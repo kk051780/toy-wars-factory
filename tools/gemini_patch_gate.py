@@ -27,7 +27,7 @@ FORBIDDEN_PATTERNS=(
 
 def _approved_path(path):
     """Reject traversal and ambiguous patch paths before prefix allowlisting."""
-    if not path or "\\\\" in path or "\\x00" in path or path.startswith("/"):
+    if not path or "\\" in path or "\x00" in path or path.startswith("/"):
         return False
     if any(part in ("", ".", "..") for part in path.split("/")):
         return False
@@ -54,7 +54,7 @@ def check_patch(patch):
                 issues.append("Unexpected content outside diff sections")
             continue
         header=block.splitlines()[0]
-        match=re.fullmatch(r"diff --git a/(\\S+) b/(\\S+)",header)
+        match=re.fullmatch(r"diff --git a/(\S+) b/(\S+)",header)
         if not match:
             issues.append("Malformed diff file header")
             continue
@@ -71,7 +71,7 @@ def check_patch(patch):
         if any(line.startswith(("rename from ","rename to ","copy from ","copy to ")) for line in lines):
             issues.append("Rename/move requires separate review")
 
-    plus_lines="\\n".join(line[1:] for line in patch.splitlines() if line.startswith("+") and not line.startswith("+++"))
+    plus_lines="\n".join(line[1:] for line in patch.splitlines() if line.startswith("+") and not line.startswith("+++"))
     for pattern,label in FORBIDDEN_PATTERNS:
         if re.search(pattern,plus_lines):
             issues.append(label)
