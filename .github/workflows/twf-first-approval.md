@@ -26,6 +26,9 @@ safe-outputs:
       - 'evidence/**'
       - 'docs/EXPERIMENT_LOG.md'
     protected-files: blocked
+  threat-detection:
+    max-ai-credits: 25
+    continue-on-error: false
   create-issue:
     title-prefix: '[TWF blocked] '
     max: 1
