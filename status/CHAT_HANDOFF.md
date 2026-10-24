@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: ac988cac6789c1545fe65ed871458c19528ab9ce
+- 基準ソースコミット: 24219373d038110e7d3c2de2ebfa6afa6574281b
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 自律AI開発: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
@@ -28,12 +28,13 @@
 - 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40047378300（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- Verify personal Copilot plan/model access; 400 unsupported auto-selected claude-sonnet-5.5 (TWF-0004)
-- Prepare a distinct one-off explicit accessible-model trial ONLY after fresh owner approval
-- Never rerun prior single-use marker; 20-minute auto AI coding PR #6 remains draft/unmerged
-- Migrate mocked Roblox server integration regression from v2.3
-- Connect actual Roblox Studio/Open Cloud 2-player/mobile character visual QA
-- Never publish game without runtime evidence and owner approval
+- Owner reviews free-tier Google AI Studio source-data/privacy handling and explicitly consents or selects privacy-preserving paid alternative
+- Owner creates Free Tier GEMINI_API_KEY using official Google AI Studio and saves as GitHub repository Actions secret without sharing in chat
+- Independently test secret presence without model inference
+- After new explicit owner authorization, run one Gemini AI coding test with fail-closed independent patch review (draft PR only)
+- Evaluate PR #12 for cost control: change two idle cron jobs from 20-minute to 6-hour cadence; retain on-change CI
+- Verify eventual real AI-generated PR with GitHub QA, size gate, character test and audit trail
+- Add Roblox Studio/Open Cloud and 2-client/mobile screenshots before release
 
 ## 新しいチャットでAIが必ず行う引き継ぎ手順
 1. GitHubコネクタでこのファイルと status/LATEST_STATE.json、PROJECT_STATE.json、AGENTS.md、config/quality_policy.json を読み込む。
