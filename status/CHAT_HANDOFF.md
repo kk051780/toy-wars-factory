@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: 146f57c0261b0862713b6e842b8d8025747420d4
+- 基準ソースコミット: 47770033da4e78b55a43b8e5fa7a3977e134ca68
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 自律AI開発: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
@@ -28,37 +28,38 @@
 - 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40064857413（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- Review docs/GEMINI_CONNECTED_OFFLINE_RUNTIME.md and C00006: public profile, model-ceiling adapter and persistent shared budget are connected offline.
-- Keep the existing cap at 10 AIC; current conservative reservation is 103.2192 modeled AIC, so all real-profile generation is blocked before forwarding.
-- Establish a defensible smaller request-specific bound; CountTokens alone is not an upper-bound proof and no arbitrary margin is accepted.
-- Recheck the short-lived public profile and authoritative provider quota/billing before any fresh inference approval.
-- Real CLI/reviewer routing and live provider transport remain disabled; never reuse the consumed one-shot marker.
-- Preserve unmerged PR #19/#21 and this follow-up; do not automatically merge, activate recurring AI, or publish Roblox.
+- Read docs/GEMINI_REQUEST_BOUND_RESULT.md and C00007: request-specific output bound is implemented; a smaller complete input bound remains unproved.
+- Do not declare live readiness from passing offline/container tests. Current 2048-output reservation remains 79.4112 modeled AIC using the full model input ceiling.
+- A fresh 10-AIC budget would require input independently bounded to <=123093 tokens for 2048 charged output tokens; the diagnostic does not certify this input count.
+- Require attributable provider input/framing bounds or an independently validated exact path before revisiting inference. The inspected official SDK 2.33.0 lacks a Gemini 3.8 local lookup.
+- Keep estimates, tokenizer aliases, character/byte ratios and arbitrary margins out of admission decisions; do not change the cap or model automatically.
+- Fresh owner inference approval and verified quota/pricing are still required after technical prerequisites hold. Keep recurring AI, automatic merge and Roblox publication inactive.
 
 ## 最新の再開地点（観測時点の記録）
-- 記録: C00006 / 2026-10-24
+- 記録: C00007 / 2026-10-24
 - 照合したmain: e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904
-- 証拠: history/C00006_connected_offline_runtime.json
-- 完了: Re-read canonical main and unmerged PR #21; preserve previous draft work.
-- 完了: Verify official Standard rates and model limits; retain dated offline-only public profile and expiry.
-- 完了: Connect the profile and documented model-ceiling bounds to a real loopback HTTP gateway.
-- 完了: Persist reservations in SQLite; verify developer/reviewer sharing, restarts, lost leases and six separate worker processes.
-- 完了: Keep the existing 10-AIC cap and reject the 103.2192-AIC model-ceiling reservation before any forwarding.
-- 完了: Add a digest-pinned offline container test with Docker networking disabled and a minimal build context.
-- 完了: Track runtime-only source changes in the portable handoff.
+- 証拠: history/C00007_request_bound_proof.json
+- 完了: Read canonical main, current drafts and completed QA before continuing from PR #22.
+- 完了: Verify native GenerateContent output cutoff includes thinking; reserve only the explicit request output limit.
+- 完了: Inspect exact official Python SDK 2.33.0 model lookup without importing SDK dependencies, downloading vocabularies or calling a provider.
+- 完了: Confirm the checked SDK cannot map Gemini 3.8 Flash to a local tokenizer; positive controls verify lookup inspection.
+- 完了: Calculate exact remaining-budget proof requirements: 2048 output tokens would require input independently bounded to <=123093 tokens under a fresh 10-AIC cap.
+- 完了: Pass 64 Node and 33 Python tests locally, retaining blocked admission and all prior guards.
 - 新規推論承認: False
 - 定期AI承認: False
 - 自動マージ承認: False
 - Roblox公開承認: False
-- 再実行の前提: A defensible smaller request-specific bound, current price review, authoritative provider quota/billing and fresh owner authorization are still required.
-- 再開する作業: Validate a smaller request-specific input/output bound without treating CountTokens, character counts or invented multipliers as guaranteed caps; keep live inference blocked at the existing 10 AIC.
-- 未確認・制限: The conservative connected adapter reserves full documented model limits; 103.2192 AIC is not an expected cost or bill.
-- 未確認・制限: Live Gemini CLI and independent reviewer remain disabled and are not rerouted.
-- 未確認・制限: No provider transport, key read or actual model call exists in this offline gateway.
-- 未確認・制限: The candidate container is CI-only, not a production deployment.
-- 未確認・制限: Roblox Studio, multiplayer and mobile remain NOT_RUN.
+- 再実行の前提: Input/framing bound must be independently established, pricing/quota rechecked and fresh owner inference authorization obtained. A mock pass or estimate is not approval.
+- 再開する作業: Treat the missing request-specific input bound as a real blocker. Resume only when an attributable provider bound or independently validated exact model/framing path is available; never substitute an estimate or promise another routine step will enable inference.
+- 未確認・制限: Only the request output bound was tightened; the input side still uses the full documented model ceiling.
+- 未確認・制限: The required input ceiling is arithmetic for a missing proof, not a measured or certified input count.
+- 未確認・制限: Local-tokenizer support findings apply to the exact inspected SDK commit; they are not an impossibility proof for all future mechanisms.
+- 未確認・制限: No live CLI/reviewer routing, provider transport, credential read or inference was enabled.
+- 未確認・制限: All implementation remains in unmerged drafts; Studio, multiplayer and mobile remain NOT_RUN.
 
 ## 未マージの提案（現在のPR状態はGitHubで再確認）
+- PR #22: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Connect offline profile, model-ceiling adapter and persistent shared ledger / https://github.com/kk051780/toy-wars-factory/pull/22
+  - QA: 40 existing Node + 19 connected container tests, 33 Python, 37 Lua and 4000 stress checks PASS. No live inference. https://github.com/kk051780/toy-wars-factory/actions/runs/40072355807
 - PR #21: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Native admission correction and reservation-runner candidate / https://github.com/kk051780/toy-wars-factory/pull/21
   - QA: 40 Node, 33 Python, 37 Lua, 4000 stress checks PASS; offline candidate only. https://github.com/kk051780/toy-wars-factory/actions/runs/40069599840
 - PR #19: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Fix shallow-history handoff churn and retain incident provenance / https://github.com/kk051780/toy-wars-factory/pull/19
