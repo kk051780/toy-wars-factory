@@ -33,8 +33,9 @@ jobs:
           assert 'GH_AW_MAX_AI_CREDITS: "25"' in lock
           assert "max-daily-ai-credits: 25" in md
           assert "8,28,48 * * * *" not in lock
-          assert "cron:" not in md
-          assert "workflow_dispatch" not in md
+          frontmatter=md.split("---",2)[1]
+          assert "cron:" not in frontmatter
+          assert "workflow_dispatch" not in frontmatter
           print("ONE_SHOT_COMPILE_PASS: no schedule, credits=25, single trigger")
           PY
       - name: Emit base64 fragments for separate limited GitHub App writer
