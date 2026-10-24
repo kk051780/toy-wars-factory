@@ -1,11 +1,12 @@
-# Isolated Gemini stop and continuity correction — draft against main
+# Isolated Gemini stop and continuity correction — merged via PR #26
 
-This proposal can be reviewed directly against main. It contains the operational
+PR #26 was merged with owner approval on 2026-10-24 at
+`3121e3ca5dd4ac3a7d4ba9ef090a099c56f9f2ae`. It contains the operational
 stop from PR #24 and the continuity correction from PR #19, without the budget
 runtime, proxy overlay, pricing profiles, tokenizer tooling or Docker candidates
 from the stacked experimental branches. No game source or character changes.
 
-## Behavior after a reviewed merge
+## Behavior on main
 
 - Gemini trial frontmatter contains literal `if: ${{ false }}`. Official gh-aw
   v0.93.2 generates `if: false` before pre-activation and `&& (false)` on activation.
@@ -25,7 +26,13 @@ The independent-review requirement is retained: the held reviewer cannot produce
 the model approval needed by safe outputs. Removing its unreserved HTTP code is
 an intentional security reduction, not a reduction of gameplay or review gates.
 
-## Validation required for this independent branch
+## Validation
+
+Post-merge main QA passed:
+https://github.com/kk051780/toy-wars-factory/actions/runs/40078677288
+
+Post-merge handoff generation and validation passed:
+https://github.com/kk051780/toy-wars-factory/actions/runs/40078677287
 
 The Python suite has 43 tests, including ten operational hold cases and four real
 Git-history continuity cases. Native Lua parsing, 37 balance assertions, 4,000
@@ -39,7 +46,7 @@ Existing idle audit schedules and their financial proposal PR #12 are unchanged.
 
 ## Limits and decision
 
-This remains an unmerged proposal. It does not retrofit historical workflow
+This stop is merged on main. It does not retrofit historical workflow
 snapshots or disable run-again controls for old runs. The consumed trial must not
 be rerun. No model, cap, quota, billing, secret, access or Roblox release is changed.
 
@@ -48,7 +55,8 @@ GEMINI_INPUT_BOUND_REVIEW.md for the exact official SDK snapshots inspected.
 An operational stop is not proof of a 10-AIC financial cap. Reopening inference
 requires independently established bounds, shared live enforcement for developer
 and reviewer, current pricing/quota, fresh owner inference consent and reviewed
-code changes. Merging this stop would not authorize model invocation.
+code changes. The approved merge did not authorize model invocation or future
+automatic merges. C00010 records the completed merge and its limited approval.
 
 Source proposals and evidence remain open; this extracts their limited stop and
 continuity changes without merging or closing other work. Studio, multiplayer

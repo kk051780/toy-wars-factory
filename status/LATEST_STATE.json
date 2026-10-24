@@ -1,7 +1,7 @@
 {
   "schema": 2,
   "canonical_repo": "kk051780/toy-wars-factory",
-  "source_revision": "8910cd3005aee53d6e65fe52de7893ab1da0e051",
+  "source_revision": "e3dc308b2f4e4cac0fbb5990b853d949630cffd8",
   "source_metrics": {
     "files": 4,
     "lines": 663,
@@ -98,13 +98,17 @@
       "next_reexecution_authorized": false,
       "credit_enforcement_investigation": "Native input/framing proof remains unavailable after exact Python, Java, Go and JavaScript SDK source inspection. A direct-main stop/continuity proposal is prepared separately from experimental budget runtime PRs.",
       "operational_hold": {
-        "status": "IMPLEMENTED_IN_THIS_DRAFT_NOT_MERGED_TO_MAIN",
+        "status": "MERGED_PR26_MAIN_VERIFIED",
         "document": "docs/GEMINI_OPERATIONAL_HOLD.md",
         "workflow_guard": "LITERAL_FALSE_PRE_ACTIVATION_AND_ACTIVATION",
         "reviewer_direct_http_removed": true,
         "credential_read": false,
         "inference_enabled": false,
-        "source_pr": 24
+        "source_pr": 24,
+        "merged_pr": 26,
+        "merge_commit": "3121e3ca5dd4ac3a7d4ba9ef090a099c56f9f2ae",
+        "post_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40078677288",
+        "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40078677287"
       },
       "runtime_candidate": {
         "status": "EXPERIMENTAL_PROPOSALS_ONLY_NOT_INCLUDED_IN_THIS_BRANCH",
@@ -153,7 +157,7 @@
   },
   "verification": {
     "offline_native_local_v2_3": "PASS_REPORTED_PREVIOUSLY",
-    "github_actions": "PENDING_ISOLATED_BRANCH_CI; prior stop implementation passed https://github.com/kk051780/toy-wars-factory/actions/runs/40075974239",
+    "github_actions": "PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40078677288",
     "roblox_studio": "NOT_RUN",
     "mobile_visual": "NOT_RUN",
     "two_client_multiplayer": "NOT_RUN",
@@ -163,42 +167,45 @@
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
-    "Review the direct-main operational stop and continuity correction; it has no dependency on experimental budget PRs.",
-    "Confirm independent CI and exact official compiler regeneration, then obtain owner approval before merging; automatic merge remains unapproved.",
-    "After an approved merge, resolve main HEAD and check on-change QA plus generated handoff; a draft or status page alone is not deployment evidence.",
-    "Keep Gemini inference blocked. The inspected Python, Java, Go and JavaScript SDK snapshots do not map Gemini 3.8 Flash; no complete input/framing bound was established.",
-    "Do not repeat identical SDK inspections as new progress. Require changed sources or new attributable provider/framing evidence.",
-    "Keep the 10-AIC cap, consumed trial markers, independent-model review requirement, inactive recurring AI and no Roblox publication. Preserve separate gameplay PR #25 and related drafts."
+    "PR #26 is merged and its post-merge main QA/handoff passed. Do not ask again to merge it or reuse the consumed inference approval.",
+    "Read C00010 and compare current main/Actions. The follow-up is factual recording of that completed integration, with no runtime or workflow changes.",
+    "If continuing gameplay work, review separate PR #25 against the new main while preserving operational and quality guards; no unrelated merge approval is implied.",
+    "Keep Gemini blocked. The complete request input/framing proof remains unavailable; do not repeat the same pinned SDK inspections as new progress.",
+    "Require independently established bounds, shared live enforcement, current pricing/quota and fresh owner inference approval before any new Gemini call.",
+    "Keep the 10-AIC cap, independent-model review requirement, inactive recurring AI, no automatic merge policy and no Roblox publication."
   ],
   "resume_checkpoint": {
-    "id": "C00009",
+    "id": "C00010",
     "observed_on": "2026-10-24",
-    "observed_main_revision": "e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904",
+    "observed_main_revision": "3121e3ca5dd4ac3a7d4ba9ef090a099c56f9f2ae",
     "completed": [
-      "Read canonical main, current drafts, Actions, issues and PR #25 without overwriting separate gameplay work.",
-      "Confirm PR #24 exact official compiler regeneration and complete QA passed in CI 40075974239.",
-      "Inspect exact official Java, Go and JavaScript local tokenizer lookups in addition to the previously inspected Python snapshot; none maps gemini-3.8-flash.",
-      "Keep the native full-request CountTokens question distinct from a contents-only mismatch example and the separate Cloud multimodal caveat; no complete input bound was certified.",
-      "Extract the tested operational stop and real-history continuity correction into a draft directly based on canonical main, excluding all budget runtime candidates.",
-      "Pass all 43 Python regressions and 21 repository policy checks on the independent branch; exact official compiler and native Lua CI must still be confirmed."
+      "Owner replied 進めて to the explicit request to merge PR #26 into main. This authorizes that integration, not inference or an unattended merge policy.",
+      "Recheck unchanged reviewed head 3bbb1e67500c8d084a2155f70bdc09f0cf14ea1e, clean mergeability and successful CI 40078321454 before merging.",
+      "Merge PR #26 at 3121e3ca5dd4ac3a7d4ba9ef090a099c56f9f2ae using the reviewed head SHA lease.",
+      "Confirm post-merge main QA 40078677288 and handoff run 40078677287 both pass, including exact compiler output, 43 Python tests, native Lua and installer/handoff checks.",
+      "Confirm main contains literal-false Gemini activation, no reviewer direct provider URL and full-history handoff checkout; reviewed tree is unchanged.",
+      "Record completion in the handoff so a later chat does not ask again to merge PR #26. Game source and character definitions remain unchanged."
     ],
-    "evidence_record": "history/C00009_isolated_hold_review.json",
+    "evidence_record": "history/C00010_approved_stop_merge.json",
     "authorization": {
+      "approved_merge_pr": 26,
+      "approved_merge_head": "3bbb1e67500c8d084a2155f70bdc09f0cf14ea1e",
+      "approval_source": "User said 進めて in direct response to the PR #26 main-merge confirmation.",
       "gemini_trial": "CONSUMED_SINGLE_RUN",
       "new_inference_authorized": false,
       "recurring_ai_authorized": false,
       "automatic_merge_authorized": false,
       "roblox_publish_authorized": false,
-      "prerequisite": "A reviewed merge of the operational stop is separate from future inference consent. Inference still needs complete bounds, shared enforcement, current pricing/quota and fresh owner approval."
+      "prerequisite": "PR #26 integration is complete and must not require renewed approval. Future inference and unrelated merges are not authorized by this approval; inference still needs complete bounds, shared enforcement, current pricing/quota and fresh owner consent."
     },
     "limitations": [
-      "This direct-main proposal remains unmerged; main still has its previous incident state.",
-      "The input/framing bound and a hard financial cap remain unproved.",
-      "Historical workflow snapshots are not retrofitted and the consumed trial must not be rerun.",
-      "Experimental budget runtime, pricing, SDK tooling and Docker code are excluded from this branch.",
+      "Input/framing bound and a hard financial cap remain unproved; Gemini stays blocked.",
+      "Historical workflow snapshots are not retrofitted; never rerun the consumed trial.",
+      "Budget runtime, pricing, SDK tooling and Docker candidates remain in unmerged experimental PRs.",
+      "Only the handoff/stop parts of PR #19/#24 were integrated; other proposals were not merged or closed.",
       "Studio, multiplayer and mobile remain NOT_RUN."
     ],
-    "next_action": "Finish independent QA and present the direct-main stop/continuity PR for owner review. Merge only after owner approval, then verify main and its QA. Do not treat merging a stop as inference consent. Revisit the input blocker only with changed sources or new provider/framing evidence; independent gameplay work remains in separate drafts."
+    "next_action": "PR #26 merge and its post-merge QA/handoff are complete. Do not request that approval again. Verify this factual recording and current main, then continue only authorized offline/gameplay review (separate PR #25 remains a draft). Keep inference and unattended merge policy blocked; revisit input proof only with new attributable evidence."
   },
   "review_queue": [
     {
@@ -219,7 +226,8 @@
       "origin": "CHAT_ASSISTANT_NOT_GEMINI",
       "purpose": "Hold Gemini activation and remove the unreserved reviewer transport",
       "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40075974239",
-      "qa_scope": "PASS: 43 Python, 64 Node including 24 container checks, exact compiler, Lua/stress, installer and handoff. Node/runtime candidates are excluded from this independent branch."
+      "qa_scope": "PASS: 43 Python, 64 Node including 24 container checks, exact compiler, Lua/stress, installer and handoff. Node/runtime candidates are excluded from this independent branch.",
+      "main_partial_integration": "Operational stop merged via PR #26; budget runtime candidates remain unmerged."
     },
     {
       "number": 23,
@@ -269,7 +277,8 @@
       "origin": "CHAT_ASSISTANT_NOT_GEMINI",
       "purpose": "Fix shallow-history handoff churn and retain Gemini failure provenance",
       "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40067722798",
-      "qa_scope": "PASS: 33 Python, 37 Lua regressions, 4000 deterministic stress, exact installer and deterministic handoff. Offline only."
+      "qa_scope": "PASS: 33 Python, 37 Lua regressions, 4000 deterministic stress, exact installer and deterministic handoff. Offline only.",
+      "main_partial_integration": "Handoff correction merged via PR #26; remaining audit/reproducer proposal not merged."
     },
     {
       "number": 17,
