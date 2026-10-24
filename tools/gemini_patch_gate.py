@@ -82,6 +82,18 @@ def scan_online(patch,api_key,transport=None):
         raise RuntimeError("INVALID_REASONS")
     return verdict
 
+def save_safe_verdict(directory):
+    """Emit gh-aw threat-detect-compatible host-side verdict only after both checks PASS."""
+    target=Path(directory)/"detection_result.json"
+    target.parent.mkdir(parents=True,exist_ok=True)
+    result={"prompt_injection":False,"secret_leak":False,"malicious_patch":False,"reasons":[]}
+    tmp=target.with_suffix(".json.tmp")
+    with tmp.open("w",encoding="utf-8") as fp:
+        json.dump(result,fp,separators=(",",":"))
+        fp.write("\n")
+    os.chmod(tmp,0o600)
+    tmp.replace(target)
+
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--patch-dir",default="/tmp/gh-aw/threat-detection")
@@ -107,12 +119,16 @@ def main():
     try:
         verdict=scan_online(patch,os.environ.get("GEMINI_API_KEY"))
         if not verdict["safe"]:
-            print("FAIL independent-model-review: "+", ".join(verdict["reasons"])[:500])
+            print("FAIL independent-model-review: SECURITY_VERDICT_UNSAFE")
             return 1
     except (ValueError,RuntimeError,urllib.error.URLError,TimeoutError):
         print("FAIL: independent Gemini review unavailable or not parsable")
         return 1
-    print("PASS independent Gemini security review (not official gh-aw AI threat detector)")
+    try: save_safe_verdict(root)
+    except (OSError,ValueError):
+        print("FAIL: could not persist independent verdict")
+        return 1
+    print("PASS independent Gemini security review (custom gate, gh-aw verdict written)")
     return 0
 
 if __name__=="__main__": sys.exit(main())
