@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: 8910cd3005aee53d6e65fe52de7893ab1da0e051
+- 基準ソースコミット: e3dc308b2f4e4cac0fbb5990b853d949630cffd8
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 自律AI開発: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
@@ -25,36 +25,36 @@
 - Studio: NOT_RUN
 - マルチクライアント: NOT_RUN
 - スマホ表示: NOT_RUN
-- 記録済GitHub QA: PENDING_ISOLATED_BRANCH_CI; prior stop implementation passed https://github.com/kk051780/toy-wars-factory/actions/runs/40075974239（最新Actionsを別途確認すること）
+- 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40078677288（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- Review the direct-main operational stop and continuity correction; it has no dependency on experimental budget PRs.
-- Confirm independent CI and exact official compiler regeneration, then obtain owner approval before merging; automatic merge remains unapproved.
-- After an approved merge, resolve main HEAD and check on-change QA plus generated handoff; a draft or status page alone is not deployment evidence.
-- Keep Gemini inference blocked. The inspected Python, Java, Go and JavaScript SDK snapshots do not map Gemini 3.8 Flash; no complete input/framing bound was established.
-- Do not repeat identical SDK inspections as new progress. Require changed sources or new attributable provider/framing evidence.
-- Keep the 10-AIC cap, consumed trial markers, independent-model review requirement, inactive recurring AI and no Roblox publication. Preserve separate gameplay PR #25 and related drafts.
+- PR #26 is merged and its post-merge main QA/handoff passed. Do not ask again to merge it or reuse the consumed inference approval.
+- Read C00010 and compare current main/Actions. The follow-up is factual recording of that completed integration, with no runtime or workflow changes.
+- If continuing gameplay work, review separate PR #25 against the new main while preserving operational and quality guards; no unrelated merge approval is implied.
+- Keep Gemini blocked. The complete request input/framing proof remains unavailable; do not repeat the same pinned SDK inspections as new progress.
+- Require independently established bounds, shared live enforcement, current pricing/quota and fresh owner inference approval before any new Gemini call.
+- Keep the 10-AIC cap, independent-model review requirement, inactive recurring AI, no automatic merge policy and no Roblox publication.
 
 ## 最新の再開地点（観測時点の記録）
-- 記録: C00009 / 2026-10-24
-- 照合したmain: e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904
-- 証拠: history/C00009_isolated_hold_review.json
-- 完了: Read canonical main, current drafts, Actions, issues and PR #25 without overwriting separate gameplay work.
-- 完了: Confirm PR #24 exact official compiler regeneration and complete QA passed in CI 40075974239.
-- 完了: Inspect exact official Java, Go and JavaScript local tokenizer lookups in addition to the previously inspected Python snapshot; none maps gemini-3.8-flash.
-- 完了: Keep the native full-request CountTokens question distinct from a contents-only mismatch example and the separate Cloud multimodal caveat; no complete input bound was certified.
-- 完了: Extract the tested operational stop and real-history continuity correction into a draft directly based on canonical main, excluding all budget runtime candidates.
-- 完了: Pass all 43 Python regressions and 21 repository policy checks on the independent branch; exact official compiler and native Lua CI must still be confirmed.
+- 記録: C00010 / 2026-10-24
+- 照合したmain: 3121e3ca5dd4ac3a7d4ba9ef090a099c56f9f2ae
+- 証拠: history/C00010_approved_stop_merge.json
+- 完了: Owner replied 進めて to the explicit request to merge PR #26 into main. This authorizes that integration, not inference or an unattended merge policy.
+- 完了: Recheck unchanged reviewed head 3bbb1e67500c8d084a2155f70bdc09f0cf14ea1e, clean mergeability and successful CI 40078321454 before merging.
+- 完了: Merge PR #26 at 3121e3ca5dd4ac3a7d4ba9ef090a099c56f9f2ae using the reviewed head SHA lease.
+- 完了: Confirm post-merge main QA 40078677288 and handoff run 40078677287 both pass, including exact compiler output, 43 Python tests, native Lua and installer/handoff checks.
+- 完了: Confirm main contains literal-false Gemini activation, no reviewer direct provider URL and full-history handoff checkout; reviewed tree is unchanged.
+- 完了: Record completion in the handoff so a later chat does not ask again to merge PR #26. Game source and character definitions remain unchanged.
 - 新規推論承認: False
 - 定期AI承認: False
 - 自動マージ承認: False
 - Roblox公開承認: False
-- 再実行の前提: A reviewed merge of the operational stop is separate from future inference consent. Inference still needs complete bounds, shared enforcement, current pricing/quota and fresh owner approval.
-- 再開する作業: Finish independent QA and present the direct-main stop/continuity PR for owner review. Merge only after owner approval, then verify main and its QA. Do not treat merging a stop as inference consent. Revisit the input blocker only with changed sources or new provider/framing evidence; independent gameplay work remains in separate drafts.
-- 未確認・制限: This direct-main proposal remains unmerged; main still has its previous incident state.
-- 未確認・制限: The input/framing bound and a hard financial cap remain unproved.
-- 未確認・制限: Historical workflow snapshots are not retrofitted and the consumed trial must not be rerun.
-- 未確認・制限: Experimental budget runtime, pricing, SDK tooling and Docker code are excluded from this branch.
+- 再実行の前提: PR #26 integration is complete and must not require renewed approval. Future inference and unrelated merges are not authorized by this approval; inference still needs complete bounds, shared enforcement, current pricing/quota and fresh owner consent.
+- 再開する作業: PR #26 merge and its post-merge QA/handoff are complete. Do not request that approval again. Verify this factual recording and current main, then continue only authorized offline/gameplay review (separate PR #25 remains a draft). Keep inference and unattended merge policy blocked; revisit input proof only with new attributable evidence.
+- 未確認・制限: Input/framing bound and a hard financial cap remain unproved; Gemini stays blocked.
+- 未確認・制限: Historical workflow snapshots are not retrofitted; never rerun the consumed trial.
+- 未確認・制限: Budget runtime, pricing, SDK tooling and Docker candidates remain in unmerged experimental PRs.
+- 未確認・制限: Only the handoff/stop parts of PR #19/#24 were integrated; other proposals were not merged or closed.
 - 未確認・制限: Studio, multiplayer and mobile remain NOT_RUN.
 
 ## 未マージの提案（現在のPR状態はGitHubで再確認）
