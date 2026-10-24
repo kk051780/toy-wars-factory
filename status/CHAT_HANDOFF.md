@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: 2ca4f40afcb138308704f4f3847fd6581bd38bb5
+- 基準ソースコミット: 56b568b20d519dbbcac0b2e5e011d71d92a8fdc1
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 自律AI開発: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
@@ -28,12 +28,11 @@
 - 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40047378300（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- Receive explicit approval for ONE Gemini API Free Tier code-generation trial and separately review custom fail-closed detector tradeoff
-- Ensure candidate PR #11 is independently passing cloud QA and activation remains single-use
-- After owner approval only: activate exactly one Gemini run with no recurring cron and document its outcome
-- If inference and draft PR succeed, inspect game code, CI, security, character quality, source size and defects; do not auto-merge
-- Keep Copilot 20-min PR #6 unmerged; consider idle Actions quota reduction via PR #12 separately
-- Connect actual Roblox Studio/Open Cloud/2-player/mobile character visual tests before game release
+- Owner explicitly approves one non-recurring Gemini 3.8 Flash trial, accepting custom independent scanner is not official gh-aw detector; no inference has yet been called
+- Before trigger, check PR #11 and ensure candidate compiled lock / QA PASS (run 40059931038); no recurring cron or unrestricted bills
+- Upon distinct owner approval, activate exactly one Gemini trial using a brand-new marker; verify live model/auth and draft PR with independent QA
+- Keep Copilot 20min PR #6 unmerged, budget proposal PR #12 unmerged pending approval
+- Complete Roblox Studio, multiplayer and mobile appearance evidence before publication
 
 ## 新しいチャットでAIが必ず行う引き継ぎ手順
 1. GitHubコネクタでこのファイルと status/LATEST_STATE.json、PROJECT_STATE.json、AGENTS.md、config/quality_policy.json を読み込む。
