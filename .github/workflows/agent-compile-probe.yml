@@ -1,0 +1,33 @@
+name: Toy Wars agent workflow compiler smoke test (no AI invocation)
+on:
+  push:
+    paths:
+      - '.github/workflows/twf-autonomous-developer.md'
+      - '.github/workflows/agent-compile-probe.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install official agentic workflows compiler
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh extension install github/gh-aw
+      - name: Compile workflow, without starting an AI job
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh aw compile .github/workflows/twf-autonomous-developer.md
+      - name: Verify generated lock exists
+        run: |
+          test -s .github/workflows/twf-autonomous-developer.lock.yml
+          echo 'Generated a candidate agent workflow; NO agent was invoked.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Archive generated workflow for review
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gh-aw-compiled-candidate
+          path: .github/workflows/twf-autonomous-developer.lock.yml
