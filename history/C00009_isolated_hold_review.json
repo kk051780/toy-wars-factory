@@ -1,0 +1,219 @@
+{
+  "id": "C00009",
+  "date": "2026-10-24",
+  "kind": "ISOLATED_MAIN_STOP_PROPOSAL_AND_INPUT_BOUND_REVIEW",
+  "canonical_main_observed": "e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904",
+  "base_branch": "main",
+  "outcome": "INPUT_PROOF_STILL_BLOCKED_STOP_AND_CONTINUITY_EXTRACTED_FOR_INDEPENDENT_REVIEW",
+  "source_proposals": [
+    {
+      "pr": 19,
+      "head": "fb0b5582f0a69296b87bd8d5dc433e67ba4211d2",
+      "imported": "Checkpoint/provenance persistence, shallow-history refusal, full checkout and real-history regressions. Credit-gap reproducer and broader incident files are excluded."
+    },
+    {
+      "pr": 24,
+      "head": "03637555a432b32e0c9eedd33ee7738188794899",
+      "imported": "Literal workflow hold, direct reviewer HTTP removal, stale verdict cleanup, pure schema tests and pinned compiler check."
+    }
+  ],
+  "sdk_lookup_inspection": {
+    "python": {
+      "repository": "googleapis/python-genai",
+      "commit": "c0e9c54915970948258226e565bde6ef6d5c0b94",
+      "version": "2.33.0",
+      "path": "google/genai/_local_tokenizer_loader.py",
+      "blob": "27f4781b8b2274e022eaf812e3bf4249dfe1e991",
+      "target_in_lookup": false
+    },
+    "java": {
+      "repository": "googleapis/java-genai",
+      "commit": "de413718286f307f48e3bdd7bff187a9e6dd1629",
+      "path": "src/main/java/com/google/genai/LocalTokenizerLoader.java",
+      "blob": "c90356ee1c5138e0a925969132d3c90c5b228663",
+      "target_in_lookup": false
+    },
+    "go": {
+      "repository": "googleapis/go-genai",
+      "commit": "9ba857f3a8f976f9d1fe7a7a82b0cceee840dcb7",
+      "path": "tokenizer/tokenizer.go",
+      "blob": "b2ef6fbab3c0c411eb082a31a684acf3026a24a3",
+      "target_in_lookup": false
+    },
+    "javascript": {
+      "repository": "googleapis/js-genai",
+      "commit": "0dd787c23d76139982d7acb01e3c99978f563007",
+      "path": "src/cross/tokenizer/_loader.ts",
+      "blob": "936cf542944b4acbd3685ca26dac786992897818",
+      "target_in_lookup": false
+    }
+  },
+  "inspection_scope": {
+    "all_four_git_blob_contents_verified": true,
+    "sdk_executed": false,
+    "vocabulary_downloads": 0,
+    "provider_calls": 0,
+    "credential_read": false,
+    "input_bound_certified": false,
+    "claim_applies_only_to_pinned_snapshots": true
+  },
+  "api_evidence": {
+    "native_count_tokens": "https://ai.google.dev/api/tokens",
+    "full_request_steering_fields_available": true,
+    "contents_only_example_count": 10,
+    "contents_only_example_generated_prompt_usage": 11,
+    "example_does_not_disprove_all_full_request_counts": true,
+    "cloud_multimodal_caveat_not_used_as_text_only_native_proof": true,
+    "numeric_worst_case_complete_framing_bound_established": false,
+    "native_per_request_input_control_found": false
+  },
+  "included_scope": [
+    "Gemini operational stop",
+    "Handoff source/provenance correction",
+    "Independent offline QA",
+    "Input-bound investigation result"
+  ],
+  "excluded_scope": [
+    "runtime/**",
+    ".dockerignore",
+    "Node/container budget tests",
+    "Pricing profiles",
+    "AWF overlay/reproducer",
+    "SDK execution or provider diagnostic",
+    "Gameplay PRs #13/#17/#20/#25"
+  ],
+  "verification": {
+    "python_tests": "PASS_43_LOCAL",
+    "repository_policy": "PASS_21_LOCAL",
+    "official_compiler_and_native_ci": "PENDING",
+    "prior_exact_stop_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40075974239",
+    "separate_game_pr25_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40076928524"
+  },
+  "integration_corrections": [
+    "Populate qa_scope alongside each QA URL required by the existing handoff record contract.",
+    "Preserve the checkpoint ID from current state instead of hardcoding the original C00004 test fixture; no checkpoint/provenance assertion was removed."
+  ],
+  "game_source": {
+    "files": 4,
+    "lines": 663,
+    "bytes": 25726,
+    "delta_files": 0,
+    "delta_lines": 0,
+    "delta_bytes": 0
+  },
+  "characters_touched": [],
+  "reduction_reason": "Remove only the reviewer direct HTTP bypass and related prompt code. Game source and independent-review requirement stay intact.",
+  "changed_files": [
+    ".github/workflows/bootstrap-quality.yml",
+    ".github/workflows/gemini-security-qa.yml",
+    ".github/workflows/handoff-sync.yml",
+    ".github/workflows/twf-gemini-free-trial.md",
+    ".github/workflows/twf-gemini-free-trial.lock.yml",
+    "tools/build_handoff.py",
+    "tools/gemini_patch_gate.py",
+    "tools/verify_gemini_hold.py",
+    "tests/test_gemini_patch_gate.py",
+    "tests/test_gemini_operational_hold.py",
+    "tests/test_handoff_checkpoint.py",
+    "PROJECT_STATE.json",
+    "docs/GEMINI_OPERATIONAL_HOLD.md",
+    "docs/GEMINI_INPUT_BOUND_REVIEW.md",
+    "docs/CHAT_CONTINUITY_PROTOCOL.md",
+    "history/C00009_isolated_hold_review.json"
+  ],
+  "generated_files": [
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "authorization": {
+    "gemini_trial": "CONSUMED_SINGLE_RUN",
+    "new_inference_authorized": false,
+    "recurring_ai_authorized": false,
+    "automatic_merge_authorized": false,
+    "roblox_publish_authorized": false,
+    "prerequisite": "A reviewed merge of the operational stop is separate from future inference consent. Inference still needs complete bounds, shared enforcement, current pricing/quota and fresh owner approval."
+  },
+  "next_action": "Finish independent QA and present the direct-main stop/continuity PR for owner review. Merge only after owner approval, then verify main and its QA. Do not treat merging a stop as inference consent. Revisit the input blocker only with changed sources or new provider/framing evidence; independent gameplay work remains in separate drafts.",
+  "file_size_deltas": {
+    ".github/workflows/bootstrap-quality.yml": {
+      "before": 3234,
+      "after": 4261,
+      "delta": 1027
+    },
+    ".github/workflows/gemini-security-qa.yml": {
+      "before": 2297,
+      "after": 2437,
+      "delta": 140
+    },
+    ".github/workflows/handoff-sync.yml": {
+      "before": 1996,
+      "after": 2021,
+      "delta": 25
+    },
+    ".github/workflows/twf-gemini-free-trial.md": {
+      "before": 2751,
+      "after": 3416,
+      "delta": 665
+    },
+    ".github/workflows/twf-gemini-free-trial.lock.yml": {
+      "before": 129737,
+      "after": 129762,
+      "delta": 25
+    },
+    "tools/build_handoff.py": {
+      "before": 5731,
+      "after": 7601,
+      "delta": 1870
+    },
+    "tools/gemini_patch_gate.py": {
+      "before": 7815,
+      "after": 6621,
+      "delta": -1194
+    },
+    "tools/verify_gemini_hold.py": {
+      "before": 0,
+      "after": 3368,
+      "delta": 3368
+    },
+    "tests/test_gemini_patch_gate.py": {
+      "before": 4674,
+      "after": 4624,
+      "delta": -50
+    },
+    "tests/test_gemini_operational_hold.py": {
+      "before": 0,
+      "after": 5588,
+      "delta": 5588
+    },
+    "tests/test_handoff_checkpoint.py": {
+      "before": 0,
+      "after": 5029,
+      "delta": 5029
+    },
+    "PROJECT_STATE.json": {
+      "before": 6224,
+      "after": 16859,
+      "delta": 10635
+    },
+    "docs/GEMINI_OPERATIONAL_HOLD.md": {
+      "before": 0,
+      "after": 3310,
+      "delta": 3310
+    },
+    "docs/GEMINI_INPUT_BOUND_REVIEW.md": {
+      "before": 0,
+      "after": 3172,
+      "delta": 3172
+    },
+    "docs/CHAT_CONTINUITY_PROTOCOL.md": {
+      "before": 1474,
+      "after": 3109,
+      "delta": 1635
+    },
+    "history/C00009_isolated_hold_review.json": {
+      "before": 0,
+      "after": 7516,
+      "delta": 7516
+    }
+  }
+}

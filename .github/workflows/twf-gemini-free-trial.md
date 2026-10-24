@@ -1,4 +1,7 @@
 ---
+# TWF-0006: consumed one-shot approval; no verified input bound/shared live budget.
+# Literal hold. Marker edits, repository variables and environment flags cannot unlock it.
+if: ${{ false }}
 on:
   push:
     branches:
@@ -44,7 +47,14 @@ safe-outputs:
 
 # TOY WARS FACTORY — Gemini Free-tier candidate (NOT AUTHORIZED TO RUN)
 
-This is a **disabled one-shot candidate** until the owner explicitly approves a new model invocation and creates the required secret. No 20-minute automated AI coding or billing is authorized.
+This is an **unconditionally held one-shot candidate** after incident TWF-0006.
+The existing marker records a consumed approval. Its presence or modification is
+not fresh consent. No repository variable, environment flag or marker can release
+the literal `if: false` condition. The key already exists; its presence is not approval.
+The independent reviewer transport is also blocked before credential access.
+Reopening requires a separately reviewed code change, independently established
+input/framing bounds, shared enforcement for developer and reviewer, verified
+pricing/quota and fresh owner inference approval. No 20-minute AI coding or billing is authorized.
 
 Before acting, read AGENTS.md, PROJECT_STATE.json, status/CHAT_HANDOFF.md, config/quality_policy.json, config/characters.json, docs/PRODUCT_VISION.md, recent GitHub Actions runs, open issues and PRs. Preserve all verified work.
 

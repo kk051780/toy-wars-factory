@@ -27,6 +27,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: true
+          fetch-depth: 0
       - name: Validate status and characters
         run: |
           python3 -m unittest discover -s tests -p 'test_*.py' -v
