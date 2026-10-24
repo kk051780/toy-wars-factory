@@ -22,19 +22,21 @@ const PINNED_BLOBS = {
   "containers/api-proxy/proxy-guards.js": "f50f31b6751c03221d7fa9aae2e3f87a0327d1d4"
 };
 
-function reproduce(upstreamRoot) {
+function loadPinnedFirewall(upstreamRoot, options = {}) {
   const modules = new Map();
   const files = new Map();
-  for (const [name, expected] of Object.entries(PINNED_BLOBS)) {
+  for (const [name, expected] of Object.entries({...PINNED_BLOBS, ...options.extraPins})) {
     const bytes = fs.readFileSync(path.join(upstreamRoot, name));
     const actual = crypto.createHash('sha1')
       .update(Buffer.from('blob ' + bytes.length + '\0')).update(bytes).digest('hex');
     assert.equal(actual, expected, 'Upstream blob mismatch: ' + name);
     files.set(name, bytes.toString('utf8'));
   }
+  for (const [name, content] of Object.entries(options.sourceOverrides || {})) files.set(name, content);
   // Pricing is original tagged code. Logging alone is stubbed; runtime env is isolated.
   const context = vm.createContext({Buffer, process: {env: {AWF_MAX_AI_CREDITS: '10'}}});
   function load(name) {
+    if (Object.hasOwn(options.moduleStubs || {}, name)) return options.moduleStubs[name];
     if (name === 'containers/api-proxy/logging.js') {
       return {logRequest() {}, sanitizeForLog(value) { return value; }};
     }
@@ -47,6 +49,9 @@ function reproduce(upstreamRoot) {
       return module.exports;
     }
     function localRequire(request) {
+      if (name === 'containers/api-proxy/twf-gemini-budget-guard.js' && request === 'node:crypto') {
+        return require('node:crypto');
+      }
       assert.ok(request.startsWith('.'), 'External dependency disallowed: ' + request);
       let resolved = path.posix.normalize(path.posix.join(path.posix.dirname(name), request));
       if (!resolved.endsWith('.js') && !resolved.endsWith('.json')) resolved += '.js';
@@ -58,6 +63,11 @@ function reproduce(upstreamRoot) {
     factory(module.exports, localRequire, module);
     return module.exports;
   }
+  return {load, files, context};
+}
+
+function reproduce(upstreamRoot) {
+  const {load, files, context} = loadPinnedFirewall(upstreamRoot);
   const proxySource = files.get('containers/api-proxy/proxy-guards.js');
   const extractorSource = proxySource.slice(
     proxySource.indexOf('function extractModelFromBody(body) {'),
@@ -106,4 +116,4 @@ if (require.main === module) {
     process.exitCode = 1;
   }
 }
-module.exports = {reproduce};
+module.exports = {reproduce, loadPinnedFirewall, PINNED_BLOBS};

@@ -1,6 +1,6 @@
 {
   "project": "TOY WARS FACTORY",
-  "version": "2.9-offline-credit-audit-continuity",
+  "version": "2.10-offline-native-admission-budget-candidate",
   "updated_at": "2026-10-24",
   "github": {
     "repository": "kk051780/toy-wars-factory",
@@ -70,7 +70,18 @@
       "single_run_error": "max_runs_exceeded 12/12 (429), Gemini CLI timed out 12 minutes; detection result absent; no safe-output PR",
       "billing_status": "UNVERIFIED: GH_AW_AIC:33.713 reported in job logs despite configured max-ai-credits=10; do not infer actual charges",
       "next_reexecution_authorized": false,
-      "credit_enforcement_investigation": "OFFLINE_REPRODUCED_UNPRICED_NATIVE_GEMINI_MODEL; see history/C00004_gemini_credit_audit.json and docs/INCIDENT_TWF_0006.md. Runtime correction and provider hard cap NOT deployed or verified."
+      "credit_enforcement_investigation": "OFFLINE_CANDIDATE_NATIVE_ADMISSION_PATCH_AND_RESERVATION_RUNNER; not deployed; no trusted live token-bound or price profile configured.",
+      "runtime_candidate": {
+        "status": "OFFLINE_TESTED_NOT_DEPLOYED",
+        "document": "docs/GEMINI_BUDGET_RUNTIME_CANDIDATE.md",
+        "overlay_builder": "tools/build_gemini_admission_overlay.py",
+        "node_regressions": 40,
+        "provider_calls": 0,
+        "live_price_profiles": 0,
+        "trusted_live_bound_adapter": false,
+        "reservation_runner_connected_to_cli": false,
+        "future_inference_authorized": false
+      }
     }
   },
   "migrated_assets": {
@@ -101,13 +112,13 @@
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
-    "Review docs/INCIDENT_TWF_0006.md and history/C00004_gemini_credit_audit.json: the native-model pricing gap is reproduced offline, not fixed in the deployed runtime.",
-    "Validate native URL model resolution, fail-closed pricing admission and a bounded local-server credit regression in a separate reviewed runtime correction; do not call a provider.",
-    "Confirm authoritative provider quotas/billing and obtain fresh owner approval before any new Gemini inference; the consumed marker must not be reused.",
-    "Preserve fail-closed independent security review; do not convert missing patches or failed runs into SAFE.",
-    "PR #17 is a separate offline-tested chat-assistant proposal, draft/unmerged; do not credit Gemini with it or merge automatically.",
-    "Keep the 20-minute AI schedule inactive; QA/audit schedules are distinct. Budget-saving PR #12 remains unmerged.",
-    "Actual Roblox Studio/mobile/multiplayer verification is still required before release."
+    "Review docs/GEMINI_BUDGET_RUNTIME_CANDIDATE.md and C00005: native admission correction and reservation runner pass offline tests; neither is deployed.",
+    "Connect a trusted request upper-bound adapter, verified per-model prices and a single-attempt transport in an offline candidate runtime; include CLI and independent reviewer in the same budget.",
+    "Ensure shared/persistent budget across all workers and processes; the current candidate ledger is in-memory.",
+    "Validate a real candidate container without a provider key, then verify authoritative provider quotas/billing.",
+    "Obtain fresh owner authorization before any new inference; never reuse the consumed one-shot marker.",
+    "Keep PR #19 and this follow-up reviewable and unmerged; PR #17 is a separate chat-assistant game proposal.",
+    "Do not activate recurring AI, automatically merge, or publish Roblox; engine/mobile/multiplayer remain unverified."
   ],
   "tracked_metrics": {
     "lua_source_files": 4,
@@ -117,34 +128,45 @@
     "baseline_record": "history/C00001_bootstrap.json"
   },
   "resume_checkpoint": {
-    "id": "C00004",
+    "id": "C00005",
     "observed_on": "2026-10-24",
     "observed_main_revision": "e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904",
     "completed": [
-      "Read canonical handoff/state/policy and inspect current main, Actions, draft PRs and open issues.",
-      "Confirm Gemini run 40060119253 failed on attempt 1, produced no safe-output PR and was not rerun.",
-      "Confirm PR #17 was authored through the chat assistant separately from Gemini and remains draft/unmerged.",
-      "Reproduce an unpriced native Gemini request bypassing model-price rejection and accumulating zero internal AIC in tagged upstream modules, without provider calls.",
-      "Trace repeated snapshot-only source_revision advancement to depth-1 CI checkouts; add full-history checkout and fail closed on shallow history."
+      "Re-read canonical main, PR #19 and current Actions/issues before continuing.",
+      "Implement hash-pinned native Gemini admission overlay: URL model identification, mismatch and unpriced-model rejection; preserve original common guards.",
+      "Implement a candidate exact-integer reservation ledger with concurrent admission, terminal request limits and no retry/refund for uncertain charges.",
+      "Pass 40 Node regressions, including original upstream pricing/common-guard code and real loopback HTTP.",
+      "Keep all model invocations, recurring AI, automatic merging and Roblox publication inactive."
     ],
-    "evidence_record": "history/C00004_gemini_credit_audit.json",
+    "evidence_record": "history/C00005_native_gemini_admission.json",
     "authorization": {
       "gemini_trial": "CONSUMED_SINGLE_RUN",
       "new_inference_authorized": false,
       "recurring_ai_authorized": false,
       "automatic_merge_authorized": false,
       "roblox_publish_authorized": false,
-      "prerequisite": "Fresh owner authorization AND independently validated enforcement before a new Gemini run."
+      "prerequisite": "Verified runtime integration, shared request/price bounds, authoritative provider quota and fresh owner approval before new inference."
     },
     "limitations": [
-      "Reported AIC is not a verified bill.",
-      "Tagged source reproduction is not an attestation of every deployed container byte.",
-      "Runtime correction and provider-side spending control remain unverified.",
-      "Roblox Studio, multiplayer and mobile remain NOT_RUN."
+      "Candidate only: no runtime image installed or deployed.",
+      "Overlay hooks native admission only; reservation runner is not connected to the Gemini CLI.",
+      "Real prices, trusted token upper-bound adapter, cross-process/shared budget and independent-review accounting are not configured.",
+      "Loopback fixture costs do not certify a real provider bill or financial ceiling.",
+      "Studio, multiplayer and mobile remain NOT_RUN."
     ],
-    "next_action": "Review the offline credit-audit/continuity proposal; prepare a priceable native-model admission fix and bounded local-server regression before requesting a new inference run."
+    "next_action": "Review this candidate; integrate a trusted token-bound adapter and approved prices with all model transports in an offline candidate container, then verify provider quotas before seeking fresh inference approval."
   },
   "review_queue": [
+    {
+      "number": 19,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/19",
+      "head_sha": "fb0b5582f0a69296b87bd8d5dc433e67ba4211d2",
+      "origin": "CHAT_ASSISTANT_NOT_GEMINI",
+      "status": "DRAFT_UNMERGED",
+      "purpose": "Fix shallow-history handoff churn and retain incident provenance",
+      "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40067722798",
+      "qa_scope": "PASS: 33 Python, 37 Lua regressions, 4000 deterministic stress, exact installer and deterministic handoff. Offline only."
+    },
     {
       "number": 17,
       "url": "https://github.com/kk051780/toy-wars-factory/pull/17",
