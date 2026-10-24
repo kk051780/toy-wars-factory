@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: b337fe8377cac153d2bb2bf5f957ea2f2f75c149
+- 基準ソースコミット: b867889aa9e017ac797e2f5be968d7c8e55a988e
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 自律AI開発: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
@@ -45,7 +45,7 @@
 - 完了: Add literal-false source/compiled pre-activation hold; marker edits and environment flags cannot release it.
 - 完了: Invalidate stale safe verdict artifacts on every scanner CLI attempt, including offline and blocked attempts.
 - 完了: Pass all 43 Python tests, including 10 new operational hold regressions; retain pure verdict-schema tests.
-- 完了: Add pinned official compiler regeneration and exact lock comparison to offline CI; verify result before claiming CI success.
+- 完了: Official gh-aw v0.93.2 compiled the hold successfully in CI 40075756193; adopted the exact artifact with literal false pre-activation and an additional false activation guard. Exact regeneration CI remains to be confirmed.
 - 新規推論承認: False
 - 定期AI承認: False
 - 自動マージ承認: False
