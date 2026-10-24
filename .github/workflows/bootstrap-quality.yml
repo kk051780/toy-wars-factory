@@ -8,6 +8,7 @@ on:
       - "config/**"
       - "tools/**"
       - "runtime/**"
+      - ".dockerignore"
       - ".github/workflows/bootstrap-quality.yml"
       - "PROJECT_STATE.json"
   pull_request:
@@ -39,6 +40,23 @@ jobs:
         run: node --test tests/gemini_budget_guard.test.cjs tests/gemini_admission_overlay.test.cjs
       - name: Build reviewable native-admission overlay without installing it
         run: python3 tools/build_gemini_admission_overlay.py --upstream .qa/awf --output .qa/gemini-overlay
+      - name: Build connected offline runtime from digest-pinned AWF image
+        run: docker build --file runtime/Dockerfile.offline --tag twf-budget-offline .
+      - name: Test connected budget runtime with networking disabled
+        run: |
+          docker run --rm --network none --read-only --tmpfs /tmp:rw,nosuid,nodev,noexec --cap-drop ALL --security-opt no-new-privileges twf-budget-offline
+          docker image inspect twf-budget-offline > .qa/connected-runtime-image.json
+      - name: Record conservative offline preflight without model calls
+        run: |
+          node - <<'JS' > .qa/connected-preflight.json
+          const snapshot = require('./runtime/gemini_price_snapshot.json');
+          const {loadOfflineProfile} = require('./runtime/gemini_offline_gateway.cjs');
+          const simulationTime = snapshot.reviewed_on + 'T12:00:00Z';
+          const p = loadOfflineProfile(snapshot, new Date(simulationTime));
+          console.log(JSON.stringify({mode:'OFFLINE_ONLY', simulationTime, model:snapshot.model,
+            maximumReservationNanocredits:String(p.maximumReservationNanos), capNanocredits:'10000000000',
+            admission:'BLOCKED_OVER_CAP', providerCalls:0, liveAuthorized:false}, null, 2));
+          JS
       - name: Install native Lua 5.4
         run: sudo apt-get update -qq && sudo apt-get install -y lua5.4
       - name: Lua parse of game modules (not Luau engine verification)
@@ -94,4 +112,13 @@ jobs:
         with:
           name: twf-gemini-admission-overlay-not-deployed
           path: .qa/gemini-overlay/
+          retention-days: 30
+      - name: Preserve connected offline runtime evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: twf-connected-offline-runtime-evidence
+          path: |
+            .qa/connected-runtime-image.json
+            .qa/connected-preflight.json
           retention-days: 30

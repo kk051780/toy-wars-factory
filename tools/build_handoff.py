@@ -32,7 +32,7 @@ def main():
     lines=sum(len(p.read_text(encoding="utf-8").splitlines()) for p in sources)
     size=sum(p.stat().st_size for p in sources)
     # Ignore state-snapshot-only commits, to prevent an endless generated-file commit loop.
-    code_sha=git("log","-1","--format=%H","--","src","tests","tools","docs","config","PROJECT_STATE.json","AGENTS.md",".github","history")
+    code_sha=git("log","-1","--format=%H","--","src","tests","tools","runtime","docs","config","PROJECT_STATE.json","AGENTS.md",".github","history",".dockerignore")
     baseline=read_json("history/C00001_bootstrap.json")["pve_source"]
     delta={"files":files-baseline["files"],"lines":lines-baseline["lines"],"bytes":size-baseline["bytes"]}
     verified=state.get("verification",{})

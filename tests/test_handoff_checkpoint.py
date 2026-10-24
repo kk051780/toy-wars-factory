@@ -64,6 +64,13 @@ class HandoffCheckpointTests(unittest.TestCase):
         updated = self.build()
         self.assertEqual(updated["source_revision"], self.git("rev-parse", "HEAD"))
         self.assertNotEqual(updated["source_revision"], before["source_revision"])
+        (self.root / "runtime").mkdir(exist_ok=True)
+        (self.root / "runtime/guard.cjs").write_text('// runtime-only evidence\n')
+        self.git("add", "runtime/guard.cjs")
+        self.git("commit", "-qm", "Runtime change without game-source changes")
+        runtime = self.build()
+        self.assertEqual(runtime["source_revision"], self.git("rev-parse", "HEAD"))
+        self.assertEqual(runtime["source_metrics"], before["source_metrics"])
 
     def test_shallow_history_fails_before_snapshot_and_full_history_recovers(self):
         before = self.build()

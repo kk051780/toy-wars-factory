@@ -1,6 +1,6 @@
 {
   "project": "TOY WARS FACTORY",
-  "version": "2.10-offline-native-admission-budget-candidate",
+  "version": "2.11-connected-offline-budget-runtime-blocked",
   "updated_at": "2026-10-24",
   "github": {
     "repository": "kk051780/toy-wars-factory",
@@ -70,9 +70,9 @@
       "single_run_error": "max_runs_exceeded 12/12 (429), Gemini CLI timed out 12 minutes; detection result absent; no safe-output PR",
       "billing_status": "UNVERIFIED: GH_AW_AIC:33.713 reported in job logs despite configured max-ai-credits=10; do not infer actual charges",
       "next_reexecution_authorized": false,
-      "credit_enforcement_investigation": "OFFLINE_CANDIDATE_NATIVE_ADMISSION_PATCH_AND_RESERVATION_RUNNER; not deployed; no trusted live token-bound or price profile configured.",
+      "credit_enforcement_investigation": "CONNECTED_OFFLINE_PROFILE_AND_PERSISTENT_SHARED_LEDGER; conservative model-limit reservation 103.2192 AIC exceeds unchanged 10-AIC cap, so generation is blocked before forwarding.",
       "runtime_candidate": {
-        "status": "OFFLINE_TESTED_NOT_DEPLOYED",
+        "status": "CONNECTED_OFFLINE_LIVE_TRIAL_BLOCKED",
         "document": "docs/GEMINI_BUDGET_RUNTIME_CANDIDATE.md",
         "overlay_builder": "tools/build_gemini_admission_overlay.py",
         "node_regressions": 40,
@@ -80,7 +80,14 @@
         "live_price_profiles": 0,
         "trusted_live_bound_adapter": false,
         "reservation_runner_connected_to_cli": false,
-        "future_inference_authorized": false
+        "future_inference_authorized": false,
+        "connected_document": "docs/GEMINI_CONNECTED_OFFLINE_RUNTIME.md",
+        "connected_regressions": 19,
+        "offline_public_price_snapshot": "runtime/gemini_price_snapshot.json",
+        "persistent_budget": "SQLITE_SHARED_ACROSS_ROLES_WORKERS_AND_RESTARTS",
+        "worst_case_reservation_aic": "103.2192",
+        "existing_cap_aic": "10",
+        "preflight_result": "CREDIT_CAP_EXHAUSTED_ZERO_FORWARDED_CALLS"
       }
     }
   },
@@ -112,13 +119,12 @@
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
-    "Review docs/GEMINI_BUDGET_RUNTIME_CANDIDATE.md and C00005: native admission correction and reservation runner pass offline tests; neither is deployed.",
-    "Connect a trusted request upper-bound adapter, verified per-model prices and a single-attempt transport in an offline candidate runtime; include CLI and independent reviewer in the same budget.",
-    "Ensure shared/persistent budget across all workers and processes; the current candidate ledger is in-memory.",
-    "Validate a real candidate container without a provider key, then verify authoritative provider quotas/billing.",
-    "Obtain fresh owner authorization before any new inference; never reuse the consumed one-shot marker.",
-    "Keep PR #19 and this follow-up reviewable and unmerged; PR #17 is a separate chat-assistant game proposal.",
-    "Do not activate recurring AI, automatically merge, or publish Roblox; engine/mobile/multiplayer remain unverified."
+    "Review docs/GEMINI_CONNECTED_OFFLINE_RUNTIME.md and C00006: public profile, model-ceiling adapter and persistent shared budget are connected offline.",
+    "Keep the existing cap at 10 AIC; current conservative reservation is 103.2192 modeled AIC, so all real-profile generation is blocked before forwarding.",
+    "Establish a defensible smaller request-specific bound; CountTokens alone is not an upper-bound proof and no arbitrary margin is accepted.",
+    "Recheck the short-lived public profile and authoritative provider quota/billing before any fresh inference approval.",
+    "Real CLI/reviewer routing and live provider transport remain disabled; never reuse the consumed one-shot marker.",
+    "Preserve unmerged PR #19/#21 and this follow-up; do not automatically merge, activate recurring AI, or publish Roblox."
   ],
   "tracked_metrics": {
     "lua_source_files": 4,
@@ -128,35 +134,47 @@
     "baseline_record": "history/C00001_bootstrap.json"
   },
   "resume_checkpoint": {
-    "id": "C00005",
+    "id": "C00006",
     "observed_on": "2026-10-24",
     "observed_main_revision": "e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904",
     "completed": [
-      "Re-read canonical main, PR #19 and current Actions/issues before continuing.",
-      "Implement hash-pinned native Gemini admission overlay: URL model identification, mismatch and unpriced-model rejection; preserve original common guards.",
-      "Implement a candidate exact-integer reservation ledger with concurrent admission, terminal request limits and no retry/refund for uncertain charges.",
-      "Pass 40 Node regressions, including original upstream pricing/common-guard code and real loopback HTTP.",
-      "Keep all model invocations, recurring AI, automatic merging and Roblox publication inactive."
+      "Re-read canonical main and unmerged PR #21; preserve previous draft work.",
+      "Verify official Standard rates and model limits; retain dated offline-only public profile and expiry.",
+      "Connect the profile and documented model-ceiling bounds to a real loopback HTTP gateway.",
+      "Persist reservations in SQLite; verify developer/reviewer sharing, restarts, lost leases and six separate worker processes.",
+      "Keep the existing 10-AIC cap and reject the 103.2192-AIC model-ceiling reservation before any forwarding.",
+      "Add a digest-pinned offline container test with Docker networking disabled and a minimal build context.",
+      "Track runtime-only source changes in the portable handoff."
     ],
-    "evidence_record": "history/C00005_native_gemini_admission.json",
+    "evidence_record": "history/C00006_connected_offline_runtime.json",
     "authorization": {
       "gemini_trial": "CONSUMED_SINGLE_RUN",
       "new_inference_authorized": false,
       "recurring_ai_authorized": false,
       "automatic_merge_authorized": false,
       "roblox_publish_authorized": false,
-      "prerequisite": "Verified runtime integration, shared request/price bounds, authoritative provider quota and fresh owner approval before new inference."
+      "prerequisite": "A defensible smaller request-specific bound, current price review, authoritative provider quota/billing and fresh owner authorization are still required."
     },
     "limitations": [
-      "Candidate only: no runtime image installed or deployed.",
-      "Overlay hooks native admission only; reservation runner is not connected to the Gemini CLI.",
-      "Real prices, trusted token upper-bound adapter, cross-process/shared budget and independent-review accounting are not configured.",
-      "Loopback fixture costs do not certify a real provider bill or financial ceiling.",
-      "Studio, multiplayer and mobile remain NOT_RUN."
+      "The conservative connected adapter reserves full documented model limits; 103.2192 AIC is not an expected cost or bill.",
+      "Live Gemini CLI and independent reviewer remain disabled and are not rerouted.",
+      "No provider transport, key read or actual model call exists in this offline gateway.",
+      "The candidate container is CI-only, not a production deployment.",
+      "Roblox Studio, multiplayer and mobile remain NOT_RUN."
     ],
-    "next_action": "Review this candidate; integrate a trusted token-bound adapter and approved prices with all model transports in an offline candidate container, then verify provider quotas before seeking fresh inference approval."
+    "next_action": "Validate a smaller request-specific input/output bound without treating CountTokens, character counts or invented multipliers as guaranteed caps; keep live inference blocked at the existing 10 AIC."
   },
   "review_queue": [
+    {
+      "number": 21,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/21",
+      "head_sha": "cdc6ac4346ebc778e1807ba228bdb4623ad866db",
+      "origin": "CHAT_ASSISTANT_NOT_GEMINI",
+      "status": "DRAFT_UNMERGED",
+      "purpose": "Native admission correction and reservation-runner candidate",
+      "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40069599840",
+      "qa_scope": "40 Node, 33 Python, 37 Lua, 4000 stress checks PASS; offline candidate only."
+    },
     {
       "number": 19,
       "url": "https://github.com/kk051780/toy-wars-factory/pull/19",

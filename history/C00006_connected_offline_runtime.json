@@ -1,0 +1,146 @@
+{
+  "id": "C00006",
+  "date": "2026-10-24",
+  "kind": "CONNECTED_OFFLINE_PRICE_BOUND_AND_PERSISTENT_LEDGER",
+  "parent_proposal": "https://github.com/kk051780/toy-wars-factory/pull/21",
+  "parent_head": "cdc6ac4346ebc778e1807ba228bdb4623ad866db",
+  "canonical_main_observed": "e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904",
+  "public_sources": [
+    "https://ai.google.dev/gemini-api/docs/pricing#gemini-3.8-flash",
+    "https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash",
+    "https://ai.google.dev/api/tokens"
+  ],
+  "snapshot_scope": "OFFLINE_PREFLIGHT_ONLY_NO_LIVE_AUTHORIZATION",
+  "preflight": {
+    "input_usd_per_million": "0.75",
+    "output_usd_per_million": "3.75",
+    "input_token_limit": 1048576,
+    "output_token_limit": 65536,
+    "maximum_reservation_nanocredits": "103219200000",
+    "maximum_reservation_aic": "103.2192",
+    "existing_cap_aic": "10",
+    "result": "CREDIT_CAP_EXHAUSTED",
+    "forwarded_calls": 0,
+    "not_a_bill_or_expected_cost": true
+  },
+  "verification": {
+    "connected_node_tests": "PASS_19_LOCAL",
+    "all_node_tests": "PASS_59_LOCAL",
+    "python_tests": "PASS_33_LOCAL",
+    "docker_network_disabled_ci": "PENDING",
+    "worker_processes": 6,
+    "budget_resets_after_restart": false,
+    "live_provider_calls": 0,
+    "provider_credentials_read": false
+  },
+  "runtime": {
+    "base_image": "ghcr.io/github/gh-aw-firewall/api-proxy:0.28.70@sha256:9ac8f9c7294e892c916de3da9d2588dfd8cd4931e5c39b00143266d7ed9fd52a",
+    "container_mode": "OFFLINE_CI_ONLY_NOT_DEPLOYED",
+    "ledger": "SQLite BEGIN IMMEDIATE, WAL, synchronous FULL",
+    "reviewer_and_developer_share_budget": true,
+    "real_clients_rerouted": false,
+    "live_transport_implemented": false
+  },
+  "game_source": {
+    "files": 4,
+    "lines": 663,
+    "bytes": 25726,
+    "delta_files": 0,
+    "delta_lines": 0,
+    "delta_bytes": 0
+  },
+  "characters_touched": [],
+  "changed_files": [
+    ".dockerignore",
+    ".github/workflows/bootstrap-quality.yml",
+    ".github/workflows/handoff-sync.yml",
+    "runtime/gemini_price_snapshot.json",
+    "runtime/gemini_offline_gateway.cjs",
+    "runtime/persistent_credit_ledger.cjs",
+    "runtime/Dockerfile.offline",
+    "tests/gemini_connected_runtime.test.cjs",
+    "tests/test_handoff_checkpoint.py",
+    "tools/build_handoff.py",
+    "docs/GEMINI_CONNECTED_OFFLINE_RUNTIME.md",
+    "PROJECT_STATE.json",
+    "history/C00006_connected_offline_runtime.json"
+  ],
+  "generated_files": [
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "authorization": {
+    "new_inference": false,
+    "recurring_ai": false,
+    "automatic_merge": false,
+    "roblox_publish": false
+  },
+  "next_action": "Validate a smaller request-specific input/output bound without treating CountTokens, character counts or invented multipliers as guaranteed caps; keep live inference blocked at the existing 10 AIC.",
+  "file_size_deltas": {
+    ".dockerignore": {
+      "before": 0,
+      "after": 74,
+      "delta": 74
+    },
+    ".github/workflows/bootstrap-quality.yml": {
+      "before": 4349,
+      "after": 5945,
+      "delta": 1596
+    },
+    ".github/workflows/handoff-sync.yml": {
+      "before": 2021,
+      "after": 2066,
+      "delta": 45
+    },
+    "runtime/gemini_price_snapshot.json": {
+      "before": 0,
+      "after": 926,
+      "delta": 926
+    },
+    "runtime/gemini_offline_gateway.cjs": {
+      "before": 0,
+      "after": 5439,
+      "delta": 5439
+    },
+    "runtime/persistent_credit_ledger.cjs": {
+      "before": 0,
+      "after": 3669,
+      "delta": 3669
+    },
+    "runtime/Dockerfile.offline": {
+      "before": 0,
+      "after": 334,
+      "delta": 334
+    },
+    "tests/gemini_connected_runtime.test.cjs": {
+      "before": 0,
+      "after": 9250,
+      "delta": 9250
+    },
+    "tests/test_handoff_checkpoint.py": {
+      "before": 5029,
+      "after": 5483,
+      "delta": 454
+    },
+    "tools/build_handoff.py": {
+      "before": 7601,
+      "after": 7627,
+      "delta": 26
+    },
+    "docs/GEMINI_CONNECTED_OFFLINE_RUNTIME.md": {
+      "before": 0,
+      "after": 4252,
+      "delta": 4252
+    },
+    "PROJECT_STATE.json": {
+      "before": 11323,
+      "after": 12309,
+      "delta": 986
+    },
+    "history/C00006_connected_offline_runtime.json": {
+      "before": 0,
+      "after": 4324,
+      "delta": 4324
+    }
+  }
+}
