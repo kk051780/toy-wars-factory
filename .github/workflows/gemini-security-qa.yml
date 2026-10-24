@@ -44,7 +44,7 @@ jobs:
           assert "cron:" not in fm and "workflow_dispatch" not in fm
           assert "ops/GEMINI_TRIAL_APPROVED_FUTURE.json" in compiled
           assert "GEMINI_API_KEY" in compiled
-          assert "COPILOT_MODEL: gemini-2.5-flash" not in compiled
+          assert "COPILOT_MODEL: gemini-3.8-flash" not in compiled
           print("PASS: Gemini main, custom fail-closed independent review, one-shot only")
           PY
       - name: Explicit limits
