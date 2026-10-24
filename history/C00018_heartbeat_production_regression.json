@@ -1,0 +1,57 @@
+{
+  "id": "C00018",
+  "date": "2026-10-25",
+  "kind": "SCHEDULED_NATIVE_HEARTBEAT_PRODUCTION_REGRESSION",
+  "main_base": "40c79ae0f06d472ed5a1184d5c27d9421afee3c0",
+  "branch": "auto/twf-game-repair",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "cause": "Previous 27 server fixtures did not drive Heartbeat through the actual production timer and B.buy. This adds executable coverage without claiming a reproduced game defect.",
+  "changed_files": [
+    "tests/auto/production_spec.lua",
+    "history/C00018_heartbeat_production_regression.json"
+  ],
+  "tests_added": [
+    {
+      "path": "tests/auto/production_spec.lua",
+      "cases": 3,
+      "execution": "load actual server through tests/roblox_server_harness.lua and fire RunService.Heartbeat; invoke canonical B.buy",
+      "scenarios": [
+        "sufficient balance: one PON produced at 1.2 s, 50+7-10=47 coins",
+        "insufficient balance: GUARDON purchase denied at 7 coins and no model created",
+        "balance recovered: next production timer buys GUARDON for 28 coins"
+      ]
+    }
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 678,
+    "lua_bytes": 26753
+  },
+  "file_size_deltas": {
+    "tests/auto/production_spec.lua": {
+      "before_bytes": 0,
+      "after_bytes": 3371,
+      "delta_bytes": 3371
+    }
+  },
+  "characters_touched": [],
+  "character_impact": "No source, character statistics, prices or visuals changed.",
+  "qa": {
+    "local_native_lua": "NOT_RUN_LUA54_NOT_AVAILABLE_IN_RUNTIME",
+    "github_bootstrap_offline_qa": "PENDING_PR_CI",
+    "roblox_studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "visual": "NOT_RUN"
+  },
+  "evidence_urls": [
+    "https://github.com/kk051780/toy-wars-factory/commit/5a2f8faa440ee070af6c739bef1bfcd9a76b3348",
+    "https://github.com/kk051780/toy-wars-factory/blob/auto/twf-game-repair/tests/auto/production_spec.lua"
+  ],
+  "external_provider_calls": 0,
+  "provider_credentials_read": false,
+  "auto_merge": false,
+  "roblox_publish": false,
+  "next_action": "Read the draft PR's first offline QA result once. If failing, repair tests on the same branch; if passing, select the next bounded untested gameplay behavior without merging."
+}
