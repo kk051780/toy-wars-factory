@@ -71,7 +71,7 @@ def check_patch(patch):
         if any(line.startswith(("rename from ","rename to ","copy from ","copy to ")) for line in lines):
             issues.append("Rename/move requires separate review")
 
-    plus_lines="\n".join(line[1:] for line in patch.splitlines() if line.startswith("+") and not line.startswith("+++"))
+    plus_lines="\n".join(line[1:] for line in patch.splitlines() if line.startswith("+") and not line.startswith("+++ "))
     for pattern,label in FORBIDDEN_PATTERNS:
         if re.search(pattern,plus_lines):
             issues.append(label)
