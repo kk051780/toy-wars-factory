@@ -1,0 +1,58 @@
+name: Toy Wars compile approved one-shot AI runner without inference
+on:
+  push:
+    branches: [trial/one-shot-copilot-20261024]
+    paths:
+      - '.github/workflows/twf-first-approval.md'
+      - '.github/workflows/compile-one-shot.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install official compiler
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh extension install github/gh-aw
+      - name: Compile one-shot source, no AI inference
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh aw compile .github/workflows/twf-first-approval.md
+      - name: Validate single trigger and budgets
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          md=Path(".github/workflows/twf-first-approval.md").read_text()
+          lock=Path(".github/workflows/twf-first-approval.lock.yml").read_text()
+          assert "ops/ONE_SHOT_APPROVED_20261024.json" in md and "ops/ONE_SHOT_APPROVED_20261024.json" in lock
+          assert "max-ai-credits: 25" in md
+          assert 'GH_AW_MAX_AI_CREDITS: "25"' in lock
+          assert "max-daily-ai-credits: 25" in md
+          assert "8,28,48 * * * *" not in lock
+          assert "cron:" not in md
+          assert "workflow_dispatch" not in md
+          print("ONE_SHOT_COMPILE_PASS: no schedule, credits=25, single trigger")
+          PY
+      - name: Emit base64 fragments for separate limited GitHub App writer
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64,hashlib
+          data=Path(".github/workflows/twf-first-approval.lock.yml").read_bytes()
+          print("TWF_ONCE_BYTES:"+str(len(data)))
+          print("TWF_ONCE_SHA256:"+hashlib.sha256(data).hexdigest())
+          enc=base64.b64encode(data).decode()
+          for i in range(0,len(enc),3072):
+              print("TWF_ONCE_PART_%04d:%s" % (i//3072,enc[i:i+3072]))
+          print("TWF_ONCE_END")
+          PY
+      - name: Preserve compiled lock artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: twf-one-shot-compiled-candidate
+          path: .github/workflows/twf-first-approval.lock.yml
+          retention-days: 30
