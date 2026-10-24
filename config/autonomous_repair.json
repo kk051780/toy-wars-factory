@@ -22,6 +22,15 @@
   "new_python_test_pattern": "tests/test_auto_*.py",
   "new_history_pattern": "history/C[0-9][0-9][0-9][0-9][0-9]_*.json",
   "experiment_log": "docs/EXPERIMENT_LOG.md",
-  "first_run_verified": false,
-  "gemini_operational_hold": "PRESERVED"
+  "first_run_verified": true,
+  "gemini_operational_hold": "PRESERVED",
+  "initial_validation_run": {
+    "id": "9fd5c391-5054-832e-b21b-9527e78d6733",
+    "recorded_status": "completed",
+    "first_run_verified": true,
+    "code_pr": 35,
+    "head": "116ab1fd56d736d10994008dfcdabaccd76afce9",
+    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40108773948",
+    "scope": "REGRESSION_CODE_ONLY; GAME_SOURCE_UNCHANGED; NOT_LONG_TERM_PROOF"
+  }
 }
