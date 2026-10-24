@@ -59,12 +59,14 @@ jobs:
           done
       - name: Original gameplay regression and 4,000 stress cases
         run: lua5.4 -e 'BALANCE_FILE="src/ToyWarsBalance.lua"; dofile("tests/balance_spec.lua"); print(RESULT_SUMMARY)'
-      - name: Checkout immutable pre-fix server for negative control
+      - name: Checkout immutable pre-fix server and HUD for negative controls
         uses: actions/checkout@v4
         with:
           ref: 2bf5e40fbca7e5420edcb324319e95c8c4f038a3
           path: .qa/server-before
-          sparse-checkout: src/ToyWarsServer.server.lua
+          sparse-checkout: |
+            src/ToyWarsServer.server.lua
+            src/ToyWarsHUD.client.lua
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - name: Confirm the pre-fix server fails exactly the two NaN fixtures
@@ -90,6 +92,30 @@ jobs:
         run: |
           lua5.4 tests/server_event_spec.lua > .qa/server-event-after.log
           cat .qa/server-event-after.log
+      - name: Confirm the original HUD cannot follow changed balance prices
+        env:
+          TWF_HUD_FILE: .qa/server-before/src/ToyWarsHUD.client.lua
+        run: |
+          set +e
+          lua5.4 tests/hud_price_spec.lua > .qa/hud-price-before.log 2>&1
+          result=$?
+          set -e
+          test "$result" -eq 1
+          python3 - <<'PY'
+          import hashlib,pathlib
+          raw=pathlib.Path('.qa/server-before/src/ToyWarsHUD.client.lua').read_bytes()
+          assert hashlib.sha1(b'blob '+str(len(raw)).encode()+bytes([0])+raw).hexdigest()=='506b2eced0cf74f15341091976090632abbe021a'
+          lines=pathlib.Path('.qa/hud-price-before.log').read_text().splitlines()
+          failures=[line.split(': ',1)[0] for line in lines if line.startswith('FAIL ')]
+          assert failures==['FAIL changed PON price','FAIL changed GUARDON price','FAIL changed TANKURU price','FAIL zero prices','FAIL maximum wallet prices'],failures
+          assert 'PASS canonical prices' in lines
+          assert lines[-1]=='HUD_PRICE_SUMMARY 1 passed / 5 failed; Lua mocks, not Roblox UI'
+          print('PASS: exact original HUD matches current prices but fails all five price-change fixtures')
+          PY
+      - name: Execute shared-price HUD fixtures (not Roblox UI)
+        run: |
+          lua5.4 tests/hud_price_spec.lua > .qa/hud-price-after.log
+          cat .qa/hud-price-after.log
       - name: Assemble Studio one-click installer from four canonical files
         run: python3 tools/build_installer.py
       - name: Verify installer embeds exact source and hashes
@@ -138,5 +164,15 @@ jobs:
           path: |
             .qa/server-event-before.log
             .qa/server-event-after.log
+          if-no-files-found: ignore
+          retention-days: 30
+      - name: Preserve before/after HUD price evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: twf-hud-price-fixtures-not-ui
+          path: |
+            .qa/hud-price-before.log
+            .qa/hud-price-after.log
           if-no-files-found: ignore
           retention-days: 30

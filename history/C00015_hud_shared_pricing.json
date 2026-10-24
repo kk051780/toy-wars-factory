@@ -1,0 +1,137 @@
+{
+  "id": "C00015",
+  "date": "2026-10-24",
+  "kind": "MAIN_BASED_SHARED_HUD_PRICES_WITH_EXECUTED_PURCHASE_THRESHOLD_FIXTURES",
+  "main_base": "b4e6901f5880102eb55bd20490eab8c049f2cbc6",
+  "source_proposal_pr": "https://github.com/kk051780/toy-wars-factory/pull/13",
+  "source_proposal_head": "87ff9b2f4b5403632ea126b0b691ee31b2c36a62",
+  "provenance": "Exact HUD source from PR #13; new native whole-HUD fixtures and main-based integration by ChatGPT, not Gemini.",
+  "defect": "Current prices match, but independent HUD literals become stale after a shared balance cost edit.",
+  "correction": "Load shared ToyWarsBalance and format each selectable toy price from its unit cost at HUD initialization.",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 3586,
+      "after_bytes": 3780,
+      "delta_bytes": 194,
+      "before_lines": 88,
+      "after_lines": 90,
+      "delta_lines": 2,
+      "line_count_convention": "splitlines()"
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 678,
+    "lua_bytes": 26753
+  },
+  "hud_git_blob": "0dcd1f1f16991b3f02b970361eea9f026d1e8688",
+  "negative_control": {
+    "commit": "2bf5e40fbca7e5420edcb324319e95c8c4f038a3",
+    "hud_blob": "506b2eced0cf74f15341091976090632abbe021a",
+    "identical_to_main_hud": true,
+    "pass": 1,
+    "expected_fail": 5,
+    "failures": [
+      "changed PON price",
+      "changed GUARDON price",
+      "changed TANKURU price",
+      "zero prices",
+      "maximum wallet prices"
+    ]
+  },
+  "fixed_local_hud_fixtures": {
+    "pass": 6,
+    "fail": 0,
+    "whole_hud_loaded": true,
+    "real_balance_buy_executed": true,
+    "purchase_function_reimplemented": false,
+    "all_three_remote_ids_checked": true
+  },
+  "qa": {
+    "candidate_github_actions": "PENDING",
+    "local_python": "PASS_53",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40102403182",
+    "main_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40102403217",
+    "roblox_studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "local_server_events": "PASS_27",
+    "local_policy_checks": "PASS_21",
+    "workflow_yaml_and_shell_parse": "PASS_NO_STEPS_EXECUTED"
+  },
+  "character_audit": "PON/GUARDON/TANKURU labels read shared costs; IDs, selection payloads, stats, prices, roles, shapes and models unchanged.",
+  "authorization": {
+    "previous_approved_merge_pr": 30,
+    "previous_merge_status": "COMPLETED",
+    "candidate_merge_authorized": false,
+    "gemini_trial": "CONSUMED_SINGLE_RUN",
+    "new_inference_authorized": false,
+    "recurring_ai_authorized": false,
+    "automatic_merge_authorized": false,
+    "roblox_publish_authorized": false,
+    "prerequisite": "PR #30 approval covered its completed gameplay integration and factual C00014 record. This separate HUD candidate needs explicit owner merge approval after its concrete diff and CI are reviewable. No inference, recurring AI, billing or Roblox publication approval is implied."
+  },
+  "limitations": [
+    "Main still has the original HUD until this separate candidate is approved; current main game source is 26,559 bytes, candidate source is 26,753 bytes.",
+    "Current literal HUD prices already match current balance; the reproduced defect is stale labels after a balance edit.",
+    "Native Lua UI/value/signal substitutes do not verify Roblox rendering, touch, replication, Studio, multiplayer or mobile layout.",
+    "Prices are read at HUD initialization; runtime balance hot-reloading is not implemented.",
+    "Gemini input/framing bounds and a hard financial cap remain unproved; the consumed trial must not be rerun."
+  ],
+  "provider_calls": 0,
+  "provider_credentials_read": false,
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/hud_price_spec.lua",
+    "tests/test_handoff_checkpoint.py",
+    ".github/workflows/bootstrap-quality.yml",
+    "PROJECT_STATE.json",
+    "docs/HUD_PRICE_QA.md",
+    "history/C00015_hud_shared_pricing.json"
+  ],
+  "generated_files": [
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "preserved_source_proposal": "PR #13 and its original history/tests remain unmodified on their source branch; this candidate reuses only its exact HUD blob.",
+  "size_gate_change": "Check each of all four initial source files against its exact original byte count plus every logged change; original 25,726-byte baseline and C00011-C00014 preserved.",
+  "next_action": "Verify the main-based HUD candidate CI and exact before/after fixture evidence, then request explicit owner approval for this concrete candidate to enter main. PR #30/#31 are already merged and must not need approval again. Keep the original #13 and other source drafts intact, Gemini held and Roblox release on HOLD.",
+  "file_size_deltas": {
+    "src/ToyWarsHUD.client.lua": {
+      "before": 3586,
+      "after": 3780,
+      "delta": 194
+    },
+    "tests/hud_price_spec.lua": {
+      "before": 0,
+      "after": 4422,
+      "delta": 4422
+    },
+    "tests/test_handoff_checkpoint.py": {
+      "before": 6284,
+      "after": 6717,
+      "delta": 433
+    },
+    ".github/workflows/bootstrap-quality.yml": {
+      "before": 6314,
+      "after": 8110,
+      "delta": 1796
+    },
+    "PROJECT_STATE.json": {
+      "before": 21785,
+      "after": 21740,
+      "delta": -45
+    },
+    "docs/HUD_PRICE_QA.md": {
+      "before": 0,
+      "after": 2880,
+      "delta": 2880
+    },
+    "history/C00015_hud_shared_pricing.json": {
+      "before": 0,
+      "after": 5584,
+      "delta": 5584
+    }
+  }
+}
