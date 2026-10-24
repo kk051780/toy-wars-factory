@@ -12,7 +12,7 @@ on:
       - 'AGENTS.md'
       - 'history/**'
   schedule:
-    - cron: '13,33,53 * * * *'
+    - cron: '13 2,8,14,20 * * *'
   workflow_dispatch:
 permissions:
   contents: write
