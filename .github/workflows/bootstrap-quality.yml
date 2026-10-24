@@ -19,6 +19,32 @@ concurrency:
   group: "twf-offline-${{ github.ref }}"
   cancel-in-progress: true
 jobs:
+  compile_hold:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install the same pinned official compiler as the reviewed lock
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh extension install github/gh-aw --pin v0.93.2
+      - name: Recompile the literal incident hold without invoking an agent
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh aw compile .github/workflows/twf-gemini-free-trial.md
+          python3 tools/verify_gemini_hold.py
+          git diff --exit-code -- .github/workflows/twf-gemini-free-trial.lock.yml
+      - name: Preserve compiler output for exact review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: twf-literal-hold-compiled-workflow
+          path: .github/workflows/twf-gemini-free-trial.lock.yml
+          include-hidden-files: true
+          retention-days: 30
   offline:
     runs-on: ubuntu-latest
     timeout-minutes: 10

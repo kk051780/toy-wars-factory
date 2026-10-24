@@ -1,0 +1,136 @@
+{
+  "id": "C00008",
+  "date": "2026-10-24",
+  "kind": "OPERATIONAL_INCIDENT_HOLD_AND_REVIEWER_BYPASS_REMOVAL",
+  "parent_proposal": "https://github.com/kk051780/toy-wars-factory/pull/23",
+  "parent_head": "098306c53c363b2486e02a79eabf11f01bfbe901",
+  "canonical_main_observed": "e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904",
+  "outcome": "DRAFT_LITERAL_HOLD_NO_INPUT_PROOF_NO_LIVE_CALL",
+  "before_fix": {
+    "reviewer_direct_http_shared_ledger": false,
+    "synthetic_transport_dispatches": 1,
+    "real_provider_calls": 0,
+    "marker_alone_was_only_push_trigger": true
+  },
+  "after_fix": {
+    "workflow_pre_activation": "LITERAL_FALSE",
+    "reviewer_online_exit": 2,
+    "reviewer_direct_http_removed": true,
+    "credential_read": false,
+    "stale_verdict_invalidated": true,
+    "input_proof_available": false,
+    "financial_cap_certified": false
+  },
+  "official_compiler": {
+    "version": "v0.93.2",
+    "observed_tag_commit": "764fdc608e552558e4e15ffebec8e2953feb18d7",
+    "source": "https://github.github.com/gh-aw/reference/frontmatter/#conditional-execution-if",
+    "exact_regeneration_ci": "PENDING"
+  },
+  "verification": {
+    "python_tests": "PASS_43_LOCAL",
+    "new_hold_tests": 10,
+    "repository_policy": "PASS_21_CHECKS_LOCAL",
+    "existing_node_suite": 64,
+    "container_and_native_lua_ci": "PENDING",
+    "provider_calls": 0,
+    "credentials_read": false,
+    "prior_pr23_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40074151010"
+  },
+  "game_source": {
+    "files": 4,
+    "lines": 663,
+    "bytes": 25726,
+    "delta_files": 0,
+    "delta_lines": 0,
+    "delta_bytes": 0
+  },
+  "characters_touched": [],
+  "changed_files": [
+    ".github/workflows/bootstrap-quality.yml",
+    ".github/workflows/gemini-security-qa.yml",
+    ".github/workflows/twf-gemini-free-trial.md",
+    ".github/workflows/twf-gemini-free-trial.lock.yml",
+    "tools/gemini_patch_gate.py",
+    "tools/verify_gemini_hold.py",
+    "tests/test_gemini_patch_gate.py",
+    "tests/test_gemini_operational_hold.py",
+    "docs/GEMINI_OPERATIONAL_HOLD.md",
+    "PROJECT_STATE.json",
+    "history/C00008_operational_hold.json"
+  ],
+  "generated_files": [
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "reduction_reason": "Remove the unsafe direct reviewer HTTP transport and its prompt-building code. Preserve verdict schema validation as a pure parser; remove no gameplay or independent-review requirement.",
+  "authorization": {
+    "new_inference": false,
+    "recurring_ai": false,
+    "automatic_merge": false,
+    "roblox_publish": false
+  },
+  "limitations": [
+    "Draft only, not deployed to main.",
+    "Does not retrofit historical workflow snapshots or authorize rerunning the consumed trial.",
+    "Input/framing proof and shared live enforcement remain unresolved."
+  ],
+  "next_action": "Confirm pinned compiler regeneration and all offline CI checks. Review the draft operational stop alongside the existing handoff/budget proposals. Keep inference blocked until the independent input/framing proof and shared live enforcement are established; do not substitute estimates or reuse approval markers.",
+  "file_size_deltas": {
+    ".github/workflows/bootstrap-quality.yml": {
+      "before": 7009,
+      "after": 8016,
+      "delta": 1007
+    },
+    ".github/workflows/gemini-security-qa.yml": {
+      "before": 2297,
+      "after": 2437,
+      "delta": 140
+    },
+    ".github/workflows/twf-gemini-free-trial.md": {
+      "before": 2751,
+      "after": 3416,
+      "delta": 665
+    },
+    ".github/workflows/twf-gemini-free-trial.lock.yml": {
+      "before": 129737,
+      "after": 129758,
+      "delta": 21
+    },
+    "tools/gemini_patch_gate.py": {
+      "before": 7815,
+      "after": 6621,
+      "delta": -1194
+    },
+    "tools/verify_gemini_hold.py": {
+      "before": 0,
+      "after": 3238,
+      "delta": 3238
+    },
+    "tests/test_gemini_patch_gate.py": {
+      "before": 4674,
+      "after": 4624,
+      "delta": -50
+    },
+    "tests/test_gemini_operational_hold.py": {
+      "before": 0,
+      "after": 5595,
+      "delta": 5595
+    },
+    "docs/GEMINI_OPERATIONAL_HOLD.md": {
+      "before": 0,
+      "after": 3984,
+      "delta": 3984
+    },
+    "PROJECT_STATE.json": {
+      "before": 13865,
+      "after": 14596,
+      "delta": 731
+    },
+    "history/C00008_operational_hold.json": {
+      "before": 0,
+      "after": 4425,
+      "delta": 4425
+    }
+  }
+}

@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"tools"))
-from gemini_patch_gate import check_patch,scan_online,save_safe_verdict
+from gemini_patch_gate import check_patch,scan_online,save_safe_verdict,parse_model_verdict
 
 GOOD="diff --git a/src/combat.lua b/src/combat.lua\n--- a/src/combat.lua\n+++ b/src/combat.lua\n@@ -1 +1 @@\n-old\n+new\n"
 class GeminiPatchGateTests(unittest.TestCase):
@@ -24,13 +24,13 @@ class GeminiPatchGateTests(unittest.TestCase):
     def test_fuzz_large_patch(self): self.assertIn("Patch exceeds maximum reviewed size",check_patch(GOOD+("+"+"x"*121000)))
     def test_security_review_true(self):
         out={"candidates":[{"content":{"parts":[{"text":json.dumps({"safe":True,"reasons":[]})}]}}]}
-        self.assertEqual(scan_online(GOOD,"dummy",lambda _:json.dumps(out).encode())["safe"],True)
+        self.assertEqual(parse_model_verdict(json.dumps(out).encode())["safe"],True)
     def test_security_review_negative(self):
         out={"candidates":[{"content":{"parts":[{"text":json.dumps({"safe":False,"reasons":["unsafe"]})}]}}]}
-        self.assertFalse(scan_online(GOOD,"dummy",lambda _:json.dumps(out).encode())["safe"])
+        self.assertFalse(parse_model_verdict(json.dumps(out).encode())["safe"])
     def test_invalid_schema_fails_closed(self):
         out={"candidates":[{"content":{"parts":[{"text":'{"safe":"yes","reasons":[]}'}]}}]}
-        with self.assertRaises(RuntimeError): scan_online(GOOD,"dummy",lambda _:json.dumps(out).encode())
+        with self.assertRaises(RuntimeError): parse_model_verdict(json.dumps(out).encode())
     def test_valid_safe_verdict_file(self):
         with tempfile.TemporaryDirectory() as directory:
             save_safe_verdict(directory)
@@ -45,10 +45,10 @@ class GeminiPatchGateTests(unittest.TestCase):
     def test_missing_api_key_fails_closed(self):
         with self.assertRaises(RuntimeError): scan_online(GOOD,"")
     def test_empty_result_fails_closed(self):
-        with self.assertRaises(RuntimeError): scan_online(GOOD,"dummy",lambda _:json.dumps({"candidates":[]}).encode())
+        with self.assertRaises(RuntimeError): parse_model_verdict(json.dumps({"candidates":[]}).encode())
     def test_conflicting_reason_fails_closed(self):
         out={"candidates":[{"content":{"parts":[{"text":'{"safe":true,"reasons":["bad"]}'}]}}]}
-        with self.assertRaises(RuntimeError): scan_online(GOOD,"dummy",lambda _:json.dumps(out).encode())
+        with self.assertRaises(RuntimeError): parse_model_verdict(json.dumps(out).encode())
 
     def test_mismatched_git_target_path_rejected(self):
         # Git apply uses the +++ target, even when diff --git claims an allowed src path.
