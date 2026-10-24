@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: 398da14631c9f1540cc5f8ab6778c2fb83002e69
+- 基準ソースコミット: f5088816ba5c8247016f9fecf8f025270471448f
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 自律AI開発: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
@@ -25,38 +25,40 @@
 - Studio: NOT_RUN
 - マルチクライアント: NOT_RUN
 - スマホ表示: NOT_RUN
-- 記録済GitHub QA: PENDING_HUD_CANDIDATE_CI; current main PASS https://github.com/kk051780/toy-wars-factory/actions/runs/40102403182（最新Actionsを別途確認すること）
+- 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40106001876（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- Read C00015 and the main-based HUD pricing candidate. PR #30/#31 integration and C00014 are already complete; do not repeat their merge approval.
-- Require the exact old-HUD negative control (one current-price pass and five expected varied-price failures), all six fixed-HUD fixtures and all existing offline QA to pass.
-- Review the concrete candidate against current main and ask the owner for its own merge approval; main retains the original HUD until then. Original PR #13 remains preserved.
-- Keep source proposals #17/#20/#25/#28/#29 intact; their gameplay changes are already integrated through #30.
-- Keep Studio, multiplayer, mobile visuals and player feedback unverified, and release on HOLD. These HUD fixtures are native substitutes, not UI screenshots or engine evidence.
-- Keep Gemini held, the 10-AIC cap and independent review requirements unchanged; no recurring AI, automatic merge or Roblox publication.
+- PR #32 is merged at 83465372f6701e20cd92ec7f9e8bd48f945c8da4 and main QA/handoff passed. PR #30/#31 are also complete. Do not request the same integration approvals again.
+- Read C00016 and docs/AUTOMATION_READINESS.md. Current main source is four Lua files / 678 lines / 26,753 bytes; tracked_metrics retains the original baseline.
+- Prioritize a reviewable offline design for bounded AI development and independent review, using new evidence or a different bounded path. Current model, 10-AIC cap and all holds remain unchanged.
+- A calendar completion date is not established while the complete request bound/shared enforcement remain unproved. The proposed 24-48 hour observation allowance applies only after an approved bounded trial succeeds; no monitoring or recurring activation has started.
+- Keep original source proposals #13/#17/#20/#25/#28/#29 intact. Their reviewed gameplay changes are already integrated through #30/#32; do not merge them again to apply the same source.
+- Keep consumed trial approval, inactive recurring AI, no future automatic merge and Roblox release HOLD. Real Studio, multiplayer, mobile, visuals and player feedback remain unverified.
 
 ## 最新の再開地点（観測時点の記録）
-- 記録: C00015 / 2026-10-24
-- 照合したmain: b4e6901f5880102eb55bd20490eab8c049f2cbc6
-- 証拠: history/C00015_hud_shared_pricing.json
-- 完了: Read C00014, confirm current main b4e6901f5880102eb55bd20490eab8c049f2cbc6 and successful main QA 40102403182 / handoff 40102403217; PR #30/#31 remain merged.
-- 完了: Review existing PR #13 at 87ff9b2f4b5403632ea126b0b691ee31b2c36a62. Current 10/28/48 labels match balance but duplicate its purchase costs.
-- 完了: Execute the complete original HUD against the real balance.buy function with varied in-memory costs: current-price fixture passes and exactly five price-change fixtures fail.
-- 完了: Reuse the exact PR #13 HUD blob 0dcd1f1f16991b3f02b970361eea9f026d1e8688 on current main; all six native HUD price fixtures pass.
-- 完了: Confirm all three selectable IDs and one-argument remote selection payloads survive each fixture; no client price is sent.
-- 完了: Extend exact history byte accounting from server-only changes to all four original Lua files without changing their initial baseline or old history.
-- 完了: Require exact immutable old-HUD failure evidence and successful canonical HUD fixtures in existing offline CI, retaining all prior gates and Gemini stops.
+- 記録: C00016 / 2026-10-25
+- 照合したmain: 83465372f6701e20cd92ec7f9e8bd48f945c8da4
+- 証拠: history/C00016_approved_hud_merge.json
+- 完了: Owner explicitly approved the concrete PR #32 integration with 進めて。; approval of PR #30 was not reused.
+- 完了: Recheck unchanged head e2cdbb8ddf6efc084031e4900ce754e73f336cbf, clean mergeability, all nine reviewed file blobs and successful pre-merge CI 40103243365.
+- 完了: Merge PR #32 at 83465372f6701e20cd92ec7f9e8bd48f945c8da4 using the reviewed head lease; merged tree 5f8fa106da6cc3b495df718bcde66614e1b8e192 equals review.
+- 完了: Verify post-merge main QA 40106001876 and handoff 40106001904 both pass on the merge SHA.
+- 完了: Verify whole-HUD fixtures: original current-price case passes and exactly five varied-price cases fail; canonical fixed HUD passes all six. All 27 server fixtures, 53 Python tests, balance/stress, compiler, installer and handoff checks also pass.
+- 完了: Record actual main source: four Lua files / 678 lines / 26,753 bytes; PR #32 adds 194 bytes and two lines only in HUD, preserving original baseline and all prior history.
+- 完了: Read actual audit/handoff and candidate AI workflow sources. Existing schedules perform audits/handoff, while Gemini activation and reviewer remain held; no successful autonomous coding trial or recurring AI is established.
+- 完了: Record automation readiness and the unresolved ETA without presenting gameplay fixes as resolution of the financial bound. A proposed 24-48 hour observation period is conditional on a future approved successful bounded trial, not a completion date or scheduled activation.
+- 完了: Preserve the original PR #13 and other source proposals, and record the completed merge so future chats do not repeat its approval.
 - 新規推論承認: False
 - 定期AI承認: False
 - 自動マージ承認: False
 - Roblox公開承認: False
-- 再実行の前提: PR #30 approval covered its completed gameplay integration and factual C00014 record. This separate HUD candidate needs explicit owner merge approval after its concrete diff and CI are reviewable. No inference, recurring AI, billing or Roblox publication approval is implied.
-- 再開する作業: Verify the main-based HUD candidate CI and exact before/after fixture evidence, then request explicit owner approval for this concrete candidate to enter main. PR #30/#31 are already merged and must not need approval again. Keep the original #13 and other source drafts intact, Gemini held and Roblox release on HOLD.
-- 未確認・制限: Main still has the original HUD until this separate candidate is approved; current main game source is 26,559 bytes, candidate source is 26,753 bytes.
-- 未確認・制限: Current literal HUD prices already match current balance; the reproduced defect is stale labels after a balance edit.
-- 未確認・制限: Native Lua UI/value/signal substitutes do not verify Roblox rendering, touch, replication, Studio, multiplayer or mobile layout.
-- 未確認・制限: Prices are read at HUD initialization; runtime balance hot-reloading is not implemented.
-- 未確認・制限: Gemini input/framing bounds and a hard financial cap remain unproved; the consumed trial must not be rerun.
+- 再実行の前提: PR #32 is already merged and post-merge QA/handoff passed; do not ask for its merge approval again. The automation timing question is not authorization to call a provider, change model/cap/billing, enable recurring AI, automatically merge future code or publish Roblox.
+- 再開する作業: Prioritize an offline automation design review that can establish the approved financial bound for both developer and independent reviewer. Produce a concrete reviewable proposal using new attributable evidence or a different bounded execution path; do not repeat the same pinned SDK inspection as progress. PR #32/#30 and their factual integrations are complete. Keep all inference and recurring execution held pending established bounds and fresh scoped owner authorization.
+- 未確認・制限: HUD fixtures validate text and callbacks in native Lua, not rendering, touch, replication, Studio, real multiplayer or mobile behavior. Runtime balance hot-reloading is not implemented.
+- 未確認・制限: Gemini complete input/framing bounds and shared live financial enforcement remain unproved; developer and independent reviewer are blocked, and the consumed trial must not be rerun.
+- 未確認・制限: An offline QA/handoff schedule does not establish unattended AI development. Continuous AI operation has not begun.
+- 未確認・制限: The 24-48 hour observation allowance is a planning suggestion after prerequisites, not a started test, completion commitment or change to release policy.
+- 未確認・制限: Automatic merge and Roblox publication are not authorized; Studio, multiplayer, mobile visuals and player feedback remain unverified.
 
 ## 未マージの提案（現在のPR状態はGitHubで再確認）
 - PR #29: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Guard deferred workshop teleport against disconnect/respawn race / https://github.com/kk051780/toy-wars-factory/pull/29
