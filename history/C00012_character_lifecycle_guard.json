@@ -1,0 +1,41 @@
+{
+  "id": "C00012",
+  "date": "2026-10-24",
+  "kind": "DRAFT_STACKED_GAMEPLAY_LIFECYCLE_HARDENING",
+  "parent_proposal_pr": 28,
+  "source_branch": "fix/late-character-teleport-guard-20261024",
+  "defect": "characterReady checks active before task.wait(0.1) and can teleport a stale character after exit or replacement during yield",
+  "scope": "Server callback lifecycle guard only; no balance, art, price, or workflow modifications",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 18437,
+      "after_bytes": 18639,
+      "delta_bytes": 202,
+      "before_lines": 481,
+      "after_lines": 483,
+      "delta_lines": 2
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 676,
+    "lua_bytes": 26545
+  },
+  "qa": {
+    "added_static_regression": "tests/test_character_ready_lifecycle.py",
+    "github_actions": "PENDING",
+    "roblox_studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "provenance": "ChatGPT offline analysis, not Gemini; no live inference",
+  "authorization": {
+    "new_inference": false,
+    "recurring_ai": false,
+    "auto_merge": false,
+    "publish": false,
+    "paid_upgrade": false
+  },
+  "next": "Run branch CI once; retain stacked draft PR and verify lifecycle race in Roblox Studio before any release."
+}

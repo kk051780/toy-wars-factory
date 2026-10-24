@@ -46,7 +46,28 @@ class HandoffCheckpointTests(unittest.TestCase):
             self.assertIn(value, text)
         actual = sum(file.stat().st_size for file in (self.root / "src").glob("*.lua"))
         self.assertEqual(result["source_metrics"]["bytes"], actual)
-        self.assertEqual(actual, 25726)  # Excludes the unmerged +306-byte proposal.
+        # Every recorded gameplay step must form an exact byte-size chain.
+        # Unrecorded changes still fail against the original baseline.
+        baseline = state["tracked_metrics"]["lua_source_bytes"]
+        self.assertEqual(baseline, 25726)
+        expected_server = 17820
+        expected_total = baseline
+        for record_file in sorted((self.root / "history").glob("C*.json")):
+            record = json.loads(record_file.read_text())
+            changes = [item for item in record.get("source_changes", [])
+                       if item["path"].startswith("src/") and item["path"].endswith(".lua")]
+            if not changes:
+                continue
+            self.assertEqual([item["path"] for item in changes],
+                             ["src/ToyWarsServer.server.lua"])
+            change = changes[0]
+            self.assertEqual(change["before_bytes"], expected_server)
+            self.assertEqual(change["after_bytes"] - change["before_bytes"], change["delta_bytes"])
+            expected_server = change["after_bytes"]
+            expected_total += change["delta_bytes"]
+            self.assertEqual(record["source_metrics"]["lua_bytes"], expected_total)
+        self.assertEqual((self.root / "src/ToyWarsServer.server.lua").stat().st_size, expected_server)
+        self.assertEqual(actual, expected_total)
 
     def test_generated_snapshot_commit_is_stable_but_new_evidence_advances_revision(self):
         before = self.build()
