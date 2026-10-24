@@ -7,7 +7,7 @@ on:
       - 'ops/GEMINI_TRIAL_APPROVED_FUTURE.json'
 engine:
   id: gemini
-  model: gemini-2.5-flash
+  model: gemini-3.8-flash
 max-ai-credits: 10
 max-daily-ai-credits: 10
 max-turns: 12
