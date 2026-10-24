@@ -1,19 +1,27 @@
 {
   "project": "TOY WARS FACTORY",
-  "version": "2.3-github-bootstrap",
+  "version": "2.3-github-bootstrap-main-v1",
   "updated_at": "2026-10-24",
   "github": {
     "repository": "kk051780/toy-wars-factory",
     "visibility": "private",
-    "branch": "bootstrap/v2-3",
+    "branch": "main",
     "write_confirmed": true,
-    "head": "bootstrap/v2-3"
+    "head": "bootstrap/v2-3",
+    "initial_pr_merged": "https://github.com/kk051780/toy-wars-factory/pull/1",
+    "issues": [
+      2,
+      3,
+      4
+    ]
   },
   "autonomous_coding": {
-    "status": "NOT_ACTIVE",
+    "status": "NOT_ACTIVE_AI_INFERENCE_UNVERIFIED",
     "schedule_target_minutes": 20,
     "agentic_workflow_compiled": false,
-    "workflow_run_verified": false
+    "workflow_run_verified": false,
+    "workflow_source_compiled_in_ci": true,
+    "reason": "Compile-only probe passed, but .lock.yml not committed and no authenticated agent coding run."
   },
   "migrated_assets": {
     "balance_rules": "PRESENT_SHA_VERIFIED",
@@ -21,16 +29,19 @@
     "pve_server": "PRESENT_SHA_VERIFIED",
     "hud": "PRESENT_SHA_VERIFIED",
     "studio_smoke": "PRESENT_SHA_VERIFIED",
-    "studio_installer": "REPRODUCIBLY_GENERATED_IN_CI",
+    "studio_installer": "GENERATED_AND_HASH_VERIFIED_IN_GITHUB_ACTIONS_ARTIFACT",
     "full_v2_3_archive": "LOCAL_ARTIFACT_ONLY",
     "mock_server_qa": "PENDING_MIGRATION"
   },
   "verification": {
     "offline_native_local_v2_3": "PASS_REPORTED_PREVIOUSLY",
-    "github_actions": "FIRST_RUN_PASS_UPDATED_BUILD_PENDING",
+    "github_actions": "PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40047378300",
     "roblox_studio": "NOT_RUN",
     "mobile_visual": "NOT_RUN",
-    "two_client_multiplayer": "NOT_RUN"
+    "two_client_multiplayer": "NOT_RUN",
+    "native_lua_qa": "PASS_37_REGRESSIONS_PLUS_4000_STRESS",
+    "source_hashes": "4_ORIGINAL_LUA_FILES_EXACT_SHA_MATCH",
+    "character_structural": "PASS"
   },
   "game": {
     "pve": "PROTOTYPE_OFFLINE_ONLY",
@@ -40,10 +51,17 @@
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
-    "Verify GitHub Actions output for generated Studio installer",
-    "Merge bootstrap foundation to main after all offline checks pass",
-    "Compile and authenticate GH agentic workflow; verify unattended coding PR",
-    "Port mocked Roblox server integration suite for regression testing",
-    "Connect Roblox Studio / Open Cloud and visual audits"
-  ]
+    "AI engine: confirm private repo user Copilot entitlement and budget before activating inference",
+    "Compile and commit gh-aw lockfile only after auth; prove actual unattended PR",
+    "Add original mocked server integration regression from v2.3",
+    "Connect genuine Roblox engine and 2-client/mobile visual test",
+    "Ship owner-approved game only after release-grade evidence"
+  ],
+  "tracked_metrics": {
+    "lua_source_files": 4,
+    "lua_source_lines": 663,
+    "lua_source_bytes": 25726,
+    "initial_character_count": 3,
+    "baseline_record": "history/C00001_bootstrap.json"
+  }
 }
