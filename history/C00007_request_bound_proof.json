@@ -1,0 +1,119 @@
+{
+  "id": "C00007",
+  "date": "2026-10-24",
+  "kind": "REQUEST_OUTPUT_BOUND_AND_INPUT_PROOF_BLOCKER",
+  "parent_proposal": "https://github.com/kk051780/toy-wars-factory/pull/22",
+  "parent_head": "42710ce8a1afb498d64370918a5db78299f38e45",
+  "canonical_main_observed": "e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904",
+  "outcome": "OUTPUT_BOUND_TIGHTENED_INPUT_PROOF_NOT_ESTABLISHED",
+  "output_bound_source": "https://ai.google.dev/gemini-api/docs/generate-content/thinking",
+  "sdk_inspection": {
+    "repository": "googleapis/python-genai",
+    "commit": "c0e9c54915970948258226e565bde6ef6d5c0b94",
+    "version": "2.33.0",
+    "lookup_blob": "27f4781b8b2274e022eaf812e3bf4249dfe1e991",
+    "version_blob": "4a55e2b75e7b52947f0b99373d03a0c0e98d2eb2",
+    "target_supported": false,
+    "positive_controls": {
+      "gemini-2.5-flash": "gemma3",
+      "gemini-3.5-flash": "gemma4"
+    },
+    "sdk_imported": false,
+    "model_weights_downloaded": false,
+    "provider_calls": 0
+  },
+  "request_example": {
+    "remaining_aic": "10",
+    "output_bound_including_thinking": 2048,
+    "current_input_bound": 1048576,
+    "required_independently_proven_input_ceiling": 123093,
+    "current_reservation_aic": "79.4112",
+    "input_proof_available": false,
+    "admission_granted": false
+  },
+  "verification": {
+    "node_tests": "PASS_64_LOCAL",
+    "python_tests": "PASS_33_LOCAL",
+    "container_and_sdk_inspection_ci": "PENDING",
+    "provider_calls": 0,
+    "credentials_read": false
+  },
+  "game_source": {
+    "files": 4,
+    "lines": 663,
+    "bytes": 25726,
+    "delta_files": 0,
+    "delta_lines": 0,
+    "delta_bytes": 0
+  },
+  "characters_touched": [],
+  "changed_files": [
+    "runtime/gemini_offline_gateway.cjs",
+    "runtime/gemini_request_budget.cjs",
+    "tools/verify_gemini_input_bound.py",
+    "tests/gemini_connected_runtime.test.cjs",
+    ".github/workflows/bootstrap-quality.yml",
+    "docs/GEMINI_CONNECTED_OFFLINE_RUNTIME.md",
+    "docs/GEMINI_REQUEST_BOUND_RESULT.md",
+    "PROJECT_STATE.json",
+    "history/C00007_request_bound_proof.json"
+  ],
+  "generated_files": [
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "authorization": {
+    "new_inference": false,
+    "recurring_ai": false,
+    "automatic_merge": false,
+    "roblox_publish": false
+  },
+  "next_action": "Treat the missing request-specific input bound as a real blocker. Resume only when an attributable provider bound or independently validated exact model/framing path is available; never substitute an estimate or promise another routine step will enable inference.",
+  "file_size_deltas": {
+    "runtime/gemini_offline_gateway.cjs": {
+      "before": 5439,
+      "after": 5661,
+      "delta": 222
+    },
+    "runtime/gemini_request_budget.cjs": {
+      "before": 0,
+      "after": 1766,
+      "delta": 1766
+    },
+    "tools/verify_gemini_input_bound.py": {
+      "before": 0,
+      "after": 3473,
+      "delta": 3473
+    },
+    "tests/gemini_connected_runtime.test.cjs": {
+      "before": 9250,
+      "after": 11966,
+      "delta": 2716
+    },
+    ".github/workflows/bootstrap-quality.yml": {
+      "before": 5945,
+      "after": 7009,
+      "delta": 1064
+    },
+    "docs/GEMINI_CONNECTED_OFFLINE_RUNTIME.md": {
+      "before": 4252,
+      "after": 4536,
+      "delta": 284
+    },
+    "docs/GEMINI_REQUEST_BOUND_RESULT.md": {
+      "before": 0,
+      "after": 3997,
+      "delta": 3997
+    },
+    "PROJECT_STATE.json": {
+      "before": 12309,
+      "after": 13865,
+      "delta": 1556
+    },
+    "history/C00007_request_bound_proof.json": {
+      "before": 0,
+      "after": 3626,
+      "delta": 3626
+    }
+  }
+}

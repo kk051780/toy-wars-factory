@@ -8,6 +8,7 @@ const {once} = require('node:events');
 const {spawn} = require('node:child_process');
 const {PersistentCreditLedger} = require('../runtime/persistent_credit_ledger.cjs');
 const {decimalRateToNanos, loadOfflineProfile, createOfflineGateway} = require('../runtime/gemini_offline_gateway.cjs');
+const {inspectRequestBudget} = require('../runtime/gemini_request_budget.cjs');
 const SNAPSHOT = require('../runtime/gemini_price_snapshot.json');
 const NOW = new Date('2026-10-24T09:00:00Z');
 const MODEL = 'gemini-3.8-flash';
@@ -49,7 +50,7 @@ test('documented maximums require exactly 103.2192 modeled AIC', async () => {
   const bound = await p.boundForRequest({model: MODEL, requestSha256: 'bound-to-request',
     body: JSON.parse(BODY)});
   assert.equal(bound.maxInputTokens, 1048576);
-  assert.equal(bound.maxChargedOutputTokens, 65536);
+  assert.equal(bound.maxChargedOutputTokens, 1);
   assert.equal(bound.requestSha256, 'bound-to-request');
 });
 for (const invalid of [
@@ -158,4 +159,45 @@ test('health explicitly reports no live authorization', async t => {
   t.after(() => gateway.close());
   const response = await fetch(gateway.origin + '/health');
   assert.deepEqual(await response.json(), {mode: 'OFFLINE_ONLY', liveAuthorized: false});
+});
+test('request output bound includes thinking and does not reserve the full model output window', async () => {
+  const profile = loadOfflineProfile(SNAPSHOT, NOW);
+  for (const output of [1, 512, 2048, 65536]) {
+    const body = JSON.parse(BODY); body.generationConfig.maxOutputTokens = output;
+    const bound = await profile.boundForRequest({model: MODEL, body, requestSha256: 'exact-request'});
+    assert.equal(bound.maxChargedOutputTokens, output);
+    assert.equal(bound.maxInputTokens, 1048576);
+  }
+});
+test('2048-token output requires an independently certified input bound of at most 123093', () => {
+  const result = inspectRequestBudget(SNAPSHOT, 2048, 10000000000n, NOW);
+  assert.equal(result.reservationNanocredits, '79411200000');
+  assert.equal(result.requiredInputCeilingToFit, '123093');
+  const rate = loadOfflineProfile(SNAPSHOT, NOW).catalog.get(MODEL);
+  const threshold = BigInt(result.requiredInputCeilingToFit);
+  assert.ok(threshold * rate.inputNanosPerToken + 2048n * rate.outputNanosPerToken <= 10000000000n);
+  assert.ok((threshold + 1n) * rate.inputNanosPerToken + 2048n * rate.outputNanosPerToken > 10000000000n);
+  assert.equal(result.requestSpecificInputProofAvailable, false);
+  assert.equal(result.admissionGranted, false);
+});
+test('one output token still cannot fit the unverified model-ceiling input bound under 10 AIC', () => {
+  const result = inspectRequestBudget(SNAPSHOT, 1, 10000000000n, NOW);
+  assert.equal(result.reservationNanocredits, '78643575000');
+  assert.equal(result.status, 'BLOCKED_NO_VERIFIED_SMALL_INPUT_BOUND');
+  assert.equal(result.admissionGranted, false);
+});
+test('budget thresholds use remaining credits and do not silently raise the cap', () => {
+  const full = inspectRequestBudget(SNAPSHOT, 512, 10000000000n, NOW);
+  const half = inspectRequestBudget(SNAPSHOT, 512, 5000000000n, NOW);
+  assert.ok(BigInt(half.requiredInputCeilingToFit) < BigInt(full.requiredInputCeilingToFit));
+  assert.throws(() => inspectRequestBudget(SNAPSHOT, 512, 10000000001n, NOW), /INVALID_REQUEST_BUDGET/);
+  assert.throws(() => inspectRequestBudget(SNAPSHOT, 65537, 10000000000n, NOW), /INVALID_REQUEST_BUDGET/);
+});
+test('client token estimates cannot replace the unresolved input proof', async t => {
+  const gateway = await start({database: temp(t), runId: 'unverified-input'});
+  t.after(() => gateway.close());
+  const res = await fetch(gateway.origin + URL, {method: 'POST', body: BODY,
+    headers: {'x-twf-role': 'developer', 'x-count-tokens': '1', 'x-input-bound': '1', 'x-sdk-supported': 'true'}});
+  assert.equal(res.status, 400);
+  assert.equal(gateway.forwardedCalls(), 0);
 });

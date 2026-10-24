@@ -38,6 +38,19 @@ jobs:
         env:
           TWF_AWF_ROOT: ${{ github.workspace }}/.qa/awf
         run: node --test tests/gemini_budget_guard.test.cjs tests/gemini_admission_overlay.test.cjs
+      - name: Checkout exact official SDK model lookup for input-bound inspection
+        uses: actions/checkout@v4
+        with:
+          repository: googleapis/python-genai
+          ref: c0e9c54915970948258226e565bde6ef6d5c0b94
+          path: .qa/python-genai
+          sparse-checkout: |
+            google/genai/_local_tokenizer_loader.py
+            google/genai/version.py
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Verify input-bound blocker without importing the SDK or downloading tokenizers
+        run: python3 tools/verify_gemini_input_bound.py --sdk-root .qa/python-genai > .qa/input-bound-proof.json
       - name: Build reviewable native-admission overlay without installing it
         run: python3 tools/build_gemini_admission_overlay.py --upstream .qa/awf --output .qa/gemini-overlay
       - name: Build connected offline runtime from digest-pinned AWF image
@@ -51,11 +64,15 @@ jobs:
           node - <<'JS' > .qa/connected-preflight.json
           const snapshot = require('./runtime/gemini_price_snapshot.json');
           const {loadOfflineProfile} = require('./runtime/gemini_offline_gateway.cjs');
+          const {inspectRequestBudget} = require('./runtime/gemini_request_budget.cjs');
+          const inputProof = require('./.qa/input-bound-proof.json');
           const simulationTime = snapshot.reviewed_on + 'T12:00:00Z';
           const p = loadOfflineProfile(snapshot, new Date(simulationTime));
           console.log(JSON.stringify({mode:'OFFLINE_ONLY', simulationTime, model:snapshot.model,
-            maximumReservationNanocredits:String(p.maximumReservationNanos), capNanocredits:'10000000000',
-            admission:'BLOCKED_OVER_CAP', providerCalls:0, liveAuthorized:false}, null, 2));
+            maximumModelReservationNanocredits:String(p.maximumReservationNanos), capNanocredits:'10000000000',
+            requests:[1,512,2048].map(n => inspectRequestBudget(snapshot,n,10000000000n,new Date(simulationTime))),
+            inputProofStatus:inputProof.status, sdkVersion:inputProof.sdk_version,
+            admissionGranted:false, providerCalls:0, liveAuthorized:false}, null, 2));
           JS
       - name: Install native Lua 5.4
         run: sudo apt-get update -qq && sudo apt-get install -y lua5.4
@@ -121,4 +138,5 @@ jobs:
           path: |
             .qa/connected-runtime-image.json
             .qa/connected-preflight.json
+            .qa/input-bound-proof.json
           retention-days: 30

@@ -1,5 +1,10 @@
 # Connected Gemini budget runtime — offline, blocked under the existing cap
 
+This document describes the PR #22 baseline. The current request-specific
+output bound and remaining input-proof blocker are in
+`GEMINI_REQUEST_BOUND_RESULT.md`; the full-model output reservation below is
+retained as the baseline calculation, not the latest per-request reservation.
+
 This follow-up to PR #21 connects a dated public price snapshot and a host-owned
 token-bound adapter to the reservation runner through a real local HTTP gateway.
 A durable SQLite ledger shares the budget across developer and reviewer clients,
