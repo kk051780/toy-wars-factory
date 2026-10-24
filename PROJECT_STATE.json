@@ -1,0 +1,46 @@
+{
+  "project": "TOY WARS FACTORY",
+  "version": "2.3-github-bootstrap",
+  "updated_at": "2026-10-24",
+  "github": {
+    "repository": "kk051780/toy-wars-factory",
+    "visibility": "private",
+    "branch": "bootstrap/v2-3",
+    "write_confirmed": true
+  },
+  "autonomous_coding": {
+    "status": "NOT_ACTIVE",
+    "schedule_target_minutes": 20,
+    "agentic_workflow_compiled": false,
+    "workflow_run_verified": false
+  },
+  "migrated_assets": {
+    "balance_rules": "PRESENT",
+    "balance_native_tests": "PRESENT",
+    "pve_server": "PENDING_MIGRATION",
+    "hud": "PENDING_MIGRATION",
+    "studio_installer": "PENDING_MIGRATION",
+    "full_v2_3_archive": "LOCAL_ARTIFACT_ONLY"
+  },
+  "verification": {
+    "offline_native_local_v2_3": "PASS_REPORTED_PREVIOUSLY",
+    "github_actions": "NOT_RUN_YET",
+    "roblox_studio": "NOT_RUN",
+    "mobile_visual": "NOT_RUN",
+    "two_client_multiplayer": "NOT_RUN"
+  },
+  "game": {
+    "pve": "PROTOTYPE_OFFLINE_ONLY",
+    "pvp": "NOT_IMPLEMENTED",
+    "blueprint_capture": "PLANNED",
+    "coop": "NOT_IMPLEMENTED"
+  },
+  "release_decision": "HOLD_ENGINE_UNVERIFIED",
+  "next": [
+    "Migrate remaining canonical PvE scripts and installer",
+    "Establish GitHub Actions proof",
+    "Compile and authenticate agentic coding workflow",
+    "Record true unattended PR with QA evidence",
+    "Provision automated Roblox engine and visual audits"
+  ]
+}

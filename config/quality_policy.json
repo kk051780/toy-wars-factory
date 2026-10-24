@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "release_required": [
+    "offline_qa",
+    "native_studio",
+    "multiplayer",
+    "mobile_ui",
+    "visual_characters",
+    "player_feedback"
+  ],
+  "never_claim_studio_pass_without_evidence": true,
+  "never_claim_ai_runtime_without_workflow_logs": true,
+  "never_auto_publish": true,
+  "size_gate": {
+    "code_removed_requires_reason": true,
+    "source_changed_requires_tests_or_reason": true,
+    "large_reduction_alert_ratio": 0.2
+  },
+  "character_required": [
+    "id",
+    "name_ja",
+    "role",
+    "combat_class",
+    "shape",
+    "color",
+    "visual_keywords",
+    "gameplay_strength",
+    "gameplay_weakness",
+    "unique_ability",
+    "status"
+  ],
+  "unverified_means_hold": true
+}

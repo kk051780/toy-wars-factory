@@ -1,0 +1,25 @@
+name: Toy Wars scheduled state audit (not AI coding)
+on:
+  schedule:
+    - cron: "7,27,47 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native Lua 5.4
+        run: sudo apt-get update -qq && sudo apt-get install -y lua5.4
+      - name: QA and character audit
+        run: |
+          lua5.4 -e 'BALANCE_FILE="src/ToyWarsBalance.lua"; dofile("tests/balance_spec.lua"); print(RESULT_SUMMARY)'
+          python3 tools/repository_gate.py
+      - name: Record scope and BLOCKED autonomous coding state
+        if: always()
+        run: |
+          echo "### Scheduled audit at $(date -u +%FT%TZ)" >> "$GITHUB_STEP_SUMMARY"
+          echo "QA heartbeat only. This job does NOT edit the game or run an AI coding agent." >> "$GITHUB_STEP_SUMMARY"
+          echo "Current default: **BLOCKED_AGENT_NOT_COMPILED** and **BLOCKED_STUDIO_NOT_CONNECTED**." >> "$GITHUB_STEP_SUMMARY"
