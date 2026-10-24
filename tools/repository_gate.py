@@ -5,6 +5,7 @@ import json
 import subprocess
 import sys
 import hashlib
+from verify_status import status_ok
 
 ROOT=Path(__file__).resolve().parents[1]
 checks=[]
@@ -24,7 +25,7 @@ for key in ("combat_class","shape","color"):
     record("character_distinct_"+key,len(set(u[key] for u in units))==len(units))
 record("policy_holds_release_unverified",policy["unverified_means_hold"] and policy["never_claim_studio_pass_without_evidence"])
 record("state_does_not_claim_runtime_pass",state["verification"]["roblox_studio"]=="NOT_RUN")
-record("state_does_not_claim_autonomous_worker",state["autonomous_coding"]["status"]=="NOT_ACTIVE")
+record("state_does_not_claim_autonomous_worker",status_ok(state["autonomous_coding"],state["github"]["repository"]))
 record("no_incorrect_game_completion",state["game"]["pvp"]=="NOT_IMPLEMENTED" and state["game"]["coop"]=="NOT_IMPLEMENTED")
 record("canonical_balance_present",(ROOT/"src/ToyWarsBalance.lua").is_file())
 record("original_balance_test_present",(ROOT/"tests/balance_spec.lua").is_file())

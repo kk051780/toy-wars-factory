@@ -1,7 +1,7 @@
 name: Toy Wars bootstrap offline QA
 on:
   push:
-    branches: ["bootstrap/**", "main"]
+    branches: ["bootstrap/**", "feature/**", "main"]
     paths:
       - "src/**"
       - "tests/**"
@@ -48,7 +48,15 @@ jobs:
           print('PASS: all four source modules exactly embedded in reproducible installer')
           PY
       - name: Independent state and character quality gate
-        run: python3 tools/repository_gate.py
+        run: |
+          python3 -m unittest discover -s tests -p "test_*.py" -v
+          python3 tools/repository_gate.py
+      - name: Generate deterministic chat handoff twice and compare results
+        run: |
+          python3 tools/build_handoff.py
+          sha256sum status/CHAT_HANDOFF.md status/LATEST_STATE.json > /tmp/handoff.hash
+          python3 tools/build_handoff.py
+          sha256sum -c /tmp/handoff.hash
       - name: Report genuine scope
         if: always()
         run: |

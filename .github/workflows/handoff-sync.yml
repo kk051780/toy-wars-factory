@@ -1,0 +1,59 @@
+name: TOY WARS living chat handoff
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'tools/**'
+      - 'PROJECT_STATE.json'
+      - 'config/**'
+      - 'docs/**'
+      - 'AGENTS.md'
+      - 'history/**'
+  schedule:
+    - cron: '13,33,53 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: twf-handoff-main
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Validate status and characters
+        run: |
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
+          python3 tools/repository_gate.py
+      - name: Rebuild portable handoff and size gate
+        run: python3 tools/build_handoff.py
+      - name: Report audit run without claiming AI coding
+        run: |
+          echo "### TOY WARS HANDOFF CYCLE" >> "$GITHUB_STEP_SUMMARY"
+          echo "This snapshots repository progress; it does not run an AI developer." >> "$GITHUB_STEP_SUMMARY"
+          head -n 26 status/CHAT_HANDOFF.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Save only substantive changes
+        run: |
+          if git diff --quiet -- status/ && [ -z "$(git ls-files --others --exclude-standard status/)" ]; then
+            echo "NO_CHANGE: avoided fake progress" >> "$GITHUB_STEP_SUMMARY"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add status/CHAT_HANDOFF.md status/LATEST_STATE.json
+            git commit -m 'chore(handoff): sync cross-chat state'
+            git push origin HEAD:main
+          fi
+      - name: Archive individual audit snapshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: toy-wars-handoff
+          path: status/
+          if-no-files-found: ignore
+          retention-days: 30
