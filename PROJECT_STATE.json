@@ -6,7 +6,8 @@
     "repository": "kk051780/toy-wars-factory",
     "visibility": "private",
     "branch": "bootstrap/v2-3",
-    "write_confirmed": true
+    "write_confirmed": true,
+    "head": "bootstrap/v2-3"
   },
   "autonomous_coding": {
     "status": "NOT_ACTIVE",
@@ -15,16 +16,18 @@
     "workflow_run_verified": false
   },
   "migrated_assets": {
-    "balance_rules": "PRESENT",
-    "balance_native_tests": "PRESENT",
-    "pve_server": "PENDING_MIGRATION",
-    "hud": "PENDING_MIGRATION",
-    "studio_installer": "PENDING_MIGRATION",
-    "full_v2_3_archive": "LOCAL_ARTIFACT_ONLY"
+    "balance_rules": "PRESENT_SHA_VERIFIED",
+    "balance_native_tests": "PRESENT_SHA_VERIFIED",
+    "pve_server": "PRESENT_SHA_VERIFIED",
+    "hud": "PRESENT_SHA_VERIFIED",
+    "studio_smoke": "PRESENT_SHA_VERIFIED",
+    "studio_installer": "REPRODUCIBLY_GENERATED_IN_CI",
+    "full_v2_3_archive": "LOCAL_ARTIFACT_ONLY",
+    "mock_server_qa": "PENDING_MIGRATION"
   },
   "verification": {
     "offline_native_local_v2_3": "PASS_REPORTED_PREVIOUSLY",
-    "github_actions": "NOT_RUN_YET",
+    "github_actions": "FIRST_RUN_PASS_UPDATED_BUILD_PENDING",
     "roblox_studio": "NOT_RUN",
     "mobile_visual": "NOT_RUN",
     "two_client_multiplayer": "NOT_RUN"
@@ -37,10 +40,10 @@
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
-    "Migrate remaining canonical PvE scripts and installer",
-    "Establish GitHub Actions proof",
-    "Compile and authenticate agentic coding workflow",
-    "Record true unattended PR with QA evidence",
-    "Provision automated Roblox engine and visual audits"
+    "Verify GitHub Actions output for generated Studio installer",
+    "Merge bootstrap foundation to main after all offline checks pass",
+    "Compile and authenticate GH agentic workflow; verify unattended coding PR",
+    "Port mocked Roblox server integration suite for regression testing",
+    "Connect Roblox Studio / Open Cloud and visual audits"
   ]
 }
