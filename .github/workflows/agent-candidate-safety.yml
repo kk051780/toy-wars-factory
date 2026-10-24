@@ -1,0 +1,34 @@
+name: TOY WARS agent candidate guardrail and reproducibility QA
+on:
+  push:
+    branches:
+      - setup/agentic-runtime-probe
+    paths:
+      - '.github/workflows/twf-autonomous-developer.md'
+      - '.github/workflows/twf-autonomous-developer.lock.yml'
+      - '.github/workflows/agent-candidate-safety.yml'
+      - 'tools/check_agent_candidate.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Static privilege, limit and source-of-truth checks
+        run: python3 tools/check_agent_candidate.py
+      - name: Install GitHub agentic workflow compiler
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh extension install github/gh-aw
+      - name: Regenerate lockfile and reject nonreproducible lock
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh aw compile .github/workflows/twf-autonomous-developer.md
+          git diff --exit-code -- .github/workflows/twf-autonomous-developer.lock.yml
+      - name: Explicit scope
+        run: |
+          echo 'PASS means only compiled agent config and limits agree. No Copilot inference, no game development, no Roblox runtime validation.' >> "$GITHUB_STEP_SUMMARY"
