@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: dd660d3acd4f148d2bcd4c3d930822fe5140ead0
+- 基準ソースコミット: 4a1afc43eb8c5509f84d4c0b094b0eb8bcddca29
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 自律AI開発: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
@@ -28,11 +28,12 @@
 - 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40047378300（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- Owner explicitly approves one non-recurring Gemini 3.8 Flash trial, accepting custom independent scanner is not official gh-aw detector; no inference has yet been called
-- Before trigger, check PR #11 and ensure candidate compiled lock / QA PASS (run 40059931038); no recurring cron or unrestricted bills
-- Upon distinct owner approval, activate exactly one Gemini trial using a brand-new marker; verify live model/auth and draft PR with independent QA
-- Keep Copilot 20min PR #6 unmerged, budget proposal PR #12 unmerged pending approval
-- Complete Roblox Studio, multiplayer and mobile appearance evidence before publication
+- DO NOT trigger or re-run Gemini/Copilot inference, do not activate 20-min AI cron; SEVERE_HOLD_AIC_CONFIG_OVERRUN from run 40060119253, issue #16
+- Investigate modeled AIC 33.713 despite frontmatter max-ai-credits 10 and verify genuinely enforceable input/output hard caps before requesting next owner approval
+- Replace broad context/tool discovery with single tiny scoped task plus clear CLI test path, and fix denied test shell policy without relaxing security gates
+- Review actual Google AI Studio Free Tier billing and GitHub Actions quota manually via smartphone if actual charges matter; do not claim measured $0
+- Continue approved NON-AI QA, character/world design and GitHub source versioning in safe branches; no Roblox publish
+- Roblox Studio 2-client/mobile visual tests remain mandatory for release
 
 ## 新しいチャットでAIが必ず行う引き継ぎ手順
 1. GitHubコネクタでこのファイルと status/LATEST_STATE.json、PROJECT_STATE.json、AGENTS.md、config/quality_policy.json を読み込む。
