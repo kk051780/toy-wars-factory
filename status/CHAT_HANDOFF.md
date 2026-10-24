@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: 24219373d038110e7d3c2de2ebfa6afa6574281b
+- 基準ソースコミット: 2ca4f40afcb138308704f4f3847fd6581bd38bb5
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 自律AI開発: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
@@ -28,13 +28,12 @@
 - 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40047378300（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- Owner reviews free-tier Google AI Studio source-data/privacy handling and explicitly consents or selects privacy-preserving paid alternative
-- Owner creates Free Tier GEMINI_API_KEY using official Google AI Studio and saves as GitHub repository Actions secret without sharing in chat
-- Independently test secret presence without model inference
-- After new explicit owner authorization, run one Gemini AI coding test with fail-closed independent patch review (draft PR only)
-- Evaluate PR #12 for cost control: change two idle cron jobs from 20-minute to 6-hour cadence; retain on-change CI
-- Verify eventual real AI-generated PR with GitHub QA, size gate, character test and audit trail
-- Add Roblox Studio/Open Cloud and 2-client/mobile screenshots before release
+- Receive explicit approval for ONE Gemini API Free Tier code-generation trial and separately review custom fail-closed detector tradeoff
+- Ensure candidate PR #11 is independently passing cloud QA and activation remains single-use
+- After owner approval only: activate exactly one Gemini run with no recurring cron and document its outcome
+- If inference and draft PR succeed, inspect game code, CI, security, character quality, source size and defects; do not auto-merge
+- Keep Copilot 20-min PR #6 unmerged; consider idle Actions quota reduction via PR #12 separately
+- Connect actual Roblox Studio/Open Cloud/2-player/mobile character visual tests before game release
 
 ## 新しいチャットでAIが必ず行う引き継ぎ手順
 1. GitHubコネクタでこのファイルと status/LATEST_STATE.json、PROJECT_STATE.json、AGENTS.md、config/quality_policy.json を読み込む。
