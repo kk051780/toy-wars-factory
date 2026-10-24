@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: e3dc308b2f4e4cac0fbb5990b853d949630cffd8
+- 基準ソースコミット: 07e90d36fc7aec6339a8bf962def17f8d73d3a9f
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 自律AI開発: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
@@ -12,8 +12,8 @@
 - 協力: NOT_IMPLEMENTED
 
 ## サイズゲート（初回基準との差分）
-- ソース: 4 ファイル / 663 行 / 25726 bytes
-- 基準差分: files 0, lines 0, bytes 0
+- ソース: 4 ファイル / 676 行 / 26559 bytes
+- 基準差分: files 0, lines 13, bytes 833
 - サイズ増加は品質の証明ではない。合理的削減は問題ない。機能・テストの欠損は別途監査。
 
 ## キャラクター（見た目の実機検査ではない）
@@ -25,55 +25,60 @@
 - Studio: NOT_RUN
 - マルチクライアント: NOT_RUN
 - スマホ表示: NOT_RUN
-- 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40078677288（最新Actionsを別途確認すること）
+- 記録済GitHub QA: PENDING_CURRENT_GAME_CANDIDATE_CI; main stop verification remains https://github.com/kk051780/toy-wars-factory/actions/runs/40079169605（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- PR #26 is merged and its post-merge main QA/handoff passed. Do not ask again to merge it or reuse the consumed inference approval.
-- Read C00010 and compare current main/Actions. The follow-up is factual recording of that completed integration, with no runtime or workflow changes.
-- If continuing gameplay work, review separate PR #25 against the new main while preserving operational and quality guards; no unrelated merge approval is implied.
-- Keep Gemini blocked. The complete request input/framing proof remains unavailable; do not repeat the same pinned SDK inspections as new progress.
-- Require independently established bounds, shared live enforcement, current pricing/quota and fresh owner inference approval before any new Gemini call.
-- Keep the 10-AIC cap, independent-model review requirement, inactive recurring AI, no automatic merge policy and no Roblox publication.
+- Review C00013 and the current main-based gameplay candidate. PR #26/#27 integration is already complete and must not require approval again.
+- Confirm exact old-server negative control: 25 pass and only the two NaN fixtures fail; require all 27 canonical fixed-server fixtures and existing QA to pass.
+- Review the combined selector authority, waiting-player backfill, deferred-character guard and two non-finite-distance corrections against current main.
+- Keep this gameplay candidate unmerged until the owner approves its concrete diff. Keep operational stops, 10-AIC cap and all approval boundaries.
+- Roblox Studio, multiplayer, mobile and player feedback remain required before release; native fixtures are not engine evidence.
+- Keep Gemini held. Revisit its missing input/framing proof only with changed sources or new attributable evidence.
 
 ## 最新の再開地点（観測時点の記録）
-- 記録: C00010 / 2026-10-24
-- 照合したmain: 3121e3ca5dd4ac3a7d4ba9ef090a099c56f9f2ae
-- 証拠: history/C00010_approved_stop_merge.json
-- 完了: Owner replied 進めて to the explicit request to merge PR #26 into main. This authorizes that integration, not inference or an unattended merge policy.
-- 完了: Recheck unchanged reviewed head 3bbb1e67500c8d084a2155f70bdc09f0cf14ea1e, clean mergeability and successful CI 40078321454 before merging.
-- 完了: Merge PR #26 at 3121e3ca5dd4ac3a7d4ba9ef090a099c56f9f2ae using the reviewed head SHA lease.
-- 完了: Confirm post-merge main QA 40078677288 and handoff run 40078677287 both pass, including exact compiler output, 43 Python tests, native Lua and installer/handoff checks.
-- 完了: Confirm main contains literal-false Gemini activation, no reviewer direct provider URL and full-history handoff checkout; reviewed tree is unchanged.
-- 完了: Record completion in the handoff so a later chat does not ask again to merge PR #26. Game source and character definitions remain unchanged.
+- 記録: C00013 / 2026-10-24
+- 照合したmain: 9e31c34d4d236a115faa5ff076f3f9af82aa879f
+- 証拠: history/C00013_nonfinite_proximity_events.json
+- 完了: Read main C00010 and discover later game proposal records C00011/C00012 and open PRs #28/#29 rather than repeating their work.
+- 完了: Confirm main-based integration CI 40088574401 and lifecycle proposal CI 40096885886 passed; main itself remains unchanged.
+- 完了: Execute the whole PR #29 server in native Lua 5.4 with deterministic services and coroutine/event fixtures: 25 cases pass and exactly two NaN-distance cases fail.
+- 完了: Change the two proximity checks to require distance <= 13 to be true; normal distance behavior and prices are preserved.
+- 完了: Pass all 27 server event fixtures locally after the numeric correction, including capacity/backfill, identity, remote rate limiting and deferred-character races.
+- 完了: Prepare a single candidate against current main combining the prior gameplay proposals with the new guard, while preserving all operational stops and approval policies.
+- 完了: Extend exact source byte accounting as a checked history chain across C00011/C00012/C00013 without changing the original baseline.
 - 新規推論承認: False
 - 定期AI承認: False
 - 自動マージ承認: False
 - Roblox公開承認: False
-- 再実行の前提: PR #26 integration is complete and must not require renewed approval. Future inference and unrelated merges are not authorized by this approval; inference still needs complete bounds, shared enforcement, current pricing/quota and fresh owner consent.
-- 再開する作業: PR #26 merge and its post-merge QA/handoff are complete. Do not request that approval again. Verify this factual recording and current main, then continue only authorized offline/gameplay review (separate PR #25 remains a draft). Keep inference and unattended merge policy blocked; revisit input proof only with new attributable evidence.
-- 未確認・制限: Input/framing bound and a hard financial cap remain unproved; Gemini stays blocked.
-- 未確認・制限: Historical workflow snapshots are not retrofitted; never rerun the consumed trial.
-- 未確認・制限: Budget runtime, pricing, SDK tooling and Docker candidates remain in unmerged experimental PRs.
-- 未確認・制限: Only the handoff/stop parts of PR #19/#24 were integrated; other proposals were not merged or closed.
-- 未確認・制限: Studio, multiplayer and mobile remain NOT_RUN.
+- 再実行の前提: This is an unmerged gameplay candidate. A later explicit approval is needed for this candidate to enter main. No inference, recurring AI, billing or publication authorization is implied.
+- 再開する作業: Verify the main-based candidate CI, including immutable pre-fix negative control and the canonical fixed-server fixtures, before asking the owner to approve this concrete gameplay PR. Preserve other source drafts. After explicit integration approval, verify main QA and record that approval without enabling inference or Roblox release.
+- 未確認・制限: All game changes in this candidate remain unmerged; main still has 25,726 game source bytes.
+- 未確認・制限: Native Lua substitutes exercise callback logic, not Roblox physics, replication, live networking, five-player or mobile behavior.
+- 未確認・制限: NaN is a synthetic invalid-coordinate fixture; a real client injection exploit was not demonstrated.
+- 未確認・制限: The Gemini input/framing and financial-cap blocker remains unresolved.
+- 未確認・制限: Studio, multiplayer, mobile, visuals and player fun remain unverified.
 
 ## 未マージの提案（現在のPR状態はGitHubで再確認）
-- PR #25: DRAFT_UNMERGED / SEPARATE_GAME_PROPOSAL_NOT_ATTRIBUTED_TO_GEMINI / Integration QA: selector authority plus workshop backfill (no merge) / https://github.com/kk051780/toy-wars-factory/pull/25
-  - QA: PASS: separate gameplay integration offline CI; Studio, multiplayer and mobile NOT_RUN. https://github.com/kk051780/toy-wars-factory/actions/runs/40076928524
+- PR #29: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Guard deferred workshop teleport against disconnect/respawn race / https://github.com/kk051780/toy-wars-factory/pull/29
+  - QA: PASS_OFFLINE_CI; prior gameplay checks are mostly static. Studio, multiplayer and mobile NOT_RUN. https://github.com/kk051780/toy-wars-factory/actions/runs/40096885886
+- PR #28: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Main-based offline integration QA: selector authority + workshop backfill (no merge) / https://github.com/kk051780/toy-wars-factory/pull/28
+  - QA: PASS_OFFLINE_CI; prior gameplay checks are mostly static. Studio, multiplayer and mobile NOT_RUN. https://github.com/kk051780/toy-wars-factory/actions/runs/40088574401
+- PR #25: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Integration QA: selector authority plus workshop backfill (no merge) / https://github.com/kk051780/toy-wars-factory/pull/25
+  - QA: PASS_OFFLINE_CI; inspect linked run for exact scope. No Roblox engine or new live inference evidence. https://github.com/kk051780/toy-wars-factory/actions/runs/40076928524
 - PR #24: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Hold Gemini activation and remove the unreserved reviewer transport / https://github.com/kk051780/toy-wars-factory/pull/24
-  - QA: PASS: 43 Python, 64 Node including 24 container checks, exact compiler, Lua/stress, installer and handoff. Node/runtime candidates are excluded from this independent branch. https://github.com/kk051780/toy-wars-factory/actions/runs/40075974239
+  - QA: PASS_OFFLINE_CI; inspect linked run for exact scope. No Roblox engine or new live inference evidence. https://github.com/kk051780/toy-wars-factory/actions/runs/40075974239
 - PR #23: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Tighten request output reservations and record the unresolved input proof / https://github.com/kk051780/toy-wars-factory/pull/23
-  - QA: 64 Node (24 network-disabled container), 33 Python, 37 Lua + 4000 stress, official SDK inspection and deterministic handoff PASS. Input proof remains BLOCKED; no live calls. https://github.com/kk051780/toy-wars-factory/actions/runs/40074151010
+  - QA: PASS_OFFLINE_CI; inspect linked run for exact scope. No Roblox engine or new live inference evidence. https://github.com/kk051780/toy-wars-factory/actions/runs/40074151010
 - PR #22: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Connect offline Gemini price bounds to a persistent shared budget runtime / https://github.com/kk051780/toy-wars-factory/pull/22
-  - QA: 40 existing Node + 19 connected container tests, 33 Python, 37 Lua and 4000 stress checks PASS. No live inference. https://github.com/kk051780/toy-wars-factory/actions/runs/40072355807
+  - QA: PASS_OFFLINE_CI; inspect linked run for exact scope. No Roblox engine or new live inference evidence. https://github.com/kk051780/toy-wars-factory/actions/runs/40072355807
 - PR #21: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Reject unpriced native Gemini requests and test reserved call budgets / https://github.com/kk051780/toy-wars-factory/pull/21
-  - QA: 40 Node, 33 Python, 37 Lua, 4000 stress checks PASS; offline candidate only. https://github.com/kk051780/toy-wars-factory/actions/runs/40069599840
-- PR #20: DRAFT_UNMERGED / SEPARATE_GAME_PROPOSAL_NOT_ATTRIBUTED_TO_GEMINI / Admit waiting players when a workshop plot becomes free / https://github.com/kk051780/toy-wars-factory/pull/20
-  - QA: PASS: separate plot backfill offline CI; Studio, multiplayer and mobile NOT_RUN. https://github.com/kk051780/toy-wars-factory/actions/runs/40069151903
+  - QA: PASS_OFFLINE_CI; inspect linked run for exact scope. No Roblox engine or new live inference evidence. https://github.com/kk051780/toy-wars-factory/actions/runs/40069599840
+- PR #20: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Admit waiting players when a workshop plot becomes free / https://github.com/kk051780/toy-wars-factory/pull/20
+  - QA: PASS_OFFLINE_CI; inspect linked run for exact scope. No Roblox engine or new live inference evidence. https://github.com/kk051780/toy-wars-factory/actions/runs/40069151903
 - PR #19: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Fix shallow-history handoff churn and retain Gemini failure provenance / https://github.com/kk051780/toy-wars-factory/pull/19
-  - QA: PASS: 33 Python, 37 Lua regressions, 4000 deterministic stress, exact installer and deterministic handoff. Offline only. https://github.com/kk051780/toy-wars-factory/actions/runs/40067722798
+  - QA: PASS_OFFLINE_CI; inspect linked run for exact scope. No Roblox engine or new live inference evidence. https://github.com/kk051780/toy-wars-factory/actions/runs/40067722798
 - PR #17: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Reject spoofed distant toy-selector prompt activation on server / https://github.com/kk051780/toy-wars-factory/pull/17
-  - QA: Offline: 37 Lua regressions, 4000 stress cases, 33 Python tests; no Roblox engine verification. https://github.com/kk051780/toy-wars-factory/actions/runs/40061153081
+  - QA: PASS_OFFLINE_CI; inspect linked run for exact scope. No Roblox engine or new live inference evidence. https://github.com/kk051780/toy-wars-factory/actions/runs/40061153081
 - PR #13: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Keep toy HUD prices in sync with canonical balance costs / https://github.com/kk051780/toy-wars-factory/pull/13
 - PR #12: DRAFT_UNMERGED / PROPOSAL / Cut idle QA runner usage ~94% while preserving every-change checks / https://github.com/kk051780/toy-wars-factory/pull/12
 - PR #6: DRAFT_UNMERGED / PROPOSAL / Prepare audited 20-minute AI coding runner — authentication approval required / https://github.com/kk051780/toy-wars-factory/pull/6
