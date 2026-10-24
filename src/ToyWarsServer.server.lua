@@ -393,7 +393,7 @@ spawn.Parent=world
 part(world,"LobbyGround",Vector3.new(930,1,200),CFrame.new(0,-2,0),Color3.fromRGB(112,169,144),Enum.Material.Grass)
 
 local function join(player)
-    if sessions[player] then return end
+    if player.Parent ~= Players or sessions[player] then return end
     local slot=chooseSlot()
     if not slot then
         warn("TWF v1.2: no free workshop plots for",player.UserId)
@@ -455,6 +455,13 @@ Players.PlayerRemoving:Connect(function(player)
     for _,e in ipairs(state.entities) do removeEntity(e) end
     if state.map and state.map.Parent then state.map:Destroy() end
     sessions[player]=nil
+    -- Assign a newly freed plot to one player who was waiting at capacity.
+    for _,waiting in ipairs(Players:GetPlayers()) do
+        if waiting ~= player and waiting.Parent == Players and not sessions[waiting] then
+            join(waiting)
+            break
+        end
+    end
 end)
 for _,player in ipairs(Players:GetPlayers()) do task.spawn(join,player) end
 
