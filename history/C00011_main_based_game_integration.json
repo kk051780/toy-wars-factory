@@ -1,0 +1,53 @@
+{
+  "id": "C00011",
+  "date": "2026-10-24",
+  "kind": "MAIN_BASED_OFFLINE_INTEGRATION_REVIEW_PROPOSAL",
+  "main_base": "9e31c34d4d236a115faa5ff076f3f9af82aa879f",
+  "original_integrated_pr": 25,
+  "original_integrated_head": "5a5c518c9d3a28d399da4293b4b49bcb0328cfef",
+  "components": [
+    17,
+    20
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 17820,
+      "after_bytes": 18437,
+      "delta_bytes": 617,
+      "before_lines": 470,
+      "after_lines": 481,
+      "delta_lines": 11
+    },
+    {
+      "path": "tests/test_selector_authority.py",
+      "new_lines": 38
+    },
+    {
+      "path": "tests/test_workshop_backfill.py",
+      "new_lines": 32
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 674,
+    "lua_bytes": 26343
+  },
+  "qa": {
+    "prior_integration_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/40076928524",
+    "new_main_based_ci": "PENDING_DO_NOT_CLAIM_PASS",
+    "roblox_studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "visual": "NOT_RUN"
+  },
+  "character_audit": "PON/GUARDON/TANKURU definitions, stats, costs, silhouettes and roles unchanged",
+  "authorization": {
+    "gemini_rerun": false,
+    "recurring_ai": false,
+    "auto_merge": false,
+    "roblox_publish": false,
+    "paid_upgrade": false
+  },
+  "next": "Review this branch's CI once, then inspect combined behavior in Roblox Studio when authorized/available. Keep existing PRs draft."
+}
