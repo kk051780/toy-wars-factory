@@ -52,6 +52,14 @@ jobs:
           fetch-depth: 0
       - name: Install native Lua 5.4
         run: sudo apt-get update -qq && sudo apt-get install -y lua5.4
+      - name: Enforce scheduled repair scope using the trusted base policy
+        if: github.event_name == 'pull_request' && github.head_ref == 'auto/twf-game-repair'
+        env:
+          TWF_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git show "$TWF_BASE_SHA:tools/check_auto_diff.py" > /tmp/twf-check-auto-diff.py
+          git show "$TWF_BASE_SHA:config/autonomous_repair.json" > /tmp/twf-auto-policy.json
+          python3 /tmp/twf-check-auto-diff.py --policy /tmp/twf-auto-policy.json --base "$TWF_BASE_SHA" --head HEAD
       - name: Lua parse of game modules (not Luau engine verification)
         run: |
           for file in src/*.lua; do
@@ -116,6 +124,14 @@ jobs:
         run: |
           lua5.4 tests/hud_price_spec.lua > .qa/hud-price-after.log
           cat .qa/hud-price-after.log
+      - name: Execute additional autonomous repair regressions
+        run: |
+          set -euo pipefail
+          mkdir -p .qa/auto
+          for spec in tests/auto/*_spec.lua; do
+            test -f "$spec" || continue
+            lua5.4 "$spec" | tee ".qa/auto/$(basename "$spec").log"
+          done
       - name: Assemble Studio one-click installer from four canonical files
         run: python3 tools/build_installer.py
       - name: Verify installer embeds exact source and hashes
@@ -174,5 +190,13 @@ jobs:
           path: |
             .qa/hud-price-before.log
             .qa/hud-price-after.log
+          if-no-files-found: ignore
+          retention-days: 30
+      - name: Preserve autonomous repair regression evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: twf-autonomous-regressions-not-engine
+          path: .qa/auto/
           if-no-files-found: ignore
           retention-days: 30

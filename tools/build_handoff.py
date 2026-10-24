@@ -46,6 +46,7 @@ def main():
       "next":state["next"],
       "resume_checkpoint":state.get("resume_checkpoint",{}),
       "review_queue":state.get("review_queue",[]),
+      "cloud_game_repair":state.get("cloud_game_repair",{}),
       "important":"Actions / Roblox Studio evidence must be checked independently. A generated status page is not proof of runtime health."
     }
     (OUT/"LATEST_STATE.json").write_text(json.dumps(record,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
@@ -58,7 +59,8 @@ def main():
       "- GitHub: https://github.com/"+repo,
       "- 基準ソースコミット: "+code_sha,
       "- ゲーム公開可否: "+state["release_decision"],
-      "- 自律AI開発: "+state["autonomous_coding"]["status"],
+      "- 既存GitHub AIワークフロー: "+state["autonomous_coding"]["status"],
+      "- ChatGPT定期ゲーム修正: "+state.get("cloud_game_repair",{}).get("status","NOT_CONFIGURED"),
       "- PvE: "+state["game"]["pve"],
       "- PvP: "+state["game"]["pvp"],
       "- 協力: "+state["game"]["coop"],
