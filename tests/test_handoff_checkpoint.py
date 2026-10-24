@@ -42,7 +42,7 @@ class HandoffCheckpointTests(unittest.TestCase):
         self.assertEqual(proposal["origin"], "CHAT_ASSISTANT_NOT_GEMINI")
         self.assertEqual(proposal["status"], "DRAFT_UNMERGED")
         text = (self.root / "status/CHAT_HANDOFF.md").read_text()
-        for value in ("C00004", "PR #17", "CHAT_ASSISTANT_NOT_GEMINI", "新規推論承認: False"):
+        for value in (state["resume_checkpoint"]["id"], "PR #17", "CHAT_ASSISTANT_NOT_GEMINI", "新規推論承認: False"):
             self.assertIn(value, text)
         actual = sum(file.stat().st_size for file in (self.root / "src").glob("*.lua"))
         self.assertEqual(result["source_metrics"]["bytes"], actual)

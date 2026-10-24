@@ -1,0 +1,117 @@
+{
+  "id": "C00005",
+  "date": "2026-10-24",
+  "kind": "OFFLINE_NATIVE_GEMINI_ADMISSION_AND_BUDGET_CANDIDATE",
+  "parent_proposal": "https://github.com/kk051780/toy-wars-factory/pull/19",
+  "parent_proposal_head": "fb0b5582f0a69296b87bd8d5dc433e67ba4211d2",
+  "canonical_main_observed": "e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904",
+  "incident_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/40060119253",
+  "upstream_commit": "32c12e0099763dad77acef6c655cb12e58fe36e1",
+  "original_proxy_git_blob": "f50f31b6751c03221d7fa9aae2e3f87a0327d1d4",
+  "common_guard_git_blob": "1adf5f6900b8459496a3703d9fc41fbb481c74ec",
+  "result": {
+    "native_admission": "PATCHED_OFFLINE_ORIGINAL_RUNTIME_TESTED",
+    "reservation_ledger": "OFFLINE_TESTED_WITH_TRUSTED_TEST_BOUND",
+    "node_tests": 40,
+    "python_tests": 33,
+    "concurrent_unpriced_requests": 20,
+    "loopback_upstream_calls_for_unpriced": 0,
+    "loopback_positive_control_calls": 1,
+    "external_provider_calls": 0,
+    "runtime_deployed": false,
+    "live_spending_cap_verified": false,
+    "billing_verified": false,
+    "github_qa": "PENDING"
+  },
+  "implementation_limits": [
+    "Candidate only: no runtime image installed or deployed.",
+    "Overlay hooks native admission only; reservation runner is not connected to the Gemini CLI.",
+    "Real prices, trusted token upper-bound adapter, cross-process/shared budget and independent-review accounting are not configured.",
+    "Loopback fixture costs do not certify a real provider bill or financial ceiling.",
+    "Studio, multiplayer and mobile remain NOT_RUN."
+  ],
+  "game_source": {
+    "files": 4,
+    "lines": 663,
+    "bytes": 25726,
+    "delta_files": 0,
+    "delta_lines": 0,
+    "delta_bytes": 0
+  },
+  "characters_touched": [],
+  "changed_files": [
+    "runtime/gemini_budget_guard.cjs",
+    "tools/build_gemini_admission_overlay.py",
+    "tools/reproduce_gemini_credit_gap.cjs",
+    "tests/gemini_budget_guard.test.cjs",
+    "tests/gemini_admission_overlay.test.cjs",
+    "tests/test_handoff_checkpoint.py",
+    ".github/workflows/bootstrap-quality.yml",
+    "docs/GEMINI_BUDGET_RUNTIME_CANDIDATE.md",
+    "PROJECT_STATE.json",
+    "history/C00005_native_gemini_admission.json"
+  ],
+  "generated_files": [
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "authorization": {
+    "new_inference": false,
+    "recurring_ai": false,
+    "automatic_merge": false,
+    "roblox_publish": false
+  },
+  "next_action": "Review this candidate; integrate a trusted token-bound adapter and approved prices with all model transports in an offline candidate container, then verify provider quotas before seeking fresh inference approval.",
+  "file_size_deltas": {
+    "runtime/gemini_budget_guard.cjs": {
+      "before": 0,
+      "after": 8271,
+      "delta": 8271
+    },
+    "tools/build_gemini_admission_overlay.py": {
+      "before": 0,
+      "after": 3196,
+      "delta": 3196
+    },
+    "tools/reproduce_gemini_credit_gap.cjs": {
+      "before": 5632,
+      "after": 6197,
+      "delta": 565
+    },
+    "tests/gemini_budget_guard.test.cjs": {
+      "before": 0,
+      "after": 9713,
+      "delta": 9713
+    },
+    "tests/gemini_admission_overlay.test.cjs": {
+      "before": 0,
+      "after": 7801,
+      "delta": 7801
+    },
+    "tests/test_handoff_checkpoint.py": {
+      "before": 5005,
+      "after": 5029,
+      "delta": 24
+    },
+    ".github/workflows/bootstrap-quality.yml": {
+      "before": 3273,
+      "after": 4349,
+      "delta": 1076
+    },
+    "docs/GEMINI_BUDGET_RUNTIME_CANDIDATE.md": {
+      "before": 0,
+      "after": 5274,
+      "delta": 5274
+    },
+    "PROJECT_STATE.json": {
+      "before": 10174,
+      "after": 11323,
+      "delta": 1149
+    },
+    "history/C00005_native_gemini_admission.json": {
+      "before": 0,
+      "after": 3846,
+      "delta": 3846
+    }
+  }
+}
