@@ -4,10 +4,10 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: fc946fa68bd729fabdaafaafe438b0e71d6d19cb
+- 基準ソースコミット: c111784330e71bf49d61f2cee2813a1a12e49734
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 既存GitHub AIワークフロー: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
-- ChatGPT定期ゲーム修正: ENABLED_FIRST_RUN_UNVERIFIED
+- ChatGPT定期ゲーム修正: ENABLED_FIRST_AUTOMATED_REGRESSION_PR_VERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
 - PvP: NOT_IMPLEMENTED
 - 協力: NOT_IMPLEMENTED
@@ -26,38 +26,40 @@
 - Studio: NOT_RUN
 - マルチクライアント: NOT_RUN
 - スマホ表示: NOT_RUN
-- 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40106001876（最新Actionsを別途確認すること）
+- 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40108475671（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- The owner has authorized hourly ChatGPT connected-GitHub repair without another routine 進めて. Read C00017, config/autonomous_repair.json and docs/AUTONOMOUS_REPAIR.md.
-- The existing task was updated and enabled successfully. Before claiming repair works, verify one real service run, actual code commit/draft PR and matching CI. Registration alone is not proof.
-- Use the fixed auto/twf-game-repair branch and one [TWF auto-fix] draft PR. Repair failed CI on that same PR before starting new changes. Preserve successful work between runs.
-- First validation: add whole-server Heartbeat production/purchase coverage for sufficient and insufficient coins in tests/auto/production_spec.lua; fix source only for a reproduced defect.
-- Keep old 27 server and 6 HUD fixtures unchanged; add executable tests in the new discovery paths, preserve source-size history and all prior QA.
-- No new external provider/API calls, model/cap/billing changes, automatic game merge or Roblox publication. Gemini holds and release requirements remain unchanged.
+- PR #34 setup is merged at 40c79ae0f06d472ed5a1184d5c27d9421afee3c0; main QA 40108475671 and handoff 40108475650 pass. Do not ask for setup integration again.
+- Hourly ChatGPT task 6adbf0d6a7d881918ce181dff2468867 is enabled. Routine game edits/tests/draft PR updates are authorized without another 進めて.
+- Initial service run 9fd5c391-5054-832e-b21b-9527e78d6733 completed and actually created draft PR #35, head 116ab1fd56d736d10994008dfcdabaccd76afce9. CI 40108773948 passed, including all three new whole-server production regressions and trusted-base scope checks.
+- First run added executable regression code only; game source and all 75 existing files were preserved. Do not claim it fixed a gameplay bug or proved continuous operation.
+- Continue with the same auto/twf-game-repair draft branch: read actual CI, preserve successful work, choose the next bounded defect/regression. Do not recreate the completed initial production test.
+- Keep Gemini/external API, keys, model/cap/billing and future automatic main merge/Roblox publication held. First task delivery is unknown; recorded completion and actual GitHub code/CI are the proof.
 
 ## 最新の再開地点（観測時点の記録）
-- 記録: C00017 / 2026-10-25
-- 照合したmain: abadea9f853670ed6eae7215361e6aeb2c73887b
-- 証拠: history/C00017_chatgpt_repair_setup.json
-- 完了: Owner explicitly requested autonomous game repair without repeatedly sending 進めて, superseding the prior lack of authorization for this separate ChatGPT route.
-- 完了: Inspect the existing hourly task 6adbf0d6a7d881918ce181dff2468867 and its actual latest recorded run. It completed an audit comment on PR #32, with no code change; task existence alone was not autonomous repair.
-- 完了: Read current official scheduled-task documentation: web tasks can use connected plugins and do not retain a local checkout between runs. Use GitHub as the durable source.
-- 完了: Update the existing task to TOY WARS 自動ゲーム修正, preserving its hourly cadence and confirmed enabled state. Saved prompt directs actual changes, tests and one maintained draft PR, not status-only comments.
-- 完了: Add a main-repository enable switch, bounded edit policy, trusted-base diff checks, native additional-test discovery and evidence archiving, while preserving all old gates.
-- 完了: Keep all four game Lua files unchanged at 678 lines / 26,753 bytes; initial baseline and historical source changes remain intact.
-- 完了: Separate the registered ChatGPT route from held Gemini/GitHub provider workflows in the generated handoff. First code-producing automation run is still unverified at setup creation.
+- 記録: C00019 / 2026-10-25
+- 照合したmain: 40c79ae0f06d472ed5a1184d5c27d9421afee3c0
+- 証拠: history/C00019_chatgpt_repair_activation.json
+- 完了: Complete the owner-requested repository setup by merging PR #34 at 40c79ae0f06d472ed5a1184d5c27d9421afee3c0 using reviewed head 829d25515f75479ec606edda8fbbab64db476fd5.
+- 完了: Confirm exact reviewed tree 7a0655b4b61dfef30c466768ae3d086889ccf3fa, all 13 reviewed setup blobs, 62 untouched blob/mode matches and all four unchanged game sources.
+- 完了: Verify setup post-merge QA 40108475671 and handoff 40108475650 both pass, including 61 Python tests, all legacy native controls, compiler and installer checks.
+- 完了: Read the new enabled config on the actual main merge, then request a single real automation validation run. The service confirmed acceptance without changing the existing hourly schedule.
+- 完了: Verify the service run completed at 2026-10-24T15:50:27.202124Z; latest_result run_id matches the requested run and was created after its start. No delivery claim is made.
+- 完了: Independently fetch actual draft PR #35, its two changed files, head 116ab1fd56d736d10994008dfcdabaccd76afce9 and tree bd98f2e95c0dad162c25fa4f795f3d7cd556858a; all 75 pre-existing files/modes remain identical.
+- 完了: Verify exact-head CI 40108773948 passes. The trusted-base path gate ran successfully, all three AUTO_PRODUCTION regressions passed, and all prior QA remained successful.
+- 完了: Record first_run_verified for this narrow code-producing regression PR trial. No gameplay defect was fixed, no game source was changed and no automatic main merge was performed.
+- 完了: Clarify the saved task prompt: accepted main regressions/history stay protected, while defects in the task own unmerged additions can be repaired on the same draft PR without weakening assertions.
 - 新規推論承認: False
 - 定期AI承認: True
 - 自動マージ承認: False
 - Roblox公開承認: False
 - 再実行の前提: Routine connected-GitHub edits/tests/draft PRs no longer wait for another 進めて. Main integration of future game fixes, external provider inference and Roblox publication still require their existing approvals. Validate the registered task by its service run, actual code PR and matching CI, not registration alone.
-- 再開する作業: Finish and verify the owner-requested ChatGPT scheduled repair setup, then validate one real scheduled-task execution that writes a regression/code PR and triggers existing CI. Keep the task running without routine user prompts; preserve Gemini stops, existing regression gates and draft-only integration policy.
-- 未確認・制限: Task update success is not proof that the new repair prompt has run. First-run code/PR/CI evidence is required and pending.
-- 未確認・制限: The existing service schedule is hourly; it is not the old proposed 20-minute Gemini runner.
-- 未確認・制限: Web tasks use connected GitHub and service availability/plan limits. They do not rely on the current scratch checkout or a running PC.
-- 未確認・制限: Gemini input/framing and shared financial enforcement remain unresolved; all Gemini/external API transports stay held and no provider key is read.
-- 未確認・制限: Future game fixes remain draft PRs until integration approval. Independent review and Roblox release requirements remain intact; engine/multiplayer/mobile/visual/player-fun evidence is absent.
+- 再開する作業: Continue the hourly task without routine user prompts. PR #35 CI passed; preserve its work and choose the next bounded defect or meaningful regression on the same draft branch. Main integration and release still require their existing approvals.
+- 未確認・制限: One scheduled service execution and matching regression-code PR/CI are verified; repeated long-term operation is not yet proven.
+- 未確認・制限: The first automatic change is three production/purchase regressions, not a reproduced gameplay-source bug fix.
+- 未確認・制限: PR #35 remains draft/unmerged. Routine development continues without a user prompt, while main integration, independent review and Roblox publication conditions remain unchanged.
+- 未確認・制限: Recorded notification delivery is unknown. Completion, actual code files and exact-head successful CI provide the evidence.
+- 未確認・制限: Gemini/external provider API and financial-bound blockers remain held; no model/cap/billing or credential changes.
 
 ## 未マージの提案（現在のPR状態はGitHubで再確認）
 - PR #29: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Guard deferred workshop teleport against disconnect/respawn race / https://github.com/kk051780/toy-wars-factory/pull/29

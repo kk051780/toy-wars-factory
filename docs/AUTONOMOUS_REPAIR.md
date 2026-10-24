@@ -33,6 +33,8 @@ Geminiの未解決問題を、接続済みGitHubでのChatGPTによるdraft PR�
 `tests/auto/*_spec.lua`、新しいPython検査は`tests/test_auto_*.py`に置く。
 記録は新規`history/CNNNNN_*.json`と`docs/EXPERIMENT_LOG.md`。
 既存テスト・ハーネス・品質方針・ワークフロー・認証・モデル設定は変更しない。
+mainに取り込まれた検査と履歴を保護する。自分のdraft PRで追加した未統合の検査や
+履歴に不備があれば同じPRで直してよいが、検査の削除・弱体化で失敗を隠さない。
 
 自動修正PRではbaseの検査スクリプトと方針を使い、許可範囲外の差分、既存回帰検査の
 書換え・削除、検査なしのゲーム変更、監査記録だけの差分を拒否する。

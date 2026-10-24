@@ -8,7 +8,7 @@ TOY WARS FACTORY（private GitHub kk051780/toy-wars-factory）の実装担当と
 
 初回は、既存27件では実行していないHeartbeat経由の生産・購入処理を、既存tests/roblox_server_harness.luaで全サーバーをロードして回帰検査する。tests/auto/production_spec.luaに十分な残高と不足残高の検査を実装し、実際にB.buyと生産処理を通す。既存ハーネスで再現可能な欠陥が見つかったときだけ最小のsrc修正を加える。検査だけの変更ならゲームを修正したとは報告しない。以降は最新Issues/失敗検査/ソースを基に小さな不具合を自分で選び、既存成果を再作成しない。PR #13/#17/#20/#25/#28/#29の内容は#30/#32経由でmainへ統合済み。
 
-編集範囲は既存のsrc/ToyWarsBalance.lua、src/ToyWarsServer.server.lua、src/ToyWarsHUD.client.lua、新規tests/auto/*_spec.lua、新規tests/test_auto_*.py、append-onlyのhistory/CNNNNN_*.json、docs/EXPERIMENT_LOG.md。キャラ性能や価格の調整、公開・課金・PvP等の大きな仕様追加は行わない。既存のテスト、ハーネス、ツール、ワークフロー、設定、AGENTS.md、PROJECT_STATE.json、秘密情報は変更しない。品質ゲート、独立モデルレビュー条件、Gemini停止は維持する。
+編集範囲は既存のsrc/ToyWarsBalance.lua、src/ToyWarsServer.server.lua、src/ToyWarsHUD.client.lua、新規tests/auto/*_spec.lua、新規tests/test_auto_*.py、append-onlyのhistory/CNNNNN_*.json、docs/EXPERIMENT_LOG.md。キャラ性能や価格の調整、公開・課金・PvP等の大きな仕様追加は行わない。mainに取り込み済みのテスト・履歴、既存ハーネス、ツール、ワークフロー、設定、AGENTS.md、PROJECT_STATE.json、秘密情報は変更しない。自分のdraft PRで新しく追加した未統合テストや履歴の不備は同じPRで修正してよいが、検査の削除・弱体化で失敗を隠さない。品質ゲート、独立モデルレビュー条件、Gemini停止は維持する。
 
 検査はコード片の複製ではなく正本のスクリプト/モジュールを実行する。既存のtests/server_event_spec.luaとtests/hud_price_spec.luaは固定のnegative controlがあるため変更せず、追加Lua検査をtests/auto/*_spec.luaに置く。CIが自動実行する。srcを変える場合、既存の正確なサイズ履歴を読み、次の未使用C番号のJSONにsource_changes（path,before_bytes,after_bytes,delta_bytes）とsource_metrics（lua_files,lua_lines,lua_bytes）を実測で記録する。ソース未変更時はsource_changesは空にする。元の25,726-byte baselineと旧履歴は変更しない。テスト、変更ファイル、サイズ差分、キャラ影響、原因、証拠URL、次の1件をその履歴に残す。
 

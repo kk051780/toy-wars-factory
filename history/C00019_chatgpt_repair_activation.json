@@ -1,0 +1,137 @@
+{
+  "id": "C00019",
+  "date": "2026-10-25",
+  "kind": "CHATGPT_REPAIR_FIRST_CODE_PRODUCING_RUN_AND_EXACT_HEAD_CI_VERIFIED",
+  "setup_pr": 34,
+  "setup_merge_commit": "40c79ae0f06d472ed5a1184d5c27d9421afee3c0",
+  "reviewed_tree": "7a0655b4b61dfef30c466768ae3d086889ccf3fa",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "initial_validation_run": {
+    "id": "9fd5c391-5054-832e-b21b-9527e78d6733",
+    "scheduled_for": "2026-10-24T15:46:52.868324Z",
+    "started_at": "2026-10-24T15:47:24.015237Z",
+    "recorded_status": "completed",
+    "completed_at": "2026-10-24T15:50:27.202124Z",
+    "verified_code_pr": 35,
+    "verified_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40108773948",
+    "result_created_at": "2026-10-24T15:50:26.489491Z",
+    "result_run_id_matches": true,
+    "verified_code_pr_url": "https://github.com/kk051780/toy-wars-factory/pull/35",
+    "verified_head": "116ab1fd56d736d10994008dfcdabaccd76afce9",
+    "verified_ci_conclusion": "success",
+    "actual_changed_files": [
+      "tests/auto/production_spec.lua",
+      "history/C00018_heartbeat_production_regression.json"
+    ],
+    "new_executed_regressions": 3,
+    "existing_files_preserved": 75,
+    "game_source_changed": false,
+    "notification_delivery": "UNKNOWN"
+  },
+  "first_run_verified": true,
+  "authorization": {
+    "owner_instruction": "自動化優先させたい。いつまで俺は指示送らなきゃいけない？ 自動で今やってるゲームの修正やれる体制作れよ",
+    "authorization_date": "2026-10-25",
+    "setup_main_integration_authorized": true,
+    "cloud_scheduled_game_fixes_authorized": true,
+    "routine_edit_approval_required": false,
+    "recurring_ai_authorized": true,
+    "recurring_ai_scope": "Existing ChatGPT connected-GitHub task only; hourly draft PR creation and repair.",
+    "new_inference_authorized": false,
+    "new_inference_scope": "No new Gemini/external provider API invocation, key read, model/cap/billing change. Existing ChatGPT task execution is authorized.",
+    "automatic_merge_authorized": false,
+    "roblox_publish_authorized": false,
+    "gemini_trial": "CONSUMED_SINGLE_RUN",
+    "prerequisite": "Routine connected-GitHub edits/tests/draft PRs no longer wait for another 進めて. Main integration of future game fixes, external provider inference and Roblox publication still require their existing approvals. Validate the registered task by its service run, actual code PR and matching CI, not registration alone.",
+    "setup_pr": 34,
+    "setup_merge_status": "COMPLETED"
+  },
+  "completed": [
+    "Complete the owner-requested repository setup by merging PR #34 at 40c79ae0f06d472ed5a1184d5c27d9421afee3c0 using reviewed head 829d25515f75479ec606edda8fbbab64db476fd5.",
+    "Confirm exact reviewed tree 7a0655b4b61dfef30c466768ae3d086889ccf3fa, all 13 reviewed setup blobs, 62 untouched blob/mode matches and all four unchanged game sources.",
+    "Verify setup post-merge QA 40108475671 and handoff 40108475650 both pass, including 61 Python tests, all legacy native controls, compiler and installer checks.",
+    "Read the new enabled config on the actual main merge, then request a single real automation validation run. The service confirmed acceptance without changing the existing hourly schedule.",
+    "Verify the service run completed at 2026-10-24T15:50:27.202124Z; latest_result run_id matches the requested run and was created after its start. No delivery claim is made.",
+    "Independently fetch actual draft PR #35, its two changed files, head 116ab1fd56d736d10994008dfcdabaccd76afce9 and tree bd98f2e95c0dad162c25fa4f795f3d7cd556858a; all 75 pre-existing files/modes remain identical.",
+    "Verify exact-head CI 40108773948 passes. The trusted-base path gate ran successfully, all three AUTO_PRODUCTION regressions passed, and all prior QA remained successful.",
+    "Record first_run_verified for this narrow code-producing regression PR trial. No gameplay defect was fixed, no game source was changed and no automatic main merge was performed.",
+    "Clarify the saved task prompt: accepted main regressions/history stay protected, while defects in the task own unmerged additions can be repaired on the same draft PR without weakening assertions."
+  ],
+  "qa": {
+    "setup_pre_merge": "https://github.com/kk051780/toy-wars-factory/actions/runs/40108366305",
+    "setup_post_merge": "https://github.com/kk051780/toy-wars-factory/actions/runs/40108475671",
+    "setup_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40108475650",
+    "setup_conclusions": "ALL_SUCCESS",
+    "python_tests": 61,
+    "first_automated_code_pr": "https://github.com/kk051780/toy-wars-factory/pull/35",
+    "first_automated_code_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40108773948",
+    "first_automated_code_head": "116ab1fd56d736d10994008dfcdabaccd76afce9",
+    "new_auto_regressions_pass": 3,
+    "trusted_base_scope_gate": "PASS_EXECUTED",
+    "first_automated_code_conclusion": "SUCCESS",
+    "activation_record_local_python": "PASS_61",
+    "activation_record_local_policy": "PASS_21"
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 678,
+    "lua_bytes": 26753
+  },
+  "characters_touched": [],
+  "external_provider_calls": 0,
+  "provider_credentials_read": false,
+  "changed_files": [
+    "PROJECT_STATE.json",
+    "config/autonomous_repair.json",
+    "docs/AUTOMATION_READINESS.md",
+    "docs/AUTONOMOUS_REPAIR.md",
+    "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+    "history/C00019_chatgpt_repair_activation.json"
+  ],
+  "generated_files": [
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "limitations": [
+    "One scheduled service execution and matching regression-code PR/CI are verified; repeated long-term operation is not yet proven.",
+    "The first automatic change is three production/purchase regressions, not a reproduced gameplay-source bug fix.",
+    "PR #35 remains draft/unmerged. Routine development continues without a user prompt, while main integration, independent review and Roblox publication conditions remain unchanged.",
+    "Recorded notification delivery is unknown. Completion, actual code files and exact-head successful CI provide the evidence.",
+    "Gemini/external provider API and financial-bound blockers remain held; no model/cap/billing or credential changes."
+  ],
+  "next_action": "Continue the hourly task without routine user prompts. PR #35 CI passed; preserve its work and choose the next bounded defect or meaningful regression on the same draft branch. Main integration and release still require their existing approvals.",
+  "file_size_deltas": {
+    "PROJECT_STATE.json": {
+      "before": 25921,
+      "after": 28014,
+      "delta": 2093
+    },
+    "config/autonomous_repair.json": {
+      "before": 913,
+      "after": 1303,
+      "delta": 390
+    },
+    "docs/AUTOMATION_READINESS.md": {
+      "before": 1889,
+      "after": 2159,
+      "delta": 270
+    },
+    "docs/AUTONOMOUS_REPAIR.md": {
+      "before": 4049,
+      "after": 4275,
+      "delta": 226
+    },
+    "ops/CHATGPT_GAME_REPAIR_PROMPT.md": {
+      "before": 5463,
+      "after": 5666,
+      "delta": 203
+    },
+    "history/C00019_chatgpt_repair_activation.json": {
+      "before": 0,
+      "after": 7376,
+      "delta": 7376
+    }
+  },
+  "timezone": "Asia/Tokyo"
+}
