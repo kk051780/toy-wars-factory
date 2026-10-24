@@ -49,8 +49,20 @@ it fail exactly the two NaN cases. Every other old-server fixture must pass.
 The canonical fixed-server run must succeed. Both logs are archived as
 `twf-server-event-fixtures-not-engine`; existing QA gates remain required.
 
-The current main-based candidate includes the separately proposed selector,
-backfill and lifecycle fixes from #28/#29; those source proposals remain open.
-The new numeric fix changes two lines, adds 14 UTF-8 bytes and adds no gameplay
-feature, price or character changes. Main still has its original game source
-until this candidate is reviewed and approved. Gemini remains held.
+The owner-approved [PR #30](https://github.com/kk051780/toy-wars-factory/pull/30)
+merged at `1e29505f62192597de6019f97a8b87447b1998e8`. It includes the separately
+proposed selector/backfill and lifecycle fixes from #28/#29; those source
+proposals remain open and their gameplay changes must not be applied again.
+The numeric fix changes two lines and adds 14 UTF-8 bytes relative to #29.
+The full integration changes only the server among the four game Lua files:
+25,726 bytes / 663 lines before, 26,559 bytes / 676 lines after (+833 / +13).
+Character definitions, stats, prices and roles are unchanged.
+
+[Post-merge main QA](https://github.com/kk051780/toy-wars-factory/actions/runs/40102033728)
+and [handoff verification](https://github.com/kk051780/toy-wars-factory/actions/runs/40102033772)
+both passed on the merge commit. QA includes the exact pre-fix negative control,
+all 27 fixed-server event fixtures, 53 Python tests, 37 balance assertions plus
+4,000 stress cases, 21 policy checks, exact official compiler regeneration,
+installer hashes and deterministic handoff. C00014 records the completed merge
+and supersedes the historical draft state in C00011-C00013. Gemini remains held;
+Roblox release remains on HOLD pending actual engine and player evidence.
