@@ -1,6 +1,6 @@
 {
   "project": "TOY WARS FACTORY",
-  "version": "2.3-github-bootstrap-main-v1",
+  "version": "2.5-one-shot-agent-trial-blocked",
   "updated_at": "2026-10-24",
   "github": {
     "repository": "kk051780/toy-wars-factory",
@@ -18,10 +18,21 @@
   "autonomous_coding": {
     "status": "NOT_ACTIVE_AI_INFERENCE_UNVERIFIED",
     "schedule_target_minutes": 20,
-    "agentic_workflow_compiled": false,
+    "agentic_workflow_compiled": true,
     "workflow_run_verified": false,
     "workflow_source_compiled_in_ci": true,
-    "reason": "Compile-only probe passed, but .lock.yml not committed and no authenticated agent coding run."
+    "reason": "2026-10-24 first owner-authorized one-shot AI trial started Copilot CLI but auto selected claude-sonnet-5.5 was rejected: HTTP 400 The requested model is not supported; no inference completion, no game code modification, no AI PR. No further run authorized.",
+    "one_shot_trial": {
+      "status": "BLOCKED_MODEL_NOT_SUPPORTED",
+      "run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40051896515",
+      "incident_url": "https://github.com/kk051780/toy-wars-factory/issues/8",
+      "model_auto_resolved": "claude-sonnet-5.5",
+      "failure": "400 The requested model is not supported",
+      "source_delta_lines": 0,
+      "agent_generated_pr": false,
+      "repeat_authorized": false,
+      "trigger": "ops/ONE_SHOT_APPROVED_20261024.json"
+    }
   },
   "migrated_assets": {
     "balance_rules": "PRESENT_SHA_VERIFIED",
@@ -51,11 +62,12 @@
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
-    "AI engine: confirm private repo user Copilot entitlement and budget before activating inference",
-    "Compile and commit gh-aw lockfile only after auth; prove actual unattended PR",
-    "Add original mocked server integration regression from v2.3",
-    "Connect genuine Roblox engine and 2-client/mobile visual test",
-    "Ship owner-approved game only after release-grade evidence"
+    "Verify personal Copilot plan/model access; 400 unsupported auto-selected claude-sonnet-5.5 (TWF-0004)",
+    "Prepare a distinct one-off explicit accessible-model trial ONLY after fresh owner approval",
+    "Never rerun prior single-use marker; 20-minute auto AI coding PR #6 remains draft/unmerged",
+    "Migrate mocked Roblox server integration regression from v2.3",
+    "Connect actual Roblox Studio/Open Cloud 2-player/mobile character visual QA",
+    "Never publish game without runtime evidence and owner approval"
   ],
   "tracked_metrics": {
     "lua_source_files": 4,
