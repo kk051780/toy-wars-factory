@@ -17,7 +17,8 @@ Only matching `diff --git` summaries were inspected. Unexpected headers, a misma
 - Require each `diff --git` section to contain a valid summary and exactly one `---` / `+++` header, with matching paths or `/dev/null`.
 - Reject traversal segments (`.`, `..`), empty segments, absolute paths and backslashes before allowlisting.
 - Reject malformed headers, stray content, and rename/copy directives.
-- Add four offline regression cases: forged destination, traversal, malformed extra header and missing destination header.
+- Inspect added source lines that start with `++` (shown as `+++...` in a unified diff); exclude only actual `+++ ` file-header lines from credential scans.
+- Add five offline regression cases: forged destination, traversal, malformed extra header, missing destination header, and a credential hidden on an added line beginning with plus characters.
 - Preserve the existing second Gemini API review and all owner approval/release restrictions.
 
 ## Remaining limits
