@@ -44,13 +44,25 @@
   "priority_backlog": [
     {
       "id": "walkable_floor_collision",
-      "status": "REPRODUCTION_READY",
+      "status": "DRAFT_FIX_VERIFIED",
       "target": "src/ToyWarsServer.server.lua",
       "observed_main": "0e66049e95bc555bfb2a12aeafe46e73ea420c90",
       "server_blob": "8d6a40fcb602a728f8876ca62194a0acb4bb45b9",
       "observation": "Whole-server native probe found CanCollide=false for FeltBattlefield, FactoryFloor and LobbyGround.",
       "required_fix": "Make only these three player floor parts collidable; preserve non-collidable decorations and units.",
-      "required_test": "Whole-server floor properties and non-collidable decorations; optional pinned old-server negative control. No engine or actual falling claim."
+      "required_test": "Whole-server floor properties and non-collidable decorations; optional pinned old-server negative control. No engine or actual falling claim.",
+      "pull_request": 38,
+      "head": "b8e543ada9e5613486cbcfc1819a3aba8cc7932c",
+      "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40137069031",
+      "merged": false
     }
-  ]
+  ],
+  "queue_runtime_verified": true,
+  "queue_runtime_verification": {
+    "run_id": "039874ac-64a0-8323-bc57-5c35cf58ec90",
+    "code_pr": 38,
+    "head": "b8e543ada9e5613486cbcfc1819a3aba8cc7932c",
+    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40137069031",
+    "scope": "ONE_SOURCE_CHANGING_UUID_LANE; TASK_ENABLED_AFTER_RUN; NOT_LONG_TERM_PROOF"
+  }
 }

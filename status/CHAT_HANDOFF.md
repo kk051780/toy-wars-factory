@@ -4,10 +4,10 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: 6490802297a91a764b786f4515f0c1200e2ef763
+- 基準ソースコミット: 5bf0a54f097507a6ecd55476b911805da0504815
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 既存GitHub AIワークフロー: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
-- ChatGPT定期ゲーム修正: ENABLED_QUEUE_V2_DEPLOYMENT_PENDING
+- ChatGPT定期ゲーム修正: ENABLED_QUEUE_V2_GAME_SOURCE_FIX_VERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
 - PvP: NOT_IMPLEMENTED
 - 協力: NOT_IMPLEMENTED
@@ -26,36 +26,39 @@
 - Studio: NOT_RUN
 - マルチクライアント: NOT_RUN
 - スマホ表示: NOT_RUN
-- 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40108475671（最新Actionsを別途確認すること）
+- 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40136758867（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- Read C00023 and the actual automation service state. C00019 enabled-state observation became stale: the worker later paused itself for PR #35 review wait. This incident is now documented.
-- Deploy queue v2 and verify the resumed task produces a new independent source-fix PR while preserving successful PR #35. Do not merge PR #35 or other game proposals without their existing authorization.
-- Use the three-PR queue and tools/repair_queue.py. Never let a scheduled worker modify/disable its task. When full, wait and recheck rather than asking for another routine 進めて.
-- Prioritize the reproduced walkable-floor collision property defect. Require whole-server regression evidence, exact source-size history and unchanged decorative/character behavior.
-- Keep independent review, no automatic main merge, Gemini/external API holds, original 10-AIC cap and Roblox release HOLD. Native attributes do not prove real physics or playability.
+- Queue v2 setup PR #37 is merged and post-merge QA/handoff passed. Do not request that setup approval again.
+- Read C00025 and the live task state. The worker now produced a real game-source fix in PR #38 on an independent UUID lane, with CI 40137069031 successful; PR #35 was preserved.
+- Continue ordinary hourly code work without another 進めて. Prioritize failed CI, otherwise start a different issue if fewer than three review PRs remain. Full queues wait without scheduler mutation.
+- PRs #35 and #38 remain draft/unmerged. Main metrics are still 678 lines / 26,753 bytes. Native floor properties do not establish actual Roblox physics or release readiness.
+- Keep owner integration approvals, independent review, model/cap/billing/credential controls and all Gemini/Roblox publication holds. Check service and GitHub state rather than treating this snapshot as live state.
 
 ## 最新の再開地点（観測時点の記録）
-- 記録: C00023 / 2026-10-25
-- 照合したmain: 0e66049e95bc555bfb2a12aeafe46e73ea420c90
-- 証拠: history/C00023_queue_continuity_setup.json
-- 完了: Read actual task state and matched latest service result: task was disabled after run c7058bdc-64e4-8332-95ba-06037acb5d28 reported self-pausing for PR #35 integration wait.
-- 完了: Confirm PR #35 evolved to seven added files, six commits and successful exact-head CI 40114787373 after repairing its own wave-fixture mistakes. Preserve that review-ready work.
-- 完了: Implement a bounded queue: failed CI first, pending CI wait, successful PRs preserved, fresh main-based UUID branch if under three open PRs, full queue waits without scheduler changes.
-- 完了: Add branch namespace validation for both legacy and UUID lanes and apply the existing trusted-base scope check to the full repair namespace. No path permissions or QA gates are removed.
-- 完了: Resume the existing hourly task with explicit prohibition of self-disabling or scheduler changes. The new prompt waits for queue_version>=2 on main before edits.
-- 完了: Execute whole-server native baseline property probe: FeltBattlefield, FactoryFloor and LobbyGround all have CanCollide=false. Prepare this concrete source defect for the next automatic repair trial; no physics/Studio claim.
-- 完了: Keep all four game sources unchanged in this controller setup; exact source baseline/history and all model/cap/credential/release holds are preserved.
+- 記録: C00025 / 2026-10-25
+- 照合したmain: efa4e67fd0cebe211a0696bb5ce0642d30cb3e58
+- 証拠: history/C00025_queue_source_fix_verified.json
+- 完了: Deploy queue v2 through PR #37 at efa4e67fd0cebe211a0696bb5ce0642d30cb3e58 using reviewed head f17a6d5c873f3234600a2e9d711aad0c55d1286e and exact tree 7a9ae89c80e00b903984f5e9d7a295cb21227f81.
+- 完了: Confirm post-merge controller QA 40136758867 and handoff 40136758840 both pass, retaining all source, quality and provider holds.
+- 完了: Validate real service run 039874ac-64a0-8323-bc57-5c35cf58ec90: completed result matches its run ID and time, and task remains enabled on its unchanged hourly schedule.
+- 完了: Verify the worker chose START with open_prs [35] and limit 3, created a new main-based UUID lane and draft PR #38, while review-ready PR #35 head stayed 1fdc549d0d708230cc642b18ceb020f28efa0806.
+- 完了: Inspect actual game patch: only FeltBattlefield, FactoryFloor and LobbyGround gain CanCollide=true. Server grows 160 bytes/3 lines; character stats, prices and decorative/unit collision remain unchanged.
+- 完了: Verify exact-head CI 40137069031 succeeds on b8e543ada9e5613486cbcfc1819a3aba8cc7932c, including UUID namespace/scope gate, five native floor cases with pinned old-server control, 74 Python tests and all previous gates.
+- 完了: Independently execute the new regression against old and fixed server snapshots: old has two failing cases, fixed all four canonical cases pass. The local pinned control was absent and skipped; CI executed it successfully.
+- 完了: Compare the actual candidate tree: 78 existing blobs/modes are unchanged and only three allowed files differ. Keep the source fix draft/unmerged and main source at 26,753 bytes.
 - 新規推論承認: False
 - 定期AI承認: True
 - 自動マージ承認: False
 - Roblox公開承認: False
 - 再実行の前提: Routine connected-GitHub edits/tests/draft PRs no longer wait for another 進めて. Main integration of future game fixes, external provider inference and Roblox publication still require their existing approvals. Validate the registered task by its service run, actual code PR and matching CI, not registration alone.
-- 再開する作業: Deploy queue v2, then validate one real automatic game-source fix on a new UUID branch while PR #35 remains review-ready. Verify the task stays enabled. Keep failed-CI repair priority, three-PR cap and all existing merge/provider/release boundaries.
-- 未確認・制限: The new queue/scheduler behavior and a source-changing automatic repair still need real service/PR/CI validation after deployment.
-- 未確認・制限: The queue is limited to three pending draft PRs; integration remains an owner decision, and full capacity must wait without disabling the task.
-- 未確認・制限: Floor baseline proves object properties in native Lua substitutes only, not Roblox physics, actual falling, mobile or multiplayer.
-- 未確認・制限: Gemini/external API, automatic main merge and Roblox publication remain held.
+- 再開する作業: Continue the enabled hourly task under queue v2. Preserve review-ready PRs #35 and #38; CI failures are repaired first, successful work is not mixed with a new issue, and one remaining queue slot can start another main-based repair. A full queue waits and rechecks without self-disabling. Main game integration and Roblox publication still require their existing approvals.
+- 未確認・制限: Queue v2 has one verified source-changing run and an enabled-state observation after completion; this is not a guarantee of indefinite operation or every future wait state.
+- 未確認・制限: Up to three draft PRs may wait for review. The task stays enabled and rechecks capacity, but cannot auto-merge or publish without existing approvals.
+- 未確認・制限: PR #38 is unmerged. Main still has four Lua files / 678 lines / 26,753 bytes; candidate metrics 681 lines / 26,913 bytes must not be represented as applied.
+- 未確認・制限: Native tests verify collision attributes, not Roblox physics, actual falling, multiplayer, mobile or visual/player experience.
+- 未確認・制限: Notification delivery is unknown. Service result, actual source commit/PR and exact-head CI are the evidence.
+- 未確認・制限: Gemini input/financial blockers, provider transports, 10-AIC cap and release HOLD are preserved.
 
 ## 未マージの提案（現在のPR状態はGitHubで再確認）
 - PR #29: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Guard deferred workshop teleport against disconnect/respawn race / https://github.com/kk051780/toy-wars-factory/pull/29
