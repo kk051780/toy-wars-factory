@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "epoch": 0,
+  "holder": null,
+  "authorized_tasks": {
+    "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+    "META": "6add445e4138819197d9cf2b1a02534d"
+  },
+  "approval_packet": {
+    "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
+    "items": [
+      {
+        "number": 35,
+        "title": "[TWF auto-fix] Cover production, wave escape and base-loss reset",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/35",
+        "head": "1fdc549d0d708230cc642b18ceb020f28efa0806",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40114787373",
+        "summary": "生産3件・ウェーブ2件・敗北リセット1件の回帰検査。ゲーム本体の変更なし。",
+        "changed_files": [
+          "history/C00018_heartbeat_production_regression.json",
+          "history/C00020_wave_escape_regression.json",
+          "history/C00021_base_loss_reset_regression.json",
+          "history/C00022_wave_status_fixture_fix.json",
+          "tests/auto/base_loss_reset_spec.lua",
+          "tests/auto/production_spec.lua",
+          "tests/auto/wave_escape_spec.lua"
+        ],
+        "kind": "回帰検査追加"
+      },
+      {
+        "number": 38,
+        "title": "[TWF auto-fix] Restore collision on three walkable floors",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/38",
+        "head": "b8e543ada9e5613486cbcfc1819a3aba8cc7932c",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40137069031",
+        "summary": "戦場・工場・ロビーの床だけ衝突を有効化。追加5検査が合格。",
+        "changed_files": [
+          "history/C00024_walkable_floor_collision_fix.json",
+          "src/ToyWarsServer.server.lua",
+          "tests/auto/walkable_floors_spec.lua"
+        ],
+        "kind": "ゲーム本体修正"
+      },
+      {
+        "number": 40,
+        "title": "[TWF auto-fix] Test factory upgrade economy boundaries",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/40",
+        "head": "f172f71119479ba0cafafb2a2163b3b6e61ce39c",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40138956623",
+        "summary": "工場アップグレードの不足金額・ぴったり購入・上限・収入の4検査。ゲーム本体の変更なし。",
+        "changed_files": [
+          "history/C00026_upgrade_economy_regression.json",
+          "tests/auto/upgrade_economy_spec.lua"
+        ],
+        "kind": "回帰検査追加"
+      }
+    ],
+    "roblox_publish_authorized": false,
+    "automatic_merge_authorized": false,
+    "observed_at": "2026-10-24T23:55:32.797750+00:00",
+    "signature": "b08762fc5138a612cfd69c00e5265e2df843fd31e66db923f7ae167c2b745a7e",
+    "approval_text": "#35・#38・#40のmain取り込みを承認"
+  },
+  "last_reported_approval_signature": null,
+  "last_completed": null
+}
