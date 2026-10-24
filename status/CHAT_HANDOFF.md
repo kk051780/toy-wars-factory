@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: 4db345768835587d8f40b97eb032df4d0c89207d
+- 基準ソースコミット: 54606e54f36865e0bfa463db1328eae264f6ed03
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 自律AI開発: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
@@ -28,11 +28,12 @@
 - 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40047378300（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- AI engine: confirm private repo user Copilot entitlement and budget before activating inference
-- Compile and commit gh-aw lockfile only after auth; prove actual unattended PR
-- Add original mocked server integration regression from v2.3
-- Connect genuine Roblox engine and 2-client/mobile visual test
-- Ship owner-approved game only after release-grade evidence
+- Verify personal Copilot plan/model access; 400 unsupported auto-selected claude-sonnet-5.5 (TWF-0004)
+- Prepare a distinct one-off explicit accessible-model trial ONLY after fresh owner approval
+- Never rerun prior single-use marker; 20-minute auto AI coding PR #6 remains draft/unmerged
+- Migrate mocked Roblox server integration regression from v2.3
+- Connect actual Roblox Studio/Open Cloud 2-player/mobile character visual QA
+- Never publish game without runtime evidence and owner approval
 
 ## 新しいチャットでAIが必ず行う引き継ぎ手順
 1. GitHubコネクタでこのファイルと status/LATEST_STATE.json、PROJECT_STATE.json、AGENTS.md、config/quality_policy.json を読み込む。
