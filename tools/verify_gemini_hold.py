@@ -22,7 +22,7 @@ def verify_hold(root):
     jobs = {match[1]: jobs_text[match.end():headers[i + 1].start() if i + 1 < len(headers) else len(jobs_text)] for i, match in enumerate(headers)}
     if set(jobs) != {"pre_activation", "activation", "agent", "detection", "safe_outputs", "conclusion"}:
         raise ValueError("unexpected compiled jobs require independent hold review")
-    if re.findall(r"^    if:\s*(.*?)\s*$", jobs["pre_activation"], re.MULTILINE) != ["${{ false }}"]:
+    if re.findall(r"^    if:\s*(.*?)\s*$", jobs["pre_activation"], re.MULTILINE) != ["false"]:
         raise ValueError("pre_activation must contain one literal false hold")
     # Existing downstream needs/conditions must remain. No provider job is independent.
     for name, parent in (("activation", "pre_activation"), ("agent", "activation")):
@@ -31,13 +31,14 @@ def verify_hold(root):
         conditions = re.findall(r"^    if:\s*(.*?)\s*$", jobs[name], re.MULTILINE)
         if len(conditions) != 1 or re.search(r"\b(?:always|cancelled|failure)\s*\(", conditions[0]) or "||" in conditions[0]:
             raise ValueError(name + " must preserve dependency success gating")
-        if name == "activation" and "needs.pre_activation.outputs.activated == 'true'" not in conditions[0]:
+        if name == "activation" and conditions[0] != "needs.pre_activation.outputs.activated == 'true' && (false)":
             raise ValueError("activation must require a successful held pre_activation")
     for name in ("detection", "safe_outputs"):
         if not re.search(r"^      - agent\s*$", jobs[name], re.MULTILINE):
             raise ValueError(name + " must depend on held agent")
         conditions = re.findall(r"^    if:\s*(.*?)\s*$", jobs[name], re.MULTILINE)
-        if len(conditions) != 1 or "needs.agent.result != 'skipped'" not in conditions[0]:
+        expected = "always() && needs.agent.result != 'skipped'" if name == "detection" else "(!cancelled()) && needs.agent.result != 'skipped' && needs.detection.result == 'success'"
+        if conditions != [expected]:
             raise ValueError(name + " must reject a skipped agent")
     if "GEMINI_API_KEY" in jobs["conclusion"]:
         raise ValueError("conclusion must not have Gemini credential access")

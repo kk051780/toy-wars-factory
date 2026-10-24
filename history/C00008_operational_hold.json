@@ -25,7 +25,13 @@
     "version": "v0.93.2",
     "observed_tag_commit": "764fdc608e552558e4e15ffebec8e2953feb18d7",
     "source": "https://github.github.com/gh-aw/reference/frontmatter/#conditional-execution-if",
-    "exact_regeneration_ci": "PENDING"
+    "exact_regeneration_ci": "PENDING",
+    "initial_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40075756193",
+    "initial_compile": "PASS",
+    "initial_inspection": "FAILED_EXPECTED_EXPRESSION_WRAPPER_INSTEAD_OF_GENERATED_BOOLEAN_FALSE",
+    "correction": "Adopt exact official artifact; require generated false pre-activation plus additional false activation guard.",
+    "artifact_sha256": "0b315f96df133201804601f59b75b9ccb13aa6cbbd64757c01c9c7ab000e5fa9",
+    "generated_lock_sha256": "4ab58352b2a2602ffbae613b60a4ded58cfb2002b2cb71fb2347328f7ed8010f"
   },
   "verification": {
     "python_tests": "PASS_43_LOCAL",
@@ -94,8 +100,8 @@
     },
     ".github/workflows/twf-gemini-free-trial.lock.yml": {
       "before": 129737,
-      "after": 129758,
-      "delta": 21
+      "after": 129762,
+      "delta": 25
     },
     "tools/gemini_patch_gate.py": {
       "before": 7815,
@@ -104,8 +110,8 @@
     },
     "tools/verify_gemini_hold.py": {
       "before": 0,
-      "after": 3238,
-      "delta": 3238
+      "after": 3368,
+      "delta": 3368
     },
     "tests/test_gemini_patch_gate.py": {
       "before": 4674,
@@ -114,23 +120,23 @@
     },
     "tests/test_gemini_operational_hold.py": {
       "before": 0,
-      "after": 5595,
-      "delta": 5595
+      "after": 5588,
+      "delta": 5588
     },
     "docs/GEMINI_OPERATIONAL_HOLD.md": {
       "before": 0,
-      "after": 3984,
-      "delta": 3984
+      "after": 4446,
+      "delta": 4446
     },
     "PROJECT_STATE.json": {
       "before": 13865,
-      "after": 14596,
-      "delta": 731
+      "after": 14694,
+      "delta": 829
     },
     "history/C00008_operational_hold.json": {
       "before": 0,
-      "after": 4425,
-      "delta": 4425
+      "after": 4965,
+      "delta": 4965
     }
   }
 }

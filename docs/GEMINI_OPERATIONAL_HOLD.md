@@ -23,6 +23,8 @@ The original 33.713 modeled AIC remains distinct from unverified provider billin
 - The authored frontmatter uses literal `if: ${{ false }}`. The pinned official
   compiler generates the hold before activation. The existing marker, variables,
   environment flags and key presence cannot satisfy a literal false condition.
+  Its exact output uses `if: false` on pre-activation and appends `&& (false)`
+  to activation. Both conditions are retained, without manual lock rewriting.
 - `scan_online` is a terminal compatibility entry point. The direct HTTP
   implementation was removed; there is no environment switch or injected
   transport that releases this hold. The CLI exits **2 (BLOCKED)** before reading
@@ -51,6 +53,10 @@ at commit `764fdc608e552558e4e15ffebec8e2953feb18d7`), recompiles the Markdown,
 checks the held dependency graph and requires the resulting lock file to equal
 the checked-in lock byte for byte. Compiling does not execute the workflow.
 The compiler output is retained as an artifact, including on validation failure.
+The first CI compiled successfully and exposed these normalizations; its
+inspection correctly stopped because the draft expected expression-wrapper
+spelling. The exact compiler artifact was then adopted and the checker corrected
+to require the generated literal false and the additional activation guard.
 
 Source for supported frontmatter conditions:
 https://github.github.com/gh-aw/reference/frontmatter/#conditional-execution-if

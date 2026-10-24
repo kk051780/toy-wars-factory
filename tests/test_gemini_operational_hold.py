@@ -100,7 +100,7 @@ class GeminiOperationalHoldTests(unittest.TestCase):
             for name in ("twf-gemini-free-trial.md", "twf-gemini-free-trial.lock.yml"):
                 source = (ROOT / ".github/workflows" / name).read_text()
                 if name.endswith(".yml"):
-                    source = source.replace("    if: ${{ false }}\n", "")
+                    source = source.replace("    if: false\n", "")
                 (root / ".github/workflows" / name).write_text(source)
             with self.assertRaisesRegex(ValueError, "pre_activation"):
                 verify_hold(root)

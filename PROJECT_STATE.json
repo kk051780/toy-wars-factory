@@ -156,7 +156,7 @@
       "Add literal-false source/compiled pre-activation hold; marker edits and environment flags cannot release it.",
       "Invalidate stale safe verdict artifacts on every scanner CLI attempt, including offline and blocked attempts.",
       "Pass all 43 Python tests, including 10 new operational hold regressions; retain pure verdict-schema tests.",
-      "Add pinned official compiler regeneration and exact lock comparison to offline CI; verify result before claiming CI success."
+      "Official gh-aw v0.93.2 compiled the hold successfully in CI 40075756193; adopted the exact artifact with literal false pre-activation and an additional false activation guard. Exact regeneration CI remains to be confirmed."
     ],
     "evidence_record": "history/C00008_operational_hold.json",
     "authorization": {

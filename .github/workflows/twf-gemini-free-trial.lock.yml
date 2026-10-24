@@ -80,7 +80,7 @@ jobs:
   activation:
     name: activation
     needs: pre_activation
-    if: needs.pre_activation.outputs.activated == 'true'
+    if: needs.pre_activation.outputs.activated == 'true' && (false)
     runs-on: ubuntu-slim
     # Permissions for the activation job (workflow permissions default to none).
     permissions:
@@ -1845,7 +1845,7 @@ jobs:
 
   pre_activation:
     name: pre_activation
-    if: ${{ false }}
+    if: false
     runs-on: ubuntu-slim
     env:
       GH_AW_RUNTIME_FEATURES: ${{ vars.GH_AW_RUNTIME_FEATURES }}
