@@ -25,6 +25,15 @@ FORBIDDEN_PATTERNS=(
     (r"(?i)\b(?:GH_AW_DEFAULT_DETECTION|COPILOT_GITHUB_TOKEN|GEMINI_API_KEY)\s*=\s*['\"][^'\"]+","Hardcoded workflow credential"),
 )
 
+def _approved_path(path):
+    """Reject traversal and ambiguous patch paths before prefix allowlisting."""
+    if not path or "\\\\" in path or "\\x00" in path or path.startswith("/"):
+        return False
+    if any(part in ("", ".", "..") for part in path.split("/")):
+        return False
+    return path.startswith(ALLOWED_PREFIX) or path in ALLOWED_EXACT
+
+
 def check_patch(patch):
     if not isinstance(patch,str) or not patch.strip():
         return ["Missing/empty patch"]
@@ -33,15 +42,36 @@ def check_patch(patch):
     issues=[]
     if "GIT binary patch" in patch or "Binary files " in patch:
         issues.append("Binary diff not reviewable")
-    files=re.findall(r"(?m)^diff --git a/(\S+) b/(\S+)\s*$",patch)
-    if not files:
+
+    # Git applies the --- / +++ file headers, not just the diff --git summary.
+    # Validate every section and require these paths to agree before allowing it.
+    blocks=re.split(r"(?=^diff --git )",patch,flags=re.MULTILINE)
+    if not any(block.startswith("diff --git ") for block in blocks):
         issues.append("Missing diff file headers")
-    for src,dest in files:
+    for block in blocks:
+        if not block.startswith("diff --git "):
+            if block.strip():
+                issues.append("Unexpected content outside diff sections")
+            continue
+        header=block.splitlines()[0]
+        match=re.fullmatch(r"diff --git a/(\\S+) b/(\\S+)",header)
+        if not match:
+            issues.append("Malformed diff file header")
+            continue
+        src,dest=match.groups()
         if src!=dest:
             issues.append("Rename/move requires separate review")
-        if not (dest.startswith(ALLOWED_PREFIX) or dest in ALLOWED_EXACT):
+        if not _approved_path(src) or not _approved_path(dest):
             issues.append("Change to unapproved path")
-    plus_lines="\n".join(line[1:] for line in patch.splitlines() if line.startswith("+") and not line.startswith("+++"))
+        lines=block.splitlines()
+        for marker,expected in (("--- ","a/"+src),("+++ ","b/"+dest)):
+            declared=[line[len(marker):] for line in lines if line.startswith(marker)]
+            if len(declared)!=1 or declared[0] not in (expected,"/dev/null"):
+                issues.append("Inconsistent patch file path")
+        if any(line.startswith(("rename from ","rename to ","copy from ","copy to ")) for line in lines):
+            issues.append("Rename/move requires separate review")
+
+    plus_lines="\\n".join(line[1:] for line in patch.splitlines() if line.startswith("+") and not line.startswith("+++"))
     for pattern,label in FORBIDDEN_PATTERNS:
         if re.search(pattern,plus_lines):
             issues.append(label)
