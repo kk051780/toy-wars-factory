@@ -50,4 +50,22 @@ class GeminiPatchGateTests(unittest.TestCase):
         out={"candidates":[{"content":{"parts":[{"text":'{"safe":true,"reasons":["bad"]}'}]}}]}
         with self.assertRaises(RuntimeError): scan_online(GOOD,"dummy",lambda _:json.dumps(out).encode())
 
+    def test_mismatched_git_target_path_rejected(self):
+        # Git apply uses the +++ target, even when diff --git claims an allowed src path.
+        forged=GOOD.replace("+++ b/src/combat.lua","+++ b/.github/workflows/hijack.yml")
+        self.assertIn("Inconsistent patch file path",check_patch(forged))
+
+    def test_traversal_inside_allowed_prefix_rejected(self):
+        forged=GOOD.replace("src/combat.lua","src/../.github/workflows/hijack.yml")
+        self.assertIn("Change to unapproved path",check_patch(forged))
+
+    def test_malformed_extra_diff_header_rejected(self):
+        forged=GOOD+"diff --git a/src/name with spaces b/src/name with spaces\n"
+        self.assertIn("Malformed diff file header",check_patch(forged))
+
+    def test_missing_target_header_rejected(self):
+        forged=GOOD.replace("+++ b/src/combat.lua","")
+        self.assertIn("Inconsistent patch file path",check_patch(forged))
+
+
 if __name__=="__main__": unittest.main()
