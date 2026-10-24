@@ -7,7 +7,8 @@ local player = h:addPlayer(h:newPlayer())
 local coins = assert(player:FindFirstChild("leaderstats"):FindFirstChild("Coins"))
 
 local function status(name)
-    return assert(h:status(player, name), "missing status: " .. name).Value
+    local value = name == "Wave" and player:FindFirstChild("leaderstats"):FindFirstChild("Wave") or h:status(player, name)
+    return assert(value, "missing status: " .. name).Value
 end
 
 local function eq(actual, expected, context)

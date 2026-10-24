@@ -28,6 +28,10 @@ local function fixture()
     return h, player, coins
 end
 
+local function waveValue(player)
+    return assert(player:FindFirstChild("leaderstats"):FindFirstChild("Wave")).Value
+end
+
 local function tickWithoutPurchases(h, coins)
     -- Isolate enemy-wave behavior: a zero balance before each tick keeps
     -- automatic production from creating allies that kill incoming JUNK.
@@ -39,7 +43,7 @@ check("first wave respects grace period before spawning JUNK", function()
     local h, player, coins = fixture()
     for _ = 1, 14 do tickWithoutPurchases(h, coins) end
     eq(h:status(player, "Enemies").Value, 0, "grace-period enemies")
-    eq(h:status(player, "Wave").Value, 1, "initial wave")
+    eq(waveValue(player), 1, "initial wave")
     tickWithoutPurchases(h, coins)
     eq(h:status(player, "Enemies").Value, 1, "first JUNK spawned")
     eq(h:status(player, "BaseHP").Value, 100, "base before escape")
@@ -50,14 +54,14 @@ check("five unopposed JUNK escapes damage base and advance wave", function()
     local completedAt
     for i = 1, 100 do
         tickWithoutPurchases(h, coins)
-        if h:status(player, "Wave").Value == 2 then
+        if waveValue(player) == 2 then
             completedAt = i
             break
         end
     end
     assert(completedAt, "wave 1 did not finish within 30 simulated seconds")
     eq(B.waveSize(1), 5, "canonical first-wave size")
-    eq(h:status(player, "BaseHP").Value, 40, "five escapes at 12 damage")
+    eq(h:status(player, "BaseHP").Value, 58, "five escapes at 12 damage, then 18 HP wave-clear heal")
     eq(h:status(player, "Enemies").Value, 0, "cleared enemy status")
     eq(h:status(player, "Allies").Value, 0, "no purchased allies")
     eq(player:FindFirstChild("leaderstats"):FindFirstChild("Defeated").Value, 0, "no ally kills")
