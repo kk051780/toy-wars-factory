@@ -1,0 +1,56 @@
+{
+  "id": "C00020",
+  "date": "2026-10-25",
+  "kind": "SCHEDULED_NATIVE_WAVE_ESCAPE_REGRESSION",
+  "main_base": "0e66049e95bc555bfb2a12aeafe46e73ea420c90",
+  "branch": "auto/twf-game-repair",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "cause": "Previous whole-server tests exercised production and remote events, but not Heartbeat-driven enemy grace, JUNK escapes, base damage, and wave-clear rewards.",
+  "changed_files": [
+    "tests/auto/wave_escape_spec.lua",
+    "history/C00020_wave_escape_regression.json"
+  ],
+  "tests_added": [
+    {
+      "path": "tests/auto/wave_escape_spec.lua",
+      "cases": 2,
+      "execution": "Load actual ToyWarsServer.server.lua with existing roblox_server_harness.lua and fire RunService.Heartbeat; use canonical ToyWarsBalance.lua.",
+      "scenarios": [
+        "No JUNK before 4-second grace ends; first enemy appears afterward.",
+        "Five unopposed JUNK reach the vault for 60 total damage; first wave clears, advances, and awards canonical wave reward."
+      ]
+    }
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 678,
+    "lua_bytes": 26753
+  },
+  "file_size_deltas": {
+    "tests/auto/wave_escape_spec.lua": {
+      "before_bytes": 0,
+      "after_bytes": 2863,
+      "delta_bytes": 2863
+    }
+  },
+  "characters_touched": [],
+  "character_impact": "No game source, character stats, prices, or visual definitions changed.",
+  "qa": {
+    "prior_draft_pr_ci": "SUCCESS:https://github.com/kk051780/toy-wars-factory/actions/runs/40108773948",
+    "new_wave_cases": "PENDING_EXACT_HEAD_CI",
+    "roblox_studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "visual": "NOT_RUN"
+  },
+  "evidence_urls": [
+    "https://github.com/kk051780/toy-wars-factory/pull/35",
+    "https://github.com/kk051780/toy-wars-factory/blob/auto/twf-game-repair/tests/auto/wave_escape_spec.lua"
+  ],
+  "external_provider_calls": 0,
+  "provider_credentials_read": false,
+  "auto_merge": false,
+  "roblox_publish": false,
+  "next_action": "Read exact-head CI once; if failed repair this draft PR, otherwise choose a bounded Heartbeat base-loss reset regression without merging."
+}
