@@ -1,16 +1,16 @@
 {
   "schema": 2,
   "canonical_repo": "kk051780/toy-wars-factory",
-  "source_revision": "5de8c39ebfc95e67e649ba4b418b9b8dad29d39e",
+  "source_revision": "398da14631c9f1540cc5f8ab6778c2fb83002e69",
   "source_metrics": {
     "files": 4,
-    "lines": 676,
-    "bytes": 26559
+    "lines": 678,
+    "bytes": 26753
   },
   "delta_from_initial_baseline": {
     "files": 0,
-    "lines": 13,
-    "bytes": 833
+    "lines": 15,
+    "bytes": 1027
   },
   "characters": [
     {
@@ -157,7 +157,7 @@
   },
   "verification": {
     "offline_native_local_v2_3": "PASS_REPORTED_PREVIOUSLY",
-    "github_actions": "PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40102033728",
+    "github_actions": "PENDING_HUD_CANDIDATE_CI; current main PASS https://github.com/kk051780/toy-wars-factory/actions/runs/40102403182",
     "roblox_studio": "NOT_RUN",
     "mobile_visual": "NOT_RUN",
     "two_client_multiplayer": "NOT_RUN",
@@ -166,52 +166,51 @@
     "character_structural": "PASS",
     "native_server_events": "PASS_27_MOCK_EVENTS; PRE_FIX_25_PASS_2_EXPECTED_FAIL; NOT_ENGINE",
     "python_tests": "PASS_53",
-    "handoff": "PASS_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40102033772"
+    "handoff": "PASS_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40102033772",
+    "native_hud_prices": "LOCAL_PASS_6_MOCK_CASES; ORIGINAL_1_PASS_5_EXPECTED_FAIL; NOT_UI"
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
-    "PR #30 is merged at 1e29505f62192597de6019f97a8b87447b1998e8 and post-merge main QA/handoff passed. Do not ask again to merge it. PR #26/#27 stop integration is also complete.",
-    "Read C00014 and resolve current main/Actions. Current game source is four Lua files / 676 lines / 26,559 bytes; tracked_metrics retains the original baseline.",
-    "Review the separate HUD pricing proposal #13 against the integrated main and canonical balance. Any new implementation must have offline evidence and a reviewable branch; no unrelated merge is approved.",
-    "Keep source proposals #17/#20/#25/#28/#29 open as historical review branches; their gameplay changes are already integrated through #30, so do not merge them again to apply the same changes.",
-    "Roblox Studio, multiplayer, mobile, visuals and player feedback remain required before release; native event fixtures do not supply those results.",
-    "Keep Gemini held, the 10-AIC cap and independent review requirements unchanged. Revisit missing input/framing proof only with changed sources or new attributable evidence; no recurring AI, automatic merge or Roblox publication."
+    "Read C00015 and the main-based HUD pricing candidate. PR #30/#31 integration and C00014 are already complete; do not repeat their merge approval.",
+    "Require the exact old-HUD negative control (one current-price pass and five expected varied-price failures), all six fixed-HUD fixtures and all existing offline QA to pass.",
+    "Review the concrete candidate against current main and ask the owner for its own merge approval; main retains the original HUD until then. Original PR #13 remains preserved.",
+    "Keep source proposals #17/#20/#25/#28/#29 intact; their gameplay changes are already integrated through #30.",
+    "Keep Studio, multiplayer, mobile visuals and player feedback unverified, and release on HOLD. These HUD fixtures are native substitutes, not UI screenshots or engine evidence.",
+    "Keep Gemini held, the 10-AIC cap and independent review requirements unchanged; no recurring AI, automatic merge or Roblox publication."
   ],
   "resume_checkpoint": {
-    "id": "C00014",
+    "id": "C00015",
     "observed_on": "2026-10-24",
-    "observed_main_revision": "1e29505f62192597de6019f97a8b87447b1998e8",
+    "observed_main_revision": "b4e6901f5880102eb55bd20490eab8c049f2cbc6",
     "completed": [
-      "Owner explicitly approved the concrete PR #30 main integration with 進めて; the previous PR #26 stop approval was not reused.",
-      "Recheck unchanged head 4366658aa9c71ec30e49476897fbd41f84b1d47c, clean mergeability, all 15 reviewed file blobs and successful pre-merge CI 40099984529.",
-      "Merge PR #30 at 1e29505f62192597de6019f97a8b87447b1998e8 using the reviewed head SHA lease; merged tree c79c1e149ad68a8a21604c9aa3c8151e64427937 equals the reviewed tree.",
-      "Verify post-merge main QA 40102033728 and handoff 40102033772 both pass on the merge SHA, including 27 event fixtures, 53 Python tests, exact compiler and installer checks.",
-      "Verify the immutable pre-fix server passes 25 fixtures and fails exactly the two NaN fixtures; the canonical fixed server passes all 27. These are native mocks, not Roblox engine evidence.",
-      "Record the actual integrated game metrics: four Lua files, 676 lines and 26,559 bytes; +13 lines/+833 bytes against the original main game source. Original baseline and C00011-C00013 remain unchanged.",
-      "Preserve literal-false Gemini activation, removed reviewer provider transport, consumed one-shot approval, inactive recurring AI and Roblox release hold; no provider calls or credential reads.",
-      "Record completion in canonical project state and regenerated handoff so the next chat resumes after the merged work instead of requesting the same approval."
+      "Read C00014, confirm current main b4e6901f5880102eb55bd20490eab8c049f2cbc6 and successful main QA 40102403182 / handoff 40102403217; PR #30/#31 remain merged.",
+      "Review existing PR #13 at 87ff9b2f4b5403632ea126b0b691ee31b2c36a62. Current 10/28/48 labels match balance but duplicate its purchase costs.",
+      "Execute the complete original HUD against the real balance.buy function with varied in-memory costs: current-price fixture passes and exactly five price-change fixtures fail.",
+      "Reuse the exact PR #13 HUD blob 0dcd1f1f16991b3f02b970361eea9f026d1e8688 on current main; all six native HUD price fixtures pass.",
+      "Confirm all three selectable IDs and one-argument remote selection payloads survive each fixture; no client price is sent.",
+      "Extend exact history byte accounting from server-only changes to all four original Lua files without changing their initial baseline or old history.",
+      "Require exact immutable old-HUD failure evidence and successful canonical HUD fixtures in existing offline CI, retaining all prior gates and Gemini stops."
     ],
-    "evidence_record": "history/C00014_approved_game_merge.json",
+    "evidence_record": "history/C00015_hud_shared_pricing.json",
     "authorization": {
-      "approved_merge_pr": 30,
-      "approved_merge_head": "4366658aa9c71ec30e49476897fbd41f84b1d47c",
-      "approved_merge_scope": "PR #30 gameplay integration and factual completion record.",
-      "approval_source": "User said 進めて in direct response to the explicit PR #30 main-merge confirmation.",
-      "merge_status": "COMPLETED",
+      "previous_approved_merge_pr": 30,
+      "previous_merge_status": "COMPLETED",
+      "candidate_merge_authorized": false,
       "gemini_trial": "CONSUMED_SINGLE_RUN",
       "new_inference_authorized": false,
       "recurring_ai_authorized": false,
       "automatic_merge_authorized": false,
       "roblox_publish_authorized": false,
-      "prerequisite": "PR #30 is already merged and post-merge QA/handoff passed. Do not request its merge approval again. This specific approval does not authorize future unrelated merges, inference, recurring AI, billing or Roblox publication."
+      "prerequisite": "PR #30 approval covered its completed gameplay integration and factual C00014 record. This separate HUD candidate needs explicit owner merge approval after its concrete diff and CI are reviewable. No inference, recurring AI, billing or Roblox publication approval is implied."
     },
     "limitations": [
-      "Native service/event/coroutine substitutes test callback logic only; Roblox Studio, physics, replication, real multiplayer, mobile visuals and player fun remain unverified.",
-      "NaN was a synthetic invalid-coordinate fixture; no real client injection exploit was demonstrated.",
-      "Complete Gemini input/framing bounds and a hard financial cap remain unproved; provider inference stays blocked and the consumed trial must not be rerun.",
-      "Related source PRs #17/#20/#25/#28/#29 remain open as preserved proposals; their reviewed gameplay changes are integrated via PR #30. Experimental budget/runtime proposals remain unmerged."
+      "Main still has the original HUD until this separate candidate is approved; current main game source is 26,559 bytes, candidate source is 26,753 bytes.",
+      "Current literal HUD prices already match current balance; the reproduced defect is stale labels after a balance edit.",
+      "Native Lua UI/value/signal substitutes do not verify Roblox rendering, touch, replication, Studio, multiplayer or mobile layout.",
+      "Prices are read at HUD initialization; runtime balance hot-reloading is not implemented.",
+      "Gemini input/framing bounds and a hard financial cap remain unproved; the consumed trial must not be rerun."
     ],
-    "next_action": "PR #30 integration is complete. Read C00014, resolve current main and check Actions before new work. Review the separate HUD pricing proposal #13 against the integrated server and current balance, with offline evidence and a reviewable draft if changes are needed. Preserve source drafts and all operational/quality guards; no further merge or provider inference approval is implied."
+    "next_action": "Verify the main-based HUD candidate CI and exact before/after fixture evidence, then request explicit owner approval for this concrete candidate to enter main. PR #30/#31 are already merged and must not need approval again. Keep the original #13 and other source drafts intact, Gemini held and Roblox release on HOLD."
   },
   "review_queue": [
     {
