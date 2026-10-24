@@ -1,0 +1,58 @@
+{
+  "id": "C00003",
+  "timestamp_utc": "2026-10-24",
+  "kind": "UNMERGED_OFFLINE_GAME_SECURITY_PROPOSAL",
+  "base_branch": "main",
+  "branch": "fix/selector-proximity-authority-20261024",
+  "issue": "Remote selector ProximityPrompt callback checks actor and active session but did not validate distance, unlike the upgrade prompt.",
+  "root_cause": "Client-triggered interaction events require server-side actor proximity validation, even when the game displays a nearby prompt.",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "bytes_before": 17820,
+      "bytes_after": 18126,
+      "delta_bytes": 306,
+      "lines_before": 470,
+      "lines_after": 474,
+      "delta_lines": 4
+    },
+    {
+      "path": "tests/test_selector_authority.py",
+      "new": true,
+      "bytes": 1558,
+      "tests": 4
+    }
+  ],
+  "source_metrics": {
+    "files": 4,
+    "lines": 667,
+    "bytes": 26032,
+    "delta_from_initial": {
+      "files": 0,
+      "lines": 4,
+      "bytes": 306
+    }
+  },
+  "behavior": "Reject remote selector prompt calls if HumanoidRootPart is missing or more than 13 studs from selector pad; retain owner identity/session checks and existing remote selection validation.",
+  "characters": {
+    "pon": "same appearance, role, stats; selector guarded",
+    "guardon": "same appearance, role, stats; selector guarded",
+    "tankuru": "same appearance, role, stats; selector guarded"
+  },
+  "qa": {
+    "offline": "PENDING_GITHUB_ACTIONS",
+    "native_studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "character_visual": "NOT_RUN"
+  },
+  "limits": "Static contract checks do not prove exploit resistance in live Roblox engine. Generated installer is built in CI from exact source; no manual Roblox publication.",
+  "safety": {
+    "no_inference": true,
+    "no_api_call": true,
+    "no_auto_merge": true,
+    "no_recurring_schedule": true,
+    "previous_gemini_trial_not_retriggered": true
+  },
+  "related_incident": "https://github.com/kk051780/toy-wars-factory/issues/14"
+}
