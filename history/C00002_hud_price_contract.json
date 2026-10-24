@@ -1,0 +1,67 @@
+{
+  "id": "C00002",
+  "timestamp_utc": "2026-10-24T03:13:58Z",
+  "kind": "OFFLINE_OWNER_UNAPPROVED_GAME_CODE_PROPOSAL",
+  "repository": "kk051780/toy-wars-factory",
+  "branch": "feature/hud-dynamic-pricing-contract",
+  "base_commit": "80babbac759c61f3af6b15fb37185e824058c105",
+  "change": "HUD toy price labels derive from shared ToyWarsBalance.UNITS costs, removing 3 independent hard-coded prices; regression test validates canonical character roster and shared source",
+  "changed_files": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "bytes_before": 3586,
+      "bytes_after": 3780,
+      "delta_bytes": 194,
+      "lines_before": 88,
+      "lines_after": 90,
+      "delta_lines": 2
+    },
+    {
+      "path": "tests/test_hud_contract.py",
+      "new": true,
+      "bytes": 1186,
+      "lines": 30
+    }
+  ],
+  "source_metrics": {
+    "files": 4,
+    "lines": 665,
+    "bytes": 25920,
+    "delta_from_initial": {
+      "files": 0,
+      "lines": 2,
+      "bytes": 194
+    }
+  },
+  "characters": {
+    "pon": "selection/price only; 3D unchanged",
+    "guardon": "selection/price only; 3D unchanged",
+    "tankuru": "selection/price only; 3D unchanged"
+  },
+  "tests": {
+    "new_contract_tests": 3,
+    "existing_native_named": 37,
+    "existing_stress": 4000,
+    "ci": "PENDING"
+  },
+  "unverified": [
+    "Roblox Studio runtime",
+    "2-player networking",
+    "Mobile HUD layout",
+    "3D visual appearance",
+    "Actual Gemini inference"
+  ],
+  "security": {
+    "no_new_secrets": true,
+    "no_google_api_call": true,
+    "no_AI_inference": true,
+    "no_workflow_change": true,
+    "no_auto_merge": true
+  },
+  "open_defects": [
+    "Prior Copilot trial unsupported model: issue #8",
+    "Gemini PR #11 requires new one-shot inference approval",
+    "Roblox engine not connected"
+  ],
+  "rationale": "Avoid price-label drift when changing the authoritative unit economy. Keep all three selectable toys and existing costs unchanged."
+}
