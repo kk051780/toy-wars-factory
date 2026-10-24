@@ -10,3 +10,10 @@
 8. If tests or permissions block progress, report BLOCKED with a concrete next step instead of declaring success.
 9. Owner works through Android ChatGPT; don't require PC, command line or manual debugging.
 10. Every meaningful development cycle must log tested functionality, changed files, file size delta, characters touched, defects, evidence URLs and next task.
+
+## Cross-chat continuity (mandatory)
+- At the start of any new chat/task/agent cycle, read status/CHAT_HANDOFF.md, status/LATEST_STATE.json, PROJECT_STATE.json, AGENTS.md, config/quality_policy.json, latest Actions runs, PRs and open issues.
+- Canonical source: private GitHub main; chat memory and older zip packages can be stale. If snapshot is missing or behind the current source, inspect GitHub HEAD and regenerate it rather than guessing.
+- Commit all actual improvements to reviewable branches and preserve reproducible tests, defect root causes and file-size history. Never equate 20-minute scheduled audit to an autonomous coding agent.
+- From an Android chat, the user may send only: TOY WARS再開. The assistant retrieves current GitHub state before acting; it must not ask the user to restate prior requirements.
+- If the product cannot auto-inject instructions into a completely new conversation without a trigger, be truthful about that limitation.
