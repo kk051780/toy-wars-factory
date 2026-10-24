@@ -50,7 +50,13 @@ class HandoffCheckpointTests(unittest.TestCase):
         # Unrecorded changes still fail against the original baseline.
         baseline = state["tracked_metrics"]["lua_source_bytes"]
         self.assertEqual(baseline, 25726)
-        expected_server = 17820
+        expected_files = {
+            "src/ToyWarsBalance.lua": 3070,
+            "src/ToyWarsServer.server.lua": 17820,
+            "src/ToyWarsHUD.client.lua": 3586,
+            "src/ToyWarsSmokeTest.server.lua": 1250,
+        }
+        self.assertEqual(sum(expected_files.values()), baseline)
         expected_total = baseline
         for record_file in sorted((self.root / "history").glob("C*.json")):
             record = json.loads(record_file.read_text())
@@ -58,15 +64,17 @@ class HandoffCheckpointTests(unittest.TestCase):
                        if item["path"].startswith("src/") and item["path"].endswith(".lua")]
             if not changes:
                 continue
-            self.assertEqual([item["path"] for item in changes],
-                             ["src/ToyWarsServer.server.lua"])
-            change = changes[0]
-            self.assertEqual(change["before_bytes"], expected_server)
-            self.assertEqual(change["after_bytes"] - change["before_bytes"], change["delta_bytes"])
-            expected_server = change["after_bytes"]
-            expected_total += change["delta_bytes"]
+            self.assertEqual(len({item["path"] for item in changes}), len(changes))
+            for change in changes:
+                self.assertIn(change["path"], expected_files)
+                self.assertEqual(change["before_bytes"], expected_files[change["path"]])
+                self.assertEqual(change["after_bytes"] - change["before_bytes"], change["delta_bytes"])
+                expected_files[change["path"]] = change["after_bytes"]
+                expected_total += change["delta_bytes"]
             self.assertEqual(record["source_metrics"]["lua_bytes"], expected_total)
-        self.assertEqual((self.root / "src/ToyWarsServer.server.lua").stat().st_size, expected_server)
+        actual_files = {str(file.relative_to(self.root)): file.stat().st_size
+                        for file in (self.root / "src").glob("*.lua")}
+        self.assertEqual(actual_files, expected_files)
         self.assertEqual(actual, expected_total)
 
     def test_generated_snapshot_commit_is_stable_but_new_evidence_advances_revision(self):
