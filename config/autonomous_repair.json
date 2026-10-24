@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "enabled": true,
+  "backend": "CHATGPT_CONNECTED_GITHUB_TASK",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "cadence_hours": 1,
+  "timezone": "Asia/Tokyo",
+  "branch": "auto/twf-game-repair",
+  "pr_title_prefix": "[TWF auto-fix]",
+  "mode": "DRAFT_PR_ONLY",
+  "owner_authorized_on": "2026-10-25",
+  "routine_edit_approval_required": false,
+  "external_provider_inference_authorized": false,
+  "automatic_merge_authorized": false,
+  "roblox_publish_authorized": false,
+  "source_paths": [
+    "src/ToyWarsBalance.lua",
+    "src/ToyWarsServer.server.lua",
+    "src/ToyWarsHUD.client.lua"
+  ],
+  "new_native_test_pattern": "tests/auto/*_spec.lua",
+  "new_python_test_pattern": "tests/test_auto_*.py",
+  "new_history_pattern": "history/C[0-9][0-9][0-9][0-9][0-9]_*.json",
+  "experiment_log": "docs/EXPERIMENT_LOG.md",
+  "first_run_verified": false,
+  "gemini_operational_hold": "PRESERVED"
+}

@@ -37,6 +37,7 @@ class HandoffCheckpointTests(unittest.TestCase):
         state = json.loads((self.root / "PROJECT_STATE.json").read_text())
         self.assertEqual(result["resume_checkpoint"], state["resume_checkpoint"])
         self.assertEqual(result["review_queue"], state["review_queue"])
+        self.assertEqual(result["cloud_game_repair"], state.get("cloud_game_repair", {}))
         self.assertFalse(result["resume_checkpoint"]["authorization"]["new_inference_authorized"])
         proposal = next(item for item in result["review_queue"] if item["number"] == 17)
         self.assertEqual(proposal["origin"], "CHAT_ASSISTANT_NOT_GEMINI")

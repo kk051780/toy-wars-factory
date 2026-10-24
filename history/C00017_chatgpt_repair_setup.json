@@ -1,0 +1,144 @@
+{
+  "id": "C00017",
+  "date": "2026-10-25",
+  "kind": "OWNER_AUTHORIZED_CHATGPT_HOURLY_GAME_REPAIR_SETUP",
+  "main_base": "abadea9f853670ed6eae7215361e6aeb2c73887b",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "task_update": {
+    "success": true,
+    "enabled": true,
+    "title": "TOY WARS 自動ゲーム修正",
+    "schedule": "BEGIN:VEVENT\nDTSTART:20261024T050504Z\nRRULE:FREQ=HOURLY\nEND:VEVENT",
+    "first_run_verified": false
+  },
+  "previous_task_run": {
+    "run_id": "9cf6025e-07bc-8325-bdd9-f5a5166f68de",
+    "scheduled_for": "2026-10-24T15:05:04Z",
+    "result": "COMPLETED_AUDIT_COMMENT_ONLY_NO_CODE",
+    "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/32#issuecomment-6385799268"
+  },
+  "authorization": {
+    "owner_instruction": "自動化優先させたい。いつまで俺は指示送らなきゃいけない？ 自動で今やってるゲームの修正やれる体制作れよ",
+    "authorization_date": "2026-10-25",
+    "setup_main_integration_authorized": true,
+    "cloud_scheduled_game_fixes_authorized": true,
+    "routine_edit_approval_required": false,
+    "recurring_ai_authorized": true,
+    "recurring_ai_scope": "Existing ChatGPT connected-GitHub task only; hourly draft PR creation and repair.",
+    "new_inference_authorized": false,
+    "new_inference_scope": "No new Gemini/external provider API invocation, key read, model/cap/billing change. Existing ChatGPT task execution is authorized.",
+    "automatic_merge_authorized": false,
+    "roblox_publish_authorized": false,
+    "gemini_trial": "CONSUMED_SINGLE_RUN",
+    "prerequisite": "Routine connected-GitHub edits/tests/draft PRs no longer wait for another 進めて. Main integration of future game fixes, external provider inference and Roblox publication still require their existing approvals. Validate the registered task by its service run, actual code PR and matching CI, not registration alone."
+  },
+  "completed": [
+    "Owner explicitly requested autonomous game repair without repeatedly sending 進めて, superseding the prior lack of authorization for this separate ChatGPT route.",
+    "Inspect the existing hourly task 6adbf0d6a7d881918ce181dff2468867 and its actual latest recorded run. It completed an audit comment on PR #32, with no code change; task existence alone was not autonomous repair.",
+    "Read current official scheduled-task documentation: web tasks can use connected plugins and do not retain a local checkout between runs. Use GitHub as the durable source.",
+    "Update the existing task to TOY WARS 自動ゲーム修正, preserving its hourly cadence and confirmed enabled state. Saved prompt directs actual changes, tests and one maintained draft PR, not status-only comments.",
+    "Add a main-repository enable switch, bounded edit policy, trusted-base diff checks, native additional-test discovery and evidence archiving, while preserving all old gates.",
+    "Keep all four game Lua files unchanged at 678 lines / 26,753 bytes; initial baseline and historical source changes remain intact.",
+    "Separate the registered ChatGPT route from held Gemini/GitHub provider workflows in the generated handoff. First code-producing automation run is still unverified at setup creation."
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 678,
+    "lua_bytes": 26753
+  },
+  "qa": {
+    "current_setup_ci": "PENDING",
+    "first_new_prompt_run": "PENDING",
+    "prior_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40106592643",
+    "local_python": "PASS_61",
+    "local_policy": "PASS_21",
+    "workflow_yaml_and_shell_parse": "PASS"
+  },
+  "characters_touched": [],
+  "external_provider_calls": 0,
+  "provider_credentials_read": false,
+  "changed_files": [
+    ".github/workflows/bootstrap-quality.yml",
+    "config/autonomous_repair.json",
+    "tools/check_auto_diff.py",
+    "tests/test_cloud_repair_scope.py",
+    "tools/build_handoff.py",
+    "docs/AUTONOMOUS_REPAIR.md",
+    "docs/AUTOMATION_READINESS.md",
+    "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+    "PROJECT_STATE.json",
+    "tests/test_handoff_checkpoint.py",
+    "history/C00017_chatgpt_repair_setup.json"
+  ],
+  "generated_files": [
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "official_reference": "https://learn.chatgpt.com/docs/automations",
+  "limitations": [
+    "Task update success is not proof that the new repair prompt has run. First-run code/PR/CI evidence is required and pending.",
+    "The existing service schedule is hourly; it is not the old proposed 20-minute Gemini runner.",
+    "Web tasks use connected GitHub and service availability/plan limits. They do not rely on the current scratch checkout or a running PC.",
+    "Gemini input/framing and shared financial enforcement remain unresolved; all Gemini/external API transports stay held and no provider key is read.",
+    "Future game fixes remain draft PRs until integration approval. Independent review and Roblox release requirements remain intact; engine/multiplayer/mobile/visual/player-fun evidence is absent."
+  ],
+  "next_action": "Finish and verify the owner-requested ChatGPT scheduled repair setup, then validate one real scheduled-task execution that writes a regression/code PR and triggers existing CI. Keep the task running without routine user prompts; preserve Gemini stops, existing regression gates and draft-only integration policy.",
+  "file_size_deltas": {
+    ".github/workflows/bootstrap-quality.yml": {
+      "before": 8110,
+      "after": 9258,
+      "delta": 1148
+    },
+    "config/autonomous_repair.json": {
+      "before": 0,
+      "after": 913,
+      "delta": 913
+    },
+    "tools/check_auto_diff.py": {
+      "before": 0,
+      "after": 2799,
+      "delta": 2799
+    },
+    "tests/test_cloud_repair_scope.py": {
+      "before": 0,
+      "after": 4072,
+      "delta": 4072
+    },
+    "tools/build_handoff.py": {
+      "before": 7601,
+      "after": 7788,
+      "delta": 187
+    },
+    "docs/AUTONOMOUS_REPAIR.md": {
+      "before": 0,
+      "after": 4049,
+      "delta": 4049
+    },
+    "docs/AUTOMATION_READINESS.md": {
+      "before": 3659,
+      "after": 1889,
+      "delta": -1770
+    },
+    "ops/CHATGPT_GAME_REPAIR_PROMPT.md": {
+      "before": 0,
+      "after": 5463,
+      "delta": 5463
+    },
+    "PROJECT_STATE.json": {
+      "before": 24821,
+      "after": 25921,
+      "delta": 1100
+    },
+    "history/C00017_chatgpt_repair_setup.json": {
+      "before": 0,
+      "after": 6644,
+      "delta": 6644
+    },
+    "tests/test_handoff_checkpoint.py": {
+      "before": 6717,
+      "after": 6807,
+      "delta": 90
+    }
+  }
+}
