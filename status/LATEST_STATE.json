@@ -1,7 +1,7 @@
 {
-  "schema": 1,
+  "schema": 2,
   "canonical_repo": "kk051780/toy-wars-factory",
-  "source_revision": "3dfd91d4f51890c5ca8f6f8b750c6a666fad0b33",
+  "source_revision": "8074962057fbe9c564725fd59327e6b0dec240c9",
   "source_metrics": {
     "files": 4,
     "lines": 663,
@@ -66,7 +66,7 @@
       "candidate_model": "gemini-3.8-flash",
       "draft_pr": "https://github.com/kk051780/toy-wars-factory/pull/11",
       "independent_security": "Custom fail-closed Python static scan + separate Gemini API verdict; NOT equivalent to official gh-aw detector",
-      "code_review_status": "OFFLINE_QA_PASS_BUT_NO_REAL_GEMINI_RUN",
+      "code_review_status": "OFFLINE_QA_PASS_LIVE_TRIAL_FAILED_NO_PATCH",
       "requires_user_consent": [
         "Google free-tier terms allow code/prompt use for service improvement",
         "GEMINI_API_KEY secret entry in GitHub",
@@ -81,7 +81,7 @@
       "authenticated_gemini_inference": "TRIAL_EXECUTED_BUT_FAILED_12_TURNS_12MIN",
       "owner_free_tier_data_usage_consent": true,
       "one_shot_inference_approval": "CONSUMED_SINGLE_RUN_20261024",
-      "model_access_note": "Official Gemini API docs now restrict Gemini 2.5 models for new API projects. Candidate updated to 3.8 Flash; compiled offline and independent QA PASS; actual model access and live API inference NOT TESTED.",
+      "model_access_note": "Authenticated Gemini CLI inference is confirmed by run 40060119253. The trial failed at 12/12 calls and 12 minutes; successful code generation and a hard financial cap are NOT verified.",
       "new_candidate_QA": "https://github.com/kk051780/toy-wars-factory/actions/runs/40059931038",
       "latest_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/40060119253",
       "failure_issue": "https://github.com/kk051780/toy-wars-factory/issues/16",
@@ -95,12 +95,13 @@
       "single_run_incident": "https://github.com/kk051780/toy-wars-factory/issues/18",
       "single_run_error": "max_runs_exceeded 12/12 (429), Gemini CLI timed out 12 minutes; detection result absent; no safe-output PR",
       "billing_status": "UNVERIFIED: GH_AW_AIC:33.713 reported in job logs despite configured max-ai-credits=10; do not infer actual charges",
-      "next_reexecution_authorized": false
+      "next_reexecution_authorized": false,
+      "credit_enforcement_investigation": "OFFLINE_REPRODUCED_UNPRICED_NATIVE_GEMINI_MODEL; see history/C00004_gemini_credit_audit.json and docs/INCIDENT_TWF_0006.md. Runtime correction and provider hard cap NOT deployed or verified."
     }
   },
   "verification": {
     "offline_native_local_v2_3": "PASS_REPORTED_PREVIOUSLY",
-    "github_actions": "PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40047378300",
+    "github_actions": "PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40064857413",
     "roblox_studio": "NOT_RUN",
     "mobile_visual": "NOT_RUN",
     "two_client_multiplayer": "NOT_RUN",
@@ -110,12 +111,81 @@
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
-    "Review Gemini run #40060119253 failure evidence and AIC accounting issue #18 before any further AI call",
-    "Without AI inference, design a small game task and independent QA so 12-turn budget is enough; no automatic rerun",
-    "Ask owner for fresh approval before new Gemini run; keep 20-minute AI schedule inactive",
-    "Review safe-output detector expected result and fail-closed path without bypassing security",
-    "Keep on-change QA; evaluate draft budget-saving PR #12 for 6-hour idle audits",
-    "Actual Roblox Studio/mobile/multiplayer verification still required before release"
+    "Review docs/INCIDENT_TWF_0006.md and history/C00004_gemini_credit_audit.json: the native-model pricing gap is reproduced offline, not fixed in the deployed runtime.",
+    "Validate native URL model resolution, fail-closed pricing admission and a bounded local-server credit regression in a separate reviewed runtime correction; do not call a provider.",
+    "Confirm authoritative provider quotas/billing and obtain fresh owner approval before any new Gemini inference; the consumed marker must not be reused.",
+    "Preserve fail-closed independent security review; do not convert missing patches or failed runs into SAFE.",
+    "PR #17 is a separate offline-tested chat-assistant proposal, draft/unmerged; do not credit Gemini with it or merge automatically.",
+    "Keep the 20-minute AI schedule inactive; QA/audit schedules are distinct. Budget-saving PR #12 remains unmerged.",
+    "Actual Roblox Studio/mobile/multiplayer verification is still required before release."
+  ],
+  "resume_checkpoint": {
+    "id": "C00004",
+    "observed_on": "2026-10-24",
+    "observed_main_revision": "e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904",
+    "completed": [
+      "Read canonical handoff/state/policy and inspect current main, Actions, draft PRs and open issues.",
+      "Confirm Gemini run 40060119253 failed on attempt 1, produced no safe-output PR and was not rerun.",
+      "Confirm PR #17 was authored through the chat assistant separately from Gemini and remains draft/unmerged.",
+      "Reproduce an unpriced native Gemini request bypassing model-price rejection and accumulating zero internal AIC in tagged upstream modules, without provider calls.",
+      "Trace repeated snapshot-only source_revision advancement to depth-1 CI checkouts; add full-history checkout and fail closed on shallow history."
+    ],
+    "evidence_record": "history/C00004_gemini_credit_audit.json",
+    "authorization": {
+      "gemini_trial": "CONSUMED_SINGLE_RUN",
+      "new_inference_authorized": false,
+      "recurring_ai_authorized": false,
+      "automatic_merge_authorized": false,
+      "roblox_publish_authorized": false,
+      "prerequisite": "Fresh owner authorization AND independently validated enforcement before a new Gemini run."
+    },
+    "limitations": [
+      "Reported AIC is not a verified bill.",
+      "Tagged source reproduction is not an attestation of every deployed container byte.",
+      "Runtime correction and provider-side spending control remain unverified.",
+      "Roblox Studio, multiplayer and mobile remain NOT_RUN."
+    ],
+    "next_action": "Review the offline credit-audit/continuity proposal; prepare a priceable native-model admission fix and bounded local-server regression before requesting a new inference run."
+  },
+  "review_queue": [
+    {
+      "number": 17,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/17",
+      "head_sha": "aac789b3c5caa43eecc3e93c18c8e29abba37f7b",
+      "origin": "CHAT_ASSISTANT_NOT_GEMINI",
+      "status": "DRAFT_UNMERGED",
+      "purpose": "Server-side distance validation for toy-selector prompts",
+      "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40061153081",
+      "qa_scope": "Offline: 37 Lua regressions, 4000 stress cases, 33 Python tests; no Roblox engine verification.",
+      "source_delta": {
+        "lines": 4,
+        "bytes": 306
+      }
+    },
+    {
+      "number": 13,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/13",
+      "head_sha": "87ff9b2f4b5403632ea126b0b691ee31b2c36a62",
+      "origin": "CHAT_ASSISTANT_NOT_GEMINI",
+      "status": "DRAFT_UNMERGED",
+      "purpose": "HUD prices follow canonical balance"
+    },
+    {
+      "number": 12,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/12",
+      "head_sha": "22df6230a38c36ad8aab9731edfb31ce9226a250",
+      "origin": "PROPOSAL",
+      "status": "DRAFT_UNMERGED",
+      "purpose": "Reduce idle QA frequency; current schedules are unchanged"
+    },
+    {
+      "number": 6,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/6",
+      "head_sha": "ad1ea73f092a2416d997b25635c912339d0b80bd",
+      "origin": "PROPOSAL",
+      "status": "DRAFT_UNMERGED_DO_NOT_ACTIVATE",
+      "purpose": "Recurring AI candidate; no recurring execution authorized"
+    }
   ],
   "important": "Actions / Roblox Studio evidence must be checked independently. A generated status page is not proof of runtime health."
 }
