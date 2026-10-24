@@ -168,6 +168,10 @@ local function makePlot(player, state)
         prompt.Parent=pad
         prompt.Triggered:Connect(function(actor)
             if actor ~= player or not state.active then return end
+            -- Never trust a client-triggered prompt without checking server-side proximity.
+            local character=actor.Character
+            local root=character and character:FindFirstChild("HumanoidRootPart")
+            if not root or (root.Position-pad.Position).Magnitude > 13 then return end
             state.selected=id
             refreshStatus(state)
         end)
