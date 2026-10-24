@@ -33,7 +33,7 @@ jobs:
           lock=generated.read_text()
           meta=md.split("---",2)[1]
           assert "engine:" in meta and "id: gemini" in meta
-          assert "gemini-2.5-flash" in meta
+          assert "gemini-3.8-flash" in meta
           assert "max-ai-credits: 10" in meta
           assert "max-daily-ai-credits: 10" in meta
           assert "cron:" not in meta and "workflow_dispatch" not in meta
