@@ -4,6 +4,7 @@ local Players=game:GetService("Players")
 local ReplicatedStorage=game:GetService("ReplicatedStorage")
 local player=Players.LocalPlayer
 local event=ReplicatedStorage:WaitForChild("ToyWarsSelectUnit")
+local B=require(ReplicatedStorage:WaitForChild("ToyWarsBalance"))
 local stats=player:WaitForChild("leaderstats")
 local status=player:WaitForChild("ToyWarsStatus")
 local coins=stats:WaitForChild("Coins")
@@ -57,11 +58,12 @@ pane.BackgroundTransparency=0.12
 pane.Parent=gui
 round(pane,14)
 local buttons={}
-local choices={{"pon","PON | 10",Color3.fromRGB(44,175,179)},{"guardon","GUARDON | 28",Color3.fromRGB(64,113,205)},{"tankuru","TANKURU | 48",Color3.fromRGB(218,135,72)}}
+local choices={{"pon","PON",Color3.fromRGB(44,175,179)},{"guardon","GUARDON",Color3.fromRGB(64,113,205)},{"tankuru","TANKURU",Color3.fromRGB(218,135,72)}}
 for i,spec in ipairs(choices) do
     local button=Instance.new("TextButton")
     button.Name=spec[1]
-    button.Text=spec[2]
+    -- Display authoritative prices from the shared balance module, never hard-code HUD prices.
+    button.Text=string.format("%s | %d",spec[2],B.UNITS[spec[1]].cost)
     button.Size=UDim2.new(1/3,-12,0,62)
     button.Position=UDim2.new((i-1)/3,7,0,14)
     button.BackgroundColor3=spec[3]
