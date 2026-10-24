@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: 8074962057fbe9c564725fd59327e6b0dec240c9
+- 基準ソースコミット: c763ae8be63d5bbecc51e36eda3a8f391fdba9a6
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 自律AI開発: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
@@ -28,35 +28,38 @@
 - 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40064857413（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- Review docs/INCIDENT_TWF_0006.md and history/C00004_gemini_credit_audit.json: the native-model pricing gap is reproduced offline, not fixed in the deployed runtime.
-- Validate native URL model resolution, fail-closed pricing admission and a bounded local-server credit regression in a separate reviewed runtime correction; do not call a provider.
-- Confirm authoritative provider quotas/billing and obtain fresh owner approval before any new Gemini inference; the consumed marker must not be reused.
-- Preserve fail-closed independent security review; do not convert missing patches or failed runs into SAFE.
-- PR #17 is a separate offline-tested chat-assistant proposal, draft/unmerged; do not credit Gemini with it or merge automatically.
-- Keep the 20-minute AI schedule inactive; QA/audit schedules are distinct. Budget-saving PR #12 remains unmerged.
-- Actual Roblox Studio/mobile/multiplayer verification is still required before release.
+- Review docs/GEMINI_BUDGET_RUNTIME_CANDIDATE.md and C00005: native admission correction and reservation runner pass offline tests; neither is deployed.
+- Connect a trusted request upper-bound adapter, verified per-model prices and a single-attempt transport in an offline candidate runtime; include CLI and independent reviewer in the same budget.
+- Ensure shared/persistent budget across all workers and processes; the current candidate ledger is in-memory.
+- Validate a real candidate container without a provider key, then verify authoritative provider quotas/billing.
+- Obtain fresh owner authorization before any new inference; never reuse the consumed one-shot marker.
+- Keep PR #19 and this follow-up reviewable and unmerged; PR #17 is a separate chat-assistant game proposal.
+- Do not activate recurring AI, automatically merge, or publish Roblox; engine/mobile/multiplayer remain unverified.
 
 ## 最新の再開地点（観測時点の記録）
-- 記録: C00004 / 2026-10-24
+- 記録: C00005 / 2026-10-24
 - 照合したmain: e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904
-- 証拠: history/C00004_gemini_credit_audit.json
-- 完了: Read canonical handoff/state/policy and inspect current main, Actions, draft PRs and open issues.
-- 完了: Confirm Gemini run 40060119253 failed on attempt 1, produced no safe-output PR and was not rerun.
-- 完了: Confirm PR #17 was authored through the chat assistant separately from Gemini and remains draft/unmerged.
-- 完了: Reproduce an unpriced native Gemini request bypassing model-price rejection and accumulating zero internal AIC in tagged upstream modules, without provider calls.
-- 完了: Trace repeated snapshot-only source_revision advancement to depth-1 CI checkouts; add full-history checkout and fail closed on shallow history.
+- 証拠: history/C00005_native_gemini_admission.json
+- 完了: Re-read canonical main, PR #19 and current Actions/issues before continuing.
+- 完了: Implement hash-pinned native Gemini admission overlay: URL model identification, mismatch and unpriced-model rejection; preserve original common guards.
+- 完了: Implement a candidate exact-integer reservation ledger with concurrent admission, terminal request limits and no retry/refund for uncertain charges.
+- 完了: Pass 40 Node regressions, including original upstream pricing/common-guard code and real loopback HTTP.
+- 完了: Keep all model invocations, recurring AI, automatic merging and Roblox publication inactive.
 - 新規推論承認: False
 - 定期AI承認: False
 - 自動マージ承認: False
 - Roblox公開承認: False
-- 再実行の前提: Fresh owner authorization AND independently validated enforcement before a new Gemini run.
-- 再開する作業: Review the offline credit-audit/continuity proposal; prepare a priceable native-model admission fix and bounded local-server regression before requesting a new inference run.
-- 未確認・制限: Reported AIC is not a verified bill.
-- 未確認・制限: Tagged source reproduction is not an attestation of every deployed container byte.
-- 未確認・制限: Runtime correction and provider-side spending control remain unverified.
-- 未確認・制限: Roblox Studio, multiplayer and mobile remain NOT_RUN.
+- 再実行の前提: Verified runtime integration, shared request/price bounds, authoritative provider quota and fresh owner approval before new inference.
+- 再開する作業: Review this candidate; integrate a trusted token-bound adapter and approved prices with all model transports in an offline candidate container, then verify provider quotas before seeking fresh inference approval.
+- 未確認・制限: Candidate only: no runtime image installed or deployed.
+- 未確認・制限: Overlay hooks native admission only; reservation runner is not connected to the Gemini CLI.
+- 未確認・制限: Real prices, trusted token upper-bound adapter, cross-process/shared budget and independent-review accounting are not configured.
+- 未確認・制限: Loopback fixture costs do not certify a real provider bill or financial ceiling.
+- 未確認・制限: Studio, multiplayer and mobile remain NOT_RUN.
 
 ## 未マージの提案（現在のPR状態はGitHubで再確認）
+- PR #19: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Fix shallow-history handoff churn and retain incident provenance / https://github.com/kk051780/toy-wars-factory/pull/19
+  - QA: PASS: 33 Python, 37 Lua regressions, 4000 deterministic stress, exact installer and deterministic handoff. Offline only. https://github.com/kk051780/toy-wars-factory/actions/runs/40067722798
 - PR #17: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Server-side distance validation for toy-selector prompts / https://github.com/kk051780/toy-wars-factory/pull/17
   - QA: Offline: 37 Lua regressions, 4000 stress cases, 33 Python tests; no Roblox engine verification. https://github.com/kk051780/toy-wars-factory/actions/runs/40061153081
 - PR #13: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / HUD prices follow canonical balance / https://github.com/kk051780/toy-wars-factory/pull/13
