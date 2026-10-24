@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: 07e90d36fc7aec6339a8bf962def17f8d73d3a9f
+- 基準ソースコミット: 5de8c39ebfc95e67e649ba4b418b9b8dad29d39e
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 自律AI開発: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
@@ -25,38 +25,38 @@
 - Studio: NOT_RUN
 - マルチクライアント: NOT_RUN
 - スマホ表示: NOT_RUN
-- 記録済GitHub QA: PENDING_CURRENT_GAME_CANDIDATE_CI; main stop verification remains https://github.com/kk051780/toy-wars-factory/actions/runs/40079169605（最新Actionsを別途確認すること）
+- 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40102033728（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- Review C00013 and the current main-based gameplay candidate. PR #26/#27 integration is already complete and must not require approval again.
-- Confirm exact old-server negative control: 25 pass and only the two NaN fixtures fail; require all 27 canonical fixed-server fixtures and existing QA to pass.
-- Review the combined selector authority, waiting-player backfill, deferred-character guard and two non-finite-distance corrections against current main.
-- Keep this gameplay candidate unmerged until the owner approves its concrete diff. Keep operational stops, 10-AIC cap and all approval boundaries.
-- Roblox Studio, multiplayer, mobile and player feedback remain required before release; native fixtures are not engine evidence.
-- Keep Gemini held. Revisit its missing input/framing proof only with changed sources or new attributable evidence.
+- PR #30 is merged at 1e29505f62192597de6019f97a8b87447b1998e8 and post-merge main QA/handoff passed. Do not ask again to merge it. PR #26/#27 stop integration is also complete.
+- Read C00014 and resolve current main/Actions. Current game source is four Lua files / 676 lines / 26,559 bytes; tracked_metrics retains the original baseline.
+- Review the separate HUD pricing proposal #13 against the integrated main and canonical balance. Any new implementation must have offline evidence and a reviewable branch; no unrelated merge is approved.
+- Keep source proposals #17/#20/#25/#28/#29 open as historical review branches; their gameplay changes are already integrated through #30, so do not merge them again to apply the same changes.
+- Roblox Studio, multiplayer, mobile, visuals and player feedback remain required before release; native event fixtures do not supply those results.
+- Keep Gemini held, the 10-AIC cap and independent review requirements unchanged. Revisit missing input/framing proof only with changed sources or new attributable evidence; no recurring AI, automatic merge or Roblox publication.
 
 ## 最新の再開地点（観測時点の記録）
-- 記録: C00013 / 2026-10-24
-- 照合したmain: 9e31c34d4d236a115faa5ff076f3f9af82aa879f
-- 証拠: history/C00013_nonfinite_proximity_events.json
-- 完了: Read main C00010 and discover later game proposal records C00011/C00012 and open PRs #28/#29 rather than repeating their work.
-- 完了: Confirm main-based integration CI 40088574401 and lifecycle proposal CI 40096885886 passed; main itself remains unchanged.
-- 完了: Execute the whole PR #29 server in native Lua 5.4 with deterministic services and coroutine/event fixtures: 25 cases pass and exactly two NaN-distance cases fail.
-- 完了: Change the two proximity checks to require distance <= 13 to be true; normal distance behavior and prices are preserved.
-- 完了: Pass all 27 server event fixtures locally after the numeric correction, including capacity/backfill, identity, remote rate limiting and deferred-character races.
-- 完了: Prepare a single candidate against current main combining the prior gameplay proposals with the new guard, while preserving all operational stops and approval policies.
-- 完了: Extend exact source byte accounting as a checked history chain across C00011/C00012/C00013 without changing the original baseline.
+- 記録: C00014 / 2026-10-24
+- 照合したmain: 1e29505f62192597de6019f97a8b87447b1998e8
+- 証拠: history/C00014_approved_game_merge.json
+- 完了: Owner explicitly approved the concrete PR #30 main integration with 進めて; the previous PR #26 stop approval was not reused.
+- 完了: Recheck unchanged head 4366658aa9c71ec30e49476897fbd41f84b1d47c, clean mergeability, all 15 reviewed file blobs and successful pre-merge CI 40099984529.
+- 完了: Merge PR #30 at 1e29505f62192597de6019f97a8b87447b1998e8 using the reviewed head SHA lease; merged tree c79c1e149ad68a8a21604c9aa3c8151e64427937 equals the reviewed tree.
+- 完了: Verify post-merge main QA 40102033728 and handoff 40102033772 both pass on the merge SHA, including 27 event fixtures, 53 Python tests, exact compiler and installer checks.
+- 完了: Verify the immutable pre-fix server passes 25 fixtures and fails exactly the two NaN fixtures; the canonical fixed server passes all 27. These are native mocks, not Roblox engine evidence.
+- 完了: Record the actual integrated game metrics: four Lua files, 676 lines and 26,559 bytes; +13 lines/+833 bytes against the original main game source. Original baseline and C00011-C00013 remain unchanged.
+- 完了: Preserve literal-false Gemini activation, removed reviewer provider transport, consumed one-shot approval, inactive recurring AI and Roblox release hold; no provider calls or credential reads.
+- 完了: Record completion in canonical project state and regenerated handoff so the next chat resumes after the merged work instead of requesting the same approval.
 - 新規推論承認: False
 - 定期AI承認: False
 - 自動マージ承認: False
 - Roblox公開承認: False
-- 再実行の前提: This is an unmerged gameplay candidate. A later explicit approval is needed for this candidate to enter main. No inference, recurring AI, billing or publication authorization is implied.
-- 再開する作業: Verify the main-based candidate CI, including immutable pre-fix negative control and the canonical fixed-server fixtures, before asking the owner to approve this concrete gameplay PR. Preserve other source drafts. After explicit integration approval, verify main QA and record that approval without enabling inference or Roblox release.
-- 未確認・制限: All game changes in this candidate remain unmerged; main still has 25,726 game source bytes.
-- 未確認・制限: Native Lua substitutes exercise callback logic, not Roblox physics, replication, live networking, five-player or mobile behavior.
-- 未確認・制限: NaN is a synthetic invalid-coordinate fixture; a real client injection exploit was not demonstrated.
-- 未確認・制限: The Gemini input/framing and financial-cap blocker remains unresolved.
-- 未確認・制限: Studio, multiplayer, mobile, visuals and player fun remain unverified.
+- 再実行の前提: PR #30 is already merged and post-merge QA/handoff passed. Do not request its merge approval again. This specific approval does not authorize future unrelated merges, inference, recurring AI, billing or Roblox publication.
+- 再開する作業: PR #30 integration is complete. Read C00014, resolve current main and check Actions before new work. Review the separate HUD pricing proposal #13 against the integrated server and current balance, with offline evidence and a reviewable draft if changes are needed. Preserve source drafts and all operational/quality guards; no further merge or provider inference approval is implied.
+- 未確認・制限: Native service/event/coroutine substitutes test callback logic only; Roblox Studio, physics, replication, real multiplayer, mobile visuals and player fun remain unverified.
+- 未確認・制限: NaN was a synthetic invalid-coordinate fixture; no real client injection exploit was demonstrated.
+- 未確認・制限: Complete Gemini input/framing bounds and a hard financial cap remain unproved; provider inference stays blocked and the consumed trial must not be rerun.
+- 未確認・制限: Related source PRs #17/#20/#25/#28/#29 remain open as preserved proposals; their reviewed gameplay changes are integrated via PR #30. Experimental budget/runtime proposals remain unmerged.
 
 ## 未マージの提案（現在のPR状態はGitHubで再確認）
 - PR #29: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Guard deferred workshop teleport against disconnect/respawn race / https://github.com/kk051780/toy-wars-factory/pull/29
