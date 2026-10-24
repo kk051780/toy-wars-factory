@@ -1,0 +1,160 @@
+{
+  "id": "C00025",
+  "date": "2026-10-25",
+  "observed_at_utc": "2026-10-24T22:13:38.219777+00:00",
+  "kind": "QUEUE_V2_AUTOMATED_GAME_SOURCE_FIX_VERIFIED",
+  "main_base": "efa4e67fd0cebe211a0696bb5ce0642d30cb3e58",
+  "setup_pr": 37,
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "validation_run": {
+    "id": "039874ac-64a0-8323-bc57-5c35cf58ec90",
+    "recorded_status": "completed",
+    "scheduled_for": "2026-10-24T22:02:19.794727Z",
+    "started_at": "2026-10-24T22:02:21.169763Z",
+    "completed_at": "2026-10-24T22:06:07.782631Z",
+    "result_created_at": "2026-10-24T22:06:07.223688Z",
+    "result_run_id_matches": true,
+    "task_enabled_after_run": true,
+    "notification_delivery": "UNKNOWN"
+  },
+  "candidate": {
+    "pr": 38,
+    "url": "https://github.com/kk051780/toy-wars-factory/pull/38",
+    "status": "DRAFT_UNMERGED",
+    "branch": "auto/twf-game-repair-039874ac-64a0-8323-bc57-5c35cf58ec90",
+    "base": "efa4e67fd0cebe211a0696bb5ce0642d30cb3e58",
+    "head": "b8e543ada9e5613486cbcfc1819a3aba8cc7932c",
+    "tree": "629e81c345d5aa18e9452de424deeea4f7accf08",
+    "server_blob": "bc39097bcadfc5b08e09ee879742f97d2f2d1c15",
+    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40137069031",
+    "ci_conclusion": "success",
+    "ci_native_cases": 5,
+    "ci_python_tests": 74,
+    "scope_gate": "PASS_EXECUTED_ON_UUID_LANE_3_CHANGED_FILES",
+    "source_delta": {
+      "bytes": 160,
+      "lines": 3
+    },
+    "candidate_source_metrics": {
+      "files": 4,
+      "lines": 681,
+      "bytes": 26913
+    },
+    "main_source_metrics": {
+      "files": 4,
+      "lines": 678,
+      "bytes": 26753
+    },
+    "preserved_existing_files": 78,
+    "legacy_pr35_head_preserved": "1fdc549d0d708230cc642b18ceb020f28efa0806",
+    "local_independent_before": {
+      "pass": 2,
+      "fail": 2
+    },
+    "local_independent_after": {
+      "pass": 4,
+      "fail": 0
+    },
+    "local_pinned_control": "SKIPPED_FIXTURE_ABSENT; CI_EXECUTED_PASS",
+    "engine_verified": false
+  },
+  "authorization": {
+    "owner_instruction": "自動化優先させたい。いつまで俺は指示送らなきゃいけない？ 自動で今やってるゲームの修正やれる体制作れよ",
+    "authorization_date": "2026-10-25",
+    "setup_main_integration_authorized": true,
+    "cloud_scheduled_game_fixes_authorized": true,
+    "routine_edit_approval_required": false,
+    "recurring_ai_authorized": true,
+    "recurring_ai_scope": "Existing ChatGPT connected-GitHub task only; hourly draft PR creation and repair.",
+    "new_inference_authorized": false,
+    "new_inference_scope": "No new Gemini/external provider API invocation, key read, model/cap/billing change. Existing ChatGPT task execution is authorized.",
+    "automatic_merge_authorized": false,
+    "roblox_publish_authorized": false,
+    "gemini_trial": "CONSUMED_SINGLE_RUN",
+    "prerequisite": "Routine connected-GitHub edits/tests/draft PRs no longer wait for another 進めて. Main integration of future game fixes, external provider inference and Roblox publication still require their existing approvals. Validate the registered task by its service run, actual code PR and matching CI, not registration alone.",
+    "setup_pr": 37,
+    "setup_merge_status": "COMPLETED",
+    "latest_owner_instruction": "自動ゲーム開発の体制整備を進めて",
+    "scheduler_controls": "Owner/controller only; scheduled worker may not alter its schedule or enabled state.",
+    "queue_scope": "Up to three independent draft PRs; existing integration and publication approvals remain."
+  },
+  "completed": [
+    "Deploy queue v2 through PR #37 at efa4e67fd0cebe211a0696bb5ce0642d30cb3e58 using reviewed head f17a6d5c873f3234600a2e9d711aad0c55d1286e and exact tree 7a9ae89c80e00b903984f5e9d7a295cb21227f81.",
+    "Confirm post-merge controller QA 40136758867 and handoff 40136758840 both pass, retaining all source, quality and provider holds.",
+    "Validate real service run 039874ac-64a0-8323-bc57-5c35cf58ec90: completed result matches its run ID and time, and task remains enabled on its unchanged hourly schedule.",
+    "Verify the worker chose START with open_prs [35] and limit 3, created a new main-based UUID lane and draft PR #38, while review-ready PR #35 head stayed 1fdc549d0d708230cc642b18ceb020f28efa0806.",
+    "Inspect actual game patch: only FeltBattlefield, FactoryFloor and LobbyGround gain CanCollide=true. Server grows 160 bytes/3 lines; character stats, prices and decorative/unit collision remain unchanged.",
+    "Verify exact-head CI 40137069031 succeeds on b8e543ada9e5613486cbcfc1819a3aba8cc7932c, including UUID namespace/scope gate, five native floor cases with pinned old-server control, 74 Python tests and all previous gates.",
+    "Independently execute the new regression against old and fixed server snapshots: old has two failing cases, fixed all four canonical cases pass. The local pinned control was absent and skipped; CI executed it successfully.",
+    "Compare the actual candidate tree: 78 existing blobs/modes are unchanged and only three allowed files differ. Keep the source fix draft/unmerged and main source at 26,753 bytes."
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 678,
+    "lua_bytes": 26753
+  },
+  "characters_touched": [],
+  "external_provider_calls": 0,
+  "provider_credentials_read": false,
+  "qa": {
+    "controller_setup": "https://github.com/kk051780/toy-wars-factory/actions/runs/40136552676",
+    "controller_main": "https://github.com/kk051780/toy-wars-factory/actions/runs/40136758867",
+    "controller_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40136758840",
+    "automatic_source_fix": "https://github.com/kk051780/toy-wars-factory/actions/runs/40137069031",
+    "conclusions": "ALL_SUCCESS; SOURCE_FIX_STILL_DRAFT",
+    "local_metadata_python": "PASS_74",
+    "local_metadata_policy": "PASS_21"
+  },
+  "changed_files": [
+    "PROJECT_STATE.json",
+    "config/autonomous_repair.json",
+    "docs/AUTOMATION_READINESS.md",
+    "history/C00025_queue_source_fix_verified.json"
+  ],
+  "generated_files": [
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "limitations": [
+    "Queue v2 has one verified source-changing run and an enabled-state observation after completion; this is not a guarantee of indefinite operation or every future wait state.",
+    "Up to three draft PRs may wait for review. The task stays enabled and rechecks capacity, but cannot auto-merge or publish without existing approvals.",
+    "PR #38 is unmerged. Main still has four Lua files / 678 lines / 26,753 bytes; candidate metrics 681 lines / 26,913 bytes must not be represented as applied.",
+    "Native tests verify collision attributes, not Roblox physics, actual falling, multiplayer, mobile or visual/player experience.",
+    "Notification delivery is unknown. Service result, actual source commit/PR and exact-head CI are the evidence.",
+    "Gemini input/financial blockers, provider transports, 10-AIC cap and release HOLD are preserved."
+  ],
+  "next_action": "Continue the enabled hourly task under queue v2. Preserve review-ready PRs #35 and #38; CI failures are repaired first, successful work is not mixed with a new issue, and one remaining queue slot can start another main-based repair. A full queue waits and rechecks without self-disabling. Main game integration and Roblox publication still require their existing approvals.",
+  "file_size_deltas": {
+    "PROJECT_STATE.json": {
+      "before": 28447,
+      "after": 32840,
+      "delta": 4393
+    },
+    "config/autonomous_repair.json": {
+      "before": 2332,
+      "after": 2899,
+      "delta": 567
+    },
+    "docs/AUTOMATION_READINESS.md": {
+      "before": 1559,
+      "after": 2084,
+      "delta": 525
+    },
+    "history/C00025_queue_source_fix_verified.json": {
+      "before": 0,
+      "after": 8170,
+      "delta": 8170
+    }
+  },
+  "queue_decision_verified": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-039874ac-64a0-8323-bc57-5c35cf58ec90",
+    "base": "main",
+    "open_prs": [
+      35
+    ],
+    "limit": 3
+  }
+}
