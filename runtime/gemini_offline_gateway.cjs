@@ -37,12 +37,15 @@ function loadOfflineProfile(snapshot, now = new Date()) {
   const outputLimit = snapshot.output_token_limit;
   const model = snapshot.model;
   const boundForRequest = async spec => {
-    if (spec.model !== model || spec.body.generationConfig.maxOutputTokens > outputLimit) {
+    const requestedOutput = spec.body?.generationConfig?.maxOutputTokens;
+    if (spec.model !== model || !Number.isSafeInteger(requestedOutput) || requestedOutput <= 0 ||
+        requestedOutput > outputLimit) {
       throw new GuardError('MODEL_LIMIT_EXCEEDED');
     }
-    // CountTokens is not promoted into an upper-bound proof. Reserve the full documented limits.
+    // Native GenerateContent documentation bounds candidates plus thinking by maxOutputTokens.
+    // Input remains at the documented model ceiling: no verified smaller input proof exists here.
     return {kind: 'HOST_VERIFIED_UPPER_BOUND', requestSha256: spec.requestSha256,
-      maxInputTokens: inputLimit, maxChargedOutputTokens: outputLimit};
+      maxInputTokens: inputLimit, maxChargedOutputTokens: requestedOutput};
   };
   return {catalog, boundForRequest,
     maximumReservationNanos: BigInt(inputLimit) * rate.inputNanosPerToken + BigInt(outputLimit) * rate.outputNanosPerToken};
