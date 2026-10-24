@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: 47770033da4e78b55a43b8e5fa7a3977e134ca68
+- 基準ソースコミット: b337fe8377cac153d2bb2bf5f957ea2f2f75c149
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 自律AI開発: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
@@ -28,36 +28,39 @@
 - 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40064857413（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- Read docs/GEMINI_REQUEST_BOUND_RESULT.md and C00007: request-specific output bound is implemented; a smaller complete input bound remains unproved.
-- Do not declare live readiness from passing offline/container tests. Current 2048-output reservation remains 79.4112 modeled AIC using the full model input ceiling.
-- A fresh 10-AIC budget would require input independently bounded to <=123093 tokens for 2048 charged output tokens; the diagnostic does not certify this input count.
-- Require attributable provider input/framing bounds or an independently validated exact path before revisiting inference. The inspected official SDK 2.33.0 lacks a Gemini 3.8 local lookup.
-- Keep estimates, tokenizer aliases, character/byte ratios and arbitrary margins out of admission decisions; do not change the cap or model automatically.
-- Fresh owner inference approval and verified quota/pricing are still required after technical prerequisites hold. Keep recurring AI, automatic merge and Roblox publication inactive.
+- Read docs/GEMINI_OPERATIONAL_HOLD.md and C00008; the reviewer direct transport is removed and a literal false workflow condition is proposed.
+- Verify the pinned official compiler reproduces the checked-in hold and all offline CI checks pass; a static assertion alone is not compilation evidence.
+- All proposals are DRAFT_UNMERGED; main has not deployed the new hold or budget candidates. Do not rerun historical workflow snapshots.
+- Request-specific input/framing proof from PR #23 remains BLOCKED. The current 2048-output reservation is still 79.4112 modeled AIC using the full model input ceiling.
+- Require independently established complete input/framing bounds, shared enforcement for both roles, current pricing/quota and fresh owner inference consent before reopening.
+- Keep the 10-AIC cap, consumed approval markers, independent-review gate, inactive recurring AI, no automatic merge and no Roblox publication.
 
 ## 最新の再開地点（観測時点の記録）
-- 記録: C00007 / 2026-10-24
+- 記録: C00008 / 2026-10-24
 - 照合したmain: e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904
-- 証拠: history/C00007_request_bound_proof.json
-- 完了: Read canonical main, current drafts and completed QA before continuing from PR #22.
-- 完了: Verify native GenerateContent output cutoff includes thinking; reserve only the explicit request output limit.
-- 完了: Inspect exact official Python SDK 2.33.0 model lookup without importing SDK dependencies, downloading vocabularies or calling a provider.
-- 完了: Confirm the checked SDK cannot map Gemini 3.8 Flash to a local tokenizer; positive controls verify lookup inspection.
-- 完了: Calculate exact remaining-budget proof requirements: 2048 output tokens would require input independently bounded to <=123093 tokens under a fresh 10-AIC cap.
-- 完了: Pass 64 Node and 33 Python tests locally, retaining blocked admission and all prior guards.
+- 証拠: history/C00008_operational_hold.json
+- 完了: Read canonical main, current drafts, latest Actions and open issues; PR #23 QA 40074151010 passed and main is unchanged.
+- 完了: Reproduce latent reviewer budget bypass with one injected synthetic dispatch and zero real provider calls.
+- 完了: Remove direct reviewer HTTP transport and block --online before patch/credential access or transport selection.
+- 完了: Add literal-false source/compiled pre-activation hold; marker edits and environment flags cannot release it.
+- 完了: Invalidate stale safe verdict artifacts on every scanner CLI attempt, including offline and blocked attempts.
+- 完了: Pass all 43 Python tests, including 10 new operational hold regressions; retain pure verdict-schema tests.
+- 完了: Add pinned official compiler regeneration and exact lock comparison to offline CI; verify result before claiming CI success.
 - 新規推論承認: False
 - 定期AI承認: False
 - 自動マージ承認: False
 - Roblox公開承認: False
-- 再実行の前提: Input/framing bound must be independently established, pricing/quota rechecked and fresh owner inference authorization obtained. A mock pass or estimate is not approval.
-- 再開する作業: Treat the missing request-specific input bound as a real blocker. Resume only when an attributable provider bound or independently validated exact model/framing path is available; never substitute an estimate or promise another routine step will enable inference.
-- 未確認・制限: Only the request output bound was tightened; the input side still uses the full documented model ceiling.
-- 未確認・制限: The required input ceiling is arithmetic for a missing proof, not a measured or certified input count.
-- 未確認・制限: Local-tokenizer support findings apply to the exact inspected SDK commit; they are not an impossibility proof for all future mechanisms.
-- 未確認・制限: No live CLI/reviewer routing, provider transport, credential read or inference was enabled.
-- 未確認・制限: All implementation remains in unmerged drafts; Studio, multiplayer and mobile remain NOT_RUN.
+- 再実行の前提: Reopening needs independently established complete input/framing bound, shared live enforcement, current pricing/quota, fresh owner inference consent and separately reviewed code changes.
+- 再開する作業: Confirm pinned compiler regeneration and all offline CI checks. Review the draft operational stop alongside the existing handoff/budget proposals. Keep inference blocked until the independent input/framing proof and shared live enforcement are established; do not substitute estimates or reuse approval markers.
+- 未確認・制限: All changes remain unmerged drafts; canonical main still has the previous incident state.
+- 未確認・制限: The literal hold is an operational stop, not proof of a request-specific input bound or financial cap.
+- 未確認・制限: The real developer/reviewer clients remain disabled and no Gemini key was read.
+- 未確認・制限: Historical workflow snapshots are not retrofitted; never rerun the consumed trial.
+- 未確認・制限: Studio, multiplayer and mobile remain NOT_RUN.
 
 ## 未マージの提案（現在のPR状態はGitHubで再確認）
+- PR #23: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Tighten output reservations; reproduce unresolved request input proof / https://github.com/kk051780/toy-wars-factory/pull/23
+  - QA: 64 Node (24 network-disabled container), 33 Python, 37 Lua + 4000 stress, official SDK inspection and deterministic handoff PASS. Input proof remains BLOCKED; no live calls. https://github.com/kk051780/toy-wars-factory/actions/runs/40074151010
 - PR #22: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Connect offline profile, model-ceiling adapter and persistent shared ledger / https://github.com/kk051780/toy-wars-factory/pull/22
   - QA: 40 existing Node + 19 connected container tests, 33 Python, 37 Lua and 4000 stress checks PASS. No live inference. https://github.com/kk051780/toy-wars-factory/actions/runs/40072355807
 - PR #21: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Native admission correction and reservation-runner candidate / https://github.com/kk051780/toy-wars-factory/pull/21

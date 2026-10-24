@@ -1,7 +1,7 @@
 {
   "schema": 2,
   "canonical_repo": "kk051780/toy-wars-factory",
-  "source_revision": "47770033da4e78b55a43b8e5fa7a3977e134ca68",
+  "source_revision": "b337fe8377cac153d2bb2bf5f957ea2f2f75c149",
   "source_metrics": {
     "files": 4,
     "lines": 663,
@@ -96,7 +96,7 @@
       "single_run_error": "max_runs_exceeded 12/12 (429), Gemini CLI timed out 12 minutes; detection result absent; no safe-output PR",
       "billing_status": "UNVERIFIED: GH_AW_AIC:33.713 reported in job logs despite configured max-ai-credits=10; do not infer actual charges",
       "next_reexecution_authorized": false,
-      "credit_enforcement_investigation": "Native output reservation is now request-specific including thinking; request-specific input bound is NOT proved. Official Python SDK 2.33.0 lookup at c0e9c549 does not support Gemini 3.8 Flash. Keep live inference blocked.",
+      "credit_enforcement_investigation": "Request input/framing proof remains unavailable. Draft operational hold adds literal-false activation and removes direct reviewer transport; no live enforcement or fresh inference authorization.",
       "runtime_candidate": {
         "status": "BLOCKED_NO_VERIFIED_SMALL_INPUT_BOUND",
         "document": "docs/GEMINI_BUDGET_RUNTIME_CANDIDATE.md",
@@ -122,7 +122,10 @@
         "inspected_sdk_commit": "c0e9c54915970948258226e565bde6ef6d5c0b94",
         "request_example_output": 2048,
         "request_example_input_ceiling_needed": 123093,
-        "request_example_reservation_aic": "79.4112"
+        "request_example_reservation_aic": "79.4112",
+        "operational_hold_status": "DRAFT_LITERAL_WORKFLOW_HOLD_AND_REVIEWER_TRANSPORT_REMOVED",
+        "operational_hold_document": "docs/GEMINI_OPERATIONAL_HOLD.md",
+        "operational_hold_tests": 10
       }
     }
   },
@@ -138,44 +141,55 @@
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
-    "Read docs/GEMINI_REQUEST_BOUND_RESULT.md and C00007: request-specific output bound is implemented; a smaller complete input bound remains unproved.",
-    "Do not declare live readiness from passing offline/container tests. Current 2048-output reservation remains 79.4112 modeled AIC using the full model input ceiling.",
-    "A fresh 10-AIC budget would require input independently bounded to <=123093 tokens for 2048 charged output tokens; the diagnostic does not certify this input count.",
-    "Require attributable provider input/framing bounds or an independently validated exact path before revisiting inference. The inspected official SDK 2.33.0 lacks a Gemini 3.8 local lookup.",
-    "Keep estimates, tokenizer aliases, character/byte ratios and arbitrary margins out of admission decisions; do not change the cap or model automatically.",
-    "Fresh owner inference approval and verified quota/pricing are still required after technical prerequisites hold. Keep recurring AI, automatic merge and Roblox publication inactive."
+    "Read docs/GEMINI_OPERATIONAL_HOLD.md and C00008; the reviewer direct transport is removed and a literal false workflow condition is proposed.",
+    "Verify the pinned official compiler reproduces the checked-in hold and all offline CI checks pass; a static assertion alone is not compilation evidence.",
+    "All proposals are DRAFT_UNMERGED; main has not deployed the new hold or budget candidates. Do not rerun historical workflow snapshots.",
+    "Request-specific input/framing proof from PR #23 remains BLOCKED. The current 2048-output reservation is still 79.4112 modeled AIC using the full model input ceiling.",
+    "Require independently established complete input/framing bounds, shared enforcement for both roles, current pricing/quota and fresh owner inference consent before reopening.",
+    "Keep the 10-AIC cap, consumed approval markers, independent-review gate, inactive recurring AI, no automatic merge and no Roblox publication."
   ],
   "resume_checkpoint": {
-    "id": "C00007",
+    "id": "C00008",
     "observed_on": "2026-10-24",
     "observed_main_revision": "e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904",
     "completed": [
-      "Read canonical main, current drafts and completed QA before continuing from PR #22.",
-      "Verify native GenerateContent output cutoff includes thinking; reserve only the explicit request output limit.",
-      "Inspect exact official Python SDK 2.33.0 model lookup without importing SDK dependencies, downloading vocabularies or calling a provider.",
-      "Confirm the checked SDK cannot map Gemini 3.8 Flash to a local tokenizer; positive controls verify lookup inspection.",
-      "Calculate exact remaining-budget proof requirements: 2048 output tokens would require input independently bounded to <=123093 tokens under a fresh 10-AIC cap.",
-      "Pass 64 Node and 33 Python tests locally, retaining blocked admission and all prior guards."
+      "Read canonical main, current drafts, latest Actions and open issues; PR #23 QA 40074151010 passed and main is unchanged.",
+      "Reproduce latent reviewer budget bypass with one injected synthetic dispatch and zero real provider calls.",
+      "Remove direct reviewer HTTP transport and block --online before patch/credential access or transport selection.",
+      "Add literal-false source/compiled pre-activation hold; marker edits and environment flags cannot release it.",
+      "Invalidate stale safe verdict artifacts on every scanner CLI attempt, including offline and blocked attempts.",
+      "Pass all 43 Python tests, including 10 new operational hold regressions; retain pure verdict-schema tests.",
+      "Add pinned official compiler regeneration and exact lock comparison to offline CI; verify result before claiming CI success."
     ],
-    "evidence_record": "history/C00007_request_bound_proof.json",
+    "evidence_record": "history/C00008_operational_hold.json",
     "authorization": {
       "gemini_trial": "CONSUMED_SINGLE_RUN",
       "new_inference_authorized": false,
       "recurring_ai_authorized": false,
       "automatic_merge_authorized": false,
       "roblox_publish_authorized": false,
-      "prerequisite": "Input/framing bound must be independently established, pricing/quota rechecked and fresh owner inference authorization obtained. A mock pass or estimate is not approval."
+      "prerequisite": "Reopening needs independently established complete input/framing bound, shared live enforcement, current pricing/quota, fresh owner inference consent and separately reviewed code changes."
     },
     "limitations": [
-      "Only the request output bound was tightened; the input side still uses the full documented model ceiling.",
-      "The required input ceiling is arithmetic for a missing proof, not a measured or certified input count.",
-      "Local-tokenizer support findings apply to the exact inspected SDK commit; they are not an impossibility proof for all future mechanisms.",
-      "No live CLI/reviewer routing, provider transport, credential read or inference was enabled.",
-      "All implementation remains in unmerged drafts; Studio, multiplayer and mobile remain NOT_RUN."
+      "All changes remain unmerged drafts; canonical main still has the previous incident state.",
+      "The literal hold is an operational stop, not proof of a request-specific input bound or financial cap.",
+      "The real developer/reviewer clients remain disabled and no Gemini key was read.",
+      "Historical workflow snapshots are not retrofitted; never rerun the consumed trial.",
+      "Studio, multiplayer and mobile remain NOT_RUN."
     ],
-    "next_action": "Treat the missing request-specific input bound as a real blocker. Resume only when an attributable provider bound or independently validated exact model/framing path is available; never substitute an estimate or promise another routine step will enable inference."
+    "next_action": "Confirm pinned compiler regeneration and all offline CI checks. Review the draft operational stop alongside the existing handoff/budget proposals. Keep inference blocked until the independent input/framing proof and shared live enforcement are established; do not substitute estimates or reuse approval markers."
   },
   "review_queue": [
+    {
+      "number": 23,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/23",
+      "head_sha": "098306c53c363b2486e02a79eabf11f01bfbe901",
+      "origin": "CHAT_ASSISTANT_NOT_GEMINI",
+      "status": "DRAFT_UNMERGED",
+      "purpose": "Tighten output reservations; reproduce unresolved request input proof",
+      "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40074151010",
+      "qa_scope": "64 Node (24 network-disabled container), 33 Python, 37 Lua + 4000 stress, official SDK inspection and deterministic handoff PASS. Input proof remains BLOCKED; no live calls."
+    },
     {
       "number": 22,
       "url": "https://github.com/kk051780/toy-wars-factory/pull/22",
