@@ -76,7 +76,9 @@ test("recovered balance: next production interval buys selected GUARDON", functi
     eq(h:status(player, "Allies").Value, 0, "first attempt rejected")
     coins.Value = 100
     beats(h, 10)
-    eq(coins.Value, 90, "3 seconds of income minus GUARDON cost")
+    -- 3.0 / 0.3 can leave a tiny positive float; cross the timer boundary.
+    h.runService.Heartbeat:Fire(0.12)
+    eq(coins.Value, 90, "3.12 seconds of income minus GUARDON cost")
     eq(h:status(player, "Allies").Value, 1, "one ally after recovery")
     eq(models(h, "GUARDON"), 1, "GUARDON produced")
 end)
