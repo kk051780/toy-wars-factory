@@ -1,0 +1,168 @@
+{
+  "id": "C00004",
+  "date": "2026-10-24",
+  "kind": "OFFLINE_INCIDENT_REPRODUCTION_AND_CHAT_RESUME",
+  "canonical_main_observed": "e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904",
+  "trial": {
+    "run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40060119253",
+    "attempt": 1,
+    "status": "FAILED",
+    "model": "gemini-3.8-flash",
+    "source_changes": 0,
+    "autonomous_pr": null
+  },
+  "artifact": {
+    "id": 12547467131,
+    "sha256": "2cda078273da9726d23129574f792022ddfdebb5b82c9267519e9d7f90f6868c"
+  },
+  "actual_config": {
+    "maxAiCredits": 10,
+    "maxRuns": 12,
+    "defaultAiCreditsPricing": null,
+    "modelPricingCatalog": null
+  },
+  "observed_usage": {
+    "responses": 12,
+    "input_tokens": 417432,
+    "output_tokens": 961,
+    "cache_read_tokens": 272648,
+    "reported_aic": 33.713,
+    "records_with_ai_credits_fields": 0,
+    "actual_billed_amount": "UNVERIFIED"
+  },
+  "diagnosis": {
+    "primary_failure": "Discovery consumed the 12-call budget; test command was denied; terminal max_runs_exceeded was retried until timeout.",
+    "credit_failure": "The tagged runtime has no price for gemini-3.8-flash; body-only model admission skips unknown-price rejection on native Gemini requests; unpriced usage returns null and does not increment internal AIC.",
+    "evidence_strength": "OFFLINE_REPRODUCED_CONSISTENT_WITH_ACTUAL_ARTIFACT; deployed binary/source byte mapping not independently attested",
+    "safety_outcome": "No patch; independent detection failed closed; safe_outputs skipped",
+    "runtime_fix_deployed": false,
+    "provider_hard_cap_verified": false
+  },
+  "reproduction": {
+    "tool": "tools/reproduce_gemini_credit_gap.cjs",
+    "upstream": "github/gh-aw-firewall@v0.28.70",
+    "git_blob_hashes": {
+      "containers/api-proxy/guards/ai-credits-guard.js": "9f1b608685ae1edc8b5962e1e6f5999dce1e7572",
+      "containers/api-proxy/ai-credits-pricing.js": "49b52bbcfe2b4bf9e460ae7343c434a7fcd015da",
+      "containers/api-proxy/models-dev-catalog.js": "de65bb5480b63e0a5a8d76a065297f14bfaba1bc",
+      "containers/api-proxy/models.dev.catalog.json": "7aadc2a15168959d020df4252b650337536e1c1d",
+      "containers/api-proxy/runtime-model-catalog.js": "a3a9315d001bb69239f59b802661ea066efbcb18",
+      "containers/api-proxy/provider-pricing-overlays.js": "f3a33ba0d96938d10c1c4d90dd2c7757f6f3d9b5",
+      "containers/api-proxy/model-pricing-catalog.js": "f9a8ea999e785e569939702cfac11b01db0d4843",
+      "containers/api-proxy/guards/guard-utils.js": "c410bee62f160b8791b7244f2004c7699a6d47d2",
+      "containers/api-proxy/guards/steering-thresholds.js": "910d69c77abd249dec9e2324e1c9a951d41f91db",
+      "containers/api-proxy/provider-names.js": "ddc3e967d84eb3ad56d084a47e25a423a983d9e9",
+      "containers/api-proxy/proxy-guards.js": "f50f31b6751c03221d7fa9aae2e3f87a0327d1d4"
+    },
+    "provider_calls": 0,
+    "credentials_read": false,
+    "status": "PASS_REPRODUCED_GAP_NOT_MITIGATION"
+  },
+  "separate_game_pr": {
+    "number": 17,
+    "origin": "CHAT_ASSISTANT_NOT_GEMINI",
+    "status": "DRAFT_UNMERGED",
+    "qa_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/40061153081",
+    "source_delta": {
+      "lines": 4,
+      "bytes": 306
+    },
+    "included_in_main": false
+  },
+  "cycle": {
+    "game_source": {
+      "files": 4,
+      "lines": 663,
+      "bytes": 25726,
+      "delta_files": 0,
+      "delta_lines": 0,
+      "delta_bytes": 0
+    },
+    "characters_touched": [],
+    "changed_files": [
+      "PROJECT_STATE.json",
+      "tools/build_handoff.py",
+      "tools/reproduce_gemini_credit_gap.cjs",
+      "tests/test_handoff_checkpoint.py",
+      "docs/CHAT_CONTINUITY_PROTOCOL.md",
+      "docs/INCIDENT_TWF_0006.md",
+      "history/C00004_gemini_credit_audit.json",
+      ".github/workflows/handoff-sync.yml",
+      ".github/workflows/bootstrap-quality.yml"
+    ],
+    "qa": {
+      "python_tests": "PASS_33_INCLUDING_REAL_SHALLOW_CLONE_REGRESSION",
+      "offline_upstream_reproduction": "PASS_11_PINNED_BLOBS_ZERO_PROVIDER_CALLS",
+      "installer": "PASS_FOUR_EXACT_MODULES_SHA256",
+      "github_pr_qa": "PENDING",
+      "roblox_studio": "NOT_RUN",
+      "multiplayer": "NOT_RUN",
+      "mobile": "NOT_RUN",
+      "policy_gate": "PASS_21_CHECKS"
+    },
+    "next": "Review tagged native-model pricing correction and bounded local-server regressions without inference.",
+    "file_size_deltas": {
+      "PROJECT_STATE.json": {
+        "before": 6224,
+        "after": 10174,
+        "delta": 3950
+      },
+      "tools/build_handoff.py": {
+        "before": 5731,
+        "after": 7601,
+        "delta": 1870
+      },
+      "tools/reproduce_gemini_credit_gap.cjs": {
+        "before": 0,
+        "after": 5632,
+        "delta": 5632
+      },
+      "tests/test_handoff_checkpoint.py": {
+        "before": 0,
+        "after": 5005,
+        "delta": 5005
+      },
+      "docs/CHAT_CONTINUITY_PROTOCOL.md": {
+        "before": 1474,
+        "after": 3109,
+        "delta": 1635
+      },
+      "docs/INCIDENT_TWF_0006.md": {
+        "before": 3767,
+        "after": 7203,
+        "delta": 3436
+      },
+      "history/C00004_gemini_credit_audit.json": {
+        "before": 0,
+        "after": 6304,
+        "delta": 6304
+      },
+      ".github/workflows/handoff-sync.yml": {
+        "before": 1996,
+        "after": 2021,
+        "delta": 25
+      },
+      ".github/workflows/bootstrap-quality.yml": {
+        "before": 3234,
+        "after": 3273,
+        "delta": 39
+      }
+    }
+  },
+  "authorization": {
+    "new_inference": false,
+    "recurring_ai": false,
+    "automatic_merge": false,
+    "roblox_publish": false
+  },
+  "continuity_defect": {
+    "evidence_commits": [
+      "3dfd91d4f51890c5ca8f6f8b750c6a666fad0b33",
+      "e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904"
+    ],
+    "symptom": "Successive status-only commits advanced source_revision without substantive source changes.",
+    "root_cause": "actions/checkout default fetch-depth=1 makes git log treat the shallow boundary as an initial whole-tree commit.",
+    "correction": "Fetch full history in handoff and offline QA checkouts; builder refuses shallow history before writing snapshots.",
+    "regression": "Real depth-1 local clone fails with explicit diagnosis; fetching full history restores the true substantive revision."
+  }
+}

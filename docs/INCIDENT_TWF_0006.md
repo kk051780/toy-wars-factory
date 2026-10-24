@@ -40,3 +40,65 @@ Issue: https://github.com/kk051780/toy-wars-factory/issues/16
 ## Actual result
 Status = `SEVERE_HOLD_AIC_CONFIG_OVERRUN`.
 Game source delta 0, gameplay QA changes 0, character changes 0, generated PR 0, Roblox runtime/mobile/multiplayer unverified. This trial generated **infrastructure defect evidence only**.
+
+## 2026-10-24 resumed audit: offline reproduction of the credit gap
+
+The earlier statement that the specific enforcement gap was uninvestigated is
+superseded by this reproducible mechanism. The stop rule remains in force.
+
+- Downloaded the original agent artifact (ID 12547467131), verified ZIP SHA-256
+  `2cda078273da9726d23129574f792022ddfdebb5b82c9267519e9d7f90f6868c`.
+- Its actual `awf-config.json` sets `maxAiCredits=10`, `maxRuns=12`, and supplies
+  neither `defaultAiCreditsPricing` nor `modelPricingCatalog`.
+- All 12 token-usage records contain token counts but **no**
+  `ai_credits_this_response` or `ai_credits_total`. The separate gh-aw summary
+  reports 33.713 AIC. This is inconsistent accounting, not a verified bill.
+- The tagged firewall v0.28.70 pricing/catalog files do not price
+  `gemini-3.8-flash`. Its `proxy-guards.js` derives admission's model only from a
+  JSON body's `model` field. Native Gemini puts its model in the request URL.
+- On the hash-verified tagged modules, a native body without `model` bypasses
+  unknown-price rejection; accounting for the named unpriced model returns
+  `null`; the internal counter remains 0 and its 10-AIC guard does not block.
+  An explicit body model is rejected, and a priced model adds credits. These
+  controls distinguish the gap from a disabled test or an absent limit.
+
+Run without provider access:
+
+```text
+node tools/reproduce_gemini_credit_gap.cjs /path/to/gh-aw-firewall-v0.28.70
+```
+
+The tool verifies 11 upstream Git blob hashes before loading the original
+modules. Only logging is stubbed; it uses an isolated environment, reads no
+credentials, downloads nothing and makes zero API calls. See
+`history/C00004_gemini_credit_audit.json` for evidence and exact upstream pins.
+This is an offline reproduction consistent with the actual artifact; the
+mapping of every deployed container byte to the tag is not independently attested.
+
+Primary source:
+- https://github.com/github/gh-aw-firewall/blob/v0.28.70/containers/api-proxy/proxy-guards.js
+- https://github.com/github/gh-aw-firewall/blob/v0.28.70/containers/api-proxy/guards/ai-credits-guard.js
+- https://github.com/github/gh-aw-firewall/blob/v0.28.70/containers/api-proxy/ai-credits-pricing.js
+
+### Remaining remediation, without a provider call
+
+1. Prepare a reviewed runtime correction that resolves native URL models,
+   refuses unpriced admission and accounts against the same pricing used in
+   reporting. Validate with a local stub server and synthetic responses.
+2. Bound each request's worst-case token usage before admitting it; stopping
+   only after a response cannot guarantee an exact financial ceiling.
+3. Preserve independent fail-closed patch review. The missing patch correctly
+   blocked detection/promotion; it must not be replaced by a fabricated SAFE.
+4. Verify provider-side quotas and authoritative billing separately, then obtain
+   fresh owner authorization. No deployed runtime fix or provider cap is claimed.
+
+### Separate gameplay proposal
+
+PR #17 is a chat-assistant-authored selector-distance fix, not Gemini output:
+https://github.com/kk051780/toy-wars-factory/pull/17
+
+Its exact head `aac789b3c5caa43eecc3e93c18c8e29abba37f7b` passed offline QA:
+https://github.com/kk051780/toy-wars-factory/actions/runs/40061153081
+
+It remains draft/unmerged. Its +4 Lua lines / +306 bytes are **not** in main
+and must not be added to main's source metrics or credited to the failed trial.

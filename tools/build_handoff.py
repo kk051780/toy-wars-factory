@@ -4,7 +4,6 @@ import json
 import hashlib
 import subprocess
 from pathlib import Path
-from datetime import datetime
 from verify_status import status_ok
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -18,6 +17,8 @@ def git(*args):
     return subprocess.check_output(["git",*args],cwd=ROOT,text=True).strip()
 
 def main():
+    if git("rev-parse","--is-shallow-repository") == "true":
+        raise SystemExit("FAIL: shallow Git history cannot identify the source revision; fetch full history first")
     state=read_json("PROJECT_STATE.json")
     chars=read_json("config/characters.json")["characters"]
     policy=read_json("config/quality_policy.json")
@@ -37,12 +38,14 @@ def main():
     verified=state.get("verification",{})
     character_summary=[{"name":u["name_ja"],"id":u["id"],"role":u["role"],"shape":u["shape"],"status":u["status"]} for u in chars]
     record={
-      "schema":1,"canonical_repo":repo,"source_revision":code_sha,
+      "schema":2,"canonical_repo":repo,"source_revision":code_sha,
       "source_metrics":{"files":files,"lines":lines,"bytes":size},
       "delta_from_initial_baseline":delta,"characters":character_summary,
       "game":state["game"],"autonomous_coding":state["autonomous_coding"],
       "verification":verified,"release_decision":state["release_decision"],
       "next":state["next"],
+      "resume_checkpoint":state.get("resume_checkpoint",{}),
+      "review_queue":state.get("review_queue",[]),
       "important":"Actions / Roblox Studio evidence must be checked independently. A generated status page is not proof of runtime health."
     }
     (OUT/"LATEST_STATE.json").write_text(json.dumps(record,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
@@ -77,6 +80,30 @@ def main():
       "",
       "## 次の開発優先事項"]
     fields+=["- "+x for x in state.get("next",[])]
+    checkpoint=state.get("resume_checkpoint",{})
+    if checkpoint:
+        fields+=["","## 最新の再開地点（観測時点の記録）",
+          "- 記録: "+checkpoint["id"]+" / "+checkpoint["observed_on"],
+          "- 照合したmain: "+checkpoint["observed_main_revision"],
+          "- 証拠: "+checkpoint["evidence_record"]]
+        fields+=["- 完了: "+item for item in checkpoint.get("completed",[])]
+        auth=checkpoint.get("authorization",{})
+        fields+=["- 新規推論承認: "+str(auth.get("new_inference_authorized",False)),
+          "- 定期AI承認: "+str(auth.get("recurring_ai_authorized",False)),
+          "- 自動マージ承認: "+str(auth.get("automatic_merge_authorized",False)),
+          "- Roblox公開承認: "+str(auth.get("roblox_publish_authorized",False)),
+          "- 再実行の前提: "+auth.get("prerequisite","UNKNOWN"),
+          "- 再開する作業: "+checkpoint["next_action"]]
+        fields+=["- 未確認・制限: "+item for item in checkpoint.get("limitations",[])]
+    queue=state.get("review_queue",[])
+    if queue:
+        fields+=["","## 未マージの提案（現在のPR状態はGitHubで再確認）"]
+        for item in queue:
+            fields.append("- PR #"+str(item["number"])+": "+item["status"]+" / "+
+              item["origin"]+" / "+item["purpose"]+" / "+item["url"])
+            if item.get("qa_url"):
+                fields.append("  - QA: "+item["qa_scope"]+" "+item["qa_url"])
+        fields.append("- mainの実装と未マージPRの提案を合算しない。Geminiの成果と別の修正を区別する。")
     fields+=["","## 新しいチャットでAIが必ず行う引き継ぎ手順",
       "1. GitHubコネクタでこのファイルと status/LATEST_STATE.json、PROJECT_STATE.json、AGENTS.md、config/quality_policy.json を読み込む。",
       "2. 最新 main、Actions実行結果、PR、Issuesを直接確認し、生成ファイルのsource_revisionと整合させる。",
