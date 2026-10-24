@@ -2,8 +2,19 @@
 import argparse
 import fnmatch
 import json
+import re
 import subprocess
 from pathlib import PurePosixPath
+
+
+def is_worker_branch(branch, policy):
+    if not isinstance(branch, str):
+        return False
+    if branch == policy.get("branch"):
+        return True
+    prefix = policy.get("branch_prefix")
+    suffix = r"[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}"
+    return isinstance(prefix, str) and bool(prefix) and re.fullmatch(re.escape(prefix) + suffix, branch) is not None
 
 
 def violations(entries, policy):
@@ -55,11 +66,14 @@ def main():
     parser.add_argument("--base", required=True)
     parser.add_argument("--head", default="HEAD")
     parser.add_argument("--policy", required=True)
+    parser.add_argument("--branch")
     args = parser.parse_args()
     with open(args.policy, encoding="utf-8") as file:
         policy = json.load(file)
     if policy.get("enabled") is not True or policy.get("mode") != "DRAFT_PR_ONLY":
         raise SystemExit("FAIL: scheduled repair is disabled or outside draft-only mode")
+    if args.branch is not None and not is_worker_branch(args.branch, policy):
+        raise SystemExit("FAIL: branch is outside the scheduled repair namespace")
     entries = changed_entries(args.base, args.head)
     errors = violations(entries, policy)
     if errors:

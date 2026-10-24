@@ -53,13 +53,14 @@ jobs:
       - name: Install native Lua 5.4
         run: sudo apt-get update -qq && sudo apt-get install -y lua5.4
       - name: Enforce scheduled repair scope using the trusted base policy
-        if: github.event_name == 'pull_request' && github.head_ref == 'auto/twf-game-repair'
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'auto/twf-game-repair')
         env:
           TWF_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          TWF_HEAD_REF: ${{ github.head_ref }}
         run: |
           git show "$TWF_BASE_SHA:tools/check_auto_diff.py" > /tmp/twf-check-auto-diff.py
           git show "$TWF_BASE_SHA:config/autonomous_repair.json" > /tmp/twf-auto-policy.json
-          python3 /tmp/twf-check-auto-diff.py --policy /tmp/twf-auto-policy.json --base "$TWF_BASE_SHA" --head HEAD
+          python3 /tmp/twf-check-auto-diff.py --policy /tmp/twf-auto-policy.json --base "$TWF_BASE_SHA" --head HEAD --branch "$TWF_HEAD_REF"
       - name: Lua parse of game modules (not Luau engine verification)
         run: |
           for file in src/*.lua; do

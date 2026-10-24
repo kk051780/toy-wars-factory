@@ -1,6 +1,6 @@
 {
   "project": "TOY WARS FACTORY",
-  "version": "2.21-chatgpt-repair-first-code-pr-verified",
+  "version": "2.22-autonomous-queue-continuity-setup",
   "updated_at": "2026-10-25",
   "github": {
     "repository": "kk051780/toy-wars-factory",
@@ -163,12 +163,11 @@
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
-    "PR #34 setup is merged at 40c79ae0f06d472ed5a1184d5c27d9421afee3c0; main QA 40108475671 and handoff 40108475650 pass. Do not ask for setup integration again.",
-    "Hourly ChatGPT task 6adbf0d6a7d881918ce181dff2468867 is enabled. Routine game edits/tests/draft PR updates are authorized without another 進めて.",
-    "Initial service run 9fd5c391-5054-832e-b21b-9527e78d6733 completed and actually created draft PR #35, head 116ab1fd56d736d10994008dfcdabaccd76afce9. CI 40108773948 passed, including all three new whole-server production regressions and trusted-base scope checks.",
-    "First run added executable regression code only; game source and all 75 existing files were preserved. Do not claim it fixed a gameplay bug or proved continuous operation.",
-    "Continue with the same auto/twf-game-repair draft branch: read actual CI, preserve successful work, choose the next bounded defect/regression. Do not recreate the completed initial production test.",
-    "Keep Gemini/external API, keys, model/cap/billing and future automatic main merge/Roblox publication held. First task delivery is unknown; recorded completion and actual GitHub code/CI are the proof."
+    "Read C00023 and the actual automation service state. C00019 enabled-state observation became stale: the worker later paused itself for PR #35 review wait. This incident is now documented.",
+    "Deploy queue v2 and verify the resumed task produces a new independent source-fix PR while preserving successful PR #35. Do not merge PR #35 or other game proposals without their existing authorization.",
+    "Use the three-PR queue and tools/repair_queue.py. Never let a scheduled worker modify/disable its task. When full, wait and recheck rather than asking for another routine 進めて.",
+    "Prioritize the reproduced walkable-floor collision property defect. Require whole-server regression evidence, exact source-size history and unchanged decorative/character behavior.",
+    "Keep independent review, no automatic main merge, Gemini/external API holds, original 10-AIC cap and Roblox release HOLD. Native attributes do not prove real physics or playability."
   ],
   "tracked_metrics": {
     "lua_source_files": 4,
@@ -310,21 +309,19 @@
     }
   ],
   "resume_checkpoint": {
-    "id": "C00019",
+    "id": "C00023",
     "observed_on": "2026-10-25",
-    "observed_main_revision": "40c79ae0f06d472ed5a1184d5c27d9421afee3c0",
+    "observed_main_revision": "0e66049e95bc555bfb2a12aeafe46e73ea420c90",
     "completed": [
-      "Complete the owner-requested repository setup by merging PR #34 at 40c79ae0f06d472ed5a1184d5c27d9421afee3c0 using reviewed head 829d25515f75479ec606edda8fbbab64db476fd5.",
-      "Confirm exact reviewed tree 7a0655b4b61dfef30c466768ae3d086889ccf3fa, all 13 reviewed setup blobs, 62 untouched blob/mode matches and all four unchanged game sources.",
-      "Verify setup post-merge QA 40108475671 and handoff 40108475650 both pass, including 61 Python tests, all legacy native controls, compiler and installer checks.",
-      "Read the new enabled config on the actual main merge, then request a single real automation validation run. The service confirmed acceptance without changing the existing hourly schedule.",
-      "Verify the service run completed at 2026-10-24T15:50:27.202124Z; latest_result run_id matches the requested run and was created after its start. No delivery claim is made.",
-      "Independently fetch actual draft PR #35, its two changed files, head 116ab1fd56d736d10994008dfcdabaccd76afce9 and tree bd98f2e95c0dad162c25fa4f795f3d7cd556858a; all 75 pre-existing files/modes remain identical.",
-      "Verify exact-head CI 40108773948 passes. The trusted-base path gate ran successfully, all three AUTO_PRODUCTION regressions passed, and all prior QA remained successful.",
-      "Record first_run_verified for this narrow code-producing regression PR trial. No gameplay defect was fixed, no game source was changed and no automatic main merge was performed.",
-      "Clarify the saved task prompt: accepted main regressions/history stay protected, while defects in the task own unmerged additions can be repaired on the same draft PR without weakening assertions."
+      "Read actual task state and matched latest service result: task was disabled after run c7058bdc-64e4-8332-95ba-06037acb5d28 reported self-pausing for PR #35 integration wait.",
+      "Confirm PR #35 evolved to seven added files, six commits and successful exact-head CI 40114787373 after repairing its own wave-fixture mistakes. Preserve that review-ready work.",
+      "Implement a bounded queue: failed CI first, pending CI wait, successful PRs preserved, fresh main-based UUID branch if under three open PRs, full queue waits without scheduler changes.",
+      "Add branch namespace validation for both legacy and UUID lanes and apply the existing trusted-base scope check to the full repair namespace. No path permissions or QA gates are removed.",
+      "Resume the existing hourly task with explicit prohibition of self-disabling or scheduler changes. The new prompt waits for queue_version>=2 on main before edits.",
+      "Execute whole-server native baseline property probe: FeltBattlefield, FactoryFloor and LobbyGround all have CanCollide=false. Prepare this concrete source defect for the next automatic repair trial; no physics/Studio claim.",
+      "Keep all four game sources unchanged in this controller setup; exact source baseline/history and all model/cap/credential/release holds are preserved."
     ],
-    "evidence_record": "history/C00019_chatgpt_repair_activation.json",
+    "evidence_record": "history/C00023_queue_continuity_setup.json",
     "authorization": {
       "owner_instruction": "自動化優先させたい。いつまで俺は指示送らなきゃいけない？ 自動で今やってるゲームの修正やれる体制作れよ",
       "authorization_date": "2026-10-25",
@@ -340,16 +337,18 @@
       "gemini_trial": "CONSUMED_SINGLE_RUN",
       "prerequisite": "Routine connected-GitHub edits/tests/draft PRs no longer wait for another 進めて. Main integration of future game fixes, external provider inference and Roblox publication still require their existing approvals. Validate the registered task by its service run, actual code PR and matching CI, not registration alone.",
       "setup_pr": 34,
-      "setup_merge_status": "COMPLETED"
+      "setup_merge_status": "COMPLETED",
+      "latest_owner_instruction": "自動ゲーム開発の体制整備を進めて",
+      "scheduler_controls": "Owner/controller only; scheduled worker may not alter its schedule or enabled state.",
+      "queue_scope": "Up to three independent draft PRs; existing integration and publication approvals remain."
     },
     "limitations": [
-      "One scheduled service execution and matching regression-code PR/CI are verified; repeated long-term operation is not yet proven.",
-      "The first automatic change is three production/purchase regressions, not a reproduced gameplay-source bug fix.",
-      "PR #35 remains draft/unmerged. Routine development continues without a user prompt, while main integration, independent review and Roblox publication conditions remain unchanged.",
-      "Recorded notification delivery is unknown. Completion, actual code files and exact-head successful CI provide the evidence.",
-      "Gemini/external provider API and financial-bound blockers remain held; no model/cap/billing or credential changes."
+      "The new queue/scheduler behavior and a source-changing automatic repair still need real service/PR/CI validation after deployment.",
+      "The queue is limited to three pending draft PRs; integration remains an owner decision, and full capacity must wait without disabling the task.",
+      "Floor baseline proves object properties in native Lua substitutes only, not Roblox physics, actual falling, mobile or multiplayer.",
+      "Gemini/external API, automatic main merge and Roblox publication remain held."
     ],
-    "next_action": "Continue the hourly task without routine user prompts. PR #35 CI passed; preserve its work and choose the next bounded defect or meaningful regression on the same draft branch. Main integration and release still require their existing approvals."
+    "next_action": "Deploy queue v2, then validate one real automatic game-source fix on a new UUID branch while PR #35 remains review-ready. Verify the task stays enabled. Keep failed-CI repair priority, three-PR cap and all existing merge/provider/release boundaries."
   },
   "applied_game_changes": {
     "status": "MERGED_PR30_MAIN_QA_VERIFIED",
@@ -433,11 +432,11 @@
     "roblox_engine_and_release": "UNVERIFIED_HOLD",
     "calendar_eta": "VALIDATE_REGISTERED_CHATGPT_ROUTE_NOW; NO_CLAIM_OF_PROVEN_AUTONOMOUS_REPAIR_YET",
     "conditional_observation_plan": "Proposed 24-48 hours after a newly authorized bounded single-run including independent review succeeds; not an elapsed-time promise, scheduled activation or engine/release ETA.",
-    "next_priority": "CONTINUE_HOURLY_REPAIR_ON_EXISTING_DRAFT_PR",
-    "chatgpt_game_repair": "FIRST_REAL_REGRESSION_CODE_PR_AND_CI_VERIFIED"
+    "next_priority": "VERIFY_NEW_LANE_SOURCE_FIX_WITH_REVIEW_PR35_PRESERVED",
+    "chatgpt_game_repair": "RESUMED_QUEUE_V2_REAL_GAME_FIX_VALIDATION_PENDING"
   },
   "cloud_game_repair": {
-    "status": "ENABLED_FIRST_AUTOMATED_REGRESSION_PR_VERIFIED",
+    "status": "ENABLED_QUEUE_V2_DEPLOYMENT_PENDING",
     "backend": "CHATGPT_CONNECTED_GITHUB_TASK",
     "task_id": "6adbf0d6a7d881918ce181dff2468867",
     "title": "TOY WARS 自動ゲーム修正",
@@ -462,7 +461,7 @@
     },
     "protocol": "docs/AUTONOMOUS_REPAIR.md",
     "saved_prompt": "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
-    "next": "Continue the hourly task without routine user prompts. PR #35 CI passed; preserve its work and choose the next bounded defect or meaningful regression on the same draft branch. Main integration and release still require their existing approvals.",
+    "next": "Deploy queue v2, then validate one real automatic game-source fix on a new UUID branch while PR #35 remains review-ready. Verify the task stays enabled. Keep failed-CI repair priority, three-PR cap and all existing merge/provider/release boundaries.",
     "setup_pr": 34,
     "setup_merge_commit": "40c79ae0f06d472ed5a1184d5c27d9421afee3c0",
     "setup_post_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40108475671",
@@ -489,6 +488,25 @@
       "game_source_changed": false,
       "notification_delivery": "UNKNOWN"
     },
-    "verification_scope": "One real service run created regression code and a draft PR; exact head CI and all three new Lua cases passed. No gameplay bug fix or continuous-operation claim."
+    "verification_scope": "One real service run created regression code and a draft PR; exact head CI and all three new Lua cases passed. No gameplay bug fix or continuous-operation claim.",
+    "observed_at_utc": "2026-10-24T21:54:27.086183+00:00",
+    "queue_version": 2,
+    "branch_prefix": "auto/twf-game-repair-",
+    "max_open_prs": 3,
+    "worker_can_change_scheduler": false,
+    "review_wait_behavior": "STAY_ENABLED_AND_RECHECK_CAPACITY",
+    "queue_selector": "tools/repair_queue.py",
+    "pause_incident": {
+      "task_was_enabled": false,
+      "run_id": "c7058bdc-64e4-8332-95ba-06037acb5d28",
+      "scheduled_for": "2026-10-24T18:05:04Z",
+      "completed_at": "2026-10-24T18:08:03.580196Z",
+      "reported_cause": "PR #35 reached reviewable size; worker reported pausing itself to avoid repeated wait notifications.",
+      "pr": 35,
+      "head": "1fdc549d0d708230cc642b18ceb020f28efa0806",
+      "qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40114787373",
+      "qa_conclusion": "success"
+    },
+    "queue_v2_verified": false
   }
 }
