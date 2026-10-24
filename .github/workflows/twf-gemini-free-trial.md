@@ -32,11 +32,14 @@ safe-outputs:
     title-prefix: '[TWF Gemini blocked] '
     max: 1
   threat-detection:
-    engine:
-      id: gemini
-      model: gemini-2.5-flash
-    max-ai-credits: 10
+    engine: false
     continue-on-error: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Independent static and Gemini API security check
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python3 tools/gemini_patch_gate.py --online
 ---
 
 # TOY WARS FACTORY — Gemini Free-tier candidate (NOT AUTHORIZED TO RUN)
@@ -49,4 +52,4 @@ Choose **one small PvE gameplay or regression improvement**, implement changes o
 
 Produce at most one DRAFT PR with a clear test log or explain BLOCKED with evidence. The reviewer must approve before merging. Do not publish to Roblox, start a paid service, modify secrets, widen access, or activate recurring development.
 
-Free tier request/quota limits may stop the run; treat 429 or missing secret as BLOCKED and fail closed. Google may use free-tier prompts/responses for service improvement; do not include secrets, production user data or personally identifiable information. Owner's private source code is provided to the API only after owner approval.
+Free tier request/quota limits may stop the run; treat 429 or missing secret as BLOCKED and fail closed. Built-in gh-aw threat-detect does not support Gemini, so this prototype runs a **separate fail-closed static+Gemini patch scanner** before safe outputs. This is custom defense-in-depth, NOT official gh-aw detector equivalence. No real PR or source upload is authorized until the owner accepts this difference. Google may use free-tier prompts/responses for service improvement; do not include secrets, production user data or personally identifiable information. Owner's private source code is provided to the API only after owner approval.
