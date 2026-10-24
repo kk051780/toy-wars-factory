@@ -1,0 +1,6 @@
+FROM ghcr.io/github/gh-aw-firewall/api-proxy:0.28.70@sha256:9ac8f9c7294e892c916de3da9d2588dfd8cd4931e5c39b00143266d7ed9fd52a
+WORKDIR /opt/twf
+COPY runtime/ ./runtime/
+COPY tests/gemini_connected_runtime.test.cjs ./tests/gemini_connected_runtime.test.cjs
+ENTRYPOINT []
+CMD ["node", "--test", "tests/gemini_connected_runtime.test.cjs"]

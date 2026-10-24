@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: c763ae8be63d5bbecc51e36eda3a8f391fdba9a6
+- 基準ソースコミット: 146f57c0261b0862713b6e842b8d8025747420d4
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 自律AI開発: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
@@ -28,36 +28,39 @@
 - 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40064857413（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- Review docs/GEMINI_BUDGET_RUNTIME_CANDIDATE.md and C00005: native admission correction and reservation runner pass offline tests; neither is deployed.
-- Connect a trusted request upper-bound adapter, verified per-model prices and a single-attempt transport in an offline candidate runtime; include CLI and independent reviewer in the same budget.
-- Ensure shared/persistent budget across all workers and processes; the current candidate ledger is in-memory.
-- Validate a real candidate container without a provider key, then verify authoritative provider quotas/billing.
-- Obtain fresh owner authorization before any new inference; never reuse the consumed one-shot marker.
-- Keep PR #19 and this follow-up reviewable and unmerged; PR #17 is a separate chat-assistant game proposal.
-- Do not activate recurring AI, automatically merge, or publish Roblox; engine/mobile/multiplayer remain unverified.
+- Review docs/GEMINI_CONNECTED_OFFLINE_RUNTIME.md and C00006: public profile, model-ceiling adapter and persistent shared budget are connected offline.
+- Keep the existing cap at 10 AIC; current conservative reservation is 103.2192 modeled AIC, so all real-profile generation is blocked before forwarding.
+- Establish a defensible smaller request-specific bound; CountTokens alone is not an upper-bound proof and no arbitrary margin is accepted.
+- Recheck the short-lived public profile and authoritative provider quota/billing before any fresh inference approval.
+- Real CLI/reviewer routing and live provider transport remain disabled; never reuse the consumed one-shot marker.
+- Preserve unmerged PR #19/#21 and this follow-up; do not automatically merge, activate recurring AI, or publish Roblox.
 
 ## 最新の再開地点（観測時点の記録）
-- 記録: C00005 / 2026-10-24
+- 記録: C00006 / 2026-10-24
 - 照合したmain: e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904
-- 証拠: history/C00005_native_gemini_admission.json
-- 完了: Re-read canonical main, PR #19 and current Actions/issues before continuing.
-- 完了: Implement hash-pinned native Gemini admission overlay: URL model identification, mismatch and unpriced-model rejection; preserve original common guards.
-- 完了: Implement a candidate exact-integer reservation ledger with concurrent admission, terminal request limits and no retry/refund for uncertain charges.
-- 完了: Pass 40 Node regressions, including original upstream pricing/common-guard code and real loopback HTTP.
-- 完了: Keep all model invocations, recurring AI, automatic merging and Roblox publication inactive.
+- 証拠: history/C00006_connected_offline_runtime.json
+- 完了: Re-read canonical main and unmerged PR #21; preserve previous draft work.
+- 完了: Verify official Standard rates and model limits; retain dated offline-only public profile and expiry.
+- 完了: Connect the profile and documented model-ceiling bounds to a real loopback HTTP gateway.
+- 完了: Persist reservations in SQLite; verify developer/reviewer sharing, restarts, lost leases and six separate worker processes.
+- 完了: Keep the existing 10-AIC cap and reject the 103.2192-AIC model-ceiling reservation before any forwarding.
+- 完了: Add a digest-pinned offline container test with Docker networking disabled and a minimal build context.
+- 完了: Track runtime-only source changes in the portable handoff.
 - 新規推論承認: False
 - 定期AI承認: False
 - 自動マージ承認: False
 - Roblox公開承認: False
-- 再実行の前提: Verified runtime integration, shared request/price bounds, authoritative provider quota and fresh owner approval before new inference.
-- 再開する作業: Review this candidate; integrate a trusted token-bound adapter and approved prices with all model transports in an offline candidate container, then verify provider quotas before seeking fresh inference approval.
-- 未確認・制限: Candidate only: no runtime image installed or deployed.
-- 未確認・制限: Overlay hooks native admission only; reservation runner is not connected to the Gemini CLI.
-- 未確認・制限: Real prices, trusted token upper-bound adapter, cross-process/shared budget and independent-review accounting are not configured.
-- 未確認・制限: Loopback fixture costs do not certify a real provider bill or financial ceiling.
-- 未確認・制限: Studio, multiplayer and mobile remain NOT_RUN.
+- 再実行の前提: A defensible smaller request-specific bound, current price review, authoritative provider quota/billing and fresh owner authorization are still required.
+- 再開する作業: Validate a smaller request-specific input/output bound without treating CountTokens, character counts or invented multipliers as guaranteed caps; keep live inference blocked at the existing 10 AIC.
+- 未確認・制限: The conservative connected adapter reserves full documented model limits; 103.2192 AIC is not an expected cost or bill.
+- 未確認・制限: Live Gemini CLI and independent reviewer remain disabled and are not rerouted.
+- 未確認・制限: No provider transport, key read or actual model call exists in this offline gateway.
+- 未確認・制限: The candidate container is CI-only, not a production deployment.
+- 未確認・制限: Roblox Studio, multiplayer and mobile remain NOT_RUN.
 
 ## 未マージの提案（現在のPR状態はGitHubで再確認）
+- PR #21: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Native admission correction and reservation-runner candidate / https://github.com/kk051780/toy-wars-factory/pull/21
+  - QA: 40 Node, 33 Python, 37 Lua, 4000 stress checks PASS; offline candidate only. https://github.com/kk051780/toy-wars-factory/actions/runs/40069599840
 - PR #19: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Fix shallow-history handoff churn and retain incident provenance / https://github.com/kk051780/toy-wars-factory/pull/19
   - QA: PASS: 33 Python, 37 Lua regressions, 4000 deterministic stress, exact installer and deterministic handoff. Offline only. https://github.com/kk051780/toy-wars-factory/actions/runs/40067722798
 - PR #17: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Server-side distance validation for toy-selector prompts / https://github.com/kk051780/toy-wars-factory/pull/17
