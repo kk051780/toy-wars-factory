@@ -1,7 +1,7 @@
 {
   "project": "TOY WARS FACTORY",
-  "version": "2.18-hud-shared-pricing-draft",
-  "updated_at": "2026-10-24",
+  "version": "2.19-approved-hud-merge-automation-readiness",
+  "updated_at": "2026-10-25",
   "github": {
     "repository": "kk051780/toy-wars-factory",
     "visibility": "private",
@@ -138,11 +138,11 @@
     "studio_installer": "GENERATED_AND_HASH_VERIFIED_IN_GITHUB_ACTIONS_ARTIFACT",
     "full_v2_3_archive": "LOCAL_ARTIFACT_ONLY",
     "mock_server_qa": "PRESENT_MAIN_NATIVE_SERVER_EVENT_FIXTURES_NOT_ROBLOX_ENGINE",
-    "mock_hud_price_qa": "DRAFT_NATIVE_HUD_PRICE_FIXTURES_NOT_ROBLOX_UI"
+    "mock_hud_price_qa": "PRESENT_MAIN_NATIVE_HUD_PRICE_FIXTURES_NOT_ROBLOX_UI"
   },
   "verification": {
     "offline_native_local_v2_3": "PASS_REPORTED_PREVIOUSLY",
-    "github_actions": "PENDING_HUD_CANDIDATE_CI; current main PASS https://github.com/kk051780/toy-wars-factory/actions/runs/40102403182",
+    "github_actions": "PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40106001876",
     "roblox_studio": "NOT_RUN",
     "mobile_visual": "NOT_RUN",
     "two_client_multiplayer": "NOT_RUN",
@@ -151,8 +151,8 @@
     "character_structural": "PASS",
     "native_server_events": "PASS_27_MOCK_EVENTS; PRE_FIX_25_PASS_2_EXPECTED_FAIL; NOT_ENGINE",
     "python_tests": "PASS_53",
-    "handoff": "PASS_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40102033772",
-    "native_hud_prices": "LOCAL_PASS_6_MOCK_CASES; ORIGINAL_1_PASS_5_EXPECTED_FAIL; NOT_UI"
+    "handoff": "PASS_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40106001904",
+    "native_hud_prices": "PASS_6_MOCK_CASES; ORIGINAL_1_PASS_5_EXPECTED_FAIL; NOT_UI"
   },
   "game": {
     "pve": "PROTOTYPE_OFFLINE_ONLY",
@@ -162,12 +162,12 @@
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
-    "Read C00015 and the main-based HUD pricing candidate. PR #30/#31 integration and C00014 are already complete; do not repeat their merge approval.",
-    "Require the exact old-HUD negative control (one current-price pass and five expected varied-price failures), all six fixed-HUD fixtures and all existing offline QA to pass.",
-    "Review the concrete candidate against current main and ask the owner for its own merge approval; main retains the original HUD until then. Original PR #13 remains preserved.",
-    "Keep source proposals #17/#20/#25/#28/#29 intact; their gameplay changes are already integrated through #30.",
-    "Keep Studio, multiplayer, mobile visuals and player feedback unverified, and release on HOLD. These HUD fixtures are native substitutes, not UI screenshots or engine evidence.",
-    "Keep Gemini held, the 10-AIC cap and independent review requirements unchanged; no recurring AI, automatic merge or Roblox publication."
+    "PR #32 is merged at 83465372f6701e20cd92ec7f9e8bd48f945c8da4 and main QA/handoff passed. PR #30/#31 are also complete. Do not request the same integration approvals again.",
+    "Read C00016 and docs/AUTOMATION_READINESS.md. Current main source is four Lua files / 678 lines / 26,753 bytes; tracked_metrics retains the original baseline.",
+    "Prioritize a reviewable offline design for bounded AI development and independent review, using new evidence or a different bounded path. Current model, 10-AIC cap and all holds remain unchanged.",
+    "A calendar completion date is not established while the complete request bound/shared enforcement remain unproved. The proposed 24-48 hour observation allowance applies only after an approved bounded trial succeeds; no monitoring or recurring activation has started.",
+    "Keep original source proposals #13/#17/#20/#25/#28/#29 intact. Their reviewed gameplay changes are already integrated through #30/#32; do not merge them again to apply the same source.",
+    "Keep consumed trial approval, inactive recurring AI, no future automatic merge and Roblox release HOLD. Real Studio, multiplayer, mobile, visuals and player feedback remain unverified."
   ],
   "tracked_metrics": {
     "lua_source_files": 4,
@@ -288,7 +288,8 @@
       "head_sha": "87ff9b2f4b5403632ea126b0b691ee31b2c36a62",
       "status": "DRAFT_UNMERGED",
       "origin": "CHAT_ASSISTANT_NOT_GEMINI",
-      "purpose": "Keep toy HUD prices in sync with canonical balance costs"
+      "purpose": "Keep toy HUD prices in sync with canonical balance costs",
+      "main_gameplay_integration": "Exact HUD source integrated via approved PR #32 with stronger executed price-threshold fixtures on current main. This original source PR remains open/unmerged; do not merge it again merely to apply the same HUD change."
     },
     {
       "number": 12,
@@ -308,38 +309,42 @@
     }
   ],
   "resume_checkpoint": {
-    "id": "C00015",
-    "observed_on": "2026-10-24",
-    "observed_main_revision": "b4e6901f5880102eb55bd20490eab8c049f2cbc6",
+    "id": "C00016",
+    "observed_on": "2026-10-25",
+    "observed_main_revision": "83465372f6701e20cd92ec7f9e8bd48f945c8da4",
     "completed": [
-      "Read C00014, confirm current main b4e6901f5880102eb55bd20490eab8c049f2cbc6 and successful main QA 40102403182 / handoff 40102403217; PR #30/#31 remain merged.",
-      "Review existing PR #13 at 87ff9b2f4b5403632ea126b0b691ee31b2c36a62. Current 10/28/48 labels match balance but duplicate its purchase costs.",
-      "Execute the complete original HUD against the real balance.buy function with varied in-memory costs: current-price fixture passes and exactly five price-change fixtures fail.",
-      "Reuse the exact PR #13 HUD blob 0dcd1f1f16991b3f02b970361eea9f026d1e8688 on current main; all six native HUD price fixtures pass.",
-      "Confirm all three selectable IDs and one-argument remote selection payloads survive each fixture; no client price is sent.",
-      "Extend exact history byte accounting from server-only changes to all four original Lua files without changing their initial baseline or old history.",
-      "Require exact immutable old-HUD failure evidence and successful canonical HUD fixtures in existing offline CI, retaining all prior gates and Gemini stops."
+      "Owner explicitly approved the concrete PR #32 integration with 進めて。; approval of PR #30 was not reused.",
+      "Recheck unchanged head e2cdbb8ddf6efc084031e4900ce754e73f336cbf, clean mergeability, all nine reviewed file blobs and successful pre-merge CI 40103243365.",
+      "Merge PR #32 at 83465372f6701e20cd92ec7f9e8bd48f945c8da4 using the reviewed head lease; merged tree 5f8fa106da6cc3b495df718bcde66614e1b8e192 equals review.",
+      "Verify post-merge main QA 40106001876 and handoff 40106001904 both pass on the merge SHA.",
+      "Verify whole-HUD fixtures: original current-price case passes and exactly five varied-price cases fail; canonical fixed HUD passes all six. All 27 server fixtures, 53 Python tests, balance/stress, compiler, installer and handoff checks also pass.",
+      "Record actual main source: four Lua files / 678 lines / 26,753 bytes; PR #32 adds 194 bytes and two lines only in HUD, preserving original baseline and all prior history.",
+      "Read actual audit/handoff and candidate AI workflow sources. Existing schedules perform audits/handoff, while Gemini activation and reviewer remain held; no successful autonomous coding trial or recurring AI is established.",
+      "Record automation readiness and the unresolved ETA without presenting gameplay fixes as resolution of the financial bound. A proposed 24-48 hour observation period is conditional on a future approved successful bounded trial, not a completion date or scheduled activation.",
+      "Preserve the original PR #13 and other source proposals, and record the completed merge so future chats do not repeat its approval."
     ],
-    "evidence_record": "history/C00015_hud_shared_pricing.json",
+    "evidence_record": "history/C00016_approved_hud_merge.json",
     "authorization": {
-      "previous_approved_merge_pr": 30,
-      "previous_merge_status": "COMPLETED",
-      "candidate_merge_authorized": false,
+      "approved_merge_pr": 32,
+      "approved_merge_head": "e2cdbb8ddf6efc084031e4900ce754e73f336cbf",
+      "approved_merge_scope": "PR #32 HUD integration and factual completion/readiness record.",
+      "approval_source": "User said 進めて。 in direct response to the explicit PR #32 main-merge confirmation, and asked how far away full automation is.",
+      "merge_status": "COMPLETED",
       "gemini_trial": "CONSUMED_SINGLE_RUN",
       "new_inference_authorized": false,
       "recurring_ai_authorized": false,
       "automatic_merge_authorized": false,
       "roblox_publish_authorized": false,
-      "prerequisite": "PR #30 approval covered its completed gameplay integration and factual C00014 record. This separate HUD candidate needs explicit owner merge approval after its concrete diff and CI are reviewable. No inference, recurring AI, billing or Roblox publication approval is implied."
+      "prerequisite": "PR #32 is already merged and post-merge QA/handoff passed; do not ask for its merge approval again. The automation timing question is not authorization to call a provider, change model/cap/billing, enable recurring AI, automatically merge future code or publish Roblox."
     },
     "limitations": [
-      "Main still has the original HUD until this separate candidate is approved; current main game source is 26,559 bytes, candidate source is 26,753 bytes.",
-      "Current literal HUD prices already match current balance; the reproduced defect is stale labels after a balance edit.",
-      "Native Lua UI/value/signal substitutes do not verify Roblox rendering, touch, replication, Studio, multiplayer or mobile layout.",
-      "Prices are read at HUD initialization; runtime balance hot-reloading is not implemented.",
-      "Gemini input/framing bounds and a hard financial cap remain unproved; the consumed trial must not be rerun."
+      "HUD fixtures validate text and callbacks in native Lua, not rendering, touch, replication, Studio, real multiplayer or mobile behavior. Runtime balance hot-reloading is not implemented.",
+      "Gemini complete input/framing bounds and shared live financial enforcement remain unproved; developer and independent reviewer are blocked, and the consumed trial must not be rerun.",
+      "An offline QA/handoff schedule does not establish unattended AI development. Continuous AI operation has not begun.",
+      "The 24-48 hour observation allowance is a planning suggestion after prerequisites, not a started test, completion commitment or change to release policy.",
+      "Automatic merge and Roblox publication are not authorized; Studio, multiplayer, mobile visuals and player feedback remain unverified."
     ],
-    "next_action": "Verify the main-based HUD candidate CI and exact before/after fixture evidence, then request explicit owner approval for this concrete candidate to enter main. PR #30/#31 are already merged and must not need approval again. Keep the original #13 and other source drafts intact, Gemini held and Roblox release on HOLD."
+    "next_action": "Prioritize an offline automation design review that can establish the approved financial bound for both developer and independent reviewer. Produce a concrete reviewable proposal using new attributable evidence or a different bounded execution path; do not repeat the same pinned SDK inspection as progress. PR #32/#30 and their factual integrations are complete. Keep all inference and recurring execution held pending established bounds and fresh scoped owner authorization."
   },
   "applied_game_changes": {
     "status": "MERGED_PR30_MAIN_QA_VERIFIED",
@@ -378,18 +383,51 @@
     "origin": "CHAT_ASSISTANT_NOT_GEMINI",
     "provider_calls": 0
   },
-  "draft_hud_changes": {
-    "status": "UNMERGED_MAIN_BASED_CANDIDATE",
-    "branch": "fix/hud-shared-pricing-20261024",
+  "applied_hud_changes": {
+    "status": "MERGED_PR32_MAIN_QA_VERIFIED",
+    "merged_pr": 32,
+    "merged_pr_url": "https://github.com/kk051780/toy-wars-factory/pull/32",
+    "approved_head": "e2cdbb8ddf6efc084031e4900ce754e73f336cbf",
+    "merge_commit": "83465372f6701e20cd92ec7f9e8bd48f945c8da4",
+    "reviewed_and_merged_tree": "5f8fa106da6cc3b495df718bcde66614e1b8e192",
     "source_proposal_pr": 13,
-    "source_proposal_head": "87ff9b2f4b5403632ea126b0b691ee31b2c36a62",
     "hud_blob": "0dcd1f1f16991b3f02b970361eea9f026d1e8688",
     "main_base": "b4e6901f5880102eb55bd20490eab8c049f2cbc6",
-    "main_source_bytes": 26559,
-    "candidate_source_bytes": 26753,
-    "main_source_lines": 676,
-    "candidate_source_lines": 678,
+    "before": {
+      "files": 4,
+      "lines": 676,
+      "bytes": 26559
+    },
+    "after": {
+      "files": 4,
+      "lines": 678,
+      "bytes": 26753
+    },
+    "delta": {
+      "files": 0,
+      "lines": 2,
+      "bytes": 194
+    },
     "native_hud_price_fixtures": 6,
+    "post_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40106001876",
+    "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40106001904",
+    "origin": "CHAT_ASSISTANT_NOT_GEMINI",
     "provider_calls": 0
+  },
+  "automation_readiness": {
+    "observed_on": "2026-10-25",
+    "document": "docs/AUTOMATION_READINESS.md",
+    "offline_qa": "RUNNING_PASS",
+    "handoff": "RUNNING_PASS",
+    "ai_developer": "HELD_NO_SUCCESSFUL_PATCH_PR_TRIAL",
+    "shared_financial_enforcement": "BLOCKED_COMPLETE_INPUT_FRAMING_BOUND_UNPROVEN",
+    "independent_model_review": "HELD_PROVIDER_TRANSPORT_REMOVED",
+    "recurring_ai": "NOT_ACTIVE",
+    "continuous_ai_observation": "NOT_STARTED",
+    "automatic_merge": "NOT_AUTHORIZED_OR_PROVEN",
+    "roblox_engine_and_release": "UNVERIFIED_HOLD",
+    "calendar_eta": "NOT_ESTIMABLE_WHILE_BOUND_UNRESOLVED",
+    "conditional_observation_plan": "Proposed 24-48 hours after a newly authorized bounded single-run including independent review succeeds; not an elapsed-time promise, scheduled activation or engine/release ETA.",
+    "next_priority": "OFFLINE_BOUNDED_AUTOMATION_DESIGN_REVIEW"
   }
 }
