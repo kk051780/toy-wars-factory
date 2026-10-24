@@ -10,7 +10,7 @@ Date 2026-10-24, source repo private: kk051780/toy-wars-factory.
 
 ## Chosen stack
 - GitHub private repo and GitHub Actions (already connected).
-- gh-aw `engine: gemini` with explicit `model: gemini-2.5-flash`.
+- gh-aw `engine: gemini` with explicit `model: gemini-3.8-flash`.
 - `GEMINI_API_KEY` from a Google AI Studio **Free Tier** project as GitHub Actions repository secret. No paid billing account to be linked unless owner explicitly authorizes.
 - One-shot source: `.github/workflows/twf-gemini-free-trial.md`, generated lock `.lock.yml`.
 - No schedule; unique placeholder `ops/GEMINI_TRIAL_APPROVED_FUTURE.json` is **not present** in main. Once owner approves and secret is verified, use a newly approved one-off invocation only.
@@ -45,3 +45,6 @@ The built-in gh-aw threat-detect tool supports Copilot, Claude, Codex — **not 
 - Independent Python security tests + quality gate: https://github.com/kk051780/toy-wars-factory/actions/runs/40052824360
 - Verified **only compiler/static/offline security tests**, no Gemini API used yet, no autonomous Gemini coding PR, no Roblox engine tests.
 - Gemini CLI engine is currently deprecated but still supported; monitor Agy's maturity and independently benchmark before migrating, do not restart project.
+
+## Model-access update (2026-10-24)
+Google's current Models documentation explicitly restricts Gemini 2.5 family for new API projects; it recommends 3.8 Flash (or 3.5 Flash-Lite). For this newly created Free-tier API project use `gemini-3.8-flash` candidate in both primary agent and independent scanner. Compilation success does **not** demonstrate entitlement or runtime compatibility. Official model guidance: https://ai.google.dev/gemini-api/docs/models . The owner's next one-off inference requires separate approval; no real API requests are made at this stage.
