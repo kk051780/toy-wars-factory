@@ -6,6 +6,8 @@ on:
     paths:
       - 'tools/gemini_patch_gate.py'
       - 'tests/test_gemini_patch_gate.py'
+      - 'tests/test_gemini_operational_hold.py'
+      - 'tools/verify_gemini_hold.py'
       - '.github/workflows/twf-gemini-free-trial.md'
       - '.github/workflows/gemini-security-qa.yml'
       - '.github/workflows/twf-gemini-free-trial.lock.yml'
@@ -28,10 +30,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh extension install github/gh-aw
+          gh extension install github/gh-aw --pin v0.93.2
           gh aw compile .github/workflows/twf-gemini-free-trial.md
       - name: Assert one-time safety
         run: |
+          python3 tools/verify_gemini_hold.py
           python3 - <<'PY'
           from pathlib import Path
           md=Path(".github/workflows/twf-gemini-free-trial.md").read_text()
@@ -45,7 +48,7 @@ jobs:
           assert "ops/GEMINI_TRIAL_APPROVED_FUTURE.json" in compiled
           assert "GEMINI_API_KEY" in compiled
           assert "COPILOT_MODEL: gemini-3.8-flash" not in compiled
-          print("PASS: Gemini main, custom fail-closed independent review, one-shot only")
+          print("PASS: literal incident hold; no model invocation or online review")
           PY
       - name: Explicit limits
         if: always()

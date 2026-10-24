@@ -1,19 +1,19 @@
 {
   "project": "TOY WARS FACTORY",
-  "version": "2.8-gemini-one-shot-budget-hold",
+  "version": "2.14-isolated-stop-and-continuity-draft",
   "updated_at": "2026-10-24",
   "github": {
     "repository": "kk051780/toy-wars-factory",
     "visibility": "private",
     "branch": "main",
     "write_confirmed": true,
-    "head": "bootstrap/v2-3",
     "initial_pr_merged": "https://github.com/kk051780/toy-wars-factory/pull/1",
     "issues": [
       2,
       3,
       4
-    ]
+    ],
+    "head_reference": "main (resolve current SHA through GitHub)"
   },
   "autonomous_coding": {
     "status": "NOT_ACTIVE_AI_INFERENCE_UNVERIFIED",
@@ -40,7 +40,7 @@
       "candidate_model": "gemini-3.8-flash",
       "draft_pr": "https://github.com/kk051780/toy-wars-factory/pull/11",
       "independent_security": "Custom fail-closed Python static scan + separate Gemini API verdict; NOT equivalent to official gh-aw detector",
-      "code_review_status": "OFFLINE_QA_PASS_BUT_NO_REAL_GEMINI_RUN",
+      "code_review_status": "OFFLINE_QA_PASS_LIVE_TRIAL_FAILED_NO_PATCH",
       "requires_user_consent": [
         "Google free-tier terms allow code/prompt use for service improvement",
         "GEMINI_API_KEY secret entry in GitHub",
@@ -55,7 +55,7 @@
       "authenticated_gemini_inference": "TRIAL_EXECUTED_BUT_FAILED_12_TURNS_12MIN",
       "owner_free_tier_data_usage_consent": true,
       "one_shot_inference_approval": "CONSUMED_SINGLE_RUN_20261024",
-      "model_access_note": "Official Gemini API docs now restrict Gemini 2.5 models for new API projects. Candidate updated to 3.8 Flash; compiled offline and independent QA PASS; actual model access and live API inference NOT TESTED.",
+      "model_access_note": "Authenticated Gemini invocation occurred in run 40060119253 and failed at 12 calls/12 minutes with no patch. Successful autonomous code generation and a hard financial cap remain unverified.",
       "new_candidate_QA": "https://github.com/kk051780/toy-wars-factory/actions/runs/40059931038",
       "latest_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/40060119253",
       "failure_issue": "https://github.com/kk051780/toy-wars-factory/issues/16",
@@ -69,7 +69,60 @@
       "single_run_incident": "https://github.com/kk051780/toy-wars-factory/issues/18",
       "single_run_error": "max_runs_exceeded 12/12 (429), Gemini CLI timed out 12 minutes; detection result absent; no safe-output PR",
       "billing_status": "UNVERIFIED: GH_AW_AIC:33.713 reported in job logs despite configured max-ai-credits=10; do not infer actual charges",
-      "next_reexecution_authorized": false
+      "next_reexecution_authorized": false,
+      "credit_enforcement_investigation": "Native input/framing proof remains unavailable after exact Python, Java, Go and JavaScript SDK source inspection. A direct-main stop/continuity proposal is prepared separately from experimental budget runtime PRs.",
+      "operational_hold": {
+        "status": "IMPLEMENTED_IN_THIS_DRAFT_NOT_MERGED_TO_MAIN",
+        "document": "docs/GEMINI_OPERATIONAL_HOLD.md",
+        "workflow_guard": "LITERAL_FALSE_PRE_ACTIVATION_AND_ACTIVATION",
+        "reviewer_direct_http_removed": true,
+        "credential_read": false,
+        "inference_enabled": false,
+        "source_pr": 24
+      },
+      "runtime_candidate": {
+        "status": "EXPERIMENTAL_PROPOSALS_ONLY_NOT_INCLUDED_IN_THIS_BRANCH",
+        "proposal_prs": [
+          21,
+          22,
+          23,
+          24
+        ],
+        "request_input_bound_certified": false,
+        "financial_cap_certified": false,
+        "input_bound_document": "docs/GEMINI_INPUT_BOUND_REVIEW.md",
+        "sdk_snapshots": {
+          "python": {
+            "repository": "googleapis/python-genai",
+            "commit": "c0e9c54915970948258226e565bde6ef6d5c0b94",
+            "version": "2.33.0",
+            "path": "google/genai/_local_tokenizer_loader.py",
+            "blob": "27f4781b8b2274e022eaf812e3bf4249dfe1e991",
+            "target_in_lookup": false
+          },
+          "java": {
+            "repository": "googleapis/java-genai",
+            "commit": "de413718286f307f48e3bdd7bff187a9e6dd1629",
+            "path": "src/main/java/com/google/genai/LocalTokenizerLoader.java",
+            "blob": "c90356ee1c5138e0a925969132d3c90c5b228663",
+            "target_in_lookup": false
+          },
+          "go": {
+            "repository": "googleapis/go-genai",
+            "commit": "9ba857f3a8f976f9d1fe7a7a82b0cceee840dcb7",
+            "path": "tokenizer/tokenizer.go",
+            "blob": "b2ef6fbab3c0c411eb082a31a684acf3026a24a3",
+            "target_in_lookup": false
+          },
+          "javascript": {
+            "repository": "googleapis/js-genai",
+            "commit": "0dd787c23d76139982d7acb01e3c99978f563007",
+            "path": "src/cross/tokenizer/_loader.ts",
+            "blob": "936cf542944b4acbd3685ca26dac786992897818",
+            "target_in_lookup": false
+          }
+        }
+      }
     }
   },
   "migrated_assets": {
@@ -84,7 +137,7 @@
   },
   "verification": {
     "offline_native_local_v2_3": "PASS_REPORTED_PREVIOUSLY",
-    "github_actions": "PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40047378300",
+    "github_actions": "PENDING_ISOLATED_BRANCH_CI; prior stop implementation passed https://github.com/kk051780/toy-wars-factory/actions/runs/40075974239",
     "roblox_studio": "NOT_RUN",
     "mobile_visual": "NOT_RUN",
     "two_client_multiplayer": "NOT_RUN",
@@ -100,12 +153,12 @@
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
-    "Review Gemini run #40060119253 failure evidence and AIC accounting issue #18 before any further AI call",
-    "Without AI inference, design a small game task and independent QA so 12-turn budget is enough; no automatic rerun",
-    "Ask owner for fresh approval before new Gemini run; keep 20-minute AI schedule inactive",
-    "Review safe-output detector expected result and fail-closed path without bypassing security",
-    "Keep on-change QA; evaluate draft budget-saving PR #12 for 6-hour idle audits",
-    "Actual Roblox Studio/mobile/multiplayer verification still required before release"
+    "Review the direct-main operational stop and continuity correction; it has no dependency on experimental budget PRs.",
+    "Confirm independent CI and exact official compiler regeneration, then obtain owner approval before merging; automatic merge remains unapproved.",
+    "After an approved merge, resolve main HEAD and check on-change QA plus generated handoff; a draft or status page alone is not deployment evidence.",
+    "Keep Gemini inference blocked. The inspected Python, Java, Go and JavaScript SDK snapshots do not map Gemini 3.8 Flash; no complete input/framing bound was established.",
+    "Do not repeat identical SDK inspections as new progress. Require changed sources or new attributable provider/framing evidence.",
+    "Keep the 10-AIC cap, consumed trial markers, independent-model review requirement, inactive recurring AI and no Roblox publication. Preserve separate gameplay PR #25 and related drafts."
   ],
   "tracked_metrics": {
     "lua_source_files": 4,
@@ -113,5 +166,141 @@
     "lua_source_bytes": 25726,
     "initial_character_count": 3,
     "baseline_record": "history/C00001_bootstrap.json"
+  },
+  "review_queue": [
+    {
+      "number": 25,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/25",
+      "head_sha": "5a5c518c9d3a28d399da4293b4b49bcb0328cfef",
+      "status": "DRAFT_UNMERGED",
+      "origin": "SEPARATE_GAME_PROPOSAL_NOT_ATTRIBUTED_TO_GEMINI",
+      "purpose": "Integration QA: selector authority plus workshop backfill (no merge)",
+      "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40076928524",
+      "qa_scope": "PASS: separate gameplay integration offline CI; Studio, multiplayer and mobile NOT_RUN."
+    },
+    {
+      "number": 24,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/24",
+      "head_sha": "03637555a432b32e0c9eedd33ee7738188794899",
+      "status": "DRAFT_UNMERGED",
+      "origin": "CHAT_ASSISTANT_NOT_GEMINI",
+      "purpose": "Hold Gemini activation and remove the unreserved reviewer transport",
+      "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40075974239",
+      "qa_scope": "PASS: 43 Python, 64 Node including 24 container checks, exact compiler, Lua/stress, installer and handoff. Node/runtime candidates are excluded from this independent branch."
+    },
+    {
+      "number": 23,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/23",
+      "head_sha": "098306c53c363b2486e02a79eabf11f01bfbe901",
+      "status": "DRAFT_UNMERGED",
+      "origin": "CHAT_ASSISTANT_NOT_GEMINI",
+      "purpose": "Tighten request output reservations and record the unresolved input proof",
+      "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40074151010",
+      "qa_scope": "64 Node (24 network-disabled container), 33 Python, 37 Lua + 4000 stress, official SDK inspection and deterministic handoff PASS. Input proof remains BLOCKED; no live calls."
+    },
+    {
+      "number": 22,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/22",
+      "head_sha": "42710ce8a1afb498d64370918a5db78299f38e45",
+      "status": "DRAFT_UNMERGED",
+      "origin": "CHAT_ASSISTANT_NOT_GEMINI",
+      "purpose": "Connect offline Gemini price bounds to a persistent shared budget runtime",
+      "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40072355807",
+      "qa_scope": "40 existing Node + 19 connected container tests, 33 Python, 37 Lua and 4000 stress checks PASS. No live inference."
+    },
+    {
+      "number": 21,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/21",
+      "head_sha": "cdc6ac4346ebc778e1807ba228bdb4623ad866db",
+      "status": "DRAFT_UNMERGED",
+      "origin": "CHAT_ASSISTANT_NOT_GEMINI",
+      "purpose": "Reject unpriced native Gemini requests and test reserved call budgets",
+      "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40069599840",
+      "qa_scope": "40 Node, 33 Python, 37 Lua, 4000 stress checks PASS; offline candidate only."
+    },
+    {
+      "number": 20,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/20",
+      "head_sha": "ce6657ec728322adbcae4496a6421b65218740b9",
+      "status": "DRAFT_UNMERGED",
+      "origin": "SEPARATE_GAME_PROPOSAL_NOT_ATTRIBUTED_TO_GEMINI",
+      "purpose": "Admit waiting players when a workshop plot becomes free",
+      "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40069151903",
+      "qa_scope": "PASS: separate plot backfill offline CI; Studio, multiplayer and mobile NOT_RUN."
+    },
+    {
+      "number": 19,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/19",
+      "head_sha": "fb0b5582f0a69296b87bd8d5dc433e67ba4211d2",
+      "status": "DRAFT_UNMERGED",
+      "origin": "CHAT_ASSISTANT_NOT_GEMINI",
+      "purpose": "Fix shallow-history handoff churn and retain Gemini failure provenance",
+      "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40067722798",
+      "qa_scope": "PASS: 33 Python, 37 Lua regressions, 4000 deterministic stress, exact installer and deterministic handoff. Offline only."
+    },
+    {
+      "number": 17,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/17",
+      "head_sha": "aac789b3c5caa43eecc3e93c18c8e29abba37f7b",
+      "status": "DRAFT_UNMERGED",
+      "origin": "CHAT_ASSISTANT_NOT_GEMINI",
+      "purpose": "Reject spoofed distant toy-selector prompt activation on server",
+      "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40061153081",
+      "qa_scope": "Offline: 37 Lua regressions, 4000 stress cases, 33 Python tests; no Roblox engine verification."
+    },
+    {
+      "number": 13,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/13",
+      "head_sha": "87ff9b2f4b5403632ea126b0b691ee31b2c36a62",
+      "status": "DRAFT_UNMERGED",
+      "origin": "CHAT_ASSISTANT_NOT_GEMINI",
+      "purpose": "Keep toy HUD prices in sync with canonical balance costs"
+    },
+    {
+      "number": 12,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/12",
+      "head_sha": "22df6230a38c36ad8aab9731edfb31ce9226a250",
+      "status": "DRAFT_UNMERGED",
+      "origin": "PROPOSAL",
+      "purpose": "Cut idle QA runner usage ~94% while preserving every-change checks"
+    },
+    {
+      "number": 6,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/6",
+      "head_sha": "ad1ea73f092a2416d997b25635c912339d0b80bd",
+      "status": "DRAFT_UNMERGED",
+      "origin": "PROPOSAL",
+      "purpose": "Prepare audited 20-minute AI coding runner — authentication approval required"
+    }
+  ],
+  "resume_checkpoint": {
+    "id": "C00009",
+    "observed_on": "2026-10-24",
+    "observed_main_revision": "e62bddc469e5edfbc97c2ccd67e9ae05ff8e5904",
+    "completed": [
+      "Read canonical main, current drafts, Actions, issues and PR #25 without overwriting separate gameplay work.",
+      "Confirm PR #24 exact official compiler regeneration and complete QA passed in CI 40075974239.",
+      "Inspect exact official Java, Go and JavaScript local tokenizer lookups in addition to the previously inspected Python snapshot; none maps gemini-3.8-flash.",
+      "Keep the native full-request CountTokens question distinct from a contents-only mismatch example and the separate Cloud multimodal caveat; no complete input bound was certified.",
+      "Extract the tested operational stop and real-history continuity correction into a draft directly based on canonical main, excluding all budget runtime candidates.",
+      "Pass all 43 Python regressions and 21 repository policy checks on the independent branch; exact official compiler and native Lua CI must still be confirmed."
+    ],
+    "evidence_record": "history/C00009_isolated_hold_review.json",
+    "authorization": {
+      "gemini_trial": "CONSUMED_SINGLE_RUN",
+      "new_inference_authorized": false,
+      "recurring_ai_authorized": false,
+      "automatic_merge_authorized": false,
+      "roblox_publish_authorized": false,
+      "prerequisite": "A reviewed merge of the operational stop is separate from future inference consent. Inference still needs complete bounds, shared enforcement, current pricing/quota and fresh owner approval."
+    },
+    "limitations": [
+      "This direct-main proposal remains unmerged; main still has its previous incident state.",
+      "The input/framing bound and a hard financial cap remain unproved.",
+      "Historical workflow snapshots are not retrofitted and the consumed trial must not be rerun.",
+      "Experimental budget runtime, pricing, SDK tooling and Docker code are excluded from this branch.",
+      "Studio, multiplayer and mobile remain NOT_RUN."
+    ],
+    "next_action": "Finish independent QA and present the direct-main stop/continuity PR for owner review. Merge only after owner approval, then verify main and its QA. Do not treat merging a stop as inference consent. Revisit the input blocker only with changed sources or new provider/framing evidence; independent gameplay work remains in separate drafts."
   }
 }
