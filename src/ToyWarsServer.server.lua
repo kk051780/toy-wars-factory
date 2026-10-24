@@ -432,8 +432,10 @@ local function join(player)
     makePlot(player,state)
     local function characterReady(character)
         local root=character:WaitForChild("HumanoidRootPart",8)
-        if root and state.active then
+        if root then
             task.wait(0.1)
+            -- Character or session may have changed while the callback yielded.
+            if not state.active or sessions[player] ~= state or player.Parent ~= Players or player.Character ~= character then return end
             character:PivotTo(CFrame.new(state.x+17,6,-37))
         end
     end
