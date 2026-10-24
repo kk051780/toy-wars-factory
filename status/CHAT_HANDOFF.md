@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: 482b85329b8818471cacee3608ac8dc519558025
+- 基準ソースコミット: df26737cb6243096e984b796d590f653da6b9fb2
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 自律AI開発: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
@@ -28,12 +28,12 @@
 - 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40047378300（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- DO NOT trigger or re-run Gemini/Copilot inference, do not activate 20-min AI cron; SEVERE_HOLD_AIC_CONFIG_OVERRUN from run 40060119253, issue #16
-- Investigate modeled AIC 33.713 despite frontmatter max-ai-credits 10 and verify genuinely enforceable input/output hard caps before requesting next owner approval
-- Replace broad context/tool discovery with single tiny scoped task plus clear CLI test path, and fix denied test shell policy without relaxing security gates
-- Review actual Google AI Studio Free Tier billing and GitHub Actions quota manually via smartphone if actual charges matter; do not claim measured $0
-- Continue approved NON-AI QA, character/world design and GitHub source versioning in safe branches; no Roblox publish
-- Roblox Studio 2-client/mobile visual tests remain mandatory for release
+- Review Gemini run #40060119253 failure evidence and AIC accounting issue #18 before any further AI call
+- Without AI inference, design a small game task and independent QA so 12-turn budget is enough; no automatic rerun
+- Ask owner for fresh approval before new Gemini run; keep 20-minute AI schedule inactive
+- Review safe-output detector expected result and fail-closed path without bypassing security
+- Keep on-change QA; evaluate draft budget-saving PR #12 for 6-hour idle audits
+- Actual Roblox Studio/mobile/multiplayer verification still required before release
 
 ## 新しいチャットでAIが必ず行う引き継ぎ手順
 1. GitHubコネクタでこのファイルと status/LATEST_STATE.json、PROJECT_STATE.json、AGENTS.md、config/quality_policy.json を読み込む。
