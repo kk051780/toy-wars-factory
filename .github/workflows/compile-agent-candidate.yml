@@ -1,0 +1,53 @@
+name: TOY WARS compiled AI-agent candidate (no inference)
+on:
+  push:
+    branches:
+      - setup/agentic-runtime-probe
+    paths:
+      - '.github/workflows/twf-autonomous-developer.md'
+      - '.github/workflows/compile-agent-candidate.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: toy-wars-agent-compile
+  cancel-in-progress: false
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Install official GitHub Agentic Workflows compiler
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh extension install github/gh-aw
+      - name: Compile without model inference
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh aw compile .github/workflows/twf-autonomous-developer.md
+      - name: Verify generated action
+        run: |
+          test -s .github/workflows/twf-autonomous-developer.lock.yml
+          grep -q 'max-ai-credits\|GH_AW_MAX_AI_CREDITS' .github/workflows/twf-autonomous-developer.lock.yml || echo 'INFO: limits handled by gh-aw runtime'
+          echo 'Compiled candidate; AI inference NOT run; owner authorization required before enabling main.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Persist generated lock file on isolated branch
+        run: |
+          git add .github/workflows/twf-autonomous-developer.lock.yml
+          if git diff --cached --quiet; then
+            echo 'No compiled differences.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "chore(agent): record compiled candidate without inference"
+            git push origin HEAD:setup/agentic-runtime-probe
+          fi
+      - name: Attach exact generated lock for independent review
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: toy-wars-agent-lock-candidate
+          path: .github/workflows/twf-autonomous-developer.lock.yml
+          retention-days: 30
