@@ -68,4 +68,10 @@ class GeminiPatchGateTests(unittest.TestCase):
         self.assertIn("Inconsistent patch file path",check_patch(forged))
 
 
+    def test_secret_in_added_line_starting_plus_is_scanned(self):
+        # A code line beginning '++' appears as '+++' in unified diff text.
+        forged=GOOD+"+++-----BEGIN PRIVATE KEY-----\n"
+        self.assertIn("Private key",check_patch(forged))
+
+
 if __name__=="__main__": unittest.main()
