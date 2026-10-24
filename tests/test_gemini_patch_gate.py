@@ -1,9 +1,10 @@
 import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"tools"))
-from gemini_patch_gate import check_patch,scan_online
+from gemini_patch_gate import check_patch,scan_online,save_safe_verdict
 
 GOOD="diff --git a/src/combat.lua b/src/combat.lua\n--- a/src/combat.lua\n+++ b/src/combat.lua\n@@ -1 +1 @@\n-old\n+new\n"
 class GeminiPatchGateTests(unittest.TestCase):
@@ -30,6 +31,17 @@ class GeminiPatchGateTests(unittest.TestCase):
     def test_invalid_schema_fails_closed(self):
         out={"candidates":[{"content":{"parts":[{"text":'{"safe":"yes","reasons":[]}'}]}}]}
         with self.assertRaises(RuntimeError): scan_online(GOOD,"dummy",lambda _:json.dumps(out).encode())
+    def test_valid_safe_verdict_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            save_safe_verdict(directory)
+            p=Path(directory)/"detection_result.json"
+            v=json.loads(p.read_text())
+            self.assertEqual(v,{"prompt_injection":False,"secret_leak":False,"malicious_patch":False,"reasons":[]})
+            self.assertTrue(p.is_file())
+    def test_no_verdict_on_bad_key(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaises(RuntimeError): scan_online(GOOD,"")
+            self.assertFalse((Path(directory)/"detection_result.json").exists())
     def test_missing_api_key_fails_closed(self):
         with self.assertRaises(RuntimeError): scan_online(GOOD,"")
     def test_empty_result_fails_closed(self):
