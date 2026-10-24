@@ -13,7 +13,7 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-MODEL="gemini-2.5-flash"
+MODEL="gemini-3.8-flash"
 MAX_PATCH_BYTES=120000
 ALLOWED_PREFIX=("src/","tests/","studio/","evidence/")
 ALLOWED_EXACT={"docs/EXPERIMENT_LOG.md"}
