@@ -46,7 +46,24 @@ class HandoffCheckpointTests(unittest.TestCase):
             self.assertIn(value, text)
         actual = sum(file.stat().st_size for file in (self.root / "src").glob("*.lua"))
         self.assertEqual(result["source_metrics"]["bytes"], actual)
-        self.assertEqual(actual, 25726)  # Excludes the unmerged +306-byte proposal.
+        # The baseline is still enforced on main, but a review branch may
+        # contain an explicitly recorded, unmerged gameplay integration.
+        baseline = state["tracked_metrics"]["lua_source_bytes"]
+        self.assertEqual(baseline, 25726)
+        integration_file = self.root / "history/C00011_main_based_game_integration.json"
+        if integration_file.exists():
+            integration = json.loads(integration_file.read_text())
+            changes = [item for item in integration["source_changes"]
+                       if item["path"].startswith("src/") and item["path"].endswith(".lua")]
+            self.assertEqual([item["path"] for item in changes],
+                             ["src/ToyWarsServer.server.lua"])
+            self.assertEqual(
+                (self.root / changes[0]["path"]).stat().st_size,
+                changes[0]["after_bytes"],
+            )
+            self.assertEqual(actual, baseline + sum(item["delta_bytes"] for item in changes))
+        else:
+            self.assertEqual(actual, baseline)
 
     def test_generated_snapshot_commit_is_stable_but_new_evidence_advances_revision(self):
         before = self.build()
