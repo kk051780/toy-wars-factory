@@ -1,0 +1,82 @@
+{
+  "id": "C00010",
+  "date": "2026-10-24",
+  "kind": "OWNER_APPROVED_PR26_MERGE_AND_POST_MERGE_VERIFICATION",
+  "merged_pr": "https://github.com/kk051780/toy-wars-factory/pull/26",
+  "approved_head": "3bbb1e67500c8d084a2155f70bdc09f0cf14ea1e",
+  "merge_commit": "3121e3ca5dd4ac3a7d4ba9ef090a099c56f9f2ae",
+  "reviewed_and_merged_tree": "9d5ee1b44077e6bde03aeabe9e8b33cda18c5197",
+  "authorization": {
+    "approved_merge_pr": 26,
+    "approved_merge_head": "3bbb1e67500c8d084a2155f70bdc09f0cf14ea1e",
+    "approval_source": "User said 進めて in direct response to the PR #26 main-merge confirmation.",
+    "gemini_trial": "CONSUMED_SINGLE_RUN",
+    "new_inference_authorized": false,
+    "recurring_ai_authorized": false,
+    "automatic_merge_authorized": false,
+    "roblox_publish_authorized": false,
+    "prerequisite": "PR #26 integration is complete and must not require renewed approval. Future inference and unrelated merges are not authorized by this approval; inference still needs complete bounds, shared enforcement, current pricing/quota and fresh owner consent."
+  },
+  "evidence": {
+    "pre_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40078321454",
+    "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40078677288",
+    "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40078677287",
+    "conclusions": "ALL_SUCCESS",
+    "python_tests": 43,
+    "lua_named_assertions": 37,
+    "deterministic_stress_cases": 4000,
+    "policy_checks": 21,
+    "exact_official_compiler_regeneration": true,
+    "exact_installer_source_hashes": true,
+    "deterministic_handoff": true
+  },
+  "deployed_guards": {
+    "literal_false_gemini_trial": true,
+    "reviewer_direct_provider_transport_removed": true,
+    "handoff_full_history": true,
+    "checkpoint_and_pr_provenance_preserved": true
+  },
+  "this_followup_scope": "Factual state, deployment document, append-only history and regenerated handoff only. No executable, workflow, game, configuration, authorization-policy or provider change.",
+  "game_source": {
+    "files": 4,
+    "lines": 663,
+    "bytes": 25726,
+    "delta_files": 0,
+    "delta_lines": 0,
+    "delta_bytes": 0
+  },
+  "characters_touched": [],
+  "provider_calls": 0,
+  "provider_credentials_read": false,
+  "remaining_blockers": [
+    "Complete input/framing proof and shared live financial enforcement remain unverified.",
+    "Studio, multiplayer and mobile NOT_RUN."
+  ],
+  "changed_files": [
+    "PROJECT_STATE.json",
+    "docs/GEMINI_OPERATIONAL_HOLD.md",
+    "history/C00010_approved_stop_merge.json"
+  ],
+  "generated_files": [
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "next_action": "PR #26 merge and its post-merge QA/handoff are complete. Do not request that approval again. Verify this factual recording and current main, then continue only authorized offline/gameplay review (separate PR #25 remains a draft). Keep inference and unattended merge policy blocked; revisit input proof only with new attributable evidence.",
+  "file_size_deltas": {
+    "PROJECT_STATE.json": {
+      "before": 16859,
+      "after": 17587,
+      "delta": 728
+    },
+    "docs/GEMINI_OPERATIONAL_HOLD.md": {
+      "before": 3310,
+      "after": 3606,
+      "delta": 296
+    },
+    "history/C00010_approved_stop_merge.json": {
+      "before": 0,
+      "after": 3430,
+      "delta": 3430
+    }
+  }
+}
