@@ -1,0 +1,65 @@
+name: Toy Wars bootstrap offline QA
+on:
+  push:
+    branches: ["bootstrap/**", "main"]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "config/**"
+      - "tools/**"
+      - ".github/workflows/bootstrap-quality.yml"
+      - "PROJECT_STATE.json"
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: "twf-offline-${{ github.ref }}"
+  cancel-in-progress: true
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install native Lua 5.4
+        run: sudo apt-get update -qq && sudo apt-get install -y lua5.4
+      - name: Lua parse of game modules (not Luau engine verification)
+        run: |
+          for file in src/*.lua; do
+            lua5.4 -e "assert(loadfile([[$file]]))"
+          done
+      - name: Original gameplay regression and 4,000 stress cases
+        run: lua5.4 -e 'BALANCE_FILE="src/ToyWarsBalance.lua"; dofile("tests/balance_spec.lua"); print(RESULT_SUMMARY)'
+      - name: Assemble Studio one-click installer from four canonical files
+        run: python3 tools/build_installer.py
+      - name: Verify installer embeds exact source and hashes
+        run: |
+          python3 - <<'PY'
+          import json,hashlib,pathlib
+          root=pathlib.Path('.')
+          manifest=json.loads((root/'evidence/SOURCE_MANIFEST.json').read_text())
+          ins=(root/'studio/TOY_WARS_v1_2_ONE_CLICK_INSTALLER.lua').read_text()
+          assert manifest['installer_sha256']==hashlib.sha256(ins.encode()).hexdigest()
+          for key,path in {'balance':'ToyWarsBalance.lua','server':'ToyWarsServer.server.lua','hud':'ToyWarsHUD.client.lua','smoke':'ToyWarsSmokeTest.server.lua'}.items():
+              code=(root/'src'/path).read_text()
+              assert code in ins, f'Missing embedded {key}'
+              assert manifest[key]==hashlib.sha256(code.encode()).hexdigest(), f'Changed source {key}'
+          print('PASS: all four source modules exactly embedded in reproducible installer')
+          PY
+      - name: Independent state and character quality gate
+        run: python3 tools/repository_gate.py
+      - name: Report genuine scope
+        if: always()
+        run: |
+          echo "### Toy Wars QA scope" >> "$GITHUB_STEP_SUMMARY"
+          echo "Lua 5.4 parser, 37 native regression assertions + 4000 stress cases, exact Studio installer build, character/policy validation. No actual Roblox engine, visuals, multiplayer or mobile test." >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve release candidate (not Roblox-verified)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: toy-wars-v1-2-offline-installer
+          path: |
+            studio/TOY_WARS_v1_2_ONE_CLICK_INSTALLER.lua
+            evidence/SOURCE_MANIFEST.json
+          retention-days: 30

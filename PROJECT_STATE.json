@@ -1,0 +1,49 @@
+{
+  "project": "TOY WARS FACTORY",
+  "version": "2.3-github-bootstrap",
+  "updated_at": "2026-10-24",
+  "github": {
+    "repository": "kk051780/toy-wars-factory",
+    "visibility": "private",
+    "branch": "bootstrap/v2-3",
+    "write_confirmed": true,
+    "head": "bootstrap/v2-3"
+  },
+  "autonomous_coding": {
+    "status": "NOT_ACTIVE",
+    "schedule_target_minutes": 20,
+    "agentic_workflow_compiled": false,
+    "workflow_run_verified": false
+  },
+  "migrated_assets": {
+    "balance_rules": "PRESENT_SHA_VERIFIED",
+    "balance_native_tests": "PRESENT_SHA_VERIFIED",
+    "pve_server": "PRESENT_SHA_VERIFIED",
+    "hud": "PRESENT_SHA_VERIFIED",
+    "studio_smoke": "PRESENT_SHA_VERIFIED",
+    "studio_installer": "REPRODUCIBLY_GENERATED_IN_CI",
+    "full_v2_3_archive": "LOCAL_ARTIFACT_ONLY",
+    "mock_server_qa": "PENDING_MIGRATION"
+  },
+  "verification": {
+    "offline_native_local_v2_3": "PASS_REPORTED_PREVIOUSLY",
+    "github_actions": "FIRST_RUN_PASS_UPDATED_BUILD_PENDING",
+    "roblox_studio": "NOT_RUN",
+    "mobile_visual": "NOT_RUN",
+    "two_client_multiplayer": "NOT_RUN"
+  },
+  "game": {
+    "pve": "PROTOTYPE_OFFLINE_ONLY",
+    "pvp": "NOT_IMPLEMENTED",
+    "blueprint_capture": "PLANNED",
+    "coop": "NOT_IMPLEMENTED"
+  },
+  "release_decision": "HOLD_ENGINE_UNVERIFIED",
+  "next": [
+    "Verify GitHub Actions output for generated Studio installer",
+    "Merge bootstrap foundation to main after all offline checks pass",
+    "Compile and authenticate GH agentic workflow; verify unattended coding PR",
+    "Port mocked Roblox server integration suite for regression testing",
+    "Connect Roblox Studio / Open Cloud and visual audits"
+  ]
+}
