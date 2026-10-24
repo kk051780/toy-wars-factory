@@ -57,11 +57,21 @@ class HandoffCheckpointTests(unittest.TestCase):
                        if item["path"].startswith("src/") and item["path"].endswith(".lua")]
             self.assertEqual([item["path"] for item in changes],
                              ["src/ToyWarsServer.server.lua"])
-            self.assertEqual(
-                (self.root / changes[0]["path"]).stat().st_size,
-                changes[0]["after_bytes"],
-            )
-            self.assertEqual(actual, baseline + sum(item["delta_bytes"] for item in changes))
+            expected_after = changes[0]["after_bytes"]
+            expected_total = baseline + sum(item["delta_bytes"] for item in changes)
+            lifecycle_file = self.root / "history/C00012_character_lifecycle_guard.json"
+            if lifecycle_file.exists():
+                lifecycle = json.loads(lifecycle_file.read_text())
+                followup = lifecycle["source_changes"]
+                self.assertEqual([item["path"] for item in followup],
+                                 ["src/ToyWarsServer.server.lua"])
+                self.assertEqual(followup[0]["before_bytes"], expected_after)
+                self.assertEqual(followup[0]["after_bytes"] - followup[0]["before_bytes"],
+                                 followup[0]["delta_bytes"])
+                expected_after = followup[0]["after_bytes"]
+                expected_total += followup[0]["delta_bytes"]
+            self.assertEqual((self.root / changes[0]["path"]).stat().st_size, expected_after)
+            self.assertEqual(actual, expected_total)
         else:
             self.assertEqual(actual, baseline)
 
