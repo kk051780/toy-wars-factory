@@ -1,7 +1,7 @@
 {
   "schema": 2,
   "canonical_repo": "kk051780/toy-wars-factory",
-  "source_revision": "07e90d36fc7aec6339a8bf962def17f8d73d3a9f",
+  "source_revision": "5de8c39ebfc95e67e649ba4b418b9b8dad29d39e",
   "source_metrics": {
     "files": 4,
     "lines": 676,
@@ -157,55 +157,61 @@
   },
   "verification": {
     "offline_native_local_v2_3": "PASS_REPORTED_PREVIOUSLY",
-    "github_actions": "PENDING_CURRENT_GAME_CANDIDATE_CI; main stop verification remains https://github.com/kk051780/toy-wars-factory/actions/runs/40079169605",
+    "github_actions": "PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40102033728",
     "roblox_studio": "NOT_RUN",
     "mobile_visual": "NOT_RUN",
     "two_client_multiplayer": "NOT_RUN",
     "native_lua_qa": "PASS_37_REGRESSIONS_PLUS_4000_STRESS",
-    "source_hashes": "4_ORIGINAL_LUA_FILES_EXACT_SHA_MATCH",
-    "character_structural": "PASS"
+    "source_hashes": "4_CANONICAL_LUA_FILES_EXACT_INSTALLER_SHA_MATCH",
+    "character_structural": "PASS",
+    "native_server_events": "PASS_27_MOCK_EVENTS; PRE_FIX_25_PASS_2_EXPECTED_FAIL; NOT_ENGINE",
+    "python_tests": "PASS_53",
+    "handoff": "PASS_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40102033772"
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
-    "Review C00013 and the current main-based gameplay candidate. PR #26/#27 integration is already complete and must not require approval again.",
-    "Confirm exact old-server negative control: 25 pass and only the two NaN fixtures fail; require all 27 canonical fixed-server fixtures and existing QA to pass.",
-    "Review the combined selector authority, waiting-player backfill, deferred-character guard and two non-finite-distance corrections against current main.",
-    "Keep this gameplay candidate unmerged until the owner approves its concrete diff. Keep operational stops, 10-AIC cap and all approval boundaries.",
-    "Roblox Studio, multiplayer, mobile and player feedback remain required before release; native fixtures are not engine evidence.",
-    "Keep Gemini held. Revisit its missing input/framing proof only with changed sources or new attributable evidence."
+    "PR #30 is merged at 1e29505f62192597de6019f97a8b87447b1998e8 and post-merge main QA/handoff passed. Do not ask again to merge it. PR #26/#27 stop integration is also complete.",
+    "Read C00014 and resolve current main/Actions. Current game source is four Lua files / 676 lines / 26,559 bytes; tracked_metrics retains the original baseline.",
+    "Review the separate HUD pricing proposal #13 against the integrated main and canonical balance. Any new implementation must have offline evidence and a reviewable branch; no unrelated merge is approved.",
+    "Keep source proposals #17/#20/#25/#28/#29 open as historical review branches; their gameplay changes are already integrated through #30, so do not merge them again to apply the same changes.",
+    "Roblox Studio, multiplayer, mobile, visuals and player feedback remain required before release; native event fixtures do not supply those results.",
+    "Keep Gemini held, the 10-AIC cap and independent review requirements unchanged. Revisit missing input/framing proof only with changed sources or new attributable evidence; no recurring AI, automatic merge or Roblox publication."
   ],
   "resume_checkpoint": {
-    "id": "C00013",
+    "id": "C00014",
     "observed_on": "2026-10-24",
-    "observed_main_revision": "9e31c34d4d236a115faa5ff076f3f9af82aa879f",
+    "observed_main_revision": "1e29505f62192597de6019f97a8b87447b1998e8",
     "completed": [
-      "Read main C00010 and discover later game proposal records C00011/C00012 and open PRs #28/#29 rather than repeating their work.",
-      "Confirm main-based integration CI 40088574401 and lifecycle proposal CI 40096885886 passed; main itself remains unchanged.",
-      "Execute the whole PR #29 server in native Lua 5.4 with deterministic services and coroutine/event fixtures: 25 cases pass and exactly two NaN-distance cases fail.",
-      "Change the two proximity checks to require distance <= 13 to be true; normal distance behavior and prices are preserved.",
-      "Pass all 27 server event fixtures locally after the numeric correction, including capacity/backfill, identity, remote rate limiting and deferred-character races.",
-      "Prepare a single candidate against current main combining the prior gameplay proposals with the new guard, while preserving all operational stops and approval policies.",
-      "Extend exact source byte accounting as a checked history chain across C00011/C00012/C00013 without changing the original baseline."
+      "Owner explicitly approved the concrete PR #30 main integration with 進めて; the previous PR #26 stop approval was not reused.",
+      "Recheck unchanged head 4366658aa9c71ec30e49476897fbd41f84b1d47c, clean mergeability, all 15 reviewed file blobs and successful pre-merge CI 40099984529.",
+      "Merge PR #30 at 1e29505f62192597de6019f97a8b87447b1998e8 using the reviewed head SHA lease; merged tree c79c1e149ad68a8a21604c9aa3c8151e64427937 equals the reviewed tree.",
+      "Verify post-merge main QA 40102033728 and handoff 40102033772 both pass on the merge SHA, including 27 event fixtures, 53 Python tests, exact compiler and installer checks.",
+      "Verify the immutable pre-fix server passes 25 fixtures and fails exactly the two NaN fixtures; the canonical fixed server passes all 27. These are native mocks, not Roblox engine evidence.",
+      "Record the actual integrated game metrics: four Lua files, 676 lines and 26,559 bytes; +13 lines/+833 bytes against the original main game source. Original baseline and C00011-C00013 remain unchanged.",
+      "Preserve literal-false Gemini activation, removed reviewer provider transport, consumed one-shot approval, inactive recurring AI and Roblox release hold; no provider calls or credential reads.",
+      "Record completion in canonical project state and regenerated handoff so the next chat resumes after the merged work instead of requesting the same approval."
     ],
-    "evidence_record": "history/C00013_nonfinite_proximity_events.json",
+    "evidence_record": "history/C00014_approved_game_merge.json",
     "authorization": {
-      "approved_merge_pr": 26,
-      "approved_merge_scope": "Completed stop/handoff integration only; not this game candidate.",
+      "approved_merge_pr": 30,
+      "approved_merge_head": "4366658aa9c71ec30e49476897fbd41f84b1d47c",
+      "approved_merge_scope": "PR #30 gameplay integration and factual completion record.",
+      "approval_source": "User said 進めて in direct response to the explicit PR #30 main-merge confirmation.",
+      "merge_status": "COMPLETED",
       "gemini_trial": "CONSUMED_SINGLE_RUN",
       "new_inference_authorized": false,
       "recurring_ai_authorized": false,
       "automatic_merge_authorized": false,
       "roblox_publish_authorized": false,
-      "prerequisite": "This is an unmerged gameplay candidate. A later explicit approval is needed for this candidate to enter main. No inference, recurring AI, billing or publication authorization is implied."
+      "prerequisite": "PR #30 is already merged and post-merge QA/handoff passed. Do not request its merge approval again. This specific approval does not authorize future unrelated merges, inference, recurring AI, billing or Roblox publication."
     },
     "limitations": [
-      "All game changes in this candidate remain unmerged; main still has 25,726 game source bytes.",
-      "Native Lua substitutes exercise callback logic, not Roblox physics, replication, live networking, five-player or mobile behavior.",
-      "NaN is a synthetic invalid-coordinate fixture; a real client injection exploit was not demonstrated.",
-      "The Gemini input/framing and financial-cap blocker remains unresolved.",
-      "Studio, multiplayer, mobile, visuals and player fun remain unverified."
+      "Native service/event/coroutine substitutes test callback logic only; Roblox Studio, physics, replication, real multiplayer, mobile visuals and player fun remain unverified.",
+      "NaN was a synthetic invalid-coordinate fixture; no real client injection exploit was demonstrated.",
+      "Complete Gemini input/framing bounds and a hard financial cap remain unproved; provider inference stays blocked and the consumed trial must not be rerun.",
+      "Related source PRs #17/#20/#25/#28/#29 remain open as preserved proposals; their reviewed gameplay changes are integrated via PR #30. Experimental budget/runtime proposals remain unmerged."
     ],
-    "next_action": "Verify the main-based candidate CI, including immutable pre-fix negative control and the canonical fixed-server fixtures, before asking the owner to approve this concrete gameplay PR. Preserve other source drafts. After explicit integration approval, verify main QA and record that approval without enabling inference or Roblox release."
+    "next_action": "PR #30 integration is complete. Read C00014, resolve current main and check Actions before new work. Review the separate HUD pricing proposal #13 against the integrated server and current balance, with offline evidence and a reviewable draft if changes are needed. Preserve source drafts and all operational/quality guards; no further merge or provider inference approval is implied."
   },
   "review_queue": [
     {
@@ -216,7 +222,8 @@
       "origin": "CHAT_ASSISTANT_NOT_GEMINI",
       "purpose": "Guard deferred workshop teleport against disconnect/respawn race",
       "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40096885886",
-      "qa_scope": "PASS_OFFLINE_CI; prior gameplay checks are mostly static. Studio, multiplayer and mobile NOT_RUN."
+      "qa_scope": "PASS_OFFLINE_CI; prior gameplay checks are mostly static. Studio, multiplayer and mobile NOT_RUN.",
+      "main_gameplay_integration": "Reviewed gameplay changes included in merged PR #30; this source PR remains open/unmerged and must not be merged again merely to apply those changes."
     },
     {
       "number": 28,
@@ -226,7 +233,8 @@
       "origin": "CHAT_ASSISTANT_NOT_GEMINI",
       "purpose": "Main-based offline integration QA: selector authority + workshop backfill (no merge)",
       "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40088574401",
-      "qa_scope": "PASS_OFFLINE_CI; prior gameplay checks are mostly static. Studio, multiplayer and mobile NOT_RUN."
+      "qa_scope": "PASS_OFFLINE_CI; prior gameplay checks are mostly static. Studio, multiplayer and mobile NOT_RUN.",
+      "main_gameplay_integration": "Reviewed gameplay changes included in merged PR #30; this source PR remains open/unmerged and must not be merged again merely to apply those changes."
     },
     {
       "number": 25,
@@ -236,7 +244,8 @@
       "origin": "CHAT_ASSISTANT_NOT_GEMINI",
       "purpose": "Integration QA: selector authority plus workshop backfill (no merge)",
       "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40076928524",
-      "qa_scope": "PASS_OFFLINE_CI; inspect linked run for exact scope. No Roblox engine or new live inference evidence."
+      "qa_scope": "PASS_OFFLINE_CI; inspect linked run for exact scope. No Roblox engine or new live inference evidence.",
+      "main_gameplay_integration": "Reviewed gameplay changes included in merged PR #30; this source PR remains open/unmerged and must not be merged again merely to apply those changes."
     },
     {
       "number": 24,
@@ -286,7 +295,8 @@
       "origin": "CHAT_ASSISTANT_NOT_GEMINI",
       "purpose": "Admit waiting players when a workshop plot becomes free",
       "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40069151903",
-      "qa_scope": "PASS_OFFLINE_CI; inspect linked run for exact scope. No Roblox engine or new live inference evidence."
+      "qa_scope": "PASS_OFFLINE_CI; inspect linked run for exact scope. No Roblox engine or new live inference evidence.",
+      "main_gameplay_integration": "Reviewed gameplay changes included in merged PR #30; this source PR remains open/unmerged and must not be merged again merely to apply those changes."
     },
     {
       "number": 19,
@@ -306,7 +316,8 @@
       "origin": "CHAT_ASSISTANT_NOT_GEMINI",
       "purpose": "Reject spoofed distant toy-selector prompt activation on server",
       "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40061153081",
-      "qa_scope": "PASS_OFFLINE_CI; inspect linked run for exact scope. No Roblox engine or new live inference evidence."
+      "qa_scope": "PASS_OFFLINE_CI; inspect linked run for exact scope. No Roblox engine or new live inference evidence.",
+      "main_gameplay_integration": "Reviewed gameplay changes included in merged PR #30; this source PR remains open/unmerged and must not be merged again merely to apply those changes."
     },
     {
       "number": 13,
