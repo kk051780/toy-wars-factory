@@ -1,6 +1,6 @@
 {
   "project": "TOY WARS FACTORY",
-  "version": "2.6-gemini-secret-presence-confirmed",
+  "version": "2.8-gemini-one-shot-budget-hold",
   "updated_at": "2026-10-24",
   "github": {
     "repository": "kk051780/toy-wars-factory",
@@ -21,7 +21,7 @@
     "agentic_workflow_compiled": true,
     "workflow_run_verified": false,
     "workflow_source_compiled_in_ci": true,
-    "reason": "2026-10-24 first owner-authorized one-shot AI trial started Copilot CLI but auto selected claude-sonnet-5.5 was rejected: HTTP 400 The requested model is not supported; no inference completion, no game code modification, no AI PR. No further run authorized.",
+    "reason": "Gemini 3.8 Flash first authorized single-run triggered, Gemini CLI invoked successfully but timed out after 12 minutes and exhausted max-turns 12/12; no patch/PR. Log recorded 33.713 modeled AIC against 10 AIC config. SEVERE_HOLD on future AI inference pending root cause and fresh owner authorization.",
     "one_shot_trial": {
       "status": "BLOCKED_MODEL_NOT_SUPPORTED",
       "run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40051896515",
@@ -34,7 +34,7 @@
       "trigger": "ops/ONE_SHOT_APPROVED_20261024.json"
     },
     "proposed_migration": {
-      "status": "PREPARED_OFFLINE_ONLY",
+      "status": "SEVERE_HOLD_AIC_CONFIG_OVERRUN",
       "reason": "Copilot Free unsupported models in one-shot run 40051896515; avoid plan upgrade",
       "candidate_engine": "gemini",
       "candidate_model": "gemini-3.8-flash",
@@ -52,11 +52,19 @@
       "financial_plan_pr": "https://github.com/kk051780/toy-wars-factory/pull/12",
       "cron_cost_warning": "two QA-only 20-minute schedules each, can overuse 2000 GitHub Free Actions minutes/month",
       "gemini_api_secret_evidence_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40053559668",
-      "authenticated_gemini_inference": "NOT_TESTED",
+      "authenticated_gemini_inference": "GEMINI_MODEL_CALLED_BUT_RUN_FAILED",
       "owner_free_tier_data_usage_consent": true,
-      "one_shot_inference_approval": "NOT_GIVEN",
+      "one_shot_inference_approval": "CONSUMED_ONCE_2026_10_24",
       "model_access_note": "Official Gemini API docs now restrict Gemini 2.5 models for new API projects. Candidate updated to 3.8 Flash; compiled offline and independent QA PASS; actual model access and live API inference NOT TESTED.",
-      "new_candidate_QA": "https://github.com/kk051780/toy-wars-factory/actions/runs/40059931038"
+      "new_candidate_QA": "https://github.com/kk051780/toy-wars-factory/actions/runs/40059931038",
+      "latest_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/40060119253",
+      "failure_issue": "https://github.com/kk051780/toy-wars-factory/issues/16",
+      "failure_cause": "12/12 turn cap exhausted, 12 min timeout, policy denied shell testing, no patch or PR; 33.713 AIC reported despite 10 AIC configured",
+      "approved_aic_cap": 10,
+      "logged_modelled_aic": 33.713,
+      "actual_billed_amount": "UNKNOWN_GOOGLE_FREE_TIER_BILLING_NOT_READABLE",
+      "future_ai_rerun_approved": false,
+      "auto_merge": false
     }
   },
   "migrated_assets": {
@@ -87,11 +95,12 @@
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
-    "Owner explicitly approves one non-recurring Gemini 3.8 Flash trial, accepting custom independent scanner is not official gh-aw detector; no inference has yet been called",
-    "Before trigger, check PR #11 and ensure candidate compiled lock / QA PASS (run 40059931038); no recurring cron or unrestricted bills",
-    "Upon distinct owner approval, activate exactly one Gemini trial using a brand-new marker; verify live model/auth and draft PR with independent QA",
-    "Keep Copilot 20min PR #6 unmerged, budget proposal PR #12 unmerged pending approval",
-    "Complete Roblox Studio, multiplayer and mobile appearance evidence before publication"
+    "DO NOT trigger or re-run Gemini/Copilot inference, do not activate 20-min AI cron; SEVERE_HOLD_AIC_CONFIG_OVERRUN from run 40060119253, issue #16",
+    "Investigate modeled AIC 33.713 despite frontmatter max-ai-credits 10 and verify genuinely enforceable input/output hard caps before requesting next owner approval",
+    "Replace broad context/tool discovery with single tiny scoped task plus clear CLI test path, and fix denied test shell policy without relaxing security gates",
+    "Review actual Google AI Studio Free Tier billing and GitHub Actions quota manually via smartphone if actual charges matter; do not claim measured $0",
+    "Continue approved NON-AI QA, character/world design and GitHub source versioning in safe branches; no Roblox publish",
+    "Roblox Studio 2-client/mobile visual tests remain mandatory for release"
   ],
   "tracked_metrics": {
     "lua_source_files": 4,
