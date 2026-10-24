@@ -1,6 +1,6 @@
 {
   "project": "TOY WARS FACTORY",
-  "version": "2.5-one-shot-agent-trial-blocked",
+  "version": "2.6-gemini-free-candidate-awaiting-owner-consent",
   "updated_at": "2026-10-24",
   "github": {
     "repository": "kk051780/toy-wars-factory",
@@ -32,6 +32,25 @@
       "agent_generated_pr": false,
       "repeat_authorized": false,
       "trigger": "ops/ONE_SHOT_APPROVED_20261024.json"
+    },
+    "proposed_migration": {
+      "status": "PREPARED_OFFLINE_ONLY",
+      "reason": "Copilot Free unsupported models in one-shot run 40051896515; avoid plan upgrade",
+      "candidate_engine": "gemini",
+      "candidate_model": "gemini-2.5-flash",
+      "draft_pr": "https://github.com/kk051780/toy-wars-factory/pull/11",
+      "independent_security": "Custom fail-closed Python static scan + separate Gemini API verdict; NOT equivalent to official gh-aw detector",
+      "code_review_status": "OFFLINE_QA_PASS_BUT_NO_REAL_GEMINI_RUN",
+      "requires_user_consent": [
+        "Google free-tier terms allow code/prompt use for service improvement",
+        "GEMINI_API_KEY secret entry in GitHub",
+        "Fresh one-shot inference approval"
+      ],
+      "gemini_api_secret_present": "NOT_VERIFIED",
+      "recurring_ai_active": false,
+      "previous_trigger_must_not_be_reused": true,
+      "financial_plan_pr": "https://github.com/kk051780/toy-wars-factory/pull/12",
+      "cron_cost_warning": "two QA-only 20-minute schedules each, can overuse 2000 GitHub Free Actions minutes/month"
     }
   },
   "migrated_assets": {
@@ -62,12 +81,13 @@
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
-    "Verify personal Copilot plan/model access; 400 unsupported auto-selected claude-sonnet-5.5 (TWF-0004)",
-    "Prepare a distinct one-off explicit accessible-model trial ONLY after fresh owner approval",
-    "Never rerun prior single-use marker; 20-minute auto AI coding PR #6 remains draft/unmerged",
-    "Migrate mocked Roblox server integration regression from v2.3",
-    "Connect actual Roblox Studio/Open Cloud 2-player/mobile character visual QA",
-    "Never publish game without runtime evidence and owner approval"
+    "Owner reviews free-tier Google AI Studio source-data/privacy handling and explicitly consents or selects privacy-preserving paid alternative",
+    "Owner creates Free Tier GEMINI_API_KEY using official Google AI Studio and saves as GitHub repository Actions secret without sharing in chat",
+    "Independently test secret presence without model inference",
+    "After new explicit owner authorization, run one Gemini AI coding test with fail-closed independent patch review (draft PR only)",
+    "Evaluate PR #12 for cost control: change two idle cron jobs from 20-minute to 6-hour cadence; retain on-change CI",
+    "Verify eventual real AI-generated PR with GitHub QA, size gate, character test and audit trail",
+    "Add Roblox Studio/Open Cloud and 2-client/mobile screenshots before release"
   ],
   "tracked_metrics": {
     "lua_source_files": 4,
