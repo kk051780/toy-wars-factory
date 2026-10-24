@@ -168,6 +168,10 @@ local function makePlot(player, state)
         prompt.Parent=pad
         prompt.Triggered:Connect(function(actor)
             if actor ~= player or not state.active then return end
+            -- Never trust a client-triggered prompt without checking server-side proximity.
+            local character=actor.Character
+            local root=character and character:FindFirstChild("HumanoidRootPart")
+            if not root or not ((root.Position-pad.Position).Magnitude <= 13) then return end
             state.selected=id
             refreshStatus(state)
         end)
@@ -198,7 +202,7 @@ local function makePlot(player, state)
         -- A forged proximity event must not upgrade from across the map.
         local character=actor.Character
         local root=character and character:FindFirstChild("HumanoidRootPart")
-        if not root or (root.Position-station.Position).Magnitude > 13 then return end
+        if not root or not ((root.Position-station.Position).Magnitude <= 13) then return end
         local price=B.upgradePrice(state.level.Value)
         if not price or state.coins.Value<price then return end
         state.coins.Value = state.coins.Value-price
@@ -393,7 +397,7 @@ spawn.Parent=world
 part(world,"LobbyGround",Vector3.new(930,1,200),CFrame.new(0,-2,0),Color3.fromRGB(112,169,144),Enum.Material.Grass)
 
 local function join(player)
-    if sessions[player] then return end
+    if player.Parent ~= Players or sessions[player] then return end
     local slot=chooseSlot()
     if not slot then
         warn("TWF v1.2: no free workshop plots for",player.UserId)
@@ -428,8 +432,10 @@ local function join(player)
     makePlot(player,state)
     local function characterReady(character)
         local root=character:WaitForChild("HumanoidRootPart",8)
-        if root and state.active then
+        if root then
             task.wait(0.1)
+            -- Character or session may have changed while the callback yielded.
+            if not state.active or sessions[player] ~= state or player.Parent ~= Players or player.Character ~= character then return end
             character:PivotTo(CFrame.new(state.x+17,6,-37))
         end
     end
@@ -455,6 +461,13 @@ Players.PlayerRemoving:Connect(function(player)
     for _,e in ipairs(state.entities) do removeEntity(e) end
     if state.map and state.map.Parent then state.map:Destroy() end
     sessions[player]=nil
+    -- Assign a newly freed plot to one player who was waiting at capacity.
+    for _,waiting in ipairs(Players:GetPlayers()) do
+        if waiting ~= player and waiting.Parent == Players and not sessions[waiting] then
+            join(waiting)
+            break
+        end
+    end
 end)
 for _,player in ipairs(Players:GetPlayers()) do task.spawn(join,player) end
 
