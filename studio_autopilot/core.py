@@ -18,7 +18,7 @@ ROLES = ("author", "reviewer", "meta")
 GATES = ("offline", "engine", "two_client", "mobile", "playtest")
 PROJECT_FIELDS = {"schema", "game_id", "title", "platform", "phase",
                   "repository", "coordination_ref", "roles", "game_design",
-                  "quality", "safety", "source_prefix", "tests_prefix"}
+                  "quality", "safety", "source_prefix", "tests_prefix", "ci_provenance"}
 SAFETY_FIELDS = {"draft_only", "independent_review", "exact_head_ci",
                  "post_merge_main_qa", "auto_publish", "external_inference",
                  "daily_external_budget_usd", "max_open_prs"}
@@ -68,6 +68,16 @@ def validate_project(data):
     _object(data["quality"], GATES, "quality")
     if any(type(v) is not str or v not in STATES for v in data["quality"].values()):
         raise InvalidProject("unknown quality evidence state")
+    if data["phase"] == "UNBOUND_TEMPLATE":
+        if data["ci_provenance"] is not None:
+            raise InvalidProject("unbound template cannot declare trusted CI")
+    else:
+        provenance = _object(data["ci_provenance"], ("workflow_path", "app_slug", "app_id"), "CI provenance")
+        if (type(provenance["workflow_path"]) is not str or
+                re.fullmatch(r"\.github/workflows/[A-Za-z0-9_.-]+\.yml", provenance["workflow_path"]) is None or
+                provenance["app_slug"] != "github-actions" or
+                type(provenance["app_id"]) is not int or provenance["app_id"] != 15368):
+            raise InvalidProject("invalid trusted GitHub Actions workflow origin")
     _object(data["safety"], SAFETY_FIELDS, "safety")
     guard = data["safety"]
     for required_true in ("draft_only", "independent_review", "exact_head_ci",

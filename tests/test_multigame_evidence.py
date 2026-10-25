@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import unittest
 
+from studio_autopilot.core import InvalidProject, validate_project
 from studio_autopilot.github_evidence import (
     API_ORIGIN, EvidenceUnavailable, GitHubReadOnlyClient, _NoRedirect,
     collect,
@@ -41,15 +42,36 @@ class FakeGitHub:
             "commits/" + HEAD + "/check-runs?per_page=100": self.good_checks(HEAD),
             "contents/ops/REPAIR_COORDINATOR.json?ref=" + COORD: self.encode(coord),
             "pulls/51": self.pr(),
+            "actions/runs/11": self.run(MAIN, 101, "push"),
+            "actions/runs/22": self.run(HEAD, 202, "pull_request"),
         }
         self.counter = {}
 
     @staticmethod
     def good_checks(sha):
-        rows = [{"head_sha": sha, "name": name,
-                 "status": "completed", "conclusion": "success"}
-                for name in ("offline", "compile_hold")]
+        is_main = (sha == MAIN)
+        run_id, suite_id = (11, 101) if is_main else (22, 202)
+        rows = [
+            {
+                "head_sha": sha, "name": name,
+                "status": "completed", "conclusion": "success",
+                "app": {"slug": "github-actions", "id": 15368},
+                "check_suite": {"id": suite_id},
+                "details_url": "https://github.com/" + REPO +
+                               "/actions/runs/" + str(run_id) + "/job/" + str(i + 1100),
+            }
+            for i, name in enumerate(("offline", "compile_hold"))
+        ]
         return {"total_count": len(rows), "check_runs": rows}
+
+    @staticmethod
+    def run(sha, suite_id, event):
+        return {
+            "workflow_id": 394718989,
+            "path": ".github/workflows/bootstrap-quality.yml",
+            "head_sha": sha, "check_suite_id": suite_id,
+            "status": "completed", "conclusion": "success", "event": event,
+        }
 
     @staticmethod
     def encode(doc):
@@ -268,6 +290,70 @@ class EvidenceAdapterTests(unittest.TestCase):
             with self.subTest(n=n):
                 with self.assertRaises(EvidenceUnavailable):
                     self.read(n)
+
+    def test_fake_app_same_name_and_sha_fails_closed(self):
+        self.fake.responses["commits/" + HEAD + "/check-runs?per_page=100"][
+            "check_runs"][0]["app"]["id"] = 99999
+        self.assertEqual(self.read()["pr"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
+
+    def test_spoofed_workflow_run_with_same_sha_is_rejected(self):
+        self.fake.responses["actions/runs/22"]["path"] = ".github/workflows/attacker.yml"
+        self.assertEqual(self.read()["pr"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
+
+    def test_forged_run_head_sha_or_suite_is_rejected(self):
+        for field, value in (("head_sha", "f" * 40), ("check_suite_id", 1234)):
+            with self.subTest(field=field):
+                old = self.fake.responses["actions/runs/22"][field]
+                self.fake.responses["actions/runs/22"][field] = value
+                self.assertEqual(self.read()["pr"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
+                self.fake.responses["actions/runs/22"][field] = old
+
+    def test_fake_details_url_cannot_send_token_to_unsafe_host(self):
+        self.fake.responses["commits/" + HEAD + "/check-runs?per_page=100"][
+            "check_runs"][0]["details_url"] = "https://evil.invalid/capture"
+        self.assertEqual(self.read()["pr"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
+        self.assertTrue(all(url.startswith(self.fake.path_prefix) for url in self.fake.calls))
+
+    def test_run_not_complete_or_wrong_event_is_rejected(self):
+        for field, value in (("conclusion", "failure"), ("status", "in_progress"),
+                             ("event", "workflow_dispatch")):
+            with self.subTest(field=field):
+                old = self.fake.responses["actions/runs/22"][field]
+                self.fake.responses["actions/runs/22"][field] = value
+                self.assertEqual(self.read()["pr"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
+                self.fake.responses["actions/runs/22"][field] = old
+
+    def test_provenance_cannot_be_invented_by_unbound_template(self):
+        altered = copy.deepcopy(TEMPLATE)
+        altered["ci_provenance"] = {
+            "workflow_path": ".github/workflows/bootstrap-quality.yml",
+            "app_slug": "github-actions", "app_id": 15368,
+        }
+        with self.assertRaises(InvalidProject):
+            validate_project(altered)
+
+    def test_manifest_rejects_untrusted_or_missing_ci_origin(self):
+        for trust in (None, {},
+                      {"workflow_path": ".github/workflows/evil.yml",
+                       "app_slug": "other-app", "app_id": 15368},
+                      {"workflow_path": "../arbitrary.yml",
+                       "app_slug": "github-actions", "app_id": 15368},
+                      {"workflow_path": ".github/workflows/bootstrap-quality.yml",
+                       "app_slug": "github-actions", "app_id": True}):
+            with self.subTest(trust=trust):
+                altered = copy.deepcopy(PROJECT)
+                altered["ci_provenance"] = trust
+                with self.assertRaises(InvalidProject):
+                    validate_project(altered)
+
+    def test_tokened_workflow_runs_only_from_trusted_main(self):
+        wf = (ROOT / ".github/workflows/studio-autopilot-evidence.yml").read_text(encoding="utf-8")
+        self.assertIn('on:\n  push:\n    branches: ["main"]', wf)
+        self.assertNotIn("\n  pull_request:", wf)
+        self.assertNotIn("workflow_dispatch:", wf)
+        self.assertIn('ref: ${{ github.sha }}', wf)
+        self.assertIn('test "$(git rev-parse HEAD)" = "${{ github.sha }}"', wf)
+        self.assertIn("  actions: read", wf)
 
     def test_the_reader_does_not_depend_on_planner_json_claims(self):
         payload = self.read()

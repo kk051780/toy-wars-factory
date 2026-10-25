@@ -101,7 +101,8 @@ def _ref(client, branch):
     return _sha(record["object"].get("sha"))
 
 
-def _checks(client, commit_sha):
+def _checks(client, commit_sha, repository, trust):
+    """A name/SHA alone is NOT QA. Pin GitHub App, workflow run and suite."""
     records = client.get("commits/" + _sha(commit_sha) + "/check-runs?per_page=100")
     items = records.get("check_runs")
     count = records.get("total_count")
@@ -111,10 +112,36 @@ def _checks(client, commit_sha):
     if any(type(item) is not dict or item.get("head_sha") != commit_sha for item in items):
         raise EvidenceUnavailable("foreign/stale check-run SHA")
     matches = []
+    anchored_url = re.compile(
+        r"https://github[.]com/" + re.escape(repository) +
+        r"/actions/runs/([1-9][0-9]*)/job/([1-9][0-9]*)\Z"
+    )
+    trusted_run_cache = {}
     for name in CHECKS:
         named = [x for x in items if x.get("name") == name]
-        passed = (len(named) == 1 and named[0].get("status") == "completed" and
-                  named[0].get("conclusion") == "success")
+        passed = False
+        if len(named) == 1:
+            check = named[0]
+            app = check.get("app")
+            suite = check.get("check_suite")
+            detail = check.get("details_url")
+            url = anchored_url.fullmatch(detail) if type(detail) is str else None
+            if (type(app) is dict and app.get("slug") == trust["app_slug"] and
+                    type(app.get("id")) is int and app.get("id") == trust["app_id"] and
+                    type(suite) is dict and type(suite.get("id")) is int and
+                    check.get("status") == "completed" and
+                    check.get("conclusion") == "success" and url is not None):
+                run_id = int(url.group(1))
+                if run_id not in trusted_run_cache:
+                    trusted_run_cache[run_id] = client.get("actions/runs/" + str(run_id))
+                run = trusted_run_cache[run_id]
+                passed = (type(run.get("workflow_id")) is int and
+                          run.get("path") == trust["workflow_path"] and
+                          run.get("head_sha") == commit_sha and
+                          run.get("check_suite_id") == suite["id"] and
+                          run.get("status") == "completed" and
+                          run.get("conclusion") == "success" and
+                          run.get("event") in ("pull_request", "push"))
         matches.append({"name": name, "status": "PASS" if passed else "HOLD"})
     return {"status": "PASS" if all(x["status"] == "PASS" for x in matches)
             else "HOLD_EXACT_HEAD_CHECKS", "required": matches}
@@ -151,7 +178,7 @@ def _coordinator(client, sha, roles):
             "task_identities_match": True}
 
 
-def _pr(client, number, repo, main_sha):
+def _pr(client, number, repo, main_sha, trust):
     if type(number) is not int or not 1 <= number <= 10000000:
         raise EvidenceUnavailable("invalid PR number")
     data = client.get("pulls/" + str(number))
@@ -167,7 +194,7 @@ def _pr(client, number, repo, main_sha):
         raise EvidenceUnavailable("invalid PR state")
     return {"number": number, "head": h, "base": b,
             "base_matches_main": b == main_sha, "draft": data["draft"],
-            "state": data["state"], "checks": _checks(client, h)}
+            "state": data["state"], "checks": _checks(client, h, repo, trust)}
 
 
 def collect(project, client, *, pr_number=None):
@@ -180,9 +207,9 @@ def collect(project, client, *, pr_number=None):
     repo = project["repository"]
     main_sha = _ref(client, "main")
     coord_sha = _ref(client, project["coordination_ref"])
-    main_checks = _checks(client, main_sha)
+    main_checks = _checks(client, main_sha, repo, project["ci_provenance"])
     coordinator = _coordinator(client, coord_sha, project["roles"])
-    pr = _pr(client, pr_number, repo, main_sha) if pr_number is not None else None
+    pr = _pr(client, pr_number, repo, main_sha, project["ci_provenance"]) if pr_number is not None else None
     # Conservative race detection. These are not permission tickets or CAS locks.
     if _ref(client, "main") != main_sha or _ref(client, project["coordination_ref"]) != coord_sha:
         raise EvidenceUnavailable("GitHub references moved while reading")

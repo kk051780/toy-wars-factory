@@ -12,9 +12,9 @@ Studio Autopilot P1 accepts JSON observations only as untrusted diagnostics. P2 
 
 ## GitHub Actions proof
 
-The new workflow at .github/workflows/studio-autopilot-evidence.yml runs on relevant PRs and via workflow_dispatch. Its GITHUB_TOKEN has explicitly read-only contents/checks/pull-requests access; checkout persists no credentials. The nonsecret JSON artifact demonstrates that GitHub was actually accessed.
+The new workflow at .github/workflows/studio-autopilot-evidence.yml runs ONLY on push to main after separately reviewed merge. Its GITHUB_TOKEN has explicitly read-only contents/checks/pull-requests/actions read access; checkout persists no credentials. The nonsecret JSON artifact demonstrates that GitHub was actually accessed.
 
-To collect metadata in GitHub Actions, run python3 -m studio_autopilot.github_evidence --pr 51. The CLI requires GITHUB_TOKEN and GITHUB_REPOSITORY matching the manifest. An unbound game or foreign repo fails closed.
+To collect metadata in an authorized GitHub Actions run, execute python3 -m studio_autopilot.github_evidence (no PR number needed for trusted main). The CLI requires GITHUB_TOKEN and GITHUB_REPOSITORY matching the manifest. An unbound game or foreign repo fails closed.
 
 ## Known limitations
 
@@ -24,3 +24,7 @@ To collect metadata in GitHub Actions, run python3 -m studio_autopilot.github_ev
 - A real future multi-game executor still needs per-game app installations, CAS lease, data isolation and explicitly scoped permissions.
 
 Primary official references: https://docs.github.com/en/rest/checks/runs and https://docs.github.com/en/rest/pulls/pulls.
+
+## Hardening after independent audit
+
+An early PR-triggered proof (run 40163275777) read live data successfully but exposed a read-scoped token to unreviewed PR code. That first mechanism has been replaced: **the authenticated workflow runs only on main after an independently approved merge** and checks out its exact push SHA. No PR code receives a token in this workflow. GitHub Actions checks must have the pinned official App ID/slug and their details URLs must resolve to live Actions runs with the configured, reviewable workflow path, matching SHA and check suite. The trusted workflow origin is a per-project manifest property, not hardcoded to Toy Wars in the adapter. The original PR execution is historical evidence only, not accepted secure deployment.

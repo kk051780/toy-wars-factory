@@ -1,20 +1,16 @@
 name: Studio Autopilot read-only evidence
 on:
-  pull_request:
+  push:
+    branches: ["main"]
     paths:
       - "studio_autopilot/**"
       - "tests/test_multigame_evidence.py"
       - ".github/workflows/studio-autopilot-evidence.yml"
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: "Optional PR to inspect"
-        required: false
-        type: string
 permissions:
   contents: read
   checks: read
   pull-requests: read
+  actions: read
 concurrency:
   group: "studio-evidence-${{ github.ref }}"
   cancel-in-progress: true
@@ -25,14 +21,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
       - name: Read live GitHub refs, check-runs and coordinator without editing
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number || '' }}
+          PR_NUMBER: ''
         run: |
           set -euo pipefail
+          test "${{ github.ref }}" = 'refs/heads/main'
+          test "$(git rev-parse HEAD)" = "${{ github.sha }}"
           if [ -n "$PR_NUMBER" ]; then
             python3 -m studio_autopilot.github_evidence --pr "$PR_NUMBER" > evidence.json
           else
