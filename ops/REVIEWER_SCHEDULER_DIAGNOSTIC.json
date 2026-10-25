@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "observed_at": "2026-10-25T02:33:31.153Z",
+  "failed": [
+    {
+      "task": "6add4ea80d3881919da4ea2c1d5def88",
+      "timing_mode": "flexible_schedule",
+      "run": "ec17dd14-1678-832b-a5b0-5e7df105834a",
+      "status": "no_update"
+    },
+    {
+      "task": "6add445e4138819197d9cf2b1a02534d",
+      "timing_mode": "flexible_schedule",
+      "run": "e70cb755-341c-8328-b90b-e56c037075ee",
+      "status": "no_update"
+    }
+  ],
+  "successful_pilot": {
+    "task": "6add69aaccd08191bbf511db2ac30a96",
+    "timing_mode": "exact_schedule",
+    "run": "8d7b5bf7-2d80-8323-a238-d222875fd9b6",
+    "status": "completed",
+    "github_read_success": true,
+    "disabled_after_pilot": true
+  },
+  "conclusion": "A short exact-scheduled task worked, but the different prompt length and task context prevent attributing cause solely to timing mode. No scheduled independent reviewer integration proof yet.",
+  "next": "Use a separate exact-scheduled read-only reviewer bootstrap, verify real output, then migrate the registered reviewer atomically with tests and old-task retirement; never run two authorized reviewers concurrently."
+}

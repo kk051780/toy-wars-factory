@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 12,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "ed6d989f-bccc-40d3-a621-348a4316bbd9",
-    "task_id": null,
-    "epoch": 12,
-    "acquired_at": "2026-10-25T02:31:32.612Z",
-    "expires_at": "2026-10-25T03:01:32.612Z",
-    "base_main_sha": "78060f60dd904746765c011089a8bda555ec8e7f",
-    "work_branch": "main",
-    "origin": "controller_progress_dashboard_review"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -31,15 +21,14 @@
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "d67e02cd-8f4f-4138-a0cd-2879bd96967a",
-    "epoch": 11,
-    "released_at": "2026-10-25T02:27:47.951Z",
-    "pr": 44,
-    "head": "e99c62925611411c9b0ca3fccc009db681c69fa1",
-    "merged_main": "4adfc389d745041e7b93092972321752546e3a85",
-    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40154450584",
-    "qa": "SUCCESS_MAIN_WITH_STATUS_ONLY_DESCENDANT",
-    "regular_reviewer_verified": false
+    "owner_id": "ed6d989f-bccc-40d3-a621-348a4316bbd9",
+    "epoch": 12,
+    "released_at": "2026-10-25T02:33:31.153Z",
+    "pr": 46,
+    "merged_main": "0cfb7dd71005b95cbb0db7c1e55e9b178ece9531",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40154804086",
+    "result": "DASHBOARD_MERGED_MAIN_QA_PASSED",
+    "automatic_dashboard_refresh_implemented": false
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -189,6 +178,27 @@
       "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40154450584",
       "regular_reviewer_cycle_verified": false,
       "authority": "owner delegated ordinary integration"
+    },
+    "46": {
+      "schema": 1,
+      "pr": 46,
+      "head": "f1c152af38d1cea036a85f5bb6b2faeb15d1daa4",
+      "reviewer_kind": "CONTROLLER",
+      "reviewer_operation_id": "ed6d989f-bccc-40d3-a621-348a4316bbd9",
+      "verdict": "APPROVE",
+      "changed_files": [
+        "config/progress_milestones.json",
+        "docs/PROGRESS_DASHBOARD.md",
+        "tests/test_progress_report.py",
+        "tools/progress_report.py"
+      ],
+      "ci": {
+        "id": 40154035423,
+        "head": "f1c152af38d1cea036a85f5bb6b2faeb15d1daa4",
+        "conclusion": "success"
+      },
+      "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40154804086",
+      "regular_reviewer_cycle_verified": false
     }
   },
   "integration_results": {
@@ -211,6 +221,11 @@
       "sha": "4adfc389d745041e7b93092972321752546e3a85",
       "merged": true,
       "message": "Controller fallback, not scheduled reviewer"
+    },
+    "46": {
+      "sha": "0cfb7dd71005b95cbb0db7c1e55e9b178ece9531",
+      "merged": true,
+      "message": "Controller review - not autonomous reviewer"
     }
   },
   "completed_controller_phase": {

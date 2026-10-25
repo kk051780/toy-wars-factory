@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "pr": 46,
+  "origin": "CONTROLLER_INDEPENDENT_MANUAL_REVIEW_NOT_SCHEDULED_REVIEWER",
+  "observed_at": "2026-10-25T02:33:31.153Z",
+  "head": "f1c152af38d1cea036a85f5bb6b2faeb15d1daa4",
+  "base_reviewed": "78060f60dd904746765c011089a8bda555ec8e7f",
+  "author_context": "manual controller previous turn",
+  "review_context": "manual controller this turn",
+  "lease_epoch": 12,
+  "files": [
+    "config/progress_milestones.json",
+    "docs/PROGRESS_DASHBOARD.md",
+    "tests/test_progress_report.py",
+    "tools/progress_report.py"
+  ],
+  "review_findings": [
+    "Two weighted progress tracks totaling 100 points each; 49 and 34 are fixed 2026-10-25 evidence snapshots rather than calculated delivery percentages",
+    "Unmerged game PRs and unverified Roblox engine remain incomplete",
+    "Four unit tests for ledger baseline and guards; 132 Python tests passed in PR offline CI",
+    "No game-source edits, secrets, external model inference, quality bypass or Roblox publication",
+    "PR exact-head CI 40154035423 offline/compile_hold success; current main QA 40154804086 and handoff 40154804093 success"
+  ],
+  "verdict": "APPROVE_AND_MERGED",
+  "merge_sha": "0cfb7dd71005b95cbb0db7c1e55e9b178ece9531",
+  "main_head_after_handoff": "d8245d230c72b3af5b57593e3710127477b139f8",
+  "qa_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/40154804086",
+  "handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40154804093",
+  "auto_updater_implemented": false,
+  "regular_reviewer_cycle_verified": false
+}
