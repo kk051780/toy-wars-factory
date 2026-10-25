@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T02:56:18.757Z",
+  "observed_at": "2026-10-25T03:21:03.539Z",
   "requests": [
     {
       "id": "hosted_roblox_evidence",
@@ -16,9 +16,19 @@
       "kind": "SCHEDULER_INTEGRATION_FAILURE",
       "priority": "P0",
       "assigned_role": "META",
-      "status": "CUTOVER_REGISTERED_RUNTIME_UNVERIFIED",
+      "status": "RESOLVED_NEW_EXACT_REVIEWER_FIRST_MERGE_AND_QA",
       "issue": "https://github.com/kk051780/toy-wars-factory/issues/4#issuecomment-6392305287",
-      "request": "New exact-scheduled REVIEWER 6add6aaceb4c8191b1666fe15f97cd88 now registered after independent APPROVE and main QA; verify one real scheduled/write-safe REVIEWER cycle, matched service run+shared lease and main QA if integration occurs. Keep old reviewer paused; do not claim live cycle yet."
+      "request": "New exact-scheduled REVIEWER 6add6aaceb4c8191b1666fe15f97cd88 now registered after independent APPROVE and main QA; verify one real scheduled/write-safe REVIEWER cycle, matched service run+shared lease and main QA if integration occurs. Keep old reviewer paused; do not claim live cycle yet.",
+      "resolution": {
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "ed0fc89e-e310-8326-989c-25380dc1467e",
+        "lease_epoch": 18,
+        "pr": 45,
+        "merge_sha": "8f3312ba7b61095f839b7121e2776bfca6245aee",
+        "post_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40157791404",
+        "old_task_disabled": true,
+        "observed_at": "2026-10-25T03:21:03.539Z"
+      }
     },
     {
       "id": "qa_tempdir_cleanup_flake",
@@ -34,7 +44,7 @@
       "kind": "PR_REBASE_AND_REGRESSION",
       "priority": "P0",
       "assigned_role": "WORKER",
-      "status": "OPEN",
+      "status": "RESOLVED_MERGED_MAIN_QA_PASSED",
       "pr": 45,
       "head": "aedc70af353c43bdb1c86038ba338fa5249419d6",
       "base_main_sha": "34939a5501a0b8d497c538cd48566e0ecc5060b0",
@@ -54,7 +64,34 @@
         "old_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40153623843",
         "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40155995384",
         "review_path": "ops/reviews/PR0045_aedc70af.json"
+      },
+      "resolution": {
+        "review": "https://github.com/kk051780/toy-wars-factory/pull/45",
+        "review_record": "ops/reviews/PR0045_8676e344.json",
+        "exact_head_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40156708093",
+        "merge_sha": "8f3312ba7b61095f839b7121e2776bfca6245aee",
+        "post_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40157791404",
+        "handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40157791429",
+        "observed_at": "2026-10-25T03:21:03.539Z"
       }
+    },
+    {
+      "id": "reviewer_runtime_project_state_and_progress_sync",
+      "kind": "EVIDENCE_BASED_STATUS_RECONCILIATION",
+      "priority": "P1",
+      "assigned_role": "CONTROLLER",
+      "status": "OPEN",
+      "request": "On current main, PROJECT_STATE.independent_integration still says PENDING_EXACT_REVIEWER_CUTOVER/runtime_verified=false. Prepare a separate reviewed and tested status-only update reflecting new REVIEWER's actual PR45 independent merge and post-merge main QA. Independently verify current task is enabled and old reviewer disabled before setting is_enabled_confirmed=true. Re-evaluate progress milestones A08 (first independent unattended integration) and G07 (Heartbeat + production cadence both main-integrated) against exact evidence; update dashboard only with acceptance tests and evidence. Do not claim sustained recurring reliability, Roblox engine verification, release readiness or Gemini hold clearance.",
+      "evidence": {
+        "review": "https://github.com/kk051780/toy-wars-factory/blob/twf-repair-coordinator/ops/reviews/PR0045_8676e344.json",
+        "pr": "https://github.com/kk051780/toy-wars-factory/pull/45",
+        "pr_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40156708093",
+        "merge_sha": "8f3312ba7b61095f839b7121e2776bfca6245aee",
+        "post_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40157791404",
+        "handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40157791429",
+        "main_after_handoff": "f728fa525d8b409ef2a08a3da59e4ae7e73e27b1"
+      },
+      "created_at": "2026-10-25T03:21:03.539Z"
     }
   ]
 }

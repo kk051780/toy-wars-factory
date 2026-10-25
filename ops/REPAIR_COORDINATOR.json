@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 18,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "ed0fc89e-e310-8326-989c-25380dc1467e",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 18,
-    "acquired_at": "2026-10-25T03:17:56.625Z",
-    "expires_at": "2026-10-25T03:47:56.625Z",
-    "base_main_sha": "34939a5501a0b8d497c538cd48566e0ecc5060b0",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -30,16 +20,16 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "42d39884-f1bc-832d-a63f-bb767edb23ce",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 17,
-    "released_at": "2026-10-25T03:02:23.621Z",
+    "kind": "REVIEWER",
+    "owner_id": "ed0fc89e-e310-8326-989c-25380dc1467e",
+    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "epoch": 18,
+    "released_at": "2026-10-25T03:21:03.539Z",
     "pr": 45,
     "head": "8676e3447c5e4d01122c59a0c62c8062b90e8a8d",
-    "result": "PR45_CURRENT_MAIN_RECONCILED_LEDGER_FIXED_NEW_CI_RUNNING",
-    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40156708093",
-    "claim_commit": "da34e004909a50b6b84988fb4b3abe940f270c90"
+    "merge_sha": "8f3312ba7b61095f839b7121e2776bfca6245aee",
+    "result": "PR45_MERGED_POST_MERGE_QA_PASSED",
+    "post_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40157791404"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",

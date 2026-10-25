@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T02:56:18.757Z",
-  "status": "REVIEWER_FIRST_LIVE_LEASE_PR45_REQUEST_CHANGES_NO_MERGE",
+  "observed_at": "2026-10-25T03:21:03.539Z",
+  "status": "REGULAR_V4_PR45_MERGED_POST_MERGE_MAIN_QA_PASSED",
   "owner_reply_required": false,
   "deployment": {
     "pr": 43,
@@ -13,7 +13,7 @@
     "qa": 40150077130,
     "handoff": 40150077134,
     "bootstrap_approved_run": "2a21fa6d-a380-8332-a389-7dcf1d7d4b32",
-    "regular_v4_cycle_verified": false
+    "regular_v4_cycle_verified": true
   },
   "merged_game_candidates": {
     "35": {
@@ -30,6 +30,13 @@
       "sha": "ef5afb5bd95f2d9bb7ef6076eec746d53a9dfbef",
       "merged": true,
       "message": "Pull Request successfully merged"
+    },
+    "45": {
+      "sha": "8f3312ba7b61095f839b7121e2776bfca6245aee",
+      "merged": true,
+      "message": "Pull Request successfully merged",
+      "qa": 40157791404,
+      "handoff": 40157791429
     }
   },
   "bootstrap_reviews": [
@@ -102,37 +109,50 @@
     "note": "Record earlier failure/no-result observation and later matching output separately. Current approval uses the fresh structured matched result."
   },
   "limitations": [
-    "Full regular v4 author/reviewer cycle is not yet verified.",
     "Roblox engine/physics/multiplayer/mobile/player experience unverified.",
     "Notification delivery UNKNOWN.",
-    "First registered reviewer run acquired shared lease and recorded review, but no PR integrated; runtime_verified remains false pending first successful normal integration and post-merge main QA."
+    "First regular v4 author/reviewer merge and post-merge QA verified on PR45; sustained unattended reliability not yet established.",
+    "PROJECT_STATE.json and progress milestone dashboard on main remain pre-verification snapshots; require independently tested status-only reconciliation."
   ],
   "reviewer_migration": {
-    "status": "EXACT_REVIEWER_REGISTERED_LIVE_RUN_PENDING",
+    "status": "EXACT_REVIEWER_LIVE_MERGE_QA_VERIFIED",
     "old_task": "6add4ea80d3881919da4ea2c1d5def88",
     "new_task": "6add6aaceb4c8191b1666fe15f97cd88",
     "approved_head": "389c4d6e0f16f907f461732fb40871560512afe9",
     "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40155995384",
-    "observed_at": "2026-10-25T02:52:50.941Z",
-    "regular_v4_cycle_verified": false
+    "observed_at": "2026-10-25T03:21:03.539Z",
+    "regular_v4_cycle_verified": true
   },
   "current_cycle": {
     "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "reviewer_run_id": "7437dc9d-6a34-8329-a605-401d1b5210ee",
-    "lease_epoch": 14,
-    "main": "34939a5501a0b8d497c538cd48566e0ecc5060b0",
+    "reviewer_run_id": "ed0fc89e-e310-8326-989c-25380dc1467e",
+    "lease_epoch": 18,
+    "main_before": "34939a5501a0b8d497c538cd48566e0ecc5060b0",
+    "main_after": "f728fa525d8b409ef2a08a3da59e4ae7e73e27b1",
     "main_qa_run": 40155995384,
-    "main_qa_scope": "QA success on 7217c2aa, 34939a55 differs by exactly 2 generated status files",
+    "main_qa_scope": "Verified compare from QA 7217c2aa to 34939a55 changed only two generated status files",
     "pr": 45,
-    "head": "aedc70af353c43bdb1c86038ba338fa5249419d6",
-    "pr_ci_run": 40153623843,
+    "head": "8676e3447c5e4d01122c59a0c62c8062b90e8a8d",
+    "pr_ci_run": 40156708093,
     "pr_ci_exact_head_success": true,
-    "pr_ci_current_main_combination_verified": false,
-    "verdict": "REQUEST_CHANGES",
-    "merge_count": 0,
-    "post_merge_qa": null,
-    "next_actor": "WORKER",
-    "review_path": "ops/reviews/PR0045_aedc70af.json",
-    "runtime_verified": false
-  }
+    "pr_ci_current_main_combination_verified": true,
+    "verdict": "APPROVE",
+    "merge_count": 1,
+    "merge_sha": "8f3312ba7b61095f839b7121e2776bfca6245aee",
+    "post_merge_qa": {
+      "run": 40157791404,
+      "conclusion": "success",
+      "head": "8f3312ba7b61095f839b7121e2776bfca6245aee",
+      "main_after_handoff": "f728fa525d8b409ef2a08a3da59e4ae7e73e27b1",
+      "status_only_descendant": true
+    },
+    "handoff": {
+      "run": 40157791429,
+      "conclusion": "success"
+    },
+    "next_actor": "CONTROLLER_FOR_STATUS_AND_PROGRESS_SYNC",
+    "review_path": "ops/reviews/PR0045_8676e344.json",
+    "runtime_verified": true
+  },
+  "runtime_verified": true
 }

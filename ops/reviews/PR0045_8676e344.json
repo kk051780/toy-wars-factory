@@ -81,10 +81,46 @@
   },
   "decision_tool": "tools/repair_integration.py",
   "decision_action": "MERGE",
-  "merge_state": "APPROVED_PENDING_EXACT_HEAD_MERGE",
-  "post_merge_main_qa": "PENDING",
+  "merge_state": "MERGED_POST_MERGE_QA_PASSED",
+  "post_merge_main_qa": {
+    "run_id": 40157791404,
+    "head": "8f3312ba7b61095f839b7121e2776bfca6245aee",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "compile_hold",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "offline",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40157791404",
+    "handoff_run_id": 40157791429,
+    "handoff_conclusion": "success",
+    "handoff_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40157791429",
+    "main_after_handoff": "f728fa525d8b409ef2a08a3da59e4ae7e73e27b1",
+    "status_only_descendant": true,
+    "comparison": {
+      "status": "ahead",
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
   "limitations": [
     "Offline mocks only; Roblox engine/physics/multiplayer/mobile/player experience unverified.",
     "Separate ChatGPT task/run reviewer, not a different provider or GitHub account."
-  ]
+  ],
+  "merge": {
+    "sha": "8f3312ba7b61095f839b7121e2776bfca6245aee",
+    "merged": true,
+    "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/45",
+    "merged_head": "8676e3447c5e4d01122c59a0c62c8062b90e8a8d"
+  },
+  "runtime_verified": true
 }
