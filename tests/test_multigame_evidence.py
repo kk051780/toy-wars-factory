@@ -368,14 +368,9 @@ class EvidenceAdapterTests(unittest.TestCase):
                 with self.assertRaises(InvalidProject):
                     validate_project(altered)
 
-    def test_tokened_workflow_runs_only_from_trusted_main(self):
-        wf = (ROOT / ".github/workflows/studio-autopilot-evidence.yml").read_text(encoding="utf-8")
-        self.assertIn('on:\n  push:\n    branches: ["main"]', wf)
-        self.assertNotIn("\n  pull_request:", wf)
-        self.assertNotIn("workflow_dispatch:", wf)
-        self.assertIn('ref: ${{ github.sha }}', wf)
-        self.assertIn('test "$(git rev-parse HEAD)" = "${{ github.sha }}"', wf)
-        self.assertIn("  actions: read", wf)
+    def test_no_credentialed_autopilot_workflow_on_unprotected_main(self):
+        # Never execute authenticated PR-supplied code on an unprotected main.
+        self.assertFalse((ROOT / ".github/workflows/studio-autopilot-evidence.yml").exists())
 
     def test_forged_job_id_cannot_pass(self):
         # Correct workflow ID, suite and SHA; job ID alone is nonexistent.
@@ -430,12 +425,11 @@ class EvidenceAdapterTests(unittest.TestCase):
         self.assertEqual(result["pr"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
         self.assertEqual(result["pr"]["checks"]["reason"], "TRUSTED_QA_WORKFLOW_CONTENT_CHANGED")
 
-    def test_modified_main_workflow_cannot_prove_main_qa(self):
+    def test_modified_main_workflow_invalidates_entire_trust_root(self):
         key = "contents/.github/workflows/bootstrap-quality.yml?ref=" + MAIN
         self.fake.responses[key]["sha"] = "f" * 40
-        result = self.read()
-        self.assertEqual(result["main"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
-        self.assertEqual(result["pr"]["checks"]["status"], "PASS")
+        with self.assertRaisesRegex(EvidenceUnavailable, "baseline"):
+            self.read()
 
     def test_missing_or_fake_trusted_workflow_blob_refused(self):
         for bad in (None, True, "f" * 40, ["bad"]):
@@ -443,11 +437,33 @@ class EvidenceAdapterTests(unittest.TestCase):
                 candidate = copy.deepcopy(PROJECT)
                 candidate["ci_provenance"]["workflow_blob_sha"] = bad
                 if bad == "f" * 40:
-                    result = collect(candidate, self.fake.client(), pr_number=51)
-                    self.assertEqual(result["pr"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
+                    with self.assertRaisesRegex(EvidenceUnavailable, "baseline"):
+                        collect(candidate, self.fake.client(), pr_number=51)
                 else:
                     with self.assertRaises(InvalidProject):
                         validate_project(candidate)
+
+    def test_modified_pr_workflow_plus_forged_manifest_cannot_self_approve(self):
+        altered = copy.deepcopy(PROJECT)
+        altered["ci_provenance"]["workflow_blob_sha"] = "f" * 40
+        pr_file = "contents/.github/workflows/bootstrap-quality.yml?ref=" + HEAD
+        self.fake.responses[pr_file]["sha"] = "f" * 40
+        with self.assertRaisesRegex(EvidenceUnavailable, "baseline"):
+            collect(altered, self.fake.client(), pr_number=51)
+        self.assertNotIn("commits/" + HEAD + "/check-runs?per_page=100", self.fake.counter)
+
+    def test_candidate_manifest_alone_cannot_change_main_trust(self):
+        altered = copy.deepcopy(PROJECT)
+        altered["ci_provenance"]["workflow_blob_sha"] = "f" * 40
+        with self.assertRaises(EvidenceUnavailable):
+            collect(altered, self.fake.client(), pr_number=51)
+        self.assertNotIn("pulls/51", self.fake.counter)
+
+    def test_untrusted_main_workflow_blocks_read_without_pr(self):
+        baseline = "contents/.github/workflows/bootstrap-quality.yml?ref=" + MAIN
+        self.fake.responses[baseline]["sha"] = "f" * 40
+        with self.assertRaises(EvidenceUnavailable):
+            self.read(number=None)
 
     def test_workflow_blob_is_fetched_at_exact_main_and_pr_head(self):
         self.read()

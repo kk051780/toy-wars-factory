@@ -12,7 +12,7 @@ Studio Autopilot P1 accepts JSON observations only as untrusted diagnostics. P2 
 
 ## GitHub Actions proof
 
-The new workflow at .github/workflows/studio-autopilot-evidence.yml runs ONLY on push to main after separately reviewed merge. Its GITHUB_TOKEN has explicitly read-only contents/checks/pull-requests/actions read access; checkout persists no credentials. The nonsecret JSON artifact demonstrates that GitHub was actually accessed.
+The earlier GitHub Actions prototype was withdrawn before integration: the private main branch is not protected, so no P2-specific credentialed workflow will be installed. Source and offline evidence checks remain available, but a secure post-merge authenticated run is NOT yet established.
 
 To collect metadata in an authorized GitHub Actions run, execute python3 -m studio_autopilot.github_evidence (no PR number needed for trusted main). The CLI requires GITHUB_TOKEN and GITHUB_REPOSITORY matching the manifest. An unbound game or foreign repo fails closed.
 
@@ -49,3 +49,26 @@ from the unreviewed PR that it attempts to evaluate. This is a diagnostic
 hardening step only; repository rulesets/branch protection and independent
 review must still protect updates to both the manifest and QA workflow.
 The current evidence API continues to return dispatch/merge/release = false.
+
+## 2026-10-25 trust-boundary hold for private GitHub Free
+
+The candidate PR can modify its manifest and its QA workflow simultaneously.
+The read-only collector now compares the candidate declared workflow digest
+against the Git blob on the separately observed target-main SHA before
+accepting any PR QA. A double modification aborts the entire snapshot.
+
+This is **not** equivalent to enforcing server-side main protection.
+Unreviewed changes pushed directly by a privileged actor could still alter
+main and the source used to interpret it. The credentialed workflow file
+was intentionally omitted from the PR, and no new task executes this reader.
+
+For a private repository, GitHub Pro/Team is required for enforced branch
+protection/rulesets. Upgrading or making this commercial code public is
+not authorized. After the owner explicitly approves a plan change, enforce
+independent PR review, required checks, no unauthorized bypass, and confirm
+the repository settings from an admin account before installing a separately
+reviewed credentials workflow. Until then, P2 remains offline/advisory only.
+
+Even if every metadata check returns PASS, dispatch, merge, spending and
+Roblox publication remain false. The old authenticated PR demo is not
+secure post-merge proof.

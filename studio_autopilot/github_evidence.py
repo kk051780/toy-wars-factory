@@ -239,6 +239,12 @@ def collect(project, client, *, pr_number=None):
         raise EvidenceUnavailable("foreign/replaced repository client")
     repo = project["repository"]
     main_sha = _ref(client, "main")
+    # A proposed PR may alter both QA workflow and its matching declared
+    # digest. This candidate declaration is NOT an authority: require it
+    # to match the QA Git blob on the independently observed target main.
+    # An unprotected main is still untrusted against privileged main writes.
+    if not _trusted_workflow_content(client, main_sha, project["ci_provenance"]):
+        raise EvidenceUnavailable("untrusted project CI baseline differs from target main")
     coord_sha = _ref(client, project["coordination_ref"])
     main_checks = _checks(client, main_sha, repo, project["ci_provenance"],
                           required_event="push")
