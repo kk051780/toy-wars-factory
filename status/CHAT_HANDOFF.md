@@ -4,10 +4,10 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: ef5afb5bd95f2d9bb7ef6076eec746d53a9dfbef
+- 基準ソースコミット: 63ef5186e84963cd5d277b0f12271ee7e4fa7c7a
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 既存GitHub AIワークフロー: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
-- ChatGPT定期ゲーム修正: ENABLED_QUEUE_V3_CONFIGURED_LIVE_RUN_VERIFY_REQUIRED
+- ChatGPT定期ゲーム修正: ENABLED_AUTHOR_WITH_DELEGATED_REVIEWER_REGISTERED
 - PvE: PROTOTYPE_OFFLINE_ONLY
 - PvP: NOT_IMPLEMENTED
 - 協力: NOT_IMPLEMENTED
@@ -26,33 +26,25 @@
 - Studio: NOT_RUN
 - マルチクライアント: NOT_RUN
 - スマホ表示: NOT_RUN
-- 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40145467694（最新Actionsを別途確認すること）
+- 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40147278940（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
-- Present approval packet #35 / #38 / #40 with exact-head CI and a ready-to-send approval sentence; never answer only approval waiting.
-- Manual go joins the existing game task; acquire a shared DISPATCH ticket only if idle with capacity. Game, META and manual integration use the same fenced coordinator.
-- With explicit owner integration approval, recheck the listed heads/CI, take CONTROLLER ownership and integrate #38 then #35 then #40, validating actual main after each step. Roblox publication is excluded.
-- Keep hourly game task enabled under queue v3; full queues recheck capacity without self-pausing. Check live service/coordinator state before writing.
-- Run the registered daily system/game review: current web primary sources, observed failures, minimal tested improvement PR, concrete game experiments and measured outcomes. Reassess the architecture every cycle.
-- Observe the first scheduled v3 and daily service runs before claiming their unattended protocol works end to end. Preserve all provider, quality and release holds.
+- Approval decisions are delegated to the assistant. Do not ask the owner to approve #35/#38/#40 again; all three are integrated with passing post-merge QA.
+- Keep author, daily system review and independent integration tasks enabled. Authors create small tested drafts; the separate reviewer validates current head/base, CI, shared ownership and actual diffs, then integrates one at a time and checks main.
+- Use docs/COMPLETION_ROADMAP.md and WORK_REQUESTS. Repair failing main/PRs first, then the smallest implementation advancing playable PvE and real-engine/mobile evidence.
+- Daily review checks observed failures/effectiveness against current primary-web cases, proposes tested system improvements and concrete game experiments. Do not freeze the architecture or mistake tests/research for game fixes.
+- Verify bootstrap and regular reviewer outcomes from service result/head/CI, not registration. Preserve objective engine/multiplayer/mobile/visual/fun and release evidence requirements.
+- Use the explicit additional-module/installer/regression path when needed. Preserve accepted tests, initial source provenance, incident holds and financial caps.
 
-## 現在の取り込み承認待ち（観測時点）
-最新一覧: https://github.com/kk051780/toy-wars-factory/blob/twf-repair-coordinator/status/PENDING_APPROVALS.md
-
-| PR | 内容 | 現在headのCI |
-| --- | --- | --- |
-| [#35](https://github.com/kk051780/toy-wars-factory/pull/35) | 生産3件・ウェーブ2件・敗北リセット1件の回帰検査。ゲーム本体の変更なし。 / 回帰検査追加 | [合格](https://github.com/kk051780/toy-wars-factory/actions/runs/40114787373) |
-| [#38](https://github.com/kk051780/toy-wars-factory/pull/38) | 戦場・工場・ロビーの床だけ衝突を有効化。追加5検査が合格。 / ゲーム本体修正 | [合格](https://github.com/kk051780/toy-wars-factory/actions/runs/40137069031) |
-| [#40](https://github.com/kk051780/toy-wars-factory/pull/40) | 工場アップグレードの不足金額・ぴったり購入・上限・収入の4検査。ゲーム本体の変更なし。 / 回帰検査追加 | [合格](https://github.com/kk051780/toy-wars-factory/actions/runs/40138956623) |
-
-承認する場合の返信: #35・#38・#40のmain取り込みを承認
-対象headのmain取り込みのみ。公開・課金・外部モデルは含まない。現在GitHubでhead/CIを再確認する。
-
+## 委譲された承認判断
+- 通常のゲーム/体制開発・main統合は助手が判断する。所有者への承認返信は不要。
+- 作者と別タスクの審査役が現在headのCIと実差分を確認し、1件ずつ統合してmainを検査する。
+- 完成ロードマップと日次の実測/最新WEB一次資料から次を選ぶ。客観的な品質条件・費用上限は免除しない。
 
 ## 手動goと自動実行の競合防止
 - 手動goは既存ゲームタスクへ統一。実行中は追加起動せず確認へ合流する。
 - 共通ロック: twf-repair-coordinator / ops/REPAIR_COORDINATOR.json。expected_sha・force=false・epochを必須にする。
-- ゲーム修正・日次体制改善・手動統合が同じロックを使う。docs/REPAIR_COORDINATION.mdを読む。
+- ゲーム修正・日次体制改善・独立審査・手動統合が同じロックを使う。docs/REPAIR_COORDINATION.mdを読む。
 
 ## 体制とゲームの日次改善
 - タスク: 6add445e4138819197d9cf2b1a02534d / 毎朝（Asia/Tokyo）
@@ -60,30 +52,27 @@
 - 現在の方式を最適と固定せず、前後の結果と未解決点を記録する。docs/SYSTEM_REVIEW.mdを読む。
 
 ## 最新の再開地点（観測時点の記録）
-- 記録: C00028 / 2026-10-25
-- 照合したmain: 192af53b50b15d2d9e9896f63ffa3f0c9818fba0
-- 証拠: history/C00028_approval_empty_state_and_cutover_proof.json
-- 完了: Integrate requested setup PR #41 at 192af53b50b15d2d9e9896f63ffa3f0c9818fba0 with exact reviewed tree. PR CI 40145345100, main QA 40145467694 and living handoff 40145467717 all passed.
-- 完了: Verify actual service run d5c2439a-d8c8-8324-bf06-a3f4abf85c06 observed undeployed queue v3/controller lock, made no edits, and presented all three approval PRs plus exact-head CI links and reply text. Task remained enabled.
-- 完了: Fix the empty approval queue so it emits no approval sentence and clearly says no items are pending. Add a regression; all 109 Python tests pass.
-- 完了: Retain eight-suite combined native candidate proof, current approval heads, daily task registration, shared lease and all original provider/game/release boundaries.
+- 記録: C00029 / 2026-10-25
+- 照合したmain: c396e4aa28908a024c70cf54a572ed5db18f04dc
+- 証拠: history/C00029_delegated_autonomous_integration.json
+- 完了: Record explicit owner delegation of ordinary development/system/integration decisions; completion is prioritized over routine owner replies.
+- 完了: Independently inspect actual diffs and exact-head CI, integrate #38 then #35 then #40 under the shared controller, and match each actual merged tree to its predicted tree.
+- 完了: Verify post-merge QA/handoff for each candidate: #38 QA 40146924040, #35 QA 40147170649, #40 QA 40147278940. Any later current-main changes were proven generated status snapshots.
+- 完了: Main now includes the three floor properties and the new accepted regressions: 4 Lua source files / 681 lines / 26,913 bytes. Preserve initial 25,726-byte baseline; #35/#40 are test-only, not two more source bug fixes.
+- 完了: Register separate reviewer 6add4ea80d3881919da4ea2c1d5def88; update all saved/live prompts to delegate integration without owner replies. Authors retain draft-only source writes.
+- 完了: Add delegated integration decisions and regressions for ownership/independent identity/current head and base/CI/scope/claim evidence/main failure/verified status-only descendants. All 125 Python tests pass.
+- 完了: Add a revisable completion roadmap and guarded additional-module/installer/regression extension. Retain mandatory daily primary-web and effectiveness review.
 - 新規推論承認: False
 - 定期AI承認: True
-- 自動マージ承認: False
+- 自動マージ承認: True
 - Roblox公開承認: False
-- 再実行の前提: General go does not approve game main integration. List the exact pending PRs, changes and CI; explicit approval applies only to listed heads and not publication.
-- 再開する作業: Present the three concrete approval items and reply text; release controller ownership after final CI and keep the two scheduled tasks enabled.
-- 未確認・制限: Only pre-deployment safety guard/approval formatting and remote lock contention are observed so far; post-deployment worker claim remains to be observed.
-- 未確認・制限: The daily system/game reviewer is enabled and registered but has not run yet. Native candidate combination is not Roblox engine evidence.
-- 未確認・制限: PRs #35/#38/#40 still require exact-head main-integration approval. Publication is excluded.
+- 再実行の前提: Standing assistant authority replaces per-PR owner replies. Require independent task/run review, exact-head CI, shared ownership and successful main QA. Objective quality and cost/incident controls remain.
+- 再開する作業: Verify the separate read-only bootstrap review and deploy the quality-gated integration loop. Continue completion work without routine owner approval replies.
+- 未確認・制限: Separate reviewer is registered; bootstrap and regular runtime require actual result evidence.
+- 未確認・制限: Roblox engine/physics, multiplayer, mobile, character visuals and player experience remain unverified; release HOLD is evidence-based.
+- 未確認・制限: Source bytes/PR/test counts are not a completion percentage; incident and cost controls remain.
 
 ## 未マージの提案（現在のPR状態はGitHubで再確認）
-- PR #35: DRAFT_UNMERGED / CHATGPT_SCHEDULED_TASK_NOT_GEMINI / 生産3件・ウェーブ2件・敗北リセット1件の回帰検査。ゲーム本体の変更なし。 / https://github.com/kk051780/toy-wars-factory/pull/35
-  - QA: PASS_EXACT_HEAD_NATIVE_OFFLINE; engine, physics, multiplayer, mobile NOT_RUN https://github.com/kk051780/toy-wars-factory/actions/runs/40114787373
-- PR #38: DRAFT_UNMERGED / CHATGPT_SCHEDULED_TASK_NOT_GEMINI / 戦場・工場・ロビーの床だけ衝突を有効化。追加5検査が合格。 / https://github.com/kk051780/toy-wars-factory/pull/38
-  - QA: PASS_EXACT_HEAD_NATIVE_OFFLINE; engine, physics, multiplayer, mobile NOT_RUN https://github.com/kk051780/toy-wars-factory/actions/runs/40137069031
-- PR #40: DRAFT_UNMERGED / CHATGPT_SCHEDULED_TASK_NOT_GEMINI / 工場アップグレードの不足金額・ぴったり購入・上限・収入の4検査。ゲーム本体の変更なし。 / https://github.com/kk051780/toy-wars-factory/pull/40
-  - QA: PASS_EXACT_HEAD_NATIVE_OFFLINE; engine, physics, multiplayer, mobile NOT_RUN https://github.com/kk051780/toy-wars-factory/actions/runs/40138956623
 - PR #29: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Guard deferred workshop teleport against disconnect/respawn race / https://github.com/kk051780/toy-wars-factory/pull/29
   - QA: PASS_OFFLINE_CI; prior gameplay checks are mostly static. Studio, multiplayer and mobile NOT_RUN. https://github.com/kk051780/toy-wars-factory/actions/runs/40096885886
 - PR #28: DRAFT_UNMERGED / CHAT_ASSISTANT_NOT_GEMINI / Main-based offline integration QA: selector authority + workshop backfill (no merge) / https://github.com/kk051780/toy-wars-factory/pull/28
