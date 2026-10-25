@@ -28,7 +28,7 @@ class WorkflowIsolationTests(unittest.TestCase):
 
     def test_pr_qa_preserves_scope_and_compilation_regressions(self):
         self.assertIn('tools/check_auto_diff.py', QA)
-        self.assertIn('tools/check_meta_diff.py', QA)
+        self.assertIn('check_meta_diff.py', QA)
         self.assertIn('tools/verify_gemini_hold.py', QA)
         self.assertIn('git diff --exit-code -- .github/workflows/twf-gemini-free-trial.lock.yml', QA)
 
