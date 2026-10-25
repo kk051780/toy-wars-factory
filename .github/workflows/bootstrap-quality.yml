@@ -29,8 +29,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh extension install github/gh-aw --pin v0.93.2
       - name: Recompile the literal incident hold without invoking an agent
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           gh aw compile .github/workflows/twf-gemini-free-trial.md
           python3 tools/verify_gemini_hold.py
@@ -50,6 +48,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Install native Lua 5.4
         run: sudo apt-get update -qq && sudo apt-get install -y lua5.4
       - name: Enforce scheduled repair scope using the trusted base policy
@@ -74,6 +73,13 @@ jobs:
           done
           git show "$TWF_BASE_SHA:config/autonomous_repair.json" > /tmp/twf-auto-policy.json
           python3 /tmp/twf-trusted/check_meta_diff.py --policy /tmp/twf-auto-policy.json --base "$TWF_BASE_SHA" --head HEAD --branch "$TWF_HEAD_REF"
+      - name: Fetch shared coordinator with isolated read token (no PR code)
+        if: github.event_name == 'pull_request' && (startsWith(github.head_ref, 'auto/twf-game-repair') || startsWith(github.head_ref, 'auto/twf-system-review-'))
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git -c "http.extraheader=AUTHORIZATION: bearer ${GH_TOKEN}" fetch --no-tags origin refs/heads/twf-repair-coordinator:refs/remotes/origin/twf-repair-coordinator
       - name: Verify immutable shared lease for automatic repair and system-review PRs
         if: github.event_name == 'pull_request' && (startsWith(github.head_ref, 'auto/twf-game-repair') || startsWith(github.head_ref, 'auto/twf-system-review-'))
         env:
@@ -87,7 +93,7 @@ jobs:
           if [ "$version" -ge 3 ]; then
             mkdir -p /tmp/twf-trusted
             git show "$TWF_BASE_SHA:tools/repair_control.py" > /tmp/twf-trusted/repair_control.py
-            git fetch --no-tags origin refs/heads/twf-repair-coordinator:refs/remotes/origin/twf-repair-coordinator
+            git show-ref --verify --quiet refs/remotes/origin/twf-repair-coordinator
             python3 /tmp/twf-trusted/repair_control.py verify-pr --policy /tmp/twf-auto-policy.json --base "$TWF_BASE_SHA" --head "$TWF_PR_HEAD_SHA" --branch "$TWF_HEAD_REF" --control-ref refs/remotes/origin/twf-repair-coordinator
           fi
       - name: Lua parse of game modules (not Luau engine verification)
