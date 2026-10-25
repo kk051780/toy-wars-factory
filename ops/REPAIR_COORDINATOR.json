@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 31,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "868347a5-40f3-4be1-9c93-b57fb77f4e2f",
-    "task_id": null,
-    "epoch": 31,
-    "acquired_at": "2026-10-25T07:03:42.299Z",
-    "expires_at": "2026-10-25T07:33:42.299Z",
-    "base_main_sha": "3e9d36f60661e9b1b99297fc926c47a2187ada06",
-    "work_branch": "ops/studio-autopilot-p3-controller",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -31,13 +21,14 @@
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "d414f7ad-0ac1-4872-b775-4af905c83671",
-    "epoch": 30,
-    "released_at": "2026-10-25T06:55:09.322Z",
-    "pr": 51,
-    "head": "d96b92bb70719b478bccf9a40ab779737556eb86",
-    "result": "P2_REVIEW_FIXES_APPLIED_EXACT_HEAD_QA_220_PASS_WAIT_INDEPENDENT_AUDIT",
-    "qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40170708013"
+    "owner_id": "868347a5-40f3-4be1-9c93-b57fb77f4e2f",
+    "epoch": 31,
+    "released_at": "2026-10-25T07:10:17.331Z",
+    "pr": 52,
+    "head": "09ac45fb283689d76846f0e9721ab2161492107a",
+    "result": "P3_READ_ONLY_MULTIGAME_SCHEDULER_PR_AND_199_TEST_QA_PASS_WAIT_SEPARATE_REVIEW",
+    "qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40171673896",
+    "P2_status": "PR51_HOLD_BRANCH_PROTECTION_AND_EXTERNAL_TRUST_POLICY"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
