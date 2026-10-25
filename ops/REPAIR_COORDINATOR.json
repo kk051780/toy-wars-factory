@@ -177,6 +177,37 @@
         "Native properties are not real Roblox physics/multiplayer/mobile evidence"
       ],
       "authority": "Owner delegated development and integration decisions on 2026-10-25"
+    },
+    "40": {
+      "schema": 1,
+      "pr": 40,
+      "head": "f172f71119479ba0cafafb2a2163b3b6e61ce39c",
+      "base_reviewed": "238c7851521194f66ea650ebf3c2439bd727d612",
+      "reviewer_kind": "CONTROLLER",
+      "reviewer_operation_id": "13782527-fe39-46b8-983a-7d2afcedc715",
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "verdict": "APPROVE",
+      "findings": [],
+      "changed_files": [
+        "history/C00026_upgrade_economy_regression.json",
+        "tests/auto/upgrade_economy_spec.lua"
+      ],
+      "ci": {
+        "id": 40138956623,
+        "head": "f172f71119479ba0cafafb2a2163b3b6e61ce39c",
+        "conclusion": "success",
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40138956623"
+      },
+      "checks": [
+        "Only four new upgrade regression cases and C00026; game source/accepted tests are unchanged",
+        "Insufficient funds, exact payment, maximum level and actual Heartbeat income pass with the accepted floor fix",
+        "Prior floor/production/wave/base-loss integration has successful main QA",
+        "No provider, budget, permissions, publishing or character-stat change"
+      ],
+      "limitations": [
+        "Offline mocks only; actual Roblox performance and UX unverified"
+      ],
+      "authority": "Owner delegated development/integration approvals"
     }
   }
 }
