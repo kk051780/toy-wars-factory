@@ -123,7 +123,7 @@ def load_portfolio(root, portfolio):
     if len(set(raw["projects"])) != len(raw["projects"]):
         raise InvalidProject("duplicate manifest paths")
     projects = []
-    seen_ids, seen_repos, seen_tasks = set(), set(), set()
+    seen_ids, seen_repos, seen_tasks, seen_coord_refs = set(), set(), set(), set()
     for path in raw["projects"]:
         project = validate_project(_json_at(root, path))
         identifier = project["game_id"]
@@ -135,6 +135,10 @@ def load_portfolio(root, portfolio):
             if repo in seen_repos:
                 raise InvalidProject("multiple projects targeting one repository")
             seen_repos.add(repo)
+            coord_key = project["coordination_ref"].casefold()
+            if coord_key in seen_coord_refs:
+                raise InvalidProject("duplicate coordination ref across games")
+            seen_coord_refs.add(coord_key)
             roles = set(project["roles"].values())
             if seen_tasks & roles:
                 raise InvalidProject("a task has cross-game authority")
