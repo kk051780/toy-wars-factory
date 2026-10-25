@@ -28,3 +28,7 @@ Primary official references: https://docs.github.com/en/rest/checks/runs and htt
 ## Hardening after independent audit
 
 An early PR-triggered proof (run 40163275777) read live data successfully but exposed a read-scoped token to unreviewed PR code. That first mechanism has been replaced: **the authenticated workflow runs only on main after an independently approved merge** and checks out its exact push SHA. No PR code receives a token in this workflow. GitHub Actions checks must have the pinned official App ID/slug and their details URLs must resolve to live Actions runs with the configured, reviewable workflow path, matching SHA and check suite. The trusted workflow origin is a per-project manifest property, not hardcoded to Toy Wars in the adapter. The original PR execution is historical evidence only, not accepted secure deployment.
+
+## Check-run-to-job authenticity gate
+
+The adapter now verifies each check-run ID against an actual Actions job API response. The job must belong to the checked run, have exactly the expected job name, source SHA, success status and check-run URL. A correct workflow URL with a nonexistent, foreign or misleading job ID cannot establish a PASS. The workflow's numeric ID is pinned per project manifest alongside its path and GitHub Actions App ID. No live snapshot authorizes dispatch.

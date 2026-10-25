@@ -44,21 +44,26 @@ class FakeGitHub:
             "pulls/51": self.pr(),
             "actions/runs/11": self.run(MAIN, 101, "push"),
             "actions/runs/22": self.run(HEAD, 202, "pull_request"),
+            "actions/jobs/1100": self.job(MAIN, 11, "offline", 501, 1100),
+            "actions/jobs/1101": self.job(MAIN, 11, "compile_hold", 502, 1101),
+            "actions/jobs/2200": self.job(HEAD, 22, "offline", 601, 2200),
+            "actions/jobs/2201": self.job(HEAD, 22, "compile_hold", 602, 2201),
         }
         self.counter = {}
 
     @staticmethod
     def good_checks(sha):
         is_main = (sha == MAIN)
-        run_id, suite_id = (11, 101) if is_main else (22, 202)
+        run_id, suite_id, first_job, first_check = (11, 101, 1100, 501) if is_main else (22, 202, 2200, 601)
         rows = [
             {
                 "head_sha": sha, "name": name,
+                "id": first_check + i,
                 "status": "completed", "conclusion": "success",
                 "app": {"slug": "github-actions", "id": 15368},
                 "check_suite": {"id": suite_id},
                 "details_url": "https://github.com/" + REPO +
-                               "/actions/runs/" + str(run_id) + "/job/" + str(i + 1100),
+                               "/actions/runs/" + str(run_id) + "/job/" + str(first_job + i),
             }
             for i, name in enumerate(("offline", "compile_hold"))
         ]
@@ -71,6 +76,16 @@ class FakeGitHub:
             "path": ".github/workflows/bootstrap-quality.yml",
             "head_sha": sha, "check_suite_id": suite_id,
             "status": "completed", "conclusion": "success", "event": event,
+        }
+
+    @staticmethod
+    def job(sha, run_id, name, check_id, job_id):
+        return {
+            "id": job_id, "run_id": run_id,
+            "name": name, "head_sha": sha,
+            "status": "completed", "conclusion": "success",
+            "check_run_url": API_ORIGIN + "/repos/" + REPO +
+                             "/check-runs/" + str(check_id),
         }
 
     @staticmethod
@@ -354,6 +369,38 @@ class EvidenceAdapterTests(unittest.TestCase):
         self.assertIn('ref: ${{ github.sha }}', wf)
         self.assertIn('test "$(git rev-parse HEAD)" = "${{ github.sha }}"', wf)
         self.assertIn("  actions: read", wf)
+
+    def test_forged_job_id_cannot_pass(self):
+        # Correct workflow ID, suite and SHA; job ID alone is nonexistent.
+        original = self.fake.responses["commits/" + HEAD + "/check-runs?per_page=100"][
+            "check_runs"][0]["details_url"]
+        self.fake.responses["commits/" + HEAD + "/check-runs?per_page=100"][
+            "check_runs"][0]["details_url"] = original.replace("/job/2200", "/job/999999")
+        with self.assertRaises(EvidenceUnavailable):
+            self.read()
+
+    def test_wrong_real_job_name_or_run_id_cannot_pass(self):
+        job = self.fake.responses["actions/jobs/2200"]
+        for field, bad in (("name", "compile_hold"), ("run_id", 11)):
+            old = job[field]
+            job[field] = bad
+            self.assertEqual(self.read()["pr"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
+            job[field] = old
+
+    def test_foreign_check_run_url_and_job_sha_cannot_pass(self):
+        job = self.fake.responses["actions/jobs/2200"]
+        for field, bad in (("check_run_url", "https://api.github.com/repos/evil/repo/check-runs/601"),
+                           ("head_sha", "f" * 40),
+                           ("conclusion", "failure")):
+            old = job[field]
+            job[field] = bad
+            self.assertEqual(self.read()["pr"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
+            job[field] = old
+
+    def test_forged_trusted_workflow_id_rejected(self):
+        run = self.fake.responses["actions/runs/22"]
+        run["workflow_id"] = 394718990
+        self.assertEqual(self.read()["pr"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
 
     def test_the_reader_does_not_depend_on_planner_json_claims(self):
         payload = self.read()

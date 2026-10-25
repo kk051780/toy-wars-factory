@@ -131,17 +131,34 @@ def _checks(client, commit_sha, repository, trust):
                     type(suite) is dict and type(suite.get("id")) is int and
                     check.get("status") == "completed" and
                     check.get("conclusion") == "success" and url is not None):
-                run_id = int(url.group(1))
+                run_id, job_id = int(url.group(1)), int(url.group(2))
                 if run_id not in trusted_run_cache:
                     trusted_run_cache[run_id] = client.get("actions/runs/" + str(run_id))
                 run = trusted_run_cache[run_id]
                 passed = (type(run.get("workflow_id")) is int and
+                          run.get("workflow_id") == trust["workflow_id"] and
                           run.get("path") == trust["workflow_path"] and
                           run.get("head_sha") == commit_sha and
                           run.get("check_suite_id") == suite["id"] and
                           run.get("status") == "completed" and
                           run.get("conclusion") == "success" and
                           run.get("event") in ("pull_request", "push"))
+                if passed:
+                    job = client.get("actions/jobs/" + str(job_id))
+                    check_id = check.get("id")
+                    expected_check_url = (
+                        API_ORIGIN + "/repos/" + repository + "/check-runs/" + str(check_id)
+                    )
+                    passed = (
+                        type(check_id) is int and check_id > 0 and
+                        job.get("id") == job_id and
+                        job.get("run_id") == run_id and
+                        job.get("name") == name and
+                        job.get("head_sha") == commit_sha and
+                        job.get("status") == "completed" and
+                        job.get("conclusion") == "success" and
+                        job.get("check_run_url") == expected_check_url
+                    )
         matches.append({"name": name, "status": "PASS" if passed else "HOLD"})
     return {"status": "PASS" if all(x["status"] == "PASS" for x in matches)
             else "HOLD_EXACT_HEAD_CHECKS", "required": matches}

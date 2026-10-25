@@ -72,11 +72,12 @@ def validate_project(data):
         if data["ci_provenance"] is not None:
             raise InvalidProject("unbound template cannot declare trusted CI")
     else:
-        provenance = _object(data["ci_provenance"], ("workflow_path", "app_slug", "app_id"), "CI provenance")
+        provenance = _object(data["ci_provenance"], ("workflow_path", "app_slug", "app_id", "workflow_id"), "CI provenance")
         if (type(provenance["workflow_path"]) is not str or
                 re.fullmatch(r"\.github/workflows/[A-Za-z0-9_.-]+\.yml", provenance["workflow_path"]) is None or
                 provenance["app_slug"] != "github-actions" or
-                type(provenance["app_id"]) is not int or provenance["app_id"] != 15368):
+                type(provenance["app_id"]) is not int or provenance["app_id"] != 15368 or
+                type(provenance["workflow_id"]) is not int or provenance["workflow_id"] <= 0):
             raise InvalidProject("invalid trusted GitHub Actions workflow origin")
     _object(data["safety"], SAFETY_FIELDS, "safety")
     guard = data["safety"]
