@@ -139,6 +139,7 @@ def recover_finished_worker(state, observed_run, now):
             observed_run.get("id") != holder["owner_id"] or
             observed_run.get("recorded_status") not in ("completed", "failed", "no_update") or
             not observed_run.get("completed_at") or
+            instant(observed_run["completed_at"]) < instant(holder["acquired_at"]) or
             instant(observed_run["completed_at"]) > instant(now)):
         raise ValueError("recovery requires positive completion evidence for the exact worker")
     result = release(state, holder["kind"], holder["owner_id"], holder["epoch"], now)
