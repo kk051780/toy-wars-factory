@@ -2,7 +2,7 @@
   "schema": 1,
   "project": "TOY WARS FACTORY",
   "observed_date": "2026-10-25",
-  "source_main_sha": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
+  "source_main_sha": "f728fa525d8b409ef2a08a3da59e4ae7e73e27b1",
   "definition": "進捗率＝検証済み（verified）工程の重み合計/100。時間予測ではない。未マージのPR、登録だけの自動タスク、実機未実証の機能は未達。失敗や前提変更時は点数を下げる。",
   "tracks": [
     {
@@ -62,8 +62,8 @@
           "id": "A08",
           "name": "独立審査による実ゲームPRの無人main統合",
           "weight": 8,
-          "state": "pending",
-          "next": "PR #44/#45で別タスク審査・統合の実走証拠"
+          "state": "verified",
+          "evidence": "https://github.com/kk051780/toy-wars-factory/pull/45"
         },
         {
           "id": "A09",
@@ -166,8 +166,8 @@
           "id": "G07",
           "name": "Heartbeat遅延・生産周期の修正をmain統合",
           "weight": 4,
-          "state": "pending",
-          "next": "PR #44/#45がドラフト、統合後QA待ち"
+          "state": "verified",
+          "evidence": "https://github.com/kk051780/toy-wars-factory/pull/45"
         },
         {
           "id": "G08",
@@ -246,6 +246,44 @@
           "state": "blocked",
           "next": "客観ゲートを満たすまでHOLD"
         }
+      ]
+    }
+  ],
+  "reconciliations": [
+    {
+      "date": "2026-10-25",
+      "main_verified": "f728fa525d8b409ef2a08a3da59e4ae7e73e27b1",
+      "reason": "One separate reviewer merged PR45 with exact-head CI and both post-merge QA jobs successful; generated-status-only descendant verified",
+      "first_run": "ed0fc89e-e310-8326-989c-25380dc1467e",
+      "pr": 45,
+      "post_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40157791404",
+      "previous_scores": {
+        "automation": 49,
+        "game": 34
+      },
+      "new_scores": {
+        "automation": 57,
+        "game": 38
+      },
+      "still_pending": [
+        "A09",
+        "A10",
+        "A11",
+        "A12",
+        "A13",
+        "A14",
+        "A15",
+        "G08",
+        "G09",
+        "G10",
+        "G11",
+        "G12",
+        "G13",
+        "G14",
+        "G15",
+        "G16",
+        "G17",
+        "G18"
       ]
     }
   ]
