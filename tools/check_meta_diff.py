@@ -2,11 +2,24 @@
 import argparse
 import fnmatch
 import json
+import re
 from pathlib import PurePosixPath
 from check_auto_diff import changed_entries
 
 
-def violations(entries, policy):
+def safe_module_extension(before, after):
+    old = before.get("additional_source_paths", [])
+    new = after.get("additional_source_paths", [])
+    if (not isinstance(new, list) or any(not isinstance(p, str) for p in new) or
+            len(set(new)) != len(new) or not set(old).issubset(new)):
+        return False
+    if {k: v for k, v in before.items() if k != "additional_source_paths"} != {k: v for k, v in after.items() if k != "additional_source_paths"}:
+        return False
+    reserved = set(before["source_paths"]) | {"src/ToyWarsSmokeTest.server.lua"}
+    return all(isinstance(p, str) and re.fullmatch(r"src/[A-Za-z0-9_]+(?:\.(?:server|client))?\.lua", p) and p not in reserved for p in new)
+
+
+def violations(entries, policy, module_extension=None):
     meta = policy["system_review"]
     errors, implementation = [], False
     for status, path in entries:
@@ -15,6 +28,12 @@ def violations(entries, policy):
             errors.append("unsafe path: " + path)
             continue
         if path in meta["allowed_tool_paths"] and status == "M":
+            implementation = True
+            continue
+        if (status == "M" and path == "config/autonomous_repair.json" and module_extension and
+                safe_module_extension(*module_extension) and ("M", "tools/build_installer.py") in entries):
+            continue
+        if status == "A" and PurePosixPath(path).parent.as_posix() == "tools" and fnmatch.fnmatchcase(path, "tools/system_*.py"):
             implementation = True
             continue
         if (status == "A" and PurePosixPath(path).parent.as_posix() == "tests" and
@@ -47,7 +66,13 @@ def main():
     if not meta.get("enabled") or not args.branch.startswith(meta["branch_prefix"]):
         raise SystemExit("FAIL: system review disabled or wrong namespace")
     canonical_id(args.branch[len(meta["branch_prefix"]):])
-    errors = violations(changed_entries(args.base, args.head), policy)
+    entries = changed_entries(args.base, args.head)
+    extension = None
+    if ("M", "config/autonomous_repair.json") in entries:
+        import subprocess
+        after = json.loads(subprocess.check_output(["git", "show", args.head + ":config/autonomous_repair.json"], text=True))
+        extension = (policy, after)
+    errors = violations(entries, policy, module_extension=extension)
     if errors:
         raise SystemExit("FAIL: " + "; ".join(errors))
     print("PASS: system review scope")

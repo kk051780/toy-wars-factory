@@ -11,7 +11,7 @@
   "owner_authorized_on": "2026-10-25",
   "routine_edit_approval_required": false,
   "external_provider_inference_authorized": false,
-  "automatic_merge_authorized": false,
+  "automatic_merge_authorized": true,
   "roblox_publish_authorized": false,
   "source_paths": [
     "src/ToyWarsBalance.lua",
@@ -33,7 +33,7 @@
     "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40108773948",
     "scope": "REGRESSION_CODE_ONLY; GAME_SOURCE_UNCHANGED; NOT_LONG_TERM_PROOF"
   },
-  "queue_version": 3,
+  "queue_version": 4,
   "repository": "kk051780/toy-wars-factory",
   "branch_prefix": "auto/twf-game-repair-",
   "max_open_prs": 3,
@@ -44,7 +44,7 @@
   "priority_backlog": [
     {
       "id": "walkable_floor_collision",
-      "status": "DRAFT_FIX_VERIFIED",
+      "status": "MERGED_OFFLINE_VERIFIED",
       "target": "src/ToyWarsServer.server.lua",
       "observed_main": "0e66049e95bc555bfb2a12aeafe46e73ea420c90",
       "server_blob": "8d6a40fcb602a728f8876ca62194a0acb4bb45b9",
@@ -54,7 +54,9 @@
       "pull_request": 38,
       "head": "b8e543ada9e5613486cbcfc1819a3aba8cc7932c",
       "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40137069031",
-      "merged": false
+      "merged": true,
+      "merge_commit": "e51bcbdf6cce831e0c5085e492f0f00b205b756e",
+      "post_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40146924040"
     }
   ],
   "queue_runtime_verified": true,
@@ -105,9 +107,11 @@
       "reply_text"
     ],
     "manual_status_always_lists_items": true,
-    "scheduled_dedup_only_after_complete_request": true,
+    "scheduled_dedup_only_after_complete_request": false,
     "changed_head_requires_new_request": true,
-    "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY"
+    "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
+    "decision_owner": "ASSISTANT",
+    "owner_reply_text_enabled": false
   },
   "system_review": {
     "enabled": true,
@@ -128,18 +132,65 @@
     "allowed_tool_paths": [
       "tools/repair_control.py",
       "tools/repair_queue.py",
-      "tools/build_handoff.py"
+      "tools/build_handoff.py",
+      "tools/repair_integration.py",
+      "tools/build_installer.py"
     ],
     "allowed_document_paths": [
       "docs/REPAIR_COORDINATION.md",
       "docs/SYSTEM_REVIEW.md",
       "docs/AUTONOMOUS_REPAIR.md",
       "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
-      "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md"
+      "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
+      "docs/AUTONOMOUS_INTEGRATION.md",
+      "docs/COMPLETION_ROADMAP.md",
+      "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md"
     ],
     "saved_prompt": "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
     "latest_report_path": "ops/SYSTEM_REVIEW_LATEST.json",
     "game_backlog_path": "ops/GAME_IMPROVEMENT_BACKLOG.json",
-    "activation": "REQUIRE_DEPLOYED_QUEUE_VERSION_3"
-  }
+    "activation": "REQUIRE_DEPLOYED_QUEUE_VERSION_4",
+    "config_extension": "additional_source_paths may only grow with installer update and new regression; all other policy fields immutable to META"
+  },
+  "additional_source_paths": [],
+  "approval_authority": {
+    "decision_owner": "ASSISTANT",
+    "owner_reply_required": false,
+    "delegated_on": "2026-10-25",
+    "owner_instruction": "承認については君に全権を与える。完成までの道のりを丁寧に自動システムで詰めていくことが最優先",
+    "scope": [
+      "game_development",
+      "system_improvement",
+      "independent_review",
+      "main_integration"
+    ],
+    "quality_gates_waived": false,
+    "spending_caps_waived": false,
+    "release_decision_delegated": true,
+    "current_release_readiness": "HOLD_ENGINE_UNVERIFIED"
+  },
+  "integration": {
+    "enabled": true,
+    "task_id": "6add4ea80d3881919da4ea2c1d5def88",
+    "cadence_hours": 1,
+    "timezone": "Asia/Tokyo",
+    "mode": "INDEPENDENT_REVIEW_AND_MAIN_INTEGRATION",
+    "max_merges_per_run": 3,
+    "owner_reply_required": false,
+    "author_may_approve_own_work": false,
+    "author_task_may_merge": false,
+    "require_exact_head_ci": true,
+    "require_current_main_qa": true,
+    "allow_verified_status_only_descendants": true,
+    "require_independent_task_and_run": true,
+    "require_shared_reviewer_lease": true,
+    "require_post_merge_qa": true,
+    "repair_main_before_new_features": true,
+    "saved_prompt": "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md",
+    "decision_tool": "tools/repair_integration.py",
+    "latest_record": "ops/INTEGRATION_LATEST.json",
+    "repair_requests": "ops/WORK_REQUESTS.json",
+    "roblox_publish_authorized": false
+  },
+  "worker_may_merge": false
 }

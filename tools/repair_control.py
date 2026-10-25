@@ -41,9 +41,9 @@ def validate(state):
     holder = state.get("holder")
     if holder is not None:
         canonical_id(holder["owner_id"])
-        if holder.get("kind") not in ("DISPATCH", "WORKER", "META", "CONTROLLER"):
+        if holder.get("kind") not in ("DISPATCH", "WORKER", "META", "REVIEWER", "CONTROLLER"):
             raise ValueError("invalid owner kind")
-        if holder["kind"] in ("WORKER", "META") and holder.get("task_id") != state.get("authorized_tasks", {}).get(holder["kind"]):
+        if holder["kind"] in ("WORKER", "META", "REVIEWER") and holder.get("task_id") != state.get("authorized_tasks", {}).get(holder["kind"]):
             raise ValueError("unregistered worker task")
         if holder.get("epoch") != epoch:
             raise ValueError("inconsistent fencing generation")
@@ -63,12 +63,14 @@ def acquire(state, kind, owner_id, now, service_status=None, base_main_sha=None,
     validate(state)
     canonical_id(owner_id)
     at = instant(now)
-    if kind not in ("DISPATCH", "WORKER", "META", "CONTROLLER"):
+    if kind not in ("DISPATCH", "WORKER", "META", "REVIEWER", "CONTROLLER"):
         raise ValueError("invalid lease kind")
-    if kind in ("WORKER", "META"):
+    if kind in ("WORKER", "META", "REVIEWER"):
         actor_task_id = actor_task_id or (TASK_ID if kind == "WORKER" else None)
         if not actor_task_id or actor_task_id != state.get("authorized_tasks", {}).get(kind):
             raise ValueError("worker task must be registered on the shared coordinator")
+    if kind == "REVIEWER" and work_branch != "main":
+        raise ValueError("integration reviewer may only own the main integration lane")
     if kind in ("WORKER", "META") and work_branch is not None:
         prefix = "auto/twf-game-repair-" if kind == "WORKER" else "auto/twf-system-review-"
         if kind == "META" or work_branch != "auto/twf-game-repair":
@@ -90,7 +92,7 @@ def acquire(state, kind, owner_id, now, service_status=None, base_main_sha=None,
             action = "RESUME" if at < instant(holder["expires_at"]) else "WAIT_RECOVERY"
             return {"action": action, "state": state, "write": False}
         else:
-            action = "JOIN_EXISTING" if holder["kind"] in ("WORKER", "META", "DISPATCH") else "WAIT_LOCK"
+            action = "JOIN_EXISTING" if holder["kind"] in ("WORKER", "META", "REVIEWER", "DISPATCH") else "WAIT_LOCK"
             if at >= instant(holder["expires_at"]) and holder["kind"] != "DISPATCH":
                 action = "WAIT_RECOVERY"
             return {"action": action, "state": state, "write": False,
@@ -133,7 +135,7 @@ def release(state, kind, owner_id, epoch, now, packet=None, reported=False):
 def recover_finished_worker(state, observed_run, now):
     validate(state)
     holder = state["holder"]
-    if (not holder or holder["kind"] not in ("WORKER", "META") or
+    if (not holder or holder["kind"] not in ("WORKER", "META", "REVIEWER") or
             observed_run.get("id") != holder["owner_id"] or
             observed_run.get("recorded_status") not in ("completed", "failed", "no_update") or
             not observed_run.get("completed_at") or
@@ -144,7 +146,7 @@ def recover_finished_worker(state, observed_run, now):
     return result
 
 
-def approval_packet(pulls, repository, observed_at):
+def approval_packet(pulls, repository, observed_at, delegated=False):
     """Require exact-head successful CI and a concrete diff summary for every item."""
     instant(observed_at)
     entries, seen = [], set()
@@ -169,10 +171,11 @@ def approval_packet(pulls, repository, observed_at):
                                else "開発体制改善" if any(x.startswith(("tools/", "ops/")) for x in pr["changed_files"])
                                else "回帰検査追加")
     content = {"scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY", "items": entries,
-               "roblox_publish_authorized": False, "automatic_merge_authorized": False}
+               "decision_owner": "ASSISTANT" if delegated else "OWNER",
+               "roblox_publish_authorized": False, "automatic_merge_authorized": bool(delegated)}
     signature = hashlib.sha256(json.dumps(content, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
     return {**content, "observed_at": observed_at, "signature": signature,
-            "approval_text": ("・".join("#" + str(p["number"]) for p in entries) + "のmain取り込みを承認") if entries else ""}
+            "approval_text": ("・".join("#" + str(p["number"]) for p in entries) + "のmain取り込みを承認") if entries and not delegated else ""}
 
 
 def report_needed(state, packet, manual=False):
@@ -182,13 +185,18 @@ def report_needed(state, packet, manual=False):
 
 
 def render_approvals(packet):
+    delegated = packet.get("decision_owner") == "ASSISTANT"
+    title = "自動審査・統合待ち" if delegated else "取り込み承認待ち"
     if not packet["items"]:
-        return "# 取り込み承認待ち\n\n観測時点: " + packet["observed_at"] + "\n\n承認待ちの項目はありません。\n"
-    lines = ["# 取り込み承認待ち", "", "観測時点: " + packet["observed_at"], "",
+        message = "自動統合待ちの項目はありません。所有者への承認返信は不要です。" if delegated else "承認待ちの項目はありません。"
+        return "# " + title + "\n\n観測時点: " + packet["observed_at"] + "\n\n" + message + "\n"
+    lines = ["# " + title, "", "観測時点: " + packet["observed_at"], "",
              "| PR | 内容 | 区分 | 現在headの検査 |", "| --- | --- | --- | --- |"]
     for item in packet["items"]:
         clean = item["summary"].replace("|", "／").replace("\n", " ")
         lines.append(f'| [#{item["number"]}]({item["url"]}) | {clean} | {item["kind"]} | [合格]({item["ci_url"]}) / `{item["head"][:8]}` |')
+    if delegated:
+        return "\n".join(lines + ["", "所有者への承認返信は不要。独立審査役が現在headの検査と共有所有権を確認し、1件ずつ統合してmainを検査する。", ""])
     lines += ["", "承認する場合の返信: **" + packet["approval_text"] + "**", "",
               "対象は上記コミットのmain取り込み。Roblox公開・課金・外部モデル再実行の承認は含まない。",
               "承認後にhead・CI・競合を再確認し、変更があれば承認を流用しない。", ""]
