@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "pr": 54,
+  "head": "9f55b1b7c0346093bee71c22e72bd041c33963f3",
+  "base_main_sha": "b6fb4d8a94330f1946335aa77af17ab64e1ac502",
+  "pr_original_base_sha": "aa2e57b6d63639f81966cac0e4ef399fcb78a527",
+  "reviewed_at": "2026-10-25T08:27:09.192Z",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "bf527fc8-8b68-8327-953a-704f6127a073",
+  "lease_epoch": 38,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "d62a3a64-210c-832c-9ca3-c923d4cbe127",
+  "author_claim_commit": "e0454283f907d38c67c8e9a86af956bff839fe18",
+  "author_claim_epoch": 35,
+  "verdict": "REQUEST_CHANGES",
+  "blockers": [
+    {
+      "kind": "STALE_MAIN_BASE",
+      "file": "history/C00034_enemy_spawn_cadence_fix.json",
+      "finding": "PR54 was built and CI tested against aa2e57b6, but current main is b6fb4d8a after PR53 and generated handoff. Old-base PR CI cannot certify new-main combination.",
+      "expected": "WORKER updates PR54 to current main, reconciles C00034 base/provenance, reruns exact-head CI with both offline and compile_hold, and resubmits for independent review."
+    }
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": false
+  },
+  "category": "GAME_SOURCE_FIX",
+  "changed_files": [
+    "history/C00034_enemy_spawn_cadence_fix.json",
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/enemy_spawn_cadence_spec.lua"
+  ],
+  "findings": [
+    "One-line enemyTimer remainder carry is scoped; three new whole-server Lua mock cases, no game balance/character/provider/publishing changes.",
+    "Old-base CI 40175282667 passed offline and compile_hold at exact PR head; 200 Python tests and native regressions reported. This is NOT proof for current main after PR53.",
+    "Original-server negative control was predicted but not executed; recommend confirming old 4 versus fixed 5 to strengthen regression proof. Roblox engine remains unverified."
+  ],
+  "evidence": {
+    "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/54",
+    "ci_run": 40175282667,
+    "ci_head": "9f55b1b7c0346093bee71c22e72bd041c33963f3",
+    "ci_base": "aa2e57b6d63639f81966cac0e4ef399fcb78a527",
+    "ci_conclusion": "success",
+    "main_qa_run": 40176571360,
+    "main_qa_head": "ea292e6bccacf362409d0502cf05a4f9c9c0c41e",
+    "main_status_only_compare": {
+      "base": "ea292e6bccacf362409d0502cf05a4f9c9c0c41e",
+      "head": "b6fb4d8a94330f1946335aa77af17ab64e1ac502",
+      "files": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    },
+    "claim_verified_ancestor": true
+  },
+  "merge": {
+    "status": "NOT_MERGED",
+    "sha": null
+  },
+  "next": "WORKER repairs same PR54 before new feature; REVIEWER rechecks new head and new-main CI."
+}

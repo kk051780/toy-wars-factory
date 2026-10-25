@@ -58,9 +58,25 @@
     "claim_verified_ancestor": true
   },
   "merge": {
-    "status": "PENDING",
-    "sha": null,
-    "post_merge_qa": null
+    "status": "MERGED_POST_MERGE_QA_PASSED",
+    "sha": "ea292e6bccacf362409d0502cf05a4f9c9c0c41e",
+    "post_merge_qa": {
+      "run": 40176571360,
+      "head": "ea292e6bccacf362409d0502cf05a4f9c9c0c41e",
+      "conclusion": "success",
+      "jobs": [
+        "offline",
+        "compile_hold"
+      ]
+    },
+    "handoff": {
+      "run": 40176571358,
+      "head": "ea292e6bccacf362409d0502cf05a4f9c9c0c41e",
+      "conclusion": "success"
+    },
+    "main_after_handoff": "b6fb4d8a94330f1946335aa77af17ab64e1ac502",
+    "status_only_descendant_verified": true,
+    "verified_at": "2026-10-25T08:27:09.192Z"
   },
-  "next": "Ready and merge only if current head/main/lease remain unchanged; then check post-merge main QA and handoff before another PR."
+  "next": "PR54 remains on old base aa2e57b6 with old-base CI; WORKER must rebase, rerun exact-head CI and return for independent review."
 }

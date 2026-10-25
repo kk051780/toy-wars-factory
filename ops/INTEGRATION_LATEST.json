@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T03:21:03.539Z",
-  "status": "REGULAR_V4_PR45_MERGED_POST_MERGE_MAIN_QA_PASSED",
+  "observed_at": "2026-10-25T08:27:09.192Z",
+  "status": "PR53_MERGED_MAIN_QA_PASSED_PR54_REBASE_REQUIRED",
   "owner_reply_required": false,
   "deployment": {
     "pr": 43,
@@ -112,7 +112,8 @@
     "Roblox engine/physics/multiplayer/mobile/player experience unverified.",
     "Notification delivery UNKNOWN.",
     "First regular v4 author/reviewer merge and post-merge QA verified on PR45; sustained unattended reliability not yet established.",
-    "PROJECT_STATE.json and progress milestone dashboard on main remain pre-verification snapshots; require independently tested status-only reconciliation."
+    "PROJECT_STATE.json and progress milestone dashboard on main remain pre-verification snapshots; require independently tested status-only reconciliation.",
+    "PR54 CI 40175282667 tested old main aa2e57b6; new-main integration not approved."
   ],
   "reviewer_migration": {
     "status": "EXACT_REVIEWER_LIVE_MERGE_QA_VERIFIED",
@@ -124,6 +125,34 @@
     "regular_v4_cycle_verified": true
   },
   "current_cycle": {
+    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "reviewer_run_id": "bf527fc8-8b68-8327-953a-704f6127a073",
+    "lease_epoch": 38,
+    "main_before": "aa2e57b6d63639f81966cac0e4ef399fcb78a527",
+    "main_after": "b6fb4d8a94330f1946335aa77af17ab64e1ac502",
+    "pr": 53,
+    "head": "4eddd7c6a6167eda79ac4c2216de88d38ddc42ff",
+    "category": "SYSTEM_IMPROVEMENT",
+    "verdict": "APPROVE",
+    "merge_count": 1,
+    "merge_sha": "ea292e6bccacf362409d0502cf05a4f9c9c0c41e",
+    "pr_ci_run": 40174658156,
+    "post_merge_qa": {
+      "run": 40176571360,
+      "head": "ea292e6bccacf362409d0502cf05a4f9c9c0c41e",
+      "conclusion": "success",
+      "status_only_descendant": true
+    },
+    "handoff": {
+      "run": 40176571358,
+      "conclusion": "success"
+    },
+    "next_actor": "WORKER_REBASE_PR54",
+    "pr54_status": "REQUEST_CHANGES_STALE_MAIN_CI",
+    "runtime_verified": true
+  },
+  "runtime_verified": true,
+  "previous_cycle": {
     "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
     "reviewer_run_id": "ed0fc89e-e310-8326-989c-25380dc1467e",
     "lease_epoch": 18,
@@ -154,5 +183,13 @@
     "review_path": "ops/reviews/PR0045_8676e344.json",
     "runtime_verified": true
   },
-  "runtime_verified": true
+  "merged_system_candidates": {
+    "53": {
+      "sha": "ea292e6bccacf362409d0502cf05a4f9c9c0c41e",
+      "merged": true,
+      "ci": 40174658156,
+      "qa": 40176571360,
+      "handoff": 40176571358
+    }
+  }
 }

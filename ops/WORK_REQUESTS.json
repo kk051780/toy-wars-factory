@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T07:58:50Z",
+  "observed_at": "2026-10-25T08:27:09.192Z",
   "requests": [
     {
       "id": "hosted_roblox_evidence",
@@ -144,6 +144,33 @@
         "worker_run_id": "0bf89fd6-6a50-8321-be82-364bb9cc3bb8",
         "observed_wait_lock": 1,
         "denominator_limitation": "One latest service result is not enough to infer a long-run contention rate."
+      }
+    },
+    {
+      "id": "pr54_rebase_after_pr53_main_qa",
+      "kind": "PR_REBASE_AND_REGRESSION",
+      "priority": "P0",
+      "assigned_role": "WORKER",
+      "status": "OPEN",
+      "pr": 54,
+      "head": "9f55b1b7c0346093bee71c22e72bd041c33963f3",
+      "old_base_main_sha": "aa2e57b6d63639f81966cac0e4ef399fcb78a527",
+      "new_main_sha": "b6fb4d8a94330f1946335aa77af17ab64e1ac502",
+      "created_at": "2026-10-25T08:27:09.192Z",
+      "request": "Before starting a new game issue, update PR54 onto current main b6fb4d8a after PR53, preserve one-line enemyTimer remainder fix and all accepted regressions, reconcile C00034 main_base/source ledger, and obtain fresh exact-head Toy Wars bootstrap offline QA (offline and compile_hold). Do not reuse run 40175282667 as evidence for the new main.",
+      "reproduction": [
+        "PR54 head 9f55b1b7 has CI 40175282667 against aa2e57b6; current main b6fb4d8a is a verified status-only descendant of merged PR53 ea292e6b, with changed repair_control.py and recovery tests.",
+        "Current PR54 REST mergeable is null/unknown after PR53 and its head has not been rebased."
+      ],
+      "expected": [
+        "New PR54 head based on current main including PR53 recovery protection, successful CI for new head/main combination, preservation of 3 enemy cadence cases and prior accepted tests.",
+        "Prefer actual old-server negative control demonstrating 4 vs 5 JUNK; report if unavailable. No changes to release HOLD, Gemini hold, spending caps or permissions."
+      ],
+      "evidence": {
+        "review_path": "ops/reviews/PR0054_9f55b1b7.json",
+        "old_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40175282667",
+        "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/54",
+        "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40176571360"
       }
     }
   ]
