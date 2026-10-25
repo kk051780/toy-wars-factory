@@ -11,7 +11,7 @@ import re
 ID = re.compile(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*\Z")
 REPO = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
 SHA = re.compile(r"[0-9a-f]{40}\Z")
-UUID = re.compile(r"[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}\Z")
+TASK_ID = re.compile(r"[0-9a-f]{32}\Z")
 STATES = {"NOT_RUN", "PASS", "FAIL"}
 ROLES = ("author", "reviewer", "meta")
 GATES = ("offline", "engine", "two_client", "mobile", "playtest")
@@ -101,7 +101,7 @@ def validate_project(data):
             raise InvalidProject("bound project needs an independent coordination ref")
         for role in ROLES:
             value = data["roles"][role]
-            if type(value) is not str or not UUID.fullmatch(value):
+            if type(value) is not str or not TASK_ID.fullmatch(value):
                 raise InvalidProject("bound project needs canonical task IDs")
         if len(set(data["roles"].values())) != 3:
             raise InvalidProject("an author cannot act as their own reviewer/meta")
@@ -117,6 +117,8 @@ def load_portfolio(root, portfolio):
     _object(raw, ("schema", "projects"), "portfolio")
     if raw["schema"] != 1 or type(raw["projects"]) is not list or not 1 <= len(raw["projects"]) <= 100:
         raise InvalidProject("portfolio schema or capacity")
+    if any(type(path) is not str for path in raw["projects"]):
+        raise InvalidProject("manifest references must be string paths")
     if len(set(raw["projects"])) != len(raw["projects"]):
         raise InvalidProject("duplicate manifest paths")
     projects = []
@@ -144,7 +146,7 @@ def evaluate(project, observation=None):
     """Read-only recommendation. No GitHub writes, provider calls, or dispatch."""
     result = {"game_id": project["game_id"], "repository": project["repository"],
               "mode": "ADVISORY_ONLY", "action": "HOLD", "alerts": [],
-              "release_eligible": False, "real_engine_verified": project["quality"]["engine"] == "PASS"}
+              "release_eligible": False, "declared_engine_gate": project["quality"]["engine"], "engine_evidence_verified": False}
     if project["phase"] == "UNBOUND_TEMPLATE":
         result["action"] = "UNBOUND_TEMPLATE"
         return result
