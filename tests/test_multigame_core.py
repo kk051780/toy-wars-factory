@@ -206,13 +206,14 @@ class MultiGameControlPlaneTests(unittest.TestCase):
                 tmp.cleanup()
 
     def test_unknown_observation_game_rejected(self):
-        tmp = tempfile.TemporaryDirectory()
+        # Copy the real portfolio into the same sandbox as synthetic observations
+        # so the rejection is for a *foreign game*, not a path traversal shortcut.
+        tmp, root = self.portfolio_with(self.projects)
         try:
-            root = Path(tmp.name)
             (root / "observation.json").write_text(
                 json.dumps({"schema": 1, "projects": {"foreign-game": {}}}), encoding="utf-8")
-            with self.assertRaises(InvalidProject):
-                plan(ROOT, PORTFOLIO, str(root / "observation.json"))
+            with self.assertRaisesRegex(InvalidProject, "unknown game"):
+                plan(root, "portfolio.json", "observation.json")
         finally:
             tmp.cleanup()
 
