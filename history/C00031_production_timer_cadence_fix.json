@@ -1,0 +1,92 @@
+{
+  "id": "C00031",
+  "date": "2026-10-25",
+  "kind": "AUTONOMOUS_PRODUCTION_TIMER_CADENCE_FIX",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "23cf9c83-ac00-8326-b3e8-d86cc8cad7c7",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-23cf9c83-ac00-8326-b3e8-d86cc8cad7c7",
+    "base": "main",
+    "open_prs": [
+      44
+    ],
+    "limit": 3
+  },
+  "main_base": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "a05cc8074b6892aaf20e4568c92e9f4171cc0513",
+    "owner_run_id": "23cf9c83-ac00-8326-b3e8-d86cc8cad7c7",
+    "epoch": 9
+  },
+  "defect": {
+    "id": "production_timer_overshoot_drift",
+    "cause": "simulate() resets productionTimer to 3.0 after crossing zero and discards the negative remainder on each cycle.",
+    "reproduction": "Run the canonical full server through tests/roblox_server_harness.lua with 28 Heartbeats of 0.26s: pre-fix produces only two PONs by 7.28s instead of three.",
+    "engine_observation": false
+  },
+  "fix": "Carry the fractional production timer overshoot forward by adding 3.0 to the existing (nonpositive) timer, rather than resetting to 3.0. Heartbeat's existing 0.3s maximum remains unchanged.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/production_cadence_spec.lua",
+    "history/C00031_production_timer_cadence_fix.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 18813,
+      "after_bytes": 18835,
+      "delta_bytes": 22
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 681,
+    "lua_bytes": 26935
+  },
+  "file_size_deltas": {
+    "src/ToyWarsServer.server.lua": {
+      "before_bytes": 18813,
+      "after_bytes": 18835,
+      "delta_bytes": 22
+    },
+    "tests/auto/production_cadence_spec.lua": {
+      "before_bytes": 0,
+      "after_bytes": 1997,
+      "delta_bytes": 1997
+    }
+  },
+  "characters_touched": [],
+  "character_impact": "Production timing affects all selected toy types uniformly. No unit stats, costs, shapes, selection permissions or combat parameters changed.",
+  "tests": {
+    "native": "tests/auto/production_cadence_spec.lua",
+    "cases": [
+      "first PON not produced before 1.2 seconds; income remains accurate",
+      "after 28 x 0.26s Heartbeats, three PONs produced and wallet equals 63 (old source would produce two and wallet 73)"
+    ],
+    "local_execution": "NOT_RUN_LUA_5_4_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "physics": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40150077130",
+    "prior_pr44_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40150762450",
+    "canonical_server_blob": "bc39097bcadfc5b08e09ee879742f97d2f2d1c15",
+    "branch_url": "https://github.com/kk051780/toy-wars-factory/tree/auto/twf-game-repair-23cf9c83-ac00-8326-b3e8-d86cc8cad7c7",
+    "pr_url": null,
+    "ci_url": null
+  },
+  "restrictions": {
+    "external_provider_inference": false,
+    "secret_read": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  },
+  "next_action": "Check exact-head offline CI; repair this PR if it fails, otherwise send to independent reviewer. Next independent candidate: verify enemy spawn timer overshoot against intended wave pacing."
+}

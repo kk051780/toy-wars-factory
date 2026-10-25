@@ -345,7 +345,7 @@ local function simulate(state,dt)
 
     state.productionTimer=state.productionTimer-dt
     if state.productionTimer<=0 then
-        state.productionTimer=3.0
+        state.productionTimer=state.productionTimer+3.0
         if aliveCount(state,"ally")<B.MAX_FIELD_UNITS then
             local new=B.buy(state.selected,state.coins.Value,aliveCount(state,"ally"))
             if new then
