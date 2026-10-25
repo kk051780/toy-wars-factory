@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T01:22:26.282427+00:00",
+  "observed_at": "2026-10-25T02:27:47.951Z",
   "requests": [
     {
       "id": "hosted_roblox_evidence",
@@ -10,6 +10,15 @@
       "status": "OPEN",
       "issue": "https://github.com/kk051780/toy-wars-factory/issues/3",
       "request": "Verify an available secure hosted engine/multiclient/mobile evidence path. Do not claim runtime success or require owner PC debugging. Continue independent source tasks while access is unresolved."
+    },
+    {
+      "id": "reviewer_no_update",
+      "kind": "SCHEDULER_INTEGRATION_FAILURE",
+      "priority": "P0",
+      "assigned_role": "META",
+      "status": "OPEN",
+      "issue": "https://github.com/kk051780/toy-wars-factory/issues/4#issuecomment-6392305287",
+      "request": "Reviewer + META runs repeatedly finish no_update with no chat_ref. Diagnose task dispatch/auth/context and prove one complete regular independent reviewer/main cycle. Never treat controller fallback as autonomous reviewer success. Keep worker/reviewer schedules enabled and avoid repeat storm."
     }
   ]
 }

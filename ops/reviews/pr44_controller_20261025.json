@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "pr": 44,
+  "origin": "CONTROLLER_INDEPENDENT_MANUAL_RECOVERY_NOT_REGULAR_AUTOMATION",
+  "observed_at": "2026-10-25T02:27:47.510Z",
+  "reviewed_head": "e99c62925611411c9b0ca3fccc009db681c69fa1",
+  "owner_run_id": "d67e02cd-8f4f-4138-a0cd-2879bd96967a",
+  "lease_epoch": 11,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "c412d94e-2c08-8322-829e-e3bbfb1d9587",
+  "reviewed_base": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
+  "scope": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/heartbeat_lag_spec.lua",
+    "history/C00030_heartbeat_lag_carry_fix.json"
+  ],
+  "findings": [
+    "Single changed source statement retains Heartbeat remainder, preserving the 0.3s step bound",
+    "Whole canonical server regression adds two lag/income/production checks",
+    "Current PR head CI 40150762450 offline and compile_hold both passed",
+    "GitHub coordinator C00030 claim ancestor verified",
+    "Author and independent controller are separate execution contexts",
+    "Merged main 4adfc389 QA 40154450584 success; current main descendant 78060f60 only generated status files"
+  ],
+  "decision": "INTEGRATED_AFTER_INDEPENDENT_CONTROLLER_REVIEW",
+  "merge_sha": "4adfc389d745041e7b93092972321752546e3a85",
+  "current_main": "78060f60dd904746765c011089a8bda555ec8e7f",
+  "qa_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/40154450584",
+  "handoff_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/40154450462",
+  "regular_reviewer_cycle_verified": false,
+  "roblox_engine_verified": false
+}
