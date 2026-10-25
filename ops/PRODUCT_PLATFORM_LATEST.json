@@ -1,18 +1,18 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T04:34:10.418Z",
+  "observed_at": "2026-10-25T07:44:54.569Z",
   "product": "Studio Autopilot",
-  "current_stage": "P1_ACCEPTED",
+  "current_stage": "P1_ACCEPTED_P2_HOLD_P3_PLANNER_MERGED",
   "stage_progress": {
     "accepted": 1,
     "total": 12,
     "remaining": 11
   },
-  "scope": "MULTIGAME_READ_ONLY_MANIFEST_AND_ADVISORY_CONTROLLER_PROTOTYPE",
+  "scope": "MULTIGAME_MANIFESTS_AND_PROPOSAL_ONLY_SCHEDULER",
   "current_project_count": 2,
   "real_connected_games": 1,
   "unbound_demo_games": 1,
-  "execution": "DISABLED",
+  "execution": "DISABLED_ADVISORY_ONLY",
   "project_game_playable_in_roblox": "UNVERIFIED",
   "sales_readiness": "NOT_READY",
   "pr": 49,
@@ -25,11 +25,35 @@
     "run_id": "5bf78359-9dd8-832d-9c4b-6f48325cb02e",
     "verdict": "APPROVE_EXACT_HEAD"
   },
-  "next": "P2: per-game read-only GitHub live evidence adapter with cross-repo and stale-proof negative tests",
+  "next": "Unblock P2 without adding token execution on unprotected main; use independently anchored trusted source and read-only API evidence, then complete P3 CAS-backed dispatch separately",
   "holds": [
     "Gemini external inference",
     "Roblox public release",
     "external spend and unattended deployment"
   ],
-  "issue": 50
+  "issue": 50,
+  "p3": {
+    "state": "EARLY_IMPLEMENTATION_ACCEPTED_NOT_FULL_STAGE",
+    "pr": 52,
+    "reviewed_head": "0c28b59545847e683ad2434c52b33e8d0b1d8a5d",
+    "merge_commit": "499f6e7ca8964ab82214b2d968afc82f250087d1",
+    "review_task": "6addabbab7f08191b93f29f0b88e235f",
+    "review_run": "d780fc8c-2cc0-8322-a9bd-e6985c504aee",
+    "review_verdict": "APPROVE",
+    "post_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40173771793",
+    "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40173771800",
+    "post_merge_status_only_main": "aa2e57b6d63639f81966cac0e4ef399fcb78a527",
+    "tests_python": 200,
+    "new_scheduler_tests": 24
+  },
+  "p2": {
+    "state": "SECURITY_HOLD",
+    "pr": 51,
+    "head": "d96b92bb70719b478bccf9a40ab779737556eb86",
+    "blocks": [
+      "PR may rewrite its own trust manifest and QA source together",
+      "private repo main branch protection disabled and rulesets unavailable without upgrade"
+    ],
+    "approved_to_run_tokened_main_workflow": false
+  }
 }
