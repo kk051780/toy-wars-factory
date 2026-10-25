@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: bdca2eb8d6b3f7d4077691692fe8266361e78fef
+- 基準ソースコミット: b863381aa80d77107ad50ca2af0f667e78361e72
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 既存GitHub AIワークフロー: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - ChatGPT定期ゲーム修正: ENABLED_AUTHOR_WITH_DELEGATED_REVIEWER_REGISTERED
@@ -60,9 +60,10 @@
 - 完了: Verify post-merge QA/handoff for each candidate: #38 QA 40146924040, #35 QA 40147170649, #40 QA 40147278940. Any later current-main changes were proven generated status snapshots.
 - 完了: Main now includes the three floor properties and the new accepted regressions: 4 Lua source files / 681 lines / 26,913 bytes. Preserve initial 25,726-byte baseline; #35/#40 are test-only, not two more source bug fixes.
 - 完了: Register separate reviewer 6add4ea80d3881919da4ea2c1d5def88; update all saved/live prompts to delegate integration without owner replies. Authors retain draft-only source writes.
-- 完了: Add delegated integration decisions and regressions for ownership/independent identity/current head and base/CI/scope/claim evidence/main failure/verified status-only descendants. All 127 Python tests pass.
+- 完了: Add delegated integration decisions and regressions for ownership/independent identity/current head and base/CI/scope/claim evidence/main failure/verified status-only descendants. All 128 Python tests pass.
 - 完了: Add a revisable completion roadmap and guarded additional-module/installer/regression extension. Retain mandatory daily primary-web and effectiveness review.
 - 完了: Separate read-only bootstrap run 8e81a8de-c59c-8332-83e0-d5f0c57f15c8 rejected the initial proposed head with two reproduced identity-validation gaps. Fix both and add two regressions; all 127 Python tests pass. Re-review the new head before deployment.
+- 完了: Check the analogous main/QA SHA input boundary: reject missing or malformed identities, with a new regression. Current full suite: 128 tests.
 - 新規推論承認: False
 - 定期AI承認: True
 - 自動マージ承認: True
