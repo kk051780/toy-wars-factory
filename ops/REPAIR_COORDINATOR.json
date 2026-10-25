@@ -204,7 +204,9 @@
     },
     "scope": "Only independently review the pinned proposed setup; no state/source/PR/ref/merge writes. Return the structured result.",
     "previous_review_run": "8e81a8de-c59c-8332-83e0-d5f0c57f15c8",
-    "revision": "Fixed both reproduced validation holes plus analogous malformed main SHA inputs; 128 tests. Re-run prior failures and independently evaluate current head."
+    "revision": "Fixed both reproduced validation holes plus analogous malformed main SHA inputs; 128 tests. Re-run prior failures and independently evaluate current head.",
+    "retry_of": "2f149aa6-5864-832d-89af-2a3086a5c41e",
+    "retry_reason": "UNKNOWN_SERVICE_FAILURE_NO_NEW_RESULT"
   },
   "bootstrap_reviews": [
     {
@@ -235,6 +237,24 @@
         "behavior": false
       },
       "reason": "2026-10-25、指定headと現在PRの一致を再確認。[CI](https://github.com/kk051780/toy-wars-factory/actions/runs/40148613909)はoffline・compile_holdとも成功し、ログで125検査合格を確認。追加16検査も独立再実行して合格したが、上記3入力で判定の抜けを再現した。ゲーム本体と既存検査の変更はない。次は作者側で2件を修正し、新headのCIと再審査を行う。今回は読取り専用審査のため、共有状態・PR・mainを変更せず、統合は0件。通常のv4統合実走やRoblox実機成功を示す結果ではない。所有者の承認返信は不要。"
+    }
+  ],
+  "bootstrap_review_failures": [
+    {
+      "pr": 43,
+      "head": "1c462d087629759cfe3efb8959742d2df299befe",
+      "run": {
+        "id": "2f149aa6-5864-832d-89af-2a3086a5c41e",
+        "recorded_status": "failed",
+        "scheduled_for": "2026-10-25T01:07:13.248558Z",
+        "started_at": "2026-10-25T01:07:44.498348Z",
+        "completed_at": "2026-10-25T01:08:35.516489Z",
+        "chat_ref": null
+      },
+      "result_run_id": "8e81a8de-c59c-8332-83e0-d5f0c57f15c8",
+      "result_usable": false,
+      "cause": "UNKNOWN_SERVICE_FAILURE_NO_NEW_RESULT",
+      "action": "One bounded read-only retry; no old-head verdict reused"
     }
   ]
 }
