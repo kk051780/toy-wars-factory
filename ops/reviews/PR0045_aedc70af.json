@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "pr": 45,
+  "repository": "kk051780/toy-wars-factory",
+  "head": "aedc70af353c43bdb1c86038ba338fa5249419d6",
+  "branch": "auto/twf-game-repair-23cf9c83-ac00-8326-b3e8-d86cc8cad7c7",
+  "base_main_sha": "34939a5501a0b8d497c538cd48566e0ecc5060b0",
+  "pr_base_sha": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "7437dc9d-6a34-8329-a605-401d1b5210ee",
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "23cf9c83-ac00-8326-b3e8-d86cc8cad7c7",
+  "reviewed_at": "2026-10-25T02:56:18.757Z",
+  "lease_epoch": 14,
+  "verdict": "REQUEST_CHANGES",
+  "action": "NO_MERGE_WAIT_FRESH_CURRENT_MAIN_COMBINATION_CI",
+  "findings": [
+    {
+      "kind": "CURRENT_MAIN_COMBINATION_NOT_TESTED",
+      "file": "src/ToyWarsServer.server.lua; tests/auto/production_cadence_spec.lua",
+      "observed": "PR #45 CI 40153623843 passed head aedc70af but its workflow base is 65b38869; main is now 34939a55 and includes PR #44 Heartbeat accumulator change in the same server file.",
+      "reproduction": "Compare 65b38869...34939a55: src/ToyWarsServer.server.lua changed accumulated=0 to accumulated=accumulated-delta; run 40153623843 pull_requests[0].base.sha is 65b38869.",
+      "expected": "WORKER rebases onto current main, keeps both the accepted C00030 Heartbeat fix and proposed C00031 production timer fix, runs fresh exact-head Toy Wars bootstrap offline QA with offline and compile_hold successful; verify both heartbeat_lag_spec.lua and production_cadence_spec.lua in the same candidate."
+    },
+    {
+      "kind": "SOURCE_LEDGER_REBASE_REQUIRED",
+      "file": "history/C00031_production_timer_cadence_fix.json",
+      "observed": "Current C00031 source_changes before/after 18813/18835 and total 26935 describe pre-PR44 base; current main server is 18829 and source total 26929.",
+      "reproduction": "Read PR45 history and main C00030/main source metrics; PR44 changes 16 bytes of the same source file.",
+      "expected": "After rebase, reconcile source_changes before/after to actual new base (expected 18829 -> 18851 for +22-byte timer change if no other source edits) and source_metrics.lua_bytes to 26951 if all four Lua sources otherwise unchanged; preserve provenance and full diff."
+    }
+  ],
+  "blockers": [
+    {
+      "kind": "CURRENT_MAIN_COMBINATION_NOT_TESTED",
+      "file": "src/ToyWarsServer.server.lua; tests/auto/production_cadence_spec.lua",
+      "observed": "PR #45 CI 40153623843 passed head aedc70af but its workflow base is 65b38869; main is now 34939a55 and includes PR #44 Heartbeat accumulator change in the same server file.",
+      "reproduction": "Compare 65b38869...34939a55: src/ToyWarsServer.server.lua changed accumulated=0 to accumulated=accumulated-delta; run 40153623843 pull_requests[0].base.sha is 65b38869.",
+      "expected": "WORKER rebases onto current main, keeps both the accepted C00030 Heartbeat fix and proposed C00031 production timer fix, runs fresh exact-head Toy Wars bootstrap offline QA with offline and compile_hold successful; verify both heartbeat_lag_spec.lua and production_cadence_spec.lua in the same candidate."
+    },
+    {
+      "kind": "SOURCE_LEDGER_REBASE_REQUIRED",
+      "file": "history/C00031_production_timer_cadence_fix.json",
+      "observed": "Current C00031 source_changes before/after 18813/18835 and total 26935 describe pre-PR44 base; current main server is 18829 and source total 26929.",
+      "reproduction": "Read PR45 history and main C00030/main source metrics; PR44 changes 16 bytes of the same source file.",
+      "expected": "After rebase, reconcile source_changes before/after to actual new base (expected 18829 -> 18851 for +22-byte timer change if no other source edits) and source_metrics.lua_bytes to 26951 if all four Lua sources otherwise unchanged; preserve provenance and full diff."
+    }
+  ],
+  "checks": {
+    "scope": true,
+    "regression": false,
+    "source_ledger": false,
+    "protected_controls": true,
+    "behavior": false
+  },
+  "kind": "GAME_SOURCE_BUG_FIX",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/production_cadence_spec.lua",
+    "history/C00031_production_timer_cadence_fix.json"
+  ],
+  "ci": {
+    "id": 40153623843,
+    "head": "aedc70af353c43bdb1c86038ba338fa5249419d6",
+    "base_main_sha": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
+    "conclusion": "success",
+    "required_jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "scope_and_claim_gate": "PASS",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40153623843",
+    "current_main_combination_verified": false
+  },
+  "main_qa": {
+    "id": 40155995384,
+    "qa_head": "7217c2aa94b17407f79d5ea42bfecf453b1e9b3a",
+    "current_main_sha": "34939a5501a0b8d497c538cd48566e0ecc5060b0",
+    "conclusion": "success",
+    "verified_status_only_descendant": true,
+    "comparison_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40155995384"
+  },
+  "claim": {
+    "commit": "a05cc8074b6892aaf20e4568c92e9f4171cc0513",
+    "epoch": 9,
+    "author_run_id": "23cf9c83-ac00-8326-b3e8-d86cc8cad7c7",
+    "observed_in_ancestor": true
+  },
+  "merge": {
+    "performed": false,
+    "merge_sha": null,
+    "post_merge_qa": null
+  },
+  "runtime_verified": false,
+  "limitations": [
+    "PR45 CI is successful for its exact head but was built against old main, not the current main combination.",
+    "No Roblox engine/multiplayer/mobile/visual/fun evidence; release HOLD and Gemini incident preserved."
+  ],
+  "next_actor": "WORKER",
+  "next_action": "Rebase PR45 onto current main, reconcile C00031 metrics, rerun exact-head CI; then independent reviewer re-evaluates new head."
+}

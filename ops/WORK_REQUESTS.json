@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T02:52:50.941Z",
+  "observed_at": "2026-10-25T02:56:18.757Z",
   "requests": [
     {
       "id": "hosted_roblox_evidence",
@@ -28,6 +28,33 @@
       "status": "OPEN",
       "issue": "https://github.com/kk051780/toy-wars-factory/pull/47",
       "request": "PR47 first offline attempt 40155248452 failed test_repair_control TemporaryDirectory teardown with OSError Directory not empty: objects; bounded rerun success and revised PR 40155772355 first-attempt success. Investigate race without weakening or skipping tests; add reproduction if repeat."
+    },
+    {
+      "id": "pr45_current_main_rebase_and_ci",
+      "kind": "PR_REBASE_AND_REGRESSION",
+      "priority": "P0",
+      "assigned_role": "WORKER",
+      "status": "OPEN",
+      "pr": 45,
+      "head": "aedc70af353c43bdb1c86038ba338fa5249419d6",
+      "base_main_sha": "34939a5501a0b8d497c538cd48566e0ecc5060b0",
+      "reviewer_run_id": "7437dc9d-6a34-8329-a605-401d1b5210ee",
+      "created_at": "2026-10-25T02:56:18.757Z",
+      "request": "Before any new issue, update PR #45 to current main including C00030 Heartbeat carry, reconcile history/C00031 source sizes, rerun exact-head offline+compile_hold with both heartbeat_lag_spec.lua and production_cadence_spec.lua; do not reuse 40153623843 as a current-main combined pass.",
+      "reproduction": [
+        "Compare 65b38869...34939a55: src/ToyWarsServer.server.lua changed accumulated=0 to accumulated=accumulated-delta; run 40153623843 pull_requests[0].base.sha is 65b38869.",
+        "Read PR45 history and main C00030/main source metrics; PR44 changes 16 bytes of the same source file."
+      ],
+      "expected": [
+        "WORKER rebases onto current main, keeps both the accepted C00030 Heartbeat fix and proposed C00031 production timer fix, runs fresh exact-head Toy Wars bootstrap offline QA with offline and compile_hold successful; verify both heartbeat_lag_spec.lua and production_cadence_spec.lua in the same candidate.",
+        "After rebase, reconcile source_changes before/after to actual new base (expected 18829 -> 18851 for +22-byte timer change if no other source edits) and source_metrics.lua_bytes to 26951 if all four Lua sources otherwise unchanged; preserve provenance and full diff."
+      ],
+      "evidence": {
+        "pr": "https://github.com/kk051780/toy-wars-factory/pull/45",
+        "old_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40153623843",
+        "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40155995384",
+        "review_path": "ops/reviews/PR0045_aedc70af.json"
+      }
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T01:22:26.282427+00:00",
-  "status": "DELEGATED_PIPELINE_DEPLOYED_NEXT_AUTHOR_READY",
+  "observed_at": "2026-10-25T02:56:18.757Z",
+  "status": "REVIEWER_FIRST_LIVE_LEASE_PR45_REQUEST_CHANGES_NO_MERGE",
   "owner_reply_required": false,
   "deployment": {
     "pr": 43,
@@ -104,7 +104,8 @@
   "limitations": [
     "Full regular v4 author/reviewer cycle is not yet verified.",
     "Roblox engine/physics/multiplayer/mobile/player experience unverified.",
-    "Notification delivery UNKNOWN."
+    "Notification delivery UNKNOWN.",
+    "First registered reviewer run acquired shared lease and recorded review, but no PR integrated; runtime_verified remains false pending first successful normal integration and post-merge main QA."
   ],
   "reviewer_migration": {
     "status": "EXACT_REVIEWER_REGISTERED_LIVE_RUN_PENDING",
@@ -114,5 +115,24 @@
     "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40155995384",
     "observed_at": "2026-10-25T02:52:50.941Z",
     "regular_v4_cycle_verified": false
+  },
+  "current_cycle": {
+    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "reviewer_run_id": "7437dc9d-6a34-8329-a605-401d1b5210ee",
+    "lease_epoch": 14,
+    "main": "34939a5501a0b8d497c538cd48566e0ecc5060b0",
+    "main_qa_run": 40155995384,
+    "main_qa_scope": "QA success on 7217c2aa, 34939a55 differs by exactly 2 generated status files",
+    "pr": 45,
+    "head": "aedc70af353c43bdb1c86038ba338fa5249419d6",
+    "pr_ci_run": 40153623843,
+    "pr_ci_exact_head_success": true,
+    "pr_ci_current_main_combination_verified": false,
+    "verdict": "REQUEST_CHANGES",
+    "merge_count": 0,
+    "post_merge_qa": null,
+    "next_actor": "WORKER",
+    "review_path": "ops/reviews/PR0045_aedc70af.json",
+    "runtime_verified": false
   }
 }
