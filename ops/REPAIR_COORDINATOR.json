@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 29,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "f616e55a-4fb5-40c9-a8b0-891e37e4073d",
-    "task_id": null,
-    "epoch": 29,
-    "acquired_at": "2026-10-25T05:16:12.287Z",
-    "expires_at": "2026-10-25T05:46:12.287Z",
-    "base_main_sha": "3e9d36f60661e9b1b99297fc926c47a2187ada06",
-    "work_branch": "ops/studio-autopilot-p2-c0c23044",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -31,13 +21,14 @@
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "a603b7c9-f099-453a-8dc1-c260c7f1a3cb",
-    "epoch": 28,
-    "released_at": "2026-10-25T05:11:20.327Z",
+    "owner_id": "f616e55a-4fb5-40c9-a8b0-891e37e4073d",
+    "epoch": 29,
+    "released_at": "2026-10-25T06:21:58.201Z",
+    "result": "OWN_EXPIRED_CONTROLLER_RECOVERED_WITHOUT_REPO_WRITE",
+    "reason": "interrupted interactive task, stale same-conversation lock",
+    "previous_expiry": "2026-10-25T05:46:12.287Z",
     "pr": 51,
-    "head": "be879db59732bbe8c6baf5480d5379b0619380ec",
-    "result": "P2_JOB_IDENTITY_TRUST_CI_214_SUCCESS_WAIT_FRESH_REVIEW",
-    "qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40164512789"
+    "observed_main": "3e9d36f60661e9b1b99297fc926c47a2187ada06"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
