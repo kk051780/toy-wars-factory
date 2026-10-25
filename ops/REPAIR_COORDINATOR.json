@@ -1,8 +1,18 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 31,
-  "holder": null,
+  "epoch": 32,
+  "holder": {
+    "kind": "CONTROLLER",
+    "owner_id": "eb03e90e-8d11-4992-b612-cff32a1d977f",
+    "task_id": null,
+    "epoch": 32,
+    "acquired_at": "2026-10-25T07:15:16.778Z",
+    "expires_at": "2026-10-25T07:45:16.778Z",
+    "base_main_sha": "3e9d36f60661e9b1b99297fc926c47a2187ada06",
+    "work_branch": "ops/studio-autopilot-p3-controller",
+    "origin": "controller"
+  },
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
