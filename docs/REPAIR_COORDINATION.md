@@ -31,6 +31,8 @@
 
 他のWORKER/META/REVIEWER/CONTROLLERが保持していれば編集しない。期限切れだけで奪わない。
 `recover_finished_worker`は、**同じowner runが終了したサービス証拠**がある場合だけ使える。
+そのcompleted_atは現在のholder.acquired_at以降かつ観測時刻以下でなければならない。
+同じrun UUIDが再取得した場合も、以前の世代の終了記録で現在のロックを解放しない。
 別runの完了や「しばらく動いていない」は復旧根拠にならない。不明ならowner/run/期限と復旧の不足を報告する。
 コーディネータ更新失敗を単なるリトライで上書きせず、新headを読んで判断し直す。
 
