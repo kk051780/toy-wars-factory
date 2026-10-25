@@ -33,7 +33,7 @@
     "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40108773948",
     "scope": "REGRESSION_CODE_ONLY; GAME_SOURCE_UNCHANGED; NOT_LONG_TERM_PROOF"
   },
-  "queue_version": 2,
+  "queue_version": 3,
   "repository": "kk051780/toy-wars-factory",
   "branch_prefix": "auto/twf-game-repair-",
   "max_open_prs": 3,
@@ -64,5 +64,82 @@
     "head": "b8e543ada9e5613486cbcfc1819a3aba8cc7932c",
     "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40137069031",
     "scope": "ONE_SOURCE_CHANGING_UUID_LANE; TASK_ENABLED_AFTER_RUN; NOT_LONG_TERM_PROOF"
+  },
+  "coordination": {
+    "version": 1,
+    "branch": "twf-repair-coordinator",
+    "state_path": "ops/REPAIR_COORDINATOR.json",
+    "approval_path": "status/PENDING_APPROVALS.md",
+    "lease_seconds": 1800,
+    "dispatch_seconds": 120,
+    "manual_go": "JOIN_OR_DISPATCH_SAME_GAME_TASK",
+    "required_for_game_and_system_writes": true,
+    "claim_proof_required": true,
+    "expiry_is_not_takeover_permission": true,
+    "grandfathered_pr_heads": [
+      {
+        "number": 35,
+        "branch": "auto/twf-game-repair",
+        "head": "1fdc549d0d708230cc642b18ceb020f28efa0806"
+      },
+      {
+        "number": 38,
+        "branch": "auto/twf-game-repair-039874ac-64a0-8323-bc57-5c35cf58ec90",
+        "head": "b8e543ada9e5613486cbcfc1819a3aba8cc7932c"
+      },
+      {
+        "number": 40,
+        "branch": "auto/twf-game-repair-23e9ebe9-179c-8326-8fdd-ac241ec4ef53",
+        "head": "f172f71119479ba0cafafb2a2163b3b6e61ce39c"
+      }
+    ]
+  },
+  "approval_reporting": {
+    "required_fields": [
+      "number",
+      "summary",
+      "kind",
+      "head",
+      "ci_url",
+      "approval_scope",
+      "reply_text"
+    ],
+    "manual_status_always_lists_items": true,
+    "scheduled_dedup_only_after_complete_request": true,
+    "changed_head_requires_new_request": true,
+    "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY"
+  },
+  "system_review": {
+    "enabled": true,
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "backend": "CHATGPT_CONNECTED_GITHUB_TASK",
+    "cadence_hours": 24,
+    "timezone": "Asia/Tokyo",
+    "timing_mode": "flexible_schedule",
+    "local_start": "09:30",
+    "branch_prefix": "auto/twf-system-review-",
+    "pr_title_prefix": "[TWF system-review]",
+    "max_open_prs": 1,
+    "routine_edit_approval_required": false,
+    "automatic_merge_authorized": false,
+    "web_research_required": true,
+    "game_improvement_backlog_required": true,
+    "shared_coordination_required": true,
+    "allowed_tool_paths": [
+      "tools/repair_control.py",
+      "tools/repair_queue.py",
+      "tools/build_handoff.py"
+    ],
+    "allowed_document_paths": [
+      "docs/REPAIR_COORDINATION.md",
+      "docs/SYSTEM_REVIEW.md",
+      "docs/AUTONOMOUS_REPAIR.md",
+      "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+      "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md"
+    ],
+    "saved_prompt": "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
+    "latest_report_path": "ops/SYSTEM_REVIEW_LATEST.json",
+    "game_backlog_path": "ops/GAME_IMPROVEMENT_BACKLOG.json",
+    "activation": "REQUIRE_DEPLOYED_QUEUE_VERSION_3"
   }
 }

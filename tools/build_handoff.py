@@ -47,6 +47,9 @@ def main():
       "resume_checkpoint":state.get("resume_checkpoint",{}),
       "review_queue":state.get("review_queue",[]),
       "cloud_game_repair":state.get("cloud_game_repair",{}),
+      "pending_approvals":state.get("pending_approvals",{}),
+      "execution_coordination":state.get("execution_coordination",{}),
+      "system_review":state.get("system_review",{}),
       "important":"Actions / Roblox Studio evidence must be checked independently. A generated status page is not proof of runtime health."
     }
     (OUT/"LATEST_STATE.json").write_text(json.dumps(record,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
@@ -82,6 +85,28 @@ def main():
       "",
       "## 次の開発優先事項"]
     fields+=["- "+x for x in state.get("next",[])]
+    approvals=state.get("pending_approvals",{})
+    if approvals.get("items"):
+        fields+=["", "## 現在の取り込み承認待ち（観測時点）",
+          "最新一覧: https://github.com/"+repo+"/blob/twf-repair-coordinator/status/PENDING_APPROVALS.md",
+          "", "| PR | 内容 | 現在headのCI |", "| --- | --- | --- |"]
+        for item in approvals["items"]:
+            summary=item["summary"].replace("|","／").replace("\n"," ")
+            fields.append(f"| [#{item['number']}]({item['url']}) | {summary} / {item['kind']} | [合格]({item['ci_url']}) |")
+        fields+=["", "承認する場合の返信: "+approvals["approval_text"],
+          "対象headのmain取り込みのみ。公開・課金・外部モデルは含まない。現在GitHubでhead/CIを再確認する。", ""]
+    coordination=state.get("execution_coordination",{})
+    if coordination:
+        fields+=["", "## 手動goと自動実行の競合防止",
+          "- 手動goは既存ゲームタスクへ統一。実行中は追加起動せず確認へ合流する。",
+          "- 共通ロック: twf-repair-coordinator / ops/REPAIR_COORDINATOR.json。expected_sha・force=false・epochを必須にする。",
+          "- ゲーム修正・日次体制改善・手動統合が同じロックを使う。docs/REPAIR_COORDINATION.mdを読む。"]
+    system_review=state.get("system_review",{})
+    if system_review:
+        fields+=["", "## 体制とゲームの日次改善",
+          "- タスク: "+system_review.get("task_id","UNKNOWN")+" / 毎朝（Asia/Tokyo）",
+          "- 実測の欠陥と最新WEB一次資料から、体制の最小修正・回帰検査・draft PR、ゲームの根拠付き実験候補を進める。",
+          "- 現在の方式を最適と固定せず、前後の結果と未解決点を記録する。docs/SYSTEM_REVIEW.mdを読む。"]
     checkpoint=state.get("resume_checkpoint",{})
     if checkpoint:
         fields+=["","## 最新の再開地点（観測時点の記録）",

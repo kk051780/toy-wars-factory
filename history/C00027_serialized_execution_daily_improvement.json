@@ -1,0 +1,267 @@
+{
+  "id": "C00027",
+  "date": "2026-10-25",
+  "observed_at_utc": "2026-10-25T00:02:08.432636+00:00",
+  "kind": "SERIALIZED_EXECUTION_ACTIONABLE_APPROVALS_DAILY_IMPROVEMENT",
+  "owner_instruction": [
+    "自動実行と俺の手動goは競合しないようにしろよ",
+    "承認すべきタスクを挙げないと先進まねーだろ。再発防止しろ",
+    "体制自体の問題確認と改善をWEBでの最新事例をとり入れながら定期実行し、体制もゲームも日々進化させる"
+  ],
+  "base_main": "658b69a4328de55c9c5129ad1f8894518c9efb49",
+  "completed": [
+    "Read all three pending PRs, actual diffs and exact-head CI. #35 is regression-only, #38 fixes three floor properties, #40 is regression-only. All current heads pass.",
+    "Add fenced WORKER/META/CONTROLLER leases plus a DISPATCH ticket for manual go. Unknown/active service joins instead of creating a second writer; expiry alone cannot steal ownership.",
+    "Create shared coordinator branch and verify real same-parent contention. A stale ref request fails; a current-head but non-fast-forward update explicitly rejects with first owner retained.",
+    "Add actionable exact-head approval packets and deterministic handoff sections with PR links, contents, evidence, scope and a ready-to-send approval sentence.",
+    "Register a separate daily ChatGPT system/game review task with current primary-web research, measured failures/effectiveness, tested draft improvements and game experiment backlog under the shared lease.",
+    "Preserve game source (4 files / 678 lines / 26,753 bytes), existing tests/negative controls, Gemini hold, budget/model/credentials and all integration/publication approvals.",
+    "Local 108 Python tests (34 new coordination/system cases) and 21 policy checks pass. Current candidate combination also passes eight native suites including four upgrade cases and pinned old floor control."
+  ],
+  "coordination_proof": {
+    "initial": {
+      "sha": "c0e99cd9fa07572b4d45a4728d0e263242c1c1f7",
+      "tree": "d854079cb3a489575c2c916151a60663f25d5609"
+    },
+    "claim_a": {
+      "sha": "78fde7a013ccd651c63311a5574d6e699f524a5e",
+      "tree": "b27f47297661aae2471084ca5b5d76a49162c1d0"
+    },
+    "claim_b": {
+      "sha": "6eecdb18d5eb8bc57446f13437f38cb5b9c424b9",
+      "tree": "069363177bb8a45b7694c7e2cea615a7d9f6891b"
+    },
+    "owner": "f15d82d1-be3b-4e0f-95a7-91f041171522",
+    "stale_ref_rejected": true,
+    "non_fast_forward_rejected": true,
+    "non_fast_forward_message": "rejecting non-fast forward update",
+    "first_owner_head_preserved": "78fde7a013ccd651c63311a5574d6e699f524a5e",
+    "meta_task_id": "6add445e4138819197d9cf2b1a02534d"
+  },
+  "pending_approvals": {
+    "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
+    "items": [
+      {
+        "number": 35,
+        "title": "[TWF auto-fix] Cover production, wave escape and base-loss reset",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/35",
+        "head": "1fdc549d0d708230cc642b18ceb020f28efa0806",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40114787373",
+        "summary": "生産3件・ウェーブ2件・敗北リセット1件の回帰検査。ゲーム本体の変更なし。",
+        "changed_files": [
+          "history/C00018_heartbeat_production_regression.json",
+          "history/C00020_wave_escape_regression.json",
+          "history/C00021_base_loss_reset_regression.json",
+          "history/C00022_wave_status_fixture_fix.json",
+          "tests/auto/base_loss_reset_spec.lua",
+          "tests/auto/production_spec.lua",
+          "tests/auto/wave_escape_spec.lua"
+        ],
+        "kind": "回帰検査追加"
+      },
+      {
+        "number": 38,
+        "title": "[TWF auto-fix] Restore collision on three walkable floors",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/38",
+        "head": "b8e543ada9e5613486cbcfc1819a3aba8cc7932c",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40137069031",
+        "summary": "戦場・工場・ロビーの床だけ衝突を有効化。追加5検査が合格。",
+        "changed_files": [
+          "history/C00024_walkable_floor_collision_fix.json",
+          "src/ToyWarsServer.server.lua",
+          "tests/auto/walkable_floors_spec.lua"
+        ],
+        "kind": "ゲーム本体修正"
+      },
+      {
+        "number": 40,
+        "title": "[TWF auto-fix] Test factory upgrade economy boundaries",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/40",
+        "head": "f172f71119479ba0cafafb2a2163b3b6e61ce39c",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40138956623",
+        "summary": "工場アップグレードの不足金額・ぴったり購入・上限・収入の4検査。ゲーム本体の変更なし。",
+        "changed_files": [
+          "history/C00026_upgrade_economy_regression.json",
+          "tests/auto/upgrade_economy_spec.lua"
+        ],
+        "kind": "回帰検査追加"
+      }
+    ],
+    "roblox_publish_authorized": false,
+    "automatic_merge_authorized": false,
+    "observed_at": "2026-10-24T23:55:32.797750+00:00",
+    "signature": "b08762fc5138a612cfd69c00e5265e2df843fd31e66db923f7ae167c2b745a7e",
+    "approval_text": "#35・#38・#40のmain取り込みを承認"
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 678,
+    "lua_bytes": 26753
+  },
+  "characters_touched": [],
+  "tests": {
+    "python": 108,
+    "new_python": 34,
+    "policy": 21,
+    "combined_native_suites": 8,
+    "engine": "NOT_RUN",
+    "new_scheduled_v3_run": "NOT_YET_OBSERVED"
+  },
+  "system_review": {
+    "status": "SCHEDULED_NOT_YET_RUN",
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "title": "TOY WARS 体制・ゲーム改善点検",
+    "backend": "CHATGPT_CONNECTED_GITHUB_TASK",
+    "is_enabled_confirmed": true,
+    "cadence_hours": 24,
+    "timezone": "Asia/Tokyo",
+    "local_start": "09:30",
+    "timing_mode": "flexible_schedule",
+    "web_research_required": true,
+    "game_backlog_required": true,
+    "max_open_prs": 1,
+    "prompt": "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
+    "protocol": "docs/SYSTEM_REVIEW.md",
+    "source": "2026-10-25 owner requested daily evolution of the system and the game using current web cases.",
+    "verification_scope": "Registration and controller initial research only; no completed daily service run claimed."
+  },
+  "restrictions": {
+    "automatic_merge": false,
+    "external_provider_inference": false,
+    "roblox_publish": false,
+    "gemini_hold": "PRESERVED"
+  },
+  "ci": "PENDING_EXACT_HEAD; final setup PR records the result",
+  "next_action": "Present all three exact-head integration approvals now. Keep game and daily tasks enabled; use shared ownership and verify future runtime outcomes.",
+  "changed_files": [
+    ".github/workflows/bootstrap-quality.yml",
+    "AGENTS.md",
+    "PROJECT_STATE.json",
+    "config/autonomous_repair.json",
+    "docs/AUTONOMOUS_REPAIR.md",
+    "docs/REPAIR_COORDINATION.md",
+    "docs/SYSTEM_REVIEW.md",
+    "history/C00027_serialized_execution_daily_improvement.json",
+    "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+    "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
+    "tests/test_repair_control.py",
+    "tests/test_system_review_scope.py",
+    "tools/build_handoff.py",
+    "tools/check_meta_diff.py",
+    "tools/repair_control.py",
+    "tools/repair_queue.py",
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "file_size_changes": [
+    {
+      "path": ".github/workflows/bootstrap-quality.yml",
+      "before_bytes": 9340,
+      "after_bytes": 11391,
+      "delta_bytes": 2051
+    },
+    {
+      "path": "AGENTS.md",
+      "before_bytes": 2296,
+      "after_bytes": 4098,
+      "delta_bytes": 1802
+    },
+    {
+      "path": "PROJECT_STATE.json",
+      "before_bytes": 32840,
+      "after_bytes": 39509,
+      "delta_bytes": 6669
+    },
+    {
+      "path": "config/autonomous_repair.json",
+      "before_bytes": 2899,
+      "after_bytes": 5421,
+      "delta_bytes": 2522
+    },
+    {
+      "path": "docs/AUTONOMOUS_REPAIR.md",
+      "before_bytes": 4407,
+      "after_bytes": 5123,
+      "delta_bytes": 716
+    },
+    {
+      "path": "docs/REPAIR_COORDINATION.md",
+      "before_bytes": 0,
+      "after_bytes": 5851,
+      "delta_bytes": 5851
+    },
+    {
+      "path": "docs/SYSTEM_REVIEW.md",
+      "before_bytes": 0,
+      "after_bytes": 4237,
+      "delta_bytes": 4237
+    },
+    {
+      "path": "history/C00027_serialized_execution_daily_improvement.json",
+      "before_bytes": 0,
+      "after_bytes": 10053,
+      "delta_bytes": 10053
+    },
+    {
+      "path": "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+      "before_bytes": 7264,
+      "after_bytes": 10014,
+      "delta_bytes": 2750
+    },
+    {
+      "path": "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
+      "before_bytes": 0,
+      "after_bytes": 6628,
+      "delta_bytes": 6628
+    },
+    {
+      "path": "tests/test_repair_control.py",
+      "before_bytes": 0,
+      "after_bytes": 13712,
+      "delta_bytes": 13712
+    },
+    {
+      "path": "tests/test_system_review_scope.py",
+      "before_bytes": 0,
+      "after_bytes": 2359,
+      "delta_bytes": 2359
+    },
+    {
+      "path": "tools/build_handoff.py",
+      "before_bytes": 7788,
+      "after_bytes": 9855,
+      "delta_bytes": 2067
+    },
+    {
+      "path": "tools/check_meta_diff.py",
+      "before_bytes": 0,
+      "after_bytes": 2480,
+      "delta_bytes": 2480
+    },
+    {
+      "path": "tools/repair_control.py",
+      "before_bytes": 0,
+      "after_bytes": 14731,
+      "delta_bytes": 14731
+    },
+    {
+      "path": "tools/repair_queue.py",
+      "before_bytes": 3219,
+      "after_bytes": 3513,
+      "delta_bytes": 294
+    },
+    {
+      "path": "status/CHAT_HANDOFF.md",
+      "before_bytes": 11314,
+      "after_bytes": 13727,
+      "delta_bytes": 2413
+    },
+    {
+      "path": "status/LATEST_STATE.json",
+      "before_bytes": 27777,
+      "after_bytes": 34446,
+      "delta_bytes": 6669
+    }
+  ]
+}

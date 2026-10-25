@@ -1,0 +1,279 @@
+"""Fenced repair leases and explicit owner approval packets; no scheduler or provider calls.
+
+Persist returned states on the shared coordinator branch with expected_sha and
+force=False. A plan is NOT a lock until that non-fast-forward-protected update
+succeeds. All competing commits must use the exact observed head as parent.
+"""
+import argparse
+from copy import deepcopy
+from datetime import datetime, timedelta, timezone
+import hashlib
+import json
+from pathlib import Path
+import re
+import subprocess
+import uuid
+
+TASK_ID = "6adbf0d6a7d881918ce181dff2468867"
+CONTROL_BRANCH = "twf-repair-coordinator"
+CONTROL_PATH = "ops/REPAIR_COORDINATOR.json"
+
+
+def canonical_id(value):
+    if not isinstance(value, str) or str(uuid.UUID(value)) != value:
+        raise ValueError("canonical operation/run UUID required")
+    return value
+
+
+def instant(value):
+    moment = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if moment.tzinfo is None:
+        raise ValueError("timezone-aware timestamp required")
+    return moment.astimezone(timezone.utc)
+
+
+def validate(state):
+    if state.get("schema") != 1 or state.get("task_id") != TASK_ID:
+        raise ValueError("wrong coordinator schema/task")
+    epoch = state.get("epoch")
+    if type(epoch) is not int or epoch < 0:
+        raise ValueError("invalid lease generation")
+    holder = state.get("holder")
+    if holder is not None:
+        canonical_id(holder["owner_id"])
+        if holder.get("kind") not in ("DISPATCH", "WORKER", "META", "CONTROLLER"):
+            raise ValueError("invalid owner kind")
+        if holder["kind"] in ("WORKER", "META") and holder.get("task_id") != state.get("authorized_tasks", {}).get(holder["kind"]):
+            raise ValueError("unregistered worker task")
+        if holder.get("epoch") != epoch:
+            raise ValueError("inconsistent fencing generation")
+        if instant(holder["expires_at"]) <= instant(holder["acquired_at"]):
+            raise ValueError("invalid lease lifetime")
+    return state
+
+
+def initial_state(packet=None):
+    return {"schema": 1, "task_id": TASK_ID, "epoch": 0, "holder": None,
+            "authorized_tasks": {"WORKER": TASK_ID},
+            "approval_packet": packet, "last_reported_approval_signature": None,
+            "last_completed": None}
+
+
+def acquire(state, kind, owner_id, now, service_status=None, base_main_sha=None, work_branch=None, actor_task_id=None):
+    validate(state)
+    canonical_id(owner_id)
+    at = instant(now)
+    if kind not in ("DISPATCH", "WORKER", "META", "CONTROLLER"):
+        raise ValueError("invalid lease kind")
+    if kind in ("WORKER", "META"):
+        actor_task_id = actor_task_id or (TASK_ID if kind == "WORKER" else None)
+        if not actor_task_id or actor_task_id != state.get("authorized_tasks", {}).get(kind):
+            raise ValueError("worker task must be registered on the shared coordinator")
+    if kind in ("WORKER", "META") and work_branch is not None:
+        prefix = "auto/twf-game-repair-" if kind == "WORKER" else "auto/twf-system-review-"
+        if kind == "META" or work_branch != "auto/twf-game-repair":
+            if not work_branch.startswith(prefix):
+                raise ValueError("worker cannot claim an unrelated branch")
+            canonical_id(work_branch[len(prefix):])
+    holder = state["holder"]
+    if kind == "DISPATCH":
+        if service_status == "in_progress":
+            return {"action": "JOIN_EXISTING", "state": state, "write": False}
+        if service_status not in ("completed", "failed", "no_update"):
+            return {"action": "WAIT_METADATA", "state": state, "write": False}
+    if holder:
+        # A dispatcher only requests a worker; the first worker atomically adopts
+        # that ticket. Other manual requests cannot enqueue a second request.
+        if kind == "WORKER" and holder["kind"] == "DISPATCH":
+            pass
+        elif holder["kind"] == kind and holder["owner_id"] == owner_id:
+            action = "RESUME" if at < instant(holder["expires_at"]) else "WAIT_RECOVERY"
+            return {"action": action, "state": state, "write": False}
+        else:
+            action = "JOIN_EXISTING" if holder["kind"] in ("WORKER", "META", "DISPATCH") else "WAIT_LOCK"
+            if at >= instant(holder["expires_at"]) and holder["kind"] != "DISPATCH":
+                action = "WAIT_RECOVERY"
+            return {"action": action, "state": state, "write": False,
+                    "holder": deepcopy(holder)}
+    next_state = deepcopy(state)
+    next_state["epoch"] += 1
+    seconds = 120 if kind == "DISPATCH" else 1800
+    next_state["holder"] = {"kind": kind, "owner_id": owner_id, "task_id": actor_task_id,
+                            "epoch": next_state["epoch"], "acquired_at": at.isoformat(),
+                            "expires_at": (at + timedelta(seconds=seconds)).isoformat(),
+                            "base_main_sha": base_main_sha,
+                            "work_branch": work_branch,
+                            "origin": "manual" if holder and holder["kind"] == "DISPATCH" else kind.lower()}
+    return {"action": "ACQUIRE", "state": next_state, "write": True}
+
+
+def owns(state, kind, owner_id, epoch, now):
+    validate(state)
+    holder = state["holder"]
+    return bool(holder and holder["kind"] == kind and holder["owner_id"] == owner_id
+                and holder["epoch"] == epoch and instant(now) < instant(holder["expires_at"]))
+
+
+def release(state, kind, owner_id, epoch, now, packet=None, reported=False):
+    validate(state)
+    holder = state["holder"]
+    if not holder or (holder["kind"], holder["owner_id"], holder["epoch"]) != (kind, owner_id, epoch):
+        raise ValueError("only the current fenced owner can release")
+    result = deepcopy(state)
+    result["holder"] = None
+    result["last_completed"] = {"kind": kind, "owner_id": owner_id, "epoch": epoch,
+                                "released_at": instant(now).isoformat()}
+    if packet is not None:
+        result["approval_packet"] = packet
+        if reported:
+            result["last_reported_approval_signature"] = packet["signature"]
+    return result
+
+
+def recover_finished_worker(state, observed_run, now):
+    validate(state)
+    holder = state["holder"]
+    if (not holder or holder["kind"] not in ("WORKER", "META") or
+            observed_run.get("id") != holder["owner_id"] or
+            observed_run.get("recorded_status") not in ("completed", "failed", "no_update") or
+            not observed_run.get("completed_at") or
+            instant(observed_run["completed_at"]) > instant(now)):
+        raise ValueError("recovery requires positive completion evidence for the exact worker")
+    result = release(state, holder["kind"], holder["owner_id"], holder["epoch"], now)
+    result["last_completed"]["recovered_from_service_evidence"] = True
+    return result
+
+
+def approval_packet(pulls, repository, observed_at):
+    """Require exact-head successful CI and a concrete diff summary for every item."""
+    instant(observed_at)
+    entries, seen = [], set()
+    prefix = "https://github.com/" + repository
+    for pr in sorted(pulls, key=lambda item: item["number"]):
+        number = pr.get("number")
+        if type(number) is not int or number <= 0 or number in seen:
+            raise ValueError("invalid/duplicate approval PR")
+        seen.add(number)
+        if (pr.get("state") != "open" or pr.get("merged") is not False or
+                pr.get("repository") != repository or pr.get("ci") != "success" or
+                pr.get("ci_head") != pr.get("head") or
+                not re.fullmatch(r"[0-9a-f]{40}", pr.get("head", ""))):
+            raise ValueError("approval requires an open same-repository PR and exact-head success")
+        if (pr.get("url") != prefix + "/pull/" + str(number) or
+                not pr.get("ci_url", "").startswith(prefix + "/actions/runs/") or
+                not pr.get("summary") or not pr.get("changed_files")):
+            raise ValueError("approval needs concrete contents and evidence URLs")
+        entries.append({key: pr[key] for key in (
+            "number", "title", "url", "head", "ci_url", "summary", "changed_files")})
+        entries[-1]["kind"] = ("ゲーム本体修正" if any(x.startswith("src/") for x in pr["changed_files"])
+                               else "開発体制改善" if any(x.startswith(("tools/", "ops/")) for x in pr["changed_files"])
+                               else "回帰検査追加")
+    content = {"scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY", "items": entries,
+               "roblox_publish_authorized": False, "automatic_merge_authorized": False}
+    signature = hashlib.sha256(json.dumps(content, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+    return {**content, "observed_at": observed_at, "signature": signature,
+            "approval_text": "・".join("#" + str(p["number"]) for p in entries) + "のmain取り込みを承認"}
+
+
+def report_needed(state, packet, manual=False):
+    # Manual status/GO responses always list approvals. Scheduled runs may only
+    # suppress an identical packet AFTER a complete approval request was recorded.
+    return bool(packet["items"]) and (manual or state.get("last_reported_approval_signature") != packet["signature"])
+
+
+def render_approvals(packet):
+    lines = ["# 取り込み承認待ち", "", "観測時点: " + packet["observed_at"], "",
+             "| PR | 内容 | 区分 | 現在headの検査 |", "| --- | --- | --- | --- |"]
+    for item in packet["items"]:
+        clean = item["summary"].replace("|", "／").replace("\n", " ")
+        lines.append(f'| [#{item["number"]}]({item["url"]}) | {clean} | {item["kind"]} | [合格]({item["ci_url"]}) / `{item["head"][:8]}` |')
+    lines += ["", "承認する場合の返信: **" + packet["approval_text"] + "**", "",
+              "対象は上記コミットのmain取り込み。Roblox公開・課金・外部モデル再実行の承認は含まない。",
+              "承認後にhead・CI・競合を再確認し、変更があれば承認を流用しない。", ""]
+    return "\n".join(lines)
+
+
+def git(*args):
+    return subprocess.check_output(["git", *args], text=True).strip()
+
+
+def verify_pr(policy, base, head, branch, control_ref):
+    if policy.get("queue_version", 0) < 3:
+        return "pre-coordination base policy"
+    head = git("rev-parse", head)
+    meta = branch.startswith(policy.get("system_review", {}).get("branch_prefix", "auto/twf-system-review-"))
+    kind = "META" if meta else "WORKER"
+    expected_task = policy["system_review"]["task_id"] if meta else policy["task_id"]
+    for old in ([] if meta else policy["coordination"].get("grandfathered_pr_heads", [])):
+        if old["head"] == head and old["branch"] == branch:
+            return "exact pre-v3 draft grandfathered; no approval or merge permission granted"
+        if old["branch"] == branch:
+            subprocess.run(["git", "merge-base", "--is-ancestor", old["head"], head], check=True, capture_output=True)
+            base = old["head"]
+    prefix = policy["system_review"]["branch_prefix"] if meta else policy["branch_prefix"]
+    legacy = None if meta else policy["branch"]
+    if branch != legacy and not branch.startswith(prefix):
+        raise ValueError("new work requires a UUID lane")
+    if branch != legacy:
+        canonical_id(branch[len(prefix):])
+    raw = subprocess.check_output(["git", "diff", "--name-status", "--no-renames", "-z", base, head, "--"]).decode().split("\0")
+    entries = list(zip(raw[::2], raw[1::2]))
+    records = [path for status, path in entries if status in ("A", "M") and re.fullmatch(r"history/C[0-9]{5}_[^/]+\.json", path)]
+    if not records:
+        raise ValueError("new worker PR requires a cycle record with a coordinator claim")
+    for path in records:
+        history = json.loads(git("show", head + ":" + path))
+        proof = history.get("coordination", {})
+        claim = proof.get("claim_commit", "")
+        owner_id = canonical_id(proof.get("owner_run_id"))
+        if (proof.get("branch") != CONTROL_BRANCH or
+                not re.fullmatch(r"[0-9a-f]{40}", claim)):
+            raise ValueError("missing canonical coordinator proof")
+        subprocess.run(["git", "merge-base", "--is-ancestor", claim, control_ref], check=True, capture_output=True)
+        state = json.loads(git("show", claim + ":" + CONTROL_PATH))
+        validate(state)
+        holder = state["holder"]
+        if not holder or (holder["kind"], holder["owner_id"], holder["epoch"]) != (kind, owner_id, proof.get("epoch")):
+            raise ValueError("claim belongs to another lease owner/generation")
+        if holder.get("task_id") != expected_task:
+            raise ValueError("claim belongs to another registered task")
+        if holder.get("work_branch") != branch:
+            raise ValueError("claim does not cover this repair branch")
+        if state["epoch"] < 1:
+            raise ValueError("invalid claim generation")
+        parent = json.loads(git("show", claim + "^:" + CONTROL_PATH))
+        validate(parent)
+        if state.get("authorized_tasks") != parent.get("authorized_tasks"):
+            raise ValueError("a claim cannot change registered tasks")
+        if state["epoch"] != parent["epoch"] + 1 or (parent["holder"] and (kind != "WORKER" or parent["holder"]["kind"] != "DISPATCH")):
+            raise ValueError("claim must follow idle or a dispatch ticket")
+    return f"{len(records)} immutable coordinator claim(s) verified"
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    sub = parser.add_subparsers(dest="command", required=True)
+    plan = sub.add_parser("plan")
+    plan.add_argument("--input", required=True, help="state, kind, owner_id, now, service_status, base_main_sha")
+    packet = sub.add_parser("approvals")
+    packet.add_argument("--input", required=True, help="pulls, repository, observed_at")
+    packet.add_argument("--markdown", action="store_true")
+    check = sub.add_parser("verify-pr")
+    for arg in ("policy", "base", "head", "branch", "control-ref"):
+        check.add_argument("--" + arg, required=True)
+    args = parser.parse_args()
+    if args.command == "verify-pr":
+        policy = json.loads(Path(args.policy).read_text())
+        print("PASS: repair coordination; " + verify_pr(policy, args.base, args.head, args.branch, args.control_ref))
+        return
+    data = json.loads(Path(args.input).read_text())
+    if args.command == "plan":
+        result = acquire(**data)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    else:
+        result = approval_packet(**data)
+        print(render_approvals(result) if args.markdown else json.dumps(result, ensure_ascii=False, indent=2))
+
+
+if __name__ == "__main__":
+    main()

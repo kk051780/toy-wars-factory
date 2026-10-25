@@ -57,6 +57,13 @@ def choose_action(policy, pulls, run_id):
     return result("START", branch=branch, base="main", open_prs=numbers, limit=limit)
 
 
+def choose_system_action(policy, pulls, run_id):
+    meta = policy["system_review"]
+    scoped = {**policy, "enabled": meta["enabled"], "branch": None,
+              "branch_prefix": meta["branch_prefix"], "max_open_prs": meta["max_open_prs"]}
+    return choose_action(scoped, pulls, run_id)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--policy", default="config/autonomous_repair.json")
