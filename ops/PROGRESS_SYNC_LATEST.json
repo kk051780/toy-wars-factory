@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "observed_at": "2026-10-25T03:48:07.958Z",
+  "source_main_sha": "f728fa525d8b409ef2a08a3da59e4ae7e73e27b1",
+  "progress_main_merge": "59bdd5888c96b0d787bbef8296ec61840564359c",
+  "main_after_handoff": "6fa3b822b805d606b5bed893c5100c2bcb642f2f",
+  "pr": 48,
+  "reviewed_head": "6a5f0629d47035e9e86f12fa8df8f3d33d785529",
+  "independent_audit": {
+    "task_id": "6add78e3873481919a38128922a0c176",
+    "run_id": "717e6a5f-0540-8326-9d8a-11c125bcdae3",
+    "verdict": "APPROVE",
+    "prior_rejection_run": "41085574-972c-832e-a7f4-943b90378ac5",
+    "prior_blockers": 2,
+    "remediations_verified": true
+  },
+  "ci": {
+    "pr_head": "https://github.com/kk051780/toy-wars-factory/actions/runs/40159117754",
+    "post_merge": "https://github.com/kk051780/toy-wars-factory/actions/runs/40159462303",
+    "post_merge_conclusion": "success",
+    "handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40159462298",
+    "handoff_conclusion": "success"
+  },
+  "scoreboard": {
+    "automation": {
+      "percent": 57,
+      "done": 8,
+      "total": 15
+    },
+    "game": {
+      "percent": 38,
+      "done": 7,
+      "total": 18
+    }
+  },
+  "limitations": [
+    "Roblox Studio real engine not run",
+    "mobile and two client verification not run",
+    "continuous autonomous operation and A09 recovery not verified",
+    "Gemini inference remains on severe hold",
+    "Roblox publication remains HOLD_ENGINE_UNVERIFIED"
+  ]
+}

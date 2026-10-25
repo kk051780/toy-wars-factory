@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T03:21:03.539Z",
+  "observed_at": "2026-10-25T03:48:07.958Z",
   "requests": [
     {
       "id": "hosted_roblox_evidence",
@@ -80,7 +80,7 @@
       "kind": "EVIDENCE_BASED_STATUS_RECONCILIATION",
       "priority": "P1",
       "assigned_role": "CONTROLLER",
-      "status": "OPEN",
+      "status": "RESOLVED_MAIN_MERGED_POST_MERGE_QA_PASSED",
       "request": "On current main, PROJECT_STATE.independent_integration still says PENDING_EXACT_REVIEWER_CUTOVER/runtime_verified=false. Prepare a separate reviewed and tested status-only update reflecting new REVIEWER's actual PR45 independent merge and post-merge main QA. Independently verify current task is enabled and old reviewer disabled before setting is_enabled_confirmed=true. Re-evaluate progress milestones A08 (first independent unattended integration) and G07 (Heartbeat + production cadence both main-integrated) against exact evidence; update dashboard only with acceptance tests and evidence. Do not claim sustained recurring reliability, Roblox engine verification, release readiness or Gemini hold clearance.",
       "evidence": {
         "review": "https://github.com/kk051780/toy-wars-factory/blob/twf-repair-coordinator/ops/reviews/PR0045_8676e344.json",
@@ -91,7 +91,21 @@
         "handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40157791429",
         "main_after_handoff": "f728fa525d8b409ef2a08a3da59e4ae7e73e27b1"
       },
-      "created_at": "2026-10-25T03:21:03.539Z"
+      "created_at": "2026-10-25T03:21:03.539Z",
+      "resolved_at": "2026-10-25T03:48:07.958Z",
+      "resolution": {
+        "pr": 48,
+        "head": "6a5f0629d47035e9e86f12fa8df8f3d33d785529",
+        "merge_sha": "59bdd5888c96b0d787bbef8296ec61840564359c",
+        "audit_task_id": "6add78e3873481919a38128922a0c176",
+        "audit_run": "717e6a5f-0540-8326-9d8a-11c125bcdae3",
+        "audit_verdict": "APPROVE_CURRENT_HEAD_ONLY",
+        "post_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40159462303",
+        "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40159462298",
+        "current_main": "6fa3b822b805d606b5bed893c5100c2bcb642f2f",
+        "automation_percent": 57,
+        "game_percent": 38
+      }
     }
   ]
 }
