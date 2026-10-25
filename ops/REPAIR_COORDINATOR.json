@@ -1,8 +1,18 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 40,
-  "holder": null,
+  "epoch": 41,
+  "holder": {
+    "kind": "CONTROLLER",
+    "owner_id": "7b2f62ac-7e5a-4c94-8e4a-41e3854bcb6d",
+    "task_id": null,
+    "epoch": 41,
+    "acquired_at": "2026-10-25T09:02:08.280Z",
+    "expires_at": "2026-10-25T09:32:08.280Z",
+    "base_main_sha": "b6fb4d8a94330f1946335aa77af17ab64e1ac502",
+    "work_branch": "ops/twf-qa-token-isolation",
+    "origin": "controller"
+  },
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
