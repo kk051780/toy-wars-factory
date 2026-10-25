@@ -1,0 +1,164 @@
+{
+  "id": "C00028",
+  "date": "2026-10-25",
+  "observed_at_utc": "2026-10-25T00:12:11.264947+00:00",
+  "kind": "EMPTY_APPROVAL_STATE_AND_ACTUAL_CUTOVER_PROOF",
+  "base_main": "192af53b50b15d2d9e9896f63ffa3f0c9818fba0",
+  "completed": [
+    "Integrate requested setup PR #41 at 192af53b50b15d2d9e9896f63ffa3f0c9818fba0 with exact reviewed tree. PR CI 40145345100, main QA 40145467694 and living handoff 40145467717 all passed.",
+    "Verify actual service run d5c2439a-d8c8-8324-bf06-a3f4abf85c06 observed undeployed queue v3/controller lock, made no edits, and presented all three approval PRs plus exact-head CI links and reply text. Task remained enabled.",
+    "Fix the empty approval queue so it emits no approval sentence and clearly says no items are pending. Add a regression; all 109 Python tests pass.",
+    "Retain eight-suite combined native candidate proof, current approval heads, daily task registration, shared lease and all original provider/game/release boundaries."
+  ],
+  "guard_validation_run": {
+    "run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06",
+    "completed_at": "2026-10-25T00:03:07.472140Z",
+    "result_id_matches": true,
+    "observed_main": "658b69a4328de55c9c5129ad1f8894518c9efb49",
+    "observed_queue_version": 2,
+    "controller_lock_observed": true,
+    "code_edits": false,
+    "approval_table": [
+      35,
+      38,
+      40
+    ],
+    "approval_reply_text": "#35・#38・#40のmain取り込みを承認",
+    "schedule_mutated": false,
+    "scope": "Actual pre-deployment fail-closed run with explicit approval table; not a successful post-deployment worker claim."
+  },
+  "defect": {
+    "reproduction": "approval_packet([],repo,now) used to generate the dangling phrase のmain取り込みを承認.",
+    "fix": "Empty packets have an empty reply; renderer explicitly states no pending items.",
+    "regression": "test_empty_queue_never_invents_an_approval_request"
+  },
+  "changed_files": [
+    "tools/repair_control.py",
+    "tests/test_repair_control.py",
+    "PROJECT_STATE.json",
+    "history/C00028_approval_empty_state_and_cutover_proof.json",
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 678,
+    "lua_bytes": 26753
+  },
+  "characters_touched": [],
+  "tests": {
+    "python": 109,
+    "new_python": 1,
+    "prior_setup_python": 108,
+    "combined_native_suites": 8,
+    "engine": "NOT_RUN"
+  },
+  "approval_items": {
+    "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
+    "items": [
+      {
+        "number": 35,
+        "title": "[TWF auto-fix] Cover production, wave escape and base-loss reset",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/35",
+        "head": "1fdc549d0d708230cc642b18ceb020f28efa0806",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40114787373",
+        "summary": "生産3件・ウェーブ2件・敗北リセット1件の回帰検査。ゲーム本体の変更なし。",
+        "changed_files": [
+          "history/C00018_heartbeat_production_regression.json",
+          "history/C00020_wave_escape_regression.json",
+          "history/C00021_base_loss_reset_regression.json",
+          "history/C00022_wave_status_fixture_fix.json",
+          "tests/auto/base_loss_reset_spec.lua",
+          "tests/auto/production_spec.lua",
+          "tests/auto/wave_escape_spec.lua"
+        ],
+        "kind": "回帰検査追加"
+      },
+      {
+        "number": 38,
+        "title": "[TWF auto-fix] Restore collision on three walkable floors",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/38",
+        "head": "b8e543ada9e5613486cbcfc1819a3aba8cc7932c",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40137069031",
+        "summary": "戦場・工場・ロビーの床だけ衝突を有効化。追加5検査が合格。",
+        "changed_files": [
+          "history/C00024_walkable_floor_collision_fix.json",
+          "src/ToyWarsServer.server.lua",
+          "tests/auto/walkable_floors_spec.lua"
+        ],
+        "kind": "ゲーム本体修正"
+      },
+      {
+        "number": 40,
+        "title": "[TWF auto-fix] Test factory upgrade economy boundaries",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/40",
+        "head": "f172f71119479ba0cafafb2a2163b3b6e61ce39c",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40138956623",
+        "summary": "工場アップグレードの不足金額・ぴったり購入・上限・収入の4検査。ゲーム本体の変更なし。",
+        "changed_files": [
+          "history/C00026_upgrade_economy_regression.json",
+          "tests/auto/upgrade_economy_spec.lua"
+        ],
+        "kind": "回帰検査追加"
+      }
+    ],
+    "roblox_publish_authorized": false,
+    "automatic_merge_authorized": false,
+    "observed_at": "2026-10-24T23:55:32.797750+00:00",
+    "signature": "b08762fc5138a612cfd69c00e5265e2df843fd31e66db923f7ae167c2b745a7e",
+    "approval_text": "#35・#38・#40のmain取り込みを承認"
+  },
+  "setup_deployment": {
+    "pr": 41,
+    "merge": "192af53b50b15d2d9e9896f63ffa3f0c9818fba0",
+    "tree": "a14d10e706830201c8b38e287bdf91720d2690b5",
+    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40145345100",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40145467694",
+    "main_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40145467717"
+  },
+  "restrictions": {
+    "automatic_merge": false,
+    "roblox_publish": false,
+    "external_provider_inference": false
+  },
+  "ci": "PENDING_EXACT_HEAD",
+  "file_size_changes": [
+    {
+      "path": "tools/repair_control.py",
+      "before_bytes": 14731,
+      "after_bytes": 14919,
+      "delta_bytes": 188
+    },
+    {
+      "path": "tests/test_repair_control.py",
+      "before_bytes": 13712,
+      "after_bytes": 14135,
+      "delta_bytes": 423
+    },
+    {
+      "path": "PROJECT_STATE.json",
+      "before_bytes": 39509,
+      "after_bytes": 40278,
+      "delta_bytes": 769
+    },
+    {
+      "path": "history/C00028_approval_empty_state_and_cutover_proof.json",
+      "before_bytes": 0,
+      "after_bytes": 6560,
+      "delta_bytes": 6560
+    },
+    {
+      "path": "status/CHAT_HANDOFF.md",
+      "before_bytes": 13727,
+      "after_bytes": 12977,
+      "delta_bytes": -750
+    },
+    {
+      "path": "status/LATEST_STATE.json",
+      "before_bytes": 34446,
+      "after_bytes": 35216,
+      "delta_bytes": 770
+    }
+  ]
+}
