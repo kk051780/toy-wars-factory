@@ -123,6 +123,8 @@ class MultiGameControlPlaneTests(unittest.TestCase):
         game["quality"] = {key: "PASS" for key in game["quality"]}
         result = evaluate(game, self.observation())
         self.assertFalse(result["release_eligible"])
+        self.assertFalse(result["engine_evidence_verified"])
+        self.assertEqual(result["declared_engine_gate"], "PASS")
 
     def test_template_cannot_claim_any_task_or_repo(self):
         game = copy.deepcopy(self.demo)
@@ -160,9 +162,9 @@ class MultiGameControlPlaneTests(unittest.TestCase):
     def test_game_registry_rejects_duplicate_repository(self):
         second = copy.deepcopy(self.toy)
         second["game_id"] = "separate-game"
-        second["roles"]["author"] = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
-        second["roles"]["reviewer"] = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"
-        second["roles"]["meta"] = "cccccccc-cccc-4ccc-8ccc-cccccccccccc"
+        second["roles"]["author"] = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        second["roles"]["reviewer"] = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        second["roles"]["meta"] = "cccccccccccccccccccccccccccccccc"
         tmp, root = self.portfolio_with([self.toy, second])
         try:
             with self.assertRaises(InvalidProject):
@@ -174,8 +176,8 @@ class MultiGameControlPlaneTests(unittest.TestCase):
         second = copy.deepcopy(self.toy)
         second["game_id"] = "second-independent-game"
         second["repository"] = "example/second-independent-game"
-        second["roles"]["reviewer"] = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"
-        second["roles"]["meta"] = "cccccccc-cccc-4ccc-8ccc-cccccccccccc"
+        second["roles"]["reviewer"] = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        second["roles"]["meta"] = "cccccccccccccccccccccccccccccccc"
         tmp, root = self.portfolio_with([self.toy, second])
         try:
             with self.assertRaises(InvalidProject):
