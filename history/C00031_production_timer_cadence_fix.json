@@ -14,7 +14,7 @@
     ],
     "limit": 3
   },
-  "main_base": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
+  "main_base": "34939a5501a0b8d497c538cd48566e0ecc5060b0",
   "coordination": {
     "branch": "twf-repair-coordinator",
     "claim_commit": "a05cc8074b6892aaf20e4568c92e9f4171cc0513",
@@ -36,20 +36,20 @@
   "source_changes": [
     {
       "path": "src/ToyWarsServer.server.lua",
-      "before_bytes": 18813,
-      "after_bytes": 18835,
+      "before_bytes": 18829,
+      "after_bytes": 18851,
       "delta_bytes": 22
     }
   ],
   "source_metrics": {
     "lua_files": 4,
     "lua_lines": 681,
-    "lua_bytes": 26935
+    "lua_bytes": 26951
   },
   "file_size_deltas": {
     "src/ToyWarsServer.server.lua": {
-      "before_bytes": 18813,
-      "after_bytes": 18835,
+      "before_bytes": 18829,
+      "after_bytes": 18851,
       "delta_bytes": 22
     },
     "tests/auto/production_cadence_spec.lua": {
@@ -67,19 +67,19 @@
       "after 28 x 0.26s Heartbeats, three PONs produced and wallet equals 63 (old source would produce two and wallet 73)"
     ],
     "local_execution": "NOT_RUN_LUA_5_4_UNAVAILABLE",
-    "ci": "PENDING_EXACT_HEAD",
+    "ci": "PENDING_NEW_EXACT_HEAD_COMBINED",
     "studio": "NOT_RUN",
     "physics": "NOT_RUN",
     "multiplayer": "NOT_RUN",
     "mobile": "NOT_RUN"
   },
   "evidence": {
-    "main_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40150077130",
+    "main_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40155995384",
     "prior_pr44_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40150762450",
     "canonical_server_blob": "bc39097bcadfc5b08e09ee879742f97d2f2d1c15",
     "branch_url": "https://github.com/kk051780/toy-wars-factory/tree/auto/twf-game-repair-23cf9c83-ac00-8326-b3e8-d86cc8cad7c7",
-    "pr_url": null,
-    "ci_url": null
+    "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/45",
+    "ci_url": "PENDING_NEW_EXACT_HEAD_COMBINED"
   },
   "restrictions": {
     "external_provider_inference": false,
@@ -88,5 +88,12 @@
     "roblox_publish": false,
     "scheduler_mutated": false
   },
-  "next_action": "Check exact-head offline CI; repair this PR if it fails, otherwise send to independent reviewer. Next independent candidate: verify enemy spawn timer overshoot against intended wave pacing."
+  "next_action": "Check current-head offline and compile_hold CI with heartbeat_lag_spec.lua and production_cadence_spec.lua together; independent reviewer re-evaluates only after both pass.",
+  "original_main_base": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
+  "rebase_coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "6c9ceeabac1f144030440f6409177ef8f3dbb341",
+    "owner_run_id": "42d39884-f1bc-832d-a63f-bb767edb23ce",
+    "epoch": 16
+  }
 }
