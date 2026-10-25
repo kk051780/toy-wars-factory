@@ -11,9 +11,10 @@
     "Verify post-merge QA/handoff for each candidate: #38 QA 40146924040, #35 QA 40147170649, #40 QA 40147278940. Any later current-main changes were proven generated status snapshots.",
     "Main now includes the three floor properties and the new accepted regressions: 4 Lua source files / 681 lines / 26,913 bytes. Preserve initial 25,726-byte baseline; #35/#40 are test-only, not two more source bug fixes.",
     "Register separate reviewer 6add4ea80d3881919da4ea2c1d5def88; update all saved/live prompts to delegate integration without owner replies. Authors retain draft-only source writes.",
-    "Add delegated integration decisions and regressions for ownership/independent identity/current head and base/CI/scope/claim evidence/main failure/verified status-only descendants. All 127 Python tests pass.",
+    "Add delegated integration decisions and regressions for ownership/independent identity/current head and base/CI/scope/claim evidence/main failure/verified status-only descendants. All 128 Python tests pass.",
     "Add a revisable completion roadmap and guarded additional-module/installer/regression extension. Retain mandatory daily primary-web and effectiveness review.",
-    "Separate read-only bootstrap run 8e81a8de-c59c-8332-83e0-d5f0c57f15c8 rejected the initial proposed head with two reproduced identity-validation gaps. Fix both and add two regressions; all 127 Python tests pass. Re-review the new head before deployment."
+    "Separate read-only bootstrap run 8e81a8de-c59c-8332-83e0-d5f0c57f15c8 rejected the initial proposed head with two reproduced identity-validation gaps. Fix both and add two regressions; all 127 Python tests pass. Re-review the new head before deployment.",
+    "Check the analogous main/QA SHA input boundary: reject missing or malformed identities, with a new regression. Current full suite: 128 tests."
   ],
   "merged_candidates": {
     "35": {
@@ -43,8 +44,8 @@
   "previous_source_record": "C00024 accounts for PR38 +160 bytes/+3 lines; do not count it again here.",
   "characters_touched": [],
   "tests": {
-    "python": 127,
-    "new_python": 18,
+    "python": 128,
+    "new_python": 19,
     "combined_native_suites": 8,
     "post_merge_qa": [
       40146924040,
@@ -121,8 +122,8 @@
     {
       "path": "PROJECT_STATE.json",
       "before_bytes": 40278,
-      "after_bytes": 39953,
-      "delta_bytes": -325
+      "after_bytes": 40104,
+      "delta_bytes": -174
     },
     {
       "path": "config/autonomous_repair.json",
@@ -205,32 +206,32 @@
     {
       "path": "tools/repair_integration.py",
       "before_bytes": 0,
-      "after_bytes": 5904,
-      "delta_bytes": 5904
+      "after_bytes": 6140,
+      "delta_bytes": 6140
     },
     {
       "path": "tests/test_repair_integration.py",
       "before_bytes": 0,
-      "after_bytes": 8521,
-      "delta_bytes": 8521
+      "after_bytes": 8978,
+      "delta_bytes": 8978
     },
     {
       "path": "history/C00029_delegated_autonomous_integration.json",
       "before_bytes": 0,
-      "after_bytes": 11260,
-      "delta_bytes": 11260
+      "after_bytes": 11406,
+      "delta_bytes": 11406
     },
     {
       "path": "status/CHAT_HANDOFF.md",
       "before_bytes": 12977,
-      "after_bytes": 11938,
-      "delta_bytes": -1039
+      "after_bytes": 12090,
+      "delta_bytes": -887
     },
     {
       "path": "status/LATEST_STATE.json",
       "before_bytes": 35216,
-      "after_bytes": 35062,
-      "delta_bytes": -154
+      "after_bytes": 35213,
+      "delta_bytes": -3
     }
   ],
   "first_bootstrap_review": {

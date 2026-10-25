@@ -30,6 +30,9 @@ def decide(policy, main, pr, review, lease, now):
             not owns(lease, "REVIEWER", reviewer_id, review.get("lease_epoch"), now) or
             lease["holder"].get("work_branch") != "main"):
         return result("WAIT_LOCK", reason="current registered independent reviewer lease required")
+    if any(not isinstance(main.get(key), str) or not re.fullmatch(r"[0-9a-f]{40}", main[key])
+           for key in ("sha", "qa_head")):
+        return result("WAIT_MAIN_CI", reason="canonical main and tested-main identities required")
     if main.get("qa_conclusion") in ("failure", "cancelled", "timed_out", "action_required"):
         return result("REPAIR_MAIN", main=main.get("sha"), ci=main.get("qa_url"))
     if main.get("qa_conclusion") != "success":

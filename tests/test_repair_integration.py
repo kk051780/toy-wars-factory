@@ -79,6 +79,16 @@ class IntegrationTests(unittest.TestCase):
         self.main["qa_conclusion"] = None
         self.assertEqual(self.decision()["action"], "WAIT_MAIN_CI")
 
+    def test_missing_or_malformed_main_identity_cannot_merge(self):
+        for key in ("sha", "qa_head"):
+            good = self.main[key]
+            for value in (None, "not-a-sha"):
+                self.main[key] = value
+                self.review["base_main_sha"] = self.main["sha"]
+                self.assertEqual(self.decision()["action"], "WAIT_MAIN_CI")
+            self.main[key] = good
+        self.review["base_main_sha"] = self.main["sha"]
+
     def test_verified_generated_status_descendant_can_reuse_main_qa(self):
         self.main["qa_head"] = "a" * 40
         self.main["comparison_since_qa"] = {"verified": True, "status": "ahead", "paths": ["status/LATEST_STATE.json"]}
