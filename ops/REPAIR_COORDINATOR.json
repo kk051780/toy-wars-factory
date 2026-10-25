@@ -110,6 +110,42 @@
     "scope": "Assistant decides ordinary game/system development, independent review and exact-head main integration. Existing objective quality gates, incident holds and spending caps are not waived."
   },
   "integration_reviews": {
+    "35": {
+      "schema": 1,
+      "pr": 35,
+      "head": "1fdc549d0d708230cc642b18ceb020f28efa0806",
+      "base_reviewed": "6bcc07614a10045abfaab21b46746d6c5fc98c44",
+      "reviewer_kind": "CONTROLLER",
+      "reviewer_operation_id": "13782527-fe39-46b8-983a-7d2afcedc715",
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "verdict": "APPROVE",
+      "findings": [],
+      "changed_files": [
+        "history/C00018_heartbeat_production_regression.json",
+        "history/C00020_wave_escape_regression.json",
+        "history/C00021_base_loss_reset_regression.json",
+        "history/C00022_wave_status_fixture_fix.json",
+        "tests/auto/base_loss_reset_spec.lua",
+        "tests/auto/production_spec.lua",
+        "tests/auto/wave_escape_spec.lua"
+      ],
+      "ci": {
+        "id": 40114787373,
+        "head": "1fdc549d0d708230cc642b18ceb020f28efa0806",
+        "conclusion": "success",
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40114787373"
+      },
+      "checks": [
+        "Only three new whole-server regression files and four unmerged cycle records; no source/accepted-test changes",
+        "Production 3, wave 2 and base-loss reset all pass with the accepted floor fix in the eight-suite combined replay",
+        "PR38 post-merge QA passed; any newer main edits are only generated status snapshots",
+        "No budget/provider/release/stat changes"
+      ],
+      "limitations": [
+        "Offline mocks do not establish Roblox engine or player experience"
+      ],
+      "authority": "Owner delegated development/integration approvals"
+    },
     "38": {
       "schema": 1,
       "pr": 38,
