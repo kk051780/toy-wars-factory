@@ -438,11 +438,11 @@ class EvidenceAdapterTests(unittest.TestCase):
         self.assertEqual(result["pr"]["checks"]["status"], "PASS")
 
     def test_missing_or_fake_trusted_workflow_blob_refused(self):
-        for bad in (None, True, "x" * 40, ["bad"]):
+        for bad in (None, True, "f" * 40, ["bad"]):
             with self.subTest(value=bad):
                 candidate = copy.deepcopy(PROJECT)
                 candidate["ci_provenance"]["workflow_blob_sha"] = bad
-                if bad == "x" * 40:
+                if bad == "f" * 40:
                     result = collect(candidate, self.fake.client(), pr_number=51)
                     self.assertEqual(result["pr"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
                 else:
