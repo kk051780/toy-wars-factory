@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T02:27:47.951Z",
+  "observed_at": "2026-10-25T02:52:50.941Z",
   "requests": [
     {
       "id": "hosted_roblox_evidence",
@@ -16,9 +16,18 @@
       "kind": "SCHEDULER_INTEGRATION_FAILURE",
       "priority": "P0",
       "assigned_role": "META",
-      "status": "OPEN",
+      "status": "CUTOVER_REGISTERED_RUNTIME_UNVERIFIED",
       "issue": "https://github.com/kk051780/toy-wars-factory/issues/4#issuecomment-6392305287",
-      "request": "Reviewer + META runs repeatedly finish no_update with no chat_ref. Diagnose task dispatch/auth/context and prove one complete regular independent reviewer/main cycle. Never treat controller fallback as autonomous reviewer success. Keep worker/reviewer schedules enabled and avoid repeat storm."
+      "request": "New exact-scheduled REVIEWER 6add6aaceb4c8191b1666fe15f97cd88 now registered after independent APPROVE and main QA; verify one real scheduled/write-safe REVIEWER cycle, matched service run+shared lease and main QA if integration occurs. Keep old reviewer paused; do not claim live cycle yet."
+    },
+    {
+      "id": "qa_tempdir_cleanup_flake",
+      "kind": "QA_FLAKE_INVESTIGATION",
+      "priority": "P1",
+      "assigned_role": "META",
+      "status": "OPEN",
+      "issue": "https://github.com/kk051780/toy-wars-factory/pull/47",
+      "request": "PR47 first offline attempt 40155248452 failed test_repair_control TemporaryDirectory teardown with OSError Directory not empty: objects; bounded rerun success and revised PR 40155772355 first-attempt success. Investigate race without weakening or skipping tests; add reproduction if repeat."
     }
   ]
 }

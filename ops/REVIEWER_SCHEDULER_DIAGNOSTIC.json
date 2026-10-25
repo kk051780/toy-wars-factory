@@ -24,5 +24,13 @@
     "disabled_after_pilot": true
   },
   "conclusion": "A short exact-scheduled task worked, but the different prompt length and task context prevent attributing cause solely to timing mode. No scheduled independent reviewer integration proof yet.",
-  "next": "Use a separate exact-scheduled read-only reviewer bootstrap, verify real output, then migrate the registered reviewer atomically with tests and old-task retirement; never run two authorized reviewers concurrently."
+  "next": "Use a separate exact-scheduled read-only reviewer bootstrap, verify real output, then migrate the registered reviewer atomically with tests and old-task retirement; never run two authorized reviewers concurrently.",
+  "reviewer_migration": {
+    "status": "EXACT_SCHEDULE_REGISTERED_WITH_FAIL_CLOSED_STANDING_RULES",
+    "old_disabled": true,
+    "new_disabled_before_activation": true,
+    "main": "34939a5501a0b8d497c538cd48566e0ecc5060b0",
+    "observed_at": "2026-10-25T02:52:50.941Z",
+    "normal_run_verified": false
+  }
 }

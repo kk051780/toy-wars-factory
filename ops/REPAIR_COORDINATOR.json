@@ -2,21 +2,11 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 13,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "bb79e90b-985a-405e-b03e-f9cb087eb297",
-    "task_id": null,
-    "epoch": 13,
-    "acquired_at": "2026-10-25T02:37:31.774Z",
-    "expires_at": "2026-10-25T03:07:31.774Z",
-    "base_main_sha": "d8245d230c72b3af5b57593e3710127477b139f8",
-    "work_branch": "ops/reviewer-exact-schedule-20261025",
-    "origin": "controller_scheduled_reviewer_migration"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
-    "REVIEWER": "6add4ea80d3881919da4ea2c1d5def88"
+    "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
   },
   "approval_packet": {
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
@@ -31,14 +21,13 @@
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "ed6d989f-bccc-40d3-a621-348a4316bbd9",
-    "epoch": 12,
-    "released_at": "2026-10-25T02:33:31.153Z",
-    "pr": 46,
-    "merged_main": "0cfb7dd71005b95cbb0db7c1e55e9b178ece9531",
-    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40154804086",
-    "result": "DASHBOARD_MERGED_MAIN_QA_PASSED",
-    "automatic_dashboard_refresh_implemented": false
+    "owner_id": "bb79e90b-985a-405e-b03e-f9cb087eb297",
+    "epoch": 13,
+    "released_at": "2026-10-25T02:52:50.941Z",
+    "pr": 47,
+    "merged_main": "7217c2aa94b17407f79d5ea42bfecf453b1e9b3a",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40155995384",
+    "result": "EXACT_REVIEWER_REGISTERED_LIVE_RUN_PENDING"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -359,5 +348,19 @@
     "bootstrap_approved_run": "2a21fa6d-a380-8332-a389-7dcf1d7d4b32",
     "regular_v4_cycle_verified": false
   },
-  "owner_reply_required": false
+  "owner_reply_required": false,
+  "reviewer_migration": {
+    "old_task": "6add4ea80d3881919da4ea2c1d5def88",
+    "new_task": "6add6aaceb4c8191b1666fe15f97cd88",
+    "old_disabled_verified": true,
+    "new_disabled_pre_activation_verified": true,
+    "read_only_bootstrap_run": "83fae721-db38-832f-b6bc-b0274091c1ce",
+    "rejected_review_run": "93aea2c6-4c5c-8333-a6fc-89cc0ebc06eb",
+    "approved_review_run": "faa07447-6ca4-8333-8dce-f851112becd3",
+    "approved_head": "389c4d6e0f16f907f461732fb40871560512afe9",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40155995384",
+    "registered_at": "2026-10-25T02:52:50.941Z",
+    "normal_reviewer_cycle_verified": false,
+    "auto_merge_verified": false
+  }
 }
