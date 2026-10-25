@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "pr": 45,
+  "repository": "kk051780/toy-wars-factory",
+  "head": "8676e3447c5e4d01122c59a0c62c8062b90e8a8d",
+  "base_main_sha": "34939a5501a0b8d497c538cd48566e0ecc5060b0",
+  "reviewed_at": "2026-10-25T03:19:00.880Z",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "ed0fc89e-e310-8326-989c-25380dc1467e",
+  "lease_epoch": 18,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "23cf9c83-ac00-8326-b3e8-d86cc8cad7c7",
+  "repair_author_run_id": "42d39884-f1bc-832d-a63f-bb767edb23ce",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [
+    "Production timer overshoot carried by +3.0 rather than reset; whole-server native mock proves 3 PON by 7.28s vs 2 pre-fix.",
+    "Current main Heartbeat carry change retained; both heartbeat_lag and production_cadence tests passed together on exact head.",
+    "Previous CI 40156619905 ledger failure repaired by leaving C00032 source_changes empty, without weakening checks.",
+    "Main QA reuse limited to directly compared generated status-only descendant; no Roblox Studio/physics/multiplayer/mobile evidence."
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "change_type": "GAME_CODE_FIX_AND_REGRESSION",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/production_cadence_spec.lua",
+    "history/C00031_production_timer_cadence_fix.json",
+    "history/C00032_pr45_current_main_reconciliation.json"
+  ],
+  "source_ledger": {
+    "main_bytes": 26929,
+    "pr_bytes": 26951,
+    "server_before_bytes": 18829,
+    "server_after_bytes": 18851,
+    "delta_bytes": 22,
+    "c31_source_changes": 1,
+    "c32_source_changes": 0,
+    "initial_baseline_bytes": 25726
+  },
+  "ci": {
+    "id": 40156708093,
+    "head": "8676e3447c5e4d01122c59a0c62c8062b90e8a8d",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "scope_and_claim_gate": "PASS",
+    "python_tests": 137,
+    "heartbeat_lag": "2 passed / 0 failed",
+    "production_cadence": "2 passed / 0 failed",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40156708093"
+  },
+  "main_qa": {
+    "id": 40155995384,
+    "qa_head": "7217c2aa94b17407f79d5ea42bfecf453b1e9b3a",
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40155995384",
+    "comparison_since_qa": {
+      "verified": true,
+      "status": "ahead",
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "coordination": {
+    "claim_commit": "d8e3473f1301a57bb2837c36c22d60b85d33c692",
+    "epoch": 18,
+    "original_author_claim": "a05cc8074b6892aaf20e4568c92e9f4171cc0513",
+    "repair_author_claim": "da34e004909a50b6b84988fb4b3abe940f270c90"
+  },
+  "decision_tool": "tools/repair_integration.py",
+  "decision_action": "MERGE",
+  "merge_state": "APPROVED_PENDING_EXACT_HEAD_MERGE",
+  "post_merge_main_qa": "PENDING",
+  "limitations": [
+    "Offline mocks only; Roblox engine/physics/multiplayer/mobile/player experience unverified.",
+    "Separate ChatGPT task/run reviewer, not a different provider or GitHub account."
+  ]
+}
