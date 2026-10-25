@@ -34,6 +34,13 @@ class ReviewerMigrationTests(unittest.TestCase):
         self.assertFalse(i["author_may_approve_own_work"] or i["author_task_may_merge"] or i["roblox_publish_authorized"])
         self.assertFalse(c["external_provider_inference_authorized"])
         self.assertEqual(self.state["release_decision"], "HOLD_ENGINE_UNVERIFIED")
+    def test_new_candidate_not_falsely_marked_live(self):
+        i = self.state["independent_integration"]
+        self.assertEqual(i["status"], "PENDING_EXACT_REVIEWER_CUTOVER")
+        self.assertIs(i["is_enabled_confirmed"], False)
+        self.assertIs(i["runtime_verified"], False)
+        self.assertEqual(self.state["cloud_game_repair"]["status"], "ENABLED_AUTHOR_REVIEWER_CUTOVER_PENDING")
+        self.assertEqual(i["new_candidate_bootstrap"]["mode"], "READ_ONLY_SUCCESS_NOT_LIVE_INTEGRATION")
     def test_historical_task_provenance_retained(self):
         self.assertTrue(any(OLD in str(item) for item in self.state["resume_checkpoint"]["completed"]))
 
