@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: e99c62925611411c9b0ca3fccc009db681c69fa1
+- 基準ソースコミット: 0cfb7dd71005b95cbb0db7c1e55e9b178ece9531
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 既存GitHub AIワークフロー: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - ChatGPT定期ゲーム修正: ENABLED_AUTHOR_WITH_DELEGATED_REVIEWER_REGISTERED
