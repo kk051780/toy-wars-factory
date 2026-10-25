@@ -1,8 +1,18 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 10,
-  "holder": null,
+  "epoch": 11,
+  "holder": {
+    "kind": "CONTROLLER",
+    "owner_id": "d67e02cd-8f4f-4138-a0cd-2879bd96967a",
+    "task_id": null,
+    "epoch": 11,
+    "acquired_at": "2026-10-25T02:25:56.816Z",
+    "expires_at": "2026-10-25T02:55:56.816Z",
+    "base_main_sha": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
+    "work_branch": "main",
+    "origin": "controller_independent_review_recovery"
+  },
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
