@@ -17,3 +17,12 @@
 - Commit all actual improvements to reviewable branches and preserve reproducible tests, defect root causes and file-size history. Never equate 20-minute scheduled audit to an autonomous coding agent.
 - From an Android chat, the user may send only: TOY WARS再開. The assistant retrieves current GitHub state before acting; it must not ask the user to restate prior requirements.
 - If the product cannot auto-inject instructions into a completely new conversation without a trigger, be truthful about that limitation.
+
+## Shared execution and actionable approvals (mandatory)
+- Read docs/REPAIR_COORDINATION.md and the live twf-repair-coordinator branch before any game/system write. GitHub is the cross-chat lock; a local flag or an in-progress check alone is insufficient.
+- Manual go uses the same game task. Join an active run; never launch a parallel editor. If idle with capacity, first acquire the DISPATCH ticket using expected_sha and force=false, recheck the service, then request that task once.
+- Scheduled game workers, daily system reviewers and manual controllers share the fenced coordinator. Use the observed ref head as commit parent, confirm the ref update, recheck ownership/expiry before every write and release only the owned epoch. Never steal a lease based only on elapsed time.
+- When approvals block progress, always list each PR, actual contents, kind, exact-head CI link, approval scope and a ready-to-send approval sentence. Manual status/go replies always include the items; scheduled deduplication starts only after a complete request has been recorded.
+- A general go is not approval to merge game PRs or publish Roblox. Approved integration uses the exact listed heads and fresh CI under a CONTROLLER lease.
+- The daily system/game review is mandatory: inspect actual failures and effectiveness, open current primary web sources, propose a minimal experiment/fix with regression checks, save measured results and game candidates. Do not treat the current architecture as the best or final one. Read docs/SYSTEM_REVIEW.md and its saved task prompt.
+- A research-only cycle is not a code improvement. Keep source fixes, added coverage, proposals, applied changes and real engine evidence distinct. Preserve existing accepted tests, approval gates, provider/billing caps and release holds.

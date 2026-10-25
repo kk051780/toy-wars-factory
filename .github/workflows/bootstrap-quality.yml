@@ -61,6 +61,35 @@ jobs:
           git show "$TWF_BASE_SHA:tools/check_auto_diff.py" > /tmp/twf-check-auto-diff.py
           git show "$TWF_BASE_SHA:config/autonomous_repair.json" > /tmp/twf-auto-policy.json
           python3 /tmp/twf-check-auto-diff.py --policy /tmp/twf-auto-policy.json --base "$TWF_BASE_SHA" --head HEAD --branch "$TWF_HEAD_REF"
+      - name: Enforce daily system-review scope using trusted base tools
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'auto/twf-system-review-')
+        env:
+          TWF_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          TWF_HEAD_REF: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/twf-trusted
+          for script in check_auto_diff.py repair_control.py check_meta_diff.py; do
+            git show "$TWF_BASE_SHA:tools/$script" > "/tmp/twf-trusted/$script"
+          done
+          git show "$TWF_BASE_SHA:config/autonomous_repair.json" > /tmp/twf-auto-policy.json
+          python3 /tmp/twf-trusted/check_meta_diff.py --policy /tmp/twf-auto-policy.json --base "$TWF_BASE_SHA" --head HEAD --branch "$TWF_HEAD_REF"
+      - name: Verify immutable shared lease for automatic repair and system-review PRs
+        if: github.event_name == 'pull_request' && (startsWith(github.head_ref, 'auto/twf-game-repair') || startsWith(github.head_ref, 'auto/twf-system-review-'))
+        env:
+          TWF_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          TWF_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          TWF_HEAD_REF: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+          git show "$TWF_BASE_SHA:config/autonomous_repair.json" > /tmp/twf-auto-policy.json
+          version="$(python3 -c 'import json; print(int(json.load(open("/tmp/twf-auto-policy.json")).get("queue_version",0)))')"
+          if [ "$version" -ge 3 ]; then
+            mkdir -p /tmp/twf-trusted
+            git show "$TWF_BASE_SHA:tools/repair_control.py" > /tmp/twf-trusted/repair_control.py
+            git fetch --no-tags origin refs/heads/twf-repair-coordinator:refs/remotes/origin/twf-repair-coordinator
+            python3 /tmp/twf-trusted/repair_control.py verify-pr --policy /tmp/twf-auto-policy.json --base "$TWF_BASE_SHA" --head "$TWF_PR_HEAD_SHA" --branch "$TWF_HEAD_REF" --control-ref refs/remotes/origin/twf-repair-coordinator
+          fi
       - name: Lua parse of game modules (not Luau engine verification)
         run: |
           for file in src/*.lua; do
