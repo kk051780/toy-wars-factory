@@ -192,6 +192,32 @@ class MultiGameControlPlaneTests(unittest.TestCase):
         finally:
             tmp.cleanup()
 
+    def test_distinct_repositories_must_not_reuse_a_coordination_ref(self):
+        other = copy.deepcopy(self.toy)
+        other["game_id"] = "independent-second-game"
+        other["repository"] = "example/independent-second-game"
+        other["roles"] = {
+            "author": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "reviewer": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "meta": "cccccccccccccccccccccccccccccccc",
+        }
+        # Same branch name is technically separate in different repos,
+        # but centralized schedulers must never key a shared lock by this
+        # ambiguous name alone. Require an independent coordination identity.
+        other["coordination_ref"] = self.toy["coordination_ref"]
+        tmp, root = self.portfolio_with([self.toy, other])
+        try:
+            with self.assertRaisesRegex(InvalidProject, "duplicate coordination ref"):
+                load_portfolio(root, "portfolio.json")
+        finally:
+            tmp.cleanup()
+        other["coordination_ref"] = "second-game-coordinator"
+        tmp, root = self.portfolio_with([self.toy, other])
+        try:
+            self.assertEqual(len(load_portfolio(root, "portfolio.json")), 2)
+        finally:
+            tmp.cleanup()
+
     def test_registry_rejects_duplicate_game_id(self):
         tmp, root = self.portfolio_with([self.toy, self.toy])
         try:
