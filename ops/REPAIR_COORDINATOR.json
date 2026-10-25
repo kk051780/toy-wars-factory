@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 9,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "23cf9c83-ac00-8326-b3e8-d86cc8cad7c7",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 9,
-    "acquired_at": "2026-10-25T02:11:23.312Z",
-    "expires_at": "2026-10-25T02:41:23.312Z",
-    "base_main_sha": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
-    "work_branch": "auto/twf-game-repair-23cf9c83-ac00-8326-b3e8-d86cc8cad7c7",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -30,15 +20,14 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "ac2cf513-50c1-4312-b96f-2561fbe655a1",
-    "epoch": 8,
-    "released_at": "2026-10-25T02:10:24.257Z",
-    "issues_documented": [
-      3,
-      4
-    ],
-    "purpose": "roblox_engine_test_plan_and_no_update_incident"
+    "kind": "WORKER",
+    "owner_id": "23cf9c83-ac00-8326-b3e8-d86cc8cad7c7",
+    "epoch": 9,
+    "released_at": "2026-10-25T02:13:30.911Z",
+    "pr": 45,
+    "head": "aedc70af353c43bdb1c86038ba338fa5249419d6",
+    "ci": null,
+    "ci_status_at_release": "PENDING"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
