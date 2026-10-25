@@ -13,9 +13,9 @@
   },
   "coordination": {
     "branch": "twf-repair-coordinator",
-    "claim_commit": "6c9ceeabac1f144030440f6409177ef8f3dbb341",
+    "claim_commit": "da34e004909a50b6b84988fb4b3abe940f270c90",
     "owner_run_id": "42d39884-f1bc-832d-a63f-bb767edb23ce",
-    "epoch": 16
+    "epoch": 17
   },
   "main_base": "34939a5501a0b8d497c538cd48566e0ecc5060b0",
   "original_pr_head": "aedc70af353c43bdb1c86038ba338fa5249419d6",
@@ -31,14 +31,7 @@
     "history/C00031_production_timer_cadence_fix.json",
     "history/C00032_pr45_current_main_reconciliation.json"
   ],
-  "source_changes": [
-    {
-      "path": "src/ToyWarsServer.server.lua",
-      "before_bytes": 18829,
-      "after_bytes": 18851,
-      "delta_bytes": 22
-    }
-  ],
+  "source_changes": [],
   "source_metrics": {
     "lua_files": 4,
     "lua_lines": 681,
@@ -62,7 +55,7 @@
     ],
     "existing_gates": "Toy Wars bootstrap offline QA (offline and compile_hold)",
     "local": "NOT_RUN_LUA_5_4_UNAVAILABLE",
-    "ci": "PENDING_EXACT_HEAD",
+    "ci": "PENDING_EXACT_HEAD_AFTER_LEDGER_FIX",
     "studio": "NOT_RUN",
     "multiplayer": "NOT_RUN",
     "mobile": "NOT_RUN"
@@ -72,13 +65,37 @@
     "old_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40153623843",
     "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40155995384",
     "work_request": "ops/WORK_REQUESTS.json#pr45_current_main_rebase_and_ci",
-    "claim_url": "https://github.com/kk051780/toy-wars-factory/commit/6c9ceeabac1f144030440f6409177ef8f3dbb341"
+    "claim_url": "https://github.com/kk051780/toy-wars-factory/commit/da34e004909a50b6b84988fb4b3abe940f270c90",
+    "previous_failed_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40156619905"
   },
-  "next_action": "Wait for fresh exact-head CI; fix any failure in PR45; independent reviewer handles main integration. Do not treat old PR45 CI as combined pass.",
+  "next_action": "Confirm exact-head CI passes 137 Python tests, 37 Lua assertions and compile_hold; then independent review of PR45.",
   "restrictions": {
     "gemini_rerun": false,
     "author_main_merge": false,
     "roblox_publish": false,
     "scheduler_mutated": false
+  },
+  "prior_coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "6c9ceeabac1f144030440f6409177ef8f3dbb341",
+    "owner_run_id": "42d39884-f1bc-832d-a63f-bb767edb23ce",
+    "epoch": 16
+  },
+  "reconciled_source_diff": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 18829,
+      "after_bytes": 18851,
+      "delta_bytes": 22
+    }
+  ],
+  "ci_failure_repair": {
+    "run": "https://github.com/kk051780/toy-wars-factory/actions/runs/40156619905",
+    "job": "offline",
+    "step": "Independent state and character quality gate",
+    "reproduction": "tests/test_handoff_checkpoint.py sequential ledger expects C00032.before_bytes to equal C00031.after_bytes=18851, but repeated 18829.",
+    "root_cause": "C00032 is a follow-up metadata reconciliation, not a second source edit. Duplicating C00031 source_changes makes the append-only history double-count the same +22 bytes.",
+    "fix": "Keep C00031 as the sole source-changing cycle and record C00032 source_changes=[]; preserve its main-vs-candidate comparison separately as reconciled_source_diff.",
+    "negative_control": "Failed run 40156619905 with 18829 != 18851; no accepted test weakened."
   }
 }
