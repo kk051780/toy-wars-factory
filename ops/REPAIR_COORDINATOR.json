@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 32,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "eb03e90e-8d11-4992-b612-cff32a1d977f",
-    "task_id": null,
-    "epoch": 32,
-    "acquired_at": "2026-10-25T07:15:16.778Z",
-    "expires_at": "2026-10-25T07:45:16.778Z",
-    "base_main_sha": "3e9d36f60661e9b1b99297fc926c47a2187ada06",
-    "work_branch": "ops/studio-autopilot-p3-controller",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -31,14 +21,13 @@
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "868347a5-40f3-4be1-9c93-b57fb77f4e2f",
-    "epoch": 31,
-    "released_at": "2026-10-25T07:10:17.331Z",
+    "owner_id": "eb03e90e-8d11-4992-b612-cff32a1d977f",
+    "epoch": 32,
+    "released_at": "2026-10-25T07:18:38.445Z",
     "pr": 52,
-    "head": "09ac45fb283689d76846f0e9721ab2161492107a",
-    "result": "P3_READ_ONLY_MULTIGAME_SCHEDULER_PR_AND_199_TEST_QA_PASS_WAIT_SEPARATE_REVIEW",
-    "qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40171673896",
-    "P2_status": "PR51_HOLD_BRANCH_PROTECTION_AND_EXTERNAL_TRUST_POLICY"
+    "head": "0c28b59545847e683ad2434c52b33e8d0b1d8a5d",
+    "result": "P3_FAIRNESS_ISSUE_REMEDIED_LATEST_HEAD_200_PYTHON_TESTS_PASS_AWAIT_INDEPENDENT_REVIEW",
+    "qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40172196489"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
