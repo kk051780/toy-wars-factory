@@ -108,6 +108,13 @@ class SchedulerTests(unittest.TestCase):
         self.snapshots[self.two["game_id"]]["qa"] = "FAIL"
         self.assertIn("REPAIR_MAIN_FIRST",self.execute()["candidates"][-1]["issues"])
 
+    def test_future_last_served_cycle_rejected(self):
+        self.snapshots[self.two["game_id"]]["last_served_cycle"] = 11
+        with self.assertRaisesRegex(UnsafePlan, "future"):
+            self.execute(cycle=10)
+        self.snapshots[self.two["game_id"]]["last_served_cycle"] = 10
+        self.assertIsInstance(self.execute(cycle=10), dict)
+
     def test_main_pending_blocks(self):
         self.snapshots[self.two["game_id"]]["qa"] = "PENDING"
         self.assertIn("WAIT_MAIN_QA",self.execute()["candidates"][-1]["issues"])

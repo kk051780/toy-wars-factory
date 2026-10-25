@@ -90,6 +90,8 @@ def propose(projects, snapshots, signals, *, cycle, max_slots=1, occupied_slots=
                 type(row["live_read_claim"]) is not bool or \
                 (row["holder"] is not None and (type(row["holder"]) is not str or not row["holder"])):
             raise UnsafePlan("foreign or malformed project observation")
+        if row["last_served_cycle"] > cycle:
+            raise UnsafePlan("last served cycle must not be in the future")
         if gid not in events:
             continue
         reasons = []
