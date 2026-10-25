@@ -1,0 +1,60 @@
+name: Studio Autopilot read-only evidence
+on:
+  pull_request:
+    paths:
+      - "studio_autopilot/**"
+      - "tests/test_multigame_evidence.py"
+      - ".github/workflows/studio-autopilot-evidence.yml"
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Optional PR to inspect"
+        required: false
+        type: string
+permissions:
+  contents: read
+  checks: read
+  pull-requests: read
+concurrency:
+  group: "studio-evidence-${{ github.ref }}"
+  cancel-in-progress: true
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Read live GitHub refs, check-runs and coordinator without editing
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number || '' }}
+        run: |
+          set -euo pipefail
+          if [ -n "$PR_NUMBER" ]; then
+            python3 -m studio_autopilot.github_evidence --pr "$PR_NUMBER" > evidence.json
+          else
+            python3 -m studio_autopilot.github_evidence > evidence.json
+          fi
+          python3 - <<'PY'
+          import json
+          report=json.load(open("evidence.json", encoding="utf-8"))
+          assert report["source"]=="AUTHENTICATED_GITHUB_API_READ_ONLY"
+          assert report["scope"]=="LIVE_REPOSITORY_METADATA_ONLY_NO_ENGINE_OR_PLAYTEST"
+          assert all(value is False for value in report["execution"].values())
+          assert report["coordinator"]["task_identities_match"] is True
+          print("PASS: GitHub read-only proof at main",report["main"]["sha"],
+                "current-main check status",report["main"]["checks"]["status"])
+          if report["pr"] is not None:
+            print("PR",report["pr"]["number"],"head",report["pr"]["head"],
+                  "head check status",report["pr"]["checks"]["status"])
+          PY
+      - name: Archive bounded nonsecret snapshot (not execution authorization)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: studio-autopilot-github-evidence
+          path: evidence.json
+          retention-days: 14
