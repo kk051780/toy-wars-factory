@@ -42,6 +42,8 @@ class FakeGitHub:
             "commits/" + HEAD + "/check-runs?per_page=100": self.good_checks(HEAD),
             "contents/ops/REPAIR_COORDINATOR.json?ref=" + COORD: self.encode(coord),
             "pulls/51": self.pr(),
+            "contents/.github/workflows/bootstrap-quality.yml?ref=" + MAIN: self.workflow_file(),
+            "contents/.github/workflows/bootstrap-quality.yml?ref=" + HEAD: self.workflow_file(),
             "actions/runs/11": self.run(MAIN, 101, "push"),
             "actions/runs/22": self.run(HEAD, 202, "pull_request"),
             "actions/jobs/1100": self.job(MAIN, 11, "offline", 501, 1100),
@@ -87,6 +89,11 @@ class FakeGitHub:
             "check_run_url": API_ORIGIN + "/repos/" + REPO +
                              "/check-runs/" + str(check_id),
         }
+
+    @staticmethod
+    def workflow_file():
+        return {"type": "file", "path": PROJECT["ci_provenance"]["workflow_path"],
+                "sha": PROJECT["ci_provenance"]["workflow_blob_sha"]}
 
     @staticmethod
     def encode(doc):
@@ -401,6 +408,55 @@ class EvidenceAdapterTests(unittest.TestCase):
         run = self.fake.responses["actions/runs/22"]
         run["workflow_id"] = 394718990
         self.assertEqual(self.read()["pr"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
+
+    def test_main_qa_must_be_push_and_not_pr_success(self):
+        self.fake.responses["actions/runs/11"]["event"] = "pull_request"
+        report = self.read()
+        self.assertEqual(report["main"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
+        self.assertEqual(report["pr"]["checks"]["status"], "PASS")
+        self.assertFalse(report["execution"]["merge_allowed"])
+
+    def test_pr_qa_must_be_pr_and_not_push_success(self):
+        self.fake.responses["actions/runs/22"]["event"] = "push"
+        report = self.read()
+        self.assertEqual(report["main"]["checks"]["status"], "PASS")
+        self.assertEqual(report["pr"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
+
+    def test_modified_workflow_in_pr_with_real_successful_jobs_refused(self):
+        key = "contents/.github/workflows/bootstrap-quality.yml?ref=" + HEAD
+        self.fake.responses[key]["sha"] = "f" * 40
+        result = self.read()
+        self.assertEqual(result["main"]["checks"]["status"], "PASS")
+        self.assertEqual(result["pr"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
+        self.assertEqual(result["pr"]["checks"]["reason"], "TRUSTED_QA_WORKFLOW_CONTENT_CHANGED")
+
+    def test_modified_main_workflow_cannot_prove_main_qa(self):
+        key = "contents/.github/workflows/bootstrap-quality.yml?ref=" + MAIN
+        self.fake.responses[key]["sha"] = "f" * 40
+        result = self.read()
+        self.assertEqual(result["main"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
+        self.assertEqual(result["pr"]["checks"]["status"], "PASS")
+
+    def test_missing_or_fake_trusted_workflow_blob_refused(self):
+        for bad in (None, True, "x" * 40, ["bad"]):
+            with self.subTest(value=bad):
+                candidate = copy.deepcopy(PROJECT)
+                candidate["ci_provenance"]["workflow_blob_sha"] = bad
+                if bad == "x" * 40:
+                    result = collect(candidate, self.fake.client(), pr_number=51)
+                    self.assertEqual(result["pr"]["checks"]["status"], "HOLD_EXACT_HEAD_CHECKS")
+                else:
+                    with self.assertRaises(InvalidProject):
+                        validate_project(candidate)
+
+    def test_workflow_blob_is_fetched_at_exact_main_and_pr_head(self):
+        self.read()
+        expected = [
+            self.fake.path_prefix + "contents/.github/workflows/bootstrap-quality.yml?ref=" + sha
+            for sha in (MAIN, HEAD)
+        ]
+        for url in expected:
+            self.assertIn(url, self.fake.calls)
 
     def test_the_reader_does_not_depend_on_planner_json_claims(self):
         payload = self.read()

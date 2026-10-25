@@ -101,8 +101,23 @@ def _ref(client, branch):
     return _sha(record["object"].get("sha"))
 
 
-def _checks(client, commit_sha, repository, trust):
+def _trusted_workflow_content(client, commit_sha, trust):
+    """Compare QA script blob at exact checked commit to reviewed main baseline."""
+    record = client.get("contents/" + trust["workflow_path"] + "?ref=" + _sha(commit_sha))
+    return (record.get("type") == "file" and
+            record.get("path") == trust["workflow_path"] and
+            type(record.get("sha")) is str and
+            record["sha"] == trust["workflow_blob_sha"])
+
+
+def _checks(client, commit_sha, repository, trust, *, required_event):
     """A name/SHA alone is NOT QA. Pin GitHub App, workflow run and suite."""
+    if required_event not in ("push", "pull_request"):
+        raise EvidenceUnavailable("unrecognized evidence event")
+    if not _trusted_workflow_content(client, commit_sha, trust):
+        return {"status": "HOLD_EXACT_HEAD_CHECKS",
+                "required": [{"name": name, "status": "HOLD"} for name in CHECKS],
+                "reason": "TRUSTED_QA_WORKFLOW_CONTENT_CHANGED"}
     records = client.get("commits/" + _sha(commit_sha) + "/check-runs?per_page=100")
     items = records.get("check_runs")
     count = records.get("total_count")
@@ -142,7 +157,7 @@ def _checks(client, commit_sha, repository, trust):
                           run.get("check_suite_id") == suite["id"] and
                           run.get("status") == "completed" and
                           run.get("conclusion") == "success" and
-                          run.get("event") in ("pull_request", "push"))
+                          run.get("event") == required_event)
                 if passed:
                     job = client.get("actions/jobs/" + str(job_id))
                     check_id = check.get("id")
@@ -211,7 +226,8 @@ def _pr(client, number, repo, main_sha, trust):
         raise EvidenceUnavailable("invalid PR state")
     return {"number": number, "head": h, "base": b,
             "base_matches_main": b == main_sha, "draft": data["draft"],
-            "state": data["state"], "checks": _checks(client, h, repo, trust)}
+            "state": data["state"], "checks": _checks(
+                client, h, repo, trust, required_event="pull_request")}
 
 
 def collect(project, client, *, pr_number=None):
@@ -224,7 +240,8 @@ def collect(project, client, *, pr_number=None):
     repo = project["repository"]
     main_sha = _ref(client, "main")
     coord_sha = _ref(client, project["coordination_ref"])
-    main_checks = _checks(client, main_sha, repo, project["ci_provenance"])
+    main_checks = _checks(client, main_sha, repo, project["ci_provenance"],
+                          required_event="push")
     coordinator = _coordinator(client, coord_sha, project["roles"])
     pr = _pr(client, pr_number, repo, main_sha, project["ci_provenance"]) if pr_number is not None else None
     # Conservative race detection. These are not permission tickets or CAS locks.

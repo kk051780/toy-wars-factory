@@ -32,3 +32,20 @@ An early PR-triggered proof (run 40163275777) read live data successfully but ex
 ## Check-run-to-job authenticity gate
 
 The adapter now verifies each check-run ID against an actual Actions job API response. The job must belong to the checked run, have exactly the expected job name, source SHA, success status and check-run URL. A correct workflow URL with a nonexistent, foreign or misleading job ID cannot establish a PASS. The workflow's numeric ID is pinned per project manifest alongside its path and GitHub Actions App ID. No live snapshot authorizes dispatch.
+
+## Audit-hardening follow-up: workflow content and event authority
+
+For `offline` and `compile_hold` to be accepted, the QA workflow file at the
+**exact checked commit** must have the independently reviewed Git blob SHA
+recorded in the trusted project's `ci_provenance.workflow_blob_sha`. A new PR
+that changes `.github/workflows/bootstrap-quality.yml` cannot use successful
+checks created by the altered workflow as proof of the original QA contract.
+
+PR checks must have event `pull_request`; current-main checks must have event
+`push`. A PR-triggered success is not post-merge main QA.
+
+The trust pin is reviewed baseline configuration and must **never** be supplied
+from the unreviewed PR that it attempts to evaluate. This is a diagnostic
+hardening step only; repository rulesets/branch protection and independent
+review must still protect updates to both the manifest and QA workflow.
+The current evidence API continues to return dispatch/merge/release = false.
