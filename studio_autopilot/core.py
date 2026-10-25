@@ -12,6 +12,7 @@ ID = re.compile(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*\Z")
 REPO = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
 SHA = re.compile(r"[0-9a-f]{40}\Z")
 TASK_ID = re.compile(r"[0-9a-f]{32}\Z")
+RUN_ID = re.compile(r"[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}\Z")
 STATES = {"NOT_RUN", "PASS", "FAIL"}
 ROLES = ("author", "reviewer", "meta")
 GATES = ("offline", "engine", "two_client", "mobile", "playtest")
@@ -57,7 +58,7 @@ def _json_at(root, path):
 
 def validate_project(data):
     _object(data, PROJECT_FIELDS, "project")
-    if data["schema"] != 1 or type(data["game_id"]) is not str or not ID.fullmatch(data["game_id"]):
+    if type(data["schema"]) is not int or data["schema"] != 1 or type(data["game_id"]) is not str or not ID.fullmatch(data["game_id"]):
         raise InvalidProject("invalid project schema or game ID")
     if type(data["title"]) is not str or not 2 <= len(data["title"]) <= 100:
         raise InvalidProject("invalid title")
@@ -65,7 +66,7 @@ def validate_project(data):
         raise InvalidProject("unsupported platform or phase")
     _object(data["roles"], ROLES, "roles")
     _object(data["quality"], GATES, "quality")
-    if any(v not in STATES for v in data["quality"].values()):
+    if any(type(v) is not str or v not in STATES for v in data["quality"].values()):
         raise InvalidProject("unknown quality evidence state")
     _object(data["safety"], SAFETY_FIELDS, "safety")
     guard = data["safety"]
@@ -90,7 +91,7 @@ def validate_project(data):
         raise InvalidProject("gameplay loop must have 3-8 steps")
     if data["phase"] == "UNBOUND_TEMPLATE":
         if any(data[key] is not None for key in ("repository", "coordination_ref", "source_prefix", "tests_prefix")) or any(
-                data["roles"].values()) or any(v != "NOT_RUN" for v in data["quality"].values()):
+                (value is not None for value in data["roles"].values())) or any(v != "NOT_RUN" for v in data["quality"].values()):
             raise InvalidProject("unbound templates must have no repository, tasks, or evidence")
     else:
         repo = data["repository"]
@@ -115,7 +116,7 @@ def validate_project(data):
 def load_portfolio(root, portfolio):
     raw = _json_at(root, portfolio)
     _object(raw, ("schema", "projects"), "portfolio")
-    if raw["schema"] != 1 or type(raw["projects"]) is not list or not 1 <= len(raw["projects"]) <= 100:
+    if type(raw["schema"]) is not int or raw["schema"] != 1 or type(raw["projects"]) is not list or not 1 <= len(raw["projects"]) <= 100:
         raise InvalidProject("portfolio schema or capacity")
     if any(type(path) is not str for path in raw["projects"]):
         raise InvalidProject("manifest references must be string paths")
@@ -143,17 +144,25 @@ def load_portfolio(root, portfolio):
 
 
 def evaluate(project, observation=None):
-    """Read-only recommendation. No GitHub writes, provider calls, or dispatch."""
-    result = {"game_id": project["game_id"], "repository": project["repository"],
-              "mode": "ADVISORY_ONLY", "action": "HOLD", "alerts": [],
-              "release_eligible": False, "declared_engine_gate": project["quality"]["engine"], "engine_evidence_verified": False}
+    """Untrusted, READ-ONLY triage: never grants a new task, merge, or publication.
+
+    Future live GitHub evidence adapters must explicitly authorize a *different*
+    execution path. A JSON observation can be forged, omitted or stale.
+    """
+    result = {
+        "game_id": project["game_id"], "repository": project["repository"],
+        "mode": "ADVISORY_ONLY", "action": "HOLD_UNVERIFIED_INPUT",
+        "diagnostic": "NONE", "alerts": [], "dispatch_allowed": False,
+        "evidence_authority": "UNTRUSTED_JSON", "release_eligible": False,
+        "declared_engine_gate": project["quality"]["engine"],
+        "engine_evidence_verified": False,
+    }
     if project["phase"] == "UNBOUND_TEMPLATE":
         result["action"] = "UNBOUND_TEMPLATE"
         return result
     if type(observation) is not dict:
         result["action"] = "HOLD_NO_OBSERVATION"
         return result
-    # An observation is untrusted telemetry, never an instruction or proof of success.
     if observation.get("repository") != project["repository"]:
         result["action"] = "HOLD_FOREIGN_REPOSITORY"
         return result
@@ -161,38 +170,56 @@ def evaluate(project, observation=None):
                for k in ("main_head", "main_qa_head")):
         result["action"] = "HOLD_MISSING_HEAD"
         return result
-    if observation.get("meta_run") == "no_update":
-        result["alerts"].append("META_NO_UPDATE")
-    if observation.get("worker_run") == "no_update":
-        result["alerts"].append("WORKER_NO_UPDATE")
-    if observation.get("reviewer_run") == "no_update":
-        result["alerts"].append("REVIEWER_NO_UPDATE")
-    if observation.get("lease") is not None:
-        result["action"] = "JOIN_EXISTING_LEASE"
-    elif observation["main_head"] != observation["main_qa_head"]:
-        result["action"] = "WAIT_EXACT_MAIN_QA"
-    elif observation.get("main_qa") == "failure":
-        result["action"] = "REPAIR_MAIN_FIRST"
-    elif observation.get("main_qa") != "success":
-        result["action"] = "WAIT_MAIN_QA"
-    else:
-        prs = observation.get("open_prs")
-        if type(prs) is not list or any(type(p) is not dict for p in prs):
-            result["action"] = "HOLD_INVALID_PR_QUEUE"
-        elif len(prs) > project["safety"]["max_open_prs"]:
-            result["action"] = "HOLD_PR_CAPACITY_BREACH"
-        elif any(p.get("ci") == "success" and p.get("head_sha") == p.get("ci_head_sha")
-                 and type(p.get("head_sha")) is str and SHA.fullmatch(p["head_sha"])
-                 for p in prs):
-            result["action"] = "REQUEST_INDEPENDENT_REVIEW"
-        elif len(prs) >= project["safety"]["max_open_prs"]:
-            result["action"] = "WAIT_PR_CAPACITY"
-        elif observation.get("worker_run") == "no_update":
-            result["action"] = "DIAGNOSE_WORKER"
+    for role in ("meta", "worker", "reviewer"):
+        if observation.get(role + "_run") == "no_update":
+            result["alerts"].append(role.upper() + "_NO_UPDATE")
+    # A claimed idle lease cannot prove the current real coordinator is idle.
+    # A claimed occupied lease can only produce conservative diagnostics.
+    if "lease" not in observation:
+        result["diagnostic"] = "LEASE_STATUS_MISSING"
+        return result
+    lease = observation["lease"]
+    if lease is not None:
+        if (type(lease) is not dict or set(lease) != {"kind", "owner_run_id", "epoch"} or
+                lease["kind"] not in ("WORKER", "REVIEWER", "META", "CONTROLLER", "DISPATCH") or
+                type(lease["owner_run_id"]) is not str or
+                not RUN_ID.fullmatch(lease["owner_run_id"]) or
+                type(lease["epoch"]) is not int or lease["epoch"] <= 0):
+            result["diagnostic"] = "INVALID_LEASE_CLAIM"
         else:
-            result["action"] = "CANDIDATE_DRAFT_ONLY"
-    # A PASS in a fixture does not override a release prohibition or the lack
-    # of engine, actual client-device, and real-player evidence.
+            result["diagnostic"] = "LEASE_CLAIM_UNVERIFIED"
+        return result
+    if observation["main_head"] != observation["main_qa_head"]:
+        result["diagnostic"] = "WAIT_EXACT_MAIN_QA"
+        return result
+    if observation.get("main_qa") == "failure":
+        result["diagnostic"] = "REPAIR_MAIN_FIRST"
+        return result
+    if observation.get("main_qa") != "success":
+        result["diagnostic"] = "WAIT_MAIN_QA"
+        return result
+    prs = observation.get("open_prs")
+    if type(prs) is not list or any(type(p) is not dict for p in prs):
+        result["diagnostic"] = "HOLD_INVALID_PR_QUEUE"
+    elif len(prs) > project["safety"]["max_open_prs"]:
+        result["diagnostic"] = "HOLD_PR_CAPACITY_BREACH"
+    elif prs:
+        # An existing draft always gets attention before generating a new one.
+        # It is not possible to approve or merge a PR using this JSON alone.
+        if any(p.get("ci") == "failure" for p in prs):
+            result["diagnostic"] = "REPAIR_EXISTING_PR_CI"
+        elif any(not (type(p.get("head_sha")) is str and SHA.fullmatch(p["head_sha"]) and
+                        p.get("head_sha") == p.get("ci_head_sha") and p.get("ci") == "success")
+                 for p in prs):
+            result["diagnostic"] = "WAIT_EXISTING_PR_CI"
+        else:
+            result["diagnostic"] = "REVIEW_CANDIDATE_UNVERIFIED"
+    elif observation.get("worker_run") == "no_update":
+        result["diagnostic"] = "DIAGNOSE_WORKER"
+    else:
+        result["diagnostic"] = "POTENTIAL_DRAFT_UNVERIFIED"
+    # action remains HOLD_UNVERIFIED_INPUT regardless of apparent CI success.
+    # Neither a field claiming PASS nor an absent lease constitutes authorization.
     return result
 
 
@@ -203,7 +230,7 @@ def plan(root, portfolio, observations=None):
     else:
         raw = _json_at(root, observations)
         _object(raw, ("schema", "projects"), "observations")
-        if raw["schema"] != 1 or type(raw["projects"]) is not dict:
+        if type(raw["schema"]) is not int or raw["schema"] != 1 or type(raw["projects"]) is not dict:
             raise InvalidProject("invalid observations file")
         data = raw["projects"]
         known = {p["game_id"] for p in projects}
