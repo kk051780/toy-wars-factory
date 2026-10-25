@@ -36,11 +36,27 @@ class ReviewerMigrationTests(unittest.TestCase):
         self.assertEqual(self.state["release_decision"], "HOLD_ENGINE_UNVERIFIED")
     def test_new_candidate_not_falsely_marked_live(self):
         i = self.state["independent_integration"]
-        self.assertEqual(i["status"], "PENDING_EXACT_REVIEWER_CUTOVER")
-        self.assertIs(i["is_enabled_confirmed"], False)
-        self.assertIs(i["runtime_verified"], False)
-        self.assertEqual(self.state["cloud_game_repair"]["status"], "ENABLED_AUTHOR_REVIEWER_CUTOVER_PENDING")
+        # Bootstrap is permanently read-only evidence, not a normal merge.
         self.assertEqual(i["new_candidate_bootstrap"]["mode"], "READ_ONLY_SUCCESS_NOT_LIVE_INTEGRATION")
+        if i["runtime_verified"]:
+            # Live status is legal only after a DIFFERENT, real reviewer run
+            # produced an identified game PR merge AND passing post-merge QA.
+            self.assertEqual(i["status"], "FIRST_REGULAR_REVIEW_MERGE_AND_MAIN_QA_VERIFIED")
+            self.assertIs(i["is_enabled_confirmed"], True)
+            proof = i["first_full_cycle"]
+            self.assertNotEqual(proof["run_id"], i["new_candidate_bootstrap"]["run_id"])
+            self.assertEqual(proof["reviewer_task_id"], NEW)
+            self.assertEqual(proof["shared_lease_epoch"], 18)
+            self.assertEqual(proof["pr"], 45)
+            self.assertEqual(proof["merge_commit"], "8f3312ba7b61095f839b7121e2776bfca6245aee")
+            self.assertIn("40157791404", proof["post_merge_qa"])
+            self.assertIn("40157791429", proof["post_merge_handoff"])
+            self.assertEqual(self.state["cloud_game_repair"]["status"],
+                             "ENABLED_AUTHOR_FIRST_INDEPENDENT_MERGE_AND_MAIN_QA_VERIFIED")
+        else:
+            self.assertEqual(i["status"], "PENDING_EXACT_REVIEWER_CUTOVER")
+            self.assertIs(i["is_enabled_confirmed"], False)
+            self.assertEqual(self.state["cloud_game_repair"]["status"], "ENABLED_AUTHOR_REVIEWER_CUTOVER_PENDING")
     def test_historical_task_provenance_retained(self):
         self.assertTrue(any(OLD in str(item) for item in self.state["resume_checkpoint"]["completed"]))
 
