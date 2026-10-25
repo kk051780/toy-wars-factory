@@ -4,10 +4,10 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: 8676e3447c5e4d01122c59a0c62c8062b90e8a8d
+- 基準ソースコミット: 6a5f0629d47035e9e86f12fa8df8f3d33d785529
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 既存GitHub AIワークフロー: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
-- ChatGPT定期ゲーム修正: ENABLED_AUTHOR_REVIEWER_CUTOVER_PENDING
+- ChatGPT定期ゲーム修正: ENABLED_AUTHOR_FIRST_INDEPENDENT_MERGE_AND_MAIN_QA_VERIFIED
 - PvE: PROTOTYPE_OFFLINE_ONLY
 - PvP: NOT_IMPLEMENTED
 - 協力: NOT_IMPLEMENTED
@@ -26,9 +26,10 @@
 - Studio: NOT_RUN
 - マルチクライアント: NOT_RUN
 - スマホ表示: NOT_RUN
-- 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40147278940（最新Actionsを別途確認すること）
+- 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40157791404（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
+- First independent game PR #45 has merged with post-merge QA; record A08 and G07 progress as completed, keep A09/A13 pending until end-to-end recovery and repeated-cycle proof.
 - Approval decisions are delegated to the assistant. Do not ask the owner to approve #35/#38/#40 again; all three are integrated with passing post-merge QA.
 - Keep author, daily system review and independent integration tasks enabled. Authors create small tested drafts; the separate reviewer validates current head/base, CI, shared ownership and actual diffs, then integrates one at a time and checks main.
 - Use docs/COMPLETION_ROADMAP.md and WORK_REQUESTS. Repair failing main/PRs first, then the smallest implementation advancing playable PvE and real-engine/mobile evidence.

@@ -1,7 +1,7 @@
 {
   "schema": 2,
   "canonical_repo": "kk051780/toy-wars-factory",
-  "source_revision": "8676e3447c5e4d01122c59a0c62c8062b90e8a8d",
+  "source_revision": "6a5f0629d47035e9e86f12fa8df8f3d33d785529",
   "source_metrics": {
     "files": 4,
     "lines": 681,
@@ -158,7 +158,7 @@
   },
   "verification": {
     "offline_native_local_v2_3": "PASS_REPORTED_PREVIOUSLY",
-    "github_actions": "PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40147278940",
+    "github_actions": "PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40157791404",
     "roblox_studio": "NOT_RUN",
     "mobile_visual": "NOT_RUN",
     "two_client_multiplayer": "NOT_RUN",
@@ -167,11 +167,12 @@
     "character_structural": "PASS",
     "native_server_events": "PASS_27_MOCK_EVENTS; PRE_FIX_25_PASS_2_EXPECTED_FAIL; NOT_ENGINE",
     "python_tests": "PASS_74",
-    "handoff": "PASS_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40136758840",
+    "handoff": "PASS_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40157791429",
     "native_hud_prices": "PASS_6_MOCK_CASES; ORIGINAL_1_PASS_5_EXPECTED_FAIL; NOT_UI"
   },
   "release_decision": "HOLD_ENGINE_UNVERIFIED",
   "next": [
+    "First independent game PR #45 has merged with post-merge QA; record A08 and G07 progress as completed, keep A09/A13 pending until end-to-end recovery and repeated-cycle proof.",
     "Approval decisions are delegated to the assistant. Do not ask the owner to approve #35/#38/#40 again; all three are integrated with passing post-merge QA.",
     "Keep author, daily system review and independent integration tasks enabled. Authors create small tested drafts; the separate reviewer validates current head/base, CI, shared ownership and actual diffs, then integrates one at a time and checks main.",
     "Use docs/COMPLETION_ROADMAP.md and WORK_REQUESTS. Repair failing main/PRs first, then the smallest implementation advancing playable PvE and real-engine/mobile evidence.",
@@ -363,7 +364,7 @@
     }
   ],
   "cloud_game_repair": {
-    "status": "ENABLED_AUTHOR_REVIEWER_CUTOVER_PENDING",
+    "status": "ENABLED_AUTHOR_FIRST_INDEPENDENT_MERGE_AND_MAIN_QA_VERIFIED",
     "backend": "CHATGPT_CONNECTED_GITHUB_TASK",
     "task_id": "6adbf0d6a7d881918ce181dff2468867",
     "title": "TOY WARS 自動ゲーム修正",
@@ -415,7 +416,7 @@
       "game_source_changed": false,
       "notification_delivery": "UNKNOWN"
     },
-    "verification_scope": "Three controller-reviewed candidates integrated with successful main QA. Separate reviewer task is registered; bootstrap/full v4 runtime is not yet verified.",
+    "verification_scope": "One separate scheduled reviewer cycle merged game PR45 with exact-head CI and post-merge main QA; repeated reliability remains unverified.",
     "observed_at_utc": "2026-10-25T00:52:14.371811+00:00",
     "queue_version": 4,
     "branch_prefix": "auto/twf-game-repair-",
@@ -658,9 +659,9 @@
     "latest_record": "ops/INTEGRATION_LATEST.json",
     "repair_requests": "ops/WORK_REQUESTS.json",
     "roblox_publish_authorized": false,
-    "status": "PENDING_EXACT_REVIEWER_CUTOVER",
-    "is_enabled_confirmed": false,
-    "runtime_verified": false,
+    "status": "FIRST_REGULAR_REVIEW_MERGE_AND_MAIN_QA_VERIFIED",
+    "is_enabled_confirmed": true,
+    "runtime_verified": true,
     "separation": "Different ChatGPT task/run context, not a different provider or GitHub account",
     "first_bootstrap_review": {
       "run_id": "8e81a8de-c59c-8332-83e0-d5f0c57f15c8",
@@ -678,6 +679,22 @@
         "verdict": "REQUEST_CHANGES",
         "blockers": 2
       }
+    },
+    "verified_at_utc": "2026-10-25T03:29:46.876Z",
+    "first_full_cycle": {
+      "run_id": "ed0fc89e-e310-8326-989c-25380dc1467e",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "independently_verified": "SEPARATE_TASK_AND_RUN_REVIEWER",
+      "integration_record": "ops/INTEGRATION_LATEST.json on twf-repair-coordinator",
+      "pr": 45,
+      "accepted_pr_head": "8676e3447c5e4d01122c59a0c62c8062b90e8a8d",
+      "merge_commit": "8f3312ba7b61095f839b7121e2776bfca6245aee",
+      "post_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40157791404",
+      "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40157791429",
+      "main_after_generated_status": "f728fa525d8b409ef2a08a3da59e4ae7e73e27b1",
+      "shared_lease_epoch": 18,
+      "merged_at_utc": "2026-10-25T03:19:37Z",
+      "runtime_scope": "FIRST_ONE_CYCLE_ONLY_NO_SUSTAINED_STABILITY_OR_ROBLOX_ENGINE"
     }
   },
   "important": "Actions / Roblox Studio evidence must be checked independently. A generated status page is not proof of runtime health."
