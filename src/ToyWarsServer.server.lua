@@ -479,7 +479,7 @@ RunService.Heartbeat:Connect(function(dt)
     accumulated=accumulated+dt
     if accumulated<0.12 then return end
     local delta=math.min(accumulated,0.3)
-    accumulated=0
+    accumulated=accumulated-delta
     for _,state in pairs(sessions) do simulate(state,delta) end
 end)
 print("TWF_BOOT_OK v1.2: server PVE auto factory and toy battle arena loaded")
