@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 1,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "f15d82d1-be3b-4e0f-95a7-91f041171522",
-    "task_id": null,
-    "epoch": 1,
-    "acquired_at": "2026-10-24T23:55:32.797750+00:00",
-    "expires_at": "2026-10-25T00:25:32.797750+00:00",
-    "base_main_sha": "658b69a4328de55c9c5129ad1f8894518c9efb49",
-    "work_branch": null,
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d"
@@ -68,10 +58,37 @@
     ],
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": false,
-    "observed_at": "2026-10-24T23:55:32.797750+00:00",
+    "observed_at": "2026-10-25T00:15:57.147900+00:00",
     "signature": "b08762fc5138a612cfd69c00e5265e2df843fd31e66db923f7ae167c2b745a7e",
     "approval_text": "#35・#38・#40のmain取り込みを承認"
   },
-  "last_reported_approval_signature": null,
-  "last_completed": null
+  "last_reported_approval_signature": "b08762fc5138a612cfd69c00e5265e2df843fd31e66db923f7ae167c2b745a7e",
+  "last_completed": {
+    "kind": "CONTROLLER",
+    "owner_id": "f15d82d1-be3b-4e0f-95a7-91f041171522",
+    "epoch": 1,
+    "released_at": "2026-10-25T00:15:57.147900+00:00"
+  },
+  "last_approval_report": {
+    "recorded_at": "2026-10-25T00:15:57.147900+00:00",
+    "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06",
+    "evidence_prs": [
+      41,
+      42
+    ],
+    "scope": "Complete approval table/reply recorded in service result, coordinator and setup PR. Notification delivery is unknown.",
+    "delivery": "UNKNOWN"
+  },
+  "deployed_setup": {
+    "prs": [
+      41,
+      42
+    ],
+    "main": "826610920907153accc0b2d188583f0a42aa4687",
+    "tree": "2167a28b494872a89a626544e9b9ae1b074743e5",
+    "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
+    "python_tests": 109,
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40145907205",
+    "main_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40145907319"
+  }
 }

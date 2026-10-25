@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "observed_at": "2026-10-25T00:02:08.432636+00:00",
+  "source": "Daily review/controller initial research; hypotheses are not implemented features",
+  "items": [
+    {
+      "id": "mobile_pve_frame_time",
+      "kind": "ENGINE_EXPERIMENT",
+      "status": "PLANNED_BLOCKED_ENGINE_ACCESS",
+      "hypothesis": "Wave/production load may produce frame-time spikes on a midrange Android device; not observed yet.",
+      "source_url": "https://create.roblox.com/docs/performance-optimization/microprofiler",
+      "experiment": "Record real server + client MicroProfiler traces during increasing PvE load and compare frame-time spikes with baseline.",
+      "success_evidence": "Dated device/load/trace data and a reproducible before/after comparison; choose threshold before tuning.",
+      "requires": "Approved hosted Roblox/engine/mobile evidence path; no PC work requested from the owner."
+    },
+    {
+      "id": "pending_floor_fix",
+      "kind": "VERIFIED_SOURCE_CANDIDATE",
+      "status": "AWAIT_OWNER_INTEGRATION_APPROVAL",
+      "pr": 38,
+      "next": "Do not duplicate the candidate. Integrate only with exact-head approval, then verify real engine collision when access exists."
+    }
+  ]
+}
