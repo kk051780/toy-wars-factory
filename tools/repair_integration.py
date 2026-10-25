@@ -25,6 +25,8 @@ def decide(policy, main, pr, review, lease, now):
     except (ValueError, TypeError, AttributeError):
         return result("WAIT_REVIEW", reason="canonical reviewer run required")
     if (review.get("reviewer_task_id") != integration["task_id"] or
+            lease.get("authorized_tasks", {}).get("REVIEWER") != integration["task_id"] or
+            (lease.get("holder") or {}).get("task_id") != integration["task_id"] or
             not owns(lease, "REVIEWER", reviewer_id, review.get("lease_epoch"), now) or
             lease["holder"].get("work_branch") != "main"):
         return result("WAIT_LOCK", reason="current registered independent reviewer lease required")
@@ -51,6 +53,10 @@ def decide(policy, main, pr, review, lease, now):
     author_task = policy["system_review"]["task_id"] if meta else policy["task_id"]
     if pr.get("author_task_id") != author_task:
         return result("WAIT_AUTHOR_ID")
+    try:
+        canonical_id(pr.get("author_run_id"))
+    except (ValueError, TypeError, AttributeError):
+        return result("WAIT_AUTHOR_ID", reason="canonical author run is required")
     if (review.get("reviewer_task_id") == pr.get("author_task_id") or
             reviewer_id == pr.get("author_run_id")):
         return result("WAIT_INDEPENDENT_REVIEW", reason="author cannot approve its own work")

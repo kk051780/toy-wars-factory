@@ -52,6 +52,18 @@ class IntegrationTests(unittest.TestCase):
         self.pr["author_run_id"] = REVIEW_RUN
         self.assertEqual(self.decision()["action"], "WAIT_INDEPENDENT_REVIEW")
 
+    def test_missing_or_noncanonical_author_run_cannot_merge(self):
+        self.pr.pop("author_run_id")
+        self.assertEqual(self.decision()["action"], "WAIT_AUTHOR_ID")
+        for value in ("not-a-run-uuid", AUTHOR_RUN.upper()):
+            self.pr["author_run_id"] = value
+            self.assertEqual(self.decision()["action"], "WAIT_AUTHOR_ID")
+
+    def test_shared_registration_holder_and_policy_must_name_the_same_task(self):
+        self.lease["authorized_tasks"]["REVIEWER"] = "different-task"
+        self.lease["holder"]["task_id"] = "different-task"
+        self.assertEqual(self.decision()["action"], "WAIT_LOCK")
+
     def test_unregistered_reviewer_or_wrong_generation_cannot_merge(self):
         self.review["lease_epoch"] += 1
         self.assertEqual(self.decision()["action"], "WAIT_LOCK")
