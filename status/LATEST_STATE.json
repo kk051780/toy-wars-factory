@@ -1,7 +1,7 @@
 {
   "schema": 2,
   "canonical_repo": "kk051780/toy-wars-factory",
-  "source_revision": "63ef5186e84963cd5d277b0f12271ee7e4fa7c7a",
+  "source_revision": "bdca2eb8d6b3f7d4077691692fe8266361e78fef",
   "source_metrics": {
     "files": 4,
     "lines": 681,
@@ -189,8 +189,9 @@
       "Verify post-merge QA/handoff for each candidate: #38 QA 40146924040, #35 QA 40147170649, #40 QA 40147278940. Any later current-main changes were proven generated status snapshots.",
       "Main now includes the three floor properties and the new accepted regressions: 4 Lua source files / 681 lines / 26,913 bytes. Preserve initial 25,726-byte baseline; #35/#40 are test-only, not two more source bug fixes.",
       "Register separate reviewer 6add4ea80d3881919da4ea2c1d5def88; update all saved/live prompts to delegate integration without owner replies. Authors retain draft-only source writes.",
-      "Add delegated integration decisions and regressions for ownership/independent identity/current head and base/CI/scope/claim evidence/main failure/verified status-only descendants. All 125 Python tests pass.",
-      "Add a revisable completion roadmap and guarded additional-module/installer/regression extension. Retain mandatory daily primary-web and effectiveness review."
+      "Add delegated integration decisions and regressions for ownership/independent identity/current head and base/CI/scope/claim evidence/main failure/verified status-only descendants. All 127 Python tests pass.",
+      "Add a revisable completion roadmap and guarded additional-module/installer/regression extension. Retain mandatory daily primary-web and effectiveness review.",
+      "Separate read-only bootstrap run 8e81a8de-c59c-8332-83e0-d5f0c57f15c8 rejected the initial proposed head with two reproduced identity-validation gaps. Fix both and add two regressions; all 127 Python tests pass. Re-review the new head before deployment."
     ],
     "evidence_record": "history/C00029_delegated_autonomous_integration.json",
     "authorization": {
@@ -656,10 +657,17 @@
     "latest_record": "ops/INTEGRATION_LATEST.json",
     "repair_requests": "ops/WORK_REQUESTS.json",
     "roblox_publish_authorized": false,
-    "status": "REGISTERED_BOOTSTRAP_REVIEW_PENDING",
+    "status": "REGISTERED_VERIFY_LIVE_REVIEW_LEDGER",
     "is_enabled_confirmed": true,
     "runtime_verified": false,
-    "separation": "Different ChatGPT task/run context, not a different provider or GitHub account"
+    "separation": "Different ChatGPT task/run context, not a different provider or GitHub account",
+    "first_bootstrap_review": {
+      "run_id": "8e81a8de-c59c-8332-83e0-d5f0c57f15c8",
+      "head": "75f26aff322474850d927358abce9ee5679a3167",
+      "verdict": "REQUEST_CHANGES",
+      "blockers": 2,
+      "resolution": "Fix author UUID and registered reviewer identity checks; new head requires CI and re-review."
+    }
   },
   "important": "Actions / Roblox Studio evidence must be checked independently. A generated status page is not proof of runtime health."
 }
