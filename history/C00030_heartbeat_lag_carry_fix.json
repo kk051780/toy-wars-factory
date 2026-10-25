@@ -1,0 +1,62 @@
+{
+  "id": "C00030",
+  "date": "2026-10-25",
+  "kind": "GAME_SOURCE_BUG_FIX",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "c412d94e-2c08-8322-829e-e3bbfb1d9587",
+  "queue_decision": "START",
+  "base_main": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "6025dc8c01a79e7354be2be7557c456b25c68b88",
+    "owner_run_id": "c412d94e-2c08-8322-829e-e3bbfb1d9587",
+    "epoch": 6
+  },
+  "defect": "Heartbeat accumulator discarded elapsed time above 0.3 seconds on a long frame, delaying income and toy production.",
+  "reproduction": "Canonical whole-server Lua harness: Heartbeat 0.6s followed by 0.12s x3 (0.96s total) credits only 0.66s on prior source; 6 coins/s yields 3 instead of 5. A further 0.3s also delays first toy.",
+  "root_cause": "RunService.Heartbeat capped delta to 0.3 but reset accumulated=0, throwing away the unprocessed remainder.",
+  "fix": "Keep accumulated=accumulated-delta, allowing bounded one-step-per-Heartbeat catch-up without changing per-step 0.3 cap.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/heartbeat_lag_spec.lua",
+    "history/C00030_heartbeat_lag_carry_fix.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 18813,
+      "after_bytes": 18829,
+      "delta_bytes": 16
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 681,
+    "lua_bytes": 26929
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/heartbeat_lag_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 2227,
+      "delta_bytes": 2227
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "No character stats or prices changed; transient server lag no longer permanently slows income/production for PON, GUARDON and TANKURU.",
+  "tests": {
+    "native_whole_server": "PENDING_GITHUB_CI",
+    "local": "NOT_RUN_LUA_5_4_UNAVAILABLE",
+    "roblox_engine": "NOT_RUN",
+    "negative_control": "Old source must fail the elapsed-income assertion; not yet executed"
+  },
+  "evidence": {
+    "base_main_url": "https://github.com/kk051780/toy-wars-factory/commit/65b38869fb2268d04b04bad110b1b2012d2a2dca",
+    "base_main_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40150077130",
+    "coordination_claim_url": "https://github.com/kk051780/toy-wars-factory/commit/6025dc8c01a79e7354be2be7557c456b25c68b88",
+    "pr_url": "PENDING_DRAFT_CREATION",
+    "ci_url": "PENDING_EXACT_HEAD"
+  },
+  "next_action": "Confirm exact-head Toy Wars bootstrap offline QA; repair the same draft if it fails; independent reviewer handles integration."
+}
