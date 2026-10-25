@@ -1,0 +1,16 @@
+{
+  "pr": 43,
+  "head": "1c462d087629759cfe3efb8959742d2df299befe",
+  "reviewer_task_id": "6add4ea80d3881919da4ea2c1d5def88",
+  "reviewer_run_id": "2a21fa6d-a380-8332-a389-7dcf1d7d4b32",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "reason": "2026-10-25、指定headをGitHubから再取得し、19検査を再実行して全件合格。前回指摘した作者run IDの欠落・不正はWAIT_AUTHOR_ID、ロックのタスク不一致はWAIT_LOCKとなることを確認した。[対象headのCI](https://github.com/kk051780/toy-wars-factory/actions/runs/40149282396)も両job成功。既存の差分審査と合わせ、導入を承認する。今回は読取り専用のため変更・統合は0件。次はCONTROLLERによる導入とmain QA確認。所有者の承認返信は不要。通常のv4統合実走・Roblox実機成功は未確認。"
+}
