@@ -24,13 +24,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Install the same pinned official compiler as the reviewed lock
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh extension install github/gh-aw --pin v0.93.2
+      - name: Download audited compiler v0.93.2 without any GitHub credentials
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --silent --show-error https://github.com/github/gh-aw/releases/download/v0.93.2/linux-amd64 --output /tmp/twf-gh-aw
+          echo "364b98de9a8b8948792289128bbf3907d152284804e02b70804fc123e09ca6fd  /tmp/twf-gh-aw" | sha256sum --check
+          chmod 0700 /tmp/twf-gh-aw
       - name: Recompile the literal incident hold without invoking an agent
         run: |
-          gh aw compile .github/workflows/twf-gemini-free-trial.md
+          /tmp/twf-gh-aw compile .github/workflows/twf-gemini-free-trial.md
           python3 tools/verify_gemini_hold.py
           git diff --exit-code -- .github/workflows/twf-gemini-free-trial.lock.yml
       - name: Preserve compiler output for exact review
@@ -73,32 +75,12 @@ jobs:
           done
           git show "$TWF_BASE_SHA:config/autonomous_repair.json" > /tmp/twf-auto-policy.json
           python3 /tmp/twf-trusted/check_meta_diff.py --policy /tmp/twf-auto-policy.json --base "$TWF_BASE_SHA" --head HEAD --branch "$TWF_HEAD_REF"
-      - name: Fetch shared coordinator with isolated read token (no PR code)
+      - name: Coordinator lease proof is checked by trusted base-only workflow
         if: github.event_name == 'pull_request' && (startsWith(github.head_ref, 'auto/twf-game-repair') || startsWith(github.head_ref, 'auto/twf-system-review-'))
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GIT_TERMINAL_PROMPT: "0"
         run: |
-          set -euo pipefail
-          basic="$(printf "x-access-token:%s" "$GH_TOKEN" | base64 -w0)"
-          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $basic" fetch --no-tags origin refs/heads/twf-repair-coordinator:refs/remotes/origin/twf-repair-coordinator
-          unset basic
-      - name: Verify immutable shared lease for automatic repair and system-review PRs
-        if: github.event_name == 'pull_request' && (startsWith(github.head_ref, 'auto/twf-game-repair') || startsWith(github.head_ref, 'auto/twf-system-review-'))
-        env:
-          TWF_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          TWF_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          TWF_HEAD_REF: ${{ github.head_ref }}
-        run: |
-          set -euo pipefail
-          git show "$TWF_BASE_SHA:config/autonomous_repair.json" > /tmp/twf-auto-policy.json
-          version="$(python3 -c 'import json; print(int(json.load(open("/tmp/twf-auto-policy.json")).get("queue_version",0)))')"
-          if [ "$version" -ge 3 ]; then
-            mkdir -p /tmp/twf-trusted
-            git show "$TWF_BASE_SHA:tools/repair_control.py" > /tmp/twf-trusted/repair_control.py
-            git show-ref --verify --quiet refs/remotes/origin/twf-repair-coordinator
-            python3 /tmp/twf-trusted/repair_control.py verify-pr --policy /tmp/twf-auto-policy.json --base "$TWF_BASE_SHA" --head "$TWF_PR_HEAD_SHA" --branch "$TWF_HEAD_REF" --control-ref refs/remotes/origin/twf-repair-coordinator
-          fi
+          echo "The trusted-coordinator-claim workflow MUST pass for this exact PR head before review/merge"
+          echo "This untrusted PR workflow never receives a GitHub token"
+
       - name: Lua parse of game modules (not Luau engine verification)
         run: |
           for file in src/*.lua; do

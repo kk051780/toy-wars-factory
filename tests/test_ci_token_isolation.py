@@ -1,73 +1,63 @@
-"""Prevent unreviewed PR test code from inheriting GitHub read credentials."""
+"""Security invariants: untrusted PR QA no secret; trusted coordination base only."""
 import pathlib
 import re
 import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-WF = ROOT / '.github/workflows/bootstrap-quality.yml'
+QA = (ROOT / '.github/workflows/bootstrap-quality.yml').read_text(encoding='utf-8')
+TRUSTED = (ROOT / '.github/workflows/trusted-coordinator-claim.yml').read_text(encoding='utf-8')
 
-class BootstrapTokenIsolationTests(unittest.TestCase):
-    def setUp(self):
-        self.content = WF.read_text(encoding='utf-8')
+class WorkflowIsolationTests(unittest.TestCase):
+    def test_pull_request_qa_has_no_explicit_github_token_use(self):
+        self.assertIn('  pull_request:', QA)
+        self.assertNotIn('GH_TOKEN:', QA)
+        self.assertNotIn('GITHUB_TOKEN:', QA)
+        self.assertNotIn('github.token', QA)
+        self.assertNotIn('gh extension install', QA)
 
-    def steps(self):
-        matches = list(re.finditer(r'^      - (?:name|uses): ', self.content, re.MULTILINE))
-        return [self.content[m.start():matches[i + 1].start() if i + 1 < len(matches)
-                else len(self.content)] for i, m in enumerate(matches)]
+    def test_compiler_binary_is_unauthenticated_and_checksum_pinned(self):
+        self.assertIn('v0.93.2/linux-amd64', QA)
+        self.assertIn('364b98de9a8b8948792289128bbf3907d152284804e02b70804fc123e09ca6fd', QA)
+        self.assertIn('sha256sum --check', QA)
+        self.assertIn('/tmp/twf-gh-aw compile .github/workflows/twf-gemini-free-trial.md', QA)
+        self.assertNotIn('GH_TOKEN', QA)
 
-    def test_every_checkout_discards_persisted_credentials(self):
-        checkout = [s for s in self.steps() if "uses: actions/checkout@v4" in s]
-        self.assertEqual(len(checkout), 3)
-        for step in checkout:
-            with self.subTest(step=step.splitlines()[0]):
-                self.assertRegex(step, r'(?m)^          persist-credentials: false$')
+    def test_checkouts_all_disable_persisted_credentials(self):
+        named = len(re.findall(r'persist-credentials: false', QA))
+        self.assertEqual(named, 3)
 
-    def test_tokened_steps_are_explicit_allowlisted_native_commands_only(self):
-        tokened = [s for s in self.steps() if 'GH_TOKEN: ${{ github.token }}' in s]
-        self.assertEqual(len(tokened), 2)
-        self.assertIn('Install the same pinned official compiler', tokened[0])
-        self.assertIn('gh extension install github/gh-aw --pin v0.93.2', tokened[0])
-        self.assertIn('Fetch shared coordinator with isolated read token', tokened[1])
-        self.assertIn('http.https://github.com/.extraheader=AUTHORIZATION: basic $basic', tokened[1])
-        self.assertIn('base64 -w0', tokened[1])
-        self.assertIn('GIT_TERMINAL_PROMPT: "0"', tokened[1])
-        for step in tokened:
-            with self.subTest(step=step.splitlines()[0]):
-                self.assertNotIn('python3 ', step)
-                self.assertNotIn('gh aw compile', step)
-                self.assertNotIn('lua5.4', step)
+    def test_pr_qa_preserves_scope_and_compilation_regressions(self):
+        self.assertIn('tools/check_auto_diff.py', QA)
+        self.assertIn('tools/check_meta_diff.py', QA)
+        self.assertIn('tools/verify_gemini_hold.py', QA)
+        self.assertIn('git diff --exit-code -- .github/workflows/twf-gemini-free-trial.lock.yml', QA)
 
-    def test_coordinator_git_token_is_not_saved_in_config(self):
-        step = next(s for s in self.steps() if "Fetch shared coordinator" in s)
-        self.assertIn("unset basic", step)
-        self.assertNotIn("git config --global", step)
-        self.assertNotIn("git config --local", step)
-        self.assertNotIn("http.extraheader=AUTHORIZATION: bearer", step)
+    def test_trusted_claim_workflow_is_base_scoped_and_not_pr_checkout(self):
+        self.assertIn('  pull_request_target:', TRUSTED)
+        self.assertNotIn('  pull_request:', TRUSTED)
+        self.assertIn('ref: ${{ github.event.pull_request.base.sha }}', TRUSTED)
+        self.assertNotIn('ref: ${{ github.event.pull_request.head.sha }}', TRUSTED)
+        self.assertIn('persist-credentials: false', TRUSTED)
+        self.assertIn('TWF_HEAD_REPO:', TRUSTED)
+        self.assertIn('test "$TWF_HEAD_REPO" = "$TWF_BASE_REPO"', TRUSTED)
 
-    def test_untrusted_compiler_and_hold_script_have_no_repo_token(self):
-        steps = [s for s in self.steps() if 'Recompile the literal incident hold' in s]
-        self.assertEqual(len(steps), 1)
-        self.assertIn('gh aw compile', steps[0])
-        self.assertIn('python3 tools/verify_gemini_hold.py', steps[0])
-        self.assertNotIn('GH_TOKEN:', steps[0])
-        self.assertNotIn('github.token', steps[0])
+    def test_trusted_claim_is_data_only_and_uses_base_verifier(self):
+        self.assertIn('GH_TOKEN: ${{ github.token }}', TRUSTED)
+        self.assertIn('contents: read', TRUSTED)
+        self.assertNotIn('contents: write', TRUSTED)
+        self.assertIn('python3 tools/repair_control.py verify-pr', TRUSTED)
+        self.assertIn('refs/remotes/origin/twf-repair-coordinator', TRUSTED)
+        self.assertIn('test "$(git rev-parse refs/remotes/origin/trusted-pr-head)" = "$TWF_HEAD_SHA"', TRUSTED)
+        self.assertNotIn('python3 -m unittest discover', TRUSTED)
+        self.assertNotIn('lua5.4', TRUSTED)
+        self.assertNotIn('gh aw compile', TRUSTED)
 
-    def test_untrusted_python_and_lua_test_steps_receive_no_token(self):
-        for step in self.steps():
-            if ('python3 -m unittest discover' in step or 'lua5.4 tests/' in step
-                    or 'python3 tools/build_installer.py' in step):
-                with self.subTest(step=step.splitlines()[0]):
-                    self.assertNotIn('GH_TOKEN:', step)
-                    self.assertNotIn('GITHUB_TOKEN:', step)
-                    self.assertNotIn('github.token', step)
-
-    def test_original_lease_scope_and_compiler_hold_not_relaxed(self):
-        self.assertIn('python3 /tmp/twf-trusted/repair_control.py verify-pr', self.content)
-        self.assertIn('git show-ref --verify --quiet refs/remotes/origin/twf-repair-coordinator', self.content)
-        self.assertIn('git show "$TWF_BASE_SHA:tools/repair_control.py"', self.content)
-        self.assertIn('git diff --exit-code -- .github/workflows/twf-gemini-free-trial.lock.yml', self.content)
-        self.assertIn('permissions:\n  contents: read', self.content)
-        self.assertNotIn('contents: write', self.content)
+    def test_no_released_workflow_runs_untrusted_code_with_credential(self):
+        self.assertNotIn('GH_TOKEN', QA)
+        for line in TRUSTED.splitlines():
+            self.assertNotIn('sudo ', line)
+            self.assertNotIn('npm ', line)
+            self.assertNotIn('lua5.4', line)
 
 if __name__ == '__main__':
     unittest.main()
