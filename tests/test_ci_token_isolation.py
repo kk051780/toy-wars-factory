@@ -16,7 +16,7 @@ class BootstrapTokenIsolationTests(unittest.TestCase):
                 else len(self.content)] for i, m in enumerate(matches)]
 
     def test_every_checkout_discards_persisted_credentials(self):
-        checkout = [s for s in self.steps() if s.startswith('      - uses: actions/checkout@v4')]
+        checkout = [s for s in self.steps() if "uses: actions/checkout@v4" in s]
         self.assertEqual(len(checkout), 3)
         for step in checkout:
             with self.subTest(step=step.splitlines()[0]):
