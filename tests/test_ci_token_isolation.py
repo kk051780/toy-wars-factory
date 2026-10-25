@@ -28,12 +28,21 @@ class BootstrapTokenIsolationTests(unittest.TestCase):
         self.assertIn('Install the same pinned official compiler', tokened[0])
         self.assertIn('gh extension install github/gh-aw --pin v0.93.2', tokened[0])
         self.assertIn('Fetch shared coordinator with isolated read token', tokened[1])
-        self.assertIn('git -c "http.extraheader=AUTHORIZATION: bearer ${GH_TOKEN}" fetch', tokened[1])
+        self.assertIn('http.https://github.com/.extraheader=AUTHORIZATION: basic $basic', tokened[1])
+        self.assertIn('base64 -w0', tokened[1])
+        self.assertIn('GIT_TERMINAL_PROMPT: "0"', tokened[1])
         for step in tokened:
             with self.subTest(step=step.splitlines()[0]):
                 self.assertNotIn('python3 ', step)
                 self.assertNotIn('gh aw compile', step)
                 self.assertNotIn('lua5.4', step)
+
+    def test_coordinator_git_token_is_not_saved_in_config(self):
+        step = next(s for s in self.steps() if "Fetch shared coordinator" in s)
+        self.assertIn("unset basic", step)
+        self.assertNotIn("git config --global", step)
+        self.assertNotIn("git config --local", step)
+        self.assertNotIn("http.extraheader=AUTHORIZATION: bearer", step)
 
     def test_untrusted_compiler_and_hold_script_have_no_repo_token(self):
         steps = [s for s in self.steps() if 'Recompile the literal incident hold' in s]

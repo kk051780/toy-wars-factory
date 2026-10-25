@@ -9,3 +9,16 @@ The coordinator scope verification continues to execute trusted-base repair_cont
 Limitations: GitHub Actions jobs can have implicit runner credentials, and a privileged actor can modify an unprotected private main workflow. This change reduces explicit credential exposure to PR code but is not an enforcement of private branch protection. P2 actual authenticated automation remains disabled pending authorized provider-enforced rules and independent source review.
 
 Regressions: `python3 -m unittest discover -s tests -p 'test_ci_token_isolation.py' -v`; required main QA and independent review must pass for exact head.
+
+## HTTP authentication correction after independent audit
+
+The coordinator fetch now uses the official checkout-compatible Basic header
+with a transient base64-encoded `x-access-token:<token>` user/password pair.
+It is set via a per-command Git `-c http.https://github.com/.extraheader`
+option, never a persisted configuration key. The temporary shell variable is
+unset afterward and interactive prompts are disabled. No PR-controlled Python
+receives that token. The earlier bearer form was not accepted as verified.
+
+The current PR's branch does not trigger the auto-repair-only fetch condition;
+the real auto-repair integration path needs separate observed CI proof. Offline
+static regression success alone is not live network authentication evidence.
