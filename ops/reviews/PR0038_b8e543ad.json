@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "pr": 38,
+  "head": "b8e543ada9e5613486cbcfc1819a3aba8cc7932c",
+  "base_reviewed": "826610920907153accc0b2d188583f0a42aa4687",
+  "reviewer_kind": "CONTROLLER",
+  "reviewer_operation_id": "13782527-fe39-46b8-983a-7d2afcedc715",
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "verdict": "APPROVE",
+  "findings": [],
+  "changed_files": [
+    "history/C00024_walkable_floor_collision_fix.json",
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/walkable_floors_spec.lua"
+  ],
+  "ci": {
+    "id": 40137069031,
+    "head": "b8e543ada9e5613486cbcfc1819a3aba8cc7932c",
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40137069031"
+  },
+  "checks": [
+    "Only three player-floor collision attributes change; shared default and decorations/units remain unchanged",
+    "Five canonical whole-server cases including pinned old source pass",
+    "All eight combined native candidate suites pass and existing acceptance cases remain intact",
+    "No provider/budget/permission/publishing/stat changes"
+  ],
+  "limitations": [
+    "Native properties are not real Roblox physics/multiplayer/mobile evidence"
+  ],
+  "authority": "Owner delegated development and integration decisions on 2026-10-25"
+}
