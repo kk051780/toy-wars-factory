@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "game_id": "skyline-parkour-template",
+  "title": "Skyline Parkour (unbound demonstration)",
+  "platform": "roblox",
+  "phase": "UNBOUND_TEMPLATE",
+  "repository": null,
+  "coordination_ref": null,
+  "roles": {
+    "author": null,
+    "reviewer": null,
+    "meta": null
+  },
+  "game_design": {
+    "genre": "Cooperative parkour",
+    "core_loop": [
+      "Choose a route",
+      "Clear traversal challenges",
+      "Share checkpoints with teammates",
+      "Improve completion time"
+    ],
+    "audience": "Players who enjoy short co-op obstacle games",
+    "novelty_hypothesis": "Adaptive team checkpoints could encourage cooperative replay rather than solitary speedrunning"
+  },
+  "quality": {
+    "offline": "NOT_RUN",
+    "engine": "NOT_RUN",
+    "two_client": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "playtest": "NOT_RUN"
+  },
+  "safety": {
+    "draft_only": true,
+    "independent_review": true,
+    "exact_head_ci": true,
+    "post_merge_main_qa": true,
+    "auto_publish": false,
+    "external_inference": false,
+    "daily_external_budget_usd": 0,
+    "max_open_prs": 2
+  },
+  "source_prefix": null,
+  "tests_prefix": null
+}
