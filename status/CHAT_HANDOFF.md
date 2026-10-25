@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: eaa51d414de310e79073a8f0a781f999cad8ba0d
+- 基準ソースコミット: c00d4d552ea1098b91e3b855cdb87e3e68b65950
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 既存GitHub AIワークフロー: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - ChatGPT定期ゲーム修正: ENABLED_QUEUE_V3_CONFIGURED_LIVE_RUN_VERIFY_REQUIRED
@@ -26,7 +26,7 @@
 - Studio: NOT_RUN
 - マルチクライアント: NOT_RUN
 - スマホ表示: NOT_RUN
-- 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40136758867（最新Actionsを別途確認すること）
+- 記録済GitHub QA: PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40145467694（最新Actionsを別途確認すること）
 
 ## 次の開発優先事項
 - Present approval packet #35 / #38 / #40 with exact-head CI and a ready-to-send approval sentence; never answer only approval waiting.
@@ -60,26 +60,22 @@
 - 現在の方式を最適と固定せず、前後の結果と未解決点を記録する。docs/SYSTEM_REVIEW.mdを読む。
 
 ## 最新の再開地点（観測時点の記録）
-- 記録: C00027 / 2026-10-25
-- 照合したmain: 658b69a4328de55c9c5129ad1f8894518c9efb49
-- 証拠: history/C00027_serialized_execution_daily_improvement.json
-- 完了: Read all three pending PRs, actual diffs and exact-head CI. #35 is regression-only, #38 fixes three floor properties, #40 is regression-only. All current heads pass.
-- 完了: Add fenced WORKER/META/CONTROLLER leases plus a DISPATCH ticket for manual go. Unknown/active service joins instead of creating a second writer; expiry alone cannot steal ownership.
-- 完了: Create shared coordinator branch and verify real same-parent contention. A stale ref request fails; a current-head but non-fast-forward update explicitly rejects with first owner retained.
-- 完了: Add actionable exact-head approval packets and deterministic handoff sections with PR links, contents, evidence, scope and a ready-to-send approval sentence.
-- 完了: Register a separate daily ChatGPT system/game review task with current primary-web research, measured failures/effectiveness, tested draft improvements and game experiment backlog under the shared lease.
-- 完了: Preserve game source (4 files / 678 lines / 26,753 bytes), existing tests/negative controls, Gemini hold, budget/model/credentials and all integration/publication approvals.
-- 完了: Local 108 Python tests (34 new coordination/system cases) and 21 policy checks pass. Current candidate combination also passes eight native suites including four upgrade cases and pinned old floor control.
+- 記録: C00028 / 2026-10-25
+- 照合したmain: 192af53b50b15d2d9e9896f63ffa3f0c9818fba0
+- 証拠: history/C00028_approval_empty_state_and_cutover_proof.json
+- 完了: Integrate requested setup PR #41 at 192af53b50b15d2d9e9896f63ffa3f0c9818fba0 with exact reviewed tree. PR CI 40145345100, main QA 40145467694 and living handoff 40145467717 all passed.
+- 完了: Verify actual service run d5c2439a-d8c8-8324-bf06-a3f4abf85c06 observed undeployed queue v3/controller lock, made no edits, and presented all three approval PRs plus exact-head CI links and reply text. Task remained enabled.
+- 完了: Fix the empty approval queue so it emits no approval sentence and clearly says no items are pending. Add a regression; all 109 Python tests pass.
+- 完了: Retain eight-suite combined native candidate proof, current approval heads, daily task registration, shared lease and all original provider/game/release boundaries.
 - 新規推論承認: False
 - 定期AI承認: True
 - 自動マージ承認: False
 - Roblox公開承認: False
 - 再実行の前提: General go does not approve game main integration. List the exact pending PRs, changes and CI; explicit approval applies only to listed heads and not publication.
-- 再開する作業: Present all three exact-head integration approvals now. Keep game and daily tasks enabled; use shared ownership and verify future runtime outcomes.
-- 未確認・制限: Controller lock contention tests do not establish every future unattended worker follows the protocol. Observe service runs and matching artifacts.
-- 未確認・制限: Daily task is registered but not yet completed. Current references are primary sources checked today, not a claim all were newly published.
-- 未確認・制限: Native combined regressions are Lua mocks, not Roblox engine/physics/multiplayer/mobile or fun evidence.
-- 未確認・制限: Game PRs #35/#38/#40 remain unmerged. Automatic main integration, external inference and Roblox publication are not authorized.
+- 再開する作業: Present the three concrete approval items and reply text; release controller ownership after final CI and keep the two scheduled tasks enabled.
+- 未確認・制限: Only pre-deployment safety guard/approval formatting and remote lock contention are observed so far; post-deployment worker claim remains to be observed.
+- 未確認・制限: The daily system/game reviewer is enabled and registered but has not run yet. Native candidate combination is not Roblox engine evidence.
+- 未確認・制限: PRs #35/#38/#40 still require exact-head main-integration approval. Publication is excluded.
 
 ## 未マージの提案（現在のPR状態はGitHubで再確認）
 - PR #35: DRAFT_UNMERGED / CHATGPT_SCHEDULED_TASK_NOT_GEMINI / 生産3件・ウェーブ2件・敗北リセット1件の回帰検査。ゲーム本体の変更なし。 / https://github.com/kk051780/toy-wars-factory/pull/35
