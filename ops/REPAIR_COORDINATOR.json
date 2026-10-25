@@ -1,8 +1,18 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 12,
-  "holder": null,
+  "epoch": 13,
+  "holder": {
+    "kind": "CONTROLLER",
+    "owner_id": "bb79e90b-985a-405e-b03e-f9cb087eb297",
+    "task_id": null,
+    "epoch": 13,
+    "acquired_at": "2026-10-25T02:37:31.774Z",
+    "expires_at": "2026-10-25T03:07:31.774Z",
+    "base_main_sha": "d8245d230c72b3af5b57593e3710127477b139f8",
+    "work_branch": "ops/reviewer-exact-schedule-20261025",
+    "origin": "controller_scheduled_reviewer_migration"
+  },
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
