@@ -1,17 +1,17 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 4,
+  "epoch": 5,
   "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "2298b36e-934b-4b83-9f66-5e59a6e04562",
+    "kind": "DISPATCH",
+    "owner_id": "b3d7cb37-d4a0-4ff9-8e4a-cdb78c3c3af0",
     "task_id": null,
-    "epoch": 4,
-    "acquired_at": "2026-10-25T01:17:40.152544+00:00",
-    "expires_at": "2026-10-25T01:47:40.152544+00:00",
-    "base_main_sha": "c396e4aa28908a024c70cf54a572ed5db18f04dc",
+    "epoch": 5,
+    "acquired_at": "2026-10-25T01:22:26.282427+00:00",
+    "expires_at": "2026-10-25T01:24:26.282427+00:00",
+    "base_main_sha": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
     "work_branch": null,
-    "origin": "controller"
+    "origin": "dispatch"
   },
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
@@ -24,16 +24,16 @@
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-25T00:48:54.301414+00:00",
+    "observed_at": "2026-10-25T01:22:26.282427+00:00",
     "signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
     "approval_text": ""
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "9775bb01-5a62-498a-9345-d9250dcefe56",
-    "epoch": 3,
-    "released_at": "2026-10-25T01:17:40.152544+00:00"
+    "owner_id": "2298b36e-934b-4b83-9f66-5e59a6e04562",
+    "epoch": 4,
+    "released_at": "2026-10-25T01:22:26.282427+00:00"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -291,5 +291,18 @@
     "late_result_run_id": "2f149aa6-5864-832d-89af-2a3086a5c41e",
     "fresh_structured_review_run": "2a21fa6d-a380-8332-a389-7dcf1d7d4b32",
     "note": "Record earlier failure/no-result observation and later matching output separately. Current approval uses the fresh structured matched result."
-  }
+  },
+  "pipeline_deployment": {
+    "pr": 43,
+    "main": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
+    "source_commit": "b863381aa80d77107ad50ca2af0f667e78361e72",
+    "reviewed_head": "1c462d087629759cfe3efb8959742d2df299befe",
+    "tree": "efd457508c8e2695ca317c907bfc2063d81b0850",
+    "python_tests": 128,
+    "qa": 40150077130,
+    "handoff": 40150077134,
+    "bootstrap_approved_run": "2a21fa6d-a380-8332-a389-7dcf1d7d4b32",
+    "regular_v4_cycle_verified": false
+  },
+  "owner_reply_required": false
 }

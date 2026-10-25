@@ -1,124 +1,32 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T00:15:57.147900+00:00",
-  "actor": "MANUAL_CONTROLLER_INITIAL_REVIEW",
-  "main_observed": "826610920907153accc0b2d188583f0a42aa4687",
-  "sources": [
-    {
-      "url": "https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency",
-      "published_on": null,
-      "checked_on": "2026-10-25",
-      "finding": "Actions concurrency scopes to workflows/jobs. Cross-service writing uses a separate shared lease as a project design inference."
-    },
-    {
-      "url": "https://docs.github.com/en/rest/git/refs#update-a-reference",
-      "published_on": null,
-      "checked_on": "2026-10-25",
-      "finding": "Non-forced updates preserve fast-forward history; remote contention was also tested."
-    },
-    {
-      "url": "https://developers.openai.com/blog/eval-skills",
-      "published_on": "2026-01-22",
-      "checked_on": "2026-10-25",
-      "finding": "Check agent process/outcomes, preserve traces, add regressions from observed failures. Not a new publication today."
-    },
-    {
-      "url": "https://create.roblox.com/docs/performance-optimization/microprofiler",
-      "published_on": null,
-      "checked_on": "2026-10-25",
-      "finding": "Use real device frame-time/spike measurements; native Lua tests are not that evidence."
-    }
-  ],
-  "fresh_publication_claimed": false,
-  "unavailable_sources": [
-    {
-      "url": "https://create.roblox.com/updates",
-      "reason": "No readable body; no update adopted from snippet alone."
-    }
-  ],
-  "findings": [
-    {
-      "issue": "Manual and scheduled work lacked a common lease",
-      "action": "Shared fenced ref and dispatch ticket; remote rejection and unit regressions pass"
-    },
-    {
-      "issue": "Review-wait replies omitted concrete approval scope",
-      "action": "Exact-head packet, reply text and mandatory handoff sections"
-    },
-    {
-      "issue": "PR40 body still said CI in progress after success",
-      "action": "Correct factual body; daily freshness audit"
-    },
-    {
-      "issue": "Three review slots contain one source fix and two regression-only packets",
-      "action": "Measure separately; do not claim three game bug fixes"
-    },
-    {
-      "issue": "No Roblox engine/mobile evidence",
-      "action": "Retain release hold and plan an instrumented experiment, not a mock success"
-    },
-    {
-      "issue": "Empty approval queue emitted a dangling approval sentence",
-      "action": "Fixed in PR42 with a new regression; no approval requested for an empty queue"
-    }
+  "observed_at": "2026-10-25T01:22:26.282427+00:00",
+  "actor": "CONTROLLER_C00029",
+  "main": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
+  "findings_and_actions": [
+    "Owner approval bottleneck replaced by separate delegated reviewer.",
+    "Three candidate PRs integrated with predicted-tree preservation and individual post-merge QA.",
+    "Independent bootstrap review rejected two identity-validation gaps; fixed with regressions, then approved the new exact head.",
+    "Failed/no-result telemetry and late matching output preserved without stale-head verdict reuse."
   ],
   "tests": {
-    "python": 109,
-    "new_python": 34,
+    "python": 128,
+    "new_python": 19,
     "policy": 21,
-    "combined_native_suites": 8,
-    "engine": "NOT_RUN",
-    "new_scheduled_v3_run": "NOT_YET_OBSERVED",
-    "new_python_total": 35
+    "native_candidate_suites": 8
   },
-  "implementation_ci": [
-    {
-      "pr": 41,
-      "head": "b3ec3e87b53e1f1f282cf33121539afd52bfba58",
-      "run": 40145345100,
-      "conclusion": "success"
-    },
-    {
-      "pr": 42,
-      "head": "6f05fdfb42ef5521d102cb45cf7c3a2f84b6ed36",
-      "run": 40145843344,
-      "conclusion": "success"
-    }
-  ],
-  "next": "Owner exact-head integration approval for #35/#38/#40; observe the next scheduled WORKER and daily META cycles, continue fresh primary-web research and measured improvements.",
-  "implementation_prs": [
-    41,
-    42
-  ],
-  "deployed_setup": {
-    "prs": [
-      41,
-      42
-    ],
-    "main": "826610920907153accc0b2d188583f0a42aa4687",
-    "tree": "2167a28b494872a89a626544e9b9ae1b074743e5",
-    "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
-    "python_tests": 109,
-    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40145907205",
-    "main_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40145907319"
+  "deployment": {
+    "pr": 43,
+    "main": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
+    "source_commit": "b863381aa80d77107ad50ca2af0f667e78361e72",
+    "reviewed_head": "1c462d087629759cfe3efb8959742d2df299befe",
+    "tree": "efd457508c8e2695ca317c907bfc2063d81b0850",
+    "python_tests": 128,
+    "qa": 40150077130,
+    "handoff": 40150077134,
+    "bootstrap_approved_run": "2a21fa6d-a380-8332-a389-7dcf1d7d4b32",
+    "regular_v4_cycle_verified": false
   },
-  "actual_service_safety_run": {
-    "id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06",
-    "completed_at": "2026-10-25T00:03:07.472140Z",
-    "outcome": "SETUP_PENDING; no writes; controller observed; all three approvals and reply listed"
-  },
-  "verification_limits": [
-    "Full post-deployment WORKER claim has not yet been observed.",
-    "Daily review task is scheduled/enabled but has not run.",
-    "Native tests are not Roblox engine/physics/mobile evidence.",
-    "Notification delivery UNKNOWN."
-  ],
-  "metrics": {
-    "game_review_prs": 3,
-    "source_fix_candidates": 1,
-    "test_only_candidates": 2,
-    "merged_game_candidates": 0,
-    "system_setup_prs_merged": 2,
-    "main_game_source_bytes": 26753
-  }
+  "web_research": "Daily task remains required to open current primary sources and compare measured outcomes; current controller work does not claim a completed daily research task.",
+  "next": "Author advances smallest completion-roadmap implementation; reviewer integrates after independent exact-head checks; daily META improves the system and game hypotheses."
 }
