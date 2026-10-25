@@ -7,6 +7,28 @@ from pathlib import Path
 REPO = "https://github.com/kk051780/toy-wars-factory/pull/"
 VALID = {"verified", "pending", "blocked"}
 
+# Snapshot of independently checked *merged* PR evidence, as of 2026-10-25.
+# Each new verification must separately update this pinned registry after checking
+# current GitHub merged state and exact-head QA; a draft PR URL alone never qualifies.
+APPROVED_MERGED_PR = {
+    "A01": 1,
+    "A02": 32,
+    "A03": 34,
+    "A04": 38,
+    "A05": 37,
+    "A06": 41,
+    "A07": 43,
+    "A08": 45,
+    "G01": 1,
+    "G02": 32,
+    "G03": 40,
+    "G04": 35,
+    "G05": 32,
+    "G06": 30,
+    "G07": 45,
+}
+
+
 def summarize(data):
     if data.get("schema") != 1: raise ValueError("wrong schema")
     result = {}
@@ -17,8 +39,11 @@ def summarize(data):
         for m in ms:
             if type(m["weight"]) is not int or m["weight"] <= 0 or m["state"] not in VALID:
                 raise ValueError("bad milestone data")
-            if m["state"] == "verified" and not m.get("evidence", "").startswith(REPO):
-                raise ValueError("completion needs GitHub PR evidence")
+            if m["state"] == "verified":
+                # Fail closed on a draft/unreviewed PR, even if it has a valid URL shape.
+                approved = APPROVED_MERGED_PR.get(m["id"])
+                if approved is None or m.get("evidence") != REPO + str(approved):
+                    raise ValueError("unreviewed or mismatched merged-PR completion evidence")
             if m["state"] != "verified" and (m.get("evidence") or not m.get("next")):
                 raise ValueError("incomplete milestone cannot claim verification")
         result[track["id"]] = {"pct": sum(m["weight"] for m in ms if m["state"] == "verified"),
