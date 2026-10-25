@@ -46,17 +46,18 @@
   "characters_touched": [],
   "character_impact": "No character stats or prices changed; transient server lag no longer permanently slows income/production for PON, GUARDON and TANKURU.",
   "tests": {
-    "native_whole_server": "PENDING_GITHUB_CI",
+    "native_whole_server": "PENDING_EXACT_HEAD_GITHUB_CI",
     "local": "NOT_RUN_LUA_5_4_UNAVAILABLE",
     "roblox_engine": "NOT_RUN",
-    "negative_control": "Old source must fail the elapsed-income assertion; not yet executed"
+    "negative_control": "Old main source deterministically discards 0.3s in the specified 0.6s frame; negative execution not run locally"
   },
   "evidence": {
     "base_main_url": "https://github.com/kk051780/toy-wars-factory/commit/65b38869fb2268d04b04bad110b1b2012d2a2dca",
     "base_main_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40150077130",
     "coordination_claim_url": "https://github.com/kk051780/toy-wars-factory/commit/6025dc8c01a79e7354be2be7557c456b25c68b88",
-    "pr_url": "PENDING_DRAFT_CREATION",
-    "ci_url": "PENDING_EXACT_HEAD"
+    "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/44",
+    "ci_url": "PENDING_EXACT_HEAD",
+    "candidate_commit_url": "https://github.com/kk051780/toy-wars-factory/commit/86ecc095e697e782485e9840a5c87a04343b0f36"
   },
   "next_action": "Confirm exact-head Toy Wars bootstrap offline QA; repair the same draft if it fails; independent reviewer handles integration."
 }
