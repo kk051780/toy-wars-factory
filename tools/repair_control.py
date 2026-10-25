@@ -172,7 +172,7 @@ def approval_packet(pulls, repository, observed_at):
                "roblox_publish_authorized": False, "automatic_merge_authorized": False}
     signature = hashlib.sha256(json.dumps(content, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
     return {**content, "observed_at": observed_at, "signature": signature,
-            "approval_text": "・".join("#" + str(p["number"]) for p in entries) + "のmain取り込みを承認"}
+            "approval_text": ("・".join("#" + str(p["number"]) for p in entries) + "のmain取り込みを承認") if entries else ""}
 
 
 def report_needed(state, packet, manual=False):
@@ -182,6 +182,8 @@ def report_needed(state, packet, manual=False):
 
 
 def render_approvals(packet):
+    if not packet["items"]:
+        return "# 取り込み承認待ち\n\n観測時点: " + packet["observed_at"] + "\n\n承認待ちの項目はありません。\n"
     lines = ["# 取り込み承認待ち", "", "観測時点: " + packet["observed_at"], "",
              "| PR | 内容 | 区分 | 現在headの検査 |", "| --- | --- | --- | --- |"]
     for item in packet["items"]:

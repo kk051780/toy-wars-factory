@@ -1,6 +1,6 @@
 {
   "project": "TOY WARS FACTORY",
-  "version": "2.24-serialized-execution-and-daily-improvement",
+  "version": "2.25-approval-empty-state-and-cutover-verified",
   "updated_at": "2026-10-25",
   "github": {
     "repository": "kk051780/toy-wars-factory",
@@ -143,7 +143,7 @@
   },
   "verification": {
     "offline_native_local_v2_3": "PASS_REPORTED_PREVIOUSLY",
-    "github_actions": "PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40136758867",
+    "github_actions": "PASS_OFFLINE_URL:https://github.com/kk051780/toy-wars-factory/actions/runs/40145467694",
     "roblox_studio": "NOT_RUN",
     "mobile_visual": "NOT_RUN",
     "two_client_multiplayer": "NOT_RUN",
@@ -340,19 +340,16 @@
     }
   ],
   "resume_checkpoint": {
-    "id": "C00027",
+    "id": "C00028",
     "observed_on": "2026-10-25",
-    "observed_main_revision": "658b69a4328de55c9c5129ad1f8894518c9efb49",
+    "observed_main_revision": "192af53b50b15d2d9e9896f63ffa3f0c9818fba0",
     "completed": [
-      "Read all three pending PRs, actual diffs and exact-head CI. #35 is regression-only, #38 fixes three floor properties, #40 is regression-only. All current heads pass.",
-      "Add fenced WORKER/META/CONTROLLER leases plus a DISPATCH ticket for manual go. Unknown/active service joins instead of creating a second writer; expiry alone cannot steal ownership.",
-      "Create shared coordinator branch and verify real same-parent contention. A stale ref request fails; a current-head but non-fast-forward update explicitly rejects with first owner retained.",
-      "Add actionable exact-head approval packets and deterministic handoff sections with PR links, contents, evidence, scope and a ready-to-send approval sentence.",
-      "Register a separate daily ChatGPT system/game review task with current primary-web research, measured failures/effectiveness, tested draft improvements and game experiment backlog under the shared lease.",
-      "Preserve game source (4 files / 678 lines / 26,753 bytes), existing tests/negative controls, Gemini hold, budget/model/credentials and all integration/publication approvals.",
-      "Local 108 Python tests (34 new coordination/system cases) and 21 policy checks pass. Current candidate combination also passes eight native suites including four upgrade cases and pinned old floor control."
+      "Integrate requested setup PR #41 at 192af53b50b15d2d9e9896f63ffa3f0c9818fba0 with exact reviewed tree. PR CI 40145345100, main QA 40145467694 and living handoff 40145467717 all passed.",
+      "Verify actual service run d5c2439a-d8c8-8324-bf06-a3f4abf85c06 observed undeployed queue v3/controller lock, made no edits, and presented all three approval PRs plus exact-head CI links and reply text. Task remained enabled.",
+      "Fix the empty approval queue so it emits no approval sentence and clearly says no items are pending. Add a regression; all 109 Python tests pass.",
+      "Retain eight-suite combined native candidate proof, current approval heads, daily task registration, shared lease and all original provider/game/release boundaries."
     ],
-    "evidence_record": "history/C00027_serialized_execution_daily_improvement.json",
+    "evidence_record": "history/C00028_approval_empty_state_and_cutover_proof.json",
     "authorization": {
       "owner_instruction": "自動化優先させたい。いつまで俺は指示送らなきゃいけない？ 自動で今やってるゲームの修正やれる体制作れよ",
       "authorization_date": "2026-10-25",
@@ -376,12 +373,11 @@
       "routine_infrastructure_repair_scope": "This requested coordination/approval/daily-review setup may be integrated after verification. Future unattended system changes remain draft PRs requiring integration approval."
     },
     "limitations": [
-      "Controller lock contention tests do not establish every future unattended worker follows the protocol. Observe service runs and matching artifacts.",
-      "Daily task is registered but not yet completed. Current references are primary sources checked today, not a claim all were newly published.",
-      "Native combined regressions are Lua mocks, not Roblox engine/physics/multiplayer/mobile or fun evidence.",
-      "Game PRs #35/#38/#40 remain unmerged. Automatic main integration, external inference and Roblox publication are not authorized."
+      "Only pre-deployment safety guard/approval formatting and remote lock contention are observed so far; post-deployment worker claim remains to be observed.",
+      "The daily system/game reviewer is enabled and registered but has not run yet. Native candidate combination is not Roblox engine evidence.",
+      "PRs #35/#38/#40 still require exact-head main-integration approval. Publication is excluded."
     ],
-    "next_action": "Present all three exact-head integration approvals now. Keep game and daily tasks enabled; use shared ownership and verify future runtime outcomes."
+    "next_action": "Present the three concrete approval items and reply text; release controller ownership after final CI and keep the two scheduled tasks enabled."
   },
   "applied_game_changes": {
     "status": "MERGED_PR30_MAIN_QA_VERIFIED",
@@ -521,8 +517,8 @@
       "game_source_changed": false,
       "notification_delivery": "UNKNOWN"
     },
-    "verification_scope": "Queue v2 produced one verified game-source repair candidate (#38). Queue v3 shared-ref contention is verified by controller; its scheduled-worker protocol is not yet observed.",
-    "observed_at_utc": "2026-10-25T00:02:08.432636+00:00",
+    "verification_scope": "Shared-ref contention and a real pre-deployment no-write/approval-table run are verified. Full post-deployment worker claim and daily review execution are not yet observed.",
+    "observed_at_utc": "2026-10-25T00:12:11.264947+00:00",
     "queue_version": 3,
     "branch_prefix": "auto/twf-game-repair-",
     "max_open_prs": 3,
@@ -601,22 +597,47 @@
     "queue_v3_worker_run_verified": false,
     "execution_coordination": "docs/REPAIR_COORDINATION.md",
     "latest_service_observation": {
-      "run_id": "2ef88bda-e5bc-832f-a073-a34e891e58a7",
-      "recorded_status": "completed",
-      "result": "WAIT_REVIEW_THREE_EXACT_HEAD_CI_SUCCESSES",
-      "queue": [
+      "run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06",
+      "completed_at": "2026-10-25T00:03:07.472140Z",
+      "result_id_matches": true,
+      "observed_main": "658b69a4328de55c9c5129ad1f8894518c9efb49",
+      "observed_queue_version": 2,
+      "controller_lock_observed": true,
+      "code_edits": false,
+      "approval_table": [
         35,
         38,
         40
       ],
-      "scope": "Prior prompt run; not queue-v3 runtime proof."
+      "approval_reply_text": "#35・#38・#40のmain取り込みを承認",
+      "schedule_mutated": false,
+      "scope": "Actual pre-deployment fail-closed run with explicit approval table; not a successful post-deployment worker claim."
     },
     "maintenance": {
       "old_worker_confirmed_idle": true,
       "old_prompt_paused_before_cutover": true,
       "v3_prompt_saved_and_task_resumed": true,
       "guard": "No writes before queue_version>=3 is deployed; controller lease excludes writes during deployment."
-    }
+    },
+    "queue_v3_guard_run_verified": true,
+    "guard_validation_run": {
+      "run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06",
+      "completed_at": "2026-10-25T00:03:07.472140Z",
+      "result_id_matches": true,
+      "observed_main": "658b69a4328de55c9c5129ad1f8894518c9efb49",
+      "observed_queue_version": 2,
+      "controller_lock_observed": true,
+      "code_edits": false,
+      "approval_table": [
+        35,
+        38,
+        40
+      ],
+      "approval_reply_text": "#35・#38・#40のmain取り込みを承認",
+      "schedule_mutated": false,
+      "scope": "Actual pre-deployment fail-closed run with explicit approval table; not a successful post-deployment worker claim."
+    },
+    "setup_v3_pr": 41
   },
   "pending_game_fixes": [
     {
@@ -717,7 +738,7 @@
     "approval_text": "#35・#38・#40のmain取り込みを承認"
   },
   "execution_coordination": {
-    "status": "SHARED_REF_CONTENTION_VERIFIED_WORKER_V3_NOT_YET_OBSERVED",
+    "status": "CONTENTION_AND_PREDEPLOY_GUARD_VERIFIED_FULL_WORKER_CLAIM_PENDING",
     "version": 1,
     "branch": "twf-repair-coordinator",
     "state_path": "ops/REPAIR_COORDINATOR.json",
@@ -746,7 +767,15 @@
     },
     "same_parent_ref_test": "PASS_FIRST_OWNER_PRESERVED",
     "non_fast_forward_test": "PASS_EXPLICIT_REJECTION",
-    "scope": "Registered game/system workers and manual controllers; not a credential-enforcing proxy for arbitrary external edits."
+    "scope": "Registered game/system workers and manual controllers; not a credential-enforcing proxy for arbitrary external edits.",
+    "setup_deployed": {
+      "pr": 41,
+      "merge": "192af53b50b15d2d9e9896f63ffa3f0c9818fba0",
+      "tree": "a14d10e706830201c8b38e287bdf91720d2690b5",
+      "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40145345100",
+      "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40145467694",
+      "main_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40145467717"
+    }
   },
   "system_review": {
     "status": "SCHEDULED_NOT_YET_RUN",

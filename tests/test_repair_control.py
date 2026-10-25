@@ -186,6 +186,14 @@ class ApprovalTests(unittest.TestCase):
         pr["head"] = pr["ci_head"] = "b" * 40
         self.assertTrue(report_needed(state, self.packet([pr])))
 
+    def test_empty_queue_never_invents_an_approval_request(self):
+        packet = approval_packet([], REPO, NOW)
+        self.assertEqual(packet["approval_text"], "")
+        self.assertFalse(report_needed(initial_state(), packet, manual=True))
+        rendered = render_approvals(packet)
+        self.assertIn("承認待ちの項目はありません", rendered)
+        self.assertNotIn("承認する場合", rendered)
+
 
 class ImmutableClaimGateTests(unittest.TestCase):
     def setUp(self):
