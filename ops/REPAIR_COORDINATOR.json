@@ -1,83 +1,39 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 2,
+  "epoch": 3,
   "holder": {
     "kind": "CONTROLLER",
-    "owner_id": "13782527-fe39-46b8-983a-7d2afcedc715",
+    "owner_id": "9775bb01-5a62-498a-9345-d9250dcefe56",
     "task_id": null,
-    "epoch": 2,
-    "acquired_at": "2026-10-25T00:27:41.257429+00:00",
-    "expires_at": "2026-10-25T00:57:41.257429+00:00",
-    "base_main_sha": "826610920907153accc0b2d188583f0a42aa4687",
+    "epoch": 3,
+    "acquired_at": "2026-10-25T00:48:54.301414+00:00",
+    "expires_at": "2026-10-25T01:18:54.301414+00:00",
+    "base_main_sha": "c396e4aa28908a024c70cf54a572ed5db18f04dc",
     "work_branch": null,
     "origin": "controller"
   },
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
-    "META": "6add445e4138819197d9cf2b1a02534d"
+    "META": "6add445e4138819197d9cf2b1a02534d",
+    "REVIEWER": "6add4ea80d3881919da4ea2c1d5def88"
   },
   "approval_packet": {
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
-    "items": [
-      {
-        "number": 35,
-        "title": "[TWF auto-fix] Cover production, wave escape and base-loss reset",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/35",
-        "head": "1fdc549d0d708230cc642b18ceb020f28efa0806",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40114787373",
-        "summary": "生産3件・ウェーブ2件・敗北リセット1件の回帰検査。ゲーム本体の変更なし。",
-        "changed_files": [
-          "history/C00018_heartbeat_production_regression.json",
-          "history/C00020_wave_escape_regression.json",
-          "history/C00021_base_loss_reset_regression.json",
-          "history/C00022_wave_status_fixture_fix.json",
-          "tests/auto/base_loss_reset_spec.lua",
-          "tests/auto/production_spec.lua",
-          "tests/auto/wave_escape_spec.lua"
-        ],
-        "kind": "回帰検査追加"
-      },
-      {
-        "number": 38,
-        "title": "[TWF auto-fix] Restore collision on three walkable floors",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/38",
-        "head": "b8e543ada9e5613486cbcfc1819a3aba8cc7932c",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40137069031",
-        "summary": "戦場・工場・ロビーの床だけ衝突を有効化。追加5検査が合格。",
-        "changed_files": [
-          "history/C00024_walkable_floor_collision_fix.json",
-          "src/ToyWarsServer.server.lua",
-          "tests/auto/walkable_floors_spec.lua"
-        ],
-        "kind": "ゲーム本体修正"
-      },
-      {
-        "number": 40,
-        "title": "[TWF auto-fix] Test factory upgrade economy boundaries",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/40",
-        "head": "f172f71119479ba0cafafb2a2163b3b6e61ce39c",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40138956623",
-        "summary": "工場アップグレードの不足金額・ぴったり購入・上限・収入の4検査。ゲーム本体の変更なし。",
-        "changed_files": [
-          "history/C00026_upgrade_economy_regression.json",
-          "tests/auto/upgrade_economy_spec.lua"
-        ],
-        "kind": "回帰検査追加"
-      }
-    ],
+    "items": [],
+    "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
-    "automatic_merge_authorized": false,
-    "observed_at": "2026-10-25T00:15:57.147900+00:00",
-    "signature": "b08762fc5138a612cfd69c00e5265e2df843fd31e66db923f7ae167c2b745a7e",
-    "approval_text": "#35・#38・#40のmain取り込みを承認"
+    "automatic_merge_authorized": true,
+    "observed_at": "2026-10-25T00:48:54.301414+00:00",
+    "signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
+    "approval_text": ""
   },
-  "last_reported_approval_signature": "b08762fc5138a612cfd69c00e5265e2df843fd31e66db923f7ae167c2b745a7e",
+  "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "f15d82d1-be3b-4e0f-95a7-91f041171522",
-    "epoch": 1,
-    "released_at": "2026-10-25T00:15:57.147900+00:00"
+    "owner_id": "13782527-fe39-46b8-983a-7d2afcedc715",
+    "epoch": 2,
+    "released_at": "2026-10-25T00:48:54.301414+00:00"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -209,5 +165,27 @@
       ],
       "authority": "Owner delegated development/integration approvals"
     }
+  },
+  "integration_results": {
+    "35": {
+      "sha": "770c889a184d97ee34b19d1a93a53cf7dbc8cc8f",
+      "merged": true,
+      "message": "Pull Request successfully merged"
+    },
+    "38": {
+      "sha": "e51bcbdf6cce831e0c5085e492f0f00b205b756e",
+      "merged": true,
+      "message": "Pull Request successfully merged"
+    },
+    "40": {
+      "sha": "ef5afb5bd95f2d9bb7ef6076eec746d53a9dfbef",
+      "merged": true,
+      "message": "Pull Request successfully merged"
+    }
+  },
+  "completed_controller_phase": {
+    "owner": "13782527-fe39-46b8-983a-7d2afcedc715",
+    "epoch": 2,
+    "result": "PR38 PR35 PR40 integrated sequentially with passing post-merge QA"
   }
 }
