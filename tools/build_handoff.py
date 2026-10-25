@@ -50,6 +50,8 @@ def main():
       "pending_approvals":state.get("pending_approvals",{}),
       "execution_coordination":state.get("execution_coordination",{}),
       "system_review":state.get("system_review",{}),
+      "approval_authority":state.get("approval_authority",{}),
+      "independent_integration":state.get("independent_integration",{}),
       "important":"Actions / Roblox Studio evidence must be checked independently. A generated status page is not proof of runtime health."
     }
     (OUT/"LATEST_STATE.json").write_text(json.dumps(record,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
@@ -85,22 +87,29 @@ def main():
       "",
       "## 次の開発優先事項"]
     fields+=["- "+x for x in state.get("next",[])]
+    authority=state.get("approval_authority",{})
+    if authority.get("decision_owner")=="ASSISTANT":
+        fields+=["", "## 委譲された承認判断",
+          "- 通常のゲーム/体制開発・main統合は助手が判断する。所有者への承認返信は不要。",
+          "- 作者と別タスクの審査役が現在headのCIと実差分を確認し、1件ずつ統合してmainを検査する。",
+          "- 完成ロードマップと日次の実測/最新WEB一次資料から次を選ぶ。客観的な品質条件・費用上限は免除しない。"]
     approvals=state.get("pending_approvals",{})
     if approvals.get("items"):
-        fields+=["", "## 現在の取り込み承認待ち（観測時点）",
+        delegated=approvals.get("decision_owner")=="ASSISTANT"
+        fields+=["", "## 現在の自動審査・統合待ち（観測時点）" if delegated else "## 現在の取り込み承認待ち（観測時点）",
           "最新一覧: https://github.com/"+repo+"/blob/twf-repair-coordinator/status/PENDING_APPROVALS.md",
           "", "| PR | 内容 | 現在headのCI |", "| --- | --- | --- |"]
         for item in approvals["items"]:
             summary=item["summary"].replace("|","／").replace("\n"," ")
             fields.append(f"| [#{item['number']}]({item['url']}) | {summary} / {item['kind']} | [合格]({item['ci_url']}) |")
-        fields+=["", "承認する場合の返信: "+approvals["approval_text"],
+        fields+=["", "独立審査役が処理する。所有者への承認返信は不要。" if delegated else "承認する場合の返信: "+approvals["approval_text"],
           "対象headのmain取り込みのみ。公開・課金・外部モデルは含まない。現在GitHubでhead/CIを再確認する。", ""]
     coordination=state.get("execution_coordination",{})
     if coordination:
         fields+=["", "## 手動goと自動実行の競合防止",
           "- 手動goは既存ゲームタスクへ統一。実行中は追加起動せず確認へ合流する。",
           "- 共通ロック: twf-repair-coordinator / ops/REPAIR_COORDINATOR.json。expected_sha・force=false・epochを必須にする。",
-          "- ゲーム修正・日次体制改善・手動統合が同じロックを使う。docs/REPAIR_COORDINATION.mdを読む。"]
+          "- ゲーム修正・日次体制改善・独立審査・手動統合が同じロックを使う。docs/REPAIR_COORDINATION.mdを読む。"]
     system_review=state.get("system_review",{})
     if system_review:
         fields+=["", "## 体制とゲームの日次改善",

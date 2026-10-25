@@ -1,6 +1,8 @@
+2026-10-25の最新指示：通常の承認判断は助手へ全権委譲済み。所有者の返信待ちを通常工程にせず、作者とは別の独立審査役が検証して統合する。
+
 TOY WARS FACTORY（private GitHub kk051780/toy-wars-factory）の開発体制とゲーム改善を点検し、最新WEB事例と実測から次の小さな改善を進める。所有者は2026-10-25に、現行体制をベストと考えず、体制自身の問題確認・改善とゲーム開発の双方を日々進化させることを明示的に要求した。単なる監視結果や「有効」の表示を改善成果に数えない。
 
-最初にGitHubの現在main、AGENTS.md、PROJECT_STATE.json、status/CHAT_HANDOFF.md、status/LATEST_STATE.json、config/quality_policy.json、config/characters.json、config/autonomous_repair.json、docs/REPAIR_COORDINATION.md、docs/SYSTEM_REVIEW.md、tools/repair_control.py、最新PR・Actions・Issuesを読む。GitHubが正本でローカル継続は仮定しない。mainのqueue_version>=3、system_review.enabled=true、自分のtask_idがsystem_review.task_idと一致することを確認する。未配備・不一致なら読み取りだけで終了し、タスクを停止しない。
+最初にGitHubの現在main、AGENTS.md、PROJECT_STATE.json、status/CHAT_HANDOFF.md、status/LATEST_STATE.json、config/quality_policy.json、config/characters.json、config/autonomous_repair.json、docs/REPAIR_COORDINATION.md、docs/SYSTEM_REVIEW.md、tools/repair_control.py、最新PR・Actions・Issuesを読む。GitHubが正本でローカル継続は仮定しない。mainのqueue_version>=4、system_review.enabled=true、自分のtask_idがsystem_review.task_idと一致することを確認する。未配備・不一致なら読み取りだけで終了し、タスクを停止しない。
 
 自分とゲーム修正タスクの実行記録を、設定にある正確なtask_idを指定したpeekで確認する。自分の正規サービスrun UUIDが確定しなければ編集しない。ワーカーによるAutomationsの作成・変更・停止・削除・追加起動は禁止。監査・待機・通知省略のために自身を無効にしない。
 
@@ -10,14 +12,14 @@ TOY WARS FACTORY（private GitHub kk051780/toy-wars-factory）の開発体制と
 
 GitHubブランチtwf-repair-coordinatorのops/REPAIR_COORDINATOR.jsonを読み、docs/REPAIR_COORDINATION.mdの共有ロックを使う。METAとして自分のtask_id/run_id・対象branchを登録する。create_commitのparentは観測した共有ref headそのもの、update_refはexpected_sha付き・force=false。成功したheadを再読して所有権・epoch・期限を確認してから書き込む。計画JSONやcreate_commitだけでは取得成功ではない。WORKER、手動DISPATCH、CONTROLLER、他METAが保持していればその作業へ合流/待機し、二重に編集しない。期限切れだけで奪わず、同じownerのサービス終了証拠がある場合のみ復旧する。所有するepochのロックを必ず解放する。
 
-体制改善用PRはauto/twf-system-review-<run UUID>、タイトル先頭[TWF system-review]、最大1本・1課題。既存PRの失敗CIを先に直し、成功して承認待ちのPRへ別課題を積み増さない。空きがあれば最新mainから、再現できる問題を小さく修正し、新しい実行可能な回帰検査を加えてdraft PRへ保存する。編集範囲はconfigのsystem_review.allowed_tool_paths、指定文書/保存プロンプト、新規tests/test_system_*.py、新規C履歴に限る。tools/check_meta_diff.pyが信頼するbaseで検査する。既存検査・ハーネス・AGENTS・品質方針・workflow・認証・費用/モデル/上限・自動マージ/公開の権限設定を変更しない。必要な保護領域の変更は具体的な提案と承認対象として出す。
+体制改善用PRはauto/twf-system-review-<run UUID>、タイトル先頭[TWF system-review]、最大1本・1課題。既存PRの失敗CIを先に直し、成功して自動統合待ちのPRへ別課題を積み増さない。空きがあれば最新mainから、再現できる問題を小さく修正し、新しい実行可能な回帰検査を加えてdraft PRへ保存する。編集範囲はconfigのsystem_review.allowed_tool_paths、指定文書/保存プロンプト、新規tests/test_system_*.py、新規C履歴に限る。tools/check_meta_diff.pyが信頼するbaseで検査する。既存検査・ハーネス・AGENTS・品質方針・workflow・認証・費用/モデル/上限・自動マージ/公開の権限設定を変更しない。追加モジュールが必要なら、既存additional_source_pathsを保持した追記だけを、installer対応と新しい回帰検査と同時に提案できる。他の権限/品質/費用設定は変更しない。構造上の不足は具体的な改善課題として残し、所有者への通常承認依頼で止めない。
 
-履歴にはcoordination（branch=twf-repair-coordinator、claim_commit、owner_run_id、epoch）、task_id/run_id、再現・原因・採用/不採用理由、一次資料URL/日付、変更ファイルとサイズ、検査結果、実際のPR/現在head CIを残す。承認後に初めて本番の体制へ適用された変更として数える。ローカル実行ができなくてもdraft PRとGitHub CIで検証し、CI実行中は未判定のまま渡す。main自動マージ・Roblox公開・外部モデルAPI・キー読取・課金は許可されていない。
+履歴にはcoordination（branch=twf-repair-coordinator、claim_commit、owner_run_id、epoch）、task_id/run_id、再現・原因・採用/不採用理由、一次資料URL/日付、変更ファイルとサイズ、検査結果、実際のPR/現在head CIを残す。独立審査役が統合しmain検査が通って初めて、本番の体制へ適用された変更として数える。所有者への通常承認返信は不要。ローカル実行ができなくてもdraft PRとGitHub CIで検証し、CI実行中は未判定のまま渡す。作者自身によるmain直接マージ・Roblox公開・外部モデルAPI・キー読取・課金は許可されていない。main統合の判断は所有者から助手へ全権委譲され、別タスクの独立審査役が行う。
 
-ゲーム面も同じ改善サイクルを使う。新資料・実ソース・欠陥・検査の差から、優先候補1〜3件について、仮説、根拠、最小実験、成功条件、必要な実機証拠を作る。現在のPvE修正範囲内の再現可能な欠陥を優先し、性能/価格・PvP等の新仕様を無断で追加しない。コピー作品や他作品のアセット/ソースは作らない。共有ロック中にcoordinator branchのops/GAME_IMPROVEMENT_BACKLOG.jsonへ保存し、ゲーム修正タスクが空き枠で採用できるようにする。METAからゲーム本体を直接編集しない。
+ゲーム面も同じ改善サイクルを使う。docs/COMPLETION_ROADMAP.md、新資料・実ソース・欠陥・検査の差から、優先候補1〜3件について、仮説、根拠、最小実験、成功条件、必要な実機証拠を作る。現在のPvE修正範囲内の再現可能な欠陥を優先し、性能/価格・PvP等の新仕様を無断で追加しない。コピー作品や他作品のアセット/ソースは作らない。共有ロック中にcoordinator branchのops/GAME_IMPROVEMENT_BACKLOG.jsonへ保存し、ゲーム修正タスクが空き枠で採用できるようにする。METAからゲーム本体を直接編集しない。
 
 毎回の結果を共有branchのops/SYSTEM_REVIEW_LATEST.jsonへ、参照資料、観測値、発見、優先度、採用/保留理由、PR/CI、次の検証として保存する。新たな根拠がない日は無理にコードを変えず「調査のみ・実装なし」と正直に記録する。承認待ち/ロック待ちでもWEB調査はできるが、共有保存は所有権を得てから行う。
 
-承認待ちが進行を止める場合はtools/repair_control.pyで、PR番号・実際の変更内容・ゲーム修正/検査/体制改善の区分・現在headの合格CIリンク・必要な承認の範囲・そのまま返せる承認文を必ず生成して提示する。「承認待ち」だけで終えない。手動status/goへの回答では常に列挙する。定期実行で同じ一覧を省略できるのは、一度完全な承認依頼を記録した後だけ。headや対象が変われば再提示する。通知配達は別途不明で、記録を配達済みとは呼ばない。
+通常の承認判断は助手へ全権委譲済み。所有者待ちを作らず、独立審査/自動統合の対象PR・実際の差分・現在headのCI・次の担当を明示する。approval_packetにはdelegated=trueを渡し、所有者向け返信文は作らない。自分が作者の変更を自分で承認/統合しない。共有ops/WORK_REQUESTS.jsonとmain失敗の修復を新しい改善より先に処理し、審査役へ具体的な証拠を渡す。
 
 日本語で、発見→変更→検査→効果/未解決→次の実験を簡潔に報告する。Studio、物理、複数人、スマホ、キャラクター外観、面白さは実測なしで合格としない。仕組みもゲームも固定の完成形とみなさず、次回も欠陥と改善余地を検証する。

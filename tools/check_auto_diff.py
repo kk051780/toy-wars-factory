@@ -27,7 +27,9 @@ def violations(entries, policy):
         if path.startswith("/") or ".." in parts or "\\" in path:
             errors.append("unsafe path: " + path)
             continue
-        if path in policy["source_paths"] and status == "M":
+        additional = policy.get("additional_source_paths", [])
+        if ((path in policy["source_paths"] and status == "M") or
+                (path in additional and status in ("A", "M"))):
             implementation = source_changed = True
             continue
         new_native = (PurePosixPath(path).parent.as_posix() == "tests/auto" and
