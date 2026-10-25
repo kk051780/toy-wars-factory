@@ -1,24 +1,64 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T00:02:08.432636+00:00",
-  "source": "Daily review/controller initial research; hypotheses are not implemented features",
+  "observed_at": "2026-10-25T07:58:50Z",
+  "source": "Daily META review: hypotheses and capability experiments, not implemented game improvements",
   "items": [
     {
       "id": "mobile_pve_frame_time",
       "kind": "ENGINE_EXPERIMENT",
       "status": "PLANNED_BLOCKED_ENGINE_ACCESS",
-      "hypothesis": "Wave/production load may produce frame-time spikes on a midrange Android device; not observed yet.",
-      "source_url": "https://create.roblox.com/docs/performance-optimization/microprofiler",
-      "experiment": "Record real server + client MicroProfiler traces during increasing PvE load and compare frame-time spikes with baseline.",
-      "success_evidence": "Dated device/load/trace data and a reproducible before/after comparison; choose threshold before tuning.",
-      "requires": "Approved hosted Roblox/engine/mobile evidence path; no PC work requested from the owner."
+      "hypothesis": "closestOpponent scans the entity list per live entity, and each simulation step pivots models and refreshes status; aggregate load may cause spikes on a baseline phone. No device slowdown has been observed.",
+      "source_url": "https://create.roblox.com/docs/performance-optimization/test-on-hardware",
+      "experiment": "Capture an idle baseline and a 10–15 minute private-test session with 1–4 active workshops and increasing legal unit counts. Record device/OS, exact source/place version, entity counts, MicroProfiler frame traces, memory, input latency and thermal trend. Keep viewport-emulator results separate.",
+      "success_evidence": "Pre-register a frame/memory budget for the experiment, measure frame-time p50/p95/p99 and errors, and compare like-for-like loads before proposing a change. This does not change existing release gates.",
+      "requires": "A secure hosted/device runner and authorized private-test access. No Roblox execution connector or universe/place IDs in the inspected project manifest; no credential read/activation performed.",
+      "priority": "P1"
     },
     {
       "id": "pending_floor_fix",
       "kind": "VERIFIED_SOURCE_CANDIDATE",
-      "status": "AWAIT_OWNER_INTEGRATION_APPROVAL",
+      "status": "MERGED_OFFLINE_VERIFIED_ENGINE_NOT_RUN",
       "pr": 38,
-      "next": "Do not duplicate the candidate. Integrate only with exact-head approval, then verify real engine collision when access exists."
+      "next": "Already main-integrated; do not recreate or request owner approval. Real-engine collision evidence is still missing.",
+      "verified_source": "Current main server has three explicit CanCollide=true floor assignments; config marks PR38 merged."
+    },
+    {
+      "id": "enemy_spawn_timer_cadence",
+      "kind": "SOURCE_HYPOTHESIS",
+      "priority": "P1",
+      "status": "READY_FOR_WHOLE_SERVER_REPRODUCTION",
+      "target": "src/ToyWarsServer.server.lua:simulate enemyTimer",
+      "hypothesis": "The enemy timer resets to 2.3 after subtracting dt. Repeated overshoot may be discarded, analogous to the production cadence defect already fixed by PR45; this is not yet a measured gameplay defect.",
+      "source_observation": "Current main uses state.enemyTimer=2.3, while productionTimer preserves negative remainder by adding 3.0.",
+      "experiment": "Execute the canonical complete server through the accepted harness with regular and jittered Heartbeat inputs; record actual first-wave spawn timestamps while preventing combat/production from invalidating the fixture. Do not copy simulate or callbacks into the test.",
+      "success_evidence": "First demonstrate repeatable cumulative cadence drift versus the intended 2.3 interval beyond one simulation-step tolerance. Only if reproduced, propose a minimal carry fix with the pinned old-source negative control. Preserve wave size, grace periods, unit balance and existing regressions.",
+      "requires_engine_evidence": "Then confirm actual server spawn times in a private engine run; offline timing is not Roblox scheduling proof.",
+      "source_main_sha": "aa2e57b6d63639f81966cac0e4ef399fcb78a527"
+    },
+    {
+      "id": "private_headless_engine_evidence_path",
+      "kind": "ENGINE_CAPABILITY_EXPERIMENT",
+      "priority": "P0",
+      "status": "BLOCKED_EXECUTION_CAPABILITY",
+      "hypothesis": "Version-specific Open Cloud Luau tasks could establish engine startup and scene-property evidence without owner PC work, but do not establish mobile or two-client behavior.",
+      "sources": [
+        "https://create.roblox.com/docs/cloud/reference/features/luau-execution",
+        "https://create.roblox.com/docs/performance-optimization/test-on-hardware"
+      ],
+      "experiment": "When a secure authorized connector and test universe/place/version are available, run the exact canonical scene build against an unpublished private test version; collect versioned source hashes, startup logs and three floor properties. Keep two-client and physical-phone evidence as separate required experiments.",
+      "success_evidence": "Dated authenticated engine task result tied to exact source/place version, with logs and property assertions; no publish, model API or credentials in artifacts.",
+      "observed_gap": "Available tool registry has no Roblox execution connector; inspected studio_autopilot/projects/toy_wars.json has no universe/place/version binding. No execution request or secret inspection performed."
     }
+  ],
+  "actor": {
+    "kind": "META",
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "run_id": "3b6d84e8-75fc-832a-90c6-5a5615167fd7"
+  },
+  "base_main_sha": "aa2e57b6d63639f81966cac0e4ef399fcb78a527",
+  "prioritized_candidates": [
+    "private_headless_engine_evidence_path",
+    "enemy_spawn_timer_cadence",
+    "mobile_pve_frame_time"
   ]
 }

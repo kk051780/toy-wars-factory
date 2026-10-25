@@ -1,32 +1,281 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T01:22:26.282427+00:00",
-  "actor": "CONTROLLER_C00029",
-  "main": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
-  "findings_and_actions": [
-    "Owner approval bottleneck replaced by separate delegated reviewer.",
-    "Three candidate PRs integrated with predicted-tree preservation and individual post-merge QA.",
-    "Independent bootstrap review rejected two identity-validation gaps; fixed with regressions, then approved the new exact head.",
-    "Failed/no-result telemetry and late matching output preserved without stale-head verdict reuse."
+  "observed_at": "2026-10-25T07:58:50Z",
+  "actor": {
+    "kind": "META",
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "run_id": "3b6d84e8-75fc-832a-90c6-5a5615167fd7",
+    "epoch": 34,
+    "claim_commit": "7f7d0facf9f5863adcffeec892d00260c5bb22b1"
+  },
+  "main": "aa2e57b6d63639f81966cac0e4ef399fcb78a527",
+  "main_health": {
+    "qa_head": "499f6e7ca8964ab82214b2d968afc82f250087d1",
+    "qa_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40173771793",
+    "conclusion": "SUCCESS_WITH_DIRECTLY_VERIFIED_STATUS_ONLY_DESCENDANT",
+    "qa_python_tests": 200,
+    "comparison": {
+      "status": "ahead",
+      "commits": 1,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "recovery_pre_claim_completion",
+      "priority": "P1",
+      "status": "FIXED_IN_DRAFT_PR_NOT_MAIN",
+      "kind": "SYSTEM_CODE_FIX",
+      "reproduced": true,
+      "actual_incident_observed": false,
+      "pr": 53,
+      "head": "4eddd7c6a6167eda79ac4c2216de88d38ddc42ff",
+      "root_cause": "Completion was upper-bounded by observation time but not lower-bounded by holder.acquired_at."
+    },
+    {
+      "id": "cleanup_flake",
+      "priority": "P1",
+      "status": "UNRESOLVED_NOT_REPRODUCED",
+      "local_repetitions": 20,
+      "failures": 0
+    },
+    {
+      "id": "hosted_engine",
+      "priority": "P0",
+      "status": "CAPABILITY_GAP",
+      "details": {
+        "observed_at": "2026-10-25T07:58:50Z",
+        "run_id": "3b6d84e8-75fc-832a-90c6-5a5615167fd7",
+        "official_api": "https://create.roblox.com/docs/cloud/reference/features/luau-execution",
+        "tool_capability": "NO_ROBLOX_EXECUTION_CONNECTOR_EXPOSED",
+        "inspected_project": "studio_autopilot/projects/toy_wars.json@aa2e57b6d63639f81966cac0e4ef399fcb78a527",
+        "binding": "NO_UNIVERSE_PLACE_VERSION_BINDING_IN_INSPECTED_MANIFEST",
+        "credential_access": false,
+        "engine_executed": false,
+        "next": "CONTROLLER can prepare a secure scoped connector and private test binding. Continue independent source tasks; engine-only task is not two-client or physical-phone evidence."
+      }
+    },
+    {
+      "id": "handoff_evidence_freshness",
+      "priority": "P1",
+      "status": "FOLLOW_UP_REQUIRED",
+      "observation": "Generated source revision is current, but PROJECT_STATE.verification.python_tests still says PASS_74 and links older main QA; current observed main CI ran 200 tests. Historical counts must remain labeled historical, not current."
+    },
+    {
+      "id": "lease_contention",
+      "status": "MEASUREMENT_REQUEST_RECORDED",
+      "worker_sample": 1,
+      "wait_lock_count": 1,
+      "comment": "No actual double-write or long-run contention rate is established."
+    }
   ],
+  "research": {
+    "sources": [
+      {
+        "url": "https://github.blog/ai-and-ml/generative-ai/under-the-hood-security-architecture-of-github-agentic-workflows/",
+        "published_at": "2026-03-09",
+        "updated_at": null,
+        "checked_at": "2026-10-25T07:55:01Z",
+        "kind": "PRIMARY_OFFICIAL_CASE",
+        "finding": "Stage and vet writes and preserve audit evidence; applies to a recovery write as well as source integration. Older article, not a newly published October case."
+      },
+      {
+        "url": "https://docs.github.com/en/actions/how-tos/manage-workflow-runs/re-run-workflows-and-jobs",
+        "published_at": null,
+        "updated_at": null,
+        "checked_at": "2026-10-25T07:55:01Z",
+        "kind": "PRIMARY_OFFICIAL_DOC",
+        "finding": "A rerun is tied to the original SHA/ref. GitHub rerun semantics are not assumed to define ChatGPT retry semantics; exact run/head/time evidence remains required."
+      },
+      {
+        "url": "https://create.roblox.com/docs/performance-optimization/test-on-hardware",
+        "published_at": null,
+        "updated_at": null,
+        "checked_at": "2026-10-25T07:55:01Z",
+        "kind": "PRIMARY_OFFICIAL_DOC",
+        "finding": "Emulation cannot establish physical-device memory, thermals and input performance; use real-device traces and a sustained 10–15 minute session. Update date was not exposed."
+      },
+      {
+        "url": "https://create.roblox.com/docs/cloud/reference/features/luau-execution",
+        "published_at": null,
+        "updated_at": null,
+        "checked_at": "2026-10-25T07:55:01Z",
+        "kind": "PRIMARY_OFFICIAL_API",
+        "finding": "Version-specific headless task creation and logs require universe/place identifiers and API authorization. No callable Roblox execution connector or configured universe/place identifiers were found in the inspected project manifest; no credentials were read or execution attempted."
+      }
+    ],
+    "freshness": "Current primary documents opened 2026-10-25. Verified dated GitHub case is March 9; no newer primary publication date is claimed. Roblox update dates unavailable.",
+    "unusable_sources": [
+      "Creator Hub legacy luau-execution URL failed; current reference path opened instead.",
+      "A recent developer-forum rate-limit report returned a robot-check page; its search snippet was not adopted as a fact."
+    ]
+  },
+  "implementation": {
+    "pr": 53,
+    "url": "https://github.com/kk051780/toy-wars-factory/pull/53",
+    "head": "4eddd7c6a6167eda79ac4c2216de88d38ddc42ff",
+    "branch": "auto/twf-system-review-3b6d84e8-75fc-832a-90c6-5a5615167fd7",
+    "changed_files": [
+      "tools/repair_control.py",
+      "docs/REPAIR_COORDINATION.md",
+      "tests/test_system_recovery_evidence.py",
+      "history/C00033_recovery_completion_freshness.json"
+    ],
+    "game_source_delta_bytes": 0,
+    "accepted_tests_modified": false
+  },
   "tests": {
-    "python": 128,
-    "new_python": 19,
-    "policy": 21,
-    "native_candidate_suites": 8
+    "new_tests": 6,
+    "targeted_local": 41,
+    "negative_control": "Original main fails four named methods / twelve assertions or subtests.",
+    "ci": {
+      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40174658156",
+      "id": 40174658156,
+      "head": "4eddd7c6a6167eda79ac4c2216de88d38ddc42ff",
+      "conclusion": "success",
+      "attempt": 1,
+      "python_tests": 206,
+      "jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "trusted_meta_scope": "PASS",
+      "immutable_claim_gate": "PASS"
+    }
   },
-  "deployment": {
-    "pr": 43,
-    "main": "65b38869fb2268d04b04bad110b1b2012d2a2dca",
-    "source_commit": "b863381aa80d77107ad50ca2af0f667e78361e72",
-    "reviewed_head": "1c462d087629759cfe3efb8959742d2df299befe",
-    "tree": "efd457508c8e2695ca317c907bfc2063d81b0850",
-    "python_tests": 128,
-    "qa": 40150077130,
-    "handoff": 40150077134,
-    "bootstrap_approved_run": "2a21fa6d-a380-8332-a389-7dcf1d7d4b32",
-    "regular_v4_cycle_verified": false
+  "measurements": {
+    "operations": {
+      "worker_last_run": {
+        "run_id": "0bf89fd6-6a50-8321-be82-364bb9cc3bb8",
+        "scheduled_for": "2026-10-25T07:05:04Z",
+        "result": "WAIT_LOCK",
+        "sample_denominator": 1
+      },
+      "reviewer_last_run": {
+        "run_id": "3621da58-0814-8330-ae5c-5f8356cd9826",
+        "scheduled_for": "2026-10-25T07:25:00Z",
+        "result": "NO_ELIGIBLE_PR",
+        "sample_denominator": 1
+      },
+      "qa_sample": {
+        "window_start": "2026-10-25T04:23:59Z",
+        "window_end": "2026-10-25T07:42:40Z",
+        "query": "latest 15 repository workflow runs filtered to Toy Wars bootstrap offline QA",
+        "runs": 10,
+        "success": 9,
+        "failure": 1,
+        "elapsed_seconds_range": [
+          23,
+          48
+        ],
+        "elapsed_definition": "workflow updated_at minus created_at, not pure runner time or queue wait",
+        "records": [
+          {
+            "run": 40173771793,
+            "sha": "499f6e7ca8964ab82214b2d968afc82f250087d1",
+            "attempt": 1,
+            "conclusion": "success",
+            "elapsed_seconds": 25
+          },
+          {
+            "run": 40172196489,
+            "sha": "0c28b59545847e683ad2434c52b33e8d0b1d8a5d",
+            "attempt": 1,
+            "conclusion": "success",
+            "elapsed_seconds": 29
+          },
+          {
+            "run": 40171673896,
+            "sha": "09ac45fb283689d76846f0e9721ab2161492107a",
+            "attempt": 1,
+            "conclusion": "success",
+            "elapsed_seconds": 28
+          },
+          {
+            "run": 40170708013,
+            "sha": "d96b92bb70719b478bccf9a40ab779737556eb86",
+            "attempt": 1,
+            "conclusion": "success",
+            "elapsed_seconds": 26
+          },
+          {
+            "run": 40170569882,
+            "sha": "f1e535c8d642adeb832025388f7273e0fa759f53",
+            "attempt": 1,
+            "conclusion": "failure",
+            "elapsed_seconds": 41
+          },
+          {
+            "run": 40164512789,
+            "sha": "be879db59732bbe8c6baf5480d5379b0619380ec",
+            "attempt": 1,
+            "conclusion": "success",
+            "elapsed_seconds": 30
+          },
+          {
+            "run": 40163926778,
+            "sha": "e2952d95c72b9361cf959524399b47821d14f1e5",
+            "attempt": 1,
+            "conclusion": "success",
+            "elapsed_seconds": 23
+          },
+          {
+            "run": 40163275760,
+            "sha": "801cfa01904983d8776d29b20e6ed04065e7d6c5",
+            "attempt": 1,
+            "conclusion": "success",
+            "elapsed_seconds": 26
+          },
+          {
+            "run": 40162167428,
+            "sha": "b1969d6d2dc82af3f53ef5abfc3bf9de370622a9",
+            "attempt": 1,
+            "conclusion": "success",
+            "elapsed_seconds": 30
+          },
+          {
+            "run": 40161736594,
+            "sha": "24089b68fedd97129a9f7dd15cc25e201f579198",
+            "attempt": 1,
+            "conclusion": "success",
+            "elapsed_seconds": 48
+          }
+        ]
+      }
+    },
+    "open_pull_requests": 14,
+    "eligible_open_meta_before_this_run": 0,
+    "eligible_open_game_before_this_run": 0,
+    "recent_failed_qa": {
+      "run": 40170569882,
+      "head": "f1e535c8d642adeb832025388f7273e0fa759f53",
+      "cause": "P2 adversarial fixture received InvalidProject for fake trusted-workflow origin",
+      "newer_head": "d96b92bb70719b478bccf9a40ab779737556eb86",
+      "newer_head_qa": 40170708013,
+      "status": "NEWER_HEAD_SUCCESS_NOT_FAILED_HEAD_REUSED"
+    }
   },
-  "web_research": "Daily task remains required to open current primary sources and compare measured outcomes; current controller work does not claim a completed daily research task.",
-  "next": "Author advances smallest completion-roadmap implementation; reviewer integrates after independent exact-head checks; daily META improves the system and game hypotheses."
+  "game_candidates": [
+    "private_headless_engine_evidence_path",
+    "enemy_spawn_timer_cadence",
+    "mobile_pve_frame_time"
+  ],
+  "applied_effect": {
+    "production_deployed": false,
+    "statement": "Stale completion proof is rejected by the modified module in local and exact-head CI tests. Separate reviewer integration and post-merge main QA are pending; no production reliability effect claimed."
+  },
+  "next": {
+    "actor": "REVIEWER",
+    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "action": "Independently inspect PR53 current head/base, all gates and diff, merge if valid, then verify main. WORKER can reproduce enemy timing when its own next run has a free lease.",
+    "owner_reply_required": false
+  },
+  "limitations": [
+    "No Roblox engine/two-client/mobile/visual/fun evidence collected.",
+    "No external model API, credentials, scheduler, spending cap, workflow, release hold or publishing change.",
+    "Small selected CI/run samples do not establish sustained reliability or notification delivery."
+  ]
 }

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T03:48:07.958Z",
+  "observed_at": "2026-10-25T07:58:50Z",
   "requests": [
     {
       "id": "hosted_roblox_evidence",
@@ -9,7 +9,18 @@
       "assigned_role": "META",
       "status": "OPEN",
       "issue": "https://github.com/kk051780/toy-wars-factory/issues/3",
-      "request": "Verify an available secure hosted engine/multiclient/mobile evidence path. Do not claim runtime success or require owner PC debugging. Continue independent source tasks while access is unresolved."
+      "request": "Verify an available secure hosted engine/multiclient/mobile evidence path. Do not claim runtime success or require owner PC debugging. Continue independent source tasks while access is unresolved.",
+      "latest_investigation": {
+        "observed_at": "2026-10-25T07:58:50Z",
+        "run_id": "3b6d84e8-75fc-832a-90c6-5a5615167fd7",
+        "official_api": "https://create.roblox.com/docs/cloud/reference/features/luau-execution",
+        "tool_capability": "NO_ROBLOX_EXECUTION_CONNECTOR_EXPOSED",
+        "inspected_project": "studio_autopilot/projects/toy_wars.json@aa2e57b6d63639f81966cac0e4ef399fcb78a527",
+        "binding": "NO_UNIVERSE_PLACE_VERSION_BINDING_IN_INSPECTED_MANIFEST",
+        "credential_access": false,
+        "engine_executed": false,
+        "next": "CONTROLLER can prepare a secure scoped connector and private test binding. Continue independent source tasks; engine-only task is not two-client or physical-phone evidence."
+      }
     },
     {
       "id": "reviewer_no_update",
@@ -37,7 +48,20 @@
       "assigned_role": "META",
       "status": "OPEN",
       "issue": "https://github.com/kk051780/toy-wars-factory/pull/47",
-      "request": "PR47 first offline attempt 40155248452 failed test_repair_control TemporaryDirectory teardown with OSError Directory not empty: objects; bounded rerun success and revised PR 40155772355 first-attempt success. Investigate race without weakening or skipping tests; add reproduction if repeat."
+      "request": "PR47 first offline attempt 40155248452 failed test_repair_control TemporaryDirectory teardown with OSError Directory not empty: objects; bounded rerun success and revised PR 40155772355 first-attempt success. Investigate race without weakening or skipping tests; add reproduction if repeat.",
+      "latest_investigation": {
+        "actor_task_id": "6add445e4138819197d9cf2b1a02534d",
+        "run_id": "3b6d84e8-75fc-832a-90c6-5a5615167fd7",
+        "observed_at": "2026-10-25T07:58:50Z",
+        "original_job": 121055159147,
+        "original_attempt": 1,
+        "confirmed_error": "OSError: Directory not empty: objects during TemporaryDirectory cleanup",
+        "local_repetitions": 20,
+        "accepted_tests_per_iteration": 29,
+        "failures": 0,
+        "status": "UNRESOLVED_NOT_REPRODUCED",
+        "next": "Retain all accepted tests. If repeated, capture concurrent process/filesystem evidence on the runner before proposing a scoped fix; do not add CI retries or weaken cleanup checks."
+      }
     },
     {
       "id": "pr45_current_main_rebase_and_ci",
@@ -105,6 +129,21 @@
         "current_main": "6fa3b822b805d606b5bed893c5100c2bcb642f2f",
         "automation_percent": 57,
         "game_percent": 38
+      }
+    },
+    {
+      "id": "lease_contention_measurement",
+      "kind": "OPERATIONAL_MEASUREMENT",
+      "priority": "P1",
+      "assigned_role": "META",
+      "status": "OPEN",
+      "created_at": "2026-10-25T07:58:50Z",
+      "request": "Measure shared lease occupancy by role against scheduled author attempts over multiple cycles, then propose a small fairness improvement if repeated CONTROLLER contention stalls source work. Keep one writer and all fences; no schedule changes or expiry-only takeover.",
+      "evidence": {
+        "sampled_worker_runs": 1,
+        "worker_run_id": "0bf89fd6-6a50-8321-be82-364bb9cc3bb8",
+        "observed_wait_lock": 1,
+        "denominator_limitation": "One latest service result is not enough to infer a long-run contention rate."
       }
     }
   ]
