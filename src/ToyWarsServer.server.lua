@@ -137,11 +137,13 @@ local function makePlot(player, state)
     map.Name = "Workshop_" .. tostring(player.UserId)
     map.Parent = world
     state.map = map
-    part(map,"FeltBattlefield",Vector3.new(92,1,92),CFrame.new(x,0,0),Color3.fromRGB(90,152,119),Enum.Material.Grass)
+    local battlefield = part(map,"FeltBattlefield",Vector3.new(92,1,92),CFrame.new(x,0,0),Color3.fromRGB(90,152,119),Enum.Material.Grass)
+    battlefield.CanCollide = true
     for z = -30,30,12 do
         part(map,"BattleStripe",Vector3.new(78,0.08,0.55),CFrame.new(x,0.55,z),Color3.fromRGB(216,228,184))
     end
-    part(map,"FactoryFloor",Vector3.new(38,1.2,23),CFrame.new(x,0.7,-35),Color3.fromRGB(214,225,237))
+    local factoryFloor = part(map,"FactoryFloor",Vector3.new(38,1.2,23),CFrame.new(x,0.7,-35),Color3.fromRGB(214,225,237))
+    factoryFloor.CanCollide = true
     part(map,"Conveyor",Vector3.new(7,0.6,20),CFrame.new(x-8,1.5,-34),Color3.fromRGB(49,64,83),Enum.Material.Metal)
     for z = -43,-26,3 do
         part(map,"BeltStripe",Vector3.new(7.2,0.12,0.7),CFrame.new(x-8,1.85,z),Color3.fromRGB(85,108,133))
@@ -394,7 +396,8 @@ spawn.Position=Vector3.new(0,3,-75)
 spawn.Color=Color3.fromRGB(250,205,91)
 spawn.Material=Enum.Material.Neon
 spawn.Parent=world
-part(world,"LobbyGround",Vector3.new(930,1,200),CFrame.new(0,-2,0),Color3.fromRGB(112,169,144),Enum.Material.Grass)
+local lobbyGround = part(world,"LobbyGround",Vector3.new(930,1,200),CFrame.new(0,-2,0),Color3.fromRGB(112,169,144),Enum.Material.Grass)
+lobbyGround.CanCollide = true
 
 local function join(player)
     if player.Parent ~= Players or sessions[player] then return end

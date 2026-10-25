@@ -1,0 +1,90 @@
+{
+  "id": "C00024",
+  "date": "2026-10-25",
+  "kind": "AUTONOMOUS_WALKABLE_FLOOR_COLLISION_FIX",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "039874ac-64a0-8323-bc57-5c35cf58ec90",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-039874ac-64a0-8323-bc57-5c35cf58ec90",
+    "base": "main",
+    "open_prs": [
+      35
+    ],
+    "limit": 3
+  },
+  "main_base": "efa4e67fd0cebe211a0696bb5ce0642d30cb3e58",
+  "defect": {
+    "id": "walkable_floor_collision",
+    "cause": "Shared part() constructor sets CanCollide=false for every Part, including walkable workshop and lobby floors.",
+    "reproduction": "Full canonical server loaded through tests/roblox_server_harness.lua on old main; FeltBattlefield, FactoryFloor, LobbyGround all CanCollide=false.",
+    "engine_observation": false
+  },
+  "fix": "Set CanCollide=true only on FeltBattlefield, FactoryFloor and LobbyGround after their creation. Leave the shared part constructor and decorative/unit geometry unchanged.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/walkable_floors_spec.lua",
+    "history/C00024_walkable_floor_collision_fix.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 18653,
+      "after_bytes": 18813,
+      "delta_bytes": 160
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 681,
+    "lua_bytes": 26913
+  },
+  "file_size_deltas": {
+    "src/ToyWarsServer.server.lua": {
+      "before_bytes": 18653,
+      "after_bytes": 18813,
+      "delta_bytes": 160
+    },
+    "tests/auto/walkable_floors_spec.lua": {
+      "before_bytes": 0,
+      "after_bytes": 4214,
+      "delta_bytes": 4214
+    }
+  },
+  "characters_touched": [],
+  "character_impact": "No unit stats, prices, shapes or toy body collision changes. The new native regression asserts PON parts remain non-collidable.",
+  "tests": {
+    "native": "tests/auto/walkable_floors_spec.lua",
+    "cases": [
+      "two workshop plots: both floors collidable and anchored",
+      "lobby ground collidable and anchored",
+      "decorative and selector parts unchanged/non-collidable",
+      "PON produced via real Heartbeat and body parts remain non-collidable",
+      "pinned pre-fix server negative control in CI"
+    ],
+    "local_execution": "NOT_RUN_LUA_5_4_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "physics": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40136758867",
+    "prior_pr35_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40114787373",
+    "old_server_blob": "8d6a40fcb602a728f8876ca62194a0acb4bb45b9",
+    "branch_url": "https://github.com/kk051780/toy-wars-factory/tree/auto/twf-game-repair-039874ac-64a0-8323-bc57-5c35cf58ec90",
+    "pr_url": null,
+    "pr_status": "PENDING_CREATION",
+    "ci_url": null
+  },
+  "restrictions": {
+    "external_provider_inference": false,
+    "secret_read": false,
+    "auto_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  },
+  "next_action": "Verify latest Toy Wars bootstrap offline QA on this PR's exact head. If failure, repair this branch; if success, preserve this draft and choose a new bounded issue under the 3-PR queue."
+}
