@@ -1,8 +1,18 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 1,
-  "holder": null,
+  "epoch": 2,
+  "holder": {
+    "kind": "CONTROLLER",
+    "owner_id": "13782527-fe39-46b8-983a-7d2afcedc715",
+    "task_id": null,
+    "epoch": 2,
+    "acquired_at": "2026-10-25T00:27:41.257429+00:00",
+    "expires_at": "2026-10-25T00:57:41.257429+00:00",
+    "base_main_sha": "826610920907153accc0b2d188583f0a42aa4687",
+    "work_branch": null,
+    "origin": "controller"
+  },
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d"
@@ -90,5 +100,13 @@
     "python_tests": 109,
     "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40145907205",
     "main_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40145907319"
+  },
+  "owner_delegation": {
+    "observed_at": "2026-10-25T00:27:41.257429+00:00",
+    "owner_instruction": "承認については君に全権を与える。今は俺の承認よりまだまだ膨大な距離のある完成までの道のりを丁寧に自動システムで詰めていくことが最優先",
+    "routine_owner_approval_required": false,
+    "main_integration_authorized": true,
+    "system_improvement_authorized": true,
+    "scope": "Assistant decides ordinary game/system development, independent review and exact-head main integration. Existing objective quality gates, incident holds and spending caps are not waived."
   }
 }
