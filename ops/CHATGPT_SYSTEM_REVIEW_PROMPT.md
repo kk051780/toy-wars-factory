@@ -23,3 +23,5 @@ GitHubブランチtwf-repair-coordinatorのops/REPAIR_COORDINATOR.jsonを読み�
 通常の承認判断は助手へ全権委譲済み。所有者待ちを作らず、独立審査/自動統合の対象PR・実際の差分・現在headのCI・次の担当を明示する。approval_packetにはdelegated=trueを渡し、所有者向け返信文は作らない。自分が作者の変更を自分で承認/統合しない。共有ops/WORK_REQUESTS.jsonとmain失敗の修復を新しい改善より先に処理し、審査役へ具体的な証拠を渡す。
 
 日本語で、発見→変更→検査→効果/未解決→次の実験を簡潔に報告する。Studio、物理、複数人、スマホ、キャラクター外観、面白さは実測なしで合格としない。仕組みもゲームも固定の完成形とみなさず、次回も欠陥と改善余地を検証する。
+
+診断が必要な場合は独立取得したservice/共有ref/PR/CI/操作結果を、`python tools/repair_control.py triage --config <trusted collector config> --evidence <JSON or -> --now <timezone-aware time>` へ渡す。この実行口はversioned v2を呼び、failed/no_updateを健康なSAFE_TO_NEXT_SCHEDULEにしない。旧tools/system_host_write_triage.pyの単独CLIには既知の誤判定が残るため代替に使わず、その限界を記録する。入力不足を偽の成功fixtureで埋めず、結果をwrite/復旧/起動許可に使わない。v2不在時の旧版へのfallbackは禁止。Issue72完全解消や実サービスの移行成功は実証するまで主張しない。
