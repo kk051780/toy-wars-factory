@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 61,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "e958762e-a330-8330-a739-56a1c3a9373b",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 61,
-    "acquired_at": "2026-10-26T10:13:45.108Z",
-    "expires_at": "2026-10-26T10:43:45.108Z",
-    "base_main_sha": "389c9af779eb120387085d4af29c47f8366502d9",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -32,13 +22,13 @@
   "last_completed": {
     "kind": "REVIEWER",
     "owner_id": "e958762e-a330-8330-a739-56a1c3a9373b",
-    "epoch": 60,
-    "released_at": "2026-10-26T10:13:17.917Z",
+    "epoch": 61,
+    "released_at": "2026-10-26T10:14:06.040Z",
     "pr": 63,
     "head": "67ee928743b8efa6c3cce4a80d8b038473f6bc95",
     "merge_sha": "6b4fb5bfb19c6e0a27a61c3f261805d85fbf7d8a",
-    "post_merge_qa_status": "PENDING",
-    "result": "MERGED_WAIT_MAIN_CI"
+    "post_merge_qa_status": "success",
+    "result": "MERGED_MAIN_QA_PASSED_FINALIZED"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -269,7 +259,11 @@
       },
       "review_record": "ops/reviews/PR0063_67ee9287.json",
       "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40305630098",
-      "post_merge_main_qa_status": "PENDING"
+      "post_merge_main_qa_status": "success",
+      "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40305629965",
+      "post_merge_handoff_status": "success",
+      "main_after_handoff": "389c9af779eb120387085d4af29c47f8366502d9",
+      "status_only_descendant_verified": true
     }
   },
   "integration_results": {
@@ -315,10 +309,12 @@
     "63": {
       "sha": "6b4fb5bfb19c6e0a27a61c3f261805d85fbf7d8a",
       "merged": true,
-      "message": "Independent exact-head reviewer merge; main QA and handoff pending",
+      "message": "Independent exact-head reviewer merge; main QA and handoff passed",
       "qa": 40305630098,
       "handoff": 40305629965,
-      "post_merge_qa_status": "PENDING"
+      "post_merge_qa_status": "success",
+      "handoff_status": "success",
+      "main_after_handoff": "389c9af779eb120387085d4af29c47f8366502d9"
     }
   },
   "completed_controller_phase": {

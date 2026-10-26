@@ -1,11 +1,11 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T10:13:17.917Z",
-  "status": "MERGED_WAIT_MAIN_CI",
+  "observed_at": "2026-10-26T10:14:06.040Z",
+  "status": "MERGED_MAIN_QA_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "e958762e-a330-8330-a739-56a1c3a9373b",
-  "lease_epoch": 60,
+  "lease_epoch": 61,
   "main_before": "4bd7535b862c9975beb481c50df26e001b151d50",
   "main_qa": {
     "run": 40299361181,
@@ -29,12 +29,25 @@
       "category": "GAME_SOURCE_FIX",
       "ci": 40305011765,
       "main_qa_run": 40305630098,
-      "main_qa_status": "PENDING",
+      "main_qa_status": "success",
       "handoff_run": 40305629965,
-      "handoff_status": "PENDING"
+      "handoff_status": "success"
     }
   ],
   "merge_count": 1,
-  "main_after": "6b4fb5bfb19c6e0a27a61c3f261805d85fbf7d8a",
-  "next": "Wait exact merge-SHA main QA 40305630098 and handoff 40305629965; do not mark passed until both complete. Next eligible work: repair if failed, otherwise P0 Roblox engine/2-client/mobile evidence and WORKER authority. PR60 trust-root bootstrap remains REQUEST_CHANGES; PR61 manual feature not eligible until reviewed policy. Preserve Gemini/release/cost holds."
+  "main_after": "389c9af779eb120387085d4af29c47f8366502d9",
+  "next": "PR63 merged and exact-head main QA/handoff passed. P0 hosted Roblox engine/multiclient/mobile evidence (#3) and unattended WORKER authority (#57); separate PR60 trust-root security review remains REQUEST_CHANGES; PR61 manual lane not eligible. Preserve Gemini/release/cost HOLDs.",
+  "main_after_handoff": {
+    "head": "389c9af779eb120387085d4af29c47f8366502d9",
+    "qa_head": "6b4fb5bfb19c6e0a27a61c3f261805d85fbf7d8a",
+    "qa_run": 40305630098,
+    "qa_conclusion": "success",
+    "handoff_run": 40305629965,
+    "handoff_conclusion": "success",
+    "status_only_descendant_verified": true,
+    "changed_files": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  }
 }
