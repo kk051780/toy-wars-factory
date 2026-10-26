@@ -17,7 +17,7 @@
     "owner_run_id": "d62a3a64-210c-832c-9ca3-c923d4cbe127",
     "epoch": 35
   },
-  "main_base": "aa2e57b6d63639f81966cac0e4ef399fcb78a527",
+  "main_base": "b6fb4d8a94330f1946335aa77af17ab64e1ac502",
   "defect": {
     "id": "enemy_spawn_timer_cadence",
     "cause": "The server resets enemyTimer to 2.3 after overshooting zero, discarding elapsed time.",
@@ -58,19 +58,19 @@
     "whole_server": "tests/auto/enemy_spawn_cadence_spec.lua",
     "local": "NOT_RUN",
     "old_source_negative_control": "NOT_RUN",
-    "ci": "PENDING_NEW_HEAD",
+    "ci": "PENDING_CURRENT_MAIN_MERGE_HEAD",
     "studio": "NOT_RUN",
     "multiplayer": "NOT_RUN",
     "mobile": "NOT_RUN"
   },
   "evidence": {
-    "main_sha": "aa2e57b6d63639f81966cac0e4ef399fcb78a527",
-    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40173771793",
-    "main_qa_note": "main is a status-only descendant of successful QA head 499f6e7; exact aa2e QA absent",
+    "main_sha": "b6fb4d8a94330f1946335aa77af17ab64e1ac502",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40176571360",
+    "main_qa_note": "Last verified offline+compile_hold main evidence precedes status-only descendants. Actual new PR-head offline+compile_hold QA required; no current-main game changes.",
     "claim_commit": "e0454283f907d38c67c8e9a86af956bff839fe18",
     "backlog": "ops/GAME_IMPROVEMENT_BACKLOG.json#enemy_spawn_timer_cadence",
-    "pr": "PENDING",
-    "ci": "PENDING"
+    "pr": "https://github.com/kk051780/toy-wars-factory/pull/54",
+    "ci": "PENDING_NEW_MERGE_HEAD"
   },
   "next_action": "Verify current-head CI, repair failures on same PR, then independent reviewer; author does not merge.",
   "restrictions": {
@@ -78,5 +78,19 @@
     "author_main_merge": false,
     "roblox_publish": false,
     "scheduler_mutated": false
+  },
+  "current_main_reconciliation": {
+    "observed_at": "2026-10-26T06:56:01.707Z",
+    "kind": "CONTROLLER_MAINTENANCE_MAIN_MERGE",
+    "source_original_worker_run_id": "d62a3a64-210c-832c-9ca3-c923d4cbe127",
+    "original_coordination_claim": "e0454283f907d38c67c8e9a86af956bff839fe18",
+    "maintenance_coordination_epoch": 45,
+    "merge_parents": [
+      "9f55b1b7c0346093bee71c22e72bd041c33963f3",
+      "b6fb4d8a94330f1946335aa77af17ab64e1ac502"
+    ],
+    "merged_main_status": "Included existing main docs and system regression updates; source retains only the previously tested one-line enemyTimer remainder fix",
+    "ci_required": "fresh head exact 2 job QA",
+    "independent_reviewer_required": true
   }
 }
