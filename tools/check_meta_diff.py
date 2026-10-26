@@ -3,6 +3,7 @@ import argparse
 import fnmatch
 import json
 import re
+import subprocess
 from pathlib import PurePosixPath
 from check_auto_diff import changed_entries
 
@@ -19,9 +20,56 @@ def safe_module_extension(before, after):
     return all(isinstance(p, str) and re.fullmatch(r"src/[A-Za-z0-9_]+(?:\.(?:server|client))?\.lua", p) and p not in reserved for p in new)
 
 
-def violations(entries, policy, module_extension=None):
+
+# Trusted-base maintenance admission: never treat PR-author policy as an authority.
+_SYSTEM_MODULE = re.compile(r"tools/system_[A-Za-z0-9_]+[.]py\Z")
+_NEW_SYSTEM_TEST = re.compile(r"tests/test_system_[A-Za-z0-9_]+[.]py\Z")
+_NEW_HISTORY = re.compile(r"history/C[0-9]{5}_[A-Za-z0-9_]+[.]json\Z")
+
+
+def trusted_base_system_modules(base, trusted_main_ref="refs/remotes/origin/main"):
+    """Only pre-existing ordinary files from an ancestor of trusted main.
+
+    This helper executes from the trusted-base checker checkout; never read a
+    checker, allowlist or modules from the PR head as authorization.
+    GitHub PRs targeting an unrelated/untrusted base fail closed.
+    """
+    if not isinstance(base, str) or not re.fullmatch(r"[0-9a-f]{40}", base):
+        return set()
+    try:
+        commit = subprocess.check_output(
+            ["git", "rev-parse", "--verify", base + "^{commit}"],
+            stderr=subprocess.DEVNULL, text=True).strip()
+        if commit != base:
+            return set()
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", base, trusted_main_ref],
+            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        raw = subprocess.check_output(
+            ["git", "ls-tree", "-r", "-z", base, "--", "tools/"],
+            stderr=subprocess.DEVNULL)
+    except (OSError, subprocess.CalledProcessError, ValueError):
+        return set()
+    safe = set()
+    for record in raw.split(b"\0"):
+        if not record:
+            continue
+        try:
+            metadata, path_bytes = record.split(b"\t", 1)
+            mode, typ, sha = metadata.split(b" ")
+            path = path_bytes.decode("utf-8", "strict")
+        except (ValueError, UnicodeDecodeError):
+            return set()
+        if (mode == b"100644" and typ == b"blob" and
+                _SYSTEM_MODULE.fullmatch(path)):
+            safe.add(path)
+    return safe
+
+
+def violations(entries, policy, module_extension=None, trusted_base_modules=None):
     meta = policy["system_review"]
-    errors, implementation = [], False
+    errors, implementation, maintenance = [], False, False
+    known = trusted_base_modules if isinstance(trusted_base_modules, set) else set()
     for status, path in entries:
         parts = PurePosixPath(path).parts
         if path.startswith("/") or ".." in parts or "\\" in path:
@@ -29,6 +77,9 @@ def violations(entries, policy, module_extension=None):
             continue
         if path in meta["allowed_tool_paths"] and status == "M":
             implementation = True
+            continue
+        if status == "M" and _SYSTEM_MODULE.fullmatch(path) and path in known:
+            implementation = maintenance = True
             continue
         if (status == "M" and path == "config/autonomous_repair.json" and module_extension and
                 safe_module_extension(*module_extension) and ("M", "tools/build_installer.py") in entries):
@@ -48,6 +99,18 @@ def violations(entries, policy, module_extension=None):
         if status == "A" and PurePosixPath(path).parent.as_posix() == "docs/research" and path.endswith(".md"):
             continue
         errors.append("outside system-review scope: " + status + " " + path)
+    if maintenance:
+        # The critical checker and the user's accepted tests are never edited.
+        new_test = any(status == "A" and _NEW_SYSTEM_TEST.fullmatch(path)
+                       for status, path in entries)
+        new_history = any(status == "A" and _NEW_HISTORY.fullmatch(path) and
+                          fnmatch.fnmatchcase(path, policy["new_history_pattern"])
+                          for status, path in entries)
+        paths = [p for _, p in entries]
+        if len(paths) != len(set(paths)):
+            errors.append("duplicate path in maintenance proposal")
+        if not new_test or not new_history:
+            errors.append("trusted system maintenance requires new regression AND history")
     if not implementation:
         errors.append("research-only output belongs in the coordinator report, not an implementation PR")
     if not any(status == "A" and path.startswith("tests/test_system_") and path.endswith(".py") for status, path in entries):
@@ -72,7 +135,9 @@ def main():
         import subprocess
         after = json.loads(subprocess.check_output(["git", "show", args.head + ":config/autonomous_repair.json"], text=True))
         extension = (policy, after)
-    errors = violations(entries, policy, module_extension=extension)
+    trusted_modules = trusted_base_system_modules(args.base)
+    errors = violations(entries, policy, module_extension=extension,
+                        trusted_base_modules=trusted_modules)
     if errors:
         raise SystemExit("FAIL: " + "; ".join(errors))
     print("PASS: system review scope")
