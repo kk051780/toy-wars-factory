@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T13:48:58Z",
-  "source": "System continuity first this cycle; game implementation deferred, hypotheses and offline/engine evidence distinguished.",
+  "observed_at": "2026-10-26T22:24:58Z",
+  "source": "Issue72 system continuity priority: no game edits. Revalidated merged game source and retained unperformed engine/mobile experiments from primary hardware documentation.",
   "items": [
     {
       "id": "mobile_pve_frame_time",
@@ -55,7 +55,7 @@
       "id": "first_play_guide_compact_layout",
       "kind": "REVIEWER_REPRODUCIBLE_SOURCE_REGRESSION",
       "priority": "P1",
-      "status": "WORKER_FIX_OFFLINE_QA_PASS_AWAIT_INDEPENDENT_REVIEW",
+      "status": "MERGED_OFFLINE_VERIFIED_ENGINE_NOT_RUN",
       "pr": 67,
       "head": "edfe101cda1b9f36e14afe5b8d1f2fccc85a346c",
       "hypothesis": "Guide action rectangles overlap toy selectors at short landscape safe-area heights; source geometry reproduces it, physical-device behavior not measured.",
@@ -66,37 +66,50 @@
         "primary": "https://create.roblox.com/docs/tutorials/use-case-tutorials/ui/create-hud-meters",
         "checked_at": "2026-10-26T11:43:11Z"
       },
-      "experiment": "WORKER first repairs existing PR67 on current main. Run canonical HUD and calculate all action-button/selector rectangles for effective safe-area bounds 640x320,640x360,844x390,960x540; preserve prices/queue notice/3 buttons and no gameplay commands from guide navigation. Include current failing head negative control.",
+      "experiment": "Run accepted canonical HUD geometric regressions, then verify same exact source on a physical phone with landscape/portrait insets. No source change is authorized by this backlog entry.",
       "success_evidence": "No interactive rectangle intersections, selectors legible/accesssible, guide dismissible, exact new-head QA both jobs successful, independent review.",
       "requires_engine_evidence": "Later real-device touch and ScreenInsets screenshots tied to source/place version. Offline rectangle checks do not establish actual mobile UX.",
-      "deferred_reason": "This cycle implements only the explicit P0 system triage task; no game edits.",
+      "deferred_reason": "Current task is Issue72 system maintenance; no new game features.",
       "latest_worker_observation": {
         "run": "d74ae23e-7e7c-8324-91b2-8fbdd6c827db",
         "result": "WAIT_LOCK",
         "held_by": "META epoch74",
         "observed_at": "2026-10-26T12:13:08Z"
       },
-      "next": "REVIEWER rechecks canonical new HUD geometric regressions and resolves old a57961e4 request; physical mobile evidence still absent.",
-      "ci": 40329852658
+      "next": "Do not recreate PR67. On a securely authorized private real-device test, confirm tap targets, guide dismissal and three selectors at short safe-area bounds; collect screenshots/version/device and preserve prices/queue notice. Physical UX remains unmeasured.",
+      "ci": 40329852658,
+      "merge_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+      "current_main": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
+      "post_repair_main_qa": 40409905235
     }
   ],
   "actor": {
     "kind": "META",
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "5d840992-1c14-8322-97f9-d694eb44edc6"
+    "run_id": "db136095-8594-8326-b3da-d23e9100a1bf"
   },
-  "base_main_sha": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+  "base_main_sha": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
   "prioritized_candidates": [
     "first_play_guide_compact_layout",
     "private_headless_engine_evidence_path",
     "mobile_pve_frame_time"
   ],
   "system_precondition": {
-    "priority": "ISSUE68_FIRST_EXPLICIT_INSTRUCTION",
+    "priority": "ISSUE72_AFTER_PR73_MERGED_MAIN_QA_PASSED",
     "queue_pr": 73,
-    "queue_ci": "PASS_EXACT_HEAD",
-    "triage_maintenance_issue": 72,
-    "pr70": "CLOSED_UNMERGED",
+    "queue_merge": "904672656d1ac13c4f8ed10f91f14de7d74e47cb",
+    "queue_main_qa": 40409905235,
+    "queue_live_consumption": "NOT_YET_OBSERVED",
+    "triage_candidate_pr": 77,
+    "triage_candidate_ci": 40411902302,
+    "legacy_cli_repaired": false,
     "game_edits_by_meta": 0
+  },
+  "last_primary_source_check": {
+    "checked_at": "2026-10-26T22:24:58Z",
+    "url": "https://create.roblox.com/docs/performance-optimization/test-on-hardware",
+    "update_date": null,
+    "adopted": "Retain actual hardware touch/frame/memory/10-15 minute thermal evidence requirement; emulator is not device proof.",
+    "new_game_experiment_executed": false
   }
 }

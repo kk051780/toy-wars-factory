@@ -1,193 +1,238 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T13:48:58Z",
-  "status": "ISSUE68_CODE_PR_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
+  "observed_at": "2026-10-26T22:24:58Z",
+  "status": "ISSUE72_PARTIAL_OPTION_B_PR77_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
   "actor": {
     "kind": "META",
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "5d840992-1c14-8322-97f9-d694eb44edc6",
-    "epoch": 77,
-    "claim_commit": "2afe37efadf6e150495b296a5e1d9f92ec44b8b4"
+    "run_id": "db136095-8594-8326-b3da-d23e9100a1bf",
+    "epoch": 85,
+    "claim_commit": "66be17632764dd420ff65b67df3fdacab5c14254",
+    "work_branch": "auto/twf-system-review-db136095-8594-8326-b3da-d23e9100a1bf"
   },
-  "main": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+  "main": {
+    "head": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
+    "source_metrics": {
+      "files": 4,
+      "lines": 758,
+      "bytes": 30030
+    }
+  },
   "main_health": {
-    "qa": 40317866877,
-    "qa_head": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
-    "jobs": {
+    "head": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
+    "qa_head": "904672656d1ac13c4f8ed10f91f14de7d74e47cb",
+    "qa": 40409905235,
+    "qa_jobs": {
       "offline": "success",
       "compile_hold": "success"
     },
-    "direct_compare_files": [
+    "python_tests": 275,
+    "handoff": 40409905182,
+    "direct_compare_paths": [
       "status/CHAT_HANDOFF.md",
       "status/LATEST_STATE.json"
-    ],
-    "known_deferred_defect": "Issue72 triage false-safe remains; explicit current task forbids protected M and prioritizes Issue68."
+    ]
   },
   "implementation": {
-    "pr": 73,
-    "url": "https://github.com/kk051780/toy-wars-factory/pull/73",
-    "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
-    "base": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
-    "branch": "auto/twf-system-review-5d840992-1c14-8322-97f9-d694eb44edc6",
+    "issue": 72,
+    "pr": 77,
+    "url": "https://github.com/kk051780/toy-wars-factory/pull/77",
+    "head": "4d0c559d22d31f0e6b8a7d3849e696926e2f9522",
+    "base": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
     "code_commits": 1,
     "changed_files": [
-      "tools/repair_queue.py",
-      "tests/test_system_review_repair_queue.py",
-      "docs/AUTONOMOUS_REPAIR.md",
-      "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
-      "history/C00043_review_repair_queue.json"
+      "tools/repair_control.py",
+      "tools/system_host_write_triage_v2.py",
+      "tests/test_system_triage_v2.py",
+      "docs/SYSTEM_REVIEW.md",
+      "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
+      "history/C00045_triage_versioned_health_guard.json"
     ],
-    "game_source_delta_bytes": 0,
-    "accepted_tests_changed": false,
-    "protected_policy_or_workflow_changed": false
-  },
-  "findings": [
-    {
-      "id": "review_request_ignored_by_old_queue",
-      "status": "IMPLEMENTED_DRAFT_NOT_MAIN",
-      "before": "Known green-head REQUEST_CHANGES could select START",
-      "after": "REPAIR_CI first, then exact-head authenticated-collector normalized review repair before START/WAIT_REVIEW; invalid evidence WAIT_METADATA",
-      "trust_boundary": "Pure selector checks consistency; caller must obtain real sources. Provider names are not signatures."
-    },
-    {
-      "id": "stale_pr67_request",
-      "status": "REVIEWER_RECHECK_REQUIRED",
-      "old_head": "a57961e42bbda115659f67bfa4a6fe5a1540d473",
-      "current_head": "edfe101cda1b9f36e14afe5b8d1f2fccc85a346c",
-      "ci": 40329852658
-    },
-    {
-      "id": "triage_maintenance",
-      "status": "TRACKED_ISSUE72_PR70_CLOSED",
-      "source_changed": false
-    }
-  ],
-  "tests": {
-    "local_python": 270,
-    "new_python": 27,
-    "existing_queue": 13,
-    "negative_control": {
-      "baseline": "Original immutable main body with signature-only adapter ignoring new evidence",
-      "selected_tests": 3,
-      "failures": 3,
-      "errors": 0
-    },
-    "local_policy_checks": 21,
+    "category": "SYSTEM_SOURCE_AND_NEW_REGRESSION",
+    "source_files": 2,
+    "game_changes": 0,
     "ci": {
-      "id": 40332978440,
-      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40332978440",
-      "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
-      "base": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+      "id": 40411902302,
+      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40411902302",
+      "head": "4d0c559d22d31f0e6b8a7d3849e696926e2f9522",
+      "base": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
       "attempt": 1,
+      "status": "completed",
       "conclusion": "success",
       "jobs": [
         {
-          "id": 121606948665,
-          "name": "compile_hold",
-          "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
-          "conclusion": "success"
+          "id": 121884439923,
+          "name": "offline",
+          "head": "4d0c559d22d31f0e6b8a7d3849e696926e2f9522",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-26T22:22:24Z",
+          "completed_at": "2026-10-26T22:22:48Z"
         },
         {
-          "id": 121606949182,
-          "name": "offline",
-          "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
-          "conclusion": "success"
+          "id": 121884440334,
+          "name": "compile_hold",
+          "head": "4d0c559d22d31f0e6b8a7d3849e696926e2f9522",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-26T22:22:19Z",
+          "completed_at": "2026-10-26T22:22:32Z"
         }
       ],
-      "python_tests": 270,
-      "new_python_tests": 27,
-      "trusted_scope": "PASS",
+      "python_tests": 296,
+      "new_python_tests": 21,
+      "scope": "PASS",
       "immutable_claim": "PASS"
-    }
+    },
+    "draft": true,
+    "merged": false
+  },
+  "findings": [
+    "PR73 independently merged and main QA275 tests passed; current main differs from QA only generated two status files. Original C00043 preserved.",
+    "Original accepted v1 still misclassifies failed/no_update as healthy. Scope protection remains unchanged.",
+    "Connected repair_control triage calls new versioned v2; new route rejects these two unsafe idle outcomes and retains v1 validation.",
+    "Option B does not repair original CLI or generalized maintenance admission. Keep Issue72 open, ask separate independent trust-root actor to evaluate narrow A; no routine owner reply."
+  ],
+  "tests": {
+    "new_tests": 21,
+    "new_result": "PASS",
+    "red_control": {
+      "tests": 2,
+      "failures": 2,
+      "errors": 0
+    },
+    "original_diagnostic_suite_replay": {
+      "tests": 37,
+      "result": "PASS",
+      "note": "Function patched to v2 for replay; original CLI/mutation-specific subtests retain their original entry."
+    },
+    "local_full": {
+      "run": 296,
+      "pass": 295,
+      "fail": 1,
+      "reason": "Materialized checkout lacks immutable source Git ancestry; unmodified ledger validation fails. No skip/waiver."
+    },
+    "github_full": {
+      "run": 296,
+      "pass": 296,
+      "fail": 0,
+      "run_id": 40411902302
+    },
+    "scope": "PASS_TRUSTED_BASE",
+    "claim": "PASS_1_IMMUTABLE_CLAIM",
+    "accepted_tests_modified": false,
+    "original_c00043_modified": false
   },
   "research": {
+    "checked_at": "2026-10-26T22:24:58Z",
     "sources": [
-      {
-        "url": "https://docs.github.com/en/rest/pulls/reviews",
-        "published_at": null,
-        "updated_at": null,
-        "checked_at": "2026-10-26T13:41:12Z",
-        "finding": "Review records carry state and commit_id. Bind verdicts to the reviewed head; this project consumes coordinator REQUEST_CHANGES from registered task/run, not native self-approval."
-      },
       {
         "url": "https://github.github.com/gh-aw/reference/safe-outputs/",
         "published_at": null,
         "updated_at": null,
-        "checked_at": "2026-10-26T13:41:12Z",
-        "finding": "Runtime distinguishes explicit review events and trusted machine-readable state from arbitrary body text. Adopt a separate normalized evidence argument; do not execute web instructions or change runtime permissions."
+        "checked_at": "2026-10-26T22:20:54Z",
+        "finding": "Opened primary runtime documentation. Deterministic permitted outputs and failure categories should remain separate from execution authority. Applied here as constant safe diagnostic JSON, never write permission."
       },
       {
-        "url": "https://create.roblox.com/docs/studio/device-simulator",
-        "published_at": null,
+        "url": "https://github.com/github/gh-aw/discussions/65507",
+        "published_at": "2026-10-05",
+        "report_window": "2026-10-04",
         "updated_at": null,
-        "checked_at": "2026-10-26T13:41:12Z",
-        "finding": "Current primary docs describe form-factor, safe-area and input simulation; beta can change and is not physical-device evidence. Keep compact guide validation separate from real-phone proof."
+        "checked_at": "2026-10-26T22:20:54Z",
+        "finding": "Implementation-repository automated audit reports writes succeeding despite terminal failures and missing raw error text. Treat as a fallible historical report, not proof of this incident's cause or a latest dated release."
       },
       {
-        "url": "https://create.roblox.com/docs/tutorials/use-case-tutorials/ui/create-hud-meters",
+        "url": "https://create.roblox.com/docs/updates/2026-10-19",
+        "published_at": null,
+        "updated_at": "2026-10-22",
+        "checked_at": "2026-10-26T22:20:54Z",
+        "finding": "Opened dated official updates index. Body contains version links rather than enough detailed fixes; did not infer unseen release behavior from search snippets."
+      },
+      {
+        "url": "https://create.roblox.com/docs/performance-optimization/test-on-hardware",
         "published_at": null,
         "updated_at": null,
-        "checked_at": "2026-10-26T13:41:12Z",
-        "finding": "ScreenGui UI is positioned relative to safe-area insets; use varied effective bounds for later guide experiments. No game code changed by META."
+        "checked_at": "2026-10-26T22:20:54Z",
+        "finding": "Emulation cannot establish physical-device frame time, memory, thermal or touch latency; retain physical phone 10-15 minute experiment and actual touch target validation."
       }
     ],
-    "freshness": "Primary documents reopened and searched this run; update dates not exposed; no new dated publication asserted."
+    "freshness": "Searched recent primary cases. October26 gh-aw blog could not be opened; Roblox forum recap blocked by JavaScript challenge. No new dated relevant automation release verified; do not label old report latest."
   },
   "observations": {
-    "preclaim": "Waited for actual WORKER epoch76 release at 13:22:34Z; no expiry takeover.",
-    "worker_run": {
-      "id": "b3b2766a-3548-832f-abf1-725336d75c18",
-      "recorded_status": "completed",
-      "scheduled_for": "2026-10-26T13:05:04Z",
-      "started_at": "2026-10-26T13:14:47.184447Z",
-      "completed_at": "2026-10-26T13:24:39.410955Z",
-      "chat_ref": {
-        "type": "chatgpt",
-        "id": "6adc2384-0294-83ee-a005-ef536b9eb34a"
-      }
-    },
-    "worker_result_matching_run": true,
-    "reviewer_run": {
-      "id": "1b9cf867-32bc-8333-8ce8-eb9ac26c0ce9",
-      "recorded_status": "completed",
-      "scheduled_for": "2026-10-26T12:25:00Z",
-      "started_at": "2026-10-26T12:32:28.383132Z",
-      "completed_at": "2026-10-26T12:34:54.716989Z",
-      "chat_ref": {
-        "type": "chatgpt",
-        "id": "6add6b00-4784-83ee-abae-45d04f185d10"
-      }
-    },
-    "service_sample_denominator": {
+    "period_start": "2026-10-26T22:03:12Z",
+    "period_end": "2026-10-26T22:20:54Z",
+    "sample": {
       "worker": 1,
-      "reviewer": 1
+      "reviewer": 1,
+      "meta": 1
     },
-    "current_worker_ci": 40329852658,
-    "old_failed_worker_ci": 40329644854,
-    "old_failure": "Trusted scope saw accepted main files relative to stale PR base; next worker head succeeded",
-    "long_term_reliability": "NOT_ESTABLISHED"
+    "worker": {
+      "run_id": "5387eb0a-6ec4-8330-a167-dd66b2977ec4",
+      "status": "completed",
+      "outcome": "Observed active REVIEWER lease and made no write, commit or PR"
+    },
+    "reviewer": {
+      "run_id": "9093457e-1b70-832d-9859-d6e7ac0671fa",
+      "status": "completed",
+      "result": "PR73 independently merged with post-main QA",
+      "released_at": "2026-10-26T22:08:09.162Z"
+    },
+    "meta": "Acquired only after fresh actual shared ref showed holder null; no expiry takeover",
+    "reliability_claim": "No long-term success rate or improvement estimate from this small sample",
+    "host_error_original": "Still unavailable for the historical denial; no denial observed in this run",
+    "ci_sample": {
+      "denominator": 1,
+      "run": 40411902302,
+      "created_at": "2026-10-26T22:22:16Z",
+      "updated_at": "2026-10-26T22:22:49Z",
+      "jobs": [
+        {
+          "name": "offline",
+          "queue_seconds": 8,
+          "duration_seconds": 24,
+          "status": "success"
+        },
+        {
+          "name": "compile_hold",
+          "queue_seconds": 3,
+          "duration_seconds": 13,
+          "status": "success"
+        }
+      ]
+    },
+    "host_write_denied_in_this_run": false,
+    "registered_meta_source_commit": "4d0c559d22d31f0e6b8a7d3849e696926e2f9522"
   },
   "applied_effect": {
-    "production_deployed": false,
-    "independent_main_merge": false,
-    "live_worker_consumption": false,
-    "statement": "Code and exact-head CI verified. Later independent integration/main QA and a real WORKER consuming this rule remain necessary."
+    "prior_pr73_deployed": true,
+    "prior_pr73_main_qa_success": true,
+    "pr77_deployed": false,
+    "pr77_independent_merge": false,
+    "pr77_post_main_qa": "NOT_APPLICABLE_UNMERGED",
+    "canonical_new_cli_offline_proof": true,
+    "live_service_use": false,
+    "legacy_cli_fixed": false,
+    "issue72_complete": false,
+    "release": "HOLD_ENGINE_UNVERIFIED",
+    "gemini": "PRESERVED",
+    "spending_caps": "UNCHANGED"
   },
   "next": {
-    "actor": "REVIEWER",
+    "role": "REVIEWER",
     "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "action": "Review PR73 current head/base and full gates; recheck PR67 new head and retire/refresh its stale request; merge one at a time and verify main.",
-    "owner_reply_required": false
+    "action": "Re-read actual PR77 head/base/shared ownership/full CI and judge connected v2 behavior with explicit limitations; merge only independently and confirm main QA. Separate CONTROLLER trust-root maintenance proposal remains for original CLI."
   },
-  "work_request": "issue68_queue_pr73_independent_review",
+  "work_request": "issue72_triage_v2_pr77_independent_review",
   "game_candidates": [
     "first_play_guide_compact_layout",
     "private_headless_engine_evidence_path",
     "mobile_pve_frame_time"
   ],
   "limitations": [
-    "No scheduler/permissions/spending/publish changes or additional task launches.",
-    "No original host denial error obtained, no permanent write-recovery claim.",
-    "No Roblox engine/physical mobile/multiplayer/visual/fun proof."
+    "Legacy standalone CLI is still defective; do not fallback or declare Issue72 complete",
+    "Live WORKER consumption of PR73 and live cross-service migration to v2 not yet observed",
+    "Roblox engine/multiclient/physical mobile/visual/fun evidence absent; current tool registry has no Roblox execution tool",
+    "Raw historical host error still unavailable; don't infer permission cause",
+    "Notification delivery and sustained reliability unverified"
   ]
 }

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T21:20:35.881Z",
+  "observed_at": "2026-10-26T22:24:58Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -178,6 +178,15 @@
         "main_qa_run": 40340954729,
         "observed_at": "2026-10-26T14:36:54.418Z",
         "note": "Mobile overlap fix is integrated, but main overall QA failed due pre-existing chronological history ledger ordering exposed by combining PR74 and PR67."
+      },
+      "current_main_health": {
+        "observed_at": "2026-10-26T22:24:58Z",
+        "head": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
+        "qa": 40409905235,
+        "qa_head": "904672656d1ac13c4f8ed10f91f14de7d74e47cb",
+        "conclusion": "success",
+        "repair_pr": 75,
+        "note": "Original resolution's failed main QA is retained as historical evidence; later main repaired, tested and status-only descendants verified."
       }
     },
     {
@@ -514,11 +523,15 @@
       ],
       "owner_reply_required": false,
       "current_disposition": {
-        "observed_at": "2026-10-26T13:48:58Z",
-        "pr_state": "CLOSED_UNMERGED",
+        "observed_at": "2026-10-26T22:24:58Z",
+        "pr70": "CLOSED_UNMERGED",
         "issue": 72,
-        "protected_triage_fix_in_main": false,
-        "ordering": "Current explicit task authorizes Issue68 first; do not reopen PR70 or mix its protected M path."
+        "partial_candidate_pr": 77,
+        "partial_head": "4d0c559d22d31f0e6b8a7d3849e696926e2f9522",
+        "partial_ci": 40411902302,
+        "original_cli_repaired": false,
+        "complete": false,
+        "next": "Registered REVIEWER evaluates connected v2 route; independent trust-root maintenance still needed for legacy CLI, without META modifying its own scope."
       }
     },
     {
@@ -585,11 +598,15 @@
       },
       "next": "Wait for separately governed scope maintenance, then reconcile/fresh exact-head CI and independent review. No owner approval reply is required.",
       "current_disposition": {
-        "observed_at": "2026-10-26T13:48:58Z",
-        "pr_state": "CLOSED_UNMERGED",
+        "observed_at": "2026-10-26T22:24:58Z",
+        "pr70": "CLOSED_UNMERGED",
         "issue": 72,
-        "protected_triage_fix_in_main": false,
-        "ordering": "Current explicit task authorizes Issue68 first; do not reopen PR70 or mix its protected M path."
+        "partial_candidate_pr": 77,
+        "partial_head": "4d0c559d22d31f0e6b8a7d3849e696926e2f9522",
+        "partial_ci": 40411902302,
+        "original_cli_repaired": false,
+        "complete": false,
+        "next": "Registered REVIEWER evaluates connected v2 route; independent trust-root maintenance still needed for legacy CLI, without META modifying its own scope."
       }
     },
     {
@@ -597,7 +614,7 @@
       "kind": "SYSTEM_CODE_REVIEW",
       "priority": "P1",
       "assigned_role": "REVIEWER",
-      "status": "OPEN",
+      "status": "RESOLVED_MERGED_MAIN_QA_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "pr": 73,
       "branch": "auto/twf-system-review-5d840992-1c14-8322-97f9-d694eb44edc6",
@@ -629,6 +646,95 @@
         "new_python_tests": 27,
         "trusted_scope": "PASS",
         "immutable_claim": "PASS"
+      },
+      "owner_reply_required": false,
+      "resolution": {
+        "observed_at": "2026-10-26T22:24:58Z",
+        "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "9093457e-1b70-832d-9859-d6e7ac0671fa",
+        "review": "ops/reviews/PR0073_a71c03ff.json",
+        "merge_sha": "904672656d1ac13c4f8ed10f91f14de7d74e47cb",
+        "post_main_qa": 40409905235,
+        "post_handoff": 40409905182,
+        "live_worker_consumption": "NOT_YET_OBSERVED"
+      }
+    },
+    {
+      "id": "issue72_triage_v2_pr77_independent_review",
+      "kind": "SYSTEM_CODE_REVIEW",
+      "priority": "P0",
+      "assigned_role": "REVIEWER",
+      "status": "OPEN",
+      "repository": "kk051780/toy-wars-factory",
+      "issue": 72,
+      "pr": 77,
+      "branch": "auto/twf-system-review-db136095-8594-8326-b3da-d23e9100a1bf",
+      "head": "4d0c559d22d31f0e6b8a7d3849e696926e2f9522",
+      "base_main_sha": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
+      "ci": {
+        "id": 40411902302,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40411902302",
+        "head": "4d0c559d22d31f0e6b8a7d3849e696926e2f9522",
+        "base": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "jobs": [
+          {
+            "id": 121884439923,
+            "name": "offline",
+            "head": "4d0c559d22d31f0e6b8a7d3849e696926e2f9522",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-26T22:22:24Z",
+            "completed_at": "2026-10-26T22:22:48Z"
+          },
+          {
+            "id": 121884440334,
+            "name": "compile_hold",
+            "head": "4d0c559d22d31f0e6b8a7d3849e696926e2f9522",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-26T22:22:19Z",
+            "completed_at": "2026-10-26T22:22:32Z"
+          }
+        ],
+        "python_tests": 296,
+        "new_python_tests": 21,
+        "scope": "PASS",
+        "immutable_claim": "PASS"
+      },
+      "request": "Independently review connected repair_control triage -> versioned v2 path and terminal guard, retained accepted validator/CLI behavior, new21 tests and safe output; exact head/base, trusted scope and immutable META epoch85 proof. This is partial option B only. Do not treat legacy CLI or generic accepted-module maintenance as repaired. Author must not self-merge. Check post-main QA after any integration.",
+      "limitations": [
+        "Original protected standalone v1 CLI still false-safe for failed/no_update",
+        "New route has offline canonical-CLI evidence but no sustained live-service consumption",
+        "Issue72 remains OPEN; separate independent trust-root A proposal needed"
+      ],
+      "owner_reply_required": false
+    },
+    {
+      "id": "issue72_legacy_triage_trust_root_maintenance",
+      "kind": "NARROW_TRUST_ROOT_MAINTENANCE_PROPOSAL",
+      "priority": "P0",
+      "assigned_role": "CONTROLLER",
+      "status": "OPEN",
+      "repository": "kk051780/toy-wars-factory",
+      "issue": 72,
+      "issue_comment": "https://github.com/kk051780/toy-wars-factory/issues/72#issuecomment-6428760025",
+      "protected_path": "tools/system_host_write_triage.py",
+      "trusted_base": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
+      "protected_blob": "8eb87b345e2e3727bcad96cac58ad7be5c354d5a",
+      "pr70": "CLOSED_UNMERGED",
+      "request": "Independently govern narrow option A for the accepted original diagnostic CLI. Require actual trusted-base regular blob/mode, registered author/run/lease, added adversarial regression and new C; reject delete/rename/symlink/fake base/protected policy or workflow broadening. META cannot M this module/checker/config or use this request as authority. PR77's connected v2 path does not close this original-CLI defect.",
+      "reproduction": {
+        "fixture": "tests/test_system_host_write_triage.py::fixtures()",
+        "statuses": [
+          "failed",
+          "no_update"
+        ],
+        "current": "SAFE_TO_NEXT_SCHEDULE despite exact-head green QA",
+        "expected": "Never healthy SAFE for failed/no_update; preserve all lease/provenance/QA gates"
       },
       "owner_reply_required": false
     }
