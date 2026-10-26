@@ -39,7 +39,7 @@ local function fixture()
         print=function() end,
     },{__index=_G})
     assert(loadfile(hud,"t",env))()
-    local found={},selection=0
+    local found,selection={},0
     for _,o in ipairs(created) do
         if o.Name then found[o.Name]=o end
         if o.ClassName=="TextButton" then selection=selection+1 end
