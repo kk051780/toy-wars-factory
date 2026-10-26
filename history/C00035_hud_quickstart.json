@@ -19,8 +19,8 @@
     {
       "path": "src/ToyWarsHUD.client.lua",
       "before_bytes": 3780,
-      "after_bytes": 5986,
-      "delta_bytes": 2206
+      "after_bytes": 5982,
+      "delta_bytes": 2202
     }
   ],
   "test_changes": [
@@ -34,15 +34,16 @@
   "characters_touched": [],
   "pricing_or_combat_changed": false,
   "tests": {
-    "native_new": "PENDING_EXACT_HEAD_CI",
-    "prior_hud_price": "MUST_REMAIN_PASS",
+    "native_new": "PENDING_EXACT_HEAD_CI_AFTER_MOCK_COMPATIBILITY_FIX",
+    "prior_hud_price": "PENDING_NEW_CI; uses UDim2.new supported in original accepted fixture",
     "roblox_engine": "NOT_RUN",
     "mobile": "NOT_RUN"
   },
   "evidence": {
-    "pr": "PENDING",
+    "pr": "https://github.com/kk051780/toy-wars-factory/pull/58",
     "ci": "PENDING",
-    "main": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec"
+    "main": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+    "previous_ci_failure": "https://github.com/kk051780/toy-wars-factory/actions/runs/40285960757"
   },
   "review": "REQUIRES_INDEPENDENT_REVIEW_BEFORE_MAIN",
   "release": "HOLD_ENGINE_UNVERIFIED"

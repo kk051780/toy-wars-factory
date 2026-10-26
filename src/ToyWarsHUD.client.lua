@@ -113,7 +113,7 @@ local function guideButton(name,caption,x,color)
     button.ZIndex=21
     button.Parent=quickStart
     round(button,10)
-    local text=addText(button,UDim2.fromScale(1,1),UDim2.fromScale(0,0),
+    local text=addText(button,UDim2.new(1,0,1,0),UDim2.new(0,0,0,0),
         caption,Color3.fromRGB(255,255,255))
     text.Name=name.."Caption"
     text.ZIndex=22
