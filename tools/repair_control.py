@@ -12,6 +12,7 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import sys
 import uuid
 
 TASK_ID = "6adbf0d6a7d881918ce181dff2468867"
@@ -261,9 +262,16 @@ def verify_pr(policy, base, head, branch, control_ref):
     return f"{len(records)} immutable coordinator claim(s) verified"
 
 
-def main():
+def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    # Route before argparse so invalid diagnostic arguments are sanitized by
+    # the v2 parser and cannot echo provider errors or secret-bearing strings.
+    if argv[:1] == ["triage"]:
+        from system_host_write_triage_v2 import main as triage_main
+        return triage_main(argv[1:])
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
+    sub.add_parser("triage", help="read-only v2 incident diagnosis; no write authority")
     plan = sub.add_parser("plan")
     plan.add_argument("--input", required=True, help="state, kind, owner_id, now, service_status, base_main_sha")
     packet = sub.add_parser("approvals")
@@ -272,7 +280,7 @@ def main():
     check = sub.add_parser("verify-pr")
     for arg in ("policy", "base", "head", "branch", "control-ref"):
         check.add_argument("--" + arg, required=True)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.command == "verify-pr":
         policy = json.loads(Path(args.policy).read_text())
         print("PASS: repair coordination; " + verify_pr(policy, args.base, args.head, args.branch, args.control_ref))
@@ -287,4 +295,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
