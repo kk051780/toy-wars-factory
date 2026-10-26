@@ -163,7 +163,7 @@ local function makePlot(player, state)
         label(pad,string.upper(id).."\n"..B.UNITS[id].cost.." coins",150,65,3.3)
         local prompt=Instance.new("ProximityPrompt")
         prompt.ObjectText="Toy printer"
-        prompt.ActionText="Make "..string.upper(id)
+        prompt.ActionText="Select "..string.upper(id)
         prompt.MaxActivationDistance=12
         prompt.HoldDuration=0
         prompt.RequiresLineOfSight=false
