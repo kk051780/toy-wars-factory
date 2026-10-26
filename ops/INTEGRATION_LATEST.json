@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T07:03:16.542Z",
-  "status": "PR54_MERGED_WAIT_MAIN_QA",
+  "observed_at": "2026-10-26T07:03:54.198Z",
+  "status": "PR54_MERGED_MAIN_QA_PASSED",
   "owner_reply_required": false,
   "deployment": {
     "pr": 43,
@@ -202,8 +202,8 @@
     "verdict": "APPROVE",
     "ci": 40282761450,
     "category": "GAME_SOURCE_FIX",
-    "merge_status": "MERGED",
-    "main_qa_status": "WAIT",
+    "merge_status": "MERGED_POST_MERGE_QA_PASSED",
+    "main_qa_status": "SUCCESS",
     "review_record": "ops/reviews/PR0054_7c3b72cf.json",
     "limitations": [
       "Roblox engine/multiplayer/mobile unverified",
@@ -214,7 +214,8 @@
     "handoff_run": 40283372188,
     "handoff_status": "SUCCESS",
     "main_after_handoff": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
-    "status_only_descendant_verified": true
+    "status_only_descendant_verified": true,
+    "verified_at": "2026-10-26T07:03:54.198Z"
   },
-  "next": "Verify main QA for merge 078f1f81c3166e7e03f9462c108620b8270187ef; hold further integration until success."
+  "next": "Main healthy after PR54; prioritize P0 worker write-authority issue #57 and hosted Roblox PvE/multiplayer/mobile evidence issue #3; daily system review evaluates orphan-controller incident #56."
 }

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T07:03:16.542Z",
+  "observed_at": "2026-10-26T07:03:54.198Z",
   "requests": [
     {
       "id": "hosted_roblox_evidence",
@@ -151,7 +151,7 @@
       "kind": "PR_REBASE_AND_REGRESSION",
       "priority": "P0",
       "assigned_role": "WORKER",
-      "status": "RESOLVED_MERGED_WAIT_MAIN_QA",
+      "status": "RESOLVED_MERGED_MAIN_QA_PASSED",
       "pr": 54,
       "head": "9f55b1b7c0346093bee71c22e72bd041c33963f3",
       "old_base_main_sha": "aa2e57b6d63639f81966cac0e4ef399fcb78a527",
@@ -183,7 +183,9 @@
         "post_merge_qa_run": 40283372197,
         "handoff_run": 40283372188,
         "handoff_status": "success",
-        "main_after_handoff": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec"
+        "main_after_handoff": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+        "post_merge_qa_conclusion": "success",
+        "verified_at": "2026-10-26T07:03:54.198Z"
       }
     }
   ]

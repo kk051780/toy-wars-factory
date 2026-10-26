@@ -66,14 +66,18 @@
     "old_source_negative_control": "NOT_RUN; analytical simulation only"
   },
   "merge": {
-    "status": "MERGED_WAIT_POST_MERGE_QA",
+    "status": "MERGED_POST_MERGE_QA_PASSED",
     "sha": "078f1f81c3166e7e03f9462c108620b8270187ef",
     "merged_at": "2026-10-26T07:02:36Z",
     "post_merge_qa": {
       "run": 40283372197,
       "head": "078f1f81c3166e7e03f9462c108620b8270187ef",
-      "status": "in_progress",
-      "conclusion": null
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        "offline",
+        "compile_hold"
+      ]
     },
     "handoff": {
       "run": 40283372188,
@@ -82,7 +86,8 @@
       "conclusion": "success"
     },
     "main_after_handoff": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
-    "status_only_descendant_verified": true
+    "status_only_descendant_verified": true,
+    "verified_at": "2026-10-26T07:03:54.198Z"
   },
-  "next": "Wait for exact-merge-head main QA; do not integrate another PR until verified."
+  "next": "Independent game source change integrated; next priority is real-engine PvE and multi-client/mobile evidence, plus P0 unattended worker write authority. No further PR merged this run."
 }
