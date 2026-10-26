@@ -360,7 +360,7 @@ local function simulate(state,dt)
     else
         state.enemyTimer=state.enemyTimer-dt
         if state.enemyTimer<=0 and state.enemiesMade<state.enemyTarget then
-            state.enemyTimer=2.3
+            state.enemyTimer=state.enemyTimer+2.3
             addEntity(state,"junk","enemy")
             state.enemiesMade=state.enemiesMade+1
         end
