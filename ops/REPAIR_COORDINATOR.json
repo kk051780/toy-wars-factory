@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 58,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "24b9a02e-f885-4656-a9e1-3650dbbcc9a9",
-    "task_id": null,
-    "epoch": 58,
-    "acquired_at": "2026-10-26T09:49:54.351Z",
-    "expires_at": "2026-10-26T10:19:54.351Z",
-    "base_main_sha": "4bd7535b862c9975beb481c50df26e001b151d50",
-    "work_branch": "ops/twf-manual-review-lane",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -31,14 +21,14 @@
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "61f721eb-427d-4091-939e-1b93e23bb006",
-    "epoch": 57,
-    "released_at": "2026-10-26T09:45:16.634Z",
+    "owner_id": "24b9a02e-f885-4656-a9e1-3650dbbcc9a9",
+    "epoch": 58,
+    "released_at": "2026-10-26T09:56:38.738Z",
     "pr": 60,
-    "head": "1b879c9cb030bd10c0cf0040050f4fec8752985c",
-    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40301804742",
+    "head": "8785abc2e037fc8117a57a2b4f2854945def7f1d",
+    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40303267438",
     "ci_status": "success",
-    "result": "ADD_PARENT_AND_COORDINATOR_ANCESTRY_PROOF_FRESH_QA_PASS_REVIEW_PENDING",
+    "result": "30MIN_LIMIT_ALL_OTHER_COORDINATOR_FIELDS_IMMUTABLE_NEW_QA_PASS_BOOTSTRAP_REVIEW_REQUIRED",
     "main_merged": false
   },
   "last_approval_report": {
@@ -474,15 +464,18 @@
     "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
     "repository": "kk051780/toy-wars-factory",
     "pr": 60,
-    "head": "1b879c9cb030bd10c0cf0040050f4fec8752985c",
+    "head": "8785abc2e037fc8117a57a2b4f2854945def7f1d",
     "base_main_sha": "4bd7535b862c9975beb481c50df26e001b151d50",
     "source_branch": "ops/twf-manual-review-lane",
-    "ci_run": 40301804742,
+    "ci_run": 40303267438,
     "owner_delegation": {
       "main_integration_authorized": true
     },
-    "intent": "THIRD_SAFE_BOOTSTRAP_REVIEW_NO_MERGE",
-    "requested_at": "2026-10-26T09:45:16.635Z",
-    "last_blocker_fixed": "real claim parent, prior idle epoch+1, one-file-only changed entries, claim-to-current coordinator ancestry"
+    "intent": "BOOTSTRAP_REVIEW_ONLY_NO_MERGE",
+    "requested_at": "2026-10-26T09:56:38.738Z",
+    "last_blockers_fixed": [
+      "claim lease max 30 minutes",
+      "all other coordinator fields immutable during claim"
+    ]
   }
 }
