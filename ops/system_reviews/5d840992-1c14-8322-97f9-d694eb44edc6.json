@@ -1,0 +1,193 @@
+{
+  "schema": 1,
+  "observed_at": "2026-10-26T13:48:58Z",
+  "status": "ISSUE68_CODE_PR_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
+  "actor": {
+    "kind": "META",
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "run_id": "5d840992-1c14-8322-97f9-d694eb44edc6",
+    "epoch": 77,
+    "claim_commit": "2afe37efadf6e150495b296a5e1d9f92ec44b8b4"
+  },
+  "main": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+  "main_health": {
+    "qa": 40317866877,
+    "qa_head": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "direct_compare_files": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "known_deferred_defect": "Issue72 triage false-safe remains; explicit current task forbids protected M and prioritizes Issue68."
+  },
+  "implementation": {
+    "pr": 73,
+    "url": "https://github.com/kk051780/toy-wars-factory/pull/73",
+    "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
+    "base": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+    "branch": "auto/twf-system-review-5d840992-1c14-8322-97f9-d694eb44edc6",
+    "code_commits": 1,
+    "changed_files": [
+      "tools/repair_queue.py",
+      "tests/test_system_review_repair_queue.py",
+      "docs/AUTONOMOUS_REPAIR.md",
+      "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+      "history/C00043_review_repair_queue.json"
+    ],
+    "game_source_delta_bytes": 0,
+    "accepted_tests_changed": false,
+    "protected_policy_or_workflow_changed": false
+  },
+  "findings": [
+    {
+      "id": "review_request_ignored_by_old_queue",
+      "status": "IMPLEMENTED_DRAFT_NOT_MAIN",
+      "before": "Known green-head REQUEST_CHANGES could select START",
+      "after": "REPAIR_CI first, then exact-head authenticated-collector normalized review repair before START/WAIT_REVIEW; invalid evidence WAIT_METADATA",
+      "trust_boundary": "Pure selector checks consistency; caller must obtain real sources. Provider names are not signatures."
+    },
+    {
+      "id": "stale_pr67_request",
+      "status": "REVIEWER_RECHECK_REQUIRED",
+      "old_head": "a57961e42bbda115659f67bfa4a6fe5a1540d473",
+      "current_head": "edfe101cda1b9f36e14afe5b8d1f2fccc85a346c",
+      "ci": 40329852658
+    },
+    {
+      "id": "triage_maintenance",
+      "status": "TRACKED_ISSUE72_PR70_CLOSED",
+      "source_changed": false
+    }
+  ],
+  "tests": {
+    "local_python": 270,
+    "new_python": 27,
+    "existing_queue": 13,
+    "negative_control": {
+      "baseline": "Original immutable main body with signature-only adapter ignoring new evidence",
+      "selected_tests": 3,
+      "failures": 3,
+      "errors": 0
+    },
+    "local_policy_checks": 21,
+    "ci": {
+      "id": 40332978440,
+      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40332978440",
+      "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
+      "base": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+      "attempt": 1,
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 121606948665,
+          "name": "compile_hold",
+          "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
+          "conclusion": "success"
+        },
+        {
+          "id": 121606949182,
+          "name": "offline",
+          "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
+          "conclusion": "success"
+        }
+      ],
+      "python_tests": 270,
+      "new_python_tests": 27,
+      "trusted_scope": "PASS",
+      "immutable_claim": "PASS"
+    }
+  },
+  "research": {
+    "sources": [
+      {
+        "url": "https://docs.github.com/en/rest/pulls/reviews",
+        "published_at": null,
+        "updated_at": null,
+        "checked_at": "2026-10-26T13:41:12Z",
+        "finding": "Review records carry state and commit_id. Bind verdicts to the reviewed head; this project consumes coordinator REQUEST_CHANGES from registered task/run, not native self-approval."
+      },
+      {
+        "url": "https://github.github.com/gh-aw/reference/safe-outputs/",
+        "published_at": null,
+        "updated_at": null,
+        "checked_at": "2026-10-26T13:41:12Z",
+        "finding": "Runtime distinguishes explicit review events and trusted machine-readable state from arbitrary body text. Adopt a separate normalized evidence argument; do not execute web instructions or change runtime permissions."
+      },
+      {
+        "url": "https://create.roblox.com/docs/studio/device-simulator",
+        "published_at": null,
+        "updated_at": null,
+        "checked_at": "2026-10-26T13:41:12Z",
+        "finding": "Current primary docs describe form-factor, safe-area and input simulation; beta can change and is not physical-device evidence. Keep compact guide validation separate from real-phone proof."
+      },
+      {
+        "url": "https://create.roblox.com/docs/tutorials/use-case-tutorials/ui/create-hud-meters",
+        "published_at": null,
+        "updated_at": null,
+        "checked_at": "2026-10-26T13:41:12Z",
+        "finding": "ScreenGui UI is positioned relative to safe-area insets; use varied effective bounds for later guide experiments. No game code changed by META."
+      }
+    ],
+    "freshness": "Primary documents reopened and searched this run; update dates not exposed; no new dated publication asserted."
+  },
+  "observations": {
+    "preclaim": "Waited for actual WORKER epoch76 release at 13:22:34Z; no expiry takeover.",
+    "worker_run": {
+      "id": "b3b2766a-3548-832f-abf1-725336d75c18",
+      "recorded_status": "completed",
+      "scheduled_for": "2026-10-26T13:05:04Z",
+      "started_at": "2026-10-26T13:14:47.184447Z",
+      "completed_at": "2026-10-26T13:24:39.410955Z",
+      "chat_ref": {
+        "type": "chatgpt",
+        "id": "6adc2384-0294-83ee-a005-ef536b9eb34a"
+      }
+    },
+    "worker_result_matching_run": true,
+    "reviewer_run": {
+      "id": "1b9cf867-32bc-8333-8ce8-eb9ac26c0ce9",
+      "recorded_status": "completed",
+      "scheduled_for": "2026-10-26T12:25:00Z",
+      "started_at": "2026-10-26T12:32:28.383132Z",
+      "completed_at": "2026-10-26T12:34:54.716989Z",
+      "chat_ref": {
+        "type": "chatgpt",
+        "id": "6add6b00-4784-83ee-abae-45d04f185d10"
+      }
+    },
+    "service_sample_denominator": {
+      "worker": 1,
+      "reviewer": 1
+    },
+    "current_worker_ci": 40329852658,
+    "old_failed_worker_ci": 40329644854,
+    "old_failure": "Trusted scope saw accepted main files relative to stale PR base; next worker head succeeded",
+    "long_term_reliability": "NOT_ESTABLISHED"
+  },
+  "applied_effect": {
+    "production_deployed": false,
+    "independent_main_merge": false,
+    "live_worker_consumption": false,
+    "statement": "Code and exact-head CI verified. Later independent integration/main QA and a real WORKER consuming this rule remain necessary."
+  },
+  "next": {
+    "actor": "REVIEWER",
+    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "action": "Review PR73 current head/base and full gates; recheck PR67 new head and retire/refresh its stale request; merge one at a time and verify main.",
+    "owner_reply_required": false
+  },
+  "work_request": "issue68_queue_pr73_independent_review",
+  "game_candidates": [
+    "first_play_guide_compact_layout",
+    "private_headless_engine_evidence_path",
+    "mobile_pve_frame_time"
+  ],
+  "limitations": [
+    "No scheduler/permissions/spending/publish changes or additional task launches.",
+    "No original host denial error obtained, no permanent write-recovery claim.",
+    "No Roblox engine/physical mobile/multiplayer/visual/fun proof."
+  ]
+}

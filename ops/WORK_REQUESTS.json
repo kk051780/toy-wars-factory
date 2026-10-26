@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T12:13:08Z",
+  "observed_at": "2026-10-26T13:48:58Z",
   "requests": [
     {
       "id": "pr67_mobile_guide_selector_overlap",
@@ -28,6 +28,17 @@
         "source": "src/ToyWarsHUD.client.lua",
         "test": "tests/auto/first_play_hud_guide_spec.lua",
         "roblox_docs": "https://create.roblox.com/docs/reference/engine/classes/GuiObject"
+      },
+      "latest_worker_evidence": {
+        "head": "edfe101cda1b9f36e14afe5b8d1f2fccc85a346c",
+        "ci": 40329852658,
+        "jobs": {
+          "offline": "success",
+          "compile_hold": "success"
+        },
+        "worker_run": "b3b2766a-3548-832f-abf1-725336d75c18",
+        "next": "REVIEWER must recheck the new head and resolve/refresh this old-head request. Keep original head/verdict historical; do not replay it against the new head.",
+        "observed_at": "2026-10-26T13:48:58Z"
       }
     },
     {
@@ -362,7 +373,14 @@
         "Then META reconciles PR70 against the new current main, preserves C42/provenance and two-line source repair, adds its own fresh acquisition history if another run edits, and obtains both jobs on the new exact head.",
         "Registered independent REVIEWER rechecks actual diff/current base/head/all gates and verifies post-merge main QA. Do not call the prior local247 or old main243 a new CI success."
       ],
-      "owner_reply_required": false
+      "owner_reply_required": false,
+      "current_disposition": {
+        "observed_at": "2026-10-26T13:48:58Z",
+        "pr_state": "CLOSED_UNMERGED",
+        "issue": 72,
+        "protected_triage_fix_in_main": false,
+        "ordering": "Current explicit task authorizes Issue68 first; do not reopen PR70 or mix its protected M path."
+      }
     },
     {
       "id": "main_triage_failed_no_update_false_safe",
@@ -426,7 +444,54 @@
         "python_tests_local": 247,
         "immutable_claim_gate_in_ci": "NOT_RUN_PRIOR_SCOPE_STEP_FAILED"
       },
-      "next": "Wait for separately governed scope maintenance, then reconcile/fresh exact-head CI and independent review. No owner approval reply is required."
+      "next": "Wait for separately governed scope maintenance, then reconcile/fresh exact-head CI and independent review. No owner approval reply is required.",
+      "current_disposition": {
+        "observed_at": "2026-10-26T13:48:58Z",
+        "pr_state": "CLOSED_UNMERGED",
+        "issue": 72,
+        "protected_triage_fix_in_main": false,
+        "ordering": "Current explicit task authorizes Issue68 first; do not reopen PR70 or mix its protected M path."
+      }
+    },
+    {
+      "id": "issue68_queue_pr73_independent_review",
+      "kind": "SYSTEM_CODE_REVIEW",
+      "priority": "P1",
+      "assigned_role": "REVIEWER",
+      "status": "OPEN",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 73,
+      "branch": "auto/twf-system-review-5d840992-1c14-8322-97f9-d694eb44edc6",
+      "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
+      "base_main_sha": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+      "request": "Independently inspect optional trusted-review input boundary, all malformed/old-head/duplicate/author checks, legacy API and CI priority. Require current head/base/CI/scope/claim and verify main after integration. Do not count a historical fixture as real WORKER consumption; later observe one real current-head REQUEST_CHANGES -> REPAIR_REVIEW cycle.",
+      "ci": {
+        "id": 40332978440,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40332978440",
+        "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
+        "base": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+        "attempt": 1,
+        "conclusion": "success",
+        "jobs": [
+          {
+            "id": 121606948665,
+            "name": "compile_hold",
+            "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
+            "conclusion": "success"
+          },
+          {
+            "id": 121606949182,
+            "name": "offline",
+            "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
+            "conclusion": "success"
+          }
+        ],
+        "python_tests": 270,
+        "new_python_tests": 27,
+        "trusted_scope": "PASS",
+        "immutable_claim": "PASS"
+      },
+      "owner_reply_required": false
     }
   ]
 }

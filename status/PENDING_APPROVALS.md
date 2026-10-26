@@ -1,14 +1,13 @@
 # 自動審査・統合待ち
 
-観測時点: 2026-10-26T12:14:19Z
+観測時点: 2026-10-26T13:48:58Z
 
-自動統合待ちの項目はありません。所有者への承認返信は不要です。
+| PR | 内容 | 区分 | 現在headの検査 |
+| --- | --- | --- | --- |
+| [#73](https://github.com/kk051780/toy-wars-factory/pull/73) | 独立審査の差戻しを新規作業より優先するキュー規則と27検査 | 開発体制改善 | [合格](https://github.com/kk051780/toy-wars-factory/actions/runs/40332978440) / `a71c03ff` |
 
-## 修復・範囲設定の保守
+所有者への承認返信は不要。独立審査役が現在headの検査と共有所有権を確認し、1件ずつ統合してmainを検査する。
 
-- [PR #70](https://github.com/kk051780/toy-wars-factory/pull/70) / head `ee61cf4ff68f337f5de70840e65d468d01b67f7b`: failed/no_updateの誤った健康判定を2行で修復。修正前は新規2検査が失敗、修正後はローカル全247検査PASS。[新head CI #40319916599](https://github.com/kk051780/toy-wars-factory/actions/runs/40319916599)はcompile_hold成功 / offlineのtrusted-base scope検査失敗。Python/claim/Lua等のCI合格とは扱わない。
-- 拒否箇所: `M tools/system_host_write_triage.py` が現在の `system_review.allowed_tool_paths` にない。次はCONTROLLERがこの正確な保守範囲の不整合を別のレビュー付き作業で修復し、その後METAが現mainへ再照合、新headの全CIと登録REVIEWERの独立再審査へ。作者は検査・設定を緩めず、mainへ統合しない。
-- [PR #67](https://github.com/kk051780/toy-wars-factory/pull/67): 小型横画面でガイドと玩具選択の重なり。WORKER担当の修正要求は継続。直近WORKERはMETA epoch74に対するWAIT_LOCKで、過去のhost拒否を今回の障害と混同しない。
-- PR69は既に統合済み。ただし同じソースのP1欠陥はPR70がまだ未統合のため解消扱いにしない。Issue68のキュー改善は、この具体的なP1修復を先に完了してから別PRで扱う。
+## 関連する次の検証
 
-所有者への通常承認返信は不要。CI失敗中のPR70を承認・統合可能として表示しない。
+PR67は新head `edfe101c...` / CI40329852658で両job成功。旧headのREQUEST_CHANGESは更新先へ流用せず、REVIEWERが再審査して元の依頼を解消/更新する。PR70はclosed/unmergedのまま。保護対象の修復はIssue72へ保持し、PR73とは分離する。新キューの実WORKER消費は未実証。

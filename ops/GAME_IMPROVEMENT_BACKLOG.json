@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T12:13:08Z",
+  "observed_at": "2026-10-26T13:48:58Z",
   "source": "System continuity first this cycle; game implementation deferred, hypotheses and offline/engine evidence distinguished.",
   "items": [
     {
@@ -55,9 +55,9 @@
       "id": "first_play_guide_compact_layout",
       "kind": "REVIEWER_REPRODUCIBLE_SOURCE_REGRESSION",
       "priority": "P1",
-      "status": "REQUEST_CHANGES_WORKER_REPAIR_PENDING",
+      "status": "WORKER_FIX_OFFLINE_QA_PASS_AWAIT_INDEPENDENT_REVIEW",
       "pr": 67,
-      "head": "a57961e42bbda115659f67bfa4a6fe5a1540d473",
+      "head": "edfe101cda1b9f36e14afe5b8d1f2fccc85a346c",
       "hypothesis": "Guide action rectangles overlap toy selectors at short landscape safe-area heights; source geometry reproduces it, physical-device behavior not measured.",
       "evidence": {
         "request": "ops/WORK_REQUESTS.json#pr67_mobile_guide_selector_overlap",
@@ -76,13 +76,14 @@
         "held_by": "META epoch74",
         "observed_at": "2026-10-26T12:13:08Z"
       },
-      "next": "WORKER repairs existing PR67 under its own future normal run and lease; preserve current-main source, geometric negative control, queue/price regressions and fresh head CI. No extra task launch."
+      "next": "REVIEWER rechecks canonical new HUD geometric regressions and resolves old a57961e4 request; physical mobile evidence still absent.",
+      "ci": 40329852658
     }
   ],
   "actor": {
     "kind": "META",
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "a95f272c-3ee4-8324-a03e-de4cce8b89d8"
+    "run_id": "5d840992-1c14-8322-97f9-d694eb44edc6"
   },
   "base_main_sha": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
   "prioritized_candidates": [
@@ -91,10 +92,11 @@
     "mobile_pve_frame_time"
   ],
   "system_precondition": {
-    "priority": "SYSTEM_CONTINUITY_FIRST",
-    "repair_pr": 70,
-    "source_status": "LOCAL247_PASS_CI_SCOPE_BLOCKED",
-    "next_role": "CONTROLLER",
-    "game_changes_this_cycle": 0
+    "priority": "ISSUE68_FIRST_EXPLICIT_INSTRUCTION",
+    "queue_pr": 73,
+    "queue_ci": "PASS_EXACT_HEAD",
+    "triage_maintenance_issue": 72,
+    "pr70": "CLOSED_UNMERGED",
+    "game_edits_by_meta": 0
   }
 }
