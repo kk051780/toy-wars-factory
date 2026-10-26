@@ -1,34 +1,53 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T14:31:29.850Z",
+  "observed_at": "2026-10-26T14:34:11.176Z",
   "status": "APPROVED_PENDING_MERGE",
+  "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "0617b736-d5dc-8321-885d-5919d548c91a",
   "lease_epoch": 79,
-  "main_before": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
-  "main_after": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+  "main_before": "336f9e08a344a706e98d459985c5cfe1c5ead94f",
+  "main_after": "336f9e08a344a706e98d459985c5cfe1c5ead94f",
   "main_qa": {
-    "head": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
+    "head": "e8d1cedce6a2bc32d5fed6b170f78c2b0b6699fa",
+    "id": 40340501580,
     "conclusion": "success",
-    "run_id": 40317866877,
-    "status_only_compare": true
+    "comparison_since_qa": {
+      "verified": true,
+      "status": "ahead",
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
   },
   "latest_review": {
-    "pr": 74,
-    "head": "35dbdf89e3583cfa3a01a2b860f750b61e4c6935",
+    "pr": 67,
+    "head": "edfe101cda1b9f36e14afe5b8d1f2fccc85a346c",
     "verdict": "APPROVE",
-    "category": "GAME_CODE_FIX",
-    "ci": 40338673054,
-    "review_record": "ops/reviews/PR0074_35dbdf89.json"
+    "category": "GAME_CODE_FIX_FIRST_PLAY_ONBOARDING",
+    "ci": 40329852658,
+    "review_record": "ops/reviews/PR0067_edfe101c.json"
   },
-  "merged_prs": [],
-  "merge_count": 0,
-  "post_merge_main_qa": null,
-  "unresolved": [
-    "PR67 new head edfe101c needs independent review",
-    "PR73 queue enhancement requires independent review",
-    "Roblox Studio/multiplayer/mobile NOT_RUN",
-    "Gemini severe hold preserved"
+  "merged_prs": [
+    {
+      "pr": 74,
+      "merge_sha": "e8d1cedce6a2bc32d5fed6b170f78c2b0b6699fa",
+      "main_qa": 40340501580,
+      "handoff": 40340501344
+    }
   ],
-  "next": "Exact-head merge PR74; verify new main QA/handoff before another PR"
+  "merge_count": 1,
+  "post_merge_main_qa": {
+    "id": 40340501580,
+    "conclusion": "success"
+  },
+  "unresolved": [
+    "PR67 integration pending",
+    "PR73 queue enhancement review pending",
+    "Issue3 Roblox engine/multiplayer/mobile NOT_RUN",
+    "Issue57 host write incident",
+    "Gemini severe HOLD"
+  ],
+  "next": "Exact-head merge PR67; verify new main QA and handoff"
 }

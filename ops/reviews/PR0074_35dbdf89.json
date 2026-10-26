@@ -56,5 +56,23 @@
   "limitations": [
     "Roblox engine, multiplayer, mobile and visuals NOT_RUN"
   ],
-  "next": "Merge exact head then require post-merge main QA and handoff before any further merge"
+  "next": "Merge exact head then require post-merge main QA and handoff before any further merge",
+  "merge_sha": "e8d1cedce6a2bc32d5fed6b170f78c2b0b6699fa",
+  "post_merge_main_qa": {
+    "id": 40340501580,
+    "head": "e8d1cedce6a2bc32d5fed6b170f78c2b0b6699fa",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    }
+  },
+  "post_merge_handoff": {
+    "id": 40340501344,
+    "head": "e8d1cedce6a2bc32d5fed6b170f78c2b0b6699fa",
+    "conclusion": "success"
+  },
+  "main_after_handoff": "336f9e08a344a706e98d459985c5cfe1c5ead94f",
+  "status_only_descendant_verified": true,
+  "integration_status": "MERGED_MAIN_QA_PASSED"
 }

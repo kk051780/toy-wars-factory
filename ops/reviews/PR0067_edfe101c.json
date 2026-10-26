@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 67,
+  "head": "edfe101cda1b9f36e14afe5b8d1f2fccc85a346c",
+  "base_main_sha": "336f9e08a344a706e98d459985c5cfe1c5ead94f",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "0617b736-d5dc-8321-885d-5919d548c91a",
+  "lease_epoch": 79,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "8d9d3375-a74c-8332-ae42-78607b1c88cc",
+  "repair_author_run_id": "b3b2766a-3548-832f-abf1-725336d75c18",
+  "reviewed_at": "2026-10-26T14:34:11.176Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [
+    "Original first-play guide added to current HUD, preserving queue notice, prices and 3 toy selectors; no gameplay remote on guide navigation",
+    "Previous compact-landscape overlap corrected by moving QuickStart y scale 0.34 to 0.12; 4 screen sizes checked with canonical HUD fixture",
+    "Current-head 9 Lua cases pass; old 0.34 geometry and pre-guide HUD negative controls pass; Python 243 tests pass",
+    "Main PR74 changes server and its tests only; PR67 actual changed paths HUD, 2 new C histories, new HUD test"
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "ci": {
+    "id": 40329852658,
+    "head": "edfe101cda1b9f36e14afe5b8d1f2fccc85a346c",
+    "conclusion": "success",
+    "required_jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "scope_and_claim_gate": "PASS",
+    "lua_hud_cases": 9,
+    "python_tests": 243,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40329852658"
+  },
+  "claim": {
+    "initial": {
+      "commit": "135c210b18e3dcc7b0e0498502de6cdf0d0aa711",
+      "epoch": 70,
+      "prior_epoch": 69,
+      "prior_holder": null,
+      "run_id": "8d9d3375-a74c-8332-ae42-78607b1c88cc"
+    },
+    "repair": {
+      "commit": "4fdf8775b224da76959e6ea69fc6704f65bc8c88",
+      "epoch": 76,
+      "prior_epoch": 75,
+      "prior_holder": null,
+      "run_id": "b3b2766a-3548-832f-abf1-725336d75c18"
+    },
+    "reachable": true
+  },
+  "category": "GAME_CODE_FIX_FIRST_PLAY_ONBOARDING",
+  "main_qa": {
+    "head": "e8d1cedce6a2bc32d5fed6b170f78c2b0b6699fa",
+    "id": 40340501580,
+    "conclusion": "success",
+    "status_only_descendant": "336f9e08a344a706e98d459985c5cfe1c5ead94f"
+  },
+  "source_ledger": {
+    "hud_main_before_bytes": 4286,
+    "hud_pr_bytes": 6610,
+    "delta_bytes": 2324,
+    "repair_delta_bytes": 0,
+    "test_bytes": 9058,
+    "history": [
+      "C00040",
+      "C00042"
+    ]
+  },
+  "limitations": [
+    "Deterministic Lua mock and geometry only; physical phone, safe-area behavior, touch interaction, multiplayer and Roblox Studio NOT_RUN"
+  ],
+  "next": "Merge exact head only, then verify main QA and handoff before further integration"
+}
