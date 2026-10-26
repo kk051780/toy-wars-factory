@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "pr": 66,
+  "head": "a10519744c92939fb671dfaa1e8b500e1cb3c03e",
+  "base_main_sha": "0ace6749a50fce2f48f9db5a5e5906d003600fa5",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "e7e7302a-6ae0-832b-a11f-e40f8d9df749",
+  "lease_epoch": 69,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "2ac75762-4ee0-8327-9dc6-fed9a8694fea",
+  "reviewed_at": "2026-10-26T10:49:42.480Z",
+  "verdict": "APPROVE",
+  "findings": [],
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "GAME_SOURCE_FIX",
+  "changed_entries": [
+    [
+      "A",
+      "history/C00039_selector_action_text_fix.json"
+    ],
+    [
+      "M",
+      "src/ToyWarsServer.server.lua"
+    ],
+    [
+      "A",
+      "tests/auto/selector_action_text_spec.lua"
+    ]
+  ],
+  "ci": {
+    "id": 40309760825,
+    "head": "a10519744c92939fb671dfaa1e8b500e1cb3c03e",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": [
+      {
+        "name": "offline",
+        "id": 121527708461,
+        "conclusion": "success"
+      },
+      {
+        "name": "compile_hold",
+        "id": 121527708546,
+        "conclusion": "success"
+      }
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40309760825"
+  },
+  "main_qa": {
+    "head": "01527e4c5fc04fd139ba624b39c7db1dd873d28a",
+    "run": 40307770609,
+    "conclusion": "success",
+    "comparison_since_qa": {
+      "verified": true,
+      "status": "ahead",
+      "ahead_by": 1,
+      "behind_by": 0,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "claim": {
+    "sha": "52d961a9d7193596b5848c936300cd48f8bf88fe",
+    "epoch": 67,
+    "owner_id": "2ac75762-4ee0-8327-9dc6-fed9a8694fea",
+    "task_id": "6adbf0d6a7d881918ce181dff2468867",
+    "work_branch": "auto/twf-game-repair-2ac75762-4ee0-8327-9dc6-fed9a8694fea",
+    "ancestor_verified": true,
+    "ci_scope_gate_verified": true
+  },
+  "source_ledger": {
+    "before_bytes": 18944,
+    "after_bytes": 18946,
+    "delta_bytes": 2,
+    "total_lua_files": 4,
+    "total_lua_lines": 695,
+    "total_lua_bytes": 27552,
+    "baseline_bytes": 25726
+  },
+  "regression": {
+    "new_native_tests_passed": 3,
+    "old_server_negative_control": "PASS",
+    "python_tests": 206,
+    "existing_tests_modified": false,
+    "server_callback_unchanged": true
+  },
+  "limitations": [
+    "Roblox Studio, real physical prompts, multiplayer and mobile are NOT_RUN"
+  ],
+  "reason": "Independent exact-head review: only three selector ActionText values change Make to Select; callback, price and permissions untouched; three whole-server mock cases incl pinned-old negative control and 206 Python tests pass; exact head two CI jobs pass; trusted base scope and immutable claim gate pass; main QA status-only descendant proven."
+}
