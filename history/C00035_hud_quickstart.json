@@ -1,0 +1,69 @@
+{
+  "id": "C00035",
+  "date": "2026-10-26",
+  "kind": "MANUAL_CONTROLLER_HUD_QUICKSTART",
+  "author_kind": "CONTROLLER",
+  "control_claim": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 49,
+    "owner_id": "fd5e3477-5c5a-4779-838c-c6f0d886ba46",
+    "claim_commit": "17a5519d37b71a83a68d6d347d7b863b9f0aba22",
+    "exact_work_branch": "feature/twf-hud-quickstart-attested-20261026"
+  },
+  "main_base": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+  "change": "3-step dismissible first-play HUD guide using touch-friendly ImageButtons, without altering the three authoritative toy selection TextButtons",
+  "files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/hud_quickstart_spec.lua",
+    "history/C00035_hud_quickstart.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 3780,
+      "after_bytes": 5982,
+      "delta_bytes": 2202
+    }
+  ],
+  "test_changes": [
+    {
+      "path": "tests/auto/hud_quickstart_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 4851,
+      "delta_bytes": 4851
+    }
+  ],
+  "characters_touched": [],
+  "pricing_or_combat_changed": false,
+  "tests": {
+    "native_new": "PENDING_EXACT_HEAD_CI_REBASED_ORIGINAL_SOURCE_SAME",
+    "prior_hud_price": "PENDING_NEW_EXACT_HEAD_CI; original PR58 6/6 PASS",
+    "roblox_engine": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "existing_regressions": "4 quickstart mock cases succeeded in failed pre-merge CI #40286449050; 206 Python suite requires complete source_metrics ledger"
+  },
+  "evidence": {
+    "pr": "PENDING_NEW_ATTESTED_REVIEW_PR",
+    "ci": "PENDING_NEW_HEAD",
+    "main": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+    "original_draft_pr": "https://github.com/kk051780/toy-wars-factory/pull/58",
+    "original_pr_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40286661178",
+    "original_claim_mismatch": "Original epoch47 claim work_branch feature/twf-hud-quickstart differs from original PR58 branch feature/twf-hud-quickstart-20261026; rejected, not reused"
+  },
+  "review": "INDEPENDENT_REVIEW_PENDING; requires policy PR60 merge, unique coordinator request and verified immutable owner claim",
+  "release": "HOLD_ENGINE_UNVERIFIED",
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 738,
+    "lua_bytes": 29170
+  },
+  "source_baseline_bytes": 25726,
+  "provenance": {
+    "reason": "Regenerate same reviewed source and test unchanged on fresh branch with exact pre-commit lease binding",
+    "source_original_sha": "1276ceb182855f48c901a29ca668878259300451",
+    "source_blob_sha": "065bdc769497006a3b67097cdbcc3a01cf3184e5",
+    "test_blob_sha": "fabe595e377b47c055d11b8dcecb4a4e5765e4ae",
+    "claim_verified_by_current_operator": true,
+    "independent_reviewer_not_yet_verified": true
+  }
+}
