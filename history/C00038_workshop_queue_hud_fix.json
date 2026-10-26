@@ -14,9 +14,9 @@
   },
   "coordination": {
     "branch": "twf-repair-coordinator",
-    "claim_commit": "1776653a95cb93f377ddf7f7227345c3d048279f",
+    "claim_commit": "7664638929391ed70a3c185fcb15dc979c8cad0d",
     "owner_run_id": "e47d1c3d-56a0-8331-b895-ba70c71e7c3d",
-    "epoch": 62
+    "epoch": 63
   },
   "main_base": "389c9af779eb120387085d4af29c47f8366502d9",
   "defect": {
@@ -49,8 +49,8 @@
     {
       "path": "tests/auto/workshop_queue_hud_spec.lua",
       "before_bytes": 0,
-      "after_bytes": 4194,
-      "delta_bytes": 4194
+      "after_bytes": 4219,
+      "delta_bytes": 4219
     }
   ],
   "characters_touched": [],
@@ -59,24 +59,32 @@
     "whole_hud": "tests/auto/workshop_queue_hud_spec.lua",
     "old_source_negative_control": "Pinned canonical HUD in CI",
     "local": "NOT_RUN_LUA_5_4_RUNTIME_UNAVAILABLE",
-    "ci": "PENDING_NEW_PR_HEAD",
+    "ci": "PENDING_REPAIRED_HEAD",
     "studio": "NOT_RUN",
     "multiplayer": "NOT_RUN",
-    "mobile": "NOT_RUN"
+    "mobile": "NOT_RUN",
+    "initial_ci_failure": "CI 40306673646: new test fixture incorrectly expected the notice to be parented directly to PlayerGui; canonical HUD correctly parents it to ScreenGui. Fixed fixture hierarchy assertion without weakening visibility check."
   },
   "evidence": {
     "main_sha": "389c9af779eb120387085d4af29c47f8366502d9",
     "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40305630098",
     "main_qa_note": "Success on gameplay-identical 6b4fb5b ancestor; current HEAD changes generated status only.",
-    "claim_commit": "1776653a95cb93f377ddf7f7227345c3d048279f",
+    "claim_commit": "7664638929391ed70a3c185fcb15dc979c8cad0d",
     "pr": "PENDING_DRAFT_PR",
-    "ci": "PENDING_NEW_PR_HEAD"
+    "ci": "PENDING_REPAIRED_HEAD",
+    "initial_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40306673646"
   },
-  "next_action": "Run exact-head CI including whole-HUD queue test and pinned negative control; send draft PR to independent REVIEWER. Do not self-merge.",
+  "next_action": "Re-run exact-head CI after correcting fixture hierarchy assertion. If successful, independent REVIEWER may integrate. No game source changes in this CI-only repair.",
   "restrictions": {
     "gemini_rerun": false,
     "author_main_merge": false,
     "roblox_publish": false,
     "scheduler_mutated": false
+  },
+  "previous_coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "1776653a95cb93f377ddf7f7227345c3d048279f",
+    "owner_run_id": "e47d1c3d-56a0-8331-b895-ba70c71e7c3d",
+    "epoch": 62
   }
 }

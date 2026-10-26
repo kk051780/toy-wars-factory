@@ -19,7 +19,7 @@ local function fixture(file,queued)
                 for _,item in ipairs(created) do
                     if item.Name=="WorkshopQueueNotice" then notice=item end
                 end
-                assert(notice and notice.Parent==playerGui and notice.Visible~=false,
+                assert(notice and notice.Parent and notice.Parent.Parent==playerGui and notice.Visible~=false,
                     "queue notice must be visible before leaderstats wait")
                 queueSeen=true
                 self._children.leaderstats=stats -- simulate a plot becoming available
