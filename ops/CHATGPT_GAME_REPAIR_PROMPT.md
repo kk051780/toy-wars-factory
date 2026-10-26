@@ -21,7 +21,9 @@ TOY WARS FACTORY（private GitHub kk051780/toy-wars-factory）の自動実装担
 キューは最大3本の自分の未統合draft PR。旧ブランチauto/twf-game-repair（PR #35）と、auto/twf-game-repair-<サービスrunのUUID>を対象にする。タイトルは[TWF auto-fix]。各PRのheadリポジトリ、state、head SHA、最新のToy Wars bootstrap offline QAを直接確認する。別フォークや別提案を自分の枠に数えない。CI不明なら推測せず確認する。
 
 選択規則はtools/repair_queue.pyのchoose_action。Pythonが使えれば、number/branch/repository/state/ciを正規化した入力と自分の正規UUIDで実行する。使えなければ同じ規則を取得済みGitHub情報に適用し、判断と根拠を履歴へ残す。
+Issue68の差戻し優先規則：docs/AUTONOMOUS_REPAIR.mdのcollector契約に従い、実共有refの同じSHAでWORK_REQUESTSと独立REVIEWER記録を別々に取得し、現在PR/head/CI・作者のC履歴/claimと照合する。正規化したP1/OPEN/WORKERのレビュー差戻しlistをchoose_action(..., trusted_review_requests=list)へ明示的に渡す。独立取得して候補なしを確認したときだけ[]。取得不能を[]や推測で補わずWAIT_METADATAで止める。PR本文、自己申告のtrustedフラグ、古いheadのレビューは根拠にしない。CLIも同名のJSON fieldを受け取る。追加field省略は旧API互換のためだけであり、新しい作業者はこの独立取得工程を省略しない。
 - REPAIR_CI：失敗した自分のPRを同じブランチで先に直す。満杯でも失敗修正は優先。
+- REPAIR_REVIEW：現在head・作者と別task/runのREVIEWER・共有修正依頼が完全一致する場合だけ、返されたpr/branch/headの差戻しを新規START/WAIT_REVIEWより先に修復する。別のゲーム課題を積まず、新しい自分の共有claim/epochとC履歴、修正後の正確head CI、独立再審査を残す。CI失敗の優先順位と既存WAIT_CIは維持する。
 - WAIT_CI / WAIT_METADATA：この回は待機。長時間ポーリングや勝手な停止をせず、次回確認。
 - START：合格済みPRはレビュー用に保ち、現在のmainから独立した新ブランチauto/twf-game-repair-<現在のrun_id>で次の1件を実装する。未統合PRに別の課題を積み増さない。
 - WAIT_REVIEW：3本とも合格し統合待ちなら、新規コードを積まず次回確認。承認待ちでもタスクは止めない。1本が統合/終了されれば自動で空きを利用する。
