@@ -422,5 +422,25 @@
       "containment": "epoch advanced to 42, holder null, previous last_completed preserved, one-parent fast-forward-only ref update; existing PR/CI/security/release gates remain",
       "followup_issue": "https://github.com/kk051780/toy-wars-factory/issues/56"
     }
+  ],
+  "manual_review_requests": [
+    {
+      "number": 61,
+      "repository": "kk051780/toy-wars-factory",
+      "branch": "feature/twf-hud-quickstart-attested-20261026",
+      "head": "6b20e80b9bcbacc24e763ba14f946bbeae46b38d",
+      "base_main_sha": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "kind": "CONTROLLER",
+      "owner_id": "fd5e3477-5c5a-4779-838c-c6f0d886ba46",
+      "epoch": 49,
+      "claim_commit": "17a5519d37b71a83a68d6d347d7b863b9f0aba22",
+      "author_first_commit": "6b20e80b9bcbacc24e763ba14f946bbeae46b38d",
+      "scope": "EXACT_HEAD_SAME_REPO_GAME_SOURCE_WITH_NEW_TEST_AND_HISTORY",
+      "status": "AWAIT_PR60_POLICY_BOOTSTRAP_AND_REGISTERED_REVIEWER",
+      "created_at": "2026-10-26T08:16:57.334Z",
+      "ci_run": 40291001810,
+      "note": "Immutable controller claim work_branch exactly equals PR branch; do not inherit superseded PR58 claim, and do not accept author self-attestation"
+    }
   ]
 }
