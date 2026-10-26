@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 44,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "b3b6c775-6e38-4f09-bf87-83538c00b93a",
-    "task_id": null,
-    "epoch": 44,
-    "acquired_at": "2026-10-26T06:34:59.308Z",
-    "expires_at": "2026-10-26T07:04:59.308Z",
-    "base_main_sha": "b6fb4d8a94330f1946335aa77af17ab64e1ac502",
-    "work_branch": "ops/twf-qa-token-isolation",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -30,12 +20,20 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "DISPATCH",
-    "owner_id": "2136e037-6ecc-4c8c-88c0-92ec5236d21e",
-    "epoch": 43,
-    "released_at": "2026-10-26T06:32:39.695Z",
-    "result": "RUN_NOW_WORKER_CLAIM_REJECTED_BY_HOST_SAFETY; manual dispatcher ticket cleanup; no worker source changes",
-    "user_approval_not_requested": true
+    "kind": "CONTROLLER",
+    "owner_id": "b3b6c775-6e38-4f09-bf87-83538c00b93a",
+    "epoch": 44,
+    "released_at": "2026-10-26T06:37:53.432Z",
+    "pr": 55,
+    "head": "581b35fb0835488e23cffbaaee9cc5db85d27631",
+    "result": "SECURITY_MAIN_ONLY_AND_TOKEN_STEP_ISOLATION_COMMITTED_AWAIT_NEW_CI_AND_INDEPENDENT_REVIEW",
+    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40280872099",
+    "ci_status": "PENDING",
+    "prohibitions": [
+      "NO_UNREVIEWED_MERGE",
+      "NO_ROBLOX_PUBLISH",
+      "NO_EXTERNAL_MODEL_SPEND"
+    ]
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
