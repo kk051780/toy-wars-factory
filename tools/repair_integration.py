@@ -4,11 +4,82 @@ from datetime import timedelta
 import json
 from pathlib import Path
 import re
-from check_auto_diff import is_worker_branch
+from check_auto_diff import is_worker_branch, violations as game_scope_violations
 from repair_control import canonical_id, instant, owns
 
 STATUS_PATHS = {"status/CHAT_HANDOFF.md", "status/LATEST_STATE.json"}
 REVIEW_CHECKS = ("scope", "regression", "source_ledger", "protected_controls", "behavior")
+
+
+def verified_manual_request(policy, lease, pr, review, main):
+    """Fail-closed, immutable-head manual CONTROLLER review gate.
+
+    The registered independent reviewer must re-fetch GitHub refs, compare the
+    real changed-path/status list, and verify the historical claim commit.
+    This pure decision layer checks the reviewer's bound evidence; it cannot
+    independently authenticate a GitHub claim or CI receipt.
+    """
+    integration = policy.get("integration", {})
+    settings = integration.get("manual_controller_reviews", {})
+    branch = pr.get("branch")
+    if settings.get("enabled") is not True or not isinstance(branch, str):
+        return None, "SKIP_UNRELATED"
+    prefix = settings.get("branch_prefix")
+    if not isinstance(prefix, str) or len(prefix) < 12 or not branch.startswith(prefix):
+        return None, "SKIP_UNRELATED"
+    if not isinstance(pr.get("number"), int) or type(pr.get("number")) is bool:
+        return None, "WAIT_MANUAL_REQUEST"
+    candidates = lease.get("manual_review_requests", [])
+    if not isinstance(candidates, list):
+        return None, "WAIT_MANUAL_REQUEST"
+    matches = [r for r in candidates if isinstance(r, dict) and
+               r.get("number") == pr["number"] and r.get("branch") == branch]
+    if len(matches) != 1:
+        return None, "WAIT_MANUAL_REQUEST"
+    request = matches[0]
+    exact = {
+        "repository": policy.get("repository"),
+        "head": pr.get("head"),
+        "base_main_sha": main.get("sha"),
+        "reviewer_task_id": integration.get("task_id"),
+        "kind": "CONTROLLER",
+    }
+    if any(request.get(k) != v for k, v in exact.items()):
+        return None, "WAIT_MANUAL_REQUEST"
+    if (not isinstance(request.get("claim_commit"), str) or
+            not re.fullmatch(r"[0-9a-f]{40}", request["claim_commit"]) or
+            type(request.get("epoch")) is not int or request["epoch"] <= 0):
+        return None, "WAIT_MANUAL_REQUEST"
+    try:
+        canonical_id(request.get("owner_id"))
+    except (ValueError, TypeError, AttributeError):
+        return None, "WAIT_MANUAL_REQUEST"
+    if (pr.get("author_task_id") is not None or
+            pr.get("author_run_id") != request["owner_id"]):
+        return None, "WAIT_AUTHOR_ID"
+    # Reviewers must corroborate the real diff from GitHub. Merely describing
+    # an allowed PR number in a PR body is never sufficient.
+    entries = pr.get("changed_entries")
+    if (not isinstance(entries, list) or not entries or
+            any(not isinstance(x, (list, tuple)) or len(x) != 2 or
+                not all(isinstance(y, str) for y in x) for x in entries)):
+        return None, "WAIT_MANUAL_SCOPE"
+    if game_scope_violations(entries, policy):
+        return None, "WAIT_MANUAL_SCOPE"
+    proof = review.get("manual_provenance")
+    if not isinstance(proof, dict):
+        return None, "WAIT_MANUAL_PROOF"
+    proof_exact = {k: request.get(k) for k in
+                   ("claim_commit", "epoch", "owner_id", "head", "base_main_sha", "branch")}
+    if any(proof.get(k) != v for k, v in proof_exact.items()):
+        return None, "WAIT_MANUAL_PROOF"
+    if proof.get("changed_entries") != entries:
+        return None, "WAIT_MANUAL_PROOF"
+    for key in ("claim_commit_verified", "main_ancestry_verified",
+                "github_diff_verified", "ledger_verified", "ci_jobs_verified"):
+        if proof.get(key) is not True:
+            return None, "WAIT_MANUAL_PROOF"
+    return request, None
 
 
 def decide(policy, main, pr, review, lease, now):
@@ -50,16 +121,28 @@ def decide(policy, main, pr, review, lease, now):
             canonical_id(branch[len(meta_prefix):])
         except (ValueError, TypeError):
             return result("SKIP_UNRELATED")
-    if (pr.get("repository") != policy["repository"] or pr.get("state") != "open" or
-            not (is_worker_branch(branch, policy) or meta)):
+    if pr.get("repository") != policy["repository"] or pr.get("state") != "open":
         return result("SKIP_UNRELATED")
-    author_task = policy["system_review"]["task_id"] if meta else policy["task_id"]
-    if pr.get("author_task_id") != author_task:
-        return result("WAIT_AUTHOR_ID")
-    try:
-        canonical_id(pr.get("author_run_id"))
-    except (ValueError, TypeError, AttributeError):
-        return result("WAIT_AUTHOR_ID", reason="canonical author run is required")
+    worker = is_worker_branch(branch, policy)
+    manual_config = integration.get("manual_controller_reviews", {})
+    manual_prefix = manual_config.get("branch_prefix")
+    manual = (manual_config.get("enabled") is True and
+              isinstance(manual_prefix, str) and len(manual_prefix) >= 12 and
+              isinstance(branch, str) and branch.startswith(manual_prefix))
+    if not (worker or meta or manual):
+        return result("SKIP_UNRELATED")
+    if manual:
+        request, error = verified_manual_request(policy, lease, pr, review, main)
+        if error is not None:
+            return result(error, reason="manual CONTROLLER provenance or path scope not verified")
+    else:
+        author_task = policy["system_review"]["task_id"] if meta else policy["task_id"]
+        if pr.get("author_task_id") != author_task:
+            return result("WAIT_AUTHOR_ID")
+        try:
+            canonical_id(pr.get("author_run_id"))
+        except (ValueError, TypeError, AttributeError):
+            return result("WAIT_AUTHOR_ID", reason="canonical author run is required")
     if (review.get("reviewer_task_id") == pr.get("author_task_id") or
             reviewer_id == pr.get("author_run_id")):
         return result("WAIT_INDEPENDENT_REVIEW", reason="author cannot approve its own work")
@@ -74,7 +157,10 @@ def decide(policy, main, pr, review, lease, now):
     if ci.get("conclusion") != "success" or ci.get("required_jobs_passed") is not True:
         return result("WAIT_CI")
     grandfathered = any(x["branch"] == branch and x["head"] == head for x in policy["coordination"].get("grandfathered_pr_heads", []))
-    if ci.get("scope_and_claim_gate") != "PASS" and not (grandfathered and ci.get("scope_and_claim_gate") == "GRANDFATHERED_EXACT_HEAD"):
+    if manual:
+        if ci.get("scope_and_claim_gate") != "MANUAL_CONTROLLER_ATTESTED":
+            return result("WAIT_CI", reason="independent manual claim and source-scope proof required")
+    elif ci.get("scope_and_claim_gate") != "PASS" and not (grandfathered and ci.get("scope_and_claim_gate") == "GRANDFATHERED_EXACT_HEAD"):
         return result("WAIT_CI", reason="trusted scope/claim gate required")
     if pr.get("mergeable") is not True:
         return result("WAIT_METADATA", reason="wait for mergeability; never force")

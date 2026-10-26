@@ -51,3 +51,31 @@ CONTROLLERが別文脈の実際のサービス結果、対象head、CIを照合�
 所有者待ちは通常工程から外すが、実機・複数人・スマホ・外観・プレイヤー体験の証拠がなければ完成/公開可としない。
 現在のRoblox公開HOLDは実証不足によるもの。日常の取り込み承認待ちとは区別する。
 Gemini事故停止、消費済み試行、認証・費用上限をこの委譲から勝手に解除しない。
+
+
+## 手動CONTROLLER作成PRの独立審査（Issue #59、導入後のみ）
+
+手動Workが作成した `feature/twf-` は、**ブランチ名だけでは統合しない**。
+共有コーディネータ `manual_review_requests` にPR番号・完全head SHA・正確な
+base-main SHA・ブランチ・元のCONTROLLER owner UUID/epoch・その取得コミットSHA・
+登録REVIEWER task IDを**一意に**記録する（作者のPR本文を証拠にしない）。
+登録REVIEWERは独立したrunと有効な自分のロックを持つこと。
+
+審査役はGitHubの不変claimコミットを取得し、取得時のholderがCONTROLLERで
+owner/epoch/work_branch/base-main/有効期間が一致することを確認する。
+現在のPR headとmainが申請と一致すること、main QA、両必須PR CI、
+実Git差分の全パスと状態、履歴の全ソースサイズを再取得して確認する。
+`changed_entries`は実Git差分の`status,path`を使い、
+`check_auto_diff.violations`により許可されたゲームソース+新テスト+履歴以外を拒否する。
+
+その根拠をREVIEWERの当該runの審査レコード`manual_provenance`に記録する。
+`ci.scope_and_claim_gate=MANUAL_CONTROLLER_ATTESTED`は、この**審査役の実証**
+があって初めて付与するラベルでありPR作者・CIの自己宣言を信用しない。
+評価関数は明示的な依頼・実差分・全証拠と既存の独立性、現main/正確head、
+レビュー時刻、main QA、リリースHOLDを同時に要求する。
+途中でhead/mainが動いたら審査をやり直す。作者が審査・統合を代行しない。
+
+実際のGitHub照合なしに`*_verified: true`と設定してはいけない。
+この方式は許可されたゲームPRの一経路だけ。GitHub Actionsの認証/課金/Roblox公開の
+権限を広げるものではない。ポリシー変更PR自身が独立レビュー・CIを経て
+mainに採用されるまでは、手動PR #58の自動統合は解禁されない。

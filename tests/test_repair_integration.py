@@ -37,6 +37,112 @@ class IntegrationTests(unittest.TestCase):
         self.assertFalse(result["requires_owner_reply"])
         return result
 
+
+    def enable_manual_candidate(self):
+        branch = "feature/twf-hud-quickstart-20261026"
+        owner = "a4b3ef83-814c-431c-97c9-d14e25c9c86f"
+        claim = "d" * 40
+        self.pr.update(number=58, branch=branch, author_task_id=None,
+                       author_run_id=owner, changed_entries=[
+                           ["A", "history/C00035_hud_quickstart.json"],
+                           ["M", "src/ToyWarsHUD.client.lua"],
+                           ["A", "tests/auto/hud_quickstart_spec.lua"]])
+        self.lease["manual_review_requests"] = [{
+            "number": 58, "repository": self.policy["repository"],
+            "branch": branch, "head": self.pr["head"],
+            "base_main_sha": self.main["sha"],
+            "reviewer_task_id": self.policy["integration"]["task_id"],
+            "kind": "CONTROLLER", "owner_id": owner,
+            "epoch": 47, "claim_commit": claim}]
+        self.pr["ci"]["scope_and_claim_gate"] = "MANUAL_CONTROLLER_ATTESTED"
+        self.review["manual_provenance"] = {
+            "claim_commit": claim, "epoch": 47, "owner_id": owner,
+            "head": self.pr["head"], "base_main_sha": self.main["sha"],
+            "branch": branch, "changed_entries": self.pr["changed_entries"],
+            "claim_commit_verified": True, "main_ancestry_verified": True,
+            "github_diff_verified": True, "ledger_verified": True,
+            "ci_jobs_verified": True}
+        return self.lease["manual_review_requests"][0]
+
+    def test_manual_candidate_requires_exact_independent_evidence(self):
+        self.enable_manual_candidate()
+        self.assertEqual(self.decision()["action"], "MERGE")
+
+    def test_manual_candidate_without_queue_request_is_rejected(self):
+        self.enable_manual_candidate()
+        self.lease.pop("manual_review_requests")
+        self.assertEqual(self.decision()["action"], "WAIT_MANUAL_REQUEST")
+
+    def test_manual_candidate_disallows_duplicate_or_forged_requests(self):
+        request = self.enable_manual_candidate()
+        self.lease["manual_review_requests"].append(copy.deepcopy(request))
+        self.assertEqual(self.decision()["action"], "WAIT_MANUAL_REQUEST")
+        self.lease["manual_review_requests"].pop()
+        for key,value in (("claim_commit","bad"),("owner_id",REVIEW_RUN),
+                          ("epoch",0),("head","a"*40),("base_main_sha","a"*40),
+                          ("reviewer_task_id","untrusted")):
+            replacement=copy.deepcopy(request)
+            replacement[key]=value
+            self.lease["manual_review_requests"][0]=replacement
+            self.assertEqual(self.decision()["action"],"WAIT_MANUAL_REQUEST",key)
+        self.lease["manual_review_requests"][0]=request
+
+    def test_manual_candidate_requires_genuine_workflow_scope(self):
+        self.enable_manual_candidate()
+        for gate in ("PASS", "GRANDFATHERED_EXACT_HEAD", "SKIPPED", None):
+            self.pr["ci"]["scope_and_claim_gate"] = gate
+            self.assertEqual(self.decision()["action"], "WAIT_CI")
+        self.pr["ci"]["scope_and_claim_gate"] = "MANUAL_CONTROLLER_ATTESTED"
+        self.assertEqual(self.decision()["action"], "MERGE")
+
+    def test_manual_candidate_scope_rejects_secret_policy_or_no_new_test(self):
+        self.enable_manual_candidate()
+        accepted=self.pr["changed_entries"]
+        for entries in (accepted+[["M","config/autonomous_repair.json"]],
+                        [["M","src/ToyWarsHUD.client.lua"]],
+                        [["A","history/C00035_hud_quickstart.json"]],
+                        [["M","src/ToyWarsHUD.client.lua"],["A","tests/auto/evil.lua"]],
+                        [["M","src/ToyWarsHUD.client.lua"],["A","tests/auto/../secret_spec.lua"]]):
+            self.pr["changed_entries"]=entries
+            self.assertEqual(self.decision()["action"], "WAIT_MANUAL_SCOPE")
+        self.pr["changed_entries"]=accepted
+
+    def test_manual_candidate_needs_real_reviewer_provenance_fields(self):
+        self.enable_manual_candidate()
+        proof=self.review["manual_provenance"]
+        for field in ("claim_commit_verified","main_ancestry_verified",
+                      "github_diff_verified","ledger_verified","ci_jobs_verified"):
+            proof[field]=False
+            self.assertEqual(self.decision()["action"], "WAIT_MANUAL_PROOF",field)
+            proof[field]=True
+        for field in ("claim_commit","epoch","head","base_main_sha","branch","owner_id"):
+            prior=proof[field];proof[field]=None
+            self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF",field)
+            proof[field]=prior
+        proof["changed_entries"]=[]
+        self.assertEqual(self.decision()["action"], "WAIT_MANUAL_PROOF")
+
+    def test_manual_candidate_stale_head_or_base_never_merges(self):
+        self.enable_manual_candidate()
+        self.pr["head"]="a"*40
+        self.assertEqual(self.decision()["action"], "WAIT_MANUAL_REQUEST")
+        self.pr["head"]="b"*40
+        self.main["sha"]="a"*40
+        self.assertEqual(self.decision()["action"], "WAIT_MANUAL_REQUEST")
+
+    def test_manual_candidate_wrong_author_or_same_run_never_merges(self):
+        self.enable_manual_candidate()
+        self.pr["author_run_id"]=REVIEW_RUN
+        self.assertEqual(self.decision()["action"], "WAIT_AUTHOR_ID")
+        self.pr["author_run_id"]=self.lease["manual_review_requests"][0]["owner_id"]
+        self.review["reviewer_run_id"]=self.pr["author_run_id"]
+        self.assertEqual(self.decision()["action"], "WAIT_LOCK")
+
+    def test_manual_candidate_legacy_worker_paths_still_reject_untrusted(self):
+        self.enable_manual_candidate()
+        self.pr["branch"]="feature/evil"
+        self.assertEqual(self.decision()["action"], "SKIP_UNRELATED")
+
     def test_good_independent_review_merges_without_owner_reply(self):
         result = self.decision()
         self.assertEqual(result["action"], "MERGE")
