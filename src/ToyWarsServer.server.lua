@@ -326,7 +326,7 @@ local function resetAfterLoss(state)
     state.coins.Value=math.max(40,state.coins.Value)
     state.enemiesMade=0
     state.enemyTarget=B.waveSize(1)
-    state.enemyTimer=4
+    state.enemyTimer=0.1
     state.waveBreak=4
     state.productionTimer=1
 end

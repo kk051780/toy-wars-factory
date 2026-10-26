@@ -1,0 +1,82 @@
+{
+  "id": "C00036",
+  "date": "2026-10-26",
+  "kind": "AUTONOMOUS_RESTART_WAVE_GRACE_FIX",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "a28e0d03-9c90-8332-a806-4fd9f438cddd",
+  "queue_decision": {
+    "action": "START",
+    "branch": "auto/twf-game-repair-a28e0d03-9c90-8332-a806-4fd9f438cddd",
+    "base": "main",
+    "open_prs": [],
+    "limit": 3,
+    "change_scheduler": false
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "55485aa0ff54591116a5c2eccede8a5363c15be5",
+    "owner_run_id": "a28e0d03-9c90-8332-a806-4fd9f438cddd",
+    "epoch": 51
+  },
+  "main_base": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+  "defect": {
+    "id": "restart_wave_double_grace",
+    "cause": "resetAfterLoss initializes both waveBreak and enemyTimer to 4 seconds; because enemyTimer only counts down after waveBreak ends, first restarted JUNK is delayed about eight seconds rather than the initial approximately four-second grace.",
+    "reproduction": "The accepted whole-server base-loss regression establishes a reset and a 3.9-second grace. New canonical whole-server regression checks 14 x 0.3-second beats with no JUNK followed by one JUNK at 15 beats (4.5 seconds); pinned old source must still have zero at 4.5 seconds.",
+    "evidence_scope": "Native deterministic Lua mock; no Roblox engine or player observation."
+  },
+  "fix": "Set only resetAfterLoss enemyTimer from 4 to 0.1, matching the initial wave timer after its 4-second grace. Keep waveBreak=4, spawn interval=2.3, unit stats and all other logic unchanged.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/restart_wave_grace_spec.lua",
+    "history/C00036_restart_wave_grace_fix.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 18868,
+      "after_bytes": 18870,
+      "delta_bytes": 2
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 681,
+    "lua_bytes": 26970
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/restart_wave_grace_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 2559,
+      "delta_bytes": 2559
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "JUNK first spawn after a defeated-base restart becomes earlier; no PON/GUARDON/TANKURU/JUNK stats, prices, damage or visual assets change.",
+  "tests": {
+    "whole_server": "tests/auto/restart_wave_grace_spec.lua",
+    "old_source_negative_control": "CI pinned old server, if checkout is available",
+    "local": "NOT_RUN_NO_LUA_5_4_RUNTIME",
+    "ci": "PENDING_NEW_PR_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40283372197",
+    "main_qa_note": "Latest verified gameplay main QA before generated status-only descendant; current HEAD bootstrap QA not separately run.",
+    "claim_commit": "55485aa0ff54591116a5c2eccede8a5363c15be5",
+    "pr": "PENDING_DRAFT_PR",
+    "ci": "PENDING_NEW_PR_HEAD"
+  },
+  "next_action": "Wait for exact-head offline and compile_hold CI, repair same PR if failing, then separate registered REVIEWER integrates after independent inspection; author never merges.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}
