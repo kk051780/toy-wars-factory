@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T10:12:27.386Z",
-  "status": "REVIEW_APPROVED_AWAIT_EXACT_HEAD_MERGE",
+  "observed_at": "2026-10-26T10:13:17.917Z",
+  "status": "MERGED_WAIT_MAIN_CI",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "e958762e-a330-8330-a739-56a1c3a9373b",
@@ -21,7 +21,20 @@
     "ci": 40305011765,
     "review_record": "ops/reviews/PR0063_67ee9287.json"
   },
-  "merged_prs": [],
-  "merge_count": 0,
-  "next": "Exact-head PR63 merge and post-merge QA/handoff. Preserve engine/release/Gemini/cost HOLDs."
+  "merged_prs": [
+    {
+      "pr": 63,
+      "head": "67ee928743b8efa6c3cce4a80d8b038473f6bc95",
+      "merge_sha": "6b4fb5bfb19c6e0a27a61c3f261805d85fbf7d8a",
+      "category": "GAME_SOURCE_FIX",
+      "ci": 40305011765,
+      "main_qa_run": 40305630098,
+      "main_qa_status": "PENDING",
+      "handoff_run": 40305629965,
+      "handoff_status": "PENDING"
+    }
+  ],
+  "merge_count": 1,
+  "main_after": "6b4fb5bfb19c6e0a27a61c3f261805d85fbf7d8a",
+  "next": "Wait exact merge-SHA main QA 40305630098 and handoff 40305629965; do not mark passed until both complete. Next eligible work: repair if failed, otherwise P0 Roblox engine/2-client/mobile evidence and WORKER authority. PR60 trust-root bootstrap remains REQUEST_CHANGES; PR61 manual feature not eligible until reviewed policy. Preserve Gemini/release/cost holds."
 }
