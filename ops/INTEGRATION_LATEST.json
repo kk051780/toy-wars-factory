@@ -1,11 +1,11 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T14:36:54.418Z",
+  "observed_at": "2026-10-26T21:20:35.881Z",
   "status": "REPAIR_MAIN",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "0617b736-d5dc-8321-885d-5919d548c91a",
-  "lease_epoch": 79,
+  "reviewer_run_id": "e819f6b2-4468-832a-b0bb-309879dcf4b0",
+  "lease_epoch": 81,
   "main_before": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
   "main_after": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
   "main_qa": {
@@ -54,7 +54,19 @@
     "PR73 queue enhancement review/merge blocked until main repaired",
     "Issue3 Roblox engine/multiplayer/mobile NOT_RUN",
     "Issue57 host write incident",
-    "Gemini severe HOLD"
+    "Gemini severe HOLD",
+    "PR75 P0 maintenance exact-head CI passes, but branch ops/twf-merge-ledger-reconcile-20261027 is outside current REVIEWER integration decision tool; current main QA fails. CONTROLLER must establish independently audited authorized repair integration route."
   ],
-  "next": "CONTROLLER repair accepted history provenance/ledger without weakening checks, then independent QA; no more new PR merges"
+  "next": "CONTROLLER: resolve P0 maintenance integration scope/gate without bypassing protected checks; once repaired main QA+handoff pass, REVIEWER may resume eligible auto PRs.",
+  "main_observed": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+  "merge_count_this_run": 0,
+  "p0_candidate": {
+    "pr": 75,
+    "head": "361f9576c1f3dcc60f342eb94016ebc3dd1c2b10",
+    "branch": "ops/twf-merge-ledger-reconcile-20261027",
+    "ci": 40402147994,
+    "ci_status": "success",
+    "integration_status": "BLOCKED_POLICY_SCOPE_AND_FAILED_MAIN_QA",
+    "main_merged": false
+  }
 }
