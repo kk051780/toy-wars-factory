@@ -90,6 +90,64 @@ for i,spec in ipairs(choices) do
 end
 local tip=addText(gui,UDim2.new(0.8,0,0,34),UDim2.new(0.1,0,1,-160),"SELECT A TOY TO AUTO-PRODUCE • UPGRADE AT THE GOLD PLATFORM",Color3.fromRGB(255,255,255))
 tip.TextStrokeTransparency=0.4
+-- Session-local first-play guide: touch-friendly, dismissible; never sends gameplay commands.
+-- Created only after workshop assignment; no cross-session completion persistence.
+-- ImageButtons keep the three toy-selection TextButtons unambiguous.
+local quickStart=Instance.new("Frame")
+quickStart.Name="QuickStart"
+quickStart.Visible=true
+quickStart.Size=UDim2.new(0.78,0,0,182)
+quickStart.Position=UDim2.new(0.11,0,0.12,0)
+quickStart.BackgroundColor3=Color3.fromRGB(24,38,63)
+quickStart.BackgroundTransparency=0.04
+quickStart.ZIndex=20
+quickStart.Parent=gui
+round(quickStart,15)
+local guideTitle=addText(quickStart,UDim2.new(1,-24,0,28),UDim2.new(0,12,0,10),
+    "WELCOME, FACTORY MASTER!",Color3.fromRGB(255,216,115))
+guideTitle.Name="GuideTitle"
+guideTitle.ZIndex=21
+local guideSteps={
+    "1/3  PICK A TOY\nTap PON, GUARDON or TANKURU at the bottom.",
+    "2/3  PRODUCE & DEFEND\nYour factory auto-produces toys; defend the vault from JUNK.",
+    "3/3  EARN & UPGRADE\nDefeat JUNK for coins; upgrade at the gold platform; retry after a loss.",
+}
+local guidePage=1
+local guideText=addText(quickStart,UDim2.new(1,-28,0,74),UDim2.new(0,14,0,43),
+    guideSteps[guidePage],Color3.fromRGB(242,248,255))
+guideText.Name="GuideStepText"
+guideText.ZIndex=21
+local function guideButton(name,caption,x,color)
+    local button=Instance.new("ImageButton")
+    button.Name=name
+    button.Image=""
+    button.Size=UDim2.new(0.39,0,0,45)
+    button.Position=UDim2.new(x,0,1,-56)
+    button.BackgroundColor3=color
+    button.ZIndex=21
+    button.Parent=quickStart
+    round(button,10)
+    local text=addText(button,UDim2.new(1,0,1,0),UDim2.new(0,0,0,0),
+        caption,Color3.fromRGB(255,255,255))
+    text.Name=name.."Caption"
+    text.ZIndex=22
+    return button,text
+end
+local skipButton=guideButton("GuideSkip","SKIP",0.07,Color3.fromRGB(79,92,111))
+local nextButton,nextCaption=guideButton("GuideNext","NEXT",0.54,Color3.fromRGB(44,175,179))
+skipButton.Activated:Connect(function()
+    quickStart.Visible=false
+end)
+nextButton.Activated:Connect(function()
+    if not quickStart.Visible then return end
+    if guidePage==#guideSteps then
+        quickStart.Visible=false
+        return
+    end
+    guidePage=guidePage+1
+    guideText.Text=guideSteps[guidePage]
+    if guidePage==#guideSteps then nextCaption.Text="PLAY" end
+end)
 local function refresh()
     summary.Text=string.format("COINS %d  |  WAVE %d  |  VAULT %d%%",coins.Value,wave.Value,hp.Value)
     subt.Text=string.format("LV %d  •  TOYS %d  •  JUNK %d  •  KILLS %d",lv.Value,allies.Value,enemies.Value,kills.Value)
