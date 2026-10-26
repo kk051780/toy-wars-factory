@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T09:24:35.708Z",
-  "status": "APPROVED_PENDING_EXACT_HEAD_MERGE",
+  "observed_at": "2026-10-26T09:25:15.643Z",
+  "status": "MERGED_WAIT_MAIN_QA",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "5640140e-af34-8330-ab0b-05c44b2e6767",
@@ -21,6 +21,19 @@
     "ci": 40294943505,
     "review_record": "ops/reviews/PR0062_f8fdfe0c.json"
   },
-  "merged_prs": [],
-  "next": "Exact-head merge PR62, then verify post-merge QA and handoff. Keep manual PR60/61 out of current auto scope."
+  "merged_prs": [
+    {
+      "pr": 62,
+      "head": "f8fdfe0c034f830d4d46589499e9c2ecb16d5a7e",
+      "merge_sha": "550afd73a02bdde2d755caf2b2d446bf5faa7372",
+      "category": "GAME_SOURCE_FIX",
+      "ci": 40294943505,
+      "main_qa_run": 40299361181,
+      "main_qa_status": "queued",
+      "handoff_run": 40299361206,
+      "handoff_status": "queued"
+    }
+  ],
+  "next": "Check merge 550afd73 main offline/compile_hold and handoff; do not merge another PR while pending. Manual PR60/61 outside reviewer scope.",
+  "merge_count": 1
 }

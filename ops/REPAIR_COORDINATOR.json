@@ -230,6 +230,26 @@
       },
       "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40283372197",
       "review_record": "ops/reviews/PR0054_7c3b72cf.json"
+    },
+    "62": {
+      "schema": 1,
+      "pr": 62,
+      "head": "f8fdfe0c034f830d4d46589499e9c2ecb16d5a7e",
+      "base_reviewed": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+      "reviewer_kind": "REVIEWER",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "5640140e-af34-8330-ab0b-05c44b2e6767",
+      "lease_epoch": 55,
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "a28e0d03-9c90-8332-a806-4fd9f438cddd",
+      "verdict": "APPROVE",
+      "ci": {
+        "id": 40294943505,
+        "head": "f8fdfe0c034f830d4d46589499e9c2ecb16d5a7e",
+        "conclusion": "success"
+      },
+      "review_record": "ops/reviews/PR0062_f8fdfe0c.json",
+      "post_merge_main_qa": "PENDING_40299361181"
     }
   },
   "integration_results": {
@@ -264,6 +284,13 @@
       "message": "Independent scheduled reviewer exact-head merge; main QA and handoff passed",
       "qa": 40283372197,
       "handoff": 40283372188
+    },
+    "62": {
+      "sha": "550afd73a02bdde2d755caf2b2d446bf5faa7372",
+      "merged": true,
+      "message": "Independent reviewer exact-head merge; main QA and handoff queued",
+      "qa": 40299361181,
+      "handoff": 40299361206
     }
   },
   "completed_controller_phase": {
