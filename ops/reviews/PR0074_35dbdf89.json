@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 74,
+  "head": "35dbdf89e3583cfa3a01a2b860f750b61e4c6935",
+  "base_main_sha": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "0617b736-d5dc-8321-885d-5919d548c91a",
+  "lease_epoch": 79,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "3c2af679-5248-8326-9344-3cbcb8d9f9a7",
+  "reviewed_at": "2026-10-26T14:31:29.850Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [
+    "Refreshes the damaged surviving target's existing health bar immediately; no combat stat or price changes",
+    "Canonical full-server Lua regression passes, old-main negative control reproduces stale bar",
+    "Exact source 18946->19100 bytes, +154; 3 changed paths; trusted scope/claim gates pass"
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "ci": {
+    "id": 40338673054,
+    "head": "35dbdf89e3583cfa3a01a2b860f750b61e4c6935",
+    "conclusion": "success",
+    "required_jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 243,
+    "lua_health_bar_tests": 3,
+    "scope_and_claim_gate": "PASS",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40338673054"
+  },
+  "claim": {
+    "commit": "fc7d307c578690e4f1a4e949802c966e702e7002",
+    "epoch": 78,
+    "prior_epoch": 77,
+    "prior_holder": null,
+    "branch": "auto/twf-game-repair-3c2af679-5248-8326-9344-3cbcb8d9f9a7",
+    "reachable": true
+  },
+  "category": "GAME_CODE_FIX",
+  "main_qa": {
+    "head": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
+    "conclusion": "success",
+    "run_id": 40317866877,
+    "status_only_compare": true
+  },
+  "limitations": [
+    "Roblox engine, multiplayer, mobile and visuals NOT_RUN"
+  ],
+  "next": "Merge exact head then require post-merge main QA and handoff before any further merge"
+}

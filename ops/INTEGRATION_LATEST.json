@@ -1,59 +1,34 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T12:34:15.795Z",
-  "status": "REPAIR_CI",
-  "owner_reply_required": false,
+  "observed_at": "2026-10-26T14:31:29.850Z",
+  "status": "APPROVED_PENDING_MERGE",
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "1b9cf867-32bc-8333-8ce8-eb9ac26c0ce9",
-  "lease_epoch": 75,
+  "reviewer_run_id": "0617b736-d5dc-8321-885d-5919d548c91a",
+  "lease_epoch": 79,
   "main_before": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
   "main_after": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
   "main_qa": {
     "head": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
-    "id": 40317866877,
     "conclusion": "success",
-    "comparison_since_qa": {
-      "verified": true,
-      "status": "ahead",
-      "ahead_by": 1,
-      "behind_by": 0,
-      "paths": [
-        "status/CHAT_HANDOFF.md",
-        "status/LATEST_STATE.json"
-      ]
-    }
+    "run_id": 40317866877,
+    "status_only_compare": true
   },
   "latest_review": {
-    "pr": 70,
-    "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
-    "verdict": "REQUEST_CHANGES",
-    "category": "SYSTEM_IMPROVEMENT_TRIAGE_FIX",
-    "ci": 40319916599,
-    "review_record": "ops/reviews/PR0070_ee61cf4f.json",
-    "blockers": [
-      {
-        "file": "tools/system_host_write_triage.py",
-        "finding": "Current trusted-base META scope rejects modification of this existing module; exact-head offline CI failed before accepted regression tests ran.",
-        "reproduction": "Toy Wars bootstrap offline QA #40319916599 offline job #121561918863 reports: FAIL: outside system-review scope: M tools/system_host_write_triage.py; compile_hold succeeds.",
-        "expected": "A separately authorized CONTROLLER must narrowly maintain config.system_review.allowed_tool_paths for tools/system_host_write_triage.py with adversarial scope regression and independent review; then rebase/update PR70 and obtain fresh exact-head two-job CI. No author-side gate edits or CI bypass."
-      }
-    ]
-  },
-  "other_candidate": {
-    "pr": 67,
-    "head": "a57961e42bbda115659f67bfa4a6fe5a1540d473",
-    "status": "REQUEST_CHANGES_PREVIOUS_REVIEW_UNCHANGED_HEAD",
-    "reason": "Known 320–390px guide/selector overlap; existing WORKER work request remains OPEN"
+    "pr": 74,
+    "head": "35dbdf89e3583cfa3a01a2b860f750b61e4c6935",
+    "verdict": "APPROVE",
+    "category": "GAME_CODE_FIX",
+    "ci": 40338673054,
+    "review_record": "ops/reviews/PR0074_35dbdf89.json"
   },
   "merged_prs": [],
   "merge_count": 0,
   "post_merge_main_qa": null,
   "unresolved": [
-    "PR70 exact-head offline CI fails trusted META scope; CONTROLLER narrow maintenance request already OPEN",
-    "PR67 mobile guide/selector overlap unresolved; WORKER request OPEN",
-    "Issue57 host-write denial raw provider response unavailable",
-    "Issue3 Roblox Studio/multiplayer/mobile evidence unavailable; release HOLD",
-    "PR60 manual controller lane remains unmerged"
+    "PR67 new head edfe101c needs independent review",
+    "PR73 queue enhancement requires independent review",
+    "Roblox Studio/multiplayer/mobile NOT_RUN",
+    "Gemini severe hold preserved"
   ],
-  "next": "CONTROLLER: narrow accepted module maintenance scope with regression, then META PR70 new head and exact-head CI; WORKER: repair PR67 compact mobile HUD; REVIEWER: recheck only fresh heads. No Roblox publish or Gemini restart."
+  "next": "Exact-head merge PR74; verify new main QA/handoff before another PR"
 }
