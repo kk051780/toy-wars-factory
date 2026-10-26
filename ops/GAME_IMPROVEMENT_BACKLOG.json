@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T07:58:50Z",
-  "source": "Daily META review: hypotheses and capability experiments, not implemented game improvements",
+  "observed_at": "2026-10-26T11:43:11Z",
+  "source": "System continuity first this cycle; game implementation deferred, hypotheses and offline/engine evidence distinguished.",
   "items": [
     {
       "id": "mobile_pve_frame_time",
@@ -26,14 +26,16 @@
       "id": "enemy_spawn_timer_cadence",
       "kind": "SOURCE_HYPOTHESIS",
       "priority": "P1",
-      "status": "READY_FOR_WHOLE_SERVER_REPRODUCTION",
+      "status": "MERGED_OFFLINE_VERIFIED_ENGINE_NOT_RUN",
       "target": "src/ToyWarsServer.server.lua:simulate enemyTimer",
       "hypothesis": "The enemy timer resets to 2.3 after subtracting dt. Repeated overshoot may be discarded, analogous to the production cadence defect already fixed by PR45; this is not yet a measured gameplay defect.",
-      "source_observation": "Current main uses state.enemyTimer=2.3, while productionTimer preserves negative remainder by adding 3.0.",
+      "source_observation": "Current canonical server now uses state.enemyTimer=state.enemyTimer+2.3. Prior reproduction proposal is superseded.",
       "experiment": "Execute the canonical complete server through the accepted harness with regular and jittered Heartbeat inputs; record actual first-wave spawn timestamps while preventing combat/production from invalidating the fixture. Do not copy simulate or callbacks into the test.",
       "success_evidence": "First demonstrate repeatable cumulative cadence drift versus the intended 2.3 interval beyond one simulation-step tolerance. Only if reproduced, propose a minimal carry fix with the pinned old-source negative control. Preserve wave size, grace periods, unit balance and existing regressions.",
       "requires_engine_evidence": "Then confirm actual server spawn times in a private engine run; offline timing is not Roblox scheduling proof.",
-      "source_main_sha": "aa2e57b6d63639f81966cac0e4ef399fcb78a527"
+      "source_main_sha": "09c08ddde66188fc0bd820ff1984c64f743d8144",
+      "pr": 54,
+      "next": "Do not reimplement; retain accepted whole-server cadence regression. Private engine scheduling evidence still not collected."
     },
     {
       "id": "private_headless_engine_evidence_path",
@@ -48,17 +50,37 @@
       "experiment": "When a secure authorized connector and test universe/place/version are available, run the exact canonical scene build against an unpublished private test version; collect versioned source hashes, startup logs and three floor properties. Keep two-client and physical-phone evidence as separate required experiments.",
       "success_evidence": "Dated authenticated engine task result tied to exact source/place version, with logs and property assertions; no publish, model API or credentials in artifacts.",
       "observed_gap": "Available tool registry has no Roblox execution connector; inspected studio_autopilot/projects/toy_wars.json has no universe/place/version binding. No execution request or secret inspection performed."
+    },
+    {
+      "id": "first_play_guide_compact_layout",
+      "kind": "REVIEWER_REPRODUCIBLE_SOURCE_REGRESSION",
+      "priority": "P1",
+      "status": "REQUEST_CHANGES_WORKER_REPAIR_PENDING",
+      "pr": 67,
+      "head": "a57961e42bbda115659f67bfa4a6fe5a1540d473",
+      "hypothesis": "Guide action rectangles overlap toy selectors at short landscape safe-area heights; source geometry reproduces it, physical-device behavior not measured.",
+      "evidence": {
+        "request": "ops/WORK_REQUESTS.json#pr67_mobile_guide_selector_overlap",
+        "review": "ops/reviews/PR0067_a57961e4.json",
+        "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40311284080",
+        "primary": "https://create.roblox.com/docs/tutorials/use-case-tutorials/ui/create-hud-meters",
+        "checked_at": "2026-10-26T11:43:11Z"
+      },
+      "experiment": "WORKER first repairs existing PR67 on current main. Run canonical HUD and calculate all action-button/selector rectangles for effective safe-area bounds 640x320,640x360,844x390,960x540; preserve prices/queue notice/3 buttons and no gameplay commands from guide navigation. Include current failing head negative control.",
+      "success_evidence": "No interactive rectangle intersections, selectors legible/accesssible, guide dismissible, exact new-head QA both jobs successful, independent review.",
+      "requires_engine_evidence": "Later real-device touch and ScreenInsets screenshots tied to source/place version. Offline rectangle checks do not establish actual mobile UX.",
+      "deferred_reason": "This cycle implements only the explicit P0 system triage task; no game edits."
     }
   ],
   "actor": {
     "kind": "META",
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "3b6d84e8-75fc-832a-90c6-5a5615167fd7"
+    "run_id": "cbda9d91-c480-8320-a8e9-606913e2a16a"
   },
-  "base_main_sha": "aa2e57b6d63639f81966cac0e4ef399fcb78a527",
+  "base_main_sha": "09c08ddde66188fc0bd820ff1984c64f743d8144",
   "prioritized_candidates": [
+    "first_play_guide_compact_layout",
     "private_headless_engine_evidence_path",
-    "enemy_spawn_timer_cadence",
     "mobile_pve_frame_time"
   ]
 }

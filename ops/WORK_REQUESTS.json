@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T11:02:40.640Z",
+  "observed_at": "2026-10-26T11:43:11Z",
   "requests": [
     {
       "id": "pr67_mobile_guide_selector_overlap",
@@ -215,6 +215,60 @@
         "post_merge_qa_conclusion": "success",
         "verified_at": "2026-10-26T07:03:54.198Z"
       }
+    },
+    {
+      "id": "host_write_original_provider_error_capture_20261026",
+      "kind": "INCIDENT_OBSERVABILITY_GAP",
+      "priority": "P0",
+      "assigned_role": "META",
+      "status": "OPEN",
+      "issue": "https://github.com/kk051780/toy-wars-factory/issues/57",
+      "request": "At the next actual denial, retain the permitted original tool/provider operation result with service task/run, operation stage, source identity, observed_at, expected ref and post-attempt ref; normalize only provider-known error codes. Capture safe keys only; never log tokens/headers/raw secrets. If the host does not expose the response, mark unavailable and keep diagnosis INDETERMINATE. No extra run/retry, permission/SDK/workflow changes or fabricated receipt.",
+      "latest": {
+        "observed_at": "2026-10-26T11:43:11Z",
+        "worker_run_id": "1c159542-ffdc-8327-9850-892b1a78843e",
+        "raw_host_error_available": false,
+        "diagnostic_pr": 69,
+        "diagnostic_head": "771f9b3d2f1b6a4aa9550547458c472d61078f2b",
+        "ci": {
+          "id": 40316726148,
+          "head": "771f9b3d2f1b6a4aa9550547458c472d61078f2b",
+          "base": "09c08ddde66188fc0bd820ff1984c64f743d8144",
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40316726148",
+          "python_tests": 243,
+          "new_python_tests": 37,
+          "job_count": 2,
+          "jobs": [
+            {
+              "name": "compile_hold",
+              "id": 121551073467,
+              "conclusion": "success",
+              "head": "771f9b3d2f1b6a4aa9550547458c472d61078f2b",
+              "attempt": 1,
+              "started_at": "2026-10-26T11:39:50Z",
+              "completed_at": "2026-10-26T11:39:59Z"
+            },
+            {
+              "name": "offline",
+              "id": 121551073733,
+              "conclusion": "success",
+              "head": "771f9b3d2f1b6a4aa9550547458c472d61078f2b",
+              "attempt": 1,
+              "started_at": "2026-10-26T11:39:51Z",
+              "completed_at": "2026-10-26T11:40:18Z"
+            }
+          ],
+          "trusted_scope": "PASS",
+          "immutable_claim": "PASS"
+        },
+        "meta_claim_succeeded": true,
+        "permanent_block_proven": false,
+        "root_cause_resolved": false
+      },
+      "expected": "Provider-authenticated direct result can distinguish host rejection from GitHub authorization error/ref race; narrative-only evidence must stay indeterminate."
     }
   ]
 }
