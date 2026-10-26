@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 66,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "9e3c34bb-26e4-8328-82e6-9da43f686d01",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 66,
-    "acquired_at": "2026-10-26T10:30:14.582Z",
-    "expires_at": "2026-10-26T11:00:14.582Z",
-    "base_main_sha": "0ace6749a50fce2f48f9db5a5e5906d003600fa5",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -32,16 +22,16 @@
   "last_completed": {
     "kind": "REVIEWER",
     "owner_id": "9e3c34bb-26e4-8328-82e6-9da43f686d01",
-    "epoch": 65,
-    "released_at": "2026-10-26T10:29:39.741Z",
+    "epoch": 66,
+    "released_at": "2026-10-26T10:30:43.997Z",
     "pr": 64,
     "head": "cd437eb278e3708054939d0f88d76a476df7b3e2",
     "merge_sha": "01527e4c5fc04fd139ba624b39c7db1dd873d28a",
     "qa_run": 40307770609,
-    "qa_status": "in_progress",
+    "qa_status": "success",
     "handoff_run": 40307770574,
     "handoff_status": "success",
-    "result": "MERGED_WAIT_MAIN_QA"
+    "result": "MERGED_MAIN_QA_PASSED"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",

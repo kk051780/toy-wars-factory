@@ -58,18 +58,37 @@
     "Roblox Studio, actual 5-player join, mobile UI, appearance and player feedback NOT_RUN",
     "Separate open PR55 addresses existing QA credential isolation; this PR does not alter workflow or grant permission"
   ],
-  "merge_status": "MERGED",
+  "merge_status": "MERGED_MAIN_QA_PASSED",
   "merge_sha": "01527e4c5fc04fd139ba624b39c7db1dd873d28a",
   "merged_at_observed": "2026-10-26T10:29:39.741Z",
   "post_merge": {
     "main_sha": "0ace6749a50fce2f48f9db5a5e5906d003600fa5",
+    "merge_sha": "01527e4c5fc04fd139ba624b39c7db1dd873d28a",
     "qa_run": 40307770609,
     "qa_head": "01527e4c5fc04fd139ba624b39c7db1dd873d28a",
-    "qa_status": "in_progress",
-    "qa_conclusion": null,
+    "qa_status": "completed",
+    "qa_conclusion": "success",
+    "qa_jobs": [
+      {
+        "name": "offline",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "compile_hold",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
     "handoff_run": 40307770574,
     "handoff_status": "completed",
     "handoff_conclusion": "success",
-    "verified": false
+    "status_only_descendant_verified": true,
+    "changed_files": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "verified": true,
+    "verified_at": "2026-10-26T10:30:43.997Z"
   }
 }

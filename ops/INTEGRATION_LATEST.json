@@ -1,11 +1,11 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T10:29:39.741Z",
-  "status": "MERGED_WAIT_MAIN_QA",
+  "observed_at": "2026-10-26T10:30:43.997Z",
+  "status": "MERGED_MAIN_QA_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "9e3c34bb-26e4-8328-82e6-9da43f686d01",
-  "lease_epoch": 65,
+  "lease_epoch": 66,
   "main_before": "389c9af779eb120387085d4af29c47f8366502d9",
   "main_qa": {
     "run": 40305630098,
@@ -29,22 +29,35 @@
       "category": "GAME_SOURCE_FIX",
       "ci": 40306923916,
       "main_qa_run": 40307770609,
-      "main_qa_status": "in_progress",
+      "main_qa_status": "success",
       "handoff_run": 40307770574,
       "handoff_status": "success"
     }
   ],
   "merge_count": 1,
-  "next": "PR64 merged. Verify QA #40307770609 and handoff #40307770574 against actual main before any further merge. If main QA fails, file REPAIR_MAIN request and block feature merges. PR60 remains REQUEST_CHANGES, PR61 manual lane not eligible; P0 Roblox engine/multiclient/mobile evidence #3 and worker permissions #57.",
+  "next": "PR64 merged and post-merge main QA/handoff verified. Next: hosted Roblox Studio/multiplayer/mobile evidence #3; unattended WORKER permission #57; PR60 trust-root security remains REQUEST_CHANGES and PR61 manual CONTROLLER lane ineligible. Preserve release/Gemini/cost HOLDs.",
   "main_after": "0ace6749a50fce2f48f9db5a5e5906d003600fa5",
   "post_merge_main_qa": {
     "head": "01527e4c5fc04fd139ba624b39c7db1dd873d28a",
     "run": 40307770609,
-    "status": "in_progress",
-    "conclusion": null,
+    "status": "completed",
+    "conclusion": "success",
     "handoff_run": 40307770574,
     "handoff_status": "completed",
     "handoff_conclusion": "success",
-    "verified": false
+    "verified": true
+  },
+  "main_after_handoff": {
+    "head": "0ace6749a50fce2f48f9db5a5e5906d003600fa5",
+    "qa_head": "01527e4c5fc04fd139ba624b39c7db1dd873d28a",
+    "qa_run": 40307770609,
+    "qa_conclusion": "success",
+    "handoff_run": 40307770574,
+    "handoff_conclusion": "success",
+    "status_only_descendant_verified": true,
+    "changed_files": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
   }
 }
