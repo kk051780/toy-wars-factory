@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "pr": 54,
+  "head": "7c3b72cf42ca0b6e754d7771be977e951b0f3a8b",
+  "base_main_sha": "b6fb4d8a94330f1946335aa77af17ab64e1ac502",
+  "reviewed_at": "2026-10-26T07:02:02.311Z",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "0b8b44a0-3b20-832c-9880-a91812559bab",
+  "lease_epoch": 46,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "d62a3a64-210c-832c-9ca3-c923d4cbe127",
+  "author_claim_commit": "e0454283f907d38c67c8e9a86af956bff839fe18",
+  "author_claim_epoch": 35,
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "GAME_SOURCE_FIX",
+  "changed_files": [
+    "history/C00034_enemy_spawn_cadence_fix.json",
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/enemy_spawn_cadence_spec.lua"
+  ],
+  "findings": [
+    "Current PR head is a true descendant of current main (ahead 2/behind 0); exact-head CI #40282761450 passed both offline and compile_hold, with trusted base scope gate and immutable shared claim gate successful.",
+    "Only one source line changed: enemyTimer=2.3 -> enemyTimer=enemyTimer+2.3. No callback copy, accepted test weakening, character/balance/provider/billing/release permission changes.",
+    "New whole-server Lua mock regression has three cases and passes in exact-head CI; a separate source-derived numeric reproduction predicts old 4 versus fixed 5 for both dt=0.30/45 and dt=0.26/52. Original-server executable negative control remains NOT_RUN and must not be represented as run.",
+    "C00034 original WORKER claim epoch35 is an ancestor of current coordinator, task/run/branch match, maintenance merge provenance is preserved; 4 Lua files sum to 26968 bytes and 681 lines; server 18851 -> 18868 (+17 bytes).",
+    "Main QA #40176571360 passed both jobs at ea292e6b; compare to current main b6fb4d8a proves only two generated status files changed.",
+    "Roblox engine, multi-client, mobile and player experience remain unverified; release HOLD and Gemini incident HOLD remain unchanged."
+  ],
+  "evidence": {
+    "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/54",
+    "ci_run": 40282761450,
+    "ci_head": "7c3b72cf42ca0b6e754d7771be977e951b0f3a8b",
+    "ci_base": "b6fb4d8a94330f1946335aa77af17ab64e1ac502",
+    "ci_conclusion": "success",
+    "required_jobs": [
+      "offline",
+      "compile_hold"
+    ],
+    "ci_scope_and_claim_gate": "PASS",
+    "main_qa_run": 40176571360,
+    "main_qa_head": "ea292e6bccacf362409d0502cf05a4f9c9c0c41e",
+    "main_status_only_compare": {
+      "base": "ea292e6bccacf362409d0502cf05a4f9c9c0c41e",
+      "head": "b6fb4d8a94330f1946335aa77af17ab64e1ac502",
+      "files": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    },
+    "claim_verified_ancestor": true,
+    "source_metrics_verified": {
+      "lua_files": 4,
+      "lua_lines": 681,
+      "lua_bytes": 26968,
+      "server_before_bytes": 18851,
+      "server_after_bytes": 18868
+    },
+    "old_source_negative_control": "NOT_RUN; analytical simulation only"
+  },
+  "merge": {
+    "status": "APPROVED_PENDING_MERGE",
+    "sha": null
+  },
+  "next": "Convert draft to ready, merge expected head, verify post-merge main QA and handoff; keep release HOLD."
+}

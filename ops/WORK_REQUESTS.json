@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-25T08:27:09.192Z",
+  "observed_at": "2026-10-26T07:02:02.311Z",
   "requests": [
     {
       "id": "hosted_roblox_evidence",
@@ -151,7 +151,7 @@
       "kind": "PR_REBASE_AND_REGRESSION",
       "priority": "P0",
       "assigned_role": "WORKER",
-      "status": "OPEN",
+      "status": "RESOLVED_CURRENT_MAIN_RECONCILED_EXACT_HEAD_CI_PASSED",
       "pr": 54,
       "head": "9f55b1b7c0346093bee71c22e72bd041c33963f3",
       "old_base_main_sha": "aa2e57b6d63639f81966cac0e4ef399fcb78a527",
@@ -171,6 +171,14 @@
         "old_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40175282667",
         "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/54",
         "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40176571360"
+      },
+      "resolution": {
+        "head": "7c3b72cf42ca0b6e754d7771be977e951b0f3a8b",
+        "main": "b6fb4d8a94330f1946335aa77af17ab64e1ac502",
+        "ci_run": 40282761450,
+        "review": "ops/reviews/PR0054_7c3b72cf.json",
+        "reviewer_run_id": "0b8b44a0-3b20-832c-9880-a91812559bab",
+        "observed_at": "2026-10-26T07:02:02.311Z"
       }
     }
   ]
