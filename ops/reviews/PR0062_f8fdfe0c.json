@@ -67,19 +67,28 @@
     "old_source_negative_control": "EXECUTED_PASS_CI_LOG"
   },
   "merge": {
-    "status": "MERGED_WAIT_MAIN_QA",
+    "status": "MERGED_POST_MERGE_QA_PASSED",
     "sha": "550afd73a02bdde2d755caf2b2d446bf5faa7372",
     "merged_at": "2026-10-26T09:24:57Z",
     "post_merge_qa": {
       "run": 40299361181,
-      "status": "queued",
-      "conclusion": null
+      "head": "550afd73a02bdde2d755caf2b2d446bf5faa7372",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        "offline",
+        "compile_hold"
+      ]
     },
     "handoff": {
       "run": 40299361206,
-      "status": "queued",
-      "conclusion": null
-    }
+      "head": "550afd73a02bdde2d755caf2b2d446bf5faa7372",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "main_after_handoff": "4bd7535b862c9975beb481c50df26e001b151d50",
+    "status_only_descendant_verified": true,
+    "verified_at": "2026-10-26T09:26:14.913Z"
   },
-  "next": "Await exact merge-SHA main QA and handoff, no further PR until success; retain all release/provider/financial holds."
+  "next": "P0: hosted Roblox PvE/physics, two-client and mobile evidence; P0: WORKER write authority Issue57; P1: safe CONTROLLER independent-review policy PR60 separately audited. No other PR merged."
 }

@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T09:25:15.643Z",
-  "status": "MERGED_WAIT_MAIN_QA",
+  "observed_at": "2026-10-26T09:26:14.913Z",
+  "status": "MERGED_MAIN_QA_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "5640140e-af34-8330-ab0b-05c44b2e6767",
@@ -29,11 +29,25 @@
       "category": "GAME_SOURCE_FIX",
       "ci": 40294943505,
       "main_qa_run": 40299361181,
-      "main_qa_status": "queued",
+      "main_qa_status": "success",
       "handoff_run": 40299361206,
-      "handoff_status": "queued"
+      "handoff_status": "success"
     }
   ],
-  "next": "Check merge 550afd73 main offline/compile_hold and handoff; do not merge another PR while pending. Manual PR60/61 outside reviewer scope.",
-  "merge_count": 1
+  "next": "No additional eligible open automated PR. P0: hosted Roblox engine/multiclient/mobile evidence (#3); P0: unattended WORKER write authority (#57); separate trust-root audit for manual CONTROLLER policy PR60 then PR61. Preserve release/Gemini/cost holds.",
+  "merge_count": 1,
+  "main_after": "4bd7535b862c9975beb481c50df26e001b151d50",
+  "main_after_handoff": {
+    "head": "4bd7535b862c9975beb481c50df26e001b151d50",
+    "qa_head": "550afd73a02bdde2d755caf2b2d446bf5faa7372",
+    "qa_run": 40299361181,
+    "qa_conclusion": "success",
+    "handoff_run": 40299361206,
+    "handoff_conclusion": "success",
+    "status_only_descendant_verified": true,
+    "changed_files": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  }
 }

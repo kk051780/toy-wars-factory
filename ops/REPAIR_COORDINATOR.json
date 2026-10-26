@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 55,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "5640140e-af34-8330-ab0b-05c44b2e6767",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 55,
-    "acquired_at": "2026-10-26T09:23:29.538Z",
-    "expires_at": "2026-10-26T09:53:29.538Z",
-    "base_main_sha": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -30,16 +20,16 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "a52a6c80-2d7c-42e2-961f-c6656faf9947",
-    "epoch": 54,
-    "released_at": "2026-10-26T09:15:08.383Z",
-    "pr": 60,
-    "head": "4527a41934f9ee34f0bf2fc69e841da62410651d",
-    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40297896495",
-    "ci_status": "success",
-    "result": "THIRD_AUDIT_FIX_EXACT_HEAD_226_TESTS_PASS_AWAIT_EXTERNAL_REVIEW",
-    "main_merged": false
+    "kind": "REVIEWER",
+    "owner_id": "5640140e-af34-8330-ab0b-05c44b2e6767",
+    "epoch": 55,
+    "released_at": "2026-10-26T09:26:14.913Z",
+    "pr": 62,
+    "head": "f8fdfe0c034f830d4d46589499e9c2ecb16d5a7e",
+    "merge_sha": "550afd73a02bdde2d755caf2b2d446bf5faa7372",
+    "main_qa": 40299361181,
+    "handoff": 40299361206,
+    "result": "MERGED_POST_MERGE_QA_PASSED"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -249,7 +239,7 @@
         "conclusion": "success"
       },
       "review_record": "ops/reviews/PR0062_f8fdfe0c.json",
-      "post_merge_main_qa": "PENDING_40299361181"
+      "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40299361181"
     }
   },
   "integration_results": {
@@ -288,7 +278,7 @@
     "62": {
       "sha": "550afd73a02bdde2d755caf2b2d446bf5faa7372",
       "merged": true,
-      "message": "Independent reviewer exact-head merge; main QA and handoff queued",
+      "message": "Independent exact-head reviewer merge; main QA and handoff passed",
       "qa": 40299361181,
       "handoff": 40299361206
     }
