@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T07:03:54.198Z",
-  "status": "PR54_MERGED_MAIN_QA_PASSED",
+  "observed_at": "2026-10-26T08:28:28.971Z",
+  "status": "WAIT_MANUAL_POLICY_NO_ELIGIBLE_AUTOMATED_PR",
   "owner_reply_required": false,
   "deployment": {
     "pr": 43,
@@ -217,5 +217,40 @@
     "status_only_descendant_verified": true,
     "verified_at": "2026-10-26T07:03:54.198Z"
   },
-  "next": "Main healthy after PR54; prioritize P0 worker write-authority issue #57 and hosted Roblox PvE/multiplayer/mobile evidence issue #3; daily system review evaluates orphan-controller incident #56."
+  "next": "No eligible auto UUID PR; manual PR60/61 remain Draft. Prioritize P0 WORKER host write #57 and Roblox evidence #3. Preserve all holds.",
+  "last_no_merge_scan": {
+    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "reviewer_run_id": "ff3845fe-0634-832d-bbe3-94ab6793f179",
+    "lease_epoch": 50,
+    "observed_at": "2026-10-26T08:28:28.971Z",
+    "main_sha": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+    "main_qa": {
+      "run": 40283372197,
+      "head": "078f1f81c3166e7e03f9462c108620b8270187ef",
+      "conclusion": "success",
+      "jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "status_only_descendant_verified": true,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    },
+    "eligible_open_prs": [],
+    "merged_prs": [],
+    "reviewed_prs": [],
+    "pending_manual_policy_pr": 60,
+    "pending_manual_game_pr": 61,
+    "manual_pr_ci": {
+      "60": 40290141085,
+      "61": 40291001810
+    },
+    "next": "PR60 requires separately authorized trust-root bootstrap review; PR61 must wait for deployed policy, exact-head evidence and registered independent review; both outside current auto branch scope.",
+    "limitations": [
+      "Roblox engine/multiplayer/mobile unverified",
+      "No permission to merge manual CONTROLLER PR under current policy"
+    ]
+  }
 }
