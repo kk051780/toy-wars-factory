@@ -1,0 +1,204 @@
+{
+  "id": "C00042",
+  "date": "2026-10-26",
+  "observed_at_utc": "2026-10-26T12:04:58Z",
+  "kind": "SYSTEM_TRIAGE_TERMINAL_OUTCOME_REPAIR",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "a95f272c-3ee4-8324-a03e-de4cce8b89d8",
+  "base_main": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "27cf2762026f371dcd4e44ded5d2f476d15b7928",
+    "owner_run_id": "a95f272c-3ee4-8324-a03e-de4cce8b89d8",
+    "epoch": 74
+  },
+  "queue_decision": "REPAIR_REVIEW_FINDING_BEFORE_ISSUE68; PR69_ALREADY_MERGED_NEW_SINGLE_ISSUE_META_PR",
+  "problem": "The final healthy-wait path accepts failed/no_update service runs when same-run/head green QA exists.",
+  "reproduction": {
+    "source_comment": "https://github.com/kk051780/toy-wars-factory/pull/69#issuecomment-6415187746",
+    "comment_head": "771f9b3d2f1b6a4aa9550547458c472d61078f2b",
+    "merged_source_unchanged": true,
+    "canonical_fixture": "tests/test_system_host_write_triage.py::fixtures()",
+    "before": {
+      "completed": "SAFE_TO_NEXT_SCHEDULE",
+      "failed": "SAFE_TO_NEXT_SCHEDULE",
+      "no_update": "SAFE_TO_NEXT_SCHEDULE"
+    },
+    "after": {
+      "completed": "SAFE_TO_NEXT_SCHEDULE",
+      "failed": "INDETERMINATE",
+      "no_update": "INDETERMINATE"
+    },
+    "reason_after": "SERVICE_NOT_SUCCESSFULLY_COMPLETED"
+  },
+  "root_cause": "service() must allow failed/no_update terminal owner evidence for orphan diagnosis, but final health classification lacked a completed-only condition.",
+  "implementation": "Two-line completed-only guard after existing in_progress check and before QA readiness. Preserve failure/orphan diagnostic paths and all existing gates.",
+  "tests": {
+    "new_file": "tests/test_system_triage_terminal_outcome.py",
+    "new_tests": 4,
+    "red_control": {
+      "source": "Unmodified current GitHub main",
+      "failed": 2,
+      "passed": 2,
+      "expected_failing_tests": [
+        "test_failed_service_is_not_safe_even_with_exact_run_head_green_qa",
+        "test_no_update_service_is_not_safe_even_with_exact_run_head_green_qa"
+      ]
+    },
+    "local_python": {
+      "tests": 247,
+      "conclusion": "PASS",
+      "includes_accepted_original37": true,
+      "includes_existing_7_mutation_controls": true
+    },
+    "local_policy_gate": {
+      "conclusion": "PASS_POLICY_ONLY",
+      "checks": 21,
+      "git_index": "Local exact-main snapshot plus proposed changes, not a GitHub CI result"
+    },
+    "existing_tests_modified": false,
+    "github_ci": "PENDING_NEW_EXACT_HEAD",
+    "trusted_meta_scope": {
+      "conclusion": "BLOCKED",
+      "error": "outside system-review scope: M tools/system_host_write_triage.py",
+      "source": "Trusted-base tools/check_meta_diff.py::violations with actual M/A entries",
+      "reason": "The existing system module is not in system_review.allowed_tool_paths; wildcard permits A only. No gate/config modification included."
+    }
+  },
+  "authority": "This run explicitly requests this exact repair after PR69 integration. The patch is saved for review under that instruction; no claim that the unchanged scope gate authorizes integration.",
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 695,
+    "lua_bytes": 27552
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "changed_files": [
+    "tools/system_host_write_triage.py",
+    "tests/test_system_triage_terminal_outcome.py",
+    "docs/research/2026-10-26_triage_terminal_outcome.md",
+    "history/C00042_triage_terminal_outcome.json"
+  ],
+  "primary_sources": [
+    {
+      "url": "https://github.com/github/gh-aw/pull/71883",
+      "published_at": "2026-10-25",
+      "updated_at": null,
+      "checked_at": "2026-10-26T12:04:58Z",
+      "finding": "Implementation-origin case preserves original process failure while emitting allowlisted diagnostics; reviewed again, not a newly discovered later publication."
+    },
+    {
+      "url": "https://docs.github.com/en/rest/actions/workflow-runs",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-26T12:04:58Z",
+      "finding": "Run status, conclusion, head_sha and attempt are distinct fields. Do not apply GitHub vocabulary as ChatGPT service semantics."
+    },
+    {
+      "url": "https://create.roblox.com/docs/studio/testing-modes",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-26T12:04:58Z",
+      "finding": "Keep client/server, multi-client and emulated-device evidence separate from source/mock tests."
+    },
+    {
+      "url": "https://create.roblox.com/docs/reference/engine/enums/ScreenInsets",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-26T12:04:58Z",
+      "finding": "Retain safe-area conditions for later compact-HUD regression; no game change or physical-device success claimed."
+    }
+  ],
+  "web_freshness": "Fresh search and primary pages opened this run. No later dated primary case established beyond the already-known Oct25 implementation case. Oct26 weekly page re-open returned Internal Error; no snippet adopted as new evidence.",
+  "main_health": {
+    "main": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+    "qa_head": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
+    "qa_run": 40317866877,
+    "qa_jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "direct_compare_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "semantic_defect": "Current main reproduces both false healthy-wait results despite green accepted CI."
+  },
+  "observed_service": {
+    "meta_run": {
+      "id": "a95f272c-3ee4-8324-a03e-de4cce8b89d8",
+      "recorded_status": "in_progress",
+      "scheduled_for": "2026-10-26T11:52:01.278194Z",
+      "started_at": "2026-10-26T11:52:13.873921Z",
+      "completed_at": null,
+      "chat_ref": null
+    },
+    "meta_prior_result_run": "cbda9d91-c480-8320-a8e9-606913e2a16a",
+    "prior_result_not_current_run": true,
+    "worker_sample": {
+      "id": "1c159542-ffdc-8327-9850-892b1a78843e",
+      "recorded_status": "completed",
+      "scheduled_for": "2026-10-26T11:05:33.019188Z",
+      "started_at": "2026-10-26T11:06:07.152359Z",
+      "completed_at": "2026-10-26T11:08:47.958965Z",
+      "chat_ref": {
+        "type": "chatgpt",
+        "id": "6adc2384-0294-83ee-a005-ef536b9eb34a"
+      }
+    },
+    "reviewer_sample": {
+      "id": "bce3c91b-9f04-832e-8452-3ebb94006588",
+      "recorded_status": "completed",
+      "scheduled_for": "2026-10-26T11:46:19.356097Z",
+      "started_at": "2026-10-26T11:46:39.668095Z",
+      "completed_at": "2026-10-26T11:50:15.679548Z",
+      "chat_ref": {
+        "type": "chatgpt",
+        "id": "6add6b00-4784-83ee-abae-45d04f185d10"
+      }
+    },
+    "denominator": {
+      "worker": 1,
+      "reviewer": 1
+    },
+    "raw_host_error": "NOT_AVAILABLE_IN_PERMITTED_PEEK",
+    "long_term_reliability": "NOT_ESTABLISHED"
+  },
+  "review_observation": {
+    "pr": 69,
+    "merged": true,
+    "merge_sha": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
+    "reviewer_run": "bce3c91b-9f04-832e-8452-3ebb94006588",
+    "comment_created_at": "2026-10-26T11:44:34Z",
+    "merged_at": "2026-10-26T11:48:55Z",
+    "observation": "One observed PR with green QA and independent APPROVE retained a reproducible issue noted in a preliminary comment. Reason for missed finding not established."
+  },
+  "deferred": [
+    "Issue68 review-request queue prioritization is next separate META issue; do not mix with this confirmed P1 source repair.",
+    "PR67 compact landscape repair remains WORKER-owned; no game edit this run."
+  ],
+  "protected_controls": "No accepted test, scope checker, workflow, authentication/provider permissions, budget/model/caps, schedule, owner delegation or release control changed. No author merge.",
+  "effect": "Local false-positive diagnosis is corrected and all247 Python tests pass. Not deployed; exact-head CI may block scope. Host write-denial root cause remains unknown.",
+  "next": "If CI rejects M tools/system_host_write_triage.py, CONTROLLER must resolve that exact maintenance-scope conflict through separate governed policy review, not bypass or weaken tests. Then registered independent REVIEWER checks a current-head passing CI and main QA after integration.",
+  "file_size_changes": [
+    {
+      "path": "tools/system_host_write_triage.py",
+      "before_bytes": 12061,
+      "after_bytes": 12196,
+      "delta_bytes": 135
+    },
+    {
+      "path": "tests/test_system_triage_terminal_outcome.py",
+      "before_bytes": 0,
+      "after_bytes": 2799,
+      "delta_bytes": 2799
+    },
+    {
+      "path": "docs/research/2026-10-26_triage_terminal_outcome.md",
+      "before_bytes": 0,
+      "after_bytes": 3892,
+      "delta_bytes": 3892
+    }
+  ]
+}

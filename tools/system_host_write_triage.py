@@ -197,6 +197,8 @@ def _classify(e, c, now):
         return result("INDETERMINATE", "HOST_WRITE_REPORTED_RAW_PROVIDER_ERROR_UNAVAILABLE")
     if svc["last_run"]["recorded_status"] == "in_progress":
         return result("INDETERMINATE", "SERVICE_IN_PROGRESS_DO_NOT_START_DUPLICATE")
+    if svc["last_run"]["recorded_status"] != "completed":
+        return result("INDETERMINATE", "SERVICE_NOT_SUCCESSFULLY_COMPLETED")
     if producer != run or ci["head"] != head or ci["base"] != base:
         return result("INDETERMINATE", "RUN_OR_HEAD_OR_BASE_QA_BINDING_MISMATCH")
     if ci["status"] != "completed":
