@@ -268,6 +268,14 @@ local function closestOpponent(state, entity)
     return best,bestDist
 end
 
+local function refreshHealthBar(e)
+    if not e.alive or not e.model or not e.model.Parent then return end
+    local bar=e.model:FindFirstChild("HealthBar")
+    if bar and bar:IsA("BasePart") then
+        bar.Size=Vector3.new(3.2*math.max(.01,e.health/e.maxHealth),0.33,0.4)
+    end
+end
+
 local function updateEntity(state,e,dt)
     if not e.alive then return end
     local data=B.UNITS[e.id]
@@ -279,7 +287,7 @@ local function updateEntity(state,e,dt)
             local remain=B.nextHP(target.health,target.maxHealth,data.damage)
             if remain then
                 target.health=remain
-                if remain<=0 then killEntity(state,target,e) end
+                if remain<=0 then killEntity(state,target,e) else refreshHealthBar(target) end
             end
             e.cooldown=data.cooldown+math.min(0,remaining)
         end
@@ -306,10 +314,7 @@ local function updateEntity(state,e,dt)
     end
     if e.alive and e.model.Parent then
         e.model:PivotTo(CFrame.new(e.x,2.5,e.z))
-        local bar=e.model:FindFirstChild("HealthBar")
-        if bar and bar:IsA("BasePart") then
-            bar.Size=Vector3.new(3.2*math.max(.01,e.health/e.maxHealth),0.33,0.4)
-        end
+        refreshHealthBar(e)
     end
 end
 
