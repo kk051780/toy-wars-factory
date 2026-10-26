@@ -1,6 +1,7 @@
 name: Toy Wars trusted coordinator claim
 on:
   pull_request_target:
+    branches: [main]
     types: [opened, synchronize, reopened, ready_for_review]
 permissions:
   contents: read
@@ -10,28 +11,38 @@ concurrency:
   cancel-in-progress: true
 jobs:
   trusted_claim:
-    if: startsWith(github.event.pull_request.head.ref, 'auto/twf-game-repair') || startsWith(github.event.pull_request.head.ref, 'auto/twf-system-review-')
+    if: >-
+      github.event.pull_request.base.ref == 'main' &&
+      github.event.pull_request.base.repo.full_name == github.repository &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (startsWith(github.event.pull_request.head.ref, 'auto/twf-game-repair') ||
+       startsWith(github.event.pull_request.head.ref, 'auto/twf-system-review-'))
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Checkout ONLY trusted target-main source, never PR code
+      - name: Checkout ONLY immutable target-main source, never PR code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           fetch-depth: 0
           persist-credentials: false
-      - name: Validate PR data using BASE Python, with scoped read-token fetch
+      - name: Authenticated data-only fetch, no PR code execution
         env:
           GH_TOKEN: ${{ github.token }}
+          TWF_BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
           TWF_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           TWF_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           TWF_HEAD_REF: ${{ github.event.pull_request.head.ref }}
           TWF_PR_NUMBER: ${{ github.event.pull_request.number }}
           TWF_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
-          TWF_BASE_REPO: ${{ github.repository }}
+          TWF_BASE_REPO: ${{ github.event.pull_request.base.repo.full_name }}
+          TWF_REPOSITORY: ${{ github.repository }}
           GIT_TERMINAL_PROMPT: '0'
         run: |
           set -euo pipefail
+          test "$TWF_BASE_BRANCH" = main
+          test "$TWF_BASE_REPO" = "$TWF_REPOSITORY"
+          test "$TWF_HEAD_REPO" = "$TWF_REPOSITORY"
           test "$TWF_HEAD_REPO" = "$TWF_BASE_REPO"
           [[ "$TWF_HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]
           [[ "$TWF_BASE_SHA" =~ ^[0-9a-f]{40}$ ]]
@@ -41,6 +52,14 @@ jobs:
           git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $basic" fetch --no-tags origin "refs/pull/${TWF_PR_NUMBER}/head:refs/remotes/origin/trusted-pr-head" refs/heads/twf-repair-coordinator:refs/remotes/origin/twf-repair-coordinator
           unset basic
           test "$(git rev-parse refs/remotes/origin/trusted-pr-head)" = "$TWF_HEAD_SHA"
-          test "$(git rev-parse "$TWF_BASE_SHA")" = "$TWF_BASE_SHA"
-          # The only executed Python below was checked out from target main.
+          # Credentials exist only in THIS step, and are never written to repo config.
+      - name: Verify fetched PR metadata using immutable MAIN Python without tokens
+        env:
+          TWF_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          TWF_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          TWF_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$TWF_BASE_SHA"
+          # Never execute Python, shell, or workflow files from PR HEAD.
           python3 tools/repair_control.py verify-pr --policy config/autonomous_repair.json --base "$TWF_BASE_SHA" --head "$TWF_HEAD_SHA" --branch "$TWF_HEAD_REF" --control-ref refs/remotes/origin/twf-repair-coordinator

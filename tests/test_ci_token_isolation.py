@@ -59,5 +59,28 @@ class WorkflowIsolationTests(unittest.TestCase):
             self.assertNotIn('npm ', line)
             self.assertNotIn('lua5.4', line)
 
+
+    def test_target_is_immutable_main_and_same_repository(self):
+        self.assertIn('    branches: [main]', TRUSTED)
+        self.assertIn("github.event.pull_request.base.ref == 'main'", TRUSTED)
+        self.assertIn('github.event.pull_request.base.repo.full_name == github.repository', TRUSTED)
+        self.assertIn('github.event.pull_request.head.repo.full_name == github.repository', TRUSTED)
+        self.assertIn('test "$TWF_BASE_BRANCH" = main', TRUSTED)
+        self.assertIn('test "$TWF_BASE_REPO" = "$TWF_REPOSITORY"', TRUSTED)
+        self.assertIn('test "$TWF_HEAD_REPO" = "$TWF_REPOSITORY"', TRUSTED)
+        self.assertIn('test "$(git rev-parse HEAD)" = "$TWF_BASE_SHA"', TRUSTED)
+
+    def test_credential_step_does_not_execute_python(self):
+        fetch_marker = '      - name: Authenticated data-only fetch, no PR code execution'
+        verify_marker = '      - name: Verify fetched PR metadata using immutable MAIN Python without tokens'
+        self.assertEqual(TRUSTED.count(fetch_marker), 1)
+        self.assertEqual(TRUSTED.count(verify_marker), 1)
+        fetch_section = TRUSTED.split(fetch_marker, 1)[1].split(verify_marker, 1)[0]
+        verify_section = TRUSTED.split(verify_marker, 1)[1]
+        self.assertIn('GH_TOKEN: ${{ github.token }}', fetch_section)
+        self.assertNotIn('python3 ', fetch_section)
+        self.assertNotIn('GH_TOKEN', verify_section)
+        self.assertIn('python3 tools/repair_control.py verify-pr', verify_section)
+
 if __name__ == '__main__':
     unittest.main()
