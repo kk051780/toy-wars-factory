@@ -271,7 +271,8 @@ end
 local function updateEntity(state,e,dt)
     if not e.alive then return end
     local data=B.UNITS[e.id]
-    e.cooldown=math.max(0,e.cooldown-dt)
+    local remaining=e.cooldown>0 and e.cooldown-dt or 0
+    e.cooldown=math.max(0,remaining)
     local target, dist=closestOpponent(state,e)
     if target and dist <= data.range then
         if e.cooldown<=0 then
@@ -280,7 +281,7 @@ local function updateEntity(state,e,dt)
                 target.health=remain
                 if remain<=0 then killEntity(state,target,e) end
             end
-            e.cooldown=data.cooldown
+            e.cooldown=data.cooldown+math.min(0,remaining)
         end
     else
         local tx= e.x
