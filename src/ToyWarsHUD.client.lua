@@ -81,6 +81,7 @@ tip.TextStrokeTransparency=0.4
 -- ImageButtons keep the three purchasable TextButtons unambiguous.
 local quickStart=Instance.new("Frame")
 quickStart.Name="QuickStart"
+quickStart.Visible=true
 quickStart.Size=UDim2.new(0.78,0,0,182)
 quickStart.Position=UDim2.new(0.11,0,0.34,0)
 quickStart.BackgroundColor3=Color3.fromRGB(24,38,63)
@@ -90,6 +91,7 @@ quickStart.Parent=gui
 round(quickStart,15)
 local guideTitle=addText(quickStart,UDim2.new(1,-24,0,28),UDim2.new(0,12,0,10),
     "WELCOME, FACTORY MASTER!",Color3.fromRGB(255,216,115))
+guideTitle.Name="GuideTitle"
 guideTitle.ZIndex=21
 local guideSteps={
     "1/3  PICK A TOY\nTap PON, GUARDON or TANKURU at the bottom.",
@@ -99,6 +101,7 @@ local guideSteps={
 local guidePage=1
 local guideText=addText(quickStart,UDim2.new(1,-28,0,74),UDim2.new(0,14,0,43),
     guideSteps[guidePage],Color3.fromRGB(242,248,255))
+guideText.Name="GuideStepText"
 guideText.ZIndex=21
 local function guideButton(name,caption,x,color)
     local button=Instance.new("ImageButton")
@@ -112,7 +115,7 @@ local function guideButton(name,caption,x,color)
     round(button,10)
     local text=addText(button,UDim2.fromScale(1,1),UDim2.fromScale(0,0),
         caption,Color3.fromRGB(255,255,255))
-    text.Name="Caption"
+    text.Name=name.."Caption"
     text.ZIndex=22
     return button,text
 end

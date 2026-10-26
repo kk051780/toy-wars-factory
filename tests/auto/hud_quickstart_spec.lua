@@ -54,21 +54,23 @@ end
 check("starts with a visible first-play guide without changing three toy buttons",function()
     local f,count=fixture()
     eq(count,3,"purchasable button count")
-    eq(f.QuickStart.Visible,nil,"default Roblox Visible property represented as unset in mock")
+    eq(f.QuickStart.Visible,true,"guide initially visible")
     assert(f.QuickStart.ClassName=="Frame","quick start frame")
     assert(f.GuideNext.ClassName=="ImageButton" and f.GuideSkip.ClassName=="ImageButton","touch actions")
-    assert(f.QuickStart.ZIndex>f.StatusPanel.ZIndex or f.StatusPanel.ZIndex==nil,"guide foreground")
+    assert(f.StatusPanel.ZIndex==nil or f.QuickStart.ZIndex>f.StatusPanel.ZIndex,"guide foreground")
 end)
 check("next moves through all three lessons and PLAY dismisses the guide",function()
     local f=fixture()
     local guide,go=f.QuickStart,f.GuideNext
-    local message
-    for _,o in ipairs({f.QuickStart}) do assert(o,"guide exists") end
+    local message=f.GuideStepText
+    assert(message.Text:match("^1/3"),"initial page 1")
     go.Activated:Fire()
-    -- TextLabel guide step is updated even with mocked UI objects.
-    assert(guide.Visible~=false,"page two visible")
+    assert(message.Text:match("^2/3"),"shows page 2 instructions")
+    eq(guide.Visible,true,"page two visible")
     go.Activated:Fire()
-    assert(guide.Visible~=false,"page three visible")
+    assert(message.Text:match("^3/3"),"shows page 3 instructions")
+    eq(f.GuideNextCaption.Text,"PLAY","final button label")
+    eq(guide.Visible,true,"page three visible")
     go.Activated:Fire()
     eq(guide.Visible,false,"guide closed")
     go.Activated:Fire()
