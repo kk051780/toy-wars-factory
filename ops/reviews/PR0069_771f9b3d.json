@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "pr": 69,
+  "head": "771f9b3d2f1b6a4aa9550547458c472d61078f2b",
+  "base_main_sha": "09c08ddde66188fc0bd820ff1984c64f743d8144",
+  "reviewed_at": "2026-10-26T11:48:36.285Z",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "bce3c91b-9f04-832e-8452-3ebb94006588",
+  "lease_epoch": 73,
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "cbda9d91-c480-8320-a8e9-606913e2a16a",
+  "category": "SYSTEM_IMPROVEMENT_READ_ONLY_DIAGNOSTIC",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "changed_files": [
+    "tools/system_host_write_triage.py",
+    "tests/test_system_host_write_triage.py",
+    "docs/research/2026-10-26_host_write_triage.md",
+    "history/C00041_host_write_incident_triage.json"
+  ],
+  "ci": {
+    "id": 40316726148,
+    "head": "771f9b3d2f1b6a4aa9550547458c472d61078f2b",
+    "base_main_sha": "09c08ddde66188fc0bd820ff1984c64f743d8144",
+    "attempt": 1,
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": [
+      {
+        "name": "offline",
+        "conclusion": "success"
+      },
+      {
+        "name": "compile_hold",
+        "conclusion": "success"
+      }
+    ],
+    "python_tests": 243,
+    "new_python_tests": 37,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40316726148"
+  },
+  "main_qa": {
+    "head": "913ed41140e3e063c207e6629858a8a35c01216b",
+    "id": 40310479605,
+    "conclusion": "success",
+    "comparison_since_qa": {
+      "verified": true,
+      "status": "ahead",
+      "ahead_by": 1,
+      "behind_by": 0,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "scope_evidence": "Current main direct compare one commit, status-only; PR69 compare exactly four new files and one commit, no game source/accepted tests/policy/permissions/budget/release changes. Trusted-base META scope and immutable claim steps passed in current-head CI.",
+  "claim_evidence": {
+    "claim_commit": "4ee9615fba786c825b6bb89d09ef8bd7a2d0e52f",
+    "epoch": 72,
+    "author_run_id": "cbda9d91-c480-8320-a8e9-606913e2a16a",
+    "ancestry_verified": true,
+    "source": "GitHub commit parent + coordinator state and current-head CI"
+  },
+  "behavior_evidence": "Pure classifier, no network/Git/scheduler writes. Explicit deny flags; direct-provider evidence required; expiry alone and stale QA rejected. 37 new adversarial tests including 7 mutation controls passed in CI logs. Does not resolve original host refusal.",
+  "limitations": [
+    "No authenticated raw host-denial response; Issue #57 remains unresolved",
+    "Provider envelope authenticity delegated to trusted collector; JSON labels are not signatures",
+    "Roblox engine/multiplayer/mobile not executed",
+    "No sustained automation reliability claim"
+  ]
+}
