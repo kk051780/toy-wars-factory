@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "pr": 62,
+  "head": "f8fdfe0c034f830d4d46589499e9c2ecb16d5a7e",
+  "base_main_sha": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+  "reviewed_at": "2026-10-26T09:24:35.708Z",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "5640140e-af34-8330-ab0b-05c44b2e6767",
+  "lease_epoch": 55,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "a28e0d03-9c90-8332-a806-4fd9f438cddd",
+  "author_claim_commit": "55485aa0ff54591116a5c2eccede8a5363c15be5",
+  "author_claim_epoch": 51,
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "GAME_SOURCE_FIX",
+  "changed_files": [
+    "history/C00036_restart_wave_grace_fix.json",
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/restart_wave_grace_spec.lua"
+  ],
+  "findings": [
+    "Exact-head PR #62 CI #40294943505 at f8fdfe0c passed offline and compile_hold; trusted base scope gate PASS (3 changed files) and immutable coordination claim gate PASS (1 claim).",
+    "Current main c057ca6d equals PR base, PR head is ahead 1/behind 0 and mergeable clean; no callback copies, test weakening, unrelated features or protected policy/provider/billing/release changes.",
+    "Only resetAfterLoss enemyTimer 4 -> 0.1; waveBreak remains 4 and initial wave timer 0.1; accepted base-loss test preserved. New whole-server regression PASS at 14x0.3 seconds no JUNK, 15th beat JUNK=1; pinned old-source executable negative control PASS with JUNK=0 at 4.5s.",
+    "C00036 task/run/branch matches shared WORKER epoch51 claim commit 55485aa0; claim is ancestor of current coordinator; source ledger server 18868 -> 18870 (+2), total Lua 4 files 681 lines 26970 bytes, new test 2559 bytes.",
+    "Main QA #40283372197 success on merge commit 078f1f81; direct compare to c057ca6d proves only status/CHAT_HANDOFF.md and status/LATEST_STATE.json changed.",
+    "Roblox Studio, multiplayer, mobile, actual play and release remain HOLD/UNVERIFIED."
+  ],
+  "evidence": {
+    "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/62",
+    "ci_run": 40294943505,
+    "ci_head": "f8fdfe0c034f830d4d46589499e9c2ecb16d5a7e",
+    "ci_base": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+    "ci_conclusion": "success",
+    "required_jobs": [
+      "offline",
+      "compile_hold"
+    ],
+    "ci_scope_and_claim_gate": "PASS",
+    "main_qa_run": 40283372197,
+    "main_qa_head": "078f1f81c3166e7e03f9462c108620b8270187ef",
+    "main_status_only_compare": {
+      "base": "078f1f81c3166e7e03f9462c108620b8270187ef",
+      "head": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+      "files": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    },
+    "claim_verified_ancestor": true,
+    "source_metrics_verified": {
+      "lua_files": 4,
+      "lua_lines": 681,
+      "lua_bytes": 26970,
+      "server_before_bytes": 18868,
+      "server_after_bytes": 18870,
+      "new_test_bytes": 2559
+    },
+    "old_source_negative_control": "EXECUTED_PASS_CI_LOG"
+  },
+  "merge": {
+    "status": "APPROVED_PENDING_MERGE"
+  },
+  "next": "Merge only exact head after renewed lease/head check; then verify main offline/compile_hold and handoff before any further PR."
+}
