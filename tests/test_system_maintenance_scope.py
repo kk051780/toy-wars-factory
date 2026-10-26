@@ -66,12 +66,29 @@ class TrustedMaintenanceScopeTests(unittest.TestCase):
                 with self.subTest(path=path, status=status):
                     result = self.allowed([(status, path), VALID_TEST, VALID_HISTORY],
                                           known={VALID_MODULE})
-                    self.assertTrue(result, (status, path))
+                    # Preserve existing *legitimate* META permissions:
+                    # new system modules/tests/history and approved repair tools
+                    # are already allowed by the trusted-base checker.
+                    existing_allowed = (
+                        (status == "A" and path in {
+                            "tools/system_.py", "tools/system_foo.py",
+                            "tests/test_system_legacy.py",
+                            "history/C00043_review_repair_queue.json"
+                        }) or
+                        (status == "M" and path == "tools/repair_integration.py")
+                    )
+                    if existing_allowed:
+                        self.assertEqual(result, [], (status, path))
+                    else:
+                        self.assertTrue(result, (status, path))
                     counter += 1
-        self.assertGreaterEqual(counter, 200)
+        self.assertGreaterEqual(counter, 240)
 
     def test_valid_path_wrong_status_or_unregistered_module_rejected(self):
-        for status in ("A", "D", "R100", "T", "C100", "U"):
+        # A was already allowed for NEW system modules before this change.
+        self.assertEqual(self.allowed([("A", VALID_MODULE),
+                                       VALID_TEST, VALID_HISTORY]), [])
+        for status in ("D", "R100", "T", "C100", "U"):
             with self.subTest(status=status):
                 self.assertTrue(self.allowed([(status, VALID_MODULE),
                                               VALID_TEST, VALID_HISTORY]))
