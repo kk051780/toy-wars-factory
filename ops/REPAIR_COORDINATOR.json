@@ -1,8 +1,18 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 55,
-  "holder": null,
+  "epoch": 56,
+  "holder": {
+    "kind": "CONTROLLER",
+    "owner_id": "e72cf70a-bdf4-48f5-9cc8-312e64b9ae3f",
+    "task_id": null,
+    "epoch": 56,
+    "acquired_at": "2026-10-26T09:29:12.897Z",
+    "expires_at": "2026-10-26T09:59:12.897Z",
+    "base_main_sha": "4bd7535b862c9975beb481c50df26e001b151d50",
+    "work_branch": "ops/twf-manual-review-lane",
+    "origin": "controller"
+  },
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
