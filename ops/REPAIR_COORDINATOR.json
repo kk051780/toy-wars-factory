@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 62,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "e47d1c3d-56a0-8331-b895-ba70c71e7c3d",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 62,
-    "acquired_at": "2026-10-26T10:18:18.116Z",
-    "expires_at": "2026-10-26T10:48:18.116Z",
-    "base_main_sha": "389c9af779eb120387085d4af29c47f8366502d9",
-    "work_branch": "auto/twf-game-repair-e47d1c3d-56a0-8331-b895-ba70c71e7c3d",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -30,15 +20,14 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "e958762e-a330-8330-a739-56a1c3a9373b",
-    "epoch": 61,
-    "released_at": "2026-10-26T10:14:06.040Z",
-    "pr": 63,
-    "head": "67ee928743b8efa6c3cce4a80d8b038473f6bc95",
-    "merge_sha": "6b4fb5bfb19c6e0a27a61c3f261805d85fbf7d8a",
-    "post_merge_qa_status": "success",
-    "result": "MERGED_MAIN_QA_PASSED_FINALIZED"
+    "kind": "WORKER",
+    "owner_id": "e47d1c3d-56a0-8331-b895-ba70c71e7c3d",
+    "epoch": 62,
+    "released_at": "2026-10-26T10:20:55.806Z",
+    "pr": 64,
+    "head": "d711b33bbeae74cfdc7362f636b521d69e4b2fdc",
+    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40306673646",
+    "result": "DRAFT_PR_CI_PENDING"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
