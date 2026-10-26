@@ -132,6 +132,55 @@ check("guide NEXT and PLAY never send gameplay commands",function()
     eq(f.QuickStart.Visible,false,"PLAY dismisses")
     eq(count,3,"selectors unchanged")
 end)
+
+-- Deterministic UDim2 bounds from the canonical HUD; not actual mobile rendering.
+local function bounds(node,width,height)
+    local px,py,pw,ph=0,0,width,height
+    if node.Parent and node.Parent.ClassName~="ScreenGui" then
+        px,py,pw,ph=bounds(node.Parent,width,height)
+    end
+    local pos,size=node.Position,node.Size
+    assert(type(pos)=="table" and type(size)=="table","GuiObject requires UDim2")
+    return px+pw*pos[1]+pos[2],py+ph*pos[3]+pos[4],pw*size[1]+size[2],ph*size[3]+size[4]
+end
+local function overlaps(a,b)
+    return a[1]<b[1]+b[3] and b[1]<a[1]+a[3]
+       and a[2]<b[2]+b[4] and b[2]<a[2]+a[4]
+end
+check("guide SKIP/NEXT do not overlap toy selectors on compact landscape screens",function()
+    local f,count,calls=fixture()
+    eq(count,3,"three selectors preserved")
+    for _,v in ipairs({{640,320},{640,360},{844,390},{960,540}}) do
+        local w,h=v[1],v[2]
+        for _,action in ipairs({f.GuideSkip,f.GuideNext}) do
+            local a={bounds(action,w,h)}
+            assert(a[1]>=0 and a[2]>=0 and a[1]+a[3]<=w and a[2]+a[4]<=h,
+                string.format("%s outside %dx%d",action.Name,w,h))
+            for _,selector in ipairs({f.pon,f.guardon,f.tankuru}) do
+                assert(not overlaps(a,{bounds(selector,w,h)}),
+                    string.format("%s overlaps %s at %dx%d",action.Name,selector.Name,w,h))
+            end
+        end
+    end
+    eq(#calls,0,"geometry test sends no gameplay command")
+end)
+check("rejected PR67 a57961e4 old guide position reproduces mobile overlap",function()
+    local f=fixture()
+    -- Old rejected head placed the guide at 0.34 screen height; other dimensions unchanged.
+    local saved=f.QuickStart.Position
+    f.QuickStart.Position={0.11,0,0.34,0}
+    for _,v in ipairs({{640,320},{640,360}}) do
+        local w,h=v[1],v[2]
+        local collision=false
+        for _,action in ipairs({f.GuideSkip,f.GuideNext}) do
+            for _,selector in ipairs({f.pon,f.guardon,f.tankuru}) do
+                if overlaps({bounds(action,w,h)},{bounds(selector,w,h)}) then collision=true end
+            end
+        end
+        assert(collision,string.format("old guide must collide at %dx%d",w,h))
+    end
+    f.QuickStart.Position=saved
+end)
 local old=".qa/server-before/src/ToyWarsHUD.client.lua"
 local fh=io.open(old,"rb")
 if fh then

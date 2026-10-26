@@ -1,0 +1,88 @@
+{
+  "id": "C00042",
+  "date": "2026-10-26",
+  "kind": "AUTONOMOUS_PR67_REVIEW_LAYOUT_REPAIR",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "b3b2766a-3548-832f-abf1-725336d75c18",
+  "queue_decision": {
+    "action": "REPAIR_REVIEW",
+    "policy_choose_action": "START",
+    "reason": "Verified same-repo exact-head PR67 independent REVIEWER REQUEST_CHANGES; prioritize before new feature",
+    "change_scheduler": false,
+    "pr": 67,
+    "branch": "auto/twf-game-repair-8d9d3375-a74c-8332-ae42-78607b1c88cc",
+    "open_prs": [
+      67
+    ]
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "4fdf8775b224da76959e6ea69fc6704f65bc8c88",
+    "owner_run_id": "b3b2766a-3548-832f-abf1-725336d75c18",
+    "epoch": 76
+  },
+  "main_base": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+  "pr_previous_head": "a57961e42bbda115659f67bfa4a6fe5a1540d473",
+  "pr": 67,
+  "review_request": "pr67_mobile_guide_selector_overlap",
+  "defect": {
+    "cause": "QuickStart at 0.34 screen height overlays toy selectors on compact landscape screens; earlier Lua tests lacked geometry assertions.",
+    "reproduction": "At 640x320 old actions y=234.8..279.8 versus selectors y=222..284; at 640x360 actions y=248.4..293.4 versus selectors y=262..324."
+  },
+  "fix": "Reposition QuickStart to 0.12 screen height; verify SKIP/NEXT vs all 3 selectors at 640x320, 640x360, 844x390 and 960x540. Preserve existing 3-step navigation, queue, price, status, and gameplay commands.",
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/first_play_hud_guide_spec.lua",
+    "history/C00042_pr67_mobile_guide_layout_repair.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 6610,
+      "after_bytes": 6610,
+      "delta_bytes": 0
+    }
+  ],
+  "main_source_bytes": 4286,
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 753,
+    "lua_bytes": 29876
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/first_play_hud_guide_spec.lua",
+      "before_bytes": 6828,
+      "after_bytes": 9058,
+      "delta_bytes": 2230
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "PON/GUARDON/TANKURU stats, prices, selection callbacks and server unchanged.",
+  "tests": {
+    "canonical_hud": "tests/auto/first_play_hud_guide_spec.lua",
+    "accepted_queue": "tests/auto/workshop_queue_hud_spec.lua",
+    "accepted_price": "tests/hud_price_spec.lua",
+    "negative_control": "Old rejected head a57961e4 UDim2 position replay plus pre-guide main HUD fixture",
+    "preflight": "Deterministic geometry preflight passed; Lua CI pending",
+    "ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+    "claim_commit": "4fdf8775b224da76959e6ea69fc6704f65bc8c88",
+    "review": "https://github.com/kk051780/toy-wars-factory/blob/twf-repair-coordinator/ops/reviews/PR0067_a57961e4.json",
+    "pr": "https://github.com/kk051780/toy-wars-factory/pull/67",
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "next_action": "Verify exact-head offline and compile_hold CI; independent REVIEWER re-reviews and merges only after acceptance.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}
