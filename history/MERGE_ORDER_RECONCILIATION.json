@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "purpose": "Out-of-order independent PR merge: original source_metrics are authored-base snapshots, not rewritten cumulative measurements.",
+  "references": {
+    "earlier_pr": 74,
+    "later_pr": 67,
+    "earlier_main_merge": "e8d1cedce6a2bc32d5fed6b170f78c2b0b6699fa",
+    "later_main_merge": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+    "original_failed_qa": 40340954729,
+    "original_failed_handoff": 40340954800
+  },
+  "exceptions": [
+    {
+      "record": "C00044_health_bar_damage_step_fix.json",
+      "record_id": "C00044",
+      "authored_commit": "35dbdf89e3583cfa3a01a2b860f750b61e4c6935",
+      "authored_base": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+      "earlier_main_merge": "e8d1cedce6a2bc32d5fed6b170f78c2b0b6699fa",
+      "later_main_merge": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+      "excluded_prior_records": [
+        "C00040_first_play_hud_guide.json"
+      ],
+      "source_files": [
+        "src/ToyWarsBalance.lua",
+        "src/ToyWarsServer.server.lua",
+        "src/ToyWarsHUD.client.lua",
+        "src/ToyWarsSmokeTest.server.lua"
+      ],
+      "note": "C44 authored on the common base with 27706 total; C40 HUD +2324 bytes merged later but sorts earlier by ID; final 30030=27706+2324."
+    }
+  ]
+}
