@@ -74,11 +74,27 @@ class IntegrationTests(unittest.TestCase):
         # independent GitHub fetch; local tests use deterministic fixtures.
         proof = self.review["manual_provenance"]
         raw=json.dumps(proof["claim_state"], sort_keys=True)
+        before_state={"epoch": 46, "holder": None,
+                      "authorized_tasks": {"REVIEWER":"registered"},
+                      "owner_delegation":{"main_integration_authorized": True}}
+        proof["claim_state"]["authorized_tasks"]=before_state["authorized_tasks"]
+        proof["claim_state"]["owner_delegation"]=before_state["owner_delegation"]
+        raw=json.dumps(proof["claim_state"], sort_keys=True)
         content=raw.encode()
         blob=hashlib.sha1(b"blob "+str(len(content)).encode()+b"\0"+content).hexdigest()
+        parent_raw=json.dumps(before_state,sort_keys=True)
+        parent_data=parent_raw.encode()
+        parent_blob=hashlib.sha1(b"blob "+str(len(parent_data)).encode()+b"\0"+parent_data).hexdigest()
         self.review["manual_git_evidence"] = {
             "claim": {"repository": self.policy["repository"],
-                      "sha": claim, "state_file": raw, "state_blob_sha": blob},
+                      "sha": claim, "state_file": raw, "state_blob_sha": blob,
+                      "parents": ["c"*40],
+                      "changed_entries": [["M","ops/REPAIR_COORDINATOR.json"]]},
+            "claim_parent": {"sha": "c"*40, "repository": self.policy["repository"],
+                             "state_file": parent_raw, "state_blob_sha": parent_blob},
+            "current_coordinator_head": "a"*40,
+            "claim_to_control_ref": {"base": claim, "head": "a"*40,
+                                     "status":"ahead", "behind_by":0},
             "first_commit": {"sha": "e"*40, "parents": [self.main["sha"]],
                              "committer_date": "2026-10-25T00:10:00Z"},
             "workflow_run": {"id": 54321, "head_sha": self.pr["head"],
@@ -243,6 +259,49 @@ class IntegrationTests(unittest.TestCase):
             else:copied["comparison"]["entries"]=[]
             self.review["manual_git_evidence"]=copied
             self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF",mutation)
+
+    def test_manual_claim_requires_actual_coordinator_ancestry(self):
+        self.enable_manual_candidate()
+        evidence=self.review["manual_git_evidence"]
+        self.assertEqual(self.decision()["action"],"MERGE")
+        relationship=evidence["claim_to_control_ref"]
+        for field,value in (("base","f"*40),("head","f"*40),
+                            ("status","diverged"),("behind_by",1)):
+            before=relationship[field]
+            relationship[field]=value
+            self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF",field)
+            relationship[field]=before
+        evidence.pop("claim_to_control_ref")
+        self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
+
+    def test_manual_claim_requires_idle_parent_and_single_epoch_step(self):
+        self.enable_manual_candidate()
+        evidence=self.review["manual_git_evidence"]
+        parent=evidence["claim_parent"]
+        original=parent["state_file"]
+        prior=json.loads(original)
+        for scenario in ("holder","epoch","authorized_tasks","owner_delegation"):
+            changed=copy.deepcopy(prior)
+            if scenario=="holder":changed["holder"]={"kind":"CONTROLLER"}
+            elif scenario=="epoch":changed["epoch"]=45
+            elif scenario=="authorized_tasks":changed["authorized_tasks"]={"REVIEWER":"other"}
+            else:changed["owner_delegation"]={}
+            content=json.dumps(changed,sort_keys=True)
+            raw=content.encode()
+            parent["state_file"]=content
+            parent["state_blob_sha"]=hashlib.sha1(
+                b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
+            self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF",scenario)
+        parent["state_file"]=original
+
+    def test_manual_claim_rejects_extra_file_or_wrong_parent_commit(self):
+        self.enable_manual_candidate()
+        claim=self.review["manual_git_evidence"]["claim"]
+        claim["changed_entries"].append(["M","config/autonomous_repair.json"])
+        self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
+        claim["changed_entries"].pop()
+        claim["parents"]=["f"*40]
+        self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
 
     def test_manual_receipt_rejects_unrelated_first_commit(self):
         self.enable_manual_candidate()

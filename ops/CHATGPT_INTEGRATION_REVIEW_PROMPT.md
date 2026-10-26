@@ -50,3 +50,7 @@ C履歴（before/afterのバイト連鎖）、既存回帰、悪意ある保護�
 
 ### 第三者監査結果に基づく追加の必須取得
 GitHubの実コミットのfirstと現在PR headについて `compare/{first_commit}...{head}` で祖先関係（status=ahead/identical、behind_by=0）を確認し、`manual_git_evidence.first_commit_to_head`へ実測を入れる。`workflow_run.path`を`.github/workflows/bootstrap-quality.yml`と照合。2つの必須jobには`run_id`と個別job IDを添え、全run_idが実CI IDと一致しjob IDは重複不可。PR作成時刻はclaim期限内を要求する。取得できない場合は統合拒否。
+
+### 追加の必須 GitHub 検査：共有claimの正規遷移
+
+元claimコミットの実parent SHA、親と子の`ops/REPAIR_COORDINATOR.json`原文/blob SHA、親子changed_entriesがその1ファイルのMだけであることを取得する。親holder=null、子epoch=親epoch+1、authorized_tasks/owner_delegation不変を確認。現在共有ref headと元claimをGitHub compareしてahead/identical、behind_by=0を検証。真正なAPI取得物を`manual_git_evidence.claim_parent`、`claim.parents`、`claim.changed_entries`、`claim_to_control_ref`、`current_coordinator_head`に入力。失敗時はWAIT_MANUAL_PROOFとする。

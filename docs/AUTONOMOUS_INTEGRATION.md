@@ -89,3 +89,7 @@ mainに採用されるまでは、手動PR #58の自動統合は解禁されな�
 ### 監査再指摘への補強（2026-10-26）
 
 レビューはclaim取得時刻 **<** 最初の作者コミット時刻 **<=** PR作成時刻 **<** claim期限を要求する。PR作成をclaim期限内とする方針を明記する。独立REVIEWERは GitHub比較API `compare/{first_commit}...{pr_head}` を取得し、firstとheadが同じなら`identical`、異なるなら`ahead`、かつ`behind_by=0`を確認し、`first_commit_to_head`として提供する。CIの`workflow_run.path`は`.github/workflows/bootstrap-quality.yml`、各`jobs[].run_id`はrun IDと一致し、2件のjob IDは異なる必要がある。API取得の真正性を担う登録済み審査役以外の入力は信用しない。
+
+### ロック取得コミットの共有ブランチ根拠
+
+登録された独立REVIEWERは、元claimの唯一の親SHAと親子の`ops/REPAIR_COORDINATOR.json`原文・blob SHAをGitHubの認証済み取得で検証する。親はholder=nullで、子ではepochがちょうど1増加し、authorized_tasksとowner_delegationが不変でなければ拒否する。claim差分は共有状態ファイル1件のMだけを許可する。さらにGitHub compareで元claimが`twf-repair-coordinator`の現headの祖先であること（ahead/identicalかつbehind_by=0）を検証し、`manual_git_evidence.claim_parent`と`claim_to_control_ref`に収録する。

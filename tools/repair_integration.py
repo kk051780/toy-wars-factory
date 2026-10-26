@@ -84,9 +84,33 @@ def verified_manual_git_receipts(request, pr, review, claim_state):
             not re.fullmatch(r"[0-9a-f]{40}", str(receipt.get("state_blob_sha"))) or
             _git_blob_sha(receipt["state_file"]) != receipt["state_blob_sha"]):
         return False
+    # Authenticated reviewer must supply parent and branch ancestry from GitHub.
+    parent = evidence.get("claim_parent")
+    relation = evidence.get("claim_to_control_ref")
+    if not isinstance(parent, dict) or not isinstance(relation, dict):
+        return False
+    if (not re.fullmatch(r"[0-9a-f]{40}", str(parent.get("sha"))) or
+            receipt.get("parents") != [parent["sha"]] or
+            not isinstance(parent.get("state_file"), str) or
+            _git_blob_sha(parent["state_file"]) != parent.get("state_blob_sha") or
+            receipt.get("changed_entries") != [["M", "ops/REPAIR_COORDINATOR.json"]] or
+            relation.get("base") != receipt["sha"] or
+            not re.fullmatch(r"[0-9a-f]{40}", str(relation.get("head"))) or
+            relation.get("status") not in ("ahead", "identical") or
+            relation.get("behind_by") != 0 or
+            relation.get("head") != evidence.get("current_coordinator_head")):
+        return False
     try:
+        prior = json.loads(parent["state_file"], object_pairs_hook=_strict_json_pairs)
         fetched = json.loads(receipt["state_file"], object_pairs_hook=_strict_json_pairs)
-        if fetched != claim_state:
+        if fetched != claim_state or not isinstance(prior, dict):
+            return False
+        if (prior.get("holder") is not None or
+                type(prior.get("epoch")) is not int or
+                prior["epoch"] + 1 != claim_state.get("epoch") or
+                prior.get("authorized_tasks") != claim_state.get("authorized_tasks") or
+                prior.get("owner_delegation") != claim_state.get("owner_delegation") or
+                parent.get("repository") != request["repository"]):
             return False
         created = instant(first["committer_date"])
         acquired = instant(claim_state["holder"]["acquired_at"])
