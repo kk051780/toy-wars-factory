@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 82,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "f53d3c26-9ea0-832e-9592-31f32cc8170f",
-    "task_id": "6adfc2413c3481919701acfe1a9b8f00",
-    "epoch": 82,
-    "acquired_at": "2026-10-26T21:26:40.435Z",
-    "expires_at": "2026-10-26T21:55:40.435Z",
-    "base_main_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
-    "work_branch": "ops/twf-merge-ledger-reconcile-20261027",
-    "origin": "controller_p0_maintenance"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -47,12 +37,15 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "e819f6b2-4468-832a-b0bb-309879dcf4b0",
-    "epoch": 81,
-    "released_at": "2026-10-26T21:20:50.614Z",
-    "result": "REPAIR_MAIN_P0_PR75_SCOPE_GATE_RECORDED_NO_MERGE",
-    "main_merged": false
+    "kind": "CONTROLLER",
+    "owner_id": "f53d3c26-9ea0-832e-9592-31f32cc8170f",
+    "task_id": "6adfc2413c3481919701acfe1a9b8f00",
+    "epoch": 82,
+    "released_at": "2026-10-26T21:28:17.060Z",
+    "pr": 75,
+    "merge_sha": "a68de7d43d1745be68f057aa0509a81cf5b600a6",
+    "result": "P0_MAINTENANCE_MERGED_QA_HANDOFF_SUCCESS",
+    "next_actor": "WORKER_META_REVIEWER_NORMAL"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",

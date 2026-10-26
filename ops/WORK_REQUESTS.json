@@ -7,7 +7,7 @@
       "kind": "REPAIR_MAIN_HISTORY_LEDGER_INVARIANT",
       "priority": "P0",
       "assigned_role": "CONTROLLER",
-      "status": "BLOCKED_REVIEWER_SCOPE_AND_FAILED_MAIN_QA",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_SUCCESS",
       "main_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
       "created_at": "2026-10-26T14:36:54.418Z",
       "trigger_prs": [
@@ -66,7 +66,7 @@
           "pr74": "e8d1cedce6a2bc32d5fed6b170f78c2b0b6699fa",
           "pr67": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93"
         },
-        "main_status": "CURRENT_MAIN_FAILED_DO_NOT_CLAIM_FIXED",
+        "main_status": "POST_MERGE_MAIN_QA_AND_HANDOFF_SUCCESS_VERIFIED",
         "on_main_success": "Require fresh post-merge offline+compile_hold and successful handoff, plus independent review",
         "independent_audit_run_id": "543474b5-42f4-832c-90e9-50ae0c9dae5b",
         "audit_limitations": [
@@ -93,6 +93,41 @@
         "decision": "SKIP_UNRELATED_AND_REPAIR_MAIN",
         "reason": "Current main tools/repair_integration.py requires successful main QA before MERGE and permits only auto/twf-game-repair[-UUID] or auto/twf-system-review-UUID branches. PR75 is a CONTROLLER maintenance branch ops/twf-merge-ledger-reconcile-20261027. A separate audit does not authorize this REVIEWER to bypass either gate.",
         "required_next": "CONTROLLER must establish an explicitly authorized, independently audited P0 main-repair integration pathway compatible with the deployed decision tool and branch policy, or produce a separately scoped reviewed policy change; do not relabel this branch as WORKER/META, weaken tests, or merge through the normal REVIEWER gate. After authorized P0 repair merge, require fresh main offline+compile_hold and handoff success."
+      },
+      "resolved_at": "2026-10-26T21:28:17.060Z",
+      "integration_resolution": {
+        "pr": 75,
+        "head": "361f9576c1f3dcc60f342eb94016ebc3dd1c2b10",
+        "base_main_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+        "merge_sha": "a68de7d43d1745be68f057aa0509a81cf5b600a6",
+        "merge_method": "merge",
+        "independent_task_id": "6adfc2413c3481919701acfe1a9b8f00",
+        "independent_run_id": "f53d3c26-9ea0-832e-9592-31f32cc8170f",
+        "coordination_epoch": 82,
+        "exact_head_pr_ci": {
+          "id": 40402147994,
+          "offline": "success",
+          "compile_hold": "success",
+          "python_tests": 248
+        },
+        "post_merge_main_qa": {
+          "id": 40404466932,
+          "head": "a68de7d43d1745be68f057aa0509a81cf5b600a6",
+          "offline": "success",
+          "compile_hold": "success",
+          "python_tests": 248
+        },
+        "post_merge_handoff": {
+          "id": 40404467227,
+          "head": "a68de7d43d1745be68f057aa0509a81cf5b600a6",
+          "update": "success"
+        },
+        "latest_main_sha": "75c3cc17bfe56ee759b9c38b8bcf00ccc46b1541",
+        "latest_main_delta": "STATUS_ONLY_TWO_GENERATED_FILES",
+        "source_bytes": 30030,
+        "roblox_engine_verified": false,
+        "other_prs_merged": false,
+        "scope": "ONE_TIME_SCOPED_P0_CONTROLLER_MAINTENANCE"
       }
     },
     {
