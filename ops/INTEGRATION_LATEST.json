@@ -1,53 +1,27 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T09:26:14.913Z",
-  "status": "MERGED_MAIN_QA_PASSED",
+  "observed_at": "2026-10-26T10:12:27.386Z",
+  "status": "REVIEW_APPROVED_AWAIT_EXACT_HEAD_MERGE",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "5640140e-af34-8330-ab0b-05c44b2e6767",
-  "lease_epoch": 55,
-  "main_before": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+  "reviewer_run_id": "e958762e-a330-8330-a739-56a1c3a9373b",
+  "lease_epoch": 60,
+  "main_before": "4bd7535b862c9975beb481c50df26e001b151d50",
   "main_qa": {
-    "run": 40283372197,
-    "head": "078f1f81c3166e7e03f9462c108620b8270187ef",
+    "run": 40299361181,
+    "head": "550afd73a02bdde2d755caf2b2d446bf5faa7372",
     "conclusion": "success",
     "status_only_descendant_verified": true
   },
   "latest_review": {
-    "pr": 62,
-    "head": "f8fdfe0c034f830d4d46589499e9c2ecb16d5a7e",
+    "pr": 63,
+    "head": "67ee928743b8efa6c3cce4a80d8b038473f6bc95",
     "verdict": "APPROVE",
     "category": "GAME_SOURCE_FIX",
-    "ci": 40294943505,
-    "review_record": "ops/reviews/PR0062_f8fdfe0c.json"
+    "ci": 40305011765,
+    "review_record": "ops/reviews/PR0063_67ee9287.json"
   },
-  "merged_prs": [
-    {
-      "pr": 62,
-      "head": "f8fdfe0c034f830d4d46589499e9c2ecb16d5a7e",
-      "merge_sha": "550afd73a02bdde2d755caf2b2d446bf5faa7372",
-      "category": "GAME_SOURCE_FIX",
-      "ci": 40294943505,
-      "main_qa_run": 40299361181,
-      "main_qa_status": "success",
-      "handoff_run": 40299361206,
-      "handoff_status": "success"
-    }
-  ],
-  "next": "No additional eligible open automated PR. P0: hosted Roblox engine/multiclient/mobile evidence (#3); P0: unattended WORKER write authority (#57); separate trust-root audit for manual CONTROLLER policy PR60 then PR61. Preserve release/Gemini/cost holds.",
-  "merge_count": 1,
-  "main_after": "4bd7535b862c9975beb481c50df26e001b151d50",
-  "main_after_handoff": {
-    "head": "4bd7535b862c9975beb481c50df26e001b151d50",
-    "qa_head": "550afd73a02bdde2d755caf2b2d446bf5faa7372",
-    "qa_run": 40299361181,
-    "qa_conclusion": "success",
-    "handoff_run": 40299361206,
-    "handoff_conclusion": "success",
-    "status_only_descendant_verified": true,
-    "changed_files": [
-      "status/CHAT_HANDOFF.md",
-      "status/LATEST_STATE.json"
-    ]
-  }
+  "merged_prs": [],
+  "merge_count": 0,
+  "next": "Exact-head PR63 merge and post-merge QA/handoff. Preserve engine/release/Gemini/cost HOLDs."
 }

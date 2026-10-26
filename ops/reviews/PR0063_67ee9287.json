@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "pr": 63,
+  "head": "67ee928743b8efa6c3cce4a80d8b038473f6bc95",
+  "base_main_sha": "4bd7535b862c9975beb481c50df26e001b151d50",
+  "reviewed_at": "2026-10-26T10:12:27.386Z",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "e958762e-a330-8330-a739-56a1c3a9373b",
+  "lease_epoch": 60,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "779614e8-4364-8322-92bb-1f1ef94f9f48",
+  "branch": "auto/twf-game-repair-779614e8-4364-8322-92bb-1f1ef94f9f48",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "GAME_SOURCE_FIX",
+  "ci": {
+    "run": 40305011765,
+    "head": "67ee928743b8efa6c3cce4a80d8b038473f6bc95",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "scope_and_claim_gate": "PASS",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40305011765"
+  },
+  "evidence": {
+    "main_qa": 40299361181,
+    "main_qa_head": "550afd73a02bdde2d755caf2b2d446bf5faa7372",
+    "main_status_only_compare": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "claim_commit": "e8896a05e8d1bbc295c63a6a9e406cf759b104bf",
+    "claim_epoch": 59,
+    "source_change": "src/ToyWarsServer.server.lua 18870->18944 bytes (+74)",
+    "source_metrics": "4 Lua files / 682 lines / 27044 bytes",
+    "native_regressions": "2/2 pass; old pinned source negative control passes",
+    "python_tests": "206 pass",
+    "scope": "3 files, no policy/release/permissions/cost edits",
+    "limitations": "Roblox Studio, 2-client and mobile NOT_RUN"
+  },
+  "decision": "MERGE_EXACT_HEAD_AFTER_RECHECK"
+}
