@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T07:02:02.311Z",
+  "observed_at": "2026-10-26T07:03:16.542Z",
   "requests": [
     {
       "id": "hosted_roblox_evidence",
@@ -151,7 +151,7 @@
       "kind": "PR_REBASE_AND_REGRESSION",
       "priority": "P0",
       "assigned_role": "WORKER",
-      "status": "RESOLVED_CURRENT_MAIN_RECONCILED_EXACT_HEAD_CI_PASSED",
+      "status": "RESOLVED_MERGED_WAIT_MAIN_QA",
       "pr": 54,
       "head": "9f55b1b7c0346093bee71c22e72bd041c33963f3",
       "old_base_main_sha": "aa2e57b6d63639f81966cac0e4ef399fcb78a527",
@@ -178,7 +178,12 @@
         "ci_run": 40282761450,
         "review": "ops/reviews/PR0054_7c3b72cf.json",
         "reviewer_run_id": "0b8b44a0-3b20-832c-9880-a91812559bab",
-        "observed_at": "2026-10-26T07:02:02.311Z"
+        "observed_at": "2026-10-26T07:02:02.311Z",
+        "merge_sha": "078f1f81c3166e7e03f9462c108620b8270187ef",
+        "post_merge_qa_run": 40283372197,
+        "handoff_run": 40283372188,
+        "handoff_status": "success",
+        "main_after_handoff": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec"
       }
     }
   ]

@@ -66,8 +66,23 @@
     "old_source_negative_control": "NOT_RUN; analytical simulation only"
   },
   "merge": {
-    "status": "APPROVED_PENDING_MERGE",
-    "sha": null
+    "status": "MERGED_WAIT_POST_MERGE_QA",
+    "sha": "078f1f81c3166e7e03f9462c108620b8270187ef",
+    "merged_at": "2026-10-26T07:02:36Z",
+    "post_merge_qa": {
+      "run": 40283372197,
+      "head": "078f1f81c3166e7e03f9462c108620b8270187ef",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    "handoff": {
+      "run": 40283372188,
+      "head": "078f1f81c3166e7e03f9462c108620b8270187ef",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "main_after_handoff": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+    "status_only_descendant_verified": true
   },
-  "next": "Convert draft to ready, merge expected head, verify post-merge main QA and handoff; keep release HOLD."
+  "next": "Wait for exact-merge-head main QA; do not integrate another PR until verified."
 }

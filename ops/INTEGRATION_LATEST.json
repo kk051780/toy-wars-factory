@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T07:02:02.311Z",
-  "status": "PR54_INDEPENDENT_APPROVED_PENDING_MERGE",
+  "observed_at": "2026-10-26T07:03:16.542Z",
+  "status": "PR54_MERGED_WAIT_MAIN_QA",
   "owner_reply_required": false,
   "deployment": {
     "pr": 43,
@@ -202,13 +202,19 @@
     "verdict": "APPROVE",
     "ci": 40282761450,
     "category": "GAME_SOURCE_FIX",
-    "merge_status": "PENDING",
-    "main_qa_status": "PENDING_POST_MERGE",
+    "merge_status": "MERGED",
+    "main_qa_status": "WAIT",
     "review_record": "ops/reviews/PR0054_7c3b72cf.json",
     "limitations": [
       "Roblox engine/multiplayer/mobile unverified",
       "Old-source executable negative control NOT_RUN"
-    ]
+    ],
+    "merge_sha": "078f1f81c3166e7e03f9462c108620b8270187ef",
+    "main_qa_run": 40283372197,
+    "handoff_run": 40283372188,
+    "handoff_status": "SUCCESS",
+    "main_after_handoff": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+    "status_only_descendant_verified": true
   },
-  "next": "Merge approved PR54 at exact head, verify main QA and handoff before any further PR."
+  "next": "Verify main QA for merge 078f1f81c3166e7e03f9462c108620b8270187ef; hold further integration until success."
 }
