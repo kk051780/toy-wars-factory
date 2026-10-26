@@ -1,0 +1,84 @@
+{
+  "id": "C00040",
+  "date": "2026-10-26",
+  "kind": "AUTONOMOUS_FIRST_PLAY_HUD_GUIDE_CURRENT_MAIN",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "8d9d3375-a74c-8332-ae42-78607b1c88cc",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-8d9d3375-a74c-8332-ae42-78607b1c88cc",
+    "base": "main",
+    "open_prs": [],
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "135c210b18e3dcc7b0e0498502de6cdf0d0aa711",
+    "owner_run_id": "8d9d3375-a74c-8332-ae42-78607b1c88cc",
+    "epoch": 70
+  },
+  "main_base": "09c08ddde66188fc0bd820ff1984c64f743d8144",
+  "issue": "https://github.com/kk051780/toy-wars-factory/issues/65",
+  "defect": {
+    "id": "first_play_hud_guide_missing",
+    "cause": "The canonical HUD provides toy selectors, prices and workshop queue notice but no in-game first-play explanation after workshop assignment.",
+    "reproduction": "Run the complete current-main src/ToyWarsHUD.client.lua in the deterministic HUD Lua fixture: after assignment no QuickStart, GuideSkip or GuideNext exists. The pinned pre-guide HUD remains a negative control.",
+    "scope": "Canonical HUD Lua mock only; Roblox Studio/touch-device rendering not tested."
+  },
+  "fix": "After the workshop is assigned, show a session-local three-step touch-friendly guide (toy selection, auto-production/defense, coins/upgrades/retry) with SKIP/NEXT/PLAY; navigation never fires ToyWarsSelectUnit. Preserve WorkshopQueueNotice, selectors, balance-derived prices and normal HUD status.",
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/first_play_hud_guide_spec.lua",
+    "history/C00040_first_play_hud_guide.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 4286,
+      "after_bytes": 6610,
+      "delta_bytes": 2324
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 753,
+    "lua_bytes": 29876
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/first_play_hud_guide_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 6828,
+      "delta_bytes": 6828
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "PON/GUARDON/TANKURU balance, prices, selectors and server behavior unchanged; guide text explains existing mechanics.",
+  "tests": {
+    "canonical_hud": "tests/auto/first_play_hud_guide_spec.lua",
+    "accepted_queue": "tests/auto/workshop_queue_hud_spec.lua",
+    "accepted_price": "tests/hud_price_spec.lua",
+    "negative_control": "Pinned old HUD .qa/server-before/src/ToyWarsHUD.client.lua",
+    "local": "NOT_RUN_NATIVE_LUA_IN_THIS_HOST",
+    "ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "09c08ddde66188fc0bd820ff1984c64f743d8144",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40310479605",
+    "claim_commit": "135c210b18e3dcc7b0e0498502de6cdf0d0aa711",
+    "pr": "PENDING_DRAFT_PR",
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "next_action": "Check current-head CI offline+compile_hold; repair own PR if failing; separate registered REVIEWER decides integration and post-merge QA.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}
