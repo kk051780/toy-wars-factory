@@ -1,5 +1,6 @@
 """Delegation removes human waits; it does not remove independent review/CI/leases."""
 import copy
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -43,7 +44,8 @@ class IntegrationTests(unittest.TestCase):
         owner = "a4b3ef83-814c-431c-97c9-d14e25c9c86f"
         claim = "d" * 40
         self.pr.update(number=58, branch=branch, author_task_id=None,
-                       author_run_id=owner, changed_entries=[
+                       author_run_id=owner, created_at="2026-10-25T00:20:00Z",
+                       first_commit_sha="e" * 40, changed_entries=[
                            ["A", "history/C00035_hud_quickstart.json"],
                            ["M", "src/ToyWarsHUD.client.lua"],
                            ["A", "tests/auto/hud_quickstart_spec.lua"]])
@@ -53,7 +55,8 @@ class IntegrationTests(unittest.TestCase):
             "base_main_sha": self.main["sha"],
             "reviewer_task_id": self.policy["integration"]["task_id"],
             "kind": "CONTROLLER", "owner_id": owner,
-            "epoch": 47, "claim_commit": claim}]
+            "epoch": 47, "claim_commit": claim,
+            "author_first_commit": "e"*40, "ci_run": 54321}]
         self.pr["ci"]["scope_and_claim_gate"] = "MANUAL_CONTROLLER_ATTESTED"
         self.review["manual_provenance"] = {
             "claim_commit": claim, "epoch": 47, "owner_id": owner,
@@ -67,6 +70,24 @@ class IntegrationTests(unittest.TestCase):
             "claim_commit_verified": True, "main_ancestry_verified": True,
             "github_diff_verified": True, "ledger_verified": True,
             "ci_jobs_verified": True}
+        # Provider payload is serialized as bytes from an authenticated
+        # independent GitHub fetch; local tests use deterministic fixtures.
+        proof = self.review["manual_provenance"]
+        raw=json.dumps(proof["claim_state"], sort_keys=True)
+        content=raw.encode()
+        blob=hashlib.sha1(b"blob "+str(len(content)).encode()+b"\0"+content).hexdigest()
+        self.review["manual_git_evidence"] = {
+            "claim": {"repository": self.policy["repository"],
+                      "sha": claim, "state_file": raw, "state_blob_sha": blob},
+            "first_commit": {"sha": "e"*40, "parents": [self.main["sha"]],
+                             "committer_date": "2026-10-25T00:10:00Z"},
+            "workflow_run": {"id": 54321, "head_sha": self.pr["head"],
+                             "status": "completed", "conclusion": "success",
+                             "event": "pull_request"},
+            "jobs": [{"name": "offline", "id": 101, "status": "completed", "conclusion": "success"},
+                     {"name": "compile_hold", "id": 102, "status": "completed", "conclusion": "success"}],
+            "comparison": {"base": self.main["sha"], "head": self.pr["head"],
+                           "behind_by": 0, "entries": self.pr["changed_entries"]}}
         return self.lease["manual_review_requests"][0]
 
     def test_manual_candidate_requires_exact_independent_evidence(self):
@@ -163,6 +184,73 @@ class IntegrationTests(unittest.TestCase):
         self.pr["author_run_id"]=self.lease["manual_review_requests"][0]["owner_id"]
         self.review["reviewer_run_id"]=self.pr["author_run_id"]
         self.assertEqual(self.decision()["action"], "WAIT_LOCK")
+
+    def test_manual_candidate_conflicting_number_in_other_branch_is_rejected(self):
+        self.enable_manual_candidate()
+        self.lease["manual_review_requests"].append({
+            **self.lease["manual_review_requests"][0], "branch": "feature/twf-other"})
+        self.assertEqual(self.decision()["action"], "WAIT_MANUAL_REQUEST")
+
+    def test_manual_candidate_requires_source_test_history_and_no_docs(self):
+        self.enable_manual_candidate()
+        valid=self.pr["changed_entries"]
+        for entries in (valid + [["M", "docs/EXPERIMENT_LOG.md"]],
+                        [valid[1], valid[2]],
+                        [valid[0], valid[2]],
+                        [valid[0], valid[1]],
+                        valid + [["M","src/ToyWarsHUD.client.lua"]],
+                        valid + [["M",".github/workflows/qa.yml"]]):
+            self.pr["changed_entries"]=entries
+            self.assertEqual(self.decision()["action"],"WAIT_MANUAL_SCOPE")
+        self.pr["changed_entries"]=valid
+
+    def test_manual_receipt_rejects_fake_blob_or_claim_ref(self):
+        self.enable_manual_candidate()
+        evidence=self.review["manual_git_evidence"]
+        self.assertEqual(self.decision()["action"],"MERGE")
+        receipt=evidence["claim"]
+        receipt["state_blob_sha"]="0"*40
+        self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
+        receipt["state_blob_sha"]=hashlib.sha1(
+            b"blob "+str(len(receipt["state_file"].encode())).encode()+b"\0"+
+            receipt["state_file"].encode()).hexdigest()
+        receipt["sha"]="f"*40
+        self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
+
+    def test_manual_receipt_rejects_time_travel_or_old_commit(self):
+        self.enable_manual_candidate()
+        evidence=self.review["manual_git_evidence"]
+        commit=evidence["first_commit"]
+        for changed in ("2026-10-24T23:59:59Z", "2026-10-25T01:01:00Z",
+                        "2099-01-01T00:00:00Z"):
+            commit["committer_date"]=changed
+            self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
+        commit["committer_date"]="2026-10-25T00:10:00Z"
+        commit["parents"]=["a"*40]
+        self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
+
+    def test_manual_receipt_rejects_stale_run_or_missing_job(self):
+        self.enable_manual_candidate()
+        evidence=self.review["manual_git_evidence"]
+        for mutation in ("wrong_run","wrong_head","old_job","third_job","changed_path"):
+            copied=copy.deepcopy(evidence)
+            if mutation=="wrong_run":copied["workflow_run"]["id"]=1
+            elif mutation=="wrong_head":copied["workflow_run"]["head_sha"]="a"*40
+            elif mutation=="old_job":copied["jobs"][0]["conclusion"]="failure"
+            elif mutation=="third_job":copied["jobs"].append(copy.deepcopy(copied["jobs"][0]))
+            else:copied["comparison"]["entries"]=[]
+            self.review["manual_git_evidence"]=copied
+            self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF",mutation)
+
+    def test_manual_receipt_rejects_duplicate_json_claim_keys(self):
+        self.enable_manual_candidate()
+        evidence=self.review["manual_git_evidence"]
+        raw=evidence["claim"]["state_file"]
+        evidence["claim"]["state_file"]='{"epoch":47,"epoch":47,"holder":null}'
+        content=evidence["claim"]["state_file"].encode()
+        evidence["claim"]["state_blob_sha"]=hashlib.sha1(
+            b"blob "+str(len(content)).encode()+b"\0"+content).hexdigest()
+        self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
 
     def test_manual_candidate_legacy_worker_paths_still_reject_untrusted(self):
         self.enable_manual_candidate()

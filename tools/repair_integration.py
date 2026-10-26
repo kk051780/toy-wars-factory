@@ -1,14 +1,123 @@
 """Decide exact-head integration under delegated authority and a separate review lease."""
 import argparse
+import fnmatch
+import hashlib
 from datetime import timedelta
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
-from check_auto_diff import is_worker_branch, violations as game_scope_violations
+from check_auto_diff import is_worker_branch
 from repair_control import canonical_id, instant, owns
 
 STATUS_PATHS = {"status/CHAT_HANDOFF.md", "status/LATEST_STATE.json"}
 REVIEW_CHECKS = ("scope", "regression", "source_ledger", "protected_controls", "behavior")
+
+
+def manual_game_scope_violations(entries, policy):
+    """Manual game PRs need changed source + NEW regression + NEW history.
+    No docs, workflows, policy, executable scripts, deletions or duplicate paths.
+    """
+    errors = []
+    paths = set()
+    has_source = has_test = has_history = False
+    for status, path in entries:
+        if path in paths:
+            errors.append("duplicate changed path")
+        paths.add(path)
+        parts = PurePosixPath(path).parts
+        if (not path or path.startswith("/") or "\\" in path or ".." in parts or
+                "." in parts or "//" in path):
+            errors.append("unsafe changed path")
+            continue
+        if status == "M" and path in policy["source_paths"]:
+            has_source = True
+        elif (status == "A" and PurePosixPath(path).parent.as_posix() == "tests/auto" and
+              fnmatch.fnmatchcase(path, policy["new_native_test_pattern"])):
+            has_test = True
+        elif (status == "A" and PurePosixPath(path).parent.as_posix() == "history" and
+              fnmatch.fnmatchcase(path, policy["new_history_pattern"])):
+            has_history = True
+        else:
+            errors.append("manual scope does not allow " + status + " " + path)
+    if not (has_source and has_test and has_history):
+        errors.append("manual game PR requires source + new native regression + new history")
+    return errors
+
+
+def _strict_json_pairs(items):
+    result = {}
+    for name, value in items:
+        if name in result:
+            raise ValueError("duplicate key in provider snapshot")
+        result[name] = value
+    return result
+
+
+def _git_blob_sha(raw):
+    content = raw.encode("utf-8")
+    return hashlib.sha1(b"blob " + str(len(content)).encode("ascii") +
+                        b"\x00" + content).hexdigest()
+
+
+def verified_manual_git_receipts(request, pr, review, claim_state):
+    """Check cross-binding of GitHub-fetched evidence.
+
+    API transport AUTHENTICITY remains the responsibility of the registered
+    independent REVIEWER. JSON contents and claimed commit SHA are not a
+    cryptographic provider signature; reviewer must fetch immutable objects
+    through authenticated GitHub access, not from a PR body or author input.
+    """
+    evidence = review.get("manual_git_evidence")
+    if not isinstance(evidence, dict):
+        return False
+    receipt = evidence.get("claim")
+    first = evidence.get("first_commit")
+    run = evidence.get("workflow_run")
+    jobs = evidence.get("jobs")
+    comparison = evidence.get("comparison")
+    if not all(isinstance(x, dict) for x in (receipt, first, run, comparison)):
+        return False
+    if (receipt.get("repository") != request["repository"] or
+            receipt.get("sha") != request["claim_commit"] or
+            not isinstance(receipt.get("state_file"), str) or
+            not re.fullmatch(r"[0-9a-f]{40}", str(receipt.get("state_blob_sha"))) or
+            _git_blob_sha(receipt["state_file"]) != receipt["state_blob_sha"]):
+        return False
+    try:
+        fetched = json.loads(receipt["state_file"], object_pairs_hook=_strict_json_pairs)
+        if fetched != claim_state:
+            return False
+        created = instant(first["committer_date"])
+        acquired = instant(claim_state["holder"]["acquired_at"])
+        expiry = instant(claim_state["holder"]["expires_at"])
+        opened = instant(pr["created_at"])
+    except (KeyError, ValueError, TypeError, AttributeError):
+        return False
+    if not (acquired <= created < expiry and acquired <= opened):
+        return False
+    if (first.get("sha") != request.get("author_first_commit") or
+            first.get("sha") != pr.get("first_commit_sha") or
+            first.get("parents") != [request["base_main_sha"]] or
+            not re.fullmatch(r"[0-9a-f]{40}", str(first.get("sha")))):
+        return False
+    if (type(request.get("ci_run")) is not int or request["ci_run"] <= 0 or
+            run.get("id") != request["ci_run"] or
+            run.get("head_sha") != request["head"] or
+            run.get("status") != "completed" or run.get("conclusion") != "success" or
+            run.get("event") not in ("push", "pull_request")):
+        return False
+    if (not isinstance(jobs, list) or len(jobs) != 2 or
+            {j.get("name") for j in jobs if isinstance(j, dict)} != {"offline", "compile_hold"} or
+            any(not isinstance(j, dict) or j.get("status") != "completed" or
+                j.get("conclusion") != "success" or
+                type(j.get("id")) is not int or j["id"] <= 0 for j in jobs)):
+        return False
+    if (comparison.get("base") != request["base_main_sha"] or
+            comparison.get("head") != request["head"] or
+            comparison.get("behind_by") != 0 or
+            comparison.get("entries") != pr.get("changed_entries")):
+        return False
+    return True
 
 
 def verified_manual_request(policy, lease, pr, review, main):
@@ -32,9 +141,10 @@ def verified_manual_request(policy, lease, pr, review, main):
     candidates = lease.get("manual_review_requests", [])
     if not isinstance(candidates, list):
         return None, "WAIT_MANUAL_REQUEST"
+    # A PR number is globally unique even if one entry lies about its branch.
     matches = [r for r in candidates if isinstance(r, dict) and
-               r.get("number") == pr["number"] and r.get("branch") == branch]
-    if len(matches) != 1:
+               r.get("number") == pr["number"]]
+    if len(matches) != 1 or matches[0].get("branch") != branch:
         return None, "WAIT_MANUAL_REQUEST"
     request = matches[0]
     exact = {
@@ -64,7 +174,7 @@ def verified_manual_request(policy, lease, pr, review, main):
             any(not isinstance(x, (list, tuple)) or len(x) != 2 or
                 not all(isinstance(y, str) for y in x) for x in entries)):
         return None, "WAIT_MANUAL_SCOPE"
-    if game_scope_violations(entries, policy):
+    if manual_game_scope_violations(entries, policy):
         return None, "WAIT_MANUAL_SCOPE"
     proof = review.get("manual_provenance")
     if not isinstance(proof, dict):
@@ -91,7 +201,7 @@ def verified_manual_request(policy, lease, pr, review, main):
         expiry = instant(claimed["expires_at"])
     except (KeyError, TypeError, ValueError, AttributeError):
         return None, "WAIT_MANUAL_PROOF"
-    if expiry <= claimed_at:
+    if expiry <= claimed_at or not verified_manual_git_receipts(request, pr, review, snapshot):
         return None, "WAIT_MANUAL_PROOF"
     for key in ("claim_commit_verified", "main_ancestry_verified",
                 "github_diff_verified", "ledger_verified", "ci_jobs_verified"):

@@ -79,3 +79,9 @@ owner/epoch/work_branch/base-main/有効期間が一致することを確認す�
 この方式は許可されたゲームPRの一経路だけ。GitHub Actionsの認証/課金/Roblox公開の
 権限を広げるものではない。ポリシー変更PR自身が独立レビュー・CIを経て
 mainに採用されるまでは、手動PR #58の自動統合は解禁されない。
+
+### 監査指摘 #60 の解消（証拠の正本）
+
+手動ゲームPRの変更範囲は、実ゲームsourceのM・新規Lua回帰のA・C履歴のAの**3種すべて必須**。docs/EXPERIMENT_LOG.md、権限設定、CI、文書だけ、重複パス、削除は拒否。
+
+単一PR番号に紐づくレビュー依頼は**ブランチにかかわらず1件のみ**。独立REVIEWERがGitHubからfetchしたimmutable claimコミットのファイル原文・blob SHA・commit SHA、第一コミットSHA/親/時刻、PR開始時刻、QA workflow IDと2 job ID/合格結果、比較したbase/headと差分を束ねる。判定関数はraw claimのGit blob SHA-1、厳格JSON（重複キー禁止）、取得時刻≦第一コミット時刻＜期限、および各種SHA・IDを相互照合する。**Git SHA-1単体や自己申告のTrue値はプロバイダ証明ではない**。REVIEWERはGitHubの認証済みコネクタから取得し、真正なAPI結果に基づく証拠だけを入力すること。純粋判定関数自体はGitHub API接続を持たず、独立したGitHub fetchを置換しない。これらが用意できない実行は保留する。

@@ -42,3 +42,7 @@ C履歴（before/afterのバイト連鎖）、既存回帰、悪意ある保護�
 外れたら承認しない。`MANUAL_CONTROLLER_ATTESTED`を作者には与えない。
 承認可能でもauthor runと自己runの一致を拒否し、REVIEWERロック/審査鮮度/
 現main QA/正確head CIの従来条件と統合後QAを全部保持。
+
+### 手動PRの独立GitHub証拠を必ず収集
+
+まず実GitHub API/コネクタから元CONTROLLER claimコミットの`ops/REPAIR_COORDINATOR.json`原文とblob SHAとcommit SHAを取得。元claimの有効時間とGitHubの作者初回コミットSHA/唯一のbase親/committer_date/PR.created_atを照合。PR head & main & compare diff/statusと、最新bootstrap QA run のrun ID、head、event、status、conclusion、および`offline`+`compile_hold`両job ID/status/conclusionを独立fetch。取得不能なら統合せずWAIT_MANUAL_PROOF。資料を`manual_git_evidence`に格納し、`verified_manual_git_receipts`の検査にかける。単なるTrueの自己申告や作者PR説明は禁止。重複PR番号、docs変更、テストのみPR、保護ファイル変更を拒否。
