@@ -7,7 +7,7 @@
       "kind": "REPAIR_MAIN_HISTORY_LEDGER_INVARIANT",
       "priority": "P0",
       "assigned_role": "CONTROLLER",
-      "status": "OPEN",
+      "status": "CODE_PR_CI_PASS_INDEPENDENT_REVIEW_PENDING",
       "main_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
       "created_at": "2026-10-26T14:36:54.418Z",
       "trigger_prs": [
@@ -37,7 +37,38 @@
       },
       "owner_approval_required": false,
       "reviewer_run_id": "0617b736-d5dc-8321-885d-5919d548c91a",
-      "observed_at": "2026-10-26T14:36:54.418Z"
+      "observed_at": "2026-10-26T14:36:54.418Z",
+      "repair_candidate": {
+        "pr": 75,
+        "head": "361f9576c1f3dcc60f342eb94016ebc3dd1c2b10",
+        "base_main_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+        "coordination_claim_epoch": 80,
+        "controller_owner_id": "e24fdb3d-985b-479f-ad9f-83591f24edc2",
+        "ci": {
+          "id": 40402147994,
+          "head": "361f9576c1f3dcc60f342eb94016ebc3dd1c2b10",
+          "status": "success",
+          "jobs": [
+            "offline",
+            "compile_hold"
+          ],
+          "python_tests": 248
+        },
+        "independent_audit_task": "6adfc2413c3481919701acfe1a9b8f00",
+        "independent_audit_verdict": "PENDING",
+        "source_records_preserved": [
+          "C00040",
+          "C00042",
+          "C00044"
+        ],
+        "history_order_exception": "C00044 original authored total 27706 + C00040 HUD 2324 = main 30030",
+        "merge_commits": {
+          "pr74": "e8d1cedce6a2bc32d5fed6b170f78c2b0b6699fa",
+          "pr67": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93"
+        },
+        "main_status": "CURRENT_MAIN_FAILED_DO_NOT_CLAIM_FIXED",
+        "on_main_success": "Require fresh post-merge offline+compile_hold and successful handoff, plus independent review"
+      }
     },
     {
       "id": "pr67_mobile_guide_selector_overlap",
