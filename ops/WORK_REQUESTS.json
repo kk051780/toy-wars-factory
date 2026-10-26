@@ -1,13 +1,50 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T13:48:58Z",
+  "observed_at": "2026-10-26T14:36:54.418Z",
   "requests": [
+    {
+      "id": "main_pr74_pr67_history_ledger_chain_20261026",
+      "kind": "REPAIR_MAIN_HISTORY_LEDGER_INVARIANT",
+      "priority": "P0",
+      "assigned_role": "CONTROLLER",
+      "status": "OPEN",
+      "main_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+      "created_at": "2026-10-26T14:36:54.418Z",
+      "trigger_prs": [
+        74,
+        67
+      ],
+      "request": "Repair main before any further integration. PR74 was merged before PR67, but sorted C-history source metrics imply C00040/C00042 HUD first and C00044 server later. C00044 records source_metrics.lua_bytes=27706 from its own pre-PR67 base, while sorted cumulative bytes are 30030 after both features. The accepted test tests/test_handoff_checkpoint.py fails on C00044. Preserve original records and exact byte provenance; implement a narrowly reviewed, append-only-compatible history/validation reconciliation that verifies each record against actual base/merge order without relaxing the chain or accepted quality checks. Worker/META may not silently rewrite accepted C history or disable the assertion. Add adversarial regression for out-of-order concurrent PR integration and merged 30030-byte source; require fresh main offline+compile_hold and handoff success. If an exception to immutable history/test policy is needed, handle via explicitly scoped independent-reviewed CONTROLLER maintenance, not reviewer code edits.",
+      "reproduction": [
+        "Current main 8471eeba32043bfdb2c182d67ea1cfdc16d10a93; offline QA #40340954729 job #121635189828: test_handoff_checkpoint.HandoffCheckpointTests.test_failed_trial_and_unmerged_pr_origin_survive_generation -> AssertionError: 27706 != 30030, 1/243 Python tests failed; compile_hold success.",
+        "Handoff #40340954800 job #121635189590: same test fails in Validate status and characters; rebuild skipped.",
+        "history/C00040 source HUD 4286->6610 and C00042 repair 6610->6610 sort before history/C00044 server 18946->19100, while C00044 source_metrics.lua_bytes=27706 predates PR67 integration. Actual current Lua bytes 30030 (27706+2324)."
+      ],
+      "expected": [
+        "Current main and subsequent status-only descendant must pass exact-head offline QA and handoff, both complete all jobs successfully.",
+        "Provenance must distinguish PR authored-on-base source metrics from ordered merged-source metrics; do not fabricate C00044's original measurement or weaken accepted tests.",
+        "Regression reproduces both merge orders (server-first HUD-second and HUD-first server-second) with byte-accurate ledger validation and no release/provider/budget change."
+      ],
+      "evidence": {
+        "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40340954729",
+        "handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40340954800",
+        "source": "tests/test_handoff_checkpoint.py:75",
+        "history": [
+          "history/C00040_first_play_hud_guide.json",
+          "history/C00042_pr67_mobile_guide_layout_repair.json",
+          "history/C00044_health_bar_damage_step_fix.json"
+        ]
+      },
+      "owner_approval_required": false,
+      "reviewer_run_id": "0617b736-d5dc-8321-885d-5919d548c91a",
+      "observed_at": "2026-10-26T14:36:54.418Z"
+    },
     {
       "id": "pr67_mobile_guide_selector_overlap",
       "kind": "PR_REGRESSION_UI_LAYOUT",
       "priority": "P1",
       "assigned_role": "WORKER",
-      "status": "OPEN",
+      "status": "RESOLVED_CODE_MERGED_MAIN_QA_BLOCKED",
       "pr": 67,
       "head": "a57961e42bbda115659f67bfa4a6fe5a1540d473",
       "base_main_sha": "09c08ddde66188fc0bd820ff1984c64f743d8144",
@@ -39,6 +76,17 @@
         "worker_run": "b3b2766a-3548-832f-abf1-725336d75c18",
         "next": "REVIEWER must recheck the new head and resolve/refresh this old-head request. Keep original head/verdict historical; do not replay it against the new head.",
         "observed_at": "2026-10-26T13:48:58Z"
+      },
+      "resolution": {
+        "pr": 67,
+        "head": "edfe101cda1b9f36e14afe5b8d1f2fccc85a346c",
+        "merge_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+        "ci": 40329852658,
+        "layout_regression": "PASS_9_LUA_MOCK_CASES",
+        "main_qa": "FAIL_HISTORY_LEDGER_CHAIN",
+        "main_qa_run": 40340954729,
+        "observed_at": "2026-10-26T14:36:54.418Z",
+        "note": "Mobile overlap fix is integrated, but main overall QA failed due pre-existing chronological history ledger ordering exposed by combining PR74 and PR67."
       }
     },
     {

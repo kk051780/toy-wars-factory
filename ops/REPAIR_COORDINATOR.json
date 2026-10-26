@@ -312,6 +312,31 @@
       "main_after_handoff": "09c08ddde66188fc0bd820ff1984c64f743d8144",
       "status_only_descendant_verified": true
     },
+    "67": {
+      "schema": 1,
+      "pr": 67,
+      "head": "edfe101cda1b9f36e14afe5b8d1f2fccc85a346c",
+      "base_reviewed": "336f9e08a344a706e98d459985c5cfe1c5ead94f",
+      "reviewer_kind": "REVIEWER",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "0617b736-d5dc-8321-885d-5919d548c91a",
+      "lease_epoch": 79,
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "8d9d3375-a74c-8332-ae42-78607b1c88cc",
+      "verdict": "APPROVE",
+      "ci": {
+        "id": 40329852658,
+        "head": "edfe101cda1b9f36e14afe5b8d1f2fccc85a346c",
+        "conclusion": "success"
+      },
+      "review_record": "ops/reviews/PR0067_edfe101c.json",
+      "merge_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+      "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40340954729",
+      "post_merge_main_qa_status": "failure",
+      "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40340954800",
+      "post_merge_handoff_status": "failure",
+      "failure_request": "main_pr74_pr67_history_ledger_chain_20261026"
+    },
     "69": {
       "schema": 1,
       "pr": 69,
@@ -419,6 +444,16 @@
       "post_merge_qa_status": "success",
       "post_merge_handoff_status": "success",
       "main_after_handoff": "09c08ddde66188fc0bd820ff1984c64f743d8144"
+    },
+    "67": {
+      "sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+      "merged": true,
+      "message": "Exact-head merge succeeded; post-merge main QA and handoff FAILED due history ledger chain",
+      "qa": 40340954729,
+      "handoff": 40340954800,
+      "post_merge_qa_status": "failure",
+      "handoff_status": "failure",
+      "repair_request": "main_pr74_pr67_history_ledger_chain_20261026"
     },
     "74": {
       "sha": "e8d1cedce6a2bc32d5fed6b170f78c2b0b6699fa",

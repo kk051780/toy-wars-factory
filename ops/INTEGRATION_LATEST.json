@@ -1,24 +1,20 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T14:34:11.176Z",
-  "status": "APPROVED_PENDING_MERGE",
+  "observed_at": "2026-10-26T14:36:54.418Z",
+  "status": "REPAIR_MAIN",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "0617b736-d5dc-8321-885d-5919d548c91a",
   "lease_epoch": 79,
-  "main_before": "336f9e08a344a706e98d459985c5cfe1c5ead94f",
-  "main_after": "336f9e08a344a706e98d459985c5cfe1c5ead94f",
+  "main_before": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+  "main_after": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
   "main_qa": {
-    "head": "e8d1cedce6a2bc32d5fed6b170f78c2b0b6699fa",
-    "id": 40340501580,
-    "conclusion": "success",
-    "comparison_since_qa": {
-      "verified": true,
-      "status": "ahead",
-      "paths": [
-        "status/CHAT_HANDOFF.md",
-        "status/LATEST_STATE.json"
-      ]
+    "head": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+    "id": 40340954729,
+    "conclusion": "failure",
+    "jobs": {
+      "offline": "failure",
+      "compile_hold": "success"
     }
   },
   "latest_review": {
@@ -27,27 +23,38 @@
     "verdict": "APPROVE",
     "category": "GAME_CODE_FIX_FIRST_PLAY_ONBOARDING",
     "ci": 40329852658,
-    "review_record": "ops/reviews/PR0067_edfe101c.json"
+    "review_record": "ops/reviews/PR0067_edfe101c.json",
+    "merge_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+    "post_merge_qa": "failure",
+    "handoff": "failure"
   },
   "merged_prs": [
     {
       "pr": 74,
       "merge_sha": "e8d1cedce6a2bc32d5fed6b170f78c2b0b6699fa",
       "main_qa": 40340501580,
-      "handoff": 40340501344
+      "handoff": 40340501344,
+      "status": "MERGED_MAIN_QA_PASSED"
+    },
+    {
+      "pr": 67,
+      "merge_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+      "main_qa": 40340954729,
+      "handoff": 40340954800,
+      "status": "MERGED_MAIN_QA_FAILED"
     }
   ],
-  "merge_count": 1,
+  "merge_count": 2,
   "post_merge_main_qa": {
-    "id": 40340501580,
-    "conclusion": "success"
+    "id": 40340954729,
+    "conclusion": "failure"
   },
   "unresolved": [
-    "PR67 integration pending",
-    "PR73 queue enhancement review pending",
+    "P0 REPAIR_MAIN main_pr74_pr67_history_ledger_chain_20261026: C00044 source_metrics 27706 vs sorted cumulative 30030; main QA+handoff failed",
+    "PR73 queue enhancement review/merge blocked until main repaired",
     "Issue3 Roblox engine/multiplayer/mobile NOT_RUN",
     "Issue57 host write incident",
     "Gemini severe HOLD"
   ],
-  "next": "Exact-head merge PR67; verify new main QA and handoff"
+  "next": "CONTROLLER repair accepted history provenance/ledger without weakening checks, then independent QA; no more new PR merges"
 }

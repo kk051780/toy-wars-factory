@@ -78,5 +78,24 @@
   "limitations": [
     "Deterministic Lua mock and geometry only; physical phone, safe-area behavior, touch interaction, multiplayer and Roblox Studio NOT_RUN"
   ],
-  "next": "Merge exact head only, then verify main QA and handoff before further integration"
+  "next": "P0 REPAIR_MAIN request main_pr74_pr67_history_ledger_chain_20261026; stop further PR integration until fixed",
+  "merge_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+  "integration_status": "MERGED_MAIN_QA_FAILED",
+  "post_merge_main_qa": {
+    "id": 40340954729,
+    "head": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+    "conclusion": "failure",
+    "jobs": {
+      "offline": "failure",
+      "compile_hold": "success"
+    },
+    "failure": "test_handoff_checkpoint: C00044 source_metrics.lua_bytes 27706 != cumulative 30030"
+  },
+  "post_merge_handoff": {
+    "id": 40340954800,
+    "head": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+    "conclusion": "failure",
+    "job": "update",
+    "step": "Validate status and characters"
+  }
 }
