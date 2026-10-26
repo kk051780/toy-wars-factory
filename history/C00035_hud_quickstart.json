@@ -1,0 +1,49 @@
+{
+  "id": "C00035",
+  "date": "2026-10-26",
+  "kind": "MANUAL_CONTROLLER_HUD_QUICKSTART",
+  "author_kind": "CONTROLLER",
+  "control_claim": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 47,
+    "owner_id": "d8f25e6a-a68b-4e6b-8f22-b2afe73d9863"
+  },
+  "main_base": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+  "change": "3-step dismissible first-play HUD guide using touch-friendly ImageButtons, without altering the three authoritative toy selection TextButtons",
+  "files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/hud_quickstart_spec.lua",
+    "history/C00035_hud_quickstart.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 3780,
+      "after_bytes": 5896,
+      "delta_bytes": 2116
+    }
+  ],
+  "test_changes": [
+    {
+      "path": "tests/auto/hud_quickstart_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 4771,
+      "delta_bytes": 4771
+    }
+  ],
+  "characters_touched": [],
+  "pricing_or_combat_changed": false,
+  "tests": {
+    "native_new": "PENDING_EXACT_HEAD_CI",
+    "prior_hud_price": "MUST_REMAIN_PASS",
+    "roblox_engine": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "pr": "PENDING",
+    "ci": "PENDING",
+    "main": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec"
+  },
+  "review": "REQUIRES_INDEPENDENT_REVIEW_BEFORE_MAIN",
+  "release": "HOLD_ENGINE_UNVERIFIED"
+}
