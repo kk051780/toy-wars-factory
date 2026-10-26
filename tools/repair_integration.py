@@ -75,7 +75,8 @@ def verified_manual_git_receipts(request, pr, review, claim_state):
     run = evidence.get("workflow_run")
     jobs = evidence.get("jobs")
     comparison = evidence.get("comparison")
-    if not all(isinstance(x, dict) for x in (receipt, first, run, comparison)):
+    lineage = evidence.get("first_commit_to_head")
+    if not all(isinstance(x, dict) for x in (receipt, first, run, comparison, lineage)):
         return False
     if (receipt.get("repository") != request["repository"] or
             receipt.get("sha") != request["claim_commit"] or
@@ -93,24 +94,37 @@ def verified_manual_git_receipts(request, pr, review, claim_state):
         opened = instant(pr["created_at"])
     except (KeyError, ValueError, TypeError, AttributeError):
         return False
-    if not (acquired <= created < expiry and acquired <= opened):
+    # Claim must precede author work; the PR must be opened during the
+    # same active controller lease. Equality with acquire is rejected.
+    if not (acquired < created <= opened < expiry):
         return False
     if (first.get("sha") != request.get("author_first_commit") or
             first.get("sha") != pr.get("first_commit_sha") or
             first.get("parents") != [request["base_main_sha"]] or
             not re.fullmatch(r"[0-9a-f]{40}", str(first.get("sha")))):
         return False
+    # The independent reviewer fetches GitHub compare(first...head).
+    # When first==head, identical is expected; otherwise head must be a
+    # descendant of the alleged first commit (behind_by=0).
+    if (lineage.get("base") != first["sha"] or
+            lineage.get("head") != request["head"] or
+            lineage.get("status") != ("identical" if first["sha"] == request["head"] else "ahead") or
+            lineage.get("behind_by") != 0):
+        return False
     if (type(request.get("ci_run")) is not int or request["ci_run"] <= 0 or
             run.get("id") != request["ci_run"] or
             run.get("head_sha") != request["head"] or
             run.get("status") != "completed" or run.get("conclusion") != "success" or
-            run.get("event") not in ("push", "pull_request")):
+            run.get("event") not in ("push", "pull_request") or
+            run.get("path") != ".github/workflows/bootstrap-quality.yml"):
         return False
     if (not isinstance(jobs, list) or len(jobs) != 2 or
             {j.get("name") for j in jobs if isinstance(j, dict)} != {"offline", "compile_hold"} or
             any(not isinstance(j, dict) or j.get("status") != "completed" or
                 j.get("conclusion") != "success" or
-                type(j.get("id")) is not int or j["id"] <= 0 for j in jobs)):
+                type(j.get("id")) is not int or j["id"] <= 0 or
+                j.get("run_id") != request["ci_run"] for j in jobs) or
+            len({j["id"] for j in jobs}) != 2):
         return False
     if (comparison.get("base") != request["base_main_sha"] or
             comparison.get("head") != request["head"] or

@@ -83,9 +83,11 @@ class IntegrationTests(unittest.TestCase):
                              "committer_date": "2026-10-25T00:10:00Z"},
             "workflow_run": {"id": 54321, "head_sha": self.pr["head"],
                              "status": "completed", "conclusion": "success",
-                             "event": "pull_request"},
-            "jobs": [{"name": "offline", "id": 101, "status": "completed", "conclusion": "success"},
-                     {"name": "compile_hold", "id": 102, "status": "completed", "conclusion": "success"}],
+                             "event": "pull_request", "path": ".github/workflows/bootstrap-quality.yml"},
+            "jobs": [{"name": "offline", "id": 101, "run_id":54321, "status": "completed", "conclusion": "success"},
+                     {"name": "compile_hold", "id": 102, "run_id":54321, "status": "completed", "conclusion": "success"}],
+            "first_commit_to_head": {"base": "e"*40, "head": self.pr["head"],
+                                     "status": "ahead", "behind_by": 0},
             "comparison": {"base": self.main["sha"], "head": self.pr["head"],
                            "behind_by": 0, "entries": self.pr["changed_entries"]}}
         return self.lease["manual_review_requests"][0]
@@ -241,6 +243,50 @@ class IntegrationTests(unittest.TestCase):
             else:copied["comparison"]["entries"]=[]
             self.review["manual_git_evidence"]=copied
             self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF",mutation)
+
+    def test_manual_receipt_rejects_unrelated_first_commit(self):
+        self.enable_manual_candidate()
+        evidence=self.review["manual_git_evidence"]
+        receipt=evidence["first_commit_to_head"]
+        first=evidence["first_commit"]
+        self.assertEqual(self.decision()["action"],"MERGE")
+        # An imaginary nonancestor first SHA must not pass on matching
+        # request/PR fields alone; the fetched compare ancestry differs.
+        first["sha"]="f"*40
+        self.pr["first_commit_sha"]="f"*40
+        self.lease["manual_review_requests"][0]["author_first_commit"]="f"*40
+        self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
+        receipt["base"]="f"*40
+        receipt["status"]="behind"
+        self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
+        receipt["status"]="ahead"
+        self.assertEqual(self.decision()["action"],"MERGE")
+
+    def test_manual_receipt_rejects_foreign_job_run_and_duplicate_ids(self):
+        self.enable_manual_candidate()
+        evidence=self.review["manual_git_evidence"]
+        self.assertEqual(self.decision()["action"],"MERGE")
+        evidence["jobs"][0]["run_id"]=99999
+        self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
+        evidence["jobs"][0]["run_id"]=54321
+        evidence["jobs"][0]["id"]=102
+        self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
+
+    def test_manual_receipt_rejects_wrong_workflow_path(self):
+        self.enable_manual_candidate()
+        evidence=self.review["manual_git_evidence"]
+        evidence["workflow_run"]["path"]=".github/workflows/another.yml"
+        self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
+
+    def test_manual_receipt_rejects_out_of_lease_pr_creation_and_time_equality(self):
+        self.enable_manual_candidate()
+        for changed in ("2026-10-25T01:00:01Z","2026-10-25T01:00:00Z"):
+            self.pr["created_at"]=changed
+            self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
+        self.pr["created_at"]="2026-10-25T00:20:00Z"
+        first=self.review["manual_git_evidence"]["first_commit"]
+        first["committer_date"]="2026-10-25T00:00:00Z"
+        self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
 
     def test_manual_receipt_rejects_duplicate_json_claim_keys(self):
         self.enable_manual_candidate()

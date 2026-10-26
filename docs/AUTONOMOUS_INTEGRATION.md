@@ -85,3 +85,7 @@ mainに採用されるまでは、手動PR #58の自動統合は解禁されな�
 手動ゲームPRの変更範囲は、実ゲームsourceのM・新規Lua回帰のA・C履歴のAの**3種すべて必須**。docs/EXPERIMENT_LOG.md、権限設定、CI、文書だけ、重複パス、削除は拒否。
 
 単一PR番号に紐づくレビュー依頼は**ブランチにかかわらず1件のみ**。独立REVIEWERがGitHubからfetchしたimmutable claimコミットのファイル原文・blob SHA・commit SHA、第一コミットSHA/親/時刻、PR開始時刻、QA workflow IDと2 job ID/合格結果、比較したbase/headと差分を束ねる。判定関数はraw claimのGit blob SHA-1、厳格JSON（重複キー禁止）、取得時刻≦第一コミット時刻＜期限、および各種SHA・IDを相互照合する。**Git SHA-1単体や自己申告のTrue値はプロバイダ証明ではない**。REVIEWERはGitHubの認証済みコネクタから取得し、真正なAPI結果に基づく証拠だけを入力すること。純粋判定関数自体はGitHub API接続を持たず、独立したGitHub fetchを置換しない。これらが用意できない実行は保留する。
+
+### 監査再指摘への補強（2026-10-26）
+
+レビューはclaim取得時刻 **<** 最初の作者コミット時刻 **<=** PR作成時刻 **<** claim期限を要求する。PR作成をclaim期限内とする方針を明記する。独立REVIEWERは GitHub比較API `compare/{first_commit}...{pr_head}` を取得し、firstとheadが同じなら`identical`、異なるなら`ahead`、かつ`behind_by=0`を確認し、`first_commit_to_head`として提供する。CIの`workflow_run.path`は`.github/workflows/bootstrap-quality.yml`、各`jobs[].run_id`はrun IDと一致し、2件のjob IDは異なる必要がある。API取得の真正性を担う登録済み審査役以外の入力は信用しない。
