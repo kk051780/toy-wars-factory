@@ -84,7 +84,8 @@ class IntegrationTests(unittest.TestCase):
             replacement=copy.deepcopy(request)
             replacement[key]=value
             self.lease["manual_review_requests"][0]=replacement
-            self.assertEqual(self.decision()["action"],"WAIT_MANUAL_REQUEST",key)
+            expected = "WAIT_AUTHOR_ID" if key == "owner_id" else "WAIT_MANUAL_REQUEST"
+            self.assertEqual(self.decision()["action"], expected, key)
         self.lease["manual_review_requests"][0]=request
 
     def test_manual_candidate_requires_genuine_workflow_scope(self):
@@ -128,7 +129,8 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(self.decision()["action"], "WAIT_MANUAL_REQUEST")
         self.pr["head"]="b"*40
         self.main["sha"]="a"*40
-        self.assertEqual(self.decision()["action"], "WAIT_MANUAL_REQUEST")
+        # An incompatible tested-main identity must stop earlier than claim matching.
+        self.assertEqual(self.decision()["action"], "WAIT_MAIN_CI")
 
     def test_manual_candidate_wrong_author_or_same_run_never_merges(self):
         self.enable_manual_candidate()
