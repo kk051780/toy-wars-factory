@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T10:28:39.398Z",
-  "status": "APPROVED_PENDING_MERGE",
+  "observed_at": "2026-10-26T10:29:39.741Z",
+  "status": "MERGED_WAIT_MAIN_QA",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "9e3c34bb-26e4-8328-82e6-9da43f686d01",
@@ -21,7 +21,30 @@
     "ci": 40306923916,
     "review_record": "ops/reviews/PR0064_cd437eb2.json"
   },
-  "merged_prs": [],
-  "merge_count": 0,
-  "next": "PR64 exact-head CI and independent review passed. Merge only with same head and lease; verify actual merge and post-merge main QA/handoff. PR60 manual CONTROLLER policy remains REQUEST_CHANGES; PR61 not eligible. Preserve holds."
+  "merged_prs": [
+    {
+      "pr": 64,
+      "head": "cd437eb278e3708054939d0f88d76a476df7b3e2",
+      "merge_sha": "01527e4c5fc04fd139ba624b39c7db1dd873d28a",
+      "category": "GAME_SOURCE_FIX",
+      "ci": 40306923916,
+      "main_qa_run": 40307770609,
+      "main_qa_status": "in_progress",
+      "handoff_run": 40307770574,
+      "handoff_status": "success"
+    }
+  ],
+  "merge_count": 1,
+  "next": "PR64 merged. Verify QA #40307770609 and handoff #40307770574 against actual main before any further merge. If main QA fails, file REPAIR_MAIN request and block feature merges. PR60 remains REQUEST_CHANGES, PR61 manual lane not eligible; P0 Roblox engine/multiclient/mobile evidence #3 and worker permissions #57.",
+  "main_after": "0ace6749a50fce2f48f9db5a5e5906d003600fa5",
+  "post_merge_main_qa": {
+    "head": "01527e4c5fc04fd139ba624b39c7db1dd873d28a",
+    "run": 40307770609,
+    "status": "in_progress",
+    "conclusion": null,
+    "handoff_run": 40307770574,
+    "handoff_status": "completed",
+    "handoff_conclusion": "success",
+    "verified": false
+  }
 }
