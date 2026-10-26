@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "pr": 64,
+  "head": "cd437eb278e3708054939d0f88d76a476df7b3e2",
+  "base_main_sha": "389c9af779eb120387085d4af29c47f8366502d9",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "9e3c34bb-26e4-8328-82e6-9da43f686d01",
+  "lease_epoch": 65,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "e47d1c3d-56a0-8331-b895-ba70c71e7c3d",
+  "reviewed_at": "2026-10-26T10:28:39.398Z",
+  "verdict": "APPROVE",
+  "category": "GAME_SOURCE_FIX",
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "blockers": [],
+  "findings": [
+    "3-file isolated HUD queue notice fix; 506-byte source increase and 13 lines match C00038 and source totals 4 files/695 lines/27550 bytes",
+    "Canonical whole-HUD Lua mock: queue notice before leaderstats wait, hidden after assignment, 3 selectors; pinned original HUD negative control all pass",
+    "Current exact head CI 40306923916 offline+compile_hold success, 206 Python tests and new 3 Lua cases; trusted base scope 3 files and immutable claim gate PASS",
+    "Initial CI 40306673646 failed due to fixture hierarchy assertion; current head repairs only the new test, preserving behavior and accepted tests",
+    "Worker original epoch62 and repair epoch63 claim ancestors, registered task/run/work_branch consistent; no permissions, Gemini, spending, release or character modifications"
+  ],
+  "evidence": {
+    "ci_run": 40306923916,
+    "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40306923916",
+    "ci_head": "cd437eb278e3708054939d0f88d76a476df7b3e2",
+    "required_jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "main_qa_run": 40305630098,
+    "main_qa_head": "6b4fb5bfb19c6e0a27a61c3f261805d85fbf7d8a",
+    "main_qa_conclusion": "success",
+    "status_only_descendant_verified": true,
+    "main_changed_files_since_qa": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "source_bytes_before": 27044,
+    "source_bytes_after": 27550,
+    "source_lines_before": 682,
+    "source_lines_after": 695,
+    "source_changed": "src/ToyWarsHUD.client.lua",
+    "claim_original": "1776653a95cb93f377ddf7f7227345c3d048279f",
+    "claim_repair": "7664638929391ed70a3c185fcb15dc979c8cad0d",
+    "scope_gate": "PASS",
+    "claim_gate": "PASS",
+    "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/64"
+  },
+  "limitations": [
+    "Roblox Studio, actual 5-player join, mobile UI, appearance and player feedback NOT_RUN",
+    "Separate open PR55 addresses existing QA credential isolation; this PR does not alter workflow or grant permission"
+  ],
+  "merge_status": "PENDING"
+}

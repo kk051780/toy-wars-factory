@@ -1,53 +1,27 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T10:14:06.040Z",
-  "status": "MERGED_MAIN_QA_PASSED",
+  "observed_at": "2026-10-26T10:28:39.398Z",
+  "status": "APPROVED_PENDING_MERGE",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "e958762e-a330-8330-a739-56a1c3a9373b",
-  "lease_epoch": 61,
-  "main_before": "4bd7535b862c9975beb481c50df26e001b151d50",
+  "reviewer_run_id": "9e3c34bb-26e4-8328-82e6-9da43f686d01",
+  "lease_epoch": 65,
+  "main_before": "389c9af779eb120387085d4af29c47f8366502d9",
   "main_qa": {
-    "run": 40299361181,
-    "head": "550afd73a02bdde2d755caf2b2d446bf5faa7372",
+    "run": 40305630098,
+    "head": "6b4fb5bfb19c6e0a27a61c3f261805d85fbf7d8a",
     "conclusion": "success",
     "status_only_descendant_verified": true
   },
   "latest_review": {
-    "pr": 63,
-    "head": "67ee928743b8efa6c3cce4a80d8b038473f6bc95",
+    "pr": 64,
+    "head": "cd437eb278e3708054939d0f88d76a476df7b3e2",
     "verdict": "APPROVE",
     "category": "GAME_SOURCE_FIX",
-    "ci": 40305011765,
-    "review_record": "ops/reviews/PR0063_67ee9287.json"
+    "ci": 40306923916,
+    "review_record": "ops/reviews/PR0064_cd437eb2.json"
   },
-  "merged_prs": [
-    {
-      "pr": 63,
-      "head": "67ee928743b8efa6c3cce4a80d8b038473f6bc95",
-      "merge_sha": "6b4fb5bfb19c6e0a27a61c3f261805d85fbf7d8a",
-      "category": "GAME_SOURCE_FIX",
-      "ci": 40305011765,
-      "main_qa_run": 40305630098,
-      "main_qa_status": "success",
-      "handoff_run": 40305629965,
-      "handoff_status": "success"
-    }
-  ],
-  "merge_count": 1,
-  "main_after": "389c9af779eb120387085d4af29c47f8366502d9",
-  "next": "PR63 merged and exact-head main QA/handoff passed. P0 hosted Roblox engine/multiclient/mobile evidence (#3) and unattended WORKER authority (#57); separate PR60 trust-root security review remains REQUEST_CHANGES; PR61 manual lane not eligible. Preserve Gemini/release/cost HOLDs.",
-  "main_after_handoff": {
-    "head": "389c9af779eb120387085d4af29c47f8366502d9",
-    "qa_head": "6b4fb5bfb19c6e0a27a61c3f261805d85fbf7d8a",
-    "qa_run": 40305630098,
-    "qa_conclusion": "success",
-    "handoff_run": 40305629965,
-    "handoff_conclusion": "success",
-    "status_only_descendant_verified": true,
-    "changed_files": [
-      "status/CHAT_HANDOFF.md",
-      "status/LATEST_STATE.json"
-    ]
-  }
+  "merged_prs": [],
+  "merge_count": 0,
+  "next": "PR64 exact-head CI and independent review passed. Merge only with same head and lease; verify actual merge and post-merge main QA/handoff. PR60 manual CONTROLLER policy remains REQUEST_CHANGES; PR61 not eligible. Preserve holds."
 }
