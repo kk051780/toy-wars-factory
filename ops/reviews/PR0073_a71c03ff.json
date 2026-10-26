@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 73,
+  "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
+  "branch": "auto/twf-system-review-5d840992-1c14-8322-97f9-d694eb44edc6",
+  "base_main_sha": "75c3cc17bfe56ee759b9c38b8bcf00ccc46b1541",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "9093457e-1b70-832d-9859-d6e7ac0671fa",
+  "lease_epoch": 84,
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "5d840992-1c14-8322-97f9-d694eb44edc6",
+  "reviewed_at": "2026-10-26T22:06:29.632Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "findings": [
+    "Actual PR diff: 5 files; queue selector +120/-2 lines, 27 new tests, new C00043, documentation and worker prompt only; no game source/policy/accepted-test/CI modifications.",
+    "Current exact head CI 40332978440: offline and compile_hold success; offline 270 Python tests, trusted-base system-review scope PASS, immutable META claim PASS.",
+    "Current main QA 40404466932 on a68de7d43d1745be68f057aa0509a81cf5b600a6 passed both jobs; handoff 40404467227 success. Current main 75c3cc17bfe56ee759b9c38b8bcf00ccc46b1541 differs only generated two status files (direct compare).",
+    "C00043 has no game source changes; recorded authored-base source bytes 27552 are historical, not current 30030; merge reconciliation preserves existing source change ledger.",
+    "New selector requires independently collected same-ref review/request facts; tests reject stale heads, foreign repos, spoofed provider flag, duplicate requests, malformed proof, and preserve REPAIR_CI precedence.",
+    "Effect of actual WORKER consuming REPAIR_REVIEW is NOT yet verified; offline fixtures only. Roblox engine/mobile/multiclient unverified."
+  ],
+  "category": "SYSTEM_QUEUE_IMPROVEMENT",
+  "ci": {
+    "id": 40332978440,
+    "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 270,
+    "scope_and_claim_gate": "PASS",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40332978440"
+  },
+  "main_qa": {
+    "id": 40404466932,
+    "head": "a68de7d43d1745be68f057aa0509a81cf5b600a6",
+    "conclusion": "success",
+    "comparison": {
+      "status": "ahead",
+      "verified": true,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "merge": null,
+  "post_merge_main_qa": null,
+  "next": "If lease/head/main remain unchanged, ready and merge PR73 with expected_head_sha, then verify fresh main QA and handoff before any further merge."
+}

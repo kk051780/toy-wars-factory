@@ -1,72 +1,42 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T21:20:35.881Z",
-  "status": "REPAIR_MAIN",
+  "observed_at": "2026-10-26T22:06:29.632Z",
+  "status": "REVIEW_APPROVED_READY_FOR_MERGE",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "e819f6b2-4468-832a-b0bb-309879dcf4b0",
-  "lease_epoch": 81,
-  "main_before": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
-  "main_after": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+  "reviewer_run_id": "9093457e-1b70-832d-9859-d6e7ac0671fa",
+  "lease_epoch": 84,
+  "main_before": "75c3cc17bfe56ee759b9c38b8bcf00ccc46b1541",
+  "main_after": "75c3cc17bfe56ee759b9c38b8bcf00ccc46b1541",
   "main_qa": {
-    "head": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
-    "id": 40340954729,
-    "conclusion": "failure",
-    "jobs": {
-      "offline": "failure",
-      "compile_hold": "success"
+    "id": 40404466932,
+    "head": "a68de7d43d1745be68f057aa0509a81cf5b600a6",
+    "conclusion": "success",
+    "comparison": {
+      "status": "ahead",
+      "verified": true,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
     }
   },
   "latest_review": {
-    "pr": 67,
-    "head": "edfe101cda1b9f36e14afe5b8d1f2fccc85a346c",
+    "pr": 73,
+    "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
     "verdict": "APPROVE",
-    "category": "GAME_CODE_FIX_FIRST_PLAY_ONBOARDING",
-    "ci": 40329852658,
-    "review_record": "ops/reviews/PR0067_edfe101c.json",
-    "merge_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
-    "post_merge_qa": "failure",
-    "handoff": "failure"
+    "category": "SYSTEM_QUEUE_IMPROVEMENT",
+    "ci": 40332978440,
+    "review_record": "ops/reviews/PR0073_a71c03ff.json",
+    "merge_sha": null,
+    "post_merge_qa": null
   },
-  "merged_prs": [
-    {
-      "pr": 74,
-      "merge_sha": "e8d1cedce6a2bc32d5fed6b170f78c2b0b6699fa",
-      "main_qa": 40340501580,
-      "handoff": 40340501344,
-      "status": "MERGED_MAIN_QA_PASSED"
-    },
-    {
-      "pr": 67,
-      "merge_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
-      "main_qa": 40340954729,
-      "handoff": 40340954800,
-      "status": "MERGED_MAIN_QA_FAILED"
-    }
-  ],
-  "merge_count": 2,
-  "post_merge_main_qa": {
-    "id": 40340954729,
-    "conclusion": "failure"
-  },
-  "unresolved": [
-    "P0 REPAIR_MAIN main_pr74_pr67_history_ledger_chain_20261026: C00044 source_metrics 27706 vs sorted cumulative 30030; main QA+handoff failed",
-    "PR73 queue enhancement review/merge blocked until main repaired",
-    "Issue3 Roblox engine/multiplayer/mobile NOT_RUN",
-    "Issue57 host write incident",
-    "Gemini severe HOLD",
-    "PR75 P0 maintenance exact-head CI passes, but branch ops/twf-merge-ledger-reconcile-20261027 is outside current REVIEWER integration decision tool; current main QA fails. CONTROLLER must establish independently audited authorized repair integration route."
-  ],
-  "next": "CONTROLLER: resolve P0 maintenance integration scope/gate without bypassing protected checks; once repaired main QA+handoff pass, REVIEWER may resume eligible auto PRs.",
-  "main_observed": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+  "merged_prs": [],
   "merge_count_this_run": 0,
-  "p0_candidate": {
-    "pr": 75,
-    "head": "361f9576c1f3dcc60f342eb94016ebc3dd1c2b10",
-    "branch": "ops/twf-merge-ledger-reconcile-20261027",
-    "ci": 40402147994,
-    "ci_status": "success",
-    "integration_status": "BLOCKED_POLICY_SCOPE_AND_FAILED_MAIN_QA",
-    "main_merged": false
-  }
+  "unresolved": [
+    "Actual WORKER consumption of REPAIR_REVIEW remains unverified",
+    "Roblox engine/mobile/multiclient evidence missing; release HOLD remains",
+    "Gemini operational incident and existing spending limits remain"
+  ],
+  "next": "Ready/merge PR73 under lease if exact head/main/CI unchanged; then post-merge QA/handoff."
 }
