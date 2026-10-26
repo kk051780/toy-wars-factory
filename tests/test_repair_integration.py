@@ -59,6 +59,11 @@ class IntegrationTests(unittest.TestCase):
             "claim_commit": claim, "epoch": 47, "owner_id": owner,
             "head": self.pr["head"], "base_main_sha": self.main["sha"],
             "branch": branch, "changed_entries": self.pr["changed_entries"],
+            "claim_state": {"epoch": 47, "holder": {
+                "kind": "CONTROLLER", "owner_id": owner, "epoch": 47,
+                "base_main_sha": self.main["sha"], "work_branch": branch,
+                "acquired_at": "2026-10-25T00:00:00Z",
+                "expires_at": "2026-10-25T01:00:00Z"}},
             "claim_commit_verified": True, "main_ancestry_verified": True,
             "github_diff_verified": True, "ledger_verified": True,
             "ci_jobs_verified": True}
@@ -121,6 +126,25 @@ class IntegrationTests(unittest.TestCase):
             self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF",field)
             proof[field]=prior
         proof["changed_entries"]=[]
+        self.assertEqual(self.decision()["action"], "WAIT_MANUAL_PROOF")
+
+    def test_manual_claim_snapshot_never_accepts_alias_wrong_owner_or_epoch(self):
+        self.enable_manual_candidate()
+        snapshot=self.review["manual_provenance"]["claim_state"]
+        self.assertEqual(self.decision()["action"], "MERGE")
+        for field,value in (("work_branch", "feature/twf-hud-quickstart"),
+                            ("owner_id", REVIEW_RUN), ("epoch", 46),
+                            ("kind","WORKER"), ("base_main_sha","a"*40),
+                            ("expires_at","2026-10-25T00:00:00Z")):
+            holder=snapshot["holder"]
+            old=holder[field]
+            holder[field]=value
+            self.assertEqual(self.decision()["action"], "WAIT_MANUAL_PROOF",field)
+            holder[field]=old
+        snapshot["epoch"]=46
+        self.assertEqual(self.decision()["action"], "WAIT_MANUAL_PROOF")
+        snapshot["epoch"]=47
+        del self.review["manual_provenance"]["claim_state"]
         self.assertEqual(self.decision()["action"], "WAIT_MANUAL_PROOF")
 
     def test_manual_candidate_stale_head_or_base_never_merges(self):

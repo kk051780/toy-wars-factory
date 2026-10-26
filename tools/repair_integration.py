@@ -75,6 +75,24 @@ def verified_manual_request(policy, lease, pr, review, main):
         return None, "WAIT_MANUAL_PROOF"
     if proof.get("changed_entries") != entries:
         return None, "WAIT_MANUAL_PROOF"
+    # Independently fetched *immutable claim commit* snapshot must match the
+    # exact branch. A merely similar/prefix branch name is not enough.
+    snapshot = proof.get("claim_state")
+    if not isinstance(snapshot, dict) or snapshot.get("epoch") != request["epoch"]:
+        return None, "WAIT_MANUAL_PROOF"
+    claimed = snapshot.get("holder")
+    if not isinstance(claimed, dict) or any(claimed.get(k) != v for k, v in {
+        "kind": "CONTROLLER", "owner_id": request["owner_id"],
+        "epoch": request["epoch"], "work_branch": branch,
+        "base_main_sha": request["base_main_sha"]}.items()):
+        return None, "WAIT_MANUAL_PROOF"
+    try:
+        claimed_at = instant(claimed["acquired_at"])
+        expiry = instant(claimed["expires_at"])
+    except (KeyError, TypeError, ValueError, AttributeError):
+        return None, "WAIT_MANUAL_PROOF"
+    if expiry <= claimed_at:
+        return None, "WAIT_MANUAL_PROOF"
     for key in ("claim_commit_verified", "main_ancestry_verified",
                 "github_diff_verified", "ledger_verified", "ci_jobs_verified"):
         if proof.get(key) is not True:
