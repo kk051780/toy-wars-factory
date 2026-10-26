@@ -55,7 +55,34 @@
       ]
     }
   },
-  "merge": null,
-  "post_merge_main_qa": null,
-  "next": "If lease/head/main remain unchanged, ready and merge PR73 with expected_head_sha, then verify fresh main QA and handoff before any further merge."
+  "merge": {
+    "sha": "904672656d1ac13c4f8ed10f91f14de7d74e47cb",
+    "method": "merge",
+    "merged": true,
+    "at": "2026-10-26T22:08:09.162Z"
+  },
+  "post_merge_main_qa": {
+    "id": 40409905235,
+    "head": "904672656d1ac13c4f8ed10f91f14de7d74e47cb",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40409905235",
+    "latest_main": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
+    "comparison_since_qa": {
+      "status": "ahead",
+      "verified": true,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "next": "Main QA and handoff passed. Actual WORKER consumption of REPAIR_REVIEW is not yet verified. Next run may review another eligible PR against latest main.",
+  "post_merge_handoff": {
+    "id": 40409905182,
+    "head": "904672656d1ac13c4f8ed10f91f14de7d74e47cb",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40409905182"
+  }
 }
