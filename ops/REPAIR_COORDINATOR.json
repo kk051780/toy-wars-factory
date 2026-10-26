@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 51,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "a28e0d03-9c90-8332-a806-4fd9f438cddd",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 51,
-    "acquired_at": "2026-10-26T08:45:06.012Z",
-    "expires_at": "2026-10-26T09:15:06.012Z",
-    "base_main_sha": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
-    "work_branch": "auto/twf-game-repair-a28e0d03-9c90-8332-a806-4fd9f438cddd",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -30,14 +20,18 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "ff3845fe-0634-832d-bbe3-94ab6793f179",
-    "epoch": 50,
-    "released_at": "2026-10-26T08:28:28.971Z",
-    "result": "NO_ELIGIBLE_AUTOMATED_PR_MAIN_QA_VERIFIED",
-    "main_sha": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
-    "main_qa": 40283372197,
-    "merged_prs": []
+    "kind": "WORKER",
+    "owner_id": "a28e0d03-9c90-8332-a806-4fd9f438cddd",
+    "epoch": 51,
+    "released_at": "2026-10-26T08:49:34.577Z",
+    "result": "DRAFT_PR62_GAME_SOURCE_FIX_CI_PENDING",
+    "pr": 62,
+    "head": "f8fdfe0c034f830d4d46589499e9c2ecb16d5a7e",
+    "base_main_sha": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
+    "source_delta_bytes": 2,
+    "source_changed": true,
+    "ci": "PENDING",
+    "next_actor": "REGISTERED_REVIEWER_AFTER_CI_SUCCESS"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
