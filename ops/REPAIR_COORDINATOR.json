@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 74,
-  "holder": {
-    "kind": "META",
-    "owner_id": "a95f272c-3ee4-8324-a03e-de4cce8b89d8",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "epoch": 74,
-    "acquired_at": "2026-10-26T11:56:52+00:00",
-    "expires_at": "2026-10-26T12:26:52+00:00",
-    "base_main_sha": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
-    "work_branch": "auto/twf-system-review-a95f272c-3ee4-8324-a03e-de4cce8b89d8",
-    "origin": "meta"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -20,36 +10,20 @@
   },
   "approval_packet": {
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
-    "items": [
-      {
-        "number": 69,
-        "title": "[TWF system-review] Classify host-write incidents from bound read-only evidence",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/69",
-        "head": "771f9b3d2f1b6a4aa9550547458c472d61078f2b",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40316726148",
-        "summary": "読取り専用の書込み障害診断器と37件の回帰検査",
-        "changed_files": [
-          "tools/system_host_write_triage.py",
-          "tests/test_system_host_write_triage.py",
-          "docs/research/2026-10-26_host_write_triage.md",
-          "history/C00041_host_write_incident_triage.json"
-        ],
-        "kind": "開発体制改善"
-      }
-    ],
+    "items": [],
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-26T11:43:11Z",
-    "signature": "6497286d212348929e417488f36fbe06b06bf864583dcba82e4d9be46576aaa4",
+    "observed_at": "2026-10-26T12:14:19Z",
+    "signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
     "approval_text": ""
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "bce3c91b-9f04-832e-8452-3ebb94006588",
-    "epoch": 73,
-    "released_at": "2026-10-26T11:49:58.044Z"
+    "kind": "META",
+    "owner_id": "a95f272c-3ee4-8324-a03e-de4cce8b89d8",
+    "epoch": 74,
+    "released_at": "2026-10-26T12:14:19+00:00"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",

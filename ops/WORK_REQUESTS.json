@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T11:43:11Z",
+  "observed_at": "2026-10-26T12:13:08Z",
   "requests": [
     {
       "id": "pr67_mobile_guide_selector_overlap",
@@ -172,6 +172,18 @@
         "worker_run_id": "0bf89fd6-6a50-8321-be82-364bb9cc3bb8",
         "observed_wait_lock": 1,
         "denominator_limitation": "One latest service result is not enough to infer a long-run contention rate."
+      },
+      "latest_measurement": {
+        "observed_at": "2026-10-26T12:13:08Z",
+        "meta_epoch": 74,
+        "meta_owner": "a95f272c-3ee4-8324-a03e-de4cce8b89d8",
+        "acquired_at": "2026-10-26T11:56:52Z",
+        "sample_denominator": 1,
+        "worker_wait_lock": 1,
+        "worker_run": "d74ae23e-7e7c-8324-91b2-8fbdd6c827db",
+        "worker_started_at": "2026-10-26T12:03:44.333948Z",
+        "worker_completed_at": "2026-10-26T12:05:27.656289Z",
+        "note": "One writer protocol held. One selected WORKER run waited on this real META repair. Not a long-run contention rate; no reschedule or additional launch authorized."
       }
     },
     {
@@ -268,7 +280,153 @@
         "permanent_block_proven": false,
         "root_cause_resolved": false
       },
-      "expected": "Provider-authenticated direct result can distinguish host rejection from GitHub authorization error/ref race; narrative-only evidence must stay indeterminate."
+      "expected": "Provider-authenticated direct result can distinguish host rejection from GitHub authorization error/ref race; narrative-only evidence must stay indeterminate.",
+      "subsequent_observation": {
+        "observed_at": "2026-10-26T12:13:08Z",
+        "meta_run": "a95f272c-3ee4-8324-a03e-de4cce8b89d8",
+        "meta_claim_and_code_writes": "SUCCEEDED",
+        "code_pr": 70,
+        "worker_latest_run": "d74ae23e-7e7c-8324-91b2-8fbdd6c827db",
+        "worker_matching_result": "WAIT_LOCK",
+        "raw_host_denial_error": "STILL_UNAVAILABLE_FOR_HISTORICAL_11_06_INCIDENT",
+        "current_ci_failure_layer": "TRUSTED_REPOSITORY_SCOPE_GATE_NOT_HOST_DENIAL"
+      }
+    },
+    {
+      "id": "meta_triage_maintenance_scope_pr70",
+      "kind": "MAINTENANCE_SCOPE_CONFLICT",
+      "priority": "P0",
+      "assigned_role": "CONTROLLER",
+      "status": "OPEN",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 70,
+      "branch": "auto/twf-system-review-a95f272c-3ee4-8324-a03e-de4cce8b89d8",
+      "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+      "base_main_sha": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+      "created_at": "2026-10-26T12:13:08Z",
+      "request": "Resolve the exact accepted-module maintenance scope conflict before unrelated META work. Owner's current task explicitly requested the two-line PR69 source repair after main integration, but the deployed trusted-base scope gate rejects its M path. In a separate governed policy-maintenance context, consider the narrow allowlist entry tools/system_host_write_triage.py with regression evidence preserving all forbidden paths. Do not grant arbitrary tools/system_* modification, bypass branch checks, skip existing tests, force refs, merge red CI or change credentials/spending/release controls. META author cannot edit the config/checker to pass its own PR.",
+      "reproduction": {
+        "policy": "config/autonomous_repair.json:system_review.allowed_tool_paths",
+        "checker": "tools/check_meta_diff.py::violations",
+        "entries": [
+          [
+            "M",
+            "tools/system_host_write_triage.py"
+          ],
+          [
+            "A",
+            "tests/test_system_triage_terminal_outcome.py"
+          ]
+        ],
+        "actual": "outside system-review scope: M tools/system_host_write_triage.py",
+        "ci": {
+          "id": 40319916599,
+          "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40319916599",
+          "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+          "base": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "job_count": 2,
+          "jobs": [
+            {
+              "id": 121561918672,
+              "name": "compile_hold",
+              "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+              "attempt": 1,
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-26T12:05:50Z",
+              "completed_at": "2026-10-26T12:06:02Z"
+            },
+            {
+              "id": 121561918863,
+              "name": "offline",
+              "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+              "attempt": 1,
+              "status": "completed",
+              "conclusion": "failure",
+              "started_at": "2026-10-26T12:05:50Z",
+              "completed_at": "2026-10-26T12:06:06Z"
+            }
+          ],
+          "failed_step": "Enforce daily system-review scope using trusted base tools",
+          "error": "FAIL: outside system-review scope: M tools/system_host_write_triage.py",
+          "python_tests_in_ci": "NOT_RUN_SCOPE_GATE_FAILED",
+          "python_tests_local": 247,
+          "immutable_claim_gate_in_ci": "NOT_RUN_PRIOR_SCOPE_STEP_FAILED"
+        }
+      },
+      "expected": [
+        "A separately reviewed narrowly scoped maintenance-policy remedy deployed to main; preserve accepted scope negatives for AGENTS, workflows, authentication, quality policy and existing tests.",
+        "Then META reconciles PR70 against the new current main, preserves C42/provenance and two-line source repair, adds its own fresh acquisition history if another run edits, and obtains both jobs on the new exact head.",
+        "Registered independent REVIEWER rechecks actual diff/current base/head/all gates and verifies post-merge main QA. Do not call the prior local247 or old main243 a new CI success."
+      ],
+      "owner_reply_required": false
+    },
+    {
+      "id": "main_triage_failed_no_update_false_safe",
+      "kind": "REPAIR_MAIN_SEMANTIC_DEFECT",
+      "priority": "P1",
+      "assigned_role": "META",
+      "status": "IMPLEMENTED_DRAFT_BLOCKED_SCOPE",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 70,
+      "branch": "auto/twf-system-review-a95f272c-3ee4-8324-a03e-de4cce8b89d8",
+      "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+      "base_main_sha": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+      "request": "Before Issue68 or a new system feature, complete the explicit PR69 review-finding repair. Current main falsely returns SAFE_TO_NEXT_SCHEDULE for failed/no_update in canonical fixtures. PR70 has the minimal completed-only final health guard and four new tests. Do not weaken source/CI/identity/freshness/orphan controls.",
+      "reproduction": {
+        "fixture": "tests/test_system_host_write_triage.py::fixtures",
+        "bad_states": [
+          "failed",
+          "no_update"
+        ],
+        "before": "SAFE_TO_NEXT_SCHEDULE",
+        "expected": "INDETERMINATE / SERVICE_NOT_SUCCESSFULLY_COMPLETED",
+        "red_tests": 2,
+        "local_full_python": 247,
+        "accepted_original37_preserved": true
+      },
+      "blocking_request": "meta_triage_maintenance_scope_pr70",
+      "ci": {
+        "id": 40319916599,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40319916599",
+        "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+        "base": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "failure",
+        "job_count": 2,
+        "jobs": [
+          {
+            "id": 121561918672,
+            "name": "compile_hold",
+            "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+            "attempt": 1,
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-26T12:05:50Z",
+            "completed_at": "2026-10-26T12:06:02Z"
+          },
+          {
+            "id": 121561918863,
+            "name": "offline",
+            "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+            "attempt": 1,
+            "status": "completed",
+            "conclusion": "failure",
+            "started_at": "2026-10-26T12:05:50Z",
+            "completed_at": "2026-10-26T12:06:06Z"
+          }
+        ],
+        "failed_step": "Enforce daily system-review scope using trusted base tools",
+        "error": "FAIL: outside system-review scope: M tools/system_host_write_triage.py",
+        "python_tests_in_ci": "NOT_RUN_SCOPE_GATE_FAILED",
+        "python_tests_local": 247,
+        "immutable_claim_gate_in_ci": "NOT_RUN_PRIOR_SCOPE_STEP_FAILED"
+      },
+      "next": "Wait for separately governed scope maintenance, then reconcile/fresh exact-head CI and independent review. No owner approval reply is required."
     }
   ]
 }

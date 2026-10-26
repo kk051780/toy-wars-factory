@@ -1,0 +1,281 @@
+{
+  "schema": 1,
+  "observed_at": "2026-10-26T12:13:08Z",
+  "status": "SOURCE_REPAIR_PR_CREATED_LOCAL_PASS_CI_BLOCKED_SCOPE",
+  "actor": {
+    "kind": "META",
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "run_id": "a95f272c-3ee4-8324-a03e-de4cce8b89d8",
+    "epoch": 74,
+    "claim_commit": "27cf2762026f371dcd4e44ded5d2f476d15b7928"
+  },
+  "priority": "Explicit PR69 P1 review-finding repair before Issue68 and before any game feature",
+  "main": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+  "main_health": {
+    "qa_run": 40317866877,
+    "qa_head": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
+    "qa_jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "status_only_descendant_verified": true,
+    "compare_files": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "semantic_defect": "Two reproducible fixtures on current main return false healthy-wait state despite passing accepted CI."
+  },
+  "findings": [
+    {
+      "id": "main_triage_failed_no_update_false_safe",
+      "priority": "P1",
+      "status": "PATCHED_IN_DRAFT_NOT_MAIN",
+      "reproduced_on": "Exact current main source and its accepted fixtures",
+      "red_control": {
+        "failed": 2,
+        "passed": 2
+      },
+      "patch": "completed-only final health classification, two added source lines / +135 bytes",
+      "local_full_tests": 247
+    },
+    {
+      "id": "meta_triage_maintenance_scope_pr70",
+      "priority": "P0",
+      "status": "REQUIRES_SEPARATE_GOVERNED_CONTROLLER_MAINTENANCE",
+      "actual_error": "FAIL: outside system-review scope: M tools/system_host_write_triage.py",
+      "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40319916599",
+      "scope_checker_modified": false,
+      "policy_modified": false
+    },
+    {
+      "id": "known_review_finding_not_in_accepted_suite",
+      "status": "OBSERVED_ONE_PR",
+      "comment": "PR69 comment existed before independent integration; the same missing cases remained in main. Both implementation and review missed this semantic path. Cause of comment/finding propagation gap not established.",
+      "sample_denominator": 1
+    },
+    {
+      "id": "host_write_original_error",
+      "status": "UNAVAILABLE",
+      "note": "This META actually wrote claim/code/PR. Current CI scope rejection is separate from historical host-write-denial narratives."
+    }
+  ],
+  "implementation": {
+    "pr": 70,
+    "url": "https://github.com/kk051780/toy-wars-factory/pull/70",
+    "branch": "auto/twf-system-review-a95f272c-3ee4-8324-a03e-de4cce8b89d8",
+    "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+    "base": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+    "code_commits": 1,
+    "changed_files": [
+      "tools/system_host_write_triage.py",
+      "tests/test_system_triage_terminal_outcome.py",
+      "docs/research/2026-10-26_triage_terminal_outcome.md",
+      "history/C00042_triage_terminal_outcome.json"
+    ],
+    "game_source_delta_bytes": 0,
+    "existing_tests_modified": false,
+    "category": "SYSTEM_SOURCE_REPAIR_PLUS_NEW_REGRESSIONS"
+  },
+  "tests": {
+    "new_python_tests": 4,
+    "red_failures": 2,
+    "local_full_python": 247,
+    "local_policy_checks": 21,
+    "accepted_triage_tests": 37,
+    "accepted_mutation_controls": 7,
+    "ci": {
+      "id": 40319916599,
+      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40319916599",
+      "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+      "base": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "job_count": 2,
+      "jobs": [
+        {
+          "id": 121561918672,
+          "name": "compile_hold",
+          "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-26T12:05:50Z",
+          "completed_at": "2026-10-26T12:06:02Z"
+        },
+        {
+          "id": 121561918863,
+          "name": "offline",
+          "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-10-26T12:05:50Z",
+          "completed_at": "2026-10-26T12:06:06Z"
+        }
+      ],
+      "failed_step": "Enforce daily system-review scope using trusted base tools",
+      "error": "FAIL: outside system-review scope: M tools/system_host_write_triage.py",
+      "python_tests_in_ci": "NOT_RUN_SCOPE_GATE_FAILED",
+      "python_tests_local": 247,
+      "immutable_claim_gate_in_ci": "NOT_RUN_PRIOR_SCOPE_STEP_FAILED"
+    },
+    "claim": "Real epoch74 ref update and ownership reread succeeded; new CI's immutable proof step was skipped because preceding scope step failed, so no claim of that CI gate PASS."
+  },
+  "research": {
+    "sources": [
+      {
+        "url": "https://github.com/github/gh-aw/pull/71883",
+        "published_at": "2026-10-25",
+        "updated_at": null,
+        "checked_at": "2026-10-26T12:04:58Z",
+        "finding": "Implementation-origin case preserves original process failure while emitting allowlisted diagnostics; reviewed again, not a newly discovered later publication."
+      },
+      {
+        "url": "https://docs.github.com/en/rest/actions/workflow-runs",
+        "published_at": null,
+        "updated_at": null,
+        "checked_at": "2026-10-26T12:04:58Z",
+        "finding": "Run status, conclusion, head_sha and attempt are distinct fields. Do not apply GitHub vocabulary as ChatGPT service semantics."
+      },
+      {
+        "url": "https://create.roblox.com/docs/studio/testing-modes",
+        "published_at": null,
+        "updated_at": null,
+        "checked_at": "2026-10-26T12:04:58Z",
+        "finding": "Keep client/server, multi-client and emulated-device evidence separate from source/mock tests."
+      },
+      {
+        "url": "https://create.roblox.com/docs/reference/engine/enums/ScreenInsets",
+        "published_at": null,
+        "updated_at": null,
+        "checked_at": "2026-10-26T12:04:58Z",
+        "finding": "Retain safe-area conditions for later compact-HUD regression; no game change or physical-device success claimed."
+      }
+    ],
+    "freshness": "Fresh searches/primary opens this cycle. No newly verified later dated case beyond the known Oct25 implementation PR. Oct26 weekly page inaccessible in this run; snippets not adopted."
+  },
+  "measurements": {
+    "initial_ci_sample": {
+      "query": "latest40 workflow runs read at start of this cycle, filtered to QA name",
+      "selection_denominator": 40,
+      "qa_rows": 32,
+      "success": 23,
+      "failure": 9,
+      "window_start": "2026-10-26T06:56:24Z",
+      "window_end": "2026-10-26T11:48:58Z",
+      "duration_definition": "updated_at - created_at; not pure runner or queue delay; duplicate trigger rows are not independent incidents",
+      "current_repair_ci_not_in_initial_sample": {
+        "id": 40319916599,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40319916599",
+        "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+        "base": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "failure",
+        "job_count": 2,
+        "jobs": [
+          {
+            "id": 121561918672,
+            "name": "compile_hold",
+            "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+            "attempt": 1,
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-26T12:05:50Z",
+            "completed_at": "2026-10-26T12:06:02Z"
+          },
+          {
+            "id": 121561918863,
+            "name": "offline",
+            "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+            "attempt": 1,
+            "status": "completed",
+            "conclusion": "failure",
+            "started_at": "2026-10-26T12:05:50Z",
+            "completed_at": "2026-10-26T12:06:06Z"
+          }
+        ],
+        "failed_step": "Enforce daily system-review scope using trusted base tools",
+        "error": "FAIL: outside system-review scope: M tools/system_host_write_triage.py",
+        "python_tests_in_ci": "NOT_RUN_SCOPE_GATE_FAILED",
+        "python_tests_local": 247,
+        "immutable_claim_gate_in_ci": "NOT_RUN_PRIOR_SCOPE_STEP_FAILED"
+      }
+    },
+    "service_samples": {
+      "worker_prior": {
+        "id": "1c159542-ffdc-8327-9850-892b1a78843e",
+        "recorded_status": "completed",
+        "scheduled_for": "2026-10-26T11:05:33.019188Z",
+        "started_at": "2026-10-26T11:06:07.152359Z",
+        "completed_at": "2026-10-26T11:08:47.958965Z",
+        "chat_ref": {
+          "type": "chatgpt",
+          "id": "6adc2384-0294-83ee-a005-ef536b9eb34a"
+        }
+      },
+      "worker_latest": {
+        "id": "d74ae23e-7e7c-8324-91b2-8fbdd6c827db",
+        "recorded_status": "completed",
+        "scheduled_for": "2026-10-26T12:05:04Z",
+        "started_at": "2026-10-26T12:03:44.333948Z",
+        "completed_at": "2026-10-26T12:05:27.656289Z",
+        "chat_ref": {
+          "type": "chatgpt",
+          "id": "6adc2384-0294-83ee-a005-ef536b9eb34a"
+        }
+      },
+      "latest_worker_result_run": "d74ae23e-7e7c-8324-91b2-8fbdd6c827db",
+      "latest_worker_result": "WAIT_LOCK",
+      "selected_worker_runs": 2,
+      "historical_host_block_reports": 1,
+      "current_meta_lock_waits": 1,
+      "reviewer": {
+        "id": "bce3c91b-9f04-832e-8452-3ebb94006588",
+        "recorded_status": "completed",
+        "scheduled_for": "2026-10-26T11:46:19.356097Z",
+        "started_at": "2026-10-26T11:46:39.668095Z",
+        "completed_at": "2026-10-26T11:50:15.679548Z",
+        "chat_ref": {
+          "type": "chatgpt",
+          "id": "6add6b00-4784-83ee-abae-45d04f185d10"
+        }
+      },
+      "selected_reviewer_runs": 1,
+      "meta_prior_result_not_current": true
+    },
+    "note": "No service success-rate/long-term reliability or notification-delivery guarantee. Provider timestamps retained as reported."
+  },
+  "game_candidates": [
+    "first_play_guide_compact_layout",
+    "private_headless_engine_evidence_path",
+    "mobile_pve_frame_time"
+  ],
+  "game_implementation": "NONE_THIS_CYCLE",
+  "deferred": {
+    "issue68": "Next separate META issue after this concrete existing P1 repair and max-one-PR scope block. No queue source change was made.",
+    "hosted_engine": "No execution or new engine/mobile/multiplayer proof."
+  },
+  "applied_effect": {
+    "production_deployed": false,
+    "pr69": "Independently merged earlier; green main QA did not cover these two terminal-health cases.",
+    "pr70": "Local cases now fail closed; new-head GitHub CI is red on existing scope policy. Not integrated or declared passed."
+  },
+  "work_requests": [
+    "meta_triage_maintenance_scope_pr70",
+    "main_triage_failed_no_update_false_safe"
+  ],
+  "next": {
+    "actor": "CONTROLLER",
+    "action": "Resolve exact accepted-module maintenance-scope conflict through separately reviewed policy work, preserving existing protected negatives. Then META obtains current-head passing CI and distinct registered REVIEWER re-reviews and verifies main QA.",
+    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "owner_reply_required": false
+  },
+  "protected_controls": "No main merge, scope checker/config/accepted test/workflow/authorization/model/budget/spending/schedule/release modification; no additional task launch.",
+  "limitations": [
+    "Current PR70 CI has not executed Python/Lua/installer/immutable-claim stages due scope refusal. Local247 is not a substitute for successful required CI.",
+    "Original host error unavailable; no persistent platform limitation or full recovery asserted.",
+    "No engine/physics/multiplayer/physical-phone/appearance/fun verification."
+  ]
+}
