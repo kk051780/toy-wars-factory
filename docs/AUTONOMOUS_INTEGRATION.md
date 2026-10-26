@@ -93,3 +93,7 @@ mainに採用されるまでは、手動PR #58の自動統合は解禁されな�
 ### ロック取得コミットの共有ブランチ根拠
 
 登録された独立REVIEWERは、元claimの唯一の親SHAと親子の`ops/REPAIR_COORDINATOR.json`原文・blob SHAをGitHubの認証済み取得で検証する。親はholder=nullで、子ではepochがちょうど1増加し、authorized_tasksとowner_delegationが不変でなければ拒否する。claim差分は共有状態ファイル1件のMだけを許可する。さらにGitHub compareで元claimが`twf-repair-coordinator`の現headの祖先であること（ahead/identicalかつbehind_by=0）を検証し、`manual_git_evidence.claim_parent`と`claim_to_control_ref`に収録する。
+
+### CONTROLLERロック取得の期限と状態不変性
+
+取得期限は取得時刻から30分以内。取得コミットの親と子は、`holder`と`epoch`以外すべての共有JSONフィールドが同一でなければ拒否する。承認・審査キュー・権限・公開設定などの同時変更を認めない。独立REVIEWERがGitHubから取得した親子原文、blob SHA、コミット系譜で実証する。

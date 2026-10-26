@@ -54,3 +54,7 @@ GitHubの実コミットのfirstと現在PR headについて `compare/{first_com
 ### 追加の必須 GitHub 検査：共有claimの正規遷移
 
 元claimコミットの実parent SHA、親と子の`ops/REPAIR_COORDINATOR.json`原文/blob SHA、親子changed_entriesがその1ファイルのMだけであることを取得する。親holder=null、子epoch=親epoch+1、authorized_tasks/owner_delegation不変を確認。現在共有ref headと元claimをGitHub compareしてahead/identical、behind_by=0を検証。真正なAPI取得物を`manual_git_evidence.claim_parent`、`claim.parents`、`claim.changed_entries`、`claim_to_control_ref`、`current_coordinator_head`に入力。失敗時はWAIT_MANUAL_PROOFとする。
+
+### ロック取得の上限と共有状態の不変条件
+
+独立レビューではclaim有効期間が0を超え30分以内と確認する。親と子の全JSONから`epoch`と`holder`以外の全フィールドを完全一致で比較する。これら以外の変更を含むclaimは拒否する。元claimと親をGitHubから必ず独立取得する。

@@ -66,7 +66,7 @@ class IntegrationTests(unittest.TestCase):
                 "kind": "CONTROLLER", "owner_id": owner, "epoch": 47,
                 "base_main_sha": self.main["sha"], "work_branch": branch,
                 "acquired_at": "2026-10-25T00:00:00Z",
-                "expires_at": "2026-10-25T01:00:00Z"}},
+                "expires_at": "2026-10-25T00:30:00Z"}},
             "claim_commit_verified": True, "main_ancestry_verified": True,
             "github_diff_verified": True, "ledger_verified": True,
             "ci_jobs_verified": True}
@@ -260,6 +260,35 @@ class IntegrationTests(unittest.TestCase):
             self.review["manual_git_evidence"]=copied
             self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF",mutation)
 
+    def test_manual_claim_rejects_overlong_lease(self):
+        self.enable_manual_candidate()
+        proof=self.review["manual_provenance"]
+        claim=self.review["manual_git_evidence"]["claim"]
+        proof["claim_state"]["holder"]["expires_at"]="2026-10-26T00:00:00Z"
+        raw=json.dumps(proof["claim_state"],sort_keys=True)
+        content=raw.encode()
+        claim["state_file"]=raw
+        claim["state_blob_sha"]=hashlib.sha1(
+            b"blob "+str(len(content)).encode()+b"\0"+content).hexdigest()
+        self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
+
+    def test_manual_claim_rejects_concurrent_shared_state_modification(self):
+        self.enable_manual_candidate()
+        proof=self.review["manual_provenance"]
+        claim=self.review["manual_git_evidence"]["claim"]
+        original=copy.deepcopy(proof["claim_state"])
+        for key,value in (("approval_packet",{"unsafe":True}),
+                          ("authorized_tasks",{"REVIEWER":"different"}),
+                          ("manual_review_requests",[{"number":999}])):
+            proof["claim_state"]=copy.deepcopy(original)
+            proof["claim_state"][key]=value
+            raw=json.dumps(proof["claim_state"],sort_keys=True)
+            content=raw.encode()
+            claim["state_file"]=raw
+            claim["state_blob_sha"]=hashlib.sha1(
+                b"blob "+str(len(content)).encode()+b"\0"+content).hexdigest()
+            self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF",key)
+
     def test_manual_claim_requires_actual_coordinator_ancestry(self):
         self.enable_manual_candidate()
         evidence=self.review["manual_git_evidence"]
@@ -339,7 +368,7 @@ class IntegrationTests(unittest.TestCase):
 
     def test_manual_receipt_rejects_out_of_lease_pr_creation_and_time_equality(self):
         self.enable_manual_candidate()
-        for changed in ("2026-10-25T01:00:01Z","2026-10-25T01:00:00Z"):
+        for changed in ("2026-10-25T00:30:01Z","2026-10-25T00:30:00Z"):
             self.pr["created_at"]=changed
             self.assertEqual(self.decision()["action"],"WAIT_MANUAL_PROOF")
         self.pr["created_at"]="2026-10-25T00:20:00Z"

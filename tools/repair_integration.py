@@ -108,9 +108,13 @@ def verified_manual_git_receipts(request, pr, review, claim_state):
         if (prior.get("holder") is not None or
                 type(prior.get("epoch")) is not int or
                 prior["epoch"] + 1 != claim_state.get("epoch") or
-                prior.get("authorized_tasks") != claim_state.get("authorized_tasks") or
-                prior.get("owner_delegation") != claim_state.get("owner_delegation") or
                 parent.get("repository") != request["repository"]):
+            return False
+        # Only epoch and holder may change during a lease acquisition.
+        expected = dict(prior)
+        expected["epoch"] = prior["epoch"] + 1
+        expected["holder"] = claim_state["holder"]
+        if fetched != expected:
             return False
         created = instant(first["committer_date"])
         acquired = instant(claim_state["holder"]["acquired_at"])
@@ -239,7 +243,8 @@ def verified_manual_request(policy, lease, pr, review, main):
         expiry = instant(claimed["expires_at"])
     except (KeyError, TypeError, ValueError, AttributeError):
         return None, "WAIT_MANUAL_PROOF"
-    if expiry <= claimed_at or not verified_manual_git_receipts(request, pr, review, snapshot):
+    if (expiry <= claimed_at or expiry - claimed_at > timedelta(minutes=30) or
+            not verified_manual_git_receipts(request, pr, review, snapshot)):
         return None, "WAIT_MANUAL_PROOF"
     for key in ("claim_commit_verified", "main_ancestry_verified",
                 "github_diff_verified", "ledger_verified", "ci_jobs_verified"):
