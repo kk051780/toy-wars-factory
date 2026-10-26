@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 53,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "cad2149a-a539-42c6-85fe-8241fdf6cb72",
-    "task_id": null,
-    "epoch": 53,
-    "acquired_at": "2026-10-26T08:52:40.130Z",
-    "expires_at": "2026-10-26T09:22:40.130Z",
-    "base_main_sha": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
-    "work_branch": "ops/twf-manual-review-lane",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -30,27 +20,17 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "a28e0d03-9c90-8332-a806-4fd9f438cddd",
-    "epoch": 52,
-    "released_at": "2026-10-26T08:51:05.886Z",
-    "result": "GAME_SOURCE_FIX_PR62_EXACT_HEAD_CI_SUCCESS_WAIT_INDEPENDENT_REVIEW",
-    "pr": 62,
-    "head": "f8fdfe0c034f830d4d46589499e9c2ecb16d5a7e",
-    "base_main_sha": "c057ca6dc568e06ad4d17a0cb9af80ef28d633ec",
-    "source_delta_bytes": 2,
-    "source_changed": true,
-    "ci": {
-      "id": 40294943505,
-      "head": "f8fdfe0c034f830d4d46589499e9c2ecb16d5a7e",
-      "offline": "success",
-      "compile_hold": "success",
-      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40294943505"
-    },
-    "next_actor": "REGISTERED_REVIEWER",
-    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "main_merged": false,
-    "engine_verified": false
+    "kind": "CONTROLLER",
+    "owner_id": "cad2149a-a539-42c6-85fe-8241fdf6cb72",
+    "epoch": 53,
+    "released_at": "2026-10-26T08:57:53.799Z",
+    "pr": 60,
+    "head": "af5fe9f3c4083642eb3ba8c0824714744980be31",
+    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40295764454",
+    "ci_status": "success",
+    "result": "AUDIT_FINDINGS_4_FIXED_EXACT_HEAD_222_PYTEST_2JOBS_PASS_PENDING_NEW_SEPARATE_AUDIT",
+    "review": "PENDING_NEW_INDEPENDENT_AUDIT",
+    "main_merged": false
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
