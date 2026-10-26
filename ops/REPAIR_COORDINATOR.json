@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 81,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "e819f6b2-4468-832a-b0bb-309879dcf4b0",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 81,
-    "acquired_at": "2026-10-26T21:19:59.522Z",
-    "expires_at": "2026-10-26T21:49:59.522Z",
-    "base_main_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -47,16 +37,11 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "CONTROLLER",
-    "epoch": 80,
-    "owner_id": "e24fdb3d-985b-479f-ad9f-83591f24edc2",
-    "released_at": "2026-10-26T21:17:13.046Z",
-    "pr": 75,
-    "head": "361f9576c1f3dcc60f342eb94016ebc3dd1c2b10",
-    "result": "P0_HISTORY_MAINTENANCE_CI_248_PASS_INDEPENDENT_AUDIT_APPROVE_AWAIT_REGISTERED_REVIEW",
-    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40402147994",
-    "audit_task": "6adfc2413c3481919701acfe1a9b8f00",
-    "audit_run_id": "543474b5-42f4-832c-90e9-50ae0c9dae5b",
+    "kind": "REVIEWER",
+    "owner_id": "e819f6b2-4468-832a-b0bb-309879dcf4b0",
+    "epoch": 81,
+    "released_at": "2026-10-26T21:20:50.614Z",
+    "result": "REPAIR_MAIN_P0_PR75_SCOPE_GATE_RECORDED_NO_MERGE",
     "main_merged": false
   },
   "last_approval_report": {
