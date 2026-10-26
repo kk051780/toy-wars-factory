@@ -1,15 +1,16 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T11:49:58.044Z",
-  "status": "MERGED_MAIN_QA_PASSED",
+  "observed_at": "2026-10-26T12:34:15.795Z",
+  "status": "REPAIR_CI",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "bce3c91b-9f04-832e-8452-3ebb94006588",
-  "lease_epoch": 73,
-  "main_before": "09c08ddde66188fc0bd820ff1984c64f743d8144",
+  "reviewer_run_id": "1b9cf867-32bc-8333-8ce8-eb9ac26c0ce9",
+  "lease_epoch": 75,
+  "main_before": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+  "main_after": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
   "main_qa": {
-    "head": "913ed41140e3e063c207e6629858a8a35c01216b",
-    "run": 40310479605,
+    "head": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
+    "id": 40317866877,
     "conclusion": "success",
     "comparison_since_qa": {
       "verified": true,
@@ -23,52 +24,36 @@
     }
   },
   "latest_review": {
-    "pr": 69,
-    "head": "771f9b3d2f1b6a4aa9550547458c472d61078f2b",
-    "verdict": "APPROVE",
-    "category": "SYSTEM_IMPROVEMENT_READ_ONLY_DIAGNOSTIC",
-    "ci": 40316726148,
-    "review_record": "ops/reviews/PR0069_771f9b3d.json",
-    "blockers": []
+    "pr": 70,
+    "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+    "verdict": "REQUEST_CHANGES",
+    "category": "SYSTEM_IMPROVEMENT_TRIAGE_FIX",
+    "ci": 40319916599,
+    "review_record": "ops/reviews/PR0070_ee61cf4f.json",
+    "blockers": [
+      {
+        "file": "tools/system_host_write_triage.py",
+        "finding": "Current trusted-base META scope rejects modification of this existing module; exact-head offline CI failed before accepted regression tests ran.",
+        "reproduction": "Toy Wars bootstrap offline QA #40319916599 offline job #121561918863 reports: FAIL: outside system-review scope: M tools/system_host_write_triage.py; compile_hold succeeds.",
+        "expected": "A separately authorized CONTROLLER must narrowly maintain config.system_review.allowed_tool_paths for tools/system_host_write_triage.py with adversarial scope regression and independent review; then rebase/update PR70 and obtain fresh exact-head two-job CI. No author-side gate edits or CI bypass."
+      }
+    ]
   },
-  "merged_prs": [
-    {
-      "pr": 69,
-      "head": "771f9b3d2f1b6a4aa9550547458c472d61078f2b",
-      "merge_sha": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
-      "category": "SYSTEM_IMPROVEMENT_READ_ONLY_DIAGNOSTIC",
-      "ci": 40316726148,
-      "post_merge_qa": 40317866877,
-      "handoff": 40317866757
-    }
-  ],
-  "merge_count": 1,
-  "next": "WORKER: fix PR67 compact landscape overlap with geometric regression and exact-head CI. META: capture original provider write-denial result safely and assess host permissions without changing caps. REVIEWER: recheck new PR67 head. No Roblox release or Gemini restart.",
-  "main_after": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
-  "post_merge_main_qa": {
-    "verified": true,
-    "head": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
-    "run": 40317866877,
-    "conclusion": "success",
-    "jobs": {
-      "offline": "success",
-      "compile_hold": "success"
-    },
-    "handoff_run": 40317866757,
-    "handoff_conclusion": "success",
-    "status_only_descendant": {
-      "verified": true,
-      "head": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
-      "paths": [
-        "status/CHAT_HANDOFF.md",
-        "status/LATEST_STATE.json"
-      ]
-    }
+  "other_candidate": {
+    "pr": 67,
+    "head": "a57961e42bbda115659f67bfa4a6fe5a1540d473",
+    "status": "REQUEST_CHANGES_PREVIOUS_REVIEW_UNCHANGED_HEAD",
+    "reason": "Known 320–390px guide/selector overlap; existing WORKER work request remains OPEN"
   },
+  "merged_prs": [],
+  "merge_count": 0,
+  "post_merge_main_qa": null,
   "unresolved": [
-    "PR67 mobile guide overlaps toy selector; WORKER repair blocked by unverified host-write denial",
-    "Issue57 raw provider error unavailable; diagnostic PR69 does not repair write path",
-    "Roblox Studio/multiplayer/mobile evidence unavailable; release HOLD",
-    "PR60 manual controller gate remains unreviewed/unmerged"
-  ]
+    "PR70 exact-head offline CI fails trusted META scope; CONTROLLER narrow maintenance request already OPEN",
+    "PR67 mobile guide/selector overlap unresolved; WORKER request OPEN",
+    "Issue57 host-write denial raw provider response unavailable",
+    "Issue3 Roblox Studio/multiplayer/mobile evidence unavailable; release HOLD",
+    "PR60 manual controller lane remains unmerged"
+  ],
+  "next": "CONTROLLER: narrow accepted module maintenance scope with regression, then META PR70 new head and exact-head CI; WORKER: repair PR67 compact mobile HUD; REVIEWER: recheck only fresh heads. No Roblox publish or Gemini restart."
 }

@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "pr": 70,
+  "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+  "base_main_sha": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+  "reviewed_at": "2026-10-26T12:34:15.795Z",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "1b9cf867-32bc-8333-8ce8-eb9ac26c0ce9",
+  "lease_epoch": 75,
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "a95f272c-3ee4-8324-a03e-de4cce8b89d8",
+  "category": "SYSTEM_IMPROVEMENT_TRIAGE_FIX",
+  "verdict": "REQUEST_CHANGES",
+  "blockers": [
+    {
+      "file": "tools/system_host_write_triage.py",
+      "finding": "Current trusted-base META scope rejects modification of this existing module; exact-head offline CI failed before accepted regression tests ran.",
+      "reproduction": "Toy Wars bootstrap offline QA #40319916599 offline job #121561918863 reports: FAIL: outside system-review scope: M tools/system_host_write_triage.py; compile_hold succeeds.",
+      "expected": "A separately authorized CONTROLLER must narrowly maintain config.system_review.allowed_tool_paths for tools/system_host_write_triage.py with adversarial scope regression and independent review; then rebase/update PR70 and obtain fresh exact-head two-job CI. No author-side gate edits or CI bypass."
+    }
+  ],
+  "findings": [
+    "C00042 reports local 247 Python tests and four new regressions, but current-head CI failed trusted scope before these tests; local results cannot replace required CI.",
+    "Current main QA success is not a waiver for PR70 failing CI."
+  ],
+  "checks": {
+    "scope": false,
+    "regression": false,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": false
+  },
+  "changed_files": [
+    "tools/system_host_write_triage.py",
+    "tests/test_system_triage_terminal_outcome.py",
+    "docs/research/2026-10-26_triage_terminal_outcome.md",
+    "history/C00042_triage_terminal_outcome.json"
+  ],
+  "ci": {
+    "id": 40319916599,
+    "head": "ee61cf4ff68f337f5de70840e65d468d01b67f7b",
+    "conclusion": "failure",
+    "required_jobs_passed": false,
+    "scope_and_claim_gate": "FAIL",
+    "jobs": [
+      {
+        "name": "offline",
+        "conclusion": "failure",
+        "id": 121561918863
+      },
+      {
+        "name": "compile_hold",
+        "conclusion": "success",
+        "id": 121561918672
+      }
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40319916599"
+  },
+  "main_qa": {
+    "head": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
+    "id": 40317866877,
+    "conclusion": "success",
+    "comparison_since_qa": {
+      "verified": true,
+      "status": "ahead",
+      "ahead_by": 1,
+      "behind_by": 0,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "work_request_id": "meta_triage_maintenance_scope_pr70",
+  "merge": {
+    "merged": false
+  },
+  "limitations": [
+    "No Roblox Studio/multiplayer/mobile evidence",
+    "No direct raw host write denial receipt",
+    "No source changes integrated this run"
+  ]
+}
