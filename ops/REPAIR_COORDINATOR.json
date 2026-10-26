@@ -1,8 +1,18 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 79,
-  "holder": null,
+  "epoch": 80,
+  "holder": {
+    "kind": "CONTROLLER",
+    "owner_id": "e24fdb3d-985b-479f-ad9f-83591f24edc2",
+    "task_id": null,
+    "epoch": 80,
+    "acquired_at": "2026-10-26T21:01:09.405Z",
+    "expires_at": "2026-10-26T21:31:09.405Z",
+    "base_main_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+    "work_branch": "ops/twf-merge-ledger-reconcile-20261027",
+    "origin": "controller"
+  },
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
