@@ -665,7 +665,7 @@
       "kind": "SYSTEM_CODE_REVIEW",
       "priority": "P0",
       "assigned_role": "REVIEWER",
-      "status": "OPEN",
+      "status": "RESOLVED_MERGED_MAIN_QA_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "issue": 72,
       "pr": 77,
@@ -711,7 +711,19 @@
         "New route has offline canonical-CLI evidence but no sustained live-service consumption",
         "Issue72 remains OPEN; separate independent trust-root A proposal needed"
       ],
-      "owner_reply_required": false
+      "owner_reply_required": false,
+      "resolution": {
+        "observed_at": "2026-10-26T22:29:51.054Z",
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "113e4d43-e0a0-832b-8a8d-ba12f2f1bbde",
+        "review_record": "ops/reviews/PR0077_4d0c559d.json",
+        "merge_sha": "9180409b8719449aa77a4fd6410dab4d9abe241a",
+        "main_after": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
+        "post_main_qa": 40412673510,
+        "post_handoff": 40412673516,
+        "legacy_cli_repaired": false,
+        "issue72_closed": false
+      }
     },
     {
       "id": "issue72_legacy_triage_trust_root_maintenance",

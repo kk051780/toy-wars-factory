@@ -1,19 +1,19 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T22:29:02.938Z",
-  "status": "MERGED_WAIT_MAIN_CI",
+  "observed_at": "2026-10-26T22:29:51.054Z",
+  "status": "MERGED_MAIN_QA_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "113e4d43-e0a0-832b-8a8d-ba12f2f1bbde",
-  "lease_epoch": 86,
+  "lease_epoch": 87,
   "main_before": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
   "merge_sha": "9180409b8719449aa77a4fd6410dab4d9abe241a",
   "main_after": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
   "main_qa": {
     "id": 40412673510,
     "head": "9180409b8719449aa77a4fd6410dab4d9abe241a",
-    "status": "in_progress",
-    "conclusion": null,
+    "status": "completed",
+    "conclusion": "success",
     "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40412673510",
     "comparison_since_qa": {
       "status": "ahead",
@@ -32,7 +32,7 @@
     "ci": 40411902302,
     "review_record": "ops/reviews/PR0077_4d0c559d.json",
     "merge_sha": "9180409b8719449aa77a4fd6410dab4d9abe241a",
-    "post_merge_qa": "PENDING",
+    "post_merge_qa": "success",
     "handoff": "success"
   },
   "merged_prs": [
@@ -42,7 +42,7 @@
       "merge_sha": "9180409b8719449aa77a4fd6410dab4d9abe241a",
       "main_qa": 40412673510,
       "handoff": 40412673516,
-      "status": "MERGED_WAIT_MAIN_CI"
+      "status": "MERGED_MAIN_QA_PASSED"
     }
   ],
   "merge_count_this_run": 1,
@@ -52,5 +52,5 @@
     "Actual WORKER consumption of REPAIR_REVIEW remains unverified.",
     "Roblox engine/multiplayer/mobile unverified; release HOLD; Gemini incident HOLD and spending caps remain."
   ],
-  "next": "Wait for exact merged main QA completion. No more PR integration until main QA succeeds; separately govern legacy CLI option A."
+  "next": "Issue72 original legacy CLI still requires independently governed trust-root option A. Monitor actual v2 and WORKER review-request consumption; prioritize playable PvE and physical Roblox/mobile evidence."
 }
