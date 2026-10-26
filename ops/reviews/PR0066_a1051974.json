@@ -98,5 +98,30 @@
   "limitations": [
     "Roblox Studio, real physical prompts, multiplayer and mobile are NOT_RUN"
   ],
-  "reason": "Independent exact-head review: only three selector ActionText values change Make to Select; callback, price and permissions untouched; three whole-server mock cases incl pinned-old negative control and 206 Python tests pass; exact head two CI jobs pass; trusted base scope and immutable claim gate pass; main QA status-only descendant proven."
+  "reason": "Independent exact-head review: only three selector ActionText values change Make to Select; callback, price and permissions untouched; three whole-server mock cases incl pinned-old negative control and 206 Python tests pass; exact head two CI jobs pass; trusted base scope and immutable claim gate pass; main QA status-only descendant proven.",
+  "integration": {
+    "merge_sha": "913ed41140e3e063c207e6629858a8a35c01216b",
+    "merged": true,
+    "main_qa": {
+      "run": 40310479605,
+      "head": "913ed41140e3e063c207e6629858a8a35c01216b",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "handoff": {
+      "run": 40310479679,
+      "head": "913ed41140e3e063c207e6629858a8a35c01216b",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    "main_after_handoff": {
+      "head": "09c08ddde66188fc0bd820ff1984c64f743d8144",
+      "status_only_descendant_verified": true,
+      "changed_files": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    },
+    "post_merge_verified": true
+  }
 }

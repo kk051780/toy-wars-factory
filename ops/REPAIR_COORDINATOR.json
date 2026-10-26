@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 69,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "e7e7302a-6ae0-832b-a11f-e40f8d9df749",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 69,
-    "acquired_at": "2026-10-26T10:48:31.850Z",
-    "expires_at": "2026-10-26T11:18:31.850Z",
-    "base_main_sha": "0ace6749a50fce2f48f9db5a5e5906d003600fa5",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -45,17 +35,21 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "2ac75762-4ee0-8327-9dc6-fed9a8694fea",
-    "epoch": 68,
-    "released_at": "2026-10-26T10:46:03.492Z",
+    "kind": "REVIEWER",
+    "owner_id": "e7e7302a-6ae0-832b-a11f-e40f8d9df749",
+    "epoch": 69,
+    "released_at": "2026-10-26T10:51:16.195Z",
     "pr": 66,
     "head": "a10519744c92939fb671dfaa1e8b500e1cb3c03e",
+    "merge_sha": "913ed41140e3e063c207e6629858a8a35c01216b",
     "ci_run": 40309760825,
     "ci_status": "success",
-    "result": "CI_SUCCESS_WAIT_INDEPENDENT_REVIEW",
-    "next_actor": "REVIEWER",
-    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88"
+    "main_qa_run": 40310479605,
+    "main_qa_status": "success",
+    "handoff_run": 40310479679,
+    "handoff_status": "success",
+    "result": "MERGED_MAIN_QA_PASSED",
+    "next_actor": "WORKER"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -291,6 +285,31 @@
       "post_merge_handoff_status": "success",
       "main_after_handoff": "389c9af779eb120387085d4af29c47f8366502d9",
       "status_only_descendant_verified": true
+    },
+    "66": {
+      "schema": 1,
+      "pr": 66,
+      "head": "a10519744c92939fb671dfaa1e8b500e1cb3c03e",
+      "base_reviewed": "0ace6749a50fce2f48f9db5a5e5906d003600fa5",
+      "reviewer_kind": "REVIEWER",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "e7e7302a-6ae0-832b-a11f-e40f8d9df749",
+      "lease_epoch": 69,
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "2ac75762-4ee0-8327-9dc6-fed9a8694fea",
+      "verdict": "APPROVE",
+      "ci": {
+        "id": 40309760825,
+        "head": "a10519744c92939fb671dfaa1e8b500e1cb3c03e",
+        "conclusion": "success"
+      },
+      "review_record": "ops/reviews/PR0066_a1051974.json",
+      "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40310479605",
+      "post_merge_main_qa_status": "success",
+      "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40310479679",
+      "post_merge_handoff_status": "success",
+      "main_after_handoff": "09c08ddde66188fc0bd820ff1984c64f743d8144",
+      "status_only_descendant_verified": true
     }
   },
   "integration_results": {
@@ -342,6 +361,16 @@
       "post_merge_qa_status": "success",
       "handoff_status": "success",
       "main_after_handoff": "389c9af779eb120387085d4af29c47f8366502d9"
+    },
+    "66": {
+      "sha": "913ed41140e3e063c207e6629858a8a35c01216b",
+      "merged": true,
+      "message": "Independent exact-head reviewer merge; main QA and handoff passed",
+      "qa": 40310479605,
+      "handoff": 40310479679,
+      "post_merge_qa_status": "success",
+      "post_merge_handoff_status": "success",
+      "main_after_handoff": "09c08ddde66188fc0bd820ff1984c64f743d8144"
     }
   },
   "completed_controller_phase": {
