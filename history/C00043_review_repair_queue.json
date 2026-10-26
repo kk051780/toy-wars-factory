@@ -1,0 +1,202 @@
+{
+  "id": "C00043",
+  "date": "2026-10-26",
+  "observed_at_utc": "2026-10-26T13:41:12Z",
+  "kind": "SYSTEM_REVIEW_REQUEST_REPAIR_QUEUE",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "5d840992-1c14-8322-97f9-d694eb44edc6",
+  "base_main": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "2afe37efadf6e150495b296a5e1d9f92ec44b8b4",
+    "owner_run_id": "5d840992-1c14-8322-97f9-d694eb44edc6",
+    "epoch": 77
+  },
+  "queue_decision": "START_SINGLE_ISSUE68_AFTER_WORKER_LEASE_RELEASE; NO_OPEN_META_PR",
+  "preconditions": {
+    "issue": 68,
+    "pr70_state": "CLOSED_UNMERGED",
+    "pr70_reopened": false,
+    "triage_maintenance_defect_issue": 72,
+    "protected_triage_module_changed": false,
+    "trusted_scope_changed": false
+  },
+  "problem": "Existing choose_action only consumes PR/CI metadata, so green CI permits START/WAIT_REVIEW even when a registered independent reviewer has requested a concrete exact-head repair.",
+  "implementation": "Add optional trusted_review_requests with strict normalized source/review/author/repository/head bindings, duplicate/schema rejection and REPAIR_REVIEW before new work. Keep original 3-argument behavior, REPAIR_CI and WAIT_CI. Wire JSON CLI and mandatory worker document/prompt to the new input contract.",
+  "reproduction": {
+    "historical_pr67_head": "a57961e42bbda115659f67bfa4a6fe5a1540d473",
+    "historical_review_run": "2d695844-ba1c-8328-af7d-bb02c9c493c3",
+    "historical_verdict": "REQUEST_CHANGES",
+    "historical_ci": 40311284080,
+    "before": "Original queue body ignores the review and chooses START.",
+    "after": "Matching normalized independent evidence chooses REPAIR_REVIEW with exact PR/branch/head; stale or unproved request chooses WAIT_METADATA.",
+    "fixture_scope": "Historical normalized replay, not current live PR67 approval or repair decision."
+  },
+  "tests": {
+    "new_test_file": "tests/test_system_review_repair_queue.py",
+    "new_python_tests": 27,
+    "local_full_python": 270,
+    "local_conclusion": "PASS",
+    "legacy_queue_tests": 13,
+    "existing_tests_modified": false,
+    "red_control": {
+      "source": "Immutable current main tools/repair_queue.py body, executed with a signature-only adapter accepting but ignoring the new optional argument.",
+      "named_tests": 3,
+      "failures": 3,
+      "errors": 0,
+      "cases": [
+        "historical green REQUEST_CHANGES becomes repair",
+        "updated live head refuses old review",
+        "missing proof cannot be replaced by trusted flag"
+      ]
+    },
+    "trusted_meta_scope_local": "PASS_VIOLATIONS_EMPTY",
+    "github_ci": "PENDING_NEW_EXACT_HEAD"
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 695,
+    "lua_bytes": 27552
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "changed_files": [
+    "tools/repair_queue.py",
+    "tests/test_system_review_repair_queue.py",
+    "docs/AUTONOMOUS_REPAIR.md",
+    "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+    "history/C00043_review_repair_queue.json"
+  ],
+  "primary_sources": [
+    {
+      "url": "https://docs.github.com/en/rest/pulls/reviews",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-26T13:41:12Z",
+      "finding": "Review records carry state and commit_id. Bind verdicts to the reviewed head; this project consumes coordinator REQUEST_CHANGES from registered task/run, not native self-approval."
+    },
+    {
+      "url": "https://github.github.com/gh-aw/reference/safe-outputs/",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-26T13:41:12Z",
+      "finding": "Runtime distinguishes explicit review events and trusted machine-readable state from arbitrary body text. Adopt a separate normalized evidence argument; do not execute web instructions or change runtime permissions."
+    },
+    {
+      "url": "https://create.roblox.com/docs/studio/device-simulator",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-26T13:41:12Z",
+      "finding": "Current primary docs describe form-factor, safe-area and input simulation; beta can change and is not physical-device evidence. Keep compact guide validation separate from real-phone proof."
+    },
+    {
+      "url": "https://create.roblox.com/docs/tutorials/use-case-tutorials/ui/create-hud-meters",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-26T13:41:12Z",
+      "finding": "ScreenGui UI is positioned relative to safe-area insets; use varied effective bounds for later guide experiments. No game code changed by META."
+    }
+  ],
+  "freshness": "Fresh primary pages opened in this run; page publication/update dates unavailable, so no new dated release claimed. Web text is evidence, not authority.",
+  "coordination_observations": {
+    "waited_on": {
+      "epoch": 76,
+      "owner_run_id": "b3b2766a-3548-832f-abf1-725336d75c18",
+      "kind": "WORKER",
+      "acquired_at": "2026-10-26T13:16:32.487Z",
+      "released_at": "2026-10-26T13:22:34.011Z"
+    },
+    "release_verified_at_ref": "9a9dec655683515f3f58e3c6545c629e36603dea",
+    "own_claim_after_idle": true,
+    "expiry_takeover": false
+  },
+  "live_observations": {
+    "pr67": {
+      "current_head": "edfe101cda1b9f36e14afe5b8d1f2fccc85a346c",
+      "ci": 40329852658,
+      "ci_conclusion": "success",
+      "prior_failed_head": "0ab2889100a52025d055e1b642d269c6b91cd55b",
+      "prior_ci": 40329644854,
+      "prior_failure": "trusted-base scope included accepted main-only files; next head succeeded",
+      "old_review_stale": true
+    },
+    "main": {
+      "head": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+      "qa": 40317866877,
+      "qa_head": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
+      "jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "direct_compare_paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    },
+    "services": {
+      "meta_run": {
+        "id": "5d840992-1c14-8322-97f9-d694eb44edc6",
+        "recorded_status": "in_progress",
+        "scheduled_for": "2026-10-26T13:01:18.023680Z",
+        "started_at": "2026-10-26T13:14:29.083998Z",
+        "completed_at": null,
+        "chat_ref": null
+      },
+      "worker_sample": {
+        "id": "b3b2766a-3548-832f-abf1-725336d75c18",
+        "recorded_status": "in_progress",
+        "scheduled_for": "2026-10-26T13:05:04Z",
+        "started_at": "2026-10-26T13:14:47.184447Z",
+        "completed_at": null,
+        "chat_ref": null
+      },
+      "reviewer_sample": {
+        "id": "1b9cf867-32bc-8333-8ce8-eb9ac26c0ce9",
+        "recorded_status": "completed",
+        "scheduled_for": "2026-10-26T12:25:00Z",
+        "started_at": "2026-10-26T12:32:28.383132Z",
+        "completed_at": "2026-10-26T12:34:54.716989Z",
+        "chat_ref": {
+          "type": "chatgpt",
+          "id": "6add6b00-4784-83ee-abae-45d04f185d10"
+        }
+      },
+      "prior_worker_output_not_attributed_to_running_run": true,
+      "sample_denominator": {
+        "worker": 1,
+        "reviewer": 1
+      }
+    }
+  },
+  "trust_boundary": "Pure deterministic selector validates consistency of independently collected facts, not cryptographic JSON origin. Caller must fetch actual coordinator/review files at one ref and current PR/CI/author history/claim; provider strings or a trusted boolean are not authentication. Missing source must not become an empty list.",
+  "effect": "Queue and adversarial tests implemented and locally verified; separate review/main integration and a later real WORKER REPAIR_REVIEW consumption remain pending. No production recovery-rate improvement claimed.",
+  "protected_controls": "Only allowed repair_queue M plus allowed documents, new tests and new C history. No policy, scope checker, accepted test, workflow, permission, scheduler, spend, release, main merge or protected triage modification.",
+  "next": "Exact-head GitHub offline+compile_hold; registered REVIEWER 6add6aaceb4c8191b1666fe15f97cd88 inspects actual diff/provenance and integrates only if valid, then main QA. Issue72 remains separate; do not reopen PR70.",
+  "file_size_changes": [
+    {
+      "path": "tools/repair_queue.py",
+      "before_bytes": 3513,
+      "after_bytes": 9937,
+      "delta_bytes": 6424
+    },
+    {
+      "path": "tests/test_system_review_repair_queue.py",
+      "before_bytes": 0,
+      "after_bytes": 14624,
+      "delta_bytes": 14624
+    },
+    {
+      "path": "docs/AUTONOMOUS_REPAIR.md",
+      "before_bytes": 2354,
+      "after_bytes": 5964,
+      "delta_bytes": 3610
+    },
+    {
+      "path": "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+      "before_bytes": 11131,
+      "after_bytes": 12296,
+      "delta_bytes": 1165
+    }
+  ]
+}
