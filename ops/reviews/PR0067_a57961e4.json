@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "pr": 67,
+  "head": "a57961e42bbda115659f67bfa4a6fe5a1540d473",
+  "base_main_sha": "09c08ddde66188fc0bd820ff1984c64f743d8144",
+  "reviewed_at": "2026-10-26T11:02:40.640Z",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "2d695844-ba1c-8328-af7d-bb02c9c493c3",
+  "lease_epoch": 71,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "8d9d3375-a74c-8332-ae42-78607b1c88cc",
+  "category": "GAME_SOURCE_FIX",
+  "verdict": "REQUEST_CHANGES",
+  "checks": {
+    "scope": true,
+    "regression": false,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": false
+  },
+  "blockers": [
+    {
+      "id": "pr67_mobile_guide_selector_overlap",
+      "file": "src/ToyWarsHUD.client.lua",
+      "test": "tests/auto/first_play_hud_guide_spec.lua",
+      "finding": "Small landscape viewports have overlapping guide action buttons and toy selection buttons; nonblocking/touch-friendly behavior not established.",
+      "reproduction": [
+        "src/ToyWarsHUD.client.lua: QuickStart Position=UDim2(0.11,0,0.34,0), Size=(0.78,0,0,182); guide SKIP/NEXT are at bottom-56 with height 45, ZIndex=21. SelectToy is bottom-112 with selector buttons top+14 and height 62, ZIndex default 1.",
+        "At effective ScreenGui 640x360, guide action buttons y=248.4..293.4, toy selection buttons y=262..324; 31.4px vertical overlap. At 640 width, SKIP overlaps PON/GUARDON horizontally, NEXT overlaps GUARDON/TANKURU. On 320px height, action-button overlap is 45px.",
+        "Current tests/auto/first_play_hud_guide_spec.lua checks names, events and button count but not GuiObject rectangles or interactive overlap. Thus all 7 Lua cases and CI pass despite this layout collision."
+      ],
+      "expected": [
+        "Reposition or responsively size QuickStart and its action buttons so the guide's interactive rectangles never overlap any toy selection button in representative compact landscape safe-area heights (e.g. 320,360,390px) while remaining legible and dismissible.",
+        "Add deterministic regression calculating rendered UDim2 bounds for the canonical HUD at 640x320, 640x360, 844x390, 960x540 and checking both action-button versus selector rectangles (not only counts). Include a negative control against current failing head, preserve accepted queue/price regressions.",
+        "New head must have fresh exact-head offline and compile_hold success, unchanged protected controls and corrected source metrics."
+      ]
+    }
+  ],
+  "changed_files": [
+    "history/C00040_first_play_hud_guide.json",
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/first_play_hud_guide_spec.lua"
+  ],
+  "ci": {
+    "id": 40311284080,
+    "head": "a57961e42bbda115659f67bfa4a6fe5a1540d473",
+    "conclusion": "success",
+    "required_jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "trusted_scope_gate": "success",
+    "trusted_claim_gate": "success",
+    "lua_guide_tests": "7 passed 0 failed",
+    "python_tests": 206,
+    "negative_control": "PASS"
+  },
+  "main_qa": {
+    "head": "913ed41140e3e063c207e6629858a8a35c01216b",
+    "run": 40310479605,
+    "conclusion": "success",
+    "comparison_since_qa": {
+      "verified": true,
+      "status": "ahead",
+      "ahead_by": 1,
+      "behind_by": 0,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "source_ledger": {
+    "hud_before_bytes": 4286,
+    "hud_after_bytes": 6610,
+    "delta_bytes": 2324,
+    "source_total_bytes": 29876,
+    "source_lines": 753,
+    "verified": true
+  },
+  "shared_claim": {
+    "commit": "135c210b18e3dcc7b0e0498502de6cdf0d0aa711",
+    "epoch": 70,
+    "owner_run_id": "8d9d3375-a74c-8332-ae42-78607b1c88cc",
+    "ancestor_verified": true,
+    "claim_delta": [
+      "epoch",
+      "holder"
+    ]
+  },
+  "limitations": [
+    "No Roblox Studio, actual mobile screen, multi-client or playtest evidence"
+  ],
+  "next_actor": "WORKER",
+  "work_request_id": "pr67_mobile_guide_selector_overlap"
+}

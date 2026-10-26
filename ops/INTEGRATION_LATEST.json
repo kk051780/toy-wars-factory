@@ -1,15 +1,15 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T10:51:16.195Z",
-  "status": "MERGED_MAIN_QA_PASSED",
+  "observed_at": "2026-10-26T11:02:40.640Z",
+  "status": "REQUEST_CHANGES",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "e7e7302a-6ae0-832b-a11f-e40f8d9df749",
-  "lease_epoch": 69,
-  "main_before": "0ace6749a50fce2f48f9db5a5e5906d003600fa5",
+  "reviewer_run_id": "2d695844-ba1c-8328-af7d-bb02c9c493c3",
+  "lease_epoch": 71,
+  "main_before": "09c08ddde66188fc0bd820ff1984c64f743d8144",
   "main_qa": {
-    "head": "01527e4c5fc04fd139ba624b39c7db1dd873d28a",
-    "run": 40307770609,
+    "head": "913ed41140e3e063c207e6629858a8a35c01216b",
+    "run": 40310479605,
     "conclusion": "success",
     "comparison_since_qa": {
       "verified": true,
@@ -23,50 +23,22 @@
     }
   },
   "latest_review": {
-    "pr": 66,
-    "head": "a10519744c92939fb671dfaa1e8b500e1cb3c03e",
-    "verdict": "APPROVE",
+    "pr": 67,
+    "head": "a57961e42bbda115659f67bfa4a6fe5a1540d473",
+    "verdict": "REQUEST_CHANGES",
     "category": "GAME_SOURCE_FIX",
-    "ci": 40309760825,
-    "review_record": "ops/reviews/PR0066_a1051974.json"
+    "ci": 40311284080,
+    "review_record": "ops/reviews/PR0067_a57961e4.json",
+    "blockers": [
+      "pr67_mobile_guide_selector_overlap"
+    ]
   },
-  "merged_prs": [
-    {
-      "pr": 66,
-      "head": "a10519744c92939fb671dfaa1e8b500e1cb3c03e",
-      "merge_sha": "913ed41140e3e063c207e6629858a8a35c01216b",
-      "category": "GAME_SOURCE_FIX",
-      "ci": 40309760825,
-      "main_qa_run": 40310479605,
-      "main_qa_status": "success",
-      "handoff_run": 40310479679,
-      "handoff_status": "success"
-    }
-  ],
-  "merge_count": 1,
-  "next": "PR66 merged and post-merge main QA/handoff verified. Next hosted Roblox Studio/multiplayer/mobile evidence #3, unattended WORKER write permission #57, PR60 trust-root security REQUEST_CHANGES and PR61 manual lane ineligible. Preserve release/Gemini/cost HOLD.",
+  "merged_prs": [],
+  "merge_count": 0,
+  "next": "WORKER: fix compact landscape guide-vs-selector button overlap; preserve existing accepted regressions; rerun exact-head CI. REVIEWER recheck new head. Roblox real-device and multiplayer evidence still pending; release/Gemini/cost HOLD retained.",
   "main_after": "09c08ddde66188fc0bd820ff1984c64f743d8144",
   "post_merge_main_qa": {
-    "head": "913ed41140e3e063c207e6629858a8a35c01216b",
-    "run": 40310479605,
-    "status": "completed",
-    "conclusion": "success",
-    "handoff_run": 40310479679,
-    "handoff_status": "completed",
-    "handoff_conclusion": "success",
-    "verified": true
-  },
-  "main_after_handoff": {
-    "head": "09c08ddde66188fc0bd820ff1984c64f743d8144",
-    "qa_head": "913ed41140e3e063c207e6629858a8a35c01216b",
-    "qa_run": 40310479605,
-    "qa_conclusion": "success",
-    "handoff_run": 40310479679,
-    "handoff_conclusion": "success",
-    "status_only_descendant_verified": true,
-    "changed_files": [
-      "status/CHAT_HANDOFF.md",
-      "status/LATEST_STATE.json"
-    ]
+    "verified": false,
+    "reason": "NO_MERGE_IN_THIS_RUN"
   }
 }
