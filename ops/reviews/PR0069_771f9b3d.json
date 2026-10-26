@@ -78,5 +78,34 @@
     "Provider envelope authenticity delegated to trusted collector; JSON labels are not signatures",
     "Roblox engine/multiplayer/mobile not executed",
     "No sustained automation reliability claim"
-  ]
+  ],
+  "merge": {
+    "merged": true,
+    "merge_sha": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
+    "main_after_handoff": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+    "post_merge_main_qa": {
+      "id": 40317866877,
+      "head": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
+      "conclusion": "success",
+      "jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      }
+    },
+    "handoff": {
+      "id": 40317866757,
+      "head": "fa9d8a2dccd365ad1bce1cbda591430b2babb394",
+      "conclusion": "success"
+    },
+    "main_comparison_since_qa": {
+      "verified": true,
+      "status": "ahead",
+      "ahead_by": 1,
+      "behind_by": 0,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  }
 }
