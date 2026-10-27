@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T22:27:53.982Z",
-  "status": "MERGED_WAIT_MAIN_CI",
+  "observed_at": "2026-10-27T22:28:32.658Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "f48775fc-f68c-8331-b56e-8ef89ec19c1f",
@@ -154,23 +154,45 @@
       "pr": 95,
       "head": "a26165b192770343897e375815428f8a36c13e2f",
       "merge_sha": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
-      "status": "MERGED_WAIT_MAIN_CI",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "main_qa": 40594943961,
-      "handoff": 40594944031
+      "handoff": 40594944031,
+      "main_after_handoff": "55d9e0da77f0a9237cf2776432cf22f62b551283"
     }
   ],
   "merge_count_this_run": 1,
   "main_qa": {
     "id": 40594943961,
     "head": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
-    "status": "in_progress",
-    "conclusion": null
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40594943961",
+    "jobs": [
+      {
+        "name": "compile_hold",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "offline",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
   },
   "handoff": {
     "id": 40594944031,
     "head": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
     "status": "completed",
-    "conclusion": "success"
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40594944031",
+    "jobs": [
+      {
+        "name": "update",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
   },
   "comparison_since_main_qa": {
     "verified": true,
@@ -185,7 +207,7 @@
     "issue71_original_operation_receipt_unavailable",
     "roblox_engine_multiplayer_mobile_unverified"
   ],
-  "next": "WAIT_POST_MERGE_MAIN_QA_JOB_CONFIRMATION; PR94_WORKER_FIX_SESSION_OVERLAP",
+  "next": "PR94_WORKER_FIX_TWO_SESSION_OVERLAP; ISSUE71_ORIGINAL_OPERATION_RECEIPT_STILL_MISSING; KEEP_RELEASE_HOLD",
   "runtime_verified": true,
   "main_after": "55d9e0da77f0a9237cf2776432cf22f62b551283",
   "merge_sha": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0"
