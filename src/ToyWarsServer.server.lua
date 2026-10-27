@@ -458,7 +458,6 @@ local function join(player)
         -- Retry bounded waits for a slow HumanoidRootPart, not a replaced character.
         local root
         for _=1,3 do
-            if not state.active or sessions[player] ~= state or player.Parent ~= Players or player.Character ~= character then return end
             root=character:WaitForChild("HumanoidRootPart",8)
             if root then break end
         end
