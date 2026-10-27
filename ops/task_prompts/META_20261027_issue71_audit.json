@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "kind": "AUTHORIZED_OPERATIONAL_TASK_ROUTING_UPDATE",
+  "status": "PREPARED_BEFORE_TASK_UPDATE",
+  "recorded_at": "2026-10-27T11:36:48.464Z",
+  "controller_operation_id": "0b72f2d6-3494-4f45-ad6f-7938a01175a6",
+  "coordination_claim": "a252662c9b6a8d32554b29955ffe2992c21b9402",
+  "epoch": 110,
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "changed_fields": [
+    "prompt"
+  ],
+  "unchanged_fields": [
+    "task ID",
+    "schedule",
+    "enabled state",
+    "title",
+    "timezone",
+    "role permissions",
+    "source scopes",
+    "quality/review/fencing/budget/publishing gates"
+  ],
+  "old_prompt_sha256": "d177a97223d591e4691e5c5b2cb833b3fccaf27510dd886e8045cb78aab1a2e5",
+  "new_prompt_sha256": "9c77b14b6c9f995ddff4c9b1296b1bcadf4af583936be9cb07417c9f447f5c55",
+  "hash_rule": "SHA256 of exact UTF-8 task prompt, without adding a newline",
+  "independent_context_review": {
+    "context": "/root/audit_pr78_and_recovery",
+    "verdict": "APPROVE_OPERATIONAL_ROUTING_ONLY",
+    "clarification": "Read-only restriction applies to evidence acquisition/live verification, not already-authorized fenced draft PR authoring."
+  },
+  "reason": "Issue72 source repair is already accepted and closed; old prompt/status alias must not recreate it. Advance standing infrastructure priority to existing Issue71.",
+  "evidence": {
+    "main": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
+    "issue72": "closed",
+    "pr79_merge": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
+    "main_qa": 40495108890,
+    "main_status_only_descendant_verified": true
+  }
+}
