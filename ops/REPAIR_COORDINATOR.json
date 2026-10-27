@@ -1,18 +1,8 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 88,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "cbac0cb2-6aac-4b9f-9eba-72993809855e",
-    "task_id": null,
-    "epoch": 88,
-    "acquired_at": "2026-10-26T22:34:58.760Z",
-    "expires_at": "2026-10-26T23:04:58.760Z",
-    "base_main_sha": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
-    "work_branch": "ops/twf-trusted-maintenance-scope-20261027",
-    "origin": "controller"
-  },
+  "epoch": 89,
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -713,5 +703,35 @@
       "run_id": "543474b5-42f4-832c-90e9-50ae0c9dae5b",
       "task_id": "6adfc2413c3481919701acfe1a9b8f00"
     }
-  }
+  },
+  "administrative_revocations": [
+    {
+      "schema": 1,
+      "operation": "OWNER_AUTHORIZED_ADMINISTRATIVE_REVOCATION",
+      "observed_ref": "1c95a5afd6f78f690c3f4544d373a67e98b806f0",
+      "recorded_at": "2026-10-27T03:35:15.695803+00:00",
+      "actor_operation_id": "0c4ce7ce-ab36-4126-842c-eab76a87e1cd",
+      "previous_holder": {
+        "kind": "CONTROLLER",
+        "owner_id": "cbac0cb2-6aac-4b9f-9eba-72993809855e",
+        "task_id": null,
+        "epoch": 88,
+        "acquired_at": "2026-10-26T22:34:58.760Z",
+        "expires_at": "2026-10-26T23:04:58.760Z",
+        "base_main_sha": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
+        "work_branch": "ops/twf-trusted-maintenance-scope-20261027",
+        "origin": "controller"
+      },
+      "previous_epoch": 88,
+      "next_epoch": 89,
+      "service_completion_asserted": false,
+      "authorization": {
+        "source": "Current conversation: reply to concrete epoch88 administrative revocation question",
+        "user_reply": "続けて",
+        "scope": "Revoke only the stated old CONTROLLER lock, then resume prepared fix and independent review",
+        "ordinary_development_already_delegated": true
+      },
+      "preservation": "All existing unrelated coordinator records and last_completed remain unchanged; no service exit is asserted."
+    }
+  ]
 }
