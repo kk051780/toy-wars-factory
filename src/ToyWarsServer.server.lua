@@ -86,11 +86,13 @@ local function newSessionToken()
     end
     return nil
 end
-local function loadProgress(player)
+local function loadProgress(player, pending)
     if not progressStore then return nil, false end
     local key = "p:" .. tostring(player.UserId)
     local ok, record = pcall(function() return progressStore:GetAsync(key) end)
     if not ok or (record ~= nil and not validProgress(record)) then return nil, false end
+    -- GetAsync may yield past PlayerRemoving; never claim a departed session.
+    if sessions[player] ~= pending or player.Parent ~= Players then return nil, false end
     local token = newSessionToken()
     if not token then return nil, false end
     local expected = progressSnapshot(record)
@@ -568,7 +570,7 @@ local function join(player)
     -- Reserve before the yielding read; leaving during load must release the plot.
     local pending={slot=slot,active=false,entities={}}
     sessions[player]=pending
-    local progress, persistAllowed=loadProgress(player)
+    local progress, persistAllowed=loadProgress(player,pending)
     if sessions[player]~=pending or player.Parent~=Players then return end
     local stats=Instance.new("Folder")
     stats.Name="leaderstats"
