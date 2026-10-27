@@ -45,6 +45,7 @@ local function fixture(store)
             end
             env.game.BindToClose=function(_,fn) callbacks[#callbacks+1]=fn end
         end
+        if env==nil then return original(path,mode) end
         return original(path,mode,env)
     end
     local ok,h=pcall(H.new,server)

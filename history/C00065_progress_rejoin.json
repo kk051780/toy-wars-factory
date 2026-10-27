@@ -50,8 +50,8 @@
     {
       "path": "tests/auto/progression_rejoin_spec.lua",
       "before_bytes": 0,
-      "after_bytes": 5633,
-      "delta_bytes": 5633
+      "after_bytes": 5689,
+      "delta_bytes": 5689
     }
   ],
   "characters_touched": [],
@@ -63,7 +63,7 @@
     "accepted_server_cases": "UNCHANGED",
     "accepted_hud_cases": "UNCHANGED",
     "local": "NOT_RUN_LOCAL_LUA_5_4_CANONICAL_TREE_UNAVAILABLE",
-    "ci": "PENDING_EXACT_HEAD",
+    "ci": "REPAIR_PENDING_EXACT_HEAD",
     "roblox_engine": "NOT_RUN",
     "multiplayer": "NOT_RUN",
     "mobile": "NOT_RUN",
@@ -77,18 +77,33 @@
     "claim_commit": "82292b8fcefa44c38b4c68d6c62a96c42f624494",
     "source_commit": "a3cdbeac12527b64f95e1eb327c6cc874722cf2d",
     "pr": "PENDING_DRAFT_PR",
-    "ci": "PENDING_EXACT_HEAD"
+    "ci": "PENDING_EXACT_HEAD",
+    "ci_previous_failed": "https://github.com/kk051780/toy-wars-factory/actions/runs/40583053498"
   },
   "limitations": [
     "No autosave during long sessions; abrupt server loss can lose progress since last successful save.",
     "Real Roblox DataStore enablement, cross-server conflicts, quota and rejoin are unverified.",
     "Malformed/unknown stored schema falls back to session defaults without overwriting prior record."
   ],
-  "next_action": "Open draft PR and require latest-head offline+compile_hold success, independent REVIEWER integration and post-merge main QA. Do not claim G13 engine acceptance or Roblox release.",
+  "next_action": "Rerun exact-head offline+compile_hold with corrected fixture; independent REVIEWER only after both jobs succeed. Roblox engine and DataStore remain NOT_RUN.",
   "restrictions": {
     "gemini_rerun": false,
     "author_main_merge": false,
     "roblox_publish": false,
     "scheduler_mutated": false
+  },
+  "ci_repair": {
+    "kind": "TEST_FIX_ONLY",
+    "claim_commit": "2bd9b1cdff77631ff4353cdc8c0da550658042bb",
+    "epoch": 145,
+    "owner_run_id": "4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "failed_head": "d195926e88b373c18d472e951aceb5ea1cd440df",
+    "failed_ci_run": 40583053498,
+    "failed_job": "offline",
+    "cause": "Test-only loadfile wrapper passed an explicit nil environment to canonical ToyWarsBalance.lua, causing _ENV=nil in the fixture; six new cases failed before server behavior assertions.",
+    "fix": "Preserve Lua loadfile default environment when env is absent, and still inject DataStore only into canonical server env.",
+    "source_changed": false,
+    "accepted_tests_changed": false,
+    "required_next": "Exact new-head offline+compile_hold success; no old-head CI reuse."
   }
 }
