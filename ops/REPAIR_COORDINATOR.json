@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 90,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "0c4ce7ce-ab36-4126-842c-eab76a87e1cd",
-    "task_id": null,
-    "epoch": 90,
-    "acquired_at": "2026-10-27T03:35:53.344304+00:00",
-    "expires_at": "2026-10-27T04:05:53.344304+00:00",
-    "base_main_sha": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
-    "work_branch": "ops/twf-trusted-maintenance-scope-20261027",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -48,14 +38,13 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "113e4d43-e0a0-832b-8a8d-ba12f2f1bbde",
-    "epoch": 87,
-    "released_at": "2026-10-26T22:29:51.054Z",
-    "pr": 77,
-    "result": "MERGED_MAIN_QA_PASSED",
-    "merge_sha": "9180409b8719449aa77a4fd6410dab4d9abe241a",
-    "main_after": "c512ed9e155ebaba97e0098a7f75fb56510e0516"
+    "kind": "CONTROLLER",
+    "owner_id": "0c4ce7ce-ab36-4126-842c-eab76a87e1cd",
+    "epoch": 90,
+    "released_at": "2026-10-27T03:38:26.183Z",
+    "result": "PR78_CORRECTION_PUSHED_SEPARATE_REVIEW_REQUESTED",
+    "pr": 78,
+    "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -698,21 +687,24 @@
     "mode": "READ_ONLY_REVIEW",
     "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
     "repository": "kk051780/toy-wars-factory",
-    "pr": 75,
-    "head": "361f9576c1f3dcc60f342eb94016ebc3dd1c2b10",
-    "base_main_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
-    "source_branch": "ops/twf-merge-ledger-reconcile-20261027",
-    "ci_run": 40402147994,
+    "pr": 78,
+    "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+    "base_main_sha": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
+    "source_branch": "ops/twf-trusted-maintenance-scope-20261027",
     "owner_delegation": {
       "main_integration_authorized": true
     },
-    "intent": "P0_CONTROLLER_MAINTENANCE_INDEPENDENT_REVIEW_ONLY_NO_MERGE",
-    "requested_at": "2026-10-26T21:17:13.046Z",
-    "external_audit": {
-      "verdict": "APPROVE_P0_MAINTENANCE",
-      "run_id": "543474b5-42f4-832c-90e9-50ae0c9dae5b",
-      "task_id": "6adfc2413c3481919701acfe1a9b8f00"
-    }
+    "intent": "TRUST_ROOT_MODE_GUARD_INDEPENDENT_REVIEW_ONLY_NO_AUTHOR_MERGE",
+    "requested_at": "2026-10-27T03:38:26.182Z",
+    "author_operation_id": "0c4ce7ce-ab36-4126-842c-eab76a87e1cd",
+    "author_claim_commit": "01e218e4a2f8b39a116c40b8f4d3397001b4f054",
+    "required_checks": [
+      "Read exact changed checker and all tests from authenticated GitHub head",
+      "Verify latest exact-head offline and compile_hold CI; do not reuse previous head success",
+      "Reproduce old exact-blob chmod-only bypass and confirm new actual CLI rejects it",
+      "Preserve immutable base ancestry, registered claims, protected controls and source ledger",
+      "Return separate service verdict with reviewer task/run UUID; no code/ref/PR/main mutations"
+    ]
   },
   "administrative_revocations": [
     {
@@ -743,5 +735,35 @@
       },
       "preservation": "All existing unrelated coordinator records and last_completed remain unchanged; no service exit is asserted."
     }
-  ]
+  ],
+  "bootstrap_review_request_history": [
+    {
+      "mode": "READ_ONLY_REVIEW",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 75,
+      "head": "361f9576c1f3dcc60f342eb94016ebc3dd1c2b10",
+      "base_main_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
+      "source_branch": "ops/twf-merge-ledger-reconcile-20261027",
+      "ci_run": 40402147994,
+      "owner_delegation": {
+        "main_integration_authorized": true
+      },
+      "intent": "P0_CONTROLLER_MAINTENANCE_INDEPENDENT_REVIEW_ONLY_NO_MERGE",
+      "requested_at": "2026-10-26T21:17:13.046Z",
+      "external_audit": {
+        "verdict": "APPROVE_P0_MAINTENANCE",
+        "run_id": "543474b5-42f4-832c-90e9-50ae0c9dae5b",
+        "task_id": "6adfc2413c3481919701acfe1a9b8f00"
+      }
+    }
+  ],
+  "pr78_correction": {
+    "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+    "claim_commit": "01e218e4a2f8b39a116c40b8f4d3397001b4f054",
+    "epoch": 90,
+    "ci": "PENDING_NEW_EXACT_HEAD",
+    "review": "REQUESTED_SEPARATE_REGISTERED_TASK",
+    "local_python_tests": 315
+  }
 }
