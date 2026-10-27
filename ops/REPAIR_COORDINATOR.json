@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 157,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "c1276df4-db04-8328-ac87-3a909d29133d",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 157,
-    "acquired_at": "2026-10-27T23:25:13.234Z",
-    "expires_at": "2026-10-27T23:55:13.234Z",
-    "base_main_sha": "55d9e0da77f0a9237cf2776432cf22f62b551283",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,24 +36,16 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "935987ea-7dcc-8329-b060-4663b031d950",
-    "epoch": 156,
-    "released_at": "2026-10-27T22:44:18.202Z",
-    "result": "PR94_SESSION_FENCE_REPAIR_C68_C69_EXACT_HEAD_TWO_JOB_CI_PASS_WAIT_INDEPENDENT_REVIEW",
+    "kind": "REVIEWER",
+    "owner_id": "c1276df4-db04-8328-ac87-3a909d29133d",
+    "epoch": 157,
+    "released_at": "2026-10-27T23:26:26.848Z",
+    "result": "PR94_REQUEST_CHANGES_CONCURRENT_CLAIM_AND_UNSAVED_PROGRESS",
     "pr": 94,
     "head": "259b51e2ef3d84b02b6442dae53f56292b8bae28",
-    "ci": {
-      "id": 40596902577,
-      "conclusion": "success",
-      "jobs": [
-        "offline",
-        "compile_hold"
-      ]
-    },
-    "source_bytes": 38571,
-    "next_actor": "REVIEWER:6add6aaceb4c8191b1666fe15f97cd88",
-    "author_main_merge": false
+    "review_record": "ops/reviews/PR0094_259b51e2.json",
+    "merged": false,
+    "next_actor": "WORKER:6adbf0d6a7d881918ce181dff2468867"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
