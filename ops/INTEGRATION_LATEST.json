@@ -1,22 +1,22 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T07:27:16.110Z",
-  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "observed_at": "2026-10-27T10:28:14.500Z",
+  "status": "APPROVED_PENDING_MERGE",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "2eb44079-6988-8328-94b3-93dacf24485d",
-  "lease_epoch": 103,
-  "main_before": "418843226131ad559c2fc3826829058f3061e0ff",
+  "reviewer_run_id": "0c4ea11b-6288-8323-a37f-1c7d0c86fdd2",
+  "lease_epoch": 106,
+  "main_before": "2d50807eff2de44cc78a9278d728f183e01c898d",
   "latest_review": {
-    "pr": 82,
-    "head": "799c838f168b8942b275dab20ed569507a50157e",
+    "pr": 81,
+    "head": "6cecd585964bbfb948a2ee02b591d44b7cb5cfd5",
     "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0082_799c838f.json",
-    "ci": 40465570011,
-    "category": "GAME_HUD_QUEUE_REPLICATION_WAIT_FIX",
-    "merge_sha": "bb9a3a1388a55186997ae7983b7eed94e84155df",
-    "post_merge_main_qa": "PASS",
-    "post_merge_handoff": "PASS"
+    "review_record": "ops/reviews/PR0081_6cecd585.json",
+    "ci": 40471116054,
+    "category": "GAME_HUD_RESTART_GUIDE_ACCURACY",
+    "merge_sha": null,
+    "post_merge_main_qa": "PENDING",
+    "post_merge_handoff": "PENDING"
   },
   "merged_prs": [
     {
@@ -54,7 +54,7 @@
       "main_after_handoff": "2d50807eff2de44cc78a9278d728f183e01c898d"
     }
   ],
-  "merge_count_this_run": 1,
+  "merge_count_this_run": 0,
   "previous_integration_commit": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
   "main_qa": {
     "id": 40467079624,
@@ -79,11 +79,11 @@
     "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40467079700"
   },
   "unresolved": [
-    "PR81 ffac4788 remains draft with duplicate C00050 and pre-PR82 HUD base. WORKER must assign C00051, rebase on current main, preserve queue fix and rerun exact-head CI before independent re-review.",
-    "Roblox Studio, two-client multiplayer, physical mobile and visual/fun evidence absent; release HOLD.",
-    "Gemini operational hold and existing spending caps preserved."
+    "Post-merge main QA and handoff not yet executed; do not report merged success until verified.",
+    "Old WORK_REQUESTS PR81 request references obsolete head; close as superseded only after successful integration.",
+    "Roblox engine, two-client multiplayer, physical mobile and release readiness remain unverified; Gemini HOLD and caps preserved."
   ],
-  "next": "WORKER: fix PR81 under own registered lease, use next free C00051, preserve merged queue fix, rebase to main 2d50807e, reconcile HUD bytes/source metrics and run fresh exact-head offline/compile_hold+scope/claim gate. REVIEWER: re-review only new head; META: monitor C00050 collision/recovery and engine evidence gap.",
+  "next": "PR81 approved under registered REVIEWER lease; revalidate head, lease and main, then merge expected_head_sha; require fresh post-merge offline/compile_hold and handoff.",
   "merge_sha": "bb9a3a1388a55186997ae7983b7eed94e84155df",
   "main_after": "2d50807eff2de44cc78a9278d728f183e01c898d",
   "status_only_descendant_verified": true,

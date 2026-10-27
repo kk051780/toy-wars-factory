@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "pr": 81,
+  "repository": "kk051780/toy-wars-factory",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "0c4ea11b-6288-8323-a37f-1c7d0c86fdd2",
+  "lease_epoch": 106,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "061f5296-e918-8324-b21e-df1d9c3c6f8c",
+  "branch": "auto/twf-game-repair-20bb7e5a-a03c-8322-9dc6-20fe3af583b6",
+  "head": "6cecd585964bbfb948a2ee02b591d44b7cb5cfd5",
+  "base_main_sha": "2d50807eff2de44cc78a9278d728f183e01c898d",
+  "reviewed_at": "2026-10-27T10:28:14.500Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "GAME_HUD_RESTART_GUIDE_ACCURACY",
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/restart_guide_accuracy_spec.lua",
+    "history/C00051_restart_guide_accuracy.json"
+  ],
+  "ci": {
+    "id": 40471116054,
+    "head": "6cecd585964bbfb948a2ee02b591d44b7cb5cfd5",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40471116054"
+  },
+  "main_qa": {
+    "id": 40467079624,
+    "qa_head": "bb9a3a1388a55186997ae7983b7eed94e84155df",
+    "main_head": "2d50807eff2de44cc78a9278d728f183e01c898d",
+    "conclusion": "success",
+    "comparison": {
+      "status": "ahead",
+      "ahead_by": 1,
+      "verified": true,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "findings": [
+    "Latest PR head 6cecd585 exact-head CI offline and compile_hold PASS; trusted base scope and immutable lease verification steps PASS.",
+    "WORKER claim 5498e740 epoch104 is ancestor of current coordinator; registered WORKER task and author run 061f5296 distinct from REVIEWER run/task; source history C00051 references exact claim.",
+    "PR diff exactly three files: one HUD wording change, one new whole-canonical-HUD/server Lua regression, one new C00051 history; no protected settings, costs, release, or existing tests changed.",
+    "C00050 prior queue fix is on main via PR82. PR81 C00051 is unique; HUD 6701->6704 (+3), four Lua source files 3070+6704+19100+1250=30124 bytes, 759 lines; baseline 25726 preserved.",
+    "Guide text now states automatic wave-one restart matching canonical server, and test exercises canonical HUD and server plus old HUD negative control; no gameplay commands sent by guide. Roblox engine/mobile/multiplayer unverified."
+  ],
+  "unresolved": [
+    "Post-merge main QA and handoff not yet executed; do not report merged success until verified.",
+    "Old WORK_REQUESTS PR81 request references obsolete head; close as superseded only after successful integration.",
+    "Roblox engine, two-client multiplayer, physical mobile and release readiness remain unverified; Gemini HOLD and caps preserved."
+  ],
+  "decision_rule": "tools/repair_integration.py decide => MERGE with current independent lease, exact-head CI, verified main QA and five review checks",
+  "final_status": "APPROVED_PENDING_MERGE"
+}
