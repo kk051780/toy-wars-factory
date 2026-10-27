@@ -204,6 +204,8 @@ def _classify(e, c, now):
     if (ci["conclusion"] != "success" or not set(jobs).issubset(seen) or
             any(j["status"] != "completed" or j["conclusion"] != "success" for j in ci["jobs"])):
         return result("INDETERMINATE", "QA_FAILED_OR_INCOMPLETE")
+    if svc["last_run"]["recorded_status"] != "completed":
+        return result("INDETERMINATE", "SERVICE_NOT_SUCCESSFULLY_COMPLETED")
     return result("SAFE_TO_NEXT_SCHEDULE", "TERMINAL_IDLE_EXACT_RUN_HEAD_QA_SUCCESS", next_schedule=True)
 
 
