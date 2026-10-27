@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T04:37:41.125Z",
+  "observed_at": "2026-10-27T05:21:32.908Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1025,6 +1025,40 @@
         "status-only descendant compare verified"
       ],
       "issue_closed": true
+    },
+    {
+      "id": "worker_c00050_history_commit_blocked_20261027",
+      "kind": "WORKER_PARTIAL_GAME_CHANGE_NO_PR",
+      "priority": "P1",
+      "assigned_role": "WORKER",
+      "status": "OPEN",
+      "created_at": "2026-10-27T05:21:32.908Z",
+      "repository": "kk051780/toy-wars-factory",
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "267d10af-56cc-832b-b690-19df0e16484b",
+      "branch": "auto/twf-game-repair-267d10af-56cc-832b-b690-19df0e16484b",
+      "head": "1e1ba369511a86ab30fff458511f7ca0bc14b33c",
+      "base_main_sha": "418843226131ad559c2fc3826829058f3061e0ff",
+      "request": "Before starting unrelated new gameplay work, reconcile the already-written HUD queue-notice replication-wait source+test commit with a properly acquired WORKER lease, add the missing C00050 history/size/provenance record and create one reviewable draft PR. Do not bypass the host write failure by impersonating a run, altering permissions, or weakening the history/scope gate. Record the original provider error if exposed; otherwise retain UNAVAILABLE/INDETERMINATE.",
+      "reproduction": [
+        "GitHub branch ref equals 1e1ba369511a86ab30fff458511f7ca0bc14b33c; main 418843226131ad559c2fc3826829058f3061e0ff; compare is exactly one ahead commit changing src/ToyWarsHUD.client.lua and adding tests/auto/queue_notice_replication_wait_spec.lua.",
+        "No history/C00050 file is present in the actual one-commit compare; the WORKER run reported create_commit blocked while attempting the cycle record, and ended with no draft PR or exact-head CI.",
+        "Shared epoch 96 was released by the same WORKER run; no lease recovery needed."
+      ],
+      "expected": [
+        "New immutable history record with accurate byte/line metrics and a valid coordinator claim; verify provenance against current main and do not silently overwrite source from a different run.",
+        "A same-repo draft PR on a registered WORKER branch with fresh exact-head Toy Wars bootstrap offline QA, offline and compile_hold both successful and trusted scope/claim evidence PASS.",
+        "Independent REVIEWER checks actual diff/behavior and only then considers integration; Roblox engine/mobile claims remain unverified."
+      ],
+      "evidence": {
+        "worker_run_id": "267d10af-56cc-832b-b690-19df0e16484b",
+        "source_commit": "https://github.com/kk051780/toy-wars-factory/commit/1e1ba369511a86ab30fff458511f7ca0bc14b33c",
+        "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450646774",
+        "host_error_code": "UNAVAILABLE",
+        "raw_provider_error": "NOT_AVAILABLE",
+        "related_issue": "https://github.com/kk051780/toy-wars-factory/issues/57"
+      },
+      "owner_reply_required": false
     }
   ]
 }
