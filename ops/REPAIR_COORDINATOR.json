@@ -1,8 +1,18 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 154,
-  "holder": null,
+  "epoch": 155,
+  "holder": {
+    "kind": "DISPATCH",
+    "owner_id": "ac518d39-6e8c-4a7d-a12c-aefe4f79ecd4",
+    "task_id": null,
+    "epoch": 155,
+    "acquired_at": "2026-10-27T22:36:19.100719+00:00",
+    "expires_at": "2026-10-27T22:38:19.100719+00:00",
+    "base_main_sha": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+    "work_branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "origin": "dispatch"
+  },
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -1148,22 +1158,14 @@
     }
   ],
   "manual_go_context": {
-    "owner_instruction": "ゲーム開発を再開。進捗率・作業時間・作業効率を継続表示。",
-    "priority_request": "pr94_progress_updateasync_stale_overwrite_20261028",
-    "priority_pr": 94,
-    "canonical_failed_head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
-    "offline_reproductions": 6,
-    "local_read_only_fixture": "/workspace/scratch/b3934249f0a4/audit-pr94/progress_conflict_audit.lua",
-    "local_lua_runner": "/workspace/scratch/b3934249f0a4/run_lua54.py",
-    "source_changed_by_controller": false,
-    "reproductions": [
-      "schema migration after load",
-      "same-schema newer server save before older server save",
-      "concurrent first joins",
-      "malformed current record after valid load",
-      "UpdateAsync callback retry with fresh current",
-      "preserve DataStoreKeyInfo users and metadata"
-    ],
-    "normal_owner_reply_required": false
+    "observed_at": "2026-10-27T22:36:19.100719+00:00",
+    "owner_request": "続けて / 開発も続けてよ",
+    "priority_request_id": "pr94_two_session_overlap_later_progress_lost_20261028",
+    "pr": 94,
+    "reviewed_head": "5bba9a7fffa3b494b485341b51372452f196fad1",
+    "independent_diagnostic": "Exact 5bba canonical whole server offline replay: A+B load revision 0, A saves 300 first, B saves 500 later; expected500 actual300 (FAIL). Fixture /workspace/scratch/b3934249f0a4/audit-pr94-fixed-5bba9a7f/controller_old_first_audit.lua",
+    "required_outcome": "Repair existing PR94 session ownership on load / safe serialization before any next feature. Current optimistic CAS only protects one write order. New active session must not silently play unsavably. Preserve accepted regressions, unknown schema, metadata, purchases (no max coins), callback non-yielding and bounded failure/recovery. Follow registered reviewer request and official primary guidance.",
+    "main_observation": "55d9e0da77f0a9237cf2776432cf22f62b551283 is verified generated-status-only descendant of d7d4bb8a PR95 merge; mainQA40594943961 and handoff40594944031 success;423Python. No engine execution claimed.",
+    "next_feature_after_repair": "Assess bounded periodic autosave only after ownership fix; no unrelated feature stacking."
   }
 }
