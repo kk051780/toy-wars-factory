@@ -1,22 +1,22 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T10:29:32.323Z",
-  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "observed_at": "2026-10-27T11:17:33.156Z",
+  "status": "APPROVED_PENDING_MERGE",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "0c4ea11b-6288-8323-a37f-1c7d0c86fdd2",
-  "lease_epoch": 106,
-  "main_before": "2d50807eff2de44cc78a9278d728f183e01c898d",
+  "reviewer_run_id": "03232810-2e74-8333-a20a-e033720a1ee0",
+  "lease_epoch": 108,
+  "main_before": "14914cda41d3a41222744e3ff0b6e0e50019b654",
   "latest_review": {
-    "pr": 81,
-    "head": "6cecd585964bbfb948a2ee02b591d44b7cb5cfd5",
+    "pr": 83,
+    "head": "ca6d1662092d71e81e959fc30a5dea306ee7f60e",
     "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0081_6cecd585.json",
-    "ci": 40471116054,
-    "category": "GAME_HUD_RESTART_GUIDE_ACCURACY",
-    "merge_sha": "23aa3649f59f96111b02c91ca31a048df6749b6f",
-    "post_merge_main_qa": "PASS",
-    "post_merge_handoff": "PASS"
+    "review_record": "ops/reviews/PR0083_ca6d1662.json",
+    "ci": 40494497951,
+    "category": "GAME_SERVER_REPLICATED_STATUS_SNAPSHOT_STABILITY",
+    "merge_sha": null,
+    "post_merge_main_qa": "PENDING",
+    "post_merge_handoff": "PENDING"
   },
   "merged_prs": [
     {
@@ -63,7 +63,7 @@
       "main_after_handoff": "14914cda41d3a41222744e3ff0b6e0e50019b654"
     }
   ],
-  "merge_count_this_run": 1,
+  "merge_count_this_run": 0,
   "previous_integration_commit": "23aa3649f59f96111b02c91ca31a048df6749b6f",
   "main_qa": {
     "id": 40488765003,
@@ -87,10 +87,10 @@
     "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40488764919"
   },
   "unresolved": [
-    "Roblox engine, two-client multiplayer, physical mobile, visual/fun evidence absent; release HOLD.",
-    "Gemini incident hold, budget caps and external inference restrictions remain unchanged."
+    "Roblox Studio engine, two-client multiplayer, physical mobile, visual/fun evidence absent; release HOLD.",
+    "Gemini incident hold, budget caps and external inference restrictions unchanged."
   ],
-  "next": "WORKER: select next small PvE defect with canonical source regression and unique C history. META: prioritize objective Roblox Studio one-cycle, 2-client and mobile evidence; maintain release HOLD. REVIEWER: verify next exact-head PR and main QA, no owner reply needed.",
+  "next": "Registered REVIEWER: recheck lease, PR83 head, main and CI immediately before ready/expected-head merge; verify post-merge main QA and handoff.",
   "merge_sha": "23aa3649f59f96111b02c91ca31a048df6749b6f",
   "main_after": "14914cda41d3a41222744e3ff0b6e0e50019b654",
   "status_only_descendant_verified": true,
@@ -150,11 +150,12 @@
   },
   "latest_review_is_current_run": true,
   "latest_scan": {
-    "observed_at": "2026-10-27T10:29:32.323Z",
-    "eligible_open_prs": [],
-    "merged_pr": 81,
-    "head": "6cecd585964bbfb948a2ee02b591d44b7cb5cfd5",
-    "main_qa": 40488765003,
-    "handoff": 40488764919
+    "observed_at": "2026-10-27T11:17:33.156Z",
+    "eligible_open_prs": [
+      83
+    ],
+    "reviewed_pr": 83,
+    "head": "ca6d1662092d71e81e959fc30a5dea306ee7f60e",
+    "main_qa": 40488765003
   }
 }

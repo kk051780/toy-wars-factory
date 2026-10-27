@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "pr": 83,
+  "repository": "kk051780/toy-wars-factory",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "03232810-2e74-8333-a20a-e033720a1ee0",
+  "lease_epoch": 108,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "14596436-5228-8333-999d-f3d26d76b4b9",
+  "branch": "auto/twf-game-repair-14596436-5228-8333-999d-f3d26d76b4b9",
+  "head": "ca6d1662092d71e81e959fc30a5dea306ee7f60e",
+  "base_main_sha": "14914cda41d3a41222744e3ff0b6e0e50019b654",
+  "reviewed_at": "2026-10-27T11:17:33.156Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "GAME_SERVER_REPLICATED_STATUS_SNAPSHOT_STABILITY",
+  "changed_files": [
+    "history/C00052_status_snapshot_stability.json",
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/status_snapshot_stability_spec.lua"
+  ],
+  "ci": {
+    "id": 40494497951,
+    "head": "ca6d1662092d71e81e959fc30a5dea306ee7f60e",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40494497951"
+  },
+  "main_qa": {
+    "id": 40488765003,
+    "qa_head": "23aa3649f59f96111b02c91ca31a048df6749b6f",
+    "main_head": "14914cda41d3a41222744e3ff0b6e0e50019b654",
+    "conclusion": "success",
+    "comparison": {
+      "status": "ahead",
+      "ahead_by": 1,
+      "verified": true,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "findings": [
+    "Exact PR83 head ca6d1662 matches latest completed Toy Wars bootstrap offline QA #40494497951; offline and compile_hold successful, trusted-base scheduled repair scope and immutable coordinator claim steps PASS.",
+    "WORKER claim a5eb038b epoch107 is direct ancestor of current shared coordinator; claim owner/run/task/branch match C00052 and previous coordinator epoch106 holder was idle. Reviewer task/run is separate.",
+    "Actual main-to-head compare is exactly 3 files: 9 added/5 removed lines in canonical server, one new whole-server Lua test, one unique C00052 history. No existing accepted tests, policy, permissions, financial controls or release workflow modified.",
+    "Canonical source byte count 19100 -> 19404 (+304), source total 30124 -> 30428 bytes, server 491 -> 495 lines, total Lua 759 -> 763, four source modules retained, baseline 25726 unchanged.",
+    "refreshStatus now counts living entities in local variables and assigns SelectedToy/Allies/Enemies only when changed; existing server selection callback remains. New whole-server Lua test reports 4 passed, 0 failed including pinned old-server negative control; existing offline regressions and 4000 stress pass.",
+    "No Roblox engine network replication, two-client, mobile UI or visual/fun evidence is inferred from deterministic Lua property-write probes."
+  ],
+  "unresolved": [
+    "Roblox Studio engine, two-client multiplayer, physical mobile, visual/fun evidence absent; release HOLD.",
+    "Gemini incident hold, budget caps and external inference restrictions unchanged."
+  ],
+  "decision_rule": "tools/repair_integration.py decide: MERGE when current independent lease, exact-head CI, trusted scope/claim, verified status-only main QA, current main review and five checks hold",
+  "final_status": "APPROVED_PENDING_MERGE",
+  "post_merge_main_qa": null,
+  "post_merge_handoff": null,
+  "merge_sha": null
+}
