@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 120,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "0ff60660-a01c-8323-8d8d-6acba0373394",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 120,
-    "acquired_at": "2026-10-27T15:10:56.673Z",
-    "expires_at": "2026-10-27T15:40:56.673Z",
-    "base_main_sha": "340afc579204bacb987a313501ee3dfa0c2961a3",
-    "work_branch": "auto/twf-game-repair-0ff60660-a01c-8323-8d8d-6acba0373394",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,16 +36,21 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "aff4eb56-175c-8327-99c5-5e34870cf5d7",
-    "epoch": 119,
-    "released_at": "2026-10-27T14:30:21.501Z",
-    "result": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
-    "pr": 86,
-    "head": "fa89829a259b150ae054541f2f86b35ff74b675f",
-    "merge_sha": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
-    "main_qa": 40521561302,
-    "handoff": 40521561438
+    "kind": "WORKER",
+    "owner_id": "0ff60660-a01c-8323-8d8d-6acba0373394",
+    "epoch": 120,
+    "released_at": "2026-10-27T15:13:37.498Z",
+    "result": "DRAFT_GAME_SOURCE_PR_CI_PENDING",
+    "pr": 87,
+    "branch": "auto/twf-game-repair-0ff60660-a01c-8323-8d8d-6acba0373394",
+    "head": "a22c983b6af684daa66e9b476b8deb4cedfe5361",
+    "claim_commit": "5d4990f7cb2fd07ffe2f85b7459c5fd0f6ece909",
+    "changed_files": [
+      "src/ToyWarsHUD.client.lua",
+      "tests/auto/queue_notice_allocation_state_spec.lua",
+      "history/C00056_queue_notice_allocation_status_fix.json"
+    ],
+    "next_actor": "REVIEWER_AFTER_EXACT_HEAD_CI"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
