@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "pr": 84,
+  "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
+  "base_main_sha": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "cbd38de1-246c-832c-ac81-0553ae00e4dc",
+  "lease_epoch": 112,
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "a71130e8-97fc-832b-8644-287a6933256c",
+  "author_claim_commit": "309ae633084b728fde21b1b87d1d29b964bf6ec6",
+  "author_claim_epoch": 111,
+  "reviewed_at": "2026-10-27T12:06:49.090Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "findings": [
+    "Four added files only; trusted META scope and immutable coordinator claim PASS.",
+    "No existing game source, accepted tests, config, workflows, secrets, release/budget controls modified.",
+    "Exact PR head CI 40499824467 attempt1 offline and compile_hold success; 361 Python tests including 41 new adversarial tests.",
+    "Main QA 40495108890 and handoff 40495108922 success; direct compare 0674762e...79377eac is exactly two generated status files.",
+    "Read-only GET collector verifies immutable blob/hash/epoch, PR/run/head/base/jobs and final drift; output remains NOT_VERIFIED, no grants.",
+    "Live 23 GET host observation is limited to one source-path trace and is not portable authentication or multi-game dispatch proof."
+  ],
+  "changed_files": [
+    "docs/research/2026-10-27_github_evidence.md",
+    "history/C00053_scoped_github_evidence.json",
+    "tests/test_system_github_evidence.py",
+    "tools/system_github_evidence.py"
+  ],
+  "ci": {
+    "id": 40499824467,
+    "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
+    "attempt": 1,
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 361,
+    "new_python_tests": 41,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40499824467"
+  },
+  "main_qa": {
+    "id": 40495108890,
+    "head": "0674762e15d293a9a01b60dfcaac3f1e8399aac7",
+    "conclusion": "success",
+    "comparison_since_qa": {
+      "status": "ahead",
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ],
+      "verified": true
+    }
+  },
+  "category": "SYSTEM_READ_ONLY_EVIDENCE_COLLECTOR",
+  "merge_sha": null,
+  "post_merge_main_qa": "PENDING",
+  "post_merge_handoff": "PENDING",
+  "limitations": [
+    "No authenticated portable origin receipt; stdout NOT_VERIFIED",
+    "No real dispatch or Roblox engine/two-client/mobile evidence",
+    "Issue71 remains open pending further acceptance evidence"
+  ]
+}

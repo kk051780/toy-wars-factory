@@ -1,22 +1,22 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T11:21:17.058Z",
-  "status": "NO_ELIGIBLE_OPEN_PR",
+  "observed_at": "2026-10-27T12:06:49.090Z",
+  "status": "REVIEW_APPROVED_MERGE_PENDING",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "cfe479fa-c778-832e-a87a-5cb6a0efbba0",
-  "lease_epoch": 109,
+  "reviewer_run_id": "cbd38de1-246c-832c-ac81-0553ae00e4dc",
+  "lease_epoch": 112,
   "main_before": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
   "latest_review": {
-    "pr": 83,
-    "head": "ca6d1662092d71e81e959fc30a5dea306ee7f60e",
+    "pr": 84,
+    "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
     "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0083_ca6d1662.json",
-    "ci": 40494497951,
-    "category": "GAME_SERVER_REPLICATED_STATUS_SNAPSHOT_STABILITY",
-    "merge_sha": "0674762e15d293a9a01b60dfcaac3f1e8399aac7",
-    "post_merge_main_qa": "PASS",
-    "post_merge_handoff": "PASS"
+    "review_record": "ops/reviews/PR0084_34062c8e.json",
+    "ci": 40499824467,
+    "category": "SYSTEM_READ_ONLY_EVIDENCE_COLLECTOR",
+    "merge_sha": null,
+    "post_merge_main_qa": "PENDING",
+    "post_merge_handoff": "PENDING"
   },
   "merged_prs": [
     {
@@ -110,7 +110,7 @@
     "Roblox Studio engine, two-client multiplayer, physical mobile, visual/fun evidence absent; release HOLD.",
     "Gemini incident hold, budget caps and external inference restrictions unchanged."
   ],
-  "next": "WORKER: create next small PvE source fix with new unique C history, exact-head CI and claim proof; META: address Issue #3 engine/two-client/mobile evidence and actual unresolved defects; REVIEWER: independently review only eligible new authored PRs. Preserve all holds.",
+  "next": "PR84 merge after exact-head, lock and main recheck; post-merge QA/handoff required. Issue71 remains open; do not claim live dispatch or engine proof.",
   "merge_sha": "0674762e15d293a9a01b60dfcaac3f1e8399aac7",
   "main_after": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
   "status_only_descendant_verified": true,
@@ -168,7 +168,7 @@
     "main_qa": 40495108890,
     "handoff": 40495108922
   },
-  "latest_review_is_current_run": false,
+  "latest_review_is_current_run": true,
   "latest_scan": {
     "observed_at": "2026-10-27T11:21:17.058Z",
     "eligible_open_prs": [],
