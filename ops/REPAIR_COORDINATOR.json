@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 121,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "0ff60660-a01c-8323-8d8d-6acba0373394",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 121,
-    "acquired_at": "2026-10-27T15:14:27.715Z",
-    "expires_at": "2026-10-27T15:44:27.715Z",
-    "base_main_sha": "340afc579204bacb987a313501ee3dfa0c2961a3",
-    "work_branch": "auto/twf-game-repair-0ff60660-a01c-8323-8d8d-6acba0373394",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -48,17 +38,22 @@
   "last_completed": {
     "kind": "WORKER",
     "owner_id": "0ff60660-a01c-8323-8d8d-6acba0373394",
-    "epoch": 120,
-    "released_at": "2026-10-27T15:13:37.498Z",
-    "result": "DRAFT_GAME_SOURCE_PR_CI_PENDING",
+    "epoch": 121,
+    "released_at": "2026-10-27T15:15:51.918Z",
+    "result": "DRAFT_GAME_SOURCE_PR_CI_REPAIR_QUEUED",
     "pr": 87,
     "branch": "auto/twf-game-repair-0ff60660-a01c-8323-8d8d-6acba0373394",
-    "head": "a22c983b6af684daa66e9b476b8deb4cedfe5361",
-    "claim_commit": "5d4990f7cb2fd07ffe2f85b7459c5fd0f6ece909",
+    "head": "d4e0e2a533ce4c377eeac92c63e07cc93976a8f4",
+    "claim_commit": "8e91e26e52447fc4cef06a23dcec13712d01fe69",
+    "initial_claim": "5d4990f7cb2fd07ffe2f85b7459c5fd0f6ece909",
+    "prior_ci_failure": 40528829057,
+    "latest_ci": 40529165971,
+    "latest_ci_status": "queued",
     "changed_files": [
       "src/ToyWarsHUD.client.lua",
       "tests/auto/queue_notice_allocation_state_spec.lua",
-      "history/C00056_queue_notice_allocation_status_fix.json"
+      "history/C00056_queue_notice_allocation_status_fix.json",
+      "history/C00057_queue_allocation_negative_control_repair.json"
     ],
     "next_actor": "REVIEWER_AFTER_EXACT_HEAD_CI"
   },
