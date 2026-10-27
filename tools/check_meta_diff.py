@@ -27,26 +27,20 @@ _NEW_SYSTEM_TEST = re.compile(r"tests/test_system_[A-Za-z0-9_]+[.]py\Z")
 _NEW_HISTORY = re.compile(r"history/C[0-9]{5}_[A-Za-z0-9_]+[.]json\Z")
 
 
-def trusted_base_system_modules(base, trusted_main_ref="refs/remotes/origin/main"):
-    """Only pre-existing ordinary files from an ancestor of trusted main.
-
-    This helper executes from the trusted-base checker checkout; never read a
-    checker, allowlist or modules from the PR head as authorization.
-    GitHub PRs targeting an unrelated/untrusted base fail closed.
-    """
-    if not isinstance(base, str) or not re.fullmatch(r"[0-9a-f]{40}", base):
+def ordinary_system_modules_at(ref):
+    """Read committed 100644 blobs, never the mutable worktree or file claims."""
+    if (not isinstance(ref, str) or
+            (ref != "HEAD" and not re.fullmatch(r"[0-9a-f]{40}", ref))):
         return set()
     try:
         commit = subprocess.check_output(
-            ["git", "rev-parse", "--verify", base + "^{commit}"],
+            ["git", "rev-parse", "--verify", ref + "^{commit}"],
             stderr=subprocess.DEVNULL, text=True).strip()
-        if commit != base:
+        if (not re.fullmatch(r"[0-9a-f]{40}", commit) or
+                (ref != "HEAD" and commit != ref)):
             return set()
-        subprocess.run(
-            ["git", "merge-base", "--is-ancestor", base, trusted_main_ref],
-            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         raw = subprocess.check_output(
-            ["git", "ls-tree", "-r", "-z", base, "--", "tools/"],
+            ["git", "ls-tree", "-r", "-z", commit, "--", "tools/"],
             stderr=subprocess.DEVNULL)
     except (OSError, subprocess.CalledProcessError, ValueError):
         return set()
@@ -57,6 +51,8 @@ def trusted_base_system_modules(base, trusted_main_ref="refs/remotes/origin/main
         try:
             metadata, path_bytes = record.split(b"\t", 1)
             mode, typ, sha = metadata.split(b" ")
+            if not re.fullmatch(rb"[0-9a-f]{40}", sha):
+                return set()
             path = path_bytes.decode("utf-8", "strict")
         except (ValueError, UnicodeDecodeError):
             return set()
@@ -64,6 +60,23 @@ def trusted_base_system_modules(base, trusted_main_ref="refs/remotes/origin/main
                 _SYSTEM_MODULE.fullmatch(path)):
             safe.add(path)
     return safe
+
+
+def trusted_base_system_modules(base, trusted_main_ref="refs/remotes/origin/main"):
+    """Only existing ordinary modules in an authenticated main ancestor.
+
+    The caller must execute this checker from its trusted-base checkout.
+    A PR-head module set supplies mode restrictions, never base authority.
+    """
+    if not isinstance(base, str) or not re.fullmatch(r"[0-9a-f]{40}", base):
+        return set()
+    try:
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", base, trusted_main_ref],
+            check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except (OSError, subprocess.CalledProcessError, ValueError):
+        return set()
+    return ordinary_system_modules_at(base)
 
 
 def violations(entries, policy, module_extension=None, trusted_base_modules=None):
@@ -135,7 +148,8 @@ def main():
         import subprocess
         after = json.loads(subprocess.check_output(["git", "show", args.head + ":config/autonomous_repair.json"], text=True))
         extension = (policy, after)
-    trusted_modules = trusted_base_system_modules(args.base)
+    trusted_modules = (trusted_base_system_modules(args.base) &
+                       ordinary_system_modules_at(args.head))
     errors = violations(entries, policy, module_extension=extension,
                         trusted_base_modules=trusted_modules)
     if errors:
