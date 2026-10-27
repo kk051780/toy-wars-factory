@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T22:26:51.698Z",
-  "status": "REVIEWED_PR94_REQUEST_CHANGES_PR95_APPROVE_PENDING_MERGE",
+  "observed_at": "2026-10-27T22:27:53.982Z",
+  "status": "MERGED_WAIT_MAIN_CI",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "f48775fc-f68c-8331-b56e-8ef89ec19c1f",
@@ -15,7 +15,7 @@
     "ci": 40588371241,
     "category": "SYSTEM_READ_ONLY_CROSS_CHANNEL_INCIDENT_OBSERVER",
     "blockers": [],
-    "merge_sha": null
+    "merge_sha": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0"
   },
   "merged_prs": [
     {
@@ -149,16 +149,27 @@
       "handoff": 40578318577,
       "category": "SYSTEM_SCOPED_SERVICE_RUN_OBSERVER",
       "main_after_handoff": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4"
+    },
+    {
+      "pr": 95,
+      "head": "a26165b192770343897e375815428f8a36c13e2f",
+      "merge_sha": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+      "status": "MERGED_WAIT_MAIN_CI",
+      "main_qa": 40594943961,
+      "handoff": 40594944031
     }
   ],
-  "merge_count_this_run": 0,
+  "merge_count_this_run": 1,
   "main_qa": {
-    "id": 40578311810,
-    "head": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
-    "conclusion": "success"
+    "id": 40594943961,
+    "head": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+    "status": "in_progress",
+    "conclusion": null
   },
   "handoff": {
-    "id": 40578318577,
+    "id": 40594944031,
+    "head": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+    "status": "completed",
     "conclusion": "success"
   },
   "comparison_since_main_qa": {
@@ -174,8 +185,8 @@
     "issue71_original_operation_receipt_unavailable",
     "roblox_engine_multiplayer_mobile_unverified"
   ],
-  "next": "MERGE_PR95_EXACT_HEAD_THEN_POST_MAIN_QA; PR94_WORKER_FIX_SESSION_OVERLAP",
+  "next": "WAIT_POST_MERGE_MAIN_QA_JOB_CONFIRMATION; PR94_WORKER_FIX_SESSION_OVERLAP",
   "runtime_verified": true,
-  "main_after": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
-  "merge_sha": null
+  "main_after": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+  "merge_sha": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0"
 }

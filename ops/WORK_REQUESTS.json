@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T22:26:51.698Z",
+  "observed_at": "2026-10-27T22:27:53.982Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1422,7 +1422,7 @@
       "priority": "P1",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-      "status": "OPEN",
+      "status": "MERGED_WAIT_MAIN_QA",
       "repository": "kk051780/toy-wars-factory",
       "issue": 71,
       "pr": 95,
@@ -1466,7 +1466,14 @@
       "request": "Independently review new A-only joined collector. Verify exact head/base/C66 epoch150 immutable claim,197 accepted blobs unchanged,32 real regressions and both job/423 tests PASS. Validate actual37 GET+9 PEEK through source8e44f0a65e569ae0dccbae8abc026dc0541d9d54, mutable job tail revalidation, immutable cache boundary, historical PR author versus later service, supported v2/core data binding and all grants false. Check initial2 rejected attempts and no unearned original error/portable auth/permanent provider claims. Author does not approve/merge. If pass, separately merge then actual main QA/handoff; keep Issue71 open until remaining acceptance.",
       "owner_reply_required": false,
       "next_actor": "6add6aaceb4c8191b1666fe15f97cd88",
-      "live_boundary": "Host-observed final execution only; stdout NOT_VERIFIED; original operation receipt unavailable; no dispatch/credential/workflow/task permission expansion."
+      "live_boundary": "Host-observed final execution only; stdout NOT_VERIFIED; original operation receipt unavailable; no dispatch/credential/workflow/task permission expansion.",
+      "review": {
+        "verdict": "APPROVE",
+        "run_id": "f48775fc-f68c-8331-b56e-8ef89ec19c1f",
+        "head": "a26165b192770343897e375815428f8a36c13e2f",
+        "merge_sha": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+        "observed_at": "2026-10-27T22:27:53.982Z"
+      }
     },
     {
       "id": "pr94_two_session_overlap_later_progress_lost_20261028",

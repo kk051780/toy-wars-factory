@@ -30,7 +30,7 @@
       "status/LATEST_STATE.json"
     ]
   },
-  "merge_performed": false,
+  "merge_performed": true,
   "pr": 95,
   "head": "a26165b192770343897e375815428f8a36c13e2f",
   "branch": "auto/twf-system-review-ed8dffe9-ee34-8323-812e-164cfa0da5bd",
@@ -93,5 +93,30 @@
     "No Roblox engine, multiplayer or mobile test; no gameplay source modification.",
     "Issue #71 remains open."
   ],
-  "next_action": "READY_FOR_EXACT_HEAD_MERGE_AND_POST_MAIN_QA"
+  "next_action": "WAIT_POST_MERGE_MAIN_QA_AND_HANDOFF",
+  "merge_sha": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+  "merge_at_recorded": "2026-10-27T22:27:53.982Z",
+  "post_merge_main_qa": {
+    "id": 40594943961,
+    "head": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+    "status": "in_progress",
+    "conclusion": null,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40594943961"
+  },
+  "post_merge_handoff": {
+    "id": 40594944031,
+    "head": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40594944031"
+  },
+  "main_after_handoff": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+  "comparison_since_merge": {
+    "verified": true,
+    "status": "ahead",
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  }
 }
