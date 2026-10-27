@@ -234,6 +234,7 @@ local function addEntity(state, id, side)
     local e={
         id=id, side=side, health=data.hp, maxHealth=data.hp, cooldown=0,
         x=state.x+offset, z=z, alive=true, model=createToyModel(id,state.x+offset,z),
+        renderedX=state.x+offset, renderedZ=z,
     }
     state.entities[#state.entities+1]=e
     return e
@@ -321,7 +322,13 @@ local function updateEntity(state,e,dt)
         removeEntity(e)
     end
     if e.alive and e.model.Parent then
-        e.model:PivotTo(CFrame.new(e.x,2.5,e.z))
+        -- Anchored models already occupy their last rendered position.
+        -- Avoid redundant PivotTo calls for stationary combat units.
+        if e.x~=e.renderedX or e.z~=e.renderedZ then
+            e.model:PivotTo(CFrame.new(e.x,2.5,e.z))
+            e.renderedX=e.x
+            e.renderedZ=e.z
+        end
         refreshHealthBar(e)
     end
 end
