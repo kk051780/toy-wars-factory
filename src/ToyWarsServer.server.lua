@@ -296,6 +296,7 @@ local function updateEntity(state,e,dt)
             local remain=B.nextHP(target.health,target.maxHealth,data.damage)
             if remain then
                 target.health=remain
+                -- Refresh the damaged victim now, even if its turn already passed.
                 if remain<=0 then killEntity(state,target,e) else refreshHealthBar(target) end
             end
             e.cooldown=data.cooldown+math.min(0,remaining)
@@ -329,7 +330,6 @@ local function updateEntity(state,e,dt)
             e.renderedX=e.x
             e.renderedZ=e.z
         end
-        refreshHealthBar(e)
     end
 end
 
