@@ -1,0 +1,173 @@
+{
+  "id": "C00066",
+  "date": "2026-10-28",
+  "kind": "SYSTEM_JOINED_READ_ONLY_INCIDENT_OBSERVER",
+  "observed_at_utc": "2026-10-27T21:34:58.459482+00:00",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "ed8dffe9-ee34-8323-812e-164cfa0da5bd",
+  "base_main": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+  "issue": 71,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "67a59e7130b91353b286d7e11ea7ae64d575f300",
+    "owner_run_id": "ed8dffe9-ee34-8323-812e-164cfa0da5bd",
+    "epoch": 150
+  },
+  "preconditions": {
+    "issue72": "CLOSED; PR79 and completed-only legacy fix reverified on current main, not duplicated",
+    "pr92": {
+      "head": "dc64713802061f590cdcb75c4fc6629a5df0d48c",
+      "merge": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+      "main_qa": 40578311810,
+      "handoff": 40578318577,
+      "main_after": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4"
+    },
+    "main_qa_head": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+    "main_jobs": [
+      {
+        "id": 122450603955,
+        "name": "compile_hold",
+        "conclusion": "success"
+      },
+      {
+        "id": 122450604380,
+        "name": "offline",
+        "conclusion": "success"
+      }
+    ],
+    "direct_compare": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "coordinator_before": {
+      "head": "2794cfc7a3cd10bb6c58777832fb2f9391bb1deb",
+      "epoch": 149,
+      "holder": null
+    },
+    "open_meta_pr_count": 0
+  },
+  "problem": "Accepted GitHub and service collectors are separately correct, but naively joining their reports does not detect changes between those channels; GitHub run objects can stay unchanged while attempt jobs change. Earlier successful PR QA must not bind to a later service execution.",
+  "implementation": "New A-only companion invokes accepted service collector (two peeks/role), accepted GitHub collector, then a third real peek/role and rereads every mutable GET including both exact-attempt job lists within one <=120s clock. Immutable SHA objects alone reuse same-call cache, with actual GET/cache traces separated. Actual collected envelopes feed accepted v2 and actual service statuses feed core; missing original operation never yields healthy scheduling. All grants remain false, output NOT_VERIFIED.",
+  "tests": {
+    "new_file": "tests/test_system_incident_observer.py",
+    "new_python_tests": 32,
+    "result": "PASS",
+    "synthetic_games": 2,
+    "synthetic_verification": "SYNTHETIC_TEST_ONLY",
+    "baseline_reproduction": "Actual accepted collectors return green GitHub QA and completed service separately after jobs mutate between them; no copied callback verdict.",
+    "negative_control": "Isolated in-memory mutant removes final mutable rereads; 2 new job-drift tests fail with 0 errors, disk unchanged. Repeated after final source.",
+    "initial_red_green": "Initial new endpoint regex rejected immutable blobs (3 failures/9 errors); corrected only new source, then all new tests pass. Existing gates/test files unchanged.",
+    "local_full": {
+      "run": 423,
+      "passed": 422,
+      "failures": 1,
+      "errors": 0,
+      "cause": "Unchanged test_handoff_checkpoint at merge_history_reconcile.py:91; connector snapshot lacks original Git ancestry. No skip; real-history CI mandatory."
+    },
+    "trusted_scope": "Current immutable main checker preflight and exact-head GitHub CI required",
+    "github_ci": "PENDING_NEW_HEAD"
+  },
+  "verification": {
+    "module_blob": "8e44f0a65e569ae0dccbae8abc026dc0541d9d54",
+    "live": {
+      "status": "LIVE_PROVIDER_VERIFIED",
+      "scope": "Actual host-connected execution only, not portable authentication",
+      "started": "2026-10-27T21:33:12.944626+00:00",
+      "finished": "2026-10-27T21:34:58.459482+00:00",
+      "github_gets": 37,
+      "service_peeks": 9,
+      "immutable_cache_hits": 7,
+      "repository": "kk051780/toy-wars-factory",
+      "main": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+      "coordinator": "67a59e7130b91353b286d7e11ea7ae64d575f300",
+      "epoch": 150,
+      "observed_pr": 94,
+      "pr_head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
+      "ci": 40583572501,
+      "pr_author_service_binding": "HISTORICAL_PR_AUTHOR_NOT_CURRENT_SERVICE",
+      "triage": {
+        "claim_verified": false,
+        "reason": "JOIN_EXISTING_WRITER",
+        "safe_to_next_schedule": false,
+        "schema": 1,
+        "start_now_allowed": false,
+        "state": "ACTIVE_LEASE",
+        "takeover_allowed": false,
+        "write_authorized": false
+      }
+    },
+    "earlier_attempts": [
+      {
+        "calls": 52,
+        "status": "REJECTED",
+        "exact_code": "Generic safe CLI error; exact cause not exposed",
+        "scope": "Before same-call immutable cache; no success inferred"
+      },
+      {
+        "calls": 53,
+        "status": "REJECTED",
+        "exact_code": "Generic safe CLI error; exact cause not exposed",
+        "scope": "Before reducing redundant service acquisition. Window tests remain <=120s; no safety limit increased"
+      }
+    ],
+    "operation": "OPERATION_EVIDENCE_UNAVAILABLE; historical WORKER prose is not original update_ref response",
+    "limits": [
+      "No portable origin receipt, permanent read-only provider service, cross-game live deployment or actual dispatch",
+      "No Issue71/P2 completion, automatic release or write/launch/merge/spend authority"
+    ]
+  },
+  "changed_files": [
+    "tools/system_incident_observer.py",
+    "tests/test_system_incident_observer.py",
+    "docs/research/2026-10-28_incident_observer.md",
+    "history/C00066_joined_incident_observer.json"
+  ],
+  "new_file_metrics": [
+    {
+      "path": "tools/system_incident_observer.py",
+      "bytes": 13958,
+      "lines": 235,
+      "sha": "8e44f0a65e569ae0dccbae8abc026dc0541d9d54"
+    },
+    {
+      "path": "tests/test_system_incident_observer.py",
+      "bytes": 19326,
+      "lines": 346,
+      "sha": "a5cbba8d9bd5e2bef70f7b63a995cf8017092416"
+    }
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 781,
+    "lua_bytes": 31291
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "protected_controls": "All197 accepted current-main blobs unchanged. No source/config/checker/workflow/AGENTS/accepted test/history changes, no PR51/55 bypass, tokens, model calls, publishing, spending, task mutation/start or author merge. Gemini/release/spend HOLD maintained.",
+  "primary_sources": [
+    {
+      "url": "https://github.com/github/gh-aw/discussions/70014",
+      "published_at": "2026-10-18",
+      "updated_at": null,
+      "checked_at": "2026-10-27T21:26:41Z",
+      "finding": "Opened developer-repository audit. Limited log coverage and metadata-only failures cannot establish a fleet trend or root cause. Treat this as an older bounded example, not today's new result."
+    },
+    {
+      "url": "https://docs.github.com/en/rest/git/refs#update-a-reference",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-27T21:19:30Z",
+      "finding": "Opened official ref API. Preserve explicit expected-SHA host fencing and force=false; read-only collection does not acquire ownership."
+    },
+    {
+      "url": "https://create.roblox.com/docs/cloud-services/data-stores/player-data-purchasing",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-27T21:19:30Z",
+      "finding": "Opened official session-locking and ordered-write guidance. Current PR94 stale-session overwrite is still a WORKER repair; no code copy or engine-success inference."
+    }
+  ],
+  "research_recency": "Fresh primary search did not establish a newer dated Oct27/28 case; Oct18 is explicitly historical, documentation publication/update date unavailable.",
+  "next": "Registered independent REVIEWER rechecks new exact head/base/epoch150 claim, both CI jobs and host live boundary; merge only separately then actual main QA/handoff. Issue71 remains open."
+}
