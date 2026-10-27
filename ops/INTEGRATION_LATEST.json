@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T17:24:23.573Z",
-  "status": "APPROVED_PENDING_MERGE",
+  "observed_at": "2026-10-27T17:25:04.175Z",
+  "status": "MERGED_WAIT_MAIN_CI",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "0afc52f2-0a74-8320-83d1-b70e1c7a501c",
@@ -14,7 +14,7 @@
     "review_record": "ops/reviews/PR0088_1c11d6ba.json",
     "ci": 40538397913,
     "category": "GAME_HUD_QUEUE_ASSET_WAIT_ORDER",
-    "merge_sha": null,
+    "merge_sha": "c016733536a41f71b521be6fa25100201694dd41",
     "post_merge_main_qa": "PENDING",
     "post_merge_handoff": "PENDING"
   },
@@ -112,7 +112,7 @@
       "category": "GAME_HUD_WORKSHOP_ALLOCATION_NOTICE"
     }
   ],
-  "merge_count_this_run": 0,
+  "merge_count_this_run": 1,
   "previous_integration_commit": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
   "main_qa": {
     "run_id": 40529796548,
@@ -133,13 +133,13 @@
     "conclusion": "success"
   },
   "unresolved": [
-    "Issue #71 remains open: real provider dispatch and multi-game integration unverified.",
-    "Roblox Studio/2-client/mobile evidence absent; release HOLD.",
-    "Gemini incident HOLD and budget caps unchanged."
+    "PR88 post-merge main QA/handoff currently in progress; do not count final acceptance yet.",
+    "PR89 draft remains open; requires fresh main baseline review and current-head CI.",
+    "Roblox engine, 2-client and mobile unverified; release HOLD and Gemini incident HOLD unchanged."
   ],
-  "next": "Review next eligible PR against fresh main/lease/CI; prioritize playable PvE and engine/mobile evidence.",
-  "merge_sha": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
-  "main_after": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
+  "next": "Review PR89 only after successful exact-main QA/handoff",
+  "merge_sha": "c016733536a41f71b521be6fa25100201694dd41",
+  "main_after": "c016733536a41f71b521be6fa25100201694dd41",
   "status_only_descendant_verified": true,
   "comparison_since_main_qa": {
     "base": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
@@ -208,11 +208,21 @@
     "reviewer_run_id": "2afe7843-357c-8320-a09c-f57445f79dc8",
     "lease_epoch": 122
   },
-  "merged_this_run": [],
+  "merged_this_run": [
+    {
+      "pr": 88,
+      "head": "1c11d6ba216e88dfb33b0391dc30f1b67748a09c",
+      "merge_sha": "c016733536a41f71b521be6fa25100201694dd41",
+      "status": "MERGED_WAIT_MAIN_CI",
+      "main_qa": 40550350296,
+      "handoff": 40550350561,
+      "category": "GAME_HUD_QUEUE_ASSET_WAIT_ORDER"
+    }
+  ],
   "eligible_open_prs": [
     88,
     89
   ],
-  "next_action": "MERGE_PR88_AFTER_RECHECK; then post-merge QA and handoff before considering PR89",
+  "next_action": "WAIT_MAIN_CI_40550350296_AND_HANDOFF_40550350561; no further merge until both verified",
   "notes": "No eligible auto/twf-game-repair[-UUID] or auto/twf-system-review-UUID PR open. Older manual/Gemini PRs excluded. Existing last_review and historical merged_prs preserved."
 }
