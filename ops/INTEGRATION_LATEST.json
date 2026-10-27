@@ -1,11 +1,11 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T20:28:38.049Z",
-  "status": "MERGED_WAIT_MAIN_CI",
+  "observed_at": "2026-10-27T20:29:29.508Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "17064fef-c4b8-8332-8678-8c1ebc923c47",
-  "lease_epoch": 140,
+  "lease_epoch": 141,
   "main_before": "bf959fb6ecc484993085ef767ae0c7370fb6db50",
   "latest_review": {
     "pr": 92,
@@ -144,19 +144,19 @@
       "pr": 92,
       "head": "dc64713802061f590cdcb75c4fc6629a5df0d48c",
       "merge_sha": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
-      "status": "MERGED_WAIT_MAIN_CI",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "main_qa": 40578311810,
       "handoff": 40578318577,
       "category": "SYSTEM_SCOPED_SERVICE_RUN_OBSERVER",
-      "main_after_handoff": null
+      "main_after_handoff": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4"
     }
   ],
   "merge_count_this_run": 1,
   "main_qa": {
-    "status": "in_progress",
+    "status": "PASS",
     "head": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
     "run_id": 40578311810,
-    "conclusion": null,
+    "conclusion": "success",
     "jobs": [
       {
         "name": "compile_hold",
@@ -165,8 +165,8 @@
       },
       {
         "name": "offline",
-        "status": "in_progress",
-        "conclusion": null
+        "status": "completed",
+        "conclusion": "success"
       }
     ]
   },
@@ -177,14 +177,19 @@
     "conclusion": "success"
   },
   "comparison_since_main_qa": {
-    "verified": false
+    "verified": true,
+    "status": "ahead",
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
   },
   "unresolved": [
     "Issue71 not complete: no portable origin receipt, original host operation error, real cross-game dispatch or long-term reliability.",
     "Roblox Studio, 2-client and mobile not verified; release HOLD.",
     "Gemini incident HOLD and existing spending caps preserved."
   ],
-  "next": "Wait for exact merged-head main QA/handoff. Do not merge another PR until successful; Issue71 remains open.",
+  "next": "Issue71 remains OPEN: original host operation error receipt, portable attestation, real cross-game operation and P3 dispatch unverified. Prioritize main QA and real PvE/2-client/mobile evidence.",
   "runtime_verified": true,
   "main_after": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
   "merge_sha": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e"
