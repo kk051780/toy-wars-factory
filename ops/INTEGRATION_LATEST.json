@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T04:33:58.519Z",
-  "status": "APPROVED_PENDING_EXACT_HEAD_MERGE",
+  "observed_at": "2026-10-27T04:34:48.239Z",
+  "status": "WAIT_POST_MERGE_MAIN_CI",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "5e0439b9-7930-832f-bc00-7ca6b3955d7d",
@@ -13,7 +13,10 @@
     "verdict": "APPROVE",
     "review_record": "ops/reviews/PR0079_b82aed7d.json",
     "ci": 40447229337,
-    "category": "SYSTEM_LEGACY_CLI_BUG_FIX"
+    "category": "SYSTEM_LEGACY_CLI_BUG_FIX",
+    "merge_sha": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
+    "post_merge_main_qa": "PENDING",
+    "post_merge_handoff": "PENDING"
   },
   "merged_prs": [
     {
@@ -24,24 +27,36 @@
       "main_qa": 40445881032,
       "handoff": 40445881046,
       "main_after_handoff": "8251288afac3ccc022d4509a8dedf9325fbfb80c"
+    },
+    {
+      "pr": 79,
+      "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+      "merge_sha": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
+      "status": "MERGED_QA_PENDING",
+      "main_qa": 40450478692,
+      "handoff": 40450478705
     }
   ],
-  "merge_count_this_run": 0,
+  "merge_count_this_run": 1,
   "previous_integration_commit": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
   "main_qa": {
-    "id": 40445881032,
-    "head": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
-    "conclusion": "success",
-    "status_only_descendant_verified": true
+    "id": 40450478692,
+    "head": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
+    "status": "in_progress",
+    "conclusion": null
   },
   "handoff": {
-    "id": 40445881046,
-    "conclusion": "success"
+    "id": 40450478705,
+    "head": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
+    "status": "in_progress",
+    "conclusion": null
   },
   "unresolved": [
     "PR79 not merged; post-merge QA and handoff pending",
     "PR80 independent review pending",
     "Roblox engine/mobile/multiplayer unverified; release and Gemini HOLD preserved"
   ],
-  "next": "Merge PR79 exact head, verify main QA and handoff before PR80."
+  "next": "Wait for exact PR79 merge head main QA and handoff; review PR80 only after verified success.",
+  "merge_sha": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
+  "main_after": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9"
 }

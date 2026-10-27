@@ -68,8 +68,20 @@
     "No Roblox Studio, multiplayer, mobile, visual or player experience evidence; release HOLD remains."
   ],
   "decision_rule": "tools/repair_integration.py decide => MERGE; current main/head/reviewer lease/all five review checks",
-  "post_merge_main_qa": null,
-  "post_merge_handoff": null,
-  "merge_sha": null,
-  "final_status": "APPROVED_AWAIT_EXACT_HEAD_MERGE"
+  "post_merge_main_qa": {
+    "id": 40450478692,
+    "head": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
+    "status": "in_progress",
+    "conclusion": null,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450478692"
+  },
+  "post_merge_handoff": {
+    "id": 40450478705,
+    "head": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
+    "status": "in_progress",
+    "conclusion": null,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450478705"
+  },
+  "merge_sha": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
+  "final_status": "MERGED_WAIT_MAIN_QA"
 }
