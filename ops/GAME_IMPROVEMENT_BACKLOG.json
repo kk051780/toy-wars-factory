@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T12:00:56Z",
+  "observed_at": "2026-10-27T20:22:23Z",
   "source": "Issue72 accepted-module repair first; no game edits. Current main source was inspected and existing physical-engine/device hypotheses retained without claiming execution.",
   "items": [
     {
@@ -85,21 +85,21 @@
   ],
   "actor": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "a71130e8-97fc-832b-8644-287a6933256c"
+    "run_id": "e5c6e27c-49c4-832d-b6c4-046ac3372c79"
   },
-  "base_main_sha": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
+  "base_main_sha": "bf959fb6ecc484993085ef767ae0c7370fb6db50",
   "prioritized_candidates": [
     "first_play_guide_compact_layout",
     "private_headless_engine_evidence_path",
     "mobile_pve_frame_time"
   ],
-  "system_precondition": "System implementation Issue71 prioritized; no game code or new features in this run. Preserve engine/release HOLD.",
+  "system_precondition": "Issue71 service observer source+tests priority; no game code changes this run. Preserve real-engine and release evidence gates.",
   "last_primary_source_check": {
-    "at": "2026-10-27T12:00:56Z",
+    "at": "2026-10-27T20:22:23Z",
     "url": "https://create.roblox.com/docs/performance-optimization/test-on-hardware",
     "published_at": null,
     "updated_at": null,
-    "actual_hardware_run": false
+    "real_hardware_run": false
   },
   "next_experiments": [
     {

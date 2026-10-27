@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 139,
-  "holder": {
-    "kind": "META",
-    "owner_id": "e5c6e27c-49c4-832d-b6c4-046ac3372c79",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "epoch": 139,
-    "acquired_at": "2026-10-27T20:15:25+00:00",
-    "expires_at": "2026-10-27T20:45:25+00:00",
-    "base_main_sha": "bf959fb6ecc484993085ef767ae0c7370fb6db50",
-    "work_branch": "auto/twf-system-review-e5c6e27c-49c4-832d-b6c4-046ac3372c79",
-    "origin": "meta"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -22,17 +12,17 @@
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
     "items": [
       {
-        "number": 84,
-        "title": "[TWF system-review] Collect scoped GitHub GET evidence for advisory planning",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/84",
-        "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40499824467",
-        "summary": "新規GET collector・実main/共有blob/PR/CIの照合、新規41検査と23回のread-only live経路実証。advisoryのみ、未統合。",
+        "number": 92,
+        "title": "[TWF system-review] Observe scoped service runs without stale-result authority",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/92",
+        "head": "dc64713802061f590cdcb75c4fc6629a5df0d48c",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40576878357",
+        "summary": "登録役割ごとの実サービスrun/result帰属を観測。新規30検査、全391PASS、実接続GET12＋peek6を同一コード経路で検証。advisoryのみ、原操作エラー未取得。",
         "changed_files": [
-          "tools/system_github_evidence.py",
-          "tests/test_system_github_evidence.py",
-          "docs/research/2026-10-27_github_evidence.md",
-          "history/C00053_scoped_github_evidence.json"
+          "tools/system_service_observer.py",
+          "tests/test_system_service_observer.py",
+          "docs/research/2026-10-28_service_observer.md",
+          "history/C00064_scoped_service_observer.json"
         ],
         "kind": "開発体制改善"
       }
@@ -40,16 +30,19 @@
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-27T12:00:56Z",
-    "signature": "95214d37d0def1525d6be8a0363090533e786420c10b0d61fd8f7eeea45bc9f2",
+    "observed_at": "2026-10-27T20:22:23Z",
+    "signature": "467a2da383a723b3587d48c24fc163e6e99f748a8daf6542d3194e1b229deebf",
     "approval_text": ""
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "f524a20f-402c-832f-9c3c-03de40c7c040",
-    "epoch": 138,
-    "released_at": "2026-10-27T20:09:21.679Z"
+    "kind": "META",
+    "owner_id": "e5c6e27c-49c4-832d-b6c4-046ac3372c79",
+    "epoch": 139,
+    "released_at": "2026-10-27T20:22:52+00:00",
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "result": "PR92_SERVICE_OBSERVER_CODE_CI_PASS_LIVE_SCOPE_SAVED_AWAIT_REVIEW",
+    "service_completion_asserted": false
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
