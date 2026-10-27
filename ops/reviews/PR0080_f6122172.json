@@ -69,8 +69,20 @@
     "After merge, new main QA and handoff must pass before another integration."
   ],
   "decision_rule": "tools/repair_integration.py decide => MERGE on exact head/current main/registered lease/five review checks",
-  "post_merge_main_qa": null,
-  "post_merge_handoff": null,
-  "merge_sha": null,
-  "final_status": "APPROVED_AWAIT_EXACT_HEAD_MERGE"
+  "post_merge_main_qa": {
+    "id": 40450646774,
+    "head": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
+    "status": "queued",
+    "conclusion": null,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450646774"
+  },
+  "post_merge_handoff": {
+    "id": 40450646939,
+    "head": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
+    "status": "queued",
+    "conclusion": null,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450646939"
+  },
+  "merge_sha": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
+  "final_status": "MERGED_WAIT_MAIN_QA"
 }
