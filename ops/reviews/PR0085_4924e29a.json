@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "pr": 85,
+  "repository": "kk051780/toy-wars-factory",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "16d021a3-2654-8328-bd3e-05e350f1a15b",
+  "lease_epoch": 117,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "ab4efd1a-bb50-8330-8354-fabdade7d99f",
+  "branch": "auto/twf-game-repair-ab4efd1a-bb50-8330-8354-fabdade7d99f",
+  "head": "4924e29a1831c0b33d35d560a1e2f9ac471e8218",
+  "base_main_sha": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
+  "reviewed_at": "2026-10-27T13:54:03.588Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "GAME_SERVER_HEALTH_BAR_PROPERTY_WRITE_STABILITY",
+  "changed_files": [
+    "history/C00054_health_bar_idle_write_fix.json",
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/health_bar_idle_write_spec.lua"
+  ],
+  "ci": {
+    "id": 40515648153,
+    "head": "4924e29a1831c0b33d35d560a1e2f9ac471e8218",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40515648153"
+  },
+  "main_qa": {
+    "id": 40501279576,
+    "qa_head": "608ca16643667d3866d4c9e451ffd269869aeca9",
+    "main_head": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
+    "conclusion": "success",
+    "comparison": {
+      "status": "ahead",
+      "ahead_by": 1,
+      "verified": true,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "findings": [
+    "Exact PR85 head 4924e29a matches completed QA #40515648153; offline and compile_hold both success, trusted-base scope and immutable shared claim verified.",
+    "Original WORKER claim commit 5b20a206 is ancestor of current coordinator; epoch116 registered WORKER run/task/branch matches C00054. Separate registered REVIEWER run 16d021a3 owns epoch117.",
+    "Main-to-head compare is exactly one canonical server change (+131 bytes, 19404->19535), new whole-server Lua regression and unique C00054 ledger; no policy, budget, workflow, accepted test or release edits.",
+    "Source total 4 Lua files, 763->767 lines, 30428->30559 bytes, baseline 25726 unchanged; server size directly verified from GitHub blobs.",
+    "Whole-server Lua regression reports 3 passed/0 failed including old-server negative control; unchanged bars have zero writes, damaged bar changes same tick and only once; 361 Python tests and 4000 stress checks pass.",
+    "No Roblox Studio/multiplayer/mobile or measured performance gain claimed."
+  ],
+  "unresolved": [
+    "Roblox engine, multiplayer, mobile, and actual performance remain unverified; release HOLD.",
+    "Gemini incident HOLD, inference and spending caps unchanged."
+  ],
+  "decision_rule": "tools/repair_integration.py decide -> MERGE with current reviewer lease, exact-head successful two-job CI, trusted scope/claim, main QA verified status-only descendant, current main review and all five checks",
+  "final_status": "APPROVED_PENDING_MERGE"
+}
