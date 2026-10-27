@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "pr": 86,
+  "repository": "kk051780/toy-wars-factory",
+  "head": "fa89829a259b150ae054541f2f86b35ff74b675f",
+  "base_main_sha": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "aff4eb56-175c-8327-99c5-5e34870cf5d7",
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "e237426c-20d4-832c-beb6-d61c73e15b98",
+  "lease_epoch": 119,
+  "reviewed_at": "2026-10-27T14:28:45.112Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [
+    "Canonical server's createToyModel performs initial PivotTo; addEntity initializes renderedX/Z to matching coordinates, avoiding redundant stationary PivotTo.",
+    "Changed position triggers one PivotTo; moving entities retain updates and health bar refresh remains unconditional.",
+    "PR changes exactly src/ToyWarsServer.server.lua, a new whole-server Lua regression, and a new C00055 history record; no protected controls or accepted tests changed.",
+    "Current main QA run 40516240374 passed both jobs at merge SHA 82fed9a; compare to current main 1b0751 proves only generated status files.",
+    "Exact PR head fa89829a matched pull_request CI run 40517714431 attempt 1; both jobs success; offline trusted scope and immutable claim gate succeeded.",
+    "WORKER claim 2897c475 is ancestor of current coordinator; epoch118 owner/run/branch/task match C00055 and registered WORKER."
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "evidence": {
+    "main_qa": {
+      "run": 40516240374,
+      "head": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
+      "offline": "success",
+      "compile_hold": "success",
+      "comparison_since_qa": {
+        "status": "ahead",
+        "ahead_by": 1,
+        "paths": [
+          "status/CHAT_HANDOFF.md",
+          "status/LATEST_STATE.json"
+        ],
+        "verified": true
+      }
+    },
+    "handoff": {
+      "run": 40516240222,
+      "conclusion": "success"
+    },
+    "pr_ci": {
+      "run": 40517714431,
+      "attempt": 1,
+      "head": "fa89829a259b150ae054541f2f86b35ff74b675f",
+      "offline": "success",
+      "compile_hold": "success",
+      "scope_and_claim_gate": "PASS",
+      "lua_regression": "4 passed / 0 failed",
+      "python_tests": 361
+    },
+    "claim": {
+      "commit": "2897c4758b9c8660f310b360196dca3ac6d40f32",
+      "epoch": 118,
+      "author_run_id": "e237426c-20d4-832c-beb6-d61c73e15b98"
+    },
+    "changed_files": [
+      "src/ToyWarsServer.server.lua",
+      "tests/auto/stationary_model_pivot_spec.lua",
+      "history/C00055_stationary_model_pivot_fix.json"
+    ],
+    "source_metrics": {
+      "lua_files": 4,
+      "lua_lines": 774,
+      "lua_bytes": 30873
+    }
+  },
+  "category": "GAME_SERVER_STATIONARY_PIVOT_STABILITY",
+  "engine_verified": false,
+  "post_merge_main_qa": "PENDING"
+}
