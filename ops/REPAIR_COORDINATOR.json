@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 133,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "134911ce-f6e0-832e-beaf-0ea25abc9704",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 133,
-    "acquired_at": "2026-10-27T19:55:20.000Z",
-    "expires_at": "2026-10-27T20:25:20.000Z",
-    "base_main_sha": "b0581b6dae3ca75601c185a38d63846c5cfcc99d",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,15 +36,10 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "090a222f-d874-8327-ac72-faf0fe621438",
-    "epoch": 132,
-    "released_at": "2026-10-27T19:53:29.411Z",
-    "recovered_from_service_evidence": true,
-    "service_completed_at": "2026-10-27T19:29:51.505399Z",
-    "service_recorded_status": "completed",
-    "recovery_method": "RECOVER_FINISHED_WORKER_EXACT_RUN_EVIDENCE",
-    "recovery_observed_at": "2026-10-27T19:53:29.411Z"
+    "kind": "REVIEWER",
+    "owner_id": "134911ce-f6e0-832e-beaf-0ea25abc9704",
+    "epoch": 133,
+    "released_at": "2026-10-27T19:57:31.867Z"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
