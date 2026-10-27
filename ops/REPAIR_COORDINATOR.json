@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 152,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "0ad158ff-63e0-8325-960b-d2f4598b3bc0",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 152,
-    "acquired_at": "2026-10-27T22:10:16.374Z",
-    "expires_at": "2026-10-27T22:40:16.374Z",
-    "base_main_sha": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
-    "work_branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
-    "origin": "manual"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,12 +36,27 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "META",
-    "owner_id": "ed8dffe9-ee34-8323-812e-164cfa0da5bd",
-    "epoch": 150,
-    "released_at": "2026-10-27T21:40:36+00:00",
-    "result": "PR95_JOINED_OBSERVER_CI_PASS_LIMITED_LIVE_SAVED_AWAIT_INDEPENDENT_REVIEW",
-    "service_completion_asserted": false
+    "kind": "WORKER",
+    "owner_id": "0ad158ff-63e0-8325-960b-d2f4598b3bc0",
+    "epoch": 152,
+    "released_at": "2026-10-27T22:21:47.154Z",
+    "result": "PR94_STALE_DATASTORE_REVIEW_REPAIR_HEAD_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
+    "service_completion_asserted": false,
+    "pr": 94,
+    "head": "5bba9a7fffa3b494b485341b51372452f196fad1",
+    "ci": {
+      "id": 40594071458,
+      "head": "5bba9a7fffa3b494b485341b51372452f196fad1",
+      "conclusion": "success",
+      "jobs": [
+        "offline",
+        "compile_hold"
+      ]
+    },
+    "claim_commit": "12f4267d13e49887735c8c2e2e534ed1a0c0f5a1",
+    "source_commit": "046ead3cee1bdfd9690caa27901f9af51bf96a5b",
+    "history": "history/C00067_progress_conflict_review_repair.json",
+    "next_actor": "REVIEWER:6add6aaceb4c8191b1666fe15f97cd88"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
