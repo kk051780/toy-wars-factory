@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "pr": 81,
+  "repository": "kk051780/toy-wars-factory",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "b77c5218-21e4-8331-a0a6-025c0e9e1722",
+  "lease_epoch": 100,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "20bb7e5a-a03c-8322-9dc6-20fe3af583b6",
+  "branch": "auto/twf-game-repair-20bb7e5a-a03c-8322-9dc6-20fe3af583b6",
+  "head": "ffac4788a4f57b6be8688fb3d976af06ab083e68",
+  "base_main_sha": "418843226131ad559c2fc3826829058f3061e0ff",
+  "reviewed_at": "2026-10-27T06:26:15.741Z",
+  "verdict": "REQUEST_CHANGES",
+  "blockers": [
+    "Unresolved earlier P1 WORK_REQUEST worker_c00050_history_commit_blocked_20261027: branch auto/twf-game-repair-267d10af-56cc-832b-b690-19df0e16484b at 1e1ba369 contains a prior HUD fix and queue-notice test, but lacks its required history/C00050 and PR. PR81 starts unrelated work and claims C00050 for a different change; integrating it now creates a competing history slot and obstructs safe recovery of the older source fix.",
+    "Repair-first order: complete/reconcile the existing partial WORKER cycle before promoting this new onboarding-copy PR. Once prior C history is assigned, renumber PR81's history to the next unique C id, rebase against current main, recalculate source metrics and rerun exact-head CI and independent review."
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": false,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "GAME_HUD_ONBOARDING_COPY_FIX",
+  "changed_files": [
+    "history/C00050_restart_guide_accuracy.json",
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/restart_guide_accuracy_spec.lua"
+  ],
+  "ci": {
+    "id": 40459826878,
+    "head": "ffac4788a4f57b6be8688fb3d976af06ab083e68",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40459826878"
+  },
+  "main_qa": {
+    "id": 40450646774,
+    "qa_head": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
+    "main_head": "418843226131ad559c2fc3826829058f3061e0ff",
+    "conclusion": "success",
+    "comparison": {
+      "status": "ahead",
+      "ahead_by": 1,
+      "verified": true,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "findings": [
+    "PR81 exact head matches Actions #40459826878, both required jobs succeeded; trusted-base repair scope and immutable WORKER claim gates succeeded.",
+    "Author task/run 6adbf0d6/20bb7e5a is distinct from reviewer task/run 6add6aac/b77c5218; epoch98 claim 1b71e5ee is an ancestor of coordinator epoch100 and records the same WORKER branch.",
+    "Diff from current main is exactly 3 files: HUD onboarding text 6625 -> 6628 (+3 bytes), new 91-line canonical Lua mock test, append-only C00050 history; 4 canonical Lua sources total 30048 bytes / 758 lines. No protected controls, budgets, release policy or character stats changed.",
+    "New guide matches mock-observed server auto restart after loss and navigation/selection isolation; engine, mobile and multiplayer are NOT_RUN.",
+    "Blocking conflict: existing open P1 request reserves C00050 for a prior unfinished WORKER HUD queue-notice branch 1e1ba369, without history or PR; PR81 uses the same C00050 for unrelated copy change. The older request explicitly requires completion before unrelated new game work.",
+    "Current main QA offline/compile_hold PASS at eb1fb8a5; verified compare to main 41884322 includes only generated status/CHAT_HANDOFF.md and status/LATEST_STATE.json."
+  ],
+  "unresolved": [
+    "Prior C00050 partial worker branch not reconciled; no merge until ledger/priority conflict resolved.",
+    "Real Roblox Studio, two clients, mobile UX and player experience unverified; release HOLD."
+  ],
+  "decision_rule": "tools/repair_integration.py decide: REQUEST_CHANGES for nonempty blockers and source_ledger=false; no merge.",
+  "post_merge_main_qa": null,
+  "merge_sha": null,
+  "final_status": "REQUEST_CHANGES_NO_MERGE"
+}

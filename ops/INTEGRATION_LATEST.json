@@ -1,22 +1,21 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T05:21:32.908Z",
-  "status": "WAIT_AUTHOR_COMPLETION",
+  "observed_at": "2026-10-27T06:26:15.741Z",
+  "status": "REQUEST_CHANGES",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "d6dffd8c-fde4-8326-8e54-744ba76e4b5f",
-  "lease_epoch": 97,
+  "reviewer_run_id": "b77c5218-21e4-8331-a0a6-025c0e9e1722",
+  "lease_epoch": 100,
   "main_before": "418843226131ad559c2fc3826829058f3061e0ff",
   "latest_review": {
-    "pr": 80,
-    "head": "f6122172c7cdb083e801058d745bc23d30558709",
-    "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0080_f6122172.json",
-    "ci": 40448427689,
-    "category": "GAME_HUD_ONBOARDING_FIX",
-    "merge_sha": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
-    "post_merge_main_qa": "success",
-    "post_merge_handoff": "success"
+    "pr": 81,
+    "head": "ffac4788a4f57b6be8688fb3d976af06ab083e68",
+    "verdict": "REQUEST_CHANGES",
+    "review_record": "ops/reviews/PR0081_ffac4788.json",
+    "ci": 40459826878,
+    "category": "GAME_HUD_ONBOARDING_COPY_FIX",
+    "merge_sha": null,
+    "post_merge_main_qa": "NOT_RUN"
   },
   "merged_prs": [
     {
@@ -70,11 +69,12 @@
     "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450646939"
   },
   "unresolved": [
-    "WORKER has an unreviewable partial HUD/test commit: missing C00050 history, no PR, no exact-head CI; must not count as integrated gameplay.",
     "Real Roblox Studio PvE, 2-client and mobile UX evidence remain absent; release HOLD.",
-    "Gemini incident HOLD, spending caps and no-publishing rule unchanged."
+    "Gemini incident HOLD, spending caps and no-publishing rule unchanged.",
+    "PR81 exact-head CI passed but integration held for conflicting open C00050 prior partial WORKER cycle; see pr81_c00050_collision_prior_worker_partial_20261027",
+    "Roblox engine, 2-client and mobile evidence absent; release HOLD remains."
   ],
-  "next": "WORKER: finish existing queue-notice replication-wait cycle record, safe draft PR and exact-head CI before unrelated game work; META: investigate host create_commit denial with provider evidence only; REVIEWER: await eligible PR, retain task enabled.",
+  "next": "WORKER: reconcile older open P1 C00050 queue-notice partial branch first, then assign PR81 distinct history ID and rebase/rerun CI; REVIEWER: independently re-review new head, no merge on current head.",
   "merge_sha": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
   "main_after": "418843226131ad559c2fc3826829058f3061e0ff",
   "status_only_descendant_verified": true,
@@ -133,25 +133,18 @@
   },
   "latest_review_is_current_run": false,
   "latest_scan": {
-    "eligible_open_prs": [],
-    "open_unrelated_prs": 17,
-    "worker_partial_branch": "auto/twf-game-repair-267d10af-56cc-832b-b690-19df0e16484b",
-    "worker_partial_head": "1e1ba369511a86ab30fff458511f7ca0bc14b33c",
-    "worker_partial_pr_created": false,
-    "worker_partial_ci": "NOT_RUN",
+    "eligible_open_prs": [
+      81
+    ],
+    "reviewed_head": "ffac4788a4f57b6be8688fb3d976af06ab083e68",
     "main_qa_run": 40450646774,
     "main_qa_head": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
-    "main_qa_jobs": {
-      "offline": "success",
-      "compile_hold": "success"
-    },
-    "handoff_run": 40450646939,
-    "handoff_conclusion": "success",
     "main_status_only_descendant_verified": true,
     "main_compare_paths": [
       "status/CHAT_HANDOFF.md",
       "status/LATEST_STATE.json"
     ],
-    "new_work_request": "worker_c00050_history_commit_blocked_20261027"
+    "new_work_request": "pr81_c00050_collision_prior_worker_partial_20261027",
+    "prior_worker_partial_head": "1e1ba369511a86ab30fff458511f7ca0bc14b33c"
   }
 }
