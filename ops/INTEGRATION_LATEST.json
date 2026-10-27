@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T17:26:27.393Z",
-  "status": "MERGED_WAIT_MAIN_CI",
+  "observed_at": "2026-10-27T17:27:25.155Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "0afc52f2-0a74-8320-83d1-b70e1c7a501c",
@@ -15,8 +15,8 @@
     "ci": 40547792566,
     "category": "GAME_SERVER_CLOSEST_TARGET_SQRT_OPTIMIZATION",
     "merge_sha": "cff98f572d6d706362e07315ad81cd4540a5095c",
-    "post_merge_main_qa": "PENDING",
-    "post_merge_handoff": "PENDING"
+    "post_merge_main_qa": "success",
+    "post_merge_handoff": "success"
   },
   "merged_prs": [
     {
@@ -120,13 +120,23 @@
       "handoff": 40550350561,
       "main_after_handoff": "b8850e155fd2d0ec5ca0280b201e39bc0ecbf13b",
       "category": "GAME_HUD_QUEUE_ASSET_WAIT_ORDER"
+    },
+    {
+      "pr": 89,
+      "head": "b9ce7e998898046476035850ce3185745cf3b55f",
+      "merge_sha": "cff98f572d6d706362e07315ad81cd4540a5095c",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40550587465,
+      "handoff": 40550587304,
+      "main_after_handoff": "5ce5d878e80a0abf8ddd6c5a741de9e26a1cee7c",
+      "category": "GAME_SERVER_CLOSEST_TARGET_SQRT_OPTIMIZATION"
     }
   ],
   "merge_count_this_run": 2,
   "previous_integration_commit": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
   "main_qa": {
-    "run_id": 40550350296,
-    "head": "c016733536a41f71b521be6fa25100201694dd41",
+    "run_id": 40550587465,
+    "head": "cff98f572d6d706362e07315ad81cd4540a5095c",
     "conclusion": "success",
     "jobs": {
       "offline": "success",
@@ -139,21 +149,21 @@
     ]
   },
   "handoff": {
-    "run_id": 40550350561,
+    "run_id": 40550587304,
     "conclusion": "success"
   },
   "unresolved": [
-    "PR89 post-merge QA and handoff not yet listed; final acceptance pending.",
-    "Roblox Studio, 2-client, mobile and FPS measurements unverified; release HOLD.",
-    "Gemini incident HOLD and spending caps unchanged."
+    "Roblox Studio/2-client/mobile/FPS/visual/fun evidence absent; release HOLD.",
+    "Issue #71 multi-game and live service integration not fully verified.",
+    "Gemini incident HOLD and existing spending caps unchanged."
   ],
-  "next": "Review PR89 only after successful exact-main QA/handoff",
+  "next": "No eligible open auto PR. Preserve release HOLD, Gemini incident HOLD, cost limits.",
   "merge_sha": "cff98f572d6d706362e07315ad81cd4540a5095c",
-  "main_after": "cff98f572d6d706362e07315ad81cd4540a5095c",
+  "main_after": "5ce5d878e80a0abf8ddd6c5a741de9e26a1cee7c",
   "status_only_descendant_verified": true,
   "comparison_since_main_qa": {
-    "base": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
-    "head": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
+    "base": "cff98f572d6d706362e07315ad81cd4540a5095c",
+    "head": "5ce5d878e80a0abf8ddd6c5a741de9e26a1cee7c",
     "status": "ahead",
     "ahead_by": 1,
     "paths": [
@@ -165,7 +175,7 @@
   "source_metrics": {
     "lua_files": 4,
     "lua_lines": 776,
-    "lua_bytes": 30993
+    "lua_bytes": 31064
   },
   "runtime_verified": true,
   "runtime_verification": {
@@ -198,25 +208,28 @@
     "handoff": 40450478705
   },
   "last_successful_integration": {
-    "reviewer_run_id": "2afe7843-357c-8320-a09c-f57445f79dc8",
-    "lease_epoch": 122,
-    "merge_sha": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
-    "main_after": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
-    "main_qa": 40529796548,
-    "handoff": 40529796278
+    "reviewer_run_id": "0afc52f2-0a74-8320-83d1-b70e1c7a501c",
+    "lease_epoch": 126,
+    "merge_sha": "cff98f572d6d706362e07315ad81cd4540a5095c",
+    "main_after": "5ce5d878e80a0abf8ddd6c5a741de9e26a1cee7c",
+    "main_qa": 40550587465,
+    "handoff": 40550587304
   },
   "latest_review_is_current_run": true,
   "latest_scan": {
-    "observed_at": "2026-10-27T15:20:21.347Z",
+    "observed_at": "2026-10-27T17:27:25.155Z",
     "eligible_open_prs": [],
-    "merged_pr": 87,
-    "main_qa": 40529796548,
-    "handoff": 40529796278,
-    "main_sha": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
+    "merged_prs": [
+      88,
+      89
+    ],
+    "main_qa": 40550587465,
+    "handoff": 40550587304,
+    "main_sha": "5ce5d878e80a0abf8ddd6c5a741de9e26a1cee7c",
     "main_qa_verified": true,
     "status_only_descendant_verified": true,
-    "reviewer_run_id": "2afe7843-357c-8320-a09c-f57445f79dc8",
-    "lease_epoch": 122
+    "reviewer_run_id": "0afc52f2-0a74-8320-83d1-b70e1c7a501c",
+    "lease_epoch": 126
   },
   "merged_this_run": [
     {
@@ -232,13 +245,13 @@
       "pr": 89,
       "head": "b9ce7e998898046476035850ce3185745cf3b55f",
       "merge_sha": "cff98f572d6d706362e07315ad81cd4540a5095c",
-      "status": "MERGED_WAIT_MAIN_CI",
-      "main_qa": null,
-      "handoff": null,
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40550587465,
+      "handoff": 40550587304,
       "category": "GAME_SERVER_CLOSEST_TARGET_SQRT_OPTIMIZATION"
     }
   ],
   "eligible_open_prs": [],
-  "next_action": "WAIT_FOR_PR89_EXACT_MAIN_QA_AND_HANDOFF; do not integrate another PR until verified",
-  "notes": "No eligible auto/twf-game-repair[-UUID] or auto/twf-system-review-UUID PR open. Older manual/Gemini PRs excluded. Existing last_review and historical merged_prs preserved."
+  "next_action": "WAIT_FOR_NEW_WORKER_OR_META_DRAFT; prioritize playable PvE and engine/2-client/mobile evidence",
+  "notes": "Two independent game fixes merged sequentially after verifying each post-merge exact-head QA and handoff; no Roblox engine or device verification claimed."
 }
