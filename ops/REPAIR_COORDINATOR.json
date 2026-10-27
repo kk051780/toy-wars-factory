@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 116,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "ab4efd1a-bb50-8330-8354-fabdade7d99f",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 116,
-    "acquired_at": "2026-10-27T13:47:04.530Z",
-    "expires_at": "2026-10-27T14:17:04.530Z",
-    "base_main_sha": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
-    "work_branch": "auto/twf-game-repair-ab4efd1a-bb50-8330-8354-fabdade7d99f",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,13 +36,15 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "eb0486af-0fe0-8330-8242-b5b7cfe878b9",
-    "epoch": 115,
-    "released_at": "2026-10-27T13:27:05.000Z",
-    "result": "NO_ELIGIBLE_OPEN_PR_MAIN_QA_VERIFIED_META_LOCK_RECOVERED",
-    "implementation_source_changed": false,
-    "merge_count": 0
+    "kind": "WORKER",
+    "owner_id": "ab4efd1a-bb50-8330-8354-fabdade7d99f",
+    "epoch": 116,
+    "released_at": "2026-10-27T13:51:04.117Z",
+    "result": "DRAFT_PR85_CREATED_CI_QUEUED",
+    "pr": 85,
+    "head": "4924e29a1831c0b33d35d560a1e2f9ac471e8218",
+    "implementation_source_changed": true,
+    "main_merged": false
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
