@@ -70,8 +70,33 @@
     "Post-merge main offline+compile_hold and handoff must succeed before any further merge."
   ],
   "decision_rule": "tools/repair_integration.py decide => MERGE after exact-head/current-main/lease/checks; separate author task/run",
-  "post_merge_main_qa": null,
-  "post_merge_handoff": null,
-  "merge_sha": null,
-  "final_status": "APPROVED_PENDING_MERGE"
+  "post_merge_main_qa": {
+    "id": 40467079624,
+    "head": "bb9a3a1388a55186997ae7983b7eed94e84155df",
+    "status": "in_progress",
+    "conclusion": null,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40467079624",
+    "comparison_since_qa": {
+      "status": "ahead",
+      "ahead_by": 1,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ],
+      "verified": true,
+      "main_head": "2d50807eff2de44cc78a9278d728f183e01c898d"
+    }
+  },
+  "post_merge_handoff": {
+    "id": 40467079700,
+    "head": "bb9a3a1388a55186997ae7983b7eed94e84155df",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": {
+      "update": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40467079700"
+  },
+  "merge_sha": "bb9a3a1388a55186997ae7983b7eed94e84155df",
+  "final_status": "MERGED_WAIT_MAIN_CI"
 }
