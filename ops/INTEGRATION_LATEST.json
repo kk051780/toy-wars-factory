@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T15:19:52.782Z",
-  "status": "MERGED_WAIT_MAIN_CI",
+  "observed_at": "2026-10-27T15:20:21.347Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "2afe7843-357c-8320-a09c-f57445f79dc8",
@@ -15,7 +15,7 @@
     "ci": 40529165971,
     "category": "GAME_HUD_WORKSHOP_ALLOCATION_NOTICE",
     "merge_sha": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
-    "post_merge_main_qa": "in_progress",
+    "post_merge_main_qa": "success",
     "post_merge_handoff": "success"
   },
   "merged_prs": [
@@ -105,7 +105,7 @@
       "pr": 87,
       "head": "d4e0e2a533ce4c377eeac92c63e07cc93976a8f4",
       "merge_sha": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
-      "status": "MERGED_WAIT_MAIN_CI",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "main_qa": 40529796548,
       "handoff": 40529796278,
       "main_after_handoff": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
@@ -117,11 +117,11 @@
   "main_qa": {
     "id": 40529796548,
     "head": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
-    "status": "in_progress",
-    "conclusion": null,
+    "status": "completed",
+    "conclusion": "success",
     "jobs": {
       "compile_hold": "success",
-      "offline": "in_progress"
+      "offline": "success"
     },
     "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40529796548"
   },
@@ -136,12 +136,11 @@
     "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40529796278"
   },
   "unresolved": [
-    "PR87 post-merge main QA offline still running; no next PR integration until both jobs pass.",
-    "Issue #71 remains open; real provider dispatch and multi-game integration unverified.",
+    "Issue #71 remains open: real provider dispatch and multi-game integration unverified.",
     "Roblox Studio/2-client/mobile evidence absent; release HOLD.",
     "Gemini incident HOLD and budget caps unchanged."
   ],
-  "next": "Verify PR87 post-merge QA 40529796548 (offline+compile_hold) and handoff 40529796278 before next eligible PR.",
+  "next": "Review next eligible PR against fresh main/lease/CI; prioritize playable PvE and engine/mobile evidence.",
   "merge_sha": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
   "main_after": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
   "status_only_descendant_verified": true,
@@ -158,8 +157,8 @@
   },
   "source_metrics": {
     "lua_files": 4,
-    "lua_lines": 774,
-    "lua_bytes": 30873
+    "lua_lines": 776,
+    "lua_bytes": 30993
   },
   "runtime_verified": true,
   "runtime_verification": {
@@ -192,23 +191,24 @@
     "handoff": 40450478705
   },
   "last_successful_integration": {
-    "reviewer_run_id": "aff4eb56-175c-8327-99c5-5e34870cf5d7",
-    "lease_epoch": 119,
-    "merge_sha": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
-    "main_after": "340afc579204bacb987a313501ee3dfa0c2961a3",
-    "main_qa": 40521561302,
-    "handoff": 40521561438
+    "reviewer_run_id": "2afe7843-357c-8320-a09c-f57445f79dc8",
+    "lease_epoch": 122,
+    "merge_sha": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
+    "main_after": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
+    "main_qa": 40529796548,
+    "handoff": 40529796278
   },
   "latest_review_is_current_run": true,
   "latest_scan": {
-    "observed_at": "2026-10-27T15:18:50.258Z",
-    "eligible_open_prs": [
-      87
-    ],
-    "reviewer_run_id": "2afe7843-357c-8320-a09c-f57445f79dc8",
-    "lease_epoch": 122,
-    "main_sha": "340afc579204bacb987a313501ee3dfa0c2961a3",
+    "observed_at": "2026-10-27T15:20:21.347Z",
+    "eligible_open_prs": [],
+    "merged_pr": 87,
+    "main_qa": 40529796548,
+    "handoff": 40529796278,
+    "main_sha": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
     "main_qa_verified": true,
-    "status_only_descendant_verified": true
+    "status_only_descendant_verified": true,
+    "reviewer_run_id": "2afe7843-357c-8320-a09c-f57445f79dc8",
+    "lease_epoch": 122
   }
 }
