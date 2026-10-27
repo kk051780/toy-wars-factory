@@ -1,12 +1,12 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T15:20:21.347Z",
-  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "observed_at": "2026-10-27T15:22:26.816Z",
+  "status": "NO_ELIGIBLE_OPEN_PR",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "2afe7843-357c-8320-a09c-f57445f79dc8",
-  "lease_epoch": 122,
-  "main_before": "340afc579204bacb987a313501ee3dfa0c2961a3",
+  "reviewer_run_id": "18a26a28-f280-8332-9352-d70cc6a9c5be",
+  "lease_epoch": 123,
+  "main_before": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
   "latest_review": {
     "pr": 87,
     "head": "d4e0e2a533ce4c377eeac92c63e07cc93976a8f4",
@@ -115,25 +115,22 @@
   "merge_count_this_run": 1,
   "previous_integration_commit": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
   "main_qa": {
-    "id": 40529796548,
+    "run_id": 40529796548,
     "head": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
-    "status": "completed",
     "conclusion": "success",
     "jobs": {
-      "compile_hold": "success",
-      "offline": "success"
+      "offline": "success",
+      "compile_hold": "success"
     },
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40529796548"
+    "status_only_descendant_verified": true,
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
   },
   "handoff": {
-    "id": 40529796278,
-    "head": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
-    "status": "completed",
-    "conclusion": "success",
-    "jobs": {
-      "update": "success"
-    },
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40529796278"
+    "run_id": 40529796278,
+    "conclusion": "success"
   },
   "unresolved": [
     "Issue #71 remains open: real provider dispatch and multi-game integration unverified.",
@@ -210,5 +207,9 @@
     "status_only_descendant_verified": true,
     "reviewer_run_id": "2afe7843-357c-8320-a09c-f57445f79dc8",
     "lease_epoch": 122
-  }
+  },
+  "merged_this_run": [],
+  "eligible_open_prs": [],
+  "next_action": "WAIT_FOR_NEW_WORKER_OR_META_DRAFT; keep engine/mobile/multiplayer release HOLD and Gemini incident HOLD",
+  "notes": "No eligible auto/twf-game-repair[-UUID] or auto/twf-system-review-UUID PR open. Older manual/Gemini PRs excluded. Existing last_review and historical merged_prs preserved."
 }
