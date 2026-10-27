@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "pr": 90,
+  "head": "4080f20abd88197d26d3cfe36cc5733009386926",
+  "base_main_sha": "b0581b6dae3ca75601c185a38d63846c5cfcc99d",
+  "reviewed_at": "2026-10-27T20:07:25.370Z",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "f524a20f-402c-832f-9c3c-03de40c7c040",
+  "lease_epoch": 137,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "0ac33782-bdfc-8332-ba05-c6ddab05f118",
+  "original_author_run_id": "ff42f093-40c0-8333-a168-011c49dbee2f",
+  "branch": "auto/twf-game-repair-ff42f093-40c0-8333-a168-011c49dbee2f",
+  "repository": "kk051780/toy-wars-factory",
+  "verdict": "APPROVE",
+  "category": "GAME_SERVER_IDLE_HEALTH_BAR_LOOKUP_OPTIMIZATION",
+  "mergeable": true,
+  "changed_files": [
+    "history/C00063_pr90_current_main_ledger_repair.json",
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/health_bar_idle_lookup_spec.lua"
+  ],
+  "ci": {
+    "id": 40574729324,
+    "head": "4080f20abd88197d26d3cfe36cc5733009386926",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "jobs": [
+      {
+        "name": "offline",
+        "conclusion": "success"
+      },
+      {
+        "name": "compile_hold",
+        "conclusion": "success"
+      }
+    ],
+    "scope_and_claim_gate": "PASS",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40574729324",
+    "python_tests": 361,
+    "lua_regression_cases": 3
+  },
+  "main_qa": {
+    "id": 40559823873,
+    "head": "4713c65b9a20b9fe46c66348160920e69af4e6da",
+    "conclusion": "success",
+    "jobs": [
+      "offline",
+      "compile_hold"
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40559823873"
+  },
+  "main_handoff": {
+    "id": 40559823996,
+    "head": "4713c65b9a20b9fe46c66348160920e69af4e6da",
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40559823996"
+  },
+  "comparison_since_main_qa": {
+    "verified": true,
+    "status": "ahead",
+    "ahead_by": 1,
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "coordination": {
+    "claim_commit": "5b1efb8903d06b2542738ed155ead4b9870abb30",
+    "claim_epoch": 136,
+    "claim_run_id": "0ac33782-bdfc-8332-ba05-c6ddab05f118",
+    "claim_ancestor_of_current_coordinator": true,
+    "claim_registered_task": true
+  },
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "findings": [
+    "Current main b0581b6d is a one-commit generated-status-only descendant of successful main QA head 4713c65b; both offline/compile_hold and handoff passed.",
+    "Exact PR head 4080f20a CI #40574729324 passed both required jobs and trusted-base scope/immutable lease checks; 361 Python tests passed; canonical whole-server HealthBar lookup regression 3/3 passed.",
+    "Current-main comparison changes exactly 3 files: C00063 new record, one-line server optimization with damage-victim refresh retained, and a new Lua regression. Old unmerged C00060 absent; accepted C00061/C00062 unchanged.",
+    "Ledger continuity C00061 server 19920→20229, C00062 20229→20091, C00063 20091→20147; Lua bytes 31235→31291; protected config/budget/release controls unchanged.",
+    "Negative-control Lua case is conditional and did not run (suite reported 3 cases, not 4). This is a testing limitation, not a claim of old-source reproduction; live Roblox FPS, Studio, multiplayer, mobile remain unverified."
+  ],
+  "blockers": [],
+  "next_action": "MERGE_IF_HEAD_MAIN_AND_LEASE_UNCHANGED_THEN_VERIFY_POST_MERGE_QA"
+}

@@ -1,23 +1,21 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T19:57:18.879Z",
-  "status": "REQUEST_CHANGES",
+  "observed_at": "2026-10-27T20:07:25.370Z",
+  "status": "APPROVED_READY_TO_MERGE",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "134911ce-f6e0-832e-beaf-0ea25abc9704",
-  "lease_epoch": 133,
+  "reviewer_run_id": "f524a20f-402c-832f-9c3c-03de40c7c040",
+  "lease_epoch": 137,
   "main_before": "b0581b6dae3ca75601c185a38d63846c5cfcc99d",
   "latest_review": {
     "pr": 90,
-    "head": "813ee8beddd0ffc8f385c6b4323f38ab15bcadaf",
-    "verdict": "REQUEST_CHANGES",
-    "review_record": "ops/reviews/PR0090_813ee8be.json",
-    "ci": 40556115019,
+    "head": "4080f20abd88197d26d3cfe36cc5733009386926",
+    "verdict": "APPROVE",
+    "review_record": "ops/reviews/PR0090_4080f20a.json",
+    "ci": 40574729324,
     "category": "GAME_SERVER_IDLE_HEALTH_BAR_LOOKUP_OPTIMIZATION",
     "merge_sha": null,
-    "blockers": [
-      "SOURCE_LEDGER_STALE_BASE_SAME_FILE"
-    ]
+    "blockers": []
   },
   "merged_prs": [
     {
@@ -235,7 +233,7 @@
   },
   "merged_this_run": [],
   "eligible_open_prs": [],
-  "next_action": "WORKER_REPAIR_PR90_SOURCE_LEDGER",
+  "next_action": "PR90_READY_THEN_MERGE_WITH_EXACT_HEAD_AND_POST_MAIN_QA",
   "notes": "PR90 current head CI succeeds but C00060 sorted before merged C00061/C00062 would violate accepted per-file history chain. No integration. Engine/device evidence remains absent; all holds retained.",
   "comparison_since_merge": {
     "base": "4713c65b9a20b9fe46c66348160920e69af4e6da",
