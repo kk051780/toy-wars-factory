@@ -48,10 +48,28 @@ local function loadProgress(player)
         or not validProgressInt(record.coins, 0, B.MAX_CASH)
         or not validProgressInt(record.wave, 1, B.MAX_WAVE)
         or not validProgressInt(record.defeated, 0, 2147483647)
-        or not validProgressInt(record.factoryLevel, 1, B.MAX_LEVEL) then
+        or not validProgressInt(record.factoryLevel, 1, B.MAX_LEVEL)
+        or (record.revision ~= nil and not validProgressInt(record.revision, 0, 2147483647)) then
         return nil, false
     end
     return record, true
+end
+-- Snapshot the loaded values: DataStore mocks and other code may mutate their tables.
+local function progressSnapshot(record)
+    if not record then return nil end
+    return {
+        version = record.version, revision = record.revision,
+        coins = record.coins, wave = record.wave,
+        defeated = record.defeated, factoryLevel = record.factoryLevel,
+    }
+end
+local function sameProgress(current, expected)
+    if expected == nil then return current == nil end
+    return type(current) == "table" and current.version == expected.version
+        and current.revision == expected.revision
+        and current.coins == expected.coins and current.wave == expected.wave
+        and current.defeated == expected.defeated
+        and current.factoryLevel == expected.factoryLevel
 end
 local function saveProgress(player, state)
     if not progressStore or not state.persistAllowed or not state.coins then return end
@@ -63,12 +81,34 @@ local function saveProgress(player, state)
         or not validProgressInt(record.wave, 1, B.MAX_WAVE)
         or not validProgressInt(record.defeated, 0, 2147483647)
         or not validProgressInt(record.factoryLevel, 1, B.MAX_LEVEL) then return end
-    local ok = pcall(function()
-        progressStore:UpdateAsync("p:" .. tostring(player.UserId), function()
-            return record
+    local expected = state.persistSnapshot
+    local ok, saved = pcall(function()
+        return progressStore:UpdateAsync("p:" .. tostring(player.UserId), function(current, keyInfo)
+            -- UpdateAsync can retry this transform with a newer cross-server value.
+            -- Never replace an unknown schema or a newer session's revision.
+            if not sameProgress(current, expected) then return nil end
+            local revision = current and (current.revision or 0) or 0
+            if revision >= 2147483647 then return nil end
+            local updated = {}
+            if current then
+                for key, value in pairs(current) do updated[key] = value end
+            end
+            for key, value in pairs(record) do updated[key] = value end
+            updated.revision = revision + 1
+            if keyInfo then
+                -- Preserve Roblox DataStoreKeyInfo associations and metadata.
+                return updated, keyInfo:GetUserIds(), keyInfo:GetMetadata()
+            end
+            return updated
         end)
     end)
-    if not ok then warn("TWF: progress save unavailable for", player.UserId) end
+    if not ok then
+        warn("TWF: progress save unavailable for", player.UserId)
+    elseif saved == nil then
+        warn("TWF: progress save conflict for", player.UserId)
+    else
+        state.persistSnapshot = progressSnapshot(saved)
+    end
 end
 
 local function part(parent, name, size, cf, color, material)
@@ -498,6 +538,7 @@ local function join(player)
     selected.Parent=status
     local state={
         slot=slot,x=plotCenter(slot),active=true,map=nil,persistAllowed=persistAllowed,
+        persistSnapshot=progressSnapshot(progress),
         coins=coins,wave=wave,kills=kills,baseHP=hp,level=level,
         unitsValue=units,enemiesValue=enemies,selectedValue=selected,selected="pon",
         entities={},spawnOrdinal=0,enemyTarget=B.waveSize(wave.Value),enemiesMade=0,
