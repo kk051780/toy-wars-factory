@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 113,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "3a893bbe-a70d-4085-883c-4ec3c720afdc",
-    "task_id": null,
-    "epoch": 113,
-    "acquired_at": "2026-10-27T12:14:27.688606+00:00",
-    "expires_at": "2026-10-27T12:44:27.688606+00:00",
-    "base_main_sha": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
-    "work_branch": "twf-repair-coordinator",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,12 +36,12 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "cbd38de1-246c-832c-ac81-0553ae00e4dc",
-    "epoch": 112,
-    "released_at": "2026-10-27T12:08:30.448Z",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "result": "PR84_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+    "kind": "CONTROLLER",
+    "owner_id": "3a893bbe-a70d-4085-883c-4ec3c720afdc",
+    "epoch": 113,
+    "released_at": "2026-10-27T12:16:11.287Z",
+    "result": "ISSUE71_NEXT_SCOPED_SERVICE_OBSERVER_REQUEST_SAVED",
+    "implementation_source_changed": false,
     "service_completion_asserted": false
   },
   "last_approval_report": {
@@ -1105,6 +1095,17 @@
       "applied_at": "2026-10-27T11:37:32.069Z",
       "task_updated_at": "2026-10-27T11:36:55.402032+00:00",
       "preserved_task_fields_verified": true
+    }
+  ],
+  "continuation_handoffs": [
+    {
+      "at": "2026-10-27T12:16:11.287Z",
+      "controller_operation_id": "3a893bbe-a70d-4085-883c-4ec3c720afdc",
+      "epoch": 113,
+      "claim": "1f2272c6f2b21546fa185078386a6bf3914639af",
+      "request": "issue71_scoped_service_run_observation_after_pr84",
+      "previous_pr": 84,
+      "source_permission_change": false
     }
   ]
 }
