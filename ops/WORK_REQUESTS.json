@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T12:00:56Z",
+  "observed_at": "2026-10-27T12:08:30.448Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1137,7 +1137,7 @@
       "kind": "SYSTEM_CODE_IMPLEMENTATION",
       "priority": "P0",
       "assigned_role": "META",
-      "status": "IMPLEMENTED_PR84_CI_PASS_PARTIAL_LIVE_CODEPATH_AWAIT_INDEPENDENT_REVIEW",
+      "status": "RESOLVED_PR84_MERGED_MAIN_QA_PASSED_PARTIAL_LIVE",
       "repository": "kk051780/toy-wars-factory",
       "issue": 71,
       "issue_url": "https://github.com/kk051780/toy-wars-factory/issues/71",
@@ -1153,7 +1153,7 @@
       "operational_prompt_path": "ops/task_prompts/META_20261027_issue71.md",
       "owner_reply_required": false,
       "release_and_spending_holds_preserved": true,
-      "updated_at": "2026-10-27T12:00:56Z",
+      "updated_at": "2026-10-27T12:08:30.448Z",
       "current_implementation": {
         "pr": 84,
         "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
@@ -1166,6 +1166,17 @@
         "live_scope": "23 connected GET -> exact source path observed once, no portable origin receipt/dispatch",
         "main_adopted": false,
         "issue_closed": false
+      },
+      "resolution": {
+        "pr": 84,
+        "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
+        "merge_sha": "608ca16643667d3866d4c9e451ffd269869aeca9",
+        "main_after": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
+        "main_qa": 40501279576,
+        "handoff": 40501279630,
+        "review": "ops/reviews/PR0084_34062c8e.json",
+        "issue_closed": false,
+        "live_scope": "one host-observed connected GET path; no portable receipt or real dispatch"
       }
     },
     {
@@ -1174,7 +1185,7 @@
       "priority": "P1",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-      "status": "OPEN",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "issue": 71,
       "pr": 84,
@@ -1198,7 +1209,19 @@
         "conclusion": "success",
         "python_tests": 361
       },
-      "request": "Review new scoped GET collector and actual advisory call path. Validate immutable main manifest/policy/coord blob+epoch, PR repo/run/head/base, all exact-head QA jobs and ref/rerun drift, safe origin labels and credentials boundary; compare new 41 adversarial tests and 1 failing isolated mutant. Read live trace in SYSTEM_REVIEW_LATEST: 23 actual connected GET calls through source blob2eed374c, stdout intentionally NOT_VERIFIED, external host record only for this execution. Do not count synthetic games as live, infer service records/errors, or approve dispatch. Require fresh head/base/claim/CI and independent review before merge; then real main QA/handoff. Keep Issue71 open until acceptance, no self merge or PR55/workflow/token bypass."
+      "request": "Review new scoped GET collector and actual advisory call path. Validate immutable main manifest/policy/coord blob+epoch, PR repo/run/head/base, all exact-head QA jobs and ref/rerun drift, safe origin labels and credentials boundary; compare new 41 adversarial tests and 1 failing isolated mutant. Read live trace in SYSTEM_REVIEW_LATEST: 23 actual connected GET calls through source blob2eed374c, stdout intentionally NOT_VERIFIED, external host record only for this execution. Do not count synthetic games as live, infer service records/errors, or approve dispatch. Require fresh head/base/claim/CI and independent review before merge; then real main QA/handoff. Keep Issue71 open until acceptance, no self merge or PR55/workflow/token bypass.",
+      "resolved_at": "2026-10-27T12:08:30.448Z",
+      "resolution": {
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "cbd38de1-246c-832c-ac81-0553ae00e4dc",
+        "lease_epoch": 112,
+        "review": "ops/reviews/PR0084_34062c8e.json",
+        "merge_sha": "608ca16643667d3866d4c9e451ffd269869aeca9",
+        "main_qa": 40501279576,
+        "handoff": 40501279630,
+        "main_after": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
+        "issue_closed": false
+      }
     }
   ]
 }

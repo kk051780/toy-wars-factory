@@ -63,12 +63,39 @@
     }
   },
   "category": "SYSTEM_READ_ONLY_EVIDENCE_COLLECTOR",
-  "merge_sha": null,
-  "post_merge_main_qa": "PENDING",
-  "post_merge_handoff": "PENDING",
+  "merge_sha": "608ca16643667d3866d4c9e451ffd269869aeca9",
+  "post_merge_main_qa": {
+    "id": 40501279576,
+    "head": "608ca16643667d3866d4c9e451ffd269869aeca9",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 361,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40501279576"
+  },
+  "post_merge_handoff": {
+    "id": 40501279630,
+    "head": "608ca16643667d3866d4c9e451ffd269869aeca9",
+    "conclusion": "success",
+    "jobs": {
+      "update": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40501279630"
+  },
   "limitations": [
     "No authenticated portable origin receipt; stdout NOT_VERIFIED",
     "No real dispatch or Roblox engine/two-client/mobile evidence",
     "Issue71 remains open pending further acceptance evidence"
+  ],
+  "main_after_handoff": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
+  "status_only_descendant_verified": true,
+  "review_outcome": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "review_completed_at": "2026-10-27T12:08:30.448Z",
+  "unresolved": [
+    "Issue71 remains open; no portable authenticated origin receipt, service/operation evidence or real dispatch.",
+    "Roblox engine, two-client, mobile UX unverified; release HOLD.",
+    "Gemini incident and existing spending caps unchanged."
   ]
 }

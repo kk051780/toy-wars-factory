@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 112,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "cbd38de1-246c-832c-ac81-0553ae00e4dc",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 112,
-    "acquired_at": "2026-10-27T12:05:41.467Z",
-    "expires_at": "2026-10-27T12:35:41.467Z",
-    "base_main_sha": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,12 +36,12 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "META",
-    "owner_id": "a71130e8-97fc-832b-8644-287a6933256c",
-    "epoch": 111,
-    "released_at": "2026-10-27T12:03:07+00:00",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "result": "PR84_CODE_TESTS_CI_PASS_LIVE_GET_CODEPATH_OBSERVED_AWAIT_REVIEW",
+    "kind": "REVIEWER",
+    "owner_id": "cbd38de1-246c-832c-ac81-0553ae00e4dc",
+    "epoch": 112,
+    "released_at": "2026-10-27T12:08:30.448Z",
+    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "result": "PR84_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
     "service_completion_asserted": false
   },
   "last_approval_report": {
@@ -565,6 +555,33 @@
       "main_after_handoff": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
       "status_only_descendant_verified": true,
       "category": "GAME_SERVER_REPLICATED_STATUS_SNAPSHOT_STABILITY"
+    },
+    "84": {
+      "schema": 1,
+      "pr": 84,
+      "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
+      "base_reviewed": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
+      "reviewer_kind": "REVIEWER",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "cbd38de1-246c-832c-ac81-0553ae00e4dc",
+      "lease_epoch": 112,
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "a71130e8-97fc-832b-8644-287a6933256c",
+      "verdict": "APPROVE",
+      "ci": {
+        "id": 40499824467,
+        "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
+        "conclusion": "success"
+      },
+      "review_record": "ops/reviews/PR0084_34062c8e.json",
+      "merge_sha": "608ca16643667d3866d4c9e451ffd269869aeca9",
+      "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40501279576",
+      "post_merge_main_qa_status": "success",
+      "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40501279630",
+      "post_merge_handoff_status": "success",
+      "main_after_handoff": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
+      "status_only_descendant_verified": true,
+      "category": "SYSTEM_READ_ONLY_EVIDENCE_COLLECTOR"
     }
   },
   "integration_results": {

@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T12:06:49.090Z",
-  "status": "REVIEW_APPROVED_MERGE_PENDING",
+  "observed_at": "2026-10-27T12:08:30.448Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "cbd38de1-246c-832c-ac81-0553ae00e4dc",
@@ -14,9 +14,9 @@
     "review_record": "ops/reviews/PR0084_34062c8e.json",
     "ci": 40499824467,
     "category": "SYSTEM_READ_ONLY_EVIDENCE_COLLECTOR",
-    "merge_sha": null,
-    "post_merge_main_qa": "PENDING",
-    "post_merge_handoff": "PENDING"
+    "merge_sha": "608ca16643667d3866d4c9e451ffd269869aeca9",
+    "post_merge_main_qa": "PASS",
+    "post_merge_handoff": "PASS"
   },
   "merged_prs": [
     {
@@ -70,20 +70,30 @@
       "main_qa": 40495108890,
       "handoff": 40495108922,
       "main_after_handoff": "79377eac676b933c161cc3d5c2f0b5e61405fe10"
+    },
+    {
+      "pr": 84,
+      "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
+      "merge_sha": "608ca16643667d3866d4c9e451ffd269869aeca9",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40501279576,
+      "handoff": 40501279630,
+      "main_after_handoff": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
+      "category": "SYSTEM_READ_ONLY_EVIDENCE_COLLECTOR"
     }
   ],
-  "merge_count_this_run": 0,
+  "merge_count_this_run": 1,
   "previous_integration_commit": "23aa3649f59f96111b02c91ca31a048df6749b6f",
   "main_qa": {
-    "id": 40495108890,
-    "head": "0674762e15d293a9a01b60dfcaac3f1e8399aac7",
+    "id": 40501279576,
+    "head": "608ca16643667d3866d4c9e451ffd269869aeca9",
     "status": "completed",
     "conclusion": "success",
     "jobs": {
       "offline": "success",
       "compile_hold": "success"
     },
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40495108890",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40501279576",
     "comparison_since_qa": {
       "status": "ahead",
       "ahead_by": 1,
@@ -92,31 +102,31 @@
         "status/LATEST_STATE.json"
       ],
       "verified": true,
-      "main_head": "79377eac676b933c161cc3d5c2f0b5e61405fe10"
+      "main_head": "0d1ee3064d590cf4ccff3b92abd96e796a45f749"
     }
   },
   "handoff": {
-    "id": 40495108922,
-    "head": "0674762e15d293a9a01b60dfcaac3f1e8399aac7",
+    "id": 40501279630,
+    "head": "608ca16643667d3866d4c9e451ffd269869aeca9",
     "status": "completed",
     "conclusion": "success",
     "jobs": {
       "update": "success"
     },
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40495108922"
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40501279630"
   },
   "unresolved": [
-    "No eligible auto/twf-game-repair[-UUID] or auto/twf-system-review-UUID PR at this scan; older controller/manual/Gemini/other branches excluded.",
-    "Roblox Studio engine, two-client multiplayer, physical mobile, visual/fun evidence absent; release HOLD.",
-    "Gemini incident hold, budget caps and external inference restrictions unchanged."
+    "Issue #71 remains open: portable provider origin receipt, service/operation error collection, real multi-game dispatch not verified.",
+    "Roblox Studio/2-client/mobile evidence absent; release HOLD.",
+    "Gemini incident HOLD and budget caps unchanged."
   ],
-  "next": "PR84 merge after exact-head, lock and main recheck; post-merge QA/handoff required. Issue71 remains open; do not claim live dispatch or engine proof.",
-  "merge_sha": "0674762e15d293a9a01b60dfcaac3f1e8399aac7",
-  "main_after": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
+  "next": "META: continue Issue71 service/operation receipt collection and multi-game live observation without credential bypass; WORKER: next small PvE fix; REVIEWER: recheck exact-head CI for future eligible PRs. No owner reply required.",
+  "merge_sha": "608ca16643667d3866d4c9e451ffd269869aeca9",
+  "main_after": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
   "status_only_descendant_verified": true,
   "comparison_since_main_qa": {
-    "base": "0674762e15d293a9a01b60dfcaac3f1e8399aac7",
-    "head": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
+    "base": "608ca16643667d3866d4c9e451ffd269869aeca9",
+    "head": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
     "status": "ahead",
     "ahead_by": 1,
     "paths": [
@@ -161,41 +171,22 @@
     "handoff": 40450478705
   },
   "last_successful_integration": {
-    "reviewer_run_id": "03232810-2e74-8333-a20a-e033720a1ee0",
-    "lease_epoch": 108,
-    "merge_sha": "0674762e15d293a9a01b60dfcaac3f1e8399aac7",
-    "main_after": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
-    "main_qa": 40495108890,
-    "handoff": 40495108922
+    "reviewer_run_id": "cbd38de1-246c-832c-ac81-0553ae00e4dc",
+    "lease_epoch": 112,
+    "merge_sha": "608ca16643667d3866d4c9e451ffd269869aeca9",
+    "main_after": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
+    "main_qa": 40501279576,
+    "handoff": 40501279630
   },
   "latest_review_is_current_run": true,
   "latest_scan": {
-    "observed_at": "2026-10-27T11:21:17.058Z",
+    "observed_at": "2026-10-27T12:08:30.448Z",
     "eligible_open_prs": [],
-    "merged_pr": null,
-    "main_qa": 40495108890,
-    "handoff": 40495108922,
-    "main_sha": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
+    "merged_pr": 84,
+    "main_qa": 40501279576,
+    "handoff": 40501279630,
+    "main_sha": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
     "main_qa_verified": true,
-    "status_only_descendant_verified": true,
-    "open_unrelated_prs": [
-      61,
-      60,
-      55,
-      51,
-      29,
-      28,
-      25,
-      24,
-      23,
-      22,
-      21,
-      20,
-      19,
-      17,
-      13,
-      12,
-      6
-    ]
+    "status_only_descendant_verified": true
   }
 }
