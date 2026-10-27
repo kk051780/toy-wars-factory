@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T11:36:48.464Z",
+  "observed_at": "2026-10-27T12:00:56Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1137,7 +1137,7 @@
       "kind": "SYSTEM_CODE_IMPLEMENTATION",
       "priority": "P0",
       "assigned_role": "META",
-      "status": "OPEN",
+      "status": "IMPLEMENTED_PR84_CI_PASS_PARTIAL_LIVE_CODEPATH_AWAIT_INDEPENDENT_REVIEW",
       "repository": "kk051780/toy-wars-factory",
       "issue": 71,
       "issue_url": "https://github.com/kk051780/toy-wars-factory/issues/71",
@@ -1152,7 +1152,53 @@
       ],
       "operational_prompt_path": "ops/task_prompts/META_20261027_issue71.md",
       "owner_reply_required": false,
-      "release_and_spending_holds_preserved": true
+      "release_and_spending_holds_preserved": true,
+      "updated_at": "2026-10-27T12:00:56Z",
+      "current_implementation": {
+        "pr": 84,
+        "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
+        "base": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
+        "ci": 40499824467,
+        "claim": "309ae633084b728fde21b1b87d1d29b964bf6ec6",
+        "epoch": 111,
+        "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+        "author_run_id": "a71130e8-97fc-832b-8644-287a6933256c",
+        "live_scope": "23 connected GET -> exact source path observed once, no portable origin receipt/dispatch",
+        "main_adopted": false,
+        "issue_closed": false
+      }
+    },
+    {
+      "id": "issue71_pr84_independent_review",
+      "kind": "INDEPENDENT_SYSTEM_REVIEW",
+      "priority": "P1",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "status": "OPEN",
+      "repository": "kk051780/toy-wars-factory",
+      "issue": 71,
+      "pr": 84,
+      "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
+      "base_main_sha": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
+      "created_at": "2026-10-27T12:00:56Z",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "a71130e8-97fc-832b-8644-287a6933256c",
+      "coordination": {
+        "claim_commit": "309ae633084b728fde21b1b87d1d29b964bf6ec6",
+        "epoch": 111
+      },
+      "ci": {
+        "id": 40499824467,
+        "attempt": 1,
+        "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
+        "jobs": [
+          "offline",
+          "compile_hold"
+        ],
+        "conclusion": "success",
+        "python_tests": 361
+      },
+      "request": "Review new scoped GET collector and actual advisory call path. Validate immutable main manifest/policy/coord blob+epoch, PR repo/run/head/base, all exact-head QA jobs and ref/rerun drift, safe origin labels and credentials boundary; compare new 41 adversarial tests and 1 failing isolated mutant. Read live trace in SYSTEM_REVIEW_LATEST: 23 actual connected GET calls through source blob2eed374c, stdout intentionally NOT_VERIFIED, external host record only for this execution. Do not count synthetic games as live, infer service records/errors, or approve dispatch. Require fresh head/base/claim/CI and independent review before merge; then real main QA/handoff. Keep Issue71 open until acceptance, no self merge or PR55/workflow/token bypass."
     }
   ]
 }

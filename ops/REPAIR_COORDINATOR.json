@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 111,
-  "holder": {
-    "kind": "META",
-    "owner_id": "a71130e8-97fc-832b-8644-287a6933256c",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "epoch": 111,
-    "acquired_at": "2026-10-27T11:43:00+00:00",
-    "expires_at": "2026-10-27T12:13:00+00:00",
-    "base_main_sha": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
-    "work_branch": "auto/twf-system-review-a71130e8-97fc-832b-8644-287a6933256c",
-    "origin": "meta"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -20,23 +10,39 @@
   },
   "approval_packet": {
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
-    "items": [],
+    "items": [
+      {
+        "number": 84,
+        "title": "[TWF system-review] Collect scoped GitHub GET evidence for advisory planning",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/84",
+        "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40499824467",
+        "summary": "新規GET collector・実main/共有blob/PR/CIの照合、新規41検査と23回のread-only live経路実証。advisoryのみ、未統合。",
+        "changed_files": [
+          "tools/system_github_evidence.py",
+          "tests/test_system_github_evidence.py",
+          "docs/research/2026-10-27_github_evidence.md",
+          "history/C00053_scoped_github_evidence.json"
+        ],
+        "kind": "開発体制改善"
+      }
+    ],
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-27T04:37:41.125Z",
-    "signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
+    "observed_at": "2026-10-27T12:00:56Z",
+    "signature": "95214d37d0def1525d6be8a0363090533e786420c10b0d61fd8f7eeea45bc9f2",
     "approval_text": ""
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "0b72f2d6-3494-4f45-ad6f-7938a01175a6",
-    "epoch": 110,
-    "released_at": "2026-10-27T11:37:32.069Z",
-    "result": "ISSUE72_STATUS_RECONCILED_AND_META_ROUTED_TO_ISSUE71",
-    "implementation_source_changed": false,
-    "task_id": "6add445e4138819197d9cf2b1a02534d"
+    "kind": "META",
+    "owner_id": "a71130e8-97fc-832b-8644-287a6933256c",
+    "epoch": 111,
+    "released_at": "2026-10-27T12:03:07+00:00",
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "result": "PR84_CODE_TESTS_CI_PASS_LIVE_GET_CODEPATH_OBSERVED_AWAIT_REVIEW",
+    "service_completion_asserted": false
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",

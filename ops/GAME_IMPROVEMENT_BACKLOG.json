@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T04:02:53Z",
+  "observed_at": "2026-10-27T12:00:56Z",
   "source": "Issue72 accepted-module repair first; no game edits. Current main source was inspected and existing physical-engine/device hypotheses retained without claiming execution.",
   "items": [
     {
@@ -84,33 +84,56 @@
     }
   ],
   "actor": {
-    "kind": "META",
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "5f96584a-7d9c-832c-bfad-297c6211d960"
+    "run_id": "a71130e8-97fc-832b-8644-287a6933256c"
   },
-  "base_main_sha": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+  "base_main_sha": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
   "prioritized_candidates": [
     "first_play_guide_compact_layout",
     "private_headless_engine_evidence_path",
     "mobile_pve_frame_time"
   ],
-  "system_precondition": {
-    "priority": "ISSUE72_LEGACY_CLI_AFTER_TRUST_ROOT_PR78",
-    "scope_pr": 78,
-    "scope_merged": true,
-    "scope_main_qa": 40445881032,
-    "legacy_cli_pr": 79,
-    "legacy_cli_head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
-    "legacy_cli_ci": 40447229337,
-    "legacy_cli_merged": false,
-    "issue72_complete": false,
-    "game_edits_by_meta": 0
-  },
+  "system_precondition": "System implementation Issue71 prioritized; no game code or new features in this run. Preserve engine/release HOLD.",
   "last_primary_source_check": {
-    "checked_at": "2026-10-27T04:02:53Z",
+    "at": "2026-10-27T12:00:56Z",
     "url": "https://create.roblox.com/docs/performance-optimization/test-on-hardware",
-    "update_date": null,
-    "adopted": "Retain actual hardware frame/memory/thermal and touch evidence. Current pure-Python fix needs no Roblox success claim; release HOLD remains.",
-    "new_game_experiment_executed": false
-  }
+    "published_at": null,
+    "updated_at": null,
+    "actual_hardware_run": false
+  },
+  "next_experiments": [
+    {
+      "id": "private_headless_engine_evidence_path",
+      "hypothesis": "A permitted hosted private engine path could establish a PvE startup baseline without owner PC debugging; no current capability is verified.",
+      "evidence": "No Roblox/engine tool exposed in current registry; actual immutable project manifest has no Roblox execution binding.",
+      "minimal_experiment": "Identify a provider-supported read-only engine evidence capability and verify scope before any runtime operation. Do not add authenticated workflow, read keys, publish or spend.",
+      "success_condition": "Dated native engine logs bound to exact main artifact and scoped private execution, without release or spend authority.",
+      "required_real_evidence": [
+        "Engine startup/PvE one-loop logs",
+        "2-client isolation remains a separate later experiment"
+      ]
+    },
+    {
+      "id": "mobile_pve_frame_time",
+      "hypothesis": "Per-entity nearest-opponent scans and pivots may affect baseline-phone frame time; recent stable status snapshots reduce writes offline but actual device effect is unknown.",
+      "evidence": "Current exact main server still calls closestOpponent and entity model PivotTo; PR83 snapshot change merged/offline verified only.",
+      "minimal_experiment": "Once permitted execution is available, 10-15 minutes of active PvE on a low-end phone, capture frame time/memory/thermal trend at fixed scene counts. No performance/spec change now.",
+      "success_condition": "Dated repeatable trace and a measured bottleneck or bounded baseline; do not claim improvement from source counts.",
+      "required_real_evidence": [
+        "Physical phone frame/memory/thermal capture",
+        "Exact main/build, device and scenario"
+      ]
+    },
+    {
+      "id": "first_play_guide_compact_layout",
+      "hypothesis": "Offline rectangle fixes and newer role/restart wording may still leave real touch-navigation gaps; no physical-device outcome measured.",
+      "evidence": "PR67/80/81 code exists on main and offline tests pass; actual mobile evidence NOT_RUN.",
+      "minimal_experiment": "On physical small phone short landscape, execute select all3 toys -> produce/upgrade -> loss/restart, record touch controls and guide/queue visibility.",
+      "success_condition": "No blocked intended tap or overlap across the dated replay, or one exact reproducible UI defect for next WORKER small repair.",
+      "required_real_evidence": [
+        "Physical phone screenshots/video",
+        "Dated input replay bound to current main"
+      ]
+    }
+  ]
 }
