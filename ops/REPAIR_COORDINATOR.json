@@ -1,8 +1,18 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 150,
-  "holder": null,
+  "epoch": 151,
+  "holder": {
+    "kind": "DISPATCH",
+    "owner_id": "d314ca17-bbac-4904-b801-2232ea117d33",
+    "task_id": null,
+    "epoch": 151,
+    "acquired_at": "2026-10-27T22:07:28.782822+00:00",
+    "expires_at": "2026-10-27T22:09:28.782822+00:00",
+    "base_main_sha": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+    "work_branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "origin": "dispatch"
+  },
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -1130,5 +1140,24 @@
       "previous_pr": 84,
       "source_permission_change": false
     }
-  ]
+  ],
+  "manual_go_context": {
+    "owner_instruction": "ゲーム開発を再開。進捗率・作業時間・作業効率を継続表示。",
+    "priority_request": "pr94_progress_updateasync_stale_overwrite_20261028",
+    "priority_pr": 94,
+    "canonical_failed_head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
+    "offline_reproductions": 6,
+    "local_read_only_fixture": "/workspace/scratch/b3934249f0a4/audit-pr94/progress_conflict_audit.lua",
+    "local_lua_runner": "/workspace/scratch/b3934249f0a4/run_lua54.py",
+    "source_changed_by_controller": false,
+    "reproductions": [
+      "schema migration after load",
+      "same-schema newer server save before older server save",
+      "concurrent first joins",
+      "malformed current record after valid load",
+      "UpdateAsync callback retry with fresh current",
+      "preserve DataStoreKeyInfo users and metadata"
+    ],
+    "normal_owner_reply_required": false
+  }
 }
