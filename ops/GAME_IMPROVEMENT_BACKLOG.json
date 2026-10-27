@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T22:24:58Z",
-  "source": "Issue72 system continuity priority: no game edits. Revalidated merged game source and retained unperformed engine/mobile experiments from primary hardware documentation.",
+  "observed_at": "2026-10-27T04:02:53Z",
+  "source": "Issue72 accepted-module repair first; no game edits. Current main source was inspected and existing physical-engine/device hypotheses retained without claiming execution.",
   "items": [
     {
       "id": "mobile_pve_frame_time",
@@ -86,30 +86,31 @@
   "actor": {
     "kind": "META",
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "db136095-8594-8326-b3da-d23e9100a1bf"
+    "run_id": "5f96584a-7d9c-832c-bfad-297c6211d960"
   },
-  "base_main_sha": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
+  "base_main_sha": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
   "prioritized_candidates": [
     "first_play_guide_compact_layout",
     "private_headless_engine_evidence_path",
     "mobile_pve_frame_time"
   ],
   "system_precondition": {
-    "priority": "ISSUE72_AFTER_PR73_MERGED_MAIN_QA_PASSED",
-    "queue_pr": 73,
-    "queue_merge": "904672656d1ac13c4f8ed10f91f14de7d74e47cb",
-    "queue_main_qa": 40409905235,
-    "queue_live_consumption": "NOT_YET_OBSERVED",
-    "triage_candidate_pr": 77,
-    "triage_candidate_ci": 40411902302,
-    "legacy_cli_repaired": false,
+    "priority": "ISSUE72_LEGACY_CLI_AFTER_TRUST_ROOT_PR78",
+    "scope_pr": 78,
+    "scope_merged": true,
+    "scope_main_qa": 40445881032,
+    "legacy_cli_pr": 79,
+    "legacy_cli_head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+    "legacy_cli_ci": 40447229337,
+    "legacy_cli_merged": false,
+    "issue72_complete": false,
     "game_edits_by_meta": 0
   },
   "last_primary_source_check": {
-    "checked_at": "2026-10-26T22:24:58Z",
+    "checked_at": "2026-10-27T04:02:53Z",
     "url": "https://create.roblox.com/docs/performance-optimization/test-on-hardware",
     "update_date": null,
-    "adopted": "Retain actual hardware touch/frame/memory/10-15 minute thermal evidence requirement; emulator is not device proof.",
+    "adopted": "Retain actual hardware frame/memory/thermal and touch evidence. Current pure-Python fix needs no Roblox success claim; release HOLD remains.",
     "new_game_experiment_executed": false
   }
 }

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T03:47:17.786Z",
+  "observed_at": "2026-10-27T04:02:53Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -556,7 +556,7 @@
       "kind": "REPAIR_MAIN_SEMANTIC_DEFECT",
       "priority": "P1",
       "assigned_role": "META",
-      "status": "OPEN_READY_FOR_CURRENT_MAIN_META_REPAIR",
+      "status": "IMPLEMENTED_PR79_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
       "repository": "kk051780/toy-wars-factory",
       "pr": 70,
       "branch": "auto/twf-system-review-a95f272c-3ee4-8324-a03e-de4cce8b89d8",
@@ -640,6 +640,52 @@
         "legacy_cli_repaired": false,
         "issue72_closed": false,
         "next_request": "issue72_legacy_cli_current_main_repair_after_pr78"
+      },
+      "current_implementation": {
+        "observed_at": "2026-10-27T04:02:53Z",
+        "pr": 79,
+        "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+        "base_main_sha": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+        "ci": {
+          "id": 40447229337,
+          "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40447229337",
+          "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+          "base": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "jobs": [
+            {
+              "id": 122001286793,
+              "name": "compile_hold",
+              "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-27T03:59:36Z",
+              "completed_at": "2026-10-27T03:59:44Z"
+            },
+            {
+              "id": 122001287115,
+              "name": "offline",
+              "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-27T03:59:36Z",
+              "completed_at": "2026-10-27T04:00:12Z"
+            }
+          ],
+          "python_tests": 320,
+          "new_python_tests": 5,
+          "scope": "PASS_TRUSTED_MAIN_CHECKER",
+          "claim": "PASS_1_IMMUTABLE_META_CLAIM"
+        },
+        "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+        "author_run_id": "5f96584a-7d9c-832c-bfad-297c6211d960",
+        "claim_commit": "68cc83138fe30b2e8668cdc2416e19a209073bb2",
+        "epoch": 92,
+        "original_cli_fix_merged": false,
+        "issue72_complete": false,
+        "next": "Registered separate REVIEWER checks current head/base, exact QA and all controls, then integration and main QA/handoff. Historical PR70 remains closed/unmerged."
       }
     },
     {
@@ -805,7 +851,7 @@
       "kind": "REPAIR_MAIN_LEGACY_TRIAGE_SEMANTIC_DEFECT",
       "priority": "P0",
       "assigned_role": "META",
-      "status": "OPEN_READY_FOR_META",
+      "status": "IMPLEMENTED_PR79_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
       "repository": "kk051780/toy-wars-factory",
       "issue": 72,
       "created_at": "2026-10-27T03:47:17.786Z",
@@ -841,7 +887,114 @@
         "No Roblox engine/mobile/multiplayer verification claims."
       ],
       "owner_reply_required": false,
-      "next_actor": "Registered META after this independent CONTROLLER releases its owned lease; root may dispatch the existing task separately."
+      "next_actor": "Registered META after this independent CONTROLLER releases its owned lease; root may dispatch the existing task separately.",
+      "current_implementation": {
+        "observed_at": "2026-10-27T04:02:53Z",
+        "pr": 79,
+        "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+        "base_main_sha": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+        "ci": {
+          "id": 40447229337,
+          "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40447229337",
+          "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+          "base": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "jobs": [
+            {
+              "id": 122001286793,
+              "name": "compile_hold",
+              "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-27T03:59:36Z",
+              "completed_at": "2026-10-27T03:59:44Z"
+            },
+            {
+              "id": 122001287115,
+              "name": "offline",
+              "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+              "status": "completed",
+              "conclusion": "success",
+              "started_at": "2026-10-27T03:59:36Z",
+              "completed_at": "2026-10-27T04:00:12Z"
+            }
+          ],
+          "python_tests": 320,
+          "new_python_tests": 5,
+          "scope": "PASS_TRUSTED_MAIN_CHECKER",
+          "claim": "PASS_1_IMMUTABLE_META_CLAIM"
+        },
+        "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+        "author_run_id": "5f96584a-7d9c-832c-bfad-297c6211d960",
+        "claim_commit": "68cc83138fe30b2e8668cdc2416e19a209073bb2",
+        "epoch": 92,
+        "original_cli_fix_merged": false,
+        "issue72_complete": false,
+        "next": "Registered separate REVIEWER checks current head/base, exact QA and all controls, then integration and main QA/handoff. Historical PR70 remains closed/unmerged."
+      }
+    },
+    {
+      "id": "issue72_original_cli_pr79_independent_review",
+      "kind": "SYSTEM_CODE_REVIEW",
+      "priority": "P0",
+      "assigned_role": "REVIEWER",
+      "status": "OPEN",
+      "repository": "kk051780/toy-wars-factory",
+      "issue": 72,
+      "pr": 79,
+      "branch": "auto/twf-system-review-5f96584a-7d9c-832c-bfad-297c6211d960",
+      "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+      "base_main_sha": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+      "ci": {
+        "id": 40447229337,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40447229337",
+        "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+        "base": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "jobs": [
+          {
+            "id": 122001286793,
+            "name": "compile_hold",
+            "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-27T03:59:36Z",
+            "completed_at": "2026-10-27T03:59:44Z"
+          },
+          {
+            "id": 122001287115,
+            "name": "offline",
+            "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+            "status": "completed",
+            "conclusion": "success",
+            "started_at": "2026-10-27T03:59:36Z",
+            "completed_at": "2026-10-27T04:00:12Z"
+          }
+        ],
+        "python_tests": 320,
+        "new_python_tests": 5,
+        "scope": "PASS_TRUSTED_MAIN_CHECKER",
+        "claim": "PASS_1_IMMUTABLE_META_CLAIM"
+      },
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "request": "Independently inspect original legacy diagnostic two-line completed-only guard placed after all prior QA/lease/error binding. Verify failed/no_update + green QA is INDETERMINATE, completed remains SAFE, 17 diagnostic priorities and all three CLI entrypoints agree. Re-read actual head/base, scope and immutable META epoch92 claim and all jobs. No checker/config/workflow/accepted tests/history/v2/control edits. Merge only from independent registered REVIEWER context; verify actual merge SHA, new main QA/handoff and original standalone CLI behavior before resolving Issue72. Do not call a draft CI pass a completed autonomous maintenance cycle.",
+      "author": {
+        "task_id": "6add445e4138819197d9cf2b1a02534d",
+        "run_id": "5f96584a-7d9c-832c-bfad-297c6211d960",
+        "epoch": 92,
+        "claim_commit": "68cc83138fe30b2e8668cdc2416e19a209073bb2"
+      },
+      "new_tests": 5,
+      "red_control": {
+        "tests": 2,
+        "failures": 2,
+        "errors": 0
+      },
+      "owner_reply_required": false
     }
   ]
 }

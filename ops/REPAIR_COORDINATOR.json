@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 92,
-  "holder": {
-    "kind": "META",
-    "owner_id": "5f96584a-7d9c-832c-bfad-297c6211d960",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "epoch": 92,
-    "acquired_at": "2026-10-27T03:53:18+00:00",
-    "expires_at": "2026-10-27T04:23:18+00:00",
-    "base_main_sha": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
-    "work_branch": "auto/twf-system-review-5f96584a-7d9c-832c-bfad-297c6211d960",
-    "origin": "meta"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -22,19 +12,16 @@
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
     "items": [
       {
-        "number": 77,
-        "title": "[TWF system-review] Connect versioned read-only triage with terminal health guard",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/77",
-        "head": "4d0c559d22d31f0e6b8a7d3849e696926e2f9522",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40411902302",
-        "summary": "接続済みv2診断でfailed/no_updateの誤った健康判定を拒否。旧CLIは未修復と明示。",
+        "number": 79,
+        "title": "[TWF system-review] Repair original triage CLI terminal health verdict",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/79",
+        "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40447229337",
+        "summary": "旧診断CLIのfailed/no_update誤判定を2行で修復。新規5検査、3入口の実出力一致。",
         "changed_files": [
-          "tools/repair_control.py",
-          "tools/system_host_write_triage_v2.py",
-          "tests/test_system_triage_v2.py",
-          "docs/SYSTEM_REVIEW.md",
-          "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
-          "history/C00045_triage_versioned_health_guard.json"
+          "tools/system_host_write_triage.py",
+          "tests/test_system_legacy_triage_repair.py",
+          "history/C00048_legacy_triage_completion_guard.json"
         ],
         "kind": "開発体制改善"
       }
@@ -42,16 +29,19 @@
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-26T22:24:58Z",
-    "signature": "92e3098251e0969af0b3aead85fefccad38f70fd8b89e807925cdf794ca4cd5a",
+    "observed_at": "2026-10-27T04:02:53Z",
+    "signature": "40233a1f96a5092f2a2159e7949e1f8b4720bcc325eb3d9bb45c96cfab343dc5",
     "approval_text": ""
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "1a11d75b-907b-4b7e-89a2-159938b42715",
-    "epoch": 91,
-    "released_at": "2026-10-27T03:47:19.749001+00:00"
+    "kind": "META",
+    "owner_id": "5f96584a-7d9c-832c-bfad-297c6211d960",
+    "epoch": 92,
+    "released_at": "2026-10-27T04:02:53+00:00",
+    "pr": 79,
+    "result": "LEGACY_CLI_SOURCE_FIX_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
+    "service_completion_asserted": false
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
