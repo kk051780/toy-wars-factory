@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "pr": 82,
+  "repository": "kk051780/toy-wars-factory",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "2eb44079-6988-8328-94b3-93dacf24485d",
+  "lease_epoch": 103,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "12b49b5f-f5fc-832d-955d-93cdfc949468",
+  "branch": "auto/twf-game-repair-267d10af-56cc-832b-b690-19df0e16484b",
+  "head": "799c838f168b8942b275dab20ed569507a50157e",
+  "base_main_sha": "418843226131ad559c2fc3826829058f3061e0ff",
+  "reviewed_at": "2026-10-27T07:25:20.487Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "GAME_HUD_QUEUE_REPLICATION_WAIT_FIX",
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/queue_notice_replication_wait_spec.lua",
+    "history/C00050_queue_notice_replication_wait.json"
+  ],
+  "ci": {
+    "id": 40465570011,
+    "head": "799c838f168b8942b275dab20ed569507a50157e",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 320,
+    "lua_queue_cases": 3,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40465570011"
+  },
+  "main_qa": {
+    "id": 40450646774,
+    "qa_head": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
+    "main_head": "418843226131ad559c2fc3826829058f3061e0ff",
+    "conclusion": "success",
+    "comparison": {
+      "status": "ahead",
+      "ahead_by": 1,
+      "verified": true,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "findings": [
+    "PR82 exact head 799c838f CI offline/compile_hold PASS, 320 Python tests, canonical whole-HUD queue replication wait 3/0 including pinned pre-queue negative control.",
+    "Trusted main-base scheduled repair scope PASS (3 changed files); immutable WORKER claim 612d7aa6 epoch101 on shared coordinator ancestor verified, author service run 12b49b5f distinct from REVIEWER task/run.",
+    "Two commits: prior partial 1e1ba369 retains HUD and new Lua fixture, second 799c838f appends C00050 with recovery claim; no overwrite or accepted test modifications.",
+    "HUD 6625->6701 (+76) bytes; actual tree 4 Lua files 3070+6701+19100+1250=30121 bytes, 759 lines per CI; initial 25726-byte baseline unchanged; no pre-existing C00050 on main.",
+    "Only remote/balance WaitForChild moved after ScreenGui and queue notice creation; queue visible at four wait boundaries, cleared after assignment; three selectors, prices, guide and selection command remain functional in native mocks.",
+    "PR81 remains separate and contains conflicting unmerged C00050; PR82 is recovery of earlier committed work and may merge first, while PR81 must rename history and rebase with new CI. No release/budget/provider/policy changes."
+  ],
+  "unresolved": [
+    "Roblox engine, physical mobile, two-client play, visual/fun evidence absent; release HOLD.",
+    "PR81 head ffac4788 cannot merge until C00050 renumber/rebase, new head CI and independent review.",
+    "Post-merge main offline+compile_hold and handoff must succeed before any further merge."
+  ],
+  "decision_rule": "tools/repair_integration.py decide => MERGE after exact-head/current-main/lease/checks; separate author task/run",
+  "post_merge_main_qa": null,
+  "post_merge_handoff": null,
+  "merge_sha": null,
+  "final_status": "APPROVED_PENDING_MERGE"
+}
