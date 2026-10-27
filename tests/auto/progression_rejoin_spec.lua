@@ -3,6 +3,7 @@
 local H = dofile("tests/roblox_server_harness.lua")
 local server = os.getenv("TWF_SERVER_FILE") or "src/ToyWarsServer.server.lua"
 local passed, failed = 0, 0
+local guidSerial = 0
 local function eq(a,b,label)
     assert(a==b,(label or "value")..": expected "..tostring(b)..", got "..tostring(a))
 end
@@ -41,6 +42,12 @@ local function fixture(store)
                         return store
                     end}
                 end
+            if name=="HttpService" then
+                return {GenerateGUID=function()
+                    guidSerial=guidSerial+1
+                    return "offline-session-guid-"..tostring(guidSerial)
+                end}
+            end
                 return originalGetService(self,name)
             end
             env.game.BindToClose=function(_,fn) callbacks[#callbacks+1]=fn end
@@ -63,7 +70,7 @@ check("new profile starts with canonical defaults and writes version one",functi
     eq(value(p,"leaderstats","Coins"),50,"new coins")
     eq(value(p,"leaderstats","Wave"),1,"new wave")
     h:removePlayer(p)
-    eq(store.writes,1,"one save")
+    eq(store.writes,2,"atomic session claim plus final save")
     eq(store.data["p:1"].version,1,"version")
     eq(store.data["p:1"].factoryLevel,1,"level")
 end)

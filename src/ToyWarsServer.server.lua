@@ -37,22 +37,18 @@ local function validProgressInt(value, minimum, maximum)
     return type(value) == "number" and value == math.floor(value)
         and value >= minimum and value <= maximum
 end
-local function loadProgress(player)
-    if not progressStore then return nil, false end
-    local ok, record = pcall(function()
-        return progressStore:GetAsync("p:" .. tostring(player.UserId))
-    end)
-    if not ok then return nil, false end
-    if record == nil then return nil, true end
-    if type(record) ~= "table" or record.version ~= 1
-        or not validProgressInt(record.coins, 0, B.MAX_CASH)
-        or not validProgressInt(record.wave, 1, B.MAX_WAVE)
-        or not validProgressInt(record.defeated, 0, 2147483647)
-        or not validProgressInt(record.factoryLevel, 1, B.MAX_LEVEL)
-        or (record.revision ~= nil and not validProgressInt(record.revision, 0, 2147483647)) then
-        return nil, false
-    end
-    return record, true
+-- A join atomically claims the newest writable session before exposing progress.
+-- A later join can replace an earlier owner; older servers then fail closed on save.
+-- No persistent lock needs expiry: every valid rejoin may acquire a fresh token.
+local function validProgress(record)
+    return type(record) == "table" and record.version == 1
+        and validProgressInt(record.coins, 0, B.MAX_CASH)
+        and validProgressInt(record.wave, 1, B.MAX_WAVE)
+        and validProgressInt(record.defeated, 0, 2147483647)
+        and validProgressInt(record.factoryLevel, 1, B.MAX_LEVEL)
+        and (record.revision == nil or validProgressInt(record.revision, 0, 2147483647))
+        and (record.sessionOwner == nil or (type(record.sessionOwner) == "string"
+            and #record.sessionOwner <= 128))
 end
 -- Snapshot the loaded values: DataStore mocks and other code may mutate their tables.
 local function progressSnapshot(record)
@@ -61,6 +57,7 @@ local function progressSnapshot(record)
         version = record.version, revision = record.revision,
         coins = record.coins, wave = record.wave,
         defeated = record.defeated, factoryLevel = record.factoryLevel,
+        sessionOwner = record.sessionOwner,
     }
 end
 local function sameProgress(current, expected)
@@ -70,6 +67,60 @@ local function sameProgress(current, expected)
         and current.coins == expected.coins and current.wave == expected.wave
         and current.defeated == expected.defeated
         and current.factoryLevel == expected.factoryLevel
+        and current.sessionOwner == expected.sessionOwner
+end
+local sessionOrdinal = 0
+local function newSessionToken()
+    local ok, http = pcall(function() return game:GetService("HttpService") end)
+    if ok and http then
+        local generated, guid = pcall(function() return http:GenerateGUID(false) end)
+        if generated and type(guid) == "string" and #guid >= 8 and #guid <= 128 then
+            return guid
+        end
+    end
+    -- A real Roblox server has a unique JobId. No unsafe cross-server fallback.
+    local jobId = game.JobId
+    if type(jobId) == "string" and #jobId > 0 then
+        sessionOrdinal = sessionOrdinal + 1
+        return jobId .. ":" .. tostring(sessionOrdinal)
+    end
+    return nil
+end
+local function loadProgress(player)
+    if not progressStore then return nil, false end
+    local key = "p:" .. tostring(player.UserId)
+    local ok, record = pcall(function() return progressStore:GetAsync(key) end)
+    if not ok or (record ~= nil and not validProgress(record)) then return nil, false end
+    local token = newSessionToken()
+    if not token then return nil, false end
+    local expected = progressSnapshot(record)
+    local claimedOk, claimed = pcall(function()
+        return progressStore:UpdateAsync(key, function(current, keyInfo)
+            -- An intervening write/claim invalidates this read; do not steal it.
+            if not sameProgress(current, expected) then return nil end
+            local updated = {}
+            if current then
+                for field, value in pairs(current) do updated[field] = value end
+            else
+                updated.version = 1
+                updated.coins = 50
+                updated.wave = 1
+                updated.defeated = 0
+                updated.factoryLevel = 1
+                updated.revision = 0
+            end
+            updated.sessionOwner = token
+            if keyInfo then
+                return updated, keyInfo:GetUserIds(), keyInfo:GetMetadata()
+            end
+            return updated
+        end)
+    end)
+    if not claimedOk or claimed == nil then
+        warn("TWF: progress session claim unavailable for", player.UserId)
+        return nil, false
+    end
+    return claimed, true
 end
 local function saveProgress(player, state)
     if not progressStore or not state.persistAllowed or not state.coins then return end

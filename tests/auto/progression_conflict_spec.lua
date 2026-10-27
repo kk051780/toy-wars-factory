@@ -4,6 +4,7 @@ local H = dofile("tests/roblox_server_harness.lua")
 local server = "src/ToyWarsServer.server.lua"
 local oldHead = "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb"
 local passed, failed = 0, 0
+local guidSerial = 0
 local function eq(actual, expected, label)
     assert(actual == expected, (label or "value")..": expected "..tostring(expected)..", got "..tostring(actual))
 end
@@ -53,6 +54,12 @@ local function fixture(store, oldSource)
                         return store
                     end}
                 end
+            if name=="HttpService" then
+                return {GenerateGUID=function()
+                    guidSerial=guidSerial+1
+                    return "offline-session-guid-"..tostring(guidSerial)
+                end}
+            end
                 return getService(self,name)
             end
             if oldSource then return assert(load(oldSource,"@PR94_HEAD","t",env)) end
