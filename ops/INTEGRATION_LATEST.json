@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T17:25:48.301Z",
-  "status": "APPROVED_PENDING_MERGE",
+  "observed_at": "2026-10-27T17:26:27.393Z",
+  "status": "MERGED_WAIT_MAIN_CI",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "0afc52f2-0a74-8320-83d1-b70e1c7a501c",
@@ -14,7 +14,7 @@
     "review_record": "ops/reviews/PR0089_b9ce7e99.json",
     "ci": 40547792566,
     "category": "GAME_SERVER_CLOSEST_TARGET_SQRT_OPTIMIZATION",
-    "merge_sha": null,
+    "merge_sha": "cff98f572d6d706362e07315ad81cd4540a5095c",
     "post_merge_main_qa": "PENDING",
     "post_merge_handoff": "PENDING"
   },
@@ -122,7 +122,7 @@
       "category": "GAME_HUD_QUEUE_ASSET_WAIT_ORDER"
     }
   ],
-  "merge_count_this_run": 1,
+  "merge_count_this_run": 2,
   "previous_integration_commit": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
   "main_qa": {
     "run_id": 40550350296,
@@ -143,13 +143,13 @@
     "conclusion": "success"
   },
   "unresolved": [
-    "PR88 post-merge main QA/handoff currently in progress; do not count final acceptance yet.",
-    "PR89 draft remains open; requires fresh main baseline review and current-head CI.",
-    "Roblox engine, 2-client and mobile unverified; release HOLD and Gemini incident HOLD unchanged."
+    "PR89 post-merge QA and handoff not yet listed; final acceptance pending.",
+    "Roblox Studio, 2-client, mobile and FPS measurements unverified; release HOLD.",
+    "Gemini incident HOLD and spending caps unchanged."
   ],
   "next": "Review PR89 only after successful exact-main QA/handoff",
-  "merge_sha": "c016733536a41f71b521be6fa25100201694dd41",
-  "main_after": "b8850e155fd2d0ec5ca0280b201e39bc0ecbf13b",
+  "merge_sha": "cff98f572d6d706362e07315ad81cd4540a5095c",
+  "main_after": "cff98f572d6d706362e07315ad81cd4540a5095c",
   "status_only_descendant_verified": true,
   "comparison_since_main_qa": {
     "base": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
@@ -227,11 +227,18 @@
       "main_qa": 40550350296,
       "handoff": 40550350561,
       "category": "GAME_HUD_QUEUE_ASSET_WAIT_ORDER"
+    },
+    {
+      "pr": 89,
+      "head": "b9ce7e998898046476035850ce3185745cf3b55f",
+      "merge_sha": "cff98f572d6d706362e07315ad81cd4540a5095c",
+      "status": "MERGED_WAIT_MAIN_CI",
+      "main_qa": null,
+      "handoff": null,
+      "category": "GAME_SERVER_CLOSEST_TARGET_SQRT_OPTIMIZATION"
     }
   ],
-  "eligible_open_prs": [
-    89
-  ],
-  "next_action": "MERGE_PR89_AFTER_RECHECK; then post-merge QA and handoff",
+  "eligible_open_prs": [],
+  "next_action": "WAIT_FOR_PR89_EXACT_MAIN_QA_AND_HANDOFF; do not integrate another PR until verified",
   "notes": "No eligible auto/twf-game-repair[-UUID] or auto/twf-system-review-UUID PR open. Older manual/Gemini PRs excluded. Existing last_review and historical merged_prs preserved."
 }
