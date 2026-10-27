@@ -120,15 +120,19 @@ local function createToyModel(id, x, z)
 end
 
 local function refreshStatus(state)
-    state.selectedValue.Value = string.upper(state.selected)
-    state.unitsValue.Value = 0
-    state.enemiesValue.Value = 0
+    -- Publish a stable snapshot once per changed field, not zero then count
+    -- on every Heartbeat (which generates redundant client value changes).
+    local selected = string.upper(state.selected)
+    local allies, enemies = 0, 0
     for _, e in ipairs(state.entities) do
         if e.alive then
-            if e.side == "ally" then state.unitsValue.Value = state.unitsValue.Value + 1
-            else state.enemiesValue.Value = state.enemiesValue.Value + 1 end
+            if e.side == "ally" then allies = allies + 1
+            else enemies = enemies + 1 end
         end
     end
+    if state.selectedValue.Value ~= selected then state.selectedValue.Value = selected end
+    if state.unitsValue.Value ~= allies then state.unitsValue.Value = allies end
+    if state.enemiesValue.Value ~= enemies then state.enemiesValue.Value = enemies end
 end
 
 local function makePlot(player, state)
