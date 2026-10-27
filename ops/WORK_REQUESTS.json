@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T12:16:11.287Z",
+  "observed_at": "2026-10-27T19:57:18.879Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1257,6 +1257,42 @@
       "related_request": "host_write_original_provider_error_capture_20261026",
       "owner_reply_required": false,
       "release_and_spending_holds_preserved": true
+    },
+    {
+      "id": "pr90_c00060_stale_ledger_after_pr91_20261028",
+      "kind": "REPAIR_PR_SOURCE_LEDGER",
+      "priority": "P0",
+      "assigned_role": "WORKER",
+      "status": "OPEN",
+      "created_at": "2026-10-27T19:57:18.879Z",
+      "observed_at": "2026-10-27T19:57:18.879Z",
+      "pr": 90,
+      "head": "813ee8beddd0ffc8f385c6b4323f38ab15bcadaf",
+      "main_sha": "b0581b6dae3ca75601c185a38d63846c5cfcc99d",
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "ff42f093-40c0-8333-a168-011c49dbee2f",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "134911ce-f6e0-832e-beaf-0ea25abc9704",
+      "review_record": "ops/reviews/PR0090_813ee8be.json",
+      "request": "Before the next feature, repair PR #90 on current main. It was authored before merged PR #91 and its C00060 same-file byte ledger cannot be inserted ahead of C00061/C00062. Rebase onto b0581b6d (or newer verified main), regenerate a fresh C history ID after C00062 (currently C00063) with correct source metrics and coordination proof from a new WORKER lease, retain only intended HealthBar optimization and whole-server regression, then run fresh exact-head offline+compile_hold CI. Do not rewrite accepted C00061/C00062 or weaken tests.",
+      "reproduction": [
+        "PR #90 C00060: src/ToyWarsServer.server.lua before_bytes=19920, after_bytes=19976, delta=+56.",
+        "Current main C00061: same file before_bytes=19920, after_bytes=20229; C00062 after_bytes=20091.",
+        "tests/test_handoff_checkpoint.py iterates sorted C*.json and asserts each change.before_bytes equals previous expected_files[path]. With C00060 inserted, C00061 expected before=19976 but records 19920. This fails before source_metrics reconciliation.",
+        "Current main QA #40559823873 and handoff #40559823996 pass; PR #90 old-base QA #40556115019 passes, but neither tests the combined ledger."
+      ],
+      "expected": [
+        "Correct chronological new history after C00062, with server starting at actual current main 20091 bytes; if same +56 patch, 20147 bytes server and 31291 bytes total.",
+        "All accepted history/handoff regression checks remain strict and pass on the new exact PR head; source provenance and new claim checked against coordinator.",
+        "No protected control, budget, provider, release or character stat changes. Reviewer rechecks new head and current main before merge."
+      ],
+      "evidence": {
+        "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/90",
+        "pr_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40556115019",
+        "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40559823873",
+        "main_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40559823996",
+        "review": "ops/reviews/PR0090_813ee8be.json"
+      }
     }
   ]
 }

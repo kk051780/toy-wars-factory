@@ -1,22 +1,23 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T18:26:00.045Z",
-  "status": "MERGED_WAIT_MAIN_CI",
+  "observed_at": "2026-10-27T19:57:18.879Z",
+  "status": "REQUEST_CHANGES",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "444e5fa6-e444-832b-bd5c-058a3bbab9ce",
-  "lease_epoch": 131,
-  "main_before": "5ce5d878e80a0abf8ddd6c5a741de9e26a1cee7c",
+  "reviewer_run_id": "134911ce-f6e0-832e-beaf-0ea25abc9704",
+  "lease_epoch": 133,
+  "main_before": "b0581b6dae3ca75601c185a38d63846c5cfcc99d",
   "latest_review": {
-    "pr": 91,
-    "head": "9766219864ed899da2041eb876187839df0a6fcf",
-    "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0091_97662198.json",
-    "ci": 40557950962,
-    "category": "GAME_SERVER_LATE_CHARACTER_ROOT_TELEPORT_RETRY",
-    "merge_sha": "4713c65b9a20b9fe46c66348160920e69af4e6da",
-    "post_merge_main_qa": "UNVERIFIED_WAIT_MAIN_CI",
-    "post_merge_handoff": "UNVERIFIED_WAIT_HANDOFF"
+    "pr": 90,
+    "head": "813ee8beddd0ffc8f385c6b4323f38ab15bcadaf",
+    "verdict": "REQUEST_CHANGES",
+    "review_record": "ops/reviews/PR0090_813ee8be.json",
+    "ci": 40556115019,
+    "category": "GAME_SERVER_IDLE_HEALTH_BAR_LOOKUP_OPTIMIZATION",
+    "merge_sha": null,
+    "blockers": [
+      "SOURCE_LEDGER_STALE_BASE_SAME_FILE"
+    ]
   },
   "merged_prs": [
     {
@@ -132,31 +133,43 @@
       "category": "GAME_SERVER_CLOSEST_TARGET_SQRT_OPTIMIZATION"
     }
   ],
-  "merge_count_this_run": 1,
+  "merge_count_this_run": 0,
   "previous_integration_commit": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
   "main_qa": {
-    "status": "UNVERIFIED_WAIT_MAIN_CI",
+    "status": "PASS",
     "head": "4713c65b9a20b9fe46c66348160920e69af4e6da",
-    "run_id": null,
-    "conclusion": null
+    "run_id": 40559823873,
+    "conclusion": "success",
+    "jobs": [
+      "offline",
+      "compile_hold"
+    ]
   },
   "handoff": {
-    "status": "UNVERIFIED_WAIT_HANDOFF",
+    "status": "PASS",
     "head": "4713c65b9a20b9fe46c66348160920e69af4e6da",
-    "run_id": null,
-    "conclusion": null
+    "run_id": 40559823996,
+    "conclusion": "success"
   },
   "unresolved": [
     "Roblox Studio/2-client/mobile/FPS/visual/fun evidence absent; release HOLD.",
     "Issue #71 multi-game and live service integration not fully verified.",
     "Gemini incident HOLD and existing spending caps unchanged.",
-    "PR91 post-merge main QA and handoff are unverified; PR90 integration blocked until verified."
+    "PR90 #813ee8be needs fresh current-main history/source ledger before integration; work request pr90_c00060_stale_ledger_after_pr91_20261028."
   ],
-  "next": "PR91 merged but main QA/handoff not yet verified. Stop additional merges; PR90 remains draft.",
+  "next": "WORKER repairs PR90 stale C00060 same-file history against current main and reruns exact-head CI; REVIEWER rechecks after updated head. No merge this run.",
   "merge_sha": "4713c65b9a20b9fe46c66348160920e69af4e6da",
   "main_after": "b0581b6dae3ca75601c185a38d63846c5cfcc99d",
   "status_only_descendant_verified": true,
-  "comparison_since_main_qa": null,
+  "comparison_since_main_qa": {
+    "verified": true,
+    "status": "ahead",
+    "ahead_by": 1,
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
   "source_metrics": {
     "lua_files": 4,
     "lua_lines": 781,
@@ -203,34 +216,27 @@
   },
   "latest_review_is_current_run": true,
   "latest_scan": {
-    "observed_at": "2026-10-27T17:27:25.155Z",
+    "observed_at": "2026-10-27T19:57:18.879Z",
     "eligible_open_prs": [],
-    "merged_prs": [
-      88,
-      89
+    "reviewed_prs": [
+      90
     ],
-    "main_qa": 40550587465,
-    "handoff": 40550587304,
-    "main_sha": "5ce5d878e80a0abf8ddd6c5a741de9e26a1cee7c",
+    "blocked_prs": [
+      90
+    ],
+    "merged_prs": [],
+    "main_qa": 40559823873,
+    "handoff": 40559823996,
+    "main_sha": "b0581b6dae3ca75601c185a38d63846c5cfcc99d",
     "main_qa_verified": true,
     "status_only_descendant_verified": true,
-    "reviewer_run_id": "0afc52f2-0a74-8320-83d1-b70e1c7a501c",
-    "lease_epoch": 126
+    "reviewer_run_id": "134911ce-f6e0-832e-beaf-0ea25abc9704",
+    "lease_epoch": 133
   },
-  "merged_this_run": [
-    {
-      "pr": 91,
-      "head": "9766219864ed899da2041eb876187839df0a6fcf",
-      "merge_sha": "4713c65b9a20b9fe46c66348160920e69af4e6da",
-      "status": "MERGED_WAIT_MAIN_CI",
-      "category": "GAME_SERVER_LATE_CHARACTER_ROOT_TELEPORT_RETRY"
-    }
-  ],
-  "eligible_open_prs": [
-    90
-  ],
-  "next_action": "VERIFY_PR91_POST_MERGE_MAIN_OFFLINE_AND_COMPILE_HOLD_QA_AND_HANDOFF_BEFORE_REVIEWING_OR_MERGING_PR90",
-  "notes": "GitHub connector does not expose main push workflow-run enumeration; generated status-only descendant and successful PR-side CI do not prove main QA. Preserve all HOLDs.",
+  "merged_this_run": [],
+  "eligible_open_prs": [],
+  "next_action": "WORKER_REPAIR_PR90_SOURCE_LEDGER",
+  "notes": "PR90 current head CI succeeds but C00060 sorted before merged C00061/C00062 would violate accepted per-file history chain. No integration. Engine/device evidence remains absent; all holds retained.",
   "comparison_since_merge": {
     "base": "4713c65b9a20b9fe46c66348160920e69af4e6da",
     "head": "b0581b6dae3ca75601c185a38d63846c5cfcc99d",

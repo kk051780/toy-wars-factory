@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "pr": 90,
+  "head": "813ee8beddd0ffc8f385c6b4323f38ab15bcadaf",
+  "base_main_sha": "b0581b6dae3ca75601c185a38d63846c5cfcc99d",
+  "reviewed_at": "2026-10-27T19:57:18.879Z",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "134911ce-f6e0-832e-beaf-0ea25abc9704",
+  "lease_epoch": 133,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "ff42f093-40c0-8333-a168-011c49dbee2f",
+  "branch": "auto/twf-game-repair-ff42f093-40c0-8333-a168-011c49dbee2f",
+  "repository": "kk051780/toy-wars-factory",
+  "verdict": "REQUEST_CHANGES",
+  "category": "GAME_SERVER_IDLE_HEALTH_BAR_LOOKUP_OPTIMIZATION",
+  "mergeable": true,
+  "merge_performed": false,
+  "changed_files": [
+    "history/C00060_health_bar_idle_lookup_fix.json",
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/health_bar_idle_lookup_spec.lua"
+  ],
+  "ci": {
+    "id": 40556115019,
+    "head": "813ee8beddd0ffc8f385c6b4323f38ab15bcadaf",
+    "status": "completed",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "jobs": [
+      {
+        "name": "offline",
+        "conclusion": "success"
+      },
+      {
+        "name": "compile_hold",
+        "conclusion": "success"
+      }
+    ],
+    "scope_and_claim_gate": "PASS",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40556115019"
+  },
+  "main_qa": {
+    "id": 40559823873,
+    "head": "4713c65b9a20b9fe46c66348160920e69af4e6da",
+    "conclusion": "success",
+    "jobs": [
+      "offline",
+      "compile_hold"
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40559823873"
+  },
+  "main_handoff": {
+    "id": 40559823996,
+    "head": "4713c65b9a20b9fe46c66348160920e69af4e6da",
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40559823996"
+  },
+  "comparison_since_main_qa": {
+    "verified": true,
+    "status": "ahead",
+    "ahead_by": 1,
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "coordination": {
+    "claim_commit": "01176e79791fc0342fe12559ca353ee498d78940",
+    "claim_epoch": 127,
+    "claim_run_id": "ff42f093-40c0-8333-a168-011c49dbee2f",
+    "claim_ancestor_of_current_coordinator": true,
+    "claim_parent_idle": true,
+    "claim_registered_task": true
+  },
+  "checks": {
+    "scope": true,
+    "regression": false,
+    "source_ledger": false,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "findings": [
+    "PR #90 exact-head CI passes both jobs and trusted base scope/claim checks, but it ran against old main 5ce5d878, not current main b0581b6d.",
+    "Current main has already merged C00061 and C00062 for the same src/ToyWarsServer.server.lua. C00060 claims 19920->19976 bytes; sorted C00061 still claims before_bytes=19920, but the preceding C00060 after_bytes would be 19976. tests/test_handoff_checkpoint.py asserts per-file before_bytes equals the previous after_bytes, so a merge as-is breaks accepted source-ledger QA.",
+    "C00061 source_metrics.lua_bytes=31373 would become expected 31429 if C00060 (+56) were sorted before it, and the reconciliation tool forbids same-source-file exceptions. GitHub mergeable=true and PR-head CI do not establish post-merge main quality.",
+    "Current main canonical Lua total=31235 and server=20091 bytes; the intended isolated +56-byte patch would target 20147 server bytes / 31291 Lua bytes after a properly re-authored current-main record. No engine or FPS evidence."
+  ],
+  "blockers": [
+    {
+      "code": "SOURCE_LEDGER_STALE_BASE_SAME_FILE",
+      "severity": "BLOCKING",
+      "file": "history/C00060_health_bar_idle_lookup_fix.json",
+      "related_file": "history/C00061_late_character_root_retry_fix.json",
+      "expected": "Rebase onto current main and create next available C history (currently C00063), with current-main server before_bytes=20091 and corrected after_bytes/delta/source_metrics; use a fresh WORKER coordinator claim and rerun exact-head QA. Preserve existing merged C00061/C00062 and accepted test strictness.",
+      "actual": "C00060 19920->19976 sorted before C00061 before=19920; hard per-file chain mismatch 19976 != 19920."
+    }
+  ],
+  "next_action": "WORKER_REBASE_PR90_RENUMBER_HISTORY_AND_REVERIFY_CURRENT_MAIN"
+}
