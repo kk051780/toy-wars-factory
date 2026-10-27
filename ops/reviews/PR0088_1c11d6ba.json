@@ -78,15 +78,27 @@
   "post_merge_main_qa": {
     "run": 40550350296,
     "head": "c016733536a41f71b521be6fa25100201694dd41",
-    "status": "in_progress",
-    "conclusion": null
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "offline",
+        "conclusion": "success"
+      },
+      {
+        "name": "compile_hold",
+        "conclusion": "success"
+      }
+    ]
   },
   "post_merge_handoff": {
     "run": 40550350561,
     "head": "c016733536a41f71b521be6fa25100201694dd41",
-    "status": "in_progress",
-    "conclusion": null
+    "status": "completed",
+    "conclusion": "success"
   },
-  "updated_at": "2026-10-27T17:25:04.175Z",
-  "merge_sha": "c016733536a41f71b521be6fa25100201694dd41"
+  "updated_at": "2026-10-27T17:25:48.301Z",
+  "merge_sha": "c016733536a41f71b521be6fa25100201694dd41",
+  "main_after": "b8850e155fd2d0ec5ca0280b201e39bc0ecbf13b",
+  "status_only_descendant_verified": true
 }

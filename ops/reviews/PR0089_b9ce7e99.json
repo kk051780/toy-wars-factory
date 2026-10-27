@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "pr": 89,
+  "repository": "kk051780/toy-wars-factory",
+  "head": "b9ce7e998898046476035850ce3185745cf3b55f",
+  "base_main_sha": "b8850e155fd2d0ec5ca0280b201e39bc0ecbf13b",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "0afc52f2-0a74-8320-83d1-b70e1c7a501c",
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "7d986e4f-36b0-8325-b1f9-28bbdf8f42e5",
+  "lease_epoch": 126,
+  "reviewed_at": "2026-10-27T17:25:48.301Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [
+    "Current main b8850e15 is a directly compared generated-status-only descendant of successful QA head c0167335 (PR88), run 40550350296 both offline/compile_hold passed; handoff 40550350561 succeeded.",
+    "PR89 latest head b9ce7e99 exact-head CI 40547792566 passes both jobs, trusted base scope gate and immutable coordinator claim gate.",
+    "WORKER claim 79aaf6f8 epoch125 is ancestor of current coordinator, acquired from idle epoch124 by author task/run 6adbf0d6/7d986e4f for exact branch; reviewer task/run independent.",
+    "Canonical server nearest-target selection compares squared planar distances and computes one sqrt for winner; zero for no eligible target; ties use strict < as before.",
+    "Whole canonical server harness exercises 6 opponents, dead/friendly exclusion, no opponent, and optional pinned old-server negative control; accepted tests unchanged.",
+    "Three changed paths: server 19849->19920 bytes (+71), new Lua regression 3734 bytes, append-only C00059. Source metrics 4 Lua/776 lines/31064 bytes reconcile with current main 30993; PR88 HUD reorder had zero byte delta.",
+    "No budget, provider, publishing, security gate, character stats or combat-range policy modifications. No real Roblox engine FPS or device evidence."
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "evidence": {
+    "main_qa": {
+      "run": 40550350296,
+      "head": "c016733536a41f71b521be6fa25100201694dd41",
+      "offline": "success",
+      "compile_hold": "success",
+      "comparison_since_qa": {
+        "status": "ahead",
+        "ahead_by": 1,
+        "paths": [
+          "status/CHAT_HANDOFF.md",
+          "status/LATEST_STATE.json"
+        ],
+        "verified": true
+      }
+    },
+    "handoff": {
+      "run": 40550350561,
+      "conclusion": "success"
+    },
+    "pr_ci": {
+      "run": 40547792566,
+      "head": "b9ce7e998898046476035850ce3185745cf3b55f",
+      "offline": "success",
+      "compile_hold": "success",
+      "scope_and_claim_gate": "PASS",
+      "negative_control": "PASS"
+    },
+    "claim": {
+      "sha": "79aaf6f887f75701690e4deef649277aa204c575",
+      "epoch": 125,
+      "author_run_id": "7d986e4f-36b0-8325-b1f9-28bbdf8f42e5",
+      "ancestry_verified": true
+    },
+    "changed_files": [
+      "src/ToyWarsServer.server.lua",
+      "tests/auto/closest_opponent_sqrt_spec.lua",
+      "history/C00059_closest_opponent_sqrt_fix.json"
+    ],
+    "source_metrics": {
+      "lua_files": 4,
+      "lua_lines": 776,
+      "lua_bytes": 31064
+    }
+  },
+  "category": "GAME_SERVER_CLOSEST_TARGET_SQRT_OPTIMIZATION",
+  "engine_verified": false,
+  "post_merge_main_qa": null,
+  "post_merge_handoff": null,
+  "updated_at": "2026-10-27T17:25:48.301Z"
+}
