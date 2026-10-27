@@ -21,11 +21,11 @@ waiting.TextWrapped=true
 waiting.Text="Waiting for a free workshop slot..."
 waiting.Parent=gui
 -- Show queue feedback before replicated assets can delay this LocalScript.
-local event=ReplicatedStorage:WaitForChild("ToyWarsSelectUnit")
-local B=require(ReplicatedStorage:WaitForChild("ToyWarsBalance"))
 local stats=player:WaitForChild("leaderstats")
 -- Allocation is known; keep feedback accurate while status values replicate.
 waiting.Text="Preparing your workshop..."
+local event=ReplicatedStorage:WaitForChild("ToyWarsSelectUnit")
+local B=require(ReplicatedStorage:WaitForChild("ToyWarsBalance"))
 local status=player:WaitForChild("ToyWarsStatus")
 local coins=stats:WaitForChild("Coins")
 local wave=stats:WaitForChild("Wave")
