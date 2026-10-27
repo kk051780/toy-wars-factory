@@ -108,7 +108,7 @@ local guideTitle=addText(quickStart,UDim2.new(1,-24,0,28),UDim2.new(0,12,0,10),
 guideTitle.Name="GuideTitle"
 guideTitle.ZIndex=21
 local guideSteps={
-    "1/3  PICK A TOY\nTap PON, GUARDON or TANKURU at the bottom.",
+    "1/3  PICK A TOY\nPON fast • GUARDON tough • TANKURU ranged. Tap below.",
     "2/3  PRODUCE & DEFEND\nYour factory auto-produces toys; defend the vault from JUNK.",
     "3/3  EARN & UPGRADE\nDefeat JUNK for coins; upgrade at the gold platform; retry after a loss.",
 }
