@@ -276,7 +276,11 @@ local function refreshHealthBar(e)
     if not e.alive or not e.model or not e.model.Parent then return end
     local bar=e.model:FindFirstChild("HealthBar")
     if bar and bar:IsA("BasePart") then
-        bar.Size=Vector3.new(3.2*math.max(.01,e.health/e.maxHealth),0.33,0.4)
+        local width=3.2*math.max(.01,e.health/e.maxHealth)
+        local size=bar.Size
+        if size.X~=width or size.Y~=0.33 or size.Z~=0.4 then
+            bar.Size=Vector3.new(width,0.33,0.4)
+        end
     end
 end
 
