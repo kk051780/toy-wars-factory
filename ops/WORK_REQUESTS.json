@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T20:29:29.508Z",
+  "observed_at": "2026-10-27T21:09:12.627Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1370,6 +1370,43 @@
         "handoff": "PASS",
         "issue71_complete": false
       }
+    },
+    {
+      "id": "pr94_progress_updateasync_stale_overwrite_20261028",
+      "kind": "PR_DATASTORE_CONCURRENT_OVERWRITE",
+      "priority": "P1",
+      "assigned_role": "WORKER",
+      "status": "OPEN_REQUEST_CHANGES",
+      "pr": 94,
+      "head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
+      "base_main_sha": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+      "created_at": "2026-10-27T21:09:12.627Z",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "af748f36-2f60-8326-af5f-af5c853acc6f",
+      "reviewer_epoch": 148,
+      "request": "Before other features, repair versioned progress persistence in PR #94. Current UpdateAsync transform unconditionally returns a stale local record, even if current stored data is a newer schema or a newer session's write. Implement fail-closed version/current-value checking and stale-session fencing, preserve existing UserIds/metadata where applicable, and add canonical-server interleaving regressions; do not weaken existing tests or policy.",
+      "reproduction": [
+        "Initialize DataStore mock p:1={version=1,coins=200,wave=2,defeated=1,factoryLevel=1}; join player; before h:removePlayer(p), mutate store.data['p:1'] to {version=2,coins=900,...}. Current saveProgress UpdateAsync callback returns stale version=1 record and overwrites version=2. Expected: preserve version=2 and report/cancel unsafe write.",
+        "Create two independent canonical server fixtures sharing one store and same UserId. Both load v1; newer fixture saves coins=500 first; older fixture then saves coins=200. Current unconditional callback replaces 500 with 200. Expected: reject stale writer, preserve newer record."
+      ],
+      "expected": [
+        "When stored version changes from v1 to v2 after join but before save, UpdateAsync cancels and leaves v2 untouched.",
+        "When a newer session writes before an older session, the older save cannot roll back newer coins/wave/kills/level.",
+        "Keep normal first join/rejoin and read-failure/no-overwrite behavior; add whole-server Lua tests with fake DataStore UpdateAsync(current), including negative controls against PR #94 current head.",
+        "Submit corrected C00065/source bytes and new immutable shared claim for any repair, plus exact-head offline and compile_hold success. Preserve release/Gemini/budget HOLD."
+      ],
+      "evidence": {
+        "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/94",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40583572501",
+        "file": "src/ToyWarsServer.server.lua",
+        "function": "saveProgress",
+        "review_record": "ops/reviews/PR0094_aeb60a50.json",
+        "official_docs": [
+          "https://create.roblox.com/docs/reference/engine/classes/GlobalDataStore",
+          "https://create.roblox.com/docs/cloud-services/data-stores/best-practices"
+        ]
+      },
+      "owner_approval_required": false
     }
   ]
 }

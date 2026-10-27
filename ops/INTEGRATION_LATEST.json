@@ -1,21 +1,24 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T20:29:29.508Z",
-  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "observed_at": "2026-10-27T21:09:12.627Z",
+  "status": "REQUEST_CHANGES",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "17064fef-c4b8-8332-8678-8c1ebc923c47",
-  "lease_epoch": 141,
-  "main_before": "bf959fb6ecc484993085ef767ae0c7370fb6db50",
+  "reviewer_run_id": "af748f36-2f60-8326-af5f-af5c853acc6f",
+  "lease_epoch": 148,
+  "main_before": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
   "latest_review": {
-    "pr": 92,
-    "head": "dc64713802061f590cdcb75c4fc6629a5df0d48c",
-    "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0092_dc647138.json",
-    "ci": 40576878357,
-    "category": "SYSTEM_SCOPED_SERVICE_RUN_OBSERVER",
-    "blockers": [],
-    "merge_sha": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e"
+    "pr": 94,
+    "head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
+    "verdict": "REQUEST_CHANGES",
+    "review_record": "ops/reviews/PR0094_aeb60a50.json",
+    "ci": 40583572501,
+    "category": "GAME_SERVER_VERSIONED_PROGRESS_PERSISTENCE",
+    "blockers": [
+      "src/ToyWarsServer.server.lua saveProgress(): UpdateAsync callback function() return record end ignores the current stored value; a newer/unknown schema written after GetAsync is overwritten on PlayerRemoving, contradicting the claimed unknown-schema protection.",
+      "A stale earlier server/session can save after a newer session and replace newer version-1 progress; current seven Lua cases do not exercise interleaved UpdateAsync writes or a version change between read and save."
+    ],
+    "merge_sha": null
   },
   "merged_prs": [
     {
@@ -151,7 +154,7 @@
       "main_after_handoff": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4"
     }
   ],
-  "merge_count_this_run": 1,
+  "merge_count_this_run": 0,
   "main_qa": {
     "status": "PASS",
     "head": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
@@ -159,12 +162,12 @@
     "conclusion": "success",
     "jobs": [
       {
-        "name": "compile_hold",
+        "name": "offline",
         "status": "completed",
         "conclusion": "success"
       },
       {
-        "name": "offline",
+        "name": "compile_hold",
         "status": "completed",
         "conclusion": "success"
       }
@@ -185,12 +188,12 @@
     ]
   },
   "unresolved": [
-    "Issue71 not complete: no portable origin receipt, original host operation error, real cross-game dispatch or long-term reliability.",
+    "PR #94 UpdateAsync callback overwrites newer/unknown stored version and newer-session progress; WORKER correction required before merge.",
     "Roblox Studio, 2-client and mobile not verified; release HOLD.",
     "Gemini incident HOLD and existing spending caps preserved."
   ],
-  "next": "Issue71 remains OPEN: original host operation error receipt, portable attestation, real cross-game operation and P3 dispatch unverified. Prioritize main QA and real PvE/2-client/mobile evidence.",
+  "next": "WORKER repairs PR #94 concurrency/version overwrite with adversarial Lua tests and new exact-head CI. REVIEWER re-reviews new head; no merge this run.",
   "runtime_verified": true,
   "main_after": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
-  "merge_sha": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e"
+  "merge_sha": null
 }

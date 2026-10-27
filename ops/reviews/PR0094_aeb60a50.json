@@ -1,0 +1,104 @@
+{
+  "schema": 1,
+  "pr": 94,
+  "head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
+  "base_main_sha": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+  "reviewed_at": "2026-10-27T21:09:12.627Z",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "af748f36-2f60-8326-af5f-af5c853acc6f",
+  "lease_epoch": 148,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+  "branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+  "repository": "kk051780/toy-wars-factory",
+  "verdict": "REQUEST_CHANGES",
+  "category": "GAME_SERVER_VERSIONED_PROGRESS_PERSISTENCE",
+  "mergeable": true,
+  "changed_files": [
+    "history/C00065_progress_rejoin.json",
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_rejoin_spec.lua"
+  ],
+  "ci": {
+    "id": 40583572501,
+    "head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "jobs": [
+      {
+        "name": "offline",
+        "conclusion": "success"
+      },
+      {
+        "name": "compile_hold",
+        "conclusion": "success"
+      }
+    ],
+    "scope_and_claim_gate": "PASS",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40583572501",
+    "new_lua_cases": 7
+  },
+  "main_qa": {
+    "id": 40578311810,
+    "head": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+    "conclusion": "success",
+    "jobs": [
+      "offline",
+      "compile_hold"
+    ]
+  },
+  "main_handoff": {
+    "id": 40578318577,
+    "conclusion": "success"
+  },
+  "comparison_since_main_qa": {
+    "verified": true,
+    "status": "ahead",
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "coordination": {
+    "claim_commit": "82292b8fcefa44c38b4c68d6c62a96c42f624494",
+    "repair_claims": [
+      "2bd9b1cdff77631ff4353cdc8c0da550658042bb",
+      "b2aa8bcadcbcbd72209124e81eb0b737828d6c2d"
+    ],
+    "author_claims_ancestor_verified": true,
+    "reviewer_claim_commit": "fb0cc57da57a32c56fdae053ab40d8ac555ad031",
+    "reviewer_epoch": 148
+  },
+  "checks": {
+    "scope": true,
+    "regression": false,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": false
+  },
+  "findings": [
+    "Main SHA/QA verified by direct compare: only two generated status files since successful main QA; PR #94 exact-head CI both jobs passed, including trusted-base scope and immutable claim checks.",
+    "PR has three files, +2785 server bytes and C00065 ledger; character, provider, release, budget and accepted test controls unchanged.",
+    "Code-level safety defect: UpdateAsync transform ignores its current stored value. Mock UpdateAsync already passes old value but no test changes stored version or simulates competing writes between join and save.",
+    "Official Roblox GlobalDataStore documentation confirms UpdateAsync transform receives latest stored value, nil cancels write, and cross-server changes can invoke callback again; current code cannot reject stale/unknown records."
+  ],
+  "blockers": [
+    "src/ToyWarsServer.server.lua saveProgress(): UpdateAsync callback function() return record end ignores the current stored value; a newer/unknown schema written after GetAsync is overwritten on PlayerRemoving, contradicting the claimed unknown-schema protection.",
+    "A stale earlier server/session can save after a newer session and replace newer version-1 progress; current seven Lua cases do not exercise interleaved UpdateAsync writes or a version change between read and save."
+  ],
+  "reproduction": [
+    "Initialize DataStore mock p:1={version=1,coins=200,wave=2,defeated=1,factoryLevel=1}; join player; before h:removePlayer(p), mutate store.data['p:1'] to {version=2,coins=900,...}. Current saveProgress UpdateAsync callback returns stale version=1 record and overwrites version=2. Expected: preserve version=2 and report/cancel unsafe write.",
+    "Create two independent canonical server fixtures sharing one store and same UserId. Both load v1; newer fixture saves coins=500 first; older fixture then saves coins=200. Current unconditional callback replaces 500 with 200. Expected: reject stale writer, preserve newer record."
+  ],
+  "source_docs": [
+    "https://create.roblox.com/docs/reference/engine/classes/GlobalDataStore",
+    "https://create.roblox.com/docs/cloud-services/data-stores/best-practices"
+  ],
+  "limitations": [
+    "Findings are deterministic code-path analysis; no Roblox engine, live DataStore or multi-server test executed.",
+    "PR's seven offline cases pass, but none exercise interleaved version/stale-session writes."
+  ],
+  "merge_performed": false,
+  "next_action": "WORKER fixes UpdateAsync version/current-value and stale-session protection with whole-server adversarial regressions; fresh exact-head CI and independent re-review required."
+}

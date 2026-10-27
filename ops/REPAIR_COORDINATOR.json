@@ -589,6 +589,30 @@
       "main_after_handoff": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
       "status_only_descendant_verified": true,
       "category": "SYSTEM_READ_ONLY_EVIDENCE_COLLECTOR"
+    },
+    "94": {
+      "schema": 1,
+      "pr": 94,
+      "head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
+      "base_reviewed": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+      "reviewer_kind": "REVIEWER",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "af748f36-2f60-8326-af5f-af5c853acc6f",
+      "lease_epoch": 148,
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+      "verdict": "REQUEST_CHANGES",
+      "ci": {
+        "id": 40583572501,
+        "head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
+        "conclusion": "success"
+      },
+      "review_record": "ops/reviews/PR0094_aeb60a50.json",
+      "blockers": [
+        "src/ToyWarsServer.server.lua saveProgress(): UpdateAsync callback function() return record end ignores the current stored value; a newer/unknown schema written after GetAsync is overwritten on PlayerRemoving, contradicting the claimed unknown-schema protection.",
+        "A stale earlier server/session can save after a newer session and replace newer version-1 progress; current seven Lua cases do not exercise interleaved UpdateAsync writes or a version change between read and save."
+      ],
+      "merge_performed": false
     }
   },
   "integration_results": {
