@@ -1,0 +1,91 @@
+{
+  "id": "C00059",
+  "date": "2026-10-28",
+  "kind": "AUTONOMOUS_CLOSEST_OPPONENT_SQRT_EFFICIENCY_FIX",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "7d986e4f-36b0-8325-b1f9-28bbdf8f42e5",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-7d986e4f-36b0-8325-b1f9-28bbdf8f42e5",
+    "base": "main",
+    "open_prs": [
+      88
+    ],
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "79aaf6f887f75701690e4deef649277aa204c575",
+    "owner_run_id": "7d986e4f-36b0-8325-b1f9-28bbdf8f42e5",
+    "epoch": 125
+  },
+  "main_base": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
+  "source_commit": "5f980184b0f24438c4e6fe2cd41308cc42f18ba8",
+  "defect": {
+    "id": "redundant_square_roots_in_nearest_opponent_search",
+    "cause": "Canonical closestOpponent computes math.sqrt for every eligible enemy while comparing distances. Dense PvE scans O(N) candidates per unit each simulation step, repeating unnecessary square-root operations.",
+    "reproduction": "Run the complete canonical server through tests/roblox_server_harness.lua and extract the original closestOpponent closure from the actual updateEntity function. Six eligible enemies cause six sqrt calls in the old implementation; a pinned old whole-server fixture provides a negative control when available."
+  },
+  "fix": "Compare squared x/z distances for all living opponents, then compute sqrt once for the selected closest target; return nil and math.huge unchanged when no target exists. Preserve nearest-target tie behavior, combat ranges and unit statistics.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/closest_opponent_sqrt_spec.lua",
+    "history/C00059_closest_opponent_sqrt_fix.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 19849,
+      "after_bytes": 19920,
+      "delta_bytes": 71
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 776,
+    "lua_bytes": 31064
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/closest_opponent_sqrt_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 3734,
+      "delta_bytes": 3734
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "PON, GUARDON, TANKURU and JUNK target selection keeps the same nearest eligible opponent and Euclidean distance; no cost, HP, speed, cooldown, damage, appearance or remote changes. Only repeated square-root work is removed.",
+  "tests": {
+    "canonical_server": "tests/auto/closest_opponent_sqrt_spec.lua",
+    "new_cases": 3,
+    "negative_control": "Pinned pre-change whole-server fixture checks six sqrt calls if present; the canonical whole-server test checks one or zero.",
+    "accepted_server_cases": "UNCHANGED",
+    "accepted_hud_cases": "UNCHANGED",
+    "local": "NOT_RUN_LUA_5_4_RUNTIME_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40529796548",
+    "main_qa_head": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
+    "main_qa_note": "Both jobs succeeded; db8a6f19 is a status-only descendant.",
+    "prior_pr": 88,
+    "prior_pr_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40538397913",
+    "claim_commit": "79aaf6f887f75701690e4deef649277aa204c575",
+    "source_commit": "5f980184b0f24438c4e6fe2cd41308cc42f18ba8",
+    "pr": "PENDING_DRAFT_PR",
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "next_action": "Create a draft PR; require latest-head offline and compile_hold success before independent REVIEWER merge. Hardware performance and Roblox engine behavior remain unverified.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}
