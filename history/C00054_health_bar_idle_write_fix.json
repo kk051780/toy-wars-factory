@@ -1,0 +1,86 @@
+{
+  "id": "C00054",
+  "date": "2026-10-27",
+  "kind": "AUTONOMOUS_HEALTH_BAR_IDLE_PROPERTY_WRITE_FIX",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "ab4efd1a-bb50-8330-8354-fabdade7d99f",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-ab4efd1a-bb50-8330-8354-fabdade7d99f",
+    "base": "main",
+    "open_prs": [],
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "5b20a206d1a514833c92d38fca0f8cf2af96f135",
+    "owner_run_id": "ab4efd1a-bb50-8330-8354-fabdade7d99f",
+    "epoch": 116
+  },
+  "main_base": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
+  "source_commit": "1845499c0c9f98a9e6b512d15c1adbfe7800f197",
+  "defect": {
+    "id": "redundant_health_bar_size_assignment_every_simulation_step",
+    "cause": "Canonical updateEntity invokes refreshHealthBar on every simulation step; refreshHealthBar assigned a new Size even when health and dimensions were unchanged. This produced repeated property assignments for every live toy.",
+    "reproduction": "Execute the entire canonical server in tests/roblox_server_harness.lua and intercept actual HealthBar Size writes during successive Heartbeat steps. Before fix each alive toy reassigns its unchanged bar width every step; new test asserts zero redundant writes. Damage-step case asserts exactly one immediate target update."
+  },
+  "fix": "Compare current X/Y/Z against the required health bar dimensions and assign Size only when any dimension actually differs. Preserve existing same-step damage refresh, geometry, combat and balance.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/health_bar_idle_write_spec.lua",
+    "history/C00054_health_bar_idle_write_fix.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 19404,
+      "after_bytes": 19535,
+      "delta_bytes": 131
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 767,
+    "lua_bytes": 30559
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/health_bar_idle_write_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 4043,
+      "delta_bytes": 4043
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "PON/GUARDON/TANKURU/JUNK statistics, price, damage, speed, HP, spawn cadence and gameplay commands unchanged. Health bar size only written when its value changes.",
+  "tests": {
+    "canonical_server": "tests/auto/health_bar_idle_write_spec.lua",
+    "new_cases": 2,
+    "negative_control": "Pinned whole-server pre-fix fixture when available and matching the previous Size assignment",
+    "accepted_server_cases": "UNCHANGED",
+    "accepted_hud_cases": "UNCHANGED",
+    "local": "NOT_RUN_LUA_5_4_RUNTIME_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40501279576",
+    "main_qa_note": "offline and compile_hold succeeded on game-source main 608ca166; base 0d1ee306 is generated status-only descendant.",
+    "claim_commit": "5b20a206d1a514833c92d38fca0f8cf2af96f135",
+    "source_commit": "1845499c0c9f98a9e6b512d15c1adbfe7800f197",
+    "pr": "PENDING_DRAFT_PR",
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "next_action": "Create draft PR, inspect exact-head offline and compile_hold, repair CI if needed under fresh lease, and hand independent REVIEWER the candidate for main integration.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}
