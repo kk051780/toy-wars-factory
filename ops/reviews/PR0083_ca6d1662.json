@@ -67,8 +67,38 @@
     "Gemini incident hold, budget caps and external inference restrictions unchanged."
   ],
   "decision_rule": "tools/repair_integration.py decide: MERGE when current independent lease, exact-head CI, trusted scope/claim, verified status-only main QA, current main review and five checks hold",
-  "final_status": "APPROVED_PENDING_MERGE",
-  "post_merge_main_qa": null,
-  "post_merge_handoff": null,
-  "merge_sha": null
+  "final_status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "post_merge_main_qa": {
+    "id": 40495108890,
+    "head": "0674762e15d293a9a01b60dfcaac3f1e8399aac7",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40495108890",
+    "comparison_since_qa": {
+      "status": "ahead",
+      "ahead_by": 1,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ],
+      "verified": true,
+      "main_head": "79377eac676b933c161cc3d5c2f0b5e61405fe10"
+    }
+  },
+  "post_merge_handoff": {
+    "id": 40495108922,
+    "head": "0674762e15d293a9a01b60dfcaac3f1e8399aac7",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": {
+      "update": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40495108922"
+  },
+  "merge_sha": "0674762e15d293a9a01b60dfcaac3f1e8399aac7",
+  "main_after": "79377eac676b933c161cc3d5c2f0b5e61405fe10"
 }
