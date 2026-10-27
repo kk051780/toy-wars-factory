@@ -1,22 +1,19 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T04:34:48.239Z",
-  "status": "WAIT_POST_MERGE_MAIN_CI",
+  "observed_at": "2026-10-27T04:35:40.307Z",
+  "status": "APPROVED_PR80_PENDING_MERGE",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "5e0439b9-7930-832f-bc00-7ca6b3955d7d",
   "lease_epoch": 95,
   "main_before": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
   "latest_review": {
-    "pr": 79,
-    "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+    "pr": 80,
+    "head": "f6122172c7cdb083e801058d745bc23d30558709",
     "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0079_b82aed7d.json",
-    "ci": 40447229337,
-    "category": "SYSTEM_LEGACY_CLI_BUG_FIX",
-    "merge_sha": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
-    "post_merge_main_qa": "PENDING",
-    "post_merge_handoff": "PENDING"
+    "review_record": "ops/reviews/PR0080_f6122172.json",
+    "ci": 40448427689,
+    "category": "GAME_HUD_ONBOARDING_FIX"
   },
   "merged_prs": [
     {
@@ -32,7 +29,7 @@
       "pr": 79,
       "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
       "merge_sha": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
-      "status": "MERGED_QA_PENDING",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "main_qa": 40450478692,
       "handoff": 40450478705
     }
@@ -42,21 +39,32 @@
   "main_qa": {
     "id": 40450478692,
     "head": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
-    "status": "in_progress",
-    "conclusion": null
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "comparison_since_qa": {
+      "verified": true,
+      "status": "ahead",
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
   },
   "handoff": {
     "id": 40450478705,
     "head": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
-    "status": "in_progress",
-    "conclusion": null
+    "status": "completed",
+    "conclusion": "success"
   },
   "unresolved": [
-    "PR79 not merged; post-merge QA and handoff pending",
-    "PR80 independent review pending",
-    "Roblox engine/mobile/multiplayer unverified; release and Gemini HOLD preserved"
+    "PR80 main integration and post-merge QA pending",
+    "Roblox engine/multiplayer/mobile/visual/player tests unverified; release and Gemini HOLD retained"
   ],
-  "next": "Wait for exact PR79 merge head main QA and handoff; review PR80 only after verified success.",
+  "next": "Merge PR80 exact head after lease/main recheck, then verify post-main QA and handoff; if CI pending hand to next run.",
   "merge_sha": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
-  "main_after": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9"
+  "main_after": "c9582eb01a38b100bf9a1df8c5377d9c90b3407f"
 }

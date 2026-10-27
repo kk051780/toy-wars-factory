@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "pr": 80,
+  "repository": "kk051780/toy-wars-factory",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "5e0439b9-7930-832f-bc00-7ca6b3955d7d",
+  "lease_epoch": 95,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "d6198d2b-49f0-8320-b895-f0b4a89228d9",
+  "branch": "auto/twf-game-repair-d6198d2b-49f0-8320-b895-f0b4a89228d9",
+  "head": "f6122172c7cdb083e801058d745bc23d30558709",
+  "base_main_sha": "c9582eb01a38b100bf9a1df8c5377d9c90b3407f",
+  "reviewed_at": "2026-10-27T04:35:40.307Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "GAME_HUD_ONBOARDING_FIX",
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/first_play_role_hints_spec.lua",
+    "history/C00049_first_play_toy_role_hints.json"
+  ],
+  "ci": {
+    "id": 40448427689,
+    "head": "f6122172c7cdb083e801058d745bc23d30558709",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 315,
+    "lua_role_hint_cases": 3,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40448427689"
+  },
+  "main_qa": {
+    "id": 40450478692,
+    "qa_head": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
+    "main_head": "c9582eb01a38b100bf9a1df8c5377d9c90b3407f",
+    "conclusion": "success",
+    "comparison": {
+      "status": "ahead",
+      "ahead_by": 1,
+      "verified": true,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "findings": [
+    "Exact head PR80 CI offline/compile_hold success, 315 Python tests PASS and native Lua canonical HUD role hint fixture 3/0; trusted-base worker scope and immutable claim gate PASS.",
+    "Author WORKER task/run d6198d2b and epoch93 claim f0693679f1e02e117c4d50cb3b2f3cdc8c4898d8 verified against current coordinator ancestor; distinct reviewer task/run.",
+    "PR80 changes exactly 3 files: HUD one first-play text line, new canonical HUD+Balance execution regression, append-only C00049; no accepted tests, other source, policy, permissions, workflow, cost or release changes.",
+    "HUD source size 6610 -> 6625 (+15), overall Lua 4 files/758 lines/30045 bytes vs main 30030; no history rewrites; candidate tree modes all regular 100644 blobs.",
+    "Behavior hints PON fastest, GUARDON highest HP, TANKURU greatest range match canonical balance. Guide navigation remains separate from selection; no real mobile or visual evidence.",
+    "PR79 merged with post-main QA/handoff PASS. Current main differs from QA head only generated status files; PR80 branch diverges only by PR79's disjoint tool/test/history and status, no overlapping paths."
+  ],
+  "unresolved": [
+    "Roblox engine, actual phone layout, multiplayer, visual/player testing unverified; release HOLD remains.",
+    "After merge, new main QA and handoff must pass before another integration."
+  ],
+  "decision_rule": "tools/repair_integration.py decide => MERGE on exact head/current main/registered lease/five review checks",
+  "post_merge_main_qa": null,
+  "post_merge_handoff": null,
+  "merge_sha": null,
+  "final_status": "APPROVED_AWAIT_EXACT_HEAD_MERGE"
+}

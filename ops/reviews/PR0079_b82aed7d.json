@@ -71,17 +71,34 @@
   "post_merge_main_qa": {
     "id": 40450478692,
     "head": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
-    "status": "in_progress",
-    "conclusion": null,
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450478692"
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 320,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450478692",
+    "comparison_since_qa": {
+      "status": "ahead",
+      "ahead_by": 1,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ],
+      "verified": true
+    }
   },
   "post_merge_handoff": {
     "id": 40450478705,
     "head": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
-    "status": "in_progress",
-    "conclusion": null,
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": {
+      "update": "success"
+    },
     "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450478705"
   },
   "merge_sha": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
-  "final_status": "MERGED_WAIT_MAIN_QA"
+  "final_status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
 }

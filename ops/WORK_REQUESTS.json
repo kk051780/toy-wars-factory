@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T04:34:48.239Z",
+  "observed_at": "2026-10-27T04:35:40.307Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -851,7 +851,7 @@
       "kind": "REPAIR_MAIN_LEGACY_TRIAGE_SEMANTIC_DEFECT",
       "priority": "P0",
       "assigned_role": "META",
-      "status": "MERGED_PR79_WAIT_MAIN_QA_AND_HANDOFF",
+      "status": "RESOLVED_PR79_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "issue": 72,
       "created_at": "2026-10-27T03:47:17.786Z",
@@ -939,14 +939,22 @@
       "review_record": "ops/reviews/PR0079_b82aed7d.json",
       "post_merge_main_qa": 40450478692,
       "post_merge_handoff": 40450478705,
-      "observed_at": "2026-10-27T04:34:48.239Z"
+      "observed_at": "2026-10-27T04:34:48.239Z",
+      "main_after": "c9582eb01a38b100bf9a1df8c5377d9c90b3407f",
+      "resolved_at": "2026-10-27T04:35:40.307Z",
+      "expected_verified": [
+        "legacy CLI failed/no_update -> INDETERMINATE, original CLI exit2 on current main",
+        "main offline/compile_hold 320 Python tests PASS",
+        "main handoff PASS",
+        "status-only descendant compare verified"
+      ]
     },
     {
       "id": "issue72_original_cli_pr79_independent_review",
       "kind": "SYSTEM_CODE_REVIEW",
       "priority": "P0",
       "assigned_role": "REVIEWER",
-      "status": "MERGED_PR79_WAIT_MAIN_QA_AND_HANDOFF",
+      "status": "RESOLVED_PR79_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "issue": 72,
       "pr": 79,
@@ -1006,7 +1014,15 @@
       "review_record": "ops/reviews/PR0079_b82aed7d.json",
       "post_merge_main_qa": 40450478692,
       "post_merge_handoff": 40450478705,
-      "observed_at": "2026-10-27T04:34:48.239Z"
+      "observed_at": "2026-10-27T04:34:48.239Z",
+      "main_after": "c9582eb01a38b100bf9a1df8c5377d9c90b3407f",
+      "resolved_at": "2026-10-27T04:35:40.307Z",
+      "expected_verified": [
+        "legacy CLI failed/no_update -> INDETERMINATE, original CLI exit2 on current main",
+        "main offline/compile_hold 320 Python tests PASS",
+        "main handoff PASS",
+        "status-only descendant compare verified"
+      ]
     }
   ]
 }
