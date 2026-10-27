@@ -544,7 +544,7 @@ Players.PlayerRemoving:Connect(function(player)
     -- Assign a newly freed plot to one player who was waiting at capacity.
     for _,waiting in ipairs(Players:GetPlayers()) do
         if waiting ~= player and waiting.Parent == Players and not sessions[waiting] then
-            task.spawn(join,waiting)
+            join(waiting)
             break
         end
     end
