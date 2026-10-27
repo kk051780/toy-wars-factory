@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 156,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "935987ea-7dcc-8329-b060-4663b031d950",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 156,
-    "acquired_at": "2026-10-27T22:38:10.076Z",
-    "expires_at": "2026-10-27T23:08:10.076Z",
-    "base_main_sha": "55d9e0da77f0a9237cf2776432cf22f62b551283",
-    "work_branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
-    "origin": "manual"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,28 +36,24 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "f48775fc-f68c-8331-b56e-8ef89ec19c1f",
-    "epoch": 154,
-    "released_at": "2026-10-27T22:28:32.658Z",
-    "result": "PR95_MERGED_MAIN_QA_AND_HANDOFF_PASSED_PR94_REQUEST_CHANGES",
-    "pr": 95,
-    "head": "a26165b192770343897e375815428f8a36c13e2f",
-    "merge_sha": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
-    "main_after": "55d9e0da77f0a9237cf2776432cf22f62b551283",
-    "post_merge_qa": {
-      "id": 40594943961,
+    "kind": "WORKER",
+    "owner_id": "935987ea-7dcc-8329-b060-4663b031d950",
+    "epoch": 156,
+    "released_at": "2026-10-27T22:44:18.202Z",
+    "result": "PR94_SESSION_FENCE_REPAIR_C68_C69_EXACT_HEAD_TWO_JOB_CI_PASS_WAIT_INDEPENDENT_REVIEW",
+    "pr": 94,
+    "head": "259b51e2ef3d84b02b6442dae53f56292b8bae28",
+    "ci": {
+      "id": 40596902577,
       "conclusion": "success",
       "jobs": [
         "offline",
         "compile_hold"
       ]
     },
-    "handoff": {
-      "id": 40594944031,
-      "conclusion": "success"
-    },
-    "next_actor": "WORKER:6adbf0d6a7d881918ce181dff2468867"
+    "source_bytes": 38571,
+    "next_actor": "REVIEWER:6add6aaceb4c8191b1666fe15f97cd88",
+    "author_main_merge": false
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
