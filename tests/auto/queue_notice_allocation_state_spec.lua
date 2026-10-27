@@ -70,7 +70,8 @@ local function fixture(file,queued,withoutFix)
         local f=assert(io.open(file,"rb"))
         local source=f:read("*a");f:close()
         local marker='waiting.Text="Preparing your workshop..."'
-        local first,last=assert(source:find(marker,1,true),"missing fix marker")
+        local first,last=source:find(marker,1,true)
+        assert(first and last,"missing fix marker")
         source=source:sub(1,first-1)..source:sub(last+1)
         assert(load(source,"@whole-HUD-before-fix","t",env))()
     else
