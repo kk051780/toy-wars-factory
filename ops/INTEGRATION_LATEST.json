@@ -1,24 +1,19 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T03:47:17.786Z",
-  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "observed_at": "2026-10-27T04:33:58.519Z",
+  "status": "APPROVED_PENDING_EXACT_HEAD_MERGE",
   "owner_reply_required": false,
-  "integration_path": "SCOPED_BOOTSTRAP_CONTROLLER_MIGRATION",
-  "controller_operation_id": "1a11d75b-907b-4b7e-89a2-159938b42715",
-  "lease_epoch": 91,
-  "claim_commit": "8dfe46145e2813670b5900eefe7e61064b06795f",
-  "main_before": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "5e0439b9-7930-832f-bc00-7ca6b3955d7d",
+  "lease_epoch": 95,
+  "main_before": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
   "latest_review": {
-    "pr": 78,
-    "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+    "pr": 79,
+    "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
     "verdict": "APPROVE",
-    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "reviewer_run_id": "d26f58a7-1d38-832f-8388-4de85a493d66",
-    "review_record": "ops/reviews/PR0078_d9caf399.json",
-    "ci": 40445204478,
-    "merge_sha": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
-    "post_merge_qa": "success",
-    "handoff": "success"
+    "review_record": "ops/reviews/PR0079_b82aed7d.json",
+    "ci": 40447229337,
+    "category": "SYSTEM_LEGACY_CLI_BUG_FIX"
   },
   "merged_prs": [
     {
@@ -31,78 +26,22 @@
       "main_after_handoff": "8251288afac3ccc022d4509a8dedf9325fbfb80c"
     }
   ],
-  "merge_count_this_run": 1,
-  "previous_integration_commit": "8a3d8727c111988a53875d65542e2bb70a8f905f",
-  "unresolved": [
-    "No ordinary registered REVIEWER integration cycle is asserted for this bootstrap migration.",
-    "Original standalone legacy CLI is still false-safe for failed/no_update; separate scoped META repair and main QA required; Issue72 remains open.",
-    "Roblox engine/multiplayer/mobile/visual/player evidence remain unverified; release HOLD and Gemini incident/spending holds remain."
-  ],
-  "next": "Registered META repairs only the current-main original legacy CLI completed-only final health guard with fresh claim, new regression/history and independent REVIEWER; Issue72 remains OPEN.",
-  "merge_sha": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
-  "main_after": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+  "merge_count_this_run": 0,
+  "previous_integration_commit": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
   "main_qa": {
     "id": 40445881032,
     "head": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
-    "status": "completed",
     "conclusion": "success",
-    "python_tests": 315,
-    "jobs": [
-      {
-        "id": 121996934981,
-        "name": "offline",
-        "conclusion": "success"
-      },
-      {
-        "id": 121996934691,
-        "name": "compile_hold",
-        "conclusion": "success"
-      }
-    ],
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40445881032",
-    "provider_calls": 0,
-    "live_authorized": false
+    "status_only_descendant_verified": true
   },
   "handoff": {
     "id": 40445881046,
-    "head": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
-    "status": "completed",
-    "conclusion": "success",
-    "jobs": [
-      {
-        "id": 121996934620,
-        "name": "update",
-        "conclusion": "success"
-      }
-    ],
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40445881046"
+    "conclusion": "success"
   },
-  "status_only_descendant_verified": true,
-  "comparison_since_main_qa": {
-    "base": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
-    "head": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
-    "status": "ahead",
-    "ahead_by": 1,
-    "paths": [
-      "status/CHAT_HANDOFF.md",
-      "status/LATEST_STATE.json"
-    ]
-  },
-  "source_metrics": {
-    "lua_files": 4,
-    "lua_lines": 758,
-    "lua_bytes": 30030
-  },
-  "next_request": "issue72_legacy_cli_current_main_repair_after_pr78",
-  "scope_blocker_resolved_only": true,
-  "legacy_cli_repaired": false,
-  "issue72_closed": false,
-  "controller_release": {
-    "kind": "CONTROLLER",
-    "operation_id": "1a11d75b-907b-4b7e-89a2-159938b42715",
-    "epoch": 91,
-    "released_at": "2026-10-27T03:47:19.749001+00:00",
-    "record": "ops/REPAIR_COORDINATOR.json:last_completed",
-    "release_kind": "OWNED_LEASE_ONLY_NO_SERVICE_COMPLETION_ASSERTION"
-  }
+  "unresolved": [
+    "PR79 not merged; post-merge QA and handoff pending",
+    "PR80 independent review pending",
+    "Roblox engine/mobile/multiplayer unverified; release and Gemini HOLD preserved"
+  ],
+  "next": "Merge PR79 exact head, verify main QA and handoff before PR80."
 }

@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "pr": 79,
+  "repository": "kk051780/toy-wars-factory",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "5e0439b9-7930-832f-bc00-7ca6b3955d7d",
+  "lease_epoch": 95,
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "5f96584a-7d9c-832c-bfad-297c6211d960",
+  "branch": "auto/twf-system-review-5f96584a-7d9c-832c-bfad-297c6211d960",
+  "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+  "base_main_sha": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+  "reviewed_at": "2026-10-27T04:33:58.519Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "SYSTEM_LEGACY_CLI_BUG_FIX",
+  "changed_files": [
+    "tools/system_host_write_triage.py",
+    "tests/test_system_legacy_triage_repair.py",
+    "history/C00048_legacy_triage_completion_guard.json"
+  ],
+  "ci": {
+    "id": 40447229337,
+    "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 320,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40447229337"
+  },
+  "main_qa": {
+    "id": 40445881032,
+    "qa_head": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+    "main_head": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+    "conclusion": "success",
+    "comparison": {
+      "status": "ahead",
+      "ahead_by": 1,
+      "verified": true,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "findings": [
+    "Exact PR head CI 40447229337 offline/compile_hold success, 320 Python tests PASS; trusted-base META scope and immutable claim gate PASS.",
+    "Current main is status-only descendant of successful QA head; actual Git compare shows exactly two generated status files.",
+    "Actual diff has only 2 added final guard lines in legacy CLI, one new executable behavioral regression suite (5 cases, 17 diagnostic matrix, 9 CLI entrypoint invocations), and append-only C00048.",
+    "Claim 68cc83138fe30b2e8668cdc2416e19a209073bb2 is ancestor of coordinator, epoch92 META task/run/branch exact, prior source mode and candidate source mode both 100644 blob.",
+    "Previously false-safe failed/no_update exact-head green QA now INDETERMINATE with no write/start/takeover; completed success and higher-priority lease/QA failures preserved.",
+    "No accepted tests, historical records, checker, workflows, authority, budgets, Gemini hold, Roblox release controls, or game source changed."
+  ],
+  "unresolved": [
+    "Issue72 completion requires merged main offline+compile_hold and handoff success.",
+    "No Roblox Studio, multiplayer, mobile, visual or player experience evidence; release HOLD remains."
+  ],
+  "decision_rule": "tools/repair_integration.py decide => MERGE; current main/head/reviewer lease/all five review checks",
+  "post_merge_main_qa": null,
+  "post_merge_handoff": null,
+  "merge_sha": null,
+  "final_status": "APPROVED_AWAIT_EXACT_HEAD_MERGE"
+}
