@@ -1,0 +1,93 @@
+{
+  "id": "C00049",
+  "date": "2026-10-27",
+  "kind": "AUTONOMOUS_FIRST_PLAY_TOY_ROLE_HINTS",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "d6198d2b-49f0-8320-b895-f0b4a89228d9",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-d6198d2b-49f0-8320-b895-f0b4a89228d9",
+    "base": "main",
+    "open_prs": [],
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "f0693679f1e02e117c4d50cb3b2f3cdc8c4898d8",
+    "owner_run_id": "d6198d2b-49f0-8320-b895-f0b4a89228d9",
+    "epoch": 93
+  },
+  "main_base": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+  "source_commit": "123d7c6162d3f9f6ca49bbe4ca4688c4f6fb6118",
+  "final_pr_head": "PENDING_HISTORY_COMMIT",
+  "defect": {
+    "id": "first_play_toy_choice_lacks_role_information",
+    "cause": "The first-play guide's toy-selection step lists three names but gives no speed, durability or range differentiation, despite the canonical balance defining distinct roles.",
+    "reproduction": "Read and execute the complete main HUD: GuideStepText on page 1 contains only 'Tap PON, GUARDON or TANKURU at the bottom.' Balance shows PON speed 8.5 > 5.3/4, GUARDON HP 108 > 40/70, TANKURU range 17 > 5.5/5.6. The new canonical HUD fixture asserts role hints and would fail against that main text.",
+    "scope": "Canonical HUD Lua fixture and balance module; actual Roblox mobile legibility, player comprehension and fun not verified."
+  },
+  "fix": "Keep the existing three-step onboarding, SKIP/NEXT/PLAY, queue notice and selector controls, but add concise truthful role hints to page 1: PON fast, GUARDON tough, TANKURU ranged.",
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/first_play_role_hints_spec.lua",
+    "history/C00049_first_play_toy_role_hints.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 6610,
+      "after_bytes": 6625,
+      "delta_bytes": 15
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 758,
+    "lua_bytes": 30045
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/first_play_role_hints_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 4379,
+      "delta_bytes": 4379
+    }
+  ],
+  "characters_touched": [
+    "pon",
+    "guardon",
+    "tankuru"
+  ],
+  "character_impact": "Only the first-play explanatory text changes. Unit HP, speed, range, damage, prices, purchase behavior and server authority remain unchanged.",
+  "tests": {
+    "canonical_hud": "tests/auto/first_play_role_hints_spec.lua",
+    "accepted_hud": "tests/auto/first_play_hud_guide_spec.lua",
+    "accepted_queue": "tests/auto/workshop_queue_hud_spec.lua",
+    "accepted_price": "tests/hud_price_spec.lua",
+    "existing_server_cases": "UNCHANGED",
+    "negative_control": "Current-main pre-change first-page text has no role hints; pinned pre-guide HUD fixture is also checked when available.",
+    "local": "NOT_RUN_LUA_5_4_RUNTIME_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40445881032",
+    "main_qa_note": "success on 8f089592 ancestor; main HEAD 8251288 is status-only descendant",
+    "claim_commit": "f0693679f1e02e117c4d50cb3b2f3cdc8c4898d8",
+    "code_commit": "123d7c6162d3f9f6ca49bbe4ca4688c4f6fb6118",
+    "pr": "PENDING_DRAFT_PR",
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "next_action": "Verify exact-head offline and compile_hold jobs, repair own PR if necessary; separate registered REVIEWER decides integration and post-merge QA.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}
