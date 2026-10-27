@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 94,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "d6198d2b-49f0-8320-b895-f0b4a89228d9",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 94,
-    "acquired_at": "2026-10-27T04:13:04.428Z",
-    "expires_at": "2026-10-27T04:43:04.428Z",
-    "base_main_sha": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
-    "work_branch": "auto/twf-game-repair-d6198d2b-49f0-8320-b895-f0b4a89228d9",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -34,26 +24,40 @@
           "history/C00048_legacy_triage_completion_guard.json"
         ],
         "kind": "開発体制改善"
+      },
+      {
+        "number": 80,
+        "title": "[TWF auto-fix] Explain toy roles in first-play guide",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/80",
+        "head": "f6122172c7cdb083e801058d745bc23d30558709",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40448427689",
+        "summary": "初回プレイガイドの3体の役割説明欠落をHUD実コード+15 bytesで修正。正本HUD・Balanceを実行する新規Lua回帰2件、既存QAを保持。",
+        "changed_files": [
+          "src/ToyWarsHUD.client.lua",
+          "tests/auto/first_play_role_hints_spec.lua",
+          "history/C00049_first_play_toy_role_hints.json"
+        ],
+        "kind": "ゲーム本体修正"
       }
     ],
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-27T04:02:53Z",
-    "signature": "40233a1f96a5092f2a2159e7949e1f8b4720bcc325eb3d9bb45c96cfab343dc5",
+    "observed_at": "2026-10-27T04:13:58.666Z",
+    "signature": "b0694651aa9274f2e9fca7ad44ff2942f10f560d6a2740955ed1b6582b7759c3",
     "approval_text": ""
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "WORKER",
     "owner_id": "d6198d2b-49f0-8320-b895-f0b4a89228d9",
-    "epoch": 93,
-    "released_at": "2026-10-27T04:12:40.596Z",
+    "epoch": 94,
+    "released_at": "2026-10-27T04:13:58.666Z",
     "pr": 80,
     "head": "f6122172c7cdb083e801058d745bc23d30558709",
-    "result": "GAME_HUD_SOURCE_CHANGED_DRAFT_PR80_CI_IN_PROGRESS",
+    "result": "DRAFT_PR80_EXACT_HEAD_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
     "ci_run": 40448427689,
-    "ci_status": "IN_PROGRESS_COMPILE_HOLD_SUCCESS_OFFLINE_PENDING",
+    "ci_status": "SUCCESS_OFFLINE_AND_COMPILE_HOLD",
     "source_delta_bytes": 15,
     "claim_commit": "f0693679f1e02e117c4d50cb3b2f3cdc8c4898d8",
     "owner_reply_required": false
