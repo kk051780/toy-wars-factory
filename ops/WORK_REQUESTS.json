@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-26T22:24:58Z",
+  "observed_at": "2026-10-27T03:47:17.786Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -456,7 +456,7 @@
       "kind": "MAINTENANCE_SCOPE_CONFLICT",
       "priority": "P0",
       "assigned_role": "CONTROLLER",
-      "status": "OPEN",
+      "status": "RESOLVED_SCOPE_ONLY_PR78_MAIN_QA_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "pr": 70,
       "branch": "auto/twf-system-review-a95f272c-3ee4-8324-a03e-de4cce8b89d8",
@@ -532,14 +532,31 @@
         "original_cli_repaired": false,
         "complete": false,
         "next": "Registered REVIEWER evaluates connected v2 route; independent trust-root maintenance still needed for legacy CLI, without META modifying its own scope."
-      }
+      },
+      "resolution": {
+        "resolved_at": "2026-10-27T03:47:17.786Z",
+        "scope_only": true,
+        "pr": 78,
+        "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+        "merge_sha": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+        "main_after_handoff": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+        "registered_review_run_id": "d26f58a7-1d38-832f-8388-4de85a493d66",
+        "controller_operation_id": "1a11d75b-907b-4b7e-89a2-159938b42715",
+        "controller_claim_commit": "8dfe46145e2813670b5900eefe7e61064b06795f",
+        "post_main_qa": 40445881032,
+        "post_handoff": 40445881046,
+        "legacy_cli_repaired": false,
+        "issue72_closed": false,
+        "next_request": "issue72_legacy_cli_current_main_repair_after_pr78"
+      },
+      "next": "Scope blocker only resolved. PR70 remains CLOSED_UNMERGED. Use the new current-main META repair request; do not reopen or replay the old head."
     },
     {
       "id": "main_triage_failed_no_update_false_safe",
       "kind": "REPAIR_MAIN_SEMANTIC_DEFECT",
       "priority": "P1",
       "assigned_role": "META",
-      "status": "IMPLEMENTED_DRAFT_BLOCKED_SCOPE",
+      "status": "OPEN_READY_FOR_CURRENT_MAIN_META_REPAIR",
       "repository": "kk051780/toy-wars-factory",
       "pr": 70,
       "branch": "auto/twf-system-review-a95f272c-3ee4-8324-a03e-de4cce8b89d8",
@@ -558,7 +575,6 @@
         "local_full_python": 247,
         "accepted_original37_preserved": true
       },
-      "blocking_request": "meta_triage_maintenance_scope_pr70",
       "ci": {
         "id": 40319916599,
         "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40319916599",
@@ -596,17 +612,34 @@
         "python_tests_local": 247,
         "immutable_claim_gate_in_ci": "NOT_RUN_PRIOR_SCOPE_STEP_FAILED"
       },
-      "next": "Wait for separately governed scope maintenance, then reconcile/fresh exact-head CI and independent review. No owner approval reply is required.",
+      "next": "Prior source proposal PR70 is closed/unmerged. Fresh registered META run must acquire a new lease on current main, implement the minimal final completed-only guard, preserve all accepted tests and v2 behavior, add regression and new C, and obtain exact-head trusted-base scope/lease plus independent review and main QA.",
       "current_disposition": {
-        "observed_at": "2026-10-26T22:24:58Z",
+        "observed_at": "2026-10-27T03:47:17.786Z",
         "pr70": "CLOSED_UNMERGED",
         "issue": 72,
-        "partial_candidate_pr": 77,
-        "partial_head": "4d0c559d22d31f0e6b8a7d3849e696926e2f9522",
-        "partial_ci": 40411902302,
+        "scope_policy_pr": 78,
+        "scope_policy_merge": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+        "current_main": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
         "original_cli_repaired": false,
         "complete": false,
-        "next": "Registered REVIEWER evaluates connected v2 route; independent trust-root maintenance still needed for legacy CLI, without META modifying its own scope."
+        "next_request": "issue72_legacy_cli_current_main_repair_after_pr78"
+      },
+      "previous_blocking_request": "meta_triage_maintenance_scope_pr70",
+      "scope_resolution": {
+        "resolved_at": "2026-10-27T03:47:17.786Z",
+        "scope_only": true,
+        "pr": 78,
+        "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+        "merge_sha": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+        "main_after_handoff": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+        "registered_review_run_id": "d26f58a7-1d38-832f-8388-4de85a493d66",
+        "controller_operation_id": "1a11d75b-907b-4b7e-89a2-159938b42715",
+        "controller_claim_commit": "8dfe46145e2813670b5900eefe7e61064b06795f",
+        "post_main_qa": 40445881032,
+        "post_handoff": 40445881046,
+        "legacy_cli_repaired": false,
+        "issue72_closed": false,
+        "next_request": "issue72_legacy_cli_current_main_repair_after_pr78"
       }
     },
     {
@@ -730,7 +763,7 @@
       "kind": "NARROW_TRUST_ROOT_MAINTENANCE_PROPOSAL",
       "priority": "P0",
       "assigned_role": "CONTROLLER",
-      "status": "OPEN",
+      "status": "RESOLVED_SCOPE_ONLY_PR78_MAIN_QA_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "issue": 72,
       "issue_comment": "https://github.com/kk051780/toy-wars-factory/issues/72#issuecomment-6428760025",
@@ -748,7 +781,67 @@
         "current": "SAFE_TO_NEXT_SCHEDULE despite exact-head green QA",
         "expected": "Never healthy SAFE for failed/no_update; preserve all lease/provenance/QA gates"
       },
-      "owner_reply_required": false
+      "owner_reply_required": false,
+      "resolution": {
+        "resolved_at": "2026-10-27T03:47:17.786Z",
+        "scope_only": true,
+        "pr": 78,
+        "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+        "merge_sha": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+        "main_after_handoff": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+        "registered_review_run_id": "d26f58a7-1d38-832f-8388-4de85a493d66",
+        "controller_operation_id": "1a11d75b-907b-4b7e-89a2-159938b42715",
+        "controller_claim_commit": "8dfe46145e2813670b5900eefe7e61064b06795f",
+        "post_main_qa": 40445881032,
+        "post_handoff": 40445881046,
+        "legacy_cli_repaired": false,
+        "issue72_closed": false,
+        "next_request": "issue72_legacy_cli_current_main_repair_after_pr78"
+      },
+      "next": "Scope blocker only resolved. PR70 remains CLOSED_UNMERGED. Use the new current-main META repair request; do not reopen or replay the old head."
+    },
+    {
+      "id": "issue72_legacy_cli_current_main_repair_after_pr78",
+      "kind": "REPAIR_MAIN_LEGACY_TRIAGE_SEMANTIC_DEFECT",
+      "priority": "P0",
+      "assigned_role": "META",
+      "status": "OPEN_READY_FOR_META",
+      "repository": "kk051780/toy-wars-factory",
+      "issue": 72,
+      "created_at": "2026-10-27T03:47:17.786Z",
+      "base_main_sha": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+      "source_path": "tools/system_host_write_triage.py",
+      "source_blob": "8eb87b345e2e3727bcad96cac58ad7be5c354d5a",
+      "scope_policy_pr": 78,
+      "scope_policy_merge": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+      "scope_policy_main_qa": 40445881032,
+      "scope_policy_handoff": 40445881046,
+      "request": "Before new META system features, repair only the accepted original standalone CLI's final healthy outcome: after existing evidence/lease/source/run/head/base/CI validation, SAFE_TO_NEXT_SCHEDULE is permitted only when the current service recorded_status is completed. failed/no_update must return INDETERMINATE with SERVICE_NOT_SUCCESSFULLY_COMPLETED. Preserve the existing priority of active lease/orphan/host denial/ref race/invalid evidence diagnoses. PR70 is CLOSED_UNMERGED; start a fresh current-main branch and new immutable C record with the actual registered META task/run/claim/epoch. Do not reopen or replay old PR70, edit trusted checker/config/workflow, or claim Issue72 complete before the source fix merges and main QA passes.",
+      "reproduction": {
+        "fixture": "tests/test_system_host_write_triage.py::fixtures()",
+        "bad_states": [
+          "failed",
+          "no_update"
+        ],
+        "current": "SAFE_TO_NEXT_SCHEDULE despite valid exact-head QA",
+        "expected": "INDETERMINATE / SERVICE_NOT_SUCCESSFULLY_COMPLETED",
+        "legacy_cli_repaired": false
+      },
+      "required_changes": [
+        "Existing source module remains ordinary 100644 in immutable base and candidate; only minimal completed-only final healthy guard in tools/system_host_write_triage.py.",
+        "Add a brand-new tests/test_system_*.py covering actual standalone legacy CLI for completed success and failed/no_update refusal; include original authenticated legacy blob negative control where practical.",
+        "Add a brand-new history/Cxxxxx_*.json with current-main source/character ledger unchanged, fresh registered META task/run/epoch/claim, actual tests and exact-head CI.",
+        "Retain all original 37 legacy triage tests, all v2/repair_control triage cases, and the accepted maintenance mode/scope regressions.",
+        "Fresh exact-head offline and compile_hold must pass, including trusted-base META scope and immutable lease verification, followed by independent registered REVIEWER exact-head/base audit, expected-head merge and post-main QA/handoff."
+      ],
+      "prohibited": [
+        "No scheduler changes or duplicate task launch.",
+        "No inference, secrets/credentials/billing/spending/release changes.",
+        "No edits to accepted tests/history/checker/config/workflows; no lowered gates.",
+        "No Roblox engine/mobile/multiplayer verification claims."
+      ],
+      "owner_reply_required": false,
+      "next_actor": "Registered META after this independent CONTROLLER releases its owned lease; root may dispatch the existing task separately."
     }
   ]
 }

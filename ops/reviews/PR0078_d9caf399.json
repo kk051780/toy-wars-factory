@@ -6,7 +6,7 @@
   "base_reviewed": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
   "category": "SCOPED_TRUST_ROOT_SYSTEM_MAINTENANCE",
   "verdict": "APPROVE",
-  "status": "MERGED_PENDING_MAIN_QA_AND_HANDOFF",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "observed_at": "2026-10-27T03:44:15.824Z",
   "integration_path": "SCOPED_BOOTSTRAP_CONTROLLER_MIGRATION",
   "normal_v4_reviewer_integration_claimed": false,
@@ -63,7 +63,15 @@
     "is_author": false,
     "claim_commit": "8dfe46145e2813670b5900eefe7e61064b06795f",
     "epoch": 91,
-    "work_branch": "main"
+    "work_branch": "main",
+    "release": {
+      "kind": "CONTROLLER",
+      "operation_id": "1a11d75b-907b-4b7e-89a2-159938b42715",
+      "epoch": 91,
+      "released_at": "2026-10-27T03:47:19.749001+00:00",
+      "record": "ops/REPAIR_COORDINATOR.json:last_completed",
+      "release_kind": "OWNED_LEASE_ONLY_NO_SERVICE_COMPLETION_ASSERTION"
+    }
   },
   "independent_findings": {
     "scope": true,
@@ -130,7 +138,7 @@
     "Original standalone legacy CLI is still false-safe for failed/no_update; separate scoped META repair and main QA required; Issue72 remains open.",
     "Roblox engine/multiplayer/mobile/visual/player evidence remain unverified; release HOLD and Gemini incident/spending holds remain."
   ],
-  "next": "Wait for exact merged-main QA and handoff; do not resolve legacy CLI or scope blocker until main QA succeeds.",
+  "next": "Registered META repairs only the current-main original legacy CLI completed-only final health guard with fresh claim, new regression/history and independent REVIEWER; Issue72 remains OPEN.",
   "merged_at": "2026-10-27T03:45:29.389Z",
   "merge_sha": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
   "merge_method": "merge",
@@ -145,13 +153,52 @@
   "post_merge_main_qa": {
     "id": 40445881032,
     "head": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
-    "status": "in_progress",
-    "conclusion": null
+    "status": "completed",
+    "conclusion": "success",
+    "python_tests": 315,
+    "jobs": [
+      {
+        "id": 121996934981,
+        "name": "offline",
+        "conclusion": "success"
+      },
+      {
+        "id": 121996934691,
+        "name": "compile_hold",
+        "conclusion": "success"
+      }
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40445881032",
+    "provider_calls": 0,
+    "live_authorized": false
   },
   "post_merge_handoff": {
     "id": 40445881046,
     "head": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
-    "status": "in_progress",
-    "conclusion": null
-  }
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 121996934620,
+        "name": "update",
+        "conclusion": "success"
+      }
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40445881046"
+  },
+  "verified_at": "2026-10-27T03:47:17.786Z",
+  "main_after_handoff": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+  "status_only_descendant_verified": true,
+  "comparison_since_main_qa": {
+    "base": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+    "head": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+    "status": "ahead",
+    "ahead_by": 1,
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "source_and_protected_blobs_verified_unchanged": true,
+  "original_legacy_cli_blob": "8eb87b345e2e3727bcad96cac58ad7be5c354d5a"
 }
