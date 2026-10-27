@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T13:54:03.588Z",
-  "status": "APPROVED_PENDING_MERGE",
+  "observed_at": "2026-10-27T13:55:03.928Z",
+  "status": "MERGED_WAIT_MAIN_CI",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "16d021a3-2654-8328-bd3e-05e350f1a15b",
@@ -14,9 +14,9 @@
     "review_record": "ops/reviews/PR0085_4924e29a.json",
     "ci": 40515648153,
     "category": "GAME_SERVER_HEALTH_BAR_PROPERTY_WRITE_STABILITY",
-    "merge_sha": null,
-    "post_merge_main_qa": "PENDING",
-    "post_merge_handoff": "PENDING"
+    "merge_sha": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
+    "post_merge_main_qa": "QUEUED",
+    "post_merge_handoff": "QUEUED"
   },
   "merged_prs": [
     {
@@ -82,7 +82,7 @@
       "category": "SYSTEM_READ_ONLY_EVIDENCE_COLLECTOR"
     }
   ],
-  "merge_count_this_run": 0,
+  "merge_count_this_run": 1,
   "previous_integration_commit": "23aa3649f59f96111b02c91ca31a048df6749b6f",
   "main_qa": {
     "id": 40501279576,
@@ -120,13 +120,13 @@
     "Roblox Studio/2-client/mobile evidence absent; release HOLD.",
     "Gemini incident HOLD and budget caps unchanged."
   ],
-  "next": "PR85 exact-head reviewed APPROVE; recheck head and reviewer lease, mark ready, merge with expected_head_sha, then verify main QA and handoff. No owner reply.",
-  "merge_sha": "608ca16643667d3866d4c9e451ffd269869aeca9",
-  "main_after": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
+  "next": "PR85 merged at 82fed9a; main QA 40516240374 and handoff 40516240222 queued. Status-only main descendant verified; do not claim post-merge PASS until jobs finish.",
+  "merge_sha": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
+  "main_after": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
   "status_only_descendant_verified": true,
   "comparison_since_main_qa": {
-    "base": "608ca16643667d3866d4c9e451ffd269869aeca9",
-    "head": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
+    "base": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
+    "head": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
     "status": "ahead",
     "ahead_by": 1,
     "paths": [
@@ -180,14 +180,13 @@
   },
   "latest_review_is_current_run": true,
   "latest_scan": {
-    "observed_at": "2026-10-27T13:54:03.588Z",
-    "eligible_open_prs": [
-      85
-    ],
-    "merged_pr": null,
-    "main_qa": 40501279576,
-    "main_sha": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
-    "main_qa_verified": true,
+    "observed_at": "2026-10-27T13:55:03.928Z",
+    "eligible_open_prs": [],
+    "merged_pr": 85,
+    "main_qa": 40516240374,
+    "handoff": 40516240222,
+    "main_sha": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
+    "main_qa_verified": false,
     "status_only_descendant_verified": true,
     "reviewer_run_id": "16d021a3-2654-8328-bd3e-05e350f1a15b",
     "lease_epoch": 117
