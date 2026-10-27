@@ -607,24 +607,24 @@
     "94": {
       "schema": 1,
       "pr": 94,
-      "head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
-      "base_reviewed": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+      "head": "259b51e2ef3d84b02b6442dae53f56292b8bae28",
+      "base_reviewed": "55d9e0da77f0a9237cf2776432cf22f62b551283",
       "reviewer_kind": "REVIEWER",
       "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-      "reviewer_run_id": "af748f36-2f60-8326-af5f-af5c853acc6f",
-      "lease_epoch": 148,
+      "reviewer_run_id": "c1276df4-db04-8328-ac87-3a909d29133d",
+      "lease_epoch": 157,
       "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "author_run_id": "4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+      "author_run_id": "935987ea-7dcc-8329-b060-4663b031d950",
       "verdict": "REQUEST_CHANGES",
       "ci": {
-        "id": 40583572501,
-        "head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
+        "id": 40596902577,
+        "head": "259b51e2ef3d84b02b6442dae53f56292b8bae28",
         "conclusion": "success"
       },
-      "review_record": "ops/reviews/PR0094_aeb60a50.json",
+      "review_record": "ops/reviews/PR0094_259b51e2.json",
       "blockers": [
-        "src/ToyWarsServer.server.lua saveProgress(): UpdateAsync callback function() return record end ignores the current stored value; a newer/unknown schema written after GetAsync is overwritten on PlayerRemoving, contradicting the claimed unknown-schema protection.",
-        "A stale earlier server/session can save after a newer session and replace newer version-1 progress; current seven Lua cases do not exercise interleaved UpdateAsync writes or a version change between read and save."
+        "RACE_1: Two servers A/B both GetAsync p:1 before either UpdateAsync claim. A claims sessionOwner=A. B UpdateAsync compares current owner A with expected nil and returns nil. loadProgress returns (nil,false), but join creates default Coins=50/Wave=1 and continues; saveProgress exits on persistAllowed=false. Later active B can play without ever saving. src/ToyWarsServer.server.lua lines 89-125, 573-584, 127-128. Existing tests only join sequentially; no concurrent GetAsync/claim interleaving.",
+        "RACE_2: A active with unsaved Coins=300 while stored Coins=200. B joins and unconditionally supersedes A's sessionOwner using stored Coins=200 before A PlayerRemoving save. A's final save is canceled; B starts at 200, so A's earned 100 is lost. Existing six session-fence tests assert B wins but do not protect A's unsaved progress. Official Roblox session-locking guidance requires holding/waiting for prior session final save or bounded recovery, not immediate takeover."
       ],
       "merge_performed": false
     }

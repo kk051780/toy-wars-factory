@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "pr": 94,
+  "repository": "kk051780/toy-wars-factory",
+  "head": "259b51e2ef3d84b02b6442dae53f56292b8bae28",
+  "base_main_sha": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "c1276df4-db04-8328-ac87-3a909d29133d",
+  "lease_epoch": 157,
+  "reviewed_at": "2026-10-27T23:26:12.468Z",
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "935987ea-7dcc-8329-b060-4663b031d950",
+  "verdict": "REQUEST_CHANGES",
+  "category": "GAME_SERVER_DATASTORE_SESSION_SAFETY",
+  "checks": {
+    "scope": true,
+    "regression": false,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": false
+  },
+  "blockers": [
+    "RACE_1: Two servers A/B both GetAsync p:1 before either UpdateAsync claim. A claims sessionOwner=A. B UpdateAsync compares current owner A with expected nil and returns nil. loadProgress returns (nil,false), but join creates default Coins=50/Wave=1 and continues; saveProgress exits on persistAllowed=false. Later active B can play without ever saving. src/ToyWarsServer.server.lua lines 89-125, 573-584, 127-128. Existing tests only join sequentially; no concurrent GetAsync/claim interleaving.",
+    "RACE_2: A active with unsaved Coins=300 while stored Coins=200. B joins and unconditionally supersedes A's sessionOwner using stored Coins=200 before A PlayerRemoving save. A's final save is canceled; B starts at 200, so A's earned 100 is lost. Existing six session-fence tests assert B wins but do not protect A's unsaved progress. Official Roblox session-locking guidance requires holding/waiting for prior session final save or bounded recovery, not immediate takeover."
+  ],
+  "findings": [
+    {
+      "severity": "HIGH",
+      "file": "src/ToyWarsServer.server.lua",
+      "lines": "89-125,127-128,573-584",
+      "kind": "CONCURRENT_READ_CLAIM_RACE",
+      "reproduction": "Start A and B GetAsync for same UserId at stored v1 coins=200 revision=0 owner=nil; return both reads before either UpdateAsync. A claims tokenA; B callback sees ownerA != expected nil, cancels. B joins with default 50, persistAllowed=false; B earns 500 and leaves; store never receives B progress.",
+      "expected": "B must not enter normal gameplay with default unsavable data. Use atomic authoritative claim/read or bounded retry/wait, and surface an explicit loading/failure state. Canonical interleaving whole-server regression must fail on this head and pass after fix."
+    },
+    {
+      "severity": "HIGH",
+      "file": "src/ToyWarsServer.server.lua",
+      "lines": "99-125,137-155",
+      "kind": "UNSAVED_PRIOR_SESSION_LOSS",
+      "reproduction": "A loads stored 200, earns 300 in memory; B joins before A final save and replaces owner. A final save cancels and B begins at stored 200. A's 100 progress is lost even if both save calls succeed/abort as designed.",
+      "expected": "Do not supersede an active unexpired session before its final save or safe bounded recovery. Test A unsaved→B reconnect→A final save→B restored value, including opposite completion orders; preserve purchases (coins can decrease)."
+    }
+  ],
+  "evidence": {
+    "main_qa": {
+      "run_id": 40594943961,
+      "head": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+      "jobs": [
+        "offline:success",
+        "compile_hold:success"
+      ]
+    },
+    "main_compare": {
+      "base": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+      "head": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    },
+    "pr_ci": {
+      "run_id": 40596902577,
+      "head": "259b51e2ef3d84b02b6442dae53f56292b8bae28",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 122514998029,
+          "name": "offline",
+          "conclusion": "success"
+        },
+        {
+          "id": 122514998346,
+          "name": "compile_hold",
+          "conclusion": "success"
+        }
+      ],
+      "python_tests": 423,
+      "lua_rejoin": "7/7",
+      "lua_conflict": "7/7",
+      "lua_session_fence": "6/6",
+      "trusted_scope_and_claim": "PASS_4_IMMUTABLE_CLAIMS"
+    },
+    "claim": {
+      "commit": "36d56f1cff56862890f0eb13d399cdf38242921e",
+      "epoch": 156,
+      "ancestor_of_coordinator": true
+    },
+    "diff_files": [
+      "history/C00065_progress_rejoin.json",
+      "history/C00067_progress_conflict_review_repair.json",
+      "history/C00068_progress_session_fence_review_repair.json",
+      "history/C00069_disconnect_before_claim_ci_repair.json",
+      "src/ToyWarsServer.server.lua",
+      "tests/auto/progression_conflict_spec.lua",
+      "tests/auto/progression_rejoin_spec.lua",
+      "tests/auto/progression_session_fence_spec.lua"
+    ],
+    "source_bytes": {
+      "main_server": 20147,
+      "pr_server": 27427,
+      "all_lua": 38571
+    },
+    "official_docs": [
+      "https://create.roblox.com/docs/cloud-services/data-stores/player-data-purchasing",
+      "https://create.roblox.com/docs/cloud-services/data-stores/versioning-listing-and-caching"
+    ]
+  },
+  "limitations": [
+    "Static interleaving from actual source; new negative regression not executed in this review; current CI only sequential fixture cases.",
+    "No Roblox engine, live DataStore, 2-server, mobile or visual evidence."
+  ],
+  "merge_performed": false,
+  "next_actor": "WORKER:6adbf0d6a7d881918ce181dff2468867"
+}

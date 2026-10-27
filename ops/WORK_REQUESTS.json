@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T22:28:32.658Z",
+  "observed_at": "2026-10-27T23:26:12.468Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1504,6 +1504,42 @@
         "pr_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40594071458",
         "official_guidance": "https://create.roblox.com/docs/cloud-services/data-stores/player-data-purchasing"
       }
+    },
+    {
+      "id": "pr94_concurrent_claim_unsavable_and_unsaved_prior_progress_20261028",
+      "kind": "REPAIR_PR94_DATASTORE_SESSION_SAFETY",
+      "priority": "P1",
+      "assigned_role": "WORKER",
+      "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "status": "OPEN_REQUEST_CHANGES",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 94,
+      "head": "259b51e2ef3d84b02b6442dae53f56292b8bae28",
+      "created_at": "2026-10-27T23:26:12.468Z",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "c1276df4-db04-8328-ac87-3a909d29133d",
+      "review_record": "ops/reviews/PR0094_259b51e2.json",
+      "source": "src/ToyWarsServer.server.lua loadProgress/saveProgress/join",
+      "request": "Fix concurrent GetAsync/UpdateAsync claim race and premature session supersession. A later session must not silently play with persistAllowed=false/default progress, and an active prior session's unsaved progress must not be discarded by immediate takeover. Prefer atomic UpdateAsync read+lock with bounded waiting/retry/failure UI and release at final save; do not change protected controls or merge coins by max.",
+      "reproduction": [
+        "Start A and B GetAsync for same UserId at stored v1 coins=200 revision=0 owner=nil; return both reads before either UpdateAsync. A claims tokenA; B callback sees ownerA != expected nil, cancels. B joins with default 50, persistAllowed=false; B earns 500 and leaves; store never receives B progress.",
+        "A loads stored 200, earns 300 in memory; B joins before A final save and replaces owner. A final save cancels and B begins at stored 200. A's 100 progress is lost even if both save calls succeed/abort as designed."
+      ],
+      "expected": [
+        "B must not enter normal gameplay with default unsavable data. Use atomic authoritative claim/read or bounded retry/wait, and surface an explicit loading/failure state. Canonical interleaving whole-server regression must fail on this head and pass after fix.",
+        "Do not supersede an active unexpired session before its final save or safe bounded recovery. Test A unsaved→B reconnect→A final save→B restored value, including opposite completion orders; preserve purchases (coins can decrease).",
+        "Add deterministic canonical whole-server interleaving regressions and pinned-current-head negative controls. Preserve unknown-schema rejection, metadata/UserIds, non-yielding UpdateAsync transform, accepted 7+7+6 cases, correct C history/bytes and new trusted claim. New exact-head offline and compile_hold CI both PASS; independent reviewer rechecks. No engine pass claim."
+      ],
+      "evidence": {
+        "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/94",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40596902577",
+        "official_docs": [
+          "https://create.roblox.com/docs/cloud-services/data-stores/player-data-purchasing",
+          "https://create.roblox.com/docs/cloud-services/data-stores/versioning-listing-and-caching"
+        ]
+      },
+      "owner_reply_required": false,
+      "next_actor": "WORKER"
     }
   ]
 }
