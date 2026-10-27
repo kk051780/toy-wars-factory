@@ -1,12 +1,12 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T12:08:30.448Z",
-  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "observed_at": "2026-10-27T13:27:05.000Z",
+  "status": "NO_ELIGIBLE_OPEN_PR",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "cbd38de1-246c-832c-ac81-0553ae00e4dc",
-  "lease_epoch": 112,
-  "main_before": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
+  "reviewer_run_id": "eb0486af-0fe0-8330-8242-b5b7cfe878b9",
+  "lease_epoch": 115,
+  "main_before": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
   "latest_review": {
     "pr": 84,
     "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
@@ -82,7 +82,7 @@
       "category": "SYSTEM_READ_ONLY_EVIDENCE_COLLECTOR"
     }
   ],
-  "merge_count_this_run": 1,
+  "merge_count_this_run": 0,
   "previous_integration_commit": "23aa3649f59f96111b02c91ca31a048df6749b6f",
   "main_qa": {
     "id": 40501279576,
@@ -120,7 +120,7 @@
     "Roblox Studio/2-client/mobile evidence absent; release HOLD.",
     "Gemini incident HOLD and budget caps unchanged."
   ],
-  "next": "META: continue Issue71 service/operation receipt collection and multi-game live observation without credential bypass; WORKER: next small PvE fix; REVIEWER: recheck exact-head CI for future eligible PRs. No owner reply required.",
+  "next": "No eligible new auto-UUID PR at scan. META previous epoch114 recovered using exact completed service run; WORKER/META can resume normal coordination. Continue Issue71 and PvE work; REVIEWER recheck current head/CI and main QA. No owner reply required.",
   "merge_sha": "608ca16643667d3866d4c9e451ffd269869aeca9",
   "main_after": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
   "status_only_descendant_verified": true,
@@ -178,15 +178,45 @@
     "main_qa": 40501279576,
     "handoff": 40501279630
   },
-  "latest_review_is_current_run": true,
+  "latest_review_is_current_run": false,
   "latest_scan": {
-    "observed_at": "2026-10-27T12:08:30.448Z",
+    "observed_at": "2026-10-27T13:27:05.000Z",
     "eligible_open_prs": [],
-    "merged_pr": 84,
+    "legacy_open_prs_excluded": [
+      61,
+      60,
+      55,
+      51,
+      29,
+      28,
+      25,
+      24,
+      23,
+      22,
+      21,
+      20,
+      19,
+      17,
+      13,
+      12,
+      6
+    ],
+    "merged_pr": null,
     "main_qa": 40501279576,
     "handoff": 40501279630,
     "main_sha": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
     "main_qa_verified": true,
-    "status_only_descendant_verified": true
+    "status_only_descendant_verified": true,
+    "reviewer_run_id": "eb0486af-0fe0-8330-8242-b5b7cfe878b9",
+    "lease_epoch": 115,
+    "lock_recovery": {
+      "recovered_epoch": 114,
+      "owner_kind": "META",
+      "owner_run_id": "708cfcb7-4de0-8320-bf21-f9e4cbf1947f",
+      "recorded_status": "no_update",
+      "completed_at": "2026-10-27T12:32:59.738512Z",
+      "recovery_commit": "a0262e37ad97349366dbabd4f3decbdf4ca4d539",
+      "recovered_from_service_evidence": true
+    }
   }
 }

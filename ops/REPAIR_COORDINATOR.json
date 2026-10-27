@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 115,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "eb0486af-0fe0-8330-8242-b5b7cfe878b9",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 115,
-    "acquired_at": "2026-10-27T13:26:00+00:00",
-    "expires_at": "2026-10-27T13:56:00+00:00",
-    "base_main_sha": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,11 +36,13 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "META",
-    "owner_id": "708cfcb7-4de0-8320-bf21-f9e4cbf1947f",
-    "epoch": 114,
-    "released_at": "2026-10-27T13:25:35.000+00:00",
-    "recovered_from_service_evidence": true
+    "kind": "REVIEWER",
+    "owner_id": "eb0486af-0fe0-8330-8242-b5b7cfe878b9",
+    "epoch": 115,
+    "released_at": "2026-10-27T13:27:05.000Z",
+    "result": "NO_ELIGIBLE_OPEN_PR_MAIN_QA_VERIFIED_META_LOCK_RECOVERED",
+    "implementation_source_changed": false,
+    "merge_count": 0
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
