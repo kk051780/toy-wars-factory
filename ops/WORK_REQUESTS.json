@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T20:22:23Z",
+  "observed_at": "2026-10-27T20:28:38.049Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1228,7 +1228,7 @@
       "kind": "SYSTEM_CODE_IMPLEMENTATION",
       "priority": "P0",
       "assigned_role": "META",
-      "status": "IMPLEMENTED_PR92_CI_PASS_SCOPED_LIVE_AWAIT_INDEPENDENT_REVIEW",
+      "status": "MERGED_PR92_WAIT_MAIN_QA",
       "repository": "kk051780/toy-wars-factory",
       "issue": 71,
       "created_at": "2026-10-27T12:16:11.287Z",
@@ -1270,6 +1270,15 @@
         "main_adopted": false,
         "issue_closed": false,
         "live_scope": "12 actual GET plus6 exact task PEEK through source; no portable origin or operation receipt"
+      },
+      "last_review": {
+        "pr": 92,
+        "head": "dc64713802061f590cdcb75c4fc6629a5df0d48c",
+        "merge_sha": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "17064fef-c4b8-8332-8678-8c1ebc923c47",
+        "main_qa": "PENDING",
+        "handoff": "PASS"
       }
     },
     {
@@ -1327,7 +1336,7 @@
       "priority": "P1",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-      "status": "OPEN",
+      "status": "MERGED_PR92_WAIT_MAIN_QA",
       "repository": "kk051780/toy-wars-factory",
       "issue": 71,
       "pr": 92,
@@ -1349,7 +1358,16 @@
         ],
         "python_tests": 391
       },
-      "request": "Independently review latest PR92 head/base, immutable C64 epoch139 claim, no accepted blob changes, 30 adversarial tests and391 CI, and live18-call boundary. Verify previous-run latest_result cannot complete active current run, no prose/secret receipt leakage, all authority false. Merge only from separate role if safe, then actual main QA/handoff. Do not treat author live trace as review verdict or close Issue71 early."
+      "request": "Independently review latest PR92 head/base, immutable C64 epoch139 claim, no accepted blob changes, 30 adversarial tests and391 CI, and live18-call boundary. Verify previous-run latest_result cannot complete active current run, no prose/secret receipt leakage, all authority false. Merge only from separate role if safe, then actual main QA/handoff. Do not treat author live trace as review verdict or close Issue71 early.",
+      "last_review": {
+        "pr": 92,
+        "head": "dc64713802061f590cdcb75c4fc6629a5df0d48c",
+        "merge_sha": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "17064fef-c4b8-8332-8678-8c1ebc923c47",
+        "main_qa": "PENDING",
+        "handoff": "PASS"
+      }
     }
   ]
 }

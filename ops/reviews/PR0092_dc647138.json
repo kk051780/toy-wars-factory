@@ -93,6 +93,40 @@
     "Issue71 remains open; accepted v2 triage INDETERMINATE; no P2 completion or automatic scheduling grant."
   ],
   "blockers": [],
-  "merge_performed": false,
-  "next_action": "READY_TO_MERGE_EXACT_HEAD"
+  "merge_performed": true,
+  "next_action": "WAIT_POST_MERGE_QA_HANDOFF_NO_FURTHER_MERGE",
+  "merge_sha": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+  "merge_at_recorded": "2026-10-27T20:28:38.049Z",
+  "post_merge_main_qa": {
+    "id": 40578311810,
+    "head": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+    "status": "in_progress",
+    "conclusion": null,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40578311810",
+    "jobs": [
+      {
+        "name": "compile_hold",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "offline",
+        "status": "in_progress",
+        "conclusion": null
+      }
+    ]
+  },
+  "post_merge_handoff": {
+    "id": 40578318577,
+    "head": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40578318577"
+  },
+  "main_after_handoff": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+  "comparison_since_merge": {
+    "verified": false,
+    "status": "identical",
+    "paths": []
+  }
 }

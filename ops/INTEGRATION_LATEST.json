@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T20:27:38.382Z",
-  "status": "APPROVED_WAIT_MERGE",
+  "observed_at": "2026-10-27T20:28:38.049Z",
+  "status": "MERGED_WAIT_MAIN_CI",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "17064fef-c4b8-8332-8678-8c1ebc923c47",
@@ -14,7 +14,8 @@
     "review_record": "ops/reviews/PR0092_dc647138.json",
     "ci": 40576878357,
     "category": "SYSTEM_SCOPED_SERVICE_RUN_OBSERVER",
-    "blockers": []
+    "blockers": [],
+    "merge_sha": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e"
   },
   "merged_prs": [
     {
@@ -138,39 +139,53 @@
       "handoff": 40575268483,
       "category": "GAME_SERVER_IDLE_HEALTH_BAR_LOOKUP_OPTIMIZATION",
       "main_after_handoff": "bf959fb6ecc484993085ef767ae0c7370fb6db50"
+    },
+    {
+      "pr": 92,
+      "head": "dc64713802061f590cdcb75c4fc6629a5df0d48c",
+      "merge_sha": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+      "status": "MERGED_WAIT_MAIN_CI",
+      "main_qa": 40578311810,
+      "handoff": 40578318577,
+      "category": "SYSTEM_SCOPED_SERVICE_RUN_OBSERVER",
+      "main_after_handoff": null
     }
   ],
-  "merge_count_this_run": 0,
+  "merge_count_this_run": 1,
   "main_qa": {
-    "status": "PASS",
-    "head": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
-    "run_id": 40575268638,
-    "conclusion": "success",
+    "status": "in_progress",
+    "head": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+    "run_id": 40578311810,
+    "conclusion": null,
     "jobs": [
-      "offline",
-      "compile_hold"
+      {
+        "name": "compile_hold",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "offline",
+        "status": "in_progress",
+        "conclusion": null
+      }
     ]
   },
   "handoff": {
     "status": "PASS",
-    "head": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
-    "run_id": 40575268483,
+    "head": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+    "run_id": 40578318577,
     "conclusion": "success"
   },
   "comparison_since_main_qa": {
-    "verified": true,
-    "status": "ahead",
-    "ahead_by": 1,
-    "paths": [
-      "status/CHAT_HANDOFF.md",
-      "status/LATEST_STATE.json"
-    ]
+    "verified": false
   },
   "unresolved": [
     "Issue71 not complete: no portable origin receipt, original host operation error, real cross-game dispatch or long-term reliability.",
     "Roblox Studio, 2-client and mobile not verified; release HOLD.",
     "Gemini incident HOLD and existing spending caps preserved."
   ],
-  "next": "Exact-head merge PR92 if shared lease and main/head unchanged; then wait for post-merge main QA/handoff.",
-  "runtime_verified": true
+  "next": "Wait for exact merged-head main QA/handoff. Do not merge another PR until successful; Issue71 remains open.",
+  "runtime_verified": true,
+  "main_after": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+  "merge_sha": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e"
 }

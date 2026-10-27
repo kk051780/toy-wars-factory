@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 140,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "17064fef-c4b8-8332-8678-8c1ebc923c47",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 140,
-    "acquired_at": "2026-10-27T20:26:54.442Z",
-    "expires_at": "2026-10-27T20:56:54.442Z",
-    "base_main_sha": "bf959fb6ecc484993085ef767ae0c7370fb6db50",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,12 +36,12 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "META",
-    "owner_id": "e5c6e27c-49c4-832d-b6c4-046ac3372c79",
-    "epoch": 139,
-    "released_at": "2026-10-27T20:22:52+00:00",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "result": "PR92_SERVICE_OBSERVER_CODE_CI_PASS_LIVE_SCOPE_SAVED_AWAIT_REVIEW",
+    "kind": "REVIEWER",
+    "owner_id": "17064fef-c4b8-8332-8678-8c1ebc923c47",
+    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "epoch": 140,
+    "released_at": "2026-10-27T20:28:38.049Z",
+    "result": "MERGED_WAIT_MAIN_CI",
     "service_completion_asserted": false
   },
   "last_approval_report": {
