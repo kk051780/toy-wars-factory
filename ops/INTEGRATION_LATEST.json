@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T18:24:54.249Z",
-  "status": "APPROVED_PENDING_MERGE",
+  "observed_at": "2026-10-27T18:26:00.045Z",
+  "status": "MERGED_WAIT_MAIN_CI",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "444e5fa6-e444-832b-bd5c-058a3bbab9ce",
@@ -13,7 +13,10 @@
     "verdict": "APPROVE",
     "review_record": "ops/reviews/PR0091_97662198.json",
     "ci": 40557950962,
-    "category": "GAME_SERVER_LATE_CHARACTER_ROOT_TELEPORT_RETRY"
+    "category": "GAME_SERVER_LATE_CHARACTER_ROOT_TELEPORT_RETRY",
+    "merge_sha": "4713c65b9a20b9fe46c66348160920e69af4e6da",
+    "post_merge_main_qa": "UNVERIFIED_WAIT_MAIN_CI",
+    "post_merge_handoff": "UNVERIFIED_WAIT_HANDOFF"
   },
   "merged_prs": [
     {
@@ -129,50 +132,36 @@
       "category": "GAME_SERVER_CLOSEST_TARGET_SQRT_OPTIMIZATION"
     }
   ],
-  "merge_count_this_run": 0,
+  "merge_count_this_run": 1,
   "previous_integration_commit": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
   "main_qa": {
-    "run_id": 40550587465,
-    "head": "cff98f572d6d706362e07315ad81cd4540a5095c",
-    "conclusion": "success",
-    "jobs": {
-      "offline": "success",
-      "compile_hold": "success"
-    },
-    "status_only_descendant_verified": true,
-    "paths": [
-      "status/CHAT_HANDOFF.md",
-      "status/LATEST_STATE.json"
-    ]
+    "status": "UNVERIFIED_WAIT_MAIN_CI",
+    "head": "4713c65b9a20b9fe46c66348160920e69af4e6da",
+    "run_id": null,
+    "conclusion": null
   },
   "handoff": {
-    "run_id": 40550587304,
-    "conclusion": "success"
+    "status": "UNVERIFIED_WAIT_HANDOFF",
+    "head": "4713c65b9a20b9fe46c66348160920e69af4e6da",
+    "run_id": null,
+    "conclusion": null
   },
   "unresolved": [
     "Roblox Studio/2-client/mobile/FPS/visual/fun evidence absent; release HOLD.",
     "Issue #71 multi-game and live service integration not fully verified.",
-    "Gemini incident HOLD and existing spending caps unchanged."
+    "Gemini incident HOLD and existing spending caps unchanged.",
+    "PR91 post-merge main QA and handoff are unverified; PR90 integration blocked until verified."
   ],
-  "next": "No eligible open auto PR. Preserve release HOLD, Gemini incident HOLD, cost limits.",
-  "merge_sha": "cff98f572d6d706362e07315ad81cd4540a5095c",
-  "main_after": "5ce5d878e80a0abf8ddd6c5a741de9e26a1cee7c",
+  "next": "PR91 merged but main QA/handoff not yet verified. Stop additional merges; PR90 remains draft.",
+  "merge_sha": "4713c65b9a20b9fe46c66348160920e69af4e6da",
+  "main_after": "b0581b6dae3ca75601c185a38d63846c5cfcc99d",
   "status_only_descendant_verified": true,
-  "comparison_since_main_qa": {
-    "base": "cff98f572d6d706362e07315ad81cd4540a5095c",
-    "head": "5ce5d878e80a0abf8ddd6c5a741de9e26a1cee7c",
-    "status": "ahead",
-    "ahead_by": 1,
-    "paths": [
-      "status/CHAT_HANDOFF.md",
-      "status/LATEST_STATE.json"
-    ],
-    "verified": true
-  },
+  "comparison_since_main_qa": null,
   "source_metrics": {
     "lua_files": 4,
-    "lua_lines": 776,
-    "lua_bytes": 31064
+    "lua_lines": 781,
+    "lua_bytes": 31235,
+    "scope": "PR91_SOURCE_PROVENANCE_NOT_POST_MERGE_QA"
   },
   "runtime_verified": true,
   "runtime_verification": {
@@ -228,11 +217,29 @@
     "reviewer_run_id": "0afc52f2-0a74-8320-83d1-b70e1c7a501c",
     "lease_epoch": 126
   },
-  "merged_this_run": [],
-  "eligible_open_prs": [
-    90,
-    91
+  "merged_this_run": [
+    {
+      "pr": 91,
+      "head": "9766219864ed899da2041eb876187839df0a6fcf",
+      "merge_sha": "4713c65b9a20b9fe46c66348160920e69af4e6da",
+      "status": "MERGED_WAIT_MAIN_CI",
+      "category": "GAME_SERVER_LATE_CHARACTER_ROOT_TELEPORT_RETRY"
+    }
   ],
-  "next_action": "RECHECK_LOCK_AND_HEAD_THEN_MERGE_PR91; verify post-merge main QA and handoff before PR90",
-  "notes": "Current main QA success and status-only compare verified; independent review passed; no engine/mobile/multiplayer proof."
+  "eligible_open_prs": [
+    90
+  ],
+  "next_action": "VERIFY_PR91_POST_MERGE_MAIN_OFFLINE_AND_COMPILE_HOLD_QA_AND_HANDOFF_BEFORE_REVIEWING_OR_MERGING_PR90",
+  "notes": "GitHub connector does not expose main push workflow-run enumeration; generated status-only descendant and successful PR-side CI do not prove main QA. Preserve all HOLDs.",
+  "comparison_since_merge": {
+    "base": "4713c65b9a20b9fe46c66348160920e69af4e6da",
+    "head": "b0581b6dae3ca75601c185a38d63846c5cfcc99d",
+    "status": "ahead",
+    "ahead_by": 1,
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "verified": true
+  }
 }
