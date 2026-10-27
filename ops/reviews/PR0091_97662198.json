@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "pr": 91,
+  "repository": "kk051780/toy-wars-factory",
+  "head": "9766219864ed899da2041eb876187839df0a6fcf",
+  "base_main_sha": "5ce5d878e80a0abf8ddd6c5a741de9e26a1cee7c",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "444e5fa6-e444-832b-bd5c-058a3bbab9ce",
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "9a1350fd-94d4-8330-bd83-8fe082f748d1",
+  "lease_epoch": 131,
+  "reviewed_at": "2026-10-27T18:24:54.249Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [
+    "Current main 5ce5d878 is a verified one-commit status-only descendant of successful offline+compile_hold QA cff98f57 (40550587465), with successful handoff 40550587304.",
+    "PR91 exact head 97662198 has two successful jobs in Actions 40557950962; trusted base scope gate and two immutable coordinator claims pass in actual offline job log.",
+    "Author WORKER run 9a1350fd and claims epochs 128/129 (2a34463e, de20f422) are verified ancestors of current coordinator; independent reviewer run 444e5fa6.",
+    "Canonical server changes only bounded HumanoidRootPart WaitForChild from one 8-second attempt to up to three 8-second attempts; original post-yield session/character guard retained.",
+    "New whole-server Lua test: late root, immediate root, replaced character, player removal, bounded 24-second exit, pinned old-server negative control; 6 passed 0 failed.",
+    "Initial head failed accepted lifecycle guard ordering; C00062 removed premature pre-yield guard without weakening accepted Python tests; latest 361 Python tests passed.",
+    "Final server source 19920->20091 bytes (+171), four Lua source total 31064->31235 bytes, 776->781 lines. Intermediate C00061 20229 and C00062 -138 reconcile.",
+    "Only server, new Lua test, C00061 and C00062 changed; no protected controls, character balance, budget, external AI, or release permissions changed. Roblox engine/device verification absent."
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "evidence": {
+    "main_qa": {
+      "run": 40550587465,
+      "head": "cff98f572d6d706362e07315ad81cd4540a5095c",
+      "offline": "success",
+      "compile_hold": "success",
+      "comparison_since_qa": {
+        "verified": true,
+        "status": "ahead",
+        "ahead_by": 1,
+        "paths": [
+          "status/CHAT_HANDOFF.md",
+          "status/LATEST_STATE.json"
+        ]
+      }
+    },
+    "handoff": {
+      "run": 40550587304,
+      "conclusion": "success"
+    },
+    "pr_ci": {
+      "run": 40557950962,
+      "head": "9766219864ed899da2041eb876187839df0a6fcf",
+      "offline": "success",
+      "compile_hold": "success",
+      "scope_and_claim_gate": "PASS",
+      "negative_control": "PASS",
+      "python_tests": 361
+    },
+    "claim": {
+      "shas": [
+        "2a34463e21593bd80ae0aaa972d1eeadbf1eeef7",
+        "de20f422cf8e5ed9b13e5c60f0a83c464f4c54a0"
+      ],
+      "epochs": [
+        128,
+        129
+      ],
+      "author_run_id": "9a1350fd-94d4-8330-bd83-8fe082f748d1",
+      "ancestry_verified": true
+    },
+    "changed_files": [
+      "src/ToyWarsServer.server.lua",
+      "tests/auto/late_character_root_retry_spec.lua",
+      "history/C00061_late_character_root_retry_fix.json",
+      "history/C00062_late_root_ci_lifecycle_repair.json"
+    ],
+    "source_metrics": {
+      "lua_files": 4,
+      "lua_lines": 781,
+      "lua_bytes": 31235
+    }
+  },
+  "category": "GAME_SERVER_LATE_CHARACTER_ROOT_TELEPORT_RETRY",
+  "engine_verified": false,
+  "post_merge_main_qa": null,
+  "post_merge_handoff": null
+}
