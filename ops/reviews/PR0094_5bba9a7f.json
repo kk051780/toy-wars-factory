@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "base_main_sha": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+  "reviewed_at": "2026-10-27T22:26:51.698Z",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "f48775fc-f68c-8331-b56e-8ef89ec19c1f",
+  "lease_epoch": 153,
+  "repository": "kk051780/toy-wars-factory",
+  "mergeable": true,
+  "main_qa": {
+    "id": 40578311810,
+    "head": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+    "conclusion": "success",
+    "jobs": [
+      "offline",
+      "compile_hold"
+    ]
+  },
+  "main_handoff": {
+    "id": 40578318577,
+    "head": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+    "conclusion": "success"
+  },
+  "comparison_since_main_qa": {
+    "verified": true,
+    "status": "ahead",
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "merge_performed": false,
+  "pr": 94,
+  "head": "5bba9a7fffa3b494b485341b51372452f196fad1",
+  "branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "0ad158ff-63e0-8325-960b-d2f4598b3bc0",
+  "verdict": "REQUEST_CHANGES",
+  "category": "GAME_PROGRESS_DATASTORE_CAS_REPAIR",
+  "changed_files": [
+    "history/C00065_progress_rejoin.json",
+    "history/C00067_progress_conflict_review_repair.json",
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_conflict_spec.lua",
+    "tests/auto/progression_rejoin_spec.lua"
+  ],
+  "ci": {
+    "id": 40594071458,
+    "head": "5bba9a7fffa3b494b485341b51372452f196fad1",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": [
+      {
+        "name": "offline",
+        "id": 122505368305,
+        "conclusion": "success"
+      },
+      {
+        "name": "compile_hold",
+        "id": 122505369519,
+        "conclusion": "success"
+      }
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40594071458",
+    "python_tests": 391,
+    "new_lua_conflict_cases": 7
+  },
+  "coordination": {
+    "claim_commit": "12f4267d13e49887735c8c2e2e534ed1a0c0f5a1",
+    "claim_epoch": 152,
+    "claim_run_id": "0ad158ff-63e0-8325-960b-d2f4598b3bc0",
+    "claim_registered_task": true,
+    "reviewer_epoch": 153
+  },
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": false
+  },
+  "findings": [
+    "Previous review blocker fixed: UpdateAsync(current,keyInfo) now checks the loaded snapshot and revision, aborts on stale/unknown schema, retains existing UserIds/metadata; 7 conflict cases including 2 pinned-old negative controls pass.",
+    "New distinct loss scenario remains: both sessions load revision0, server A later saves revision1, then server B (already active with more recent gameplay) attempts to save; B's UpdateAsync returns nil because expected revision0 differs. B's earned/spent progress is discarded on disconnect, despite all tests passing.",
+    "Official Roblox player-data guidance explicitly recommends session locking because a new session may load before an old session finishes saving. CAS cancellation prevents stale overwrite but does not guarantee saving the later session's progress."
+  ],
+  "blockers": [
+    "P1: src/ToyWarsServer.server.lua loadProgress()/saveProgress(): two-server overlap A and B both load coins=200 revision0; A later saves 300 revision1; B plays to 500 and leaves; B's expected snapshot revision0 conflicts, UpdateAsync returns nil and persistent data remains 300. Add canonical two-session interleaving regression with newer session progress preserved, implement session ownership/locking at load or equivalently safe recovery without merging nonmonotonic coins by max; keep unknown schema and metadata protections."
+  ],
+  "limitations": [
+    "No Roblox Studio/DataStore/multiplayer/mobile verification; offline mock only.",
+    "No autosave and failed DataStore requests may lose unsaved progress; keep documented, do not claim production durability."
+  ],
+  "next_action": "WORKER_FIX_TWO_SESSION_OVERLAP_BEFORE_MERGE"
+}

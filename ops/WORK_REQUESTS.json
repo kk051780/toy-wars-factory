@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T21:40:36Z",
+  "observed_at": "2026-10-27T22:26:51.698Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1376,7 +1376,7 @@
       "kind": "PR_DATASTORE_CONCURRENT_OVERWRITE",
       "priority": "P1",
       "assigned_role": "WORKER",
-      "status": "OPEN_REQUEST_CHANGES",
+      "status": "RESOLVED_IN_PR_HEAD_AWAIT_MAIN",
       "pr": 94,
       "head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
       "base_main_sha": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
@@ -1406,7 +1406,15 @@
           "https://create.roblox.com/docs/cloud-services/data-stores/best-practices"
         ]
       },
-      "owner_approval_required": false
+      "owner_approval_required": false,
+      "resolution": {
+        "pr": 94,
+        "head": "5bba9a7fffa3b494b485341b51372452f196fad1",
+        "ci": 40594071458,
+        "verified_by": "f48775fc-f68c-8331-b56e-8ef89ec19c1f",
+        "observed_at": "2026-10-27T22:26:51.698Z",
+        "note": "Specific unconditional UpdateAsync overwrite fixed; separate two-session overlap loss remains blocked."
+      }
     },
     {
       "id": "issue71_pr95_joined_incident_observer_independent_review",
@@ -1459,6 +1467,34 @@
       "owner_reply_required": false,
       "next_actor": "6add6aaceb4c8191b1666fe15f97cd88",
       "live_boundary": "Host-observed final execution only; stdout NOT_VERIFIED; original operation receipt unavailable; no dispatch/credential/workflow/task permission expansion."
+    },
+    {
+      "id": "pr94_two_session_overlap_later_progress_lost_20261028",
+      "kind": "REPAIR_PR94_DATASTORE_SESSION_OVERLAP",
+      "priority": "P1",
+      "assigned_role": "WORKER",
+      "status": "OPEN_REQUEST_CHANGES",
+      "pr": 94,
+      "head": "5bba9a7fffa3b494b485341b51372452f196fad1",
+      "created_at": "2026-10-27T22:26:51.698Z",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "f48775fc-f68c-8331-b56e-8ef89ec19c1f",
+      "source": "src/ToyWarsServer.server.lua loadProgress/saveProgress",
+      "request": "Protect the later active session's progress when a prior server's final save races with a new session's load. Current CAS rejects B's final write after A commits, silently losing B's progress. Use per-key session ownership/locking on load with bounded expiry/refresh or equivalent safe serialization; do not merge coins via max because purchases decrease coins. Preserve unknown schema, revision, metadata and existing accepted tests.",
+      "reproduction": [
+        "DataStore p:1={version=1,coins=200,wave=2,defeated=3,factoryLevel=1,revision=0}; A loads; B loads same snapshot before A PlayerRemoving.",
+        "A earns 100 and saves coins=300 revision=1; B earns/spends and reaches coins=500, then PlayerRemoving; B's UpdateAsync(current) sees revision=1 vs expected 0 and returns nil.",
+        "Stored coins=300, B's later progress is lost. Existing 7 conflict cases only cover older writer saving after newer writer, not inverse."
+      ],
+      "expected": [
+        "Canonical two-session overlap regression fails on current PR head and passes on fix, with later session state retained and no stale overwrite.",
+        "UpdateAsync callback remains non-yielding and preserves DataStoreKeyInfo metadata/UserIds; unknown version remains untouched.",
+        "Fresh exact-head trusted scope/claim and both CI jobs PASS; author must not merge. Roblox engine remains unverified."
+      ],
+      "evidence": {
+        "pr_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40594071458",
+        "official_guidance": "https://create.roblox.com/docs/cloud-services/data-stores/player-data-purchasing"
+      }
     }
   ]
 }

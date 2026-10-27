@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "base_main_sha": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+  "reviewed_at": "2026-10-27T22:26:51.698Z",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "f48775fc-f68c-8331-b56e-8ef89ec19c1f",
+  "lease_epoch": 153,
+  "repository": "kk051780/toy-wars-factory",
+  "mergeable": true,
+  "main_qa": {
+    "id": 40578311810,
+    "head": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+    "conclusion": "success",
+    "jobs": [
+      "offline",
+      "compile_hold"
+    ]
+  },
+  "main_handoff": {
+    "id": 40578318577,
+    "head": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+    "conclusion": "success"
+  },
+  "comparison_since_main_qa": {
+    "verified": true,
+    "status": "ahead",
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "merge_performed": false,
+  "pr": 95,
+  "head": "a26165b192770343897e375815428f8a36c13e2f",
+  "branch": "auto/twf-system-review-ed8dffe9-ee34-8323-812e-164cfa0da5bd",
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "ed8dffe9-ee34-8323-812e-164cfa0da5bd",
+  "verdict": "APPROVE",
+  "category": "SYSTEM_READ_ONLY_CROSS_CHANNEL_INCIDENT_OBSERVER",
+  "changed_files": [
+    "docs/research/2026-10-28_incident_observer.md",
+    "history/C00066_joined_incident_observer.json",
+    "tests/test_system_incident_observer.py",
+    "tools/system_incident_observer.py"
+  ],
+  "ci": {
+    "id": 40588371241,
+    "head": "a26165b192770343897e375815428f8a36c13e2f",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": [
+      {
+        "name": "offline",
+        "id": 122485809811,
+        "conclusion": "success"
+      },
+      {
+        "name": "compile_hold",
+        "id": 122485810231,
+        "conclusion": "success"
+      }
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40588371241",
+    "python_tests": 423,
+    "new_python_tests": 32
+  },
+  "coordination": {
+    "claim_commit": "67a59e7130b91353b286d7e11ea7ae64d575f300",
+    "claim_epoch": 150,
+    "claim_run_id": "ed8dffe9-ee34-8323-812e-164cfa0da5bd",
+    "claim_registered_task": true,
+    "reviewer_epoch": 153
+  },
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "findings": [
+    "Four A-only system/tool/test/history/doc files; no existing accepted source/tests, config, workflows, Gemini hold, release or cost controls changed.",
+    "Exact-head CI attempt1 offline and compile_hold completed successfully, trusted-base system scope and immutable shared META claim steps succeeded; 423 Python tests including 32 new observer tests.",
+    "New bounded observer rechecks mutable GitHub run/PR/ref/job responses and service snapshots, uses same-call cache only for SHA-addressed Git objects, fails closed on drift, and records advisory-only NOT_VERIFIED with all grants false.",
+    "Claim epoch150/run ID confirmed from immutable shared state and ancestry; author META run is separate from REVIEWER task/run.",
+    "Reported one live bounded host observation (37 GET, 9 PEEK) and two rejected attempts are author evidence, not independently reproduced provider-operation receipts."
+  ],
+  "blockers": [],
+  "limitations": [
+    "Original host write rejection/operation response not captured; no autonomous dispatch, permission grant, durable provider attestation or long-term reliability proof.",
+    "No Roblox engine, multiplayer or mobile test; no gameplay source modification.",
+    "Issue #71 remains open."
+  ],
+  "next_action": "READY_FOR_EXACT_HEAD_MERGE_AND_POST_MAIN_QA"
+}
