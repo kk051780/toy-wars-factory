@@ -1,7 +1,7 @@
 --!strict
 -- TOY WARS FACTORY v1.2 / PLAYABLE PVE VERTICAL SLICE.
 -- Server-authoritative solo factory arenas, wave combat and upgrades.
--- Session only: no DataStore, no purchasable content, no PvP yet.
+-- Server-owned versioned progress persistence; no purchasable content or PvP yet.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -24,6 +24,52 @@ local UNIT_COLORS = {
     junk = Color3.fromRGB(173, 83, 118),
 }
 local selectEvent = ReplicatedStorage:WaitForChild("ToyWarsSelectUnit")
+-- Server-owned progress: failed reads and unrecognized schemas never overwrite prior saves.
+local progressStore
+do
+    local ok, service = pcall(function() return game:GetService("DataStoreService") end)
+    if ok and service then
+        local opened, store = pcall(function() return service:GetDataStore("ToyWarsProgressV1") end)
+        if opened then progressStore = store end
+    end
+end
+local function validProgressInt(value, minimum, maximum)
+    return type(value) == "number" and value == math.floor(value)
+        and value >= minimum and value <= maximum
+end
+local function loadProgress(player)
+    if not progressStore then return nil, false end
+    local ok, record = pcall(function()
+        return progressStore:GetAsync("p:" .. tostring(player.UserId))
+    end)
+    if not ok then return nil, false end
+    if record == nil then return nil, true end
+    if type(record) ~= "table" or record.version ~= 1
+        or not validProgressInt(record.coins, 0, B.MAX_CASH)
+        or not validProgressInt(record.wave, 1, B.MAX_WAVE)
+        or not validProgressInt(record.defeated, 0, 2147483647)
+        or not validProgressInt(record.factoryLevel, 1, B.MAX_LEVEL) then
+        return nil, false
+    end
+    return record, true
+end
+local function saveProgress(player, state)
+    if not progressStore or not state.persistAllowed or not state.coins then return end
+    local record = {
+        version = 1, coins = state.coins.Value, wave = state.wave.Value,
+        defeated = state.kills.Value, factoryLevel = state.level.Value,
+    }
+    if not validProgressInt(record.coins, 0, B.MAX_CASH)
+        or not validProgressInt(record.wave, 1, B.MAX_WAVE)
+        or not validProgressInt(record.defeated, 0, 2147483647)
+        or not validProgressInt(record.factoryLevel, 1, B.MAX_LEVEL) then return end
+    local ok = pcall(function()
+        progressStore:UpdateAsync("p:" .. tostring(player.UserId), function()
+            return record
+        end)
+    end)
+    if not ok then warn("TWF: progress save unavailable for", player.UserId) end
+end
 
 local function part(parent, name, size, cf, color, material)
     local p = Instance.new("Part")
@@ -428,16 +474,21 @@ local function join(player)
         return
     end
     occupied[slot]=player
+    -- Reserve before the yielding read; leaving during load must release the plot.
+    local pending={slot=slot,active=false,entities={}}
+    sessions[player]=pending
+    local progress, persistAllowed=loadProgress(player)
+    if sessions[player]~=pending or player.Parent~=Players then return end
     local stats=Instance.new("Folder")
     stats.Name="leaderstats"
     stats.Parent=player
-    local coins=setInt(stats,"Coins",50)
-    local wave=setInt(stats,"Wave",1)
-    local kills=setInt(stats,"Defeated",0)
+    local coins=setInt(stats,"Coins",progress and progress.coins or 50)
+    local wave=setInt(stats,"Wave",progress and progress.wave or 1)
+    local kills=setInt(stats,"Defeated",progress and progress.defeated or 0)
     local status=Instance.new("Folder")
     status.Name="ToyWarsStatus"
     status.Parent=player
-    local level=setInt(status,"FactoryLevel",1)
+    local level=setInt(status,"FactoryLevel",progress and progress.factoryLevel or 1)
     local hp=setInt(status,"BaseHP",100)
     local units=setInt(status,"Allies",0)
     local enemies=setInt(status,"Enemies",0)
@@ -446,10 +497,10 @@ local function join(player)
     selected.Value="PON"
     selected.Parent=status
     local state={
-        slot=slot,x=plotCenter(slot),active=true,map=nil,
+        slot=slot,x=plotCenter(slot),active=true,map=nil,persistAllowed=persistAllowed,
         coins=coins,wave=wave,kills=kills,baseHP=hp,level=level,
         unitsValue=units,enemiesValue=enemies,selectedValue=selected,selected="pon",
-        entities={},spawnOrdinal=0,enemyTarget=B.waveSize(1),enemiesMade=0,
+        entities={},spawnOrdinal=0,enemyTarget=B.waveSize(wave.Value),enemiesMade=0,
         productionTimer=1.2,enemyTimer=0.1,waveBreak=4,incomeCarry=0,
     }
     sessions[player]=state
@@ -493,11 +544,19 @@ Players.PlayerRemoving:Connect(function(player)
     -- Assign a newly freed plot to one player who was waiting at capacity.
     for _,waiting in ipairs(Players:GetPlayers()) do
         if waiting ~= player and waiting.Parent == Players and not sessions[waiting] then
-            join(waiting)
+            task.spawn(join,waiting)
             break
         end
     end
+    saveProgress(player,state)
 end)
+if type(game.BindToClose) == "function" then
+    game:BindToClose(function()
+        for player,state in pairs(sessions) do
+            if state.active then saveProgress(player,state) end
+        end
+    end)
+end
 for _,player in ipairs(Players:GetPlayers()) do task.spawn(join,player) end
 
 local accumulated=0
