@@ -1,0 +1,134 @@
+{
+  "schema": 1,
+  "pr": 78,
+  "repository": "kk051780/toy-wars-factory",
+  "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+  "base_reviewed": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
+  "category": "SCOPED_TRUST_ROOT_SYSTEM_MAINTENANCE",
+  "verdict": "APPROVE",
+  "status": "APPROVED_PENDING_EXACT_HEAD_MERGE",
+  "observed_at": "2026-10-27T03:44:15.824Z",
+  "integration_path": "SCOPED_BOOTSTRAP_CONTROLLER_MIGRATION",
+  "normal_v4_reviewer_integration_claimed": false,
+  "policy_authority": {
+    "main_integration_delegated": true,
+    "documents": [
+      "AGENTS.md",
+      "docs/AUTONOMOUS_INTEGRATION.md#導入時の読取り専用審査",
+      "docs/REPAIR_COORDINATION.md"
+    ],
+    "scope": "One exact reviewed trust-root PR; author cannot self-approve or self-merge; no normal REVIEWER gate override"
+  },
+  "registered_service_review": {
+    "pr": 78,
+    "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "reviewer_run_id": "d26f58a7-1d38-832f-8388-4de85a493d66",
+    "verdict": "APPROVE",
+    "blockers": [],
+    "checks": {
+      "scope": true,
+      "regression": true,
+      "source_ledger": true,
+      "protected_controls": true,
+      "behavior": true
+    },
+    "reason": "指定PR/headと共有審査依頼の一致を確認。最新CIは両ジョブ成功、Python検査315件PASS。変更は6ファイルで、ゲームソース・公開条件・費用上限に変更なし。C00046/C00047の履歴とソース規模30030バイトの整合性を確認。旧チェッカーのchmod-only回避を実際のGit操作で再現する検査が成功し、修正版では変更前後双方の100644 blob条件を検証。実行権限変更、シンボリックリンク、未登録モジュール、検査・履歴欠落の拒否検査も成功。共有claimの祖先関係を確認。保護されたチェッカーの変更は通常の自動PR用scope/lease CI対象外であり、今回の判定は指定された独立読取り専用審査に限る。main統合、統合後QA、旧診断CLI修復、Roblox実機検証は未実施。",
+    "last_run": {
+      "id": "d26f58a7-1d38-832f-8388-4de85a493d66",
+      "recorded_status": "completed",
+      "scheduled_for": "2026-10-27T03:39:09.850974Z",
+      "started_at": "2026-10-27T03:39:36.826781Z",
+      "completed_at": "2026-10-27T03:41:13.371124Z",
+      "chat_ref": {
+        "type": "chatgpt",
+        "id": "6add6b00-4784-83ee-abae-45d04f185d10"
+      }
+    },
+    "result_created_at": "2026-10-27T03:41:12.830554Z",
+    "result_completed_at": "2026-10-27T03:41:13.371124Z",
+    "content_truncated": false,
+    "is_failure_message": false,
+    "requires_user_action": false,
+    "delivery_status": "unknown",
+    "read_only": true
+  },
+  "independent_integrator": {
+    "kind": "CONTROLLER",
+    "identity_kind": "MANUAL_OPERATION_UUID_NOT_SERVICE_RUN",
+    "operation_id": "1a11d75b-907b-4b7e-89a2-159938b42715",
+    "task_id": null,
+    "context": "/root/pr78_independent_integration",
+    "author_operation_id": "0c4ce7ce-ab36-4126-842c-eab76a87e1cd",
+    "is_author": false,
+    "claim_commit": "8dfe46145e2813670b5900eefe7e61064b06795f",
+    "epoch": 91,
+    "work_branch": "main"
+  },
+  "independent_findings": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true,
+    "summary": "Read all six exact-head changed files. Authority comes only from 100644 ordinary blobs in authenticated main ancestor intersected with immutable candidate modes; head can restrict but cannot create authority. New regression/history remain mandatory. Existing tests/history, source, policy/workflows, task/run/claim gates, Gemini/spending/release controls are unchanged.",
+    "local_tests": {
+      "matched_authenticated_blob_shas": true,
+      "scope_tests": 7,
+      "real_git_cli_tests": 12,
+      "passed": 19,
+      "negative_control_blob": "e8567c85c5ff9895052e8b15a1ea288304b3b978",
+      "negative_control": "Exact old checker admits chmod-only M; actual corrected CLI rejects it; ordinary 100644 content edit passes."
+    }
+  },
+  "ci": {
+    "id": 40445204478,
+    "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+    "base": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 121994715554,
+        "name": "offline",
+        "conclusion": "success"
+      },
+      {
+        "id": 121994715812,
+        "name": "compile_hold",
+        "conclusion": "success"
+      }
+    ],
+    "python_tests": 315,
+    "provider_calls": 0,
+    "live_authorized": false,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40445204478",
+    "scope_and_claim_steps": "SKIPPED_EXPECTED_CONTROLLER_BRANCH; separately reviewed bootstrap trust-root path"
+  },
+  "main_before": {
+    "head": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
+    "qa": 40412673510,
+    "qa_head": "9180409b8719449aa77a4fd6410dab4d9abe241a",
+    "conclusion": "success",
+    "jobs": [
+      "offline:success",
+      "compile_hold:success"
+    ],
+    "status_only_descendant_verified": true,
+    "comparison_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 758,
+    "lua_bytes": 30030
+  },
+  "limitations": [
+    "No ordinary registered REVIEWER integration cycle is asserted for this bootstrap migration.",
+    "Original standalone legacy CLI is still false-safe for failed/no_update; separate scoped META repair and main QA required; Issue72 remains open.",
+    "Roblox engine/multiplayer/mobile/visual/player evidence remain unverified; release HOLD and Gemini incident/spending holds remain."
+  ],
+  "next": "Merge only exact reviewed head with merge method; verify actual post-merge main offline/compile_hold and handoff; then hand legacy CLI repair to META."
+}

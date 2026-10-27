@@ -567,6 +567,26 @@
         "behavior": true
       },
       "reason": "2026-10-25、指定headをGitHubから再取得し、19検査を再実行して全件合格。前回指摘した作者run IDの欠落・不正はWAIT_AUTHOR_ID、ロックのタスク不一致はWAIT_LOCKとなることを確認した。[対象headのCI](https://github.com/kk051780/toy-wars-factory/actions/runs/40149282396)も両job成功。既存の差分審査と合わせ、導入を承認する。今回は読取り専用のため変更・統合は0件。次はCONTROLLERによる導入とmain QA確認。所有者の承認返信は不要。通常のv4統合実走・Roblox実機成功は未確認。"
+    },
+    {
+      "pr": 78,
+      "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "d26f58a7-1d38-832f-8388-4de85a493d66",
+      "verdict": "APPROVE",
+      "blockers": [],
+      "checks": {
+        "scope": true,
+        "regression": true,
+        "source_ledger": true,
+        "protected_controls": true,
+        "behavior": true
+      },
+      "reason": "指定PR/headと共有審査依頼の一致を確認。最新CIは両ジョブ成功、Python検査315件PASS。変更は6ファイルで、ゲームソース・公開条件・費用上限に変更なし。C00046/C00047の履歴とソース規模30030バイトの整合性を確認。旧チェッカーのchmod-only回避を実際のGit操作で再現する検査が成功し、修正版では変更前後双方の100644 blob条件を検証。実行権限変更、シンボリックリンク、未登録モジュール、検査・履歴欠落の拒否検査も成功。共有claimの祖先関係を確認。保護されたチェッカーの変更は通常の自動PR用scope/lease CI対象外であり、今回の判定は指定された独立読取り専用審査に限る。main統合、統合後QA、旧診断CLI修復、Roblox実機検証は未実施。",
+      "ci": 40445204478,
+      "service_completed_at": "2026-10-27T03:41:13.371124Z",
+      "review_record": "ops/reviews/PR0078_d9caf399.json",
+      "integration_status": "APPROVED_PENDING_EXACT_HEAD_MERGE"
     }
   ],
   "bootstrap_review_failures": [
@@ -693,29 +713,6 @@
       "note": "Immutable controller claim work_branch exactly equals PR branch; do not inherit superseded PR58 claim, and do not accept author self-attestation"
     }
   ],
-  "bootstrap_review_request": {
-    "mode": "READ_ONLY_REVIEW",
-    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "repository": "kk051780/toy-wars-factory",
-    "pr": 78,
-    "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
-    "base_main_sha": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
-    "source_branch": "ops/twf-trusted-maintenance-scope-20261027",
-    "owner_delegation": {
-      "main_integration_authorized": true
-    },
-    "intent": "TRUST_ROOT_MODE_GUARD_INDEPENDENT_REVIEW_ONLY_NO_AUTHOR_MERGE",
-    "requested_at": "2026-10-27T03:38:26.182Z",
-    "author_operation_id": "0c4ce7ce-ab36-4126-842c-eab76a87e1cd",
-    "author_claim_commit": "01e218e4a2f8b39a116c40b8f4d3397001b4f054",
-    "required_checks": [
-      "Read exact changed checker and all tests from authenticated GitHub head",
-      "Verify latest exact-head offline and compile_hold CI; do not reuse previous head success",
-      "Reproduce old exact-blob chmod-only bypass and confirm new actual CLI rejects it",
-      "Preserve immutable base ancestry, registered claims, protected controls and source ledger",
-      "Return separate service verdict with reviewer task/run UUID; no code/ref/PR/main mutations"
-    ]
-  },
   "administrative_revocations": [
     {
       "schema": 1,
@@ -766,14 +763,84 @@
         "run_id": "543474b5-42f4-832c-90e9-50ae0c9dae5b",
         "task_id": "6adfc2413c3481919701acfe1a9b8f00"
       }
+    },
+    {
+      "mode": "READ_ONLY_REVIEW",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 78,
+      "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+      "base_main_sha": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
+      "source_branch": "ops/twf-trusted-maintenance-scope-20261027",
+      "owner_delegation": {
+        "main_integration_authorized": true
+      },
+      "intent": "TRUST_ROOT_MODE_GUARD_INDEPENDENT_REVIEW_ONLY_NO_AUTHOR_MERGE",
+      "requested_at": "2026-10-27T03:38:26.182Z",
+      "author_operation_id": "0c4ce7ce-ab36-4126-842c-eab76a87e1cd",
+      "author_claim_commit": "01e218e4a2f8b39a116c40b8f4d3397001b4f054",
+      "required_checks": [
+        "Read exact changed checker and all tests from authenticated GitHub head",
+        "Verify latest exact-head offline and compile_hold CI; do not reuse previous head success",
+        "Reproduce old exact-blob chmod-only bypass and confirm new actual CLI rejects it",
+        "Preserve immutable base ancestry, registered claims, protected controls and source ledger",
+        "Return separate service verdict with reviewer task/run UUID; no code/ref/PR/main mutations"
+      ],
+      "status": "CONSUMED_BY_INDEPENDENT_CONTROLLER_INTEGRATION",
+      "consumed_at": "2026-10-27T03:44:15.824Z",
+      "consumer_operation_id": "1a11d75b-907b-4b7e-89a2-159938b42715",
+      "reviewer_run_id": "d26f58a7-1d38-832f-8388-4de85a493d66",
+      "review_record": "ops/reviews/PR0078_d9caf399.json"
     }
   ],
   "pr78_correction": {
     "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
     "claim_commit": "01e218e4a2f8b39a116c40b8f4d3397001b4f054",
     "epoch": 90,
-    "ci": "PENDING_NEW_EXACT_HEAD",
-    "review": "REQUESTED_SEPARATE_REGISTERED_TASK",
-    "local_python_tests": 315
+    "ci": 40445204478,
+    "review": "ACTUAL_REGISTERED_APPROVE_VERIFIED",
+    "local_python_tests": 315,
+    "reviewer_run_id": "d26f58a7-1d38-832f-8388-4de85a493d66"
+  },
+  "reviews": {
+    "78": {
+      "schema": 1,
+      "pr": 78,
+      "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+      "base_reviewed": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
+      "reviewer_kind": "REGISTERED_READ_ONLY_BOOTSTRAP_REVIEW",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "d26f58a7-1d38-832f-8388-4de85a493d66",
+      "verdict": "APPROVE",
+      "review_record": "ops/reviews/PR0078_d9caf399.json",
+      "integration_path": "SCOPED_BOOTSTRAP_CONTROLLER_MIGRATION",
+      "integrator_operation_id": "1a11d75b-907b-4b7e-89a2-159938b42715",
+      "lease_epoch": 91,
+      "status": "APPROVED_PENDING_EXACT_HEAD_MERGE",
+      "ci": {
+        "id": 40445204478,
+        "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+        "base": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
+        "status": "completed",
+        "conclusion": "success",
+        "jobs": [
+          {
+            "id": 121994715554,
+            "name": "offline",
+            "conclusion": "success"
+          },
+          {
+            "id": 121994715812,
+            "name": "compile_hold",
+            "conclusion": "success"
+          }
+        ],
+        "python_tests": 315,
+        "provider_calls": 0,
+        "live_authorized": false,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40445204478",
+        "scope_and_claim_steps": "SKIPPED_EXPECTED_CONTROLLER_BRANCH; separately reviewed bootstrap trust-root path"
+      }
+    }
   }
 }
