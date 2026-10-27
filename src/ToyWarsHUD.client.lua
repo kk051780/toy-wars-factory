@@ -3,8 +3,6 @@
 local Players=game:GetService("Players")
 local ReplicatedStorage=game:GetService("ReplicatedStorage")
 local player=Players.LocalPlayer
-local event=ReplicatedStorage:WaitForChild("ToyWarsSelectUnit")
-local B=require(ReplicatedStorage:WaitForChild("ToyWarsBalance"))
 -- Show a useful queue state before waiting for a workshop slot (max four plots).
 local gui=Instance.new("ScreenGui")
 gui.Name="ToyWarsHUD"
@@ -22,6 +20,9 @@ waiting.TextScaled=true
 waiting.TextWrapped=true
 waiting.Text="Waiting for a free workshop slot..."
 waiting.Parent=gui
+-- Show queue feedback before replicated assets can delay this LocalScript.
+local event=ReplicatedStorage:WaitForChild("ToyWarsSelectUnit")
+local B=require(ReplicatedStorage:WaitForChild("ToyWarsBalance"))
 local stats=player:WaitForChild("leaderstats")
 local status=player:WaitForChild("ToyWarsStatus")
 local coins=stats:WaitForChild("Coins")
