@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "pr": 88,
+  "repository": "kk051780/toy-wars-factory",
+  "head": "1c11d6ba216e88dfb33b0391dc30f1b67748a09c",
+  "base_main_sha": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "0afc52f2-0a74-8320-83d1-b70e1c7a501c",
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "246d08d5-6110-832e-9675-c62d604b0196",
+  "lease_epoch": 126,
+  "reviewed_at": "2026-10-27T17:24:23.573Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [
+    "Current main db8a6f19 is a directly compared generated-status-only descendant of QA-success head 4ba0ec71; main offline and compile_hold succeeded in run 40529796548; handoff 40529796278 succeeded.",
+    "PR88 exact head 1c11d6ba passes offline and compile_hold in run 40538397913, including trusted-base scope and immutable coordinator claim gates.",
+    "WORKER claim 84c8bdf7 epoch124 is an ancestor of coordinator, was acquired from idle epoch123 by task/run 6adbf0d6/246d08d5 for exact PR branch; reviewer task/run independent.",
+    "HUD reorders leaderstats before replicated remote and balance awaits, switching queued notice to preparing only after allocation; guide and three selector actions remain unchanged.",
+    "Whole canonical HUD fixture covers queued and already-allocated players and pinned old-order negative control; accepted tests unchanged.",
+    "Three changed paths: HUD reorder 6824->6824 bytes, new Lua regression, append-only C00058; 4 Lua files/776 lines/30993 bytes, unchanged. No release, billing, provider, character-stat, permissions or test-gate changes.",
+    "Offline mock does not establish actual Roblox engine, multiplayer or mobile UX."
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "evidence": {
+    "main_qa": {
+      "run": 40529796548,
+      "head": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
+      "offline": "success",
+      "compile_hold": "success",
+      "comparison_since_qa": {
+        "status": "ahead",
+        "ahead_by": 1,
+        "paths": [
+          "status/CHAT_HANDOFF.md",
+          "status/LATEST_STATE.json"
+        ],
+        "verified": true
+      }
+    },
+    "handoff": {
+      "run": 40529796278,
+      "conclusion": "success"
+    },
+    "pr_ci": {
+      "run": 40538397913,
+      "head": "1c11d6ba216e88dfb33b0391dc30f1b67748a09c",
+      "offline": "success",
+      "compile_hold": "success",
+      "scope_and_claim_gate": "PASS",
+      "negative_control": "PASS"
+    },
+    "claim": {
+      "sha": "84c8bdf7230289282928cc4e47d252a3ea70c915",
+      "epoch": 124,
+      "author_run_id": "246d08d5-6110-832e-9675-c62d604b0196",
+      "ancestry_verified": true
+    },
+    "changed_files": [
+      "src/ToyWarsHUD.client.lua",
+      "tests/auto/queue_notice_assets_after_allocation_spec.lua",
+      "history/C00058_queue_asset_wait_order_fix.json"
+    ],
+    "source_metrics": {
+      "lua_files": 4,
+      "lua_lines": 776,
+      "lua_bytes": 30993
+    }
+  },
+  "category": "GAME_HUD_QUEUE_ASSET_WAIT_ORDER",
+  "engine_verified": false,
+  "post_merge_main_qa": null,
+  "post_merge_handoff": null,
+  "updated_at": "2026-10-27T17:24:23.573Z"
+}
