@@ -258,19 +258,19 @@ end
 
 local function closestOpponent(state, entity)
     local best=nil
-    local bestDist=math.huge
+    local bestDistSquared=math.huge
     for _,target in ipairs(state.entities) do
         if target.alive and target.side~=entity.side then
             local dx=target.x-entity.x
             local dz=target.z-entity.z
-            local d=math.sqrt(dx*dx+dz*dz)
-            if d<bestDist then
-                bestDist=d
+            local dSquared=dx*dx+dz*dz
+            if dSquared<bestDistSquared then
+                bestDistSquared=dSquared
                 best=target
             end
         end
     end
-    return best,bestDist
+    return best,best and math.sqrt(bestDistSquared) or math.huge
 end
 
 local function refreshHealthBar(e)
