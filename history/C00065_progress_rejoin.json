@@ -1,0 +1,94 @@
+{
+  "id": "C00065",
+  "date": "2026-10-28",
+  "kind": "AUTONOMOUS_VERSIONED_PROGRESS_REJOIN",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "base": "main",
+    "open_prs": [],
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "82292b8fcefa44c38b4c68d6c62a96c42f624494",
+    "owner_run_id": "4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "epoch": 144
+  },
+  "main_base": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+  "source_commit": "a3cdbeac12527b64f95e1eb327c6cc874722cf2d",
+  "issue": 93,
+  "defect": {
+    "id": "player_progress_resets_on_rejoin",
+    "cause": "Canonical join() unconditionally initialized Coins=50, Wave=1, Defeated=0 and FactoryLevel=1; all progress was lost on a normal reconnect.",
+    "reproduction": "Run complete canonical server through injected DataStore mock: mutate four server-owned values, remove player, rejoin same UserId. Previous main resets values and never calls GetAsync/UpdateAsync; new test requires persisted roundtrip."
+  },
+  "fix": "Use optional ToyWarsProgressV1 DataStore with server-owned, bounded integer schema; restore four values before plot construction and derive enemyTarget from restored wave. Reserve plot during yielding load and fence disconnected players. Save on PlayerRemoving and BindToClose; never overwrite an unknown schema or a failed read.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_rejoin_spec.lua",
+    "history/C00065_progress_rejoin.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 20147,
+      "after_bytes": 22943,
+      "delta_bytes": 2796
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 840,
+    "lua_bytes": 34087
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/progression_rejoin_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 5633,
+      "delta_bytes": 5633
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "PON/GUARDON/TANKURU/JUNK stats, costs, visuals and combat formulas unchanged; progress restoration affects saved wave, factory level, coins and defeated count.",
+  "tests": {
+    "canonical_server": "tests/auto/progression_rejoin_spec.lua",
+    "new_cases": 7,
+    "negative_control": "Old canonical main initializes default values on every join; no prior persistence API.",
+    "accepted_server_cases": "UNCHANGED",
+    "accepted_hud_cases": "UNCHANGED",
+    "local": "NOT_RUN_LOCAL_LUA_5_4_CANONICAL_TREE_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "roblox_engine": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "datastore_live": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40578311810",
+    "main_qa_head": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+    "main_qa_note": "Both jobs success; base main differs only in two generated status files.",
+    "claim_commit": "82292b8fcefa44c38b4c68d6c62a96c42f624494",
+    "source_commit": "a3cdbeac12527b64f95e1eb327c6cc874722cf2d",
+    "pr": "PENDING_DRAFT_PR",
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "limitations": [
+    "No autosave during long sessions; abrupt server loss can lose progress since last successful save.",
+    "Real Roblox DataStore enablement, cross-server conflicts, quota and rejoin are unverified.",
+    "Malformed/unknown stored schema falls back to session defaults without overwriting prior record."
+  ],
+  "next_action": "Open draft PR and require latest-head offline+compile_hold success, independent REVIEWER integration and post-merge main QA. Do not claim G13 engine acceptance or Roblox release.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}
