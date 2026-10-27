@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 103,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "2eb44079-6988-8328-94b3-93dacf24485d",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 103,
-    "acquired_at": "2026-10-27T07:24:45.519Z",
-    "expires_at": "2026-10-27T07:54:45.519Z",
-    "base_main_sha": "418843226131ad559c2fc3826829058f3061e0ff",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -30,11 +20,11 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "12b49b5f-f5fc-832d-955d-93cdfc949468",
-    "epoch": 102,
-    "released_at": "2026-10-27T07:12:41.537Z",
-    "result": "PR82_C00050_CI_40465570011_TWO_JOBS_SUCCESS_WAIT_REVIEW"
+    "kind": "REVIEWER",
+    "owner_id": "2eb44079-6988-8328-94b3-93dacf24485d",
+    "epoch": 103,
+    "released_at": "2026-10-27T07:27:16.110Z",
+    "result": "PR82_MERGED_MAIN_QA_AND_HANDOFF_PASSED;PR81_REBASE_C00051_REQUIRED"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -485,8 +475,14 @@
         "conclusion": "success"
       },
       "review_record": "ops/reviews/PR0082_799c838f.json",
-      "post_merge_status": "WAIT_MAIN_CI",
-      "merge_sha": "bb9a3a1388a55186997ae7983b7eed94e84155df"
+      "post_merge_status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "merge_sha": "bb9a3a1388a55186997ae7983b7eed94e84155df",
+      "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40467079624",
+      "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40467079700",
+      "post_merge_main_qa_status": "success",
+      "post_merge_handoff_status": "success",
+      "main_after_handoff": "2d50807eff2de44cc78a9278d728f183e01c898d",
+      "status_only_descendant_verified": true
     }
   },
   "integration_results": {

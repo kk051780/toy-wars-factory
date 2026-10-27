@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T06:26:15.741Z",
+  "observed_at": "2026-10-27T07:27:16.110Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1031,7 +1031,7 @@
       "kind": "WORKER_PARTIAL_GAME_CHANGE_NO_PR",
       "priority": "P1",
       "assigned_role": "WORKER",
-      "status": "OPEN",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "created_at": "2026-10-27T05:21:32.908Z",
       "repository": "kk051780/toy-wars-factory",
       "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
@@ -1058,7 +1058,18 @@
         "raw_provider_error": "NOT_AVAILABLE",
         "related_issue": "https://github.com/kk051780/toy-wars-factory/issues/57"
       },
-      "owner_reply_required": false
+      "owner_reply_required": false,
+      "resolution": {
+        "pr": 82,
+        "head": "799c838f168b8942b275dab20ed569507a50157e",
+        "merge_sha": "bb9a3a1388a55186997ae7983b7eed94e84155df",
+        "main_qa": 40467079624,
+        "handoff": 40467079700,
+        "main_after": "2d50807eff2de44cc78a9278d728f183e01c898d",
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "2eb44079-6988-8328-94b3-93dacf24485d",
+        "observed_at": "2026-10-27T07:27:16.110Z"
+      }
     },
     {
       "id": "pr81_c00050_collision_prior_worker_partial_20261027",
@@ -1075,7 +1086,7 @@
       "author_run_id": "20bb7e5a-a03c-8322-9dc6-20fe3af583b6",
       "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "reviewer_run_id": "b77c5218-21e4-8331-a0a6-025c0e9e1722",
-      "blocked_by": "worker_c00050_history_commit_blocked_20261027",
+      "blocked_by": "RESOLVED_BY_PR82",
       "review_record": "ops/reviews/PR0081_ffac4788.json",
       "request": "Before PR81 integration, finish/reconcile the existing WORKER partial queue-notice HUD change at branch auto/twf-game-repair-267d10af-56cc-832b-b690-19df0e16484b (commit 1e1ba369) with valid history and CI. Resolve C00050 uniqueness: the older request explicitly requires history/C00050, while PR81 currently claims history/C00050_restart_guide_accuracy.json for unrelated copy. Use a distinct next C cycle for PR81, rebase on latest main, keep changes separated, update accurate source/history metrics, and rerun exact-head offline/compile_hold + trusted scope/claim gate. Do not force, rewrite the older branch without its owner lease, or weaken tests.",
       "reproduction": [
@@ -1087,7 +1098,15 @@
         "Make all accepted C cycle IDs unique across pending/merged work; PR81 must use next available id after prior cycle and fresh current-main review.",
         "Retain the good restart-guide behavior test and protected controls; keep engine/mobile/multiplayer HOLD unchanged."
       ],
-      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40459826878"
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40459826878",
+      "prerequisite_resolution": {
+        "pr": 82,
+        "merge_sha": "bb9a3a1388a55186997ae7983b7eed94e84155df",
+        "main_qa": 40467079624,
+        "handoff": 40467079700,
+        "observed_at": "2026-10-27T07:27:16.110Z"
+      },
+      "next_action": "Rebase PR81 onto current main 2d50807eff2de44cc78a9278d728f183e01c898d; rename history/C00050_restart_guide_accuracy.json and internal id to next free C00051; preserve PR82 queue-notice change; recalculate source bytes/lines, add new claim evidence if required by trusted gate, rerun exact-head offline+compile_hold and obtain fresh independent review. Do not merge old head."
     }
   ]
 }
