@@ -1,0 +1,98 @@
+{
+  "schema": 1,
+  "pr": 92,
+  "head": "dc64713802061f590cdcb75c4fc6629a5df0d48c",
+  "base_main_sha": "bf959fb6ecc484993085ef767ae0c7370fb6db50",
+  "reviewed_at": "2026-10-27T20:27:38.382Z",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "17064fef-c4b8-8332-8678-8c1ebc923c47",
+  "lease_epoch": 140,
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "e5c6e27c-49c4-832d-b6c4-046ac3372c79",
+  "branch": "auto/twf-system-review-e5c6e27c-49c4-832d-b6c4-046ac3372c79",
+  "repository": "kk051780/toy-wars-factory",
+  "verdict": "APPROVE",
+  "category": "SYSTEM_SCOPED_SERVICE_RUN_OBSERVER",
+  "mergeable": true,
+  "changed_files": [
+    "docs/research/2026-10-28_service_observer.md",
+    "history/C00064_scoped_service_observer.json",
+    "tests/test_system_service_observer.py",
+    "tools/system_service_observer.py"
+  ],
+  "ci": {
+    "id": 40576878357,
+    "head": "dc64713802061f590cdcb75c4fc6629a5df0d48c",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "jobs": [
+      {
+        "name": "offline",
+        "id": 122445558214,
+        "conclusion": "success"
+      },
+      {
+        "name": "compile_hold",
+        "id": 122445557885,
+        "conclusion": "success"
+      }
+    ],
+    "scope_and_claim_gate": "PASS",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40576878357",
+    "python_tests": 391,
+    "new_python_tests": 30
+  },
+  "main_qa": {
+    "id": 40575268638,
+    "head": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
+    "conclusion": "success",
+    "jobs": [
+      "offline",
+      "compile_hold"
+    ]
+  },
+  "main_handoff": {
+    "id": 40575268483,
+    "head": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
+    "conclusion": "success"
+  },
+  "comparison_since_main_qa": {
+    "verified": true,
+    "status": "ahead",
+    "ahead_by": 1,
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "coordination": {
+    "claim_commit": "073a3431316954907089d4da4e5647a060c43351",
+    "claim_epoch": 139,
+    "claim_run_id": "e5c6e27c-49c4-832d-b6c4-046ac3372c79",
+    "claim_registered_task": true,
+    "reviewer_epoch": 140
+  },
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "findings": [
+    "Exact PR head and base match GitHub PR #92; four A-only files, no changes to game source, accepted tests, config, workflows or protected tools.",
+    "CI #40576878357 attempt1 matches head and base; offline and compile_hold success, trusted-base system scope and immutable META claim steps success; 391 Python tests PASS including 30 new observer tests.",
+    "C00064 is a new system-only history record with zero game-source delta; author META run and epoch139 claim are confirmed in immutable coordinator claim and automation peek.",
+    "Observer uses immutable main manifest/policy and coordinator commit/blob/epoch, double PEEK per role, rejects drift and stale/current-result conflation; terminal failures remain distinct, no start/write/merge/spend authority.",
+    "Source blob 2baec64cfe6b0b7445ebf04bedb1530981586375 matches author's claimed tested source. Claimed one-time host GET12/PEEK6 remains bounded author-host observation; independent external attestation not reproduced by reviewer."
+  ],
+  "limitations": [
+    "Roblox Studio/2-client/mobile tests absent; no game source change.",
+    "Callback/stdin and two synthetic games are NOT_VERIFIED/SYNTHETIC_TEST_ONLY; original host operation error unavailable, no cross-game live dispatch or portable origin receipt.",
+    "Issue71 remains open; accepted v2 triage INDETERMINATE; no P2 completion or automatic scheduling grant."
+  ],
+  "blockers": [],
+  "merge_performed": false,
+  "next_action": "READY_TO_MERGE_EXACT_HEAD"
+}
