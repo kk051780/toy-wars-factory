@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T04:36:24.073Z",
-  "status": "WAIT_POST_MERGE_MAIN_CI",
+  "observed_at": "2026-10-27T04:37:41.125Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "5e0439b9-7930-832f-bc00-7ca6b3955d7d",
@@ -15,8 +15,8 @@
     "ci": 40448427689,
     "category": "GAME_HUD_ONBOARDING_FIX",
     "merge_sha": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
-    "post_merge_main_qa": "PENDING",
-    "post_merge_handoff": "PENDING"
+    "post_merge_main_qa": "success",
+    "post_merge_handoff": "success"
   },
   "merged_prs": [
     {
@@ -40,7 +40,7 @@
       "pr": 80,
       "head": "f6122172c7cdb083e801058d745bc23d30558709",
       "merge_sha": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
-      "status": "MERGED_QA_PENDING",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "main_qa": 40450646774,
       "handoff": 40450646939
     }
@@ -50,20 +50,78 @@
   "main_qa": {
     "id": 40450646774,
     "head": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
-    "status": "queued",
-    "conclusion": null
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 320,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450646774"
   },
   "handoff": {
     "id": 40450646939,
     "head": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
-    "status": "queued",
-    "conclusion": null
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": {
+      "update": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450646939"
   },
   "unresolved": [
-    "PR80 main integration and post-merge QA pending",
-    "Roblox engine/multiplayer/mobile/visual/player tests unverified; release and Gemini HOLD retained"
+    "No remaining eligible auto/twf-game-repair-UUID or auto/twf-system-review-UUID PR at observed scan; other legacy/Gemini/manual proposals not merged.",
+    "Real Roblox Studio PvE loop, multi-client, mobile UI, character visuals and player evidence absent; release HOLD remains.",
+    "Gemini operational incident hold and existing cost limits remain; external inference and publishing not authorized.",
+    "Review-request auto-repair consumption and recurring unattended effectiveness still need observed future cycles."
   ],
-  "next": "Wait for PR80 merged main exact-head offline+compile_hold and handoff; stop new integrations until verified.",
+  "next": "WORKER: prioritize playable PvE and objective engine/mobile evidence, small scoped game fixes. META: observe actual REQUEST_CHANGES->REPAIR_REVIEW and review real failure/impact; do not weaken controls. REVIEWER: retain schedule and review next eligible exact-head PR.",
   "merge_sha": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
-  "main_after": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337"
+  "main_after": "418843226131ad559c2fc3826829058f3061e0ff",
+  "status_only_descendant_verified": true,
+  "comparison_since_main_qa": {
+    "base": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
+    "head": "418843226131ad559c2fc3826829058f3061e0ff",
+    "status": "ahead",
+    "ahead_by": 1,
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 758,
+    "lua_bytes": 30045
+  },
+  "runtime_verified": true,
+  "runtime_verification": {
+    "kind": "REGISTERED_REVIEWER_NORMAL_INTEGRATION",
+    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "reviewer_run_id": "5e0439b9-7930-832f-bc00-7ca6b3955d7d",
+    "lease_epoch": 95,
+    "prs": [
+      79,
+      80
+    ],
+    "post_merge_qa": [
+      40450478692,
+      40450646774
+    ],
+    "handoffs": [
+      40450478705,
+      40450646939
+    ],
+    "main_after": "418843226131ad559c2fc3826829058f3061e0ff",
+    "scope": "NORMAL_REVIEWER_RUNTIME_AND_MAIN_QA_ONLY_NOT_ROBLOX_ENGINE"
+  },
+  "issue72": {
+    "status": "closed",
+    "completed_via_prs": [
+      78,
+      79
+    ],
+    "main_qa": 40450478692,
+    "handoff": 40450478705
+  }
 }

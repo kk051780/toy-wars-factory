@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 95,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "5e0439b9-7930-832f-bc00-7ca6b3955d7d",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 95,
-    "acquired_at": "2026-10-27T04:33:03.689Z",
-    "expires_at": "2026-10-27T05:03:03.689Z",
-    "base_main_sha": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -20,57 +10,26 @@
   },
   "approval_packet": {
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
-    "items": [
-      {
-        "number": 79,
-        "title": "[TWF system-review] Repair original triage CLI terminal health verdict",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/79",
-        "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40447229337",
-        "summary": "旧診断CLIのfailed/no_update誤判定を2行で修復。新規5検査、3入口の実出力一致。",
-        "changed_files": [
-          "tools/system_host_write_triage.py",
-          "tests/test_system_legacy_triage_repair.py",
-          "history/C00048_legacy_triage_completion_guard.json"
-        ],
-        "kind": "開発体制改善"
-      },
-      {
-        "number": 80,
-        "title": "[TWF auto-fix] Explain toy roles in first-play guide",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/80",
-        "head": "f6122172c7cdb083e801058d745bc23d30558709",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40448427689",
-        "summary": "初回プレイガイドの3体の役割説明欠落をHUD実コード+15 bytesで修正。正本HUD・Balanceを実行する新規Lua回帰2件、既存QAを保持。",
-        "changed_files": [
-          "src/ToyWarsHUD.client.lua",
-          "tests/auto/first_play_role_hints_spec.lua",
-          "history/C00049_first_play_toy_role_hints.json"
-        ],
-        "kind": "ゲーム本体修正"
-      }
-    ],
+    "items": [],
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-27T04:13:58.666Z",
-    "signature": "b0694651aa9274f2e9fca7ad44ff2942f10f560d6a2740955ed1b6582b7759c3",
+    "observed_at": "2026-10-27T04:37:41.125Z",
+    "signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
     "approval_text": ""
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "d6198d2b-49f0-8320-b895-f0b4a89228d9",
-    "epoch": 94,
-    "released_at": "2026-10-27T04:13:58.666Z",
-    "pr": 80,
-    "head": "f6122172c7cdb083e801058d745bc23d30558709",
-    "result": "DRAFT_PR80_EXACT_HEAD_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
-    "ci_run": 40448427689,
-    "ci_status": "SUCCESS_OFFLINE_AND_COMPILE_HOLD",
-    "source_delta_bytes": 15,
-    "claim_commit": "f0693679f1e02e117c4d50cb3b2f3cdc8c4898d8",
-    "owner_reply_required": false
+    "kind": "REVIEWER",
+    "owner_id": "5e0439b9-7930-832f-bc00-7ca6b3955d7d",
+    "epoch": 95,
+    "released_at": "2026-10-27T04:37:41.125Z",
+    "prs": [
+      79,
+      80
+    ],
+    "result": "MERGED_2_MAIN_QA_AND_HANDOFF_PASSED",
+    "main_after": "418843226131ad559c2fc3826829058f3061e0ff"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -452,6 +411,56 @@
       "post_merge_handoff_status": "success",
       "status_only_descendant_verified": true,
       "main_after_handoff": "c512ed9e155ebaba97e0098a7f75fb56510e0516"
+    },
+    "79": {
+      "schema": 1,
+      "pr": 79,
+      "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+      "reviewer_kind": "REVIEWER",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "5e0439b9-7930-832f-bc00-7ca6b3955d7d",
+      "lease_epoch": 95,
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "5f96584a-7d9c-832c-bfad-297c6211d960",
+      "verdict": "APPROVE",
+      "ci": {
+        "id": 40447229337,
+        "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+        "conclusion": "success"
+      },
+      "merge_sha": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
+      "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450478692",
+      "post_merge_main_qa_status": "success",
+      "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450478705",
+      "post_merge_handoff_status": "success",
+      "review_record": "ops/reviews/PR0079_b82aed7d.json",
+      "main_after_handoff": "418843226131ad559c2fc3826829058f3061e0ff",
+      "status_only_descendant_verified": true
+    },
+    "80": {
+      "schema": 1,
+      "pr": 80,
+      "head": "f6122172c7cdb083e801058d745bc23d30558709",
+      "reviewer_kind": "REVIEWER",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "5e0439b9-7930-832f-bc00-7ca6b3955d7d",
+      "lease_epoch": 95,
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "d6198d2b-49f0-8320-b895-f0b4a89228d9",
+      "verdict": "APPROVE",
+      "ci": {
+        "id": 40448427689,
+        "head": "f6122172c7cdb083e801058d745bc23d30558709",
+        "conclusion": "success"
+      },
+      "merge_sha": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
+      "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450646774",
+      "post_merge_main_qa_status": "success",
+      "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450646939",
+      "post_merge_handoff_status": "success",
+      "review_record": "ops/reviews/PR0080_f6122172.json",
+      "main_after_handoff": "418843226131ad559c2fc3826829058f3061e0ff",
+      "status_only_descendant_verified": true
     }
   },
   "integration_results": {
