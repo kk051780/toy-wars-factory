@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 93,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "d6198d2b-49f0-8320-b895-f0b4a89228d9",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 93,
-    "acquired_at": "2026-10-27T04:08:18.514Z",
-    "expires_at": "2026-10-27T04:38:18.514Z",
-    "base_main_sha": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
-    "work_branch": "auto/twf-game-repair-d6198d2b-49f0-8320-b895-f0b4a89228d9",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -45,13 +35,18 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "META",
-    "owner_id": "5f96584a-7d9c-832c-bfad-297c6211d960",
-    "epoch": 92,
-    "released_at": "2026-10-27T04:02:53+00:00",
-    "pr": 79,
-    "result": "LEGACY_CLI_SOURCE_FIX_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
-    "service_completion_asserted": false
+    "kind": "WORKER",
+    "owner_id": "d6198d2b-49f0-8320-b895-f0b4a89228d9",
+    "epoch": 93,
+    "released_at": "2026-10-27T04:12:40.596Z",
+    "pr": 80,
+    "head": "f6122172c7cdb083e801058d745bc23d30558709",
+    "result": "GAME_HUD_SOURCE_CHANGED_DRAFT_PR80_CI_IN_PROGRESS",
+    "ci_run": 40448427689,
+    "ci_status": "IN_PROGRESS_COMPILE_HOLD_SUCCESS_OFFLINE_PENDING",
+    "source_delta_bytes": 15,
+    "claim_commit": "f0693679f1e02e117c4d50cb3b2f3cdc8c4898d8",
+    "owner_reply_required": false
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
