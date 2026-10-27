@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T21:09:12.627Z",
+  "observed_at": "2026-10-27T21:40:36Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1407,6 +1407,58 @@
         ]
       },
       "owner_approval_required": false
+    },
+    {
+      "id": "issue71_pr95_joined_incident_observer_independent_review",
+      "kind": "INDEPENDENT_SYSTEM_REVIEW",
+      "priority": "P1",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "status": "OPEN",
+      "repository": "kk051780/toy-wars-factory",
+      "issue": 71,
+      "pr": 95,
+      "head": "a26165b192770343897e375815428f8a36c13e2f",
+      "base_main_sha": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+      "created_at": "2026-10-27T21:40:36Z",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "ed8dffe9-ee34-8323-812e-164cfa0da5bd",
+      "claim_commit": "67a59e7130b91353b286d7e11ea7ae64d575f300",
+      "epoch": 150,
+      "ci": {
+        "id": 40588371241,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40588371241",
+        "head": "a26165b192770343897e375815428f8a36c13e2f",
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "python_tests": 423,
+        "new_tests": 32,
+        "scope": "PASS_SYSTEM_REVIEW_SCOPE",
+        "coordination": "PASS_ONE_IMMUTABLE_CLAIM",
+        "jobs": [
+          {
+            "id": 122485809811,
+            "name": "offline",
+            "head": "a26165b192770343897e375815428f8a36c13e2f",
+            "attempt": 1,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 122485810231,
+            "name": "compile_hold",
+            "head": "a26165b192770343897e375815428f8a36c13e2f",
+            "attempt": 1,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      "request": "Independently review new A-only joined collector. Verify exact head/base/C66 epoch150 immutable claim,197 accepted blobs unchanged,32 real regressions and both job/423 tests PASS. Validate actual37 GET+9 PEEK through source8e44f0a65e569ae0dccbae8abc026dc0541d9d54, mutable job tail revalidation, immutable cache boundary, historical PR author versus later service, supported v2/core data binding and all grants false. Check initial2 rejected attempts and no unearned original error/portable auth/permanent provider claims. Author does not approve/merge. If pass, separately merge then actual main QA/handoff; keep Issue71 open until remaining acceptance.",
+      "owner_reply_required": false,
+      "next_actor": "6add6aaceb4c8191b1666fe15f97cd88",
+      "live_boundary": "Host-observed final execution only; stdout NOT_VERIFIED; original operation receipt unavailable; no dispatch/credential/workflow/task permission expansion."
     }
   ]
 }

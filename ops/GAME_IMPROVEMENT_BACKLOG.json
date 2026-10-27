@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T20:22:23Z",
+  "observed_at": "2026-10-27T21:39:18Z",
   "source": "Issue72 accepted-module repair first; no game edits. Current main source was inspected and existing physical-engine/device hypotheses retained without claiming execution.",
   "items": [
     {
@@ -81,27 +81,67 @@
       "merge_sha": "8471eeba32043bfdb2c182d67ea1cfdc16d10a93",
       "current_main": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
       "post_repair_main_qa": 40409905235
+    },
+    {
+      "id": "pr94_stale_session_persistence",
+      "hypothesis": "An older server/session can overwrite a newer session or schema when an UpdateAsync transform ignores current data; canonical code review gives a reproducible risk, no live loss observed.",
+      "evidence": {
+        "pr": 94,
+        "head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
+        "work_request": "pr94_progress_updateasync_stale_overwrite_20261028",
+        "primary": "https://create.roblox.com/docs/cloud-services/data-stores/player-data-purchasing",
+        "checked_at": "2026-10-27T21:39:18Z"
+      },
+      "minimal_experiment": "WORKER runs two canonical full-server harness instances sharing one store, saves newer session first then older; also changes stored schema between load and save. Preserve legitimate normal rejoin and read-failure behavior.",
+      "success_condition": "Older writer cannot roll back newer progress or unknown schema. Exact new head both CI jobs and separate reviewer pass. This is source repair evidence, not live DataStore consistency.",
+      "required_real_evidence": [
+        "Later scoped private-engine two-server/rejoin trace with exact source/place version",
+        "No publication, billing, credential access or inferred data-loss incident"
+      ],
+      "next_actor": "WORKER",
+      "status": "REQUEST_CHANGES_OFFLINE_REPRO_REQUESTED",
+      "kind": "REVIEWER_REQUESTED_SOURCE_REPAIR",
+      "priority": "P1"
     }
   ],
   "actor": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "e5c6e27c-49c4-832d-b6c4-046ac3372c79"
+    "run_id": "ed8dffe9-ee34-8323-812e-164cfa0da5bd"
   },
-  "base_main_sha": "bf959fb6ecc484993085ef767ae0c7370fb6db50",
+  "base_main_sha": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
   "prioritized_candidates": [
-    "first_play_guide_compact_layout",
+    "pr94_stale_session_persistence",
     "private_headless_engine_evidence_path",
     "mobile_pve_frame_time"
   ],
-  "system_precondition": "Issue71 service observer source+tests priority; no game code changes this run. Preserve real-engine and release evidence gates.",
+  "system_precondition": "Issue71 joined observation is this run's only implementation. No game source edits. WORKER repair94 precedes new game features.",
   "last_primary_source_check": {
-    "at": "2026-10-27T20:22:23Z",
-    "url": "https://create.roblox.com/docs/performance-optimization/test-on-hardware",
+    "at": "2026-10-27T21:39:18Z",
+    "url": "https://create.roblox.com/docs/cloud-services/data-stores/player-data-purchasing",
     "published_at": null,
     "updated_at": null,
     "real_hardware_run": false
   },
   "next_experiments": [
+    {
+      "id": "pr94_stale_session_persistence",
+      "hypothesis": "An older server/session can overwrite a newer session or schema when an UpdateAsync transform ignores current data; canonical code review gives a reproducible risk, no live loss observed.",
+      "evidence": {
+        "pr": 94,
+        "head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
+        "work_request": "pr94_progress_updateasync_stale_overwrite_20261028",
+        "primary": "https://create.roblox.com/docs/cloud-services/data-stores/player-data-purchasing",
+        "checked_at": "2026-10-27T21:39:18Z"
+      },
+      "minimal_experiment": "WORKER runs two canonical full-server harness instances sharing one store, saves newer session first then older; also changes stored schema between load and save. Preserve legitimate normal rejoin and read-failure behavior.",
+      "success_condition": "Older writer cannot roll back newer progress or unknown schema. Exact new head both CI jobs and separate reviewer pass. This is source repair evidence, not live DataStore consistency.",
+      "required_real_evidence": [
+        "Later scoped private-engine two-server/rejoin trace with exact source/place version",
+        "No publication, billing, credential access or inferred data-loss incident"
+      ],
+      "next_actor": "WORKER",
+      "status": "REQUEST_CHANGES_OFFLINE_REPRO_REQUESTED"
+    },
     {
       "id": "private_headless_engine_evidence_path",
       "hypothesis": "A permitted hosted private engine path could establish a PvE startup baseline without owner PC debugging; no current capability is verified.",
@@ -122,17 +162,6 @@
       "required_real_evidence": [
         "Physical phone frame/memory/thermal capture",
         "Exact main/build, device and scenario"
-      ]
-    },
-    {
-      "id": "first_play_guide_compact_layout",
-      "hypothesis": "Offline rectangle fixes and newer role/restart wording may still leave real touch-navigation gaps; no physical-device outcome measured.",
-      "evidence": "PR67/80/81 code exists on main and offline tests pass; actual mobile evidence NOT_RUN.",
-      "minimal_experiment": "On physical small phone short landscape, execute select all3 toys -> produce/upgrade -> loss/restart, record touch controls and guide/queue visibility.",
-      "success_condition": "No blocked intended tap or overlap across the dated replay, or one exact reproducible UI defect for next WORKER small repair.",
-      "required_real_evidence": [
-        "Physical phone screenshots/video",
-        "Dated input replay bound to current main"
       ]
     }
   ]
