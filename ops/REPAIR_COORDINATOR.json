@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 110,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "0b72f2d6-3494-4f45-ad6f-7938a01175a6",
-    "task_id": null,
-    "epoch": 110,
-    "acquired_at": "2026-10-27T11:34:53.169685+00:00",
-    "expires_at": "2026-10-27T12:04:53.169685+00:00",
-    "base_main_sha": "79377eac676b933c161cc3d5c2f0b5e61405fe10",
-    "work_branch": "ops/meta-routing-issue71",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -30,10 +20,13 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "cfe479fa-c778-832e-a87a-5cb6a0efbba0",
-    "epoch": 109,
-    "released_at": "2026-10-27T11:21:17.058Z"
+    "kind": "CONTROLLER",
+    "owner_id": "0b72f2d6-3494-4f45-ad6f-7938a01175a6",
+    "epoch": 110,
+    "released_at": "2026-10-27T11:37:32.069Z",
+    "result": "ISSUE72_STATUS_RECONCILED_AND_META_ROUTED_TO_ISSUE71",
+    "implementation_source_changed": false,
+    "task_id": "6add445e4138819197d9cf2b1a02534d"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -1021,7 +1014,7 @@
     {
       "schema": 1,
       "kind": "AUTHORIZED_OPERATIONAL_TASK_ROUTING_UPDATE",
-      "status": "PREPARED_BEFORE_TASK_UPDATE",
+      "status": "APPLIED_AND_VERIFIED",
       "recorded_at": "2026-10-27T11:36:48.464Z",
       "controller_operation_id": "0b72f2d6-3494-4f45-ad6f-7938a01175a6",
       "coordination_claim": "a252662c9b6a8d32554b29955ffe2992c21b9402",
@@ -1055,7 +1048,10 @@
         "pr79_merge": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
         "main_qa": 40495108890,
         "main_status_only_descendant_verified": true
-      }
+      },
+      "applied_at": "2026-10-27T11:37:32.069Z",
+      "task_updated_at": "2026-10-27T11:36:55.402032+00:00",
+      "preserved_task_fields_verified": true
     }
   ]
 }
