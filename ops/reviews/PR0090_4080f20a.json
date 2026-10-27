@@ -88,5 +88,31 @@
     "Negative-control Lua case is conditional and did not run (suite reported 3 cases, not 4). This is a testing limitation, not a claim of old-source reproduction; live Roblox FPS, Studio, multiplayer, mobile remain unverified."
   ],
   "blockers": [],
-  "next_action": "MERGE_IF_HEAD_MAIN_AND_LEASE_UNCHANGED_THEN_VERIFY_POST_MERGE_QA"
+  "next_action": "VERIFY_POST_MERGE_MAIN_QA_BEFORE_NEXT_MERGE",
+  "merge_performed": true,
+  "merge_sha": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
+  "merge_at_recorded": "2026-10-27T20:08:25.885Z",
+  "post_merge_main_qa": {
+    "id": 40575268638,
+    "head": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40575268638"
+  },
+  "post_merge_handoff": {
+    "id": 40575268483,
+    "head": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40575268483"
+  },
+  "main_after_handoff": "bf959fb6ecc484993085ef767ae0c7370fb6db50",
+  "comparison_since_merge": {
+    "status": "ahead",
+    "files": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "verified": true
+  }
 }

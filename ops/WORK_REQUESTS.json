@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T19:57:18.879Z",
+  "observed_at": "2026-10-27T20:08:25.885Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1263,7 +1263,7 @@
       "kind": "REPAIR_PR_SOURCE_LEDGER",
       "priority": "P0",
       "assigned_role": "WORKER",
-      "status": "OPEN",
+      "status": "MERGED_WAIT_MAIN_QA",
       "created_at": "2026-10-27T19:57:18.879Z",
       "observed_at": "2026-10-27T19:57:18.879Z",
       "pr": 90,
@@ -1292,6 +1292,15 @@
         "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40559823873",
         "main_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40559823996",
         "review": "ops/reviews/PR0090_813ee8be.json"
+      },
+      "resolution_candidate": {
+        "pr": 90,
+        "head": "4080f20abd88197d26d3cfe36cc5733009386926",
+        "merge_sha": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
+        "review_record": "ops/reviews/PR0090_4080f20a.json",
+        "main_qa": 40575268638,
+        "handoff": 40575268483,
+        "verified": false
       }
     }
   ]

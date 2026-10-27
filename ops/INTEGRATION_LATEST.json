@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T20:07:25.370Z",
-  "status": "APPROVED_READY_TO_MERGE",
+  "observed_at": "2026-10-27T20:08:25.885Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "f524a20f-402c-832f-9c3c-03de40c7c040",
@@ -14,7 +14,7 @@
     "review_record": "ops/reviews/PR0090_4080f20a.json",
     "ci": 40574729324,
     "category": "GAME_SERVER_IDLE_HEALTH_BAR_LOOKUP_OPTIMIZATION",
-    "merge_sha": null,
+    "merge_sha": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
     "blockers": []
   },
   "merged_prs": [
@@ -129,10 +129,19 @@
       "handoff": 40550587304,
       "main_after_handoff": "5ce5d878e80a0abf8ddd6c5a741de9e26a1cee7c",
       "category": "GAME_SERVER_CLOSEST_TARGET_SQRT_OPTIMIZATION"
+    },
+    {
+      "pr": 90,
+      "head": "4080f20abd88197d26d3cfe36cc5733009386926",
+      "merge_sha": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40575268638,
+      "handoff": 40575268483,
+      "category": "GAME_SERVER_IDLE_HEALTH_BAR_LOOKUP_OPTIMIZATION"
     }
   ],
-  "merge_count_this_run": 0,
-  "previous_integration_commit": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
+  "merge_count_this_run": 1,
+  "previous_integration_commit": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
   "main_qa": {
     "status": "PASS",
     "head": "4713c65b9a20b9fe46c66348160920e69af4e6da",
@@ -233,7 +242,7 @@
   },
   "merged_this_run": [],
   "eligible_open_prs": [],
-  "next_action": "PR90_READY_THEN_MERGE_WITH_EXACT_HEAD_AND_POST_MAIN_QA",
+  "next_action": "VERIFY_PR90_POST_MERGE_MAIN_QA_BEFORE_NEW_INTEGRATION",
   "notes": "PR90 current head CI succeeds but C00060 sorted before merged C00061/C00062 would violate accepted per-file history chain. No integration. Engine/device evidence remains absent; all holds retained.",
   "comparison_since_merge": {
     "base": "4713c65b9a20b9fe46c66348160920e69af4e6da",
@@ -245,5 +254,7 @@
       "status/LATEST_STATE.json"
     ],
     "verified": true
-  }
+  },
+  "main_after_merge": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
+  "main_after_handoff": "bf959fb6ecc484993085ef767ae0c7370fb6db50"
 }
