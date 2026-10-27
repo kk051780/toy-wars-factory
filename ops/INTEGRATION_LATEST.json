@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T15:18:50.258Z",
-  "status": "REVIEW_APPROVED_READY_TO_MERGE",
+  "observed_at": "2026-10-27T15:19:52.782Z",
+  "status": "MERGED_WAIT_MAIN_CI",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "2afe7843-357c-8320-a09c-f57445f79dc8",
@@ -14,9 +14,9 @@
     "review_record": "ops/reviews/PR0087_d4e0e2a5.json",
     "ci": 40529165971,
     "category": "GAME_HUD_WORKSHOP_ALLOCATION_NOTICE",
-    "merge_sha": null,
-    "post_merge_main_qa": null,
-    "post_merge_handoff": null
+    "merge_sha": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
+    "post_merge_main_qa": "in_progress",
+    "post_merge_handoff": "success"
   },
   "merged_prs": [
     {
@@ -100,43 +100,54 @@
       "handoff": 40521561438,
       "main_after_handoff": "340afc579204bacb987a313501ee3dfa0c2961a3",
       "category": "GAME_SERVER_STATIONARY_PIVOT_STABILITY"
+    },
+    {
+      "pr": 87,
+      "head": "d4e0e2a533ce4c377eeac92c63e07cc93976a8f4",
+      "merge_sha": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
+      "status": "MERGED_WAIT_MAIN_CI",
+      "main_qa": 40529796548,
+      "handoff": 40529796278,
+      "main_after_handoff": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
+      "category": "GAME_HUD_WORKSHOP_ALLOCATION_NOTICE"
     }
   ],
-  "merge_count_this_run": 0,
+  "merge_count_this_run": 1,
   "previous_integration_commit": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
   "main_qa": {
-    "id": 40521561302,
-    "head": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
-    "status": "completed",
-    "conclusion": "success",
+    "id": 40529796548,
+    "head": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
+    "status": "in_progress",
+    "conclusion": null,
     "jobs": {
       "compile_hold": "success",
-      "offline": "success"
+      "offline": "in_progress"
     },
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40521561302"
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40529796548"
   },
   "handoff": {
-    "id": 40521561438,
-    "head": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
+    "id": 40529796278,
+    "head": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
     "status": "completed",
     "conclusion": "success",
     "jobs": {
       "update": "success"
     },
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40521561438"
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40529796278"
   },
   "unresolved": [
-    "Issue #71 remains open: portable provider origin receipt, service/operation error collection, real multi-game dispatch not verified.",
+    "PR87 post-merge main QA offline still running; no next PR integration until both jobs pass.",
+    "Issue #71 remains open; real provider dispatch and multi-game integration unverified.",
     "Roblox Studio/2-client/mobile evidence absent; release HOLD.",
     "Gemini incident HOLD and budget caps unchanged."
   ],
-  "next": "Merge PR87 only after current lease and exact head recheck; verify post-merge main QA and handoff.",
-  "merge_sha": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
-  "main_after": "340afc579204bacb987a313501ee3dfa0c2961a3",
+  "next": "Verify PR87 post-merge QA 40529796548 (offline+compile_hold) and handoff 40529796278 before next eligible PR.",
+  "merge_sha": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
+  "main_after": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
   "status_only_descendant_verified": true,
   "comparison_since_main_qa": {
-    "base": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
-    "head": "340afc579204bacb987a313501ee3dfa0c2961a3",
+    "base": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
+    "head": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
     "status": "ahead",
     "ahead_by": 1,
     "paths": [
