@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 119,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "aff4eb56-175c-8327-99c5-5e34870cf5d7",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 119,
-    "acquired_at": "2026-10-27T14:28:01.593Z",
-    "expires_at": "2026-10-27T14:58:01.593Z",
-    "base_main_sha": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,21 +36,16 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "e237426c-20d4-832c-beb6-d61c73e15b98",
-    "epoch": 118,
-    "released_at": "2026-10-27T14:05:06.236Z",
-    "result": "PR86_DRAFT_CI_QUEUED",
+    "kind": "REVIEWER",
+    "owner_id": "aff4eb56-175c-8327-99c5-5e34870cf5d7",
+    "epoch": 119,
+    "released_at": "2026-10-27T14:30:21.501Z",
+    "result": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
     "pr": 86,
     "head": "fa89829a259b150ae054541f2f86b35ff74b675f",
-    "ci_run": 40517714431,
-    "main_base": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
-    "source_metrics": {
-      "lua_files": 4,
-      "lua_lines": 774,
-      "lua_bytes": 30873
-    },
-    "engine_verified": false
+    "merge_sha": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
+    "main_qa": 40521561302,
+    "handoff": 40521561438
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",

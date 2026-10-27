@@ -1,22 +1,22 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T13:55:03.928Z",
-  "status": "MERGED_WAIT_MAIN_CI",
+  "observed_at": "2026-10-27T14:30:21.501Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "16d021a3-2654-8328-bd3e-05e350f1a15b",
-  "lease_epoch": 117,
-  "main_before": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
+  "reviewer_run_id": "aff4eb56-175c-8327-99c5-5e34870cf5d7",
+  "lease_epoch": 119,
+  "main_before": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
   "latest_review": {
-    "pr": 85,
-    "head": "4924e29a1831c0b33d35d560a1e2f9ac471e8218",
+    "pr": 86,
+    "head": "fa89829a259b150ae054541f2f86b35ff74b675f",
     "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0085_4924e29a.json",
-    "ci": 40515648153,
-    "category": "GAME_SERVER_HEALTH_BAR_PROPERTY_WRITE_STABILITY",
-    "merge_sha": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
-    "post_merge_main_qa": "QUEUED",
-    "post_merge_handoff": "QUEUED"
+    "review_record": "ops/reviews/PR0086_fa89829a.json",
+    "ci": 40517714431,
+    "category": "GAME_SERVER_STATIONARY_PIVOT_STABILITY",
+    "merge_sha": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
+    "post_merge_main_qa": "success",
+    "post_merge_handoff": "success"
   },
   "merged_prs": [
     {
@@ -80,53 +80,63 @@
       "handoff": 40501279630,
       "main_after_handoff": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
       "category": "SYSTEM_READ_ONLY_EVIDENCE_COLLECTOR"
+    },
+    {
+      "pr": 85,
+      "head": "4924e29a1831c0b33d35d560a1e2f9ac471e8218",
+      "merge_sha": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40516240374,
+      "handoff": 40516240222,
+      "main_after_handoff": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
+      "category": "GAME_SERVER_HEALTH_BAR_PROPERTY_WRITE_STABILITY"
+    },
+    {
+      "pr": 86,
+      "head": "fa89829a259b150ae054541f2f86b35ff74b675f",
+      "merge_sha": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40521561302,
+      "handoff": 40521561438,
+      "main_after_handoff": "340afc579204bacb987a313501ee3dfa0c2961a3",
+      "category": "GAME_SERVER_STATIONARY_PIVOT_STABILITY"
     }
   ],
   "merge_count_this_run": 1,
-  "previous_integration_commit": "23aa3649f59f96111b02c91ca31a048df6749b6f",
+  "previous_integration_commit": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
   "main_qa": {
-    "id": 40501279576,
-    "head": "608ca16643667d3866d4c9e451ffd269869aeca9",
+    "id": 40521561302,
+    "head": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
     "status": "completed",
     "conclusion": "success",
     "jobs": {
-      "offline": "success",
-      "compile_hold": "success"
+      "compile_hold": "success",
+      "offline": "success"
     },
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40501279576",
-    "comparison_since_qa": {
-      "status": "ahead",
-      "ahead_by": 1,
-      "paths": [
-        "status/CHAT_HANDOFF.md",
-        "status/LATEST_STATE.json"
-      ],
-      "verified": true,
-      "main_head": "0d1ee3064d590cf4ccff3b92abd96e796a45f749"
-    }
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40521561302"
   },
   "handoff": {
-    "id": 40501279630,
-    "head": "608ca16643667d3866d4c9e451ffd269869aeca9",
+    "id": 40521561438,
+    "head": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
     "status": "completed",
     "conclusion": "success",
     "jobs": {
       "update": "success"
     },
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40501279630"
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40521561438"
   },
   "unresolved": [
     "Issue #71 remains open: portable provider origin receipt, service/operation error collection, real multi-game dispatch not verified.",
     "Roblox Studio/2-client/mobile evidence absent; release HOLD.",
     "Gemini incident HOLD and budget caps unchanged."
   ],
-  "next": "PR85 merged at 82fed9a; main QA 40516240374 and handoff 40516240222 queued. Status-only main descendant verified; do not claim post-merge PASS until jobs finish.",
-  "merge_sha": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
-  "main_after": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
+  "next": "Continue with next eligible small PR after fresh main/lock/CI checks; prioritize playable PvE and real engine/mobile evidence.",
+  "merge_sha": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
+  "main_after": "340afc579204bacb987a313501ee3dfa0c2961a3",
   "status_only_descendant_verified": true,
   "comparison_since_main_qa": {
-    "base": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
-    "head": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
+    "base": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
+    "head": "340afc579204bacb987a313501ee3dfa0c2961a3",
     "status": "ahead",
     "ahead_by": 1,
     "paths": [
@@ -137,8 +147,8 @@
   },
   "source_metrics": {
     "lua_files": 4,
-    "lua_lines": 763,
-    "lua_bytes": 30428
+    "lua_lines": 774,
+    "lua_bytes": 30873
   },
   "runtime_verified": true,
   "runtime_verification": {
@@ -171,24 +181,24 @@
     "handoff": 40450478705
   },
   "last_successful_integration": {
-    "reviewer_run_id": "cbd38de1-246c-832c-ac81-0553ae00e4dc",
-    "lease_epoch": 112,
-    "merge_sha": "608ca16643667d3866d4c9e451ffd269869aeca9",
-    "main_after": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
-    "main_qa": 40501279576,
-    "handoff": 40501279630
+    "reviewer_run_id": "aff4eb56-175c-8327-99c5-5e34870cf5d7",
+    "lease_epoch": 119,
+    "merge_sha": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
+    "main_after": "340afc579204bacb987a313501ee3dfa0c2961a3",
+    "main_qa": 40521561302,
+    "handoff": 40521561438
   },
   "latest_review_is_current_run": true,
   "latest_scan": {
-    "observed_at": "2026-10-27T13:55:03.928Z",
+    "observed_at": "2026-10-27T14:30:21.501Z",
     "eligible_open_prs": [],
-    "merged_pr": 85,
-    "main_qa": 40516240374,
-    "handoff": 40516240222,
-    "main_sha": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
-    "main_qa_verified": false,
+    "merged_pr": 86,
+    "main_qa": 40521561302,
+    "handoff": 40521561438,
+    "main_sha": "340afc579204bacb987a313501ee3dfa0c2961a3",
+    "main_qa_verified": true,
     "status_only_descendant_verified": true,
-    "reviewer_run_id": "16d021a3-2654-8328-bd3e-05e350f1a15b",
-    "lease_epoch": 117
+    "reviewer_run_id": "aff4eb56-175c-8327-99c5-5e34870cf5d7",
+    "lease_epoch": 119
   }
 }

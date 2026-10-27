@@ -75,5 +75,30 @@
   },
   "category": "GAME_SERVER_STATIONARY_PIVOT_STABILITY",
   "engine_verified": false,
-  "post_merge_main_qa": "PENDING"
+  "post_merge_main_qa": {
+    "run": 40521561302,
+    "head": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "compile_hold",
+        "conclusion": "success"
+      },
+      {
+        "name": "offline",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "merge_sha": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
+  "post_merge_handoff": {
+    "run": 40521561438,
+    "head": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "main_after": "340afc579204bacb987a313501ee3dfa0c2961a3",
+  "status_only_descendant_verified": true,
+  "updated_at": "2026-10-27T14:30:21.501Z"
 }
