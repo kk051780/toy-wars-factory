@@ -62,10 +62,41 @@
     "Guide text now states automatic wave-one restart matching canonical server, and test exercises canonical HUD and server plus old HUD negative control; no gameplay commands sent by guide. Roblox engine/mobile/multiplayer unverified."
   ],
   "unresolved": [
-    "Post-merge main QA and handoff not yet executed; do not report merged success until verified.",
-    "Old WORK_REQUESTS PR81 request references obsolete head; close as superseded only after successful integration.",
-    "Roblox engine, two-client multiplayer, physical mobile and release readiness remain unverified; Gemini HOLD and caps preserved."
+    "Roblox engine, two-client multiplayer, physical mobile, visual/fun evidence absent; release HOLD.",
+    "Gemini incident hold, budget caps and external inference restrictions remain unchanged."
   ],
   "decision_rule": "tools/repair_integration.py decide => MERGE with current independent lease, exact-head CI, verified main QA and five review checks",
-  "final_status": "APPROVED_PENDING_MERGE"
+  "final_status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "post_merge_main_qa": {
+    "id": 40488765003,
+    "head": "23aa3649f59f96111b02c91ca31a048df6749b6f",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40488765003",
+    "comparison_since_qa": {
+      "status": "ahead",
+      "ahead_by": 1,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ],
+      "verified": true,
+      "main_head": "14914cda41d3a41222744e3ff0b6e0e50019b654"
+    }
+  },
+  "post_merge_handoff": {
+    "id": 40488764919,
+    "head": "23aa3649f59f96111b02c91ca31a048df6749b6f",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": {
+      "update": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40488764919"
+  },
+  "merge_sha": "23aa3649f59f96111b02c91ca31a048df6749b6f"
 }

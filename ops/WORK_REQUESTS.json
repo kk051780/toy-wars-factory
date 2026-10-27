@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T07:27:16.110Z",
+  "observed_at": "2026-10-27T10:29:32.323Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1076,7 +1076,7 @@
       "kind": "REVIEW_REQUEST_CHANGES",
       "priority": "P1",
       "assigned_role": "WORKER",
-      "status": "OPEN",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_SUCCESS",
       "created_at": "2026-10-27T06:26:15.741Z",
       "repository": "kk051780/toy-wars-factory",
       "pr": 81,
@@ -1106,7 +1106,18 @@
         "handoff": 40467079700,
         "observed_at": "2026-10-27T07:27:16.110Z"
       },
-      "next_action": "Rebase PR81 onto current main 2d50807eff2de44cc78a9278d728f183e01c898d; rename history/C00050_restart_guide_accuracy.json and internal id to next free C00051; preserve PR82 queue-notice change; recalculate source bytes/lines, add new claim evidence if required by trusted gate, rerun exact-head offline+compile_hold and obtain fresh independent review. Do not merge old head."
+      "next_action": "RESOLVED; no further C00050 collision remediation required. Continue next independently scoped PvE improvement.",
+      "resolved_at": "2026-10-27T10:29:32.323Z",
+      "resolution": {
+        "pr": 81,
+        "head": "6cecd585964bbfb948a2ee02b591d44b7cb5cfd5",
+        "corrected_history": "history/C00051_restart_guide_accuracy.json",
+        "prerequisite_pr82": 82,
+        "merge_sha": "23aa3649f59f96111b02c91ca31a048df6749b6f",
+        "main_qa": 40488765003,
+        "handoff": 40488764919,
+        "review_record": "ops/reviews/PR0081_6cecd585.json"
+      }
     }
   ]
 }
