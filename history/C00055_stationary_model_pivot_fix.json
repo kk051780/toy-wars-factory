@@ -1,0 +1,86 @@
+{
+  "id": "C00055",
+  "date": "2026-10-27",
+  "kind": "AUTONOMOUS_STATIONARY_MODEL_PIVOT_WRITE_FIX",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "e237426c-20d4-832c-beb6-d61c73e15b98",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-e237426c-20d4-832c-beb6-d61c73e15b98",
+    "base": "main",
+    "open_prs": [],
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "2897c4758b9c8660f310b360196dca3ac6d40f32",
+    "owner_run_id": "e237426c-20d4-832c-beb6-d61c73e15b98",
+    "epoch": 118
+  },
+  "main_base": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
+  "source_commit": "44d036e5811264976e8682ac87c828f641056ecf",
+  "defect": {
+    "id": "redundant_stationary_model_pivot_every_heartbeat",
+    "cause": "Canonical updateEntity calls Model:PivotTo for every alive model on each simulation step even when coordinates are unchanged. Anchored units in combat remain stationary for many ticks, causing redundant transform writes.",
+    "reproduction": "Execute the complete canonical server through tests/roblox_server_harness.lua. In a 3-stud combat encounter with both cooldowns set high, after initial placement the old server increments _pivotCount for both stationary models every Heartbeat. The new regression checks repeated idle ticks and a pinned old whole-server negative control when available."
+  },
+  "fix": "Track each entity's last rendered x/z from its initial model placement. Only call Model:PivotTo when actual position changes, then update rendered coordinates. Preserve immediate damage bar updates and moving-unit transform updates.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/stationary_model_pivot_spec.lua",
+    "history/C00055_stationary_model_pivot_fix.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 19535,
+      "after_bytes": 19849,
+      "delta_bytes": 314
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 774,
+    "lua_bytes": 30873
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/stationary_model_pivot_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 3767,
+      "delta_bytes": 3767
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "PON, GUARDON, TANKURU and JUNK unit attributes, economy, attack cadence and visuals unchanged; only identical stationary model transforms are skipped.",
+  "tests": {
+    "canonical_server": "tests/auto/stationary_model_pivot_spec.lua",
+    "new_cases": 3,
+    "negative_control": "Pinned old whole-server fixture when available",
+    "accepted_server_cases": "UNCHANGED",
+    "accepted_hud_cases": "UNCHANGED",
+    "local": "NOT_RUN_LUA_5_4_RUNTIME_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40516240374",
+    "main_qa_note": "Both jobs succeeded on merge source 82fed9a; 1b0751 is verified status-only descendant.",
+    "claim_commit": "2897c4758b9c8660f310b360196dca3ac6d40f32",
+    "source_commit": "44d036e5811264976e8682ac87c828f641056ecf",
+    "pr": "PENDING_DRAFT_PR",
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "next_action": "Create draft PR and require exact-head offline plus compile_hold success; independent REVIEWER alone may integrate. Do not claim device frame-time improvement without hardware measurement.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}
