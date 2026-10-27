@@ -19,7 +19,7 @@
     "epoch": 144
   },
   "main_base": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
-  "source_commit": "a3cdbeac12527b64f95e1eb327c6cc874722cf2d",
+  "source_commit": "1fe83e17d23535db6a1a073cb5518c5d3d7b0e09",
   "issue": 93,
   "defect": {
     "id": "player_progress_resets_on_rejoin",
@@ -36,14 +36,14 @@
     {
       "path": "src/ToyWarsServer.server.lua",
       "before_bytes": 20147,
-      "after_bytes": 22943,
-      "delta_bytes": 2796
+      "after_bytes": 22932,
+      "delta_bytes": 2785
     }
   ],
   "source_metrics": {
     "lua_files": 4,
     "lua_lines": 840,
-    "lua_bytes": 34087
+    "lua_bytes": 34076
   },
   "source_baseline_bytes": 25726,
   "test_changes": [
@@ -63,7 +63,7 @@
     "accepted_server_cases": "UNCHANGED",
     "accepted_hud_cases": "UNCHANGED",
     "local": "NOT_RUN_LOCAL_LUA_5_4_CANONICAL_TREE_UNAVAILABLE",
-    "ci": "REPAIR_PENDING_EXACT_HEAD",
+    "ci": "PENDING_EXACT_HEAD_AFTER_ACCEPTED_REGRESSION_REPAIR",
     "roblox_engine": "NOT_RUN",
     "multiplayer": "NOT_RUN",
     "mobile": "NOT_RUN",
@@ -75,17 +75,18 @@
     "main_qa_head": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
     "main_qa_note": "Both jobs success; base main differs only in two generated status files.",
     "claim_commit": "82292b8fcefa44c38b4c68d6c62a96c42f624494",
-    "source_commit": "a3cdbeac12527b64f95e1eb327c6cc874722cf2d",
+    "source_commit": "1fe83e17d23535db6a1a073cb5518c5d3d7b0e09",
     "pr": "PENDING_DRAFT_PR",
     "ci": "PENDING_EXACT_HEAD",
-    "ci_previous_failed": "https://github.com/kk051780/toy-wars-factory/actions/runs/40583053498"
+    "ci_previous_failed": "https://github.com/kk051780/toy-wars-factory/actions/runs/40583053498",
+    "ci_previous_failed_accepted": "https://github.com/kk051780/toy-wars-factory/actions/runs/40583307537"
   },
   "limitations": [
     "No autosave during long sessions; abrupt server loss can lose progress since last successful save.",
     "Real Roblox DataStore enablement, cross-server conflicts, quota and rejoin are unverified.",
     "Malformed/unknown stored schema falls back to session defaults without overwriting prior record."
   ],
-  "next_action": "Rerun exact-head offline+compile_hold with corrected fixture; independent REVIEWER only after both jobs succeed. Roblox engine and DataStore remain NOT_RUN.",
+  "next_action": "Require fresh exact-head offline+compile_hold success after preserving workshop backfill call; independent REVIEWER only after success. Roblox DataStore real rejoin remains NOT_RUN.",
   "restrictions": {
     "gemini_rerun": false,
     "author_main_merge": false,
@@ -105,5 +106,19 @@
     "source_changed": false,
     "accepted_tests_changed": false,
     "required_next": "Exact new-head offline+compile_hold success; no old-head CI reuse."
+  },
+  "ci_repair_accepted": {
+    "kind": "SOURCE_COMPATIBILITY_FIX",
+    "claim_commit": "b2aa8bcadcbcbd72209124e81eb0b737828d6c2d",
+    "epoch": 146,
+    "owner_run_id": "4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "failed_head": "74fd34c2e308496b98c6d2a458477307ed721bc4",
+    "failed_ci_run": 40583307537,
+    "failed_job": "offline",
+    "cause": "New DataStore save change replaced accepted workshop backfill join(waiting) call with task.spawn(join,waiting). Existing immutable tests/test_workshop_backfill.py expects the exact original direct call and ordering.",
+    "fix": "Restore original join(waiting) call. Preserve accepted tests unmodified; all seven new whole-server persistence Lua cases passed on the failed head.",
+    "source_changed": true,
+    "accepted_tests_changed": false,
+    "required_next": "Exact new-head offline and compile_hold both success; previous head success cannot be reused."
   }
 }
