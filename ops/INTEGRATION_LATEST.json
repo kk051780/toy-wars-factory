@@ -1,22 +1,22 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T14:30:21.501Z",
-  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "observed_at": "2026-10-27T15:18:50.258Z",
+  "status": "REVIEW_APPROVED_READY_TO_MERGE",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "aff4eb56-175c-8327-99c5-5e34870cf5d7",
-  "lease_epoch": 119,
-  "main_before": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
+  "reviewer_run_id": "2afe7843-357c-8320-a09c-f57445f79dc8",
+  "lease_epoch": 122,
+  "main_before": "340afc579204bacb987a313501ee3dfa0c2961a3",
   "latest_review": {
-    "pr": 86,
-    "head": "fa89829a259b150ae054541f2f86b35ff74b675f",
+    "pr": 87,
+    "head": "d4e0e2a533ce4c377eeac92c63e07cc93976a8f4",
     "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0086_fa89829a.json",
-    "ci": 40517714431,
-    "category": "GAME_SERVER_STATIONARY_PIVOT_STABILITY",
-    "merge_sha": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
-    "post_merge_main_qa": "success",
-    "post_merge_handoff": "success"
+    "review_record": "ops/reviews/PR0087_d4e0e2a5.json",
+    "ci": 40529165971,
+    "category": "GAME_HUD_WORKSHOP_ALLOCATION_NOTICE",
+    "merge_sha": null,
+    "post_merge_main_qa": null,
+    "post_merge_handoff": null
   },
   "merged_prs": [
     {
@@ -102,7 +102,7 @@
       "category": "GAME_SERVER_STATIONARY_PIVOT_STABILITY"
     }
   ],
-  "merge_count_this_run": 1,
+  "merge_count_this_run": 0,
   "previous_integration_commit": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
   "main_qa": {
     "id": 40521561302,
@@ -130,7 +130,7 @@
     "Roblox Studio/2-client/mobile evidence absent; release HOLD.",
     "Gemini incident HOLD and budget caps unchanged."
   ],
-  "next": "Continue with next eligible small PR after fresh main/lock/CI checks; prioritize playable PvE and real engine/mobile evidence.",
+  "next": "Merge PR87 only after current lease and exact head recheck; verify post-merge main QA and handoff.",
   "merge_sha": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
   "main_after": "340afc579204bacb987a313501ee3dfa0c2961a3",
   "status_only_descendant_verified": true,
@@ -190,15 +190,14 @@
   },
   "latest_review_is_current_run": true,
   "latest_scan": {
-    "observed_at": "2026-10-27T14:30:21.501Z",
-    "eligible_open_prs": [],
-    "merged_pr": 86,
-    "main_qa": 40521561302,
-    "handoff": 40521561438,
+    "observed_at": "2026-10-27T15:18:50.258Z",
+    "eligible_open_prs": [
+      87
+    ],
+    "reviewer_run_id": "2afe7843-357c-8320-a09c-f57445f79dc8",
+    "lease_epoch": 122,
     "main_sha": "340afc579204bacb987a313501ee3dfa0c2961a3",
     "main_qa_verified": true,
-    "status_only_descendant_verified": true,
-    "reviewer_run_id": "aff4eb56-175c-8327-99c5-5e34870cf5d7",
-    "lease_epoch": 119
+    "status_only_descendant_verified": true
   }
 }
