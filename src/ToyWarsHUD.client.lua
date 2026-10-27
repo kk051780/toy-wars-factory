@@ -111,7 +111,7 @@ guideTitle.ZIndex=21
 local guideSteps={
     "1/3  PICK A TOY\nPON fast • GUARDON tough • TANKURU ranged. Tap below.",
     "2/3  PRODUCE & DEFEND\nYour factory auto-produces toys; defend the vault from JUNK.",
-    "3/3  EARN & UPGRADE\nDefeat JUNK for coins; upgrade at the gold platform; retry after a loss.",
+    "3/3  EARN & UPGRADE\nDefeat JUNK for coins; upgrade at gold. Loss automatically restarts wave 1.",
 }
 local guidePage=1
 local guideText=addText(quickStart,UDim2.new(1,-28,0,74),UDim2.new(0,14,0,43),
