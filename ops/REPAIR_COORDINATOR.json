@@ -515,6 +515,18 @@
       "qa": 40340501580,
       "handoff": 40340501344,
       "main_after_handoff": "336f9e08a344a706e98d459985c5cfe1c5ead94f"
+    },
+    "78": {
+      "sha": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+      "merged": true,
+      "message": "Pull Request successfully merged",
+      "integration_path": "SCOPED_BOOTSTRAP_CONTROLLER_MIGRATION",
+      "controller_operation_id": "1a11d75b-907b-4b7e-89a2-159938b42715",
+      "registered_review_run_id": "d26f58a7-1d38-832f-8388-4de85a493d66",
+      "qa": 40445881032,
+      "handoff": 40445881046,
+      "post_merge_main_qa_status": "in_progress",
+      "post_merge_handoff_status": "in_progress"
     }
   },
   "completed_controller_phase": {
@@ -816,7 +828,7 @@
       "integration_path": "SCOPED_BOOTSTRAP_CONTROLLER_MIGRATION",
       "integrator_operation_id": "1a11d75b-907b-4b7e-89a2-159938b42715",
       "lease_epoch": 91,
-      "status": "APPROVED_PENDING_EXACT_HEAD_MERGE",
+      "status": "MERGED_PENDING_MAIN_QA_AND_HANDOFF",
       "ci": {
         "id": 40445204478,
         "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
@@ -840,6 +852,19 @@
         "live_authorized": false,
         "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40445204478",
         "scope_and_claim_steps": "SKIPPED_EXPECTED_CONTROLLER_BRANCH; separately reviewed bootstrap trust-root path"
+      },
+      "merge_sha": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+      "post_merge_main_qa": {
+        "id": 40445881032,
+        "head": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      "post_merge_handoff": {
+        "id": 40445881046,
+        "head": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+        "status": "in_progress",
+        "conclusion": null
       }
     }
   }

@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T03:44:15.824Z",
-  "status": "APPROVED_PENDING_EXACT_HEAD_CONTROLLER_MIGRATION",
+  "observed_at": "2026-10-27T03:45:29.389Z",
+  "status": "MERGED_PENDING_MAIN_QA_AND_HANDOFF",
   "owner_reply_required": false,
   "integration_path": "SCOPED_BOOTSTRAP_CONTROLLER_MIGRATION",
   "controller_operation_id": "1a11d75b-907b-4b7e-89a2-159938b42715",
@@ -17,13 +17,36 @@
     "review_record": "ops/reviews/PR0078_d9caf399.json",
     "ci": 40445204478
   },
-  "merged_prs": [],
-  "merge_count_this_run": 0,
+  "merged_prs": [
+    {
+      "pr": 78,
+      "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+      "merge_sha": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+      "status": "MERGED_PENDING_MAIN_QA_AND_HANDOFF",
+      "main_qa": 40445881032,
+      "handoff": 40445881046
+    }
+  ],
+  "merge_count_this_run": 1,
   "previous_integration_commit": "8a3d8727c111988a53875d65542e2bb70a8f905f",
   "unresolved": [
     "No ordinary registered REVIEWER integration cycle is asserted for this bootstrap migration.",
     "Original standalone legacy CLI is still false-safe for failed/no_update; separate scoped META repair and main QA required; Issue72 remains open.",
     "Roblox engine/multiplayer/mobile/visual/player evidence remain unverified; release HOLD and Gemini incident/spending holds remain."
   ],
-  "next": "Merge only exact reviewed head with merge method; verify actual post-merge main offline/compile_hold and handoff; then hand legacy CLI repair to META."
+  "next": "Wait for exact merged-main QA and handoff; do not resolve legacy CLI or scope blocker until main QA succeeds.",
+  "merge_sha": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+  "main_after": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+  "main_qa": {
+    "id": 40445881032,
+    "head": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+    "status": "in_progress",
+    "conclusion": null
+  },
+  "handoff": {
+    "id": 40445881046,
+    "head": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+    "status": "in_progress",
+    "conclusion": null
+  }
 }

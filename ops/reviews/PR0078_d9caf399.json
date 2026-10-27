@@ -6,7 +6,7 @@
   "base_reviewed": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
   "category": "SCOPED_TRUST_ROOT_SYSTEM_MAINTENANCE",
   "verdict": "APPROVE",
-  "status": "APPROVED_PENDING_EXACT_HEAD_MERGE",
+  "status": "MERGED_PENDING_MAIN_QA_AND_HANDOFF",
   "observed_at": "2026-10-27T03:44:15.824Z",
   "integration_path": "SCOPED_BOOTSTRAP_CONTROLLER_MIGRATION",
   "normal_v4_reviewer_integration_claimed": false,
@@ -130,5 +130,28 @@
     "Original standalone legacy CLI is still false-safe for failed/no_update; separate scoped META repair and main QA required; Issue72 remains open.",
     "Roblox engine/multiplayer/mobile/visual/player evidence remain unverified; release HOLD and Gemini incident/spending holds remain."
   ],
-  "next": "Merge only exact reviewed head with merge method; verify actual post-merge main offline/compile_hold and handoff; then hand legacy CLI repair to META."
+  "next": "Wait for exact merged-main QA and handoff; do not resolve legacy CLI or scope blocker until main QA succeeds.",
+  "merged_at": "2026-10-27T03:45:29.389Z",
+  "merge_sha": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+  "merge_method": "merge",
+  "actual_merge_verified": {
+    "tree": "5010a5db8f6b8d3a6d1e73fde4c337ed7f9843ae",
+    "reviewed_tree_equal": true,
+    "parents": [
+      "c512ed9e155ebaba97e0098a7f75fb56510e0516",
+      "d9caf3992724a487b0dbeac65f8c01cb161ab854"
+    ]
+  },
+  "post_merge_main_qa": {
+    "id": 40445881032,
+    "head": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+    "status": "in_progress",
+    "conclusion": null
+  },
+  "post_merge_handoff": {
+    "id": 40445881046,
+    "head": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+    "status": "in_progress",
+    "conclusion": null
+  }
 }
