@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T20:08:25.885Z",
+  "observed_at": "2026-10-27T20:09:21.679Z",
   "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
@@ -137,7 +137,8 @@
       "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "main_qa": 40575268638,
       "handoff": 40575268483,
-      "category": "GAME_SERVER_IDLE_HEALTH_BAR_LOOKUP_OPTIMIZATION"
+      "category": "GAME_SERVER_IDLE_HEALTH_BAR_LOOKUP_OPTIMIZATION",
+      "main_after_handoff": "bf959fb6ecc484993085ef767ae0c7370fb6db50"
     }
   ],
   "merge_count_this_run": 1,
@@ -242,7 +243,7 @@
   },
   "merged_this_run": [],
   "eligible_open_prs": [],
-  "next_action": "VERIFY_PR90_POST_MERGE_MAIN_QA_BEFORE_NEW_INTEGRATION",
+  "next_action": "NO_MORE_ELIGIBLE_AUTOMATIC_PRS; PRIORITIZE_PLAYABLE_PVE_AND_STUDIO_TWO_CLIENT_MOBILE_EVIDENCE",
   "notes": "PR90 current head CI succeeds but C00060 sorted before merged C00061/C00062 would violate accepted per-file history chain. No integration. Engine/device evidence remains absent; all holds retained.",
   "comparison_since_merge": {
     "base": "4713c65b9a20b9fe46c66348160920e69af4e6da",

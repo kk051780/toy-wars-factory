@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T20:08:25.885Z",
+  "observed_at": "2026-10-27T20:09:21.679Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1263,7 +1263,7 @@
       "kind": "REPAIR_PR_SOURCE_LEDGER",
       "priority": "P0",
       "assigned_role": "WORKER",
-      "status": "MERGED_WAIT_MAIN_QA",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_SUCCESS",
       "created_at": "2026-10-27T19:57:18.879Z",
       "observed_at": "2026-10-27T19:57:18.879Z",
       "pr": 90,
@@ -1300,8 +1300,12 @@
         "review_record": "ops/reviews/PR0090_4080f20a.json",
         "main_qa": 40575268638,
         "handoff": 40575268483,
-        "verified": false
-      }
+        "verified": true,
+        "main_after_handoff": "bf959fb6ecc484993085ef767ae0c7370fb6db50",
+        "main_qa_conclusion": "success",
+        "handoff_conclusion": "success"
+      },
+      "resolved_at": "2026-10-27T20:09:21.679Z"
     }
   ]
 }
