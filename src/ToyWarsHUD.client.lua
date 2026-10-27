@@ -24,6 +24,8 @@ waiting.Parent=gui
 local event=ReplicatedStorage:WaitForChild("ToyWarsSelectUnit")
 local B=require(ReplicatedStorage:WaitForChild("ToyWarsBalance"))
 local stats=player:WaitForChild("leaderstats")
+-- Allocation is known; keep feedback accurate while status values replicate.
+waiting.Text="Preparing your workshop..."
 local status=player:WaitForChild("ToyWarsStatus")
 local coins=stats:WaitForChild("Coins")
 local wave=stats:WaitForChild("Wave")
