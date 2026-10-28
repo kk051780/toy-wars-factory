@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 171,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "7f92f090-38c4-8328-9a0e-9975e4e4981d",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 171,
-    "acquired_at": "2026-10-28T06:02:16.489Z",
-    "expires_at": "2026-10-28T06:32:16.489Z",
-    "base_main_sha": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
-    "work_branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,16 +36,15 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "078f9eff-b7ac-832c-8dcb-099823cdb301",
-    "epoch": 170,
-    "released_at": "2026-10-28T05:30:56.728Z",
-    "result": "PR94_REQUEST_CHANGES_OVERLAPPING_REFRESH_P1",
+    "kind": "WORKER",
+    "owner_id": "7f92f090-38c4-8328-9a0e-9975e4e4981d",
+    "epoch": 171,
+    "released_at": "2026-10-28T06:05:18.339Z",
+    "result": "PR94_REFRESH_OVERLAP_CODE_COMMITTED_CI_PENDING",
     "pr": 94,
-    "head": "f6bf432901e66ce025c490373fbf5a17f176d431",
-    "review": "ops/reviews/PR0094_f6bf4329.json",
-    "request": "pr94_overlapping_lease_refresh_false_kick_unsaved_20261028",
-    "next_actor": "WORKER"
+    "head": "c7c870d631dc08c889cf022006cc038a6e29be3c",
+    "ci": 40641675274,
+    "next_actor": "REVIEWER_AFTER_EXACT_HEAD_CI"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
