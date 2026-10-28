@@ -177,16 +177,26 @@ local function loadProgress(player,pending)
         if claimedOk and claimed~=nil then
             if sessions[player]~=pending or player.Parent~=Players then
                 -- The claim may have yielded past disconnect. Release only this token.
-                pcall(function()
-                    progressStore:UpdateAsync(key,function(current,keyInfo)
-                        if not validProgress(current) or current.sessionOwner~=token then return nil end
-                        local updated={}
-                        for field,value in pairs(current) do updated[field]=value end
-                        updated.sessionOwner=nil;updated.sessionLeaseUntil=nil
-                        if keyInfo then return updated,keyInfo:GetUserIds(),keyInfo:GetMetadata() end
-                        return updated
+                -- A transient DataStore error must not strand a departed player's
+                -- just-committed claim for the full lease duration.
+                local cleanupOk=false
+                for cleanupAttempt=1,SAVE_RETRY_COUNT do
+                    local ok=pcall(function()
+                        progressStore:UpdateAsync(key,function(current,keyInfo)
+                            if not validProgress(current) or current.sessionOwner~=token then return nil end
+                            local updated={}
+                            for field,value in pairs(current) do updated[field]=value end
+                            updated.sessionOwner=nil;updated.sessionLeaseUntil=nil
+                            if keyInfo then return updated,keyInfo:GetUserIds(),keyInfo:GetMetadata() end
+                            return updated
+                        end)
                     end)
-                end)
+                    if ok then cleanupOk=true;break end
+                    if cleanupAttempt<SAVE_RETRY_COUNT then task.wait(SAVE_RETRY_SECONDS) end
+                end
+                if not cleanupOk then
+                    warn("TWF: departed claim cleanup unavailable for",player.UserId)
+                end
                 return nil,false,"DEPARTED"
             end
             return claimed,true
