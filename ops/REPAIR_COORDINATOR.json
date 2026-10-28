@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 209,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "703f0277-dcf0-832b-b9fd-2a59fd937839",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 209,
-    "acquired_at": "2026-10-28T17:06:32.126+00:00",
-    "expires_at": "2026-10-28T17:36:32.126+00:00",
-    "base_main_sha": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
-    "work_branch": "auto/twf-game-repair-95aef457-a224-8332-ac0b-f8e3e80c9ae0",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,16 +36,16 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "527bce03-5fa0-832f-bb89-1dae393e4e29",
-    "epoch": 208,
-    "released_at": "2026-10-28T16:32:06.887Z",
-    "result": "PR106_REQUEST_CHANGES_PENDING_CLAIM",
+    "kind": "WORKER",
+    "owner_id": "703f0277-dcf0-832b-b9fd-2a59fd937839",
+    "epoch": 209,
+    "released_at": "2026-10-28T17:12:01.000+00:00",
+    "result": "PR106_C00112_REVIEW_REPAIR_EXACT_HEAD_BOTH_CI_PASS_WAIT_INDEPENDENT_REVIEW",
     "pr": 106,
-    "head": "6038487fe5b93d9212a3845196f129792729fec3",
-    "ci": 40723859639,
-    "review_record": "ops/reviews/PR0106_6038487f.json",
-    "request_id": "pr106_pending_claim_after_bindtoclose_20261029"
+    "head": "3a62e5c70e27c2b60152ab97011b5b7535ddc8d5",
+    "ci": 40733120541,
+    "review_request_id": "pr106_pending_claim_after_bindtoclose_20261029",
+    "claim_commit": "cb245d9b2c5e24710e0e1e6f93008797c04b1655"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
