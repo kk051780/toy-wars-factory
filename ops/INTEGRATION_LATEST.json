@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T21:42:43.442Z",
-  "status": "PR111_APPROVED_PENDING_MERGE_PR112_REQUEST_CHANGES",
+  "observed_at": "2026-10-28T21:44:15.489Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED_PR112_REQUEST_CHANGES",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "481f4d3e-88e0-832e-bba2-ea4fbc2fe466",
@@ -13,8 +13,11 @@
     "verdict": "APPROVE",
     "review_record": "ops/reviews/PR0111_985a0246.json",
     "ci": 40769446837,
+    "merge_sha": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
+    "main_qa": 40774271061,
+    "handoff": 40774270909,
     "category": "GAME_DATASTORE_DEPARTED_CLAIM_CLEANUP_RETRY",
-    "status": "APPROVED_PENDING_MERGE"
+    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
   },
   "merged_prs": [
     {
@@ -250,18 +253,34 @@
       "main_after_handoff": "5d4774843179227956f68d92c0ff6f89c77cb28d",
       "category": "GAME_SERVER_CONFIGURED_PROMPT_DISTANCE_FENCE",
       "status_only_descendant_verified": true
+    },
+    {
+      "pr": 111,
+      "head": "985a02462cce841434af6d94b10a2e728cc8c9be",
+      "merge_sha": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40774271061,
+      "handoff": 40774270909,
+      "main_after_handoff": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
+      "category": "GAME_DATASTORE_DEPARTED_CLAIM_CLEANUP_RETRY"
     }
   ],
-  "merge_count_this_run": 0,
+  "merge_count_this_run": 1,
   "main_qa": {
-    "id": 40763962202,
-    "head": "526ad536497510f57b94460988ea1ca9fa19ac62",
-    "conclusion": "success"
+    "id": 40774271061,
+    "head": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40774271061"
   },
   "handoff": {
-    "id": 40763962162,
-    "head": "526ad536497510f57b94460988ea1ca9fa19ac62",
-    "conclusion": "success"
+    "id": 40774270909,
+    "head": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40774270909"
   },
   "comparison_since_main_qa": {
     "verified": true,
@@ -277,11 +296,11 @@
       "blocker": "OWNER_ORIGINAL_PARAPHRASE_MISCLASSIFIED"
     }
   ],
-  "next": "Merge PR111 exact head after ownership recheck; verify main QA/handoff. PR112 must repair original-text provenance and pass new head CI before reconsideration.",
+  "next": "PR112 new head required: preserve owner exact transcription and separate DERIVED paraphrase, regression and both CI, independent re-review. PR110 manual CONTROLLER remains protected. Continue playable PvE and real device/players verification.",
   "runtime_verified": true,
-  "main_after": "5d4774843179227956f68d92c0ff6f89c77cb28d",
-  "merge_sha": "877417447e645fd8f3c34d5aecd883a43791712d",
-  "next_actor": "WORKER",
+  "main_after": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
+  "merge_sha": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
+  "next_actor": "META_REPAIR_PR112",
   "secondary_review": {
     "pr": 112,
     "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
@@ -298,8 +317,8 @@
       }
     ]
   },
-  "main_after_merge": "877417447e645fd8f3c34d5aecd883a43791712d",
-  "main_after_handoff": "8a0f8816870fa4854b71c23d223728589303070a",
+  "main_after_merge": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
+  "main_after_handoff": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
   "status_only_descendant_verified": true,
-  "merges_this_run": 0
+  "merges_this_run": 1
 }
