@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T22:22:31.157Z",
+  "observed_at": "2026-10-28T22:42:27Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2551,6 +2551,103 @@
         "engine": "NOT_RUN",
         "old_rejection_preserved": true
       }
+    },
+    {
+      "id": "a12_runtime_alerts_pr116_registered_review_20261029",
+      "created_at": "2026-10-28T22:42:27Z",
+      "kind": "INDEPENDENT_REVIEW_REQUEST",
+      "priority": "P1",
+      "status": "OPEN",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 116,
+      "branch": "auto/twf-system-review-4d796ca2-e004-832e-86ae-b5e502f26901",
+      "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
+      "base_main_sha": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "4d796ca2-e004-832e-86ae-b5e502f26901",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "de45b71d8925fba0b9a5862a14c14d78083d8a88",
+        "owner_run_id": "4d796ca2-e004-832e-86ae-b5e502f26901",
+        "epoch": 226,
+        "work_branch": "auto/twf-system-review-4d796ca2-e004-832e-86ae-b5e502f26901",
+        "acquired_at": "2026-10-28T22:28:10+00:00",
+        "expires_at": "2026-10-28T22:58:10+00:00",
+        "release": "SAME_COMMIT_RELEASES_OWN_EPOCH"
+      },
+      "summary": "Read-only scoped service/CI/lease anomaly classification through accepted observer transport; provisional dedup and unrecovered disappearance candidates. No operation denial inference without original receipt.",
+      "changed_files": [
+        {
+          "path": "tools/system_runtime_alerts.py",
+          "status": "A",
+          "bytes": 24155,
+          "sha": "4430050e9e42eec35d5f7339f1d975444e72b0e6"
+        },
+        {
+          "path": "tests/test_system_runtime_alerts.py",
+          "status": "A",
+          "bytes": 22035,
+          "sha": "403a81347c5256e86741db6a2a3cc90311aed6c3"
+        },
+        {
+          "path": "docs/research/2026-10-29_a12_runtime_alerts.md",
+          "status": "A",
+          "bytes": 8421,
+          "sha": "24fbce2ec6486feee46a065ce204c5bed232910b"
+        },
+        {
+          "path": "history/C00123_a12_runtime_alerts.json",
+          "status": "A",
+          "bytes": 10361,
+          "sha": "d736fd10d7134ed07d5b44a95b8b0a1f4b9d424e"
+        }
+      ],
+      "ci": {
+        "run": 40781686546,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40781686546",
+        "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
+        "attempt": 1,
+        "conclusion": "success",
+        "jobs": [
+          {
+            "id": 123144679640,
+            "name": "offline",
+            "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
+            "conclusion": "success",
+            "started_at": "2026-10-28T22:39:53Z",
+            "completed_at": "2026-10-28T22:40:20Z"
+          },
+          {
+            "id": 123144679978,
+            "name": "compile_hold",
+            "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
+            "conclusion": "success",
+            "started_at": "2026-10-28T22:39:53Z",
+            "completed_at": "2026-10-28T22:40:03Z"
+          }
+        ],
+        "python": 549,
+        "new_python": 39,
+        "accepted_python": 510,
+        "trusted_scope": "PASS",
+        "claim_gate": "1 immutable coordinator claim verified",
+        "other": "Existing Lua/installer/policy/handoff checks PASS; native engine NOT_RUN"
+      },
+      "expected": "Independent exact-head source/claim/2-job review, author cannot merge; after any merge verify actual main QA/handoff. Source-only phase; A12/A13/progress credit not earned by fixtures.",
+      "limitations": [
+        "Independent registered source review and actual post-merge main QA/handoff pending",
+        "Later unforced scheduled anomaly/report/recovery proof required for A12; source test pass is not operation proof",
+        "Attempt-specific CI rerun start, missed-schedule history, trusted durable prior-state/alert sender not implemented",
+        "Original host-denial receipt unavailable; causal diagnosis INDETERMINATE",
+        "Issue113 progress audit and PR55 credential isolation remain separate protected work",
+        "Roblox engine/multiplayer/mobile/visual/fun and player effect unmeasured"
+      ],
+      "owner_reply_required": false,
+      "engine_executed": false,
+      "player_effect": "NOT_MEASURED",
+      "next_actor": "REGISTERED_REVIEWER"
     }
   ]
 }

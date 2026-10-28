@@ -1,474 +1,291 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T22:14:38Z",
-  "status": "PR112_FORMAL_REVIEW_REPAIR_IMPLEMENTED_CI_PASS_AWAIT_INDEPENDENT_REREVIEW",
+  "observed_at": "2026-10-28T22:42:27Z",
+  "status": "SOURCE_PR_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
   "repository": "kk051780/toy-wars-factory",
   "actor": {
-    "kind": "META",
+    "role": "META",
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "f849220f-dc50-8329-926a-f3b0db1267a2",
-    "service_recorded_status": "in_progress",
-    "service_completion_asserted": false
+    "run_id": "4d796ca2-e004-832e-86ae-b5e502f26901",
+    "run_status_at_observation": "in_progress",
+    "old_latest_result_is_current": false
   },
   "coordination": {
     "branch": "twf-repair-coordinator",
-    "claim_commit": "a4ef9beea5e4ac1b523407ddf53ccc8ea6c4ef12",
-    "owner_run_id": "f849220f-dc50-8329-926a-f3b0db1267a2",
-    "epoch": 224,
-    "acquired_at": "2026-10-28T21:55:15+00:00",
-    "expires_at": "2026-10-28T22:25:15+00:00",
-    "release": "SAME_COMMIT_RELEASES_OWN_EPOCH",
-    "released_at": "2026-10-28T22:16:08Z",
-    "release_status": "OWN_EPOCH_HOLDER_NULL_IN_SAME_COMMIT"
+    "claim_commit": "de45b71d8925fba0b9a5862a14c14d78083d8a88",
+    "owner_run_id": "4d796ca2-e004-832e-86ae-b5e502f26901",
+    "epoch": 226,
+    "work_branch": "auto/twf-system-review-4d796ca2-e004-832e-86ae-b5e502f26901",
+    "acquired_at": "2026-10-28T22:28:10+00:00",
+    "expires_at": "2026-10-28T22:58:10+00:00",
+    "release": "SAME_COMMIT_RELEASES_OWN_EPOCH"
   },
   "main_health": {
-    "head": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
-    "qa": 40774271061,
-    "qa_head": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
-    "handoff": 40774270909,
-    "jobs": [
-      {
-        "id": 123119308289,
-        "name": "offline",
-        "conclusion": "success"
-      },
-      {
-        "id": 123119308489,
-        "name": "compile_hold",
-        "conclusion": "success"
-      }
+    "main": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+    "qa": 40779288581,
+    "qa_head": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+    "qa_jobs": "offline+compile_hold SUCCESS",
+    "qa_python": 510,
+    "handoff": 40779288627,
+    "status_only_direct_compare": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
     ],
-    "comparison": {
-      "status": "ahead",
-      "ahead": 1,
-      "behind": 0,
-      "files": [
-        "status/CHAT_HANDOFF.md",
-        "status/LATEST_STATE.json"
-      ]
-    },
-    "status": "PASS_VERIFIED_GENERATED_STATUS_ONLY_DESCENDANT",
-    "pr111": {
-      "merged": true,
-      "merge": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
-      "already_integrated_not_reimplemented": true
-    }
+    "pr112": "INDEPENDENTLY_MERGED; no duplicate repair",
+    "review_record": "ops/reviews/PR0112_c6301b97.json"
   },
-  "review_request": {
-    "id": "pr112_owner_verbatim_provenance_20261029",
-    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "reviewer_run_id": "481f4d3e-88e0-832e-bba2-ea4fbc2fe466",
-    "record": "ops/reviews/PR0112_a6ccf32e.json",
-    "original_head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
-    "original_verdict": "REQUEST_CHANGES",
-    "finding": "AI summary mislabeled as owner verbatim despite passing SHA/CI",
-    "current_verdict": "NOT_REVIEWED_NEW_HEAD",
-    "author_does_not_dismiss_review": true
+  "previous_outcome": {
+    "pr": 112,
+    "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
+    "merge_sha": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+    "qa": 40779288581,
+    "handoff": 40779288627,
+    "reviewer_run_id": "867615bf-3cfc-8326-9ba2-e1a5cc06064b",
+    "status": "INDEPENDENT_MERGE_MAIN_QA_HANDOFF_SUCCESS",
+    "prior_report_at": "2026-10-28T22:14:38Z",
+    "owner_chat_authentication": "NOT_VERIFIED",
+    "no_duplicate_repair": true
   },
   "implementation": {
-    "pr": 112,
-    "url": "https://github.com/kk051780/toy-wars-factory/pull/112",
-    "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
-    "base_main_sha": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
-    "branch": "auto/twf-system-review-7abde498-0150-8327-8579-2b3f808d0acb",
-    "kind": "SYSTEM_P1_PROVENANCE_REPAIR",
-    "summary": "Append transcript extraction with exact repo/issue/comment binding, explicit original chat NOT_AVAILABLE/NOT_VERIFIED and owner text comparison. Reject hash-consistent paraphrases and archived provenance in candidate ancestry. Old C00121 immutable; active checkpoint below withdraws3 rejected records, appends exact full transcription, separate DERIVED summary and2 freshly linked game variants.",
-    "files": [
+    "category": "SYSTEM_SOURCE_AND_NEW_REGRESSIONS",
+    "issue": 114,
+    "pr": 116,
+    "url": "https://github.com/kk051780/toy-wars-factory/pull/116",
+    "branch": "auto/twf-system-review-4d796ca2-e004-832e-86ae-b5e502f26901",
+    "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
+    "base": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+    "commit_count": 1,
+    "new_pr_count": 1,
+    "main_merges": 0,
+    "paths": [
       {
-        "path": "docs/research/2026-10-29_scoped_idea_vault.md",
-        "status": "added",
-        "sha": "332f400bd02e91636c926bcf7177da80a5d7d015",
-        "bytes": 5472
+        "path": "tools/system_runtime_alerts.py",
+        "status": "A",
+        "bytes": 24155,
+        "sha": "4430050e9e42eec35d5f7339f1d975444e72b0e6"
       },
       {
-        "path": "history/C00121_scoped_dual_idea_pipeline.json",
-        "status": "added",
-        "sha": "26aebd9badfc616e43cafc1a792669007e5387d1",
-        "bytes": 37398
+        "path": "tests/test_system_runtime_alerts.py",
+        "status": "A",
+        "bytes": 22035,
+        "sha": "403a81347c5256e86741db6a2a3cc90311aed6c3"
       },
       {
-        "path": "history/C00122_owner_verbatim_review_repair.json",
-        "status": "added",
-        "sha": "05525a97b24381e660ddc7cd5812550a427406e0",
-        "bytes": 53682
+        "path": "docs/research/2026-10-29_a12_runtime_alerts.md",
+        "status": "A",
+        "bytes": 8421,
+        "sha": "24fbce2ec6486feee46a065ce204c5bed232910b"
       },
       {
-        "path": "tests/test_system_idea_pipeline.py",
-        "status": "added",
-        "sha": "881e02efa8fddc1306b6034c317201d292de4498",
-        "bytes": 12578
-      },
-      {
-        "path": "tests/test_system_idea_vault.py",
-        "status": "added",
-        "sha": "3eb8dbe5c1186bb6a3ac107d21172b1605b7f924",
-        "bytes": 11548
-      },
-      {
-        "path": "tests/test_system_owner_transcription.py",
-        "status": "added",
-        "sha": "ba8b37783771a0c76778acfc310325d81807938d",
-        "bytes": 11325
-      },
-      {
-        "path": "tools/system_idea_pipeline.py",
-        "status": "added",
-        "sha": "df6cf5d2202a9343570bce0957c72c5ca4e4b570",
-        "bytes": 25556
+        "path": "history/C00123_a12_runtime_alerts.json",
+        "status": "A",
+        "bytes": 10361,
+        "sha": "d736fd10d7134ed07d5b44a95b8b0a1f4b9d424e"
       }
     ],
-    "new_prs_created": 0,
-    "accepted_main_blobs_unchanged": 255,
-    "game_source_changed": 0,
-    "game_lua_metrics": {
-      "lua_files": 4,
-      "lua_lines": 1173,
-      "lua_bytes": 51896
-    },
-    "self_merged": false
-  },
-  "provenance": {
-    "original_author_run_id": "7abde498-0150-8327-8579-2b3f808d0acb",
-    "original_claim": "1404bff89ae63c913de3d3c556f37acb6583a636",
-    "original_epoch": 222,
-    "original_C00121_sha": "26aebd9badfc616e43cafc1a792669007e5387d1",
-    "original_C00121_unchanged": true,
-    "prior43_tests_unchanged": true,
-    "repair_claim": "a4ef9beea5e4ac1b523407ddf53ccc8ea6c4ef12",
-    "repair_run_id": "f849220f-dc50-8329-926a-f3b0db1267a2",
-    "repair_epoch": 224,
-    "source_commit_parents": [
-      "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
-      "5cafd1a4f3f7289dd77257a92977f5899aaa927c"
-    ],
-    "scope_and_claim_gate": "PASS: 2 immutable claims verified; legitimate later run repairs same exact branch",
-    "not_manual_controller_impersonation": true
+    "accepted_main_blobs_preserved": 262,
+    "game_source_changed": false,
+    "summary": "Read-only scoped service/CI/lease anomaly classification through accepted observer transport; provisional dedup and unrecovered disappearance candidates. No operation denial inference without original receipt."
   },
   "tests": {
-    "new_python": 13,
-    "prior_pr_python_unchanged": 43,
-    "focused": "56 PASS",
-    "old_checkpoint_control": {
-      "old_hash_validation": "PASS_NOT_AUTHENTICATION",
-      "old_checkpoint_rejected": "owner source does not match scoped record",
-      "rehash_with_correct_source_rejected": "owner text is not verbatim transcription"
+    "focused": {
+      "new_tests": 39,
+      "pass": 39,
+      "classification": "SYNTHETIC_TEST_ONLY"
     },
-    "isolated_mutant": {
-      "run": 2,
-      "failures": 2,
-      "errors": 0,
-      "disk_source_unchanged": true
+    "negative_control": {
+      "old_observer": "Actual accepted incident observer reports IN_PROGRESS without an overrun threshold/alert collection; new classifier flags 1200s elapsed against600s hypothesis.",
+      "isolated_mutant": {
+        "tests": 2,
+        "failures": 2,
+        "errors": 0,
+        "disk_source_written": false
+      }
     },
     "local_full": {
-      "run": 510,
-      "passed": 509,
+      "run": 549,
+      "passed": 548,
       "failures": 1,
       "errors": 0,
-      "cause": "Unchanged historical Git ancestry assertion; connected-file snapshot lacks real history; no test skips/weakening"
+      "cause": "Unchanged handoff historical Git ancestry assertion; connected snapshot has no real commit history. No test skips or accepted edits."
     },
-    "github": {
-      "run": 40777605047,
-      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40777605047",
-      "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
+    "github_ci": {
+      "run": 40781686546,
+      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40781686546",
+      "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
       "attempt": 1,
       "conclusion": "success",
       "jobs": [
         {
-          "id": 123130815932,
-          "name": "compile_hold",
-          "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
+          "id": 123144679640,
+          "name": "offline",
+          "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
           "conclusion": "success",
-          "started_at": "2026-10-28T22:08:22Z",
-          "completed_at": "2026-10-28T22:08:31Z"
+          "started_at": "2026-10-28T22:39:53Z",
+          "completed_at": "2026-10-28T22:40:20Z"
         },
         {
-          "id": 123130816527,
-          "name": "offline",
-          "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
+          "id": 123144679978,
+          "name": "compile_hold",
+          "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
           "conclusion": "success",
-          "started_at": "2026-10-28T22:08:22Z",
-          "completed_at": "2026-10-28T22:08:47Z"
+          "started_at": "2026-10-28T22:39:53Z",
+          "completed_at": "2026-10-28T22:40:03Z"
         }
       ],
-      "python": 510,
-      "python_result": "ALL_PASS",
+      "python": 549,
+      "new_python": 39,
+      "accepted_python": 510,
       "trusted_scope": "PASS",
-      "coordinator_claim": "2 immutable claims verified",
-      "other": "Accepted Lua/installer/handoff checks PASS; engine NOT_RUN"
-    }
+      "claim_gate": "1 immutable coordinator claim verified",
+      "other": "Existing Lua/installer/policy/handoff checks PASS; native engine NOT_RUN"
+    },
+    "accepted_tests_changed": false,
+    "scope_checker_changed": false
   },
-  "idea_stock_checkpoint": {
-    "ref": "c6301b978b289197b764f32744fd0693c2fdbd05:history/C00122_owner_verbatim_review_repair.json",
-    "blob": "05525a97b24381e660ddc7cd5812550a427406e0",
-    "counts": {
-      "retained_records": 13,
-      "active_records": 10,
-      "active_owner_transcriptions": 2,
-      "active_web_ideas": 3,
-      "active_derived": 5,
-      "withdrawn": 3,
-      "original_chat_authenticated": 0,
-      "main_adoptions": 0,
-      "engine_measured": 0,
-      "player_measured": 0
-    },
-    "withdrawn_ids": [
-      "OWNER-20261028-CHARACTER-VARIETY",
-      "MIX-20261029-CUREBO-STAGED",
-      "MIX-20261029-FTUE-FIRST"
-    ],
-    "replacement_map": {
-      "misclassified_owner": "OWNER-20261028-CHARACTER-VARIETY",
-      "verbatim_owner": "OWNER-20261028-CHARACTER-VERBATIM",
-      "derived_summary": "MIX-20261029-CHARACTER-SUMMARY",
-      "variants": {
-        "MIX-20261029-CUREBO-STAGED": "MIX-20261029-CUREBO-STAGED-R1",
-        "MIX-20261029-FTUE-FIRST": "MIX-20261029-FTUE-FIRST-R1"
-      }
-    },
-    "preserved_unchanged_ids": [
-      "OWNER-20261028-DUAL-EVOLUTION",
-      "WEB-20261029-DISCOVERY",
-      "WEB-20261029-COLLECTION",
-      "WEB-20261029-EVALS",
-      "MIX-20261029-SCOPED-VAULT",
-      "MIX-20261029-ISSUE-LEDGER"
-    ],
-    "owner_provenance_check": {
-      "basis": "EXACT_MATCH_TO_SUPPLIED_GITHUB_TRANSCRIPT_NOT_AUTHENTICATION",
-      "matched_active_records": [
-        [
-          "toy-wars-factory",
-          "OWNER-20261028-CHARACTER-VERBATIM"
-        ],
-        [
-          "toy-wars-factory",
-          "OWNER-20261028-DUAL-EVOLUTION"
-        ]
-      ],
-      "original_chat_url": "NOT_AVAILABLE",
-      "original_chat_authentication": "NOT_VERIFIED",
-      "archived_unverified_owner_ids": [
-        "OWNER-20261028-CHARACTER-VARIETY"
-      ]
-    },
-    "actual_cli": {
-      "SYSTEM": {
-        "returncode": 0,
-        "variants": 2,
-        "baseline": "NO_CHANGE",
-        "matched_transcriptions": 2,
-        "original_chat_authentication": "NOT_VERIFIED",
-        "engine": "NOT_RUN",
-        "players": "NOT_MEASURED"
-      },
-      "GAME": {
-        "returncode": 0,
-        "variants": 2,
-        "baseline": "NO_CHANGE",
-        "matched_transcriptions": 2,
-        "original_chat_authentication": "NOT_VERIFIED",
-        "engine": "NOT_RUN",
-        "players": "NOT_MEASURED"
-      }
-    },
-    "source_comment_url": "https://github.com/kk051780/toy-wars-factory/issues/109#issuecomment-6481271808",
-    "source_api_url": "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808",
-    "original_chat_url": "NOT_AVAILABLE",
-    "original_chat_authentication": "NOT_VERIFIED",
-    "source_observation": "Actual connected GitHub GET comment responses projected to7 content/identity/time keys, then passed through this exact source. This is transcription comparison, not original chat authentication.",
-    "comment_snapshots": [
-      {
-        "id": 6480372522,
-        "api_url": "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6480372522",
-        "html_url": "https://github.com/kk051780/toy-wars-factory/issues/109#issuecomment-6480372522",
-        "created_at": "2026-10-28T20:50:23Z",
-        "updated_at": "2026-10-28T20:50:23Z",
-        "body_sha256": "ed61e2572f89df7eba4c49c5f204107530442c2d9190a774c250f207d8a966aa",
-        "checked_at": "2026-10-28T22:01:06Z",
-        "original_chat_authentication": "NOT_VERIFIED"
-      },
-      {
-        "id": 6481271808,
-        "api_url": "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808",
-        "html_url": "https://github.com/kk051780/toy-wars-factory/issues/109#issuecomment-6481271808",
-        "created_at": "2026-10-28T21:36:21Z",
-        "updated_at": "2026-10-28T21:36:21Z",
-        "body_sha256": "bc7249ac8a4023f616992ec0852d8c470216d913e92b7aa1a3a2756a3dd219c0",
-        "checked_at": "2026-10-28T22:01:06Z",
-        "original_chat_authentication": "NOT_VERIFIED"
-      }
-    ],
-    "current_view": "C00122; C00121 is explicitly rejected historical input, not active original stock"
-  },
-  "operational_observations": {
-    "inspection_start": "2026-10-28T21:49:36.188467Z",
-    "observed_at": "2026-10-28T22:14:38Z",
-    "latest_service_samples": 3,
-    "sample_includes_prior_run_times": true,
-    "not_full_run_history": true,
-    "services": [
-      {
-        "role": "task",
+  "observations": {
+    "window_start": "2026-10-28T22:24:15.003018Z",
+    "window_end": "2026-10-28T22:42:27Z",
+    "service_latest_samples": 3,
+    "service_roles": {
+      "meta_task": {
         "task_id": "6add445e4138819197d9cf2b1a02534d",
         "run": {
-          "id": "f849220f-dc50-8329-926a-f3b0db1267a2",
+          "id": "4d796ca2-e004-832e-86ae-b5e502f26901",
           "recorded_status": "in_progress",
-          "scheduled_for": "2026-10-28T21:49:30.429956Z",
-          "started_at": "2026-10-28T21:49:36.188467Z",
-          "completed_at": null,
-          "chat_ref": null
+          "scheduled_for": "2026-10-28T22:24:01.857443Z",
+          "started_at": "2026-10-28T22:24:15.003018Z",
+          "completed_at": null
         },
-        "result_run": "7abde498-0150-8327-8579-2b3f808d0acb",
-        "result_is_current_run": false,
+        "latest_result_run_id": "f849220f-dc50-8329-926a-f3b0db1267a2",
         "delivery": "UNKNOWN"
       },
-      {
-        "role": "worker",
+      "worker_task": {
         "task_id": "6adbf0d6a7d881918ce181dff2468867",
         "run": {
           "id": "bb67691e-e5ac-8328-9c7b-cac742d64d77",
           "recorded_status": "completed",
           "scheduled_for": "2026-10-28T22:05:04Z",
           "started_at": "2026-10-28T22:07:02.166125Z",
-          "completed_at": "2026-10-28T22:07:55.017103Z",
-          "chat_ref": {
-            "type": "chatgpt",
-            "id": "6adc2384-0294-83ee-a005-ef536b9eb34a"
-          }
+          "completed_at": "2026-10-28T22:07:55.017103Z"
         },
-        "result_run": "bb67691e-e5ac-8328-9c7b-cac742d64d77",
-        "result_is_current_run": true,
+        "latest_result_run_id": "bb67691e-e5ac-8328-9c7b-cac742d64d77",
         "delivery": "UNKNOWN"
       },
-      {
-        "role": "reviewer",
+      "reviewer_task": {
         "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
         "run": {
-          "id": "481f4d3e-88e0-832e-bba2-ea4fbc2fe466",
+          "id": "4884b328-740c-8323-b500-1f8da8d73819",
           "recorded_status": "completed",
-          "scheduled_for": "2026-10-28T21:40:38.405639Z",
-          "started_at": "2026-10-28T21:40:58.678726Z",
-          "completed_at": "2026-10-28T21:44:41.456491Z",
-          "chat_ref": {
-            "type": "chatgpt",
-            "id": "6add6b00-4784-83ee-abae-45d04f185d10"
-          }
+          "scheduled_for": "2026-10-28T22:25:00Z",
+          "started_at": "2026-10-28T22:23:43.787848Z",
+          "completed_at": "2026-10-28T22:24:13.863389Z"
         },
-        "result_run": "481f4d3e-88e0-832e-bba2-ea4fbc2fe466",
-        "result_is_current_run": true,
+        "latest_result_run_id": "4884b328-740c-8323-b500-1f8da8d73819",
         "delivery": "UNKNOWN"
       }
-    ],
-    "worker_wait": {
-      "run_id": "bb67691e-e5ac-8328-9c7b-cac742d64d77",
-      "result": "WAIT_LOCK_META224_NO_NEW_CODE",
-      "source": "Matching current completed service result, no takeover"
     },
-    "prior_meta_result": {
-      "run_id": "7abde498-0150-8327-8579-2b3f808d0acb",
-      "belongs_to_current_run": false,
-      "summary": "Prior source implementation now formally REQUEST_CHANGES; not current-run completion"
-    },
-    "ci_sample": {
-      "runs": 1,
-      "offline_seconds": 25,
-      "compile_hold_seconds": 9,
-      "reruns": 0
-    },
-    "host_diagnostic": {
-      "prior_write_denial": "INDETERMINATE_ORIGINAL_HOST_RECEIPT_UNAVAILABLE",
-      "current_actual_writes": "Feature branch fast-forward and PR metadata succeeded; no permanent recovery claim",
-      "local_prepare_errors": [
-        "apply_patch refused delete/add same path in one transaction; corrected one update",
-        "exec_command rejected oversized argument payload, os error7; used minimal metadata rather than altering permissions"
-      ]
-    },
-    "progress_accounting": {
-      "system_source_repairs": 1,
-      "new_python_tests": 13,
-      "game_changes": 0,
-      "independent_approvals": 0,
-      "main_adoptions": 0,
-      "engine_runs": 0,
-      "player_measurements": 0
-    },
-    "active_work_seconds": null,
-    "cumulative_active_work_seconds": null
+    "main_qa_runs_verified": 1,
+    "open_registered_meta_prs_before": 0,
+    "after": 1,
+    "claim_result": "ONE_FENCED_ACQUIRE_SUCCEEDED_EMPTY_HOLDER",
+    "owner_epoch_at_start": 225,
+    "concurrent_edit_or_task_start": 0,
+    "ci_wait_seconds": 33,
+    "repeat_failure_this_new_head": 0,
+    "denominator_note": "One bounded observation and one new PR/CI attempt; not a success rate or sustained effect.",
+    "handoff": "Current main descendant directly proven status-only; latest handoff PASS."
   },
   "sources": [
     {
-      "url": "https://docs.github.com/en/rest/issues/comments#get-an-issue-comment",
-      "published_at": null,
-      "checked_at": "2026-10-28T22:01:06Z",
+      "url": "https://github.blog/ai-and-ml/llms/how-to-evaluate-llms-before-production/",
+      "published_at": "2026-08-25",
+      "updated_at": null,
+      "checked_at": "2026-10-28T22:37:19Z",
       "source_kind": "PRIMARY_OFFICIAL",
-      "finding": "Raw comment API exposes comment ID, repo/issue URLs, body and timestamps; no original-chat authentication contract."
+      "finding": "Preserve realistic failure classes and distinguish offline evaluation from real production outcomes. Older case freshly read, not new news."
+    },
+    {
+      "url": "https://docs.github.com/en/rest/actions/workflow-jobs#list-jobs-for-a-workflow-run-attempt",
+      "published_at": null,
+      "checked_at": "2026-10-28T22:37:19Z",
+      "source_kind": "PRIMARY_OFFICIAL",
+      "finding": "Attempt job list is keyed by run and attempt; keep exact bindings and Actions read-only boundary."
+    },
+    {
+      "url": "https://create.roblox.com/docs/production/game-design/analytics-essentials",
+      "published_at": null,
+      "checked_at": "2026-10-28T22:37:19Z",
+      "source_kind": "PRIMARY_OFFICIAL",
+      "finding": "Engagement/retention/monetization and controlled experiments are future measurement candidates, not this game's measured effect."
     },
     {
       "url": "https://create.roblox.com/docs/discovery",
       "published_at": null,
-      "checked_at": "2026-10-28T22:01:06Z",
+      "checked_at": "2026-10-28T22:37:19Z",
       "source_kind": "PRIMARY_OFFICIAL",
-      "finding": "Preserve first-play bounce and return-day hypotheses separately from unmeasured Toy Wars outcomes."
+      "finding": "Keep first-session and repeat-play cohort hypotheses separate from unmeasured outcomes."
     },
     {
-      "url": "https://create.roblox.com/docs/production/experiments",
-      "published_at": null,
-      "checked_at": "2026-10-28T22:01:06Z",
-      "source_kind": "PRIMARY_OFFICIAL",
-      "finding": "Controlled cohort and sample/detectable-effect conditions remain required; no experiment started."
-    },
-    {
-      "url": "https://github.blog/ai-and-ml/github-copilot/reviewbench-an-open-benchmark-for-ai-code-review/",
-      "published_at": "2026-10-05",
-      "checked_at": "2026-10-28T22:14:38Z",
+      "url": "https://www.biggames.io/post/pet-simulator-99-update-99",
+      "published_at": "2026-10-24",
+      "checked_at": "2026-10-28T22:37:19Z",
       "source_kind": "DEVELOPER_CASE",
-      "finding": "Opened full primary case: known offline labels need independent validation; passing fixed checks alone is not complete review or user-impact proof."
-    },
-    {
-      "url": "https://opensource.microsoft.com/blog/2026/10/19/introducing-scope-open-source-evaluation-for-ai-coding-agents/",
-      "published_at": "2026-10-19",
-      "checked_at": "2026-10-28T22:14:38Z",
-      "source_kind": "DEVELOPER_CASE",
-      "finding": "Opened primary case: preserve task/configuration/evidence, repeat meaningful checks; one CI/demo is not product effect."
+      "finding": "Collection/reward mechanism is observable, no causal retention claim or copied material."
     }
   ],
-  "research_recency": "Fresh recency search did not verify a newer dated case; Oct5/Oct19 publications are explicitly older sources rechecked today, not today's new announcements.",
   "community_research": {
-    "url": "https://www.reddit.com/r/TowerDefense/comments/1tmtqlo/how_do_you_get_over_the_learning_curve_of_a_td/",
-    "published_at_secondary_issue_report": "2026-05-25",
-    "checked_at": "2026-10-28T22:01:06Z",
+    "url": "https://devforum.roblox.com/t/50-of-players-leave-within-2-minutes/4946893",
+    "checked_at": "2026-10-28T22:37:19Z",
     "status": "NOT_VERIFIED_THIS_RUN",
-    "reason": "Direct browser research retrieval returned DisabledError; prior Issue109 report is not a fresh primary body read. No bypass or representative/player-outcome claim."
+    "reason": "Actual open returned JavaScript/bot wall; no snippet metrics adopted."
   },
-  "protected_controls": {
-    "accepted_main_files_changed": 0,
-    "old_C00121_or_prior43_tests_changed": false,
-    "checker_workflow_policy_changes": 0,
-    "task_mutations": 0,
-    "additional_runs_started": 0,
-    "credentials_read": 0,
-    "model_api_calls": 0,
-    "roblox_publishes": 0,
-    "new_spend_authority": false
+  "research_recency": "Fresh search/open; dated evaluation case2026-08-25 is older, not newly published. Developer collection case2026-10-24; official doc update dates unavailable.",
+  "idea_loop": {
+    "current_source_pipeline": "PR112 independently adopted; C00122 active snapshot retained unchanged",
+    "new_owner_original_records": 0,
+    "new_web_stock_records": 0,
+    "new_derived_records": 0,
+    "new_adoptions_this_meta_run": 0,
+    "reason": "One task A12 first source increment; no duplicate stock capture. Actual scheduled intake/experiment/adoption evidence loop remains pending."
   },
+  "limits": {
+    "source_verification": "SYNTHETIC_TEST_ONLY",
+    "live_classifier": "NOT_RUN; first source proposal; subsequent legal scheduled cycle only after adoption",
+    "unattended_anomaly_detection": "NOT_VERIFIED",
+    "alert_persistence_by_classifier": "NOT_IMPLEMENTED",
+    "notification_delivery": "UNKNOWN_NOT_ATTEMPTED",
+    "original_host_operation_error": "NOT_AVAILABLE",
+    "operation_cause": "INDETERMINATE",
+    "recovery": "NOT_VERIFIED",
+    "a12_points_awarded": 0,
+    "a13": "NOT_VERIFIED",
+    "progress_issue113": "SEPARATE_PROTECTED_AUDIT_NOT_CHANGED",
+    "native_engine": "NOT_RUN",
+    "players": "NOT_MEASURED"
+  },
+  "protected_controls": "All262 canonical main blobs,510 accepted Python tests, source/history/checker/workflow/config/AGENTS/permissions/task/spend/publishing controls preserved. No new scheduler, API inference or credentials.",
   "unresolved": [
-    "Independent re-review of new head required; original REQUEST_CHANGES record preserved",
-    "No original-chat permalink or independent owner authentication",
-    "Automatic chat intake and post-planning evidence collection remain unimplemented",
-    "Credential isolation/old host-denial original receipt unresolved",
-    "Community primary body unavailable this run",
-    "Roblox engine/multiplayer/mobile/player/fun effects NOT_RUN or NOT_MEASURED"
+    "Independent registered source review and actual post-merge main QA/handoff pending",
+    "Later unforced scheduled anomaly/report/recovery proof required for A12; source test pass is not operation proof",
+    "Attempt-specific CI rerun start, missed-schedule history, trusted durable prior-state/alert sender not implemented",
+    "Original host-denial receipt unavailable; causal diagnosis INDETERMINATE",
+    "Issue113 progress audit and PR55 credential isolation remain separate protected work",
+    "Roblox engine/multiplayer/mobile/visual/fun and player effect unmeasured"
   ],
   "next": {
+    "actor": "REGISTERED_REVIEWER",
     "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "action": "Review PR112 new head c6301b97 against current5cafd1a4; validate two claims, exact transcript vs derived summary, C00122 active view, previous-history preservation and both CI jobs. Only independent APPROVE then merge and main QA/handoff; fresh checks if head/base/gates move.",
-    "manual_pr110": "Not eligible for ordinary integration; not touched",
-    "game": "PR111 integrated; no duplicate repair. PR98/Issue102 remain protected/unimplemented dependencies."
+    "request": "a12_runtime_alerts_pr116_registered_review_20261029",
+    "steps": [
+      "Review exact head1962cb81, canonical claim226, actual source/39 new regressions, fresh CI40781686546 both jobs.",
+      "If approved, independently merge then confirm actual main QA/handoff.",
+      "Only a later legitimate scheduled cycle after source adoption may persist/dedup a real anomaly and independently assess recovery; do not force starts or award A12 now."
+    ]
   },
-  "holds": {
-    "Gemini": "PRESERVED",
-    "Roblox": "HOLD_ENGINE_UNVERIFIED",
-    "fees": "EXISTING_CAPS_PRESERVED"
-  }
+  "holds": [
+    "GEMINI_SEVERE_HOLD",
+    "EXTERNAL_SPEND_HOLD",
+    "ROBLOX_RELEASE_HOLD"
+  ]
 }
