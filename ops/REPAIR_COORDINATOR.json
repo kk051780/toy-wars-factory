@@ -1,8 +1,18 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 162,
-  "holder": null,
+  "epoch": 163,
+  "holder": {
+    "kind": "CONTROLLER",
+    "owner_id": "5fe5290f-e216-4f8c-b8fa-4ff7d002e4a4",
+    "task_id": null,
+    "epoch": 163,
+    "acquired_at": "2026-10-28T03:22:12.219234+00:00",
+    "expires_at": "2026-10-28T03:52:12.219234+00:00",
+    "base_main_sha": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+    "work_branch": "ops/twf-datastore-harness-5fe5290f-e216-4f8c-b8fa-4ff7d002e4a4",
+    "origin": "controller"
+  },
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -1139,5 +1149,24 @@
     "required_outcome": "Repair existing PR94 session ownership on load / safe serialization before any next feature. Current optimistic CAS only protects one write order. New active session must not silently play unsavably. Preserve accepted regressions, unknown schema, metadata, purchases (no max coins), callback non-yielding and bounded failure/recovery. Follow registered reviewer request and official primary guidance.",
     "main_observation": "55d9e0da77f0a9237cf2776432cf22f62b551283 is verified generated-status-only descendant of d7d4bb8a PR95 merge; mainQA40594943961 and handoff40594944031 success;423Python. No engine execution claimed.",
     "next_feature_after_repair": "Assess bounded periodic autosave only after ownership fix; no unrelated feature stacking."
+  },
+  "controller_maintenance": {
+    "mode": "ONE_TIME_SCOPED_HARNESS_MAINTENANCE",
+    "owner_id": "5fe5290f-e216-4f8c-b8fa-4ff7d002e4a4",
+    "request_id": "pr94_failclosed_datastore_harness_ci_20261028",
+    "branch": "ops/twf-datastore-harness-5fe5290f-e216-4f8c-b8fa-4ff7d002e4a4",
+    "allowed_paths": [
+      "tests/roblox_server_harness.lua",
+      "tests/auto/harness_datastore_spec.lua",
+      "history/C00074_datastore_harness_maintenance.json"
+    ],
+    "constraints": [
+      "Existing 27 gameplay expectations remain byte-identical",
+      "Main/game source and workflows/policies unchanged",
+      "Successful deterministic offline service only; no actual engine claim",
+      "Exact-head CI and separate registered READ_ONLY_REVIEW required before controller maintenance integration",
+      "Author cannot self-approve; no normal WORKER/META scope expansion"
+    ],
+    "basis": "Owner delegated ordinary infrastructure repair and integration decisions; concrete registered REVIEWER request authorizes CONTROLLER maintenance. This one scoped review does not change normal worker/meta/reviewer branch policy."
   }
 }
