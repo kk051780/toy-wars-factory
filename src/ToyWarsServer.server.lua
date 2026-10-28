@@ -100,11 +100,11 @@ local function loadProgress(player,pending)
     local ok,record=pcall(function() return progressStore:GetAsync(key) end)
     if not ok then return nil,false,"READ_UNAVAILABLE" end
     if record~=nil and not validProgress(record) then return nil,false,"SCHEMA_UNSUPPORTED" end
-    if shuttingDown or sessions[player]~=pending or player.Parent~=Players then return nil,false,"DEPARTED" end
+    if sessions[player]~=pending or player.Parent~=Players then return nil,false,"DEPARTED" end
     local token=newSessionToken()
     if not token then return nil,false,"CLAIM_UNAVAILABLE" end
     for attempt=1,SESSION_RETRY_COUNT do
-        if shuttingDown or sessions[player]~=pending or player.Parent~=Players then return nil,false,"DEPARTED" end
+        if sessions[player]~=pending or player.Parent~=Players then return nil,false,"DEPARTED" end
         local now=leaseNow()
         local blocked,invalid=false,false
         local claimedOk,claimed=pcall(function()
@@ -130,8 +130,8 @@ local function loadProgress(player,pending)
             end)
         end)
         if claimedOk and claimed~=nil then
-            if shuttingDown or sessions[player]~=pending or player.Parent~=Players then
-                -- The claim may have yielded past disconnect or shutdown. Release only this token.
+            if sessions[player]~=pending or player.Parent~=Players then
+                -- The claim may have yielded past disconnect. Release only this token.
                 pcall(function()
                     progressStore:UpdateAsync(key,function(current,keyInfo)
                         if not validProgress(current) or current.sessionOwner~=token then return nil end
@@ -745,6 +745,13 @@ local function join(player)
     }
     sessions[player]=state
     makePlot(player,state)
+    if shuttingDown then
+        -- This join began before shutdown: preserve queue admission, but
+        -- immediately freeze and release its lease without unsavable gameplay.
+        state.active=false
+        finalizeProgress(player,state,true)
+        return
+    end
     local function characterReady(character)
         -- Retry bounded waits for a slow HumanoidRootPart, not a replaced character.
         local root
