@@ -209,12 +209,14 @@ local function saveProgress(player,state)
 end
 local function refreshProgressLease(state)
     if not progressStore or not state.persistAllowed or not state.persistSnapshot
-        or state.persistFinalizing then return end
+        or state.persistFinalizing or state.persistRefreshInFlight then return end
     local now=leaseNow()
     if now<(state.nextLeaseRefresh or 0) then return end
     state.nextLeaseRefresh=now+SESSION_REFRESH_SECONDS
     local expected=state.persistSnapshot
     if not expected.sessionOwner then return end
+    -- UpdateAsync may yield outside its transform: serialize this session's refreshes.
+    state.persistRefreshInFlight=true
     local ok,refreshed=pcall(function()
         return progressStore:UpdateAsync("p:"..tostring(state.player.UserId),function(current,keyInfo)
             if state.persistFinalizing or not sameProgress(current,expected) then return nil end
@@ -225,6 +227,7 @@ local function refreshProgressLease(state)
             return updated
         end)
     end)
+    state.persistRefreshInFlight=false
     -- A delayed refresh response must not replace a completed final save
     -- or misreport a departing player as a foreign-owner conflict.
     if state.persistFinalizing or not state.persistAllowed then return end
