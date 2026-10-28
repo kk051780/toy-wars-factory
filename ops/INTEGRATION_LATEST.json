@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T22:47:22.417Z",
-  "status": "APPROVED_AWAITING_EXACT_HEAD_MERGE",
+  "observed_at": "2026-10-28T22:48:03.801Z",
+  "status": "MERGED_WAIT_MAIN_QA_AND_HANDOFF",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "590edbe8-10fc-832a-b3b2-57ccdfd4585b",
@@ -13,11 +13,11 @@
     "verdict": "APPROVE",
     "review_record": "ops/reviews/PR0116_1962cb81.json",
     "ci": 40781686546,
-    "merge_sha": null,
-    "main_qa": null,
-    "handoff": null,
+    "merge_sha": "3009bfefde60311ba58a8962e3fc296db669f75e",
+    "main_qa": 40782676418,
+    "handoff": 40782676452,
     "category": "SYSTEM_A12_READ_ONLY_CLASSIFIER_SOURCE_ONLY",
-    "status": "APPROVED_AWAITING_EXACT_HEAD_MERGE"
+    "status": "MERGED_WAIT_MAIN_QA_AND_HANDOFF"
   },
   "merged_prs": [
     {
@@ -274,6 +274,15 @@
       "main_after_handoff": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
       "category": "SYSTEM_IDEA_PROVENANCE_SCOPED_ADVISORY",
       "status_only_descendant_verified": true
+    },
+    {
+      "pr": 116,
+      "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
+      "merge_sha": "3009bfefde60311ba58a8962e3fc296db669f75e",
+      "status": "MERGED_WAIT_MAIN_QA_AND_HANDOFF",
+      "main_qa": 40782676418,
+      "handoff": 40782676452,
+      "category": "SYSTEM_A12_READ_ONLY_CLASSIFIER_SOURCE_ONLY"
     }
   ],
   "merge_count_this_run": 1,

@@ -80,5 +80,23 @@
     "https://github.com/kk051780/toy-wars-factory/issues/114"
   ],
   "next": "Exact-head merge under current reviewer lease, then independent main offline+compile_hold and handoff; A12 operational evidence separate.",
-  "status": "APPROVED_AWAITING_EXACT_HEAD_MERGE"
+  "status": "MERGED_WAIT_MAIN_QA_AND_HANDOFF",
+  "merge": {
+    "sha": "3009bfefde60311ba58a8962e3fc296db669f75e",
+    "merged": true,
+    "method": "merge",
+    "main_after_merge": "3009bfefde60311ba58a8962e3fc296db669f75e"
+  },
+  "post_merge_main_qa": {
+    "id": 40782676418,
+    "head": "3009bfefde60311ba58a8962e3fc296db669f75e",
+    "conclusion": "in_progress",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40782676418"
+  },
+  "post_merge_handoff": {
+    "id": 40782676452,
+    "head": "3009bfefde60311ba58a8962e3fc296db669f75e",
+    "conclusion": "queued",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40782676452"
+  }
 }
