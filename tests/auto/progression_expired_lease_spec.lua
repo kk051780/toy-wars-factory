@@ -57,6 +57,7 @@ local function fixture(store,clock,source)
                 end} end
                 return get(self,name)
             end
+            env.game.BindToClose=function(_,callback) clock.onClose=callback end
             if source then return assert(load(source,"@PINNED_9DEAB2AC","t",env)) end
         end
         if env==nil then return original(file,mode) end
@@ -135,6 +136,64 @@ check("pinned old main resumes after delayed failed refresh past expiry",functio
     local r=delayedScenario(oldSource())
     assert(r.money.Value>350,"old main resumes unsavable income")
     eq(r.kicked,0,"old main does not fail closed")
+end)
+-- The exact reviewed PR100 head is a negative control for the shutdown-before-removal race.
+local function reviewedHeadSource()
+    local p=assert(io.popen("git show 06ef9e558743b7eec1582cf7d6e358c9766132ea:src/ToyWarsServer.server.lua 2>/dev/null","r"))
+    local source=p:read("*a")
+    assert(p:close() and #source>34000,"pinned reviewed PR head required")
+    return source
+end
+local function shutdownBeforeRemoval(source,foreign)
+    local store=newStore();local clock={value=0}
+    local h=fixture(store,clock,source);local p=h:addPlayer(h:newPlayer())
+    local owner=assert(store.data["p:1"].sessionOwner)
+    local money=coins(p);money.Value=350
+    local kicked=0;p.Kick=function() kicked=kicked+1 end
+    clock.value=181
+    h.runService.Heartbeat:Fire(0.2)
+    eq(kicked,1,"lease expiry kicks but does not remove immediately")
+    eq(money.Value,350,"no post-expiry income")
+    if foreign then
+        local record=store.data["p:1"]
+        record.sessionOwner="new-server-owner"
+        record.sessionLeaseUntil=361
+        record.revision=1
+        record.coins=275
+    end
+    assert(type(clock.onClose)=="function","real server BindToClose callback must be registered")
+    clock.onClose() -- before PlayerRemoving: the old server still has a session
+    return {store=store,owner=owner,player=p,h=h,money=money}
+end
+check("expired but CAS-owned session saves on shutdown before PlayerRemoving",function()
+    local r=shutdownBeforeRemoval()
+    local saved=r.store.data["p:1"]
+    eq(saved.coins,350,"pre-expiry earnings committed")
+    eq(saved.wave,2,"wave preserved")
+    eq(saved.defeated,3,"kills preserved")
+    eq(saved.revision,1,"revision advanced exactly once")
+    eq(saved.sessionOwner,nil,"owner released after successful save")
+    eq(saved.sessionLeaseUntil,nil,"lease released after successful save")
+    eq(r.store.metadata.keep,"yes","metadata retained")
+    eq(r.store.ids[1],123,"UserIds retained")
+    r.h:removePlayer(r.player)
+    eq(r.store.data["p:1"].revision,1,"PlayerRemoving cannot duplicate committed save")
+end)
+check("expired shutdown cannot overwrite a foreign owner",function()
+    local r=shutdownBeforeRemoval(nil,true)
+    local saved=r.store.data["p:1"]
+    eq(saved.coins,275,"foreign progress unchanged")
+    eq(saved.revision,1,"foreign revision unchanged")
+    eq(saved.sessionOwner,"new-server-owner","foreign lease owner unchanged")
+    eq(saved.sessionLeaseUntil,361,"foreign lease remains")
+    eq(r.store.metadata.keep,"yes","metadata retained")
+    eq(r.store.ids[1],123,"UserIds retained")
+end)
+check("pinned reviewed PR100 head skips expired session during shutdown",function()
+    local r=shutdownBeforeRemoval(reviewedHeadSource())
+    local saved=r.store.data["p:1"]
+    eq(saved.coins,200,"reviewed old head loses unsaved earnings")
+    eq(saved.sessionOwner,r.owner,"reviewed old head leaves lease owned")
 end)
 print(string.format("AUTO_EXPIRED_LEASE_SUMMARY %d passed / %d failed",passed,failed))
 if failed>0 then os.exit(1) end

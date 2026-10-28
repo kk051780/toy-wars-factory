@@ -1,0 +1,95 @@
+{
+  "id": "C00105",
+  "date": "2026-10-28",
+  "kind": "AUTONOMOUS_EXPIRED_LEASE_SHUTDOWN_REVIEW_REPAIR",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "0503596d-15e0-8330-ad32-07112bff92e4",
+  "queue_decision": {
+    "action": "REPAIR_REVIEW",
+    "change_scheduler": false,
+    "pr": 100,
+    "branch": "auto/twf-game-repair-597f03b8-0fc0-8330-a5ec-a88949bff82b",
+    "head": "06ef9e558743b7eec1582cf7d6e358c9766132ea",
+    "request_id": "pr100_expired_lease_shutdown_save_skip_20261028",
+    "open_prs": [
+      100
+    ]
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "6f39824a0ccdca5fdbc734e5d135eb165bc03ca5",
+    "owner_run_id": "0503596d-15e0-8330-ad32-07112bff92e4",
+    "epoch": 195
+  },
+  "main_base": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+  "reviewed_pr_head": "06ef9e558743b7eec1582cf7d6e358c9766132ea",
+  "defect": {
+    "id": "pr100_expired_lease_shutdown_save_skip_20261028",
+    "cause": "Lease expiry deactivates gameplay before Kick; BindToClose gated final save on state.active, excluding CAS-owned unsaved sessions before PlayerRemoving.",
+    "reproduction": "Canonical whole-server: stored200, earned350, time181 expires lease, Kick recorded without PlayerRemoving, BindToClose called. Reviewed PR100 head leaves stored200 and lease owned. Foreign-owner case must never overwrite."
+  },
+  "fix": "Keep expired gameplay inactive but allow BindToClose to attempt final save for initialized sessions; saveProgress retains strict owner/revision/value/metadata CAS and persistAllowed check. Successful finalization blocks duplicate PlayerRemoving save.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_expired_lease_spec.lua",
+    "history/C00105_expired_lease_shutdown_review_repair.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 34083,
+      "after_bytes": 35117,
+      "delta_bytes": 1034
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1064,
+    "lua_bytes": 46261
+  },
+  "main_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1045,
+    "lua_bytes": 45227
+  },
+  "source_baseline_bytes": 25726,
+  "review_repair_changes": {
+    "source_before_bytes": 35028,
+    "source_after_bytes": 35117,
+    "delta_bytes": 89,
+    "test_before_bytes": 6545,
+    "test_after_bytes": 9511,
+    "delta_test_bytes": 2966
+  },
+  "characters_touched": [],
+  "character_impact": "Existing three unit prices/stats/models, selector, HUD guide, waiting notice, save schema unchanged.",
+  "tests": {
+    "new_shutdown_positive_cases": 2,
+    "pinned_reviewed_head_negative_controls": 1,
+    "original_expired_lease_cases": 5,
+    "accepted_server_27": "UNCHANGED",
+    "accepted_hud_6": "UNCHANGED",
+    "local_lua": "NOT_RUN",
+    "exact_head_ci": "PENDING",
+    "roblox_engine": "NOT_RUN",
+    "real_datastore": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "review_file": "ops/reviews/PR0100_06ef9e55.json",
+    "review_request": "pr100_expired_lease_shutdown_save_skip_20261028",
+    "reviewed_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40684349324",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40672776209",
+    "claim_commit": "6f39824a0ccdca5fdbc734e5d135eb165bc03ca5",
+    "pr": 100,
+    "head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE"
+  },
+  "next_action": "Check both jobs for exact updated head, then independent REVIEWER re-review; author never merges.",
+  "restrictions": {
+    "scheduler_mutated": false,
+    "gemini_rerun": false,
+    "roblox_publish": false,
+    "author_main_merge": false
+  }
+}

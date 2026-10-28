@@ -776,7 +776,8 @@ end)
 if type(game.BindToClose) == "function" then
     game:BindToClose(function()
         for player,state in pairs(sessions) do
-            if state.active then saveProgress(player,state) end
+            -- Expired gameplay can still own unsaved progress; final CAS decides safety.
+            if state.coins then saveProgress(player,state) end
         end
     end)
 end
