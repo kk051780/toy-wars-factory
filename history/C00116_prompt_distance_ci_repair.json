@@ -1,0 +1,80 @@
+{
+  "id": "C00116",
+  "date": "2026-10-29",
+  "kind": "AUTONOMOUS_PROMPT_DISTANCE_CI_REPAIR",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "20fb1989-2368-8326-a2c3-3ac8c0d59538",
+  "queue_decision": {
+    "action": "REPAIR_CI",
+    "branch": "auto/twf-game-repair-20fb1989-2368-8326-a2c3-3ac8c0d59538",
+    "pr": 108,
+    "failed_run": 40760602268,
+    "change_scheduler": false
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "d467103da6666d7bb1909f96a7da2f052dc7b1a7",
+    "owner_run_id": "20fb1989-2368-8326-a2c3-3ac8c0d59538",
+    "epoch": 216
+  },
+  "main_base": "8a0f8816870fa4854b71c23d223728589303070a",
+  "previous_head": "a2b0a9a293d592f1d437bd52b8f9f06abfe28fa9",
+  "failure": {
+    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40760602268",
+    "offline": "FAIL",
+    "compile_hold": "PASS",
+    "reason": "Accepted tests/server_event_spec.lua explicitly allows a 1-stud server-side tolerance at 13 for a configured 12-stud ProximityPrompt; initial hard 12 check violated that accepted behavior. Initial C00115 and test are retained as failed proposal provenance; do not weaken accepted tests."
+  },
+  "fix": "Preserve 1-stud tolerance while deriving limit from each prompt's MaxActivationDistance, instead of fixed 13. Demonstrate current default remains 13 and narrower runtime-configured prompt ranges reject forged triggers.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/prompt_activation_distance_spec.lua",
+    "history/C00116_prompt_distance_ci_repair.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 40052,
+      "after_bytes": 40060,
+      "delta_bytes": 8
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1162,
+    "lua_bytes": 51204
+  },
+  "main_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1162,
+    "lua_bytes": 51137
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/prompt_activation_distance_spec.lua",
+      "before_bytes": 3353,
+      "after_bytes": 3224,
+      "delta_bytes": -129
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "No toy prices, combat stats, catalog, HUD or save changes.",
+  "tests": {
+    "new_canonical_lua_cases": 4,
+    "pinned_main_negative_controls": 1,
+    "accepted_server_27": "UNCHANGED",
+    "accepted_hud_6": "UNCHANGED",
+    "local_lua": "NOT_RUN",
+    "exact_head_ci": "PENDING",
+    "roblox_engine": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "multiplayer": "NOT_RUN"
+  },
+  "evidence": {
+    "claim_commit": "d467103da6666d7bb1909f96a7da2f052dc7b1a7",
+    "head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE",
+    "failed_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40760602268"
+  },
+  "next_action": "Re-run exact-head CI, independent review and main QA. No author self-merge or Roblox release."
+}
