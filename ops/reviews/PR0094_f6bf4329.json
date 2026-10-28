@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "pr": 94,
+  "head": "f6bf432901e66ce025c490373fbf5a17f176d431",
+  "base_main_sha": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "078f9eff-b7ac-832c-8dcb-099823cdb301",
+  "lease_epoch": 170,
+  "reviewed_at": "2026-10-28T05:30:43.760Z",
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "02da8384-5050-8326-b742-50142d6d1163",
+  "category": "GAME_DATASTORE_PERSISTENCE_REFRESH_OVERLAP_REPAIR",
+  "verdict": "REQUEST_CHANGES",
+  "blockers": [
+    "P1 refresh/refresh overlap: src/ToyWarsServer.server.lua refreshProgressLease() (lines 210-241) can launch concurrent yielding UpdateAsync requests after 45s without in-flight fencing; the later callback sees its own earlier lease extension as foreign progress and disables persistence/Kicks, leaving unsaved coins. Add a canonical whole-server deterministic 2-refresh test with service latency outside transform, a pinned f6bf4329 negative control, and a guard/serialization preserving foreign owner fencing and final save."
+  ],
+  "findings": [
+    "Confirmed GitHub diff contains only 15 allowed paths: 1 server source, 6 new canonical Lua regressions, 8 new C history; no accepted-test, budget, permission, publish, Gemini, or character policy changes.",
+    "Exact-head CI 40630993164 offline/compile_hold passed; offline logs show 454 Python PASS, all 6 refresh/final race tests PASS, scope PASS and 8 immutable coordinator claims verified.",
+    "Independent byte count of 4 Lua files: 44,149 bytes / 1,027 lines; server 33,005 bytes, matches C00075 and CI handoff. Original worker claim 2bd1edd... epoch168 registered WORKER run 02da8384..., coordinator ancestor and adopted DISPATCH parent epoch167.",
+    "NEW BLOCKER (source control-flow, not an executed Roblox reproduction): refreshProgressLease in server lines 210-241 yields in UpdateAsync and has no per-state in-flight guard. A second Heartbeat at nextLeaseRefresh=now+45 can start a second refresh against the same persistSnapshot while first request is delayed; after first commits lease extension, second returns nil, sets persistAllowed=false/active=false and kicks despite unchanged owner. PlayerRemoving saveProgress then exits early, losing in-memory earned coins.",
+    "Existing progression_refresh_save_race_spec.lua tests refresh vs final save, not overlapping refresh vs refresh; live Roblox/DataStore behavior remains NOT_RUN."
+  ],
+  "checks": {
+    "scope": true,
+    "regression": false,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": false
+  },
+  "evidence": {
+    "main_qa": {
+      "id": 40629585413,
+      "head": "d3decf3519937f4e8391d130eee5ff5375868fed",
+      "jobs": [
+        "offline:success",
+        "compile_hold:success"
+      ]
+    },
+    "main_compare": {
+      "status": "ahead",
+      "ahead_by": 1,
+      "behind_by": 0,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    },
+    "pr_ci": {
+      "id": 40630993164,
+      "head": "f6bf432901e66ce025c490373fbf5a17f176d431",
+      "jobs": [
+        "offline:success",
+        "compile_hold:success"
+      ],
+      "python_tests": 454,
+      "scope_gate": "PASS",
+      "claim_gate": "PASS"
+    },
+    "pr_diff": {
+      "changed_files": 15,
+      "source": [
+        "src/ToyWarsServer.server.lua"
+      ],
+      "new_tests": 6,
+      "new_history": 8,
+      "protected_modified": false
+    },
+    "source_metrics": {
+      "files": 4,
+      "bytes": 44149,
+      "lines": 1027,
+      "server_bytes": 33005
+    },
+    "author_claim": {
+      "commit": "2bd1eddac601c1e27165125e4799e8a99af9ddc6",
+      "epoch": 168,
+      "owner_run_id": "02da8384-5050-8326-b742-50142d6d1163",
+      "parent_epoch": 167,
+      "parent_kind": "DISPATCH",
+      "ancestor_verified": true
+    },
+    "official_reference": "https://create.roblox.com/docs/reference/engine/classes/GlobalDataStore"
+  },
+  "merge_sha": null,
+  "post_merge_qa": null,
+  "limitations": [
+    "Roblox Studio/live DataStore/two-server/mobile not tested",
+    "Refresh/refresh counterexample is code-level deterministic schedule; new regression has not yet been executed",
+    "PR98 is CONTROLLER protected policy change and outside normal auto merge scope"
+  ]
+}

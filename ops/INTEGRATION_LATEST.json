@@ -1,33 +1,22 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T02:28:57.220Z",
-  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "observed_at": "2026-10-28T05:30:43.760Z",
+  "status": "REQUEST_CHANGES",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "c8032924-5078-8333-9ef3-c5f870f61610",
-  "lease_epoch": 162,
-  "main_before": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+  "reviewer_run_id": "078f9eff-b7ac-832c-8dcb-099823cdb301",
+  "lease_epoch": 170,
+  "main_before": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
   "latest_review": {
-    "pr": 96,
-    "head": "b6118ae609d6d634d4538a7e04be2b051c32a7a0",
-    "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0096_b6118ae6.json",
-    "ci": 40616434523,
-    "category": "SYSTEM_IMPROVEMENT_SCOPED_READONLY_PROVIDER_TRANSPORT",
-    "blockers": [],
-    "merge_sha": "dd703db711f11b0aff5cce3c084a2462025ac010",
-    "post_merge_main_qa": {
-      "id": 40621070139,
-      "status": "success",
-      "jobs": [
-        "offline:success",
-        "compile_hold:success"
-      ]
-    },
-    "post_merge_handoff": {
-      "id": 40621070138,
-      "status": "success"
-    }
+    "pr": 94,
+    "head": "f6bf432901e66ce025c490373fbf5a17f176d431",
+    "verdict": "REQUEST_CHANGES",
+    "review_record": "ops/reviews/PR0094_f6bf4329.json",
+    "ci": 40630993164,
+    "category": "GAME_DATASTORE_PERSISTENCE",
+    "blockers": [
+      "P1 refresh/refresh overlap: src/ToyWarsServer.server.lua refreshProgressLease() (lines 210-241) can launch concurrent yielding UpdateAsync requests after 45s without in-flight fencing; the later callback sees its own earlier lease extension as foreign progress and disables persistence/Kicks, leaving unsaved coins. Add a canonical whole-server deterministic 2-refresh test with service latency outside transform, a pinned f6bf4329 negative control, and a guard/serialization preserving foreign owner fencing and final save."
+    ]
   },
   "merged_prs": [
     {
@@ -184,34 +173,31 @@
   ],
   "merge_count_this_run": 0,
   "main_qa": {
-    "id": 40594943961,
-    "head": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+    "id": 40629585413,
+    "head": "d3decf3519937f4e8391d130eee5ff5375868fed",
     "status": "completed",
     "conclusion": "success",
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40594943961",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40629585413",
     "jobs": [
       {
-        "name": "compile_hold",
-        "status": "completed",
+        "name": "offline",
         "conclusion": "success"
       },
       {
-        "name": "offline",
-        "status": "completed",
+        "name": "compile_hold",
         "conclusion": "success"
       }
     ]
   },
   "handoff": {
-    "id": 40594944031,
-    "head": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+    "id": 40629585610,
+    "head": "d3decf3519937f4e8391d130eee5ff5375868fed",
     "status": "completed",
     "conclusion": "success",
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40594944031",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40629585610",
     "jobs": [
       {
         "name": "update",
-        "status": "completed",
         "conclusion": "success"
       }
     ]
@@ -225,24 +211,17 @@
     ]
   },
   "unresolved": [
-    "pr94_two_session_overlap_later_progress_lost_20261028",
+    "pr94_overlapping_lease_refresh_false_kick_unsaved_20261028",
     "issue71_original_operation_receipt_unavailable",
     "roblox_engine_multiplayer_mobile_unverified",
-    "pr94_concurrent_claim_unsavable_and_unsaved_prior_progress_20261028"
+    "pr98_protected_character_scope_requires_separate_exact_head_maintenance_audit"
   ],
-  "next": "WORKER_REPAIR_PR94_CONCURRENT_CLAIM_AND_UNSAVED_PROGRESS; KEEP_RELEASE_HOLD",
+  "next": "WORKER_FIX_PR94_OVERLAPPING_REFRESH_WITH_PINNED_NEGATIVE_CONTROL; PROTECTED_PR98_SEPARATE_AUDIT; KEEP_RELEASE_HOLD",
   "runtime_verified": true,
-  "main_after": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+  "main_after": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
   "merge_sha": null,
   "next_actor": "WORKER",
-  "secondary_review": {
-    "pr": 94,
-    "head": "9399dee1ee5d8e70085fadef66d48cf5a75ddea1",
-    "verdict": "REQUEST_CHANGES",
-    "reason": "REPAIR_CI",
-    "review_record": "ops/reviews/PR0094_9399dee1.json",
-    "ci": 40618595107
-  },
+  "secondary_review": null,
   "main_after_merge": "dd703db711f11b0aff5cce3c084a2462025ac010",
   "main_after_handoff": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
   "status_only_descendant_verified": true
