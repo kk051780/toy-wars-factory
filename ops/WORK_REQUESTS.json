@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T22:42:27Z",
+  "observed_at": "2026-10-28T23:27:55.191Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2557,7 +2557,7 @@
       "created_at": "2026-10-28T22:42:27Z",
       "kind": "INDEPENDENT_REVIEW_REQUEST",
       "priority": "P1",
-      "status": "OPEN",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
@@ -2647,7 +2647,51 @@
       "owner_reply_required": false,
       "engine_executed": false,
       "player_effect": "NOT_MEASURED",
-      "next_actor": "REGISTERED_REVIEWER"
+      "next_actor": "REGISTERED_REVIEWER",
+      "resolved_at": "2026-10-28T23:27:55.191Z",
+      "integration_resolution": {
+        "pr": 116,
+        "original_head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
+        "base_main_sha": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+        "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+        "author_run_id": "4d796ca2-e004-832e-86ae-b5e502f26901",
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "590edbe8-10fc-832a-b3b2-57ccdfd4585b",
+        "review_lease_epoch": 227,
+        "review_record": "ops/reviews/PR0116_1962cb81.json",
+        "verdict": "APPROVE",
+        "exact_head_ci": {
+          "run": 40781686546,
+          "attempt": 1,
+          "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
+          "offline": "success",
+          "compile_hold": "success"
+        },
+        "merge_sha": "3009bfefde60311ba58a8962e3fc296db669f75e",
+        "main_qa": {
+          "run": 40782676418,
+          "head": "3009bfefde60311ba58a8962e3fc296db669f75e",
+          "offline": "success",
+          "compile_hold": "success"
+        },
+        "handoff": {
+          "run": 40782676452,
+          "head": "3009bfefde60311ba58a8962e3fc296db669f75e",
+          "update": "success"
+        },
+        "main_after_handoff": "3d99c3ec30238587af2823c76682343c403042df",
+        "status_only_descendant_verified": true,
+        "reconciliation": {
+          "reviewer_run_id": "a21dcd24-7e7c-832e-ac14-1f9deaee3b21",
+          "lease_epoch": 229,
+          "kind": "QUEUE_STATUS_ONLY",
+          "source_classifier_executed": false,
+          "merge_attempted": false,
+          "idempotence_guard": "EXACT_PR_HEAD_REVIEW_MERGE_MAIN_QA_AND_STATUS_ONLY_COMPARE"
+        },
+        "a12_verified": false,
+        "a12_points": 0
+      }
     }
   ]
 }
