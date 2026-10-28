@@ -37,9 +37,9 @@
   "source_changes": [
     {
       "path": "src/ToyWarsServer.server.lua",
-      "before_bytes": 34083,
+      "before_bytes": 35028,
       "after_bytes": 35117,
-      "delta_bytes": 1034
+      "delta_bytes": 89
     }
   ],
   "source_metrics": {
@@ -85,11 +85,32 @@
     "pr": 100,
     "head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE"
   },
-  "next_action": "Check both jobs for exact updated head, then independent REVIEWER re-review; author never merges.",
+  "next_action": "Check updated head offline and compile_hold after history-chain correction, then independent REVIEWER.",
   "restrictions": {
     "scheduler_mutated": false,
     "gemini_rerun": false,
     "roblox_publish": false,
     "author_main_merge": false
+  },
+  "main_to_head_source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 34083,
+      "after_bytes": 35117,
+      "delta_bytes": 1034
+    }
+  ],
+  "ci_history_correction": {
+    "failed_run": 40685567528,
+    "failed_job": "offline",
+    "failure": "Accepted handoff test requires C-history per-file byte chain; prior C00105 incorrectly used main 34083 instead of immediately preceding C00083 35028.",
+    "correction": "Keep source_changes contiguous 35028→35117 (+89), retain separate main_to_head 34083→35117 (+1034), do not edit accepted test.",
+    "coordination": {
+      "branch": "twf-repair-coordinator",
+      "claim_commit": "2339f59ab086c9c20698fe1af305fc108c0d5291",
+      "owner_run_id": "0503596d-15e0-8330-ad32-07112bff92e4",
+      "epoch": 196
+    },
+    "next_head_ci": "PENDING"
   }
 }
