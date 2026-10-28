@@ -598,25 +598,22 @@
     "94": {
       "schema": 1,
       "pr": 94,
-      "head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
+      "head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
       "base_reviewed": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
       "reviewer_kind": "REVIEWER",
       "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-      "reviewer_run_id": "00a41d21-8588-8323-acf2-cf75462da83b",
-      "lease_epoch": 174,
+      "reviewer_run_id": "9c5d2b9b-3ef8-8325-9f16-5939d55064e1",
+      "lease_epoch": 180,
       "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "author_run_id": "7f92f090-38c4-8328-9a0e-9975e4e4981d",
-      "verdict": "REQUEST_CHANGES",
-      "findings": [
-        "simulate() checks active only before a yielding refreshProgressLease; after PlayerRemoving or lease-loss Kick it can resume and mutate coins/spawn orphan models. Require post-refresh active/session guard and deterministic negative-control regression."
-      ],
+      "author_run_id": "1e5e957c-de1c-832a-a736-e455da4fb7cc",
+      "verdict": "APPROVE",
       "ci": {
-        "id": 40641863301,
-        "head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
-        "conclusion": "success",
-        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40641863301"
+        "id": 40654472563,
+        "head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+        "conclusion": "success"
       },
-      "review_record": "ops/reviews/PR0094_c7227654.json"
+      "review_record": "ops/reviews/PR0094_a635a1b2.json",
+      "status": "APPROVED_PENDING_MERGE"
     },
     "97": {
       "schema": 1,

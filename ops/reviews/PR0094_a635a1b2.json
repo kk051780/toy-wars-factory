@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "pr": 94,
+  "head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+  "base_main_sha": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "9c5d2b9b-3ef8-8325-9f16-5939d55064e1",
+  "lease_epoch": 180,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "1e5e957c-de1c-832a-a736-e455da4fb7cc",
+  "reviewed_at": "2026-10-28T08:25:26.979Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "GAME_DATASTORE_PERSISTENCE",
+  "change_classification": "GAME_CODE_FIX_AND_REGRESSION",
+  "findings": [
+    "Latest 6ac3f11a->a635a1b2 modifies exactly server save order, adds 3 canonical five-player delayed-GetAsync tests and C00079 ledger.",
+    "Departing player saveProgress now executes before yielding join(waiting); new fixture tests coins 350 vs 200, lease release, later backfill, and pinned old-source negative control.",
+    "Exact-head CI both jobs pass with trusted base scope and coordinator claim steps; 27 accepted server and 6 HUD tests unchanged.",
+    "Full main diff contains only canonical server, new regression specs and 12 cycle histories; no protected config, accepted tests, pricing, publishing, provider, budget, or characters changes.",
+    "Source tree four Lua files 44536 bytes and 1032 lines, server 33392 bytes, C00079 agrees; source growth is expected persistence feature.",
+    "No real Roblox Studio, DataStore, multiplayer, mobile or visual verification; release remains HOLD."
+  ],
+  "ci": {
+    "id": 40654472563,
+    "head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": [
+      {
+        "name": "offline",
+        "conclusion": "success"
+      },
+      {
+        "name": "compile_hold",
+        "conclusion": "success"
+      }
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40654472563"
+  },
+  "main_qa": {
+    "id": 40629585413,
+    "head": "d3decf3519937f4e8391d130eee5ff5375868fed",
+    "conclusion": "success",
+    "verified_status_only_descendant": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+    "compare_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "changed_files_count": 22,
+  "source_metrics": {
+    "files": 4,
+    "lines": 1032,
+    "bytes": 44536
+  },
+  "limitations": [
+    "OFFLINE_ONLY",
+    "NO_ENGINE_OR_REAL_DATASTORE_VERIFICATION"
+  ],
+  "decision": "INTEGRATE_EXACT_HEAD_AFTER_RECHECK"
+}

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T07:28:06.412Z",
+  "observed_at": "2026-10-28T08:25:26.979Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1865,7 +1865,7 @@
       "priority": "P1",
       "assigned_role": "WORKER",
       "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "status": "OPEN_REQUEST_CHANGES",
+      "status": "RESOLVED_IN_PR_HEAD_AWAIT_MAIN",
       "repository": "kk051780/toy-wars-factory",
       "pr": 94,
       "head": "6ac3f11a0fa88154652b9c68c60a6838a4e5eb60",
@@ -1896,7 +1896,16 @@
         "official_player_removing": "https://create.roblox.com/docs/reference/engine/classes/Players"
       },
       "next_actor": "WORKER_FIX_BEFORE_NEW_ISSUES",
-      "owner_reply_required": false
+      "owner_reply_required": false,
+      "resolution": {
+        "head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+        "ci": 40654472563,
+        "review_record": "ops/reviews/PR0094_a635a1b2.json",
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "9c5d2b9b-3ef8-8325-9f16-5939d55064e1",
+        "observed_at": "2026-10-28T08:25:26.979Z",
+        "note": "New whole-server 5-player delay fixture and pinned old-source negative control pass; independent APPROVE pending main merge and QA."
+      }
     }
   ]
 }

@@ -1,22 +1,21 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T07:28:06.412Z",
-  "status": "REQUEST_CHANGES",
+  "observed_at": "2026-10-28T08:25:26.979Z",
+  "status": "APPROVED_PENDING_MERGE",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "419780a3-78e8-832e-a8da-c4baf3595488",
-  "lease_epoch": 177,
+  "reviewer_run_id": "9c5d2b9b-3ef8-8325-9f16-5939d55064e1",
+  "lease_epoch": 180,
   "main_before": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
   "latest_review": {
     "pr": 94,
-    "head": "6ac3f11a0fa88154652b9c68c60a6838a4e5eb60",
-    "verdict": "REQUEST_CHANGES",
-    "review_record": "ops/reviews/PR0094_6ac3f11a.json",
-    "ci": 40648102338,
+    "head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+    "verdict": "APPROVE",
+    "review_record": "ops/reviews/PR0094_a635a1b2.json",
+    "ci": 40654472563,
     "category": "GAME_DATASTORE_PERSISTENCE",
-    "blockers": [
-      "PlayerRemoving frees the plot and synchronously calls join(waiting) before saveProgress(player,state). With four occupied plots and a fifth waiting player, join(waiting) enters loadProgress/GetAsync (a yielding DataStore call), delaying the departing player's final UpdateAsync. If shutdown occurs during that wait, the departed session is already removed from sessions, so BindToClose cannot save its earned progress. Move departing-player save before potentially yielding backfill while preserving accepted direct join(waiting) contract; add canonical 5-player delayed-GetAsync regression and pinned 6ac3f11a negative control."
-    ]
+    "blockers": [],
+    "next_action": "EXACT_HEAD_MERGE_AND_POST_MAIN_QA"
   },
   "merged_prs": [
     {
