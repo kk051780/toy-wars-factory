@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 225,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "867615bf-3cfc-8326-9ba2-e1a5cc06064b",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 225,
-    "acquired_at": "2026-10-28T22:19:40.653Z",
-    "expires_at": "2026-10-28T22:49:40.653Z",
-    "base_main_sha": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -20,44 +10,26 @@
   },
   "approval_packet": {
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
-    "items": [
-      {
-        "number": 112,
-        "title": "[TWF system-review] Preserve verbatim owner transcripts and separate derived summaries",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/112",
-        "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40777605047",
-        "summary": "正式差戻し修復: 原文全文の転記とDERIVED要約を分離。C121保持、C122で誤登録撤回。新13/全510検査・両CI・2取得証拠PASS。原チャット本人認証NOT_VERIFIED、独立再審査待ち。",
-        "changed_files": [
-          "docs/research/2026-10-29_scoped_idea_vault.md",
-          "history/C00121_scoped_dual_idea_pipeline.json",
-          "tests/test_system_idea_pipeline.py",
-          "tests/test_system_idea_vault.py",
-          "tools/system_idea_pipeline.py",
-          "tests/test_system_owner_transcription.py",
-          "history/C00122_owner_verbatim_review_repair.json"
-        ],
-        "kind": "開発体制改善"
-      }
-    ],
+    "items": [],
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-28T22:11:52Z",
-    "signature": "af02eb0d05ce51e5f88404aa3575d41004e0afb5d36642b8d396d1b33036bdca",
+    "observed_at": "2026-10-28T22:22:31.157Z",
+    "signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
     "approval_text": ""
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "META",
-    "owner_id": "f849220f-dc50-8329-926a-f3b0db1267a2",
-    "epoch": 224,
-    "released_at": "2026-10-28T22:16:08+00:00",
-    "result": "PR112_P1_PROVENANCE_REPAIR_CI_PASS_AWAIT_REVIEW",
+    "kind": "REVIEWER",
+    "owner_id": "867615bf-3cfc-8326-9ba2-e1a5cc06064b",
+    "epoch": 225,
+    "released_at": "2026-10-28T22:22:31.157Z",
+    "result": "PR112_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
     "pr": 112,
     "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
-    "ci": 40777605047,
-    "service_completion_asserted": false
+    "merge_sha": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+    "main_qa": 40779288581,
+    "handoff": 40779288627
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -967,38 +939,48 @@
     },
     "112": {
       "pr": 112,
-      "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+      "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
+      "base_main_sha": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
       "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-      "reviewer_run_id": "481f4d3e-88e0-832e-bba2-ea4fbc2fe466",
+      "reviewer_run_id": "867615bf-3cfc-8326-9ba2-e1a5cc06064b",
       "author_task_id": "6add445e4138819197d9cf2b1a02534d",
       "author_run_id": "7abde498-0150-8327-8579-2b3f808d0acb",
-      "verdict": "REQUEST_CHANGES",
-      "review_record": "ops/reviews/PR0112_a6ccf32e.json",
+      "repair_author_run_id": "f849220f-dc50-8329-926a-f3b0db1267a2",
+      "verdict": "APPROVE",
+      "review_record": "ops/reviews/PR0112_c6301b97.json",
+      "prior_rejected_review_record": "ops/reviews/PR0112_a6ccf32e.json",
+      "lease_epoch": 225,
       "ci": {
-        "id": 40772704574,
-        "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+        "id": 40777605047,
+        "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
         "conclusion": "success",
         "required_jobs_passed": true,
         "jobs": {
           "offline": "success",
           "compile_hold": "success"
         },
+        "python_tests": 510,
         "scope_and_claim_gate": "PASS",
-        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40772704574",
-        "python_tests": 497
+        "claim_checks": 2
       },
-      "base_main_sha": "5d4774843179227956f68d92c0ff6f89c77cb28d",
-      "lease_epoch": 223,
-      "blockers": [
-        {
-          "id": "OWNER_ORIGINAL_PARAPHRASE_MISCLASSIFIED",
-          "severity": "P1",
-          "file": "history/C00121_scoped_dual_idea_pipeline.json",
-          "path": "stock_checkpoint.records[idea_id=OWNER-20261028-CHARACTER-VARIETY]",
-          "actual": "origin OWNER_ORIGINAL_IDEA but original_text is AI paraphrase; source_ref NOT_AVAILABLE",
-          "expected": "Keep verbatim original transcription with explicit Issue #109 comment 6481271808 evidence and original-chat NOT_AVAILABLE/NOT_VERIFIED; move summary to distinct DERIVED id with derived_from original. Never treat hash self-consistency as owner-authentication. Add negative regression for paraphrase-as-verified-original."
-        }
-      ]
+      "merge_sha": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+      "post_merge_main_qa": {
+        "id": 40779288581,
+        "head": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+        "conclusion": "success",
+        "jobs": {
+          "offline": "success",
+          "compile_hold": "success"
+        },
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40779288581"
+      },
+      "post_merge_handoff": {
+        "id": 40779288627,
+        "head": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+        "conclusion": "success",
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40779288627"
+      },
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
     }
   },
   "integration_results": {

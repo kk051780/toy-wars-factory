@@ -83,5 +83,30 @@
     "https://github.com/kk051780/toy-wars-factory/issues/109#issuecomment-6481271808",
     "https://github.com/kk051780/toy-wars-factory/actions/runs/40777605047"
   ],
-  "next": "Exact-head merge under current reviewer lease; verify new main QA and handoff before marking merged/fully resolved. PR110 remains manual CONTROLLER protected."
+  "next": "Exact-head merge under current reviewer lease; verify new main QA and handoff before marking merged/fully resolved. PR110 remains manual CONTROLLER protected.",
+  "merge": {
+    "sha": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+    "merged": true,
+    "method": "merge",
+    "main_after_merge": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+    "main_after_handoff": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c"
+  },
+  "post_merge_main_qa": {
+    "id": 40779288581,
+    "head": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40779288581"
+  },
+  "post_merge_handoff": {
+    "id": 40779288627,
+    "head": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40779288627"
+  },
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "completed_at": "2026-10-28T22:22:31.157Z"
 }

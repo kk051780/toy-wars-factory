@@ -1,22 +1,22 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T21:44:15.489Z",
-  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED_PR112_REQUEST_CHANGES",
+  "observed_at": "2026-10-28T22:22:31.157Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "481f4d3e-88e0-832e-bba2-ea4fbc2fe466",
-  "lease_epoch": 223,
-  "main_before": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+  "reviewer_run_id": "867615bf-3cfc-8326-9ba2-e1a5cc06064b",
+  "lease_epoch": 225,
+  "main_before": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
   "latest_review": {
-    "pr": 111,
-    "head": "985a02462cce841434af6d94b10a2e728cc8c9be",
+    "pr": 112,
+    "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
     "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0111_985a0246.json",
-    "ci": 40769446837,
-    "merge_sha": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
-    "main_qa": 40774271061,
-    "handoff": 40774270909,
-    "category": "GAME_DATASTORE_DEPARTED_CLAIM_CLEANUP_RETRY",
+    "review_record": "ops/reviews/PR0112_c6301b97.json",
+    "ci": 40777605047,
+    "merge_sha": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+    "main_qa": 40779288581,
+    "handoff": 40779288627,
+    "category": "SYSTEM_IDEA_PROVENANCE_SCOPED_ADVISORY",
     "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
   },
   "merged_prs": [
@@ -263,24 +263,35 @@
       "handoff": 40774270909,
       "main_after_handoff": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
       "category": "GAME_DATASTORE_DEPARTED_CLAIM_CLEANUP_RETRY"
+    },
+    {
+      "pr": 112,
+      "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
+      "merge_sha": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40779288581,
+      "handoff": 40779288627,
+      "main_after_handoff": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+      "category": "SYSTEM_IDEA_PROVENANCE_SCOPED_ADVISORY",
+      "status_only_descendant_verified": true
     }
   ],
   "merge_count_this_run": 1,
   "main_qa": {
-    "id": 40774271061,
-    "head": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
+    "id": 40779288581,
+    "head": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
     "conclusion": "success",
     "jobs": {
       "offline": "success",
       "compile_hold": "success"
     },
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40774271061"
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40779288581"
   },
   "handoff": {
-    "id": 40774270909,
-    "head": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
+    "id": 40779288627,
+    "head": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
     "conclusion": "success",
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40774270909"
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40779288627"
   },
   "comparison_since_main_qa": {
     "verified": true,
@@ -290,35 +301,21 @@
       "status/LATEST_STATE.json"
     ]
   },
-  "unresolved": [
-    {
-      "pr": 112,
-      "blocker": "OWNER_ORIGINAL_PARAPHRASE_MISCLASSIFIED"
-    }
-  ],
-  "next": "PR112 new head required: preserve owner exact transcription and separate DERIVED paraphrase, regression and both CI, independent re-review. PR110 manual CONTROLLER remains protected. Continue playable PvE and real device/players verification.",
+  "unresolved": [],
+  "next": "Prioritize playable PvE and real Studio/multiplayer/mobile evidence. PR110 manual CONTROLLER and PR98 character protected scopes remain separately held; Issue113 progress percentages not adopted without protected maintenance. No new ideas auto-deployed; engine NOT_RUN, players NOT_MEASURED; release/Gemini/cost HOLD.",
   "runtime_verified": true,
-  "main_after": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
-  "merge_sha": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
-  "next_actor": "META_REPAIR_PR112",
+  "main_after": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+  "merge_sha": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+  "next_actor": "WORKER_META_ROADMAP",
   "secondary_review": {
     "pr": 112,
     "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
     "verdict": "REQUEST_CHANGES",
     "review_record": "ops/reviews/PR0112_a6ccf32e.json",
-    "blockers": [
-      {
-        "id": "OWNER_ORIGINAL_PARAPHRASE_MISCLASSIFIED",
-        "severity": "P1",
-        "file": "history/C00121_scoped_dual_idea_pipeline.json",
-        "path": "stock_checkpoint.records[idea_id=OWNER-20261028-CHARACTER-VARIETY]",
-        "actual": "origin OWNER_ORIGINAL_IDEA but original_text is AI paraphrase; source_ref NOT_AVAILABLE",
-        "expected": "Keep verbatim original transcription with explicit Issue #109 comment 6481271808 evidence and original-chat NOT_AVAILABLE/NOT_VERIFIED; move summary to distinct DERIVED id with derived_from original. Never treat hash self-consistency as owner-authentication. Add negative regression for paraphrase-as-verified-original."
-      }
-    ]
+    "status": "HISTORICAL_REJECTION_SUPERSEDED_BY_NEW_HEAD_APPROVE"
   },
-  "main_after_merge": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
-  "main_after_handoff": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
+  "main_after_merge": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+  "main_after_handoff": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
   "status_only_descendant_verified": true,
   "merges_this_run": 1
 }

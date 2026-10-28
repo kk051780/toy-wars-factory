@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T22:14:38Z",
+  "observed_at": "2026-10-28T22:22:31.157Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2356,7 +2356,7 @@
       "priority": "P1",
       "assigned_role": "META",
       "assigned_task_id": "6add445e4138819197d9cf2b1a02534d",
-      "status": "IMPLEMENTED_NEW_HEAD_CI_PASS_AWAIT_INDEPENDENT_REREVIEW",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "pr": 112,
       "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
@@ -2377,7 +2377,7 @@
         "Fresh exact-head offline and compile_hold, trusted claim/scope gate, independent re-review, main QA/handoff only after APPROVE.",
         "Do not merge PR110 manual CONTROLLER via normal REVIEWER or relax accepted tests, publication, spending, external API, Gemini HOLD."
       ],
-      "next_actor": "REGISTERED_REVIEWER",
+      "next_actor": "WORKER_META_NEXT_ROADMAP",
       "owner_reply_required": false,
       "engine_executed": false,
       "player_effect": "NOT_MEASURED",
@@ -2535,6 +2535,21 @@
         },
         "observed_at": "2026-10-28T22:14:38Z",
         "review_result": "NOT_APPROVED_BY_AUTHOR"
+      },
+      "resolution": {
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "867615bf-3cfc-8326-9ba2-e1a5cc06064b",
+        "review_record": "ops/reviews/PR0112_c6301b97.json",
+        "repaired_head": "c6301b978b289197b764f32744fd0693c2fdbd05",
+        "merge_sha": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+        "main_qa": 40779288581,
+        "handoff": 40779288627,
+        "main_after_handoff": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+        "verified_at": "2026-10-28T22:22:31.157Z",
+        "original_chat_authentication": "NOT_VERIFIED",
+        "player_effect": "NOT_MEASURED",
+        "engine": "NOT_RUN",
+        "old_rejection_preserved": true
       }
     }
   ]
