@@ -161,6 +161,8 @@ local function saveProgress(player,state)
         or not validProgressInt(record.factoryLevel,1,B.MAX_LEVEL) then return end
     local expected=state.persistSnapshot
     if not expected or not expected.sessionOwner then return end
+    -- Prevent any in-flight refresh from changing the final-save snapshot.
+    state.persistFinalizing=true
     -- Retry only transport/throttle errors. A successful nil result is a
     -- confirmed CAS conflict, never permission to overwrite another owner.
     -- The UpdateAsync transform itself never yields.
@@ -168,7 +170,17 @@ local function saveProgress(player,state)
         if not state.persistAllowed then return end
         local ok,saved=pcall(function()
             return progressStore:UpdateAsync("p:"..tostring(player.UserId),function(current,keyInfo)
-                if not sameProgress(current,expected) then return nil end
+                if not sameProgress(current,expected) then
+                    -- The same owner may have extended only its lease while the
+                    -- refresh response was still in flight. Never relax any
+                    -- progress value, revision, schema or owner comparison.
+                    if not validProgress(current) or not current.sessionLeaseUntil
+                        or not expected.sessionLeaseUntil
+                        or current.sessionLeaseUntil<expected.sessionLeaseUntil then return nil end
+                    local withoutLease=progressSnapshot(current)
+                    withoutLease.sessionLeaseUntil=expected.sessionLeaseUntil
+                    if not sameProgress(withoutLease,expected) then return nil end
+                end
                 local revision=current and (current.revision or 0) or 0
                 if revision>=2147483647 then return nil end
                 local updated={}
@@ -196,7 +208,8 @@ local function saveProgress(player,state)
     warn("TWF: progress save retries exhausted; progress may be unsaved for",player.UserId)
 end
 local function refreshProgressLease(state)
-    if not progressStore or not state.persistAllowed or not state.persistSnapshot then return end
+    if not progressStore or not state.persistAllowed or not state.persistSnapshot
+        or state.persistFinalizing then return end
     local now=leaseNow()
     if now<(state.nextLeaseRefresh or 0) then return end
     state.nextLeaseRefresh=now+SESSION_REFRESH_SECONDS
@@ -204,7 +217,7 @@ local function refreshProgressLease(state)
     if not expected.sessionOwner then return end
     local ok,refreshed=pcall(function()
         return progressStore:UpdateAsync("p:"..tostring(state.player.UserId),function(current,keyInfo)
-            if not sameProgress(current,expected) then return nil end
+            if state.persistFinalizing or not sameProgress(current,expected) then return nil end
             local updated={}
             for field,value in pairs(current) do updated[field]=value end
             updated.sessionLeaseUntil=now+SESSION_LEASE_SECONDS
@@ -212,6 +225,9 @@ local function refreshProgressLease(state)
             return updated
         end)
     end)
+    -- A delayed refresh response must not replace a completed final save
+    -- or misreport a departing player as a foreign-owner conflict.
+    if state.persistFinalizing or not state.persistAllowed then return end
     if ok and refreshed~=nil then
         state.persistSnapshot=progressSnapshot(refreshed)
     elseif not ok then
