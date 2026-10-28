@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 211,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "ee7a7829-7bf4-8322-80e7-51082142f2d0",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 211,
-    "acquired_at": "2026-10-28T18:05:11.114Z",
-    "expires_at": "2026-10-28T18:35:11.114Z",
-    "base_main_sha": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092",
-    "work_branch": "auto/twf-game-repair-ee7a7829-7bf4-8322-80e7-51082142f2d0",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,14 +36,11 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "73f73cd1-8cd4-8326-b436-83c29f105c82",
-    "epoch": 210,
-    "released_at": "2026-10-28T17:29:31.780Z",
-    "result": "PR106_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
-    "pr": 106,
-    "merge_sha": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
-    "main_after_handoff": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092"
+    "kind": "WORKER",
+    "owner_id": "ee7a7829-7bf4-8322-80e7-51082142f2d0",
+    "epoch": 211,
+    "released_at": "2026-10-28T18:07:38.663Z",
+    "result": "BLOCKED_HOST_SAFETY_CREATE_BRANCH_NO_SOURCE_WRITE"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
