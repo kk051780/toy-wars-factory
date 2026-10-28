@@ -59,9 +59,32 @@
     "Offline mock only, not Roblox engine/DataStore/multiplayer/mobile/retention evidence",
     "Release HOLD, Gemini incident HOLD, spending caps remain unchanged"
   ],
-  "next": "MERGE_EXACT_HEAD_THEN_MAIN_QA_AND_HANDOFF",
+  "next": "WORKER_NEXT_P1_OR_PLAYABLE_PVE_EVIDENCE",
   "merge_sha": "877417447e645fd8f3c34d5aecd883a43791712d",
-  "merge_status": "MERGED_WAIT_MAIN_QA_AND_HANDOFF",
+  "merge_status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "main_qa_run": 40754419751,
-  "handoff_run": 40754419345
+  "handoff_run": 40754419345,
+  "main_after_handoff": "8a0f8816870fa4854b71c23d223728589303070a",
+  "post_merge_main_qa": {
+    "id": 40754419751,
+    "head": "877417447e645fd8f3c34d5aecd883a43791712d",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    }
+  },
+  "post_merge_handoff": {
+    "id": 40754419345,
+    "head": "877417447e645fd8f3c34d5aecd883a43791712d",
+    "conclusion": "success"
+  },
+  "post_merge_comparison": {
+    "status": "ahead",
+    "ahead_by": 1,
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  }
 }

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T17:29:13.693Z",
+  "observed_at": "2026-10-28T19:27:57.791Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2152,7 +2152,7 @@
       "priority": "P1",
       "assigned_role": "WORKER",
       "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "status": "OPEN_REPRODUCED",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "source_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
       "source": "src/ToyWarsServer.server.lua refreshProgressLease/simulate",
@@ -2173,8 +2173,12 @@
         "No active prior session progress stolen before expiry; no default unsavable admission, no max-coins merging. Preserve all accepted canonical regressions and exact-head both-job CI, separate registered review, post-merge QA/handoff."
       ],
       "owner_reply_required": false,
-      "next_actor": "WORKER",
-      "engine_executed": false
+      "next_actor": "NONE",
+      "engine_executed": false,
+      "resolved_head": "0f3f2eb853ef58b7d34adeee5241e090066a9b7f",
+      "merge_sha": "877417447e645fd8f3c34d5aecd883a43791712d",
+      "main_qa": 40754419751,
+      "handoff": 40754419345
     },
     {
       "id": "pr100_expired_lease_shutdown_save_skip_20261028",
