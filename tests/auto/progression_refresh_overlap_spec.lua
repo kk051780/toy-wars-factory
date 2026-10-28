@@ -66,6 +66,8 @@ local function race(source,foreign)
     eq(s.calls,2,"first refresh started")
     clock.value=1095;h.runService.Heartbeat:Fire(0.2)
     local callsBeforeRemove=s.calls
+    -- Heartbeat pays passive income: pin the intended final balance after both ticks.
+    assert(assert(p:FindFirstChild("leaderstats")):FindFirstChild("Coins")).Value=350
     if foreign then s.data["p:1"].sessionOwner="foreign";s.data["p:1"].revision=9 end
     h:removePlayer(p);h:advance(0.35)
     return s,h,callsBeforeRemove
