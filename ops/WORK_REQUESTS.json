@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T06:33:51.029Z",
+  "observed_at": "2026-10-28T07:28:06.412Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1826,7 +1826,7 @@
       "priority": "P1",
       "assigned_role": "WORKER",
       "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "status": "OPEN_REQUEST_CHANGES",
+      "status": "RESOLVED_IN_PR_HEAD_AWAIT_MAIN",
       "repository": "kk051780/toy-wars-factory",
       "pr": 94,
       "head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
@@ -1851,6 +1851,51 @@
         "review": "ops/reviews/PR0094_c7227654.json"
       },
       "next_actor": "WORKER",
+      "owner_reply_required": false,
+      "resolution": {
+        "head": "6ac3f11a0fa88154652b9c68c60a6838a4e5eb60",
+        "ci": 40648102338,
+        "review": "ops/reviews/PR0094_6ac3f11a.json",
+        "note": "Post-refresh active/session/parent guard and four canonical regression/negative controls pass; separate backfill-before-final-save issue remains."
+      }
+    },
+    {
+      "id": "pr94_backfill_before_final_save_20261028",
+      "kind": "REPAIR_PR94_PLAYER_REMOVING_BACKFILL_SAVE_ORDER",
+      "priority": "P1",
+      "assigned_role": "WORKER",
+      "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "status": "OPEN_REQUEST_CHANGES",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 94,
+      "head": "6ac3f11a0fa88154652b9c68c60a6838a4e5eb60",
+      "base_main_sha": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+      "created_at": "2026-10-28T07:28:06.412Z",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "419780a3-78e8-832e-a8da-c4baf3595488",
+      "review_record": "ops/reviews/PR0094_6ac3f11a.json",
+      "source": "src/ToyWarsServer.server.lua: PlayerRemoving lines 727-742; join/loadProgress lines 648-671,92-96; BindToClose lines 744-749",
+      "request": "Save the departing player's owned progress before invoking potentially yielding join(waiting). Keep exact accepted workshop backfill semantics and direct join(waiting) call; no accepted-test weakening or protected-control changes.",
+      "reproduction": [
+        "Populate all four workshop plots and add a fifth waiting player. Give departing player A 350 coins with last persisted record 200.",
+        "Trigger PlayerRemoving(A), freeing the slot. Make waiting player B's GetAsync yield for a long time.",
+        "Current code invokes join(B) before saveProgress(A), so A's final UpdateAsync has not started while B's GetAsync is suspended.",
+        "Simulate shutdown/BindToClose while A has been removed from sessions; A is absent from shutdown save iteration. Expected A's 350 saved and owner released before B's slow read; actual stored 200 remains until B read resumes."
+      ],
+      "expected": [
+        "A's final save is attempted before B's yielding load, and A's progress/owner is committed independently of B's read latency.",
+        "Canonical five-player delayed GetAsync test and pinned 6ac3f11a negative control prove the old ordering defect.",
+        "Existing 27 server/6 HUD accepted tests, backfill behavior, DataStore session ownership/retry/metadata, all progression tests remain unchanged and pass.",
+        "Fresh exact-head offline+compile_hold CI, ledger/claim verification, independent re-review; no Roblox engine claim."
+      ],
+      "evidence": {
+        "pr_ci": 40648102338,
+        "main_qa": 40629585413,
+        "review_head": "6ac3f11a0fa88154652b9c68c60a6838a4e5eb60",
+        "official_datastore": "https://create.roblox.com/docs/reference/engine/classes/GlobalDataStore",
+        "official_player_removing": "https://create.roblox.com/docs/reference/engine/classes/Players"
+      },
+      "next_actor": "WORKER_FIX_BEFORE_NEW_ISSUES",
       "owner_reply_required": false
     }
   ]

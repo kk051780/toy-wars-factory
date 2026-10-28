@@ -1,21 +1,21 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T06:34:10.683Z",
+  "observed_at": "2026-10-28T07:28:06.412Z",
   "status": "REQUEST_CHANGES",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "00a41d21-8588-8323-acf2-cf75462da83b",
-  "lease_epoch": 174,
+  "reviewer_run_id": "419780a3-78e8-832e-a8da-c4baf3595488",
+  "lease_epoch": 177,
   "main_before": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
   "latest_review": {
     "pr": 94,
-    "head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
+    "head": "6ac3f11a0fa88154652b9c68c60a6838a4e5eb60",
     "verdict": "REQUEST_CHANGES",
-    "review_record": "ops/reviews/PR0094_c7227654.json",
-    "ci": 40641863301,
+    "review_record": "ops/reviews/PR0094_6ac3f11a.json",
+    "ci": 40648102338,
     "category": "GAME_DATASTORE_PERSISTENCE",
     "blockers": [
-      "simulate() checks active only before a yielding refreshProgressLease; after PlayerRemoving or lease-loss Kick it can resume and mutate coins/spawn orphan models. Require post-refresh active/session guard and deterministic negative-control regression."
+      "PlayerRemoving frees the plot and synchronously calls join(waiting) before saveProgress(player,state). With four occupied plots and a fifth waiting player, join(waiting) enters loadProgress/GetAsync (a yielding DataStore call), delaying the departing player's final UpdateAsync. If shutdown occurs during that wait, the departed session is already removed from sessions, so BindToClose cannot save its earned progress. Move departing-player save before potentially yielding backfill while preserving accepted direct join(waiting) contract; add canonical 5-player delayed-GetAsync regression and pinned 6ac3f11a negative control."
     ]
   },
   "merged_prs": [
@@ -175,18 +175,15 @@
   "main_qa": {
     "id": 40629585413,
     "head": "d3decf3519937f4e8391d130eee5ff5375868fed",
-    "status": "completed",
     "conclusion": "success",
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40629585413",
-    "jobs": [
-      {
-        "name": "offline",
-        "conclusion": "success"
-      },
-      {
-        "name": "compile_hold",
-        "conclusion": "success"
-      }
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "status_only_descendant_verified": true,
+    "comparison_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
     ]
   },
   "handoff": {
@@ -211,12 +208,12 @@
     ]
   },
   "unresolved": [
-    "pr94_refresh_yield_resume_after_departure_20261028",
+    "pr94_backfill_before_final_save_20261028",
     "issue71_original_operation_receipt_unavailable",
     "roblox_engine_multiplayer_mobile_unverified",
     "pr98_protected_character_scope_requires_separate_exact_head_maintenance_audit"
   ],
-  "next": "WORKER_FIX_PR94_POST_REFRESH_ACTIVE_GUARD_WITH_PINNED_NEGATIVE_CONTROL; PROTECTED_PR98_SEPARATE_AUDIT; KEEP_RELEASE_HOLD",
+  "next": "WORKER_FIX_PR94_SAVE_BEFORE_YIELDING_BACKFILL_WITH_FIVE_PLAYER_NEGATIVE_CONTROL; PROTECTED_PR98_SEPARATE_AUDIT; KEEP_RELEASE_HOLD",
   "runtime_verified": true,
   "main_after": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
   "merge_sha": null,
