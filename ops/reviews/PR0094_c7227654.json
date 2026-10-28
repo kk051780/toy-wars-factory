@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "pr": 94,
+  "head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
+  "base_main_sha": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+  "reviewed_at": "2026-10-28T06:33:16.281Z",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "00a41d21-8588-8323-acf2-cf75462da83b",
+  "lease_epoch": 174,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "7f92f090-38c4-8328-9a0e-9975e4e4981d",
+  "verdict": "REQUEST_CHANGES",
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": false
+  },
+  "findings": [
+    "After refreshProgressLease yields or sets state.active=false, simulate continues without checking state.active again. PlayerRemoving may have removed the session and entities, but resumed simulate can still add models or mutate coins. Add a post-refresh active/session guard and canonical delayed-refresh/foreign-owner regressions with pinned c7227654 negative control."
+  ],
+  "blockers": [
+    "After refreshProgressLease yields or sets state.active=false, simulate continues without checking state.active again. PlayerRemoving may have removed the session and entities, but resumed simulate can still add models or mutate coins. Add a post-refresh active/session guard and canonical delayed-refresh/foreign-owner regressions with pinned c7227654 negative control."
+  ],
+  "ci": {
+    "id": 40641863301,
+    "head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "scope_and_claim_gate": "PASS",
+    "python_tests": 454,
+    "refresh_overlap_lua": "3/3",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40641863301"
+  },
+  "main_qa": {
+    "id": 40629585413,
+    "head": "d3decf3519937f4e8391d130eee5ff5375868fed",
+    "conclusion": "success",
+    "status_only_descendant_verified": true
+  },
+  "source_ledger": {
+    "files": 4,
+    "bytes": 44346,
+    "lines": 1030,
+    "server_bytes": 33202
+  },
+  "author_claims_verified": 8,
+  "changed_files": 18,
+  "accepted_tests_unchanged": true,
+  "protected_controls_unchanged": true,
+  "roblox_engine": "NOT_RUN",
+  "merge_sha": null,
+  "next_actor": "WORKER",
+  "request_id": "pr94_refresh_yield_resume_after_departure_20261028"
+}
