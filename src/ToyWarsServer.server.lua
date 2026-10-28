@@ -578,6 +578,7 @@ end
 local function simulate(state,dt)
     if not state.active then return end
     refreshProgressLease(state)
+    if not state.active or sessions[state.player] ~= state or state.player.Parent ~= Players then return end
     local income=B.incomePerSecond(state.level.Value)
     if not income then income=6 end
     state.incomeCarry=state.incomeCarry+income*dt
