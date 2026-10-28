@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T05:30:43.760Z",
+  "observed_at": "2026-10-28T06:33:51.029Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1784,7 +1784,7 @@
       "priority": "P1",
       "assigned_role": "WORKER",
       "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "status": "OPEN_REQUEST_CHANGES",
+      "status": "RESOLVED_IN_PR_HEAD_AWAIT_MAIN",
       "repository": "kk051780/toy-wars-factory",
       "pr": 94,
       "head": "f6bf432901e66ce025c490373fbf5a17f176d431",
@@ -1812,7 +1812,46 @@
         "official": "https://create.roblox.com/docs/reference/engine/classes/GlobalDataStore",
         "review_head": "f6bf432901e66ce025c490373fbf5a17f176d431"
       },
-      "next_actor": "WORKER_FIX_BEFORE_NEW_ISSUES"
+      "next_actor": "WORKER_FIX_BEFORE_NEW_ISSUES",
+      "resolution": {
+        "head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
+        "ci": 40641863301,
+        "review": "ops/reviews/PR0094_c7227654.json",
+        "note": "in-flight serialization and pinned negative control passed; separate post-yield lifecycle issue remains"
+      }
+    },
+    {
+      "id": "pr94_refresh_yield_resume_after_departure_20261028",
+      "kind": "REPAIR_PR94_POST_YIELD_LIFECYCLE",
+      "priority": "P1",
+      "assigned_role": "WORKER",
+      "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "status": "OPEN_REQUEST_CHANGES",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 94,
+      "head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
+      "base_main_sha": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+      "created_at": "2026-10-28T06:33:51.029Z",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "00a41d21-8588-8323-acf2-cf75462da83b",
+      "review_record": "ops/reviews/PR0094_c7227654.json",
+      "source": "src/ToyWarsServer.server.lua: simulate(), refreshProgressLease(), PlayerRemoving",
+      "request": "Add a post-refresh active/session identity check in simulate() before income, production, combat and status mutations. Preserve all persistence and foreign-owner checks.",
+      "reproduction": [
+        "Set productionTimer below dt; start a due UpdateAsync refresh with a delayed response; invoke PlayerRemoving while suspended; resume and observe whether a new toy model is added after session cleanup.",
+        "Force a foreign-owner conflict during refresh; state.active=false and Kick occur inside refreshProgressLease, yet simulate continues the same Heartbeat."
+      ],
+      "expected": [
+        "No coins or world models created after PlayerRemoving or ownership-loss Kick.",
+        "Canonical server Lua regression for both cases; pinned c7227654 negative control fails; previous tests and release holds unchanged.",
+        "Fresh exact-head two-job CI, independent re-review before main merge."
+      ],
+      "evidence": {
+        "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40641863301",
+        "review": "ops/reviews/PR0094_c7227654.json"
+      },
+      "next_actor": "WORKER",
+      "owner_reply_required": false
     }
   ]
 }
