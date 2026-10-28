@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 164,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "c24b547b-a58c-4c2b-a3cd-46410057053c",
-    "task_id": null,
-    "epoch": 164,
-    "acquired_at": "2026-10-28T03:40:28.797467+00:00",
-    "expires_at": "2026-10-28T04:10:28.797467+00:00",
-    "base_main_sha": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
-    "work_branch": "ops/twf-character-pipeline-20261028",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -47,14 +37,14 @@
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "5fe5290f-e216-4f8c-b8fa-4ff7d002e4a4",
-    "epoch": 163,
-    "released_at": "2026-10-28T03:35:05.782Z",
-    "result": "PR97_HARNESS_FIX_CI_PASS_AWAIT_SCOPED_INDEPENDENT_AUDIT",
-    "pr": 97,
-    "head": "499a8226925ef41aec66ec12c6d685f9cbe9b43b",
-    "ci": 40626780378,
-    "next_actor": "INDEPENDENT_MAINTENANCE_AUDIT:6ae16d4645308191876c8f768743a583"
+    "owner_id": "c24b547b-a58c-4c2b-a3cd-46410057053c",
+    "epoch": 164,
+    "released_at": "2026-10-28T03:46:59.583Z",
+    "result": "PR98_CHARACTER_PIPELINE_AND_CUREBO_DRAFT_CREATED",
+    "pr": 98,
+    "head": "f830f259dcbaa58aa79ab15162f7d73123003ab5",
+    "audit_task_id": "6ae16fe9b8908191b93c85b0c2782f01",
+    "next_actor": "INDEPENDENT_READ_ONLY_CHARACTER_MAINTENANCE_AUDIT"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -1249,5 +1239,21 @@
     "authority": "Owner delegated ordinary game/system repair and integration; registered REVIEWER's exact protected-harness repair request. One independently reviewed CONTROLLER maintenance operation only; no ordinary reviewer MERGE decision claimed.",
     "created_at": "2026-10-28T03:35:05.782Z",
     "status": "AWAIT_INDEPENDENT_REVIEW"
+  },
+  "character_pipeline_review_request": {
+    "mode": "READ_ONLY_SCOPED_CHARACTER_MAINTENANCE_AUDIT",
+    "reviewer_task_id": "6ae16fe9b8908191b93c85b0c2782f01",
+    "repository": "kk051780/toy-wars-factory",
+    "pr": 98,
+    "head": "f830f259dcbaa58aa79ab15162f7d73123003ab5",
+    "base_main_sha": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+    "branch": "ops/twf-character-pipeline-20261028",
+    "author_operation_id": "c24b547b-a58c-4c2b-a3cd-46410057053c",
+    "author_claim_commit": "0b6c79a0247216d2471c0b67d710a44abc6085bd",
+    "epoch": 164,
+    "status": "DRAFT_WAIT_EXACT_HEAD_CI_AND_INDEPENDENT_AUDIT",
+    "requested_at": "2026-10-28T03:46:59.583Z",
+    "scope": "Protected character gate/catalog/scope adoption plus first CUREBO pilot. No automatic merge/spend/publish grant.",
+    "live_role_prompts": "UPDATED_CONDITIONALLY_PENDING_MAIN_ADOPTION_SCHEDULES_UNCHANGED"
   }
 }
