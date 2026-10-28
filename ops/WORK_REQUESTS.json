@@ -1999,7 +1999,7 @@
       "kind": "REPAIR_PROTECTED_CHARACTER_ADOPTION_PR98",
       "priority": "P1",
       "assigned_role": "CONTROLLER_AUTHOR",
-      "status": "OPEN_REQUEST_CHANGES",
+      "status": "IMPLEMENTED_IN_PR_HEAD_AWAIT_INDEPENDENT_REVIEW",
       "repository": "kk051780/toy-wars-factory",
       "pr": 98,
       "head": "8997fdbd364ef9f0aa88ffffecfee3bfc22087bd",
@@ -2072,7 +2072,49 @@
       ],
       "owner_reply_required": false,
       "next_actor": "CONTROLLER_AUTHOR",
-      "ordinary_worker_instruction": "Continue only existing authorized main work; do not edit this ops branch or protected acceptance files. Do not duplicate CUREBO before adoption."
+      "ordinary_worker_instruction": "Continue only existing authorized main work; do not edit this ops branch or protected acceptance files. Do not duplicate CUREBO before adoption.",
+      "resolution": {
+        "head": "0d64eaa9cbd15bb136bd41de24303f82cb98be1b",
+        "history": "history/C00103_character_adoption_review_repair.json",
+        "author_operation_id": "f7b10bdc-c8b0-4353-863c-768b9ef64687",
+        "claim_commit": "d1fb5c8facd07b51623797160561d3e6739a0267",
+        "epoch": 189,
+        "ci": 40680291116,
+        "note": "All four blockers addressed; author does not claim independent approval. New exact-head CI and reviewer judgment required."
+      }
+    },
+    {
+      "id": "main_shutdown_sequential_save_deadline_20261028",
+      "kind": "REPAIR_MAIN_DATASTORE_SHUTDOWN_PARALLELISM",
+      "priority": "P1",
+      "assigned_role": "WORKER",
+      "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "status": "OPEN_REPRODUCED",
+      "repository": "kk051780/toy-wars-factory",
+      "source_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+      "source": "src/ToyWarsServer.server.lua BindToClose/saveProgress",
+      "server_blob": "01614fae4cca597f174efbd82845afc768d2af47",
+      "created_at": "2026-10-28T11:30:00Z",
+      "author_operation_id": "f7b10bdc-c8b0-4353-863c-768b9ef64687",
+      "diagnostic": "ops/diagnostics/shutdown_budget_audit_20261028.lua",
+      "request": "Start final saves for all active users concurrently within the 30-second shutdown budget instead of one sequential loop. Freeze gameplay and coordinate with PlayerRemoving/inflight refresh to avoid duplicate finalization, unsaved mutations or stale ownership/revision writes. Preserve all accepted cases and normal branch scope; use one small new PR.",
+      "reproduction": [
+        "Canonical full server9deab2ac with deterministic successful DataStore calls delayed8seconds only after actual BindToClose callback starts,4 admitted users with earned coins350.",
+        "At30seconds:4 calls started,3 committed; one user still stored initial50 and owned lease. Fourth commits only at32seconds. Actual platform's documented close timeout is30seconds.",
+        "Controls:1user×8sec saves1/1 by30;4users×0.1sec saves4/4 by0.4seconds. This is simulated service latency, not evidence of actual Roblox incident frequency."
+      ],
+      "expected": [
+        "New canonical whole-server regression:4×8sec successful saves finish all before30sec, with full balance/metadata/UserIds retained and ownership safely released.",
+        "Bounded all-fail behavior; duplicate close/remove/refresh races and no gameplay mutation during shutdown; preserve all old accepted tests.",
+        "Pinned old-main negative control reproduces3/4 at30; fresh exact-head offline+compile_hold, source ledger, separate REVIEWER, post-merge QA/handoff."
+      ],
+      "official_sources": [
+        "https://create.roblox.com/docs/reference/engine/classes/DataModel#BindToClose",
+        "https://create.roblox.com/docs/cloud-services/data-stores/player-data-purchasing"
+      ],
+      "engine_executed": false,
+      "owner_reply_required": false,
+      "next_actor": "WORKER_AFTER_CURRENT_CONTROLLER_RELEASE"
     }
   ]
 }
