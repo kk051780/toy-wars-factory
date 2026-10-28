@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T02:26:57.699Z",
+  "observed_at": "2026-10-28T02:28:21.945Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1594,7 +1594,7 @@
       "priority": "P1",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-      "status": "APPROVED_PENDING_MERGE",
+      "status": "MERGED_WAIT_MAIN_CI",
       "repository": "kk051780/toy-wars-factory",
       "issue": 71,
       "pr": 96,
@@ -1652,7 +1652,11 @@
         "reviewer_run_id": "c8032924-5078-8333-9ef3-c5f870f61610",
         "head": "b6118ae609d6d634d4538a7e04be2b051c32a7a0",
         "review_record": "ops/reviews/PR0096_b6118ae6.json",
-        "observed_at": "2026-10-28T02:26:57.699Z"
+        "observed_at": "2026-10-28T02:26:57.699Z",
+        "merge_sha": "dd703db711f11b0aff5cce3c084a2462025ac010",
+        "main_qa": 40621070139,
+        "handoff": 40621070138,
+        "main_after_handoff": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385"
       }
     },
     {

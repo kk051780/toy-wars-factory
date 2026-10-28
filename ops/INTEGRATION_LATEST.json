@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T02:26:57.699Z",
-  "status": "APPROVED_PENDING_MERGE",
+  "observed_at": "2026-10-28T02:28:21.945Z",
+  "status": "MERGED_WAIT_MAIN_CI",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "c8032924-5078-8333-9ef3-c5f870f61610",
@@ -15,7 +15,15 @@
     "ci": 40616434523,
     "category": "SYSTEM_IMPROVEMENT_SCOPED_READONLY_PROVIDER_TRANSPORT",
     "blockers": [],
-    "merge_sha": null
+    "merge_sha": "dd703db711f11b0aff5cce3c084a2462025ac010",
+    "post_merge_main_qa": {
+      "id": 40621070139,
+      "status": "PENDING"
+    },
+    "post_merge_handoff": {
+      "id": 40621070138,
+      "status": "success"
+    }
   },
   "merged_prs": [
     {
@@ -158,6 +166,16 @@
       "main_qa": 40594943961,
       "handoff": 40594944031,
       "main_after_handoff": "55d9e0da77f0a9237cf2776432cf22f62b551283"
+    },
+    {
+      "pr": 96,
+      "head": "b6118ae609d6d634d4538a7e04be2b051c32a7a0",
+      "merge_sha": "dd703db711f11b0aff5cce3c084a2462025ac010",
+      "status": "MERGED_WAIT_MAIN_CI",
+      "main_qa": 40621070139,
+      "handoff": 40621070138,
+      "main_after_handoff": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+      "status_only_descendant_verified": true
     }
   ],
   "merge_count_this_run": 0,
@@ -220,5 +238,8 @@
     "reason": "REPAIR_CI",
     "review_record": "ops/reviews/PR0094_9399dee1.json",
     "ci": 40618595107
-  }
+  },
+  "main_after_merge": "dd703db711f11b0aff5cce3c084a2462025ac010",
+  "main_after_handoff": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+  "status_only_descendant_verified": true
 }
