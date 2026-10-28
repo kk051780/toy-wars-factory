@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 182,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "0ddf4fa2-d1d0-8321-a1a5-ef55cde33155",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 182,
-    "acquired_at": "2026-10-28T09:08:05.663Z",
-    "expires_at": "2026-10-28T09:38:05.663Z",
-    "base_main_sha": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
-    "work_branch": "auto/twf-game-repair-0ddf4fa2-d1d0-8321-a1a5-ef55cde33155",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -48,13 +38,13 @@
   "last_completed": {
     "kind": "WORKER",
     "owner_id": "0ddf4fa2-d1d0-8321-a1a5-ef55cde33155",
-    "epoch": 181,
-    "released_at": "2026-10-28T09:06:46.556Z",
-    "result": "PR99_DRAFT_CI_RUNNING",
+    "epoch": 182,
+    "released_at": "2026-10-28T09:10:35.612Z",
+    "result": "PR99_DRAFT_HEAD_CI_BOTH_JOBS_PASS",
     "pr": 99,
     "head": "ae1e80f5b2e05e983497f33b675a52bf33a7acfd",
     "ci_run": 40661660868,
-    "next_actor": "REVIEWER_AFTER_CI_SUCCESS"
+    "next_actor": "INDEPENDENT_REVIEWER"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
