@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T22:48:03.801Z",
-  "status": "MERGED_WAIT_MAIN_QA_AND_HANDOFF",
+  "observed_at": "2026-10-28T22:48:41.973Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "590edbe8-10fc-832a-b3b2-57ccdfd4585b",
@@ -17,7 +17,7 @@
     "main_qa": 40782676418,
     "handoff": 40782676452,
     "category": "SYSTEM_A12_READ_ONLY_CLASSIFIER_SOURCE_ONLY",
-    "status": "MERGED_WAIT_MAIN_QA_AND_HANDOFF"
+    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
   },
   "merged_prs": [
     {
@@ -279,10 +279,11 @@
       "pr": 116,
       "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
       "merge_sha": "3009bfefde60311ba58a8962e3fc296db669f75e",
-      "status": "MERGED_WAIT_MAIN_QA_AND_HANDOFF",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "main_qa": 40782676418,
       "handoff": 40782676452,
-      "category": "SYSTEM_A12_READ_ONLY_CLASSIFIER_SOURCE_ONLY"
+      "category": "SYSTEM_A12_READ_ONLY_CLASSIFIER_SOURCE_ONLY",
+      "main_after_handoff": "3d99c3ec30238587af2823c76682343c403042df"
     }
   ],
   "merge_count_this_run": 1,
@@ -311,7 +312,7 @@
     ]
   },
   "unresolved": [],
-  "next": "Prioritize playable PvE and real Studio/multiplayer/mobile evidence. PR110 manual CONTROLLER and PR98 character protected scopes remain separately held; Issue113 progress percentages not adopted without protected maintenance. No new ideas auto-deployed; engine NOT_RUN, players NOT_MEASURED; release/Gemini/cost HOLD.",
+  "next": "Issue114: independently prove real scheduled detection, fenced durable dedup and delivery, then verified recovery in separate work. Issue113 protected progress remains unchanged.",
   "runtime_verified": true,
   "main_after": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
   "merge_sha": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
@@ -324,7 +325,9 @@
     "status": "HISTORICAL_REJECTION_SUPERSEDED_BY_NEW_HEAD_APPROVE"
   },
   "main_after_merge": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
-  "main_after_handoff": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+  "main_after_handoff": "3d99c3ec30238587af2823c76682343c403042df",
   "status_only_descendant_verified": true,
-  "merges_this_run": 1
+  "merges_this_run": 1,
+  "a12_verified": false,
+  "a12_progress_points_awarded": 0
 }

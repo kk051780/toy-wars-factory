@@ -79,24 +79,33 @@
     "https://github.com/kk051780/toy-wars-factory/actions/runs/40781686546",
     "https://github.com/kk051780/toy-wars-factory/issues/114"
   ],
-  "next": "Exact-head merge under current reviewer lease, then independent main offline+compile_hold and handoff; A12 operational evidence separate.",
-  "status": "MERGED_WAIT_MAIN_QA_AND_HANDOFF",
+  "next": "A12 read-only classifier merged and QA verified, but unattended monitoring, durable dedup, notification delivery and recovery remain NOT_VERIFIED. Issue114 subsequent separate guarded work; no A12 points or 81% update.",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "merge": {
     "sha": "3009bfefde60311ba58a8962e3fc296db669f75e",
     "merged": true,
     "method": "merge",
-    "main_after_merge": "3009bfefde60311ba58a8962e3fc296db669f75e"
+    "main_after_merge": "3009bfefde60311ba58a8962e3fc296db669f75e",
+    "main_after_handoff": "3d99c3ec30238587af2823c76682343c403042df"
   },
   "post_merge_main_qa": {
     "id": 40782676418,
     "head": "3009bfefde60311ba58a8962e3fc296db669f75e",
-    "conclusion": "in_progress",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
     "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40782676418"
   },
   "post_merge_handoff": {
     "id": 40782676452,
     "head": "3009bfefde60311ba58a8962e3fc296db669f75e",
-    "conclusion": "queued",
+    "conclusion": "success",
+    "jobs": {
+      "update": "success"
+    },
     "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40782676452"
-  }
+  },
+  "completed_at": "2026-10-28T22:48:41.973Z"
 }
