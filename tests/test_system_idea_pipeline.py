@@ -141,6 +141,60 @@ class PipelineTests(unittest.TestCase):
         fake=deepcopy(row);fake["events"][0]["from"]="RESEARCHED"
         self.assertRejected(lambda:validate_record(fake))
 
+    def test_provenance_rejects_two_node_cycle(self):
+        a=capture(idea_id="DERA",project_id="toy-wars-factory",origin="DERIVED",
+                  original_text="Derived from B",source_ref="NOT_AVAILABLE",captured_at=NOW,derived_from=["DERB"])
+        b=capture(idea_id="DERB",project_id="toy-wars-factory",origin="DERIVED",
+                  original_text="Derived from A",source_ref="NOT_AVAILABLE",captured_at=NOW,derived_from=["DERA"])
+        self.assertRejected(lambda:validate_registry([a,b]))
+
+    def test_provenance_rejects_three_node_cycle_with_owner_root(self):
+        a=capture(idea_id="DERA",project_id="toy-wars-factory",origin="DERIVED",
+                  original_text="One parent is a source, another a cycle",source_ref="NOT_AVAILABLE",
+                  captured_at=NOW,derived_from=["OWN20261028_CHARACTERS","DERC"])
+        b=capture(idea_id="DERB",project_id="toy-wars-factory",origin="DERIVED",
+                  original_text="Derived from A",source_ref="NOT_AVAILABLE",captured_at=NOW,derived_from=["DERA"])
+        c=capture(idea_id="DERC",project_id="toy-wars-factory",origin="DERIVED",
+                  original_text="Derived from B",source_ref="NOT_AVAILABLE",captured_at=NOW,derived_from=["DERB"])
+        self.assertRejected(lambda:validate_registry([owner(),a,b,c]))
+
+    def test_provenance_diamond_and_long_chain_work_without_recursion(self):
+        one=owner()
+        two=web()
+        children=[
+            capture(idea_id="DERA",project_id="toy-wars-factory",origin="DERIVED",
+                    original_text="Owner derived path",source_ref="NOT_AVAILABLE",
+                    captured_at=NOW,derived_from=[one["idea_id"]]),
+            capture(idea_id="DERB",project_id="toy-wars-factory",origin="DERIVED",
+                    original_text="Web derived path",source_ref="NOT_AVAILABLE",
+                    captured_at=NOW,derived_from=[two["idea_id"]]),
+        ]
+        joined=capture(idea_id="DERC",project_id="toy-wars-factory",origin="DERIVED",
+                       original_text="Merged owner and web branches",source_ref="NOT_AVAILABLE",
+                       captured_at=NOW,derived_from=["DERA","DERB"])
+        chain=[one,two]+children+[joined]
+        parent=joined["idea_id"]
+        for idx in range(250):
+            idea_id="DER%04d" % idx
+            chain.append(capture(idea_id=idea_id,project_id="toy-wars-factory",
+                                 origin="DERIVED",original_text="Deep chain #%d"%idx,
+                                 source_ref="NOT_AVAILABLE",captured_at=NOW,
+                                 derived_from=[parent]))
+            parent=idea_id
+        self.assertEqual(validate_registry(chain),chain)
+
+    def test_provenance_rejects_impossible_parent_timestamp(self):
+        child=capture(idea_id="DERA",project_id="toy-wars-factory",origin="DERIVED",
+                      original_text="A derived candidate before its source",source_ref="NOT_AVAILABLE",
+                      captured_at="2026-10-27T12:00:00+00:00",
+                      derived_from=["OWN20261028_CHARACTERS"])
+        self.assertRejected(lambda:validate_registry([owner(),child]))
+
+    def test_baseline_id_is_reserved_for_no_change(self):
+        p1=proposal("NO_CHANGE",["OWN20261028_CHARACTERS"])
+        p2=proposal("KURURIN",["OWN20261028_CHARACTERS"])
+        self.assertRejected(lambda:assess_candidates("toy-wars-factory",[owner()],[p1,p2]))
+
     def test_duplicate_candidates_rejected(self):
         c=proposal("CUREBO",["OWN20261028_CHARACTERS"])
         self.assertRejected(lambda:assess_candidates("toy-wars-factory",[owner()],[c,c]))

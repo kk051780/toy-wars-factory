@@ -6,6 +6,7 @@ Only a provider-backed audit can attest the original GitHub issue/commit origin.
 """
 from __future__ import annotations
 
+from collections import deque
 from copy import deepcopy
 from datetime import datetime, timezone
 from hashlib import sha256
@@ -147,15 +148,41 @@ def advance(record: dict, to: str, *, actor: str, occurred_at: str,
     return after
 
 def validate_registry(ideas: list[dict]) -> list[dict]:
+    """Check same-project parents, timestamps and an acyclic, rooted provenance DAG.
+
+    Iterative topological traversal avoids recursion failure on long idea histories.
+    This validation is *not* host authentication of the cited source.
+    """
     require(type(ideas) is list and len(ideas) <= 10000, "registry size")
-    seen = set()
+    by_key = {}
     for idea in ideas:
         validate_record(idea)
         key = (idea["project_id"], idea["idea_id"])
-        require(key not in seen, "duplicate idea ID in project")
-        seen.add(key)
-    for idea in ideas:
-        require(all((idea["project_id"], ref) in seen for ref in idea["derived_from"]), "foreign/missing parent")
+        require(key not in by_key, "duplicate idea ID in project")
+        by_key[key] = idea
+    children = {key: [] for key in by_key}
+    indegree = {key: 0 for key in by_key}
+    for key, idea in by_key.items():
+        for parent_id in idea["derived_from"]:
+            parent_key = (idea["project_id"], parent_id)
+            require(parent_key in by_key, "foreign/missing parent")
+            require(_timestamp(idea["captured_at"]) >=
+                    _timestamp(by_key[parent_key]["captured_at"]),
+                    "idea predates its provenance parent")
+            children[parent_key].append(key)
+            indegree[key] += 1
+    queue = deque(key for key, count in indegree.items() if count == 0)
+    require(all(by_key[key]["origin"] != "DERIVED" for key in queue),
+            "derived idea without original/research root")
+    processed = 0
+    while queue:
+        key = queue.popleft()
+        processed += 1
+        for child in children[key]:
+            indegree[child] -= 1
+            if indegree[child] == 0:
+                queue.append(child)
+    require(processed == len(by_key), "cyclic idea provenance")
     return ideas
 
 def assess_candidates(project_id: str, ideas: list[dict], proposals: list[dict]) -> dict:
@@ -168,7 +195,7 @@ def assess_candidates(project_id: str, ideas: list[dict], proposals: list[dict])
     for candidate in proposals:
         require(type(candidate) is dict and set(candidate) == {"candidate_id", "idea_refs", "hypothesis", "test_plan", "falsifier", "benefit", "effort", "confidence", "open_risks"}, "candidate schema")
         cid = candidate["candidate_id"]
-        require(type(cid) is str and IDENTIFIER.fullmatch(cid) and cid not in seen, "candidate ID/duplicate")
+        require(type(cid) is str and IDENTIFIER.fullmatch(cid) and cid not in seen and cid != "NO_CHANGE", "candidate ID/duplicate or reserved baseline")
         seen.add(cid)
         refs = candidate["idea_refs"]
         require(type(refs) is list and refs and len(refs) <= 20 and all(type(x) is str for x in refs) and len(set(refs)) == len(refs) and all(x in known for x in refs), "missing/cross-project idea refs")

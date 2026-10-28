@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "cycle_id": "C00120",
+  "title": "Fix owner idea provenance graph and baseline collisions",
+  "kind": "MANUAL_CONTROLLER_REPAIR",
+  "author_role": "CONTROLLER",
+  "author_operation_id": "0a2bda97-9201-4d16-96e1-61be1029a75c",
+  "author_task_id": null,
+  "source_pr": 110,
+  "base_main_sha": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+  "previous_pr_head": "e8b91b3e2ad5e335b75d116791c026ac5457ee16",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "ea7fc1cfa219633c640bff84f7f02310b23bf242",
+    "owner_run_id": "0a2bda97-9201-4d16-96e1-61be1029a75c",
+    "epoch": 221,
+    "kind": "CONTROLLER",
+    "work_branch": "feature/twf-owner-idea-loop-a747203b"
+  },
+  "issue": 109,
+  "fixes": [
+    "reject 2+ node cyclic provenance even with a valid root attached",
+    "validate parent creation time",
+    "reserve NO_CHANGE baseline ID"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1163,
+    "lua_bytes": 51286
+  },
+  "source_files_modified": 0,
+  "test_cases_added": 5,
+  "existing_test_cases_untouched": true,
+  "testing": {
+    "local_exact_pr_head": "NOT_RUN",
+    "exact_head_github_ci": "PENDING",
+    "roblox_engine": "NOT_RUN",
+    "real_user_metric": "NOT_MEASURED"
+  },
+  "state": "UNMERGED_DRAFT_NEEDS_PROTECTED_INDEPENDENT_MAINTENANCE_REVIEW",
+  "review_authority": "NO_SELF_MERGE",
+  "prohibited_actions": {
+    "external_spend": false,
+    "roblox_publish": false,
+    "disable_gates": false
+  }
+}
