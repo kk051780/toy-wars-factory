@@ -1,22 +1,22 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T19:27:57.791Z",
+  "observed_at": "2026-10-28T20:31:52.267Z",
   "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "ec854cff-9478-8328-b35e-17a60d930fbc",
-  "lease_epoch": 215,
-  "main_before": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092",
+  "reviewer_run_id": "08b9a9a6-6070-8321-a534-c6adad650214",
+  "lease_epoch": 218,
+  "main_before": "8a0f8816870fa4854b71c23d223728589303070a",
   "latest_review": {
-    "pr": 107,
-    "head": "0f3f2eb853ef58b7d34adeee5241e090066a9b7f",
+    "pr": 108,
+    "head": "234c6f9dc2d6b9001796fe3e47daf48891b88223",
     "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0107_0f3f2eb8.json",
-    "ci": 40751895777,
-    "merge_sha": "877417447e645fd8f3c34d5aecd883a43791712d",
-    "main_qa": 40754419751,
-    "handoff": 40754419345,
-    "category": "GAME_DATASTORE_EXPIRED_LEASE_INPUT_FENCE",
+    "review_record": "ops/reviews/PR0108_234c6f9d.json",
+    "ci": 40761307293,
+    "merge_sha": "526ad536497510f57b94460988ea1ca9fa19ac62",
+    "main_qa": 40763962202,
+    "handoff": 40763962162,
+    "category": "GAME_SERVER_CONFIGURED_PROMPT_DISTANCE_FENCE",
     "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
   },
   "merged_prs": [
@@ -242,12 +242,23 @@
       "main_after_handoff": "8a0f8816870fa4854b71c23d223728589303070a",
       "category": "GAME_DATASTORE_EXPIRED_LEASE_INPUT_FENCE",
       "status_only_descendant_verified": true
+    },
+    {
+      "pr": 108,
+      "head": "234c6f9dc2d6b9001796fe3e47daf48891b88223",
+      "merge_sha": "526ad536497510f57b94460988ea1ca9fa19ac62",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40763962202,
+      "handoff": 40763962162,
+      "main_after_handoff": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+      "category": "GAME_SERVER_CONFIGURED_PROMPT_DISTANCE_FENCE",
+      "status_only_descendant_verified": true
     }
   ],
   "merge_count_this_run": 1,
   "main_qa": {
-    "id": 40754419751,
-    "head": "877417447e645fd8f3c34d5aecd883a43791712d",
+    "id": 40763962202,
+    "head": "526ad536497510f57b94460988ea1ca9fa19ac62",
     "conclusion": "success",
     "jobs": {
       "offline": "success",
@@ -256,8 +267,8 @@
     "status_only_descendant_verified": true
   },
   "handoff": {
-    "id": 40754419345,
-    "head": "877417447e645fd8f3c34d5aecd883a43791712d",
+    "id": 40763962162,
+    "head": "526ad536497510f57b94460988ea1ca9fa19ac62",
     "conclusion": "success"
   },
   "comparison_since_main_qa": {
@@ -269,13 +280,14 @@
     ]
   },
   "unresolved": [
-    "P0 hosted Roblox engine/multiplayer/mobile evidence still OPEN",
-    "PR98 protected character pipeline separate audit",
-    "Gemini incident HOLD, release HOLD and existing spending caps preserved"
+    "P0 Roblox Studio engine/multiplayer/mobile verification remains OPEN",
+    "PR98 protected character pipeline requires separate exact-head maintenance review",
+    "Gemini incident HOLD, release HOLD and spending caps preserved",
+    "Selector fixed <=13 guard remains for larger future MaxActivationDistance configuration"
   ],
-  "next": "WORKER_NEXT_PRIORITY_AFTER_P1_LEASE_INPUT_FENCE",
+  "next": "PRIORITIZE_PLAYABLE_PVE_AND_REAL_ENGINE_EVIDENCE; REVIEW_ONLY_REGISTERED_WORKER_META",
   "runtime_verified": true,
-  "main_after": "8a0f8816870fa4854b71c23d223728589303070a",
+  "main_after": "5d4774843179227956f68d92c0ff6f89c77cb28d",
   "merge_sha": "877417447e645fd8f3c34d5aecd883a43791712d",
   "next_actor": "WORKER",
   "secondary_review": null,

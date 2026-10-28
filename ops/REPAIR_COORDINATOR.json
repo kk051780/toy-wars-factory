@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 218,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "08b9a9a6-6070-8321-a534-c6adad650214",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 218,
-    "acquired_at": "2026-10-28T20:29:37.075Z",
-    "expires_at": "2026-10-28T20:59:37.075Z",
-    "base_main_sha": "8a0f8816870fa4854b71c23d223728589303070a",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,11 +36,11 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "20fb1989-2368-8326-a2c3-3ac8c0d59538",
-    "epoch": 217,
-    "released_at": "2026-10-28T20:13:55.337Z",
-    "result": "PR108_DRAFT_HEAD_234C6F9_CI_PENDING"
+    "kind": "REVIEWER",
+    "owner_id": "08b9a9a6-6070-8321-a534-c6adad650214",
+    "epoch": 218,
+    "released_at": "2026-10-28T20:31:52.267Z",
+    "result": "PR108_MERGED_MAIN_QA_AND_HANDOFF_PASSED"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -887,6 +877,33 @@
       "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40754419751",
       "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40754419345",
       "review_record": "ops/reviews/PR0107_0f3f2eb8.json"
+    },
+    "108": {
+      "schema": 1,
+      "pr": 108,
+      "head": "234c6f9dc2d6b9001796fe3e47daf48891b88223",
+      "base_reviewed": "8a0f8816870fa4854b71c23d223728589303070a",
+      "reviewer_kind": "REVIEWER",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "08b9a9a6-6070-8321-a534-c6adad650214",
+      "lease_epoch": 218,
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "20fb1989-2368-8326-a2c3-3ac8c0d59538",
+      "verdict": "APPROVE",
+      "ci": {
+        "id": 40761307293,
+        "head": "234c6f9dc2d6b9001796fe3e47daf48891b88223",
+        "conclusion": "success"
+      },
+      "merge_sha": "526ad536497510f57b94460988ea1ca9fa19ac62",
+      "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40763962202",
+      "post_merge_main_qa_status": "success",
+      "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40763962162",
+      "post_merge_handoff_status": "success",
+      "review_record": "ops/reviews/PR0108_234c6f9d.json",
+      "status_only_descendant_verified": true,
+      "main_after_handoff": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+      "category": "GAME_SERVER_CONFIGURED_PROMPT_DISTANCE_FENCE"
     }
   },
   "integration_results": {
