@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 220,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "6c654e6a-4100-8331-976a-bb27fe199e2c",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 220,
-    "acquired_at": "2026-10-28T21:05:40.368Z",
-    "expires_at": "2026-10-28T21:35:40.368Z",
-    "base_main_sha": "5d4774843179227956f68d92c0ff6f89c77cb28d",
-    "work_branch": "auto/twf-game-repair-6c654e6a-4100-8331-976a-bb27fe199e2c",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,15 +36,13 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "a747203b-aef7-4bbd-9e80-2b26dfbd630b",
-    "epoch": 219,
-    "released_at": "2026-10-28T20:55:55.203Z",
-    "result": "PR110_MANUAL_DRAFT_CI_PENDING_PROTECTED_REVIEW",
-    "pr": 110,
-    "head": "e8b91b3e2ad5e335b75d116791c026ac5457ee16",
-    "ci": 40767545785,
-    "manual_operation": true,
+    "kind": "WORKER",
+    "owner_id": "6c654e6a-4100-8331-976a-bb27fe199e2c",
+    "epoch": 220,
+    "released_at": "2026-10-28T21:08:53.330Z",
+    "result": "PR111_DRAFT_CI_PENDING",
+    "pr": 111,
+    "head": "985a02462cce841434af6d94b10a2e728cc8c9be",
     "release_status": "NOT_MERGED"
   },
   "last_approval_report": {
