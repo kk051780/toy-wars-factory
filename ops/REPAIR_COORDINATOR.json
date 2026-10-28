@@ -2,7 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 221,
-  "holder": {"kind":"CONTROLLER","owner_id":"0a2bda97-9201-4d16-96e1-61be1029a75c","task_id":null,"epoch":221,"acquired_at":"2026-10-28T21:11:24.797Z","expires_at":"2026-10-28T21:41:24.797Z","base_main_sha":"5d4774843179227956f68d92c0ff6f89c77cb28d","work_branch":"feature/twf-owner-idea-loop-a747203b","origin":"controller"},
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -35,16 +35,7 @@
     "approval_text": ""
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
-  "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "6c654e6a-4100-8331-976a-bb27fe199e2c",
-    "epoch": 220,
-    "released_at": "2026-10-28T21:08:53.330Z",
-    "result": "PR111_DRAFT_CI_PENDING",
-    "pr": 111,
-    "head": "985a02462cce841434af6d94b10a2e728cc8c9be",
-    "release_status": "NOT_MERGED"
-  },
+  "last_completed": {"kind":"CONTROLLER","owner_id":"0a2bda97-9201-4d16-96e1-61be1029a75c","epoch":221,"released_at":"2026-10-28T21:14:02.419Z","result":"PR110_GRAPH_REPAIR_EXACT_HEAD_CI_PENDING_PROTECTED_REVIEW","pr":110,"head":"b74cace762f671dff268d2109b0dfd47b22d8184","manual_operation":true,"release_status":"NOT_MERGED"},
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06",
