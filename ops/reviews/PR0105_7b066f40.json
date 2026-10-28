@@ -78,6 +78,25 @@
     "official": "https://create.roblox.com/docs/reference/engine/classes/DataModel#BindToClose"
   },
   "category": "GAME_DATASTORE_SHUTDOWN_PARALLEL",
-  "next_action": "MERGE_EXACT_HEAD_POST_QA",
-  "status": "APPROVED_PENDING_MERGE"
+  "next_action": "RECONCILE_OPEN_P1_EXPIRED_LEASE_REQUEST; REAL_ENGINE_EVIDENCE",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "merge_sha": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
+  "post_merge_main_qa": {
+    "id": 40697393767,
+    "head": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40697393767"
+  },
+  "post_merge_handoff": {
+    "id": 40697394086,
+    "head": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40697394086"
+  },
+  "main_after_handoff": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
+  "status_only_descendant_verified": true
 }

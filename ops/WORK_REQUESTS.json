@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T12:19:54.221Z",
+  "observed_at": "2026-10-28T13:35:50.590Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2097,7 +2097,7 @@
       "priority": "P1",
       "assigned_role": "WORKER",
       "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "status": "OPEN_REPRODUCED",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "source_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
       "source": "src/ToyWarsServer.server.lua BindToClose/saveProgress",
@@ -2122,7 +2122,7 @@
       ],
       "engine_executed": false,
       "owner_reply_required": false,
-      "next_actor": "WORKER_AFTER_CURRENT_CONTROLLER_RELEASE",
+      "next_actor": "NONE",
       "supplemental_reproductions": [
         {
           "diagnostic": "ops/diagnostics/shutdown_progress_during_close_audit_20261028.lua",
@@ -2132,7 +2132,19 @@
           "diagnostic": "ops/diagnostics/shutdown_departing_save_audit_20261028.lua",
           "behavior": "PlayerRemoving save yields8seconds after removing sessions entry; BindToClose returns at0 with initial50, final350 commits only at8. Closing must await all already-inflight departing saves."
         }
-      ]
+      ],
+      "resolved_at": "2026-10-28T13:35:50.590Z",
+      "resolution": {
+        "pr": 105,
+        "head": "7b066f4006086a571196daef8935b8573077cc1a",
+        "ci": 40693298110,
+        "merge_sha": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
+        "main_qa": 40697393767,
+        "handoff": 40697394086,
+        "main_after_handoff": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
+        "review": "ops/reviews/PR0105_7b066f40.json",
+        "limitation": "Roblox Studio and real DataStore not run"
+      }
     },
     {
       "id": "main_expired_lease_refresh_failure_unsavable_play_20261028",

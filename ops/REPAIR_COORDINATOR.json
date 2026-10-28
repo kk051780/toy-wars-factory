@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 203,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "ee6db87d-a504-8322-82f7-56d04c95d67f",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 203,
-    "acquired_at": "2026-10-28T13:35:12.432Z",
-    "expires_at": "2026-10-28T14:05:12.432Z",
-    "base_main_sha": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -48,11 +38,13 @@
   "last_completed": {
     "kind": "REVIEWER",
     "owner_id": "ee6db87d-a504-8322-82f7-56d04c95d67f",
-    "epoch": 202,
-    "released_at": "2026-10-28T13:34:30.886Z",
-    "result": "PR105_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+    "epoch": 203,
+    "released_at": "2026-10-28T13:35:57.524Z",
+    "result": "PR105_RECORDS_FINALIZED_QA_HANDOFF_PASSED",
     "pr": 105,
-    "merge_sha": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73"
+    "merge_sha": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
+    "main_qa": 40697393767,
+    "handoff": 40697394086
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -835,7 +827,13 @@
         "conclusion": "success"
       },
       "review_record": "ops/reviews/PR0105_7b066f40.json",
-      "category": "GAME_DATASTORE_SHUTDOWN_PARALLEL"
+      "category": "GAME_DATASTORE_SHUTDOWN_PARALLEL",
+      "merge_sha": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
+      "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40697393767",
+      "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40697394086",
+      "post_merge_status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_after_handoff": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
+      "status_only_descendant_verified": true
     }
   },
   "integration_results": {
