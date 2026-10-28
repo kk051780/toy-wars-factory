@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "pr": 112,
+  "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
+  "base_main_sha": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
+  "reviewed_at": "2026-10-28T22:20:32.440Z",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "867615bf-3cfc-8326-9ba2-e1a5cc06064b",
+  "lease_epoch": 225,
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "7abde498-0150-8327-8579-2b3f808d0acb",
+  "repair_author_run_id": "f849220f-dc50-8329-926a-f3b0db1267a2",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [
+    {
+      "id": "OWNER_VERBATIM_PROVENANCE_REPAIRED",
+      "severity": "RESOLVED_P1",
+      "evidence": "Issue109 comment6481271808 exact quoted text equals C00122 active owner record; SHA256 46de180dc2e7c83fbae82c728b54bd66878d1b3be57f6bb6d5c027ba6586f1b7; old C00121 blob 26aebd9badfc616e43cafc1a792669007e5387d1 unchanged; original chat NOT_VERIFIED"
+    },
+    {
+      "id": "DERIVED_SEPARATION",
+      "severity": "PASS",
+      "evidence": "Old OWNER-20261028-CHARACTER-VARIETY WITHDRAWN; MIX-20261029-CHARACTER-SUMMARY origin DERIVED with parent OWNER-20261028-CHARACTER-VERBATIM; rejected dependent proposals withdrawn and replaced"
+    },
+    {
+      "id": "NO_REAL_WORLD_CLAIMS",
+      "severity": "LIMITATION",
+      "evidence": "Owner chat authentication NOT_VERIFIED, engine NOT_RUN, player impact NOT_MEASURED; no auto-implementation or release grant"
+    }
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "SYSTEM_IDEA_PROVENANCE_SCOPED_ADVISORY",
+  "changed_files": [
+    "docs/research/2026-10-29_scoped_idea_vault.md",
+    "history/C00121_scoped_dual_idea_pipeline.json",
+    "history/C00122_owner_verbatim_review_repair.json",
+    "tests/test_system_idea_pipeline.py",
+    "tests/test_system_idea_vault.py",
+    "tests/test_system_owner_transcription.py",
+    "tools/system_idea_pipeline.py"
+  ],
+  "ci": {
+    "id": 40777605047,
+    "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 510,
+    "scope_and_claim_gate": "PASS",
+    "claim_checks": 2
+  },
+  "coordination": {
+    "original_claim": "1404bff89ae63c913de3d3c556f37acb6583a636",
+    "original_epoch": 222,
+    "repair_claim": "a4ef9beea5e4ac1b523407ddf53ccc8ea6c4ef12",
+    "repair_epoch": 224,
+    "review_claim": "fdd5d65f5810d94d89c27c366b9cdeaf7c747428",
+    "review_epoch": 225
+  },
+  "main_health": {
+    "sha": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
+    "qa_head": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
+    "qa": 40774271061,
+    "qa_jobs": "offline+compile_hold success",
+    "handoff": 40774270909,
+    "compare_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "evidence_urls": [
+    "https://github.com/kk051780/toy-wars-factory/pull/112",
+    "https://github.com/kk051780/toy-wars-factory/issues/109#issuecomment-6481271808",
+    "https://github.com/kk051780/toy-wars-factory/actions/runs/40777605047"
+  ],
+  "next": "Exact-head merge under current reviewer lease; verify new main QA and handoff before marking merged/fully resolved. PR110 remains manual CONTROLLER protected."
+}
