@@ -14,7 +14,7 @@
     "owner_id_kind": "MANUAL_OPERATION_UUID",
     "epoch": 164
   },
-  "main_base": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+  "main_base": "9deab2acbdba8406b02f653ae84b355d92dd499a",
   "changed_files": [
     "config/autonomous_repair.json",
     "config/characters.json",
@@ -45,11 +45,11 @@
     },
     {
       "path": "src/ToyWarsServer.server.lua",
-      "before_bytes": 20147,
-      "after_bytes": 23145,
+      "before_bytes": 34083,
+      "after_bytes": 37081,
       "delta_bytes": 2998,
-      "before_blob": "ec3deddb53ef6c319b8699a647fff0beeec3592e",
-      "after_blob": "48f3206006a1b16582f03b041144541c73a9640f"
+      "before_blob": "01614fae4cca597f174efbd82845afc768d2af47",
+      "after_blob": "cc347bf34ee1961e319e49eabf4a3b5616455fb8"
     },
     {
       "path": "src/ToyWarsHUD.client.lua",
@@ -62,8 +62,8 @@
   ],
   "source_metrics": {
     "lua_files": 4,
-    "lua_lines": 891,
-    "lua_bytes": 36280
+    "lua_lines": 1155,
+    "lua_bytes": 50216
   },
   "source_baseline_bytes": 25726,
   "characters_touched": [
@@ -127,5 +127,44 @@
     "paid_inference": false,
     "protected_accepted_tests_modified": false,
     "schedule_changed": false
+  },
+  "initial_authored_snapshot": {
+    "head": "04ae31b1447ec352e504f96b72dd91ea78d24db2",
+    "main_base": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+    "source_changes": [
+      {
+        "path": "src/ToyWarsBalance.lua",
+        "before_bytes": 3070,
+        "after_bytes": 3304,
+        "delta_bytes": 234,
+        "before_blob": "e78a07c7551f19183316803706c5602cd4049459",
+        "after_blob": "b254be5ff0a6643dc634ef5ed17d3d0e3f663d20"
+      },
+      {
+        "path": "src/ToyWarsServer.server.lua",
+        "before_bytes": 34083,
+        "after_bytes": 37081,
+        "delta_bytes": 2998,
+        "before_blob": "01614fae4cca597f174efbd82845afc768d2af47",
+        "after_blob": "cc347bf34ee1961e319e49eabf4a3b5616455fb8"
+      },
+      {
+        "path": "src/ToyWarsHUD.client.lua",
+        "before_bytes": 6824,
+        "after_bytes": 8581,
+        "delta_bytes": 1757,
+        "before_blob": "3f2d9932396bc2eea90f96336912abbdf67ffeca",
+        "after_blob": "145f8caa63b92bdf1515060fd05c0135ebbd073f"
+      }
+    ],
+    "source_metrics": {
+      "lua_files": 4,
+      "lua_lines": 891,
+      "lua_bytes": 36280
+    }
+  },
+  "current_base_reconciliation": {
+    "history": "history/C00102_character_current_main_reconciliation.json",
+    "reason": "Unmerged C00100 now follows accepted persistence records through C00082. Original authored snapshot remains preserved above; no accepted history or tests changed."
   }
 }

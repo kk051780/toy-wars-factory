@@ -1,7 +1,7 @@
 --!strict
 -- TOY WARS FACTORY v1.2 / PLAYABLE PVE VERTICAL SLICE.
 -- Server-authoritative solo factory arenas, wave combat and upgrades.
--- Session only: no DataStore, no purchasable content, no PvP yet.
+-- Server-owned versioned progress persistence; no purchasable content or PvP yet.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -15,6 +15,8 @@ world.Parent = workspace
 local MAX_PLOTS = 4
 local SPACING = 108
 local sessions = {}
+-- A kicked player may remain in Players until disconnect; never retry its failed load.
+local rejectedLoads = {}
 local occupied = {}
 local SLOT_COLORS = {Color3.fromRGB(33, 187, 193), Color3.fromRGB(250, 147, 76), Color3.fromRGB(157, 127, 237), Color3.fromRGB(109, 200, 112)}
 local UNIT_COLORS = {
@@ -25,6 +27,229 @@ local UNIT_COLORS = {
     junk = Color3.fromRGB(173, 83, 118),
 }
 local selectEvent = ReplicatedStorage:WaitForChild("ToyWarsSelectUnit")
+-- Server-owned progress: failed reads and unrecognized schemas never overwrite prior saves.
+local progressStore
+do
+    local ok, service = pcall(function() return game:GetService("DataStoreService") end)
+    if ok and service then
+        local opened, store = pcall(function() return service:GetDataStore("ToyWarsProgressV1") end)
+        if opened then progressStore = store end
+    end
+end
+local function validProgressInt(value, minimum, maximum)
+    return type(value) == "number" and value == math.floor(value)
+        and value >= minimum and value <= maximum
+end
+-- Cross-server progress ownership: atomic claims, bounded wait and renewable leases.
+-- A new join never steals an active session's unsaved in-memory progress.
+local SESSION_LEASE_SECONDS=180
+local SESSION_REFRESH_SECONDS=45
+local SESSION_RETRY_SECONDS=0.5
+local SESSION_RETRY_COUNT=4
+local SAVE_RETRY_COUNT=3
+local SAVE_RETRY_SECONDS=0.25
+local function leaseNow()
+    -- Roblox os.time is shared wall time; the offline fixture has no os.time.
+    if type(os.time)=="function" then return os.time() end
+    return 0
+end
+local function validProgress(record)
+    return type(record)=="table" and record.version==1
+        and validProgressInt(record.coins,0,B.MAX_CASH)
+        and validProgressInt(record.wave,1,B.MAX_WAVE)
+        and validProgressInt(record.defeated,0,2147483647)
+        and validProgressInt(record.factoryLevel,1,B.MAX_LEVEL)
+        and (record.revision==nil or validProgressInt(record.revision,0,2147483647))
+        and (record.sessionOwner==nil or (type(record.sessionOwner)=="string" and #record.sessionOwner<=128))
+        and (record.sessionLeaseUntil==nil or validProgressInt(record.sessionLeaseUntil,0,4102444800))
+end
+local function progressSnapshot(record)
+    if not record then return nil end
+    return {version=record.version,revision=record.revision,coins=record.coins,
+        wave=record.wave,defeated=record.defeated,factoryLevel=record.factoryLevel,
+        sessionOwner=record.sessionOwner,sessionLeaseUntil=record.sessionLeaseUntil}
+end
+local function sameProgress(current,expected)
+    if expected==nil then return current==nil end
+    return type(current)=="table" and current.version==expected.version
+        and current.revision==expected.revision and current.coins==expected.coins
+        and current.wave==expected.wave and current.defeated==expected.defeated
+        and current.factoryLevel==expected.factoryLevel
+        and current.sessionOwner==expected.sessionOwner
+        and current.sessionLeaseUntil==expected.sessionLeaseUntil
+end
+local sessionOrdinal=0
+local function newSessionToken()
+    local ok,http=pcall(function() return game:GetService("HttpService") end)
+    if ok and http then
+        local generated,guid=pcall(function() return http:GenerateGUID(false) end)
+        if generated and type(guid)=="string" and #guid>=8 and #guid<=128 then return guid end
+    end
+    local jobId=game.JobId
+    if type(jobId)=="string" and #jobId>0 then
+        sessionOrdinal=sessionOrdinal+1
+        return jobId..":"..tostring(sessionOrdinal)
+    end
+    return nil
+end
+local function loadProgress(player,pending)
+    if not progressStore then return nil,false,"STORE_UNAVAILABLE" end
+    local key="p:"..tostring(player.UserId)
+    local ok,record=pcall(function() return progressStore:GetAsync(key) end)
+    if not ok then return nil,false,"READ_UNAVAILABLE" end
+    if record~=nil and not validProgress(record) then return nil,false,"SCHEMA_UNSUPPORTED" end
+    if sessions[player]~=pending or player.Parent~=Players then return nil,false,"DEPARTED" end
+    local token=newSessionToken()
+    if not token then return nil,false,"CLAIM_UNAVAILABLE" end
+    for attempt=1,SESSION_RETRY_COUNT do
+        if sessions[player]~=pending or player.Parent~=Players then return nil,false,"DEPARTED" end
+        local now=leaseNow()
+        local blocked,invalid=false,false
+        local claimedOk,claimed=pcall(function()
+            return progressStore:UpdateAsync(key,function(current,keyInfo)
+                -- Never trust the earlier GetAsync snapshot inside this atomic CAS.
+                if current~=nil and not validProgress(current) then invalid=true;return nil end
+                if current and current.sessionOwner and current.sessionOwner~=token
+                    and (current.sessionLeaseUntil==nil or current.sessionLeaseUntil>now) then
+                    blocked=true
+                    return nil
+                end
+                local updated={}
+                if current then
+                    for field,value in pairs(current) do updated[field]=value end
+                else
+                    updated.version=1;updated.coins=50;updated.wave=1
+                    updated.defeated=0;updated.factoryLevel=1;updated.revision=0
+                end
+                updated.sessionOwner=token
+                updated.sessionLeaseUntil=now+SESSION_LEASE_SECONDS
+                if keyInfo then return updated,keyInfo:GetUserIds(),keyInfo:GetMetadata() end
+                return updated
+            end)
+        end)
+        if claimedOk and claimed~=nil then
+            if sessions[player]~=pending or player.Parent~=Players then
+                -- The claim may have yielded past disconnect. Release only this token.
+                pcall(function()
+                    progressStore:UpdateAsync(key,function(current,keyInfo)
+                        if not validProgress(current) or current.sessionOwner~=token then return nil end
+                        local updated={}
+                        for field,value in pairs(current) do updated[field]=value end
+                        updated.sessionOwner=nil;updated.sessionLeaseUntil=nil
+                        if keyInfo then return updated,keyInfo:GetUserIds(),keyInfo:GetMetadata() end
+                        return updated
+                    end)
+                end)
+                return nil,false,"DEPARTED"
+            end
+            return claimed,true
+        end
+        if not claimedOk or invalid then
+            warn("TWF: progress claim unavailable or schema changed for",player.UserId)
+            return nil,false,"CLAIM_UNAVAILABLE"
+        end
+        if not blocked then return nil,false,"CLAIM_UNAVAILABLE" end
+        if attempt<SESSION_RETRY_COUNT then task.wait(SESSION_RETRY_SECONDS) end
+    end
+    warn("TWF: active progress session still owns save for",player.UserId)
+    return nil,false,"SESSION_BUSY"
+end
+local function saveProgress(player,state)
+    if not progressStore or not state.persistAllowed or not state.coins then return end
+    local record={version=1,coins=state.coins.Value,wave=state.wave.Value,
+        defeated=state.kills.Value,factoryLevel=state.level.Value}
+    if not validProgressInt(record.coins,0,B.MAX_CASH)
+        or not validProgressInt(record.wave,1,B.MAX_WAVE)
+        or not validProgressInt(record.defeated,0,2147483647)
+        or not validProgressInt(record.factoryLevel,1,B.MAX_LEVEL) then return end
+    local expected=state.persistSnapshot
+    if not expected or not expected.sessionOwner then return end
+    -- Prevent any in-flight refresh from changing the final-save snapshot.
+    state.persistFinalizing=true
+    -- Retry only transport/throttle errors. A successful nil result is a
+    -- confirmed CAS conflict, never permission to overwrite another owner.
+    -- The UpdateAsync transform itself never yields.
+    for attempt=1,SAVE_RETRY_COUNT do
+        if not state.persistAllowed then return end
+        local ok,saved=pcall(function()
+            return progressStore:UpdateAsync("p:"..tostring(player.UserId),function(current,keyInfo)
+                if not sameProgress(current,expected) then
+                    -- The same owner may have extended only its lease while the
+                    -- refresh response was still in flight. Never relax any
+                    -- progress value, revision, schema or owner comparison.
+                    if not validProgress(current) or not current.sessionLeaseUntil
+                        or not expected.sessionLeaseUntil
+                        or current.sessionLeaseUntil<expected.sessionLeaseUntil then return nil end
+                    local withoutLease=progressSnapshot(current)
+                    withoutLease.sessionLeaseUntil=expected.sessionLeaseUntil
+                    if not sameProgress(withoutLease,expected) then return nil end
+                end
+                local revision=current and (current.revision or 0) or 0
+                if revision>=2147483647 then return nil end
+                local updated={}
+                if current then for key,value in pairs(current) do updated[key]=value end end
+                for key,value in pairs(record) do updated[key]=value end
+                updated.revision=revision+1
+                -- Commit final progress before relinquishing ownership.
+                updated.sessionOwner=nil;updated.sessionLeaseUntil=nil
+                if keyInfo then return updated,keyInfo:GetUserIds(),keyInfo:GetMetadata() end
+                return updated
+            end)
+        end)
+        if ok then
+            if saved==nil then
+                warn("TWF: progress save conflict for",player.UserId)
+            else
+                state.persistSnapshot=progressSnapshot(saved)
+                state.persistAllowed=false
+            end
+            return
+        end
+        warn("TWF: progress save attempt unavailable for",player.UserId,attempt)
+        if attempt<SAVE_RETRY_COUNT then task.wait(SAVE_RETRY_SECONDS) end
+    end
+    warn("TWF: progress save retries exhausted; progress may be unsaved for",player.UserId)
+end
+local function refreshProgressLease(state)
+    if not progressStore or not state.persistAllowed or not state.persistSnapshot
+        or state.persistFinalizing or state.persistRefreshInFlight then return end
+    local now=leaseNow()
+    if now<(state.nextLeaseRefresh or 0) then return end
+    state.nextLeaseRefresh=now+SESSION_REFRESH_SECONDS
+    local expected=state.persistSnapshot
+    if not expected.sessionOwner then return end
+    -- UpdateAsync may yield outside its transform: serialize this session's refreshes.
+    state.persistRefreshInFlight=true
+    local ok,refreshed=pcall(function()
+        return progressStore:UpdateAsync("p:"..tostring(state.player.UserId),function(current,keyInfo)
+            if state.persistFinalizing or not sameProgress(current,expected) then return nil end
+            local updated={}
+            for field,value in pairs(current) do updated[field]=value end
+            updated.sessionLeaseUntil=now+SESSION_LEASE_SECONDS
+            if keyInfo then return updated,keyInfo:GetUserIds(),keyInfo:GetMetadata() end
+            return updated
+        end)
+    end)
+    state.persistRefreshInFlight=false
+    -- A delayed refresh response must not replace a completed final save
+    -- or misreport a departing player as a foreign-owner conflict.
+    if state.persistFinalizing or not state.persistAllowed then return end
+    if ok and refreshed~=nil then
+        state.persistSnapshot=progressSnapshot(refreshed)
+    elseif not ok then
+        -- A transient throttle/network error is not evidence of lost ownership.
+        -- Retry soon; the final save still checks the exact owner/revision.
+        state.nextLeaseRefresh=now+5
+        warn("TWF: progress lease refresh temporarily unavailable for",state.player.UserId)
+    else
+        state.persistAllowed=false
+        state.active=false
+        warn("TWF: progress lease ownership lost for",state.player.UserId)
+        if type(state.player.Kick)=="function" then
+            state.player:Kick("Toy Wars: progress session moved. Please rejoin.")
+        end
+    end
+end
 
 local function part(parent, name, size, cf, color, material)
     local p = Instance.new("Part")
@@ -407,6 +632,8 @@ end
 
 local function simulate(state,dt)
     if not state.active then return end
+    refreshProgressLease(state)
+    if not state.active or sessions[state.player] ~= state or state.player.Parent ~= Players then return end
     state.combatTime=(state.combatTime or 0)+dt
     local income=B.incomePerSecond(state.level.Value)
     if not income then income=6 end
@@ -476,22 +703,48 @@ lobbyGround.CanCollide = true
 
 local function join(player)
     if player.Parent ~= Players or sessions[player] then return end
+    if rejectedLoads[player] then return end
     local slot=chooseSlot()
     if not slot then
         warn("TWF v1.2: no free workshop plots for",player.UserId)
         return
     end
     occupied[slot]=player
+    -- Reserve before the yielding read; leaving during load must release the plot.
+    local pending={slot=slot,active=false,entities={}}
+    sessions[player]=pending
+    local progress, persistAllowed, loadFailure=loadProgress(player,pending)
+    if sessions[player]~=pending or player.Parent~=Players then return end
+    if loadFailure then
+        sessions[player]=nil;occupied[slot]=nil
+        if loadFailure~="DEPARTED" then
+            rejectedLoads[player]=true
+            warn("TWF: progress loading blocked",player.UserId,loadFailure)
+            -- A visible kick is safer than unsavable default gameplay.
+            if type(player.Kick)=="function" then
+                player:Kick("Toy Wars: progress is in use or unavailable. Please rejoin.")
+            end
+        end
+        -- A failed load also frees a reserved plot. Admit the next queued player;
+        -- the rejected player can still be in Players until Kick completes.
+        for _,waiting in ipairs(Players:GetPlayers()) do
+            if waiting ~= player and waiting.Parent == Players and not sessions[waiting] and not rejectedLoads[waiting] then
+                task.spawn(join,waiting)
+                break
+            end
+        end
+        return
+    end
     local stats=Instance.new("Folder")
     stats.Name="leaderstats"
     stats.Parent=player
-    local coins=setInt(stats,"Coins",50)
-    local wave=setInt(stats,"Wave",1)
-    local kills=setInt(stats,"Defeated",0)
+    local coins=setInt(stats,"Coins",progress and progress.coins or 50)
+    local wave=setInt(stats,"Wave",progress and progress.wave or 1)
+    local kills=setInt(stats,"Defeated",progress and progress.defeated or 0)
     local status=Instance.new("Folder")
     status.Name="ToyWarsStatus"
     status.Parent=player
-    local level=setInt(status,"FactoryLevel",1)
+    local level=setInt(status,"FactoryLevel",progress and progress.factoryLevel or 1)
     local hp=setInt(status,"BaseHP",100)
     local units=setInt(status,"Allies",0)
     local enemies=setInt(status,"Enemies",0)
@@ -500,10 +753,11 @@ local function join(player)
     selected.Value="PON"
     selected.Parent=status
     local state={
-        slot=slot,x=plotCenter(slot),active=true,map=nil,
+        slot=slot,x=plotCenter(slot),active=true,map=nil,player=player,persistAllowed=persistAllowed,
+        persistSnapshot=progressSnapshot(progress),nextLeaseRefresh=leaseNow()+SESSION_REFRESH_SECONDS,
         coins=coins,wave=wave,kills=kills,baseHP=hp,level=level,
         unitsValue=units,enemiesValue=enemies,selectedValue=selected,selected="pon",
-        entities={},spawnOrdinal=0,enemyTarget=B.waveSize(1),enemiesMade=0,
+        entities={},spawnOrdinal=0,enemyTarget=B.waveSize(wave.Value),enemiesMade=0,
         productionTimer=1.2,enemyTimer=0.1,waveBreak=4,incomeCarry=0,
     }
     sessions[player]=state
@@ -537,6 +791,7 @@ selectEvent.OnServerEvent:Connect(function(player,selected)
 end)
 Players.PlayerAdded:Connect(join)
 Players.PlayerRemoving:Connect(function(player)
+    rejectedLoads[player]=nil
     local state=sessions[player]
     if not state then return end
     state.active=false
@@ -544,14 +799,23 @@ Players.PlayerRemoving:Connect(function(player)
     for _,e in ipairs(state.entities) do removeEntity(e) end
     if state.map and state.map.Parent then state.map:Destroy() end
     sessions[player]=nil
+    -- Finalize departing progress before a waiting player's GetAsync can yield.
+    saveProgress(player,state)
     -- Assign a newly freed plot to one player who was waiting at capacity.
     for _,waiting in ipairs(Players:GetPlayers()) do
-        if waiting ~= player and waiting.Parent == Players and not sessions[waiting] then
+        if waiting ~= player and waiting.Parent == Players and not sessions[waiting] and not rejectedLoads[waiting] then
             join(waiting)
             break
         end
     end
 end)
+if type(game.BindToClose) == "function" then
+    game:BindToClose(function()
+        for player,state in pairs(sessions) do
+            if state.active then saveProgress(player,state) end
+        end
+    end)
+end
 for _,player in ipairs(Players:GetPlayers()) do task.spawn(join,player) end
 
 local accumulated=0

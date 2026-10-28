@@ -1,0 +1,98 @@
+{
+  "id": "C00081",
+  "date": "2026-10-28",
+  "kind": "REVIEWER_REPAIR_REJECTED_LOAD_RETRY_STORM",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "adc91bf8-f704-832e-be48-8763e44012da",
+  "queue_decision": {
+    "action": "REPAIR_REVIEW",
+    "reason": "Verified same-repository PR99 exact-head independent REVIEWER REQUEST_CHANGES; legacy WORK_REQUESTS shape manually cross-checked",
+    "pr": 99,
+    "branch": "auto/twf-game-repair-0ddf4fa2-d1d0-8321-a1a5-ef55cde33155",
+    "previous_head": "ae1e80f5b2e05e983497f33b675a52bf33a7acfd",
+    "change_scheduler": false
+  },
+  "review_request": {
+    "id": "pr99_failed_load_rejected_player_retry_storm_20261028",
+    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "reviewer_run_id": "d83f0507-634c-8330-9cb4-52b7cbd63deb",
+    "review_head": "ae1e80f5b2e05e983497f33b675a52bf33a7acfd",
+    "review_record": "ops/reviews/PR0099_ae1e80f5.json"
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "d8f5a966b7ab18b7c099b7b3060f4311f507af6d",
+    "owner_run_id": "adc91bf8-f704-832e-be48-8763e44012da",
+    "epoch": 184
+  },
+  "main_base": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
+  "previous_pr_head": "ae1e80f5b2e05e983497f33b675a52bf33a7acfd",
+  "pr": 99,
+  "defect": {
+    "cause": "The failed-load backfill only excludes its current failed player, so a prior kicked player still in Players with no session is requeued. Two failed loads can repeatedly reschedule each other and starve healthy waiters.",
+    "reproduction": "A/B yield on progress reads and both fail while Kick disconnect is delayed; C/D active and E queued. Pinned PR99 retries A/B after their failures."
+  },
+  "fix": "Track rejected loads per Player until PlayerRemoving; reject their join and exclude them from both failed-load and departure backfill. Preserve safe fail-closed loads.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_rejected_load_retry_spec.lua",
+    "history/C00081_rejected_load_retry_review_repair.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 33794,
+      "after_bytes": 34063,
+      "delta_bytes": 269
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1044,
+    "lua_bytes": 45207
+  },
+  "main_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1032,
+    "lua_bytes": 44536
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/progression_rejected_load_retry_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 4838,
+      "delta_bytes": 4838
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "Existing PON/GUARDON/TANKURU prices, stats, models, HUD guide, selector paging, queue notice and save fencing unchanged.",
+  "tests": {
+    "new_cases": 3,
+    "canonical_server": "tests/auto/progression_rejected_load_retry_spec.lua",
+    "negative_control_head": "ae1e80f5b2e05e983497f33b675a52bf33a7acfd",
+    "previous_new_cases": 3,
+    "accepted_server_27": "UNCHANGED",
+    "accepted_hud_6": "UNCHANGED",
+    "local_lua": "NOT_RUN_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "roblox_engine": "NOT_RUN",
+    "real_datastore": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "review_record": "ops/reviews/PR0099_ae1e80f5.json",
+    "previous_head_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40661660868",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40656759102",
+    "claim_commit": "d8f5a966b7ab18b7c099b7b3060f4311f507af6d",
+    "new_head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE"
+  },
+  "next_action": "Verify both jobs on exact updated PR99 head, then independent REVIEWER re-review and integration; no author main merge.",
+  "restrictions": {
+    "scheduler_mutated": false,
+    "gemini_rerun": false,
+    "roblox_publish": false,
+    "author_main_merge": false
+  }
+}

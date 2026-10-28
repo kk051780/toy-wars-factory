@@ -1,0 +1,86 @@
+{
+  "id": "C00077",
+  "date": "2026-10-28",
+  "kind": "AUTONOMOUS_PR94_REFRESH_OVERLAP_TEST_CI_REPAIR",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "7f92f090-38c4-8328-9a0e-9975e4e4981d",
+  "queue_decision": {
+    "action": "REPAIR_CI",
+    "change_scheduler": false,
+    "pr": 94,
+    "branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "failed_head": "c7c870d631dc08c889cf022006cc038a6e29be3c",
+    "failed_ci": 40641675274,
+    "failed_job": "offline",
+    "failed_step": "Execute additional autonomous repair regressions"
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "90d20a8a8755822efba477495d5d8bcd55e21b88",
+    "owner_run_id": "7f92f090-38c4-8328-9a0e-9975e4e4981d",
+    "epoch": 172
+  },
+  "main_base": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+  "previous_pr_head": "c7c870d631dc08c889cf022006cc038a6e29be3c",
+  "issue": 93,
+  "defect": {
+    "id": "test_fixture_heartbeat_passive_income",
+    "cause": "The new refresh-overlap regression fixed Coins=350 before Heartbeat. Canonical simulate grants passive income (+1), so a correctly saved 351 was incorrectly asserted as 350.",
+    "reproduction": "CI 40641675274 offline failed only the new regression: expected 350, got 351. The pinned prior-head negative control and foreign-owner case passed; compile_hold passed."
+  },
+  "fix": "Set deterministic final Coins=350 after both Heartbeat calls and before PlayerRemoving. This corrects only the new, unmerged test fixture; production code and accepted tests are unchanged.",
+  "changed_files": [
+    "tests/auto/progression_refresh_overlap_spec.lua",
+    "history/C00077_refresh_overlap_test_ci_repair.json"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1030,
+    "lua_bytes": 44346
+  },
+  "main_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 781,
+    "lua_bytes": 31291
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/progression_refresh_overlap_spec.lua",
+      "before_bytes": 4494,
+      "after_bytes": 4667,
+      "delta_bytes": 173
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "None; no character stats, prices or visuals modified.",
+  "tests": {
+    "new_cases": 3,
+    "pinned_negative_head": "f6bf432901e66ce025c490373fbf5a17f176d431",
+    "existing_server_27": "UNCHANGED",
+    "existing_hud_6": "UNCHANGED",
+    "local": "NOT_RUN",
+    "ci": "PENDING_EXACT_NEW_HEAD",
+    "roblox_engine": "NOT_RUN",
+    "live_datastore": "NOT_RUN"
+  },
+  "evidence": {
+    "failed_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40641675274",
+    "failed_job_id": 122661016808,
+    "claim_commit": "90d20a8a8755822efba477495d5d8bcd55e21b88",
+    "pr": "https://github.com/kk051780/toy-wars-factory/pull/94",
+    "final_head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE"
+  },
+  "limitations": [
+    "Only new test fixture corrected, not another production bug fix.",
+    "Offline Lua only; engine and real DataStore NOT_RUN."
+  ],
+  "next_action": "Fresh exact-head offline+compile_hold CI; independent REVIEWER checks the new source fix and test evidence.",
+  "restrictions": {
+    "scheduler_mutated": false,
+    "gemini_rerun": false,
+    "roblox_publish": false,
+    "author_main_merge": false
+  }
+}
