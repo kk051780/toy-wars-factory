@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "pr": 99,
+  "head": "0f9a191e86918a4b1c599d86ef18dba26b0442b1",
+  "base_main_sha": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "2370fa4c-c120-8329-964d-bf303c27c2e9",
+  "lease_epoch": 186,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "adc91bf8-f704-832e-be48-8763e44012da",
+  "reviewed_at": "2026-10-28T10:30:53.203Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "GAME_WORKSHOP_FAILED_LOAD_BACKFILL",
+  "change_classification": "GAME_CODE_FIX_AND_REGRESSION",
+  "findings": [
+    "Exact-head 0f9a191e CI #40669496318 completed success; offline and compile_hold passed, trusted-base scope (6 files) and 3 immutable coordinator claims verified.",
+    "Canonical server tracks rejectedLoads on failed GetAsync/unknown schema, excludes rejected players from join and both backfill paths until PlayerRemoving; fail-closed Kick and session fences retained.",
+    "Full canonical Lua regressions: original failed-load backfill 3/3 and new two-failure/delayed-Kick/rejoin negative-control 3/3; pinned previous PR99 ae1e80f5 reproduces retry storm.",
+    "PR changes 6 files: canonical server + two newly added auto Lua tests + append-only C00080/C00081/C00082; accepted tests, protected policy, payment, release, external API and character catalog untouched.",
+    "History reports 4 canonical Lua files 45,227 bytes and 1,045 lines (+691 bytes/+13 lines over main 44,536/1,032), server 34,083 bytes; CI installer exact four-source embedding passes.",
+    "Main QA #40656759102 on merge 515ceac6 succeeded with both jobs; current main differs only in generated status/CHAT_HANDOFF.md and status/LATEST_STATE.json as directly compared.",
+    "No Roblox Studio, real DataStore, multiplayer, mobile or visual evidence; release HOLD and Gemini incident hold remain."
+  ],
+  "ci": {
+    "id": 40669496318,
+    "head": "0f9a191e86918a4b1c599d86ef18dba26b0442b1",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": [
+      {
+        "name": "offline",
+        "conclusion": "success"
+      },
+      {
+        "name": "compile_hold",
+        "conclusion": "success"
+      }
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40669496318"
+  },
+  "main_qa": {
+    "id": 40656759102,
+    "head": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+    "conclusion": "success",
+    "verified_status_only_descendant": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
+    "compare_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "changed_files_count": 6,
+  "source_metrics": {
+    "files": 4,
+    "lines": 1045,
+    "bytes": 45227
+  },
+  "limitations": [
+    "OFFLINE_ONLY",
+    "NO_ENGINE_OR_REAL_DATASTORE_VERIFICATION"
+  ],
+  "decision": "INTEGRATE_EXACT_HEAD_AFTER_RECHECK",
+  "status": "APPROVED_NOT_MERGED"
+}
