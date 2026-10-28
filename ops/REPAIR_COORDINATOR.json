@@ -602,26 +602,25 @@
     "94": {
       "schema": 1,
       "pr": 94,
-      "head": "259b51e2ef3d84b02b6442dae53f56292b8bae28",
-      "base_reviewed": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+      "head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
+      "base_reviewed": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
       "reviewer_kind": "REVIEWER",
       "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-      "reviewer_run_id": "c1276df4-db04-8328-ac87-3a909d29133d",
-      "lease_epoch": 157,
+      "reviewer_run_id": "00a41d21-8588-8323-acf2-cf75462da83b",
+      "lease_epoch": 174,
       "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "author_run_id": "935987ea-7dcc-8329-b060-4663b031d950",
+      "author_run_id": "7f92f090-38c4-8328-9a0e-9975e4e4981d",
       "verdict": "REQUEST_CHANGES",
-      "ci": {
-        "id": 40596902577,
-        "head": "259b51e2ef3d84b02b6442dae53f56292b8bae28",
-        "conclusion": "success"
-      },
-      "review_record": "ops/reviews/PR0094_259b51e2.json",
-      "blockers": [
-        "RACE_1: Two servers A/B both GetAsync p:1 before either UpdateAsync claim. A claims sessionOwner=A. B UpdateAsync compares current owner A with expected nil and returns nil. loadProgress returns (nil,false), but join creates default Coins=50/Wave=1 and continues; saveProgress exits on persistAllowed=false. Later active B can play without ever saving. src/ToyWarsServer.server.lua lines 89-125, 573-584, 127-128. Existing tests only join sequentially; no concurrent GetAsync/claim interleaving.",
-        "RACE_2: A active with unsaved Coins=300 while stored Coins=200. B joins and unconditionally supersedes A's sessionOwner using stored Coins=200 before A PlayerRemoving save. A's final save is canceled; B starts at 200, so A's earned 100 is lost. Existing six session-fence tests assert B wins but do not protect A's unsaved progress. Official Roblox session-locking guidance requires holding/waiting for prior session final save or bounded recovery, not immediate takeover."
+      "findings": [
+        "simulate() checks active only before a yielding refreshProgressLease; after PlayerRemoving or lease-loss Kick it can resume and mutate coins/spawn orphan models. Require post-refresh active/session guard and deterministic negative-control regression."
       ],
-      "merge_performed": false
+      "ci": {
+        "id": 40641863301,
+        "head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
+        "conclusion": "success",
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40641863301"
+      },
+      "review_record": "ops/reviews/PR0094_c7227654.json"
     },
     "97": {
       "schema": 1,

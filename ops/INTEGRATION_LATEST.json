@@ -1,21 +1,21 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T05:30:43.760Z",
+  "observed_at": "2026-10-28T06:34:10.683Z",
   "status": "REQUEST_CHANGES",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "078f9eff-b7ac-832c-8dcb-099823cdb301",
-  "lease_epoch": 170,
+  "reviewer_run_id": "00a41d21-8588-8323-acf2-cf75462da83b",
+  "lease_epoch": 174,
   "main_before": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
   "latest_review": {
     "pr": 94,
-    "head": "f6bf432901e66ce025c490373fbf5a17f176d431",
+    "head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
     "verdict": "REQUEST_CHANGES",
-    "review_record": "ops/reviews/PR0094_f6bf4329.json",
-    "ci": 40630993164,
+    "review_record": "ops/reviews/PR0094_c7227654.json",
+    "ci": 40641863301,
     "category": "GAME_DATASTORE_PERSISTENCE",
     "blockers": [
-      "P1 refresh/refresh overlap: src/ToyWarsServer.server.lua refreshProgressLease() (lines 210-241) can launch concurrent yielding UpdateAsync requests after 45s without in-flight fencing; the later callback sees its own earlier lease extension as foreign progress and disables persistence/Kicks, leaving unsaved coins. Add a canonical whole-server deterministic 2-refresh test with service latency outside transform, a pinned f6bf4329 negative control, and a guard/serialization preserving foreign owner fencing and final save."
+      "simulate() checks active only before a yielding refreshProgressLease; after PlayerRemoving or lease-loss Kick it can resume and mutate coins/spawn orphan models. Require post-refresh active/session guard and deterministic negative-control regression."
     ]
   },
   "merged_prs": [
@@ -211,12 +211,12 @@
     ]
   },
   "unresolved": [
-    "pr94_overlapping_lease_refresh_false_kick_unsaved_20261028",
+    "pr94_refresh_yield_resume_after_departure_20261028",
     "issue71_original_operation_receipt_unavailable",
     "roblox_engine_multiplayer_mobile_unverified",
     "pr98_protected_character_scope_requires_separate_exact_head_maintenance_audit"
   ],
-  "next": "WORKER_FIX_PR94_OVERLAPPING_REFRESH_WITH_PINNED_NEGATIVE_CONTROL; PROTECTED_PR98_SEPARATE_AUDIT; KEEP_RELEASE_HOLD",
+  "next": "WORKER_FIX_PR94_POST_REFRESH_ACTIVE_GUARD_WITH_PINNED_NEGATIVE_CONTROL; PROTECTED_PR98_SEPARATE_AUDIT; KEEP_RELEASE_HOLD",
   "runtime_verified": true,
   "main_after": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
   "merge_sha": null,
