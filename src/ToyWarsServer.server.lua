@@ -732,6 +732,8 @@ Players.PlayerRemoving:Connect(function(player)
     for _,e in ipairs(state.entities) do removeEntity(e) end
     if state.map and state.map.Parent then state.map:Destroy() end
     sessions[player]=nil
+    -- Finalize departing progress before a waiting player's GetAsync can yield.
+    saveProgress(player,state)
     -- Assign a newly freed plot to one player who was waiting at capacity.
     for _,waiting in ipairs(Players:GetPlayers()) do
         if waiting ~= player and waiting.Parent == Players and not sessions[waiting] then
@@ -739,7 +741,6 @@ Players.PlayerRemoving:Connect(function(player)
             break
         end
     end
-    saveProgress(player,state)
 end)
 if type(game.BindToClose) == "function" then
     game:BindToClose(function()
