@@ -194,10 +194,20 @@ local function refreshProgressLease(state)
             return updated
         end)
     end)
-    if ok and refreshed~=nil then state.persistSnapshot=progressSnapshot(refreshed)
+    if ok and refreshed~=nil then
+        state.persistSnapshot=progressSnapshot(refreshed)
+    elseif not ok then
+        -- A transient throttle/network error is not evidence of lost ownership.
+        -- Retry soon; the final save still checks the exact owner/revision.
+        state.nextLeaseRefresh=now+5
+        warn("TWF: progress lease refresh temporarily unavailable for",state.player.UserId)
     else
         state.persistAllowed=false
-        warn("TWF: progress lease refresh failed for",state.player.UserId)
+        state.active=false
+        warn("TWF: progress lease ownership lost for",state.player.UserId)
+        if type(state.player.Kick)=="function" then
+            state.player:Kick("Toy Wars: progress session moved. Please rejoin.")
+        end
     end
 end
 

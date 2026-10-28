@@ -15,7 +15,7 @@ local function copy(record)
     local out={};for k,v in pairs(record) do out[k]=v end;return out
 end
 local function newStore(delay)
-    local store={data={["p:1"]={version=1,coins=200,wave=2,defeated=3,factoryLevel=1,revision=0}},writes=0,cancels=0}
+    local store={data={["p:1"]={version=1,coins=200,wave=2,defeated=3,factoryLevel=1,revision=0}},writes=0,cancels=0,failRefresh=false}
     function store:GetAsync(key)
         local snapshot=copy(self.data[key])
         if delay then coroutine.yield(0.1) end
@@ -23,6 +23,10 @@ local function newStore(delay)
     end
     function store:UpdateAsync(key,callback)
         self.writes=self.writes+1
+        if self.failRefresh and self.writes==2 then
+            self.failRefresh=false
+            error("injected transient refresh failure")
+        end
         local updated=callback(copy(self.data[key]))
         if not updated then self.cancels=self.cancels+1;return nil end
         self.data[key]=updated
@@ -30,10 +34,11 @@ local function newStore(delay)
     end
     return store
 end
-local function fixture(store,source)
+local function fixture(store,source,clock)
     local original=loadfile
     _G.loadfile=function(file,mode,env)
         if file==path and env then
+            if clock then env.os.time=function() return clock.value end end
             local getService=env.game.GetService
             env.game.GetService=function(self,name)
                 if name=="DataStoreService" then return {GetDataStore=function() return store end} end
@@ -86,6 +91,19 @@ check("timeout refuses unsavable B; reconnect after A final save works",function
     coins(pa).Value=320;a:removePlayer(pa)
     local c=fixture(store);local pc=c:addPlayer(c:newPlayer())
     eq(coins(pc).Value,320,"later reconnect")
+end)
+check("transient lease refresh error still permits a fenced final save",function()
+    local store=newStore(false);store.failRefresh=true
+    local clock={value=1000}
+    local h=fixture(store,nil,clock);local p=h:addPlayer(h:newPlayer())
+    coins(p).Value=300
+    clock.value=1050
+    h.runService.Heartbeat:Fire(0.2)
+    assert(#h.warnings>=1,"transient refresh must warn")
+    local finalCoins=coins(p).Value
+    h:removePlayer(p)
+    eq(store.data["p:1"].coins,finalCoins,"final CAS save after transient refresh")
+    eq(store.data["p:1"].sessionOwner,nil,"owner released after save")
 end)
 check("negative control: pinned old head starts B with unsavable defaults",function()
     local store=newStore(true);local source=oldSource()
