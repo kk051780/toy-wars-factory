@@ -14,5 +14,40 @@
   "blockers": [
     "Shutdown pending claim exceeds callback wait; new regression required."
   ],
-  "ci": 40723859639
+  "ci": 40723859639,
+  "repository": "kk051780/toy-wars-factory",
+  "base_main_sha": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewed_at": "2026-10-28T16:31:10.609Z",
+  "lease_epoch": 208,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "95aef457-a224-8332-ac0b-f8e3e80c9ae0",
+  "repair_author_run_id": "ab9836e0-e1cc-8320-b9c9-13ef905aa627",
+  "category": "GAME_DATASTORE_SHUTDOWN_ADMISSION",
+  "merge_status": "NOT_MERGED",
+  "next_actor": "WORKER",
+  "evidence": {
+    "main_qa": 40697393767,
+    "main_qa_head": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
+    "main_status_only_compare": true,
+    "ci_head": "6038487fe5b93d9212a3845196f129792729fec3",
+    "offline": "PASS",
+    "compile_hold": "PASS",
+    "python": "454/454",
+    "lua_shutdown": "7/7",
+    "scope_claim_gate": "PASS",
+    "changed_files": [
+      "src/ToyWarsServer.server.lua",
+      "tests/auto/progression_shutdown_admission_spec.lua",
+      "history/C00108_shutdown_admission_fence.json",
+      "history/C00109_shutdown_admission_ci_repair.json",
+      "history/C00110_shutdown_admission_backfill_ci_repair.json",
+      "history/C00111_shutdown_join_guard_accepted_regression.json"
+    ],
+    "source_before_bytes": 47757,
+    "source_after_bytes": 48267,
+    "accepted_tests": "UNCHANGED",
+    "roblox_engine": "NOT_RUN"
+  },
+  "request_id": "pr106_pending_claim_after_bindtoclose_20261029"
 }
