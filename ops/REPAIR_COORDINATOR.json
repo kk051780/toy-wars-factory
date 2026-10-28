@@ -1247,7 +1247,16 @@
     "normal_worker_meta_reviewer_scope_unchanged": true,
     "authority": "Owner delegated ordinary game/system repair and integration; registered REVIEWER's exact protected-harness repair request. One independently reviewed CONTROLLER maintenance operation only; no ordinary reviewer MERGE decision claimed.",
     "created_at": "2026-10-28T03:35:05.782Z",
-    "status": "AWAIT_INDEPENDENT_REVIEW"
+    "status": "INDEPENDENT_APPROVE_AWAIT_MERGE",
+    "review": {
+      "verdict": "APPROVE",
+      "task_id": "6ae16d4645308191876c8f768743a583",
+      "run_id": "adfde28b-a754-8327-9e24-02fb41cd6cfc",
+      "lease_epoch": 166,
+      "review_record": "ops/reviews/PR0097_499a8226_maintenance.json",
+      "head": "499a8226925ef41aec66ec12c6d685f9cbe9b43b",
+      "reviewed_at": "2026-10-28T03:56:37Z"
+    }
   },
   "character_pipeline_review_request": {
     "mode": "READ_ONLY_SCOPED_CHARACTER_MAINTENANCE_AUDIT",
