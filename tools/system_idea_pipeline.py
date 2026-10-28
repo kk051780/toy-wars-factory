@@ -273,9 +273,82 @@ def merge_registry(existing: list[dict], incoming: list[dict]) -> list[dict]:
     validate_registry(result)
     return result
 
-def assess_candidates(project_id: str, ideas: list[dict], proposals: list[dict]) -> dict:
+TRANSCRIPT_KEYS = {"project_id", "idea_id", "repository", "issue_number", "comment_id",
+                   "source_ref", "comment_url", "original_text", "checked_at",
+                   "original_chat_url", "original_chat_authentication"}
+
+def _validate_transcription(item):
+    require(type(item) is dict and set(item) == TRANSCRIPT_KEYS, "transcription schema")
+    require(type(item["project_id"]) is str and PROJECT.fullmatch(item["project_id"]), "transcription project")
+    require(type(item["idea_id"]) is str and IDENTIFIER.fullmatch(item["idea_id"]), "transcription idea")
+    repo = item["repository"]
+    require(type(repo) is str and re.fullmatch(r"[a-z0-9][a-z0-9_.-]*/[a-z0-9][a-z0-9_.-]*", repo), "transcription repository")
+    issue, comment = item["issue_number"], item["comment_id"]
+    require(type(issue) is int and issue > 0 and type(comment) is int and comment > 0, "transcription IDs")
+    require(item["source_ref"] == f"https://api.github.com/repos/{repo}/issues/comments/{comment}"
+            and item["comment_url"] == f"https://github.com/{repo}/issues/{issue}#issuecomment-{comment}", "transcription source binding")
+    require(type(item["original_text"]) is str and 5 <= len(item["original_text"]) <= 12000, "transcription text")
+    _timestamp(item["checked_at"])
+    require(item["original_chat_url"] == "NOT_AVAILABLE"
+            and item["original_chat_authentication"] == "NOT_VERIFIED", "original chat is not authenticated by a comment")
+    _plain(item)
+    return item
+
+def transcription_from_comment(*, project_id, idea_id, repository, issue_number, comment, checked_at):
+    """Extract one quoted transcription from supplied GET data, never authenticate it.
+
+    The connected caller must independently retrieve the pinned source. Neither
+    author_association, a provider label nor this pure function proves chat origin.
+    Only the quoted bytes are preserved; page prose is never an instruction.
+    """
+    require(type(comment) is dict, "comment response")
+    require(type(comment.get("body")) is str and len(comment["body"]) <= 65536, "comment body")
+    require(comment.get("issue_url") == f"https://api.github.com/repos/{repository}/issues/{issue_number}", "comment issue binding")
+    created = _timestamp(comment.get("created_at"))
+    updated = _timestamp(comment.get("updated_at"))
+    require(created <= updated <= _timestamp(checked_at), "comment observation time")
+    blocks = re.findall(r"(?m)^> .*(?:\n> .*)*", comment["body"])
+    require(len(blocks) == 1, "one unambiguous transcription quote required")
+    original = "\n".join(line[2:] for line in blocks[0].split("\n"))
+    item = {"project_id": project_id, "idea_id": idea_id, "repository": repository,
+            "issue_number": issue_number, "comment_id": comment.get("id"),
+            "source_ref": comment.get("url"), "comment_url": comment.get("html_url"),
+            "original_text": original, "checked_at": checked_at,
+            "original_chat_url": "NOT_AVAILABLE", "original_chat_authentication": "NOT_VERIFIED"}
+    return _validate_transcription(item)
+
+def verify_owner_transcriptions(ideas, owner_transcriptions):
+    """Exact match to supplied transcriptions; NOT independent owner authentication.
+
+    Hash-consistent paraphrases fail this separate comparison. Withdrawn erroneous
+    checkpoints remain auditable but cannot count as matched active owner records.
+    """
+    validate_registry(ideas)
+    require(type(owner_transcriptions) is list and len(owner_transcriptions) <= 10000, "transcriptions required")
+    active = {(r["project_id"], r["idea_id"]): r for r in ideas
+              if r["origin"] == "OWNER_ORIGINAL_IDEA" and r["stage"] not in CLOSED}
+    seen = set()
+    for item in owner_transcriptions:
+        _validate_transcription(item)
+        key = (item["project_id"], item["idea_id"])
+        require(key in active and key not in seen, "foreign/duplicate/inactive transcription")
+        seen.add(key)
+        row = active[key]
+        require(row["scope"]["repository"] == item["repository"]
+                and row["source_ref"] == item["source_ref"], "owner source does not match scoped record")
+        require(row["original_text"] == item["original_text"], "owner text is not verbatim transcription")
+    require(seen == set(active), "active owner transcription missing")
+    return {"basis": "EXACT_MATCH_TO_SUPPLIED_GITHUB_TRANSCRIPT_NOT_AUTHENTICATION",
+            "matched_active_records": [list(k) for k in sorted(seen)],
+            "original_chat_url": "NOT_AVAILABLE", "original_chat_authentication": "NOT_VERIFIED",
+            "archived_unverified_owner_ids": [r["idea_id"] for r in ideas
+                if r["origin"] == "OWNER_ORIGINAL_IDEA" and r["stage"] in CLOSED]}
+
+def assess_candidates(project_id: str, ideas: list[dict], proposals: list[dict], *, owner_transcriptions=None) -> dict:
     """Heuristic-only comparison; NEVER authorizes a task or claims market impact."""
     validate_registry(ideas)
+    provenance = ({"basis": "NOT_VERIFIED", "original_chat_authentication": "NOT_VERIFIED"}
+                  if owner_transcriptions is None else verify_owner_transcriptions(ideas, owner_transcriptions))
     require(type(project_id) is str and PROJECT.fullmatch(project_id), "invalid project")
     selected = {x["idea_id"]: x for x in ideas if x["project_id"] == project_id}
     known = set(selected)
@@ -289,6 +362,16 @@ def assess_candidates(project_id: str, ideas: list[dict], proposals: list[dict])
         seen.add(cid)
         refs = candidate["idea_refs"]
         require(type(refs) is list and refs and len(refs) <= 20 and all(type(x) is str for x in refs) and len(set(refs)) == len(refs) and all(x in known for x in refs), "missing/cross-project idea refs")
+        pending, visited = list(refs), set()
+        while pending:
+            ref = pending.pop()
+            if ref in visited:
+                continue
+            visited.add(ref)
+            row = selected[ref]
+            require(row["stage"] not in CLOSED, "candidate depends on an archived idea")
+            pending.extend(row["derived_from"])
+            pending.extend(row[k] for k in ("variant_of", "duplicate_of") if row[k] is not None)
         domains.update(selected[x]["domain"] for x in refs)
         require(len(domains) == 1, "compare GAME and SYSTEM experiments separately")
         for field in ("hypothesis", "test_plan", "falsifier"):
@@ -314,6 +397,7 @@ def assess_candidates(project_id: str, ideas: list[dict], proposals: list[dict])
             "ranking": results,
             "scope": deepcopy(next(iter(selected.values()))["scope"]),
             "domain": next(iter(domains)),
+            "owner_source_provenance": provenance,
             "baseline": {"candidate_id": "NO_CHANGE", "measured_effect": "NOT_MEASURED",
                          "test_plan": "Observe unchanged main with the same cohort, device and exposure window"},
             "metric_status": {k: "NOT_MEASURED" for k in METRICS},
@@ -342,7 +426,8 @@ def main():
         require(len(raw) <= 2_000_000, "input size")
         data = json.loads(raw, object_pairs_hook=pairs,
                           parse_constant=lambda _: require(False, "nonfinite JSON"))
-        require(type(data) is dict and set(data) == {"project_id", "ideas", "proposals"}, "CLI schema")
+        require(type(data) is dict and {"project_id", "ideas", "proposals"} <= set(data)
+                <= {"project_id", "ideas", "proposals", "owner_transcriptions"}, "CLI schema")
         result = assess_candidates(**data)
         print(json.dumps(result, ensure_ascii=False, allow_nan=False))
         return 0

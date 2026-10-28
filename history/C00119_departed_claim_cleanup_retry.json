@@ -1,0 +1,76 @@
+{
+  "id": "C00119",
+  "date": "2026-10-29",
+  "kind": "AUTONOMOUS_DEPARTED_CLAIM_CLEANUP_RETRY",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "6c654e6a-4100-8331-976a-bb27fe199e2c",
+  "queue_decision": {
+    "action": "START",
+    "branch": "auto/twf-game-repair-6c654e6a-4100-8331-976a-bb27fe199e2c",
+    "base": "main",
+    "open_prs": [],
+    "limit": 3,
+    "change_scheduler": false
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "4e91e1fc861cf72059e3cc454d112a3415507788",
+    "owner_run_id": "6c654e6a-4100-8331-976a-bb27fe199e2c",
+    "epoch": 220
+  },
+  "main_base": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+  "reproduction": "An UpdateAsync claim commits, then the player disconnects before the response. A transient transport error on the sole departed-token release attempt leaves the DataStore sessionOwner leased for up to 180 seconds.",
+  "cause": "The post-claim departure cleanup uses a single pcall without bounded retry, unlike final saves and shutdown cleanup.",
+  "fix": "Retry only thrown DataStore cleanup errors up to SAVE_RETRY_COUNT with SAVE_RETRY_SECONDS delay; CAS checks the exact token and preserves user IDs/metadata; nil result is a non-error ownership conflict and is not retried. Exhaustion warns.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_departed_claim_cleanup_spec.lua",
+    "history/C00119_departed_claim_cleanup_retry.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 40142,
+      "after_bytes": 40752,
+      "delta_bytes": 610
+    }
+  ],
+  "main_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1163,
+    "lua_bytes": 51286
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/progression_departed_claim_cleanup_spec.lua",
+      "cases": 4,
+      "negative_controls": 1
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "No toy model, price, selection, battle, UI or catalog changes.",
+  "tests": {
+    "new_canonical_lua_cases": 3,
+    "pinned_main_negative_controls": 1,
+    "accepted_server_27": "UNCHANGED",
+    "accepted_hud_6": "UNCHANGED",
+    "local_lua": "NOT_RUN",
+    "exact_head_ci": "PENDING",
+    "roblox_engine": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "multiplayer": "NOT_RUN"
+  },
+  "evidence": {
+    "claim_commit": "4e91e1fc861cf72059e3cc454d112a3415507788",
+    "base_main": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+    "head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE",
+    "ci": "PENDING"
+  },
+  "next_action": "Verify both exact-head CI jobs, fix own PR CI if necessary, then hand off to separate REVIEWER for main integration and post-merge QA."
+}
