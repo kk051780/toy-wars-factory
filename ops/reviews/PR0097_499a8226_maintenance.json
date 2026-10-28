@@ -59,6 +59,46 @@
     "Normal registered REVIEWER WAIT_LOCK/SKIP is not a MERGE decision; normal autonomous integration not claimed"
   ],
   "authority": "Owner delegated ordinary game/system repair and integration; registered REVIEWER's exact protected-harness repair request. One independently reviewed CONTROLLER maintenance operation only; no ordinary reviewer MERGE decision claimed.",
-  "status": "APPROVED_AWAIT_EXACT_HEAD_MERGE_AND_MAIN_QA",
-  "next_actor": "This independent controller integrates only PR97, then WORKER rebases PR94 and runs all failure-path and negative-control cases"
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "next_actor": "REGISTERED_WORKER: rebase PR94, repair active concrete failure requests including inflight refresh/final save race, fresh exact-head offline+compile_hold and all failure-path/negative-control cases; registered REVIEWER independently reviews PR94",
+  "merge_sha": "d3decf3519937f4e8391d130eee5ff5375868fed",
+  "post_merge_main_qa": {
+    "id": 40629585413,
+    "head": "d3decf3519937f4e8391d130eee5ff5375868fed",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 122622584226,
+        "name": "offline",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 122622584475,
+        "name": "compile_hold",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40629585413"
+  },
+  "post_merge_handoff": {
+    "id": 40629585610,
+    "head": "d3decf3519937f4e8391d130eee5ff5375868fed",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 122622584878,
+        "name": "update",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40629585610"
+  },
+  "main_after_handoff": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+  "status_only_descendant_verified": true,
+  "completed_at": "2026-10-28T03:58:15Z"
 }

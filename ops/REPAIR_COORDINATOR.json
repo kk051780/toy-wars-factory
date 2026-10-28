@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 166,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "adfde28b-a754-8327-9e24-02fb41cd6cfc",
-    "task_id": "6ae16d4645308191876c8f768743a583",
-    "epoch": 166,
-    "acquired_at": "2026-10-28T03:56:07+00:00",
-    "expires_at": "2026-10-28T04:26:07+00:00",
-    "base_main_sha": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
-    "work_branch": "main",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -47,13 +37,16 @@
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "7cd3d4e6-7d79-4b75-9a7c-83538df787c6",
-    "epoch": 165,
-    "released_at": "2026-10-28T03:49:06.344Z",
-    "result": "PR94_ASYNC_REFRESH_FINAL_SAVE_RACE_REPRODUCED_WORKER_REQUEST_RECORDED",
-    "request_id": "pr94_inflight_refresh_cancels_final_save_20261028",
-    "source_changed": false,
-    "next_actor": "INDEPENDENT_PR97_AUDIT_THEN_WORKER"
+    "owner_id": "adfde28b-a754-8327-9e24-02fb41cd6cfc",
+    "epoch": 166,
+    "released_at": "2026-10-28T03:58:15+00:00",
+    "result": "PR97_INDEPENDENT_MAINTENANCE_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+    "pr": 97,
+    "head": "499a8226925ef41aec66ec12c6d685f9cbe9b43b",
+    "merge_sha": "d3decf3519937f4e8391d130eee5ff5375868fed",
+    "main_qa": 40629585413,
+    "handoff": 40629585610,
+    "next_actor": "REGISTERED_WORKER_PR94"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -617,6 +610,110 @@
         "RACE_2: A active with unsaved Coins=300 while stored Coins=200. B joins and unconditionally supersedes A's sessionOwner using stored Coins=200 before A PlayerRemoving save. A's final save is canceled; B starts at 200, so A's earned 100 is lost. Existing six session-fence tests assert B wins but do not protect A's unsaved progress. Official Roblox session-locking guidance requires holding/waiting for prior session final save or bounded recovery, not immediate takeover."
       ],
       "merge_performed": false
+    },
+    "97": {
+      "schema": 1,
+      "pr": 97,
+      "repository": "kk051780/toy-wars-factory",
+      "head": "499a8226925ef41aec66ec12c6d685f9cbe9b43b",
+      "branch": "ops/twf-datastore-harness-5fe5290f-e216-4f8c-b8fa-4ff7d002e4a4",
+      "base_reviewed": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+      "reviewer_kind": "ONE_TIME_INDEPENDENT_CONTROLLER_MAINTENANCE",
+      "reviewer_task_id": "6ae16d4645308191876c8f768743a583",
+      "reviewer_run_id": "adfde28b-a754-8327-9e24-02fb41cd6cfc",
+      "lease_epoch": 166,
+      "claim_commit": "848638a912348b3b4c93c9d49e909675439db4dc",
+      "author_operation_id": "5fe5290f-e216-4f8c-b8fa-4ff7d002e4a4",
+      "author_claim_commit": "6159a3fe9b9a50a875c31ba14be574204801ffa0",
+      "author_epoch": 163,
+      "verdict": "APPROVE",
+      "findings": [],
+      "reviewed_at": "2026-10-28T03:56:37Z",
+      "changed_files": [
+        "tests/roblox_server_harness.lua",
+        "tests/auto/harness_datastore_spec.lua",
+        "history/C00074_datastore_harness_maintenance.json"
+      ],
+      "ci": {
+        "id": 40626780378,
+        "head": "499a8226925ef41aec66ec12c6d685f9cbe9b43b",
+        "conclusion": "success",
+        "jobs": [
+          {
+            "id": 122613504645,
+            "name": "offline",
+            "conclusion": "success"
+          },
+          {
+            "id": 122613504901,
+            "name": "compile_hold",
+            "conclusion": "success"
+          }
+        ]
+      },
+      "main_qa": {
+        "id": 40621070139,
+        "head": "dd703db711f11b0aff5cce3c084a2462025ac010",
+        "conclusion": "success",
+        "actual_compare_to_current_main": "only status/CHAT_HANDOFF.md and status/LATEST_STATE.json"
+      },
+      "checks": [
+        "Actual diff exactly three authorized paths; no source/config/workflow/old history/provider/spending/release changes",
+        "Original accepted server_event_spec blob97cfce6ff303eb6f125133abb643ae035d824b7c unchanged; base harness blobabf1214d85d6ee432413f49033d74aa62f4e6136",
+        "Independent canonical local server27/27; seven actual service cases7/7; pinned old server25pass2fail exactly NaN selector/upgrade; CI logs agree",
+        "Per-H.new and name/scope storage isolation, detached tables/false values, nil cancellation preserves record and associations, transform errors cannot commit, explicit metadata/UserIds preservation and omitted clearing reviewed",
+        "GUID fixture/call serials deterministic and distinct; os.time=floor(scheduler time) reviewed as stub",
+        "C74 bytes harness8583->10827 and new spec4829 verified; game4files781lines31291bytes and25726 initial baseline retained",
+        "Author claim is actual coordinator ancestor and exact CONTROLLER owner/epoch/branch; current task/run distinct from author and registered reviewer"
+      ],
+      "limitations": [
+        "Deterministic successful service simulation only; no network/throttling/real concurrency/Roblox engine/mobile proof",
+        "Author candidate9399 local27/27 supplemental only; PR94 failure cases NOT approved; existing new refresh/final-save race request remains for WORKER",
+        "Normal registered REVIEWER WAIT_LOCK/SKIP is not a MERGE decision; normal autonomous integration not claimed"
+      ],
+      "authority": "Owner delegated ordinary game/system repair and integration; registered REVIEWER's exact protected-harness repair request. One independently reviewed CONTROLLER maintenance operation only; no ordinary reviewer MERGE decision claimed.",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "next_actor": "REGISTERED_WORKER: rebase PR94, repair active concrete failure requests including inflight refresh/final save race, fresh exact-head offline+compile_hold and all failure-path/negative-control cases; registered REVIEWER independently reviews PR94",
+      "merge_sha": "d3decf3519937f4e8391d130eee5ff5375868fed",
+      "post_merge_main_qa": {
+        "id": 40629585413,
+        "head": "d3decf3519937f4e8391d130eee5ff5375868fed",
+        "status": "completed",
+        "conclusion": "success",
+        "jobs": [
+          {
+            "id": 122622584226,
+            "name": "offline",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 122622584475,
+            "name": "compile_hold",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40629585413"
+      },
+      "post_merge_handoff": {
+        "id": 40629585610,
+        "head": "d3decf3519937f4e8391d130eee5ff5375868fed",
+        "status": "completed",
+        "conclusion": "success",
+        "jobs": [
+          {
+            "id": 122622584878,
+            "name": "update",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40629585610"
+      },
+      "main_after_handoff": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+      "status_only_descendant_verified": true,
+      "completed_at": "2026-10-28T03:58:15Z"
     }
   },
   "integration_results": {
@@ -1247,7 +1344,7 @@
     "normal_worker_meta_reviewer_scope_unchanged": true,
     "authority": "Owner delegated ordinary game/system repair and integration; registered REVIEWER's exact protected-harness repair request. One independently reviewed CONTROLLER maintenance operation only; no ordinary reviewer MERGE decision claimed.",
     "created_at": "2026-10-28T03:35:05.782Z",
-    "status": "INDEPENDENT_APPROVE_AWAIT_MERGE",
+    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
     "review": {
       "verdict": "APPROVE",
       "task_id": "6ae16d4645308191876c8f768743a583",
@@ -1256,7 +1353,12 @@
       "review_record": "ops/reviews/PR0097_499a8226_maintenance.json",
       "head": "499a8226925ef41aec66ec12c6d685f9cbe9b43b",
       "reviewed_at": "2026-10-28T03:56:37Z"
-    }
+    },
+    "merge_sha": "d3decf3519937f4e8391d130eee5ff5375868fed",
+    "post_merge_main_qa": 40629585413,
+    "post_merge_handoff": 40629585610,
+    "completed_at": "2026-10-28T03:58:15Z",
+    "next_actor": "WORKER_PR94"
   },
   "character_pipeline_review_request": {
     "mode": "READ_ONLY_SCOPED_CHARACTER_MAINTENANCE_AUDIT",
