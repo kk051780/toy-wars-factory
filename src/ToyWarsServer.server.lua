@@ -15,6 +15,7 @@ world.Parent = workspace
 local MAX_PLOTS = 4
 local SPACING = 108
 local sessions = {}
+local shuttingDown = false
 -- Keep departing saves visible to shutdown after their session is removed.
 local finalSavesInFlight = {}
 -- A kicked player may remain in Players until disconnect; never retry its failed load.
@@ -99,11 +100,11 @@ local function loadProgress(player,pending)
     local ok,record=pcall(function() return progressStore:GetAsync(key) end)
     if not ok then return nil,false,"READ_UNAVAILABLE" end
     if record~=nil and not validProgress(record) then return nil,false,"SCHEMA_UNSUPPORTED" end
-    if sessions[player]~=pending or player.Parent~=Players then return nil,false,"DEPARTED" end
+    if shuttingDown or sessions[player]~=pending or player.Parent~=Players then return nil,false,"DEPARTED" end
     local token=newSessionToken()
     if not token then return nil,false,"CLAIM_UNAVAILABLE" end
     for attempt=1,SESSION_RETRY_COUNT do
-        if sessions[player]~=pending or player.Parent~=Players then return nil,false,"DEPARTED" end
+        if shuttingDown or sessions[player]~=pending or player.Parent~=Players then return nil,false,"DEPARTED" end
         local now=leaseNow()
         local blocked,invalid=false,false
         local claimedOk,claimed=pcall(function()
@@ -129,8 +130,8 @@ local function loadProgress(player,pending)
             end)
         end)
         if claimedOk and claimed~=nil then
-            if sessions[player]~=pending or player.Parent~=Players then
-                -- The claim may have yielded past disconnect. Release only this token.
+            if shuttingDown or sessions[player]~=pending or player.Parent~=Players then
+                -- The claim may have yielded past disconnect or shutdown. Release only this token.
                 pcall(function()
                     progressStore:UpdateAsync(key,function(current,keyInfo)
                         if not validProgress(current) or current.sessionOwner~=token then return nil end
@@ -683,7 +684,7 @@ local lobbyGround = part(world,"LobbyGround",Vector3.new(930,1,200),CFrame.new(0
 lobbyGround.CanCollide = true
 
 local function join(player)
-    if player.Parent ~= Players or sessions[player] then return end
+    if shuttingDown or player.Parent ~= Players or sessions[player] then return end
     if rejectedLoads[player] then return end
     local slot=chooseSlot()
     if not slot then
@@ -708,6 +709,7 @@ local function join(player)
         end
         -- A failed load also frees a reserved plot. Admit the next queued player;
         -- the rejected player can still be in Players until Kick completes.
+        if shuttingDown then return end
         for _,waiting in ipairs(Players:GetPlayers()) do
             if waiting ~= player and waiting.Parent == Players and not sessions[waiting] and not rejectedLoads[waiting] then
                 task.spawn(join,waiting)
@@ -782,6 +784,7 @@ Players.PlayerRemoving:Connect(function(player)
     sessions[player]=nil
     -- Finalize departing progress before a waiting player's GetAsync can yield.
     finalizeProgress(player,state)
+    if shuttingDown then return end
     -- Assign a newly freed plot to one player who was waiting at capacity.
     for _,waiting in ipairs(Players:GetPlayers()) do
         if waiting ~= player and waiting.Parent == Players and not sessions[waiting] and not rejectedLoads[waiting] then
@@ -792,6 +795,8 @@ Players.PlayerRemoving:Connect(function(player)
 end)
 if type(game.BindToClose) == "function" then
     game:BindToClose(function()
+        -- Block late admissions before freezing the shutdown save set.
+        shuttingDown=true
         local deadline=os.clock()+25 -- Roblox waits at most 30 seconds for BindToClose.
         local closing={}
         for player,state in pairs(sessions) do
