@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 160,
-  "holder": {
-    "kind": "META",
-    "owner_id": "bd1f21de-2058-8332-9263-71e91bacf82d",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "epoch": 160,
-    "acquired_at": "2026-10-28T01:24:54+00:00",
-    "expires_at": "2026-10-28T01:54:54+00:00",
-    "base_main_sha": "55d9e0da77f0a9237cf2776432cf22f62b551283",
-    "work_branch": "auto/twf-system-review-bd1f21de-2058-8332-9263-71e91bacf82d",
-    "origin": "meta"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -22,17 +12,17 @@
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
     "items": [
       {
-        "number": 95,
-        "title": "[TWF system-review] Bind GitHub and service observations with final job rereads",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/95",
-        "head": "a26165b192770343897e375815428f8a36c13e2f",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40588371241",
-        "summary": "体制改善: GitHub QAと実serviceの時点を照合、両attempt job再読。新規32/全423 CI PASS。実GET37+peek9の限定live、原操作エラー未取得。独立審査・main QA待ち。",
+        "number": 96,
+        "title": "[TWF system-review] Scope provider reads and minimize service input before collection",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/96",
+        "head": "b6118ae609d6d634d4538a7e04be2b051c32a7a0",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40616434523",
+        "summary": "体制改善: opt-in read-only transportが固定repo/ref/blob/登録taskと必要なGETを照合し、サービス本文をcollector入力前に除外。新規31/全454 CI PASS、実GET37+peek9。認証分離・恒久稼働は未実証、独立審査待ち。",
         "changed_files": [
-          "tools/system_incident_observer.py",
-          "tests/test_system_incident_observer.py",
-          "docs/research/2026-10-28_incident_observer.md",
-          "history/C00066_joined_incident_observer.json"
+          "tools/system_provider_transport.py",
+          "tests/test_system_provider_transport.py",
+          "docs/research/2026-10-28_provider_transport.md",
+          "history/C00072_scoped_provider_transport.json"
         ],
         "kind": "開発体制改善"
       }
@@ -40,22 +30,18 @@
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-27T21:40:36Z",
-    "signature": "86f959153ef374570b45766b958f6bdc4b4840a565477564cd17c1bf3258fa78",
+    "observed_at": "2026-10-28T01:44:06Z",
+    "signature": "e504f4bdecac42cc304e85607acfd062105a3774a0c11e085372ac4ccf415644",
     "approval_text": ""
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "6bd24c39-2fa4-8328-9004-5436f2b6830e",
-    "epoch": 159,
-    "released_at": "2026-10-28T01:23:50.026Z",
-    "result": "PR94_REQUEST_CHANGES_READ_FAILURE_AND_FINAL_SAVE_RETRY",
-    "pr": 94,
-    "head": "09abf3753bdfc9753a45004048b95a17afb311f4",
-    "review_record": "ops/reviews/PR0094_09abf375.json",
-    "merged": false,
-    "next_actor": "WORKER:6adbf0d6a7d881918ce181dff2468867"
+    "kind": "META",
+    "owner_id": "bd1f21de-2058-8332-9263-71e91bacf82d",
+    "epoch": 160,
+    "released_at": "2026-10-28T01:44:06+00:00",
+    "result": "PR96_SCOPED_TRANSPORT_CI454_PASS_BOUNDED_LIVE_AWAIT_INDEPENDENT_REVIEW",
+    "service_completion_asserted": false
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",

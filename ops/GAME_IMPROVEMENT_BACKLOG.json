@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T21:39:18Z",
+  "observed_at": "2026-10-28T01:42:35Z",
   "source": "Issue72 accepted-module repair first; no game edits. Current main source was inspected and existing physical-engine/device hypotheses retained without claiming execution.",
   "items": [
     {
@@ -99,48 +99,71 @@
         "No publication, billing, credential access or inferred data-loss incident"
       ],
       "next_actor": "WORKER",
-      "status": "REQUEST_CHANGES_OFFLINE_REPRO_REQUESTED",
+      "status": "PR94_NEW_HEAD_CI_PASS_NEW_REVIEW_REPAIR_REQUIRED",
       "kind": "REVIEWER_REQUESTED_SOURCE_REPAIR",
+      "priority": "P1",
+      "latest_head": "09abf3753bdfc9753a45004048b95a17afb311f4",
+      "latest_request": "pr94_read_fail_unsavable_and_final_save_retry_20261028"
+    },
+    {
+      "id": "pr94_read_failure_final_save_reliability",
+      "status": "REVIEWER_REQUESTED_WORKER_REPAIR",
+      "hypothesis": "A read/unknown-schema failure can permit unsavable normal play, and a single-attempt final save can lose earned progress on transient UpdateAsync failure. Current reviewer source diagnosis; no live data loss measured.",
+      "evidence": {
+        "pr": 94,
+        "head": "09abf3753bdfc9753a45004048b95a17afb311f4",
+        "request": "pr94_read_fail_unsavable_and_final_save_retry_20261028",
+        "primary": "https://create.roblox.com/docs/cloud-services/data-stores/best-practices",
+        "checked_at": "2026-10-28T01:42:35Z"
+      },
+      "minimal_experiment": "WORKER runs canonical full-server fixtures with read/unknown-schema errors and transient final-save failure. Require explicit fail-closed loading/failure behavior and bounded ordered final-save retry while preserving lease/revision/metadata checks.",
+      "success_condition": "Pinned current-head negative controls fail; repaired canonical server preserves progress and exposes safe failure state. Fresh both-job CI and independent reviewer. Offline result is not real DataStore reliability.",
+      "required_real_evidence": [
+        "Later private-engine rejoin/two-server test with exact source/place version and actual failure logs",
+        "No publish/key/API activation or added spending"
+      ],
+      "next_actor": "WORKER",
+      "kind": "SOURCE_REPAIR_EXPERIMENT",
       "priority": "P1"
     }
   ],
   "actor": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "ed8dffe9-ee34-8323-812e-164cfa0da5bd"
+    "run_id": "bd1f21de-2058-8332-9263-71e91bacf82d"
   },
-  "base_main_sha": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+  "base_main_sha": "55d9e0da77f0a9237cf2776432cf22f62b551283",
   "prioritized_candidates": [
-    "pr94_stale_session_persistence",
+    "pr94_read_failure_final_save_reliability",
     "private_headless_engine_evidence_path",
     "mobile_pve_frame_time"
   ],
-  "system_precondition": "Issue71 joined observation is this run's only implementation. No game source edits. WORKER repair94 precedes new game features.",
+  "system_precondition": "Issue71 transport input minimization is this run's only implementation; game changes0. WORKER repairs current PR94 request before features.",
   "last_primary_source_check": {
-    "at": "2026-10-27T21:39:18Z",
-    "url": "https://create.roblox.com/docs/cloud-services/data-stores/player-data-purchasing",
+    "at": "2026-10-28T01:42:35Z",
+    "url": "https://create.roblox.com/docs/cloud-services/data-stores/best-practices",
     "published_at": null,
     "updated_at": null,
     "real_hardware_run": false
   },
   "next_experiments": [
     {
-      "id": "pr94_stale_session_persistence",
-      "hypothesis": "An older server/session can overwrite a newer session or schema when an UpdateAsync transform ignores current data; canonical code review gives a reproducible risk, no live loss observed.",
+      "id": "pr94_read_failure_final_save_reliability",
+      "status": "REVIEWER_REQUESTED_WORKER_REPAIR",
+      "hypothesis": "A read/unknown-schema failure can permit unsavable normal play, and a single-attempt final save can lose earned progress on transient UpdateAsync failure. Current reviewer source diagnosis; no live data loss measured.",
       "evidence": {
         "pr": 94,
-        "head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
-        "work_request": "pr94_progress_updateasync_stale_overwrite_20261028",
-        "primary": "https://create.roblox.com/docs/cloud-services/data-stores/player-data-purchasing",
-        "checked_at": "2026-10-27T21:39:18Z"
+        "head": "09abf3753bdfc9753a45004048b95a17afb311f4",
+        "request": "pr94_read_fail_unsavable_and_final_save_retry_20261028",
+        "primary": "https://create.roblox.com/docs/cloud-services/data-stores/best-practices",
+        "checked_at": "2026-10-28T01:42:35Z"
       },
-      "minimal_experiment": "WORKER runs two canonical full-server harness instances sharing one store, saves newer session first then older; also changes stored schema between load and save. Preserve legitimate normal rejoin and read-failure behavior.",
-      "success_condition": "Older writer cannot roll back newer progress or unknown schema. Exact new head both CI jobs and separate reviewer pass. This is source repair evidence, not live DataStore consistency.",
+      "minimal_experiment": "WORKER runs canonical full-server fixtures with read/unknown-schema errors and transient final-save failure. Require explicit fail-closed loading/failure behavior and bounded ordered final-save retry while preserving lease/revision/metadata checks.",
+      "success_condition": "Pinned current-head negative controls fail; repaired canonical server preserves progress and exposes safe failure state. Fresh both-job CI and independent reviewer. Offline result is not real DataStore reliability.",
       "required_real_evidence": [
-        "Later scoped private-engine two-server/rejoin trace with exact source/place version",
-        "No publication, billing, credential access or inferred data-loss incident"
+        "Later private-engine rejoin/two-server test with exact source/place version and actual failure logs",
+        "No publish/key/API activation or added spending"
       ],
-      "next_actor": "WORKER",
-      "status": "REQUEST_CHANGES_OFFLINE_REPRO_REQUESTED"
+      "next_actor": "WORKER"
     },
     {
       "id": "private_headless_engine_evidence_path",

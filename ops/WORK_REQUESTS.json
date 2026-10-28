@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T01:23:39.025Z",
+  "observed_at": "2026-10-28T01:44:06Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1587,6 +1587,66 @@
       },
       "owner_reply_required": false,
       "next_actor": "WORKER"
+    },
+    {
+      "id": "issue71_pr96_scoped_transport_independent_review",
+      "kind": "INDEPENDENT_SYSTEM_REVIEW",
+      "priority": "P1",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "status": "OPEN",
+      "repository": "kk051780/toy-wars-factory",
+      "issue": 71,
+      "pr": 96,
+      "head": "b6118ae609d6d634d4538a7e04be2b051c32a7a0",
+      "base_main_sha": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+      "created_at": "2026-10-28T01:44:06Z",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "bd1f21de-2058-8332-9263-71e91bacf82d",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "a0714a68a05425a196b20c91107e37a672ff8e66",
+        "owner_run_id": "bd1f21de-2058-8332-9263-71e91bacf82d",
+        "epoch": 160
+      },
+      "ci": {
+        "id": 40616434523,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40616434523",
+        "head": "b6118ae609d6d634d4538a7e04be2b051c32a7a0",
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "python_tests": 454,
+        "new_tests": 31,
+        "scope": "PASS",
+        "coordination": "PASS_ONE_IMMUTABLE_CLAIM",
+        "jobs": [
+          {
+            "id": 122579899773,
+            "name": "compile_hold",
+            "head": "b6118ae609d6d634d4538a7e04be2b051c32a7a0",
+            "attempt": 1,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 122579900041,
+            "name": "offline",
+            "head": "b6118ae609d6d634d4538a7e04be2b051c32a7a0",
+            "attempt": 1,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      "request": "Independently review new96 exact head/base and C72 epoch160 immutable claim. Verify4A only/201 main blobs unchanged, new31 regressions and full454 both-job CI, actual37 GET+9 PEEK through sourced6bd8b106101a34c5eeb35c92a583bd8ccd8235f. Check fixed/discovered resource scope, original accepted GET/gates, PEEK projection before actual collectors, identical lifecycle behavior, fail-closed session/error/budgets and no origin/execution grants. Explicitly retain opt-in/in-process boundary: no sandbox/auth proxy/PR55 solution/portable proof/permanent operation. Author cannot approve or merge; if safe separately integrate then actual main QA/handoff. Keep Issue71 open until overall acceptance confirmed.",
+      "owner_reply_required": false,
+      "live_scope": "One host-observed bounded new route; callback/stdin/output NOT_VERIFIED, synthetic games SYNTHETIC_TEST_ONLY",
+      "limits": [
+        "Older CLIs unchanged",
+        "Original operation error absent",
+        "No task, authentication, workflow, spending or release changes"
+      ]
     }
   ]
 }
