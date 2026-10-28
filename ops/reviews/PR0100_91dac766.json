@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "pr": 100,
+  "head": "91dac7662454a197e20eb953a92df044545fd577",
+  "base_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "487bd4a0-2d84-8327-a4c5-7d71b5136cde",
+  "lease_epoch": 198,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "597f03b8-0fc0-8330-a5ec-a88949bff82b",
+  "repair_author_run_id": "0503596d-15e0-8330-ad32-07112bff92e4",
+  "reviewed_at": "2026-10-28T12:18:15.170Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "evidence": {
+    "main_qa": {
+      "id": 40672776209,
+      "head": "681730de8cf346b8a59ff5e4408ad50ed1986345",
+      "conclusion": "success",
+      "status_only_compare": {
+        "verified": true,
+        "status": "ahead",
+        "paths": [
+          "status/CHAT_HANDOFF.md",
+          "status/LATEST_STATE.json"
+        ]
+      }
+    },
+    "pr_ci": {
+      "id": 40685911751,
+      "head": "91dac7662454a197e20eb953a92df044545fd577",
+      "conclusion": "success",
+      "required_jobs_passed": true,
+      "scope_and_claim_gate": "PASS",
+      "jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      }
+    },
+    "diff": [
+      "src/ToyWarsServer.server.lua",
+      "tests/auto/progression_expired_lease_spec.lua",
+      "history/C00083_expired_progress_lease_failclosed.json",
+      "history/C00105_expired_lease_shutdown_review_repair.json"
+    ],
+    "source": {
+      "main_bytes": 34083,
+      "head_bytes": 35117,
+      "delta": 1034,
+      "repair_delta": 89
+    },
+    "claims": [
+      {
+        "epoch": 193,
+        "sha": "de1885ce25d8802ceeac5422aa3cc222d570e5ac"
+      },
+      {
+        "epoch": 195,
+        "sha": "6f39824a0ccdca5fdbc734e5d135eb165bc03ca5"
+      },
+      {
+        "epoch": 196,
+        "sha": "2339f59ab086c9c20698fe1af305fc108c0d5291"
+      }
+    ],
+    "regression": "Eight new Lua lease cases with shutdown CAS, foreign owner and pinned negative controls; 454 Python CI cases",
+    "limitations": [
+      "Roblox Studio, real DataStore, multiplayer, mobile NOT_RUN",
+      "Separate shutdown concurrency and 30-second budget request remains open"
+    ]
+  },
+  "category": "GAME_DATASTORE_LEASE_EXPIRY_SHUTDOWN",
+  "reason": "Fail-closed lease expiry and shutdown CAS save, foreign-owner protection, previous-head negative control. Four trusted-scope files; contiguous source ledger; two exact-head CI jobs pass; independent task/run.",
+  "next": "MERGE_EXACT_HEAD_AND_CHECK_MAIN_QA"
+}

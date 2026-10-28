@@ -1,24 +1,22 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T12:05:14.673Z",
-  "status": "REQUEST_CHANGES",
+  "observed_at": "2026-10-28T12:18:15.170Z",
+  "status": "APPROVED_PENDING_MERGE",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "c2f31733-e58c-8323-9c58-d6703aea3553",
-  "lease_epoch": 194,
+  "reviewer_run_id": "487bd4a0-2d84-8327-a4c5-7d71b5136cde",
+  "lease_epoch": 198,
   "main_before": "9deab2acbdba8406b02f653ae84b355d92dd499a",
   "latest_review": {
     "pr": 100,
-    "head": "06ef9e558743b7eec1582cf7d6e358c9766132ea",
-    "verdict": "REQUEST_CHANGES",
-    "review_record": "ops/reviews/PR0100_06ef9e55.json",
-    "ci": 40684349324,
-    "category": "GAME_PROGRESS_LEASE_EXPIRY_SHUTDOWN",
-    "blockers": [
-      "pr100_expired_lease_shutdown_save_skip_20261028"
-    ],
-    "next_action": "WORKER_FIX_SHUTDOWN_SAVE_SKIP",
-    "status": "REQUEST_CHANGES"
+    "head": "91dac7662454a197e20eb953a92df044545fd577",
+    "verdict": "APPROVE",
+    "review_record": "ops/reviews/PR0100_91dac766.json",
+    "ci": 40685911751,
+    "category": "GAME_DATASTORE_LEASE_EXPIRY_SHUTDOWN",
+    "blockers": [],
+    "next_action": "MERGE_EXACT_HEAD_POST_QA",
+    "status": "APPROVED_PENDING_MERGE"
   },
   "merged_prs": [
     {
@@ -193,7 +191,7 @@
       "category": "GAME_WORKSHOP_FAILED_LOAD_BACKFILL"
     }
   ],
-  "merge_count_this_run": 1,
+  "merge_count_this_run": 0,
   "main_qa": {
     "id": 40672776209,
     "head": "681730de8cf346b8a59ff5e4408ad50ed1986345",
@@ -238,7 +236,7 @@
   "runtime_verified": true,
   "main_after": "9deab2acbdba8406b02f653ae84b355d92dd499a",
   "merge_sha": "681730de8cf346b8a59ff5e4408ad50ed1986345",
-  "next_actor": "WORKER_OR_META_NEXT_SMALL_TESTED_TASK",
+  "next_actor": "REVIEWER_MERGE_AFTER_HEAD_RECHECK",
   "secondary_review": null,
   "main_after_merge": "681730de8cf346b8a59ff5e4408ad50ed1986345",
   "main_after_handoff": "9deab2acbdba8406b02f653ae84b355d92dd499a",
