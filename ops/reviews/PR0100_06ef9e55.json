@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "pr": 100,
+  "head": "06ef9e558743b7eec1582cf7d6e358c9766132ea",
+  "base_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "c2f31733-e58c-8323-9c58-d6703aea3553",
+  "lease_epoch": 194,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "597f03b8-0fc0-8330-a5ec-a88949bff82b",
+  "reviewed_at": "2026-10-28T12:05:14.673Z",
+  "verdict": "REQUEST_CHANGES",
+  "blockers": [
+    "src/ToyWarsServer.server.lua:215-225 sets state.active=false on lease expiry before Kick; BindToClose at lines 776-781 only saves state.active sessions. If shutdown begins before PlayerRemoving after Kick, an unsaved but still CAS-owned session is excluded from shutdown saving (e.g. stored 200, in-memory 350). The new 5-case Lua test does not exercise BindToClose; harness game has no BindToClose by default. Fix the shutdown save eligibility independently of gameplay active, retain strict owner/revision CAS and no post-expiry income; add a canonical shutdown-before-PlayerRemoving regression that fails at this head and passes after fix, plus foreign-owner protection."
+  ],
+  "checks": {
+    "scope": true,
+    "regression": false,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": false
+  },
+  "category": "GAME_PROGRESS_LEASE_EXPIRY_SHUTDOWN",
+  "change_classification": "GAME_CODE_FIX_AND_REGRESSION",
+  "findings": [
+    "Exact PR head 06ef9e55, base main 9deab2ac; main QA #40672776209 success on 681730de and verified status-only descendant to current main.",
+    "PR CI #40684349324 success attempt1; offline and compile_hold both success; trusted scope and immutable shared claim checks passed.",
+    "PR 3 files: src/ToyWarsServer.server.lua +19/-1, new tests/auto/progression_expired_lease_spec.lua and new C00083 history; main has no C00083; source metrics 4 files/46172 bytes and history matches.",
+    "C00083 task/run and coordinator claim de1885ce epoch193 match completed WORKER peek. No protected settings, accepted tests, catalog, external API, billing, or publish changes.",
+    "Lease expiry stops income, but shutdown callback excludes the deactivated session if PlayerRemoving has not completed; this conditional path is directly visible in source and not covered by current CI.",
+    "Official Roblox DataModel BindToClose documentation recommends saving unsaved DataStore data at shutdown; offline fixture has no engine shutdown evidence."
+  ],
+  "ci": {
+    "id": 40684349324,
+    "head": "06ef9e558743b7eec1582cf7d6e358c9766132ea",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": [
+      {
+        "name": "offline",
+        "conclusion": "success"
+      },
+      {
+        "name": "compile_hold",
+        "conclusion": "success"
+      }
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40684349324"
+  },
+  "main_qa": {
+    "id": 40672776209,
+    "head": "681730de8cf346b8a59ff5e4408ad50ed1986345",
+    "conclusion": "success",
+    "verified_status_only_descendant": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+    "compare_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "changed_files_count": 3,
+  "source_metrics": {
+    "files": 4,
+    "lines": 1063,
+    "bytes": 46172
+  },
+  "limitations": [
+    "OFFLINE_ONLY",
+    "SHUTDOWN_RACE_NOT_EXECUTED",
+    "NO_ENGINE_OR_REAL_DATASTORE_VERIFICATION"
+  ],
+  "decision": "REQUEST_FIX_AND_NEW_HEAD_CI",
+  "status": "REQUEST_CHANGES",
+  "merge_sha": null,
+  "source_reference": "https://create.roblox.com/docs/reference/engine/classes/DataModel"
+}

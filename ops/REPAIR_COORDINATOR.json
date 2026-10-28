@@ -750,6 +750,42 @@
       "post_merge_handoff_status": "success",
       "main_after_handoff": "9deab2acbdba8406b02f653ae84b355d92dd499a",
       "status_only_descendant_verified": true
+    },
+    "100": {
+      "schema": 1,
+      "pr": 100,
+      "head": "06ef9e558743b7eec1582cf7d6e358c9766132ea",
+      "base_reviewed": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+      "reviewer_kind": "REVIEWER",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "c2f31733-e58c-8323-9c58-d6703aea3553",
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "597f03b8-0fc0-8330-a5ec-a88949bff82b",
+      "verdict": "REQUEST_CHANGES",
+      "findings": [
+        "src/ToyWarsServer.server.lua:215-225 sets state.active=false on lease expiry before Kick; BindToClose at lines 776-781 only saves state.active sessions. If shutdown begins before PlayerRemoving after Kick, an unsaved but still CAS-owned session is excluded from shutdown saving (e.g. stored 200, in-memory 350). The new 5-case Lua test does not exercise BindToClose; harness game has no BindToClose by default. Fix the shutdown save eligibility independently of gameplay active, retain strict owner/revision CAS and no post-expiry income; add a canonical shutdown-before-PlayerRemoving regression that fails at this head and passes after fix, plus foreign-owner protection."
+      ],
+      "ci": {
+        "id": 40684349324,
+        "head": "06ef9e558743b7eec1582cf7d6e358c9766132ea",
+        "conclusion": "success",
+        "required_jobs_passed": true,
+        "scope_and_claim_gate": "PASS",
+        "jobs": [
+          {
+            "name": "offline",
+            "conclusion": "success"
+          },
+          {
+            "name": "compile_hold",
+            "conclusion": "success"
+          }
+        ],
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40684349324"
+      },
+      "review_record": "ops/reviews/PR0100_06ef9e55.json",
+      "status": "REQUEST_CHANGES",
+      "reviewed_at": "2026-10-28T12:05:14.673Z"
     }
   },
   "integration_results": {

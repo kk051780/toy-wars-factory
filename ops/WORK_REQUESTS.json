@@ -2163,6 +2163,33 @@
       "owner_reply_required": false,
       "next_actor": "WORKER",
       "engine_executed": false
+    },
+    {
+      "id": "pr100_expired_lease_shutdown_save_skip_20261028",
+      "kind": "INDEPENDENT_REVIEW_FIX",
+      "priority": "P1",
+      "assigned_role": "WORKER",
+      "status": "OPEN",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 100,
+      "branch": "auto/twf-game-repair-597f03b8-0fc0-8330-a5ec-a88949bff82b",
+      "head": "06ef9e558743b7eec1582cf7d6e358c9766132ea",
+      "base_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "c2f31733-e58c-8323-9c58-d6703aea3553",
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "597f03b8-0fc0-8330-a5ec-a88949bff82b",
+      "created_at": "2026-10-28T12:05:14.673Z",
+      "request": "src/ToyWarsServer.server.lua:215-225 sets state.active=false on lease expiry before Kick; BindToClose at lines 776-781 only saves state.active sessions. If shutdown begins before PlayerRemoving after Kick, an unsaved but still CAS-owned session is excluded from shutdown saving (e.g. stored 200, in-memory 350). The new 5-case Lua test does not exercise BindToClose; harness game has no BindToClose by default. Fix the shutdown save eligibility independently of gameplay active, retain strict owner/revision CAS and no post-expiry income; add a canonical shutdown-before-PlayerRemoving regression that fails at this head and passes after fix, plus foreign-owner protection.",
+      "reproduction": "Set stored coins=200; load player A and raise in-memory coins=350; advance os.time to 181 and fire Heartbeat; stub Kick to record only (no PlayerRemoving); invoke captured BindToClose before PlayerRemoving; on current head stored coins remain 200 and owner lease remains. After fix stored coins should be 350 and owner released only when CAS still matches; with foreign owner no overwrite.",
+      "expected": "Expired session cannot simulate but is eligible for safe final save in shutdown; add head-failing regression, foreign-owner negative control, preserve 2-job CI and accepted tests.",
+      "evidence": {
+        "pr_ci": 40684349324,
+        "head": "06ef9e558743b7eec1582cf7d6e358c9766132ea",
+        "source": "src/ToyWarsServer.server.lua",
+        "official": "https://create.roblox.com/docs/reference/engine/classes/DataModel"
+      },
+      "next_actor": "WORKER_REPAIR_BEFORE_NEW_ISSUE"
     }
   ]
 }
