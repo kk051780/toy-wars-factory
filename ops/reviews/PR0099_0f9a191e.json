@@ -69,5 +69,28 @@
     "NO_ENGINE_OR_REAL_DATASTORE_VERIFICATION"
   ],
   "decision": "INTEGRATE_EXACT_HEAD_AFTER_RECHECK",
-  "status": "APPROVED_NOT_MERGED"
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "merge_sha": "681730de8cf346b8a59ff5e4408ad50ed1986345",
+  "post_merge_main_qa": {
+    "id": 40672776209,
+    "head": "681730de8cf346b8a59ff5e4408ad50ed1986345",
+    "conclusion": "success",
+    "jobs": [
+      "offline",
+      "compile_hold"
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40672776209"
+  },
+  "post_merge_handoff": {
+    "id": 40672776082,
+    "head": "681730de8cf346b8a59ff5e4408ad50ed1986345",
+    "conclusion": "success",
+    "jobs": [
+      "update"
+    ],
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40672776082"
+  },
+  "main_after_handoff": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+  "status_only_descendant_verified": true,
+  "completed_at": "2026-10-28T10:32:18.062Z"
 }

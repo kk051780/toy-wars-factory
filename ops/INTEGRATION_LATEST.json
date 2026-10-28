@@ -1,24 +1,22 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T09:22:49.033Z",
-  "status": "REQUEST_CHANGES",
+  "observed_at": "2026-10-28T10:32:18.062Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "d83f0507-634c-8330-9cb4-52b7cbd63deb",
-  "lease_epoch": 183,
+  "reviewer_run_id": "2370fa4c-c120-8329-964d-bf303c27c2e9",
+  "lease_epoch": 186,
   "main_before": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
   "latest_review": {
     "pr": 99,
-    "head": "ae1e80f5b2e05e983497f33b675a52bf33a7acfd",
-    "verdict": "REQUEST_CHANGES",
-    "review_record": "ops/reviews/PR0099_ae1e80f5.json",
-    "ci": 40661660868,
+    "head": "0f9a191e86918a4b1c599d86ef18dba26b0442b1",
+    "verdict": "APPROVE",
+    "review_record": "ops/reviews/PR0099_0f9a191e.json",
+    "ci": 40669496318,
     "category": "GAME_WORKSHOP_FAILED_LOAD_BACKFILL",
-    "blockers": [
-      "pr99_failed_load_rejected_player_retry_storm_20261028"
-    ],
-    "next_action": "WORKER_FIX_AND_FRESH_EXACT_HEAD_CI",
-    "status": "NOT_MERGED"
+    "blockers": [],
+    "next_action": "NEXT_PVE_DEFECT_OR_ENGINE_EVIDENCE",
+    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
   },
   "merged_prs": [
     {
@@ -181,12 +179,22 @@
       "handoff": 40656759290,
       "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
       "category": "GAME_DATASTORE_PERSISTENCE"
+    },
+    {
+      "pr": 99,
+      "head": "0f9a191e86918a4b1c599d86ef18dba26b0442b1",
+      "merge_sha": "681730de8cf346b8a59ff5e4408ad50ed1986345",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40672776209,
+      "handoff": 40672776082,
+      "main_after_handoff": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+      "category": "GAME_WORKSHOP_FAILED_LOAD_BACKFILL"
     }
   ],
-  "merge_count_this_run": 0,
+  "merge_count_this_run": 1,
   "main_qa": {
-    "id": 40656759102,
-    "head": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+    "id": 40672776209,
+    "head": "681730de8cf346b8a59ff5e4408ad50ed1986345",
     "conclusion": "success",
     "jobs": {
       "offline": "success",
@@ -199,11 +207,11 @@
     ]
   },
   "handoff": {
-    "id": 40629585610,
-    "head": "d3decf3519937f4e8391d130eee5ff5375868fed",
+    "id": 40672776082,
+    "head": "681730de8cf346b8a59ff5e4408ad50ed1986345",
     "status": "completed",
     "conclusion": "success",
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40629585610",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40672776082",
     "jobs": [
       {
         "name": "update",
@@ -220,17 +228,17 @@
     ]
   },
   "unresolved": [
-    "PR99 failed-load backfill can reselect a previously kicked but not yet disconnected player; multi-failure retry loop/queue starvation risk, WORKER fix requested.",
-    "PR98 character pipeline protected scope requires separate exact-head maintenance review; not eligible for routine reviewer merge.",
-    "Roblox Studio/real DataStore/multiplayer/mobile/character visuals not verified; release HOLD."
+    "PR98 character pipeline includes protected scope/repository_gate and requires separate exact-head maintenance review; not eligible for routine reviewer merge.",
+    "Roblox Studio/real DataStore/multiplayer/mobile/character visuals and player feedback unverified; release HOLD.",
+    "Gemini incident hold and existing financial caps remain unchanged."
   ],
-  "next": "WORKER_FIX_PR99_REJECTED_PLAYER_BACKFILL_ELIGIBILITY_WITH_TWO_FAILURE_NEGATIVE_CONTROL; PROTECTED_PR98_SEPARATE_AUDIT; KEEP_RELEASE_HOLD",
+  "next": "VERIFY_PVE_ENGINE_AND_MULTIPLAYER_EVIDENCE; PROTECTED_PR98_SEPARATE_AUDIT; KEEP_RELEASE_HOLD",
   "runtime_verified": true,
-  "main_after": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
-  "merge_sha": null,
-  "next_actor": "WORKER_FIX_BEFORE_NEW_ISSUES",
+  "main_after": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+  "merge_sha": "681730de8cf346b8a59ff5e4408ad50ed1986345",
+  "next_actor": "WORKER_OR_META_NEXT_SMALL_TESTED_TASK",
   "secondary_review": null,
-  "main_after_merge": "dd703db711f11b0aff5cce3c084a2462025ac010",
-  "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
+  "main_after_merge": "681730de8cf346b8a59ff5e4408ad50ed1986345",
+  "main_after_handoff": "9deab2acbdba8406b02f653ae84b355d92dd499a",
   "status_only_descendant_verified": true
 }

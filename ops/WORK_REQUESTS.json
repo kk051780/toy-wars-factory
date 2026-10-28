@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T09:22:49.033Z",
+  "observed_at": "2026-10-28T10:32:18.062Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1957,7 +1957,7 @@
       "priority": "P1",
       "assigned_role": "WORKER",
       "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "status": "OPEN",
+      "status": "RESOLVED_MERGED_MAIN_QA_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "pr": 99,
       "head": "ae1e80f5b2e05e983497f33b675a52bf33a7acfd",
@@ -1965,7 +1965,7 @@
       "created_at": "2026-10-28T09:22:49.033Z",
       "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "reviewer_run_id": "d83f0507-634c-8330-9cb4-52b7cbd63deb",
-      "review_record": "ops/reviews/PR0099_ae1e80f5.json",
+      "review_record": "ops/reviews/PR0099_0f9a191e.json",
       "source": "src/ToyWarsServer.server.lua join() failed-load backfill after Kick",
       "request": "A player whose progress load has already failed must not be eligible for another join/backfill while still in Players pending Kick disconnect. Track rejected/failed-load players or equivalent fenced eligibility, skip them during backfill and join, clear tracking on PlayerRemoving, preserve safe fail-closed behavior and fair assignment to healthy waiting players. Do not change accepted tests or protected config.",
       "reproduction": [
@@ -1986,8 +1986,13 @@
         "source": "src/ToyWarsServer.server.lua",
         "test": "tests/auto/progression_failed_load_backfill_spec.lua"
       },
-      "next_actor": "WORKER_FIX_BEFORE_NEW_ISSUES",
-      "owner_reply_required": false
+      "next_actor": "NONE",
+      "owner_reply_required": false,
+      "resolved_at": "2026-10-28T10:32:18.062Z",
+      "resolved_head": "0f9a191e86918a4b1c599d86ef18dba26b0442b1",
+      "resolved_pr": 99,
+      "merge_sha": "681730de8cf346b8a59ff5e4408ad50ed1986345",
+      "main_qa": 40672776209
     }
   ]
 }
