@@ -1,8 +1,18 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 190,
-  "holder": null,
+  "epoch": 191,
+  "holder": {
+    "kind": "CONTROLLER",
+    "owner_id": "d0193dac-f125-4f66-a0b1-6c824c6e17e2",
+    "task_id": null,
+    "epoch": 191,
+    "acquired_at": "2026-10-28T11:41:21.767362+00:00",
+    "expires_at": "2026-10-28T12:11:21.767362+00:00",
+    "base_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+    "work_branch": "ops/twf-character-pipeline-20261028",
+    "origin": "controller"
+  },
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -1456,7 +1466,7 @@
         "compile_hold": 122789004248
       }
     },
-    "status": "REPAIR_CI_PASSED_AWAIT_NEW_EXACT_HEAD_INDEPENDENT_REVIEW",
+    "status": "WITHDRAWN_PENDING_HISTORICAL_HEAD_TEST_REPAIR",
     "require_independent_actual_diff_review": true,
     "require_current_main_qa": true,
     "require_post_merge_main_qa_and_handoff": true,
@@ -1527,7 +1537,24 @@
       "claimed_at": "2026-10-28T11:36:10.211Z",
       "request_result": "Immediate run requested. The saved schedule is unchanged.",
       "requested_at": "2026-10-28T11:36:35.641Z"
-    }
+    },
+    "preintegration_blockers": [
+      {
+        "id": "HISTORICAL_C00100_BOUND_TO_MUTABLE_HEAD",
+        "file": "tests/test_system_character_history.py",
+        "lines": [
+          49,
+          50,
+          51
+        ],
+        "head": "0d64eaa9cbd15bb136bd41de24303f82cb98be1b",
+        "observed_at": "2026-10-28T11:41:22.334Z",
+        "observer_kind": "MANUAL_CONTROLLER_WITH_SEPARATE_READ_ONLY_SUPPLEMENTAL_REVIEW",
+        "observer_operation_id": "d0193dac-f125-4f66-a0b1-6c824c6e17e2",
+        "evidence": "Independent supplemental context /root/independent_pr98_code_audit executes exact test with canonical sources:0d passes, valid future kururin registration3304->3349 fails historical after_bytes and total50216->50261. Any future source-changing WORKER PR fails while C00100 and accepted test must stay immutable.",
+        "required": "Anchor reconciled C00100 snapshot to immutable8997fdbd tree; preserve accepted cumulative HEAD ledger verification; add a future-HEAD noninterference regression. New exact head CI and a new independent registered review are required."
+      }
+    ]
   },
   "character_pipeline_review_request_history": [
     {
