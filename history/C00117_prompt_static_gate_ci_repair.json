@@ -1,0 +1,75 @@
+{
+  "id": "C00117",
+  "date": "2026-10-29",
+  "kind": "AUTONOMOUS_PROMPT_ACCEPTED_STATIC_GATE_CI_REPAIR",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "20fb1989-2368-8326-a2c3-3ac8c0d59538",
+  "queue_decision": {
+    "action": "REPAIR_CI",
+    "branch": "auto/twf-game-repair-20fb1989-2368-8326-a2c3-3ac8c0d59538",
+    "pr": 108,
+    "failed_run": 40760892777,
+    "change_scheduler": false
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "f1ea9b209ab1c2767a1ed2dc75d9eeaa11d5f358",
+    "owner_run_id": "20fb1989-2368-8326-a2c3-3ac8c0d59538",
+    "epoch": 217
+  },
+  "main_base": "8a0f8816870fa4854b71c23d223728589303070a",
+  "previous_head": "413961ecf47908e1f66209884ecf3aa7ff02dc48",
+  "failure": {
+    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40760892777",
+    "offline": "FAIL",
+    "compile_hold": "PASS",
+    "new_lua": "5/5 PASS",
+    "reason": "Accepted tests/test_selector_authority.py asserts exact original <=13 server guard text; changing that line fails the immutable static regression. No accepted tests or tools modified."
+  },
+  "fix": "Restore exact accepted <=13 guard and add a separate configuration-aware <=prompt.MaxActivationDistance+1 fence. Current default 12+1 behavior stays intact; narrower configured ranges reject forged triggers.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "history/C00117_prompt_static_gate_ci_repair.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 40060,
+      "after_bytes": 40142,
+      "delta_bytes": 82
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1163,
+    "lua_bytes": 51286
+  },
+  "main_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1162,
+    "lua_bytes": 51137
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [],
+  "characters_touched": [],
+  "character_impact": "No existing toy price/stats/catalog/HUD/save changes.",
+  "tests": {
+    "new_canonical_lua_cases": 4,
+    "pinned_main_negative_controls": 1,
+    "accepted_server_27": "UNCHANGED",
+    "accepted_hud_6": "UNCHANGED",
+    "local_lua": "NOT_RUN",
+    "prior_new_lua": "5/5 PASS",
+    "exact_head_ci": "PENDING",
+    "roblox_engine": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "multiplayer": "NOT_RUN"
+  },
+  "evidence": {
+    "claim_commit": "f1ea9b209ab1c2767a1ed2dc75d9eeaa11d5f358",
+    "previous_head": "413961ecf47908e1f66209884ecf3aa7ff02dc48",
+    "head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE",
+    "failed_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40760892777"
+  },
+  "next_action": "Exact-head CI both jobs; independent reviewer and main QA; author never self-merges."
+}

@@ -482,7 +482,8 @@ local function makePlot(player, state)
             -- Never trust a client-triggered prompt without checking server-side proximity.
             local character=actor.Character
             local root=character and character:FindFirstChild("HumanoidRootPart")
-            if not root or not ((root.Position-pad.Position).Magnitude <= prompt.MaxActivationDistance + 1) then return end
+            if not root or not ((root.Position-pad.Position).Magnitude <= 13) then return end
+            if not ((root.Position-pad.Position).Magnitude <= prompt.MaxActivationDistance + 1) then return end
             state.selected=id
             refreshStatus(state)
         end)
