@@ -648,7 +648,8 @@ local lobbyGround = part(world,"LobbyGround",Vector3.new(930,1,200),CFrame.new(0
 lobbyGround.CanCollide = true
 
 local function join(player)
-    if player.Parent ~= Players or sessions[player] or rejectedLoads[player] then return end
+    if player.Parent ~= Players or sessions[player] then return end
+    if rejectedLoads[player] then return end
     local slot=chooseSlot()
     if not slot then
         warn("TWF v1.2: no free workshop plots for",player.UserId)
