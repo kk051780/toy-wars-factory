@@ -1,23 +1,23 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T17:28:54.695Z",
-  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "observed_at": "2026-10-28T19:27:28.545Z",
+  "status": "MERGED_WAIT_MAIN_QA_AND_HANDOFF",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "73f73cd1-8cd4-8326-b436-83c29f105c82",
-  "lease_epoch": 210,
-  "main_before": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
+  "reviewer_run_id": "ec854cff-9478-8328-b35e-17a60d930fbc",
+  "lease_epoch": 215,
+  "main_before": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092",
   "latest_review": {
-    "pr": 106,
-    "head": "3a62e5c70e27c2b60152ab97011b5b7535ddc8d5",
+    "pr": 107,
+    "head": "0f3f2eb853ef58b7d34adeee5241e090066a9b7f",
     "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0106_3a62e5c7.json",
-    "ci": 40733120541,
-    "merge_sha": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
-    "main_qa": 40735889809,
-    "handoff": 40735889774,
-    "category": "GAME_DATASTORE_SHUTDOWN_ADMISSION",
-    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
+    "review_record": "ops/reviews/PR0107_0f3f2eb8.json",
+    "ci": 40751895777,
+    "merge_sha": "877417447e645fd8f3c34d5aecd883a43791712d",
+    "main_qa": 40754419751,
+    "handoff": 40754419345,
+    "category": "GAME_DATASTORE_EXPIRED_LEASE_INPUT_FENCE",
+    "status": "MERGED_WAIT_MAIN_QA_AND_HANDOFF"
   },
   "merged_prs": [
     {
@@ -258,17 +258,17 @@
     ]
   },
   "unresolved": [
-    "P1 main_expired_lease_refresh_failure_unsavable_play_20261028 OPEN_REPRODUCED",
+    "Post-merge main QA and handoff still pending for PR107",
     "PR98 protected character pipeline separate audit",
     "Roblox engine/DataStore/multiplayer/mobile/visual/player-feedback NOT_RUN; release HOLD; Gemini/spending caps preserved"
   ],
-  "next": "WORKER_FIX_P1_EXPIRED_LEASE_REFRESH",
+  "next": "WAIT_MAIN_QA_AND_HANDOFF",
   "runtime_verified": true,
-  "main_after": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092",
-  "merge_sha": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
-  "next_actor": "WORKER",
+  "main_after": "877417447e645fd8f3c34d5aecd883a43791712d",
+  "merge_sha": "877417447e645fd8f3c34d5aecd883a43791712d",
+  "next_actor": "REVIEWER_VERIFY_POST_MERGE_CI",
   "secondary_review": null,
-  "main_after_merge": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
+  "main_after_merge": "877417447e645fd8f3c34d5aecd883a43791712d",
   "main_after_handoff": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092",
   "status_only_descendant_verified": true,
   "merges_this_run": 1
