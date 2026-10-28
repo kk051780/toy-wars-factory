@@ -1,0 +1,239 @@
+{
+  "id": "C00123",
+  "date": "2026-10-29",
+  "kind": "SYSTEM_A12_READ_ONLY_RUNTIME_ALERTS",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "4d796ca2-e004-832e-86ae-b5e502f26901",
+  "base_main": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+  "observed_at_utc": "2026-10-28T22:37:19Z",
+  "issue": 114,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "de45b71d8925fba0b9a5862a14c14d78083d8a88",
+    "owner_run_id": "4d796ca2-e004-832e-86ae-b5e502f26901",
+    "epoch": 226
+  },
+  "problem": "Accepted scoped observers bind actual run/head but do not classify running-duration overruns or maintain deduplicated, explicitly provisional anomaly history. Old latest_result, service prose, disappearing alarms and self-declared proof must not become completion, host-denial, delivery or recovery.",
+  "implementation": {
+    "source": "tools/system_runtime_alerts.py",
+    "call_path": "runtime_alerts.observe -> accepted provider_transport.observe(incident) -> accepted incident/service/GitHub collectors; no accepted implementation changed",
+    "pure_input_validation": "classify validates exact snapshots/trace/project/role/task/run/coordinator/head/attempt/jobs; source authentication remains NOT_VERIFIED",
+    "classifications": [
+      "OBSERVED_COMPLETED",
+      "OBSERVED_FAILED",
+      "OBSERVED_NO_UPDATE",
+      "IN_PROGRESS_NOT_YET_STALE",
+      "STALE_OR_NO_RESULT",
+      "ACTIVE_LEASE",
+      "EXPIRED_LEASE_UNRELEASED",
+      "CI_RUNNING_IN_WINDOW",
+      "CI_TIMEOUT",
+      "MAIN_QA_FAILED",
+      "PR_QA_FAILED",
+      "CONNECTOR_UNAVAILABLE",
+      "INDETERMINATE"
+    ],
+    "dedup": "Service IDs bind project/repo/role/task/current run/kind, not unrelated main movement. CI adds exact head/run/attempt. 48-hour prior observation replay bound; repeats require strictly later observation; disappeared alerts are unrecovered candidates only.",
+    "protected_boundary": "No write/start/retry/merge/publish/spend capability; all authority false. Expired lease is never a takeover grant. Unknown operation cause INDETERMINATE; original host operation receipt unavailable.",
+    "limits": [
+      "Initial attempt queue+execution timeout only; no attempt-specific start in accepted rerun envelope, so pending rerun is INDETERMINATE",
+      "No missed-schedule detection/history pagination or notification sender",
+      "No authenticated durable alert baseline or independent recovery receipt",
+      "Pure callbacks/caller JSON/checksums cannot authenticate origins"
+    ]
+  },
+  "main_health": {
+    "main": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+    "qa": 40779288581,
+    "qa_head": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+    "qa_jobs": "offline+compile_hold SUCCESS",
+    "qa_python": 510,
+    "handoff": 40779288627,
+    "status_only_direct_compare": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "pr112": "INDEPENDENTLY_MERGED; no duplicate repair",
+    "review_record": "ops/reviews/PR0112_c6301b97.json"
+  },
+  "service_observations": {
+    "meta_task": {
+      "task_id": "6add445e4138819197d9cf2b1a02534d",
+      "run": {
+        "id": "4d796ca2-e004-832e-86ae-b5e502f26901",
+        "recorded_status": "in_progress",
+        "scheduled_for": "2026-10-28T22:24:01.857443Z",
+        "started_at": "2026-10-28T22:24:15.003018Z",
+        "completed_at": null
+      },
+      "latest_result_run_id": "f849220f-dc50-8329-926a-f3b0db1267a2",
+      "delivery": "UNKNOWN"
+    },
+    "worker_task": {
+      "task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "run": {
+        "id": "bb67691e-e5ac-8328-9c7b-cac742d64d77",
+        "recorded_status": "completed",
+        "scheduled_for": "2026-10-28T22:05:04Z",
+        "started_at": "2026-10-28T22:07:02.166125Z",
+        "completed_at": "2026-10-28T22:07:55.017103Z"
+      },
+      "latest_result_run_id": "bb67691e-e5ac-8328-9c7b-cac742d64d77",
+      "delivery": "UNKNOWN"
+    },
+    "reviewer_task": {
+      "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "run": {
+        "id": "4884b328-740c-8323-b500-1f8da8d73819",
+        "recorded_status": "completed",
+        "scheduled_for": "2026-10-28T22:25:00Z",
+        "started_at": "2026-10-28T22:23:43.787848Z",
+        "completed_at": "2026-10-28T22:24:13.863389Z"
+      },
+      "latest_result_run_id": "4884b328-740c-8323-b500-1f8da8d73819",
+      "delivery": "UNKNOWN"
+    }
+  },
+  "thresholds": {
+    "service_timeout_seconds": {
+      "author": 1800,
+      "meta": 1800,
+      "reviewer": 1800
+    },
+    "ci_timeout_seconds": 900,
+    "max_observation_age_seconds": 120,
+    "replay_window_seconds": 172800
+  },
+  "tests": {
+    "new_test": "tests/test_system_runtime_alerts.py",
+    "new_tests": 39,
+    "local_focused": "39 PASS; both synthetic manifests through accepted transport/collectors",
+    "local_full": {
+      "run": 549,
+      "passed": 548,
+      "failures": 1,
+      "errors": 0,
+      "cause": "Unchanged handoff historical Git ancestry assertion; connected snapshot has no real commit history. No test skips or accepted edits."
+    },
+    "negative_controls": {
+      "old_observer": "Actual accepted incident observer reports IN_PROGRESS without an overrun threshold/alert collection; new classifier flags 1200s elapsed against600s hypothesis.",
+      "isolated_mutant": {
+        "tests": 2,
+        "failures": 2,
+        "errors": 0,
+        "disk_source_written": false
+      }
+    },
+    "github_ci": "PENDING_EXACT_NEW_HEAD; no prior CI reused",
+    "trusted_scope": "PREFLIGHT_REQUIRED; actual trusted-base+immutable claim CI required"
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "files": [
+    {
+      "path": "tools/system_runtime_alerts.py",
+      "bytes": 24155,
+      "lines": 396,
+      "sha256": "749b76dbb7143492e599f8f832c3ec56514e6ecf8ed7b9191c236f5b44d20bde",
+      "before_bytes": 0
+    },
+    {
+      "path": "tests/test_system_runtime_alerts.py",
+      "bytes": 22035,
+      "lines": 372,
+      "sha256": "cad831172ed669f8f0f6a3a5b91ea61163c2a80a4fd44f045ce0dfbfa633bdde",
+      "before_bytes": 0
+    },
+    {
+      "path": "docs/research/2026-10-29_a12_runtime_alerts.md",
+      "bytes": 8421,
+      "lines": 129,
+      "sha256": "70f3a4e481174421d748615469ae89e23cd6cacfc8b8261b76e2611cb317575d",
+      "before_bytes": 0
+    }
+  ],
+  "history_size": "Measured after serialization; not a circular self-hash claim.",
+  "prior_art_credit": {
+    "issue": "https://github.com/kk051780/toy-wars-factory/issues/114#issuecomment-6482136080",
+    "status": "Requirements from local prototype report only; no downloadable code retrieved or copied, no manual claim/test record attributed to META."
+  },
+  "web_research": [
+    {
+      "url": "https://github.blog/ai-and-ml/llms/how-to-evaluate-llms-before-production/",
+      "published_at": "2026-08-25",
+      "updated_at": null,
+      "checked_at": "2026-10-28T22:37:19Z",
+      "source_kind": "PRIMARY_OFFICIAL",
+      "finding": "Preserve realistic failure classes and distinguish offline evaluation from real production outcomes. Older case freshly read, not new news."
+    },
+    {
+      "url": "https://docs.github.com/en/rest/actions/workflow-jobs#list-jobs-for-a-workflow-run-attempt",
+      "published_at": null,
+      "checked_at": "2026-10-28T22:37:19Z",
+      "source_kind": "PRIMARY_OFFICIAL",
+      "finding": "Attempt job list is keyed by run and attempt; keep exact bindings and Actions read-only boundary."
+    },
+    {
+      "url": "https://create.roblox.com/docs/production/game-design/analytics-essentials",
+      "published_at": null,
+      "checked_at": "2026-10-28T22:37:19Z",
+      "source_kind": "PRIMARY_OFFICIAL",
+      "finding": "Engagement/retention/monetization and controlled experiments are future measurement candidates, not this game's measured effect."
+    },
+    {
+      "url": "https://create.roblox.com/docs/discovery",
+      "published_at": null,
+      "checked_at": "2026-10-28T22:37:19Z",
+      "source_kind": "PRIMARY_OFFICIAL",
+      "finding": "Keep first-session and repeat-play cohort hypotheses separate from unmeasured outcomes."
+    },
+    {
+      "url": "https://www.biggames.io/post/pet-simulator-99-update-99",
+      "published_at": "2026-10-24",
+      "checked_at": "2026-10-28T22:37:19Z",
+      "source_kind": "DEVELOPER_CASE",
+      "finding": "Collection/reward mechanism is observable, no causal retention claim or copied material."
+    }
+  ],
+  "community_research": {
+    "url": "https://devforum.roblox.com/t/50-of-players-leave-within-2-minutes/4946893",
+    "checked_at": "2026-10-28T22:37:19Z",
+    "status": "NOT_VERIFIED_THIS_RUN",
+    "reason": "Actual open returned JavaScript/bot wall; no snippet metrics adopted."
+  },
+  "measurement_scope": {
+    "period_start": "2026-10-28T22:24:15.003018Z",
+    "period_end": "2026-10-28T22:37:19Z",
+    "service_samples": 3,
+    "qa_runs_verified": 1,
+    "open_registered_meta_prs_at_start": 0,
+    "concurrency": "One free-holder claim; no takeover or extra launch. Prior reviewer observed completed.",
+    "effect": "No rate or sustained effectiveness inferred from one bounded observation."
+  },
+  "verification": {
+    "fixture": "SYNTHETIC_TEST_ONLY",
+    "live_classifier_path": "NOT_RUN_AT_AUTHORING; first source review only; subsequent legal scheduled cycle after main adoption",
+    "raw_host_error": "NOT_AVAILABLE",
+    "operation_cause": "INDETERMINATE",
+    "alert_delivery": "NOT_ATTEMPTED",
+    "unattended_detection": "NOT_VERIFIED",
+    "recovery": "NOT_VERIFIED",
+    "a12_progress_points_awarded": 0,
+    "a13": "NOT_VERIFIED",
+    "engine": "NOT_RUN",
+    "players": "NOT_MEASURED"
+  },
+  "protected_controls": "All262 accepted main blobs preserved; no accepted tests/history, checker/workflow/config/AGENTS/permissions/secrets/billing/publishing/task changes. repair_control v2 unchanged. Issue113 protected progress maintenance separate.",
+  "next": "Fresh exact head offline+compile_hold, separate registered REVIEWER task 6add6aaceb4c8191b1666fe15f97cd88 and post-main QA/handoff. Author cannot merge. Only later legitimate unforced scheduled anomaly/report/recovery proof can satisfy A12.",
+  "holds": [
+    "GEMINI_SEVERE_HOLD",
+    "EXTERNAL_SPEND_HOLD",
+    "ROBLOX_RELEASE_HOLD"
+  ]
+}
