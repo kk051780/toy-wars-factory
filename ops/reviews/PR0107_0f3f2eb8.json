@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "pr": 107,
+  "head": "0f3f2eb853ef58b7d34adeee5241e090066a9b7f",
+  "base_main_sha": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092",
+  "reviewed_at": "2026-10-28T19:26:47.879Z",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "ec854cff-9478-8328-b35e-17a60d930fbc",
+  "lease_epoch": 215,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "da89febb-8b50-832d-bf89-6d2edc8d64f0",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "changed_files": [
+    "history/C00113_expired_lease_input_fence.json",
+    "history/C00114_expired_lease_input_fence_ci_repair.json",
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_expired_input_fence_spec.lua"
+  ],
+  "change_category": "GAME_CODE_AND_NEW_REGRESSION",
+  "findings": [
+    "Three input entry points call existing lease-expiry fail-closed helper before state mutation; no HUD, balance, catalog, accepted test or protected control changes.",
+    "Five canonical whole-server Lua cases pass (expired 3 routes, unexpired 3 routes, pinned old-main negative control); real engine/DataStore/multiplayer/mobile not run.",
+    "Historical C00113/C00114 source metrics 39816->39993 bytes (+177), four Lua files 50960->51137 bytes, initial baseline 25726 unchanged; correction is test-fixture-only.",
+    "Trusted base CI offline scope and immutable claim gates passed; shared claim epochs 212 and 213 are ancestors of coordinator head."
+  ],
+  "evidence": {
+    "ci_run": 40751895777,
+    "ci_head": "0f3f2eb853ef58b7d34adeee5241e090066a9b7f",
+    "ci_conclusion": "success",
+    "ci_jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 454,
+    "new_lua_cases": 5,
+    "old_head_failure_run": 40751639872,
+    "claim_commits": [
+      "456dc8d96fc98e802901a0acb361898b31ec0bba",
+      "157b8311dcb15980843eeb292d0054b3fa6e6919"
+    ],
+    "main_qa_run": 40735889809,
+    "main_qa_head": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
+    "main_qa_status_only_descendant": true,
+    "main_compare_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "limitations": [
+    "Offline mock only, not Roblox engine/DataStore/multiplayer/mobile/retention evidence",
+    "Release HOLD, Gemini incident HOLD, spending caps remain unchanged"
+  ],
+  "next": "MERGE_EXACT_HEAD_THEN_MAIN_QA_AND_HANDOFF"
+}
