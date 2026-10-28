@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 190,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "d165c1b2-1ff4-4475-8279-10ec5d1b2256",
-    "task_id": null,
-    "epoch": 190,
-    "acquired_at": "2026-10-28T11:36:09.643418+00:00",
-    "expires_at": "2026-10-28T12:06:09.643418+00:00",
-    "base_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
-    "work_branch": "ops/twf-character-pipeline-20261028",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -47,14 +37,12 @@
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "f7b10bdc-c8b0-4353-863c-768b9ef64687",
-    "epoch": 189,
-    "released_at": "2026-10-28T11:31:45.402083+00:00",
-    "result": "PR98_FOUR_BLOCKERS_REPAIRED_CI_PASSED_SHUTDOWN_REQUEST_REGISTERED",
+    "owner_id": "d165c1b2-1ff4-4475-8279-10ec5d1b2256",
+    "epoch": 190,
+    "released_at": "2026-10-28T11:36:36.669178+00:00",
+    "result": "PR98_NEW_HEAD_REVIEW_DISPATCHED",
     "pr": 98,
     "head": "0d64eaa9cbd15bb136bd41de24303f82cb98be1b",
-    "ci": 40680291116,
-    "next_actor": "INDEPENDENT_CHARACTER_MAINTENANCE_REVIEWER",
     "next_task_id": "6ae16fe9b8908191b93c85b0c2782f01"
   },
   "last_approval_report": {
@@ -1531,12 +1519,14 @@
       "id": "f7b10bdc-c8b0-4353-863c-768b9ef64687",
       "task_id": "6ae16fe9b8908191b93c85b0c2782f01",
       "head": "0d64eaa9cbd15bb136bd41de24303f82cb98be1b",
-      "status": "SINGLE_IMMEDIATE_REVIEW_REQUEST_CLAIMED",
+      "status": "IMMEDIATE_REVIEW_REQUEST_SENT",
       "recorded_at": "2026-10-28T11:31:42Z",
       "regular_task_schedules_changed": false,
       "dispatcher_operation_id": "d165c1b2-1ff4-4475-8279-10ec5d1b2256",
       "dispatcher_epoch": 190,
-      "claimed_at": "2026-10-28T11:36:10.211Z"
+      "claimed_at": "2026-10-28T11:36:10.211Z",
+      "request_result": "Immediate run requested. The saved schedule is unchanged.",
+      "requested_at": "2026-10-28T11:36:35.641Z"
     }
   },
   "character_pipeline_review_request_history": [
