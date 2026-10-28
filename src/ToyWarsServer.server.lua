@@ -211,13 +211,20 @@ local function saveProgress(player,state)
     end
     warn("TWF: progress save retries exhausted; progress may be unsaved for",player.UserId)
 end
--- Share one finalization per player across departure and shutdown callbacks.
-local function finalizeProgress(player,state)
-    if finalSavesInFlight[player] then return end
-    finalSavesInFlight[player]=true
+-- Reserve finalization synchronously so delayed spawned saves cannot duplicate it.
+local function runFinalSave(player,state)
     local ok=pcall(saveProgress,player,state)
     finalSavesInFlight[player]=nil
     if not ok then warn("TWF: unexpected final save failure for",player.UserId) end
+end
+local function finalizeProgress(player,state,spawnAsync)
+    if finalSavesInFlight[player] then return end
+    finalSavesInFlight[player]=true
+    if spawnAsync then
+        task.spawn(runFinalSave,player,state)
+    else
+        runFinalSave(player,state)
+    end
 end
 -- A failed refresh is tolerable only while this exact session's local lease is live.
 -- Preserve final-save CAS on expiry: earlier earnings may still be committed
@@ -786,9 +793,22 @@ end)
 if type(game.BindToClose) == "function" then
     game:BindToClose(function()
         local deadline=os.clock()+25 -- Roblox waits at most 30 seconds for BindToClose.
+        local closing={}
         for player,state in pairs(sessions) do
-            -- Expired gameplay can still own unsaved progress; final CAS decides safety.
-            if state.coins then finalizeProgress(player,state) end
+            -- Freeze gameplay before any final UpdateAsync can yield.
+            if state.coins then
+                state.active=false
+                closing[#closing+1]={player=player,state=state}
+            end
+        end
+        -- Start every other save before the first synchronous save yields.
+        -- Keep one synchronous path for the one-player shutdown case.
+        for i=2,#closing do
+            local item=closing[i]
+            finalizeProgress(item.player,item.state,true)
+        end
+        if closing[1] then
+            finalizeProgress(closing[1].player,closing[1].state)
         end
         -- PlayerRemoving may have cleared sessions while UpdateAsync was yielding.
         while next(finalSavesInFlight) and os.clock()<deadline do task.wait(0.1) end
