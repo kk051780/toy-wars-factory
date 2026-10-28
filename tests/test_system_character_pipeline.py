@@ -1,0 +1,77 @@
+"""Adversarial character admission tests; acquisition scores are hypotheses."""
+from copy import deepcopy
+import json
+from pathlib import Path
+import sys
+import unittest
+
+ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT/'tools'))
+from system_character_pipeline import catalog_errors,assess
+
+
+class CharacterPipelineTests(unittest.TestCase):
+    def setUp(self):
+        self.catalog=json.loads((ROOT/'config/characters.json').read_text())
+        self.balance=(ROOT/'src/ToyWarsBalance.lua').read_text()
+        self.required=json.loads((ROOT/'config/quality_policy.json').read_text())['character_required']
+
+    def errors(self,c=None,b=None):
+        return catalog_errors(self.catalog if c is None else c,self.balance if b is None else b,self.required)
+
+    def test_active_and_planned_rosters_are_consistent(self):
+        self.assertEqual(self.errors(),[])
+        self.assertEqual(len(self.catalog['characters'])+len(self.catalog['candidates']),12)
+
+    def test_baseline_character_cannot_be_removed(self):
+        self.catalog['characters']=[c for c in self.catalog['characters'] if c['id']!='pon']
+        self.assertIn('baseline characters removed',self.errors())
+
+    def test_metadata_alone_cannot_promote_a_character(self):
+        c=self.catalog['candidates'].pop(0);c['status']='prototype';self.catalog['characters'].append(c)
+        self.assertIn('catalog and executable balance roster disagree',self.errors())
+
+    def test_unregistered_catalog_and_duplicate_source_keys_fail_closed(self):
+        self.assertTrue(self.errors(b=self.balance.replace('    curebo =','    impostor =')))
+        self.assertTrue(self.errors(b=self.balance.replace('    curebo =','    pon =')))
+
+    def test_duplicates_across_live_and_planned_are_rejected(self):
+        self.catalog['candidates'].append(deepcopy(self.catalog['characters'][0]))
+        self.assertTrue(self.errors())
+
+    def test_npc_is_never_a_collectible_character(self):
+        self.catalog['candidates'][0]['id']='junk'
+        self.assertIn('duplicate/player-NPC identity',self.errors())
+
+    def test_candidate_cannot_claim_implementation_or_native_visuals(self):
+        self.catalog['candidates'][0]['status']='prototype'
+        self.catalog['candidates'][0]['visual_contract']['native_render_verified']=True
+        self.assertGreaterEqual(len(self.errors()),2)
+
+    def test_missing_role_or_distinguishing_shape_is_rejected(self):
+        self.catalog['candidates'][0]['role']=''
+        self.catalog['candidates'][0]['shape']=self.catalog['characters'][0]['shape']
+        self.assertGreaterEqual(len(self.errors()),2)
+
+    def test_boolean_cost_and_out_of_range_appeal_are_rejected(self):
+        b=self.catalog['candidates'][0]['business_case']
+        b['effort_points']['qa']=True;b['appeal_scores']['acquisition']=6
+        self.assertGreaterEqual(len(self.errors()),2)
+
+    def test_unsupported_measured_business_claim_is_rejected(self):
+        self.catalog['candidates'][0]['business_case']['evidence_status']='CUSTOMER_GROWTH_PROVEN'
+        self.assertTrue(self.errors())
+
+    def test_heavy_geometry_and_missing_reference_are_rejected(self):
+        c=self.catalog['candidates'][0];c['visual_contract']['primitive_part_budget']=200
+        c['source_review']=[]
+        self.assertGreaterEqual(len(self.errors()),2)
+
+    def test_ranking_is_deterministic_and_does_not_count_skins(self):
+        a=assess(self.catalog);b=deepcopy(self.catalog);b['candidates'].reverse()
+        self.assertEqual(a,assess(b))
+        self.assertEqual(len(a),8)
+        self.assertTrue(all(c['market_effect']=='NOT_MEASURED' and c['native_visuals']=='NOT_RUN' for c in a))
+
+
+if __name__=='__main__':unittest.main()

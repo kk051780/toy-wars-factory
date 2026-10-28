@@ -1,0 +1,131 @@
+{
+  "id": "C00100",
+  "date": "2026-10-28",
+  "kind": "CONTROLLER_CHARACTER_PIPELINE_AND_FIRST_PILOT",
+  "author_kind": "CONTROLLER",
+  "author_operation_id": "c24b547b-a58c-4c2b-a3cd-46410057053c",
+  "task_id": null,
+  "run_id": null,
+  "identity_note": "Interactive manual operation UUID; not represented as a registered service run",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "0b6c79a0247216d2471c0b67d710a44abc6085bd",
+    "owner_run_id": "c24b547b-a58c-4c2b-a3cd-46410057053c",
+    "owner_id_kind": "MANUAL_OPERATION_UUID",
+    "epoch": 164
+  },
+  "main_base": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+  "changed_files": [
+    "config/autonomous_repair.json",
+    "config/characters.json",
+    "docs/CHARACTER_PIPELINE.md",
+    "docs/SYSTEM_REVIEW.md",
+    "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+    "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
+    "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md",
+    "src/ToyWarsBalance.lua",
+    "src/ToyWarsServer.server.lua",
+    "src/ToyWarsHUD.client.lua",
+    "tools/repository_gate.py",
+    "tools/system_character_pipeline.py",
+    "tests/test_system_character_pipeline.py",
+    "tests/test_system_character_scope.py",
+    "tests/auto/curebo_support_spec.lua",
+    "tests/auto/character_pages_spec.lua",
+    "history/C00100_character_pipeline_pilot.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsBalance.lua",
+      "before_bytes": 3070,
+      "after_bytes": 3304,
+      "delta_bytes": 234,
+      "before_blob": "e78a07c7551f19183316803706c5602cd4049459",
+      "after_blob": "b254be5ff0a6643dc634ef5ed17d3d0e3f663d20"
+    },
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 20147,
+      "after_bytes": 23145,
+      "delta_bytes": 2998,
+      "before_blob": "ec3deddb53ef6c319b8699a647fff0beeec3592e",
+      "after_blob": "48f3206006a1b16582f03b041144541c73a9640f"
+    },
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 6824,
+      "after_bytes": 8581,
+      "delta_bytes": 1757,
+      "before_blob": "3f2d9932396bc2eea90f96336912abbdf67ffeca",
+      "after_blob": "145f8caa63b92bdf1515060fd05c0135ebbd073f"
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 892,
+    "lua_bytes": 36281
+  },
+  "source_baseline_bytes": 25726,
+  "characters_touched": [
+    "curebo"
+  ],
+  "preserved_characters": [
+    "pon",
+    "guardon",
+    "tankuru"
+  ],
+  "game_change": "One new repair toy with server-side purchase, model, combat and shared target repair cooldown; three-button pagination",
+  "system_change": "Replace fixed roster size with preserved baseline plus catalog/balance consistency and benefit-effort/primitive visual contracts; explicitly admit only character metadata to WORKER source scope",
+  "protected_change_requires_independent_exact_head_audit": true,
+  "customer_acquisition": {
+    "status": "HYPOTHESIS_NOT_MEASURED",
+    "hypothesis": "A visible repair role and distinctive heart/winder toy may provide a new collectible goal and more composition choices",
+    "effort_points": 7,
+    "new_players": null,
+    "retention": null,
+    "revenue": null
+  },
+  "geometry": {
+    "curebo_parts": 17,
+    "budget": 18,
+    "runtime_render": "NOT_RUN"
+  },
+  "tests": {
+    "new_server_cases": 12,
+    "new_hud_cases": 6,
+    "new_python_cases": 16,
+    "all_local_auto_lua_suites_passed": 27,
+    "accepted_server_cases_passed": 27,
+    "accepted_hud_price_cases_passed": 6,
+    "original_balance_assertions_passed": 37,
+    "stress_cases_passed": 4000,
+    "old_scope_tests_passed": 8,
+    "installer": "BUILT_FROM_ALL_FOUR_CANONICAL_LUA_FILES",
+    "negative_control": "Disabling actual repair call causes the same positive HP assertion to fail",
+    "ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "acquisition": "NOT_MEASURED"
+  },
+  "time_accounting": {
+    "observed_preparation_started_at": "2026-10-28T03:21:43.264952+00:00",
+    "recorded_at": "2026-10-28T03:43:32.468795+00:00",
+    "active_seconds": null,
+    "prior_cumulative_active_seconds": null,
+    "reason": "Preparation elapsed time is observable; continuous active time and prior sessions were not instrumented. The earlier five-hour user pause is excluded."
+  },
+  "coordination_incident": {
+    "earlier_operation_id": "72695f32-63f8-4e72-b87a-42400e15be0d",
+    "attempted_claim_commit": "f5f8256662f5cce6818b747abc5ee64e273adae4",
+    "update_result": "FAILED_UNKNOWN_PROVIDER_ERROR",
+    "post_read": "Another CONTROLLER already held epoch163. No retry or takeover; later acquired fresh epoch164 after actual release."
+  },
+  "next_action": "Independent exact-head protected-maintenance review, current-main QA, then adopt role prompts. No author self-approval; maintain release/Gemini/spending holds.",
+  "restrictions": {
+    "roblox_publish": false,
+    "paid_inference": false,
+    "protected_accepted_tests_modified": false,
+    "schedule_changed": false
+  }
+}

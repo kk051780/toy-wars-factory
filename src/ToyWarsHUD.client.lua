@@ -73,25 +73,74 @@ pane.BackgroundColor3=Color3.fromRGB(20,33,53)
 pane.BackgroundTransparency=0.12
 pane.Parent=gui
 round(pane,14)
-local buttons={}
-local choices={{"pon","PON",Color3.fromRGB(44,175,179)},{"guardon","GUARDON",Color3.fromRGB(64,113,205)},{"tankuru","TANKURU",Color3.fromRGB(218,135,72)}}
-for i,spec in ipairs(choices) do
+local buttons,slots,visibleIds={},{},{}
+local refresh
+local unitOrder=B.PLAYABLE_IDS or {"pon","guardon","tankuru"}
+local colors={pon=Color3.fromRGB(44,175,179),guardon=Color3.fromRGB(64,113,205),tankuru=Color3.fromRGB(218,135,72),curebo=Color3.fromRGB(94,174,146)}
+local page,pageCount=1,math.max(1,math.ceil(#unitOrder/3))
+for i=1,3 do
+    local slot=i
     local button=Instance.new("TextButton")
-    button.Name=spec[1]
-    -- Display authoritative prices from the shared balance module, never hard-code HUD prices.
-    button.Text=string.format("%s | %d",spec[2],B.UNITS[spec[1]].cost)
+    button.Name="ToySlot"..i
+    -- Labels are filled from the shared module when the visible page changes.
     button.Size=UDim2.new(1/3,-12,0,62)
     button.Position=UDim2.new((i-1)/3,7,0,14)
-    button.BackgroundColor3=spec[3]
+    button.BackgroundColor3=colors.pon
     button.TextColor3=Color3.fromRGB(255,255,255)
     button.Font=Enum.Font.GothamBold
     button.TextScaled=true
     button.Parent=pane
     round(button,10)
-    button.Activated:Connect(function()event:FireServer(spec[1])end)
-    buttons[spec[1]]=button
+    button.Activated:Connect(function()
+        local id=visibleIds[slot]
+        if id and B.isUnit(id) then event:FireServer(id) end
+    end)
+    slots[i]=button
 end
-local tip=addText(gui,UDim2.new(0.8,0,0,34),UDim2.new(0.1,0,1,-160),"SELECT A TOY TO AUTO-PRODUCE • UPGRADE AT THE GOLD PLATFORM",Color3.fromRGB(255,255,255))
+local navigation=Instance.new("Frame")
+navigation.Name="ToyPageNavigation"
+navigation.Size=UDim2.new(0.88,0,0,42)
+navigation.Position=UDim2.new(0.06,0,1,-159)
+navigation.BackgroundTransparency=1
+navigation.Visible=false
+navigation.Parent=gui
+local pageText=addText(navigation,UDim2.new(0.48,0,1,0),UDim2.new(0.26,0,0,0),"")
+pageText.Name="ToyPageCaption"
+local function showPage(delta)
+    page=(page-1+delta)%pageCount+1
+    buttons={}
+    for i,button in ipairs(slots) do
+        local id=unitOrder[(page-1)*3+i]
+        visibleIds[i]=id
+        button.Visible=id~=nil
+        button.Name=id or ("EmptyToySlot"..i)
+        if id then
+            local spec={id,B.UNITS[id].name,colors[id] or colors.pon}
+            button.Text=string.format("%s | %d",spec[2],B.UNITS[spec[1]].cost)
+            if id=="curebo" then button.Text=button.Text.."\nREPAIR ALLIES" end
+            button.BackgroundColor3=spec[3]
+            buttons[id]=button
+        end
+    end
+    pageText.Text=string.format("TOYS %d / %d",page,pageCount)
+    if refresh then refresh() end
+end
+local function pageButton(name,caption,x,delta)
+    local b=Instance.new("ImageButton")
+    b.Name=name
+    b.Image=""
+    b.Size=UDim2.new(0.24,0,1,0)
+    b.Position=UDim2.new(x,0,0,0)
+    b.BackgroundColor3=Color3.fromRGB(46,75,102)
+    b.Parent=navigation
+    round(b,10)
+    addText(b,UDim2.new(1,0,1,0),UDim2.new(0,0,0,0),caption)
+    b.Activated:Connect(function() showPage(delta) end)
+end
+pageButton("ToyPagePrevious","PREV",0,-1)
+pageButton("ToyPageNext","NEXT",0.76,1)
+showPage(0)
+local tip=addText(gui,UDim2.new(0.8,0,0,34),UDim2.new(0.1,0,1,-202),"SELECT A TOY TO AUTO-PRODUCE • UPGRADE AT THE GOLD PLATFORM",Color3.fromRGB(255,255,255))
 tip.TextStrokeTransparency=0.4
 -- Session-local first-play guide: touch-friendly, dismissible; never sends gameplay commands.
 -- Created only after workshop assignment; no cross-session completion persistence.
@@ -140,18 +189,20 @@ local skipButton=guideButton("GuideSkip","SKIP",0.07,Color3.fromRGB(79,92,111))
 local nextButton,nextCaption=guideButton("GuideNext","NEXT",0.54,Color3.fromRGB(44,175,179))
 skipButton.Activated:Connect(function()
     quickStart.Visible=false
+    navigation.Visible=pageCount>1
 end)
 nextButton.Activated:Connect(function()
     if not quickStart.Visible then return end
     if guidePage==#guideSteps then
         quickStart.Visible=false
+        navigation.Visible=pageCount>1
         return
     end
     guidePage=guidePage+1
     guideText.Text=guideSteps[guidePage]
     if guidePage==#guideSteps then nextCaption.Text="PLAY" end
 end)
-local function refresh()
+refresh=function()
     summary.Text=string.format("COINS %d  |  WAVE %d  |  VAULT %d%%",coins.Value,wave.Value,hp.Value)
     subt.Text=string.format("LV %d  •  TOYS %d  •  JUNK %d  •  KILLS %d",lv.Value,allies.Value,enemies.Value,kills.Value)
     for id,button in pairs(buttons) do
@@ -162,3 +213,4 @@ end
 for _,v in ipairs({coins,wave,kills,hp,lv,allies,enemies,selected}) do v.Changed:Connect(refresh) end
 refresh()
 print("TWF_HUD_OK v1.2")
+

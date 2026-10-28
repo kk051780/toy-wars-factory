@@ -16,7 +16,8 @@
   "source_paths": [
     "src/ToyWarsBalance.lua",
     "src/ToyWarsServer.server.lua",
-    "src/ToyWarsHUD.client.lua"
+    "src/ToyWarsHUD.client.lua",
+    "config/characters.json"
   ],
   "new_native_test_pattern": "tests/auto/*_spec.lua",
   "new_python_test_pattern": "tests/test_auto_*.py",
@@ -144,7 +145,8 @@
       "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
       "docs/AUTONOMOUS_INTEGRATION.md",
       "docs/COMPLETION_ROADMAP.md",
-      "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md"
+      "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md",
+      "docs/CHARACTER_PIPELINE.md"
     ],
     "saved_prompt": "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
     "latest_report_path": "ops/SYSTEM_REVIEW_LATEST.json",

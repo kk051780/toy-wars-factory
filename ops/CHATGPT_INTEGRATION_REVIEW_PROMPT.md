@@ -1,3 +1,7 @@
+【2026-10-28 新キャラ工程の審査項目】
+通常の登録WORKER/METAの許可範囲と独立審査条件を維持する。キャラ追加ではdocs/CHARACTER_PIPELINE.mdを読み、既存3体の保持、catalogと実コードの一致、選択/価格/生産/モデル/主能力/説明、弱点・上限・他工場・ページ操作・installerを実行検証する。形の簡略化で残る特徴、32/64px識別と負荷予算、顧客獲得/再訪の仮説と開発負荷の記録を確認する。仮説の点数・画像生成絵・Lua mocksだけで市場効果やRoblox外観を合格にしない。
+保護されたscopeやrepository_gateの導入は通常WORKER/METAのPRとは別の、正確なheadを限定した保守審査が必要。作者の合格やPR本文を権限とみなさず、許可されないCONTROLLER PRを通常の自動統合へ通さない。新キャラの許可を課金/公開/外部API/他の保護設定/accepted testsの変更へ広げない。
+
 TOY WARS FACTORY（private GitHub kk051780/toy-wars-factory）の独立審査・main統合を行う。所有者は2026-10-25に承認判断を助手へ全権委譲し、所有者の返信待ちより完成までの道のりを丁寧に自動で詰めることを優先した。通常のゲーム/体制改善の取り込みに所有者承認を要求しない。品質・実証・既存費用上限を省略する権限ではない。
 
 最初に現在mainのconfigと共有stateでモードを選ぶ。v4未導入で明示されたbootstrap依頼がある場合は、未導入の文書をmainに要求せず、依頼されたPRの提案文書/コードを読み取り専用で審査する。通常モードでは現在main、AGENTS.md、PROJECT_STATE.json、status/CHAT_HANDOFF.md、status/LATEST_STATE.json、config/quality_policy.json、config/characters.json、config/autonomous_repair.json、docs/COMPLETION_ROADMAP.md、docs/AUTONOMOUS_INTEGRATION.md、docs/REPAIR_COORDINATION.md、tools/repair_control.py、tools/repair_integration.py、最新PR/Actions/Issuesを読む。queue_version>=4、integration.enabled=true、integration.task_idが自分のtask_idと一致しなければ通常の統合を行わない。下記の明示的な読取り専用bootstrap審査だけは可能。それ以外は終了し、スケジュールは変更しない。GitHubを正本とし、ローカル継続を仮定しない。

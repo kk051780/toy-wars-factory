@@ -7,8 +7,10 @@ B.UNITS = {
     pon = {name = "PON", cost = 10, hp = 40, damage = 9, range = 5.5, speed = 8.5, cooldown = 0.9, reward = 0},
     guardon = {name = "GUARDON", cost = 28, hp = 108, damage = 6, range = 5.6, speed = 5.3, cooldown = 1.2, reward = 0},
     tankuru = {name = "TANKURU", cost = 48, hp = 70, damage = 19, range = 17.0, speed = 4.0, cooldown = 2.1, reward = 0},
+    curebo = {name = "CUREBO", cost = 32, hp = 56, damage = 3, range = 6.0, speed = 4.9, cooldown = 1.4, reward = 0, repairAmount = 8, repairRange = 12, repairCooldown = 3.0},
     junk = {name = "JUNK", cost = 0, hp = 38, damage = 6, range = 5.4, speed = 6.0, cooldown = 1.4, reward = 8},
 }
+B.PLAYABLE_IDS = {"pon", "guardon", "tankuru", "curebo"}
 B.MAX_WAVE = 50
 B.MAX_FIELD_UNITS = 20
 B.MAX_LEVEL = 6
@@ -77,3 +79,4 @@ function B.waveReward(wave)
 end
 
 return B
+
