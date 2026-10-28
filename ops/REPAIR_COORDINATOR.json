@@ -1408,26 +1408,29 @@
     "reviewer_task_id": "6ae16fe9b8908191b93c85b0c2782f01",
     "repository": "kk051780/toy-wars-factory",
     "pr": 98,
-    "head": "0d64eaa9cbd15bb136bd41de24303f82cb98be1b",
+    "head": "77c2b387474c1f71c07680d80c74ce3aa421a59f",
     "base_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
     "branch": "ops/twf-character-pipeline-20261028",
     "author_operation_ids": [
       "c24b547b-a58c-4c2b-a3cd-46410057053c",
       "8cc6639f-5b15-4b6d-b6a8-5987938c19e4",
       "5f5a4403-cfeb-4942-abd0-eeceffba1310",
-      "f7b10bdc-c8b0-4353-863c-768b9ef64687"
+      "f7b10bdc-c8b0-4353-863c-768b9ef64687",
+      "d0193dac-f125-4f66-a0b1-6c824c6e17e2"
     ],
     "author_claim_commits": [
       "0b6c79a0247216d2471c0b67d710a44abc6085bd",
       "7c7be229a364f739cbd46da6eb60c5f512846017",
       "83f2bd76d87f190744370cfd976f9c4a08ed7792",
-      "d1fb5c8facd07b51623797160561d3e6739a0267"
+      "d1fb5c8facd07b51623797160561d3e6739a0267",
+      "c1bba39073fa667f33e5162cbbc959a609b3b601"
     ],
     "author_epochs": [
       164,
       169,
       187,
-      189
+      189,
+      191
     ],
     "allowed_paths": [
       "config/autonomous_repair.json",
@@ -1451,22 +1454,23 @@
       "history/C00102_character_current_main_reconciliation.json",
       "tests/auto/curebo_progression_lifecycle_spec.lua",
       "history/C00103_character_adoption_review_repair.json",
-      "tests/test_system_character_history.py"
+      "tests/test_system_character_history.py",
+      "history/C00104_character_history_snapshot_anchor_repair.json"
     ],
     "required_ci": {
-      "run": 40680291116,
-      "head": "0d64eaa9cbd15bb136bd41de24303f82cb98be1b",
+      "run": 40682419780,
+      "head": "77c2b387474c1f71c07680d80c74ce3aa421a59f",
       "jobs": [
         "offline",
         "compile_hold"
       ],
       "status": "success",
       "job_ids": {
-        "offline": 122789004077,
-        "compile_hold": 122789004248
+        "compile_hold": 122796194140,
+        "offline": 122796194480
       }
     },
-    "status": "WITHDRAWN_PENDING_HISTORICAL_HEAD_TEST_REPAIR",
+    "status": "HISTORY_ANCHOR_REPAIRED_CI_PASSED_AWAIT_NEW_INDEPENDENT_REVIEW",
     "require_independent_actual_diff_review": true,
     "require_current_main_qa": true,
     "require_post_merge_main_qa_and_handoff": true,
@@ -1511,32 +1515,34 @@
       "work_request": "pr98_next_character_tests_and_snapshot_scope_20261028",
       "reviewed_at": "2026-10-28T11:21:53.468Z"
     },
-    "next_actor": "CONTROLLER_AUTHOR",
+    "next_actor": "INDEPENDENT_CHARACTER_MAINTENANCE_REVIEWER",
     "previous_request_changes": {
       "reviewer_run_id": "1e582c75-d824-832f-8790-8a9b1c63d217",
       "head": "8997fdbd364ef9f0aa88ffffecfee3bfc22087bd",
       "review": "ops/reviews/PR0098_8997fdbd_maintenance.json",
-      "request_id": "pr98_next_character_tests_and_snapshot_scope_20261028"
+      "request_id": "pr98_next_character_tests_and_snapshot_scope_20261028",
+      "latest_review_run_id": "78e902a8-6c30-8332-bae0-2c39c79232ce",
+      "latest_head": "0d64eaa9cbd15bb136bd41de24303f82cb98be1b",
+      "latest_verdict": "REQUEST_CHANGES",
+      "latest_blocker": "Historical C00100 was bound to mutable HEAD"
     },
     "repair": {
       "history": "history/C00103_character_adoption_review_repair.json",
-      "scope": "Exactly four requested blockers; no game-source changes from8997; new history and snapshot regression added as requested",
-      "python_tests": 477,
+      "scope": "Only immutable authored-tree anchor and future-HEAD regression; all earlier four fixes retained, no Lua source changes",
+      "python_tests": 478,
       "pager_cases": 11,
-      "author_cannot_self_approve": true
+      "author_cannot_self_approve": true,
+      "latest_history": "history/C00104_character_history_snapshot_anchor_repair.json",
+      "historical_snapshot_cases": 5,
+      "current_source_metrics_unchanged": true
     },
     "audit_dispatch": {
-      "id": "f7b10bdc-c8b0-4353-863c-768b9ef64687",
+      "id": "d0193dac-f125-4f66-a0b1-6c824c6e17e2",
       "task_id": "6ae16fe9b8908191b93c85b0c2782f01",
-      "head": "0d64eaa9cbd15bb136bd41de24303f82cb98be1b",
-      "status": "IMMEDIATE_REVIEW_REQUEST_SENT",
-      "recorded_at": "2026-10-28T11:31:42Z",
-      "regular_task_schedules_changed": false,
-      "dispatcher_operation_id": "d165c1b2-1ff4-4475-8279-10ec5d1b2256",
-      "dispatcher_epoch": 190,
-      "claimed_at": "2026-10-28T11:36:10.211Z",
-      "request_result": "Immediate run requested. The saved schedule is unchanged.",
-      "requested_at": "2026-10-28T11:36:35.641Z"
+      "head": "77c2b387474c1f71c07680d80c74ce3aa421a59f",
+      "status": "READY_FOR_SINGLE_REVIEW_AFTER_OWN_RELEASE",
+      "recorded_at": "2026-10-28T11:47:43.404Z",
+      "regular_task_schedules_changed": false
     },
     "preintegration_blockers": [
       {
@@ -1552,7 +1558,10 @@
         "observer_kind": "MANUAL_CONTROLLER_WITH_SEPARATE_READ_ONLY_SUPPLEMENTAL_REVIEW",
         "observer_operation_id": "d0193dac-f125-4f66-a0b1-6c824c6e17e2",
         "evidence": "Independent supplemental context /root/independent_pr98_code_audit executes exact test with canonical sources:0d passes, valid future kururin registration3304->3349 fails historical after_bytes and total50216->50261. Any future source-changing WORKER PR fails while C00100 and accepted test must stay immutable.",
-        "required": "Anchor reconciled C00100 snapshot to immutable8997fdbd tree; preserve accepted cumulative HEAD ledger verification; add a future-HEAD noninterference regression. New exact head CI and a new independent registered review are required."
+        "required": "Anchor reconciled C00100 snapshot to immutable8997fdbd tree; preserve accepted cumulative HEAD ledger verification; add a future-HEAD noninterference regression. New exact head CI and a new independent registered review are required.",
+        "status": "REPAIRED_IN_NEW_CANDIDATE_AWAIT_INDEPENDENT_CONFIRMATION",
+        "repaired_head": "77c2b387474c1f71c07680d80c74ce3aa421a59f",
+        "repair_history": "history/C00104_character_history_snapshot_anchor_repair.json"
       }
     ]
   },
@@ -1715,6 +1724,161 @@
         "reviewed_at": "2026-10-28T11:21:53.468Z"
       },
       "next_actor": "CONTROLLER_AUTHOR"
+    },
+    {
+      "schema": 1,
+      "mode": "ONE_TIME_INDEPENDENT_CHARACTER_MAINTENANCE_REVIEW_AND_INTEGRATION",
+      "task_id": "6ae16fe9b8908191b93c85b0c2782f01",
+      "reviewer_task_id": "6ae16fe9b8908191b93c85b0c2782f01",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 98,
+      "head": "0d64eaa9cbd15bb136bd41de24303f82cb98be1b",
+      "base_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+      "branch": "ops/twf-character-pipeline-20261028",
+      "author_operation_ids": [
+        "c24b547b-a58c-4c2b-a3cd-46410057053c",
+        "8cc6639f-5b15-4b6d-b6a8-5987938c19e4",
+        "5f5a4403-cfeb-4942-abd0-eeceffba1310",
+        "f7b10bdc-c8b0-4353-863c-768b9ef64687"
+      ],
+      "author_claim_commits": [
+        "0b6c79a0247216d2471c0b67d710a44abc6085bd",
+        "7c7be229a364f739cbd46da6eb60c5f512846017",
+        "83f2bd76d87f190744370cfd976f9c4a08ed7792",
+        "d1fb5c8facd07b51623797160561d3e6739a0267"
+      ],
+      "author_epochs": [
+        164,
+        169,
+        187,
+        189
+      ],
+      "allowed_paths": [
+        "config/autonomous_repair.json",
+        "config/characters.json",
+        "docs/CHARACTER_PIPELINE.md",
+        "docs/SYSTEM_REVIEW.md",
+        "history/C00100_character_pipeline_pilot.json",
+        "history/C00101_character_ledger_review_repair.json",
+        "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+        "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md",
+        "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
+        "src/ToyWarsBalance.lua",
+        "src/ToyWarsHUD.client.lua",
+        "src/ToyWarsServer.server.lua",
+        "tests/auto/character_pages_spec.lua",
+        "tests/auto/curebo_support_spec.lua",
+        "tests/test_system_character_pipeline.py",
+        "tests/test_system_character_scope.py",
+        "tools/repository_gate.py",
+        "tools/system_character_pipeline.py",
+        "history/C00102_character_current_main_reconciliation.json",
+        "tests/auto/curebo_progression_lifecycle_spec.lua",
+        "history/C00103_character_adoption_review_repair.json",
+        "tests/test_system_character_history.py"
+      ],
+      "required_ci": {
+        "run": 40680291116,
+        "head": "0d64eaa9cbd15bb136bd41de24303f82cb98be1b",
+        "jobs": [
+          "offline",
+          "compile_hold"
+        ],
+        "status": "success",
+        "job_ids": {
+          "offline": 122789004077,
+          "compile_hold": 122789004248
+        }
+      },
+      "status": "WITHDRAWN_PENDING_HISTORICAL_HEAD_TEST_REPAIR",
+      "require_independent_actual_diff_review": true,
+      "require_current_main_qa": true,
+      "require_post_merge_main_qa_and_handoff": true,
+      "author_cannot_self_approve_or_integrate": true,
+      "normal_worker_meta_reviewer_lane_unchanged": true,
+      "scope": "Exact-head one-time adoption of character catalog gate, exact WORKER M permission on config/characters.json, documented creation pipeline and CUREBO pilot. Preserve every other control, original roster, accepted history/tests, source baseline, regular task identity/schedules/enabled states and all release/spend/Gemini holds.",
+      "authority": "Owner explicitly requested new characters in-game and in the existing automatic development process, delegated approval/integration to assistant, and asked to continue. Separate registered maintenance task must make its own independent judgment and integrate only this exact head under a fresh shared CONTROLLER lease. This is a scoped migration, not the normal automatic branch policy or self-approval.",
+      "original_read_only_audit": {
+        "task_id": "6ae16fe9b8908191b93c85b0c2782f01",
+        "run_id": "2b0b62b0-2c34-8333-ba76-4368301aaf22",
+        "head": "f830f259dcbaa58aa79ab15162f7d73123003ab5",
+        "verdict": "REQUEST_CHANGES",
+        "repair_metrics": {
+          "lua_files": 4,
+          "lua_lines": 891,
+          "lua_bytes": 36280
+        },
+        "last_reaudit_run": "5e96e31d-06fc-8329-bb67-d5274dcea483",
+        "last_reaudit_result": "NO_UPDATE_NOT_APPROVAL"
+      },
+      "current_source_metrics": {
+        "lua_files": 4,
+        "lua_lines": 1155,
+        "lua_bytes": 50216,
+        "delta_vs_current_main": 4989
+      },
+      "created_at": "2026-10-28T11:09:16.471Z",
+      "ci_verified_at": "2026-10-28T11:11:27.574Z",
+      "review": {
+        "verdict": "REQUEST_CHANGES",
+        "task_id": "6ae16fe9b8908191b93c85b0c2782f01",
+        "run_id": "1e582c75-d824-832f-8790-8a9b1c63d217",
+        "head": "8997fdbd364ef9f0aa88ffffecfee3bfc22087bd",
+        "base_reviewed": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+        "review_record": "ops/reviews/PR0098_8997fdbd_maintenance.json",
+        "blockers": [
+          "FUTURE_CANDIDATE_COUNT_FREEZE",
+          "FUTURE_PAGER_COUNT_FREEZE",
+          "FALSE_INITIAL_AUTHORED_SNAPSHOT",
+          "UNADMITTED_META_DOCUMENT_PERMISSION"
+        ],
+        "work_request": "pr98_next_character_tests_and_snapshot_scope_20261028",
+        "reviewed_at": "2026-10-28T11:21:53.468Z"
+      },
+      "next_actor": "CONTROLLER_AUTHOR",
+      "previous_request_changes": {
+        "reviewer_run_id": "1e582c75-d824-832f-8790-8a9b1c63d217",
+        "head": "8997fdbd364ef9f0aa88ffffecfee3bfc22087bd",
+        "review": "ops/reviews/PR0098_8997fdbd_maintenance.json",
+        "request_id": "pr98_next_character_tests_and_snapshot_scope_20261028"
+      },
+      "repair": {
+        "history": "history/C00103_character_adoption_review_repair.json",
+        "scope": "Exactly four requested blockers; no game-source changes from8997; new history and snapshot regression added as requested",
+        "python_tests": 477,
+        "pager_cases": 11,
+        "author_cannot_self_approve": true
+      },
+      "audit_dispatch": {
+        "id": "f7b10bdc-c8b0-4353-863c-768b9ef64687",
+        "task_id": "6ae16fe9b8908191b93c85b0c2782f01",
+        "head": "0d64eaa9cbd15bb136bd41de24303f82cb98be1b",
+        "status": "IMMEDIATE_REVIEW_REQUEST_SENT",
+        "recorded_at": "2026-10-28T11:31:42Z",
+        "regular_task_schedules_changed": false,
+        "dispatcher_operation_id": "d165c1b2-1ff4-4475-8279-10ec5d1b2256",
+        "dispatcher_epoch": 190,
+        "claimed_at": "2026-10-28T11:36:10.211Z",
+        "request_result": "Immediate run requested. The saved schedule is unchanged.",
+        "requested_at": "2026-10-28T11:36:35.641Z"
+      },
+      "preintegration_blockers": [
+        {
+          "id": "HISTORICAL_C00100_BOUND_TO_MUTABLE_HEAD",
+          "file": "tests/test_system_character_history.py",
+          "lines": [
+            49,
+            50,
+            51
+          ],
+          "head": "0d64eaa9cbd15bb136bd41de24303f82cb98be1b",
+          "observed_at": "2026-10-28T11:41:22.334Z",
+          "observer_kind": "MANUAL_CONTROLLER_WITH_SEPARATE_READ_ONLY_SUPPLEMENTAL_REVIEW",
+          "observer_operation_id": "d0193dac-f125-4f66-a0b1-6c824c6e17e2",
+          "evidence": "Independent supplemental context /root/independent_pr98_code_audit executes exact test with canonical sources:0d passes, valid future kururin registration3304->3349 fails historical after_bytes and total50216->50261. Any future source-changing WORKER PR fails while C00100 and accepted test must stay immutable.",
+          "required": "Anchor reconciled C00100 snapshot to immutable8997fdbd tree; preserve accepted cumulative HEAD ledger verification; add a future-HEAD noninterference regression. New exact head CI and a new independent registered review are required."
+        }
+      ]
     }
   ]
 }

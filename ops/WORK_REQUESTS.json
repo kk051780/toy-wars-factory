@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T11:21:53.468Z",
+  "observed_at": "2026-10-28T11:47:43.404Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1999,7 +1999,7 @@
       "kind": "REPAIR_PROTECTED_CHARACTER_ADOPTION_PR98",
       "priority": "P1",
       "assigned_role": "CONTROLLER_AUTHOR",
-      "status": "IMPLEMENTED_IN_PR_HEAD_AWAIT_INDEPENDENT_REVIEW",
+      "status": "IMPLEMENTED_IN_NEW_PR_HEAD_AWAIT_INDEPENDENT_REVIEW",
       "repository": "kk051780/toy-wars-factory",
       "pr": 98,
       "head": "8997fdbd364ef9f0aa88ffffecfee3bfc22087bd",
@@ -2071,7 +2071,7 @@
         "Preserve every currently accepted test/history, original3 unit stats, all objective quality/spend/Gemini/release holds."
       ],
       "owner_reply_required": false,
-      "next_actor": "CONTROLLER_AUTHOR",
+      "next_actor": "INDEPENDENT_CHARACTER_MAINTENANCE_REVIEWER",
       "ordinary_worker_instruction": "Continue only existing authorized main work; do not edit this ops branch or protected acceptance files. Do not duplicate CUREBO before adoption.",
       "resolution": {
         "head": "0d64eaa9cbd15bb136bd41de24303f82cb98be1b",
@@ -2081,6 +2081,14 @@
         "epoch": 189,
         "ci": 40680291116,
         "note": "All four blockers addressed; author does not claim independent approval. New exact-head CI and reviewer judgment required."
+      },
+      "repaired_head": "77c2b387474c1f71c07680d80c74ce3aa421a59f",
+      "followup_history": "history/C00104_character_history_snapshot_anchor_repair.json",
+      "additional_blocker": {
+        "id": "HISTORICAL_C00100_BOUND_TO_MUTABLE_HEAD",
+        "observed_head": "0d64eaa9cbd15bb136bd41de24303f82cb98be1b",
+        "fixed_head": "77c2b387474c1f71c07680d80c74ce3aa421a59f",
+        "fresh_ci": 40682419780
       }
     },
     {
