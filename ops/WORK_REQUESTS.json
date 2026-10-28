@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T14:31:33.655Z",
+  "observed_at": "2026-10-28T16:30:50.036Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2248,6 +2248,25 @@
       "next_actor": "WORKER_REPAIR_BEFORE_NEXT_ISSUE",
       "engine_executed": false,
       "owner_reply_required": false
+    },
+    {
+      "id": "pr106_pending_claim_after_bindtoclose_20261029",
+      "kind": "INDEPENDENT_REVIEW_FIX",
+      "priority": "P1",
+      "assigned_role": "WORKER",
+      "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "status": "OPEN_CODE_PATH_UNTESTED",
+      "pr": 106,
+      "head": "6038487fe5b93d9212a3845196f129792729fec3",
+      "base_main_sha": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
+      "review_record": "ops/reviews/PR0106_6038487f.json",
+      "source": "src/ToyWarsServer.server.lua loadProgress/join/BindToClose",
+      "request": "Pending UpdateAsync claim can finish after BindToClose returns; add >25-second claim/read shutdown regression and safe tracking/cancellation. Preserve accepted backfill, CAS, CI, and release HOLD.",
+      "reproduction": "Commit p:2 token before shutdown; delay claim response 35 simulated seconds. Start BindToClose with one 3-second final save. Callback returns while p:2 still has sessionOwner, pending claim untracked. Model server termination before delayed response.",
+      "expected": "No post-close untracked owned lease or unawaited save; bound wait within shutdown budget; exact-head both CI and independent review.",
+      "engine_executed": false,
+      "next_actor": "WORKER_REPAIR_BEFORE_NEXT_ISSUE",
+      "created_at": "2026-10-28T16:30:50.036Z"
     }
   ]
 }
