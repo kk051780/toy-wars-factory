@@ -15,8 +15,13 @@ world.Parent = workspace
 local MAX_PLOTS = 4
 local SPACING = 108
 local sessions = {}
+local shuttingDown = false
 -- Keep departing saves visible to shutdown after their session is removed.
 local finalSavesInFlight = {}
+-- Track atomic claims whose responses can outlive BindToClose.
+local pendingClaims = {}
+local pendingClaimCleanups = {}
+local shutdownDeadline
 -- A kicked player may remain in Players until disconnect; never retry its failed load.
 local rejectedLoads = {}
 local occupied = {}
@@ -93,6 +98,38 @@ local function newSessionToken()
     end
     return nil
 end
+-- Release only this token if its UpdateAsync response is still pending at close.
+local function schedulePendingClaimCleanup(player,claim)
+    if claim.cleanupScheduled then return end
+    claim.cleanupScheduled=true
+    pendingClaimCleanups[claim]=true
+    task.spawn(function()
+        task.wait(5) -- preserve accepted short admissions; reserve cleanup budget
+        if pendingClaims[player]~=claim then
+            pendingClaimCleanups[claim]=nil
+            return
+        end
+        claim.cancelled=true
+        local cleaned=false
+        for attempt=1,SAVE_RETRY_COUNT do
+            local ok=pcall(function()
+                progressStore:UpdateAsync(claim.key,function(current,keyInfo)
+                    if not validProgress(current) or current.sessionOwner~=claim.token then return nil end
+                    local updated={}
+                    for field,value in pairs(current) do updated[field]=value end
+                    updated.sessionOwner=nil;updated.sessionLeaseUntil=nil
+                    if keyInfo then return updated,keyInfo:GetUserIds(),keyInfo:GetMetadata() end
+                    return updated
+                end)
+            end)
+            if ok then cleaned=true;break end
+            if attempt<SAVE_RETRY_COUNT then task.wait(SAVE_RETRY_SECONDS) end
+        end
+        if not cleaned then warn("TWF: shutdown pending claim cleanup unavailable for",player.UserId) end
+        if pendingClaims[player]==claim then pendingClaims[player]=nil end
+        pendingClaimCleanups[claim]=nil
+    end)
+end
 local function loadProgress(player,pending)
     if not progressStore then return nil,false,"STORE_UNAVAILABLE" end
     local key="p:"..tostring(player.UserId)
@@ -100,14 +137,20 @@ local function loadProgress(player,pending)
     if not ok then return nil,false,"READ_UNAVAILABLE" end
     if record~=nil and not validProgress(record) then return nil,false,"SCHEMA_UNSUPPORTED" end
     if sessions[player]~=pending or player.Parent~=Players then return nil,false,"DEPARTED" end
+    if shuttingDown and shutdownDeadline and os.clock()>=shutdownDeadline-10 then return nil,false,"DEPARTED" end
     local token=newSessionToken()
     if not token then return nil,false,"CLAIM_UNAVAILABLE" end
     for attempt=1,SESSION_RETRY_COUNT do
         if sessions[player]~=pending or player.Parent~=Players then return nil,false,"DEPARTED" end
+        if shuttingDown and shutdownDeadline and os.clock()>=shutdownDeadline-10 then return nil,false,"DEPARTED" end
         local now=leaseNow()
         local blocked,invalid=false,false
+        local claim={key=key,token=token,cancelled=false}
+        pendingClaims[player]=claim
+        if shuttingDown then schedulePendingClaimCleanup(player,claim) end
         local claimedOk,claimed=pcall(function()
             return progressStore:UpdateAsync(key,function(current,keyInfo)
+                if claim.cancelled or (shuttingDown and shutdownDeadline and os.clock()>=shutdownDeadline) then return nil end
                 -- Never trust the earlier GetAsync snapshot inside this atomic CAS.
                 if current~=nil and not validProgress(current) then invalid=true;return nil end
                 if current and current.sessionOwner and current.sessionOwner~=token
@@ -128,6 +171,9 @@ local function loadProgress(player,pending)
                 return updated
             end)
         end)
+        if pendingClaims[player]==claim then pendingClaims[player]=nil end
+        if not claim.cancelled then pendingClaimCleanups[claim]=nil end
+        if claim.cancelled then return nil,false,"DEPARTED" end
         if claimedOk and claimed~=nil then
             if sessions[player]~=pending or player.Parent~=Players then
                 -- The claim may have yielded past disconnect. Release only this token.
@@ -684,6 +730,7 @@ lobbyGround.CanCollide = true
 
 local function join(player)
     if player.Parent ~= Players or sessions[player] then return end
+    if shuttingDown then return end
     if rejectedLoads[player] then return end
     local slot=chooseSlot()
     if not slot then
@@ -708,6 +755,7 @@ local function join(player)
         end
         -- A failed load also frees a reserved plot. Admit the next queued player;
         -- the rejected player can still be in Players until Kick completes.
+        if shuttingDown then return end
         for _,waiting in ipairs(Players:GetPlayers()) do
             if waiting ~= player and waiting.Parent == Players and not sessions[waiting] and not rejectedLoads[waiting] then
                 task.spawn(join,waiting)
@@ -743,6 +791,13 @@ local function join(player)
     }
     sessions[player]=state
     makePlot(player,state)
+    if shuttingDown then
+        -- This join began before shutdown: preserve queue admission, but
+        -- immediately freeze and release its lease without unsavable gameplay.
+        state.active=false
+        finalizeProgress(player,state,true)
+        return
+    end
     local function characterReady(character)
         -- Retry bounded waits for a slow HumanoidRootPart, not a replaced character.
         local root
@@ -782,6 +837,7 @@ Players.PlayerRemoving:Connect(function(player)
     sessions[player]=nil
     -- Finalize departing progress before a waiting player's GetAsync can yield.
     finalizeProgress(player,state)
+    if shuttingDown then return end
     -- Assign a newly freed plot to one player who was waiting at capacity.
     for _,waiting in ipairs(Players:GetPlayers()) do
         if waiting ~= player and waiting.Parent == Players and not sessions[waiting] and not rejectedLoads[waiting] then
@@ -792,7 +848,11 @@ Players.PlayerRemoving:Connect(function(player)
 end)
 if type(game.BindToClose) == "function" then
     game:BindToClose(function()
+        -- Block late admissions before freezing the shutdown save set.
+        shuttingDown=true
         local deadline=os.clock()+25 -- Roblox waits at most 30 seconds for BindToClose.
+        shutdownDeadline=deadline
+        for player,claim in pairs(pendingClaims) do schedulePendingClaimCleanup(player,claim) end
         local closing={}
         for player,state in pairs(sessions) do
             -- Freeze gameplay before any final UpdateAsync can yield.
@@ -811,8 +871,9 @@ if type(game.BindToClose) == "function" then
             finalizeProgress(closing[1].player,closing[1].state)
         end
         -- PlayerRemoving may have cleared sessions while UpdateAsync was yielding.
-        while next(finalSavesInFlight) and os.clock()<deadline do task.wait(0.1) end
+        while (next(finalSavesInFlight) or next(pendingClaimCleanups)) and os.clock()<deadline do task.wait(0.1) end
         if next(finalSavesInFlight) then warn("TWF: shutdown final save still pending") end
+        if next(pendingClaimCleanups) then warn("TWF: shutdown pending claim cleanup still pending") end
     end)
 end
 for _,player in ipairs(Players:GetPlayers()) do task.spawn(join,player) end
