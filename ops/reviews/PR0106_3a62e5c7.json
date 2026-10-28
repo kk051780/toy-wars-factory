@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "pr": 106,
+  "head": "3a62e5c70e27c2b60152ab97011b5b7535ddc8d5",
+  "branch": "auto/twf-game-repair-95aef457-a224-8332-ac0b-f8e3e80c9ae0",
+  "repository": "kk051780/toy-wars-factory",
+  "base_main_sha": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "73f73cd1-8cd4-8326-b436-83c29f105c82",
+  "lease_epoch": 210,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "703f0277-dcf0-832b-b9fd-2a59fd937839",
+  "original_author_run_id": "95aef457-a224-8332-ac0b-f8e3e80c9ae0",
+  "reviewed_at": "2026-10-28T17:26:58.534Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "ci": {
+    "id": 40733120541,
+    "head": "3a62e5c70e27c2b60152ab97011b5b7535ddc8d5",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "scope_and_claim_gate": "PASS",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40733120541"
+  },
+  "main_qa": {
+    "id": 40697393767,
+    "qa_head": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
+    "conclusion": "success",
+    "comparison_since_qa": {
+      "verified": true,
+      "status": "ahead",
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "category": "GAME_DATASTORE_SHUTDOWN_ADMISSION",
+  "change_kind": "GAME_CODE_AND_NEW_REGRESSION",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_shutdown_admission_spec.lua",
+    "history/C00108_shutdown_admission_fence.json",
+    "history/C00109_shutdown_admission_ci_repair.json",
+    "history/C00110_shutdown_admission_backfill_ci_repair.json",
+    "history/C00111_shutdown_join_guard_accepted_regression.json",
+    "history/C00112_shutdown_pending_claim_cleanup.json"
+  ],
+  "findings": [
+    "Latest PR head matches Actions run 40733120541 (offline/compile_hold success), trusted base scope PASS for seven files, and five immutable coordinator claims verified in offline job log.",
+    "Accepted 27 server and six HUD regressions unchanged; new shutdown admission fixture executes canonical server 9/9, including 35-second pending claim/read and pinned-old-main negative controls; Python 454/454 PASS.",
+    "Track pending UpdateAsync claim token, cancel after five-second grace, token-matched compensating CAS and wait for cleanup inside 25-second BindToClose budget; late GetAsync cannot start claim after deadline. Existing queued backfill and existing three character prices/models/HUD preserved.",
+    "Historical C00108-C00112 records preserve source byte deltas and registered WORKER claim/run evidence; no protected policy, cost, publishing, API, accepted-test, or installer change."
+  ],
+  "limitations": [
+    "Roblox Studio, real DataStore, multi-client, mobile, actual shutdown/network failure, visual characters and player feedback NOT_RUN.",
+    "Compensating CAS may fail on transport/throttling; warning retained, no guaranteed save/lease cleanup under real outages.",
+    "PR is not an OWNER/WEB innovation experiment; no market/retention claims."
+  ],
+  "next": "MERGE_ONE_THEN_REQUIRE_MAIN_QA_AND_HANDOFF; release HOLD remains."
+}
