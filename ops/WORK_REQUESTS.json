@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T12:18:15.170Z",
+  "observed_at": "2026-10-28T12:19:54.221Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2169,7 +2169,7 @@
       "kind": "INDEPENDENT_REVIEW_FIX",
       "priority": "P1",
       "assigned_role": "WORKER",
-      "status": "FIX_VERIFIED_PENDING_MAIN_QA",
+      "status": "RESOLVED_MERGED_MAIN_QA_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "pr": 100,
       "branch": "auto/twf-game-repair-597f03b8-0fc0-8330-a5ec-a88949bff82b",
@@ -2193,7 +2193,11 @@
       "fixed_head": "91dac7662454a197e20eb953a92df044545fd577",
       "fixed_ci": 40685911751,
       "review_record": "ops/reviews/PR0100_91dac766.json",
-      "verified_at": "2026-10-28T12:18:15.170Z"
+      "verified_at": "2026-10-28T12:18:15.170Z",
+      "resolved_at": "2026-10-28T12:19:54.221Z",
+      "merge_sha": "d7738c5b8b6eafbca494dd241067bb450bdc46d5",
+      "main_qa": 40686775807,
+      "handoff": 40686775714
     }
   ]
 }
