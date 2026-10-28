@@ -80,5 +80,9 @@
   },
   "category": "GAME_DATASTORE_LEASE_EXPIRY_SHUTDOWN",
   "reason": "Fail-closed lease expiry and shutdown CAS save, foreign-owner protection, previous-head negative control. Four trusted-scope files; contiguous source ledger; two exact-head CI jobs pass; independent task/run.",
-  "next": "MERGE_EXACT_HEAD_AND_CHECK_MAIN_QA"
+  "next": "MERGE_EXACT_HEAD_AND_CHECK_MAIN_QA",
+  "merge_sha": "d7738c5b8b6eafbca494dd241067bb450bdc46d5",
+  "status": "MERGED_MAIN_QA_PENDING",
+  "post_merge_main_qa": 40686775807,
+  "post_merge_handoff": 40686775714
 }
