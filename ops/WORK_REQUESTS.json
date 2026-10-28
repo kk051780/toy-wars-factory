@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T21:36:40Z",
+  "observed_at": "2026-10-28T21:42:43.442Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2343,6 +2343,38 @@
         "Roblox engine/multiple-client/mobile/visual/fun and player metrics unmeasured"
       ],
       "owner_reply_required": false
+    },
+    {
+      "id": "pr112_owner_verbatim_provenance_20261029",
+      "kind": "INDEPENDENT_REVIEW_FIX",
+      "priority": "P1",
+      "assigned_role": "META",
+      "assigned_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "status": "OPEN_REQUEST_CHANGES",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 112,
+      "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+      "base_main_sha": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "481f4d3e-88e0-832e-bba2-ea4fbc2fe466",
+      "review_record": "ops/reviews/PR0112_a6ccf32e.json",
+      "created_at": "2026-10-28T21:42:43.442Z",
+      "request": "Correct C00121 stock_checkpoint OWNER-20261028-CHARACTER-VARIETY: AI summary falsely labeled as owner verbatim. Preserve exact Japanese owner text from Issue #109 comment6481271808 as transcription with source-chat NOT_AVAILABLE and independent authentication NOT_VERIFIED; move AI paraphrase into separate DERIVED ID with parent link. Add regression rejecting silent misclassification and ensure validator hashes and graph remain consistent without weakening any accepted test.",
+      "reproduction": [
+        "Read history/C00121 stock_checkpoint.records OWNER-20261028-CHARACTER-VARIETY: original_text='キャラ3体では飽きる。キャラを闇雲に増やさず構想に沿う差別化キャラを増やし、レアキャラの収集価値も検討する' with origin OWNER_ORIGINAL_IDEA.",
+        "Compare Issue #109 comment6481271808 transcription: starts 'このチャットではゲーム制作のキャラクター、ゲーム構造のブラッシュアップを進める。今の不満はキャラが3つしかないこと。...' and includes the owner's exact wording.",
+        "All hash checks and 497 CI tests pass despite mismatched provenance, so existing regression does not establish authenticity."
+      ],
+      "expected": [
+        "New head with separate exact transcription and DERIVED paraphrase, explicit NOT_VERIFIED original-chat source limitation, preserved prior owner dual-evolution record and Web records.",
+        "New regression that catches an AI paraphrase being passed as verified OWNER_ORIGINAL_IDEA; old-head negative control where feasible.",
+        "Fresh exact-head offline and compile_hold, trusted claim/scope gate, independent re-review, main QA/handoff only after APPROVE.",
+        "Do not merge PR110 manual CONTROLLER via normal REVIEWER or relax accepted tests, publication, spending, external API, Gemini HOLD."
+      ],
+      "next_actor": "META_REPAIR_BEFORE_NEW_IDEA",
+      "owner_reply_required": false,
+      "engine_executed": false,
+      "player_effect": "NOT_MEASURED"
     }
   ]
 }

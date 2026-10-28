@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "pr": 111,
+  "repository": "kk051780/toy-wars-factory",
+  "head": "985a02462cce841434af6d94b10a2e728cc8c9be",
+  "base_main_sha": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+  "reviewed_at": "2026-10-28T21:42:43.442Z",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "481f4d3e-88e0-832e-bba2-ea4fbc2fe466",
+  "lease_epoch": 223,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "6c654e6a-4100-8331-976a-bb27fe199e2c",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [
+    "Bounded departed-claim cleanup retries thrown DataStore errors only, with token CAS and preserved metadata/UserIds; foreign-owner conflict stops without retry.",
+    "Current-main source bytes 40142 -> 40752 (+610); no accepted tests/config/character/HUD/publish/spend changes.",
+    "4 new deterministic Lua cases include old-main negative control; exact-head offline and compile_hold both PASS; engine/real DataStore/multiplayer/mobile NOT_RUN."
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "GAME_DATASTORE_DEPARTED_CLAIM_CLEANUP_RETRY",
+  "changed_files": [
+    "history/C00119_departed_claim_cleanup_retry.json",
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_departed_claim_cleanup_spec.lua"
+  ],
+  "ci": {
+    "id": 40769446837,
+    "head": "985a02462cce841434af6d94b10a2e728cc8c9be",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "scope_and_claim_gate": "PASS",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40769446837",
+    "new_lua_cases": 4
+  },
+  "main_qa": {
+    "id": 40763962202,
+    "head": "526ad536497510f57b94460988ea1ca9fa19ac62",
+    "conclusion": "success",
+    "status_only_descendant_verified": true
+  },
+  "main_handoff": {
+    "id": 40763962162,
+    "conclusion": "success"
+  },
+  "evidence": {
+    "main_compare_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "claim_commit": "4e91e1fc861cf72059e3cc454d112a3415507788",
+    "claim_epoch": 220,
+    "claim_ancestor_verified": true,
+    "source_before_bytes": 40142,
+    "source_after_bytes": 40752,
+    "accepted_tests_unchanged": true,
+    "limitations": [
+      "Roblox engine NOT_RUN",
+      "Actual DataStore NOT_RUN",
+      "Multiplayer NOT_RUN",
+      "Mobile NOT_RUN"
+    ]
+  },
+  "status": "APPROVED_PENDING_EXACT_HEAD_MERGE"
+}

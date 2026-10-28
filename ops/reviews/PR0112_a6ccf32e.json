@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "pr": 112,
+  "repository": "kk051780/toy-wars-factory",
+  "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+  "base_main_sha": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+  "reviewed_at": "2026-10-28T21:42:43.442Z",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "481f4d3e-88e0-832e-bba2-ea4fbc2fe466",
+  "lease_epoch": 223,
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "7abde498-0150-8327-8579-2b3f808d0acb",
+  "verdict": "REQUEST_CHANGES",
+  "blockers": [
+    {
+      "id": "OWNER_ORIGINAL_PARAPHRASE_MISCLASSIFIED",
+      "severity": "P1",
+      "file": "history/C00121_scoped_dual_idea_pipeline.json",
+      "path": "stock_checkpoint.records[idea_id=OWNER-20261028-CHARACTER-VARIETY]",
+      "actual": "origin OWNER_ORIGINAL_IDEA but original_text is AI paraphrase; source_ref NOT_AVAILABLE",
+      "expected": "Keep verbatim original transcription with explicit Issue #109 comment 6481271808 evidence and original-chat NOT_AVAILABLE/NOT_VERIFIED; move summary to distinct DERIVED id with derived_from original. Never treat hash self-consistency as owner-authentication. Add negative regression for paraphrase-as-verified-original."
+    }
+  ],
+  "findings": [
+    "Issue #109 comment 6481271808 preserves owner wording as project-chat transcription; original chat permalink is unavailable, so independent original-chat authentication is NOT_VERIFIED.",
+    "PR #112 head a6ccf32e passes both CI jobs and 497 Python checks, but content provenance is false despite matching internal hashes.",
+    "No game code, release, API, payment or player outcome changed; original chat ingestion/engine/mobile/player effects NOT_RUN or NOT_MEASURED."
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": false,
+    "protected_controls": true,
+    "behavior": false
+  },
+  "category": "SYSTEM_OWNER_WEB_DUAL_ORIGIN_PIPELINE",
+  "changed_files": [
+    "tools/system_idea_pipeline.py",
+    "tests/test_system_idea_pipeline.py",
+    "tests/test_system_idea_vault.py",
+    "docs/research/2026-10-29_scoped_idea_vault.md",
+    "history/C00121_scoped_dual_idea_pipeline.json"
+  ],
+  "ci": {
+    "id": 40772704574,
+    "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "scope_and_claim_gate": "PASS",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40772704574",
+    "python_tests": 497
+  },
+  "evidence": {
+    "owner_source": "https://github.com/kk051780/toy-wars-factory/issues/109#issuecomment-6481271808",
+    "prior_review_comment": "https://github.com/kk051780/toy-wars-factory/pull/112#issuecomment-6481216316",
+    "claim_commit": "1404bff89ae63c913de3d3c556f37acb6583a636",
+    "claim_epoch": 222,
+    "claim_ancestor_verified": true,
+    "original_chat_link": "NOT_AVAILABLE",
+    "owner_authentication": "NOT_VERIFIED",
+    "player_metrics": "NOT_MEASURED",
+    "roblox_engine": "NOT_RUN"
+  },
+  "status": "REQUEST_CHANGES_UNMERGED"
+}

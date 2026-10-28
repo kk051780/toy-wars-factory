@@ -933,6 +933,66 @@
       "status_only_descendant_verified": true,
       "main_after_handoff": "5d4774843179227956f68d92c0ff6f89c77cb28d",
       "category": "GAME_SERVER_CONFIGURED_PROMPT_DISTANCE_FENCE"
+    },
+    "111": {
+      "pr": 111,
+      "head": "985a02462cce841434af6d94b10a2e728cc8c9be",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "481f4d3e-88e0-832e-bba2-ea4fbc2fe466",
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "6c654e6a-4100-8331-976a-bb27fe199e2c",
+      "verdict": "APPROVE",
+      "review_record": "ops/reviews/PR0111_985a0246.json",
+      "ci": {
+        "id": 40769446837,
+        "head": "985a02462cce841434af6d94b10a2e728cc8c9be",
+        "conclusion": "success",
+        "required_jobs_passed": true,
+        "jobs": {
+          "offline": "success",
+          "compile_hold": "success"
+        },
+        "scope_and_claim_gate": "PASS",
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40769446837",
+        "new_lua_cases": 4
+      },
+      "base_main_sha": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+      "lease_epoch": 223
+    },
+    "112": {
+      "pr": 112,
+      "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "481f4d3e-88e0-832e-bba2-ea4fbc2fe466",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "7abde498-0150-8327-8579-2b3f808d0acb",
+      "verdict": "REQUEST_CHANGES",
+      "review_record": "ops/reviews/PR0112_a6ccf32e.json",
+      "ci": {
+        "id": 40772704574,
+        "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+        "conclusion": "success",
+        "required_jobs_passed": true,
+        "jobs": {
+          "offline": "success",
+          "compile_hold": "success"
+        },
+        "scope_and_claim_gate": "PASS",
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40772704574",
+        "python_tests": 497
+      },
+      "base_main_sha": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+      "lease_epoch": 223,
+      "blockers": [
+        {
+          "id": "OWNER_ORIGINAL_PARAPHRASE_MISCLASSIFIED",
+          "severity": "P1",
+          "file": "history/C00121_scoped_dual_idea_pipeline.json",
+          "path": "stock_checkpoint.records[idea_id=OWNER-20261028-CHARACTER-VARIETY]",
+          "actual": "origin OWNER_ORIGINAL_IDEA but original_text is AI paraphrase; source_ref NOT_AVAILABLE",
+          "expected": "Keep verbatim original transcription with explicit Issue #109 comment 6481271808 evidence and original-chat NOT_AVAILABLE/NOT_VERIFIED; move summary to distinct DERIVED id with derived_from original. Never treat hash self-consistency as owner-authentication. Add negative regression for paraphrase-as-verified-original."
+        }
+      ]
     }
   },
   "integration_results": {

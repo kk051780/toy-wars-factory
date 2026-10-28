@@ -1,23 +1,20 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T20:31:52.267Z",
-  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "observed_at": "2026-10-28T21:42:43.442Z",
+  "status": "PR111_APPROVED_PENDING_MERGE_PR112_REQUEST_CHANGES",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "08b9a9a6-6070-8321-a534-c6adad650214",
-  "lease_epoch": 218,
-  "main_before": "8a0f8816870fa4854b71c23d223728589303070a",
+  "reviewer_run_id": "481f4d3e-88e0-832e-bba2-ea4fbc2fe466",
+  "lease_epoch": 223,
+  "main_before": "5d4774843179227956f68d92c0ff6f89c77cb28d",
   "latest_review": {
-    "pr": 108,
-    "head": "234c6f9dc2d6b9001796fe3e47daf48891b88223",
+    "pr": 111,
+    "head": "985a02462cce841434af6d94b10a2e728cc8c9be",
     "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0108_234c6f9d.json",
-    "ci": 40761307293,
-    "merge_sha": "526ad536497510f57b94460988ea1ca9fa19ac62",
-    "main_qa": 40763962202,
-    "handoff": 40763962162,
-    "category": "GAME_SERVER_CONFIGURED_PROMPT_DISTANCE_FENCE",
-    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
+    "review_record": "ops/reviews/PR0111_985a0246.json",
+    "ci": 40769446837,
+    "category": "GAME_DATASTORE_DEPARTED_CLAIM_CLEANUP_RETRY",
+    "status": "APPROVED_PENDING_MERGE"
   },
   "merged_prs": [
     {
@@ -255,16 +252,11 @@
       "status_only_descendant_verified": true
     }
   ],
-  "merge_count_this_run": 1,
+  "merge_count_this_run": 0,
   "main_qa": {
     "id": 40763962202,
     "head": "526ad536497510f57b94460988ea1ca9fa19ac62",
-    "conclusion": "success",
-    "jobs": {
-      "offline": "success",
-      "compile_hold": "success"
-    },
-    "status_only_descendant_verified": true
+    "conclusion": "success"
   },
   "handoff": {
     "id": 40763962162,
@@ -280,19 +272,34 @@
     ]
   },
   "unresolved": [
-    "P0 Roblox Studio engine/multiplayer/mobile verification remains OPEN",
-    "PR98 protected character pipeline requires separate exact-head maintenance review",
-    "Gemini incident HOLD, release HOLD and spending caps preserved",
-    "Selector fixed <=13 guard remains for larger future MaxActivationDistance configuration"
+    {
+      "pr": 112,
+      "blocker": "OWNER_ORIGINAL_PARAPHRASE_MISCLASSIFIED"
+    }
   ],
-  "next": "PRIORITIZE_PLAYABLE_PVE_AND_REAL_ENGINE_EVIDENCE; REVIEW_ONLY_REGISTERED_WORKER_META",
+  "next": "Merge PR111 exact head after ownership recheck; verify main QA/handoff. PR112 must repair original-text provenance and pass new head CI before reconsideration.",
   "runtime_verified": true,
   "main_after": "5d4774843179227956f68d92c0ff6f89c77cb28d",
   "merge_sha": "877417447e645fd8f3c34d5aecd883a43791712d",
   "next_actor": "WORKER",
-  "secondary_review": null,
+  "secondary_review": {
+    "pr": 112,
+    "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+    "verdict": "REQUEST_CHANGES",
+    "review_record": "ops/reviews/PR0112_a6ccf32e.json",
+    "blockers": [
+      {
+        "id": "OWNER_ORIGINAL_PARAPHRASE_MISCLASSIFIED",
+        "severity": "P1",
+        "file": "history/C00121_scoped_dual_idea_pipeline.json",
+        "path": "stock_checkpoint.records[idea_id=OWNER-20261028-CHARACTER-VARIETY]",
+        "actual": "origin OWNER_ORIGINAL_IDEA but original_text is AI paraphrase; source_ref NOT_AVAILABLE",
+        "expected": "Keep verbatim original transcription with explicit Issue #109 comment 6481271808 evidence and original-chat NOT_AVAILABLE/NOT_VERIFIED; move summary to distinct DERIVED id with derived_from original. Never treat hash self-consistency as owner-authentication. Add negative regression for paraphrase-as-verified-original."
+      }
+    ]
+  },
   "main_after_merge": "877417447e645fd8f3c34d5aecd883a43791712d",
   "main_after_handoff": "8a0f8816870fa4854b71c23d223728589303070a",
   "status_only_descendant_verified": true,
-  "merges_this_run": 1
+  "merges_this_run": 0
 }
