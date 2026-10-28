@@ -1,0 +1,82 @@
+{
+  "id": "C00069",
+  "date": "2026-10-28",
+  "kind": "AUTONOMOUS_CI_REPAIR_DISCONNECT_BEFORE_CLAIM",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "935987ea-7dcc-8329-b060-4663b031d950",
+  "queue_decision": {
+    "action": "REPAIR_CI",
+    "change_scheduler": false,
+    "pr": 94,
+    "branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "failed_head": "fa3a77280ac25847bb1465116a02876554316eb7",
+    "failed_ci": 40596714434
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "36d56f1cff56862890f0eb13d399cdf38242921e",
+    "owner_run_id": "935987ea-7dcc-8329-b060-4663b031d950",
+    "epoch": 156
+  },
+  "main_base": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+  "source_commit": "fa3a77280ac25847bb1465116a02876554316eb7",
+  "previous_pr_head": "fa3a77280ac25847bb1465116a02876554316eb7",
+  "issue": 93,
+  "defect": {
+    "id": "disconnect_during_getasync_still_claims",
+    "cause": "loadProgress performed UpdateAsync claim after yielding GetAsync even when PlayerRemoving had cleared the pending session.",
+    "reproduction": "Canonical whole-server tests/auto/progression_rejoin_spec.lua: disconnect while read yields frees slot without a ghost plot failed (expected 0 writes, got 1) in exact-head offline CI #40596714434."
+  },
+  "fix": "Pass pending join state to loadProgress; after GetAsync and schema validation, verify the player is still parented and the same pending state owns the slot before attempting any UpdateAsync claim.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "history/C00069_disconnect_before_claim_ci_repair.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 27241,
+      "after_bytes": 27427,
+      "delta_bytes": 186
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 934,
+    "lua_bytes": 38571
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [],
+  "characters_touched": [],
+  "character_impact": "No character stats, prices, or combat changes; avoids stale DataStore ownership claim on disconnect.",
+  "tests": {
+    "canonical_server": [
+      "tests/auto/progression_rejoin_spec.lua",
+      "tests/auto/progression_session_fence_spec.lua"
+    ],
+    "reproduction_case": "disconnect while read yields frees slot without a ghost plot",
+    "new_cases_this_commit": 0,
+    "accepted_tests": "UNCHANGED",
+    "local": "NOT_RUN_LUA_INTERPRETER_UNAVAILABLE",
+    "failed_head_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40596714434",
+    "ci": "PENDING_EXACT_HEAD",
+    "roblox_engine": "NOT_RUN"
+  },
+  "evidence": {
+    "claim_commit": "36d56f1cff56862890f0eb13d399cdf38242921e",
+    "pr": "https://github.com/kk051780/toy-wars-factory/pull/94",
+    "source_commit": "fa3a77280ac25847bb1465116a02876554316eb7",
+    "final_head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE"
+  },
+  "limitations": [
+    "Canonical offline mock only; live Roblox DataStore/engine not run.",
+    "Session owner supersession does not transfer unsaved progress."
+  ],
+  "next_action": "Require both exact-head CI jobs success, independent reviewer only for main integration.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}

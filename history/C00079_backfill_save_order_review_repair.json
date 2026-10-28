@@ -1,0 +1,98 @@
+{
+  "id": "C00079",
+  "date": "2026-10-28",
+  "kind": "AUTONOMOUS_PR94_BACKFILL_FINAL_SAVE_REVIEW_REPAIR",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "1e5e957c-de1c-832a-a736-e455da4fb7cc",
+  "queue_decision": {
+    "action": "REPAIR_REVIEW",
+    "change_scheduler": false,
+    "pr": 94,
+    "branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "previous_head": "6ac3f11a0fa88154652b9c68c60a6838a4e5eb60",
+    "request_id": "pr94_backfill_before_final_save_20261028",
+    "reason": "Independent REVIEWER request and exact GitHub PR/head/branch verified; older WORK_REQUESTS shape is not normalized trusted-input schema."
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "5c549a4b9b72bb68001652c7060bae4243e4df58",
+    "owner_run_id": "1e5e957c-de1c-832a-a736-e455da4fb7cc",
+    "epoch": 178
+  },
+  "main_base": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+  "previous_pr_head": "6ac3f11a0fa88154652b9c68c60a6838a4e5eb60",
+  "issue": 93,
+  "defect": {
+    "id": "player_removing_backfill_yields_before_final_save",
+    "cause": "PlayerRemoving invokes join(waiting) before saveProgress; the queued player's GetAsync can yield, leaving the departing player's session absent from BindToClose without a committed final save.",
+    "reproduction": "Four occupied workshops, fifth waiting player; departing player A earns 350 from stored 200, B's GetAsync yields 5 seconds. On pinned 6ac3f11a, shutdown before B resumes leaves A's stored 200 and lease owner; canonical test runs the full server."
+  },
+  "fix": "Move departing player's existing saveProgress call immediately before the direct join(waiting) backfill loop; retain slot release and queue semantics.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_backfill_save_order_spec.lua",
+    "history/C00079_backfill_save_order_review_repair.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 33311,
+      "after_bytes": 33392,
+      "delta_bytes": 81
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1032,
+    "lua_bytes": 44536
+  },
+  "main_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 781,
+    "lua_bytes": 31291
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/progression_backfill_save_order_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 5280,
+      "delta_bytes": 5280
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "No toy cost, stats, appearance, combat or production changes; departure persistence is finalized before yielding backfill.",
+  "tests": {
+    "new_cases": 3,
+    "canonical_server": "tests/auto/progression_backfill_save_order_spec.lua",
+    "negative_control_head": "6ac3f11a0fa88154652b9c68c60a6838a4e5eb60",
+    "accepted_server_27": "UNCHANGED",
+    "accepted_hud_6": "UNCHANGED",
+    "local": "NOT_RUN_LUA_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "roblox_engine": "NOT_RUN",
+    "real_datastore": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "review_record": "ops/reviews/PR0094_6ac3f11a.json",
+    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "reviewer_run_id": "419780a3-78e8-832e-a8da-c4baf3595488",
+    "previous_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40648102338",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40629585413",
+    "claim_commit": "5c549a4b9b72bb68001652c7060bae4243e4df58",
+    "pr": "https://github.com/kk051780/toy-wars-factory/pull/94",
+    "new_head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE"
+  },
+  "limitations": [
+    "Offline canonical Lua mocks only; Roblox engine, real DataStore, physical mobile and multiplayer remain unverified."
+  ],
+  "next_action": "Verify both exact-head CI jobs and independent REVIEWER re-review; author does not merge main.",
+  "restrictions": {
+    "scheduler_mutated": false,
+    "gemini_rerun": false,
+    "roblox_publish": false,
+    "author_main_merge": false
+  }
+}

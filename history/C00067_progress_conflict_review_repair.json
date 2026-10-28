@@ -1,0 +1,97 @@
+{
+  "id": "C00067",
+  "date": "2026-10-28",
+  "kind": "AUTONOMOUS_REVIEW_REPAIR_PROGRESS_STALE_SESSION",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "0ad158ff-63e0-8325-960b-d2f4598b3bc0",
+  "queue_decision": {
+    "action": "REPAIR_REVIEW",
+    "change_scheduler": false,
+    "pr": 94,
+    "branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "open_prs": [
+      94
+    ],
+    "request_id": "pr94_progress_updateasync_stale_overwrite_20261028"
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "12f4267d13e49887735c8c2e2e534ed1a0c0f5a1",
+    "owner_run_id": "0ad158ff-63e0-8325-960b-d2f4598b3bc0",
+    "epoch": 152
+  },
+  "main_base": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
+  "previous_pr_head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
+  "source_commit": "046ead3cee1bdfd9690caa27901f9af51bf96a5b",
+  "issue": 93,
+  "defect": {
+    "id": "progress_updateasync_stale_overwrite",
+    "cause": "UpdateAsync ignored its current stored value and unconditionally returned a stale local snapshot.",
+    "reproduction": "Canonical PR94 whole-server Lua fixtures reproduce both unknown v2 schema overwrite and stale older-session rollback after newer write."
+  },
+  "fix": "Snapshot loaded v1 fields and optional revision; UpdateAsync cancels if current differs, bumps revision on successful write, retains unrelated record fields and keyInfo UserIds/metadata, and warns on conflict.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_conflict_spec.lua",
+    "history/C00067_progress_conflict_review_repair.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 22932,
+      "after_bytes": 24938,
+      "delta_bytes": 2006
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 881,
+    "lua_bytes": 36082
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/progression_conflict_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 7299,
+      "delta_bytes": 7299
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "No toy stats, prices or combat behavior changed; persistence conflict protection only.",
+  "tests": {
+    "canonical_server": "tests/auto/progression_conflict_spec.lua",
+    "new_cases": 7,
+    "negative_controls": 2,
+    "accepted_server_cases": "UNCHANGED",
+    "accepted_hud_cases": "UNCHANGED",
+    "local": "NOT_RUN_LOCAL_CANONICAL_TREE_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "roblox_engine": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "datastore_live": "NOT_RUN"
+  },
+  "evidence": {
+    "request": "ops/WORK_REQUESTS.json#pr94_progress_updateasync_stale_overwrite_20261028",
+    "review": "ops/reviews/PR0094_aeb60a50.json",
+    "pr": "https://github.com/kk051780/toy-wars-factory/pull/94",
+    "prior_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40583572501",
+    "claim_commit": "12f4267d13e49887735c8c2e2e534ed1a0c0f5a1",
+    "source_commit": "046ead3cee1bdfd9690caa27901f9af51bf96a5b",
+    "final_head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE",
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "limitations": [
+    "No Roblox DataStore or cross-server live verification; deterministic full-server mock only.",
+    "Save conflicts are fail-closed and warned, not automatically merged or retried.",
+    "No periodic autosave; crash durability and user-facing conflict recovery remain unimplemented."
+  ],
+  "next_action": "Require exact final head offline and compile_hold success; independent REVIEWER re-review before merge; verify main QA/handoff after integration.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}

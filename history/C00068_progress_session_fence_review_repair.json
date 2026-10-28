@@ -1,0 +1,112 @@
+{
+  "id": "C00068",
+  "date": "2026-10-28",
+  "kind": "AUTONOMOUS_REVIEW_REPAIR_PROGRESS_SESSION_FENCING",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "935987ea-7dcc-8329-b060-4663b031d950",
+  "queue_decision": {
+    "action": "REPAIR_REVIEW",
+    "change_scheduler": false,
+    "pr": 94,
+    "branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "open_prs": [
+      94
+    ],
+    "request_id": "pr94_two_session_overlap_later_progress_lost_20261028",
+    "reason": "Verified latest REVIEWER WORK_REQUESTS exact PR/head; repair precedes new START."
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "36d56f1cff56862890f0eb13d399cdf38242921e",
+    "owner_run_id": "935987ea-7dcc-8329-b060-4663b031d950",
+    "epoch": 156
+  },
+  "main_base": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+  "previous_pr_head": "5bba9a7fffa3b494b485341b51372452f196fad1",
+  "source_commit": "5bba9a7fffa3b494b485341b51372452f196fad1",
+  "issue": 93,
+  "defect": {
+    "id": "two_session_overlap_later_progress_lost",
+    "cause": "Save-only optimistic revision CAS rejects later session B when older A saves first, discarding B's later progress.",
+    "reproduction": "Two complete canonical server fixtures share DataStore p:1; A and B load v1; A saves coins=300 first, B later tries coins=500. Previous head stores 300 and cancels B. Negative control pins previous PR94 head."
+  },
+  "fix": "Atomically claim a per-session GUID owner via UpdateAsync during validated load; later join supersedes earlier owner. Save checks both revision and owner, so old sessions cannot commit in either save order. New-profile claim reserves the key; malformed/read-failed/claim-failed sessions never write. Preserve DataStoreKeyInfo metadata/UserIds. No permanent lease: each valid rejoin can supersede, with failed concurrent claims fail-closed.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_rejoin_spec.lua",
+    "tests/auto/progression_conflict_spec.lua",
+    "tests/auto/progression_session_fence_spec.lua",
+    "history/C00068_progress_session_fence_review_repair.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 24938,
+      "after_bytes": 27241,
+      "delta_bytes": 2303
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 932,
+    "lua_bytes": 38385
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/progression_rejoin_spec.lua",
+      "before_bytes": 5689,
+      "after_bytes": 5980,
+      "delta_bytes": 291
+    },
+    {
+      "path": "tests/auto/progression_conflict_spec.lua",
+      "before_bytes": 7299,
+      "after_bytes": 7562,
+      "delta_bytes": 263
+    },
+    {
+      "path": "tests/auto/progression_session_fence_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 6497,
+      "delta_bytes": 6497
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "No character stats/prices/combat changes; session ownership fences persisted Coins/Wave/Defeated/FactoryLevel.",
+  "tests": {
+    "canonical_server": "tests/auto/progression_session_fence_spec.lua",
+    "new_cases": 6,
+    "negative_controls": 1,
+    "previous_rejoin_cases": "7 preserved; initial claim adds one legitimate UpdateAsync",
+    "previous_conflict_cases": "7 preserved; GUID service injected in unmerged fixture",
+    "accepted_server_cases": "UNCHANGED",
+    "accepted_hud_cases": "UNCHANGED",
+    "local": "NOT_RUN_LUA_INTERPRETER_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "roblox_engine": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "datastore_live": "NOT_RUN"
+  },
+  "evidence": {
+    "request": "ops/WORK_REQUESTS.json#pr94_two_session_overlap_later_progress_lost_20261028",
+    "pr": "https://github.com/kk051780/toy-wars-factory/pull/94",
+    "previous_head_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40594071458",
+    "claim_commit": "36d56f1cff56862890f0eb13d399cdf38242921e",
+    "final_head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE",
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "limitations": [
+    "An earlier session's unsaved progress is not transferred to a later session; last claimed session is authoritative.",
+    "No periodic autosave; crash loss remains possible.",
+    "No live DataStore, Roblox engine or physical mobile proof."
+  ],
+  "next_action": "Exact-head both CI jobs and new whole-server regression; separate REVIEWER decides main integration, then main QA/handoff.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}
