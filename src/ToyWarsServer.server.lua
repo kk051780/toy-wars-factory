@@ -209,6 +209,22 @@ local function saveProgress(player,state)
     end
     warn("TWF: progress save retries exhausted; progress may be unsaved for",player.UserId)
 end
+-- A failed refresh is tolerable only while this exact session's local lease is live.
+-- Preserve final-save CAS on expiry: earlier earnings may still be committed
+-- if no other server has claimed the record.
+local function stopExpiredProgressLease(state)
+    local expected=state.persistSnapshot
+    if state.persistAllowed and not state.persistFinalizing and expected and expected.sessionOwner
+        and (not expected.sessionLeaseUntil or leaseNow()>=expected.sessionLeaseUntil) then
+        state.active=false
+        warn("TWF: progress lease expired for",state.player.UserId)
+        if type(state.player.Kick)=="function" then
+            state.player:Kick("Toy Wars: progress session expired. Please rejoin.")
+        end
+        return true
+    end
+    return false
+end
 local function refreshProgressLease(state)
     if not progressStore or not state.persistAllowed or not state.persistSnapshot
         or state.persistFinalizing or state.persistRefreshInFlight then return end
@@ -578,8 +594,10 @@ local function resetAfterLoss(state)
 end
 
 local function simulate(state,dt)
-    if not state.active then return end
+    if not state.active or stopExpiredProgressLease(state) then return end
     refreshProgressLease(state)
+    -- UpdateAsync may yield past expiry; never pay income on its return.
+    if stopExpiredProgressLease(state) then return end
     if not state.active or sessions[state.player] ~= state or state.player.Parent ~= Players then return end
     local income=B.incomePerSecond(state.level.Value)
     if not income then income=6 end
@@ -758,7 +776,8 @@ end)
 if type(game.BindToClose) == "function" then
     game:BindToClose(function()
         for player,state in pairs(sessions) do
-            if state.active then saveProgress(player,state) end
+            -- Expired gameplay can still own unsaved progress; final CAS decides safety.
+            if state.coins then saveProgress(player,state) end
         end
     end)
 end
