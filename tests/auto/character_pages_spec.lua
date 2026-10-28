@@ -8,11 +8,25 @@ local function signal()
     function s:Fire(...) for _,fn in ipairs(self.listeners) do fn(...) end end
     return s
 end
-local function fixture()
+-- Legacy cases use an explicit four-unit fixture, never a frozen live roster.
+local function fixture(roster,waitingOn)
+    local rules=dofile("src/ToyWarsBalance.lua")
+    rules.PLAYABLE_IDS=roster or {"pon","guardon","tankuru","curebo"}
+    for _,id in ipairs(rules.PLAYABLE_IDS) do
+        if not rules.UNITS[id] then rules.UNITS[id]={name=string.upper(id),cost=41} end
+    end
     local made,calls={},{}
     local function object(class,value)
         local o={ClassName=class,Value=value,_children={},Changed=signal(),Activated=signal()}
-        function o:WaitForChild(name) return assert(self._children[name],name) end
+        function o:WaitForChild(name)
+            if name==waitingOn then
+                local notice
+                for _,v in ipairs(made) do if v.Name=="WorkshopQueueNotice" then notice=v end end
+                assert(notice and notice.Text:find(name=="leaderstats" and "Waiting" or "Preparing",1,true),"queue/preparing feedback before yield")
+                coroutine.yield(0.2)
+            end
+            return assert(self._children[name],name)
+        end
         return o
     end
     local p,stats,status=object("Player"),object("Folder"),object("Folder")
@@ -26,10 +40,13 @@ local function fixture()
     local env=setmetatable({game={GetService=function(_,n) return services[n] end},
         Instance={new=function(class) local o=object(class);made[#made+1]=o;return o end},
         Color3={fromRGB=tuple},UDim={new=tuple},UDim2={new=tuple,fromScale=tuple},
-        Enum={Font={GothamBold="GothamBold"}},require=function(v) assert(v==module);return B end,print=function() end}, {__index=_G})
-    assert(loadfile(hud,"t",env))()
+        Enum={Font={GothamBold="GothamBold"}},require=function(v) assert(v==module);return rules end,print=function() end}, {__index=_G})
+    local chunk=assert(loadfile(hud,"t",env))
+    local thread=coroutine.create(chunk)
+    local ok,err=coroutine.resume(thread);assert(ok,err)
     local function find(name) for _,o in ipairs(made) do if o.Name==name then return o end end end
-    return find,calls,made,status
+    local function resume() local success,e=coroutine.resume(thread);assert(success,e) end
+    return find,calls,made,status,resume
 end
 local function check(name,fn)
     local ok,err=pcall(fn)
@@ -72,5 +89,57 @@ check("pager touch height and selector separation are explicit",function()
     find("GuideNext").Activated:Fire();find("GuideNext").Activated:Fire();find("GuideNext").Activated:Fire()
     assert(find("QuickStart").Visible==false and nav.Visible==true)
 end)
+local function roster(count)
+    local ids={"pon","guardon","tankuru","curebo","kururin","future_six","future_seven"}
+    local selected={};for i=1,count do selected[i]=ids[i] end
+    return selected
+end
+for _,count in ipairs({5,7}) do
+    check(tostring(count).." units page through every slot, empty tail and both wrap directions",function()
+        local ids=roster(count)
+        local find,calls,made,status=fixture(ids)
+        assert(#calls==0 and find("ToyPageNavigation").Visible==false)
+        find("GuideSkip").Activated:Fire()
+        local pages=math.ceil(count/3)
+        for page=1,pages do
+            assert(find("ToyPageCaption").Text==string.format("TOYS %d / %d",page,pages))
+            for slot=1,3 do
+                local id=ids[(page-1)*3+slot]
+                local before=#calls
+                if id then
+                    local button=assert(find(id));assert(button.Visible)
+                    status._children.SelectedToy.Value=string.upper(id);status._children.SelectedToy.Changed:Fire()
+                    assert(button.BorderSizePixel==3)
+                    button.Activated:Fire();assert(calls[#calls]==id and #calls==before+1)
+                else
+                    local empty=assert(find("EmptyToySlot"..slot));assert(empty.Visible==false)
+                    empty.Activated:Fire();assert(#calls==before)
+                end
+            end
+            local before=#calls;find("ToyPageNext").Activated:Fire();assert(#calls==before)
+        end
+        assert(find("ToyPageCaption").Text=="TOYS 1 / "..pages)
+        local before=#calls;find("ToyPagePrevious").Activated:Fire();assert(#calls==before)
+        assert(find("ToyPageCaption").Text=="TOYS "..pages.." / "..pages)
+        find("ToyPageNext").Activated:Fire()
+        for _,id in ipairs({"pon","guardon","tankuru"}) do find(id).Activated:Fire();assert(calls[#calls]==id) end
+    end)
+end
+check("single page roster stays without navigation after guide",function()
+    local find,calls=fixture(roster(3));find("GuideSkip").Activated:Fire()
+    assert(find("ToyPageNavigation").Visible==false and #calls==0)
+end)
+for _,missing in ipairs({"leaderstats","ToyWarsBalance"}) do
+    check("waiting state survives delayed "..missing.." before guide and pager",function()
+        local find,calls,made,status,resume=fixture(roster(7),missing)
+        assert(find("WorkshopQueueNotice") and #calls==0)
+        assert(not find("QuickStart") and not find("ToyPageNavigation"))
+        resume()
+        assert(find("WorkshopQueueNotice").Visible==false and find("QuickStart").Visible==true)
+        find("GuideNext").Activated:Fire();find("GuideNext").Activated:Fire();find("GuideNext").Activated:Fire()
+        assert(find("ToyPageNavigation").Visible==true and #calls==0)
+    end)
+end
 print(string.format("AUTO_CHARACTER_PAGES_SUMMARY %d passed / %d failed; HUD mock, not phone hardware",passed,failed))
 if failed>0 then os.exit(1) end
+

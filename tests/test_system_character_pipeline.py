@@ -21,7 +21,11 @@ class CharacterPipelineTests(unittest.TestCase):
 
     def test_active_and_planned_rosters_are_consistent(self):
         self.assertEqual(self.errors(),[])
-        self.assertEqual(len(self.catalog['characters'])+len(self.catalog['candidates']),12)
+        active={c['id'] for c in self.catalog['characters']}
+        planned={c['id'] for c in self.catalog['candidates']}
+        self.assertTrue({'pon','guardon','tankuru'} <= active)
+        self.assertFalse(active & planned)
+        self.assertEqual(len(active | planned),len(self.catalog['characters'])+len(self.catalog['candidates']))
 
     def test_baseline_character_cannot_be_removed(self):
         self.catalog['characters']=[c for c in self.catalog['characters'] if c['id']!='pon']
@@ -70,8 +74,33 @@ class CharacterPipelineTests(unittest.TestCase):
     def test_ranking_is_deterministic_and_does_not_count_skins(self):
         a=assess(self.catalog);b=deepcopy(self.catalog);b['candidates'].reverse()
         self.assertEqual(a,assess(b))
-        self.assertEqual(len(a),8)
+        self.assertEqual({c['id'] for c in a},{c['id'] for c in self.catalog['candidates']})
+        self.assertEqual(len(a),len(self.catalog['candidates']))
         self.assertTrue(all(c['market_effect']=='NOT_MEASURED' and c['native_visuals']=='NOT_RUN' for c in a))
+
+    def test_next_character_promotion_keeps_catalog_and_ranking_valid(self):
+        before={c['id'] for c in self.catalog['characters']}
+        total=len(self.catalog['characters'])+len(self.catalog['candidates'])
+        candidate=self.catalog['candidates'].pop(0)
+        candidate['status']='prototype'
+        self.catalog['characters'].append(candidate)
+        registration=f"    {candidate['id']} = {{name = \"NEXT FIXTURE\", cost = 40}},\n"
+        self.balance=self.balance.replace('    junk =',registration+'    junk =',1)
+        self.assertEqual(self.errors(),[])
+        self.assertEqual({c['id'] for c in self.catalog['characters']},before | {candidate['id']})
+        self.assertEqual(len(self.catalog['characters'])+len(self.catalog['candidates']),total)
+        self.assertNotIn(candidate['id'],{c['id'] for c in assess(self.catalog)})
+        self.test_active_and_planned_rosters_are_consistent()
+        self.test_ranking_is_deterministic_and_does_not_count_skins()
+
+    def test_additional_original_candidate_is_valid_without_freezing_roster_size(self):
+        extra=deepcopy(self.catalog['candidates'][0])
+        extra.update(id='future_fixture',shape='fixture_new_shape',color='#010203')
+        self.catalog['candidates'].append(extra)
+        self.assertEqual(self.errors(),[])
+        self.assertIn('future_fixture',{c['id'] for c in assess(self.catalog)})
+        self.test_active_and_planned_rosters_are_consistent()
+        self.test_ranking_is_deterministic_and_does_not_count_skins()
 
 
 if __name__=='__main__':unittest.main()
