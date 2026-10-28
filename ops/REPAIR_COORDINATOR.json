@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 180,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "9c5d2b9b-3ef8-8325-9f16-5939d55064e1",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 180,
-    "acquired_at": "2026-10-28T08:24:31.198Z",
-    "expires_at": "2026-10-28T08:54:31.198Z",
-    "base_main_sha": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,15 +36,17 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "1e5e957c-de1c-832a-a736-e455da4fb7cc",
-    "epoch": 179,
-    "released_at": "2026-10-28T08:08:16.593Z",
-    "result": "PR94_C00079_GAME_FIX_EXACT_HEAD_BOTH_CI_JOBS_SUCCESS",
+    "kind": "REVIEWER",
+    "owner_id": "9c5d2b9b-3ef8-8325-9f16-5939d55064e1",
+    "epoch": 180,
+    "released_at": "2026-10-28T08:27:15.142Z",
+    "result": "PR94_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
     "pr": 94,
     "head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
-    "ci": 40654472563,
-    "next_actor": "INDEPENDENT_REVIEWER_REVIEW_AND_MAIN_QA"
+    "merge_sha": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+    "post_merge_main_qa": 40656759102,
+    "post_merge_handoff": 40656759290,
+    "next_actor": "WORKER_NEXT_ISSUE_OR_ENGINE_EVIDENCE"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -613,7 +605,11 @@
         "conclusion": "success"
       },
       "review_record": "ops/reviews/PR0094_a635a1b2.json",
-      "status": "APPROVED_PENDING_MERGE"
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "merge_sha": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+      "post_merge_main_qa": 40656759102,
+      "post_merge_handoff": 40656759290,
+      "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8"
     },
     "97": {
       "schema": 1,

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T08:25:26.979Z",
+  "observed_at": "2026-10-28T08:27:15.142Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1376,7 +1376,7 @@
       "kind": "PR_DATASTORE_CONCURRENT_OVERWRITE",
       "priority": "P1",
       "assigned_role": "WORKER",
-      "status": "RESOLVED_IN_PR_HEAD_AWAIT_MAIN",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "pr": 94,
       "head": "aeb60a50aa9ca4eaf64cb636e113ab562d05b6bb",
       "base_main_sha": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4",
@@ -1412,8 +1412,13 @@
         "head": "5bba9a7fffa3b494b485341b51372452f196fad1",
         "ci": 40594071458,
         "verified_by": "f48775fc-f68c-8331-b56e-8ef89ec19c1f",
-        "observed_at": "2026-10-27T22:26:51.698Z",
-        "note": "Specific unconditional UpdateAsync overwrite fixed; separate two-session overlap loss remains blocked."
+        "observed_at": "2026-10-28T08:27:15.142Z",
+        "note": "Specific unconditional UpdateAsync overwrite fixed; separate two-session overlap loss remains blocked.",
+        "merged_head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+        "merge_sha": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+        "main_qa": 40656759102,
+        "handoff": 40656759290,
+        "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8"
       }
     },
     {
@@ -1482,7 +1487,7 @@
       "kind": "REPAIR_PR94_DATASTORE_SESSION_OVERLAP",
       "priority": "P1",
       "assigned_role": "WORKER",
-      "status": "RESOLVED_IN_PR_HEAD_AWAIT_MAIN",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "pr": 94,
       "head": "5bba9a7fffa3b494b485341b51372452f196fad1",
       "created_at": "2026-10-27T22:26:51.698Z",
@@ -1508,8 +1513,13 @@
         "pr": 94,
         "head": "09abf3753bdfc9753a45004048b95a17afb311f4",
         "ci": 40612891637,
-        "observed_at": "2026-10-28T01:23:39.025Z",
-        "note": "Original two-session claim/overlap races addressed by new atomic lease, but separate read-failure/final-save paths remain blocked."
+        "observed_at": "2026-10-28T08:27:15.142Z",
+        "note": "Original two-session claim/overlap races addressed by new atomic lease, but separate read-failure/final-save paths remain blocked.",
+        "merged_head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+        "merge_sha": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+        "main_qa": 40656759102,
+        "handoff": 40656759290,
+        "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8"
       }
     },
     {
@@ -1518,7 +1528,7 @@
       "priority": "P1",
       "assigned_role": "WORKER",
       "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "status": "RESOLVED_IN_PR_HEAD_AWAIT_MAIN",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "pr": 94,
       "head": "259b51e2ef3d84b02b6442dae53f56292b8bae28",
@@ -1551,8 +1561,13 @@
         "pr": 94,
         "head": "09abf3753bdfc9753a45004048b95a17afb311f4",
         "ci": 40612891637,
-        "observed_at": "2026-10-28T01:23:39.025Z",
-        "note": "Original two-session claim/overlap races addressed by new atomic lease, but separate read-failure/final-save paths remain blocked."
+        "observed_at": "2026-10-28T08:27:15.142Z",
+        "note": "Original two-session claim/overlap races addressed by new atomic lease, but separate read-failure/final-save paths remain blocked.",
+        "merged_head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+        "merge_sha": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+        "main_qa": 40656759102,
+        "handoff": 40656759290,
+        "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8"
       }
     },
     {
@@ -1561,7 +1576,7 @@
       "priority": "P1",
       "assigned_role": "WORKER",
       "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "status": "RESOLVED_IN_PR_HEAD_AWAIT_MAIN",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "pr": 94,
       "head": "09abf3753bdfc9753a45004048b95a17afb311f4",
@@ -1591,7 +1606,13 @@
         "pr": 94,
         "head": "f6bf432901e66ce025c490373fbf5a17f176d431",
         "ci": 40630993164,
-        "note": "Fail-closed read and bounded save retry tests now pass, not main merged."
+        "note": "Fail-closed read and bounded save retry tests now pass, not main merged.",
+        "merged_head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+        "merge_sha": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+        "main_qa": 40656759102,
+        "handoff": 40656759290,
+        "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
+        "observed_at": "2026-10-28T08:27:15.142Z"
       }
     },
     {
@@ -1727,7 +1748,7 @@
       "priority": "P1",
       "assigned_role": "WORKER",
       "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "status": "RESOLVED_IN_PR_HEAD_AWAIT_MAIN",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "pr": 94,
       "head": "9399dee1ee5d8e70085fadef66d48cf5a75ddea1",
@@ -1775,7 +1796,13 @@
         "head": "f6bf432901e66ce025c490373fbf5a17f176d431",
         "ci": 40630993164,
         "review_record": "ops/reviews/PR0094_f6bf4329.json",
-        "note": "Specific refresh/final race fixed and six canonical tests passed; separate overlapping refresh/refresh blocker remains."
+        "note": "Specific refresh/final race fixed and six canonical tests passed; separate overlapping refresh/refresh blocker remains.",
+        "merged_head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+        "merge_sha": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+        "main_qa": 40656759102,
+        "handoff": 40656759290,
+        "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
+        "observed_at": "2026-10-28T08:27:15.142Z"
       }
     },
     {
@@ -1784,7 +1811,7 @@
       "priority": "P1",
       "assigned_role": "WORKER",
       "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "status": "RESOLVED_IN_PR_HEAD_AWAIT_MAIN",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "pr": 94,
       "head": "f6bf432901e66ce025c490373fbf5a17f176d431",
@@ -1817,7 +1844,13 @@
         "head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
         "ci": 40641863301,
         "review": "ops/reviews/PR0094_c7227654.json",
-        "note": "in-flight serialization and pinned negative control passed; separate post-yield lifecycle issue remains"
+        "note": "in-flight serialization and pinned negative control passed; separate post-yield lifecycle issue remains",
+        "merged_head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+        "merge_sha": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+        "main_qa": 40656759102,
+        "handoff": 40656759290,
+        "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
+        "observed_at": "2026-10-28T08:27:15.142Z"
       }
     },
     {
@@ -1826,7 +1859,7 @@
       "priority": "P1",
       "assigned_role": "WORKER",
       "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "status": "RESOLVED_IN_PR_HEAD_AWAIT_MAIN",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "pr": 94,
       "head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
@@ -1856,7 +1889,13 @@
         "head": "6ac3f11a0fa88154652b9c68c60a6838a4e5eb60",
         "ci": 40648102338,
         "review": "ops/reviews/PR0094_6ac3f11a.json",
-        "note": "Post-refresh active/session/parent guard and four canonical regression/negative controls pass; separate backfill-before-final-save issue remains."
+        "note": "Post-refresh active/session/parent guard and four canonical regression/negative controls pass; separate backfill-before-final-save issue remains.",
+        "merged_head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+        "merge_sha": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+        "main_qa": 40656759102,
+        "handoff": 40656759290,
+        "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
+        "observed_at": "2026-10-28T08:27:15.142Z"
       }
     },
     {
@@ -1865,7 +1904,7 @@
       "priority": "P1",
       "assigned_role": "WORKER",
       "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "status": "RESOLVED_IN_PR_HEAD_AWAIT_MAIN",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "pr": 94,
       "head": "6ac3f11a0fa88154652b9c68c60a6838a4e5eb60",
@@ -1903,8 +1942,13 @@
         "review_record": "ops/reviews/PR0094_a635a1b2.json",
         "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
         "reviewer_run_id": "9c5d2b9b-3ef8-8325-9f16-5939d55064e1",
-        "observed_at": "2026-10-28T08:25:26.979Z",
-        "note": "New whole-server 5-player delay fixture and pinned old-source negative control pass; independent APPROVE pending main merge and QA."
+        "observed_at": "2026-10-28T08:27:15.142Z",
+        "note": "New whole-server 5-player delay fixture and pinned old-source negative control pass; independent APPROVE pending main merge and QA.",
+        "merged_head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+        "merge_sha": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+        "main_qa": 40656759102,
+        "handoff": 40656759290,
+        "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8"
       }
     }
   ]

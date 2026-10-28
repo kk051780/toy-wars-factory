@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T08:25:26.979Z",
-  "status": "APPROVED_PENDING_MERGE",
+  "observed_at": "2026-10-28T08:27:15.142Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "9c5d2b9b-3ef8-8325-9f16-5939d55064e1",
@@ -15,7 +15,11 @@
     "ci": 40654472563,
     "category": "GAME_DATASTORE_PERSISTENCE",
     "blockers": [],
-    "next_action": "EXACT_HEAD_MERGE_AND_POST_MAIN_QA"
+    "next_action": "EXACT_HEAD_MERGE_AND_POST_MAIN_QA",
+    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+    "merge_sha": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+    "post_merge_main_qa": 40656759102,
+    "post_merge_handoff": 40656759290
   },
   "merged_prs": [
     {
@@ -168,6 +172,16 @@
       "handoff": 40621070138,
       "main_after_handoff": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
       "status_only_descendant_verified": true
+    },
+    {
+      "pr": 94,
+      "head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+      "merge_sha": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40656759102,
+      "handoff": 40656759290,
+      "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
+      "category": "GAME_DATASTORE_PERSISTENCE"
     }
   ],
   "merge_count_this_run": 0,
@@ -207,18 +221,16 @@
     ]
   },
   "unresolved": [
-    "pr94_backfill_before_final_save_20261028",
-    "issue71_original_operation_receipt_unavailable",
-    "roblox_engine_multiplayer_mobile_unverified",
-    "pr98_protected_character_scope_requires_separate_exact_head_maintenance_audit"
+    "Roblox Studio/real DataStore/multiplayer/mobile/character visuals not verified; release HOLD.",
+    "PR98 character pipeline remains protected-scope one-shot independent audit; not eligible for normal REVIEWER merge."
   ],
   "next": "WORKER_FIX_PR94_SAVE_BEFORE_YIELDING_BACKFILL_WITH_FIVE_PLAYER_NEGATIVE_CONTROL; PROTECTED_PR98_SEPARATE_AUDIT; KEEP_RELEASE_HOLD",
   "runtime_verified": true,
   "main_after": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
   "merge_sha": null,
-  "next_actor": "WORKER",
+  "next_actor": "WORKER_NEXT_ISSUE_AND_ENGINE_EVIDENCE",
   "secondary_review": null,
   "main_after_merge": "dd703db711f11b0aff5cce3c084a2462025ac010",
-  "main_after_handoff": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+  "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
   "status_only_descendant_verified": true
 }
