@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 188,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "1e582c75-d824-832f-8790-8a9b1c63d217",
-    "task_id": "6ae16fe9b8908191b93c85b0c2782f01",
-    "epoch": 188,
-    "acquired_at": "2026-10-28T11:19:50.626076+00:00",
-    "expires_at": "2026-10-28T11:49:50.626076+00:00",
-    "base_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
-    "work_branch": "main",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -47,14 +37,16 @@
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "5f5a4403-cfeb-4942-abd0-eeceffba1310",
-    "epoch": 187,
-    "released_at": "2026-10-28T11:11:28.591025+00:00",
-    "result": "PR98_CURRENT_MAIN_RECONCILED_ALL_CI_PASSED_HANDOFF_TO_INDEPENDENT_MAINTENANCE",
+    "owner_id": "1e582c75-d824-832f-8790-8a9b1c63d217",
+    "epoch": 188,
+    "released_at": "2026-10-28T11:22:31.367506+00:00",
+    "result": "PR98_REQUEST_CHANGES_RECORDED_NOT_MERGED",
     "pr": 98,
     "head": "8997fdbd364ef9f0aa88ffffecfee3bfc22087bd",
-    "ci": 40677534521,
-    "next_task_id": "6ae16fe9b8908191b93c85b0c2782f01"
+    "reviewer_task_id": "6ae16fe9b8908191b93c85b0c2782f01",
+    "review_record": "ops/reviews/PR0098_8997fdbd_maintenance.json",
+    "work_request": "pr98_next_character_tests_and_snapshot_scope_20261028",
+    "next_actor": "CONTROLLER_AUTHOR"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
