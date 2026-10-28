@@ -667,6 +667,14 @@ local function join(player)
                 player:Kick("Toy Wars: progress is in use or unavailable. Please rejoin.")
             end
         end
+        -- A failed load also frees a reserved plot. Admit the next queued player;
+        -- the rejected player can still be in Players until Kick completes.
+        for _,waiting in ipairs(Players:GetPlayers()) do
+            if waiting ~= player and waiting.Parent == Players and not sessions[waiting] then
+                task.spawn(join,waiting)
+                break
+            end
+        end
         return
     end
     local stats=Instance.new("Folder")
