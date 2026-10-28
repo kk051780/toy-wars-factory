@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 224,
-  "holder": {
-    "kind": "META",
-    "owner_id": "f849220f-dc50-8329-926a-f3b0db1267a2",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "epoch": 224,
-    "acquired_at": "2026-10-28T21:55:15+00:00",
-    "expires_at": "2026-10-28T22:25:15+00:00",
-    "base_main_sha": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
-    "work_branch": "auto/twf-system-review-7abde498-0150-8327-8579-2b3f808d0acb",
-    "origin": "meta"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -22,32 +12,20 @@
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
     "items": [
       {
-        "number": 111,
-        "title": "[TWF auto-fix] Retry departed session claim cleanup after transient DataStore error",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/111",
-        "head": "985a02462cce841434af6d94b10a2e728cc8c9be",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40769446837",
-        "summary": "ゲーム本体修正: 退出中のDataStore claim解放を最大3回再試行。両CI成功、未審査・未統合。先に登録REVIEWERが審査する。",
-        "changed_files": [
-          "history/C00119_departed_claim_cleanup_retry.json",
-          "src/ToyWarsServer.server.lua",
-          "tests/auto/progression_departed_claim_cleanup_spec.lua"
-        ],
-        "kind": "ゲーム本体修正"
-      },
-      {
         "number": 112,
-        "title": "[TWF system-review] Preserve owner/Web ideas in scoped append-only advisory stock",
+        "title": "[TWF system-review] Preserve verbatim owner transcripts and separate derived summaries",
         "url": "https://github.com/kk051780/toy-wars-factory/pull/112",
-        "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40772704574",
-        "summary": "体制改善: OWNER原文/Web/派生をrepo・3役別に保持し上書きと履歴消去を拒否。43新規/全497 CI成功。原案2・Web3・派生4、計画のみ。独立審査・main採用は未実施。",
+        "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40777605047",
+        "summary": "正式差戻し修復: 原文全文の転記とDERIVED要約を分離。C121保持、C122で誤登録撤回。新13/全510検査・両CI・2取得証拠PASS。原チャット本人認証NOT_VERIFIED、独立再審査待ち。",
         "changed_files": [
-          "tools/system_idea_pipeline.py",
+          "docs/research/2026-10-29_scoped_idea_vault.md",
+          "history/C00121_scoped_dual_idea_pipeline.json",
           "tests/test_system_idea_pipeline.py",
           "tests/test_system_idea_vault.py",
-          "docs/research/2026-10-29_scoped_idea_vault.md",
-          "history/C00121_scoped_dual_idea_pipeline.json"
+          "tools/system_idea_pipeline.py",
+          "tests/test_system_owner_transcription.py",
+          "history/C00122_owner_verbatim_review_repair.json"
         ],
         "kind": "開発体制改善"
       }
@@ -55,22 +33,20 @@
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-28T21:35:43Z",
-    "signature": "c69a97fb9fa544971cff7b6191d8ccb96b6800133ab235d2a9f89ef6eaccd32b",
+    "observed_at": "2026-10-28T22:11:52Z",
+    "signature": "af02eb0d05ce51e5f88404aa3575d41004e0afb5d36642b8d396d1b33036bdca",
     "approval_text": ""
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "481f4d3e-88e0-832e-bba2-ea4fbc2fe466",
-    "epoch": 223,
-    "released_at": "2026-10-28T21:44:15.489Z",
-    "result": "PR111_MERGED_QA_HANDOFF_PASSED_PR112_REQUEST_CHANGES",
-    "pr": 111,
-    "head": "985a02462cce841434af6d94b10a2e728cc8c9be",
-    "merge_sha": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
-    "main_qa": 40774271061,
-    "handoff": 40774270909,
+    "kind": "META",
+    "owner_id": "f849220f-dc50-8329-926a-f3b0db1267a2",
+    "epoch": 224,
+    "released_at": "2026-10-28T22:16:08+00:00",
+    "result": "PR112_P1_PROVENANCE_REPAIR_CI_PASS_AWAIT_REVIEW",
+    "pr": 112,
+    "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
+    "ci": 40777605047,
     "service_completion_asserted": false
   },
   "last_approval_report": {
@@ -2154,14 +2130,14 @@
   ],
   "last_system_review": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "7abde498-0150-8327-8579-2b3f808d0acb",
-    "epoch": 222,
-    "claim_commit": "1404bff89ae63c913de3d3c556f37acb6583a636",
-    "recorded_at": "2026-10-28T21:37:44Z",
+    "run_id": "f849220f-dc50-8329-926a-f3b0db1267a2",
+    "epoch": 224,
+    "claim_commit": "a4ef9beea5e4ac1b523407ddf53ccc8ea6c4ef12",
+    "recorded_at": "2026-10-28T22:16:08Z",
     "report_path": "ops/SYSTEM_REVIEW_LATEST.json",
     "pr": 112,
-    "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
-    "ci": 40772704574,
-    "result": "DRAFT_IMPLEMENTED_CI_PASS_NOT_ADOPTED"
+    "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
+    "ci": 40777605047,
+    "result": "REPAIR_DRAFT_CI_PASS_NOT_APPROVED_OR_ADOPTED"
   }
 }
