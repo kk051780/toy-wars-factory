@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T01:42:35Z",
-  "source": "Issue72 accepted-module repair first; no game edits. Current main source was inspected and existing physical-engine/device hypotheses retained without claiming execution.",
+  "observed_at": "2026-10-28T21:36:40Z",
+  "source": "Fresh main/PR/CI plus source-executed dual-origin stock C00121; hypothesis/code adoption/player effect distinct.",
   "items": [
     {
       "id": "mobile_pve_frame_time",
@@ -99,15 +99,24 @@
         "No publication, billing, credential access or inferred data-loss incident"
       ],
       "next_actor": "WORKER",
-      "status": "PR94_NEW_HEAD_CI_PASS_NEW_REVIEW_REPAIR_REQUIRED",
+      "status": "ORIGINAL_PR94_MERGED_IN_MAIN_REAL_ENGINE_NOT_RUN",
       "kind": "REVIEWER_REQUESTED_SOURCE_REPAIR",
       "priority": "P1",
       "latest_head": "09abf3753bdfc9753a45004048b95a17afb311f4",
-      "latest_request": "pr94_read_fail_unsavable_and_final_save_retry_20261028"
+      "latest_request": "pr94_read_fail_unsavable_and_final_save_retry_20261028",
+      "historical_status": "PR94_NEW_HEAD_CI_PASS_NEW_REVIEW_REPAIR_REQUIRED",
+      "current_verification": {
+        "pr": 94,
+        "merge": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+        "current_main": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+        "compare_behind": 0,
+        "observed_at": "2026-10-28T21:36:40Z"
+      },
+      "next": "Do not redo historical PR94 repair; current game review is PR111. Native rejoin/device proof remains separate."
     },
     {
       "id": "pr94_read_failure_final_save_reliability",
-      "status": "REVIEWER_REQUESTED_WORKER_REPAIR",
+      "status": "ORIGINAL_PR94_MERGED_IN_MAIN_REAL_ENGINE_NOT_RUN",
       "hypothesis": "A read/unknown-schema failure can permit unsavable normal play, and a single-attempt final save can lose earned progress on transient UpdateAsync failure. Current reviewer source diagnosis; no live data loss measured.",
       "evidence": {
         "pr": 94,
@@ -124,46 +133,468 @@
       ],
       "next_actor": "WORKER",
       "kind": "SOURCE_REPAIR_EXPERIMENT",
-      "priority": "P1"
+      "priority": "P1",
+      "historical_status": "REVIEWER_REQUESTED_WORKER_REPAIR",
+      "current_verification": {
+        "pr": 94,
+        "merge": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+        "current_main": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+        "compare_behind": 0,
+        "observed_at": "2026-10-28T21:36:40Z"
+      },
+      "next": "Do not redo historical PR94 repair; current game review is PR111. Native rejoin/device proof remains separate."
+    },
+    {
+      "id": "pr111_departed_claim_cleanup_retry_20261029",
+      "kind": "CURRENT_SOURCE_REPAIR_CANDIDATE",
+      "priority": "P1",
+      "status": "BOTH_CI_PASS_AWAIT_REGISTERED_REVIEWER",
+      "pr": 111,
+      "head": "985a02462cce841434af6d94b10a2e728cc8c9be",
+      "ci": 40769446837,
+      "review": "NOT_APPROVED_YET",
+      "hypothesis": "Bounded cleanup retry releases a departed session after transient failure without clearing a newer session.",
+      "minimum_experiment": "Keep4 canonical tests and pinned-old-source negative control; independent exact-head/claim review.",
+      "required_real_evidence": "Private-engine two-session/rejoin/failure trace NOT_RUN.",
+      "next_actor": "REVIEWER"
+    },
+    {
+      "id": "dual_origin_character_variety_20261029",
+      "kind": "OWNER_WEB_FUSED_GAME_EXPERIMENT",
+      "priority": "P2",
+      "status": "HYPOTHESIS_ONLY_BLOCKED_CHARACTER_PIPELINE_AND_ENGINE",
+      "origin_refs": [
+        "OWNER-20261028-CHARACTER-VARIETY",
+        "WEB-20261029-DISCOVERY",
+        "WEB-20261029-COLLECTION"
+      ],
+      "stock_ref": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db:history/C00121_scoped_dual_idea_pipeline.json",
+      "scope": {
+        "repository": "kk051780/toy-wars-factory",
+        "tasks": {
+          "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+          "META": "6add445e4138819197d9cf2b1a02534d",
+          "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+        }
+      },
+      "hypothesis": "Distinct support tactics/collection goal may improve return interest; compare first-funnel clarity before roster expansion.",
+      "alternatives": [
+        {
+          "candidate_id": "MIX-20261029-CUREBO-STAGED",
+          "idea_refs": [
+            "MIX-20261029-CUREBO-STAGED"
+          ],
+          "hypothesis": "A support role and collection goal may deepen strategic choice and return interest.",
+          "test_plan": "WAIT PR98 protected adoption; combat/old-character regression; 32/64px silhouette and 4 factories x 20 units/device frame-time test. Then matched opt-in cohort first-production, D1/D7 and play-day study.",
+          "falsifier": "Reject if role is unreadable, support dominates, onboarding worsens or device guardrails regress.",
+          "benefit": {
+            "acquisition": 3,
+            "retention": 3,
+            "strategy": 3,
+            "originality": 3
+          },
+          "effort": {
+            "engineering": 4,
+            "qa": 4,
+            "performance": 4
+          },
+          "confidence": 1,
+          "open_risks": [
+            "PR98 unmerged; Issue102 remains dependent candidate",
+            "Engine, mobile, player effects NOT_RUN"
+          ]
+        },
+        {
+          "candidate_id": "MIX-20261029-FTUE-FIRST",
+          "idea_refs": [
+            "MIX-20261029-FTUE-FIRST"
+          ],
+          "hypothesis": "Clear first-production feedback may reduce first-180-second friction while preserving three toys.",
+          "test_plan": "Compare unchanged main with same device/traffic cohort; validate select-production-first-wave funnel and existing UI/characters before opt-in study.",
+          "falsifier": "Reject if comprehension fails or early-bounce/D1 guardrails worsen without learning gains.",
+          "benefit": {
+            "acquisition": 3,
+            "retention": 3,
+            "strategy": 3,
+            "originality": 3
+          },
+          "effort": {
+            "engineering": 2,
+            "qa": 2,
+            "performance": 2
+          },
+          "confidence": 1,
+          "open_risks": [
+            "Mid-term collection value unknown"
+          ]
+        }
+      ],
+      "comparison": {
+        "schema": 2,
+        "project_id": "toy-wars-factory",
+        "ranking": [
+          {
+            "candidate_id": "MIX-20261029-FTUE-FIRST",
+            "idea_refs": [
+              "MIX-20261029-FTUE-FIRST"
+            ],
+            "heuristic_score": 6,
+            "confidence": 1,
+            "risks": [
+              "Mid-term collection value unknown"
+            ],
+            "hypothesis": "Clear first-production feedback may reduce first-180-second friction while preserving three toys.",
+            "test_plan": "Compare unchanged main with same device/traffic cohort; validate select-production-first-wave funnel and existing UI/characters before opt-in study.",
+            "falsifier": "Reject if comprehension fails or early-bounce/D1 guardrails worsen without learning gains.",
+            "measured_effect": "NOT_MEASURED",
+            "review_status": "NOT_REVIEWED"
+          },
+          {
+            "candidate_id": "MIX-20261029-CUREBO-STAGED",
+            "idea_refs": [
+              "MIX-20261029-CUREBO-STAGED"
+            ],
+            "heuristic_score": -10,
+            "confidence": 1,
+            "risks": [
+              "PR98 unmerged; Issue102 remains dependent candidate",
+              "Engine, mobile, player effects NOT_RUN"
+            ],
+            "hypothesis": "A support role and collection goal may deepen strategic choice and return interest.",
+            "test_plan": "WAIT PR98 protected adoption; combat/old-character regression; 32/64px silhouette and 4 factories x 20 units/device frame-time test. Then matched opt-in cohort first-production, D1/D7 and play-day study.",
+            "falsifier": "Reject if role is unreadable, support dominates, onboarding worsens or device guardrails regress.",
+            "measured_effect": "NOT_MEASURED",
+            "review_status": "NOT_REVIEWED"
+          }
+        ],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "GAME",
+        "baseline": {
+          "candidate_id": "NO_CHANGE",
+          "measured_effect": "NOT_MEASURED",
+          "test_plan": "Observe unchanged main with the same cohort, device and exposure window"
+        },
+        "metric_status": {
+          "playthrough": "NOT_MEASURED",
+          "first_play_bounce_lt60s": "NOT_MEASURED",
+          "first_play_bounce_61_180s": "NOT_MEASURED",
+          "play_days_D2_D7": "NOT_MEASURED",
+          "play_days_D8_D28": "NOT_MEASURED",
+          "playtime": "NOT_MEASURED",
+          "D1": "NOT_MEASURED",
+          "D7": "NOT_MEASURED",
+          "first_production_funnel": "NOT_MEASURED",
+          "fun": "NOT_MEASURED",
+          "originality": "NOT_MEASURED",
+          "frame_time_p95": "NOT_MEASURED",
+          "engineering_effort": "NOT_MEASURED",
+          "qa_effort": "NOT_MEASURED",
+          "regression_risk": "NOT_MEASURED"
+        },
+        "engine_status": "NOT_RUN",
+        "player_status": "NOT_MEASURED",
+        "lifecycle": [
+          "CAPTURED",
+          "RESEARCHED",
+          "COMPARED",
+          "EXPERIMENT_DESIGNED",
+          "PROTOTYPE_PR",
+          "OFFLINE_VERIFIED",
+          "INDEPENDENT_APPROVED",
+          "MERGED_MAIN_QA",
+          "ENGINE_VERIFIED",
+          "PLAYER_MEASURED"
+        ],
+        "blocked_on": "PROVIDER_BACKED_INDEPENDENT_EXECUTION_EVIDENCE_REQUIRED",
+        "classification": "HYPOTHESIS_ONLY_NOT_MARKET_PROOF",
+        "execution": {
+          "write": false,
+          "dispatch": false,
+          "merge": false,
+          "publish": false,
+          "spend": false
+        },
+        "next": "Require independent prototype+offline test, Roblox engine/mobile proof, then opt-in player study before any measured-effect claim"
+      },
+      "dependencies": [
+        {
+          "pr": 98,
+          "head": "77c2b387474c1f71c07680d80c74ce3aa421a59f",
+          "state": "OPEN_UNMERGED_PROTECTED"
+        },
+        {
+          "issue": 102,
+          "state": "KURURIN_CANDIDATE_NOT_IMPLEMENTED"
+        }
+      ],
+      "minimum_engine_plan": "Protected PR98 adoption first. 32/64px unique silhouettes; normal18/large24 part goals (project hypotheses, not platform limits), canonical combat/production/UI checks and private20 units/side x4 factories frame/device study.",
+      "success_condition": "Old toys/saves/prices/UI preserved; role understandable and not dominant; later matched cohort/device first-production, first60/61-180s bounce, D1/D7 metrics.",
+      "falsifier": "Defer if role unreadable, strategic difference absent, early dropoff worsens or stability/device guardrails regress.",
+      "engine": "NOT_RUN",
+      "players": "NOT_MEASURED",
+      "execution_authority": false,
+      "next_actor": "WORKER_AFTER_PROTECTED_DEPENDENCIES_AND_AVAILABLE_LEASE"
     }
   ],
   "actor": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "bd1f21de-2058-8332-9263-71e91bacf82d"
+    "run_id": "7abde498-0150-8327-8579-2b3f808d0acb"
   },
-  "base_main_sha": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+  "base_main_sha": "5d4774843179227956f68d92c0ff6f89c77cb28d",
   "prioritized_candidates": [
-    "pr94_read_failure_final_save_reliability",
+    "pr111_departed_claim_cleanup_retry_20261029",
+    "dual_origin_character_variety_20261029",
     "private_headless_engine_evidence_path",
     "mobile_pve_frame_time"
   ],
-  "system_precondition": "Issue71 transport input minimization is this run's only implementation; game changes0. WORKER repairs current PR94 request before features.",
+  "system_precondition": "PR112 implemented/CI PASS, not reviewed/adopted; reviewer priority PR111. Game edits0.",
   "last_primary_source_check": {
-    "at": "2026-10-28T01:42:35Z",
-    "url": "https://create.roblox.com/docs/cloud-services/data-stores/best-practices",
-    "published_at": null,
-    "updated_at": null,
+    "at": "2026-10-28T21:36:40Z",
+    "sources": [
+      {
+        "url": "https://create.roblox.com/docs/discovery",
+        "published_at": null,
+        "checked_at": "2026-10-28T21:28:29Z",
+        "kind": "PRIMARY_OFFICIAL",
+        "finding": "First-play bounce and return-day signals; no Toy Wars results."
+      },
+      {
+        "url": "https://create.roblox.com/docs/production/experiments",
+        "published_at": null,
+        "checked_at": "2026-10-28T21:28:29Z",
+        "kind": "PRIMARY_OFFICIAL",
+        "finding": "Controlled tests and sample/detectable-effect limits; no experiment started."
+      },
+      {
+        "url": "https://create.roblox.com/docs/production/analytics/retention",
+        "published_at": null,
+        "checked_at": "2026-10-28T21:28:29Z",
+        "kind": "PRIMARY_OFFICIAL",
+        "finding": "D1/D7 first-visit cohorts differ from aggregate play days."
+      },
+      {
+        "url": "https://www.biggames.io/post/pet-simulator-99-update-99",
+        "published_at": "2026-10-24",
+        "checked_at": "2026-10-28T21:28:29Z",
+        "kind": "DEVELOPER_CASE",
+        "finding": "Index/rewards described by developer; not causal retention proof."
+      },
+      {
+        "url": "https://opensource.microsoft.com/blog/2026/10/19/introducing-scope-open-source-evaluation-for-ai-coding-agents/",
+        "published_at": "2026-10-19",
+        "checked_at": "2026-10-28T21:28:29Z",
+        "kind": "DEVELOPER_CASE",
+        "finding": "Repeated tasks/configurations and failure inspection; not this system's effect."
+      }
+    ],
+    "community": "NOT_VERIFIED_BODY_BLOCKED",
     "real_hardware_run": false
   },
   "next_experiments": [
     {
-      "id": "pr94_read_failure_final_save_reliability",
-      "status": "REVIEWER_REQUESTED_WORKER_REPAIR",
-      "hypothesis": "A read/unknown-schema failure can permit unsavable normal play, and a single-attempt final save can lose earned progress on transient UpdateAsync failure. Current reviewer source diagnosis; no live data loss measured.",
-      "evidence": {
-        "pr": 94,
-        "head": "09abf3753bdfc9753a45004048b95a17afb311f4",
-        "request": "pr94_read_fail_unsavable_and_final_save_retry_20261028",
-        "primary": "https://create.roblox.com/docs/cloud-services/data-stores/best-practices",
-        "checked_at": "2026-10-28T01:42:35Z"
-      },
-      "minimal_experiment": "WORKER runs canonical full-server fixtures with read/unknown-schema errors and transient final-save failure. Require explicit fail-closed loading/failure behavior and bounded ordered final-save retry while preserving lease/revision/metadata checks.",
-      "success_condition": "Pinned current-head negative controls fail; repaired canonical server preserves progress and exposes safe failure state. Fresh both-job CI and independent reviewer. Offline result is not real DataStore reliability.",
-      "required_real_evidence": [
-        "Later private-engine rejoin/two-server test with exact source/place version and actual failure logs",
-        "No publish/key/API activation or added spending"
+      "id": "pr111_departed_claim_cleanup_retry_20261029",
+      "kind": "CURRENT_SOURCE_REPAIR_CANDIDATE",
+      "priority": "P1",
+      "status": "BOTH_CI_PASS_AWAIT_REGISTERED_REVIEWER",
+      "pr": 111,
+      "head": "985a02462cce841434af6d94b10a2e728cc8c9be",
+      "ci": 40769446837,
+      "review": "NOT_APPROVED_YET",
+      "hypothesis": "Bounded cleanup retry releases a departed session after transient failure without clearing a newer session.",
+      "minimum_experiment": "Keep4 canonical tests and pinned-old-source negative control; independent exact-head/claim review.",
+      "required_real_evidence": "Private-engine two-session/rejoin/failure trace NOT_RUN.",
+      "next_actor": "REVIEWER"
+    },
+    {
+      "id": "dual_origin_character_variety_20261029",
+      "kind": "OWNER_WEB_FUSED_GAME_EXPERIMENT",
+      "priority": "P2",
+      "status": "HYPOTHESIS_ONLY_BLOCKED_CHARACTER_PIPELINE_AND_ENGINE",
+      "origin_refs": [
+        "OWNER-20261028-CHARACTER-VARIETY",
+        "WEB-20261029-DISCOVERY",
+        "WEB-20261029-COLLECTION"
       ],
-      "next_actor": "WORKER"
+      "stock_ref": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db:history/C00121_scoped_dual_idea_pipeline.json",
+      "scope": {
+        "repository": "kk051780/toy-wars-factory",
+        "tasks": {
+          "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+          "META": "6add445e4138819197d9cf2b1a02534d",
+          "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+        }
+      },
+      "hypothesis": "Distinct support tactics/collection goal may improve return interest; compare first-funnel clarity before roster expansion.",
+      "alternatives": [
+        {
+          "candidate_id": "MIX-20261029-CUREBO-STAGED",
+          "idea_refs": [
+            "MIX-20261029-CUREBO-STAGED"
+          ],
+          "hypothesis": "A support role and collection goal may deepen strategic choice and return interest.",
+          "test_plan": "WAIT PR98 protected adoption; combat/old-character regression; 32/64px silhouette and 4 factories x 20 units/device frame-time test. Then matched opt-in cohort first-production, D1/D7 and play-day study.",
+          "falsifier": "Reject if role is unreadable, support dominates, onboarding worsens or device guardrails regress.",
+          "benefit": {
+            "acquisition": 3,
+            "retention": 3,
+            "strategy": 3,
+            "originality": 3
+          },
+          "effort": {
+            "engineering": 4,
+            "qa": 4,
+            "performance": 4
+          },
+          "confidence": 1,
+          "open_risks": [
+            "PR98 unmerged; Issue102 remains dependent candidate",
+            "Engine, mobile, player effects NOT_RUN"
+          ]
+        },
+        {
+          "candidate_id": "MIX-20261029-FTUE-FIRST",
+          "idea_refs": [
+            "MIX-20261029-FTUE-FIRST"
+          ],
+          "hypothesis": "Clear first-production feedback may reduce first-180-second friction while preserving three toys.",
+          "test_plan": "Compare unchanged main with same device/traffic cohort; validate select-production-first-wave funnel and existing UI/characters before opt-in study.",
+          "falsifier": "Reject if comprehension fails or early-bounce/D1 guardrails worsen without learning gains.",
+          "benefit": {
+            "acquisition": 3,
+            "retention": 3,
+            "strategy": 3,
+            "originality": 3
+          },
+          "effort": {
+            "engineering": 2,
+            "qa": 2,
+            "performance": 2
+          },
+          "confidence": 1,
+          "open_risks": [
+            "Mid-term collection value unknown"
+          ]
+        }
+      ],
+      "comparison": {
+        "schema": 2,
+        "project_id": "toy-wars-factory",
+        "ranking": [
+          {
+            "candidate_id": "MIX-20261029-FTUE-FIRST",
+            "idea_refs": [
+              "MIX-20261029-FTUE-FIRST"
+            ],
+            "heuristic_score": 6,
+            "confidence": 1,
+            "risks": [
+              "Mid-term collection value unknown"
+            ],
+            "hypothesis": "Clear first-production feedback may reduce first-180-second friction while preserving three toys.",
+            "test_plan": "Compare unchanged main with same device/traffic cohort; validate select-production-first-wave funnel and existing UI/characters before opt-in study.",
+            "falsifier": "Reject if comprehension fails or early-bounce/D1 guardrails worsen without learning gains.",
+            "measured_effect": "NOT_MEASURED",
+            "review_status": "NOT_REVIEWED"
+          },
+          {
+            "candidate_id": "MIX-20261029-CUREBO-STAGED",
+            "idea_refs": [
+              "MIX-20261029-CUREBO-STAGED"
+            ],
+            "heuristic_score": -10,
+            "confidence": 1,
+            "risks": [
+              "PR98 unmerged; Issue102 remains dependent candidate",
+              "Engine, mobile, player effects NOT_RUN"
+            ],
+            "hypothesis": "A support role and collection goal may deepen strategic choice and return interest.",
+            "test_plan": "WAIT PR98 protected adoption; combat/old-character regression; 32/64px silhouette and 4 factories x 20 units/device frame-time test. Then matched opt-in cohort first-production, D1/D7 and play-day study.",
+            "falsifier": "Reject if role is unreadable, support dominates, onboarding worsens or device guardrails regress.",
+            "measured_effect": "NOT_MEASURED",
+            "review_status": "NOT_REVIEWED"
+          }
+        ],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "GAME",
+        "baseline": {
+          "candidate_id": "NO_CHANGE",
+          "measured_effect": "NOT_MEASURED",
+          "test_plan": "Observe unchanged main with the same cohort, device and exposure window"
+        },
+        "metric_status": {
+          "playthrough": "NOT_MEASURED",
+          "first_play_bounce_lt60s": "NOT_MEASURED",
+          "first_play_bounce_61_180s": "NOT_MEASURED",
+          "play_days_D2_D7": "NOT_MEASURED",
+          "play_days_D8_D28": "NOT_MEASURED",
+          "playtime": "NOT_MEASURED",
+          "D1": "NOT_MEASURED",
+          "D7": "NOT_MEASURED",
+          "first_production_funnel": "NOT_MEASURED",
+          "fun": "NOT_MEASURED",
+          "originality": "NOT_MEASURED",
+          "frame_time_p95": "NOT_MEASURED",
+          "engineering_effort": "NOT_MEASURED",
+          "qa_effort": "NOT_MEASURED",
+          "regression_risk": "NOT_MEASURED"
+        },
+        "engine_status": "NOT_RUN",
+        "player_status": "NOT_MEASURED",
+        "lifecycle": [
+          "CAPTURED",
+          "RESEARCHED",
+          "COMPARED",
+          "EXPERIMENT_DESIGNED",
+          "PROTOTYPE_PR",
+          "OFFLINE_VERIFIED",
+          "INDEPENDENT_APPROVED",
+          "MERGED_MAIN_QA",
+          "ENGINE_VERIFIED",
+          "PLAYER_MEASURED"
+        ],
+        "blocked_on": "PROVIDER_BACKED_INDEPENDENT_EXECUTION_EVIDENCE_REQUIRED",
+        "classification": "HYPOTHESIS_ONLY_NOT_MARKET_PROOF",
+        "execution": {
+          "write": false,
+          "dispatch": false,
+          "merge": false,
+          "publish": false,
+          "spend": false
+        },
+        "next": "Require independent prototype+offline test, Roblox engine/mobile proof, then opt-in player study before any measured-effect claim"
+      },
+      "dependencies": [
+        {
+          "pr": 98,
+          "head": "77c2b387474c1f71c07680d80c74ce3aa421a59f",
+          "state": "OPEN_UNMERGED_PROTECTED"
+        },
+        {
+          "issue": 102,
+          "state": "KURURIN_CANDIDATE_NOT_IMPLEMENTED"
+        }
+      ],
+      "minimum_engine_plan": "Protected PR98 adoption first. 32/64px unique silhouettes; normal18/large24 part goals (project hypotheses, not platform limits), canonical combat/production/UI checks and private20 units/side x4 factories frame/device study.",
+      "success_condition": "Old toys/saves/prices/UI preserved; role understandable and not dominant; later matched cohort/device first-production, first60/61-180s bounce, D1/D7 metrics.",
+      "falsifier": "Defer if role unreadable, strategic difference absent, early dropoff worsens or stability/device guardrails regress.",
+      "engine": "NOT_RUN",
+      "players": "NOT_MEASURED",
+      "execution_authority": false,
+      "next_actor": "WORKER_AFTER_PROTECTED_DEPENDENCIES_AND_AVAILABLE_LEASE"
     },
     {
       "id": "private_headless_engine_evidence_path",
@@ -187,5 +618,110 @@
         "Exact main/build, device and scenario"
       ]
     }
-  ]
+  ],
+  "previous_snapshot": {
+    "ref": "1404bff89ae63c913de3d3c556f37acb6583a636",
+    "blob": "3725e65bd982f2520623df12acd31655d3ae59fc",
+    "observed_at": "2026-10-28T01:42:35Z"
+  },
+  "idea_stock": {
+    "ref": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db:history/C00121_scoped_dual_idea_pipeline.json",
+    "blob": "26aebd9badfc616e43cafc1a792669007e5387d1",
+    "counts": {
+      "owner_originals": 2,
+      "web_research_ideas": 3,
+      "derived_variants": 4,
+      "comparison_reports": 2,
+      "no_change_controls": 2,
+      "main_adoptions": 0,
+      "engine_measured": 0,
+      "player_measured": 0
+    },
+    "record_ids": [
+      {
+        "id": "OWNER-20261028-DUAL-EVOLUTION",
+        "origin": "OWNER_ORIGINAL_IDEA",
+        "domain": "SYSTEM",
+        "stage": "CAPTURED"
+      },
+      {
+        "id": "OWNER-20261028-CHARACTER-VARIETY",
+        "origin": "OWNER_ORIGINAL_IDEA",
+        "domain": "GAME",
+        "stage": "CAPTURED"
+      },
+      {
+        "id": "WEB-20261029-DISCOVERY",
+        "origin": "WEB_RESEARCH_IDEA",
+        "domain": "GAME",
+        "stage": "CAPTURED"
+      },
+      {
+        "id": "WEB-20261029-COLLECTION",
+        "origin": "WEB_RESEARCH_IDEA",
+        "domain": "GAME",
+        "stage": "CAPTURED"
+      },
+      {
+        "id": "WEB-20261029-EVALS",
+        "origin": "WEB_RESEARCH_IDEA",
+        "domain": "SYSTEM",
+        "stage": "CAPTURED"
+      },
+      {
+        "id": "MIX-20261029-SCOPED-VAULT",
+        "origin": "DERIVED",
+        "domain": "SYSTEM",
+        "stage": "EXPERIMENT_DESIGNED"
+      },
+      {
+        "id": "MIX-20261029-ISSUE-LEDGER",
+        "origin": "DERIVED",
+        "domain": "SYSTEM",
+        "stage": "EXPERIMENT_DESIGNED"
+      },
+      {
+        "id": "MIX-20261029-CUREBO-STAGED",
+        "origin": "DERIVED",
+        "domain": "GAME",
+        "stage": "EXPERIMENT_DESIGNED"
+      },
+      {
+        "id": "MIX-20261029-FTUE-FIRST",
+        "origin": "DERIVED",
+        "domain": "GAME",
+        "stage": "EXPERIMENT_DESIGNED"
+      }
+    ],
+    "owner_original_hashes": [
+      {
+        "id": "OWNER-20261028-DUAL-EVOLUTION",
+        "text_sha256": "8534ef5f224b1e8cd4bcbbbada136dcb87c8652f88ae71d840cf79e01133bd35",
+        "source_ref": "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6480372522"
+      },
+      {
+        "id": "OWNER-20261028-CHARACTER-VARIETY",
+        "text_sha256": "579755bc65a7b366c92a3ec3eabc31cf67c566c0093f60e7dafb703e18552fb6",
+        "source_ref": "NOT_AVAILABLE"
+      }
+    ],
+    "actual_cli": {
+      "GAME": {
+        "returncode": 0,
+        "variants": 2,
+        "baseline": "NO_CHANGE",
+        "engine": "NOT_RUN",
+        "player": "NOT_MEASURED"
+      },
+      "SYSTEM": {
+        "returncode": 0,
+        "variants": 2,
+        "baseline": "NO_CHANGE",
+        "engine": "NOT_RUN",
+        "player": "NOT_MEASURED"
+      }
+    },
+    "source_capture": "Independent GitHub GET for Issue109 owner quote; current user message for character wording. No automated chat intake or authentication by labels/hashes.",
+    "adoption": "NOT_MERGED; engine NOT_RUN; player NOT_MEASURED"
+  }
 }

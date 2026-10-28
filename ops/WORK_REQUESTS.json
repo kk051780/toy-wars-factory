@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T19:27:57.791Z",
+  "observed_at": "2026-10-28T21:36:40Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2279,6 +2279,70 @@
       "merge_sha": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
       "main_qa": 40735889809,
       "handoff": 40735889774
+    },
+    {
+      "id": "owner_web_idea_pipeline_legal_meta_20261029",
+      "created_at": "2026-10-28T21:36:40Z",
+      "priority": "P2",
+      "status": "IMPLEMENTED_PR112_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
+      "assigned_role": "REVIEWER",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 112,
+      "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+      "branch": "auto/twf-system-review-7abde498-0150-8327-8579-2b3f808d0acb",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "7abde498-0150-8327-8579-2b3f808d0acb",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "1404bff89ae63c913de3d3c556f37acb6583a636",
+        "owner_run_id": "7abde498-0150-8327-8579-2b3f808d0acb",
+        "epoch": 222,
+        "acquired_at": "2026-10-28T21:17:36+00:00",
+        "expires_at": "2026-10-28T21:47:36+00:00",
+        "release": "SAME_COMMIT_RELEASES_OWN_EPOCH"
+      },
+      "summary": "Legal META port with original manual credit; owner/Web/derived stock, repo/3-role separation, append-only originals/events, variant/duplicate DAG, planning-only lifecycle and read-only CLI.",
+      "scope": "Five A paths; manual PR110 credit; no protected/main changes",
+      "ci": {
+        "run": 40772704574,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40772704574",
+        "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+        "attempt": 1,
+        "conclusion": "success",
+        "jobs": [
+          {
+            "id": 123113838122,
+            "name": "compile_hold",
+            "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+            "conclusion": "success",
+            "started_at": "2026-10-28T21:31:55Z",
+            "completed_at": "2026-10-28T21:32:04Z"
+          },
+          {
+            "id": 123113838411,
+            "name": "offline",
+            "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+            "conclusion": "success",
+            "started_at": "2026-10-28T21:31:55Z",
+            "completed_at": "2026-10-28T21:32:31Z"
+          }
+        ],
+        "python": 497,
+        "python_result": "ALL_PASS",
+        "trusted_scope": "PASS",
+        "coordinator_claim": "1 immutable claim verified",
+        "other": "Accepted Lua/installer/handoff PASS; native engine NOT_RUN"
+      },
+      "expected": "Independent registered REVIEWER checks exact head/base/claim/jobs, handles PR111/main repair first, then merge/main QA/handoff only if approved.",
+      "findings": [],
+      "limitations": [
+        "Independent REVIEWER and post-merge main QA/handoff pending",
+        "Automatic chat intake and trusted post-planning evidence collection not implemented",
+        "Credential isolation PR55 and original host-denial receipt unresolved",
+        "Community body NOT_VERIFIED",
+        "Roblox engine/multiple-client/mobile/visual/fun and player metrics unmeasured"
+      ],
+      "owner_reply_required": false
     }
   ]
 }

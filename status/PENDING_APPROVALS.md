@@ -1,9 +1,10 @@
 # 自動審査・統合待ち
 
-観測時点: 2026-10-28T01:44:06Z
+観測時点: 2026-10-28T21:35:43Z
 
 | PR | 内容 | 区分 | 現在headの検査 |
 | --- | --- | --- | --- |
-| [#96](https://github.com/kk051780/toy-wars-factory/pull/96) | 体制改善: opt-in read-only transportが固定repo/ref/blob/登録taskと必要なGETを照合し、サービス本文をcollector入力前に除外。新規31/全454 CI PASS、実GET37+peek9。認証分離・恒久稼働は未実証、独立審査待ち。 | 開発体制改善 | [合格](https://github.com/kk051780/toy-wars-factory/actions/runs/40616434523) / `b6118ae6` |
+| [#111](https://github.com/kk051780/toy-wars-factory/pull/111) | ゲーム本体修正: 退出中のDataStore claim解放を最大3回再試行。両CI成功、未審査・未統合。先に登録REVIEWERが審査する。 | ゲーム本体修正 | [合格](https://github.com/kk051780/toy-wars-factory/actions/runs/40769446837) / `985a0246` |
+| [#112](https://github.com/kk051780/toy-wars-factory/pull/112) | 体制改善: OWNER原文/Web/派生をrepo・3役別に保持し上書きと履歴消去を拒否。43新規/全497 CI成功。原案2・Web3・派生4、計画のみ。独立審査・main採用は未実施。 | 開発体制改善 | [合格](https://github.com/kk051780/toy-wars-factory/actions/runs/40772704574) / `a6ccf32e` |
 
 所有者への承認返信は不要。独立審査役が現在headの検査と共有所有権を確認し、1件ずつ統合してmainを検査する。
