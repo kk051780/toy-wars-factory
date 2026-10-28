@@ -34,17 +34,11 @@
     "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40733120541"
   },
   "main_qa": {
-    "id": 40697393767,
-    "qa_head": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
+    "id": 40735889809,
+    "head": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
     "conclusion": "success",
-    "comparison_since_qa": {
-      "verified": true,
-      "status": "ahead",
-      "paths": [
-        "status/CHAT_HANDOFF.md",
-        "status/LATEST_STATE.json"
-      ]
-    }
+    "main_after_handoff": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092",
+    "status_only_descendant_verified": true
   },
   "category": "GAME_DATASTORE_SHUTDOWN_ADMISSION",
   "change_kind": "GAME_CODE_AND_NEW_REGRESSION",
@@ -68,5 +62,14 @@
     "Compensating CAS may fail on transport/throttling; warning retained, no guaranteed save/lease cleanup under real outages.",
     "PR is not an OWNER/WEB innovation experiment; no market/retention claims."
   ],
-  "next": "MERGE_ONE_THEN_REQUIRE_MAIN_QA_AND_HANDOFF; release HOLD remains."
+  "next": "MERGE_ONE_THEN_REQUIRE_MAIN_QA_AND_HANDOFF; release HOLD remains.",
+  "merged": true,
+  "merge_sha": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
+  "integration_status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "completed_at": "2026-10-28T17:28:54.695Z",
+  "handoff": {
+    "id": 40735889774,
+    "head": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
+    "conclusion": "success"
+  }
 }

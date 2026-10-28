@@ -1,24 +1,23 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T14:31:33.655Z",
-  "status": "REPAIR_CI",
+  "observed_at": "2026-10-28T17:28:54.695Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "d11b8193-1bf4-832d-93ae-71e1291c83e2",
-  "lease_epoch": 206,
+  "reviewer_run_id": "73f73cd1-8cd4-8326-b436-83c29f105c82",
+  "lease_epoch": 210,
   "main_before": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
   "latest_review": {
     "pr": 106,
-    "head": "da987ddcfe1bd34a814b8ff53e3ef52107bbe446",
-    "verdict": "REQUEST_CHANGES",
-    "review_record": "ops/reviews/PR0106_da987ddc.json",
-    "ci": 40703700831,
+    "head": "3a62e5c70e27c2b60152ab97011b5b7535ddc8d5",
+    "verdict": "APPROVE",
+    "review_record": "ops/reviews/PR0106_3a62e5c7.json",
+    "ci": 40733120541,
+    "merge_sha": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
+    "main_qa": 40735889809,
+    "handoff": 40735889774,
     "category": "GAME_DATASTORE_SHUTDOWN_ADMISSION",
-    "blockers": [
-      "Exact-head CI #40703700831 offline failed: tests/auto/progression_shutdown_admission_spec.lua:83 expects immediate fifth-player backfill even though fixture UpdateAsync yields 3 seconds during PlayerRemoving final save; 6/7 new Lua cases pass, compile_hold passes. The accepted prior backfill regression uses advance(5.1) for a delayed read; repair test scheduling or code without weakening accepted behavior."
-    ],
-    "next_action": "WORKER_REPAIR_CI",
-    "status": "NOT_MERGED"
+    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
   },
   "merged_prs": [
     {
@@ -222,28 +221,33 @@
       "handoff": 40697394086,
       "main_after_handoff": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
       "category": "GAME_DATASTORE_SHUTDOWN_PARALLEL"
+    },
+    {
+      "pr": 106,
+      "head": "3a62e5c70e27c2b60152ab97011b5b7535ddc8d5",
+      "merge_sha": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40735889809,
+      "handoff": 40735889774,
+      "main_after_handoff": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092",
+      "category": "GAME_DATASTORE_SHUTDOWN_ADMISSION"
     }
   ],
-  "merge_count_this_run": 0,
+  "merge_count_this_run": 1,
   "main_qa": {
-    "id": 40697393767,
-    "head": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
+    "id": 40735889809,
+    "head": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
     "conclusion": "success",
     "jobs": {
       "offline": "success",
       "compile_hold": "success"
     },
-    "status_only_descendant_verified": true,
-    "comparison_paths": [
-      "status/CHAT_HANDOFF.md",
-      "status/LATEST_STATE.json"
-    ]
+    "status_only_descendant_verified": true
   },
   "handoff": {
-    "id": 40697394086,
-    "head": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
-    "conclusion": "success",
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40697394086"
+    "id": 40735889774,
+    "head": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
+    "conclusion": "success"
   },
   "comparison_since_main_qa": {
     "verified": true,
@@ -254,19 +258,18 @@
     ]
   },
   "unresolved": [
-    "PR106 exact-head offline CI FAIL at tests/auto/progression_shutdown_admission_spec.lua:83; fix and rerun both jobs before independent merge.",
-    "P1 main_expired_lease_refresh_failure_unsavable_play_20261028 remains OPEN_REPRODUCED; reconcile before unrelated feature.",
-    "PR98 protected character pipeline remains outside ordinary reviewer scope.",
-    "Studio, DataStore, multi-client, mobile, visual, player-feedback NOT_RUN; release HOLD; Gemini and spending caps unchanged."
+    "P1 main_expired_lease_refresh_failure_unsavable_play_20261028 OPEN_REPRODUCED",
+    "PR98 protected character pipeline separate audit",
+    "Roblox engine/DataStore/multiplayer/mobile/visual/player-feedback NOT_RUN; release HOLD; Gemini/spending caps preserved"
   ],
-  "next": "WORKER_FIX_PR106_CI; RECHECK_P1_LEASE_REQUEST; PROTECTED_PR98_SEPARATE_AUDIT",
+  "next": "WORKER_FIX_P1_EXPIRED_LEASE_REFRESH",
   "runtime_verified": true,
-  "main_after": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
-  "merge_sha": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
+  "main_after": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092",
+  "merge_sha": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
   "next_actor": "WORKER",
   "secondary_review": null,
-  "main_after_merge": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
-  "main_after_handoff": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
+  "main_after_merge": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
+  "main_after_handoff": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092",
   "status_only_descendant_verified": true,
-  "merges_this_run": 0
+  "merges_this_run": 1
 }
