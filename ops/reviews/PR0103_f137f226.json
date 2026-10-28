@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "pr": 103,
+  "head": "f137f226a8ddb3cb580dbd52179a7581934187ca",
+  "base_main_sha": "1ed8445528eb6c48597888f0be395859df0d44bd",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "b3f41147-61ac-832b-85cb-3a5bae269d65",
+  "lease_epoch": 200,
+  "reviewed_at": "2026-10-28T12:28:48.323Z",
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "738903db-c350-832d-9b4c-9567e90d509c",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [
+    "PR #103 addresses only the departing PlayerRemoving save-in-flight join; active-player sequential shutdown budget remains a separate OPEN_REPRODUCED P1 work request.",
+    "Lua coroutine/DataStore mocks and pinned-main negative control are not Roblox Studio, real DataStore, multiplayer, mobile or retention evidence."
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "evidence": {
+    "pr_ci": {
+      "id": 40687828281,
+      "head": "f137f226a8ddb3cb580dbd52179a7581934187ca",
+      "conclusion": "success",
+      "jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "scope_and_claim_gate": "PASS",
+      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40687828281"
+    },
+    "main_ci": {
+      "id": 40686775807,
+      "head": "d7738c5b8b6eafbca494dd241067bb450bdc46d5",
+      "conclusion": "success",
+      "status_only_descendant": {
+        "head": "1ed8445528eb6c48597888f0be395859df0d44bd",
+        "paths": [
+          "status/CHAT_HANDOFF.md",
+          "status/LATEST_STATE.json"
+        ],
+        "compare_status": "ahead"
+      }
+    },
+    "changed_files": [
+      "history/C00106_shutdown_inflight_save_join.json",
+      "src/ToyWarsServer.server.lua",
+      "tests/auto/progression_shutdown_inflight_spec.lua"
+    ],
+    "source_bytes": {
+      "main_server": 35117,
+      "pr_server": 35960,
+      "delta": 843,
+      "pr_all_lua": 47104,
+      "initial_baseline": 25726
+    },
+    "claim": {
+      "commit": "b523bafd4cc626063d24b8eafd6ff4d0c4007de0",
+      "epoch": 199,
+      "author_run_id": "738903db-c350-832d-9b4c-9567e90d509c"
+    },
+    "regression": {
+      "new_positive": 4,
+      "pinned_main_negative": 1,
+      "accepted_tests": "unchanged",
+      "python_tests": 454,
+      "installer": "PASS"
+    }
+  },
+  "category": "GAME_DATASTORE_SHUTDOWN_INFLIGHT",
+  "next_action": "MERGE_EXACT_HEAD_POST_QA"
+}
