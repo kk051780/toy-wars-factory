@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "pr": 94,
+  "head": "9399dee1ee5d8e70085fadef66d48cf5a75ddea1",
+  "base_main_sha": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "c8032924-5078-8333-9ef3-c5f870f61610",
+  "lease_epoch": 162,
+  "reviewed_at": "2026-10-28T02:26:57.699Z",
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "138a0562-2e90-8324-9168-a144e74bb7c0",
+  "category": "GAME_DATASTORE_PERSISTENCE_CI_BLOCKED",
+  "verdict": "REQUEST_CHANGES",
+  "blockers": [
+    "CI_OFFLINE_FAILURE: exact-head run 40618595107 offline failed at protected tests/server_event_spec.lua; compile_hold passed. Existing harness does not supply DataStoreService, so fail-closed load rejects plot admission; accepted 27-case gameplay suite must not be weakened. New failure-path regressions have not reached execution."
+  ],
+  "checks": {
+    "scope": true,
+    "regression": false,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": false
+  },
+  "evidence": {
+    "pr_ci": {
+      "id": 40618595107,
+      "head": "9399dee1ee5d8e70085fadef66d48cf5a75ddea1",
+      "conclusion": "failure",
+      "jobs": [
+        "compile_hold:success",
+        "offline:failure"
+      ],
+      "failed_step": "Execute server events with deterministic services (not Roblox engine)"
+    },
+    "author_claim": {
+      "commit": "77da5bd28e14fe36c98a8e3abd7730bdd3075ceb",
+      "epoch": 161,
+      "author_run_id": "138a0562-2e90-8324-9168-a144e74bb7c0"
+    },
+    "main_sha": "55d9e0da77f0a9237cf2776432cf22f62b551283"
+  },
+  "merge_sha": null,
+  "limitations": [
+    "PR94 not integrated",
+    "No verified new Lua regression result at failed head",
+    "DataStore behavior not verified in Roblox engine"
+  ]
+}

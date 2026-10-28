@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T01:44:06Z",
+  "observed_at": "2026-10-28T02:26:57.699Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1594,7 +1594,7 @@
       "priority": "P1",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-      "status": "OPEN",
+      "status": "APPROVED_PENDING_MERGE",
       "repository": "kk051780/toy-wars-factory",
       "issue": 71,
       "pr": 96,
@@ -1646,7 +1646,46 @@
         "Older CLIs unchanged",
         "Original operation error absent",
         "No task, authentication, workflow, spending or release changes"
-      ]
+      ],
+      "review": {
+        "verdict": "APPROVE",
+        "reviewer_run_id": "c8032924-5078-8333-9ef3-c5f870f61610",
+        "head": "b6118ae609d6d634d4538a7e04be2b051c32a7a0",
+        "review_record": "ops/reviews/PR0096_b6118ae6.json",
+        "observed_at": "2026-10-28T02:26:57.699Z"
+      }
+    },
+    {
+      "id": "pr94_failclosed_datastore_harness_ci_20261028",
+      "kind": "REPAIR_CI_AND_TEST_HARNESS",
+      "priority": "P1",
+      "assigned_role": "META_OR_AUTHORIZED_CONTROLLER",
+      "status": "OPEN",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 94,
+      "head": "9399dee1ee5d8e70085fadef66d48cf5a75ddea1",
+      "base_main_sha": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+      "created_at": "2026-10-28T02:26:57.699Z",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "c8032924-5078-8333-9ef3-c5f870f61610",
+      "review_record": "ops/reviews/PR0094_9399dee1.json",
+      "source": "tests/roblox_server_harness.lua and tests/server_event_spec.lua (protected accepted fixtures)",
+      "request": "Add a deterministic successful DataStoreService mock to the protected accepted server harness via a separately authorized and independently reviewed small PR; preserve all 27 existing gameplay expectations, no skip or weakening. The new fail-closed game behavior must remain. Existing META scope does not authorize these paths; do not silently expand policy. If no authorized writer lane, report a concrete scope-blocked repair for controller review. After harness merges with successful main QA, rebase PR94 and require fresh exact-head both-job CI and all new failure-path/negative-control tests.",
+      "reproduction": [
+        "Run exact PR94 head 9399dee1 with existing tests/server_event_spec.lua: offline CI 40618595107 fails at the server event step; worker reports 5/27 pass and 22 fail after DataStore unavailable causes fail-closed plot admission.",
+        "Current accepted tests/roblox_server_harness.lua lacks DataStoreService, so normal gameplay assertions never reach their intended event logic."
+      ],
+      "expected": [
+        "Protected 27 gameplay cases pass with deterministic working DataStore mock, retaining the same assertions and real source path.",
+        "New DataStore read failure and transient final-save retry regressions execute and pass on rebased PR94, with pinned-old-head negative controls.",
+        "No owner-reply wait, no unapproved policy relaxation, no engine/production safety claims."
+      ],
+      "evidence": {
+        "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40618595107",
+        "pr": "https://github.com/kk051780/toy-wars-factory/pull/94"
+      },
+      "owner_reply_required": false,
+      "next_actor": "META_OR_AUTHORIZED_CONTROLLER"
     }
   ]
 }

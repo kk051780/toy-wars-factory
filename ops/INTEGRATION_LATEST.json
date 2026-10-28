@@ -1,23 +1,20 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T01:23:39.025Z",
-  "status": "REQUEST_CHANGES",
+  "observed_at": "2026-10-28T02:26:57.699Z",
+  "status": "APPROVED_PENDING_MERGE",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "6bd24c39-2fa4-8328-9004-5436f2b6830e",
-  "lease_epoch": 159,
+  "reviewer_run_id": "c8032924-5078-8333-9ef3-c5f870f61610",
+  "lease_epoch": 162,
   "main_before": "55d9e0da77f0a9237cf2776432cf22f62b551283",
   "latest_review": {
-    "pr": 94,
-    "head": "09abf3753bdfc9753a45004048b95a17afb311f4",
-    "verdict": "REQUEST_CHANGES",
-    "review_record": "ops/reviews/PR0094_09abf375.json",
-    "ci": 40612891637,
-    "category": "GAME_DATASTORE_PERSISTENCE_FAILURE_HANDLING",
-    "blockers": [
-      "READ_FAILURE_UNSAVABLE_GAMEPLAY: src/ToyWarsServer.server.lua:90-95 returns (nil,false) on GetAsync exception or unknown schema; join:621-659 treats absent loadFailure as success and creates active default Coins=50 with persistAllowed=false. tests/auto/progression_rejoin_spec.lua explicitly asserts 'read failure allows play' and 'unrecognized version' starts default gameplay. Reproduce stored coins=500, GetAsync throws once, player joins and earns 300, leaves; no final save, all new progress silently lost. Require fail-closed join (no normal gameplay, free plot and visible retry) for failed reads/unknown schemas/unavailable store, with whole-server negative control; update only the now-invalid fallback expectations to stricter tests, preserving no-overwrite behavior.",
-      "FINAL_SAVE_TRANSIENT_FAILURE_NO_RETRY: src/ToyWarsServer.server.lua:151-179 and PlayerRemoving:689-705 attempt exactly one UpdateAsync final save. Reproduce stored coins=200 with owned session, player earns 300, mock UpdateAsync throws once at leave and would succeed next call. The server warns but never retries, leaves persisted coins=200 and sessionOwner lease held for up to 180 seconds; next join times out after ~2s. Require bounded retry/backoff for transient save errors, retain owner/revision fencing and avoid duplicate mutation, add canonical-server injected-once-failure regression and explicit failure observability. No claim of crash-proof durability."
-    ],
+    "pr": 96,
+    "head": "b6118ae609d6d634d4538a7e04be2b051c32a7a0",
+    "verdict": "APPROVE",
+    "review_record": "ops/reviews/PR0096_b6118ae6.json",
+    "ci": 40616434523,
+    "category": "SYSTEM_IMPROVEMENT_SCOPED_READONLY_PROVIDER_TRANSPORT",
+    "blockers": [],
     "merge_sha": null
   },
   "merged_prs": [
@@ -215,5 +212,13 @@
   "runtime_verified": true,
   "main_after": "55d9e0da77f0a9237cf2776432cf22f62b551283",
   "merge_sha": null,
-  "next_actor": "WORKER"
+  "next_actor": "WORKER",
+  "secondary_review": {
+    "pr": 94,
+    "head": "9399dee1ee5d8e70085fadef66d48cf5a75ddea1",
+    "verdict": "REQUEST_CHANGES",
+    "reason": "REPAIR_CI",
+    "review_record": "ops/reviews/PR0094_9399dee1.json",
+    "ci": 40618595107
+  }
 }

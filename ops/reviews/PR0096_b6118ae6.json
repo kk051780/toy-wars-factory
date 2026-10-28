@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "pr": 96,
+  "head": "b6118ae609d6d634d4538a7e04be2b051c32a7a0",
+  "base_main_sha": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "c8032924-5078-8333-9ef3-c5f870f61610",
+  "lease_epoch": 162,
+  "reviewed_at": "2026-10-28T02:26:57.699Z",
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "bd1f21de-2058-8332-9263-71e91bacf82d",
+  "category": "SYSTEM_IMPROVEMENT_SCOPED_READONLY_PROVIDER_TRANSPORT",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [
+    "Opt-in in-process read-only input adapter, not a credential boundary or sandbox; existing collectors and CLIs unchanged",
+    "Only four added files; 201 accepted main blobs and all game source unchanged",
+    "Pinned ref/commit/tree/blob and registered role checks, exact GET allowlist, PEEK metadata projection before accepted collectors; no write/task/dispatch authority",
+    "C00072 immutable META epoch160 claim verified as descendant of coordinator, exact parent epoch159 idle and registered task unchanged",
+    "Host-observed 37 GET+9 PEEK is bounded live evidence only; output/original host denial/permanent deployment unverified"
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "evidence": {
+    "main_sha": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+    "main_qa": {
+      "id": 40594943961,
+      "head": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+      "conclusion": "success",
+      "jobs": [
+        "offline:success",
+        "compile_hold:success"
+      ]
+    },
+    "main_compare": {
+      "status": "ahead",
+      "ahead_by": 1,
+      "behind_by": 0,
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    },
+    "pr_ci": {
+      "id": 40616434523,
+      "attempt": 1,
+      "head": "b6118ae609d6d634d4538a7e04be2b051c32a7a0",
+      "conclusion": "success",
+      "jobs": [
+        "offline:success",
+        "compile_hold:success"
+      ],
+      "python_tests": 454,
+      "new_python_tests": 31,
+      "scope_gate": "PASS",
+      "claim_gate": "PASS"
+    },
+    "diff": {
+      "status": "ahead",
+      "ahead_by": 1,
+      "behind_by": 0,
+      "files_added": [
+        "docs/research/2026-10-28_provider_transport.md",
+        "history/C00072_scoped_provider_transport.json",
+        "tests/test_system_provider_transport.py",
+        "tools/system_provider_transport.py"
+      ]
+    },
+    "claim": {
+      "commit": "a0714a68a05425a196b20c91107e37a672ff8e66",
+      "epoch": 160,
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "bd1f21de-2058-8332-9263-71e91bacf82d",
+      "parent_epoch": 159,
+      "parent_holder": null
+    },
+    "live_scope": "37 connected GET and 9 service peek host-observed in source record; no independent portable receipt"
+  },
+  "merge_sha": null,
+  "post_merge_qa": null,
+  "post_merge_handoff": null,
+  "limitations": [
+    "Roblox Studio, multiplayer, mobile and real player feedback not tested",
+    "No portable origin/auth isolation, long-term deployment, actual dispatch or original operation error proof",
+    "Issue71 remains open; no automatic publishing or cost changes"
+  ]
+}
