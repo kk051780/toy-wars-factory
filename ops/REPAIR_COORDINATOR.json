@@ -1458,7 +1458,7 @@
       ],
       "status": "success"
     },
-    "status": "READY_FOR_INDEPENDENT_MAINTENANCE_REVIEW_AND_INTEGRATION",
+    "status": "REQUEST_CHANGES",
     "require_independent_actual_diff_review": true,
     "require_current_main_qa": true,
     "require_post_merge_main_qa_and_handoff": true,
@@ -1486,7 +1486,24 @@
       "delta_vs_current_main": 4989
     },
     "created_at": "2026-10-28T11:09:16.471Z",
-    "ci_verified_at": "2026-10-28T11:11:27.574Z"
+    "ci_verified_at": "2026-10-28T11:11:27.574Z",
+    "review": {
+      "verdict": "REQUEST_CHANGES",
+      "task_id": "6ae16fe9b8908191b93c85b0c2782f01",
+      "run_id": "1e582c75-d824-832f-8790-8a9b1c63d217",
+      "head": "8997fdbd364ef9f0aa88ffffecfee3bfc22087bd",
+      "base_reviewed": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+      "review_record": "ops/reviews/PR0098_8997fdbd_maintenance.json",
+      "blockers": [
+        "FUTURE_CANDIDATE_COUNT_FREEZE",
+        "FUTURE_PAGER_COUNT_FREEZE",
+        "FALSE_INITIAL_AUTHORED_SNAPSHOT",
+        "UNADMITTED_META_DOCUMENT_PERMISSION"
+      ],
+      "work_request": "pr98_next_character_tests_and_snapshot_scope_20261028",
+      "reviewed_at": "2026-10-28T11:21:53.468Z"
+    },
+    "next_actor": "CONTROLLER_AUTHOR"
   },
   "character_pipeline_review_request_history": [
     {

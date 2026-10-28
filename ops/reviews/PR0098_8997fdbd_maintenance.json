@@ -1,0 +1,211 @@
+{
+  "schema": 1,
+  "pr": 98,
+  "head": "8997fdbd364ef9f0aa88ffffecfee3bfc22087bd",
+  "base_reviewed": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+  "repository": "kk051780/toy-wars-factory",
+  "reviewer_task_id": "6ae16fe9b8908191b93c85b0c2782f01",
+  "reviewer_run_id": "1e582c75-d824-832f-8790-8a9b1c63d217",
+  "mode": "ONE_TIME_INDEPENDENT_CHARACTER_MAINTENANCE_REVIEW_AND_INTEGRATION",
+  "verdict": "REQUEST_CHANGES",
+  "status": "NOT_MERGED_AUTHOR_REPAIR_REQUIRED",
+  "reviewed_at": "2026-10-28T11:21:53.468Z",
+  "reviewer_lease": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "e74d6079c8434c2f757650640d54aac98b48b97e",
+    "epoch": 188,
+    "kind": "CONTROLLER",
+    "work_branch": "main"
+  },
+  "author_operation_ids": [
+    "c24b547b-a58c-4c2b-a3cd-46410057053c",
+    "8cc6639f-5b15-4b6d-b6a8-5987938c19e4",
+    "5f5a4403-cfeb-4942-abd0-eeceffba1310"
+  ],
+  "blockers": [
+    {
+      "id": "FUTURE_CANDIDATE_COUNT_FREEZE",
+      "severity": "P1",
+      "file": "tests/test_system_character_pipeline.py",
+      "lines": [
+        24,
+        73
+      ],
+      "issue": "Immutable accepted-test candidate fixes ranking count at8 and total roster at12, stopping intended character promotion/new proposals.",
+      "reproduction": "Canonical in-memory catalog: promote kururin to characters, prototype status, add literal balance registration. catalog_errors returns[], but the unchanged test_ranking_is_deterministic_and_does_not_count_skins raises7!=8.",
+      "required": "Before acceptance, replace loaded-roster fixed counts with roster-aware invariants or isolated fixed fixtures. Add valid next-character promotion and additional-candidate cases while retaining baseline preservation, catalog/source mismatch, duplicates/NPC, hypothesis and visual-budget denial tests."
+    },
+    {
+      "id": "FUTURE_PAGER_COUNT_FREEZE",
+      "severity": "P1",
+      "file": "tests/auto/character_pages_spec.lua",
+      "lines": [
+        48,
+        55,
+        60
+      ],
+      "issue": "Regression assumes exactly4 playable characters, EmptyToySlot2 on page2, exactly2 pages and CUREBO on last page.",
+      "reproduction": "Canonical HUD/B.UNITS/PLAYABLE_IDS with a fifth kururin slot: product correctly occupies second page slot2; unchanged accepted-test candidate yields5pass1fail because EmptyToySlot2 is absent. Larger roster also breaks caption/last-page assertions.",
+      "required": "Use explicit immutable4-unit fixture for legacy cases and/or roster-aware assertions; execute5-unit and7+-unit cases, empty final slots, wrap, no page commands, guide/wait behavior and original selection. Do not weaken gameplay expectations."
+    },
+    {
+      "id": "FALSE_INITIAL_AUTHORED_SNAPSHOT",
+      "severity": "P1",
+      "file": "history/C00100_character_pipeline_pilot.json",
+      "field": "initial_authored_snapshot.source_changes",
+      "issue": "Snapshot labels itself as04ae but server before/after bytes and blobs were mutated to latest-base values.",
+      "actual": {
+        "before_bytes": 34083,
+        "after_bytes": 37081,
+        "before_blob": "01614fae4cca597f174efbd82845afc768d2af47",
+        "after_blob": "cc347bf34ee1961e319e49eabf4a3b5616455fb8"
+      },
+      "required_snapshot_at_04ae": {
+        "before_bytes": 20147,
+        "after_bytes": 23145,
+        "before_blob": "ec3deddb53ef6c319b8699a647fff0beeec3592e",
+        "after_blob": "48f3206006a1b16582f03b041144541c73a9640f"
+      },
+      "cause": "Initial snapshot retained the same source_changes list by reference, then in-place current-base reconciliation altered both.",
+      "required": "Restore original immutable04ae values using an independent deep copy and add Git/source-parity verification for every claimed snapshot. Keep current flat ledger50216/1155/+4989 and accepted records intact."
+    },
+    {
+      "id": "UNADMITTED_META_DOCUMENT_PERMISSION",
+      "severity": "P1",
+      "file": "config/autonomous_repair.json",
+      "field": "system_review.allowed_document_paths",
+      "issue": "Candidate adds META edit permission for docs/CHARACTER_PIPELINE.md in addition to the expressly described WORKER M permission for config/characters.json. Current exact request says every other control stays unchanged.",
+      "required": "Remove the extra META permission from this candidate or obtain a separately scoped explicit admission and matching review evidence. Do not use the PR body or current CI as admission."
+    }
+  ],
+  "checks": {
+    "exact20paths": true,
+    "accepted_history_tests_and_workflows_unchanged": true,
+    "protected_existing_blobs_unchanged": 159,
+    "original3_catalog_fields_and_balance_stats_preserved": true,
+    "current_flat_source_ledger": true,
+    "historical_snapshot": false,
+    "regular_scope_admission": false,
+    "pilot_behavior": true,
+    "future_character_workflow": false,
+    "main_qa": true,
+    "market_claims_separated": true
+  },
+  "ci": {
+    "run_id": 40677534521,
+    "head": "8997fdbd364ef9f0aa88ffffecfee3bfc22087bd",
+    "status": "success",
+    "jobs": [
+      {
+        "name": "offline",
+        "id": 122779649055,
+        "conclusion": "success"
+      },
+      {
+        "name": "compile_hold",
+        "id": 122779649502,
+        "conclusion": "success"
+      }
+    ],
+    "python_tests": 470,
+    "auto_lua_suites": 39,
+    "auto_lua_cases": 164,
+    "balance_assertions": 37,
+    "stress_cases": 4000,
+    "installer": "ALL4CANONICAL_SOURCES_EMBEDDED"
+  },
+  "independent_execution": {
+    "supplemental_context": "/root/independent_pr98_code_audit",
+    "scope": "Read-only fresh context, canonical connector sources, Lua5.4 entirely in memory; no writes. Not claimed as a registered service task.",
+    "pilot_lua_cases": 22,
+    "pilot_lua_failed": 0,
+    "future_pager_5unit": {
+      "passed": 5,
+      "failed": 1
+    },
+    "root_future_promotion_replay": "VALID_CATALOG_THEN_UNCHANGED_TEST_FAILS7!=8",
+    "full_git_history_suite": "CI_EVIDENCE; not misrepresented as independent local full-history rerun"
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1155,
+    "lua_bytes": 50216,
+    "main_bytes": 45227,
+    "delta_bytes": 4989,
+    "baseline_bytes": 25726
+  },
+  "provenance": [
+    {
+      "claim": "0b6c79a0247216d2471c0b67d710a44abc6085bd",
+      "epoch": 164,
+      "shared_ancestor_verified": true,
+      "acquired_before_feature_and_within_lease": true
+    },
+    {
+      "claim": "7c7be229a364f739cbd46da6eb60c5f512846017",
+      "epoch": 169,
+      "shared_ancestor_verified": true,
+      "acquired_before_feature_and_within_lease": true
+    },
+    {
+      "claim": "83f2bd76d87f190744370cfd976f9c4a08ed7792",
+      "epoch": 187,
+      "shared_ancestor_verified": true,
+      "acquired_before_feature_and_within_lease": true
+    }
+  ],
+  "main_verification": {
+    "main": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+    "qa": 40672776209,
+    "handoff": 40672776082,
+    "tested_sha": "681730de8cf346b8a59ff5e4408ad50ed1986345",
+    "status_only_descendant_verified": true,
+    "changed_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "market_source_review": {
+    "observed_at": "2026-10-28T11:21:53.468Z",
+    "primary_urls": [
+      "https://www.biggames.io/post/pet-simulator-99-update-99",
+      "https://www.playadopt.me/news",
+      "https://www.roblox.com/games/3260590327/Tower-Defense-Simulator",
+      "https://create.roblox.com/docs/performance-optimization/design"
+    ],
+    "result": "Observed index/large collectibles/themed updates/unit unlock examples support inspiration only; no measured acquisition/retention or native performance proof."
+  },
+  "regular_tasks": [
+    {
+      "id": "6adbf0d6a7d881918ce181dff2468867",
+      "is_enabled": true,
+      "schedule_unchanged": true
+    },
+    {
+      "id": "6add445e4138819197d9cf2b1a02534d",
+      "is_enabled": true,
+      "schedule_unchanged": true
+    },
+    {
+      "id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "is_enabled": true,
+      "schedule_unchanged": true
+    }
+  ],
+  "next_actor": "CONTROLLER_AUTHOR_REPAIR_EXISTING_PR98_THEN_NEW_EXACT_HEAD_CI_AND_INDEPENDENT_REVIEW",
+  "merge_sha": null,
+  "post_merge_main_qa": null,
+  "post_merge_handoff": null,
+  "limitations": {
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "native_visuals": "NOT_RUN",
+    "balance_or_fun": "NOT_VERIFIED",
+    "acquisition": "NOT_MEASURED",
+    "retention": "NOT_MEASURED",
+    "roblox_publish": false,
+    "paid_inference": false
+  },
+  "normal_automatic_integration_lane_expanded": false
+}

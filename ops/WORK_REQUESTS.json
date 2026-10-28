@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T10:32:18.062Z",
+  "observed_at": "2026-10-28T11:21:53.468Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1993,6 +1993,86 @@
       "resolved_pr": 99,
       "merge_sha": "681730de8cf346b8a59ff5e4408ad50ed1986345",
       "main_qa": 40672776209
+    },
+    {
+      "id": "pr98_next_character_tests_and_snapshot_scope_20261028",
+      "kind": "REPAIR_PROTECTED_CHARACTER_ADOPTION_PR98",
+      "priority": "P1",
+      "assigned_role": "CONTROLLER_AUTHOR",
+      "status": "OPEN_REQUEST_CHANGES",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 98,
+      "head": "8997fdbd364ef9f0aa88ffffecfee3bfc22087bd",
+      "base_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+      "created_at": "2026-10-28T11:21:53.468Z",
+      "reviewer_task_id": "6ae16fe9b8908191b93c85b0c2782f01",
+      "reviewer_run_id": "1e582c75-d824-832f-8790-8a9b1c63d217",
+      "review_record": "ops/reviews/PR0098_8997fdbd_maintenance.json",
+      "request": "Fix all four blockers in the unmerged protected adoption candidate. Current470 tests passing does not establish the next character can be added. Existing regular WORKER/META must not bypass branch/config/accepted-test limits to repair this protected CONTROLLER PR.",
+      "blockers": [
+        {
+          "id": "FUTURE_CANDIDATE_COUNT_FREEZE",
+          "severity": "P1",
+          "file": "tests/test_system_character_pipeline.py",
+          "lines": [
+            24,
+            73
+          ],
+          "issue": "Immutable accepted-test candidate fixes ranking count at8 and total roster at12, stopping intended character promotion/new proposals.",
+          "reproduction": "Canonical in-memory catalog: promote kururin to characters, prototype status, add literal balance registration. catalog_errors returns[], but the unchanged test_ranking_is_deterministic_and_does_not_count_skins raises7!=8.",
+          "required": "Before acceptance, replace loaded-roster fixed counts with roster-aware invariants or isolated fixed fixtures. Add valid next-character promotion and additional-candidate cases while retaining baseline preservation, catalog/source mismatch, duplicates/NPC, hypothesis and visual-budget denial tests."
+        },
+        {
+          "id": "FUTURE_PAGER_COUNT_FREEZE",
+          "severity": "P1",
+          "file": "tests/auto/character_pages_spec.lua",
+          "lines": [
+            48,
+            55,
+            60
+          ],
+          "issue": "Regression assumes exactly4 playable characters, EmptyToySlot2 on page2, exactly2 pages and CUREBO on last page.",
+          "reproduction": "Canonical HUD/B.UNITS/PLAYABLE_IDS with a fifth kururin slot: product correctly occupies second page slot2; unchanged accepted-test candidate yields5pass1fail because EmptyToySlot2 is absent. Larger roster also breaks caption/last-page assertions.",
+          "required": "Use explicit immutable4-unit fixture for legacy cases and/or roster-aware assertions; execute5-unit and7+-unit cases, empty final slots, wrap, no page commands, guide/wait behavior and original selection. Do not weaken gameplay expectations."
+        },
+        {
+          "id": "FALSE_INITIAL_AUTHORED_SNAPSHOT",
+          "severity": "P1",
+          "file": "history/C00100_character_pipeline_pilot.json",
+          "field": "initial_authored_snapshot.source_changes",
+          "issue": "Snapshot labels itself as04ae but server before/after bytes and blobs were mutated to latest-base values.",
+          "actual": {
+            "before_bytes": 34083,
+            "after_bytes": 37081,
+            "before_blob": "01614fae4cca597f174efbd82845afc768d2af47",
+            "after_blob": "cc347bf34ee1961e319e49eabf4a3b5616455fb8"
+          },
+          "required_snapshot_at_04ae": {
+            "before_bytes": 20147,
+            "after_bytes": 23145,
+            "before_blob": "ec3deddb53ef6c319b8699a647fff0beeec3592e",
+            "after_blob": "48f3206006a1b16582f03b041144541c73a9640f"
+          },
+          "cause": "Initial snapshot retained the same source_changes list by reference, then in-place current-base reconciliation altered both.",
+          "required": "Restore original immutable04ae values using an independent deep copy and add Git/source-parity verification for every claimed snapshot. Keep current flat ledger50216/1155/+4989 and accepted records intact."
+        },
+        {
+          "id": "UNADMITTED_META_DOCUMENT_PERMISSION",
+          "severity": "P1",
+          "file": "config/autonomous_repair.json",
+          "field": "system_review.allowed_document_paths",
+          "issue": "Candidate adds META edit permission for docs/CHARACTER_PIPELINE.md in addition to the expressly described WORKER M permission for config/characters.json. Current exact request says every other control stays unchanged.",
+          "required": "Remove the extra META permission from this candidate or obtain a separately scoped explicit admission and matching review evidence. Do not use the PR body or current CI as admission."
+        }
+      ],
+      "expected": [
+        "New exact-head offline and compile_hold PASS, actual next5-unit promotion and7+-unit pager coverage, immutable original snapshot parity, admitted policy diff only.",
+        "Independent re-review in a separate registered task/run, current main QA, shared fencing, one exact-head integration only after APPROVE; post-merge main QA/handoff.",
+        "Preserve every currently accepted test/history, original3 unit stats, all objective quality/spend/Gemini/release holds."
+      ],
+      "owner_reply_required": false,
+      "next_actor": "CONTROLLER_AUTHOR",
+      "ordinary_worker_instruction": "Continue only existing authorized main work; do not edit this ops branch or protected acceptance files. Do not duplicate CUREBO before adoption."
     }
   ]
 }
