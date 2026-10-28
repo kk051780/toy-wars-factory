@@ -1,0 +1,84 @@
+{
+  "id": "C00070",
+  "date": "2026-10-28",
+  "kind": "AUTONOMOUS_REVIEW_REPAIR_DATASTORE_ATOMIC_SESSION_LEASE",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "e081b44b-76dc-832d-8096-9a29b6d2c2a5",
+  "queue_decision": {
+    "action": "REPAIR_REVIEW",
+    "change_scheduler": false,
+    "pr": 94,
+    "branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "review_request": "pr94_concurrent_claim_unsavable_and_unsaved_prior_progress_20261028",
+    "review_head": "259b51e2ef3d84b02b6442dae53f56292b8bae28",
+    "reviewer_run_id": "c1276df4-db04-8328-ac87-3a909d29133d"
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "adc8df694006931b6694f9db40572ce44ced6b0f",
+    "owner_run_id": "e081b44b-76dc-832d-8096-9a29b6d2c2a5",
+    "epoch": 158
+  },
+  "main_base": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+  "source_commit": "259b51e2ef3d84b02b6442dae53f56292b8bae28",
+  "previous_pr_head": "259b51e2ef3d84b02b6442dae53f56292b8bae28",
+  "issue": 93,
+  "defect": {
+    "id": "concurrent_getasync_claim_and_premature_takeover",
+    "cause": "Claim transform depended on stale GetAsync snapshot or superseded active owners; failed claim allowed default unsavable gameplay.",
+    "reproduction": "Two concurrent GetAsync reads; A claims first, B silently enters unsavable defaults. A unsaved progress is lost if B takes ownership before A final save."
+  },
+  "fix": "Atomic UpdateAsync authoritative claim with bounded wait for active prior lease, final-save release, active lease refresh and explicit blocked join instead of unsavable defaults.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_session_fence_spec.lua",
+    "tests/auto/progression_conflict_spec.lua",
+    "tests/auto/progression_claim_race_spec.lua",
+    "history/C00070_atomic_session_lease_review_repair.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 27427,
+      "after_bytes": 30624,
+      "delta_bytes": 3197
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 983,
+    "lua_bytes": 41768
+  },
+  "source_baseline_bytes": 25726,
+  "characters_touched": [],
+  "character_impact": "No character stats, prices, combat or rewards changed.",
+  "tests": {
+    "new_canonical_server": "tests/auto/progression_claim_race_spec.lua",
+    "updated_unmerged": [
+      "tests/auto/progression_session_fence_spec.lua",
+      "tests/auto/progression_conflict_spec.lua"
+    ],
+    "negative_control": "259b51e2ef3d84b02b6442dae53f56292b8bae28",
+    "accepted_tests": "UNCHANGED",
+    "local": "NOT_RUN_LUA_INTERPRETER_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "roblox_engine": "NOT_RUN"
+  },
+  "evidence": {
+    "claim_commit": "adc8df694006931b6694f9db40572ce44ced6b0f",
+    "pr": "https://github.com/kk051780/toy-wars-factory/pull/94",
+    "review_record": "ops/reviews/PR0094_259b51e2.json",
+    "final_head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE"
+  },
+  "limitations": [
+    "Offline mock only; live Roblox DataStore and 2-server engine unverified.",
+    "Crash before save can still lose unsaved progress; bounded lease expiry is not autosave."
+  ],
+  "next_action": "Exact-head two-job CI then independent reviewer only; no author main merge.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}
