@@ -24,15 +24,17 @@ local function fixture(source,count,delayMode)
             local store=get(env.game,"DataStoreService"):GetDataStore("ToyWarsProgressV1")
             local proxy={}
             function proxy:GetAsync(key)
-                if delayMode=="read" and key=="p:2" then coroutine.yield(2) end
+                if (delayMode=="read" or delayMode=="read_long") and key=="p:2" then
+                    coroutine.yield(delayMode=="read_long" and 35 or 2)
+                end
                 return store:GetAsync(key)
             end
             function proxy:UpdateAsync(key,transform)
                 local current=store:GetAsync(key)
-                if delayMode=="claim" and key=="p:2" and not f.delayedClaim then
+                if (delayMode=="claim" or delayMode=="claim_long") and key=="p:2" and not f.delayedClaim then
                     f.delayedClaim=true
                     local result=store:UpdateAsync(key,transform)
-                    coroutine.yield(2)
+                    coroutine.yield(delayMode=="claim_long" and 35 or 2)
                     return result
                 end
                 if current and current.sessionOwner then coroutine.yield(3) end
@@ -145,6 +147,31 @@ check("already-committed pending claim is finalized without gameplay",function()
     f.h.runService.Heartbeat:Fire(0.3)
     eq(coins.Value,before,"no unsavable gameplay")
     finishClose(f,thread,0)
+end)
+check("35-second pending claim is released before 25-second close returns",function()
+    local f=fixture(nil,1,"claim_long")
+    local pending=f.h:addPlayer(f.h:newPlayer())
+    assert(f.delayedClaim,"claim committed before response")
+    assert(assert(f.store:GetAsync("p:2")).sessionOwner,"pending owner held")
+    local thread=startClose(f)
+    f.h:advance(25.1)
+    finishClose(f,thread,0)
+    local saved=assert(f.store:GetAsync("p:2"),"progress retained")
+    eq(saved.sessionOwner,nil,"pending token released")
+    eq(saved.sessionLeaseUntil,nil,"pending lease cleared")
+    eq(f.h:workshop(pending),nil,"no late workshop before response")
+    f.h:advance(11)
+    eq(f.h:workshop(pending),nil,"cancelled claim cannot admit after close")
+    eq(assert(f.store:GetAsync("p:2")).sessionOwner,nil,"no re-claim after close")
+end)
+check("35-second pending read cannot start a post-close claim",function()
+    local f=fixture(nil,1,"read_long")
+    local pending=f.h:addPlayer(f.h:newPlayer())
+    local thread=startClose(f)
+    f.h:advance(25.1)
+    finishClose(f,thread,0)
+    f.h:advance(11)
+    notAdmitted(f,pending)
 end)
 check("pinned old main admits fifth player during shutdown",function()
     local f=fixture(oldSource(),4)
