@@ -1,8 +1,18 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 191,
-  "holder": null,
+  "epoch": 192,
+  "holder": {
+    "kind": "DISPATCH",
+    "owner_id": "9f9df223-5efe-48bd-ac03-6e86bd43e9d8",
+    "task_id": null,
+    "epoch": 192,
+    "acquired_at": "2026-10-28T11:53:54.079520+00:00",
+    "expires_at": "2026-10-28T11:55:54.079520+00:00",
+    "base_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+    "work_branch": "auto/twf-game-repair",
+    "origin": "dispatch"
+  },
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -1266,22 +1276,17 @@
     }
   ],
   "manual_go_context": {
-    "observed_at": "2026-10-28T04:00:07.407683+00:00",
+    "observed_at": "2026-10-28T11:53:54.079520+00:00",
     "owner_request": "続けて",
-    "priority_request_id": "pr94_inflight_refresh_cancels_final_save_20261028",
-    "pr": 94,
-    "head": "9399dee1ee5d8e70085fadef66d48cf5a75ddea1",
-    "harness_maintenance": {
-      "pr": 97,
-      "head": "499a8226925ef41aec66ec12c6d685f9cbe9b43b",
-      "merged": "d3decf3519937f4e8391d130eee5ff5375868fed",
-      "main_qa": 40629585413,
-      "handoff": 40629585610,
-      "independent_task": "6ae16d4645308191876c8f768743a583",
-      "independent_run": "adfde28b-a754-8327-9e24-02fb41cd6cfc",
-      "status": "MAIN_INTEGRATED_BOTH_QA_JOBS_AND_HANDOFF_SUCCESS"
-    },
-    "instruction": "Existing PR94 repair first. Rebase/reconcile against current main with accepted PR97 harness (do not edit protected accepted harness). All31 candidate progression cases independently pass with repaired harness, but added canonical asynchronous API-latency diagnostic loses350->stored200 when own refresh commits before pending final save. Full exact reproduction and code recipe are in WORK_REQUESTS priority request. Fix per-session operation coordination safely; retain owner/revision/metadata/schema protections and bounded retries, add pinned9399 negative control, new real claim/source ledger, fresh exact-head both-job CI. Do not mistake PR97 approval for PR94 approval. Separate registered REVIEWER only can integrate game. No engine/release claim. Respect other open PR C-history numbers; do not reuse C00074 or reserved C00075 from character pipeline."
+    "controller_operation_id": "9f9df223-5efe-48bd-ac03-6e86bd43e9d8",
+    "mode": "FENCED_DISPATCH_EXISTING_WORKER_ONLY",
+    "priority_request_ids": [
+      "main_shutdown_sequential_save_deadline_20261028",
+      "main_expired_lease_refresh_failure_unsavable_play_20261028"
+    ],
+    "source_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+    "next_actor": "REGISTERED_WORKER",
+    "reason": "Repair concrete main persistence failures before new game features. PR98 remains separate independent maintenance review; do not author/approve it in WORKER lane."
   },
   "controller_maintenance": {
     "mode": "ONE_TIME_SCOPED_HARNESS_MAINTENANCE",

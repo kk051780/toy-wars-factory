@@ -2122,7 +2122,47 @@
       ],
       "engine_executed": false,
       "owner_reply_required": false,
-      "next_actor": "WORKER_AFTER_CURRENT_CONTROLLER_RELEASE"
+      "next_actor": "WORKER_AFTER_CURRENT_CONTROLLER_RELEASE",
+      "supplemental_reproductions": [
+        {
+          "diagnostic": "ops/diagnostics/shutdown_progress_during_close_audit_20261028.lua",
+          "behavior": "Heartbeat changes350->351 during8second pending close save; stored350 confirms mutation not included."
+        },
+        {
+          "diagnostic": "ops/diagnostics/shutdown_departing_save_audit_20261028.lua",
+          "behavior": "PlayerRemoving save yields8seconds after removing sessions entry; BindToClose returns at0 with initial50, final350 commits only at8. Closing must await all already-inflight departing saves."
+        }
+      ]
+    },
+    {
+      "id": "main_expired_lease_refresh_failure_unsavable_play_20261028",
+      "kind": "REPAIR_MAIN_DATASTORE_LEASE_EXPIRY",
+      "priority": "P1",
+      "assigned_role": "WORKER",
+      "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "status": "OPEN_REPRODUCED",
+      "repository": "kk051780/toy-wars-factory",
+      "source_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+      "source": "src/ToyWarsServer.server.lua refreshProgressLease/simulate",
+      "server_blob": "01614fae4cca597f174efbd82845afc768d2af47",
+      "created_at": "2026-10-28T11:53:54.079520+00:00",
+      "manual_operation_id": "9f9df223-5efe-48bd-ac03-6e86bd43e9d8",
+      "diagnostic": "ops/diagnostics/lease_expiry_refresh_failure_audit_20261028.lua",
+      "request": "Fail closed when this session can no longer demonstrate an unexpired owned progress lease. Transient refresh errors within a still-valid lease may retry, but expired sessions must not continue normal unsavable gameplay while another server can claim the record. Preserve bounded retries, CAS owner/revision/value/metadata, no stale overwrite and clear failure/rejoin behavior. One small source PR with new canonical regression and pinned-old-main negative control.",
+      "reproduction": [
+        "A loads profile200/revision0 at shared wall time0 and owns leaseUntil180, then earns350 in memory.",
+        "Set shared wall time181 and inject UpdateAsync transport failure only during A refresh; actual Heartbeat increments old A coins350->351 despite expired lease.",
+        "Clear service failure; new server B for same user claims expired record and loads stored200. A Heartbeat before retry deadline still advances351->353 while B owns the key.",
+        "A final save correctly cancels on B ownership; stored200 remains, so A's later normal play was unsavable. Deterministic whole-server mock, not actual Roblox incident."
+      ],
+      "expected": [
+        "Current-main negative control demonstrates the exact expired-error-unsavable sequence.",
+        "Fixed source must stop normal progress at expiry without treating an unexpired transient error as lost ownership; test both sides of expiry and recovery.",
+        "No active prior session progress stolen before expiry; no default unsavable admission, no max-coins merging. Preserve all accepted canonical regressions and exact-head both-job CI, separate registered review, post-merge QA/handoff."
+      ],
+      "owner_reply_required": false,
+      "next_actor": "WORKER",
+      "engine_executed": false
     }
   ]
 }
