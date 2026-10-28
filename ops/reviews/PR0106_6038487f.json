@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "pr": 106,
+  "head": "6038487fe5b93d9212a3845196f129792729fec3",
+  "reviewer_run_id": "527bce03-5fa0-832f-bb89-1dae393e4e29",
+  "verdict": "REQUEST_CHANGES",
+  "checks": {
+    "scope": true,
+    "regression": false,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": false
+  },
+  "blockers": [
+    "Shutdown pending claim exceeds callback wait; new regression required."
+  ],
+  "ci": 40723859639
+}
