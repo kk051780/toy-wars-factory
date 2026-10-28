@@ -1168,5 +1168,41 @@
       "Author cannot self-approve; no normal WORKER/META scope expansion"
     ],
     "basis": "Owner delegated ordinary infrastructure repair and integration decisions; concrete registered REVIEWER request authorizes CONTROLLER maintenance. This one scoped review does not change normal worker/meta/reviewer branch policy."
+  },
+  "bootstrap_review_request": {
+    "mode": "READ_ONLY_REVIEW",
+    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "repository": "kk051780/toy-wars-factory",
+    "pr": 97,
+    "head": "499a8226925ef41aec66ec12c6d685f9cbe9b43b",
+    "base_main_sha": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+    "requested_at": "2026-10-28T03:29:23.442Z",
+    "request_id": "pr94_failclosed_datastore_harness_ci_20261028",
+    "author_role": "CONTROLLER",
+    "author_operation_id": "5fe5290f-e216-4f8c-b8fa-4ff7d002e4a4",
+    "ci": {
+      "id": 40626780378,
+      "head": "499a8226925ef41aec66ec12c6d685f9cbe9b43b",
+      "conclusion": "success",
+      "required_jobs": [
+        "offline",
+        "compile_hold"
+      ]
+    },
+    "allowed_paths": [
+      "tests/roblox_server_harness.lua",
+      "tests/auto/harness_datastore_spec.lua",
+      "history/C00074_datastore_harness_maintenance.json"
+    ],
+    "scope": "One exact-head protected-harness maintenance review. Existing27 gameplay assertion file remains byte-identical. Review real diff/service semantics and explicit scoped CONTROLLER admission; no normal WORKER/META scope expansion. Saved READ_ONLY_REVIEW means no writes/lease/merge. Return independent verdict only; later maintenance integration requires this exact approval and current main QA.",
+    "source_evidence": {
+      "accepted_server_tests_blob": "97cfce6ff303eb6f125133abb643ae035d824b7c",
+      "original_harness_blob": "abf1214d85d6ee432413f49033d74aa62f4e6136",
+      "local_candidate": "9399dee1ee5d8e70085fadef66d48cf5a75ddea1",
+      "before": "5/27 pass",
+      "after": "27/27 pass",
+      "new_service_cases": "7/7 pass on main and candidate",
+      "negative_control": "old server exactly25pass2NaNfail; oldharness1pass6fail"
+    }
   }
 }
