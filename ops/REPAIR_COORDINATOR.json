@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 194,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "c2f31733-e58c-8323-9c58-d6703aea3553",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 194,
-    "acquired_at": "2026-10-28T12:04:09.232Z",
-    "expires_at": "2026-10-28T12:34:09.232Z",
-    "base_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,16 +36,17 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "597f03b8-0fc0-8330-a5ec-a88949bff82b",
-    "epoch": 193,
-    "released_at": "2026-10-28T12:00:52.950Z",
-    "result": "PR100_GAME_SOURCE_AND_REGRESSION_COMMITTED_CI_QUEUED",
+    "kind": "REVIEWER",
+    "owner_id": "c2f31733-e58c-8323-9c58-d6703aea3553",
+    "epoch": 194,
+    "released_at": "2026-10-28T12:05:49.638Z",
+    "result": "PR100_REQUEST_CHANGES_SHUTDOWN_SAVE_SKIP",
     "pr": 100,
     "head": "06ef9e558743b7eec1582cf7d6e358c9766132ea",
     "ci": 40684349324,
-    "ci_status": "QUEUED_NOT_PASS",
-    "next_task_id": "6add6aaceb4c8191b1666fe15f97cd88"
+    "review": "ops/reviews/PR0100_06ef9e55.json",
+    "request_id": "pr100_expired_lease_shutdown_save_skip_20261028",
+    "next_task_id": "6adbf0d6a7d881918ce181dff2468867"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
