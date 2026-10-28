@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 212,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "da89febb-8b50-832d-bf89-6d2edc8d64f0",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 212,
-    "acquired_at": "2026-10-28T19:05:51.198Z",
-    "expires_at": "2026-10-28T19:35:51.198Z",
-    "base_main_sha": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092",
-    "work_branch": "auto/twf-game-repair-da89febb-8b50-832d-bf89-6d2edc8d64f0",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -47,10 +37,10 @@
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "WORKER",
-    "owner_id": "ee7a7829-7bf4-8322-80e7-51082142f2d0",
-    "epoch": 211,
-    "released_at": "2026-10-28T18:07:38.663Z",
-    "result": "BLOCKED_HOST_SAFETY_CREATE_BRANCH_NO_SOURCE_WRITE"
+    "owner_id": "da89febb-8b50-832d-bf89-6d2edc8d64f0",
+    "epoch": 212,
+    "released_at": "2026-10-28T19:09:04.434Z",
+    "result": "DRAFT_PR_107_CI_QUEUED"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
