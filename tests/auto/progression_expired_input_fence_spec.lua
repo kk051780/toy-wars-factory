@@ -22,6 +22,7 @@ local function fixture(source)
     if source then
         _G.loadfile=function(path,mode,env)
             if path==server and env then return assert(load(source,"@PINNED_E6D41268","t",env)) end
+            if env==nil then return original(path,mode) end
             return original(path,mode,env)
         end
     end
