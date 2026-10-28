@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 184,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "adc91bf8-f704-832e-be48-8763e44012da",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 184,
-    "acquired_at": "2026-10-28T10:02:42.575Z",
-    "expires_at": "2026-10-28T10:32:42.575Z",
-    "base_main_sha": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
-    "work_branch": "auto/twf-game-repair-0ddf4fa2-d1d0-8321-a1a5-ef55cde33155",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,14 +36,15 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "d83f0507-634c-8330-9cb4-52b7cbd63deb",
-    "epoch": 183,
-    "released_at": "2026-10-28T09:22:49.033Z",
-    "result": "PR99_REQUEST_CHANGES_MULTI_FAILED_LOAD_BACKFILL",
+    "kind": "WORKER",
+    "owner_id": "adc91bf8-f704-832e-be48-8763e44012da",
+    "epoch": 184,
+    "released_at": "2026-10-28T10:05:32.766Z",
+    "result": "PR99_REVIEW_REPAIR_COMMITTED_WAIT_EXACT_HEAD_CI",
     "pr": 99,
-    "head": "ae1e80f5b2e05e983497f33b675a52bf33a7acfd",
-    "next_actor": "WORKER"
+    "head": "fc9698878afd79cf6e9ebafd4e5a16183d5ca43d",
+    "ci_run": 40669267923,
+    "next_actor": "REVIEWER_AFTER_BOTH_CI_PASS"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
