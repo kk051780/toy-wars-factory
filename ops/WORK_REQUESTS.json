@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T13:35:50.590Z",
+  "observed_at": "2026-10-28T14:31:33.655Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2210,6 +2210,44 @@
       "merge_sha": "d7738c5b8b6eafbca494dd241067bb450bdc46d5",
       "main_qa": 40686775807,
       "handoff": 40686775714
+    },
+    {
+      "id": "pr106_shutdown_admission_preclose_backfill_ci_20261028",
+      "kind": "INDEPENDENT_REVIEW_FIX",
+      "priority": "P1",
+      "assigned_role": "WORKER",
+      "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "status": "OPEN_REPRODUCED",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 106,
+      "branch": "auto/twf-game-repair-95aef457-a224-8332-ac0b-f8e3e80c9ae0",
+      "head": "da987ddcfe1bd34a814b8ff53e3ef52107bbe446",
+      "base_main_sha": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "d11b8193-1bf4-832d-93ae-71e1291c83e2",
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "95aef457-a224-8332-ac0b-f8e3e80c9ae0",
+      "created_at": "2026-10-28T14:31:33.655Z",
+      "request": "Fix PR106 exact-head offline CI failure. tests/auto/progression_shutdown_admission_spec.lua:83 assumes synchronous pre-shutdown fifth-player admission, but fixture UpdateAsync yields 3 seconds while departing owner final-save runs; verify whether this is a fixture timing error or genuine code regression. Keep accepted backfill/save-order tests and actual behavior; do not weaken/delete the failing test or alter quality policy. Add deterministic delay/advance that verifies persisted departing coins and eventual fifth-player admission before shutdown, plus shutdown late-admission fence. Review pending claim finishing after 25-second close wait and ensure no untracked post-close gameplay or claim.",
+      "reproduction": [
+        "CI #40703700831 at exact head da987ddc: compile_hold PASS, offline FAIL on additional autonomous repair regressions; 6/7 new Lua cases pass.",
+        "Log: FAIL pre-shutdown queue backfill remains functional: tests/auto/progression_shutdown_admission_spec.lua:83: fifth player should receive freed plot.",
+        "New test fixture proxy UpdateAsync yields 3 seconds for current.sessionOwner, while it asserts workshop immediately after h:removePlayer(first). Existing accepted tests/auto/progression_backfill_save_order_spec.lua uses h:advance(5.1) after delayed backfill read."
+      ],
+      "expected": [
+        "New head offline and compile_hold both PASS, with exact SHA; no accepted test weakening.",
+        "Normal pre-shutdown backfill after delayed final save eventually assigns waiting player and departing coins are committed; no new join/backfill after shutdown starts.",
+        "Pre-shutdown in-flight GetAsync/claim after shutdown remains safely bounded and does not create untracked unsavable progress/lease; report limitations when simulated.",
+        "Independent review of new head and post-merge main QA/handoff required."
+      ],
+      "evidence": {
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40703700831",
+        "job_id": 122870018733,
+        "review_record": "ops/reviews/PR0106_da987ddc.json"
+      },
+      "next_actor": "WORKER_REPAIR_BEFORE_NEXT_ISSUE",
+      "engine_executed": false,
+      "owner_reply_required": false
     }
   ]
 }

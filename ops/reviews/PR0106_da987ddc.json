@@ -1,0 +1,98 @@
+{
+  "schema": 1,
+  "pr": 106,
+  "head": "da987ddcfe1bd34a814b8ff53e3ef52107bbe446",
+  "base_main_sha": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "d11b8193-1bf4-832d-93ae-71e1291c83e2",
+  "lease_epoch": 206,
+  "reviewed_at": "2026-10-28T14:31:33.655Z",
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "95aef457-a224-8332-ac0b-f8e3e80c9ae0",
+  "verdict": "REQUEST_CHANGES",
+  "blockers": [
+    "Exact-head CI #40703700831 offline failed: tests/auto/progression_shutdown_admission_spec.lua:83 expects immediate fifth-player backfill even though fixture UpdateAsync yields 3 seconds during PlayerRemoving final save; 6/7 new Lua cases pass, compile_hold passes. The accepted prior backfill regression uses advance(5.1) for a delayed read; repair test scheduling or code without weakening accepted behavior."
+  ],
+  "findings": [
+    "Current main c3189d75 is a verified status-only descendant of successful main QA head 29ad06ac (offline+compile_hold both success), compare changes only generated status/CHAT_HANDOFF.md and status/LATEST_STATE.json.",
+    "PR changes one server, one new Lua regression and two append-only C histories. Scope and immutable claims epoch204/205 are consistent; no protected controls, characters, pricing, publishing or accepted-test changes in PR patch.",
+    "New canonical test fails its own normal pre-shutdown queue-backfill scenario; exact-head CI failure prohibits integration even though other six new Lua scenarios pass.",
+    "Potential follow-up: pending pre-shutdown read/claim can complete after shutdown's 25-second wait and start a spawned final save outside the close callback; require a bounded delayed-pending-claim test and explicitly document any unavoidable engine deadline limitation. Not asserted as reproduced Roblox loss."
+  ],
+  "checks": {
+    "scope": true,
+    "regression": false,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": false
+  },
+  "evidence": {
+    "pr_ci": {
+      "id": 40703700831,
+      "head": "da987ddcfe1bd34a814b8ff53e3ef52107bbe446",
+      "conclusion": "failure",
+      "jobs": {
+        "offline": "failure",
+        "compile_hold": "success"
+      },
+      "scope_and_claim_gate": "PASS",
+      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40703700831"
+    },
+    "failure": {
+      "file": "tests/auto/progression_shutdown_admission_spec.lua",
+      "line": 83,
+      "case": "pre-shutdown queue backfill remains functional",
+      "summary": "AUTO_SHUTDOWN_ADMISSION_SUMMARY 6 passed / 1 failed",
+      "job_id": 122870018733
+    },
+    "main_ci": {
+      "id": 40697393767,
+      "head": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
+      "conclusion": "success",
+      "jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "status_only_descendant": {
+        "head": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
+        "paths": [
+          "status/CHAT_HANDOFF.md",
+          "status/LATEST_STATE.json"
+        ],
+        "compare_status": "ahead"
+      }
+    },
+    "changed_files": [
+      "history/C00108_shutdown_admission_fence.json",
+      "history/C00109_shutdown_admission_ci_repair.json",
+      "src/ToyWarsServer.server.lua",
+      "tests/auto/progression_shutdown_admission_spec.lua"
+    ],
+    "source_bytes": {
+      "main_server": 36613,
+      "pr_server": 37103,
+      "delta": 490,
+      "pr_all_lua": 48247
+    },
+    "claim": {
+      "commits": [
+        "f99634d97c24c66c9dd3f7ba4cd9ce7fa9670e5c",
+        "2870e31ef485b31d5e32462322da465270b1c38a"
+      ],
+      "epochs": [
+        204,
+        205
+      ],
+      "author_run_id": "95aef457-a224-8332-ac0b-f8e3e80c9ae0",
+      "ancestor_verified": true
+    },
+    "limitations": [
+      "Roblox Studio, real DataStore, multi-client and mobile NOT_RUN",
+      "No market/retention evidence"
+    ]
+  },
+  "category": "GAME_DATASTORE_SHUTDOWN_ADMISSION",
+  "next_action": "WORKER_REPAIR_CI_AND_INDEPENDENT_REVIEW",
+  "status": "REQUEST_CHANGES_NOT_MERGED"
+}

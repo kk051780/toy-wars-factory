@@ -1,25 +1,24 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T13:35:43.779Z",
-  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "observed_at": "2026-10-28T14:31:33.655Z",
+  "status": "REPAIR_CI",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "ee6db87d-a504-8322-82f7-56d04c95d67f",
-  "lease_epoch": 202,
-  "main_before": "d56cf4239f50eaaeb31233cc7f2a277dc855e4f9",
+  "reviewer_run_id": "d11b8193-1bf4-832d-93ae-71e1291c83e2",
+  "lease_epoch": 206,
+  "main_before": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
   "latest_review": {
-    "pr": 105,
-    "head": "7b066f4006086a571196daef8935b8573077cc1a",
-    "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0105_7b066f40.json",
-    "ci": 40693298110,
-    "category": "GAME_DATASTORE_SHUTDOWN_PARALLEL",
-    "blockers": [],
-    "next_action": "POST_MERGE_QA_VERIFIED",
-    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
-    "merge_sha": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
-    "main_qa": 40697393767,
-    "handoff": 40697394086
+    "pr": 106,
+    "head": "da987ddcfe1bd34a814b8ff53e3ef52107bbe446",
+    "verdict": "REQUEST_CHANGES",
+    "review_record": "ops/reviews/PR0106_da987ddc.json",
+    "ci": 40703700831,
+    "category": "GAME_DATASTORE_SHUTDOWN_ADMISSION",
+    "blockers": [
+      "Exact-head CI #40703700831 offline failed: tests/auto/progression_shutdown_admission_spec.lua:83 expects immediate fifth-player backfill even though fixture UpdateAsync yields 3 seconds during PlayerRemoving final save; 6/7 new Lua cases pass, compile_hold passes. The accepted prior backfill regression uses advance(5.1) for a delayed read; repair test scheduling or code without weakening accepted behavior."
+    ],
+    "next_action": "WORKER_REPAIR_CI",
+    "status": "NOT_MERGED"
   },
   "merged_prs": [
     {
@@ -225,7 +224,7 @@
       "category": "GAME_DATASTORE_SHUTDOWN_PARALLEL"
     }
   ],
-  "merge_count_this_run": 1,
+  "merge_count_this_run": 0,
   "main_qa": {
     "id": 40697393767,
     "head": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
@@ -255,12 +254,12 @@
     ]
   },
   "unresolved": [
-    "P1 main_expired_lease_refresh_failure_unsavable_play_20261028 remains OPEN_REPRODUCED in WORK_REQUESTS; verify if PR100 already addressed it before new work.",
-    "PR98 protected character pipeline remains outside ordinary reviewer scope; separate exact-head maintenance audit required.",
-    "Roblox Studio, real DataStore, multiplayer, mobile, character visuals and player feedback unverified; release HOLD.",
-    "Gemini incident hold and spending caps unchanged."
+    "PR106 exact-head offline CI FAIL at tests/auto/progression_shutdown_admission_spec.lua:83; fix and rerun both jobs before independent merge.",
+    "P1 main_expired_lease_refresh_failure_unsavable_play_20261028 remains OPEN_REPRODUCED; reconcile before unrelated feature.",
+    "PR98 protected character pipeline remains outside ordinary reviewer scope.",
+    "Studio, DataStore, multi-client, mobile, visual, player-feedback NOT_RUN; release HOLD; Gemini and spending caps unchanged."
   ],
-  "next": "RECONCILE_OPEN_P1_EXPIRED_LEASE_REQUEST; PROTECTED_PR98_SEPARATE_AUDIT; KEEP_RELEASE_HOLD",
+  "next": "WORKER_FIX_PR106_CI; RECHECK_P1_LEASE_REQUEST; PROTECTED_PR98_SEPARATE_AUDIT",
   "runtime_verified": true,
   "main_after": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
   "merge_sha": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
@@ -269,5 +268,5 @@
   "main_after_merge": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
   "main_after_handoff": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
   "status_only_descendant_verified": true,
-  "merges_this_run": 1
+  "merges_this_run": 0
 }
