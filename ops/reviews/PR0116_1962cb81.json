@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "pr": 116,
+  "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
+  "base_main_sha": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+  "reviewed_at": "2026-10-28T22:47:22.417Z",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "590edbe8-10fc-832a-b3b2-57ccdfd4585b",
+  "lease_epoch": 227,
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "4d796ca2-e004-832e-86ae-b5e502f26901",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [
+    {
+      "id": "READ_ONLY_BOUND_DIAGNOSTICS",
+      "severity": "PASS",
+      "evidence": "Reviewed tools/system_runtime_alerts.py exact PR head: accepted incident/transport collectors; project/repo/role/task/current run/CI head+attempt and lease epoch; 403/404/unknown cause fail closed. No original host denial receipt asserted."
+    },
+    {
+      "id": "ADVERSARIAL_REGRESSION",
+      "severity": "PASS",
+      "evidence": "CI40781686546 exact head attempt1: offline+compile_hold completed success, 549 Python tests passed including 39 new; negative controls stale latest_result, CI rerun attempt, wrong ref/epoch/role/game, expired lease, duplicate alert and unverified recovery. Source mutant 2/2 expected failures reported in C00123, not independently re-executed."
+    },
+    {
+      "id": "LIMITED_SOURCE_ADOPTION",
+      "severity": "LIMITATION",
+      "evidence": "No live scheduled monitor, durable authenticated baseline, notification sender, verified recovery, actual host error or Roblox engine/player evidence. All authority false; A12=NOT_VERIFIED; no +5/81%."
+    }
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "SYSTEM_A12_READ_ONLY_CLASSIFIER_SOURCE_ONLY",
+  "changed_files": [
+    "tools/system_runtime_alerts.py",
+    "tests/test_system_runtime_alerts.py",
+    "history/C00123_a12_runtime_alerts.json",
+    "docs/research/2026-10-29_a12_runtime_alerts.md"
+  ],
+  "ci": {
+    "id": 40781686546,
+    "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
+    "attempt": 1,
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 549,
+    "new_tests": 39,
+    "scope_and_claim_gate": "PASS"
+  },
+  "coordination": {
+    "author_claim": "de45b71d8925fba0b9a5862a14c14d78083d8a88",
+    "author_epoch": 226,
+    "review_claim": "e9975a5dc8f1be24cc13997d35d4a073f5d1367c",
+    "review_epoch": 227,
+    "author_service_completed": true
+  },
+  "main_health": {
+    "sha": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+    "qa_head": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+    "qa": 40779288581,
+    "qa_jobs": "offline+compile_hold success",
+    "handoff": 40779288627,
+    "compare_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "evidence_urls": [
+    "https://github.com/kk051780/toy-wars-factory/pull/116",
+    "https://github.com/kk051780/toy-wars-factory/actions/runs/40781686546",
+    "https://github.com/kk051780/toy-wars-factory/issues/114"
+  ],
+  "next": "Exact-head merge under current reviewer lease, then independent main offline+compile_hold and handoff; A12 operational evidence separate.",
+  "status": "APPROVED_AWAITING_EXACT_HEAD_MERGE"
+}
