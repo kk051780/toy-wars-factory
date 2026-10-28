@@ -1,0 +1,57 @@
+{
+  "id": "C00118",
+  "date": "2026-10-29",
+  "kind": "MANUAL_CONTROLLER_DUAL_ORIGIN_IDEA_PIPELINE_CANDIDATE",
+  "owner_issue": 109,
+  "source_origin": "OWNER_ORIGINAL_IDEA",
+  "author_role": "CONTROLLER",
+  "manual_operation_id": "a747203b-aef7-4bbd-9e80-2b26dfbd630b",
+  "author_service_run_id": null,
+  "base_main_sha": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "58628b031c730b80c207342ce17b06d72cf5c92a",
+    "owner_run_id": "a747203b-aef7-4bbd-9e80-2b26dfbd630b",
+    "epoch": 219,
+    "kind": "CONTROLLER",
+    "work_branch": "feature/twf-owner-idea-loop-a747203b"
+  },
+  "change_type": "SYSTEM_TOOL_ONLY_NO_GAME_SOURCE",
+  "changed_files": [
+    "tools/system_idea_pipeline.py",
+    "tests/test_system_idea_pipeline.py",
+    "docs/research/2026-10-29_owner_idea_dual_loop.md",
+    "history/C00118_owner_idea_dual_loop_candidate.json"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1163,
+    "lua_bytes": 51286
+  },
+  "main_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1163,
+    "lua_bytes": 51286
+  },
+  "test_plan": {
+    "new_python_cases": 19,
+    "local_portable_v0": "19_PASS",
+    "github_exact_head_ci": "PENDING",
+    "full_existing_tests": "PENDING",
+    "negative_controls": "INCLUDED",
+    "roblox_engine": "NOT_RUN",
+    "player_metrics": "NOT_MEASURED"
+  },
+  "origin_provenance": {
+    "owner_words_record": "https://github.com/kk051780/toy-wars-factory/issues/109",
+    "source_conversation_link": "NOT_AVAILABLE",
+    "web_facts_independently_attested": false
+  },
+  "outcome": "UNMERGED_CANDIDATE_REQUIRES_INDEPENDENT_PROTECTED_MAINTENANCE_REVIEW",
+  "no_author_self_merge": true,
+  "release_authorized": false,
+  "external_model_inference_authorized": false,
+  "notes": "Manual CONTROLLER claim is not a registered META service run. This one-file system module and new tests constitute a safe read-only proposal; do not reuse a normal WORKER/REVIEWER author proof. Preserve existing protected system review and main QA.",
+  "next": "Run exact-head PR CI, obtain independent protected maintenance actor, merge only after separate attested approval and main QA."
+}
