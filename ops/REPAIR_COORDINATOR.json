@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 159,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "6bd24c39-2fa4-8328-9004-5436f2b6830e",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 159,
-    "acquired_at": "2026-10-28T01:22:41.400Z",
-    "expires_at": "2026-10-28T01:52:41.400Z",
-    "base_main_sha": "55d9e0da77f0a9237cf2776432cf22f62b551283",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,15 +36,16 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "e081b44b-76dc-832d-8096-9a29b6d2c2a5",
-    "epoch": 158,
-    "released_at": "2026-10-28T01:06:28.631Z",
-    "result": "PR94_C00070_C00071_EXACT_HEAD_TWO_JOB_CI_SUCCESS_REVIEW_PENDING",
+    "kind": "REVIEWER",
+    "owner_id": "6bd24c39-2fa4-8328-9004-5436f2b6830e",
+    "epoch": 159,
+    "released_at": "2026-10-28T01:23:50.026Z",
+    "result": "PR94_REQUEST_CHANGES_READ_FAILURE_AND_FINAL_SAVE_RETRY",
     "pr": 94,
     "head": "09abf3753bdfc9753a45004048b95a17afb311f4",
-    "ci": 40612891637,
-    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88"
+    "review_record": "ops/reviews/PR0094_09abf375.json",
+    "merged": false,
+    "next_actor": "WORKER:6adbf0d6a7d881918ce181dff2468867"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
