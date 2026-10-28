@@ -478,6 +478,7 @@ local function makePlot(player, state)
         prompt.Parent=pad
         prompt.Triggered:Connect(function(actor)
             if actor ~= player or not state.active then return end
+            if stopExpiredProgressLease(state) then return end
             -- Never trust a client-triggered prompt without checking server-side proximity.
             local character=actor.Character
             local root=character and character:FindFirstChild("HumanoidRootPart")
@@ -509,6 +510,7 @@ local function makePlot(player, state)
     refreshUpgrade()
     upgradePrompt.Triggered:Connect(function(actor)
         if actor ~= player or not state.active then return end
+        if stopExpiredProgressLease(state) then return end
         -- A forged proximity event must not upgrade from across the map.
         local character=actor.Character
         local root=character and character:FindFirstChild("HumanoidRootPart")
@@ -819,6 +821,7 @@ end
 selectEvent.OnServerEvent:Connect(function(player,selected)
     local state=sessions[player]
     if not state or not state.active then return end
+    if stopExpiredProgressLease(state) then return end
     if not B.isUnit(selected) then return end
     if os.clock() - (state.lastSelection or -100) < 0.12 then return end
     state.lastSelection=os.clock()

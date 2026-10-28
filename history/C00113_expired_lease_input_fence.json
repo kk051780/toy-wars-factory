@@ -1,0 +1,87 @@
+{
+  "id": "C00113",
+  "date": "2026-10-29",
+  "kind": "AUTONOMOUS_EXPIRED_LEASE_INPUT_FENCE",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "da89febb-8b50-832d-bf89-6d2edc8d64f0",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-da89febb-8b50-832d-bf89-6d2edc8d64f0",
+    "base": "main",
+    "open_prs": [],
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "456dc8d96fc98e802901a0acb361898b31ec0bba",
+    "owner_run_id": "da89febb-8b50-832d-bf89-6d2edc8d64f0",
+    "epoch": 212
+  },
+  "main_base": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092",
+  "defect": {
+    "id": "expired_lease_actions_before_next_heartbeat",
+    "reproduction": "At wall time >= leaseUntil, before the next Heartbeat, canonical UpgradePrompt, selector ProximityPrompt and ToyWarsSelectUnit RemoteEvent handlers still mutate state. Pinned current-main whole-server negative control demonstrates all three.",
+    "root_cause": "Input handlers checked state.active but expiry was checked only in simulate()."
+  },
+  "fix": "Call existing stopExpiredProgressLease(state) before each input mutation, retaining bounded refresh retry, owner CAS and prior earned final save.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_expired_input_fence_spec.lua",
+    "history/C00113_expired_lease_input_fence.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 39816,
+      "after_bytes": 39993,
+      "delta_bytes": 177
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1162,
+    "lua_bytes": 51137
+  },
+  "main_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1159,
+    "lua_bytes": 50960
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/progression_expired_input_fence_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 3665,
+      "delta_bytes": 3665
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "No existing toy price, stats, model, catalog, HUD, guide or queue notice changes.",
+  "tests": {
+    "new_canonical_lua_cases": 4,
+    "pinned_main_negative_controls": 1,
+    "accepted_server_27": "UNCHANGED",
+    "accepted_hud_6": "UNCHANGED",
+    "local_lua": "NOT_RUN",
+    "exact_head_ci": "PENDING",
+    "roblox_engine": "NOT_RUN",
+    "real_datastore": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "claim_commit": "456dc8d96fc98e802901a0acb361898b31ec0bba",
+    "main_base": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092",
+    "head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40735889809"
+  },
+  "next_action": "Exact-head two-job CI, independent registered REVIEWER and post-merge main QA; author cannot self-merge.",
+  "restrictions": {
+    "scheduler_mutated": false,
+    "gemini_rerun": false,
+    "roblox_publish": false,
+    "author_main_merge": false
+  }
+}
