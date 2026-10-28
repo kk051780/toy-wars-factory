@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 178,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "1e5e957c-de1c-832a-a736-e455da4fb7cc",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 178,
-    "acquired_at": "2026-10-28T08:04:52.840Z",
-    "expires_at": "2026-10-28T08:34:52.840Z",
-    "base_main_sha": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
-    "work_branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,15 +36,15 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "419780a3-78e8-832e-a8da-c4baf3595488",
-    "epoch": 177,
-    "released_at": "2026-10-28T07:28:06.412Z",
-    "result": "PR94_C00078_REQUEST_CHANGES_BACKFILL_SAVE_ORDER",
+    "kind": "WORKER",
+    "owner_id": "1e5e957c-de1c-832a-a736-e455da4fb7cc",
+    "epoch": 178,
+    "released_at": "2026-10-28T08:07:18.398Z",
+    "result": "PR94_C00079_SOURCE_AND_CANONICAL_TEST_COMMITTED_CI_PENDING",
     "pr": 94,
-    "head": "6ac3f11a0fa88154652b9c68c60a6838a4e5eb60",
-    "ci": 40648102338,
-    "next_actor": "WORKER"
+    "head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+    "ci": 40654472563,
+    "next_actor": "REVIEWER_AFTER_EXACT_HEAD_BOTH_JOBS_PASS"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
