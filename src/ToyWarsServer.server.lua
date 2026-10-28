@@ -15,6 +15,8 @@ world.Parent = workspace
 local MAX_PLOTS = 4
 local SPACING = 108
 local sessions = {}
+-- A kicked player may remain in Players until disconnect; never retry its failed load.
+local rejectedLoads = {}
 local occupied = {}
 local SLOT_COLORS = {Color3.fromRGB(33, 187, 193), Color3.fromRGB(250, 147, 76), Color3.fromRGB(157, 127, 237), Color3.fromRGB(109, 200, 112)}
 local UNIT_COLORS = {
@@ -647,6 +649,7 @@ lobbyGround.CanCollide = true
 
 local function join(player)
     if player.Parent ~= Players or sessions[player] then return end
+    if rejectedLoads[player] then return end
     local slot=chooseSlot()
     if not slot then
         warn("TWF v1.2: no free workshop plots for",player.UserId)
@@ -661,10 +664,19 @@ local function join(player)
     if loadFailure then
         sessions[player]=nil;occupied[slot]=nil
         if loadFailure~="DEPARTED" then
+            rejectedLoads[player]=true
             warn("TWF: progress loading blocked",player.UserId,loadFailure)
             -- A visible kick is safer than unsavable default gameplay.
             if type(player.Kick)=="function" then
                 player:Kick("Toy Wars: progress is in use or unavailable. Please rejoin.")
+            end
+        end
+        -- A failed load also frees a reserved plot. Admit the next queued player;
+        -- the rejected player can still be in Players until Kick completes.
+        for _,waiting in ipairs(Players:GetPlayers()) do
+            if waiting ~= player and waiting.Parent == Players and not sessions[waiting] and not rejectedLoads[waiting] then
+                task.spawn(join,waiting)
+                break
             end
         end
         return
@@ -725,6 +737,7 @@ selectEvent.OnServerEvent:Connect(function(player,selected)
 end)
 Players.PlayerAdded:Connect(join)
 Players.PlayerRemoving:Connect(function(player)
+    rejectedLoads[player]=nil
     local state=sessions[player]
     if not state then return end
     state.active=false
@@ -736,7 +749,7 @@ Players.PlayerRemoving:Connect(function(player)
     saveProgress(player,state)
     -- Assign a newly freed plot to one player who was waiting at capacity.
     for _,waiting in ipairs(Players:GetPlayers()) do
-        if waiting ~= player and waiting.Parent == Players and not sessions[waiting] then
+        if waiting ~= player and waiting.Parent == Players and not sessions[waiting] and not rejectedLoads[waiting] then
             join(waiting)
             break
         end
