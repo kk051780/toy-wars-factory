@@ -1,0 +1,129 @@
+{
+  "schema": 1,
+  "pr": 94,
+  "repository": "kk051780/toy-wars-factory",
+  "head": "09abf3753bdfc9753a45004048b95a17afb311f4",
+  "base_main_sha": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "6bd24c39-2fa4-8328-9004-5436f2b6830e",
+  "lease_epoch": 159,
+  "reviewed_at": "2026-10-28T01:23:39.025Z",
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "e081b44b-76dc-832d-8096-9a29b6d2c2a5",
+  "verdict": "REQUEST_CHANGES",
+  "category": "GAME_DATASTORE_PERSISTENCE_FAILURE_HANDLING",
+  "checks": {
+    "scope": true,
+    "regression": false,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": false
+  },
+  "blockers": [
+    "READ_FAILURE_UNSAVABLE_GAMEPLAY: src/ToyWarsServer.server.lua:90-95 returns (nil,false) on GetAsync exception or unknown schema; join:621-659 treats absent loadFailure as success and creates active default Coins=50 with persistAllowed=false. tests/auto/progression_rejoin_spec.lua explicitly asserts 'read failure allows play' and 'unrecognized version' starts default gameplay. Reproduce stored coins=500, GetAsync throws once, player joins and earns 300, leaves; no final save, all new progress silently lost. Require fail-closed join (no normal gameplay, free plot and visible retry) for failed reads/unknown schemas/unavailable store, with whole-server negative control; update only the now-invalid fallback expectations to stricter tests, preserving no-overwrite behavior.",
+    "FINAL_SAVE_TRANSIENT_FAILURE_NO_RETRY: src/ToyWarsServer.server.lua:151-179 and PlayerRemoving:689-705 attempt exactly one UpdateAsync final save. Reproduce stored coins=200 with owned session, player earns 300, mock UpdateAsync throws once at leave and would succeed next call. The server warns but never retries, leaves persisted coins=200 and sessionOwner lease held for up to 180 seconds; next join times out after ~2s. Require bounded retry/backoff for transient save errors, retain owner/revision fencing and avoid duplicate mutation, add canonical-server injected-once-failure regression and explicit failure observability. No claim of crash-proof durability."
+  ],
+  "findings": [
+    {
+      "severity": "HIGH",
+      "file": "src/ToyWarsServer.server.lua",
+      "lines": "90-95,621-659",
+      "kind": "UNSAVABLE_DEFAULT_ON_READ_ERROR",
+      "reproduction": "GetAsync raises for stored 500; loadProgress returns nil,false; join starts default active state with persistAllowed=false. Progress earned is never saved.",
+      "expected": "Explicit load failure must prevent normal gameplay and show rejoin/retry; no saved record overwritten. Regression must catch current head."
+    },
+    {
+      "severity": "HIGH",
+      "file": "src/ToyWarsServer.server.lua",
+      "lines": "151-179,689-711",
+      "kind": "ONE_SHOT_FINAL_SAVE_LOSS",
+      "reproduction": "After claiming stored 200, earn 300; final UpdateAsync raises transiently once on leave; no retry, stored remains 200 and lease persists.",
+      "expected": "Bounded retry for transient final save, maintain exact-session ownership, test injected-once-failure and unsuccessful terminal outcome."
+    }
+  ],
+  "evidence": {
+    "main_qa": {
+      "run_id": 40594943961,
+      "head": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+      "jobs": [
+        "offline:success",
+        "compile_hold:success"
+      ]
+    },
+    "main_compare": {
+      "base": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+      "head": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+      "paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ],
+      "verified": true
+    },
+    "pr_ci": {
+      "run_id": 40612891637,
+      "head": "09abf3753bdfc9753a45004048b95a17afb311f4",
+      "conclusion": "success",
+      "jobs": [
+        "offline:success",
+        "compile_hold:success"
+      ],
+      "python_tests": 423,
+      "lua_claim_race": "5/5",
+      "lua_rejoin": "7/7",
+      "lua_conflict": "7/7",
+      "lua_session_fence": "6/6",
+      "scope_and_claim": "PASS"
+    },
+    "claims": [
+      {
+        "commit": "82292b8fcefa44c38b4c68d6c62a96c42f624494",
+        "epoch": 144
+      },
+      {
+        "commit": "12f4267d13e49887735c8c2e2e534ed1a0c0f5a1",
+        "epoch": 152
+      },
+      {
+        "commit": "36d56f1cff56862890f0eb13d399cdf38242921e",
+        "epoch": 156
+      },
+      {
+        "commit": "adc8df694006931b6694f9db40572ce44ced6b0f",
+        "epoch": 158
+      }
+    ],
+    "diff_files": [
+      "history/C00065_progress_rejoin.json",
+      "history/C00067_progress_conflict_review_repair.json",
+      "history/C00068_progress_session_fence_review_repair.json",
+      "history/C00069_disconnect_before_claim_ci_repair.json",
+      "history/C00070_atomic_session_lease_review_repair.json",
+      "history/C00071_lease_refresh_transient_ci_hardening.json",
+      "src/ToyWarsServer.server.lua",
+      "tests/auto/progression_claim_race_spec.lua",
+      "tests/auto/progression_conflict_spec.lua",
+      "tests/auto/progression_rejoin_spec.lua",
+      "tests/auto/progression_session_fence_spec.lua"
+    ],
+    "source_bytes": {
+      "main_server": 20147,
+      "pr_server": 31115,
+      "all_lua": 42259
+    },
+    "history_chain": [
+      "C00065",
+      "C00067",
+      "C00068",
+      "C00069",
+      "C00070",
+      "C00071"
+    ]
+  },
+  "limitations": [
+    "Exact-head offline CI PASS does not test these two failure paths as fail-closed/recoverable; rejoin fixture currently accepts unsafe read fallback.",
+    "No live Roblox DataStore, Studio, two-server, or mobile verification."
+  ],
+  "merge_performed": false,
+  "next_actor": "WORKER:6adbf0d6a7d881918ce181dff2468867"
+}

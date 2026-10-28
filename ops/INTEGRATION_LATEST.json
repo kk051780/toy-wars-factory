@@ -1,22 +1,22 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-27T23:26:12.468Z",
+  "observed_at": "2026-10-28T01:23:39.025Z",
   "status": "REQUEST_CHANGES",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "c1276df4-db04-8328-ac87-3a909d29133d",
-  "lease_epoch": 157,
+  "reviewer_run_id": "6bd24c39-2fa4-8328-9004-5436f2b6830e",
+  "lease_epoch": 159,
   "main_before": "55d9e0da77f0a9237cf2776432cf22f62b551283",
   "latest_review": {
     "pr": 94,
-    "head": "259b51e2ef3d84b02b6442dae53f56292b8bae28",
+    "head": "09abf3753bdfc9753a45004048b95a17afb311f4",
     "verdict": "REQUEST_CHANGES",
-    "review_record": "ops/reviews/PR0094_259b51e2.json",
-    "ci": 40596902577,
-    "category": "GAME_DATASTORE_SESSION_CONCURRENCY",
+    "review_record": "ops/reviews/PR0094_09abf375.json",
+    "ci": 40612891637,
+    "category": "GAME_DATASTORE_PERSISTENCE_FAILURE_HANDLING",
     "blockers": [
-      "RACE_1: Two servers A/B both GetAsync p:1 before either UpdateAsync claim. A claims sessionOwner=A. B UpdateAsync compares current owner A with expected nil and returns nil. loadProgress returns (nil,false), but join creates default Coins=50/Wave=1 and continues; saveProgress exits on persistAllowed=false. Later active B can play without ever saving. src/ToyWarsServer.server.lua lines 89-125, 573-584, 127-128. Existing tests only join sequentially; no concurrent GetAsync/claim interleaving.",
-      "RACE_2: A active with unsaved Coins=300 while stored Coins=200. B joins and unconditionally supersedes A's sessionOwner using stored Coins=200 before A PlayerRemoving save. A's final save is canceled; B starts at 200, so A's earned 100 is lost. Existing six session-fence tests assert B wins but do not protect A's unsaved progress. Official Roblox session-locking guidance requires holding/waiting for prior session final save or bounded recovery, not immediate takeover."
+      "READ_FAILURE_UNSAVABLE_GAMEPLAY: src/ToyWarsServer.server.lua:90-95 returns (nil,false) on GetAsync exception or unknown schema; join:621-659 treats absent loadFailure as success and creates active default Coins=50 with persistAllowed=false. tests/auto/progression_rejoin_spec.lua explicitly asserts 'read failure allows play' and 'unrecognized version' starts default gameplay. Reproduce stored coins=500, GetAsync throws once, player joins and earns 300, leaves; no final save, all new progress silently lost. Require fail-closed join (no normal gameplay, free plot and visible retry) for failed reads/unknown schemas/unavailable store, with whole-server negative control; update only the now-invalid fallback expectations to stricter tests, preserving no-overwrite behavior.",
+      "FINAL_SAVE_TRANSIENT_FAILURE_NO_RETRY: src/ToyWarsServer.server.lua:151-179 and PlayerRemoving:689-705 attempt exactly one UpdateAsync final save. Reproduce stored coins=200 with owned session, player earns 300, mock UpdateAsync throws once at leave and would succeed next call. The server warns but never retries, leaves persisted coins=200 and sessionOwner lease held for up to 180 seconds; next join times out after ~2s. Require bounded retry/backoff for transient save errors, retain owner/revision fencing and avoid duplicate mutation, add canonical-server injected-once-failure regression and explicit failure observability. No claim of crash-proof durability."
     ],
     "merge_sha": null
   },
@@ -214,5 +214,6 @@
   "next": "WORKER_REPAIR_PR94_CONCURRENT_CLAIM_AND_UNSAVED_PROGRESS; KEEP_RELEASE_HOLD",
   "runtime_verified": true,
   "main_after": "55d9e0da77f0a9237cf2776432cf22f62b551283",
-  "merge_sha": null
+  "merge_sha": null,
+  "next_actor": "WORKER"
 }
