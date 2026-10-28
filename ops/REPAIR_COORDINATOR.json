@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 169,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "8cc6639f-5b15-4b6d-b6a8-5987938c19e4",
-    "task_id": null,
-    "epoch": 169,
-    "acquired_at": "2026-10-28T04:14:02.037Z",
-    "expires_at": "2026-10-28T04:44:02.037Z",
-    "base_main_sha": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
-    "work_branch": "ops/twf-character-pipeline-20261028",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,21 +36,16 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "02da8384-5050-8326-b742-50142d6d1163",
-    "epoch": 168,
-    "released_at": "2026-10-28T04:13:21.535Z",
-    "result": "PR94_REVIEW_REPAIR_AND_EXACT_HEAD_CI_SUCCESS_AWAIT_INDEPENDENT_REVIEW",
-    "pr": 94,
-    "head": "f6bf432901e66ce025c490373fbf5a17f176d431",
-    "ci": 40630993164,
-    "ci_jobs": {
-      "offline": "success",
-      "compile_hold": "success"
-    },
-    "history": "history/C00075_progress_refresh_save_race_repair.json",
-    "main_base": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
-    "next_actor": "REGISTERED_INDEPENDENT_REVIEWER"
+    "kind": "CONTROLLER",
+    "owner_id": "8cc6639f-5b15-4b6d-b6a8-5987938c19e4",
+    "epoch": 169,
+    "released_at": "2026-10-28T04:16:23.225Z",
+    "result": "PR98_EXACT_SOURCE_LEDGER_CORRECTED_AND_SCOPED_READ_ONLY_REAUDIT_SCHEDULED",
+    "pr": 98,
+    "head": "04ae31b1447ec352e504f96b72dd91ea78d24db2",
+    "source_changed": false,
+    "history": "history/C00101_character_ledger_review_repair.json",
+    "next_actor": "SEPARATE_CHARACTER_AUDITOR; REGISTERED_REVIEWER_PR94_NOT_BLOCKED"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -1386,15 +1371,57 @@
     "reviewer_task_id": "6ae16fe9b8908191b93c85b0c2782f01",
     "repository": "kk051780/toy-wars-factory",
     "pr": 98,
-    "head": "f830f259dcbaa58aa79ab15162f7d73123003ab5",
-    "base_main_sha": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+    "head": "04ae31b1447ec352e504f96b72dd91ea78d24db2",
+    "base_main_sha": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
     "branch": "ops/twf-character-pipeline-20261028",
     "author_operation_id": "c24b547b-a58c-4c2b-a3cd-46410057053c",
     "author_claim_commit": "0b6c79a0247216d2471c0b67d710a44abc6085bd",
     "epoch": 164,
-    "status": "DRAFT_WAIT_EXACT_HEAD_CI_AND_INDEPENDENT_AUDIT",
-    "requested_at": "2026-10-28T03:46:59.583Z",
+    "status": "REPAIRED_HEAD_WAIT_FRESH_CI_AND_READ_ONLY_REAUDIT",
+    "requested_at": "2026-10-28T04:16:23.225Z",
     "scope": "Protected character gate/catalog/scope adoption plus first CUREBO pilot. No automatic merge/spend/publish grant.",
-    "live_role_prompts": "UPDATED_CONDITIONALLY_PENDING_MAIN_ADOPTION_SCHEDULES_UNCHANGED"
-  }
+    "live_role_prompts": "UPDATED_CONDITIONALLY_PENDING_MAIN_ADOPTION_SCHEDULES_UNCHANGED",
+    "original_author_operation_id": "c24b547b-a58c-4c2b-a3cd-46410057053c",
+    "repair_author_operation_id": "8cc6639f-5b15-4b6d-b6a8-5987938c19e4",
+    "repair_author_claim_commit": "7c7be229a364f739cbd46da6eb60c5f512846017",
+    "repair_epoch": 169,
+    "repair_history": "history/C00101_character_ledger_review_repair.json",
+    "exact_head_ci": {
+      "workflow_runs": [
+        {
+          "id": 40631270124,
+          "name": "Toy Wars bootstrap offline QA",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 243,
+          "jobs_url": "https://api.github.com/repos/kk051780/toy-wars-factory/actions/runs/40631270124/jobs",
+          "logs_url": "https://api.github.com/repos/kk051780/toy-wars-factory/actions/runs/40631270124/logs",
+          "workflow_id": 394718989
+        }
+      ]
+    },
+    "reaudit_schedule": "BEGIN:VEVENT\nDTSTART:20261028T041751Z\nEND:VEVENT",
+    "prompts_preserved": "Existing WORKER/META/REVIEWER task IDs, schedules, enabled states unchanged; only the separate one-shot read-only character audit was re-armed for the new exact head. No automatic merge lane expansion."
+  },
+  "character_pipeline_review_request_history": [
+    {
+      "mode": "READ_ONLY_SCOPED_CHARACTER_MAINTENANCE_AUDIT",
+      "reviewer_task_id": "6ae16fe9b8908191b93c85b0c2782f01",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 98,
+      "head": "f830f259dcbaa58aa79ab15162f7d73123003ab5",
+      "base_main_sha": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+      "branch": "ops/twf-character-pipeline-20261028",
+      "author_operation_id": "c24b547b-a58c-4c2b-a3cd-46410057053c",
+      "author_claim_commit": "0b6c79a0247216d2471c0b67d710a44abc6085bd",
+      "epoch": 164,
+      "status": "REQUEST_CHANGES",
+      "requested_at": "2026-10-28T03:46:59.583Z",
+      "scope": "Protected character gate/catalog/scope adoption plus first CUREBO pilot. No automatic merge/spend/publish grant.",
+      "live_role_prompts": "UPDATED_CONDITIONALLY_PENDING_MAIN_ADOPTION_SCHEDULES_UNCHANGED",
+      "verdict_run_id": "2b0b62b0-2c34-8333-ba76-4368301aaf22",
+      "blocker": "C00100 aggregate36281bytes/892lines vs actual36280bytes/891lines",
+      "superseded_by": "04ae31b1447ec352e504f96b72dd91ea78d24db2"
+    }
+  ]
 }
