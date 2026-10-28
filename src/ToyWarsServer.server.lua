@@ -15,6 +15,8 @@ world.Parent = workspace
 local MAX_PLOTS = 4
 local SPACING = 108
 local sessions = {}
+-- Keep departing saves visible to shutdown after their session is removed.
+local finalSavesInFlight = {}
 -- A kicked player may remain in Players until disconnect; never retry its failed load.
 local rejectedLoads = {}
 local occupied = {}
@@ -208,6 +210,14 @@ local function saveProgress(player,state)
         if attempt<SAVE_RETRY_COUNT then task.wait(SAVE_RETRY_SECONDS) end
     end
     warn("TWF: progress save retries exhausted; progress may be unsaved for",player.UserId)
+end
+-- Share one finalization per player across departure and shutdown callbacks.
+local function finalizeProgress(player,state)
+    if finalSavesInFlight[player] then return end
+    finalSavesInFlight[player]=true
+    local ok=pcall(saveProgress,player,state)
+    finalSavesInFlight[player]=nil
+    if not ok then warn("TWF: unexpected final save failure for",player.UserId) end
 end
 -- A failed refresh is tolerable only while this exact session's local lease is live.
 -- Preserve final-save CAS on expiry: earlier earnings may still be committed
@@ -764,7 +774,7 @@ Players.PlayerRemoving:Connect(function(player)
     if state.map and state.map.Parent then state.map:Destroy() end
     sessions[player]=nil
     -- Finalize departing progress before a waiting player's GetAsync can yield.
-    saveProgress(player,state)
+    finalizeProgress(player,state)
     -- Assign a newly freed plot to one player who was waiting at capacity.
     for _,waiting in ipairs(Players:GetPlayers()) do
         if waiting ~= player and waiting.Parent == Players and not sessions[waiting] and not rejectedLoads[waiting] then
@@ -775,10 +785,14 @@ Players.PlayerRemoving:Connect(function(player)
 end)
 if type(game.BindToClose) == "function" then
     game:BindToClose(function()
+        local deadline=os.clock()+25 -- Roblox waits at most 30 seconds for BindToClose.
         for player,state in pairs(sessions) do
             -- Expired gameplay can still own unsaved progress; final CAS decides safety.
-            if state.coins then saveProgress(player,state) end
+            if state.coins then finalizeProgress(player,state) end
         end
+        -- PlayerRemoving may have cleared sessions while UpdateAsync was yielding.
+        while next(finalSavesInFlight) and os.clock()<deadline do task.wait(0.1) end
+        if next(finalSavesInFlight) then warn("TWF: shutdown final save still pending") end
     end)
 end
 for _,player in ipairs(Players:GetPlayers()) do task.spawn(join,player) end
