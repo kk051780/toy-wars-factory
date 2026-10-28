@@ -1,8 +1,18 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 166,
-  "holder": null,
+  "epoch": 167,
+  "holder": {
+    "kind": "DISPATCH",
+    "owner_id": "fcec2a9a-9b9d-4243-a951-2c9a9a896639",
+    "task_id": null,
+    "epoch": 167,
+    "acquired_at": "2026-10-28T04:00:07.407683+00:00",
+    "expires_at": "2026-10-28T04:02:07.407683+00:00",
+    "base_main_sha": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+    "work_branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "origin": "dispatch"
+  },
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -1241,15 +1251,22 @@
     }
   ],
   "manual_go_context": {
-    "observed_at": "2026-10-27T22:36:19.100719+00:00",
-    "owner_request": "続けて / 開発も続けてよ",
-    "priority_request_id": "pr94_two_session_overlap_later_progress_lost_20261028",
+    "observed_at": "2026-10-28T04:00:07.407683+00:00",
+    "owner_request": "続けて",
+    "priority_request_id": "pr94_inflight_refresh_cancels_final_save_20261028",
     "pr": 94,
-    "reviewed_head": "5bba9a7fffa3b494b485341b51372452f196fad1",
-    "independent_diagnostic": "Exact 5bba canonical whole server offline replay: A+B load revision 0, A saves 300 first, B saves 500 later; expected500 actual300 (FAIL). Fixture /workspace/scratch/b3934249f0a4/audit-pr94-fixed-5bba9a7f/controller_old_first_audit.lua",
-    "required_outcome": "Repair existing PR94 session ownership on load / safe serialization before any next feature. Current optimistic CAS only protects one write order. New active session must not silently play unsavably. Preserve accepted regressions, unknown schema, metadata, purchases (no max coins), callback non-yielding and bounded failure/recovery. Follow registered reviewer request and official primary guidance.",
-    "main_observation": "55d9e0da77f0a9237cf2776432cf22f62b551283 is verified generated-status-only descendant of d7d4bb8a PR95 merge; mainQA40594943961 and handoff40594944031 success;423Python. No engine execution claimed.",
-    "next_feature_after_repair": "Assess bounded periodic autosave only after ownership fix; no unrelated feature stacking."
+    "head": "9399dee1ee5d8e70085fadef66d48cf5a75ddea1",
+    "harness_maintenance": {
+      "pr": 97,
+      "head": "499a8226925ef41aec66ec12c6d685f9cbe9b43b",
+      "merged": "d3decf3519937f4e8391d130eee5ff5375868fed",
+      "main_qa": 40629585413,
+      "handoff": 40629585610,
+      "independent_task": "6ae16d4645308191876c8f768743a583",
+      "independent_run": "adfde28b-a754-8327-9e24-02fb41cd6cfc",
+      "status": "MAIN_INTEGRATED_BOTH_QA_JOBS_AND_HANDOFF_SUCCESS"
+    },
+    "instruction": "Existing PR94 repair first. Rebase/reconcile against current main with accepted PR97 harness (do not edit protected accepted harness). All31 candidate progression cases independently pass with repaired harness, but added canonical asynchronous API-latency diagnostic loses350->stored200 when own refresh commits before pending final save. Full exact reproduction and code recipe are in WORK_REQUESTS priority request. Fix per-session operation coordination safely; retain owner/revision/metadata/schema protections and bounded retries, add pinned9399 negative control, new real claim/source ledger, fresh exact-head both-job CI. Do not mistake PR97 approval for PR94 approval. Separate registered REVIEWER only can integrate game. No engine/release claim. Respect other open PR C-history numbers; do not reuse C00074 or reserved C00075 from character pipeline."
   },
   "controller_maintenance": {
     "mode": "ONE_TIME_SCOPED_HARNESS_MAINTENANCE",
