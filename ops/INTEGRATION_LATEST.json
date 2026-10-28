@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T12:28:48.323Z",
-  "status": "APPROVED_AWAIT_EXACT_HEAD_MERGE",
+  "observed_at": "2026-10-28T12:30:08.039Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "b3f41147-61ac-832b-85cb-3a5bae269d65",
@@ -16,7 +16,10 @@
     "category": "GAME_DATASTORE_SHUTDOWN_INFLIGHT",
     "blockers": [],
     "next_action": "MERGE_EXACT_HEAD_POST_QA",
-    "status": "APPROVED_AWAIT_EXACT_HEAD_MERGE"
+    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+    "merge_sha": "c8f823fc39c3f412c60475fa64a118cc28d69fcf",
+    "main_qa": 40688191639,
+    "handoff": 40688191916
   },
   "merged_prs": [
     {
@@ -199,12 +202,23 @@
       "handoff": 40686775714,
       "main_after_handoff": "1ed8445528eb6c48597888f0be395859df0d44bd",
       "category": "GAME_DATASTORE_LEASE_EXPIRY_SHUTDOWN"
+    },
+    {
+      "pr": 103,
+      "head": "f137f226a8ddb3cb580dbd52179a7581934187ca",
+      "merge_sha": "c8f823fc39c3f412c60475fa64a118cc28d69fcf",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40688191639,
+      "handoff": 40688191916,
+      "main_after_handoff": "d56cf4239f50eaaeb31233cc7f2a277dc855e4f9",
+      "category": "GAME_DATASTORE_SHUTDOWN_INFLIGHT",
+      "status_only_descendant_verified": true
     }
   ],
-  "merge_count_this_run": 0,
+  "merge_count_this_run": 1,
   "main_qa": {
-    "id": 40686775807,
-    "head": "d7738c5b8b6eafbca494dd241067bb450bdc46d5",
+    "id": 40688191639,
+    "head": "c8f823fc39c3f412c60475fa64a118cc28d69fcf",
     "conclusion": "success",
     "jobs": {
       "offline": "success",
@@ -217,11 +231,11 @@
     ]
   },
   "handoff": {
-    "id": 40686775714,
-    "head": "d7738c5b8b6eafbca494dd241067bb450bdc46d5",
+    "id": 40688191916,
+    "head": "c8f823fc39c3f412c60475fa64a118cc28d69fcf",
     "status": "completed",
     "conclusion": "success",
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40686775714",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40688191916",
     "jobs": [
       {
         "name": "update",
@@ -238,19 +252,19 @@
     ]
   },
   "unresolved": [
-    "Separate shutdown 30-second budget/inflight PlayerRemoving save request remains open; WORKER priority.",
-    "PR98 protected character pipeline is outside ordinary reviewer scope; separate exact-head maintenance audit required.",
+    "P1: Existing main_shutdown_sequential_save_deadline_20261028 remains OPEN_REPRODUCED: 4 active users x 8-second DataStore saves are sequential; 3/4 complete within the documented 30-second shutdown window. Next WORKER fix should use parallel final saves and a single shared deadline.",
+    "PR98 protected character pipeline remains outside ordinary reviewer scope; separate exact-head maintenance audit required.",
     "Roblox Studio, real DataStore, multiplayer, mobile, character visuals and player feedback unverified; release HOLD.",
-    "Gemini incident hold and existing spending caps unchanged."
+    "Gemini incident hold and spending caps unchanged."
   ],
-  "next": "FIX_SHUTDOWN_30S_BUDGET_AND_INFLIGHT_SAVE; PROTECTED_PR98_SEPARATE_AUDIT; KEEP_RELEASE_HOLD",
+  "next": "FIX_ACTIVE_SHUTDOWN_PARALLEL_SAVES_30S; PROTECTED_PR98_SEPARATE_AUDIT; KEEP_RELEASE_HOLD",
   "runtime_verified": true,
-  "main_after": "1ed8445528eb6c48597888f0be395859df0d44bd",
-  "merge_sha": "d7738c5b8b6eafbca494dd241067bb450bdc46d5",
-  "next_actor": "REVIEWER_MERGE_EXACT_HEAD",
+  "main_after": "d56cf4239f50eaaeb31233cc7f2a277dc855e4f9",
+  "merge_sha": "c8f823fc39c3f412c60475fa64a118cc28d69fcf",
+  "next_actor": "WORKER_REPAIR_SHUTDOWN_PARALLEL_SAVES",
   "secondary_review": null,
-  "main_after_merge": "d7738c5b8b6eafbca494dd241067bb450bdc46d5",
-  "main_after_handoff": "1ed8445528eb6c48597888f0be395859df0d44bd",
+  "main_after_merge": "c8f823fc39c3f412c60475fa64a118cc28d69fcf",
+  "main_after_handoff": "d56cf4239f50eaaeb31233cc7f2a277dc855e4f9",
   "status_only_descendant_verified": true,
-  "merges_this_run": 0
+  "merges_this_run": 1
 }

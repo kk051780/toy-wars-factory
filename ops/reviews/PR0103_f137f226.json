@@ -74,5 +74,25 @@
     }
   },
   "category": "GAME_DATASTORE_SHUTDOWN_INFLIGHT",
-  "next_action": "MERGE_EXACT_HEAD_POST_QA"
+  "next_action": "MERGE_EXACT_HEAD_POST_QA",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "merge_sha": "c8f823fc39c3f412c60475fa64a118cc28d69fcf",
+  "post_merge_main_qa": {
+    "id": 40688191639,
+    "head": "c8f823fc39c3f412c60475fa64a118cc28d69fcf",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40688191639"
+  },
+  "post_merge_handoff": {
+    "id": 40688191916,
+    "head": "c8f823fc39c3f412c60475fa64a118cc28d69fcf",
+    "conclusion": "success",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40688191916"
+  },
+  "main_after_handoff": "d56cf4239f50eaaeb31233cc7f2a277dc855e4f9",
+  "status_only_descendant_verified": true
 }
