@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "pr": 108,
+  "repository": "kk051780/toy-wars-factory",
+  "head": "234c6f9dc2d6b9001796fe3e47daf48891b88223",
+  "base_main_sha": "8a0f8816870fa4854b71c23d223728589303070a",
+  "reviewed_at": "2026-10-28T20:30:30.808Z",
+  "reviewer_kind": "REVIEWER",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "08b9a9a6-6070-8321-a534-c6adad650214",
+  "lease_epoch": 218,
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "20fb1989-2368-8326-a2c3-3ac8c0d59538",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [
+    "Current default prompt distance 12+1 studs remains accepted; runtime shrink to 5 rejects forged events beyond 6 and accepts at 6.",
+    "Selector retains additional fixed <=13 accepted static guard; expanding selector MaxActivationDistance beyond 12 would still be capped at 13. Not part of current shrink-only fix; monitor future config changes.",
+    "Lua harness and Python checks are offline only; Roblox Studio/multiplayer/mobile and player outcomes remain unverified."
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "GAME_SERVER_CONFIGURED_PROMPT_DISTANCE_FENCE",
+  "changed_files": [
+    "history/C00115_prompt_activation_distance_fence.json",
+    "history/C00116_prompt_distance_ci_repair.json",
+    "history/C00117_prompt_static_gate_ci_repair.json",
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/prompt_activation_distance_spec.lua"
+  ],
+  "ci": {
+    "id": 40761307293,
+    "head": "234c6f9dc2d6b9001796fe3e47daf48891b88223",
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "scope_and_claim_gate": "PASS",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40761307293",
+    "python_tests": 454,
+    "new_lua_cases": 5
+  },
+  "main_qa": {
+    "id": 40754419751,
+    "head": "877417447e645fd8f3c34d5aecd883a43791712d",
+    "conclusion": "success",
+    "status_only_descendant_verified": true
+  },
+  "main_handoff": {
+    "id": 40754419345,
+    "conclusion": "success"
+  },
+  "evidence": {
+    "main_compare_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "pr_compare_ahead": 3,
+    "pr_compare_files": 5,
+    "server_before_bytes": 39993,
+    "server_after_bytes": 40142,
+    "source_total_before_bytes": 51137,
+    "source_total_after_bytes": 51286,
+    "claim_epoch_216": "d467103da6666d7bb1909f96a7da2f052dc7b1a7",
+    "claim_epoch_217": "f1ea9b209ab1c2767a1ed2dc75d9eeaa11d5f358",
+    "accepted_tests_unchanged": true,
+    "negative_control": "pinned old main source accepts reconfigured 6.5 stud forged selector/upgrade",
+    "limitations": [
+      "Roblox engine NOT_RUN",
+      "Mobile NOT_RUN",
+      "Multiplayer NOT_RUN",
+      "No market effect measured"
+    ]
+  }
+}
