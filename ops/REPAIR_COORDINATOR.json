@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 163,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "5fe5290f-e216-4f8c-b8fa-4ff7d002e4a4",
-    "task_id": null,
-    "epoch": 163,
-    "acquired_at": "2026-10-28T03:22:12.219234+00:00",
-    "expires_at": "2026-10-28T03:52:12.219234+00:00",
-    "base_main_sha": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
-    "work_branch": "ops/twf-datastore-harness-5fe5290f-e216-4f8c-b8fa-4ff7d002e4a4",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,10 +36,15 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "c8032924-5078-8333-9ef3-c5f870f61610",
-    "epoch": 162,
-    "released_at": "2026-10-28T02:28:57.220Z"
+    "kind": "CONTROLLER",
+    "owner_id": "5fe5290f-e216-4f8c-b8fa-4ff7d002e4a4",
+    "epoch": 163,
+    "released_at": "2026-10-28T03:35:05.782Z",
+    "result": "PR97_HARNESS_FIX_CI_PASS_AWAIT_SCOPED_INDEPENDENT_AUDIT",
+    "pr": 97,
+    "head": "499a8226925ef41aec66ec12c6d685f9cbe9b43b",
+    "ci": 40626780378,
+    "next_actor": "INDEPENDENT_MAINTENANCE_AUDIT:6ae16d4645308191876c8f768743a583"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -1170,7 +1165,7 @@
     "basis": "Owner delegated ordinary infrastructure repair and integration decisions; concrete registered REVIEWER request authorizes CONTROLLER maintenance. This one scoped review does not change normal worker/meta/reviewer branch policy."
   },
   "bootstrap_review_request": {
-    "mode": "READ_ONLY_REVIEW",
+    "mode": "SUPERSEDED_BY_SCOPED_MAINTENANCE_AUDIT",
     "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
     "repository": "kk051780/toy-wars-factory",
     "pr": 97,
@@ -1203,6 +1198,46 @@
       "after": "27/27 pass",
       "new_service_cases": "7/7 pass on main and candidate",
       "negative_control": "old server exactly25pass2NaNfail; oldharness1pass6fail"
-    }
+    },
+    "status": "NOT_APPROVED_NORMAL_REVIEWER_WAIT_LOCK_OUTSIDE_LANE",
+    "superseded_at": "2026-10-28T03:35:05.782Z",
+    "audit_task_id": "6ae16d4645308191876c8f768743a583"
+  },
+  "controller_maintenance_audit_request": {
+    "schema": 1,
+    "mode": "ONE_TIME_INDEPENDENT_CONTROLLER_MAINTENANCE_REVIEW_AND_INTEGRATION",
+    "task_id": "6ae16d4645308191876c8f768743a583",
+    "repository": "kk051780/toy-wars-factory",
+    "pr": 97,
+    "head": "499a8226925ef41aec66ec12c6d685f9cbe9b43b",
+    "branch": "ops/twf-datastore-harness-5fe5290f-e216-4f8c-b8fa-4ff7d002e4a4",
+    "base_main_sha": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+    "author_operation_id": "5fe5290f-e216-4f8c-b8fa-4ff7d002e4a4",
+    "author_epoch": 163,
+    "author_claim_commit": "6159a3fe9b9a50a875c31ba14be574204801ffa0",
+    "request_id": "pr94_failclosed_datastore_harness_ci_20261028",
+    "allowed_paths": [
+      "tests/roblox_server_harness.lua",
+      "tests/auto/harness_datastore_spec.lua",
+      "history/C00074_datastore_harness_maintenance.json"
+    ],
+    "required_ci": {
+      "run": 40626780378,
+      "head": "499a8226925ef41aec66ec12c6d685f9cbe9b43b",
+      "jobs": [
+        "offline",
+        "compile_hold"
+      ],
+      "status": "success"
+    },
+    "require_independent_actual_diff_review": true,
+    "require_current_main_qa": true,
+    "require_post_merge_main_qa_and_handoff": true,
+    "author_cannot_self_approve_or_integrate": true,
+    "protected_assertions_and_policies_unchanged": true,
+    "normal_worker_meta_reviewer_scope_unchanged": true,
+    "authority": "Owner delegated ordinary game/system repair and integration; registered REVIEWER's exact protected-harness repair request. One independently reviewed CONTROLLER maintenance operation only; no ordinary reviewer MERGE decision claimed.",
+    "created_at": "2026-10-28T03:35:05.782Z",
+    "status": "AWAIT_INDEPENDENT_REVIEW"
   }
 }
