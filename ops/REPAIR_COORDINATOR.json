@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 168,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "02da8384-5050-8326-b742-50142d6d1163",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 168,
-    "acquired_at": "2026-10-28T04:09:44.793Z",
-    "expires_at": "2026-10-28T04:39:44.793Z",
-    "base_main_sha": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
-    "work_branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
-    "origin": "manual"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,17 +36,21 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "adfde28b-a754-8327-9e24-02fb41cd6cfc",
-    "epoch": 166,
-    "released_at": "2026-10-28T03:58:15+00:00",
-    "result": "PR97_INDEPENDENT_MAINTENANCE_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
-    "pr": 97,
-    "head": "499a8226925ef41aec66ec12c6d685f9cbe9b43b",
-    "merge_sha": "d3decf3519937f4e8391d130eee5ff5375868fed",
-    "main_qa": 40629585413,
-    "handoff": 40629585610,
-    "next_actor": "REGISTERED_WORKER_PR94"
+    "kind": "WORKER",
+    "owner_id": "02da8384-5050-8326-b742-50142d6d1163",
+    "epoch": 168,
+    "released_at": "2026-10-28T04:13:21.535Z",
+    "result": "PR94_REVIEW_REPAIR_AND_EXACT_HEAD_CI_SUCCESS_AWAIT_INDEPENDENT_REVIEW",
+    "pr": 94,
+    "head": "f6bf432901e66ce025c490373fbf5a17f176d431",
+    "ci": 40630993164,
+    "ci_jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "history": "history/C00075_progress_refresh_save_race_repair.json",
+    "main_base": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+    "next_actor": "REGISTERED_INDEPENDENT_REVIEWER"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
