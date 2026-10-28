@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 196,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "0503596d-15e0-8330-ad32-07112bff92e4",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 196,
-    "acquired_at": "2026-10-28T12:11:47.835Z",
-    "expires_at": "2026-10-28T12:41:47.835Z",
-    "base_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
-    "work_branch": "auto/twf-game-repair-597f03b8-0fc0-8330-a5ec-a88949bff82b",
-    "origin": "worker"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -48,13 +38,13 @@
   "last_completed": {
     "kind": "WORKER",
     "owner_id": "0503596d-15e0-8330-ad32-07112bff92e4",
-    "epoch": 195,
-    "released_at": "2026-10-28T12:10:33.971Z",
-    "result": "PR100_REVIEW_REPAIR_SUBMITTED_CI_PENDING",
+    "epoch": 196,
+    "released_at": "2026-10-28T12:12:43.552Z",
+    "result": "PR100_CI_HISTORY_REPAIRED_NEW_CI_PENDING",
     "pr": 100,
-    "head": "9aefcc868a471fc6c471f792c495b77a0878fdae",
-    "ci": 40685567528,
-    "claim_commit": "6f39824a0ccdca5fdbc734e5d135eb165bc03ca5",
+    "head": "91dac7662454a197e20eb953a92df044545fd577",
+    "prior_failed_ci": 40685567528,
+    "claim_commit": "2339f59ab086c9c20698fe1af305fc108c0d5291",
     "next_task_id": "6add6aaceb4c8191b1666fe15f97cd88"
   },
   "last_approval_report": {
