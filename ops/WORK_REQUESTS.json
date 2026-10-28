@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T08:27:15.142Z",
+  "observed_at": "2026-10-28T09:22:49.033Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1950,6 +1950,44 @@
         "handoff": 40656759290,
         "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8"
       }
+    },
+    {
+      "id": "pr99_failed_load_rejected_player_retry_storm_20261028",
+      "kind": "REPAIR_PR99_FAILED_LOAD_BACKFILL_REJECTED_PLAYER_RETRY",
+      "priority": "P1",
+      "assigned_role": "WORKER",
+      "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "status": "OPEN",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 99,
+      "head": "ae1e80f5b2e05e983497f33b675a52bf33a7acfd",
+      "base_main_sha": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
+      "created_at": "2026-10-28T09:22:49.033Z",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "d83f0507-634c-8330-9cb4-52b7cbd63deb",
+      "review_record": "ops/reviews/PR0099_ae1e80f5.json",
+      "source": "src/ToyWarsServer.server.lua join() failed-load backfill after Kick",
+      "request": "A player whose progress load has already failed must not be eligible for another join/backfill while still in Players pending Kick disconnect. Track rejected/failed-load players or equivalent fenced eligibility, skip them during backfill and join, clear tracking on PlayerRemoving, preserve safe fail-closed behavior and fair assignment to healthy waiting players. Do not change accepted tests or protected config.",
+      "reproduction": [
+        "Start A and B progress GetAsync with delayed failure/unsupported schema; C and D occupy other plots; E is a healthy queued player. Keep A and B Parent==Players for at least one scheduler cycle after Kick (asynchronous disconnect).",
+        "Let A fail and free its plot; then let B fail. B's backfill scans Players:GetPlayers and finds A first because sessions[A]==nil and A remains in Players; schedules join(A).",
+        "A's second failed read can schedule join(B) while B still appears in Players. The new loop can repeat, issue unnecessary DataStore calls and postpone E despite an available plot. Existing 3-case fixture has only one rejected user, so it does not exercise this case."
+      ],
+      "expected": [
+        "At most one failed load attempt per rejected player while it remains in Players; no ping-pong retries or unbounded task.spawn work.",
+        "A and B remain unable to play without valid progress; healthy E receives a freed workshop; no DataStore writes for rejected profiles.",
+        "Add deterministic canonical whole-server two-failure/delayed-disconnect regression and pinned ae1e80f5 negative control that demonstrates old failure; retain existing new 3 tests, accepted server27/HUD6, DataStore fencing, exact-head offline+compile_hold and trusted claim gate.",
+        "Keep Studio/real DataStore/multiplayer/mobile NOT_RUN, release HOLD, Gemini incident hold and spending limits."
+      ],
+      "evidence": {
+        "pr_ci": 40661660868,
+        "main_qa": 40656759102,
+        "review_head": "ae1e80f5b2e05e983497f33b675a52bf33a7acfd",
+        "source": "src/ToyWarsServer.server.lua",
+        "test": "tests/auto/progression_failed_load_backfill_spec.lua"
+      },
+      "next_actor": "WORKER_FIX_BEFORE_NEW_ISSUES",
+      "owner_reply_required": false
     }
   ]
 }

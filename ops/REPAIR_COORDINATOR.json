@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 183,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "d83f0507-634c-8330-9cb4-52b7cbd63deb",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 183,
-    "acquired_at": "2026-10-28T09:21:58.081Z",
-    "expires_at": "2026-10-28T09:51:58.081Z",
-    "base_main_sha": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,15 +36,14 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "0ddf4fa2-d1d0-8321-a1a5-ef55cde33155",
-    "epoch": 182,
-    "released_at": "2026-10-28T09:10:35.612Z",
-    "result": "PR99_DRAFT_HEAD_CI_BOTH_JOBS_PASS",
+    "kind": "REVIEWER",
+    "owner_id": "d83f0507-634c-8330-9cb4-52b7cbd63deb",
+    "epoch": 183,
+    "released_at": "2026-10-28T09:22:49.033Z",
+    "result": "PR99_REQUEST_CHANGES_MULTI_FAILED_LOAD_BACKFILL",
     "pr": 99,
     "head": "ae1e80f5b2e05e983497f33b675a52bf33a7acfd",
-    "ci_run": 40661660868,
-    "next_actor": "INDEPENDENT_REVIEWER"
+    "next_actor": "WORKER"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -722,6 +711,28 @@
       "main_after_handoff": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
       "status_only_descendant_verified": true,
       "completed_at": "2026-10-28T03:58:15Z"
+    },
+    "99": {
+      "schema": 1,
+      "pr": 99,
+      "head": "ae1e80f5b2e05e983497f33b675a52bf33a7acfd",
+      "base_reviewed": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
+      "reviewer_kind": "REVIEWER",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "d83f0507-634c-8330-9cb4-52b7cbd63deb",
+      "lease_epoch": 183,
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "0ddf4fa2-d1d0-8321-a1a5-ef55cde33155",
+      "verdict": "REQUEST_CHANGES",
+      "ci": {
+        "id": 40661660868,
+        "head": "ae1e80f5b2e05e983497f33b675a52bf33a7acfd",
+        "conclusion": "success"
+      },
+      "review_record": "ops/reviews/PR0099_ae1e80f5.json",
+      "blockers": [
+        "pr99_failed_load_rejected_player_retry_storm_20261028"
+      ]
     }
   },
   "integration_results": {
