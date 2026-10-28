@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 208,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "527bce03-5fa0-832f-bb89-1dae393e4e29",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 208,
-    "acquired_at": "2026-10-28T16:28:15.711Z",
-    "expires_at": "2026-10-28T16:58:15.711Z",
-    "base_main_sha": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,14 +36,16 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "ab9836e0-e1cc-8320-b9c9-13ef905aa627",
-    "epoch": 207,
-    "released_at": "2026-10-28T16:14:50.525Z",
-    "result": "PR106_CI_REPAIR_EXACT_HEAD_PASS_WAIT_INDEPENDENT_REVIEW",
+    "kind": "REVIEWER",
+    "owner_id": "527bce03-5fa0-832f-bb89-1dae393e4e29",
+    "epoch": 208,
+    "released_at": "2026-10-28T16:32:06.887Z",
+    "result": "PR106_REQUEST_CHANGES_PENDING_CLAIM",
     "pr": 106,
     "head": "6038487fe5b93d9212a3845196f129792729fec3",
-    "ci": 40723859639
+    "ci": 40723859639,
+    "review_record": "ops/reviews/PR0106_6038487f.json",
+    "request_id": "pr106_pending_claim_after_bindtoclose_20261029"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
