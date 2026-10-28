@@ -43,6 +43,8 @@ local SESSION_LEASE_SECONDS=180
 local SESSION_REFRESH_SECONDS=45
 local SESSION_RETRY_SECONDS=0.5
 local SESSION_RETRY_COUNT=4
+local SAVE_RETRY_COUNT=3
+local SAVE_RETRY_SECONDS=0.25
 local function leaseNow()
     -- Roblox os.time is shared wall time; the offline fixture has no os.time.
     if type(os.time)=="function" then return os.time() end
@@ -88,10 +90,11 @@ local function newSessionToken()
     return nil
 end
 local function loadProgress(player,pending)
-    if not progressStore then return nil,false end
+    if not progressStore then return nil,false,"STORE_UNAVAILABLE" end
     local key="p:"..tostring(player.UserId)
     local ok,record=pcall(function() return progressStore:GetAsync(key) end)
-    if not ok or (record~=nil and not validProgress(record)) then return nil,false end
+    if not ok then return nil,false,"READ_UNAVAILABLE" end
+    if record~=nil and not validProgress(record) then return nil,false,"SCHEMA_UNSUPPORTED" end
     if sessions[player]~=pending or player.Parent~=Players then return nil,false,"DEPARTED" end
     local token=newSessionToken()
     if not token then return nil,false,"CLAIM_UNAVAILABLE" end
@@ -158,24 +161,39 @@ local function saveProgress(player,state)
         or not validProgressInt(record.factoryLevel,1,B.MAX_LEVEL) then return end
     local expected=state.persistSnapshot
     if not expected or not expected.sessionOwner then return end
-    local ok,saved=pcall(function()
-        return progressStore:UpdateAsync("p:"..tostring(player.UserId),function(current,keyInfo)
-            if not sameProgress(current,expected) then return nil end
-            local revision=current and (current.revision or 0) or 0
-            if revision>=2147483647 then return nil end
-            local updated={}
-            if current then for key,value in pairs(current) do updated[key]=value end end
-            for key,value in pairs(record) do updated[key]=value end
-            updated.revision=revision+1
-            -- Commit the final progress before relinquishing ownership.
-            updated.sessionOwner=nil;updated.sessionLeaseUntil=nil
-            if keyInfo then return updated,keyInfo:GetUserIds(),keyInfo:GetMetadata() end
-            return updated
+    -- Retry only transport/throttle errors. A successful nil result is a
+    -- confirmed CAS conflict, never permission to overwrite another owner.
+    -- The UpdateAsync transform itself never yields.
+    for attempt=1,SAVE_RETRY_COUNT do
+        if not state.persistAllowed then return end
+        local ok,saved=pcall(function()
+            return progressStore:UpdateAsync("p:"..tostring(player.UserId),function(current,keyInfo)
+                if not sameProgress(current,expected) then return nil end
+                local revision=current and (current.revision or 0) or 0
+                if revision>=2147483647 then return nil end
+                local updated={}
+                if current then for key,value in pairs(current) do updated[key]=value end end
+                for key,value in pairs(record) do updated[key]=value end
+                updated.revision=revision+1
+                -- Commit final progress before relinquishing ownership.
+                updated.sessionOwner=nil;updated.sessionLeaseUntil=nil
+                if keyInfo then return updated,keyInfo:GetUserIds(),keyInfo:GetMetadata() end
+                return updated
+            end)
         end)
-    end)
-    if not ok then warn("TWF: progress save unavailable for",player.UserId)
-    elseif saved==nil then warn("TWF: progress save conflict for",player.UserId)
-    else state.persistSnapshot=progressSnapshot(saved);state.persistAllowed=false end
+        if ok then
+            if saved==nil then
+                warn("TWF: progress save conflict for",player.UserId)
+            else
+                state.persistSnapshot=progressSnapshot(saved)
+                state.persistAllowed=false
+            end
+            return
+        end
+        warn("TWF: progress save attempt unavailable for",player.UserId,attempt)
+        if attempt<SAVE_RETRY_COUNT then task.wait(SAVE_RETRY_SECONDS) end
+    end
+    warn("TWF: progress save retries exhausted; progress may be unsaved for",player.UserId)
 end
 local function refreshProgressLease(state)
     if not progressStore or not state.persistAllowed or not state.persistSnapshot then return end
