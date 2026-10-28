@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T02:28:21.945Z",
+  "observed_at": "2026-10-28T02:28:57.220Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -1561,7 +1561,7 @@
       "priority": "P1",
       "assigned_role": "WORKER",
       "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "status": "OPEN_REQUEST_CHANGES",
+      "status": "IMPLEMENTED_IN_PR_HEAD_BLOCKED_CI",
       "repository": "kk051780/toy-wars-factory",
       "pr": 94,
       "head": "09abf3753bdfc9753a45004048b95a17afb311f4",
@@ -1586,7 +1586,14 @@
         "review_record": "ops/reviews/PR0094_09abf375.json"
       },
       "owner_reply_required": false,
-      "next_actor": "WORKER"
+      "next_actor": "WORKER",
+      "resolution": {
+        "pr": 94,
+        "head": "9399dee1ee5d8e70085fadef66d48cf5a75ddea1",
+        "ci": 40618595107,
+        "observed_at": "2026-10-28T02:28:57.220Z",
+        "note": "Fail-closed read and bounded final save retry implemented, but protected accepted server harness lacks DataStore mock. Offline CI failed; new regression not yet executed. See pr94_failclosed_datastore_harness_ci_20261028."
+      }
     },
     {
       "id": "issue71_pr96_scoped_transport_independent_review",
@@ -1594,7 +1601,7 @@
       "priority": "P1",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-      "status": "MERGED_WAIT_MAIN_CI",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "repository": "kk051780/toy-wars-factory",
       "issue": 71,
       "pr": 96,
@@ -1652,11 +1659,13 @@
         "reviewer_run_id": "c8032924-5078-8333-9ef3-c5f870f61610",
         "head": "b6118ae609d6d634d4538a7e04be2b051c32a7a0",
         "review_record": "ops/reviews/PR0096_b6118ae6.json",
-        "observed_at": "2026-10-28T02:26:57.699Z",
+        "observed_at": "2026-10-28T02:28:57.220Z",
         "merge_sha": "dd703db711f11b0aff5cce3c084a2462025ac010",
         "main_qa": 40621070139,
         "handoff": 40621070138,
-        "main_after_handoff": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385"
+        "main_after_handoff": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+        "qa_conclusion": "success",
+        "handoff_conclusion": "success"
       }
     },
     {
