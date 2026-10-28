@@ -482,7 +482,7 @@ local function makePlot(player, state)
             -- Never trust a client-triggered prompt without checking server-side proximity.
             local character=actor.Character
             local root=character and character:FindFirstChild("HumanoidRootPart")
-            if not root or not ((root.Position-pad.Position).Magnitude <= 13) then return end
+            if not root or not ((root.Position-pad.Position).Magnitude <= prompt.MaxActivationDistance) then return end
             state.selected=id
             refreshStatus(state)
         end)
@@ -514,7 +514,7 @@ local function makePlot(player, state)
         -- A forged proximity event must not upgrade from across the map.
         local character=actor.Character
         local root=character and character:FindFirstChild("HumanoidRootPart")
-        if not root or not ((root.Position-station.Position).Magnitude <= 13) then return end
+        if not root or not ((root.Position-station.Position).Magnitude <= upgradePrompt.MaxActivationDistance) then return end
         local price=B.upgradePrice(state.level.Value)
         if not price or state.coins.Value<price then return end
         state.coins.Value = state.coins.Value-price
