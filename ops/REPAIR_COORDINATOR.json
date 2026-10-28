@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 193,
-  "holder": {
-    "kind": "WORKER",
-    "owner_id": "597f03b8-0fc0-8330-a5ec-a88949bff82b",
-    "task_id": "6adbf0d6a7d881918ce181dff2468867",
-    "epoch": 193,
-    "acquired_at": "2026-10-28T11:56:42.350Z",
-    "expires_at": "2026-10-28T12:26:42.350Z",
-    "base_main_sha": "9deab2acbdba8406b02f653ae84b355d92dd499a",
-    "work_branch": "auto/twf-game-repair-597f03b8-0fc0-8330-a5ec-a88949bff82b",
-    "origin": "manual"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -46,15 +36,16 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "d0193dac-f125-4f66-a0b1-6c824c6e17e2",
-    "epoch": 191,
-    "released_at": "2026-10-28T11:50:06.073929+00:00",
-    "result": "PR98_HISTORY_ANCHORED_478_TESTS_AND_BOTH_CI_PASSED_AWAIT_INDEPENDENT_REVIEW",
-    "pr": 98,
-    "head": "77c2b387474c1f71c07680d80c74ce3aa421a59f",
-    "ci": 40682419780,
-    "next_task_id": "6ae16fe9b8908191b93c85b0c2782f01"
+    "kind": "WORKER",
+    "owner_id": "597f03b8-0fc0-8330-a5ec-a88949bff82b",
+    "epoch": 193,
+    "released_at": "2026-10-28T12:00:52.950Z",
+    "result": "PR100_GAME_SOURCE_AND_REGRESSION_COMMITTED_CI_QUEUED",
+    "pr": 100,
+    "head": "06ef9e558743b7eec1582cf7d6e358c9766132ea",
+    "ci": 40684349324,
+    "ci_status": "QUEUED_NOT_PASS",
+    "next_task_id": "6add6aaceb4c8191b1666fe15f97cd88"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
