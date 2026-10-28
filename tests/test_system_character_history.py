@@ -5,8 +5,11 @@ import json
 from pathlib import Path
 import subprocess
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
+# C00100's reconciled source snapshot predates later append-only development.
+RECONCILED_HEAD = "8997fdbd364ef9f0aa88ffffecfee3bfc22087bd"
 
 
 def git_bytes(ref, path):
@@ -46,10 +49,25 @@ class CharacterHistoryTests(unittest.TestCase):
         self.check_changes(snapshot["source_changes"], snapshot["main_base"], snapshot["head"])
         self.check_metrics(snapshot["source_metrics"], snapshot["head"])
 
-    def test_current_ledger_matches_authored_base_and_current_git_sources(self):
-        self.check_changes(self.record["source_changes"], self.record["main_base"], "HEAD")
-        self.check_metrics(self.record["source_metrics"], "HEAD")
+    def test_reconciled_ledger_matches_its_immutable_authored_git_sources(self):
+        self.check_changes(self.record["source_changes"], self.record["main_base"], RECONCILED_HEAD)
+        self.check_metrics(self.record["source_metrics"], RECONCILED_HEAD)
         self.assertEqual(self.record["source_baseline_bytes"], 25726)
+
+    def test_later_head_source_changes_do_not_rewrite_the_recorded_snapshot(self):
+        original = git_bytes
+        path = "src/ToyWarsBalance.lua"
+        recorded = original(RECONCILED_HEAD, path)
+        future = recorded.replace(b"    junk =", b"    kururin = {name=\"NEXT FIXTURE\",cost=40},\n    junk =", 1)
+        self.assertNotEqual(future, recorded)
+
+        def later_source(ref, source_path):
+            if ref == "HEAD":
+                return future if source_path == path else original(RECONCILED_HEAD, source_path)
+            return original(ref, source_path)
+
+        with patch(__name__ + ".git_bytes", side_effect=later_source):
+            self.test_reconciled_ledger_matches_its_immutable_authored_git_sources()
 
     def test_each_historical_reconciliation_matches_its_immutable_source_tree(self):
         snapshots = {
