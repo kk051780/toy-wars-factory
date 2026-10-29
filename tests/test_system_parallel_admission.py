@@ -222,4 +222,89 @@ class MainPortHardeningTests(unittest.TestCase):
             self.assertEqual(mod.advise(self.candidate(),[wrong])['status'],'BLOCKED_UNSAFE_INPUT')
 
 
+
+class ReviewJoinRegressionTests(unittest.TestCase):
+    """Registered PR124 review regressions; real source, no copied planner."""
+
+    def decision(self, candidate, active, expected):
+        result = mod.advise(candidate, active)
+        self.assertEqual(result["status"], expected)
+        self.assertIs(result["may_write"], False)
+        self.assertIs(result["may_run_now"], False)
+        self.assertIs(result["github_cas_performed"], False)
+        self.assertEqual(result["verification"], "NOT_VERIFIED")
+        self.assertTrue(all(value is False for value in result["authority"].values()))
+        return result
+
+    def test_same_goal_different_work_changed_paths_fails_closed(self):
+        a = item(work="GAME_A001", goal="a", paths=["src/a.lua"])
+        b = item(work="GAME_B001", goal="a", paths=["src/b.lua"])
+        self.decision(b, [a], "BLOCKED_WORK_ID_CONFLICT")
+
+    def test_same_goal_different_work_changed_shared_resources_fails_closed(self):
+        a = item(work="GAME_A001", goal="a", paths=["src/a.lua"])
+        b = item(work="GAME_B001", goal="a", paths=["src/a.lua"], shared_resources=["changed-schema"])
+        self.decision(b, [a], "BLOCKED_WORK_ID_CONFLICT")
+
+    def test_same_goal_different_work_changed_mode_fails_closed(self):
+        a = item(work="GAME_A001", goal="a", paths=["src/a.lua"])
+        b = item(work="GAME_B001", goal="a", mode="READ_ONLY", paths=[])
+        self.decision(b, [a], "BLOCKED_WORK_ID_CONFLICT")
+
+    def test_protected_writer_scope_checked_before_any_join(self):
+        for path in ("config/autonomous_repair.json", "tools/check_meta_diff.py", "AGENTS.md"):
+            for work in ("GAME_A001", "GAME_B001"):
+                with self.subTest(path=path, work=work):
+                    a = item(work="GAME_A001", goal="a", paths=[path])
+                    b = item(work=work, goal="a", paths=[path])
+                    self.decision(b, [a], "WAIT_PROTECTED_SCOPE")
+            with self.subTest(path=path, scope="changed-protected"):
+                a = item(work="GAME_A001", goal="a", paths=["src/a.lua"])
+                b = item(work="GAME_B001", goal="a", paths=[path])
+                self.decision(b, [a], "WAIT_PROTECTED_SCOPE")
+
+    def test_duplicate_active_goal_cannot_return_multiple_join_targets(self):
+        a = item(work="GAME_A001", goal="a", paths=["src/a.lua"])
+        b = item(work="GAME_B001", goal="a", paths=["src/b.lua"])
+        c = item(work="GAME_C001", goal="a", paths=["src/c.lua"])
+        self.decision(c, [a, b], "BLOCKED_UNSAFE_INPUT")
+
+    def test_ambiguous_active_goal_blocks_even_an_unrelated_candidate(self):
+        a = item(work="GAME_A001", goal="a", paths=["src/a.lua"])
+        b = item(work="GAME_B001", goal="a", paths=["src/b.lua"])
+        c = item(work="GAME_C001", goal="c", paths=["src/c.lua"])
+        self.decision(c, [a, b], "BLOCKED_UNSAFE_INPUT")
+
+    def test_two_active_work_ids_with_same_goal_and_scope_still_ambiguous(self):
+        a = item(work="GAME_A001", goal="a", paths=["src/a.lua"])
+        b = item(work="GAME_B001", goal="a", paths=["src/a.lua"])
+        c = item(work="GAME_C001", goal="c", paths=["src/c.lua"])
+        self.decision(c, [a, b], "BLOCKED_UNSAFE_INPUT")
+
+    def test_unambiguous_same_goal_identical_normalized_scope_preserves_join(self):
+        a = item(work="GAME_A001", goal="a", paths=["src/a.lua", "src/b.lua"],
+                 shared_resources=["one", "two"])
+        b = item(work="GAME_B001", goal="a", paths=["SRC/B.lua", "src/A.lua"],
+                 shared_resources=["two", "one"])
+        result = self.decision(b, [a], "JOIN_EXISTING")
+        self.assertEqual(result["existing_work_ids"], ["GAME_A001"])
+
+    def test_repeated_identical_canonical_row_is_idempotent(self):
+        a = item(work="GAME_A001", goal="a", paths=["src/a.lua"])
+        b = item(work="GAME_B001", goal="a", paths=["src/a.lua"])
+        result = self.decision(b, [a, a], "JOIN_EXISTING")
+        self.assertEqual(result["existing_work_ids"], ["GAME_A001"])
+
+    def test_canonical_goal_isolation_across_project_and_repository(self):
+        for repository in ("studio/factory", "studio/puzzle"):
+            with self.subTest(repository=repository):
+                a = item(work="GAME_A001", goal="a", paths=["src/a.lua"],
+                         project_id="factory-demo", repository="studio/factory")
+                b = item(work="GAME_B001", goal="a", paths=["src/b.lua"],
+                         project_id="puzzle-demo", repository=repository)
+                c = item(work="GAME_C001", goal="c", mode="READ_ONLY", paths=[])
+                self.decision(c, [a, b], "READ_ONLY_PARALLEL")
+
+
+
 if __name__ == "__main__": unittest.main()
