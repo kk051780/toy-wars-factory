@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "pr": 121,
+  "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
+  "base_main_sha": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
+  "repository": "kk051780/toy-wars-factory",
+  "branch": "auto/twf-system-review-559ceca6-d748-832f-bb96-a5779f993964",
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "559ceca6-d748-832f-bb96-a5779f993964",
+  "author_claim_commit": "8712e9d060fec2bc6bd6c9f38f17f408285ce7ef",
+  "author_epoch": 238,
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "120aefe3-b808-8331-933d-209e5c2e211d",
+  "lease_epoch": 239,
+  "reviewed_at": "2026-10-29T11:17:38.128Z",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "changed_files": [
+    "history/C00127_prepared_alert_notification.json",
+    "tests/test_system_alert_notification.py",
+    "tools/system_alert_notification.py"
+  ],
+  "change_kind": "SYSTEM_SOURCE_ADDITIVE_PREPARED_ONLY",
+  "evidence": {
+    "current_main": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
+    "main_qa": {
+      "run": 40850476260,
+      "head": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
+      "offline": "success",
+      "compile_hold": "success",
+      "status_only_compare": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    },
+    "main_handoff": {
+      "run": 40850476258,
+      "conclusion": "success"
+    },
+    "pr_ci": {
+      "run": 40863409804,
+      "attempt": 1,
+      "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
+      "offline": {
+        "id": 123412039924,
+        "conclusion": "success"
+      },
+      "compile_hold": {
+        "id": 123412039556,
+        "conclusion": "success"
+      },
+      "python_tests": 636,
+      "accepted_tests": 612,
+      "new_tests": 24,
+      "scope_gate": "PASS",
+      "immutable_claim": "1 verified"
+    },
+    "provenance": "history/C00127_prepared_alert_notification.json",
+    "source_changed_existing": [],
+    "negative_tests": [
+      "matched delivered JSON remains UNVERIFIED",
+      "403/404/429 and foreign run/receiver/epoch fail closed",
+      "lost acknowledgement never authorizes retry",
+      "fake provider permissions and GitHub save do not grant delivery",
+      "recovery candidate is not open incident"
+    ],
+    "live_host_report": "META reports accepted persist connected GET18/PEEK7 with writer=None; independent HOST authentication NOT_VERIFIED; no incident saved",
+    "notification": "PREPARED_NOTIFICATION_ONLY",
+    "delivery": "UNVERIFIED",
+    "recovery": "NOT_VERIFIED"
+  },
+  "findings": [
+    "Only 3 additive paths, no accepted code/test/policy/Roblox game source changes.",
+    "Exact head CI both jobs success; 636 Python tests pass; trusted META scope and immutable claim gate pass.",
+    "No external send, retry, credential, publication, budget, or provider authentication elevation.",
+    "New notification module tests are synthetic; separate META live-source trace reports NO_INCIDENT_OBSERVED and NOT_PERSISTED; no A12/A13 credit."
+  ],
+  "limitations": [
+    "No Roblox engine/multiplayer/mobile validation.",
+    "No authenticated recipient delivery or independent recovery proof.",
+    "Current review performed by distinct registered task/run, not distinct GitHub account."
+  ],
+  "merge_status": "APPROVED_PENDING_MERGE_AND_POSTMAIN_QA"
+}
