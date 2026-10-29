@@ -1,0 +1,88 @@
+{
+  "schema": 1,
+  "pr": 119,
+  "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
+  "base_main_sha": "fa89e46eca61b7f84acfae10c99d8127900de83a",
+  "reviewed_at": "2026-10-29T08:25:13.898Z",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "89b1351d-7060-832b-8b3d-44e1dd8b311b",
+  "lease_epoch": 235,
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "dc2b1012-5a84-8322-bd75-263b45cc0f82",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [
+    {
+      "id": "FENCED_PURE_LEDGER_REDUCER",
+      "severity": "PASS",
+      "evidence": "Exact source uses accepted runtime._validate_frame/reconcile; binds project, service/run, current META/REVIEWER fence and immutable prior digest; no GitHub write, send, authority, recovery claims."
+    },
+    {
+      "id": "EXACT_HEAD_CI_AND_CLAIM",
+      "severity": "PASS",
+      "evidence": "PR119 fc3c796c, 3 added files only; parent/base main fa89e46e, META epoch234 claim 087d53d7, service run dc2b1012 completed, offline/compile_hold jobs 123332506841/123332507249 both success in run40839603464; trusted META scope and immutable lease steps PASS. 20 new tests, total 589 in CI."
+    },
+    {
+      "id": "SYNTHETIC_LIMITATION",
+      "severity": "LIMITATION",
+      "evidence": "No host-bound independent provider authentication, durable GitHub persistence, actual delivery or separate recovery. A12/A13+0, official progress unchanged; SOURCE_CLASSIFIER_NOT_EXECUTED in this reviewer run."
+    }
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "SYSTEM_A12_PURE_FENCED_ALERT_LEDGER_PROPOSAL",
+  "changed_files": [
+    "tools/system_alert_ledger.py",
+    "tests/test_system_alert_ledger.py",
+    "history/C00125_durable_alert_ledger_reducer.json"
+  ],
+  "ci": {
+    "id": 40839603464,
+    "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
+    "attempt": 1,
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 589,
+    "new_tests": 20,
+    "scope_and_claim_gate": "PASS"
+  },
+  "coordination": {
+    "author_claim": "087d53d7cb775dc227b170936389b9066914ed53",
+    "author_epoch": 234,
+    "review_claim": "9351b00cf1fc5b782ae3816b97d681014eb23436",
+    "review_epoch": 235,
+    "author_service_completed": true
+  },
+  "main_health": {
+    "sha": "fa89e46eca61b7f84acfae10c99d8127900de83a",
+    "qa_head": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+    "qa": 40813038305,
+    "qa_jobs": "offline+compile_hold success",
+    "handoff": 40813038300,
+    "compare_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "evidence_urls": [
+    "https://github.com/kk051780/toy-wars-factory/pull/119",
+    "https://github.com/kk051780/toy-wars-factory/actions/runs/40839603464",
+    "https://github.com/kk051780/toy-wars-factory/issues/114"
+  ],
+  "status": "APPROVED_AWAIT_MERGE",
+  "operational_observation": {
+    "source_classifier": "SOURCE_CLASSIFIER_NOT_EXECUTED",
+    "delivery": "UNVERIFIED",
+    "a12_verified": false,
+    "host_cause": "INDETERMINATE"
+  }
+}
