@@ -23,18 +23,21 @@
     "items": [
       {
         "number": 126,
-        "title": "[TWF system-review] Owned lease finally and CAS readback",
+        "title": "[TWF system-review] Strict stored/caller epochs and owned finally",
         "url": "https://github.com/kk051780/toy-wars-factory/pull/126",
-        "head": "9bbf9e819c886099802b4ccbf69f1e0cf2718939",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40958732301",
-        "summary": "本人task/run/epochのfinally解放、CAS失敗時の閉塞、解放後の実ref再読。28新規回帰、737件PASS。",
+        "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40963166528",
+        "summary": "PR126差戻し修復：holderと呼出し側epochのbool/float混同を拒否。12新規回帰、749件全合格。",
         "changed_files": [
-          "tools/repair_control.py",
-          "tests/test_system_owned_lease_finalization.py",
           "docs/REPAIR_COORDINATION.md",
-          "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md",
           "history/C00134_owned_lease_finalization_red_control.json",
-          "history/C00135_owned_lease_finalization_capa.json"
+          "history/C00135_owned_lease_finalization_capa.json",
+          "history/C00136_pr126_holder_epoch_red_control.json",
+          "history/C00137_pr126_strict_holder_epoch_repair.json",
+          "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md",
+          "tests/test_system_holder_epoch_fencing.py",
+          "tests/test_system_owned_lease_finalization.py",
+          "tools/repair_control.py"
         ],
         "kind": "開発体制改善"
       }
@@ -42,8 +45,8 @@
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-29T21:37:34Z",
-    "signature": "3d91f1416d1b7c8a38cf61f568ff9c7f6d55a853184b4969da6a245328a121f7",
+    "observed_at": "2026-10-29T22:09:23Z",
+    "signature": "34caef63f5cc4706ef439cbe9b3245e27b25f62c9027eec8a56884d02be2a249",
     "approval_text": ""
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
