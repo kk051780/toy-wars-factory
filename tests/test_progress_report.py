@@ -62,6 +62,23 @@ class ProgressTest(unittest.TestCase):
         self.assertEqual([states[k] for k in ("A09","A10","A11")], ["verified"]*3)
         self.assertEqual([states[k] for k in ("A12","A13","A14","A15")],
                          ["blocked","pending","blocked","blocked"])
+    def test_historic_reconciliation_is_exact_immutable_record(self):
+        first = self.data["reconciliations"][0]
+        self.assertEqual(first["main_verified"], "f728fa525d8b409ef2a08a3da59e4ae7e73e27b1")
+        self.assertEqual(first["new_scores"], {"automation":57,"game":38})
+        self.assertEqual(first, mod.HISTORIC_FIRST_RECONCILIATION)
+        for mutation in ("delete", "changed_sha", "changed_score", "changed_reason",
+                         "truncate_pending", "reorder", "erase_array"):
+            trial = copy.deepcopy(self.data)
+            old = trial["reconciliations"]
+            if mutation == "delete": old.pop(0)
+            elif mutation == "changed_sha": old[0]["main_verified"] = "0"*40
+            elif mutation == "changed_score": old[0]["new_scores"]["automation"] = 76
+            elif mutation == "changed_reason": old[0]["reason"] = "FORGED"
+            elif mutation == "truncate_pending": old[0]["still_pending"].pop()
+            elif mutation == "reorder": old.reverse()
+            else: trial["reconciliations"] = []
+            with self.assertRaises(ValueError): mod.summarize(trial)
     def test_evidence_required(self):
         self.data["tracks"][0]["milestones"][0].pop("evidence")
         with self.assertRaises(ValueError): mod.summarize(self.data)

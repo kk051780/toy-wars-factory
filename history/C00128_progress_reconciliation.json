@@ -45,5 +45,22 @@
     "gemini": "SEVERE_HOLD",
     "roblox_publish": "HOLD",
     "external_spend": "UNCHANGED"
+  },
+  "audit_repair": {
+    "cause": "Registered independent reviewer REQUEST_CHANGES: exact historic reconciliation not guarded against edits/deletion",
+    "scope": "Only protected progress validator and new negative regression",
+    "second_claim_epoch": 241,
+    "second_claim_commit": "1d6eebbb7560781f028fc3d855cb2edc1fdfcbd9",
+    "historic_main_sha": "f728fa525d8b409ef2a08a3da59e4ae7e73e27b1",
+    "negative_cases": [
+      "delete",
+      "changed_sha",
+      "changed_score",
+      "changed_reason",
+      "truncate_pending",
+      "reorder",
+      "erase_array"
+    ],
+    "current_progress_remains_officially_57": true
   }
 }

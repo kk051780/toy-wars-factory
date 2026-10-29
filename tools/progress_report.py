@@ -32,8 +32,14 @@ APPROVED_MERGED_PR = {
 }
 
 
+# Immutable accepted 2026-10-25 evidence: no change to original 57% record is permitted.
+HISTORIC_FIRST_RECONCILIATION = json.loads("{\"date\":\"2026-10-25\",\"main_verified\":\"f728fa525d8b409ef2a08a3da59e4ae7e73e27b1\",\"reason\":\"One separate reviewer merged PR45 with exact-head CI and both post-merge QA jobs successful; generated-status-only descendant verified\",\"first_run\":\"ed0fc89e-e310-8326-989c-25380dc1467e\",\"pr\":45,\"post_merge_qa\":\"https://github.com/kk051780/toy-wars-factory/actions/runs/40157791404\",\"previous_scores\":{\"automation\":49,\"game\":34},\"new_scores\":{\"automation\":57,\"game\":38},\"still_pending\":[\"A09\",\"A10\",\"A11\",\"A12\",\"A13\",\"A14\",\"A15\",\"G08\",\"G09\",\"G10\",\"G11\",\"G12\",\"G13\",\"G14\",\"G15\",\"G16\",\"G17\",\"G18\"]}")
+
 def summarize(data):
     if data.get("schema") != 1: raise ValueError("wrong schema")
+    records = data.get("reconciliations")
+    if type(records) is not list or not records or records[0] != HISTORIC_FIRST_RECONCILIATION:
+        raise ValueError("historic 57% reconciliation was changed, removed or reordered")
     result = {}
     for track in data["tracks"]:
         ms = track["milestones"]
