@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T13:54:00Z",
+  "observed_at": "2026-10-29T14:02:54.545Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2972,9 +2972,9 @@
       "id": "pr124_parallel_admission_phase0_registered_review_20261029",
       "kind": "REGISTERED_META_PHASE0_SOURCE_REVIEW",
       "priority": "P1",
-      "status": "OPEN",
-      "assigned_role": "REVIEWER",
-      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "status": "REQUEST_CHANGES",
+      "assigned_role": "META",
+      "assigned_task_id": "6add445e4138819197d9cf2b1a02534d",
       "repository": "kk051780/toy-wars-factory",
       "pr": 124,
       "url": "https://github.com/kk051780/toy-wars-factory/pull/124",
@@ -3061,7 +3061,7 @@
           "ambiguous active goal owners"
         ]
       },
-      "updated_at": "2026-10-29T13:54:00Z",
+      "updated_at": "2026-10-29T14:02:54.545Z",
       "repair_author": {
         "task_id": "6add445e4138819197d9cf2b1a02534d",
         "run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
@@ -3075,6 +3075,34 @@
           "history/C00130_pr124_join_review_red_control.json",
           "history/C00131_pr124_join_review_repair.json"
         ]
+      },
+      "next_actor": "6add445e4138819197d9cf2b1a02534d",
+      "review": {
+        "verdict": "REQUEST_CHANGES",
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "run_id": "51d0d0bd-1be8-8328-b6cf-a28aa0e83a51",
+        "lease_epoch": 249,
+        "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+        "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
+        "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/124#issuecomment-6498775943",
+        "ci": {
+          "id": 40885741136,
+          "offline": "success",
+          "compile_hold": "success",
+          "python_tests": 697,
+          "red_control": 40885014135,
+          "red_failures": 15
+        },
+        "source_static_finding": "advise() returns JOIN_EXISTING at lines169-170 before complete_manifest check at173-174; matching incomplete candidate or active row can JOIN",
+        "negative_case_executed": false,
+        "required": [
+          "test matching same work/goal/scope with candidate complete_manifest=false => WAIT_INCOMPLETE_MANIFEST",
+          "test matching active complete_manifest=false => WAIT_INCOMPLETE_MANIFEST",
+          "preserve complete same-scope JOIN and old 697 tests",
+          "test-first red then source fix and new exact-head two-job green CI",
+          "append-only history, registered META claim/release and independent new-run review"
+        ],
+        "merge_authorized": false
       }
     }
   ]
