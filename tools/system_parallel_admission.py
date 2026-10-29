@@ -157,6 +157,8 @@ def advise(candidate: Any, active: Any) -> dict[str, Any]:
             goals[goal_key] = job["work"]
     except UnsafeInput as ex:
         return _decision("BLOCKED_UNSAFE_INPUT", reason=str(ex))
+    if not x["complete"] or any(not j["complete"] and j["repository"] == x["repository"] for j in jobs):
+        return _decision("WAIT_INCOMPLETE_MANIFEST")
     if x["mode"] == "SOURCE_WRITE" and _protected(x["paths"]):
         return _decision("WAIT_PROTECTED_SCOPE")
     matches = []
@@ -170,8 +172,6 @@ def advise(candidate: Any, active: Any) -> dict[str, Any]:
         return _decision("JOIN_EXISTING", existing_work_ids=sorted(set(matches)))
     if x["mode"] == "READ_ONLY":
         return _decision("READ_ONLY_PARALLEL")
-    if not x["complete"] or any(not j["complete"] and j["repository"] == x["repository"] for j in jobs):
-        return _decision("WAIT_INCOMPLETE_MANIFEST")
     if x["origin"] != "REGISTERED_TASK_CLAIMED":
         return _decision("WAIT_UNATTESTED_AUTHOR")
     for j in jobs:
