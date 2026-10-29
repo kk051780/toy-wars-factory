@@ -1,143 +1,179 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T08:06:35Z",
-  "status": "IMPLEMENTED_DRAFT_PR_CI_PASS_NOT_MERGED",
+  "observed_at": "2026-10-29T09:19:49Z",
+  "status": "NEW_SOURCE_PR_CI_PASS_NOT_MERGED",
   "repository": "kk051780/toy-wars-factory",
   "actor": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "dc2b1012-5a84-8322-bd75-263b45cc0f82",
-    "latest_result_used_as_current_success": false
+    "run_id": "84f6c2ab-3724-8326-95cb-f3937487e58f",
+    "service_status_at_last_peek": "in_progress",
+    "old_result_run_id": "dc2b1012-5a84-8322-bd75-263b45cc0f82",
+    "old_result_used_as_current_success": false,
+    "unforced_scheduled_proof": "NOT_VERIFIED"
   },
   "coordination": {
     "branch": "twf-repair-coordinator",
-    "claim_commit": "087d53d7cb775dc227b170936389b9066914ed53",
-    "owner_run_id": "dc2b1012-5a84-8322-bd75-263b45cc0f82",
-    "epoch": 234,
-    "release": "ATOMIC_WITH_THIS_REPORT"
+    "claim_commit": "1fbd6f03d388bdcf9d59c36874de77d66196e17c",
+    "owner_run_id": "84f6c2ab-3724-8326-95cb-f3937487e58f",
+    "epoch": 236,
+    "release": "ATOMIC_WITH_REPORT_AND_REQUEST; actual ref reread required"
   },
   "main_health": {
-    "sha": "fa89e46eca61b7f84acfae10c99d8127900de83a",
-    "qa_head": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
-    "qa": 40813038305,
+    "sha": "e1ebe061d60cd74843b144db813f085ad9ce3da7",
+    "qa_head": "54e48d895ceef71a713d37148e1e954970dbad43",
+    "qa": 40842047702,
     "jobs": "offline+compile_hold SUCCESS",
-    "handoff": 40813038300,
+    "handoff": 40842047673,
     "status_only_paths": [
       "status/CHAT_HANDOFF.md",
       "status/LATEST_STATE.json"
     ]
   },
   "implementation": {
-    "pr": 119,
-    "url": "https://github.com/kk051780/toy-wars-factory/pull/119",
-    "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
-    "branch": "auto/twf-system-review-dc2b1012-5a84-8322-bd75-263b45cc0f82",
-    "base": "fa89e46eca61b7f84acfae10c99d8127900de83a",
+    "pr": 120,
+    "url": "https://github.com/kk051780/toy-wars-factory/pull/120",
+    "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
+    "branch": "auto/twf-system-review-84f6c2ab-3724-8326-95cb-f3937487e58f",
+    "base": "e1ebe061d60cd74843b144db813f085ad9ce3da7",
     "source_commits": 1,
     "new_modules": 1,
-    "new_tests": 20,
-    "files": [
+    "new_tests": 23,
+    "changed_files": [
       {
-        "path": "tools/system_alert_ledger.py",
-        "bytes": 10580,
-        "status": "A"
+        "path": "tools/system_alert_persistence.py",
+        "status": "A",
+        "bytes": 12443
       },
       {
-        "path": "tests/test_system_alert_ledger.py",
-        "bytes": 10408,
-        "status": "A"
+        "path": "tests/test_system_alert_persistence.py",
+        "status": "A",
+        "bytes": 14701
       },
       {
-        "path": "history/C00125_durable_alert_ledger_reducer.json",
-        "bytes": 5477,
-        "status": "A"
+        "path": "history/C00126_scoped_alert_persistence.json",
+        "status": "A",
+        "bytes": 6078
       }
     ],
-    "accepted_blobs_preserved": 269,
-    "accepted_python_preserved": 569,
-    "scope": "3 A paths; trusted checker preflight and actual GitHub CI PASS"
+    "accepted_blobs_preserved": 272,
+    "accepted_tests_preserved": 589,
+    "trusted_scope": "PASS exact-head CI",
+    "category": "OPTIONAL_EXPLICIT_HOST_CAPABILITY_CONNECTION; NEW_LIVE_PROVIDER_PATH_NOT_RUN",
+    "ledger_written_to_real_github": false,
+    "notifications_sent": false,
+    "prior_report_blob": "ff3ac032abb9f48b5462d762457de56813aa4365"
   },
   "tests": {
-    "focused": "20 PASS",
+    "focused": {
+      "run": 23,
+      "pass": 23,
+      "scope": "SYNTHETIC_TEST_ONLY; actual accepted observer/reducer and fake Git transport"
+    },
     "negative_control": {
       "mutant_tests": 1,
       "expected_failures": 1,
       "errors": 0,
       "accepted_source_modified": false
     },
-    "local_full": "589;588pass/1 unchanged handoff Git ancestry failure; accepted tests unmodified",
+    "local_full": "Before final3added cases609run/608pass/1 unchanged accepted Git ancestry failure; new23focusedPASS; actual full-history CI resolves snapshot limitation",
     "ci": {
-      "id": 40839603464,
-      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40839603464",
-      "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
+      "id": 40848410064,
+      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40848410064",
+      "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
       "attempt": 1,
+      "status": "completed",
       "conclusion": "success",
       "jobs": [
         {
-          "id": 123332506841,
+          "id": 123361518442,
           "name": "offline",
-          "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
+          "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
           "conclusion": "success"
         },
         {
-          "id": 123332507249,
+          "id": 123361518859,
           "name": "compile_hold",
-          "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
+          "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
           "conclusion": "success"
         }
       ],
-      "python_total": "See exact-head offline log; local589, existing569 + new20"
+      "python_total": 612,
+      "existing": 589,
+      "new": 23,
+      "scope_gate": "PASS",
+      "immutable_claim_gate": "1 immutable coordinator claim(s) verified"
     }
   },
-  "findings": {
-    "selected": "Missing pure fenced durable ledger proposal. Duplicate exact observation now no-op; role/task/run/key/time/fence and prior-digest validation; disappearance never confirmed,403/404 unassessable",
-    "adoption": "DRAFT_SOURCE_ONLY; no authenticated persistence/delivery/recovery implementation",
-    "unresolved_requests": "Engine evidence unavailable; no actual host denial original receipt; historical flake/occupancy not newly reproduced; protected Issue113/117 unchanged"
-  },
+  "findings": [
+    {
+      "id": "NO_NEW_REAL_ANOMALY_USED",
+      "priority": "P1",
+      "result": "No historical no_update converted into current incident; no real alert ledger written"
+    },
+    {
+      "id": "MISSING_PERSISTENCE_CONNECTION_IMPLEMENTED",
+      "priority": "P1",
+      "result": "New source calls accepted idle.observe/ledger.reduce; immutable snapshot and actor PEEK, repeated fence; optional bounded tree/commit/CAS with mandatory exact ref/blob/owner readback"
+    },
+    {
+      "id": "UNCONFIRMED_WRITE_IS_NOT_ROLLBACK",
+      "priority": "P1",
+      "result": "Lost acknowledgement/readback remains NOT_PERSISTED with UNCONFIRMED_POSSIBLE_WRITE; no blind retry or fake delivery/recovery"
+    },
+    {
+      "id": "EXISTING_WORK_REQUESTS",
+      "priority": "P0",
+      "result": "main healthy; engine access absent, original host-error receipt absent; no new real flake/denial inferred. Continue independent source work as requests permit."
+    }
+  ],
   "research": [
     {
-      "url": "https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api",
+      "url": "https://docs.github.com/en/rest/git/refs",
       "kind": "PRIMARY_GITHUB_OFFICIAL",
       "published_at": "NOT_AVAILABLE",
       "updated_at": "NOT_AVAILABLE",
-      "checked_at": "2026-10-29T08:04:14Z",
-      "finding": "Do not ignore errors, use bounded conditional/efficient requests. Documentation not authentication or provider receipt; no new webhook/task/credential introduced."
+      "checked_at": "2026-10-29T09:15:50Z",
+      "finding": "Reference API read/update and409/422 semantics. Host expected_sha CAS is required; do not equate bare REST force=false with a separate expected_sha parameter or a lease/epoch receipt."
     },
     {
       "url": "https://create.roblox.com/docs/production/experiments",
       "kind": "PRIMARY_ROBLOX_OFFICIAL",
       "published_at": "NOT_AVAILABLE",
       "updated_at": "NOT_AVAILABLE",
-      "checked_at": "2026-10-29T08:04:14Z",
-      "finding": "Controlled baseline/variants, goals, planned duration and detectable effect guide hypotheses. No target game effect or player data measured; no live experiment started."
+      "checked_at": "2026-10-29T09:15:50Z",
+      "finding": "Goals, controlled variants, sampling/detectable effect and recorded decisions guide NO_CHANGE/first-loop clarity/role contrast hypotheses. No actual target game outcome or live experiment claim."
     }
   ],
   "limits": [
-    "SYNTHETIC_TEST_ONLY; prior digest and supplied fence do not authenticate origin. Host must bind to immutable actual blob/live registered service/ref and reread lease before any external CAS.",
-    "No actual persistent alert write, notification/delivery/recovery or unforced schedule proof. Module only returns JSON proposal; all authority false, verification NOT_VERIFIED.",
-    "Accepted replay-window/capacity bounded; expired checkpoint requires independent archive/review, never silent dropping.",
-    "A12/A13 incomplete, points+0; official automation57%/game38% unchanged; engine/mobile/players NOT_RUN/NOT_MEASURED.",
-    "This real META execution is not proof of unforced scheduling; no run_now/task changes requested."
+    "SYNTHETIC_TEST_ONLY; host GET/PEEK/write callbacks for this NEW module were simulated, not live provider or unforced schedule proof.",
+    "Callbacks remain trusted host capabilities, not credential isolation or portable origin authentication. verification NOT_VERIFIED; no automatic authority granted.",
+    "NOT_PERSISTED means no confirmed persistence. A lost CAS acknowledgement or failed readback may leave UNCONFIRMED_POSSIBLE_WRITE; no rollback or retry is asserted.",
+    "No current real incident ledger written, no notification sent/confirmed, no independent recovery evidence; A12/A13 points0.",
+    "New code not yet accepted main; source-to-live connected writer binding and scheduled observation remain NOT_RUN.",
+    "Official automation57%/game38% unchanged; Issue113/117 protected; engine/mobile/player evidence NOT_RUN/NOT_MEASURED."
   ],
   "progress": {
     "automation_percent": 57,
     "game_percent": 38,
     "a12_points_added": 0,
-    "a13_verified": false
+    "a13_verified": false,
+    "protected_candidate_76": "Issue113 independent protected maintenance only"
   },
   "timing": {
-    "service_started_at": "2026-10-29T07:55:19.940787Z",
-    "source_pr_created_at": "2026-10-29T08:04:51Z",
-    "ci_completed_at": "2026-10-29T08:05:32Z",
-    "observed_at": "2026-10-29T08:06:35Z",
-    "human_active_time": "NOT_MEASURED"
+    "service_started_at": "2026-10-29T09:03:09.063253Z",
+    "claim_at": "2026-10-29T09:07:22Z",
+    "pr_created_at": "2026-10-29T09:16:55Z",
+    "ci_completed_at": "2026-10-29T09:17:33Z",
+    "observed_at": "2026-10-29T09:19:49Z",
+    "human_touch_time": "NOT_MEASURED"
   },
   "next_actor": "REGISTERED_REVIEWER",
   "next_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "next": "Independent exact-head author/claim/source/CI review; author cannot merge. After independent adoption main QA/handoff; operational anomaly/persistence/notification/distinct recovery proof separate.",
+  "next": "Independent source/capability/realrun/claim/exact-head CI audit; author cannot approve/merge. If adopted, actual mainQA/handoff then normal registered source-to-live callback operation. No A12 credit until authentic unforced anomaly/dedup/persistence/delivery/independent recovery.",
   "holds": [
     "GEMINI_SEVERE_HOLD",
-    "EXTERNAL_SPEND_HOLD",
+    "NO_EXTERNAL_SPEND",
     "ROBLOX_PUBLISH_HOLD",
-    "NO_TASK_CHANGES"
+    "NO_TASK_OR_AUTH_CHANGES"
   ]
 }

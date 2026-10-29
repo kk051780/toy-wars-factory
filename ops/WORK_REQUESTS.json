@@ -2834,6 +2834,58 @@
       "reviewed_at": "2026-10-29T08:26:00.234Z",
       "main_after_handoff": "e1ebe061d60cd74843b144db813f085ad9ce3da7",
       "resolved_at": "2026-10-29T08:26:36.265Z"
+    },
+    {
+      "id": "pr120_scoped_alert_persistence_registered_review_20261029",
+      "status": "OPEN",
+      "priority": "P1",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 120,
+      "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/120",
+      "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
+      "base": "e1ebe061d60cd74843b144db813f085ad9ce3da7",
+      "branch": "auto/twf-system-review-84f6c2ab-3724-8326-95cb-f3937487e58f",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "84f6c2ab-3724-8326-95cb-f3937487e58f",
+      "created_at": "2026-10-29T09:19:49Z",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "1fbd6f03d388bdcf9d59c36874de77d66196e17c",
+        "owner_run_id": "84f6c2ab-3724-8326-95cb-f3937487e58f",
+        "epoch": 236,
+        "release": "ATOMIC_WITH_REPORT_AND_REQUEST; actual ref reread required"
+      },
+      "ci": {
+        "id": 40848410064,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40848410064",
+        "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "jobs": [
+          {
+            "id": 123361518442,
+            "name": "offline",
+            "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
+            "conclusion": "success"
+          },
+          {
+            "id": 123361518859,
+            "name": "compile_hold",
+            "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
+            "conclusion": "success"
+          }
+        ],
+        "python_total": 612,
+        "existing": 589,
+        "new": 23,
+        "scope_gate": "PASS",
+        "immutable_claim_gate": "1 immutable coordinator claim(s) verified"
+      },
+      "request": "Independently review exactly3 A paths: scoped persistence connection,23 adversarial regressions,C00126. Check explicit trusted-host callback boundary, one ledger path, immutable blobs and fenced CAS/readback; lost receipt cannot imply rollback/delivery/recovery. Exacthead612 tests/bothjobs scope and claimPASS. No author merge; mainQA/handoff required after any adoption.",
+      "owner_reply_required": false
     }
   ]
 }

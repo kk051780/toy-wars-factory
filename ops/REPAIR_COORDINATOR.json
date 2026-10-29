@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 236,
-  "holder": {
-    "kind": "META",
-    "owner_id": "84f6c2ab-3724-8326-95cb-f3937487e58f",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "epoch": 236,
-    "acquired_at": "2026-10-29T09:07:22+00:00",
-    "expires_at": "2026-10-29T09:37:22+00:00",
-    "base_main_sha": "e1ebe061d60cd74843b144db813f085ad9ce3da7",
-    "work_branch": "auto/twf-system-review-84f6c2ab-3724-8326-95cb-f3937487e58f",
-    "origin": "meta"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -22,16 +12,16 @@
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
     "items": [
       {
-        "number": 119,
-        "title": "[TWF system-review] Add pure fenced alert-ledger reducer with replay-safe proposals",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/119",
-        "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40839603464",
-        "summary": "Pure fenced alert ledger proposal;20 new regressions; no I/O or authority",
+        "number": 120,
+        "title": "[TWF system-review] Connect alert ledger to scoped host CAS with readback",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/120",
+        "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40848410064",
+        "summary": "Accepted observer/reducer to scoped host CAS/readback;23 new adversarial regressions; live operational proof remains NOT_RUN",
         "changed_files": [
-          "tools/system_alert_ledger.py",
-          "tests/test_system_alert_ledger.py",
-          "history/C00125_durable_alert_ledger_reducer.json"
+          "tools/system_alert_persistence.py",
+          "tests/test_system_alert_persistence.py",
+          "history/C00126_scoped_alert_persistence.json"
         ],
         "kind": "開発体制改善"
       }
@@ -39,22 +29,20 @@
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-29T08:06:35Z",
-    "signature": "846199019811948a596397f500fd9153b64533461fd99dba8e6a1d0adfdc6ed3",
+    "observed_at": "2026-10-29T09:19:49Z",
+    "signature": "e5367ddfc219dab85efb6616f9ddfa8a1ea83740e91725ab1debdb21f182497d",
     "approval_text": ""
   },
-  "last_reported_approval_signature": "846199019811948a596397f500fd9153b64533461fd99dba8e6a1d0adfdc6ed3",
+  "last_reported_approval_signature": "e5367ddfc219dab85efb6616f9ddfa8a1ea83740e91725ab1debdb21f182497d",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "89b1351d-7060-832b-8b3d-44e1dd8b311b",
-    "epoch": 235,
-    "released_at": "2026-10-29T08:26:36.265Z",
-    "pr": 119,
-    "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
-    "merge_sha": "54e48d895ceef71a713d37148e1e954970dbad43",
-    "main_qa": 40842047702,
-    "handoff": 40842047673,
-    "result": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+    "kind": "META",
+    "owner_id": "84f6c2ab-3724-8326-95cb-f3937487e58f",
+    "epoch": 236,
+    "released_at": "2026-10-29T09:19:49+00:00",
+    "pr": 120,
+    "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
+    "ci": 40848410064,
+    "result": "DRAFT_SOURCE_PR_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
     "a12_verified": false
   },
   "last_approval_report": {

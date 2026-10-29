@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T08:06:35Z",
+  "observed_at": "2026-10-29T09:19:49Z",
   "source": "PR112 formal provenance repair; current C00122 active view uses exact transcriptions with original chat NOT_VERIFIED; no game source changes.",
   "items": [
     {
@@ -386,9 +386,9 @@
   ],
   "actor": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "dc2b1012-5a84-8322-bd75-263b45cc0f82"
+    "run_id": "84f6c2ab-3724-8326-95cb-f3937487e58f"
   },
-  "base_main_sha": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+  "base_main_sha": "e1ebe061d60cd74843b144db813f085ad9ce3da7",
   "prioritized_candidates": [
     "dual_origin_character_variety_20261029",
     "private_headless_engine_evidence_path",
@@ -399,57 +399,61 @@
     "checked_on": "2026-10-29",
     "references": [
       {
-        "url": "https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api",
+        "url": "https://docs.github.com/en/rest/git/refs",
         "kind": "PRIMARY_GITHUB_OFFICIAL",
         "published_at": "NOT_AVAILABLE",
         "updated_at": "NOT_AVAILABLE",
-        "checked_at": "2026-10-29T08:04:14Z",
-        "finding": "Do not ignore errors, use bounded conditional/efficient requests. Documentation not authentication or provider receipt; no new webhook/task/credential introduced."
+        "checked_at": "2026-10-29T09:15:50Z",
+        "finding": "Reference API read/update and409/422 semantics. Host expected_sha CAS is required; do not equate bare REST force=false with a separate expected_sha parameter or a lease/epoch receipt."
       },
       {
         "url": "https://create.roblox.com/docs/production/experiments",
         "kind": "PRIMARY_ROBLOX_OFFICIAL",
         "published_at": "NOT_AVAILABLE",
         "updated_at": "NOT_AVAILABLE",
-        "checked_at": "2026-10-29T08:04:14Z",
-        "finding": "Controlled baseline/variants, goals, planned duration and detectable effect guide hypotheses. No target game effect or player data measured; no live experiment started."
+        "checked_at": "2026-10-29T09:15:50Z",
+        "finding": "Goals, controlled variants, sampling/detectable effect and recorded decisions guide NO_CHANGE/first-loop clarity/role contrast hypotheses. No actual target game outcome or live experiment claim."
       }
     ],
-    "comparison": "NO_CHANGE baseline vs first-loop clarity vs differentiated role/collection goal (Issue109/115); existing candidate details preserved; target effects NOT_MEASURED",
-    "implementation": "No game changes; system PR119 priority",
-    "required_evidence": "Studio/mobile/player/first production completion/D1-D7/performance NOT_RUN",
-    "QA_load": "NO_CHANGE baseline; small HUD experiment lower source but mobile QA; character variant model/motion/combat/UI/performance workload; no market-effect scores as measurements"
+    "new_same_day_publication": "NOT_ESTABLISHED; current primary documentation read, no snippet-only current-event claim",
+    "owner_references": [
+      "Issue109 OWNER and DERIVED provenance retained; chat identity NOT_VERIFIED",
+      "Issue115 two-business mandate"
+    ],
+    "game_implementation": "NONE; system PR120 prioritized",
+    "system_precondition": "No live engine/player outcomes inferred from source CI"
   },
   "next_experiments": [
     {
       "id": "NO_CHANGE",
-      "hypothesis": "Keep current three-unit prototype as baseline while validating initial production loop",
-      "minimum_experiment": "Later authorized Studio test records first production completion/errors and a mature D1/D7 cohort only after release permission",
-      "success_condition": "Objective baseline observations, not inferred fun/retention",
+      "hypothesis": "Current three-unit PvE remains the necessary baseline",
+      "minimum_experiment": "Later authorized engine records initial production and first-round completion; no game edit this run",
+      "success_condition": "Actual baseline and error observations",
       "evidence": "NOT_RUN",
-      "load": "No game source change this cycle"
+      "load": "No source change; real Studio/mobile/two-client QA still required"
     },
     {
       "id": "FIRST_LOOP_CLARITY",
-      "hypothesis": "Clearer first production goal may reduce initial confusion",
-      "minimum_experiment": "Compare existing PvE guide against baseline on actual mobile/2client recordings",
-      "success_condition": "Fewer missed actions with no UI overlap/performance regression",
-      "required_evidence": "Studio/mobile/two-client/player observations NOT_RUN",
-      "load": "Small UI source plus native/engine QA; WORKER only"
+      "hypothesis": "A clearer first production goal may reduce early-session confusion",
+      "minimum_experiment": "Compare existing guide and one minimal HUD variant against baseline on actual mobile",
+      "success_condition": "Fewer missed actions without overlap/error/frame-time regression",
+      "metrics": "First production completion, early exits,D1/D7 after sufficient real cohorts",
+      "load": "Small WORKER UI change plus native/engine/mobile QA",
+      "evidence": "NOT_RUN/NOT_MEASURED"
     },
     {
-      "id": "DIFFERENTIATED_LINEUP_GOAL",
-      "hypothesis": "Original role contrast and collection goals may support return play",
-      "minimum_experiment": "32/64px silhouettes and documented role comparison before implementation",
-      "success_condition": "Recognizable roles without existing three-unit behavior regression; retention remains hypothesis",
-      "required_evidence": "Actual visual/player/20units-side×4factories performance NOT_RUN",
-      "load": "Model/motion/combat/UI/QA;18/24parts are project trial budgets, not official limits",
+      "id": "DIFFERENTIATED_ROLE_COLLECTION",
+      "hypothesis": "Original silhouette/role contrast and future collection goals may improve revisit motivation",
+      "minimum_experiment": "32/64px PON/GUARDON/TANKURU compatibility/role comparison before new character implementation",
+      "success_condition": "Recognizable differentiated roles without existing balance/performance regression",
+      "load": "Model/motion/combat/UI/QA;18/24parts and20units/side×4factories are unverified project budgets",
       "dependencies": [
-        "PR98 manual protected candidate unmerged",
-        "Issue102 candidate",
-        "Issue109 original/DERIVED provenance",
-        "Issue115 product/business evidence"
-      ]
+        "PR98 manual protected candidate",
+        "Issue102",
+        "Issue109",
+        "Issue115"
+      ],
+      "evidence": "NOT_RUN/NOT_MEASURED; no popularity/revenue guarantee"
     }
   ],
   "previous_snapshot": {
