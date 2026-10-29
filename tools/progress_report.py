@@ -7,7 +7,7 @@ from pathlib import Path
 REPO = "https://github.com/kk051780/toy-wars-factory/pull/"
 VALID = {"verified", "pending", "blocked"}
 
-# Snapshot of independently checked *merged* PR evidence, as of 2026-10-25.
+# Snapshot of independently checked *merged* PR evidence, as of 2026-10-29 (protected Issue113 candidate).
 # Each new verification must separately update this pinned registry after checking
 # current GitHub merged state and exact-head QA; a draft PR URL alone never qualifies.
 APPROVED_MERGED_PR = {
@@ -19,6 +19,9 @@ APPROVED_MERGED_PR = {
     "A06": 41,
     "A07": 43,
     "A08": 45,
+    "A09": 75,
+    "A10": 84,
+    "A11": 108,
     "G01": 1,
     "G02": 32,
     "G03": 40,

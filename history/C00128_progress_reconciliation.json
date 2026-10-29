@@ -1,0 +1,49 @@
+{
+  "id": "C00128",
+  "date": "2026-10-29",
+  "kind": "ISSUE113_PROTECTED_PROGRESS_RECONCILIATION",
+  "controller_manual_work_id": "a2beea1b-8ed0-42da-ba08-4ddbc8688ad0",
+  "base_main": "221bc53ce118f5242777c13649f437d18078dcc4",
+  "coordination": {
+    "epoch": 240,
+    "claim_commit": "09915125ca62477b420479b6687f44ee54d8de78"
+  },
+  "previous": {
+    "automation": 57,
+    "game": 38
+  },
+  "proposed": {
+    "automation": 76,
+    "game": 38
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "evidence_prs": [
+    75,
+    84,
+    108
+  ],
+  "exact_head_qa": [
+    40402147994,
+    40499824467,
+    40761307293
+  ],
+  "postmerge_qa": [
+    40404466932,
+    40501279576,
+    40763962202
+  ],
+  "protected_independent_audit": "REQUIRED_BEFORE_MERGE",
+  "qa_guards_preserved": true,
+  "holds": {
+    "gemini": "SEVERE_HOLD",
+    "roblox_publish": "HOLD",
+    "external_spend": "UNCHANGED"
+  }
+}
