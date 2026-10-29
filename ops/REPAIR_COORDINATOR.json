@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 242,
-  "holder": {
-    "kind": "DISPATCH",
-    "owner_id": "dcd29311-96b5-4c5c-8d42-7fe6059e4101",
-    "task_id": null,
-    "epoch": 242,
-    "acquired_at": "2026-10-29T11:39:29.507Z",
-    "expires_at": "2026-10-29T11:41:29.507Z",
-    "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
-    "work_branch": null,
-    "origin": "dispatch"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -45,17 +35,10 @@
   },
   "last_reported_approval_signature": "b63289e0b9e012b1c25375d0e52363b84a22b8e8ecdb40568755a002de6416ff",
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "a2beea1b-8ed0-42da-ba08-4ddbc8688ad0",
-    "epoch": 241,
-    "released_at": "2026-10-29T11:36:48.037Z",
-    "pr": 122,
-    "head": "fc9424a80960e3164b97cf4b22c91f35d1804977",
-    "ci": 40866590673,
-    "result": "SCOPED_DRAFT_HEAD_CI_PASS_AWAIT_SECOND_INDEPENDENT_PROTECTED_AUDIT",
-    "protected_review": "REQUEST_CHANGES_HISTORIC_GUARD_CORRECTED_REAUDIT_PENDING",
-    "main_changed": false,
-    "official_progress_unchanged": true
+    "kind": "DISPATCH",
+    "owner_id": "dcd29311-96b5-4c5c-8d42-7fe6059e4101",
+    "epoch": 242,
+    "released_at": "2026-10-29T11:43:12.251Z"
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
