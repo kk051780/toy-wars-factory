@@ -1,24 +1,24 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T22:22:44.320Z",
+  "observed_at": "2026-10-29T23:19:57Z",
   "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "3db5475d-d874-8327-b42b-378e05dd32c2",
-  "lease_epoch": 258,
-  "main_before": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+  "reviewer_run_id": "9abf6142-0ad0-8322-84a9-f5e4488deb78",
+  "lease_epoch": 261,
+  "main_before": "7f198fa99ee4ee28d580172885a4183cf0773adc",
   "latest_review": {
     "schema": 1,
-    "pr": 126,
-    "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
-    "base_main_sha": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+    "pr": 129,
+    "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
+    "base_main_sha": "7f198fa99ee4ee28d580172885a4183cf0773adc",
     "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "reviewer_run_id": "3db5475d-d874-8327-b42b-378e05dd32c2",
-    "lease_epoch": 258,
-    "reviewer_claim": "ed18db23ca0cfb9e8d30a04eb0820777cd69bb42",
+    "reviewer_run_id": "9abf6142-0ad0-8322-84a9-f5e4488deb78",
+    "lease_epoch": 261,
+    "reviewer_claim": "37037f978b084e53c34c0567e18ee4589ded97e0",
     "verdict": "APPROVE",
-    "reviewed_at": "2026-10-29T22:20:11.424Z",
-    "comment_url": "https://github.com/kk051780/toy-wars-factory/issues/123#issuecomment-6509648239",
+    "reviewed_at": "2026-10-29T23:18:55Z",
+    "comment_url": "https://github.com/kk051780/toy-wars-factory/issues/114#issuecomment-6510803046",
     "checks": {
       "scope": true,
       "regression": true,
@@ -28,39 +28,46 @@
     },
     "blockers": [],
     "findings": [],
+    "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+    "author_run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+    "author_epoch": 260,
+    "author_claim": "0fa55eaa205b9ccaf27894d9332a553f4d7779ed",
+    "author_release_ref": "3145cf488b65637871744ea768b6634bed8eaccb",
+    "red": {
+      "head": "f484a601125efd778de81e175fee62b132284c5b",
+      "id": 40969342145,
+      "tests": 761,
+      "failures": 13,
+      "errors": 0
+    },
     "ci": {
-      "id": 40963166528,
-      "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+      "id": 40969585796,
+      "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
       "attempt": 1,
       "conclusion": "success",
       "jobs": {
         "offline": "success",
         "compile_hold": "success"
       },
-      "python_tests": 749
+      "python_tests": 761,
+      "new_tests": 12
     },
-    "red": {
-      "id": 40962918985,
-      "head": "7a3d6b8d96591342821e68d06a9bcd9b68aff18c",
-      "tests": 749,
-      "failures": 14,
-      "errors": 0
-    },
-    "original_author_run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
-    "repair_author_run_id": "d746314f-15a8-832f-80fa-d479f030d398",
     "source_review": "STATIC_SOURCE_AND_REAL_GITHUB_CI; accepted Python integration classifier NOT_EXECUTED",
-    "limitations": [
-      "Synthetic callbacks not provider authentication",
-      "process-kill finally not guaranteed",
-      "epoch251 terminal not attested",
-      "A12/A13/Roblox engine unverified"
-    ],
     "native_github_review_submission": false,
-    "merge_sha": "90826c84f7a7e100d406f84f4af720e6e666cdda",
+    "limitations": [
+      "Synthetic GET fixtures are not connected provider authentication",
+      "Provider PEEK delivery_status unknown, no actual user push receipt",
+      "A12/A13 organic scheduled incident/recovery NOT_VERIFIED",
+      "Historic epoch251 terminal NOT_ATTESTED",
+      "No Roblox engine or multiplayer proof"
+    ],
+    "merge_sha": "cb775fdc319f760c68673768863984c91aa5694f",
+    "main_qa": 40972299526,
+    "handoff": 40972299903,
+    "main_after_handoff": "03bdbb9fdb2bc8ee5fcd22c504b8d3428971c606",
     "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
-    "main_qa": 40965149273,
-    "handoff": 40965149371,
-    "review_record": "ops/reviews/PR0126_2ffa8a32.json"
+    "review_record": "ops/reviews/PR0129_02b3744e.json",
+    "at": "2026-10-29T23:19:57Z"
   },
   "merged_prs": [
     {
@@ -398,46 +405,62 @@
       "reviewer_lease_epoch": 258,
       "approval_comment": "https://github.com/kk051780/toy-wars-factory/issues/123#issuecomment-6509648239",
       "native_github_review_submission": false
+    },
+    {
+      "pr": 129,
+      "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
+      "merge_sha": "cb775fdc319f760c68673768863984c91aa5694f",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40972299526,
+      "handoff": 40972299903,
+      "category": "SYSTEM_A12_EVIDENCE_HOLDER_EPOCH_INPUT_INTEGRITY",
+      "main_after_handoff": "03bdbb9fdb2bc8ee5fcd22c504b8d3428971c606",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "9abf6142-0ad0-8322-84a9-f5e4488deb78",
+      "reviewer_claim": "37037f978b084e53c34c0567e18ee4589ded97e0",
+      "reviewer_lease_epoch": 261,
+      "approval_comment": "https://github.com/kk051780/toy-wars-factory/issues/114#issuecomment-6510803046",
+      "native_github_review_submission": false
     }
   ],
   "merge_count_this_run": 1,
   "main_qa": {
-    "id": 40965149273,
-    "head": "90826c84f7a7e100d406f84f4af720e6e666cdda",
+    "id": 40972299526,
+    "head": "cb775fdc319f760c68673768863984c91aa5694f",
     "conclusion": "success",
     "jobs": {
       "offline": "success",
       "compile_hold": "success"
     },
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40965149273",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40972299526",
     "attempt": 1,
     "status": "completed",
     "job_evidence": [
       {
-        "id": 123767621977,
+        "id": 123791742530,
         "name": "offline",
-        "head": "90826c84f7a7e100d406f84f4af720e6e666cdda",
+        "head": "cb775fdc319f760c68673768863984c91aa5694f",
         "conclusion": "success"
       },
       {
-        "id": 123767622378,
+        "id": 123791743029,
         "name": "compile_hold",
-        "head": "90826c84f7a7e100d406f84f4af720e6e666cdda",
+        "head": "cb775fdc319f760c68673768863984c91aa5694f",
         "conclusion": "success"
       }
     ],
     "reexecuted_this_run": true,
-    "evidence_scope": "Actual new merge-head push QA, 749 Python tests OK"
+    "evidence_scope": "Actual PR129 merge-head push QA, 761 Python tests OK"
   },
   "handoff": {
-    "id": 40965149371,
-    "head": "90826c84f7a7e100d406f84f4af720e6e666cdda",
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40965149371",
+    "id": 40972299903,
+    "head": "cb775fdc319f760c68673768863984c91aa5694f",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40972299903",
     "jobs": [
       {
-        "id": 123767622284,
+        "id": 123791744216,
         "name": "update",
-        "head": "90826c84f7a7e100d406f84f4af720e6e666cdda",
+        "head": "cb775fdc319f760c68673768863984c91aa5694f",
         "conclusion": "success"
       }
     ],
@@ -453,14 +476,14 @@
       "status/CHAT_HANDOFF.md",
       "status/LATEST_STATE.json"
     ],
-    "base": "90826c84f7a7e100d406f84f4af720e6e666cdda",
-    "head": "7f198fa99ee4ee28d580172885a4183cf0773adc"
+    "base": "cb775fdc319f760c68673768863984c91aa5694f",
+    "head": "03bdbb9fdb2bc8ee5fcd22c504b8d3428971c606"
   },
   "unresolved": [],
-  "next": "PR126 accepted with main QA/handoff; A12/A13 operational evidence still pending",
+  "next": "PR129 independently reviewed and merged with post-main 761-test QA and handoff; A12/A13 operational delivery/recovery still unverified",
   "runtime_verified": true,
-  "main_after": "7f198fa99ee4ee28d580172885a4183cf0773adc",
-  "merge_sha": "90826c84f7a7e100d406f84f4af720e6e666cdda",
+  "main_after": "03bdbb9fdb2bc8ee5fcd22c504b8d3428971c606",
+  "merge_sha": "cb775fdc319f760c68673768863984c91aa5694f",
   "next_actor": "META_OR_WORKER_NEXT_SAFE_TASK",
   "secondary_review": {
     "pr": 112,
@@ -469,8 +492,8 @@
     "review_record": "ops/reviews/PR0112_a6ccf32e.json",
     "status": "HISTORICAL_REJECTION_SUPERSEDED_BY_NEW_HEAD_APPROVE"
   },
-  "main_after_merge": "90826c84f7a7e100d406f84f4af720e6e666cdda",
-  "main_after_handoff": "7f198fa99ee4ee28d580172885a4183cf0773adc",
+  "main_after_merge": "cb775fdc319f760c68673768863984c91aa5694f",
+  "main_after_handoff": "03bdbb9fdb2bc8ee5fcd22c504b8d3428971c606",
   "status_only_descendant_verified": true,
   "merges_this_run": 1,
   "a12_verified": false,
@@ -886,9 +909,9 @@
     "new_ci_runs": 0
   },
   "snapshot_field_scope": {
-    "runtime_verified": "Preserved historical integration-cycle fact; no new execution or A12 proof",
-    "secondary_review": "Historical rejection already superseded; not a current repair request",
-    "source_classifier": "Preserved historical source-execution limitation; not executed this cycle",
-    "delivery": "No authenticated delivery evidence; UNVERIFIED"
+    "runtime_verified": "Preserved historical field; this cycle source static review and real GitHub CI only, no host classifier execution",
+    "secondary_review": "Preserved historical rejection, not a current PR129 blocker",
+    "source_classifier": "SOURCE_CLASSIFIER_NOT_EXECUTED for this reviewer run",
+    "delivery": "No actual user delivery receipt, UNVERIFIED"
   }
 }

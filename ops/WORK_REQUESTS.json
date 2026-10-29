@@ -3489,7 +3489,7 @@
       "id": "pr129_github_evidence_strict_holder_epoch_20261030",
       "kind": "REGISTERED_META_SOURCE_REVIEW",
       "priority": "P1",
-      "status": "OPEN",
+      "status": "RESOLVED",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
@@ -3549,7 +3549,7 @@
       },
       "owner_approval_required": false,
       "review_required_for_head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
-      "next_actor": "REGISTERED_REVIEWER_AFTER_AUTHOR_COMPLETION_AND_OWN_RELEASE",
+      "next_actor": "META_OR_WORKER_NEXT_SAFE_TASK",
       "scope": {
         "source_files": 1,
         "new_tests": 12,
@@ -3559,7 +3559,75 @@
       "live_release_evidence": {
         "record": "ops/lease_receipts/META_f5288a51_epoch260.json",
         "status": "NORMAL_OWN_RELEASE_AND_POSTREAD_REQUIRED_NOT_YET_AT_PACKET_COMMIT"
-      }
+      },
+      "review": {
+        "schema": 1,
+        "pr": 129,
+        "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
+        "base_main_sha": "7f198fa99ee4ee28d580172885a4183cf0773adc",
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "9abf6142-0ad0-8322-84a9-f5e4488deb78",
+        "lease_epoch": 261,
+        "reviewer_claim": "37037f978b084e53c34c0567e18ee4589ded97e0",
+        "verdict": "APPROVE",
+        "reviewed_at": "2026-10-29T23:18:55Z",
+        "comment_url": "https://github.com/kk051780/toy-wars-factory/issues/114#issuecomment-6510803046",
+        "checks": {
+          "scope": true,
+          "regression": true,
+          "source_ledger": true,
+          "protected_controls": true,
+          "behavior": true
+        },
+        "blockers": [],
+        "findings": [],
+        "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+        "author_run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+        "author_epoch": 260,
+        "author_claim": "0fa55eaa205b9ccaf27894d9332a553f4d7779ed",
+        "author_release_ref": "3145cf488b65637871744ea768b6634bed8eaccb",
+        "red": {
+          "head": "f484a601125efd778de81e175fee62b132284c5b",
+          "id": 40969342145,
+          "tests": 761,
+          "failures": 13,
+          "errors": 0
+        },
+        "ci": {
+          "id": 40969585796,
+          "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
+          "attempt": 1,
+          "conclusion": "success",
+          "jobs": {
+            "offline": "success",
+            "compile_hold": "success"
+          },
+          "python_tests": 761,
+          "new_tests": 12
+        },
+        "source_review": "STATIC_SOURCE_AND_REAL_GITHUB_CI; accepted Python integration classifier NOT_EXECUTED",
+        "native_github_review_submission": false,
+        "limitations": [
+          "Synthetic GET fixtures are not connected provider authentication",
+          "Provider PEEK delivery_status unknown, no actual user push receipt",
+          "A12/A13 organic scheduled incident/recovery NOT_VERIFIED",
+          "Historic epoch251 terminal NOT_ATTESTED",
+          "No Roblox engine or multiplayer proof"
+        ],
+        "merge_sha": "cb775fdc319f760c68673768863984c91aa5694f",
+        "main_qa": 40972299526,
+        "handoff": 40972299903,
+        "main_after_handoff": "03bdbb9fdb2bc8ee5fcd22c504b8d3428971c606",
+        "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+        "review_record": "ops/reviews/PR0129_02b3744e.json",
+        "at": "2026-10-29T23:19:57Z"
+      },
+      "review_record": "ops/reviews/PR0129_02b3744e.json",
+      "merge_sha": "cb775fdc319f760c68673768863984c91aa5694f",
+      "main_qa": 40972299526,
+      "handoff": 40972299903,
+      "main_after_handoff": "03bdbb9fdb2bc8ee5fcd22c504b8d3428971c606",
+      "merged_at": "2026-10-29T23:19:57Z"
     }
   ]
 }
