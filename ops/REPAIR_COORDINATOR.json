@@ -1143,7 +1143,12 @@
         "epoch251 terminal not attested",
         "A12/A13/Roblox engine unverified"
       ],
-      "native_github_review_submission": false
+      "native_github_review_submission": false,
+      "merge_sha": "90826c84f7a7e100d406f84f4af720e6e666cdda",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40965149273,
+      "handoff": 40965149371,
+      "main_after_handoff": "7f198fa99ee4ee28d580172885a4183cf0773adc"
     }
   },
   "integration_results": {
@@ -2504,5 +2509,15 @@
     "claim_commit": "185757612ad0117a52d057adadacf3f534b75d37",
     "record": "ops/reconciliations/PR0124_epoch253_json_compatibility_epoch254.json",
     "status": "AWAIT_NEW_INDEPENDENT_REVIEW"
+  },
+  "last_completed_integration": {
+    "pr": 126,
+    "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+    "merge_sha": "90826c84f7a7e100d406f84f4af720e6e666cdda",
+    "main_qa": 40965149273,
+    "handoff": 40965149371,
+    "reviewer_run_id": "3db5475d-d874-8327-b42b-378e05dd32c2",
+    "epoch": 258,
+    "at": "2026-10-29T22:22:44.320Z"
   }
 }

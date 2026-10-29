@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T22:20:11.424Z",
+  "observed_at": "2026-10-29T22:22:44.320Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -3254,7 +3254,7 @@
       "id": "pr126_owned_lease_finalization_registered_review_20261030",
       "kind": "REGISTERED_META_SOURCE_REVIEW",
       "priority": "P1",
-      "status": "APPROVED_PENDING_MAIN_QA",
+      "status": "RESOLVED",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
@@ -3321,7 +3321,7 @@
       },
       "owner_approval_required": false,
       "review_required_for_head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
-      "next_actor": "REVIEWER_SAFE_EXACT_HEAD_MERGE",
+      "next_actor": "META_NEXT_PHASE_WITH_HOLDS",
       "scope": "ONE_PR_OWNED_FINALLY_CAPA_NO_PROVIDER_ATTESTATION",
       "live_release_evidence": "ops/lease_receipts/META_47b45262_epoch255.json",
       "review": {
@@ -3372,7 +3372,11 @@
           "epoch251 terminal not attested",
           "A12/A13/Roblox engine unverified"
         ],
-        "native_github_review_submission": false
+        "native_github_review_submission": false,
+        "merge_sha": "90826c84f7a7e100d406f84f4af720e6e666cdda",
+        "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+        "main_qa": 40965149273,
+        "handoff": 40965149371
       },
       "previous_request_snapshot": {
         "ref": "4e37ebb98bc46dccbbbead434839384cef367183",
@@ -3475,7 +3479,11 @@
           "merge_authorized": false
         }
       ],
-      "reviewed_at": "2026-10-29T22:20:11.424Z"
+      "reviewed_at": "2026-10-29T22:20:11.424Z",
+      "merge_sha": "90826c84f7a7e100d406f84f4af720e6e666cdda",
+      "main_qa": 40965149273,
+      "handoff": 40965149371,
+      "merged_at": "2026-10-29T22:22:44.320Z"
     }
   ]
 }

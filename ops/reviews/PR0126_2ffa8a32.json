@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "pr": 126,
+  "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+  "merge_sha": "90826c84f7a7e100d406f84f4af720e6e666cdda",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "3db5475d-d874-8327-b42b-378e05dd32c2",
+  "lease_epoch": 258,
+  "reviewer_claim": "ed18db23ca0cfb9e8d30a04eb0820777cd69bb42",
+  "verdict": "APPROVE",
+  "review_comment": "https://github.com/kk051780/toy-wars-factory/issues/123#issuecomment-6509648239",
+  "author_original_run": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+  "author_repair_run": "d746314f-15a8-832f-80fa-d479f030d398",
+  "author_release_ref": "0aa49b8277683633c46c60b92d96345a38cb977d",
+  "red": {
+    "head": "7a3d6b8d96591342821e68d06a9bcd9b68aff18c",
+    "run": 40962918985,
+    "failures": 14,
+    "tests": 749
+  },
+  "green": {
+    "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+    "run": 40963166528,
+    "attempt": 1,
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "tests": 749
+  },
+  "main_qa": {
+    "run": 40965149273,
+    "head": "90826c84f7a7e100d406f84f4af720e6e666cdda",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "tests": 749
+  },
+  "handoff": {
+    "run": 40965149371,
+    "head": "90826c84f7a7e100d406f84f4af720e6e666cdda",
+    "conclusion": "success"
+  },
+  "main_after_handoff": "7f198fa99ee4ee28d580172885a4183cf0773adc",
+  "main_status_only_verified": true,
+  "limitations": [
+    "Static source review; real accepted GitHub tests executed",
+    "No provider terminal attestation for historical epoch251",
+    "Synthetic callback tests not real host authentication",
+    "Process kill cannot guarantee finally",
+    "A12/A13 and Roblox runtime unverified"
+  ],
+  "at": "2026-10-29T22:22:44.320Z"
+}
