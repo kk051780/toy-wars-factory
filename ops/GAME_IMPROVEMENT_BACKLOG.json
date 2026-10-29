@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T11:14:43Z",
+  "observed_at": "2026-10-29T11:54:28Z",
   "source": "PR112 formal provenance repair; current C00122 active view uses exact transcriptions with original chat NOT_VERIFIED; no game source changes.",
   "items": [
     {
@@ -386,40 +386,55 @@
   ],
   "actor": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "559ceca6-d748-832f-bb96-a5779f993964"
+    "run_id": "24635529-22a0-8323-afad-ab07acb6f077",
+    "recorded_status_at_observation": "in_progress",
+    "latest_result_run_id": "559ceca6-d748-832f-bb96-a5779f993964",
+    "latest_result_binding": "PREVIOUS_RUN_NOT_CURRENT_SUCCESS",
+    "scheduled_for": "2026-10-29T11:38:40.135812Z",
+    "started_at": "2026-10-29T11:39:09.150514Z",
+    "unforced_scheduled_origin": "NOT_VERIFIED_HOST_TRIGGER_ORIGIN_NOT_EXPOSED"
   },
-  "base_main_sha": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
+  "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
   "prioritized_candidates": [
     "dual_origin_character_variety_20261029",
     "private_headless_engine_evidence_path",
     "mobile_pve_frame_time"
   ],
-  "system_precondition": "Owner priority PR-less A12 source; no game source modified. First-loop clarity vs differentiated support/collection vs NO_CHANGE remain unmeasured hypotheses. Native/multiplayer/mobile/32-64px identity/20units x4factory trials NOT_RUN; protected PR98 prerequisite retained.",
+  "system_precondition": "Evidence-only accepted A12 source execution. No game implementation. Keep NO_CHANGE + FIRST_LOOP_CLARITY + DIFFERENTIATED_ROLE_COLLECTION comparisons and actual engine/player gates; no hypothesis score or callback trace grants implementation authority.",
   "last_primary_source_check": {
     "checked_on": "2026-10-29",
     "references": [
       {
-        "url": "https://opentelemetry.io/docs/specs/semconv/messaging/messaging-spans/",
-        "kind": "PRIMARY_IMPLEMENTER_SPECIFICATION",
+        "url": "https://docs.github.com/en/rest/git/refs",
+        "kind": "PRIMARY_GITHUB_OFFICIAL",
         "published_at": "NOT_AVAILABLE",
         "updated_at": "NOT_AVAILABLE",
-        "checked_at": "2026-10-29T11:10:05Z",
-        "finding": "Message/operation/destination and send/receive/settle observations are separate. Used as an evidence-separation pattern, not end-user delivery proof or installed telemetry."
+        "checked_at": "2026-10-29T11:54:28Z",
+        "fact": "Refs are mutable; force=false preserves fast-forward-only checks. Exact expected_sha is an additional connected capability requirement, not inferred from bare REST force=false."
       },
       {
         "url": "https://create.roblox.com/docs/production/experiments",
         "kind": "PRIMARY_ROBLOX_OFFICIAL",
         "published_at": "NOT_AVAILABLE",
         "updated_at": "NOT_AVAILABLE",
-        "checked_at": "2026-10-29T11:10:05Z",
-        "finding": "Control/variants, cohort size/detectable effect and documented decisions guide first-loop vs role/collection vs NO_CHANGE hypotheses. No game measurement or live experiment."
+        "checked_at": "2026-10-29T11:54:28Z",
+        "fact": "Control/variants and predefined metrics/detectable effect guide causal game experiments; no experiment activated here."
+      },
+      {
+        "url": "https://create.roblox.com/docs/production/analytics/get-started",
+        "kind": "PRIMARY_ROBLOX_OFFICIAL",
+        "published_at": "NOT_AVAILABLE",
+        "updated_at": "NOT_AVAILABLE",
+        "checked_at": "2026-10-29T11:54:28Z",
+        "fact": "First-session funnels, session lengths,D1/D7 are candidate measures; no real player data measured or accessed."
       }
     ],
-    "new_same_day_publication": "NOT_ESTABLISHED; current primary documentation opened, not called a fresh release",
-    "owner_origins": "Issue109 original/DERIVED distinction unchanged; original chat authentication NOT_VERIFIED",
-    "business_reference": "Issue115 game/system flywheel preserved; no market or cost claims",
-    "game_implementation": "NONE; A12 source notification boundary prioritized",
-    "comparison": "Existing NO_CHANGE vs FIRST_LOOP_CLARITY vs DIFFERENTIATED_ROLE_COLLECTION hypotheses retained; first production/initial exits/D1-D7/performance require actual engine and mature player cohorts; no effect measured"
+    "new_same_day_publication": "NOT_ESTABLISHED_CURRENT_DOCS_NOT_CALLED_A_NEW_RELEASE",
+    "community_response": "NOT_VERIFIED_THIS_RUN",
+    "owner_origins": "C00122 exact-transcription/DERIVED split retained; original_chat_authentication NOT_VERIFIED",
+    "business_reference": "Issue115 freshly read; economic/market outcomes still UNKNOWN/NOT_MEASURED",
+    "game_implementation": "NONE",
+    "comparison": "Existing NO_CHANGE vs FIRST_LOOP_CLARITY vs DIFFERENTIATED_ROLE_COLLECTION retained; no game source edits or market-effect claim"
   },
   "next_experiments": [
     {
@@ -566,8 +581,11 @@
   "latest_system_source_candidate": {
     "pr": 121,
     "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
-    "status": "DRAFT_CI_PASS_NOT_MERGED",
-    "description": "Notification preparation/receipt matching only; no automatic delivery or game feature",
+    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+    "merge_sha": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+    "main_qa": 40864317141,
+    "handoff": 40864317147,
+    "description": "Accepted prepared-only notification module; no new source this run. Real incident save, delivery and independent recovery not verified.",
     "engine": "NOT_RUN",
     "player_effect": "NOT_MEASURED"
   }

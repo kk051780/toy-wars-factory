@@ -1,9 +1,10 @@
 # 自動審査・統合待ち
 
-観測時点: 2026-10-29T11:14:43Z
+観測時点: 2026-10-29T11:54:28Z
 
-| PR | 内容 | 区分 | 現在headの検査 |
-| --- | --- | --- | --- |
-| [#121](https://github.com/kk051780/toy-wars-factory/pull/121) | Prepared-only notification/receipt binding;24 regressions; genuine accepted-source GET18/PEEK7 separate; no send/delivery proof | 開発体制改善 | [合格](https://github.com/kk051780/toy-wars-factory/actions/runs/40863409804) / `fc8195af` |
+自動統合待ちの項目はありません。所有者への承認返信は不要です。
 
-所有者への承認返信は不要。独立審査役が現在headの検査と共有所有権を確認し、1件ずつ統合してmainを検査する。
+
+PR #121 は独立統合・main QA/handoff 成功済み。現在の通常登録作者PRは0件。
+PR #122 は保護CONTROLLERの別独立監査対象。通常META/REVIEWERレーンから承認・統合しない。
+A12の実配達・独立復旧・非強制定期起動は未実証。所有者の通常承認返信は不要。
