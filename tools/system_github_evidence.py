@@ -293,7 +293,7 @@ def _collect(projects, b, get, clock):
          type(state.get("epoch")) is int and state["epoch"] == b["coordinator_epoch"], "WRONG_EPOCH_OR_ROLE")
     holder = state.get("holder")
     if holder is not None:
-        need(type(holder) is dict and holder.get("epoch") == state["epoch"] and
+        need(type(holder) is dict and type(holder.get("epoch")) is int and holder.get("epoch") == state["epoch"] and
              type(holder.get("owner_id")) is str and UUID.fullmatch(holder["owner_id"]) and
              holder.get("kind") in ("META", "WORKER", "REVIEWER", "DISPATCH", "CONTROLLER") and
              moment(holder["acquired_at"]) < moment(holder["expires_at"]), "INVALID_HOLDER")
