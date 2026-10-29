@@ -1,0 +1,168 @@
+{
+  "id": "C00137",
+  "date": "2026-10-30",
+  "kind": "SYSTEM_PR126_STRICT_HOLDER_AND_CALLER_EPOCH_REPAIR",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "d746314f-15a8-832f-80fa-d479f030d398",
+  "base_main": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+  "observed_at_utc": "2026-10-29T22:05:41Z",
+  "issue": 123,
+  "pr": 126,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "1c03230b8d6a35022d023918aec311af2605f0ce",
+    "owner_run_id": "d746314f-15a8-832f-80fa-d479f030d398",
+    "epoch": 257
+  },
+  "original_author": {
+    "run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+    "epoch": 255,
+    "claim": "ca8d1dba24ba61f8f757262a4281e43560f081db",
+    "head": "9bbf9e819c886099802b4ccbf69f1e0cf2718939",
+    "histories": [
+      "history/C00134_owned_lease_finalization_red_control.json",
+      "history/C00135_owned_lease_finalization_capa.json"
+    ],
+    "preserved_unchanged": true
+  },
+  "formal_review": {
+    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "run_id": "73434dcc-91f8-8327-8231-3e7e067b4fab",
+    "epoch": 256,
+    "verdict": "REQUEST_CHANGES_BOOL_FLOAT_HOLDER_EPOCH_FAIL_CLOSED",
+    "url": "https://github.com/kk051780/toy-wars-factory/issues/123#issuecomment-6509231333",
+    "finding_was_static_not_a_test_execution": true
+  },
+  "stage": "TWO_LINE_SOURCE_REPAIR_AFTER_REAL_EXACT_HEAD_GITHUB_RED",
+  "red_control": {
+    "head": "7a3d6b8d96591342821e68d06a9bcd9b68aff18c",
+    "run": 40962918985,
+    "attempt": 1,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40962918985",
+    "jobs": [
+      {
+        "id": 123760045099,
+        "name": "offline",
+        "head": "7a3d6b8d96591342821e68d06a9bcd9b68aff18c",
+        "conclusion": "failure"
+      },
+      {
+        "id": 123760045143,
+        "name": "compile_hold",
+        "head": "7a3d6b8d96591342821e68d06a9bcd9b68aff18c",
+        "conclusion": "success"
+      }
+    ],
+    "python_tests": 749,
+    "failures": 14,
+    "errors": 0,
+    "old_source_blob": "a7ebe381c302e54ec08db000d1b562650856c559",
+    "proof": [
+      "2026-10-29T22:04:18.4491222Z PASS: system review scope",
+      "2026-10-29T22:04:18.8331678Z PASS: repair coordination; 3 immutable coordinator claim(s) verified",
+      "2026-10-29T22:04:27.9979223Z FAIL: test_acquire_cannot_resume_malformed_stored_holder (test_system_holder_epoch_fencing.HolderEpochFencingTests.test_acquire_cannot_resume_malformed_stored_holder) (bad='True')",
+      "2026-10-29T22:04:27.9987436Z FAIL: test_acquire_cannot_resume_malformed_stored_holder (test_system_holder_epoch_fencing.HolderEpochFencingTests.test_acquire_cannot_resume_malformed_stored_holder) (bad='1.0')",
+      "2026-10-29T22:04:27.9995006Z FAIL: test_finally_cannot_release_holder_that_became_malformed (test_system_holder_epoch_fencing.HolderEpochFencingTests.test_finally_cannot_release_holder_that_became_malformed) (bad='True')",
+      "2026-10-29T22:04:28.0003049Z FAIL: test_finally_cannot_release_holder_that_became_malformed (test_system_holder_epoch_fencing.HolderEpochFencingTests.test_finally_cannot_release_holder_that_became_malformed) (bad='1.0')",
+      "2026-10-29T22:04:28.0010866Z FAIL: test_owned_scope_has_no_body_or_cas_for_bad_stored_holder (test_system_holder_epoch_fencing.HolderEpochFencingTests.test_owned_scope_has_no_body_or_cas_for_bad_stored_holder) (bad='True')",
+      "2026-10-29T22:04:28.0018671Z FAIL: test_owned_scope_has_no_body_or_cas_for_bad_stored_holder (test_system_holder_epoch_fencing.HolderEpochFencingTests.test_owned_scope_has_no_body_or_cas_for_bad_stored_holder) (bad='1.0')",
+      "2026-10-29T22:04:28.0026417Z FAIL: test_owns_boolean_argument_is_false (test_system_holder_epoch_fencing.HolderEpochFencingTests.test_owns_boolean_argument_is_false)",
+      "2026-10-29T22:04:28.0033687Z FAIL: test_owns_float_argument_is_false (test_system_holder_epoch_fencing.HolderEpochFencingTests.test_owns_float_argument_is_false)",
+      "2026-10-29T22:04:28.0041375Z FAIL: test_owns_rejects_bad_persisted_generations (test_system_holder_epoch_fencing.HolderEpochFencingTests.test_owns_rejects_bad_persisted_generations) (bad='True')",
+      "2026-10-29T22:04:28.0049511Z FAIL: test_owns_rejects_bad_persisted_generations (test_system_holder_epoch_fencing.HolderEpochFencingTests.test_owns_rejects_bad_persisted_generations) (bad='1.0')",
+      "2026-10-29T22:04:28.0057440Z FAIL: test_release_rejects_bad_persisted_generation_without_mutation (test_system_holder_epoch_fencing.HolderEpochFencingTests.test_release_rejects_bad_persisted_generation_without_mutation) (bad='True')",
+      "2026-10-29T22:04:28.0065710Z FAIL: test_release_rejects_bad_persisted_generation_without_mutation (test_system_holder_epoch_fencing.HolderEpochFencingTests.test_release_rejects_bad_persisted_generation_without_mutation) (bad='1.0')",
+      "2026-10-29T22:04:28.0073929Z FAIL: test_validate_rejects_boolean_persisted_epoch (test_system_holder_epoch_fencing.HolderEpochFencingTests.test_validate_rejects_boolean_persisted_epoch)",
+      "2026-10-29T22:04:28.0081900Z FAIL: test_validate_rejects_float_persisted_epoch (test_system_holder_epoch_fencing.HolderEpochFencingTests.test_validate_rejects_float_persisted_epoch)",
+      "2026-10-29T22:04:28.0088812Z Ran 749 tests in 6.409s",
+      "2026-10-29T22:04:28.0089481Z FAILED (failures=14)"
+    ]
+  },
+  "repair": {
+    "path": "tools/repair_control.py",
+    "old_blob": "a7ebe381c302e54ec08db000d1b562650856c559",
+    "new": {
+      "bytes": 21929,
+      "lines": 405,
+      "blob": "aec1699605fc7754f808b7768ceb8e3ce4b74f29",
+      "sha256": "15c68ddef30dee94ac232b9cf5ac1ff8d910bdd3ea37f29e30d2a9e074608ae4"
+    },
+    "added_lines": 2,
+    "removed_lines": 2,
+    "bytes_delta": 59,
+    "description": "validate rejects non-exact-int persisted holder epoch before equality; owns returnsFalse for non-exact-int caller epoch. No coercion, no lease duration/recovery/provider/permission changes."
+  },
+  "tests": {
+    "new_methods": 12,
+    "local_new": {
+      "run": 12,
+      "failures": 0,
+      "errors": 0
+    },
+    "local_previous_pr": {
+      "run": 28,
+      "failures": 0,
+      "errors": 0
+    },
+    "local_accepted_control": {
+      "run": 29,
+      "failures": 0,
+      "errors": 0
+    },
+    "expected_full_python_tests": 749,
+    "prior737_tests_unchanged": true,
+    "red_and_green_new_test_bytes_identical": true,
+    "new_test": {
+      "bytes": 4596,
+      "lines": 107,
+      "blob": "59eccfa3a7e530b43a0523b6d119c87c20f40269",
+      "sha256": "2410ab5880553b442540938e34c123b6d986e56187166fba997fa3c32b5e233a"
+    },
+    "positive_controls": [
+      "Strict integer generation still owns and finally releases with readback",
+      "Same current owner/epoch primitive release after expiry remains supported; no service recovery or authentication asserted"
+    ],
+    "exact_head_github_green": "PENDING_AT_COMMIT_CREATION",
+    "scope": "Synthetic Host regression callbacks with actual source execution; not provider attestation or crash recovery"
+  },
+  "preserved": {
+    "all_accepted_tests_and_history": true,
+    "prior_pr_tests_and_C00134_C00135": true,
+    "old_C00136_append_only": true,
+    "accepted_main_unchanged": true,
+    "shared32_detailed_adoption_entries": true,
+    "monitoring_services_and_holds_object": true,
+    "protected_policy_checker_workflows_and_PR122_98_110": true
+  },
+  "research": {
+    "retrieved_on": "2026-10-30",
+    "primary_url": "https://docs.python.org/3/library/stdtypes.html",
+    "observation": "Python booleans participate in integer equality; fencing uses exact type checks instead of equality or isinstance alone.",
+    "system_options": [
+      "NO_CHANGE: retains reproduced fence bypass",
+      "COERCE/normalize numeric input: risks silently legitimizing malformed state",
+      "STRICT_REJECT: chosen minimal2-line guard with additive tests"
+    ],
+    "game_options": [
+      "NO_CHANGE during safety repair",
+      "FIRST_LOOP_CLARITY: lower QA cost, effect NOT_MEASURED",
+      "DIFFERENTIATED_ROLE_COLLECTION: preserved OWNER origin, higher visual/UI/balance QA cost, effect NOT_MEASURED"
+    ],
+    "owner_idea": "Existing verbatim/DERIVED provenance retained unchanged; original chat authentication NOT_VERIFIED"
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "limits": [
+    "No source author approval/merge; fresh independent registered REVIEWER decision required on new head",
+    "No caller JSON/provider flag authentication; original epoch251 terminal UNPROVEN and root cause UNKNOWN",
+    "No ordinary expiry-only takeover or new recover permission",
+    "No schedules/tasks/credentials/spend/Gemini/Roblox changes; no A12/A13 formal award",
+    "Reference pulse separate from protected official system57/game38; no duplicate oldRED/GREEN credit"
+  ],
+  "next": "Exact new-head749-test offline+compile_hold success and real job logs, own epoch257 release/readback, formal same-PR repair handoff; separate reviewer only may adopt followed by main QA/handoff"
+}
