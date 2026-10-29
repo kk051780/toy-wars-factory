@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "pr": 118,
+  "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+  "base_main_sha": "3d99c3ec30238587af2823c76682343c403042df",
+  "reviewed_at": "2026-10-29T03:35:26.938Z",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "af363942-93b4-832e-bbed-ee28eb4b71ac",
+  "lease_epoch": 232,
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "findings": [
+    {
+      "id": "PR_LESS_ACCEPTED_SERVICE_OBSERVER",
+      "severity": "PASS",
+      "evidence": "Reviewed exact-head tools/system_idle_health.py: calls accepted tools.system_service_observer.observe; two PEEKs per registered role, main/coord/manifest/epoch binding, stale/current result, active/expired lease and provider failure. No PR or Actions required; no authority grants; main QA explicitly NOT_CHECKED."
+    },
+    {
+      "id": "SYNTHETIC_ADVERSARIAL_REGRESSIONS",
+      "severity": "PASS",
+      "evidence": "Exact-head CI40812571716 attempt1 offline job123246094755 and compile_hold job123246095044 success, trusted META scope and immutable claim gate pass, 569 Python tests PASS including 20 new. Source reports isolated timeout mutant expected fail, not independently reexecuted."
+    },
+    {
+      "id": "LIMITED_A12_SCOPE",
+      "severity": "LIMITATION",
+      "evidence": "No real non-forced host scheduling, durable dedup, notification delivery, independently verified recovery or Roblox/player evidence. Classification returns NOT_VERIFIED; SOURCE_CLASSIFIER_NOT_EXECUTED for this review; A12+5=0."
+    }
+  ],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "category": "SYSTEM_A12_PR_LESS_READ_ONLY_SOURCE_ONLY",
+  "changed_files": [
+    "tools/system_idle_health.py",
+    "tests/test_system_idle_health.py",
+    "history/C00124_pr_less_idle_health.json"
+  ],
+  "ci": {
+    "id": 40812571716,
+    "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+    "attempt": 1,
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 569,
+    "new_tests": 20,
+    "scope_and_claim_gate": "PASS"
+  },
+  "coordination": {
+    "author_claim": "268a6b7517acd21e0965bae9ef9bdbef4c4f855c",
+    "author_epoch": 231,
+    "review_claim": "ffb156404a059058d03ad6ef922d4fa51af73ca9",
+    "review_epoch": 232,
+    "author_service_completed": true
+  },
+  "main_health": {
+    "sha": "3d99c3ec30238587af2823c76682343c403042df",
+    "qa_head": "3009bfefde60311ba58a8962e3fc296db669f75e",
+    "qa": 40782676418,
+    "qa_jobs": "offline+compile_hold success",
+    "handoff": 40809225059,
+    "compare_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "evidence_urls": [
+    "https://github.com/kk051780/toy-wars-factory/pull/118",
+    "https://github.com/kk051780/toy-wars-factory/actions/runs/40812571716",
+    "https://github.com/kk051780/toy-wars-factory/issues/114"
+  ],
+  "next": "Independent exact-head integration then fresh main QA/handoff; A12 operational source+host attestation and notification/recovery separate.",
+  "status": "APPROVED_AWAIT_MERGE"
+}
