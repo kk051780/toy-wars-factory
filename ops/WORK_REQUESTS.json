@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T11:19:06.502Z",
+  "observed_at": "2026-10-29T13:19:04Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2967,6 +2967,77 @@
         "a12_verified": false,
         "delivery": "UNVERIFIED"
       }
+    },
+    {
+      "id": "pr124_parallel_admission_phase0_registered_review_20261029",
+      "kind": "REGISTERED_META_PHASE0_SOURCE_REVIEW",
+      "priority": "P1",
+      "status": "OPEN",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 124,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/124",
+      "branch": "auto/twf-system-review-29b870a0-83b0-8331-948d-942fbef57f57",
+      "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
+      "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "29b870a0-83b0-8331-948d-942fbef57f57",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "e33427a8b5ed173c6b310b2c31f71fccc6318703",
+        "owner_run_id": "29b870a0-83b0-8331-948d-942fbef57f57",
+        "epoch": 247
+      },
+      "created_at": "2026-10-29T13:19:04Z",
+      "request": "Independently review Issue123 Phase0 read-only planner. ThreeA paths only; exact head687 tests and2jobCI pass,51new tests. Do not approve from claimed role/hash, enable writers or count Phase1/2/A12. Check own registered review run, claim provenance, real diff, conservative collision semantics and C129 provenance; source author cannot merge. Post-main QA/handoff after legal independent integration. Preserve separate epoch245 posthoc audit and protected PR122 repairs.",
+      "changed_files": [
+        "tools/system_parallel_admission.py",
+        "tests/test_system_parallel_admission.py",
+        "history/C00129_parallel_admission_phase0.json"
+      ],
+      "ci": {
+        "id": 40880252760,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40880252760",
+        "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
+        "base": "221bc53ce118f5242777c13649f437d18078dcc4",
+        "event": "pull_request",
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "jobs": [
+          {
+            "id": 123469539369,
+            "name": "offline",
+            "conclusion": "success",
+            "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
+            "started_at": "2026-10-29T13:15:22Z",
+            "completed_at": "2026-10-29T13:15:53Z"
+          },
+          {
+            "id": 123469539710,
+            "name": "compile_hold",
+            "conclusion": "success",
+            "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
+            "started_at": "2026-10-29T13:15:23Z",
+            "completed_at": "2026-10-29T13:15:34Z"
+          }
+        ],
+        "python_tests": 687,
+        "new_python_tests": 51,
+        "scope": "PASS_TRUSTED_BASE",
+        "claim": "PASS_ONE_IMMUTABLE_CLAIM",
+        "offline_log": [
+          "2026-10-29T13:15:37.5726291Z PASS: system review scope",
+          "2026-10-29T13:15:37.8999747Z PASS: repair coordination; 1 immutable coordinator claim(s) verified",
+          "2026-10-29T13:15:46.7067530Z Ran 687 tests in 6.368s",
+          "2026-10-29T13:15:46.7068063Z OK",
+          "2026-10-29T13:15:46.8976444Z status/CHAT_HANDOFF.md: OK",
+          "2026-10-29T13:15:46.8977242Z status/LATEST_STATE.json: OK"
+        ]
+      },
+      "scope": "ONE_SOURCE_ADDITIVE_PHASE0_NO_CONCURRENT_WRITER_OR_POLICY_CHANGE",
+      "owner_approval_required": false
     }
   ]
 }

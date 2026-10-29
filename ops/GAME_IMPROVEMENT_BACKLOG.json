@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T11:54:28Z",
+  "observed_at": "2026-10-29T13:19:04Z",
   "source": "PR112 formal provenance repair; current C00122 active view uses exact transcriptions with original chat NOT_VERIFIED; no game source changes.",
   "items": [
     {
@@ -386,13 +386,7 @@
   ],
   "actor": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "24635529-22a0-8323-afad-ab07acb6f077",
-    "recorded_status_at_observation": "in_progress",
-    "latest_result_run_id": "559ceca6-d748-832f-bb96-a5779f993964",
-    "latest_result_binding": "PREVIOUS_RUN_NOT_CURRENT_SUCCESS",
-    "scheduled_for": "2026-10-29T11:38:40.135812Z",
-    "started_at": "2026-10-29T11:39:09.150514Z",
-    "unforced_scheduled_origin": "NOT_VERIFIED_HOST_TRIGGER_ORIGIN_NOT_EXPOSED"
+    "run_id": "29b870a0-83b0-8331-948d-942fbef57f57"
   },
   "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
   "prioritized_candidates": [
@@ -400,41 +394,49 @@
     "private_headless_engine_evidence_path",
     "mobile_pve_frame_time"
   ],
-  "system_precondition": "Evidence-only accepted A12 source execution. No game implementation. Keep NO_CHANGE + FIRST_LOOP_CLARITY + DIFFERENTIATED_ROLE_COLLECTION comparisons and actual engine/player gates; no hypothesis score or callback trace grants implementation authority.",
+  "system_precondition": "OWNER Issue123 Phase0 read-only admission source prioritized under actual META247. No game source or concurrent writer enabled. Retain original/DERIVED provenance and unmeasured NO_CHANGE +2 game hypotheses.",
   "last_primary_source_check": {
     "checked_on": "2026-10-29",
     "references": [
       {
-        "url": "https://docs.github.com/en/rest/git/refs",
-        "kind": "PRIMARY_GITHUB_OFFICIAL",
+        "url": "https://learn.chatgpt.com/docs/long-running-work",
+        "kind": "PRIMARY_OPENAI_OFFICIAL",
         "published_at": "NOT_AVAILABLE",
         "updated_at": "NOT_AVAILABLE",
-        "checked_at": "2026-10-29T11:54:28Z",
-        "fact": "Refs are mutable; force=false preserves fast-forward-only checks. Exact expected_sha is an additional connected capability requirement, not inferred from bare REST force=false."
+        "checked_at": "2026-10-29T13:13:26Z",
+        "finding": "Independent chats can run separately, but each keeps its own context; avoid giving two tasks access to change the same source. Goal mode does not widen sandbox or approvals."
+      },
+      {
+        "url": "https://learn.chatgpt.com/docs/pricing",
+        "kind": "PRIMARY_OPENAI_OFFICIAL",
+        "published_at": "NOT_AVAILABLE",
+        "updated_at": "NOT_AVAILABLE",
+        "checked_at": "2026-10-29T13:13:26Z",
+        "finding": "Work/Codex share usage; allowances depend on model/task/context/tool use, with plan-dependent windows and possible weekly limits. No fixed universal simultaneous-chat count or unlimited use verified; no account quota read or paid change."
       },
       {
         "url": "https://create.roblox.com/docs/production/experiments",
         "kind": "PRIMARY_ROBLOX_OFFICIAL",
         "published_at": "NOT_AVAILABLE",
         "updated_at": "NOT_AVAILABLE",
-        "checked_at": "2026-10-29T11:54:28Z",
-        "fact": "Control/variants and predefined metrics/detectable effect guide causal game experiments; no experiment activated here."
+        "checked_at": "2026-10-29T13:13:26Z",
+        "finding": "Keep control/variant and metrics/detectable-effect hypotheses separate from measured outcomes; no game test or data collection activated."
       },
       {
-        "url": "https://create.roblox.com/docs/production/analytics/get-started",
-        "kind": "PRIMARY_ROBLOX_OFFICIAL",
+        "url": "https://learn.chatgpt.com/docs/automations",
+        "kind": "PRIMARY_OPENAI_OFFICIAL",
         "published_at": "NOT_AVAILABLE",
         "updated_at": "NOT_AVAILABLE",
-        "checked_at": "2026-10-29T11:54:28Z",
-        "fact": "First-session funnels, session lengths,D1/D7 are candidate measures; no real player data measured or accessed."
+        "checked_at": "2026-10-29T13:19:04Z",
+        "finding": "Web scheduled runs use tools/context available to that chat and do not preserve a local worktree; durable sources must be accessible. No task/trigger was changed or started."
       }
     ],
-    "new_same_day_publication": "NOT_ESTABLISHED_CURRENT_DOCS_NOT_CALLED_A_NEW_RELEASE",
+    "new_same_day_publication": "NOT_ESTABLISHED_CURRENT_OFFICIAL_DOCS_NOT_CALLED_NEW_RELEASE",
     "community_response": "NOT_VERIFIED_THIS_RUN",
-    "owner_origins": "C00122 exact-transcription/DERIVED split retained; original_chat_authentication NOT_VERIFIED",
-    "business_reference": "Issue115 freshly read; economic/market outcomes still UNKNOWN/NOT_MEASURED",
-    "game_implementation": "NONE",
-    "comparison": "Existing NO_CHANGE vs FIRST_LOOP_CLARITY vs DIFFERENTIATED_ROLE_COLLECTION retained; no game source edits or market-effect claim"
+    "owner_origins": "C00122 verbatim/DERIVED distinction retained; original chat authentication NOT_VERIFIED",
+    "business_reference": "Issue115 retained; popularity, revenue, paid cost and human labor NOT_MEASURED/UNKNOWN",
+    "game_implementation": "NONE; legal new Phase0 source PR124 instead of another A12 health-only loop",
+    "comparison": "NO_CHANGE vs FIRST_LOOP_CLARITY vs DIFFERENTIATED_ROLE_COLLECTION retained as unmeasured hypotheses; no game edit or telemetry activation"
   },
   "next_experiments": [
     {
@@ -579,13 +581,10 @@
     "current_view": "C00122; C00121 is explicitly rejected historical input, not active original stock"
   },
   "latest_system_source_candidate": {
-    "pr": 121,
-    "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
-    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
-    "merge_sha": "5631288b22d9676420fa1e7f71393502c8fce5a4",
-    "main_qa": 40864317141,
-    "handoff": 40864317147,
-    "description": "Accepted prepared-only notification module; no new source this run. Real incident save, delivery and independent recovery not verified.",
+    "pr": 124,
+    "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
+    "status": "DRAFT_CI_PASS_NOT_MERGED",
+    "description": "Issue123 Phase0 pure advisory duplicate/scope planner; no new writer authority",
     "engine": "NOT_RUN",
     "player_effect": "NOT_MEASURED"
   }
