@@ -87,5 +87,25 @@
     "No authenticated recipient delivery or independent recovery proof.",
     "Current review performed by distinct registered task/run, not distinct GitHub account."
   ],
-  "merge_status": "APPROVED_PENDING_MERGE_AND_POSTMAIN_QA"
+  "merge_status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "merged_at": "2026-10-29T11:19:06.502Z",
+  "merge_sha": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+  "post_merge_main_qa": {
+    "id": 40864317141,
+    "head": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    }
+  },
+  "post_merge_handoff": {
+    "id": 40864317147,
+    "head": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+    "conclusion": "success"
+  },
+  "main_after_handoff": "221bc53ce118f5242777c13649f437d18078dcc4",
+  "status_only_descendant_verified": true,
+  "a12_verified": false,
+  "a13_verified": false
 }

@@ -1,24 +1,24 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T09:34:23.487Z",
+  "observed_at": "2026-10-29T11:19:06.502Z",
   "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "f08a6dcb-96c0-8322-a69a-8603b249be38",
-  "lease_epoch": 237,
-  "main_before": "e1ebe061d60cd74843b144db813f085ad9ce3da7",
+  "reviewer_run_id": "120aefe3-b808-8331-933d-209e5c2e211d",
+  "lease_epoch": 239,
+  "main_before": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
   "latest_review": {
-    "pr": 120,
-    "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
+    "pr": 121,
+    "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
     "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0120_9169f225.json",
-    "ci": 40848410064,
-    "merge_sha": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
-    "main_qa": 40850476260,
-    "handoff": 40850476258,
-    "category": "SYSTEM_A12_SCOPED_HOST_CAS_LEDGER_BRIDGE",
+    "review_record": "ops/reviews/PR0121_fc8195af.json",
+    "ci": 40863409804,
+    "merge_sha": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+    "main_qa": 40864317141,
+    "handoff": 40864317147,
+    "category": "SYSTEM_A12_PREPARED_ONLY_NOTIFICATION_BOUNDARY",
     "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
-    "main_after_handoff": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45"
+    "main_after_handoff": "221bc53ce118f5242777c13649f437d18078dcc4"
   },
   "merged_prs": [
     {
@@ -314,24 +314,34 @@
       "handoff": 40850476258,
       "category": "SYSTEM_A12_SCOPED_HOST_CAS_LEDGER_BRIDGE",
       "main_after_handoff": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45"
+    },
+    {
+      "pr": 121,
+      "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
+      "merge_sha": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40864317141,
+      "handoff": 40864317147,
+      "category": "SYSTEM_A12_PREPARED_ONLY_NOTIFICATION_BOUNDARY",
+      "main_after_handoff": "221bc53ce118f5242777c13649f437d18078dcc4"
     }
   ],
   "merge_count_this_run": 1,
   "main_qa": {
-    "id": 40850476260,
-    "head": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
+    "id": 40864317141,
+    "head": "5631288b22d9676420fa1e7f71393502c8fce5a4",
     "conclusion": "success",
     "jobs": {
       "offline": "success",
       "compile_hold": "success"
     },
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40850476260"
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40864317141"
   },
   "handoff": {
-    "id": 40850476258,
-    "head": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
+    "id": 40864317147,
+    "head": "5631288b22d9676420fa1e7f71393502c8fce5a4",
     "conclusion": "success",
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40850476258"
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40864317147"
   },
   "comparison_since_main_qa": {
     "verified": true,
@@ -342,11 +352,11 @@
     ]
   },
   "unresolved": [],
-  "next": "Issue114: live non-forced schedule/host writer binding, real anomaly persistence, notification delivery and later independent recovery NOT_VERIFIED. Issue113 protected progress unchanged.",
+  "next": "Issue114 A12: actual non-forced scheduled anomaly, durable CAS incident, authenticated delivery and independent recovery still NOT_VERIFIED. Issue113 protected progress 57% unchanged.",
   "runtime_verified": true,
-  "main_after": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
-  "merge_sha": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
-  "next_actor": "META_WORKER_ROADMAP",
+  "main_after": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+  "merge_sha": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+  "next_actor": "REGISTERED_META_OR_WORKER",
   "secondary_review": {
     "pr": 112,
     "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
@@ -354,8 +364,8 @@
     "review_record": "ops/reviews/PR0112_a6ccf32e.json",
     "status": "HISTORICAL_REJECTION_SUPERSEDED_BY_NEW_HEAD_APPROVE"
   },
-  "main_after_merge": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
-  "main_after_handoff": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
+  "main_after_merge": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+  "main_after_handoff": "221bc53ce118f5242777c13649f437d18078dcc4",
   "status_only_descendant_verified": true,
   "merges_this_run": 1,
   "a12_verified": false,

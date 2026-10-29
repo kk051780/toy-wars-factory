@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 239,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "120aefe3-b808-8331-933d-209e5c2e211d",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 239,
-    "acquired_at": "2026-10-29T11:17:02.751Z",
-    "expires_at": "2026-10-29T11:47:02.751Z",
-    "base_main_sha": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -45,14 +35,16 @@
   },
   "last_reported_approval_signature": "b63289e0b9e012b1c25375d0e52363b84a22b8e8ecdb40568755a002de6416ff",
   "last_completed": {
-    "kind": "META",
-    "owner_id": "559ceca6-d748-832f-bb96-a5779f993964",
-    "epoch": 238,
-    "released_at": "2026-10-29T11:14:43+00:00",
+    "kind": "REVIEWER",
+    "owner_id": "120aefe3-b808-8331-933d-209e5c2e211d",
+    "epoch": 239,
+    "released_at": "2026-10-29T11:19:06.502Z",
     "pr": 121,
     "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
-    "ci": 40863409804,
-    "result": "DRAFT_NOTIFICATION_SOURCE_CI_PASS; ACCEPTED_PERSIST_LIVE_HEALTHY_NOT_PERSISTED",
+    "merge_sha": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+    "main_qa": 40864317141,
+    "handoff": 40864317147,
+    "result": "APPROVE_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
     "a12_verified": false
   },
   "last_approval_report": {
