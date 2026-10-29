@@ -1,0 +1,87 @@
+{
+  "id": "C00130",
+  "date": "2026-10-29",
+  "kind": "SYSTEM_PR124_JOIN_REVIEW_RED_CONTROL",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+  "base_main": "221bc53ce118f5242777c13649f437d18078dcc4",
+  "observed_at_utc": "2026-10-29T13:46:12Z",
+  "issue": 123,
+  "pr": 124,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "3a370c48f6a72559dc99423b2a0b1ce56e924226",
+    "owner_run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+    "epoch": 248
+  },
+  "original_author": {
+    "run_id": "29b870a0-83b0-8331-948d-942fbef57f57",
+    "history": "history/C00129_parallel_admission_phase0.json",
+    "claim": "e33427a8b5ed173c6b310b2c31f71fccc6318703",
+    "epoch": 247,
+    "preserved_unchanged": true
+  },
+  "review": {
+    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "run_id": "73bdb9c1-a300-8328-a2fd-0ca62b294119",
+    "recorded_status": "completed",
+    "verdict": "REQUEST_CHANGES",
+    "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
+    "url": "https://github.com/kk051780/toy-wars-factory/pull/124#issuecomment-6498176602",
+    "native_github_review_submitted": false,
+    "manual_additional_finding": "https://github.com/kk051780/toy-wars-factory/pull/124#issuecomment-6497891727"
+  },
+  "stage": "RED_CONTROL_TESTS_ADDED_BEFORE_ANY_SOURCE_FIX",
+  "old_module_blob": "9e6af5a8ba93d2057aef49c8800a66c1464140cd",
+  "old_module_sha256": "679a54f33425ee2598a411f36f63d00212b581db479386ef7018721f12767b42",
+  "old_module_bytes": 8830,
+  "source_fix_applied": false,
+  "problem": "JOIN can bypass same-goal scope consistency and protected writer scope; an active project/repo/goal can name more than one canonical work ID.",
+  "test_plan": {
+    "new_methods": 10,
+    "old_pr_methods_preserved": 51,
+    "expected_python_total": 697,
+    "negative_control": "Existing immutable workflow on same PR must execute added Python tests against unmodified rejected module. Actual result PENDING; no failure or pass is fabricated.",
+    "positive_controls": [
+      "same-goal/different-work with identical normalized scope remains single canonical JOIN",
+      "identical canonical row replay stays idempotent",
+      "goal namespace remains scoped by project and repository"
+    ],
+    "all_authority_remains_false": true
+  },
+  "execution": {
+    "local_python": "NOT_RUN_NO_USABLE_EXECUTION_ENVIRONMENT",
+    "observed_safe_runtime_error": "No usable execution environment is available",
+    "remote_python": "EXISTING_GITHUB_CI_REQUESTED_BY_PR_UPDATE_NOT_YET_OBSERVED",
+    "workflow_changed": false,
+    "new_workflow_dispatched": false,
+    "lease_plan": "Host JSON plan follows freshly read accepted acquire idle-state schema; helper Python was not executed locally"
+  },
+  "files": [
+    {
+      "path": "tests/test_system_parallel_admission.py",
+      "status": "M_UNMERGED_PR_ONLY",
+      "change": "Append10 real-source review regressions; preserve existing51 tests"
+    },
+    {
+      "path": "history/C00130_pr124_join_review_red_control.json",
+      "status": "A"
+    }
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "limits": [
+    "Synthetic declarations are not provider attestation",
+    "No writer/policy/task/spend/Gemini/publication authorization",
+    "Old C00129 source, original run and epoch not rewritten",
+    "Protected PR122/C00128 left unchanged",
+    "A12/A13 +0; official automation57%/game38%"
+  ],
+  "next": "After actual CI red proof, append a separate new repair record and apply narrow source fix on this same PR. Fresh exact-head both-job CI and another registered REVIEWER required; no author merge."
+}
