@@ -1,0 +1,318 @@
+{
+  "schema": 1,
+  "kind": "NONDESTRUCTIVE_OPERATIONAL_JSON_COMPATIBILITY_REPAIR",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "7674c598-6884-8333-92ca-493a3272348c",
+  "repository": "kk051780/toy-wars-factory",
+  "epoch": 254,
+  "claim_commit": "185757612ad0117a52d057adadacf3f534b75d37",
+  "previous_ref": "cbbf2981a3de3c7d4246101302110f06c4a2df93",
+  "old_snapshot_ref": "e398fe3274dbfb0774e1ec39f3acb498795c0d6e",
+  "old_integration_blob": "b52fc2e06f44f7419ed9e3b5ee19f53467e66169",
+  "old_system_blob": "abbdcdbc572d569866cc31de614a61934c16be8e",
+  "request": "https://github.com/kk051780/toy-wars-factory/issues/123#issuecomment-6508176030",
+  "original_history_count": 31,
+  "final_history_count": 32,
+  "original_entry_raw_bytes_preserved": true,
+  "requests_count": 51,
+  "requests_bytes_unchanged": true,
+  "main": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+  "source_changes": 0,
+  "new_repository_tests": 0,
+  "new_prs": 0,
+  "new_ci_runs": 0,
+  "new_merges": 0,
+  "qa": {
+    "id": 40904787932,
+    "head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "reexecuted": false
+  },
+  "handoff": {
+    "id": 40904787875,
+    "head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+    "conclusion": "success",
+    "reexecuted": false
+  },
+  "original_epoch251_same_owner_terminal": "UNPROVEN",
+  "validation": {
+    "kind": "SYNTHETIC_LOCAL_OPERATIONAL_JSON_CHECKS_NOT_ACCEPTED_REPOSITORY_TESTS",
+    "positive_cases": 3,
+    "negative_cases": 43,
+    "positives": [
+      "canonical_schema_and_evidence",
+      "31_raw_entry_byte_sequences_preserved",
+      "duplicate_append_idempotent"
+    ],
+    "negative_results": [
+      {
+        "case": "epoch253_loss_regression",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "missing:integration/latest_review/review_record"
+      },
+      {
+        "case": "history_removed",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "history"
+      },
+      {
+        "case": "history_reordered",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "history"
+      },
+      {
+        "case": "historical_entry_mutated",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "history"
+      },
+      {
+        "case": "duplicate_pr124",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "history"
+      },
+      {
+        "case": "integer_history_entry",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "element:integration/merged_prs"
+      },
+      {
+        "case": "jobs_array",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "type:integration/main_qa/jobs"
+      },
+      {
+        "case": "missing_compile_hold",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "missing:integration/main_qa/jobs/compile_hold"
+      },
+      {
+        "case": "failed_offline",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "jobs"
+      },
+      {
+        "case": "old_qa_run",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "qa"
+      },
+      {
+        "case": "wrong_qa_head",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "qa"
+      },
+      {
+        "case": "missing_qa_conclusion",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "missing:integration/main_qa/conclusion"
+      },
+      {
+        "case": "handoff_failed",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "handoff"
+      },
+      {
+        "case": "wrong_handoff_head",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "handoff"
+      },
+      {
+        "case": "inconsistent_adoption_status",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "status"
+      },
+      {
+        "case": "missing_runtime_key",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "missing:integration/runtime_verified"
+      },
+      {
+        "case": "missing_services",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "missing:system/services"
+      },
+      {
+        "case": "foreign_role_task",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "service_task"
+      },
+      {
+        "case": "foreign_current_run",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "service_run"
+      },
+      {
+        "case": "old_result_current_success",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "old_result"
+      },
+      {
+        "case": "stale_tests_claimed_current",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "historical_tests"
+      },
+      {
+        "case": "historical_red_evidence_removed",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "missing:system/tests/github_red"
+      },
+      {
+        "case": "original_provenance_removed",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "missing:system/input_provenance/formal_review"
+      },
+      {
+        "case": "fake_terminal",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "terminal"
+      },
+      {
+        "case": "false_service_completion",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "terminal"
+      },
+      {
+        "case": "unrelated_request_changed",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "requests"
+      },
+      {
+        "case": "approval_actor_reassigned",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "unrelated_coord:integration_reviews"
+      },
+      {
+        "case": "administrative_history_removed",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "unrelated_coord:administrative_revocations"
+      },
+      {
+        "case": "stale_release_epoch",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "release"
+      },
+      {
+        "case": "foreign_release_owner",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "owner"
+      },
+      {
+        "case": "source_change_claim",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "source"
+      },
+      {
+        "case": "main_moved",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "main"
+      },
+      {
+        "case": "invalid_schema_version",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "schema"
+      },
+      {
+        "case": "boolean_schema",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "type:integration/schema"
+      },
+      {
+        "case": "foreign_repository",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "repository"
+      },
+      {
+        "case": "duplicate_job_receipt",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "job_receipts"
+      },
+      {
+        "case": "wrong_job_receipt",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "job_receipts"
+      },
+      {
+        "case": "old_qa_claimed_new",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "new_qa_claim"
+      },
+      {
+        "case": "own_old_result_relabelled",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "actor_result"
+      },
+      {
+        "case": "foreign_owner_release",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "only the current fenced owner can release"
+      },
+      {
+        "case": "stale_epoch_release",
+        "expected": "REJECT",
+        "actual": "REJECT",
+        "reason": "only the current fenced owner can release"
+      },
+      {
+        "case": "expired_lease_write",
+        "expected": "REJECT",
+        "actual": "REJECT"
+      },
+      {
+        "case": "active_foreign_holder",
+        "expected": "REJECT",
+        "actual": "REJECT"
+      }
+    ],
+    "script_sha256": "e4d2d0ca1cb5a6b8e607277ef68fa602569e2fc71086892cdbc2f0f10deed225"
+  },
+  "independent_review": "AWAIT_NEW_REGISTERED_REVIEWER_EXACT_REF",
+  "observed_at": "2026-10-29T21:10:50Z",
+  "progress": {
+    "automation": 57,
+    "game": 38,
+    "A12": 0,
+    "A13": 0
+  }
+}

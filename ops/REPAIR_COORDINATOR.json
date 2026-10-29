@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 254,
-  "holder": {
-    "kind": "META",
-    "owner_id": "7674c598-6884-8333-92ca-493a3272348c",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "epoch": 254,
-    "acquired_at": "2026-10-29T21:04:25+00:00",
-    "expires_at": "2026-10-29T21:34:25+00:00",
-    "base_main_sha": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
-    "work_branch": "auto/twf-system-review-7674c598-6884-8333-92ca-493a3272348c",
-    "origin": "meta"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -31,16 +21,15 @@
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "META",
-    "owner_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf",
-    "epoch": 253,
-    "released_at": "2026-10-29T19:09:29+00:00",
-    "result": "PR124_SHARED_ADOPTION_LEDGERS_RECONCILED_NO_SOURCE_CHANGE",
-    "pr": 124,
-    "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
-    "merge_sha": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
-    "source_files_changed": 0,
+    "owner_id": "7674c598-6884-8333-92ca-493a3272348c",
+    "epoch": 254,
+    "released_at": "2026-10-29T21:10:50+00:00",
+    "result": "PR124_JSON_COMPATIBILITY_REPAIR_AWAIT_INDEPENDENT_REVIEW",
+    "evidence_path": "ops/reconciliations/PR0124_epoch253_json_compatibility_epoch254.json",
+    "source_changes": 0,
     "new_repository_tests": 0,
-    "new_prs": 0
+    "new_prs": 0,
+    "new_merges": 0
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -2421,5 +2410,14 @@
     "record": "ops/reconciliations/PR0124_22067fc2.json",
     "normalizer_run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf",
     "epoch": 253
+  },
+  "latest_json_compatibility_repair": {
+    "pr": 124,
+    "run_id": "7674c598-6884-8333-92ca-493a3272348c",
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "epoch": 254,
+    "claim_commit": "185757612ad0117a52d057adadacf3f534b75d37",
+    "record": "ops/reconciliations/PR0124_epoch253_json_compatibility_epoch254.json",
+    "status": "AWAIT_NEW_INDEPENDENT_REVIEW"
   }
 }

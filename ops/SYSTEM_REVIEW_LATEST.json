@@ -1,19 +1,410 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T19:09:29Z",
-  "status": "PR124_SHARED_LEDGER_RECONCILIATION_ONLY",
+  "observed_at": "2026-10-29T21:10:50Z",
+  "status": "PR124_JSON_COMPATIBILITY_REPAIRED_AWAIT_INDEPENDENT_REVIEW",
   "repository": "kk051780/toy-wars-factory",
   "actor": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf",
+    "run_id": "7674c598-6884-8333-92ca-493a3272348c",
+    "recorded_status_at_last_peek": "in_progress",
+    "latest_result_run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf",
+    "latest_result_binding": "PREVIOUS_RUN_NOT_CURRENT_SUCCESS",
+    "unforced_scheduled_origin": "NOT_VERIFIED_HOST_TRIGGER_ORIGIN_NOT_EXPOSED",
     "recorded_status_at_preflight": "in_progress",
-    "latest_result_run_id": "30f253c2-400c-8322-9609-be068121fb4e",
     "old_result_used_as_current_success": false
   },
+  "services": {
+    "META": {
+      "task_id": "6add445e4138819197d9cf2b1a02534d",
+      "last_run": {
+        "id": "7674c598-6884-8333-92ca-493a3272348c",
+        "recorded_status": "in_progress",
+        "scheduled_for": "2026-10-29T20:59:57.970500Z",
+        "started_at": "2026-10-29T20:59:59.316277Z",
+        "completed_at": null,
+        "chat_ref": null
+      },
+      "latest_result_run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf",
+      "latest_result_used_as_current_success": false,
+      "delivery_status": "unknown",
+      "currentness": "FRESH_CONNECTED_PEEK_SNAPSHOT",
+      "observed_at": "2026-10-29T21:10:50Z"
+    },
+    "WORKER": {
+      "task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "last_run": {
+        "id": "4d080174-df2c-8323-b2e7-d072444e7c92",
+        "recorded_status": "in_progress",
+        "scheduled_for": "2026-10-29T21:05:04Z",
+        "started_at": "2026-10-29T21:10:04.392568Z",
+        "completed_at": null,
+        "chat_ref": null
+      },
+      "latest_result_run_id": "d5e8b006-945c-832c-8bdf-67b5b8361963",
+      "latest_result_used_as_current_success": false,
+      "delivery_status": "unknown",
+      "currentness": "FRESH_CONNECTED_PEEK_SNAPSHOT",
+      "observed_at": "2026-10-29T21:10:50Z"
+    },
+    "REVIEWER": {
+      "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "last_run": {
+        "id": "e1c9347f-c24c-8327-9309-df245f7bfdd6",
+        "recorded_status": "completed",
+        "scheduled_for": "2026-10-29T20:25:00Z",
+        "started_at": "2026-10-29T20:24:12.095632Z",
+        "completed_at": "2026-10-29T20:25:13.517392Z",
+        "chat_ref": {
+          "type": "chatgpt",
+          "id": "6add6b00-4784-83ee-abae-45d04f185d10"
+        }
+      },
+      "latest_result_run_id": "e1c9347f-c24c-8327-9309-df245f7bfdd6",
+      "latest_result_used_as_current_success": false,
+      "delivery_status": "unknown",
+      "currentness": "FRESH_CONNECTED_PEEK_SNAPSHOT",
+      "observed_at": "2026-10-29T21:10:50Z"
+    }
+  },
   "coordination": {
-    "claim_commit": "e398fe3274dbfb0774e1ec39f3acb498795c0d6e",
-    "epoch": 253,
-    "release_requested_at": "2026-10-29T19:09:29Z"
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "185757612ad0117a52d057adadacf3f534b75d37",
+    "parent": "cbbf2981a3de3c7d4246101302110f06c4a2df93",
+    "owner_run_id": "7674c598-6884-8333-92ca-493a3272348c",
+    "epoch": 254,
+    "acquired_at": "2026-10-29T21:04:25+00:00",
+    "expires_at": "2026-10-29T21:34:25+00:00",
+    "release_requested_at": "2026-10-29T21:10:50Z",
+    "expected_ref_before_release": "185757612ad0117a52d057adadacf3f534b75d37",
+    "force": false,
+    "execution": "Accepted main repair_control.acquire/release/approval_packet(delegated=True) actually executed in local Python from exact canonical blob4d6e61eb8b2f1276abbc33bd99e7da48bc19959c; actual GitHub CAS and resulting-ref re-read establish claim/release",
+    "release": "Own epoch254 atomic release planned; actual postwrite readback required"
+  },
+  "main_health": {
+    "sha": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+    "tree": "19a5c8cb3cae64c47142943f5913fcc8cab8a0ec",
+    "qa_head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+    "qa": 40904787932,
+    "qa_jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "handoff": 40904787875,
+    "handoff_status": "success",
+    "actual_status_only_compare": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "python_tests": 709,
+    "no_current_main_failure": true,
+    "rechecked_in_this_run": true,
+    "main_changed": false,
+    "main_qa_reexecuted": false,
+    "qa_reuse_basis": "Fresh GET of merge22067fc2 QA40904787932 and handoff40904787875; actual compare to main contains only the two generated status files. No new QA run.",
+    "qa_reexecuted": false,
+    "python_test_count_provenance": "Existing canonical main QA offline job123556475404 logs freshly GET-read: Ran 709 tests, OK. No reexecution."
+  },
+  "implementation": {
+    "pr": 124,
+    "url": "https://github.com/kk051780/toy-wars-factory/pull/124",
+    "state": "closed",
+    "draft": false,
+    "merged": true,
+    "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+    "rejected_head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+    "branch": "auto/twf-system-review-29b870a0-83b0-8331-948d-942fbef57f57",
+    "new_pr_created": false,
+    "original_author_run_id": "29b870a0-83b0-8331-948d-942fbef57f57",
+    "first_repair_author_run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+    "second_repair_author_run_id": "30f253c2-400c-8322-9609-be068121fb4e",
+    "files": [
+      "history/C00129_parallel_admission_phase0.json",
+      "history/C00130_pr124_join_review_red_control.json",
+      "history/C00131_pr124_join_review_repair.json",
+      "history/C00132_pr124_incomplete_manifest_red_control.json",
+      "history/C00133_pr124_incomplete_manifest_review_repair.json",
+      "tests/test_system_parallel_admission.py",
+      "tools/system_parallel_admission.py"
+    ],
+    "source": {
+      "path": "tools/system_parallel_admission.py",
+      "blob": "75aa58628ec1df792efae352470e23d9e479b3d0",
+      "sha256": "a5bb0ff11451a7b038d96b82ce630ae2df90f219719fdf603f8ad5cfbae539bd",
+      "bytes": 9151,
+      "lines": 189,
+      "review_patch": {
+        "added": 2,
+        "removed": 2,
+        "bytes_delta": 0,
+        "reason": "Move existing completeness guard unchanged ahead of both early admission branches"
+      }
+    },
+    "test_blob": "9fe6fd9909fa2a5f0072cc43d309362e7fbd9337",
+    "test_sha256": "f9ed0af90af105b6292e80d3828a921869831e55eaceaff22061b6ca1675b77f",
+    "test_bytes": 23976,
+    "accepted_main_blobs_preserved": 278,
+    "old_C00129_C00130_C00131_blobs_preserved": true,
+    "prior_61_pr_tests_preserved": true,
+    "source_game_delta": 0,
+    "merge_sha": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+    "current_cycle_source_changes": 0,
+    "current_cycle_new_prs": 0,
+    "provenance_scope": "Source/test metrics and review patch describe the prior source-author cycle preserved at historical_snapshot; not new work this cycle"
+  },
+  "tests": {
+    "local_red": {
+      "source_unchanged_blob": "20c512af8907b18361b2aa179d638547b4d62a79",
+      "tests_run": 73,
+      "failures": 9,
+      "errors": 0,
+      "failure_tests": [
+        "test_both_matching_manifests_incomplete_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_both_matching_manifests_incomplete_cannot_join)",
+        "test_complete_read_only_candidate_waits_for_incomplete_matching_active (test_system_parallel_admission.IncompleteManifestReviewTests.test_complete_read_only_candidate_waits_for_incomplete_matching_active)",
+        "test_complete_read_only_candidate_waits_for_incomplete_same_repo_active (test_system_parallel_admission.IncompleteManifestReviewTests.test_complete_read_only_candidate_waits_for_incomplete_same_repo_active)",
+        "test_incomplete_candidate_cannot_join_same_goal_different_work (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_candidate_cannot_join_same_goal_different_work)",
+        "test_incomplete_candidate_cannot_join_same_work (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_candidate_cannot_join_same_work)",
+        "test_incomplete_read_only_candidate_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_read_only_candidate_cannot_join)",
+        "test_incomplete_read_only_candidate_cannot_parallel (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_read_only_candidate_cannot_parallel)",
+        "test_matching_incomplete_active_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_matching_incomplete_active_cannot_join) (work='GAME_A001')",
+        "test_matching_incomplete_active_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_matching_incomplete_active_cannot_join) (work='GAME_B001')"
+      ],
+      "new_methods": 12
+    },
+    "local_green": {
+      "source_bytes": 9151,
+      "source_lines": 189,
+      "source_blob": "75aa58628ec1df792efae352470e23d9e479b3d0",
+      "source_sha256": "a5bb0ff11451a7b038d96b82ce630ae2df90f219719fdf603f8ad5cfbae539bd",
+      "tests_run": 73,
+      "failures": 0,
+      "errors": 0,
+      "tests_blob": "9fe6fd9909fa2a5f0072cc43d309362e7fbd9337",
+      "tests_sha256": "f9ed0af90af105b6292e80d3828a921869831e55eaceaff22061b6ca1675b77f"
+    },
+    "github_red": {
+      "head": "cd830891853f5b5c5c70ab13fcb6473b0d415659",
+      "run": 40890066161,
+      "attempt": 1,
+      "offline": {
+        "id": 123504123723,
+        "conclusion": "failure",
+        "python_tests": 709,
+        "assertion_failures": 9
+      },
+      "compile_hold": {
+        "id": 123504123393,
+        "conclusion": "success"
+      },
+      "source_blob": "20c512af8907b18361b2aa179d638547b4d62a79",
+      "source_unmodified": true,
+      "scope_and4claims_passed": true,
+      "proof": [
+        "2026-10-29T14:18:11.3302162Z PASS: system review scope",
+        "2026-10-29T14:18:11.6807529Z PASS: repair coordination; 4 immutable coordinator claim(s) verified",
+        "2026-10-29T14:18:19.8454857Z FAIL: test_both_matching_manifests_incomplete_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_both_matching_manifests_incomplete_cannot_join)",
+        "2026-10-29T14:18:19.8471646Z FAIL: test_complete_read_only_candidate_waits_for_incomplete_matching_active (test_system_parallel_admission.IncompleteManifestReviewTests.test_complete_read_only_candidate_waits_for_incomplete_matching_active)",
+        "2026-10-29T14:18:19.8483132Z FAIL: test_complete_read_only_candidate_waits_for_incomplete_same_repo_active (test_system_parallel_admission.IncompleteManifestReviewTests.test_complete_read_only_candidate_waits_for_incomplete_same_repo_active)",
+        "2026-10-29T14:18:19.8493810Z FAIL: test_incomplete_candidate_cannot_join_same_goal_different_work (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_candidate_cannot_join_same_goal_different_work)",
+        "2026-10-29T14:18:19.8505030Z FAIL: test_incomplete_candidate_cannot_join_same_work (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_candidate_cannot_join_same_work)",
+        "2026-10-29T14:18:19.8514992Z FAIL: test_incomplete_read_only_candidate_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_read_only_candidate_cannot_join)",
+        "2026-10-29T14:18:19.8525371Z FAIL: test_incomplete_read_only_candidate_cannot_parallel (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_read_only_candidate_cannot_parallel)",
+        "2026-10-29T14:18:19.8535992Z FAIL: test_matching_incomplete_active_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_matching_incomplete_active_cannot_join) (work='GAME_A001')",
+        "2026-10-29T14:18:19.8545894Z FAIL: test_matching_incomplete_active_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_matching_incomplete_active_cannot_join) (work='GAME_B001')",
+        "2026-10-29T14:18:19.8555592Z Ran 709 tests in 5.861s",
+        "2026-10-29T14:18:19.8555973Z FAILED (failures=9)"
+      ]
+    },
+    "github_green": {
+      "id": 40890528723,
+      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40890528723",
+      "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+      "base": "221bc53ce118f5242777c13649f437d18078dcc4",
+      "event": "pull_request",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 123505767880,
+          "name": "offline",
+          "conclusion": "success",
+          "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+          "started_at": "2026-10-29T14:20:46Z",
+          "completed_at": "2026-10-29T14:21:15Z"
+        },
+        {
+          "id": 123505768462,
+          "name": "compile_hold",
+          "conclusion": "success",
+          "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+          "started_at": "2026-10-29T14:20:46Z",
+          "completed_at": "2026-10-29T14:20:57Z"
+        }
+      ],
+      "python_tests": 709,
+      "new_python_tests_this_repair": 12,
+      "prior_pr_python_tests": 61,
+      "scope": "PASS_TRUSTED_BASE",
+      "claim": "PASS_FIVE_IMMUTABLE_HISTORY_CLAIMS",
+      "offline_log": [
+        "2026-10-29T14:20:58.8358673Z PASS: system review scope",
+        "2026-10-29T14:20:59.3932251Z PASS: repair coordination; 5 immutable coordinator claim(s) verified",
+        "2026-10-29T14:21:06.4932949Z Ran 709 tests in 4.603s",
+        "2026-10-29T14:21:06.4933194Z OK",
+        "2026-10-29T14:21:06.6307222Z status/CHAT_HANDOFF.md: OK",
+        "2026-10-29T14:21:06.6307745Z status/LATEST_STATE.json: OK"
+      ]
+    },
+    "new_methods": 12,
+    "prior_pr_methods_preserved": 61,
+    "main_accepted_python_tests_preserved": 636,
+    "red_and_green_test_bytes_identical": true,
+    "interpretation": "Actual PR Python source executed locally and in existing GitHub CI with synthetic manifests; not live provider/task attestation or simultaneous source writers"
+  },
+  "input_provenance": {
+    "formal_review": {
+      "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "run_id": "51d0d0bd-1be8-8328-b6cf-a28aa0e83a51",
+      "recorded_status": "completed",
+      "epoch": 249,
+      "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+      "verdict": "REQUEST_CHANGES_INCOMPLETE_MANIFEST_JOIN_FAIL_CLOSED",
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/124#issuecomment-6498775943",
+      "finding_was_static_not_executed_by_reviewer": true
+    },
+    "canonical_work_request_ref": {
+      "ref": "f9aed743aea06276956a61515d1c330585d34806",
+      "blob": "35a50515f1ef5bdd9264d721c2bbfe7be494ca3d"
+    },
+    "fresh_library_verification": {
+      "library_file_id": "libfile_8cd3b9bbc6188191a00aca4630468e25",
+      "bytes": 22544,
+      "sha256": "7daa5f97a3d53ca3d104ba36178ee17b4eb2842f757e2df2e2889fc633e44162",
+      "crc": "PASS",
+      "members": [
+        {
+          "name": "twf_parallel_candidate_v6/README.md",
+          "bytes": 5331
+        },
+        {
+          "name": "twf_parallel_candidate_v6/tests/test_system_parallel_admission.py",
+          "bytes": 8966
+        },
+        {
+          "name": "twf_parallel_candidate_v6/tests/test_system_parallel_cas_model.py",
+          "bytes": 9753
+        },
+        {
+          "name": "twf_parallel_candidate_v6/tests/test_system_parallel_git_ref_cas.py",
+          "bytes": 9510
+        },
+        {
+          "name": "twf_parallel_candidate_v6/tests/test_system_parallel_live_bridge.py",
+          "bytes": 9467
+        },
+        {
+          "name": "twf_parallel_candidate_v6/tools/system_parallel_admission.py",
+          "bytes": 7446
+        },
+        {
+          "name": "twf_parallel_candidate_v6/tools/system_parallel_cas_model.py",
+          "bytes": 8252
+        },
+        {
+          "name": "twf_parallel_candidate_v6/tools/system_parallel_live_bridge.py",
+          "bytes": 8624
+        }
+      ],
+      "executed_archive_code": false
+    },
+    "library_archive_code_executed_or_imported": false,
+    "original_library_provenance_history": "history/C00129_parallel_admission_phase0.json",
+    "old_authors_and_claims_not_reassigned": true
+  },
+  "research": {
+    "checked_on": "2026-10-29",
+    "references": [
+      {
+        "url": "https://learn.chatgpt.com/docs/long-running-work",
+        "kind": "PRIMARY_OPENAI_OFFICIAL",
+        "finding": "Separate contexts and avoiding simultaneous writes to one connected source support conservative advisory admission; goal/worktree use does not grant broader access."
+      },
+      {
+        "url": "https://learn.chatgpt.com/docs/pricing",
+        "kind": "PRIMARY_OPENAI_OFFICIAL",
+        "finding": "Usage depends on task/model/context/tools and shared allowance; no universal unlimited chat/concurrency promise or account quota verified."
+      },
+      {
+        "url": "https://create.roblox.com/docs/production/experiments",
+        "kind": "PRIMARY_ROBLOX_OFFICIAL",
+        "finding": "Control and variant changes need observed metrics; hypotheses are not measured player improvements."
+      }
+    ],
+    "new_release_not_claimed": true,
+    "game_candidates": [
+      "NO_CHANGE",
+      "FIRST_LOOP_CLARITY",
+      "DIFFERENTIATED_ROLE_COLLECTION"
+    ],
+    "comparison": "Keep current game unchanged during safety repair; first-loop clarity has smaller implementation/QA surface but onboarding impact unmeasured; differentiated collection follows original OWNER variety idea but needs greater model/UI/balance/QA cost and actual engine/player evidence.",
+    "game_effect": "NOT_MEASURED",
+    "community_response": "NOT_VERIFIED_THIS_RUN",
+    "owner_origins": "C00122 verbatim vs DERIVED retained; original-chat authentication NOT_VERIFIED; no new owner transcription claimed",
+    "business_reference": "Issue115 retained, revenue/popularity/model cost/human labor UNKNOWN/NOT_MEASURED"
+  },
+  "progress": {
+    "automation_percent": 57,
+    "game_percent": 38,
+    "A12_points_awarded": 0,
+    "A13_points_awarded": 0,
+    "protected_candidate76": "Issue113/PR122 separate independent protected maintenance",
+    "automation": 57,
+    "game": 38,
+    "A12": 0,
+    "A13": 0
+  },
+  "limits": [
+    "Source remains PURE/advisory, NOT_VERIFIED and all authority false",
+    "No live canonical work intake, parallel writers or speedup demonstrated",
+    "No new A12 live anomaly/persistence/notification/recovery or A13 unforced-cycle evidence",
+    "No author approval/merge or main source write; new reviewer status in_progress is not approval",
+    "Protected policy/checker/workflows/accepted tests/history/config/Issue113/117 unchanged",
+    "No task/schedule/credential/fee/Gemini/publication changes",
+    "This cycle only restores operational JSON; source/tests/PR/merge/CI unchanged",
+    "Original epoch251 same-owner terminal UNPROVEN; no expiry-only recovery",
+    "Synthetic local operational checks are not accepted repository regressions",
+    "Exact new shared-ref independent compatibility review PENDING"
+  ],
+  "timing": {
+    "service_started_at": "2026-10-29T20:59:59.316277Z",
+    "report_at": "2026-10-29T21:10:50Z",
+    "elapsed_seconds_from_service_start": 650,
+    "human_work_minutes": "NOT_MEASURED",
+    "release_requested_at": "2026-10-29T21:10:50Z",
+    "elapsed_seconds_from_service_start_at_release": 650
+  },
+  "previous_report": {
+    "ref": "e398fe3274dbfb0774e1ec39f3acb498795c0d6e",
+    "blob": "abbdcdbc572d569866cc31de614a61934c16be8e",
+    "actor": {
+      "task_id": "6add445e4138819197d9cf2b1a02534d",
+      "run_id": "30f253c2-400c-8322-9609-be068121fb4e",
+      "recorded_status_at_last_peek": "in_progress",
+      "latest_result_run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+      "latest_result_binding": "PREVIOUS_RUN_NOT_CURRENT_SUCCESS",
+      "unforced_scheduled_origin": "NOT_VERIFIED_HOST_TRIGGER_ORIGIN_NOT_EXPOSED"
+    },
+    "status": "PR124_SECOND_REQUEST_CHANGES_REPAIRED_EXACT_HEAD_CI_PASS_WAIT_NEW_INDEPENDENT_REVIEW",
+    "currentness": "OLD_AUDIT_POINT_SNAPSHOT_NOT_CURRENT"
+  },
+  "next_actor": "REGISTERED_REVIEWER_NEW_RUN",
+  "next_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "next": "Independent exact shared-ref JSON compatibility review. PR124 already merged; no new merge/source/CAPA in this cycle.",
+  "holds": {
+    "Gemini": "SEVERE_HOLD",
+    "external_model_spend": "HOLD",
+    "Roblox_publish": "HOLD",
+    "new_tasks_schedules_credentials": "PROHIBITED"
   },
   "evidence_path": "ops/reconciliations/PR0124_22067fc2.json",
   "main": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
@@ -31,10 +422,6 @@
     "positive": 1,
     "negative_rejections": 8
   },
-  "previous_report": {
-    "ref": "85c9aa70795b86b07db9d3b00e6a8ac6e54319d8",
-    "blob": "abbdcdbc572d569866cc31de614a61934c16be8e"
-  },
   "failed_prior_run": {
     "run_id": "a0f5d008-8654-8322-bd8c-b7e0d1fb1e36",
     "status": "failed",
@@ -43,12 +430,749 @@
     "existing_incident": "https://github.com/kk051780/toy-wars-factory/issues/114#issuecomment-6505831375",
     "duplicate_incident_created": false
   },
-  "next": "Separate future genuine META run: bounded finally-release CAPA and provider-attested same-run terminal history. Old epoch251 termination remains UNPROVEN; no routine expiry takeover.",
-  "progress": {
-    "automation": 57,
-    "game": 38,
-    "A12": 0,
-    "A13": 0
+  "historical_snapshot": {
+    "kind": "OLD_AUDIT_POINT_SNAPSHOT_NOT_CURRENT",
+    "ref": "e398fe3274dbfb0774e1ec39f3acb498795c0d6e",
+    "blob": "abbdcdbc572d569866cc31de614a61934c16be8e",
+    "observed_at": "2026-10-29T14:26:52Z",
+    "currentness": "STALE_NOT_CURRENT_SERVICE_OR_QA_RUN",
+    "data": {
+      "schema": 1,
+      "observed_at": "2026-10-29T14:26:52Z",
+      "status": "PR124_SECOND_REQUEST_CHANGES_REPAIRED_EXACT_HEAD_CI_PASS_WAIT_NEW_INDEPENDENT_REVIEW",
+      "repository": "kk051780/toy-wars-factory",
+      "actor": {
+        "task_id": "6add445e4138819197d9cf2b1a02534d",
+        "run_id": "30f253c2-400c-8322-9609-be068121fb4e",
+        "recorded_status_at_last_peek": "in_progress",
+        "latest_result_run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+        "latest_result_binding": "PREVIOUS_RUN_NOT_CURRENT_SUCCESS",
+        "unforced_scheduled_origin": "NOT_VERIFIED_HOST_TRIGGER_ORIGIN_NOT_EXPOSED"
+      },
+      "services": {
+        "META": {
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "last_run": {
+            "id": "30f253c2-400c-8322-9609-be068121fb4e",
+            "recorded_status": "in_progress",
+            "scheduled_for": "2026-10-29T14:08:56.844868Z",
+            "started_at": "2026-10-29T14:09:26.650351Z",
+            "completed_at": null,
+            "chat_ref": null
+          },
+          "latest_result_run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+          "latest_result_used_as_current_success": false,
+          "delivery_status": "unknown"
+        },
+        "WORKER": {
+          "task_id": "6adbf0d6a7d881918ce181dff2468867",
+          "last_run": {
+            "id": "d31e43b0-66f4-8324-9fa4-0a4d5c487afc",
+            "recorded_status": "completed",
+            "scheduled_for": "2026-10-29T14:05:04Z",
+            "started_at": "2026-10-29T14:08:44.625517Z",
+            "completed_at": "2026-10-29T14:09:58.521535Z",
+            "chat_ref": {
+              "type": "chatgpt",
+              "id": "6adc2384-0294-83ee-a005-ef536b9eb34a"
+            }
+          },
+          "latest_result_run_id": "d31e43b0-66f4-8324-9fa4-0a4d5c487afc",
+          "latest_result_used_as_current_success": false,
+          "delivery_status": "unknown"
+        },
+        "REVIEWER": {
+          "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+          "last_run": {
+            "id": "56112df0-1df4-8333-a46d-488cbff3397b",
+            "recorded_status": "in_progress",
+            "scheduled_for": "2026-10-29T14:25:00Z",
+            "started_at": "2026-10-29T14:24:37.060981Z",
+            "completed_at": null,
+            "chat_ref": null
+          },
+          "latest_result_run_id": "51d0d0bd-1be8-8328-b6cf-a28aa0e83a51",
+          "latest_result_used_as_current_success": false,
+          "delivery_status": "unknown"
+        }
+      },
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "f9aed743aea06276956a61515d1c330585d34806",
+        "parent": "6e7e6a69328725eaf13b6a2ce1fc5ea3c425495c",
+        "owner_run_id": "30f253c2-400c-8322-9609-be068121fb4e",
+        "epoch": 250,
+        "acquired_at": "2026-10-29T14:14:45+00:00",
+        "expires_at": "2026-10-29T14:44:45+00:00",
+        "release_requested_at": "2026-10-29T14:29:29Z",
+        "expected_ref_before_release": "f9aed743aea06276956a61515d1c330585d34806",
+        "force": false,
+        "execution": "Accepted main repair_control.acquire/release/approval_packet(delegated=True) actually executed in local Python from exact canonical blob4d6e61eb8b2f1276abbc33bd99e7da48bc19959c; actual GitHub CAS and resulting-ref re-read establish claim/release",
+        "release": "holder null in this atomic commit; final actual-ref readback still required"
+      },
+      "main_health": {
+        "sha": "221bc53ce118f5242777c13649f437d18078dcc4",
+        "tree": "da583a571a43386091fd95a9d0aa9f1397af8d9b",
+        "qa_head": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+        "qa": 40864317141,
+        "qa_jobs": {
+          "offline": "success",
+          "compile_hold": "success"
+        },
+        "handoff": 40864317147,
+        "handoff_status": "success",
+        "actual_status_only_compare": [
+          "status/CHAT_HANDOFF.md",
+          "status/LATEST_STATE.json"
+        ],
+        "python_tests": 636,
+        "no_current_main_failure": true,
+        "rechecked_in_this_run": true,
+        "main_changed": false,
+        "main_qa_reexecuted": false,
+        "qa_reuse_basis": "Fresh actual GitHub compare5631288b22d9676420fa1e7f71393502c8fce5a4...221bc53ce118f5242777c13649f437d18078dcc4 contains only generated status/CHAT_HANDOFF.md and status/LATEST_STATE.json; existing two jobs and handoff re-read SUCCESS",
+        "qa_reexecuted": false
+      },
+      "implementation": {
+        "pr": 124,
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/124",
+        "state": "open",
+        "draft": true,
+        "merged": false,
+        "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+        "rejected_head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+        "branch": "auto/twf-system-review-29b870a0-83b0-8331-948d-942fbef57f57",
+        "new_pr_created": false,
+        "original_author_run_id": "29b870a0-83b0-8331-948d-942fbef57f57",
+        "first_repair_author_run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+        "second_repair_author_run_id": "30f253c2-400c-8322-9609-be068121fb4e",
+        "files": [
+          "history/C00129_parallel_admission_phase0.json",
+          "history/C00130_pr124_join_review_red_control.json",
+          "history/C00131_pr124_join_review_repair.json",
+          "history/C00132_pr124_incomplete_manifest_red_control.json",
+          "history/C00133_pr124_incomplete_manifest_review_repair.json",
+          "tests/test_system_parallel_admission.py",
+          "tools/system_parallel_admission.py"
+        ],
+        "source": {
+          "path": "tools/system_parallel_admission.py",
+          "blob": "75aa58628ec1df792efae352470e23d9e479b3d0",
+          "sha256": "a5bb0ff11451a7b038d96b82ce630ae2df90f219719fdf603f8ad5cfbae539bd",
+          "bytes": 9151,
+          "lines": 189,
+          "review_patch": {
+            "added": 2,
+            "removed": 2,
+            "bytes_delta": 0,
+            "reason": "Move existing completeness guard unchanged ahead of both early admission branches"
+          }
+        },
+        "test_blob": "9fe6fd9909fa2a5f0072cc43d309362e7fbd9337",
+        "test_sha256": "f9ed0af90af105b6292e80d3828a921869831e55eaceaff22061b6ca1675b77f",
+        "test_bytes": 23976,
+        "accepted_main_blobs_preserved": 278,
+        "old_C00129_C00130_C00131_blobs_preserved": true,
+        "prior_61_pr_tests_preserved": true,
+        "source_game_delta": 0
+      },
+      "tests": {
+        "local_red": {
+          "source_unchanged_blob": "20c512af8907b18361b2aa179d638547b4d62a79",
+          "tests_run": 73,
+          "failures": 9,
+          "errors": 0,
+          "failure_tests": [
+            "test_both_matching_manifests_incomplete_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_both_matching_manifests_incomplete_cannot_join)",
+            "test_complete_read_only_candidate_waits_for_incomplete_matching_active (test_system_parallel_admission.IncompleteManifestReviewTests.test_complete_read_only_candidate_waits_for_incomplete_matching_active)",
+            "test_complete_read_only_candidate_waits_for_incomplete_same_repo_active (test_system_parallel_admission.IncompleteManifestReviewTests.test_complete_read_only_candidate_waits_for_incomplete_same_repo_active)",
+            "test_incomplete_candidate_cannot_join_same_goal_different_work (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_candidate_cannot_join_same_goal_different_work)",
+            "test_incomplete_candidate_cannot_join_same_work (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_candidate_cannot_join_same_work)",
+            "test_incomplete_read_only_candidate_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_read_only_candidate_cannot_join)",
+            "test_incomplete_read_only_candidate_cannot_parallel (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_read_only_candidate_cannot_parallel)",
+            "test_matching_incomplete_active_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_matching_incomplete_active_cannot_join) (work='GAME_A001')",
+            "test_matching_incomplete_active_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_matching_incomplete_active_cannot_join) (work='GAME_B001')"
+          ],
+          "new_methods": 12
+        },
+        "local_green": {
+          "source_bytes": 9151,
+          "source_lines": 189,
+          "source_blob": "75aa58628ec1df792efae352470e23d9e479b3d0",
+          "source_sha256": "a5bb0ff11451a7b038d96b82ce630ae2df90f219719fdf603f8ad5cfbae539bd",
+          "tests_run": 73,
+          "failures": 0,
+          "errors": 0,
+          "tests_blob": "9fe6fd9909fa2a5f0072cc43d309362e7fbd9337",
+          "tests_sha256": "f9ed0af90af105b6292e80d3828a921869831e55eaceaff22061b6ca1675b77f"
+        },
+        "github_red": {
+          "head": "cd830891853f5b5c5c70ab13fcb6473b0d415659",
+          "run": 40890066161,
+          "attempt": 1,
+          "offline": {
+            "id": 123504123723,
+            "conclusion": "failure",
+            "python_tests": 709,
+            "assertion_failures": 9
+          },
+          "compile_hold": {
+            "id": 123504123393,
+            "conclusion": "success"
+          },
+          "source_blob": "20c512af8907b18361b2aa179d638547b4d62a79",
+          "source_unmodified": true,
+          "scope_and4claims_passed": true,
+          "proof": [
+            "2026-10-29T14:18:11.3302162Z PASS: system review scope",
+            "2026-10-29T14:18:11.6807529Z PASS: repair coordination; 4 immutable coordinator claim(s) verified",
+            "2026-10-29T14:18:19.8454857Z FAIL: test_both_matching_manifests_incomplete_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_both_matching_manifests_incomplete_cannot_join)",
+            "2026-10-29T14:18:19.8471646Z FAIL: test_complete_read_only_candidate_waits_for_incomplete_matching_active (test_system_parallel_admission.IncompleteManifestReviewTests.test_complete_read_only_candidate_waits_for_incomplete_matching_active)",
+            "2026-10-29T14:18:19.8483132Z FAIL: test_complete_read_only_candidate_waits_for_incomplete_same_repo_active (test_system_parallel_admission.IncompleteManifestReviewTests.test_complete_read_only_candidate_waits_for_incomplete_same_repo_active)",
+            "2026-10-29T14:18:19.8493810Z FAIL: test_incomplete_candidate_cannot_join_same_goal_different_work (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_candidate_cannot_join_same_goal_different_work)",
+            "2026-10-29T14:18:19.8505030Z FAIL: test_incomplete_candidate_cannot_join_same_work (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_candidate_cannot_join_same_work)",
+            "2026-10-29T14:18:19.8514992Z FAIL: test_incomplete_read_only_candidate_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_read_only_candidate_cannot_join)",
+            "2026-10-29T14:18:19.8525371Z FAIL: test_incomplete_read_only_candidate_cannot_parallel (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_read_only_candidate_cannot_parallel)",
+            "2026-10-29T14:18:19.8535992Z FAIL: test_matching_incomplete_active_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_matching_incomplete_active_cannot_join) (work='GAME_A001')",
+            "2026-10-29T14:18:19.8545894Z FAIL: test_matching_incomplete_active_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_matching_incomplete_active_cannot_join) (work='GAME_B001')",
+            "2026-10-29T14:18:19.8555592Z Ran 709 tests in 5.861s",
+            "2026-10-29T14:18:19.8555973Z FAILED (failures=9)"
+          ]
+        },
+        "github_green": {
+          "id": 40890528723,
+          "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40890528723",
+          "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+          "base": "221bc53ce118f5242777c13649f437d18078dcc4",
+          "event": "pull_request",
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "jobs": [
+            {
+              "id": 123505767880,
+              "name": "offline",
+              "conclusion": "success",
+              "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+              "started_at": "2026-10-29T14:20:46Z",
+              "completed_at": "2026-10-29T14:21:15Z"
+            },
+            {
+              "id": 123505768462,
+              "name": "compile_hold",
+              "conclusion": "success",
+              "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+              "started_at": "2026-10-29T14:20:46Z",
+              "completed_at": "2026-10-29T14:20:57Z"
+            }
+          ],
+          "python_tests": 709,
+          "new_python_tests_this_repair": 12,
+          "prior_pr_python_tests": 61,
+          "scope": "PASS_TRUSTED_BASE",
+          "claim": "PASS_FIVE_IMMUTABLE_HISTORY_CLAIMS",
+          "offline_log": [
+            "2026-10-29T14:20:58.8358673Z PASS: system review scope",
+            "2026-10-29T14:20:59.3932251Z PASS: repair coordination; 5 immutable coordinator claim(s) verified",
+            "2026-10-29T14:21:06.4932949Z Ran 709 tests in 4.603s",
+            "2026-10-29T14:21:06.4933194Z OK",
+            "2026-10-29T14:21:06.6307222Z status/CHAT_HANDOFF.md: OK",
+            "2026-10-29T14:21:06.6307745Z status/LATEST_STATE.json: OK"
+          ]
+        },
+        "new_methods": 12,
+        "prior_pr_methods_preserved": 61,
+        "main_accepted_python_tests_preserved": 636,
+        "red_and_green_test_bytes_identical": true,
+        "interpretation": "Actual PR Python source executed locally and in existing GitHub CI with synthetic manifests; not live provider/task attestation or simultaneous source writers"
+      },
+      "input_provenance": {
+        "formal_review": {
+          "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+          "run_id": "51d0d0bd-1be8-8328-b6cf-a28aa0e83a51",
+          "recorded_status": "completed",
+          "epoch": 249,
+          "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+          "verdict": "REQUEST_CHANGES_INCOMPLETE_MANIFEST_JOIN_FAIL_CLOSED",
+          "url": "https://github.com/kk051780/toy-wars-factory/pull/124#issuecomment-6498775943",
+          "finding_was_static_not_executed_by_reviewer": true
+        },
+        "canonical_work_request_ref": {
+          "ref": "f9aed743aea06276956a61515d1c330585d34806",
+          "blob": "35a50515f1ef5bdd9264d721c2bbfe7be494ca3d"
+        },
+        "fresh_library_verification": {
+          "library_file_id": "libfile_8cd3b9bbc6188191a00aca4630468e25",
+          "bytes": 22544,
+          "sha256": "7daa5f97a3d53ca3d104ba36178ee17b4eb2842f757e2df2e2889fc633e44162",
+          "crc": "PASS",
+          "members": [
+            {
+              "name": "twf_parallel_candidate_v6/README.md",
+              "bytes": 5331
+            },
+            {
+              "name": "twf_parallel_candidate_v6/tests/test_system_parallel_admission.py",
+              "bytes": 8966
+            },
+            {
+              "name": "twf_parallel_candidate_v6/tests/test_system_parallel_cas_model.py",
+              "bytes": 9753
+            },
+            {
+              "name": "twf_parallel_candidate_v6/tests/test_system_parallel_git_ref_cas.py",
+              "bytes": 9510
+            },
+            {
+              "name": "twf_parallel_candidate_v6/tests/test_system_parallel_live_bridge.py",
+              "bytes": 9467
+            },
+            {
+              "name": "twf_parallel_candidate_v6/tools/system_parallel_admission.py",
+              "bytes": 7446
+            },
+            {
+              "name": "twf_parallel_candidate_v6/tools/system_parallel_cas_model.py",
+              "bytes": 8252
+            },
+            {
+              "name": "twf_parallel_candidate_v6/tools/system_parallel_live_bridge.py",
+              "bytes": 8624
+            }
+          ],
+          "executed_archive_code": false
+        },
+        "library_archive_code_executed_or_imported": false,
+        "original_library_provenance_history": "history/C00129_parallel_admission_phase0.json",
+        "old_authors_and_claims_not_reassigned": true
+      },
+      "research": {
+        "checked_on": "2026-10-29",
+        "references": [
+          {
+            "url": "https://learn.chatgpt.com/docs/long-running-work",
+            "kind": "PRIMARY_OPENAI_OFFICIAL",
+            "finding": "Separate contexts and avoiding simultaneous writes to one connected source support conservative advisory admission; goal/worktree use does not grant broader access."
+          },
+          {
+            "url": "https://learn.chatgpt.com/docs/pricing",
+            "kind": "PRIMARY_OPENAI_OFFICIAL",
+            "finding": "Usage depends on task/model/context/tools and shared allowance; no universal unlimited chat/concurrency promise or account quota verified."
+          },
+          {
+            "url": "https://create.roblox.com/docs/production/experiments",
+            "kind": "PRIMARY_ROBLOX_OFFICIAL",
+            "finding": "Control and variant changes need observed metrics; hypotheses are not measured player improvements."
+          }
+        ],
+        "new_release_not_claimed": true,
+        "game_candidates": [
+          "NO_CHANGE",
+          "FIRST_LOOP_CLARITY",
+          "DIFFERENTIATED_ROLE_COLLECTION"
+        ],
+        "comparison": "Keep current game unchanged during safety repair; first-loop clarity has smaller implementation/QA surface but onboarding impact unmeasured; differentiated collection follows original OWNER variety idea but needs greater model/UI/balance/QA cost and actual engine/player evidence.",
+        "game_effect": "NOT_MEASURED",
+        "community_response": "NOT_VERIFIED_THIS_RUN",
+        "owner_origins": "C00122 verbatim vs DERIVED retained; original-chat authentication NOT_VERIFIED; no new owner transcription claimed",
+        "business_reference": "Issue115 retained, revenue/popularity/model cost/human labor UNKNOWN/NOT_MEASURED"
+      },
+      "progress": {
+        "automation_percent": 57,
+        "game_percent": 38,
+        "A12_points_awarded": 0,
+        "A13_points_awarded": 0,
+        "protected_candidate76": "Issue113/PR122 separate independent protected maintenance"
+      },
+      "limits": [
+        "Source remains PURE/advisory, NOT_VERIFIED and all authority false",
+        "No live canonical work intake, parallel writers or speedup demonstrated",
+        "No new A12 live anomaly/persistence/notification/recovery or A13 unforced-cycle evidence",
+        "No author approval/merge or main source write; new reviewer status in_progress is not approval",
+        "Protected policy/checker/workflows/accepted tests/history/config/Issue113/117 unchanged",
+        "No task/schedule/credential/fee/Gemini/publication changes"
+      ],
+      "timing": {
+        "service_started_at": "2026-10-29T14:09:26.650351Z",
+        "report_at": "2026-10-29T14:26:52Z",
+        "elapsed_seconds_from_service_start": 1045,
+        "human_work_minutes": "NOT_MEASURED",
+        "release_requested_at": "2026-10-29T14:29:29Z",
+        "elapsed_seconds_from_service_start_at_release": 1202
+      },
+      "previous_report": {
+        "ref": "f9aed743aea06276956a61515d1c330585d34806",
+        "blob": "c2b0fba6855e10063d62e00ba7fe704237dd53fb",
+        "actor": {
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+          "recorded_status_at_last_peek": "in_progress",
+          "latest_result_run_id": "29b870a0-83b0-8331-948d-942fbef57f57",
+          "latest_result_binding": "PREVIOUS_RUN_NOT_CURRENT_SUCCESS",
+          "unforced_scheduled_origin": "NOT_VERIFIED_HOST_TRIGGER_ORIGIN_NOT_EXPOSED"
+        },
+        "status": "EXISTING_PR124_REQUEST_CHANGES_REPAIRED_EXACT_HEAD_CI_PASS_AWAIT_NEW_INDEPENDENT_REVIEW"
+      },
+      "next_actor": "REGISTERED_REVIEWER_NEW_HEAD_INDEPENDENT_JUDGMENT",
+      "next_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "next": "After this owned lease is released and real author completion available, independently inspect exact fc4e1a4f head/claims/CI; if lawful adoption occurs verify new main QA/handoff. Do not reuse old rejected-head verdict/latest_result for current run.",
+      "holds": {
+        "Gemini": "SEVERE_HOLD",
+        "external_model_spend": "HOLD",
+        "Roblox_publish": "HOLD",
+        "new_tasks_schedules_credentials": "PROHIBITED"
+      }
+    }
   },
-  "holds": "Gemini SEVERE_HOLD; no costs/credentials/tasks/schedule/Roblox publication changes"
+  "epoch253_report_snapshot": {
+    "kind": "PRIOR_LEDGER_REPAIR_REPORT_NOT_CURRENT",
+    "ref": "cbbf2981a3de3c7d4246101302110f06c4a2df93",
+    "blob": "1b9c176ab0108ac5ca4498fc104f299af0b844d0",
+    "data": {
+      "schema": 1,
+      "observed_at": "2026-10-29T19:09:29Z",
+      "status": "PR124_SHARED_LEDGER_RECONCILIATION_ONLY",
+      "repository": "kk051780/toy-wars-factory",
+      "actor": {
+        "task_id": "6add445e4138819197d9cf2b1a02534d",
+        "run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf",
+        "recorded_status_at_preflight": "in_progress",
+        "latest_result_run_id": "30f253c2-400c-8322-9609-be068121fb4e",
+        "old_result_used_as_current_success": false
+      },
+      "coordination": {
+        "claim_commit": "e398fe3274dbfb0774e1ec39f3acb498795c0d6e",
+        "epoch": 253,
+        "release_requested_at": "2026-10-29T19:09:29Z"
+      },
+      "evidence_path": "ops/reconciliations/PR0124_22067fc2.json",
+      "main": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+      "pr124": {
+        "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+        "merge_sha": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+        "status": "MERGED_MAIN_QA_HANDOFF_PASSED",
+        "qa": 40904787932,
+        "handoff": 40904787875
+      },
+      "source_changes": 0,
+      "new_tests": 0,
+      "new_prs": 0,
+      "operational_consistency_checks": {
+        "positive": 1,
+        "negative_rejections": 8
+      },
+      "previous_report": {
+        "ref": "85c9aa70795b86b07db9d3b00e6a8ac6e54319d8",
+        "blob": "abbdcdbc572d569866cc31de614a61934c16be8e"
+      },
+      "failed_prior_run": {
+        "run_id": "a0f5d008-8654-8322-bd8c-b7e0d1fb1e36",
+        "status": "failed",
+        "cause": "INDETERMINATE",
+        "own_result": "NOT_AVAILABLE",
+        "existing_incident": "https://github.com/kk051780/toy-wars-factory/issues/114#issuecomment-6505831375",
+        "duplicate_incident_created": false
+      },
+      "next": "Separate future genuine META run: bounded finally-release CAPA and provider-attested same-run terminal history. Old epoch251 termination remains UNPROVEN; no routine expiry takeover.",
+      "progress": {
+        "automation": 57,
+        "game": 38,
+        "A12": 0,
+        "A13": 0
+      },
+      "holds": "Gemini SEVERE_HOLD; no costs/credentials/tasks/schedule/Roblox publication changes"
+    }
+  },
+  "field_currentness": {
+    "tests": "HISTORICAL_SOURCE_TEST_RESULTS_NOT_REEXECUTED_THIS_RUN",
+    "implementation": "PR_STATE_FRESH_GET; SOURCE_METRICS_HISTORICAL_NOT_REMEASURED",
+    "input_provenance": "OLD_AUDIT_POINT_SNAPSHOT_NOT_RECHECKED; no new Library/provider attestation",
+    "research": "OLD_AUDIT_POINT_SNAPSHOT_NOT_RECHECKED; no current research claim",
+    "services": "Fresh connected PEEK snapshot at stated time, not current run completion proof",
+    "main_health": "Fresh canonical GitHub GET; existing QA not reexecuted",
+    "timing": "Current ledger-repair run; old timing in historical_snapshot"
+  },
+  "current_cycle": {
+    "kind": "OPERATIONAL_JSON_COMPATIBILITY_REPAIR",
+    "source_changes": 0,
+    "new_repository_tests": 0,
+    "new_prs": 0,
+    "new_ci_runs": 0,
+    "source_observer_executed": false,
+    "record": "ops/reconciliations/PR0124_epoch253_json_compatibility_epoch254.json",
+    "independent_review": "PENDING",
+    "epoch251_terminal": "UNPROVEN",
+    "concurrent_service_observation": "Scheduled WORKER may be in_progress; actual shared ref remains owned META epoch254. Service in_progress alone does not attest another source writer.",
+    "validation": {
+      "kind": "SYNTHETIC_LOCAL_OPERATIONAL_JSON_CHECKS_NOT_ACCEPTED_REPOSITORY_TESTS",
+      "positive_cases": 3,
+      "negative_cases": 43,
+      "positives": [
+        "canonical_schema_and_evidence",
+        "31_raw_entry_byte_sequences_preserved",
+        "duplicate_append_idempotent"
+      ],
+      "negative_results": [
+        {
+          "case": "epoch253_loss_regression",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "missing:integration/latest_review/review_record"
+        },
+        {
+          "case": "history_removed",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "history"
+        },
+        {
+          "case": "history_reordered",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "history"
+        },
+        {
+          "case": "historical_entry_mutated",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "history"
+        },
+        {
+          "case": "duplicate_pr124",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "history"
+        },
+        {
+          "case": "integer_history_entry",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "element:integration/merged_prs"
+        },
+        {
+          "case": "jobs_array",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "type:integration/main_qa/jobs"
+        },
+        {
+          "case": "missing_compile_hold",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "missing:integration/main_qa/jobs/compile_hold"
+        },
+        {
+          "case": "failed_offline",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "jobs"
+        },
+        {
+          "case": "old_qa_run",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "qa"
+        },
+        {
+          "case": "wrong_qa_head",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "qa"
+        },
+        {
+          "case": "missing_qa_conclusion",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "missing:integration/main_qa/conclusion"
+        },
+        {
+          "case": "handoff_failed",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "handoff"
+        },
+        {
+          "case": "wrong_handoff_head",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "handoff"
+        },
+        {
+          "case": "inconsistent_adoption_status",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "status"
+        },
+        {
+          "case": "missing_runtime_key",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "missing:integration/runtime_verified"
+        },
+        {
+          "case": "missing_services",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "missing:system/services"
+        },
+        {
+          "case": "foreign_role_task",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "service_task"
+        },
+        {
+          "case": "foreign_current_run",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "service_run"
+        },
+        {
+          "case": "old_result_current_success",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "old_result"
+        },
+        {
+          "case": "stale_tests_claimed_current",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "historical_tests"
+        },
+        {
+          "case": "historical_red_evidence_removed",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "missing:system/tests/github_red"
+        },
+        {
+          "case": "original_provenance_removed",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "missing:system/input_provenance/formal_review"
+        },
+        {
+          "case": "fake_terminal",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "terminal"
+        },
+        {
+          "case": "false_service_completion",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "terminal"
+        },
+        {
+          "case": "unrelated_request_changed",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "requests"
+        },
+        {
+          "case": "approval_actor_reassigned",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "unrelated_coord:integration_reviews"
+        },
+        {
+          "case": "administrative_history_removed",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "unrelated_coord:administrative_revocations"
+        },
+        {
+          "case": "stale_release_epoch",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "release"
+        },
+        {
+          "case": "foreign_release_owner",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "owner"
+        },
+        {
+          "case": "source_change_claim",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "source"
+        },
+        {
+          "case": "main_moved",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "main"
+        },
+        {
+          "case": "invalid_schema_version",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "schema"
+        },
+        {
+          "case": "boolean_schema",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "type:integration/schema"
+        },
+        {
+          "case": "foreign_repository",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "repository"
+        },
+        {
+          "case": "duplicate_job_receipt",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "job_receipts"
+        },
+        {
+          "case": "wrong_job_receipt",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "job_receipts"
+        },
+        {
+          "case": "old_qa_claimed_new",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "new_qa_claim"
+        },
+        {
+          "case": "own_old_result_relabelled",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "actor_result"
+        },
+        {
+          "case": "foreign_owner_release",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "only the current fenced owner can release"
+        },
+        {
+          "case": "stale_epoch_release",
+          "expected": "REJECT",
+          "actual": "REJECT",
+          "reason": "only the current fenced owner can release"
+        },
+        {
+          "case": "expired_lease_write",
+          "expected": "REJECT",
+          "actual": "REJECT"
+        },
+        {
+          "case": "active_foreign_holder",
+          "expected": "REJECT",
+          "actual": "REJECT"
+        }
+      ],
+      "script_sha256": "e4d2d0ca1cb5a6b8e607277ef68fa602569e2fc71086892cdbc2f0f10deed225"
+    }
+  },
+  "compatibility_evidence_path": "ops/reconciliations/PR0124_epoch253_json_compatibility_epoch254.json",
+  "operational_consistency_checks_scope": "Inherited epoch253 checks only; current cycle validation separately recorded"
 }

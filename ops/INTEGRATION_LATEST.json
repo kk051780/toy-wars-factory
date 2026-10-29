@@ -1,17 +1,12 @@
 {
   "schema": 1,
+  "observed_at": "2026-10-29T21:10:50Z",
   "status": "RECONCILED_EXISTING_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
-  "repository": "kk051780/toy-wars-factory",
-  "normalizer": {
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf",
-    "epoch": 253,
-    "claim_commit": "e398fe3274dbfb0774e1ec39f3acb498795c0d6e"
-  },
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "a1a56640-3164-832a-9692-2d79bafbbb79",
   "lease_epoch": 251,
+  "main_before": "221bc53ce118f5242777c13649f437d18078dcc4",
   "latest_review": {
     "schema": 1,
     "pr": 124,
@@ -40,24 +35,349 @@
     "original_provider_terminal_receipt": "NOT_AVAILABLE_FROM_PROVIDER",
     "service_completion_asserted": false,
     "merge_sha": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
-    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
+    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+    "review_record": "ops/reconciliations/PR0124_22067fc2.json",
+    "ci": 40890528723,
+    "main_qa": 40904787932,
+    "handoff": 40904787875,
+    "category": "SYSTEM_PHASE0_READ_ONLY_ADVISORY",
+    "main_after_handoff": "3dda8d0ad7601bdf2b650ed10abd935bfa370091"
   },
   "merged_prs": [
-    124
+    {
+      "pr": 78,
+      "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+      "merge_sha": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40445881032,
+      "handoff": 40445881046,
+      "main_after_handoff": "8251288afac3ccc022d4509a8dedf9325fbfb80c"
+    },
+    {
+      "pr": 79,
+      "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+      "merge_sha": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40450478692,
+      "handoff": 40450478705
+    },
+    {
+      "pr": 80,
+      "head": "f6122172c7cdb083e801058d745bc23d30558709",
+      "merge_sha": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40450646774,
+      "handoff": 40450646939
+    },
+    {
+      "pr": 82,
+      "head": "799c838f168b8942b275dab20ed569507a50157e",
+      "merge_sha": "bb9a3a1388a55186997ae7983b7eed94e84155df",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40467079624,
+      "handoff": 40467079700,
+      "main_after_handoff": "2d50807eff2de44cc78a9278d728f183e01c898d"
+    },
+    {
+      "pr": 81,
+      "head": "6cecd585964bbfb948a2ee02b591d44b7cb5cfd5",
+      "merge_sha": "23aa3649f59f96111b02c91ca31a048df6749b6f",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40488765003,
+      "handoff": 40488764919,
+      "main_after_handoff": "14914cda41d3a41222744e3ff0b6e0e50019b654"
+    },
+    {
+      "pr": 83,
+      "head": "ca6d1662092d71e81e959fc30a5dea306ee7f60e",
+      "merge_sha": "0674762e15d293a9a01b60dfcaac3f1e8399aac7",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40495108890,
+      "handoff": 40495108922,
+      "main_after_handoff": "79377eac676b933c161cc3d5c2f0b5e61405fe10"
+    },
+    {
+      "pr": 84,
+      "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
+      "merge_sha": "608ca16643667d3866d4c9e451ffd269869aeca9",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40501279576,
+      "handoff": 40501279630,
+      "main_after_handoff": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
+      "category": "SYSTEM_READ_ONLY_EVIDENCE_COLLECTOR"
+    },
+    {
+      "pr": 85,
+      "head": "4924e29a1831c0b33d35d560a1e2f9ac471e8218",
+      "merge_sha": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40516240374,
+      "handoff": 40516240222,
+      "main_after_handoff": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
+      "category": "GAME_SERVER_HEALTH_BAR_PROPERTY_WRITE_STABILITY"
+    },
+    {
+      "pr": 86,
+      "head": "fa89829a259b150ae054541f2f86b35ff74b675f",
+      "merge_sha": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40521561302,
+      "handoff": 40521561438,
+      "main_after_handoff": "340afc579204bacb987a313501ee3dfa0c2961a3",
+      "category": "GAME_SERVER_STATIONARY_PIVOT_STABILITY"
+    },
+    {
+      "pr": 87,
+      "head": "d4e0e2a533ce4c377eeac92c63e07cc93976a8f4",
+      "merge_sha": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40529796548,
+      "handoff": 40529796278,
+      "main_after_handoff": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
+      "category": "GAME_HUD_WORKSHOP_ALLOCATION_NOTICE"
+    },
+    {
+      "pr": 88,
+      "head": "1c11d6ba216e88dfb33b0391dc30f1b67748a09c",
+      "merge_sha": "c016733536a41f71b521be6fa25100201694dd41",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40550350296,
+      "handoff": 40550350561,
+      "main_after_handoff": "b8850e155fd2d0ec5ca0280b201e39bc0ecbf13b",
+      "category": "GAME_HUD_QUEUE_ASSET_WAIT_ORDER"
+    },
+    {
+      "pr": 89,
+      "head": "b9ce7e998898046476035850ce3185745cf3b55f",
+      "merge_sha": "cff98f572d6d706362e07315ad81cd4540a5095c",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40550587465,
+      "handoff": 40550587304,
+      "main_after_handoff": "5ce5d878e80a0abf8ddd6c5a741de9e26a1cee7c",
+      "category": "GAME_SERVER_CLOSEST_TARGET_SQRT_OPTIMIZATION"
+    },
+    {
+      "pr": 90,
+      "head": "4080f20abd88197d26d3cfe36cc5733009386926",
+      "merge_sha": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40575268638,
+      "handoff": 40575268483,
+      "category": "GAME_SERVER_IDLE_HEALTH_BAR_LOOKUP_OPTIMIZATION",
+      "main_after_handoff": "bf959fb6ecc484993085ef767ae0c7370fb6db50"
+    },
+    {
+      "pr": 92,
+      "head": "dc64713802061f590cdcb75c4fc6629a5df0d48c",
+      "merge_sha": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40578311810,
+      "handoff": 40578318577,
+      "category": "SYSTEM_SCOPED_SERVICE_RUN_OBSERVER",
+      "main_after_handoff": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4"
+    },
+    {
+      "pr": 95,
+      "head": "a26165b192770343897e375815428f8a36c13e2f",
+      "merge_sha": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40594943961,
+      "handoff": 40594944031,
+      "main_after_handoff": "55d9e0da77f0a9237cf2776432cf22f62b551283"
+    },
+    {
+      "pr": 96,
+      "head": "b6118ae609d6d634d4538a7e04be2b051c32a7a0",
+      "merge_sha": "dd703db711f11b0aff5cce3c084a2462025ac010",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40621070139,
+      "handoff": 40621070138,
+      "main_after_handoff": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+      "status_only_descendant_verified": true
+    },
+    {
+      "pr": 94,
+      "head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+      "merge_sha": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40656759102,
+      "handoff": 40656759290,
+      "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
+      "category": "GAME_DATASTORE_PERSISTENCE"
+    },
+    {
+      "pr": 99,
+      "head": "0f9a191e86918a4b1c599d86ef18dba26b0442b1",
+      "merge_sha": "681730de8cf346b8a59ff5e4408ad50ed1986345",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40672776209,
+      "handoff": 40672776082,
+      "main_after_handoff": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+      "category": "GAME_WORKSHOP_FAILED_LOAD_BACKFILL"
+    },
+    {
+      "pr": 100,
+      "head": "91dac7662454a197e20eb953a92df044545fd577",
+      "merge_sha": "d7738c5b8b6eafbca494dd241067bb450bdc46d5",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40686775807,
+      "handoff": 40686775714,
+      "main_after_handoff": "1ed8445528eb6c48597888f0be395859df0d44bd",
+      "category": "GAME_DATASTORE_LEASE_EXPIRY_SHUTDOWN"
+    },
+    {
+      "pr": 103,
+      "head": "f137f226a8ddb3cb580dbd52179a7581934187ca",
+      "merge_sha": "c8f823fc39c3f412c60475fa64a118cc28d69fcf",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40688191639,
+      "handoff": 40688191916,
+      "main_after_handoff": "d56cf4239f50eaaeb31233cc7f2a277dc855e4f9",
+      "category": "GAME_DATASTORE_SHUTDOWN_INFLIGHT",
+      "status_only_descendant_verified": true
+    },
+    {
+      "pr": 105,
+      "head": "7b066f4006086a571196daef8935b8573077cc1a",
+      "merge_sha": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40697393767,
+      "handoff": 40697394086,
+      "main_after_handoff": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
+      "category": "GAME_DATASTORE_SHUTDOWN_PARALLEL"
+    },
+    {
+      "pr": 106,
+      "head": "3a62e5c70e27c2b60152ab97011b5b7535ddc8d5",
+      "merge_sha": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40735889809,
+      "handoff": 40735889774,
+      "main_after_handoff": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092",
+      "category": "GAME_DATASTORE_SHUTDOWN_ADMISSION"
+    },
+    {
+      "pr": 107,
+      "head": "0f3f2eb853ef58b7d34adeee5241e090066a9b7f",
+      "merge_sha": "877417447e645fd8f3c34d5aecd883a43791712d",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40754419751,
+      "handoff": 40754419345,
+      "main_after_handoff": "8a0f8816870fa4854b71c23d223728589303070a",
+      "category": "GAME_DATASTORE_EXPIRED_LEASE_INPUT_FENCE",
+      "status_only_descendant_verified": true
+    },
+    {
+      "pr": 108,
+      "head": "234c6f9dc2d6b9001796fe3e47daf48891b88223",
+      "merge_sha": "526ad536497510f57b94460988ea1ca9fa19ac62",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40763962202,
+      "handoff": 40763962162,
+      "main_after_handoff": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+      "category": "GAME_SERVER_CONFIGURED_PROMPT_DISTANCE_FENCE",
+      "status_only_descendant_verified": true
+    },
+    {
+      "pr": 111,
+      "head": "985a02462cce841434af6d94b10a2e728cc8c9be",
+      "merge_sha": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40774271061,
+      "handoff": 40774270909,
+      "main_after_handoff": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
+      "category": "GAME_DATASTORE_DEPARTED_CLAIM_CLEANUP_RETRY"
+    },
+    {
+      "pr": 112,
+      "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
+      "merge_sha": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40779288581,
+      "handoff": 40779288627,
+      "main_after_handoff": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+      "category": "SYSTEM_IDEA_PROVENANCE_SCOPED_ADVISORY",
+      "status_only_descendant_verified": true
+    },
+    {
+      "pr": 116,
+      "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
+      "merge_sha": "3009bfefde60311ba58a8962e3fc296db669f75e",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40782676418,
+      "handoff": 40782676452,
+      "category": "SYSTEM_A12_READ_ONLY_CLASSIFIER_SOURCE_ONLY",
+      "main_after_handoff": "3d99c3ec30238587af2823c76682343c403042df"
+    },
+    {
+      "pr": 118,
+      "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+      "merge_sha": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40813038305,
+      "handoff": 40813038300,
+      "category": "SYSTEM_A12_PR_LESS_READ_ONLY_SOURCE_ONLY",
+      "main_after_handoff": "fa89e46eca61b7f84acfae10c99d8127900de83a"
+    },
+    {
+      "pr": 119,
+      "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
+      "merge_sha": "54e48d895ceef71a713d37148e1e954970dbad43",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40842047702,
+      "handoff": 40842047673,
+      "main_after_handoff": "e1ebe061d60cd74843b144db813f085ad9ce3da7"
+    },
+    {
+      "pr": 120,
+      "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
+      "merge_sha": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40850476260,
+      "handoff": 40850476258,
+      "category": "SYSTEM_A12_SCOPED_HOST_CAS_LEDGER_BRIDGE",
+      "main_after_handoff": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45"
+    },
+    {
+      "pr": 121,
+      "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
+      "merge_sha": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40864317141,
+      "handoff": 40864317147,
+      "category": "SYSTEM_A12_PREPARED_ONLY_NOTIFICATION_BOUNDARY",
+      "main_after_handoff": "221bc53ce118f5242777c13649f437d18078dcc4"
+    },
+    {
+      "pr": 124,
+      "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+      "merge_sha": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40904787932,
+      "handoff": 40904787875,
+      "category": "SYSTEM_PHASE0_READ_ONLY_ADVISORY",
+      "main_after_handoff": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "a1a56640-3164-832a-9692-2d79bafbbb79",
+      "reviewer_claim": "9e3baf907765bf911030e4e973559fb24cb368a6",
+      "reviewer_lease_epoch": 251,
+      "approval_comment": "https://github.com/kk051780/toy-wars-factory/pull/124#issuecomment-6501321119",
+      "native_github_review_submission": false
+    }
   ],
   "merge_count_this_run": 0,
-  "merges_this_run": 0,
-  "main_before": "221bc53ce118f5242777c13649f437d18078dcc4",
-  "main_after_merge": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
-  "main_after_handoff": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
-  "main_after": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
-  "merge_sha": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
   "main_qa": {
     "id": 40904787932,
-    "attempt": 1,
     "head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
     "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40904787932",
-    "jobs": [
+    "attempt": 1,
+    "status": "completed",
+    "job_evidence": [
       {
         "id": 123556475404,
         "name": "offline",
@@ -70,7 +390,9 @@
         "head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
         "conclusion": "success"
       }
-    ]
+    ],
+    "reexecuted_this_run": false,
+    "evidence_scope": "Existing merge-head QA freshly GET-checked; not a new QA run"
   },
   "handoff": {
     "id": 40904787875,
@@ -83,9 +405,50 @@
         "head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
         "conclusion": "success"
       }
-    ]
+    ],
+    "conclusion": "success",
+    "status": "completed",
+    "attempt": 1,
+    "reexecuted_this_run": false
   },
+  "comparison_since_main_qa": {
+    "verified": true,
+    "status": "ahead",
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "base": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+    "head": "3dda8d0ad7601bdf2b650ed10abd935bfa370091"
+  },
+  "unresolved": [],
+  "next": "Independent exact shared-ref JSON compatibility review. PR124 already merged; no new merge/source/CAPA in this cycle.",
+  "runtime_verified": true,
+  "main_after": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+  "merge_sha": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+  "next_actor": "REGISTERED_REVIEWER_NEW_RUN",
+  "secondary_review": {
+    "pr": 112,
+    "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+    "verdict": "REQUEST_CHANGES",
+    "review_record": "ops/reviews/PR0112_a6ccf32e.json",
+    "status": "HISTORICAL_REJECTION_SUPERSEDED_BY_NEW_HEAD_APPROVE"
+  },
+  "main_after_merge": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+  "main_after_handoff": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
   "status_only_descendant_verified": true,
+  "merges_this_run": 0,
+  "a12_verified": false,
+  "a12_progress_points_awarded": 0,
+  "source_classifier": "SOURCE_CLASSIFIER_NOT_EXECUTED",
+  "delivery": "UNVERIFIED",
+  "repository": "kk051780/toy-wars-factory",
+  "normalizer": {
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf",
+    "epoch": 253,
+    "claim_commit": "e398fe3274dbfb0774e1ec39f3acb498795c0d6e"
+  },
   "previous_snapshot": {
     "ref": "85c9aa70795b86b07db9d3b00e6a8ac6e54319d8",
     "blob": "b52fc2e06f44f7419ed9e3b5ee19f53467e66169",
@@ -94,7 +457,403 @@
   },
   "original_reviewer_terminal_receipt": "NOT_AVAILABLE_FROM_PROVIDER",
   "service_completion_asserted": false,
-  "next_actor": "META_CAPA_NEXT_LEGITIMATE_RUN",
-  "next": "PR124 already adopted; do not repeat source/PR/merge. Finally release and same-run authenticated terminal history remain separate CAPA; no expiry-only recovery.",
-  "observed_at": "2026-10-29T19:09:29Z"
+  "historical_snapshot": {
+    "kind": "OLD_AUDIT_POINT_SNAPSHOT_NOT_CURRENT",
+    "ref": "e398fe3274dbfb0774e1ec39f3acb498795c0d6e",
+    "blob": "b52fc2e06f44f7419ed9e3b5ee19f53467e66169",
+    "observed_at": "2026-10-29T11:19:06.502Z",
+    "currentness": "STALE_NOT_CURRENT_SERVICE_OR_QA_RUN",
+    "data": {
+      "schema": 1,
+      "observed_at": "2026-10-29T11:19:06.502Z",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "owner_reply_required": false,
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "120aefe3-b808-8331-933d-209e5c2e211d",
+      "lease_epoch": 239,
+      "main_before": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
+      "latest_review": {
+        "pr": 121,
+        "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
+        "verdict": "APPROVE",
+        "review_record": "ops/reviews/PR0121_fc8195af.json",
+        "ci": 40863409804,
+        "merge_sha": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+        "main_qa": 40864317141,
+        "handoff": 40864317147,
+        "category": "SYSTEM_A12_PREPARED_ONLY_NOTIFICATION_BOUNDARY",
+        "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+        "main_after_handoff": "221bc53ce118f5242777c13649f437d18078dcc4"
+      },
+      "merged_prs": [
+        {
+          "pr": 78,
+          "head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+          "merge_sha": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40445881032,
+          "handoff": 40445881046,
+          "main_after_handoff": "8251288afac3ccc022d4509a8dedf9325fbfb80c"
+        },
+        {
+          "pr": 79,
+          "head": "b82aed7dc2778f652b3b772ef072c0ba3b3d7b55",
+          "merge_sha": "cc53bcce03ac9c4624cb76fcb8624206aeaae7b9",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40450478692,
+          "handoff": 40450478705
+        },
+        {
+          "pr": 80,
+          "head": "f6122172c7cdb083e801058d745bc23d30558709",
+          "merge_sha": "eb1fb8a55d899b1c3d1ec71238d9fae2951ac337",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40450646774,
+          "handoff": 40450646939
+        },
+        {
+          "pr": 82,
+          "head": "799c838f168b8942b275dab20ed569507a50157e",
+          "merge_sha": "bb9a3a1388a55186997ae7983b7eed94e84155df",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40467079624,
+          "handoff": 40467079700,
+          "main_after_handoff": "2d50807eff2de44cc78a9278d728f183e01c898d"
+        },
+        {
+          "pr": 81,
+          "head": "6cecd585964bbfb948a2ee02b591d44b7cb5cfd5",
+          "merge_sha": "23aa3649f59f96111b02c91ca31a048df6749b6f",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40488765003,
+          "handoff": 40488764919,
+          "main_after_handoff": "14914cda41d3a41222744e3ff0b6e0e50019b654"
+        },
+        {
+          "pr": 83,
+          "head": "ca6d1662092d71e81e959fc30a5dea306ee7f60e",
+          "merge_sha": "0674762e15d293a9a01b60dfcaac3f1e8399aac7",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40495108890,
+          "handoff": 40495108922,
+          "main_after_handoff": "79377eac676b933c161cc3d5c2f0b5e61405fe10"
+        },
+        {
+          "pr": 84,
+          "head": "34062c8efe58b8db19c74bcf98c6aa2c3f01dffe",
+          "merge_sha": "608ca16643667d3866d4c9e451ffd269869aeca9",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40501279576,
+          "handoff": 40501279630,
+          "main_after_handoff": "0d1ee3064d590cf4ccff3b92abd96e796a45f749",
+          "category": "SYSTEM_READ_ONLY_EVIDENCE_COLLECTOR"
+        },
+        {
+          "pr": 85,
+          "head": "4924e29a1831c0b33d35d560a1e2f9ac471e8218",
+          "merge_sha": "82fed9a14f582ba1e7ca14f81bb44c5dcbf7446e",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40516240374,
+          "handoff": 40516240222,
+          "main_after_handoff": "1b0751fc7d1c37be67b379803a37a79a9469ce00",
+          "category": "GAME_SERVER_HEALTH_BAR_PROPERTY_WRITE_STABILITY"
+        },
+        {
+          "pr": 86,
+          "head": "fa89829a259b150ae054541f2f86b35ff74b675f",
+          "merge_sha": "654850d75ad51c309cfbb6b88f7d35c4ec565dba",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40521561302,
+          "handoff": 40521561438,
+          "main_after_handoff": "340afc579204bacb987a313501ee3dfa0c2961a3",
+          "category": "GAME_SERVER_STATIONARY_PIVOT_STABILITY"
+        },
+        {
+          "pr": 87,
+          "head": "d4e0e2a533ce4c377eeac92c63e07cc93976a8f4",
+          "merge_sha": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40529796548,
+          "handoff": 40529796278,
+          "main_after_handoff": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
+          "category": "GAME_HUD_WORKSHOP_ALLOCATION_NOTICE"
+        },
+        {
+          "pr": 88,
+          "head": "1c11d6ba216e88dfb33b0391dc30f1b67748a09c",
+          "merge_sha": "c016733536a41f71b521be6fa25100201694dd41",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40550350296,
+          "handoff": 40550350561,
+          "main_after_handoff": "b8850e155fd2d0ec5ca0280b201e39bc0ecbf13b",
+          "category": "GAME_HUD_QUEUE_ASSET_WAIT_ORDER"
+        },
+        {
+          "pr": 89,
+          "head": "b9ce7e998898046476035850ce3185745cf3b55f",
+          "merge_sha": "cff98f572d6d706362e07315ad81cd4540a5095c",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40550587465,
+          "handoff": 40550587304,
+          "main_after_handoff": "5ce5d878e80a0abf8ddd6c5a741de9e26a1cee7c",
+          "category": "GAME_SERVER_CLOSEST_TARGET_SQRT_OPTIMIZATION"
+        },
+        {
+          "pr": 90,
+          "head": "4080f20abd88197d26d3cfe36cc5733009386926",
+          "merge_sha": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40575268638,
+          "handoff": 40575268483,
+          "category": "GAME_SERVER_IDLE_HEALTH_BAR_LOOKUP_OPTIMIZATION",
+          "main_after_handoff": "bf959fb6ecc484993085ef767ae0c7370fb6db50"
+        },
+        {
+          "pr": 92,
+          "head": "dc64713802061f590cdcb75c4fc6629a5df0d48c",
+          "merge_sha": "c901283ffdd25f2cae6aaf191b1ac3adbd407b7e",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40578311810,
+          "handoff": 40578318577,
+          "category": "SYSTEM_SCOPED_SERVICE_RUN_OBSERVER",
+          "main_after_handoff": "a3867adb10aff0d6c93f94e1d3ea0222b9bd7ca4"
+        },
+        {
+          "pr": 95,
+          "head": "a26165b192770343897e375815428f8a36c13e2f",
+          "merge_sha": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40594943961,
+          "handoff": 40594944031,
+          "main_after_handoff": "55d9e0da77f0a9237cf2776432cf22f62b551283"
+        },
+        {
+          "pr": 96,
+          "head": "b6118ae609d6d634d4538a7e04be2b051c32a7a0",
+          "merge_sha": "dd703db711f11b0aff5cce3c084a2462025ac010",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40621070139,
+          "handoff": 40621070138,
+          "main_after_handoff": "c6fe65a3eb7ada86a3d43cf22ec7378a069f5385",
+          "status_only_descendant_verified": true
+        },
+        {
+          "pr": 94,
+          "head": "a635a1b29d5a47f552b34fbf6298832f0e7ce55c",
+          "merge_sha": "515ceac69e5a60e74721ecc0bb6b72ecf29fc65a",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40656759102,
+          "handoff": 40656759290,
+          "main_after_handoff": "e0db2a6a6a49f79ba0b9a900ffa84b62c30ae6e8",
+          "category": "GAME_DATASTORE_PERSISTENCE"
+        },
+        {
+          "pr": 99,
+          "head": "0f9a191e86918a4b1c599d86ef18dba26b0442b1",
+          "merge_sha": "681730de8cf346b8a59ff5e4408ad50ed1986345",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40672776209,
+          "handoff": 40672776082,
+          "main_after_handoff": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+          "category": "GAME_WORKSHOP_FAILED_LOAD_BACKFILL"
+        },
+        {
+          "pr": 100,
+          "head": "91dac7662454a197e20eb953a92df044545fd577",
+          "merge_sha": "d7738c5b8b6eafbca494dd241067bb450bdc46d5",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40686775807,
+          "handoff": 40686775714,
+          "main_after_handoff": "1ed8445528eb6c48597888f0be395859df0d44bd",
+          "category": "GAME_DATASTORE_LEASE_EXPIRY_SHUTDOWN"
+        },
+        {
+          "pr": 103,
+          "head": "f137f226a8ddb3cb580dbd52179a7581934187ca",
+          "merge_sha": "c8f823fc39c3f412c60475fa64a118cc28d69fcf",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40688191639,
+          "handoff": 40688191916,
+          "main_after_handoff": "d56cf4239f50eaaeb31233cc7f2a277dc855e4f9",
+          "category": "GAME_DATASTORE_SHUTDOWN_INFLIGHT",
+          "status_only_descendant_verified": true
+        },
+        {
+          "pr": 105,
+          "head": "7b066f4006086a571196daef8935b8573077cc1a",
+          "merge_sha": "29ad06ac3f0726ee55e8182d04c5bb52d4fe1a73",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40697393767,
+          "handoff": 40697394086,
+          "main_after_handoff": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
+          "category": "GAME_DATASTORE_SHUTDOWN_PARALLEL"
+        },
+        {
+          "pr": 106,
+          "head": "3a62e5c70e27c2b60152ab97011b5b7535ddc8d5",
+          "merge_sha": "5e43f3aad2779a839b0d751c4674eac5a3ce67d1",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40735889809,
+          "handoff": 40735889774,
+          "main_after_handoff": "e6d41268a4fc0efcb8f8d72dd674826c6dcbe092",
+          "category": "GAME_DATASTORE_SHUTDOWN_ADMISSION"
+        },
+        {
+          "pr": 107,
+          "head": "0f3f2eb853ef58b7d34adeee5241e090066a9b7f",
+          "merge_sha": "877417447e645fd8f3c34d5aecd883a43791712d",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40754419751,
+          "handoff": 40754419345,
+          "main_after_handoff": "8a0f8816870fa4854b71c23d223728589303070a",
+          "category": "GAME_DATASTORE_EXPIRED_LEASE_INPUT_FENCE",
+          "status_only_descendant_verified": true
+        },
+        {
+          "pr": 108,
+          "head": "234c6f9dc2d6b9001796fe3e47daf48891b88223",
+          "merge_sha": "526ad536497510f57b94460988ea1ca9fa19ac62",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40763962202,
+          "handoff": 40763962162,
+          "main_after_handoff": "5d4774843179227956f68d92c0ff6f89c77cb28d",
+          "category": "GAME_SERVER_CONFIGURED_PROMPT_DISTANCE_FENCE",
+          "status_only_descendant_verified": true
+        },
+        {
+          "pr": 111,
+          "head": "985a02462cce841434af6d94b10a2e728cc8c9be",
+          "merge_sha": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40774271061,
+          "handoff": 40774270909,
+          "main_after_handoff": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
+          "category": "GAME_DATASTORE_DEPARTED_CLAIM_CLEANUP_RETRY"
+        },
+        {
+          "pr": 112,
+          "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
+          "merge_sha": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40779288581,
+          "handoff": 40779288627,
+          "main_after_handoff": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+          "category": "SYSTEM_IDEA_PROVENANCE_SCOPED_ADVISORY",
+          "status_only_descendant_verified": true
+        },
+        {
+          "pr": 116,
+          "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
+          "merge_sha": "3009bfefde60311ba58a8962e3fc296db669f75e",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40782676418,
+          "handoff": 40782676452,
+          "category": "SYSTEM_A12_READ_ONLY_CLASSIFIER_SOURCE_ONLY",
+          "main_after_handoff": "3d99c3ec30238587af2823c76682343c403042df"
+        },
+        {
+          "pr": 118,
+          "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+          "merge_sha": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40813038305,
+          "handoff": 40813038300,
+          "category": "SYSTEM_A12_PR_LESS_READ_ONLY_SOURCE_ONLY",
+          "main_after_handoff": "fa89e46eca61b7f84acfae10c99d8127900de83a"
+        },
+        {
+          "pr": 119,
+          "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
+          "merge_sha": "54e48d895ceef71a713d37148e1e954970dbad43",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40842047702,
+          "handoff": 40842047673,
+          "main_after_handoff": "e1ebe061d60cd74843b144db813f085ad9ce3da7"
+        },
+        {
+          "pr": 120,
+          "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
+          "merge_sha": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40850476260,
+          "handoff": 40850476258,
+          "category": "SYSTEM_A12_SCOPED_HOST_CAS_LEDGER_BRIDGE",
+          "main_after_handoff": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45"
+        },
+        {
+          "pr": 121,
+          "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
+          "merge_sha": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+          "main_qa": 40864317141,
+          "handoff": 40864317147,
+          "category": "SYSTEM_A12_PREPARED_ONLY_NOTIFICATION_BOUNDARY",
+          "main_after_handoff": "221bc53ce118f5242777c13649f437d18078dcc4"
+        }
+      ],
+      "merge_count_this_run": 1,
+      "main_qa": {
+        "id": 40864317141,
+        "head": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+        "conclusion": "success",
+        "jobs": {
+          "offline": "success",
+          "compile_hold": "success"
+        },
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40864317141"
+      },
+      "handoff": {
+        "id": 40864317147,
+        "head": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+        "conclusion": "success",
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40864317147"
+      },
+      "comparison_since_main_qa": {
+        "verified": true,
+        "status": "ahead",
+        "paths": [
+          "status/CHAT_HANDOFF.md",
+          "status/LATEST_STATE.json"
+        ]
+      },
+      "unresolved": [],
+      "next": "Issue114 A12: actual non-forced scheduled anomaly, durable CAS incident, authenticated delivery and independent recovery still NOT_VERIFIED. Issue113 protected progress 57% unchanged.",
+      "runtime_verified": true,
+      "main_after": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+      "merge_sha": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+      "next_actor": "REGISTERED_META_OR_WORKER",
+      "secondary_review": {
+        "pr": 112,
+        "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+        "verdict": "REQUEST_CHANGES",
+        "review_record": "ops/reviews/PR0112_a6ccf32e.json",
+        "status": "HISTORICAL_REJECTION_SUPERSEDED_BY_NEW_HEAD_APPROVE"
+      },
+      "main_after_merge": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+      "main_after_handoff": "221bc53ce118f5242777c13649f437d18078dcc4",
+      "status_only_descendant_verified": true,
+      "merges_this_run": 1,
+      "a12_verified": false,
+      "a12_progress_points_awarded": 0,
+      "source_classifier": "SOURCE_CLASSIFIER_NOT_EXECUTED",
+      "delivery": "UNVERIFIED"
+    }
+  },
+  "compatibility_repair": {
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "run_id": "7674c598-6884-8333-92ca-493a3272348c",
+    "epoch": 254,
+    "claim_commit": "185757612ad0117a52d057adadacf3f534b75d37",
+    "record": "ops/reconciliations/PR0124_epoch253_json_compatibility_epoch254.json",
+    "review_status": "AWAIT_NEW_INDEPENDENT_REVIEW",
+    "new_source_changes": 0,
+    "new_merges": 0,
+    "new_ci_runs": 0
+  },
+  "snapshot_field_scope": {
+    "runtime_verified": "Preserved historical integration-cycle fact; no new execution or A12 proof",
+    "secondary_review": "Historical rejection already superseded; not a current repair request",
+    "source_classifier": "Preserved historical source-execution limitation; not executed this cycle",
+    "delivery": "No authenticated delivery evidence; UNVERIFIED"
+  }
 }
