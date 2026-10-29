@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 237,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "f08a6dcb-96c0-8322-a69a-8603b249be38",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 237,
-    "acquired_at": "2026-10-29T09:30:55.582Z",
-    "expires_at": "2026-10-29T10:00:55.582Z",
-    "base_main_sha": "e1ebe061d60cd74843b144db813f085ad9ce3da7",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -20,39 +10,26 @@
   },
   "approval_packet": {
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
-    "items": [
-      {
-        "number": 120,
-        "title": "[TWF system-review] Connect alert ledger to scoped host CAS with readback",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/120",
-        "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40848410064",
-        "summary": "Accepted observer/reducer to scoped host CAS/readback;23 new adversarial regressions; live operational proof remains NOT_RUN",
-        "changed_files": [
-          "tools/system_alert_persistence.py",
-          "tests/test_system_alert_persistence.py",
-          "history/C00126_scoped_alert_persistence.json"
-        ],
-        "kind": "開発体制改善"
-      }
-    ],
+    "items": [],
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-29T09:19:49Z",
-    "signature": "e5367ddfc219dab85efb6616f9ddfa8a1ea83740e91725ab1debdb21f182497d",
+    "observed_at": "2026-10-29T09:34:23.487Z",
+    "signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
     "approval_text": ""
   },
-  "last_reported_approval_signature": "e5367ddfc219dab85efb6616f9ddfa8a1ea83740e91725ab1debdb21f182497d",
+  "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
-    "kind": "META",
-    "owner_id": "84f6c2ab-3724-8326-95cb-f3937487e58f",
-    "epoch": 236,
-    "released_at": "2026-10-29T09:19:49+00:00",
+    "kind": "REVIEWER",
+    "owner_id": "f08a6dcb-96c0-8322-a69a-8603b249be38",
+    "epoch": 237,
+    "released_at": "2026-10-29T09:34:23.487Z",
     "pr": 120,
     "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
-    "ci": 40848410064,
-    "result": "DRAFT_SOURCE_PR_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
+    "merge_sha": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
+    "main_qa": 40850476260,
+    "handoff": 40850476258,
+    "result": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
     "a12_verified": false
   },
   "last_approval_report": {

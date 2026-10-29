@@ -1,24 +1,24 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T08:26:36.265Z",
+  "observed_at": "2026-10-29T09:34:23.487Z",
   "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "89b1351d-7060-832b-8b3d-44e1dd8b311b",
-  "lease_epoch": 235,
-  "main_before": "fa89e46eca61b7f84acfae10c99d8127900de83a",
+  "reviewer_run_id": "f08a6dcb-96c0-8322-a69a-8603b249be38",
+  "lease_epoch": 237,
+  "main_before": "e1ebe061d60cd74843b144db813f085ad9ce3da7",
   "latest_review": {
-    "pr": 119,
-    "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
+    "pr": 120,
+    "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
     "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0119_fc3c796c.json",
-    "ci": 40839603464,
-    "merge_sha": "54e48d895ceef71a713d37148e1e954970dbad43",
-    "main_qa": 40842047702,
-    "handoff": 40842047673,
-    "category": "SYSTEM_A12_PURE_FENCED_ALERT_LEDGER_PROPOSAL",
+    "review_record": "ops/reviews/PR0120_9169f225.json",
+    "ci": 40848410064,
+    "merge_sha": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
+    "main_qa": 40850476260,
+    "handoff": 40850476258,
+    "category": "SYSTEM_A12_SCOPED_HOST_CAS_LEDGER_BRIDGE",
     "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
-    "main_after_handoff": "e1ebe061d60cd74843b144db813f085ad9ce3da7"
+    "main_after_handoff": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45"
   },
   "merged_prs": [
     {
@@ -304,24 +304,34 @@
       "main_qa": 40842047702,
       "handoff": 40842047673,
       "main_after_handoff": "e1ebe061d60cd74843b144db813f085ad9ce3da7"
+    },
+    {
+      "pr": 120,
+      "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
+      "merge_sha": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40850476260,
+      "handoff": 40850476258,
+      "category": "SYSTEM_A12_SCOPED_HOST_CAS_LEDGER_BRIDGE",
+      "main_after_handoff": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45"
     }
   ],
   "merge_count_this_run": 1,
   "main_qa": {
-    "id": 40813038305,
-    "head": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+    "id": 40850476260,
+    "head": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
     "conclusion": "success",
     "jobs": {
       "offline": "success",
       "compile_hold": "success"
     },
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40813038305"
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40850476260"
   },
   "handoff": {
-    "id": 40813038300,
-    "head": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+    "id": 40850476258,
+    "head": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
     "conclusion": "success",
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40813038300"
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40850476258"
   },
   "comparison_since_main_qa": {
     "verified": true,
@@ -332,10 +342,10 @@
     ]
   },
   "unresolved": [],
-  "next": "Issue114: host-attested non-forced scheduled anomaly detection, durable dedup, notification receipt and independent recovery remain separate; Issue113 protected progress unchanged.",
+  "next": "Issue114: live non-forced schedule/host writer binding, real anomaly persistence, notification delivery and later independent recovery NOT_VERIFIED. Issue113 protected progress unchanged.",
   "runtime_verified": true,
-  "main_after": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
-  "merge_sha": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+  "main_after": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
+  "merge_sha": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
   "next_actor": "META_WORKER_ROADMAP",
   "secondary_review": {
     "pr": 112,
@@ -344,8 +354,8 @@
     "review_record": "ops/reviews/PR0112_a6ccf32e.json",
     "status": "HISTORICAL_REJECTION_SUPERSEDED_BY_NEW_HEAD_APPROVE"
   },
-  "main_after_merge": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
-  "main_after_handoff": "fa89e46eca61b7f84acfae10c99d8127900de83a",
+  "main_after_merge": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
+  "main_after_handoff": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
   "status_only_descendant_verified": true,
   "merges_this_run": 1,
   "a12_verified": false,

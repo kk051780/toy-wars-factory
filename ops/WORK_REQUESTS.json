@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T03:37:32.676Z",
+  "observed_at": "2026-10-29T09:34:23.487Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2837,7 +2837,7 @@
     },
     {
       "id": "pr120_scoped_alert_persistence_registered_review_20261029",
-      "status": "OPEN",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "priority": "P1",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
@@ -2885,7 +2885,21 @@
         "immutable_claim_gate": "1 immutable coordinator claim(s) verified"
       },
       "request": "Independently review exactly3 A paths: scoped persistence connection,23 adversarial regressions,C00126. Check explicit trusted-host callback boundary, one ledger path, immutable blobs and fenced CAS/readback; lost receipt cannot imply rollback/delivery/recovery. Exacthead612 tests/bothjobs scope and claimPASS. No author merge; mainQA/handoff required after any adoption.",
-      "owner_reply_required": false
+      "owner_reply_required": false,
+      "resolution": {
+        "resolved_at": "2026-10-29T09:34:23.487Z",
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "f08a6dcb-96c0-8322-a69a-8603b249be38",
+        "review_epoch": 237,
+        "review_record": "ops/reviews/PR0120_9169f225.json",
+        "verdict": "APPROVE",
+        "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
+        "merge_sha": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
+        "main_qa": 40850476260,
+        "handoff": 40850476258,
+        "main_after_handoff": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
+        "a12_verified": false
+      }
     }
   ]
 }
