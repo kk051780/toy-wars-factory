@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T22:22:44.320Z",
+  "observed_at": "2026-10-29T23:01:31Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -3484,6 +3484,82 @@
       "main_qa": 40965149273,
       "handoff": 40965149371,
       "merged_at": "2026-10-29T22:22:44.320Z"
+    },
+    {
+      "id": "pr129_github_evidence_strict_holder_epoch_20261030",
+      "kind": "REGISTERED_META_SOURCE_REVIEW",
+      "priority": "P1",
+      "status": "OPEN",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 129,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/129",
+      "branch": "auto/twf-system-review-f5288a51-22e0-8327-a48b-335833cc9a00",
+      "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
+      "base_main_sha": "7f198fa99ee4ee28d580172885a4183cf0773adc",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "0fa55eaa205b9ccaf27894d9332a553f4d7779ed",
+        "owner_run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+        "epoch": 260
+      },
+      "created_at": "2026-10-29T23:01:31Z",
+      "request": "New reproduced A12 collector integrity defect; not PR126 replay. Require strict int for persisted holder.epoch before equality. Real RED761tests/13 failures, final GREEN761tests/allpass;12 new methods/two games/all kinds. C00140 corrects C00139 local suite counts41/31 append-only. Review actual changed5 paths and unchanged old749 tests/history/PR126. Wait until author true completion and original own release/readback; no run_now. Separate registered reviewer exact current head/CI before any merge/main QA/handoff. No provider/unforced alert/delivery/recovery proof, A12/A13+0 and Issue128 protected cadence drift unchanged.",
+      "changed_files": [
+        "history/C00138_github_evidence_holder_epoch_red.json",
+        "history/C00139_github_evidence_holder_epoch_repair.json",
+        "history/C00140_github_evidence_local_count_correction.json",
+        "tests/test_system_evidence_holder_generation.py",
+        "tools/system_github_evidence.py"
+      ],
+      "ci": {
+        "id": 40969585796,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40969585796",
+        "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
+        "base": "7f198fa99ee4ee28d580172885a4183cf0773adc",
+        "attempt": 1,
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "success",
+        "python_tests": 761,
+        "new_python_tests": 12,
+        "jobs": [
+          {
+            "name": "compile_hold",
+            "id": 123782735532,
+            "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
+            "conclusion": "success"
+          },
+          {
+            "name": "offline",
+            "id": 123782735777,
+            "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
+            "conclusion": "success"
+          }
+        ],
+        "log": [
+          "2026-10-29T22:56:51.5402799Z PASS: system review scope",
+          "2026-10-29T22:56:51.8616578Z PASS: repair coordination; 3 immutable coordinator claim(s) verified",
+          "2026-10-29T22:57:00.4006108Z Ran 761 tests in 6.235s",
+          "2026-10-29T22:57:00.4006448Z OK"
+        ]
+      },
+      "owner_approval_required": false,
+      "review_required_for_head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
+      "next_actor": "REGISTERED_REVIEWER_AFTER_AUTHOR_COMPLETION_AND_OWN_RELEASE",
+      "scope": {
+        "source_files": 1,
+        "new_tests": 12,
+        "all_prior749_tests_preserved": true,
+        "main_source_unchanged": true
+      },
+      "live_release_evidence": {
+        "record": "ops/lease_receipts/META_f5288a51_epoch260.json",
+        "status": "NORMAL_OWN_RELEASE_AND_POSTREAD_REQUIRED_NOT_YET_AT_PACKET_COMMIT"
+      }
     }
   ]
 }

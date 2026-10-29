@@ -1,0 +1,129 @@
+{
+  "schema": 1,
+  "kind": "NORMAL_OWNER_RELEASE_NOT_PROVIDER_TERMINAL",
+  "repository": "kk051780/toy-wars-factory",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+  "epoch": 260,
+  "claim": "0fa55eaa205b9ccaf27894d9332a553f4d7779ed",
+  "expected_parent": "a9ec4603ddd9107ced55344de31d61e3a11a3e06",
+  "source_commit": "7f198fa99ee4ee28d580172885a4183cf0773adc",
+  "source_blob": "aec1699605fc7754f808b7768ceb8e3ce4b74f29",
+  "source_function": "tools.repair_control.owned_lease",
+  "source_receipt": {
+    "epoch": 260,
+    "expected_parent": "a9ec4603ddd9107ced55344de31d61e3a11a3e06",
+    "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
+    "owner_run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+    "postwrite_readback_required": true,
+    "provider_terminal": "NOT_ATTESTED",
+    "repository": "kk051780/toy-wars-factory",
+    "task_id": "6add445e4138819197d9cf2b1a02534d"
+  },
+  "host_trace_before_cas": [
+    {
+      "op": "CONNECTED_READ",
+      "ref": "a9ec4603ddd9107ced55344de31d61e3a11a3e06",
+      "blob": "ad6fca1f6cff02629224a675a50efbae6b19a73a",
+      "epoch": 260,
+      "holder": "f5288a51-22e0-8327-a48b-335833cc9a00"
+    },
+    {
+      "op": "HOST_CLOCK",
+      "at": "2026-10-29T23:04:35Z"
+    },
+    {
+      "op": "CONNECTED_PEEK",
+      "run": "f5288a51-22e0-8327-a48b-335833cc9a00",
+      "status": "in_progress"
+    },
+    {
+      "op": "BODY_FINISH",
+      "scope": "REPORT_AND_NORMAL_FINALIZATION_ONLY_AFTER_PRIOR_LOCAL_CALLBACK_ERRORS"
+    },
+    {
+      "op": "CONNECTED_READ",
+      "ref": "a9ec4603ddd9107ced55344de31d61e3a11a3e06",
+      "blob": "ad6fca1f6cff02629224a675a50efbae6b19a73a",
+      "epoch": 260,
+      "holder": "f5288a51-22e0-8327-a48b-335833cc9a00"
+    },
+    {
+      "op": "HOST_CLOCK",
+      "at": "2026-10-29T23:04:41Z"
+    },
+    {
+      "op": "CONNECTED_PEEK",
+      "run": "f5288a51-22e0-8327-a48b-335833cc9a00",
+      "status": "in_progress"
+    },
+    {
+      "op": "CONNECTED_READ",
+      "ref": "a9ec4603ddd9107ced55344de31d61e3a11a3e06",
+      "blob": "ad6fca1f6cff02629224a675a50efbae6b19a73a",
+      "epoch": 260,
+      "holder": "f5288a51-22e0-8327-a48b-335833cc9a00"
+    },
+    {
+      "op": "HOST_CLOCK",
+      "at": "2026-10-29T23:04:47Z"
+    },
+    {
+      "op": "CONNECTED_PEEK",
+      "run": "f5288a51-22e0-8327-a48b-335833cc9a00",
+      "status": "in_progress"
+    },
+    {
+      "op": "HOST_CLOCK",
+      "at": "2026-10-29T23:04:51Z"
+    },
+    {
+      "op": "HOST_OWN_RELEASE_GUARD",
+      "expected_sha": "a9ec4603ddd9107ced55344de31d61e3a11a3e06",
+      "force": false,
+      "run": "f5288a51-22e0-8327-a48b-335833cc9a00",
+      "epoch": 260,
+      "at": "2026-10-29T23:04:55Z",
+      "provider_terminal": "NOT_ATTESTED"
+    }
+  ],
+  "first_local_callback_failure": {
+    "state": "CONTEXT_FAILED",
+    "error_type": "RuntimeError",
+    "safe_error": "owned lease finalization not confirmed: CAS",
+    "receipt": {
+      "status": "RELEASE_UNCONFIRMED",
+      "repository": "kk051780/toy-wars-factory",
+      "kind": "META",
+      "task_id": "6add445e4138819197d9cf2b1a02534d",
+      "owner_run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+      "epoch": 260,
+      "provider_verified": false,
+      "provider_terminal": "NOT_ATTESTED",
+      "failure_stage": "CAS"
+    }
+  },
+  "second_local_callback_failure": {
+    "state": "CONTEXT_FAILED",
+    "error_type": "RuntimeError",
+    "safe_error": "owned lease finalization not confirmed: CAS",
+    "receipt": {
+      "status": "RELEASE_UNCONFIRMED",
+      "repository": "kk051780/toy-wars-factory",
+      "kind": "META",
+      "task_id": "6add445e4138819197d9cf2b1a02534d",
+      "owner_run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+      "epoch": 260,
+      "provider_verified": false,
+      "provider_terminal": "NOT_ATTESTED",
+      "failure_stage": "CAS"
+    }
+  },
+  "prior_failure_host_cas_calls": 0,
+  "callback_signature_and_large_rpc_corrected_same_owner": true,
+  "scope": "Final normal cleanup only; earlier full work context had local callback failure before connected CAS",
+  "postwrite_state": "READBACK_REQUIRED_AFTER_THIS_COMMIT",
+  "provider_terminal": "NOT_ATTESTED",
+  "a12_verified": false,
+  "a13_verified": false
+}

@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T22:10:28Z",
-  "status": "PR126_HOLDER_EPOCH_REPAIRED_EXACT_HEAD_CI_PASS_AWAIT_NEW_INDEPENDENT_REVIEW",
+  "observed_at": "2026-10-29T23:01:31Z",
+  "status": "PR129_DRAFT_EXACT_HEAD_CI_PASS_WAIT_INDEPENDENT_REVIEW",
   "repository": "kk051780/toy-wars-factory",
   "actor": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
@@ -392,22 +392,10 @@
     "elapsed_seconds_from_service_start_at_release": 690
   },
   "previous_report": {
-    "ref": "4e37ebb98bc46dccbbbead434839384cef367183",
-    "blob": "25879528b18d4127287ed0fc347741b4bcea83c2",
-    "actor": {
-      "task_id": "6add445e4138819197d9cf2b1a02534d",
-      "run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
-      "recorded_status_at_last_peek": "in_progress",
-      "latest_result_run_id": "7674c598-6884-8333-92ca-493a3272348c",
-      "latest_result_binding": "PREVIOUS_RUN_NOT_CURRENT_SUCCESS",
-      "unforced_scheduled_origin": "NOT_VERIFIED_HOST_TRIGGER_ORIGIN_NOT_EXPOSED",
-      "recorded_status_at_preflight": "in_progress",
-      "old_result_used_as_current_success": false
-    },
-    "status": "PR126_EXACT_HEAD_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
-    "currentness": "PREVIOUS_RUN_NOT_CURRENT_SUCCESS"
+    "ref": "02b9be0da7eed2690648a9a9f40f0c7b0c8600a8",
+    "blob": "6750002d9f4aee9bf84055b930d41eba25fefaea"
   },
-  "next_actor": "REGISTERED_REVIEWER_NEW_RUN",
+  "next_actor": "REVIEWER",
   "next_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "next": "Independently inspect PR126 repaired exact head 2ffa8a3248d598bbfa695a8111a8f04abd9c5996 and CI40963166528/749 tests, original and new claims, then decide under new REVIEWER run; only it may merge with main QA/handoff. Do not reuse old rejection/result as new approval.",
   "holds": {
@@ -894,256 +882,550 @@
     }
   },
   "field_currentness": {
-    "tests": "Historical source tests retained; new28/candidate737 CI at current_cycle.ci",
-    "implementation": "Latest accepted main PR124 retained unchanged; current draft source CAPA at current_cycle",
+    "tests": "PRESERVED_HISTORICAL; current_cycle.ci exact current PR",
+    "implementation": "PRESERVED_HISTORICAL; current_cycle is current",
     "input_provenance": "OLD_AUDIT_POINT_SNAPSHOT_NOT_RECHECKED; no new Library/provider attestation",
     "research": "Older research retained; current safety primary reference at current_cycle.research",
-    "services": "Fresh connected PEEK; no current own service completion claimed",
-    "main_health": "Fresh canonical GitHub GET; existing QA not reexecuted",
-    "timing": "Current ledger-repair run; old timing in historical_snapshot"
+    "services": "PRESERVED_HISTORICAL_SNAPSHOT; current_cycle.services holds fresh connected PEEK",
+    "main_health": "PRESERVED_HISTORICAL_SNAPSHOT; current_cycle.main_health current",
+    "timing": "Current ledger-repair run; old timing in historical_snapshot",
+    "holds": "PRESERVED_UNCHANGED",
+    "current_cycle": "CURRENT_AT_OBSERVED_AT"
   },
   "current_cycle": {
-    "kind": "PR126_INDEPENDENT_REVIEW_STRICT_HOLDER_EPOCH_REPAIR",
-    "pr": 126,
-    "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
-    "url": "https://github.com/kk051780/toy-wars-factory/pull/126",
+    "kind": "A12_GITHUB_COLLECTOR_STRICT_HOLDER_EPOCH",
+    "actor": {
+      "task_id": "6add445e4138819197d9cf2b1a02534d",
+      "run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+      "epoch": 260,
+      "claim": "0fa55eaa205b9ccaf27894d9332a553f4d7779ed"
+    },
+    "pr": 129,
+    "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
+    "base_main": "7f198fa99ee4ee28d580172885a4183cf0773adc",
     "source_changes": 1,
     "source_line_delta": {
-      "added": 2,
-      "removed": 2,
-      "bytes": 59
+      "added": 1,
+      "removed": 1,
+      "bytes": 37
     },
     "new_repository_tests": 12,
-    "new_prs": 0,
-    "new_ci_runs": 2,
+    "new_prs": 1,
     "new_merges": 0,
-    "independent_review": "AWAIT_NEW_REGISTERED_REVIEWER",
+    "independent_review": "AWAIT_SEPARATE_REGISTERED_REVIEWER_NEW_RUN",
     "ci": {
-      "id": 40963166528,
-      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40963166528",
-      "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
-      "base": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
-      "event": "pull_request",
+      "id": 40969585796,
+      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40969585796",
+      "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
+      "base": "7f198fa99ee4ee28d580172885a4183cf0773adc",
       "attempt": 1,
+      "event": "pull_request",
       "status": "completed",
       "conclusion": "success",
+      "python_tests": 761,
+      "new_python_tests": 12,
       "jobs": [
         {
-          "id": 123760868928,
           "name": "compile_hold",
-          "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+          "id": 123782735532,
+          "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
           "conclusion": "success"
         },
         {
-          "id": 123760869520,
           "name": "offline",
-          "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+          "id": 123782735777,
+          "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
           "conclusion": "success"
         }
       ],
-      "python_tests": 749,
-      "new_python_tests": 12,
-      "previous737_tests_preserved": true,
-      "scope": "PASS_TRUSTED_BASE",
-      "claim": "PASS_FOUR_IMMUTABLE_HISTORY_RECORDS",
-      "offline_log": [
-        "2026-10-29T22:06:05.5030963Z PASS: system review scope",
-        "2026-10-29T22:06:06.0131859Z PASS: repair coordination; 4 immutable coordinator claim(s) verified",
-        "2026-10-29T22:06:14.5948215Z Ran 749 tests in 5.935s",
-        "2026-10-29T22:06:14.5971828Z OK"
+      "log": [
+        "2026-10-29T22:56:51.5402799Z PASS: system review scope",
+        "2026-10-29T22:56:51.8616578Z PASS: repair coordination; 3 immutable coordinator claim(s) verified",
+        "2026-10-29T22:57:00.4006108Z Ran 761 tests in 6.235s",
+        "2026-10-29T22:57:00.4006448Z OK"
       ]
     },
     "red": {
-      "head": "7a3d6b8d96591342821e68d06a9bcd9b68aff18c",
-      "ci": 40962918985,
-      "tests": 749,
-      "failures": 14,
+      "head": "f484a601125efd778de81e175fee62b132284c5b",
+      "ci": 40969342145,
+      "tests": 761,
+      "failures": 13,
       "errors": 0
     },
+    "histories": [
+      "C00138",
+      "C00139",
+      "C00140"
+    ],
+    "local_test_counts": {
+      "new": 12,
+      "evidence": 41,
+      "idle": 20,
+      "transport": 31,
+      "all_pass": true,
+      "correction": "C00140 append-only corrects C00139 two assumed local counts; source and RED/GREEN unchanged"
+    },
     "preservation": {
-      "modified_from_rejected_head": [
-        "tools/repair_control.py"
-      ],
-      "new_paths": [
-        "history/C00136_pr126_holder_epoch_red_control.json",
-        "history/C00137_pr126_strict_holder_epoch_repair.json",
-        "tests/test_system_holder_epoch_fencing.py"
-      ],
-      "preserved_prior_PR_blobs": 287,
-      "all_previous_tests_and_history_identical": true,
-      "old_test_blob": "5df2fdbb7c25a09ac99dc5658fc98034571a0a3a",
-      "new_test_blob": "59eccfa3a7e530b43a0523b6d119c87c20f40269",
-      "source_blob": "aec1699605fc7754f808b7768ceb8e3ce4b74f29"
-    },
-    "metrics": {
-      "tools/repair_control.py": {
-        "bytes": 21929,
-        "lines": 405,
-        "blob": "aec1699605fc7754f808b7768ceb8e3ce4b74f29",
-        "sha256": "15c68ddef30dee94ac232b9cf5ac1ff8d910bdd3ea37f29e30d2a9e074608ae4"
-      },
-      "tests/test_system_holder_epoch_fencing.py": {
-        "bytes": 4596,
-        "lines": 107,
-        "blob": "59eccfa3a7e530b43a0523b6d119c87c20f40269",
-        "sha256": "2410ab5880553b442540938e34c123b6d986e56187166fba997fa3c32b5e233a"
-      }
-    },
-    "original_author": {
-      "task_id": "6add445e4138819197d9cf2b1a02534d",
-      "run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
-      "epoch": 255
-    },
-    "repair_author": {
-      "task_id": "6add445e4138819197d9cf2b1a02534d",
-      "run_id": "d746314f-15a8-832f-80fa-d479f030d398",
-      "coordination": {
-        "branch": "twf-repair-coordinator",
-        "claim_commit": "1c03230b8d6a35022d023918aec311af2605f0ce",
-        "owner_run_id": "d746314f-15a8-832f-80fa-d479f030d398",
-        "epoch": 257
-      },
-      "histories": [
-        "history/C00136_pr126_holder_epoch_red_control.json",
-        "history/C00137_pr126_strict_holder_epoch_repair.json"
-      ]
-    },
-    "formal_prior_rejection": {
-      "schema": 1,
-      "pr": 126,
-      "head": "9bbf9e819c886099802b4ccbf69f1e0cf2718939",
-      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-      "reviewer_run_id": "73434dcc-91f8-8327-8231-3e7e067b4fab",
-      "lease_epoch": 256,
-      "reviewer_claim": "46b48cf9e01fccd004423358ab3a2aeea356605e",
-      "verdict": "REQUEST_CHANGES_BOOL_FLOAT_HOLDER_EPOCH_FAIL_CLOSED",
-      "reviewed_at": "2026-10-29T21:56:02.725Z",
-      "issue_comment_url": "https://github.com/kk051780/toy-wars-factory/issues/123#issuecomment-6509231333",
-      "source_static_only": true,
-      "accepted_negative_test_executed": false,
-      "green_ci": 40958732301,
-      "blocking_fixtures": [
-        "holder.epoch=true with state.epoch=1",
-        "holder.epoch=1.0 with state.epoch=1",
-        "owns epoch=True/1.0 strictness"
-      ],
-      "merge_authorized": false
-    },
-    "reference_progress": {
-      "automation": 81.3,
-      "game": 40,
-      "delta": 0.2,
-      "game_delta": 0,
-      "event": "PULSE-20261030-PR126-HOLDER-EPOCH-GREEN-001"
-    },
-    "reference_pulse_comment": 6509451758,
-    "original_orphan_root_cause": "UNKNOWN",
-    "epoch251_terminal": "UNPROVEN",
-    "live_finally": {
-      "status": "CORRECTED_SOURCE_REACHED_CONNECTED_HOST_CAS; POSTREAD_PENDING_AT_COMMIT",
-      "record": "ops/lease_receipts/META_d746314f_epoch257.json",
-      "source_commit": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
-      "source_blob": "aec1699605fc7754f808b7768ceb8e3ce4b74f29",
-      "provider_attestation": false,
-      "unforced_scheduled_origin": "NOT_VERIFIED",
-      "host_trace_before_cas": [
+      "modified": [
         {
-          "op": "CONNECTED_GET_PAIR",
-          "ref": "6bbb1cf27bfc89ff4a742e3e6d04c3a7a23ec83c",
-          "state_blob": "0f59180c0b7cf3cd96711a031690421c031bbc4f",
-          "epoch": 257,
-          "holder": {
-            "owner_id": "d746314f-15a8-832f-80fa-d479f030d398",
-            "epoch": 257
-          }
-        },
-        {
-          "op": "HOST_CLOCK",
-          "at": "2026-10-29T22:11:17Z"
-        },
-        {
-          "op": "CONNECTED_PEEK",
-          "task_id": "6add445e4138819197d9cf2b1a02534d",
-          "run_id": "d746314f-15a8-832f-80fa-d479f030d398",
-          "status": "in_progress"
-        },
-        {
-          "op": "CANDIDATE_CONTEXT_BODY",
-          "scope": "Single normal finally-release portion; earlier source work was outside this Python context"
-        },
-        {
-          "op": "CONNECTED_GET_PAIR",
-          "ref": "6bbb1cf27bfc89ff4a742e3e6d04c3a7a23ec83c",
-          "state_blob": "0f59180c0b7cf3cd96711a031690421c031bbc4f",
-          "epoch": 257,
-          "holder": {
-            "owner_id": "d746314f-15a8-832f-80fa-d479f030d398",
-            "epoch": 257
-          }
-        },
-        {
-          "op": "HOST_CLOCK",
-          "at": "2026-10-29T22:11:27Z"
-        },
-        {
-          "op": "CONNECTED_PEEK",
-          "task_id": "6add445e4138819197d9cf2b1a02534d",
-          "run_id": "d746314f-15a8-832f-80fa-d479f030d398",
-          "status": "in_progress"
-        },
-        {
-          "op": "CONNECTED_GET_PAIR",
-          "ref": "6bbb1cf27bfc89ff4a742e3e6d04c3a7a23ec83c",
-          "state_blob": "0f59180c0b7cf3cd96711a031690421c031bbc4f",
-          "epoch": 257,
-          "holder": {
-            "owner_id": "d746314f-15a8-832f-80fa-d479f030d398",
-            "epoch": 257
-          }
-        },
-        {
-          "op": "HOST_CLOCK",
-          "at": "2026-10-29T22:11:35Z"
-        },
-        {
-          "op": "CONNECTED_PEEK",
-          "task_id": "6add445e4138819197d9cf2b1a02534d",
-          "run_id": "d746314f-15a8-832f-80fa-d479f030d398",
-          "status": "in_progress"
-        },
-        {
-          "op": "HOST_CLOCK",
-          "at": "2026-10-29T22:11:39Z"
-        },
-        {
-          "op": "HOST_INDEPENDENT_CAS_GUARD",
-          "expected_sha": "6bbb1cf27bfc89ff4a742e3e6d04c3a7a23ec83c",
-          "force": false,
-          "owner": "d746314f-15a8-832f-80fa-d479f030d398",
-          "epoch": 257,
-          "main": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
-          "pr_head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
-          "observed_at": "2026-10-29T22:11:41Z"
+          "path": "tools/system_github_evidence.py",
+          "before": "2eed374c00b037cc8f0d48a1aaf1f04b7831aa33",
+          "after": "73e71972209bf1937560c8250e0aaf76ef759f89",
+          "bytes_delta": 37
         }
       ],
-      "scope": "One normal release portion, not earlier source work or unforced full-cycle proof"
+      "removed": [],
+      "added": [
+        "history/C00138_github_evidence_holder_epoch_red.json",
+        "history/C00139_github_evidence_holder_epoch_repair.json",
+        "history/C00140_github_evidence_local_count_correction.json",
+        "tests/test_system_evidence_holder_generation.py"
+      ],
+      "preserved_blobs": 290,
+      "base_blobs": 291,
+      "final_blobs": 295
+    },
+    "services": {
+      "META": {
+        "task_id": "6add445e4138819197d9cf2b1a02534d",
+        "is_enabled": true,
+        "last_run": {
+          "id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+          "recorded_status": "in_progress",
+          "scheduled_for": "2026-10-29T22:45:00Z",
+          "started_at": "2026-10-29T22:43:26.247789Z",
+          "completed_at": null,
+          "chat_ref": null
+        },
+        "latest_result_run_id": "d746314f-15a8-832f-80fa-d479f030d398",
+        "same_run_result": false,
+        "delivery_status": "unknown"
+      },
+      "WORKER": {
+        "task_id": "6adbf0d6a7d881918ce181dff2468867",
+        "is_enabled": true,
+        "last_run": {
+          "id": "8f6caaa9-dde8-832e-8aac-c9d039996098",
+          "recorded_status": "completed",
+          "scheduled_for": "2026-10-29T22:05:04Z",
+          "started_at": "2026-10-29T22:02:55.720845Z",
+          "completed_at": "2026-10-29T22:03:47.400722Z",
+          "chat_ref": {
+            "type": "chatgpt",
+            "id": "6adc2384-0294-83ee-a005-ef536b9eb34a"
+          }
+        },
+        "latest_result_run_id": "8f6caaa9-dde8-832e-8aac-c9d039996098",
+        "same_run_result": true,
+        "delivery_status": "unknown"
+      },
+      "REVIEWER": {
+        "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "is_enabled": true,
+        "last_run": {
+          "id": "3db5475d-d874-8327-b42b-378e05dd32c2",
+          "recorded_status": "completed",
+          "scheduled_for": "2026-10-29T22:14:37.685663Z",
+          "started_at": "2026-10-29T22:14:40.121296Z",
+          "completed_at": "2026-10-29T22:24:54.690803Z",
+          "chat_ref": {
+            "type": "chatgpt",
+            "id": "6add6b00-4784-83ee-abae-45d04f185d10"
+          }
+        },
+        "latest_result_run_id": "3db5475d-d874-8327-b42b-378e05dd32c2",
+        "same_run_result": true,
+        "delivery_status": "unknown"
+      }
+    },
+    "main_health": {
+      "main": "7f198fa99ee4ee28d580172885a4183cf0773adc",
+      "qa_head": "90826c84f7a7e100d406f84f4af720e6e666cdda",
+      "qa": 40965149273,
+      "handoff": 40965149371,
+      "jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "tests": 749,
+      "status_only_compare": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ],
+      "main_source_not_changed": true
+    },
+    "live_source_observation": {
+      "executed_source_blobs": {
+        "studio_autopilot/__init__.py": "15c851b633b73e841c4450e2144cec2c552ab6a5",
+        "studio_autopilot/core.py": "315d86ab9805abce7b3c82dac405b7cf7370952d",
+        "studio_autopilot/scheduler.py": "9fe373d4e853c69ecd09ecdcc8b70c6ea0a3ea73",
+        "tools/system_host_write_triage.py": "2baea389ea52a7bb9e6392f77b466e0b028ac3fd",
+        "tools/system_github_evidence.py": "2eed374c00b037cc8f0d48a1aaf1f04b7831aa33",
+        "tools/system_host_write_triage_v2.py": "b3d33d2c949e3a0d30e79f3fc47e50adfc7681df",
+        "tools/system_service_observer.py": "2baec64cfe6b0b7445ebf04bedb1530981586375",
+        "tools/system_incident_observer.py": "8e44f0a65e569ae0dccbae8abc026dc0541d9d54",
+        "tools/system_provider_transport.py": "d6bd8b106101a34c5eeb35c92a583bd8ccd8235f",
+        "tools/system_runtime_alerts.py": "4430050e9e42eec35d5f7339f1d975444e72b0e6",
+        "tools/system_idle_health.py": "499624fc9b2a6b75a53bae3b5bf7c4afa0069fef"
+      },
+      "result": {
+        "schema": 1,
+        "mode": "PR_LESS_READ_ONLY",
+        "verification": "NOT_VERIFIED",
+        "game_id": "toy-wars-factory",
+        "repository": "kk051780/toy-wars-factory",
+        "main_qa": "MAIN_QA_NOT_CHECKED",
+        "delivery": "NOT_ATTEMPTED",
+        "a12_verified": false,
+        "operation_cause": "INDETERMINATE",
+        "state": "OBSERVED_HEALTHY",
+        "frame": {
+          "schema": 1,
+          "mode": "READ_ONLY_A12_DIAGNOSTIC",
+          "verification": "NOT_VERIFIED",
+          "game_id": "toy-wars-factory",
+          "repository": "kk051780/toy-wars-factory",
+          "roles": {
+            "author": "6adbf0d6a7d881918ce181dff2468867",
+            "reviewer": "6add6aaceb4c8191b1666fe15f97cd88",
+            "meta": "6add445e4138819197d9cf2b1a02534d"
+          },
+          "observed_at": "2026-10-29T22:50:05.397867+00:00",
+          "thresholds": {
+            "service_timeout_seconds": {
+              "author": 1800,
+              "meta": 1800,
+              "reviewer": 1800
+            },
+            "ci_timeout_seconds": 1800,
+            "max_observation_age_seconds": 120,
+            "replay_window_seconds": 86400
+          },
+          "services": [
+            {
+              "role": "author",
+              "task_id": "6adbf0d6a7d881918ce181dff2468867",
+              "run_id": "8f6caaa9-dde8-832e-8aac-c9d039996098",
+              "state": "OBSERVED_COMPLETED",
+              "age_seconds": 2829,
+              "latest_result_binding": "CURRENT_RUN"
+            },
+            {
+              "role": "meta",
+              "task_id": "6add445e4138819197d9cf2b1a02534d",
+              "run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+              "state": "IN_PROGRESS_NOT_YET_STALE",
+              "age_seconds": 399,
+              "latest_result_binding": "PREVIOUS_RUN"
+            },
+            {
+              "role": "reviewer",
+              "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+              "run_id": "3db5475d-d874-8327-b42b-378e05dd32c2",
+              "state": "OBSERVED_COMPLETED",
+              "age_seconds": 2125,
+              "latest_result_binding": "CURRENT_RUN"
+            }
+          ],
+          "lease": null,
+          "ci": [],
+          "alerts": [],
+          "recovery_candidates": [],
+          "authority": {
+            "write_allowed": false,
+            "start_now_allowed": false,
+            "takeover_allowed": false,
+            "dispatch_allowed": false,
+            "merge_allowed": false,
+            "publish_allowed": false,
+            "external_spend_allowed": false,
+            "safe_to_next_schedule": false
+          },
+          "delivery": "NOT_ATTEMPTED",
+          "operation_cause": "INDETERMINATE",
+          "a12_verified": false
+        },
+        "authority": {
+          "write_allowed": false,
+          "start_now_allowed": false,
+          "takeover_allowed": false,
+          "dispatch_allowed": false,
+          "merge_allowed": false,
+          "publish_allowed": false,
+          "external_spend_allowed": false,
+          "safe_to_next_schedule": false
+        }
+      },
+      "provider_authentication": "NOT_ATTESTED",
+      "trigger_origin": "NOT_EXPOSED_BY_PEEK; scheduled_for alone NOT proof of unforced start",
+      "writer_bound": false,
+      "host_call_trace": [
+        {
+          "op": "CONNECTED_GET",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory",
+          "at": "2026-10-29 22:49:35 UTC"
+        },
+        {
+          "op": "CONNECTED_GET",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/ref/heads/main",
+          "at": "2026-10-29 22:49:37 UTC"
+        },
+        {
+          "op": "CONNECTED_GET",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/ref/heads/twf-repair-coordinator",
+          "at": "2026-10-29 22:49:38 UTC"
+        },
+        {
+          "op": "CONNECTED_GET",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/commits/7f198fa99ee4ee28d580172885a4183cf0773adc",
+          "at": "2026-10-29 22:49:40 UTC"
+        },
+        {
+          "op": "CONNECTED_GET",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/trees/ab5031745d8211020c61975395bd6eb22c0a5e7d?recursive=1",
+          "at": "2026-10-29 22:49:41 UTC"
+        },
+        {
+          "op": "CONNECTED_GET",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/blobs/b16fcdb953701c321bac7f6ed467b21d46d998bb",
+          "at": "2026-10-29 22:49:43 UTC"
+        },
+        {
+          "op": "CONNECTED_GET",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/blobs/0ed1fa31b93493299388da068749a0ca64768f43",
+          "at": "2026-10-29 22:49:44 UTC"
+        },
+        {
+          "op": "CONNECTED_GET",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/commits/02b9be0da7eed2690648a9a9f40f0c7b0c8600a8",
+          "at": "2026-10-29 22:49:46 UTC"
+        },
+        {
+          "op": "CONNECTED_GET",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/trees/6146f3f94d21696e29db6a8ab0a303c2502b95dd?recursive=1",
+          "at": "2026-10-29 22:49:47 UTC"
+        },
+        {
+          "op": "CONNECTED_GET",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/blobs/d577d6a020d4360172442a337eacaa631ca07c6e",
+          "at": "2026-10-29 22:49:49 UTC"
+        },
+        {
+          "op": "CONNECTED_PEEK",
+          "task_id": "6adbf0d6a7d881918ce181dff2468867",
+          "run": "8f6caaa9-dde8-832e-8aac-c9d039996098",
+          "status": "completed",
+          "result_run": "8f6caaa9-dde8-832e-8aac-c9d039996098",
+          "at": "2026-10-29 22:49:52 UTC"
+        },
+        {
+          "op": "CONNECTED_PEEK",
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "run": "f5288a51-22e0-8327-a48b-335833cc9a00",
+          "status": "in_progress",
+          "result_run": "d746314f-15a8-832f-80fa-d479f030d398",
+          "at": "2026-10-29 22:49:54 UTC"
+        },
+        {
+          "op": "CONNECTED_PEEK",
+          "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+          "run": "3db5475d-d874-8327-b42b-378e05dd32c2",
+          "status": "completed",
+          "result_run": "3db5475d-d874-8327-b42b-378e05dd32c2",
+          "at": "2026-10-29 22:49:56 UTC"
+        },
+        {
+          "op": "CONNECTED_PEEK",
+          "task_id": "6adbf0d6a7d881918ce181dff2468867",
+          "run": "8f6caaa9-dde8-832e-8aac-c9d039996098",
+          "status": "completed",
+          "result_run": "8f6caaa9-dde8-832e-8aac-c9d039996098",
+          "at": "2026-10-29 22:49:58 UTC"
+        },
+        {
+          "op": "CONNECTED_PEEK",
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "run": "f5288a51-22e0-8327-a48b-335833cc9a00",
+          "status": "in_progress",
+          "result_run": "d746314f-15a8-832f-80fa-d479f030d398",
+          "at": "2026-10-29 22:50:00 UTC"
+        },
+        {
+          "op": "CONNECTED_PEEK",
+          "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+          "run": "3db5475d-d874-8327-b42b-378e05dd32c2",
+          "status": "completed",
+          "result_run": "3db5475d-d874-8327-b42b-378e05dd32c2",
+          "at": "2026-10-29 22:50:02 UTC"
+        },
+        {
+          "op": "CONNECTED_GET",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/ref/heads/main",
+          "at": "2026-10-29 22:50:03 UTC"
+        },
+        {
+          "op": "CONNECTED_GET",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/ref/heads/twf-repair-coordinator",
+          "at": "2026-10-29 22:50:05 UTC"
+        }
+      ],
+      "true_get_callbacks": 12,
+      "true_peek_callbacks": 6,
+      "organic_incidents": 0,
+      "persistent_incident_created": false,
+      "delivery": "NOT_VERIFIED",
+      "recovery": "NOT_OBSERVED"
+    },
+    "normal_cleanup": {
+      "first_context": {
+        "state": "CONTEXT_FAILED",
+        "error_type": "RuntimeError",
+        "safe_error": "owned lease finalization not confirmed: CAS",
+        "receipt": {
+          "status": "RELEASE_UNCONFIRMED",
+          "repository": "kk051780/toy-wars-factory",
+          "kind": "META",
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "owner_run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+          "epoch": 260,
+          "provider_verified": false,
+          "provider_terminal": "NOT_ATTESTED",
+          "failure_stage": "CAS"
+        }
+      },
+      "first_context_trace": [
+        {
+          "op": "CONNECTED_READ",
+          "ref": "0fa55eaa205b9ccaf27894d9332a553f4d7779ed",
+          "blob": "2c15022748876002d65a3fbc80f30e093ca27cd9",
+          "epoch": 260
+        },
+        {
+          "op": "HOST_CLOCK",
+          "at": "2026-10-29T22:52:24Z"
+        },
+        {
+          "op": "CONNECTED_PEEK",
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "run": "f5288a51-22e0-8327-a48b-335833cc9a00",
+          "status": "in_progress"
+        },
+        {
+          "op": "CONNECTED_READ",
+          "ref": "0fa55eaa205b9ccaf27894d9332a553f4d7779ed",
+          "blob": "2c15022748876002d65a3fbc80f30e093ca27cd9",
+          "epoch": 260
+        },
+        {
+          "op": "HOST_CLOCK",
+          "at": "2026-10-29T22:58:43Z"
+        },
+        {
+          "op": "CONNECTED_PEEK",
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "run": "f5288a51-22e0-8327-a48b-335833cc9a00",
+          "status": "in_progress"
+        },
+        {
+          "op": "CONNECTED_READ",
+          "ref": "0fa55eaa205b9ccaf27894d9332a553f4d7779ed",
+          "blob": "2c15022748876002d65a3fbc80f30e093ca27cd9",
+          "epoch": 260
+        },
+        {
+          "op": "HOST_CLOCK",
+          "at": "2026-10-29T22:58:49Z"
+        },
+        {
+          "op": "CONNECTED_PEEK",
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "run": "f5288a51-22e0-8327-a48b-335833cc9a00",
+          "status": "in_progress"
+        },
+        {
+          "op": "HOST_CLOCK",
+          "at": "2026-10-29T22:58:52Z"
+        }
+      ],
+      "first_actual_host_cas_calls": 0,
+      "operational_callback_error": "Local driver cas callback accepted keyword args only; source invokes repository and branch positionally. No tool write/CAS occurred. Corrected operational adapter signature and reentered SAME authenticated run/epoch; no recover/takeover/extra automation.",
+      "release_receipt": "ops/lease_receipts/META_f5288a51_epoch260.json",
+      "final_release": "PENDING_NORMAL_FINALLY_AND_POSTREAD_AT_COMMIT_CREATION",
+      "provider_terminal": "NOT_ATTESTED",
+      "crash_guarantee": false,
+      "second_context": {
+        "state": "CONTEXT_FAILED",
+        "error_type": "RuntimeError",
+        "safe_error": "owned lease finalization not confirmed: CAS",
+        "receipt": {
+          "status": "RELEASE_UNCONFIRMED",
+          "repository": "kk051780/toy-wars-factory",
+          "kind": "META",
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "owner_run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+          "epoch": 260,
+          "provider_verified": false,
+          "provider_terminal": "NOT_ATTESTED",
+          "failure_stage": "CAS"
+        }
+      },
+      "second_failure_host_cas_calls": 0,
+      "second_operational_error": "PTY returned the large state RPC in chunks; JSON parse failed before any connected CAS. Sent callback rejection, drained context. Reentered same current owner after correction to file-backed bounded RPC. No provider write refusal, no acknowledged or ambiguous GitHub write, no CAS conflict or takeover."
+    },
+    "reference_progress": {
+      "automation": 82.3,
+      "game": 40,
+      "delta": 0.2,
+      "event": "PULSE-20261030-PR129-EVIDENCE-EPOCH-GREEN-001",
+      "pulse": 6510505411,
+      "official_automation": 57,
+      "official_game": 38,
+      "a12_awarded": 0,
+      "a13_awarded": 0
     },
     "research": {
       "retrieved_on": "2026-10-30",
       "primary_url": "https://docs.python.org/3/library/stdtypes.html",
-      "observation": "Python booleans participate in integer equality; fencing uses exact type checks instead of equality or isinstance alone.",
+      "fact": "Python bool is an int subclass; numeric equality alone does not enforce exact stored generation type.",
       "system_options": [
-        "NO_CHANGE: retains reproduced fence bypass",
-        "COERCE/normalize numeric input: risks silently legitimizing malformed state",
-        "STRICT_REJECT: chosen minimal2-line guard with additive tests"
+        {
+          "id": "NO_CHANGE",
+          "result": "Reproduced malformed holder epoch accepted; no extra work"
+        },
+        {
+          "id": "NORMALIZE",
+          "result": "Rejected hypothesis: coercion hides malformed persisted state; more compatibility and QA risk"
+        },
+        {
+          "id": "STRICT_REJECT",
+          "result": "Selected one-line exact-type guard; low implementation cost; new adversarial regression; performance effect NOT_MEASURED"
+        }
       ],
       "game_options": [
-        "NO_CHANGE during safety repair",
-        "FIRST_LOOP_CLARITY: lower QA cost, effect NOT_MEASURED",
-        "DIFFERENTIATED_ROLE_COLLECTION: preserved OWNER origin, higher visual/UI/balance QA cost, effect NOT_MEASURED"
+        {
+          "id": "NO_CHANGE",
+          "result": "Selected while system safety is prioritized; gameplay effect NOT_MEASURED"
+        },
+        {
+          "id": "FIRST_LOOP_CLARITY",
+          "result": "Owner first-loop acquisition/early-exit hypothesis; UI/mobile QA needed; NOT_MEASURED"
+        },
+        {
+          "id": "DIFFERENTIATED_COLLECTION",
+          "result": "Preserved OWNER verbatim/DERIVED ledger; differentiated role/collection hypothesis; model/animation/battle/UI and QA burden higher; NOT_MEASURED"
+        }
       ],
-      "owner_idea": "Existing verbatim/DERIVED provenance retained unchanged; original chat authentication NOT_VERIFIED"
-    }
+      "owner_origin": "Existing C00122 origin/DERIVED preserved, original chat authentication NOT_VERIFIED"
+    },
+    "limits": [
+      "No new organic service anomaly, persistence, notification delivery or independently confirmed recovery",
+      "Trigger origin is NOT_EXPOSED_BY_PEEK; scheduled_for alone is not unforced attestation",
+      "Original epoch251 terminal remains UNATTESTED",
+      "A12/A13 award0; official protected57/game38 unchanged",
+      "Issue128 cadence reconciliation is separate protected work, no task/schedule/config mutation",
+      "No author approve/merge, external inference/spend, credentials or Roblox publication"
+    ],
+    "next": "Wait for genuine author run completion, own epoch260 release/ref readback; registered REVIEWER exact new head review. No run_now or schedule mutations."
   },
   "compatibility_evidence_path": "ops/reconciliations/PR0124_epoch253_json_compatibility_epoch254.json",
   "operational_consistency_checks_scope": "Inherited epoch253 checks only; current cycle validation separately recorded",
@@ -1660,6 +1942,253 @@
             "FIRST_LOOP_CLARITY: smaller QA scope; effect NOT_MEASURED",
             "DIFFERENTIATED_ROLE_COLLECTION: original OWNER idea retained; larger model/UI/balance QA scope; effect NOT_MEASURED"
           ]
+        }
+      }
+    },
+    {
+      "ref": "02b9be0da7eed2690648a9a9f40f0c7b0c8600a8",
+      "blob": "6750002d9f4aee9bf84055b930d41eba25fefaea",
+      "cycle": {
+        "kind": "PR126_INDEPENDENT_REVIEW_STRICT_HOLDER_EPOCH_REPAIR",
+        "pr": 126,
+        "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/126",
+        "source_changes": 1,
+        "source_line_delta": {
+          "added": 2,
+          "removed": 2,
+          "bytes": 59
+        },
+        "new_repository_tests": 12,
+        "new_prs": 0,
+        "new_ci_runs": 2,
+        "new_merges": 0,
+        "independent_review": "AWAIT_NEW_REGISTERED_REVIEWER",
+        "ci": {
+          "id": 40963166528,
+          "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40963166528",
+          "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+          "base": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+          "event": "pull_request",
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "jobs": [
+            {
+              "id": 123760868928,
+              "name": "compile_hold",
+              "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+              "conclusion": "success"
+            },
+            {
+              "id": 123760869520,
+              "name": "offline",
+              "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+              "conclusion": "success"
+            }
+          ],
+          "python_tests": 749,
+          "new_python_tests": 12,
+          "previous737_tests_preserved": true,
+          "scope": "PASS_TRUSTED_BASE",
+          "claim": "PASS_FOUR_IMMUTABLE_HISTORY_RECORDS",
+          "offline_log": [
+            "2026-10-29T22:06:05.5030963Z PASS: system review scope",
+            "2026-10-29T22:06:06.0131859Z PASS: repair coordination; 4 immutable coordinator claim(s) verified",
+            "2026-10-29T22:06:14.5948215Z Ran 749 tests in 5.935s",
+            "2026-10-29T22:06:14.5971828Z OK"
+          ]
+        },
+        "red": {
+          "head": "7a3d6b8d96591342821e68d06a9bcd9b68aff18c",
+          "ci": 40962918985,
+          "tests": 749,
+          "failures": 14,
+          "errors": 0
+        },
+        "preservation": {
+          "modified_from_rejected_head": [
+            "tools/repair_control.py"
+          ],
+          "new_paths": [
+            "history/C00136_pr126_holder_epoch_red_control.json",
+            "history/C00137_pr126_strict_holder_epoch_repair.json",
+            "tests/test_system_holder_epoch_fencing.py"
+          ],
+          "preserved_prior_PR_blobs": 287,
+          "all_previous_tests_and_history_identical": true,
+          "old_test_blob": "5df2fdbb7c25a09ac99dc5658fc98034571a0a3a",
+          "new_test_blob": "59eccfa3a7e530b43a0523b6d119c87c20f40269",
+          "source_blob": "aec1699605fc7754f808b7768ceb8e3ce4b74f29"
+        },
+        "metrics": {
+          "tools/repair_control.py": {
+            "bytes": 21929,
+            "lines": 405,
+            "blob": "aec1699605fc7754f808b7768ceb8e3ce4b74f29",
+            "sha256": "15c68ddef30dee94ac232b9cf5ac1ff8d910bdd3ea37f29e30d2a9e074608ae4"
+          },
+          "tests/test_system_holder_epoch_fencing.py": {
+            "bytes": 4596,
+            "lines": 107,
+            "blob": "59eccfa3a7e530b43a0523b6d119c87c20f40269",
+            "sha256": "2410ab5880553b442540938e34c123b6d986e56187166fba997fa3c32b5e233a"
+          }
+        },
+        "original_author": {
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+          "epoch": 255
+        },
+        "repair_author": {
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "run_id": "d746314f-15a8-832f-80fa-d479f030d398",
+          "coordination": {
+            "branch": "twf-repair-coordinator",
+            "claim_commit": "1c03230b8d6a35022d023918aec311af2605f0ce",
+            "owner_run_id": "d746314f-15a8-832f-80fa-d479f030d398",
+            "epoch": 257
+          },
+          "histories": [
+            "history/C00136_pr126_holder_epoch_red_control.json",
+            "history/C00137_pr126_strict_holder_epoch_repair.json"
+          ]
+        },
+        "formal_prior_rejection": {
+          "schema": 1,
+          "pr": 126,
+          "head": "9bbf9e819c886099802b4ccbf69f1e0cf2718939",
+          "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+          "reviewer_run_id": "73434dcc-91f8-8327-8231-3e7e067b4fab",
+          "lease_epoch": 256,
+          "reviewer_claim": "46b48cf9e01fccd004423358ab3a2aeea356605e",
+          "verdict": "REQUEST_CHANGES_BOOL_FLOAT_HOLDER_EPOCH_FAIL_CLOSED",
+          "reviewed_at": "2026-10-29T21:56:02.725Z",
+          "issue_comment_url": "https://github.com/kk051780/toy-wars-factory/issues/123#issuecomment-6509231333",
+          "source_static_only": true,
+          "accepted_negative_test_executed": false,
+          "green_ci": 40958732301,
+          "blocking_fixtures": [
+            "holder.epoch=true with state.epoch=1",
+            "holder.epoch=1.0 with state.epoch=1",
+            "owns epoch=True/1.0 strictness"
+          ],
+          "merge_authorized": false
+        },
+        "reference_progress": {
+          "automation": 81.3,
+          "game": 40,
+          "delta": 0.2,
+          "game_delta": 0,
+          "event": "PULSE-20261030-PR126-HOLDER-EPOCH-GREEN-001"
+        },
+        "reference_pulse_comment": 6509451758,
+        "original_orphan_root_cause": "UNKNOWN",
+        "epoch251_terminal": "UNPROVEN",
+        "live_finally": {
+          "status": "CORRECTED_SOURCE_REACHED_CONNECTED_HOST_CAS; POSTREAD_PENDING_AT_COMMIT",
+          "record": "ops/lease_receipts/META_d746314f_epoch257.json",
+          "source_commit": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+          "source_blob": "aec1699605fc7754f808b7768ceb8e3ce4b74f29",
+          "provider_attestation": false,
+          "unforced_scheduled_origin": "NOT_VERIFIED",
+          "host_trace_before_cas": [
+            {
+              "op": "CONNECTED_GET_PAIR",
+              "ref": "6bbb1cf27bfc89ff4a742e3e6d04c3a7a23ec83c",
+              "state_blob": "0f59180c0b7cf3cd96711a031690421c031bbc4f",
+              "epoch": 257,
+              "holder": {
+                "owner_id": "d746314f-15a8-832f-80fa-d479f030d398",
+                "epoch": 257
+              }
+            },
+            {
+              "op": "HOST_CLOCK",
+              "at": "2026-10-29T22:11:17Z"
+            },
+            {
+              "op": "CONNECTED_PEEK",
+              "task_id": "6add445e4138819197d9cf2b1a02534d",
+              "run_id": "d746314f-15a8-832f-80fa-d479f030d398",
+              "status": "in_progress"
+            },
+            {
+              "op": "CANDIDATE_CONTEXT_BODY",
+              "scope": "Single normal finally-release portion; earlier source work was outside this Python context"
+            },
+            {
+              "op": "CONNECTED_GET_PAIR",
+              "ref": "6bbb1cf27bfc89ff4a742e3e6d04c3a7a23ec83c",
+              "state_blob": "0f59180c0b7cf3cd96711a031690421c031bbc4f",
+              "epoch": 257,
+              "holder": {
+                "owner_id": "d746314f-15a8-832f-80fa-d479f030d398",
+                "epoch": 257
+              }
+            },
+            {
+              "op": "HOST_CLOCK",
+              "at": "2026-10-29T22:11:27Z"
+            },
+            {
+              "op": "CONNECTED_PEEK",
+              "task_id": "6add445e4138819197d9cf2b1a02534d",
+              "run_id": "d746314f-15a8-832f-80fa-d479f030d398",
+              "status": "in_progress"
+            },
+            {
+              "op": "CONNECTED_GET_PAIR",
+              "ref": "6bbb1cf27bfc89ff4a742e3e6d04c3a7a23ec83c",
+              "state_blob": "0f59180c0b7cf3cd96711a031690421c031bbc4f",
+              "epoch": 257,
+              "holder": {
+                "owner_id": "d746314f-15a8-832f-80fa-d479f030d398",
+                "epoch": 257
+              }
+            },
+            {
+              "op": "HOST_CLOCK",
+              "at": "2026-10-29T22:11:35Z"
+            },
+            {
+              "op": "CONNECTED_PEEK",
+              "task_id": "6add445e4138819197d9cf2b1a02534d",
+              "run_id": "d746314f-15a8-832f-80fa-d479f030d398",
+              "status": "in_progress"
+            },
+            {
+              "op": "HOST_CLOCK",
+              "at": "2026-10-29T22:11:39Z"
+            },
+            {
+              "op": "HOST_INDEPENDENT_CAS_GUARD",
+              "expected_sha": "6bbb1cf27bfc89ff4a742e3e6d04c3a7a23ec83c",
+              "force": false,
+              "owner": "d746314f-15a8-832f-80fa-d479f030d398",
+              "epoch": 257,
+              "main": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+              "pr_head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+              "observed_at": "2026-10-29T22:11:41Z"
+            }
+          ],
+          "scope": "One normal release portion, not earlier source work or unforced full-cycle proof"
+        },
+        "research": {
+          "retrieved_on": "2026-10-30",
+          "primary_url": "https://docs.python.org/3/library/stdtypes.html",
+          "observation": "Python booleans participate in integer equality; fencing uses exact type checks instead of equality or isinstance alone.",
+          "system_options": [
+            "NO_CHANGE: retains reproduced fence bypass",
+            "COERCE/normalize numeric input: risks silently legitimizing malformed state",
+            "STRICT_REJECT: chosen minimal2-line guard with additive tests"
+          ],
+          "game_options": [
+            "NO_CHANGE during safety repair",
+            "FIRST_LOOP_CLARITY: lower QA cost, effect NOT_MEASURED",
+            "DIFFERENTIATED_ROLE_COLLECTION: preserved OWNER origin, higher visual/UI/balance QA cost, effect NOT_MEASURED"
+          ],
+          "owner_idea": "Existing verbatim/DERIVED provenance retained unchanged; original chat authentication NOT_VERIFIED"
         }
       }
     }
