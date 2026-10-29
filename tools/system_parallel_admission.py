@@ -145,18 +145,24 @@ def advise(candidate: Any, active: Any) -> dict[str, Any]:
         if not isinstance(active, list) or len(active) > 200:
             raise UnsafeInput("invalid active ledger")
         jobs = [_validate(row) for row in active]
-        known = {}
+        known, goals = {}, {}
         for job in jobs:
             key = job["repository"], job["project"], job["work"]
             if key in known and known[key] != _scope(job):
                 raise UnsafeInput("contradictory active work identity")
             known[key] = _scope(job)
+            goal_key = job["repository"], job["project"], job["goal"]
+            if goal_key in goals and goals[goal_key] != job["work"]:
+                raise UnsafeInput("ambiguous active canonical goal")
+            goals[goal_key] = job["work"]
     except UnsafeInput as ex:
         return _decision("BLOCKED_UNSAFE_INPUT", reason=str(ex))
+    if x["mode"] == "SOURCE_WRITE" and _protected(x["paths"]):
+        return _decision("WAIT_PROTECTED_SCOPE")
     matches = []
     for j in jobs:
         if j["repository"] == x["repository"] and j["project"] == x["project"]:
-            if j["work"] == x["work"] and _scope(j) != _scope(x):
+            if (j["work"] == x["work"] or j["goal"] == x["goal"]) and _scope(j) != _scope(x):
                 return _decision("BLOCKED_WORK_ID_CONFLICT")
             if j["work"] == x["work"] or j["goal"] == x["goal"]:
                 matches.append(j["work"])
@@ -168,8 +174,6 @@ def advise(candidate: Any, active: Any) -> dict[str, Any]:
         return _decision("WAIT_INCOMPLETE_MANIFEST")
     if x["origin"] != "REGISTERED_TASK_CLAIMED":
         return _decision("WAIT_UNATTESTED_AUTHOR")
-    if _protected(x["paths"]):
-        return _decision("WAIT_PROTECTED_SCOPE")
     for j in jobs:
         if j["mode"] == "READ_ONLY":
             continue
