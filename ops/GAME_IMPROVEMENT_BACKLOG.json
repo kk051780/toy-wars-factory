@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T13:19:04Z",
+  "observed_at": "2026-10-29T13:54:00Z",
   "source": "PR112 formal provenance repair; current C00122 active view uses exact transcriptions with original chat NOT_VERIFIED; no game source changes.",
   "items": [
     {
@@ -386,7 +386,7 @@
   ],
   "actor": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "29b870a0-83b0-8331-948d-942fbef57f57"
+    "run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc"
   },
   "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
   "prioritized_candidates": [
@@ -472,9 +472,8 @@
     }
   ],
   "previous_snapshot": {
-    "ref": "a4ef9beea5e4ac1b523407ddf53ccc8ea6c4ef12",
-    "blob": "6968afc338eac2a8441024e558d81893159dd490",
-    "observed_at": "2026-10-28T21:36:40Z"
+    "ref": "3a370c48f6a72559dc99423b2a0b1ce56e924226",
+    "blob": "6d88576805d3214b6f48da75e7872b4a712fe3f7"
   },
   "idea_stock": {
     "ref": "c6301b978b289197b764f32744fd0693c2fdbd05:history/C00122_owner_verbatim_review_repair.json",
@@ -578,14 +577,41 @@
         "original_chat_authentication": "NOT_VERIFIED"
       }
     ],
-    "current_view": "C00122; C00121 is explicitly rejected historical input, not active original stock"
+    "current_view": "C00122; C00121 is explicitly rejected historical input, not active original stock",
+    "current_run_note": "No OWNER transcription or original-chat authentication re-executed this repair; retained actual_cli/comment snapshots are historical provenance."
   },
   "latest_system_source_candidate": {
     "pr": 124,
-    "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
-    "status": "DRAFT_CI_PASS_NOT_MERGED",
-    "description": "Issue123 Phase0 pure advisory duplicate/scope planner; no new writer authority",
+    "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+    "status": "REQUEST_CHANGES_REPAIRED_DRAFT_CI_PASS_AWAIT_NEW_REGISTERED_REVIEW",
+    "description": "Repair same-goal scope/protected JOIN and ambiguous active goal fail-closed checks;10new review regressions",
+    "ci": 40885741136,
     "engine": "NOT_RUN",
     "player_effect": "NOT_MEASURED"
+  },
+  "latest_primary_source_check_this_run": {
+    "checked_on": "2026-10-29",
+    "references": [
+      {
+        "url": "https://learn.chatgpt.com/docs/long-running-work",
+        "kind": "PRIMARY_OPENAI_OFFICIAL",
+        "finding": "Separate chat contexts and avoiding overlapping writes support conservative advisory JOIN only; no extra writer or permission."
+      },
+      {
+        "url": "https://create.roblox.com/docs/production/experiments",
+        "kind": "PRIMARY_ROBLOX_OFFICIAL",
+        "finding": "Control/variant and goal hypotheses remain separate from observed player results."
+      }
+    ],
+    "new_release_not_claimed": true,
+    "game_candidates": [
+      "NO_CHANGE",
+      "FIRST_LOOP_CLARITY",
+      "DIFFERENTIATED_ROLE_COLLECTION"
+    ],
+    "game_candidate_effect": "NOT_MEASURED",
+    "community_response": "NOT_VERIFIED_THIS_RUN",
+    "owner_idea": "Accepted C00122 original/DERIVED provenance preserved, original-chat authentication NOT_VERIFIED; no new transcription claim",
+    "business_reference": "Issue115 retained; revenue/popularity/human effort not measured"
   }
 }

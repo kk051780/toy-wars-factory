@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 248,
-  "holder": {
-    "kind": "META",
-    "owner_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "epoch": 248,
-    "acquired_at": "2026-10-29T13:44:41Z",
-    "expires_at": "2026-10-29T14:14:41.000Z",
-    "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
-    "work_branch": "auto/twf-system-review-29b870a0-83b0-8331-948d-942fbef57f57",
-    "origin": "meta"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -25,13 +15,15 @@
         "number": 124,
         "title": "[TWF system-review] Add read-only cross-chat work admission planner",
         "url": "https://github.com/kk051780/toy-wars-factory/pull/124",
-        "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40880252760",
-        "summary": "Issue123 Phase0 pure read-only duplicate/scope planner;51 new repo regressions; no additional writer authority",
+        "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40885741136",
+        "summary": "PR124 REQUEST_CHANGES repair: strict same-goal scope/protected-path/unique-active-goal checks;10 added regressions,697 tests PASS; independent new-head review pending",
         "changed_files": [
-          "tools/system_parallel_admission.py",
+          "history/C00129_parallel_admission_phase0.json",
+          "history/C00130_pr124_join_review_red_control.json",
+          "history/C00131_pr124_join_review_repair.json",
           "tests/test_system_parallel_admission.py",
-          "history/C00129_parallel_admission_phase0.json"
+          "tools/system_parallel_admission.py"
         ],
         "kind": "開発体制改善"
       }
@@ -39,23 +31,27 @@
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-29T13:19:04Z",
-    "signature": "97573dc91234d83706b7d37a3ed61e64df7523063b88980538cffc797354f77c",
+    "observed_at": "2026-10-29T13:54:00Z",
+    "signature": "3bd72e4b5161e365a871e3522172bd3be70fbada41f336745aef8f724e8bcc33",
     "approval_text": ""
   },
-  "last_reported_approval_signature": "97573dc91234d83706b7d37a3ed61e64df7523063b88980538cffc797354f77c",
+  "last_reported_approval_signature": "3bd72e4b5161e365a871e3522172bd3be70fbada41f336745aef8f724e8bcc33",
   "last_completed": {
     "kind": "META",
-    "owner_id": "29b870a0-83b0-8331-948d-942fbef57f57",
-    "epoch": 247,
-    "released_at": "2026-10-29T13:19:04+00:00",
+    "owner_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+    "epoch": 248,
+    "released_at": "2026-10-29T13:55:58Z",
     "pr": 124,
-    "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
-    "ci": 40880252760,
-    "result": "PHASE0_SOURCE_DRAFT_CI_PASS_AWAIT_REGISTERED_REVIEWER",
+    "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+    "ci": 40885741136,
+    "result": "EXISTING_PR_REQUEST_CHANGES_REPAIRED_CI_PASS_AWAIT_NEW_REGISTERED_REVIEW",
     "main_changed": false,
-    "source_files_added": 1,
-    "new_python_tests": 51
+    "new_pr_created": false,
+    "source_patch_added": 8,
+    "source_patch_removed": 4,
+    "new_python_tests": 10,
+    "total_python_tests": 697,
+    "elapsed_seconds_from_service_start": 1052
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
@@ -2245,14 +2241,14 @@
   ],
   "last_system_review": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "f849220f-dc50-8329-926a-f3b0db1267a2",
-    "epoch": 224,
-    "claim_commit": "a4ef9beea5e4ac1b523407ddf53ccc8ea6c4ef12",
-    "recorded_at": "2026-10-28T22:16:08Z",
+    "run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+    "epoch": 248,
+    "claim_commit": "3a370c48f6a72559dc99423b2a0b1ce56e924226",
+    "recorded_at": "2026-10-29T13:54:00Z",
     "report_path": "ops/SYSTEM_REVIEW_LATEST.json",
-    "pr": 112,
-    "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
-    "ci": 40777605047,
-    "result": "REPAIR_DRAFT_CI_PASS_NOT_APPROVED_OR_ADOPTED"
+    "pr": 124,
+    "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+    "ci": 40885741136,
+    "result": "EXISTING_PR124_REQUEST_CHANGES_REPAIRED_EXACT_HEAD_CI_PASS_AWAIT_NEW_INDEPENDENT_REVIEW"
   }
 }

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T13:19:04Z",
+  "observed_at": "2026-10-29T13:54:00Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2979,7 +2979,7 @@
       "pr": 124,
       "url": "https://github.com/kk051780/toy-wars-factory/pull/124",
       "branch": "auto/twf-system-review-29b870a0-83b0-8331-948d-942fbef57f57",
-      "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
+      "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
       "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
       "author_task_id": "6add445e4138819197d9cf2b1a02534d",
       "author_run_id": "29b870a0-83b0-8331-948d-942fbef57f57",
@@ -2990,16 +2990,18 @@
         "epoch": 247
       },
       "created_at": "2026-10-29T13:19:04Z",
-      "request": "Independently review Issue123 Phase0 read-only planner. ThreeA paths only; exact head687 tests and2jobCI pass,51new tests. Do not approve from claimed role/hash, enable writers or count Phase1/2/A12. Check own registered review run, claim provenance, real diff, conservative collision semantics and C129 provenance; source author cannot merge. Post-main QA/handoff after legal independent integration. Preserve separate epoch245 posthoc audit and protected PR122 repairs.",
+      "request": "Re-review repaired PR124 exact new head, not historical bcc1 CI. Real existing-workflow Python red control40885014135 reproduced15 assertion failures in697 tests against unchanged rejected source; new repair-head40885741136 passes both jobs/all697. Inspect same-goal normalized scope equality, protected writer pre-JOIN rejection and unique active project/repo/goal ownership, including unrelated candidates. Preserve positive same-scope JOIN and duplicate canonical-row idempotency. Check old author247/C129 and new repair248/C130/C131 claims independently. Existing51 PR tests and all278 main blobs preserved. Author cannot approve/merge; registered separate new review run, current main QA and postmerge QA/handoff required. No new concurrent writer/auth/provider/Phase1/2 authority.",
       "changed_files": [
-        "tools/system_parallel_admission.py",
+        "history/C00129_parallel_admission_phase0.json",
+        "history/C00130_pr124_join_review_red_control.json",
+        "history/C00131_pr124_join_review_repair.json",
         "tests/test_system_parallel_admission.py",
-        "history/C00129_parallel_admission_phase0.json"
+        "tools/system_parallel_admission.py"
       ],
       "ci": {
-        "id": 40880252760,
-        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40880252760",
-        "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
+        "id": 40885741136,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40885741136",
+        "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
         "base": "221bc53ce118f5242777c13649f437d18078dcc4",
         "event": "pull_request",
         "attempt": 1,
@@ -3007,37 +3009,73 @@
         "conclusion": "success",
         "jobs": [
           {
-            "id": 123469539369,
+            "id": 123488832882,
             "name": "offline",
             "conclusion": "success",
-            "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
-            "started_at": "2026-10-29T13:15:22Z",
-            "completed_at": "2026-10-29T13:15:53Z"
+            "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+            "started_at": "2026-10-29T13:51:03Z",
+            "completed_at": "2026-10-29T13:51:30Z"
           },
           {
-            "id": 123469539710,
+            "id": 123488833299,
             "name": "compile_hold",
             "conclusion": "success",
-            "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
-            "started_at": "2026-10-29T13:15:23Z",
-            "completed_at": "2026-10-29T13:15:34Z"
+            "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+            "started_at": "2026-10-29T13:51:03Z",
+            "completed_at": "2026-10-29T13:51:15Z"
           }
         ],
-        "python_tests": 687,
-        "new_python_tests": 51,
+        "python_tests": 697,
+        "new_python_tests_this_repair": 10,
+        "original_pr_python_tests": 51,
         "scope": "PASS_TRUSTED_BASE",
-        "claim": "PASS_ONE_IMMUTABLE_CLAIM",
+        "claim": "PASS_THREE_IMMUTABLE_HISTORY_CLAIMS",
         "offline_log": [
-          "2026-10-29T13:15:37.5726291Z PASS: system review scope",
-          "2026-10-29T13:15:37.8999747Z PASS: repair coordination; 1 immutable coordinator claim(s) verified",
-          "2026-10-29T13:15:46.7067530Z Ran 687 tests in 6.368s",
-          "2026-10-29T13:15:46.7068063Z OK",
-          "2026-10-29T13:15:46.8976444Z status/CHAT_HANDOFF.md: OK",
-          "2026-10-29T13:15:46.8977242Z status/LATEST_STATE.json: OK"
+          "2026-10-29T13:51:16.2428791Z PASS: system review scope",
+          "2026-10-29T13:51:16.5643075Z PASS: repair coordination; 3 immutable coordinator claim(s) verified",
+          "2026-10-29T13:51:24.6266537Z Ran 697 tests in 5.799s",
+          "2026-10-29T13:51:24.6267527Z OK",
+          "2026-10-29T13:51:24.7890625Z status/CHAT_HANDOFF.md: OK",
+          "2026-10-29T13:51:24.7891386Z status/LATEST_STATE.json: OK"
         ]
       },
       "scope": "ONE_SOURCE_ADDITIVE_PHASE0_NO_CONCURRENT_WRITER_OR_POLICY_CHANGE",
-      "owner_approval_required": false
+      "owner_approval_required": false,
+      "prior_request_snapshot": {
+        "ref": "3a370c48f6a72559dc99423b2a0b1ce56e924226",
+        "blob": "b42f2ca007b8179233ad323e536c3126f27e6882",
+        "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
+        "ci": 40880252760,
+        "author_run_id": "29b870a0-83b0-8331-948d-942fbef57f57"
+      },
+      "previous_registered_review": {
+        "verdict": "REQUEST_CHANGES",
+        "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "run_id": "73bdb9c1-a300-8328-a2fd-0ca62b294119",
+        "recorded_status": "completed",
+        "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/124#issuecomment-6498176602",
+        "findings": [
+          "same-goal different-work scope bypass",
+          "protected writer scope JOIN bypass",
+          "ambiguous active goal owners"
+        ]
+      },
+      "updated_at": "2026-10-29T13:54:00Z",
+      "repair_author": {
+        "task_id": "6add445e4138819197d9cf2b1a02534d",
+        "run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+        "coordination": {
+          "branch": "twf-repair-coordinator",
+          "claim_commit": "3a370c48f6a72559dc99423b2a0b1ce56e924226",
+          "owner_run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+          "epoch": 248
+        },
+        "histories": [
+          "history/C00130_pr124_join_review_red_control.json",
+          "history/C00131_pr124_join_review_repair.json"
+        ]
+      }
     }
   ]
 }
