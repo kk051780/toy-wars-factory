@@ -1,7 +1,9 @@
 # 自動審査・統合待ち
 
-観測時点: 2026-10-29T19:09:29Z
+観測時点: 2026-10-29T21:37:34Z
 
-自動統合待ちの項目はありません。所有者への承認返信は不要です。
+| PR | 内容 | 区分 | 現在headの検査 |
+| --- | --- | --- | --- |
+| [#126](https://github.com/kk051780/toy-wars-factory/pull/126) | 本人task/run/epochのfinally解放、CAS失敗時の閉塞、解放後の実ref再読。28新規回帰、737件PASS。 | 開発体制改善 | [合格](https://github.com/kk051780/toy-wars-factory/actions/runs/40958732301) / `9bbf9e81` |
 
-PR124は正式統合・main QA/handoff成功済みです。再審査・再mergeは不要。旧run終了証明とfinally解放CAPAは別の未完課題です。
+所有者への承認返信は不要。独立審査役が現在headの検査と共有所有権を確認し、1件ずつ統合してmainを検査する。

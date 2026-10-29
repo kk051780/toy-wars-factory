@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 255,
-  "holder": {
-    "kind": "META",
-    "owner_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "epoch": 255,
-    "acquired_at": "2026-10-29T21:21:35+00:00",
-    "expires_at": "2026-10-29T21:51:35+00:00",
-    "base_main_sha": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
-    "work_branch": "auto/twf-system-review-47b45262-2f40-8329-b6cd-3a4b4643b055",
-    "origin": "meta"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -49,15 +39,19 @@
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_completed": {
     "kind": "META",
-    "owner_id": "7674c598-6884-8333-92ca-493a3272348c",
-    "epoch": 254,
-    "released_at": "2026-10-29T21:10:50+00:00",
-    "result": "PR124_JSON_COMPATIBILITY_REPAIR_AWAIT_INDEPENDENT_REVIEW",
-    "evidence_path": "ops/reconciliations/PR0124_epoch253_json_compatibility_epoch254.json",
-    "source_changes": 0,
-    "new_repository_tests": 0,
-    "new_prs": 0,
-    "new_merges": 0
+    "owner_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+    "epoch": 255,
+    "released_at": "2026-10-29T21:41:43+00:00",
+    "release_receipt": {
+      "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
+      "repository": "kk051780/toy-wars-factory",
+      "task_id": "6add445e4138819197d9cf2b1a02534d",
+      "owner_run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+      "epoch": 255,
+      "expected_parent": "c2a1ccc069466ba0b15be95e4137706c52018483",
+      "provider_terminal": "NOT_ATTESTED",
+      "postwrite_readback_required": true
+    }
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",

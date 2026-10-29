@@ -1,13 +1,13 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T21:10:50Z",
-  "status": "PR124_JSON_COMPATIBILITY_REPAIRED_AWAIT_INDEPENDENT_REVIEW",
+  "observed_at": "2026-10-29T21:39:20Z",
+  "status": "PR126_EXACT_HEAD_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
   "repository": "kk051780/toy-wars-factory",
   "actor": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "7674c598-6884-8333-92ca-493a3272348c",
+    "run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
     "recorded_status_at_last_peek": "in_progress",
-    "latest_result_run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf",
+    "latest_result_run_id": "7674c598-6884-8333-92ca-493a3272348c",
     "latest_result_binding": "PREVIOUS_RUN_NOT_CURRENT_SUCCESS",
     "unforced_scheduled_origin": "NOT_VERIFIED_HOST_TRIGGER_ORIGIN_NOT_EXPOSED",
     "recorded_status_at_preflight": "in_progress",
@@ -17,68 +17,71 @@
     "META": {
       "task_id": "6add445e4138819197d9cf2b1a02534d",
       "last_run": {
-        "id": "7674c598-6884-8333-92ca-493a3272348c",
+        "id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
         "recorded_status": "in_progress",
-        "scheduled_for": "2026-10-29T20:59:57.970500Z",
-        "started_at": "2026-10-29T20:59:59.316277Z",
+        "scheduled_for": "2026-10-29T21:19:46.881919Z",
+        "started_at": "2026-10-29T21:19:48.700869Z",
         "completed_at": null,
         "chat_ref": null
       },
-      "latest_result_run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf",
+      "latest_result_run_id": "7674c598-6884-8333-92ca-493a3272348c",
       "latest_result_used_as_current_success": false,
       "delivery_status": "unknown",
       "currentness": "FRESH_CONNECTED_PEEK_SNAPSHOT",
-      "observed_at": "2026-10-29T21:10:50Z"
+      "observed_at": "2026-10-29T21:39:20Z"
     },
     "WORKER": {
       "task_id": "6adbf0d6a7d881918ce181dff2468867",
       "last_run": {
         "id": "4d080174-df2c-8323-b2e7-d072444e7c92",
-        "recorded_status": "in_progress",
+        "recorded_status": "completed",
         "scheduled_for": "2026-10-29T21:05:04Z",
         "started_at": "2026-10-29T21:10:04.392568Z",
-        "completed_at": null,
-        "chat_ref": null
+        "completed_at": "2026-10-29T21:11:12.199432Z",
+        "chat_ref": {
+          "type": "chatgpt",
+          "id": "6adc2384-0294-83ee-a005-ef536b9eb34a"
+        }
       },
-      "latest_result_run_id": "d5e8b006-945c-832c-8bdf-67b5b8361963",
+      "latest_result_run_id": "4d080174-df2c-8323-b2e7-d072444e7c92",
       "latest_result_used_as_current_success": false,
       "delivery_status": "unknown",
       "currentness": "FRESH_CONNECTED_PEEK_SNAPSHOT",
-      "observed_at": "2026-10-29T21:10:50Z"
+      "observed_at": "2026-10-29T21:39:20Z"
     },
     "REVIEWER": {
       "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "last_run": {
-        "id": "e1c9347f-c24c-8327-9309-df245f7bfdd6",
+        "id": "1a5b4387-d0b8-8332-9623-573099204258",
         "recorded_status": "completed",
-        "scheduled_for": "2026-10-29T20:25:00Z",
-        "started_at": "2026-10-29T20:24:12.095632Z",
-        "completed_at": "2026-10-29T20:25:13.517392Z",
+        "scheduled_for": "2026-10-29T21:25:00Z",
+        "started_at": "2026-10-29T21:22:35.461073Z",
+        "completed_at": "2026-10-29T21:23:35.557680Z",
         "chat_ref": {
           "type": "chatgpt",
           "id": "6add6b00-4784-83ee-abae-45d04f185d10"
         }
       },
-      "latest_result_run_id": "e1c9347f-c24c-8327-9309-df245f7bfdd6",
+      "latest_result_run_id": "1a5b4387-d0b8-8332-9623-573099204258",
       "latest_result_used_as_current_success": false,
       "delivery_status": "unknown",
       "currentness": "FRESH_CONNECTED_PEEK_SNAPSHOT",
-      "observed_at": "2026-10-29T21:10:50Z"
+      "observed_at": "2026-10-29T21:39:20Z"
     }
   },
   "coordination": {
     "branch": "twf-repair-coordinator",
-    "claim_commit": "185757612ad0117a52d057adadacf3f534b75d37",
-    "parent": "cbbf2981a3de3c7d4246101302110f06c4a2df93",
-    "owner_run_id": "7674c598-6884-8333-92ca-493a3272348c",
-    "epoch": 254,
-    "acquired_at": "2026-10-29T21:04:25+00:00",
-    "expires_at": "2026-10-29T21:34:25+00:00",
-    "release_requested_at": "2026-10-29T21:10:50Z",
-    "expected_ref_before_release": "185757612ad0117a52d057adadacf3f534b75d37",
+    "claim_commit": "ca8d1dba24ba61f8f757262a4281e43560f081db",
+    "parent": "7bbce3f61561b51b8530d7b6fc88d262635f25b6",
+    "owner_run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+    "epoch": 255,
+    "acquired_at": "2026-10-29T21:21:35+00:00",
+    "expires_at": "2026-10-29T21:51:35+00:00",
+    "release_requested_at": "2026-10-29T21:41:43+00:00",
+    "expected_ref_before_release": "c2a1ccc069466ba0b15be95e4137706c52018483",
     "force": false,
     "execution": "Accepted main repair_control.acquire/release/approval_packet(delegated=True) actually executed in local Python from exact canonical blob4d6e61eb8b2f1276abbc33bd99e7da48bc19959c; actual GitHub CAS and resulting-ref re-read establish claim/release",
-    "release": "Own epoch254 atomic release planned; actual postwrite readback required"
+    "release": "Candidate owned_lease finally with bounded real host callbacks; actual new ref/state readback required. Owner receipt is not provider terminal proof."
   },
   "main_health": {
     "sha": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
@@ -373,40 +376,44 @@
     "This cycle only restores operational JSON; source/tests/PR/merge/CI unchanged",
     "Original epoch251 same-owner terminal UNPROVEN; no expiry-only recovery",
     "Synthetic local operational checks are not accepted repository regressions",
-    "Exact new shared-ref independent compatibility review PENDING"
+    "Exact new shared-ref independent compatibility review PENDING",
+    "This draft adds normal same-owner finally/CAS/readback; not authenticated provider history or crash recovery",
+    "No implicit adoption of PR126 or A12/A13 points; independent exact-head REVIEWER/main QA still required"
   ],
   "timing": {
-    "service_started_at": "2026-10-29T20:59:59.316277Z",
-    "report_at": "2026-10-29T21:10:50Z",
-    "elapsed_seconds_from_service_start": 650,
+    "service_started_at": "2026-10-29T21:19:48.700869Z",
+    "report_at": "2026-10-29T21:39:20Z",
+    "elapsed_seconds_from_service_start": 1171,
     "human_work_minutes": "NOT_MEASURED",
-    "release_requested_at": "2026-10-29T21:10:50Z",
-    "elapsed_seconds_from_service_start_at_release": 650
+    "release_requested_at": "2026-10-29T21:41:43+00:00",
+    "elapsed_seconds_from_service_start_at_release": 1314
   },
   "previous_report": {
-    "ref": "e398fe3274dbfb0774e1ec39f3acb498795c0d6e",
-    "blob": "abbdcdbc572d569866cc31de614a61934c16be8e",
+    "ref": "7bbce3f61561b51b8530d7b6fc88d262635f25b6",
+    "blob": "ec2afac8d2fe2565ec1df2b9ee5fa8687e7a54e3",
     "actor": {
       "task_id": "6add445e4138819197d9cf2b1a02534d",
-      "run_id": "30f253c2-400c-8322-9609-be068121fb4e",
+      "run_id": "7674c598-6884-8333-92ca-493a3272348c",
       "recorded_status_at_last_peek": "in_progress",
-      "latest_result_run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+      "latest_result_run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf",
       "latest_result_binding": "PREVIOUS_RUN_NOT_CURRENT_SUCCESS",
-      "unforced_scheduled_origin": "NOT_VERIFIED_HOST_TRIGGER_ORIGIN_NOT_EXPOSED"
+      "unforced_scheduled_origin": "NOT_VERIFIED_HOST_TRIGGER_ORIGIN_NOT_EXPOSED",
+      "recorded_status_at_preflight": "in_progress",
+      "old_result_used_as_current_success": false
     },
-    "status": "PR124_SECOND_REQUEST_CHANGES_REPAIRED_EXACT_HEAD_CI_PASS_WAIT_NEW_INDEPENDENT_REVIEW",
-    "currentness": "OLD_AUDIT_POINT_SNAPSHOT_NOT_CURRENT"
+    "status": "PR124_JSON_COMPATIBILITY_REPAIRED_AWAIT_INDEPENDENT_REVIEW",
+    "currentness": "PREVIOUS_REGISTERED_META_REPORT_NOT_CURRENT"
   },
   "next_actor": "REGISTERED_REVIEWER_NEW_RUN",
   "next_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "next": "Independent exact shared-ref JSON compatibility review. PR124 already merged; no new merge/source/CAPA in this cycle.",
+  "next": "Inspect PR126 exact head 9bbf9e819c886099802b4ccbf69f1e0cf2718939, trusted base scope, original709/new28 tests and live own-release receipt. Only separate registered REVIEWER may approve/merge; then main QA/handoff. PR124 and epoch254 repair already accepted.",
   "holds": {
     "Gemini": "SEVERE_HOLD",
     "external_model_spend": "HOLD",
     "Roblox_publish": "HOLD",
     "new_tasks_schedules_credentials": "PROHIBITED"
   },
-  "evidence_path": "ops/reconciliations/PR0124_22067fc2.json",
+  "evidence_path": "ops/lease_receipts/META_47b45262_epoch255.json",
   "main": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
   "pr124": {
     "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
@@ -884,295 +891,515 @@
     }
   },
   "field_currentness": {
-    "tests": "HISTORICAL_SOURCE_TEST_RESULTS_NOT_REEXECUTED_THIS_RUN",
-    "implementation": "PR_STATE_FRESH_GET; SOURCE_METRICS_HISTORICAL_NOT_REMEASURED",
+    "tests": "Historical source tests retained; new28/candidate737 CI at current_cycle.ci",
+    "implementation": "Latest accepted main PR124 retained unchanged; current draft source CAPA at current_cycle",
     "input_provenance": "OLD_AUDIT_POINT_SNAPSHOT_NOT_RECHECKED; no new Library/provider attestation",
-    "research": "OLD_AUDIT_POINT_SNAPSHOT_NOT_RECHECKED; no current research claim",
-    "services": "Fresh connected PEEK snapshot at stated time, not current run completion proof",
+    "research": "Older research retained; current safety primary reference at current_cycle.research",
+    "services": "Fresh connected PEEK; no current own service completion claimed",
     "main_health": "Fresh canonical GitHub GET; existing QA not reexecuted",
     "timing": "Current ledger-repair run; old timing in historical_snapshot"
   },
   "current_cycle": {
-    "kind": "OPERATIONAL_JSON_COMPATIBILITY_REPAIR",
-    "source_changes": 0,
-    "new_repository_tests": 0,
-    "new_prs": 0,
-    "new_ci_runs": 0,
-    "source_observer_executed": false,
-    "record": "ops/reconciliations/PR0124_epoch253_json_compatibility_epoch254.json",
-    "independent_review": "PENDING",
-    "epoch251_terminal": "UNPROVEN",
-    "concurrent_service_observation": "Scheduled WORKER may be in_progress; actual shared ref remains owned META epoch254. Service in_progress alone does not attest another source writer.",
-    "validation": {
-      "kind": "SYNTHETIC_LOCAL_OPERATIONAL_JSON_CHECKS_NOT_ACCEPTED_REPOSITORY_TESTS",
-      "positive_cases": 3,
-      "negative_cases": 43,
-      "positives": [
-        "canonical_schema_and_evidence",
-        "31_raw_entry_byte_sequences_preserved",
-        "duplicate_append_idempotent"
-      ],
-      "negative_results": [
+    "kind": "SOURCE_OWNED_LEASE_FINALLY_CAPA",
+    "pr": 126,
+    "head": "9bbf9e819c886099802b4ccbf69f1e0cf2718939",
+    "url": "https://github.com/kk051780/toy-wars-factory/pull/126",
+    "source_changes": 1,
+    "modified_source_paths": [
+      "tools/repair_control.py"
+    ],
+    "new_repository_tests": 28,
+    "new_prs": 1,
+    "new_ci_runs": 2,
+    "new_merges": 0,
+    "independent_review": "PENDING_NEW_REGISTERED_REVIEWER",
+    "ci": {
+      "id": 40958732301,
+      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40958732301",
+      "head": "9bbf9e819c886099802b4ccbf69f1e0cf2718939",
+      "base": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+      "event": "pull_request",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
         {
-          "case": "epoch253_loss_regression",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "missing:integration/latest_review/review_record"
+          "id": 123745603789,
+          "name": "compile_hold",
+          "conclusion": "success",
+          "head": "9bbf9e819c886099802b4ccbf69f1e0cf2718939"
         },
         {
-          "case": "history_removed",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "history"
-        },
-        {
-          "case": "history_reordered",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "history"
-        },
-        {
-          "case": "historical_entry_mutated",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "history"
-        },
-        {
-          "case": "duplicate_pr124",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "history"
-        },
-        {
-          "case": "integer_history_entry",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "element:integration/merged_prs"
-        },
-        {
-          "case": "jobs_array",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "type:integration/main_qa/jobs"
-        },
-        {
-          "case": "missing_compile_hold",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "missing:integration/main_qa/jobs/compile_hold"
-        },
-        {
-          "case": "failed_offline",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "jobs"
-        },
-        {
-          "case": "old_qa_run",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "qa"
-        },
-        {
-          "case": "wrong_qa_head",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "qa"
-        },
-        {
-          "case": "missing_qa_conclusion",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "missing:integration/main_qa/conclusion"
-        },
-        {
-          "case": "handoff_failed",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "handoff"
-        },
-        {
-          "case": "wrong_handoff_head",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "handoff"
-        },
-        {
-          "case": "inconsistent_adoption_status",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "status"
-        },
-        {
-          "case": "missing_runtime_key",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "missing:integration/runtime_verified"
-        },
-        {
-          "case": "missing_services",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "missing:system/services"
-        },
-        {
-          "case": "foreign_role_task",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "service_task"
-        },
-        {
-          "case": "foreign_current_run",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "service_run"
-        },
-        {
-          "case": "old_result_current_success",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "old_result"
-        },
-        {
-          "case": "stale_tests_claimed_current",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "historical_tests"
-        },
-        {
-          "case": "historical_red_evidence_removed",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "missing:system/tests/github_red"
-        },
-        {
-          "case": "original_provenance_removed",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "missing:system/input_provenance/formal_review"
-        },
-        {
-          "case": "fake_terminal",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "terminal"
-        },
-        {
-          "case": "false_service_completion",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "terminal"
-        },
-        {
-          "case": "unrelated_request_changed",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "requests"
-        },
-        {
-          "case": "approval_actor_reassigned",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "unrelated_coord:integration_reviews"
-        },
-        {
-          "case": "administrative_history_removed",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "unrelated_coord:administrative_revocations"
-        },
-        {
-          "case": "stale_release_epoch",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "release"
-        },
-        {
-          "case": "foreign_release_owner",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "owner"
-        },
-        {
-          "case": "source_change_claim",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "source"
-        },
-        {
-          "case": "main_moved",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "main"
-        },
-        {
-          "case": "invalid_schema_version",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "schema"
-        },
-        {
-          "case": "boolean_schema",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "type:integration/schema"
-        },
-        {
-          "case": "foreign_repository",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "repository"
-        },
-        {
-          "case": "duplicate_job_receipt",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "job_receipts"
-        },
-        {
-          "case": "wrong_job_receipt",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "job_receipts"
-        },
-        {
-          "case": "old_qa_claimed_new",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "new_qa_claim"
-        },
-        {
-          "case": "own_old_result_relabelled",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "actor_result"
-        },
-        {
-          "case": "foreign_owner_release",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "only the current fenced owner can release"
-        },
-        {
-          "case": "stale_epoch_release",
-          "expected": "REJECT",
-          "actual": "REJECT",
-          "reason": "only the current fenced owner can release"
-        },
-        {
-          "case": "expired_lease_write",
-          "expected": "REJECT",
-          "actual": "REJECT"
-        },
-        {
-          "case": "active_foreign_holder",
-          "expected": "REJECT",
-          "actual": "REJECT"
+          "id": 123745604110,
+          "name": "offline",
+          "conclusion": "success",
+          "head": "9bbf9e819c886099802b4ccbf69f1e0cf2718939"
         }
       ],
-      "script_sha256": "e4d2d0ca1cb5a6b8e607277ef68fa602569e2fc71086892cdbc2f0f10deed225"
+      "python_tests": 737,
+      "new_python_tests": 28,
+      "scope": "PASS_TRUSTED_BASE",
+      "claim": "PASS_TWO_IMMUTABLE_HISTORY_RECORDS",
+      "offline_log": [
+        "2026-10-29T21:33:18.7584667Z PASS: system review scope",
+        "2026-10-29T21:33:19.1253633Z PASS: repair coordination; 2 immutable coordinator claim(s) verified",
+        "2026-10-29T21:33:26.6719243Z Ran 737 tests in 5.321s",
+        "2026-10-29T21:33:26.6719811Z OK"
+      ]
+    },
+    "red": {
+      "head": "d2baf1b1c97da000f7f02ea0397029a8e133bc60",
+      "ci": 40958082678,
+      "tests": 737,
+      "failures": 3,
+      "errors": 24
+    },
+    "preservation": {
+      "accepted_main_blobs": 285,
+      "unchanged_accepted_blobs": 282,
+      "modified": [
+        "docs/REPAIR_COORDINATION.md",
+        "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md",
+        "tools/repair_control.py"
+      ],
+      "added": [
+        "history/C00134_owned_lease_finalization_red_control.json",
+        "history/C00135_owned_lease_finalization_capa.json",
+        "tests/test_system_owned_lease_finalization.py"
+      ],
+      "red_green_test_blob": "5df2fdbb7c25a09ac99dc5658fc98034571a0a3a",
+      "all_existing_tests_unchanged": true,
+      "all_existing_histories_unchanged": true
+    },
+    "metrics": {
+      "tools/repair_control.py": {
+        "bytes": 21870,
+        "lines": 405,
+        "blob": "a7ebe381c302e54ec08db000d1b562650856c559",
+        "sha256": "16c35750bf8e5228bfc4a35563cf881478cb5043369c5f46e1c68093385287d9"
+      },
+      "tests/test_system_owned_lease_finalization.py": {
+        "bytes": 11279,
+        "lines": 268,
+        "blob": "5df2fdbb7c25a09ac99dc5658fc98034571a0a3a",
+        "sha256": "54a828f131461350c2104374438e5589f0bca9a885b8e28cc3ebf9e36e17b83a"
+      },
+      "docs/REPAIR_COORDINATION.md": {
+        "bytes": 8841,
+        "lines": 106,
+        "blob": "72d170e6744b46e92a9651ba397deaba9017c703",
+        "sha256": "d4206d07422c74ff190e5b6d8968cd8ce5808b4bd24c0de50f1532196a60076b"
+      },
+      "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md": {
+        "bytes": 8235,
+        "lines": 27,
+        "blob": "f0cbbfc8e718e430fdcc9aac6d132caf7434c1fe",
+        "sha256": "cb928c101d135429e9185b756bbb3ab4b4255e78dbad960ddc0b6b4ef45ed1c1"
+      }
+    },
+    "original_orphan_root_cause": "UNKNOWN",
+    "epoch251_terminal": "UNPROVEN",
+    "live_finally": {
+      "status": "CANDIDATE_SOURCE_REACHED_REAL_HOST_CAS; POSTWRITE_READBACK_PENDING_AT_COMMIT",
+      "record": "ops/lease_receipts/META_47b45262_epoch255.json",
+      "source_blob": "a7ebe381c302e54ec08db000d1b562650856c559",
+      "provider_attestation": false,
+      "scheduled_unforced_operation_proof": "NOT_VERIFIED",
+      "host_trace_before_cas": [
+        {
+          "stage": "INITIAL_LOCAL_DRIVER_ATTEMPT",
+          "outcome": "STDIN_EOF_BEFORE_ANY_HOST_GET_OR_CAS",
+          "provider_error": false
+        },
+        {
+          "op": "CONNECTED_GET_PAIR",
+          "ref": "c2a1ccc069466ba0b15be95e4137706c52018483",
+          "state_blob": "b67685ac704d1afe15135f093895ecdf357ff289",
+          "epoch": 255,
+          "holder": {
+            "owner_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+            "epoch": 255
+          }
+        },
+        {
+          "op": "HOST_CLOCK",
+          "at": "2026-10-29T21:41:21Z"
+        },
+        {
+          "op": "CONNECTED_PEEK",
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+          "status": "in_progress"
+        },
+        {
+          "op": "CANDIDATE_CONTEXT_BODY",
+          "scope": "Single normal finally-release portion; earlier source work was outside this Python context"
+        },
+        {
+          "op": "CONNECTED_GET_PAIR",
+          "ref": "c2a1ccc069466ba0b15be95e4137706c52018483",
+          "state_blob": "b67685ac704d1afe15135f093895ecdf357ff289",
+          "epoch": 255,
+          "holder": {
+            "owner_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+            "epoch": 255
+          }
+        },
+        {
+          "op": "HOST_CLOCK",
+          "at": "2026-10-29T21:41:31Z"
+        },
+        {
+          "op": "CONNECTED_PEEK",
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+          "status": "in_progress"
+        },
+        {
+          "op": "CONNECTED_GET_PAIR",
+          "ref": "c2a1ccc069466ba0b15be95e4137706c52018483",
+          "state_blob": "b67685ac704d1afe15135f093895ecdf357ff289",
+          "epoch": 255,
+          "holder": {
+            "owner_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+            "epoch": 255
+          }
+        },
+        {
+          "op": "HOST_CLOCK",
+          "at": "2026-10-29T21:41:38Z"
+        },
+        {
+          "op": "CONNECTED_PEEK",
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+          "status": "in_progress"
+        },
+        {
+          "op": "HOST_CLOCK",
+          "at": "2026-10-29T21:41:43Z"
+        },
+        {
+          "op": "HOST_INDEPENDENT_CAS_GUARD",
+          "expected_sha": "c2a1ccc069466ba0b15be95e4137706c52018483",
+          "owner": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+          "epoch": 255,
+          "force": false,
+          "observed_at": "2026-10-29T21:41:44Z"
+        }
+      ],
+      "scope": "One normal release portion actually executed in Python; not entire earlier source-author cycle, not unforced scheduled operation proof"
+    },
+    "research": {
+      "retrieved_on": "2026-10-30",
+      "primary_url": "https://docs.python.org/3/library/contextlib.html",
+      "finding": "finally cleanup can propagate the original body exception; not crash recovery",
+      "game_candidates": [
+        "NO_CHANGE during safety CAPA",
+        "FIRST_LOOP_CLARITY: smaller QA scope; effect NOT_MEASURED",
+        "DIFFERENTIATED_ROLE_COLLECTION: original OWNER idea retained; larger model/UI/balance QA scope; effect NOT_MEASURED"
+      ]
     }
   },
   "compatibility_evidence_path": "ops/reconciliations/PR0124_epoch253_json_compatibility_epoch254.json",
-  "operational_consistency_checks_scope": "Inherited epoch253 checks only; current cycle validation separately recorded"
+  "operational_consistency_checks_scope": "Inherited epoch253 checks only; current cycle validation separately recorded",
+  "cycle_history": [
+    {
+      "ref": "7bbce3f61561b51b8530d7b6fc88d262635f25b6",
+      "blob": "ec2afac8d2fe2565ec1df2b9ee5fa8687e7a54e3",
+      "observed_at": "2026-10-29T21:10:50Z",
+      "actor": {
+        "task_id": "6add445e4138819197d9cf2b1a02534d",
+        "run_id": "7674c598-6884-8333-92ca-493a3272348c",
+        "recorded_status_at_last_peek": "in_progress",
+        "latest_result_run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf",
+        "latest_result_binding": "PREVIOUS_RUN_NOT_CURRENT_SUCCESS",
+        "unforced_scheduled_origin": "NOT_VERIFIED_HOST_TRIGGER_ORIGIN_NOT_EXPOSED",
+        "recorded_status_at_preflight": "in_progress",
+        "old_result_used_as_current_success": false
+      },
+      "status": "PR124_JSON_COMPATIBILITY_REPAIRED_AWAIT_INDEPENDENT_REVIEW",
+      "current_cycle": {
+        "kind": "OPERATIONAL_JSON_COMPATIBILITY_REPAIR",
+        "source_changes": 0,
+        "new_repository_tests": 0,
+        "new_prs": 0,
+        "new_ci_runs": 0,
+        "source_observer_executed": false,
+        "record": "ops/reconciliations/PR0124_epoch253_json_compatibility_epoch254.json",
+        "independent_review": "PENDING",
+        "epoch251_terminal": "UNPROVEN",
+        "concurrent_service_observation": "Scheduled WORKER may be in_progress; actual shared ref remains owned META epoch254. Service in_progress alone does not attest another source writer.",
+        "validation": {
+          "kind": "SYNTHETIC_LOCAL_OPERATIONAL_JSON_CHECKS_NOT_ACCEPTED_REPOSITORY_TESTS",
+          "positive_cases": 3,
+          "negative_cases": 43,
+          "positives": [
+            "canonical_schema_and_evidence",
+            "31_raw_entry_byte_sequences_preserved",
+            "duplicate_append_idempotent"
+          ],
+          "negative_results": [
+            {
+              "case": "epoch253_loss_regression",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "missing:integration/latest_review/review_record"
+            },
+            {
+              "case": "history_removed",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "history"
+            },
+            {
+              "case": "history_reordered",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "history"
+            },
+            {
+              "case": "historical_entry_mutated",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "history"
+            },
+            {
+              "case": "duplicate_pr124",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "history"
+            },
+            {
+              "case": "integer_history_entry",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "element:integration/merged_prs"
+            },
+            {
+              "case": "jobs_array",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "type:integration/main_qa/jobs"
+            },
+            {
+              "case": "missing_compile_hold",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "missing:integration/main_qa/jobs/compile_hold"
+            },
+            {
+              "case": "failed_offline",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "jobs"
+            },
+            {
+              "case": "old_qa_run",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "qa"
+            },
+            {
+              "case": "wrong_qa_head",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "qa"
+            },
+            {
+              "case": "missing_qa_conclusion",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "missing:integration/main_qa/conclusion"
+            },
+            {
+              "case": "handoff_failed",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "handoff"
+            },
+            {
+              "case": "wrong_handoff_head",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "handoff"
+            },
+            {
+              "case": "inconsistent_adoption_status",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "status"
+            },
+            {
+              "case": "missing_runtime_key",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "missing:integration/runtime_verified"
+            },
+            {
+              "case": "missing_services",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "missing:system/services"
+            },
+            {
+              "case": "foreign_role_task",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "service_task"
+            },
+            {
+              "case": "foreign_current_run",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "service_run"
+            },
+            {
+              "case": "old_result_current_success",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "old_result"
+            },
+            {
+              "case": "stale_tests_claimed_current",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "historical_tests"
+            },
+            {
+              "case": "historical_red_evidence_removed",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "missing:system/tests/github_red"
+            },
+            {
+              "case": "original_provenance_removed",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "missing:system/input_provenance/formal_review"
+            },
+            {
+              "case": "fake_terminal",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "terminal"
+            },
+            {
+              "case": "false_service_completion",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "terminal"
+            },
+            {
+              "case": "unrelated_request_changed",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "requests"
+            },
+            {
+              "case": "approval_actor_reassigned",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "unrelated_coord:integration_reviews"
+            },
+            {
+              "case": "administrative_history_removed",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "unrelated_coord:administrative_revocations"
+            },
+            {
+              "case": "stale_release_epoch",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "release"
+            },
+            {
+              "case": "foreign_release_owner",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "owner"
+            },
+            {
+              "case": "source_change_claim",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "source"
+            },
+            {
+              "case": "main_moved",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "main"
+            },
+            {
+              "case": "invalid_schema_version",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "schema"
+            },
+            {
+              "case": "boolean_schema",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "type:integration/schema"
+            },
+            {
+              "case": "foreign_repository",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "repository"
+            },
+            {
+              "case": "duplicate_job_receipt",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "job_receipts"
+            },
+            {
+              "case": "wrong_job_receipt",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "job_receipts"
+            },
+            {
+              "case": "old_qa_claimed_new",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "new_qa_claim"
+            },
+            {
+              "case": "own_old_result_relabelled",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "actor_result"
+            },
+            {
+              "case": "foreign_owner_release",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "only the current fenced owner can release"
+            },
+            {
+              "case": "stale_epoch_release",
+              "expected": "REJECT",
+              "actual": "REJECT",
+              "reason": "only the current fenced owner can release"
+            },
+            {
+              "case": "expired_lease_write",
+              "expected": "REJECT",
+              "actual": "REJECT"
+            },
+            {
+              "case": "active_foreign_holder",
+              "expected": "REJECT",
+              "actual": "REJECT"
+            }
+          ],
+          "script_sha256": "e4d2d0ca1cb5a6b8e607277ef68fa602569e2fc71086892cdbc2f0f10deed225"
+        }
+      }
+    }
+  ]
 }

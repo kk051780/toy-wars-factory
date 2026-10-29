@@ -1,0 +1,144 @@
+{
+  "schema": 1,
+  "kind": "HOST_CONNECTED_CANDIDATE_SOURCE_FINALIZATION_CAS_PREPARATION",
+  "repository": "kk051780/toy-wars-factory",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+  "epoch": 255,
+  "claim_commit": "ca8d1dba24ba61f8f757262a4281e43560f081db",
+  "expected_parent": "c2a1ccc069466ba0b15be95e4137706c52018483",
+  "source_commit": "9bbf9e819c886099802b4ccbf69f1e0cf2718939",
+  "source_blob": "a7ebe381c302e54ec08db000d1b562650856c559",
+  "ci": {
+    "id": 40958732301,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40958732301",
+    "head": "9bbf9e819c886099802b4ccbf69f1e0cf2718939",
+    "base": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+    "event": "pull_request",
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 123745603789,
+        "name": "compile_hold",
+        "conclusion": "success",
+        "head": "9bbf9e819c886099802b4ccbf69f1e0cf2718939"
+      },
+      {
+        "id": 123745604110,
+        "name": "offline",
+        "conclusion": "success",
+        "head": "9bbf9e819c886099802b4ccbf69f1e0cf2718939"
+      }
+    ],
+    "python_tests": 737,
+    "new_python_tests": 28,
+    "scope": "PASS_TRUSTED_BASE",
+    "claim": "PASS_TWO_IMMUTABLE_HISTORY_RECORDS",
+    "offline_log": [
+      "2026-10-29T21:33:18.7584667Z PASS: system review scope",
+      "2026-10-29T21:33:19.1253633Z PASS: repair coordination; 2 immutable coordinator claim(s) verified",
+      "2026-10-29T21:33:26.6719243Z Ran 737 tests in 5.321s",
+      "2026-10-29T21:33:26.6719811Z OK"
+    ]
+  },
+  "normal_release_receipt": {
+    "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
+    "repository": "kk051780/toy-wars-factory",
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "owner_run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+    "epoch": 255,
+    "expected_parent": "c2a1ccc069466ba0b15be95e4137706c52018483",
+    "provider_terminal": "NOT_ATTESTED",
+    "postwrite_readback_required": true
+  },
+  "actual_host_trace_before_cas": [
+    {
+      "stage": "INITIAL_LOCAL_DRIVER_ATTEMPT",
+      "outcome": "STDIN_EOF_BEFORE_ANY_HOST_GET_OR_CAS",
+      "provider_error": false
+    },
+    {
+      "op": "CONNECTED_GET_PAIR",
+      "ref": "c2a1ccc069466ba0b15be95e4137706c52018483",
+      "state_blob": "b67685ac704d1afe15135f093895ecdf357ff289",
+      "epoch": 255,
+      "holder": {
+        "owner_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+        "epoch": 255
+      }
+    },
+    {
+      "op": "HOST_CLOCK",
+      "at": "2026-10-29T21:41:21Z"
+    },
+    {
+      "op": "CONNECTED_PEEK",
+      "task_id": "6add445e4138819197d9cf2b1a02534d",
+      "run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+      "status": "in_progress"
+    },
+    {
+      "op": "CANDIDATE_CONTEXT_BODY",
+      "scope": "Single normal finally-release portion; earlier source work was outside this Python context"
+    },
+    {
+      "op": "CONNECTED_GET_PAIR",
+      "ref": "c2a1ccc069466ba0b15be95e4137706c52018483",
+      "state_blob": "b67685ac704d1afe15135f093895ecdf357ff289",
+      "epoch": 255,
+      "holder": {
+        "owner_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+        "epoch": 255
+      }
+    },
+    {
+      "op": "HOST_CLOCK",
+      "at": "2026-10-29T21:41:31Z"
+    },
+    {
+      "op": "CONNECTED_PEEK",
+      "task_id": "6add445e4138819197d9cf2b1a02534d",
+      "run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+      "status": "in_progress"
+    },
+    {
+      "op": "CONNECTED_GET_PAIR",
+      "ref": "c2a1ccc069466ba0b15be95e4137706c52018483",
+      "state_blob": "b67685ac704d1afe15135f093895ecdf357ff289",
+      "epoch": 255,
+      "holder": {
+        "owner_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+        "epoch": 255
+      }
+    },
+    {
+      "op": "HOST_CLOCK",
+      "at": "2026-10-29T21:41:38Z"
+    },
+    {
+      "op": "CONNECTED_PEEK",
+      "task_id": "6add445e4138819197d9cf2b1a02534d",
+      "run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+      "status": "in_progress"
+    },
+    {
+      "op": "HOST_CLOCK",
+      "at": "2026-10-29T21:41:43Z"
+    },
+    {
+      "op": "HOST_INDEPENDENT_CAS_GUARD",
+      "expected_sha": "c2a1ccc069466ba0b15be95e4137706c52018483",
+      "owner": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+      "epoch": 255,
+      "force": false,
+      "observed_at": "2026-10-29T21:41:44Z"
+    }
+  ],
+  "postwrite_readback": "PENDING_AT_COMMIT_CREATION; ACTUAL_NEW_REF_AND_STATE_MUST_BE_REGET",
+  "provider_authentication": "NOT_ATTESTED",
+  "original_epoch251_terminal": "UNPROVEN",
+  "unforced_scheduled_origin": "NOT_VERIFIED",
+  "scope": "Only own normal finally release with actual connected GET/PEEK; no crash or recovery or notification proof"
+}
