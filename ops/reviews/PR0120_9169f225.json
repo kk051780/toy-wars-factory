@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "pr": 120,
+  "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
+  "base_main_sha": "e1ebe061d60cd74843b144db813f085ad9ce3da7",
+  "reviewed_at": "2026-10-29T09:31:44.080Z",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "f08a6dcb-96c0-8322-a69a-8603b249be38",
+  "lease_epoch": 237,
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "84f6c2ab-3724-8326-95cb-f3937487e58f",
+  "verdict": "APPROVE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "findings": [
+    {
+      "id": "SCOPED_HOST_CAS_BRIDGE",
+      "severity": "PASS",
+      "evidence": "3 added files only, 189-line new persistence bridge invokes accepted idle.observe and ledger.reduce; immutable coordinator and prior-ledger checks, owned actor PEEK, expected_sha force=false host callback and exact ref/blob readback; no accepted source modifications."
+    },
+    {
+      "id": "EXACT_HEAD_AND_CI",
+      "severity": "PASS",
+      "evidence": "PR120 head9169f225 parent/base e1ebe061, META epoch236 claim1fbd6f03 with registered author run84f6c2ab and valid parent epoch235 holder=null; current main status-only descendant of QA head54e48d89. PR CI40848410064 attempt1 head matches, offline job123361518442 and compile_hold job123361518859 success; 612/612 Python tests in actual job logs; trusted META scope and immutable claim steps success."
+    },
+    {
+      "id": "NEGATIVE_CONTROLS",
+      "severity": "PASS",
+      "evidence": "23 new synthetic regressions include CAS conflict, 403/404, stale/fake receipt, injected tree, wrong commit parent, foreign holder, expired fence, actor drift, duplicate observation, unconfirmed write, false delivery/recovery; accepted regression tests preserved."
+    },
+    {
+      "id": "LIVE_OPERATION_LIMIT",
+      "severity": "LIMITATION",
+      "evidence": "SYNTHETIC_TEST_ONLY. Host callback adapter is an explicitly trusted capability, not live authentication. No real incident persisted, no user notification receipt or independent recovery. SOURCE_CLASSIFIER_NOT_EXECUTED in this reviewer run; A12/A13 +0."
+    }
+  ],
+  "category": "SYSTEM_A12_SCOPED_HOST_CAS_LEDGER_BRIDGE",
+  "changed_files": [
+    "tools/system_alert_persistence.py",
+    "tests/test_system_alert_persistence.py",
+    "history/C00126_scoped_alert_persistence.json"
+  ],
+  "ci": {
+    "id": 40848410064,
+    "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
+    "attempt": 1,
+    "conclusion": "success",
+    "required_jobs_passed": true,
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 612,
+    "new_tests": 23,
+    "scope_and_claim_gate": "PASS"
+  },
+  "coordination": {
+    "author_claim": "1fbd6f03d388bdcf9d59c36874de77d66196e17c",
+    "author_epoch": 236,
+    "review_claim": "67897dc0bbba7a4d4b623392675991bd97b56efc",
+    "review_epoch": 237,
+    "author_service_completed": true
+  },
+  "main_health": {
+    "sha": "e1ebe061d60cd74843b144db813f085ad9ce3da7",
+    "qa_head": "54e48d895ceef71a713d37148e1e954970dbad43",
+    "qa": 40842047702,
+    "qa_jobs": "offline+compile_hold success",
+    "handoff": 40842047673,
+    "compare_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "evidence_urls": [
+    "https://github.com/kk051780/toy-wars-factory/pull/120",
+    "https://github.com/kk051780/toy-wars-factory/actions/runs/40848410064",
+    "https://github.com/kk051780/toy-wars-factory/issues/114"
+  ],
+  "status": "APPROVED_AWAITING_MERGE_AND_MAIN_QA",
+  "operational_observation": {
+    "source_classifier": "SOURCE_CLASSIFIER_NOT_EXECUTED",
+    "delivery": "UNVERIFIED",
+    "a12_verified": false,
+    "host_cause": "INDETERMINATE"
+  }
+}
