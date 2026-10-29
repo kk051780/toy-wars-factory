@@ -307,4 +307,89 @@ class ReviewJoinRegressionTests(unittest.TestCase):
 
 
 
+
+class IncompleteManifestReviewTests(unittest.TestCase):
+    """Incomplete declarations never become JOIN or read-only admission."""
+
+    def decision(self, candidate, active, expected):
+        result = mod.advise(candidate, active)
+        self.assertEqual(result["status"], expected)
+        self.assertEqual(result["verification"], "NOT_VERIFIED")
+        self.assertEqual(result["mode"], "READ_ONLY_ADMISSION")
+        for key in ("may_write", "may_run_now", "github_cas_performed"):
+            self.assertIs(result[key], False)
+        self.assertEqual(result["authority"], {key: False for key in (
+            "write_allowed", "start_now_allowed", "takeover_allowed",
+            "dispatch_allowed", "merge_allowed", "publish_allowed",
+            "external_spend_allowed", "safe_to_next_schedule")})
+        return result
+
+    def test_incomplete_candidate_cannot_join_same_work(self):
+        active = item(paths=["src/a.lua"])
+        candidate = item(paths=["src/a.lua"], complete_manifest=False)
+        self.decision(candidate, [active], "WAIT_INCOMPLETE_MANIFEST")
+
+    def test_incomplete_candidate_cannot_join_same_goal_different_work(self):
+        active = item(paths=["src/a.lua"])
+        candidate = item(work="GAME_B001", paths=["src/a.lua"], complete_manifest=False)
+        self.decision(candidate, [active], "WAIT_INCOMPLETE_MANIFEST")
+
+    def test_matching_incomplete_active_cannot_join(self):
+        active = item(paths=["src/a.lua"], complete_manifest=False)
+        for work in ("GAME_A001", "GAME_B001"):
+            with self.subTest(work=work):
+                candidate = item(work=work, paths=["src/a.lua"])
+                self.decision(candidate, [active], "WAIT_INCOMPLETE_MANIFEST")
+
+    def test_both_matching_manifests_incomplete_cannot_join(self):
+        active = item(paths=["src/a.lua"], complete_manifest=False)
+        candidate = item(paths=["src/a.lua"], complete_manifest=False)
+        self.decision(candidate, [active], "WAIT_INCOMPLETE_MANIFEST")
+
+    def test_incomplete_read_only_candidate_cannot_parallel(self):
+        candidate = item(mode="READ_ONLY", paths=[], complete_manifest=False)
+        self.decision(candidate, [], "WAIT_INCOMPLETE_MANIFEST")
+
+    def test_incomplete_read_only_candidate_cannot_join(self):
+        active = item(mode="READ_ONLY", paths=[])
+        candidate = item(mode="READ_ONLY", paths=[], complete_manifest=False)
+        self.decision(candidate, [active], "WAIT_INCOMPLETE_MANIFEST")
+
+    def test_complete_read_only_candidate_waits_for_incomplete_matching_active(self):
+        active = item(mode="READ_ONLY", paths=[], complete_manifest=False)
+        candidate = item(mode="READ_ONLY", paths=[])
+        self.decision(candidate, [active], "WAIT_INCOMPLETE_MANIFEST")
+
+    def test_complete_read_only_candidate_waits_for_incomplete_same_repo_active(self):
+        active = item(project_id="other-game", complete_manifest=False)
+        candidate = item(work="GAME_C001", goal="c", mode="READ_ONLY", paths=[])
+        self.decision(candidate, [active], "WAIT_INCOMPLETE_MANIFEST")
+
+    def test_complete_same_goal_and_scope_still_joins(self):
+        active = item(paths=["src/a.lua", "src/b.lua"], shared_resources=["one", "two"])
+        for work in ("GAME_A001", "GAME_B001"):
+            with self.subTest(work=work):
+                candidate = item(work=work, paths=["SRC/B.lua", "src/A.lua"],
+                                 shared_resources=["two", "one"])
+                result = self.decision(candidate, [active], "JOIN_EXISTING")
+                self.assertEqual(result["existing_work_ids"], ["GAME_A001"])
+
+    def test_foreign_repo_incomplete_does_not_block_writer_or_reader(self):
+        foreign = item(repository="other/repo", complete_manifest=False)
+        for mode, expected in (("SOURCE_WRITE", "CANDIDATE_FOR_AUTHENTICATED_CAS"),
+                               ("READ_ONLY", "READ_ONLY_PARALLEL")):
+            with self.subTest(mode=mode):
+                candidate = item(work="GAME_B001", goal="b", mode=mode,
+                                 paths=[] if mode == "READ_ONLY" else ["src/other.lua"])
+                self.decision(candidate, [foreign], expected)
+
+    def test_complete_read_only_no_active_still_parallel(self):
+        self.decision(item(mode="READ_ONLY", paths=[]), [], "READ_ONLY_PARALLEL")
+
+    def test_malformed_completeness_is_not_a_wait_or_join(self):
+        for value in (None, 0, 1, "false", [], {}):
+            with self.subTest(value=value):
+                self.decision(item(complete_manifest=value), [item()], "BLOCKED_UNSAFE_INPUT")
+
+
 if __name__ == "__main__": unittest.main()
