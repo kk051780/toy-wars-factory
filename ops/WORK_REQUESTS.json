@@ -2777,6 +2777,53 @@
         "release": "ATOMIC_WITH_THIS_REPORT; reread required"
       },
       "owner_reply_required": false
+    },
+    {
+      "id": "pr119_durable_alert_ledger_registered_review_20261029",
+      "status": "OPEN",
+      "priority": "P1",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "created_at": "2026-10-29T08:06:35Z",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 119,
+      "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/119",
+      "branch": "auto/twf-system-review-dc2b1012-5a84-8322-bd75-263b45cc0f82",
+      "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
+      "base": "fa89e46eca61b7f84acfae10c99d8127900de83a",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "dc2b1012-5a84-8322-bd75-263b45cc0f82",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "087d53d7cb775dc227b170936389b9066914ed53",
+        "owner_run_id": "dc2b1012-5a84-8322-bd75-263b45cc0f82",
+        "epoch": 234,
+        "release": "ATOMIC_WITH_THIS_REPORT"
+      },
+      "request": "Review pure durable alert ledger reducer, exact3 A paths,20 new adversarial regressions, immutable META claim and bothCI success. No I/O/provider-auth/delivery/recovery claims. Separate reviewer only merge; exact postmain QA/handoff required.",
+      "ci": {
+        "id": 40839603464,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40839603464",
+        "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
+        "attempt": 1,
+        "conclusion": "success",
+        "jobs": [
+          {
+            "id": 123332506841,
+            "name": "offline",
+            "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
+            "conclusion": "success"
+          },
+          {
+            "id": 123332507249,
+            "name": "compile_hold",
+            "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
+            "conclusion": "success"
+          }
+        ],
+        "python_total": "See exact-head offline log; local589, existing569 + new20"
+      },
+      "owner_reply_required": false
     }
   ]
 }

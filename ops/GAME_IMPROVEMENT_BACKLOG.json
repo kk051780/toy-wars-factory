@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T03:48:52Z",
+  "observed_at": "2026-10-29T08:06:35Z",
   "source": "PR112 formal provenance repair; current C00122 active view uses exact transcriptions with original chat NOT_VERIFIED; no game source changes.",
   "items": [
     {
@@ -386,7 +386,7 @@
   ],
   "actor": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "438e0a34-b6a0-832d-a75b-9be7b03dc383"
+    "run_id": "dc2b1012-5a84-8322-bd75-263b45cc0f82"
   },
   "base_main_sha": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
   "prioritized_candidates": [
@@ -399,25 +399,26 @@
     "checked_on": "2026-10-29",
     "references": [
       {
-        "url": "https://grafana.com/press/2026/10/20/observabilitycon-2026-ai-updates/",
-        "published": "2026-10-20",
-        "updated": "NOT_AVAILABLE",
-        "checked_on": "2026-10-29"
+        "url": "https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api",
+        "kind": "PRIMARY_GITHUB_OFFICIAL",
+        "published_at": "NOT_AVAILABLE",
+        "updated_at": "NOT_AVAILABLE",
+        "checked_at": "2026-10-29T08:04:14Z",
+        "finding": "Do not ignore errors, use bounded conditional/efficient requests. Documentation not authentication or provider receipt; no new webhook/task/credential introduced."
       },
       {
-        "url": "https://about.roblox.com/newsroom/2026/08/optimize-testing-live-updates-roblox-analytics-experimentation-platform",
-        "published": "2026-08-24",
-        "updated": "NOT_AVAILABLE",
-        "checked_on": "2026-10-29"
-      },
-      {
-        "url": "https://create.roblox.com/docs/production/analytics/retention",
-        "published": "NOT_AVAILABLE",
-        "updated": "NOT_AVAILABLE",
-        "checked_on": "2026-10-29"
+        "url": "https://create.roblox.com/docs/production/experiments",
+        "kind": "PRIMARY_ROBLOX_OFFICIAL",
+        "published_at": "NOT_AVAILABLE",
+        "updated_at": "NOT_AVAILABLE",
+        "checked_at": "2026-10-29T08:04:14Z",
+        "finding": "Controlled baseline/variants, goals, planned duration and detectable effect guide hypotheses. No target game effect or player data measured; no live experiment started."
       }
     ],
-    "game_implementation": "NONE; system operational observation prioritized"
+    "comparison": "NO_CHANGE baseline vs first-loop clarity vs differentiated role/collection goal (Issue109/115); existing candidate details preserved; target effects NOT_MEASURED",
+    "implementation": "No game changes; system PR119 priority",
+    "required_evidence": "Studio/mobile/player/first production completion/D1-D7/performance NOT_RUN",
+    "QA_load": "NO_CHANGE baseline; small HUD experiment lower source but mobile QA; character variant model/motion/combat/UI/performance workload; no market-effect scores as measurements"
   },
   "next_experiments": [
     {

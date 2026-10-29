@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 234,
-  "holder": {
-    "kind": "META",
-    "owner_id": "dc2b1012-5a84-8322-bd75-263b45cc0f82",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "epoch": 234,
-    "acquired_at": "2026-10-29T07:58:37+00:00",
-    "expires_at": "2026-10-29T08:28:37+00:00",
-    "base_main_sha": "fa89e46eca61b7f84acfae10c99d8127900de83a",
-    "work_branch": "auto/twf-system-review-dc2b1012-5a84-8322-bd75-263b45cc0f82",
-    "origin": "meta"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -22,16 +12,16 @@
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
     "items": [
       {
-        "number": 118,
-        "title": "[TWF system-review] Add PR-less read-only idle service health",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/118",
-        "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40812571716",
-        "summary": "PRなしのサービス異常判定。古い結果・NO_UPDATE・停滞・leaseと観測障害を区別。main QAは未検査と明示、権限全false。",
+        "number": 119,
+        "title": "[TWF system-review] Add pure fenced alert-ledger reducer with replay-safe proposals",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/119",
+        "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40839603464",
+        "summary": "Pure fenced alert ledger proposal;20 new regressions; no I/O or authority",
         "changed_files": [
-          "tools/system_idle_health.py",
-          "tests/test_system_idle_health.py",
-          "history/C00124_pr_less_idle_health.json"
+          "tools/system_alert_ledger.py",
+          "tests/test_system_alert_ledger.py",
+          "history/C00125_durable_alert_ledger_reducer.json"
         ],
         "kind": "開発体制改善"
       }
@@ -39,19 +29,20 @@
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-29T03:31:55Z",
-    "signature": "cb460add028924222a3ce7161da71fded24e8e498ad66ce2ea16164ea0eb8b25",
+    "observed_at": "2026-10-29T08:06:35Z",
+    "signature": "846199019811948a596397f500fd9153b64533461fd99dba8e6a1d0adfdc6ed3",
     "approval_text": ""
   },
-  "last_reported_approval_signature": "cb460add028924222a3ce7161da71fded24e8e498ad66ce2ea16164ea0eb8b25",
+  "last_reported_approval_signature": "846199019811948a596397f500fd9153b64533461fd99dba8e6a1d0adfdc6ed3",
   "last_completed": {
     "kind": "META",
-    "owner_id": "438e0a34-b6a0-832d-a75b-9be7b03dc383",
-    "epoch": 233,
-    "released_at": "2026-10-29T03:48:52+00:00",
-    "result": "LIVE_OBSERVATION_HEALTHY_NO_IMPLEMENTATION",
-    "source_pr": 118,
-    "main_sha": "fa89e46eca61b7f84acfae10c99d8127900de83a",
+    "owner_id": "dc2b1012-5a84-8322-bd75-263b45cc0f82",
+    "epoch": 234,
+    "released_at": "2026-10-29T08:06:35+00:00",
+    "pr": 119,
+    "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
+    "ci": 40839603464,
+    "result": "SOURCE_PR_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
     "a12_verified": false
   },
   "last_approval_report": {
