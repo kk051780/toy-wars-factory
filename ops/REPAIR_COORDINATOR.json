@@ -1094,6 +1094,56 @@
       "service_completion_asserted": false,
       "merge_sha": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
       "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
+    },
+    "126": {
+      "schema": 1,
+      "pr": 126,
+      "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+      "base_main_sha": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "3db5475d-d874-8327-b42b-378e05dd32c2",
+      "lease_epoch": 258,
+      "reviewer_claim": "ed18db23ca0cfb9e8d30a04eb0820777cd69bb42",
+      "verdict": "APPROVE",
+      "reviewed_at": "2026-10-29T22:20:11.424Z",
+      "comment_url": "https://github.com/kk051780/toy-wars-factory/issues/123#issuecomment-6509648239",
+      "checks": {
+        "scope": true,
+        "regression": true,
+        "source_ledger": true,
+        "protected_controls": true,
+        "behavior": true
+      },
+      "blockers": [],
+      "findings": [],
+      "ci": {
+        "id": 40963166528,
+        "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+        "attempt": 1,
+        "conclusion": "success",
+        "jobs": {
+          "offline": "success",
+          "compile_hold": "success"
+        },
+        "python_tests": 749
+      },
+      "red": {
+        "id": 40962918985,
+        "head": "7a3d6b8d96591342821e68d06a9bcd9b68aff18c",
+        "tests": 749,
+        "failures": 14,
+        "errors": 0
+      },
+      "original_author_run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+      "repair_author_run_id": "d746314f-15a8-832f-80fa-d479f030d398",
+      "source_review": "STATIC_SOURCE_AND_REAL_GITHUB_CI; accepted Python integration classifier NOT_EXECUTED",
+      "limitations": [
+        "Synthetic callbacks not provider authentication",
+        "process-kill finally not guaranteed",
+        "epoch251 terminal not attested",
+        "A12/A13/Roblox engine unverified"
+      ],
+      "native_github_review_submission": false
     }
   },
   "integration_results": {

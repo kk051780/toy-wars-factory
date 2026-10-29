@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T22:10:28Z",
+  "observed_at": "2026-10-29T22:20:11.424Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -3254,7 +3254,7 @@
       "id": "pr126_owned_lease_finalization_registered_review_20261030",
       "kind": "REGISTERED_META_SOURCE_REVIEW",
       "priority": "P1",
-      "status": "OPEN",
+      "status": "APPROVED_PENDING_MAIN_QA",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
@@ -3321,29 +3321,58 @@
       },
       "owner_approval_required": false,
       "review_required_for_head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
-      "next_actor": "REGISTERED_REVIEWER_NEW_RUN_ON_REPAIRED_HEAD",
+      "next_actor": "REVIEWER_SAFE_EXACT_HEAD_MERGE",
       "scope": "ONE_PR_OWNED_FINALLY_CAPA_NO_PROVIDER_ATTESTATION",
       "live_release_evidence": "ops/lease_receipts/META_47b45262_epoch255.json",
       "review": {
         "schema": 1,
         "pr": 126,
-        "head": "9bbf9e819c886099802b4ccbf69f1e0cf2718939",
+        "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+        "base_main_sha": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
         "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-        "reviewer_run_id": "73434dcc-91f8-8327-8231-3e7e067b4fab",
-        "lease_epoch": 256,
-        "reviewer_claim": "46b48cf9e01fccd004423358ab3a2aeea356605e",
-        "verdict": "REQUEST_CHANGES_BOOL_FLOAT_HOLDER_EPOCH_FAIL_CLOSED",
-        "reviewed_at": "2026-10-29T21:56:02.725Z",
-        "issue_comment_url": "https://github.com/kk051780/toy-wars-factory/issues/123#issuecomment-6509231333",
-        "source_static_only": true,
-        "accepted_negative_test_executed": false,
-        "green_ci": 40958732301,
-        "blocking_fixtures": [
-          "holder.epoch=true with state.epoch=1",
-          "holder.epoch=1.0 with state.epoch=1",
-          "owns epoch=True/1.0 strictness"
+        "reviewer_run_id": "3db5475d-d874-8327-b42b-378e05dd32c2",
+        "lease_epoch": 258,
+        "reviewer_claim": "ed18db23ca0cfb9e8d30a04eb0820777cd69bb42",
+        "verdict": "APPROVE",
+        "reviewed_at": "2026-10-29T22:20:11.424Z",
+        "comment_url": "https://github.com/kk051780/toy-wars-factory/issues/123#issuecomment-6509648239",
+        "checks": {
+          "scope": true,
+          "regression": true,
+          "source_ledger": true,
+          "protected_controls": true,
+          "behavior": true
+        },
+        "blockers": [],
+        "findings": [],
+        "ci": {
+          "id": 40963166528,
+          "head": "2ffa8a3248d598bbfa695a8111a8f04abd9c5996",
+          "attempt": 1,
+          "conclusion": "success",
+          "jobs": {
+            "offline": "success",
+            "compile_hold": "success"
+          },
+          "python_tests": 749
+        },
+        "red": {
+          "id": 40962918985,
+          "head": "7a3d6b8d96591342821e68d06a9bcd9b68aff18c",
+          "tests": 749,
+          "failures": 14,
+          "errors": 0
+        },
+        "original_author_run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+        "repair_author_run_id": "d746314f-15a8-832f-80fa-d479f030d398",
+        "source_review": "STATIC_SOURCE_AND_REAL_GITHUB_CI; accepted Python integration classifier NOT_EXECUTED",
+        "limitations": [
+          "Synthetic callbacks not provider authentication",
+          "process-kill finally not guaranteed",
+          "epoch251 terminal not attested",
+          "A12/A13/Roblox engine unverified"
         ],
-        "merge_authorized": false
+        "native_github_review_submission": false
       },
       "previous_request_snapshot": {
         "ref": "4e37ebb98bc46dccbbbead434839384cef367183",
@@ -3422,7 +3451,31 @@
       },
       "updated_at": "2026-10-29T22:10:28Z",
       "review_currentness": "HISTORICAL_REQUEST_CHANGES_ON_9bbf_HEAD_NOT_NEW_HEAD_VERDICT",
-      "repair_release_evidence": "ops/lease_receipts/META_d746314f_epoch257.json"
+      "repair_release_evidence": "ops/lease_receipts/META_d746314f_epoch257.json",
+      "review_history": [
+        {
+          "schema": 1,
+          "pr": 126,
+          "head": "9bbf9e819c886099802b4ccbf69f1e0cf2718939",
+          "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+          "reviewer_run_id": "73434dcc-91f8-8327-8231-3e7e067b4fab",
+          "lease_epoch": 256,
+          "reviewer_claim": "46b48cf9e01fccd004423358ab3a2aeea356605e",
+          "verdict": "REQUEST_CHANGES_BOOL_FLOAT_HOLDER_EPOCH_FAIL_CLOSED",
+          "reviewed_at": "2026-10-29T21:56:02.725Z",
+          "issue_comment_url": "https://github.com/kk051780/toy-wars-factory/issues/123#issuecomment-6509231333",
+          "source_static_only": true,
+          "accepted_negative_test_executed": false,
+          "green_ci": 40958732301,
+          "blocking_fixtures": [
+            "holder.epoch=true with state.epoch=1",
+            "holder.epoch=1.0 with state.epoch=1",
+            "owns epoch=True/1.0 strictness"
+          ],
+          "merge_authorized": false
+        }
+      ],
+      "reviewed_at": "2026-10-29T22:20:11.424Z"
     }
   ]
 }
