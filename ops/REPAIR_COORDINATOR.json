@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 241,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "a2beea1b-8ed0-42da-ba08-4ddbc8688ad0",
-    "task_id": null,
-    "epoch": 241,
-    "acquired_at": "2026-10-29T11:34:10.413Z",
-    "expires_at": "2026-10-29T12:04:10.413Z",
-    "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
-    "work_branch": "controller/progress-a09-a11-a2beea1b-8ed0-42da-ba08-4ddbc8688ad0",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -47,13 +37,13 @@
   "last_completed": {
     "kind": "CONTROLLER",
     "owner_id": "a2beea1b-8ed0-42da-ba08-4ddbc8688ad0",
-    "epoch": 240,
-    "released_at": "2026-10-29T11:29:36.452Z",
+    "epoch": 241,
+    "released_at": "2026-10-29T11:36:48.037Z",
     "pr": 122,
-    "head": "353dfa401d7fe5c18335a76e3a34efb0b0785373",
-    "ci": 40865684891,
-    "result": "DRAFT_PROTECTED_PROGRESS_RECONCILIATION_CI_PASS_AWAIT_INDEPENDENT_AUDIT",
-    "protected_review": "PENDING",
+    "head": "fc9424a80960e3164b97cf4b22c91f35d1804977",
+    "ci": 40866590673,
+    "result": "SCOPED_DRAFT_HEAD_CI_PASS_AWAIT_SECOND_INDEPENDENT_PROTECTED_AUDIT",
+    "protected_review": "REQUEST_CHANGES_HISTORIC_GUARD_CORRECTED_REAUDIT_PENDING",
     "main_changed": false,
     "official_progress_unchanged": true
   },
