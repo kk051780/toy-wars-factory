@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "kind": "EXISTING_ADOPTION_EVIDENCE_RECONCILIATION_NOT_NEW_REVIEW",
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 124,
+  "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+  "merge_sha": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+  "merged_at": "2026-10-29T15:45:29Z",
+  "current_main": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+  "review": {
+    "schema": 1,
+    "pr": 124,
+    "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+    "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
+    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "reviewer_run_id": "a1a56640-3164-832a-9692-2d79bafbbb79",
+    "lease_epoch": 251,
+    "reviewer_claim": "9e3baf907765bf911030e4e973559fb24cb368a6",
+    "verdict": "APPROVE",
+    "reviewed_at": "2026-10-29T15:43:49Z",
+    "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/124#issuecomment-6501321119",
+    "checks": {
+      "scope": true,
+      "regression": true,
+      "source_ledger": true,
+      "protected_controls": true,
+      "behavior": true
+    },
+    "check_scope": "Attribution of already-existing registered independent approval comment and exact claim, not a new META review;20-case matrix was static, not separately executed",
+    "native_github_review_submission": false,
+    "normalizer": {
+      "task_id": "6add445e4138819197d9cf2b1a02534d",
+      "run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf"
+    },
+    "original_provider_terminal_receipt": "NOT_AVAILABLE_FROM_PROVIDER",
+    "service_completion_asserted": false,
+    "merge_sha": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
+  },
+  "post_merge_qa": {
+    "id": 40904787932,
+    "attempt": 1,
+    "head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40904787932",
+    "jobs": [
+      {
+        "id": 123556475404,
+        "name": "offline",
+        "head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+        "conclusion": "success"
+      },
+      {
+        "id": 123556476012,
+        "name": "compile_hold",
+        "head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "handoff": {
+    "id": 40904787875,
+    "head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40904787875",
+    "jobs": [
+      {
+        "id": 123556468973,
+        "name": "update",
+        "head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "status_only_descendant": {
+    "base": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+    "head": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+    "paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "verified": true
+  },
+  "normalizer": {
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf",
+    "claim_commit": "e398fe3274dbfb0774e1ec39f3acb498795c0d6e",
+    "epoch": 253
+  },
+  "prior_refs": {
+    "coordinator_ref": "85c9aa70795b86b07db9d3b00e6a8ac6e54319d8",
+    "state_blob": "a5527932e7a3a23a280399a026deb223529e978d",
+    "requests_blob": "c2ffeda245fc05dcffa628b8e347dd48dcf6a009",
+    "integration_blob": "b52fc2e06f44f7419ed9e3b5ee19f53467e66169"
+  },
+  "old_epoch251_terminal": "UNPROVEN",
+  "administrative_exception": {
+    "commit": "85c9aa70795b86b07db9d3b00e6a8ac6e54319d8",
+    "audit_comment": "https://github.com/kk051780/toy-wars-factory/issues/56#issuecomment-6505669338",
+    "audit_run": "7909376c-0da4-8320-bd09-0d77639f0f7b",
+    "scope": "STRUCTURAL_ONE_SHOT_ONLY_NOT_ROUTINE_RECOVERY"
+  },
+  "main_source_changed": false,
+  "new_source_files": 0,
+  "new_repository_tests": 0,
+  "new_prs": 0,
+  "new_merges": 0,
+  "progress": {
+    "automation": 57,
+    "game": 38,
+    "A12": 0,
+    "A13": 0
+  },
+  "normalized_at": "2026-10-29T19:09:29Z",
+  "operational_consistency_checks": {
+    "positive": 1,
+    "negative_rejections": 8
+  }
+}

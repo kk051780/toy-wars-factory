@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T14:26:52Z",
+  "observed_at": "2026-10-29T19:09:29Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2972,7 +2972,7 @@
       "id": "pr124_parallel_admission_phase0_registered_review_20261029",
       "kind": "REGISTERED_META_PHASE0_SOURCE_REVIEW",
       "priority": "P1",
-      "status": "OPEN",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
@@ -3078,8 +3078,151 @@
           "history/C00133_pr124_incomplete_manifest_review_repair.json"
         ]
       },
-      "next_actor": "6add445e4138819197d9cf2b1a02534d",
+      "next_actor": "NONE_FOR_PR124_ALREADY_MERGED",
       "review": {
+        "schema": 1,
+        "pr": 124,
+        "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+        "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "a1a56640-3164-832a-9692-2d79bafbbb79",
+        "lease_epoch": 251,
+        "reviewer_claim": "9e3baf907765bf911030e4e973559fb24cb368a6",
+        "verdict": "APPROVE",
+        "reviewed_at": "2026-10-29T15:43:49Z",
+        "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/124#issuecomment-6501321119",
+        "checks": {
+          "scope": true,
+          "regression": true,
+          "source_ledger": true,
+          "protected_controls": true,
+          "behavior": true
+        },
+        "check_scope": "Attribution of already-existing registered independent approval comment and exact claim, not a new META review;20-case matrix was static, not separately executed",
+        "native_github_review_submission": false,
+        "normalizer": {
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf"
+        },
+        "original_provider_terminal_receipt": "NOT_AVAILABLE_FROM_PROVIDER",
+        "service_completion_asserted": false,
+        "merge_sha": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+        "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
+      },
+      "previous_request_snapshot": {
+        "ref": "f9aed743aea06276956a61515d1c330585d34806",
+        "blob": "35a50515f1ef5bdd9264d721c2bbfe7be494ca3d",
+        "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+        "status": "REQUEST_CHANGES",
+        "assigned_role": "META"
+      },
+      "previous_repair_authors": [
+        {
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+          "coordination": {
+            "branch": "twf-repair-coordinator",
+            "claim_commit": "3a370c48f6a72559dc99423b2a0b1ce56e924226",
+            "owner_run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+            "epoch": 248
+          },
+          "histories": [
+            "history/C00130_pr124_join_review_red_control.json",
+            "history/C00131_pr124_join_review_repair.json"
+          ]
+        }
+      ],
+      "review_required_for_head": null,
+      "current_reviewer_observation": {
+        "run_id": "56112df0-1df4-8333-a46d-488cbff3397b",
+        "recorded_status": "in_progress",
+        "latest_result_run_id": "51d0d0bd-1be8-8328-b6cf-a28aa0e83a51",
+        "old_result_not_new_verdict": true,
+        "observed_at": "2026-10-29T14:26:52Z"
+      },
+      "previous_state_ref": {
+        "commit": "85c9aa70795b86b07db9d3b00e6a8ac6e54319d8",
+        "blob": "c2ffeda245fc05dcffa628b8e347dd48dcf6a009",
+        "status": "OPEN"
+      },
+      "resolution": {
+        "pr": 124,
+        "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+        "merge_sha": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+        "current_main": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+        "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+        "evidence_path": "ops/reconciliations/PR0124_22067fc2.json",
+        "reviewer_run_id": "a1a56640-3164-832a-9692-2d79bafbbb79",
+        "reviewer_epoch": 251,
+        "post_merge_qa": 40904787932,
+        "handoff": {
+          "id": 40904787875,
+          "head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+          "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40904787875",
+          "jobs": [
+            {
+              "id": 123556468973,
+              "name": "update",
+              "head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+              "conclusion": "success"
+            }
+          ]
+        },
+        "normalizer_run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf",
+        "source_merge_performed_by_normalizer": false,
+        "review": {
+          "schema": 1,
+          "pr": 124,
+          "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+          "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
+          "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+          "reviewer_run_id": "a1a56640-3164-832a-9692-2d79bafbbb79",
+          "lease_epoch": 251,
+          "reviewer_claim": "9e3baf907765bf911030e4e973559fb24cb368a6",
+          "verdict": "APPROVE",
+          "reviewed_at": "2026-10-29T15:43:49Z",
+          "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/124#issuecomment-6501321119",
+          "checks": {
+            "scope": true,
+            "regression": true,
+            "source_ledger": true,
+            "protected_controls": true,
+            "behavior": true
+          },
+          "check_scope": "Attribution of already-existing registered independent approval comment and exact claim, not a new META review;20-case matrix was static, not separately executed",
+          "native_github_review_submission": false,
+          "normalizer": {
+            "task_id": "6add445e4138819197d9cf2b1a02534d",
+            "run_id": "5a576096-d4ec-8321-8a1b-74ba0373dcdf"
+          },
+          "original_provider_terminal_receipt": "NOT_AVAILABLE_FROM_PROVIDER",
+          "service_completion_asserted": false,
+          "merge_sha": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+          "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
+        },
+        "postmerge_qa": {
+          "id": 40904787932,
+          "attempt": 1,
+          "head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+          "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40904787932",
+          "jobs": [
+            {
+              "id": 123556475404,
+              "name": "offline",
+              "head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+              "conclusion": "success"
+            },
+            {
+              "id": 123556476012,
+              "name": "compile_hold",
+              "head": "22067fc2da6bbb1a29c424944a3fa260698bacd8",
+              "conclusion": "success"
+            }
+          ]
+        },
+        "old_provider_terminal_receipt": "NOT_AVAILABLE"
+      },
+      "historical_review": {
         "verdict": "REQUEST_CHANGES",
         "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
         "run_id": "51d0d0bd-1be8-8328-b6cf-a28aa0e83a51",
@@ -3105,37 +3248,6 @@
           "append-only history, registered META claim/release and independent new-run review"
         ],
         "merge_authorized": false
-      },
-      "previous_request_snapshot": {
-        "ref": "f9aed743aea06276956a61515d1c330585d34806",
-        "blob": "35a50515f1ef5bdd9264d721c2bbfe7be494ca3d",
-        "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
-        "status": "REQUEST_CHANGES",
-        "assigned_role": "META"
-      },
-      "previous_repair_authors": [
-        {
-          "task_id": "6add445e4138819197d9cf2b1a02534d",
-          "run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
-          "coordination": {
-            "branch": "twf-repair-coordinator",
-            "claim_commit": "3a370c48f6a72559dc99423b2a0b1ce56e924226",
-            "owner_run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
-            "epoch": 248
-          },
-          "histories": [
-            "history/C00130_pr124_join_review_red_control.json",
-            "history/C00131_pr124_join_review_repair.json"
-          ]
-        }
-      ],
-      "review_required_for_head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
-      "current_reviewer_observation": {
-        "run_id": "56112df0-1df4-8333-a46d-488cbff3397b",
-        "recorded_status": "in_progress",
-        "latest_result_run_id": "51d0d0bd-1be8-8328-b6cf-a28aa0e83a51",
-        "old_result_not_new_verdict": true,
-        "observed_at": "2026-10-29T14:26:52Z"
       }
     }
   ]
