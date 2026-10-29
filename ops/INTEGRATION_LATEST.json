@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T08:26:00.234Z",
-  "status": "MERGED_AWAIT_MAIN_QA_AND_HANDOFF",
+  "observed_at": "2026-10-29T08:26:36.265Z",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
   "reviewer_run_id": "89b1351d-7060-832b-8b3d-44e1dd8b311b",
@@ -17,7 +17,8 @@
     "main_qa": 40842047702,
     "handoff": 40842047673,
     "category": "SYSTEM_A12_PURE_FENCED_ALERT_LEDGER_PROPOSAL",
-    "status": "MERGED_AWAIT_MAIN_QA_AND_HANDOFF"
+    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+    "main_after_handoff": "e1ebe061d60cd74843b144db813f085ad9ce3da7"
   },
   "merged_prs": [
     {
@@ -299,9 +300,10 @@
       "pr": 119,
       "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
       "merge_sha": "54e48d895ceef71a713d37148e1e954970dbad43",
-      "status": "MERGED_AWAIT_MAIN_QA_AND_HANDOFF",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "main_qa": 40842047702,
-      "handoff": 40842047673
+      "handoff": 40842047673,
+      "main_after_handoff": "e1ebe061d60cd74843b144db813f085ad9ce3da7"
     }
   ],
   "merge_count_this_run": 1,
