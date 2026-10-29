@@ -62,5 +62,17 @@
       "erase_array"
     ],
     "current_progress_remains_officially_57": true
+  },
+  "audit_followup": {
+    "scope": "REJECT_UNPINNED_76_HISTORY_AND_SOURCE_MAIN_FORGERY",
+    "independent_auditor_task": "6ae3308d2f2081919824960e0abdc4f8",
+    "independent_auditor_run": "b78a4c8c-4a80-8331-8b5f-6ebd04a9de8d",
+    "previous_verdict": "REQUEST_CHANGES",
+    "controller_claim_epoch": 243,
+    "claim_commit": "77db92fb6fefe453da7f647fcb95271cf2a8c2b4",
+    "fix": "Pin original 76% reconciliation payload and source main sha, reject modification/delete/append; extra negative regressions",
+    "new_head_protected_audit": "PENDING",
+    "official_progress_before_independent_main_qa": 57,
+    "protected_authority": "Separate independently executed audit stored out-of-band after head freeze; no false approval in self-authored C record"
   }
 }

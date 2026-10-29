@@ -79,6 +79,30 @@ class ProgressTest(unittest.TestCase):
             elif mutation == "reorder": old.reverse()
             else: trial["reconciliations"] = []
             with self.assertRaises(ValueError): mod.summarize(trial)
+    def test_76_reconciliation_is_pinned_against_tampering(self):
+        canonical = self.data["reconciliations"][1]
+        self.assertEqual(canonical, mod.PINNED_76_RECONCILIATION)
+        self.assertEqual(self.data["source_main_sha"], mod.PINNED_SOURCE_MAIN_SHA)
+        for mutation in ("remove", "replace_main", "replace_old", "change_pr", "change_ci",
+                         "change_calc", "change_scope", "erase_evidence", "reorder", "append"):
+            data = copy.deepcopy(self.data)
+            history = data["reconciliations"]
+            if mutation == "remove": history.pop()
+            elif mutation == "replace_main": history[1]["base_main"] = "0"*40
+            elif mutation == "replace_old": history[1]["old"]["automation"] = 60
+            elif mutation == "change_pr": history[1]["evidence"][0]["pr"] = 9999
+            elif mutation == "change_ci": history[1]["evidence"][1]["head_ci"] = 0
+            elif mutation == "change_calc": history[1]["proposed"]["automation"] = 80
+            elif mutation == "change_scope": history[1]["scope"] = "UNAUDITED"
+            elif mutation == "erase_evidence": history[1]["evidence"].pop()
+            elif mutation == "reorder": history.reverse()
+            elif mutation == "append": history.append(copy.deepcopy(history[1]))
+            with self.assertRaises(ValueError): mod.summarize(data)
+    def test_source_main_sha_cannot_be_forged(self):
+        for value in ("0"*40, "f728fa525d8b409ef2a08a3da59e4ae7e73e27b1", "", None):
+            data = copy.deepcopy(self.data)
+            data["source_main_sha"] = value
+            with self.assertRaises(ValueError): mod.summarize(data)
     def test_evidence_required(self):
         self.data["tracks"][0]["milestones"][0].pop("evidence")
         with self.assertRaises(ValueError): mod.summarize(self.data)
