@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T14:02:54.545Z",
+  "observed_at": "2026-10-29T14:26:52Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2972,14 +2972,14 @@
       "id": "pr124_parallel_admission_phase0_registered_review_20261029",
       "kind": "REGISTERED_META_PHASE0_SOURCE_REVIEW",
       "priority": "P1",
-      "status": "REQUEST_CHANGES",
-      "assigned_role": "META",
-      "assigned_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "status": "OPEN",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
       "pr": 124,
       "url": "https://github.com/kk051780/toy-wars-factory/pull/124",
       "branch": "auto/twf-system-review-29b870a0-83b0-8331-948d-942fbef57f57",
-      "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+      "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
       "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
       "author_task_id": "6add445e4138819197d9cf2b1a02534d",
       "author_run_id": "29b870a0-83b0-8331-948d-942fbef57f57",
@@ -2990,18 +2990,20 @@
         "epoch": 247
       },
       "created_at": "2026-10-29T13:19:04Z",
-      "request": "Re-review repaired PR124 exact new head, not historical bcc1 CI. Real existing-workflow Python red control40885014135 reproduced15 assertion failures in697 tests against unchanged rejected source; new repair-head40885741136 passes both jobs/all697. Inspect same-goal normalized scope equality, protected writer pre-JOIN rejection and unique active project/repo/goal ownership, including unrelated candidates. Preserve positive same-scope JOIN and duplicate canonical-row idempotency. Check old author247/C129 and new repair248/C130/C131 claims independently. Existing51 PR tests and all278 main blobs preserved. Author cannot approve/merge; registered separate new review run, current main QA and postmerge QA/handoff required. No new concurrent writer/auth/provider/Phase1/2 authority.",
+      "request": "Second REQUEST_CHANGES repaired on SAME PR124: move unchanged candidate/same-repository active completeness guard before JOIN/READ_ONLY. New12 regressions include matching candidate/active incomplete and read-only false; complete normalized same-scope JOIN and foreign-repo incomplete isolation preserved. Actual GitHub RED40890066161 ran709 tests with9 assertion failures on unchanged module20c512af; exact new-head GREEN40890528723 bothjobs/all709 pass. Prior61 PR tests,278 accepted main blobs andC129-C131 preserved; appendC132/C133 and real METAepoch250. Independently re-review exact NEW head/claims/tests and old scope/ambiguity fixes. Current author run may still be in_progress until its result is recorded; do not treat old latest_result as its completion. A separate registered REVIEWER run and legal lease must decide; no author approval/merge. Postmerge main QA/handoff required. No extra writer/provider/spend/publish/schedule authority.",
       "changed_files": [
         "history/C00129_parallel_admission_phase0.json",
         "history/C00130_pr124_join_review_red_control.json",
         "history/C00131_pr124_join_review_repair.json",
+        "history/C00132_pr124_incomplete_manifest_red_control.json",
+        "history/C00133_pr124_incomplete_manifest_review_repair.json",
         "tests/test_system_parallel_admission.py",
         "tools/system_parallel_admission.py"
       ],
       "ci": {
-        "id": 40885741136,
-        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40885741136",
-        "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+        "id": 40890528723,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40890528723",
+        "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
         "base": "221bc53ce118f5242777c13649f437d18078dcc4",
         "event": "pull_request",
         "attempt": 1,
@@ -3009,34 +3011,34 @@
         "conclusion": "success",
         "jobs": [
           {
-            "id": 123488832882,
+            "id": 123505767880,
             "name": "offline",
             "conclusion": "success",
-            "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
-            "started_at": "2026-10-29T13:51:03Z",
-            "completed_at": "2026-10-29T13:51:30Z"
+            "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+            "started_at": "2026-10-29T14:20:46Z",
+            "completed_at": "2026-10-29T14:21:15Z"
           },
           {
-            "id": 123488833299,
+            "id": 123505768462,
             "name": "compile_hold",
             "conclusion": "success",
-            "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
-            "started_at": "2026-10-29T13:51:03Z",
-            "completed_at": "2026-10-29T13:51:15Z"
+            "head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+            "started_at": "2026-10-29T14:20:46Z",
+            "completed_at": "2026-10-29T14:20:57Z"
           }
         ],
-        "python_tests": 697,
-        "new_python_tests_this_repair": 10,
-        "original_pr_python_tests": 51,
+        "python_tests": 709,
+        "new_python_tests_this_repair": 12,
+        "prior_pr_python_tests": 61,
         "scope": "PASS_TRUSTED_BASE",
-        "claim": "PASS_THREE_IMMUTABLE_HISTORY_CLAIMS",
+        "claim": "PASS_FIVE_IMMUTABLE_HISTORY_CLAIMS",
         "offline_log": [
-          "2026-10-29T13:51:16.2428791Z PASS: system review scope",
-          "2026-10-29T13:51:16.5643075Z PASS: repair coordination; 3 immutable coordinator claim(s) verified",
-          "2026-10-29T13:51:24.6266537Z Ran 697 tests in 5.799s",
-          "2026-10-29T13:51:24.6267527Z OK",
-          "2026-10-29T13:51:24.7890625Z status/CHAT_HANDOFF.md: OK",
-          "2026-10-29T13:51:24.7891386Z status/LATEST_STATE.json: OK"
+          "2026-10-29T14:20:58.8358673Z PASS: system review scope",
+          "2026-10-29T14:20:59.3932251Z PASS: repair coordination; 5 immutable coordinator claim(s) verified",
+          "2026-10-29T14:21:06.4932949Z Ran 709 tests in 4.603s",
+          "2026-10-29T14:21:06.4933194Z OK",
+          "2026-10-29T14:21:06.6307222Z status/CHAT_HANDOFF.md: OK",
+          "2026-10-29T14:21:06.6307745Z status/LATEST_STATE.json: OK"
         ]
       },
       "scope": "ONE_SOURCE_ADDITIVE_PHASE0_NO_CONCURRENT_WRITER_OR_POLICY_CHANGE",
@@ -3061,19 +3063,19 @@
           "ambiguous active goal owners"
         ]
       },
-      "updated_at": "2026-10-29T14:02:54.545Z",
+      "updated_at": "2026-10-29T14:26:52Z",
       "repair_author": {
         "task_id": "6add445e4138819197d9cf2b1a02534d",
-        "run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+        "run_id": "30f253c2-400c-8322-9609-be068121fb4e",
         "coordination": {
           "branch": "twf-repair-coordinator",
-          "claim_commit": "3a370c48f6a72559dc99423b2a0b1ce56e924226",
-          "owner_run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
-          "epoch": 248
+          "claim_commit": "f9aed743aea06276956a61515d1c330585d34806",
+          "owner_run_id": "30f253c2-400c-8322-9609-be068121fb4e",
+          "epoch": 250
         },
         "histories": [
-          "history/C00130_pr124_join_review_red_control.json",
-          "history/C00131_pr124_join_review_repair.json"
+          "history/C00132_pr124_incomplete_manifest_red_control.json",
+          "history/C00133_pr124_incomplete_manifest_review_repair.json"
         ]
       },
       "next_actor": "6add445e4138819197d9cf2b1a02534d",
@@ -3103,6 +3105,37 @@
           "append-only history, registered META claim/release and independent new-run review"
         ],
         "merge_authorized": false
+      },
+      "previous_request_snapshot": {
+        "ref": "f9aed743aea06276956a61515d1c330585d34806",
+        "blob": "35a50515f1ef5bdd9264d721c2bbfe7be494ca3d",
+        "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+        "status": "REQUEST_CHANGES",
+        "assigned_role": "META"
+      },
+      "previous_repair_authors": [
+        {
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+          "coordination": {
+            "branch": "twf-repair-coordinator",
+            "claim_commit": "3a370c48f6a72559dc99423b2a0b1ce56e924226",
+            "owner_run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+            "epoch": 248
+          },
+          "histories": [
+            "history/C00130_pr124_join_review_red_control.json",
+            "history/C00131_pr124_join_review_repair.json"
+          ]
+        }
+      ],
+      "review_required_for_head": "fc4e1a4fa8e1969d0bd7da77576f6592aec3a3f3",
+      "current_reviewer_observation": {
+        "run_id": "56112df0-1df4-8333-a46d-488cbff3397b",
+        "recorded_status": "in_progress",
+        "latest_result_run_id": "51d0d0bd-1be8-8328-b6cf-a28aa0e83a51",
+        "old_result_not_new_verdict": true,
+        "observed_at": "2026-10-29T14:26:52Z"
       }
     }
   ]
