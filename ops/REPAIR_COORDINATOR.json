@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 240,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "a2beea1b-8ed0-42da-ba08-4ddbc8688ad0",
-    "task_id": null,
-    "epoch": 240,
-    "acquired_at": "2026-10-29T11:24:39.859Z",
-    "expires_at": "2026-10-29T11:54:39.859Z",
-    "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
-    "work_branch": "controller/progress-a09-a11-a2beea1b-8ed0-42da-ba08-4ddbc8688ad0",
-    "origin": "controller"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -45,17 +35,17 @@
   },
   "last_reported_approval_signature": "b63289e0b9e012b1c25375d0e52363b84a22b8e8ecdb40568755a002de6416ff",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "120aefe3-b808-8331-933d-209e5c2e211d",
-    "epoch": 239,
-    "released_at": "2026-10-29T11:19:06.502Z",
-    "pr": 121,
-    "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
-    "merge_sha": "5631288b22d9676420fa1e7f71393502c8fce5a4",
-    "main_qa": 40864317141,
-    "handoff": 40864317147,
-    "result": "APPROVE_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
-    "a12_verified": false
+    "kind": "CONTROLLER",
+    "owner_id": "a2beea1b-8ed0-42da-ba08-4ddbc8688ad0",
+    "epoch": 240,
+    "released_at": "2026-10-29T11:29:36.452Z",
+    "pr": 122,
+    "head": "353dfa401d7fe5c18335a76e3a34efb0b0785373",
+    "ci": 40865684891,
+    "result": "DRAFT_PROTECTED_PROGRESS_RECONCILIATION_CI_PASS_AWAIT_INDEPENDENT_AUDIT",
+    "protected_review": "PENDING",
+    "main_changed": false,
+    "official_progress_unchanged": true
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",
