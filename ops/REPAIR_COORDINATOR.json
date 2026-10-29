@@ -1,18 +1,8 @@
 {
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
-  "epoch": 245,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "7c2849ae-67e2-4d4d-b91f-65bb4c0892ea",
-    "task_id": null,
-    "epoch": 245,
-    "acquired_at": "2026-10-29T11:58:35.368Z",
-    "expires_at": "2026-10-29T12:28:35.368Z",
-    "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
-    "work_branch": "controller/progress-a09-a11-a2beea1b-8ed0-42da-ba08-4ddbc8688ad0",
-    "origin": "controller"
-  },
+  "epoch": 246,
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -1374,6 +1364,55 @@
         "ordinary_development_already_delegated": true
       },
       "preservation": "All existing unrelated coordinator records and last_completed remain unchanged; no service exit is asserted."
+    },
+    {
+      "schema": 1,
+      "operation": "OWNER_DELEGATED_ONE_SHOT_ADMINISTRATIVE_REVOCATION",
+      "observed_ref": "c4f6591393589e2536bd649f5b3cf73e38fed0fc",
+      "recorded_at": "2026-10-29T12:53:38.423647Z",
+      "actor_operation_id": "5c248914-574d-4bff-8004-8d70c6be6ecc",
+      "previous_holder": {
+        "kind": "CONTROLLER",
+        "owner_id": "7c2849ae-67e2-4d4d-b91f-65bb4c0892ea",
+        "task_id": null,
+        "epoch": 245,
+        "acquired_at": "2026-10-29T11:58:35.368Z",
+        "expires_at": "2026-10-29T12:28:35.368Z",
+        "base_main_sha": "221bc53ce118f5242777c13649f437d18078dcc4",
+        "work_branch": "controller/progress-a09-a11-a2beea1b-8ed0-42da-ba08-4ddbc8688ad0",
+        "origin": "controller"
+      },
+      "previous_epoch": 245,
+      "next_epoch": 246,
+      "service_completion_asserted": false,
+      "same_owner_terminal_receipt": "NOT_AVAILABLE",
+      "authorization": {
+        "source": "User's 2026-10-29 request '次' following explicit handoff that epoch245 recovery is the highest-priority next task; standing 2026-10-25 delegation of ordinary engineering decisions; analogous historical owner-delegated audited operator exceptions epochs41 and88",
+        "scope": "Only revoke stuck epoch245 CONTROLLER. Does not bypass QA, protected PR122 review, fees, inference or publishing.",
+        "type": "ONE_SHOT_OWNER_DELEGATED_OPERATOR_EXCEPTION_NOT_ORDINARY_LEASE_RECOVERY"
+      },
+      "grounds": {
+        "stale_expired_at": "2026-10-29T12:28:35.368Z",
+        "observed_at": "2026-10-29T12:53:38.423647Z",
+        "owner_branch_head": "2c686b7e0a2b4c58ec4f34df6f49da8d87773584",
+        "main_head": "221bc53ce118f5242777c13649f437d18078dcc4",
+        "pr": 122,
+        "pr_state": "OPEN_DRAFT_REQUEST_CHANGES",
+        "recorded_provider_status": "MANUAL_CONTROLLER_TERMINAL_UNVERIFIED",
+        "registered_service_runs_in_progress": 0,
+        "previous_claim_commit": "c4f6591393589e2536bd649f5b3cf73e38fed0fc"
+      },
+      "safety": {
+        "previous_owner_fenced_from_epoch246": true,
+        "keep_last_completed_unchanged": true,
+        "keep_all_unrelated_state_unchanged": true,
+        "no_source_write": true,
+        "no_merges": true,
+        "required_ref_cas": "SINGLE_PARENT_FAST_FORWARD_FORCE_FALSE_EXPECTED_SHA",
+        "unverified_original_actor": "YES",
+        "requires_subsequent_independent_audit": true
+      },
+      "preservation": "Only holder null, epoch plus one, and append audit record; no other shared state changes or false service completion."
     }
   ],
   "bootstrap_review_request_history": [
