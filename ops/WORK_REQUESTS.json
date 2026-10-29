@@ -2900,6 +2900,58 @@
         "main_after_handoff": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
         "a12_verified": false
       }
+    },
+    {
+      "id": "pr121_prepared_notification_registered_review_20261029",
+      "status": "OPEN",
+      "priority": "P1",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 121,
+      "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/121",
+      "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
+      "base": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
+      "branch": "auto/twf-system-review-559ceca6-d748-832f-bb96-a5779f993964",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "559ceca6-d748-832f-bb96-a5779f993964",
+      "created_at": "2026-10-29T11:14:43Z",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "8712e9d060fec2bc6bd6c9f38f17f408285ce7ef",
+        "owner_run_id": "559ceca6-d748-832f-bb96-a5779f993964",
+        "epoch": 238,
+        "release": "ATOMIC_WITH_THIS_REPORT; actual ref/owner reread required"
+      },
+      "ci": {
+        "id": 40863409804,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40863409804",
+        "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "python_total": 636,
+        "existing": 612,
+        "new": 24,
+        "jobs": [
+          {
+            "id": 123412039556,
+            "name": "compile_hold",
+            "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
+            "conclusion": "success"
+          },
+          {
+            "id": 123412039924,
+            "name": "offline",
+            "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
+            "conclusion": "success"
+          }
+        ],
+        "scope": "PASS",
+        "immutable_claim": "1 immutable coordinator claim(s) verified"
+      },
+      "request": "Review exactly3 A paths (new prepared-only notification/receipt matcher,24 regressions,C00127). Check no send/authentication upgrade, unknown/stale/foreign/run/receiver/epoch/attempt/403/429/lost ACK/duplicate boundaries. Exacthead636 and2jobs/scope/claim PASS. Genuine accepted persist live GET18/PEEK7 healthy is separately recorded; no actual alert save or delivery. Separate registered reviewer only merge and postmain QA/handoff.",
+      "owner_reply_required": false
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T09:19:49Z",
+  "observed_at": "2026-10-29T11:14:43Z",
   "source": "PR112 formal provenance repair; current C00122 active view uses exact transcriptions with original chat NOT_VERIFIED; no game source changes.",
   "items": [
     {
@@ -386,9 +386,9 @@
   ],
   "actor": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "84f6c2ab-3724-8326-95cb-f3937487e58f"
+    "run_id": "559ceca6-d748-832f-bb96-a5779f993964"
   },
-  "base_main_sha": "e1ebe061d60cd74843b144db813f085ad9ce3da7",
+  "base_main_sha": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
   "prioritized_candidates": [
     "dual_origin_character_variety_20261029",
     "private_headless_engine_evidence_path",
@@ -399,29 +399,27 @@
     "checked_on": "2026-10-29",
     "references": [
       {
-        "url": "https://docs.github.com/en/rest/git/refs",
-        "kind": "PRIMARY_GITHUB_OFFICIAL",
+        "url": "https://opentelemetry.io/docs/specs/semconv/messaging/messaging-spans/",
+        "kind": "PRIMARY_IMPLEMENTER_SPECIFICATION",
         "published_at": "NOT_AVAILABLE",
         "updated_at": "NOT_AVAILABLE",
-        "checked_at": "2026-10-29T09:15:50Z",
-        "finding": "Reference API read/update and409/422 semantics. Host expected_sha CAS is required; do not equate bare REST force=false with a separate expected_sha parameter or a lease/epoch receipt."
+        "checked_at": "2026-10-29T11:10:05Z",
+        "finding": "Message/operation/destination and send/receive/settle observations are separate. Used as an evidence-separation pattern, not end-user delivery proof or installed telemetry."
       },
       {
         "url": "https://create.roblox.com/docs/production/experiments",
         "kind": "PRIMARY_ROBLOX_OFFICIAL",
         "published_at": "NOT_AVAILABLE",
         "updated_at": "NOT_AVAILABLE",
-        "checked_at": "2026-10-29T09:15:50Z",
-        "finding": "Goals, controlled variants, sampling/detectable effect and recorded decisions guide NO_CHANGE/first-loop clarity/role contrast hypotheses. No actual target game outcome or live experiment claim."
+        "checked_at": "2026-10-29T11:10:05Z",
+        "finding": "Control/variants, cohort size/detectable effect and documented decisions guide first-loop vs role/collection vs NO_CHANGE hypotheses. No game measurement or live experiment."
       }
     ],
-    "new_same_day_publication": "NOT_ESTABLISHED; current primary documentation read, no snippet-only current-event claim",
-    "owner_references": [
-      "Issue109 OWNER and DERIVED provenance retained; chat identity NOT_VERIFIED",
-      "Issue115 two-business mandate"
-    ],
-    "game_implementation": "NONE; system PR120 prioritized",
-    "system_precondition": "No live engine/player outcomes inferred from source CI"
+    "new_same_day_publication": "NOT_ESTABLISHED; current primary documentation opened, not called a fresh release",
+    "owner_origins": "Issue109 original/DERIVED distinction unchanged; original chat authentication NOT_VERIFIED",
+    "business_reference": "Issue115 game/system flywheel preserved; no market or cost claims",
+    "game_implementation": "NONE; A12 source notification boundary prioritized",
+    "comparison": "Existing NO_CHANGE vs FIRST_LOOP_CLARITY vs DIFFERENTIATED_ROLE_COLLECTION hypotheses retained; first production/initial exits/D1-D7/performance require actual engine and mature player cohorts; no effect measured"
   },
   "next_experiments": [
     {
@@ -566,9 +564,11 @@
     "current_view": "C00122; C00121 is explicitly rejected historical input, not active original stock"
   },
   "latest_system_source_candidate": {
-    "pr": 118,
-    "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
-    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40812571716",
-    "status": "INDEPENDENT_REVIEW_PENDING; A12_NOT_VERIFIED"
+    "pr": 121,
+    "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
+    "status": "DRAFT_CI_PASS_NOT_MERGED",
+    "description": "Notification preparation/receipt matching only; no automatic delivery or game feature",
+    "engine": "NOT_RUN",
+    "player_effect": "NOT_MEASURED"
   }
 }

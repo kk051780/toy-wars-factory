@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 238,
-  "holder": {
-    "kind": "META",
-    "owner_id": "559ceca6-d748-832f-bb96-a5779f993964",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "epoch": 238,
-    "acquired_at": "2026-10-29T10:59:33+00:00",
-    "expires_at": "2026-10-29T11:29:33+00:00",
-    "base_main_sha": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
-    "work_branch": "auto/twf-system-review-559ceca6-d748-832f-bb96-a5779f993964",
-    "origin": "meta"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -20,26 +10,39 @@
   },
   "approval_packet": {
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
-    "items": [],
+    "items": [
+      {
+        "number": 121,
+        "title": "[TWF system-review] Prepare scoped alert notices without false delivery claims",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/121",
+        "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40863409804",
+        "summary": "Prepared-only notification/receipt binding;24 regressions; genuine accepted-source GET18/PEEK7 separate; no send/delivery proof",
+        "changed_files": [
+          "tools/system_alert_notification.py",
+          "tests/test_system_alert_notification.py",
+          "history/C00127_prepared_alert_notification.json"
+        ],
+        "kind": "開発体制改善"
+      }
+    ],
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-29T09:34:23.487Z",
-    "signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
+    "observed_at": "2026-10-29T11:14:43Z",
+    "signature": "b63289e0b9e012b1c25375d0e52363b84a22b8e8ecdb40568755a002de6416ff",
     "approval_text": ""
   },
-  "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
+  "last_reported_approval_signature": "b63289e0b9e012b1c25375d0e52363b84a22b8e8ecdb40568755a002de6416ff",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "f08a6dcb-96c0-8322-a69a-8603b249be38",
-    "epoch": 237,
-    "released_at": "2026-10-29T09:34:23.487Z",
-    "pr": 120,
-    "head": "9169f225af0bc559c768d5c90a6fa3ef8f944247",
-    "merge_sha": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
-    "main_qa": 40850476260,
-    "handoff": 40850476258,
-    "result": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+    "kind": "META",
+    "owner_id": "559ceca6-d748-832f-bb96-a5779f993964",
+    "epoch": 238,
+    "released_at": "2026-10-29T11:14:43+00:00",
+    "pr": 121,
+    "head": "fc8195af8b1a823cb7fe356c6308ec853757b1bb",
+    "ci": 40863409804,
+    "result": "DRAFT_NOTIFICATION_SOURCE_CI_PASS; ACCEPTED_PERSIST_LIVE_HEALTHY_NOT_PERSISTED",
     "a12_verified": false
   },
   "last_approval_report": {
