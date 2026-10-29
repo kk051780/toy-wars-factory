@@ -1,23 +1,23 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T03:37:32.676Z",
-  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "observed_at": "2026-10-29T08:26:00.234Z",
+  "status": "MERGED_AWAIT_MAIN_QA_AND_HANDOFF",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "af363942-93b4-832e-bbed-ee28eb4b71ac",
-  "lease_epoch": 232,
-  "main_before": "3d99c3ec30238587af2823c76682343c403042df",
+  "reviewer_run_id": "89b1351d-7060-832b-8b3d-44e1dd8b311b",
+  "lease_epoch": 235,
+  "main_before": "fa89e46eca61b7f84acfae10c99d8127900de83a",
   "latest_review": {
-    "pr": 118,
-    "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+    "pr": 119,
+    "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
     "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0118_f30d386c.json",
-    "ci": 40812571716,
-    "merge_sha": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
-    "main_qa": 40813038305,
-    "handoff": 40813038300,
-    "category": "SYSTEM_A12_PR_LESS_READ_ONLY_SOURCE_ONLY",
-    "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
+    "review_record": "ops/reviews/PR0119_fc3c796c.json",
+    "ci": 40839603464,
+    "merge_sha": "54e48d895ceef71a713d37148e1e954970dbad43",
+    "main_qa": 40842047702,
+    "handoff": 40842047673,
+    "category": "SYSTEM_A12_PURE_FENCED_ALERT_LEDGER_PROPOSAL",
+    "status": "MERGED_AWAIT_MAIN_QA_AND_HANDOFF"
   },
   "merged_prs": [
     {
@@ -294,6 +294,14 @@
       "handoff": 40813038300,
       "category": "SYSTEM_A12_PR_LESS_READ_ONLY_SOURCE_ONLY",
       "main_after_handoff": "fa89e46eca61b7f84acfae10c99d8127900de83a"
+    },
+    {
+      "pr": 119,
+      "head": "fc3c796c0b2c428447e213b69f04349c75df7d1f",
+      "merge_sha": "54e48d895ceef71a713d37148e1e954970dbad43",
+      "status": "MERGED_AWAIT_MAIN_QA_AND_HANDOFF",
+      "main_qa": 40842047702,
+      "handoff": 40842047673
     }
   ],
   "merge_count_this_run": 1,

@@ -2780,7 +2780,7 @@
     },
     {
       "id": "pr119_durable_alert_ledger_registered_review_20261029",
-      "status": "OPEN",
+      "status": "MERGED_AWAIT_MAIN_QA_AND_HANDOFF",
       "priority": "P1",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
@@ -2823,7 +2823,15 @@
         ],
         "python_total": "See exact-head offline log; local589, existing569 + new20"
       },
-      "owner_reply_required": false
+      "owner_reply_required": false,
+      "review_record": "ops/reviews/PR0119_fc3c796c.json",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "89b1351d-7060-832b-8b3d-44e1dd8b311b",
+      "lease_epoch": 235,
+      "merge_sha": "54e48d895ceef71a713d37148e1e954970dbad43",
+      "post_merge_main_qa": 40842047702,
+      "post_merge_handoff": 40842047673,
+      "reviewed_at": "2026-10-29T08:26:00.234Z"
     }
   ]
 }
