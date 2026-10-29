@@ -1,134 +1,604 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T03:30:20Z",
-  "status": "SOURCE_PR_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
+  "observed_at": "2026-10-29T03:48:52Z",
+  "status": "LIVE_READ_ONLY_OBSERVATION_NO_IMPLEMENTATION",
   "repository": "kk051780/toy-wars-factory",
   "actor": {
-    "role": "META",
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
-    "old_latest_result_used": false
+    "run_id": "438e0a34-b6a0-832d-a75b-9be7b03dc383",
+    "recorded_status_at_observation": "in_progress",
+    "latest_result_run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
+    "latest_result_used_as_current_success": false
   },
   "coordination": {
     "branch": "twf-repair-coordinator",
-    "claim_commit": "268a6b7517acd21e0965bae9ef9bdbef4c4f855c",
-    "owner_run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
-    "epoch": 231
+    "claim_commit": "685e64de8505db3e199754c003a62220d216f62e",
+    "owner_run_id": "438e0a34-b6a0-832d-a75b-9be7b03dc383",
+    "epoch": 233,
+    "observed_free_ref": "2d0e4818787334aeb586feb118ae4a2e2876f500",
+    "observed_free_epoch": 232,
+    "release": "ATOMIC_WITH_THIS_REPORT; reread required"
   },
   "main_health": {
-    "main": "3d99c3ec30238587af2823c76682343c403042df",
-    "qa": 40782676418,
-    "qa_head": "3009bfefde60311ba58a8962e3fc296db669f75e",
-    "jobs": "offline+compile_hold SUCCESS",
-    "handoff": 40809225059,
-    "status_only_direct_compare": [
+    "sha": "fa89e46eca61b7f84acfae10c99d8127900de83a",
+    "qa_head": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+    "qa_run": 40813038305,
+    "attempt": 1,
+    "jobs": [
+      {
+        "id": 123247592930,
+        "name": "offline",
+        "head_sha": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+        "conclusion": "success"
+      },
+      {
+        "id": 123247593224,
+        "name": "compile_hold",
+        "head_sha": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+        "conclusion": "success"
+      }
+    ],
+    "handoff_run": 40813038300,
+    "handoff_conclusion": "success",
+    "compare_paths": [
       "status/CHAT_HANDOFF.md",
       "status/LATEST_STATE.json"
-    ]
+    ],
+    "pr118": {
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/118",
+      "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+      "merge": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+      "status": "MERGED_MAIN_QA_HANDOFF_PASSED",
+      "review_record": "ops/reviews/PR0118_f30d386c.json",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "af363942-93b4-832e-bbed-ee28eb4b71ac",
+      "ci": 40812571716,
+      "python_tests": 569,
+      "new_tests_in_original_pr": 20
+    }
   },
   "implementation": {
-    "category": "SYSTEM_PR_LESS_SOURCE_AND_NEW_TESTS",
-    "pr": 118,
-    "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
-    "branch": "auto/twf-system-review-6cde9580-6110-832e-a8dd-656aac9bbdf8",
-    "base": "3d99c3ec30238587af2823c76682343c403042df",
-    "paths": [
-      "tools/system_idle_health.py",
-      "tests/test_system_idle_health.py",
-      "history/C00124_pr_less_idle_health.json"
+    "source_commits": 0,
+    "new_prs": 0,
+    "changed_source_paths": [],
+    "new_tests": 0,
+    "category": "ACCEPTED_SOURCE_ACTUALLY_CALLED; NOT_NEW_CODE_DEVELOPMENT",
+    "all_accepted_main_blobs_verified": 269,
+    "source_pins": [
+      {
+        "path": "tools/system_idle_health.py",
+        "mode": "100644",
+        "sha": "499624fc9b2a6b75a53bae3b5bf7c4afa0069fef"
+      },
+      {
+        "path": "tools/system_service_observer.py",
+        "mode": "100644",
+        "sha": "2baec64cfe6b0b7445ebf04bedb1530981586375"
+      },
+      {
+        "path": "tools/system_runtime_alerts.py",
+        "mode": "100644",
+        "sha": "4430050e9e42eec35d5f7339f1d975444e72b0e6"
+      },
+      {
+        "path": "tools/system_github_evidence.py",
+        "mode": "100644",
+        "sha": "2eed374c00b037cc8f0d48a1aaf1f04b7831aa33"
+      },
+      {
+        "path": "tools/system_host_write_triage_v2.py",
+        "mode": "100644",
+        "sha": "b3d33d2c949e3a0d30e79f3fc47e50adfc7681df"
+      },
+      {
+        "path": "studio_autopilot/projects/toy_wars.json",
+        "mode": "100644",
+        "sha": "b16fcdb953701c321bac7f6ed467b21d46d998bb"
+      },
+      {
+        "path": "config/autonomous_repair.json",
+        "mode": "100644",
+        "sha": "0ed1fa31b93493299388da068749a0ca64768f43"
+      }
     ],
-    "accepted_blobs_preserved": 266,
-    "game_source_changed": false,
-    "summary": "New system_idle_health.observe calls accepted service.observe. Exact project/repo/task/run/ref/blob/epoch and two PEEK traces per role; completed/current result, failed/no_update, missing result, timeout, disabled/attention, unreleased lease and detector failure distinct. MAIN_QA_NOT_CHECKED; all authority false. Provisional supplied-data dedup, not authenticated persistence; disappeared alerts remain UNVERIFIED_RECOVERY_CANDIDATE."
+    "previous_report_blob": "3f44c294b9cd55480c0841be4c8c30eaa7ba8d6a"
   },
   "tests": {
-    "new": 20,
-    "focused": "20 PASS SYNTHETIC_TEST_ONLY",
-    "local_full": "569 run,568pass,1 unchanged snapshot Git ancestry failure",
-    "negative_control": {
-      "isolated_timeout_mutant": 1,
-      "failures": 1,
-      "errors": 0,
-      "disk_written": false
+    "accepted_idle_health_rerun": {
+      "count": 20,
+      "pass": 20,
+      "new": false,
+      "scope": "SYNTHETIC_REGRESSIONS_REEXECUTED_NOT_OPERATIONAL_PROOF"
     },
-    "github_ci": {
-      "run": 40812571716,
-      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40812571716",
-      "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
-      "attempt": 1,
-      "conclusion": "success",
-      "jobs": [
+    "new_ci_run": null
+  },
+  "live_observation": {
+    "entrypoint": "tools.system_idle_health.observe(projects,binding,thresholds,get,peek,clock)",
+    "binding": {
+      "game_id": "toy-wars-factory",
+      "manifest_path": "studio_autopilot/projects/toy_wars.json",
+      "main_sha": "fa89e46eca61b7f84acfae10c99d8127900de83a",
+      "coordinator_sha": "2d0e4818787334aeb586feb118ae4a2e2876f500",
+      "coordinator_blob_sha": "450cd3dc2c9f4df501252fd55f270944acdd0f72",
+      "coordinator_epoch": 232,
+      "max_record_age_seconds": 86400
+    },
+    "thresholds": {
+      "service_timeout_seconds": {
+        "author": 1800,
+        "reviewer": 1800,
+        "meta": 1800
+      },
+      "ci_timeout_seconds": 1800,
+      "max_observation_age_seconds": 120,
+      "replay_window_seconds": 86400
+    },
+    "result": {
+      "schema": 1,
+      "mode": "PR_LESS_READ_ONLY",
+      "verification": "NOT_VERIFIED",
+      "game_id": "toy-wars-factory",
+      "repository": "kk051780/toy-wars-factory",
+      "main_qa": "MAIN_QA_NOT_CHECKED",
+      "delivery": "NOT_ATTEMPTED",
+      "a12_verified": false,
+      "operation_cause": "INDETERMINATE",
+      "state": "OBSERVED_HEALTHY",
+      "frame": {
+        "schema": 1,
+        "mode": "READ_ONLY_A12_DIAGNOSTIC",
+        "verification": "NOT_VERIFIED",
+        "game_id": "toy-wars-factory",
+        "repository": "kk051780/toy-wars-factory",
+        "roles": {
+          "author": "6adbf0d6a7d881918ce181dff2468867",
+          "reviewer": "6add6aaceb4c8191b1666fe15f97cd88",
+          "meta": "6add445e4138819197d9cf2b1a02534d"
+        },
+        "observed_at": "2026-10-29T03:46:16.597448+00:00",
+        "thresholds": {
+          "service_timeout_seconds": {
+            "author": 1800,
+            "reviewer": 1800,
+            "meta": 1800
+          },
+          "ci_timeout_seconds": 1800,
+          "max_observation_age_seconds": 120,
+          "replay_window_seconds": 86400
+        },
+        "services": [
+          {
+            "role": "author",
+            "task_id": "6adbf0d6a7d881918ce181dff2468867",
+            "run_id": "79defba7-c81c-8321-be97-2e3f9ffc9081",
+            "state": "OBSERVED_COMPLETED",
+            "age_seconds": 2682,
+            "latest_result_binding": "CURRENT_RUN"
+          },
+          {
+            "role": "meta",
+            "task_id": "6add445e4138819197d9cf2b1a02534d",
+            "run_id": "438e0a34-b6a0-832d-a75b-9be7b03dc383",
+            "state": "IN_PROGRESS_NOT_YET_STALE",
+            "age_seconds": 390,
+            "latest_result_binding": "PREVIOUS_RUN"
+          },
+          {
+            "role": "reviewer",
+            "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+            "run_id": "af363942-93b4-832e-bbed-ee28eb4b71ac",
+            "state": "OBSERVED_COMPLETED",
+            "age_seconds": 767,
+            "latest_result_binding": "CURRENT_RUN"
+          }
+        ],
+        "lease": null,
+        "ci": [],
+        "alerts": [],
+        "recovery_candidates": [],
+        "authority": {
+          "write_allowed": false,
+          "start_now_allowed": false,
+          "takeover_allowed": false,
+          "dispatch_allowed": false,
+          "merge_allowed": false,
+          "publish_allowed": false,
+          "external_spend_allowed": false,
+          "safe_to_next_schedule": false
+        },
+        "delivery": "NOT_ATTEMPTED",
+        "operation_cause": "INDETERMINATE",
+        "a12_verified": false
+      },
+      "authority": {
+        "write_allowed": false,
+        "start_now_allowed": false,
+        "takeover_allowed": false,
+        "dispatch_allowed": false,
+        "merge_allowed": false,
+        "publish_allowed": false,
+        "external_spend_allowed": false,
+        "safe_to_next_schedule": false
+      }
+    },
+    "host_execution": {
+      "status": "CONNECTED_GET_AND_PEEK_CODE_PATH_EXECUTED",
+      "authentication_claim": "NO_PORTABLE_PROVIDER_AUTHENTICATION; module verification remains NOT_VERIFIED",
+      "get_calls": 12,
+      "peek_calls": 6,
+      "source": "CURRENT_THREAD_CONNECTED_TOOLS_ROUTED_TO_ACCEPTED_PYTHON_CALLBACKS",
+      "get_success_mapping": "Connector successful JSON result mapped to Response(200); raw HTTP status/header not separately exposed",
+      "peek_projection": "ALLOWLISTED_LIFECYCLE_METADATA_ONLY; no prompt/result prose forwarded",
+      "trace": [
         {
-          "id": 123246094755,
-          "name": "offline",
-          "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
-          "conclusion": "success"
+          "sequence": 1,
+          "method": "GET",
+          "observed_at": "2026-10-29 03:45:46 UTC",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory",
+          "connector_tool": "mcp__codex_apps__github_fetch",
+          "connector_is_error": false,
+          "response_body_sha256": "fadad2fb0c3a9ff0e7367a5cf104569ab1d1064643eb1be73df5d326543286c2",
+          "response_bytes": 5750,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
         },
         {
-          "id": 123246095044,
-          "name": "compile_hold",
-          "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
-          "conclusion": "success"
+          "sequence": 2,
+          "method": "GET",
+          "observed_at": "2026-10-29 03:45:47 UTC",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/ref/heads/main",
+          "connector_tool": "mcp__codex_apps__github_fetch",
+          "connector_is_error": false,
+          "response_body_sha256": "1a9e87753f2f9a7f5d4349f9397c7608bee04a973028bcd492644818391ec256",
+          "response_bytes": 348,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 3,
+          "method": "GET",
+          "observed_at": "2026-10-29 03:45:49 UTC",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/ref/heads/twf-repair-coordinator",
+          "connector_tool": "mcp__codex_apps__github_fetch",
+          "connector_is_error": false,
+          "response_body_sha256": "33f9e0c42e21e3b36f4063372dec1b06a71701e0a5d3dfb795cc6b652cb24034",
+          "response_bytes": 411,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 4,
+          "method": "GET",
+          "observed_at": "2026-10-29 03:45:50 UTC",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/commits/fa89e46eca61b7f84acfae10c99d8127900de83a",
+          "connector_tool": "mcp__codex_apps__github_fetch",
+          "connector_is_error": false,
+          "response_body_sha256": "d6053569371d6b6973466122b66432bd3277b007b5fb2f00613958b26e1262bb",
+          "response_bytes": 1237,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 5,
+          "method": "GET",
+          "observed_at": "2026-10-29 03:45:51 UTC",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/trees/1c99e1d5b8c7a4f2d0f3239513cd4a6022550724?recursive=1",
+          "connector_tool": "mcp__codex_apps__github_fetch",
+          "connector_is_error": false,
+          "response_body_sha256": "fed8814e6b89320489ee5f162a3b82a405d504d8a4ce3bbccfee48328b9e2954",
+          "response_bytes": 72060,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 6,
+          "method": "GET",
+          "observed_at": "2026-10-29 03:45:53 UTC",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/blobs/b16fcdb953701c321bac7f6ed467b21d46d998bb",
+          "connector_tool": "mcp__codex_apps__github_fetch",
+          "connector_is_error": false,
+          "response_body_sha256": "af853ab187d96b2768d13e2e0cae06383c3cbd36950215c514b7b998d2e8e5a0",
+          "response_bytes": 1266,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 7,
+          "method": "GET",
+          "observed_at": "2026-10-29 03:45:55 UTC",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/blobs/0ed1fa31b93493299388da068749a0ca64768f43",
+          "connector_tool": "mcp__codex_apps__github_fetch",
+          "connector_is_error": false,
+          "response_body_sha256": "01184fc102478be3008b5632cc93b17bef4f7a729974cd028440821f3371d787",
+          "response_bytes": 7564,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 8,
+          "method": "GET",
+          "observed_at": "2026-10-29 03:45:56 UTC",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/commits/2d0e4818787334aeb586feb118ae4a2e2876f500",
+          "connector_tool": "mcp__codex_apps__github_fetch",
+          "connector_is_error": false,
+          "response_body_sha256": "41890c56bd9b3392606d9115bbeb2ee7413675252fca213c345fad20755cd9dc",
+          "response_bytes": 1179,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 9,
+          "method": "GET",
+          "observed_at": "2026-10-29 03:45:58 UTC",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/trees/cf8b70673c13e46943e243ef1bb7b59aa4a5e736?recursive=1",
+          "connector_tool": "mcp__codex_apps__github_fetch",
+          "connector_is_error": false,
+          "response_body_sha256": "c2b004f3ec4e0c5afa85bc734a2022b89db002d70b21c52b566df5f890674252",
+          "response_bytes": 46255,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 10,
+          "method": "GET",
+          "observed_at": "2026-10-29 03:46:00 UTC",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/blobs/450cd3dc2c9f4df501252fd55f270944acdd0f72",
+          "connector_tool": "mcp__codex_apps__github_fetch",
+          "connector_is_error": false,
+          "response_body_sha256": "6ec4cd55841884888f863ec9eb2d424f45d978de4050d8efbc912aa03b698999",
+          "response_bytes": 98942,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 11,
+          "method": "PEEK",
+          "observed_at": "2026-10-29 03:46:02 UTC",
+          "task_id": "6adbf0d6a7d881918ce181dff2468867",
+          "current_run_id": "79defba7-c81c-8321-be97-2e3f9ffc9081",
+          "recorded_status": "completed",
+          "latest_result_run_id": "79defba7-c81c-8321-be97-2e3f9ffc9081",
+          "connector_tool": "mcp__codex_apps__automations_peek",
+          "projection": "ALLOWLISTED_LIFECYCLE_METADATA_ONLY",
+          "delivery_status": "unknown",
+          "response_body_sha256": "e2d886f02467547c036a4e0faa685afa3e95e1738d05ff08e1ef05af9de25d8e",
+          "response_bytes": 630,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 12,
+          "method": "PEEK",
+          "observed_at": "2026-10-29 03:46:04 UTC",
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "current_run_id": "438e0a34-b6a0-832d-a75b-9be7b03dc383",
+          "recorded_status": "in_progress",
+          "latest_result_run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
+          "connector_tool": "mcp__codex_apps__automations_peek",
+          "projection": "ALLOWLISTED_LIFECYCLE_METADATA_ONLY",
+          "delivery_status": "unknown",
+          "response_body_sha256": "738a110ee04dcbad2e420ac05cb65753567ca5c15d3cfb915a408f48d6fd3df2",
+          "response_bytes": 563,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 13,
+          "method": "PEEK",
+          "observed_at": "2026-10-29 03:46:06 UTC",
+          "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+          "current_run_id": "af363942-93b4-832e-bbed-ee28eb4b71ac",
+          "recorded_status": "completed",
+          "latest_result_run_id": "af363942-93b4-832e-bbed-ee28eb4b71ac",
+          "connector_tool": "mcp__codex_apps__automations_peek",
+          "projection": "ALLOWLISTED_LIFECYCLE_METADATA_ONLY",
+          "delivery_status": "unknown",
+          "response_body_sha256": "d76f09b639476705c890a673e2a0af6455abd59c18a6b09e0bd12542dafcb7c9",
+          "response_bytes": 644,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 14,
+          "method": "PEEK",
+          "observed_at": "2026-10-29 03:46:08 UTC",
+          "task_id": "6adbf0d6a7d881918ce181dff2468867",
+          "current_run_id": "79defba7-c81c-8321-be97-2e3f9ffc9081",
+          "recorded_status": "completed",
+          "latest_result_run_id": "79defba7-c81c-8321-be97-2e3f9ffc9081",
+          "connector_tool": "mcp__codex_apps__automations_peek",
+          "projection": "ALLOWLISTED_LIFECYCLE_METADATA_ONLY",
+          "delivery_status": "unknown",
+          "response_body_sha256": "e2d886f02467547c036a4e0faa685afa3e95e1738d05ff08e1ef05af9de25d8e",
+          "response_bytes": 630,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 15,
+          "method": "PEEK",
+          "observed_at": "2026-10-29 03:46:10 UTC",
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "current_run_id": "438e0a34-b6a0-832d-a75b-9be7b03dc383",
+          "recorded_status": "in_progress",
+          "latest_result_run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
+          "connector_tool": "mcp__codex_apps__automations_peek",
+          "projection": "ALLOWLISTED_LIFECYCLE_METADATA_ONLY",
+          "delivery_status": "unknown",
+          "response_body_sha256": "738a110ee04dcbad2e420ac05cb65753567ca5c15d3cfb915a408f48d6fd3df2",
+          "response_bytes": 563,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 16,
+          "method": "PEEK",
+          "observed_at": "2026-10-29 03:46:12 UTC",
+          "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+          "current_run_id": "af363942-93b4-832e-bbed-ee28eb4b71ac",
+          "recorded_status": "completed",
+          "latest_result_run_id": "af363942-93b4-832e-bbed-ee28eb4b71ac",
+          "connector_tool": "mcp__codex_apps__automations_peek",
+          "projection": "ALLOWLISTED_LIFECYCLE_METADATA_ONLY",
+          "delivery_status": "unknown",
+          "response_body_sha256": "d76f09b639476705c890a673e2a0af6455abd59c18a6b09e0bd12542dafcb7c9",
+          "response_bytes": 644,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 17,
+          "method": "GET",
+          "observed_at": "2026-10-29 03:46:14 UTC",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/ref/heads/main",
+          "connector_tool": "mcp__codex_apps__github_fetch",
+          "connector_is_error": false,
+          "response_body_sha256": "1a9e87753f2f9a7f5d4349f9397c7608bee04a973028bcd492644818391ec256",
+          "response_bytes": 348,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
+        },
+        {
+          "sequence": 18,
+          "method": "GET",
+          "observed_at": "2026-10-29 03:46:15 UTC",
+          "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/ref/heads/twf-repair-coordinator",
+          "connector_tool": "mcp__codex_apps__github_fetch",
+          "connector_is_error": false,
+          "response_body_sha256": "33f9e0c42e21e3b36f4063372dec1b06a71701e0a5d3dfb795cc6b652cb24034",
+          "response_bytes": 411,
+          "source": "CONNECTED_TOOL_CALL_IN_CURRENT_META_RUN",
+          "portable_origin_authentication": "NOT_VERIFIED"
         }
       ],
-      "python": 569,
-      "new_python": 20,
-      "trusted_scope": "PASS",
-      "claim": "1 immutable coordinator claim verified"
+      "clock": "timezone-aware Python UTC clock; checked against connected clock",
+      "local_rpc_preflight": "EOF/PTY setup attempts had no connected provider responses; excluded from live trace and not treated as real host outage"
+    },
+    "execution_origin": {
+      "service_run_id": "438e0a34-b6a0-832d-a75b-9be7b03dc383",
+      "scheduled_for": "2026-10-29T03:39:28.742617Z",
+      "started_at": "2026-10-29T03:39:45.598053Z",
+      "unforced_scheduled": "NOT_VERIFIED",
+      "reason": "Connected PEEK exposes scheduled_for/start metadata but no trigger provenance distinguishing run_now from schedule. No run_now/task changes performed by this META."
+    },
+    "incident": {
+      "real_anomaly_observed": false,
+      "incident_dedup_record_created": false,
+      "recovery": "NOT_OBSERVED; later distinct real run required"
+    },
+    "delivery": {
+      "github_persistence": "FENCED_SHARED_REPORT_ONLY; not notification delivery",
+      "notification_delivery": "UNKNOWN",
+      "notification_send": "NOT_ATTEMPTED"
     }
   },
-  "service_observations": {
-    "meta_task": {
-      "task_id": "6add445e4138819197d9cf2b1a02534d",
-      "run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
-      "status": "in_progress",
-      "started_at": "2026-10-29T03:23:50.458671Z",
-      "completed_at": null
+  "findings": [
+    {
+      "id": "CURRENT_PREVIOUS_RESULT_SEPARATION",
+      "priority": "P1",
+      "result": "PASS_THIS_OBSERVATION",
+      "evidence": "Current META438e0a34 is active; previous6cde9580 result remains PREVIOUS_RUN, never CURRENT_SUCCESS."
     },
-    "worker_task": {
-      "task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "run_id": "79defba7-c81c-8321-be97-2e3f9ffc9081",
-      "status": "completed",
-      "started_at": "2026-10-29T03:01:34.348967Z",
-      "completed_at": "2026-10-29T03:03:01.275664Z"
+    {
+      "id": "NO_REAL_ANOMALY_IN_WINDOW",
+      "priority": "P2",
+      "result": "OBSERVED_HEALTHY",
+      "evidence": "WORKER and REVIEWER completed with current results; META in progress below1800s; shared232 holdernull; alerts0. One bounded sample, no reliability rate."
     },
-    "reviewer_task": {
-      "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-      "run_id": "4debec02-3880-8325-b0d3-ec18f22e2dd6",
-      "status": "completed",
-      "started_at": "2026-10-29T02:22:39.853103Z",
-      "completed_at": "2026-10-29T02:23:49.604125Z"
+    {
+      "id": "A12_OPERATIONAL_ACCEPTANCE",
+      "priority": "P1",
+      "result": "NOT_MET",
+      "missing": [
+        "unforced schedule trigger provenance",
+        "real anomaly detection event",
+        "verified notification result",
+        "distinct independent recovery evidence"
+      ],
+      "a12_points_added": 0
+    },
+    {
+      "id": "ENGINE_AND_PROGRESS_PROTECTED",
+      "priority": "P0",
+      "result": "HOLD_PRESERVED",
+      "evidence": "Existing engine-access request unresolved; no host denial original receipt in this observation; Issue113/117 require independent protected maintenance."
     }
-  },
+  ],
   "research": [
     {
-      "url": "https://grafana.com/blog/agent-observability-faq-understand-the-value-of-monitoring-evaluating-and-improving-your-ai-agents/",
-      "published_at": "2026-10-27",
-      "checked_at": "2026-10-29T03:30:20Z",
-      "kind": "PRIMARY_DEVELOPER",
-      "finding": "Separate runtime trace/failure classes and regression evaluation; vendor effects not our evidence; no fees."
+      "origin": "WEB_RESEARCH_IDEA",
+      "source_type": "IMPLEMENTER_PRIMARY_ANNOUNCEMENT",
+      "url": "https://grafana.com/press/2026/10/20/observabilitycon-2026-ai-updates/",
+      "published": "2026-10-20",
+      "updated": "NOT_AVAILABLE",
+      "checked_on": "2026-10-29",
+      "observation": "Vendor separates agent detection/investigation/proposed fixes and OpenTelemetry observations; this announcement is not performance evidence for this project.",
+      "hypothesis": "Keep host call trace, classification, GitHub persistence and delivery/recovery evidence separate.",
+      "adoption": "READ_ONLY_EVIDENCE_PATTERN_ONLY; no product installation, inference or spend"
     },
     {
+      "origin": "WEB_RESEARCH_IDEA",
+      "source_type": "ROBLOX_OFFICIAL_DEVELOPER_CASE",
+      "url": "https://about.roblox.com/newsroom/2026/08/optimize-testing-live-updates-roblox-analytics-experimentation-platform",
+      "published": "2026-08-24",
+      "updated": "NOT_AVAILABLE",
+      "checked_on": "2026-10-29",
+      "observation": "Roblox describes analytics segmentation, early experiment harm alerts and Uplift Games experimentation. This is an older primary case, not a new October release.",
+      "hypothesis": "Compare first-loop clarity and differentiated composition goals against NO_CHANGE; performance and retention require actual cohorts.",
+      "uncertainty": "Toy Wars engine/player effects NOT_MEASURED"
+    },
+    {
+      "origin": "WEB_RESEARCH_IDEA",
+      "source_type": "ROBLOX_OFFICIAL_DOCUMENTATION",
       "url": "https://create.roblox.com/docs/production/analytics/retention",
-      "published_at": null,
-      "checked_at": "2026-10-29T03:30:20Z",
-      "kind": "PRIMARY_OFFICIAL",
-      "finding": "D1/D7 require real cohorts. First-loop clarity vs differentiated support/collection vs NO_CHANGE remain unmeasured game hypotheses."
+      "published": "NOT_AVAILABLE",
+      "updated": "NOT_AVAILABLE",
+      "checked_on": "2026-10-29",
+      "observation": "D1/D7/D30 refer to new-user return cohorts; later retention needs cohort maturity.",
+      "hypothesis": "Use initial production completion, first-session exit and D1/D7 as experiment candidates only.",
+      "uncertainty": "No game analytics accessed; all target-game outcomes NOT_MEASURED"
     }
   ],
-  "limits": [
-    "SYNTHETIC_TEST_ONLY; source authentication NOT_VERIFIED",
-    "No unforced scheduled detection, durable alert persistence, delivery or independently verified recovery; A12+5=0",
-    "Source function does not collect main QA: MAIN_QA_NOT_CHECKED",
-    "No Roblox Studio/multiplayer/mobile/player measurement; protected progress unchanged"
-  ],
-  "protected_controls": "All266 accepted blobs/549 tests preserved; no config/checker/workflow/history/test/permissions/task/fees/publishing modifications.",
+  "decision": {
+    "selected": "NO_CHANGE_TO_ACCEPTED_SOURCE; persist real healthy observation",
+    "alternatives": [
+      {
+        "id": "REIMPLEMENT_PR118",
+        "adopt": false,
+        "reason": "Already independently merged and QA passed"
+      },
+      {
+        "id": "ADD_ALERT_FROM_HISTORICAL_NO_UPDATE",
+        "adopt": false,
+        "reason": "Current exact-role runs healthy; historical failures cannot become a current incident"
+      },
+      {
+        "id": "FORCE_NEW_RUN_FOR_PROOF",
+        "adopt": false,
+        "reason": "Task start prohibited and forced run cannot prove unforced scheduling"
+      }
+    ]
+  },
+  "limits": {
+    "a12": false,
+    "a13": "NOT_ESTABLISHED",
+    "engine": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "players": "NOT_MEASURED",
+    "github_persistence_is_delivery": false,
+    "cause": "INDETERMINATE",
+    "official_progress": "UNCHANGED_PROTECTED_57_PERCENT",
+    "model_cost": "NOT_MEASURED",
+    "owner_original_chat_authentication": "NOT_VERIFIED"
+  },
   "next_actor": "REGISTERED_REVIEWER",
   "next_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "next": "Review exact new head/source/20 regressions/claim231/both fresh CI; independent merge then main QA/handoff. A12 operational proof and protected Issue113 progress remain separate.",
+  "next": "Read-only audit of this accepted-source host-call record on a distinct normal run; collect actual trigger provenance if available without new credentials/task changes, then later true anomaly/delivery/independent recovery. Do not induce failures or manufacture A12 points.",
   "holds": [
     "GEMINI_SEVERE_HOLD",
-    "SPEND_HOLD",
-    "ROBLOX_RELEASE_HOLD"
+    "NO_NEW_SPEND",
+    "ROBLOX_PUBLISH_HOLD",
+    "NO_TASK_MUTATION",
+    "NO_SELF_MERGE"
   ]
 }

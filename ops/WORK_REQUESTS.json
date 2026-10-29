@@ -2754,6 +2754,29 @@
         "handoff": 40813038300,
         "a12_verified": false
       }
+    },
+    {
+      "id": "a12_idle_live_438e0a34_independent_audit_20261029",
+      "status": "OPEN",
+      "priority": "P2",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "created_at": "2026-10-29T03:48:52Z",
+      "repository": "kk051780/toy-wars-factory",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "438e0a34-b6a0-832d-a75b-9be7b03dc383",
+      "request": "Read-only independent audit of ops/SYSTEM_REVIEW_LATEST.json live GET12/PEEK6 accepted main idle.observe path. Current run healthy, no anomaly/dedup/notification/recovery proof; unforced origin NOT_VERIFIED. On next ordinary registered run collect fresh evidence without forcing starts or claiming A12 complete.",
+      "main_sha": "fa89e46eca61b7f84acfae10c99d8127900de83a",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "685e64de8505db3e199754c003a62220d216f62e",
+        "owner_run_id": "438e0a34-b6a0-832d-a75b-9be7b03dc383",
+        "epoch": 233,
+        "observed_free_ref": "2d0e4818787334aeb586feb118ae4a2e2876f500",
+        "observed_free_epoch": 232,
+        "release": "ATOMIC_WITH_THIS_REPORT; reread required"
+      },
+      "owner_reply_required": false
     }
   ]
 }

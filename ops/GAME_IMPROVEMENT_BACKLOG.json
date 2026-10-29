@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T03:30:20Z",
+  "observed_at": "2026-10-29T03:48:52Z",
   "source": "PR112 formal provenance repair; current C00122 active view uses exact transcriptions with original chat NOT_VERIFIED; no game source changes.",
   "items": [
     {
@@ -385,9 +385,8 @@
     }
   ],
   "actor": {
-    "role": "META",
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8"
+    "run_id": "438e0a34-b6a0-832d-a75b-9be7b03dc383"
   },
   "base_main_sha": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
   "prioritized_candidates": [
@@ -397,43 +396,59 @@
   ],
   "system_precondition": "Owner priority PR-less A12 source; no game source modified. First-loop clarity vs differentiated support/collection vs NO_CHANGE remain unmeasured hypotheses. Native/multiplayer/mobile/32-64px identity/20units x4factory trials NOT_RUN; protected PR98 prerequisite retained.",
   "last_primary_source_check": {
-    "checked_at": "2026-10-29T03:30:20Z",
-    "sources": [
+    "checked_on": "2026-10-29",
+    "references": [
       {
-        "url": "https://grafana.com/blog/agent-observability-faq-understand-the-value-of-monitoring-evaluating-and-improving-your-ai-agents/",
-        "published_at": "2026-10-27",
-        "checked_at": "2026-10-29T03:30:20Z",
-        "kind": "PRIMARY_DEVELOPER",
-        "finding": "Separate runtime trace/failure classes and regression evaluation; vendor effects not our evidence; no fees."
+        "url": "https://grafana.com/press/2026/10/20/observabilitycon-2026-ai-updates/",
+        "published": "2026-10-20",
+        "updated": "NOT_AVAILABLE",
+        "checked_on": "2026-10-29"
+      },
+      {
+        "url": "https://about.roblox.com/newsroom/2026/08/optimize-testing-live-updates-roblox-analytics-experimentation-platform",
+        "published": "2026-08-24",
+        "updated": "NOT_AVAILABLE",
+        "checked_on": "2026-10-29"
       },
       {
         "url": "https://create.roblox.com/docs/production/analytics/retention",
-        "published_at": null,
-        "checked_at": "2026-10-29T03:30:20Z",
-        "kind": "PRIMARY_OFFICIAL",
-        "finding": "D1/D7 require real cohorts. First-loop clarity vs differentiated support/collection vs NO_CHANGE remain unmeasured game hypotheses."
+        "published": "NOT_AVAILABLE",
+        "updated": "NOT_AVAILABLE",
+        "checked_on": "2026-10-29"
       }
-    ]
+    ],
+    "game_implementation": "NONE; system operational observation prioritized"
   },
   "next_experiments": [
     {
-      "id": "FIRST_PRODUCTION_CLARITY_VS_NO_CHANGE",
-      "hypothesis": "Clearer current three-unit first-production goal may reduce early confusion.",
-      "evidence": "Current main three prototypes; official Discovery/analytics are measurement guidance, not observed Toy Wars benefit.",
-      "minimum_experiment": "After engine access, two bounded first-session variants vs unchanged baseline; log selection->production->first wave and <60/61-180s exits.",
-      "success": "Pre-register cohort/sample and detectable effect; preserve server authority and use negative controls; no claimed causal improvement without observations.",
-      "falsification": "No measurable funnel/retention improvement or more errors/confusion.",
-      "required_engine_evidence": "Studio PvE one loop,2clients,mobile/readability,framerate; D1/D7 actual cohorts. NOT_RUN/NOT_MEASURED."
+      "id": "NO_CHANGE",
+      "hypothesis": "Keep current three-unit prototype as baseline while validating initial production loop",
+      "minimum_experiment": "Later authorized Studio test records first production completion/errors and a mature D1/D7 cohort only after release permission",
+      "success_condition": "Objective baseline observations, not inferred fun/retention",
+      "evidence": "NOT_RUN",
+      "load": "No game source change this cycle"
     },
     {
-      "id": "DIFFERENTIATED_SUPPORT_COLLECTION_AFTER_PR98",
-      "hypothesis": "Mechanically distinct support silhouette and visible collection target may improve strategic choice/revisit.",
-      "dependency": "PR98 currently manual/protected open; Issue102 candidate, no META source edit.",
-      "evidence": "Owner exact transcription retained in main C00122; BIG Games developer mechanism, no transferred retention result.",
-      "minimum_experiment": "Compare support-role variant and first-session-clarity variant with NO_CHANGE after legal catalog adoption; 32/64px identity and18/24-part trial budget.",
-      "success": "Differentiated role measurable in actual fight plus readable mobile production/UI; actual20units/side x4factories device profile and later cohort retention.",
-      "falsification": "Unclear silhouette/role, overlapping UI, device frame regression or no observed cohort effect.",
-      "required_engine_evidence": "Native/multiplayer/mobile/visual/fun and retention NOT_RUN/NOT_MEASURED."
+      "id": "FIRST_LOOP_CLARITY",
+      "hypothesis": "Clearer first production goal may reduce initial confusion",
+      "minimum_experiment": "Compare existing PvE guide against baseline on actual mobile/2client recordings",
+      "success_condition": "Fewer missed actions with no UI overlap/performance regression",
+      "required_evidence": "Studio/mobile/two-client/player observations NOT_RUN",
+      "load": "Small UI source plus native/engine QA; WORKER only"
+    },
+    {
+      "id": "DIFFERENTIATED_LINEUP_GOAL",
+      "hypothesis": "Original role contrast and collection goals may support return play",
+      "minimum_experiment": "32/64px silhouettes and documented role comparison before implementation",
+      "success_condition": "Recognizable roles without existing three-unit behavior regression; retention remains hypothesis",
+      "required_evidence": "Actual visual/player/20units-side×4factories performance NOT_RUN",
+      "load": "Model/motion/combat/UI/QA;18/24parts are project trial budgets, not official limits",
+      "dependencies": [
+        "PR98 manual protected candidate unmerged",
+        "Issue102 candidate",
+        "Issue109 original/DERIVED provenance",
+        "Issue115 product/business evidence"
+      ]
     }
   ],
   "previous_snapshot": {

@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 233,
-  "holder": {
-    "kind": "META",
-    "owner_id": "438e0a34-b6a0-832d-a75b-9be7b03dc383",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "epoch": 233,
-    "acquired_at": "2026-10-29T03:47:16+00:00",
-    "expires_at": "2026-10-29T04:17:16+00:00",
-    "base_main_sha": "fa89e46eca61b7f84acfae10c99d8127900de83a",
-    "work_branch": "auto/twf-system-review-438e0a34-b6a0-832d-a75b-9be7b03dc383",
-    "origin": "meta"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -45,17 +35,13 @@
   },
   "last_reported_approval_signature": "cb460add028924222a3ce7161da71fded24e8e498ad66ce2ea16164ea0eb8b25",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "af363942-93b4-832e-bbed-ee28eb4b71ac",
-    "epoch": 232,
-    "released_at": "2026-10-29T03:37:32.676Z",
-    "result": "PR118_MERGED_MAIN_QA_AND_HANDOFF_PASS_A12_SOURCE_ONLY",
-    "pr": 118,
-    "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
-    "merge_sha": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+    "kind": "META",
+    "owner_id": "438e0a34-b6a0-832d-a75b-9be7b03dc383",
+    "epoch": 233,
+    "released_at": "2026-10-29T03:48:52+00:00",
+    "result": "LIVE_OBSERVATION_HEALTHY_NO_IMPLEMENTATION",
+    "source_pr": 118,
     "main_sha": "fa89e46eca61b7f84acfae10c99d8127900de83a",
-    "main_qa": 40813038305,
-    "handoff": 40813038300,
     "a12_verified": false
   },
   "last_approval_report": {
