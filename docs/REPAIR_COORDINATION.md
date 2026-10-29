@@ -68,3 +68,39 @@ CIは信頼するbaseから検査コードを読み、新しい自動PRの取得
 導入前の#35/#38/#40は**指定されたbranchとheadが一致する場合だけ**例外とし、内容変更へ流用しない。
 この排他は本書に従う経路のもの。直接GitHub上で行う外部の編集や、指示に従わないツール利用まで
 物理的に禁止する権限プロキシではない。違反はCIと実行監査で検出し、日次点検で再評価する。
+
+## 本人の finally 解放と再読（孤立leaseの限定CAPA）
+
+合法claimの実ref/holder/epochを確認した直後から、全作業を外側の
+try/finallyに置く。通常完了、CI失敗、WAIT、例外のどの出口でも、
+元の登録task/run/epochだけを対象に後始末する。別holderや新epochに
+変わっていたら書かない。時計逆行・期限超過は回復権限ではない。
+
+受理済みmainの tools/repair_control.py にある owned_lease を利用できる
+ホストは、真正接続に限定した read/cas/peek/clock callback を渡して
+with owned_lease(...) の内側で作業する。read(repo, branch, path) は
+repository/branch/ref/state のsnapshot、peek(task_id) は task_id と
+last_run を返す。cas は同repo・共有branchのstate更新だけを許し、
+expected_sha と force=false で作った単一parent commit SHAを返す。
+実行前後のPEEKは同じ登録本人のin_progress runでなければならない。
+callbackのJSON自己申告・provider=trueは接続認証ではない。
+秘密・tokenや任意のネットワーク権限をPRコードへ渡さない。
+
+helperはfinallyで所有者/取得時刻/期限/epochを再照合し、二度のGETが
+同じref/stateであることを確認する。元ownerのrelease_receiptを
+last_completedへ含めて一度だけCASし、返された新commitとstate全体を
+実GETで再読して初めて RELEASED_READBACK とする。これは通常の所有者
+解放記録で、provider署名やサービス終了証明ではない。配達・通知・main QAの
+成功にも流用しない。既存の台帳や履歴を削らない。
+
+CAS拒否・ACK喪失・再読不一致は RELEASE_UNCONFIRMED、CAS前の拒否は
+NOT_RELEASED。再試行、rollback、他owner解放、期限だけのtakeoverは行わず、
+真正なrefと不足証拠を残す。finally中の失敗でも新holderを解放しない。
+ホストがcallback実行を提供しない場合も、同じ本人確認・限定CAS・実ref再読を
+外側finallyで実行し、実行できなければ未解放と明記する。
+
+recover_finished_worker は既存の入力整合性検査であり、provider認証器ではない。
+同じ元runの真正terminal historyが接続APIに無ければ通常recoverを呼ばない。
+新runのlatest_result、CHAT申告や単なる期限超過で代用しない。
+process kill・host停止・通信断ではfinally自体を保証できない。この限定CAPAを
+孤立lease全件の根治や無人復旧実証と呼ばない。期限内に解放の余裕を残す。
