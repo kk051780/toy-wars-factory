@@ -47,7 +47,7 @@ def validate(state):
             raise ValueError("invalid owner kind")
         if holder["kind"] in ("WORKER", "META", "REVIEWER") and holder.get("task_id") != state.get("authorized_tasks", {}).get(holder["kind"]):
             raise ValueError("unregistered worker task")
-        if holder.get("epoch") != epoch:
+        if type(holder.get("epoch")) is not int or holder["epoch"] != epoch:
             raise ValueError("inconsistent fencing generation")
         if instant(holder["expires_at"]) <= instant(holder["acquired_at"]):
             raise ValueError("invalid lease lifetime")
@@ -114,7 +114,7 @@ def acquire(state, kind, owner_id, now, service_status=None, base_main_sha=None,
 def owns(state, kind, owner_id, epoch, now):
     validate(state)
     holder = state["holder"]
-    return bool(holder and holder["kind"] == kind and holder["owner_id"] == owner_id
+    return bool(type(epoch) is int and holder and holder["kind"] == kind and holder["owner_id"] == owner_id
                 and holder["epoch"] == epoch and instant(now) < instant(holder["expires_at"]))
 
 
