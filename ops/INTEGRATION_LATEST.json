@@ -1,22 +1,22 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T22:48:41.973Z",
+  "observed_at": "2026-10-29T03:37:32.676Z",
   "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "owner_reply_required": false,
   "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-  "reviewer_run_id": "590edbe8-10fc-832a-b3b2-57ccdfd4585b",
-  "lease_epoch": 227,
-  "main_before": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
+  "reviewer_run_id": "af363942-93b4-832e-bbed-ee28eb4b71ac",
+  "lease_epoch": 232,
+  "main_before": "3d99c3ec30238587af2823c76682343c403042df",
   "latest_review": {
-    "pr": 116,
-    "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
+    "pr": 118,
+    "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
     "verdict": "APPROVE",
-    "review_record": "ops/reviews/PR0116_1962cb81.json",
-    "ci": 40781686546,
-    "merge_sha": "3009bfefde60311ba58a8962e3fc296db669f75e",
-    "main_qa": 40782676418,
-    "handoff": 40782676452,
-    "category": "SYSTEM_A12_READ_ONLY_CLASSIFIER_SOURCE_ONLY",
+    "review_record": "ops/reviews/PR0118_f30d386c.json",
+    "ci": 40812571716,
+    "merge_sha": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+    "main_qa": 40813038305,
+    "handoff": 40813038300,
+    "category": "SYSTEM_A12_PR_LESS_READ_ONLY_SOURCE_ONLY",
     "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED"
   },
   "merged_prs": [
@@ -284,24 +284,34 @@
       "handoff": 40782676452,
       "category": "SYSTEM_A12_READ_ONLY_CLASSIFIER_SOURCE_ONLY",
       "main_after_handoff": "3d99c3ec30238587af2823c76682343c403042df"
+    },
+    {
+      "pr": 118,
+      "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+      "merge_sha": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 40813038305,
+      "handoff": 40813038300,
+      "category": "SYSTEM_A12_PR_LESS_READ_ONLY_SOURCE_ONLY",
+      "main_after_handoff": "fa89e46eca61b7f84acfae10c99d8127900de83a"
     }
   ],
   "merge_count_this_run": 1,
   "main_qa": {
-    "id": 40779288581,
-    "head": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+    "id": 40813038305,
+    "head": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
     "conclusion": "success",
     "jobs": {
       "offline": "success",
       "compile_hold": "success"
     },
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40779288581"
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40813038305"
   },
   "handoff": {
-    "id": 40779288627,
-    "head": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
+    "id": 40813038300,
+    "head": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
     "conclusion": "success",
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40779288627"
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40813038300"
   },
   "comparison_since_main_qa": {
     "verified": true,
@@ -312,11 +322,11 @@
     ]
   },
   "unresolved": [],
-  "next": "Issue114: independently prove real scheduled detection, fenced durable dedup and delivery, then verified recovery in separate work. Issue113 protected progress remains unchanged.",
+  "next": "Issue114: host-attested non-forced scheduled anomaly detection, durable dedup, notification receipt and independent recovery remain separate; Issue113 protected progress unchanged.",
   "runtime_verified": true,
-  "main_after": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
-  "merge_sha": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
-  "next_actor": "WORKER_META_ROADMAP",
+  "main_after": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+  "merge_sha": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+  "next_actor": "META_WORKER_ROADMAP",
   "secondary_review": {
     "pr": 112,
     "head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
@@ -324,10 +334,12 @@
     "review_record": "ops/reviews/PR0112_a6ccf32e.json",
     "status": "HISTORICAL_REJECTION_SUPERSEDED_BY_NEW_HEAD_APPROVE"
   },
-  "main_after_merge": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
-  "main_after_handoff": "3d99c3ec30238587af2823c76682343c403042df",
+  "main_after_merge": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+  "main_after_handoff": "fa89e46eca61b7f84acfae10c99d8127900de83a",
   "status_only_descendant_verified": true,
   "merges_this_run": 1,
   "a12_verified": false,
-  "a12_progress_points_awarded": 0
+  "a12_progress_points_awarded": 0,
+  "source_classifier": "SOURCE_CLASSIFIER_NOT_EXECUTED",
+  "delivery": "UNVERIFIED"
 }

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T03:30:20Z",
+  "observed_at": "2026-10-29T03:37:32.676Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2697,7 +2697,7 @@
       "id": "pr118_idle_health_registered_review_20261029",
       "kind": "INDEPENDENT_REVIEW_REQUEST",
       "priority": "P1",
-      "status": "OPEN",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
@@ -2739,7 +2739,21 @@
         "trusted_scope": "PASS",
         "claim": "1 immutable coordinator claim verified"
       },
-      "owner_reply_required": false
+      "owner_reply_required": false,
+      "resolved_at": "2026-10-29T03:37:32.676Z",
+      "review_record": "ops/reviews/PR0118_f30d386c.json",
+      "review": {
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "af363942-93b4-832e-bbed-ee28eb4b71ac",
+        "epoch": 232,
+        "verdict": "APPROVE",
+        "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+        "ci": 40812571716,
+        "merge_sha": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+        "main_qa": 40813038305,
+        "handoff": 40813038300,
+        "a12_verified": false
+      }
     }
   ]
 }

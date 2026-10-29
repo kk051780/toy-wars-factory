@@ -79,5 +79,38 @@
     "https://github.com/kk051780/toy-wars-factory/issues/114"
   ],
   "next": "Independent exact-head integration then fresh main QA/handoff; A12 operational source+host attestation and notification/recovery separate.",
-  "status": "APPROVED_AWAIT_MERGE"
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+  "merge": {
+    "sha": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+    "merged": true,
+    "method": "merge",
+    "main_after_merge": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+    "main_after_handoff": "fa89e46eca61b7f84acfae10c99d8127900de83a"
+  },
+  "post_merge_main_qa": {
+    "id": 40813038305,
+    "head": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40813038305"
+  },
+  "post_merge_handoff": {
+    "id": 40813038300,
+    "head": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+    "conclusion": "success",
+    "jobs": {
+      "update": "success"
+    },
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40813038300"
+  },
+  "operational_observation": {
+    "source_classifier": "SOURCE_CLASSIFIER_NOT_EXECUTED",
+    "delivery": "UNVERIFIED",
+    "a12_verified": false,
+    "host_cause": "INDETERMINATE"
+  },
+  "completed_at": "2026-10-29T03:37:32.676Z"
 }
