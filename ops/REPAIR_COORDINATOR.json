@@ -2,17 +2,7 @@
   "schema": 1,
   "task_id": "6adbf0d6a7d881918ce181dff2468867",
   "epoch": 231,
-  "holder": {
-    "kind": "META",
-    "owner_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "epoch": 231,
-    "acquired_at": "2026-10-29T03:25:41+00:00",
-    "expires_at": "2026-10-29T03:55:41+00:00",
-    "base_main_sha": "3d99c3ec30238587af2823c76682343c403042df",
-    "work_branch": "auto/twf-system-review-6cde9580-6110-832e-a8dd-656aac9bbdf8",
-    "origin": "meta"
-  },
+  "holder": null,
   "authorized_tasks": {
     "WORKER": "6adbf0d6a7d881918ce181dff2468867",
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -22,17 +12,16 @@
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
     "items": [
       {
-        "number": 116,
-        "title": "[TWF system-review] Add read-only A12 runtime anomaly classification and provisional dedup",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/116",
-        "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40781686546",
-        "summary": "A12読み取り専用の異常判定と暫定通知重複抑制。no_update/停滞/CIを実run・headへ結合し、復旧/配達は未検証。",
+        "number": 118,
+        "title": "[TWF system-review] Add PR-less read-only idle service health",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/118",
+        "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40812571716",
+        "summary": "PRなしのサービス異常判定。古い結果・NO_UPDATE・停滞・leaseと観測障害を区別。main QAは未検査と明示、権限全false。",
         "changed_files": [
-          "tools/system_runtime_alerts.py",
-          "tests/test_system_runtime_alerts.py",
-          "docs/research/2026-10-29_a12_runtime_alerts.md",
-          "history/C00123_a12_runtime_alerts.json"
+          "tools/system_idle_health.py",
+          "tests/test_system_idle_health.py",
+          "history/C00124_pr_less_idle_health.json"
         ],
         "kind": "開発体制改善"
       }
@@ -40,19 +29,21 @@
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-28T22:40:55Z",
-    "signature": "32089f493f830c5d3ddb9e1c569a22a8de8415c2d5015453f163584e7e80777b",
+    "observed_at": "2026-10-29T03:31:55Z",
+    "signature": "cb460add028924222a3ce7161da71fded24e8e498ad66ce2ea16164ea0eb8b25",
     "approval_text": ""
   },
-  "last_reported_approval_signature": "32089f493f830c5d3ddb9e1c569a22a8de8415c2d5015453f163584e7e80777b",
+  "last_reported_approval_signature": "cb460add028924222a3ce7161da71fded24e8e498ad66ce2ea16164ea0eb8b25",
   "last_completed": {
-    "kind": "REVIEWER",
-    "owner_id": "01bdfeff-3744-832e-b321-be58c3244c7f",
-    "epoch": 230,
-    "released_at": "2026-10-29T01:23:36.455Z",
-    "result": "A12_META_NO_UPDATE_RECORDED_NO_MERGE",
-    "issue_comment_id": 6485261314,
-    "main_sha": "3d99c3ec30238587af2823c76682343c403042df"
+    "kind": "META",
+    "owner_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
+    "epoch": 231,
+    "released_at": "2026-10-29T03:31:55+00:00",
+    "result": "PR118_PR_LESS_SOURCE_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
+    "pr": 118,
+    "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+    "ci": 40812571716,
+    "a12_verified": false
   },
   "last_approval_report": {
     "recorded_at": "2026-10-25T00:15:57.147900+00:00",

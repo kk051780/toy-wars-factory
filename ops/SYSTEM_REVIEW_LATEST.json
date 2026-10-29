@@ -1,291 +1,134 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T22:42:27Z",
+  "observed_at": "2026-10-29T03:30:20Z",
   "status": "SOURCE_PR_CI_PASS_AWAIT_INDEPENDENT_REVIEW",
   "repository": "kk051780/toy-wars-factory",
   "actor": {
     "role": "META",
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "4d796ca2-e004-832e-86ae-b5e502f26901",
-    "run_status_at_observation": "in_progress",
-    "old_latest_result_is_current": false
+    "run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
+    "old_latest_result_used": false
   },
   "coordination": {
     "branch": "twf-repair-coordinator",
-    "claim_commit": "de45b71d8925fba0b9a5862a14c14d78083d8a88",
-    "owner_run_id": "4d796ca2-e004-832e-86ae-b5e502f26901",
-    "epoch": 226,
-    "work_branch": "auto/twf-system-review-4d796ca2-e004-832e-86ae-b5e502f26901",
-    "acquired_at": "2026-10-28T22:28:10+00:00",
-    "expires_at": "2026-10-28T22:58:10+00:00",
-    "release": "SAME_COMMIT_RELEASES_OWN_EPOCH"
+    "claim_commit": "268a6b7517acd21e0965bae9ef9bdbef4c4f855c",
+    "owner_run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
+    "epoch": 231
   },
   "main_health": {
-    "main": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
-    "qa": 40779288581,
-    "qa_head": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
-    "qa_jobs": "offline+compile_hold SUCCESS",
-    "qa_python": 510,
-    "handoff": 40779288627,
+    "main": "3d99c3ec30238587af2823c76682343c403042df",
+    "qa": 40782676418,
+    "qa_head": "3009bfefde60311ba58a8962e3fc296db669f75e",
+    "jobs": "offline+compile_hold SUCCESS",
+    "handoff": 40809225059,
     "status_only_direct_compare": [
       "status/CHAT_HANDOFF.md",
       "status/LATEST_STATE.json"
-    ],
-    "pr112": "INDEPENDENTLY_MERGED; no duplicate repair",
-    "review_record": "ops/reviews/PR0112_c6301b97.json"
-  },
-  "previous_outcome": {
-    "pr": 112,
-    "head": "c6301b978b289197b764f32744fd0693c2fdbd05",
-    "merge_sha": "778404e48f7e1bd8b9d60cc111a385adf72046c8",
-    "qa": 40779288581,
-    "handoff": 40779288627,
-    "reviewer_run_id": "867615bf-3cfc-8326-9ba2-e1a5cc06064b",
-    "status": "INDEPENDENT_MERGE_MAIN_QA_HANDOFF_SUCCESS",
-    "prior_report_at": "2026-10-28T22:14:38Z",
-    "owner_chat_authentication": "NOT_VERIFIED",
-    "no_duplicate_repair": true
+    ]
   },
   "implementation": {
-    "category": "SYSTEM_SOURCE_AND_NEW_REGRESSIONS",
-    "issue": 114,
-    "pr": 116,
-    "url": "https://github.com/kk051780/toy-wars-factory/pull/116",
-    "branch": "auto/twf-system-review-4d796ca2-e004-832e-86ae-b5e502f26901",
-    "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
-    "base": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
-    "commit_count": 1,
-    "new_pr_count": 1,
-    "main_merges": 0,
+    "category": "SYSTEM_PR_LESS_SOURCE_AND_NEW_TESTS",
+    "pr": 118,
+    "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+    "branch": "auto/twf-system-review-6cde9580-6110-832e-a8dd-656aac9bbdf8",
+    "base": "3d99c3ec30238587af2823c76682343c403042df",
     "paths": [
-      {
-        "path": "tools/system_runtime_alerts.py",
-        "status": "A",
-        "bytes": 24155,
-        "sha": "4430050e9e42eec35d5f7339f1d975444e72b0e6"
-      },
-      {
-        "path": "tests/test_system_runtime_alerts.py",
-        "status": "A",
-        "bytes": 22035,
-        "sha": "403a81347c5256e86741db6a2a3cc90311aed6c3"
-      },
-      {
-        "path": "docs/research/2026-10-29_a12_runtime_alerts.md",
-        "status": "A",
-        "bytes": 8421,
-        "sha": "24fbce2ec6486feee46a065ce204c5bed232910b"
-      },
-      {
-        "path": "history/C00123_a12_runtime_alerts.json",
-        "status": "A",
-        "bytes": 10361,
-        "sha": "d736fd10d7134ed07d5b44a95b8b0a1f4b9d424e"
-      }
+      "tools/system_idle_health.py",
+      "tests/test_system_idle_health.py",
+      "history/C00124_pr_less_idle_health.json"
     ],
-    "accepted_main_blobs_preserved": 262,
+    "accepted_blobs_preserved": 266,
     "game_source_changed": false,
-    "summary": "Read-only scoped service/CI/lease anomaly classification through accepted observer transport; provisional dedup and unrecovered disappearance candidates. No operation denial inference without original receipt."
+    "summary": "New system_idle_health.observe calls accepted service.observe. Exact project/repo/task/run/ref/blob/epoch and two PEEK traces per role; completed/current result, failed/no_update, missing result, timeout, disabled/attention, unreleased lease and detector failure distinct. MAIN_QA_NOT_CHECKED; all authority false. Provisional supplied-data dedup, not authenticated persistence; disappeared alerts remain UNVERIFIED_RECOVERY_CANDIDATE."
   },
   "tests": {
-    "focused": {
-      "new_tests": 39,
-      "pass": 39,
-      "classification": "SYNTHETIC_TEST_ONLY"
-    },
+    "new": 20,
+    "focused": "20 PASS SYNTHETIC_TEST_ONLY",
+    "local_full": "569 run,568pass,1 unchanged snapshot Git ancestry failure",
     "negative_control": {
-      "old_observer": "Actual accepted incident observer reports IN_PROGRESS without an overrun threshold/alert collection; new classifier flags 1200s elapsed against600s hypothesis.",
-      "isolated_mutant": {
-        "tests": 2,
-        "failures": 2,
-        "errors": 0,
-        "disk_source_written": false
-      }
-    },
-    "local_full": {
-      "run": 549,
-      "passed": 548,
+      "isolated_timeout_mutant": 1,
       "failures": 1,
       "errors": 0,
-      "cause": "Unchanged handoff historical Git ancestry assertion; connected snapshot has no real commit history. No test skips or accepted edits."
+      "disk_written": false
     },
     "github_ci": {
-      "run": 40781686546,
-      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40781686546",
-      "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
+      "run": 40812571716,
+      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40812571716",
+      "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
       "attempt": 1,
       "conclusion": "success",
       "jobs": [
         {
-          "id": 123144679640,
+          "id": 123246094755,
           "name": "offline",
-          "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
-          "conclusion": "success",
-          "started_at": "2026-10-28T22:39:53Z",
-          "completed_at": "2026-10-28T22:40:20Z"
+          "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+          "conclusion": "success"
         },
         {
-          "id": 123144679978,
+          "id": 123246095044,
           "name": "compile_hold",
-          "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
-          "conclusion": "success",
-          "started_at": "2026-10-28T22:39:53Z",
-          "completed_at": "2026-10-28T22:40:03Z"
+          "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+          "conclusion": "success"
         }
       ],
-      "python": 549,
-      "new_python": 39,
-      "accepted_python": 510,
+      "python": 569,
+      "new_python": 20,
       "trusted_scope": "PASS",
-      "claim_gate": "1 immutable coordinator claim verified",
-      "other": "Existing Lua/installer/policy/handoff checks PASS; native engine NOT_RUN"
-    },
-    "accepted_tests_changed": false,
-    "scope_checker_changed": false
+      "claim": "1 immutable coordinator claim verified"
+    }
   },
-  "observations": {
-    "window_start": "2026-10-28T22:24:15.003018Z",
-    "window_end": "2026-10-28T22:42:27Z",
-    "service_latest_samples": 3,
-    "service_roles": {
-      "meta_task": {
-        "task_id": "6add445e4138819197d9cf2b1a02534d",
-        "run": {
-          "id": "4d796ca2-e004-832e-86ae-b5e502f26901",
-          "recorded_status": "in_progress",
-          "scheduled_for": "2026-10-28T22:24:01.857443Z",
-          "started_at": "2026-10-28T22:24:15.003018Z",
-          "completed_at": null
-        },
-        "latest_result_run_id": "f849220f-dc50-8329-926a-f3b0db1267a2",
-        "delivery": "UNKNOWN"
-      },
-      "worker_task": {
-        "task_id": "6adbf0d6a7d881918ce181dff2468867",
-        "run": {
-          "id": "bb67691e-e5ac-8328-9c7b-cac742d64d77",
-          "recorded_status": "completed",
-          "scheduled_for": "2026-10-28T22:05:04Z",
-          "started_at": "2026-10-28T22:07:02.166125Z",
-          "completed_at": "2026-10-28T22:07:55.017103Z"
-        },
-        "latest_result_run_id": "bb67691e-e5ac-8328-9c7b-cac742d64d77",
-        "delivery": "UNKNOWN"
-      },
-      "reviewer_task": {
-        "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-        "run": {
-          "id": "4884b328-740c-8323-b500-1f8da8d73819",
-          "recorded_status": "completed",
-          "scheduled_for": "2026-10-28T22:25:00Z",
-          "started_at": "2026-10-28T22:23:43.787848Z",
-          "completed_at": "2026-10-28T22:24:13.863389Z"
-        },
-        "latest_result_run_id": "4884b328-740c-8323-b500-1f8da8d73819",
-        "delivery": "UNKNOWN"
-      }
+  "service_observations": {
+    "meta_task": {
+      "task_id": "6add445e4138819197d9cf2b1a02534d",
+      "run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
+      "status": "in_progress",
+      "started_at": "2026-10-29T03:23:50.458671Z",
+      "completed_at": null
     },
-    "main_qa_runs_verified": 1,
-    "open_registered_meta_prs_before": 0,
-    "after": 1,
-    "claim_result": "ONE_FENCED_ACQUIRE_SUCCEEDED_EMPTY_HOLDER",
-    "owner_epoch_at_start": 225,
-    "concurrent_edit_or_task_start": 0,
-    "ci_wait_seconds": 33,
-    "repeat_failure_this_new_head": 0,
-    "denominator_note": "One bounded observation and one new PR/CI attempt; not a success rate or sustained effect.",
-    "handoff": "Current main descendant directly proven status-only; latest handoff PASS."
+    "worker_task": {
+      "task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "run_id": "79defba7-c81c-8321-be97-2e3f9ffc9081",
+      "status": "completed",
+      "started_at": "2026-10-29T03:01:34.348967Z",
+      "completed_at": "2026-10-29T03:03:01.275664Z"
+    },
+    "reviewer_task": {
+      "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "run_id": "4debec02-3880-8325-b0d3-ec18f22e2dd6",
+      "status": "completed",
+      "started_at": "2026-10-29T02:22:39.853103Z",
+      "completed_at": "2026-10-29T02:23:49.604125Z"
+    }
   },
-  "sources": [
+  "research": [
     {
-      "url": "https://github.blog/ai-and-ml/llms/how-to-evaluate-llms-before-production/",
-      "published_at": "2026-08-25",
-      "updated_at": null,
-      "checked_at": "2026-10-28T22:37:19Z",
-      "source_kind": "PRIMARY_OFFICIAL",
-      "finding": "Preserve realistic failure classes and distinguish offline evaluation from real production outcomes. Older case freshly read, not new news."
+      "url": "https://grafana.com/blog/agent-observability-faq-understand-the-value-of-monitoring-evaluating-and-improving-your-ai-agents/",
+      "published_at": "2026-10-27",
+      "checked_at": "2026-10-29T03:30:20Z",
+      "kind": "PRIMARY_DEVELOPER",
+      "finding": "Separate runtime trace/failure classes and regression evaluation; vendor effects not our evidence; no fees."
     },
     {
-      "url": "https://docs.github.com/en/rest/actions/workflow-jobs#list-jobs-for-a-workflow-run-attempt",
+      "url": "https://create.roblox.com/docs/production/analytics/retention",
       "published_at": null,
-      "checked_at": "2026-10-28T22:37:19Z",
-      "source_kind": "PRIMARY_OFFICIAL",
-      "finding": "Attempt job list is keyed by run and attempt; keep exact bindings and Actions read-only boundary."
-    },
-    {
-      "url": "https://create.roblox.com/docs/production/game-design/analytics-essentials",
-      "published_at": null,
-      "checked_at": "2026-10-28T22:37:19Z",
-      "source_kind": "PRIMARY_OFFICIAL",
-      "finding": "Engagement/retention/monetization and controlled experiments are future measurement candidates, not this game's measured effect."
-    },
-    {
-      "url": "https://create.roblox.com/docs/discovery",
-      "published_at": null,
-      "checked_at": "2026-10-28T22:37:19Z",
-      "source_kind": "PRIMARY_OFFICIAL",
-      "finding": "Keep first-session and repeat-play cohort hypotheses separate from unmeasured outcomes."
-    },
-    {
-      "url": "https://www.biggames.io/post/pet-simulator-99-update-99",
-      "published_at": "2026-10-24",
-      "checked_at": "2026-10-28T22:37:19Z",
-      "source_kind": "DEVELOPER_CASE",
-      "finding": "Collection/reward mechanism is observable, no causal retention claim or copied material."
+      "checked_at": "2026-10-29T03:30:20Z",
+      "kind": "PRIMARY_OFFICIAL",
+      "finding": "D1/D7 require real cohorts. First-loop clarity vs differentiated support/collection vs NO_CHANGE remain unmeasured game hypotheses."
     }
   ],
-  "community_research": {
-    "url": "https://devforum.roblox.com/t/50-of-players-leave-within-2-minutes/4946893",
-    "checked_at": "2026-10-28T22:37:19Z",
-    "status": "NOT_VERIFIED_THIS_RUN",
-    "reason": "Actual open returned JavaScript/bot wall; no snippet metrics adopted."
-  },
-  "research_recency": "Fresh search/open; dated evaluation case2026-08-25 is older, not newly published. Developer collection case2026-10-24; official doc update dates unavailable.",
-  "idea_loop": {
-    "current_source_pipeline": "PR112 independently adopted; C00122 active snapshot retained unchanged",
-    "new_owner_original_records": 0,
-    "new_web_stock_records": 0,
-    "new_derived_records": 0,
-    "new_adoptions_this_meta_run": 0,
-    "reason": "One task A12 first source increment; no duplicate stock capture. Actual scheduled intake/experiment/adoption evidence loop remains pending."
-  },
-  "limits": {
-    "source_verification": "SYNTHETIC_TEST_ONLY",
-    "live_classifier": "NOT_RUN; first source proposal; subsequent legal scheduled cycle only after adoption",
-    "unattended_anomaly_detection": "NOT_VERIFIED",
-    "alert_persistence_by_classifier": "NOT_IMPLEMENTED",
-    "notification_delivery": "UNKNOWN_NOT_ATTEMPTED",
-    "original_host_operation_error": "NOT_AVAILABLE",
-    "operation_cause": "INDETERMINATE",
-    "recovery": "NOT_VERIFIED",
-    "a12_points_awarded": 0,
-    "a13": "NOT_VERIFIED",
-    "progress_issue113": "SEPARATE_PROTECTED_AUDIT_NOT_CHANGED",
-    "native_engine": "NOT_RUN",
-    "players": "NOT_MEASURED"
-  },
-  "protected_controls": "All262 canonical main blobs,510 accepted Python tests, source/history/checker/workflow/config/AGENTS/permissions/task/spend/publishing controls preserved. No new scheduler, API inference or credentials.",
-  "unresolved": [
-    "Independent registered source review and actual post-merge main QA/handoff pending",
-    "Later unforced scheduled anomaly/report/recovery proof required for A12; source test pass is not operation proof",
-    "Attempt-specific CI rerun start, missed-schedule history, trusted durable prior-state/alert sender not implemented",
-    "Original host-denial receipt unavailable; causal diagnosis INDETERMINATE",
-    "Issue113 progress audit and PR55 credential isolation remain separate protected work",
-    "Roblox engine/multiplayer/mobile/visual/fun and player effect unmeasured"
+  "limits": [
+    "SYNTHETIC_TEST_ONLY; source authentication NOT_VERIFIED",
+    "No unforced scheduled detection, durable alert persistence, delivery or independently verified recovery; A12+5=0",
+    "Source function does not collect main QA: MAIN_QA_NOT_CHECKED",
+    "No Roblox Studio/multiplayer/mobile/player measurement; protected progress unchanged"
   ],
-  "next": {
-    "actor": "REGISTERED_REVIEWER",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "request": "a12_runtime_alerts_pr116_registered_review_20261029",
-    "steps": [
-      "Review exact head1962cb81, canonical claim226, actual source/39 new regressions, fresh CI40781686546 both jobs.",
-      "If approved, independently merge then confirm actual main QA/handoff.",
-      "Only a later legitimate scheduled cycle after source adoption may persist/dedup a real anomaly and independently assess recovery; do not force starts or award A12 now."
-    ]
-  },
+  "protected_controls": "All266 accepted blobs/549 tests preserved; no config/checker/workflow/history/test/permissions/task/fees/publishing modifications.",
+  "next_actor": "REGISTERED_REVIEWER",
+  "next_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "next": "Review exact new head/source/20 regressions/claim231/both fresh CI; independent merge then main QA/handoff. A12 operational proof and protected Issue113 progress remain separate.",
   "holds": [
     "GEMINI_SEVERE_HOLD",
-    "EXTERNAL_SPEND_HOLD",
+    "SPEND_HOLD",
     "ROBLOX_RELEASE_HOLD"
   ]
 }

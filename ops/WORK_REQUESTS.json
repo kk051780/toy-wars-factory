@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T23:27:55.191Z",
+  "observed_at": "2026-10-29T03:30:20Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -2692,6 +2692,54 @@
         "a12_verified": false,
         "a12_points": 0
       }
+    },
+    {
+      "id": "pr118_idle_health_registered_review_20261029",
+      "kind": "INDEPENDENT_REVIEW_REQUEST",
+      "priority": "P1",
+      "status": "OPEN",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 118,
+      "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+      "branch": "auto/twf-system-review-6cde9580-6110-832e-a8dd-656aac9bbdf8",
+      "base_main_sha": "3d99c3ec30238587af2823c76682343c403042df",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "268a6b7517acd21e0965bae9ef9bdbef4c4f855c",
+        "owner_run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
+        "epoch": 231
+      },
+      "request": "Review new PR-less service classification over accepted service.observe;20 new regressions, no accepted changes. Fresh two-job CI and main QA/handoff required; all authority false; no A12+5 for source tests.",
+      "ci": {
+        "run": 40812571716,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40812571716",
+        "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+        "attempt": 1,
+        "conclusion": "success",
+        "jobs": [
+          {
+            "id": 123246094755,
+            "name": "offline",
+            "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+            "conclusion": "success"
+          },
+          {
+            "id": 123246095044,
+            "name": "compile_hold",
+            "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+            "conclusion": "success"
+          }
+        ],
+        "python": 569,
+        "new_python": 20,
+        "trusted_scope": "PASS",
+        "claim": "1 immutable coordinator claim verified"
+      },
+      "owner_reply_required": false
     }
   ]
 }

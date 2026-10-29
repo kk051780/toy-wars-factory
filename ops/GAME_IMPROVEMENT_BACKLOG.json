@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-28T22:42:27Z",
+  "observed_at": "2026-10-29T03:30:20Z",
   "source": "PR112 formal provenance repair; current C00122 active view uses exact transcriptions with original chat NOT_VERIFIED; no game source changes.",
   "items": [
     {
@@ -387,7 +387,7 @@
   "actor": {
     "role": "META",
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "4d796ca2-e004-832e-86ae-b5e502f26901"
+    "run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8"
   },
   "base_main_sha": "bd3eb6e9f339d0fe9fed3c094995c8ae6f2fe90c",
   "prioritized_candidates": [
@@ -395,38 +395,25 @@
     "private_headless_engine_evidence_path",
     "mobile_pve_frame_time"
   ],
-  "system_precondition": "Owner priority: A12 read-only source PR116 first; game source not edited; native evidence/PR98 protected adoption remain prerequisites.",
+  "system_precondition": "Owner priority PR-less A12 source; no game source modified. First-loop clarity vs differentiated support/collection vs NO_CHANGE remain unmeasured hypotheses. Native/multiplayer/mobile/32-64px identity/20units x4factory trials NOT_RUN; protected PR98 prerequisite retained.",
   "last_primary_source_check": {
-    "checked_at": "2026-10-28T22:42:27Z",
+    "checked_at": "2026-10-29T03:30:20Z",
     "sources": [
       {
-        "url": "https://create.roblox.com/docs/production/game-design/analytics-essentials",
-        "published_at": null,
-        "checked_at": "2026-10-28T22:37:19Z",
-        "source_kind": "PRIMARY_OFFICIAL",
-        "finding": "Engagement/retention/monetization and controlled experiments are future measurement candidates, not this game's measured effect."
+        "url": "https://grafana.com/blog/agent-observability-faq-understand-the-value-of-monitoring-evaluating-and-improving-your-ai-agents/",
+        "published_at": "2026-10-27",
+        "checked_at": "2026-10-29T03:30:20Z",
+        "kind": "PRIMARY_DEVELOPER",
+        "finding": "Separate runtime trace/failure classes and regression evaluation; vendor effects not our evidence; no fees."
       },
       {
-        "url": "https://create.roblox.com/docs/discovery",
+        "url": "https://create.roblox.com/docs/production/analytics/retention",
         "published_at": null,
-        "checked_at": "2026-10-28T22:37:19Z",
-        "source_kind": "PRIMARY_OFFICIAL",
-        "finding": "Keep first-session and repeat-play cohort hypotheses separate from unmeasured outcomes."
-      },
-      {
-        "url": "https://www.biggames.io/post/pet-simulator-99-update-99",
-        "published_at": "2026-10-24",
-        "checked_at": "2026-10-28T22:37:19Z",
-        "source_kind": "DEVELOPER_CASE",
-        "finding": "Collection/reward mechanism is observable, no causal retention claim or copied material."
+        "checked_at": "2026-10-29T03:30:20Z",
+        "kind": "PRIMARY_OFFICIAL",
+        "finding": "D1/D7 require real cohorts. First-loop clarity vs differentiated support/collection vs NO_CHANGE remain unmeasured game hypotheses."
       }
-    ],
-    "community": {
-      "url": "https://devforum.roblox.com/t/50-of-players-leave-within-2-minutes/4946893",
-      "checked_at": "2026-10-28T22:37:19Z",
-      "status": "NOT_VERIFIED_THIS_RUN",
-      "reason": "Actual open returned JavaScript/bot wall; no snippet metrics adopted."
-    }
+    ]
   },
   "next_experiments": [
     {
@@ -559,9 +546,9 @@
     "current_view": "C00122; C00121 is explicitly rejected historical input, not active original stock"
   },
   "latest_system_source_candidate": {
-    "pr": 116,
-    "head": "1962cb8187e7f508e248ad2c90ce4e1735132417",
-    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40781686546",
-    "status": "INDEPENDENT_REVIEW_PENDING; A12_UNATTENDED_NOT_VERIFIED"
+    "pr": 118,
+    "head": "f30d386c93f6250b2760c0359819fdd4a81dae22",
+    "ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40812571716",
+    "status": "INDEPENDENT_REVIEW_PENDING; A12_NOT_VERIFIED"
   }
 }
