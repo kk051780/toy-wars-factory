@@ -1,0 +1,224 @@
+{
+  "id": "C00127",
+  "date": "2026-10-29",
+  "kind": "SYSTEM_PREPARED_ALERT_NOTIFICATION",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "559ceca6-d748-832f-bb96-a5779f993964",
+  "base_main": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
+  "observed_at_utc": "2026-10-29T11:10:05Z",
+  "issue": 114,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "8712e9d060fec2bc6bd6c9f38f17f408285ce7ef",
+    "owner_run_id": "559ceca6-d748-832f-bb96-a5779f993964",
+    "epoch": 238
+  },
+  "problem": "Accepted persistence is not recipient delivery. No strict minimal notification intent/receipt boundary existed; old, foreign, unknown or lost acknowledgements must never become delivery or automatic resend permission.",
+  "implementation": "New pure system_alert_notification.prepare/assess reuse accepted ledger and readback outputs. One open incident scoped by project/repo,actor task/run,epoch,immutable commit/blob and opaque receiver digest; stable notification and attempt digests, minimal body, prior anchor dedup/no new attempt. All receipts remain UNVERIFIED without authenticated host origin, even when supplied delivered JSON matches. No send, callback, network, credential, retry, schedule, fee or recovery API.",
+  "adopted": "One new additive prepared-only module +24 adversarial tests +new history. No accepted source modifications or old PR reimplementation.",
+  "not_adopted": [
+    {
+      "idea": "Treat GitHub save/commit as delivered",
+      "reason": "Storage and recipient delivery are independent facts"
+    },
+    {
+      "idea": "Authenticate source labels or caller JSON by a SHA",
+      "reason": "Integrity comparison cannot prove provider origin or owner identity"
+    },
+    {
+      "idea": "Send/retry automatically or set up another application credential",
+      "reason": "Not authorized; current connected PEEK delivery_status unknown has no incident/receiver-bound authenticated receipt"
+    }
+  ],
+  "files": [
+    {
+      "path": "tools/system_alert_notification.py",
+      "before_bytes": 0,
+      "bytes": 11659,
+      "lines": 183,
+      "sha256": "242f59e7b97d264c7c4568af1246f1e5c47fecb8e452d8b9f31541d577826cfe"
+    },
+    {
+      "path": "tests/test_system_alert_notification.py",
+      "before_bytes": 0,
+      "bytes": 11362,
+      "lines": 198,
+      "sha256": "0a93fca6d8fa9b49c360867b5c533e90817ea3565363479693d5b29fc52435c6"
+    }
+  ],
+  "live_accepted_source_execution": {
+    "scope": "ACTUAL_CONNECTED_GET_PEEK_ROUTED_THROUGH_ACCEPTED_MAIN_PYTHON; not fixture",
+    "binding": {
+      "game_id": "toy-wars-factory",
+      "manifest_path": "studio_autopilot/projects/toy_wars.json",
+      "main_sha": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
+      "coordinator_sha": "8712e9d060fec2bc6bd6c9f38f17f408285ce7ef",
+      "coordinator_blob_sha": "e8621bd35d80dfd32dda8c156a2a2e61ddcab506",
+      "coordinator_epoch": 238,
+      "max_record_age_seconds": 86400
+    },
+    "actor": {
+      "role": "meta",
+      "task_id": "6add445e4138819197d9cf2b1a02534d",
+      "run_id": "559ceca6-d748-832f-bb96-a5779f993964"
+    },
+    "thresholds": {
+      "service_timeout_seconds": {
+        "author": 1800,
+        "reviewer": 1800,
+        "meta": 1800
+      },
+      "ci_timeout_seconds": 1800,
+      "max_observation_age_seconds": 120,
+      "replay_window_seconds": 86400
+    },
+    "writer": null,
+    "gets": 18,
+    "peeks": 7,
+    "observed_window": {
+      "first": "2026-10-29 11:00:27 UTC",
+      "last": "2026-10-29 11:01:12 UTC"
+    },
+    "executed_functions": [
+      {
+        "function": "persistence.persist",
+        "observed_at": "2026-10-29T11:00:14.021372+00:00",
+        "source_file": "system_alert_persistence.py"
+      },
+      {
+        "function": "idle.observe",
+        "observed_at": "2026-10-29T11:00:14.026086+00:00",
+        "source_file": "system_idle_health.py"
+      },
+      {
+        "function": "service.observe",
+        "observed_at": "2026-10-29T11:00:14.027082+00:00",
+        "source_file": "system_service_observer.py"
+      },
+      {
+        "function": "ledger.reduce",
+        "observed_at": "2026-10-29T11:01:14.095201+00:00",
+        "source_file": "system_alert_ledger.py"
+      }
+    ],
+    "source_pins": [
+      {
+        "path": "tools/system_idle_health.py",
+        "sha": "499624fc9b2a6b75a53bae3b5bf7c4afa0069fef"
+      },
+      {
+        "path": "tools/system_alert_persistence.py",
+        "sha": "bef76041238111b907e5a7afbbf0b2b6f27b0154"
+      },
+      {
+        "path": "tools/system_service_observer.py",
+        "sha": "2baec64cfe6b0b7445ebf04bedb1530981586375"
+      },
+      {
+        "path": "tools/system_alert_ledger.py",
+        "sha": "09a27a14261024a5b6c9b0586a926a5349e2c52a"
+      }
+    ],
+    "idle_state": "OBSERVED_HEALTHY",
+    "persistence": {
+      "schema": 1,
+      "mode": "HOST_CAPABILITY_LEDGER_BRIDGE",
+      "verification": "NOT_VERIFIED",
+      "state": "NOT_PERSISTED",
+      "stage": "NO_CHANGE",
+      "persisted": false,
+      "cas_attempted": false,
+      "operation_receipts": [],
+      "delivery": "NOT_ATTEMPTED",
+      "recovery_verification": "NOT_VERIFIED",
+      "a12_verified": false,
+      "main_qa": "MAIN_QA_NOT_CHECKED",
+      "authority": {
+        "write_allowed": false,
+        "start_now_allowed": false,
+        "takeover_allowed": false,
+        "dispatch_allowed": false,
+        "merge_allowed": false,
+        "publish_allowed": false,
+        "external_spend_allowed": false,
+        "safe_to_next_schedule": false
+      },
+      "reason": "NO_INCIDENT_OBSERVED"
+    },
+    "current_meta_latest_result_binding": "PREVIOUS_RUN",
+    "live_anomaly_count": 0,
+    "full_safe_trace": "ops/SYSTEM_REVIEW_LATEST.json on this run's coordinator release commit",
+    "portable_authentication": "NOT_VERIFIED; successful connected fetch mapped to200, raw HTTP status not separately exposed",
+    "unforced_schedule": "NO; current OWNER manual GO, not A12/A13 proof"
+  },
+  "tests": {
+    "new": 24,
+    "focused": "24/24 PASS; two synthetic manifests through accepted persistence/reducer/observer",
+    "negative_control": {
+      "mutant_tests": 1,
+      "expected_failures": 1,
+      "errors": 0,
+      "accepted_source_modified": false
+    },
+    "local_full": "636 run;635pass/1 unchanged accepted handoff real-Git-ancestry failure; exact-head full-history GitHub CI required, accepted harness unchanged",
+    "github_ci": "PENDING_NEW_HEAD"
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "preservation": {
+    "accepted_main_blobs": 275,
+    "accepted_python_tests": 612,
+    "protected_controls": "No existing source/test/history/AGENTS/config/checker/workflow/auth/budget/publishing changes"
+  },
+  "main_health": {
+    "sha": "7c5c1a6ff6bddcdf5d0731d92ae1efec9fd8ff45",
+    "qa_head": "1326a29ba743b908e7778924ce0cbad3f2b2f881",
+    "qa": 40850476260,
+    "jobs": "offline+compile_hold SUCCESS",
+    "handoff": 40850476258,
+    "latest_handoff": 40852864330,
+    "status_only_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "research": [
+    {
+      "url": "https://opentelemetry.io/docs/specs/semconv/messaging/messaging-spans/",
+      "kind": "PRIMARY_IMPLEMENTER_SPECIFICATION",
+      "published_at": "NOT_AVAILABLE",
+      "updated_at": "NOT_AVAILABLE",
+      "checked_at": "2026-10-29T11:10:05Z",
+      "finding": "Message/operation/destination and send/receive/settle observations are separate. Used as an evidence-separation pattern, not end-user delivery proof or installed telemetry."
+    },
+    {
+      "url": "https://create.roblox.com/docs/production/experiments",
+      "kind": "PRIMARY_ROBLOX_OFFICIAL",
+      "published_at": "NOT_AVAILABLE",
+      "updated_at": "NOT_AVAILABLE",
+      "checked_at": "2026-10-29T11:10:05Z",
+      "finding": "Control/variants, cohort size/detectable effect and documented decisions guide first-loop vs role/collection vs NO_CHANGE hypotheses. No game measurement or live experiment."
+    }
+  ],
+  "limits": [
+    "The NEW notification module is SYNTHETIC_TEST_ONLY; no real incident intent or receipt was fabricated or sent.",
+    "Current accepted-source persist run is actual connected execution but healthy with writer=None and NOT_PERSISTED/NO_INCIDENT_OBSERVED; write/CAS/readback branches not exercised live.",
+    "PREPARED_NOTIFICATION_ONLY; delivery UNVERIFIED. No current host API supplies authenticated incident/run/receiver/epoch-bound delivery receipt. Matching supplied JSON/hashes cannot upgrade that.",
+    "Prior intent dedup requires independently loaded immutable history; caller control of both prior JSON/digest cannot authenticate it. No send/resend permission from this module.",
+    "Current OWNER manual GO cannot prove unforced scheduling. Real anomaly persistence, notification receipt and distinct independent recovery remain unproven; A12/A13 points0.",
+    "Automation57%/game38% unchanged; Issue113/117 protected; Studio/mobile/two-client/player effects NOT_RUN/NOT_MEASURED."
+  ],
+  "next": "Exact-head offline+compile_hold plus trusted scope/claim, separate registered REVIEWER only, postmain QA/handoff after independent adoption. Later authenticated host delivery readback needed; no automatic send or inference/publication authorized.",
+  "holds": [
+    "GEMINI_SEVERE_HOLD",
+    "NO_EXTERNAL_SPEND",
+    "ROBLOX_PUBLISH_HOLD",
+    "NO_TASK_OR_CREDENTIAL_CHANGES"
+  ]
+}
