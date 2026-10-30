@@ -94,6 +94,20 @@ def acquire(state, kind, owner_id, now, service_status=None, base_main_sha=None,
             if at >= instant(holder["expires_at"]):
                 return {"action": "WAIT_DISPATCH_EXPIRED", "state": state,
                         "write": False, "holder": deepcopy(holder)}
+            # Source-pin manual admission: independently verified live
+            # main/ref and provider identity remain the trusted host's duty.
+            if at < instant(holder["acquired_at"]):
+                return {"action": "WAIT_DISPATCH_BEFORE_ISSUE", "state": state,
+                        "write": False, "holder": deepcopy(holder)}
+            ticket_sha = holder.get("base_main_sha")
+            if (type(ticket_sha) is not str or not re.fullmatch(r"[0-9a-f]{40}", ticket_sha)
+                    or type(base_main_sha) is not str
+                    or not re.fullmatch(r"[0-9a-f]{40}", base_main_sha)):
+                return {"action": "WAIT_DISPATCH_MAIN_UNBOUND", "state": state,
+                        "write": False, "holder": deepcopy(holder)}
+            if ticket_sha != base_main_sha:
+                return {"action": "WAIT_DISPATCH_MAIN_CHANGED", "state": state,
+                        "write": False, "holder": deepcopy(holder)}
         elif holder["kind"] == kind and holder["owner_id"] == owner_id:
             action = "RESUME" if at < instant(holder["expires_at"]) else "WAIT_RECOVERY"
             return {"action": action, "state": state, "write": False}

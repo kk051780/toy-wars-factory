@@ -1,0 +1,55 @@
+{
+  "id": "C00160",
+  "date": "2026-10-31",
+  "kind": "DISPATCH_SOURCE_MAIN_BINDING_GREEN_CANDIDATE",
+  "issue": 57,
+  "pr_base": 139,
+  "pr_new": 152,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 299,
+    "owner_run_id": "1996de65-0309-4d86-8c80-972330117fe1",
+    "claim_commit": "4498e9f5661d0e1f92b24e0d1ebbf0346637c9f5"
+  },
+  "red": {
+    "head": "ff48b744ffc40bfe49b77defa6e889214b264721",
+    "actions_run_id": 41145689159,
+    "offline": "failure",
+    "compile_hold": "success",
+    "python_total": 854,
+    "python_failed": 8,
+    "python_passed": 846,
+    "regressions": "eight expected changed/missing/unbound/pre-issue ticket failures"
+  },
+  "source_changes": [
+    {
+      "path": "tools/repair_control.py",
+      "before_blob": "cfc14a4730e2b6bccb40bbdf0c0e5932ac04ead3",
+      "after_blob": "d1309675cd67a7b208af7997b3afced130fe04a9"
+    }
+  ],
+  "fixture_migrations": [
+    {
+      "path": "tests/test_repair_control.py",
+      "before_blob": "f07cce0722ac13c88d6bc5e08599bcb684588963",
+      "after_blob": "d8cfef13795a77c215507b9db334a4abf0a5e909"
+    },
+    {
+      "path": "tests/test_system_manual_dispatch_expiry.py",
+      "before_blob": "46c9a3caada2126565f29035f6af100da176bf25",
+      "after_blob": "3eb801f4f70ab9bda331531be38aa7e5008cc897"
+    }
+  ],
+  "added_regressions": {
+    "path": "tests/test_system_manual_dispatch_main_binding.py",
+    "cases": 14
+  },
+  "green": {
+    "status": "AWAIT_EXACT_HEAD_GITHUB_ACTIONS"
+  },
+  "host_identity_verified": false,
+  "roblox_engine_verified": false,
+  "independent_review": "REQUIRED",
+  "safety_holds": "PRESERVED",
+  "main_merged": false
+}
