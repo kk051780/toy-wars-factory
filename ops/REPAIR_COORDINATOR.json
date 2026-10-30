@@ -163,31 +163,30 @@
     }
   ],
   "approval_packet": {
-    "approval_text": "",
-    "automatic_merge_authorized": true,
-    "decision_owner": "ASSISTANT",
+    "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
     "items": [
       {
+        "number": 131,
+        "title": "[TWF system-review] Bind alert persistence lease to actual actor start time",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/131",
+        "head": "318a27bd6ee9bb565ceb619cf1db182336673c7e",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40982601708",
+        "summary": "A12保存時に実run開始前のleaseを拒否。1条件追加・新規12回帰、RED9失敗→GREEN773件。",
         "changed_files": [
-          "history/C00138_github_evidence_holder_epoch_red.json",
-          "history/C00139_github_evidence_holder_epoch_repair.json",
-          "history/C00140_github_evidence_local_count_correction.json",
-          "tests/test_system_evidence_holder_generation.py",
-          "tools/system_github_evidence.py"
+          "history/C00141_persistence_actor_chronology_red.json",
+          "history/C00142_persistence_actor_chronology_repair.json",
+          "tests/test_system_persistence_actor_chronology.py",
+          "tools/system_alert_persistence.py"
         ],
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40969585796",
-        "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
-        "kind": "開発体制改善",
-        "number": 129,
-        "summary": "A12観測入力のholder世代番号を厳密化する1行修正。新規12回帰、RED13失敗→GREEN761件。",
-        "title": "[TWF system-review] Reject malformed holder epochs in read-only GitHub evidence",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/129"
+        "kind": "開発体制改善"
       }
     ],
-    "observed_at": "2026-10-29T23:01:31Z",
+    "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
-    "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
-    "signature": "fdd71a966427b924cf98548aa6c677fee88d4d4e151ea150f51f962e604fcfb8"
+    "automatic_merge_authorized": true,
+    "observed_at": "2026-10-30T00:58:48Z",
+    "signature": "dbfcbfafc85eb633fb95c2e6c47c7d22e87f933f00f6b17312049c1544980d76",
+    "approval_text": ""
   },
   "authorized_tasks": {
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -2353,16 +2352,16 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_system_review": {
-    "ci": 40969585796,
-    "claim_commit": "0fa55eaa205b9ccaf27894d9332a553f4d7779ed",
-    "epoch": 260,
-    "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
-    "pr": 129,
-    "recorded_at": "2026-10-29T23:01:31Z",
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "run_id": "6c5df803-672c-8328-b0c9-07b9b96ee6bf",
+    "epoch": 262,
+    "claim_commit": "f121785d6a5f32ca604132625160a62882dd2713",
+    "recorded_at": "2026-10-30T00:58:48Z",
     "report_path": "ops/SYSTEM_REVIEW_LATEST.json",
-    "result": "NEW_A12_COLLECTOR_HOLDER_TYPE_DEFECT_REPAIRED_EXACT_HEAD_CI_PASS_WAIT_INDEPENDENT_REVIEW",
-    "run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
-    "task_id": "6add445e4138819197d9cf2b1a02534d"
+    "pr": 131,
+    "head": "318a27bd6ee9bb565ceb619cf1db182336673c7e",
+    "ci": 40982601708,
+    "result": "NEW_A12_PERSISTENCE_ACTOR_CHRONOLOGY_REPAIR_GREEN_WAIT_INDEPENDENT_REVIEW"
   },
   "latest_adoption_reconciliation": {
     "epoch": 253,
@@ -2603,6 +2602,21 @@
         "task_id": "6add445e4138819197d9cf2b1a02534d"
       },
       "ref": "0fa55eaa205b9ccaf27894d9332a553f4d7779ed"
+    },
+    {
+      "ref": "9f220cb2a4adb0422ed581e223b76a3dd77c01b6",
+      "prior": {
+        "ci": 40969585796,
+        "claim_commit": "0fa55eaa205b9ccaf27894d9332a553f4d7779ed",
+        "epoch": 260,
+        "head": "02b3744ed3f7c1b683356ce679ca8633c66bd706",
+        "pr": 129,
+        "recorded_at": "2026-10-29T23:01:31Z",
+        "report_path": "ops/SYSTEM_REVIEW_LATEST.json",
+        "result": "NEW_A12_COLLECTOR_HOLDER_TYPE_DEFECT_REPAIRED_EXACT_HEAD_CI_PASS_WAIT_INDEPENDENT_REVIEW",
+        "run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+        "task_id": "6add445e4138819197d9cf2b1a02534d"
+      }
     }
   ],
   "task_id": "6adbf0d6a7d881918ce181dff2468867"
