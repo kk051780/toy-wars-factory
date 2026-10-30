@@ -1056,17 +1056,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 279,
-  "holder": {
-    "kind": "REVIEWER",
-    "owner_id": "a4549b49-48a4-832a-901e-f434b894242e",
-    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-    "epoch": 279,
-    "acquired_at": "2026-10-30T06:47:03.665Z",
-    "expires_at": "2026-10-30T07:17:03.665Z",
-    "base_main_sha": "d0c1bf60d733a0db51d12c0295805d7741ce62eb",
-    "work_branch": "main",
-    "origin": "reviewer"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2710,17 +2700,17 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "WORKER",
-    "owner_id": "4844c90e-ef6c-8324-b867-c89b833e2ed9",
-    "epoch": 278,
-    "released_at": "2026-10-30T06:39:36.988Z",
+    "kind": "REVIEWER",
+    "owner_id": "a4549b49-48a4-832a-901e-f434b894242e",
+    "epoch": 279,
+    "released_at": "2026-10-30T06:50:31.007Z",
     "release_receipt": {
       "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
       "repository": "kk051780/toy-wars-factory",
-      "task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "owner_run_id": "4844c90e-ef6c-8324-b867-c89b833e2ed9",
-      "epoch": 278,
-      "expected_parent": "a02ccb9c00de123d7813d75e9dd6713268cf2809",
+      "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "owner_run_id": "a4549b49-48a4-832a-901e-f434b894242e",
+      "epoch": 279,
+      "expected_parent": "912805c18a605cc2c1f73b2548d3240ad08a50ac",
       "provider_terminal": "NOT_ATTESTED",
       "postwrite_readback_required": true
     }
