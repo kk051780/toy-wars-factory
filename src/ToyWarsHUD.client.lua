@@ -154,6 +154,9 @@ end)
 local function refresh()
     summary.Text=string.format("COINS %d  |  WAVE %d  |  VAULT %d%%",coins.Value,wave.Value,hp.Value)
     subt.Text=string.format("LV %d  •  TOYS %d  •  JUNK %d  •  KILLS %d",lv.Value,allies.Value,enemies.Value,kills.Value)
+    local upgradeCost=B.upgradePrice(lv.Value)
+    tip.Text=upgradeCost and string.format("SELECT A TOY • GOLD UPGRADE: %d COINS",upgradeCost)
+        or "SELECT A TOY • FACTORY MAX LEVEL"
     for id,button in pairs(buttons) do
         button.BorderSizePixel=(string.upper(id)==selected.Value) and 3 or 0
         button.BorderColor3=Color3.fromRGB(255,255,255)
