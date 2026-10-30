@@ -2841,6 +2841,42 @@
         "source scopes",
         "quality/review/fencing/budget/publishing gates"
       ]
+    },
+    {
+      "schema": 1,
+      "operation": "OWNER_DELEGATED_OPERATIONAL_WORKER_DISPATCH_PROMPT_REPAIR",
+      "status": "PROMPT_APPLIED_READBACK_VERIFIED_RUNTIME_UNPROVEN",
+      "scope": "SAVED_WORKER_PROMPT_ONLY",
+      "applied_at": "2026-10-30T07:40:41.530721+00:00",
+      "recorded_at": "2026-10-30T07:41:05.279Z",
+      "controller_operation_id": "23f07c09-d641-4559-abd7-79e9852397cb",
+      "claim_commit": "6f2bc7de3d70b9069f4fdf8238d33e301c64c2ad",
+      "epoch": 282,
+      "task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "source_issue": 57,
+      "protected_source_pr": 139,
+      "original_run": "5db65bdd-67e8-8326-9e1a-82f6bc639170",
+      "old_prompt_characters": 6672,
+      "new_prompt_characters": 7503,
+      "patch": "Two exact substitutions: allow only verified live DISPATCH adoption under unchanged CAS/owner checks and reject expired ticket; preserve foreign-holder wait and actual run identity.",
+      "preserved_task_fields": [
+        "task_id",
+        "title",
+        "schedule",
+        "timing_mode",
+        "is_enabled"
+      ],
+      "safety": {
+        "provider_run_identity_still_required": true,
+        "expired_ticket_not_adopted": true,
+        "host_safety_override": false,
+        "main_code_change": false,
+        "protected_pr139_unmerged": true,
+        "live_adoption_tested": false,
+        "credentials_or_spend_changed": false,
+        "publishing_changed": false
+      },
+      "next": "Independent source audit of protected PR139; verify future genuine registered WORKER handoff with original provider result, do not count prompt-only as A12/A13."
     }
   ],
   "owner_delegation": {
