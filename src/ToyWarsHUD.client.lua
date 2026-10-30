@@ -157,7 +157,10 @@ local function refresh()
     local upgradeCost=B.upgradePrice(lv.Value)
     local chosenId=type(selected.Value)=="string" and string.lower(selected.Value) or nil
     local unit=chosenId and B.isUnit(chosenId) and B.UNITS[chosenId] or nil
-    if unit and coins.Value<unit.cost then
+    if allies.Value>=B.MAX_FIELD_UNITS then
+        tip.Text=upgradeCost and string.format("FIELD FULL %d/%d • GOLD %d",allies.Value,B.MAX_FIELD_UNITS,upgradeCost)
+            or string.format("FIELD FULL %d/%d • MAX LEVEL",allies.Value,B.MAX_FIELD_UNITS)
+    elseif unit and coins.Value<unit.cost then
         tip.Text=upgradeCost and string.format("WAIT %s %d COINS • GOLD %d",unit.name,unit.cost,upgradeCost)
             or string.format("WAIT %s %d COINS • MAX LEVEL",unit.name,unit.cost)
     else
