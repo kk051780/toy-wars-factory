@@ -1,0 +1,38 @@
+{
+  "id": "C00161",
+  "date": "2026-10-31",
+  "kind": "ROBLOX_GITHUB_ARTIFACT_CONSUMER_TEST_FIRST_RED",
+  "issue": 3,
+  "owner_role": "MANUAL_CONTROLLER",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "07c80da62612423db6a1ab7b1605b742b46449fb",
+    "owner_run_id": "a14cf2f4-9e69-4994-877e-18452d3a76b3",
+    "epoch": 290
+  },
+  "source_changes": [],
+  "test_changes": [
+    {
+      "path": "tests/test_system_github_artifact_admission.py",
+      "new_cases": 19
+    }
+  ],
+  "tests": {
+    "red": {
+      "status": "AWAIT_GITHUB_CI",
+      "expected": "ImportError of absent github_artifact_admission module"
+    },
+    "green": {
+      "status": "NOT_YET_EXECUTED"
+    }
+  },
+  "roblox_engine": "NOT_RUN",
+  "real_builder": "NOT_RUN",
+  "credentials_used": false,
+  "public_publish_authorized": false,
+  "independent_review": "REQUIRED",
+  "source_metrics": {
+    "lua_game_files_changed": 0
+  }
+}
