@@ -1139,17 +1139,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 292,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "a14bb962-6ce9-4839-b1a5-390fba4429a2",
-    "task_id": null,
-    "epoch": 292,
-    "acquired_at": "2026-10-30T22:01:59.604Z",
-    "expires_at": "2026-10-30T22:31:59.604Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/a14-strong-workflow-ref-a14bb962",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2794,22 +2784,26 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "a14c0520-2026-4a14-9b45-202610310633",
-    "epoch": 291,
-    "released_at": "2026-10-30T21:44:35.851Z",
+    "owner_id": "a14bb962-6ce9-4839-b1a5-390fba4429a2",
+    "epoch": 292,
+    "released_at": "2026-10-30T22:08:21.238Z",
     "release_receipt": {
-      "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
-      "repository": "kk051780/toy-wars-factory",
-      "task_id": null,
-      "owner_run_id": "a14c0520-2026-4a14-9b45-202610310633",
-      "epoch": 291,
-      "expected_parent": "28c4c2d3cc0b63732194339dc251f4cc8961c1ef",
-      "provider_terminal": "NOT_ATTESTED",
-      "postwrite_readback_required": true,
-      "pr_number": 145,
-      "pr_head": "ef3c66b62c1415ee43425ca151f8c4ebc85ceba4",
-      "green_run_id": 41133146170,
-      "protected_independent_review": "PENDING"
+      "kind": "OWN_CONTROLLER_NORMAL_RELEASE",
+      "claim_commit": "57e0b2d407ea482ec9ce66647579abbaff356727",
+      "source_pr": 146,
+      "base_pr": 144,
+      "source_head": "513279fb845554e019095d15a71eb4a7568fe8fd",
+      "base_head": "5c4694943c89e5a77fbac53bac9e1abc0138e03f",
+      "red_run_id": 41135563042,
+      "red_failures": 8,
+      "final_green_run_id": 41135967801,
+      "python_tests_passed": 863,
+      "offline": "success",
+      "compile_hold": "success",
+      "protected_independent_review": "PENDING",
+      "parent_pr_integration": "NOT_DONE",
+      "real_github_build": "NOT_RUN",
+      "roblox_engine_verified": false
     }
   },
   "last_completed_integration": {
