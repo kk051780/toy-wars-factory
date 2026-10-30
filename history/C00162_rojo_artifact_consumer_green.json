@@ -1,0 +1,51 @@
+{
+  "id": "C00162",
+  "date": "2026-10-31",
+  "kind": "ROBLOX_GITHUB_ARTIFACT_CONSUMER_READONLY_GREEN_CANDIDATE",
+  "issue": 3,
+  "owner_role": "MANUAL_CONTROLLER",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "07c80da62612423db6a1ab7b1605b742b46449fb",
+    "owner_run_id": "a14cf2f4-9e69-4994-877e-18452d3a76b3",
+    "epoch": 290
+  },
+  "source_changes": [
+    {
+      "path": "tools/github_artifact_admission.py",
+      "local_library": "libfile_22303d3ae8cc81919c002b677624288c"
+    },
+    {
+      "path": "tools/github_builder_preflight.py",
+      "local_library": "libfile_689be06619188191bc815dcd9bc9a40d"
+    }
+  ],
+  "test_changes": [
+    {
+      "path": "tests/test_system_github_artifact_admission.py",
+      "new_cases": 19
+    }
+  ],
+  "tests": {
+    "red": {
+      "head": "9be5b0e3f8b2afa84879abc462b6ed18988f525d",
+      "run_id": 41122878150,
+      "expected_failure": "ModuleNotFoundError: github_artifact_admission",
+      "offline": "failure",
+      "compile_hold": "success"
+    },
+    "green": {
+      "status": "PENDING_CURRENT_HEAD_GITHUB_ACTIONS"
+    }
+  },
+  "roblox_engine": "NOT_RUN",
+  "real_builder": "NOT_RUN",
+  "credentials_used": false,
+  "public_publish_authorized": false,
+  "independent_review": "REQUIRED_PROTECTED_NO_SELF_MERGE",
+  "safety_scope": "READONLY_GITHUB_ACTIONS_METADATA_AND_ZIP_ONLY_NO_WORKFLOW_EDIT",
+  "source_metrics": {
+    "lua_game_files_changed": 0
+  }
+}
