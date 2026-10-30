@@ -1,0 +1,160 @@
+{
+  "id": "C00154",
+  "date": "2026-10-30",
+  "kind": "A12_IDLE_HOLDER_CHRONOLOGY_FAIL_CLOSED_REPAIR",
+  "issue": 114,
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "b0642945-e128-8323-9d82-d2a8b335dc8e",
+  "main_base": "e55ee17606b03ad997f752944eae6ad91e7651dc",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "99f908e4bb0493364ab0631701d55a7492fc53c9",
+    "owner_run_id": "b0642945-e128-8323-9d82-d2a8b335dc8e",
+    "epoch": 275
+  },
+  "defect": "Current accepted idle health accepts same UUID identity with provider started_at later than acquired_at, potentially OBSERVED_HEALTHY. Source observer identity match remains metadata, not authorization.",
+  "fix": "Six additive lines in idle.classify add existing advisory CONNECTOR_UNAVAILABLE when matching holder chronology conflicts. This existing category includes invalid provider/binding evidence, not a diagnosed transport outage. _output becomes INDETERMINATE while existing lease/expiry/terminal alerts remain visible. No new kind/schema/authentication/recovery authority.",
+  "source_changes": [
+    {
+      "path": "tools/system_idle_health.py",
+      "before_bytes": 10619,
+      "after_bytes": 11170,
+      "delta_bytes": 551,
+      "before_blob": "499624fc9b2a6b75a53bae3b5bf7c4afa0069fef",
+      "after_blob": "654163735ce18043780140a47b0ae5d9407c7309",
+      "added_lines": 6,
+      "removed_lines": 0
+    }
+  ],
+  "test_changes": [
+    {
+      "path": "tests/test_system_idle_claim_chronology.py",
+      "before_bytes": 0,
+      "after_bytes": 7451
+    }
+  ],
+  "source_metrics": {
+    "tools/system_idle_health.py": {
+      "bytes": 11170,
+      "lines": 169,
+      "blob": "654163735ce18043780140a47b0ae5d9407c7309",
+      "sha256": "fcd7b2cb29dc9109ca6f9bd80eaca8b4b5d326fed01c6aa25d99e25ce696a145"
+    },
+    "tests/test_system_idle_claim_chronology.py": {
+      "bytes": 7451,
+      "lines": 127,
+      "blob": "9525a9db443e08c6a099663e353bccb375f11e39",
+      "sha256": "d9725ba5c644811b202a1f2ffa8a0f444882455e4d0b5e0d3a9ee5ade424bf3d"
+    }
+  },
+  "characters_touched": [],
+  "tests": {
+    "new_methods": 13,
+    "main_red": {
+      "head": "5007c0fc0f82ed5c5bc7232c6b4fb8f1320736f5",
+      "id": 41011134241,
+      "python_tests": 833,
+      "failures": 9,
+      "errors": 0,
+      "offline": "failure",
+      "compile_hold": "success",
+      "accepted_820_preserved": true
+    },
+    "local_green_new": 13,
+    "local_green_accepted_idle": 20,
+    "github_exact_head_green": "PENDING_NEW_HEAD",
+    "positive_controls": [
+      "same instant",
+      "after start",
+      "equivalent timezone offset",
+      "different unmatched holder run"
+    ],
+    "negative_controls": [
+      "all3roles",
+      "microsecond prestart",
+      "oldresult/forged provider flags",
+      "changed secondpeek",
+      "two projects",
+      "expired prestart keeps expiry",
+      "no confirmed recovery from disappearance",
+      "pure classify and actual observe"
+    ]
+  },
+  "preservation": {
+    "all_prior_accepted_tests_unchanged": true,
+    "accepted_history_unchanged": true,
+    "priorC00153_unchanged": true,
+    "main_game_and_protected_policy_unchanged": true,
+    "source_observer_and_runtime_schema_unchanged": true
+  },
+  "current_run": {
+    "connected_started_at": "2026-10-30T05:49:24.099814Z",
+    "fresh_acquired_at": "2026-10-30T05:52:25Z",
+    "stable_start_observed_at": "2026-10-30T05:58:23Z",
+    "immutable_provider_attempt_history": "NOT_ATTESTED",
+    "latest_result": "PRIOR_RUN_NOT_CURRENT_AUTHORIZATION"
+  },
+  "research": {
+    "date": "2026-10-30",
+    "primary_sources": [
+      "https://docs.python.org/3/library/datetime.html"
+    ],
+    "evidence": "Aware datetime instants are compared without seconds rounding; preserve microsecond and UTC offset equivalence. This does not authenticate provider attempts.",
+    "comparison": [
+      {
+        "option": "NO_CHANGE",
+        "benefit": "No source risk",
+        "cost": "False healthy for contradictory holder/run timeline remains",
+        "selected": false
+      },
+      {
+        "option": "Reject in shared observer",
+        "benefit": "Earlier hard error",
+        "cost": "Would break accepted identity-only expired-holder test and lose bounded expiry report; do not weaken tests",
+        "selected": false
+      },
+      {
+        "option": "Minimal advisory fail-closed in idle classifier",
+        "benefit": "INDETERMINATE plus task/immutable-ref evidence; preserve old diagnostics and no grants",
+        "cost": "13 focused regressions plus fresh full CI/independent review",
+        "selected": true
+      }
+    ],
+    "game": {
+      "owner_sources": [
+        "Issue109",
+        "Issue115"
+      ],
+      "owner_verbatim": "PRESERVED_IN_EXISTING_ISSUES_NOT_REWRITTEN",
+      "decision": "NO_CHANGE_SYSTEM_ROLE",
+      "candidates": [
+        {
+          "idea": "Full-field 20/20 production hint",
+          "owner": "Existing WORKER prepared task, do not duplicate",
+          "effect": "Player confusion/retention unmeasured",
+          "test": "Canonical HUD mock then real mobile/player test",
+          "effort": "Small WORKER-only experiment"
+        },
+        {
+          "idea": "Observe first successful production/upgrade comprehension",
+          "effect": "Acquisition/retention hypothesis only",
+          "test": "Real player funnel after authorized engine access",
+          "effort": "Deferred evidence collection, no new tracking or publishing"
+        }
+      ]
+    }
+  },
+  "limitations": {
+    "synthetic_reproducer": true,
+    "live_bad_claim_observed_this_run": false,
+    "known_no_update_4d36": "Already recorded Issue114 #6515382728; not duplicated",
+    "preclaim_authorization_gate": "NOT_IMPLEMENTED_BY_THIS_DETECTOR",
+    "immutable_provider_attempts": "NOT_VERIFIED",
+    "live_notification": "NOT_ATTEMPTED",
+    "A12": false,
+    "A13": false,
+    "official_system": 57,
+    "official_game": 38,
+    "spend_schedule_credentials_roblox": "UNCHANGED_HOLD"
+  }
+}

@@ -117,6 +117,12 @@ def _classify(projects, b, r, rules, now, previous):
             if h["kind"] == kind: need(h["task_id"] == p["roles"][role], "WRONG_HOLDER_TASK")
             if h["owner_id"] == safe[role]["last_run"]["id"]:
                 need(h["kind"] == kind, "HOLDER_ROLE_COLLISION")
+                # UUID equality is identity only, not a valid claim timeline.
+                # Keep expiry evidence; uncertain provider/binding data never looks healthy.
+                if moment(safe[role]["last_run"]["started_at"]) > acquired:
+                    runtime._add(frame, "CONNECTOR_UNAVAILABLE", {"game_id": p["game_id"]},
+                                 ["task/" + p["roles"][role] + "/run/" + h["owner_id"],
+                                  p["repository"] + "/git/" + b["coordinator_sha"] + "/blob/" + b["coordinator_blob_sha"]])
                 if safe[role]["last_run"]["recorded_status"] in service.TERMINAL:
                     subject = {"role": role, "task_id": p["roles"][role], "run_id": h["owner_id"]}
                     if not any(a["identity"]["subject"] == subject and a["identity"]["kind"] == "STALE_OR_NO_RESULT" for a in frame["alerts"]):
