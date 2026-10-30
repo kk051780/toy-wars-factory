@@ -1,0 +1,39 @@
+{
+  "id": "C00157",
+  "date": "2026-10-30",
+  "kind": "MANUAL_DISPATCH_EXPIRY_FAIL_FIRST_TEST",
+  "issue": 57,
+  "owner_role": "MANUAL_CONTROLLER",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "c14f93b0f19ce1afbc22c47f138339de7e2edfb8",
+    "owner_run_id": "4a26aba5-3470-43d2-a557-74dcc5eba181",
+    "epoch": 281
+  },
+  "source_changes": [],
+  "test_changes": [
+    {
+      "path": "tests/test_system_manual_dispatch_expiry.py",
+      "new_cases": 7
+    }
+  ],
+  "tests": {
+    "red": {
+      "status": "AWAIT_GITHUB_CI",
+      "expected": "2 failure(s) for expired ticket being adopted as WORKER",
+      "other_cases": "PENDING"
+    }
+  },
+  "characters_touched": [],
+  "real_provider_run_identity": "NOT_ATTESTED_MANUAL_CONTROLLER",
+  "roblox_engine": "NOT_RUN",
+  "unattended_worker_adoption": "NOT_VERIFIED",
+  "safety_holds": "PRESERVED",
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1186,
+    "lua_bytes": 52781
+  },
+  "source_baseline_bytes": 25726
+}
