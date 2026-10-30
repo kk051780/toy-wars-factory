@@ -1,0 +1,66 @@
+{
+  "id": "C00143",
+  "date": "2026-10-30",
+  "kind": "AUTONOMOUS_HUD_UPGRADE_PRICE_TEST_FIRST_RED_CONTROL",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "a683a27f-a9b0-8325-aa17-39a8c864bc49",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-a683a27f-a9b0-8325-aa17-39a8c864bc49",
+    "base": "main",
+    "open_prs": [],
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "0985bedd23cccad033a6bb7807cb6716d9230039",
+    "owner_run_id": "a683a27f-a9b0-8325-aa17-39a8c864bc49",
+    "epoch": 264
+  },
+  "main_base": "03bdbb9fdb2bc8ee5fcd22c504b8d3428971c606",
+  "source_commit": "a6879840d7c1bcc54e9024de7602c9a194117f42",
+  "issue": 115,
+  "pr": 132,
+  "defect": {
+    "id": "hud_upgrade_price_missing_from_persistent_tip",
+    "observation": "Current accepted HUD tip says upgrade at gold platform but omits the server-authoritative price; balance.upgradePrice(1)=65 and upgradePrice(2)=260.",
+    "user_impact_hypothesis": "Price visibility may help first-time players plan upgrades without walking to the platform; real player effect UNVERIFIED."
+  },
+  "changed_files": [
+    "tests/auto/upgrade_affordability_hud_spec.lua",
+    "history/C00143_upgrade_affordability_hud_red.json"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/upgrade_affordability_hud_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 4562,
+      "delta_bytes": 4562
+    }
+  ],
+  "characters_touched": [],
+  "tests": {
+    "new_cases": 3,
+    "local": "NOT_RUN_LUA_RUNTIME_UNAVAILABLE",
+    "red_ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "03bdbb9fdb2bc8ee5fcd22c504b8d3428971c606",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40972299526",
+    "claim_commit": "0985bedd23cccad033a6bb7807cb6716d9230039",
+    "red_test_commit": "a6879840d7c1bcc54e9024de7602c9a194117f42",
+    "pr": 132,
+    "prior_ci": "40986941864 failed at missing cycle history before Lua tests; NOT counted as RED regression"
+  },
+  "next_action": "Run native Lua canonical HUD regression at RED head with required immutable C history, then smallest source GREEN and separate append-only history; independent reviewer only."
+}
