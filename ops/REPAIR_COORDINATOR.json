@@ -163,30 +163,30 @@
     }
   ],
   "approval_packet": {
-    "approval_text": "",
-    "automatic_merge_authorized": true,
-    "decision_owner": "ASSISTANT",
+    "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
     "items": [
       {
+        "number": 136,
+        "title": "[TWF system-review] Fail closed on idle holder/provider start chronology conflict",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/136",
+        "head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41011391749",
+        "summary": "同一run UUIDでもclaimがprovider開始前ならINDETERMINATE。6行/+551bytes、13新規回帰、833検査合格。取得権限・実通知・A12実証は付与しない。",
         "changed_files": [
-          "history/C00149_recovery_metrics_main_red.json",
-          "history/C00150_recovery_metrics_source_green.json",
-          "tests/test_system_throughput_metrics.py",
-          "tools/system_throughput_metrics.py"
+          "tools/system_idle_health.py",
+          "history/C00153_idle_holder_chronology_red.json",
+          "history/C00154_idle_holder_chronology_green.json",
+          "tests/test_system_idle_claim_chronology.py"
         ],
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40999462871",
-        "head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
-        "kind": "開発体制改善",
-        "number": 134,
-        "summary": "回収記録・通常解放・UNKNOWNを分離するread-only metrics。59新規検査（隔離案42再構成＋新17）、全820成功。実認証・回収・配達・高速化は未実証。",
-        "title": "[TWF system-review] Recovery-aware read-only throughput metrics (fresh Issue130 author)",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/134"
+        "kind": "開発体制改善"
       }
     ],
-    "observed_at": "2026-10-30T03:51:54Z",
+    "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
-    "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
-    "signature": "35541a4eecc31e74d08a3fd6ebd386a66a3485a4ef3a89d06edb21d7b43d185e"
+    "automatic_merge_authorized": true,
+    "observed_at": "2026-10-30T06:01:34Z",
+    "signature": "71fcba64f200c9e764933ddc47898c41f65d7ed5c04c2d24f6e07fff73cdc3d2",
+    "approval_text": ""
   },
   "approval_packet_history": [
     {
@@ -202,6 +202,36 @@
       },
       "ref": "70e310f19361ba2e2f96832b1fc192698aeabb6f",
       "scope": "Historical packet only; PR133 actually CLOSED_UNMERGED_QUARANTINE #6514300606"
+    },
+    {
+      "ref": "99f908e4bb0493364ab0631701d55a7492fc53c9",
+      "prior": {
+        "approval_text": "",
+        "automatic_merge_authorized": true,
+        "decision_owner": "ASSISTANT",
+        "items": [
+          {
+            "changed_files": [
+              "history/C00149_recovery_metrics_main_red.json",
+              "history/C00150_recovery_metrics_source_green.json",
+              "tests/test_system_throughput_metrics.py",
+              "tools/system_throughput_metrics.py"
+            ],
+            "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40999462871",
+            "head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
+            "kind": "開発体制改善",
+            "number": 134,
+            "summary": "回収記録・通常解放・UNKNOWNを分離するread-only metrics。59新規検査（隔離案42再構成＋新17）、全820成功。実認証・回収・配達・高速化は未実証。",
+            "title": "[TWF system-review] Recovery-aware read-only throughput metrics (fresh Issue130 author)",
+            "url": "https://github.com/kk051780/toy-wars-factory/pull/134"
+          }
+        ],
+        "observed_at": "2026-10-30T03:51:54Z",
+        "roblox_publish_authorized": false,
+        "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
+        "signature": "35541a4eecc31e74d08a3fd6ebd386a66a3485a4ef3a89d06edb21d7b43d185e"
+      },
+      "scope": "Prior PR134 source packet is historical; actual adoption now recorded by separate reviewer."
     }
   ],
   "authorized_tasks": {
@@ -2527,16 +2557,16 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_system_review": {
-    "ci": 40999462871,
-    "claim_commit": "70e310f19361ba2e2f96832b1fc192698aeabb6f",
-    "epoch": 269,
-    "head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
-    "pr": 134,
-    "recorded_at": "2026-10-30T03:52:47Z",
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "run_id": "b0642945-e128-8323-9d82-d2a8b335dc8e",
+    "epoch": 275,
+    "claim_commit": "99f908e4bb0493364ab0631701d55a7492fc53c9",
+    "pr": 136,
+    "head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
+    "ci": 41011391749,
+    "result": "IDLE_HOLDER_PRESTART_CLASSIFICATION_REPAIR_833_GREEN_WAIT_INDEPENDENT_REVIEW",
     "report_path": "ops/SYSTEM_REVIEW_LATEST.json",
-    "result": "FRESH_RECOVERY_METRICS_820_GREEN_WAIT_INDEPENDENT_REVIEW",
-    "run_id": "f1661ecf-7000-8333-a3a6-0d42dda44160",
-    "task_id": "6add445e4138819197d9cf2b1a02534d"
+    "recorded_at": "2026-10-30T06:03:01Z"
   },
   "latest_adoption_reconciliation": {
     "epoch": 253,
@@ -2833,6 +2863,22 @@
       },
       "ref": "70e310f19361ba2e2f96832b1fc192698aeabb6f",
       "scope": "PR133 author provenance quarantined by independent reviewer; not current acceptance"
+    },
+    {
+      "ref": "99f908e4bb0493364ab0631701d55a7492fc53c9",
+      "prior": {
+        "ci": 40999462871,
+        "claim_commit": "70e310f19361ba2e2f96832b1fc192698aeabb6f",
+        "epoch": 269,
+        "head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
+        "pr": 134,
+        "recorded_at": "2026-10-30T03:52:47Z",
+        "report_path": "ops/SYSTEM_REVIEW_LATEST.json",
+        "result": "FRESH_RECOVERY_METRICS_820_GREEN_WAIT_INDEPENDENT_REVIEW",
+        "run_id": "f1661ecf-7000-8333-a3a6-0d42dda44160",
+        "task_id": "6add445e4138819197d9cf2b1a02534d"
+      },
+      "scope": "Historical PR134 source report, independently integrated before this new distinct Issue114 repair."
     }
   ],
   "task_id": "6adbf0d6a7d881918ce181dff2468867"

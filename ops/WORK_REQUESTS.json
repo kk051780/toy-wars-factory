@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-30T05:00:19.525Z",
+  "observed_at": "2026-10-30T06:03:01Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4160,6 +4160,83 @@
         "old_upgrade_hud_tests": 3,
         "status_only_descendant_verified": true
       }
+    },
+    {
+      "id": "pr136_idle_holder_chronology_registered_review_20261030",
+      "kind": "REGISTERED_META_SOURCE_REVIEW",
+      "status": "REQUESTED_INDEPENDENT_REVIEW",
+      "priority": "P1",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 136,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/136",
+      "head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
+      "branch": "auto/twf-system-review-b0642945-e128-8323-9d82-d2a8b335dc8e",
+      "base_main_sha": "e55ee17606b03ad997f752944eae6ad91e7651dc",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "b0642945-e128-8323-9d82-d2a8b335dc8e",
+      "created_at": "2026-10-30T06:01:34Z",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "99f908e4bb0493364ab0631701d55a7492fc53c9",
+        "owner_run_id": "b0642945-e128-8323-9d82-d2a8b335dc8e",
+        "epoch": 275
+      },
+      "ci": {
+        "id": 41011391749,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41011391749",
+        "head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
+        "base": "e55ee17606b03ad997f752944eae6ad91e7651dc",
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "python_tests": 833,
+        "new_tests": 13,
+        "accepted_baseline_tests": 820,
+        "jobs": [
+          {
+            "id": 123917841796,
+            "name": "compile_hold",
+            "head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 123917842058,
+            "name": "offline",
+            "head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "scope": "PASS_TRUSTED_BASE",
+        "claim": "PASS_IMMUTABLE_COORDINATOR_CLAIMS",
+        "actual_log": [
+          "2026-10-30T05:58:52.1016034Z PASS: system review scope",
+          "2026-10-30T05:58:52.4709538Z PASS: repair coordination; 2 immutable coordinator claim(s) verified",
+          "2026-10-30T05:58:58.6649943Z Ran 833 tests in 4.379s",
+          "2026-10-30T05:58:58.6650346Z OK"
+        ]
+      },
+      "changed_files": [
+        "tools/system_idle_health.py",
+        "history/C00153_idle_holder_chronology_red.json",
+        "history/C00154_idle_holder_chronology_green.json",
+        "tests/test_system_idle_claim_chronology.py"
+      ],
+      "request": "New registered REVIEWER independently verify exactHEAD833GREEN and833/9failRED, all820 accepted tests intact, source6line+551byte idle classification correction. Check all3roles/1us/offset/equality/no-grants/expiry-preserved/unmatchedowner/dedup/recovery-unproven. Existing generic CONNECTOR_UNAVAILABLE is binding uncertainty, not asserted transport cause. No preclaim authorization/provider authenticity claimed. Review current author stable started_at and real terminal/release evidence independently; old latest_result is priorrun. Normal owner275 release receipt must be fetched after actual finally; no self-merge.",
+      "normal_author_release": {
+        "status": "PENDING_FINALLY_AT_RECORD_CREATION",
+        "receipt_path": "ops/lease_receipts/META_b0642945_epoch275.json",
+        "provider_terminal": "NOT_ATTESTED"
+      },
+      "review_required_for_head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
+      "source_review_status": "NOT_APPROVED",
+      "a12_verified": false,
+      "a13_verified": false,
+      "owner_reply_required": false,
+      "next_actor": "SEPARATE_REGISTERED_REVIEWER_NEW_RUN"
     }
   ]
 }
