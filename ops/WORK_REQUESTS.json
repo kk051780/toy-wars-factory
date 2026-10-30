@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-30T03:33:50.768Z",
+  "observed_at": "2026-10-30T03:52:47Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -3897,6 +3897,85 @@
         "a13_verified": false
       },
       "review_required_for_head": null
+    },
+    {
+      "id": "pr134_recovery_metrics_registered_review_20261030",
+      "kind": "REGISTERED_META_SOURCE_REVIEW",
+      "status": "REQUESTED_INDEPENDENT_REVIEW",
+      "priority": "P1",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "work_id": "TWF-SYSTEM-THROUGHPUT-V2-20261030",
+      "pr": 134,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/134",
+      "branch": "auto/twf-system-review-f1661ecf-7000-8333-a3a6-0d42dda44160",
+      "head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
+      "base_main_sha": "0e424593c75e8a65279dd251789aaa5834586263",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "f1661ecf-7000-8333-a3a6-0d42dda44160",
+      "created_at": "2026-10-30T03:51:54Z",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "70e310f19361ba2e2f96832b1fc192698aeabb6f",
+        "owner_run_id": "f1661ecf-7000-8333-a3a6-0d42dda44160",
+        "epoch": 269
+      },
+      "ci": {
+        "id": 40999462871,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40999462871",
+        "head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
+        "base": "0e424593c75e8a65279dd251789aaa5834586263",
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "python_tests": 820,
+        "new_on_main": 59,
+        "reused_untrusted_scenarios": 42,
+        "distinct_recovery_methods": 17,
+        "jobs": [
+          {
+            "id": 123880213603,
+            "name": "offline",
+            "head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 123880214030,
+            "name": "compile_hold",
+            "head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "actual_log": [
+          "2026-10-30T03:49:18.1904338Z PASS: system review scope",
+          "2026-10-30T03:49:18.5676700Z PASS: repair coordination; 2 immutable coordinator claim(s) verified",
+          "2026-10-30T03:49:27.7885677Z Ran 820 tests in 6.364s",
+          "2026-10-30T03:49:27.7886142Z OK"
+        ]
+      },
+      "changed_files": [
+        "history/C00149_recovery_metrics_main_red.json",
+        "history/C00150_recovery_metrics_source_green.json",
+        "tests/test_system_throughput_metrics.py",
+        "tools/system_throughput_metrics.py"
+      ],
+      "request": "Separate registered REVIEWER on new head: verify stable fresh provider start/claim chronology independently; former PR133 quarantine does not authenticate this author. Test recovery lookup exact-binding contract and positives/forged/UNKNOWN controls; host callback fixture is synthetic, no true provider auth/recovery or A12 proof. Check 59 new on main/17 distinct recovery methods, clean820/59RED then820GREEN twojobs, 298 accepted blobs preserved, prior35adoptions/56requests unaffected. Wait for actual author termination and independently read normal epoch269 release before normal integration. Never reuse old REVIEWER verdict.",
+      "normal_author_release": {
+        "status": "PENDING_NORMAL_FINALLY_AT_RECORD_CREATION",
+        "receipt_path": "ops/lease_receipts/META_f1661ecf_epoch269.json",
+        "provider_terminal": "NOT_ATTESTED"
+      },
+      "review_required_for_head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
+      "prior_quarantined_pr": 133,
+      "prior_review_comment": 6514244342,
+      "prior_closure_comment": 6514300606,
+      "a12_verified": false,
+      "a13_verified": false,
+      "owner_reply_required": false,
+      "next_actor": "SEPARATE_REGISTERED_REVIEWER_NEW_RUN"
     }
   ]
 }

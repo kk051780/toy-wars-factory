@@ -163,14 +163,30 @@
     }
   ],
   "approval_packet": {
-    "approval_text": "",
-    "automatic_merge_authorized": true,
-    "decision_owner": "ASSISTANT",
-    "items": [],
-    "observed_at": "2026-10-30T03:08:53Z",
-    "roblox_publish_authorized": false,
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
-    "signature": "79df37ffdef59e43f1433997821573891ef927ce5cfd232906438d573bc42387"
+    "items": [
+      {
+        "number": 134,
+        "title": "[TWF system-review] Recovery-aware read-only throughput metrics (fresh Issue130 author)",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/134",
+        "head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40999462871",
+        "summary": "回収記録・通常解放・UNKNOWNを分離するread-only metrics。59新規検査（隔離案42再構成＋新17）、全820成功。実認証・回収・配達・高速化は未実証。",
+        "changed_files": [
+          "history/C00149_recovery_metrics_main_red.json",
+          "history/C00150_recovery_metrics_source_green.json",
+          "tests/test_system_throughput_metrics.py",
+          "tools/system_throughput_metrics.py"
+        ],
+        "kind": "開発体制改善"
+      }
+    ],
+    "decision_owner": "ASSISTANT",
+    "roblox_publish_authorized": false,
+    "automatic_merge_authorized": true,
+    "observed_at": "2026-10-30T03:51:54Z",
+    "signature": "35541a4eecc31e74d08a3fd6ebd386a66a3485a4ef3a89d06edb21d7b43d185e",
+    "approval_text": ""
   },
   "authorized_tasks": {
     "META": "6add445e4138819197d9cf2b1a02534d",
@@ -2337,25 +2353,16 @@
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_system_review": {
-    "ci": 40995154590,
-    "claim_commit": "8c89fc2c26b5dc536c36a528b333034353a79af0",
-    "epoch": 266,
-    "head": "fc80010c74bb2b92c88706710671453d277c33cb",
-    "pr": 133,
-    "recorded_at": "2026-10-30T03:10:35Z",
-    "reference_progress": {
-      "automation": 83.1,
-      "automation_delta": 0.2,
-      "event": "PULSE-20261030-PR133-THROUGHPUT-METRICS-GREEN-001",
-      "game": 40.5,
-      "game_delta": 0,
-      "prior": 6513545920,
-      "pulse": 6513987120
-    },
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "run_id": "f1661ecf-7000-8333-a3a6-0d42dda44160",
+    "epoch": 269,
+    "claim_commit": "70e310f19361ba2e2f96832b1fc192698aeabb6f",
+    "pr": 134,
+    "head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
+    "ci": 40999462871,
+    "result": "FRESH_RECOVERY_METRICS_820_GREEN_WAIT_INDEPENDENT_REVIEW",
     "report_path": "ops/SYSTEM_REVIEW_LATEST.json",
-    "result": "NEW_READ_ONLY_THROUGHPUT_SOURCE_GREEN_WAIT_INDEPENDENT_REVIEW",
-    "run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
-    "task_id": "6add445e4138819197d9cf2b1a02534d"
+    "recorded_at": "2026-10-30T03:52:47Z"
   },
   "latest_adoption_reconciliation": {
     "epoch": 253,
@@ -2627,7 +2634,48 @@
       },
       "ref": "8c89fc2c26b5dc536c36a528b333034353a79af0",
       "scope": "Historical PR131 closed/quarantined; not reused for new author."
+    },
+    {
+      "ref": "70e310f19361ba2e2f96832b1fc192698aeabb6f",
+      "prior": {
+        "ci": 40995154590,
+        "claim_commit": "8c89fc2c26b5dc536c36a528b333034353a79af0",
+        "epoch": 266,
+        "head": "fc80010c74bb2b92c88706710671453d277c33cb",
+        "pr": 133,
+        "recorded_at": "2026-10-30T03:10:35Z",
+        "reference_progress": {
+          "automation": 83.1,
+          "automation_delta": 0.2,
+          "event": "PULSE-20261030-PR133-THROUGHPUT-METRICS-GREEN-001",
+          "game": 40.5,
+          "game_delta": 0,
+          "prior": 6513545920,
+          "pulse": 6513987120
+        },
+        "report_path": "ops/SYSTEM_REVIEW_LATEST.json",
+        "result": "NEW_READ_ONLY_THROUGHPUT_SOURCE_GREEN_WAIT_INDEPENDENT_REVIEW",
+        "run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+        "task_id": "6add445e4138819197d9cf2b1a02534d"
+      },
+      "scope": "PR133 author provenance quarantined by independent reviewer; not current acceptance"
     }
   ],
-  "task_id": "6adbf0d6a7d881918ce181dff2468867"
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "approval_packet_history": [
+    {
+      "ref": "70e310f19361ba2e2f96832b1fc192698aeabb6f",
+      "prior": {
+        "approval_text": "",
+        "automatic_merge_authorized": true,
+        "decision_owner": "ASSISTANT",
+        "items": [],
+        "observed_at": "2026-10-30T03:08:53Z",
+        "roblox_publish_authorized": false,
+        "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
+        "signature": "79df37ffdef59e43f1433997821573891ef927ce5cfd232906438d573bc42387"
+      },
+      "scope": "Historical packet only; PR133 actually CLOSED_UNMERGED_QUARANTINE #6514300606"
+    }
+  ]
 }

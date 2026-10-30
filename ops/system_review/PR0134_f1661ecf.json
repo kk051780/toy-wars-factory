@@ -1,0 +1,136 @@
+{
+  "schema": 1,
+  "observed_at": "2026-10-30T03:52:47Z",
+  "repository": "kk051780/toy-wars-factory",
+  "actor": {
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "run_id": "f1661ecf-7000-8333-a3a6-0d42dda44160",
+    "epoch": 269,
+    "provider_started_at": "2026-10-30T03:35:41.173905Z",
+    "provider_status_at_record": "in_progress",
+    "provider_origin": "NOT_VERIFIED_BY_PEEK",
+    "immutable_attempt_history": "NOT_ATTESTED"
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "70e310f19361ba2e2f96832b1fc192698aeabb6f",
+    "owner_run_id": "f1661ecf-7000-8333-a3a6-0d42dda44160",
+    "epoch": 269,
+    "acquired_at": "2026-10-30T03:41:40Z",
+    "expires_at": "2026-10-30T04:11:40+00:00",
+    "normal_release": "PENDING_FINALLY_AT_RECORD_CREATION",
+    "release_receipt_path": "ops/lease_receipts/META_f1661ecf_epoch269.json",
+    "provider_terminal": "NOT_ATTESTED"
+  },
+  "pr": 134,
+  "head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
+  "red": {
+    "id": 40999228060,
+    "head": "24f97b2cab1ca8d155ed6a8f01281fe08c5c078e",
+    "tests": 820,
+    "failures": 59,
+    "errors": 0,
+    "compile_hold": "success"
+  },
+  "ci": {
+    "id": 40999462871,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40999462871",
+    "head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
+    "base": "0e424593c75e8a65279dd251789aaa5834586263",
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "python_tests": 820,
+    "new_on_main": 59,
+    "reused_untrusted_scenarios": 42,
+    "distinct_recovery_methods": 17,
+    "jobs": [
+      {
+        "id": 123880213603,
+        "name": "offline",
+        "head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 123880214030,
+        "name": "compile_hold",
+        "head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "actual_log": [
+      "2026-10-30T03:49:18.1904338Z PASS: system review scope",
+      "2026-10-30T03:49:18.5676700Z PASS: repair coordination; 2 immutable coordinator claim(s) verified",
+      "2026-10-30T03:49:27.7885677Z Ran 820 tests in 6.364s",
+      "2026-10-30T03:49:27.7886142Z OK"
+    ]
+  },
+  "preservation": {
+    "baseline_blobs": 298,
+    "preserved": 298,
+    "additions": 4,
+    "modified": 0,
+    "deleted": 0,
+    "tests_same_red_green_blob": "4d19db934b4b1bd131ede4f19a0fa78e06d9499b",
+    "additions_list": [
+      {
+        "path": "history/C00149_recovery_metrics_main_red.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e48a5cdf8716275b6d3222f3e96a380fccff5889",
+        "size": 1836,
+        "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/blobs/e48a5cdf8716275b6d3222f3e96a380fccff5889"
+      },
+      {
+        "path": "history/C00150_recovery_metrics_source_green.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "27afc64a688244b773666ed0daad6511399441aa",
+        "size": 5575,
+        "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/blobs/27afc64a688244b773666ed0daad6511399441aa"
+      },
+      {
+        "path": "tests/test_system_throughput_metrics.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4d19db934b4b1bd131ede4f19a0fa78e06d9499b",
+        "size": 21161,
+        "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/blobs/4d19db934b4b1bd131ede4f19a0fa78e06d9499b"
+      },
+      {
+        "path": "tools/system_throughput_metrics.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "58472794440d4cb6ba9e499fda2fdb60749b2d50",
+        "size": 18923,
+        "url": "https://api.github.com/repos/kk051780/toy-wars-factory/git/blobs/58472794440d4cb6ba9e499fda2fdb60749b2d50"
+      }
+    ]
+  },
+  "source_metrics": {
+    "tools/system_throughput_metrics.py": {
+      "bytes": 18923,
+      "lines": 372,
+      "blob": "58472794440d4cb6ba9e499fda2fdb60749b2d50",
+      "sha256": "af62361260f805c9d896eb8e662181fa036347a51fb3c7b28a6e946413696afa"
+    },
+    "tests/test_system_throughput_metrics.py": {
+      "bytes": 21161,
+      "lines": 368,
+      "blob": "4d19db934b4b1bd131ede4f19a0fa78e06d9499b",
+      "sha256": "ec0dee65771fbb814115e96d23b5af1fa1371d8cd5b71ed3a2ea56e65b228708"
+    }
+  },
+  "prior_requests_preserved": 56,
+  "adoption_entries_preserved": 35,
+  "trigger_origin": "NOT_VERIFIED",
+  "provider_attempt_history": "NOT_ATTESTED",
+  "recovery_positive": "SYNTHETIC_READ_LOOKUP_UNIT_ONLY",
+  "actual_recovery_lookup": "NOT_EXECUTED",
+  "actual_delivery": "NOT_VERIFIED",
+  "A12": false,
+  "A13": false,
+  "normal_release": "PENDING_AT_RECORD_CREATION_SEPARATE_RECEIPT_REQUIRED"
+}
