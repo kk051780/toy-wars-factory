@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-30T04:27:19.023Z",
+  "observed_at": "2026-10-30T04:53:35.047Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4064,6 +4064,65 @@
       "observed_at": "2026-10-30T04:27:19.023Z",
       "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/135#issuecomment-6514965243",
       "note": "Not an author-created work request. Main changed by PR134; fresh source-base QA required. No merge or approval."
+    },
+    {
+      "id": "pr135_author_rehandoff_main9a5742_epoch273_20261030",
+      "kind": "REGISTERED_WORKER_GAME_SOURCE_REVIEW",
+      "priority": "P1",
+      "status": "OPEN_PENDING_EXACT_HEAD_CI",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 135,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/135",
+      "branch": "auto/twf-game-repair-5b03c57e-5c94-8333-84d6-43fc482e6561",
+      "head": "59673ab3dc63291ade9494c7ce24310ba615be5e",
+      "base_main_sha": "9a57420b96060d7cd0e0991a46edcc1aaa0f0070",
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "5b03c57e-5c94-8333-84d6-43fc482e6561",
+      "author_epoch": 270,
+      "original_source_claim": "c3f17fd69020775974131b89e7339fd0b1900290",
+      "author_handoff": {
+        "task_id": "6adbf0d6a7d881918ce181dff2468867",
+        "run_id": "aef0ecc7-1998-8321-8dca-3d232239e780",
+        "epoch": 273,
+        "claim_commit": "cdc056a50029eebbe18d7cc85544afdc2e72e712",
+        "request_recorded_at": "2026-10-30T04:53:35.047Z",
+        "kind": "PRIOR_GAME_AUTHOR_NEXT_REGISTERED_RUN_HANDOFF",
+        "original_head": "d011d3af2c3fd6e00a07e871bdd0cf7b399af8c7",
+        "new_head": "59673ab3dc63291ade9494c7ce24310ba615be5e",
+        "main_merge_parent": "9a57420b96060d7cd0e0991a46edcc1aaa0f0070",
+        "branch_merge_strategy": "NONFORCED_TWO_PARENT_MERGE_KEEP_MAIN_TREE_PLUS_FOUR_ORIGINAL_PR_BLOBS",
+        "source_delta_this_run_bytes": 0,
+        "source_delta_this_run_lines": 0
+      },
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "cdc056a50029eebbe18d7cc85544afdc2e72e712",
+        "owner_run_id": "aef0ecc7-1998-8321-8dca-3d232239e780",
+        "epoch": 273
+      },
+      "changed_files": [
+        "history/C00151_selected_toy_waiting_hint_red.json",
+        "history/C00152_selected_toy_waiting_hint_green.json",
+        "src/ToyWarsHUD.client.lua",
+        "tests/auto/selected_toy_waiting_hint_spec.lua"
+      ],
+      "ci": {
+        "status": "PENDING_NEW_HEAD",
+        "head": "59673ab3dc63291ade9494c7ce24310ba615be5e",
+        "previous_ci": {
+          "id": 41001187168,
+          "head": "d011d3af2c3fd6e00a07e871bdd0cf7b399af8c7",
+          "base": "0e424593c75e8a65279dd251789aaa5834586263",
+          "conclusion": "success",
+          "not_reusable_for_current_main": true
+        }
+      },
+      "review_required_for_head": "59673ab3dc63291ade9494c7ce24310ba615be5e",
+      "owner_reply_required": false,
+      "request": "Independent registered REVIEWER: verify original WORKER run 5b03c57e/epoch270 source author, current registered same-task repair run aef0ecc7-1998-8321-8dca-3d232239e780/epoch273 legal branch-specific claim and own release, exact branch/head 59673ab3dc63291ade9494c7ce24310ba615be5e merge parents original PR135 and accepted main 9a57420b96060d7cd0e0991a46edcc1aaa0f0070, compare against main exactly four original allowed game files and preserved C00151/C00152. New GitHub pull_request offline+compile_hold for this head/base must be success before approval; expected accepted Python 820 plus new native Lua5/5 and old upgrade Lua3/3, not yet verified. No self-merge, no engine/mobile/player outcome; all holds preserved.",
+      "next_actor": "REVIEWER_AFTER_NEW_EXACT_HEAD_CI_AND_AUTHOR_RELEASE"
     }
   ]
 }
