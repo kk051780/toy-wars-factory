@@ -1237,6 +1237,24 @@
       "status_only_descendant_verified": true,
       "a12_verified": false,
       "a13_verified": false
+    },
+    "137": {
+      "pr": 137,
+      "head": "7e3b22efbfd79220360e1e9c5e1b02f7cc417c02",
+      "merge_sha": "55bccfc5456ca1295f352bb365eae6ed664272cb",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 41016196308,
+      "handoff": 41016196306,
+      "main_after_handoff": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "reviewer_epoch": 279,
+      "reviewer_run_id": "a4549b49-48a4-832a-901e-f434b894242e",
+      "python_tests": 833,
+      "new_native_lua": 7,
+      "existing_wait_lua": 5,
+      "existing_upgrade_lua": 3,
+      "status_only_descendant_verified": true,
+      "a12_verified": false,
+      "a13_verified": false
     }
   },
   "integration_review_history": [
@@ -2605,6 +2623,80 @@
       },
       "postmerge_verified_at": "2026-10-30T06:19:04.252Z",
       "postmerge_receipt_url": "https://github.com/kk051780/toy-wars-factory/pull/136#issuecomment-6516375092"
+    },
+    "137": {
+      "schema": 1,
+      "pr": 137,
+      "head": "7e3b22efbfd79220360e1e9c5e1b02f7cc417c02",
+      "base_main_sha": "d0c1bf60d733a0db51d12c0295805d7741ce62eb",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "a4549b49-48a4-832a-901e-f434b894242e",
+      "reviewer_claim": "d703ce3a2e06976aef62510fbbcc179575b9cf21",
+      "lease_epoch": 279,
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "4844c90e-ef6c-8324-b867-c89b833e2ed9",
+      "author_epoch": 278,
+      "author_claim": "9cde74db985ddff9f5f0d507a6d2c6cbfc0ff736",
+      "author_release_ref": "1102bbd229559e4c6e1fcc790adfedd54456af1e",
+      "reviewed_at": "2026-10-30T06:47:30Z",
+      "verdict": "APPROVE",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "blockers": [],
+      "checks": {
+        "scope": true,
+        "regression": true,
+        "source_ledger": true,
+        "protected_controls": true,
+        "behavior": true
+      },
+      "ci": {
+        "id": 41015164630,
+        "attempt": 1,
+        "head": "7e3b22efbfd79220360e1e9c5e1b02f7cc417c02",
+        "conclusion": "success",
+        "status": "completed",
+        "python_tests": 833,
+        "new_native_lua": 7,
+        "old_selected_wait_lua": 5,
+        "old_upgrade_lua": 3,
+        "jobs": {
+          "offline": "success",
+          "compile_hold": "success"
+        }
+      },
+      "red": {
+        "id": 41014897762,
+        "head": "e7710663ea9b818d59c329f80ff5e5c354e9ecbd",
+        "new_native_passed": 2,
+        "new_native_failed": 5
+      },
+      "changed_files": [
+        "history/C00155_field_capacity_hud_red.json",
+        "history/C00156_field_capacity_hud_green.json",
+        "src/ToyWarsHUD.client.lua",
+        "tests/auto/field_capacity_hud_spec.lua"
+      ],
+      "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/137#issuecomment-6516765984",
+      "native_github_review_submission": false,
+      "merge_sha": "55bccfc5456ca1295f352bb365eae6ed664272cb",
+      "main_qa": 41016196308,
+      "handoff": 41016196306,
+      "main_after_handoff": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "postmerge_qa_jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "handoff_jobs": {
+        "update": "success"
+      },
+      "status_only_descendant_verified": true,
+      "postmerge_verified_at": "2026-10-30T06:49:24.269Z",
+      "limitations": [
+        "Lua mocks only, not Roblox Studio or mobile proof",
+        "No real player engagement or retention proof",
+        "A12/A13 and user notification delivery NOT_VERIFIED",
+        "Provider original-attempt signature NOT_ATTESTED"
+      ]
     }
   },
   "last_approval_report": {
@@ -2634,14 +2726,14 @@
     }
   },
   "last_completed_integration": {
-    "at": "2026-10-30T06:19:04.252Z",
-    "epoch": 276,
-    "pr": 136,
-    "head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
-    "merge_sha": "a1e54b5ee1f272ee43bdb321defe867c254e0268",
-    "main_qa": 41013241881,
-    "handoff": 41013241727,
-    "reviewer_run_id": "6f544d8f-8718-832b-afcf-743abcf7d634"
+    "at": "2026-10-30T06:49:24.269Z",
+    "epoch": 279,
+    "pr": 137,
+    "head": "7e3b22efbfd79220360e1e9c5e1b02f7cc417c02",
+    "merge_sha": "55bccfc5456ca1295f352bb365eae6ed664272cb",
+    "main_qa": 41016196308,
+    "handoff": 41016196306,
+    "reviewer_run_id": "a4549b49-48a4-832a-901e-f434b894242e"
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_system_review": {

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-30T06:39:05.613Z",
+  "observed_at": "2026-10-30T06:49:24.269Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4268,7 +4268,7 @@
       "id": "pr137_field_capacity_hud_worker_epoch278_20261030",
       "kind": "REGISTERED_WORKER_GAME_SOURCE_REVIEW",
       "priority": "P1",
-      "status": "READY_FOR_INDEPENDENT_REVIEW",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
@@ -4323,8 +4323,16 @@
       "review_required_for_head": "7e3b22efbfd79220360e1e9c5e1b02f7cc417c02",
       "owner_reply_required": false,
       "request": "Independent registered REVIEWER: check exact head/base, actual epoch278 owner claim and release, compare 4 allowed files, C00155/C00156 and RED/GREEN evidence; review only, do not attribute native Lua mocks to Roblox device or player outcomes. Source is HUD-only +264bytes/+3lines. No extra buttons, events, server economy or config. Must verify current main, offline+compile_hold exact head and perform independent merge/main QA/handoff. Preserve protected PR98/110/122, Gemini SEVERE_HOLD and publish/spend HOLD.",
-      "next_actor": "INDEPENDENT_REGISTERED_REVIEWER_AFTER_AUTHOR_OWN_RELEASE",
-      "updated_at": "2026-10-30T06:39:05.613Z"
+      "next_actor": "REGISTERED_WORKER_NEW_DISTINCT_GAME_CANDIDATE",
+      "updated_at": "2026-10-30T06:49:24.269Z",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "a4549b49-48a4-832a-901e-f434b894242e",
+      "reviewer_epoch": 279,
+      "review_comment_url": "https://github.com/kk051780/toy-wars-factory/pull/137#issuecomment-6516765984",
+      "merge_sha": "55bccfc5456ca1295f352bb365eae6ed664272cb",
+      "main_qa": 41016196308,
+      "handoff": 41016196306,
+      "main_after_handoff": "e5deff4d5681bca4823a3da0f848e01bc089ae6e"
     }
   ]
 }
