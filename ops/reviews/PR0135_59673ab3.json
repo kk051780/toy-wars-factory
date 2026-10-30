@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "pr": 135,
+  "head": "59673ab3dc63291ade9494c7ce24310ba615be5e",
+  "base_main_sha": "9a57420b96060d7cd0e0991a46edcc1aaa0f0070",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "9441c051-1f78-8328-836f-fd08b1b5b840",
+  "lease_epoch": 274,
+  "reviewer_claim": "5eaaefbc236959194123b295ada7709808f077e",
+  "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "author_run_id": "5b03c57e-5c94-8333-84d6-43fc482e6561",
+  "author_epoch": 270,
+  "author_claim": "c3f17fd69020775974131b89e7339fd0b1900290",
+  "rehandoff_run_id": "aef0ecc7-1998-8321-8dca-3d232239e780",
+  "rehandoff_epoch": 273,
+  "rehandoff_claim": "cdc056a50029eebbe18d7cc85544afdc2e72e712",
+  "author_released_ref": "8497f0fe3020fd1ee5a7fd8c60fe0ae22fe5acae",
+  "verdict": "APPROVE",
+  "reviewed_at": "2026-10-30T04:58:47.891Z",
+  "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/135#issuecomment-6515350577",
+  "native_github_review_submission": false,
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "blockers": [],
+  "ci": {
+    "id": 41005352714,
+    "head": "59673ab3dc63291ade9494c7ce24310ba615be5e",
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 820,
+    "new_native_lua": 5,
+    "existing_upgrade_lua": 3
+  },
+  "red": {
+    "id": 41001043637,
+    "failed_new_lua": 3
+  },
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/selected_toy_waiting_hint_spec.lua",
+    "history/C00151_selected_toy_waiting_hint_red.json",
+    "history/C00152_selected_toy_waiting_hint_green.json"
+  ],
+  "status": "REVIEW_APPROVED_PENDING_EXPECTED_HEAD_MERGE",
+  "limitations": [
+    "Lua mock not Roblox engine",
+    "Phone rendering and real player impact NOT_VERIFIED",
+    "A12/A13 and user push delivery NOT_VERIFIED"
+  ]
+}

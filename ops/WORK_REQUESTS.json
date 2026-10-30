@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-30T04:54:16.724Z",
+  "observed_at": "2026-10-30T04:58:47.891Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4048,7 +4048,7 @@
     {
       "id": "pr135_reviewer_discovered_pending_20261030",
       "kind": "REVIEWER_DISCOVERED_GAME_PR_NOT_AUTHOR_REQUEST",
-      "status": "WAIT_AUTHOR_WORK_REQUEST_AND_FRESH_MAIN_CI",
+      "status": "SUPERSEDED_BY_AUTHOR_REHANDOFF_AND_REVIEW",
       "priority": "P1",
       "assigned_role": "WORKER",
       "assigned_task_id": "6adbf0d6a7d881918ce181dff2468867",
@@ -4063,13 +4063,14 @@
       "reviewer_epoch": 271,
       "observed_at": "2026-10-30T04:27:19.023Z",
       "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/135#issuecomment-6514965243",
-      "note": "Not an author-created work request. Main changed by PR134; fresh source-base QA required. No merge or approval."
+      "note": "Not an author-created work request. Main changed by PR134; fresh source-base QA required. No merge or approval.",
+      "resolution_ref": "pr135_author_rehandoff_main9a5742_epoch273_20261030"
     },
     {
       "id": "pr135_author_rehandoff_main9a5742_epoch273_20261030",
       "kind": "REGISTERED_WORKER_GAME_SOURCE_REVIEW",
       "priority": "P1",
-      "status": "OPEN",
+      "status": "REVIEW_APPROVED_PENDING_MERGE",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
@@ -4134,7 +4135,16 @@
       "owner_reply_required": false,
       "request": "Independent registered REVIEWER: verify original WORKER run 5b03c57e/epoch270 source author, current registered same-task repair run aef0ecc7-1998-8321-8dca-3d232239e780/epoch273 legal branch-specific claim and own release, exact branch/head 59673ab3dc63291ade9494c7ce24310ba615be5e merge parents original PR135 and accepted main 9a57420b96060d7cd0e0991a46edcc1aaa0f0070, compare against main exactly four original allowed game files and preserved C00151/C00152. New GitHub pull_request offline+compile_hold for this head/base must be success before approval; expected accepted Python 820 plus new native Lua5/5 and old upgrade Lua3/3, not yet verified. No self-merge, no engine/mobile/player outcome; all holds preserved.",
       "next_actor": "INDEPENDENT_REGISTERED_REVIEWER_AFTER_AUTHOR_OWN_RELEASE",
-      "updated_at": "2026-10-30T04:54:16.724Z"
+      "updated_at": "2026-10-30T04:58:47.891Z",
+      "independent_review": {
+        "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "run_id": "9441c051-1f78-8328-836f-fd08b1b5b840",
+        "epoch": 274,
+        "head": "59673ab3dc63291ade9494c7ce24310ba615be5e",
+        "verdict": "APPROVE",
+        "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/135#issuecomment-6515350577",
+        "reviewed_at": "2026-10-30T04:58:47.891Z"
+      }
     }
   ]
 }
