@@ -243,6 +243,61 @@
         "single_parent": true
       },
       "schema": 1
+    },
+    {
+      "schema": 1,
+      "case_id": "A14_WINDOWS_CONTROLLEREPOCH296_ORPHAN_20261031",
+      "operation": "OWNER_DELEGATED_ONE_SHOT_ADMINISTRATIVE_REVOCATION",
+      "previous_epoch": 296,
+      "next_epoch": 297,
+      "previous_holder": {
+        "kind": "CONTROLLER",
+        "owner_id": "a14c-windows-20261031-0833-6b83d2",
+        "task_id": null,
+        "epoch": 296,
+        "acquired_at": "2026-10-30T22:39:14.512Z",
+        "expires_at": "2026-10-30T23:04:14.512Z",
+        "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "work_branch": "controller/a14-windows-studio-discovery-6b83d2",
+        "origin": "controller"
+      },
+      "observed_ref": "5129990764af143603cc7775b9be429bf4e405b5",
+      "observed_state_blob": "4982f3f94c0c6aa061b58e0f1ed6dfd78253bbf1",
+      "recorded_at": "2026-10-30T23:30:52Z",
+      "authorization": {
+        "type": "ONE_SHOT_OWNER_DELEGATED_OPERATOR_EXCEPTION_NOT_NORMAL_RECOVERY",
+        "source": "Owner repeated 次 after reported foreign epoch296 block; standing 2026-10-25 delegated development/operational decision authority and earlier scoped exception precedents",
+        "scope": "Fence only unchanged expired manual CONTROLLER epoch296 to unblock registered independent tasks. No PR or main/source edit, no merge, no external service activation, no spend or Roblox publication."
+      },
+      "evidence": {
+        "source_pr": 150,
+        "source_pr_head": "26eb8b707df6725763f85948c587264225446681",
+        "source_branch": "controller/a14-windows-studio-discovery-6b83d2",
+        "latest_source_branch_head": "26eb8b707df6725763f85948c587264225446681",
+        "hosted_windows_run_id": 41139966667,
+        "hosted_windows_run_status": "completed",
+        "hosted_windows_run_conclusion": "success",
+        "source_artifact_engine_verified": false,
+        "holder_expired_at": "2026-10-30T23:04:14.512Z",
+        "observed_after_expiry": true,
+        "registered_service_completion_proof": "NOT_AVAILABLE_FOR_MANUAL_CONTROLLER",
+        "original_manual_actor_terminal": "UNVERIFIED",
+        "origin_of_permitted_exception": "OWNER_DELEGATED_NOT_SERVICE_ATTESTED",
+        "observed_main_head": "e5deff4d5681bca4823a3da0f848e01bc089ae6e"
+      },
+      "safety": {
+        "old_epoch_fenced": true,
+        "unrelated_state_preserved": true,
+        "last_completed_unchanged": true,
+        "coordinator_only": true,
+        "single_parent": true,
+        "fast_forward_no_force": true,
+        "postwrite_readback_required": true,
+        "independent_posthoc_review_required": true,
+        "no_source_write": true,
+        "no_author_merge": true,
+        "no_automatic_claim": true
+      }
     }
   ],
   "approval_packet": {
@@ -1138,18 +1193,8 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 296,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "a14c-windows-20261031-0833-6b83d2",
-    "task_id": null,
-    "epoch": 296,
-    "acquired_at": "2026-10-30T22:39:14.512Z",
-    "expires_at": "2026-10-30T23:04:14.512Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/a14-windows-studio-discovery-6b83d2",
-    "origin": "controller"
-  },
+  "epoch": 297,
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
