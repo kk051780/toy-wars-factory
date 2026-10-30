@@ -89,7 +89,11 @@ def acquire(state, kind, owner_id, now, service_status=None, base_main_sha=None,
         # A dispatcher only requests a worker; the first worker atomically adopts
         # that ticket. Other manual requests cannot enqueue a second request.
         if kind == "WORKER" and holder["kind"] == "DISPATCH":
-            pass
+            # A manual ticket can be adopted only while its original 120-second
+            # lease remains live; expiry is never a takeover permission.
+            if at >= instant(holder["expires_at"]):
+                return {"action": "WAIT_DISPATCH_EXPIRED", "state": state,
+                        "write": False, "holder": deepcopy(holder)}
         elif holder["kind"] == kind and holder["owner_id"] == owner_id:
             action = "RESUME" if at < instant(holder["expires_at"]) else "WAIT_RECOVERY"
             return {"action": action, "state": state, "write": False}
