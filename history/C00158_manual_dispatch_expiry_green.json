@@ -1,0 +1,63 @@
+{
+  "id": "C00158",
+  "date": "2026-10-30",
+  "kind": "MANUAL_DISPATCH_EXPIRY_MINIMAL_GUARD_GREEN_CANDIDATE",
+  "issue": 57,
+  "owner_role": "MANUAL_CONTROLLER",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "c14f93b0f19ce1afbc22c47f138339de7e2edfb8",
+    "owner_run_id": "4a26aba5-3470-43d2-a557-74dcc5eba181",
+    "epoch": 281
+  },
+  "source_changes": [
+    {
+      "path": "tools/repair_control.py",
+      "before_blob": "aec1699605fc7754f808b7768ceb8e3ce4b74f29",
+      "after_blob": "cfc14a4730e2b6bccb40bbdf0c0e5932ac04ead3",
+      "before_chars": 21461,
+      "after_chars": 21792,
+      "delta_chars": 331
+    }
+  ],
+  "test_changes": [
+    {
+      "path": "tests/test_system_manual_dispatch_expiry.py",
+      "new_cases": 7
+    }
+  ],
+  "tests": {
+    "red": {
+      "head": "7c39be88eff00359d4e5671d7de28810ed0a5311",
+      "run_id": 41020327540,
+      "offline": "failure",
+      "compile_hold": "success",
+      "python_tests": 840,
+      "python_pass": 838,
+      "python_fail": 2,
+      "exact_failures": [
+        "test_exact_expiry_boundary_does_not_grant_writer",
+        "test_long_expired_ticket_never_becomes_worker_lease"
+      ],
+      "original_result": "ACQUIRE_INSTEAD_OF_WAIT_DISPATCH_EXPIRED"
+    },
+    "green": {
+      "status": "PENDING_CURRENT_HEAD_CI"
+    }
+  },
+  "accepted_regressions_modified": false,
+  "characters_touched": [],
+  "lua_source_changed": false,
+  "roblox_engine": "NOT_RUN",
+  "unattended_worker_adoption": "NOT_VERIFIED",
+  "separate_work_prompt_adoption_bug": "UNFIXED_PROTECTED_WORKER_PROMPT",
+  "independent_review": "REQUIRED_NO_SELF_MERGE",
+  "safety_holds": "PRESERVED",
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1186,
+    "lua_bytes": 52781
+  },
+  "source_baseline_bytes": 25726
+}
