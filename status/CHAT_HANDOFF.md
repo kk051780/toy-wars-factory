@@ -4,7 +4,7 @@
 
 ## 現在地
 - GitHub: https://github.com/kk051780/toy-wars-factory
-- 基準ソースコミット: 5f20d9f825cb34b5d7d63e9b75680e393105fd91
+- 基準ソースコミット: 59673ab3dc63291ade9494c7ce24310ba615be5e
 - ゲーム公開可否: HOLD_ENGINE_UNVERIFIED
 - 既存GitHub AIワークフロー: NOT_ACTIVE_AI_INFERENCE_UNVERIFIED
 - ChatGPT定期ゲーム修正: ENABLED_AUTHOR_FIRST_INDEPENDENT_MERGE_AND_MAIN_QA_VERIFIED
@@ -13,8 +13,8 @@
 - 協力: NOT_IMPLEMENTED
 
 ## サイズゲート（初回基準との差分）
-- ソース: 4 ファイル / 1176 行 / 52089 bytes
-- 基準差分: files 0, lines 513, bytes 26363
+- ソース: 4 ファイル / 1183 行 / 52517 bytes
+- 基準差分: files 0, lines 520, bytes 26791
 - サイズ増加は品質の証明ではない。合理的削減は問題ない。機能・テストの欠損は別途監査。
 
 ## キャラクター（見た目の実機検査ではない）
