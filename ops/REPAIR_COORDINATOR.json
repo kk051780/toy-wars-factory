@@ -1139,17 +1139,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 293,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "a14e8a10-4314-4114-b081-202610310712",
-    "task_id": null,
-    "epoch": 293,
-    "acquired_at": "2026-10-30T22:13:15.731Z",
-    "expires_at": "2026-10-30T22:36:15.731Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/github-native-xml-artifact-a14e8a10",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2794,26 +2784,31 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "a14bb962-6ce9-4839-b1a5-390fba4429a2",
-    "epoch": 292,
-    "released_at": "2026-10-30T22:08:21.238Z",
+    "owner_id": "a14e8a10-4314-4114-b081-202610310712",
+    "epoch": 293,
+    "released_at": "2026-10-30T22:18:59.824Z",
     "release_receipt": {
-      "kind": "OWN_CONTROLLER_NORMAL_RELEASE",
-      "claim_commit": "57e0b2d407ea482ec9ce66647579abbaff356727",
-      "source_pr": 146,
-      "base_pr": 144,
-      "source_head": "513279fb845554e019095d15a71eb4a7568fe8fd",
-      "base_head": "5c4694943c89e5a77fbac53bac9e1abc0138e03f",
-      "red_run_id": 41135563042,
-      "red_failures": 8,
-      "final_green_run_id": 41135967801,
-      "python_tests_passed": 863,
-      "offline": "success",
-      "compile_hold": "success",
+      "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
+      "repository": "kk051780/toy-wars-factory",
+      "owner_run_id": "a14e8a10-4314-4114-b081-202610310712",
+      "task_id": null,
+      "epoch": 293,
+      "claim_commit": "37d9c8385129cd45c6acac5e4b23c412937b69ef",
+      "parent": "37d9c8385129cd45c6acac5e4b23c412937b69ef",
+      "source_pr": 147,
+      "source_head": "6f27ba9e8ed76a7ee027043bd66c1764e73a853b",
+      "red_run_id": 41136879714,
+      "green_run_id": 41137070161,
+      "python_tests_passed": 856,
+      "action_artifact_id": 13015999142,
+      "artifact_digest": "sha256:2f662dad3e0fd81d71aaa52f34fcf1be56406cf6aecc5637b30f6de8bdac3b7b",
+      "github_artifact_download_verified": true,
+      "source_pins_4_of_4_verified": true,
+      "roblox_api_sent": false,
+      "engine_verified": false,
       "protected_independent_review": "PENDING",
-      "parent_pr_integration": "NOT_DONE",
-      "real_github_build": "NOT_RUN",
-      "roblox_engine_verified": false
+      "provider_terminal": "NOT_ATTESTED",
+      "postwrite_readback_required": true
     }
   },
   "last_completed_integration": {
