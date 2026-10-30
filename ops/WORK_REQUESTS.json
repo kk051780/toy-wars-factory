@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-30T07:58:23Z",
+  "observed_at": "2026-10-30T09:59:38Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4360,6 +4360,124 @@
       "repaired_blob": "2a216f8b3e227c76d8c7a97796b4d30862699482",
       "request": "Separate registered REVIEWER: independently GET immutable before/after blobs and one-file compare; verify exact39 history rows/all otherroot values unchanged, current PR137 Actions id/head/attempt/job binding and status-only main; confirm new owner284 finally release/readback before verdict. This is ops-only repair, not source acceptance/main merge/A12/A13; do not merge coordinator into main.",
       "owner_reply_required": false
+    },
+    {
+      "id": "pr142_integration_receipt_contract_registered_review_20261030",
+      "kind": "REGISTERED_META_SOURCE_REVIEW",
+      "status": "OPEN",
+      "priority": "P1",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "parent_issue": 138,
+      "canonical_issue": 123,
+      "work_id": "TWF-SYSTEM-INTEGRATION-RECEIPT-CONTRACT-20261030",
+      "pr": 142,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/142",
+      "branch": "auto/twf-system-review-25643826-354c-8327-a5a7-132a22972b34",
+      "head": "45c4c12303eed0decc088cd12db2a5636e649839",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "25643826-354c-8327-a5a7-132a22972b34",
+      "created_at": "2026-10-30T09:59:38Z",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "cae4694d483adb62dc77bedb375818cf6f5cc73b",
+        "owner_run_id": "25643826-354c-8327-a5a7-132a22972b34",
+        "epoch": 287
+      },
+      "changed_files": [
+        "history/C00159_integration_receipt_contract_red.json",
+        "history/C00160_integration_receipt_contract_green.json",
+        "tests/test_system_integration_contract.py",
+        "tools/system_integration_contract.py"
+      ],
+      "new_bytes": 23816,
+      "source_metrics": {
+        "tools/system_integration_contract.py": {
+          "bytes": 7752,
+          "lines": 145,
+          "blob": "3b2615ce9f9edbd92f1158be625137dc761cdae3",
+          "sha256": "3eba19ce3fb8c626d0642ecdc453287b36a6668a01b0fa4a65691557307d5ecc"
+        },
+        "tests/test_system_integration_contract.py": {
+          "bytes": 7664,
+          "lines": 201,
+          "blob": "44124173822d5a2bae088358f3bd5f4e19411cc4",
+          "sha256": "368868e825f15fa8e00d8db0c862a7c15d546fd321a1082f2ce9901592e3d660"
+        }
+      },
+      "red": {
+        "id": 41036373889,
+        "head": "676fece47cca79929211a1671deb953562ace2bd",
+        "attempt": 1,
+        "tests": 863,
+        "failures": 30,
+        "errors": 0,
+        "accepted833_preserved": true,
+        "offline_job": 123998091571,
+        "compile_hold_job": 123998091726,
+        "offline": "failure",
+        "compile_hold": "success",
+        "expected_new_only": true,
+        "log_lines": [
+          "2026-10-30T09:50:53.1677662Z PASS: system review scope",
+          "2026-10-30T09:50:53.6147082Z PASS: repair coordination; 1 immutable coordinator claim(s) verified",
+          "2026-10-30T09:51:02.3927236Z Ran 863 tests in 6.035s",
+          "2026-10-30T09:51:02.3927477Z FAILED (failures=30)"
+        ]
+      },
+      "ci": {
+        "id": 41036877249,
+        "head": "45c4c12303eed0decc088cd12db2a5636e649839",
+        "base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41036877249",
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "python_tests": 863,
+        "new_tests": 30,
+        "accepted_baseline": 833,
+        "jobs": [
+          {
+            "id": 123999767989,
+            "name": "compile_hold",
+            "head": "45c4c12303eed0decc088cd12db2a5636e649839",
+            "run_id": 41036877249,
+            "run_attempt": 1,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 123999768276,
+            "name": "offline",
+            "head": "45c4c12303eed0decc088cd12db2a5636e649839",
+            "run_id": 41036877249,
+            "run_attempt": 1,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "log_lines": [
+          "2026-10-30T09:55:11.2910753Z PASS: system review scope",
+          "2026-10-30T09:55:11.6046951Z PASS: repair coordination; 2 immutable coordinator claim(s) verified",
+          "2026-10-30T09:55:21.0203669Z Ran 863 tests in 6.451s",
+          "2026-10-30T09:55:21.0204452Z OK"
+        ]
+      },
+      "report_path": "ops/reviews/META_epoch287_PR0142_integration_contract.json",
+      "review_required_for_head": "45c4c12303eed0decc088cd12db2a5636e649839",
+      "normal_author_release": {
+        "status": "PENDING_NORMAL_FINALLY_AT_RECORD_CREATION",
+        "receipt_path": "ops/lease_receipts/META_25643826_epoch287.json",
+        "provider_terminal": "NOT_ATTESTED"
+      },
+      "owner_reply_required": false,
+      "next_actor": "SEPARATE_REGISTERED_REVIEWER_AFTER_ACTUAL_AUTHOR_RELEASE_AND_TERMINAL",
+      "request": "Independently verify exact head/base863GREEN and863/30failRED, all833 accepted tests and311 blobs unchanged, four added files/C00159+C00160 immutable. Review typed current QA/handoff and job run/attempt/head/strict ints, exact historical prefix/snapshots, two repositories and allflagsfalse; missing/partial/non-status comparisons failclosed. New pure preflight has NO installed automatic write hook, provider auth, A12/A13 or Phase1 permission. Verify stable THIS author run/start and actual own epoch287 finally/readback separately; old epoch284 remains quarantined and protected PR139/141 not part of this PR. Author cannot approve/merge; normal main QA/handoff after independent adoption required.",
+      "a12_verified": false,
+      "a13_verified": false,
+      "progress_credit_this_run": 0
     }
   ]
 }
