@@ -76,7 +76,7 @@ class CoordinationTests(unittest.TestCase):
 
     def test_positive_completion_proof_recovers_finished_worker(self):
         state = self.worker()["state"]
-        observed = {"id": RUN, "recorded_status": "failed", "completed_at": "2026-10-25T00:02:00Z"}
+        observed = {"id": RUN, "recorded_status": "failed", "started_at": NOW, "completed_at": "2026-10-25T00:02:00Z"}
         recovered = recover_finished_worker(state, observed, LATER)
         self.assertIsNone(recovered["holder"])
         self.assertTrue(recovered["last_completed"]["recovered_from_service_evidence"])
