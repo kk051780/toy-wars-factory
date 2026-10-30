@@ -1,0 +1,199 @@
+{
+  "schema": 1,
+  "kind": "REGISTERED_META_COORDINATOR_ONLY_JSON_COMPATIBILITY_REPAIR",
+  "repository": "kk051780/toy-wars-factory",
+  "parent_issue": 123,
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "49a54157-e358-8325-abf9-b6f21d5faf35",
+  "provider_started_at": "2026-10-30T07:45:52.992741Z",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "d0572033d30d406750e4fa33417393563e37f220",
+    "epoch": 284,
+    "owner_run_id": "49a54157-e358-8325-abf9-b6f21d5faf35"
+  },
+  "source_main_unchanged": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "original": {
+    "ref": "b729f8b56cf8361bb4ab16e3b0839817c9d0916f",
+    "blob": "af7501b104714110e0f4231b961317dcaa7b30d9",
+    "trusted_prior_object_schema_ref": "1102bbd229559e4c6e1fcc790adfedd54456af1e",
+    "trusted_prior_object_schema_blob": "b0ad01a6aa70df89179f7b4739677c6e9b6c0d2f"
+  },
+  "repair": {
+    "ref": "b4855a96889a622170c28653f80d892b2d32ce17",
+    "blob": "2a216f8b3e227c76d8c7a97796b4d30862699482",
+    "epoch": 284,
+    "at": "2026-10-30T07:56:47Z"
+  },
+  "diff": {
+    "files": [
+      "ops/INTEGRATION_LATEST.json"
+    ],
+    "changed_keys": [
+      "main_qa",
+      "handoff"
+    ],
+    "before_bytes": 39712,
+    "after_bytes": 41514,
+    "delta_bytes": 1802,
+    "all_other_values_unchanged": true,
+    "merged_prs_preserved_exactly": 39
+  },
+  "native_get_evidence": {
+    "merge": "55bccfc5456ca1295f352bb365eae6ed664272cb",
+    "main_after_handoff": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "comparison": {
+      "ahead_by": 1,
+      "behind_by": 0,
+      "files": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    },
+    "main_qa": {
+      "id": 41016196308,
+      "head": "55bccfc5456ca1295f352bb365eae6ed664272cb",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41016196308",
+      "jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "job_evidence": [
+        {
+          "id": 123932972104,
+          "name": "offline",
+          "head": "55bccfc5456ca1295f352bb365eae6ed664272cb",
+          "run_id": 41016196308,
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41016196308/job/123932972104"
+        },
+        {
+          "id": 123932972339,
+          "name": "compile_hold",
+          "head": "55bccfc5456ca1295f352bb365eae6ed664272cb",
+          "run_id": 41016196308,
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41016196308/job/123932972339"
+        }
+      ],
+      "evidence_scope": "Actual post-PR137 merge main push QA; 833 Python tests OK in fetched offline log; not Roblox engine verification"
+    },
+    "handoff": {
+      "id": 41016196306,
+      "head": "55bccfc5456ca1295f352bb365eae6ed664272cb",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41016196306",
+      "jobs": [
+        {
+          "id": 123932972386,
+          "name": "update",
+          "head": "55bccfc5456ca1295f352bb365eae6ed664272cb",
+          "run_id": 41016196306,
+          "run_attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41016196306/job/123932972386"
+        }
+      ]
+    },
+    "python_tests": 833,
+    "fetched_offline_log_lines": [
+      "2026-10-30T06:48:20.0219303Z Ran 833 tests in 4.697s",
+      "2026-10-30T06:48:20.0219736Z OK"
+    ]
+  },
+  "checks": {
+    "scope": "SESSION_LOCAL_OPERATIONAL_CHECKS_NOT_ACCEPTED_REPO_TESTS_OR_GITHUB_CI",
+    "positive": "PASS",
+    "negatives": [
+      {
+        "name": "bool_run_id",
+        "result": "PASS_EXPECTED_REJECTION"
+      },
+      {
+        "name": "wrong_QA_head",
+        "result": "PASS_EXPECTED_REJECTION"
+      },
+      {
+        "name": "job_wrong_run",
+        "result": "PASS_EXPECTED_REJECTION"
+      },
+      {
+        "name": "job_wrong_attempt",
+        "result": "PASS_EXPECTED_REJECTION"
+      },
+      {
+        "name": "job_bool_id",
+        "result": "PASS_EXPECTED_REJECTION"
+      },
+      {
+        "name": "job_duplicate_id",
+        "result": "PASS_EXPECTED_REJECTION"
+      },
+      {
+        "name": "job_duplicate_name",
+        "result": "PASS_EXPECTED_REJECTION"
+      },
+      {
+        "name": "missing_job",
+        "result": "PASS_EXPECTED_REJECTION"
+      },
+      {
+        "name": "failed_job",
+        "result": "PASS_EXPECTED_REJECTION"
+      },
+      {
+        "name": "wrong_current_main",
+        "result": "PASS_EXPECTED_REJECTION"
+      },
+      {
+        "name": "non_status_source_compare",
+        "result": "PASS_EXPECTED_REJECTION"
+      },
+      {
+        "name": "duplicate_history",
+        "result": "PASS_EXPECTED_REJECTION"
+      },
+      {
+        "name": "history_deletion",
+        "result": "PASS_EXPECTED_REJECTION"
+      },
+      {
+        "name": "review_head_conflict",
+        "result": "PASS_EXPECTED_REJECTION"
+      },
+      {
+        "name": "already_repaired",
+        "result": "PASS_EXPECTED_REJECTION"
+      }
+    ],
+    "history_preserved": true,
+    "rows": 39,
+    "only_top_level_changes": [
+      "main_qa",
+      "handoff"
+    ]
+  },
+  "library_candidate": {
+    "id": "libfile_87fcde3a7c148191869bb77919b940c5",
+    "sha256": "3f31bd2c96456f5a1162d4523f00014f4ad80417c7ce73b25512c24df0f832f5",
+    "bytes": 32177,
+    "inspection": "STATIC_ONLY_NOT_EXECUTED",
+    "local_145_tests": "ARCHIVE_CLAIM_NOT_REEXECUTED_NOT_GITHUB_CI"
+  },
+  "independent_verdict": "PENDING",
+  "a12_verified": false,
+  "a13_verified": false,
+  "provider_terminal": "NOT_ATTESTED",
+  "no_source_or_main_change": true,
+  "recorded_at": "2026-10-30T07:58:23Z"
+}

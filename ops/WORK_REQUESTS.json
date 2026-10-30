@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-30T06:49:24.269Z",
+  "observed_at": "2026-10-30T07:58:23Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4333,6 +4333,33 @@
       "main_qa": 41016196308,
       "handoff": 41016196306,
       "main_after_handoff": "e5deff4d5681bca4823a3da0f848e01bc089ae6e"
+    },
+    {
+      "id": "issue123_integration_object_compat_meta_epoch284_20261030",
+      "kind": "REGISTERED_META_COORDINATOR_COMPATIBILITY_AUDIT",
+      "priority": "P0",
+      "status": "OPEN",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "parent_issue": 123,
+      "work_id": "TWF-INTEGRATION-JSON-COMPAT-PR137-20261030",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "49a54157-e358-8325-abf9-b6f21d5faf35",
+      "created_at": "2026-10-30T07:58:23Z",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "d0572033d30d406750e4fa33417393563e37f220",
+        "epoch": 284,
+        "owner_run_id": "49a54157-e358-8325-abf9-b6f21d5faf35"
+      },
+      "head": "b4855a96889a622170c28653f80d892b2d32ce17",
+      "path": "ops/INTEGRATION_LATEST.json",
+      "evidence_path": "ops/reviews/META_epoch284_integration_compat_repair.json",
+      "original_blob": "af7501b104714110e0f4231b961317dcaa7b30d9",
+      "repaired_blob": "2a216f8b3e227c76d8c7a97796b4d30862699482",
+      "request": "Separate registered REVIEWER: independently GET immutable before/after blobs and one-file compare; verify exact39 history rows/all otherroot values unchanged, current PR137 Actions id/head/attempt/job binding and status-only main; confirm new owner284 finally release/readback before verdict. This is ops-only repair, not source acceptance/main merge/A12/A13; do not merge coordinator into main.",
+      "owner_reply_required": false
     }
   ]
 }
