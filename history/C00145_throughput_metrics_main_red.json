@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "cycle": "C00145",
+  "date": "2026-10-30",
+  "kind": "SYSTEM_THROUGHPUT_METRICS_TEST_FIRST_RED",
+  "repository": "kk051780/toy-wars-factory",
+  "work_id": "TWF-SYSTEM-THROUGHPUT-V2-20261030",
+  "parent_issue": 130,
+  "base_main": "0e424593c75e8a65279dd251789aaa5834586263",
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "8c89fc2c26b5dc536c36a528b333034353a79af0",
+    "owner_run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+    "epoch": 266
+  },
+  "provider_snapshot": {
+    "started_at": "2026-10-30T02:45:22.273109Z",
+    "acquired_at": "2026-10-30T02:48:50Z",
+    "provider_verified": false,
+    "trigger_origin": "NOT_VERIFIED"
+  },
+  "candidate_input": {
+    "library_file_id": "libfile_df3b421016f8819191c295a30d90ec0a",
+    "zip_bytes": 11005,
+    "zip_sha256": "c721b888f909be4e1531e0f0b736f4bbfb4cc6f88bc63ee58bcc456637562872",
+    "source_sha256": "50949a93ca2315d3bcb500cfe6bca337538a0a88abdd4d6312f831b19a1b55fd",
+    "test_sha256": "b9d38102deecf62893540ffefb663b633712e2a66421fc8c85abfce49b9bdc19",
+    "status": "UNTRUSTED_LOCAL_CANDIDATE_NOT_ACCEPTED_SOURCE"
+  },
+  "change": "42 additive regression methods, first run on exact accepted main with metrics module absent; original 30 candidate scenarios adapted to strict independent binding and 12 added integrity cases",
+  "local_red": {
+    "tests": 42,
+    "failures": 42,
+    "errors": 0,
+    "module_present": false,
+    "scope": "ACTUAL_ACCEPTED_MAIN_BYTES_PLUS_NEW_TEST_NO_SOURCE_IMPLEMENTATION"
+  },
+  "source_changes": 0,
+  "existing_main_blobs_preserved": 298,
+  "github_ci": "NOT_RUN_AT_COMMIT_CREATION; bind actual exact-head run in subsequent append-only history",
+  "red_green_test_bytes_identical_required": true,
+  "limitations": [
+    "No provider authentication or launch-origin proof",
+    "No source changes or billing inferred from terminal time or CI",
+    "No notification/delivery/recovery/Roblox claim",
+    "PR131 rejected/quarantined history not reused as author claim"
+  ],
+  "holds": {
+    "gemini": "SEVERE_HOLD",
+    "external_spend": false,
+    "roblox_publish": false,
+    "schedule_changes": false
+  }
+}
