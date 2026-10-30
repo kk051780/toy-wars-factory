@@ -160,6 +160,89 @@
       "same_owner_terminal_receipt": "NOT_AVAILABLE_FROM_PROVIDER",
       "schema": 1,
       "service_completion_asserted": false
+    },
+    {
+      "schema": 1,
+      "operation": "OWNER_DELEGATED_ONE_SHOT_ADMINISTRATIVE_REVOCATION",
+      "case_id": "ISSUE140_META_EPOCH284_MUTABLE_STARTED_AT_20261030",
+      "actor_operation_id": "d6f96b06-170a-4cd8-9051-0d40eb7d42da",
+      "authorization": {
+        "type": "ONE_SHOT_OWNER_DELEGATED_OPERATOR_EXCEPTION_NOT_NORMAL_TERMINAL_RECOVERY",
+        "source": "Owner repeated '次' to continue after Issue140 priority; standing 2026 delegation of engineering operations and documented prior exceptions epochs41/88/245/251. This is no authorization to downgrade protected review or publish.",
+        "scope": "Fence ONLY orphaned META epoch284; all original unverified outputs remain quarantined; no source, main, PR, task schedule, spending, inference, credential or Roblox change."
+      },
+      "observed_ref": "801a89dcadef592388173d38e0339bbe51d4aca2",
+      "recorded_at": "2026-10-30T09:20:39.034Z",
+      "previous_epoch": 284,
+      "next_epoch": 285,
+      "previous_holder": {
+        "kind": "META",
+        "owner_id": "49a54157-e358-8325-abf9-b6f21d5faf35",
+        "task_id": "6add445e4138819197d9cf2b1a02534d",
+        "epoch": 284,
+        "acquired_at": "2026-10-30T07:53:37+00:00",
+        "expires_at": "2026-10-30T08:23:37+00:00",
+        "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "work_branch": "auto/twf-system-review-49a54157-e358-8325-abf9-b6f21d5faf35",
+        "origin": "meta"
+      },
+      "evidence": {
+        "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "coord_tree": "fb24703648656b40b765aaafa2fd2c1ffced3a48",
+        "original_claim_commit": "d0572033d30d406750e4fa33417393563e37f220",
+        "original_claim_recorded_at": "2026-10-30T07:53:37+00:00",
+        "latest_provider_observed_started_at": "2026-10-30T08:04:45.167629Z",
+        "original_provider_earlier_observed_started_at": "2026-10-30T07:45:52.992741Z",
+        "provider_same_run_uuid_changed_started_at": true,
+        "provider_attempt_origin": "UNRESOLVED",
+        "provider_original_terminal": "NOT_ATTESTED",
+        "newer_registered_runs": {
+          "WORKER": {
+            "task_id": "6adbf0d6a7d881918ce181dff2468867",
+            "id": "318b2a8b-e118-832e-bd81-2e383815e7ab",
+            "recorded_status": "completed",
+            "started_at": "2026-10-30T09:06:39.062247Z",
+            "completed_at": "2026-10-30T09:08:05.539293Z"
+          },
+          "META": {
+            "task_id": "6add445e4138819197d9cf2b1a02534d",
+            "id": "88a7c086-a278-8330-abf7-906044af5a98",
+            "recorded_status": "completed",
+            "started_at": "2026-10-30T08:45:41.267299Z",
+            "completed_at": "2026-10-30T08:55:22.051245Z"
+          },
+          "REVIEWER": {
+            "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+            "id": "ea70ac23-7128-8332-aa8f-eb7f941ab6fa",
+            "recorded_status": "completed",
+            "started_at": "2026-10-30T08:26:44.110166Z",
+            "completed_at": "2026-10-30T08:27:48.826269Z"
+          }
+        },
+        "original_work_branch": "NOT_FOUND_AT_PREFLIGHT",
+        "exclusive_lease_expired": true,
+        "shared_ref_unchanged_since_author_work": true,
+        "issue": "https://github.com/kk051780/toy-wars-factory/issues/140"
+      },
+      "safety": {
+        "service_completion_asserted": false,
+        "recovered_from_service_evidence": false,
+        "legacy_integration_repair": "QUARANTINE_PENDING_INDEPENDENT_AUDIT",
+        "last_completed_unchanged": true,
+        "old_epoch_fenced": true,
+        "scope": "coordinator only",
+        "changed_fields_only": [
+          "epoch",
+          "holder",
+          "administrative_revocations"
+        ],
+        "requires_posthoc_independent_registered_audit": true,
+        "expected_sha": "801a89dcadef592388173d38e0339bbe51d4aca2",
+        "force": false,
+        "single_parent": true,
+        "postwrite_readback_required": true,
+        "not_a_general_expiry_takeover_rule": true
+      }
     }
   ],
   "approval_packet": {
@@ -1055,18 +1138,8 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 284,
-  "holder": {
-    "kind": "META",
-    "owner_id": "49a54157-e358-8325-abf9-b6f21d5faf35",
-    "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "epoch": 284,
-    "acquired_at": "2026-10-30T07:53:37+00:00",
-    "expires_at": "2026-10-30T08:23:37+00:00",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "auto/twf-system-review-49a54157-e358-8325-abf9-b6f21d5faf35",
-    "origin": "meta"
-  },
+  "epoch": 285,
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
