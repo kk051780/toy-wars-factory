@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "kind": "NORMAL_OWNER_FINALLY_RELEASE_NOT_PROVIDER_TERMINAL",
+  "actor_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "owner_run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+  "epoch": 266,
+  "claim_ref": "8c89fc2c26b5dc536c36a528b333034353a79af0",
+  "expected_parent": "813926738d330b219e2c1d6574379246cde3609e",
+  "recorded_release_at": "2026-10-30T03:11:53+00:00",
+  "source_head": "fc80010c74bb2b92c88706710671453d277c33cb",
+  "ci": 40995154590,
+  "pr": 133,
+  "source_context": "Accepted repair_control.owned_lease with genuine scoped GET/PEEK/clock/nonforced CAS callbacks; all source work inside body",
+  "provider_terminal": "NOT_ATTESTED",
+  "provider_launch_origin": "NOT_VERIFIED",
+  "crash_guarantee": false,
+  "force": false,
+  "postwrite_readback_required": true,
+  "host_trace_before_cas": [
+    {
+      "op": "read",
+      "ref": "813926738d330b219e2c1d6574379246cde3609e",
+      "blob": "d2ac46132ef19d34146f54b98daf9c6bc5439d88"
+    },
+    {
+      "op": "clock",
+      "at": "2026-10-30T03:11:36Z"
+    },
+    {
+      "op": "peek",
+      "run": {
+        "id": "c761721e-48bc-832a-aa81-e7de554a089b",
+        "recorded_status": "in_progress",
+        "scheduled_for": "2026-10-30T02:45:00Z",
+        "started_at": "2026-10-30T02:45:22.273109Z",
+        "completed_at": null,
+        "chat_ref": null
+      }
+    },
+    {
+      "op": "read",
+      "ref": "813926738d330b219e2c1d6574379246cde3609e",
+      "blob": "d2ac46132ef19d34146f54b98daf9c6bc5439d88"
+    },
+    {
+      "op": "clock",
+      "at": "2026-10-30T03:11:48Z"
+    },
+    {
+      "op": "peek",
+      "run": {
+        "id": "c761721e-48bc-832a-aa81-e7de554a089b",
+        "recorded_status": "in_progress",
+        "scheduled_for": "2026-10-30T02:45:00Z",
+        "started_at": "2026-10-30T02:45:22.273109Z",
+        "completed_at": null,
+        "chat_ref": null
+      }
+    },
+    {
+      "op": "clock",
+      "at": "2026-10-30T03:11:53Z"
+    }
+  ],
+  "host_guard": "Canonical deep field comparison: only holder and last_completed change; initial key-order-sensitive local guard stopped before any CAS and was corrected."
+}
