@@ -59,8 +59,14 @@ class ExactWorkflowRefTests(unittest.TestCase):
     def test_pull_request_suffix_rejected(self):
         self.rejected(WORKFLOW + "@refs/pull/17/merge")
 
-    def test_missing_ref_suffix_rejected(self):
-        self.rejected(WORKFLOW)
+    def test_bare_workflow_path_matches_observed_github_rest_shape(self):
+        # Connected Actions REST exposes bare path for actual workflow runs.
+        # head_branch=main, event=workflow_dispatch, and exact SHA are verified separately.
+        result = self.verify(WORKFLOW)
+        self.assertFalse(result["provider_authenticated"])
+
+    def test_empty_ref_suffix_rejected(self):
+        self.rejected(WORKFLOW + "@")
 
     def test_main_prefix_extra_segment_rejected(self):
         self.rejected(WORKFLOW + "@refs/heads/main/unreviewed")

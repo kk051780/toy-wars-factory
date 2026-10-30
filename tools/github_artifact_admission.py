@@ -55,7 +55,7 @@ def verify_metadata(expected: Expected, run: Any, jobs: Any, artifacts: Any) -> 
              run.get('status') == 'completed' and run.get('conclusion') == 'success' and
              _positive(run.get('run_attempt')) and
              run.get('repository', {}).get('full_name') == REPO and
-             type(run.get('path')) is str and run['path'] == WORKFLOW + '@refs/heads/main',
+             type(run.get('path')) is str and run['path'] in (WORKFLOW, WORKFLOW + '@refs/heads/main'),
              'GitHub builder run ID/ref/workflow/source/status mismatch')
     _require(type(jobs) is dict and type(jobs.get('jobs')) is list and
              type(jobs.get('total_count')) is int and jobs['total_count'] == len(jobs['jobs']) and
