@@ -1,0 +1,24 @@
+name: TWF read-only GitHub runner identity observation
+on:
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: read
+concurrency:
+  group: twf-identity-read-only-probe
+  cancel-in-progress: false
+jobs:
+  read-only-observation:
+    if: github.repository == 'kk051780/toy-wars-factory' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify offline fixtures and inspect matching GitHub run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 -m unittest discover -s tests -p 'test_system_runner_identity_probe.py' -v
+          python3 tools/system_runner_identity_probe.py
