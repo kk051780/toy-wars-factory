@@ -1194,17 +1194,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 299,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "1996de65-0309-4d86-8c80-972330117fe1",
-    "task_id": null,
-    "epoch": 299,
-    "acquired_at": "2026-10-30T23:37:06.350Z",
-    "expires_at": "2026-10-31T00:02:06.350Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/dispatch-main-binding-1996de65-0309-4d86-8c80-972330117fe1",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2848,24 +2838,33 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "DISPATCH",
-    "owner_id": "c609829a-9d30-4ecb-8ddd-289349f1b6d8",
-    "epoch": 298,
-    "released_at": "2026-10-30T23:36:25.774Z",
+    "kind": "CONTROLLER",
+    "owner_id": "1996de65-0309-4d86-8c80-972330117fe1",
+    "epoch": 299,
+    "released_at": "2026-10-30T23:41:32.640Z",
     "release_receipt": {
-      "kind": "OWNER_DISPATCH_RELEASE_NOT_WORKER_SUCCESS",
+      "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
       "repository": "kk051780/toy-wars-factory",
-      "owner_run_id": "c609829a-9d30-4ecb-8ddd-289349f1b6d8",
-      "epoch": 298,
-      "worker_run_id": "c56745e5-8f20-832e-9050-91c018496c63",
-      "worker_status": "completed",
-      "worker_completed_at": "2026-10-30T23:36:06.311750Z",
-      "worker_source_changes": "NONE_AS_REPORTED",
-      "worker_blocker": "WAIT_IDENTITY",
-      "provider_run_identity": "NOT_VERIFIED_WHILE_RUNNING",
-      "main_modified": false,
-      "postwrite_readback_required": true,
-      "previous_last_completed_epoch": 295
+      "owner_run_id": "1996de65-0309-4d86-8c80-972330117fe1",
+      "task_id": null,
+      "epoch": 299,
+      "claim_commit": "4498e9f5661d0e1f92b24e0d1ebbf0346637c9f5",
+      "parent": "4498e9f5661d0e1f92b24e0d1ebbf0346637c9f5",
+      "source_pr": 152,
+      "source_head": "e220e85df6519ad5ec163042aba8b78564f3622f",
+      "protected_base_pr": 139,
+      "red_head": "ff48b744ffc40bfe49b77defa6e889214b264721",
+      "red_run_id": 41145689159,
+      "green_run_id": 41145842751,
+      "python_tests_passed": 854,
+      "offline": "success",
+      "compile_hold": "success",
+      "independent_security_review": "PENDING",
+      "roblox_engine": "NOT_RUN",
+      "unattended_worker_identity": "NOT_VERIFIED",
+      "public_publish": false,
+      "provider_terminal": "NOT_ATTESTED",
+      "postwrite_readback_required": true
     }
   },
   "last_completed_integration": {
