@@ -1176,6 +1176,21 @@
       "reviewer_epoch": 271,
       "reviewer_run_id": "078f2010-adf0-832e-9057-8275bef7fd97",
       "main_after_handoff": "9a57420b96060d7cd0e0991a46edcc1aaa0f0070"
+    },
+    "135": {
+      "pr": 135,
+      "head": "59673ab3dc63291ade9494c7ce24310ba615be5e",
+      "merge_sha": "e9e72a2e56fa536114d596b0b0c416e9ebec4540",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 41005880052,
+      "handoff": 41005879997,
+      "main_after_handoff": "e55ee17606b03ad997f752944eae6ad91e7651dc",
+      "reviewer_epoch": 274,
+      "reviewer_run_id": "9441c051-1f78-8328-836f-fd08b1b5b840",
+      "python_tests": 820,
+      "native_selected_toy_tests": 5,
+      "old_upgrade_hud_tests": 3,
+      "status_only_descendant_verified": true
     }
   },
   "integration_review_history": [
@@ -2454,12 +2469,24 @@
         "history/C00151_selected_toy_waiting_hint_red.json",
         "history/C00152_selected_toy_waiting_hint_green.json"
       ],
-      "status": "REVIEW_APPROVED_PENDING_EXPECTED_HEAD_MERGE",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "limitations": [
         "Lua mock not Roblox engine",
         "Phone rendering and real player impact NOT_VERIFIED",
         "A12/A13 and user push delivery NOT_VERIFIED"
-      ]
+      ],
+      "merge_sha": "e9e72a2e56fa536114d596b0b0c416e9ebec4540",
+      "main_qa": 41005880052,
+      "handoff": 41005879997,
+      "main_after_handoff": "e55ee17606b03ad997f752944eae6ad91e7651dc",
+      "postmerge_qa_jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "handoff_jobs": {
+        "update": "success"
+      },
+      "postmerge_verified_at": "2026-10-30T05:00:19.525Z"
     }
   },
   "last_approval_report": {
@@ -2489,14 +2516,14 @@
     }
   },
   "last_completed_integration": {
-    "at": "2026-10-30T04:27:19.023Z",
-    "epoch": 271,
-    "pr": 134,
-    "head": "5f20d9f825cb34b5d7d63e9b75680e393105fd91",
-    "merge_sha": "209933a31868e202f949359358d06907074d6c75",
-    "main_qa": 41002816485,
-    "handoff": 41002816465,
-    "reviewer_run_id": "078f2010-adf0-832e-9057-8275bef7fd97"
+    "at": "2026-10-30T05:00:19.525Z",
+    "epoch": 274,
+    "pr": 135,
+    "head": "59673ab3dc63291ade9494c7ce24310ba615be5e",
+    "merge_sha": "e9e72a2e56fa536114d596b0b0c416e9ebec4540",
+    "main_qa": 41005880052,
+    "handoff": 41005879997,
+    "reviewer_run_id": "9441c051-1f78-8328-836f-fd08b1b5b840"
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_system_review": {

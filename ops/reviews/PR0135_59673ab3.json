@@ -51,10 +51,22 @@
     "history/C00151_selected_toy_waiting_hint_red.json",
     "history/C00152_selected_toy_waiting_hint_green.json"
   ],
-  "status": "REVIEW_APPROVED_PENDING_EXPECTED_HEAD_MERGE",
+  "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
   "limitations": [
     "Lua mock not Roblox engine",
     "Phone rendering and real player impact NOT_VERIFIED",
     "A12/A13 and user push delivery NOT_VERIFIED"
-  ]
+  ],
+  "merge_sha": "e9e72a2e56fa536114d596b0b0c416e9ebec4540",
+  "main_qa": 41005880052,
+  "handoff": 41005879997,
+  "main_after_handoff": "e55ee17606b03ad997f752944eae6ad91e7651dc",
+  "postmerge_qa_jobs": {
+    "offline": "success",
+    "compile_hold": "success"
+  },
+  "handoff_jobs": {
+    "update": "success"
+  },
+  "postmerge_verified_at": "2026-10-30T05:00:19.525Z"
 }
