@@ -1,0 +1,164 @@
+{
+  "id": "C00148",
+  "date": "2026-10-30",
+  "kind": "SYSTEM_THROUGHPUT_METRICS_SOURCE_LOCAL_GREEN_EXACT_RED_PROOF",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+  "repository": "kk051780/toy-wars-factory",
+  "work_id": "TWF-SYSTEM-THROUGHPUT-V2-20261030",
+  "issue": 130,
+  "base_main": "0e424593c75e8a65279dd251789aaa5834586263",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "8c89fc2c26b5dc536c36a528b333034353a79af0",
+    "owner_run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+    "epoch": 266
+  },
+  "provider_snapshot": {
+    "started_at": "2026-10-30T02:45:22.273109Z",
+    "acquired_at": "2026-10-30T02:48:50Z",
+    "current_snapshot_only": true,
+    "provider_authentication": "NOT_ATTESTED",
+    "trigger_origin": "NOT_VERIFIED"
+  },
+  "source_changes": [
+    {
+      "path": "tools/system_throughput_metrics.py",
+      "before_bytes": 0,
+      "after_bytes": 14627,
+      "delta_bytes": 14627,
+      "after_blob": "06ad07328ead55bbe8b507b0238e230a18b9730d",
+      "rationale": "New pure read-only module; no accepted source, test, workflow or policy changes."
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1176,
+    "lua_bytes": 52089
+  },
+  "characters_touched": [],
+  "game_source_delta_bytes": 0,
+  "metrics": {
+    "tools/system_throughput_metrics.py": {
+      "bytes": 14627,
+      "lines": 303,
+      "blob": "06ad07328ead55bbe8b507b0238e230a18b9730d",
+      "sha256": "fb27a63e1f8147df3e6ce48926c942e2bbb2440336d8a6e0f22e69a9303e53d9"
+    },
+    "tests/test_system_throughput_metrics.py": {
+      "bytes": 14382,
+      "lines": 265,
+      "blob": "91e9376d94fc734191065c3e1b02a263ef2995fe",
+      "sha256": "efd3d83493c41553740b959168c6ba0dda058923805c8d3d8da9ec6645db535e"
+    }
+  },
+  "candidate_input": {
+    "library_file_id": "libfile_df3b421016f8819191c295a30d90ec0a",
+    "zip_bytes": 11005,
+    "zip_sha256": "c721b888f909be4e1531e0f0b736f4bbfb4cc6f88bc63ee58bcc456637562872",
+    "source_sha256": "50949a93ca2315d3bcb500cfe6bca337538a0a88abdd4d6312f831b19a1b55fd",
+    "test_sha256": "b9d38102deecf62893540ffefb663b633712e2a66421fc8c85abfce49b9bdc19",
+    "status": "UNTRUSTED_LOCAL_CANDIDATE_NOT_ACCEPTED_SOURCE"
+  },
+  "implementation": {
+    "new_source_paths": [
+      "tools/system_throughput_metrics.py"
+    ],
+    "new_test_paths": [
+      "tests/test_system_throughput_metrics.py"
+    ],
+    "tests": 42,
+    "retained_candidate_scenarios": 30,
+    "additional_scenarios": 12,
+    "behavior": [
+      "Independent project/repo/main/role binding; canonical32hex task IDs and globally unique run UUIDs",
+      "Signed schedule jitter and terminal elapsed; current in-progress duration UNKNOWN",
+      "Same UUID old-attempt result uses creation timestamp and cannot count as fresh; no_update never productive result",
+      "Strict epoch and claim/release ref formats; reject pre-start or post-terminal lease times and overlapping exclusive leases",
+      "Union of reported released other-role intervals; unreleased foreign intervals UNKNOWN, never causal WAIT",
+      "p50/p90 withheld pending six genuine unforced role runs and postmerge evidence",
+      "All seven operation authority flags false; no network, persistence, scheduler, credentials, sender or inference"
+    ],
+    "verification": "NOT_VERIFIED; all caller snapshots and refs remain data, not provider proof"
+  },
+  "red": {
+    "head": "51c9dbc5cdee67aafbf53099d59f8f045f733a93",
+    "ci": 40994919636,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40994919636",
+    "attempt": 1,
+    "tests": 803,
+    "failures": 42,
+    "errors": 0,
+    "accepted761_passed": true,
+    "jobs": [
+      {
+        "id": 123865698147,
+        "name": "offline",
+        "head": "51c9dbc5cdee67aafbf53099d59f8f045f733a93",
+        "conclusion": "failure"
+      },
+      {
+        "id": 123865698435,
+        "name": "compile_hold",
+        "head": "51c9dbc5cdee67aafbf53099d59f8f045f733a93",
+        "conclusion": "success"
+      }
+    ],
+    "offline_log": [
+      "2026-10-30T03:00:51.8601156Z PASS: system review scope",
+      "2026-10-30T03:00:52.3442134Z PASS: repair coordination; 3 immutable coordinator claim(s) verified",
+      "2026-10-30T03:00:58.9158929Z Ran 803 tests in 4.259s",
+      "2026-10-30T03:00:58.9159141Z FAILED (failures=42)"
+    ]
+  },
+  "local_green": {
+    "new_methods": 42,
+    "failures": 0,
+    "errors": 0,
+    "invalid_cli_envelopes_rejected": 3,
+    "no_external_provider_invoked": true
+  },
+  "github_green": "PENDING_AT_THIS_COMMIT_CREATION; exact final head/run/jobs/logs must be independently bound in ops report and reviewer",
+  "preservation": {
+    "existing_main_blobs": 298,
+    "modified_accepted_blobs": 0,
+    "removed_paths": [],
+    "accepted_tests_and_history_unchanged": true,
+    "final_test_blob_identical_to_clean_red": "91e9376d94fc734191065c3e1b02a263ef2995fe",
+    "prior_red_commits_preserved": [
+      "b38e38da572f12344eb32d6c0962b646eac4c919",
+      "c752e33a17182b8afb697beddd42b4afcba4f515",
+      "51c9dbc5cdee67aafbf53099d59f8f045f733a93"
+    ],
+    "new_unmerged_history_format_correction": "C00147 explicitly records numeric-to-list metadata repair in newC145/C146; accepted histories never changed"
+  },
+  "research": {
+    "retrieved_on": "2026-10-30",
+    "primary_urls": [
+      "https://docs.python.org/3/library/datetime.html",
+      "https://docs.python.org/3/library/json.html"
+    ],
+    "facts": [
+      "Aware datetime arithmetic preserves timezone and microseconds",
+      "object_pairs_hook permits rejecting duplicate JSON names; default JSON accepts nonfinite constants unless rejected"
+    ],
+    "system_options": [
+      "NO_CHANGE: metrics remain local-only and overlap is unmeasured",
+      "Existing controller instrumentation: mixes pure analytics with ownership API and increases regression risk",
+      "New allowed pure system module: selected; no authority extension"
+    ],
+    "game_options": [
+      "NO_CHANGE while adopting metrics: selected",
+      "Further first-loop affordability cue: only hypothesis, PR132 already accepted, no repeat change",
+      "Differentiated collection roles: original OWNER/DERIVED ledger retained, higher model/UI/balance QA; effect NOT_MEASURED"
+    ],
+    "owner_provenance": "Existing C00122 verbatim/DERIVED kept; original chat authentication remains NOT_VERIFIED"
+  },
+  "limits": [
+    "This source PR is not accepted main until separate registered reviewer integration and post-main QA/handoff",
+    "No live metrics source was previously scheduled; imported candidate30 PASS was LOCAL_ONLY",
+    "Reference score is not official completion; no A12/A13 credit or speedup claim",
+    "No genuine organic alert persistence, delivery or independent recovery claimed",
+    "No Gemini/external inference, spend, credentials, schedule/task or Roblox release change"
+  ]
+}
