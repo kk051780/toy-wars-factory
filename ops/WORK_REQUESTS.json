@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-30T06:19:04.252Z",
+  "observed_at": "2026-10-30T06:39:05.613Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4263,6 +4263,68 @@
         "a12_verified": false,
         "a13_verified": false
       }
+    },
+    {
+      "id": "pr137_field_capacity_hud_worker_epoch278_20261030",
+      "kind": "REGISTERED_WORKER_GAME_SOURCE_REVIEW",
+      "priority": "P1",
+      "status": "READY_FOR_INDEPENDENT_REVIEW",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 137,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/137",
+      "branch": "auto/twf-game-repair-4844c90e-ef6c-8324-b867-c89b833e2ed9",
+      "head": "7e3b22efbfd79220360e1e9c5e1b02f7cc417c02",
+      "base_main_sha": "d0c1bf60d733a0db51d12c0295805d7741ce62eb",
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "4844c90e-ef6c-8324-b867-c89b833e2ed9",
+      "author_epoch": 278,
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "9cde74db985ddff9f5f0d507a6d2c6cbfc0ff736",
+        "owner_run_id": "4844c90e-ef6c-8324-b867-c89b833e2ed9",
+        "epoch": 278
+      },
+      "changed_files": [
+        "history/C00155_field_capacity_hud_red.json",
+        "history/C00156_field_capacity_hud_green.json",
+        "src/ToyWarsHUD.client.lua",
+        "tests/auto/field_capacity_hud_spec.lua"
+      ],
+      "source_delta_bytes": 264,
+      "source_delta_lines": 3,
+      "ci": {
+        "id": 41015164630,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41015164630",
+        "head": "7e3b22efbfd79220360e1e9c5e1b02f7cc417c02",
+        "base": "d0c1bf60d733a0db51d12c0295805d7741ce62eb",
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "success",
+        "jobs": {
+          "offline": "success",
+          "compile_hold": "success"
+        },
+        "python_tests": 833,
+        "new_native_lua_cases": 7,
+        "existing_selected_wait_cases": 5,
+        "existing_upgrade_cases": 3,
+        "red": {
+          "id": 41014897762,
+          "head": "e7710663ea9b818d59c329f80ff5e5c354e9ecbd",
+          "native": "2 passed / 5 failed"
+        },
+        "prior_green_failure": {
+          "id": 41015051300,
+          "reason": "C history source_metrics missing; repaired in draft before final CI"
+        }
+      },
+      "review_required_for_head": "7e3b22efbfd79220360e1e9c5e1b02f7cc417c02",
+      "owner_reply_required": false,
+      "request": "Independent registered REVIEWER: check exact head/base, actual epoch278 owner claim and release, compare 4 allowed files, C00155/C00156 and RED/GREEN evidence; review only, do not attribute native Lua mocks to Roblox device or player outcomes. Source is HUD-only +264bytes/+3lines. No extra buttons, events, server economy or config. Must verify current main, offline+compile_hold exact head and perform independent merge/main QA/handoff. Preserve protected PR98/110/122, Gemini SEVERE_HOLD and publish/spend HOLD.",
+      "next_actor": "INDEPENDENT_REGISTERED_REVIEWER_AFTER_AUTHOR_OWN_RELEASE",
+      "updated_at": "2026-10-30T06:39:05.613Z"
     }
   ]
 }
