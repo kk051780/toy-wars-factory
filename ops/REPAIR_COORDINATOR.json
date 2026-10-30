@@ -1194,17 +1194,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 298,
-  "holder": {
-    "kind": "DISPATCH",
-    "owner_id": "c609829a-9d30-4ecb-8ddd-289349f1b6d8",
-    "task_id": null,
-    "epoch": 298,
-    "acquired_at": "2026-10-30T23:34:22.732Z",
-    "expires_at": "2026-10-30T23:36:22.732Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": null,
-    "origin": "dispatch"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2848,33 +2838,24 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "a14f4100-873f-441a-83cc-202610310743",
-    "epoch": 295,
-    "released_at": "2026-10-30T22:36:32.673Z",
+    "kind": "DISPATCH",
+    "owner_id": "c609829a-9d30-4ecb-8ddd-289349f1b6d8",
+    "epoch": 298,
+    "released_at": "2026-10-30T23:36:25.774Z",
     "release_receipt": {
-      "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
+      "kind": "OWNER_DISPATCH_RELEASE_NOT_WORKER_SUCCESS",
       "repository": "kk051780/toy-wars-factory",
-      "owner_run_id": "a14f4100-873f-441a-83cc-202610310743",
-      "task_id": null,
-      "epoch": 295,
-      "claim_commit": "fe53e915bbd075b8372d7c77ce455e706abba935",
-      "parent": "fe53e915bbd075b8372d7c77ce455e706abba935",
-      "source_pr": 149,
-      "source_head": "cad549c12da41b2634a4df6f7ab160c39a585e9f",
-      "base_pr": 147,
-      "base_head": "6f27ba9e8ed76a7ee027043bd66c1764e73a853b",
-      "red_run_id": 41138858730,
-      "green_run_id": 41139097571,
-      "python_tests_passed": 884,
-      "offline": "success",
-      "compile_hold": "success",
-      "real_windows_studio": "NOT_RUN",
-      "hosted_runner": "NOT_CONFIGURED",
-      "independent_security_review": "PENDING",
-      "public_publish": false,
-      "provider_terminal": "NOT_ATTESTED",
-      "postwrite_readback_required": true
+      "owner_run_id": "c609829a-9d30-4ecb-8ddd-289349f1b6d8",
+      "epoch": 298,
+      "worker_run_id": "c56745e5-8f20-832e-9050-91c018496c63",
+      "worker_status": "completed",
+      "worker_completed_at": "2026-10-30T23:36:06.311750Z",
+      "worker_source_changes": "NONE_AS_REPORTED",
+      "worker_blocker": "WAIT_IDENTITY",
+      "provider_run_identity": "NOT_VERIFIED_WHILE_RUNNING",
+      "main_modified": false,
+      "postwrite_readback_required": true,
+      "previous_last_completed_epoch": 295
     }
   },
   "last_completed_integration": {
