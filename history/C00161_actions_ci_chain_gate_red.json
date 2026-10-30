@@ -1,0 +1,29 @@
+{
+  "id": "C00161",
+  "date": "2026-10-31",
+  "kind": "PROTECTED_ACTIONS_CI_CHAIN_WAIT_APPROVAL_RED",
+  "issue": 57,
+  "related_prs": [
+    152,
+    153
+  ],
+  "scope": "READ_ONLY_NO_WORKFLOW_CHANGE",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "dfa1c634cec93b3dfd54f488c294acd650ac5731",
+    "owner_run_id": "b34c8765-01ac-4335-ad17-9d504dac4544",
+    "epoch": 301
+  },
+  "added_tests": [
+    "tests/test_system_ci_chain_gate.py"
+  ],
+  "expected_red": "missing module: system_ci_chain_gate (not an accepted test red until actual GitHub CI)",
+  "safety": {
+    "provider_attested": false,
+    "write_authorized": false,
+    "merge_authorized": false,
+    "external_spend": false,
+    "roblox_engine": false
+  }
+}
