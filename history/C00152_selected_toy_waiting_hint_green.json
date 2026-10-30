@@ -1,0 +1,88 @@
+{
+  "id": "C00152",
+  "date": "2026-10-30",
+  "kind": "AUTONOMOUS_HUD_SELECTED_TOY_WAITING_HINT_FIX",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "5b03c57e-5c94-8333-84d6-43fc482e6561",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-5b03c57e-5c94-8333-84d6-43fc482e6561",
+    "base": "main",
+    "open_prs": [],
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "c3f17fd69020775974131b89e7339fd0b1900290",
+    "owner_run_id": "5b03c57e-5c94-8333-84d6-43fc482e6561",
+    "epoch": 270
+  },
+  "main_base": "0e424593c75e8a65279dd251789aaa5834586263",
+  "source_commit": "ed4130a999cd9984287f7295c05837ebe7659652",
+  "issue": 115,
+  "pr": 135,
+  "defect": {
+    "id": "selected_toy_unaffordable_wait_feedback",
+    "reproduction": "Actual whole-canonical HUD native Lua RED run 41001043637 at 5cc66084: 3 of 5 new cases FAIL for missing WAIT message while other 2 pass. Previous run 41000899162 stopped at missing C history and is not a valid RED.",
+    "cause": "HUD already subscribed to Coins and SelectedToy changes but tip only reports gold upgrade; server intentionally defers unaffordable auto-production.",
+    "user_impact_hypothesis": "A compact waiting-cost hint may reduce confusion before first unit production; actual first-play retention and mobile readability UNKNOWN."
+  },
+  "fix": "Existing 34px tip uses authoritative B.UNITS and B.isUnit to show selected-toy wait cost only when coins below cost, otherwise retains prior gold upgrade or MAX. No extra UI, buttons, events, server economy or persistence.",
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/selected_toy_waiting_hint_spec.lua",
+    "history/C00151_selected_toy_waiting_hint_red.json",
+    "history/C00152_selected_toy_waiting_hint_green.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 7017,
+      "after_bytes": 7445,
+      "delta_bytes": 428
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1183,
+    "lua_bytes": 52517
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/selected_toy_waiting_hint_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 6287,
+      "delta_bytes": 6287
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "PON/GUARDON/TANKURU existing costs and 3 choice buttons unchanged; only waiting feedback when unaffordable; QuickStart, queue notice and prior GOLD upgrade tip preserved.",
+  "tests": {
+    "canonical_hud": "tests/auto/selected_toy_waiting_hint_spec.lua",
+    "new_cases": 5,
+    "red_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/41001043637",
+    "red_result": "3 new native Lua cases FAIL with accepted canonical HUD; other 2 PASS, compile_hold SUCCESS",
+    "local": "NOT_RUN_LUA_RUNTIME_UNAVAILABLE",
+    "green_ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "0e424593c75e8a65279dd251789aaa5834586263",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40992293248",
+    "claim_commit": "c3f17fd69020775974131b89e7339fd0b1900290",
+    "source_commit": "ed4130a999cd9984287f7295c05837ebe7659652",
+    "pr": 135,
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "next_action": "Verify exact final head offline+compile_hold and immutable C history; independent registered REVIEWER only may approve/merge; post-main QA/handoff needed. Real Roblox/mobile/player impact NOT_RUN.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}
