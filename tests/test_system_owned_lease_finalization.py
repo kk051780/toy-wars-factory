@@ -258,7 +258,7 @@ class OwnedFinalizationTests(unittest.TestCase):
 
     def test_legacy_positive_exact_run_recovery_is_preserved(self):
         done = {"id": RUN, "recorded_status": "failed",
-                "completed_at": "2026-10-30T00:01:00Z"}
+                "started_at": NOW, "completed_at": "2026-10-30T00:01:00Z"}
         idle = control.recover_finished_worker(self.host.state, done, EXPIRED)
         self.assertIsNone(idle["holder"])
         self.assertTrue(idle["last_completed"]["recovered_from_service_evidence"])

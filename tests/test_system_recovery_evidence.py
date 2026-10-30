@@ -27,7 +27,7 @@ class RecoveryEvidenceTests(unittest.TestCase):
 
     def proof(self, completed_at, status="completed"):
         return {"id": RUN, "recorded_status": status,
-                "completed_at": completed_at}
+                "started_at": CLAIM, "completed_at": completed_at}
 
     def test_pre_claim_completion_never_releases_any_registered_role(self):
         for kind in ("WORKER", "META", "REVIEWER"):
