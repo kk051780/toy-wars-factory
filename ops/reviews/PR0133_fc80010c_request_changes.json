@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 133,
+  "head": "fc80010c74bb2b92c88706710671453d277c33cb",
+  "base_main_sha": "0e424593c75e8a65279dd251789aaa5834586263",
+  "review": {
+    "verdict": "REQUEST_CHANGES",
+    "scope": "INDEPENDENT_STATIC_SOURCE_AND_GITHUB_CI_WITH_GENUINE_PROVIDER_PEEK",
+    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "reviewer_run_id": "5e5fb03e-56b0-8323-b82e-63b6d3628316",
+    "reviewer_epoch": 267,
+    "head": "fc80010c74bb2b92c88706710671453d277c33cb",
+    "main": "0e424593c75e8a65279dd251789aaa5834586263",
+    "author_run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+    "author_epoch": 266,
+    "provider_latest_same_run": true,
+    "provider_current_started_at": "2026-10-30T03:17:50.440872Z",
+    "provider_prior_observed_started_at": "2026-10-30T02:45:22.273109Z",
+    "author_acquired_at": "2026-10-30T02:48:50Z",
+    "author_owner_release_at": "2026-10-30T03:11:53Z",
+    "provider_attempt_history": "NOT_ATTESTED",
+    "source_issue": "POSTTERMINAL_RECOVERY_WITHOUT_RECEIPT_CONFLATED_WITH_INVALID_OWNER_RELEASE",
+    "ci": {
+      "id": 40995154590,
+      "head": "fc80010c74bb2b92c88706710671453d277c33cb",
+      "offline": "success",
+      "compile_hold": "success",
+      "tests": 803
+    },
+    "native_review": "HTTP_422_SHARED_GITHUB_ACCOUNT",
+    "pr_comment_id": 6514244342,
+    "merge": false,
+    "source_modified": false,
+    "reviewed_at": "2026-10-30T03:29:03.962Z"
+  },
+  "blockers": [
+    "P0_PROVIDER_ATTEMPT_CHRONOLOGY_UNRESOLVED",
+    "P1_POSTTERMINAL_RECOVERY_CLASSIFICATION_GAP"
+  ],
+  "expected_repair": "Host-attested per-attempt author start continuity or new lawful author claim; distinguish receipt-authenticated terminal recovery vs forged postterminal release; fresh exact-head CI",
+  "reviewer_claim_commit": "e589b5d7d1edf6ebb8fcb6e90ced92dde59392a4",
+  "original_author_claim_commit": "8c89fc2c26b5dc536c36a528b333034353a79af0",
+  "a12_verified": false,
+  "a13_verified": false,
+  "holds_preserved": true
+}
