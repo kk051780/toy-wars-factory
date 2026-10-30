@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-30T04:53:35.047Z",
+  "observed_at": "2026-10-30T04:54:16.724Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4069,7 +4069,7 @@
       "id": "pr135_author_rehandoff_main9a5742_epoch273_20261030",
       "kind": "REGISTERED_WORKER_GAME_SOURCE_REVIEW",
       "priority": "P1",
-      "status": "OPEN_PENDING_EXACT_HEAD_CI",
+      "status": "OPEN",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
@@ -4109,20 +4109,32 @@
         "tests/auto/selected_toy_waiting_hint_spec.lua"
       ],
       "ci": {
-        "status": "PENDING_NEW_HEAD",
+        "id": 41005352714,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41005352714",
         "head": "59673ab3dc63291ade9494c7ce24310ba615be5e",
+        "base": "9a57420b96060d7cd0e0991a46edcc1aaa0f0070",
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "success",
+        "jobs": {
+          "offline": "success",
+          "compile_hold": "success"
+        },
+        "python_tests": 820,
+        "new_native_lua_cases": 5,
+        "old_upgrade_native_lua_cases": 3,
+        "verified_log": "AUTO_SELECTED_TOY_WAITING_HINT_SUMMARY 5 passed / 0 failed; AUTO_UPGRADE_AFFORDABILITY_HUD_SUMMARY 3 passed / 0 failed; Ran 820 tests / OK",
         "previous_ci": {
           "id": 41001187168,
           "head": "d011d3af2c3fd6e00a07e871bdd0cf7b399af8c7",
-          "base": "0e424593c75e8a65279dd251789aaa5834586263",
-          "conclusion": "success",
-          "not_reusable_for_current_main": true
+          "not_reused": true
         }
       },
       "review_required_for_head": "59673ab3dc63291ade9494c7ce24310ba615be5e",
       "owner_reply_required": false,
       "request": "Independent registered REVIEWER: verify original WORKER run 5b03c57e/epoch270 source author, current registered same-task repair run aef0ecc7-1998-8321-8dca-3d232239e780/epoch273 legal branch-specific claim and own release, exact branch/head 59673ab3dc63291ade9494c7ce24310ba615be5e merge parents original PR135 and accepted main 9a57420b96060d7cd0e0991a46edcc1aaa0f0070, compare against main exactly four original allowed game files and preserved C00151/C00152. New GitHub pull_request offline+compile_hold for this head/base must be success before approval; expected accepted Python 820 plus new native Lua5/5 and old upgrade Lua3/3, not yet verified. No self-merge, no engine/mobile/player outcome; all holds preserved.",
-      "next_actor": "REVIEWER_AFTER_NEW_EXACT_HEAD_CI_AND_AUTHOR_RELEASE"
+      "next_actor": "INDEPENDENT_REGISTERED_REVIEWER_AFTER_AUTHOR_OWN_RELEASE",
+      "updated_at": "2026-10-30T04:54:16.724Z"
     }
   ]
 }
