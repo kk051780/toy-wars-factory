@@ -73,7 +73,8 @@ def _snapshot(project, binding, actor, reader, peek, clock):
          x.get("error_code") is None for x in layers), "ACTOR_NOT_CURRENT")
     row = idle.service.snapshot(response.text, actor["task_id"], idle.moment(clock()), binding["max_record_age_seconds"])
     need(row["is_enabled"] is True and row["last_run"]["id"] == actor["run_id"] and
-         row["last_run"]["recorded_status"] == "in_progress", "ACTOR_NOT_CURRENT")
+         row["last_run"]["recorded_status"] == "in_progress" and
+         idle.moment(row["last_run"]["started_at"]) <= idle.moment(state["holder"]["acquired_at"]), "ACTOR_NOT_CURRENT")
     # Recheck expiry after PEEK, not just before a possibly slow callback.
     ledger._fence(project, fence, idle.moment(clock()))
     return {"tree_sha": tree_sha, "tree": tree, "path": path, "previous": previous,
