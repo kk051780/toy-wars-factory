@@ -1,0 +1,86 @@
+{
+  "schema": 1,
+  "kind": "NORMAL_OWNER_FINALLY_RELEASE_NOT_PROVIDER_TERMINAL",
+  "repository": "kk051780/toy-wars-factory",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "owner_run_id": "b0642945-e128-8323-9d82-d2a8b335dc8e",
+  "epoch": 275,
+  "claim_commit": "99f908e4bb0493364ab0631701d55a7492fc53c9",
+  "expected_parent": "40b29e498dd6ea8ebdef20bd507bb41ebeee8576",
+  "original_connected_started_at": "2026-10-30T05:49:24.099814Z",
+  "acquired_at": "2026-10-30T05:52:25Z",
+  "released_at": "2026-10-30T06:05:08+00:00",
+  "provider_terminal": "NOT_ATTESTED",
+  "provider_attempt_history": "NOT_ATTESTED",
+  "trigger_origin": "NOT_VERIFIED",
+  "pr": 136,
+  "head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
+  "ci": 41011391749,
+  "release_source_blob": "aec1699605fc7754f808b7768ceb8e3ce4b74f29",
+  "source_function": "repair_control.owned_lease",
+  "host_pre_release_trace": [
+    {
+      "kind": "READ1",
+      "ref": "40b29e498dd6ea8ebdef20bd507bb41ebeee8576",
+      "state_blob": "7d1aa1d633ff2a6d68cad85970b749443ba0b0ec",
+      "observed_at": "2026-10-30T06:04:52Z",
+      "provider": {
+        "task_id": "6add445e4138819197d9cf2b1a02534d",
+        "last_run": {
+          "id": "b0642945-e128-8323-9d82-d2a8b335dc8e",
+          "recorded_status": "in_progress",
+          "scheduled_for": "2026-10-30T05:45:00Z",
+          "started_at": "2026-10-30T05:49:24.099814Z",
+          "completed_at": null,
+          "chat_ref": null
+        }
+      }
+    },
+    {
+      "kind": "PEEK1",
+      "task_id": "6add445e4138819197d9cf2b1a02534d",
+      "last_run": {
+        "id": "b0642945-e128-8323-9d82-d2a8b335dc8e",
+        "recorded_status": "in_progress",
+        "scheduled_for": "2026-10-30T05:45:00Z",
+        "started_at": "2026-10-30T05:49:24.099814Z",
+        "completed_at": null,
+        "chat_ref": null
+      }
+    },
+    {
+      "kind": "READ2",
+      "ref": "40b29e498dd6ea8ebdef20bd507bb41ebeee8576",
+      "state_blob": "7d1aa1d633ff2a6d68cad85970b749443ba0b0ec",
+      "observed_at": "2026-10-30T06:05:01Z",
+      "provider": {
+        "task_id": "6add445e4138819197d9cf2b1a02534d",
+        "last_run": {
+          "id": "b0642945-e128-8323-9d82-d2a8b335dc8e",
+          "recorded_status": "in_progress",
+          "scheduled_for": "2026-10-30T05:45:00Z",
+          "started_at": "2026-10-30T05:49:24.099814Z",
+          "completed_at": null,
+          "chat_ref": null
+        }
+      }
+    },
+    {
+      "kind": "PEEK2",
+      "task_id": "6add445e4138819197d9cf2b1a02534d",
+      "last_run": {
+        "id": "b0642945-e128-8323-9d82-d2a8b335dc8e",
+        "recorded_status": "in_progress",
+        "scheduled_for": "2026-10-30T05:45:00Z",
+        "started_at": "2026-10-30T05:49:24.099814Z",
+        "completed_at": null,
+        "chat_ref": null
+      }
+    }
+  ],
+  "target_state_sha256": "ed79fba16c67de2c2e053c31768fe24281332660326ea7fbb781903a9319a194",
+  "postwrite_readback": "REQUIRED_NOT_ASSERTED_AT_COMMIT_CREATION",
+  "host_crash_guarantee": false,
+  "A12": false,
+  "A13": false
+}
