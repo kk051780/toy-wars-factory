@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-30T06:17:19.434Z",
+  "observed_at": "2026-10-30T06:19:04.252Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4164,7 +4164,7 @@
     {
       "id": "pr136_idle_holder_chronology_registered_review_20261030",
       "kind": "REGISTERED_META_SOURCE_REVIEW",
-      "status": "INDEPENDENT_APPROVED_AWAITING_MERGE",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "priority": "P1",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
@@ -4232,11 +4232,11 @@
         "provider_terminal": "NOT_ATTESTED"
       },
       "review_required_for_head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
-      "source_review_status": "APPROVED_EXACT_HEAD",
+      "source_review_status": "APPROVED_AND_MERGED",
       "a12_verified": false,
       "a13_verified": false,
       "owner_reply_required": false,
-      "next_actor": "SEPARATE_REGISTERED_REVIEWER_NEW_RUN",
+      "next_actor": "REGISTERED_WORKER_OR_META_NEW_DISTINCT_SOURCE",
       "independent_review": {
         "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
         "run_id": "6f544d8f-8718-832b-afcf-743abcf7d634",
@@ -4246,7 +4246,23 @@
         "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/136#issuecomment-6516351276",
         "reviewed_at": "2026-10-30T06:17:19.434Z"
       },
-      "updated_at": "2026-10-30T06:17:19.434Z"
+      "updated_at": "2026-10-30T06:19:04.252Z",
+      "integration_result": {
+        "pr": 136,
+        "head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
+        "merge_sha": "a1e54b5ee1f272ee43bdb321defe867c254e0268",
+        "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+        "main_qa": 41013241881,
+        "handoff": 41013241727,
+        "main_after_handoff": "d0c1bf60d733a0db51d12c0295805d7741ce62eb",
+        "reviewer_epoch": 276,
+        "reviewer_run_id": "6f544d8f-8718-832b-afcf-743abcf7d634",
+        "python_tests": 833,
+        "new_python_tests": 13,
+        "status_only_descendant_verified": true,
+        "a12_verified": false,
+        "a13_verified": false
+      }
     }
   ]
 }

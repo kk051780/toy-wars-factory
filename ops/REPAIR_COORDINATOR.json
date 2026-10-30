@@ -1221,6 +1221,22 @@
       "reviewer_run_id": "9441c051-1f78-8328-836f-fd08b1b5b840",
       "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "status_only_descendant_verified": true
+    },
+    "136": {
+      "pr": 136,
+      "head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
+      "merge_sha": "a1e54b5ee1f272ee43bdb321defe867c254e0268",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "main_qa": 41013241881,
+      "handoff": 41013241727,
+      "main_after_handoff": "d0c1bf60d733a0db51d12c0295805d7741ce62eb",
+      "reviewer_epoch": 276,
+      "reviewer_run_id": "6f544d8f-8718-832b-afcf-743abcf7d634",
+      "python_tests": 833,
+      "new_python_tests": 13,
+      "status_only_descendant_verified": true,
+      "a12_verified": false,
+      "a13_verified": false
     }
   },
   "integration_review_history": [
@@ -2534,7 +2550,7 @@
       "author_release_ref": "a0371881c378b4de42621d59a64ef2295fb37c5a",
       "reviewed_at": "2026-10-30T06:17:19.434Z",
       "verdict": "APPROVE",
-      "status": "INDEPENDENT_APPROVED_AWAITING_MERGE",
+      "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
       "blockers": [],
       "checks": {
         "scope": true,
@@ -2575,7 +2591,20 @@
         "No provider signed immutable attempt history",
         "No user delivery, recovery, Roblox engine or mobile evidence",
         "Existing generic CONNECTOR_UNAVAILABLE signals binding uncertainty, not network diagnosis"
-      ]
+      ],
+      "merge_sha": "a1e54b5ee1f272ee43bdb321defe867c254e0268",
+      "main_qa": 41013241881,
+      "handoff": 41013241727,
+      "main_after_handoff": "d0c1bf60d733a0db51d12c0295805d7741ce62eb",
+      "postmerge_qa_jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "handoff_jobs": {
+        "update": "success"
+      },
+      "postmerge_verified_at": "2026-10-30T06:19:04.252Z",
+      "postmerge_receipt_url": "https://github.com/kk051780/toy-wars-factory/pull/136#issuecomment-6516375092"
     }
   },
   "last_approval_report": {
@@ -2605,14 +2634,14 @@
     "released_at": "2026-10-30T06:05:08+00:00"
   },
   "last_completed_integration": {
-    "at": "2026-10-30T05:00:19.525Z",
-    "epoch": 274,
-    "handoff": 41005879997,
-    "head": "59673ab3dc63291ade9494c7ce24310ba615be5e",
-    "main_qa": 41005880052,
-    "merge_sha": "e9e72a2e56fa536114d596b0b0c416e9ebec4540",
-    "pr": 135,
-    "reviewer_run_id": "9441c051-1f78-8328-836f-fd08b1b5b840"
+    "at": "2026-10-30T06:19:04.252Z",
+    "epoch": 276,
+    "pr": 136,
+    "head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
+    "merge_sha": "a1e54b5ee1f272ee43bdb321defe867c254e0268",
+    "main_qa": 41013241881,
+    "handoff": 41013241727,
+    "reviewer_run_id": "6f544d8f-8718-832b-afcf-743abcf7d634"
   },
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_system_review": {
