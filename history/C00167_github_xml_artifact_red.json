@@ -1,0 +1,30 @@
+{
+  "id": "C00167",
+  "date": "2026-10-31",
+  "kind": "A14_GITHUB_NATIVE_XML_ARTIFACT_RED",
+  "owner_role": "MANUAL_CONTROLLER",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "37d9c8385129cd45c6acac5e4b23c412937b69ef",
+    "owner_run_id": "a14e8a10-4314-4114-b081-202610310712",
+    "epoch": 293
+  },
+  "issue": 117,
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_changes": [],
+  "test_changes": [
+    {
+      "path": "tests/test_system_xml_artifact_export.py",
+      "tests_added": 23
+    }
+  ],
+  "tests": {
+    "red": "PENDING_REAL_GITHUB_ACTIONS",
+    "green": "NOT_YET_RUN"
+  },
+  "game_source_changed": false,
+  "roblox_api_calls": 0,
+  "engine_test": "NOT_RUN",
+  "public_publish_authorized": false,
+  "independent_security_review": "REQUIRED"
+}
