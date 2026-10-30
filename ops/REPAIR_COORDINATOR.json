@@ -1139,17 +1139,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 286,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "7cb7b8ef-f9be-4f1a-a4a1-78ff3ea62429",
-    "task_id": null,
-    "epoch": 286,
-    "acquired_at": "2026-10-30T09:29:12.660Z",
-    "expires_at": "2026-10-30T09:59:12.660Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/epoch284-provider-start-guard-7cb7b8ef-f9be-4f1a-a4a1-78ff3ea62429",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2793,27 +2783,21 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "DISPATCH",
-    "owner_id": "c666a88a-468b-483d-88ce-b10dba275383",
-    "epoch": 283,
-    "released_at": "2026-10-30T07:46:14.138Z",
+    "kind": "CONTROLLER",
+    "owner_id": "7cb7b8ef-f9be-4f1a-a4a1-78ff3ea62429",
+    "epoch": 286,
+    "released_at": "2026-10-30T09:38:46.651Z",
     "release_receipt": {
-      "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
-      "repository": "kk051780/toy-wars-factory",
-      "task_id": null,
-      "owner_run_id": "c666a88a-468b-483d-88ce-b10dba275383",
-      "epoch": 283,
-      "expected_parent": "b3356fe949c2127abb768972c42323022581ffd0",
-      "provider_terminal": "NOT_ATTESTED",
-      "postwrite_readback_required": true,
-      "reason": "OWN_EXPIRED_DISPATCH_DETACHED_TO_FREE_GLOBAL_LEASE",
-      "worker_observation": {
-        "task_id": "6adbf0d6a7d881918ce181dff2468867",
-        "run_id": "8af36847-4914-8328-a7c7-f6fc636646c4",
-        "run_status": "in_progress",
-        "started_at": "2026-10-30T07:45:01.159521Z"
-      },
-      "no_worker_or_foreign_lease_released": true
+      "kind": "OWN_CONTROLLER_NORMAL_COMPLETION_AND_RELEASE",
+      "claim_commit": "47ad3e1808a1fbc615513f5866f9118108819b03",
+      "source_pr": 141,
+      "source_head": "4caa1a238cdda629caeee9fdfb3b944e88f3952d",
+      "qa_run": 41034681601,
+      "qa_conclusion": "success",
+      "two_jobs_success": true,
+      "independent_protected_review": "PENDING",
+      "former_meta_epoch284_terminal_attestation": "NOT_AVAILABLE",
+      "single_parent_nonforce_postwrite_check": true
     }
   },
   "last_completed_integration": {
