@@ -1,12 +1,12 @@
 # Toy Wars Factory — 開発進捗ダッシュボード
 
-観測日：2026-10-25 / 根拠main：`f728fa525d8b`
+観測日：2026-10-29 / 確認base main：`221bc53ce118`（Issue113 保護審査候補）
 
 **進捗率は残り日数ではなく「完了条件を満たした工程の重み付き達成率」。** ドラフトPRや未検証の実機は完了扱いしない。初回の自動統合成功を反映したが、長期の無人安定稼働やRobloxエンジン検証は未達。
 
 | 項目 | 基準達成率 | 完了工程 | 未完工程 | うち障害あり |
 | --- | ---: | ---: | ---: | ---: |
-| 自動開発体制 | **57%** | 8/15 | 7 | 4 |
+| 自動開発体制 | **76%** | 11/15 | 4 | 3 |
 | ゲーム開発（全体構想） | **38%** | 7/18 | 11 | 5 |
 
 ## 自動開発体制
@@ -21,9 +21,9 @@
 | A06 手動GO・自動実行の共有排他ロック | 8 | 達成 | [根拠](https://github.com/kk051780/toy-wars-factory/pull/41) |
 | A07 実装と分離した審査タスク・統合判定ルールの導入 | 6 | 達成 | [根拠](https://github.com/kk051780/toy-wars-factory/pull/43) |
 | A08 独立審査による実ゲームPRの無人main統合 | 8 | 達成 | [別タスクがPR #45を統合](https://github.com/kk051780/toy-wars-factory/pull/45)・[統合後QA成功](https://github.com/kk051780/toy-wars-factory/actions/runs/40157791404) |
-| A09 無人統合後mainのQAによる後続工程制御 | 6 | 未達 | QA成功・失敗の後続停止/再開を実証 |
-| A10 日次METAによる根拠付きの体制改善PR | 7 | 障害あり | no_updateの原因調査と初回PRの成功 |
-| A11 故障したmain/CIの自動修復・再検査 | 6 | 未達 | 実際の失敗から修復完了までを検証 |
+| A09 無人統合後mainのQAによる後続工程制御 | 6 | 達成 | [検査済PR #75](https://github.com/kk051780/toy-wars-factory/pull/75) |
+| A10 日次METAによる根拠付きの体制改善PR | 7 | 達成 | [検査済PR #84](https://github.com/kk051780/toy-wars-factory/pull/84) |
+| A11 故障したmain/CIの自動修復・再検査 | 6 | 達成 | [検査済PR #108](https://github.com/kk051780/toy-wars-factory/pull/108) |
 | A12 no_update・停滞・CI遅延の自動検知/報告 | 5 | 障害あり | Issue #4の再発防止 |
 | A13 連続サイクルでの無人安定稼働 | 5 | 未達 | 3サイクル以上の作者/審査/改善結果 |
 | A14 非公開Roblox Cloud Engine実機CI接続 | 8 | 障害あり | Issue #3の実機起動証拠 |
@@ -61,6 +61,14 @@
 
 ## 直近の重要ゲート
 
-- 自動体制：独立審査でPR #44/#45をmainへ無人統合した実証が必要。
+- 自動体制：A12の定期異常検知・保存・配達・別run回復、A13の非強制3周期をそれぞれ実証する。
 - ゲーム：Roblox実機でPvE一周、2人、スマホを通すまで公開不可。
 - `no_update` やGemini推論事故を承認で素通りしない。新規課金/プロバイダ推論、Roblox公開は別ゲート。
+
+## 2026-10-29 保護付き進捗調整候補（Issue #113）
+
+- 歴史的な公式値 **57%（8/15）** を履歴に保持。A09 +6 / A10 +7 / A11 +6で76%候補。別の保護独立監査と正確head CI、main統合後QA完了までは正式値と断定しない。
+- A09: [失敗main QA](https://github.com/kk051780/toy-wars-factory/actions/runs/40340954729) → [CONTROLLER保護修復PR75](https://github.com/kk051780/toy-wars-factory/pull/75) → [成功main QA](https://github.com/kk051780/toy-wars-factory/actions/runs/40404466932)。万能な無人自動復旧ではない。
+- A10: [META PR84](https://github.com/kk051780/toy-wars-factory/pull/84) → [成功main QA](https://github.com/kk051780/toy-wars-factory/actions/runs/40501279576)。連続無人保証ではない。
+- A11: [失敗CI](https://github.com/kk051780/toy-wars-factory/actions/runs/40760602268) → [修復PR108](https://github.com/kk051780/toy-wars-factory/pull/108) → [成功main QA](https://github.com/kk051780/toy-wars-factory/actions/runs/40763962202)。
+- A12〜15、ゲーム38%、Gemini/予算/公開HOLDは変更しない。
