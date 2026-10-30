@@ -79,7 +79,8 @@ class ThroughputTests(unittest.TestCase):
     def test_32_hex_real_task_ids(self):
         f=fixture(); f['roles']['WORKER']='6adbf0d6a7d881918ce181dff2468867'
         f['runs'][1]['task_id']=f['roles']['WORKER']
-        self.assertEqual(build(f)['roles']['WORKER']['observed_runs'], 1)
+        trusted=binding(); trusted['roles']['WORKER']=f['roles']['WORKER']
+        self.assertEqual(build(f,trusted)['roles']['WORKER']['observed_runs'], 1)
     def test_foreign_lease_overlaps_worker_by_62_seconds(self):
         v = build(fixture())['roles']
         self.assertEqual(v['WORKER']['foreign_lease_overlap_seconds_reported'], 62)

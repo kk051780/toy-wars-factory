@@ -1,0 +1,41 @@
+{
+  "id": "C00146",
+  "date": "2026-10-30",
+  "kind": "SYSTEM_THROUGHPUT_METRICS_FINAL_TEST_FIXTURE_AND_RED",
+  "repository": "kk051780/toy-wars-factory",
+  "work_id": "TWF-SYSTEM-THROUGHPUT-V2-20261030",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "8c89fc2c26b5dc536c36a528b333034353a79af0",
+    "owner_run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+    "epoch": 266
+  },
+  "base_main": "0e424593c75e8a65279dd251789aaa5834586263",
+  "preserved_history": "C00145 remains byte-identical; its initial test-byte-identity expectation is superseded only by this explicit fixture correction",
+  "correction": "One NEW, never accepted positive test changed to provide the matching independently pinned WORKER task binding when exercising valid real32hex task ID. Source contract was not relaxed. Earlier RED was missing-module42 failures; first local candidate implementation revealed this positive fixture mismatch. Corrected final42 tests show source-absent42 failures/0errors and local source-present42 PASS.",
+  "initial_red": {
+    "head": "b38e38da572f12344eb32d6c0962b646eac4c919",
+    "ci": 40994394203,
+    "expected": "42 assertion failures for missing module; actual job logs bound in GREEN record"
+  },
+  "final_local_red": {
+    "tests": 42,
+    "failures": 42,
+    "errors": 0
+  },
+  "final_local_green": {
+    "tests": 42,
+    "failures": 0,
+    "errors": 0
+  },
+  "final_test_bytes_identical_red_to_green_required": true,
+  "old_accepted_tests_edited": false,
+  "source_changes_in_this_commit": 0,
+  "limits": [
+    "Synthetic/local evidence, not provider attestation or A12/A13",
+    "Source remains absent in this new GitHub RED commit",
+    "No alteration of C00145 or any accepted source/test/history"
+  ]
+}
