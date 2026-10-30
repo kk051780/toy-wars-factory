@@ -1,0 +1,21 @@
+{
+  "id": "C00161",
+  "date": "2026-10-31",
+  "kind": "META_HOURLY_SOURCE_DRIFT_TEST_FIRST_RED",
+  "issue": 128,
+  "owner_role": "MANUAL_CONTROLLER",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordinator": {
+    "epoch": 302,
+    "owner_id": "e1ca775b-0b0e-4116-a104-2c553bd8608e",
+    "claim_commit": "e4efcd6b5e3bff614540520bb219e5e3605cbdfe"
+  },
+  "new_tests": "tests/test_system_meta_hourly_contract.py",
+  "new_cases": 16,
+  "expected_red": "eleven new source daily-vs-hourly assertions",
+  "verification": "AWAIT_GITHUB_RED_CI",
+  "protected": "DRAFT_ONLY",
+  "provider_authenticated": false,
+  "source_publishing": false,
+  "spend_authorized": false
+}
