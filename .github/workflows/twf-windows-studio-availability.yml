@@ -1,0 +1,70 @@
+# A14 Windows-host feasibility check only. No Roblox Studio installation/execution.
+# This workflow is a protected PR review candidate; its output is NOT engine proof.
+name: TWF Windows Studio availability - NOT ENGINE
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/twf-windows-studio-availability.yml'
+  workflow_dispatch:
+permissions: {}
+concurrency:
+  group: twf-windows-studio-availability-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  windows-host-only:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - name: Inspect preinstalled Studio without downloading or running it
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $versions = Join-Path $env:LOCALAPPDATA 'Roblox\Versions'
+          $found = @()
+          if (Test-Path -LiteralPath $versions -PathType Container) {
+            $found = @(Get-ChildItem -LiteralPath $versions -Filter 'RobloxStudioBeta.exe' -File -Recurse -ErrorAction Stop)
+          }
+          $status = 'STUDIO_NOT_INSTALLED'
+          $signatureStatus = 'NOT_APPLICABLE'
+          if ($found.Count -gt 0) {
+            $status = 'STUDIO_PRESENT_UNTRUSTED'
+            $candidate = $found[0].FullName
+            $sig = Get-AuthenticodeSignature -LiteralPath $candidate
+            $signatureStatus = [string]$sig.Status
+            if ($sig.Status -eq 'Valid' -and $null -ne $sig.SignerCertificate -and
+                $sig.SignerCertificate.Subject -match 'Roblox') {
+              $status = 'STUDIO_PRESENT_SIGNED'
+            }
+          }
+          $report = [ordered]@{
+            schema = 1
+            type = 'WINDOWS_HOST_DISCOVERY_ONLY_NOT_ENGINE'
+            status = $status
+            signature_status = $signatureStatus
+            repository = 'kk051780/toy-wars-factory'
+            run_id = $env:GITHUB_RUN_ID
+            head_sha = $env:GITHUB_SHA
+            runner_os = $env:RUNNER_OS
+            runner_image = $env:ImageVersion
+            available_installations_count = $found.Count
+            studio_executed = $false
+            xml_loaded = $false
+            play_mode_verified = $false
+            roblox_engine_verified = $false
+            public_publish_authorized = $false
+            secret_access_used = $false
+            artifact_is_host_attestation = $false
+          }
+          $dest = Join-Path $env:RUNNER_TEMP 'studio-host-availability.json'
+          $report | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $dest -Encoding utf8
+          Write-Output ('A14_WIN_HOST_STATUS=' + $status)
+          Write-Output ('A14_WIN_HOST_RUN_ID=' + $env:GITHUB_RUN_ID)
+          Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Value ('Studio installed/signed availability: **' + $status + '**. No Studio execution, Play, XML load, upload or publish.')
+      - name: Preserve bounded host availability evidence (not engine)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: twf-windows-studio-availability-not-engine
+          path: ${{ runner.temp }}/studio-host-availability.json
+          if-no-files-found: error
+          retention-days: 7
