@@ -1,0 +1,27 @@
+{
+  "id": "C00159",
+  "date": "2026-10-31",
+  "kind": "MANUAL_DISPATCH_MAIN_LINEAGE_FAIL_FIRST_TEST",
+  "issue": 57,
+  "owner_role": "MANUAL_CONTROLLER",
+  "base_pr": 139,
+  "base_pr_head": "adb8909b9ab8f451fbcb24306685bdcfbc491a98",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "4498e9f5661d0e1f92b24e0d1ebbf0346637c9f5",
+    "owner_run_id": "1996de65-0309-4d86-8c80-972330117fe1",
+    "epoch": 299
+  },
+  "added_tests": [
+    "tests/test_system_manual_dispatch_main_binding.py"
+  ],
+  "expected_red": [
+    "changed/missing main SHA admitted by prior helper",
+    "worker time before ticket issue accepted"
+  ],
+  "verification": "AWAIT_GITHUB_RED_CI",
+  "real_provider_identity": "NOT_ATTESTED_MANUAL_CONTROLLER",
+  "roblox_engine": "NOT_RUN",
+  "safety_holds": "PRESERVED"
+}
