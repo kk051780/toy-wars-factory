@@ -1,0 +1,47 @@
+{
+  "id": "C00166",
+  "date": "2026-10-31",
+  "kind": "A14_XML_SAVED_GREEN_CANDIDATE",
+  "origin": "MANUAL_CONTROLLER",
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "28c4c2d3cc0b63732194339dc251f4cc8961c1ef",
+    "owner_run_id": "a14c0520-2026-4a14-9b45-202610310633",
+    "epoch": 291,
+    "work_branch": "controller/roblox-private-xml-saved-a14c0520"
+  },
+  "source_changes": [],
+  "module_changes": [
+    "tools/roblox_private_xml_saved.py",
+    "tools/stage_private_xml_saved.py"
+  ],
+  "test_changes": [
+    {
+      "path": "tests/test_system_private_xml_saved.py",
+      "new_cases": 27,
+      "prior_red_cases": 25
+    }
+  ],
+  "documentation": [
+    "docs/A14_PRIVATE_XML_SAVED_BRIDGE.md"
+  ],
+  "tests": {
+    "red": {
+      "commit": "7fd20873d24ebc4eba074357b9290c00c1f9085e",
+      "run_id": 41132816512,
+      "offline": "FAILED_EXPECTED_PLUS_RED_HISTORY_SCHEMA",
+      "compile_hold": "SUCCESS",
+      "fixed_red_history_source_changes_type": true
+    },
+    "green": {
+      "status": "WAIT_GITHUB_CI"
+    }
+  },
+  "game_lua_changed": false,
+  "roblox_api_requests": 0,
+  "studio_test": "NOT_RUN",
+  "public_publish": false,
+  "roblox_engine_verified": false,
+  "independent_protected_review": "REQUIRED"
+}

@@ -67,6 +67,19 @@ class ActualCurrentGameXml(unittest.TestCase):
             p=ET.SubElement(i,'Properties');ET.SubElement(p,'string',{'name':'Name'}).text='Unknown'
         data=build_xml(modify)
         with self.assertRaises(x.XmlStageError):x.check_rbxlx_bytes(data,config(data))
+    def test_hidden_nested_item_rejected(self):
+        def modify(root):
+            holder=root.find(".//Item[@class='ServerScriptService']")
+            hidden=ET.SubElement(holder,'UnknownWrapper')
+            ET.SubElement(hidden,'Item',{'class':'Script'})
+        data=build_xml(modify)
+        with self.assertRaises(x.XmlStageError):x.check_rbxlx_bytes(data,config(data))
+    def test_unknown_root_payload_rejected(self):
+        def modify(root):
+            hidden=ET.SubElement(root,'UnknownWrapper')
+            ET.SubElement(hidden,'Item',{'class':'Script'})
+        data=build_xml(modify)
+        with self.assertRaises(x.XmlStageError):x.check_rbxlx_bytes(data,config(data))
     def test_missing_remote_event_rejected(self):
         def modify(root):
             holder=root.find(".//Item[@class='ReplicatedStorage']")
