@@ -1,0 +1,55 @@
+{
+  "id": "C00147",
+  "date": "2026-10-30",
+  "kind": "UNMERGED_NEW_HISTORY_JSON_CONTRACT_CORRECTION_AND_CLEAN_RED",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "8c89fc2c26b5dc536c36a528b333034353a79af0",
+    "owner_run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+    "epoch": 266
+  },
+  "base_main": "0e424593c75e8a65279dd251789aaa5834586263",
+  "work_id": "TWF-SYSTEM-THROUGHPUT-V2-20261030",
+  "source_changes": [],
+  "source_change_count": 0,
+  "correction": {
+    "paths": [
+      "history/C00145_throughput_metrics_main_red.json",
+      "history/C00146_throughput_metrics_final_test_red.json"
+    ],
+    "before": "Numeric source_changes count in new unmerged history violated accepted list contract.",
+    "after": "Use empty source_changes list and preserve numeric count in separate count field; C00145 gains canonical id.",
+    "unmerged_history_revision": true,
+    "accepted_history_rewritten": false,
+    "original_versions_preserved_in_git": [
+      "b38e38da572f12344eb32d6c0962b646eac4c919",
+      "c752e33a17182b8afb697beddd42b4afcba4f515"
+    ],
+    "supersedes": "C00146 C00145 byte-identity expectation only; old versions retained in immutable commits. Test bytes remain identical after final fixture correction.",
+    "error_evidence": {
+      "test": "test_failed_trial_and_unmerged_pr_origin_survive_generation",
+      "type": "TypeError: int object is not iterable",
+      "initial_ci": 40994394203,
+      "second_ci": 40994608181,
+      "tests": 803,
+      "failures": 42,
+      "errors": 1
+    }
+  },
+  "final_test": {
+    "methods": 42,
+    "blob": "91e9376d94fc734191065c3e1b02a263ef2995fe"
+  },
+  "clean_red_expected": {
+    "new_failures": 42,
+    "accepted_errors": 0
+  },
+  "status": "REAL_CLEAN_RED_CI_PENDING_AT_COMMIT_CREATION",
+  "limits": [
+    "No accepted test or history changed",
+    "Source module absent in this RED commit",
+    "No provider authentication, A12/A13 or engine claim"
+  ]
+}
