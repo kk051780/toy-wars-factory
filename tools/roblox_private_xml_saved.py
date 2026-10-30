@@ -104,15 +104,33 @@ def check_rbxlx_bytes(data:bytes,cfg:XmlStageConfig)->dict[str,Any]:
     demand(root.tag=='roblox' and root.attrib.get('version')=='4','invalid Roblox XML place root')
     topology={}
     scripts={}
+    referents=set()
     def walk(item:ET.Element,parent:tuple[str,...]):
         cls=item.attrib.get('class')
         demand(type(cls) is str and cls,'missing Roblox class')
         name=_name(item)
         path=parent+(name,)
         demand(path not in topology,'duplicate Roblox instance path')
+        referent=item.attrib.get('referent')
+        demand(set(item.attrib)=={'class','referent'} and
+               type(referent) is str and
+               re.fullmatch(r'RBX[0-9A-F]{1,32}',referent) is not None and
+               referent not in referents,'invalid, duplicate or unreviewed Roblox instance referent')
+        referents.add(referent)
         topology[path]=cls
         demand(all(child.tag in {'Properties','Item'} for child in item),
                'unexpected element inside Roblox Item')
+        props=next(p for p in item if p.tag=='Properties')
+        permitted={'Name':'string'}
+        if path in SOURCE_PINS:permitted['Source']='ProtectedString'
+        observed=set()
+        for prop in props:
+            label=prop.attrib.get('name')
+            demand(set(prop.attrib)=={'name'} and label in permitted and
+                   prop.tag==permitted[label] and label not in observed,
+                   'unreviewed or duplicate XML instance property')
+            observed.add(label)
+        demand(observed==set(permitted),'missing expected XML instance property')
         for child in item:
             if child.tag=='Item': walk(child,path)
         if path in SOURCE_PINS:
