@@ -20,11 +20,13 @@ NOW = "2026-10-25T00:00:00Z"
 LATER = "2026-10-25T00:31:00Z"
 BRANCH = "auto/twf-game-repair-" + RUN
 REPO = "kk051780/toy-wars-factory"
+SOURCE_MAIN = "e5deff4d5681bca4823a3da0f848e01bc089ae6e"
 
 
 class CoordinationTests(unittest.TestCase):
     def worker(self, state=None, owner=RUN, now=NOW):
-        return acquire(state or initial_state(), "WORKER", owner, now, work_branch=BRANCH)
+        return acquire(state or initial_state(), "WORKER", owner, now,
+                       base_main_sha=SOURCE_MAIN, work_branch=BRANCH)
 
     def test_manual_go_joins_in_progress_service_without_dispatch(self):
         result = acquire(initial_state(), "DISPATCH", RUN, NOW, service_status="in_progress")
@@ -42,7 +44,8 @@ class CoordinationTests(unittest.TestCase):
         self.assertEqual(second["action"], "JOIN_EXISTING")
 
     def test_first_worker_adopts_manual_ticket_and_fences_dispatcher(self):
-        ticket = acquire(initial_state(), "DISPATCH", RUN, NOW, service_status="completed")["state"]
+        ticket = acquire(initial_state(), "DISPATCH", RUN, NOW,
+                         service_status="completed", base_main_sha=SOURCE_MAIN)["state"]
         work = self.worker(ticket, OTHER)["state"]
         self.assertEqual(work["holder"]["kind"], "WORKER")
         self.assertEqual(work["holder"]["origin"], "manual")
