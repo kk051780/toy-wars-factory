@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-30T06:03:01Z",
+  "observed_at": "2026-10-30T06:17:19.434Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4164,7 +4164,7 @@
     {
       "id": "pr136_idle_holder_chronology_registered_review_20261030",
       "kind": "REGISTERED_META_SOURCE_REVIEW",
-      "status": "REQUESTED_INDEPENDENT_REVIEW",
+      "status": "INDEPENDENT_APPROVED_AWAITING_MERGE",
       "priority": "P1",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
@@ -4232,11 +4232,21 @@
         "provider_terminal": "NOT_ATTESTED"
       },
       "review_required_for_head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
-      "source_review_status": "NOT_APPROVED",
+      "source_review_status": "APPROVED_EXACT_HEAD",
       "a12_verified": false,
       "a13_verified": false,
       "owner_reply_required": false,
-      "next_actor": "SEPARATE_REGISTERED_REVIEWER_NEW_RUN"
+      "next_actor": "SEPARATE_REGISTERED_REVIEWER_NEW_RUN",
+      "independent_review": {
+        "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "run_id": "6f544d8f-8718-832b-afcf-743abcf7d634",
+        "epoch": 276,
+        "head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
+        "verdict": "APPROVE",
+        "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/136#issuecomment-6516351276",
+        "reviewed_at": "2026-10-30T06:17:19.434Z"
+      },
+      "updated_at": "2026-10-30T06:17:19.434Z"
     }
   ]
 }

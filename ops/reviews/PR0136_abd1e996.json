@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "pr": 136,
+  "head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
+  "base_main_sha": "e55ee17606b03ad997f752944eae6ad91e7651dc",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "6f544d8f-8718-832b-afcf-743abcf7d634",
+  "reviewer_claim": "98f7c6a75237740d4e22ea9956eacf9b30dd9fee",
+  "lease_epoch": 276,
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "b0642945-e128-8323-9d82-d2a8b335dc8e",
+  "author_epoch": 275,
+  "author_claim": "99f908e4bb0493364ab0631701d55a7492fc53c9",
+  "author_release_ref": "a0371881c378b4de42621d59a64ef2295fb37c5a",
+  "reviewed_at": "2026-10-30T06:17:19.434Z",
+  "verdict": "APPROVE",
+  "status": "INDEPENDENT_APPROVED_AWAITING_MERGE",
+  "blockers": [],
+  "checks": {
+    "scope": true,
+    "regression": true,
+    "source_ledger": true,
+    "protected_controls": true,
+    "behavior": true
+  },
+  "ci": {
+    "id": 41011391749,
+    "attempt": 1,
+    "head": "abd1e9966d09d96a88e4ce1089f4edd5705eccd5",
+    "conclusion": "success",
+    "status": "completed",
+    "python_tests": 833,
+    "new_tests": 13,
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    }
+  },
+  "red": {
+    "id": 41011134241,
+    "head": "5007c0fc0f82ed5c5bc7232c6b4fb8f1320736f5",
+    "failures": 9,
+    "tests": 833
+  },
+  "changed_files": [
+    "tools/system_idle_health.py",
+    "tests/test_system_idle_claim_chronology.py",
+    "history/C00153_idle_holder_chronology_red.json",
+    "history/C00154_idle_holder_chronology_green.json"
+  ],
+  "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/136#issuecomment-6516351276",
+  "native_github_review_submission": false,
+  "limitations": [
+    "Synthetic tests only; no A12/A13 verified",
+    "No provider signed immutable attempt history",
+    "No user delivery, recovery, Roblox engine or mobile evidence",
+    "Existing generic CONNECTOR_UNAVAILABLE signals binding uncertainty, not network diagnosis"
+  ]
+}
