@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-30T02:33:45.691Z",
+  "observed_at": "2026-10-30T03:10:35Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -3751,6 +3751,84 @@
       "review_record": "ops/reviews/PR0132_e1ef559a.json",
       "created_at": "2026-10-30T02:33:45.691Z",
       "next_actor": "WORKER_NEXT_GAME_CYCLE"
+    },
+    {
+      "id": "pr133_throughput_metrics_registered_review_20261030",
+      "kind": "REGISTERED_META_SOURCE_REVIEW",
+      "status": "REQUESTED_INDEPENDENT_REVIEW",
+      "priority": "P1",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "work_id": "TWF-SYSTEM-THROUGHPUT-V2-20261030",
+      "pr": 133,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/133",
+      "head": "fc80010c74bb2b92c88706710671453d277c33cb",
+      "base_main_sha": "0e424593c75e8a65279dd251789aaa5834586263",
+      "branch": "auto/twf-system-review-c761721e-48bc-832a-aa81-e7de554a089b",
+      "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+      "author_run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+      "created_at": "2026-10-30T03:10:35Z",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "8c89fc2c26b5dc536c36a528b333034353a79af0",
+        "owner_run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+        "epoch": 266
+      },
+      "ci": {
+        "id": 40995154590,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40995154590",
+        "head": "fc80010c74bb2b92c88706710671453d277c33cb",
+        "base": "0e424593c75e8a65279dd251789aaa5834586263",
+        "attempt": 1,
+        "event": "pull_request",
+        "status": "completed",
+        "conclusion": "success",
+        "python_tests": 803,
+        "new_tests": 42,
+        "existing761_preserved": true,
+        "jobs": [
+          {
+            "id": 123866449892,
+            "name": "compile_hold",
+            "head": "fc80010c74bb2b92c88706710671453d277c33cb",
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "id": 123866450330,
+            "name": "offline",
+            "head": "fc80010c74bb2b92c88706710671453d277c33cb",
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "scope": "PASS_TRUSTED_BASE",
+        "claim": "PASS_IMMUTABLE_COORDINATOR_CLAIMS",
+        "offline_log": [
+          "2026-10-30T03:03:18.0535851Z PASS: system review scope",
+          "2026-10-30T03:03:18.4345067Z PASS: repair coordination; 4 immutable coordinator claim(s) verified",
+          "2026-10-30T03:03:25.0180071Z Ran 803 tests in 4.165s",
+          "2026-10-30T03:03:25.0180518Z OK"
+        ]
+      },
+      "changed_files": [
+        "history/C00145_throughput_metrics_main_red.json",
+        "history/C00146_throughput_metrics_final_test_red.json",
+        "history/C00147_throughput_metrics_unmerged_history_contract.json",
+        "history/C00148_throughput_metrics_source_green.json",
+        "tests/test_system_throughput_metrics.py",
+        "tools/system_throughput_metrics.py"
+      ],
+      "request": "Separate registered REVIEWER: inspect exact new read-only metrics source and42new scenarios, original Library candidate as untrusted input, final cleanRED803/42 failures/0errors and exactGREEN803 bothjobs. Check strict project/repo/main/roles binding, result timestamp freshness, no_update/inprogress handling, released foreign interval union/unreleased UNKNOWN, chronology/epochs and withheld statistics/allauthorityfalse. All298 accepted blobs remain exact. NewC145/C146 metadata corrections explicitly logged C147; original RED commits retained. No old PR131 provenance/approval reuse. Author source/workflow/accepted tests unchanged. Wait for current author actual completion/release; old latest_result is previous run. Independent review then any merge must pass new mainQA/handoff.",
+      "owner_reply_required": false,
+      "normal_author_release": {
+        "status": "PENDING_NORMAL_FINALLY_AT_RECORD_CREATION",
+        "receipt_path": "ops/lease_receipts/META_c761721e_epoch266.json",
+        "provider_terminal": "NOT_ATTESTED"
+      },
+      "a12_verified": false,
+      "a13_verified": false
     }
   ]
 }

@@ -166,17 +166,19 @@
     "scope": "EXACT_HEAD_MAIN_INTEGRATION_ONLY",
     "items": [
       {
-        "number": 131,
-        "title": "[TWF system-review] Bind alert persistence lease to actual actor start time",
-        "url": "https://github.com/kk051780/toy-wars-factory/pull/131",
-        "head": "318a27bd6ee9bb565ceb619cf1db182336673c7e",
-        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40982601708",
-        "summary": "A12保存時に実run開始前のleaseを拒否。1条件追加・新規12回帰、RED9失敗→GREEN773件。",
+        "number": 133,
+        "title": "[TWF system-review] Add read-only multi-game throughput and lease-overlap metrics",
+        "url": "https://github.com/kk051780/toy-wars-factory/pull/133",
+        "head": "fc80010c74bb2b92c88706710671453d277c33cb",
+        "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40995154590",
+        "summary": "実行時間・結果鮮度・他役割lease重複を区別するread-only metrics。新42検査、既存761保持・全803成功。無人/配達/高速化は未実証。",
         "changed_files": [
-          "history/C00141_persistence_actor_chronology_red.json",
-          "history/C00142_persistence_actor_chronology_repair.json",
-          "tests/test_system_persistence_actor_chronology.py",
-          "tools/system_alert_persistence.py"
+          "history/C00145_throughput_metrics_main_red.json",
+          "history/C00146_throughput_metrics_final_test_red.json",
+          "history/C00147_throughput_metrics_unmerged_history_contract.json",
+          "history/C00148_throughput_metrics_source_green.json",
+          "tests/test_system_throughput_metrics.py",
+          "tools/system_throughput_metrics.py"
         ],
         "kind": "開発体制改善"
       }
@@ -184,8 +186,8 @@
     "decision_owner": "ASSISTANT",
     "roblox_publish_authorized": false,
     "automatic_merge_authorized": true,
-    "observed_at": "2026-10-30T00:58:48Z",
-    "signature": "dbfcbfafc85eb633fb95c2e6c47c7d22e87f933f00f6b17312049c1544980d76",
+    "observed_at": "2026-10-30T03:08:53Z",
+    "signature": "79df37ffdef59e43f1433997821573891ef927ce5cfd232906438d573bc42387",
     "approval_text": ""
   },
   "authorized_tasks": {
@@ -2353,15 +2355,24 @@
   "last_reported_approval_signature": "3a25be4d6dde4bc56602889c100f2e5c717e276a1940a8aeef726371b606bd77",
   "last_system_review": {
     "task_id": "6add445e4138819197d9cf2b1a02534d",
-    "run_id": "6c5df803-672c-8328-b0c9-07b9b96ee6bf",
-    "epoch": 262,
-    "claim_commit": "f121785d6a5f32ca604132625160a62882dd2713",
-    "recorded_at": "2026-10-30T00:58:48Z",
+    "run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+    "epoch": 266,
+    "claim_commit": "8c89fc2c26b5dc536c36a528b333034353a79af0",
+    "recorded_at": "2026-10-30T03:10:35Z",
     "report_path": "ops/SYSTEM_REVIEW_LATEST.json",
-    "pr": 131,
-    "head": "318a27bd6ee9bb565ceb619cf1db182336673c7e",
-    "ci": 40982601708,
-    "result": "NEW_A12_PERSISTENCE_ACTOR_CHRONOLOGY_REPAIR_GREEN_WAIT_INDEPENDENT_REVIEW"
+    "pr": 133,
+    "head": "fc80010c74bb2b92c88706710671453d277c33cb",
+    "ci": 40995154590,
+    "result": "NEW_READ_ONLY_THROUGHPUT_SOURCE_GREEN_WAIT_INDEPENDENT_REVIEW",
+    "reference_progress": {
+      "automation": 83.1,
+      "game": 40.5,
+      "automation_delta": 0.2,
+      "game_delta": 0,
+      "event": "PULSE-20261030-PR133-THROUGHPUT-METRICS-GREEN-001",
+      "prior": 6513545920,
+      "pulse": 6513987120
+    }
   },
   "latest_adoption_reconciliation": {
     "epoch": 253,
@@ -2617,6 +2628,22 @@
         "run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
         "task_id": "6add445e4138819197d9cf2b1a02534d"
       }
+    },
+    {
+      "ref": "8c89fc2c26b5dc536c36a528b333034353a79af0",
+      "prior": {
+        "task_id": "6add445e4138819197d9cf2b1a02534d",
+        "run_id": "6c5df803-672c-8328-b0c9-07b9b96ee6bf",
+        "epoch": 262,
+        "claim_commit": "f121785d6a5f32ca604132625160a62882dd2713",
+        "recorded_at": "2026-10-30T00:58:48Z",
+        "report_path": "ops/SYSTEM_REVIEW_LATEST.json",
+        "pr": 131,
+        "head": "318a27bd6ee9bb565ceb619cf1db182336673c7e",
+        "ci": 40982601708,
+        "result": "NEW_A12_PERSISTENCE_ACTOR_CHRONOLOGY_REPAIR_GREEN_WAIT_INDEPENDENT_REVIEW"
+      },
+      "scope": "Historical PR131 closed/quarantined; not reused for new author."
     }
   ],
   "task_id": "6adbf0d6a7d881918ce181dff2468867"

@@ -1,0 +1,239 @@
+{
+  "schema": 1,
+  "kind": "CANDIDATE_PYTHON_EXECUTION_WITH_CONNECTED_METADATA",
+  "actor": {
+    "task_id": "6add445e4138819197d9cf2b1a02534d",
+    "run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+    "epoch": 266,
+    "provider_status_at_prewrite": "in_progress",
+    "started_at": "2026-10-30T02:45:22.273109Z",
+    "previous_result_not_used": true
+  },
+  "source": {
+    "head": "fc80010c74bb2b92c88706710671453d277c33cb",
+    "blob": "06ad07328ead55bbe8b507b0238e230a18b9730d"
+  },
+  "input": {
+    "snapshot": {
+      "schema": 1,
+      "project_id": "toy-wars-factory",
+      "repository": "kk051780/toy-wars-factory",
+      "main_sha": "0e424593c75e8a65279dd251789aaa5834586263",
+      "observed_at": "2026-10-30T03:06:22Z",
+      "roles": {
+        "META": "6add445e4138819197d9cf2b1a02534d",
+        "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+        "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+      },
+      "runs": [
+        {
+          "role": "META",
+          "task_id": "6add445e4138819197d9cf2b1a02534d",
+          "run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+          "scheduled_for": "2026-10-30T02:45:00Z",
+          "started_at": "2026-10-30T02:45:22.273109Z",
+          "completed_at": null,
+          "recorded_status": "in_progress",
+          "current_result_run_id": "ae1bd1db-18a4-8333-9ccb-146b4f68c97e",
+          "current_result_created_at": "2026-10-30T01:48:31.976803Z"
+        },
+        {
+          "role": "WORKER",
+          "task_id": "6adbf0d6a7d881918ce181dff2468867",
+          "run_id": "0e255f57-f2c4-8331-bf27-4d2d6f1ee24e",
+          "scheduled_for": "2026-10-30T02:05:04Z",
+          "started_at": "2026-10-30T02:00:40.816657Z",
+          "completed_at": "2026-10-30T02:02:18.034881Z",
+          "recorded_status": "completed",
+          "current_result_run_id": "0e255f57-f2c4-8331-bf27-4d2d6f1ee24e",
+          "current_result_created_at": "2026-10-30T02:02:17.203453Z"
+        },
+        {
+          "role": "REVIEWER",
+          "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+          "run_id": "8193968e-b248-8328-92df-0eddc21c3c90",
+          "scheduled_for": "2026-10-30T02:29:18.838334Z",
+          "started_at": "2026-10-30T02:29:35.595687Z",
+          "completed_at": "2026-10-30T02:35:34.322123Z",
+          "recorded_status": "completed",
+          "current_result_run_id": "8193968e-b248-8328-92df-0eddc21c3c90",
+          "current_result_created_at": "2026-10-30T02:35:32.438654Z"
+        }
+      ],
+      "coordinator": [
+        {
+          "role": "REVIEWER",
+          "owner_run_id": "8193968e-b248-8328-92df-0eddc21c3c90",
+          "acquired_at": "2026-10-30T02:30:40.605Z",
+          "released_at": "2026-10-30T02:35:00.280Z",
+          "epoch": 265,
+          "claim_ref": "8c92957eb5393b4c23442346fc4b36d760f2a4ca",
+          "release_ref": "ebdebb0f2cbb7a6d4b0c6f27322180abb6b60fef"
+        },
+        {
+          "role": "META",
+          "owner_run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+          "acquired_at": "2026-10-30T02:48:50+00:00",
+          "released_at": null,
+          "epoch": 266,
+          "claim_ref": "8c89fc2c26b5dc536c36a528b333034353a79af0",
+          "release_ref": null
+        }
+      ]
+    },
+    "binding": {
+      "project_id": "toy-wars-factory",
+      "repository": "kk051780/toy-wars-factory",
+      "main_sha": "0e424593c75e8a65279dd251789aaa5834586263",
+      "roles": {
+        "META": "6add445e4138819197d9cf2b1a02534d",
+        "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+        "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+      }
+    }
+  },
+  "output": {
+    "authority": {
+      "dispatch_allowed": false,
+      "external_spend_allowed": false,
+      "merge_allowed": false,
+      "publish_allowed": false,
+      "start_now_allowed": false,
+      "takeover_allowed": false,
+      "write_allowed": false
+    },
+    "limitations": [
+      "HOST_PROVIDER_AUTHENTICATION_REQUIRED",
+      "SOURCE_CHANGES_NOT_INFERRED_FROM_PROSE",
+      "MISSING_LEASE_RELEASE_IS_NOT_SUCCESS",
+      "BILLABLE_MINUTES_UNKNOWN",
+      "LEASE_OVERLAP_NOT_CAUSAL_WAIT_PROOF"
+    ],
+    "main_sha": "0e424593c75e8a65279dd251789aaa5834586263",
+    "mode": "READ_ONLY_THROUGHPUT_METRICS",
+    "observed_at": "2026-10-30T03:06:22+00:00",
+    "project_id": "toy-wars-factory",
+    "repository": "kk051780/toy-wars-factory",
+    "roles": {
+      "META": {
+        "actual_user_delivery": "NOT_VERIFIED",
+        "completed_runs": 0,
+        "elapsed_p50_seconds": null,
+        "elapsed_p90_seconds": null,
+        "elapsed_seconds_sum": 0,
+        "failed_runs": 0,
+        "foreign_lease_incomplete_terminal_runs": 0,
+        "foreign_lease_overlap_seconds": "UNKNOWN",
+        "foreign_lease_overlap_seconds_reported": 0,
+        "foreign_lease_overlap_terminal_runs": 0,
+        "fresh_result_runs": 0,
+        "in_progress": 1,
+        "lease_seconds_reported": 0,
+        "lease_unreleased_unknown_count": 1,
+        "merge_acceptance": "NOT_VERIFIED",
+        "no_update_runs": 0,
+        "observed_runs": 1,
+        "productive_source_changes": "NOT_VERIFIED",
+        "schedule_offset_p50_seconds": null,
+        "summary_statistics": "NOT_VERIFIED_REQUIRES_SIX_UNFORCED_RUNS_AND_POSTMERGE_EVIDENCE",
+        "task_id": "6add445e4138819197d9cf2b1a02534d",
+        "terminal_runs": 0,
+        "wait_reason": "NOT_VERIFIED"
+      },
+      "REVIEWER": {
+        "actual_user_delivery": "NOT_VERIFIED",
+        "completed_runs": 1,
+        "elapsed_p50_seconds": null,
+        "elapsed_p90_seconds": null,
+        "elapsed_seconds_sum": 358.726,
+        "failed_runs": 0,
+        "foreign_lease_incomplete_terminal_runs": 0,
+        "foreign_lease_overlap_seconds": 0,
+        "foreign_lease_overlap_seconds_reported": 0,
+        "foreign_lease_overlap_terminal_runs": 0,
+        "fresh_result_runs": 1,
+        "in_progress": 0,
+        "lease_seconds_reported": 259.675,
+        "lease_unreleased_unknown_count": 0,
+        "merge_acceptance": "NOT_VERIFIED",
+        "no_update_runs": 0,
+        "observed_runs": 1,
+        "productive_source_changes": "NOT_VERIFIED",
+        "schedule_offset_p50_seconds": null,
+        "summary_statistics": "NOT_VERIFIED_REQUIRES_SIX_UNFORCED_RUNS_AND_POSTMERGE_EVIDENCE",
+        "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "terminal_runs": 1,
+        "wait_reason": "NOT_VERIFIED"
+      },
+      "WORKER": {
+        "actual_user_delivery": "NOT_VERIFIED",
+        "completed_runs": 1,
+        "elapsed_p50_seconds": null,
+        "elapsed_p90_seconds": null,
+        "elapsed_seconds_sum": 97.218,
+        "failed_runs": 0,
+        "foreign_lease_incomplete_terminal_runs": 0,
+        "foreign_lease_overlap_seconds": 0,
+        "foreign_lease_overlap_seconds_reported": 0,
+        "foreign_lease_overlap_terminal_runs": 0,
+        "fresh_result_runs": 1,
+        "in_progress": 0,
+        "lease_seconds_reported": 0,
+        "lease_unreleased_unknown_count": 0,
+        "merge_acceptance": "NOT_VERIFIED",
+        "no_update_runs": 0,
+        "observed_runs": 1,
+        "productive_source_changes": "NOT_VERIFIED",
+        "schedule_offset_p50_seconds": null,
+        "summary_statistics": "NOT_VERIFIED_REQUIRES_SIX_UNFORCED_RUNS_AND_POSTMERGE_EVIDENCE",
+        "task_id": "6adbf0d6a7d881918ce181dff2468867",
+        "terminal_runs": 1,
+        "wait_reason": "NOT_VERIFIED"
+      }
+    },
+    "runs": [
+      {
+        "elapsed_sec": null,
+        "fresh_result": false,
+        "latest_result_binding": "PREVIOUS_RUN",
+        "role": "META",
+        "run_id": "c761721e-48bc-832a-aa81-e7de554a089b",
+        "schedule_jitter_seconds": 22.273,
+        "start_offset_sec": 22.273,
+        "status": "in_progress",
+        "terminal_elapsed_seconds": "UNKNOWN"
+      },
+      {
+        "elapsed_sec": 97.218,
+        "fresh_result": true,
+        "latest_result_binding": "CURRENT_RUN",
+        "role": "WORKER",
+        "run_id": "0e255f57-f2c4-8331-bf27-4d2d6f1ee24e",
+        "schedule_jitter_seconds": -263.183,
+        "start_offset_sec": -263.183,
+        "status": "completed",
+        "terminal_elapsed_seconds": 97.218
+      },
+      {
+        "elapsed_sec": 358.726,
+        "fresh_result": true,
+        "latest_result_binding": "CURRENT_RUN",
+        "role": "REVIEWER",
+        "run_id": "8193968e-b248-8328-92df-0eddc21c3c90",
+        "schedule_jitter_seconds": 16.757,
+        "start_offset_sec": 16.757,
+        "status": "completed",
+        "terminal_elapsed_seconds": 358.726
+      }
+    ],
+    "schema": 1,
+    "verification": "NOT_VERIFIED"
+  },
+  "collection_scope": "Latest connected snapshots and two exact immutable claim/release records only; incomplete lease history. Data is not provider authentication or unforced-origin proof.",
+  "accepted_main_source": false,
+  "regression_tests_in_this_observation": "NOT_APPLICABLE_SEPARATE_EXACT_HEAD_CI",
+  "a12_verified": false,
+  "a13_verified": false,
+  "delivery": "NOT_VERIFIED",
+  "speed_improvement": "NOT_MEASURED"
+}
