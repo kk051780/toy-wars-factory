@@ -1,0 +1,40 @@
+{
+  "id": "C00168",
+  "date": "2026-10-31",
+  "kind": "A14_GITHUB_NATIVE_XML_ARTIFACT_GREEN_CANDIDATE",
+  "owner_role": "MANUAL_CONTROLLER",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "37d9c8385129cd45c6acac5e4b23c412937b69ef",
+    "owner_run_id": "a14e8a10-4314-4114-b081-202610310712",
+    "epoch": 293,
+    "work_branch": "controller/github-native-xml-artifact-a14e8a10"
+  },
+  "issue": 117,
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_changes": [],
+  "modules": [
+    "tools/export_accepted_rbxlx.py"
+  ],
+  "tests": [
+    {
+      "path": "tests/test_system_xml_artifact_export.py",
+      "count": 23
+    }
+  ],
+  "evidence": {
+    "red_commit": "ae8f9ebcb8b23a4e1b6a9cfd3cf73ace92578a30",
+    "red_run_id": 41136879714,
+    "red_failure": "No module named export_accepted_rbxlx",
+    "green_run": "PENDING_ACTUAL_EXACT_HEAD",
+    "expected_action_artifact": "twf-autonomous-regressions-not-engine",
+    "actual_action_artifact_id": "NOT_YET_OBSERVED"
+  },
+  "release": {
+    "roblox_upload": false,
+    "roblox_engine": false,
+    "public_publish": false,
+    "credentials": false
+  },
+  "protected_review": "PENDING"
+}
