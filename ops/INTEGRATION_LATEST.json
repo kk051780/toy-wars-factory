@@ -514,8 +514,61 @@
     }
   ],
   "merge_count_this_run": 1,
-  "main_qa": 41016196308,
-  "handoff": 41016196306,
+  "main_qa": {
+    "id": 41016196308,
+    "head": "55bccfc5456ca1295f352bb365eae6ed664272cb",
+    "status": "completed",
+    "conclusion": "success",
+    "attempt": 1,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41016196308",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "job_evidence": [
+      {
+        "id": 123932972104,
+        "name": "offline",
+        "head": "55bccfc5456ca1295f352bb365eae6ed664272cb",
+        "run_id": 41016196308,
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41016196308/job/123932972104"
+      },
+      {
+        "id": 123932972339,
+        "name": "compile_hold",
+        "head": "55bccfc5456ca1295f352bb365eae6ed664272cb",
+        "run_id": 41016196308,
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41016196308/job/123932972339"
+      }
+    ],
+    "evidence_scope": "Actual post-PR137 merge main push QA; 833 Python tests OK in fetched offline log; not Roblox engine verification"
+  },
+  "handoff": {
+    "id": 41016196306,
+    "head": "55bccfc5456ca1295f352bb365eae6ed664272cb",
+    "status": "completed",
+    "conclusion": "success",
+    "attempt": 1,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41016196306",
+    "jobs": [
+      {
+        "id": 123932972386,
+        "name": "update",
+        "head": "55bccfc5456ca1295f352bb365eae6ed664272cb",
+        "run_id": 41016196306,
+        "run_attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41016196306/job/123932972386"
+      }
+    ]
+  },
   "comparison_since_main_qa": {
     "verified": true,
     "status": "ahead",
