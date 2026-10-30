@@ -1,0 +1,53 @@
+{
+  "id": "C00149",
+  "date": "2026-10-30",
+  "kind": "ISSUE130_FRESH_RECOVERY_METRICS_TEST_FIRST_RED",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "f1661ecf-7000-8333-a3a6-0d42dda44160",
+  "main_base": "0e424593c75e8a65279dd251789aaa5834586263",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "70e310f19361ba2e2f96832b1fc192698aeabb6f",
+    "owner_run_id": "f1661ecf-7000-8333-a3a6-0d42dda44160",
+    "epoch": 269
+  },
+  "provider_observation": {
+    "started_at": "2026-10-30T03:35:41.173905Z",
+    "acquired_at": "2026-10-30T03:41:40Z",
+    "attestation": "CONNECTED_CURRENT_PEEK_NOT_IMMUTABLE_ATTEMPT_HISTORY"
+  },
+  "issue": 130,
+  "work_id": "TWF-SYSTEM-THROUGHPUT-V2-20261030",
+  "defect": "Archived unaccepted PR133 rejected every postterminal release. Accepted main lacks metrics module. Fresh adoption must represent host-bound recovery separately or UNKNOWN without owner-time credit.",
+  "source_changes": [],
+  "changed_files": [
+    "tests/test_system_throughput_metrics.py",
+    "history/C00149_recovery_metrics_main_red.json"
+  ],
+  "tests": {
+    "new_methods": 59,
+    "carried_untrusted_scenarios": 42,
+    "new_recovery_methods": 17,
+    "local": "59 failures on exact accepted main without module",
+    "github_red": "PENDING_ACTUAL_CI"
+  },
+  "provenance": {
+    "PR133": {
+      "head": "fc80010c74bb2b92c88706710671453d277c33cb",
+      "state": "CLOSED_UNMERGED_QUARANTINE",
+      "review_comment": 6514244342,
+      "closure_comment": 6514300606,
+      "source_authority": "UNTRUSTED_ARCHIVED_INPUT_ONLY"
+    },
+    "old_run_reused": false,
+    "old_claim_reused": false,
+    "accepted_blobs_preserved": 298
+  },
+  "characters_touched": [],
+  "constraints": {
+    "all_authority_false": true,
+    "A12": false,
+    "A13": false,
+    "source_merge": false
+  }
+}
