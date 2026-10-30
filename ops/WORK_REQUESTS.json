@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-29T23:01:31Z",
+  "observed_at": "2026-10-30T02:33:45.691Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -3628,6 +3628,129 @@
       "handoff": 40972299903,
       "main_after_handoff": "03bdbb9fdb2bc8ee5fcd22c504b8d3428971c606",
       "merged_at": "2026-10-29T23:19:57Z"
+    },
+    {
+      "id": "pr131_actor_chronology_quarantined_20261030",
+      "kind": "META_AUTHOR_PROVENANCE_QUARANTINE",
+      "priority": "P0",
+      "status": "CLOSED_QUARANTINED_NOT_MERGED",
+      "assigned_role": "META",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 131,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/131",
+      "head": "318a27bd6ee9bb565ceb619cf1db182336673c7e",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "8193968e-b248-8328-92df-0eddc21c3c90",
+      "reviewer_epoch": 265,
+      "review_record": "ops/reviews/PR0131_318a27bd_quarantine.json",
+      "reason": "ORIGINAL_AUTHOR_PRESTART_CLAIM_UNATTESTED",
+      "scope_correction": "Existing trusted-base tools/system_*.py is allowed with new regression/history; earlier missing-five-allowlist objection retracted",
+      "created_at": "2026-10-30T02:33:45.691Z",
+      "next_actor": "FRESH_REGISTERED_META_NEW_LAWFUL_PR_FOR_ISSUE130"
+    },
+    {
+      "id": "pr132_upgrade_affordability_hud_registered_review_20261030",
+      "kind": "REGISTERED_WORKER_GAME_SOURCE_REVIEW",
+      "priority": "P1",
+      "status": "RESOLVED_MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "pr": 132,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/132",
+      "branch": "auto/twf-game-repair-a683a27f-a9b0-8325-aa17-39a8c864bc49",
+      "head": "e1ef559a51225e60f413a0eb879ff4a434f1c4b3",
+      "base_main_sha": "03bdbb9fdb2bc8ee5fcd22c504b8d3428971c606",
+      "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "author_run_id": "a683a27f-a9b0-8325-aa17-39a8c864bc49",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "0985bedd23cccad033a6bb7807cb6716d9230039",
+        "owner_run_id": "a683a27f-a9b0-8325-aa17-39a8c864bc49",
+        "epoch": 264
+      },
+      "ci": {
+        "id": 40987212820,
+        "head": "e1ef559a51225e60f413a0eb879ff4a434f1c4b3",
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success",
+        "jobs": {
+          "offline": "success",
+          "compile_hold": "success"
+        },
+        "python_tests": 761,
+        "new_lua_cases": 3
+      },
+      "review": {
+        "schema": 1,
+        "pr": 132,
+        "head": "e1ef559a51225e60f413a0eb879ff4a434f1c4b3",
+        "base_main_sha": "03bdbb9fdb2bc8ee5fcd22c504b8d3428971c606",
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "8193968e-b248-8328-92df-0eddc21c3c90",
+        "lease_epoch": 265,
+        "reviewer_claim": "8c92957eb5393b4c23442346fc4b36d760f2a4ca",
+        "verdict": "APPROVE_EXACT_HEAD_SOURCE_AND_CI",
+        "reviewed_at": "2026-10-30T02:33:45.691Z",
+        "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/132#issuecomment-6513512759",
+        "native_github_review_submission": false,
+        "native_github_review_error": "422_CAN_NOT_APPROVE_OWN_PULL_REQUEST_SAME_GITHUB_ACCOUNT",
+        "independent_context": "DISTINCT_REGISTERED_WORKER_AND_REVIEWER_TASK_RUNS",
+        "author_task_id": "6adbf0d6a7d881918ce181dff2468867",
+        "author_run_id": "a683a27f-a9b0-8325-aa17-39a8c864bc49",
+        "author_epoch": 264,
+        "author_claim": "0985bedd23cccad033a6bb7807cb6716d9230039",
+        "author_release_ref": "6b859ad3cd660b64c9cca357e7178f84633f18ae",
+        "checks": {
+          "scope": true,
+          "regression": true,
+          "source_ledger": true,
+          "protected_controls": true,
+          "behavior": true
+        },
+        "ci": {
+          "id": 40987212820,
+          "head": "e1ef559a51225e60f413a0eb879ff4a434f1c4b3",
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "jobs": {
+            "offline": "success",
+            "compile_hold": "success"
+          },
+          "python_tests": 761,
+          "new_lua_cases": 3
+        },
+        "red": {
+          "id": 40987103171,
+          "head": "b51899a53c7ba526c6d32c8a8348b8ea59d58b64",
+          "new_lua_failures": 3
+        },
+        "changed_files": [
+          "src/ToyWarsHUD.client.lua",
+          "tests/auto/upgrade_affordability_hud_spec.lua",
+          "history/C00143_upgrade_affordability_hud_red.json",
+          "history/C00144_upgrade_affordability_hud_green.json"
+        ],
+        "merge_sha": "af5fbf3b73f5c9f0a72042153b7b8dfb4290564c",
+        "main_qa": 40992293248,
+        "handoff": 40992293202,
+        "main_after_handoff": "0e424593c75e8a65279dd251789aaa5834586263",
+        "status": "MERGED_MAIN_QA_AND_HANDOFF_PASSED",
+        "limitations": [
+          "Native Lua mock is not Roblox engine or mobile proof",
+          "No measured player retention/fun/monetization",
+          "A12/A13 operational unforced proof absent"
+        ]
+      },
+      "merge_sha": "af5fbf3b73f5c9f0a72042153b7b8dfb4290564c",
+      "main_qa": 40992293248,
+      "handoff": 40992293202,
+      "main_after_handoff": "0e424593c75e8a65279dd251789aaa5834586263",
+      "review_record": "ops/reviews/PR0132_e1ef559a.json",
+      "created_at": "2026-10-30T02:33:45.691Z",
+      "next_actor": "WORKER_NEXT_GAME_CYCLE"
     }
   ]
 }
