@@ -43,7 +43,13 @@
       "head": "PENDING",
       "run_id": "PENDING",
       "native_field_capacity": "PENDING",
-      "python_expected": 833
+      "python_expected": 833,
+      "prior_ci_failed": {
+        "run_id": 41015051300,
+        "python_tests": 833,
+        "errors": 1,
+        "reason": "C00156 missing source_metrics; fixed in unmerged draft record"
+      }
     }
   },
   "characters_touched": [],
@@ -51,5 +57,11 @@
   "roblox_engine": "NOT_RUN",
   "mobile_ui": "NOT_VERIFIED",
   "player_impact": "UNVERIFIED",
-  "safety_holds": "PRESERVED"
+  "safety_holds": "PRESERVED",
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1186,
+    "lua_bytes": 52781
+  },
+  "source_baseline_bytes": 25726
 }
