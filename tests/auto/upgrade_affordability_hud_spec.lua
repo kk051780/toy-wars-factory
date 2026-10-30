@@ -48,7 +48,8 @@ local function fixture()
         if o.Name=="QuickStart" then guide=o end
         if o.ClassName=="TextButton" then buttonCount=buttonCount+1 end
     end
-    assert(tip and tip.Parent==gui,"expected existing HUD tip, not a new overlay")
+    assert(tip and tip.Parent and tip.Parent.ClassName=="ScreenGui" and tip.Parent.Parent==gui,
+        "expected existing HUD tip, not a new overlay")
     assert(guide and guide.Visible,"existing first-play guide must survive")
     eq(buttonCount,3,"toy choice count")
     return tip,stats._children.Coins,status._children.FactoryLevel,remoteCalls
