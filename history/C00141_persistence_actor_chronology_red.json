@@ -1,0 +1,66 @@
+{
+  "id": "C00141",
+  "date": "2026-10-30",
+  "kind": "A12_PERSISTENCE_ACTOR_CHRONOLOGY_TEST_FIRST_RED",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "6c5df803-672c-8328-b0c9-07b9b96ee6bf",
+  "base_main": "03bdbb9fdb2bc8ee5fcd22c504b8d3428971c606",
+  "observed_at_utc": "2026-10-30T00:52:18Z",
+  "issue": 114,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "f121785d6a5f32ca604132625160a62882dd2713",
+    "owner_run_id": "6c5df803-672c-8328-b0c9-07b9b96ee6bf",
+    "epoch": 262
+  },
+  "stage": "TEST_FIRST_LOCAL_RED_ACCEPTED_SOURCE_UNCHANGED",
+  "defect": {
+    "path": "tools/system_alert_persistence.py",
+    "old_blob": "bef76041238111b907e5a7afbbf0b2b6f27b0154",
+    "description": "Current actor task/run id may match, but _snapshot never requires actual run.started_at <= holder.acquired_at. The same UUID with acquisition 12:29:30 and run start12:29:40 wrongly reaches synthetic PERSISTED_READBACK and all3 host callbacks. Integrity defect, NOT provider auth or an organic service incident.",
+    "source_previous_inspection_run": "c4cfa434-d218-8332-9a54-4d759f2af62c",
+    "current_run_is_separate": true
+  },
+  "tests": {
+    "new_methods": 12,
+    "expected_full_python": 773,
+    "prior761_preserved": true,
+    "new_test": {
+      "bytes": 5658,
+      "lines": 129,
+      "blob": "2bae2a6f288d6ad30bb02b4ee8fe55519d437e4c",
+      "sha256": "a4a192e3ddb75440f6df2cb97070b4fdf3c0d59646d2877c17201f14e0d7c5f9"
+    },
+    "local_red": {
+      "run": 12,
+      "failures": 9,
+      "errors": 0
+    },
+    "scope": "SYNTHETIC_TEST_ONLY, actual accepted observer/reducer/persistence over in-memory Host. No live Git ref write, provider provenance, notification or recovery demonstrated."
+  },
+  "previous_run_context": {
+    "run_id": "c4cfa434-d218-8332-9a54-4d759f2af62c",
+    "issue_comment": "https://github.com/kk051780/toy-wars-factory/issues/114#issuecomment-6511321270",
+    "secondary_registered_reviewer_run": "f78233d6-9c04-832a-a6f4-b5198138a11f",
+    "root_cause": "INDETERMINATE",
+    "original_error_receipt": "NOT_AVAILABLE",
+    "current_latest_peek_is_new_meta_run": true,
+    "old_last_result_not_used_as_current_success": true,
+    "no_duplicate_alert_created": true
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "characters_touched": [],
+  "game_source_delta_bytes": 0,
+  "limits": [
+    "No new auth or recovery grant, no real organic anomaly/delivery/recovery proof, A12/A13+0",
+    "Original epoch251 provider terminal UNATTESTED",
+    "No accepted tests/history/protected policy/workflow/config/schedule mutation",
+    "PR126/129 already accepted, not repeated or credited",
+    "Exact RED/GREEN GitHub CI and separate registered REVIEWER required"
+  ],
+  "next": "Publish exact-head RED, then one actor chronology condition; final exact-head offline+compile_hold logs and normal same-owner release/readback."
+}
