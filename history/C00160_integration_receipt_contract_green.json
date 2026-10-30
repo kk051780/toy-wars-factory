@@ -1,0 +1,151 @@
+{
+  "id": "C00160",
+  "date": "2026-10-30",
+  "kind": "READ_ONLY_INTEGRATION_RECEIPT_CONTRACT_GREEN",
+  "issue": 138,
+  "parent_issue": 123,
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "25643826-354c-8327-a5a7-132a22972b34",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "cae4694d483adb62dc77bedb375818cf6f5cc73b",
+    "owner_run_id": "25643826-354c-8327-a5a7-132a22972b34",
+    "epoch": 287
+  },
+  "defect": "Successful source QA did not preserve current INTEGRATION_LATEST receipt object types; numeric IDs lost addressable jobs/conclusion while adoption history required exact retention. No accepted reusable source guard exists on current main.",
+  "fix": "Add one pure read-only check_transition helper: require typed current QA/handoff, strict positive integer run/job/attempt bindings, head/status/conclusion/named job identity, full bounded generated-status descendant comparison, preserved old keys/historical snapshot values and exact ordered history prefix with at most one new detailed row. Old numeric nested historical snapshots remain readable and unchanged. Always NOT_VERIFIED with all authority flags false.",
+  "source_changes": [
+    {
+      "path": "tools/system_integration_contract.py",
+      "before_bytes": 0,
+      "after_bytes": 7752,
+      "delta_bytes": 7752,
+      "added_lines": 145,
+      "removed_lines": 0
+    }
+  ],
+  "test_changes": [
+    {
+      "path": "tests/test_system_integration_contract.py",
+      "before_bytes": 0,
+      "after_bytes": 7664,
+      "new_methods": 30
+    }
+  ],
+  "source_metrics": {
+    "tools/system_integration_contract.py": {
+      "bytes": 7752,
+      "lines": 145,
+      "blob": "3b2615ce9f9edbd92f1158be625137dc761cdae3",
+      "sha256": "3eba19ce3fb8c626d0642ecdc453287b36a6668a01b0fa4a65691557307d5ecc"
+    },
+    "tests/test_system_integration_contract.py": {
+      "bytes": 7664,
+      "lines": 201,
+      "blob": "44124173822d5a2bae088358f3bd5f4e19411cc4",
+      "sha256": "368868e825f15fa8e00d8db0c862a7c15d546fd321a1082f2ce9901592e3d660"
+    }
+  },
+  "characters_touched": [],
+  "tests": {
+    "github_main_red": {
+      "id": 41036373889,
+      "head": "676fece47cca79929211a1671deb953562ace2bd",
+      "attempt": 1,
+      "tests": 863,
+      "failures": 30,
+      "errors": 0,
+      "accepted833_preserved": true,
+      "offline_job": 123998091571,
+      "compile_hold_job": 123998091726,
+      "offline": "failure",
+      "compile_hold": "success",
+      "expected_new_only": true,
+      "log_lines": [
+        "2026-10-30T09:50:53.1677662Z PASS: system review scope",
+        "2026-10-30T09:50:53.6147082Z PASS: repair coordination; 1 immutable coordinator claim(s) verified",
+        "2026-10-30T09:51:02.3927236Z Ran 863 tests in 6.035s",
+        "2026-10-30T09:51:02.3927477Z FAILED (failures=30)"
+      ]
+    },
+    "local_new_green": "30 tests / OK",
+    "github_exact_head_green": "PENDING_NEW_HEAD",
+    "positive_controls": [
+      "current object restoration preserves legacy numeric snapshots",
+      "one detailed append",
+      "second independent repository binding",
+      "inputs unchanged/no grants"
+    ],
+    "negative_controls": [
+      "numeric receipts/jobs list",
+      "failed/pending/stale jobs",
+      "run/attempt/head mismatch",
+      "bool/float generations",
+      "duplicate job IDs/names/PRs",
+      "deleted/reordered/rewritten history and root keys",
+      "foreign URL/non-status diff",
+      "wrong comparison base/head",
+      "NaN"
+    ]
+  },
+  "research": {
+    "date": "2026-10-30",
+    "primary_sources": [
+      "https://docs.github.com/en/rest/actions/workflow-jobs",
+      "https://docs.github.com/en/rest/actions/workflow-runs"
+    ],
+    "scope": "API job/run fields are distinct records. Matching caller copies remain untrusted and require fresh connected host GET plus registered actor/lease outside this module.",
+    "options": [
+      {
+        "option": "NO_CHANGE",
+        "benefit": "No new module",
+        "cost": "Known numeric current receipt regression has no reusable source contract"
+      },
+      {
+        "option": "Rewrite integration producer/trust root",
+        "benefit": "Could enforce automatically",
+        "cost": "Broader protected ownership/merge policy scope and overlap with PR139/141; rejected"
+      },
+      {
+        "option": "Add bounded read-only preflight contract",
+        "selected": true,
+        "benefit": "Focused current receipt/history controls reusable by two game bindings",
+        "cost": "30 synthetic tests, real GitHub RED/GREEN and separate registered review; not installed automatically"
+      }
+    ],
+    "candidate_v9": {
+      "sha256": "3f31bd2c96456f5a1162d4523f00014f4ad80417c7ce73b25512c24df0f832f5",
+      "status": "STATIC_UNTRUSTED_REFERENCE_ONLY_145_NOT_EXECUTED",
+      "admission_comparison": "Accepted tools/system_parallel_admission.py 75aa586... already stricter than candidate's stale duplicate/completeness/protected roots; no replacement",
+      "repair_control": "Accepted aec169... retained; PR139/141 separately own protected DISPATCH/recovery changes"
+    }
+  },
+  "preservation": {
+    "accepted_main_blobs": 311,
+    "all_prior_source_tests_history_unchanged": true,
+    "old_C00159_unchanged": true,
+    "shared39_adoption_entries_unchanged": true,
+    "ops_JSON_repair_not_repeated": true
+  },
+  "provenance": {
+    "current_provider_start": "2026-10-30T09:45:06.681409Z",
+    "current_acquired_at": "2026-10-30T09:48:29+00:00",
+    "last_stable_observation": "2026-10-30T09:54:40Z",
+    "immutable_provider_attempt_history": "NOT_EXPOSED_NOT_ATTESTED",
+    "old_epoch284_author_outputs": "QUARANTINED_NOT_APPROVED_BY_THIS_AUTHOR"
+  },
+  "limitations": {
+    "synthetic_contract_tests": true,
+    "automatic_writer_hook": "NOT_INSTALLED",
+    "current_records_not_provider_authentication": true,
+    "missing_partial_comparison": "FAIL_CLOSED",
+    "no_immutable_attempt_or_host_crash_proof": true,
+    "a12": false,
+    "a13": false,
+    "parallel_writers": false,
+    "official_system": 57,
+    "official_game": 38,
+    "schedules_credentials_spend_gemini_roblox": "UNCHANGED_HOLD"
+  }
+}
