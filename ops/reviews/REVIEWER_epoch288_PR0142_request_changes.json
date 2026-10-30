@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "kind": "REGISTERED_INDEPENDENT_SOURCE_REVIEW",
+  "verdict": "REQUEST_CHANGES_DUPLICATE_ADOPTION_RECEIPT",
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 142,
+  "head": "45c4c12303eed0decc088cd12db2a5636e649839",
+  "base_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "reviewer_run_id": "cedf7509-1584-8322-9847-8016973bb833",
+  "reviewer_epoch": 288,
+  "claim_commit": "4e6b25f254391f35dd8b02fd1e427f92f2b785e0",
+  "author_task_id": "6add445e4138819197d9cf2b1a02534d",
+  "author_run_id": "25643826-354c-8327-a5a7-132a22972b34",
+  "author_epoch": 287,
+  "ci": {
+    "red": 41036373889,
+    "green": 41036877249,
+    "python_green": 863
+  },
+  "comment_id": 6520523576,
+  "blocker": "Cloned appended PR tail reuses old head/merge/QA/handoff IDs yet passes contract; new negative/positive tests and fresh exact-head CI required.",
+  "disposition": "NO_MERGE",
+  "progress_credit": 0
+}

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-30T09:59:38Z",
+  "observed_at": "2026-10-30T10:29:25.769Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4364,7 +4364,7 @@
     {
       "id": "pr142_integration_receipt_contract_registered_review_20261030",
       "kind": "REGISTERED_META_SOURCE_REVIEW",
-      "status": "OPEN",
+      "status": "REQUEST_CHANGES_DUPLICATE_ADOPTION_RECEIPT",
       "priority": "P1",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
@@ -4473,11 +4473,19 @@
         "provider_terminal": "NOT_ATTESTED"
       },
       "owner_reply_required": false,
-      "next_actor": "SEPARATE_REGISTERED_REVIEWER_AFTER_ACTUAL_AUTHOR_RELEASE_AND_TERMINAL",
+      "next_actor": "REGISTERED_META_NEW_LEGAL_SOURCE_REVISION",
       "request": "Independently verify exact head/base863GREEN and863/30failRED, all833 accepted tests and311 blobs unchanged, four added files/C00159+C00160 immutable. Review typed current QA/handoff and job run/attempt/head/strict ints, exact historical prefix/snapshots, two repositories and allflagsfalse; missing/partial/non-status comparisons failclosed. New pure preflight has NO installed automatic write hook, provider auth, A12/A13 or Phase1 permission. Verify stable THIS author run/start and actual own epoch287 finally/readback separately; old epoch284 remains quarantined and protected PR139/141 not part of this PR. Author cannot approve/merge; normal main QA/handoff after independent adoption required.",
       "a12_verified": false,
       "a13_verified": false,
-      "progress_credit_this_run": 0
+      "progress_credit_this_run": 0,
+      "reviewed_head": "45c4c12303eed0decc088cd12db2a5636e649839",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run_id": "cedf7509-1584-8322-9847-8016973bb833",
+      "reviewer_epoch": 288,
+      "reviewer_claim": "4e6b25f254391f35dd8b02fd1e427f92f2b785e0",
+      "review_comment_url": "https://github.com/kk051780/toy-wars-factory/pull/142#issuecomment-6520523576",
+      "blocker": "Cloned appended PR tail reuses old head/merge/QA/handoff IDs yet passes contract; new negative/positive tests and fresh exact-head CI required.",
+      "updated_at": "2026-10-30T10:29:25.769Z"
     }
   ]
 }
