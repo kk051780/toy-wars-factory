@@ -263,7 +263,7 @@ class CoordinatorTests(unittest.TestCase):
                 if path=='/git/ref/heads/'+p.CONTROL_REF:return {'object':{'sha':'b'*40}}
                 if path.startswith('/contents/'):
                     data={'schema':1,'task_id':p.__dict__.get('TASK_ID','6adbf0d6a7d881918ce181dff2468867'),
-                          'epoch':2,'holder':{'kind':'CONTROLLER','owner_id':'c'*36,'epoch':2,
+                          'epoch':2,'holder':{'kind':'CONTROLLER','owner_id':'6fcae344-22fd-4f91-95dd-383e9a30c1d4','epoch':2,
                             'acquired_at':'2026-10-31T00:00:00+00:00','expires_at':'2099-01-01T00:00:00+00:00'},
                           'authorized_tasks':{'CONTROLLER':'none'}}
                     return {'encoding':'base64','type':'file',
