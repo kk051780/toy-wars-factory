@@ -1,0 +1,41 @@
+{
+  "id": "C00211",
+  "date": "2026-10-31",
+  "kind": "PROTECTED_A14_CLOUD_GLOBAL_CAS_GREEN",
+  "issue": 151,
+  "pr": 158,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "d68d200b87a88fd5d512c2972af16631f484fb3d",
+    "owner_run_id": "4c8d111d-2456-4959-aa5b-219fc7d43546",
+    "epoch": 306
+  },
+  "red": {
+    "source_missing": true,
+    "commit": "c3c3c663dba911dde37aa6f7a72464d320c38b36",
+    "run_id": 41155461177,
+    "offline": "FAILED_EXPECTED_MISSING_MODULE",
+    "compile_hold": "SUCCESS",
+    "error_count": 1,
+    "runner_test_count": 834
+  },
+  "green": {
+    "source_path": "tools/cloud_global_intent_fence.py",
+    "source_sha256": "cf1a55dd2ecd6edc971966ff15b596669bf78751a2951a7afc3725ac90f33bfc",
+    "source_bytes": 8491,
+    "new_tests": 17,
+    "local_candidate_tests": 60,
+    "original_v3_archive_tests": 222,
+    "actual_github_ci": "PENDING_EXACT_HEAD"
+  },
+  "authority": "PURE_REDUCER_NO_GITHUB_OR_ROBLOX_IO",
+  "github_global_cas_live": "NOT_INTEGRATED",
+  "roblox_engine": "NOT_RUN",
+  "provider_attested": false,
+  "main_merged": false,
+  "independent_review": "PENDING",
+  "roblox_publication": "FORBIDDEN",
+  "spending": "NONE",
+  "note": "Source integration only. No new run-time permission; reconcile with PR157 generic reservation and authenticate trusted host before any Cloud POST."
+}
