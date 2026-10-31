@@ -1,0 +1,26 @@
+{
+  "id": "C00177",
+  "date": "2026-10-31",
+  "kind": "PROTECTED_HISTORY_ID_RESERVATION_FAIL_FIRST",
+  "issue": 123,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "76a5e4ba3ae74dcf45780863dba391414b3f416c",
+    "owner_run_id": "07690ed3-cf00-4193-8dd4-a8cbaa9d3d58",
+    "epoch": 305
+  },
+  "added_tests": [
+    "tests/test_system_history_reservation.py",
+    "tests/test_system_history_reservation_cas.py",
+    "tests/test_system_history_reservation_live_collisions.py",
+    "tests/test_system_history_reservation_rebind.py"
+  ],
+  "expected_red": "ModuleNotFoundError system_history_reservation before source implementation; only exact-head hosted GitHub offline result establishes actual RED",
+  "source_change": "NONE_TESTS_ONLY",
+  "authentic_run": "MANUAL_CONTROLLER_NO_PROVIDER_ATTESTATION",
+  "merge_authorized": false,
+  "publish_allowed": false,
+  "spending": "NONE",
+  "roblox_engine": "NOT_RUN"
+}
