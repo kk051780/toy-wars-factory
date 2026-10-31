@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 335,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "7aa5024a-2781-4a8e-9368-614cca4da3a4",
-    "task_id": null,
-    "epoch": 335,
-    "acquired_at": "2026-10-31T07:36:50.497Z",
-    "expires_at": "2026-10-31T08:01:50.497Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/pr-supersession-advisory-7aa5024a",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,20 +2893,23 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "5828688a-e0a8-4055-b012-088efcfae5f7",
-    "epoch": 334,
-    "released_at": "2026-10-31T07:34:49.487Z",
+    "owner_id": "7aa5024a-2781-4a8e-9368-614cca4da3a4",
+    "epoch": 335,
+    "released_at": "2026-10-31T07:40:23.919Z",
     "release_receipt": {
-      "reason": "PR168_DRAFT_EXACT_HEAD_CI_GREEN_INDEPENDENT_REVIEW_PENDING",
-      "claim_commit": "48aac4fe905067c239a3d622b3afa8aa29e5a025",
-      "work_branch": "controller/parallel-pr-path-audit-v3-5828688a",
-      "pr": 168,
-      "pr_head": "efa707f72e6cf353f862fcb3cf5c594b4ce289a7",
-      "ci_run": 41181111576,
+      "reason": "PR169_DRAFT_EXACT_HEAD_CI_PASS_INDEPENDENT_REVIEW_PENDING",
+      "claim_commit": "ede8573f498c9bd1cf91c9888d6932fdbe50b090",
+      "work_branch": "controller/pr-supersession-advisory-7aa5024a",
+      "pr": 169,
+      "pr_head": "707ffffb871d6ee34862230e7bc9ebe8fd24a5fe",
+      "ci_run": 41181447902,
       "ci_status": "success",
+      "offline_tests": 843,
+      "compile_hold": "success",
       "independent_review": "PENDING",
       "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "main_mutated": false
+      "main_mutated": false,
+      "service_terminal": "NOT_ATTESTED"
     }
   },
   "last_completed_integration": {
