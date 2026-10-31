@@ -1,8 +1,7 @@
 ---
 on:
-  schedule:
-    - cron: '8,28,48 * * * *'
   workflow_dispatch:
+network: defaults
 permissions:
   contents: read
   issues: read
