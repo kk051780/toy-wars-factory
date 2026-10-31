@@ -1,5 +1,5 @@
 {
-  "id": "C00160",
+  "id": "C00212",
   "date": "2026-10-31",
   "kind": "PROTECTED_MANUAL_CONTROLLER_READONLY_RUNNER_IDENTITY_PROBE",
   "issue": 57,
@@ -34,5 +34,11 @@
     "roblox_publish": false,
     "author_self_merge": false
   },
-  "purpose": "Explore safe independent provider run-context evidence under GitHub Actions; never automatically grant ChatGPT WORKER identity or dispatch."
+  "purpose": "Explore safe independent provider run-context evidence under GitHub Actions; never automatically grant ChatGPT WORKER identity or dispatch.",
+  "collision_repair": {
+    "kind": "RENAMED_UNMERGED_HISTORY_ID_FROM_C00160",
+    "reason": "Duplicate with PR142 and PR152; original source history was a draft, no accepted main journal mutated",
+    "new_author_lease_epoch": 307,
+    "claim_commit": "5c9e9dbf084b2be08145ab3f3ab64b1876dfec57"
+  }
 }
