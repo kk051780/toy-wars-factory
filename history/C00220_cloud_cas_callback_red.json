@@ -1,0 +1,23 @@
+{
+  "id": "C00220",
+  "date": "2026-10-31",
+  "kind": "PROTECTED_A14_CLOUD_CAS_CALLBACK_RED",
+  "issue": 151,
+  "pr": 158,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "76e8b1fc1e13a347aed1b86d0d2eb610f3465388",
+    "owner_run_id": "c33a05bf-6b35-4b0f-acb8-ae8d788994bf",
+    "epoch": 308
+  },
+  "test_path": "tests/test_cloud_global_trusted_callbacks.py",
+  "regression_count": 16,
+  "expected_red": "MODULE_MISSING_TRUSTED_CALLBACK_METHOD_AND_MALFORMED_PLAN_INDEXERROR",
+  "source_before_blob": "1b22d4e756a5fa63aa75c84d308adfe8a0663877",
+  "native_actions": "PENDING",
+  "runtime_permissions": "NONE",
+  "roblox_engine_verified": false,
+  "protected_review": "PENDING",
+  "main_merged": false
+}
