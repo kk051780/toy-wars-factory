@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 332,
-  "holder": {
-    "kind": "DISPATCH",
-    "owner_id": "db5ec465-3deb-45a6-a8c1-0dc8175cff75",
-    "task_id": null,
-    "epoch": 332,
-    "acquired_at": "2026-10-31T07:12:04.753Z",
-    "expires_at": "2026-10-31T07:14:04.753Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": null,
-    "origin": "dispatch"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2902,38 +2892,18 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "e42c75b2-8b61-4cce-97cc-165f6a8c2cd6",
-    "epoch": 331,
-    "released_at": "2026-10-31T06:44:45.369Z",
+    "kind": "DISPATCH",
+    "owner_id": "db5ec465-3deb-45a6-a8c1-0dc8175cff75",
+    "epoch": 332,
+    "released_at": "2026-10-31T07:13:51.674Z",
     "release_receipt": {
-      "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
-      "repository": "kk051780/toy-wars-factory",
-      "owner_run_id": "e42c75b2-8b61-4cce-97cc-165f6a8c2cd6",
-      "task_id": null,
-      "epoch": 331,
-      "claim_commit": "7c6f884b8fd5e98c89f5cc694a5a7f969fbae13a",
-      "source_pr": 167,
-      "source_branch": "controller/studio-mcp-readonly-e42c75b2",
-      "source_head": "4e0cca5191c14f36b4de183a53aec361e8fcab32",
-      "source_main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "red_run_id": 41177602736,
-      "red_offline": "failure",
-      "red_compile_hold": "success",
-      "red_reason": "missing studio_mcp_readonly_probe module",
-      "green_run_id": 41177732972,
-      "green_offline": "success",
-      "green_compile_hold": "success",
-      "green_python_tests": 856,
-      "new_tests": 23,
-      "comment_id": 6540226202,
-      "independent_review": "PENDING",
-      "main_merged": false,
-      "actual_mcp_windows": "NOT_RUN",
-      "studio_engine": "NOT_RUN",
-      "published": false,
-      "spending": "NONE",
-      "workflow_dispatch": "NOT_RUN"
+      "reason": "REGISTERED_WORKER_FINISHED_WAIT_IDENTITY_NO_ADOPTION",
+      "observed_worker_run_id": "e2ea0c16-7ab0-832a-9fde-c41f9b8c7d5b",
+      "worker_status": "completed",
+      "worker_completed_at": "2026-10-31T07:13:21.305361Z",
+      "worker_chat_ref_post_completion": "6ae4c147-ede8-83e8-8cc4-57e49f5f77bb",
+      "real_source_edit": false,
+      "run_request_accepted": true
     }
   },
   "last_completed_integration": {
