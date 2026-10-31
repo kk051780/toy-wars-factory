@@ -1,0 +1,73 @@
+{
+  "id": "C09994",
+  "date": "2026-10-31",
+  "kind": "OWNER_WORK_REGISTRATION_SINGLE_CAS_ATTEMPT_CANDIDATE",
+  "repository": "kk051780/toy-wars-factory",
+  "project_id": "toy-wars-factory",
+  "task_id": null,
+  "run_id": "1dd085ef-52ef-49e1-a22e-c927f6ad07d9",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "1e3e413a61bc7943d7874131e75db8c7fdc8492e",
+    "owner_run_id": "1dd085ef-52ef-49e1-a22e-c927f6ad07d9",
+    "epoch": 341,
+    "work_branch": "controller/work-registration-cas-1dd085ef",
+    "origin": "controller"
+  },
+  "parent_pr": 173,
+  "parent_sha": "e37662edb2a4701ecd4de109d428e1a8fe3213c1",
+  "stacked_pr": true,
+  "purpose": "Atomic work-ID registry plan with one injected compare-and-swap attempt under the exact existing exclusive coordinator lease. Two simulated chat submissions yield exactly one fake ref winner and one loser; readback projection matches PR173.",
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1186,
+    "lua_bytes": 52781
+  },
+  "source_baseline_bytes": 25726,
+  "characters_touched": [],
+  "changed_files": [
+    "tools/system_owner_work_registration.py",
+    "tests/test_system_owner_work_registration.py",
+    "history/C09994_owner_work_registration_cas.json"
+  ],
+  "source_sha_git_blob": "5e4f49c6c353234e9aa0b6b74bfc3033fb1a1f58",
+  "test_sha_git_blob": "380a4caa57c12b24f2e217467a1f73b72c91e30c",
+  "tests": {
+    "local_python_unittest": "44/44 PASS",
+    "local_python_compileall": "PASS",
+    "github_exact_head": "PENDING",
+    "real_original_github_cas": "NOT_RUN",
+    "simulated_parallel_race": "ONE_WINNER_ONE_LOSER",
+    "roblox_engine": "NOT_RUN"
+  },
+  "history_scan": {
+    "open_prs": 52,
+    "main_entries": 118,
+    "candidate_id": "C09994",
+    "observed_conflicts": 0,
+    "merge_recheck_required": true
+  },
+  "trust": {
+    "caller_snapshot_trusted": false,
+    "callback_authenticated": false,
+    "provider_run_verified": false,
+    "may_dispatch": false,
+    "may_merge": false,
+    "no_ai_inference": true,
+    "no_credentials": true,
+    "no_publication": true
+  },
+  "known_limits": [
+    "PROTECTED_DRAFT_ONLY",
+    "REQUIRES_PR173_APPROVED_FIRST",
+    "IN_MEMORY_FAKE_REF_TEST_ONLY",
+    "ORIGINAL_GITHUB_PROVENANCE_NOT_VERIFIED",
+    "SHARED_WORK_REGISTRATIONS_NOT_ACTUALLY_WRITTEN",
+    "NO_SCHEDULE_OR_REGISTERED_WORKER_DISPATCH_INTEGRATION",
+    "INDEPENDENT_REGISTERED_REVIEW_PENDING",
+    "MAIN_NOT_MUTATED"
+  ],
+  "next": "Stacked PR exact-head CI, independent review of parent PR173 then child; original trusted host adapter and actual coordinator CAS test only after approved gate."
+}
