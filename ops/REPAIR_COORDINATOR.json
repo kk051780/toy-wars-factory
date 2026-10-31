@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 343,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "1c7c521d-f3d6-4485-a180-3b2e438fe9b4",
-    "task_id": null,
-    "epoch": 343,
-    "acquired_at": "2026-10-31T10:01:07.016Z",
-    "expires_at": "2026-10-31T10:20:07.016Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/work-registration-cas-1dd085ef",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,24 +2893,31 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "205f76a2-1541-4661-86e7-36aecc542d8a",
-    "epoch": 342,
-    "released_at": "2026-10-31T09:39:30.536Z",
+    "owner_id": "1c7c521d-f3d6-4485-a180-3b2e438fe9b4",
+    "epoch": 343,
+    "released_at": "2026-10-31T10:06:01.906Z",
     "release_receipt": {
-      "reason": "PR163_CHECKOUT_IMMUTABLE_PIN_GREEN_DRAFT_REVIEW_PENDING",
-      "claim_commit": "d83ffcc2360f0c4eb08b95ba2ca99f3d5c53c423",
-      "work_branch": "controller/actions-write-pilot-8df31af2",
-      "pr": 163,
-      "pr_head": "e5b40a6f84e0e58a14613a8ee83095226d581ef0",
-      "red_run": 41189449778,
-      "red_offline": "FAIL_2_EXPECTED",
-      "green_run": 41189524748,
-      "green_offline": "PASS_913",
-      "green_compile_hold": "SUCCESS",
+      "reason": "PR174_SNAPSHOT_ADAPTER_EXACT_HEAD_CI_GREEN_INDEPENDENT_REVIEW_PENDING",
+      "claim_commit": "94b6fdcc6c956571b5e8a4810f68542f793c7dd5",
+      "work_branch": "controller/work-registration-cas-1dd085ef",
+      "pr": 174,
+      "pr_head": "96403caab02b1b17773b475f18606c8ef062d51c",
+      "parent_pr": 173,
+      "parent_head": "e37662edb2a4701ecd4de109d428e1a8fe3213c1",
+      "ci_run": 41191252932,
+      "ci_status": "success",
+      "offline_python_tests": 943,
+      "compile_hold": "success",
+      "new_snapshot_regressions": 35,
+      "history_id": "C09995",
       "independent_review": "PENDING",
-      "manual_capability_probe": "NOT_RUN",
+      "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_mutated": false,
-      "service_terminal": "NOT_ATTESTED"
+      "live_original_github_snapshot_adapter_execution": false,
+      "real_registry_cas": false,
+      "registered_worker_dispatch": false,
+      "service_terminal": "NOT_ATTESTED",
+      "may_merge": false
     }
   },
   "last_completed_integration": {
