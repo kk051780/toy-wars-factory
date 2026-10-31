@@ -1,0 +1,40 @@
+{
+  "id": "C09011",
+  "date": "2026-10-31",
+  "kind": "READ_ONLY_PR_SUPERSESSION_ADVISORY",
+  "issue": 123,
+  "origin": "MANUAL_CONTROLLER_ISOLATED_SOURCE",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "ede8573f498c9bd1cf91c9888d6932fdbe50b090",
+    "owner_run_id": "7aa5024a-2781-4a8e-9368-614cca4da3a4",
+    "epoch": 335
+  },
+  "distinct_from": [
+    "PR168 file path collision preflight",
+    "PR157 history id reservation",
+    "PR165 manual GO priorities",
+    "PR60 manual review lane"
+  ],
+  "changed_files": [
+    "tools/system_pr_supersession.py",
+    "tests/test_system_pr_supersession.py",
+    "history/C09011_pr_supersession_advisory.json"
+  ],
+  "safety": "READ_ONLY_NO_AUTOMATIC_PR_CLOSURE_OR_MERGE",
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "engine": "NOT_RUN",
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1186,
+    "lua_bytes": 52781
+  },
+  "source_baseline_bytes": 25726,
+  "tests": {
+    "local": "PENDING",
+    "github_ci": "PENDING"
+  },
+  "notes": "Receipts are caller-supplied and never provider-authenticated by this pure reducer; only candidate for independent review, never authority to hide/close PR."
+}
