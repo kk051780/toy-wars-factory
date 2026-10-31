@@ -1,0 +1,71 @@
+{
+  "id": "C09992",
+  "date": "2026-10-31",
+  "kind": "OWNER_IDEA_ADVISORY_PER_RECORD_PROJECT_REPO_SCOPE_V2",
+  "repository": "kk051780/toy-wars-factory",
+  "task_id": null,
+  "run_id": "8e1e4205-6e5b-4b92-94f7-e21138e63d5b",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "b1297364496e9aadc16c24bda448bfa2a0825bcf",
+    "owner_run_id": "8e1e4205-6e5b-4b92-94f7-e21138e63d5b",
+    "epoch": 339,
+    "work_branch": "controller/owner-intake-dedup-04d26d6e",
+    "previous_claim_epoch": 338,
+    "previous_claim_commit": "21d8cfc778f04ef44e1fd841733b4510ed0bf37d"
+  },
+  "purpose": "Reject unscoped/foreign work records and v1 envelope so a multi-game collection cannot silently alias a local work ID; still no authentication or atomic work admission.",
+  "changed_files": [
+    "tools/system_owner_intake_dedup.py",
+    "tests/test_system_owner_intake_dedup.py",
+    "history/C09992_owner_intake_scope_boundary.json"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1186,
+    "lua_bytes": 52781
+  },
+  "source_baseline_bytes": 25726,
+  "characters_touched": [],
+  "source_blob_green": "e6e21ab84512244ac87b7e6885e6a53a502765ab",
+  "test_blob_green": "a144045403c2c53a87d0ca45ede9c87256ad0b57",
+  "added_test_cases": 8,
+  "total_candidate_test_cases": 31,
+  "test_first_red": {
+    "head_sha": "b5aabbc62278d4251f3ea63096d4dd622f6f242a",
+    "run": 41188022961,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41188022961",
+    "offline": "FAIL_EXPECTED_1_FAILURE_2_ERRORS",
+    "compile_hold": "SUCCESS",
+    "python_tests": 864
+  },
+  "green": {
+    "head_sha": "7fa277bbbd61f19cd53c18231c9da3a202def010",
+    "run": 41188112820,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41188112820",
+    "offline": "SUCCESS",
+    "compile_hold": "SUCCESS",
+    "python_tests": 864
+  },
+  "history_reservation": {
+    "current_main_history_entries": 118,
+    "open_prs_scanned": 52,
+    "candidate_id": "C09992",
+    "collisions_found": 0,
+    "recheck_required_at_merge": true
+  },
+  "limits": [
+    "PROTECTED_DRAFT_UNMERGED",
+    "UNTRUSTED_CALLER_INPUT",
+    "NO_ATOMIC_CAS_WORK_ADMISSION",
+    "NO_MODEL_INFERENCE_OR_SPEND",
+    "NO_ROBLOX_ENGINE_OR_RELEASE",
+    "INDEPENDENT_REVIEW_PENDING",
+    "FINAL_EXACT_HEAD_QA_AFTER_HISTORY_PENDING"
+  ],
+  "main_mutated": false,
+  "automatic_merge_authorized": false,
+  "release_holds": "PRESERVED"
+}
