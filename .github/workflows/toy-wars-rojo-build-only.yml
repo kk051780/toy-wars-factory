@@ -8,6 +8,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build-only:
+    name: rojo-build-only
     if: github.repository == 'kk051780/toy-wars-factory' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 8
@@ -27,12 +28,12 @@ jobs:
         run: |
           mkdir -p .qa/rojo
           rojo --version
-          rojo build default.project.json -o .qa/rojo/ToyWarsFactory_NOT_ENGINE_TESTED.rbxl
-          python3 tools/rojo_rbxl_gate.py .qa/rojo/ToyWarsFactory_NOT_ENGINE_TESTED.rbxl > .qa/rojo/source_pinned_binary_receipt_UNTRUSTED.json
+          rojo build default.project.json -o .qa/rojo/toy-wars-private-test.rbxl
+          python3 tools/rojo_build_receipt.py
       - name: Upload temporary review artifact, not publication
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: twf-rojo-private-build-only-not-engine
+          name: twf-rojo-build-only-rbxl
           path: .qa/rojo/
           retention-days: 3
           if-no-files-found: error
