@@ -298,6 +298,60 @@
         "no_author_merge": true,
         "no_automatic_claim": true
       }
+    },
+    {
+      "schema": 1,
+      "case_id": "ISSUE128_MANUAL_CONTROLLER_EPOCH302_STALE_20261031",
+      "operation": "OWNER_DELEGATED_ONE_SHOT_ADMINISTRATIVE_REVOCATION",
+      "previous_epoch": 302,
+      "next_epoch": 303,
+      "previous_holder": {
+        "kind": "CONTROLLER",
+        "owner_id": "e1ca775b-0b0e-4116-a104-2c553bd8608e",
+        "task_id": null,
+        "epoch": 302,
+        "acquired_at": "2026-10-30T23:53:05.650Z",
+        "expires_at": "2026-10-31T00:18:05.650Z",
+        "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "work_branch": "controller/meta-hourly-schedule-e1ca775b",
+        "origin": "controller"
+      },
+      "observed_ref": "e4efcd6b5e3bff614540520bb219e5e3605cbdfe",
+      "observed_state_blob": "fdda996b7a11a2ac1763bcb2c6862b4da539fb62",
+      "recorded_at": "2026-10-31T00:23:56.995Z",
+      "authorization": {
+        "type": "ONE_SHOT_OWNER_DELEGATED_OPERATOR_EXCEPTION_NOT_NORMAL_RECOVERY",
+        "source": "Owner continuing explicit 2026-10-31 '次' instruction after many repeated cycle stoppages; standing 2026-10-25 delegation of operational decisions and earlier scoped administrative exceptions; current holder epoch302 passed its time limit and cannot authorize further source edits.",
+        "scope": "Fence only identical expired manual CONTROLLER epoch302, preserve PR155 RED evidence and source branch; no PR/main/source/task, Gemini, credentials, fees, Roblox or publishing changes. Do not infer owner-run completion."
+      },
+      "evidence": {
+        "source_pr": 155,
+        "source_pr_head": "640ecfc66ba7349d6de43457d5d5a0407318432f",
+        "source_branch": "controller/meta-hourly-schedule-e1ca775b",
+        "latest_source_branch_head": "640ecfc66ba7349d6de43457d5d5a0407318432f",
+        "ci_run": 41147165943,
+        "ci_status": "completed",
+        "ci_conclusion": "failure",
+        "holder_expired_at": "2026-10-31T00:18:05.650Z",
+        "observed_after_expiry": true,
+        "observed_main_head": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "registered_service_completion_proof": "NOT_APPLICABLE_MANUAL_CONTROLLER",
+        "original_manual_actor_terminal": "UNVERIFIED",
+        "last_seen_PR_comment": "2026-10-31T00:19:18Z",
+        "prior_owner_release": "NOT_OBSERVED",
+        "reason": "Stale foreign exclusive holder blocks unrelated legal lanes; exceptional owner-delegated administrative fencing is separate from standard lease recovery."
+      },
+      "safety": {
+        "preserve_prior_audit": true,
+        "provider_terminal_attested": false,
+        "main_mutated": false,
+        "pr_changed": false,
+        "source_branch_changed": false,
+        "automatic_worker_authenticated": false,
+        "roblox_engine_verified": false,
+        "spending_authorized": false,
+        "postwrite_readback_required": true
+      }
     }
   ],
   "approval_packet": {
@@ -1193,18 +1247,8 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 302,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "e1ca775b-0b0e-4116-a104-2c553bd8608e",
-    "task_id": null,
-    "epoch": 302,
-    "acquired_at": "2026-10-30T23:53:05.650Z",
-    "expires_at": "2026-10-31T00:18:05.650Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/meta-hourly-schedule-e1ca775b",
-    "origin": "controller"
-  },
+  "epoch": 303,
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
