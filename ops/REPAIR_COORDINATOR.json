@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 334,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "5828688a-e0a8-4055-b012-088efcfae5f7",
-    "task_id": null,
-    "work_branch": "controller/parallel-pr-path-audit-v3-5828688a",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "epoch": 334,
-    "acquired_at": "2026-10-31T07:30:22.101Z",
-    "expires_at": "2026-10-31T07:50:22.101Z"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,31 +2893,20 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "27eaf524-0f4d-4f8d-ae06-6971d88b7f14",
-    "epoch": 333,
-    "released_at": "2026-10-31T07:28:02.950Z",
+    "owner_id": "5828688a-e0a8-4055-b012-088efcfae5f7",
+    "epoch": 334,
+    "released_at": "2026-10-31T07:34:49.487Z",
     "release_receipt": {
-      "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
-      "repository": "kk051780/toy-wars-factory",
-      "source_pr": 166,
-      "source_head": "76746f77ea96ae02efc34cbfe35e8158f34980c0",
-      "source_branch": "controller/claim-witness-84fdc871",
-      "claim_commit": "f6ac4add1453bba66d084550b1b2b4f32a5bcfe9",
-      "red_head": "432241b9b7db97c7fa89cfa1b60418e2c8669258",
-      "red_run_id": 41180140044,
-      "red_offline": "failure",
-      "red_tests": 938,
-      "green_run_id": 41180627724,
-      "green_tests": 938,
-      "green_offline": "success",
-      "green_compile_hold": "success",
+      "reason": "PR168_DRAFT_EXACT_HEAD_CI_GREEN_INDEPENDENT_REVIEW_PENDING",
+      "claim_commit": "48aac4fe905067c239a3d622b3afa8aa29e5a025",
+      "work_branch": "controller/parallel-pr-path-audit-v3-5828688a",
+      "pr": 168,
+      "pr_head": "efa707f72e6cf353f862fcb3cf5c594b4ce289a7",
+      "ci_run": 41181111576,
+      "ci_status": "success",
       "independent_review": "PENDING",
-      "main_merged": false,
-      "live_claim_witness_run": false,
-      "roblox_engine": "NOT_RUN",
-      "no_publish": true,
-      "external_inference": "NONE",
-      "spending": "NONE"
+      "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "main_mutated": false
     }
   },
   "last_completed_integration": {
