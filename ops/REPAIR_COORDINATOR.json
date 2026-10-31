@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 350,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "0cee76ed-d225-4d88-8203-09741ae2e517",
-    "task_id": null,
-    "epoch": 350,
-    "acquired_at": "2026-10-31T21:41:16.537Z",
-    "expires_at": "2026-10-31T22:04:16.537Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/parallel-pr-path-audit-v3-5828688a",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,28 +2893,32 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "e01b33ca-8e54-4783-a553-97174e5d9e28",
-    "epoch": 349,
-    "released_at": "2026-10-31T21:33:59.555Z",
+    "owner_id": "0cee76ed-d225-4d88-8203-09741ae2e517",
+    "epoch": 350,
+    "released_at": "2026-10-31T21:46:20.710Z",
     "release_receipt": {
-      "reason": "PR145_PR148_TWO_PARENT_SHA_SPLIT_41_CHILD_TESTS_PRESERVED",
-      "claim_commit": "3a14c60fd1b458855704cbd0b0a9b713d4508ca8",
-      "work_branch": "controller/roblox-private-xml-saved-a14c0520",
-      "pr145_head": "e33dad15b189f468763b79202ff17b92f0e7f1f1",
-      "pr148_head": "8e0b5c1af3accdfc4bb54cdbf12bbcb6b490bdfd",
-      "pr145_run": 41243765036,
-      "pr145_python_tests": 870,
-      "pr148_run": 41244024262,
-      "pr148_python_tests": 884,
+      "reason": "PR168_STACKED_BASE_SHA_DRIFT_GUARD_10_NEW_REGRESSIONS_EXACT_HEAD_910_PASS",
+      "claim_commit": "c723ae0ca53cc2a29c355fb10681ae57a13f62f9",
+      "work_branch": "controller/parallel-pr-path-audit-v3-5828688a",
+      "pr": 168,
+      "pr_head": "9ce8ff2b14000928c11abf7ccbc56f34f948f33c",
+      "source_test_commit": "83346e6a1a0cb251cc512ddad0685f4789008e26",
+      "history_commit": "9ce8ff2b14000928c11abf7ccbc56f34f948f33c",
+      "history_id": "C05204",
+      "new_python_cases": 10,
+      "run": 41245007705,
+      "attempt": 1,
+      "ci_status": "success",
       "offline": "success",
+      "offline_python_tests": 910,
       "compile_hold": "success",
-      "original_child_test_methods": 41,
-      "retained_child_test_methods": 41,
-      "new_sha_split_tests": 10,
       "independent_review": "PENDING",
+      "real_github_original_module_execution": "NOT_ATTESTED",
+      "may_merge": false,
+      "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_mutated": false,
       "roblox_engine": "NOT_TESTED",
-      "roblox_publish": false
+      "publish_authorized": false
     }
   },
   "last_completed_integration": {
