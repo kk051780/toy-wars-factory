@@ -59,7 +59,7 @@ class HostTests(unittest.TestCase):
     def test_positive_owner_only_zero_rows(self):
         r=act();self.assertEqual(r['status'],'OWNER_MANUAL_READ_ONLY_PROBE_NOT_AUTOMATED_SCHEDULER')
         self.assertEqual(r['run_id'],int(VALID['GITHUB_RUN_ID']))
-        self.assertTrue(r['host_gets_executed']);self.assertFalse(r['historical_cron_source_authenticated'])
+        self.assertTrue(r['get_callback_invoked']);self.assertFalse(r['historical_cron_source_authenticated'])
         self.assertFalse(r['automatic_ai_coding_verified'])
         self.assertTrue(all(x is False for x in r['authority'].values()))
 
