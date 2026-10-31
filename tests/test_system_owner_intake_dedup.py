@@ -12,7 +12,7 @@ from system_owner_intake_dedup import calculate_work_id, classify, strict_json
 
 def sample():
     return {
-        "schema": 1,
+        "schema": 2,
         "project_id": "toy-wars-factory",
         "repository": "kk051780/toy-wars-factory",
         "main_sha": "a" * 40,
@@ -25,6 +25,7 @@ def sample():
 
 def existing(data, idea_id="owner:oct30:b", objective="Add a toy repair character", status="OPEN"):
     return {"idea_id": idea_id, "kind": data["incoming"]["kind"],
+            "project_id": data["project_id"], "repository": data["repository"],
             "objective": objective, "status": status,
             "work_id": calculate_work_id(data["project_id"], data["repository"],
                                          data["incoming"]["kind"], objective)}
@@ -50,14 +51,19 @@ class OwnerIdeaIntakeTests(unittest.TestCase):
 
     def test_v1_unscoped_records_must_be_refused_after_migration(self):
         d = sample()
-        d["records"] = [existing(d)]
+        d["schema"] = 1
+        row = existing(d)
+        del row["project_id"], row["repository"]
+        d["records"] = [row]
         with self.assertRaises(ValueError):
             classify(d)
 
     def test_v2_unscoped_record_must_not_be_silently_assumed_local(self):
         d = sample()
         d["schema"] = 2
-        d["records"] = [existing(d)]
+        row = existing(d)
+        del row["project_id"], row["repository"]
+        d["records"] = [row]
         with self.assertRaises(ValueError):
             classify(d)
 
@@ -203,7 +209,7 @@ class OwnerIdeaIntakeTests(unittest.TestCase):
             classify(d)
 
     def test_unknown_fields_or_wrong_schema_rejected(self):
-        for k, v in (("schema", True), ("schema", 2), ("extra", "yes")):
+        for k, v in (("schema", True), ("schema", 1), ("extra", "yes")):
             d = sample()
             d[k] = v
             with self.assertRaises(ValueError):
