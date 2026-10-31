@@ -1,0 +1,31 @@
+{
+  "id": "C00215",
+  "date": "2026-10-31",
+  "kind": "HISTORY_PUBLICATION_RECONCILIATION_AND_HOLDER_ORIGIN_RED",
+  "issue": 123,
+  "pr": 157,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "02691784c6890376a5753d311078d914270b850b",
+    "owner_run_id": "0b9ed49a-3b89-4ddb-ac33-c16ea0726982",
+    "epoch": 309
+  },
+  "new_tests": [
+    "tests/test_system_history_publication_bridge.py",
+    "tests/test_system_history_publication_provenance.py",
+    "tests/test_system_history_reservation_holder_origin.py"
+  ],
+  "test_cases": {
+    "publication_original": 24,
+    "provenance_extra": 16,
+    "holder_origin_other_author": 11
+  },
+  "expected_red": "Missing system_history_publication_bridge module and independently reported holder origin shape failures; requires exact GitHub Actions failure evidence",
+  "original_63_tests_preserved": true,
+  "source_changed_in_red": false,
+  "independent_review": "PENDING",
+  "provider_attested": false,
+  "robot_engine": "NOT_RUN",
+  "merge_authorized": false
+}
