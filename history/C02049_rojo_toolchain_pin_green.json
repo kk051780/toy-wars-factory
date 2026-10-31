@@ -1,0 +1,41 @@
+{
+  "id": "C02049",
+  "date": "2026-10-31",
+  "kind": "ROJO_BUILD_TOOLCHAIN_VERSION_PIN_GREEN",
+  "issue": 117,
+  "pr": 143,
+  "branch": "controller/rojo-build-only-gate-f01e9043",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordinator": {
+    "epoch": 328,
+    "owner_run_id": "76b086d1-bebd-49c4-81c0-d2c7c4ff6a45",
+    "claim_commit": "27f279e3180ee4d7f14e8e80ab66ef52826062bf"
+  },
+  "red": {
+    "source_head": "4ae4d3f7b9856c5821a9cea5c018c84d6190e87b",
+    "run_id": 41175199466,
+    "offline": "failure",
+    "compile_hold": "success",
+    "python_tests": 891,
+    "failed_test_import": "rojo_toolchain_gate module absent",
+    "added_tests": 13
+  },
+  "green": {
+    "source_changes": "Pin setup-rokit installer version 1.2.0 plus fail-closed no-shell rokit+rojo --version pre-build gate; preserve Rojo 7.5.1 rokit.toml pin",
+    "github_ci": "PENDING",
+    "engine_test": "NOT_RUN",
+    "real_rojo_build": "NOT_RUN"
+  },
+  "upstream": {
+    "rokit_release": "rojo-rbx/rokit v1.2.0 (2025-09-30)",
+    "setup_action": "paradoxum-games/setup-rokit v3 at 29e6ee09651a3711e3a287a1037671d7b74db6d0",
+    "rojo_release": "v7.5.1"
+  },
+  "security": {
+    "permissions_unchanged": true,
+    "workflow_trigger_unchanged": "workflow_dispatch",
+    "independent_review": "PENDING",
+    "publish": "HOLD",
+    "spend": "NONE"
+  }
+}

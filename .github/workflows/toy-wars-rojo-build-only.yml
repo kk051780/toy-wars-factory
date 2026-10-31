@@ -23,7 +23,10 @@ jobs:
       - name: Install pinned Rojo using the Rokit toolchain
         uses: paradoxum-games/setup-rokit@29e6ee09651a3711e3a287a1037671d7b74db6d0
         with:
+          version: 1.2.0
           cache: false
+      - name: Verify fixed Rokit and Rojo binary versions before build
+        run: python3 tools/rojo_toolchain_gate.py
       - name: Build static place candidate only
         run: |
           mkdir -p .qa/rojo
