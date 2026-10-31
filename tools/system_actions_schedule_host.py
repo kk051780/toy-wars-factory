@@ -161,8 +161,13 @@ def execute(reader,env,*,root,clock):
         "status":"OWNER_MANUAL_READ_ONLY_PROBE_NOT_AUTOMATED_SCHEDULER",
         "run_id":scope["run_id"],
         "source_main_sha":scope["main_sha"],
-        "host_gets_executed":True,
+        # A caller can inject a synthetic reader or root. The returned JSON
+        # cannot itself attest a real GitHub API call, even if the callback ran.
+        # Original workflow-run/step logs are needed for hosted provenance.
+        "get_callback_invoked":True,
+        "callback_provenance":"INJECTED_READER_NOT_PROVIDER_ATTESTATION",
         "current_cron_source_checked":True,
+        "current_cron_source_authenticated":False,
         "historical_cron_source_authenticated":False,
         "automatic_ai_coding_verified":False,
         "provider_authenticated_outside_job":False,
