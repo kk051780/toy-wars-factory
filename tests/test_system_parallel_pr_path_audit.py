@@ -284,3 +284,98 @@ class ParallelPrRestObservationTests(unittest.TestCase):
                 item['prs_after'][0][field]['repo']['full_name'] = 'untrusted/fork'
                 with self.assertRaises(ValueError):
                     from_rest_observations(**item)
+
+
+class PrefixTreeCollisionRegressionTests(unittest.TestCase):
+    """A file path and its directory descendants cannot coexist in Git."""
+
+    def test_candidate_parent_then_child_rejected(self):
+        d = fixture()
+        d['candidate']['paths'] = ['tools/cache', 'tools/cache/item.py']
+        with self.assertRaisesRegex(ValueError, 'file/directory path collision'):
+            audit(d)
+
+    def test_candidate_child_then_parent_rejected(self):
+        d = fixture()
+        d['candidate']['paths'] = ['tools/cache/item.py', 'tools/cache']
+        with self.assertRaisesRegex(ValueError, 'file/directory path collision'):
+            audit(d)
+
+    def test_candidate_prefix_casefold_rejected(self):
+        d = fixture()
+        d['candidate']['paths'] = ['Tools/CACHE', 'tools/cache/item.py']
+        with self.assertRaises(ValueError):
+            audit(d)
+
+    def test_candidate_prefix_unicode_nfc_rejected(self):
+        d = fixture()
+        d['candidate']['paths'] = ['docs/Café', 'docs/Cafe\u0301/item.md']
+        with self.assertRaises(ValueError):
+            audit(d)
+
+    def test_other_pr_parent_directory_blocks_candidate_file(self):
+        d = fixture()
+        d['pulls'][0]['paths'] = ['tools']
+        x = audit(d)
+        self.assertEqual(x['decision'], 'BLOCK_OVERLAP')
+        self.assertEqual(x['collisions'][0]['kind'], 'PATH_PREFIX')
+        self.assertEqual(x['collisions'][0]['existing_path'], 'tools')
+        self.assertFalse(x['grant_write_authority'])
+
+    def test_other_pr_child_file_blocks_candidate_parent(self):
+        d = fixture()
+        d['pulls'][0]['paths'] = ['tools/new_audit.py/other.py']
+        x = audit(d)
+        self.assertEqual(x['decision'], 'BLOCK_OVERLAP')
+        self.assertEqual(x['collisions'][0]['kind'], 'PATH_PREFIX')
+        self.assertFalse(x['source_authenticated'])
+
+    def test_prefix_must_be_component_boundary(self):
+        d = fixture()
+        d['pulls'][0]['paths'] = ['tools/new_audit.py2']
+        self.assertEqual(audit(d)['decision'], 'CLEAR_ADVISORY')
+
+    def test_prefix_casefold_and_nfc_across_prs(self):
+        d = fixture()
+        d['candidate']['paths'] = ['Tests/Café']
+        d['pulls'][0]['paths'] = ['tests/cafe\u0301/suite.py']
+        x = audit(d)
+        self.assertEqual(x['collisions'][0]['kind'], 'PATH_PREFIX')
+        self.assertEqual(x['decision'], 'BLOCK_OVERLAP')
+
+    def test_stacked_pr_prefix_is_visible(self):
+        d = fixture()
+        d['pulls'][0]['base_branch'] = 'controller/staged-parent'
+        d['pulls'][0]['paths'] = ['tools']
+        x = audit(d)
+        self.assertTrue(x['collisions'][0]['stacked'])
+        self.assertEqual(x['stacked_prs_checked'], 1)
+        self.assertEqual(x['collisions'][0]['kind'], 'PATH_PREFIX')
+
+    def test_one_existing_parent_reports_each_distinct_child(self):
+        d = fixture()
+        d['candidate']['paths'] = ['tools/a.py', 'tools/b.py']
+        d['pulls'][0]['paths'] = ['tools']
+        x = audit(d)
+        self.assertEqual(len(x['collisions']), 2)
+        self.assertEqual([y['candidate_path'] for y in x['collisions']],
+                         ['tools/a.py', 'tools/b.py'])
+
+    def test_rest_rename_old_parent_path_is_checked(self):
+        d = rest_fixture()
+        d['changed_files_by_pr']['147'] = [{
+            'filename': 'tools/new_path.py', 'status': 'renamed',
+            'previous_filename': 'tools',
+        }]
+        x = audit(from_rest_observations(**d))
+        self.assertEqual(x['decision'], 'BLOCK_OVERLAP')
+        self.assertEqual(x['collisions'][0]['kind'], 'PATH_PREFIX')
+
+    def test_unrelated_paths_remain_advisory_without_authority(self):
+        d = fixture()
+        d['candidate']['paths'] = ['tools/x/item.py']
+        d['pulls'][0]['paths'] = ['tools/y/item.py']
+        x = audit(d)
+        self.assertEqual(x['decision'], 'CLEAR_ADVISORY')
+        self.assertFalse(x['grant_write_authority'])
+        self.assertFalse(x['source_authenticated'])
