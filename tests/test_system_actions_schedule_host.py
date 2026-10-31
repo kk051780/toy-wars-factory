@@ -62,6 +62,26 @@ class HostTests(unittest.TestCase):
         self.assertTrue(r['host_gets_executed']);self.assertFalse(r['historical_cron_source_authenticated'])
         self.assertFalse(r['automatic_ai_coding_verified'])
         self.assertTrue(all(x is False for x in r['authority'].values()))
+
+    def test_injected_get_callback_never_becomes_provider_evidence(self):
+        injected=MockLive()
+        result=act(injected)
+        self.assertGreaterEqual(len(injected.calls),4)
+        self.assertTrue(result['get_callback_invoked'])
+        self.assertEqual(result['callback_provenance'],'INJECTED_READER_NOT_PROVIDER_ATTESTATION')
+        self.assertNotIn('host_gets_executed', result)
+        self.assertFalse(result['current_cron_source_authenticated'])
+        self.assertFalse(result['provider_authenticated_outside_job'])
+
+    def test_replayed_original_shaped_run_is_still_not_live_proof(self):
+        fake=MockLive()
+        result=act(fake)
+        self.assertEqual(result['source_verification'],'UNTRUSTED_INPUT_ONLY')
+        self.assertNotIn('host_gets_executed',result)
+        self.assertFalse(result['historical_cron_source_authenticated'])
+        self.assertFalse(result['current_cron_source_authenticated'])
+        self.assertFalse(result['authority']['provider_authenticated'])
+
     def test_scope_ids_accepted(self):
         self.assertEqual(h.validated_context(VALID),{'main_sha':'e'*40,'run_id':41188887777})
     def test_required_context_keys(self):
