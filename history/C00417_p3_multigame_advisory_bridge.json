@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "id": "C00417",
+  "project": "TOY WARS FACTORY",
+  "work_id": "TWF-P3-READONLY-MULTIGAME-BRIDGE-20261031",
+  "date_utc": "2026-10-31",
+  "category": "SYSTEM_ADVISORY_IMPLEMENTATION",
+  "status": "PROTECTED_DRAFT_NOT_INTEGRATED",
+  "issue": 104,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "90a15eae9cf0b992be72a5d0d66d044d77c7ce19",
+    "owner_run_id": "4dc1c782-2b3e-4a74-a18e-4f43e6e9043c",
+    "epoch": 311,
+    "work_branch": "controller/p3-observation-bridge-4dc1c782"
+  },
+  "rationale": "Strictly map one scoped observer report per bound game to scheduler snapshots while refusing to claim exact CI, idle lease, provider-origin authentication or automatic dispatch from serializable JSON.",
+  "changed_files": [
+    "tools/system_multigame_bridge.py",
+    "tests/test_system_multigame_bridge.py",
+    "history/C00417_p3_multigame_advisory_bridge.json"
+  ],
+  "test_design": {
+    "new_test_methods": 9,
+    "distinct_project_manifests": 2,
+    "negative_cases": [
+      "foreign_repository",
+      "cross_project_run_replay",
+      "fake_live_verified",
+      "fake_dispatch_authority",
+      "expired_holder_claim",
+      "missing_report",
+      "missing_role",
+      "missing_trace",
+      "fabricated_QA_PASS"
+    ]
+  },
+  "validation": {
+    "python_compile": "PASS_LOCAL_SYNTAX_ONLY",
+    "full_offline": "PENDING_GITHUB_ACTIONS",
+    "official_compile_hold": "PENDING_GITHUB_ACTIONS",
+    "independent_review": "PENDING",
+    "post_main_qa": "NOT_RUN",
+    "roblox_engine": "NOT_RUN",
+    "actual_provider_attestation": "NOT_VERIFIED"
+  },
+  "permissions": {
+    "dispatch": false,
+    "merge": false,
+    "publish": false,
+    "gemini_inference": false,
+    "spend": false,
+    "new_schedule": false
+  },
+  "history_id_reservation": "PROVISIONAL_REQUIRES_PREMERGE_CROSS_PR_CONFLICT_SCAN",
+  "next": "Independent reviewer verify exact-head two-job CI and source/history collision before protected merge; follow-up needs trusted live provider and exact PR/CI chain."
+}
