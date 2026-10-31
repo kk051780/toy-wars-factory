@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 328,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "76b086d1-bebd-49c4-81c0-d2c7c4ff6a45",
-    "task_id": null,
-    "work_branch": "controller/rojo-build-only-gate-f01e9043",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "epoch": 328,
-    "acquired_at": "2026-10-31T06:04:38.295Z",
-    "expires_at": "2026-10-31T06:29:38.295Z"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,9 +2893,40 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "fa63a25b-0b84-4922-a5c3-68e84bced219",
-    "epoch": 327,
-    "released_at": "2026-10-31T05:27:37.857Z"
+    "owner_id": "76b086d1-bebd-49c4-81c0-d2c7c4ff6a45",
+    "epoch": 328,
+    "released_at": "2026-10-31T06:08:52.720Z",
+    "release_receipt": {
+      "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
+      "repository": "kk051780/toy-wars-factory",
+      "owner_run_id": "76b086d1-bebd-49c4-81c0-d2c7c4ff6a45",
+      "task_id": null,
+      "epoch": 328,
+      "claim_commit": "27f279e3180ee4d7f14e8e80ab66ef52826062bf",
+      "source_pr": 143,
+      "source_head": "c5e8417d2cb7e677eb18f990172761d849bc497e",
+      "source_branch": "controller/rojo-build-only-gate-f01e9043",
+      "source_main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "comment_id": 6539913050,
+      "red_run_id": 41175199466,
+      "red_offline": "failure",
+      "red_compile_hold": "success",
+      "red_python_tests": 891,
+      "green_run_id": 41175293028,
+      "green_offline": "success",
+      "green_compile_hold": "success",
+      "green_python_tests": 903,
+      "new_tests": 13,
+      "independent_review": "PENDING",
+      "main_merged": false,
+      "workflow_dispatch": "NOT_RUN",
+      "actual_rokit_rojo_runtime": "NOT_VERIFIED",
+      "actual_rbxl_build": "NOT_VERIFIED",
+      "roblox_studio": "NOT_RUN",
+      "publish": "HOLD",
+      "external_inference": "NONE",
+      "spending": "NONE"
+    }
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
