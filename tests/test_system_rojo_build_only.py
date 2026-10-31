@@ -22,7 +22,7 @@ def fake_rbxl(types=("INST", "PROP", "PRNT", "END")):
     header = gate.MAGIC + struct.pack("<HIIQ", 0, 3, 5, 0)
     chunks = b""
     for kind in types:
-        payload = b"" if kind == "END" else b"fixture"
+        payload = b"</roblox>" if kind == "END" else b"fixture"
         chunks += struct.pack("<4sIII", kind.encode().ljust(4, b"\0"), 0, len(payload), 0) + payload
     return header + chunks
 

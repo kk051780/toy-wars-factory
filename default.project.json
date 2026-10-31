@@ -1,0 +1,24 @@
+{
+  "name": "ToyWarsFactory",
+  "tree": {
+    "$className": "DataModel",
+    "Workspace": {"$className": "Workspace"},
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "ToyWarsBalance": {"$path": "src/ToyWarsBalance.lua"},
+      "ToyWarsSelectUnit": {"$className": "RemoteEvent"}
+    },
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "ToyWarsServer": {"$path": "src/ToyWarsServer.server.lua"},
+      "ToyWarsSmokeTest": {"$path": "src/ToyWarsSmokeTest.server.lua"}
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "ToyWarsHUD": {"$path": "src/ToyWarsHUD.client.lua"}
+      }
+    }
+  }
+}

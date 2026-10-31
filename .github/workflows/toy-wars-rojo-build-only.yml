@@ -1,0 +1,38 @@
+name: TOY WARS manual-source-pinned Rojo place builder (not Roblox engine)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: twf-source-pinned-rojo-manual
+  cancel-in-progress: false
+jobs:
+  build-only:
+    if: github.repository == 'kk051780/toy-wars-factory' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout reviewed main history without token persistence
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Reject stale source or foreign manual event
+        run: python3 tools/rojo_source_contract.py
+      - name: Install pinned Rojo using the Rokit toolchain
+        uses: paradoxum-games/setup-rokit@29e6ee09651a3711e3a287a1037671d7b74db6d0
+        with:
+          cache: false
+      - name: Build static place candidate only
+        run: |
+          mkdir -p .qa/rojo
+          rojo --version
+          rojo build default.project.json -o .qa/rojo/ToyWarsFactory_NOT_ENGINE_TESTED.rbxl
+          python3 tools/rojo_rbxl_gate.py .qa/rojo/ToyWarsFactory_NOT_ENGINE_TESTED.rbxl > .qa/rojo/source_pinned_binary_receipt_UNTRUSTED.json
+      - name: Upload temporary review artifact, not publication
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: twf-rojo-private-build-only-not-engine
+          path: .qa/rojo/
+          retention-days: 3
+          if-no-files-found: error
