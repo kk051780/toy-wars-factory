@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 336,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "78bb839a-2a16-476c-9da4-cb6086af846d",
-    "task_id": null,
-    "epoch": 336,
-    "acquired_at": "2026-10-31T07:51:11.100Z",
-    "expires_at": "2026-10-31T08:16:11.100Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/gemini-antigravity-bridge-78bb839a",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,19 +2893,17 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "7aa5024a-2781-4a8e-9368-614cca4da3a4",
-    "epoch": 335,
-    "released_at": "2026-10-31T07:40:23.919Z",
+    "owner_id": "78bb839a-2a16-476c-9da4-cb6086af846d",
+    "epoch": 336,
+    "released_at": "2026-10-31T07:53:24.390Z",
     "release_receipt": {
-      "reason": "PR169_DRAFT_EXACT_HEAD_CI_PASS_INDEPENDENT_REVIEW_PENDING",
-      "claim_commit": "ede8573f498c9bd1cf91c9888d6932fdbe50b090",
-      "work_branch": "controller/pr-supersession-advisory-7aa5024a",
-      "pr": 169,
-      "pr_head": "707ffffb871d6ee34862230e7bc9ebe8fd24a5fe",
-      "ci_run": 41181447902,
-      "ci_status": "success",
-      "offline_tests": 843,
-      "compile_hold": "success",
+      "reason": "PR171_DRAFT_BRIDGE_OFFLINE_CANDIDATE_SEVERE_HOLD_UNCHANGED",
+      "claim_commit": "81b34d50394ebd94d5be8a860e489a999bf1743b",
+      "work_branch": "controller/gemini-antigravity-bridge-78bb839a",
+      "pr": 171,
+      "pr_head": "33b05f78adf2dd0f687afc65b229fbef04472fe7",
+      "ci_run": 41182349006,
+      "ci_status": "QUEUED_AT_RELEASE",
       "independent_review": "PENDING",
       "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_mutated": false,
