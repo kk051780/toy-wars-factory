@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 314,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "90905804-ebb6-42b7-ae1e-fd1af5b26e28",
-    "task_id": null,
-    "work_branch": "controller/a12-observation-90905804",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "epoch": 314,
-    "acquired_at": "2026-10-31T02:30:47.424Z",
-    "expires_at": "2026-10-31T02:45:47.424Z"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,28 +2893,21 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "d3ccae74-0947-41f9-aa95-1e77cab0dca4",
-    "epoch": 313,
-    "released_at": "2026-10-31T02:21:48.794Z",
+    "owner_id": "90905804-ebb6-42b7-ae1e-fd1af5b26e28",
+    "epoch": 314,
+    "released_at": "2026-10-31T02:31:28.026Z",
     "release_receipt": {
       "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
       "repository": "kk051780/toy-wars-factory",
-      "owner_run_id": "d3ccae74-0947-41f9-aa95-1e77cab0dca4",
-      "task_id": null,
-      "epoch": 313,
-      "claim_commit": "79e59e56bf700f97a4e6025df7e0d2f6c9c1f063",
-      "source_pr": 162,
-      "source_head": "df6ced28faf1f95ec227fd4ea213b7a05a5410c8",
-      "source_branch": "controller/prompt-drift-d3ccae74",
-      "source_main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "green_run_id": 41159567803,
-      "green_offline": "success",
-      "green_compile_hold": "success",
-      "green_python_tests": 871,
-      "independent_review": "PENDING",
+      "owner_run_id": "90905804-ebb6-42b7-ae1e-fd1af5b26e28",
+      "claim_commit": "04f0a3894dfa0675aa89e4a85b9e52785af17d75",
+      "issue": 114,
+      "issue_comment_id": 6537824963,
+      "scope": "READONLY_A12_CONNECTED_SERVICE_OBSERVATION_WITH_GITHUB_ISSUE_COMMENT",
       "main_merged": false,
-      "roblox_engine": "NOT_RUN",
-      "external_inference": "NONE",
+      "source_modified": false,
+      "scheduled_authority_verified": false,
+      "incident_delivery_verified": false,
       "spending": "NONE",
       "postwrite_readback_required": true
     }
