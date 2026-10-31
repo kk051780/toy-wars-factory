@@ -59,6 +59,7 @@ class XmlStageConfig:
     source_main_sha: str
     rbxlx_sha256: str
     rbxlx_bytes: int
+    reviewed_workflow_sha: str
 
     def check(self)->None:
         ids=(self.test_universe_id,self.test_place_id,self.production_universe_id,self.production_place_id)
@@ -69,6 +70,8 @@ class XmlStageConfig:
         demand(type(self.source_main_sha) is str and SHA.fullmatch(self.source_main_sha) and
                self.source_main_sha == MAIN_BASE,
                'current-main source pin was not independently refreshed')
+        demand(type(self.reviewed_workflow_sha) is str and SHA.fullmatch(self.reviewed_workflow_sha),
+               'invalid reviewed main workflow SHA')
         demand(type(self.rbxlx_sha256) is str and DIGEST.fullmatch(self.rbxlx_sha256) and
                type(self.rbxlx_bytes) is int and 40 <= self.rbxlx_bytes <= MAX_XML_BYTES,
                'invalid bounded XML artifact pin')
@@ -180,7 +183,9 @@ def check_host_environment(cfg:XmlStageConfig, env:Any)->None:
     demand(type(env) is dict and all(type(k) is str and type(v) is str for k,v in env.items()),
            'untrusted environment metadata')
     expected={'GITHUB_ACTIONS':'true','GITHUB_REPOSITORY':REPOSITORY,'GITHUB_REF':'refs/heads/main',
-              'GITHUB_SHA':cfg.source_main_sha,'GITHUB_EVENT_NAME':'workflow_dispatch',
+              'GITHUB_SHA':cfg.reviewed_workflow_sha,'GITHUB_EVENT_NAME':'workflow_dispatch',
+              'TWF_ACCEPTED_GAME_SOURCE_SHA':cfg.source_main_sha,
+              'TWF_REVIEWED_MAIN_SHA':cfg.reviewed_workflow_sha,
               'TWF_PRIVATE_STAGE_APPROVED':'true','TWF_PROTECTED_ENVIRONMENT':'roblox-private-test',
               'TWF_TEST_UNIVERSE_ID':cfg.test_universe_id,'TWF_TEST_PLACE_ID':cfg.test_place_id,
               'TWF_PROD_UNIVERSE_ID':cfg.production_universe_id,'TWF_PROD_PLACE_ID':cfg.production_place_id}
