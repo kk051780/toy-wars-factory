@@ -178,11 +178,34 @@ class IntegrationContract(unittest.TestCase):
                          "CONTRACT_PASS_UNTRUSTED_EVIDENCE")
 
     def test_one_new_detailed_adoption_is_allowed(self):
+        # A new PR requires independent SHA, QA, handoff and job identities.
         tail = copy.deepcopy(self.after["merged_prs"][-1])
-        tail["pr"] = 140
+        tail.update(pr=140, head="d"*40, merge_sha="e"*40,
+                    main_qa=1101, handoff=1102, main_after_handoff="f"*40)
         self.after["merged_prs"].append(tail)
+        self.after["latest_review"] = dict(pr=140, head=tail["head"], merge_sha=tail["merge_sha"])
+        self.after.update(merge_sha=tail["merge_sha"], main_after_merge=tail["merge_sha"],
+                          main_after_handoff=tail["main_after_handoff"],
+                          latest_main_sha=tail["main_after_handoff"])
+        for key, run_id in (("main_qa", 1101), ("handoff", 1102)):
+            receipt = self.after[key]
+            receipt.update(id=run_id, head=tail["merge_sha"],
+                           url=f"https://github.com/owner/game-one/actions/runs/{run_id}")
+            jobs = receipt["job_evidence"] if key == "main_qa" else receipt["jobs"]
+            for job in jobs:
+                job.update(id=job["id"]+100, head=tail["merge_sha"], run_id=run_id)
+        self.compare["base_commit"]["sha"] = tail["merge_sha"]
+        self.compare["commits"][-1]["sha"] = tail["main_after_handoff"]
+        result = self.check()
+        self.assertEqual(result["status"], "CONTRACT_PASS_UNTRUSTED_EVIDENCE")
+        self.assertEqual(result["appended_rows"], 1)
+
+    def test_cloned_prior_adoption_is_not_fresh(self):
+        clone = copy.deepcopy(self.after["merged_prs"][-1])
+        clone["pr"] = 140
+        self.after["merged_prs"].append(clone)
         self.after["latest_review"]["pr"] = 140
-        self.assertEqual(self.check()["appended_rows"], 1)
+        self.blocked()
 
     def test_two_new_adoptions_not_one_operation(self):
         for pr in (140, 141):

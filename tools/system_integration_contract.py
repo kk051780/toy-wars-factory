@@ -41,6 +41,35 @@ def _history(rows):
     return rows
 
 
+def _distinct_new_adoption(old_rows, new_row):
+    """Fail closed if an appended PR reuses any prior provider identity.
+
+    Old ledger rows may be sparse or numeric-only, so only compare a prior
+    value when it has the correct type. The *new* row must supply all five.
+    This detects copied evidence even when the newly invented PR ID is unique.
+    """
+    fields = {"head": _sha, "merge_sha": _sha,
+              "main_qa": _integer, "handoff": _integer,
+              "main_after_handoff": _sha}
+    for field, validator in fields.items():
+        value = new_row.get(field)
+        _need(validator(value), "new adoption lacks valid " + field)
+        _need(not any(validator(prior.get(field)) and prior[field] == value
+                      for prior in old_rows), "reused prior adoption " + field)
+    # A GitHub run ID is globally scoped within a repository, NOT a separate
+    # namespace for QA and handoff. Swapping roles must not renew old proof.
+    def run_id(record, key):
+        raw = record.get(key)
+        if type(raw) is dict:
+            raw = raw.get("id")
+        return raw if _integer(raw) else None
+    fresh = {new_row["main_qa"], new_row["handoff"]}
+    _need(len(fresh) == 2, "QA and handoff reused one run")
+    previous = {rid for row in old_rows for key in ("main_qa", "handoff")
+                if (rid := run_id(row, key)) is not None}
+    _need(not fresh.intersection(previous), "reused prior GitHub run across QA/handoff")
+
+
 def _receipts(after, tail, repository, merge):
     seen_ids = set()
     for field, names in (("main_qa", {"offline", "compile_hold"}),
@@ -128,6 +157,8 @@ def check_transition(before, after, *, repository, comparison):
         for key in ("historical_snapshot", "previous_snapshot", "compatibility_repair", "normalizer"):
             if key in before:
                 _need(_json(before[key]) == _json(after[key]), "historical snapshot changed")
+        if len(new) == len(old) + 1:
+            _distinct_new_adoption(old, new[-1])
         tail, review = new[-1], after["latest_review"]
         merge, main = tail["merge_sha"], tail["main_after_handoff"]
         _need(_sha(tail.get("head")) and _sha(merge) and _sha(main), "canonical tail required")
