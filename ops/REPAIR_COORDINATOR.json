@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 352,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "31d534d7-8379-479a-9a74-8ae285f5f6b8",
-    "task_id": null,
-    "epoch": 352,
-    "acquired_at": "2026-10-31T21:52:54.110Z",
-    "expires_at": "2026-10-31T22:02:54.110Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/pr168-protected-review-intake-issue59",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2902,19 +2892,30 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "DISPATCH",
-    "owner_id": "13afdf66-56bc-4ae0-8223-2b89af2ae63d",
-    "epoch": 351,
-    "released_at": "2026-10-31T21:52:09.289Z",
+    "kind": "CONTROLLER",
+    "owner_id": "31d534d7-8379-479a-9a74-8ae285f5f6b8",
+    "epoch": 352,
+    "released_at": "2026-10-31T21:54:55.362Z",
     "release_receipt": {
-      "reason": "REGISTERED_WORKER_RUN_COMPLETED_NO_TICKET_ADOPTION",
-      "worker_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "worker_run_id": "106c2918-125c-8325-a564-3aae96fc9d89",
-      "worker_status": "completed",
-      "worker_completed_at": "2026-10-31T21:51:23.573576Z",
-      "claim_commit": "437b69232691a43d9ef3bcb01241807bbfd85864",
-      "no_new_run_requested": true,
-      "main_unchanged": true
+      "reason": "ISSUE59_PR168_PROTECTED_SYSTEM_REVIEW_LANE_HANDOFF_ONLY",
+      "claim_commit": "2c9580c7b9fdbc082094310afc5dd2bce80c1a6a",
+      "work_branch": "controller/pr168-protected-review-intake-issue59",
+      "issue": 59,
+      "comment_id": 6549636747,
+      "pr": 168,
+      "pr_head": "9ce8ff2b14000928c11abf7ccbc56f34f948f33c",
+      "pr60_base_behind_main_commits": 223,
+      "ci_run": 41245007705,
+      "ci_status": "success",
+      "python_tests": 910,
+      "independent_review": "NOT_SUBMITTED",
+      "merge_authorized": false,
+      "reviewer_policy_changed": false,
+      "code_files_changed": 0,
+      "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "main_mutated": false,
+      "original_github_collector_runtime": "NOT_ATTESTED",
+      "roblox_engine": "NOT_TESTED"
     }
   },
   "last_completed_integration": {
