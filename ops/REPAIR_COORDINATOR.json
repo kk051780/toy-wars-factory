@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 304,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "c8bda6ed-33c1-4e79-8806-9d23cabc187a",
-    "task_id": null,
-    "epoch": 304,
-    "acquired_at": "2026-10-31T00:24:59.631Z",
-    "expires_at": "2026-10-31T00:54:59.631Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/pr142-integration-replay-c8bda6ed",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,32 +2893,42 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "b34c8765-01ac-4335-ad17-9d504dac4544",
-    "epoch": 301,
-    "released_at": "2026-10-30T23:51:07.691Z",
+    "owner_id": "c8bda6ed-33c1-4e79-8806-9d23cabc187a",
+    "epoch": 304,
+    "released_at": "2026-10-31T00:33:15.351Z",
     "release_receipt": {
       "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
       "repository": "kk051780/toy-wars-factory",
-      "owner_run_id": "b34c8765-01ac-4335-ad17-9d504dac4544",
       "task_id": null,
-      "epoch": 301,
-      "claim_commit": "dfa1c634cec93b3dfd54f488c294acd650ac5731",
-      "expected_parent": "dfa1c634cec93b3dfd54f488c294acd650ac5731",
-      "source_pr": 154,
-      "source_head": "4780806fbae5af6f84705478070120a1c6fd7134",
-      "source_main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "red_run_id": 41146630501,
+      "owner_run_id": "c8bda6ed-33c1-4e79-8806-9d23cabc187a",
+      "epoch": 304,
+      "expected_parent": "1859b4649d6661fceb2da452377f7356dd37a610",
+      "claim_commit": "1859b4649d6661fceb2da452377f7356dd37a610",
+      "source_pr": 156,
+      "source_head": "d3e8714a6c24710ee91073d2ac03e0089c459ea3",
+      "source_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "superseded_original_pr": 142,
+      "red_head": "6a4371a879f9f581995d8de85dcba9dcc69a4471",
+      "red_run_id": 41150278241,
       "red_offline": "failure",
-      "red_compile_hold": "success",
-      "green_run_id": 41146767732,
+      "red_expected_failures": 9,
+      "green_run_id": 41150569759,
       "green_offline": "success",
       "green_compile_hold": "success",
-      "green_python_tests": 871,
+      "green_python_tests_passed": 878,
+      "history_renumbered": {
+        "C00159": "C00173",
+        "C00160": "C00174"
+      },
+      "new_history": [
+        "C00175",
+        "C00176"
+      ],
       "independent_security_review": "PENDING",
       "main_merged": false,
-      "provider_terminal": "NOT_ATTESTED",
       "roblox_engine": "NOT_RUN",
-      "spending": "NONE",
+      "unattended_worker_identity": "NOT_VERIFIED",
+      "provider_terminal": "NOT_ATTESTED",
       "postwrite_readback_required": true
     }
   },
