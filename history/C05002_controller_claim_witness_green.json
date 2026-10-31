@@ -1,0 +1,52 @@
+{
+  "repo": "kk051780/toy-wars-factory",
+  "source_pr": 166,
+  "date": "2026-10-31",
+  "main_base_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 330,
+    "owner_id": "84fdc871-93d5-4af6-91a7-05555a0f61ca",
+    "claim_commit": "11cff3db37b9c96d92acc7213f31f47e4d07e1a1",
+    "work_branch": "controller/claim-witness-84fdc871"
+  },
+  "guards": {
+    "read_only": true,
+    "workflows_only_manual": true,
+    "permissions": "contents: read",
+    "main_merged": false,
+    "independent_reviewer_approval": false,
+    "actual_workflow_dispatch": false,
+    "roblox_access": false,
+    "external_inference": false,
+    "spending": false,
+    "provider_claim_chronology_proven": false
+  },
+  "id": "C05002",
+  "kind": "MANUAL_CLAIM_WITNESS_V4_REAL_GITHUB_SOURCE_GREEN",
+  "source_head": "8c1d3d5cdce9520acc1df94cba6875a251b548b7",
+  "source_paths": [
+    "tools/manual_controller_claim_witness.py",
+    ".github/workflows/twf-controller-claim-witness.yml",
+    "tests/test_actions_host_context.py",
+    "tests/test_claim_git_tree_diff.py",
+    "tests/test_manual_claim_witness.py",
+    "tests/test_witness_final_ref_recheck.py",
+    "tests/test_workflow_manifest.py",
+    "tests/test_system_manual_controller_claim_witness.py",
+    "docs/MANUAL_CONTROLLER_CLAIM_WITNESS_V4.md"
+  ],
+  "local_original_v4_tests": 89,
+  "new_native_tests": 6,
+  "source_blob_sha": "01335f29e96735d7297edf1dbf21d294be56edaa",
+  "workflow_blob_sha": "33775c8a24cbe95c31de16d4a475c8d31b01e54d",
+  "final_real_github_ci": {
+    "actions_run": 41176796448,
+    "offline_job": 124465919548,
+    "compile_hold_job": 124465919606,
+    "offline_conclusion": "success",
+    "compile_hold_conclusion": "success",
+    "python_tests": 928
+  },
+  "adoption_hold": "This PR must be independently reviewed and authorized before trusted-main workflow exists; author is not an approver."
+}

@@ -1,0 +1,40 @@
+{
+  "repo": "kk051780/toy-wars-factory",
+  "source_pr": 166,
+  "date": "2026-10-31",
+  "main_base_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 330,
+    "owner_id": "84fdc871-93d5-4af6-91a7-05555a0f61ca",
+    "claim_commit": "11cff3db37b9c96d92acc7213f31f47e4d07e1a1",
+    "work_branch": "controller/claim-witness-84fdc871"
+  },
+  "guards": {
+    "read_only": true,
+    "workflows_only_manual": true,
+    "permissions": "contents: read",
+    "main_merged": false,
+    "independent_reviewer_approval": false,
+    "actual_workflow_dispatch": false,
+    "roblox_access": false,
+    "external_inference": false,
+    "spending": false,
+    "provider_claim_chronology_proven": false
+  },
+  "id": "C05001",
+  "kind": "MANUAL_CLAIM_WITNESS_V4_REAL_GITHUB_TEST_FIRST_RED",
+  "test_only_head": "c6e7bcfeb3bf3fd46507aeee6cae24bfed66e783",
+  "test_file": "tests/test_system_manual_controller_claim_witness.py",
+  "new_tests": 6,
+  "red": {
+    "actions_run": 41176354495,
+    "offline_job": 124464607155,
+    "compile_hold_job": 124464607315,
+    "offline_conclusion": "failure",
+    "compile_hold_conclusion": "success",
+    "python_tests": 834,
+    "expected_error": "ModuleNotFoundError: manual_controller_claim_witness"
+  },
+  "preservation": "No main source, current workflow or reviewer policy changed"
+}

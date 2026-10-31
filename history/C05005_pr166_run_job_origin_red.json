@@ -1,0 +1,25 @@
+{
+  "id": "C05005",
+  "date": "2026-10-31",
+  "kind": "PR166_GITHUB_WITNESS_RUN_JOB_ORIGIN_RED",
+  "issue": 60,
+  "pr": 166,
+  "work_id": "ISSUE60_PR166_ORIGINAL_RUN_JOB_GATE",
+  "base_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "pr_head_before": "76746f77ea96ae02efc34cbfe35e8158f34980c0",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 344,
+    "owner_run_id": "3f43b1b2-7dd7-4f95-bb98-eaf49f15cf80",
+    "claim_commit": "1317319291711904bf527a53ea9dd3283f602e54",
+    "work_branch": "controller/claim-witness-84fdc871"
+  },
+  "expected_test_count": 23,
+  "source_expected_missing": "tools/manual_controller_run_origin_gate.py",
+  "red_ci": "PENDING_ORIGINAL_GITHUB",
+  "purpose": "Original Actions workflow_dispatch run and completed witness job metadata consistency, not provenance authorization",
+  "main_mutated": false,
+  "provider_witness_run": false,
+  "independent_review": "PENDING",
+  "merge_authorized": false
+}
