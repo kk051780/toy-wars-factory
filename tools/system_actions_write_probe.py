@@ -276,11 +276,14 @@ def run(api, env):
     plan = acquire(state,"CONTROLLER",scope["owner"],now(),base_main_sha=main,work_branch=scope["branch"])
     if plan.get("action") != "ACQUIRE" or not plan.get("write"):
         return {"status":"WAIT_COORDINATOR","pr":None,"wrote":False}
-    claim = cas_state(api,prevref,plan["state"])
     epoch = plan["state"]["epoch"]
+    claim = None
     pr = None
     failure = None
+    # Start cleanup BEFORE attempting the remote claim. An unacknowledged PATCH
+    # may have written our lease even when cas_state fails during readback.
     try:
+        claim = cas_state(api,prevref,plan["state"])
         # Revalidate and ensure the exclusive owner remains ourselves before source write.
         before=sha_ref(api,CONTROL_REF)
         live=state_at(api,before)
@@ -294,11 +297,16 @@ def run(api, env):
         try:
             current=sha_ref(api,CONTROL_REF)
             st=state_at(api,current)
-            if not owns(st,"CONTROLLER",scope["owner"],epoch,now()):
+            if owns(st,"CONTROLLER",scope["owner"],epoch,now()):
+                # The owner, epoch and current expiry must match exactly.
+                # No expiry-only or foreign-run lease recovery is permitted.
+                nxt=release(st,"CONTROLLER",scope["owner"],epoch,now())
+                cas_state(api,current,nxt)
+            elif claim is not None:
+                # A confirmed claim without our current ownership is unsafe.
                 raise ProbeError("RELEASE_NOT_OWNED")
-            nxt=release(st,"CONTROLLER",scope["owner"],epoch,now())
-            # Even on failure, only this exact owner/epoch is released.
-            cas_state(api,current,nxt)
+            # If claim failed and we do NOT own the current ref, do not write.
+            # Report the original claim failure, never claim a successful run.
         except ProbeError:
             raise ProbeError("RELEASE_UNCONFIRMED") from None
     if failure:

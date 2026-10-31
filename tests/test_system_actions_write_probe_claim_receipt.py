@@ -83,7 +83,7 @@ class FakeHost:
         return o
     def create(self,api,scope):
         self.source_calls+=1
-        if self.source_error:raise target.ProbeError(self.source_error)
+        if self.source_error and self.source_error!="READBACK_FAILED":raise target.ProbeError(self.source_error)
         return 123
     def verify(self,api,scope,pr):
         self.verifier_calls+=1

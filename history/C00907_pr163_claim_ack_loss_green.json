@@ -1,0 +1,40 @@
+{
+  "id": "C00907",
+  "date": "2026-10-31",
+  "kind": "PR163_CAS_CLAIM_ACK_LOSS_FAIL_CLOSED_GREEN",
+  "issue": 57,
+  "pr": 163,
+  "repository": "kk051780/toy-wars-factory",
+  "source_head_before": "31aaf23e67de0829f63666afffdbb43c22da6e04",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 319,
+    "owner_run_id": "9da4af9c-0a89-49ea-a77e-8459eac6c65a",
+    "claim_commit": "8c84b76add186c05fcebc70101aba3b7a84cdd4a"
+  },
+  "red": {
+    "head": "31aaf23e67de0829f63666afffdbb43c22da6e04",
+    "run_id": 41163363425,
+    "offline_job_id": 124425568881,
+    "python_tests": 897,
+    "expected_defect_failures": 4,
+    "new_suite_tests": 8,
+    "offline": "failure",
+    "compile_hold": "success",
+    "additional_test_fixture_failure": "READBACK_FAILED was incorrectly thrown in fake create() instead of fake verify()"
+  },
+  "green": {
+    "security_change": "Wrap claim CAS in same owning try/finally as source write; on ambiguous receipt re-read live current ref and own matching epoch before release; never modify foreign holder or claim success.",
+    "test_fixture_correction": "Fake create() does not throw for READBACK_FAILED; fake verify() does.",
+    "hosted_ci": "PENDING"
+  },
+  "scope": {
+    "added_permissions": false,
+    "workflow_modified": false,
+    "main_merged": false,
+    "independent_review": "PENDING",
+    "spend": "NONE",
+    "roblox": "NOT_RUN"
+  }
+}
