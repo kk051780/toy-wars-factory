@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 337,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "cd8a21bd-df84-4d47-b4c5-3bf4b63e8ecd",
-    "task_id": null,
-    "epoch": 337,
-    "acquired_at": "2026-10-31T08:55:34.127Z",
-    "expires_at": "2026-10-31T09:21:34.127Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/stacked-pr-dependency-cd8a21bd",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,20 +2893,29 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "78bb839a-2a16-476c-9da4-cb6086af846d",
-    "epoch": 336,
-    "released_at": "2026-10-31T07:53:24.390Z",
+    "owner_id": "cd8a21bd-df84-4d47-b4c5-3bf4b63e8ecd",
+    "epoch": 337,
+    "released_at": "2026-10-31T08:58:47.949Z",
     "release_receipt": {
-      "reason": "PR171_DRAFT_BRIDGE_OFFLINE_CANDIDATE_SEVERE_HOLD_UNCHANGED",
-      "claim_commit": "81b34d50394ebd94d5be8a860e489a999bf1743b",
-      "work_branch": "controller/gemini-antigravity-bridge-78bb839a",
-      "pr": 171,
-      "pr_head": "33b05f78adf2dd0f687afc65b229fbef04472fe7",
-      "ci_run": 41182349006,
-      "ci_status": "QUEUED_AT_RELEASE",
+      "reason": "PR172_DRAFT_EXACT_HEAD_GREEN_INDEPENDENT_REVIEW_PENDING",
+      "claim_commit": "224f7c231fd54904f88e66258e0946400b08aa93",
+      "work_branch": "controller/stacked-pr-dependency-cd8a21bd",
+      "pr": 172,
+      "pr_head": "f91111550563b6f1afdc6affce9eb114798afc3c",
+      "ci_run": 41186678740,
+      "ci_status": "success",
+      "offline_python_tests": 847,
+      "compile_hold": "success",
       "independent_review": "PENDING",
       "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_mutated": false,
+      "live_pr_stacks": {
+        "inventory": 51,
+        "stacked": 11,
+        "parent_head_mismatch": [
+          146
+        ]
+      },
       "service_terminal": "NOT_ATTESTED"
     }
   },
