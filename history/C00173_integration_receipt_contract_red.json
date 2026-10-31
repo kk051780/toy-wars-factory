@@ -1,0 +1,58 @@
+{
+  "id": "C00173",
+  "date": "2026-10-30",
+  "kind": "INTEGRATION_RECEIPT_CONTRACT_TEST_FIRST_RED",
+  "issue": 138,
+  "parent_issue": 123,
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "25643826-354c-8327-a5a7-132a22972b34",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "cae4694d483adb62dc77bedb375818cf6f5cc73b",
+    "owner_run_id": "25643826-354c-8327-a5a7-132a22972b34",
+    "epoch": 287
+  },
+  "defect": "Current main has no reusable fail-closed contract for typed current QA/handoff receipts and immutable adoption history; operational ledger had integer type regression despite successful source CI.",
+  "phase": "TEST_FIRST_ON_ACCEPTED_MAIN_NO_SOURCE_IMPLEMENTATION",
+  "test_changes": [
+    {
+      "path": "tests/test_system_integration_contract.py",
+      "before_bytes": 0,
+      "after_bytes": 7664
+    }
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "tests/test_system_integration_contract.py": {
+      "bytes": 7664,
+      "lines": 201,
+      "blob": "44124173822d5a2bae088358f3bd5f4e19411cc4",
+      "sha256": "368868e825f15fa8e00d8db0c862a7c15d546fd321a1082f2ce9901592e3d660"
+    }
+  },
+  "characters_touched": [],
+  "tests": {
+    "new_methods": 30,
+    "local_red": "30 failures / 0 errors",
+    "github_red": "PENDING_EXACT_HEAD_LOG",
+    "accepted_baseline": 833
+  },
+  "provenance": {
+    "prior_local_design": "Old unsubmitted30-case design re-read as UNTRUSTED input, re-executed in THIS newrun; no old author/lease/RED/GREEN claim reused",
+    "library_candidate_sha256": "3f31bd2c96456f5a1162d4523f00014f4ad80417c7ce73b25512c24df0f832f5",
+    "library145_tests": "NOT_EXECUTED_OR_CREDITED",
+    "old_epoch284_outputs": "QUARANTINED_NOT_PROVIDER_AUTHORITY",
+    "old_ops_repair": "NO_CHANGE_ALREADY_TYPED_REQUIRES_INDEPENDENT_AUDIT"
+  },
+  "limits": {
+    "read_only_contract": true,
+    "no_installed_write_hook": true,
+    "no_identity_attestation": true,
+    "a12_verified": false,
+    "a13_verified": false,
+    "parallel_writers": false,
+    "protected_PR139_141_122_98_110": "UNCHANGED",
+    "spend_gemini_roblox_holds": "UNCHANGED"
+  }
+}

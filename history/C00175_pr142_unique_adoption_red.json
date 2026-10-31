@@ -1,0 +1,34 @@
+{
+  "id": "C00175",
+  "date": "2026-10-31",
+  "kind": "PROTECTED_MANUAL_CONTROLLER_PR142_REPLAY_FAIL_FIRST",
+  "issue": 138,
+  "parent_issue": 123,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_pr": 142,
+  "source_pr_head": "45c4c12303eed0decc088cd12db2a5636e649839",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 304,
+    "owner_run_id": "c8bda6ed-33c1-4e79-8806-9d23cabc187a",
+    "claim_commit": "1859b4649d6661fceb2da452377f7356dd37a610"
+  },
+  "added_regressions": {
+    "file": "tests/test_system_integration_nonreuse.py",
+    "cases": 14
+  },
+  "phase": "TEST_FIRST_EXPECT_REPLAY_FAILURE",
+  "verification": "PENDING_EXACT_HEAD_GITHUB_CI",
+  "historical_record_ids_to_renumber": [
+    "C00159",
+    "C00160"
+  ],
+  "next_history_ids_candidate": [
+    "C00173",
+    "C00174"
+  ],
+  "existing_source_changes": [],
+  "provider_authenticated": false,
+  "merge_allowed": false,
+  "roblox_verified": false
+}

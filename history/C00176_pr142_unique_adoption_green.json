@@ -1,0 +1,47 @@
+{
+  "id": "C00176",
+  "date": "2026-10-31",
+  "kind": "PROTECTED_PR142_CLONED_ADOPTION_REPLAY_GREEN_CANDIDATE",
+  "issue": 138,
+  "parent_issue": 123,
+  "source_pr": 142,
+  "superseding_pr": 156,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 304,
+    "owner_run_id": "c8bda6ed-33c1-4e79-8806-9d23cabc187a",
+    "claim_commit": "1859b4649d6661fceb2da452377f7356dd37a610"
+  },
+  "red": {
+    "head": "6a4371a879f9f581995d8de85dcba9dcc69a4471",
+    "run_id": 41150278241,
+    "offline": "failure",
+    "compile_hold": "success",
+    "python_tests_total": 877,
+    "expected_failures": 9,
+    "retained_original_baseline_tests": "PASS"
+  },
+  "fix": {
+    "source": "tools/system_integration_contract.py",
+    "original_test": "tests/test_system_integration_contract.py",
+    "new_test": "tests/test_system_integration_nonreuse.py",
+    "history_id_renumbering": {
+      "C00159": "C00173",
+      "C00160": "C00174"
+    },
+    "original_immutable_provenance_preserved": true
+  },
+  "green": {
+    "status": "PENDING_ACTUAL_EXACT_HEAD_GITHUB_CI"
+  },
+  "provider_identity": "NOT_ATTESTED_MANUAL_CONTROLLER",
+  "authority": {
+    "may_merge": false,
+    "may_write_from_test": false,
+    "may_publish": false,
+    "may_dispatch": false
+  },
+  "independent_review": "REQUIRED",
+  "roblox_engine": "NOT_RUN"
+}
