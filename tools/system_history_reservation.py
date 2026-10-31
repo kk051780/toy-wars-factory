@@ -68,6 +68,15 @@ def advise(coordinator, *, expected_ref, owner_id, work_branch, work_id,
         return decision('BLOCK_WRONG_ROLE_BRANCH')
     if holder.get('kind')=='META' and not work_branch.startswith('auto/twf-system-review-'):
         return decision('BLOCK_WRONG_ROLE_BRANCH')
+    # Lease fields must be internally consistent even though this pure reducer
+    # NEVER authenticates their provider origin or grants a ref mutation.
+    if holder['kind']=='CONTROLLER' and (holder.get('task_id') is not None
+        or holder.get('origin')!='controller'):
+        return decision('BLOCK_CONTROLLER_HOLDER_SHAPE')
+    if holder['kind']=='META' and holder.get('origin')!='meta':
+        return decision('BLOCK_META_HOLDER_ORIGIN')
+    if holder['kind']=='WORKER' and holder.get('origin') not in ('worker','manual'):
+        return decision('BLOCK_WORKER_HOLDER_ORIGIN')
     if type(occupied_ids) is not list or len(occupied_ids)>MAX_CLAIMS or any(not _id(x) for x in occupied_ids):return decision('BLOCK_OCCUPIED_SET')
     observed_collisions=sorted(k for k,v in Counter(occupied_ids).items() if v>1)
     ledger=coordinator.get('history_id_reservations')

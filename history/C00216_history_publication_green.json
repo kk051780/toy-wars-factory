@@ -1,0 +1,44 @@
+{
+  "id": "C00216",
+  "date": "2026-10-31",
+  "kind": "HISTORY_PUBLICATION_RECONCILIATION_AND_HOLDER_ORIGIN_GREEN",
+  "issue": 123,
+  "pr": 157,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "02691784c6890376a5753d311078d914270b850b",
+    "owner_run_id": "0b9ed49a-3b89-4ddb-ac33-c16ea0726982",
+    "epoch": 309
+  },
+  "red": {
+    "head": "7ba661e11bded45d4873b254239970645af21959",
+    "run_id": 41157366984,
+    "offline": "failure",
+    "compile_hold": "success",
+    "observed": "7 expected holder-shape failures and 3 import/key errors; new publication module not installed"
+  },
+  "green": {
+    "source_changes": [
+      "tools/system_history_publication_bridge.py",
+      "tools/system_history_reservation.py",
+      "tests/test_system_history_reservation.py"
+    ],
+    "test_cases": {
+      "original_reservation": 63,
+      "publication_legacy": 24,
+      "publication_work_identity": 16,
+      "holder_origin": 11,
+      "aggregate_local": 114
+    },
+    "github_exact_head_ci": "PENDING"
+  },
+  "independent_role_origin_attribution": "PR157 comment 6537174087 separately verified 11 regressions, reused vetted patch",
+  "provider_verified": false,
+  "live_history_reservation_cas": false,
+  "canonical_bootstrap": "NOT_DONE",
+  "independent_review": "PENDING",
+  "main_merged": false,
+  "roblox_engine": "NOT_RUN",
+  "spend": "NONE"
+}

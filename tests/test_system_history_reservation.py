@@ -4,7 +4,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1] / 'tools'))
 from system_history_reservation import advise
 SHA='a'*40;REF='b'*40;OWNER='d8a79f1e-8aa2-4c6c-96f0-147ecb423ceb';BRANCH='controller/history-allocator-d8a79f1e';NOW='2026-10-31T00:03:00Z'
 def state():
- return {'schema':1,'epoch':302,'authorized_tasks':{'WORKER':'6adbf0d6a7d881918ce181dff2468867'}, 'holder':{'kind':'CONTROLLER','owner_id':OWNER,'task_id':None,'work_branch':BRANCH,'epoch':302,'base_main_sha':SHA,'acquired_at':'2026-10-31T00:00:00Z','expires_at':'2026-10-31T00:10:00Z'},'history_id_reservations':{'schema':1,'high_watermark':172,'entries':[]}}
+ return {'schema':1,'epoch':302,'authorized_tasks':{'WORKER':'6adbf0d6a7d881918ce181dff2468867'}, 'holder':{'kind':'CONTROLLER','owner_id':OWNER,'task_id':None,'origin':'controller','work_branch':BRANCH,'epoch':302,'base_main_sha':SHA,'acquired_at':'2026-10-31T00:00:00Z','expires_at':'2026-10-31T00:10:00Z'},'history_id_reservations':{'schema':1,'high_watermark':172,'entries':[]}}
 def call(s=None,**kw):
  a=dict(expected_ref=REF,owner_id=OWNER,work_branch=BRANCH,work_id='TWF_HISTORY_ID_REPAIR',occupied_ids=['C00171','C00172'],main_sha=SHA,amount=2,now=NOW);a.update(kw);return advise(state() if s is None else s,**a)
 class Cases(unittest.TestCase):
