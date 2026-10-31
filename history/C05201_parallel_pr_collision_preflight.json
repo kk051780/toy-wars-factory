@@ -1,0 +1,54 @@
+{
+  "id": "C05201",
+  "date": "2026-10-31",
+  "kind": "MANUAL_CONTROLLER_PARALLEL_PR_PATH_READONLY_PREFLIGHT",
+  "repository": "kk051780/toy-wars-factory",
+  "task_id": null,
+  "run_id": "5828688a-e0a8-4055-b012-088efcfae5f7",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "48aac4fe905067c239a3d622b3afa8aa29e5a025",
+    "owner_run_id": "5828688a-e0a8-4055-b012-088efcfae5f7",
+    "epoch": 334,
+    "work_branch": "controller/parallel-pr-path-audit-v3-5828688a"
+  },
+  "purpose": "Normalize exact GitHub REST PR+files snapshots into a read-only advisory overlap guard for parallel ChatGPT chats.",
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1186,
+    "lua_bytes": 52781
+  },
+  "source_baseline_bytes": 25726,
+  "changed_files": [
+    "tools/system_parallel_pr_path_audit.py",
+    "tests/test_system_parallel_pr_path_audit.py",
+    "history/C05201_parallel_pr_collision_preflight.json"
+  ],
+  "test_changes": [
+    {
+      "path": "tests/test_system_parallel_pr_path_audit.py",
+      "new_cases": 31
+    }
+  ],
+  "tests": {
+    "test_first_red": "ImportError: from_rest_observations missing before implementation",
+    "local_green": "31/31 PASS Python unittest",
+    "github_ci": "PENDING_EXACT_HEAD",
+    "roblox_engine": "NOT_RUN",
+    "mobile_ui": "NOT_RUN"
+  },
+  "known_limits": [
+    "READ_ONLY_ONLY",
+    "GitHub API snapshots are non-atomic",
+    "max 99 PRs and 99 files/PR until pagination collector implemented",
+    "caller-supplied metadata is not provider-authenticated by this reducer",
+    "CLEAR_ADVISORY never grants lease/merge or write permission"
+  ],
+  "main_mutated": false,
+  "merge_authorized": false,
+  "release_holds": "PRESERVED",
+  "characters_touched": [],
+  "next": "Open isolated draft PR, inspect actual exact-head bootstrap CI, obtain independent audit; do not integrate without trusted authorized review."
+}
