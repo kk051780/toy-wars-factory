@@ -1,0 +1,33 @@
+{
+  "id": "C00906",
+  "date": "2026-10-31",
+  "kind": "PR163_CAS_CLAIM_ACK_LOSS_TEST_FIRST_RED",
+  "issue": 57,
+  "pr": 163,
+  "work_branch": "controller/actions-write-pilot-8df31af2",
+  "source_head_before": "c4be5057ff9daabcaa4b790af91cd2c1c5a7a5be",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "owner_run_id": "9da4af9c-0a89-49ea-a77e-8459eac6c65a",
+    "epoch": 319,
+    "claim_commit": "8c84b76add186c05fcebc70101aba3b7a84cdd4a"
+  },
+  "finding": "Current run() calls cas_state claim outside any try/finally, so an ambiguous ACK loss after successful Git ref update can strand a legitimate owner lease and block autonomous work. Do not release another owner or count the claim as success.",
+  "scope": "Only existing PR163; narrow error/finally boundary repair, no workflow/permission changes",
+  "test_scope": {
+    "new_tests": 8,
+    "suites": "test_system_actions_write_probe_claim_receipt.py",
+    "synthetic": true
+  },
+  "red": {
+    "github_run": "PENDING",
+    "expected": "claim ACK loss leaves owner held before fix; other fail-safe cases unaffected"
+  },
+  "official_progress_change": 0,
+  "main_merged": false,
+  "independent_review": "PENDING",
+  "inference": "NONE",
+  "spending": "NONE",
+  "roblox": "NOT_RUN"
+}
