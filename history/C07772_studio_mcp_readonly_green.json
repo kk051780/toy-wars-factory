@@ -1,0 +1,36 @@
+{
+  "id": "C07772",
+  "date": "2026-10-31",
+  "kind": "STUDIO_MCP_READONLY_GUARDS_GREEN",
+  "source_pr": 167,
+  "branch": "controller/studio-mcp-readonly-e42c75b2",
+  "base_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordinator": {
+    "epoch": 331,
+    "owner_id": "e42c75b2-8b61-4cce-97cc-165f6a8c2cd6",
+    "claim_commit": "7c6f884b8fd5e98c89f5cc694a5a7f969fbae13a"
+  },
+  "red": {
+    "head": "23b4d35de67b1625a7d618b2522e7e6a36aa6934",
+    "ci_run": 41177602736,
+    "offline": "FAILURE",
+    "failure": "missing studio_mcp_readonly_probe module",
+    "compile_hold": "SUCCESS"
+  },
+  "green": {
+    "test_methods": 23,
+    "CI": "PENDING",
+    "scope": "read-only local MCP observation only",
+    "engine_execution": "NOT_RUN",
+    "trusted_host": "NOT_ESTABLISHED",
+    "actual_live_connection": "NOT_RUN"
+  },
+  "holds": {
+    "independent_security_review": "PENDING",
+    "main_merged": false,
+    "roblox_publish": false,
+    "spending": false,
+    "github_token": false,
+    "external_ai": false
+  }
+}
