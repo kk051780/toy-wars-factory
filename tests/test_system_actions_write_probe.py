@@ -198,6 +198,15 @@ class WorkflowTests(unittest.TestCase):
             self.assertNotIn(piece,self.workflow.lower())
     def test_checkout_does_not_persist_token(self):
         self.assertIn('persist-credentials: false',self.workflow)
+    def test_checkout_is_pinned_to_reviewed_exact_v422_commit(self):
+        expected = "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2"
+        self.assertIn(expected, self.workflow)
+        self.assertEqual(self.workflow.count("uses: actions/checkout@"), 1)
+
+    def test_no_mutable_checkout_ref_in_privileged_workflow(self):
+        self.assertNotIn("actions/checkout@v4", self.workflow)
+        self.assertNotIn("actions/checkout@main", self.workflow)
+
     def test_reviewed_source_only(self):
         self.assertIn('python3 tools/system_actions_write_probe.py',self.workflow)
         self.assertNotIn('curl ',self.workflow)

@@ -1,0 +1,24 @@
+{
+  "id": "C09033",
+  "date": "2026-10-31",
+  "kind": "PR163_PRIVILEGED_ACTION_PIN_RED",
+  "pr": 163,
+  "issue": 57,
+  "source_base": "63dedcb33c6c193e8220f1325cdf75a3dd589b0d",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "epoch": 342,
+    "owner_run_id": "205f76a2-1541-4661-86e7-36aecc542d8a",
+    "claim_commit": "d83ffcc2360f0c4eb08b95ba2ca99f3d5c53c423",
+    "work_branch": "controller/actions-write-pilot-8df31af2"
+  },
+  "scope": "ACTION_PIN_SECURITY_REGRESSION_ONLY",
+  "expected": "Original GitHub hosted offline test fails on mutable checkout@v4",
+  "hosted_ci": "PENDING",
+  "changes": [
+    "tests/test_system_actions_write_probe.py"
+  ],
+  "main_edited": false,
+  "roblox_run": false,
+  "gemini_run": false
+}
