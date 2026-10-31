@@ -1,0 +1,26 @@
+{
+  "id": "C02044",
+  "date": "2026-10-31",
+  "kind": "PR143_BINARY_V0_STRUCTURE_COUNTS_AND_ORDER_RED",
+  "issue": 117,
+  "source_pr": 143,
+  "source_before": "ae1be90d69988b865b4d99e3e6fbca8e9d0748e8",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordinator": {
+    "epoch": 325,
+    "owner_id": "2d8519b9-4f46-42b9-83c3-930fac1becb7",
+    "claim_commit": "552c5b7af923f6312b170bcf306ba228d596bc49"
+  },
+  "origin": "manual_controllable_branch_only",
+  "finding": "Existing RBXL v0 static gate accepts header Class Count inconsistent with INST chunk count, out-of-order META/SSTR/INST/PROP/PRNT chunks and overlarge advertised uncompressed chunk lengths; all need fail-closed framing guards.",
+  "test_suite": "tests/test_system_rojo_binary_structure.py",
+  "new_test_methods": 15,
+  "red_workflow": "PENDING",
+  "constraints": [
+    "Do not claim actual Rojo execution",
+    "No Roblox engine test",
+    "Preserve 30 existing static Rojo tests",
+    "No workflow or permission change",
+    "Protected draft independent security review still pending"
+  ]
+}
