@@ -1,0 +1,34 @@
+{
+  "id": "C00223",
+  "date": "2026-11-01",
+  "kind": "PR148_STRICT_ROOT_AND_PROPERTIES_XML_ENVELOPE",
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "pr": 148,
+  "head_before": "bb675abbeda59017c8c135cd3347aa1701728533",
+  "coordination": {
+    "claim_commit": "67f13407cf5edb8e507cefde5d854e2bdf76f441",
+    "owner_id": "d78b8242-e15e-4fe4-8ac6-02a1520d7589",
+    "epoch": 345,
+    "work_branch": "controller/a14-saved-xml-strict-properties-0f445b08"
+  },
+  "source_blobs_before": {
+    "source": "a2d3679428e6847a2f6673b4f3f600b834b507ee",
+    "tests": "21c61c65001e6713d960f7df1e71ee540fd3975b"
+  },
+  "added_regressions": 4,
+  "original_roblox_github_artifact": {
+    "run_id": 41137070161,
+    "artifact_id": 13015999142,
+    "rbxlx_sha256": "1c9bdc3dc478fe72e51870e478aa15392c47875618b86262aa7dd605e4026b33"
+  },
+  "security_changes": [
+    "strict root attributes version only",
+    "reject unreviewed Meta/External roots",
+    "reject extra Properties attributes"
+  ],
+  "github_ci": "PENDING_EXACT_NEW_HEAD",
+  "reviewer": "PENDING",
+  "main_mutated": false,
+  "roblox_engine_verified": false,
+  "roblox_upload_authorized": false
+}

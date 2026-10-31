@@ -101,7 +101,7 @@ def check_rbxlx_bytes(data:bytes,cfg:XmlStageConfig)->dict[str,Any]:
            'XML entities and DTD are forbidden')
     try:root=ET.fromstring(data)
     except (ET.ParseError,ValueError,UnicodeError):raise XmlStageError('invalid Roblox XML syntax') from None
-    demand(root.tag=='roblox' and root.attrib.get('version')=='4','invalid Roblox XML place root')
+    demand(root.tag=='roblox' and root.attrib=={'version':'4'},'invalid Roblox XML place root')
     topology={}
     scripts={}
     referents=set()
@@ -121,6 +121,7 @@ def check_rbxlx_bytes(data:bytes,cfg:XmlStageConfig)->dict[str,Any]:
         demand(all(child.tag in {'Properties','Item'} for child in item),
                'unexpected element inside Roblox Item')
         props=next(p for p in item if p.tag=='Properties')
+        demand(not props.attrib,'unexpected Properties attributes')
         permitted={'Name':'string'}
         if path in SOURCE_PINS:permitted['Source']='ProtectedString'
         observed=set()
@@ -143,7 +144,7 @@ def check_rbxlx_bytes(data:bytes,cfg:XmlStageConfig)->dict[str,Any]:
             value=sources[0].text.encode('utf-8')
             demand(hashlib.sha256(value).hexdigest()==digest,'script source does not match accepted main')
             scripts['/'.join(path)]=digest
-    demand(all(item.tag in {'Meta','External','Item'} for item in root),
+    demand(all(item.tag == 'Item' for item in root),
            'unexpected top-level Roblox XML element')
     for item in root:
         if item.tag=='Item':walk(item,())

@@ -127,6 +127,26 @@ class SavedOnlyXmlPropertySecurity(unittest.TestCase):
         with self.assertRaises(x.XmlStageError):
             x.check_rbxlx_bytes(payload, config(payload))
 
+    def test_reject_surprise_root_attribute_with_rehashed_file(self):
+        def edit(root):
+            root.set('archivable','false')
+        self.check(edit)
+
+    def test_reject_unreviewed_root_Meta_element_with_rehashed_file(self):
+        def edit(root):
+            ET.SubElement(root,'Meta',{'name':'Unknown'})
+        self.check(edit)
+
+    def test_reject_unreviewed_root_External_element_with_rehashed_file(self):
+        def edit(root):
+            ET.SubElement(root,'External').text='payload'
+        self.check(edit)
+
+    def test_reject_unreviewed_Properties_attributes_with_rehashed_file(self):
+        def edit(root):
+            root.find('.//Properties').set('surprise','true')
+        self.check(edit)
+
     def test_original_ten_instance_xml_remains_valid(self):
         self.assertEqual(x.check_rbxlx_bytes(build_xml(), config(build_xml()))['instance_count'], 10)
 
