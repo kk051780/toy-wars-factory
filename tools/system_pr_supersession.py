@@ -12,9 +12,9 @@ import json
 from pathlib import PurePosixPath
 import re
 
-SHA = re.compile(r"[0-9a-f]{40}\\Z")
-REPO = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\\Z")
-PATH = re.compile(r"[A-Za-z0-9_./-]+\\Z")
+SHA = re.compile(r"[0-9a-f]{40}")
+REPO = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+")
+PATH = re.compile(r"[A-Za-z0-9_./-]+")
 
 
 class UnsafeEvidence(ValueError):
@@ -54,7 +54,7 @@ def paths(value):
              and PATH.fullmatch(item) is not None and "\\\\" not in item
              and not item.startswith("/") and not any(
                  part in ("", ".", "..") or part.startswith(".")
-                 for part in PurePosixPath(item).parts
+                 for part in item.split("/")
              ), "unsafe path")
         result.append(item)
     need(len(result) == len(set(result)), "duplicate changed path")
