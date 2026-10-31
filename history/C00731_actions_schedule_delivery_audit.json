@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "id": "C00731",
+  "project": "TOY WARS FACTORY",
+  "work_id": "TWF-P1-GITHUB-ACTIONS-SCHEDULE-CADENCE-OBSERVABILITY-20261031",
+  "date_utc": "2026-10-31",
+  "category": "SYSTEM_READ_ONLY_SCHEDULE_OBSERVABILITY",
+  "status": "PROTECTED_DRAFT_NOT_INTEGRATED",
+  "issue": 4,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "180287581c6fc15e06de843c8593859045918815",
+    "owner_run_id": "e80e980c-9722-479c-864f-5d60f5cb057b",
+    "epoch": 317,
+    "work_branch": "controller/actions-cadence-e80e980c"
+  },
+  "distinct_from": [
+    "PR163 isolated owner-manual Actions write capability",
+    "PR155 META ChatGPT task cadence config",
+    "existing system_throughput_metrics.py role-service run/lease analysis",
+    "PR154 CI approval stall classifier"
+  ],
+  "changed_files": [
+    "tools/system_actions_schedule_cadence.py",
+    "tests/test_system_actions_schedule_cadence.py",
+    "history/C00731_actions_schedule_delivery_audit.json"
+  ],
+  "live_observation": {
+    "api": "GET /actions/runs?event=schedule&per_page=100",
+    "total_count": 76,
+    "records_received": 76,
+    "window_start_utc": "2026-10-24T06:00:00Z",
+    "window_end_utc": "2026-10-31T02:00:00Z",
+    "nominal_slots_per_workflow": 492,
+    "observed_runs_per_workflow": 36,
+    "workflow_paths": [
+      ".github/workflows/handoff-sync.yml",
+      ".github/workflows/loop-watchdog.yml"
+    ],
+    "earliest_mid_latest_workflow_cron_checked": true,
+    "model": "PROVIDER_EVENTS_OBSERVED_NOT_DROP_RATE_OR_CAUSE",
+    "root_cause": "UNKNOWN"
+  },
+  "validation": {
+    "local_python_tests": 31,
+    "local_test_status": "PASS",
+    "github_exact_head_offline": "PENDING",
+    "github_compile_hold": "PENDING",
+    "independent_review": "PENDING",
+    "main_merged": false,
+    "scheduled_collector": "NOT_INSTALLED",
+    "github_actions_workflow_mutated": false,
+    "roblox_engine": "NOT_RUN"
+  },
+  "permissions": {
+    "dispatch": false,
+    "write": false,
+    "merge": false,
+    "pr_create": false,
+    "run_now": false,
+    "schedule_change": false,
+    "external_inference": false,
+    "spend": false,
+    "publish": false
+  },
+  "history_id_reservation": "PROVISIONAL_GLOBAL_SCAN_MAIN_AND_43_OPEN_PRS_20261031_NO_C00731",
+  "next": "Independent reviewer check source cron provenance and exact-head hosted CI before any merge. A future registered META/authorized runner may call read-only observer via trusted provider host, but user-supplied JSON is never authenticated; never assert missed cron root cause or create a new production schedule."
+}
