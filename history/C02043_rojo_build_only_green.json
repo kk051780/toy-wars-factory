@@ -1,0 +1,48 @@
+{
+  "id": "C02043",
+  "date": "2026-10-31",
+  "kind": "PR143_SOURCE_PINNED_ROJO_BUILD_ONLY_GREEN",
+  "repository": "kk051780/toy-wars-factory",
+  "source_pr": 143,
+  "source_head_before": "3d18a1bbadbcaeff56adc8f6aa66ccee04b9ad84",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 323,
+    "owner_run_id": "5f4ebb37-0cd7-45e8-8d8c-799c47ae848e",
+    "claim_commit": "6c63eca6a7abc54f09442725114456bb63e435e5"
+  },
+  "source_pins": {
+    "balance": "e78a07c7551f19183316803706c5602cd4049459",
+    "server": "d86a0b89a1d811ec6da83da93b24e29235218b04",
+    "smoke": "ccba431909c664909e2680785648d0402fedf3c3",
+    "hud": "f1b7a2e2e4e6cd0a5703a7f034f50d4e62801467"
+  },
+  "tests": {
+    "original_20": "PENDING_GITHUB_CI",
+    "added_binary_end": 10,
+    "local_30": "PASS",
+    "exact_head_ci": "PENDING"
+  },
+  "files": [
+    "tools/rojo_source_contract.py",
+    "tools/rojo_rbxl_gate.py",
+    "default.project.json",
+    "rokit.toml",
+    ".github/workflows/toy-wars-rojo-build-only.yml",
+    "tests/test_system_rojo_build_only.py",
+    "tests/test_binary_end_contract.py",
+    "history/C02043_rojo_build_only_green.json"
+  ],
+  "holds": {
+    "independent_security_review": "PENDING",
+    "main_merged": false,
+    "workflow_dispatch": "NOT_RUN",
+    "actual_rojo_binary": "NOT_VERIFIED",
+    "roblox_engine": "NOT_RUN",
+    "publish": "HOLD",
+    "spend": "NONE",
+    "external_ai": "NONE"
+  },
+  "explicit_no_origin_claim": "manual controller source candidate, not registered task-run evidence"
+}

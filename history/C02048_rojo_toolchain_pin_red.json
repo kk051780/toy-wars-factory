@@ -1,0 +1,31 @@
+{
+  "id": "C02048",
+  "date": "2026-10-31",
+  "kind": "ROJO_BUILD_TOOLCHAIN_VERSION_PIN_TEST_FIRST_RED",
+  "issue": 117,
+  "pr": 143,
+  "work_branch": "controller/rojo-build-only-gate-f01e9043",
+  "original_pr_head": "f8d3ced137d3110c72bed43ec27c961357581855",
+  "source_main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "epoch": 328,
+    "owner_run_id": "76b086d1-bebd-49c4-81c0-d2c7c4ff6a45",
+    "claim_commit": "27f279e3180ee4d7f14e8e80ab66ef52826062bf"
+  },
+  "finding": "setup-rokit v3 action defaults to latest Rokit even when rokit.toml pins Rojo 7.5.1; without explicit installer version and pre-build binary-version checks, approved workflows are not reproducible across date or runner state",
+  "source": "Official setup-rokit v3 README and rojo-rbx/rokit v1.2.0 GitHub release from live GitHub connector",
+  "rokit_release": {
+    "version": "1.2.0",
+    "date": "2025-09-30",
+    "linux_x86_64_zip_sha256": "951a7f3ec3d2a5e021fd1867d32f69f010ee4c2927f644b759578afc59c65fc0"
+  },
+  "rojo_version": "7.5.1",
+  "new_tests": 13,
+  "run": "PENDING",
+  "main_merged": false,
+  "independent_review": "PENDING",
+  "actual_rojo_build": "NOT_RUN",
+  "studio_engine": "NOT_RUN",
+  "spend": "NONE"
+}

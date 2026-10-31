@@ -1,0 +1,34 @@
+{
+  "id": "C02046",
+  "date": "2026-10-31",
+  "kind": "PR143_PR144_ROJO_ARTIFACT_CONTRACT_RED",
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 143,
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 326,
+    "owner_run_id": "ed1ac192-7a95-40cd-aa1a-5881843a4d4e",
+    "claim_commit": "be7412a20ec713ab93d21b55490cbdb8723985f2"
+  },
+  "test_first": {
+    "head": "4cc4d4ba4090ccc53fd45bcae4dc55c01deeaa24",
+    "run_id": 41169379309,
+    "result": "EXPECTED_OFFLINE_FAILURE",
+    "offline_job": 124443815456,
+    "compile_hold_job": 124443815264,
+    "executed_tests": 879,
+    "errors": 1,
+    "error_kind": "ModuleNotFoundError: rojo_build_receipt",
+    "new_tests": 12
+  },
+  "trust": {
+    "provider_github_actions_ci": true,
+    "manual_owner_claim": true,
+    "roblox_engine_run": false,
+    "actual_rojo_build": false,
+    "publish_authorized": false,
+    "main_merged": false,
+    "review_approved": false
+  }
+}
