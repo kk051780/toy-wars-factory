@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "id": "C00615",
+  "project": "TOY WARS FACTORY",
+  "work_id": "TWF-P0-ISSUE57-MANUAL-ACTIONS-ISOLATED-DRAFT-PR-CAPABILITY-20261031",
+  "date_utc": "2026-10-31",
+  "category": "SYSTEM_PROTECTED_MANUAL_CAPABILITY_PILOT",
+  "status": "PROTECTED_DRAFT_NO_LIVE_EXECUTION",
+  "issue": 57,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "12a6e6a4fce6dfc188cf133ceac93dfd9e842606",
+    "owner_run_id": "8df31af2-91d9-4a23-920c-0ecee70dbde8",
+    "epoch": 315,
+    "work_branch": "controller/actions-write-pilot-8df31af2"
+  },
+  "distinct_from": [
+    "PR153 read-only GH Actions context",
+    "Issue57 synthetic OIDC RSA supplied-JWKS candidate",
+    "PR162 prompt drift audit",
+    "PR160 multi-game bridge"
+  ],
+  "changed_files": [
+    ".github/workflows/twf-actions-write-capability-probe.yml",
+    "tools/system_actions_write_probe.py",
+    "tests/test_system_actions_write_probe.py",
+    "history/C00615_actions_write_capability_candidate.json"
+  ],
+  "verification": {
+    "local_regressions": 31,
+    "local_status": "PASS",
+    "exact_head_hosted_CI": "PENDING",
+    "independent_review": "PENDING",
+    "main_adoption": "NOT_DONE",
+    "workflow_dispatch": "NOT_RUN",
+    "isolated_branch_write": "NOT_VERIFIED",
+    "draft_pr_create_permission": "NOT_VERIFIED",
+    "robot_engine": "NOT_RUN"
+  },
+  "safety": {
+    "only_manual_owner_dispatch": true,
+    "exact_main_ref_and_sha": true,
+    "first_attempt_only": true,
+    "current_and_original_actor_owner": true,
+    "shared_epoch_CAS_required": true,
+    "non_force_and_readback_required": true,
+    "no_main_write_from_probe": true,
+    "branch_scope": "controller/gha-write-probe-RUN-a1 only",
+    "file_scope": "ops/probes/gha-write-RUN-a1.json only",
+    "draft_PR_only": true,
+    "schedule": false,
+    "gemini_inference": false,
+    "paid_inference": false,
+    "merge": false,
+    "approval": false,
+    "roblox_publish": false
+  },
+  "history_id_reservation": "PROVISIONAL_C00615_RECHECK_FULL_OPEN_PR_BEFORE_MERGE",
+  "caveat": "GITHUB_TOKEN-created PR may trigger approval-required CI; GitHub Actions PR creation repository setting unknown, no UI setting or permission changed",
+  "next": "Independent trust-root review of privileged workflow required; only after approved main integration should repo owner manually dispatch once with consent phrase and verify original hosted run/cas/pr/release; no unattended AI coding claim"
+}
