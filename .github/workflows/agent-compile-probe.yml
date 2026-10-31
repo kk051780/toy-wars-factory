@@ -1,6 +1,7 @@
 name: Toy Wars agent workflow compiler smoke test (no AI invocation)
 on:
   push:
+    branches: [main]
     paths:
       - '.github/workflows/twf-autonomous-developer.md'
       - '.github/workflows/agent-compile-probe.yml'
@@ -9,18 +10,49 @@ permissions:
   contents: read
 jobs:
   compile:
+    if: github.repository == 'kk051780/toy-wars-factory'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify approved agent policy before compiling
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          from pathlib import Path
+          p = Path('.github/workflows/twf-autonomous-developer.md')
+          if not p.is_file() or p.is_symlink() or p.stat().st_size > 32768:
+              raise SystemExit('NOT_APPROVED_SOURCE')
+          try:
+              data = p.read_text(encoding='utf-8')
+          except (OSError, UnicodeError):
+              raise SystemExit('NOT_APPROVED_SOURCE') from None
+          if not data.startswith('---\n'):
+              raise SystemExit('NOT_APPROVED_FRONTMATTER')
+          end = data.find('\n---\n', 4)
+          if end < 0:
+              raise SystemExit('NOT_APPROVED_FRONTMATTER')
+          frontmatter = data[4:end] + '\n'
+          approved = '2d82661d394cf9e9422becc924b8edcc4ca2628e8bc243b076b39dfd8798202c'
+          if hashlib.sha256(frontmatter.encode('utf-8')).hexdigest() != approved:
+              raise SystemExit('UNREVIEWED_AGENT_POLICY')
+          print('Approved manual-only frontmatter digest matched; model NOT invoked')
+          PY
       - name: Install official agentic workflows compiler
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh extension install github/gh-aw
+        run: gh extension install github/gh-aw --pin v0.93.2
       - name: Compile workflow, without starting an AI job
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh aw compile .github/workflows/twf-autonomous-developer.md
+        run: gh aw compile --strict .github/workflows/twf-autonomous-developer.md
+      - name: Fail closed if generated lock can auto-start
+        run: |
+          python3 tools/ghaw_trigger_gate.py \
+            --source .github/workflows/twf-autonomous-developer.md \
+            --compiled-lock .github/workflows/twf-autonomous-developer.lock.yml
       - name: Verify generated lock exists
         run: |
           test -s .github/workflows/twf-autonomous-developer.lock.yml
@@ -31,3 +63,4 @@ jobs:
         with:
           name: gh-aw-compiled-candidate
           path: .github/workflows/twf-autonomous-developer.lock.yml
+          include-hidden-files: true
