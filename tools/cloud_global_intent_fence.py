@@ -163,7 +163,8 @@ def confirm_readback(plan, *, actual_ref, cas_ack_ref, actual_state, current_hol
     rec = plan.get('record')
     require(type(rec) is dict and rec.get('owner_id') == owner_id and
             rec.get('epoch') == epoch, 'WRONG_RECORD_OWNER')
-    require(ledger(actual_state)[-1] == rec and
+    records = ledger(actual_state)
+    require(bool(records) and records[-1] == rec and
             actual_state.get('holder') == current_holder_state.get('holder'),
             'HISTORY_OR_HOLDER_CHANGED')
     active_controller(current_holder_state, owner_id, epoch, now)
@@ -174,6 +175,79 @@ def confirm_readback(plan, *, actual_ref, cas_ack_ref, actual_state, current_hol
             'github_provider_authenticated': False,
             'post_authorized': False, 'roblox_engine_verified': False,
             'merge_authorized': False, 'replay_authorized': False}
+
+
+# Host-application contract: separate this from credentialed GitHub operations.
+# These callbacks MUST be bound by a trusted controller to genuine provider API
+# responses. No callback-origin proof, user-supplied token or permission is granted
+# by this module. In particular, successful CAS never authorizes a Roblox POST.
+CONTROL_BRANCH = 'twf-repair-coordinator'
+CONTROL_PATH = 'ops/REPAIR_COORDINATOR.json'
+
+
+def persist_proposal_via_trusted_callbacks(*, request, owner_id, epoch, now,
+                                           read, cas, read_commit):
+    """One-shot GitHub CAS proposal and exact-parent/readback gate, no retries.
+
+    read(repo, branch, path) -> {'repository', 'branch', 'ref', 'state'}
+    cas(repo, branch, expected_sha=<sha>, state=<dict>, force=False) -> new SHA
+    read_commit(repo, new SHA) -> {'sha':new SHA,'parents':[old SHA]}
+
+    All three must be genuine independently authenticated provider connections.
+    An ambiguous CAS result must HOLD even if the write might have succeeded.
+    Unlike an execution dispatcher, this NEVER grants any right to POST, publish,
+    merge, spend, release a lease or run a Roblox game.
+    """
+    require(callable(read) and callable(cas) and callable(read_commit),
+            'TRUSTED_CALLBACKS_MISSING')
+
+    def snapshot():
+        try:
+            row = read(REPO, CONTROL_BRANCH, CONTROL_PATH)
+        except Exception:
+            raise Blocked('READBACK_UNAVAILABLE_HOLD') from None
+        require(type(row) is dict and set(row) ==
+                {'repository', 'branch', 'ref', 'state'} and
+                row['repository'] == REPO and
+                row['branch'] == CONTROL_BRANCH and
+                sha(row['ref'], SHA1) and type(row['state']) is dict,
+                'INVALID_GITHUB_SNAPSHOT')
+        return row
+
+    before = snapshot()
+    plan = propose(before['state'], request, owner_id=owner_id,
+                   epoch=epoch, now=now, expected_ref=before['ref'])
+    try:
+        ack = cas(REPO, CONTROL_BRANCH,
+                  expected_sha=before['ref'],
+                  state=deepcopy(plan['next_state']), force=False)
+    except Exception:
+        raise Blocked('CAS_ACK_UNKNOWN_HOLD_NO_RETRY') from None
+    # Do NOT ever repeat the CAS here. A lost response could mean a prior write.
+    require(sha(ack, SHA1) and ack != before['ref'],
+            'CAS_ACK_UNKNOWN_HOLD_NO_RETRY')
+    try:
+        meta = read_commit(REPO, ack)
+    except Exception:
+        raise Blocked('COMMIT_PARENT_NOT_PROVEN_HOLD') from None
+    require(type(meta) is dict and
+            set(meta) == {'sha', 'parents'} and
+            meta['sha'] == ack and
+            type(meta['parents']) is list and meta['parents'] == [before['ref']],
+            'COMMIT_PARENT_NOT_PROVEN_HOLD')
+    after = snapshot()
+    validated = confirm_readback(plan, actual_ref=after['ref'],
+                                 cas_ack_ref=ack, actual_state=after['state'],
+                                 current_holder_state=after['state'],
+                                 owner_id=owner_id, epoch=epoch, now=now)
+    return {
+        **validated,
+        'status': 'EXACT_PARENT_CAS_READBACK_STRUCTURAL_ONLY',
+        'source_ref': before['ref'], 'observed_ref': after['ref'],
+        'post_authorized': False, 'github_provider_authenticated': False,
+        'roblox_engine_verified': False, 'replay_authorized': False,
+        'merge_authorized': False,
+    }
 
 if __name__ == '__main__':
     print(json.dumps({'status': 'DISABLED_LIBRARY_ONLY',
