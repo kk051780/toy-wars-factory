@@ -1,0 +1,62 @@
+{
+  "id": "C02047",
+  "date": "2026-10-31",
+  "kind": "PR143_PR144_ROJO_ARTIFACT_CONTRACT_GREEN",
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 143,
+  "source_main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 326,
+    "owner_run_id": "ed1ac192-7a95-40cd-aa1a-5881843a4d4e",
+    "claim_commit": "be7412a20ec713ab93d21b55490cbdb8723985f2"
+  },
+  "test_first_red": "4cc4d4ba4090ccc53fd45bcae4dc55c01deeaa24",
+  "source_impl": "4cbd3d42947a0920e104ab1611ae0a0af566ac92",
+  "first_green_attempt": {
+    "github_actions_run": 41169433490,
+    "executed_tests": 890,
+    "failures": 1,
+    "reason": "preexisting workflow regression expected direct rojo_rbxl_gate invocation; changed call chain requires helper source gate assertion"
+  },
+  "final_source_head": "c75f3287618a2ad9f923925abcf2160e06f51dcc",
+  "final_green": {
+    "github_actions_run": 41169545037,
+    "status": "COMPLETED_SUCCESS",
+    "offline_job": 124444315108,
+    "compile_hold_job": 124444315313,
+    "python_tests": 890,
+    "new_tests": 12
+  },
+  "interface": {
+    "job": "rojo-build-only",
+    "artifact": "twf-rojo-build-only-rbxl",
+    "binary": "toy-wars-private-test.rbxl",
+    "receipt": "build-receipt.json",
+    "receipt_keys": [
+      "repository",
+      "source_main_sha",
+      "rbxl_sha256",
+      "rbxl_bytes",
+      "build_only",
+      "engine_verified"
+    ]
+  },
+  "change_files": [
+    "tests/test_pr143_pr144_wire.py",
+    "tools/rojo_build_receipt.py",
+    ".github/workflows/toy-wars-rojo-build-only.yml",
+    "tests/test_system_rojo_build_only.py"
+  ],
+  "holds": {
+    "no_real_rojo_run": true,
+    "no_actual_rbxl_build": true,
+    "independent_security_review": "PENDING",
+    "main_merged": false,
+    "roblox_engine": "NOT_RUN",
+    "public_publish": false,
+    "fees": "NONE",
+    "external_inference": false
+  },
+  "history_head_ci": "PENDING_SEPARATE_CI"
+}
