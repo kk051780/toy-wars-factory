@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 340,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "473ba135-4cdb-4e5c-8f96-08e734c698da",
-    "task_id": null,
-    "epoch": 340,
-    "acquired_at": "2026-10-31T09:22:47.497Z",
-    "expires_at": "2026-10-31T09:50:47.497Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/actions-write-pilot-8df31af2",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,25 +2893,23 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "8e1e4205-6e5b-4b92-94f7-e21138e63d5b",
-    "epoch": 339,
-    "released_at": "2026-10-31T09:20:01.781Z",
+    "owner_id": "473ba135-4cdb-4e5c-8f96-08e734c698da",
+    "epoch": 340,
+    "released_at": "2026-10-31T09:26:26.426Z",
     "release_receipt": {
-      "reason": "PR173_SCOPE_BOUND_V2_GREEN_TEST_ORIGINAL_CI_FINAL_PENDING",
-      "claim_commit": "b1297364496e9aadc16c24bda448bfa2a0825bcf",
-      "work_branch": "controller/owner-intake-dedup-04d26d6e",
-      "pr": 173,
-      "pr_head": "e37662edb2a4701ecd4de109d428e1a8fe3213c1",
-      "test_first_red_run": 41188022961,
-      "test_green_run": 41188112820,
-      "green_python_tests": 864,
-      "final_head_ci_run": 41188213960,
-      "final_head_ci_at_release": "PENDING",
+      "reason": "PR163_PER_WRITE_FENCE_GREEN_EXACT_HEAD_DRAFT_NOT_REVIEWED",
+      "claim_commit": "0f9cadedcc089162ef7a4a316f2b1898df993a6b",
+      "work_branch": "controller/actions-write-pilot-8df31af2",
+      "pr": 163,
+      "pr_head": "63dedcb33c6c193e8220f1325cdf75a3dd589b0d",
+      "red_run": 41188561000,
+      "green_run": 41188640382,
+      "green_offline": "PASS_911",
+      "green_compile_hold": "SUCCESS",
       "independent_review": "PENDING",
-      "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "live_write_probe": "NOT_RUN",
       "main_mutated": false,
-      "service_terminal": "NOT_ATTESTED",
-      "permissions": "NO_DISPATCH_OR_MERGE_GRANTED"
+      "service_terminal": "NOT_ATTESTED"
     }
   },
   "last_completed_integration": {
