@@ -31,6 +31,78 @@ def existing(data, idea_id="owner:oct30:b", objective="Add a toy repair characte
 
 
 class OwnerIdeaIntakeTests(unittest.TestCase):
+    def test_v2_scoped_record_can_join_without_cross_game_ambiguity(self):
+        d = sample()
+        d["schema"] = 2
+        row = existing(d)
+        row.update(project_id=d["project_id"], repository=d["repository"])
+        d["records"] = [row]
+        r = classify(d)
+        self.assertEqual(r["decision"], "JOIN_EXISTING_ADVISORY")
+        self.assertEqual(r["schema"], 2)
+
+    def test_v2_empty_inventory_is_valid_new_candidate(self):
+        d = sample()
+        d["schema"] = 2
+        r = classify(d)
+        self.assertEqual(r["decision"], "NEW_ID_CANDIDATE_ONLY")
+        self.assertFalse(r["may_write"])
+
+    def test_v1_unscoped_records_must_be_refused_after_migration(self):
+        d = sample()
+        d["records"] = [existing(d)]
+        with self.assertRaises(ValueError):
+            classify(d)
+
+    def test_v2_unscoped_record_must_not_be_silently_assumed_local(self):
+        d = sample()
+        d["schema"] = 2
+        d["records"] = [existing(d)]
+        with self.assertRaises(ValueError):
+            classify(d)
+
+    def test_v2_foreign_project_with_even_forged_local_work_id_fails(self):
+        d = sample()
+        d["schema"] = 2
+        row = existing(d)
+        row.update(project_id="other-game", repository=d["repository"])
+        d["records"] = [row]
+        with self.assertRaises(ValueError):
+            classify(d)
+
+    def test_v2_foreign_repository_with_own_work_id_fails(self):
+        d = sample()
+        d["schema"] = 2
+        row = existing(d)
+        row.update(project_id=d["project_id"], repository="other/repository")
+        d["records"] = [row]
+        with self.assertRaises(ValueError):
+            classify(d)
+
+    def test_v2_self_consistent_foreign_scope_is_still_refused(self):
+        d = sample()
+        d["schema"] = 2
+        row = existing(d)
+        row.update(project_id="other-game", repository="other/repository")
+        row["work_id"] = calculate_work_id(
+            row["project_id"], row["repository"], row["kind"], row["objective"])
+        d["records"] = [row]
+        with self.assertRaises(ValueError):
+            classify(d)
+
+    def test_v2_malformed_scope_types_fail_closed(self):
+        for field, value in (("project_id", False), ("project_id", "Other"),
+                             ("repository", []), ("repository", "other\\repo")):
+            with self.subTest(field=field, value=str(value)):
+                d = sample()
+                d["schema"] = 2
+                row = existing(d)
+                row.update(project_id=d["project_id"], repository=d["repository"])
+                row[field] = value
+                d["records"] = [row]
+                with self.assertRaises(ValueError):
+                    classify(d)
+
     def test_first_intake_is_only_a_candidate(self):
         r = classify(sample())
         self.assertEqual(r["decision"], "NEW_ID_CANDIDATE_ONLY")
