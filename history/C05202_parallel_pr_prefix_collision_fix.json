@@ -1,0 +1,40 @@
+{
+  "id": "C05202",
+  "date": "2026-11-01",
+  "kind": "MANUAL_CONTROLLER_PARALLEL_PR_PREFIX_COLLISION_REPAIR",
+  "repository": "kk051780/toy-wars-factory",
+  "task_id": null,
+  "run_id": "7d652c40-8ca4-4ca9-8baa-ae3293f44c12",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "6ac377c5dbd40fd208108416c94ebfa78c3027b4",
+    "owner_run_id": "7d652c40-8ca4-4ca9-8baa-ae3293f44c12",
+    "epoch": 346,
+    "work_branch": "controller/parallel-pr-path-audit-v3-5828688a"
+  },
+  "parent_pr": 168,
+  "parent_head": "efa707f72e6cf353f862fcb3cf5c594b4ce289a7",
+  "purpose": "Reject file/directory parent-child collisions between candidate paths and other PRs, preserving read-only advisory result and all existing authorization holds.",
+  "changed_files": [
+    "tools/system_parallel_pr_path_audit.py",
+    "tests/test_system_parallel_pr_path_audit.py",
+    "history/C05202_parallel_pr_prefix_collision_fix.json"
+  ],
+  "test_changes": [
+    {
+      "path": "tests/test_system_parallel_pr_path_audit.py",
+      "new_cases": 12
+    }
+  ],
+  "prior_local_proof": "Pinned offline patch candidate checked 16 cases and 13 patcher guards; not GitHub CI.",
+  "github_ci": "PENDING_EXACT_HEAD",
+  "provider_authenticated": false,
+  "read_only_advisory": true,
+  "grant_write_authority": false,
+  "main_mutated": false,
+  "merge_authorized": false,
+  "roblox_engine": "NOT_TESTED",
+  "independent_security_review": "PENDING",
+  "release_holds": "PRESERVED"
+}
