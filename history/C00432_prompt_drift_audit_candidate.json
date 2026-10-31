@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "id": "C00432",
+  "project": "TOY WARS FACTORY",
+  "work_id": "TWF-ISSUE127-PROMPT-DRIFT-LINT-20261031",
+  "date_utc": "2026-10-31",
+  "category": "SYSTEM_NONAUTHORIZING_PROMPT_LINT",
+  "status": "PROTECTED_DRAFT_NOT_MERGED",
+  "issue": 127,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "79e59e56bf700f97a4e6025df7e0d2f6c9c1f063",
+    "owner_run_id": "d3ccae74-0947-41f9-aa95-1e77cab0dca4",
+    "epoch": 313,
+    "work_branch": "controller/prompt-drift-d3ccae74"
+  },
+  "rationale": "Prevent unbounded regrowth of saved unattended task instructions while preserving independent task schedule, provenance checks, Gemini/spend/Roblox hold, and source-write ownership. Lexical hints are advisory only.",
+  "changed_files": [
+    "tools/system_prompt_drift_audit.py",
+    "tests/test_system_prompt_drift_audit.py",
+    "history/C00432_prompt_drift_audit_candidate.json"
+  ],
+  "validation": {
+    "local_python_cases": 38,
+    "local_python_result": "PASS",
+    "actual_provider_scheduled_run": "NOT_RUN",
+    "github_exact_head_offline": "PENDING",
+    "github_compile_hold": "PENDING",
+    "independent_security_review": "PENDING",
+    "post_main_qa": "NOT_RUN",
+    "roblox_engine": "NOT_RUN"
+  },
+  "design": {
+    "read_only": true,
+    "baseline_utf16_chars": {
+      "WORKER": 7346,
+      "META": 6577,
+      "REVIEWER": 7438
+    },
+    "regrowth_warning": "500 UTF16 units OR 10 percent",
+    "rejects": [
+      "foreign_repo_or_task",
+      "duplicate_roles_json_keys",
+      "NaN",
+      "invalid_run_chronology",
+      "claimed_permissions",
+      "oversized_prompts",
+      "non_hourly_schedule_drift"
+    ],
+    "provider_origin_attestation": "NOT_VERIFIED_FROM_LOCAL_INPUT"
+  },
+  "permissions": {
+    "task_prompt_write": false,
+    "task_schedule_change": false,
+    "dispatch": false,
+    "merge": false,
+    "publish": false,
+    "gemini_inference": false,
+    "spend": false
+  },
+  "history_id_reservation": "PROVISIONAL_CROSS_OPEN_PR_SCAN_20261031_NO_C00432_FOUND",
+  "next": "Independent reviewer inspect exact source and CI; maintain protected draft, do not activate a scheduled checker until trusted host binding and separate review"
+}
