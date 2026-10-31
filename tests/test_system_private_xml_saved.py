@@ -31,7 +31,7 @@ def build_xml(bad=None):
     return ET.tostring(root,encoding='utf-8',xml_declaration=True)
 
 def config(data):
-    return x.XmlStageConfig('2020','3030','4040','5050',x.MAIN_BASE,hashlib.sha256(data).hexdigest(),len(data))
+    return x.XmlStageConfig('2020','3030','4040','5050',x.MAIN_BASE,hashlib.sha256(data).hexdigest(),len(data),'f'*40)
 
 def replace_source(root):
     e=root.find(".//Item[@class='Script']/Properties/ProtectedString[@name='Source']")
@@ -233,7 +233,8 @@ class SavedOnlyTransport(unittest.TestCase):
             with self.assertRaises(x.XmlStageError):cfg.check()
     def test_environment_attestation_strings_are_required_but_not_proof(self):
         env={'GITHUB_ACTIONS':'true','GITHUB_REPOSITORY':x.REPOSITORY,'GITHUB_REF':'refs/heads/main',
-             'GITHUB_SHA':x.MAIN_BASE,'GITHUB_EVENT_NAME':'workflow_dispatch',
+             'GITHUB_SHA':'f'*40,'GITHUB_EVENT_NAME':'workflow_dispatch',
+             'TWF_ACCEPTED_GAME_SOURCE_SHA':x.MAIN_BASE,'TWF_REVIEWED_MAIN_SHA':'f'*40,
              'TWF_PRIVATE_STAGE_APPROVED':'true','TWF_PROTECTED_ENVIRONMENT':'roblox-private-test',
              'TWF_TEST_UNIVERSE_ID':'2020','TWF_TEST_PLACE_ID':'3030',
              'TWF_PROD_UNIVERSE_ID':'4040','TWF_PROD_PLACE_ID':'5050'}
@@ -254,7 +255,8 @@ class SavedOnlyTransport(unittest.TestCase):
             sent.assert_not_called()
             self.assertEqual(json.loads(err.getvalue())['status'],'BLOCKED_OR_UNCERTAIN_XML_SAVED')
     def test_transport_single_use_and_no_redirect(self):
-        env={'GITHUB_ACTIONS':'true','GITHUB_REPOSITORY':x.REPOSITORY,'GITHUB_REF':'refs/heads/main','GITHUB_SHA':x.MAIN_BASE,'GITHUB_EVENT_NAME':'workflow_dispatch',
+        env={'GITHUB_ACTIONS':'true','GITHUB_REPOSITORY':x.REPOSITORY,'GITHUB_REF':'refs/heads/main','GITHUB_SHA':'f'*40,'GITHUB_EVENT_NAME':'workflow_dispatch',
+             'TWF_ACCEPTED_GAME_SOURCE_SHA':x.MAIN_BASE,'TWF_REVIEWED_MAIN_SHA':'f'*40,
              'TWF_PRIVATE_STAGE_APPROVED':'true','TWF_PROTECTED_ENVIRONMENT':'roblox-private-test',
              'TWF_TEST_UNIVERSE_ID':'2020','TWF_TEST_PLACE_ID':'3030',
              'TWF_PROD_UNIVERSE_ID':'4040','TWF_PROD_PLACE_ID':'5050'}
@@ -276,7 +278,8 @@ class SavedOnlyTransport(unittest.TestCase):
             self.assertEqual(sent.headers.get('Content-type'),'application/xml')
             self.assertNotIn('Published',sent.full_url)
     def test_changed_payload_denied_before_transport(self):
-        env={'GITHUB_ACTIONS':'true','GITHUB_REPOSITORY':x.REPOSITORY,'GITHUB_REF':'refs/heads/main','GITHUB_SHA':x.MAIN_BASE,'GITHUB_EVENT_NAME':'workflow_dispatch',
+        env={'GITHUB_ACTIONS':'true','GITHUB_REPOSITORY':x.REPOSITORY,'GITHUB_REF':'refs/heads/main','GITHUB_SHA':'f'*40,'GITHUB_EVENT_NAME':'workflow_dispatch',
+             'TWF_ACCEPTED_GAME_SOURCE_SHA':x.MAIN_BASE,'TWF_REVIEWED_MAIN_SHA':'f'*40,
              'TWF_PRIVATE_STAGE_APPROVED':'true','TWF_PROTECTED_ENVIRONMENT':'roblox-private-test',
              'TWF_TEST_UNIVERSE_ID':'2020','TWF_TEST_PLACE_ID':'3030',
              'TWF_PROD_UNIVERSE_ID':'4040','TWF_PROD_PLACE_ID':'5050'}
@@ -288,7 +291,8 @@ class SavedOnlyTransport(unittest.TestCase):
             with self.assertRaises(x.XmlStageError):t(replace(req,url=req.url.replace('Saved','Published')))
             opener.open.assert_not_called()
     def test_http_error_not_retried(self):
-        env={'GITHUB_ACTIONS':'true','GITHUB_REPOSITORY':x.REPOSITORY,'GITHUB_REF':'refs/heads/main','GITHUB_SHA':x.MAIN_BASE,'GITHUB_EVENT_NAME':'workflow_dispatch',
+        env={'GITHUB_ACTIONS':'true','GITHUB_REPOSITORY':x.REPOSITORY,'GITHUB_REF':'refs/heads/main','GITHUB_SHA':'f'*40,'GITHUB_EVENT_NAME':'workflow_dispatch',
+             'TWF_ACCEPTED_GAME_SOURCE_SHA':x.MAIN_BASE,'TWF_REVIEWED_MAIN_SHA':'f'*40,
              'TWF_PRIVATE_STAGE_APPROVED':'true','TWF_PROTECTED_ENVIRONMENT':'roblox-private-test',
              'TWF_TEST_UNIVERSE_ID':'2020','TWF_TEST_PLACE_ID':'3030',
              'TWF_PROD_UNIVERSE_ID':'4040','TWF_PROD_PLACE_ID':'5050'}

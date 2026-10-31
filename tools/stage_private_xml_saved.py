@@ -33,9 +33,10 @@ def main(argv=None,environ=None):
             test_place_id=env.get('TWF_TEST_PLACE_ID',''),
             production_universe_id=env.get('TWF_PROD_UNIVERSE_ID',''),
             production_place_id=env.get('TWF_PROD_PLACE_ID',''),
-            source_main_sha=env.get('GITHUB_SHA',''),
+            source_main_sha=env.get('TWF_ACCEPTED_GAME_SOURCE_SHA',''),
             rbxlx_sha256=env.get('TWF_XML_PLACE_SHA256',''),
             rbxlx_bytes=a.expected_bytes,
+            reviewed_workflow_sha=env.get('TWF_REVIEWED_MAIN_SHA',''),
         )
         if not a.xml_file:
             raise XmlStageError('XML file not specified')
