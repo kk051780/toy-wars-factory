@@ -52,7 +52,7 @@ class FenceTests(unittest.TestCase):
         self.api = FakeAPI()
         self.sha = patch.object(p, "sha_ref", side_effect=self.ref_sha)
         self.state = patch.object(p, "state_at", side_effect=self.get_state)
-        self.owns = patch.object(p, "owns", side_effect=self.test_owns)
+        self.owns = patch.object(p, "owns", side_effect=self._owns)
         self.clock = patch.object(p, "now", return_value="2026-10-31T09:25:00+00:00")
         for m in (self.sha, self.state, self.owns, self.clock):
             m.start()
@@ -65,7 +65,7 @@ class FenceTests(unittest.TestCase):
         return deepcopy(api.state)
 
     @staticmethod
-    def test_owns(state, kind, owner, epoch, at):
+    def _owns(state, kind, owner, epoch, at):
         h = state.get("holder")
         return bool(h and (h.get("kind"), h.get("owner_id"), h.get("epoch")) ==
                     (kind, owner, epoch))

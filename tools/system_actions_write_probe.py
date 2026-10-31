@@ -245,6 +245,62 @@ def verify_created_probe(api, scope, number):
     return number
 
 
+
+class _PerWriteLeaseFence:
+    """Recheck the one live CONTROLLER lease immediately before each source write.
+
+    This narrows the non-atomic GET/POST race; it cannot make three GitHub REST
+    mutations transactional. A write is consumed BEFORE sending its request, so
+    an ambiguous response does not trigger a duplicate mutation.
+    """
+    def __init__(self, api, scope, epoch, claim_ref):
+        self._api = api
+        self._scope = scope
+        self._epoch = epoch
+        self._claim_ref = claim_ref
+        run_id, attempt = scope["run_id"], scope["attempt"]
+        filename = f"ops/probes/gha-write-{run_id}-a{attempt}.json"
+        self._mutations = (("POST", "/git/refs"),
+                           ("PUT", "/contents/" + filename),
+                           ("POST", "/pulls"))
+        self._index = 0
+
+    def _check_live(self):
+        if sha_ref(self._api, CONTROL_REF) != self._claim_ref:
+            raise ProbeError("SOURCE_LEASE_REF_MOVED")
+        state = state_at(self._api, self._claim_ref)
+        if sha_ref(self._api, CONTROL_REF) != self._claim_ref:
+            raise ProbeError("SOURCE_LEASE_CHANGED_DURING_READ")
+        scope = self._scope
+        if not owns(state, "CONTROLLER", scope["owner"], self._epoch, now()):
+            raise ProbeError("SOURCE_LEASE_NOT_OWNED")
+        holder = state.get("holder")
+        if (not isinstance(holder, dict) or
+                holder.get("kind") != "CONTROLLER" or
+                holder.get("owner_id") != scope["owner"] or
+                holder.get("epoch") != self._epoch or
+                holder.get("task_id") is not None or
+                holder.get("work_branch") != scope["branch"] or
+                holder.get("base_main_sha") != scope["main"]):
+            raise ProbeError("SOURCE_LEASE_SCOPE_CHANGED")
+        if sha_ref(self._api, "main") != scope["main"]:
+            raise ProbeError("SOURCE_MAIN_CHANGED")
+        if sha_ref(self._api, CONTROL_REF) != self._claim_ref:
+            raise ProbeError("SOURCE_LEASE_MOVED_BEFORE_WRITE")
+
+    def call(self, method, path, body=None):
+        if method == "GET":
+            return self._api.call(method, path, body)
+        if (self._index >= len(self._mutations) or
+                (method, path) != self._mutations[self._index]):
+            raise ProbeError("SOURCE_WRITE_NOT_IN_ALLOWED_ORDER")
+        # A policy or network error must never become a retry of this mutation.
+        self._check_live()
+        self._index += 1
+        return self._api.call(method, path, body)
+
+
+
 def create_branch_probe(api, scope):
     """Only one immutable non-sensitive file on an isolated branch, NEVER main."""
     if sha_ref(api, "main") != scope["main"]:
@@ -289,7 +345,13 @@ def run(api, env):
         live=state_at(api,before)
         if before!=claim or not owns(live,"CONTROLLER",scope["owner"],epoch,now()):
             raise ProbeError("LEASE_LOST")
-        pr=create_branch_probe(api,scope)
+        source_api = api
+        try:
+            api = _PerWriteLeaseFence(source_api, scope, epoch, claim)
+            pr=create_branch_probe(api,scope)
+        finally:
+            # The verifier and release use the original trusted transport.
+            api = source_api
         verify_created_probe(api,scope,pr)
     except ProbeError as exc:
         failure=str(exc)
