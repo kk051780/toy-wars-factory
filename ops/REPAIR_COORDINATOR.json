@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 339,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "8e1e4205-6e5b-4b92-94f7-e21138e63d5b",
-    "task_id": null,
-    "epoch": 339,
-    "acquired_at": "2026-10-31T09:15:39.782Z",
-    "expires_at": "2026-10-31T09:39:39.782Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/owner-intake-dedup-04d26d6e",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,22 +2893,25 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "04d26d6e-2f66-4c4c-9786-88737e186b6d",
-    "epoch": 338,
-    "released_at": "2026-10-31T09:01:54.850Z",
+    "owner_id": "8e1e4205-6e5b-4b92-94f7-e21138e63d5b",
+    "epoch": 339,
+    "released_at": "2026-10-31T09:20:01.781Z",
     "release_receipt": {
-      "reason": "PR173_PROTECTED_DRAFT_LOCAL_TEST_23_GREEN_ORIGINAL_HOSTED_CI_PENDING",
-      "claim_commit": "21d8cfc778f04ef44e1fd841733b4510ed0bf37d",
+      "reason": "PR173_SCOPE_BOUND_V2_GREEN_TEST_ORIGINAL_CI_FINAL_PENDING",
+      "claim_commit": "b1297364496e9aadc16c24bda448bfa2a0825bcf",
       "work_branch": "controller/owner-intake-dedup-04d26d6e",
       "pr": 173,
-      "pr_head": "5d3605868375ed7edfef764262d545eb6f963319",
-      "local_python_tests": 23,
-      "original_hosted_ci": "PENDING_RECHECK",
+      "pr_head": "e37662edb2a4701ecd4de109d428e1a8fe3213c1",
+      "test_first_red_run": 41188022961,
+      "test_green_run": 41188112820,
+      "green_python_tests": 864,
+      "final_head_ci_run": 41188213960,
+      "final_head_ci_at_release": "PENDING",
       "independent_review": "PENDING",
       "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_mutated": false,
       "service_terminal": "NOT_ATTESTED",
-      "authorization": "NO_RUNTIME_WRITE_OR_MERGE_GRANTED"
+      "permissions": "NO_DISPATCH_OR_MERGE_GRANTED"
     }
   },
   "last_completed_integration": {
