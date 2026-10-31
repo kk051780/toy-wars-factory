@@ -1,0 +1,42 @@
+{
+  "id": "C09012",
+  "date": "2026-10-31",
+  "kind": "READ_ONLY_STACKED_PR_TOPOLOGY",
+  "issue": 123,
+  "task_origin": "MANUAL_CONTROLLER_DISTINCT_NO_AUTONOMOUS_AUTHORITY",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "224f7c231fd54904f88e66258e0946400b08aa93",
+    "owner_run_id": "cd8a21bd-df84-4d47-b4c5-3bf4b63e8ecd",
+    "epoch": 337
+  },
+  "distinct_from": [
+    "PR168 path collision preflight",
+    "PR169 superseded source adoption",
+    "PR157 history ID reservation",
+    "PR165 manual GO priority",
+    "PR60 reviewer lane"
+  ],
+  "changed_files": [
+    "tools/system_stacked_pr_dependency.py",
+    "tests/test_system_stacked_pr_dependency.py",
+    "history/C09012_stacked_pr_dependency.json"
+  ],
+  "result": "SOURCE_CANDIDATE_PENDING_CI_INDEPENDENT_REVIEW",
+  "safety": "ALL_OUTPUTS_READ_ONLY_ADVISORY_NO_MERGE_NO_REBASE_NO_REVIEW_BYPASS",
+  "engine": "NOT_RUN",
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1186,
+    "lua_bytes": 52781
+  },
+  "source_baseline_bytes": 25726,
+  "tests": {
+    "github_ci": "PENDING",
+    "python": "PENDING"
+  },
+  "notes": "Stacked PR parent SHA and branch dependency must be verified from live GitHub by trusted caller; no actual GitHub attestation or write power in this module."
+}
