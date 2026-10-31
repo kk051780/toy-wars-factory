@@ -1,0 +1,26 @@
+{
+  "id": "C00903",
+  "date": "2026-10-31",
+  "kind": "PR163_POSTWRITE_READBACK_TEST_FIRST_RED",
+  "issue": 57,
+  "pr": 163,
+  "original_pr_source_head": "11672298d2362f590967bc65eb5aba45e71b7094",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "dce0518be01e2305fd775654f66c7ecb2e4a7612",
+    "epoch": 318,
+    "owner_run_id": "aa4781f3-e8b3-4e97-b321-6bb93787003e"
+  },
+  "scope": "Existing PR163 only; add postwrite exact branch/file/PR GET readback and no permissions",
+  "finding": "The original create_branch_probe accepts POST /pulls integer response and returns success without checking branch/file contents or PR head/base/repo/draft state; a lost/misbound API receipt is unverified.",
+  "red": {
+    "tests_added": 19,
+    "expected": "New tests fail against unchanged accepted PR163 source",
+    "github_exact_head_run": "PENDING"
+  },
+  "progress_credit": 0,
+  "roblox_engine": "NOT_RUN",
+  "inference": "NONE",
+  "permission_change": false
+}
