@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 351,
-  "holder": {
-    "kind": "DISPATCH",
-    "owner_id": "13afdf66-56bc-4ae0-8223-2b89af2ae63d",
-    "task_id": null,
-    "epoch": 351,
-    "acquired_at": "2026-10-31T21:50:03.181Z",
-    "expires_at": "2026-10-31T21:52:03.181Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": null,
-    "origin": "dispatch"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2902,33 +2892,19 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "0cee76ed-d225-4d88-8203-09741ae2e517",
-    "epoch": 350,
-    "released_at": "2026-10-31T21:46:20.710Z",
+    "kind": "DISPATCH",
+    "owner_id": "13afdf66-56bc-4ae0-8223-2b89af2ae63d",
+    "epoch": 351,
+    "released_at": "2026-10-31T21:52:09.289Z",
     "release_receipt": {
-      "reason": "PR168_STACKED_BASE_SHA_DRIFT_GUARD_10_NEW_REGRESSIONS_EXACT_HEAD_910_PASS",
-      "claim_commit": "c723ae0ca53cc2a29c355fb10681ae57a13f62f9",
-      "work_branch": "controller/parallel-pr-path-audit-v3-5828688a",
-      "pr": 168,
-      "pr_head": "9ce8ff2b14000928c11abf7ccbc56f34f948f33c",
-      "source_test_commit": "83346e6a1a0cb251cc512ddad0685f4789008e26",
-      "history_commit": "9ce8ff2b14000928c11abf7ccbc56f34f948f33c",
-      "history_id": "C05204",
-      "new_python_cases": 10,
-      "run": 41245007705,
-      "attempt": 1,
-      "ci_status": "success",
-      "offline": "success",
-      "offline_python_tests": 910,
-      "compile_hold": "success",
-      "independent_review": "PENDING",
-      "real_github_original_module_execution": "NOT_ATTESTED",
-      "may_merge": false,
-      "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "main_mutated": false,
-      "roblox_engine": "NOT_TESTED",
-      "publish_authorized": false
+      "reason": "REGISTERED_WORKER_RUN_COMPLETED_NO_TICKET_ADOPTION",
+      "worker_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "worker_run_id": "106c2918-125c-8325-a564-3aae96fc9d89",
+      "worker_status": "completed",
+      "worker_completed_at": "2026-10-31T21:51:23.573576Z",
+      "claim_commit": "437b69232691a43d9ef3bcb01241807bbfd85864",
+      "no_new_run_requested": true,
+      "main_unchanged": true
     }
   },
   "last_completed_integration": {
