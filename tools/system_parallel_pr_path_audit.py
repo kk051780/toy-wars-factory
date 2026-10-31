@@ -37,6 +37,33 @@ def _canonical(value):
     return unicodedata.normalize("NFC", _path(value)).casefold()
 
 
+def validate_candidate(candidate):
+    """Pure candidate schema validation; does not attest GitHub authority."""
+    _require(type(candidate) is dict and set(candidate) in (
+        {"branch", "paths"},
+        {"branch", "paths", "repair_pr", "repair_head_sha"},
+    ), "invalid candidate")
+    _require(isinstance(candidate["branch"], str) and
+             re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_./-]{0,180}", candidate["branch"]) and
+             ".." not in candidate["branch"] and
+             "//" not in candidate["branch"] and
+             not candidate["branch"].endswith("/"), "invalid branch")
+    paths = candidate["paths"]
+    _require(type(paths) is list and len(paths) > 0, "missing candidate paths")
+    proposed = {}
+    for path in paths:
+        key = _canonical(path)
+        _require(key not in proposed, "candidate duplicate/case-fold path")
+        _require(not any(key.startswith(other + "/") or other.startswith(key + "/")
+                         for other in proposed), "candidate file/directory path collision")
+        proposed[key] = path
+    if "repair_pr" in candidate:
+        _require(type(candidate["repair_pr"]) is int and
+                 candidate["repair_pr"] > 0, "invalid repair PR number")
+        _sha(candidate["repair_head_sha"])
+    return proposed
+
+
 def audit(snapshot):
     """Return evidence-collision warnings; even CLEAR is NOT execution approval.
 
@@ -52,19 +79,9 @@ def audit(snapshot):
     _sha(snapshot["base_sha"])
     _require(snapshot["collection_complete"] is True, "partial PR discovery")
     candidate = snapshot["candidate"]
-    _require(type(candidate) is dict and set(candidate) == {"branch", "paths"}, "invalid candidate")
-    _require(isinstance(candidate["branch"], str) and
-             re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_./-]{0,180}", candidate["branch"]) and
-             ".." not in candidate["branch"], "invalid branch")
-    paths = candidate["paths"]
-    _require(type(paths) is list and len(paths) > 0, "missing candidate paths")
-    proposed = {}
-    for path in paths:
-        key = _canonical(path)
-        _require(key not in proposed, "candidate duplicate/case-fold path")
-        _require(not any(key.startswith(other + "/") or other.startswith(key + "/")
-                         for other in proposed), "candidate file/directory path collision")
-        proposed[key] = path
+    proposed = validate_candidate(candidate)
+    repair_mode = "repair_pr" in candidate
+    repair_matches = 0
 
     pulls = snapshot["pulls"]
     _require(type(pulls) is list, "missing PR inventory")
@@ -72,9 +89,10 @@ def audit(snapshot):
     collisions = []
     stacked_prs_checked = 0
     for pr in pulls:
-        _require(type(pr) is dict and set(pr) ==
-                 {"number", "repository", "base_branch", "state", "head_sha", "paths"},
-                 "invalid PR record")
+        _require(type(pr) is dict and set(pr) in (
+                     {"number", "repository", "base_branch", "state", "head_sha", "paths"},
+                     {"number", "repository", "base_branch", "state", "head_sha", "head_branch", "paths"},
+                 ), "invalid PR record")
         n = pr["number"]
         _require(type(n) is int and n > 0 and n not in observed, "duplicate/invalid PR number")
         observed.add(n)
@@ -90,6 +108,18 @@ def audit(snapshot):
                  "wrong repo or closed PR")
         stacked_prs_checked += base_branch != "main"
         _sha(pr["head_sha"])
+        if "head_branch" in pr:
+            head_branch = pr["head_branch"]
+            _require(isinstance(head_branch, str) and
+                     re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_./-]{0,180}", head_branch) and
+                     not head_branch.endswith("/") and ".." not in head_branch and
+                     "//" not in head_branch, "invalid PR head branch")
+        is_self = repair_mode and n == candidate["repair_pr"]
+        if is_self:
+            _require(pr.get("head_branch") == candidate["branch"] and
+                     pr["head_sha"] == candidate["repair_head_sha"],
+                     "repair PR identity mismatch")
+            repair_matches += 1
         _require(type(pr["paths"]) is list and len(pr["paths"]) > 0,
                  "missing PR path page")
         seen = set()
@@ -97,6 +127,9 @@ def audit(snapshot):
             key = _canonical(old_or_new)
             _require(key not in seen, "duplicate PR file path")
             seen.add(key)
+            if is_self:
+                # Only suppress own collisions, never skip path/schema validation.
+                continue
             for candidate_key, candidate_path in proposed.items():
                 if not (key == candidate_key or key.startswith(candidate_key + "/")
                         or candidate_key.startswith(key + "/")):
@@ -106,6 +139,8 @@ def audit(snapshot):
                                    "base_branch": base_branch, "stacked": base_branch != "main",
                                    "kind": ("EXACT" if old_or_new == candidate_path else "CASE_OR_UNICODE")
                                    if key == candidate_key else "PATH_PREFIX"})
+    if repair_mode:
+        _require(repair_matches == 1, "repair PR missing from original inventory")
     collisions.sort(key=lambda x: (x["pr"], x["candidate_path"], x["existing_path"]))
     return {"decision": "BLOCK_OVERLAP" if collisions else "CLEAR_ADVISORY",
             "grant_write_authority": False,
@@ -113,7 +148,8 @@ def audit(snapshot):
             "checked_open_prs": len(pulls),
             "main_prs_checked": len(pulls) - stacked_prs_checked,
             "stacked_prs_checked": stacked_prs_checked,
-            "candidate_paths": len(paths),
+            "candidate_paths": len(candidate["paths"]),
+            "self_pr_excluded": candidate["repair_pr"] if repair_mode else None,
             "collisions": collisions,
             "warning": "Input authenticity, pagination, head freshness and lease ownership require external checks"}
 
@@ -161,19 +197,27 @@ def from_rest_observations(*, repository, main_before_sha, main_after_sha,
                      re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_./-]{0,180}", branch) and
                      not branch.endswith("/") and ".." not in branch and "//" not in branch,
                      "invalid stacked PR base")
-            normalized[number] = (head["sha"], base["sha"], branch)
+            head_ref = head.get("ref")
+            if head_ref is not None:
+                _require(isinstance(head_ref, str) and
+                         re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_./-]{0,180}", head_ref) and
+                         not head_ref.endswith("/") and ".." not in head_ref and
+                         "//" not in head_ref, "invalid PR head ref")
+            if "repair_pr" in candidate:
+                _require(head_ref is not None, "repair requires original PR head ref")
+            normalized[number] = (head["sha"], base["sha"], branch, head_ref)
         return normalized
 
     before, after = parse_prs(prs_before), parse_prs(prs_after)
     _require(before == after, "PR list/heads/bases changed during collection")
-    for _, (_, parent_sha, parent_ref) in before.items():
+    for _, (_, parent_sha, parent_ref, _) in before.items():
         if parent_ref == "main":
             _require(parent_sha == main_before_sha, "main base SHA drift during collection")
     _require(set(changed_files_by_pr) == {str(n) for n in before},
              "missing or unexpected changed-file page")
     pulls = []
     for number in sorted(before):
-        head_sha, base_sha, base_ref = before[number]
+        head_sha, base_sha, base_ref, head_ref = before[number]
         files = changed_files_by_pr[str(number)]
         _require(type(files) is list and 0 < len(files) < 100,
                  "missing or truncated changed-file page; pagination required")
@@ -205,7 +249,8 @@ def from_rest_observations(*, repository, main_before_sha, main_after_sha,
                     local.add(key)
         pulls.append({"number": number, "repository": repository,
                       "base_branch": base_ref, "state": "open",
-                      "head_sha": head_sha, "paths": paths})
+                      "head_sha": head_sha, "paths": paths,
+                      **({"head_branch": head_ref} if head_ref is not None else {})})
     snapshot = {"schema": 1, "repository": repository,
                 "base_sha": main_before_sha, "collection_complete": True,
                 "candidate": candidate, "pulls": pulls}

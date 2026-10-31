@@ -13,7 +13,7 @@ import os
 import re
 from urllib import request
 
-from system_parallel_pr_path_audit import audit, from_rest_observations
+from system_parallel_pr_path_audit import audit, from_rest_observations, validate_candidate
 
 REPO = "kk051780/toy-wars-factory"
 REPO_ID = 1431683395
@@ -130,8 +130,7 @@ def collect(reader, candidate):
     require(callable(reader), "READER_REQUIRED")
     # Validate candidate before any remote call; invalid paths never trigger GET.
     try:
-        audit({"schema": 1, "repository": REPO, "base_sha": "0" * 40,
-               "collection_complete": True, "candidate": candidate, "pulls": []})
+        validate_candidate(candidate)
     except (ValueError, TypeError, KeyError):
         raise CollectorHold("INVALID_CANDIDATE") from None
     meta = reader(ROOT)
