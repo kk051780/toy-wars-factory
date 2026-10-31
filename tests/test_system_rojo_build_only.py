@@ -170,7 +170,11 @@ class WorkflowPolicyTests(unittest.TestCase):
         self.assertIn("actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",y)
         self.assertIn("actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",y)
         self.assertIn("rojo_source_contract.py",y)
-        self.assertIn("rojo_rbxl_gate.py",y)
+        self.assertIn("rojo_build_receipt.py",y)
+        # The new receipt helper still MUST invoke the strict binary framing gate.
+        helper = (ROOT / "tools/rojo_build_receipt.py").read_text(encoding="utf-8")
+        self.assertIn("from rojo_rbxl_gate import inspect as inspect_binary",helper)
+        self.assertIn("check = inspect_binary(blob)",helper)
         self.assertIn("rojo build",y)
 
 if __name__=="__main__":
