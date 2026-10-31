@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 321,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "ba6128c1-65c5-40b1-9c96-1249aec366ab",
-    "task_id": null,
-    "work_branch": "controller/actions-cadence-e80e980c",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "epoch": 321,
-    "acquired_at": "2026-10-31T03:22:50.832Z",
-    "expires_at": "2026-10-31T03:47:50.832Z"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,32 +2893,19 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "d0f93b2f-953e-40d7-8622-4f75fc40bb74",
-    "epoch": 320,
-    "released_at": "2026-10-31T03:18:50.466Z",
+    "owner_id": "ba6128c1-65c5-40b1-9c96-1249aec366ab",
+    "epoch": 321,
+    "released_at": "2026-10-31T03:26:39.606Z",
     "release_receipt": {
       "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
       "repository": "kk051780/toy-wars-factory",
-      "owner_run_id": "d0f93b2f-953e-40d7-8622-4f75fc40bb74",
-      "task_id": null,
-      "epoch": 320,
-      "claim_commit": "1cdcf5c4693f79b751f958f0d97ea40f39baa5e6",
       "source_pr": 164,
-      "source_head": "4035f94e4e028b849f3458c8e7bfa2a09ac2f87b",
-      "source_branch": "controller/actions-cadence-e80e980c",
-      "source_main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "green_run_id": 41163739455,
-      "green_offline": "success",
-      "green_compile_hold": "success",
-      "green_python_tests": 901,
-      "new_tests": 37,
+      "source_head": "e845f89ddc7ae81029de0fb2cff45aa46b195120",
+      "green_run_id": 41164240671,
+      "green_python_tests": 921,
       "independent_review": "PENDING",
       "main_merged": false,
-      "periodic_collector": "NOT_INSTALLED",
-      "external_ai": "NONE",
-      "roblox_engine": "NOT_RUN",
-      "spending": "NONE",
-      "postwrite_readback_required": true
+      "manual_host_dispatched": false
     }
   },
   "last_completed_integration": {
