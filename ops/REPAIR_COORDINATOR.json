@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 356,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "b5fc0f93-4fd2-4f41-b878-43bea377ee72",
-    "task_id": null,
-    "epoch": 356,
-    "acquired_at": "2026-10-31T23:27:01.419Z",
-    "expires_at": "2026-10-31T23:42:01.419Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/actions-write-pilot-8df31af2",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,31 +2893,15 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "5a924b11-e0a3-4cfe-949c-166c11e2ad60",
-    "epoch": 355,
-    "released_at": "2026-10-31T22:59:26.025Z",
+    "owner_id": "b5fc0f93-4fd2-4f41-b878-43bea377ee72",
+    "epoch": 356,
+    "released_at": "2026-10-31T23:35:12.974Z",
     "release_receipt": {
-      "reason": "PR166_TRANSIENT_COMPILE_HOLD_RETRY_EXACT_HEAD",
-      "claim_commit": "7f4286dd7b85bb46239fcc40bc0186f534c23c3d",
-      "work_branch": "controller/claim-witness-84fdc871",
-      "pr": 166,
-      "pr_head": "aac68a3f66ac4b0b0083e93070dd2dda29aab541",
-      "pr_comment_id": 6550287400,
-      "workflow_run": 41192516151,
-      "original_failed_job_id": 124512228341,
-      "final_compile_job_id": 124682865736,
-      "final_offline_job_id": 124682866871,
-      "final_run_attempt": 3,
-      "final_run_conclusion": "success",
-      "offline_python_tests": 961,
-      "code_files_changed": 0,
-      "new_pr_created": false,
-      "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "main_mutated": false,
-      "independent_review": "PENDING",
-      "protected_merge_authorized": false,
-      "roblox_engine": "NOT_TESTED",
-      "gemini_inference": "HELD"
+      "reason": "OWN_EPOCH356_RELEASE_AFTER_HOST_WRITE_DENIAL",
+      "claim_commit": "f32e3e103c29396502798630dfa3649d27e69281",
+      "pr": 163,
+      "work_branch": "controller/actions-write-pilot-8df31af2",
+      "source_changed": false
     }
   },
   "last_completed_integration": {
