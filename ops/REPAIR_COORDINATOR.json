@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 344,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "3f43b1b2-7dd7-4f95-bb98-eaf49f15cf80",
-    "task_id": null,
-    "epoch": 344,
-    "acquired_at": "2026-10-31T10:18:20.624Z",
-    "expires_at": "2026-10-31T10:41:20.624Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/claim-witness-84fdc871",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,31 +2893,23 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "1c7c521d-f3d6-4485-a180-3b2e438fe9b4",
-    "epoch": 343,
-    "released_at": "2026-10-31T10:06:01.906Z",
+    "owner_id": "3f43b1b2-7dd7-4f95-bb98-eaf49f15cf80",
+    "epoch": 344,
+    "released_at": "2026-10-31T19:21:58.824Z",
+    "recovered_from_owner_emergency": true,
     "release_receipt": {
-      "reason": "PR174_SNAPSHOT_ADAPTER_EXACT_HEAD_CI_GREEN_INDEPENDENT_REVIEW_PENDING",
-      "claim_commit": "94b6fdcc6c956571b5e8a4810f68542f793c7dd5",
-      "work_branch": "controller/work-registration-cas-1dd085ef",
-      "pr": 174,
-      "pr_head": "96403caab02b1b17773b475f18606c8ef062d51c",
-      "parent_pr": 173,
-      "parent_head": "e37662edb2a4701ecd4de109d428e1a8fe3213c1",
-      "ci_run": 41191252932,
-      "ci_status": "success",
-      "offline_python_tests": 943,
-      "compile_hold": "success",
-      "new_snapshot_regressions": 35,
-      "history_id": "C09995",
-      "independent_review": "PENDING",
-      "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "reason": "EXPLICIT_REPOSITORY_OWNER_EMERGENCY_OVERRIDE_OF_EXPIRED_MANUAL_CONTROLLER",
+      "prior_coordinator_head": "1317319291711904bf527a53ea9dd3283f602e54",
+      "holder_epoch_revoked": 344,
+      "previous_work_branch": "controller/claim-witness-84fdc871",
+      "authorization": "CURRENT_CHAT_USER_EXPLICIT_EMERGENCY_UNLOCK_2026_11_01",
+      "authorization_verified_as_provider_terminal": false,
+      "old_owner_run_terminal_attested": false,
+      "old_owner_self_release": false,
+      "force_push": false,
       "main_mutated": false,
-      "live_original_github_snapshot_adapter_execution": false,
-      "real_registry_cas": false,
-      "registered_worker_dispatch": false,
-      "service_terminal": "NOT_ATTESTED",
-      "may_merge": false
+      "write_scope": "ops/REPAIR_COORDINATOR.json on twf-repair-coordinator ONLY",
+      "next_claim_must_re_read_current_ref": true
     }
   },
   "last_completed_integration": {
