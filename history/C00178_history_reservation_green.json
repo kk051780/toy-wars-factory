@@ -1,0 +1,37 @@
+{
+  "id": "C00178",
+  "date": "2026-10-31",
+  "kind": "PROTECTED_HISTORY_ID_RESERVATION_FAIL_FIRST_GREEN",
+  "issue": 123,
+  "pr": 157,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "76a5e4ba3ae74dcf45780863dba391414b3f416c",
+    "owner_run_id": "07690ed3-cf00-4193-8dd4-a8cbaa9d3d58",
+    "epoch": 305
+  },
+  "red": {
+    "commit": "8655c03a421ddfb2f12aca8e4e0e8034e41d4cc2",
+    "run_id": 41154606854,
+    "offline": "failure",
+    "compile_hold": "success",
+    "observed_cause": "Four unittest import errors: ModuleNotFoundError system_history_reservation; 837 existing Python tests executed"
+  },
+  "green": {
+    "source_path": "tools/system_history_reservation.py",
+    "local_new_tests": 63,
+    "source_sha256": "6908eb4cd1220826c2ff729ab378d4318d7fdd07a1c93dfe733bb01b0b1730da",
+    "run_id": "PENDING_EXACT_HEAD_GITHUB_ACTIONS",
+    "offline": "PENDING",
+    "compile_hold": "PENDING"
+  },
+  "functions": "PURE_UNTRUSTED_ADVISORY_ONLY",
+  "trusted_bootstrap": "NOT_DONE",
+  "github_coordinator_reservation_cas": "NOT_PERFORMED",
+  "main_merged": false,
+  "provider_attested": false,
+  "roblox_engine": "NOT_RUN",
+  "spending": "NONE",
+  "independent_review": "PENDING"
+}
