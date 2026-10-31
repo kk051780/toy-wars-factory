@@ -44,11 +44,13 @@ def objective_key(value):
     return key
 
 
-def request_fields(value, *, record=False):
+def request_fields(value, *, record=False, project_id=None, repository=None):
     require(type(value) is dict, "invalid work record")
     required = {"idea_id", "kind", "objective"}
     if record:
-        required |= {"work_id", "status"}
+        # Do not silently import records from another game or repository.
+        # Scope is asserted by the caller; this function does not authenticate it.
+        required |= {"work_id", "status", "project_id", "repository"}
     require(set(value) == required, "unknown or missing work record field")
     require(type(value["idea_id"]) is str and IDEA_ID.fullmatch(value["idea_id"]),
             "invalid idea ID")
@@ -56,6 +58,10 @@ def request_fields(value, *, record=False):
             "invalid work kind")
     normalized = objective_key(value["objective"])
     if record:
+        require(type(value["project_id"]) is str and value["project_id"] == project_id,
+                "foreign or missing record project_id")
+        require(type(value["repository"]) is str and value["repository"] == repository,
+                "foreign or missing record repository")
         require(type(value["status"]) is str and value["status"] in STATUSES,
                 "invalid work status")
     return normalized
@@ -72,7 +78,7 @@ def classify(snapshot):
     require(type(snapshot) is dict and set(snapshot) == {
         "schema", "project_id", "repository", "main_sha", "collection_complete",
         "incoming", "records"}, "invalid intake envelope")
-    require(type(snapshot["schema"]) is int and snapshot["schema"] == 1,
+    require(type(snapshot["schema"]) is int and snapshot["schema"] == 2,
             "wrong schema")
     project, repo = snapshot["project_id"], snapshot["repository"]
     require(type(project) is str and PROJECT.fullmatch(project), "invalid project")
@@ -91,7 +97,8 @@ def classify(snapshot):
     work_seen = set()
     exact = None
     for item in snapshot["records"]:
-        key = request_fields(item, record=True)
+        key = request_fields(item, record=True, project_id=project,
+                             repository=repo)
         canonical = calculate_work_id(project, repo, item["kind"], item["objective"])
         require(item["work_id"] == canonical, "record work ID not canonical")
         require(canonical not in work_seen, "duplicate canonical work record")
@@ -117,7 +124,7 @@ def classify(snapshot):
         existing_id = None
         status = None
     return {
-        "schema": 1,
+        "schema": 2,
         "decision": decision,
         "project_id": project,
         "repository": repo,
