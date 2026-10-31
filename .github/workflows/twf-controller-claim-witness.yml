@@ -1,0 +1,57 @@
+name: Toy Wars trusted manual CONTROLLER claim witness (read only)
+on:
+  workflow_dispatch:
+    inputs:
+      claim_sha:
+        description: 'Coordinator claim commit SHA (40 lower hex)'
+        required: true
+        type: string
+      source_branch:
+        description: 'Fresh controller/protected-system-<owner-uuid> branch, not created yet'
+        required: true
+        type: string
+      owner_id:
+        description: 'Unique canonical controller UUID'
+        required: true
+        type: string
+      epoch:
+        description: 'Reserved exact coordinator epoch'
+        required: true
+        type: string
+      main_sha:
+        description: 'Original accepted main SHA (40 lower hex)'
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: twf-controller-claim-witness-${{ inputs.source_branch }}
+  cancel-in-progress: false
+jobs:
+  witness:
+    # Repository main must contain this reviewed workflow and helper beforehand.
+    if: github.repository == 'kk051780/toy-wars-factory' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout exact trusted event main without persisting token
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          ref: ${{ github.sha }}
+      - name: Fail closed on foreign claim, preexisting source branch, or partial API
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TWF_CLAIM_SHA: ${{ inputs.claim_sha }}
+          TWF_SOURCE_BRANCH: ${{ inputs.source_branch }}
+          TWF_OWNER_ID: ${{ inputs.owner_id }}
+          TWF_EPOCH: ${{ inputs.epoch }}
+          TWF_MAIN_SHA: ${{ inputs.main_sha }}
+        run: |
+          set -euo pipefail
+          python3 tools/manual_controller_claim_witness.py
+      - name: Preserve non-authorizing outcome classification
+        if: always()
+        run: |
+          echo 'Controller claim witness was read only.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'This does not approve a reviewer, merge a PR, or permit Roblox API calls.' >> "$GITHUB_STEP_SUMMARY"
