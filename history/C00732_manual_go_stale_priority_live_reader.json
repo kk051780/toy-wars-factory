@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "id": "C00732",
+  "project": "TOY WARS FACTORY",
+  "work_id": "TWF-P0-MANUAL-GO-STALE-WORK-REQUEST-PREFLIGHT-20261031",
+  "date_utc": "2026-10-31",
+  "category": "SYSTEM_READ_ONLY_MANUAL_DISPATCH_PRIORITY_GUARD",
+  "status": "PROTECTED_DRAFT_NOT_INTEGRATED",
+  "issue": 123,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "b3c61af4a12f82149ab8e39ceecda9e3dd16e1d3",
+    "owner_run_id": "a581f8a9-bdbe-45c1-8b2c-52b71ec9e474",
+    "epoch": 329,
+    "work_branch": "controller/manual-go-priority-reader-a581f8a9"
+  },
+  "changed_files": [
+    "tools/system_manual_go_priority_preflight.py",
+    "tools/system_manual_go_priority_github_reader.py",
+    "tests/test_system_manual_go_priority_preflight.py",
+    "tests/test_system_manual_go_priority_github_reader.py",
+    "history/C00732_manual_go_stale_priority_live_reader.json"
+  ],
+  "source_changes": [],
+  "game_source_changed": false,
+  "local_tests": {
+    "count": 47,
+    "status": "PASS",
+    "scope": "OFFLINE_MOCK_ONLY_NOT_PROVIDER_ATTESTATION"
+  },
+  "github_ci": {
+    "status": "PENDING_EXACT_HEAD",
+    "expected_jobs": [
+      "offline",
+      "compile_hold"
+    ]
+  },
+  "history_id_reservation": "PROVISIONAL_MAIN_AND_44_OPEN_PRS_SCANNED_NO_C00732",
+  "scope": {
+    "git_get_collector": true,
+    "untrusted_input_preflight": true,
+    "cron_or_task_schedule_changed": false,
+    "worker_dispatched": false,
+    "owner_dispatch_authorized": false,
+    "live_get_connected": false,
+    "roblox_engine": false,
+    "external_model": false,
+    "cost": false
+  },
+  "authority": {
+    "may_dispatch": false,
+    "may_write": false,
+    "may_start_ai": false,
+    "may_merge": false,
+    "may_publish": false,
+    "may_spend": false
+  },
+  "remaining": "Independent reviewer must attest exact head hosted CI, current main, source paths, 2-pass GitHub callback limits; a trusted host must separately run read-only preflight BEFORE any real manual GO dispatch. Existing registered tasks unchanged."
+}
