@@ -1,0 +1,35 @@
+name: TOY WARS owner-manual read-only schedule audit (NOT an AI developer)
+on:
+  workflow_dispatch:
+    inputs:
+      approval_phrase:
+        description: Explicit owner-only read-only audit acknowledgement
+        required: true
+        type: string
+permissions:
+  actions: read
+  contents: read
+concurrency:
+  group: twf-owner-manual-readonly-cadence
+  cancel-in-progress: false
+jobs:
+  read_only_schedule_audit:
+    if: >-
+      github.repository == 'kk051780/toy-wars-factory' &&
+      github.actor == 'kk051780' &&
+      github.triggering_actor == 'kk051780' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'workflow_dispatch' &&
+      github.run_attempt == 1 &&
+      inputs.approval_phrase == 'I_AUTHORIZE_READ_ONLY_SCHEDULE_AUDIT'
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Read original GitHub scheduled-run history without writes
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PROBE_CONSENT: ${{ inputs.approval_phrase }}
+        run: python3 tools/system_actions_schedule_host.py
