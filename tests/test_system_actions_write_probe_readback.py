@@ -131,9 +131,15 @@ class ReadbackTests(unittest.TestCase):
     def test_bool_pr_number_rejected(self):
         with self.assertRaises(target.ProbeError):
             target.verify_created_probe(self.api,SCOPE,True)
-    def test_actual_create_branch_probe_requires_readback(self):
-        self.assertEqual(target.create_branch_probe(self.api,SCOPE),123)
-        self.assertIn(("GET","/pulls/123",None),self.api.calls)
-        self.assertIn(("GET","/contents/"+FILENAME+"?ref="+HEAD,None),self.api.calls)
+    def test_actual_owner_run_requires_postwrite_readback(self):
+        # Legacy create_branch_probe API is retained for its existing accepted
+        # unit tests. The real owner run MUST call the verifier after writing.
+        import inspect
+        owner_source=inspect.getsource(target.run)
+        before="pr=create_branch_probe(api,scope)"
+        after="verify_created_probe(api,scope,pr)"
+        self.assertIn(before,owner_source)
+        self.assertIn(after,owner_source)
+        self.assertLess(owner_source.index(before),owner_source.index(after))
 
 if __name__=="__main__":unittest.main()

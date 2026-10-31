@@ -8,6 +8,8 @@ loss of process/network can still orphan a lease and must NOT be auto-recovered.
 from __future__ import annotations
 
 import base64
+import binascii
+import hashlib
 from datetime import datetime, timezone
 import json
 import os
@@ -102,7 +104,9 @@ class GitHubAPI:
     def call(self, method: str, suffix: str, body=None):
         if (method not in ("GET", "POST", "PATCH", "PUT") or
                 not isinstance(suffix, str) or
-                not suffix.startswith("/") or ".." in suffix or
+                not suffix.startswith("/") or
+                (".." in suffix and not (method == "GET" and
+                    re.fullmatch(r"/compare/[0-9a-f]{40}\\.\\.\\.[0-9a-f]{40}", suffix))) or
                 not re.fullmatch(r"/[A-Za-z0-9_./?=&-]+", suffix)):
             raise ProbeError("INVALID_API_PATH")
         data = None if body is None else json.dumps(body, separators=(",", ":")).encode("utf8")
@@ -173,6 +177,74 @@ def cas_state(api, oldref, newstate):
     return newsha
 
 
+
+def verify_created_probe(api, scope, number):
+    """Require independent exact Git GET readbacks after a draft-PR write.
+
+    Readbacks bind the new branch commit, one-file diff, exact Git blob
+    and still-open draft PR to the original main. This validates API
+    consistency, NOT provider identity outside the reviewed Actions host.
+    """
+    if type(number) is not int or number < 1:
+        raise ProbeError("PR_RESPONSE_UNVERIFIED")
+    main_sha, branch = scope.get("main"), scope.get("branch")
+    run_id, attempt = scope.get("run_id"), scope.get("attempt")
+    if (not valid_sha(main_sha) or
+            type(run_id) is not int or run_id < 1 or type(attempt) is not int or attempt != 1 or
+            branch != f"controller/gha-write-probe-{run_id}-a{attempt}"):
+        raise ProbeError("PROBE_SCOPE_INVALID")
+    filename = f"ops/probes/gha-write-{run_id}-a{attempt}.json"
+    expected = {"schema":1,"kind":"OWNER_MANUAL_GHA_CAPABILITY_PROBE_ONLY",
+                "source_main_sha":main_sha,"github_run_id":run_id,
+                "run_attempt":attempt,"status":"NO_AI_NO_GAME_CHANGE"}
+    expected_raw = (json.dumps(expected,sort_keys=True)+"\n").encode("utf8")
+
+    if sha_ref(api,"main") != main_sha:
+        raise ProbeError("MAIN_CHANGED_AFTER_WRITE")
+    branch_sha = sha_ref(api,branch)
+    if branch_sha == main_sha:
+        raise ProbeError("BRANCH_NOT_CHANGED")
+    commit = api.call("GET",f"/git/commits/{branch_sha}")
+    parents = commit.get("parents")
+    if (commit.get("sha") != branch_sha or type(parents) is not list or
+            len(parents) != 1 or type(parents[0]) is not dict or parents[0].get("sha") != main_sha):
+        raise ProbeError("BRANCH_PARENT_UNVERIFIED")
+    diff = api.call("GET",f"/compare/{main_sha}...{branch_sha}")
+    changed = diff.get("files")
+    if (diff.get("status") != "ahead" or
+            type(diff.get("ahead_by")) is not int or diff["ahead_by"] != 1 or
+            type(diff.get("behind_by")) is not int or diff["behind_by"] != 0 or
+            type(diff.get("total_commits")) is not int or diff["total_commits"] != 1 or
+            type(changed) is not list or len(changed) != 1 or
+            type(changed[0]) is not dict or
+            changed[0].get("filename") != filename or changed[0].get("status") != "added"):
+        raise ProbeError("BRANCH_DIFF_UNVERIFIED")
+    file = api.call("GET",f"/contents/{filename}?ref={branch_sha}")
+    if (file.get("type") != "file" or file.get("encoding") != "base64" or
+            type(file.get("size")) is not int or file["size"] != len(expected_raw)):
+        raise ProbeError("PROBE_FILE_UNVERIFIED")
+    try:
+        raw = base64.b64decode("".join(file["content"].split()),validate=True)
+    except (TypeError,KeyError,ValueError,binascii.Error,AttributeError):
+        raise ProbeError("PROBE_FILE_UNVERIFIED") from None
+    git_blob = hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\\0"+raw).hexdigest()
+    if raw != expected_raw or file.get("sha") != git_blob:
+        raise ProbeError("PROBE_FILE_UNVERIFIED")
+    pr = api.call("GET",f"/pulls/{number}")
+    h,b = pr.get("head"),pr.get("base")
+    if (type(pr.get("number")) is not int or pr["number"] != number or
+            pr.get("state") != "open" or pr.get("draft") is not True or
+            type(h) is not dict or type(b) is not dict or
+            h.get("ref") != branch or h.get("sha") != branch_sha or
+            type(h.get("repo")) is not dict or h["repo"].get("full_name") != REPO or
+            b.get("ref") != "main" or b.get("sha") != main_sha or
+            type(b.get("repo")) is not dict or b["repo"].get("full_name") != REPO):
+        raise ProbeError("DRAFT_PR_READBACK_UNVERIFIED")
+    if sha_ref(api,"main") != main_sha or sha_ref(api,branch) != branch_sha:
+        raise ProbeError("REF_MOVED_DURING_READBACK")
+    return number
+
+
 def create_branch_probe(api, scope):
     """Only one immutable non-sensitive file on an isolated branch, NEVER main."""
     if sha_ref(api, "main") != scope["main"]:
@@ -215,6 +287,7 @@ def run(api, env):
         if before!=claim or not owns(live,"CONTROLLER",scope["owner"],epoch,now()):
             raise ProbeError("LEASE_LOST")
         pr=create_branch_probe(api,scope)
+        verify_created_probe(api,scope,pr)
     except ProbeError as exc:
         failure=str(exc)
     finally:

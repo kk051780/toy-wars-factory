@@ -1,0 +1,41 @@
+{
+  "id": "C00904",
+  "date": "2026-10-31",
+  "kind": "PR163_POSTWRITE_EXACT_READBACK_GREEN_SECURITY_FIX",
+  "issue": 57,
+  "pr": 163,
+  "repository": "kk051780/toy-wars-factory",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 318,
+    "owner_run_id": "aa4781f3-e8b3-4e97-b321-6bb93787003e",
+    "claim_commit": "dce0518be01e2305fd775654f66c7ecb2e4a7612"
+  },
+  "red": {
+    "head": "a7095caf96eaa21c9b509c0d3dd29892433d060c",
+    "github_run_id": 41162387257,
+    "offline_job_id": 124422572589,
+    "python_tests": 888,
+    "expected_new_test_failures": 20,
+    "compile_hold": "success",
+    "offline": "failure"
+  },
+  "green": {
+    "scope": "The existing run() must verify exact PR, branch, one-file compare, Git blob SHA-1 and unchanged main after the POST/PUT writes.",
+    "accepted_test_preservation": "Older create_branch_probe standalone API retained; RED test authoring updated only integration target to run(), not baseline accepted tests.",
+    "modified_files": [
+      "tools/system_actions_write_probe.py",
+      "tests/test_system_actions_write_probe_readback.py"
+    ],
+    "github_ci": "PENDING"
+  },
+  "restrictions": {
+    "no_write_workflow_change": true,
+    "permission_change": false,
+    "provider_inference": "NONE",
+    "main_merged": false,
+    "roblox_publish": "HOLD",
+    "independent_review": "PENDING"
+  }
+}
