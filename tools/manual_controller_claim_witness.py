@@ -282,6 +282,10 @@ def validate_host_context(env):
          env.get("GITHUB_REPOSITORY") == REPO and
          env.get("GITHUB_REPOSITORY_ID") == REPO_ID and
          env.get("GITHUB_WORKFLOW_REF") == WORKFLOW_REF and
+         env.get("GITHUB_ACTIONS") == "true" and
+         env.get("GITHUB_JOB") == "witness" and
+         sha(env.get("GITHUB_WORKFLOW_SHA")) and
+         env.get("GITHUB_WORKFLOW_SHA") == env.get("GITHUB_SHA") and
          env.get("GITHUB_EVENT_NAME") == "workflow_dispatch" and
          env.get("GITHUB_REF") == "refs/heads/main" and
          sha(env.get("GITHUB_SHA")) and
@@ -291,10 +295,51 @@ def validate_host_context(env):
     return True
 
 
+def bind_actions_run_observation(observation, env):
+    """Attach *untrusted* runner labels to a successful candidate observation.
+
+    This is a REVIEWER JOIN KEY, not proof of the label's origin. The
+    independent reviewer MUST fetch the real GitHub workflow run and job by
+    ID from the original provider, cross-check exact main/job/attempt/head,
+    and treat the printed log itself as untrusted without that fetch.
+    """
+    validate_host_context(env)
+    need(type(observation) is dict and
+         observation.get('status') == 'CLAIM_OBSERVED_BRANCH_ABSENT_CANDIDATE_ONLY' and
+         sha(observation.get('claim_sha')) and
+         observation.get('main_sha') == env['GITHUB_SHA'] and
+         type(observation.get('epoch')) is int and observation['epoch'] > 0 and
+         type(observation.get('source_branch')) is str and
+         SRC.fullmatch(observation['source_branch']) is not None and
+         observation.get('provider_authenticated') is False and
+         observation.get('independent_review_authorized') is False and
+         observation.get('merge_authorized') is False and
+         observation.get('roblox_post_authorized') is False,
+         'UNTRUSTED_WITNESS_OBSERVATION')
+    result = dict(observation)
+    result['reported_actions_origin_untrusted'] = {
+        'repository': REPO, 'repository_id': REPO_ID,
+        'workflow_ref': WORKFLOW_REF,
+        'workflow_sha': env['GITHUB_WORKFLOW_SHA'],
+        'job_id': 'witness',
+        'run_id': int(env['GITHUB_RUN_ID']),
+        'run_attempt': 1,
+        'source_main_sha': env['GITHUB_SHA'],
+        'claim_sha': observation['claim_sha'],
+        'source_branch': observation['source_branch'],
+        'epoch': observation['epoch'],
+        'provider_authenticated': False,
+        'job_log_attested': False,
+        'may_review_or_merge': False,
+        'may_write_or_publish': False,
+    }
+    return result
+
+
 def from_actions_env():
     e = os.environ
     validate_host_context(dict(e))
-    return first_party_witness(
+    return bind_actions_run_observation(first_party_witness(
         ProviderReadOnly(e.get("GH_TOKEN")),
         claim_sha=e.get("TWF_CLAIM_SHA"),
         owner_id=e.get("TWF_OWNER_ID"),
@@ -304,7 +349,7 @@ def from_actions_env():
         event_name=e.get("GITHUB_EVENT_NAME"),
         event_ref=e.get("GITHUB_REF"),
         event_sha=e.get("GITHUB_SHA"),
-    )
+    ), dict(e))
 
 
 if __name__ == "__main__":

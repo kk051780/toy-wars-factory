@@ -7,7 +7,9 @@ sys.path.insert(0,str(ROOT/'tools'))
 import manual_controller_claim_witness as m
 
 BASE={"GITHUB_REPOSITORY":m.REPO,"GITHUB_REPOSITORY_ID":m.REPO_ID,
-      "GITHUB_WORKFLOW_REF":m.WORKFLOW_REF,"GITHUB_EVENT_NAME":"workflow_dispatch",
+      "GITHUB_WORKFLOW_REF":m.WORKFLOW_REF,"GITHUB_WORKFLOW_SHA":"a"*40,
+      "GITHUB_ACTIONS":"true","GITHUB_JOB":"witness",
+      "GITHUB_EVENT_NAME":"workflow_dispatch",
       "GITHUB_REF":"refs/heads/main","GITHUB_SHA":"a"*40,
       "GITHUB_RUN_ID":"41199999999","GITHUB_RUN_ATTEMPT":"1"}
 
