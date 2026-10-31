@@ -1,0 +1,44 @@
+{
+  "id": "C00902",
+  "date": "2026-10-31",
+  "kind": "PR163_CROSS_ORIGIN_BEARER_REDIRECT_GREEN_SECURITY_FIX",
+  "issue": 57,
+  "pr": 163,
+  "role": "CONTROLLER",
+  "repository": "kk051780/toy-wars-factory",
+  "work_branch": "controller/actions-write-pilot-8df31af2",
+  "source_head_before": "45af4daca55e40d50ac11afd6a3a2c7e46d3b229",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "d415afea1e52f27dc98a7f31c6fca93f99aa73ca",
+    "owner_run_id": "c187e1e3-3b71-4c79-b098-8e5a377be4a1",
+    "epoch": 316
+  },
+  "red": {
+    "head": "45af4daca55e40d50ac11afd6a3a2c7e46d3b229",
+    "run_id": 41161366005,
+    "offline_job_id": 124419422817,
+    "python_tests": 869,
+    "new_tests": 5,
+    "expected_new_failures": 4,
+    "offline": "failure",
+    "compile_hold": "success",
+    "root_cause": "Default urllib HTTPRedirectHandler redirects bearer authorization cross-origin; baseline lacked deny redirect handler."
+  },
+  "green": {
+    "source_change": "Add explicit rejecting HTTPRedirectHandler to default urllib opener; independent test transport unaffected.",
+    "tests": "tests/test_system_actions_write_probe_redirect.py",
+    "hosted_exact_head_ci": "PENDING"
+  },
+  "guardrails": {
+    "no_added_workflow_permissions": true,
+    "workflow_unchanged": true,
+    "schedule_unchanged": true,
+    "main_merged": false,
+    "external_inference": "NONE",
+    "spending": "NONE",
+    "roblox_publish": "HOLD",
+    "independent_review": "PENDING"
+  }
+}

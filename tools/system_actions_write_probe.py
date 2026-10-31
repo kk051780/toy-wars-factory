@@ -76,13 +76,28 @@ def checked_context(env: dict, live_run: dict, live_main: str):
             "run_id":int(run_id), "attempt":int(attempt)}
 
 
+class _RejectRedirects(request.HTTPRedirectHandler):
+    """Keep Authorization on the original GitHub API origin only.
+
+    urllib's normal HTTPRedirectHandler copies Authorization on redirect,
+    including cross-origin 301/302/303/307/308. The privileged workflow
+    never needs redirects for its fixed REST API paths.
+    """
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise ProbeError("GITHUB_REDIRECT_DENIED")
+
+
 class GitHubAPI:
     """Fixed-host REST transport, bounded source and sanitized error codes."""
     def __init__(self, token: str, transport: Callable | None = None):
         if not token:
             raise ProbeError("TOKEN_ABSENT")
         self._token = token
-        self._transport = transport or request.urlopen
+        # The default urllib opener forwards Authorization on redirects.
+        # No redirects are permitted for this bearer-bearing GitHub API client.
+        # Dependency-injected transports are for offline testing only.
+        self._transport = (transport if transport is not None
+                           else request.build_opener(_RejectRedirects()).open)
 
     def call(self, method: str, suffix: str, body=None):
         if (method not in ("GET", "POST", "PATCH", "PUT") or
