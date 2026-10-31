@@ -1,0 +1,41 @@
+{
+  "id": "C05203",
+  "date": "2026-11-01",
+  "kind": "MANUAL_CONTROLLER_BOUNDED_GITHUB_ORIGINAL_PR_COLLECTOR",
+  "repository": "kk051780/toy-wars-factory",
+  "task_id": null,
+  "run_id": "8c19e6a3-799a-4ac8-8bf6-e1f8c301bfc2",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "2704d3d7ad1ca65aa8a12d879df2d3a294470d55",
+    "owner_run_id": "8c19e6a3-799a-4ac8-8bf6-e1f8c301bfc2",
+    "epoch": 348,
+    "work_branch": "controller/parallel-pr-path-audit-v3-5828688a"
+  },
+  "parent_pr": 168,
+  "previous_head": "814d28127a45158bd7c15c72725ae23505e737b0",
+  "new_files": [
+    "tools/system_parallel_pr_github_collector.py",
+    "tests/test_system_parallel_pr_github_collector.py",
+    "history/C05203_parallel_pr_github_collector.json"
+  ],
+  "tested_local": "24/24 PASS with contract-compatible local stub; not authenticated original GitHub delivery",
+  "original_github_ci": "PENDING_EXACT_HEAD",
+  "original_https_get_execution": "NOT_ATTESTED",
+  "read_only": true,
+  "no_redirect": true,
+  "allowlist_fixed": true,
+  "max_open_prs": 99,
+  "max_changed_files_per_pr": 99,
+  "rejects_main_and_pr_head_drift": true,
+  "provider_authenticated": false,
+  "may_write": false,
+  "may_merge": false,
+  "real_parallel_runtime": "NOT_ATTESTED",
+  "roblox_engine": "NOT_TESTED",
+  "publish_authorized": false,
+  "independent_security_review": "PENDING",
+  "original_ci_head_required": true,
+  "main_mutated": false
+}

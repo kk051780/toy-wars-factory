@@ -1,0 +1,38 @@
+{
+  "id": "C05204",
+  "date": "2026-11-01",
+  "kind": "CONTROLLER_STACKED_PARENT_BASE_SHA_TOCTOU_FAIL_CLOSED",
+  "repository": "kk051780/toy-wars-factory",
+  "task_id": null,
+  "run_id": "0cee76ed-d225-4d88-8203-09741ae2e517",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "c723ae0ca53cc2a29c355fb10681ae57a13f62f9",
+    "owner_run_id": "0cee76ed-d225-4d88-8203-09741ae2e517",
+    "epoch": 350,
+    "work_branch": "controller/parallel-pr-path-audit-v3-5828688a"
+  },
+  "parent_pr": 168,
+  "previous_head": "c8026fd520fb775a25d3bc15daba264d54a7d8fc",
+  "source_and_tests_commit": "83346e6a1a0cb251cc512ddad0685f4789008e26",
+  "source": "tools/system_parallel_pr_path_audit.py",
+  "test_files": [
+    "tests/test_system_parallel_pr_path_audit.py",
+    "tests/test_system_parallel_pr_github_collector.py"
+  ],
+  "purpose": "Fail closed on stacked PR base.sha drift despite unchanged child head and base ref, invalid/missing base.sha, and main-target base.sha diverging from pinned main snapshot.",
+  "new_python_test_cases": 10,
+  "prior_hosted_python_tests": 900,
+  "local_patch_safety_checks": 13,
+  "latest_exact_head_github_ci": "PENDING",
+  "provider_authenticated": false,
+  "original_github_live_module_execution": "NOT_ATTESTED",
+  "independent_review": "PENDING",
+  "read_only_advisory": true,
+  "write_authorized_by_advisory": false,
+  "merge_authorized": false,
+  "main_mutated": false,
+  "roblox_engine": "NOT_TESTED",
+  "release_holds": "PRESERVED"
+}

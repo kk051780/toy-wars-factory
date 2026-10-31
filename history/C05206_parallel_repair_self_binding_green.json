@@ -1,0 +1,33 @@
+{
+  "id": "C05206",
+  "date": "2026-11-01",
+  "kind": "PROTECTED_PR168_REPAIR_SELF_IDENTITY_FAIL_CLOSED_GREEN",
+  "repository": "kk051780/toy-wars-factory",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "parent_pr": 168,
+  "red_head": "def9f4d9c9329d9c6e7ac3bbfc208de729a35b7d",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "0e58a3f4eef2dd59c2f81bbfa77c5180a01053b3",
+    "owner_run_id": "0fca7e4f-a1cd-4e9b-b394-0f0f4ddca168",
+    "epoch": 354,
+    "work_branch": "controller/parallel-pr-path-audit-v3-5828688a"
+  },
+  "changed_files": [
+    "tools/system_parallel_pr_path_audit.py",
+    "tools/system_parallel_pr_github_collector.py",
+    "history/C05206_parallel_repair_self_binding_green.json"
+  ],
+  "test_file_paths": [
+    "tests/test_system_parallel_pr_path_audit.py",
+    "tests/test_system_parallel_pr_github_collector.py"
+  ],
+  "new_tests": 16,
+  "source_changes": [],
+  "scope": "Only a verified same-repo existing PR number/ref/head pair is omitted from advisory collisions, while all other PRs and candidate paths are validated. Caller input does not grant writes.",
+  "independent_review": "PENDING",
+  "engine_verified": false,
+  "merge_authorized": false,
+  "release_holds": "PRESERVED",
+  "github_ci": "PENDING_EXACT_HEAD"
+}
