@@ -130,9 +130,9 @@ def state_at(api, refsha):
     try:
         decoded = base64.b64decode("".join(row["content"].split()), validate=True)
         obj = json.loads(decoded)
-        validate(obj)
         if not isinstance(obj, dict):
             raise ValueError()
+        validate(obj)
     except (ValueError, TypeError, KeyError, UnicodeDecodeError):
         raise ProbeError("STATE_INVALID") from None
     return obj
