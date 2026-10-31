@@ -1,0 +1,28 @@
+{
+  "id": "C09034",
+  "date": "2026-10-31",
+  "kind": "PR163_PRIVILEGED_ACTION_PIN_GREEN",
+  "pr": 163,
+  "issue": 57,
+  "source_red_head": "86551c901bd5c8c2422e7e7bfe264ec1bc3786b1",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "epoch": 342,
+    "owner_run_id": "205f76a2-1541-4661-86e7-36aecc542d8a",
+    "claim_commit": "d83ffcc2360f0c4eb08b95ba2ca99f3d5c53c423",
+    "work_branch": "controller/actions-write-pilot-8df31af2"
+  },
+  "change": "Pin checkout v4.2.2 to immutable exact action commit SHA",
+  "workflow": ".github/workflows/twf-actions-write-capability-probe.yml",
+  "new_regressions": 2,
+  "hosting": "Original GitHub CI exact-green-head pending",
+  "not_run": [
+    "no workflow_dispatch capability pilot",
+    "no automations write",
+    "no engine",
+    "no publish",
+    "no Gemini inference"
+  ],
+  "independent_review": "PENDING",
+  "main_edited": false
+}
