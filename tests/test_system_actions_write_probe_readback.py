@@ -131,6 +131,25 @@ class ReadbackTests(unittest.TestCase):
     def test_bool_pr_number_rejected(self):
         with self.assertRaises(target.ProbeError):
             target.verify_created_probe(self.api,SCOPE,True)
+    def test_transport_admits_only_exact_sha_compare_readback(self):
+        class Response:
+            def __enter__(self):return self
+            def __exit__(self,*args):return None
+            def read(self,n):return b'{"ok":true}'
+        received=[]
+        def fake(req,timeout):
+            received.append(req)
+            return Response()
+        api=target.GitHubAPI("sentinel",fake)
+        self.assertEqual(api.call("GET","/compare/"+MAIN+"..."+HEAD),{"ok":True})
+        self.assertEqual(len(received),1)
+        self.assertEqual(received[0].get_header("Authorization"),"Bearer sentinel")
+        for bad in ("/git/../refs","/compare/"+MAIN+"...."+HEAD,
+                    "/compare/"+MAIN+"..."+HEAD+"/../../actions",
+                    "/compare/"+MAIN+"...evil"):
+            with self.subTest(bad=bad),self.assertRaises(target.ProbeError):
+                api.call("GET",bad)
+
     def test_actual_owner_run_requires_postwrite_readback(self):
         # Legacy create_branch_probe API is retained for its existing accepted
         # unit tests. The real owner run MUST call the verifier after writing.

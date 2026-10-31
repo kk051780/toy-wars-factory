@@ -1,0 +1,40 @@
+{
+  "id": "C00905",
+  "date": "2026-10-31",
+  "kind": "PR163_POSTWRITE_READBACK_ESCAPE_CORRECTION",
+  "issue": 57,
+  "pr": 163,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 318,
+    "owner_run_id": "aa4781f3-e8b3-4e97-b321-6bb93787003e",
+    "claim_commit": "dce0518be01e2305fd775654f66c7ecb2e4a7612"
+  },
+  "red": {
+    "original_missing_feature_head": "a7095caf96eaa21c9b509c0d3dd29892433d060c",
+    "missing_feature_run": 41162387257,
+    "python_tests": 888,
+    "offline": "failure",
+    "expected_errors": 20
+  },
+  "first_green_attempt": {
+    "head": "5939b687fe1a7595e1f585657d9f738c72f44a57",
+    "run_id": 41162571994,
+    "offline": "failure",
+    "python_tests": 888,
+    "one_error": "PROBE_FILE_UNVERIFIED due to double-escaped Python NUL; URL compare regex also overescaped, not covered by initial fake GET adapter"
+  },
+  "correction": {
+    "python_git_blob_separator": "one actual NUL byte",
+    "strict_compare_uri_pattern": "escaped dot literals, not double-escaped backslash",
+    "added_transport_test": 1,
+    "changed_test_count": 20,
+    "expected_ci": "PENDING"
+  },
+  "permissions": "UNCHANGED",
+  "workflow": "UNCHANGED",
+  "main_merged": false,
+  "independent_review": "PENDING",
+  "ai_inference": "NONE",
+  "spending": "NONE"
+}

@@ -106,7 +106,7 @@ class GitHubAPI:
                 not isinstance(suffix, str) or
                 not suffix.startswith("/") or
                 (".." in suffix and not (method == "GET" and
-                    re.fullmatch(r"/compare/[0-9a-f]{40}\\.\\.\\.[0-9a-f]{40}", suffix))) or
+                    re.fullmatch(r"/compare/[0-9a-f]{40}\.\.\.[0-9a-f]{40}", suffix))) or
                 not re.fullmatch(r"/[A-Za-z0-9_./?=&-]+", suffix)):
             raise ProbeError("INVALID_API_PATH")
         data = None if body is None else json.dumps(body, separators=(",", ":")).encode("utf8")
@@ -227,7 +227,7 @@ def verify_created_probe(api, scope, number):
         raw = base64.b64decode("".join(file["content"].split()),validate=True)
     except (TypeError,KeyError,ValueError,binascii.Error,AttributeError):
         raise ProbeError("PROBE_FILE_UNVERIFIED") from None
-    git_blob = hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\\0"+raw).hexdigest()
+    git_blob = hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
     if raw != expected_raw or file.get("sha") != git_blob:
         raise ProbeError("PROBE_FILE_UNVERIFIED")
     pr = api.call("GET",f"/pulls/{number}")
