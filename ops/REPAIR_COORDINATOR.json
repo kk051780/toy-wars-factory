@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 354,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "0fca7e4f-a1cd-4e9b-b394-0f0f4ddca168",
-    "task_id": null,
-    "epoch": 354,
-    "acquired_at": "2026-10-31T22:52:54.556Z",
-    "expires_at": "2026-10-31T23:17:54.556Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/parallel-pr-path-audit-v3-5828688a",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,19 +2893,30 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "736a7894-29c8-4b0f-8cbc-4b5f7aabce77",
-    "epoch": 353,
-    "released_at": "2026-10-31T22:19:04.885Z",
+    "owner_id": "0fca7e4f-a1cd-4e9b-b394-0f0f4ddca168",
+    "epoch": 354,
+    "released_at": "2026-10-31T22:56:17.795Z",
     "release_receipt": {
-      "reason": "ISSUE57_ORIGINAL_REGISTERED_WORKER_NO_CLAIM_PROOF",
-      "claim_commit": "10a87859a900d461423487ad0e8a9b9caa26aa24",
-      "comment_id": 6549888606,
-      "issue": 57,
-      "registered_worker_manual_run_id": "106c2918-125c-8325-a564-3aae96fc9d89",
-      "registered_worker_scheduled_run_id": "5996437b-f50c-8327-b468-cae779ccb245",
-      "code_files_changed": 0,
+      "reason": "ISSUE123_PR168_REPAIR_SELF_COLLISION_TEST_FIRST_RED_GREEN_HANDOFF",
+      "claim_commit": "0e58a3f4eef2dd59c2f81bbfa77c5180a01053b3",
+      "work_branch": "controller/parallel-pr-path-audit-v3-5828688a",
+      "pr": 168,
+      "pr_head": "67f8977e6375eb1a3e789255d382b33847686a8e",
+      "pr_comment_id": 6550255541,
+      "red_commit": "def9f4d9c9329d9c6e7ac3bbfc208de729a35b7d",
+      "red_run": 41250215115,
+      "green_run": 41250271872,
+      "green_tests": 926,
+      "green_offline": "success",
+      "compile_hold": "success",
+      "new_tests": 16,
+      "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_mutated": false,
-      "new_pr_created": false
+      "independent_review": "PENDING",
+      "merge_authorized": false,
+      "roblox_engine": "NOT_TESTED",
+      "source_files_changed": 2,
+      "changed_files": 6
     }
   },
   "last_completed_integration": {
