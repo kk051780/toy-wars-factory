@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 348,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "8c19e6a3-799a-4ac8-8bf6-e1f8c301bfc2",
-    "task_id": null,
-    "epoch": 348,
-    "acquired_at": "2026-10-31T19:45:35.875Z",
-    "expires_at": "2026-10-31T20:07:35.875Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/parallel-pr-path-audit-v3-5828688a",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,18 +2893,34 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "93a183a7-d348-4253-8976-3a2086ea2395",
-    "epoch": 347,
-    "released_at": "2026-10-31T19:43:37.853Z",
+    "owner_id": "8c19e6a3-799a-4ac8-8bf6-e1f8c301bfc2",
+    "epoch": 348,
+    "released_at": "2026-10-31T19:49:24.794Z",
     "release_receipt": {
-      "reason": "PR145_SOURCE_WRITE_BLOCKED_BY_HOST_SAFETY_NO_SOURCE_REF_CHANGE",
-      "claim_commit": "8b67e98823059725f939dba3af294cb1a7c6fd1b",
-      "pr145_original_head": "ef3c66b62c1415ee43425ca151f8c4ebc85ceba4",
-      "source_changes_applied": false,
-      "main_changed": false,
-      "pr148_modified": false,
+      "reason": "PR168_ORIGINAL_GITHUB_PR_GET_COLLECTOR_24_ADDED_TESTS_EXACT_HEAD_HOSTED_900_PASS",
+      "claim_commit": "2704d3d7ad1ca65aa8a12d879df2d3a294470d55",
+      "work_branch": "controller/parallel-pr-path-audit-v3-5828688a",
+      "pr": 168,
+      "pr_head": "c8026fd520fb775a25d3bc15daba264d54a7d8fc",
+      "source_commit": "683eac071ab1ea03294b22f0a114d5e3ea504c77",
+      "tests_commit": "c2e37672af93d169eeec90d2a545778c985e2057",
+      "ledger_commit": "c8026fd520fb775a25d3bc15daba264d54a7d8fc",
+      "history_id": "C05203",
+      "new_python_cases": 24,
+      "github_actions_run": 41235882190,
+      "run_attempt": 1,
+      "exact_head": "c8026fd520fb775a25d3bc15daba264d54a7d8fc",
+      "offline": "success",
+      "offline_python_tests": 900,
+      "compile_hold": "success",
       "independent_review": "PENDING",
-      "engine_test": false
+      "provider_original_authenticated_execution": "NOT_ATTESTED",
+      "source_authenticated": false,
+      "may_merge": false,
+      "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "main_mutated": false,
+      "roblox_engine": "NOT_TESTED",
+      "publish_authorized": false
     }
   },
   "last_completed_integration": {
