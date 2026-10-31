@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 333,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "27eaf524-0f4d-4f8d-ae06-6971d88b7f14",
-    "task_id": null,
-    "work_branch": "controller/claim-witness-84fdc871",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "epoch": 333,
-    "acquired_at": "2026-10-31T07:16:49.780Z",
-    "expires_at": "2026-10-31T07:36:49.780Z"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2902,18 +2892,32 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "DISPATCH",
-    "owner_id": "db5ec465-3deb-45a6-a8c1-0dc8175cff75",
-    "epoch": 332,
-    "released_at": "2026-10-31T07:13:51.674Z",
+    "kind": "CONTROLLER",
+    "owner_id": "27eaf524-0f4d-4f8d-ae06-6971d88b7f14",
+    "epoch": 333,
+    "released_at": "2026-10-31T07:28:02.950Z",
     "release_receipt": {
-      "reason": "REGISTERED_WORKER_FINISHED_WAIT_IDENTITY_NO_ADOPTION",
-      "observed_worker_run_id": "e2ea0c16-7ab0-832a-9fde-c41f9b8c7d5b",
-      "worker_status": "completed",
-      "worker_completed_at": "2026-10-31T07:13:21.305361Z",
-      "worker_chat_ref_post_completion": "6ae4c147-ede8-83e8-8cc4-57e49f5f77bb",
-      "real_source_edit": false,
-      "run_request_accepted": true
+      "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
+      "repository": "kk051780/toy-wars-factory",
+      "source_pr": 166,
+      "source_head": "76746f77ea96ae02efc34cbfe35e8158f34980c0",
+      "source_branch": "controller/claim-witness-84fdc871",
+      "claim_commit": "f6ac4add1453bba66d084550b1b2b4f32a5bcfe9",
+      "red_head": "432241b9b7db97c7fa89cfa1b60418e2c8669258",
+      "red_run_id": 41180140044,
+      "red_offline": "failure",
+      "red_tests": 938,
+      "green_run_id": 41180627724,
+      "green_tests": 938,
+      "green_offline": "success",
+      "green_compile_hold": "success",
+      "independent_review": "PENDING",
+      "main_merged": false,
+      "live_claim_witness_run": false,
+      "roblox_engine": "NOT_RUN",
+      "no_publish": true,
+      "external_inference": "NONE",
+      "spending": "NONE"
     }
   },
   "last_completed_integration": {
