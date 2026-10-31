@@ -425,3 +425,85 @@ class PrefixTreeCollisionRegressionTests(unittest.TestCase):
         self.assertEqual(x['decision'], 'CLEAR_ADVISORY')
         self.assertFalse(x['grant_write_authority'])
         self.assertFalse(x['source_authenticated'])
+
+
+class RepairSelfPrAdvisoryTests(unittest.TestCase):
+    """Self exclusion is available only after exact source-ref SHA binding."""
+    def _repair(self):
+        d = rest_fixture()
+        d['candidate'] = {'branch':'controller/owned', 'paths':['tools/new_audit.py'],
+                          'repair_pr':147, 'repair_head_sha':OTHER}
+        for rows in (d['prs_before'], d['prs_after']):
+            rows[0]['head']['ref']='controller/owned'
+        d['changed_files_by_pr']['147']=[{'filename':'tools/new_audit.py','status':'modified'}]
+        return d
+
+    def test_existing_pr_self_collision_not_reported_when_exactly_bound(self):
+        d = self._repair()
+        result = audit(from_rest_observations(**d))
+        self.assertEqual(result['decision'],'CLEAR_ADVISORY')
+        self.assertEqual(result['self_pr_excluded'],147)
+        self.assertFalse(result['grant_write_authority'])
+
+    def test_other_open_pr_same_path_still_blocks(self):
+        d = self._repair()
+        competing = json.loads(json.dumps(d['prs_before'][0]))
+        competing['number']=148
+        competing['head']['ref']='controller/other'
+        competing['head']['sha']='c'*40
+        for rows in (d['prs_before'],d['prs_after']):
+            rows.append(json.loads(json.dumps(competing)))
+        d['changed_files_by_pr']['148']=[{'filename':'tools/new_audit.py','status':'modified'}]
+        report = audit(from_rest_observations(**d))
+        self.assertEqual(report['decision'],'BLOCK_OVERLAP')
+        self.assertEqual([x['pr'] for x in report['collisions']],[148])
+
+    def test_wrong_ref_same_number_does_not_exempt(self):
+        d=self._repair()
+        for rows in (d['prs_before'],d['prs_after']):
+            rows[0]['head']['ref']='controller/forged'
+        with self.assertRaises(ValueError):
+            from_rest_observations(**d)
+
+    def test_wrong_head_sha_cannot_exempt(self):
+        d=self._repair()
+        d['candidate']['repair_head_sha']='c'*40
+        with self.assertRaises(ValueError):
+            from_rest_observations(**d)
+
+    def test_repair_pr_absent_refuses_advisory(self):
+        d=self._repair()
+        d['candidate']['repair_pr']=148
+        with self.assertRaises(ValueError):
+            from_rest_observations(**d)
+
+    def test_changed_head_ref_between_observations_rejected(self):
+        d=self._repair()
+        d['prs_after'][0]['head']['ref']='controller/other'
+        with self.assertRaises(ValueError):
+            from_rest_observations(**d)
+
+    def test_changed_head_sha_between_observations_rejected(self):
+        d=self._repair()
+        d['prs_after'][0]['head']['sha']='d'*40
+        with self.assertRaises(ValueError):
+            from_rest_observations(**d)
+
+    def test_no_repair_metadata_preserves_current_collision(self):
+        d=self._repair()
+        d['candidate']={'branch':'controller/owned','paths':['tools/new_audit.py']}
+        report=audit(from_rest_observations(**d))
+        self.assertEqual(report['decision'],'BLOCK_OVERLAP')
+        self.assertEqual(report['collisions'][0]['pr'],147)
+
+    def test_malformed_bool_repair_number_rejected(self):
+        d=self._repair()
+        d['candidate']['repair_pr']=True
+        with self.assertRaises(ValueError):
+            from_rest_observations(**d)
+
+    def test_self_payload_paths_still_validated(self):
+        d=self._repair()
+        d['changed_files_by_pr']['147']=[{'filename':'tools/../escape.py','status':'added'}]
+        with self.assertRaises(ValueError):
+            from_rest_observations(**d)

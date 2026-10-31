@@ -1,0 +1,28 @@
+{
+  "id": "C05205",
+  "date": "2026-11-01",
+  "kind": "PROTECTED_PR168_REPAIR_SELF_IDENTITY_TEST_FIRST_RED",
+  "repository": "kk051780/toy-wars-factory",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "parent_pr": 168,
+  "prior_pr_head": "9ce8ff2b14000928c11abf7ccbc56f34f948f33c",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "0e58a3f4eef2dd59c2f81bbfa77c5180a01053b3",
+    "owner_run_id": "0fca7e4f-a1cd-4e9b-b394-0f0f4ddca168",
+    "epoch": 354,
+    "work_branch": "controller/parallel-pr-path-audit-v3-5828688a"
+  },
+  "changed_files": [
+    "tests/test_system_parallel_pr_path_audit.py",
+    "tests/test_system_parallel_pr_github_collector.py",
+    "history/C05205_parallel_repair_self_binding_red.json"
+  ],
+  "new_tests": 16,
+  "source_changes": [],
+  "test_first_red_expected": true,
+  "release_holds": "PRESERVED",
+  "engine_verified": false,
+  "merge_authorized": false,
+  "description": "Exercise exact self-PR source ref and SHA binding, rejecting spoof/stale while preserving other-PR overlap. No write authority from advisory."
+}

@@ -262,3 +262,63 @@ class PrCollectorTests(unittest.TestCase):
 
 if __name__=='__main__':
     unittest.main()
+
+
+class RepairExistingPrCollectorTests(unittest.TestCase):
+    def _repair(self):
+        f=fixture()
+        f[OPEN_PRS][0]['head']['ref']='controller/owned'
+        f[API+'/pulls/147/files?per_page=100&page=1']=[
+            {'filename':'tools/existing.py','status':'modified'}]
+        c={'branch':'controller/owned','paths':['tools/existing.py'],
+           'repair_pr':147,'repair_head_sha':HEAD}
+        return f,c
+
+    def test_bound_existing_pr_self_is_clear_non_authorizing(self):
+        f,c=self._repair()
+        report=collect(FakeOriginalGET(f),c)
+        self.assertEqual(report['decision'],'CLEAR_ADVISORY')
+        self.assertEqual(report['self_pr_excluded'],147)
+        self.assertFalse(report['may_write'])
+
+    def test_foreign_candidate_head_ref_refused(self):
+        f,c=self._repair()
+        f[OPEN_PRS][0]['head']['ref']='controller/foreign'
+        with self.assertRaisesRegex(CollectorHold,'ORIGINAL_SNAPSHOT_MISMATCH'):
+            collect(FakeOriginalGET(f),c)
+
+    def test_foreign_candidate_sha_refused(self):
+        f,c=self._repair()
+        c['repair_head_sha']='c'*40
+        with self.assertRaisesRegex(CollectorHold,'ORIGINAL_SNAPSHOT_MISMATCH'):
+            collect(FakeOriginalGET(f),c)
+
+    def test_other_pr_still_blocked_when_self_is_exempt(self):
+        f,c=self._repair()
+        row=pr_row(n=148)
+        row['head']['ref']='controller/other'
+        row['head']['sha']='c'*40
+        f[OPEN_PRS].append(row)
+        f[API+'/pulls/148/files?per_page=100&page=1']=[
+            {'filename':'tools/existing.py','status':'modified'}]
+        report=collect(FakeOriginalGET(f),c)
+        self.assertEqual(report['decision'],'BLOCK_OVERLAP')
+        self.assertEqual([x['pr'] for x in report['collisions']],[148])
+        self.assertFalse(report['may_write'])
+
+    def test_invalid_self_number_fails_before_get(self):
+        f,c=self._repair()
+        c['repair_pr']=True
+        q=FakeOriginalGET(f)
+        with self.assertRaisesRegex(CollectorHold,'INVALID_CANDIDATE'):
+            collect(q,c)
+        self.assertEqual(q.reads,[])
+
+    def test_repair_head_ref_drift_rejected_by_recheck(self):
+        f,c=self._repair()
+        q=FakeOriginalGET(f)
+        altered=json.loads(json.dumps(f[OPEN_PRS]))
+        altered[0]['head']['ref']='controller/changed'
+        q.twice[OPEN_PRS]=altered
+        with self.assertRaisesRegex(CollectorHold,'ORIGINAL_SNAPSHOT_MISMATCH'):
+            collect(q,c)
