@@ -16,7 +16,7 @@ MAGIC=b"</roblox>"
 def packet(*, payload=MAGIC, compressed=0, uncompressed=None, kinds=None, trailer=b''):
     if kinds is None:
         kinds=[('INST',b'class'),('PROP',b'props'),('PRNT',b'parents')]
-    content=gate.MAGIC+struct.pack('<HIIQ',0,3,5,0)
+    content=gate.MAGIC+struct.pack('<HIIQ',0,1,5,0)
     for name,body in kinds:
         content+=struct.pack('<4sIII',name.encode().ljust(4,b'\0'),0,len(body),0)+body
     if uncompressed is None:uncompressed=len(payload)

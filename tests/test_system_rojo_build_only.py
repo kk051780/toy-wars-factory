@@ -19,7 +19,7 @@ from tools import rojo_rbxl_gate as gate
 WF = ROOT / ".github/workflows/toy-wars-rojo-build-only.yml"
 
 def fake_rbxl(types=("INST", "PROP", "PRNT", "END")):
-    header = gate.MAGIC + struct.pack("<HIIQ", 0, 3, 5, 0)
+    header = gate.MAGIC + struct.pack("<HIIQ", 0, 1, 5, 0)
     chunks = b""
     for kind in types:
         payload = b"</roblox>" if kind == "END" else b"fixture"

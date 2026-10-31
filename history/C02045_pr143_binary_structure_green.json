@@ -1,0 +1,38 @@
+{
+  "id": "C02045",
+  "date": "2026-10-31",
+  "kind": "PR143_BINARY_V0_STRUCTURE_COUNT_ORDER_GREEN",
+  "pr": 143,
+  "base_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "red_head": "446ed28bc9f5721c8dc6591248ad9f732613f231",
+  "coordination": {
+    "epoch": 325,
+    "owner_run_id": "2d8519b9-4f46-42b9-83c3-930fac1becb7",
+    "claim_commit": "552c5b7af923f6312b170bcf306ba228d596bc49"
+  },
+  "red": {
+    "run_id": 41168497470,
+    "offline": "failure",
+    "compile_hold": "success",
+    "python_tests": 878,
+    "expected_failures": 11,
+    "new_test_suite": "tests/test_system_rojo_binary_structure.py",
+    "new_tests": 15
+  },
+  "green": {
+    "expected_tests": 878,
+    "head": "PENDING",
+    "actions_run": "PENDING",
+    "test_changes": "1-line static class fixture correction in each of two older test files",
+    "source_change": "Require header class count matches INST chunks and monotonic META,SSTR,INST,PROP,PRNT,END with uncompressed size cap"
+  },
+  "trust": {
+    "no_actual_rojo_run": true,
+    "studio_engine": "NOT_RUN",
+    "main_merge": false,
+    "independent_review": "PENDING",
+    "workflow_permissions": "UNCHANGED",
+    "spend": "NONE",
+    "no_automatic_publish": true
+  }
+}

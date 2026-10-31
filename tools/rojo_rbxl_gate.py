@@ -40,7 +40,7 @@ def inspect(data: bytes):
         if kind not in CHUNKS or reserved or len(seen) > 100_000:
             raise ValueError("invalid chunk type or flags")
         length = compressed if compressed else uncompressed
-        if length > MAX_BYTES or offset + length > len(data):
+        if length > MAX_BYTES or uncompressed > MAX_BYTES or offset + length > len(data):
             raise ValueError("invalid chunk bounds")
         if kind == "END":
             if (compressed != 0 or uncompressed != len(END_PAYLOAD) or
@@ -52,11 +52,17 @@ def inspect(data: bytes):
         seen.append(kind)
         if kind == "END":
             break
+    # The v0 header's class count is exactly the number of INST chunks.
+    # Static framing MUST NOT pass if metadata, instance, properties, or
+    # parenting chunks are reordered. This is deliberately NOT deserialization.
+    ranks = {"META": 0, "SSTR": 1, "INST": 2, "PROP": 3, "PRNT": 4, "END": 5}
     if (offset != len(data) or not seen or seen[-1] != "END" or
             not {"INST", "PROP", "PRNT"} <= set(seen) or
-            seen.count("PRNT") != 1 or seen.count("META") > 1 or
-            seen.count("SSTR") > 1):
-        raise ValueError("not a complete Roblox binary place frame")
+            seen.count("INST") != classes or seen.count("PRNT") != 1 or
+            seen.count("META") > 1 or seen.count("SSTR") > 1 or
+            any(ranks[left] > ranks[right]
+                for left, right in zip(seen, seen[1:]))):
+        raise ValueError("inconsistent Roblox v0 header or chunk ordering")
     return {"format": "RBXL_BINARY_V0_FRAMING_ONLY", "bytes": len(data),
             "sha256": hashlib.sha256(data).hexdigest(), "chunk_types": seen,
             "engine_verified": False, "studio_open_verified": False,
