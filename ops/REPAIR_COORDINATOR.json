@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 341,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "1dd085ef-52ef-49e1-a22e-c927f6ad07d9",
-    "task_id": null,
-    "epoch": 341,
-    "acquired_at": "2026-10-31T09:27:40.536Z",
-    "expires_at": "2026-10-31T09:51:40.536Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/work-registration-cas-1dd085ef",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,22 +2893,26 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "473ba135-4cdb-4e5c-8f96-08e734c698da",
-    "epoch": 340,
-    "released_at": "2026-10-31T09:26:26.426Z",
+    "owner_id": "1dd085ef-52ef-49e1-a22e-c927f6ad07d9",
+    "epoch": 341,
+    "released_at": "2026-10-31T09:32:35.083Z",
     "release_receipt": {
-      "reason": "PR163_PER_WRITE_FENCE_GREEN_EXACT_HEAD_DRAFT_NOT_REVIEWED",
-      "claim_commit": "0f9cadedcc089162ef7a4a316f2b1898df993a6b",
-      "work_branch": "controller/actions-write-pilot-8df31af2",
-      "pr": 163,
-      "pr_head": "63dedcb33c6c193e8220f1325cdf75a3dd589b0d",
-      "red_run": 41188561000,
-      "green_run": 41188640382,
-      "green_offline": "PASS_911",
-      "green_compile_hold": "SUCCESS",
+      "reason": "PR174_PROTECTED_STACKED_EXACT_HEAD_GREEN_INDEPENDENT_REVIEW_PENDING",
+      "claim_commit": "1e3e413a61bc7943d7874131e75db8c7fdc8492e",
+      "work_branch": "controller/work-registration-cas-1dd085ef",
+      "pr": 174,
+      "pr_head": "8d4eaa9d7b08d23a526036f6c3a483d3dfe578b1",
+      "parent_pr": 173,
+      "parent_head": "e37662edb2a4701ecd4de109d428e1a8fe3213c1",
+      "ci_run": 41189039821,
+      "ci_status": "success",
+      "offline_python_tests": 908,
+      "compile_hold": "success",
       "independent_review": "PENDING",
-      "live_write_probe": "NOT_RUN",
+      "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_mutated": false,
+      "live_registry_write": false,
+      "registered_worker_dispatch": false,
       "service_terminal": "NOT_ATTESTED"
     }
   },
