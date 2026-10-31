@@ -62,6 +62,8 @@ def audit(snapshot):
     for path in paths:
         key = _canonical(path)
         _require(key not in proposed, "candidate duplicate/case-fold path")
+        _require(not any(key.startswith(other + "/") or other.startswith(key + "/")
+                         for other in proposed), "candidate file/directory path collision")
         proposed[key] = path
 
     pulls = snapshot["pulls"]
@@ -95,11 +97,15 @@ def audit(snapshot):
             key = _canonical(old_or_new)
             _require(key not in seen, "duplicate PR file path")
             seen.add(key)
-            if key in proposed:
-                collisions.append({"pr": n, "candidate_path": proposed[key],
+            for candidate_key, candidate_path in proposed.items():
+                if not (key == candidate_key or key.startswith(candidate_key + "/")
+                        or candidate_key.startswith(key + "/")):
+                    continue
+                collisions.append({"pr": n, "candidate_path": candidate_path,
                                    "existing_path": old_or_new,
                                    "base_branch": base_branch, "stacked": base_branch != "main",
-                                   "kind": "EXACT" if old_or_new == proposed[key] else "CASE_OR_UNICODE"})
+                                   "kind": ("EXACT" if old_or_new == candidate_path else "CASE_OR_UNICODE")
+                                   if key == candidate_key else "PATH_PREFIX"})
     collisions.sort(key=lambda x: (x["pr"], x["candidate_path"], x["existing_path"]))
     return {"decision": "BLOCK_OVERLAP" if collisions else "CLEAR_ADVISORY",
             "grant_write_authority": False,
