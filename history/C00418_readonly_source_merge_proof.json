@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "id": "C00418",
+  "date_utc": "2026-10-31",
+  "project": "TOY WARS FACTORY",
+  "work_id": "TWF-ISSUE76-IMMUTABLE-SOURCE-MERGE-PROOF-20261031",
+  "issue": 76,
+  "status": "PROTECTED_DRAFT_REVIEW_PENDING",
+  "objective": "Prepare a reusable read-only immutable-Git disjoint-source merger forecast for independently authored PRs without changing original author history.",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "900e0c777906aab8143dd9536b2a084fa6376c65",
+    "owner_run_id": "ba72d6c3-dac4-47d3-87b6-9f38bf32c12e",
+    "epoch": 312,
+    "work_branch": "controller/merge-ledger-proof-ba72d6c3"
+  },
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "paths": [
+    "tools/system_source_merge_proof.py",
+    "tests/test_system_source_merge_proof.py",
+    "history/C00418_readonly_source_merge_proof.json"
+  ],
+  "tests": {
+    "added_methods": 12,
+    "main_fixture": "local Git repository with 4 ordinary Lua blobs",
+    "positive": [
+      "HUD_then_SERVER",
+      "SERVER_then_HUD"
+    ],
+    "negative": [
+      "stale_main",
+      "forged_authored_total",
+      "forged_blob",
+      "duplicate_change",
+      "same_source_change",
+      "wrong_authored_base",
+      "unexpected_new_module",
+      "nonordinary_executable",
+      "empty_source_change",
+      "already_integrated",
+      "source_deleted"
+    ]
+  },
+  "verification": {
+    "hosted_offline": "PENDING",
+    "hosted_compile_hold": "PENDING",
+    "actual_roblox_engine": "NOT_RUN",
+    "independent_reviewer": "PENDING",
+    "post_main_qa": "NOT_RUN",
+    "user_visible_autonomous_behavior": "NOT_IMPLEMENTED"
+  },
+  "safety": {
+    "changes_existing_ledger": false,
+    "source_writes": false,
+    "merge": false,
+    "dispatch": false,
+    "external_inference": false,
+    "roblox_publish": false,
+    "cost": false
+  },
+  "limitations": "Local Git object consistency is not GitHub provider origin authentication. Non-source conflicts, CI, history ID globally reserved, and independent integration review are explicitly not verified.",
+  "next": "Independent REVIEWER inspect actual diff and current-head 2-job CI; verify C00418 cross-PR reservation and current main. Follow up with trustworthy merge DAG journal consumption and integration-time gates."
+}
