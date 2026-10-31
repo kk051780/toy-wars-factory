@@ -7,7 +7,7 @@ import json
 import os
 import re
 import sys
-from urllib.request import Request, urlopen
+from urllib.request import Request, build_opener, HTTPRedirectHandler
 
 REPO = "kk051780/toy-wars-factory"
 WORKFLOW = ".github/workflows/twf-runner-identity-probe.yml"
@@ -16,6 +16,14 @@ ID = re.compile(r"[1-9][0-9]{0,18}\Z")
 
 class NotVerified(ValueError):
     """Fixed safe error code, never raw provider response or credential."""
+
+class _NoRedirect(HTTPRedirectHandler):
+    """Never follow redirects while carrying scoped GitHub bearer credentials."""
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        # Neither destination URL nor secret token may enter an exception string.
+        raise NotVerified("REDIRECT_REFUSED")
+
+_SAFE_OPEN = build_opener(_NoRedirect()).open
 
 def require(ok, code):
     if not ok:
@@ -84,7 +92,7 @@ def github_get(path, token):
                            "X-GitHub-Api-Version": "2022-11-28",
                            "User-Agent": "twf-runner-identity-readonly"})
     try:
-        with urlopen(req, timeout=12) as response:
+        with _SAFE_OPEN(req, timeout=12) as response:
             require(response.status == 200, "GET_NOT_OK")
             payload = response.read(262145)
     except Exception:
