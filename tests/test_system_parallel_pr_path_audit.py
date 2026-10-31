@@ -184,7 +184,7 @@ def rest_fixture():
     first = [{
         'number': 147, 'state': 'open',
         'head': {'sha': OTHER, 'repo': {'full_name': 'kk051780/toy-wars-factory'}},
-        'base': {'ref': 'main', 'repo': {'full_name': 'kk051780/toy-wars-factory'}},
+        'base': {'ref': 'main', 'sha': SHA, 'repo': {'full_name': 'kk051780/toy-wars-factory'}},
     }]
     changed = {'147': [{'filename': 'tools/independent.py', 'status': 'added'}]}
     return dict(repository='kk051780/toy-wars-factory', main_before_sha=SHA,
@@ -195,6 +195,52 @@ def rest_fixture():
 
 
 class ParallelPrRestObservationTests(unittest.TestCase):
+    def test_reject_stacked_base_sha_changed_with_same_ref_and_head(self):
+        item = rest_fixture()
+        item['prs_before'][0]['base']['ref'] = 'controller/parent'
+        item['prs_after'][0]['base']['ref'] = 'controller/parent'
+        item['prs_after'][0]['base']['sha'] = 'c' * 40
+        with self.assertRaisesRegex(ValueError, 'changed during collection'):
+            from_rest_observations(**item)
+
+    def test_reject_missing_base_sha(self):
+        item = rest_fixture()
+        del item['prs_before'][0]['base']['sha']
+        with self.assertRaises(ValueError):
+            from_rest_observations(**item)
+
+    def test_reject_nonhex_base_sha(self):
+        item = rest_fixture()
+        item['prs_before'][0]['base']['sha'] = 'not-a-sha'
+        with self.assertRaises(ValueError):
+            from_rest_observations(**item)
+
+    def test_reject_main_base_sha_not_equal_main_ref(self):
+        item = rest_fixture()
+        item['prs_before'][0]['base']['sha'] = 'c' * 40
+        item['prs_after'][0]['base']['sha'] = 'c' * 40
+        with self.assertRaisesRegex(ValueError, 'main base SHA drift'):
+            from_rest_observations(**item)
+
+    def test_accept_unchanged_stacked_base_sha(self):
+        item = rest_fixture()
+        for field in ('prs_before', 'prs_after'):
+            item[field][0]['base']['ref'] = 'controller/stacked-parent'
+            item[field][0]['base']['sha'] = 'd' * 40
+        report = audit(from_rest_observations(**item))
+        self.assertEqual(report['decision'], 'CLEAR_ADVISORY')
+        self.assertFalse(report['grant_write_authority'])
+
+    def test_reject_stacked_base_sha_changed_without_main_move(self):
+        item = rest_fixture()
+        for field in ('prs_before','prs_after'):
+            item[field][0]['base']['ref'] = 'controller/stacked-parent'
+        item['prs_before'][0]['base']['sha'] = 'd' * 40
+        item['prs_after'][0]['base']['sha'] = 'e' * 40
+        self.assertEqual(item['main_before_sha'], item['main_after_sha'])
+        with self.assertRaises(ValueError):
+            from_rest_observations(**item)
+
     def test_real_style_payload_converts_and_remains_advisory(self):
         item = rest_fixture()
         item['prs_before'][0]['base']['ref'] = 'controller/stack-parent'

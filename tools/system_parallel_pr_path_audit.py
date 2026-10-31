@@ -155,21 +155,25 @@ def from_rest_observations(*, repository, main_before_sha, main_after_sha,
                      "foreign PR repository")
             _require(row.get("state") == "open", "closed PR in open PR inventory")
             _sha(head.get("sha"))
+            _sha(base.get("sha"))
             branch = base.get("ref")
             _require(isinstance(branch, str) and
                      re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_./-]{0,180}", branch) and
                      not branch.endswith("/") and ".." not in branch and "//" not in branch,
                      "invalid stacked PR base")
-            normalized[number] = (head["sha"], branch)
+            normalized[number] = (head["sha"], base["sha"], branch)
         return normalized
 
     before, after = parse_prs(prs_before), parse_prs(prs_after)
     _require(before == after, "PR list/heads/bases changed during collection")
+    for _, (_, parent_sha, parent_ref) in before.items():
+        if parent_ref == "main":
+            _require(parent_sha == main_before_sha, "main base SHA drift during collection")
     _require(set(changed_files_by_pr) == {str(n) for n in before},
              "missing or unexpected changed-file page")
     pulls = []
     for number in sorted(before):
-        head_sha, base_ref = before[number]
+        head_sha, base_sha, base_ref = before[number]
         files = changed_files_by_pr[str(number)]
         _require(type(files) is list and 0 < len(files) < 100,
                  "missing or truncated changed-file page; pagination required")

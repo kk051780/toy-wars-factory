@@ -19,10 +19,10 @@ from system_parallel_pr_github_collector import (
 MAIN = 'a' * 40
 HEAD = 'b' * 40
 
-def pr_row(n=147, head=HEAD, base='main'):
+def pr_row(n=147, head=HEAD, base='main', base_sha=MAIN):
     return {'number':n,'state':'open',
             'head':{'sha':head,'repo':{'full_name':REPO}},
-            'base':{'ref':base,'repo':{'full_name':REPO}}}
+            'base':{'ref':base,'sha':base_sha,'repo':{'full_name':REPO}}}
 
 def fixture():
     urls = {
@@ -54,6 +54,32 @@ def candidate(path='tools/new_audit.py'):
     return {'branch':'controller/readonly-collector','paths':[path]}
 
 class PrCollectorTests(unittest.TestCase):
+    def test_changed_stacked_parent_sha_rejected_even_if_main_head_stable(self):
+        row=pr_row(base='controller/parent', base_sha='d'*40)
+        f=fixture();f[OPEN_PRS]=[row]
+        q=FakeOriginalGET(f)
+        q.twice[OPEN_PRS]=[pr_row(base='controller/parent', base_sha='e'*40)]
+        with self.assertRaisesRegex(CollectorHold, 'ORIGINAL_SNAPSHOT_MISMATCH'):
+            collect(q,candidate())
+
+    def test_absent_base_sha_rejected_by_reader(self):
+        f=fixture()
+        del f[OPEN_PRS][0]['base']['sha']
+        with self.assertRaisesRegex(CollectorHold, 'ORIGINAL_SNAPSHOT_MISMATCH'):
+            collect(FakeOriginalGET(f),candidate())
+
+    def test_main_sha_drift_inside_pr_record_rejected(self):
+        f=fixture()
+        f[OPEN_PRS][0]['base']['sha']='c'*40
+        with self.assertRaisesRegex(CollectorHold, 'ORIGINAL_SNAPSHOT_MISMATCH'):
+            collect(FakeOriginalGET(f),candidate())
+
+    def test_unchanged_stacked_parent_sha_advisory_only(self):
+        f=fixture();f[OPEN_PRS]=[pr_row(base='controller/parent',base_sha='d'*40)]
+        report=collect(FakeOriginalGET(f),candidate())
+        self.assertEqual(report['decision'],'CLEAR_ADVISORY')
+        self.assertFalse(report['may_write'])
+
     def test_clear_is_only_advisory_not_permission(self):
         read=FakeOriginalGET(fixture())
         x=collect(read,candidate())
