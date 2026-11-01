@@ -56,6 +56,8 @@ def _validate_plan(plan: Any) -> dict:
     need(type(request) is dict and request.get('method') == 'POST' and
          request.get('api_host') == cloud.API_HOST and
          request.get('content_type') == 'application/json' and
+         request.get('timeout') == cloud.TASK_TIMEOUT and
+         type(request.get('timeout')) is str and
          request.get('credentials_embedded') is False and
          request.get('body_contains_exact_reviewed_script') is True and
          request.get('body_embedded_in_report') is False,
@@ -76,7 +78,7 @@ def _validate_plan(plan: Any) -> dict:
         source = cloud.pin_script(script_path)
     except cloud.Blocked:
         raise ResultHold('STATIC_SCRIPT_BYTES_NOT_REVIEWED') from None
-    raw = json.dumps({'script': source}, ensure_ascii=False,
+    raw = json.dumps({'script': source, 'timeout': cloud.TASK_TIMEOUT}, ensure_ascii=False,
                      separators=(',', ':')).encode('utf-8')
     need(request.get('body_sha256') == hashlib.sha256(raw).hexdigest() and
          type(plan.get('script_bytes')) is int and
