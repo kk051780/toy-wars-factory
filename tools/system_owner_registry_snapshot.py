@@ -56,7 +56,7 @@ def strict_json(data: bytes) -> dict:
                             parse_constant=reject_const)
     except SnapshotRejected:
         raise
-    except (ValueError, UnicodeDecodeError, TypeError):
+    except (ValueError, UnicodeDecodeError, TypeError, RecursionError):
         raise SnapshotRejected('INVALID_JSON') from None
     check(type(parsed) is dict, 'NOT_JSON_OBJECT')
     return parsed
@@ -107,7 +107,10 @@ def _get_state(get: Callable, commit_sha: str) -> dict:
         raise SnapshotRejected('INVALID_CONTENT_BASE64') from None
     check(len(data) == row['size'] and len(data) <= MAX_FILE_BYTES and
           git_blob_sha(data) == row['sha'], 'CONTENTS_HASH_MISMATCH')
-    state = strict_json(data)
+    return _validate_coordinator_state(strict_json(data))
+
+
+def _validate_coordinator_state(state: dict) -> dict:
     check(type(state.get('schema')) is int and
           state['schema'] == 1 and
           type(state.get('epoch')) is int and state['epoch'] >= 1 and
@@ -148,6 +151,99 @@ def capture_snapshot(get: Callable) -> dict:
         'schema': 1,
         'status': 'CALLBACK_SNAPSHOT_NOT_PROVIDER_ATTESTED',
         'capture_input_class': 'CALLBACK_JSON_UNTRUSTED',
+        'capture_get_count': 6,
+        'work_registry_initialized': 'work_registrations' in state,
+        'snapshot': {
+            'repository': REPOSITORY,
+            'coordination_branch': COORDINATOR_BRANCH,
+            'ref_sha': coordinator_head,
+            'main_sha': main_head,
+            'state': state,
+        },
+        'github_authenticated': False,
+        'provider_run_authenticated': False,
+        'may_claim': False,
+        'may_write': False,
+        'may_dispatch': False,
+        'may_merge': False,
+        'cas_performed': False,
+    }
+
+
+def capture_connected_snapshot(fetch: Callable, fetch_file: Callable) -> dict:
+    """Consume normalized ChatGPT GitHub connector GET results, READ ONLY.
+
+    fetch(url) -> {'content': JSON_TEXT} for GitHub repository or git/ref URL.
+    fetch_file(repository_full_name=..., path=..., ref=PINNED_SHA) ->
+      {'content': DECODED_TEXT, 'sha': GIT_BLOB_SHA, 'encoding': 'utf-8',
+       'display_url': EXACT_PRIVATE_GITHUB_BLOB_URL, 'display_title': FILE_NAME}
+
+    These shapes have been observed against original connected GitHub. However,
+    mock callbacks can forge all fields. This does NOT attest the provider,
+    grant identity or authorization, perform CAS, or dispatch/merge anything.
+    A trusted host must bind tool identity and verify the original response.
+    """
+    check(callable(fetch) and callable(fetch_file), 'GET_CALLBACK_NOT_AVAILABLE')
+
+    def fetch_json(url: str) -> dict:
+        try:
+            row = fetch(url)
+        except Exception:
+            raise SnapshotRejected('GITHUB_GET_FAILED') from None
+        check(type(row) is dict and type(row.get('content')) is str,
+              'INVALID_CONNECTED_FETCH')
+        try:
+            data = row['content'].encode('utf-8')
+        except UnicodeError:
+            raise SnapshotRejected('INVALID_CONNECTED_FETCH') from None
+        return strict_json(data)
+
+    def fetch_ref(branch: str) -> str:
+        check(branch in ('main', COORDINATOR_BRANCH), 'REF_NOT_ALLOWED')
+        row = fetch_json(f'{API_ROOT}/git/ref/heads/{branch}')
+        obj = row.get('object')
+        check(row.get('ref') == f'refs/heads/{branch}' and
+              type(obj) is dict and obj.get('type') == 'commit' and
+              type(obj.get('sha')) is str and bool(SHA.fullmatch(obj['sha'])),
+              'INVALID_GIT_REF')
+        return obj['sha']
+
+    metadata = fetch_json(API_ROOT)
+    check(type(metadata.get('id')) is int and metadata['id'] == REPOSITORY_ID and
+          metadata.get('full_name') == REPOSITORY and
+          metadata.get('private') is True, 'REPOSITORY_IDENTITY_MISMATCH')
+
+    main_head = fetch_ref('main')
+    coordinator_head = fetch_ref(COORDINATOR_BRANCH)
+    try:
+        row = fetch_file(repository_full_name=REPOSITORY,
+                         path=COORDINATOR_PATH, ref=coordinator_head)
+    except Exception:
+        raise SnapshotRejected('GITHUB_FILE_FAILED') from None
+    check(type(row) is dict and type(row.get('content')) is str and
+          row.get('encoding') == 'utf-8' and
+          row.get('display_title') == 'REPAIR_COORDINATOR.json' and
+          row.get('display_url') == (
+              f'https://github.com/{REPOSITORY}/blob/'
+              f'{coordinator_head}/{COORDINATOR_PATH}') and
+          type(row.get('sha')) is str and bool(SHA.fullmatch(row['sha'])),
+          'INVALID_CONNECTED_FILE')
+    try:
+        data = row['content'].encode('utf-8')
+    except UnicodeError:
+        raise SnapshotRejected('INVALID_CONNECTED_FILE') from None
+    check(0 < len(data) <= MAX_FILE_BYTES and
+          git_blob_sha(data) == row['sha'],
+          'CONTENTS_HASH_MISMATCH')
+    state = _validate_coordinator_state(strict_json(data))
+    check(main_head == fetch_ref('main') and
+          coordinator_head == fetch_ref(COORDINATOR_BRANCH),
+          'REF_MOVED_DURING_CAPTURE')
+
+    return {
+        'schema': 1,
+        'status': 'CALLBACK_SNAPSHOT_NOT_PROVIDER_ATTESTED',
+        'capture_input_class': 'CONNECTED_NORMALIZED_CALLBACKS_NOT_PROVIDER_ATTESTED',
         'capture_get_count': 6,
         'work_registry_initialized': 'work_registrations' in state,
         'snapshot': {
