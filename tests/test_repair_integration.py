@@ -114,6 +114,7 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
 
     def test_branch_protection_missing_status_check_app_binding_must_wait(self):
+        self._protected_main().pop("required_status_check_sources", None)
         self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
 
     def test_branch_protection_any_app_status_checks_must_wait(self):
