@@ -1,0 +1,29 @@
+{
+  "id": "C00169",
+  "date": "2026-10-31",
+  "kind": "A14_STUDIO_EDIT_MODE_TRUST_GATE_RED",
+  "issue": 3,
+  "source_changes": [],
+  "owner_role": "MANUAL_CONTROLLER",
+  "coordination": {
+    "epoch": 295,
+    "owner_id": "a14f4100-873f-441a-83cc-202610310743",
+    "claim_commit": "fe53e915bbd075b8372d7c77ce455e706abba935",
+    "stack_base_pr": 147
+  },
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "test_changes": [
+    {
+      "path": "tests/test_studio_host_gate.py",
+      "new_cases": 28
+    }
+  ],
+  "tests": {
+    "red": "PENDING_ACTIONS",
+    "green": "NOT_RUN"
+  },
+  "real_studio_executed": false,
+  "roblox_api_used": false,
+  "public_publish": false,
+  "protected_review": "REQUIRED"
+}

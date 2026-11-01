@@ -1,0 +1,24 @@
+{
+  "id": "C14510",
+  "date": "2026-11-01",
+  "kind": "A14_PR149_SIGNER_ORGANIZATION_EXPECTED_RED",
+  "pr": 149,
+  "parent_pr": 147,
+  "accepted_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "prior_head": "f37dc8b3dcefacbf0e1b2ac3454f9f159799c128",
+  "source_sha_before": "1c3245ca8996b5a0f63ad43e78fddc4c0489aa0f",
+  "powershell_sha_before": "51e877f7c4e20dc77761868cfba749609fbce8a4",
+  "coordinator": {
+    "epoch": 364,
+    "owner": "65812b6d-ae8b-4b34-9450-99f3547776f6",
+    "claim_commit": "ea9ec1fc5d7e5484634c9f77116017ec08c3c9da"
+  },
+  "test_file": "tests/test_studio_signer_organization.py",
+  "added_tests": 15,
+  "source_mutations": 0,
+  "expected_failures": "Current signature Subject -notmatch Roblox accepts CN/OU/wrong O containing Roblox; require O=Roblox Corporation field",
+  "ci": "PENDING",
+  "engine_verified": false,
+  "windows_authenticode_test": false,
+  "merge_authorized": false
+}

@@ -1,0 +1,34 @@
+{
+  "id": "C10984",
+  "date": "2026-11-01",
+  "pr": 149,
+  "parent_pr": 147,
+  "kind": "A14_STUDIO_PRIVATE_INPUT_SNAPSHOT_GREEN",
+  "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "old_head": "e22570159e3875064ddf2ba9c4da1c8f127e4874",
+  "source_blob": "1c3245ca8996b5a0f63ad43e78fddc4c0489aa0f",
+  "coordination": {
+    "epoch": 363,
+    "owner": "d24b0367-a5be-4aac-8864-53e6830576e2",
+    "claim_commit": "e163a83a921db41dfa3a888ab21ebd5c597dd632"
+  },
+  "red": {
+    "head": "e22570159e3875064ddf2ba9c4da1c8f127e4874",
+    "run": 41261913978,
+    "python_total": 891,
+    "expected_failures": 5,
+    "compile_hold": "success"
+  },
+  "green": {
+    "ci": "PENDING",
+    "new_regressions": 7
+  },
+  "scope": "Only per-run private XML/Luau byte copy + post-signature rehash. No change to signer verification / Lua source / CI workflows.",
+  "authority": {
+    "independent_review": "PENDING",
+    "merge": false,
+    "real_windows_host": false,
+    "studio_engine": false,
+    "roblox_publish": false
+  }
+}
