@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 369,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "a9fbd627-4cb4-46ed-921f-841b755dc134",
-    "task_id": null,
-    "epoch": 369,
-    "acquired_at": "2026-11-01T03:11:57.664Z",
-    "expires_at": "2026-11-01T03:27:57.664Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/actions-ci-chain-gate-b34c8765-01ac-4335-ad17-9d504dac4544",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,44 +2893,41 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "af7b73cb-c13e-4c5f-84b3-d4128bdbd726",
-    "epoch": 368,
-    "released_at": "2026-11-01T03:07:14.315Z",
+    "owner_id": "a9fbd627-4cb4-46ed-921f-841b755dc134",
+    "epoch": 369,
+    "released_at": "2026-11-01T03:20:44.451Z",
     "release_receipt": {
-      "reason": "PR150_STUDIO_WINDOWS_SIGNER_PARENT149_TRUE_RESTACK_EXACT_HEAD_GREEN",
-      "claim_commit": "2928b3b74875606efbacd60e5d3066034ccb1055",
-      "work_branch": "controller/a14-windows-studio-discovery-6b83d2",
-      "pr": 150,
-      "pr_head": "2fdd7c540ce54b63d985d3360415e50eb9d03d5e",
-      "previous_base": "cad549c12da41b2634a4df6f7ab160c39a585e9f",
-      "current_parent149": "68490a335cc6619933f671b8aae63f074c2536c6",
-      "initial_red_run": 41267338767,
-      "initial_red_error": "C15820 draft source_changes type corrected and rerun",
-      "clean_red_head": "a29b81daabfee4c54dbe2a0e3142c90c7e9c4135",
-      "clean_red_run": 41267538580,
-      "clean_red_total": 933,
-      "clean_red_failures": 8,
-      "clean_red_errors": 0,
-      "green_run": 41267707472,
-      "green_total": 933,
+      "reason": "PR154_HOSTED_RED_GREEN_EXACT_HEAD_CI_PASS",
+      "claim_commit": "569ffbcb42ff597de85233449c946a03a4f319a4",
+      "work_branch": "controller/actions-ci-chain-gate-b34c8765-01ac-4335-ad17-9d504dac4544",
+      "pr": 154,
+      "pr_head": "23ef88ff1a82e282106973a05b57f11ca7737a34",
+      "red_head": "3fc568e8e4b352ad5a1c60b7089b28fde82b3ae2",
+      "red_run": 41268416205,
+      "red_python_tests": 879,
+      "red_errors": 7,
+      "green_run": 41268678375,
+      "green_python_tests": 887,
       "green_conclusion": "success",
-      "windows_host_inventory_run": 41267707473,
-      "windows_host_inventory_conclusion": "success",
-      "child_tree": "221353509b0a4b43d22e13b284f73c2918131cf0",
-      "new_regressions": 15,
-      "history_files": [
-        "history/C15820_pr150_windows_signer_red.json",
-        "history/C15821_pr150_signer_parent_restack_green.json"
+      "green_jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "pr154_specific_tests": 54,
+      "deterministic_fuzz_mutations": 5000,
+      "changed_files": [
+        "tools/system_ci_chain_gate.py",
+        "tests/test_system_ci_chain_gate.py",
+        "tests/test_system_ci_chain_gate_deterministic_fuzz.py",
+        "tests/test_system_ci_chain_gate_original_hosted_snapshot.py",
+        "history/C00163_pr154_ci_json_red.json"
       ],
-      "comment_id": 6552681283,
+      "pr_comment_id": 6552809639,
       "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "main_changed": false,
+      "main_mutated": false,
       "independent_review": "PENDING",
-      "real_windows_signer": "NOT_RUN",
-      "roblox_studio": "NOT_RUN",
-      "roblox_engine": "NOT_RUN",
-      "private_saved_upload": "NOT_RUN",
-      "publish_authorized": false
+      "robotics_engine": "NOT_RUN",
+      "Gemini_inference": "HELD"
     }
   },
   "last_completed_integration": {
