@@ -1,0 +1,55 @@
+{
+  "id": "C77641",
+  "date": "2026-11-01",
+  "kind": "A14_STATIC_OPEN_CLOUD_TIMEOUT_BOUND_RED_GREEN",
+  "repository": "kk051780/toy-wars-factory",
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "epoch": 365,
+    "owner_id": "6f8e1c42-0e17-4e5f-91ef-172e0a0bb4d0",
+    "claim_commit": "48917f6f5044b169b07226980488e414deb1f80e",
+    "work_branch": "controller/roblox-static-return-gate-75202447"
+  },
+  "source_scope": {
+    "game_source_modified": false,
+    "static_luau_script_modified": false,
+    "pinned_static_script_sha256": "fc343ede29c2466b0962689b183b5320d81122a807d65ad7f82e942a9268759d",
+    "modified_files": [
+      "tools/open_cloud_engine_preflight.py",
+      "tools/twf_static_smoke_return_gate.py",
+      "tests/test_twf_static_smoke_return_gate.py",
+      "docs/A14_STATIC_RETURN_GATE.md"
+    ]
+  },
+  "red": {
+    "head": "3918299bb183fc267c7dd2236ee0255c01eac8c1",
+    "github_actions_run": 41264707661,
+    "offline": "EXPECTED_FAILURE",
+    "total_python_tests": 874,
+    "failed": 4,
+    "errors": 2,
+    "compile_hold": "SUCCESS"
+  },
+  "green": {
+    "head": "f5d3865763d0e376018fa056f54332cf971cf699",
+    "github_actions_run": 41264805775,
+    "conclusion": "SUCCESS",
+    "python_unittests_passed": 874,
+    "new_tests": 7,
+    "total_static_return_tests": 41,
+    "compile_hold": "SUCCESS"
+  },
+  "contract": {
+    "fixed_script_timeout": "30s",
+    "body_sha256_includes_script_and_timeout": true,
+    "missing_or_oversize_timeout_rejected": true,
+    "script_timeout_not_end_to_end_wall_clock": true
+  },
+  "independent_security_review": "PENDING",
+  "roblox_api_requests": 0,
+  "private_saved_upload": "NOT_RUN",
+  "roblox_engine_verified": false,
+  "actual_mobile_verified": false,
+  "public_publish_authorized": false,
+  "external_inference": "NOT_RUN"
+}
