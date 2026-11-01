@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 361,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "bd82cf7e-4ff8-43a8-919b-a85836a170e9",
-    "task_id": null,
-    "epoch": 361,
-    "acquired_at": "2026-11-01T01:02:16.062Z",
-    "expires_at": "2026-11-01T01:26:16.062Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/a14-saved-xml-strict-properties-0f445b08",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,38 +2893,37 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "75202447-ebfd-446f-b7e2-b870f2f1d072",
-    "epoch": 360,
-    "released_at": "2026-11-01T00:52:14.934Z",
+    "owner_id": "bd82cf7e-4ff8-43a8-919b-a85836a170e9",
+    "epoch": 361,
+    "released_at": "2026-11-01T01:10:00.972Z",
     "release_receipt": {
-      "reason": "PR175_A14_STATIC_RETURN_GATE_SOURCE_AND_TEST_PROMOTED",
-      "claim_commit": "9e6d561f992658f453ea6376298e2c721da5998c",
-      "work_branch": "controller/roblox-static-return-gate-75202447",
-      "pr": 175,
-      "pr_head": "44545353cf4136fd0bd9ceb3dc28a10fec131d2d",
-      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "observed_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "changed_files": [
-        "tools/twf_static_smoke_return_gate.py",
-        "tools/open_cloud_engine_preflight.py",
-        "tools/twf_open_cloud_smoke.luau",
-        "tests/test_twf_static_smoke_return_gate.py",
-        "docs/A14_STATIC_RETURN_GATE.md",
-        "history/C09110_a14_static_return_gate.json"
+      "reason": "PR148_XML_GRAMMAR_17_CASE_RED_GREEN_EXACT_HEAD",
+      "claim_commit": "61f1a69d1205505179734201b61e463d01403d59",
+      "work_branch": "controller/a14-saved-xml-strict-properties-0f445b08",
+      "pr": 148,
+      "pr_head": "1db4d0efc417a0688298e91cdbf40670b2befd22",
+      "red_head": "9cbbe4baa7a5be9247deb3f2b89dba3a290e6404",
+      "red_run": 41259513497,
+      "red_python_tests": 904,
+      "red_failures": 14,
+      "green_head": "1db4d0efc417a0688298e91cdbf40670b2befd22",
+      "green_run": 41259791590,
+      "green_python_tests": 905,
+      "green_conclusion": "success",
+      "source_blob": "de40d4ae37da942f3fdce2edad5c496f1dfc328e",
+      "new_regressions": 17,
+      "history_files": [
+        "history/C09860_pr148_xml_grammar_red.json",
+        "history/C09861_pr148_xml_grammar_green.json"
       ],
-      "new_python_tests": 34,
-      "local_qa": "34_OF_34_PASS",
-      "original_static_luau_sha256": "fc343ede29c2466b0962689b183b5320d81122a807d65ad7f82e942a9268759d",
-      "exact_head_ci_run": 41258574371,
-      "exact_head_ci_status": "in_progress",
-      "exact_head_ci_conclusion": null,
+      "pr_comment_id": 6551585926,
+      "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "main_changed": false,
       "independent_review": "PENDING",
-      "main_mutated": false,
-      "game_source_modified": false,
-      "roblox_saved_upload": "NOT_RUN",
       "roblox_engine": "NOT_RUN",
-      "public_publish_authorized": false,
-      "external_inference": "NOT_RUN"
+      "private_saved_upload": "NOT_RUN",
+      "publish_authorized": false,
+      "gemini_inference": "HELD"
     }
   },
   "last_completed_integration": {
