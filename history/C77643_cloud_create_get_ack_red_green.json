@@ -10,11 +10,6 @@
     "claim_commit": "3eef29d802d682e375922c7fea87cd559ac6c1b5",
     "work_branch": "controller/roblox-static-return-gate-75202447"
   },
-  "source_changes": [
-    "tools/twf_open_cloud_get_log_adapter.py",
-    "tests/test_twf_open_cloud_get_log_adapter.py",
-    "docs/A14_STATIC_RETURN_GATE.md"
-  ],
   "game_source_modified": false,
   "first_party_reference": "https://github.com/Roblox/open-cloud-execution-binary-payloads-example/blob/main/DemoSDK.luau",
   "red": {
@@ -44,5 +39,10 @@
     "roblox_post_calls": 0,
     "public_publish_authorized": false
   },
-  "protected_independent_review": "PENDING"
+  "protected_independent_review": "PENDING",
+  "changed_files": [
+    "tools/twf_open_cloud_get_log_adapter.py",
+    "tests/test_twf_open_cloud_get_log_adapter.py",
+    "docs/A14_STATIC_RETURN_GATE.md"
+  ]
 }
