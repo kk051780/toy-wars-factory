@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 357,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "5a931052-befc-4187-a16b-c64e12d8bb75",
-    "task_id": null,
-    "epoch": 357,
-    "acquired_at": "2026-10-31T23:59:39.059Z",
-    "expires_at": "2026-11-01T00:11:39.059Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/actions-write-pilot-8df31af2",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,15 +2893,30 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "b5fc0f93-4fd2-4f41-b878-43bea377ee72",
-    "epoch": 356,
-    "released_at": "2026-10-31T23:35:12.974Z",
+    "owner_id": "5a931052-befc-4187-a16b-c64e12d8bb75",
+    "epoch": 357,
+    "released_at": "2026-11-01T00:02:02.131Z",
     "release_receipt": {
-      "reason": "OWN_EPOCH356_RELEASE_AFTER_HOST_WRITE_DENIAL",
-      "claim_commit": "f32e3e103c29396502798630dfa3649d27e69281",
+      "reason": "PR163_DOUBLE_REF_READBACK_SOURCE_TESTS_COMMITTED",
+      "claim_commit": "07c962ef765befbb9cf21bd9ef60bcd9b9f3eb62",
+      "source_branch": "controller/actions-write-pilot-8df31af2",
       "pr": 163,
-      "work_branch": "controller/actions-write-pilot-8df31af2",
-      "source_changed": false
+      "pr_head": "972eaf01a52c65c01a5d97645d57a578f10444ba",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "changed_files": [
+        "tools/system_actions_write_probe.py",
+        "tests/test_system_actions_write_probe.py",
+        "tests/test_system_actions_write_probe_cas_ref_drift.py",
+        "history/C09035_pr163_double_cas_readback_green.json"
+      ],
+      "original_ci_run": 41254926755,
+      "original_ci_status_at_release": "in_progress",
+      "original_ci_conclusion_at_release": null,
+      "main_mutated": false,
+      "gemini_inference": "HELD",
+      "roblox_engine": "NOT_TESTED",
+      "independent_review": "PENDING",
+      "protected_draft": true
     }
   },
   "last_completed_integration": {
