@@ -1,0 +1,49 @@
+{
+  "id": "C10151",
+  "date": "2026-11-01",
+  "kind": "CONTROLLER_A14_READONLY_TARGET_METADATA_PREFLIGHT",
+  "issue": 151,
+  "branch": "controller/a14-target-metadata-preflight-39359777",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "44d96793e7a2518cfaf2e2779c9588363409427c",
+    "owner_run_id": "39359777-3362-4170-8a74-88b4060e6e3f",
+    "epoch": 378
+  },
+  "changed_files": [
+    "tools/twf_roblox_target_metadata_probe.py",
+    "tests/test_twf_roblox_target_metadata_probe.py",
+    "docs/A14_TARGET_METADATA_READONLY.md",
+    "history/C10151_a14_target_metadata_readonly.json"
+  ],
+  "source_pins": {
+    "module_git_blob": "43b8f01ce9efe4fe687a7e22041304a7d238b340",
+    "tests_git_blob": "6041783c8e38d047a18b2d2491f135c1a811e011"
+  },
+  "tests": {
+    "local_python_cases": 18,
+    "local_result": "PASS",
+    "native_github_ci": "PENDING_EXACT_HEAD",
+    "provider_api": "NOT_RUN",
+    "roblox_engine": "NOT_RUN",
+    "studio": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "overlap": {
+    "existing_145_xml_saved": "UNTOUCHED",
+    "existing_175_luau_get": "UNTOUCHED",
+    "existing_167_mcp": "UNTOUCHED",
+    "existing_143_rojo": "UNTOUCHED"
+  },
+  "restrictions": {
+    "main_mutated": false,
+    "auto_merge": false,
+    "roblox_publish": false,
+    "api_key_committed": false,
+    "external_inference": false,
+    "provider_authenticated": false,
+    "production_target_known": false
+  },
+  "next_action": "Exact-head GitHub Actions CI, independent source/security review, and separately authenticated Roblox private target"
+}
