@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import json
 import sys
 import unittest
@@ -166,5 +167,41 @@ class GateTests(unittest.TestCase):
     def test_34_xml_size_bool_not_integer(self):
         self.denied(lambda p,t: p.__setitem__('xml_bytes',True))
 
+
+    def test_35_task_timeout_policy_is_bounded_to_30s(self):
+        self.assertEqual(cloud.TASK_TIMEOUT, '30s')
+
+    def test_36_plan_pins_30s_timeout(self):
+        self.assertEqual(self.plan['request']['timeout'], '30s')
+
+    def test_37_body_digest_includes_timeout_exactly(self):
+        script = cloud.pin_script(ROOT/'tools'/'twf_open_cloud_smoke.luau')
+        expected = json.dumps(
+            {'script': script, 'timeout': '30s'},
+            ensure_ascii=False, separators=(',', ':')).encode('utf-8')
+        self.assertEqual(self.plan['request']['body_sha256'],
+                         hashlib.sha256(expected).hexdigest())
+
+    def test_38_missing_timeout_is_not_accepted(self):
+        p = copy.deepcopy(self.plan)
+        p['request'].pop('timeout', None)
+        with self.assertRaises(gate.ResultHold):
+            gate.inspect_untrusted_return(p, self.task)
+
+    def test_39_default_300s_timeout_is_not_accepted(self):
+        p = copy.deepcopy(self.plan)
+        p['request']['timeout'] = '300s'
+        with self.assertRaises(gate.ResultHold):
+            gate.inspect_untrusted_return(p, self.task)
+
+    def test_40_timeout_boolean_is_not_accepted(self):
+        p = copy.deepcopy(self.plan)
+        p['request']['timeout'] = True
+        with self.assertRaises(gate.ResultHold):
+            gate.inspect_untrusted_return(p, self.task)
+
+    def test_41_reviewed_script_bytes_remain_unchanged(self):
+        raw = (ROOT/'tools'/'twf_open_cloud_smoke.luau').read_bytes()
+        self.assertEqual(hashlib.sha256(raw).hexdigest(), cloud.SCRIPT_SHA256)
 
 if __name__=='__main__':unittest.main()
