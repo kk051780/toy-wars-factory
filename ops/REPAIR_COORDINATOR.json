@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 383,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "c4d7af89-5c65-4b25-99c9-953162eb7336",
-    "task_id": null,
-    "epoch": 383,
-    "acquired_at": "2026-11-01T08:14:13.616Z",
-    "expires_at": "2026-11-01T08:36:13.616Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/roblox-cloud-cas-4c8d111d"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,32 +2893,32 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "b3c186b2-d75f-4715-ac10-55de4a3a6478",
-    "epoch": 382,
-    "released_at": "2026-11-01T08:10:02.119Z",
+    "owner_id": "c4d7af89-5c65-4b25-99c9-953162eb7336",
+    "epoch": 383,
+    "released_at": "2026-11-01T08:22:57.645Z",
     "release_receipt": {
-      "reason": "PR178_EXACT_HEAD_STATIC_CAS_POST_ALIGNMENT_CI_GREEN_INDEPENDENT_REVIEW_PENDING",
-      "claim_commit": "61f60bc1a6e62adf26a30e9ce102ed9dcdb1e0c2",
-      "work_branch": "controller/a14-post-contract-b3c186b2",
-      "pr": 178,
-      "pr_head": "99520d02ab53f4b5ff8fc51292a2aebc89d25715",
-      "ci_run": 41287599121,
+      "reason": "PR158_FRESH_POSTCAS_CLOCK_AND_EXACT_CHANGED_PATH_SCOPE_RED_GREEN_882PASS_REVIEW_PENDING",
+      "claim_commit": "77c748aff11647e67281f5981aa5cd7042596a60",
+      "work_branch": "controller/roblox-cloud-cas-4c8d111d",
+      "pr": 158,
+      "pr_head": "3d852391284aac5947e285e4ba4284431ecac06a",
+      "ci_run": 41288504223,
       "ci_result": "success",
-      "local_offline_tests": 73,
-      "ci_jobs": [
-        "offline",
-        "compile_hold"
-      ],
-      "review_status": "PENDING_INDEPENDENT",
+      "red_run": 41288174960,
+      "initial_green_failure_run": 41288333626,
+      "final_python_tests": 882,
+      "compile_hold": "success",
       "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_after": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_mutated": false,
+      "review": "PENDING_INDEPENDENT",
+      "main_merge": false,
       "roblox_engine": "NOT_RUN",
-      "cloud_http_calls": 0,
-      "cross_host_cas_verified": false,
+      "real_cas_bridge": "NOT_RUN",
+      "roblox_api_calls": 0,
       "roblox_publish_authorized": false,
-      "external_ai_inference": false,
-      "may_merge": false
+      "may_merge": false,
+      "external_ai_inference": false
     }
   },
   "last_completed_integration": {
