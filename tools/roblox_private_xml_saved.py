@@ -260,7 +260,8 @@ class LiveSavedXmlTransport:
                        'unexpected Roblox Saved HTTP status')
                 content_type=response.headers.get('Content-Type','')
                 demand(type(content_type) is str and
-                       content_type.lower().split(';',1)[0].strip()=='application/json',
+                       content_type.lower().split(';',1)[0].strip()
+                       in ('text/plain','application/json'),
                        'unexpected Roblox Saved response type')
                 body=response.read(16385)
         except (urllib.error.HTTPError,urllib.error.URLError,OSError,TimeoutError):
