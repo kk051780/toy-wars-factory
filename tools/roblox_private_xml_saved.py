@@ -240,9 +240,13 @@ class LiveSavedXmlTransport:
     """One nonretrying POST; only use after protected independent provider checks."""
     def __init__(self,cfg:XmlStageConfig,*,api_key:str,environment:dict[str,str]):
         check_host_environment(cfg,environment)
-        demand(type(api_key) is str and 16<=len(api_key)<=8192,'test-only API key unavailable')
+        demand(type(api_key) is str and 16<=len(api_key)<=8192 and
+               not any(c in api_key for c in '\r\n\x00'),
+               'test-only API key unavailable')
         self._cfg=cfg;self._api_key=api_key;self._used=False
-        self._opener=urllib.request.build_opener(NoRedirect())
+        # Do not inherit runner HTTP(S)_PROXY for future Roblox API-key POSTs.
+        self._opener=urllib.request.build_opener(
+            NoRedirect(), urllib.request.ProxyHandler({}))
     def __call__(self,request:XmlSavedRequest)->dict:
         expected=saved_xml_request(self._cfg,request.body)
         demand(not self._used and request==expected,'duplicate or unapproved XML Saved POST')
@@ -252,11 +256,32 @@ class LiveSavedXmlTransport:
         try:
             with self._opener.open(req,timeout=25) as response:
                 demand(response.geturl()==expected.url,'Roblox response changed endpoint')
+                demand(type(response.status) is int and response.status==200,
+                       'unexpected Roblox Saved HTTP status')
+                content_type=response.headers.get('Content-Type','')
+                demand(type(content_type) is str and
+                       content_type.lower().split(';',1)[0].strip()
+                       in ('text/plain','application/json'),
+                       'unexpected Roblox Saved response type')
                 body=response.read(16385)
         except (urllib.error.HTTPError,urllib.error.URLError,OSError,TimeoutError):
             raise XmlStageError('Saved upload outcome UNKNOWN; no automatic retry') from None
-        demand(len(body)<=16384,'oversized Roblox response')
-        try:value=json.loads(body)
-        except (ValueError,UnicodeError):raise XmlStageError('malformed Saved response') from None
+        demand(type(body) is bytes and len(body)<=16384,
+               'invalid or oversized Roblox Saved response')
+        def strict_pairs(pairs):
+            result={}
+            for key,value in pairs:
+                demand(key not in result, 'duplicate Saved response JSON key')
+                result[key]=value
+            return result
+        def deny_nonfinite(_):
+            raise XmlStageError('nonfinite Saved response JSON value')
+        try:
+            value=json.loads(body,object_pairs_hook=strict_pairs,
+                             parse_constant=deny_nonfinite)
+        except XmlStageError:
+            raise
+        except (ValueError,UnicodeError,RecursionError):
+            raise XmlStageError('malformed Saved response') from None
         demand(type(value) is dict,'non-object Saved response')
         return value

@@ -1,0 +1,57 @@
+{
+  "id": "C77646",
+  "date": "2026-11-01",
+  "kind": "A14_SAVED_OFFICIAL_TEXT_PLAIN_CONTENT_TYPE_FIX_RED_GREEN",
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 176,
+  "parent_pr": 148,
+  "parent_head": "1db4d0efc417a0688298e91cdbf40670b2befd22",
+  "original_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "epoch": 374,
+    "owner_id": "85371c63-78ab-4c2b-ae25-19f382b2db51",
+    "claim_commit": "fd23a11f4268906331d07a9f8ce674789be4c9c1",
+    "branch": "controller/a14-saved-proxy-noimplicit-cae7961f"
+  },
+  "official_source": "https://github.com/Roblox/creator-docs/blob/main/content/en-us/reference/cloud/universes-api/v1.json",
+  "documented_http_200_content_type": "text/plain",
+  "changed_files": [
+    "tools/roblox_private_xml_saved.py",
+    "tests/test_live_saved_receipt_strict.py",
+    "history/C77646_a14_official_text_plain_compat_red_green.json"
+  ],
+  "red": {
+    "head": "97c57f34ac253f706a2a97ae5600ed7d2d113bb2",
+    "run": 41277611804,
+    "python_tests": 925,
+    "expected_errors": 2,
+    "compile_hold": "success"
+  },
+  "green": {
+    "head": "f13073e1820048e17885bcfd54c9da0b2678636b",
+    "run": 41277696323,
+    "python_tests": 925,
+    "new_tests": 3,
+    "offline": "success",
+    "compile_hold": "success"
+  },
+  "contract": {
+    "text_plain_accepted": true,
+    "text_plain_charset_accepted": true,
+    "application_json_legacy_accepted": true,
+    "unrelated_mime_rejected": true,
+    "strict_json_unchanged": true,
+    "api_key_no_newlines": true,
+    "nonpublic_saved_only": true,
+    "automatic_retry": false,
+    "public_publish_authorized": false
+  },
+  "limitations": {
+    "real_roblox_requests": 0,
+    "actual_provider_receipt": false,
+    "real_saved_test_place": false,
+    "authenticated_engine_run": false,
+    "independent_review": "PENDING",
+    "source_main_unchanged": true
+  }
+}

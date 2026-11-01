@@ -1,0 +1,37 @@
+{
+  "id": "C09972",
+  "date": "2026-11-01",
+  "kind": "A14_SAVED_PROXY_NO_IMPLICIT_ENV_GREEN",
+  "repository": "kk051780/toy-wars-factory",
+  "source_pr": 176,
+  "reviewed_parent_pr": 148,
+  "parent_head": "1db4d0efc417a0688298e91cdbf40670b2befd22",
+  "owner_id": "cae7961f-2e91-4bf6-a157-33d4fd0d0151",
+  "epoch": 362,
+  "claim_commit": "d06106431e4c0968834f9eba32e42b2be7334b80",
+  "red_commit": "2cfe12a4fd59fbdc53962b99baea058d5780a1a7",
+  "red_ci": {
+    "run_id": 41261318782,
+    "offline": "EXPECTED_FAILURE_3_OF_909",
+    "compile_hold": "SUCCESS"
+  },
+  "source_fix_commit": "38b7299c722c9320011f151735bf0a1ff77043a2",
+  "fix": {
+    "path": "tools/roblox_private_xml_saved.py",
+    "old_blob": "de40d4ae37da942f3fdce2edad5c496f1dfc328e",
+    "new_blob": "ae41724fbf653830fc06ed463072d772086b1fb6",
+    "note": "Disable implicit HTTPS_PROXY while preserving NoRedirect"
+  },
+  "green_ci": {
+    "run_id": 41261433789,
+    "conclusion": "SUCCESS",
+    "offline": "909_PYTHON_TESTS_PASS",
+    "compile_hold": "SUCCESS",
+    "new_proxy_tests": "4_PASS"
+  },
+  "public_publish_authorized": false,
+  "roblox_network_calls": 0,
+  "roblox_engine_verified": false,
+  "independent_review": "PENDING",
+  "main_mutated": false
+}

@@ -261,7 +261,10 @@ class SavedOnlyTransport(unittest.TestCase):
              'TWF_TEST_UNIVERSE_ID':'2020','TWF_TEST_PLACE_ID':'3030',
              'TWF_PROD_UNIVERSE_ID':'4040','TWF_PROD_PLACE_ID':'5050'}
         class FakeResponse:
-            def __init__(self,url):self.url=url
+            def __init__(self,url):
+                self.url=url
+                self.status=200
+                self.headers={'Content-Type':'application/json'}
             def __enter__(self):return self
             def __exit__(self,*a):return None
             def geturl(self):return self.url
