@@ -22,6 +22,8 @@ XML_SHA256 = '1c9bdc3dc478fe72e51870e478aa15392c47875618b86262aa7dd605e4026b33'
 XML_SIZE = 54753
 SCRIPT_SHA256 = 'fc343ede29c2466b0962689b183b5320d81122a807d65ad7f82e942a9268759d'
 SCRIPT_NAME = 'twf_open_cloud_smoke.luau'
+# Bound script runtime; this does not assert end-to-end task wall time.
+TASK_TIMEOUT = '30s'
 MARKER = 'TWF_OC_ENGINE_STRUCTURE_V1'
 EXPECTED_TOPOLOGY = '6_expected_game_objects'
 API_HOST = 'https://apis.roblox.com'
@@ -85,7 +87,7 @@ def readiness(*, repository: object, source_main: object, producer_run: object,
     script=pin_script(script_path)
     api_path = (f'/cloud/v2/universes/{universe}/places/{place}'
                 f'/versions/{version}/luau-execution-session-tasks')
-    body = json.dumps({'script':script}, ensure_ascii=False, separators=(',',':')).encode('utf-8')
+    body = json.dumps({'script':script,'timeout':TASK_TIMEOUT}, ensure_ascii=False, separators=(',',':')).encode('utf-8')
     return {
         'schema':1,
         'status':'PRIVATE_OPEN_CLOUD_PLAN_NOT_EXECUTED',
@@ -103,6 +105,7 @@ def readiness(*, repository: object, source_main: object, producer_run: object,
             'api_host':API_HOST,
             'path':api_path,
             'body_sha256':hashlib.sha256(body).hexdigest(),
+            'timeout':TASK_TIMEOUT,
             'content_type':'application/json',
             'body_contains_exact_reviewed_script':True,
             'credentials_embedded':False,
