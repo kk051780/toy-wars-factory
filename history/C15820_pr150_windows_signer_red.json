@@ -15,11 +15,12 @@
   },
   "test_file": "tests/test_windows_studio_signer_organization.py",
   "new_tests": 15,
-  "source_changes": 0,
+  "source_changes": [],
   "expected_native_ci": "RED_SIGNER_POLICY",
   "authority": {
     "roblox_execution": false,
     "merge": false,
     "independent_review": "PENDING"
-  }
+  },
+  "note": "Correct C15820 draft schema (no game source modifications) after provider RED revealed unrelated handoff test TypeError; retain original RED head and run as evidence."
 }
