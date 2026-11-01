@@ -158,7 +158,12 @@ def strict_json(data):
     def no_const(_):
         raise ValueError("nonfinite JSON literal")
 
-    return json.loads(data, object_pairs_hook=no_dup, parse_constant=no_const)
+    try:
+        return json.loads(data, object_pairs_hook=no_dup, parse_constant=no_const)
+    except RecursionError:
+        # This shape can fit under MAX_BYTES yet exceed the parser's nesting
+        # depth. Keep all invalid JSON on the ordinary fail-closed CLI path.
+        raise ValueError("JSON nesting too deep") from None
 
 
 def main(argv=None):
