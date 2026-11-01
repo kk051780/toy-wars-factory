@@ -105,4 +105,18 @@ class SavedResponseSecurity(unittest.TestCase):
         with self.assertRaises(stage.XmlStageError):
             self.go(b'{"versionNumber":56,"other":"\xff"}')
 
+
+    def test_14_official_saved_receipt_text_plain_accepted(self):
+        value, opener=self.go(content_type='text/plain')
+        self.assertEqual(stage.saved_version(value),'56')
+        self.assertEqual(opener.open.call_count,1)
+    def test_15_official_saved_receipt_text_plain_charset_accepted(self):
+        value, opener=self.go(content_type='text/plain; charset=utf-8')
+        self.assertEqual(stage.saved_version(value),'56')
+        self.assertEqual(opener.open.call_count,1)
+    def test_16_unrelated_response_mime_remains_rejected(self):
+        for media_type in ('text/html','application/octet-stream','application/javascript'):
+            with self.subTest(media_type=media_type),self.assertRaises(stage.XmlStageError):
+                self.go(content_type=media_type)
+
 if __name__=='__main__':unittest.main()
