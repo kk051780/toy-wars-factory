@@ -144,6 +144,10 @@ class IntegrationTests(unittest.TestCase):
 
     def test_branch_protection_two_distinct_fresh_approvals_allowed(self):
         self._protected_main()["required_approving_review_count"] = 2
+        other = copy.deepcopy(self.review["native_approval"]["reviews"][0])
+        other["id"] = 702
+        other["user"]["login"] = "second-native-reviewer"
+        self.review["native_approval"]["reviews"].append(other)
         self.assertEqual(self.decision()["action"], "MERGE")
 
     def test_branch_protection_proof_malformed_must_wait(self):
