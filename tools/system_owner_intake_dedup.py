@@ -158,11 +158,33 @@ def strict_json(data):
     def no_const(_):
         raise ValueError("nonfinite JSON literal")
 
+    # JSON decoder recursion limits vary across Python builds. Count JSON
+    # structural brackets independently, ignoring quoted and escaped text.
+    # Reject before json.loads, while preserving its strict key/number checks.
+    raw = data.decode("utf-8") if isinstance(data, (bytes, bytearray)) else data
+    if isinstance(raw, str):
+        depth = 0
+        in_string = False
+        escaped = False
+        for char in raw:
+            if in_string:
+                if escaped:
+                    escaped = False
+                elif char == "\\":
+                    escaped = True
+                elif char == '"':
+                    in_string = False
+            elif char == '"':
+                in_string = True
+            elif char in "[{":
+                depth += 1
+                if depth > 256:
+                    raise ValueError("JSON nesting too deep")
+            elif char in "]}":
+                depth -= 1
     try:
         return json.loads(data, object_pairs_hook=no_dup, parse_constant=no_const)
     except RecursionError:
-        # This shape can fit under MAX_BYTES yet exceed the parser's nesting
-        # depth. Keep all invalid JSON on the ordinary fail-closed CLI path.
         raise ValueError("JSON nesting too deep") from None
 
 

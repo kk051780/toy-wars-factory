@@ -305,6 +305,25 @@ class OwnerIdeaIntakeTests(unittest.TestCase):
                 self.assertEqual(run.returncode, 2)
                 self.assertIn("WAIT_INVALID_INPUT", run.stdout)
 
+    def test_brackets_and_escaped_quotes_in_strings_are_not_structure(self):
+        from system_owner_intake_dedup import strict_json
+        payload = {"brackets": "[" * 10000 + "}" * 10000,
+                   "escaped": 'quoted " and slash \\ plus [ { ] }'}
+        self.assertEqual(strict_json(json.dumps(payload)), payload)
+
+    def test_depth_limit_256_accepts_boundary_rejects_overflow(self):
+        from system_owner_intake_dedup import strict_json
+        raw = "[" * 256 + "0" + "]" * 256
+        decoded = strict_json(raw)
+        for _ in range(256):
+            self.assertIsInstance(decoded, list)
+            decoded = decoded[0]
+        self.assertEqual(decoded, 0)
+        for opener, closer in (("[", "]"), ('{"x":', "}")):
+            invalid = opener * 257 + "0" + closer * 257
+            with self.assertRaisesRegex(ValueError, "JSON nesting too deep"):
+                strict_json(invalid)
+
     def test_deep_json_parser_returns_bounded_value_error(self):
         from system_owner_intake_dedup import strict_json
         raw = "[" * 40000 + "0" + "]" * 40000
