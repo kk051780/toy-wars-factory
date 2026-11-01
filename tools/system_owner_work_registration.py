@@ -51,8 +51,9 @@ def _work_record(row: Any) -> tuple[str, str]:
          "bad registry project")
     must(type(row["repository"]) is str and REPOSITORY.fullmatch(row["repository"]) is not None,
          "bad registry repository")
-    must(all(p not in (".", "..") for p in row["repository"].split("/")),
-         "unsafe registry repository")
+    must(all(p not in (".", "..") for p in row["repository"].split("/")) and
+         row["repository"] == row["repository"].casefold(),
+         "unsafe or noncanonical registry repository")
     must(type(row["idea_id"]) is str and IDEA_ID.fullmatch(row["idea_id"]) is not None,
          "bad registry idea_id")
     must(type(row["kind"]) is str and row["kind"] in KINDS, "bad registry kind")
@@ -94,8 +95,9 @@ def _snapshot(snapshot: Any) -> tuple[dict, dict, list[dict]]:
     }, "invalid snapshot shape")
     must(type(snapshot["repository"]) is str and
          REPOSITORY.fullmatch(snapshot["repository"]) is not None and
-         all(p not in (".", "..") for p in snapshot["repository"].split("/")),
-         "invalid snapshot repo")
+         all(p not in (".", "..") for p in snapshot["repository"].split("/")) and
+         snapshot["repository"] == snapshot["repository"].casefold(),
+         "invalid or noncanonical snapshot repo")
     must(snapshot["coordination_branch"] == CONTROL_BRANCH, "wrong coordinator")
     must(_is_sha(snapshot["ref_sha"]), "invalid coordinator ref")
     must(_is_sha(snapshot["main_sha"]), "invalid main ref")
