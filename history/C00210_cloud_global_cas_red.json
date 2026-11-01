@@ -1,0 +1,27 @@
+{
+  "id": "C00210",
+  "date": "2026-10-31",
+  "kind": "PROTECTED_A14_CLOUD_GLOBAL_CAS_RED",
+  "issue": 151,
+  "pr": "PENDING_PROTECTED_DRAFT",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "d68d200b87a88fd5d512c2972af16631f484fb3d",
+    "owner_run_id": "4c8d111d-2456-4959-aa5b-219fc7d43546",
+    "epoch": 306
+  },
+  "tests": {
+    "file": "tests/test_cloud_global_intent_integration.py",
+    "test_count": 17,
+    "expected_result": "RED_IMPORT_WHILE_IMPLEMENTATION_ABSENT",
+    "actual_actions": "PENDING"
+  },
+  "non_authorizing": true,
+  "roblox_engine": "NOT_RUN",
+  "provider_attested": false,
+  "main_merged": false,
+  "independent_review": "PENDING",
+  "external_inference": "NONE",
+  "roblox_publication": "FORBIDDEN"
+}

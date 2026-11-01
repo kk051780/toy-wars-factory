@@ -1,0 +1,30 @@
+{
+  "id": "C99158",
+  "date": "2026-11-01",
+  "kind": "CONTROLLER_A14_PR158_FRESH_CLOCK_COMMIT_SCOPE_REGRESSION_RED",
+  "pr": 158,
+  "original_pr_head": "bb0ae321afa7f0d35d6ac7e69d5f5fdee04e69bc",
+  "base_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "77c748aff11647e67281f5981aa5cd7042596a60",
+    "owner_run_id": "c4d7af89-5c65-4b25-99c9-953162eb7336",
+    "epoch": 383,
+    "work_branch": "controller/roblox-cloud-cas-4c8d111d"
+  },
+  "changed_files": [
+    "tests/test_cloud_global_clock_and_commit_scope.py",
+    "history/C99158_pr158_clock_and_scope_red.json"
+  ],
+  "test_first": {
+    "new_cases": 16,
+    "original_source": "UNMODIFIED",
+    "expected_ci": "RED: mock test invokes missing required fresh-clock and diff-scope controls",
+    "native_ci": "PENDING_EXACT_HEAD"
+  },
+  "network_calls": 0,
+  "roblox_calls": 0,
+  "main_mutated": false,
+  "publish": false,
+  "may_merge": false
+}

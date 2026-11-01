@@ -1,0 +1,44 @@
+{
+  "id": "C00221",
+  "date": "2026-10-31",
+  "kind": "PROTECTED_A14_CLOUD_CAS_CALLBACK_GREEN",
+  "issue": 151,
+  "pr": 158,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "76e8b1fc1e13a347aed1b86d0d2eb610f3465388",
+    "owner_run_id": "c33a05bf-6b35-4b0f-acb8-ae8d788994bf",
+    "epoch": 308
+  },
+  "red": {
+    "head": "13ce6a7e8958bd4c741851963416255c954ea6cd",
+    "actions_run": 41156709983,
+    "status": "OFFLINE_FAILURE",
+    "compile_hold": "SUCCESS",
+    "expected_reason": "new callback API absent and empty-ledger IndexError"
+  },
+  "green": {
+    "source_path": "tools/cloud_global_intent_fence.py",
+    "source_git_blob": "edc721afa9c442a8f1ebabcc4daba4bba0c4935a",
+    "source_sha256": "482e6193fad3a0ef0d2636715f4d74b2976fe6eb89c68e3291adc4f374a9f53f",
+    "source_bytes": 11961,
+    "test_path": "tests/test_cloud_global_trusted_callbacks.py",
+    "test_blob": "5f60172de7d07dd4e146df6aad0920c4d2c64295",
+    "new_tests": 16,
+    "prior_native_tests": 850,
+    "github_actions": "PENDING_EXACT_FINAL_HEAD",
+    "owner_local_scoped_tests": 93
+  },
+  "permissions": {
+    "github_write_from_module": "NO",
+    "roblox_request": "NO",
+    "post_authorized": false,
+    "provider_authenticated": false,
+    "merge_authorized": false,
+    "roblox_engine_verified": false
+  },
+  "independent_review": "PENDING_MANUAL_SYSTEM_TRUST_ROOT_ISSUE60",
+  "main_merged": false,
+  "note": "Single-parent CAS and matching ACK+readback pure callback adapter; does not install an authenticated runtime. Issue60 manual-controller system PR reviewer intake is not yet authorized."
+}

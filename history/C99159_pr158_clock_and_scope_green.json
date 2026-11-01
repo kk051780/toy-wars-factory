@@ -1,0 +1,56 @@
+{
+  "id": "C99159",
+  "date": "2026-11-01",
+  "kind": "CONTROLLER_A14_PR158_FRESH_CLOCK_COMMIT_SCOPE_FIX_GREEN",
+  "pr": 158,
+  "branch": "controller/roblox-cloud-cas-4c8d111d",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "77c748aff11647e67281f5981aa5cd7042596a60",
+    "owner_run_id": "c4d7af89-5c65-4b25-99c9-953162eb7336",
+    "epoch": 383
+  },
+  "red": {
+    "head": "605d7436d7cdb1f9176c4bc201bc3b156ab6b326",
+    "ci_run": 41288174960,
+    "offline": "failure",
+    "compile_hold": "success",
+    "new_adversarial_cases": 16,
+    "expected_defect": "Old callbacks used stale caller now and required only single-parent ancestry"
+  },
+  "fix": {
+    "fresh_clock_required": "three host clock observations: proposal/pre-CAS/post-readback",
+    "clock_nonrollback": true,
+    "expired_before_cas_block": true,
+    "expired_after_cas_block": true,
+    "commit_scope": "exactly ops/REPAIR_COORDINATOR.json in complete authenticated commit diff",
+    "no_forged_authority": true,
+    "no_retry": true
+  },
+  "changed_files": [
+    "tools/cloud_global_intent_fence.py",
+    "tests/test_cloud_global_trusted_callbacks.py",
+    "tests/test_cloud_global_clock_and_commit_scope.py",
+    "history/C99158_pr158_clock_and_scope_red.json",
+    "history/C99159_pr158_clock_and_scope_green.json"
+  ],
+  "source_patch_blob": "20f01020cb83cb269c1b9e801be4e8cb00891ea9",
+  "migrated_tests_blob": "80b64937f3cdfa6212135c3c97f348f42bf59190",
+  "test_result": {
+    "native_green_ci": "PENDING_EXACT_HEAD",
+    "roblox_engine": "NOT_RUN",
+    "provider_cas": "NOT_RUN",
+    "real_git_scope": "NOT_RUN"
+  },
+  "security": {
+    "post_authorized": false,
+    "real_provider_authenticated": false,
+    "force": false,
+    "main_mutated": false,
+    "owner_merge": false,
+    "publish": false,
+    "external_ai_inference": false
+  },
+  "next_action": "Exact-head native GitHub QA and independent manual trust-root review; no Roblox POST"
+}
