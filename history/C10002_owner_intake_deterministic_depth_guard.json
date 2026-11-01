@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "id": "C10002",
+  "date": "2026-11-01",
+  "kind": "PROTECTED_OWNER_INTAKE_JSON_DEPTH_RUNTIME_INDEPENDENT_GUARD",
+  "repository": "kk051780/toy-wars-factory",
+  "scope": "Existing DRAFT parent PR173 only, no main/child source writes",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 386,
+    "owner_run_id": "fdc2a1b3-98c4-49d0-a1b6-e07ba8ac57d0",
+    "claim_commit": "dca855d98f4be0dd215dcab8c755a666af7408fd",
+    "work_branch": "controller/owner-intake-dedup-04d26d6e"
+  },
+  "initial_parent_head": "c902948f66d408c78211c1afb694c19326b98bc4",
+  "source_issue": "80,001-byte nested JSON fails differently depending on Python decoder's recursion setting; initial RecursionError catch alone failed hosted CI (40k arrays parsed successfully).",
+  "red": {
+    "tests_only_head": "9ca9b810e96d66a1ac0bb18817472cbd7fcdc479",
+    "ci_run": 41291105632,
+    "offline": "failure",
+    "compile_hold": "success",
+    "new_failure_cases": 2
+  },
+  "intermediate": {
+    "head": "8dae53f8205185643f4d0cddad71138cfe2e049e",
+    "ci_run": 41291232340,
+    "offline": "failure",
+    "compile_hold": "success",
+    "reason": "RecursionError-only catch insufficient in hosted Python"
+  },
+  "green": {
+    "head": "091ea6a9e7f7bf96b8d2306068b6a657d4113ee2",
+    "ci_run": 41293014839,
+    "offline": "success",
+    "compile_hold": "success",
+    "new_additional_boundary_and_literal_tests": 2
+  },
+  "changed_paths": [
+    "tools/system_owner_intake_dedup.py",
+    "tests/test_system_owner_intake_dedup.py",
+    "history/C10002_owner_intake_deterministic_depth_guard.json"
+  ],
+  "fix": "Explicit max depth 256 structural JSON brackets, skip structural characters inside quoted/escaped strings, maintain json.loads duplicate-key/NaN guards and RecursionError fallback.",
+  "history_reservation": {
+    "open_prs_scanned": 57,
+    "main_history_checked": true,
+    "collisions_found": 0,
+    "recheck_required_at_merge": true
+  },
+  "limits": {
+    "author_not_reviewer": true,
+    "independent_review": "PENDING",
+    "dependent_pr": 174,
+    "dependent_child_reconciliation": "PENDING",
+    "real_coordinator_work_registry_CAS": false,
+    "original_worker_dispatch": false,
+    "main_mutated": false,
+    "roblox_studio": "NOT_RUN",
+    "gemini_activation": false,
+    "spending": false,
+    "publish": false,
+    "may_merge": false
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "id": "C09991",
+  "date": "2026-10-31",
+  "kind": "MANUAL_CONTROLLER_OWNER_IDEA_INTAKE_DEDUP_READONLY",
+  "repository": "kk051780/toy-wars-factory",
+  "task_id": null,
+  "run_id": "04d26d6e-2f66-4c4c-9786-88737e186b6d",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "21d8cfc778f04ef44e1fd841733b4510ed0bf37d",
+    "owner_run_id": "04d26d6e-2f66-4c4c-9786-88737e186b6d",
+    "epoch": 338,
+    "work_branch": "controller/owner-intake-dedup-04d26d6e"
+  },
+  "purpose": "Canonicalize exact normalized owner-idea request IDs so two ChatGPT conversations can suggest JOIN rather than launch duplicate source work. Not an atomic reservation.",
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1186,
+    "lua_bytes": 52781
+  },
+  "source_baseline_bytes": 25726,
+  "changed_files": [
+    "tools/system_owner_intake_dedup.py",
+    "tests/test_system_owner_intake_dedup.py",
+    "history/C09991_owner_intake_dedup_advisory.json"
+  ],
+  "test_changes": [
+    {
+      "path": "tests/test_system_owner_intake_dedup.py",
+      "new_cases": 23
+    }
+  ],
+  "exact_local_git_blobs": {
+    "source": "4f01fedb711aa7c2e4d2c632cfbf0dc5a784ccf9",
+    "tests": "d46a1ebf29d8042012d1d12bffc03c75bf82fe68"
+  },
+  "tests": {
+    "local_green": "23/23 Python unittest PASS",
+    "python_compileall": "PASS",
+    "github_ci": "PENDING_EXACT_HEAD",
+    "roblox_engine": "NOT_RUN",
+    "mobile_ui": "NOT_RUN"
+  },
+  "known_limits": [
+    "READ_ONLY_ADVISORY_ONLY",
+    "caller source not provider-attested",
+    "same initial snapshot can yield NEW twice; no CAS",
+    "paraphrases not semantically deduplicated",
+    "no coordinator integration or runtime consumer",
+    "no new write/dispatch/merge/model/publish authority",
+    "provisional history ID; must global-scan before merge"
+  ],
+  "main_mutated": false,
+  "merge_authorized": false,
+  "release_holds": "PRESERVED",
+  "characters_touched": [],
+  "next": "Independent protected reviewer checks exact GitHub source and two-job CI, global history-id, no conflicts and final main QA. Trust-root migration required before automatic work intake."
+}
