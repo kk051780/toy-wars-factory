@@ -9,7 +9,7 @@ import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
 from system_owner_registry_snapshot import (API_ROOT, COORDINATOR_BRANCH,
     COORDINATOR_PATH, REPOSITORY, REPOSITORY_ID, SnapshotRejected,
-    capture_snapshot, git_blob_sha, strict_json)
+    capture_snapshot, capture_connected_snapshot, git_blob_sha, strict_json)
 
 MAIN = 'a' * 40
 CONTROL = 'b' * 40
@@ -55,6 +55,164 @@ class FakeOriginalGitHub:
         if url == f'{API_ROOT}/contents/{COORDINATOR_PATH}?ref={CONTROL}':
             return copy.deepcopy(self.contents)
         raise AssertionError('unexpected URL (this test must not do any network call)')
+
+
+class ConnectedGitHubAdapterTests(unittest.TestCase):
+    """Simulate normalized connector results; never a real provider attestation."""
+
+    class Fake:
+        def __init__(self):
+            self.calls = []
+            self.file_calls = []
+            self.main = MAIN
+            self.coordinator = CONTROL
+            self.repo = {'id': REPOSITORY_ID, 'full_name': REPOSITORY, 'private': True}
+            self.payload = observed_state()
+
+        def fetch(self, url):
+            self.calls.append(url)
+            if url == API_ROOT:
+                return {'content': json.dumps(self.repo)}
+            if url.endswith('/git/ref/heads/main'):
+                return {'content': json.dumps(ref('main', self.main))}
+            if url.endswith('/git/ref/heads/' + COORDINATOR_BRANCH):
+                return {'content': json.dumps(ref(COORDINATOR_BRANCH, self.coordinator))}
+            raise AssertionError('unexpected URL')
+
+        def fetch_file(self, *, repository_full_name, path, ref):
+            self.file_calls.append((repository_full_name, path, ref))
+            assert (repository_full_name, path, ref) == (REPOSITORY, COORDINATOR_PATH, CONTROL)
+            data = json.dumps(self.payload, ensure_ascii=False)
+            raw = data.encode('utf-8')
+            return {'content': data, 'sha': git_blob_sha(raw), 'encoding': 'utf-8',
+                    'display_title': 'REPAIR_COORDINATOR.json',
+                    'display_url': ('https://github.com/' + REPOSITORY + '/blob/' +
+                                    CONTROL + '/' + COORDINATOR_PATH)}
+
+    def test_connector_normalized_live_shape_accepted_without_write_authority(self):
+        fake = self.Fake()
+        r = capture_connected_snapshot(fake.fetch, fake.fetch_file)
+        self.assertEqual(len(fake.calls), 5)
+        self.assertEqual(fake.file_calls, [(REPOSITORY, COORDINATOR_PATH, CONTROL)])
+        self.assertEqual(r['capture_get_count'], 6)
+        self.assertEqual(r['snapshot']['state'], observed_state())
+        self.assertEqual(r['snapshot']['ref_sha'], CONTROL)
+        self.assertFalse(r['github_authenticated'])
+        for key in ('may_claim', 'may_write', 'may_dispatch', 'may_merge', 'cas_performed'):
+            self.assertFalse(r[key])
+
+    def test_connector_registry_preserved_without_authority(self):
+        fake = self.Fake()
+        fake.payload['work_registrations'] = {'schema': 1, 'entries': []}
+        r = capture_connected_snapshot(fake.fetch, fake.fetch_file)
+        self.assertTrue(r['work_registry_initialized'])
+        self.assertEqual(r['snapshot']['state']['work_registrations']['entries'], [])
+
+    def test_connector_rejects_foreign_repo_identity(self):
+        for field, bad in (('id', 12), ('full_name', 'other/repo'), ('private', False)):
+            with self.subTest(field=field):
+                fake = self.Fake()
+                fake.repo[field] = bad
+                with self.assertRaises(SnapshotRejected):
+                    capture_connected_snapshot(fake.fetch, fake.fetch_file)
+
+    def test_connector_ref_drift_rejected(self):
+        fake = self.Fake()
+        old = fake.fetch
+        seen = [0]
+        def change(url):
+            if url.endswith('/git/ref/heads/main'):
+                seen[0] += 1
+                if seen[0] == 2:
+                    fake.main = 'c' * 40
+            return old(url)
+        with self.assertRaisesRegex(SnapshotRejected, 'REF_MOVED'):
+            capture_connected_snapshot(change, fake.fetch_file)
+
+    def test_connector_bad_ref_type_rejected(self):
+        fake = self.Fake()
+        old = fake.fetch
+        def malformed(url):
+            if url.endswith('/git/ref/heads/main'):
+                return {'content': json.dumps({'ref':'refs/heads/main','object':{'sha':MAIN,'type':'tag'}})}
+            return old(url)
+        with self.assertRaises(SnapshotRejected):
+            capture_connected_snapshot(malformed, fake.fetch_file)
+
+    def test_connector_normalized_file_sha_mismatch_rejected(self):
+        fake = self.Fake()
+        original = fake.fetch_file
+        def mismatched(**kw):
+            o = original(**kw)
+            o['sha'] = '0' * 40
+            return o
+        with self.assertRaises(SnapshotRejected):
+            capture_connected_snapshot(fake.fetch, mismatched)
+
+    def test_connector_normalized_file_url_or_encoding_rejected(self):
+        for field, bad in (('display_url', 'https://other.test/clone'),
+                           ('encoding', 'base64'), ('display_title', 'OTHER.json')):
+            with self.subTest(field=field):
+                fake = self.Fake()
+                original = fake.fetch_file
+                def altered(**kw):
+                    o = original(**kw)
+                    o[field] = bad
+                    return o
+                with self.assertRaises(SnapshotRejected):
+                    capture_connected_snapshot(fake.fetch, altered)
+
+    def test_connector_unsupported_coordinator_schema_rejected(self):
+        fake = self.Fake()
+        fake.payload['schema'] = 2
+        with self.assertRaisesRegex(SnapshotRejected, 'COORDINATOR_SHAPE_INVALID'):
+            capture_connected_snapshot(fake.fetch, fake.fetch_file)
+
+    def test_connector_duplicate_json_key_rejected(self):
+        fake = self.Fake()
+        old = fake.fetch_file
+        def dup(**kw):
+            o = old(**kw)
+            o['content'] = '{"schema":1,"schema":1,"epoch":379,"holder":null}'
+            o['sha'] = git_blob_sha(o['content'].encode())
+            return o
+        with self.assertRaisesRegex(SnapshotRejected, 'DUPLICATE_JSON_KEY'):
+            capture_connected_snapshot(fake.fetch, dup)
+
+    def test_connector_invalid_api_result_and_callback_errors(self):
+        fake = self.Fake()
+        with self.assertRaises(SnapshotRejected):
+            capture_connected_snapshot(lambda url: [], fake.fetch_file)
+        with self.assertRaises(SnapshotRejected):
+            capture_connected_snapshot(fake.fetch, lambda **kw: [])
+        def fails(url):
+            raise RuntimeError('secret-sentinel')
+        with self.assertRaises(SnapshotRejected) as error:
+            capture_connected_snapshot(fails, fake.fetch_file)
+        self.assertNotIn('sentinel', str(error.exception))
+
+    def test_connector_missing_callback_is_fail_closed(self):
+        fake = self.Fake()
+        for a,b in ((None, fake.fetch_file), (fake.fetch, None)):
+            with self.assertRaises(SnapshotRejected):
+                capture_connected_snapshot(a,b)
+
+    def test_connector_forged_self_consistent_callback_remains_untrusted(self):
+        fake = self.Fake()
+        r = capture_connected_snapshot(fake.fetch, fake.fetch_file)
+        self.assertEqual(r['status'], 'CALLBACK_SNAPSHOT_NOT_PROVIDER_ATTESTED')
+        self.assertFalse(r['provider_run_authenticated'])
+
+    def test_nested_coordinator_json_recursion_is_sanitized(self):
+        fake = self.Fake()
+        original = fake.fetch_file
+        def deeply_nested(**kw):
+            o = original(**kw)
+            o['content'] = '[' * 10000 + '0' + ']' * 10000
+            o['sha'] = git_blob_sha(o['content'].encode())
+            return o
+        with self.assertRaises(SnapshotRejected):
+            capture_connected_snapshot(fake.fetch, deeply_nested)
 
 
 class OriginalGitSnapshotTests(unittest.TestCase):
