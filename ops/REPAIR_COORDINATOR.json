@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 372,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "ef4b2e2a-6bfe-47a9-b438-a42de8eb3871",
-    "task_id": null,
-    "epoch": 372,
-    "acquired_at": "2026-11-01T03:53:33.222Z",
-    "expires_at": "2026-11-01T04:17:33.222Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/studio-mcp-readonly-e42c75b2",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,20 +2893,38 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "cf416b22-6c41-4d1f-9a36-abc013effe70",
-    "epoch": 371,
-    "released_at": "2026-11-01T03:45:11.993Z",
+    "owner_id": "ef4b2e2a-6bfe-47a9-b438-a42de8eb3871",
+    "epoch": 372,
+    "released_at": "2026-11-01T04:04:43.417Z",
     "release_receipt": {
-      "pr": 176,
-      "pr_head": "5e74946d7d895a06f8a551c77d545468a3ded86f",
-      "claim_commit": "2908d93ac00e5f2fd905912ae4308285067ce85d",
-      "ci_run": 41270196752,
-      "ci_conclusion": "success",
-      "python_tests": 922,
-      "review": "PENDING",
-      "engine": "NOT_RUN",
-      "main_mutated": false,
-      "reason": "A14_SAVED_RESPONSE_STRICT_JSON_RED_GREEN"
+      "reason": "PR167_WINDOWS_MCP_LAUNCHER_CWD_EXACT_HEAD_NATIVE_RED_GREEN",
+      "claim_commit": "c96b50cb2907c2a51d2723a825ed617f2e10920f",
+      "work_branch": "controller/studio-mcp-readonly-e42c75b2",
+      "pr": 167,
+      "pr_head": "c084338415a4f97db27035f3443a5eb58301e01f",
+      "red_head": "dd2e84e89dfbc68b6039dc73f9c602bb0fc22200",
+      "red_run": 41271252895,
+      "red_python_tests": 871,
+      "red_errors": 17,
+      "green_head": "c084338415a4f97db27035f3443a5eb58301e01f",
+      "green_run": 41271487563,
+      "green_python_tests": 871,
+      "green_conclusion": "success",
+      "new_regressions": 15,
+      "source_blob": "b6c50f922f2f707aed8b5bbf143bbba5fb097037",
+      "history_files": [
+        "history/C16731_studio_mcp_windows_cwd_red.json",
+        "history/C16732_studio_mcp_windows_cwd_green.json"
+      ],
+      "pr_comment_id": 6553188890,
+      "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "main_changed": false,
+      "independent_review": "PENDING",
+      "windows_host": "NOT_RUN",
+      "studio_mcp_live": "NOT_RUN",
+      "roblox_engine": "NOT_RUN",
+      "private_saved_upload": "NOT_RUN",
+      "public_publish_authorized": false
     }
   },
   "last_completed_integration": {
