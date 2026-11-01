@@ -1,4 +1,4 @@
-# TOY WARS / A14 — Open Cloud 固定スモークの戻り値検証ゲート（候補 v4）
+# TOY WARS / A14 — Open Cloud 固定スモークの戻り値検証ゲート（候補 v5）
 
 ## 課題と今回の差分
 既存の「88テスト」Open Cloud 静的スクリプト候補の `inspect_untrusted_task()` は、返却文字列内のマーカーや構造名が「含まれるか」のみを報告する。これを実機成功判定に使うと、単なるエラーメッセージや偽の文字列も成功に見えてしまう。
@@ -38,6 +38,16 @@ Roblox公式の [DemoSDK.luau](https://github.com/Roblox/open-cloud-execution-bi
 - 新規 `inspect_untrusted_create_get_and_logs(plan, create_json, get_json, logs_json)` は、タスク作成応答と完了タスクGETの**フルパス完全一致**を必須とする。バージョン/タスクIDの食い違い、作成応答の失敗状態、スクリプト変更、30秒制限の不一致を拒否する。
 - 新規17件の回帰検査を、既存 `tests/test_twf_open_cloud_get_log_adapter.py` に追加。GitHub実RED `11c71ed67e70006c9cda7990b1bd8ce70b7fa23f` / [Actions #41266078138](https://github.com/kk051780/toy-wars-factory/actions/runs/41266078138) は **914件中想定エラー17件**、修正後 `04a83070300a0d5318389f8422ecaef6fa81168e` / [Actions #41266148985](https://github.com/kk051780/toy-wars-factory/actions/runs/41266148985) は **914/914全成功**。41件の静的戻り値テストと40件のGET/ログ・作成ACKチェックは通過。
 - 重要：**作成応答そのものは未認証の呼び出し元JSON**で、これを実機証拠と見なさない。返却値は `create_response_path_matches_get=True` だが、`create_ack_authenticated=False`、`provider_authenticated=False`、`engine_verified=False`。実際のホストは、認証済みHTTPS応答・当初のPOST本文・非公開保存版・CAS履歴を別個に証明する必要がある。
+
+## GET-only 実通信候補と本物の契約検証器の接続（候補 v5、2026-11-01）
+前版の `POST create ACK → GETタスク → GETログ` 検証は無通信の整合比較であり、実HTTP通信部分が存在しなかった。今回、以前にオーナーのChatGPT Libraryへ保管した候補から **GET専用通信モジュール2件とオフライン検査50件**を元の保護PR #175へ追加した。公開・作成・保存用のPOSTは**追加していない**。
+
+- `tools/twf_roblox_get_only_probe.py`：明示的に指定された非公開のUniverse/Place/Saved-version/session/task IDへ、`GET task` と `GET task/logs` を**最大2回**実行する候補。QUEUED/PROCESSINGではGET1回のみ、暗黙の再試行なし。TLS標準認証、環境プロキシ無効、リダイレクト拒否、各要求8秒、各応答64KiBの制限。実運用の鍵・ホスト真正性は未証明。
+- `tools/twf_get_only_pr175_bridge.py`：得られたJSONを**メモリ内だけで**既存の `inspect_untrusted_create_get_and_logs()` に渡す。呼び出し元のCREATE応答と固定スクリプト・30秒のタスク制限を照合し、ログ本文・鍵・実機成功フラグを返さない。
+- `tests/test_get_only_probe.py` 26件、`tests/test_get_only_contract_bridge.py` 24件は、事前の独立ローカルテストに加え **GitHub Actions [#41269099092](https://github.com/kk051780/toy-wars-factory/actions/runs/41269099092) で964/964成功**。追加前 [#41269005912](https://github.com/kk051780/toy-wars-factory/actions/runs/41269005912) は未実装の読み込みエラー2件が想定どおり発生。
+- さらに**実際のPR #175検証モジュールを差替えず**に使う `tests/test_get_only_real_pr175_integration.py` を新規15件追加。GitHub Actions [#41269240219](https://github.com/kk051780/toy-wars-factory/actions/runs/41269240219) で**979/979** Python単体テスト成功、`offline` と `compile_hold` 両ジョブ成功。処理中タスクはGET1回だけ、完成タスクはGET2回と本物の契約照合、誤った元ACK/タスク/ログは拒否。
+- 専用の候補回帰試験は既存81件+GET-only50件+実モジュール結合15件＝**146件**。保存スクリプトLuauの元SHAは変更していない。
+- 最重要の制限：**GitHub Actionsの通信は全てモック**であり、外部Roblox API GET/POSTを1度も実行していない。鍵の保管、認証済み実行ホスト、元POST原本、非公開プレイス保存済み版と権限の証明、独立インフラ審査は依然として未完了。いかなるローカル整合性結果でもエンジン・スマホ・2人同時Playや公開成功と扱わない。
 
 ## 実行
 Python 3.10+。追加パッケージ不要。
