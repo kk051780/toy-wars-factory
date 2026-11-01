@@ -1,0 +1,25 @@
+{
+  "id": "C09971",
+  "kind": "A14_SAVED_PROXY_NO_IMPLICIT_ENV_RED",
+  "date": "2026-11-01",
+  "repository": "kk051780/toy-wars-factory",
+  "claim_commit": "d06106431e4c0968834f9eba32e42b2be7334b80",
+  "owner_id": "cae7961f-2e91-4bf6-a157-33d4fd0d0151",
+  "epoch": 362,
+  "pr": 176,
+  "parent_pr": 148,
+  "parent_head": "1db4d0efc417a0688298e91cdbf40670b2befd22",
+  "red_commit": "2cfe12a4fd59fbdc53962b99baea058d5780a1a7",
+  "original_ci": {
+    "run_id": 41261318782,
+    "offline": "FAIL_EXPECTED",
+    "compile_hold": "SUCCESS",
+    "python_tests": 909,
+    "expected_failing_tests": 3,
+    "nonrelated_failures": 0
+  },
+  "expected_failure": "Environment HTTPS_PROXY leaks to the urllib ProxyHandler installed by default; exact old source uses build_opener(NoRedirect()).",
+  "no_real_roblox_api": true,
+  "no_credential_used": true,
+  "release_authorized": false
+}
