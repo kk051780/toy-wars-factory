@@ -186,20 +186,37 @@ CONTROL_PATH = 'ops/REPAIR_COORDINATOR.json'
 
 
 def persist_proposal_via_trusted_callbacks(*, request, owner_id, epoch, now,
-                                           read, cas, read_commit):
-    """One-shot GitHub CAS proposal and exact-parent/readback gate, no retries.
+                                           read, cas, read_commit, clock=None):
+    """Prepare one append-only CAS; prove exact-parent, single-path and fresh lease.
 
     read(repo, branch, path) -> {'repository', 'branch', 'ref', 'state'}
-    cas(repo, branch, expected_sha=<sha>, state=<dict>, force=False) -> new SHA
-    read_commit(repo, new SHA) -> {'sha':new SHA,'parents':[old SHA]}
+    cas(repo, branch, expected_sha=<sha>, state=<dict>, force=False) -> SHA
+    read_commit(repo, SHA) -> {'sha', 'parents', 'changed_paths', 'changes_complete'}
+        'changed_paths' must be a COMPLETE list from actual GitHub commit pages.
+        The only permitted changed file is ops/REPAIR_COORDINATOR.json.
+    clock() -> aware UTC ISO 8601 string from an independently trusted host.
+        Required before proposal, immediately before CAS and after readback.
 
-    All three must be genuine independently authenticated provider connections.
-    An ambiguous CAS result must HOLD even if the write might have succeeded.
-    Unlike an execution dispatcher, this NEVER grants any right to POST, publish,
-    merge, spend, release a lease or run a Roblox game.
+    The old caller-supplied 'now' remains accepted for API compatibility, but
+    it does NOT authorize a lease or substitute for the fresh clock callback.
+    These callbacks must be independently host-authenticated. This module
+    cannot verify their origin and NEVER grants permission to POST to Roblox.
     """
     require(callable(read) and callable(cas) and callable(read_commit),
             'TRUSTED_CALLBACKS_MISSING')
+    require(callable(clock), 'TRUSTED_CLOCK_MISSING')
+    moment(now)  # Preserve the former typed input contract without trusting it.
+
+    def fresh_time(previous=None):
+        try:
+            at = clock()
+        except Exception:
+            # Do not leak a provider diagnostic, URL, token or host private data.
+            raise Blocked('TRUSTED_CLOCK_UNAVAILABLE_HOLD') from None
+        observed = moment(at)
+        if previous is not None:
+            require(observed >= moment(previous), 'CLOCK_ROLLBACK_HOLD')
+        return at
 
     def snapshot():
         try:
@@ -215,15 +232,19 @@ def persist_proposal_via_trusted_callbacks(*, request, owner_id, epoch, now,
         return row
 
     before = snapshot()
+    observed_before = fresh_time()
     plan = propose(before['state'], request, owner_id=owner_id,
-                   epoch=epoch, now=now, expected_ref=before['ref'])
+                   epoch=epoch, now=observed_before, expected_ref=before['ref'])
+    observed_pre_cas = fresh_time(observed_before)
+    # A slow read/proposal must never cross expiry just before a write.
+    active_controller(before['state'], owner_id, epoch, observed_pre_cas)
     try:
         ack = cas(REPO, CONTROL_BRANCH,
                   expected_sha=before['ref'],
                   state=deepcopy(plan['next_state']), force=False)
     except Exception:
         raise Blocked('CAS_ACK_UNKNOWN_HOLD_NO_RETRY') from None
-    # Do NOT ever repeat the CAS here. A lost response could mean a prior write.
+    # Never retry after an ambiguous CAS ACK; a remote reservation may exist.
     require(sha(ack, SHA1) and ack != before['ref'],
             'CAS_ACK_UNKNOWN_HOLD_NO_RETRY')
     try:
@@ -231,15 +252,22 @@ def persist_proposal_via_trusted_callbacks(*, request, owner_id, epoch, now,
     except Exception:
         raise Blocked('COMMIT_PARENT_NOT_PROVEN_HOLD') from None
     require(type(meta) is dict and
-            set(meta) == {'sha', 'parents'} and
-            meta['sha'] == ack and
-            type(meta['parents']) is list and meta['parents'] == [before['ref']],
+            meta.get('sha') == ack and
+            type(meta.get('parents')) is list and
+            meta['parents'] == [before['ref']],
             'COMMIT_PARENT_NOT_PROVEN_HOLD')
+    # A single Git parent does not prove a single changed file.
+    require(set(meta) == {'sha', 'parents', 'changed_paths', 'changes_complete'} and
+            meta.get('changes_complete') is True and
+            type(meta.get('changed_paths')) is list and
+            meta['changed_paths'] == [CONTROL_PATH],
+            'COMMIT_SCOPE_NOT_PROVEN_HOLD')
     after = snapshot()
+    observed_after = fresh_time(observed_pre_cas)
     validated = confirm_readback(plan, actual_ref=after['ref'],
                                  cas_ack_ref=ack, actual_state=after['state'],
                                  current_holder_state=after['state'],
-                                 owner_id=owner_id, epoch=epoch, now=now)
+                                 owner_id=owner_id, epoch=epoch, now=observed_after)
     return {
         **validated,
         'status': 'EXACT_PARENT_CAS_READBACK_STRUCTURAL_ONLY',

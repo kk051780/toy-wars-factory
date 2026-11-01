@@ -50,13 +50,16 @@ class GitHubFake:
         with self.lock:
             if self.fail_commit: raise ConnectionError('provider commit metadata outage')
             return {'sha': '0' * 40 if self.lie_commit else ref,
-                    'parents': [SECOND if self.lie_parent else PARENT]}
+                    'parents': [SECOND if self.lie_parent else PARENT],
+                    'changed_paths': [m.CONTROL_PATH], 'changes_complete': True}
 
 def call(g, **extra):
+    now=extra.pop('now', AT)
+    clock=extra.pop('clock', lambda: now)
     return m.persist_proposal_via_trusted_callbacks(
         request=extra.pop('request',request()),owner_id=extra.pop('owner_id',OWNER),
-        epoch=extra.pop('epoch',306),now=extra.pop('now',AT),
-        read=g.read,cas=g.cas,read_commit=g.commit,**extra)
+        epoch=extra.pop('epoch',306),now=now,
+        read=g.read,cas=g.cas,read_commit=g.commit,clock=clock,**extra)
 
 class GitHubCallbacksContract(unittest.TestCase):
     def check_block(self, f, expected=None):
