@@ -82,6 +82,44 @@ def new_entry(snap, req, *, override=None):
 
 
 class WorkClaimCASTests(unittest.TestCase):
+    def test_case_alias_record_with_canonical_work_id_rejected(self):
+        snap, req = fixture()
+        row = new_entry(snap, req)
+        row["repository"] = REPO.upper()
+        # Hash identity is the SAME under GitHub case-insensitive aliases.
+        self.assertEqual(row["work_id"], calculate_work_id(
+            row["project_id"], row["repository"], row["kind"], row["objective"]))
+        snap["state"]["work_registrations"] = {"schema": 1, "entries": [row]}
+        with self.assertRaisesRegex(Rejected, "registry repository"):
+            plan(snap, req)
+
+    def test_case_alias_cannot_evade_reused_owner_idea_check(self):
+        snap, req = fixture()
+        first = new_entry(snap, req)
+        second_req = dict(req, objective="Build another conveyor")
+        second = new_entry(snap, second_req)
+        self.assertNotEqual(first["work_id"], second["work_id"])
+        self.assertEqual(first["idea_id"], second["idea_id"])
+        second["repository"] = REPO.upper()
+        snap["state"]["work_registrations"] = {"schema": 1, "entries": [first, second]}
+        with self.assertRaises(Rejected):
+            plan(snap, req)
+
+    def test_case_alias_snapshot_and_request_cannot_admit_new_claim(self):
+        snap, req = fixture()
+        snap["repository"] = REPO.upper()
+        req["repository"] = REPO.upper()
+        with self.assertRaisesRegex(Rejected, "snapshot repo"):
+            plan(snap, req)
+
+    def test_case_alias_registry_rejected_by_readonly_projection(self):
+        snap, req = fixture()
+        row = new_entry(snap, req)
+        row["repository"] = REPO.upper()
+        snap["state"]["work_registrations"] = {"schema": 1, "entries": [row]}
+        with self.assertRaises(Rejected):
+            intake_projection(snap)
+
     def test_pre_cas_missing_clock_and_fresh_reader_never_write(self):
         snap, req = fixture()
         host = FakeRefHost(snap)
