@@ -1,0 +1,28 @@
+{
+  "id": "C96401",
+  "date": "2026-11-02",
+  "kind": "PR60_GITHUB_NATIVE_REVIEWS_PAGINATION_TEST_FIRST_RED",
+  "pr": 60,
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "pr_source_head": "7e2e28bc6f8039e3416dab78bff2c69026dd4f4e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "16dcb270620f17b6245f5629958a3a381313db8a",
+    "owner_run_id": "8bcba285-840d-4e80-b435-c27ccf3431e9",
+    "epoch": 394
+  },
+  "scope": "Read-only REST pull reviews normalization for up to 100 pages, no provider attestation or review permissions.",
+  "new_files": [
+    "tests/test_system_native_review_pages.py",
+    "history/C96401_pr60_review_pages_red.json"
+  ],
+  "expected_red": "Source module missing: test import should fail; existing Python suites untouched.",
+  "qa": "PENDING_HOSTED_RED_CI",
+  "authority": {
+    "approve": false,
+    "merge": false,
+    "dispatch": false,
+    "publish": false,
+    "spend": false
+  }
+}
