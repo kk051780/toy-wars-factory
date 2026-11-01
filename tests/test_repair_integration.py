@@ -110,6 +110,34 @@ class IntegrationTests(unittest.TestCase):
         self._protected_main()["required_status_checks"] = ["offline"]
         self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
 
+    def test_branch_protection_missing_status_check_app_binding_must_wait(self):
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_any_app_status_checks_must_wait(self):
+        self._protected_main()["required_status_check_sources"] = [
+            {"context": "offline", "app_id": -1},
+            {"context": "compile_hold", "app_id": -1}]
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_wrong_status_check_app_must_wait(self):
+        self._protected_main()["required_status_check_sources"] = [
+            {"context": "offline", "app_id": 15369},
+            {"context": "compile_hold", "app_id": 15368}]
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_duplicate_status_check_binding_must_wait(self):
+        self._protected_main()["required_status_check_sources"] = [
+            {"context": "offline", "app_id": 15368},
+            {"context": "offline", "app_id": 15368},
+            {"context": "compile_hold", "app_id": 15368}]
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_invalid_check_app_id_type_must_wait(self):
+        self._protected_main()["required_status_check_sources"] = [
+            {"context": "offline", "app_id": True},
+            {"context": "compile_hold", "app_id": 15368}]
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
     def test_branch_protection_force_pushes_allowed_must_wait(self):
         self._protected_main()["force_pushes_allowed"] = True
         self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
