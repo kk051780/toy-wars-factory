@@ -117,13 +117,31 @@ def run_once(*, studio: Path, place: Path, script: Path,
     system = platform.system() if system is None else system
     require(system=='Windows','real Studio probe requires trusted Windows host')
     require(type(timeout) is int and 30<=timeout<=180,'timeout outside bounded range')
-    artifact=validate_file(place.read_bytes())
+    # Capture the reviewed bytes once, then supply Studio with private copies.
+    # Original paths may be replaced during the Authenticode subprocess.
+    require(place.name==PLACE_NAME and place.is_file() and not place.is_symlink(),
+            'trusted XML place path required')
+    require(script.name=='twf_local_place_probe.luau' and script.is_file() and not script.is_symlink(),
+            'trusted Luau probe path required')
+    place_bytes=place.read_bytes()
+    artifact=validate_file(place_bytes)
+    probe_bytes=script.read_bytes()
+    require(0 < len(probe_bytes) < 20000 and sha256_bytes(probe_bytes)==PROBE_SCRIPT_SHA256,
+            'Luau probe script changed from reviewed bytes')
     with tempfile.TemporaryDirectory(prefix='twf-studio-proof-') as d:
-        log_file = Path(d)/'studio-output.log'
-        cmd=build_args(studio,place,script,log_file)
+        private_place=Path(d)/PLACE_NAME
+        private_script=Path(d)/'twf_local_place_probe.luau'
+        # Exclusive create: never follow a pre-existing name or symlink.
+        with private_place.open('xb') as f: f.write(place_bytes)
+        with private_script.open('xb') as f: f.write(probe_bytes)
+        log_file=Path(d)/'studio-output.log'
+        cmd=build_args(studio,private_place,private_script,log_file)
         verified = (signature_checker(studio) if signature_checker is not None else
                     verify_windows_studio_signature(studio, system=system))
         require(verified is True, 'untrusted Studio executable signer')
+        # Re-pin private contents *after* signature checking, before spawning.
+        validate_file(private_place.read_bytes())
+        validate_probe_script(private_script)
         runner=runner or subprocess.run
         try:
             p=runner(cmd, capture_output=True, text=True, timeout=timeout, check=False, shell=False)
