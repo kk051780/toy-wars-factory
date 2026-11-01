@@ -99,7 +99,7 @@ class GitHubAPI:
         # No redirects are permitted for this bearer-bearing GitHub API client.
         # Dependency-injected transports are for offline testing only.
         self._transport = (transport if transport is not None
-                           else request.build_opener(request.ProxyHandler({}), _RejectRedirects()).open)
+                           else request.build_opener(_RejectRedirects(), request.ProxyHandler({})).open)
 
     def call(self, method: str, suffix: str, body=None):
         if (method not in ("GET", "POST", "PATCH", "PUT") or
