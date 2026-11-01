@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 392,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "c86b46f7-1a4f-49ab-82f3-842bdc6d299e",
-    "task_id": null,
-    "epoch": 392,
-    "acquired_at": "2026-11-01T23:32:30.399Z",
-    "expires_at": "2026-11-02T00:02:30.399Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "ops/twf-manual-review-lane",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,19 +2893,33 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "a1b6c043-3956-4b2d-811b-08f922756d01",
-    "epoch": 391,
-    "released_at": "2026-11-01T23:23:46.581Z",
+    "owner_id": "c86b46f7-1a4f-49ab-82f3-842bdc6d299e",
+    "epoch": 392,
+    "released_at": "2026-11-01T23:38:45.043Z",
     "release_receipt": {
-      "reason": "PR163_PROXY_SECURITY_FIX_921_TESTS_PASS_WAIT_INDEPENDENT_REVIEW",
-      "claim_commit": "6a61ec3355d43df049ea968246fb5edcebda404a",
-      "work_branch": "controller/actions-write-pilot-8df31af2",
-      "pr": 163,
-      "pr_head": "d3b5d07405325df959583b752a84874f4b7bbfee",
-      "ci_run": 41361445173,
-      "ci_result": "success",
+      "reason": "PR60_NATIVE_REVIEW_HISTORY_FALSE_HOLD_926_PASS_PROTECTED_REVIEW_PENDING",
+      "claim_commit": "b61be2918286036b46ea02f8e7d098e35de0dd7d",
+      "work_branch": "ops/twf-manual-review-lane",
+      "pr": 60,
+      "pr_head": "5690e8b23ad6b96c0f5ebdbcd9110acb764848db",
+      "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_mutated": false,
-      "merged": false
+      "red_ci_run": 41362847704,
+      "green_ci_run": 41362995774,
+      "offline_tests": 926,
+      "offline": "success",
+      "compile_hold": "success",
+      "new_history": [
+        "C96311",
+        "C96312"
+      ],
+      "native_reviews": 0,
+      "independent_review": "PENDING",
+      "merged": false,
+      "roblox_studio": "NOT_RUN",
+      "publish": false,
+      "external_inference": false,
+      "spend": false
     }
   },
   "last_completed_integration": {
