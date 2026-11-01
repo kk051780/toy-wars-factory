@@ -209,52 +209,113 @@ def intake_projection(snapshot: dict) -> list[dict]:
 
 
 def apply_once(snapshot: dict, request: dict, *, cas: Callable,
-               readback: Callable, read_main_ref: Callable) -> dict:
-    """One injected CAS callback + post-write readback; NO retries or provider proof.
+               readback: Callable, read_main_ref: Callable,
+               fresh_coordinator_snapshot: Callable | None = None,
+               trusted_clock: Callable | None = None) -> dict:
+    """Single untrusted-callback CAS attempt with fail-closed pre-write fencing.
 
-    cas(repo, branch, path, expected_sha, state) -> new commit SHA or None.
-    readback(repo, branch, path) -> same-shaped fresh snapshot.
-    read_main_ref(repo) -> original main commit SHA; rechecked pre/post CAS.
-    The callbacks are not authenticated by this library and must NOT be
-    supplied by untrusted PR code in a production host.
+    All callbacks are supplied by a CALLER, not authenticated by this library.
+    fresh_coordinator_snapshot(repo, CONTROL_BRANCH, CONTROL_PATH) must perform
+    a new original-source ref/content read, not serve stale caller request data.
+    trusted_clock() must obtain a new original-host UTC-aware timestamp.
+
+    These checks only reduce the time-of-check/time-of-use gap. They do NOT
+    prove GitHub write-time lease validity: the trustworthy CAS adapter must
+    independently enforce the exclusive owner/epoch/expiry at actual write.
+    There is no automatic retry, provider identity attestation, work dispatch,
+    merge, external inference or Roblox execution in this module.
     """
     outcome = plan(snapshot, request)
     if outcome["decision"] != "CAS_PROPOSAL_NOT_AUTHORIZED":
         return {"status": outcome["decision"], "work_id": outcome["work_id"],
                 "cas_attempted": False, "may_dispatch": False,
                 "github_authenticated": False}
+
     old = outcome["expected_sha"]
     new_state = outcome["proposed_state"]
+    repo = snapshot["repository"]
+
+    def wait(status: str) -> dict:
+        return {"status": status, "work_id": outcome["work_id"],
+                "cas_attempted": False, "may_dispatch": False,
+                "github_authenticated": False}
+
+    # Missing callbacks are a hard hold. Never fall back to request.observed_at.
+    if not callable(fresh_coordinator_snapshot) or not callable(trusted_clock):
+        return wait("WAIT_PRECAS_CALLBACK_UNAVAILABLE")
+
     try:
-        original_main = read_main_ref(snapshot["repository"])
+        original_main = read_main_ref(repo)
     except Exception:
         original_main = None
     if original_main != snapshot["main_sha"]:
-        return {"status": "WAIT_MAIN_DRIFT_UNCONFIRMED", "work_id": outcome["work_id"],
-                "cas_attempted": False, "may_dispatch": False,
-                "github_authenticated": False}
+        return wait("WAIT_MAIN_DRIFT_UNCONFIRMED")
+
+    # The immutable expected SHA does not change merely because a lease expires.
+    # Require two fresh original-source coordinator reads and an exact match
+    # to the proposed predecessor, including all existing state and holder.
     try:
-        new_sha = cas(snapshot["repository"], CONTROL_BRANCH, CONTROL_PATH,
+        first = fresh_coordinator_snapshot(repo, CONTROL_BRANCH, CONTROL_PATH)
+        second = fresh_coordinator_snapshot(repo, CONTROL_BRANCH, CONTROL_PATH)
+        _snapshot(first)
+        _snapshot(second)
+        unchanged = (type(first) is dict and type(second) is dict and
+                     first == second == snapshot)
+    except Exception:
+        unchanged = False
+    if not unchanged:
+        return wait("WAIT_COORDINATOR_DRIFT_UNCONFIRMED")
+
+    # Main may move during the coordinator reads; reject before time check.
+    try:
+        last_main = read_main_ref(repo)
+    except Exception:
+        last_main = None
+    if last_main != snapshot["main_sha"]:
+        return wait("WAIT_MAIN_DRIFT_UNCONFIRMED")
+
+    # Last injected host callback before CAS: independent UTC clock. The
+    # caller's earlier observed_at may be stale and MUST NOT serve as now.
+    try:
+        actual_now = _utc_instant(trusted_clock())
+        previously_observed = _utc_instant(request["observed_at"])
+        holder = snapshot["state"]["holder"]
+        acquired = _utc_instant(holder["acquired_at"])
+        expires = _utc_instant(holder["expires_at"])
+        in_lease = (acquired <= previously_observed <= actual_now < expires and
+                    timedelta(0) < expires - acquired <= timedelta(minutes=30))
+    except Exception:
+        return wait("WAIT_PRECAS_CLOCK_UNCONFIRMED")
+    if not in_lease:
+        return wait("WAIT_PRECAS_CLOCK_UNCONFIRMED")
+    # A five-second headroom limits ordinary transport overrun; it is NOT a
+    # remotely enforced deadline. Original write adapter remains the trust root.
+    if expires - actual_now <= timedelta(seconds=5):
+        return wait("WAIT_PRECAS_EXPIRING_UNCONFIRMED")
+
+    try:
+        new_sha = cas(repo, CONTROL_BRANCH, CONTROL_PATH,
                       old, copy.deepcopy(new_state))
     except Exception:
-        # Ambiguous ACK: never retry; caller must inspect a fresh original ref.
+        # Ambiguous ACK: no retry. Fresh original read by the owner is required.
         return {"status": "WAIT_CAS_UNCONFIRMED", "work_id": outcome["work_id"],
                 "cas_attempted": True, "may_dispatch": False,
                 "github_authenticated": False}
     if new_sha is None or not _is_sha(new_sha) or new_sha == old:
-        return {"status": "WAIT_CAS_CONFLICT_OR_INVALID_ACK", "work_id": outcome["work_id"],
-                "cas_attempted": True, "may_dispatch": False,
-                "github_authenticated": False}
+        return {"status": "WAIT_CAS_CONFLICT_OR_INVALID_ACK",
+                "work_id": outcome["work_id"], "cas_attempted": True,
+                "may_dispatch": False, "github_authenticated": False}
+
     try:
-        observed = readback(snapshot["repository"], CONTROL_BRANCH, CONTROL_PATH)
-        second = readback(snapshot["repository"], CONTROL_BRANCH, CONTROL_PATH)
+        observed = readback(repo, CONTROL_BRANCH, CONTROL_PATH)
+        second = readback(repo, CONTROL_BRANCH, CONTROL_PATH)
         state, details, _ = _snapshot(observed)
         state2, details2, _ = _snapshot(second)
-        second_main = read_main_ref(snapshot["repository"])
+        second_main = read_main_ref(repo)
         valid = (second_main == snapshot["main_sha"] and
                  details["ref_sha"] == details2["ref_sha"] == new_sha and
                  details["main_sha"] == details2["main_sha"] == snapshot["main_sha"] and
-                 details["repository"] == details2["repository"] == snapshot["repository"] and
+                 details["repository"] == details2["repository"] == repo and
                  state == state2 == new_state)
     except Exception:
         valid = False
