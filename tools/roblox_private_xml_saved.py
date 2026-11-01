@@ -105,6 +105,10 @@ def check_rbxlx_bytes(data:bytes,cfg:XmlStageConfig)->dict[str,Any]:
     try:root=ET.fromstring(data)
     except (ET.ParseError,ValueError,UnicodeError):raise XmlStageError('invalid Roblox XML syntax') from None
     demand(root.tag=='roblox' and root.attrib=={'version':'4'},'invalid Roblox XML place root')
+    # Count Item nodes iteratively before entering the depth-recursive walker.
+    # A hostile but well-formed XML tree must not trigger uncaught RecursionError.
+    demand(sum(1 for item in root.iter('Item')) == len(EXPECTED_TOPOLOGY),
+           'XML instance count not exactly approved')
     topology={}
     scripts={}
     referents=set()
