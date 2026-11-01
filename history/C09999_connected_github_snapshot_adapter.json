@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "id": "C09999",
+  "kind": "READ_ONLY_CHATGPT_GITHUB_CONNECTOR_NORMALIZED_SNAPSHOT_ADAPTER",
+  "repository": "kk051780/toy-wars-factory",
+  "scope": "Existing protected PR174 child branch only; parent PR173 and main untouched",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "baa3f13020a1ff329cee3cfd0e151bf5f81deccb",
+    "owner_run_id": "a8cba3e9-14a4-44a0-88d0-6ef544e03401",
+    "epoch": 380,
+    "work_branch": "controller/work-registration-cas-1dd085ef"
+  },
+  "original_observation": {
+    "repo_id": 1431683395,
+    "repo_private": true,
+    "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "coordinator_head_before_and_after": "aa00c58b0f48d131d69b7ef82aecfd63b7119a1b",
+    "coordinator_epoch_observed": 379,
+    "holder_observed": null,
+    "work_registry_initialized": false,
+    "github_connector_fetch_returns_decoded_json_text": true,
+    "github_connector_fetch_file_encoding": "utf-8",
+    "github_connector_fetch_file_blob_sha": "3bfbd1285f520bb46cae8c69e971349d5a3e7d34",
+    "direct_raw_rest_envelope_compatible": false,
+    "real_connector_fetches_observed": true,
+    "capture_connected_snapshot_original_live_call_executed": false
+  },
+  "changes": [
+    "tools/system_owner_registry_snapshot.py",
+    "tests/test_system_owner_registry_snapshot.py",
+    "history/C09999_connected_github_snapshot_adapter.json"
+  ],
+  "regressions_added": 13,
+  "red": {
+    "head": "ae7242780b3e14ef6b0d25e5cdd44c6418e5f040",
+    "ci": 41285907791,
+    "result": "failure"
+  },
+  "green": {
+    "head": "d8652d7e20a1362c7c424d5a2e415570353e7ce2",
+    "ci": 41285968673,
+    "result": "success",
+    "offline": "success",
+    "compile_hold": "success"
+  },
+  "history_id_uniqueness": {
+    "open_pr_files_scanned": 56,
+    "main_history_scanned": true,
+    "collision_found": false,
+    "global_recheck_required_at_merge": true
+  },
+  "safety": {
+    "no_write_connector": true,
+    "github_authenticated": false,
+    "provider_run_authenticated": false,
+    "may_claim": false,
+    "may_write": false,
+    "may_dispatch": false,
+    "may_merge": false,
+    "cas_performed": false,
+    "main_mutated": false,
+    "independent_review": "PENDING",
+    "parent_first": 173,
+    "child_second": 174,
+    "roblox_studio": "NOT_RUN",
+    "gemini_hold": "PRESERVED",
+    "publication": "HOLD"
+  },
+  "limit": "Mock normalized connector outputs can forge shapes. Actual provider-origin identity must be bound at trusted host. No real work-registration CAS, unattended worker execution, or verified Roblox engine."
+}
