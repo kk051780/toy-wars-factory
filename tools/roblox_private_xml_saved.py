@@ -242,7 +242,9 @@ class LiveSavedXmlTransport:
         check_host_environment(cfg,environment)
         demand(type(api_key) is str and 16<=len(api_key)<=8192,'test-only API key unavailable')
         self._cfg=cfg;self._api_key=api_key;self._used=False
-        self._opener=urllib.request.build_opener(NoRedirect())
+        # Do not inherit runner HTTP(S)_PROXY for future Roblox API-key POSTs.
+        self._opener=urllib.request.build_opener(
+            NoRedirect(), urllib.request.ProxyHandler({}))
     def __call__(self,request:XmlSavedRequest)->dict:
         expected=saved_xml_request(self._cfg,request.body)
         demand(not self._used and request==expected,'duplicate or unapproved XML Saved POST')
