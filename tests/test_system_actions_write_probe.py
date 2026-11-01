@@ -229,7 +229,7 @@ class CoordinatorTests(unittest.TestCase):
                         'content':base64.b64encode((json.dumps(pinned,indent=2)+'\n').encode()).decode()}
                 raise AssertionError((method,path))
         self.assertEqual(p.cas_state(API(),old,pinned),new)
-        self.assertEqual([x[0] for x in seen],['GET','POST','POST','POST','PATCH','GET','GET'])
+        self.assertEqual([x[0] for x in seen],['GET','POST','POST','POST','PATCH','GET','GET','GET'])
         self.assertEqual(seen[3][2]['parents'],[old])
         self.assertEqual(seen[4][2],{'sha':new,'force':False})
         self.assertEqual(seen[2][2]['base_tree'],'e'*40)

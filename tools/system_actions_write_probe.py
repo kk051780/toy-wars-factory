@@ -172,7 +172,11 @@ def cas_state(api, oldref, newstate):
     if not valid_sha(newsha):
         raise ProbeError("CONTROL_NEW_COMMIT_INVALID")
     api.call("PATCH", f"/git/refs/heads/{CONTROL_REF}", {"sha":newsha,"force":False})
-    if sha_ref(api, CONTROL_REF) != newsha or state_at(api, newsha) != newstate:
+    # Reconfirm the live ref after reading state; a concurrent ref move
+    # must not be acknowledged as an owned coordinator lease.
+    if (sha_ref(api, CONTROL_REF) != newsha or
+            state_at(api, newsha) != newstate or
+            sha_ref(api, CONTROL_REF) != newsha):
         raise ProbeError("CONTROL_CAS_READBACK_UNCONFIRMED")
     return newsha
 
