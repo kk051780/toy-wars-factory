@@ -1,4 +1,4 @@
-# TOY WARS / A14 — Open Cloud 固定スモークの戻り値検証ゲート（候補 v2）
+# TOY WARS / A14 — Open Cloud 固定スモークの戻り値検証ゲート（候補 v3）
 
 ## 課題と今回の差分
 既存の「88テスト」Open Cloud 静的スクリプト候補の `inspect_untrusted_task()` は、返却文字列内のマーカーや構造名が「含まれるか」のみを報告する。これを実機成功判定に使うと、単なるエラーメッセージや偽の文字列も成功に見えてしまう。
@@ -21,6 +21,16 @@ Roblox Open Cloud Luau Execution API は `timeout` を 1〜300 秒で指定で�
 - `twf_static_smoke_return_gate.py`: `timeout` の欠落・別の値・型の違い・旧スクリプト単独本文SHAを拒否。実際のプロバイダ認証・タスク起動の許可は**与えない**。
 - `tests/test_twf_static_smoke_return_gate.py`: 既存34件に7件を追加。修正前 GitHub Actions #41264707661 は **874件中6件の想定失敗**、修正後 #41264805775 は **874/874成功**。この検証はすべてオフライン。
 - 固定LuauスクリプトのSHA256 `fc343ede29c2466b0962689b183b5320d81122a807d65ad7f82e942a9268759d` は不変。将来の接続器も実際のPOST JSON本文のSHAを照合すること。
+
+## Open Cloud公式タスクGETとログを結ぶ追加アダプター（候補 v3、2026-11-01）
+`tools/twf_open_cloud_get_log_adapter.py` は、バージョン指定された `GET /cloud/v2/.../tasks/{task_id}` と `GET /cloud/v2/.../tasks/{task_id}/logs` のレスポンスを**ローカル入力**として読み、固定Luauコードのエコー・30秒制限・タスクID・ログページ・結果テーブルの整合性を照合する。
+
+- `tests/test_twf_open_cloud_get_log_adapter.py`：23件のオフライン回帰を追加。未実装時 [GitHub Actions #41265279491](https://github.com/kk051780/toy-wars-factory/actions/runs/41265279491) は、モジュール未存在で **875件中エラー1件**。実装後 [#41265346280](https://github.com/kk051780/toy-wars-factory/actions/runs/41265346280) **897件全合格**。新規23件全合格。
+- 偽のスクリプトエコー、別バージョンのタスク、別タスクのログ、ページング未完、巨大ログ・JSON重複キーを拒否。ログ本文は戻り値にも履歴にも含めない。
+- これは**公式APIレスポンスと同じ形式の入力を比較するだけ**であり、信頼できる取得元、正当な秘密情報、元のPOSTからのACK、Saved実バージョンと出力のプロバイダ真正性を認証できない。エンジンPASSの根拠には決して使用しない。
+- 今後の接続器は、Roblox公式APIキーを受け取る保護されたホスト上でPOST 1回→GET→ログ取得を行い、実際のHTTP応答元、レスポンスとPOST原本、Global CASと秘密鍵の範囲を独立検証する必要がある。ホストの実装・鍵・実アクセスはこの候補には含めない。
+
+公式の返却形式参考：[Roblox Luau Execution API](https://create.roblox.com/docs/cloud/reference/features/luau-execution)、[Robloxによる構造化ログの紹介](https://devforum.roblox.com/t/beta-open-cloud-engine-api-for-executing-luau/3172185/74)。
 
 ## 実行
 Python 3.10+。追加パッケージ不要。
