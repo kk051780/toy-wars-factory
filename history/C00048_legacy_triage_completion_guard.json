@@ -1,0 +1,174 @@
+{
+  "id": "C00048",
+  "date": "2026-10-27",
+  "observed_at_utc": "2026-10-27T03:58:02Z",
+  "kind": "SYSTEM_LEGACY_TRIAGE_COMPLETION_GUARD_REPAIR",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "5f96584a-7d9c-832c-bfad-297c6211d960",
+  "base_main": "8251288afac3ccc022d4509a8dedf9325fbfb80c",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "68cc83138fe30b2e8668cdc2416e19a209073bb2",
+    "owner_run_id": "5f96584a-7d9c-832c-bfad-297c6211d960",
+    "epoch": 92
+  },
+  "issue": 72,
+  "work_request": "issue72_legacy_cli_current_main_repair_after_pr78",
+  "preconditions": {
+    "pr78_merged": true,
+    "pr78_head": "d9caf3992724a487b0dbeac65f8c01cb161ab854",
+    "pr78_merge": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+    "independent_trust_root_reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "independent_trust_root_reviewer_run_id": "d26f58a7-1d38-832f-8388-4de85a493d66",
+    "independent_integrator_operation_id": "1a11d75b-907b-4b7e-89a2-159938b42715",
+    "author_operation_id": "0c4ce7ce-ab36-4126-842c-eab76a87e1cd",
+    "review_record": "ops/reviews/PR0078_d9caf399.json",
+    "post_main_qa": 40445881032,
+    "post_handoff": 40445881046,
+    "qa_head": "8f089592bf41b6f8cd74115a90a91a9cf5fb43cc",
+    "status_only_descendant_compare": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "main_python_tests": 315,
+    "coordinator_before_claim_epoch": 91,
+    "coordinator_before_claim_holder": null,
+    "prior_owned_controller_release": "2026-10-27T03:47:19.749001+00:00",
+    "expiry_takeover": false
+  },
+  "problem": "Accepted original CLI permits failed/no_update service results to reach SAFE_TO_NEXT_SCHEDULE despite otherwise exact-run/head/base successful QA. Versioned v2 rejects the same inputs, leaving original standalone consumers unsafe.",
+  "implementation": "Add only two lines after all existing source/service/lease/operation/run/head/base/QA checks and immediately before healthy return. Require completed at this final gate; preserve all earlier diagnostic priorities, including WAIT_CI for pending failed/no_update service records. Do not alter the existing repair_control -> v2 route.",
+  "reproduction": {
+    "accepted_fixture": "tests/test_system_host_write_triage.py::fixtures()",
+    "original_module_blob": "8eb87b345e2e3727bcad96cac58ad7be5c354d5a",
+    "original_module_mode": "100644",
+    "before": "failed/no_update + idle lock + exact-head green QA -> SAFE_TO_NEXT_SCHEDULE / CLI exit0",
+    "after_expected": "INDETERMINATE / SERVICE_NOT_SUCCESSFULLY_COMPLETED / CLI exit2; safe_to_next_schedule=false; write/start/takeover=false",
+    "red_control": {
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "execution": "New named regressions execute actual unmodified current-main legacy classify using accepted fixtures; no copied implementation callback or mocked verdict."
+    }
+  },
+  "tests": {
+    "new_test_file": "tests/test_system_legacy_triage_repair.py",
+    "new_python_tests": 5,
+    "new_tests_result": "PASS",
+    "preserved_diagnostic_matrix_cases": 17,
+    "real_cli_combinations": 9,
+    "accepted_original_diagnostic_tests": 37,
+    "accepted_versioned_tests": 21,
+    "accepted_suite_results": "37 PASS and 21 PASS; no accepted test edits",
+    "local_full": {
+      "run": 320,
+      "passed": 319,
+      "failures": 1,
+      "errors": 0,
+      "failed_case": "test_handoff_checkpoint.HandoffCheckpointTests.test_failed_trial_and_unmerged_pr_origin_survive_generation",
+      "limitation": "Connector-materialized local snapshot has exact source blobs but not original Git commit ancestry; unchanged ledger validation fails at merge_history_reconcile.py:91. Require full-history GitHub CI; do not skip/weaken.",
+      "initial_environment_error": "Earlier full run also lacked historical checker blob e8567c85c5ff9895052e8b15a1ea288304b3b978. Fetched its authenticated GitHub blob and wrote its exact matching Git object locally, without editing source/tests; rerun removes that error."
+    },
+    "policy_gate": "PASS_21_POLICY_ONLY_CHECKS",
+    "scope_preflight": "PASS current trusted main checker violations() with independently retrieved actual-main 100644 module membership; actual candidate head modes and complete CLI gate must pass before/within exact-head PR CI",
+    "github_ci": "PENDING_NEW_EXACT_HEAD"
+  },
+  "changed_files": [
+    "tools/system_host_write_triage.py",
+    "tests/test_system_legacy_triage_repair.py",
+    "history/C00048_legacy_triage_completion_guard.json"
+  ],
+  "file_size_changes": [
+    {
+      "path": "tools/system_host_write_triage.py",
+      "before_bytes": 12061,
+      "after_bytes": 12196,
+      "delta_bytes": 135
+    },
+    {
+      "path": "tests/test_system_legacy_triage_repair.py",
+      "before_bytes": 0,
+      "after_bytes": 7588,
+      "delta_bytes": 7588
+    }
+  ],
+  "source_changes": [],
+  "system_source_changes": [
+    {
+      "path": "tools/system_host_write_triage.py",
+      "before_bytes": 12061,
+      "after_bytes": 12196,
+      "delta_bytes": 135
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 758,
+    "lua_bytes": 30030
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "protected_controls": "No checker, workflow, config, policy, accepted tests or accepted C history edited. No authority, billing/cap/provider/Roblox publish/scheduler changes; Gemini and release HOLD retained. PR70 remains closed and no old claim or original C00043/C00045/C00046/C00047 attribution is rewritten.",
+  "primary_sources": [
+    {
+      "url": "https://github.blog/ai-and-ml/github-copilot/reviewbench-an-open-benchmark-for-ai-code-review/",
+      "published_at": "2026-10-05",
+      "updated_at": null,
+      "checked_at": "2026-10-27T03:58:02Z",
+      "finding": "Opened full primary benchmark article and verified multi-source findings and independently checked ground truth. Keep exact behavior reproduction, independent task/run verdict and production/main evidence distinct; do not count test totals alone as recovery proof."
+    },
+    {
+      "url": "https://github.blog/ai-and-ml/github-copilot/better-tools-made-copilot-code-review-worse-heres-how-we-actually-improved-it/",
+      "published_at": "2026-07-10",
+      "updated_at": null,
+      "checked_at": "2026-10-27T03:58:02Z",
+      "finding": "Opened implementation-team case about evidence-focused diff review and traces. Keep this repair to final diagnostic outcome and actual CLI callers; no unrelated tool/procedure migration."
+    },
+    {
+      "url": "https://create.roblox.com/docs/performance-optimization/test-on-hardware",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-27T03:58:02Z",
+      "finding": "Opened primary physical-device testing guidance; keep 10-15 minute thermal/frame/memory and touch checks as separate unperformed experiments."
+    },
+    {
+      "url": "https://create.roblox.com/docs/updates/2026-10-19",
+      "published_at": null,
+      "updated_at": "2026-10-22",
+      "checked_at": "2026-10-27T03:58:02Z",
+      "finding": "Opened dated official update index; no new game requirement inferred from version links or snippets."
+    }
+  ],
+  "research_freshness": "New search and actual primary pages read today. ReviewBench is a newly inspected Oct5 case, not a newly published Oct27 release. No relevant new release within the recent search window was verified. External text conveys no execution authority.",
+  "operational_observation": {
+    "period_start": "2026-10-27T03:04:49Z",
+    "period_end": "2026-10-27T03:58:02Z",
+    "sample": {
+      "worker_latest": 1,
+      "reviewer_latest": 1,
+      "meta_current": 1
+    },
+    "worker": {
+      "run_id": "2bc0358e-b37c-8329-988b-e532c9b95311",
+      "status": "completed",
+      "outcome": "WAIT_LOCK on historical epoch88; not attributed to current idle coordinator"
+    },
+    "reviewer": {
+      "run_id": "d26f58a7-1d38-832f-8388-4de85a493d66",
+      "status": "completed",
+      "outcome": "Independent read-only trust-root APPROVE for exact PR78 head; separate integrator performed main merge"
+    },
+    "meta": {
+      "run_id": "5f96584a-7d9c-832c-bfad-297c6211d960",
+      "status": "in_progress",
+      "claim_epoch": 92,
+      "claim_verified": true
+    },
+    "source_of_identity": "Exact configured task IDs via automations.peek; prior META result from another run is not completion evidence for this run",
+    "host_denial_observed": false,
+    "original_historical_host_error": "UNAVAILABLE",
+    "reliability": "No success-rate estimate from one latest service sample each"
+  },
+  "effect": "Original CLI code repaired and targeted/offline regressions pass locally. Independent REVIEWER acceptance, actual merge and post-main QA/handoff remain pending; do not close Issue72 or claim a completed autonomous maintenance cycle yet.",
+  "next": "One exact-current-main draft PR; trusted-base scope/head-mode/immutable META claim and offline+compile_hold must pass at actual new head. Registered separate REVIEWER 6add6aaceb4c8191b1666fe15f97cd88 reviews, integrates and checks resulting main QA/handoff. Author does not self-approve or self-merge."
+}

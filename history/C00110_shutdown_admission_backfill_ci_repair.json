@@ -1,0 +1,92 @@
+{
+  "id": "C00110",
+  "date": "2026-10-29",
+  "kind": "AUTONOMOUS_SHUTDOWN_ADMISSION_ACCEPTED_BACKFILL_CI_REPAIR",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "ab9836e0-e1cc-8320-b9c9-13ef905aa627",
+  "queue_decision": {
+    "action": "REPAIR_CI",
+    "pr": 106,
+    "branch": "auto/twf-game-repair-95aef457-a224-8332-ac0b-f8e3e80c9ae0",
+    "open_prs": [
+      106
+    ],
+    "change_scheduler": false
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "ac0ad9435ad79938a1ba5a9b5c368d1e3174abad",
+    "owner_run_id": "ab9836e0-e1cc-8320-b9c9-13ef905aa627",
+    "epoch": 207
+  },
+  "main_base": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
+  "prior_pr_head": "da987ddcfe1bd34a814b8ff53e3ef52107bbe446",
+  "defect": {
+    "id": "shutdown_admission_backfill_test_timing",
+    "reproduction": "Exact-head CI #40703700831: offline additional regression fails 1/7 at progression_shutdown_admission_spec.lua:83, while compile_hold succeeds. The fixture delays the departing player's final UpdateAsync by 3 simulated seconds, but the new test asserts waiting-player admission immediately after PlayerRemoving.",
+    "root_cause": "Accepted PlayerRemoving ordering saves the departing owner's progress before invoking queued join. A yielded final save means the queued fifth player cannot be admitted synchronously. The assertion raced the intentionally delayed persistence operation."
+  },
+  "fix": "Keep the canonical server source and all accepted tests unchanged. In the new autonomous Lua regression, explicitly assert that backfill does not bypass the pending final save, advance the deterministic scheduler 3.1 seconds, verify departing coins 350 and lease release, then verify eventual fifth-player workshop/leaderstats admission. Preserve all shutdown fence and pinned-old-main negative controls.",
+  "changed_files": [
+    "tests/auto/progression_shutdown_admission_spec.lua",
+    "history/C00110_shutdown_admission_backfill_ci_repair.json"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1110,
+    "lua_bytes": 48247
+  },
+  "main_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1098,
+    "lua_bytes": 47757
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/progression_shutdown_admission_spec.lua",
+      "before_bytes": 6795,
+      "after_bytes": 7556,
+      "delta_bytes": 761
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "No changes to existing three toy prices/stats/models, three-button HUD, waiting notice, guide, persistence implementation or catalog.",
+  "tests": {
+    "new_canonical_lua_cases": 5,
+    "pinned_main_negative_controls": 2,
+    "accepted_server_27": "UNCHANGED",
+    "accepted_hud_6": "UNCHANGED",
+    "local_lua": "NOT_RUN",
+    "prior_ci": {
+      "id": 40703700831,
+      "head": "da987ddcfe1bd34a814b8ff53e3ef52107bbe446",
+      "offline": "failure",
+      "compile_hold": "success"
+    },
+    "new_head_ci": "PENDING",
+    "roblox_engine": "NOT_RUN",
+    "real_datastore": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "claim_commit": "ac0ad9435ad79938a1ba5a9b5c368d1e3174abad",
+    "pr": 106,
+    "prior_head": "da987ddcfe1bd34a814b8ff53e3ef52107bbe446",
+    "review_record": "ops/reviews/PR0106_da987ddc.json",
+    "head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE"
+  },
+  "limitations": [
+    "No new game-source code change in this repair cycle; test scheduling correction only.",
+    "A pending claim response beyond BindToClose's 25-second local deadline cannot be proven durable in a terminating Roblox engine by offline tests; requires separate engine/timeout evidence."
+  ],
+  "next_action": "Run exact-head offline and compile_hold CI; independent REVIEWER rechecks both jobs and pre-shutdown delayed save/admission. Do not self-merge or alter schedule.",
+  "restrictions": {
+    "scheduler_mutated": false,
+    "gemini_rerun": false,
+    "roblox_publish": false,
+    "author_main_merge": false
+  }
+}

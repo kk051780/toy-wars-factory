@@ -1,0 +1,98 @@
+{
+  "id": "C00078",
+  "date": "2026-10-28",
+  "kind": "AUTONOMOUS_PR94_POST_REFRESH_LIFECYCLE_REVIEW_REPAIR",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "6ea84ce0-a874-8333-9cfb-82409abf312c",
+  "queue_decision": {
+    "action": "REPAIR_REVIEW",
+    "change_scheduler": false,
+    "pr": 94,
+    "branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "previous_head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
+    "request_id": "pr94_refresh_yield_resume_after_departure_20261028",
+    "reason": "Direct GitHub same-repository/PR/head/branch and independent reviewer record verified; legacy WORK_REQUESTS item does not meet newer normalized trusted-input shape."
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "d206190c01e0ebf927fb0a4581498d89a104cec2",
+    "owner_run_id": "6ea84ce0-a874-8333-9cfb-82409abf312c",
+    "epoch": 175
+  },
+  "main_base": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+  "previous_pr_head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
+  "issue": 93,
+  "defect": {
+    "id": "simulate_continues_after_yielded_refresh_session_end",
+    "cause": "simulate checked state.active only before refreshProgressLease, which can yield or revoke ownership and set active=false; resumed simulate still awards income, produces models and mutates status after PlayerRemoving or foreign-owner Kick.",
+    "reproduction": "Whole canonical server: prime production timer with 3 Heartbeats, advance lease time, suspend refresh UpdateAsync outside its transform, remove player/final-save or force foreign-owner conflict, then resume. Pinned c7227654 creates a toy and mutates Coins after departure/Kick."
+  },
+  "fix": "Immediately after refreshProgressLease returns, require active state, identical sessions[player] identity and player still parented to Players before any income/production/combat/status mutations.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_refresh_lifecycle_spec.lua",
+    "history/C00078_post_refresh_lifecycle_review_repair.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 33202,
+      "after_bytes": 33311,
+      "delta_bytes": 109
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1031,
+    "lua_bytes": 44455
+  },
+  "main_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 781,
+    "lua_bytes": 31291
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/progression_refresh_lifecycle_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 5649,
+      "delta_bytes": 5649
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "No existing toy price, stats, appearance or balance change; prevents post-session toy production and coin mutation.",
+  "tests": {
+    "new_cases": 4,
+    "canonical_server": "tests/auto/progression_refresh_lifecycle_spec.lua",
+    "negative_control_head": "c7227654cd89d665bf8c4d84dbcb966f4881e2f4",
+    "accepted_server_27": "UNCHANGED",
+    "accepted_hud_6": "UNCHANGED",
+    "local": "NOT_RUN_LUA_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "roblox_engine": "NOT_RUN",
+    "real_datastore": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "review_record": "ops/reviews/PR0094_c7227654.json",
+    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "reviewer_run_id": "00a41d21-8588-8323-acf2-cf75462da83b",
+    "previous_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40641863301",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40629585413",
+    "claim_commit": "d206190c01e0ebf927fb0a4581498d89a104cec2",
+    "pr": "https://github.com/kk051780/toy-wars-factory/pull/94",
+    "new_head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE"
+  },
+  "limitations": [
+    "Offline canonical Lua mocks only; Roblox engine, real DataStore, device and multiplayer remain unverified."
+  ],
+  "next_action": "Run exact-head offline and compile_hold CI; if both pass, independent REVIEWER re-evaluates PR94. Author never merges main.",
+  "restrictions": {
+    "scheduler_mutated": false,
+    "gemini_rerun": false,
+    "roblox_publish": false,
+    "author_main_merge": false
+  }
+}

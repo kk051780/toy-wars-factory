@@ -1,0 +1,35 @@
+{
+  "id": "C00046",
+  "date": "2026-10-27",
+  "kind": "TRUST_ROOT_SYSTEM_SCOPE_MAINTENANCE_PROPOSAL",
+  "issue": 72,
+  "base_main": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
+  "role": "CONTROLLER",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "1c95a5afd6f78f690c3f4544d373a67e98b806f0",
+    "epoch": 88,
+    "owner_run_id": "cbac0cb2-6aac-4b9f-9eba-72993809855e"
+  },
+  "change": "Only trusted-base existing 100644 system_*.py may be modified by future META PRs, with new native Python regression and new immutable C history",
+  "changed_files": [
+    "tools/check_meta_diff.py",
+    "tests/test_system_maintenance_scope.py",
+    "docs/TRUSTED_SYSTEM_MAINTENANCE_SCOPE.md",
+    "history/C00046_system_scope_trust_root.json"
+  ],
+  "proof": "Requires independent trust-root review; caller cannot self-authorize",
+  "tests": {
+    "adversarial_path_status_pairs": 240,
+    "other_cases": 6,
+    "github_ci": "PENDING_EXACT_HEAD",
+    "roblox_engine": "NOT_RUN"
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 758,
+    "lua_bytes": 30030
+  },
+  "release": "HOLD"
+}

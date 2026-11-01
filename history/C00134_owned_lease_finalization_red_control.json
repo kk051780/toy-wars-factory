@@ -1,0 +1,60 @@
+{
+  "id": "C00134",
+  "date": "2026-10-30",
+  "kind": "SYSTEM_OWNED_LEASE_FINALIZATION_RED_CONTROL",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+  "base_main": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+  "observed_at_utc": "2026-10-29T21:28:13Z",
+  "issue": 123,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "ca8d1dba24ba61f8f757262a4281e43560f081db",
+    "owner_run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+    "epoch": 255
+  },
+  "stage": "TEST_FIRST_UNMODIFIED_ACCEPTED_REPAIR_CONTROL",
+  "defect": "release accepts timestamps before acquisition and boolean/float equal-valued epochs; no finally-scoped same-owner CAS/readback helper exists",
+  "source": {
+    "path": "tools/repair_control.py",
+    "blob": "4d6e61eb8b2f1276abbc33bd99e7da48bc19959c",
+    "unchanged": true
+  },
+  "tests": {
+    "new_methods": 28,
+    "local": {
+      "tests_run": 28,
+      "failures": 3,
+      "errors": 24,
+      "interpretation": "Three executed release-validation assertion failures;24 errors from absent owned_lease API; legacy recovery positive control passes"
+    },
+    "old_main_baseline": {
+      "tests_run": 709,
+      "failures": 1,
+      "errors": 1,
+      "limitation": "Local reconstructed canonical285-blob shallow checkout lacks historical git objects for two pre-existing provenance tests; do not skip or weaken; full-history GitHub CI required"
+    },
+    "github_red": "PENDING_EXACT_HEAD_RUN_AT_COMMIT_CREATION"
+  },
+  "preserved": {
+    "main_blobs": 285,
+    "accepted_tests_unchanged": true,
+    "shared_32_entry_adoption_ledger_unchanged": true,
+    "old_approval_and_request_history_unchanged": true,
+    "protected_controls": true
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "limits": [
+    "No source repair yet; this is a failing test-first commit",
+    "No provider authentication asserted by fixture/caller JSON",
+    "Original reviewer epoch251 terminal UNPROVEN; no expiry takeover",
+    "No task/schedule/credentials/fees/Gemini/Roblox changes; automation57/game38,A12/A13+0"
+  ],
+  "next": "Same PR: preserve these tests, minimally repair release validation and add bounded same-owner finally/CAS/readback; real red logs then exact-head green and independent registered REVIEWER"
+}

@@ -1,0 +1,208 @@
+{
+  "id": "C00129",
+  "date": "2026-10-29",
+  "kind": "SYSTEM_PARALLEL_ADMISSION_PHASE0_READ_ONLY",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "29b870a0-83b0-8331-948d-942fbef57f57",
+  "base_main": "221bc53ce118f5242777c13649f437d18078dcc4",
+  "observed_at_utc": "2026-10-29T13:13:26Z",
+  "issue": 123,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "e33427a8b5ed173c6b310b2c31f71fccc6318703",
+    "owner_run_id": "29b870a0-83b0-8331-948d-942fbef57f57",
+    "epoch": 247
+  },
+  "problem": "Different chats have no authenticated shared work identity by default; duplicate declared goals, ambiguous paths, contradictory work scope and shared resources must be identified before future admission. The existing single-writer coordinator must stay unchanged.",
+  "implementation": "One new pure advise(candidate,active) module: exact project/repository/work identity, declared goal hash, normalized write paths, shared resources and explicit incomplete-manifest waits. Idempotent JOIN for unchanged declarations; conflicting same work ID/scope or active ledger fails closed; cross-project same physical repository still conflicts. Every outcome NOT_VERIFIED with all execution authority false. No intake persistence, GitHub transport, lease/recovery/CAS, scheduler, send or parallel writer implementation.",
+  "adopted": "Only v6 Phase0 planner and its37 regression methods independently ported;14 new regression methods and hardened source. No current single-holder bridge or hypothetical CAS model imported.",
+  "not_adopted": [
+    {
+      "idea": "Treat caller-provided goal hashes/task IDs or REGISTERED_TASK_CLAIMED as authentication",
+      "reason": "Inputs remain caller declarations; goal hash equality is not semantic dedup or provider proof."
+    },
+    {
+      "idea": "Port all v6 modules/tests or enable multiple writers immediately",
+      "reason": "Keep one reviewable Phase0 issue, one source module and existing exclusive CAS. Future bridge/CAS tests remain external unreviewed candidates."
+    },
+    {
+      "idea": "Rewrite production policy, workflow, accepted tests or past C history",
+      "reason": "Not required and not authorized. Protected PR122 and epoch245 administrative exception audit remain separate."
+    }
+  ],
+  "untrusted_input": {
+    "library_file_id": "libfile_8cd3b9bbc6188191a00aca4630468e25",
+    "filename": "Issue123_parallel_admission_v6.zip",
+    "bytes": 22544,
+    "sha256": "7daa5f97a3d53ca3d104ba36178ee17b4eb2842f757e2df2e2889fc633e44162",
+    "download_and_hash_verified": true,
+    "source_comment": "https://github.com/kk051780/toy-wars-factory/issues/123#issuecomment-6497134888",
+    "original_phase0_audit_comment": "https://github.com/kk051780/toy-wars-factory/issues/123#issuecomment-6496084079",
+    "archive_reported_tests": 95,
+    "tests_executed_here_from_archive": 37,
+    "other_archive_modules_not_adopted": [
+      "system_parallel_live_bridge.py",
+      "system_parallel_cas_model.py"
+    ],
+    "authentication": "NOT_VERIFIED; bytes/hash establish integrity only, not author/claim/main/CI authority",
+    "notes": "Original README still has historical v5/91 heading and a v6/95 appendix; input unchanged, only actual selected37 tests counted."
+  },
+  "files": [
+    {
+      "path": "tools/system_parallel_admission.py",
+      "bytes": 8830,
+      "lines": 185,
+      "sha256": "679a54f33425ee2598a411f36f63d00212b581db479386ef7018721f12767b42",
+      "input_sha256": "ba77ace775dac6f5fd768924906e537b97abf37dba90d693028291ddbe32ca5c",
+      "before_bytes": 0
+    },
+    {
+      "path": "tests/test_system_parallel_admission.py",
+      "bytes": 14734,
+      "lines": 225,
+      "sha256": "7a120e21c9f8538b39154475205267b055c6a83c2359bc70fe15770b92700f2a",
+      "input_sha256": "cbea049675c19f43ed7c39182047996a2bc8679c8ee77707513adcfd06fa908b",
+      "before_bytes": 0
+    }
+  ],
+  "source_changes": [],
+  "system_source_changes": [
+    {
+      "path": "tools/system_parallel_admission.py",
+      "status": "A",
+      "before_bytes": 0,
+      "after_bytes": 8830
+    },
+    {
+      "path": "tests/test_system_parallel_admission.py",
+      "status": "A",
+      "before_bytes": 0,
+      "after_bytes": 14734
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "tests": {
+    "new_repository_tests": 51,
+    "reused_candidate_tests": 37,
+    "new_hardening_methods": 14,
+    "focused": {
+      "run": 51,
+      "passed": 51,
+      "failures": 0,
+      "errors": 0
+    },
+    "negative_control": {
+      "mode": "V6_ORIGINAL_CANDIDATE_NEGATIVE_CONTROL",
+      "run": 14,
+      "failures": 29,
+      "errors": 0,
+      "failed_tests": [
+        "test_ambiguous_platform_paths (tests.test_system_parallel_admission.MainPortHardeningTests.test_ambiguous_platform_paths) (path='C:/game.lua')",
+        "test_ambiguous_platform_paths (tests.test_system_parallel_admission.MainPortHardeningTests.test_ambiguous_platform_paths) (path='src/file:stream')",
+        "test_ambiguous_platform_paths (tests.test_system_parallel_admission.MainPortHardeningTests.test_ambiguous_platform_paths) (path='src/name\\u200b.lua')",
+        "test_ambiguous_platform_paths (tests.test_system_parallel_admission.MainPortHardeningTests.test_ambiguous_platform_paths) (path='src/café.lua')",
+        "test_ambiguous_platform_paths (tests.test_system_parallel_admission.MainPortHardeningTests.test_ambiguous_platform_paths) (path='src/name\\x7f.lua')",
+        "test_ambiguous_platform_paths (tests.test_system_parallel_admission.MainPortHardeningTests.test_ambiguous_platform_paths) (path='src/name space.lua')",
+        "test_contradictory_active_identity_blocks_unrelated_work (tests.test_system_parallel_admission.MainPortHardeningTests.test_contradictory_active_identity_blocks_unrelated_work) (row={'project_id': 'toy-wars-factory', 'repository': 'kk051780/toy-wars-factory', 'work_id': 'GAME_A001', 'goal_sha256': 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc', 'mode': 'SOURCE_WRITE', 'write_paths': ['src/ToyWarsServer.server.lua'], 'shared_resources': [], 'complete_manifest': True, 'origin': 'REGISTERED_TASK_CLAIMED'})",
+        "test_contradictory_active_identity_blocks_unrelated_work (tests.test_system_parallel_admission.MainPortHardeningTests.test_contradictory_active_identity_blocks_unrelated_work) (row={'project_id': 'toy-wars-factory', 'repository': 'kk051780/toy-wars-factory', 'work_id': 'GAME_A001', 'goal_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'mode': 'SOURCE_WRITE', 'write_paths': ['src/other.lua'], 'shared_resources': [], 'complete_manifest': True, 'origin': 'REGISTERED_TASK_CLAIMED'})",
+        "test_every_result_denies_authentication_and_execution (tests.test_system_parallel_admission.MainPortHardeningTests.test_every_result_denies_authentication_and_execution) (candidate={'project_id': 'toy-wars-factory', 'repository': 'kk051780/toy-wars-factory', 'work_id': 'GAME_B002', 'goal_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'mode': 'SOURCE_WRITE', 'write_paths': ['src/independent.lua'], 'shared_resources': [], 'complete_manifest': True, 'origin': 'REGISTERED_TASK_CLAIMED'})",
+        "test_every_result_denies_authentication_and_execution (tests.test_system_parallel_admission.MainPortHardeningTests.test_every_result_denies_authentication_and_execution) (candidate={'project_id': 'toy-wars-factory', 'repository': 'kk051780/toy-wars-factory', 'work_id': 'GAME_A001', 'goal_sha256': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'mode': 'SOURCE_WRITE', 'write_paths': ['src/ToyWarsServer.server.lua'], 'shared_resources': [], 'complete_manifest': True, 'origin': 'REGISTERED_TASK_CLAIMED'})",
+        "test_every_result_denies_authentication_and_execution (tests.test_system_parallel_admission.MainPortHardeningTests.test_every_result_denies_authentication_and_execution) (candidate={'project_id': 'toy-wars-factory', 'repository': 'kk051780/toy-wars-factory', 'work_id': 'GAME_B002', 'goal_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'mode': 'SOURCE_WRITE', 'write_paths': ['src/independent.lua'], 'shared_resources': [], 'complete_manifest': True, 'origin': 'CHAT_UNVERIFIED'})",
+        "test_every_result_denies_authentication_and_execution (tests.test_system_parallel_admission.MainPortHardeningTests.test_every_result_denies_authentication_and_execution) (candidate={'project_id': 'toy-wars-factory', 'repository': 'kk051780/toy-wars-factory', 'work_id': 'GAME_B002', 'goal_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'mode': 'READ_ONLY', 'write_paths': [], 'shared_resources': [], 'complete_manifest': True, 'origin': 'REGISTERED_TASK_CLAIMED'})",
+        "test_every_result_denies_authentication_and_execution (tests.test_system_parallel_admission.MainPortHardeningTests.test_every_result_denies_authentication_and_execution) (candidate={'project_id': 'toy-wars-factory', 'repository': 'kk051780/toy-wars-factory', 'work_id': 'GAME_B002', 'goal_sha256': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'mode': 'SOURCE_WRITE', 'write_paths': ['src/independent.lua'], 'shared_resources': [], 'complete_manifest': True, 'origin': 'REGISTERED_TASK_CLAIMED'})",
+        "test_invalid_repository_identity (tests.test_system_parallel_admission.MainPortHardeningTests.test_invalid_repository_identity) (repo='./repo')",
+        "test_invalid_repository_identity (tests.test_system_parallel_admission.MainPortHardeningTests.test_invalid_repository_identity) (repo='owner/..')",
+        "test_invalid_repository_identity (tests.test_system_parallel_admission.MainPortHardeningTests.test_invalid_repository_identity) (repo='-owner/repo')",
+        "test_invalid_repository_identity (tests.test_system_parallel_admission.MainPortHardeningTests.test_invalid_repository_identity) (repo='owner-/repo')",
+        "test_invalid_repository_identity (tests.test_system_parallel_admission.MainPortHardeningTests.test_invalid_repository_identity) (repo='owner/name.git')",
+        "test_invalid_repository_identity (tests.test_system_parallel_admission.MainPortHardeningTests.test_invalid_repository_identity) (repo='owner/rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr')",
+        "test_protected_parent_and_control_plane (tests.test_system_parallel_admission.MainPortHardeningTests.test_protected_parent_and_control_plane) (path='tools')",
+        "test_protected_parent_and_control_plane (tests.test_system_parallel_admission.MainPortHardeningTests.test_protected_parent_and_control_plane) (path='tools/check_meta_diff.py')",
+        "test_protected_parent_and_control_plane (tests.test_system_parallel_admission.MainPortHardeningTests.test_protected_parent_and_control_plane) (path='tools/system_alert_notification.py')",
+        "test_protected_parent_and_control_plane (tests.test_system_parallel_admission.MainPortHardeningTests.test_protected_parent_and_control_plane) (path='.env')",
+        "test_protected_parent_and_control_plane (tests.test_system_parallel_admission.MainPortHardeningTests.test_protected_parent_and_control_plane) (path='.env.production')",
+        "test_protected_parent_and_control_plane (tests.test_system_parallel_admission.MainPortHardeningTests.test_protected_parent_and_control_plane) (path='.gitconfig')",
+        "test_protected_parent_and_control_plane (tests.test_system_parallel_admission.MainPortHardeningTests.test_protected_parent_and_control_plane) (path='.cache/credentials')",
+        "test_same_id_changed_scope_cannot_silent_join (tests.test_system_parallel_admission.MainPortHardeningTests.test_same_id_changed_scope_cannot_silent_join) (override={'write_paths': ['src/renamed.lua']})",
+        "test_same_id_changed_scope_cannot_silent_join (tests.test_system_parallel_admission.MainPortHardeningTests.test_same_id_changed_scope_cannot_silent_join) (override={'shared_resources': ['new-schema']})",
+        "test_same_id_changed_scope_cannot_silent_join (tests.test_system_parallel_admission.MainPortHardeningTests.test_same_id_changed_scope_cannot_silent_join) (override={'mode': 'READ_ONLY', 'write_paths': []})"
+      ],
+      "error_tests": [],
+      "description": "14 new methods against the exact original v6 Phase0 source;29 failing subcases,0 errors. Not a live service/CAS failure; accepted main source/tests untouched."
+    },
+    "local_full": {
+      "run": 687,
+      "passed": 686,
+      "failures": 1,
+      "errors": 0,
+      "limitation": "One unchanged accepted test_handoff_checkpoint failure at merge_history_reconcile.py:91: local immutable-file snapshot lacks authentic Git ancestry. Historical trusted checker blob restored; accepted harness/records not skipped or weakened. Exact-head full-history GitHub CI must pass."
+    },
+    "github_ci": "PENDING_EXACT_NEW_PR_HEAD_OFFLINE_AND_COMPILE_HOLD"
+  },
+  "preservation": {
+    "accepted_main_blobs": 278,
+    "accepted_python_tests": 636,
+    "accepted_tests_modified": 0,
+    "protected_controls": "AGENTS/config/checkers/workflows/auth/spend/publishing unchanged",
+    "history_id": "C00128 reserved by open protected PR122; C00129 unused in accepted main and selected for this separate META issue."
+  },
+  "main_health": {
+    "sha": "221bc53ce118f5242777c13649f437d18078dcc4",
+    "qa_head": "5631288b22d9676420fa1e7f71393502c8fce5a4",
+    "qa": 40864317141,
+    "jobs": "offline+compile_hold SUCCESS",
+    "handoff": 40864317147,
+    "status_only_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "research": [
+    {
+      "url": "https://learn.chatgpt.com/docs/long-running-work",
+      "kind": "PRIMARY_OPENAI_OFFICIAL",
+      "published_at": "NOT_AVAILABLE",
+      "updated_at": "NOT_AVAILABLE",
+      "checked_at": "2026-10-29T13:13:26Z",
+      "finding": "Independent chats can run separately, but each keeps its own context; avoid giving two tasks access to change the same source. Goal mode does not widen sandbox or approvals."
+    },
+    {
+      "url": "https://learn.chatgpt.com/docs/pricing",
+      "kind": "PRIMARY_OPENAI_OFFICIAL",
+      "published_at": "NOT_AVAILABLE",
+      "updated_at": "NOT_AVAILABLE",
+      "checked_at": "2026-10-29T13:13:26Z",
+      "finding": "Work/Codex share usage; allowances depend on model/task/context/tool use, with plan-dependent windows and possible weekly limits. No fixed universal simultaneous-chat count or unlimited use verified; no account quota read or paid change."
+    },
+    {
+      "url": "https://create.roblox.com/docs/production/experiments",
+      "kind": "PRIMARY_ROBLOX_OFFICIAL",
+      "published_at": "NOT_AVAILABLE",
+      "updated_at": "NOT_AVAILABLE",
+      "checked_at": "2026-10-29T13:13:26Z",
+      "finding": "Keep control/variant and metrics/detectable-effect hypotheses separate from measured outcomes; no game test or data collection activated."
+    }
+  ],
+  "limits": [
+    "SYNTHETIC_TEST_ONLY: pure planner has no provider authentication or live canonical work-manifest ingestion; passing live coordinator/WORK_REQUESTS directly is invalid input.",
+    "No persistent shared intake record/canonical work registration, natural-language goal semantics, tree/symlink/undeclared dependency validation, terminal receipt or actual parallel claims.",
+    "Conservative ASCII path subset only; hidden paths and control-plane tools wait for existing exclusive/protected lanes. This is advisory caution, not a replacement for trusted checker authorization.",
+    "Current single-holder bridge, provider-CAS concurrency, two independent concurrent source authors, measured lead-time/cost improvement and Phase1/2 remain NOT_VERIFIED.",
+    "Epoch245 was revoked by a separate one-shot administrative exception, not authenticated terminal recovery; independent posthoc audit is still required. This author did not revoke/recover it.",
+    "A12/A13 and engine/mobile/two-client/player evidence remain unverified; official automation57%/game38%, protected PR122 no META integration."
+  ],
+  "next": "Separate registered REVIEWER checks actual new head, source behavior, claim and both CI jobs. Only independent merge + post-main QA/handoff counts as accepted Phase0 source. Future true canonical intake/bridge then governed Phase1/2; no author self-approval/merge.",
+  "holds": [
+    "GEMINI_SEVERE_HOLD",
+    "NO_NEW_INFERENCE_OR_SPEND",
+    "NO_CREDENTIAL_OR_TASK_CHANGES",
+    "ROBLOX_PUBLISH_HOLD",
+    "GLOBAL_SINGLE_WRITER_PRESERVED"
+  ]
+}

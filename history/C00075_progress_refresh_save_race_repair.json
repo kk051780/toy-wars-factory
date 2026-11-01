@@ -1,0 +1,94 @@
+{
+  "id": "C00075",
+  "date": "2026-10-28",
+  "kind": "AUTONOMOUS_PR94_REFRESH_FINAL_SAVE_REVIEW_AND_CI_REPAIR",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "02da8384-5050-8326-b742-50142d6d1163",
+  "queue_decision": {
+    "action": "REPAIR_CI",
+    "change_scheduler": false,
+    "pr": 94,
+    "branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "failed_head": "9399dee1ee5d8e70085fadef66d48cf5a75ddea1",
+    "review_request": "pr94_inflight_refresh_cancels_final_save_20261028"
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "2bd1eddac601c1e27165125e4799e8a99af9ddc6",
+    "owner_run_id": "02da8384-5050-8326-b742-50142d6d1163",
+    "epoch": 168
+  },
+  "main_base": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+  "previous_pr_head": "9399dee1ee5d8e70085fadef66d48cf5a75ddea1",
+  "issue": 93,
+  "defect": {
+    "id": "refresh_final_save_interleaving",
+    "cause": "A concurrent UpdateAsync lease refresh can advance sessionLeaseUntil while final save still compares an older exact snapshot, producing a false CAS conflict and dropping earned progress; delayed refresh response can misreport ownership loss.",
+    "reproduction": "Canonical whole-server fixture with per-call DataStore latency: refresh ordinal 2 overlaps final-save ordinal 3; pinned 9399 loses coins 350 -> stored 200 and retains owner."
+  },
+  "fix": "Fence finalization against in-flight refresh transforms/responses; permit only same-owner, same-revision, same-progress lease extension on final save; keep foreign ownership and schema fencing.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_refresh_save_race_spec.lua",
+    "history/C00075_progress_refresh_save_race_repair.json"
+  ],
+  "main_sync_files": [
+    "docs/research/2026-10-28_provider_transport.md",
+    "history/C00072_scoped_provider_transport.json",
+    "history/C00074_datastore_harness_maintenance.json",
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json",
+    "tests/auto/harness_datastore_spec.lua",
+    "tests/roblox_server_harness.lua",
+    "tests/test_system_provider_transport.py",
+    "tools/system_provider_transport.py"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 31910,
+      "after_bytes": 33005,
+      "delta_bytes": 1095
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1027,
+    "lua_bytes": 44149
+  },
+  "source_baseline_bytes": 25726,
+  "characters_touched": [],
+  "character_impact": "None; existing Pon/Guardon/Tankuru stats, costs, visual forms and combat are unchanged.",
+  "tests": {
+    "canonical_server": "tests/auto/progression_refresh_save_race_spec.lua",
+    "new_cases": 6,
+    "pinned_negative_head": "9399dee1ee5d8e70085fadef66d48cf5a75ddea1",
+    "existing_server_27": "UNCHANGED",
+    "existing_hud_6": "UNCHANGED",
+    "local": "NOT_RUN",
+    "ci": "PENDING_EXACT_NEW_HEAD",
+    "roblox_engine": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "live_datastore": "NOT_RUN"
+  },
+  "evidence": {
+    "prior_failed_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40618595107",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40629585413",
+    "main_qa_head": "d3decf3519937f4e8391d130eee5ff5375868fed",
+    "claim_commit": "2bd1eddac601c1e27165125e4799e8a99af9ddc6",
+    "pr": "https://github.com/kk051780/toy-wars-factory/pull/94",
+    "final_head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE"
+  },
+  "limitations": [
+    "No live DataStore or real Roblox engine proof.",
+    "Main harness and other accepted main changes were merged without editing their content."
+  ],
+  "next_action": "Require exact new-head offline+compile_hold CI and independent REVIEWER; author does not merge main.",
+  "restrictions": {
+    "scheduler_mutated": false,
+    "gemini_rerun": false,
+    "roblox_publish": false,
+    "author_main_merge": false
+  }
+}

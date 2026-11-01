@@ -1,0 +1,118 @@
+{
+  "id": "C00126",
+  "date": "2026-10-29",
+  "kind": "SYSTEM_SCOPED_ALERT_PERSISTENCE_BRIDGE",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "84f6c2ab-3724-8326-95cb-f3937487e58f",
+  "base_main": "e1ebe061d60cd74843b144db813f085ad9ce3da7",
+  "observed_at_utc": "2026-10-29T09:15:50Z",
+  "issue": 114,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "1fbd6f03d388bdcf9d59c36874de77d66196e17c",
+    "owner_run_id": "84f6c2ab-3724-8326-95cb-f3937487e58f",
+    "epoch": 236
+  },
+  "problem": "Accepted PR119 reducer emits a proposal only. No code connected a fresh accepted PR-less observation, immutable prior anchor and current registered fence to narrowly scoped CAS/readback.",
+  "implementation": "New system_alert_persistence.persist invokes accepted idle.observe and ledger.reduce. Reads complete immutable coordinator tree/blob and optional per-game ledger blob; exact task/run/role and active <=30min owned fence, epoch/base/main/ref and digest checked repeatedly. Optional explicit host create_tree/create_commit/update_ref callbacks can change only ops/alerts/<game>.json; expected exact ref parent,force=false, all tree leaves and commit parent checked; final ref/blob/holder readback required for PERSISTED_READBACK. Without writer returns PREPARED_ONLY/NOT_PERSISTED. Duplicate/healthy startup creates no Git objects. No retry, scheduler, credential, notification or recovery API.",
+  "adopted": "One additive module,23 independently executable adversarial regressions, new history only; reuse all accepted implementation.",
+  "not_adopted": [
+    {
+      "idea": "Reimplement PR119 reducer",
+      "reason": "Already independently merged and main QA/handoff passed"
+    },
+    {
+      "idea": "Save historical no_update as a new live incident",
+      "reason": "Historical run/time is not this run's current observation"
+    },
+    {
+      "idea": "Claim delivery or recovery from file/commit success",
+      "reason": "No actual delivery receipt or independent later recovery proof; fields remain NOT_ATTEMPTED/NOT_VERIFIED"
+    }
+  ],
+  "files": [
+    {
+      "path": "tools/system_alert_persistence.py",
+      "before_bytes": 0,
+      "bytes": 12443,
+      "lines": 189,
+      "sha256": "8d8421af589edb34983f30224cde38b9f5d9d8160f20823acc356f96583e8507"
+    },
+    {
+      "path": "tests/test_system_alert_persistence.py",
+      "before_bytes": 0,
+      "bytes": 14701,
+      "lines": 256,
+      "sha256": "54a635aaf08f0460da950a8aee3040ddd7fbaa9c5041684bbe6499aab62006b9"
+    }
+  ],
+  "tests": {
+    "new": 23,
+    "focused": "23/23 PASS; two synthetic game manifests through actual accepted idle observer/reducer; optional host writer simulation",
+    "negative_control": {
+      "mutant_tests": 1,
+      "expected_failures": 1,
+      "errors": 0,
+      "accepted_source_modified": false
+    },
+    "local_full": "Before last3 added cases:609 tests,608pass/1 unchanged accepted handoff real-Git-ancestry failure. New23 focused all PASS. Full-history exact-head GitHub CI must pass612, not inferred from local fixtures.",
+    "github_ci": "PENDING_EXACT_NEW_HEAD"
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "preservation": {
+    "accepted_blobs": 272,
+    "accepted_python": 589,
+    "protected_controls": "No existing source/test/history/config/checker/workflow/AGENTS/auth/spend/publishing changes"
+  },
+  "main_health": {
+    "sha": "e1ebe061d60cd74843b144db813f085ad9ce3da7",
+    "qa_head": "54e48d895ceef71a713d37148e1e954970dbad43",
+    "qa": 40842047702,
+    "jobs": "offline+compile_hold SUCCESS",
+    "handoff": 40842047673,
+    "status_only_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "research": [
+    {
+      "url": "https://docs.github.com/en/rest/git/refs",
+      "kind": "PRIMARY_GITHUB_OFFICIAL",
+      "published_at": "NOT_AVAILABLE",
+      "updated_at": "NOT_AVAILABLE",
+      "checked_at": "2026-10-29T09:15:50Z",
+      "finding": "Reference API read/update and409/422 semantics. Host expected_sha CAS is required; do not equate bare REST force=false with a separate expected_sha parameter or a lease/epoch receipt."
+    },
+    {
+      "url": "https://create.roblox.com/docs/production/experiments",
+      "kind": "PRIMARY_ROBLOX_OFFICIAL",
+      "published_at": "NOT_AVAILABLE",
+      "updated_at": "NOT_AVAILABLE",
+      "checked_at": "2026-10-29T09:15:50Z",
+      "finding": "Goals, controlled variants, sampling/detectable effect and recorded decisions guide NO_CHANGE/first-loop clarity/role contrast hypotheses. No actual target game outcome or live experiment claim."
+    }
+  ],
+  "limits": [
+    "SYNTHETIC_TEST_ONLY; host GET/PEEK/write callbacks for this NEW module were simulated, not live provider or unforced schedule proof.",
+    "Callbacks remain trusted host capabilities, not credential isolation or portable origin authentication. verification NOT_VERIFIED; no automatic authority granted.",
+    "NOT_PERSISTED means no confirmed persistence. A lost CAS acknowledgement or failed readback may leave UNCONFIRMED_POSSIBLE_WRITE; no rollback or retry is asserted.",
+    "No current real incident ledger written, no notification sent/confirmed, no independent recovery evidence; A12/A13 points0.",
+    "New code not yet accepted main; source-to-live connected writer binding and scheduled observation remain NOT_RUN.",
+    "Official automation57%/game38% unchanged; Issue113/117 protected; engine/mobile/player evidence NOT_RUN/NOT_MEASURED."
+  ],
+  "next": "Fresh exact-head offline+compile_hold with trusted scope/immutable claim; registered REVIEWER independently checks caller capability boundary/failure semantics and merge if appropriate; postmain QA/handoff. Only later normal legitimate run may wire actual host callbacks and persist a genuinely new incident.",
+  "holds": [
+    "GEMINI_SEVERE_HOLD",
+    "NO_EXTERNAL_SPEND",
+    "ROBLOX_PUBLISH_HOLD",
+    "NO_TASK_OR_AUTH_CHANGES"
+  ]
+}

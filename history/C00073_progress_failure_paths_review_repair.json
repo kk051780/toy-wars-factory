@@ -1,0 +1,78 @@
+{
+  "id": "C00073",
+  "date": "2026-10-28",
+  "kind": "AUTONOMOUS_REVIEW_REPAIR_DATASTORE_FAILURE_PATHS",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "138a0562-2e90-8324-9168-a144e74bb7c0",
+  "queue_decision": {
+    "action": "REPAIR_REVIEW",
+    "change_scheduler": false,
+    "pr": 94,
+    "branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "review_request": "pr94_read_fail_unsavable_and_final_save_retry_20261028",
+    "review_head": "09abf3753bdfc9753a45004048b95a17afb311f4"
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "77da5bd28e14fe36c98a8e3abd7730bdd3075ceb",
+    "owner_run_id": "138a0562-2e90-8324-9168-a144e74bb7c0",
+    "epoch": 161
+  },
+  "main_base": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+  "source_commit": "09abf3753bdfc9753a45004048b95a17afb311f4",
+  "previous_pr_head": "09abf3753bdfc9753a45004048b95a17afb311f4",
+  "issue": 93,
+  "defect": {
+    "id": "read_failure_unsavable_gameplay_and_transient_final_save_loss",
+    "cause": "GetAsync failures and unknown schema returned no loadFailure, allowing unsavable default gameplay; final UpdateAsync had one attempt and abandoned transient errors.",
+    "reproduction": "Canonical whole-server injected read failure starts Coins=50 unsavable session; injected once-only final UpdateAsync error leaves stored coins unchanged and lease held."
+  },
+  "fix": "Fail closed on store/read/schema failures, releasing the plot and exposing a rejoin reason; bounded three-attempt final-save transport retry with 0.25-second backoff, preserving exact-owner/revision CAS and metadata. A nil CAS result remains a conflict, not retry permission.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_rejoin_spec.lua",
+    "tests/auto/progression_failure_paths_spec.lua",
+    "history/C00073_progress_failure_paths_review_repair.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 31115,
+      "after_bytes": 31910,
+      "delta_bytes": 795
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1011,
+    "lua_bytes": 43054
+  },
+  "source_baseline_bytes": 25726,
+  "characters_touched": [],
+  "character_impact": "None; DataStore failure handling only.",
+  "tests": {
+    "new_cases": 6,
+    "updated_unmerged_cases": 2,
+    "negative_control_head": "09abf3753bdfc9753a45004048b95a17afb311f4",
+    "local": "NOT_RUN_LUA_INTERPRETER_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "roblox_engine": "NOT_RUN",
+    "accepted_main_tests": "UNCHANGED"
+  },
+  "evidence": {
+    "claim_commit": "77da5bd28e14fe36c98a8e3abd7730bdd3075ceb",
+    "pr": "https://github.com/kk051780/toy-wars-factory/pull/94",
+    "final_head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE"
+  },
+  "limitations": [
+    "No real Roblox DataStore or cross-server durability verified.",
+    "Permanent save failure remains observable but not crash-proof; session lease can remain until expiry."
+  ],
+  "next_action": "Fresh exact-head offline and compile_hold CI, then independent REVIEWER rechecks; no author main merge.",
+  "restrictions": {
+    "scheduler_mutated": false,
+    "gemini_rerun": false,
+    "roblox_publish": false,
+    "author_main_merge": false
+  }
+}

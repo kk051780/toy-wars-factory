@@ -1,0 +1,449 @@
+{
+  "id": "C00041",
+  "date": "2026-10-26",
+  "observed_at_utc": "2026-10-26T11:38:54Z",
+  "kind": "SYSTEM_READ_ONLY_HOST_WRITE_INCIDENT_TRIAGE",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "cbda9d91-c480-8320-a8e9-606913e2a16a",
+  "base_main": "09c08ddde66188fc0bd820ff1984c64f743d8144",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "4ee9615fba786c825b6bb89d09ef8bd7a2d0e52f",
+    "owner_run_id": "cbda9d91-c480-8320-a8e9-606913e2a16a",
+    "epoch": 72
+  },
+  "queue_decision": "START_SYSTEM_REVIEW_NO_OPEN_META_PR_SYSTEM_CONTINUITY_FIRST",
+  "problem": "Repeated write-denial narratives cannot distinguish a provider host error, a ref race, a live lease, an orphan, or stale CI. The original host error for the 11:06 WORKER run is not exposed.",
+  "reproduction": {
+    "worker_task_id": "6adbf0d6a7d881918ce181dff2468867",
+    "worker_run_id": "1c159542-ffdc-8327-9850-892b1a78843e",
+    "started_at": "2026-10-26T11:06:07.152359Z",
+    "completed_at": "2026-10-26T11:08:47.958965Z",
+    "matching_result_run_id": "1c159542-ffdc-8327-9850-892b1a78843e",
+    "reported_state": "BLOCKED_HOST_WRITE",
+    "raw_host_error_available": false,
+    "coordinator_head_before_meta": "952411e5e33c240d8d3170251977d1630fdc09c7",
+    "epoch": 71,
+    "holder": null,
+    "pr": 67,
+    "head": "a57961e42bbda115659f67bfa4a6fe5a1540d473",
+    "qa": 40311284080,
+    "producing_run_id": "8d9d3375-a74c-8332-ae42-78607b1c88cc",
+    "expected_diagnosis": "INDETERMINATE / HOST_WRITE_REPORTED_RAW_PROVIDER_ERROR_UNAVAILABLE",
+    "permanent_write_denial_proven": false
+  },
+  "root_cause": "OBSERVABILITY_GAP_CONFIRMED; underlying host-denial cause remains UNKNOWN. Service output is not the original connector/runtime error. Prior worker successes and this META claim exclude a blanket all-write-failure conclusion.",
+  "implementation": "Add pure configurable JSON classifier + CLI; require source/locator/freshness, exact service run and result generation, same-run/head/base/latest-attempt/all-job QA, fenced ref reread and same-owner terminal proof. Never call scheduler/Git or grant writes.",
+  "tests": {
+    "new_python_tests": 37,
+    "new_test_file": "tests/test_system_host_write_triage.py",
+    "local_targeted": {
+      "tests": 78,
+      "conclusion": "PASS",
+      "scope": "37 new + 29 accepted repair_control + 6 accepted recovery + 6 accepted META scope"
+    },
+    "unsafe_mutation_controls": {
+      "count": 7,
+      "conclusion": "ALL_REJECTED_BY_BEHAVIOR_TEST_FAILURE",
+      "cases": [
+        "expiry-only takeover",
+        "commit creation as claim",
+        "unknown error as host denial",
+        "old QA binding accepted",
+        "narrative as provider receipt",
+        "provider spoof accepted",
+        "in-progress duplicate allowed"
+      ]
+    },
+    "cli_historical_fixture": {
+      "exit": 2,
+      "state": "INDETERMINATE",
+      "reason": "HOST_WRITE_REPORTED_RAW_PROVIDER_ERROR_UNAVAILABLE",
+      "raw_error_echoed": false
+    },
+    "trusted_meta_scope": "PASS_LOCAL_VIOLATIONS_EMPTY",
+    "github_ci": "PENDING_EXACT_HEAD",
+    "local_lua_executed": false
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 695,
+    "lua_bytes": 27552
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "source_ledger": "No game source or accepted test changes; original C00001 baseline 25,726 bytes preserved.",
+  "changed_files": [
+    "tools/system_host_write_triage.py",
+    "tests/test_system_host_write_triage.py",
+    "docs/research/2026-10-26_host_write_triage.md",
+    "history/C00041_host_write_incident_triage.json"
+  ],
+  "primary_sources": [
+    {
+      "url": "https://github.github.com/gh-aw/blog/2026-10-26-weekly-update/",
+      "published_at": "2026-10-26",
+      "updated_at": null,
+      "checked_at": "2026-10-26T11:38:54Z",
+      "finding": "Implementation-origin weekly case separates engine driver failure classifications and secret-safe diagnostics. Adopt diagnosis/reporting principles; keep pinned compiler unchanged."
+    },
+    {
+      "url": "https://github.com/github/gh-aw/pull/71883",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-26T11:38:54Z",
+      "finding": "Opened implementation-origin PR for driver crash classification. External workflow/code not executed."
+    },
+    {
+      "url": "https://arxiv.org/html/2610.17418v1",
+      "published_at": "2026-10-12",
+      "updated_at": null,
+      "checked_at": "2026-10-26T11:38:54Z",
+      "finding": "Primary preprint: source and execution-stage localization. Its selected incident counts are not this system's failure rates."
+    },
+    {
+      "url": "https://docs.github.com/en/rest/git/refs#update-a-reference",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-26T11:38:54Z",
+      "finding": "force=false requires fast-forward; connector expected_sha is an additional local interface contract, not a REST field."
+    },
+    {
+      "url": "https://create.roblox.com/docs/tutorials/use-case-tutorials/ui/create-hud-meters",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-26T11:38:54Z",
+      "finding": "ScreenInsets defines relative UI bounds and device emulator supports layout exploration; physical touch remains unverified."
+    }
+  ],
+  "observed_operations": {
+    "service_sample": {
+      "worker_runs": 1,
+      "reviewer_runs": 1,
+      "window_start": "2026-10-26T10:59:18.747796Z",
+      "window_end": "2026-10-26T11:08:47.958965Z",
+      "worker_result": "Reported host-write block with no original error; zero code commit",
+      "reviewer_result": "REQUEST_CHANGES on PR67, no merge, lease released",
+      "manual_go_duplicate_rate": "NOT_MEASURED"
+    },
+    "qa_sample": {
+      "query": "latest 40 repository workflow runs filtered by QA workflow name",
+      "selected": 40,
+      "runs": 31,
+      "success": 22,
+      "failure": 9,
+      "window_start": "2026-10-26T05:08:57Z",
+      "window_end": "2026-10-26T11:17:48Z",
+      "qa_elapsed_seconds_range": [
+        24,
+        46
+      ],
+      "elapsed_definition": "updated_at minus created_at; not pure runner or queue time; reruns/duplicate trigger rows not independent incidents",
+      "records": [
+        {
+          "run": 40311284080,
+          "head": "a57961e42bbda115659f67bfa4a6fe5a1540d473",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T10:56:29Z",
+          "updated_at": "2026-10-26T10:57:09Z"
+        },
+        {
+          "run": 40310479605,
+          "head": "913ed41140e3e063c207e6629858a8a35c01216b",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T10:50:10Z",
+          "updated_at": "2026-10-26T10:50:48Z"
+        },
+        {
+          "run": 40309760825,
+          "head": "a10519744c92939fb671dfaa1e8b500e1cb3c03e",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T10:44:34Z",
+          "updated_at": "2026-10-26T10:45:06Z"
+        },
+        {
+          "run": 40307770609,
+          "head": "01527e4c5fc04fd139ba624b39c7db1dd873d28a",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T10:29:08Z",
+          "updated_at": "2026-10-26T10:29:54Z"
+        },
+        {
+          "run": 40306923916,
+          "head": "cd437eb278e3708054939d0f88d76a476df7b3e2",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T10:22:36Z",
+          "updated_at": "2026-10-26T10:23:06Z"
+        },
+        {
+          "run": 40306673646,
+          "head": "d711b33bbeae74cfdc7362f636b521d69e4b2fdc",
+          "attempt": 1,
+          "conclusion": "failure",
+          "created_at": "2026-10-26T10:20:43Z",
+          "updated_at": "2026-10-26T10:21:11Z"
+        },
+        {
+          "run": 40305630098,
+          "head": "6b4fb5bfb19c6e0a27a61c3f261805d85fbf7d8a",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T10:12:51Z",
+          "updated_at": "2026-10-26T10:13:30Z"
+        },
+        {
+          "run": 40305011765,
+          "head": "67ee928743b8efa6c3cce4a80d8b038473f6bc95",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T10:08:12Z",
+          "updated_at": "2026-10-26T10:08:39Z"
+        },
+        {
+          "run": 40303267438,
+          "head": "8785abc2e037fc8117a57a2b4f2854945def7f1d",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T09:54:58Z",
+          "updated_at": "2026-10-26T09:55:26Z"
+        },
+        {
+          "run": 40301804742,
+          "head": "1b879c9cb030bd10c0cf0040050f4fec8752985c",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T09:43:50Z",
+          "updated_at": "2026-10-26T09:44:19Z"
+        },
+        {
+          "run": 40300284975,
+          "head": "0803888a9c080495d1a509145c5b0700234d00aa",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T09:31:58Z",
+          "updated_at": "2026-10-26T09:32:29Z"
+        },
+        {
+          "run": 40299361181,
+          "head": "550afd73a02bdde2d755caf2b2d446bf5faa7372",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T09:24:58Z",
+          "updated_at": "2026-10-26T09:25:43Z"
+        },
+        {
+          "run": 40297896495,
+          "head": "4527a41934f9ee34f0bf2fc69e841da62410651d",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T09:13:28Z",
+          "updated_at": "2026-10-26T09:14:03Z"
+        },
+        {
+          "run": 40295764454,
+          "head": "af5fe9f3c4083642eb3ba8c0824714744980be31",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T08:56:15Z",
+          "updated_at": "2026-10-26T08:56:54Z"
+        },
+        {
+          "run": 40294943505,
+          "head": "f8fdfe0c034f830d4d46589499e9c2ecb16d5a7e",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T08:49:21Z",
+          "updated_at": "2026-10-26T08:49:48Z"
+        },
+        {
+          "run": 40291001810,
+          "head": "6b20e80b9bcbacc24e763ba14f946bbeae46b38d",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T08:15:27Z",
+          "updated_at": "2026-10-26T08:15:57Z"
+        },
+        {
+          "run": 40290929230,
+          "head": "6b20e80b9bcbacc24e763ba14f946bbeae46b38d",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T08:14:51Z",
+          "updated_at": "2026-10-26T08:15:27Z"
+        },
+        {
+          "run": 40290141085,
+          "head": "98342fdd2a5aeab0dd58fe4915a0e612a7887726",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T08:07:48Z",
+          "updated_at": "2026-10-26T08:08:19Z"
+        },
+        {
+          "run": 40289717933,
+          "head": "4fd77487b2c77da9fbac6e2c71eaad5ffa9fa483",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T08:03:59Z",
+          "updated_at": "2026-10-26T08:04:26Z"
+        },
+        {
+          "run": 40289516247,
+          "head": "bf02cb01e2a13ba657edf50bef4d54996c080617",
+          "attempt": 1,
+          "conclusion": "failure",
+          "created_at": "2026-10-26T08:02:08Z",
+          "updated_at": "2026-10-26T08:02:36Z"
+        },
+        {
+          "run": 40286661178,
+          "head": "1276ceb182855f48c901a29ca668878259300451",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T07:34:57Z",
+          "updated_at": "2026-10-26T07:35:28Z"
+        },
+        {
+          "run": 40286449050,
+          "head": "79c24087fa5e8883647a489803e95b76b1997cd1",
+          "attempt": 1,
+          "conclusion": "failure",
+          "created_at": "2026-10-26T07:32:53Z",
+          "updated_at": "2026-10-26T07:33:17Z"
+        },
+        {
+          "run": 40286442196,
+          "head": "79c24087fa5e8883647a489803e95b76b1997cd1",
+          "attempt": 1,
+          "conclusion": "failure",
+          "created_at": "2026-10-26T07:32:49Z",
+          "updated_at": "2026-10-26T07:33:18Z"
+        },
+        {
+          "run": 40286287783,
+          "head": "b43d6c7078b45fc689bbded7b253217a33873748",
+          "attempt": 1,
+          "conclusion": "failure",
+          "created_at": "2026-10-26T07:31:16Z",
+          "updated_at": "2026-10-26T07:31:43Z"
+        },
+        {
+          "run": 40286280404,
+          "head": "b43d6c7078b45fc689bbded7b253217a33873748",
+          "attempt": 1,
+          "conclusion": "failure",
+          "created_at": "2026-10-26T07:31:11Z",
+          "updated_at": "2026-10-26T07:31:48Z"
+        },
+        {
+          "run": 40285960757,
+          "head": "5f8cc1c826e494d413c79bbfcccbb865e72d4c8e",
+          "attempt": 1,
+          "conclusion": "failure",
+          "created_at": "2026-10-26T07:28:04Z",
+          "updated_at": "2026-10-26T07:28:28Z"
+        },
+        {
+          "run": 40285903257,
+          "head": "5f8cc1c826e494d413c79bbfcccbb865e72d4c8e",
+          "attempt": 1,
+          "conclusion": "failure",
+          "created_at": "2026-10-26T07:27:29Z",
+          "updated_at": "2026-10-26T07:28:04Z"
+        },
+        {
+          "run": 40285754961,
+          "head": "b86093ee06ba12c6f7ceeeeecb472b58efeeac59",
+          "attempt": 1,
+          "conclusion": "failure",
+          "created_at": "2026-10-26T07:25:59Z",
+          "updated_at": "2026-10-26T07:26:37Z"
+        },
+        {
+          "run": 40283372197,
+          "head": "078f1f81c3166e7e03f9462c108620b8270187ef",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T07:02:38Z",
+          "updated_at": "2026-10-26T07:03:14Z"
+        },
+        {
+          "run": 40282761450,
+          "head": "7c3b72cf42ca0b6e754d7771be977e951b0f3a8b",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T06:56:24Z",
+          "updated_at": "2026-10-26T06:56:53Z"
+        },
+        {
+          "run": 40280872099,
+          "head": "581b35fb0835488e23cffbaaee9cc5db85d27631",
+          "attempt": 1,
+          "conclusion": "success",
+          "created_at": "2026-10-26T06:37:02Z",
+          "updated_at": "2026-10-26T06:37:28Z"
+        }
+      ]
+    },
+    "latest_failed_qa_detail": {
+      "run": 40306673646,
+      "head": "d711b33bbeae74cfdc7362f636b521d69e4b2fdc",
+      "failure": "Accepted workshop_queue_hud_spec queued-player visibility assertion failed",
+      "newer_main_qa": 40310479605,
+      "status": "CURRENT_MAIN_PASSES_ACCEPTED_REGRESSION; old failed head not reused"
+    },
+    "handoff": "Current generated source revision a1051974 matches latest source; embedded PASS_74/40157791404 are historical, current QA log is 206. Snapshot historical counts not current proof."
+  },
+  "main_health": {
+    "head": "09c08ddde66188fc0bd820ff1984c64f743d8144",
+    "qa_head": "913ed41140e3e063c207e6629858a8a35c01216b",
+    "qa": 40310479605,
+    "qa_python_tests": 206,
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "direct_compare_files": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "adoption": {
+    "chosen": "P0 system diagnostic classifier explicitly requested for this cycle",
+    "deferred": [
+      "Issue68 review-request queue prioritization is separate next META issue, not stacked here",
+      "PR67 compact guide layout remains WORKER repair",
+      "Roblox hosted engine/mobile evidence remains unavailable"
+    ],
+    "authentication_boundary": "Provider-name/locator matching is consistency checking, not cryptographic JSON authentication. Collector must obtain real provider responses with separately trusted config."
+  },
+  "effect": "Local adversarial cases and CLI distinguish evidence classes. Not a fix for host refusal; no deployment or sustained reliability effect until independent merge/main QA and later repeated service observations.",
+  "protected_controls": "No main merge, owner approval/config/quality/accepted-test/workflow/token/provider/budget/scheduler/release/publishing changes.",
+  "next": "Registered independent REVIEWER inspects current head/base and all scope/claim/CI gates; after merge verify main. Obtain exact provider error at next actual denial through permitted telemetry, with safe normalization. Do not synthesize receipts or retry/alter rights.",
+  "file_size_changes": [
+    {
+      "path": "tools/system_host_write_triage.py",
+      "before_bytes": 0,
+      "after_bytes": 12061,
+      "delta_bytes": 12061
+    },
+    {
+      "path": "tests/test_system_host_write_triage.py",
+      "before_bytes": 0,
+      "after_bytes": 22299,
+      "delta_bytes": 22299
+    },
+    {
+      "path": "docs/research/2026-10-26_host_write_triage.md",
+      "before_bytes": 0,
+      "after_bytes": 7382,
+      "delta_bytes": 7382
+    }
+  ]
+}

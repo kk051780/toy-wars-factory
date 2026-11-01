@@ -1,0 +1,76 @@
+{
+  "id": "C00071",
+  "date": "2026-10-28",
+  "kind": "AUTONOMOUS_CI_HARDEN_TRANSIENT_DATASTORE_LEASE_REFRESH",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "e081b44b-76dc-832d-8096-9a29b6d2c2a5",
+  "queue_decision": {
+    "action": "REPAIR_REVIEW",
+    "change_scheduler": false,
+    "pr": 94,
+    "branch": "auto/twf-game-repair-4e9fadf4-8b94-8333-9efc-d46cf6d04730",
+    "review_request": "pr94_concurrent_claim_unsavable_and_unsaved_prior_progress_20261028",
+    "review_head": "259b51e2ef3d84b02b6442dae53f56292b8bae28"
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "adc8df694006931b6694f9db40572ce44ced6b0f",
+    "owner_run_id": "e081b44b-76dc-832d-8096-9a29b6d2c2a5",
+    "epoch": 158
+  },
+  "main_base": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+  "source_commit": "98607aedc00e71e341e651a8823a00a6a0ab275f",
+  "previous_pr_head": "98607aedc00e71e341e651a8823a00a6a0ab275f",
+  "issue": 93,
+  "defect": {
+    "id": "transient_lease_refresh_network_failure_disables_final_save",
+    "cause": "A transient UpdateAsync exception was treated as confirmed loss of ownership, disabling final persistence.",
+    "reproduction": "Canonical server fixture injects an error only at periodic lease refresh, then leaves with unsaved coins; old code refuses final save."
+  },
+  "fix": "Distinguish transient refresh exceptions from confirmed ownership conflicts; retry soon on exception and retain exact-owner final-save CAS. Confirmed conflict stops gameplay and displays reconnect reason.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_claim_race_spec.lua",
+    "history/C00071_lease_refresh_transient_ci_hardening.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 30624,
+      "after_bytes": 31115,
+      "delta_bytes": 491
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 993,
+    "lua_bytes": 42259
+  },
+  "source_baseline_bytes": 25726,
+  "characters_touched": [],
+  "character_impact": "None; only DataStore session ownership/error handling.",
+  "tests": {
+    "new_case": "transient lease refresh error still permits a fenced final save",
+    "previous_ci": 40612758841,
+    "previous_head": "98607aedc00e71e341e651a8823a00a6a0ab275f",
+    "local": "NOT_RUN_LUA_INTERPRETER_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "roblox_engine": "NOT_RUN",
+    "accepted_tests": "UNCHANGED"
+  },
+  "evidence": {
+    "claim_commit": "adc8df694006931b6694f9db40572ce44ced6b0f",
+    "pr": "https://github.com/kk051780/toy-wars-factory/pull/94",
+    "final_head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE"
+  },
+  "limitations": [
+    "No live Roblox DataStore or multi-server engine evidence."
+  ],
+  "next_action": "Exact-head offline+compile_hold then independent review; no author main merge.",
+  "restrictions": {
+    "scheduler_mutated": false,
+    "gemini_rerun": false,
+    "roblox_publish": false,
+    "author_main_merge": false
+  }
+}

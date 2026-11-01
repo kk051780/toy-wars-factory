@@ -11,7 +11,17 @@ local function frame(x,y,z)
     return {Position=type(x)=="table" and x or vector(x or 0,y or 0,z or 0)}
 end
 
+local fixtureSerial = 0
+local function copyData(value)
+    if type(value)~="table" then return value end
+    local copy={}
+    for key,item in pairs(value) do copy[key]=copyData(item) end
+    return copy
+end
+
 function H.new(serverFile, existingCount)
+    fixtureSerial=fixtureSerial+1
+    local fixtureId=fixtureSerial
     local h = {now=0, queue={}, serial=0, warnings={}, playerList={}, nextId=0}
     local function resume(thread,...)
         local ok, delay = coroutine.resume(thread,...)
@@ -170,14 +180,54 @@ function H.new(serverFile, existingCount)
         local value=setmetatable({},{__index=function(_,item) return key.."."..item end})
         rawset(t,key,value);return value
     end})
-    local services={Players=h.players,ReplicatedStorage=h.storage,RunService=h.runService}
+    -- Successful deterministic persistence for ordinary gameplay fixtures.
+    -- Storage is isolated per H.new; failure/overlap specs may inject their own
+    -- services. This models values/metadata, not real requests or concurrency.
+    local stores={}
+    local function keyInfo(record)
+        if not record then return nil end
+        local ids,metadata=copyData(record.ids),copyData(record.metadata)
+        return {GetUserIds=function() return copyData(ids) end,
+            GetMetadata=function() return copyData(metadata) end}
+    end
+    local dataStoreService={}
+    function dataStoreService:GetDataStore(name,scope)
+        assert(type(name)=="string" and #name>0,"store name required")
+        local storeKey=name.."\0"..(scope or "global")
+        if stores[storeKey] then return stores[storeKey] end
+        local records={}
+        local store={}
+        function store:GetAsync(key)
+            local record=records[key]
+            return record and copyData(record.value),keyInfo(record)
+        end
+        function store:UpdateAsync(key,transform)
+            local record=records[key]
+            local updated,ids,metadata=transform(record and copyData(record.value),keyInfo(record))
+            if updated==nil then return nil end
+            -- Roblox removes associations omitted from a successful transform.
+            records[key]={value=copyData(updated),ids=copyData(ids or {}),metadata=copyData(metadata or {})}
+            return copyData(updated),keyInfo(records[key])
+        end
+        stores[storeKey]=store
+        return store
+    end
+    local guidSerial=0
+    local httpService={GenerateGUID=function(_,braces)
+        guidSerial=guidSerial+1
+        local guid=string.format("%08x-0000-4000-8000-%012x",fixtureId,guidSerial)
+        return braces and ("{"..guid.."}") or guid
+    end}
+    local services={Players=h.players,ReplicatedStorage=h.storage,RunService=h.runService,
+        DataStoreService=dataStoreService,HttpService=httpService}
+    h.services=services
     local env=setmetatable({
         game={GetService=function(_,name) return assert(services[name],"unsupported service") end},
         workspace=h.workspace,Instance={new=instance},Enum=enums,
         Vector3={new=vector},CFrame={new=frame},Color3={fromRGB=function(...) return {...} end},
         UDim={new=function(...) return {...} end},UDim2={fromOffset=function(...) return {...} end,fromScale=function(...) return {...} end},
         task={spawn=spawn,wait=function(duration) return coroutine.yield(duration or 0) end},
-        os={clock=function() return h.now end},
+        os={clock=function() return h.now end,time=function() return math.floor(h.now) end},
         require=function(value) assert(value==module,"unsupported require");return balance end,
         print=function() end,warn=function(...) h.warnings[#h.warnings+1]={...} end,
     },{__index=_G})

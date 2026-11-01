@@ -48,3 +48,18 @@ ChatGPTの別タスクで毎朝、実際の失敗・停滞と最新WEB一次資�
 完成ロードマップ、実際に取り込まれた機能、実機証拠、再発/待ち時間を見て改善を選ぶ。承認待ちを作ること自体を通常工程にしない。
 追加モジュールが必要なら、installer対応と新しい回帰検査を付け、additional_source_pathsの追記だけを提案できる。
 他の権限/費用/品質設定や既存検査を緩めず、根拠のある小さな変更を独立審査・main検査へ進める。
+
+## 受理済み診断器の安全な入口（Issue #72、2026-10-27）
+
+障害診断は `python tools/repair_control.py triage --config collector-config.json --evidence evidence.json --now <timezone-aware timestamp>` を使う。
+この入口は `tools/system_host_write_triage_v2.py` を実際に呼び、v1の出所・鮮度・ロック・同一run/head/base QA検査を保持した上で、
+サービス結果が `failed` / `no_update` のとき健康な待機成功を返さない。
+独立取得した実データだけを入力し、source名やCLIの成功終了を認証・書込み・復旧の許可として扱わない。
+
+旧 `python tools/system_host_write_triage.py ...` は保護対象のままで、failed/no_updateの誤判定が残る。
+旧入口をこの経路の代替にせず、診断時は新入口へ移行する。過去の研究記録と既存検査は書き換えない。
+案Bが保護scopeを保って改善できるのは、新入口を使う診断だけである。
+原CLIを使う外部利用者の修復・system_*.py全般の保守解禁・実サービスへの継続的適用は未達。
+Issue #72は閉じず、旧CLI自体の修復には独立trust-root審査による狭い案Aが必要となる。
+作者はchecker/config/workflowを変更して通さない。新入口も常にwrite/start/takeover許可を返さず、
+v2が欠落した場合に旧CLIへ自動フォールバックしない。
