@@ -69,7 +69,9 @@ def request_fields(value, *, record=False, project_id=None, repository=None):
 
 def calculate_work_id(project_id, repository, kind, objective):
     normalized = objective_key(objective)
-    stable = json.dumps([project_id, repository, kind, normalized],
+    # GitHub repository names are case-insensitive; canonicalize before hashing.
+    # The trusted host must still authenticate the actual repository identity.
+    stable = json.dumps([project_id, repository.casefold(), kind, normalized],
                         ensure_ascii=False, separators=(",", ":"))
     return "work-" + hashlib.sha256(stable.encode("utf-8")).hexdigest()[:24]
 
@@ -83,7 +85,8 @@ def classify(snapshot):
     project, repo = snapshot["project_id"], snapshot["repository"]
     require(type(project) is str and PROJECT.fullmatch(project), "invalid project")
     require(type(repo) is str and REPOSITORY.fullmatch(repo) and
-            all(part not in (".", "..") for part in repo.split("/")),
+            all(part not in (".", "..") for part in repo.split("/")) and
+            repo == repo.casefold(),
             "invalid repository")
     require(type(snapshot["main_sha"]) is str and SHA.fullmatch(snapshot["main_sha"]),
             "invalid main SHA")

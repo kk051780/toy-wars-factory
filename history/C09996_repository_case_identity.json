@@ -1,0 +1,45 @@
+{
+  "id": "C09996",
+  "date": "2026-11-01",
+  "kind": "MANUAL_CONTROLLER_OWNER_IDEA_REPOSITORY_CASE_IDENTITY_REGRESSION",
+  "repository": "kk051780/toy-wars-factory",
+  "task_id": null,
+  "run_id": "e74999c2-19a0-466e-b160-730952fafaef",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "81ce85754899d87a34af4c7e99568651bd3c0c56",
+    "owner_run_id": "e74999c2-19a0-466e-b160-730952fafaef",
+    "epoch": 375,
+    "work_branch": "controller/owner-intake-dedup-04d26d6e"
+  },
+  "original_pr": 173,
+  "original_head": "e37662edb2a4701ecd4de109d428e1a8fe3213c1",
+  "scope": "EXISTING_PR_SOURCE_AND_TESTS_PLUS_APPEND_ONLY_HISTORY",
+  "changed_files": [
+    "tools/system_owner_intake_dedup.py",
+    "tests/test_system_owner_intake_dedup.py",
+    "history/C09996_repository_case_identity.json"
+  ],
+  "new_test_cases": 4,
+  "prior_test_cases": 31,
+  "proposed_test_cases": 35,
+  "casefold_rule": "case-insensitive same GitHub repo full name => same advisory work ID; intake rejects noncanonical cased repository",
+  "canonical_lowercase_work_id": "work-ee37da2c214de8b04dbc49b8",
+  "external_activity": "NONE",
+  "local_smoke": "5/5 PASS on helper-only previously prepared reproduction",
+  "exact_head_ci": "PENDING",
+  "independent_review": "PENDING",
+  "real_github_work_registry_CAS": "NOT_PERFORMED",
+  "real_worker_dispatch": "NOT_PERFORMED",
+  "roblox_engine": "NOT_RUN",
+  "main_mutated": false,
+  "merge_authorized": false,
+  "release_holds": "PRESERVED",
+  "history_reservation": {
+    "accepted_main_entries_checked": 118,
+    "open_prs_scanned": 55,
+    "collisions_found": 0,
+    "recheck_at_merge": true
+  }
+}
