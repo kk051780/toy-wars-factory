@@ -1,0 +1,52 @@
+{
+  "id": "C08178",
+  "date": "2026-11-01",
+  "kind": "CONTROLLER_A14_STATIC_POST_CAS_CONTRACT_ALIGNMENT",
+  "issue": 151,
+  "repository": "kk051780/toy-wars-factory",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "61f60bc1a6e62adf26a30e9ce102ed9dcdb1e0c2",
+    "owner_run_id": "b3c186b2-d75f-4715-ac10-55de4a3a6478",
+    "epoch": 382,
+    "work_branch": "controller/a14-post-contract-b3c186b2"
+  },
+  "scope": "offline read-only alignment and mocked one-shot transport; does not authenticate provider or permit POST",
+  "changes": {
+    "source": [
+      "tools/twf_a14_post_cas_contract.py",
+      "tools/twf_roblox_task_post_once.py"
+    ],
+    "tests": [
+      "tests/test_twf_a14_post_cas_contract.py",
+      "tests/test_twf_roblox_task_post_once.py",
+      "tests/test_twf_roblox_task_post_interlock.py",
+      "tests/test_twf_roblox_task_post_cross_instance_red.py"
+    ],
+    "fixture": "fixtures/twf_open_cloud_smoke.luau",
+    "docs": "docs/A14_POST_CONTRACT_ALIGNMENT.md"
+  },
+  "quality": {
+    "new_offline_python_cases": 73,
+    "local_result": "PASS",
+    "github_exact_head_ci": "PENDING",
+    "roblox_cloud_http": "NOT_RUN",
+    "roblox_engine": "NOT_RUN",
+    "two_client": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "independent_review": "PENDING"
+  },
+  "security_holds": {
+    "pr158_post_cas_fresh_clock": "UNRESOLVED",
+    "pr158_commit_changed_path_proof": "UNRESOLVED",
+    "private_target_authenticated": false,
+    "global_cas_authenticated": false,
+    "main_merged": false,
+    "roblox_publish": false,
+    "post_authorized": false,
+    "auto_retry": false,
+    "external_inference": false
+  },
+  "parent_prs_untouched": [158, 175]
+}
