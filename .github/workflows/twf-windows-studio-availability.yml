@@ -32,7 +32,7 @@ jobs:
             $sig = Get-AuthenticodeSignature -LiteralPath $candidate
             $signatureStatus = [string]$sig.Status
             if ($sig.Status -eq 'Valid' -and $null -ne $sig.SignerCertificate -and
-                $sig.SignerCertificate.Subject -match 'Roblox') {
+                $sig.SignerCertificate.Subject -match '(^|,\s*)O=Roblox Corporation(\s*,|$)') {
               $status = 'STUDIO_PRESENT_SIGNED'
             }
           }

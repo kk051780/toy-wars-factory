@@ -1,0 +1,40 @@
+{
+  "id": "C15821",
+  "date": "2026-11-01",
+  "kind": "A14_PR150_STUDIO_SIGNER_STRICT_AND_PARENT149_RESTACK_GREEN",
+  "pr": 150,
+  "parent_pr": 149,
+  "accepted_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "original_child_head": "26eb8b707df6725763f85948c587264225446681",
+  "clean_red_head": "a29b81daabfee4c54dbe2a0e3142c90c7e9c4135",
+  "clean_red_run": 41267538580,
+  "red_tests": 933,
+  "red_failures": 8,
+  "red_errors": 0,
+  "old_recorded_base": "cad549c12da41b2634a4df6f7ab160c39a585e9f",
+  "current_parent_head": "68490a335cc6619933f671b8aae63f074c2536c6",
+  "parent_tree": "ab30c3492d4e384eaab011c5d538981af722970f",
+  "coordinator": {
+    "epoch": 368,
+    "owner": "af7b73cb-c13e-4c5f-84b3-d4128bdbd726",
+    "claim_commit": "2928b3b74875606efbacd60e5d3066034ccb1055"
+  },
+  "source_changes": [],
+  "workflow_changes": [
+    ".github/workflows/twf-windows-studio-availability.yml"
+  ],
+  "child_files_replayed": [
+    ".github/workflows/twf-windows-studio-availability.yml",
+    "tests/test_windows_studio_host_discovery.py",
+    "tests/test_windows_studio_signer_organization.py",
+    "history/C00171_windows_host_discovery_red.json",
+    "history/C00172_windows_host_discovery_green.json",
+    "history/C15820_pr150_windows_signer_red.json"
+  ],
+  "green_ci": "AWAIT_EXACT_HEAD_CI",
+  "engine_executed": false,
+  "windows_authenticode_real": false,
+  "independent_review": "PENDING",
+  "merge_to_main": false,
+  "public_publish": false
+}

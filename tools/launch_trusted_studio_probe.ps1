@@ -19,7 +19,7 @@ if (-not (Test-Path -LiteralPath $PythonExe -PathType Leaf)) { throw 'Explicit t
 # The caller-supplied path and signature are checked before any untrusted file is loaded.
 $signature = Get-AuthenticodeSignature -LiteralPath $studioPath
 if ($signature.Status -ne 'Valid' -or $null -eq $signature.SignerCertificate -or
-    $signature.SignerCertificate.Subject -notmatch 'Roblox') { throw 'Roblox Studio Authenticode verification failed' }
+    $signature.SignerCertificate.Subject -notmatch '(^|,\s*)O=Roblox Corporation(\s*,|$)') { throw 'Roblox Studio Authenticode verification failed' }
 $gate=Join-Path $root 'tools\studio_host_gate.py'
 $probe=Join-Path $root 'tools\twf_local_place_probe.luau'
 if (-not (Test-Path -LiteralPath $gate -PathType Leaf) -or -not (Test-Path -LiteralPath $probe -PathType Leaf)) {
