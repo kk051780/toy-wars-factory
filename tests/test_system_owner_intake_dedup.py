@@ -305,6 +305,28 @@ class OwnerIdeaIntakeTests(unittest.TestCase):
                 self.assertEqual(run.returncode, 2)
                 self.assertIn("WAIT_INVALID_INPUT", run.stdout)
 
+    def test_deep_json_parser_returns_bounded_value_error(self):
+        from system_owner_intake_dedup import strict_json
+        raw = "[" * 40000 + "0" + "]" * 40000
+        self.assertLess(len(raw.encode("utf-8")), 128 * 1024)
+        with self.assertRaisesRegex(ValueError, "JSON nesting too deep"):
+            strict_json(raw)
+
+    def test_deep_json_cli_fail_closed_without_traceback(self):
+        script = Path(__file__).resolve().parents[1] / "tools" / "system_owner_intake_dedup.py"
+        raw = "[" * 40000 + "0" + "]" * 40000
+        with tempfile.TemporaryDirectory() as tmp:
+            p = Path(tmp) / "deep.json"
+            p.write_text(raw, encoding="utf-8")
+            result = subprocess.run([sys.executable, str(script), "--input", str(p)],
+                                    capture_output=True, text=True)
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertEqual(result.stderr, "")
+        payload = json.loads(result.stdout)
+        self.assertEqual(payload["decision"], "WAIT_INVALID_INPUT")
+        self.assertIs(payload["may_write"], False)
+        self.assertEqual(payload["reason"], "JSON nesting too deep")
+
     def test_cli_oversize_rejected(self):
         script = Path(__file__).resolve().parents[1] / "tools" / "system_owner_intake_dedup.py"
         with tempfile.TemporaryDirectory() as tmp:
