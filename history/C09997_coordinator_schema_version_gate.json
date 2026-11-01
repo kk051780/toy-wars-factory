@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "case_id": "C09997",
+  "title": "PR174 strict coordinator protocol schema fail-closed",
+  "scope": "Existing protected stacked PR174 only; no main merge, no work registry CAS or worker dispatch",
+  "context": {
+    "parent_pr": 173,
+    "parent_head": "c902948f66d408c78211c1afb694c19326b98bc4",
+    "child_pr": 174,
+    "child_before": "636d284e492931127b7e83774262bd6ec84118ec",
+    "issue": 123
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "b517f277df42e5332f4684ed2592630a4b2bb6f8",
+    "owner_run_id": "3bc70943-566a-4a52-8509-6da448c47233",
+    "epoch": 377,
+    "work_branch": "controller/work-registration-cas-1dd085ef"
+  },
+  "regression": {
+    "reject_unsupported_coordinator_schema": [
+      0,
+      2,
+      999
+    ],
+    "preserve_supported_schema": 1,
+    "test_methods_added": 3,
+    "source_parsers_changed": 2,
+    "expected_cas_attempts_for_invalid_schema": 0
+  },
+  "evidence": {
+    "status": "PR_CANDIDATE_PENDING_ORIGINAL_GITHUB_CI",
+    "offline_tests": "NOT_YET_RUN",
+    "independent_review": "PENDING",
+    "roblox_engine": "NOT_RUN",
+    "provider_attested_work_registry_cas": false,
+    "worker_dispatch": false,
+    "main_mutated": false
+  },
+  "source_files": [
+    "tools/system_owner_work_registration.py",
+    "tools/system_owner_registry_snapshot.py",
+    "tests/test_system_owner_work_registration.py",
+    "tests/test_system_owner_registry_snapshot.py"
+  ],
+  "copyright": "No external borrowed material"
+}

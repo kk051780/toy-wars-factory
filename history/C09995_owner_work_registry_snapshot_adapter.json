@@ -1,0 +1,86 @@
+{
+  "id": "C09995",
+  "date": "2026-10-31",
+  "kind": "OWNER_WORK_REGISTRY_PINNED_GITHUB_GET_READONLY_SNAPSHOT",
+  "repository": "kk051780/toy-wars-factory",
+  "issue": 123,
+  "pr": 174,
+  "parent_pr": 173,
+  "observed_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_parent_pr_head": "e37662edb2a4701ecd4de109d428e1a8fe3213c1",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "94b6fdcc6c956571b5e8a4810f68542f793c7dd5",
+    "owner_run_id": "1c7c521d-f3d6-4485-a180-3b2e438fe9b4",
+    "epoch": 343,
+    "work_branch": "controller/work-registration-cas-1dd085ef",
+    "kind": "CONTROLLER_MANUAL"
+  },
+  "changes": [
+    {
+      "path": "tools/system_owner_registry_snapshot.py",
+      "new": true,
+      "git_blob_sha": "a1508f64f336a1b5fedb84b8a114221096e4e259",
+      "bytes": 6428
+    },
+    {
+      "path": "tests/test_system_owner_registry_snapshot.py",
+      "new": true,
+      "git_blob_sha": "766f983629ee29b3a1e3bdad9a4c03cb6969bbfd",
+      "bytes": 12918
+    },
+    {
+      "path": "history/C09995_owner_work_registry_snapshot_adapter.json",
+      "new": true
+    }
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1186,
+    "lua_bytes": 52781
+  },
+  "source_baseline_bytes": 25726,
+  "characters_touched": [],
+  "tests": {
+    "new_unittest_cases": 35,
+    "verified_local_pass": "35/35",
+    "git_hosted_exact_head": "PENDING"
+  },
+  "collision_audit": {
+    "open_prs_checked": 53,
+    "accepted_main_history_file_count": 118,
+    "collision_count": 0,
+    "recheck_at_integration": true
+  },
+  "adapter_contract": {
+    "reads": [
+      "fixed private repo metadata",
+      "main ref",
+      "coordinator ref",
+      "pinned coordinator state REST Contents with Git blob check",
+      "recheck main ref",
+      "recheck coordinator ref"
+    ],
+    "transport_reuse_candidate": "PR165 GitHubGet(url) interface, NOT imported/executed in this candidate",
+    "retains_untrusted_callbacks": true,
+    "no_real_authorized_https_get_execution": true,
+    "work_registry_null_rejected": true,
+    "atomic_writer_untouched": true,
+    "may_write": false,
+    "may_dispatch": false,
+    "may_claim": false,
+    "may_merge": false,
+    "github_authenticated": false
+  },
+  "limits": [
+    "independent reviewer pending",
+    "PR173 remains unmerged; child PR174 is stacked, not main-based",
+    "no actual trusted GitHub GET of this code",
+    "no live shared work-registry CAS",
+    "no registered WORKER dispatch",
+    "no actual Roblox Studio or mobile engine validation",
+    "no Gemini inference, costs or publishing"
+  ],
+  "main_mutated": false
+}
