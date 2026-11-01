@@ -176,6 +176,34 @@ class OwnerIdeaIntakeTests(unittest.TestCase):
         c = classify(d)["proposed_work_id"]
         self.assertEqual(len({a, b, c}), 3)
 
+    def test_github_repository_case_aliases_share_work_id(self):
+        d = sample()
+        args = (d["project_id"], d["incoming"]["kind"], d["incoming"]["objective"])
+        lower = calculate_work_id(args[0], "kk051780/toy-wars-factory", args[1], args[2])
+        mixed = calculate_work_id(args[0], "Kk051780/Toy-Wars-Factory", args[1], args[2])
+        upper = calculate_work_id(args[0], "KK051780/TOY-WARS-FACTORY", args[1], args[2])
+        self.assertEqual(lower, mixed)
+        self.assertEqual(lower, upper)
+
+    def test_uppercase_repository_intake_fails_closed(self):
+        d = sample()
+        d["repository"] = "KK051780/TOY-WARS-FACTORY"
+        with self.assertRaises(ValueError):
+            classify(d)
+
+    def test_case_mismatched_existing_record_fails_closed(self):
+        d = sample()
+        d["records"] = [existing(d)]
+        d["records"][0]["repository"] = "KK051780/TOY-WARS-FACTORY"
+        with self.assertRaises(ValueError):
+            classify(d)
+
+    def test_existing_lowercase_repository_work_id_remains_stable(self):
+        d = sample()
+        observed = calculate_work_id(d["project_id"], d["repository"],
+                                     d["incoming"]["kind"], d["incoming"]["objective"])
+        self.assertEqual(observed, "work-ee37da2c214de8b04dbc49b8")
+
     def test_duplicate_work_id_rejected(self):
         d = sample()
         d["records"] = [existing(d), existing(d, idea_id="owner:c")]
