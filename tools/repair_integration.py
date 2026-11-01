@@ -8,6 +8,7 @@ from pathlib import Path, PurePosixPath
 import re
 from check_auto_diff import is_worker_branch
 from repair_control import canonical_id, instant, owns
+from native_github_review_gate import verified_native_approval
 
 STATUS_PATHS = {"status/CHAT_HANDOFF.md", "status/LATEST_STATE.json"}
 REVIEW_CHECKS = ("scope", "regression", "source_ledger", "protected_controls", "behavior")
@@ -386,6 +387,9 @@ def decide(policy, main, pr, review, lease, now):
     if not verified_branch_protection(main, policy):
         return result("WAIT_BRANCH_PROTECTION",
                       reason="trusted current-main protection and required PR/CI rules not verified")
+    if not verified_native_approval(policy, main, pr, review, now):
+        return result("WAIT_NATIVE_APPROVAL",
+                      reason="no verified separate GitHub native reviewer approved exact head; independent trusted host must re-fetch reviews")
     return result("MERGE", pr=pr["number"], expected_head_sha=head,
                   review_base_sha=main["sha"], merge_method="merge",
                   post_merge_qa_required=True, roblox_publish_authorized=False)

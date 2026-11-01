@@ -1,0 +1,53 @@
+{
+  "id": "C99164",
+  "kind": "PR60_NATIVE_REVIEW_PROVENANCE_GREEN",
+  "date": "2026-11-01",
+  "pr": 60,
+  "claim": {
+    "epoch": 388,
+    "owner": "74d58e92-8c8a-4268-9c18-cb7bf3a05d44",
+    "sha": "0c402d4cf7096ddd22149714dd2472054a531f31"
+  },
+  "red": {
+    "head": "2cdbf978e091c94b1c01a4b9354e822f29955081",
+    "run": 41294644418,
+    "offline": "failure",
+    "compile_hold": "success",
+    "reason": "expected missing module"
+  },
+  "fix": "add structural provider review exact head and author/last push separation + review count gate before MERGE; no tokens/no provider calls",
+  "tests": [
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial",
+    "synthetic_adversarial"
+  ],
+  "ci": "PENDING_GREEN",
+  "origin_proof": "NOT_REAL",
+  "actual_github_approving_reviews": 0,
+  "author_merge": false,
+  "roblox_requests": 0,
+  "main_mutated": false
+}

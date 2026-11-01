@@ -34,6 +34,27 @@ class IntegrationTests(unittest.TestCase):
                        "head": self.pr["head"], "base_main_sha": self.main["sha"], "reviewed_at": NOW,
                        "verdict": "APPROVE", "blockers": [], "checks": {name: True for name in REVIEW_CHECKS}}
 
+        self.pr.update(author_login="twf-owner",last_pusher_login="twf-owner",
+                       last_push_at="2026-10-25T00:20:00Z")
+        self._native_fixture()
+
+    def _native_fixture(self):
+        """Synthetic provider-shaped data only; not authenticated or authorizing."""
+        self.review["native_approval"] = {
+            "source":"GITHUB_LIVE_PR_REVIEWS_AND_PERMISSIONS",
+            "repository":self.policy["repository"], "pr_number":self.pr["number"],
+            "head_sha":self.pr["head"],"base_main_sha":self.main["sha"],
+            "author_login":self.pr["author_login"],
+            "last_pusher_login":self.pr["last_pusher_login"],
+            "last_push_at":self.pr["last_push_at"],
+            "observed_at":"2026-10-25T00:55:00Z","complete":True,
+            "reviews":[{"id":701,"state":"APPROVED","commit_id":self.pr["head"],
+                        "submitted_at":"2026-10-25T00:50:00Z",
+                        "user":{"login":"independent-reviewer","type":"User"},
+                        "reviewer_permission":"write"}]
+        }
+
+
     def decision(self, now=NOW):
         result = decide(self.policy, self.main, self.pr, self.review, self.lease, now)
         self.assertFalse(result["requires_owner_reply"])
@@ -200,6 +221,7 @@ class IntegrationTests(unittest.TestCase):
                                      "status": "ahead", "behind_by": 0},
             "comparison": {"base": self.main["sha"], "head": self.pr["head"],
                            "behind_by": 0, "entries": self.pr["changed_entries"]}}
+        self._native_fixture()
         return self.lease["manual_review_requests"][0]
 
     def test_manual_candidate_requires_exact_independent_evidence(self):
