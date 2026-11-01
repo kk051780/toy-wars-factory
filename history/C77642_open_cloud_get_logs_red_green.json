@@ -1,0 +1,49 @@
+{
+  "id": "C77642",
+  "kind": "A14_CLOUD_GET_LOGS_UNTRUSTED_RECEIPT_ADAPTER_RED_GREEN",
+  "date": "2026-11-01",
+  "repository": "kk051780/toy-wars-factory",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "epoch": 366,
+    "owner_id": "c7ed408b-2950-4fb1-ac14-d81a3d770c92",
+    "claim_commit": "96b2c97a91eb55016e9dba9e1ac267720c4c4fc7",
+    "work_branch": "controller/roblox-static-return-gate-75202447"
+  },
+  "source_scope": {
+    "game_source_files_changed": 0,
+    "network_calls": 0,
+    "credential_reads": 0,
+    "raw_logs_retained": false,
+    "new_module": "tools/twf_open_cloud_get_log_adapter.py",
+    "new_tests": "tests/test_twf_open_cloud_get_log_adapter.py",
+    "docs": "docs/A14_STATIC_RETURN_GATE.md",
+    "static_luau_sha256_unchanged": "fc343ede29c2466b0962689b183b5320d81122a807d65ad7f82e942a9268759d"
+  },
+  "red": {
+    "commit": "cba0070418e59770bf9900b9eaf80a6d4fd24289",
+    "github_actions_run": 41265279491,
+    "python_tests": 875,
+    "expected_import_errors": 1,
+    "offline": "FAIL_AS_EXPECTED"
+  },
+  "green": {
+    "source_commit": "93282c37e38e4c926110b8a228d17e5e9d0acdb6",
+    "github_actions_run": 41265346280,
+    "offline": "SUCCESS",
+    "compile_hold": "SUCCESS",
+    "python_tests": 897,
+    "new_tests": 23
+  },
+  "release_proofs": {
+    "real_roblox_provider_authenticated": false,
+    "real_cloud_task_created": false,
+    "private_saved_place_version": false,
+    "real_engine_test": false,
+    "android_mobile_test": false,
+    "independent_review": "PENDING",
+    "public_publish_authorized": false,
+    "external_spending_authorized": false
+  },
+  "note": "Offline consistency of official-looking task and log JSON does not prove provider origin or an engine test."
+}
