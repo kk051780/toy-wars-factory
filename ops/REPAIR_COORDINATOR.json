@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 359,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "c3af4b29-b91e-4e5d-a7fe-dd2091aa3ac9",
-    "task_id": null,
-    "epoch": 359,
-    "acquired_at": "2026-11-01T00:18:37.308Z",
-    "expires_at": "2026-11-01T00:33:37.308Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/actions-ci-chain-gate-b34c8765-01ac-4335-ad17-9d504dac4544",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,36 +2893,16 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "7d2d8264-bd48-4e2f-b0ab-c3c63e570f84",
-    "epoch": 358,
-    "released_at": "2026-11-01T00:14:34.166Z",
+    "owner_id": "c3af4b29-b91e-4e5d-a7fe-dd2091aa3ac9",
+    "epoch": 359,
+    "released_at": "2026-11-01T00:45:32.643Z",
     "release_receipt": {
-      "reason": "PR148_XML_RECURSION_BOUND_RED_GREEN_EXACT_HEAD",
-      "claim_commit": "483267a5beff278636cce0b7428f82980766ee19",
-      "work_branch": "controller/a14-saved-xml-strict-properties-0f445b08",
-      "pr": 148,
-      "pr_head": "a9bde65707e566848ad4e8ccc24073df8e2e2491",
-      "red_commit": "53b49db11901098d5718e95a0616b2f912170500",
-      "red_run": 41255664383,
-      "red_outcome": "offline_expected_failure_2_errors_1_failure",
-      "green_commit": "a9bde65707e566848ad4e8ccc24073df8e2e2491",
-      "green_run": 41255760049,
-      "green_conclusion": "success",
-      "python_tests": 888,
-      "new_regressions": 4,
-      "source_delta_bytes": 291,
-      "history_files": [
-        "history/C08888_pr148_xml_depth_red.json",
-        "history/C08889_pr148_xml_depth_green.json"
-      ],
-      "comment_id": 6551026788,
-      "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "main_unchanged": true,
-      "independent_review": "PENDING",
-      "engine": "NOT_RUN",
-      "saved_upload": "NOT_RUN",
-      "publish_authorized": false,
-      "external_inference": "NOT_RUN"
+      "reason": "PR154_JSON_PARSER_PATCH_HOST_DENIED_NO_SOURCE_WRITE",
+      "claim_commit": "ed397a8c7eaf68fcaece1cff627ae2ef62083a58",
+      "pr": 154,
+      "pr_head": "4780806fbae5af6f84705478070120a1c6fd7134",
+      "source_files_changed": 0,
+      "main_mutated": false
     }
   },
   "last_completed_integration": {
