@@ -1,0 +1,22 @@
+{
+  "id": "C16731",
+  "date": "2026-11-01",
+  "kind": "A14_PR167_STUDIO_MCP_WINDOWS_CWD_EXPECTED_RED",
+  "pr": 167,
+  "base_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "original_head": "4e0cca5191c14f36b4de183a53aec361e8fcab32",
+  "original_source_blob": "ac7228861ad6ee4e617f9d1212c033b9083e7789",
+  "coordination": {
+    "epoch": 372,
+    "owner": "ef4b2e2a-6bfe-47a9-b438-a42de8eb3871",
+    "claim_commit": "c96b50cb2907c2a51d2723a825ed617f2e10920f"
+  },
+  "source_changes": [],
+  "test_file": "tests/test_studio_mcp_windows_cwd.py",
+  "new_tests": 15,
+  "expected_red": "missing _mcp_popen_spec with Roblox working directory",
+  "actual_windows_run": false,
+  "engine_verified": false,
+  "auth_approved": false,
+  "may_publish": false
+}
