@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 374,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "85371c63-78ab-4c2b-ae25-19f382b2db51",
-    "task_id": null,
-    "epoch": 374,
-    "acquired_at": "2026-11-01T05:33:52.101Z",
-    "expires_at": "2026-11-01T05:57:52.101Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/a14-saved-proxy-noimplicit-cae7961f",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,46 +2893,37 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "b7382451-423f-44c4-bf12-85314a0a831f",
-    "epoch": 373,
-    "released_at": "2026-11-01T04:18:23.152Z",
+    "owner_id": "85371c63-78ab-4c2b-ae25-19f382b2db51",
+    "epoch": 374,
+    "released_at": "2026-11-01T05:42:10.750Z",
     "release_receipt": {
-      "reason": "PR60_MAIN_BRANCH_PROTECTION_GATE_RED_GREEN_EXACT_HEAD_GREEN",
-      "claim_commit": "bbfc002a253d86add682f0d7142263ab1a25bcd0",
-      "work_branch": "ops/twf-manual-review-lane",
-      "pr": 60,
-      "pr_head": "1dfd17490b47ea1f7a4bfe5e852a3196cfafd9d6",
-      "red_head": "3e7b2077d9f857e7930b799d9a40905d0c255d67",
-      "red_run": 41272216976,
-      "red_python_tests": 870,
-      "red_expected_failures": 11,
-      "red_job": {
-        "offline": "failure",
-        "compile_hold": "success"
-      },
-      "green_run": 41272436392,
-      "green_python_tests": 870,
-      "green_conclusion": "success",
-      "green_jobs": {
-        "offline": "success",
-        "compile_hold": "success"
-      },
-      "new_regressions": 12,
-      "changed_files": [
-        "tools/repair_integration.py",
-        "tests/test_repair_integration.py",
-        "history/C88860_pr60_main_protection_red_green.json"
-      ],
-      "history": "history/C88860_pr60_main_protection_red_green.json",
-      "pr_comment_id": 6553317712,
+      "reason": "PR176_OFFICIAL_SAVED_TEXT_PLAIN_COMPAT_NATIVE_RED_GREEN",
+      "claim_commit": "fd23a11f4268906331d07a9f8ce674789be4c9c1",
+      "pr": 176,
+      "pr_head": "aac2619135cb9da7b745bdc72d68fc26e9c8e5e3",
+      "work_branch": "controller/a14-saved-proxy-noimplicit-cae7961f",
+      "parent_pr": 148,
+      "parent_head": "1db4d0efc417a0688298e91cdbf40670b2befd22",
       "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_mutated": false,
+      "red_head": "97c57f34ac253f706a2a97ae5600ed7d2d113bb2",
+      "red_run": 41277611804,
+      "red_errors": 2,
+      "first_green_head": "f13073e1820048e17885bcfd54c9da0b2678636b",
+      "first_green_run": 41277696323,
+      "final_head": "aac2619135cb9da7b745bdc72d68fc26e9c8e5e3",
+      "final_run": 41277783075,
+      "final_python_tests": 925,
+      "final_ci": "success",
+      "new_regressions": 3,
+      "child_regressions": 20,
+      "history": "history/C77646_a14_official_text_plain_compat_red_green.json",
+      "pr_comment_id": 6554031852,
       "independent_review": "PENDING",
-      "native_branch_protection": "NOT_ENABLED",
-      "live_provider_proof_adapter": "NOT_IMPLEMENTED",
-      "merge": "NOT_RUN",
+      "roblox_saved_upload": "NOT_RUN",
       "roblox_engine": "NOT_RUN",
-      "publish": false
+      "live_api": "NOT_RUN",
+      "publish_authorized": false
     }
   },
   "last_completed_integration": {
