@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "id": "C10003",
+  "date": "2026-11-01",
+  "type": "PROTECTED_MAIN_STATUS_CHECK_GITHUB_APP_PROVENANCE",
+  "repository": "kk051780/toy-wars-factory",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "6a2226ad8c6aff441c8f6e1dba2259bc4ba0fd92",
+    "owner_run_id": "8be6ee59-e34d-44ee-93db-6428fa9434c9",
+    "epoch": 389,
+    "work_branch": "ops/twf-manual-review-lane"
+  },
+  "pr": 60,
+  "original_head": "a519b1472f375a654566d7a0d2af34aa187ff470",
+  "issue": "required_status_checks context names only accepted checks from any app, although native GitHub REST required check items have context + app_id and write-capable integrations can set similarly named statuses.",
+  "official_docs": "https://docs.github.com/en/rest/branches/branch-protection",
+  "original_head_real_checks": [
+    {
+      "name": "offline",
+      "app_id": 15368,
+      "app_slug": "github-actions"
+    },
+    {
+      "name": "compile_hold",
+      "app_id": 15368,
+      "app_slug": "github-actions"
+    }
+  ],
+  "red": {
+    "head": "f44234ce852dd9eac140ea800b83307d920279c0",
+    "run": 41296912535,
+    "offline": "failure",
+    "compile_hold": "success",
+    "python_tests": 907,
+    "expected_new_failures": 5
+  },
+  "intermediate": {
+    "head": "a4767cd151ef4f39bbe240dfca89ecd1335bd5a4",
+    "run": 41297197805,
+    "offline": "failure",
+    "reason": "missing source fixture must delete source binding explicitly"
+  },
+  "green": {
+    "head": "d5a9ad86d02e59c410dda38ff6ea0fa8ae985be3",
+    "run": 41297416824,
+    "offline": "success",
+    "compile_hold": "success",
+    "python_tests": 907,
+    "new_regressions": 5
+  },
+  "changed_paths": [
+    "tools/repair_integration.py",
+    "tests/test_repair_integration.py",
+    "config/autonomous_repair.json",
+    "history/C10003_pr60_required_ci_app_source_gate.json"
+  ],
+  "behavior": "Requires exact GitHub Actions App ID 15368 for all named required status checks, rejects absent/any-app/wrong/duplicate/boolean app IDs, independently authenticated reviewer must compare GitHub branch protection checks and exact-head check-run app IDs.",
+  "source_delta_bytes": 1064,
+  "regression_delta_bytes": 1778,
+  "config_delta_bytes": 33,
+  "history_collision_check": {
+    "open_prs_checked": 57,
+    "main_history_checked": true,
+    "collision_count": 0
+  },
+  "gates": {
+    "real_private_branch_protection_rest": "403_RESOURCE_NOT_ACCESSIBLE_BY_INTEGRATION",
+    "rulesets": "403_GITHUB_PRO_UPGRADE_OR_PUBLIC",
+    "provider_protection_implemented": false,
+    "native_independent_review": "PENDING",
+    "pr_status": "DRAFT",
+    "main_merged": false,
+    "actual_unattended_worker_writes": false,
+    "roblox_studio": "NOT_RUN",
+    "budget_change": false,
+    "spending": false,
+    "published": false
+  }
+}
