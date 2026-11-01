@@ -50,6 +50,28 @@ def validate_localappdata(value: str) -> str:
         raise ProbeError("unsafe local Studio launcher path")
     return value.rstrip('\\')
 
+def _mcp_popen_spec(launcher: Path):
+    """Construct a fixed, non-shell stdio command; *not* launcher trust proof.
+
+    The host's separate lexical, symlink, file and path checks must precede
+    execution. Roblox's official Windows setup starts mcp.bat from its own
+    Roblox directory; subprocess cwd is equivalent to cmd.exe 'cd /d' here.
+    """
+    if (not isinstance(launcher, Path) or
+            launcher.name.lower() != "mcp.bat" or
+            launcher.parent.name.lower() != "roblox"):
+        raise ProbeError("unreviewed Studio MCP launcher location")
+    return (["cmd.exe", "/c", str(launcher)], {
+        "cwd": str(launcher.parent),
+        "shell": False,
+        "stdin": subprocess.PIPE,
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.DEVNULL,
+        "text": True,
+        "encoding": "utf-8",
+        "bufsize": 1,
+    })
+
 class JsonLineTransport:
     """stdio-only local Windows launcher; does not trust server self-description."""
     def __init__(self, *, localappdata: str, runner=subprocess.Popen):
@@ -64,10 +86,11 @@ class JsonLineTransport:
                 raise ProbeError("Studio MCP launcher escaped local root")
         except OSError as ex:
             raise ProbeError("Studio MCP launcher resolution failed") from ex
-        self.proc = runner(["cmd.exe", "/c", str(launcher)], shell=False,
-                           stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                           stderr=subprocess.DEVNULL, text=True, encoding="utf-8",
-                           bufsize=1)
+        command, options = _mcp_popen_spec(launcher)
+        try:
+            self.proc = runner(command, **options)
+        except (OSError, subprocess.SubprocessError):
+            raise ProbeError("Studio MCP launcher could not start") from None
         if self.proc.stdin is None or self.proc.stdout is None:
             raise ProbeError("MCP pipes unavailable")
         self.q = queue.Queue(maxsize=MAX_REPLY_COUNT + 1)

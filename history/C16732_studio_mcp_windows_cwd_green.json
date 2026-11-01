@@ -1,0 +1,31 @@
+{
+  "id": "C16732",
+  "date": "2026-11-01",
+  "kind": "A14_PR167_STUDIO_MCP_WINDOWS_CWD_GREEN",
+  "pr": 167,
+  "accepted_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "red_head": "dd2e84e89dfbc68b6039dc73f9c602bb0fc22200",
+  "red_run": 41271252895,
+  "red_python_tests": 871,
+  "red_errors": 17,
+  "red_class": "missing method, 15 new cases incl subtests",
+  "coordination": {
+    "epoch": 372,
+    "owner": "ef4b2e2a-6bfe-47a9-b438-a42de8eb3871",
+    "claim_commit": "c96b50cb2907c2a51d2723a825ed617f2e10920f"
+  },
+  "source_changes": [],
+  "transport_changes": [
+    "tools/studio_mcp_readonly_probe.py"
+  ],
+  "docs_changes": [
+    "docs/STUDIO_MCP_READONLY_PROBE.md"
+  ],
+  "new_regressions": 15,
+  "green_ci": "PENDING",
+  "actual_windows_host": false,
+  "actual_roblox_studio": false,
+  "engine_verified": false,
+  "merge": false,
+  "independent_security_review": "PENDING"
+}
