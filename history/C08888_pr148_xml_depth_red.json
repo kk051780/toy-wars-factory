@@ -1,0 +1,29 @@
+{
+  "id": "C08888",
+  "date": "2026-11-01",
+  "kind": "A14_PR148_XML_BOUNDED_INSTANCE_COUNT_RED",
+  "base_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "pr": 148,
+  "prior_head": "8e0b5c1af3accdfc4bb54cdbf12bbcb6b490bdfd",
+  "parent_pr": 145,
+  "issue": 117,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "483267a5beff278636cce0b7428f82980766ee19",
+    "owner_run_id": "7d2d8264-bd48-4e2f-b0ab-c3c63e570f84",
+    "epoch": 358
+  },
+  "scope": [
+    "tests/test_system_xml_traversal_bound.py",
+    "history/C08888_pr148_xml_depth_red.json"
+  ],
+  "failure_expected": "XML deeper than Python recursion limit throws RecursionError before topology equality. Synthetic (no Roblox network).",
+  "new_cases": 4,
+  "exact_head_native_ci": "PENDING",
+  "not_authorized": {
+    "roblox_upload": true,
+    "roblox_publish": true,
+    "main_merge": true,
+    "external_inference": true
+  }
+}
