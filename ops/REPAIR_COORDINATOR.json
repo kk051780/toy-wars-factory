@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 360,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "75202447-ebfd-446f-b7e2-b870f2f1d072",
-    "task_id": null,
-    "epoch": 360,
-    "acquired_at": "2026-11-01T00:48:43.403Z",
-    "expires_at": "2026-11-01T01:06:43.403Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/roblox-static-return-gate-75202447",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,16 +2893,38 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "c3af4b29-b91e-4e5d-a7fe-dd2091aa3ac9",
-    "epoch": 359,
-    "released_at": "2026-11-01T00:45:32.643Z",
+    "owner_id": "75202447-ebfd-446f-b7e2-b870f2f1d072",
+    "epoch": 360,
+    "released_at": "2026-11-01T00:52:14.934Z",
     "release_receipt": {
-      "reason": "PR154_JSON_PARSER_PATCH_HOST_DENIED_NO_SOURCE_WRITE",
-      "claim_commit": "ed397a8c7eaf68fcaece1cff627ae2ef62083a58",
-      "pr": 154,
-      "pr_head": "4780806fbae5af6f84705478070120a1c6fd7134",
-      "source_files_changed": 0,
-      "main_mutated": false
+      "reason": "PR175_A14_STATIC_RETURN_GATE_SOURCE_AND_TEST_PROMOTED",
+      "claim_commit": "9e6d561f992658f453ea6376298e2c721da5998c",
+      "work_branch": "controller/roblox-static-return-gate-75202447",
+      "pr": 175,
+      "pr_head": "44545353cf4136fd0bd9ceb3dc28a10fec131d2d",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "observed_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "changed_files": [
+        "tools/twf_static_smoke_return_gate.py",
+        "tools/open_cloud_engine_preflight.py",
+        "tools/twf_open_cloud_smoke.luau",
+        "tests/test_twf_static_smoke_return_gate.py",
+        "docs/A14_STATIC_RETURN_GATE.md",
+        "history/C09110_a14_static_return_gate.json"
+      ],
+      "new_python_tests": 34,
+      "local_qa": "34_OF_34_PASS",
+      "original_static_luau_sha256": "fc343ede29c2466b0962689b183b5320d81122a807d65ad7f82e942a9268759d",
+      "exact_head_ci_run": 41258574371,
+      "exact_head_ci_status": "in_progress",
+      "exact_head_ci_conclusion": null,
+      "independent_review": "PENDING",
+      "main_mutated": false,
+      "game_source_modified": false,
+      "roblox_saved_upload": "NOT_RUN",
+      "roblox_engine": "NOT_RUN",
+      "public_publish_authorized": false,
+      "external_inference": "NOT_RUN"
     }
   },
   "last_completed_integration": {
