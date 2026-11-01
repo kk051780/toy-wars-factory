@@ -1,0 +1,70 @@
+{
+  "id": "C77644",
+  "date": "2026-11-01",
+  "kind": "A14_CLOUD_GET_ONLY_TRANSPORT_PR175_REAL_ADAPTER_INTEGRATION",
+  "repository": "kk051780/toy-wars-factory",
+  "baseline_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "epoch": 370,
+    "owner_id": "a502ec66-0a62-42ba-8c9a-646a7ecf48b3",
+    "claim_commit": "8d1a976c50b89c7b4c815838e3349c58d27c1e46",
+    "work_branch": "controller/roblox-static-return-gate-75202447"
+  },
+  "changed_files": [
+    "tools/twf_roblox_get_only_probe.py",
+    "tools/twf_get_only_pr175_bridge.py",
+    "tests/test_get_only_probe.py",
+    "tests/test_get_only_contract_bridge.py",
+    "tests/test_get_only_real_pr175_integration.py",
+    "docs/A14_STATIC_RETURN_GATE.md",
+    "history/C77644_cloud_get_only_pr175_integration.json"
+  ],
+  "exact_promoted_local_github_blobs": {
+    "tools/twf_roblox_get_only_probe.py": "82f9be7491e044580e25930919626975989e80bf",
+    "tools/twf_get_only_pr175_bridge.py": "4a7b3b8089dd47ac9e93b8203834d596ed26ac5b",
+    "tests/test_get_only_probe.py": "77c1ba7951acee760af2069dbbf302f00ff6f480",
+    "tests/test_get_only_contract_bridge.py": "2d5a25ffafddc44c38e8d1e6935766dfda8e2a1a"
+  },
+  "archive": {
+    "library_path": "/ToyWars/A14_Roblox_GetOnly_CloudTask_50tests_20261101.zip",
+    "library_id": "libfile_477606118da881918333866f7b071889"
+  },
+  "red": {
+    "commit": "5ffd7ea1b5808c4ce2ca3d50c24386b17948d8fa",
+    "run": 41269005912,
+    "python_total": 916,
+    "expected_import_errors": 2,
+    "compile_hold": "SUCCESS"
+  },
+  "first_green": {
+    "commit": "3b4ca2e923b78c844940595dd7e5fbe2ac29b223",
+    "run": 41269099092,
+    "python_total": 964,
+    "offline": "SUCCESS",
+    "compile_hold": "SUCCESS",
+    "new_transport_tests": 26,
+    "new_mock_bridge_tests": 24
+  },
+  "real_adapter_integration": {
+    "commit": "1866144ccf145b3af7b2b0518a8e22532bab1748",
+    "run": 41269240219,
+    "python_total": 979,
+    "offline": "SUCCESS",
+    "compile_hold": "SUCCESS",
+    "real_unmocked_contract_tests": 15
+  },
+  "protected_candidate_tests_total": 146,
+  "security_boundaries": {
+    "real_roblox_api_calls": 0,
+    "real_api_keys_used": false,
+    "number_get_calls_on_real_host": 0,
+    "github_main_modified": false,
+    "source_game_modified": false,
+    "provider_authenticated": false,
+    "roblox_engine_verified": false,
+    "roblox_publish_authorized": false,
+    "external_inference": "NOT_RUN",
+    "independent_infrastructure_review": "PENDING"
+  },
+  "note": "Tests contain mock HTTP and use PR175 real contract module. No real provider receipt, authorized saved private test place, or execution."
+}
