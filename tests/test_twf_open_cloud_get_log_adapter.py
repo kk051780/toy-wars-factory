@@ -114,4 +114,82 @@ class AdapterTests(unittest.TestCase):
         with self.assertRaises(adapter.ReceiptHold):
             adapter.inspect_untrusted_get_and_logs(p,'{not json}',json.dumps(l))
 
+
+    def ack_check(self, mutate_ack=None, mutate_task=None, mutate_logs=None):
+        p,task,logs=fixture()
+        ack={'path':task['path'], 'state':'PROCESSING',
+             'script':task['script'], 'timeout':'30s'}
+        if mutate_ack:mutate_ack(ack)
+        if mutate_task:mutate_task(task)
+        if mutate_logs:mutate_logs(logs)
+        return adapter.inspect_untrusted_create_get_and_logs(
+            p,json.dumps(ack),json.dumps(task),json.dumps(logs))
+
+    def ack_denied(self, mutate_ack=None, mutate_task=None, mutate_logs=None):
+        with self.assertRaises(adapter.ReceiptHold):
+            self.ack_check(mutate_ack,mutate_task,mutate_logs)
+
+    def test_24_create_ack_processing_get_complete_consistent_untrusted(self):
+        r=self.ack_check()
+        self.assertTrue(r['create_response_path_matches_get'])
+        self.assertFalse(r['create_ack_authenticated'])
+        self.assertFalse(r['provider_authenticated'])
+
+    def test_25_create_ack_queued_supported(self):
+        self.assertTrue(self.ack_check(lambda a:a.__setitem__('state','QUEUED'))['create_response_path_matches_get'])
+
+    def test_26_create_ack_already_complete_supported(self):
+        self.assertTrue(self.ack_check(lambda a:a.__setitem__('state','COMPLETE'))['create_response_path_matches_get'])
+
+    def test_27_create_ack_different_task_rejected(self):
+        self.ack_denied(lambda a:a.__setitem__('path',a['path'].replace(TASK,SESSION)))
+
+    def test_28_create_ack_different_version_rejected(self):
+        self.ack_denied(lambda a:a.__setitem__('path',a['path'].replace('/versions/56/','/versions/57/')))
+
+    def test_29_create_ack_missing_path_rejected(self):
+        self.ack_denied(lambda a:a.pop('path'))
+
+    def test_30_create_ack_nonstring_path_rejected(self):
+        self.ack_denied(lambda a:a.__setitem__('path',123))
+
+    def test_31_create_ack_script_mismatch_rejected(self):
+        self.ack_denied(lambda a:a.__setitem__('script','return false'))
+
+    def test_32_create_ack_missing_script_rejected(self):
+        self.ack_denied(lambda a:a.pop('script'))
+
+    def test_33_create_ack_timeout_mismatch_rejected(self):
+        self.ack_denied(lambda a:a.__setitem__('timeout','300s'))
+
+    def test_34_create_ack_missing_timeout_rejected(self):
+        self.ack_denied(lambda a:a.pop('timeout'))
+
+    def test_35_create_ack_failed_state_rejected(self):
+        self.ack_denied(lambda a:a.__setitem__('state','FAILED'))
+
+    def test_36_create_ack_missing_state_rejected(self):
+        self.ack_denied(lambda a:a.pop('state'))
+
+    def test_37_create_ack_duplicate_json_keys_rejected(self):
+        p,t,l=fixture()
+        a={'path':t['path'],'state':'PROCESSING','script':t['script'],'timeout':'30s'}
+        raw=json.dumps(a).replace('"state": "PROCESSING"','"state": "PROCESSING", "state": "PROCESSING"')
+        with self.assertRaises(adapter.ReceiptHold):
+            adapter.inspect_untrusted_create_get_and_logs(p,raw,json.dumps(t),json.dumps(l))
+
+    def test_38_create_ack_huge_response_rejected(self):
+        p,t,l=fixture()
+        a={'path':t['path'],'state':'PROCESSING','script':t['script'],'timeout':'30s'}
+        with self.assertRaises(adapter.ReceiptHold):
+            adapter.inspect_untrusted_create_get_and_logs(p,json.dumps(a)+' '*150000,json.dumps(t),json.dumps(l))
+
+    def test_39_create_ack_mismatched_logs_rejected(self):
+        self.ack_denied(mutate_logs=lambda l:l['luauExecutionSessionTaskLogs'][0].__setitem__('path','foreign/logs/1'))
+
+    def test_40_create_ack_never_grants_engine_proof(self):
+        r=self.ack_check()
+        for flag in ('create_ack_authenticated','provider_authenticated','engine_verified','may_post','may_publish'):
+            self.assertIs(r[flag],False)
+
 if __name__=='__main__':unittest.main()
