@@ -34,6 +34,13 @@ class OutsideRootMarkup(unittest.TestCase):
     def test_processing_instruction_after_root(self):
         self.reject(after=b'<?probe outside-root?>')
 
+    def test_xml_stylesheet_pi_cannot_impersonate_xml_declaration(self):
+        original = real_xml()
+        start = original.index(b'?>') + 2
+        altered = b'<?xml-stylesheet href="style.css"?>' + original[start:]
+        with self.assertRaisesRegex(module.XmlStageError, 'unreviewed XML processing markup'):
+            module.check_rbxlx_bytes(altered, config(altered))
+
     def test_native_original_artifact_accepted(self):
         original = real_xml()
         result = module.check_rbxlx_bytes(original, config(original))

@@ -102,9 +102,20 @@ def check_rbxlx_bytes(data:bytes,cfg:XmlStageConfig)->dict[str,Any]:
     upper=data.upper()
     demand(b'<!DOCTYPE' not in upper and b'<!ENTITY' not in upper,
            'XML entities and DTD are forbidden')
-    try:root=ET.fromstring(data)
+    # Outside-root comments and PIs are not retained even by TreeBuilder.
+    # Inspect original bytes to stop previously ignored processing markup.
+    visible=data.lstrip()
+    if re.match(br'^<\?xml[ \t\r\n]',visible):
+        end=visible.find(b'?>', 0, 256)
+        demand(end>=0, 'invalid bounded XML declaration')
+        visible=visible[end+2:]
+    demand(b'<!--' not in visible and b'<?' not in visible,
+           'unreviewed XML processing markup')
+    try:root=ET.fromstring(data,parser=ET.XMLParser(target=ET.TreeBuilder(insert_comments=True,insert_pis=True)))
     except (ET.ParseError,ValueError,UnicodeError):raise XmlStageError('invalid Roblox XML syntax') from None
     demand(root.tag=='roblox' and root.attrib=={'version':'4'},'invalid Roblox XML place root')
+    demand(root.text is None or not root.text.strip(), 'unreviewed root structural text')
+    demand(all(child.tail is None or not child.tail.strip() for child in root), 'unreviewed root child tail')
     # Count Item nodes iteratively before entering the depth-recursive walker.
     # A hostile but well-formed XML tree must not trigger uncaught RecursionError.
     demand(sum(1 for item in root.iter('Item')) == len(EXPECTED_TOPOLOGY),
@@ -115,6 +126,8 @@ def check_rbxlx_bytes(data:bytes,cfg:XmlStageConfig)->dict[str,Any]:
     def walk(item:ET.Element,parent:tuple[str,...]):
         cls=item.attrib.get('class')
         demand(type(cls) is str and cls,'missing Roblox class')
+        demand(item.text is None or not item.text.strip(), 'unreviewed Item structural text')
+        demand(all(child.tail is None or not child.tail.strip() for child in item), 'unreviewed Item child tail')
         name=_name(item)
         path=parent+(name,)
         demand(path not in topology,'duplicate Roblox instance path')
@@ -129,10 +142,13 @@ def check_rbxlx_bytes(data:bytes,cfg:XmlStageConfig)->dict[str,Any]:
                'unexpected element inside Roblox Item')
         props=next(p for p in item if p.tag=='Properties')
         demand(not props.attrib,'unexpected Properties attributes')
+        demand(props.text is None or not props.text.strip(), 'unreviewed Properties structural text')
         permitted={'Name':'string'}
         if path in SOURCE_PINS:permitted['Source']='ProtectedString'
         observed=set()
         for prop in props:
+            demand(len(prop)==0 and (prop.tail is None or not prop.tail.strip()),
+                   'unreviewed XML property markup or tail')
             label=prop.attrib.get('name')
             demand(set(prop.attrib)=={'name'} and label in permitted and
                    prop.tag==permitted[label] and label not in observed,

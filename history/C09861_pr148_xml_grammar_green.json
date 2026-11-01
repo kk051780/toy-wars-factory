@@ -1,0 +1,38 @@
+{
+  "id": "C09861",
+  "date": "2026-11-01",
+  "kind": "A14_PR148_XML_GRAMMAR_17_CASES_GREEN",
+  "pr": 148,
+  "parent_pr": 145,
+  "accepted_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "head_before": "9cbbe4baa7a5be9247deb3f2b89dba3a290e6404",
+  "source_before": "ede75311d1272b73db3af302c0c4dc692646f1ee",
+  "source_after_blob": "de40d4ae37da942f3fdce2edad5c496f1dfc328e",
+  "coordination": {
+    "epoch": 361,
+    "owner": "bd82cf7e-4ff8-43a8-919b-a85836a170e9",
+    "claim_commit": "61f1a69d1205505179734201b61e463d01403d59"
+  },
+  "red": {
+    "head": "9cbbe4baa7a5be9247deb3f2b89dba3a290e6404",
+    "run": 41259513497,
+    "conclusion": "failure",
+    "python_total": 904,
+    "failures": 14,
+    "errors": 0,
+    "compile_hold": "success"
+  },
+  "green": {
+    "run": "PENDING",
+    "source_patch": "comment-aware parser, strict XML declaration lexical guard, text/tail+leaf children allowlist",
+    "new_regressions": 17
+  },
+  "authority": {
+    "source_review": "PENDING",
+    "merge": false,
+    "roblox_engine": false,
+    "saved_upload": false,
+    "public_publish": false,
+    "gemini_inference": false
+  }
+}
