@@ -11,7 +11,7 @@ import re
 SOURCE = "GITHUB_LIVE_PR_REVIEWS_AND_PERMISSIONS"
 PERMISSIONS = frozenset(("write", "maintain", "admin"))
 USER_TYPES = frozenset(("User", "Bot"))
-REVIEW_STATES = frozenset(("APPROVED", "CHANGES_REQUESTED", "COMMENTED", "DISMISSED"))
+REVIEW_STATES = frozenset(("APPROVED", "CHANGES_REQUESTED", "COMMENTED", "DISMISSED", "PENDING"))
 SHA = re.compile(r"[0-9a-f]{40}\Z")
 
 
@@ -86,10 +86,13 @@ def verified_native_approval(policy, main, pr, reviewer, now):
     seen_ids = set()
     effective = {}
     previous_at = None
+    decisive_clock = {}
     for entry in reviews:
-        if type(entry) is not dict or set(entry) != {
-            "id", "state", "commit_id", "submitted_at", "user", "reviewer_permission"
-        }:
+        expected_keys = {"id", "state", "commit_id", "submitted_at",
+                         "user", "reviewer_permission"}
+        if type(entry) is not dict or (set(entry) != expected_keys and not (
+                entry.get("state") == "PENDING" and
+                set(entry) == expected_keys - {"submitted_at"})):
             return False
         user = entry.get("user")
         if type(user) is not dict or set(user) != {"login", "type"}:
@@ -103,10 +106,14 @@ def verified_native_approval(policy, main, pr, reviewer, now):
                 type(commit_id) is not str or SHA.fullmatch(commit_id) is None or
                 type(permission) is not str or
                 permission not in ("read", "triage", *PERMISSIONS) or
-                submitted is None or submitted > observed or
-                (previous_at is not None and submitted < previous_at)):
+                (state == "PENDING" and entry.get("submitted_at") is not None) or
+                (state != "PENDING" and (submitted is None or submitted > observed or
+                 (previous_at is not None and submitted < previous_at)))):
             return False
         seen_ids.add(rid)
+        if state == "PENDING":
+            # GitHub unsubmitted drafts are not review decisions; no submitted_at.
+            continue
         previous_at = submitted
         # COMMENTED has no decisive vote; never erase a prior valid approval.
         if state == "COMMENTED":
@@ -114,6 +121,12 @@ def verified_native_approval(policy, main, pr, reviewer, now):
         # The author and last pusher can never contribute decisive review votes.
         if login in (author, pusher) and state in ("APPROVED", "CHANGES_REQUESTED"):
             return False
+        # GitHub timestamps are second precision: contradictory votes from
+        # one reviewer at the same time cannot safely clear a previous hold.
+        prior = decisive_clock.get(login)
+        if prior is not None and prior[0] == submitted and prior[1] != state:
+            return False
+        decisive_clock[login] = (submitted, state)
         # Last decisive state per reviewer wins; stale/latest unqualified approval
         # must not silently revive a previously approved decision.
         effective[login] = (
