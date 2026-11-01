@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 364,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "65812b6d-ae8b-4b34-9450-99f3547776f6",
-    "task_id": null,
-    "epoch": 364,
-    "acquired_at": "2026-11-01T01:51:11.798Z",
-    "expires_at": "2026-11-01T02:15:11.798Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/studio-edit-probe-a14f4100",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,38 +2893,42 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "d24b0367-a5be-4aac-8864-53e6830576e2",
-    "epoch": 363,
-    "released_at": "2026-11-01T01:41:26.440Z",
+    "owner_id": "65812b6d-ae8b-4b34-9450-99f3547776f6",
+    "epoch": 364,
+    "released_at": "2026-11-01T01:58:47.161Z",
     "release_receipt": {
-      "reason": "PR149_STUDIO_PINNED_SNAPSHOT_RACE_RED_GREEN_EXACT_HEAD",
-      "claim_commit": "e163a83a921db41dfa3a888ab21ebd5c597dd632",
+      "reason": "PR149_AUTHENTICODE_SIGNER_ORGANIZATION_RED_GREEN_EXACT_HEAD",
+      "claim_commit": "ea9ec1fc5d7e5484634c9f77116017ec08c3c9da",
       "work_branch": "controller/studio-edit-probe-a14f4100",
       "pr": 149,
-      "pr_head": "f37dc8b3dcefacbf0e1b2ac3454f9f159799c128",
-      "red_head": "e22570159e3875064ddf2ba9c4da1c8f127e4874",
-      "red_run": 41261913978,
-      "red_tests": 891,
-      "red_failures": 5,
-      "green_head": "f37dc8b3dcefacbf0e1b2ac3454f9f159799c128",
-      "green_run": 41262003871,
-      "green_tests": 891,
+      "pr_head": "68490a335cc6619933f671b8aae63f074c2536c6",
+      "red_head": "886203d949db08dd8099fad6f56d30c32a8fd3bd",
+      "red_run": 41262990487,
+      "red_python_total": 906,
+      "red_failures": 9,
+      "green_head": "68490a335cc6619933f671b8aae63f074c2536c6",
+      "green_run": 41263147603,
+      "green_python_tests": 906,
       "green_conclusion": "success",
-      "source_blob": "1c3245ca8996b5a0f63ad43e78fddc4c0489aa0f",
-      "new_regressions": 7,
+      "new_regressions": 15,
+      "source_blobs": {
+        "python": "d754e449bff178a06f230629add67cb95b032f2d",
+        "powershell": "8f848a6460e02dd86b822b8982fb15ae28e39c36"
+      },
       "history_files": [
-        "history/C10983_studio_snapshot_race_red.json",
-        "history/C10984_studio_snapshot_race_green.json"
+        "history/C14510_pr149_signer_organization_red.json",
+        "history/C14511_pr149_signer_organization_green.json"
       ],
-      "pr_comment_id": 6551891612,
+      "pr_comment_id": 6552056918,
       "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "main_changed": false,
+      "main_unchanged": true,
       "independent_review": "PENDING",
-      "roblox_studio": "NOT_RUN",
-      "engine": "NOT_RUN",
-      "publish": false,
-      "gemini_inference": "HELD",
-      "security_remaining": "SIGNER_ORGANIZATION_PIN_AND_HOST_TOCTOU"
+      "pr150_restack": "PENDING",
+      "windows_studio": "NOT_RUN",
+      "roblox_engine": "NOT_RUN",
+      "roblox_upload": "NOT_RUN",
+      "publish_authorized": false,
+      "gemini_inference": "HELD"
     }
   },
   "last_completed_integration": {
