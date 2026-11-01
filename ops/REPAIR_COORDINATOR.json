@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 382,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "b3c186b2-d75f-4715-ac10-55de4a3a6478",
-    "task_id": null,
-    "epoch": 382,
-    "acquired_at": "2026-11-01T08:03:34.842Z",
-    "expires_at": "2026-11-01T08:20:34.842Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/a14-post-contract-b3c186b2"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,37 +2893,32 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "7ebefb2d-4c32-4c49-8bd4-a32b4984e44d",
-    "epoch": 381,
-    "released_at": "2026-11-01T07:56:41.811Z",
+    "owner_id": "b3c186b2-d75f-4715-ac10-55de4a3a6478",
+    "epoch": 382,
+    "released_at": "2026-11-01T08:10:02.119Z",
     "release_receipt": {
-      "reason": "PR174_CANONICAL_REPOSITORY_SCOPE_RED_GREEN_TESTS_PASSED_HISTORY_UPDATE_DENIED_BY_HOST_SAFETY",
-      "claim_commit": "a2a2d2044253971947379fccdddb2b75f723298d",
-      "work_branch": "controller/work-registration-cas-1dd085ef",
-      "pr": 174,
-      "pr_head": "1eef291577a272699119c18a9b64918828e04cf5",
-      "parent_pr": 173,
-      "parent_head": "c902948f66d408c78211c1afb694c19326b98bc4",
-      "red_head": "de2d325c310c4974636b5d689281813003203529",
-      "red_run": 41286532104,
-      "red_result": "failure",
-      "green_head": "1eef291577a272699119c18a9b64918828e04cf5",
-      "green_run": 41286588897,
-      "green_result": "success",
-      "regressions_added": 4,
-      "history_C10000": "NOT_COMMITTED_HOST_SAFETY_DENIED",
-      "history_commit_candidate": "c9a5c5cd37fd9cebc0cbd1271efadc30b8598c37",
+      "reason": "PR178_EXACT_HEAD_STATIC_CAS_POST_ALIGNMENT_CI_GREEN_INDEPENDENT_REVIEW_PENDING",
+      "claim_commit": "61f60bc1a6e62adf26a30e9ce102ed9dcdb1e0c2",
+      "work_branch": "controller/a14-post-contract-b3c186b2",
+      "pr": 178,
+      "pr_head": "99520d02ab53f4b5ff8fc51292a2aebc89d25715",
+      "ci_run": 41287599121,
+      "ci_result": "success",
+      "local_offline_tests": 73,
+      "ci_jobs": [
+        "offline",
+        "compile_hold"
+      ],
+      "review_status": "PENDING_INDEPENDENT",
       "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_after": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_mutated": false,
-      "independent_review": "PENDING",
-      "registered_worker_dispatch": false,
-      "real_registry_cas": false,
-      "provider_attested": false,
-      "may_merge": false,
       "roblox_engine": "NOT_RUN",
+      "cloud_http_calls": 0,
+      "cross_host_cas_verified": false,
+      "roblox_publish_authorized": false,
       "external_ai_inference": false,
-      "publication": false
+      "may_merge": false
     }
   },
   "last_completed_integration": {
