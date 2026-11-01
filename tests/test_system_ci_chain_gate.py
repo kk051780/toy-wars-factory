@@ -164,4 +164,46 @@ class ChainTriage(unittest.TestCase):
         r,j=fixture();r['event']='workflow_dispatch';q=assess(REPO,HEAD,WORKFLOW,r,j)
         self.assertFalse(q['dispatch_allowed'])
 
+
+    def test_unpaired_unicode_surrogate_fails_closed(self):
+        self.assertEqual(assess_with_payload(REPO,HEAD,WORKFLOW, "\ud800")['verdict'],
+                         'BLOCK_MALFORMED')
+
+    def test_pathologically_nested_json_fails_closed(self):
+        n = 12000
+        payload = '{"run":' + '[' * n + '0' + ']' * n + ',"jobs":[]}'
+        self.assertLess(len(payload.encode('utf-8')), 100000)
+        self.assertEqual(assess_with_payload(REPO,HEAD,WORKFLOW,payload)['verdict'],
+                         'BLOCK_MALFORMED')
+
+    def test_run_conclusion_list_fails_closed(self):
+        r,j=fixture();r['conclusion']=[]
+        self.assertEqual(assess_with_payload(REPO,HEAD,WORKFLOW,
+                         json.dumps({'run':r,'jobs':j}))['verdict'],'BLOCK_MALFORMED')
+
+    def test_run_conclusion_dict_fails_closed(self):
+        r,j=fixture();r['conclusion']={}
+        self.assertEqual(assess_with_payload(REPO,HEAD,WORKFLOW,
+                         json.dumps({'run':r,'jobs':j}))['verdict'],'BLOCK_MALFORMED')
+
+    def test_job_conclusion_list_fails_closed(self):
+        r,j=fixture();j[0]['conclusion']=[]
+        self.assertEqual(assess_with_payload(REPO,HEAD,WORKFLOW,
+                         json.dumps({'run':r,'jobs':j}))['verdict'],'BLOCK_JOBS_MISMATCH')
+
+    def test_job_conclusion_dict_fails_closed(self):
+        r,j=fixture();j[0]['conclusion']={}
+        self.assertEqual(assess_with_payload(REPO,HEAD,WORKFLOW,
+                         json.dumps({'run':r,'jobs':j}))['verdict'],'BLOCK_JOBS_MISMATCH')
+
+    def test_job_name_list_fails_closed(self):
+        r,j=fixture();j[0]['name']=[]
+        self.assertEqual(assess_with_payload(REPO,HEAD,WORKFLOW,
+                         json.dumps({'run':r,'jobs':j}))['verdict'],'BLOCK_JOBS_MISMATCH')
+
+    def test_job_name_dict_fails_closed(self):
+        r,j=fixture();j[0]['name']={}
+        self.assertEqual(assess_with_payload(REPO,HEAD,WORKFLOW,
+                         json.dumps({'run':r,'jobs':j}))['verdict'],'BLOCK_JOBS_MISMATCH')
+
 if __name__=='__main__':unittest.main()
