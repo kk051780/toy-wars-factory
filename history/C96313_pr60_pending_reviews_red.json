@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "C96313",
+  "kind": "PR60_NATIVE_PENDING_REVIEW_TEST_FIRST_RED",
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "base_pr_head": "5690e8b23ad6b96c0f5ebdbcd9110acb764848db",
+  "coordinator": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "28f42887d8b712b9f536f7bc18321e89d95326d2",
+    "owner_run_id": "0f557bdd-29ae-413e-bd81-88934d983fb3",
+    "epoch": 393
+  },
+  "files": [
+    "tests/test_native_github_review_pending.py",
+    "history/C96313_pr60_pending_reviews_red.json"
+  ],
+  "expected_failures": [
+    "test_pending_null_before_independent_approval",
+    "test_pending_null_after_existing_approval",
+    "test_pending_without_submitted_at_field_is_neutral",
+    "test_author_unsubmitted_draft_is_neutral",
+    "test_same_second_change_then_approval_not_order_trusted"
+  ],
+  "scope": "SYNTHETIC_UNIT_TESTS_ONLY_NO_GITHUB_NATIVE_APPROVAL_NO_MERGE"
+}
