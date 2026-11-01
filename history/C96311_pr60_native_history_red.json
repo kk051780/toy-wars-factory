@@ -1,0 +1,28 @@
+{
+  "id": "C96311",
+  "date": "2026-11-02",
+  "kind": "PR60_NATIVE_REVIEW_EFFECTIVE_HISTORY_TEST_FIRST_RED",
+  "pr": 60,
+  "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_pr_head": "89b07aeac36719d00b87c7f17d5ecc858ac57536",
+  "source_blob": "11d2614b7d13cc2eba04748d3bd47672e8088b9b",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "b61be2918286036b46ea02f8e7d098e35de0dd7d",
+    "owner_run_id": "c86b46f7-1a4f-49ab-82f3-842bdc6d299e",
+    "epoch": 392
+  },
+  "expected": "Native GitHub CI RED: old gate wrongly rejects COMMENTED/APPROVED sequences and >100 complete rows; unhashable hostile states currently throw.",
+  "changed_paths": [
+    "tests/test_native_github_review_history.py",
+    "history/C96311_pr60_native_history_red.json"
+  ],
+  "hosted_ci": "PENDING",
+  "independent_security_review": "PENDING",
+  "authority": {
+    "merge": false,
+    "dispatch": false,
+    "publish": false,
+    "spend": false
+  }
+}
