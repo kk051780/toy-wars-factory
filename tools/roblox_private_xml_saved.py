@@ -102,20 +102,59 @@ def check_rbxlx_bytes(data:bytes,cfg:XmlStageConfig)->dict[str,Any]:
     upper=data.upper()
     demand(b'<!DOCTYPE' not in upper and b'<!ENTITY' not in upper,
            'XML entities and DTD are forbidden')
-    try:root=ET.fromstring(data)
+    # Outside-root comments and PIs are not retained even by TreeBuilder.
+    # Inspect original bytes to stop previously ignored processing markup.
+    visible=data.lstrip()
+    if re.match(br'^<\?xml[ \t\r\n]',visible):
+        end=visible.find(b'?>', 0, 256)
+        demand(end>=0, 'invalid bounded XML declaration')
+        visible=visible[end+2:]
+    demand(b'<!--' not in visible and b'<?' not in visible,
+           'unreviewed XML processing markup')
+    try:root=ET.fromstring(data,parser=ET.XMLParser(target=ET.TreeBuilder(insert_comments=True,insert_pis=True)))
     except (ET.ParseError,ValueError,UnicodeError):raise XmlStageError('invalid Roblox XML syntax') from None
-    demand(root.tag=='roblox' and root.attrib.get('version')=='4','invalid Roblox XML place root')
+    demand(root.tag=='roblox' and root.attrib=={'version':'4'},'invalid Roblox XML place root')
+    demand(root.text is None or not root.text.strip(), 'unreviewed root structural text')
+    demand(all(child.tail is None or not child.tail.strip() for child in root), 'unreviewed root child tail')
+    # Count Item nodes iteratively before entering the depth-recursive walker.
+    # A hostile but well-formed XML tree must not trigger uncaught RecursionError.
+    demand(sum(1 for item in root.iter('Item')) == len(EXPECTED_TOPOLOGY),
+           'XML instance count not exactly approved')
     topology={}
     scripts={}
+    referents=set()
     def walk(item:ET.Element,parent:tuple[str,...]):
         cls=item.attrib.get('class')
         demand(type(cls) is str and cls,'missing Roblox class')
+        demand(item.text is None or not item.text.strip(), 'unreviewed Item structural text')
+        demand(all(child.tail is None or not child.tail.strip() for child in item), 'unreviewed Item child tail')
         name=_name(item)
         path=parent+(name,)
         demand(path not in topology,'duplicate Roblox instance path')
+        referent=item.attrib.get('referent')
+        demand(set(item.attrib)=={'class','referent'} and
+               type(referent) is str and
+               re.fullmatch(r'RBX[0-9A-F]{1,32}',referent) is not None and
+               referent not in referents,'invalid, duplicate or unreviewed Roblox instance referent')
+        referents.add(referent)
         topology[path]=cls
         demand(all(child.tag in {'Properties','Item'} for child in item),
                'unexpected element inside Roblox Item')
+        props=next(p for p in item if p.tag=='Properties')
+        demand(not props.attrib,'unexpected Properties attributes')
+        demand(props.text is None or not props.text.strip(), 'unreviewed Properties structural text')
+        permitted={'Name':'string'}
+        if path in SOURCE_PINS:permitted['Source']='ProtectedString'
+        observed=set()
+        for prop in props:
+            demand(len(prop)==0 and (prop.tail is None or not prop.tail.strip()),
+                   'unreviewed XML property markup or tail')
+            label=prop.attrib.get('name')
+            demand(set(prop.attrib)=={'name'} and label in permitted and
+                   prop.tag==permitted[label] and label not in observed,
+                   'unreviewed or duplicate XML instance property')
+            observed.add(label)
+        demand(observed==set(permitted),'missing expected XML instance property')
         for child in item:
             if child.tag=='Item': walk(child,path)
         if path in SOURCE_PINS:
@@ -128,7 +167,7 @@ def check_rbxlx_bytes(data:bytes,cfg:XmlStageConfig)->dict[str,Any]:
             value=sources[0].text.encode('utf-8')
             demand(hashlib.sha256(value).hexdigest()==digest,'script source does not match accepted main')
             scripts['/'.join(path)]=digest
-    demand(all(item.tag in {'Meta','External','Item'} for item in root),
+    demand(all(item.tag == 'Item' for item in root),
            'unexpected top-level Roblox XML element')
     for item in root:
         if item.tag=='Item':walk(item,())

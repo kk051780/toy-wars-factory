@@ -119,6 +119,89 @@ class ActualCurrentGameXml(unittest.TestCase):
             p=Path(temp)/'place.rbxl';p.write_bytes(self.data)
             with self.assertRaises(x.XmlStageError):x.check_rbxlx_file(p,self.cfg)
 
+class SavedOnlyXmlPropertySecurity(unittest.TestCase):
+    """Only the exact minimal XML emitted by PR147 is admitted for test Saved staging."""
+
+    def check(self, edit):
+        payload = build_xml(edit)
+        with self.assertRaises(x.XmlStageError):
+            x.check_rbxlx_bytes(payload, config(payload))
+
+    def test_reject_surprise_root_attribute_with_rehashed_file(self):
+        def edit(root):
+            root.set('archivable','false')
+        self.check(edit)
+
+    def test_reject_unreviewed_root_Meta_element_with_rehashed_file(self):
+        def edit(root):
+            ET.SubElement(root,'Meta',{'name':'Unknown'})
+        self.check(edit)
+
+    def test_reject_unreviewed_root_External_element_with_rehashed_file(self):
+        def edit(root):
+            ET.SubElement(root,'External').text='payload'
+        self.check(edit)
+
+    def test_reject_unreviewed_Properties_attributes_with_rehashed_file(self):
+        def edit(root):
+            root.find('.//Properties').set('surprise','true')
+        self.check(edit)
+
+    def test_original_ten_instance_xml_remains_valid(self):
+        self.assertEqual(x.check_rbxlx_bytes(build_xml(), config(build_xml()))['instance_count'], 10)
+
+    def test_reject_script_disabled_property(self):
+        def edit(root):
+            script = root.find(".//Item[@class='Script']")
+            ET.SubElement(script.find('Properties'), 'bool', {'name':'Enabled'}).text = 'false'
+        self.check(edit)
+
+    def test_reject_script_run_context_override(self):
+        def edit(root):
+            script = root.find(".//Item[@class='Script']")
+            ET.SubElement(script.find('Properties'), 'token', {'name':'RunContext'}).text = '2'
+        self.check(edit)
+
+    def test_reject_remote_event_extra_source(self):
+        def edit(root):
+            event = root.find(".//Item[@class='RemoteEvent']")
+            ET.SubElement(event.find('Properties'), 'ProtectedString', {'name':'Source'}).text = 'print(1)'
+        self.check(edit)
+
+    def test_reject_workspace_extra_property(self):
+        def edit(root):
+            workspace = root.find("./Item[@class='Workspace']")
+            ET.SubElement(workspace.find('Properties'), 'bool', {'name':'StreamingEnabled'}).text = 'true'
+        self.check(edit)
+
+    def test_reject_script_source_downgrade_to_string(self):
+        def edit(root):
+            source = root.find(".//Item[@class='Script']/Properties/ProtectedString[@name='Source']")
+            source.tag = 'string'
+        self.check(edit)
+
+    def test_reject_duplicate_roblox_referent(self):
+        def edit(root):
+            a = root.find("./Item[@class='Workspace']")
+            b = root.find("./Item[@class='ReplicatedStorage']")
+            b.set('referent', a.get('referent'))
+        self.check(edit)
+
+    def test_reject_missing_roblox_referent(self):
+        def edit(root):
+            root.find(".//Item[@class='RemoteEvent']").attrib.pop('referent')
+        self.check(edit)
+
+    def test_reject_empty_roblox_referent(self):
+        def edit(root):
+            root.find(".//Item[@class='RemoteEvent']").set('referent','')
+        self.check(edit)
+
+    def test_reject_surprise_roblox_item_attribute(self):
+        def edit(root):
+            root.find(".//Item[@class='Script']").set('RunContext', 'client')
+        self.check(edit)
+
 class SavedOnlyTransport(unittest.TestCase):
     def setUp(self):
         self.data=build_xml();self.cfg=config(self.data)

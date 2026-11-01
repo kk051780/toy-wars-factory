@@ -1,0 +1,43 @@
+{
+  "id": "C08889",
+  "date": "2026-11-01",
+  "kind": "A14_PR148_XML_BOUNDED_INSTANCE_COUNT_GREEN",
+  "issue": 117,
+  "pr": 148,
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_head_before": "53b49db11901098d5718e95a0616b2f912170500",
+  "source_sha_before": "846c202099930ab9c527c0e31c8b9e7bc314b18e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "483267a5beff278636cce0b7428f82980766ee19",
+    "owner_run_id": "7d2d8264-bd48-4e2f-b0ab-c3c63e570f84",
+    "epoch": 358
+  },
+  "red": {
+    "head": "53b49db11901098d5718e95a0616b2f912170500",
+    "run": 41255664383,
+    "offline": "FAIL_EXPECTED",
+    "compile_hold": "SUCCESS",
+    "python_tests": 888,
+    "failures": 1,
+    "errors": 2,
+    "reason": "uncaught RecursionError from 1200-deep extra Item nodes; shallow extra Item count not checked"
+  },
+  "change": {
+    "source": "tools/roblox_private_xml_saved.py",
+    "new_tests": "tests/test_system_xml_traversal_bound.py",
+    "added_test_cases": 4,
+    "added_source_bytes": 291
+  },
+  "green": {
+    "head": "TO_BE_VERIFIED",
+    "actions": "PENDING"
+  },
+  "authority": {
+    "merge": false,
+    "studio_engine_verified": false,
+    "private_saved_upload": false,
+    "public_publish": false,
+    "external_model_inference": false
+  }
+}
