@@ -6,10 +6,13 @@ fields from genuine current GitHub REST responses. A caller-created JSON
 object is never proof of real provider provenance or merge eligibility.
 """
 from datetime import datetime, timezone, timedelta
+import re
 
 SOURCE = "GITHUB_LIVE_PR_REVIEWS_AND_PERMISSIONS"
 PERMISSIONS = frozenset(("write", "maintain", "admin"))
 USER_TYPES = frozenset(("User", "Bot"))
+REVIEW_STATES = frozenset(("APPROVED", "CHANGES_REQUESTED", "COMMENTED", "DISMISSED"))
+SHA = re.compile(r"[0-9a-f]{40}\Z")
 
 
 def _instant(value):
@@ -56,7 +59,7 @@ def verified_native_approval(policy, main, pr, reviewer, now):
     base = main.get("sha")
     if type(number) is not int or number <= 0:
         return False
-    if type(sha) is not str or type(base) is not str or len(sha) != 40 or len(base) != 40:
+    if type(sha) is not str or type(base) is not str or SHA.fullmatch(sha) is None or SHA.fullmatch(base) is None:
         return False
     if (doc["repository"] != repo or doc["pr_number"] != number or
             doc["head_sha"] != sha or doc["base_main_sha"] != base):
@@ -76,27 +79,51 @@ def verified_native_approval(policy, main, pr, reviewer, now):
             current - observed > timedelta(hours=1)):
         return False
     reviews = doc.get("reviews")
-    if type(reviews) is not list or not (required <= len(reviews) <= 100):
+    # A complete paginated history may exceed a single GitHub REST page.
+    # Never truncate unknown adverse decisions; reject implausibly large input.
+    if type(reviews) is not list or not (required <= len(reviews) <= 10_000):
         return False
-    ids, actors = set(), set()
+    seen_ids = set()
+    effective = {}
+    previous_at = None
     for entry in reviews:
         if type(entry) is not dict or set(entry) != {
-            "id", "state", "commit_id", "submitted_at", "user", "reviewer_permission"}:
+            "id", "state", "commit_id", "submitted_at", "user", "reviewer_permission"
+        }:
             return False
-        identity = entry.get("user")
-        if type(identity) is not dict or set(identity) != {"login", "type"}:
+        user = entry.get("user")
+        if type(user) is not dict or set(user) != {"login", "type"}:
             return False
-        login = _login(identity["login"])
-        review_at = _instant(entry["submitted_at"])
-        rid = entry["id"]
-        if (type(rid) is not int or rid <= 0 or rid in ids or not login or
-                login == author or login == pusher or login in actors or
-                identity["type"] not in USER_TYPES or
-                entry["state"] != "APPROVED" or entry["commit_id"] != sha or
-                type(entry["reviewer_permission"]) is not str or
-                entry["reviewer_permission"] not in PERMISSIONS or
-                review_at is None or not last_push <= review_at <= observed):
+        login, submitted = _login(user.get("login")), _instant(entry.get("submitted_at"))
+        rid, state, commit_id = entry.get("id"), entry.get("state"), entry.get("commit_id")
+        permission = entry.get("reviewer_permission")
+        if (type(rid) is not int or rid <= 0 or rid in seen_ids or not login or
+                type(user["type"]) is not str or user["type"] not in USER_TYPES or
+                type(state) is not str or state not in REVIEW_STATES or
+                type(commit_id) is not str or SHA.fullmatch(commit_id) is None or
+                type(permission) is not str or
+                permission not in ("read", "triage", *PERMISSIONS) or
+                submitted is None or submitted > observed or
+                (previous_at is not None and submitted < previous_at)):
             return False
-        ids.add(rid)
-        actors.add(login)
-    return len(actors) >= required
+        seen_ids.add(rid)
+        previous_at = submitted
+        # COMMENTED has no decisive vote; never erase a prior valid approval.
+        if state == "COMMENTED":
+            continue
+        # The author and last pusher can never contribute decisive review votes.
+        if login in (author, pusher) and state in ("APPROVED", "CHANGES_REQUESTED"):
+            return False
+        # Last decisive state per reviewer wins; stale/latest unqualified approval
+        # must not silently revive a previously approved decision.
+        effective[login] = (
+            state if (state != "APPROVED" or
+                      (commit_id == sha and submitted >= last_push and
+                       permission in PERMISSIONS)) else "UNQUALIFIED"
+        )
+        if state == "CHANGES_REQUESTED" and permission not in PERMISSIONS:
+            return False
+    # A different reviewer's still-effective request for changes blocks.
+    if "CHANGES_REQUESTED" in effective.values():
+        return False
+    return sum(value == "APPROVED" for value in effective.values()) >= required

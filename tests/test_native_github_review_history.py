@@ -60,8 +60,7 @@ class ReviewHistoryRegression(unittest.TestCase):
         self.good([event(1, "reviewer-a", "CHANGES_REQUESTED", "2026-10-25T00:30:00Z"), event(2)])
 
     def test_approval_then_change_request_blocks(self):
-        self.blocked([event(1, at="2026-10-25T00:40:00Z") if False else
-                      event(1, "reviewer-a", "APPROVED", "2026-10-25T00:40:00Z"),
+        self.blocked([event(1, "reviewer-a", "APPROVED", "2026-10-25T00:40:00Z"),
                       event(2, "reviewer-a", "CHANGES_REQUESTED")])
 
     def test_dismissed_then_new_approval(self):
