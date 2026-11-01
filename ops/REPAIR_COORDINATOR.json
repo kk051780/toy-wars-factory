@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 377,
-  "holder": {
-    "acquired_at": "2026-11-01T06:47:13.573Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "epoch": 377,
-    "expires_at": "2026-11-01T07:05:13.573Z",
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "3bc70943-566a-4a52-8509-6da448c47233",
-    "task_id": null,
-    "work_branch": "controller/work-registration-cas-1dd085ef"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,24 +2893,24 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "76ce23da-5f92-4aba-8fe5-8a18743a2d8e",
-    "epoch": 376,
-    "released_at": "2026-11-01T06:30:56.641Z",
+    "owner_id": "3bc70943-566a-4a52-8509-6da448c47233",
+    "epoch": 377,
+    "released_at": "2026-11-01T06:50:33.517Z",
     "release_receipt": {
-      "reason": "PR174_EXACT_PARENT_ANCESTRY_RECONCILED_CI_GREEN_REVIEW_PENDING",
-      "claim_commit": "a47380e6ce87f3180a6729e8bcbeb4cb7bed6754",
+      "reason": "PR174_COORDINATOR_SCHEMA_STRICT_GATE_CI_GREEN_INDEPENDENT_REVIEW_PENDING",
+      "claim_commit": "b517f277df42e5332f4684ed2592630a4b2bb6f8",
       "work_branch": "controller/work-registration-cas-1dd085ef",
       "pr": 174,
-      "pr_head": "636d284e492931127b7e83774262bd6ec84118ec",
+      "pr_head": "3fe18a41655b91a8630b46284e2d6a0fd8db5a86",
       "parent_pr": 173,
       "parent_head": "c902948f66d408c78211c1afb694c19326b98bc4",
-      "child_first_parent": "96403caab02b1b17773b475f18606c8ef062d51c",
-      "parent_integrated_as_second_git_parent": true,
-      "child_branch_nonforced_cas": true,
-      "ci_run": 41281038561,
+      "changed_files": 5,
+      "new_history": "history/C09997_coordinator_schema_version_gate.json",
+      "new_tests": 3,
+      "ci_run": 41282341573,
       "ci_result": "success",
-      "offline_python_tests": 947,
-      "compile_hold": "success",
+      "ci_offline": "success",
+      "ci_compile_hold": "success",
       "main_before": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_after": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_mutated": false,
@@ -2933,7 +2923,8 @@
       "roblox_engine": "NOT_RUN",
       "publish_authorized": false,
       "external_ai_inference": false,
-      "may_merge": false
+      "may_merge": false,
+      "known_unresolved": "PRE_CAS_REAL_CLOCK_LEASE_EXPIRY_FENCE"
     }
   },
   "last_completed_integration": {
