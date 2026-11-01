@@ -39,6 +39,72 @@ class IntegrationTests(unittest.TestCase):
         return result
 
 
+
+    def _protected_main(self):
+        """Simulated trusted-GitHub evidence. Tests do not authenticate a provider."""
+        proof = {
+            "source": "GITHUB_LIVE_BRANCH_AND_PROTECTION",
+            "repository": self.policy["repository"],
+            "branch": "main",
+            "head_sha": self.main["sha"],
+            "protected": True,
+            "require_pull_request": True,
+            "required_status_checks": ["offline", "compile_hold"],
+            "force_pushes_allowed": False,
+            "deletions_allowed": False,
+            "admin_bypass_allowed": False,
+        }
+        self.main["branch_protection"] = proof
+        return proof
+
+    def test_branch_protection_absent_must_wait_even_if_ci_and_review_green(self):
+        self.main.pop("branch_protection", None)
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_explicitly_false_must_wait(self):
+        self._protected_main()["protected"] = False
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_stale_main_sha_must_wait(self):
+        self._protected_main()["head_sha"] = "a" * 40
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_untrusted_source_must_wait(self):
+        self._protected_main()["source"] = "PR_BODY"
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_other_repository_must_wait(self):
+        self._protected_main()["repository"] = "attacker/other"
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_no_pr_requirement_must_wait(self):
+        self._protected_main()["require_pull_request"] = False
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_missing_required_ci_must_wait(self):
+        self._protected_main()["required_status_checks"] = ["offline"]
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_force_pushes_allowed_must_wait(self):
+        self._protected_main()["force_pushes_allowed"] = True
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_deletions_allowed_must_wait(self):
+        self._protected_main()["deletions_allowed"] = True
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_admin_bypass_allowed_must_wait(self):
+        self._protected_main()["admin_bypass_allowed"] = True
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_proof_malformed_must_wait(self):
+        self.main["branch_protection"] = ["not", "a", "verified", "object"]
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_trusted_complete_proof_preserves_merge_candidate(self):
+        self._protected_main()
+        self.assertEqual(self.decision()["action"], "MERGE")
+
     def enable_manual_candidate(self):
         branch = "feature/twf-hud-quickstart-20261026"
         owner = "a4b3ef83-814c-431c-97c9-d14e25c9c86f"
