@@ -54,6 +54,9 @@ class IntegrationTests(unittest.TestCase):
             "force_pushes_allowed": False,
             "deletions_allowed": False,
             "admin_bypass_allowed": False,
+            "required_approving_review_count": 1,
+            "dismiss_stale_reviews": True,
+            "require_last_push_approval": True,
         }
         self.main["branch_protection"] = proof
         return proof

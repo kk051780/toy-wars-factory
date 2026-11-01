@@ -276,7 +276,11 @@ def verified_branch_protection(main, policy):
             or p.get("require_pull_request") is not True
             or p.get("force_pushes_allowed") is not False
             or p.get("deletions_allowed") is not False
-            or p.get("admin_bypass_allowed") is not False):
+            or p.get("admin_bypass_allowed") is not False
+            or type(p.get("required_approving_review_count")) is not int
+            or not (1 <= p["required_approving_review_count"] <= 6)
+            or p.get("dismiss_stale_reviews") is not True
+            or p.get("require_last_push_approval") is not True):
         return False
     checks = p.get("required_status_checks")
     return (type(checks) is list
