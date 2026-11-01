@@ -253,6 +253,37 @@ def verified_manual_request(policy, lease, pr, review, main):
     return request, None
 
 
+
+def verified_branch_protection(main, policy):
+    """Fail-closed live-GitHub-protection evidence contract, NOT an attestation.
+
+    A separate trusted REVIEWER must actually fetch current main branch details
+    AND effective branch protection/rulesets from GitHub, then bind these
+    fields to the exact main SHA. A PR author, JSON body or local assertion
+    must NEVER populate this evidence. This pure function cannot establish
+    provider provenance by itself; subsequent merge still needs live checks.
+    """
+    if type(main) is not dict or type(policy) is not dict:
+        return False
+    p = main.get("branch_protection")
+    if type(p) is not dict:
+        return False
+    if (p.get("source") != "GITHUB_LIVE_BRANCH_AND_PROTECTION"
+            or p.get("repository") != policy.get("repository")
+            or p.get("branch") != "main"
+            or p.get("head_sha") != main.get("sha")
+            or p.get("protected") is not True
+            or p.get("require_pull_request") is not True
+            or p.get("force_pushes_allowed") is not False
+            or p.get("deletions_allowed") is not False
+            or p.get("admin_bypass_allowed") is not False):
+        return False
+    checks = p.get("required_status_checks")
+    return (type(checks) is list
+            and all(type(x) is str for x in checks)
+            and {"offline", "compile_hold"}.issubset(set(checks)))
+
+
 def decide(policy, main, pr, review, lease, now):
     def result(action, **details):
         return {"action": action, "requires_owner_reply": False, **details}
@@ -348,6 +379,9 @@ def decide(policy, main, pr, review, lease, now):
         return result("REQUEST_CHANGES", pr=pr["number"], blockers=review.get("blockers", []))
     if any(review.get("checks", {}).get(name) is not True for name in REVIEW_CHECKS):
         return result("WAIT_REVIEW", reason="all review dimensions need evidence")
+    if not verified_branch_protection(main, policy):
+        return result("WAIT_BRANCH_PROTECTION",
+                      reason="trusted current-main protection and required PR/CI rules not verified")
     return result("MERGE", pr=pr["number"], expected_head_sha=head,
                   review_base_sha=main["sha"], merge_method="merge",
                   post_merge_qa_required=True, roblox_publish_authorized=False)

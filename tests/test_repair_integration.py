@@ -25,6 +25,7 @@ class IntegrationTests(unittest.TestCase):
         state = initial_state();state["authorized_tasks"]["REVIEWER"] = task
         self.lease = acquire(state, "REVIEWER", REVIEW_RUN, NOW, actor_task_id=task, work_branch="main")["state"]
         self.main = {"sha": "c" * 40, "qa_head": "c" * 40, "qa_conclusion": "success", "qa_url": "main-ci"}
+        self._protected_main()
         self.pr = {"number": 57, "repository": self.policy["repository"], "branch": self.policy["branch_prefix"] + AUTHOR_RUN,
                    "state": "open", "head": "b" * 40, "mergeable": True,
                    "author_task_id": self.policy["task_id"], "author_run_id": AUTHOR_RUN,
