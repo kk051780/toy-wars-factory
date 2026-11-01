@@ -98,6 +98,30 @@ class IntegrationTests(unittest.TestCase):
         self._protected_main()["admin_bypass_allowed"] = True
         self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
 
+    def test_branch_protection_zero_required_approvals_must_wait(self):
+        self._protected_main()["required_approving_review_count"] = 0
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_missing_review_count_must_wait(self):
+        self._protected_main().pop("required_approving_review_count", None)
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_boolean_approval_count_must_wait(self):
+        self._protected_main()["required_approving_review_count"] = True
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_stale_approvals_allowed_must_wait(self):
+        self._protected_main()["dismiss_stale_reviews"] = False
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_last_push_without_separate_review_must_wait(self):
+        self._protected_main()["require_last_push_approval"] = False
+        self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
+
+    def test_branch_protection_two_distinct_fresh_approvals_allowed(self):
+        self._protected_main()["required_approving_review_count"] = 2
+        self.assertEqual(self.decision()["action"], "MERGE")
+
     def test_branch_protection_proof_malformed_must_wait(self):
         self.main["branch_protection"] = ["not", "a", "verified", "object"]
         self.assertEqual(self.decision()["action"], "WAIT_BRANCH_PROTECTION")
