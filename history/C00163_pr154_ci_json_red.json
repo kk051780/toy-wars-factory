@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "id": "C00163",
+  "pr": 154,
+  "kind": "CI_JSON_FAIL_CLOSED_RED",
+  "utc": "2026-11-01",
+  "original_pr_head": "4780806fbae5af6f84705478070120a1c6fd7134",
+  "red_head": "3fc568e8e4b352ad5a1c60b7089b28fde82b3ae2",
+  "red_run": 41268416205,
+  "red_run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41268416205",
+  "ci_event": "pull_request",
+  "red_jobs": {
+    "offline": "failure",
+    "compile_hold": "success"
+  },
+  "native_python": {
+    "tests": 879,
+    "errors": 7,
+    "notes": "8 new controls: 7 ERROR + deep JSON PASS; no original QA bypass"
+  },
+  "owner_lease": {
+    "epoch": 369,
+    "claim_commit": "569ffbcb42ff597de85233449c946a03a4f319a4",
+    "owner_id": "a9fbd627-4cb4-46ed-921f-841b755dc134"
+  },
+  "changes": [
+    "tests/test_system_ci_chain_gate.py"
+  ],
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "main_edited": false,
+  "review": "PENDING",
+  "security": {
+    "write_allowed": false,
+    "dispatch_allowed": false,
+    "merge_allowed": false,
+    "provider_attested": false,
+    "gemini_inference": "HELD",
+    "roblox_publish": "HELD"
+  }
+}

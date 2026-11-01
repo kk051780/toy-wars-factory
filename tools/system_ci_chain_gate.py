@@ -34,7 +34,7 @@ def _sha(v):
 
 
 def _classify(status, conclusion):
-    if type(status) is not str:
+    if type(status) is not str or (conclusion is not None and type(conclusion) is not str):
         return "BLOCK_MALFORMED"
     if status in APPROVAL:
         return "WAIT_WORKFLOW_APPROVAL" if conclusion is None else "BLOCK_MALFORMED"
@@ -81,7 +81,7 @@ def assess(repository, expected_head, expected_workflow_id, run, jobs):
                 job.get("run_id") != rid or job.get("run_attempt") != attempt or
                 type(job.get("run_attempt")) is not int or
                 job.get("head_sha") != expected_head or
-                job.get("name") not in JOBS):
+                type(job.get("name")) is not str or job.get("name") not in JOBS):
             return _result("BLOCK_JOBS_MISMATCH", rid)
         if job["name"] in names or job["id"] in ids:
             return _result("BLOCK_JOBS_MISMATCH", rid)
@@ -111,12 +111,14 @@ def _unique_pairs(pairs):
 
 def assess_with_payload(repository, expected_head, expected_workflow_id, payload):
     """Strict JSON transport wrapper: duplicate keys and unbounded input blocked."""
-    if type(payload) is not str or len(payload.encode("utf-8")) > MAX_PAYLOAD:
+    if type(payload) is not str:
         return _result("BLOCK_MALFORMED")
     try:
+        if len(payload.encode("utf-8")) > MAX_PAYLOAD:
+            return _result("BLOCK_MALFORMED")
         packet=json.loads(payload, object_pairs_hook=_unique_pairs,
                           parse_constant=lambda _: (_ for _ in ()).throw(ValueError("nonfinite number")))
-    except (ValueError, TypeError, UnicodeError):
+    except (ValueError, TypeError, UnicodeError, RecursionError):
         return _result("BLOCK_MALFORMED")
     if type(packet) is not dict or set(packet) != {"run", "jobs"}:
         return _result("BLOCK_MALFORMED")
