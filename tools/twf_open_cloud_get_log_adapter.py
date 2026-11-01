@@ -92,3 +92,45 @@ def inspect_untrusted_get_and_logs(plan, raw_task_json, raw_logs_json):
         'engine_verified':False,'play_mode_verified':False,'mobile_verified':False,
         'may_post':False,'may_publish':False,'may_merge':False,'may_spend':False,
     }
+
+def inspect_untrusted_create_get_and_logs(plan, raw_create_json,
+                                          raw_task_json, raw_logs_json):
+    """Compare original task CREATE response with later task GET and logs.
+
+    The matching ACK is **caller supplied**, not authenticated by this module.
+    A trusted host must bind real HTTPS/provider origin, original POST bytes,
+    global single-write intent, private Saved version and owned request ID.
+    """
+    ack = _safe_decode(raw_create_json)
+    must(type(ack) is dict, 'CREATE_ACK_NOT_OBJECT')
+    must(type(ack.get('path')) is str and
+         type(ack.get('script')) is str and
+         type(ack.get('timeout')) is str and
+         type(ack.get('state')) is str,
+         'CREATE_ACK_REQUIRED_FIELDS')
+    must(ack['state'] in ('QUEUED', 'PROCESSING', 'COMPLETE') and
+         ack.get('error') is None,
+         'CREATE_ACK_ERROR_STATE')
+    result = inspect_untrusted_get_and_logs(plan, raw_task_json, raw_logs_json)
+    get = _safe_decode(raw_task_json)
+    must(ack['path'] == result['task_path_claim'],
+         'CREATE_ACK_GET_TASK_ID_MISMATCH')
+    must(ack['script'] == get['script'],
+         'CREATE_ACK_SCRIPT_MISMATCH')
+    must(ack['timeout'] == cloud.TASK_TIMEOUT and
+         ack['timeout'] == get['timeout'],
+         'CREATE_ACK_TIMEOUT_MISMATCH')
+    # Strictly a fixture-level equality claim. The ACK is still unauthenticated.
+    return {
+        **result,
+        'create_response_path_matches_get': True,
+        'create_response_script_matches_get': True,
+        'create_response_timeout_matches_get': True,
+        'create_ack_authenticated': False,
+        'create_ack_bound': False,
+        'provider_authenticated': False,
+        'engine_verified': False,
+        'may_post': False,
+        'may_publish': False,
+    }
+
