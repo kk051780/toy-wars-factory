@@ -109,6 +109,7 @@ def _get_state(get: Callable, commit_sha: str) -> dict:
           git_blob_sha(data) == row['sha'], 'CONTENTS_HASH_MISMATCH')
     state = strict_json(data)
     check(type(state.get('schema')) is int and
+          state['schema'] == 1 and
           type(state.get('epoch')) is int and state['epoch'] >= 1 and
           'holder' in state, 'COORDINATOR_SHAPE_INVALID')
     registry = state.get('work_registrations')

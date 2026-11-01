@@ -101,6 +101,7 @@ def _snapshot(snapshot: Any) -> tuple[dict, dict, list[dict]]:
     must(_is_sha(snapshot["main_sha"]), "invalid main ref")
     state = snapshot["state"]
     must(type(state) is dict and type(state.get("schema")) is int and
+         state["schema"] == 1 and
          type(state.get("epoch")) is int and state["epoch"] >= 1 and
          "holder" in state, "malformed coordinator state")
     return state, snapshot, _registry(state)

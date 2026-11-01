@@ -58,6 +58,16 @@ class FakeOriginalGitHub:
 
 
 class OriginalGitSnapshotTests(unittest.TestCase):
+    def test_unknown_coordinator_schema_is_not_backward_compatible(self):
+        for invalid in (0, 2, 999):
+            with self.subTest(schema=invalid):
+                fake = FakeOriginalGitHub()
+                state = observed_state()
+                state["schema"] = invalid
+                fake.contents = file_response(state)
+                with self.assertRaisesRegex(SnapshotRejected, "COORDINATOR_SHAPE_INVALID"):
+                    capture_snapshot(fake)
+
     def test_stable_six_get_snapshot(self):
         fake = FakeOriginalGitHub()
         result = capture_snapshot(fake)

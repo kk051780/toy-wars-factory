@@ -72,6 +72,25 @@ def new_entry(snap, req, *, override=None):
 
 
 class WorkClaimCASTests(unittest.TestCase):
+    def test_unknown_coordinator_schema_rejected_before_proposal(self):
+        for invalid in (0, 2, 999):
+            with self.subTest(schema=invalid):
+                snap, req = fixture()
+                snap["state"]["schema"] = invalid
+                with self.assertRaisesRegex(Rejected, "malformed coordinator state"):
+                    plan(snap, req)
+
+    def test_unknown_coordinator_schema_never_attempts_cas(self):
+        for invalid in (0, 2, 999):
+            with self.subTest(schema=invalid):
+                snap, req = fixture()
+                snap["state"]["schema"] = invalid
+                host = FakeRefHost(snap)
+                with self.assertRaisesRegex(Rejected, "malformed coordinator state"):
+                    apply_once(snap, req, cas=host.cas, readback=host.readback,
+                               read_main_ref=lambda repo: MAIN)
+                self.assertEqual(host.calls, 0)
+
     def test_expired_holder_must_fail_closed(self):
         snap, req = fixture()
         req["observed_at"] = "2026-10-31T09:48:00Z"
