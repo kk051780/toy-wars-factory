@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 393,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "0f557bdd-29ae-413e-bd81-88934d983fb3",
-    "task_id": null,
-    "epoch": 393,
-    "acquired_at": "2026-11-01T23:48:16.256Z",
-    "expires_at": "2026-11-02T00:18:16.256Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "ops/twf-manual-review-lane",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,33 +2893,20 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "c86b46f7-1a4f-49ab-82f3-842bdc6d299e",
-    "epoch": 392,
-    "released_at": "2026-11-01T23:38:45.043Z",
+    "owner_id": "0f557bdd-29ae-413e-bd81-88934d983fb3",
+    "epoch": 393,
+    "released_at": "2026-11-01T23:51:53.968Z",
     "release_receipt": {
-      "reason": "PR60_NATIVE_REVIEW_HISTORY_FALSE_HOLD_926_PASS_PROTECTED_REVIEW_PENDING",
-      "claim_commit": "b61be2918286036b46ea02f8e7d098e35de0dd7d",
-      "work_branch": "ops/twf-manual-review-lane",
+      "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
       "pr": 60,
-      "pr_head": "5690e8b23ad6b96c0f5ebdbcd9110acb764848db",
-      "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "main_mutated": false,
-      "red_ci_run": 41362847704,
-      "green_ci_run": 41362995774,
-      "offline_tests": 926,
-      "offline": "success",
-      "compile_hold": "success",
-      "new_history": [
-        "C96311",
-        "C96312"
-      ],
-      "native_reviews": 0,
+      "head": "7e2e28bc6f8039e3416dab78bff2c69026dd4f4e",
+      "red_run": 41363968022,
+      "green_run": 41364085583,
+      "green_result": "941/941_PYTHON_AND_TWO_JOBS_SUCCESS",
+      "expected_parent": "28f42887d8b712b9f536f7bc18321e89d95326d2",
       "independent_review": "PENDING",
-      "merged": false,
-      "roblox_studio": "NOT_RUN",
-      "publish": false,
-      "external_inference": false,
-      "spend": false
+      "main_integration": false,
+      "postwrite_readback_required": true
     }
   },
   "last_completed_integration": {
