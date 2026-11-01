@@ -1,0 +1,61 @@
+{
+  "id": "C77645",
+  "kind": "A14_SAVED_XML_RAW_RESPONSE_STRICT_GUARD_RED_GREEN",
+  "date": "2026-11-01",
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 176,
+  "base_pr": 148,
+  "base_pr_head": "1db4d0efc417a0688298e91cdbf40670b2befd22",
+  "source_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordinator": {
+    "epoch": 371,
+    "owner_id": "cf416b22-6c41-4d1f-9a36-abc013effe70",
+    "claim_commit": "2908d93ac00e5f2fd905912ae4308285067ce85d",
+    "work_branch": "controller/a14-saved-proxy-noimplicit-cae7961f"
+  },
+  "changed_files": [
+    "tools/roblox_private_xml_saved.py",
+    "tests/test_system_private_xml_saved.py",
+    "tests/test_live_saved_receipt_strict.py",
+    "history/C77645_a14_saved_response_guard_red_green.json"
+  ],
+  "native_red": {
+    "commit": "016b38651cc31cb4f20f0774e76426a6927f8eff",
+    "github_run": 41269958485,
+    "python_tests": 922,
+    "expected_failures": 10,
+    "compile_hold": "SUCCESS"
+  },
+  "native_green": {
+    "source_commit": "cd6bdc234f167871f4dec02000a1dee494fd60b4",
+    "github_run": 41270087658,
+    "python_tests": 922,
+    "success": true,
+    "new_regressions": 13,
+    "compile_hold": "SUCCESS"
+  },
+  "behavior": {
+    "single_Saved_POST_only": true,
+    "published_endpoint_attempts": 0,
+    "automatic_retries": 0,
+    "strict_json_duplicate_keys": true,
+    "strict_json_nonfinite": true,
+    "status_exact_200": true,
+    "content_type_json_required": true,
+    "body_bytes_required": true,
+    "key_newline_nul_rejected": true,
+    "env_proxy_disabled": true
+  },
+  "limits": {
+    "roblox_api_calls": 0,
+    "real_api_key_used": false,
+    "real_saved_version_receipt_verified": false,
+    "roblox_engine_test": false,
+    "independent_security_review": "PENDING",
+    "public_publish_authorized": false,
+    "main_mutated": false,
+    "external_ai_inference": "NOT_RUN"
+  },
+  "doc_reference": "https://create.roblox.com/docs/cloud/guides/usage-place-publishing",
+  "note": "Proves only offline checks on fake Saved provider replies. Preserves original parent tests, no live Roblox/provider attestation."
+}
