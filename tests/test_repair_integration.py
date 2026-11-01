@@ -72,6 +72,9 @@ class IntegrationTests(unittest.TestCase):
             "protected": True,
             "require_pull_request": True,
             "required_status_checks": ["offline", "compile_hold"],
+            "required_status_check_sources": [
+                {"context": "offline", "app_id": 15368},
+                {"context": "compile_hold", "app_id": 15368}],
             "force_pushes_allowed": False,
             "deletions_allowed": False,
             "admin_bypass_allowed": False,

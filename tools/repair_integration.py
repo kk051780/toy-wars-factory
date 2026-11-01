@@ -284,9 +284,28 @@ def verified_branch_protection(main, policy):
             or p.get("require_last_push_approval") is not True):
         return False
     checks = p.get("required_status_checks")
-    return (type(checks) is list
-            and all(type(x) is str for x in checks)
-            and {"offline", "compile_hold"}.issubset(set(checks)))
+    sources = p.get("required_status_check_sources")
+    expected_app = policy.get("integration", {}).get("required_ci_app_id")
+    if (type(expected_app) is not int or expected_app <= 0 or
+            type(checks) is not list or
+            not all(type(x) is str for x in checks) or
+            len(checks) != len(set(checks)) or
+            not {"offline", "compile_hold"}.issubset(set(checks)) or
+            type(sources) is not list or len(sources) != len(checks)):
+        return False
+    actual = {}
+    for row in sources:
+        if (type(row) is not dict or set(row) != {"context", "app_id"} or
+                type(row["context"]) is not str or row["context"] in actual or
+                type(row["app_id"]) is not int or row["app_id"] <= 0):
+            return False
+        actual[row["context"]] = row["app_id"]
+    # Bind every required check name to the original provider's expected
+    # GitHub App ID; app_id=-1 ('any app') cannot satisfy this gate.
+    # The independent reviewer must compare this against the live API's
+    # required_status_checks.checks and exact-head check_run.app.id.
+    return set(actual) == set(checks) and all(
+        actual[name] == expected_app for name in checks)
 
 
 def decide(policy, main, pr, review, lease, now):
