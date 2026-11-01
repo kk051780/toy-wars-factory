@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 362,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "cae7961f-2e91-4bf6-a157-33d4fd0d0151",
-    "task_id": null,
-    "epoch": 362,
-    "acquired_at": "2026-11-01T01:28:24.723Z",
-    "expires_at": "2026-11-01T01:48:24.723Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/a14-saved-proxy-noimplicit-cae7961f",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,37 +2893,43 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "bd82cf7e-4ff8-43a8-919b-a85836a170e9",
-    "epoch": 361,
-    "released_at": "2026-11-01T01:10:00.972Z",
+    "owner_id": "cae7961f-2e91-4bf6-a157-33d4fd0d0151",
+    "epoch": 362,
+    "released_at": "2026-11-01T01:34:29.452Z",
     "release_receipt": {
-      "reason": "PR148_XML_GRAMMAR_17_CASE_RED_GREEN_EXACT_HEAD",
-      "claim_commit": "61f1a69d1205505179734201b61e463d01403d59",
-      "work_branch": "controller/a14-saved-xml-strict-properties-0f445b08",
-      "pr": 148,
-      "pr_head": "1db4d0efc417a0688298e91cdbf40670b2befd22",
-      "red_head": "9cbbe4baa7a5be9247deb3f2b89dba3a290e6404",
-      "red_run": 41259513497,
-      "red_python_tests": 904,
-      "red_failures": 14,
-      "green_head": "1db4d0efc417a0688298e91cdbf40670b2befd22",
-      "green_run": 41259791590,
-      "green_python_tests": 905,
+      "reason": "PR176_PRIVATE_SAVED_NO_IMPLICIT_PROXY_RED_GREEN_EXACT_HEAD",
+      "claim_commit": "d06106431e4c0968834f9eba32e42b2be7334b80",
+      "work_branch": "controller/a14-saved-proxy-noimplicit-cae7961f",
+      "pr": 176,
+      "pr_head": "bb79b7dc10ea529cc3bfe0dd0382e6c60b724bbb",
+      "parent_pr": 148,
+      "parent_head": "1db4d0efc417a0688298e91cdbf40670b2befd22",
+      "accepted_main_at_release": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "main_mutated": false,
+      "shared_coordinator_owner_only": true,
+      "red_commit": "2cfe12a4fd59fbdc53962b99baea058d5780a1a7",
+      "red_run": 41261318782,
+      "red_failures": 3,
+      "red_python_tests": 909,
+      "source_patch_commit": "38b7299c722c9320011f151735bf0a1ff77043a2",
+      "green_final_commit": "bb79b7dc10ea529cc3bfe0dd0382e6c60b724bbb",
+      "green_final_run": 41261532214,
+      "green_python_tests": 909,
       "green_conclusion": "success",
-      "source_blob": "de40d4ae37da942f3fdce2edad5c496f1dfc328e",
-      "new_regressions": 17,
-      "history_files": [
-        "history/C09860_pr148_xml_grammar_red.json",
-        "history/C09861_pr148_xml_grammar_green.json"
+      "change_files": [
+        "tools/roblox_private_xml_saved.py",
+        "tests/test_live_saved_no_implicit_proxy.py",
+        "history/C09971_a14_saved_proxy_red.json",
+        "history/C09972_a14_saved_proxy_green.json"
       ],
-      "pr_comment_id": 6551585926,
-      "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "main_changed": false,
+      "source_delta_bytes": 125,
       "independent_review": "PENDING",
-      "roblox_engine": "NOT_RUN",
       "private_saved_upload": "NOT_RUN",
-      "publish_authorized": false,
-      "gemini_inference": "HELD"
+      "roblox_engine": "NOT_RUN",
+      "mobile_ux": "NOT_RUN",
+      "publishing_authorized": false,
+      "external_inference": "NOT_RUN",
+      "issue_comment_id": 6551823795
     }
   },
   "last_completed_integration": {
