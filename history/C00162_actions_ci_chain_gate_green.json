@@ -1,0 +1,49 @@
+{
+  "id": "C00162",
+  "date": "2026-10-31",
+  "kind": "PROTECTED_ACTIONS_CI_CHAIN_WAIT_APPROVAL_GREEN_CANDIDATE",
+  "issue": 57,
+  "pr": 154,
+  "related_prs": [
+    152,
+    153
+  ],
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 301,
+    "owner_run_id": "b34c8765-01ac-4335-ad17-9d504dac4544",
+    "claim_commit": "dfa1c634cec93b3dfd54f488c294acd650ac5731"
+  },
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "red": {
+    "commit": "c9bf5228a32279d7b1cffbd676adfac77b11962e",
+    "actions_run": 41146630501,
+    "offline": "failure",
+    "compile_hold": "success",
+    "python_total": 834,
+    "expected_error": "ModuleNotFoundError: No module named system_ci_chain_gate",
+    "accepted_baseline": 833
+  },
+  "source": {
+    "path": "tools/system_ci_chain_gate.py",
+    "blob": "a3b09aceed577cfeb49159ba471d7848a1e8d8cc",
+    "bytes": 5389
+  },
+  "regressions": {
+    "path": "tests/test_system_ci_chain_gate.py",
+    "tests": 38,
+    "local_pass": 38,
+    "github_green": "PENDING_EXACT_HEAD_CI"
+  },
+  "safety": {
+    "authority": "READ_ONLY_UNTRUSTED_SNAPSHOT",
+    "no_network": true,
+    "no_write": true,
+    "no_dispatch": true,
+    "no_merge": true,
+    "no_publish": true,
+    "independent_protected_review_required": true,
+    "gemini_hold": "PRESERVED",
+    "roblox_engine": "NOT_RUN"
+  }
+}
