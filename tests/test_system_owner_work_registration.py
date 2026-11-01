@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 from system_owner_intake_dedup import calculate_work_id, classify
 from system_owner_work_registration import (
-    CONTROL_BRANCH, CONTROL_PATH, Rejected, apply_once, plan, intake_projection, MAX_ROWS,
+    CONTROL_BRANCH, CONTROL_PATH, Rejected, apply_once as _real_apply_once, plan, intake_projection, MAX_ROWS,
 )
 
 REPO = "kk051780/toy-wars-factory"
@@ -65,6 +65,16 @@ class FakeRefHost:
             return copy.deepcopy(self.snap)
 
 
+def apply_once(snapshot, request, *, fresh_coordinator_snapshot=None,
+               trusted_clock=None, **kwargs):
+    """Legacy mocks now supply explicitly fake pre-CAS callbacks; no provider proof."""
+    if fresh_coordinator_snapshot is None:
+        fresh_coordinator_snapshot = lambda *args: copy.deepcopy(snapshot)
+    if trusted_clock is None:
+        trusted_clock = lambda: NOW
+    return _real_apply_once(snapshot, request, fresh_coordinator_snapshot=fresh_coordinator_snapshot,
+                            trusted_clock=trusted_clock, **kwargs)
+
 def new_entry(snap, req, *, override=None):
     row = copy.deepcopy(plan(snap, req)["proposed_state"]["work_registrations"]["entries"][0])
     row.update(override or {})
@@ -72,6 +82,151 @@ def new_entry(snap, req, *, override=None):
 
 
 class WorkClaimCASTests(unittest.TestCase):
+    def test_pre_cas_missing_clock_and_fresh_reader_never_write(self):
+        snap, req = fixture()
+        host = FakeRefHost(snap)
+        for clock, reader in ((None, host.readback), (lambda: NOW, None), (None, None)):
+            with self.subTest(clock_available=clock is not None, reader_available=reader is not None):
+                result = _real_apply_once(snap, req, cas=host.cas, readback=host.readback,
+                    read_main_ref=lambda repo: MAIN, trusted_clock=clock,
+                    fresh_coordinator_snapshot=reader)
+                self.assertEqual(result["status"], "WAIT_PRECAS_CALLBACK_UNAVAILABLE")
+                self.assertFalse(result["cas_attempted"])
+        self.assertEqual(host.calls, 0)
+
+    def test_pre_cas_delayed_clock_expiration_blocks_write(self):
+        snap, req = fixture()
+        host = FakeRefHost(snap)
+        result = apply_once(snap, req, cas=host.cas, readback=host.readback,
+            read_main_ref=lambda repo: MAIN,
+            trusted_clock=lambda: "2026-10-31T09:48:00Z")
+        self.assertEqual(result["status"], "WAIT_PRECAS_CLOCK_UNCONFIRMED")
+        self.assertFalse(result["cas_attempted"])
+        self.assertEqual(host.calls, 0)
+
+    def test_pre_cas_exact_expiry_blocks_write(self):
+        snap, req = fixture()
+        host = FakeRefHost(snap)
+        result = apply_once(snap, req, cas=host.cas, readback=host.readback,
+            read_main_ref=lambda repo: MAIN, trusted_clock=lambda: EXPIRES)
+        self.assertEqual(result["status"], "WAIT_PRECAS_CLOCK_UNCONFIRMED")
+        self.assertEqual(host.calls, 0)
+
+    def test_pre_cas_five_second_headroom_required(self):
+        snap, req = fixture()
+        host = FakeRefHost(snap)
+        result = apply_once(snap, req, cas=host.cas, readback=host.readback,
+            read_main_ref=lambda repo: MAIN, trusted_clock=lambda: "2026-10-31T09:46:56Z")
+        self.assertEqual(result["status"], "WAIT_PRECAS_EXPIRING_UNCONFIRMED")
+        self.assertEqual(host.calls, 0)
+
+    def test_pre_cas_clock_rollback_rejected(self):
+        snap, req = fixture()
+        host = FakeRefHost(snap)
+        result = apply_once(snap, req, cas=host.cas, readback=host.readback,
+            read_main_ref=lambda repo: MAIN, trusted_clock=lambda: "2026-10-31T09:23:59Z")
+        self.assertEqual(result["status"], "WAIT_PRECAS_CLOCK_UNCONFIRMED")
+        self.assertEqual(host.calls, 0)
+
+    def test_pre_cas_clock_malformed_timezone_and_exceptions(self):
+        for bad in (None, {}, False, "yesterday", "2026-10-31T09:25:00",
+                    "2026-10-31T18:25:00+09:00"):
+            with self.subTest(bad=bad):
+                snap, req = fixture()
+                host = FakeRefHost(snap)
+                result = apply_once(snap, req, cas=host.cas, readback=host.readback,
+                    read_main_ref=lambda repo: MAIN, trusted_clock=lambda: bad)
+                self.assertEqual(result["status"], "WAIT_PRECAS_CLOCK_UNCONFIRMED")
+                self.assertEqual(host.calls, 0)
+        snap, req = fixture()
+        def broken():
+            raise OSError("clock unavailable")
+        result = apply_once(snap, req, cas=lambda *a: self.fail("unexpected CAS"),
+            readback=lambda *a: self.fail("unexpected readback"),
+            read_main_ref=lambda repo: MAIN, trusted_clock=broken)
+        self.assertEqual(result["status"], "WAIT_PRECAS_CLOCK_UNCONFIRMED")
+
+    def test_pre_cas_latest_coordinator_ref_drift_no_write(self):
+        snap, req = fixture()
+        host = FakeRefHost(snap)
+        shifted = copy.deepcopy(snap)
+        shifted["ref_sha"] = "c" * 40
+        result = apply_once(snap, req, cas=host.cas, readback=host.readback,
+            read_main_ref=lambda repo: MAIN, fresh_coordinator_snapshot=lambda *a: shifted)
+        self.assertEqual(result["status"], "WAIT_COORDINATOR_DRIFT_UNCONFIRMED")
+        self.assertEqual(host.calls, 0)
+
+    def test_pre_cas_latest_holder_and_epoch_drift_no_write(self):
+        for mutate in (lambda s: s["state"]["holder"].update(owner_id=OTHER),
+                       lambda s: s["state"].update(epoch=442),
+                       lambda s: s["state"]["holder"].update(work_branch=BRANCH + "-other")):
+            snap, req = fixture()
+            shifted = copy.deepcopy(snap)
+            mutate(shifted)
+            host = FakeRefHost(snap)
+            result = apply_once(snap, req, cas=host.cas, readback=host.readback,
+                read_main_ref=lambda repo: MAIN, fresh_coordinator_snapshot=lambda *a: shifted)
+            self.assertEqual(result["status"], "WAIT_COORDINATOR_DRIFT_UNCONFIRMED")
+            self.assertEqual(host.calls, 0)
+
+    def test_pre_cas_two_fresh_reads_disagree_no_write(self):
+        snap, req = fixture()
+        host = FakeRefHost(snap)
+        calls = [0]
+        def drift(*args):
+            calls[0] += 1
+            shifted = copy.deepcopy(snap)
+            if calls[0] == 2:
+                shifted["ref_sha"] = "c" * 40
+            return shifted
+        result = apply_once(snap, req, cas=host.cas, readback=host.readback,
+            read_main_ref=lambda repo: MAIN, fresh_coordinator_snapshot=drift)
+        self.assertEqual(result["status"], "WAIT_COORDINATOR_DRIFT_UNCONFIRMED")
+        self.assertEqual(calls[0], 2)
+        self.assertEqual(host.calls, 0)
+
+    def test_pre_cas_second_main_ref_drift_no_write(self):
+        snap, req = fixture()
+        host = FakeRefHost(snap)
+        outcomes = iter([MAIN, "d" * 40])
+        result = apply_once(snap, req, cas=host.cas, readback=host.readback,
+            read_main_ref=lambda repo: next(outcomes))
+        self.assertEqual(result["status"], "WAIT_MAIN_DRIFT_UNCONFIRMED")
+        self.assertEqual(host.calls, 0)
+
+    def test_pre_cas_clock_is_last_host_callback_before_single_cas(self):
+        snap, req = fixture()
+        calls = []
+        def on_main(_repo):
+            calls.append("main")
+            return MAIN
+        def on_coord(*args):
+            calls.append("coord")
+            return copy.deepcopy(snap)
+        def on_clock():
+            calls.append("clock")
+            return NOW
+        def on_cas(*args):
+            calls.append("cas")
+            return None
+        result = apply_once(snap, req, cas=on_cas,
+            readback=lambda *a: self.fail("no readback after rejected CAS"),
+            read_main_ref=on_main, fresh_coordinator_snapshot=on_coord,
+            trusted_clock=on_clock)
+        self.assertEqual(result["status"], "WAIT_CAS_CONFLICT_OR_INVALID_ACK")
+        self.assertEqual(calls, ["main", "coord", "coord", "main", "clock", "cas"])
+
+    def test_pre_cas_fresh_valid_owner_makes_one_fake_cas_without_authentication(self):
+        snap, req = fixture()
+        host = FakeRefHost(snap)
+        result = apply_once(snap, req, cas=host.cas, readback=host.readback,
+            read_main_ref=lambda repo: MAIN, fresh_coordinator_snapshot=host.readback,
+            trusted_clock=lambda: "2026-10-31T09:25:00Z")
+        self.assertEqual(result["status"], "CALLBACK_CAS_CONFIRMED_NOT_GITHUB_AUTHENTICATED")
+        self.assertEqual(host.calls, 1)
+        self.assertFalse(result["may_dispatch"])
+        self.assertFalse(result["github_authenticated"])
+
     def test_unknown_coordinator_schema_rejected_before_proposal(self):
         for invalid in (0, 2, 999):
             with self.subTest(schema=invalid):
@@ -173,7 +328,7 @@ class WorkClaimCASTests(unittest.TestCase):
     def test_main_changes_after_cas_refuses_confirmed(self):
         snap, req = fixture()
         host = FakeRefHost(snap)
-        observations = iter([MAIN, "d" * 40])
+        observations = iter([MAIN, MAIN, "d" * 40])
         out = apply_once(snap, req, cas=host.cas, readback=host.readback,
                          read_main_ref=lambda repo: next(observations))
         self.assertEqual(out["status"], "WAIT_CAS_UNCONFIRMED")
