@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "case_id": "C09998",
+  "title": "Fail-closed PR174 pre-CAS coordinator/clock lease verification",
+  "issue": 123,
+  "branch": "controller/work-registration-cas-1dd085ef",
+  "parent_pr": 173,
+  "parent_head": "c902948f66d408c78211c1afb694c19326b98bc4",
+  "child_pr": 174,
+  "base_head": "3fe18a41655b91a8630b46284e2d6a0fd8db5a86",
+  "red_test_head": "faaeedc1f8c9b38bb4b93aaa70b453349a77b88d",
+  "green_source_head": "92ea623345855844db6438f2670bb3858691a25e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "f979a289446d00f5cdd6753ac658170590647d70",
+    "owner_run_id": "8a9b90d4-0d5a-419c-8151-e77a8b96929d",
+    "epoch": 379
+  },
+  "change": {
+    "files": [
+      "tests/test_system_owner_work_registration.py",
+      "tools/system_owner_work_registration.py",
+      "history/C09998_precas_lease_clock_guard.json"
+    ],
+    "new_regression_test_methods": 12,
+    "required_fake_callbacks": [
+      "fresh_coordinator_snapshot",
+      "trusted_clock"
+    ],
+    "pre_cas_sequence": [
+      "first main",
+      "two fresh coordinator reads",
+      "second main",
+      "trusted clock",
+      "at most one caller-supplied CAS"
+    ],
+    "unknown_production_provider": false,
+    "min_clock_headroom_seconds": 5,
+    "remote_write_deadline_proven": false
+  },
+  "verification": {
+    "red_ci": {
+      "run": 41283119794,
+      "conclusion": "failure"
+    },
+    "green_ci": {
+      "run": 41283175969,
+      "conclusion": "success",
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "robot_engine": "NOT_RUN",
+    "provider_attested_registry_cas": false,
+    "autonomous_worker_dispatch": false,
+    "independent_parent_review": "PENDING",
+    "independent_child_review": "PENDING",
+    "main_unchanged": true,
+    "no_external_ai_inference": true
+  },
+  "safety": {
+    "original_host_attestation": "NOT_PROVEN",
+    "atomic_remote_expiry_fencing": "NOT_PROVEN",
+    "github_authenticated": false,
+    "may_dispatch": false,
+    "may_merge": false,
+    "may_publish": false,
+    "incident_holds_preserved": true
+  },
+  "notes": "An earlier supplied observed_at and a nonforced ref CAS do not prove lease validity at remote write time. Gate checks only narrow the race; provider adapter needs a separately enforced final deadline. Author may not self-review protected draft."
+}
