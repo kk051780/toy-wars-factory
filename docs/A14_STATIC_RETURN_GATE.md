@@ -1,4 +1,4 @@
-# TOY WARS / A14 — Open Cloud 固定スモークの戻り値検証ゲート（候補 v3）
+# TOY WARS / A14 — Open Cloud 固定スモークの戻り値検証ゲート（候補 v4）
 
 ## 課題と今回の差分
 既存の「88テスト」Open Cloud 静的スクリプト候補の `inspect_untrusted_task()` は、返却文字列内のマーカーや構造名が「含まれるか」のみを報告する。これを実機成功判定に使うと、単なるエラーメッセージや偽の文字列も成功に見えてしまう。
@@ -31,6 +31,13 @@ Roblox Open Cloud Luau Execution API は `timeout` を 1〜300 秒で指定で�
 - 今後の接続器は、Roblox公式APIキーを受け取る保護されたホスト上でPOST 1回→GET→ログ取得を行い、実際のHTTP応答元、レスポンスとPOST原本、Global CASと秘密鍵の範囲を独立検証する必要がある。ホストの実装・鍵・実アクセスはこの候補には含めない。
 
 公式の返却形式参考：[Roblox Luau Execution API](https://create.roblox.com/docs/cloud/reference/features/luau-execution)、[Robloxによる構造化ログの紹介](https://devforum.roblox.com/t/beta-open-cloud-engine-api-for-executing-luau/3172185/74)。
+
+## 作成時POST応答と完了GET/ログの同一タスク照合（候補 v4、2026-11-01）
+Roblox公式の [DemoSDK.luau](https://github.com/Roblox/open-cloud-execution-binary-payloads-example/blob/main/DemoSDK.luau) は、タスク作成応答から得た `path` を使って、後続のGETとログ取得を行う。従来のJSON整合チェックはこの**作成応答とGETの同一性**を比較していなかった。
+
+- 新規 `inspect_untrusted_create_get_and_logs(plan, create_json, get_json, logs_json)` は、タスク作成応答と完了タスクGETの**フルパス完全一致**を必須とする。バージョン/タスクIDの食い違い、作成応答の失敗状態、スクリプト変更、30秒制限の不一致を拒否する。
+- 新規17件の回帰検査を、既存 `tests/test_twf_open_cloud_get_log_adapter.py` に追加。GitHub実RED `11c71ed67e70006c9cda7990b1bd8ce70b7fa23f` / [Actions #41266078138](https://github.com/kk051780/toy-wars-factory/actions/runs/41266078138) は **914件中想定エラー17件**、修正後 `04a83070300a0d5318389f8422ecaef6fa81168e` / [Actions #41266148985](https://github.com/kk051780/toy-wars-factory/actions/runs/41266148985) は **914/914全成功**。41件の静的戻り値テストと40件のGET/ログ・作成ACKチェックは通過。
+- 重要：**作成応答そのものは未認証の呼び出し元JSON**で、これを実機証拠と見なさない。返却値は `create_response_path_matches_get=True` だが、`create_ack_authenticated=False`、`provider_authenticated=False`、`engine_verified=False`。実際のホストは、認証済みHTTPS応答・当初のPOST本文・非公開保存版・CAS履歴を別個に証明する必要がある。
 
 ## 実行
 Python 3.10+。追加パッケージ不要。
