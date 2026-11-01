@@ -79,7 +79,7 @@ def verify_windows_studio_signature(studio: Path, *, runner=None, system=None) -
     script = ("$p=[System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('"+encoded+"'));"
               "$s=Get-AuthenticodeSignature -LiteralPath $p;"
               "if ($s.Status -ne 'Valid' -or $null -eq $s.SignerCertificate -or "
-              "$s.SignerCertificate.Subject -notmatch 'Roblox') { exit 8 };"
+              "$s.SignerCertificate.Subject -notmatch '(^|,\\s*)O=Roblox Corporation(\\s*,|$)') { exit 8 };"
               "Write-Output '"+SIGNATURE_SENTINEL+"'")
     runner = runner or subprocess.run
     try:

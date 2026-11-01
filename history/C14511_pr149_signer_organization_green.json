@@ -1,0 +1,39 @@
+{
+  "id": "C14511",
+  "date": "2026-11-01",
+  "kind": "A14_PR149_SIGNER_ORGANIZATION_EXPECTED_GREEN",
+  "pr": 149,
+  "parent_pr": 147,
+  "accepted_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "prior_head": "886203d949db08dd8099fad6f56d30c32a8fd3bd",
+  "coordinator": {
+    "epoch": 364,
+    "owner": "65812b6d-ae8b-4b34-9450-99f3547776f6",
+    "claim_commit": "ea9ec1fc5d7e5484634c9f77116017ec08c3c9da"
+  },
+  "red": {
+    "head": "886203d949db08dd8099fad6f56d30c32a8fd3bd",
+    "run": 41262990487,
+    "python_tests": 906,
+    "failures": 9,
+    "compile_hold": "success"
+  },
+  "source": {
+    "python": "tools/studio_host_gate.py",
+    "powershell": "tools/launch_trusted_studio_probe.ps1",
+    "tests": "tests/test_studio_signer_organization.py",
+    "original_python_blob": "1c3245ca8996b5a0f63ad43e78fddc4c0489aa0f",
+    "original_ps_blob": "51e877f7c4e20dc77761868cfba749609fbce8a4",
+    "new_regressions": 15
+  },
+  "green": {
+    "run": "PENDING"
+  },
+  "authority": {
+    "independent_review": "PENDING",
+    "merge": false,
+    "windows_studio_executed": false,
+    "roblox_engine": false,
+    "public_publish": false
+  }
+}
