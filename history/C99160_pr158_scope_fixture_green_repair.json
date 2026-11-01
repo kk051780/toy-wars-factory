@@ -1,0 +1,30 @@
+{
+  "id": "C99160",
+  "date": "2026-11-01",
+  "kind": "CONTROLLER_PR158_TEST_FIXTURE_SCOPE_NEGATIVE_CASE_REPAIR",
+  "pr": 158,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 383,
+    "owner_run_id": "c4d7af89-5c65-4b25-99c9-953162eb7336",
+    "claim_commit": "77c748aff11647e67281f5981aa5cd7042596a60"
+  },
+  "red_head": "605d7436d7cdb1f9176c4bc201bc3b156ab6b326",
+  "first_green_candidate_head": "d3d3e82c812fc5ca7b6358eb3a409d4986b45c41",
+  "first_green_candidate_ci": {
+    "run": 41288333626,
+    "offline": "failure",
+    "compile_hold": "success",
+    "cases": 882,
+    "failures": 1,
+    "failure": "test_13_missing_commit_scope_metadata_denied fixture used g.commit which now returns complete scope proof"
+  },
+  "fix": "Return only sha and parents for missing-metadata negative control, leave production code unchanged",
+  "changed_files": [
+    "tests/test_cloud_global_clock_and_commit_scope.py",
+    "history/C99160_pr158_scope_fixture_green_repair.json"
+  ],
+  "next": "Exact-head native QA on updated original PR; independent reviewer; no Roblox engine/POST",
+  "may_merge": false,
+  "public_publish": false
+}

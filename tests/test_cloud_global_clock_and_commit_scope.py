@@ -114,7 +114,9 @@ class ClockAndScopeTests(unittest.TestCase):
 
     def test_13_missing_commit_scope_metadata_denied(self):
         g=GitHubFake()
-        def missing(repo,sha):return g.commit(repo,sha)
+        def missing(repo,sha):
+            response=g.commit(repo,sha)
+            return {'sha':response['sha'],'parents':response['parents']}
         self.deny(lambda:self.call(g,commit=missing),"COMMIT_SCOPE_NOT_PROVEN_HOLD")
 
     def test_14_extra_unknown_commit_metadata_denied(self):
