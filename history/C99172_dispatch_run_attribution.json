@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "id": "C99172",
+  "date_utc": "2026-11-02",
+  "issue": 57,
+  "kind": "PROTECTED_CONTROLLER_READ_ONLY_DISPATCH_RUN_ATTRIBUTION_REGRESSION",
+  "status": "DRAFT_UNMERGED_NO_AUTHORITY",
+  "work_id": "TWF-ISSUE57-DISPATCH-RUN-ATTRIBUTION-20261102",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "a301b3e42dd40a0e2776e0f863399cc02a110f1c",
+    "epoch": 414,
+    "owner_run_id": "73b1e923-a548-4ac4-ac76-66af5d21b648",
+    "work_branch": "controller/issue57-dispatch-attribution-73b1e923",
+    "origin": "CONTROLLER_MANUAL"
+  },
+  "changed_files": [
+    "tools/system_dispatch_run_attribution.py",
+    "tests/test_system_dispatch_run_attribution.py",
+    "history/C99172_dispatch_run_attribution.json"
+  ],
+  "scope": "STRICTLY_ADVISORY_TIMESTAMP_CLASSIFIER_NOT_ADOPTION_OR_RUN_NOW_PROOF",
+  "regression": {
+    "local_python_tests": 23,
+    "synthetic": true,
+    "fixtures": [
+      "DISPATCH_EPOCH412_DUE_BEFORE_ACQUIRE_EXPIRED",
+      "DISPATCH_EPOCH413_IN_WINDOW_WAIT_IDENTITY"
+    ],
+    "github_exact_head_ci": "PENDING"
+  },
+  "quality": {
+    "lua_game_source_changed": false,
+    "main_changed": false,
+    "acceptance_gate_changed": false,
+    "roblox_engine_run": false
+  },
+  "safety": {
+    "no_registered_worker_authentication": true,
+    "no_provider_request_run_binding": true,
+    "no_cas_for_runtime": true,
+    "no_task_update": true,
+    "no_auto_merge": true,
+    "no_spend": true,
+    "no_roblox_publish": true
+  },
+  "limitations": [
+    "Source data supplied by caller are not authenticated",
+    "Live run_now request->run binding unavailable; never infer causality",
+    "No change to DISPATCH TTL or registered scheduled tasks",
+    "Requires independent registered reviewer and actual hosted CI before integration"
+  ],
+  "next_actor": "INDEPENDENT_REVIEWER"
+}
