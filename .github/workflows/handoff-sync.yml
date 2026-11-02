@@ -109,20 +109,39 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$TWF_SOURCE_COMMIT"
           test "$(git status --porcelain --untracked-files=no | grep -v '^.. status/' | wc -l)" -eq 0
-          git add -- status/CHAT_HANDOFF.md status/LATEST_STATE.json
-          if git diff --cached --quiet -- status/CHAT_HANDOFF.md status/LATEST_STATE.json; then
-            echo "NO_CHANGE: avoided fake progress" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          # A syntactically valid SHA can still misrepresent the true source.
-          # Derive the substantive revision from the accepted, full-history checkout.
+          # Match the builder's substantive source revision, not a forged hex SHA.
           expected_source_revision="$(git log -1 --format=%H -- src tests tools docs config PROJECT_STATE.json AGENTS.md .github history)"
           test -n "$expected_source_revision"
           jq -e --arg expected "$expected_source_revision" '.source_revision == $expected' status/LATEST_STATE.json >/dev/null
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'chore(handoff): sync cross-chat state' -- status/CHAT_HANDOFF.md status/LATEST_STATE.json
+
+          # Construct a tree from the exact two passive files. No source,
+          # workflow or executable from main is placed on the snapshot ref.
+          handoff_blob="$(git hash-object -w -- status/CHAT_HANDOFF.md)"
+          state_blob="$(git hash-object -w -- status/LATEST_STATE.json)"
+          status_tree="$(printf '100644 blob %s\tCHAT_HANDOFF.md\n100644 blob %s\tLATEST_STATE.json\n' "$handoff_blob" "$state_blob" | git mktree)"
+          snapshot_tree="$(printf '040000 tree %s\tstatus\n' "$status_tree" | git mktree)"
+          snapshot_ref='refs/heads/twf-handoff-snapshots'
+          allowed_files="$(printf 'status/CHAT_HANDOFF.md\nstatus/LATEST_STATE.json')"
+          test "$(git ls-tree -r --name-only "$snapshot_tree")" = "$allowed_files"
+
+          # GitHub token only becomes useful in this final data-only step.
+          # Main is NEVER a destination, even if private branch protection is absent.
           gh auth setup-git
-          remote_sha="$(git ls-remote origin refs/heads/main | cut -f1)"
-          test "$remote_sha" = "$TWF_SOURCE_COMMIT"
-          git push origin HEAD:refs/heads/main
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$TWF_SOURCE_COMMIT"
+          previous="$(git ls-remote origin "$snapshot_ref" | cut -f1)"
+          parents=()
+          if [ -n "$previous" ]; then
+            git fetch --no-tags origin "$snapshot_ref"
+            test "$(git rev-parse FETCH_HEAD)" = "$previous"
+            test "$(git ls-tree -r --name-only "$previous")" = "$allowed_files"
+            if [ "$(git rev-parse "$previous^{tree}")" = "$snapshot_tree" ]; then
+              echo "NO_CHANGE: avoided fake snapshot progress" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            parents=(-p "$previous")
+          fi
+          snapshot_commit="$(printf 'chore(handoff-snapshot): accepted main %s\n' "$TWF_SOURCE_COMMIT" | git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit-tree "$snapshot_tree" "${parents[@]}")"
+          test "$(git ls-tree -r --name-only "$snapshot_commit")" = "$allowed_files"
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$TWF_SOURCE_COMMIT"
+          # Non-force fast-forward. Concurrent writers reject rather than overwrite.
+          git push origin "$snapshot_commit:$snapshot_ref"
