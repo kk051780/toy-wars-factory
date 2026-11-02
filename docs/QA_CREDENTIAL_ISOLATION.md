@@ -64,3 +64,12 @@ The compiler install uses a pinned public release SHA256 without a PR-exposed
 GitHub token, all checkout steps disable persisted credentials, and the
 original Gemini incident HOLD compilation and full main regression suite remain
 enabled. No external inference, billing changes or Roblox publish are authorized.
+
+## Privileged checkout action source pin (2026-11-02)
+
+The `pull_request_target` trusted claim job uses the exact immutable
+`actions/checkout` commit `11bd71901bbe5b1630ceea73d27597364c9af683`
+(v4.2.2) rather than the mutable `@v4` ref. This avoids unexpected
+upstream changes to the action source while the job uses a read-scoped token.
+It does NOT authenticate the actual PR head, force required status checks,
+prove branch protection or give native reviewer approval by itself.

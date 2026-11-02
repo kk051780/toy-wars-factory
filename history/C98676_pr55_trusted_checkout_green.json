@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "id": "C98676",
+  "kind": "PR55_PRIVILEGED_TRUSTED_CHECKOUT_SHA_PIN_GREEN",
+  "pr": 55,
+  "parent_red": "816711dd9f94c2be14a9cc908e82ca42a9b85a54",
+  "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "claim_commit": "479d8247e60bc5ccc54dc3e5e72be32c75e7c031",
+    "epoch": 399,
+    "owner_id": "48311411-3dad-4b25-9dee-e4db9c95782f"
+  },
+  "red": {
+    "run_id": 41381120985,
+    "total_python": 843,
+    "expected_new_failures": 1,
+    "offline": "failure",
+    "compile_hold": "success"
+  },
+  "source_change": {
+    "path": ".github/workflows/trusted-coordinator-claim.yml",
+    "original_sha": "d8eb4bc0c9fddd181f4828d8725a761167eb895f",
+    "old_ref": "actions/checkout@v4",
+    "new_ref": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+  },
+  "green": {
+    "expected_python_tests": 843,
+    "run": "PENDING"
+  },
+  "holds": [
+    "NATIVE_REVIEW_PEND",
+    "TRUSTED_CLAIM_NOT_PROVIDER_VERIFIED",
+    "NO_MAIN_MERGE",
+    "NO_SPENDING",
+    "NO_ROBLOX_PUBLISH"
+  ]
+}
