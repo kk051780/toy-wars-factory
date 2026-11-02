@@ -56,6 +56,14 @@ Gemini事故停止、消費済み試行、認証・費用上限をこの委譲�
 ## 手動CONTROLLER作成PRの独立審査（Issue #59、導入後のみ）
 
 手動Workが作成した `feature/twf-` は、**ブランチ名だけでは統合しない**。
+`controller/` で始まる手動ブランチは、共有コーディネーターの
+`manual_review_requests` にPR番号・完全なブランチ名・リポジトリ・
+元CONTROLLER種別が明示的に一致する**正規の依頼がある場合だけ**
+審査候補として識別する。新しい命名規則は、検証済みの元claim、
+第一コミット、実差分、現在head/main、正規独立REVIEWERによる審査、
+GitHubの必須チェックを免除しない。申請が未登録・重複している場合は
+候補対象外またはWAITとする。既存テストの`M`（変更）は引き続き
+手動ゲームscopeでは拒否し、PR #179を暗黙に解禁しない。
 共有コーディネータ `manual_review_requests` にPR番号・完全head SHA・正確な
 base-main SHA・ブランチ・元のCONTROLLER owner UUID/epoch・その取得コミットSHA・
 登録REVIEWER task IDを**一意に**記録する（作者のPR本文を証拠にしない）。

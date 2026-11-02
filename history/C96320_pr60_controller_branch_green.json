@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "id": "C96320",
+  "kind": "PR60_EXACT_REGISTERED_CONTROLLER_BRANCH_GREEN_CANDIDATE",
+  "pr": 60,
+  "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordinator": {
+    "kind": "CONTROLLER",
+    "owner_id": "819b208f-3c8d-4bf0-a75e-e2b66d920b65",
+    "epoch": 407,
+    "claim_commit": "9f67d1d29bb0fee68fbcf8b961ff532cea36f1b1",
+    "work_branch": "ops/twf-manual-review-lane"
+  },
+  "red": {
+    "head": "e540d6a805f4bca67faf94d8286c766a2c6e27fd",
+    "run": 41401270008,
+    "offline": "FAILURE",
+    "compile_hold": "SUCCESS",
+    "python_tests": 985,
+    "expected_new_failures": 4
+  },
+  "source_changed": [
+    "tools/repair_integration.py",
+    "config/autonomous_repair.json",
+    "docs/AUTONOMOUS_INTEGRATION.md"
+  ],
+  "regression": "tests/test_repair_integration.py",
+  "new_cases": 6,
+  "existing_tests_intact": true,
+  "behavior": "Controller branches are candidates only when exact controller request matches trusted coordinator; immutable claim, scope, native independent approval and provider branch protections remain mandatory. Existing modified HUD tests still fail manual_game_scope_violations.",
+  "green": {
+    "run": "PENDING_EXACT_HEAD",
+    "offline": "NOT_VERIFIED",
+    "compile_hold": "NOT_VERIFIED"
+  },
+  "holds": {
+    "main_merged": false,
+    "owner_source_permissions_not_expanded": true,
+    "publish": false,
+    "spend": false,
+    "engine": "NOT_RUN"
+  }
+}

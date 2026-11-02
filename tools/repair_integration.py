@@ -163,6 +163,42 @@ def verified_manual_git_receipts(request, pr, review, claim_state):
     return True
 
 
+def manual_controller_candidate(policy, lease, pr):
+    """Only an exact request registered on the trusted coordinator can opt a
+    controller/* branch into the existing, independently attested manual lane.
+
+    This is a classifier, NOT authorization: verified_manual_request must still
+    prove the immutable original claim, real diff, source/test/history scope,
+    current main, exact-head CI and separate REVIEWER.
+    """
+    settings = policy.get("integration", {}).get("manual_controller_reviews", {})
+    branch = pr.get("branch")
+    if settings.get("enabled") is not True or type(branch) is not str:
+        return False
+    prefix = settings.get("branch_prefix")
+    if type(prefix) is str and len(prefix) >= 12 and branch.startswith(prefix):
+        return True
+    if (settings.get("request_bound_controller_prefix") != "controller/" or
+            not branch.startswith("controller/")):
+        return False
+    suffix = branch[len("controller/"):]
+    if (not suffix or len(suffix) > 100 or suffix.endswith("/") or
+            ".." in suffix or "//" in suffix or
+            re.fullmatch(r"[a-z0-9][a-z0-9._/-]*", suffix) is None):
+        return False
+    number = pr.get("number")
+    requests = lease.get("manual_review_requests")
+    if type(number) is not int or number < 1 or type(requests) is not list:
+        return False
+    return any(
+        type(request) is dict and request.get("number") == number and
+        request.get("branch") == branch and
+        request.get("repository") == policy.get("repository") and
+        request.get("kind") == "CONTROLLER"
+        for request in requests
+    )
+
+
 def verified_manual_request(policy, lease, pr, review, main):
     """Fail-closed, immutable-head manual CONTROLLER review gate.
 
@@ -176,8 +212,7 @@ def verified_manual_request(policy, lease, pr, review, main):
     branch = pr.get("branch")
     if settings.get("enabled") is not True or not isinstance(branch, str):
         return None, "SKIP_UNRELATED"
-    prefix = settings.get("branch_prefix")
-    if not isinstance(prefix, str) or len(prefix) < 12 or not branch.startswith(prefix):
+    if not manual_controller_candidate(policy, lease, pr):
         return None, "SKIP_UNRELATED"
     if not isinstance(pr.get("number"), int) or type(pr.get("number")) is bool:
         return None, "WAIT_MANUAL_REQUEST"
@@ -350,11 +385,7 @@ def decide(policy, main, pr, review, lease, now):
     if pr.get("repository") != policy["repository"] or pr.get("state") != "open":
         return result("SKIP_UNRELATED")
     worker = is_worker_branch(branch, policy)
-    manual_config = integration.get("manual_controller_reviews", {})
-    manual_prefix = manual_config.get("branch_prefix")
-    manual = (manual_config.get("enabled") is True and
-              isinstance(manual_prefix, str) and len(manual_prefix) >= 12 and
-              isinstance(branch, str) and branch.startswith(manual_prefix))
+    manual = manual_controller_candidate(policy, lease, pr)
     if not (worker or meta or manual):
         return result("SKIP_UNRELATED")
     if manual:
