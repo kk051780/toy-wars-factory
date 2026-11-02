@@ -67,7 +67,7 @@ class HandoffPrivilegeSplit(unittest.TestCase):
         self.assertEqual(SRC.count("ref: $" + "{{ github.sha }}"), 2)
         self.assertIn("if: github.ref == 'refs/heads/main'", SRC)
         self.assertIn('test "$(git rev-parse HEAD)" = "$TWF_SOURCE_COMMIT"', SRC)
-        self.assertIn('test "$remote_sha" = "$TWF_SOURCE_COMMIT"', SRC)
+        self.assertIn('git ls-remote origin refs/heads/main | cut -f1', SRC)
 
     def test_token_only_present_in_final_step(self):
         verify, writer = sections()
@@ -78,9 +78,15 @@ class HandoffPrivilegeSplit(unittest.TestCase):
 
     def test_exact_two_status_files_only(self):
         writer = sections()[1]
-        self.assertIn("git add -- status/CHAT_HANDOFF.md status/LATEST_STATE.json", writer)
-        self.assertIn("git commit -m 'chore(handoff): sync cross-chat state' -- status/CHAT_HANDOFF.md status/LATEST_STATE.json", writer)
+        self.assertIn("git hash-object -w -- status/CHAT_HANDOFF.md", writer)
+        self.assertIn("git hash-object -w -- status/LATEST_STATE.json", writer)
+        self.assertIn("git mktree", writer)
+        self.assertIn("git commit-tree", writer)
+        self.assertIn("snapshot_ref=\'refs/heads/twf-handoff-snapshots\'", writer)
+        self.assertIn("git push origin \"$snapshot_commit:$snapshot_ref\"", writer)
         self.assertNotIn("git push ", sections()[0])
+        self.assertNotIn("git push origin HEAD:refs/heads/main", writer)
+        self.assertNotIn("git push --force", writer)
 
     def test_writer_only_downloads_passive_artifact(self):
         writer = sections()[1]
