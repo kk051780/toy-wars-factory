@@ -1304,17 +1304,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 410,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "65d28c2f-fec5-4a87-8a59-67932c30a4a8",
-    "task_id": null,
-    "epoch": 410,
-    "acquired_at": "2026-11-02T07:12:51.919Z",
-    "expires_at": "2026-11-02T07:30:51.919Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/issue59-pr179-neutral-fixture-proof-20261102",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2959,26 +2949,27 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "5bd7dd44-e07c-4c78-9d20-b8781d105e91",
-    "epoch": 409,
-    "released_at": "2026-11-02T06:56:50.542Z",
+    "owner_id": "65d28c2f-fec5-4a87-8a59-67932c30a4a8",
+    "epoch": 410,
+    "released_at": "2026-11-02T07:15:23.121Z",
     "release_receipt": {
-      "reason": "READ_ONLY_PR179_ELEVEN_FIXTURE_FILES_VERIFIED_NO_SOURCE_WRITE",
-      "claim_commit": "dc031bed1950344f42f80199b59854369956b1eb",
-      "work_branch": "ops/twf-manual-review-lane",
-      "pr": 60,
-      "head": "9eac94bfe3ac388812cfd4e681606a433f3a4d8c",
+      "reason": "ISSUE59_PR179_NEUTRAL_EXISTING_FIXTURE_EXACT_BLOB_PROVENANCE_EVIDENCE_ONLY",
+      "claim_commit": "cb335e571f54e9b0ecbbef9d5798a8bb0ee1b8fb",
+      "pr60": 60,
       "pr179": 179,
+      "issue": 59,
+      "issue_comment_id": 6571366284,
       "fixture_files_verified": 11,
-      "all_only_one_neutral_RoundOutcome_change": true,
-      "attempted_test_write": "BLOCKED_BEFORE_MUTATION",
-      "ci_not_run": true,
-      "source_not_modified": true,
-      "main_not_modified": true,
-      "pr_not_merged": true,
-      "provider_security_controls_unchanged": true,
-      "spending": false,
-      "publishing": false
+      "whole_file_exact_one_line_neutral_addition": true,
+      "source_files_modified": false,
+      "existing_tests_modified": false,
+      "main_modified": false,
+      "merge": false,
+      "git_native_approval": false,
+      "provider_protection_unverified": true,
+      "safety_denied_code_retried": false,
+      "paid_inference": false,
+      "roblox_publish": false
     }
   },
   "last_completed_integration": {
