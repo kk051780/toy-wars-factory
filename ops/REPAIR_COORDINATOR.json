@@ -1304,17 +1304,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 406,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "88e0f72c-a31d-429b-884d-c47b84e5c20d",
-    "task_id": null,
-    "epoch": 406,
-    "acquired_at": "2026-11-02T06:23:35.459Z",
-    "expires_at": "2026-11-02T06:53:35.459Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "ops/twf-manual-review-lane",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2959,23 +2949,30 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "a2c6d66b-0f47-4d82-bbbe-5cc7429dd9a1",
-    "epoch": 405,
-    "released_at": "2026-11-02T06:19:57.073Z",
+    "owner_id": "88e0f72c-a31d-429b-884d-c47b84e5c20d",
+    "epoch": 406,
+    "released_at": "2026-11-02T06:31:02.160Z",
     "release_receipt": {
-      "reason": "PR179_INDEPENDENT_READ_ONLY_HANDOFF_COMPLETED",
-      "claim_commit": "de44786f1d72d9d24d09a450825c61e95ae45a5e",
-      "pr_number": 179,
-      "pr_head": "9d327e37476fe9f0517f6bd9e670760054025e09",
-      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-      "reviewer_run": "25e7f69c-3240-8321-b4fc-cef5fe86b397",
-      "review_status": "READ_ONLY_ADVISORY",
-      "pr_comment_id": 6570373496,
-      "main_unchanged": true,
-      "approved": false,
+      "reason": "PR60_REVIEW_PAGE_STRICT_RED_GREEN_HOSTED_COMPLETE_DRAFT_REMAINING",
+      "claim_commit": "109be1ab03dea78bf8c6e4c38ed5a595fa5689da",
+      "pr": 60,
+      "pr_head": "7a4a43532e0d71e37a6dd2a9bb496217ad71c8fa",
+      "red_run": 41365367463,
+      "green_run": 41400174726,
+      "offline": "success",
+      "compile_hold": "success",
+      "python_tests": 979,
+      "adversarial_tests": 19,
+      "changed_source_blob": "599b15800d4f383f4bebe1164a58981eccb5d73e",
+      "history_id": "C96318",
+      "comment_id": 6570699346,
+      "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "main_modified": false,
       "merged": false,
-      "publish": false,
-      "paid_work": false
+      "approved": false,
+      "privileged_workflow_ran": false,
+      "spending": false,
+      "published": false
     }
   },
   "last_completed_integration": {
