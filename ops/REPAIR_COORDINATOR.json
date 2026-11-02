@@ -1304,17 +1304,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 424,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "d69c9135-feb0-4dd9-9835-b384c0940c25",
-    "task_id": null,
-    "epoch": 424,
-    "acquired_at": "2026-11-02T22:20:10.642Z",
-    "expires_at": "2026-11-02T22:50:10.642Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": null,
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2959,30 +2949,9 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "89be2418-58d0-4ad9-933a-2c847e429019",
-    "epoch": 423,
-    "released_at": "2026-11-02T20:59:03.140Z",
-    "release_receipt": {
-      "reason": "HOST_SAFETY_REJECTED_UNMERGED_SNAPSHOT_CONSUMER_SOURCE_UPLOAD",
-      "claim_commit": "adf2a19139f09fc34346587386fa581075037544",
-      "pr": 181,
-      "unchanged_head": "b2664862d7c027ff5508e8b6ca3a2d60dbca4d0c",
-      "prepared_library": "/ToyWars/TOY_WARS_PR181_snapshot_consumer_20tests_20261103.zip",
-      "zip_sha256": "a00e8e0d9b97b994f43aed9abdfd13a25c11ec4897f42ef0f8e495d248f56d1b",
-      "local_tests_passed": 20,
-      "host_error": "このツールの呼び出しは、OpenAI の安全性チェックによってブロックされました。送信内容を再度確認してください。",
-      "blocked_action": "GitHub create_blob for read-only snapshot consumer and tests (functions call never completed)",
-      "github_provider_403_observed": false,
-      "code_modified": false,
-      "main_modified": false,
-      "pr_modified": false,
-      "privileged_workflow_invoked": false,
-      "native_review": false,
-      "merged": false,
-      "spend": false,
-      "roblox_publish": false,
-      "next": "P0 Issue57 host safety denial diagnosis; do not evade rejected upload"
-    }
+    "owner_id": "d69c9135-feb0-4dd9-9835-b384c0940c25",
+    "epoch": 424,
+    "released_at": "2026-11-02T22:20:59.315Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
