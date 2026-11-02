@@ -82,5 +82,11 @@ class WorkflowIsolationTests(unittest.TestCase):
         self.assertNotIn('GH_TOKEN', verify_section)
         self.assertIn('python3 tools/repair_control.py verify-pr', verify_section)
 
+
+    def test_trusted_checkout_commit_is_immutable(self):
+        # The pull_request_target workflow carries a GitHub token in one step.
+        self.assertIn('uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683', TRUSTED)
+        self.assertNotIn('uses: actions/checkout@v4', TRUSTED)
+
 if __name__ == '__main__':
     unittest.main()
