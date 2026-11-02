@@ -175,5 +175,37 @@ class WriterGitBoundary(unittest.TestCase):
 
 
 
+    def test_future_snapshot_does_not_write_unprotected_main(self):
+        self.change_status()
+        result = self.run_writer()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.remote_sha(), self.source_sha,
+                         "Unprotected main must remain unchanged by handoff job")
+
+    def test_future_snapshot_branch_contains_exact_two_passive_files(self):
+        self.change_status()
+        result = self.run_writer()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        snapshot_sha = command(
+            "git", "--git-dir", str(self.remote), "rev-parse",
+            "refs/heads/twf-handoff-snapshots")
+        paths = command(
+            "git", "--git-dir", str(self.remote), "ls-tree", "-r",
+            "--name-only", snapshot_sha).splitlines()
+        self.assertEqual(paths, ["status/CHAT_HANDOFF.md",
+                                 "status/LATEST_STATE.json"])
+
+    def test_future_snapshot_does_not_embed_executable_source_tree(self):
+        self.change_status()
+        result = self.run_writer()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        snapshot_sha = command(
+            "git", "--git-dir", str(self.remote), "rev-parse",
+            "refs/heads/twf-handoff-snapshots")
+        tree = command("git", "--git-dir", str(self.remote),
+                       "ls-tree", "--name-only", snapshot_sha)
+        self.assertEqual(tree, "status")
+
+
 if __name__ == "__main__":
     unittest.main()
