@@ -163,4 +163,50 @@ class DispatchAttributionTests(unittest.TestCase):
         self.assertEqual(mod.audit(t, r)["state"], "SCHEDULED_BEFORE_DISPATCH")
 
 
+    def test_epoch412_reports_both_conditions_not_only_first(self):
+        t, r = values()
+        flags = mod.audit(t, r)["chronology_signals"]
+        self.assertIs(flags["scheduled_before_acquire"], True)
+        self.assertIs(flags["started_at_or_after_expiry"], True)
+        self.assertIs(flags["started_before_acquire"], False)
+        self.assertIs(flags["scheduled_time_after_start"], False)
+
+    def test_epoch413_in_window_has_no_temporal_contradiction(self):
+        t, r = values()
+        t.update(epoch=413, owner_id="f5e13e26-b090-45d8-9021-6b6cb845b752",
+                 acquired_at="2026-11-02T11:23:37.378Z", expires_at="2026-11-02T11:25:37.378Z")
+        r.update(id="234b995f-4c0c-8323-b0be-61ccc5700ef4",
+                 scheduled_for="2026-11-02T11:24:20.222809Z",
+                 started_at="2026-11-02T11:24:48.570149Z",
+                 completed_at="2026-11-02T11:25:00.132494Z")
+        self.assertEqual(mod.audit(t, r)["chronology_signals"],
+                         {"scheduled_before_acquire": False,
+                          "started_before_acquire": False,
+                          "started_at_or_after_expiry": False,
+                          "scheduled_time_after_start": False})
+
+    def test_expiry_boundary_flag_is_independent_of_schedule_flag(self):
+        t, r = values()
+        r.update(scheduled_for=stamp(-1), started_at=stamp(120), completed_at=stamp(121))
+        flags = mod.audit(t, r)["chronology_signals"]
+        self.assertIs(flags["scheduled_before_acquire"], True)
+        self.assertIs(flags["started_at_or_after_expiry"], True)
+
+    def test_early_run_start_flag_is_independent(self):
+        t, r = values()
+        r.update(scheduled_for=stamp(-20), started_at=stamp(-10), completed_at=stamp(1))
+        flags = mod.audit(t, r)["chronology_signals"]
+        self.assertIs(flags["scheduled_before_acquire"], True)
+        self.assertIs(flags["started_before_acquire"], True)
+        self.assertIs(flags["started_at_or_after_expiry"], False)
+
+    def test_scheduled_time_after_start_is_informational_only(self):
+        t, r = values()
+        r.update(scheduled_for=stamp(70), started_at=stamp(20), completed_at=stamp(30))
+        result = mod.audit(t, r)
+        self.assertIs(result["chronology_signals"]["scheduled_time_after_start"], True)
+        self.denied(result)
+
+
+
 if __name__ == "__main__": unittest.main()
