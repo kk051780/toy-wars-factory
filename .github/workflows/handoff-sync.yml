@@ -95,6 +95,10 @@ jobs:
           grep -Eq '^[0-9a-f]{64}  CHAT_HANDOFF\.md$' .verified-handoff/HANDOFF_SHA256SUMS.txt
           grep -Eq '^[0-9a-f]{64}  LATEST_STATE\.json$' .verified-handoff/HANDOFF_SHA256SUMS.txt
           (cd .verified-handoff && sha256sum --check --status HANDOFF_SHA256SUMS.txt)
+          # Matching hashes are integrity, not schema or source-policy proof.
+          # Use the runner-provided jq parser, never Python/repository code with a write token.
+          # -s rejects multiple concatenated JSON documents, not just invalid syntax.
+          jq -s -e 'length == 1 and (.[0] | type == "object" and .schema == 2 and .canonical_repo == "kk051780/toy-wars-factory" and .release_decision == "HOLD_ENGINE_UNVERIFIED" and (.source_revision | type == "string" and test("^[0-9a-f]{40}$")))' .verified-handoff/LATEST_STATE.json >/dev/null
           install -m 0644 .verified-handoff/CHAT_HANDOFF.md status/CHAT_HANDOFF.md
           install -m 0644 .verified-handoff/LATEST_STATE.json status/LATEST_STATE.json
       - name: Commit exact allowlisted status only, single no-retry push
