@@ -1,0 +1,28 @@
+{
+  "id": "C09041",
+  "date": "2026-11-02",
+  "kind": "PR163_PRIVILEGED_WRITE_BODY_FENCE_RED",
+  "pr": 163,
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "original_pr_head": "d3b5d07405325df959583b752a84874f4b7bbfee",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "e844a8c894d39b70fd6ebefc39e097a56479da69",
+    "owner_run_id": "2fc73166-aceb-47ab-bb29-e355c3a3bda4",
+    "epoch": 396
+  },
+  "issue": "Pre-write _PerWriteLeaseFence validates method/path but not body. Current hard-coded caller safe, independent body fence missing.",
+  "new_files": [
+    "tests/test_system_actions_write_probe_body_fence.py",
+    "history/C09041_pr163_write_body_red.json"
+  ],
+  "expected": "Actual hosted RED on unsafe main ref, payload content, PR draft false. Existing suite remains unchanged.",
+  "qa": "PENDING",
+  "authority": {
+    "approve": false,
+    "merge": false,
+    "dispatch": false,
+    "publish": false,
+    "spend": false
+  }
+}
