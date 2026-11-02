@@ -65,6 +65,14 @@ class WriterGitBoundary(unittest.TestCase):
     def remote_sha(self):
         return command("git", "--git-dir", str(self.remote), "rev-parse", "refs/heads/main")
 
+    def snapshot_sha(self):
+        return command("git", "--git-dir", str(self.remote), "rev-parse",
+                       "refs/heads/twf-handoff-snapshots")
+
+    def snapshot_paths(self):
+        return command("git", "--git-dir", str(self.remote), "ls-tree", "-r",
+                       "--name-only", self.snapshot_sha()).splitlines()
+
     def run_writer(self):
         env = os.environ.copy()
         env.update({"PATH": str(self.fake_bin) + os.pathsep + os.environ.get("PATH", ""),
@@ -87,17 +95,22 @@ class WriterGitBoundary(unittest.TestCase):
         self.change_status()
         result = self.run_writer()
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertNotEqual(self.remote_sha(), self.source_sha)
-        paths = self.git("diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").splitlines()
-        self.assertEqual(paths, ["status/CHAT_HANDOFF.md", "status/LATEST_STATE.json"])
-        self.assertEqual(self.remote_sha(), self.git("rev-parse", "HEAD"))
-        self.assertEqual(self.git("show", "HEAD:status/CHAT_HANDOFF.md"), "new handoff")
+        self.assertEqual(self.remote_sha(), self.source_sha)
+        self.assertEqual(self.git("rev-parse", "HEAD"), self.source_sha)
+        self.assertEqual(self.snapshot_paths(), ["status/CHAT_HANDOFF.md", "status/LATEST_STATE.json"])
+        self.assertEqual(command("git", "--git-dir", str(self.remote), "show",
+                                 self.snapshot_sha() + ":status/CHAT_HANDOFF.md"), "new handoff")
 
     def test_unchanged_status_skips_commit_and_push(self):
+        self.change_status()
+        first = self.run_writer()
+        self.assertEqual(first.returncode, 0, first.stderr)
+        snapshot = self.snapshot_sha()
         (self.work / ".verified-handoff").mkdir()
         (self.work / ".verified-handoff/untracked").write_text("ignored untracked artifact\n")
-        result = self.run_writer()
-        self.assertEqual(result.returncode, 0, result.stderr)
+        second = self.run_writer()
+        self.assertEqual(second.returncode, 0, second.stderr)
+        self.assertEqual(self.snapshot_sha(), snapshot)
         self.assertEqual(self.git("rev-parse", "HEAD"), self.source_sha)
         self.assertEqual(self.remote_sha(), self.source_sha)
         self.assertIn("NO_CHANGE", self.summary.read_text())
@@ -133,7 +146,7 @@ class WriterGitBoundary(unittest.TestCase):
         result = self.run_writer()
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual(self.remote_sha(), moved)
-        self.assertNotEqual(self.git("rev-parse", "HEAD"), self.source_sha)
+        self.assertEqual(self.git("rev-parse", "HEAD"), self.source_sha)
         self.assertNotIn("SYNTHETIC_NO_REAL_TOKEN", result.stdout + result.stderr)
 
 
@@ -205,6 +218,52 @@ class WriterGitBoundary(unittest.TestCase):
         tree = command("git", "--git-dir", str(self.remote),
                        "ls-tree", "--name-only", snapshot_sha)
         self.assertEqual(tree, "status")
+
+
+    def test_snapshot_branch_second_update_is_fast_forward(self):
+        self.change_status()
+        first = self.run_writer()
+        self.assertEqual(first.returncode, 0, first.stderr)
+        old = self.snapshot_sha()
+        (self.work / "status/CHAT_HANDOFF.md").write_text("second snapshot\n")
+        second = self.run_writer()
+        self.assertEqual(second.returncode, 0, second.stderr)
+        new = self.snapshot_sha()
+        self.assertNotEqual(old, new)
+        parent = command("git", "--git-dir", str(self.remote), "rev-parse", new + "^")
+        self.assertEqual(parent, old)
+        self.assertEqual(self.snapshot_paths(), ["status/CHAT_HANDOFF.md", "status/LATEST_STATE.json"])
+        self.assertEqual(self.remote_sha(), self.source_sha)
+
+    def test_existing_foreign_snapshot_tree_is_rejected(self):
+        self.change_status()
+        first = self.run_writer()
+        self.assertEqual(first.returncode, 0, first.stderr)
+        other = self.root / "foreign"
+        command("git", "clone", "-q", "-b", "twf-handoff-snapshots",
+                str(self.remote), str(other))
+        command("git", "config", "user.name", "Foreign fixture", cwd=other)
+        command("git", "config", "user.email", "foreign@example.invalid", cwd=other)
+        (other / "malicious-code.py").write_text("raise RuntimeError('must not execute')\n")
+        command("git", "add", "malicious-code.py", cwd=other)
+        command("git", "commit", "-qm", "foreign branch has executable source", cwd=other)
+        command("git", "push", "-q", "origin", "HEAD:refs/heads/twf-handoff-snapshots", cwd=other)
+        foreign = self.snapshot_sha()
+        (self.work / "status/CHAT_HANDOFF.md").write_text("next snapshot\n")
+        result = self.run_writer()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(self.snapshot_sha(), foreign)
+        self.assertEqual(self.remote_sha(), self.source_sha)
+
+    def test_snapshot_root_has_no_inherited_main_history(self):
+        self.change_status()
+        result = self.run_writer()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        parents = command("git", "--git-dir", str(self.remote),
+                          "rev-list", "--parents", "-n", "1", self.snapshot_sha()).split()
+        self.assertEqual(len(parents), 1, "initial snapshot must be an orphan commit")
+        self.assertEqual(self.remote_sha(), self.source_sha)
+
 
 
 if __name__ == "__main__":
