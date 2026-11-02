@@ -1,0 +1,167 @@
+{
+  "id": "C00072",
+  "date": "2026-10-28",
+  "kind": "SYSTEM_SCOPED_READONLY_PROVIDER_TRANSPORT",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "bd1f21de-2058-8332-9263-71e91bacf82d",
+  "base_main": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+  "observed_at_utc": "2026-10-28T01:35:46.778545+00:00",
+  "issue": 71,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "a0714a68a05425a196b20c91107e37a672ff8e66",
+    "owner_run_id": "bd1f21de-2058-8332-9263-71e91bacf82d",
+    "epoch": 160
+  },
+  "preconditions": {
+    "issue72": "CLOSED; PR79 legacy completed-only guard still present at real main; not reimplemented",
+    "pr95": {
+      "head": "a26165b192770343897e375815428f8a36c13e2f",
+      "merge": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+      "qa": 40594943961,
+      "handoff": 40594944031,
+      "independent_reviewer_run": "f48775fc-f68c-8331-b56e-8ef89ec19c1f"
+    },
+    "main_qa_head": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+    "main_qa": 40594943961,
+    "main_jobs": [
+      {
+        "id": 122508366768,
+        "name": "compile_hold",
+        "head": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+        "conclusion": "success"
+      },
+      {
+        "id": 122508366995,
+        "name": "offline",
+        "head": "d7d4bb8a2bd2b25bb6298946b56ce56b0944eaa0",
+        "conclusion": "success"
+      }
+    ],
+    "handoff": 40594944031,
+    "direct_compare_status_only": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "prior_holder": "Waited for REVIEWER159; no takeover. Explicit release11e80861 then normal META160 claim",
+    "open_meta_pr_count": 0,
+    "pending_history_ids": "PR94 C00065 and C00067..C00071; new C00072 unused"
+  },
+  "problem": "The accepted service observer filters prose in its OUTPUT, but existing callback/stdin handoff still supplies full prompt/result/unknown service fields to collector code. Reusable argument/resource scoping and metadata reduction were outside the versioned transport path.",
+  "implementation": "New A-only opt-in read-only transport. Bound selected repo, exact PR/run/attempt and immutable main/coordinator object graph; enable only registered PEEK IDs after pinned manifest/policy/state/ref checks. Validate raw lifecycle with accepted snapshot before forwarding only allowlisted metadata. Preserve GET payloads and existing collector gates; reject unknown/foreign resources/errors/duplicate JSON, poison failed sessions, bound calls/bytes/time, never retry or grant execution. Both accepted service and joined-incident paths exercised; no accepted entry point silently changed.",
+  "tests": {
+    "new_file": "tests/test_system_provider_transport.py",
+    "new_python_tests": 31,
+    "new_result": "PASS",
+    "synthetic_game_manifests": 2,
+    "synthetic_label": "SYNTHETIC_TEST_ONLY",
+    "actual_old_boundary": "Real accepted snapshot correctly redacts its output, while its supplied raw callback input contains synthetic prompt/result canaries. New transport projection preserves identical validated observation while removing those inputs before the collector.",
+    "negative_control": {
+      "isolated_mutant": "Return original raw PeekResponse instead of projected metadata",
+      "direct_tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "disk_unchanged": true,
+      "additional_note": "An initial 3-test mutant run also triggered accepted PEEK_UNAVAILABLE when a callback assertion failed; final two direct controls give clean assertion failures."
+    },
+    "local_full": {
+      "run": 454,
+      "passed": 453,
+      "failures": 1,
+      "errors": 0,
+      "cause": "Unchanged test_handoff_checkpoint ancestry assertion at merge_history_reconcile.py:91; snapshot lacks real Git ancestry. Original historical checker object e8567... independently hash-verified, no test skip/weakening."
+    },
+    "trusted_scope": "PASS_PREFLIGHT_USING_CURRENT_TRUSTED_MAIN_CHECKER; final actual Git diff/claim gate required",
+    "github_ci": "PENDING_NEW_HEAD"
+  },
+  "verification": {
+    "source_blob": "d6bd8b106101a34c5eeb35c92a583bd8ccd8235f",
+    "live": {
+      "status": "LIVE_PROVIDER_VERIFIED",
+      "scope": "Only the actual connected execution through this exact source. Output and callback JSON NOT_VERIFIED; no portable receipt.",
+      "main": "55d9e0da77f0a9237cf2776432cf22f62b551283",
+      "coordinator": "a0714a68a05425a196b20c91107e37a672ff8e66",
+      "coordinator_blob": "9f7f644f5a9defb4909b73bd7b7b03665fe743c0",
+      "epoch": 160,
+      "pr": 94,
+      "pr_head": "09abf3753bdfc9753a45004048b95a17afb311f4",
+      "ci_run": 40612891637,
+      "started": "2026-10-28T01:34:00.807325+00:00",
+      "finished": "2026-10-28T01:35:46.778545+00:00",
+      "get_calls": 37,
+      "peek_calls": 9,
+      "received_bytes": 4311083,
+      "roles_bound_to_pinned_blobs": true,
+      "projection": "All9 actual PEEK responses projected before accepted collectors; safe lifecycle/result metadata only",
+      "triage": {
+        "claim_verified": false,
+        "reason": "JOIN_EXISTING_WRITER",
+        "safe_to_next_schedule": false,
+        "schema": 1,
+        "start_now_allowed": false,
+        "state": "ACTIVE_LEASE",
+        "takeover_allowed": false,
+        "write_authorized": false
+      },
+      "pr_author_service_binding": "HISTORICAL_PR_AUTHOR_NOT_CURRENT_SERVICE"
+    },
+    "earlier_readonly_observation": {
+      "scope": "Accepted PR95 code while waiting for REVIEWER159;3 GET calls rejected, no success claim. Subsequent direct ref read confirmed coordinator had moved from active ce760aa9 to explicit release11e80861; generic CLI did not expose internal rejection code.",
+      "writes": 0
+    },
+    "original_operation_error": "UNAVAILABLE; no denial induced; service prose is not an original host operation receipt"
+  },
+  "changed_files": [
+    "tools/system_provider_transport.py",
+    "tests/test_system_provider_transport.py",
+    "docs/research/2026-10-28_provider_transport.md",
+    "history/C00072_scoped_provider_transport.json"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 781,
+    "lua_bytes": 31291
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "protected_controls": "All201 accepted main blobs preserved. No modifications to accepted source/tests/history/config/checker/workflow/AGENTS or credentials, SDK, billing, public release or tasks. New Python control-plane A files only; no game-module/installer expansion, PR51/55 bypass or self merge.",
+  "limits": [
+    "Opt-in new route only; older CLIs remain unchanged and do not automatically gain the input filter",
+    "In-process adapter, not sandbox, credential proxy, original-operation receipt or global capability enforcement",
+    "No long-term provider deployment, real dispatch, commercial completeness or Issue71/P2 close",
+    "Original host write-error cause, Roblox Studio, real 2-client/mobile/visual/fun evidence absent"
+  ],
+  "primary_sources": [
+    {
+      "url": "https://github.com/github/github-mcp-server/blob/main/docs/server-configuration.md",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-28T01:23:00Z",
+      "finding": "Opened developer's current configuration guide. Read-only tool selection and content filtering have different boundaries. Used as design evidence only; did not change MCP, GitHub or credential settings."
+    },
+    {
+      "url": "https://modelcontextprotocol.io/docs/draft/tutorials/security/security_best_practices",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-28T01:24:00Z",
+      "finding": "Opened draft primary guidance on token passthrough and scope minimization. New module is only in-process input reduction, not token isolation or enforcement against malicious in-process code."
+    },
+    {
+      "url": "https://arxiv.org/html/2610.22301v1",
+      "published_at": "2026-10-15",
+      "updated_at": null,
+      "checked_at": "2026-10-28T01:24:00Z",
+      "finding": "Read primary paper: declared tool contracts alone do not confine host filesystem access. This motivates precise allowlists and explicit sandbox limits, not a claim of a vulnerability in this repo."
+    },
+    {
+      "url": "https://create.roblox.com/docs/cloud-services/data-stores/best-practices",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-28T01:23:00Z",
+      "finding": "Opened official ordered retries, unknown write outcomes and periodic save guidance. Keep PR94 transient final-save/read failure as WORKER repair, with engine evidence separate."
+    }
+  ],
+  "research_recency": "Fresh primary searches did not verify a newly dated Oct28 case; dated primary research opened is Oct15. Documentation publish/update dates unavailable, checked today.",
+  "next": "Registered independent REVIEWER checks new exact head/base/C72 epoch160 claim, both CI jobs and live limits, then separate merge and actual main QA/handoff. WORKER repairs PR94 read-failure/unknown-schema unsavable play and transient final-save retry; do not treat older review text as new head's verdict."
+}

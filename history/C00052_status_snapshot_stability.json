@@ -1,0 +1,88 @@
+{
+  "id": "C00052",
+  "date": "2026-10-27",
+  "kind": "AUTONOMOUS_STABLE_REPLICATED_STATUS_SNAPSHOT_FIX",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "14596436-5228-8333-999d-f3d26d76b4b9",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-14596436-5228-8333-999d-f3d26d76b4b9",
+    "base": "main",
+    "open_prs": [],
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "a5eb038b37cd596dfa0a23e9839002b496e29231",
+    "owner_run_id": "14596436-5228-8333-999d-f3d26d76b4b9",
+    "epoch": 107
+  },
+  "main_base": "14914cda41d3a41222744e3ff0b6e0e50019b654",
+  "source_commit": "1f230c392fe83dcf29e51182a86c9ff7bcaf49ef",
+  "final_pr_head": "PENDING_HISTORY_COMMIT",
+  "defect": {
+    "id": "status_refresh_reassigns_zero_then_counts_every_heartbeat",
+    "cause": "Canonical refreshStatus writes SelectedToy unchanged and sets Allies/Enemies to zero before incrementing for each living unit on every simulation step, including idle steps. This produces redundant replicated Value assignments and transient intermediate counts even when the final counts have not changed.",
+    "reproduction": "Execute the complete canonical main server in tests/roblox_server_harness.lua, intercept only the actual IntValue/StringValue property assignments during a Heartbeat. On an idle step old source performs three redundant status writes; with one ally and one enemy it publishes intermediate zeros before final ones. This is deterministic Lua-level assignment evidence, not a measured Roblox network/flicker claim.",
+    "scope": "Replicated status publication; no change to combat, economy, spawn, wave or UI input."
+  },
+  "fix": "Compute selected/ally/enemy snapshot locally and write each status Value only when its final value differs. Preserve exact selected toy, alive-only counting and server-authoritative mechanics.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/status_snapshot_stability_spec.lua",
+    "history/C00052_status_snapshot_stability.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 19100,
+      "after_bytes": 19404,
+      "delta_bytes": 304
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 763,
+    "lua_bytes": 30428
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/status_snapshot_stability_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 4886,
+      "delta_bytes": 4886
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "No PON/GUARDON/TANKURU stats, HP, price, damage, movement, selection rules or spawn cadence change; only published status count/selection assignments are de-duplicated.",
+  "tests": {
+    "canonical_server": "tests/auto/status_snapshot_stability_spec.lua",
+    "new_cases": 4,
+    "negative_control": "Pinned .qa/server-before/src/ToyWarsServer.server.lua when present; asserts redundant idle assignments in the old whole server.",
+    "accepted_server_cases": "UNCHANGED",
+    "accepted_hud_cases": "UNCHANGED",
+    "local": "NOT_RUN_LUA_5_4_RUNTIME_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "14914cda41d3a41222744e3ff0b6e0e50019b654",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40488765003",
+    "main_qa_note": "offline+compile_hold succeeded on 23aa3649; current base 14914cda is generated status-only descendant.",
+    "claim_commit": "a5eb038b37cd596dfa0a23e9839002b496e29231",
+    "code_commit": "1f230c392fe83dcf29e51182a86c9ff7bcaf49ef",
+    "pr": "PENDING_DRAFT_PR",
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "next_action": "Create a draft PR, verify its exact-head offline and compile_hold jobs, repair only on a new valid WORKER claim if needed, and leave main integration to separate registered REVIEWER.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}

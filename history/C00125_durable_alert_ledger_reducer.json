@@ -1,0 +1,113 @@
+{
+  "id": "C00125",
+  "date": "2026-10-29",
+  "kind": "SYSTEM_PURE_DURABLE_ALERT_LEDGER_REDUCER",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "dc2b1012-5a84-8322-bd75-263b45cc0f82",
+  "base_main": "fa89e46eca61b7f84acfae10c99d8127900de83a",
+  "observed_at_utc": "2026-10-29T08:04:14Z",
+  "issue": 114,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "087d53d7cb775dc227b170936389b9066914ed53",
+    "owner_run_id": "dc2b1012-5a84-8322-bd75-263b45cc0f82",
+    "epoch": 234
+  },
+  "problem": "Accepted reconcile provides provisional in-memory dedup, but no validated, fenced ledger proposal exists. Replayed observations must not increment counters or trigger repeat storage.",
+  "implementation": "New pure tools.system_alert_ledger.reduce reuses accepted runtime validation/reconcile. Host independently supplies pinned prior ledger digest and current META/REVIEWER fence; schema/roles/task/run/epoch/time/identity integrity checks, canonical alert digest, exact-observation no-op, one record per incident, provisional disappearance/unassessable outage. No I/O, provider client, GitHub writer, sender or recovery function. All authority false.",
+  "adopted": "Minimal additive pure reducer with20 new regressions. Accepted source/tests/history unchanged.",
+  "not_adopted": [
+    {
+      "idea": "repeat healthy live observation",
+      "reason": "Previously done manually; this cycle prioritizes missing source implementation"
+    },
+    {
+      "idea": "persist synthetic incident or claim delivered/recovered",
+      "reason": "No actual anomaly, delivery receipt or distinct authenticated recovery evidence exists"
+    }
+  ],
+  "tests": {
+    "new": 20,
+    "focused": "20 PASS; two synthetic game manifests; actual accepted idle observer/frame and reconcile called",
+    "negative_control": {
+      "mutant_tests": 1,
+      "expected_failures": 1,
+      "errors": 0,
+      "accepted_source_modified": false
+    },
+    "local_full": "589 run; snapshot lacks real Git commit ancestry for accepted handoff regression. Initial missing historical blob supplied from verified existing object cache, no harness/test changes; exact full-history GitHub CI required.",
+    "github_ci": "PENDING_EXACT_NEW_HEAD"
+  },
+  "files": [
+    {
+      "path": "tools/system_alert_ledger.py",
+      "before_bytes": 0,
+      "bytes": 10580,
+      "lines": 172,
+      "sha256": "668ed4e8ccafc9149a441381789fe9f54ef0aa345fa77e92e2dac49b78d14bb5"
+    },
+    {
+      "path": "tests/test_system_alert_ledger.py",
+      "before_bytes": 0,
+      "bytes": 10408,
+      "lines": 186,
+      "sha256": "5233afe38ee933377ab8e2f139a060aff9a14c969cc85674675f01c827757c65"
+    }
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "main_health": {
+    "sha": "fa89e46eca61b7f84acfae10c99d8127900de83a",
+    "qa_head": "0ad9eec95b80ef1607e95db975b0bfa032d4f4e7",
+    "qa": 40813038305,
+    "jobs": "offline+compile_hold SUCCESS",
+    "handoff": 40813038300,
+    "status_only_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "preservation": {
+    "accepted_main_blobs": 269,
+    "accepted_python_tests": 569,
+    "protected_controls": "No workflow/config/checker/AGENTS/security/spend/publishing/accepted test/history modification"
+  },
+  "research": [
+    {
+      "url": "https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api",
+      "kind": "PRIMARY_GITHUB_OFFICIAL",
+      "published_at": "NOT_AVAILABLE",
+      "updated_at": "NOT_AVAILABLE",
+      "checked_at": "2026-10-29T08:04:14Z",
+      "finding": "Do not ignore errors, use bounded conditional/efficient requests. Documentation not authentication or provider receipt; no new webhook/task/credential introduced."
+    },
+    {
+      "url": "https://create.roblox.com/docs/production/experiments",
+      "kind": "PRIMARY_ROBLOX_OFFICIAL",
+      "published_at": "NOT_AVAILABLE",
+      "updated_at": "NOT_AVAILABLE",
+      "checked_at": "2026-10-29T08:04:14Z",
+      "finding": "Controlled baseline/variants, goals, planned duration and detectable effect guide hypotheses. No target game effect or player data measured; no live experiment started."
+    }
+  ],
+  "limits": [
+    "SYNTHETIC_TEST_ONLY; prior digest and supplied fence do not authenticate origin. Host must bind to immutable actual blob/live registered service/ref and reread lease before any external CAS.",
+    "No actual persistent alert write, notification/delivery/recovery or unforced schedule proof. Module only returns JSON proposal; all authority false, verification NOT_VERIFIED.",
+    "Accepted replay-window/capacity bounded; expired checkpoint requires independent archive/review, never silent dropping.",
+    "A12/A13 incomplete, points+0; official automation57%/game38% unchanged; engine/mobile/players NOT_RUN/NOT_MEASURED.",
+    "This real META execution is not proof of unforced scheduling; no run_now/task changes requested."
+  ],
+  "next": "Fresh exact-head offline+compile_hold and immutable claim/scope gates; separate registered REVIEWER only. No author merge; main QA/handoff after any independent adoption. Later legitimate source-to-storage/notification/recovery operational proof required.",
+  "holds": [
+    "GEMINI_SEVERE_HOLD",
+    "EXTERNAL_SPEND_HOLD",
+    "ROBLOX_PUBLISH_HOLD",
+    "NO_TASK_CHANGES"
+  ]
+}

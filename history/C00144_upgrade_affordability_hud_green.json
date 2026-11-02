@@ -1,0 +1,88 @@
+{
+  "id": "C00144",
+  "date": "2026-10-30",
+  "kind": "AUTONOMOUS_HUD_CANONICAL_UPGRADE_PRICE_FIX",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "a683a27f-a9b0-8325-aa17-39a8c864bc49",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-a683a27f-a9b0-8325-aa17-39a8c864bc49",
+    "base": "main",
+    "open_prs": [],
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "0985bedd23cccad033a6bb7807cb6716d9230039",
+    "owner_run_id": "a683a27f-a9b0-8325-aa17-39a8c864bc49",
+    "epoch": 264
+  },
+  "main_base": "03bdbb9fdb2bc8ee5fcd22c504b8d3428971c606",
+  "source_commit": "ea9cffc0f605e321619a8cdc220077e571d30f78",
+  "issue": 115,
+  "pr": 132,
+  "defect": {
+    "id": "hud_upgrade_price_missing_from_persistent_tip",
+    "reproduction": "Actual canonical HUD native Lua fixture: 40987103171 offline failure at test-only head b51899a53c7ba526c6d32c8a8348b8ea59d58b64; 3/3 new assertions failed because existing tip omits level1 65, level2 260 and max level. Accepted compile_hold success. Earlier 40987027998 test fixture had incorrect ScreenGui parent assertion, repaired in same PR before genuine RED.",
+    "cause": "HUD refresh subscribed to FactoryLevel.Changed but updated summary/subtitle only; the existing tip had a static text string.",
+    "user_impact_hypothesis": "Expose current cost in existing smaller tip so new players can plan the gold-platform upgrade without walking to it; player acquisition/retention effect UNKNOWN."
+  },
+  "fix": "Reuse existing HUD tip. Refresh uses authoritative B.upgradePrice(lv.Value) for current level, and displays FACTORY MAX LEVEL when price nil. No new UI element, button, remote, purchase, price or server change.",
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/upgrade_affordability_hud_spec.lua",
+    "history/C00143_upgrade_affordability_hud_red.json",
+    "history/C00144_upgrade_affordability_hud_green.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 6824,
+      "after_bytes": 7017,
+      "delta_bytes": 193
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1176,
+    "lua_bytes": 52089
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/upgrade_affordability_hud_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 4631,
+      "delta_bytes": 4631
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "PON/GUARDON/TANKURU selection buttons, prices and server balance unchanged; existing quick-start guide and waiting notice retained.",
+  "tests": {
+    "canonical_hud": "tests/auto/upgrade_affordability_hud_spec.lua",
+    "new_cases": 3,
+    "red_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40987103171",
+    "red_result": "3 new native Lua assertions FAIL with accepted canonical HUD; compile_hold SUCCESS",
+    "local": "NOT_RUN_LUA_RUNTIME_UNAVAILABLE",
+    "green_ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "03bdbb9fdb2bc8ee5fcd22c504b8d3428971c606",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40972299526",
+    "claim_commit": "0985bedd23cccad033a6bb7807cb6716d9230039",
+    "source_commit": "ea9cffc0f605e321619a8cdc220077e571d30f78",
+    "pr": 132,
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "next_action": "Verify exact final head offline and compile_hold; independent REVIEWER must approve/merge, then new main QA/handoff. Never claim Roblox engine or real player effects.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}

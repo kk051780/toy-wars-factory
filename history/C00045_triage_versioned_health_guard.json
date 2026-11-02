@@ -1,0 +1,191 @@
+{
+  "id": "C00045",
+  "date": "2026-10-27",
+  "observed_at_utc": "2026-10-26T22:20:54Z",
+  "kind": "SYSTEM_TRIAGE_VERSIONED_TERMINAL_HEALTH_MIGRATION",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "db136095-8594-8326-b3da-d23e9100a1bf",
+  "base_main": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "66be17632764dd420ff65b67df3fdacab5c14254",
+    "owner_run_id": "db136095-8594-8326-b3da-d23e9100a1bf",
+    "epoch": 85
+  },
+  "issue": 72,
+  "problem": "The accepted v1 classifier returns SAFE_TO_NEXT_SCHEDULE for failed/no_update runs with idle lock and exact-run/head green QA. Scope correctly forbids modifying accepted system modules not in the fixed allowlist.",
+  "decision": {
+    "selected": "B: add versioned module and actual repair_control triage invocation, with mandatory saved META diagnostic entry migration",
+    "rejected": [
+      "Reopen PR70",
+      "Modify protected legacy module, checker, config or workflow to authorize this PR",
+      "Claim all of Issue72 solved or hide unsafe legacy CLI"
+    ],
+    "limit": "Only the new connected entry is repaired; original standalone v1 CLI remains defective and unmodified. Independent trust-root option A is still required for the original CLI and general maintenance admission."
+  },
+  "implementation": "A tools/system_host_write_triage_v2.py delegates full evidence validation to accepted v1, then refuses only its healthy-idle outcome unless service status is completed. M allowed tools/repair_control.py routes real triage subcommand to v2 before argument parsing, preserves existing CLI contracts and propagates safe diagnostic exit code. Saved META prompt and SYSTEM_REVIEW document use this entry with no automatic v1 fallback.",
+  "reproduction": {
+    "source_blob": "8eb87b345e2e3727bcad96cac58ad7be5c354d5a",
+    "fixture": "Unmodified tests/test_system_host_write_triage.py::fixtures()",
+    "before": "failed and no_update both return SAFE_TO_NEXT_SCHEDULE",
+    "after": "Both return INDETERMINATE/SERVICE_NOT_SUCCESSFULLY_COMPLETED, false next-schedule/write/start/takeover flags",
+    "red_control": {
+      "body": "Versioned entry delegating to immutable current-main v1 classifier before new guard; no mock verdict",
+      "named_tests": 2,
+      "failures": 2,
+      "errors": 0
+    },
+    "legacy_cli_limit": "Direct python tools/system_host_write_triage.py still reproduces false-safe. No claim of original CLI repair."
+  },
+  "tests": {
+    "new_test_file": "tests/test_system_triage_v2.py",
+    "new_python_tests": 21,
+    "new_tests_result": "PASS",
+    "accepted_diagnostic_cases_replayed_through_v2": 37,
+    "accepted_diagnostic_replay_result": "PASS (original CLI-specific/mutation subtests retain their own original entry behavior)",
+    "original_tests_modified": false,
+    "local_full": {
+      "run": 296,
+      "passed": 295,
+      "failed": 1,
+      "errors": 0,
+      "reason": "Local connector-materialized files lack immutable Git ancestry. Unmodified HandoffCheckpointTests.test_failed_trial_and_unmerged_pr_origin_survive_generation fails authentic merge-ledger ancestry check at merge_history_reconcile.py:91. Do not skip or weaken. Full GitHub CI on actual history is required."
+    },
+    "initial_local_materialization": "An earlier incomplete-workflow checkout additionally produced 3 missing-file errors. Exact main workflow files were fetched; rerun removed all 3 errors.",
+    "policy_gate": "PASS_21_CHECKS",
+    "github_ci": "PENDING_NEW_EXACT_HEAD",
+    "scope": "PASS_VIOLATIONS_EMPTY_TRUSTED_MAIN_CHECKER"
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 758,
+    "lua_bytes": 30030
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "changed_files": [
+    "tools/repair_control.py",
+    "tools/system_host_write_triage_v2.py",
+    "tests/test_system_triage_v2.py",
+    "docs/SYSTEM_REVIEW.md",
+    "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
+    "history/C00045_triage_versioned_health_guard.json"
+  ],
+  "main_evidence": {
+    "head": "6aa3370f926362247eb1171fbe5a7066a3b86dce",
+    "qa_head": "904672656d1ac13c4f8ed10f91f14de7d74e47cb",
+    "qa": 40409905235,
+    "qa_jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 275,
+    "handoff": 40409905182,
+    "direct_compare_paths": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "prior_pr73": {
+    "head": "a71c03ff5d9536ea9f73c335551e4e57c3ad3c70",
+    "merged": true,
+    "merge_sha": "904672656d1ac13c4f8ed10f91f14de7d74e47cb",
+    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "reviewer_run_id": "9093457e-1b70-832d-9859-d6e7ac0671fa",
+    "review_epoch": 84,
+    "original_c00043_blob": "2c2d6312f7ccfb5ba9070a4727c8697d71172109",
+    "modified": false,
+    "live_worker_consumption": "NOT_YET_OBSERVED"
+  },
+  "operational_observation": {
+    "period_start": "2026-10-26T22:03:12Z",
+    "period_end": "2026-10-26T22:20:54Z",
+    "sample": {
+      "worker": 1,
+      "reviewer": 1,
+      "meta": 1
+    },
+    "worker": {
+      "run_id": "5387eb0a-6ec4-8330-a167-dd66b2977ec4",
+      "status": "completed",
+      "outcome": "Observed active REVIEWER lease and made no write, commit or PR"
+    },
+    "reviewer": {
+      "run_id": "9093457e-1b70-832d-9859-d6e7ac0671fa",
+      "status": "completed",
+      "result": "PR73 independently merged with post-main QA",
+      "released_at": "2026-10-26T22:08:09.162Z"
+    },
+    "meta": "Acquired only after fresh actual shared ref showed holder null; no expiry takeover",
+    "reliability_claim": "No long-term success rate or improvement estimate from this small sample",
+    "host_error_original": "Still unavailable for the historical denial; no denial observed in this run"
+  },
+  "primary_sources": [
+    {
+      "url": "https://github.github.com/gh-aw/reference/safe-outputs/",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-26T22:20:54Z",
+      "finding": "Opened primary runtime documentation. Deterministic permitted outputs and failure categories should remain separate from execution authority. Applied here as constant safe diagnostic JSON, never write permission."
+    },
+    {
+      "url": "https://github.com/github/gh-aw/discussions/65507",
+      "published_at": "2026-10-05",
+      "report_window": "2026-10-04",
+      "updated_at": null,
+      "checked_at": "2026-10-26T22:20:54Z",
+      "finding": "Implementation-repository automated audit reports writes succeeding despite terminal failures and missing raw error text. Treat as a fallible historical report, not proof of this incident's cause or a latest dated release."
+    },
+    {
+      "url": "https://create.roblox.com/docs/updates/2026-10-19",
+      "published_at": null,
+      "updated_at": "2026-10-22",
+      "checked_at": "2026-10-26T22:20:54Z",
+      "finding": "Opened dated official updates index. Body contains version links rather than enough detailed fixes; did not infer unseen release behavior from search snippets."
+    },
+    {
+      "url": "https://create.roblox.com/docs/performance-optimization/test-on-hardware",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-26T22:20:54Z",
+      "finding": "Emulation cannot establish physical-device frame time, memory, thermal or touch latency; retain physical phone 10-15 minute experiment and actual touch target validation."
+    }
+  ],
+  "research_limit": "Searched recent primary cases. October26 gh-aw blog could not be opened; Roblox forum recap blocked by JavaScript challenge. No new dated relevant automation release verified; do not label old report latest.",
+  "protected_controls": "No accepted test/history rewrite, v1 module/checker/policy/workflow change, credential access, schedule mutation, API inference, release, cap change, self approval or main merge.",
+  "effect": "Connected versioned diagnosis and regression implemented; production deployment requires exact-head CI, registered independent REVIEWER, merge and post-main QA. Original CLI and generalized maintenance are unresolved; Issue72 remains open.",
+  "next": "Publish one draft, fresh offline+compile_hold; REVIEWER inspects actual diff and limitation. Independent trust-root actor must evaluate narrow option A for original legacy CLI; META cannot self-authorize it.",
+  "file_size_changes": [
+    {
+      "path": "tools/repair_control.py",
+      "before_bytes": 15823,
+      "after_bytes": 16294,
+      "delta_bytes": 471
+    },
+    {
+      "path": "tools/system_host_write_triage_v2.py",
+      "before_bytes": 0,
+      "after_bytes": 2055,
+      "delta_bytes": 2055
+    },
+    {
+      "path": "tests/test_system_triage_v2.py",
+      "before_bytes": 0,
+      "after_bytes": 12485,
+      "delta_bytes": 12485
+    },
+    {
+      "path": "docs/SYSTEM_REVIEW.md",
+      "before_bytes": 5020,
+      "after_bytes": 6456,
+      "delta_bytes": 1436
+    },
+    {
+      "path": "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
+      "before_bytes": 7198,
+      "after_bytes": 7908,
+      "delta_bytes": 710
+    }
+  ]
+}

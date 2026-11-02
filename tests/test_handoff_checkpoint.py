@@ -5,6 +5,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from tools.merge_history_reconcile import MergeMetricReconciliation
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -59,6 +60,9 @@ class HandoffCheckpointTests(unittest.TestCase):
         }
         self.assertEqual(sum(expected_files.values()), baseline)
         expected_total = baseline
+        reconciliation = MergeMetricReconciliation(
+            origin_repo=ROOT, history_dir=self.root / "history")
+        processed_records = {}
         for record_file in sorted((self.root / "history").glob("C*.json")):
             record = json.loads(record_file.read_text())
             changes = [item for item in record.get("source_changes", [])
@@ -72,7 +76,14 @@ class HandoffCheckpointTests(unittest.TestCase):
                 self.assertEqual(change["after_bytes"] - change["before_bytes"], change["delta_bytes"])
                 expected_files[change["path"]] = change["after_bytes"]
                 expected_total += change["delta_bytes"]
-            self.assertEqual(record["source_metrics"]["lua_bytes"], expected_total)
+            # Local per-file sizes must stay perfectly contiguous; independent
+            # source PRs may, however, carry author-base global metrics that
+            # predate another PR merged first. These exceptions need verified
+            # Git commit provenance, not a blind numeric waiver.
+            reconciliation.verify(
+                record_file, record, expected_total, processed_records)
+            processed_records[record_file.name] = record
+        reconciliation.assert_all_consumed()
         actual_files = {str(file.relative_to(self.root)): file.stat().st_size
                         for file in (self.root / "src").glob("*.lua")}
         self.assertEqual(actual_files, expected_files)

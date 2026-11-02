@@ -1,0 +1,52 @@
+{
+  "id": "C00153",
+  "date": "2026-10-30",
+  "kind": "A12_IDLE_HOLDER_CHRONOLOGY_TEST_FIRST_RED",
+  "issue": 114,
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "b0642945-e128-8323-9d82-d2a8b335dc8e",
+  "main_base": "e55ee17606b03ad997f752944eae6ad91e7651dc",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "99f908e4bb0493364ab0631701d55a7492fc53c9",
+    "owner_run_id": "b0642945-e128-8323-9d82-d2a8b335dc8e",
+    "epoch": 275
+  },
+  "source_changes": [],
+  "changed_files": [
+    "tests/test_system_idle_claim_chronology.py",
+    "history/C00153_idle_holder_chronology_red.json"
+  ],
+  "defect": "Accepted idle.classify only checks holder identity/kind/expiry. Same current run whose provider start is after holder.acquired_at can be reported OBSERVED_HEALTHY. This is an input-consistency gap, not proof of malicious author or real new incident.",
+  "reproduction": {
+    "source_blob": "499624fc9b2a6b75a53bae3b5bf7c4afa0069fef",
+    "fixture": "SYNTHETIC_ONLY: same META UUID, claim12:09Z, provider start12:10Z, still-active lease until12:39Z",
+    "before": "OBSERVED_HEALTHY",
+    "expected": "INDETERMINATE_WITH_TASK_AND_COORDINATOR_EVIDENCE"
+  },
+  "tests": {
+    "new_methods": 13,
+    "local_red": {
+      "failures": 9,
+      "errors": 0
+    },
+    "github_red": "PENDING_EXACT_HEAD",
+    "preserve_accepted_tests": 820
+  },
+  "provider_observation": {
+    "started_at": "2026-10-30T05:49:24.099814Z",
+    "fresh_claim_at": "2026-10-30T05:52:25Z",
+    "latest_result": "PREVIOUS_RUN_NOT_CURRENT_AUTHORIZATION",
+    "original_attempt_history": "NOT_ATTESTED"
+  },
+  "scope": {
+    "accepted_tests_modified": false,
+    "protected_config_changed": false,
+    "game_source_changed": false,
+    "existing_expiry_warning_required": true,
+    "source_observer_identity_match_does_not_attest_authorization": true
+  },
+  "characters_touched": [],
+  "A12": false,
+  "A13": false
+}

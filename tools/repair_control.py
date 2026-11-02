@@ -1,10 +1,11 @@
-"""Fenced repair leases and explicit owner approval packets; no scheduler or provider calls.
+"""Fenced leases and approval packets; no built-in network or scheduler clients.
 
 Persist returned states on the shared coordinator branch with expected_sha and
 force=False. A plan is NOT a lock until that non-fast-forward-protected update
 succeeds. All competing commits must use the exact observed head as parent.
 """
 import argparse
+from contextlib import contextmanager
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 import hashlib
@@ -12,6 +13,7 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import sys
 import uuid
 
 TASK_ID = "6adbf0d6a7d881918ce181dff2468867"
@@ -45,7 +47,7 @@ def validate(state):
             raise ValueError("invalid owner kind")
         if holder["kind"] in ("WORKER", "META", "REVIEWER") and holder.get("task_id") != state.get("authorized_tasks", {}).get(holder["kind"]):
             raise ValueError("unregistered worker task")
-        if holder.get("epoch") != epoch:
+        if type(holder.get("epoch")) is not int or holder["epoch"] != epoch:
             raise ValueError("inconsistent fencing generation")
         if instant(holder["expires_at"]) <= instant(holder["acquired_at"]):
             raise ValueError("invalid lease lifetime")
@@ -112,15 +114,19 @@ def acquire(state, kind, owner_id, now, service_status=None, base_main_sha=None,
 def owns(state, kind, owner_id, epoch, now):
     validate(state)
     holder = state["holder"]
-    return bool(holder and holder["kind"] == kind and holder["owner_id"] == owner_id
+    return bool(type(epoch) is int and holder and holder["kind"] == kind and holder["owner_id"] == owner_id
                 and holder["epoch"] == epoch and instant(now) < instant(holder["expires_at"]))
 
 
 def release(state, kind, owner_id, epoch, now, packet=None, reported=False):
     validate(state)
+    if type(epoch) is not int:
+        raise ValueError("integer fencing generation required")
     holder = state["holder"]
     if not holder or (holder["kind"], holder["owner_id"], holder["epoch"]) != (kind, owner_id, epoch):
         raise ValueError("only the current fenced owner can release")
+    if instant(now) < instant(holder["acquired_at"]):
+        raise ValueError("release cannot precede acquisition")
     result = deepcopy(state)
     result["holder"] = None
     result["last_completed"] = {"kind": kind, "owner_id": owner_id, "epoch": epoch,
@@ -131,6 +137,108 @@ def release(state, kind, owner_id, epoch, now, packet=None, reported=False):
             result["last_reported_approval_signature"] = packet["signature"]
     return result
 
+
+
+@contextmanager
+def owned_lease(*, repository, kind, owner_id, epoch, task_id, read, cas, peek, clock):
+    """Finally release a live exact owner through host-supplied capabilities.
+
+    read(repo, branch, path) returns {repository, branch, ref, state}; cas accepts
+    only a new state, expected_sha and force=False and returns its commit SHA.
+    peek(task_id) returns {task_id, last_run}. The trusted host must bind these
+    callbacks to genuine connections/current run and retain their call evidence.
+    Python data/receipts do NOT authenticate providers or prove service exit.
+    No acquisition, recovery, retry, scheduler, credentials or network client.
+    A killed process or failed host callback cannot be fixed by Python finally.
+    """
+    if (not isinstance(repository, str) or
+            not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository) or
+            kind not in ("WORKER", "META", "REVIEWER") or type(epoch) is not int or epoch < 1):
+        raise ValueError("invalid owned lease binding")
+    canonical_id(owner_id)
+    previous = None
+
+    def tick():
+        nonlocal previous
+        at = instant(clock())
+        if previous is not None and at < previous:
+            raise ValueError("clock moved backwards")
+        previous = at
+        return at
+
+    def snapshot():
+        row = deepcopy(read(repository, CONTROL_BRANCH, CONTROL_PATH))
+        if (type(row) is not dict or
+                set(row) != {"repository", "branch", "ref", "state"} or
+                row["repository"] != repository or row["branch"] != CONTROL_BRANCH or
+                not isinstance(row["ref"], str) or not re.fullmatch(r"[0-9a-f]{40}", row["ref"])):
+            raise ValueError("invalid scoped coordinator snapshot")
+        validate(row["state"])
+        return row
+
+    def live_owner(row):
+        state, at = row["state"], tick()
+        holder = state["holder"]
+        if (not task_id or state["authorized_tasks"].get(kind) != task_id or
+                not owns(state, kind, owner_id, epoch, at.isoformat()) or
+                holder["task_id"] != task_id or at < instant(holder["acquired_at"]) or
+                (instant(holder["expires_at"])-instant(holder["acquired_at"])).total_seconds() > 1800):
+            raise ValueError("not the live registered owner")
+        service = peek(task_id)
+        run = service.get("last_run", {}) if type(service) is dict else {}
+        if (service.get("task_id") != task_id or run.get("id") != owner_id or
+                run.get("recorded_status") != "in_progress" or run.get("completed_at") is not None or
+                instant(run.get("started_at", "")) > instant(holder["acquired_at"])):
+            raise ValueError("current same-run observation required")
+        return holder
+
+    try:
+        initial = snapshot()
+        anchor = deepcopy(live_owner(initial))
+    except Exception:
+        raise ValueError("owned lease entry not verified") from None
+    receipt = {"status": "OWNED", "repository": repository, "kind": kind,
+               "task_id": task_id, "owner_run_id": owner_id, "epoch": epoch,
+               "provider_verified": False, "provider_terminal": "NOT_ATTESTED"}
+    try:
+        yield receipt
+    finally:
+        attempted, stage = False, "PRE_RELEASE"
+        receipt.update(status="NOT_RELEASED", provider_verified=False,
+                       provider_terminal="NOT_ATTESTED")
+        try:
+            first = snapshot()
+            if live_owner(first) != anchor:
+                raise ValueError("original holder changed")
+            second = snapshot()
+            if live_owner(second) != anchor or second != first:
+                raise ValueError("coordinator moved during final fence")
+            at = tick().isoformat()
+            if not owns(second["state"], kind, owner_id, epoch, at):
+                raise ValueError("lease expired before CAS")
+            target = release(second["state"], kind, owner_id, epoch, at)
+            target["last_completed"]["release_receipt"] = {
+                "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
+                "repository": repository, "task_id": task_id, "owner_run_id": owner_id,
+                "epoch": epoch, "expected_parent": second["ref"],
+                "provider_terminal": "NOT_ATTESTED", "postwrite_readback_required": True}
+            stage, attempted = "CAS", True
+            new_ref = cas(repository, CONTROL_BRANCH, expected_sha=second["ref"],
+                          state=deepcopy(target), force=False)
+            if (not isinstance(new_ref, str) or not re.fullmatch(r"[0-9a-f]{40}", new_ref) or
+                    new_ref == second["ref"]):
+                raise ValueError("invalid CAS acknowledgement")
+            stage = "READBACK"
+            after = snapshot()
+            tick()
+            if after["ref"] != new_ref or after["state"] != target:
+                raise ValueError("release not confirmed by actual ref/state")
+            receipt.update(status="RELEASED_READBACK", from_ref=second["ref"],
+                           to_ref=new_ref, released_at=at)
+        except Exception:
+            receipt.update(status="RELEASE_UNCONFIRMED" if attempted else "NOT_RELEASED",
+                           failure_stage=stage)
+            raise RuntimeError("owned lease finalization not confirmed: " + stage) from None
 
 def recover_finished_worker(state, observed_run, now):
     validate(state)
@@ -261,9 +369,16 @@ def verify_pr(policy, base, head, branch, control_ref):
     return f"{len(records)} immutable coordinator claim(s) verified"
 
 
-def main():
+def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    # Route before argparse so invalid diagnostic arguments are sanitized by
+    # the v2 parser and cannot echo provider errors or secret-bearing strings.
+    if argv[:1] == ["triage"]:
+        from system_host_write_triage_v2 import main as triage_main
+        return triage_main(argv[1:])
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
+    sub.add_parser("triage", help="read-only v2 incident diagnosis; no write authority")
     plan = sub.add_parser("plan")
     plan.add_argument("--input", required=True, help="state, kind, owner_id, now, service_status, base_main_sha")
     packet = sub.add_parser("approvals")
@@ -272,7 +387,7 @@ def main():
     check = sub.add_parser("verify-pr")
     for arg in ("policy", "base", "head", "branch", "control-ref"):
         check.add_argument("--" + arg, required=True)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.command == "verify-pr":
         policy = json.loads(Path(args.policy).read_text())
         print("PASS: repair coordination; " + verify_pr(policy, args.base, args.head, args.branch, args.control_ref))
@@ -287,4 +402,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

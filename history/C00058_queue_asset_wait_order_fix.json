@@ -1,0 +1,87 @@
+{
+  "id": "C00058",
+  "date": "2026-10-28",
+  "kind": "AUTONOMOUS_QUEUE_ASSET_WAIT_ORDER_FIX",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "246d08d5-6110-832e-9675-c62d604b0196",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-246d08d5-6110-832e-9675-c62d604b0196",
+    "base": "main",
+    "open_prs": [],
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "84c8bdf7230289282928cc4e47d252a3ea70c915",
+    "owner_run_id": "246d08d5-6110-832e-9675-c62d604b0196",
+    "epoch": 124
+  },
+  "main_base": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
+  "source_commit": "759883c042aae64c27a70a5b80cf0911934260e4",
+  "defect": {
+    "id": "queue_notice_stale_during_remote_asset_wait_after_allocation",
+    "cause": "The canonical HUD awaited ToyWarsSelectUnit and ToyWarsBalance before leaderstats, so an already allocated player still saw 'Waiting for a free workshop slot...' while replicated assets loaded. C00056 corrected the later status wait but not these earlier waits.",
+    "reproduction": "Execute the complete HUD LocalScript with mocked delayed WaitForChild for remote/balance, first for an already allocated player and then for a queued player. In the pinned old-order whole-HUD mutation the remote wait observes the stale waiting notice."
+  },
+  "fix": "Await leaderstats first, then immediately switch the existing queue notice to 'Preparing your workshop...' before awaiting replicated remote/balance assets. Keep waiting notice while no workshop is assigned; do not create guide/selectors until all required values arrive. No server commands added.",
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/queue_notice_assets_after_allocation_spec.lua",
+    "history/C00058_queue_asset_wait_order_fix.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 6824,
+      "after_bytes": 6824,
+      "delta_bytes": 0
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 776,
+    "lua_bytes": 30993
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/queue_notice_assets_after_allocation_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 6547,
+      "delta_bytes": 6547
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "No PON/GUARDON/TANKURU/JUNK stats, costs, combat or selection changes. Three existing selector buttons, price source, queue notice and first-play guide preserved.",
+  "tests": {
+    "canonical_hud": "tests/auto/queue_notice_assets_after_allocation_spec.lua",
+    "new_cases": 3,
+    "negative_control": "Full canonical HUD with only the five-line asset/leaderstats wait order reverted; expected stale waiting notice at remote wait.",
+    "accepted_server_cases": "UNCHANGED",
+    "accepted_hud_cases": "UNCHANGED",
+    "local": "NOT_RUN_LUA_5_4_RUNTIME_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "db8a6f19866cec563c6138d13212dddbb21fbfc9",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40529796548",
+    "main_qa_head": "4ba0ec7199abb5c34d40f5484cb0fc299ef82ca3",
+    "main_qa_note": "Main db8a6f19866cec563c6138d13212dddbb21fbfc9 is a generated status-only descendant of the successful QA head.",
+    "claim_commit": "84c8bdf7230289282928cc4e47d252a3ea70c915",
+    "source_commit": "759883c042aae64c27a70a5b80cf0911934260e4",
+    "pr": "PENDING_DRAFT_PR",
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "next_action": "Create draft PR; require exact latest head offline and compile_hold success and independent REVIEWER approval/merge. Actual Roblox replication, real-device and visual UX remain unverified.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}

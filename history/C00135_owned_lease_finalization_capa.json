@@ -1,0 +1,152 @@
+{
+  "id": "C00135",
+  "date": "2026-10-30",
+  "kind": "SYSTEM_OWNED_LEASE_FINALLY_CAPA",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+  "base_main": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+  "observed_at_utc": "2026-10-29T21:32:20Z",
+  "issue": 123,
+  "pr": 126,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "ca8d1dba24ba61f8f757262a4281e43560f081db",
+    "owner_run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+    "epoch": 255
+  },
+  "stage": "MINIMAL_SOURCE_REPAIR_AFTER_REAL_GITHUB_RED",
+  "red_control": {
+    "head": "d2baf1b1c97da000f7f02ea0397029a8e133bc60",
+    "run": 40958082678,
+    "attempt": 1,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40958082678",
+    "jobs": [
+      {
+        "id": 123743356558,
+        "name": "offline",
+        "head": "d2baf1b1c97da000f7f02ea0397029a8e133bc60",
+        "conclusion": "failure"
+      },
+      {
+        "id": 123743356756,
+        "name": "compile_hold",
+        "head": "d2baf1b1c97da000f7f02ea0397029a8e133bc60",
+        "conclusion": "success"
+      }
+    ],
+    "python_tests": 737,
+    "failures": 3,
+    "errors": 24,
+    "interpretation": "3 actual old release-validation assertion failures;24 errors indicate missing owned_lease API. No test weakened; original main709 tests pass in full-history GitHub RED except only the newly added tests.",
+    "proof": [
+      "2026-10-29T21:28:39.7669249Z PASS: system review scope",
+      "2026-10-29T21:28:40.0682042Z PASS: repair coordination; 1 immutable coordinator claim(s) verified",
+      "2026-10-29T21:28:49.4155654Z FAIL: test_release_rejects_boolean_generation (test_system_owned_lease_finalization.OwnedFinalizationTests.test_release_rejects_boolean_generation)",
+      "2026-10-29T21:28:49.4159547Z FAIL: test_release_rejects_clock_before_acquisition (test_system_owned_lease_finalization.OwnedFinalizationTests.test_release_rejects_clock_before_acquisition)",
+      "2026-10-29T21:28:49.4163654Z FAIL: test_release_rejects_float_generation (test_system_owned_lease_finalization.OwnedFinalizationTests.test_release_rejects_float_generation)",
+      "2026-10-29T21:28:49.4166972Z Ran 737 tests in 6.010s",
+      "2026-10-29T21:28:49.4167217Z FAILED (failures=3, errors=24)"
+    ]
+  },
+  "repair": {
+    "path": "tools/repair_control.py",
+    "before_blob": "4d6e61eb8b2f1276abbc33bd99e7da48bc19959c",
+    "after": {
+      "bytes": 21870,
+      "lines": 405,
+      "blob": "a7ebe381c302e54ec08db000d1b562650856c559",
+      "sha256": "16c35750bf8e5228bfc4a35563cf881478cb5043369c5f46e1c68093385287d9"
+    },
+    "description": "Reject pre-acquisition release time and non-integer epochs. Add finally-scoped live exact owner, stable two-read fence, one expected-ref force=false CAS, persistent owner-only receipt and full ref/state readback. No acquire/recover/retry path added."
+  },
+  "tests": {
+    "new_methods": 28,
+    "local_focused": {
+      "tests_run": 28,
+      "failures": 0,
+      "errors": 0
+    },
+    "full_local": {
+      "tests_run": 737,
+      "failures": 1,
+      "errors": 1,
+      "limitation": "Same two baseline failures due unavailable historical git objects in the canonical shallow local reconstruction, not source regressions. No skips, accepted test edits or weakening; full-history GitHub CI required."
+    },
+    "new_test_metrics": {
+      "bytes": 11279,
+      "lines": 268,
+      "blob": "5df2fdbb7c25a09ac99dc5658fc98034571a0a3a",
+      "sha256": "54a828f131461350c2104374438e5589f0bca9a885b8e28cc3ebf9e36e17b83a"
+    },
+    "red_and_green_test_bytes_identical": true,
+    "accepted_main_tests_preserved": 709,
+    "expected_github_green": 737,
+    "exact_head_github_green": "PENDING_AT_COMMIT_CREATION"
+  },
+  "scope": {
+    "trusted_base_local": "PASS",
+    "paths": [
+      [
+        "M",
+        "tools/repair_control.py"
+      ],
+      [
+        "M",
+        "docs/REPAIR_COORDINATION.md"
+      ],
+      [
+        "M",
+        "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md"
+      ],
+      [
+        "A",
+        "tests/test_system_owned_lease_finalization.py"
+      ],
+      [
+        "A",
+        "history/C00134_owned_lease_finalization_red_control.json"
+      ],
+      [
+        "A",
+        "history/C00135_owned_lease_finalization_capa.json"
+      ]
+    ],
+    "accepted_files_modified_only": [
+      "tools/repair_control.py",
+      "docs/REPAIR_COORDINATION.md",
+      "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md"
+    ],
+    "other_282_accepted_blobs_preserved": true,
+    "old_histories_preserved": true,
+    "all_existing_tests_preserved": true,
+    "shared32_entry_ledger_preserved": true
+  },
+  "research": {
+    "checked_on": "2026-10-30",
+    "primary_url": "https://docs.python.org/3/library/contextlib.html",
+    "observation": "A generator contextmanager can run finally cleanup and propagate the body error. Process termination/host failures still require independent evidence; finally is not distributed crash recovery.",
+    "game_comparison": [
+      "NO_CHANGE during lease safety CAPA",
+      "FIRST_LOOP_CLARITY: smaller implementation/QA scope, player effect NOT_MEASURED",
+      "DIFFERENTIATED_ROLE_COLLECTION: follows preserved OWNER variety idea, larger model/UI/balance/QA scope, effect NOT_MEASURED"
+    ],
+    "owner_provenance": "Existing C00122 verbatim/DERIVED records unchanged; original chat authenticity NOT_VERIFIED"
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "limits": [
+    "Explicit host callback capabilities only; caller JSON and receipt flags never authenticate providers",
+    "No token/credential is handed to PR code; host must bind genuine same-task/run callbacks and independently restrict CAS",
+    "recover_finished_worker retains existing pure input semantics, not provider attestation; do not invoke without genuine exact-run history",
+    "Original reviewer epoch251 terminal history remains UNPROVEN; no expiry-only or foreign-owner recovery",
+    "No promise of cleanup after process kill, host outage, lost ACK or postwrite failure; fail closed and no automatic retry",
+    "Source helper plus synthetic regressions is not scheduled operational adoption, signed provider evidence, delivery or A12/A13 proof",
+    "Official automation57/game38; protected PR122/98/110, fees/Gemini/Roblox/schedule/credentials unchanged"
+  ],
+  "next": "Exact-head offline+compile_hold737 tests, own release with real CAS/postread, separate registered REVIEWER approval; only REVIEWER may merge then postmain QA/handoff."
+}
