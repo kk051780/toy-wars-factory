@@ -3,6 +3,7 @@
 All remote operations target a temporary local bare Git repository. No GitHub
 token, external service, workflow dispatch, or real main branch is used.
 """
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -76,7 +77,11 @@ class WriterGitBoundary(unittest.TestCase):
 
     def change_status(self):
         (self.work / "status/CHAT_HANDOFF.md").write_text("new handoff\n")
-        (self.work / "status/LATEST_STATE.json").write_text('{"new":true}\n')
+        source_revision = self.git("log", "-1", "--format=%H", "--",
+                                       "src", "tests", "tools", "docs", "config",
+                                       "PROJECT_STATE.json", "AGENTS.md", ".github", "history")
+        (self.work / "status/LATEST_STATE.json").write_text(
+            json.dumps({"new": True, "source_revision": source_revision}) + "\n")
 
     def test_status_only_update_pushes_exactly_two_paths(self):
         self.change_status()
@@ -130,6 +135,44 @@ class WriterGitBoundary(unittest.TestCase):
         self.assertEqual(self.remote_sha(), moved)
         self.assertNotEqual(self.git("rev-parse", "HEAD"), self.source_sha)
         self.assertNotIn("SYNTHETIC_NO_REAL_TOKEN", result.stdout + result.stderr)
+
+
+    def test_wrong_but_well_formed_source_revision_blocks_writer(self):
+        self.change_status()
+        path = self.work / "status/LATEST_STATE.json"
+        record = json.loads(path.read_text())
+        self.assertNotEqual(record["source_revision"], "0" * 40)
+        record["source_revision"] = "0" * 40
+        path.write_text(json.dumps(record) + "\n")
+        result = self.run_writer()
+        self.assertNotEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.remote_sha(), self.source_sha)
+        self.assertEqual(self.git("rev-parse", "HEAD"), self.source_sha)
+
+    def test_missing_source_revision_blocks_writer(self):
+        self.change_status()
+        path = self.work / "status/LATEST_STATE.json"
+        path.write_text('{"new":true}\n')
+        result = self.run_writer()
+        self.assertNotEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.remote_sha(), self.source_sha)
+        self.assertEqual(self.git("rev-parse", "HEAD"), self.source_sha)
+
+    def test_source_revision_tracks_latest_substantive_not_status_commit(self):
+        source_sha = self.source_sha
+        (self.work / "status/CHAT_HANDOFF.md").write_text("status-only snapshot\n")
+        self.git("add", "status/CHAT_HANDOFF.md")
+        self.git("commit", "-qm", "synthetic status-only main commit")
+        self.git("push", "-q", "origin", "HEAD:refs/heads/main")
+        self.source_sha = self.git("rev-parse", "HEAD")
+        self.assertNotEqual(self.source_sha, source_sha)
+        self.change_status()
+        record = json.loads((self.work / "status/LATEST_STATE.json").read_text())
+        self.assertEqual(record["source_revision"], source_sha)
+        result = self.run_writer()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.remote_sha(), self.git("rev-parse", "HEAD"))
+
 
 
 if __name__ == "__main__":
