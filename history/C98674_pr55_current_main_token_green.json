@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "id": "C98674",
+  "kind": "PR55_CURRENT_MAIN_TOKEN_ISOLATION_GREEN",
+  "pr": 55,
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "parent_red": "70dd41c79a12d17a89fcd0c54d477dfeb2146023",
+  "coordinator": {
+    "claim_commit": "479d8247e60bc5ccc54dc3e5e72be32c75e7c031",
+    "epoch": 399,
+    "owner_id": "48311411-3dad-4b25-9dee-e4db9c95782f",
+    "work_branch": "ops/twf-qa-token-isolation"
+  },
+  "test_first": {
+    "red_commit": "70dd41c79a12d17a89fcd0c54d477dfeb2146023",
+    "run_id": 41380578839,
+    "python_total": 842,
+    "expected_new_failures": 4,
+    "offline": "failure",
+    "compile_hold": "success"
+  },
+  "modifications": [
+    ".github/workflows/bootstrap-quality.yml",
+    "docs/QA_CREDENTIAL_ISOLATION.md",
+    "history/C98674_pr55_current_main_token_green.json"
+  ],
+  "qa_source_blob_original": "5adea497e000a02afcc36323c68bef915c04841f",
+  "qa_source_blob_candidate": "aedc786d0eb2d1e0d56da09a631be283ed1e58bf",
+  "test_target": {
+    "github_actions": "PENDING",
+    "independent_security_review": "PENDING"
+  },
+  "holds": [
+    "NO_MAIN_MERGE",
+    "TRUSTED_CLAIM_NOT_PROVIDER_ENFORCED",
+    "NO_GITHUB_TOKEN_TO_UNTRUSTED_PR_QA",
+    "NO_WORKER_AUTHENTICATION",
+    "NO_INFERENCE",
+    "NO_ROBLOX_PUBLISH"
+  ]
+}
