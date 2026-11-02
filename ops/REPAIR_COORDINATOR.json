@@ -1304,17 +1304,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 412,
-  "holder": {
-    "kind": "DISPATCH",
-    "owner_id": "0b4b06ab-e120-461d-b086-7021cc95429d",
-    "task_id": null,
-    "epoch": 412,
-    "acquired_at": "2026-11-02T09:14:57.299+00:00",
-    "expires_at": "2026-11-02T09:16:57.299+00:00",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": null,
-    "origin": "dispatch"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2958,28 +2948,22 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "a697be12-3672-4522-9daa-a1a574f7d31e",
-    "epoch": 411,
-    "released_at": "2026-11-02T07:22:54.838Z",
+    "kind": "DISPATCH",
+    "owner_id": "0b4b06ab-e120-461d-b086-7021cc95429d",
+    "epoch": 412,
+    "released_at": "2026-11-02T09:46:14.384Z",
     "release_receipt": {
-      "reason": "ISSUE57_POST_TERMINAL_WORKER_RUN_CHAT_REF_DISCREPANCY_RECORDED",
-      "claim_commit": "ed34ec81ce6364c807c951fa9663b60d7fc20f02",
-      "issue": 57,
-      "issue_comment_id": 6571483688,
+      "reason": "ORIGINAL_OWNER_RELEASE_UNADOPTED_DISPATCH_AFTER_WORKER_TERMINAL_WAIT_IDENTITY",
       "worker_task_id": "6adbf0d6a7d881918ce181dff2468867",
-      "worker_run_id": "05667bc6-9dec-8322-b2d9-679009f12671",
-      "post_terminal_chat_ref_nonnull": true,
-      "in_run_reported_chat_ref_null": true,
-      "host_origin_attested": false,
-      "root_cause_unproven": true,
+      "worker_run_id": "f57248f2-d7f4-8332-a947-2aceb260cdc4",
+      "worker_status": "completed",
+      "original_claim_commit": "c20e98c41047090f0725c467bf1e9fd570b6df08",
+      "worker_adopted": false,
       "source_modified": false,
       "main_modified": false,
       "pr_created": false,
-      "merged": false,
-      "approval": false,
-      "spend": false,
-      "roblox_publish": false
+      "host_auth_verified": false,
+      "progress_credit": false
     }
   },
   "last_completed_integration": {
