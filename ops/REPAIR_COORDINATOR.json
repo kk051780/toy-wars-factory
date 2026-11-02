@@ -1304,17 +1304,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 405,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "a2c6d66b-0f47-4d82-bbbe-5cc7429dd9a1",
-    "task_id": null,
-    "epoch": 405,
-    "acquired_at": "2026-11-02T06:07:04.528Z",
-    "expires_at": "2026-11-02T06:27:04.528Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/pr179-review-handoff-20261102",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2959,48 +2949,23 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "be5b6e39-d518-4a38-b769-7187059449ab",
-    "epoch": 404,
-    "released_at": "2026-11-02T06:03:21.656Z",
+    "owner_id": "a2c6d66b-0f47-4d82-bbbe-5cc7429dd9a1",
+    "epoch": 405,
+    "released_at": "2026-11-02T06:19:57.073Z",
     "release_receipt": {
-      "reason": "PR179_SERVER_ROUND_OUTCOME_LOSS_VICTORY_833_PYTHON_11_NEW_LUA_PASS",
-      "claim_commit": "c5f12c9db450e59ffde39c354da434a3fd867963",
-      "work_branch": "controller/game-round-outcome-be5b6e39",
-      "pr": 179,
+      "reason": "PR179_INDEPENDENT_READ_ONLY_HANDOFF_COMPLETED",
+      "claim_commit": "de44786f1d72d9d24d09a450825c61e95ae45a5e",
+      "pr_number": 179,
       "pr_head": "9d327e37476fe9f0517f6bd9e670760054025e09",
-      "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "red_commit": "1fb136ee55efc505cdfe37e2b6ea238f49006055",
-      "red_run": 41396062592,
-      "red_hud_failures": 2,
-      "initial_green_commit": "853f906ff8ccc33234fc5aa3c89004c961848d47",
-      "initial_green_run": 41396706126,
-      "initial_green_offline": "FAIL_SOURCE_LEDGER",
-      "initial_green_lua": "11_PASS",
-      "final_green_commit": "9d327e37476fe9f0517f6bd9e670760054025e09",
-      "final_green_run": 41397211343,
-      "offline": "success",
-      "compile_hold": "success",
-      "python_tests": 833,
-      "new_lua_server": 6,
-      "new_lua_hud": 5,
-      "source_metrics": {
-        "files": 4,
-        "lines": 1202,
-        "bytes": 53462
-      },
-      "history_ids": [
-        "C98690",
-        "C98691"
-      ],
-      "main_mutated": false,
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "reviewer_run": "25e7f69c-3240-8321-b4fc-cef5fe86b397",
+      "review_status": "READ_ONLY_ADVISORY",
+      "pr_comment_id": 6570373496,
+      "main_unchanged": true,
+      "approved": false,
       "merged": false,
-      "independent_review": "PENDING",
-      "native_reviews": 0,
-      "roblox_studio": "NOT_RUN",
-      "mobile_visual": "NOT_RUN",
-      "registered_worker_identity": "WAIT_IDENTITY",
-      "gemini_spend": false,
-      "roblox_publish": false
+      "publish": false,
+      "paid_work": false
     }
   },
   "last_completed_integration": {
