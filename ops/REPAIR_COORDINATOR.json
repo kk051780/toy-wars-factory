@@ -1304,17 +1304,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 404,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "be5b6e39-d518-4a38-b769-7187059449ab",
-    "task_id": null,
-    "epoch": 404,
-    "acquired_at": "2026-11-02T05:41:35.676Z",
-    "expires_at": "2026-11-02T06:11:35.676Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/game-round-outcome-be5b6e39",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2959,27 +2949,48 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "bb2a65cd-2ffd-43f5-a693-20c4ff7e8b81",
-    "epoch": 403,
-    "released_at": "2026-11-02T05:40:15.328Z",
+    "owner_id": "be5b6e39-d518-4a38-b769-7187059449ab",
+    "epoch": 404,
+    "released_at": "2026-11-02T06:03:21.656Z",
     "release_receipt": {
-      "reason": "ISSUE57_GITHUB_PRIVATE_REQUIRED_CHECK_PLAN_GATE_EVIDENCE_RECORDED",
-      "claim_commit": "0245ac6072c2117ba90112dc58b1cc45d4103c15",
-      "issue": 57,
-      "comment_id": 6569986676,
-      "reviewer_runs": [
-        "f1ae7400-d128-832f-b1c0-7335dcb2c7bd",
-        "cf8ae293-2f48-832a-8b8c-f231adee92d4"
+      "reason": "PR179_SERVER_ROUND_OUTCOME_LOSS_VICTORY_833_PYTHON_11_NEW_LUA_PASS",
+      "claim_commit": "c5f12c9db450e59ffde39c354da434a3fd867963",
+      "work_branch": "controller/game-round-outcome-be5b6e39",
+      "pr": 179,
+      "pr_head": "9d327e37476fe9f0517f6bd9e670760054025e09",
+      "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "red_commit": "1fb136ee55efc505cdfe37e2b6ea238f49006055",
+      "red_run": 41396062592,
+      "red_hud_failures": 2,
+      "initial_green_commit": "853f906ff8ccc33234fc5aa3c89004c961848d47",
+      "initial_green_run": 41396706126,
+      "initial_green_offline": "FAIL_SOURCE_LEDGER",
+      "initial_green_lua": "11_PASS",
+      "final_green_commit": "9d327e37476fe9f0517f6bd9e670760054025e09",
+      "final_green_run": 41397211343,
+      "offline": "success",
+      "compile_hold": "success",
+      "python_tests": 833,
+      "new_lua_server": 6,
+      "new_lua_hud": 5,
+      "source_metrics": {
+        "files": 4,
+        "lines": 1202,
+        "bytes": 53462
+      },
+      "history_ids": [
+        "C98690",
+        "C98691"
       ],
-      "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "source_modified": false,
-      "pr_modified": false,
-      "no_main_merge": true,
-      "no_review_approval": true,
-      "provider_plan_not_changed": true,
-      "no_spend": true,
-      "no_inference": true,
-      "no_roblox_publish": true
+      "main_mutated": false,
+      "merged": false,
+      "independent_review": "PENDING",
+      "native_reviews": 0,
+      "roblox_studio": "NOT_RUN",
+      "mobile_visual": "NOT_RUN",
+      "registered_worker_identity": "WAIT_IDENTITY",
+      "gemini_spend": false,
+      "roblox_publish": false
     }
   },
   "last_completed_integration": {
