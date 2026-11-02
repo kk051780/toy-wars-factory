@@ -5,6 +5,7 @@ GitHub proof. The module does not perform network access, obtain credentials,
 approve reviews, dispatch jobs, merge code, or attest data completeness.
 """
 import re
+from datetime import datetime, timezone
 from urllib.parse import parse_qs, urlsplit
 
 MAX_PAGES = 100
@@ -13,6 +14,9 @@ REVIEW_STATES = frozenset(("APPROVED", "CHANGES_REQUESTED", "COMMENTED", "DISMIS
 ROLES = frozenset(("read", "triage", "write", "maintain", "admin"))
 LINK_ENTRY = re.compile(r'^<([^<>]+)>; rel="([a-z]+)"$')
 REPO = re.compile(r'^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$')
+COMMIT_SHA = re.compile(r'^[0-9a-f]{40}$')
+LOGIN = re.compile(r'^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?(?:\[bot\])?$')
+ISO_TIME = re.compile(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,6})?(?:Z|[+-][0-9]{2}:[0-9]{2})$')
 
 
 class PageError(ValueError):
@@ -59,8 +63,13 @@ def next_review_page(header, repo, pr_number, current):
         raise PageError("LINK_SKIP_OR_LOOP")
     if "prev" in links and links["prev"] != current - 1:
         raise PageError("LINK_PREV_MISMATCH")
-    if "last" in links and links["last"] < current:
-        raise PageError("LINK_LAST_MISMATCH")
+    if "first" in links and links["first"] != 1:
+        raise PageError("LINK_FIRST_MISMATCH")
+    if "last" in links:
+        last = links["last"]
+        if (last < current or (nxt is not None and last < nxt) or
+                (nxt is None and last != current)):
+            raise PageError("LINK_LAST_MISMATCH")
     if nxt is not None and nxt > MAX_PAGES:
         raise PageError("TOO_MANY_PAGES")
     return nxt
@@ -76,7 +85,7 @@ def collect_pages(fetch, repo, pr_number, permissions):
     if (not callable(fetch) or type(repo) is not str or
             REPO.fullmatch(repo) is None or type(pr_number) is not int or
             pr_number < 1 or type(permissions) is not dict or
-            any(type(k) is not str or type(v) is not str or v not in ROLES
+            any(type(k) is not str or k != k.casefold() or type(v) is not str or v not in ROLES
                 for k, v in permissions.items())):
         raise PageError("INVALID_INPUT")
     seen, result, page, previous = set(), [], 1, None
@@ -95,23 +104,34 @@ def collect_pages(fetch, repo, pr_number, permissions):
                 raise PageError("REVIEW_NOT_OBJECT")
             user = row.get("user")
             if (type(user) is not dict or type(user.get("login")) is not str or
-                    type(user.get("type")) is not str):
+                    user.get("type") not in ("User", "Bot")):
                 raise PageError("REVIEW_ACTOR_INVALID")
             login, rid, state = user["login"], row.get("id"), row.get("state")
             if (type(rid) is not int or rid <= 0 or rid in seen or
                     type(state) is not str or state not in REVIEW_STATES or
+                    LOGIN.fullmatch(login) is None or
                     login.casefold() not in permissions):
                 raise PageError("REVIEW_INVALID_OR_MISSING_ROLE")
+            commit = row.get("commit_id")
+            if type(commit) is not str or COMMIT_SHA.fullmatch(commit) is None:
+                raise PageError("REVIEW_COMMIT_INVALID")
             submitted = row.get("submitted_at")
             if state == "PENDING":
                 if submitted is not None:
                     raise PageError("PENDING_HAS_SUBMISSION")
-            elif type(submitted) is not str:
-                raise PageError("SUBMITTED_MISSING")
-            if state != "PENDING":
-                if previous is not None and submitted < previous:
+            else:
+                if type(submitted) is not str or ISO_TIME.fullmatch(submitted) is None:
+                    raise PageError("SUBMITTED_INVALID")
+                try:
+                    instant = datetime.fromisoformat(submitted.replace("Z", "+00:00"))
+                    if instant.tzinfo is None or instant.utcoffset() is None:
+                        raise ValueError("timezone required")
+                    instant = instant.astimezone(timezone.utc)
+                except (ValueError, OverflowError):
+                    raise PageError("SUBMITTED_INVALID") from None
+                if previous is not None and instant < previous:
                     raise PageError("PAGE_CHRONOLOGY_CHANGED")
-                previous = submitted
+                previous = instant
             result.append({"id": rid, "state": state,
                            "commit_id": row.get("commit_id"),
                            "submitted_at": submitted,

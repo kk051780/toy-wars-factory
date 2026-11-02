@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "id": "C96318",
+  "kind": "PR60_REVIEW_PAGINATION_ADVERSARIAL_RED_GREEN_CANDIDATE",
+  "pr": 60,
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "109be1ab03dea78bf8c6e4c38ed5a595fa5689da",
+    "owner_id": "88e0f72c-a31d-429b-884d-c47b84e5c20d",
+    "epoch": 406,
+    "work_branch": "ops/twf-manual-review-lane"
+  },
+  "red": {
+    "commit": "bf63ea2b69db48e623deb5aeceecc47f57268e46",
+    "ci_run": 41365367463,
+    "offline": "FAILURE",
+    "compile_hold": "SUCCESS",
+    "python_tests": 979,
+    "expected_failures": 9,
+    "expected_errors": 1
+  },
+  "source": {
+    "path": "tools/system_native_review_pages.py",
+    "before_blob": "e16120a59a4eeeb33ad2c9bfd13d67969bcdfea9",
+    "before_bytes": 6220,
+    "after_bytes": 7447,
+    "delta_bytes": 1227
+  },
+  "suite": {
+    "path": "tests/test_system_native_review_pages_extra.py",
+    "new_cases": 19,
+    "unchanged": true
+  },
+  "corrected": [
+    "normalize timezone-aware timestamps to UTC",
+    "strict review commit SHA and GitHub user type/login",
+    "reject noncanonical permission keys",
+    "reject inconsistent pagination first/last/next"
+  ],
+  "green": {
+    "github_actions": "PENDING_EXACT_HEAD",
+    "offline": "NOT_RUN",
+    "compile_hold": "NOT_RUN"
+  },
+  "gates": {
+    "native_approval": false,
+    "main_merged": false,
+    "roblox_studio": "NOT_RUN",
+    "spend": false,
+    "publish": false
+  }
+}
