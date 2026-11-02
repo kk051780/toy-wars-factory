@@ -279,7 +279,7 @@ class IntegrationTests(unittest.TestCase):
         receipt = self.review["manual_git_evidence"]["claim"]
         receipt["state_file"] = raw
         receipt["state_blob_sha"] = hashlib.sha1(
-            b"blob " + str(len(data)).encode() + b"\\0" + data
+            b"blob " + str(len(data)).encode() + b"\0" + data
         ).hexdigest()
         return request
 
