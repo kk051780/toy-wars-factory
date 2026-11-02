@@ -81,7 +81,7 @@ class HandoffPrivilegeSplit(unittest.TestCase):
         self.assertIn("git hash-object -w -- status/CHAT_HANDOFF.md", writer)
         self.assertIn("git hash-object -w -- status/LATEST_STATE.json", writer)
         self.assertIn("git mktree", writer)
-        self.assertIn("git commit-tree", writer)
+        self.assertIn("commit-tree \"$snapshot_tree\"", writer)
         self.assertIn("snapshot_ref=\'refs/heads/twf-handoff-snapshots\'", writer)
         self.assertIn("git push origin \"$snapshot_commit:$snapshot_ref\"", writer)
         self.assertNotIn("git push ", sections()[0])
