@@ -1304,17 +1304,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 407,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "819b208f-3c8d-4bf0-a75e-e2b66d920b65",
-    "task_id": null,
-    "epoch": 407,
-    "acquired_at": "2026-11-02T06:35:57.324Z",
-    "expires_at": "2026-11-02T07:05:57.324Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "ops/twf-manual-review-lane",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2959,30 +2949,35 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "88e0f72c-a31d-429b-884d-c47b84e5c20d",
-    "epoch": 406,
-    "released_at": "2026-11-02T06:31:02.160Z",
+    "owner_id": "819b208f-3c8d-4bf0-a75e-e2b66d920b65",
+    "epoch": 407,
+    "released_at": "2026-11-02T06:44:27.195Z",
     "release_receipt": {
-      "reason": "PR60_REVIEW_PAGE_STRICT_RED_GREEN_HOSTED_COMPLETE_DRAFT_REMAINING",
-      "claim_commit": "109be1ab03dea78bf8c6e4c38ed5a595fa5689da",
+      "reason": "PR60_REQUEST_BOUND_CONTROLLER_BRANCH_RED_GREEN_HOLD_INTEGRATION",
+      "claim_commit": "9f67d1d29bb0fee68fbcf8b961ff532cea36f1b1",
       "pr": 60,
-      "pr_head": "7a4a43532e0d71e37a6dd2a9bb496217ad71c8fa",
-      "red_run": 41365367463,
-      "green_run": 41400174726,
+      "pr_head": "9eac94bfe3ac388812cfd4e681606a433f3a4d8c",
+      "red_head": "e540d6a805f4bca67faf94d8286c766a2c6e27fd",
+      "red_ci": 41401270008,
+      "green_ci": 41401609124,
       "offline": "success",
       "compile_hold": "success",
-      "python_tests": 979,
-      "adversarial_tests": 19,
-      "changed_source_blob": "599b15800d4f383f4bebe1164a58981eccb5d73e",
-      "history_id": "C96318",
-      "comment_id": 6570699346,
-      "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "python_tests": 985,
+      "new_tests": 6,
+      "history": [
+        "C96319",
+        "C96320"
+      ],
+      "comment_id": 6570900061,
+      "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "main_modified": false,
-      "merged": false,
-      "approved": false,
-      "privileged_workflow_ran": false,
-      "spending": false,
-      "published": false
+      "pr_179_merged": false,
+      "pr_60_merged": false,
+      "native_approval": false,
+      "provider_protection": "UNVERIFIED",
+      "actual_autonomous_worker": "NOT_PROVEN",
+      "paid_inference": false,
+      "roblox_publish": false
     }
   },
   "last_completed_integration": {
