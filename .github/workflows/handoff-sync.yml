@@ -114,6 +114,11 @@ jobs:
             echo "NO_CHANGE: avoided fake progress" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
+          # A syntactically valid SHA can still misrepresent the true source.
+          # Derive the substantive revision from the accepted, full-history checkout.
+          expected_source_revision="$(git log -1 --format=%H -- src tests tools docs config PROJECT_STATE.json AGENTS.md .github history)"
+          test -n "$expected_source_revision"
+          jq -e --arg expected "$expected_source_revision" '.source_revision == $expected' status/LATEST_STATE.json >/dev/null
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m 'chore(handoff): sync cross-chat state' -- status/CHAT_HANDOFF.md status/LATEST_STATE.json
