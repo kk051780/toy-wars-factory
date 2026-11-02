@@ -72,7 +72,19 @@ def audit(ticket, run):
         state = "STARTED_BEFORE_DISPATCH"
     else:
         state = "WITHIN_TTL_BUT_UNATTRIBUTED"
-    return {"schema": 1, "state": state, "attribution": "UNATTRIBUTED",
+    # Independent temporal signals: the single legacy state is deliberately a
+    # human-oriented summary, not an exhaustive set of observed conditions.
+    # In epoch412, schedule-before-acquire and start-after-expiry coexist.
+    signals = {
+        "scheduled_before_acquire": due < acq,
+        "started_before_acquire": started < acq,
+        "started_at_or_after_expiry": started >= exp,
+        # This can legitimately occur in some scheduler environments; record
+        # it without inferring a forged provider run or illegal early start.
+        "scheduled_time_after_start": due > started,
+    }
+    return {"schema": 1, "state": state,
+            "chronology_signals": signals, "attribution": "UNATTRIBUTED",
             "cause": "INDETERMINATE", "provider_run_binding_verified": False,
             "may_adopt": False, "may_write": False, "may_extend_ticket": False,
             "may_recover_foreign": False, "may_dispatch": False}
