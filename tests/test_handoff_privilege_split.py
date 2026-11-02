@@ -8,6 +8,8 @@ import unittest
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SRC = (ROOT / ".github/workflows/handoff-sync.yml").read_text(encoding="utf-8")
 
+VALID_STATE = '{"schema":2,"canonical_repo":"kk051780/toy-wars-factory","source_revision":"e5deff4d5681bca4823a3da0f848e01bc089ae6e","release_decision":"HOLD_ENGINE_UNVERIFIED"}\n'
+
 
 def sections():
     a, b = SRC.split("\n  status_writer:", 1)
@@ -105,7 +107,7 @@ class HandoffPrivilegeSplit(unittest.TestCase):
             (root / "outside.json").write_text("{}\n")
             (folder / "LATEST_STATE.json").symlink_to("../outside.json")
         else:
-            (folder / "LATEST_STATE.json").write_text("{}\n")
+            (folder / "LATEST_STATE.json").write_text(VALID_STATE)
         manifest(folder)
         if extra:
             (folder / "intruder.txt").write_text("extra\n")
@@ -132,6 +134,51 @@ class HandoffPrivilegeSplit(unittest.TestCase):
     def test_symlink_is_rejected(self):
         _, result = self.artifact(symlink=True)
         self.assertNotEqual(result.returncode, 0)
+
+
+    def bad_payload_with_valid_checksums(self, payload):
+        root, first = self.artifact()
+        self.assertEqual(first.returncode, 0, first.stderr)
+        folder = root / ".verified-handoff"
+        (folder / "LATEST_STATE.json").write_text(payload, encoding="utf-8")
+        # This is the critical adversary: generate a fresh *matching* checksum
+        # rather than corrupting the data after the checksum was calculated.
+        manifest(folder)
+        script = shell_step("Inspect passive artifact, never execute files from it")
+        return subprocess.run(["bash", "-euo", "pipefail", "-c", script],
+                              cwd=root, capture_output=True, text=True)
+
+    def test_invalid_json_with_matching_sha_is_rejected(self):
+        result = self.bad_payload_with_valid_checksums('{"schema":2,invalid}\n')
+        self.assertNotEqual(result.returncode, 0)
+
+    def test_multiple_json_documents_with_matching_sha_are_rejected(self):
+        result = self.bad_payload_with_valid_checksums(VALID_STATE + VALID_STATE)
+        self.assertNotEqual(result.returncode, 0)
+
+    def test_wrong_repo_with_matching_sha_is_rejected(self):
+        result = self.bad_payload_with_valid_checksums(
+            VALID_STATE.replace("kk051780/toy-wars-factory", "untrusted/other-repo"))
+        self.assertNotEqual(result.returncode, 0)
+
+    def test_schema_downgrade_with_matching_sha_is_rejected(self):
+        result = self.bad_payload_with_valid_checksums(VALID_STATE.replace('"schema":2', '"schema":1'))
+        self.assertNotEqual(result.returncode, 0)
+
+    def test_release_hold_removed_with_matching_sha_is_rejected(self):
+        result = self.bad_payload_with_valid_checksums(
+            VALID_STATE.replace("HOLD_ENGINE_UNVERIFIED", "PUBLISHED"))
+        self.assertNotEqual(result.returncode, 0)
+
+    def test_bad_source_revision_with_matching_sha_is_rejected(self):
+        result = self.bad_payload_with_valid_checksums(
+            VALID_STATE.replace("e5deff4d5681bca4823a3da0f848e01bc089ae6e", "NOT_A_GIT_SHA"))
+        self.assertNotEqual(result.returncode, 0)
+
+    def test_array_document_with_matching_sha_is_rejected(self):
+        result = self.bad_payload_with_valid_checksums('["not", "status"]\n')
+        self.assertNotEqual(result.returncode, 0)
+
 
 
 if __name__ == "__main__":
