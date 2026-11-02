@@ -1,0 +1,38 @@
+{
+  "id": "C09042",
+  "date": "2026-11-02",
+  "kind": "PR163_PRIVILEGED_WRITE_BODY_FENCE_GREEN",
+  "pr": 163,
+  "original_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "e844a8c894d39b70fd6ebefc39e097a56479da69",
+    "owner_run_id": "2fc73166-aceb-47ab-bb29-e355c3a3bda4",
+    "epoch": 396
+  },
+  "red": {
+    "head": "74c5da9da9351bb51203272a60c6c8e84f5e48b5",
+    "ci_run": 41367282698,
+    "offline": "failure",
+    "compile_hold": "success",
+    "python_tests": 939,
+    "expected_new_failures": 17
+  },
+  "mitigation": "Fence prevalidates exact ref SHA, exact canonical file content and branch, draft PR head/base/body/title and full typed payload key sets before sending mutations; preserves one-shot CAS lease, owner release, and postwrite GitHub readback.",
+  "files": [
+    "tools/system_actions_write_probe.py",
+    "tests/test_system_actions_write_probe_per_write_fence.py",
+    "history/C09042_pr163_write_body_green.json"
+  ],
+  "qa": "PENDING_EXACT_HEAD_GITHUB",
+  "holds": {
+    "independent_security_review": true,
+    "main_unchanged": true,
+    "privileged_manual_workflow_not_dispatched": true,
+    "ai_agent_unattended_not_proven": true,
+    "roblox_engine_not_proven": true,
+    "merge": false,
+    "publish": false,
+    "spend": false
+  }
+}

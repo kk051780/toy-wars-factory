@@ -292,13 +292,47 @@ class _PerWriteLeaseFence:
         if sha_ref(self._api, CONTROL_REF) != self._claim_ref:
             raise ProbeError("SOURCE_LEASE_MOVED_BEFORE_WRITE")
 
+    def _approved_body(self, index):
+        """Separate exact-content authorization; paths alone grant no write."""
+        scope = self._scope
+        if index == 0:
+            return {"ref": "refs/heads/" + scope["branch"],
+                    "sha": scope["main"]}
+        if index == 1:
+            # Canonical non-sensitive one-file payload, never a caller-selected
+            # source path, branch, bytes, or existing Git commit.
+            info = {"schema": 1, "kind": "OWNER_MANUAL_GHA_CAPABILITY_PROBE_ONLY",
+                    "source_main_sha": scope["main"],
+                    "github_run_id": scope["run_id"],
+                    "run_attempt": scope["attempt"],
+                    "status": "NO_AI_NO_GAME_CHANGE"}
+            encoded = base64.b64encode(
+                (json.dumps(info, sort_keys=True) + "\n").encode()).decode()
+            return {"message": "probe: isolated owner-manual write only",
+                    "branch": scope["branch"], "content": encoded}
+        if index == 2:
+            return {
+                "title": "[PROBE ONLY] Owner-manual GitHub Actions branch/PR permission",
+                "head": scope["branch"], "base": "main", "draft": True,
+                "body": "Non-production, no game files, no AI inference, no merge authorization. "
+                        "Confirm separate reviewer and delete only by authorized owner after audit.",
+            }
+        raise ProbeError("SOURCE_WRITE_NOT_IN_ALLOWED_ORDER")
+
     def call(self, method, path, body=None):
         if method == "GET":
             return self._api.call(method, path, body)
         if (self._index >= len(self._mutations) or
                 (method, path) != self._mutations[self._index]):
             raise ProbeError("SOURCE_WRITE_NOT_IN_ALLOWED_ORDER")
-        # A policy or network error must never become a retry of this mutation.
+        expected = self._approved_body(self._index)
+        # Dict equality alone is insufficient because bool == 1 in Python.
+        if (type(body) is not dict or set(body) != set(expected) or
+                any(type(body[key]) is not type(value) or body[key] != value
+                    for key, value in expected.items())):
+            raise ProbeError("SOURCE_WRITE_BODY_NOT_APPROVED")
+        # Never consume the one-shot write budget on a rejected body. After
+        # transport dispatch, consume BEFORE the call: no uncertain-ACK retry.
         self._check_live()
         self._index += 1
         return self._api.call(method, path, body)

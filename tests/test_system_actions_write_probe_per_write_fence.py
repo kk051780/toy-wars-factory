@@ -3,6 +3,8 @@ from __future__ import annotations
 from copy import deepcopy
 from pathlib import Path
 import inspect
+import base64
+import json
 import sys
 import unittest
 from unittest.mock import patch
@@ -22,6 +24,24 @@ SCOPE = {
 }
 TARGET = "/contents/ops/probes/gha-write-41199998877-a1.json"
 OPS = [("POST", "/git/refs"), ("PUT", TARGET), ("POST", "/pulls")]
+
+
+def approved_bodies():
+    """Known public test-only bytes, identical to the production caller."""
+    info = {"schema": 1, "kind": "OWNER_MANUAL_GHA_CAPABILITY_PROBE_ONLY",
+            "source_main_sha": MAIN, "github_run_id": SCOPE["run_id"],
+            "run_attempt": SCOPE["attempt"], "status": "NO_AI_NO_GAME_CHANGE"}
+    return [
+        {"ref": "refs/heads/" + SCOPE["branch"], "sha": MAIN},
+        {"message": "probe: isolated owner-manual write only",
+         "branch": SCOPE["branch"],
+         "content": base64.b64encode(
+             (json.dumps(info, sort_keys=True) + "\n").encode()).decode()},
+        {"title": "[PROBE ONLY] Owner-manual GitHub Actions branch/PR permission",
+         "head": SCOPE["branch"], "base": "main", "draft": True,
+         "body": "Non-production, no game files, no AI inference, no merge authorization. "
+                 "Confirm separate reviewer and delete only by authorized owner after audit."},
+    ]
 
 
 def holder():
@@ -74,12 +94,12 @@ class FenceTests(unittest.TestCase):
         return p._PerWriteLeaseFence(self.api, SCOPE, EPOCH, CLAIM)
 
     def first(self, fence):
-        return fence.call(*OPS[0], {"ref": "refs/heads/" + SCOPE["branch"]})
+        return fence.call(*OPS[0], approved_bodies()[0])
 
     def test_positive_three_exact_writes(self):
         x = self.fence()
-        for method, path in OPS:
-            x.call(method, path, {})
+        for i, (method, path) in enumerate(OPS):
+            x.call(method, path, approved_bodies()[i])
         self.assertEqual(self.api.calls, OPS)
 
     def test_read_does_not_consume_mutation_budget(self):
@@ -93,7 +113,7 @@ class FenceTests(unittest.TestCase):
         self.first(x)
         self.api.ref = FOREIGN
         with self.assertRaises(p.ProbeError):
-            x.call(*OPS[1], {})
+            x.call(*OPS[1], approved_bodies()[1])
         self.assertEqual(self.api.calls, OPS[:1])
 
     def test_changed_owner_blocks_next_write(self):
@@ -101,7 +121,7 @@ class FenceTests(unittest.TestCase):
         self.first(x)
         self.api.state["holder"]["owner_id"] = "581c9d84-436e-422c-bc44-d06ff57f5924"
         with self.assertRaises(p.ProbeError):
-            x.call(*OPS[1], {})
+            x.call(*OPS[1], approved_bodies()[1])
         self.assertEqual(self.api.calls, OPS[:1])
 
     def test_wrong_epoch_refused_before_first_write(self):
@@ -133,13 +153,13 @@ class FenceTests(unittest.TestCase):
         self.first(x)
         self.api.main = FOREIGN
         with self.assertRaises(p.ProbeError):
-            x.call(*OPS[1], {})
+            x.call(*OPS[1], approved_bodies()[1])
         self.assertEqual(self.api.calls, OPS[:1])
 
     def test_wrong_operation_order_stops_without_write(self):
         x = self.fence()
         with self.assertRaises(p.ProbeError):
-            x.call(*OPS[1], {})
+            x.call(*OPS[1], approved_bodies()[1])
         self.assertEqual(self.api.calls, [])
 
     def test_unknown_write_ack_cannot_retry(self):
@@ -156,8 +176,8 @@ class FenceTests(unittest.TestCase):
 
     def test_extra_write_not_allowed(self):
         x = self.fence()
-        for method, path in OPS:
-            x.call(method, path, {})
+        for i, (method, path) in enumerate(OPS):
+            x.call(method, path, approved_bodies()[i])
         with self.assertRaises(p.ProbeError):
             x.call("POST", "/pulls", {})
         self.assertEqual(self.api.calls, OPS)
