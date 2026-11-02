@@ -1304,17 +1304,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 409,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "5bd7dd44-e07c-4c78-9d20-b8781d105e91",
-    "task_id": null,
-    "epoch": 409,
-    "acquired_at": "2026-11-02T06:54:06.660Z",
-    "expires_at": "2026-11-02T07:24:06.660Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "ops/twf-manual-review-lane",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2959,24 +2949,26 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "7fa16f40-683c-49a7-8e10-c85e73b0c931",
-    "epoch": 408,
-    "released_at": "2026-11-02T06:47:02.960Z",
+    "owner_id": "5bd7dd44-e07c-4c78-9d20-b8781d105e91",
+    "epoch": 409,
+    "released_at": "2026-11-02T06:56:50.542Z",
     "release_receipt": {
-      "reason": "REGISTERED_REVIEWER_PR60_PROTECTED_READ_ONLY_ADVISORY_PROMPT_UPDATED",
-      "claim_commit": "aa85165b0f2f00e6c0573412836b0f82d9cfd1a3",
-      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-      "task_schedule_unchanged": true,
+      "reason": "READ_ONLY_PR179_ELEVEN_FIXTURE_FILES_VERIFIED_NO_SOURCE_WRITE",
+      "claim_commit": "dc031bed1950344f42f80199b59854369956b1eb",
+      "work_branch": "ops/twf-manual-review-lane",
       "pr": 60,
       "head": "9eac94bfe3ac388812cfd4e681606a433f3a4d8c",
-      "manual_review_advisory_only": true,
-      "native_approval": false,
-      "source_change": false,
-      "main_change": false,
-      "merge": false,
-      "provider_private_protection_not_enforced": true,
-      "spend": false,
-      "publish": false
+      "pr179": 179,
+      "fixture_files_verified": 11,
+      "all_only_one_neutral_RoundOutcome_change": true,
+      "attempted_test_write": "BLOCKED_BEFORE_MUTATION",
+      "ci_not_run": true,
+      "source_not_modified": true,
+      "main_not_modified": true,
+      "pr_not_merged": true,
+      "provider_security_controls_unchanged": true,
+      "spending": false,
+      "publishing": false
     }
   },
   "last_completed_integration": {
