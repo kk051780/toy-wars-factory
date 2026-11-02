@@ -352,6 +352,62 @@
         "spending_authorized": false,
         "postwrite_readback_required": true
       }
+    },
+    {
+      "schema": 1,
+      "case_id": "SELF_OWNED_UNADOPTED_DISPATCH_397_20261102",
+      "operation": "OWNER_DELEGATED_ONE_SHOT_EXPIRED_DISPATCH_CANCELLATION",
+      "previous_epoch": 397,
+      "next_epoch": 398,
+      "previous_holder": {
+        "kind": "DISPATCH",
+        "owner_id": "a8ff9605-c8a7-4126-9b93-202611021112",
+        "task_id": null,
+        "epoch": 397,
+        "acquired_at": "2026-11-02T02:15:43.606Z",
+        "expires_at": "2026-11-02T02:17:43.606Z",
+        "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "work_branch": null,
+        "origin": "dispatch"
+      },
+      "observed_ref": "9b41fe4bffaeddb52d5faf23982222edcd46676c",
+      "recorded_at": "2026-11-02T02:52:48.099Z",
+      "authorization": {
+        "type": "SAME_CONVERSATION_OWN_TICKET_CLEANUP_ONLY",
+        "source": "Owner continuation 'つぎ' 2026-11-02; current conversation originated epoch397 DISPATCH and the only run_now request",
+        "scope": "Cancel exactly unchanged unadopted own DISPATCH only; not an override of any foreign WORKER/META/REVIEWER/CONTROLLER lease."
+      },
+      "evidence": {
+        "worker_task_id": "6adbf0d6a7d881918ce181dff2468867",
+        "worker_run_id": "79d6bb3d-e4ec-8329-9853-1fbe67aaf3f0",
+        "worker_run_status": "completed",
+        "worker_completed_at": "2026-11-02T02:16:58.982762Z",
+        "worker_result": "READ_ONLY_WAIT_IDENTITY_NO_CLAIM",
+        "dispatch_acquire_commit": "9b41fe4bffaeddb52d5faf23982222edcd46676c",
+        "dispatch_expired_at": "2026-11-02T02:17:43.606Z",
+        "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "original_dispatch_adopted": false,
+        "unattended_writer_authenticated": false
+      },
+      "safety": {
+        "changed_fields_only": [
+          "epoch",
+          "holder",
+          "administrative_revocations"
+        ],
+        "last_completed_unchanged": true,
+        "other_state_unchanged": true,
+        "no_source_write": true,
+        "no_pr_write": true,
+        "no_main_write": true,
+        "no_spending": true,
+        "no_roblox_publish": true,
+        "force": false,
+        "single_parent": true,
+        "postwrite_readback_required": true,
+        "no_automatic_takeover_rule": true,
+        "prior_epoch_fenced": true
+      }
     }
   ],
   "approval_packet": {
@@ -1247,18 +1303,8 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 397,
-  "holder": {
-    "kind": "DISPATCH",
-    "owner_id": "a8ff9605-c8a7-4126-9b93-202611021112",
-    "task_id": null,
-    "epoch": 397,
-    "acquired_at": "2026-11-02T02:15:43.606Z",
-    "expires_at": "2026-11-02T02:17:43.606Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": null,
-    "origin": "dispatch"
-  },
+  "epoch": 398,
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
