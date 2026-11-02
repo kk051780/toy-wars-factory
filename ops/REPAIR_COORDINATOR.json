@@ -1248,17 +1248,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 395,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "aa099064-3e24-48b3-a28e-0d6e993208be",
-    "task_id": null,
-    "epoch": 395,
-    "acquired_at": "2026-11-02T00:05:26.856Z",
-    "expires_at": "2026-11-02T00:35:26.856Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "ops/twf-manual-review-lane",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2903,33 +2893,26 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "8bcba285-840d-4e80-b435-c27ccf3431e9",
-    "epoch": 394,
-    "released_at": "2026-11-02T00:03:44.683Z",
+    "owner_id": "aa099064-3e24-48b3-a28e-0d6e993208be",
+    "epoch": 395,
+    "released_at": "2026-11-02T00:09:51.150Z",
     "release_receipt": {
-      "reason": "PR60_NATIVE_REVIEW_PAGE_COLLECTOR_960_PASS_PROTECTED_REVIEW_PENDING",
-      "claim_commit": "16dcb270620f17b6245f5629958a3a381313db8a",
+      "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
+      "reason": "PR60_REVIEW_PAGE_GREEN_REF_UPDATE_HOST_SAFETY_DENIED",
+      "claim_commit": "c468b0f4fada5aaf5c4de8a3a5ce4f251de9689e",
       "work_branch": "ops/twf-manual-review-lane",
       "pr": 60,
-      "pr_head": "41085cb89f8f847e10104a1e1f2f01d0b601e465",
-      "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "red_head": "bf63ea2b69db48e623deb5aeceecc47f57268e46",
+      "red_ci_run": 41365367463,
+      "red_ci": "979_TESTS_9_FAIL_1_ERROR_EXPECTED",
+      "green_candidate_commit": "125b5148af830fbfa53cbbc6f0ea514c191d6cc9",
+      "green_candidate_blob": "bba74c82e0f0c03343fd93d5d3c0ba71995b1280",
+      "green_ref_update": "DENIED_BY_HOST_SAFETY",
+      "green_ci": "NOT_RUN",
+      "actual_pr_head": "bf63ea2b69db48e623deb5aeceecc47f57268e46",
       "main_mutated": false,
-      "red_ci_run": 41364723587,
-      "green_ci_run": 41364976658,
-      "offline_tests": 960,
-      "offline": "success",
-      "compile_hold": "success",
-      "history": [
-        "C96401",
-        "C96402"
-      ],
-      "native_reviews": 0,
-      "independent_review": "PENDING",
       "merged": false,
-      "roblox_studio": "NOT_RUN",
-      "external_inference": false,
-      "publish": false,
-      "spend": false
+      "independent_review": "PENDING"
     }
   },
   "last_completed_integration": {
