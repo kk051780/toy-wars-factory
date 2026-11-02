@@ -1304,17 +1304,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 402,
-  "holder": {
-    "kind": "DISPATCH",
-    "owner_id": "15a6635d-2abc-4b24-ac71-f32e09a10d93",
-    "task_id": null,
-    "epoch": 402,
-    "acquired_at": "2026-11-02T05:35:52.547Z",
-    "expires_at": "2026-11-02T05:37:52.547Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": null,
-    "origin": "dispatch"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2958,26 +2948,22 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "5c2d8e69-8045-49e3-8f66-3e7de77134b2",
-    "epoch": 401,
-    "released_at": "2026-11-02T05:32:54.045Z",
+    "kind": "DISPATCH",
+    "owner_id": "15a6635d-2abc-4b24-ac71-f32e09a10d93",
+    "epoch": 402,
+    "released_at": "2026-11-02T05:37:47.584Z",
     "release_receipt": {
-      "reason": "REVIEWER_DRAFT_ADVISORY_PROMPT_ADDED_AND_VERIFIED",
-      "claim_commit": "f78c2863f3fbb31024469a564953fdc15a3410c3",
-      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
-      "original_prompt_length": 8125,
-      "new_prompt_length": 10152,
-      "schedule_unchanged": true,
-      "enabled_unchanged": true,
-      "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "github_main_mutated": false,
-      "github_source_mutated": false,
-      "pr_mutated": false,
-      "reviewer_run": "NOT_RUN",
-      "security_advisory": "NOT_PERFORMED",
-      "spend": false,
-      "publish": false
+      "reason": "OWN_UNADOPTED_DISPATCH_AFTER_WORKER_TERMINAL",
+      "claim_commit": "5efc58b6ff2a31ef0c0ecdc2c1398422870be10c",
+      "worker_task_id": "6adbf0d6a7d881918ce181dff2468867",
+      "worker_run_id": "25f3d8ee-0058-8329-9834-b43a3967d042",
+      "worker_status": "completed",
+      "worker_completed_at": "2026-11-02T05:37:08.190151Z",
+      "worker_adopted": false,
+      "worker_source_written": false,
+      "worker_pr_created": false,
+      "identity_status": "WAIT_IDENTITY",
+      "no_inference_or_publish": true
     }
   },
   "last_completed_integration": {
