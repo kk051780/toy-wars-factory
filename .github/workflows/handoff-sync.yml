@@ -15,46 +15,105 @@ on:
     - cron: '13,33,53 * * * *'
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
   group: twf-handoff-main
   cancel-in-progress: false
 jobs:
-  update:
+  verify:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact accepted source, no persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4 resolved 2026-11-02
         with:
-          persist-credentials: true
+          ref: ${{ github.sha }}
+          persist-credentials: false
           fetch-depth: 0
-      - name: Validate status and characters
+      - name: Validate status and characters without write permission
         run: |
+          set -euo pipefail
           python3 -m unittest discover -s tests -p 'test_*.py' -v
           python3 tools/repository_gate.py
       - name: Rebuild portable handoff and size gate
-        run: python3 tools/build_handoff.py
+        run: |
+          set -euo pipefail
+          python3 tools/build_handoff.py
       - name: Report audit run without claiming AI coding
         run: |
           echo "### TOY WARS HANDOFF CYCLE" >> "$GITHUB_STEP_SUMMARY"
           echo "This snapshots repository progress; it does not run an AI developer." >> "$GITHUB_STEP_SUMMARY"
           head -n 26 status/CHAT_HANDOFF.md >> "$GITHUB_STEP_SUMMARY"
-      - name: Save only substantive changes
+      - name: Build exact two-file passive status manifest
         run: |
-          if git diff --quiet -- status/ && [ -z "$(git ls-files --others --exclude-standard status/)" ]; then
-            echo "NO_CHANGE: avoided fake progress" >> "$GITHUB_STEP_SUMMARY"
-          else
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add status/CHAT_HANDOFF.md status/LATEST_STATE.json
-            git commit -m 'chore(handoff): sync cross-chat state'
-            git push origin HEAD:main
-          fi
-      - name: Archive individual audit snapshot
+          set -euo pipefail
+          test -f status/CHAT_HANDOFF.md
+          test -f status/LATEST_STATE.json
+          (cd status && sha256sum CHAT_HANDOFF.md LATEST_STATE.json > HANDOFF_SHA256SUMS.txt)
+      - name: Archive audited two-file status and its checksums
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4 resolved 2026-11-02
         with:
           name: toy-wars-handoff
-          path: status/
+          path: |
+            status/CHAT_HANDOFF.md
+            status/LATEST_STATE.json
+            status/HANDOFF_SHA256SUMS.txt
           if-no-files-found: ignore
           retention-days: 30
+  status_writer:
+    needs: verify
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout accepted main commit only (no token cache)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4 resolved 2026-11-02
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Download passive files from this run's verified job
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4 resolved 2026-11-02
+        with:
+          name: toy-wars-handoff
+          path: .verified-handoff
+      - name: Inspect passive artifact, never execute files from it
+        run: |
+          set -euo pipefail
+          test "$(find .verified-handoff -mindepth 1 -maxdepth 1 | wc -l)" -eq 3
+          for file in CHAT_HANDOFF.md LATEST_STATE.json HANDOFF_SHA256SUMS.txt; do
+            test -f ".verified-handoff/$file"
+            test ! -L ".verified-handoff/$file"
+            test "$(wc -c < ".verified-handoff/$file")" -lt 500000
+          done
+          test "$(wc -l < .verified-handoff/HANDOFF_SHA256SUMS.txt)" -eq 2
+          grep -Eq '^[0-9a-f]{64}  CHAT_HANDOFF\.md$' .verified-handoff/HANDOFF_SHA256SUMS.txt
+          grep -Eq '^[0-9a-f]{64}  LATEST_STATE\.json$' .verified-handoff/HANDOFF_SHA256SUMS.txt
+          (cd .verified-handoff && sha256sum --check --status HANDOFF_SHA256SUMS.txt)
+          install -m 0644 .verified-handoff/CHAT_HANDOFF.md status/CHAT_HANDOFF.md
+          install -m 0644 .verified-handoff/LATEST_STATE.json status/LATEST_STATE.json
+      - name: Commit exact allowlisted status only, single no-retry push
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TWF_SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$TWF_SOURCE_COMMIT"
+          test "$(git status --porcelain --untracked-files=no | grep -v '^.. status/' | wc -l)" -eq 0
+          git add -- status/CHAT_HANDOFF.md status/LATEST_STATE.json
+          if git diff --cached --quiet -- status/CHAT_HANDOFF.md status/LATEST_STATE.json; then
+            echo "NO_CHANGE: avoided fake progress" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'chore(handoff): sync cross-chat state' -- status/CHAT_HANDOFF.md status/LATEST_STATE.json
+          gh auth setup-git
+          remote_sha="$(git ls-remote origin refs/heads/main | cut -f1)"
+          test "$remote_sha" = "$TWF_SOURCE_COMMIT"
+          git push origin HEAD:refs/heads/main
