@@ -1,0 +1,41 @@
+{
+  "id": "C96402",
+  "date": "2026-11-02",
+  "kind": "PR60_NATIVE_REVIEW_REST_PAGINATION_GREEN_CANDIDATE",
+  "pr": 60,
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "16dcb270620f17b6245f5629958a3a381313db8a",
+    "owner_run_id": "8bcba285-840d-4e80-b435-c27ccf3431e9",
+    "epoch": 394
+  },
+  "red": {
+    "source_head": "0c22ae54acd753aa1aab03547599e39a4d7dcb82",
+    "ci_run": 41364723587,
+    "offline": "failure",
+    "compile_hold": "success",
+    "python_test_count": 942,
+    "reason": "expected missing system_native_review_pages module"
+  },
+  "source": {
+    "path": "tools/system_native_review_pages.py",
+    "read_only": true,
+    "provider_authenticated": false,
+    "permissions_verified": false,
+    "authority": {
+      "merge": false,
+      "dispatch": false,
+      "publish": false,
+      "spend": false
+    }
+  },
+  "qa": "PENDING_EXACT_HEAD_HOSTED_CI",
+  "holds": [
+    "PR60_PROTECTED_DRAFT",
+    "NATIVE_REVIEW_0",
+    "MAIN_PROTECTION_UNVERIFIED",
+    "REAL_HOST_GET_NOT_WIRED",
+    "ROBLOX_ENGINE_NOT_RUN"
+  ]
+}
