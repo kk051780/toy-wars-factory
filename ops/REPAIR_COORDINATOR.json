@@ -1304,17 +1304,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 415,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "b3a8d274-f1e9-42dd-aa38-0b8a24d754bb",
-    "task_id": null,
-    "epoch": 415,
-    "acquired_at": "2026-11-02T11:47:03.835Z",
-    "expires_at": "2026-11-02T12:17:03.835Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/issue57-dispatch-attribution-73b1e923",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -2959,22 +2949,27 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "73b1e923-a548-4ac4-ac76-66af5d21b648",
-    "epoch": 414,
-    "released_at": "2026-11-02T11:41:45.173Z",
+    "owner_id": "b3a8d274-f1e9-42dd-aa38-0b8a24d754bb",
+    "epoch": 415,
+    "released_at": "2026-11-02T11:51:26.916Z",
     "release_receipt": {
-      "reason": "ISSUE57_PR180_PROTECTED_DRAFT_SOURCE_TEST_HISTORY_WRITTEN",
-      "claim_commit": "a301b3e42dd40a0e2776e0f863399cc02a110f1c",
+      "reason": "PR180_MULTISIGNAL_SOURCE_TEST_CI_GREEN_HISTORY_WRITE_BLOCKED_BY_HOST",
+      "claim_commit": "a3753dc27008f815cc2886032f49043816c34d24",
       "work_branch": "controller/issue57-dispatch-attribution-73b1e923",
       "pr": 180,
-      "head": "c89af6facc9e6b565790314ab21c2b58cba441e8",
-      "hosted_ci": "PENDING",
-      "local_python_tests": 23,
+      "head": "7a8e90edba5b54265d3009758375e25261ab2da8",
+      "red_run_id": 41439660302,
+      "green_run_id": 41439746990,
+      "red_new_errors": 5,
+      "green_total_python_tests": 861,
+      "source_modified": true,
+      "tests_modified": true,
+      "history_append_completed": false,
+      "host_policy_denial_observed": true,
       "main_modified": false,
-      "no_provider_attribution": true,
-      "no_merge": true,
-      "no_spend": true,
-      "no_publish": true
+      "merged": false,
+      "spend": false,
+      "roblox_publish": false
     }
   },
   "last_completed_integration": {
