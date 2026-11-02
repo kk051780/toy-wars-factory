@@ -264,6 +264,54 @@ class IntegrationTests(unittest.TestCase):
         self.enable_manual_candidate()
         self.assertEqual(self.decision()["action"], "MERGE")
 
+    def make_registered_controller_branch(self):
+        # Synthetic immutable-Git review proof: branch change must be bound
+        # through the exact coordinator request AND matching claim snapshot.
+        request = self.enable_manual_candidate()
+        branch = "controller/game-round-outcome-be5b6e39"
+        self.pr["branch"] = branch
+        request["branch"] = branch
+        proof = self.review["manual_provenance"]
+        proof["branch"] = branch
+        proof["claim_state"]["holder"]["work_branch"] = branch
+        raw = json.dumps(proof["claim_state"], sort_keys=True)
+        data = raw.encode()
+        receipt = self.review["manual_git_evidence"]["claim"]
+        receipt["state_file"] = raw
+        receipt["state_blob_sha"] = hashlib.sha1(
+            b"blob " + str(len(data)).encode() + b"\\0" + data
+        ).hexdigest()
+        return request
+
+    def test_registered_controller_branch_with_exact_proof_can_reach_existing_gates(self):
+        self.make_registered_controller_branch()
+        self.assertEqual(self.decision()["action"], "MERGE")
+
+    def test_unregistered_controller_branch_remains_unrelated(self):
+        self.make_registered_controller_branch()
+        self.lease.pop("manual_review_requests")
+        self.assertEqual(self.decision()["action"], "SKIP_UNRELATED")
+
+    def test_wrong_controller_branch_cannot_borrow_request(self):
+        self.make_registered_controller_branch()
+        self.pr["branch"] = "controller/foreign-work"
+        self.assertEqual(self.decision()["action"], "SKIP_UNRELATED")
+
+    def test_duplicate_controller_claim_requests_fail_closed(self):
+        request = self.make_registered_controller_branch()
+        self.lease["manual_review_requests"].append(copy.deepcopy(request))
+        self.assertEqual(self.decision()["action"], "WAIT_MANUAL_REQUEST")
+
+    def test_registered_controller_branch_does_not_authorize_existing_test_edits(self):
+        self.make_registered_controller_branch()
+        self.pr["changed_entries"].append(["M", "tests/auto/restart_guide_accuracy_spec.lua"])
+        self.assertEqual(self.decision()["action"], "WAIT_MANUAL_SCOPE")
+
+    def test_registered_controller_branch_claim_mismatch_blocks(self):
+        self.make_registered_controller_branch()
+        self.review["manual_provenance"]["claim_state"]["holder"]["work_branch"] = "controller/foreign"
+        self.assertEqual(self.decision()["action"], "WAIT_MANUAL_PROOF")
+
     def test_manual_candidate_without_queue_request_is_rejected(self):
         self.enable_manual_candidate()
         self.lease.pop("manual_review_requests")
