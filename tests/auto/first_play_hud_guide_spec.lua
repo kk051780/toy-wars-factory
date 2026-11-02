@@ -40,7 +40,7 @@ local function fixture(file,queued)
     player._children={ToyWarsStatus=status,PlayerGui=gui}
     if not queued then player._children.leaderstats=stats end
     for id,v in pairs({Coins=50,Wave=1,Defeated=0}) do stats._children[id]=object("IntValue",v) end
-    for id,v in pairs({BaseHP=100,FactoryLevel=1,Allies=0,Enemies=0,SelectedToy="PON"}) do
+    for id,v in pairs({BaseHP=100,FactoryLevel=1,Allies=0,Enemies=0,RoundOutcome="",SelectedToy="PON"}) do
         status._children[id]=object("Value",v)
     end
     local module={}

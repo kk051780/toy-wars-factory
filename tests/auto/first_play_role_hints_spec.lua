@@ -23,7 +23,7 @@ local function fixture(file)
     for id,value in pairs({Coins=50,Wave=1,Defeated=0}) do
         stats._children[id]=object("IntValue",value)
     end
-    for id,value in pairs({BaseHP=100,FactoryLevel=1,Allies=0,Enemies=0,SelectedToy="PON"}) do
+    for id,value in pairs({BaseHP=100,FactoryLevel=1,Allies=0,Enemies=0,RoundOutcome="",SelectedToy="PON"}) do
         status._children[id]=object("Value",value)
     end
     local module=object("ModuleScript")

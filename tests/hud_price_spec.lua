@@ -25,7 +25,7 @@ local function fixture(costs)
     local stats,status,gui=object("Folder"),object("Folder"),object("PlayerGui")
     player._children={leaderstats=stats,ToyWarsStatus=status,PlayerGui=gui}
     for key,value in pairs({Coins=100,Wave=1,Defeated=0}) do stats._children[key]=object("IntValue",value) end
-    for key,value in pairs({BaseHP=100,FactoryLevel=1,Allies=0,Enemies=0,SelectedToy="PON"}) do
+    for key,value in pairs({BaseHP=100,FactoryLevel=1,Allies=0,Enemies=0,RoundOutcome="",SelectedToy="PON"}) do
         status._children[key]=object("Value",value)
     end
     local module={}

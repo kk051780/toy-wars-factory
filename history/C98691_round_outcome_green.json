@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "id": "C98691",
+  "kind": "MANUAL_GAME_ROUND_OUTCOME_GREEN",
+  "pr": 179,
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "parent_red": "1fb136ee55efc505cdfe37e2b6ea238f49006055",
+  "coordinator": {
+    "owner_id": "be5b6e39-d518-4a38-b769-7187059449ab",
+    "epoch": 404,
+    "claim_commit": "c5f12c9db450e59ffde39c354da434a3fd867963",
+    "work_branch": "controller/game-round-outcome-be5b6e39"
+  },
+  "red": {
+    "ci_run": 41396062592,
+    "status": "FAILURE",
+    "offline": "FAILURE",
+    "compile_hold": "SUCCESS",
+    "new_hud_tests_executed": 5,
+    "expected_new_hud_failures": 2,
+    "server_test_executed": "NOT_REACHED_BECAUSE_OFFLINE_FAIL_FAST"
+  },
+  "green": {
+    "ci_run": "PENDING",
+    "result": "NOT_VERIFIED"
+  },
+  "change_scope": {
+    "server": "RoundOutcome StringValue LOSS/VICTORY plus restart grace clear",
+    "hud": "use existing tip and explicit state over money/field hints",
+    "fixtures": 11,
+    "new_tests": 11
+  },
+  "no_change": [
+    "DataStore persisted progress record",
+    "three purchase buttons",
+    "Gemini HOLD",
+    "billing",
+    "Roblox publish",
+    "main branch"
+  ],
+  "independent_review": "PENDING",
+  "engine": "NOT_RUN"
+}

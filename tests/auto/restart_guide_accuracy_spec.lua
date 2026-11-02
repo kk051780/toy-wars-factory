@@ -25,7 +25,7 @@ local function fixture(file)
     local p,stats,status,gui=obj("Player"),obj("Folder"),obj("Folder"),obj("PlayerGui")
     p._children={leaderstats=stats,ToyWarsStatus=status,PlayerGui=gui}
     for k,v in pairs({Coins=50,Wave=1,Defeated=0}) do stats._children[k]=obj("IntValue",v) end
-    for k,v in pairs({BaseHP=100,FactoryLevel=1,Allies=0,Enemies=0,SelectedToy="PON"}) do
+    for k,v in pairs({BaseHP=100,FactoryLevel=1,Allies=0,Enemies=0,RoundOutcome="",SelectedToy="PON"}) do
         status._children[k]=obj("Value",v)
     end
     local module=obj("ModuleScript")
