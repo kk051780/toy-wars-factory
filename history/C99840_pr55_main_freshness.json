@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "cycle": "C99840",
+  "kind": "P0_CREDENTIAL_ISOLATION_MAIN_FRESHNESS",
+  "observed_at": "2026-11-04T12:38:06.735Z",
+  "summary": "Fail closed when pull_request_target event base SHA differs from current provider main at authenticated fetch time; never execute PR code in privileged step.",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "c9132facabd0dfc469a5ceaba0bf725bca390342",
+    "owner_run_id": "5a47c6d1-92eb-473c-8374-9630b42ec3de",
+    "epoch": 430,
+    "kind": "CONTROLLER",
+    "work_branch": "ops/twf-qa-token-isolation"
+  },
+  "baseline": {
+    "main_head": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "pr": 55,
+    "pr_head": "670f5fd344df4ddcbd528eea23a28323af9458bd",
+    "workflow_blob": "13b662eadb867356d4594751d6cc7d1b7eb2450e",
+    "tests_blob": "06f8a6e82b9eb8b2182df3e5d7c6eaf2eeb1e82a"
+  },
+  "files_changed": [
+    ".github/workflows/trusted-coordinator-claim.yml",
+    "tests/test_ci_token_isolation.py",
+    "history/C99840_pr55_main_freshness.json"
+  ],
+  "source_deltas": {
+    "workflow_utf8_chars": 192,
+    "test_utf8_chars": 1006
+  },
+  "characters_touched": [],
+  "new_test": "test_trusted_fetch_rechecks_live_main_not_only_event_snapshot",
+  "regression_evidence": {
+    "before": "old source lacks trusted-current-main fetch and guard",
+    "after": "local exact-source static assertion passed; exact-head GitHub Actions required after commit",
+    "status": "HOSTED_NOT_YET_RUN"
+  },
+  "safe_scope": {
+    "no_new_token_permissions": true,
+    "no_code_execution_from_pr": true,
+    "no_main_write": true,
+    "no_publish": true,
+    "no_new_paid_plan": true,
+    "no_waived_quality": true
+  },
+  "limitations": [
+    "Does not turn Free private into provider-enforced branch protection.",
+    "Does not prove separate native reviewer or production pull_request_target job.",
+    "A main change after fetch still requires independent exact-head validation."
+  ],
+  "next": "Fetch original exact-head offline & compile_hold GitHub Actions results; independent review remains HOLD."
+}

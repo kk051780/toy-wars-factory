@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "C98673",
+  "kind": "PR55_CURRENT_MAIN_TOKEN_ISOLATION_RED",
+  "pr": 55,
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "original_pr_head": "581b35fb0835488e23cffbaaee9cc5db85d27631",
+  "coordinator": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "479d8247e60bc5ccc54dc3e5e72be32c75e7c031",
+    "epoch": 399,
+    "owner_id": "48311411-3dad-4b25-9dee-e4db9c95782f"
+  },
+  "scope": "NEW_3_PROTECTED_QA_FILES_ON_TOP_OF_CURRENT_MAIN_PRESERVE_OLD_PR_ANCESTRY",
+  "test_first": {
+    "expect": "main still exposes GH_TOKEN in compile_hold and checkout offline persisted credentials; new test_ci_token_isolation.py must reject",
+    "hosted_ci": "PENDING"
+  },
+  "holds": [
+    "NO_MAIN_MERGE",
+    "NO_WORKER_AUTHORIZATION",
+    "NO_PROVIDER_BRANCH_PROTECTION_ATTESTATION",
+    "NO_INFERENCE",
+    "NO_ROBLOX_PUBLISH"
+  ]
+}

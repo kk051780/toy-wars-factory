@@ -1,0 +1,153 @@
+"""Security invariants: untrusted PR QA no secret; trusted coordination base only."""
+import pathlib
+import re
+import unittest
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+QA = (ROOT / '.github/workflows/bootstrap-quality.yml').read_text(encoding='utf-8')
+TRUSTED = (ROOT / '.github/workflows/trusted-coordinator-claim.yml').read_text(encoding='utf-8')
+
+class WorkflowIsolationTests(unittest.TestCase):
+    def test_pull_request_qa_has_no_explicit_github_token_use(self):
+        self.assertIn('  pull_request:', QA)
+        self.assertNotIn('GH_TOKEN:', QA)
+        self.assertNotIn('GITHUB_TOKEN:', QA)
+        self.assertNotIn('github.token', QA)
+        self.assertNotIn('gh extension install', QA)
+
+    def test_compiler_binary_is_unauthenticated_and_checksum_pinned(self):
+        self.assertIn('v0.93.2/linux-amd64', QA)
+        self.assertIn('364b98de9a8b8948792289128bbf3907d152284804e02b70804fc123e09ca6fd', QA)
+        self.assertIn('sha256sum --check', QA)
+        self.assertIn('/tmp/twf-gh-aw compile .github/workflows/twf-gemini-free-trial.md', QA)
+        self.assertNotIn('GH_TOKEN', QA)
+
+    def test_compiler_cache_pins_exact_reviewed_action(self):
+        import json
+        cache = json.loads((ROOT / '.github/aw/actions-lock.json').read_text())
+        self.assertEqual(set(cache), {'entries', 'containers'})
+        self.assertEqual(cache['containers'], {})
+        key = 'github/gh-aw-actions/setup@v0.93.2'
+        self.assertEqual(set(cache['entries']), {key})
+        self.assertEqual(cache['entries'][key], {
+            'repo': 'github/gh-aw-actions/setup',
+            'version': 'v0.93.2',
+            'sha': 'd9128eb3ea40c18b77c76184eda03c0ff2608d79'})
+        self.assertIn('/tmp/twf-gh-aw compile .github/workflows/twf-gemini-free-trial.md', QA)
+        self.assertNotIn('--action-mode release --action-tag', QA)
+        self.assertNotIn('GH_TOKEN:', QA)
+        self.assertIn('git diff --exit-code -- .github/workflows/twf-gemini-free-trial.lock.yml', QA)
+
+    def test_checkouts_all_disable_persisted_credentials(self):
+        named = len(re.findall(r'persist-credentials: false', QA))
+        self.assertEqual(named, 3)
+
+    def test_pr_qa_preserves_scope_and_compilation_regressions(self):
+        self.assertIn('tools/check_auto_diff.py', QA)
+        self.assertIn('check_meta_diff.py', QA)
+        self.assertIn('tools/verify_gemini_hold.py', QA)
+        self.assertIn('git diff --exit-code -- .github/workflows/twf-gemini-free-trial.lock.yml', QA)
+
+    def test_trusted_claim_workflow_is_base_scoped_and_not_pr_checkout(self):
+        self.assertIn('  pull_request_target:', TRUSTED)
+        self.assertNotIn('  pull_request:', TRUSTED)
+        self.assertIn('ref: ${{ github.event.pull_request.base.sha }}', TRUSTED)
+        self.assertNotIn('ref: ${{ github.event.pull_request.head.sha }}', TRUSTED)
+        self.assertIn('persist-credentials: false', TRUSTED)
+        self.assertIn('TWF_HEAD_REPO:', TRUSTED)
+        self.assertIn('test "$TWF_HEAD_REPO" = "$TWF_BASE_REPO"', TRUSTED)
+
+    def test_trusted_claim_is_data_only_and_uses_base_verifier(self):
+        self.assertIn('GH_TOKEN: ${{ github.token }}', TRUSTED)
+        self.assertIn('contents: read', TRUSTED)
+        self.assertNotIn('contents: write', TRUSTED)
+        self.assertIn('python3 tools/repair_control.py verify-pr', TRUSTED)
+        self.assertIn('refs/remotes/origin/twf-repair-coordinator', TRUSTED)
+        self.assertIn('test "$(git rev-parse refs/remotes/origin/trusted-pr-head)" = "$TWF_HEAD_SHA"', TRUSTED)
+        self.assertNotIn('python3 -m unittest discover', TRUSTED)
+        self.assertNotIn('lua5.4', TRUSTED)
+        self.assertNotIn('gh aw compile', TRUSTED)
+
+    def test_no_released_workflow_runs_untrusted_code_with_credential(self):
+        self.assertNotIn('GH_TOKEN', QA)
+        for line in TRUSTED.splitlines():
+            self.assertNotIn('sudo ', line)
+            self.assertNotIn('npm ', line)
+            self.assertNotIn('lua5.4', line)
+
+
+    def test_target_is_immutable_main_and_same_repository(self):
+        self.assertIn('    branches: [main]', TRUSTED)
+        self.assertIn("github.event.pull_request.base.ref == 'main'", TRUSTED)
+        self.assertIn('github.event.pull_request.base.repo.full_name == github.repository', TRUSTED)
+        self.assertIn('github.event.pull_request.head.repo.full_name == github.repository', TRUSTED)
+        self.assertIn('test "$TWF_BASE_BRANCH" = main', TRUSTED)
+        self.assertIn('test "$TWF_BASE_REPO" = "$TWF_REPOSITORY"', TRUSTED)
+        self.assertIn('test "$TWF_HEAD_REPO" = "$TWF_REPOSITORY"', TRUSTED)
+        self.assertIn('test "$(git rev-parse HEAD)" = "$TWF_BASE_SHA"', TRUSTED)
+
+    def test_credential_step_does_not_execute_python(self):
+        fetch_marker = '      - name: Authenticated data-only fetch, no PR code execution'
+        verify_marker = '      - name: Verify fetched PR metadata using immutable MAIN Python without tokens'
+        self.assertEqual(TRUSTED.count(fetch_marker), 1)
+        self.assertEqual(TRUSTED.count(verify_marker), 1)
+        fetch_section = TRUSTED.split(fetch_marker, 1)[1].split(verify_marker, 1)[0]
+        verify_section = TRUSTED.split(verify_marker, 1)[1]
+        self.assertIn('GH_TOKEN: ${{ github.token }}', fetch_section)
+        self.assertNotIn('python3 ', fetch_section)
+        self.assertNotIn('GH_TOKEN', verify_section)
+        self.assertIn('python3 tools/repair_control.py verify-pr', verify_section)
+
+
+    def test_trusted_fetch_rechecks_live_main_not_only_event_snapshot(self):
+        # The event base SHA can become stale while a privileged job is queued.
+        # The authenticated data-only fetch must bind it to current main.
+        marker = '      - name: Authenticated data-only fetch, no PR code execution'
+        end = '      - name: Verify fetched PR metadata using immutable MAIN Python without tokens'
+        fetch = TRUSTED.split(marker, 1)[1].split(end, 1)[0]
+        refspec = 'refs/heads/main:refs/remotes/origin/trusted-current-main'
+        guard = 'test "$(git rev-parse refs/remotes/origin/trusted-current-main)" = "$TWF_BASE_SHA"'
+        self.assertIn(refspec, fetch)
+        self.assertIn(guard, fetch)
+        self.assertLess(fetch.index(refspec), fetch.index(guard))
+        self.assertIn('refs/pull/${TWF_PR_NUMBER}/head:refs/remotes/origin/trusted-pr-head', fetch)
+        self.assertIn('test "$(git rev-parse refs/remotes/origin/trusted-pr-head)" = "$TWF_HEAD_SHA"', fetch)
+
+    def test_trusted_git_auth_header_never_enters_process_argv(self):
+        # Encoded GITHUB_TOKEN is still a secret; GitHub warns against command-line exposure.
+        first = '      - name: Authenticated data-only fetch, no PR code execution'
+        second = '      - name: Verify fetched PR metadata using immutable MAIN Python without tokens'
+        fetch = TRUSTED.split(first, 1)[1].split(second, 1)[0]
+        self.assertNotIn('git -c "http.https://github.com/.extraheader=', fetch)
+        self.assertIn('GIT_CONFIG_COUNT=1', fetch)
+        self.assertIn('GIT_CONFIG_KEY_0=http.https://github.com/.extraheader', fetch)
+        self.assertIn('GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $basic"', fetch)
+        self.assertIn('git fetch --no-tags origin', fetch)
+        self.assertIn('unset basic', fetch)
+
+    def test_git_env_config_is_one_command_only_not_persisted(self):
+        import os
+        import subprocess
+        import tempfile
+        with tempfile.TemporaryDirectory() as folder:
+            subprocess.run(['git', 'init', '-q', folder], check=True, capture_output=True)
+            dummy = 'AUTHORIZATION: basic DUMMY_TEST_NOT_A_SECRET'
+            env = dict(os.environ,
+                GIT_CONFIG_COUNT='1',
+                GIT_CONFIG_KEY_0='http.https://github.com/.extraheader',
+                GIT_CONFIG_VALUE_0=dummy)
+            a = subprocess.run(['git', '-C', folder, 'config', '--get',
+                'http.https://github.com/.extraheader'], env=env,
+                text=True, capture_output=True, check=True)
+            self.assertEqual(a.stdout.strip(), dummy)
+            b = subprocess.run(['git', '-C', folder, 'config', '--local', '--get',
+                'http.https://github.com/.extraheader'], text=True, capture_output=True)
+            self.assertEqual(b.returncode, 1)
+
+    def test_trusted_checkout_commit_is_immutable(self):
+        # The pull_request_target workflow carries a GitHub token in one step.
+        self.assertIn('uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683', TRUSTED)
+        self.assertNotIn('uses: actions/checkout@v4', TRUSTED)
+
+if __name__ == '__main__':
+    unittest.main()

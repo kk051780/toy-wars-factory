@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "C98675",
+  "kind": "PR55_PRIVILEGED_TRUSTED_CHECKOUT_SHA_PIN_RED",
+  "pr": 55,
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "parent_head": "45774e1df7a29986cb328ce44cf532d31f8f2503",
+  "coordinator": {
+    "claim_commit": "479d8247e60bc5ccc54dc3e5e72be32c75e7c031",
+    "epoch": 399,
+    "owner_id": "48311411-3dad-4b25-9dee-e4db9c95782f"
+  },
+  "test_first": {
+    "new_test": "test_trusted_checkout_commit_is_immutable",
+    "expect": "FAIL because trusted pull_request_target code uses mutable actions/checkout@v4",
+    "original_green_run": 41380874971,
+    "original_tests": 842
+  },
+  "scope": "TEST_ONLY_ON_ORIGINAL_PR55",
+  "holds": [
+    "NO_WRITE_WORKFLOW_DISPATCH",
+    "NO_MAIN_MERGE",
+    "NO_NATIVE_REVIEW",
+    "NO_ROBLOX_PUBLISH"
+  ]
+}

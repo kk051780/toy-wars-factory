@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "cycle": "C99842",
+  "kind": "PIN_TOKENLESS_GHAW_COMPILER_ACTION",
+  "observed_at": "2026-11-04T12:55:59.980Z",
+  "summary": "Preserve the mandatory compiler lock-diff gate while fixing compiler's action ref to the verified immutable GH-AW v0.93.2 setup commit; no GH_TOKEN or secrets to untrusted PR compilation.",
+  "coordinator": {
+    "epoch": 431,
+    "owner_id": "ad85ca49-1532-4aec-bc63-b6f4f64d728e",
+    "claim_commit": "16826191bb1dcfbae0de40d09323314b7a4e9985",
+    "branch": "twf-repair-coordinator",
+    "work_branch": "ops/twf-qa-token-isolation"
+  },
+  "baseline": {
+    "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "pr": 55,
+    "head": "ea62292a8708c870614a384ea71923a8c5d2c2cb",
+    "bootstrap_workflow_blob": "aedc786d0eb2d1e0d56da09a631be283ed1e58bf",
+    "test_blob": "b6326a022159504ef471a305cd06422622757f56"
+  },
+  "failure": {
+    "run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/41832722505",
+    "exact_head": "ea62292a8708c870614a384ea71923a8c5d2c2cb",
+    "offline_job": "success",
+    "compile_hold_job": "failure",
+    "cause": "Tokenless compilation emitted github/gh-aw-actions/setup@v0.93.2 instead of already committed SHA d9128eb3ea40c18b77c76184eda03c0ff2608d79. Workflow lock diff gate correctly blocked it; no evidence of token argv regression."
+  },
+  "intervention": {
+    "action_ref_commit": "d9128eb3ea40c18b77c76184eda03c0ff2608d79",
+    "mode": "release",
+    "cli_flag": "--action-tag",
+    "provenance": "Existing .github/workflows/twf-gemini-free-trial.lock.yml manifest at main and v0.93.2 CLI flag docs",
+    "trusted_main_unchanged": true,
+    "tokenless_compilation": true,
+    "failed_gate_preserved": true
+  },
+  "changed_files": [
+    ".github/workflows/bootstrap-quality.yml",
+    "tests/test_ci_token_isolation.py",
+    "history/C99842_pr55_compiler_action_sha.json"
+  ],
+  "delta": {
+    "workflow_chars": 76,
+    "tests_chars": 607
+  },
+  "characters_touched": [],
+  "new_tests": [
+    "test_compiler_explicitly_fixes_protected_setup_action_commit"
+  ],
+  "ci_status": "PENDING_AFTER_COMMIT",
+  "limitations": [
+    "GitHub-hosted exact-head CI required to confirm compiler output fully matches.",
+    "No privileged pull_request_target run nor native independent review.",
+    "No main merge, no automated agent release, no billing or publishing."
+  ]
+}
