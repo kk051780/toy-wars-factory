@@ -44,6 +44,7 @@ BASE_ENV={
     'GITHUB_SHA':SHA,'PROBE_CONSENT':p.CONSENT
 }
 BASE_RUN={'id':41199998877,'run_attempt':1,'event':'workflow_dispatch',
+          'status':'in_progress','conclusion':None,
           'path':p.WORKFLOW,'head_repository':{'id':p.REPO_ID},
           'actor':{'login':p.ACTOR},'triggering_actor':{'login':p.ACTOR},'head_branch':'main','head_sha':SHA}
 
@@ -85,6 +86,16 @@ class ContextTests(unittest.TestCase):
             'head_branch':'different','head_sha':'b'*40}.items():
             with self.subTest(key=key),self.assertRaises(p.ProbeError):
                 p.checked_context(BASE_ENV,{**BASE_RUN,key:value},SHA)
+    def test_live_run_must_be_actively_running(self):
+        for status, conclusion in [
+            ("completed", "success"), ("completed", "cancelled"),
+            ("queued", None), ("waiting", None), (None, None),
+            ("in_progress", "failure"), ("in_progress", "success"),
+        ]:
+            with self.subTest(status=status, conclusion=conclusion),self.assertRaises(p.ProbeError):
+                p.checked_context(BASE_ENV,{**BASE_RUN,'status':status,'conclusion':conclusion},SHA)
+        self.assertEqual(p.checked_context(BASE_ENV,BASE_RUN,SHA)['attempt'],1)
+
     def test_nonmapping_provider_denied(self):
         for row in [None,[],'hello']:
             with self.subTest(row=str(row)),self.assertRaises(p.ProbeError):

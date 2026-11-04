@@ -63,6 +63,7 @@ def checked_context(env: dict, live_run: dict, live_main: str):
             not valid_sha(env["GITHUB_SHA"]) or not valid_sha(live_main)):
         raise ProbeError("INVALID_SOURCE_LINEAGE")
     if not isinstance(live_run, dict) or (
+        live_run.get("status") != "in_progress" or live_run.get("conclusion") is not None or
         live_run.get("id") != int(run_id) or live_run.get("run_attempt") != int(attempt) or
         live_run.get("event") != "workflow_dispatch" or
         live_run.get("path") != WORKFLOW or
