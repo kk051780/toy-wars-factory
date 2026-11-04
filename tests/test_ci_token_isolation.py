@@ -97,6 +97,37 @@ class WorkflowIsolationTests(unittest.TestCase):
         self.assertIn('refs/pull/${TWF_PR_NUMBER}/head:refs/remotes/origin/trusted-pr-head', fetch)
         self.assertIn('test "$(git rev-parse refs/remotes/origin/trusted-pr-head)" = "$TWF_HEAD_SHA"', fetch)
 
+    def test_trusted_git_auth_header_never_enters_process_argv(self):
+        # Encoded GITHUB_TOKEN is still a secret; GitHub warns against command-line exposure.
+        first = '      - name: Authenticated data-only fetch, no PR code execution'
+        second = '      - name: Verify fetched PR metadata using immutable MAIN Python without tokens'
+        fetch = TRUSTED.split(first, 1)[1].split(second, 1)[0]
+        self.assertNotIn('git -c "http.https://github.com/.extraheader=', fetch)
+        self.assertIn('GIT_CONFIG_COUNT=1', fetch)
+        self.assertIn('GIT_CONFIG_KEY_0=http.https://github.com/.extraheader', fetch)
+        self.assertIn('GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $basic"', fetch)
+        self.assertIn('git fetch --no-tags origin', fetch)
+        self.assertIn('unset basic', fetch)
+
+    def test_git_env_config_is_one_command_only_not_persisted(self):
+        import os
+        import subprocess
+        import tempfile
+        with tempfile.TemporaryDirectory() as folder:
+            subprocess.run(['git', 'init', '-q', folder], check=True, capture_output=True)
+            dummy = 'AUTHORIZATION: basic DUMMY_TEST_NOT_A_SECRET'
+            env = dict(os.environ,
+                GIT_CONFIG_COUNT='1',
+                GIT_CONFIG_KEY_0='http.https://github.com/.extraheader',
+                GIT_CONFIG_VALUE_0=dummy)
+            a = subprocess.run(['git', '-C', folder, 'config', '--get',
+                'http.https://github.com/.extraheader'], env=env,
+                text=True, capture_output=True, check=True)
+            self.assertEqual(a.stdout.strip(), dummy)
+            b = subprocess.run(['git', '-C', folder, 'config', '--local', '--get',
+                'http.https://github.com/.extraheader'], text=True, capture_output=True)
+            self.assertEqual(b.returncode, 1)
+
     def test_trusted_checkout_commit_is_immutable(self):
         # The pull_request_target workflow carries a GitHub token in one step.
         self.assertIn('uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683', TRUSTED)
