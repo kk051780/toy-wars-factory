@@ -91,5 +91,38 @@ class RunnerIdentityTests(unittest.TestCase):
         r["id"] = 54321
         self.assertFalse(probe.check(c, r, m)["may_dispatch"])
 
+class RunnerWorkflowTokenIsolationTests(unittest.TestCase):
+    """The read-only probe must not give its test suite the run-inspection token."""
+    def setUp(self):
+        self.workflow = (MODULE.parents[1] / ".github/workflows/twf-runner-identity-probe.yml").read_text()
+
+    def test_offline_identity_and_redirect_fixtures_are_tokenless(self):
+        first = "      - name: Verify read-only identity and redirect regressions without GitHub token"
+        second = "      - name: Inspect matching GitHub run with read-only token"
+        self.assertEqual(self.workflow.count(first), 1)
+        self.assertEqual(self.workflow.count(second), 1)
+        fixture = self.workflow.split(first, 1)[1].split(second, 1)[0]
+        self.assertIn("test_system_runner_identity_*.py", fixture)
+        self.assertNotIn("GH_TOKEN:", fixture)
+        self.assertNotIn("github.token", fixture)
+        self.assertNotIn("system_runner_identity_probe.py", fixture.replace("test_system_runner_identity_*.py", ""))
+
+    def test_token_available_only_to_read_only_live_probe(self):
+        self.assertEqual(self.workflow.count("GH_TOKEN: ${{ github.token }}"), 1)
+        step = self.workflow.split("      - name: Inspect matching GitHub run with read-only token", 1)[1]
+        self.assertIn("GH_TOKEN: ${{ github.token }}", step)
+        self.assertIn("python3 tools/system_runner_identity_probe.py", step)
+        self.assertNotIn("python3 -m unittest", step)
+        self.assertIn("  contents: read", self.workflow)
+        self.assertIn("  actions: read", self.workflow)
+        self.assertNotIn("contents: write", self.workflow)
+        self.assertNotIn("pull-requests: write", self.workflow)
+
+    def test_tokenless_checkout_pinned_to_immutable_source(self):
+        self.assertIn("actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2", self.workflow)
+        self.assertNotIn("actions/checkout@v4", self.workflow)
+        self.assertIn("persist-credentials: false", self.workflow)
+
+
 if __name__ == "__main__":
     unittest.main()

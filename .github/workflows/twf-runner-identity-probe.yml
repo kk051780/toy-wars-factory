@@ -13,12 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
-      - name: Verify offline fixtures and inspect matching GitHub run
+      - name: Verify read-only identity and redirect regressions without GitHub token
+        run: |
+          python3 -m unittest discover -s tests -p 'test_system_runner_identity_*.py' -v
+      - name: Inspect matching GitHub run with read-only token
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          python3 -m unittest discover -s tests -p 'test_system_runner_identity_probe.py' -v
           python3 tools/system_runner_identity_probe.py
