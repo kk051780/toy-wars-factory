@@ -32,7 +32,7 @@ jobs:
           chmod 0700 /tmp/twf-gh-aw
       - name: Recompile the literal incident hold without invoking an agent
         run: |
-          /tmp/twf-gh-aw compile .github/workflows/twf-gemini-free-trial.md
+          /tmp/twf-gh-aw compile --action-mode release --action-tag d9128eb3ea40c18b77c76184eda03c0ff2608d79 .github/workflows/twf-gemini-free-trial.md
           python3 tools/verify_gemini_hold.py
           git diff --exit-code -- .github/workflows/twf-gemini-free-trial.lock.yml
       - name: Preserve compiler output for exact review

@@ -19,8 +19,16 @@ class WorkflowIsolationTests(unittest.TestCase):
         self.assertIn('v0.93.2/linux-amd64', QA)
         self.assertIn('364b98de9a8b8948792289128bbf3907d152284804e02b70804fc123e09ca6fd', QA)
         self.assertIn('sha256sum --check', QA)
-        self.assertIn('/tmp/twf-gh-aw compile .github/workflows/twf-gemini-free-trial.md', QA)
+        self.assertIn('/tmp/twf-gh-aw compile --action-mode release --action-tag d9128eb3ea40c18b77c76184eda03c0ff2608d79 .github/workflows/twf-gemini-free-trial.md', QA)
         self.assertNotIn('GH_TOKEN', QA)
+
+    def test_compiler_explicitly_fixes_protected_setup_action_commit(self):
+        # Tokenless compilation cannot rely on optional remote tag resolution.
+        pinned = '--action-mode release --action-tag d9128eb3ea40c18b77c76184eda03c0ff2608d79'
+        self.assertIn('/tmp/twf-gh-aw compile ' + pinned, QA)
+        self.assertNotIn('/tmp/twf-gh-aw compile .github/workflows/', QA)
+        self.assertIn('git diff --exit-code -- .github/workflows/twf-gemini-free-trial.lock.yml', QA)
+        self.assertNotIn('GH_TOKEN:', QA)
 
     def test_checkouts_all_disable_persisted_credentials(self):
         named = len(re.findall(r'persist-credentials: false', QA))
