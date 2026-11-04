@@ -408,6 +408,60 @@
         "no_automatic_takeover_rule": true,
         "prior_epoch_fenced": true
       }
+    },
+    {
+      "schema": 1,
+      "case_id": "OWNER_EXPLICIT_EPOCH425_CONTROLLEREVENT_20261104",
+      "operation": "OWNER_EXPLICIT_ONE_SHOT_ADMINISTRATIVE_REVOCATION_NOT_TERMINAL_RECOVERY",
+      "previous_epoch": 425,
+      "next_epoch": 426,
+      "previous_holder": {
+        "kind": "CONTROLLER",
+        "owner_id": "613c0a8f-cf88-48d2-9c9b-ad8cb2993d76",
+        "task_id": null,
+        "epoch": 425,
+        "acquired_at": "2026-11-03T01:55:26.483Z",
+        "expires_at": "2026-11-03T02:25:26.489Z",
+        "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "work_branch": null,
+        "origin": "controller"
+      },
+      "observed_ref": "b2b5b501a36040f1860568e1642b744ce0263021",
+      "observed_state_blob": "64c4f40cf32f041cab4905172e817a43eee5a52c",
+      "recorded_at": "2026-11-04T00:45:36.180Z",
+      "authorization": {
+        "type": "CURRENT_CONVERSATION_EXPLICIT_OWNER_APPROVAL",
+        "source": "Owner 2026-11-04: explicit one-time permission to revoke only epoch425 / owner_id 613c0a8f-cf88-48d2-9c9b-ad8cb2993d76, if exact ref/holder unchanged, using force=false expected_sha, preserving history; no false claim of terminal completion.",
+        "scope": "Revoke ONLY observed expired manual CONTROLLER epoch425; main, PR source, workflows, secrets, plan, billing, Roblox and unrelated coordinator records unchanged. Subsequent PR163 work requires separate legitimate exclusive lease."
+      },
+      "evidence": {
+        "issue57": "https://github.com/kk051780/toy-wars-factory/issues/57#issuecomment-6618646202",
+        "original_holder_expired_at": "2026-11-03T02:25:26.489Z",
+        "manual_controller_terminal": "UNVERIFIED",
+        "provider_run_terminal_attested": false,
+        "previous_release_observed": false,
+        "observed_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "observed_now": "2026-11-04T00:45:36.180Z"
+      },
+      "safety": {
+        "changed_fields_only": [
+          "epoch",
+          "holder",
+          "administrative_revocations"
+        ],
+        "last_completed_unchanged": true,
+        "unrelated_state_preserved": true,
+        "previous_history_preserved": true,
+        "source_unchanged": true,
+        "main_unchanged": true,
+        "no_merge": true,
+        "spend_increment_zero": true,
+        "single_parent": true,
+        "force": false,
+        "expected_sha": "b2b5b501a36040f1860568e1642b744ce0263021",
+        "postwrite_readback_required": true,
+        "not_normal_recovery": true
+      }
     }
   ],
   "approval_packet": {
@@ -1303,18 +1357,8 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 425,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "613c0a8f-cf88-48d2-9c9b-ad8cb2993d76",
-    "task_id": null,
-    "epoch": 425,
-    "acquired_at": "2026-11-03T01:55:26.483Z",
-    "expires_at": "2026-11-03T02:25:26.489Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": null,
-    "origin": "controller"
-  },
+  "epoch": 426,
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
