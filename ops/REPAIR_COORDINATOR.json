@@ -462,6 +462,68 @@
         "postwrite_readback_required": true,
         "not_normal_recovery": true
       }
+    },
+    {
+      "schema": 1,
+      "case_id": "OWNER_EXPLICIT_EPOCH435_PR6_CLOSED_STALE_20261105",
+      "operation": "OWNER_EXPLICIT_ONE_SHOT_ADMINISTRATIVE_REVOCATION_NOT_TERMINAL_RECOVERY",
+      "previous_epoch": 435,
+      "next_epoch": 436,
+      "previous_holder": {
+        "kind": "CONTROLLER",
+        "owner_id": "a8e62a4c-df51-4e2e-92a4-9f1be7e12853",
+        "task_id": null,
+        "epoch": 435,
+        "acquired_at": "2026-11-04T13:48:14.711Z",
+        "expires_at": "2026-11-04T14:18:14.711Z",
+        "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "work_branch": null,
+        "origin": "controller"
+      },
+      "observed_ref": "4554106b293ae6cd3661aecf6da4d027bf1ca799",
+      "observed_state_blob": "04eb1294905f8a91d7679846928e0409d796d52b",
+      "recorded_at": "2026-11-04T22:15:54.998Z",
+      "authorization": {
+        "type": "CURRENT_CONVERSATION_EXPLICIT_OWNER_APPROVAL",
+        "source": "2026-11-05 explicit OWNER approval: revoke epoch435 / owner a8e62a4c-df51-4e2e-92a4-9f1be7e12853 only after exact current GitHub ref/epoch/holder and target-work verification; use nonforce expected_sha CAS; preserve all other records; NEVER claim old manual work completed; afterward legitimately claim a new lease and repair PR153 only.",
+        "scope": "Limited one-time revocation of expired foreign manual CONTROLLER epoch435; no mutation of unrelated histories, last_completed, source, main, PRs, permission, secrets, billing, Roblox, merge or publication."
+      },
+      "evidence": {
+        "source_pr": 6,
+        "source_pr_state": "closed",
+        "source_pr_merged": false,
+        "source_pr_closed_at": "2026-11-04T13:51:16Z",
+        "source_pr_head": "ad1ea73f092a2416d997b25635c912339d0b80bd",
+        "original_claim_message": "coordination: claim historical paid-Copilot PR6 retirement epoch435",
+        "original_holder_expired_at": "2026-11-04T14:18:14.711Z",
+        "original_holder_terminal": "UNVERIFIED",
+        "old_holder_release_observed": false,
+        "owner_revocation_not_normal_completion": true,
+        "observed_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "protected_pr153_head": "a33880b6fb42d13bf9b5da1923dbcec21a1ac30e",
+        "observed_now": "2026-11-04T22:15:54.998Z"
+      },
+      "safety": {
+        "changed_fields_only": [
+          "epoch",
+          "holder",
+          "administrative_revocations"
+        ],
+        "last_completed_unchanged": true,
+        "other_state_preserved": true,
+        "previous_revocation_history_preserved": true,
+        "no_source_write": true,
+        "no_main_write": true,
+        "no_merge": true,
+        "no_publish": true,
+        "no_new_paid_contract": true,
+        "provider_terminal_attested": false,
+        "expected_sha": "4554106b293ae6cd3661aecf6da4d027bf1ca799",
+        "force": false,
+        "single_parent": true,
+        "postwrite_readback_required": true,
+        "one_shot": true
+      }
     }
   ],
   "approval_packet": {
@@ -1357,18 +1419,8 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 435,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "a8e62a4c-df51-4e2e-92a4-9f1be7e12853",
-    "task_id": null,
-    "epoch": 435,
-    "acquired_at": "2026-11-04T13:48:14.711Z",
-    "expires_at": "2026-11-04T14:18:14.711Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": null,
-    "origin": "controller"
-  },
+  "epoch": 436,
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
