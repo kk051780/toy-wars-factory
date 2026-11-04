@@ -68,6 +68,7 @@ def check(context, run, branch):
     require(run.get("path") == WORKFLOW, "WRONG_RUN_WORKFLOW")
     require(run.get("head_sha") == context["sha"], "WRONG_RUN_HEAD")
     require(run.get("status") == "in_progress", "RUN_NOT_IN_PROGRESS")
+    require("conclusion" in run and run["conclusion"] is None, "RUN_CONCLUSION_INVALID")
     require(exact_int(run.get("workflow_id")), "INVALID_WORKFLOW_ID")
     require(type(branch) is dict and type(branch.get("commit")) is dict, "MISSING_MAIN")
     require(branch.get("name") == "main", "WRONG_MAIN_BRANCH")

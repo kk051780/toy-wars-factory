@@ -20,7 +20,7 @@ def valid():
              workflow_ref=f"{REPO}/{WORKFLOW}@refs/heads/main")
     r = dict(id=12345, run_attempt=2, repository={"full_name": REPO},
              event="workflow_dispatch", head_branch="main", path=WORKFLOW,
-             head_sha=SHA, status="in_progress", workflow_id=65432)
+             head_sha=SHA, status="in_progress", conclusion=None, workflow_id=65432)
     m = {"name": "main", "commit": {"sha": SHA}}
     return c, r, m
 
@@ -62,6 +62,20 @@ class RunnerIdentityTests(unittest.TestCase):
     def test_wrong_run_workflow(self): self.denied(1, "path", ".github/workflows/push.yml", "WRONG_RUN_WORKFLOW")
     def test_wrong_run_sha(self): self.denied(1, "head_sha", "b" * 40, "WRONG_RUN_HEAD")
     def test_run_complete_not_running(self): self.denied(1, "status", "completed", "RUN_NOT_IN_PROGRESS")
+    def test_in_progress_run_requires_explicit_null_conclusion(self):
+        c, r, m = valid()
+        self.assertTrue(probe.check(c, r, m)["github_api_consistent"])
+        for value in ("success", "failure", "cancelled", "skipped", "", False, True, 0, {}):
+            with self.subTest(value=str(value)):
+                c, r, m = valid()
+                r["conclusion"] = value
+                with self.assertRaisesRegex(probe.NotVerified, "^RUN_CONCLUSION_INVALID$"):
+                    probe.check(c, r, m)
+        c, r, m = valid()
+        r.pop("conclusion")
+        with self.assertRaisesRegex(probe.NotVerified, "^RUN_CONCLUSION_INVALID$"):
+            probe.check(c, r, m)
+
     def test_missing_workflow_id(self): self.denied(1, "workflow_id", None, "INVALID_WORKFLOW_ID")
     def test_bool_workflow_id(self): self.denied(1, "workflow_id", True, "INVALID_WORKFLOW_ID")
     def test_wrong_main_ref(self): self.denied(2, "name", "old-main", "WRONG_MAIN_BRANCH")

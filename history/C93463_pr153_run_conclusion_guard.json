@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "cycle": "C93463",
+  "kind": "PR153_READ_ONLY_RUN_CONCLUSION_FAIL_CLOSED",
+  "timestamp_utc": "2026-11-04T22:30:19.014Z",
+  "summary": "Reject inconsistent or incomplete GitHub Actions run provider state: in_progress requires explicit conclusion:null at initial observation.",
+  "coordinator": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "a69f652865a4c2887a2b030cbcd93043293f9f45",
+    "epoch": 438,
+    "owner_id": "8e25cadc-f7c6-4799-bfc8-d0fd5b3b6f2a",
+    "work_branch": "controller/read-only-runner-identity-490539b4"
+  },
+  "baseline": {
+    "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "pr": 153,
+    "pr_head": "789e18ea551c56006904bc27d4f690c74dafec0b",
+    "source_blob": "096c963315b358fdc2248ccc89610fb5e07e50cc",
+    "test_blob": "6c8ba51859fd6407fed12c71065ada98b0394351"
+  },
+  "changed_paths": [
+    "tools/system_runner_identity_probe.py",
+    "tests/test_system_runner_identity_probe.py",
+    "history/C93463_pr153_run_conclusion_guard.json"
+  ],
+  "source_delta_chars": 89,
+  "test_delta_chars": 705,
+  "issue": "Prior check validated run.status == in_progress but ignored whether provider conclusion was present and null; contradiction could be treated as locally consistent; no exploitation or malformed live GitHub response observed.",
+  "regression": "test_in_progress_run_requires_explicit_null_conclusion requires normal run to pass, all contradictory conclusion variants and missing key to fail; old source would fail these cases.",
+  "safety": {
+    "workflow_permissions_unchanged": true,
+    "read_only": true,
+    "main_unchanged": true,
+    "no_merge": true,
+    "no_publish": true,
+    "no_new_billable_services": true,
+    "no_automatic_dispatch": true,
+    "not_provider_identity_attestation": true,
+    "all_may_write_fields_still_false": true
+  },
+  "verification": {
+    "local_static_exact_anchor": "PASS",
+    "hosted_exact_head_ci": "PENDING",
+    "independent_native_review": "PENDING"
+  }
+}
