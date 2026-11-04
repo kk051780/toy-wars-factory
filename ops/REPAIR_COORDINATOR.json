@@ -1358,17 +1358,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 434,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "4e6f9acd-293d-49c9-a35a-d5a2de4a7185",
-    "task_id": null,
-    "epoch": 434,
-    "acquired_at": "2026-11-04T13:40:27.444Z",
-    "expires_at": "2026-11-04T14:10:27.444Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/read-only-runner-identity-490539b4",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3013,19 +3003,29 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "bb751d20-0775-4d9a-9cc8-9a4b7c2451df",
-    "epoch": 433,
-    "released_at": "2026-11-04T13:37:25.661Z",
+    "owner_id": "4e6f9acd-293d-49c9-a35a-d5a2de4a7185",
+    "epoch": 434,
+    "released_at": "2026-11-04T13:45:34.783Z",
     "release_receipt": {
       "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
-      "maintenance": "CLOSE_SUPERSEDED_GEMINI_HOLD_PR24",
-      "pr": 24,
-      "pr_head": "03637555a432b32e0c9eedd33ee7738188794899",
-      "result": "CLOSED_UNMERGED_READBACK",
-      "main_head": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "source_changed": false,
-      "merge": false,
-      "provider_automations_run_attested": false
+      "claim_commit": "b6ffd4761d63e264b1cc7a1c40ea0c78b6149378",
+      "pr": 153,
+      "pr_head": "a33880b6fb42d13bf9b5da1923dbcec21a1ac30e",
+      "ci_run_id": 41840826024,
+      "ci_attempt": 1,
+      "ci_conclusion": "success",
+      "ci_python_tests_passed": 880,
+      "code_paths": [
+        ".github/workflows/twf-runner-identity-probe.yml",
+        "tests/test_system_runner_identity_probe.py",
+        "history/C93461_pr153_tokenless_fixtures.json"
+      ],
+      "registered_chatgpt_automation_run_attested": false,
+      "github_dispatch_activated": false,
+      "github_native_independent_review": false,
+      "main_merged": false,
+      "roblox_engine_verified": false,
+      "postwrite_readback_required": true
     }
   },
   "last_completed_integration": {
