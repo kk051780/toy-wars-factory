@@ -1358,17 +1358,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 428,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "b7fe2c21-2da1-43df-86cd-e42e739392fd",
-    "task_id": null,
-    "epoch": 428,
-    "acquired_at": "2026-11-04T11:56:33.030Z",
-    "expires_at": "2026-11-04T12:26:33.034Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/game-round-outcome-be5b6e39",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3013,20 +3003,19 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "23881b31-bf9f-4c3b-98c7-45e1a40b8c8d",
-    "epoch": 427,
-    "released_at": "2026-11-04T00:52:34.930Z",
+    "owner_id": "b7fe2c21-2da1-43df-86cd-e42e739392fd",
+    "epoch": 428,
+    "released_at": "2026-11-04T11:59:19.105Z",
     "release_receipt": {
       "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
-      "claim_commit": "b0effb741e2d359675160bbba5e2f8c282e7debe",
-      "pr": 163,
-      "pr_head": "0557a558b4e69d3169a6dce69434a12c6526fd4b",
-      "ci_run_id": 41749846564,
-      "ci_run_attempt": 1,
-      "ci_success": true,
+      "source_update": "HOST_SAFETY_BLOCKED",
+      "PR": 179,
+      "pr_head": "9d327e37476fe9f0517f6bd9e670760054025e09",
+      "main_head": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "source_branch_head": "9d327e37476fe9f0517f6bd9e670760054025e09",
+      "claim_commit": "4ba0ba9ee14c5891d14ee9496c59750eda22f526",
       "provider_automations_run_attested": false,
-      "epoch425_original_controller_terminal_attested": false,
-      "manual_owner_release": true,
+      "claim_of_success": false,
       "postwrite_readback_required": true
     }
   },
