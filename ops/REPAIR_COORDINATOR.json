@@ -1358,17 +1358,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 432,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "9f1d81c6-94ae-4f0e-8e5c-a79c3b7f1260",
-    "task_id": null,
-    "epoch": 432,
-    "acquired_at": "2026-11-04T13:04:59.392Z",
-    "expires_at": "2026-11-04T13:34:59.392Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": null,
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3013,38 +3003,23 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "ad85ca49-1532-4aec-bc63-b6f4f64d728e",
-    "epoch": 431,
-    "released_at": "2026-11-04T13:01:20.596Z",
+    "owner_id": "9f1d81c6-94ae-4f0e-8e5c-a79c3b7f1260",
+    "epoch": 432,
+    "released_at": "2026-11-04T13:09:21.512Z",
     "release_receipt": {
       "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
-      "claim_commit": "16826191bb1dcfbae0de40d09323314b7a4e9985",
-      "pr": 55,
-      "pr_head": "78361dc667485c0e128279ebd09f15dded1e51b3",
-      "ci_run_id": 41834081337,
-      "ci_run_attempt": 1,
-      "ci_success": true,
-      "ci_python_tests_passed": 847,
-      "failed_prior_runs": [
-        41832722505,
-        41833649267
+      "claim_commit": "600cb03ef7a659a38a0143bc3d767f82f731fe30",
+      "maintenance": "CLOSE_SUPERSEDED_PR_20_25_28_29",
+      "closed_unmerged_prs": [
+        20,
+        25,
+        28,
+        29
       ],
-      "final_green_run": 41834081337,
-      "changes": [
-        ".github/workflows/trusted-coordinator-claim.yml",
-        ".github/workflows/bootstrap-quality.yml",
-        ".github/aw/actions-lock.json",
-        "tests/test_ci_token_isolation.py",
-        "history/C99841_pr55_git_env_secret_guard.json",
-        "history/C99842_pr55_compiler_action_sha.json",
-        "history/C99843_pr55_action_pin_cache.json"
-      ],
-      "provider_automations_run_attested": false,
-      "independent_native_review": false,
-      "privileged_trusted_workflow_run_attested": false,
-      "main_merged": false,
-      "manual_owner_release": true,
-      "postwrite_readback_required": true
+      "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "main_unchanged": true,
+      "merge": false,
+      "provider_automations_run_attested": false
     }
   },
   "last_completed_integration": {
