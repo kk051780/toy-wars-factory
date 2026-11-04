@@ -83,6 +83,20 @@ class WorkflowIsolationTests(unittest.TestCase):
         self.assertIn('python3 tools/repair_control.py verify-pr', verify_section)
 
 
+    def test_trusted_fetch_rechecks_live_main_not_only_event_snapshot(self):
+        # The event base SHA can become stale while a privileged job is queued.
+        # The authenticated data-only fetch must bind it to current main.
+        marker = '      - name: Authenticated data-only fetch, no PR code execution'
+        end = '      - name: Verify fetched PR metadata using immutable MAIN Python without tokens'
+        fetch = TRUSTED.split(marker, 1)[1].split(end, 1)[0]
+        refspec = 'refs/heads/main:refs/remotes/origin/trusted-current-main'
+        guard = 'test "$(git rev-parse refs/remotes/origin/trusted-current-main)" = "$TWF_BASE_SHA"'
+        self.assertIn(refspec, fetch)
+        self.assertIn(guard, fetch)
+        self.assertLess(fetch.index(refspec), fetch.index(guard))
+        self.assertIn('refs/pull/${TWF_PR_NUMBER}/head:refs/remotes/origin/trusted-pr-head', fetch)
+        self.assertIn('test "$(git rev-parse refs/remotes/origin/trusted-pr-head)" = "$TWF_HEAD_SHA"', fetch)
+
     def test_trusted_checkout_commit_is_immutable(self):
         # The pull_request_target workflow carries a GitHub token in one step.
         self.assertIn('uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683', TRUSTED)
