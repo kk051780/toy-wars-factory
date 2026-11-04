@@ -1358,17 +1358,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 431,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "ad85ca49-1532-4aec-bc63-b6f4f64d728e",
-    "task_id": null,
-    "epoch": 431,
-    "acquired_at": "2026-11-04T12:48:00.955Z",
-    "expires_at": "2026-11-04T13:18:00.955Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "ops/twf-qa-token-isolation",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3013,27 +3003,37 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "5a47c6d1-92eb-473c-8374-9630b42ec3de",
-    "epoch": 430,
-    "released_at": "2026-11-04T12:42:39.749Z",
+    "owner_id": "ad85ca49-1532-4aec-bc63-b6f4f64d728e",
+    "epoch": 431,
+    "released_at": "2026-11-04T13:01:20.596Z",
     "release_receipt": {
       "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
-      "claim_commit": "c9132facabd0dfc469a5ceaba0bf725bca390342",
+      "claim_commit": "16826191bb1dcfbae0de40d09323314b7a4e9985",
       "pr": 55,
-      "pr_head": "821898197d6dc7daeee5742a9a3a36c840e81c27",
-      "ci_run_id": 41831070410,
+      "pr_head": "78361dc667485c0e128279ebd09f15dded1e51b3",
+      "ci_run_id": 41834081337,
       "ci_run_attempt": 1,
       "ci_success": true,
-      "ci_python_tests_passed": 844,
-      "code_paths": [
+      "ci_python_tests_passed": 847,
+      "failed_prior_runs": [
+        41832722505,
+        41833649267
+      ],
+      "final_green_run": 41834081337,
+      "changes": [
         ".github/workflows/trusted-coordinator-claim.yml",
+        ".github/workflows/bootstrap-quality.yml",
+        ".github/aw/actions-lock.json",
         "tests/test_ci_token_isolation.py",
-        "history/C99840_pr55_main_freshness.json"
+        "history/C99841_pr55_git_env_secret_guard.json",
+        "history/C99842_pr55_compiler_action_sha.json",
+        "history/C99843_pr55_action_pin_cache.json"
       ],
       "provider_automations_run_attested": false,
-      "main_merged": false,
       "independent_native_review": false,
-      "owner_release": true,
+      "privileged_trusted_workflow_run_attested": false,
+      "main_merged": false,
+      "manual_owner_release": true,
       "postwrite_readback_required": true
     }
   },
