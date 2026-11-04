@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "cycle": "C99843",
+  "kind": "PR55_TOKENLESS_ACTION_PIN_CACHE",
+  "observed_at": "2026-11-04T12:59:02.113Z",
+  "summary": "Restore tokenless compiler default action mode and use the documented GitHub Agentic Workflows .github/aw/actions-lock.json cache to resolve gh-aw-actions/setup v0.93.2 to its immutable reviewed SHA.",
+  "coordinator": {
+    "epoch": 431,
+    "owner_run_id": "ad85ca49-1532-4aec-bc63-b6f4f64d728e",
+    "claim_commit": "16826191bb1dcfbae0de40d09323314b7a4e9985",
+    "branch": "twf-repair-coordinator",
+    "work_branch": "ops/twf-qa-token-isolation"
+  },
+  "base": {
+    "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "pr": 55,
+    "head": "ff4c4d6fcaa9ef4b8a024f19743aefe8eedbb44a"
+  },
+  "observed_failures": [
+    {
+      "run": 41832722505,
+      "cause": "GitHub API resolution fallback emitted github/gh-aw-actions/setup@v0.93.2 instead of reviewed SHA; hold diff correctly failed."
+    },
+    {
+      "run": 41833649267,
+      "cause": "Explicit --action-mode release SHA incorrectly emitted github/gh-aw/actions/setup at same SHA and changed version comments; hold diff correctly failed."
+    }
+  ],
+  "new_design": {
+    "doc": "https://github.github.com/gh-aw/reference/compilation-process/",
+    "external_sha_proof": "https://github.com/github/gh-aw-actions/commit/d9128eb3ea40c18b77c76184eda03c0ff2608d79",
+    "cache_pin": "github/gh-aw-actions/setup@v0.93.2",
+    "sha": "d9128eb3ea40c18b77c76184eda03c0ff2608d79",
+    "no_token_to_compiler": true,
+    "mandatory_lock_diff_preserved": true
+  },
+  "files_changed": [
+    ".github/workflows/bootstrap-quality.yml",
+    ".github/aw/actions-lock.json",
+    "tests/test_ci_token_isolation.py",
+    "history/C99843_pr55_action_pin_cache.json"
+  ],
+  "new_tests": [
+    "test_compiler_cache_pins_exact_reviewed_action"
+  ],
+  "characters_touched": [],
+  "ci_status": "PENDING",
+  "limit": [
+    "Cache file is a proposed minimal documented schema; only GitHub-hosted CI can confirm compiler uses it in this version.",
+    "PR55 still DRAFT; no main integration or privileged live run.",
+    "No independent review, no new paid contracts, no model inference, no Roblox publication."
+  ]
+}
