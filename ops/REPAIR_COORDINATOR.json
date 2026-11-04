@@ -1420,17 +1420,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 438,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "8e25cadc-f7c6-4799-bfc8-d0fd5b3b6f2a",
-    "task_id": null,
-    "epoch": 438,
-    "acquired_at": "2026-11-04T22:28:33.499Z",
-    "expires_at": "2026-11-04T22:58:33.499Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/read-only-runner-identity-490539b4",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3075,47 +3065,31 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "b6822aca-3582-4f69-93b6-1150a87c909f",
-    "epoch": 437,
-    "released_at": "2026-11-04T22:23:01.382Z",
+    "owner_id": "8e25cadc-f7c6-4799-bfc8-d0fd5b3b6f2a",
+    "epoch": 438,
+    "released_at": "2026-11-04T22:33:27.203Z",
     "release_receipt": {
       "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
-      "claim_commit": "2cd0d2c572ecea0e604d1111f2a43ac46ac39699",
+      "claim_commit": "a69f652865a4c2887a2b030cbcd93043293f9f45",
       "pr": 153,
-      "pr_head": "789e18ea551c56006904bc27d4f690c74dafec0b",
+      "pr_head": "19f395ddad49a40c883ba1fbab8b99dd78c933a1",
       "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "ci_run_id": 41924577488,
+      "ci_run_id": 41926120928,
       "ci_run_attempt": 1,
       "ci_conclusion": "success",
-      "ci_python_tests_passed": 882,
-      "github_ci_jobs": [
-        {
-          "id": 126905479372,
-          "name": "offline",
-          "status": "completed",
-          "conclusion": "success"
-        },
-        {
-          "id": 126905479711,
-          "name": "compile_hold",
-          "status": "completed",
-          "conclusion": "success"
-        }
-      ],
-      "change_commit": "789e18ea551c56006904bc27d4f690c74dafec0b",
-      "source_changes": [
+      "ci_python_tests_passed": 883,
+      "code_paths": [
         "tools/system_runner_identity_probe.py",
-        "tests/test_system_runner_identity_redirect.py",
-        "history/C93462_pr153_proxy_env_guard.json"
+        "tests/test_system_runner_identity_probe.py",
+        "history/C93463_pr153_run_conclusion_guard.json"
       ],
-      "owner_one_shot_revocation_prior_epoch": 435,
-      "prior_holder_terminal_proof": false,
-      "prior_revocation_case_id": "OWNER_EXPLICIT_EPOCH435_PR6_CLOSED_STALE_20261105",
+      "code_commit": "19f395ddad49a40c883ba1fbab8b99dd78c933a1",
       "registered_chatgpt_worker_run_attested": false,
-      "github_manual_workflow_dispatch_executed": false,
+      "github_dispatch_activated": false,
       "github_native_independent_review": false,
       "main_merged": false,
       "roblox_engine_verified": false,
+      "no_paid_service_added": true,
       "no_secret_permission_billing_changes": true,
       "postwrite_readback_required": true
     }
