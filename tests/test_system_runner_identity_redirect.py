@@ -32,6 +32,32 @@ class RedirectSafety(unittest.TestCase):
         with self.assertRaisesRegex(NotVerified, '^REDIRECT_REFUSED$'):
             _NoRedirect().redirect_request(fake_request(), None, 302, 'Moved', {}, 'http://other.example.test/')
 
+    def test_real_client_rejects_inherited_https_proxy(self):
+        """Load the actual API client under hostile proxy env, without real HTTP."""
+        import os
+        import runpy
+        from unittest.mock import patch
+        from urllib.request import ProxyHandler
+        poison = 'http://proxy.invalid:9999'
+        path = Path(__file__).resolve().parents[1] / 'tools/system_runner_identity_probe.py'
+        with patch.dict(os.environ, {'HTTPS_PROXY': poison, 'https_proxy': poison}):
+            self.assertEqual(ProxyHandler().proxies.get('https'), poison)
+            module = runpy.run_path(str(path), run_name='twf_readonly_proxy_negative')
+        opener = module['_SAFE_OPEN'].__self__
+        self.assertFalse(any(isinstance(h, ProxyHandler) for h in opener.handlers),
+                         'Bearer API client must not inherit runner HTTPS_PROXY')
+        handlers = [type(h).__name__ for h in opener.handlers]
+        self.assertIn('_NoRedirect', handlers)
+        self.assertIn('HTTPSHandler', handlers)
+
+    def test_real_client_explicitly_disables_proxy_fallback(self):
+        from urllib.request import ProxyHandler
+        source = (Path(__file__).resolve().parents[1] /
+                  'tools/system_runner_identity_probe.py').read_text(encoding='utf-8')
+        self.assertIn('build_opener(_NoRedirect(), ProxyHandler({})).open', source)
+        self.assertNotIn('build_opener(_NoRedirect()).open', source)
+        self.assertEqual(ProxyHandler({}).proxies, {})
+
     def test_no_token_or_url_echo(self):
         try:
             _NoRedirect().redirect_request(fake_request(), None, 302, 'Moved', {}, 'https://other.example.test/'+FAKE)

@@ -7,7 +7,7 @@ import json
 import os
 import re
 import sys
-from urllib.request import Request, build_opener, HTTPRedirectHandler
+from urllib.request import Request, build_opener, HTTPRedirectHandler, ProxyHandler
 
 REPO = "kk051780/toy-wars-factory"
 WORKFLOW = ".github/workflows/twf-runner-identity-probe.yml"
@@ -23,7 +23,7 @@ class _NoRedirect(HTTPRedirectHandler):
         # Neither destination URL nor secret token may enter an exception string.
         raise NotVerified("REDIRECT_REFUSED")
 
-_SAFE_OPEN = build_opener(_NoRedirect()).open
+_SAFE_OPEN = build_opener(_NoRedirect(), ProxyHandler({})).open
 
 def require(ok, code):
     if not ok:

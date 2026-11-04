@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "cycle": "C93462",
+  "kind": "P0_READONLY_GITHUB_BEARER_PROXY_ENV_GUARD",
+  "observed_at": "2026-11-04T22:20:41.675Z",
+  "summary": "Disable inherited HTTP(S) proxy routing for the scoped GitHub Bearer API client in PR153, in addition to existing redirect denial, while preserving all GitHub-provider read-only and main identity gates.",
+  "coordinator": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "2cd0d2c572ecea0e604d1111f2a43ac46ac39699",
+    "epoch": 437,
+    "owner_id": "b6822aca-3582-4f69-93b6-1150a87c909f",
+    "work_branch": "controller/read-only-runner-identity-490539b4",
+    "prior_owner_expired_epoch": 435,
+    "prior_owner_revocation_record": "OWNER_EXPLICIT_EPOCH435_PR6_CLOSED_STALE_20261105"
+  },
+  "baseline": {
+    "main_head": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "pr_number": 153,
+    "pr_head": "a33880b6fb42d13bf9b5da1923dbcec21a1ac30e",
+    "source_git_blob": "608c9bc44615a3594f07a85a9c9d957fbe2d646b",
+    "tests_git_blob": "0f6e1804b57fa8bbd7f1aa0d2b041957553386d7"
+  },
+  "source_changes": [
+    {
+      "path": "tools/system_runner_identity_probe.py",
+      "old": "build_opener(_NoRedirect()).open",
+      "new": "build_opener(_NoRedirect(), ProxyHandler({})).open"
+    },
+    {
+      "path": "tests/test_system_runner_identity_redirect.py",
+      "new_tests": [
+        "test_real_client_rejects_inherited_https_proxy",
+        "test_real_client_explicitly_disables_proxy_fallback"
+      ]
+    },
+    {
+      "path": "history/C93462_pr153_proxy_env_guard.json",
+      "added": true
+    }
+  ],
+  "source_char_deltas": {
+    "client": 32,
+    "tests": 1497
+  },
+  "game_character_assets_touched": [],
+  "regression_evidence": {
+    "prepatch": "Original PR153 client _SAFE_OPEN lacked explicit ProxyHandler({}); synthetic local 12 patcher tests passed but NOT original GitHub hosted integration.",
+    "after": "Exact-head hosted GitHub Actions required; tests deliberately reimport real client with poisoned HTTPS_PROXY and verify no ProxyHandler while redirect+TLS remain; no network / no real token.",
+    "status": "PENDING_PROVIDER_CI"
+  },
+  "safety": {
+    "no_new_permissions": true,
+    "no_secrets_changed": true,
+    "github_actions_read_only": true,
+    "no_main_write": true,
+    "no_merge": true,
+    "no_repo_visibility_change": true,
+    "no_paid_spend_authorized": true,
+    "no_roblox_publish": true,
+    "no_unattended_identity_attested": true,
+    "no_waived_quality_gate": true
+  },
+  "limitations": [
+    "ProxyHandler({}) may break a proxy-only runner; this diagnostic is fail-closed.",
+    "Offline CI does not prove a manual workflow_dispatch run or ChatGPT registered WORKER identity.",
+    "Native independent code review and provider-enforced Free private-main controls remain outstanding."
+  ],
+  "next": "Verify original exact-head hosted CI offline and compile_hold. If both success, release own epoch437 and hand off to independent review; never mark PR153 deployed."
+}
