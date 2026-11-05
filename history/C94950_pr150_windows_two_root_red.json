@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "C94950",
+  "kind": "PR150_TWO_OFFICIAL_WINDOWS_ROOTS_EXPECTED_RED",
+  "date_utc": "2026-11-05",
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "pr": 150,
+  "source_head_before": "2fdd7c540ce54b63d985d3360415e50eb9d03d5e",
+  "coordination": {
+    "ref": "twf-repair-coordinator",
+    "epoch": 448,
+    "owner_id": "50ed9852-7d4c-4ab0-904a-9092d7aa8b4a",
+    "claim_commit": "321fed8579777b79cfacd890430d8c38316a2aed",
+    "work_branch": "controller/a14-windows-studio-discovery-6b83d2"
+  },
+  "test_path": "tests/test_windows_studio_two_official_roots.py",
+  "new_cases": 7,
+  "expected_failures": 5,
+  "workflow_changed_in_red": false,
+  "engine_executed": false,
+  "studio_installed": false,
+  "roblox_cloud_called": false,
+  "billing_changed": false,
+  "independent_review": "PENDING",
+  "next": "Test-first RED then preserve fixed official signer and both root inventory, CI GREEN."
+}
