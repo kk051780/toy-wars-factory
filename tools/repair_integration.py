@@ -98,7 +98,7 @@ def verified_manual_git_receipts(request, pr, review, claim_state):
             relation.get("base") != receipt["sha"] or
             not re.fullmatch(r"[0-9a-f]{40}", str(relation.get("head"))) or
             relation.get("status") not in ("ahead", "identical") or
-            relation.get("behind_by") != 0 or
+            type(relation.get("behind_by")) is not int or relation["behind_by"] != 0 or
             relation.get("head") != evidence.get("current_coordinator_head")):
         return False
     try:
@@ -138,7 +138,7 @@ def verified_manual_git_receipts(request, pr, review, claim_state):
     if (lineage.get("base") != first["sha"] or
             lineage.get("head") != request["head"] or
             lineage.get("status") != ("identical" if first["sha"] == request["head"] else "ahead") or
-            lineage.get("behind_by") != 0):
+            type(lineage.get("behind_by")) is not int or lineage["behind_by"] != 0):
         return False
     if (type(request.get("ci_run")) is not int or request["ci_run"] <= 0 or
             run.get("id") != request["ci_run"] or
@@ -157,7 +157,7 @@ def verified_manual_git_receipts(request, pr, review, claim_state):
         return False
     if (comparison.get("base") != request["base_main_sha"] or
             comparison.get("head") != request["head"] or
-            comparison.get("behind_by") != 0 or
+            type(comparison.get("behind_by")) is not int or comparison["behind_by"] != 0 or
             comparison.get("entries") != pr.get("changed_entries")):
         return False
     return True
