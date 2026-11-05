@@ -284,9 +284,12 @@ class _PerWriteLeaseFence:
         self._claim_ref = claim_ref
         run_id, attempt = scope["run_id"], scope["attempt"]
         filename = f"ops/probes/gha-write-{run_id}-a{attempt}.json"
+        # Enforce the mode in code, even if the host later grants more
+        # OAuth permissions. BRANCH_ONLY has exactly TWO source mutations.
         self._mutations = (("POST", "/git/refs"),
-                           ("PUT", "/contents/" + filename),
-                           ("POST", "/pulls"))
+                           ("PUT", "/contents/" + filename))
+        if scope.get("branch_only") is not True:
+            self._mutations += (("POST", "/pulls"),)
         self._index = 0
 
     def _check_live(self):
@@ -331,6 +334,8 @@ class _PerWriteLeaseFence:
             return {"message": "probe: isolated owner-manual write only",
                     "branch": scope["branch"], "content": encoded}
         if index == 2:
+            if scope.get("branch_only") is True:
+                raise ProbeError("SOURCE_WRITE_NOT_IN_ALLOWED_ORDER")
             return {
                 "title": "[PROBE ONLY] Owner-manual GitHub Actions branch/PR permission",
                 "head": scope["branch"], "base": "main", "draft": True,
