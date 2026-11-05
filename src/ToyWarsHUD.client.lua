@@ -186,15 +186,18 @@ end
 local observed={coins,wave,kills,hp,lv,allies,enemies,selected}
 if outcome then observed[#observed+1]=outcome end
 for _,v in ipairs(observed) do v.Changed:Connect(refresh) end
--- Attach the optional server-owned outcome as soon as replication provides it.
-if status.ChildAdded then
-    status.ChildAdded:Connect(function(child)
-        if not outcome and child.Name=="RoundOutcome" and child.ClassName=="StringValue" then
-            outcome=child
-            outcome.Changed:Connect(refresh)
-            refresh()
-        end
-    end)
+-- Subscribe before rechecking: replication can land between first lookup
+-- and ChildAdded registration. Close that gap without blocking normal HUD startup.
+local function bindOutcome(child)
+    if not outcome and child and child.Name=="RoundOutcome" and child.ClassName=="StringValue" then
+        outcome=child
+        outcome.Changed:Connect(refresh)
+        refresh()
+    end
+end
+if status.ChildAdded then status.ChildAdded:Connect(bindOutcome) end
+if not outcome and status.FindFirstChild then
+    bindOutcome(status:FindFirstChild("RoundOutcome"))
 end
 refresh()
 print("TWF_HUD_OK v1.2")
