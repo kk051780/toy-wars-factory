@@ -1,0 +1,46 @@
+{
+  "id": "C99162",
+  "date": "2026-11-01",
+  "kind": "CONTROLLER_PR60_NATIVE_GITHUB_APPROVAL_RULES_GREEN",
+  "pr": 60,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "epoch": 385,
+    "owner_id": "b1138e9f-7aba-4ea7-a4fb-c4a5b0f9b7a8",
+    "claim_commit": "61ee39817560aea2943d7b1c2666e4e470838662",
+    "work_branch": "ops/twf-manual-review-lane"
+  },
+  "red": {
+    "head": "5f88819436df09a225ace38bc2dbab7274350f02",
+    "ci_run": 41291791761,
+    "offline": "failure",
+    "compile_hold": "success",
+    "native_python_cases": 876,
+    "expected_new_failures": 5
+  },
+  "fix": {
+    "require_approvals": "integer 1..6, bool rejected",
+    "dismiss_stale_reviews": true,
+    "require_last_push_approval": true,
+    "required_ci_unchanged": [
+      "offline",
+      "compile_hold"
+    ],
+    "admin_bypass": false,
+    "force_pushes": false,
+    "deletions": false
+  },
+  "changed_files": [
+    "tools/repair_integration.py",
+    "tests/test_repair_integration.py",
+    "history/C99161_pr60_native_review_red.json",
+    "history/C99162_pr60_native_review_green.json"
+  ],
+  "native_green_ci": "PENDING_EXACT_HEAD",
+  "real_provider_branch_protection": "NOT_VERIFIED",
+  "native_review": "NOT_SUBMITTED",
+  "main_merge": false,
+  "external_api_calls": 0,
+  "roblox_engine": "NOT_RUN",
+  "publish": false
+}

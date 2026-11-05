@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "id": "C98740",
+  "category": "SYSTEM_REVIEWER_GATE",
+  "date_utc": "2026-11-05",
+  "pr": 60,
+  "original_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordinator": {
+    "owner_id": "70e948a2-508b-44dd-a621-1db22c4fb270",
+    "epoch": 453,
+    "claim_commit": "d05487766ea9d44921270d9ff670e5bd0addb309",
+    "branch": "ops/twf-manual-review-lane"
+  },
+  "red": {
+    "test_commit": "22a4d4e563cf19a2b8bc0ee0e58b44b9ca8af740",
+    "workflow_run": 42131718613,
+    "offline": "FAILURE",
+    "compile_hold": "SUCCESS",
+    "python_tests": 992,
+    "failures": 1,
+    "errors": 13,
+    "verified": "original GitHub job logs"
+  },
+  "fixes": [
+    "validate nonempty string-only main QA comparison paths",
+    "reject unhashable GitHub CI job names before set construction",
+    "reject malformed PR CI metadata",
+    "reject malformed review checks"
+  ],
+  "changed_paths": [
+    "tools/repair_integration.py",
+    "tests/test_repair_integration.py",
+    "history/C98740_pr60_fail_closed_provider_metadata.json"
+  ],
+  "source": {
+    "path": "tools/repair_integration.py",
+    "before_blob": "982e8728a30f778426985527ffa5e85a85e6208c",
+    "after_blob": "d1e4010bb723494c3f6a0e94d3b389cc45ee06ab",
+    "before_bytes": 23619,
+    "after_bytes": 24083,
+    "delta_bytes": 464
+  },
+  "game_source_changed": false,
+  "expected_python_tests": 992,
+  "green_ci": "PENDING",
+  "independent_native_approval": false,
+  "main_merged": false,
+  "roblox_engine_test": false,
+  "new_spend_authorized": false
+}

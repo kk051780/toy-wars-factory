@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "id": "C96321",
+  "date_utc": "2026-11-05",
+  "kind": "PR60_TYPED_GITHUB_COMPARE_COUNTS_TEST_FIRST_RED_GREEN",
+  "issue": 59,
+  "pr": 60,
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "b952999a423160941e82a610ac218f0559e1ae90",
+    "owner_id": "fd1202f7-6833-49f0-bda1-1703d0986137",
+    "epoch": 445,
+    "work_branch": "ops/twf-manual-review-lane"
+  },
+  "red": {
+    "head": "5c66532eeb1052d9794ae1f3cfbd316723365cbe",
+    "run_id": 41974900401,
+    "offline": "FAILURE",
+    "compile_hold": "SUCCESS",
+    "python_tests": 988,
+    "expected_new_failures": 3,
+    "log_failure": "Three False behind_by comparison fixtures returned MERGE instead of WAIT_MANUAL_PROOF"
+  },
+  "source": {
+    "path": "tools/repair_integration.py",
+    "before_blob": "a1e863fd90d518b367330060d5b99b91cad51d94",
+    "after_blob": "982e8728a30f778426985527ffa5e85a85e6208c",
+    "before_bytes": 23492,
+    "after_bytes": 23619,
+    "delta_bytes": 127,
+    "defect": "Python False == 0 in three ancestry comparison receipts",
+    "fix": "Require exact int type before accepting behind_by == 0 on coordinator, first-to-head and main-to-head comparisons"
+  },
+  "tests": {
+    "path": "tests/test_repair_integration.py",
+    "cases_added": [
+      "test_manual_coordinator_ancestry_boolean_false_not_integer_zero",
+      "test_manual_first_commit_lineage_boolean_false_not_integer_zero",
+      "test_manual_main_compare_boolean_false_not_integer_zero"
+    ],
+    "existing_regressions_preserved": true
+  },
+  "green": {
+    "run_id": "PENDING_EXACT_HEAD",
+    "offline": "NOT_YET_VERIFIED",
+    "compile_hold": "NOT_YET_VERIFIED"
+  },
+  "scope": {
+    "new_files": [
+      "history/C96321_pr60_compare_counts_green.json"
+    ],
+    "existing_files_modified": [
+      "tools/repair_integration.py",
+      "tests/test_repair_integration.py"
+    ],
+    "roblox_game_source_modified": false,
+    "automatic_merge": false,
+    "provider_attestation": false,
+    "main_merged": false,
+    "roblox_engine_test": false,
+    "incremental_spend_requested": false,
+    "independent_security_review_required": true
+  }
+}

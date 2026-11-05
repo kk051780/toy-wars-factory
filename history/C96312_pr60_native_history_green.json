@@ -1,0 +1,38 @@
+{
+  "id": "C96312",
+  "date": "2026-11-02",
+  "kind": "PR60_NATIVE_REVIEW_EFFECTIVE_HISTORY_GREEN_CANDIDATE",
+  "pr": 60,
+  "base_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "b61be2918286036b46ea02f8e7d098e35de0dd7d",
+    "owner_run_id": "c86b46f7-1a4f-49ab-82f3-842bdc6d299e",
+    "epoch": 392
+  },
+  "original_source_git_blob": "11d2614b7d13cc2eba04748d3bd47672e8088b9b",
+  "red": {
+    "head": "c42b1e1c5fa7fb519af6316747140f67a98a75a6",
+    "ci_run": 41362847704,
+    "offline": "failure",
+    "compile_hold": "success",
+    "python_tests": 926,
+    "expected_failures": 7,
+    "expected_errors": 1
+  },
+  "source_change": "Review all chronological rows; collapse to last decisive per-reviewer vote, reject effective CHANGES_REQUESTED, stale approvals, duplicate IDs, malformed types, and incomplete history; COMMENTED neutral.",
+  "changed_paths": [
+    "tools/native_github_review_gate.py",
+    "tests/test_native_github_review_history.py",
+    "history/C96312_pr60_native_history_green.json"
+  ],
+  "qa": "PENDING_NEW_EXACT_HEAD_GITHUB_CI",
+  "holds": {
+    "independent_native_review": true,
+    "main_branch_protection": true,
+    "github_provider_attestation": true,
+    "roblox_engine": true,
+    "external_inference": true,
+    "merge": false
+  }
+}

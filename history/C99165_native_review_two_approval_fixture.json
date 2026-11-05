@@ -1,0 +1,22 @@
+{
+  "id": "C99165",
+  "kind": "PR60_NATIVE_APPROVAL_TWO_REVIEW_FIXTURE_CORRECTION",
+  "date": "2026-11-01",
+  "epoch": 388,
+  "source_module_unchanged": true,
+  "pr": 60,
+  "previous_green_candidate": "8401a50ac4d05c1762da34bbe3a2b6cd931c9535",
+  "previous_ci": 41294849224,
+  "previous_ci_result": {
+    "offline": "failure",
+    "compile_hold": "success",
+    "unittests": 902,
+    "failures": 1,
+    "case": "test_branch_protection_two_distinct_fresh_approvals_allowed",
+    "cause": "native proof fixture had one reviewer despite 2 required"
+  },
+  "fix": "Add a real second distinct native-shaped reviewer to positive synthetic fixture; do not reduce approval minimum",
+  "main_mutated": false,
+  "provider_approvals": 0,
+  "may_merge": false
+}

@@ -51,3 +51,57 @@ CONTROLLERが別文脈の実際のサービス結果、対象head、CIを照合�
 所有者待ちは通常工程から外すが、実機・複数人・スマホ・外観・プレイヤー体験の証拠がなければ完成/公開可としない。
 現在のRoblox公開HOLDは実証不足によるもの。日常の取り込み承認待ちとは区別する。
 Gemini事故停止、消費済み試行、認証・費用上限をこの委譲から勝手に解除しない。
+
+
+## 手動CONTROLLER作成PRの独立審査（Issue #59、導入後のみ）
+
+手動Workが作成した `feature/twf-` は、**ブランチ名だけでは統合しない**。
+`controller/` で始まる手動ブランチは、共有コーディネーターの
+`manual_review_requests` にPR番号・完全なブランチ名・リポジトリ・
+元CONTROLLER種別が明示的に一致する**正規の依頼がある場合だけ**
+審査候補として識別する。新しい命名規則は、検証済みの元claim、
+第一コミット、実差分、現在head/main、正規独立REVIEWERによる審査、
+GitHubの必須チェックを免除しない。申請が未登録・重複している場合は
+候補対象外またはWAITとする。既存テストの`M`（変更）は引き続き
+手動ゲームscopeでは拒否し、PR #179を暗黙に解禁しない。
+共有コーディネータ `manual_review_requests` にPR番号・完全head SHA・正確な
+base-main SHA・ブランチ・元のCONTROLLER owner UUID/epoch・その取得コミットSHA・
+登録REVIEWER task IDを**一意に**記録する（作者のPR本文を証拠にしない）。
+登録REVIEWERは独立したrunと有効な自分のロックを持つこと。
+
+審査役はGitHubの不変claimコミットを取得し、取得時のholderがCONTROLLERで
+owner/epoch/work_branch/base-main/有効期間が一致することを確認する。
+現在のPR headとmainが申請と一致すること、main QA、両必須PR CI、
+実Git差分の全パスと状態、履歴の全ソースサイズを再取得して確認する。
+`changed_entries`は実Git差分の`status,path`を使い、
+`check_auto_diff.violations`により許可されたゲームソース+新テスト+履歴以外を拒否する。
+
+その根拠をREVIEWERの当該runの審査レコード`manual_provenance`に記録する。
+`ci.scope_and_claim_gate=MANUAL_CONTROLLER_ATTESTED`は、この**審査役の実証**
+があって初めて付与するラベルでありPR作者・CIの自己宣言を信用しない。
+評価関数は明示的な依頼・実差分・全証拠と既存の独立性、現main/正確head、
+レビュー時刻、main QA、リリースHOLDを同時に要求する。
+途中でhead/mainが動いたら審査をやり直す。作者が審査・統合を代行しない。
+
+実際のGitHub照合なしに`*_verified: true`と設定してはいけない。
+この方式は許可されたゲームPRの一経路だけ。GitHub Actionsの認証/課金/Roblox公開の
+権限を広げるものではない。ポリシー変更PR自身が独立レビュー・CIを経て
+mainに採用されるまでは、手動PR #58の自動統合は解禁されない。
+
+### 監査指摘 #60 の解消（証拠の正本）
+
+手動ゲームPRの変更範囲は、実ゲームsourceのM・新規Lua回帰のA・C履歴のAの**3種すべて必須**。docs/EXPERIMENT_LOG.md、権限設定、CI、文書だけ、重複パス、削除は拒否。
+
+単一PR番号に紐づくレビュー依頼は**ブランチにかかわらず1件のみ**。独立REVIEWERがGitHubからfetchしたimmutable claimコミットのファイル原文・blob SHA・commit SHA、第一コミットSHA/親/時刻、PR開始時刻、QA workflow IDと2 job ID/合格結果、比較したbase/headと差分を束ねる。判定関数はraw claimのGit blob SHA-1、厳格JSON（重複キー禁止）、取得時刻≦第一コミット時刻＜期限、および各種SHA・IDを相互照合する。**Git SHA-1単体や自己申告のTrue値はプロバイダ証明ではない**。REVIEWERはGitHubの認証済みコネクタから取得し、真正なAPI結果に基づく証拠だけを入力すること。純粋判定関数自体はGitHub API接続を持たず、独立したGitHub fetchを置換しない。これらが用意できない実行は保留する。
+
+### 監査再指摘への補強（2026-10-26）
+
+レビューはclaim取得時刻 **<** 最初の作者コミット時刻 **<=** PR作成時刻 **<** claim期限を要求する。PR作成をclaim期限内とする方針を明記する。独立REVIEWERは GitHub比較API `compare/{first_commit}...{pr_head}` を取得し、firstとheadが同じなら`identical`、異なるなら`ahead`、かつ`behind_by=0`を確認し、`first_commit_to_head`として提供する。CIの`workflow_run.path`は`.github/workflows/bootstrap-quality.yml`、各`jobs[].run_id`はrun IDと一致し、2件のjob IDは異なる必要がある。API取得の真正性を担う登録済み審査役以外の入力は信用しない。
+
+### ロック取得コミットの共有ブランチ根拠
+
+登録された独立REVIEWERは、元claimの唯一の親SHAと親子の`ops/REPAIR_COORDINATOR.json`原文・blob SHAをGitHubの認証済み取得で検証する。親はholder=nullで、子ではepochがちょうど1増加し、authorized_tasksとowner_delegationが不変でなければ拒否する。claim差分は共有状態ファイル1件のMだけを許可する。さらにGitHub compareで元claimが`twf-repair-coordinator`の現headの祖先であること（ahead/identicalかつbehind_by=0）を検証し、`manual_git_evidence.claim_parent`と`claim_to_control_ref`に収録する。
+
+### CONTROLLERロック取得の期限と状態不変性
+
+取得期限は取得時刻から30分以内。取得コミットの親と子は、`holder`と`epoch`以外すべての共有JSONフィールドが同一でなければ拒否する。承認・審査キュー・権限・公開設定などの同時変更を認めない。独立REVIEWERがGitHubから取得した親子原文、blob SHA、コミット系譜で実証する。

@@ -190,7 +190,24 @@
     "decision_tool": "tools/repair_integration.py",
     "latest_record": "ops/INTEGRATION_LATEST.json",
     "repair_requests": "ops/WORK_REQUESTS.json",
-    "roblox_publish_authorized": false
+    "roblox_publish_authorized": false,
+    "required_ci_app_id": 15368,
+    "manual_controller_reviews": {
+      "enabled": true,
+      "branch_prefix": "feature/twf-",
+      "request_location": "twf-repair-coordinator:ops/REPAIR_COORDINATOR.json#manual_review_requests",
+      "original_claim_verification": "independent REVIEWER reads immutable claim commit; matches holder kind CONTROLLER, owner UUID, epoch, base_main_sha, work_branch and acquisition before first commit",
+      "status": "BOUNDED_STAGED_POLICY; only source+test+history scope, not a publishing grant",
+      "expected_ci_gate": "MANUAL_CONTROLLER_ATTESTED",
+      "required_independent_proof": [
+        "claim_commit_verified",
+        "main_ancestry_verified",
+        "github_diff_verified",
+        "ledger_verified",
+        "ci_jobs_verified"
+      ],
+      "request_bound_controller_prefix": "controller/"
+    }
   },
   "worker_may_merge": false
 }

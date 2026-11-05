@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "C96314",
+  "kind": "PR60_NATIVE_PENDING_REVIEW_TEST_FIRST_GREEN",
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "base_pr_head": "cb383d90e3412526ace4a6a5bcf5b0de2ed650a7",
+  "code_blob_sha": "bc89ef09f84a3b3f33280e8dc679210732e7a7aa",
+  "coordinator": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "28f42887d8b712b9f536f7bc18321e89d95326d2",
+    "owner_run_id": "0f557bdd-29ae-413e-bd81-88934d983fb3",
+    "epoch": 393
+  },
+  "red": {
+    "commit": "cb383d90e3412526ace4a6a5bcf5b0de2ed650a7",
+    "run_id": 41363968022,
+    "offline": "FAILURE_EXPECTED_5_NEW_TESTS",
+    "compile_hold": "SUCCESS",
+    "tests": 941,
+    "failed_new": 5
+  },
+  "green": {
+    "expected_tests": 941,
+    "tests_local_new": 15,
+    "tests_local_prior_history": 50,
+    "github_actions": "PENDING_ACTUAL_RUN",
+    "source_change": "tools/native_github_review_gate.py"
+  },
+  "scope": "REVIEW_HISTORY_STRUCTURAL_ONLY_NO_PROVIDER_AUTHORITY_NO_MERGE_NO_PUBLISH"
+}

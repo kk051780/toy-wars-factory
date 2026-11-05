@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "C88860",
+  "pr": 60,
+  "kind": "MAIN_BRANCH_PROTECTION_REQUIRED_BEFORE_MERGE",
+  "date_utc": "2026-11-01",
+  "claim_commit": "bbfc002a253d86add682f0d7142263ab1a25bcd0",
+  "owner_id": "b7382451-423f-44c4-bf12-85314a0a831f",
+  "epoch": 373,
+  "base_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "original_head": "8785abc2e037fc8117a57a2b4f2854945def7f1d",
+  "red_head": "3e7b2077d9f857e7930b799d9a40905d0c255d67",
+  "red_run": 41272216976,
+  "red_job": "offline",
+  "red_test_total": 870,
+  "red_expected_failures": 11,
+  "green_run": "PENDING",
+  "green_python_total": "PENDING",
+  "changed_files": [
+    "tools/repair_integration.py",
+    "tests/test_repair_integration.py"
+  ],
+  "notes": "Fail-closed planner requires proof from authenticated live GitHub branch+protection facts bound to exact main SHA; source label is not itself an authentication; external trusted REVIEWER must fetch current provider facts. Do not merge, publish, alter main or bypass absent protection."
+}

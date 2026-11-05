@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "C96319",
+  "kind": "PR60_EXACT_REGISTERED_CONTROLLER_BRANCH_TEST_FIRST_RED",
+  "pr": 60,
+  "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordinator": {
+    "kind": "CONTROLLER",
+    "owner_id": "819b208f-3c8d-4bf0-a75e-e2b66d920b65",
+    "epoch": 407,
+    "claim_commit": "9f67d1d29bb0fee68fbcf8b961ff532cea36f1b1",
+    "work_branch": "ops/twf-manual-review-lane"
+  },
+  "previous_green_head": "7a4a43532e0d71e37a6dd2a9bb496217ad71c8fa",
+  "purpose": "Extend policy classification ONLY for exactly registered controller-owned branch with exact immutable claim; leave changed original fixtures M blocked, protected main and native review gates unchanged",
+  "tests_added": 6,
+  "tests_path": "tests/test_repair_integration.py",
+  "expected_red": "valid registered controller branch, duplicate request, manual-scope modified existing test, and claim mismatch tests expose unreachable manual lane",
+  "initial_ci": "PENDING",
+  "authority": {
+    "merge": false,
+    "settings": false,
+    "spend": false,
+    "publish": false
+  }
+}
