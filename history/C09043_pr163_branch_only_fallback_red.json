@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "C09043",
+  "kind": "GHA_PR_CREATION_DENIAL_VERIFIED_STAGE_RED",
+  "date_utc": "2026-11-05",
+  "pr": 163,
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "pre_red_head": "0557a558b4e69d3169a6dce69434a12c6526fd4b",
+  "owner_id": "4c908bbd-969c-4f5a-a41d-7c58a2916fd7",
+  "coordinator_epoch": 447,
+  "claim_commit": "796633e1e1d367b74ba9a77eceb035bd6643ed83",
+  "target": "tools/system_actions_write_probe.py",
+  "test_file": "tests/test_system_actions_write_probe_branch_only.py",
+  "expected_failures": [
+    "test_post_pulls_403_returns_branch_only_instead_of_false_total_failure",
+    "test_staged_branch_requires_one_parent_exact_single_file_and_blob",
+    "test_staged_branch_rejects_hidden_second_file",
+    "test_staged_branch_rejects_untrusted_file_bytes",
+    "test_staged_branch_rejects_main_ref_drift"
+  ],
+  "invariants": {
+    "no_repo_permission_change": true,
+    "no_automation_change": true,
+    "no_external_token": true,
+    "no_publish": true,
+    "no_merge": true,
+    "no_main_write": true
+  },
+  "original_ci": "PENDING"
+}
