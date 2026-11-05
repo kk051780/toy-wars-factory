@@ -111,5 +111,21 @@ check("late server result arrives without blocking original HUD",function()
     assert(has(tip,"WAIT GUARDON") and #calls==0,"restored guidance without client gameplay event")
 end)
 
+for _,recognized in ipairs({"LOSS","VICTORY"}) do
+    check("recognized "..recognized.." exposes result even when onboarding is visible",function()
+        local tip,result,coins,allies,guide,calls=fixture()
+        assert(guide.Visible,"new player sees first-play guide")
+        result.Value=recognized
+        result.Changed:Fire()
+        assert(guide.Visible==false,"outcome must dismiss onboarding overlay")
+        assert(recognized=="LOSS" and has(tip,"BASE LOST") or
+               recognized=="VICTORY" and has(tip,"WAVE 50"),"server-owned result still displayed")
+        result.Value=""
+        result.Changed:Fire()
+        assert(guide.Visible==false,"result clear must not reopen first-play guide")
+        assert(#calls==0,"client only displays outcome, no gameplay command")
+    end)
+end
+
 print(string.format("AUTO_ROUND_OUTCOME_HUD_SUMMARY %d passed / %d failed; canonical HUD native Lua mock",passed,failed))
 if failed>0 then os.exit(1) end
