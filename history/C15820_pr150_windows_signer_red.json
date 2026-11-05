@@ -1,0 +1,26 @@
+{
+  "id": "C15820",
+  "date": "2026-11-01",
+  "kind": "A14_PR150_WINDOWS_INVENTORY_SIGNER_ORGANIZATION_RED",
+  "pr": 150,
+  "parent_pr": 149,
+  "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "original_child_head": "26eb8b707df6725763f85948c587264225446681",
+  "stale_child_base_sha": "cad549c12da41b2634a4df6f7ab160c39a585e9f",
+  "upgraded_parent_head": "68490a335cc6619933f671b8aae63f074c2536c6",
+  "coordination": {
+    "epoch": 368,
+    "owner": "af7b73cb-c13e-4c5f-84b3-d4128bdbd726",
+    "claim_commit": "2928b3b74875606efbacd60e5d3066034ccb1055"
+  },
+  "test_file": "tests/test_windows_studio_signer_organization.py",
+  "new_tests": 15,
+  "source_changes": [],
+  "expected_native_ci": "RED_SIGNER_POLICY",
+  "authority": {
+    "roblox_execution": false,
+    "merge": false,
+    "independent_review": "PENDING"
+  },
+  "note": "Correct C15820 draft schema (no game source modifications) after provider RED revealed unrelated handoff test TypeError; retain original RED head and run as evidence."
+}

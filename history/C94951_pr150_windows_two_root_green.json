@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "id": "C94951",
+  "date_utc": "2026-11-05",
+  "kind": "PR150_WINDOWS_STUDIO_TWO_ROOTS_REAL_RED_GREEN",
+  "pr": 150,
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "protected_parent_pr": 149,
+  "parent_head": "68490a335cc6619933f671b8aae63f074c2536c6",
+  "coordination": {
+    "ref": "twf-repair-coordinator",
+    "claim_commit": "321fed8579777b79cfacd890430d8c38316a2aed",
+    "owner_id": "50ed9852-7d4c-4ab0-904a-9092d7aa8b4a",
+    "epoch": 448,
+    "work_branch": "controller/a14-windows-studio-discovery-6b83d2"
+  },
+  "red": {
+    "head": "e1173eae4b8dbb85169a656ab8a57d925fedbe56",
+    "run_id": 41999062430,
+    "offline": "failure",
+    "compile_hold": "success",
+    "python_cases": 940,
+    "new_cases": 7,
+    "new_failures": 5,
+    "real_host_windows_job": 41999062341,
+    "real_host_windows_job_result": "success_prior_workflow_only"
+  },
+  "fix": {
+    "path": ".github/workflows/twf-windows-studio-availability.yml",
+    "before_blob": "222c4f9f5df841309b346e7e3c912a03af1af3af",
+    "after_blob": "dba0dc98db8eedf955ba8f0bd46a22d4f4c507e6",
+    "old_bytes": 3164,
+    "new_bytes": 4446,
+    "delta_bytes": 1282,
+    "official_roots": [
+      "%LOCALAPPDATA%/Roblox/Versions",
+      "%ProgramFiles(x86)%/Roblox/Versions"
+    ],
+    "all_candidates_signature_scan": true,
+    "incomplete_scan_fails_closed": true,
+    "report_limited_scope": true
+  },
+  "green": {
+    "head": "PENDING_EXACT_CI",
+    "offline": "NOT_VERIFIED",
+    "windows_host": "NOT_VERIFIED"
+  },
+  "quality": {
+    "existing_signer_rule_unchanged": true,
+    "existing_qa_intact": true,
+    "studio_executed": false,
+    "engine_verified": false,
+    "gameplay_unmodified": true,
+    "main_merged": false,
+    "release": false,
+    "scope_escalated": false,
+    "additional_spend": false,
+    "independent_review": "PENDING"
+  }
+}

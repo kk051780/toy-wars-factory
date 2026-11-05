@@ -1,0 +1,38 @@
+{
+  "id": "C00172",
+  "date": "2026-10-31",
+  "kind": "A14_WINDOWS_HOST_DISCOVERY_CANDIDATE",
+  "issue": 3,
+  "source_changes": [],
+  "owner_role": "MANUAL_CONTROLLER",
+  "coordination": {
+    "epoch": 296,
+    "owner_id": "a14c-windows-20261031-0833-6b83d2",
+    "claim_commit": "5129990764af143603cc7775b9be429bf4e405b5",
+    "stack_base_pr": 149
+  },
+  "workflow_changes": [
+    {
+      "path": ".github/workflows/twf-windows-studio-availability.yml",
+      "permissionless": true,
+      "studio_exec": false
+    }
+  ],
+  "tests": {
+    "red": {
+      "commit": "e5f271756682e642a2a3a33ba1fe5fd4b2323a51",
+      "run_id": 41139808271,
+      "fail": "FileNotFoundError: missing workflow file"
+    },
+    "green": "AWAIT_LIVE_GITHUB_CI"
+  },
+  "runtime": {
+    "studio_installed": "UNOBSERVED",
+    "signed_studio": "UNOBSERVED",
+    "studio_executed": false,
+    "xml_loaded": false,
+    "engine_verified": false,
+    "public_publish": false
+  },
+  "protected_independent_review": "REQUIRED"
+}

@@ -1,0 +1,96 @@
+# A14 Windows-host feasibility check only. No Roblox Studio installation/execution.
+# This workflow is a protected PR review candidate; its output is NOT engine proof.
+name: TWF Windows Studio availability - NOT ENGINE
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/twf-windows-studio-availability.yml'
+  workflow_dispatch:
+permissions: {}
+concurrency:
+  group: twf-windows-studio-availability-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  windows-host-only:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - name: Inspect preinstalled Studio without downloading or running it
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          # Scope is limited to the two documented Windows Studio installation roots.
+          # A missing environment root is an incomplete inventory, not proof of absence.
+          $roots = @()
+          if (-not [string]::IsNullOrWhiteSpace($env:LOCALAPPDATA)) {
+            $roots += Join-Path $env:LOCALAPPDATA 'Roblox\Versions'
+          }
+          $programFilesX86 = [Environment]::GetEnvironmentVariable('ProgramFiles(x86)')
+          if (-not [string]::IsNullOrWhiteSpace($programFilesX86)) {
+            $roots += Join-Path $programFilesX86 'Roblox\Versions'
+          }
+          $roots = @($roots | Select-Object -Unique)
+          $scanRootsChecked = 0
+          $scanRootsPresent = 0
+          $found = @()
+          foreach ($root in $roots) {
+            $scanRootsChecked += 1
+            if (Test-Path -LiteralPath $root -PathType Container) {
+              $scanRootsPresent += 1
+              $found += @(Get-ChildItem -LiteralPath $root -Filter 'RobloxStudioBeta.exe' -File -Recurse -ErrorAction Stop)
+            }
+          }
+          $status = 'STUDIO_NOT_INSTALLED'
+          $signatureStatus = 'NOT_APPLICABLE'
+          if ($scanRootsChecked -ne 2) {
+            $status = 'HOST_INVENTORY_INCOMPLETE'
+          } elseif ($found.Count -gt 0) {
+            $status = 'STUDIO_PRESENT_UNTRUSTED'
+            $signatureStatus = 'NO_VALID_SIGNED_CANDIDATE'
+            # The first match may be unsigned; inspect every candidate until
+            # a correctly signed official Studio executable is found.
+            foreach ($candidate in $found) {
+              $sig = Get-AuthenticodeSignature -LiteralPath $candidate.FullName
+              if ($sig.Status -eq 'Valid' -and $null -ne $sig.SignerCertificate -and
+                  $sig.SignerCertificate.Subject -match '(^|,\s*)O=Roblox Corporation(\s*,|$)') {
+                $signatureStatus = [string]$sig.Status
+                $status = 'STUDIO_PRESENT_SIGNED'
+                break
+              }
+            }
+          }
+          $report = [ordered]@{
+            schema = 1
+            type = 'WINDOWS_HOST_DISCOVERY_ONLY_NOT_ENGINE'
+            status = $status
+            signature_status = $signatureStatus
+            repository = 'kk051780/toy-wars-factory'
+            run_id = $env:GITHUB_RUN_ID
+            head_sha = $env:GITHUB_SHA
+            runner_os = $env:RUNNER_OS
+            runner_image = $env:ImageVersion
+            scan_scope = 'TWO_OFFICIAL_WINDOWS_LOCATIONS_ONLY'
+            scan_roots_checked = $scanRootsChecked
+            scan_roots_present = $scanRootsPresent
+            available_installations_count = $found.Count
+            studio_executed = $false
+            xml_loaded = $false
+            play_mode_verified = $false
+            roblox_engine_verified = $false
+            public_publish_authorized = $false
+            secret_access_used = $false
+            artifact_is_host_attestation = $false
+          }
+          $dest = Join-Path $env:RUNNER_TEMP 'studio-host-availability.json'
+          $report | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $dest -Encoding utf8
+          Write-Output ('A14_WIN_HOST_STATUS=' + $status)
+          Write-Output ('A14_WIN_HOST_RUN_ID=' + $env:GITHUB_RUN_ID)
+          Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Value ('Studio installed/signed availability: **' + $status + '**. No Studio execution, Play, XML load, upload or publish.')
+      - name: Preserve bounded host availability evidence (not engine)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: twf-windows-studio-availability-not-engine
+          path: ${{ runner.temp }}/studio-host-availability.json
+          if-no-files-found: error
+          retention-days: 7
