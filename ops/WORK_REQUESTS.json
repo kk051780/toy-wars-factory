@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-10-30T10:29:25.769Z",
+  "observed_at": "2026-11-05T05:40:37.621Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4486,6 +4486,49 @@
       "review_comment_url": "https://github.com/kk051780/toy-wars-factory/pull/142#issuecomment-6520523576",
       "blocker": "Cloned appended PR tail reuses old head/merge/QA/handoff IDs yet passes contract; new negative/positive tests and fresh exact-head CI required.",
       "updated_at": "2026-10-30T10:29:25.769Z"
+    },
+    {
+      "id": "pr60_independent_security_bootstrap_current_head_20261105",
+      "kind": "REGISTERED_REVIEWER_READ_ONLY_POLICY_BOOTSTRAP_SECURITY_AUDIT",
+      "priority": "P0",
+      "status": "OPEN_READ_ONLY_AUDIT_NO_NATIVE_APPROVAL_NO_MERGE",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "parent_issue": 59,
+      "canonical_issue": 123,
+      "work_id": "TWF-PR060-POLICY-BOOTSTRAP-SECURITY-REVIEW-20261105",
+      "pr": 60,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/60",
+      "branch": "ops/twf-manual-review-lane",
+      "head": "eac9c0476feb6be10bb49237ed92de449a7a37a6",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "created_at": "2026-11-05T05:40:37.621Z",
+      "requested_by_role": "MANUAL_CONTROLLER",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "b952999a423160941e82a610ac218f0559e1ae90",
+        "epoch": 445,
+        "owner_run_id": "fd1202f7-6833-49f0-bda1-1703d0986137"
+      },
+      "review_evidence": {
+        "red_head": "5c66532eeb1052d9794ae1f3cfbd316723365cbe",
+        "red_run_id": 41974900401,
+        "red_offline": "failure",
+        "red_expected_new_failures": 3,
+        "green_head": "eac9c0476feb6be10bb49237ed92de449a7a37a6",
+        "green_run_id": 41975260924,
+        "green_offline": "success",
+        "green_compile_hold": "success",
+        "python_tests": 988,
+        "new_count_type_regressions": 3
+      },
+      "request": "Registered separate REVIEWER must independently retrieve PR60 exact-head diff, CI jobs/logs, main branch protection/ruleset API and effective required check sources, original claim ancestry and trust-root bootstrap scope. Produce explicit PASS/REQUEST_CHANGES/BLOCKED verdict as a read-only security audit; do NOT approve native GitHub review, do NOT claim run identity from JSON, do NOT merge, DO NOT lower provider protected-main requirements, change repo billing/permissions, or publish. Because current private GitHub Free main protection API is not proven available, a code PASS alone cannot authorize main integration. This request supplements, not supersedes, existing PR179 game head review and the prior PR97 bootstrap record.",
+      "owner_reply_required": false,
+      "independent_review_complete": false,
+      "merge_authorized_by_this_entry": false,
+      "provider_enforcement_verified": false,
+      "new_spend_authorized": false
     }
   ]
 }
