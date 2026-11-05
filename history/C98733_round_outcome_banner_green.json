@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "id": "C98733",
+  "date_utc": "2026-11-05",
+  "kind": "ROUND_OUTCOME_VISIBLE_BANNER_SOURCE_GREEN",
+  "pr": 179,
+  "issue": 179,
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "kind": "CONTROLLER",
+    "owner_id": "df058148-16da-45c5-b274-124768f390ff",
+    "epoch": 451,
+    "claim_commit": "5656d0a816a7d61a8a05933d1f5a1333cf4daa6b",
+    "work_branch": "controller/game-round-outcome-be5b6e39"
+  },
+  "red": {
+    "head": "0b0edbc644d93369877a1ba0c1ccb1ff2549bfcd",
+    "run_id": 42104736102,
+    "run_attempt": 1,
+    "offline": "FAILURE_EXPECTED_NEW_BANNER_FIXTURE",
+    "compile_hold": "SUCCESS",
+    "hud": "9 passed / 1 failed",
+    "regression": "result banner shows each server result and restores unobstructed guidance"
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 8984,
+      "after_bytes": 10097,
+      "delta_bytes": 1113,
+      "before_blob": "794fce48fb771f2657908a77e2db97742000662f",
+      "after_blob": "96badf877ca5a424d20d6cea928bf589e586bc6b",
+      "added_lines": 25,
+      "removed_lines": 0
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1248,
+    "lua_bytes": 55607
+  },
+  "source_baseline_bytes": 25726,
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/round_outcome_hud_spec.lua",
+    "history/C98733_round_outcome_banner_green.json"
+  ],
+  "behavior": {
+    "distinct_visible_banner": true,
+    "neutral_restores_tip": true,
+    "noninteractive_textlabel": true,
+    "uses_server_owned_outcome": true,
+    "existing_three_toy_choices_preserved": true,
+    "previous_test_fixture_files_unmodified": true
+  },
+  "engine": "NOT_RUN",
+  "independent_review": "PENDING",
+  "main_merged": false,
+  "roblox_published": false,
+  "additional_cost_authorized": false,
+  "green_ci": "PENDING_EXACT_HEAD"
+}

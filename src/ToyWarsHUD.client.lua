@@ -96,6 +96,15 @@ for i,spec in ipairs(choices) do
 end
 local tip=addText(gui,UDim2.new(0.8,0,0,34),UDim2.new(0.1,0,1,-160),"SELECT A TOY TO AUTO-PRODUCE • UPGRADE AT THE GOLD PLATFORM",Color3.fromRGB(255,255,255))
 tip.TextStrokeTransparency=0.4
+-- Present a distinct, high-contrast outcome without taking touch input.
+local resultBanner=addText(gui,UDim2.new(0.74,0,0,60),UDim2.new(0.13,0,0.40,0),
+    "",Color3.fromRGB(255,255,255))
+resultBanner.Name="RoundResultBanner"
+resultBanner.BackgroundTransparency=0.08
+resultBanner.BackgroundColor3=Color3.fromRGB(23,35,54)
+resultBanner.ZIndex=30
+resultBanner.Visible=false
+round(resultBanner,12)
 -- Session-local first-play guide: touch-friendly, dismissible; never sends gameplay commands.
 -- Created only after workshop assignment; no cross-session completion persistence.
 -- ImageButtons keep the three toy-selection TextButtons unambiguous.
@@ -160,6 +169,22 @@ local function refresh()
     local upgradeCost=B.upgradePrice(lv.Value)
     local chosenId=type(selected.Value)=="string" and string.lower(selected.Value) or nil
     local unit=chosenId and B.isUnit(chosenId) and B.UNITS[chosenId] or nil
+    -- A bottom instruction line is easy to miss; a temporary, noninteractive
+    -- result banner keeps LOSS and final-wave VICTORY legible on small screens.
+    local outcomeLabel=outcome and outcome.Value or ""
+    if outcomeLabel=="LOSS" then
+        resultBanner.Text="BASE LOST\\nRESTARTING WAVE 1"
+        resultBanner.TextColor3=Color3.fromRGB(255,145,145)
+        resultBanner.Visible=true
+    elseif outcomeLabel=="VICTORY" then
+        resultBanner.Text="WAVE 50 CLEARED\\nNEW FACTORY RUN"
+        resultBanner.TextColor3=Color3.fromRGB(153,255,185)
+        resultBanner.Visible=true
+    else
+        resultBanner.Text=""
+        resultBanner.Visible=false
+    end
+    tip.Visible=not resultBanner.Visible
     if outcome and (outcome.Value=="LOSS" or outcome.Value=="VICTORY") then
         -- Expose the authoritative result instead of leaving onboarding over it.
         quickStart.Visible=false
