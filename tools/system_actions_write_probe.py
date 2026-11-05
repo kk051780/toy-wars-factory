@@ -183,15 +183,11 @@ def cas_state(api, oldref, newstate):
 
 
 
-def verify_created_probe(api, scope, number):
-    """Require independent exact Git GET readbacks after a draft-PR write.
+def verify_staged_probe(api, scope):
+    """Fail closed on exact branch/parent/diff/blob readbacks even if PR creation was denied.
 
-    Readbacks bind the new branch commit, one-file diff, exact Git blob
-    and still-open draft PR to the original main. This validates API
-    consistency, NOT provider identity outside the reviewed Actions host.
+    A verified staged branch is NOT a PR, review, merge, or successful CI.
     """
-    if type(number) is not int or number < 1:
-        raise ProbeError("PR_RESPONSE_UNVERIFIED")
     main_sha, branch = scope.get("main"), scope.get("branch")
     run_id, attempt = scope.get("run_id"), scope.get("attempt")
     if (not valid_sha(main_sha) or
@@ -235,6 +231,17 @@ def verify_created_probe(api, scope, number):
     git_blob = hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
     if raw != expected_raw or file.get("sha") != git_blob:
         raise ProbeError("PROBE_FILE_UNVERIFIED")
+    if sha_ref(api,"main") != main_sha or sha_ref(api,branch) != branch_sha:
+        raise ProbeError("REF_MOVED_DURING_READBACK")
+    return branch_sha
+
+
+def verify_created_probe(api, scope, number):
+    """Keep the original strict draft-PR readback after verifying its staged branch."""
+    if type(number) is not int or number < 1:
+        raise ProbeError("PR_RESPONSE_UNVERIFIED")
+    branch_sha = verify_staged_probe(api, scope)
+    main_sha, branch = scope["main"], scope["branch"]
     pr = api.call("GET",f"/pulls/{number}")
     h,b = pr.get("head"),pr.get("base")
     if (type(pr.get("number")) is not int or pr["number"] != number or
@@ -351,9 +358,17 @@ def create_branch_probe(api, scope):
             "run_attempt":scope["attempt"],"status":"NO_AI_NO_GAME_CHANGE"}
     api.call("PUT", f"/contents/{filename}", {"message":"probe: isolated owner-manual write only",
         "branch":scope["branch"],"content":base64.b64encode((json.dumps(body,sort_keys=True)+"\n").encode()).decode()})
-    pr = api.call("POST", "/pulls", {"title":"[PROBE ONLY] Owner-manual GitHub Actions branch/PR permission",
+    try:
+        pr = api.call("POST", "/pulls", {"title":"[PROBE ONLY] Owner-manual GitHub Actions branch/PR permission",
         "head":scope["branch"],"base":"main","draft":True,
         "body":"Non-production, no game files, no AI inference, no merge authorization. Confirm separate reviewer and delete only by authorized owner after audit."})
+    except ProbeError as exc:
+        # Repo "Allow Actions to create and approve pull requests" may be off.
+        # Only this exact POST /pulls HTTP 403 may yield a staged-only result,
+        # after independent branch/source readback in run(). Do not retry.
+        if str(exc) != "GITHUB_HTTP_403":
+            raise
+        return None
     if type(pr.get("number")) is not int or pr["number"] < 1:
         raise ProbeError("PR_RESPONSE_UNVERIFIED")
     return pr["number"]
@@ -374,6 +389,7 @@ def run(api, env):
     epoch = plan["state"]["epoch"]
     claim = None
     pr = None
+    staged_only = False
     failure = None
     # Start cleanup BEFORE attempting the remote claim. An unacknowledged PATCH
     # may have written our lease even when cas_state fails during readback.
@@ -391,7 +407,13 @@ def run(api, env):
         finally:
             # The verifier and release use the original trusted transport.
             api = source_api
-        verify_created_probe(api,scope,pr)
+        if pr is None:
+            # The create-PR endpoint alone rejected the request; never mark
+            # branch staging as success until the immutable source is reread.
+            verify_staged_probe(api,scope)
+            staged_only = True
+        else:
+            verify_created_probe(api,scope,pr)
     except ProbeError as exc:
         failure=str(exc)
     finally:
@@ -412,6 +434,8 @@ def run(api, env):
             raise ProbeError("RELEASE_UNCONFIRMED") from None
     if failure:
         raise ProbeError(failure)
+    if staged_only:
+        return {"status":"BRANCH_VERIFIED_PR_CREATE_DENIED", "pr":None, "wrote":True}
     return {"status":"DRAFT_PR_CREATED_NOT_MERGED", "pr":pr, "wrote":True}
 
 

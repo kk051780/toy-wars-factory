@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "id": "C09044",
+  "kind": "GHA_PR_CREATION_DENIAL_VERIFIED_STAGING_GREEN",
+  "date_utc": "2026-11-05",
+  "pr": 163,
+  "issue": 57,
+  "owner_id": "4c908bbd-969c-4f5a-a41d-7c58a2916fd7",
+  "coordination_epoch": 447,
+  "claim_commit": "796633e1e1d367b74ba9a77eceb035bd6643ed83",
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "red": {
+    "head": "d05bf9dca392f702ee3407aa790856784bd8c38d",
+    "hosted_run": 41992939807,
+    "offline": "FAILURE",
+    "compile_hold": "SUCCESS",
+    "expected_new_test_errors": 5
+  },
+  "implementation": {
+    "source": "tools/system_actions_write_probe.py",
+    "original_blob": "aca0b1150fa3c9bcaf7e167b8015324db7445cf7",
+    "after_blob": "dce5ec8bb240a5534d8142c1177f139a57821542",
+    "behavior": "Only GitHub HTTP403 from POST /pulls returns a stage-only candidate; verify exact single-parent branch, one approved file+SHA, stable main/ref before claiming branch staging; never claim PR created; other failures stop; always release own coordinator."
+  },
+  "tests": [
+    "tests/test_system_actions_write_probe_branch_only.py",
+    "tests/test_system_actions_write_probe_claim_receipt.py"
+  ],
+  "green_ci": "PENDING_ORIGINAL_EXACT_HEAD",
+  "limits": {
+    "no_permissions_change": true,
+    "no_native_review": true,
+    "no_main_write": true,
+    "no_extra_paid_service": true,
+    "no_roblox_publish": true,
+    "no_actual_actions_writer_execution_yet": true
+  }
+}

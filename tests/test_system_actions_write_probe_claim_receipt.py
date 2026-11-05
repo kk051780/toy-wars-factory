@@ -173,5 +173,28 @@ class ClaimReceiptTests(unittest.TestCase):
         self.assertEqual(x.source_calls,1)
         self.assertEqual(x.verifier_calls,1)
 
+
+    def test_post_pulls_403_can_only_claim_verified_staged_branch_and_releases(self):
+        x=FakeHost(claim_effect="own",claim_error=None)
+        x.create=lambda api,scope: None
+        with patch.object(target,"verify_staged_probe",return_value="b"*40) as checked:
+            self.assertEqual(x.run(),
+                {"status":"BRANCH_VERIFIED_PR_CREATE_DENIED","pr":None,"wrote":True})
+            self.assertEqual(checked.call_count,1)
+        self.assertEqual(len(x.cas_calls),2)
+        self.assertIsNone(x.current["holder"])
+        self.assertEqual(x.verifier_calls,0)
+
+    def test_post_pulls_403_staging_bad_readback_is_not_success_and_releases(self):
+        x=FakeHost(claim_effect="own",claim_error=None)
+        x.create=lambda api,scope: None
+        with patch.object(target,"verify_staged_probe",
+                          side_effect=target.ProbeError("PROBE_FILE_UNVERIFIED")):
+            with self.assertRaisesRegex(target.ProbeError,"^PROBE_FILE_UNVERIFIED$"):
+                x.run()
+        self.assertEqual(len(x.cas_calls),2)
+        self.assertIsNone(x.current["holder"])
+        self.assertEqual(x.verifier_calls,0)
+
 if __name__=="__main__":
     unittest.main()
