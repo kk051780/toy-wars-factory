@@ -147,9 +147,12 @@ def verified_manual_git_receipts(request, pr, review, claim_state):
             run.get("event") not in ("push", "pull_request") or
             run.get("path") != ".github/workflows/bootstrap-quality.yml"):
         return False
-    if (not isinstance(jobs, list) or len(jobs) != 2 or
-            {j.get("name") for j in jobs if isinstance(j, dict)} != {"offline", "compile_hold"} or
-            any(not isinstance(j, dict) or j.get("status") != "completed" or
+    if (type(jobs) is not list or len(jobs) != 2 or
+            any(type(j) is not dict or type(j.get("name")) is not str
+                for j in jobs)):
+        return False
+    if (set(j["name"] for j in jobs) != {"offline", "compile_hold"} or
+            any(j.get("status") != "completed" or
                 j.get("conclusion") != "success" or
                 type(j.get("id")) is not int or j["id"] <= 0 or
                 j.get("run_id") != request["ci_run"] for j in jobs) or
@@ -370,9 +373,13 @@ def decide(policy, main, pr, review, lease, now):
     if main.get("qa_conclusion") != "success":
         return result("WAIT_MAIN_CI")
     if main.get("qa_head") != main.get("sha"):
-        comparison = main.get("comparison_since_qa", {})
+        comparison = main.get("comparison_since_qa")
+        if type(comparison) is not dict:
+            return result("WAIT_MAIN_CI", reason="valid provider main-ancestry evidence required")
+        paths = comparison.get("paths")
         if (comparison.get("verified") is not True or comparison.get("status") != "ahead" or
-                not set(comparison.get("paths", [])).issubset(STATUS_PATHS)):
+                type(paths) is not list or not paths or
+                any(type(path) is not str or path not in STATUS_PATHS for path in paths)):
             return result("WAIT_MAIN_CI", reason="only verified generated-status descendants may reuse main QA")
     branch = pr.get("branch", "")
     meta_prefix = policy["system_review"]["branch_prefix"]
@@ -406,7 +413,9 @@ def decide(policy, main, pr, review, lease, now):
     head = pr.get("head", "")
     if not re.fullmatch(r"[0-9a-f]{40}", head):
         return result("WAIT_METADATA")
-    ci = pr.get("ci", {})
+    ci = pr.get("ci")
+    if type(ci) is not dict:
+        return result("WAIT_CI", reason="validated exact-head CI evidence required")
     if ci.get("head") != head:
         return result("WAIT_CI", reason="old-head CI is not evidence")
     if ci.get("conclusion") in ("failure", "cancelled", "timed_out", "action_required"):
@@ -432,7 +441,8 @@ def decide(policy, main, pr, review, lease, now):
         return result("WAIT_REVIEW", reason="review is stale")
     if review.get("verdict") != "APPROVE" or review.get("blockers"):
         return result("REQUEST_CHANGES", pr=pr["number"], blockers=review.get("blockers", []))
-    if any(review.get("checks", {}).get(name) is not True for name in REVIEW_CHECKS):
+    checks = review.get("checks")
+    if type(checks) is not dict or any(checks.get(name) is not True for name in REVIEW_CHECKS):
         return result("WAIT_REVIEW", reason="all review dimensions need evidence")
     if not verified_branch_protection(main, policy):
         return result("WAIT_BRANCH_PROTECTION",
