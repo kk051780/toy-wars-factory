@@ -1,0 +1,72 @@
+{
+  "id": "C00026",
+  "date": "2026-10-25",
+  "kind": "AUTONOMOUS_UPGRADE_ECONOMY_NATIVE_REGRESSION",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "23e9ebe9-179c-8326-8fdd-ac241ec4ef53",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-23e9ebe9-179c-8326-8fdd-ac241ec4ef53",
+    "base": "main",
+    "open_prs": [
+      35,
+      38
+    ],
+    "limit": 3
+  },
+  "main_base": "658b69a4328de55c9c5129ad1f8894518c9efb49",
+  "defect": {
+    "id": "upgrade_economy_boundary_coverage",
+    "cause": "Existing 27 event cases test level-one proximity, but not insufficient funds, exact-price, level cap or level-dependent Heartbeat income.",
+    "reproduction": "Load canonical server and balance via existing harness; fire actual UpgradePrompt and RunService.Heartbeat callbacks.",
+    "confirmed_game_bug": false
+  },
+  "changed_files": [
+    "tests/auto/upgrade_economy_spec.lua",
+    "history/C00026_upgrade_economy_regression.json"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 678,
+    "lua_bytes": 26753
+  },
+  "file_size_deltas": {
+    "tests/auto/upgrade_economy_spec.lua": {
+      "before_bytes": 0,
+      "after_bytes": 3255,
+      "delta_bytes": 3255
+    }
+  },
+  "characters_touched": [],
+  "character_impact": "No game source, stats, prices, visuals or collision modified.",
+  "tests": {
+    "path": "tests/auto/upgrade_economy_spec.lua",
+    "cases": 4,
+    "local_lua": "NOT_RUN_LUA54_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_commit": "https://github.com/kk051780/toy-wars-factory/commit/658b69a4328de55c9c5129ad1f8894518c9efb49",
+    "prior_pr35": "https://github.com/kk051780/toy-wars-factory/pull/35",
+    "prior_pr35_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40114787373",
+    "prior_pr38": "https://github.com/kk051780/toy-wars-factory/pull/38",
+    "prior_pr38_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40137069031",
+    "branch_url": "https://github.com/kk051780/toy-wars-factory/tree/auto/twf-game-repair-23e9ebe9-179c-8326-8fdd-ac241ec4ef53",
+    "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/40",
+    "ci_url": null,
+    "initial_commit": "https://github.com/kk051780/toy-wars-factory/commit/a58a31e15c96b471ab2e212196f1c61a62e39779"
+  },
+  "restrictions": {
+    "external_provider_inference": false,
+    "secret_read": false,
+    "auto_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  },
+  "next_action": "Check exact-head Toy Wars bootstrap offline QA; repair this PR if failed; otherwise preserve draft and wait for review capacity without scheduler mutation."
+}

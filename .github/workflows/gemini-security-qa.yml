@@ -1,0 +1,56 @@
+name: TWF Gemini independent security QA (no AI inference)
+on:
+  push:
+    branches:
+      - setup/gemini-free-engine-v1
+    paths:
+      - 'tools/gemini_patch_gate.py'
+      - 'tests/test_gemini_patch_gate.py'
+      - 'tests/test_gemini_operational_hold.py'
+      - 'tools/verify_gemini_hold.py'
+      - '.github/workflows/twf-gemini-free-trial.md'
+      - '.github/workflows/gemini-security-qa.yml'
+      - '.github/workflows/twf-gemini-free-trial.lock.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail-closed security tests (offline)
+        run: python3 -m unittest discover -s tests -p 'test_gemini_patch_gate.py' -v
+      - name: Original canonical game policy, character, and agent tests
+        run: |
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
+          python3 tools/repository_gate.py
+      - name: Recompile official Gemini workflow source (NO provider call)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh extension install github/gh-aw --pin v0.93.2
+          gh aw compile .github/workflows/twf-gemini-free-trial.md
+      - name: Assert one-time safety
+        run: |
+          python3 tools/verify_gemini_hold.py
+          python3 - <<'PY'
+          from pathlib import Path
+          md=Path(".github/workflows/twf-gemini-free-trial.md").read_text()
+          compiled=Path(".github/workflows/twf-gemini-free-trial.lock.yml").read_text()
+          fm=md.split("---",2)[1]
+          assert "engine: false" in fm  # no unsupported Copilot threat detector
+          assert "gemini_patch_gate.py --online" in fm
+          assert "continue-on-error: false" in fm
+          assert "max-ai-credits: 10" in fm
+          assert "cron:" not in fm and "workflow_dispatch" not in fm
+          assert "ops/GEMINI_TRIAL_APPROVED_FUTURE.json" in compiled
+          assert "GEMINI_API_KEY" in compiled
+          assert "COPILOT_MODEL: gemini-3.8-flash" not in compiled
+          print("PASS: literal incident hold; no model invocation or online review")
+          PY
+      - name: Explicit limits
+        if: always()
+        run: |
+          echo "Static offline QA only. No GEMINI_API_KEY reads, no AI inference, no API cost, no Roblox engine run. Custom security scanning is not gh-aw official threat detector." >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,108 @@
+{
+  "id": "C00131",
+  "date": "2026-10-29",
+  "kind": "SYSTEM_PR124_JOIN_REVIEW_REPAIR",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+  "base_main": "221bc53ce118f5242777c13649f437d18078dcc4",
+  "issue": 123,
+  "pr": 124,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "3a370c48f6a72559dc99423b2a0b1ce56e924226",
+    "owner_run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+    "epoch": 248
+  },
+  "original_author": {
+    "run_id": "29b870a0-83b0-8331-948d-942fbef57f57",
+    "history": "history/C00129_parallel_admission_phase0.json",
+    "claim": "e33427a8b5ed173c6b310b2c31f71fccc6318703",
+    "epoch": 247,
+    "preserved_unchanged": true
+  },
+  "review": {
+    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "run_id": "73bdb9c1-a300-8328-a2fd-0ca62b294119",
+    "recorded_status": "completed",
+    "verdict": "REQUEST_CHANGES",
+    "head": "bcc1ed0291dc8090ebb2903ea84e349342a38630",
+    "url": "https://github.com/kk051780/toy-wars-factory/pull/124#issuecomment-6498176602",
+    "native_github_review_submitted": false,
+    "manual_additional_finding": "https://github.com/kk051780/toy-wars-factory/pull/124#issuecomment-6497891727"
+  },
+  "stage": "SOURCE_REPAIR_AFTER_REAL_RED_CONTROL",
+  "red_control": {
+    "head": "ed8f25fb8d2d5c557e6a08a9aadcc9cb71767fb7",
+    "history": "history/C00130_pr124_join_review_red_control.json",
+    "source_blob": "9e6af5a8ba93d2057aef49c8800a66c1464140cd",
+    "run": 40885014135,
+    "attempt": 1,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40885014135",
+    "jobs": {
+      "offline": {
+        "id": 123486259689,
+        "conclusion": "failure",
+        "python_tests": 697,
+        "assertion_failures": 15
+      },
+      "compile_hold": {
+        "id": 123486260117,
+        "conclusion": "success"
+      }
+    },
+    "scope": "Trusted-base diff gate passed and2 immutable coordinator claims verified; real Python assertion failures demonstrate requested JOIN defects, not a syntax or infrastructure failure.",
+    "executed": "GitHub Actions existing immutable pull_request workflow; no local Python execution environment"
+  },
+  "repair": [
+    "Validate each active project/repository/goal maps to one canonical work ID before any decision; repeated identical rows remain idempotent.",
+    "Check candidate protected SOURCE_WRITE scope before any JOIN.",
+    "Require identical normalized goal/mode/path/resource scope for matching work ID or goal; preserve a single same-goal/different-work same-scope JOIN."
+  ],
+  "test_plan": {
+    "new_methods": 10,
+    "old_pr_methods_preserved": 51,
+    "accepted_main_tests_preserved": 636,
+    "expected_python_total": 697,
+    "red_tests_unchanged_for_green": true,
+    "green_exact_head_ci": "PENDING_AT_COMMIT_CREATION"
+  },
+  "source": {
+    "path": "tools/system_parallel_admission.py",
+    "old_blob": "9e6af5a8ba93d2057aef49c8800a66c1464140cd",
+    "before_bytes": 8830,
+    "after_bytes": 9151,
+    "before_lines": 185,
+    "after_lines": 189
+  },
+  "files": [
+    {
+      "path": "tools/system_parallel_admission.py",
+      "status": "M_UNMERGED_PR_ONLY"
+    },
+    {
+      "path": "history/C00131_pr124_join_review_repair.json",
+      "status": "A"
+    }
+  ],
+  "preserved": {
+    "prior_C00129_blob": "4b612e8c0afd554c6e7fc4100ab91d28ce903749",
+    "red_C00130_append_only": true,
+    "accepted_main_blobs": 278,
+    "original_51_pr_test_methods": true,
+    "workflow_checker_policy_game_source": true
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "limits": [
+    "Pure advisory, not identity/provider attestation or a lease",
+    "All authority flags remain false; no additional source writer admitted",
+    "No task/schedule/permission/spend/Gemini/publishing changes",
+    "A12/A13 +0; official automation57%/game38%"
+  ],
+  "next": "Fresh exact repair-head offline+compile_hold and697-test results, independent registered REVIEWER new-run review, then postmerge main QA/handoff; author cannot approve/merge."
+}

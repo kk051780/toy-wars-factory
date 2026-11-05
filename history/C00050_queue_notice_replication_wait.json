@@ -1,0 +1,102 @@
+{
+  "id": "C00050",
+  "date": "2026-10-27",
+  "kind": "AUTONOMOUS_WORKSHOP_QUEUE_REPLICATION_WAIT_FIX",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "12b49b5f-f5fc-832d-955d-93cdfc949468",
+  "queue_decision": {
+    "action": "RECOVER_PARTIAL",
+    "change_scheduler": false,
+    "reason": "OPEN WORK_REQUEST worker_c00050_history_commit_blocked_20261027 predates PR81; finish existing source commit before unrelated review repair",
+    "current_open_worker_prs": [
+      81
+    ],
+    "branch": "auto/twf-game-repair-267d10af-56cc-832b-b690-19df0e16484b",
+    "base": "main",
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "612d7aa6d7447c2979df68a8078d634494e7b64c",
+    "owner_run_id": "12b49b5f-f5fc-832d-955d-93cdfc949468",
+    "epoch": 101
+  },
+  "main_base": "418843226131ad559c2fc3826829058f3061e0ff",
+  "source_commit": "1e1ba369511a86ab30fff458511f7ca0bc14b33c",
+  "prior_partial": {
+    "branch": "auto/twf-game-repair-267d10af-56cc-832b-b690-19df0e16484b",
+    "commit": "1e1ba369511a86ab30fff458511f7ca0bc14b33c",
+    "original_run_suffix": "267d10af-56cc-832b-b690-19df0e16484b",
+    "recovery": "Preserve already-written HUD and fixture; append missing history with fresh WORKER claim."
+  },
+  "defect": {
+    "id": "queue_notice_hidden_during_replication_wait",
+    "cause": "HUD previously waited for replicated ToyWarsSelectUnit and ToyWarsBalance before constructing ScreenGui/WorkshopQueueNotice; delayed assets could leave a queued player with no notice.",
+    "reproduction": "New whole-HUD Lua fixture asserts visible WorkshopQueueNotice at remote, balance, require and leaderstats wait boundaries, then checks assignment, guide, prices and selector command. Current main blocks before creating notice; pinned pre-queue HUD is a negative control."
+  },
+  "fix": "Create ScreenGui and visible queue notice before replicated remote/balance waits; retain all accepted guide, queue, prices and gameplay callbacks.",
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/queue_notice_replication_wait_spec.lua",
+    "history/C00050_queue_notice_replication_wait.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 6625,
+      "after_bytes": 6701,
+      "delta_bytes": 76
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 759,
+    "lua_bytes": 30121
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/queue_notice_replication_wait_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 5429,
+      "delta_bytes": 5429
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "PON/GUARDON/TANKURU stats, costs, combat and selector payload unchanged; queued notice appears earlier.",
+  "tests": {
+    "canonical_hud": "tests/auto/queue_notice_replication_wait_spec.lua",
+    "new_cases": 3,
+    "accepted_queue": "tests/auto/workshop_queue_hud_spec.lua",
+    "accepted_guide": "tests/auto/first_play_hud_guide_spec.lua",
+    "accepted_price": "tests/hud_price_spec.lua",
+    "negative_control": "Pinned pre-queue HUD fixture; main-before code order independently observed",
+    "local": "NOT_RUN_LUA_RUNTIME_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "418843226131ad559c2fc3826829058f3061e0ff",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40450646774",
+    "main_qa_note": "eb1fb8a5 passed, current main 41884322 is status-only descendant",
+    "claim_commit": "612d7aa6d7447c2979df68a8078d634494e7b64c",
+    "source_commit": "1e1ba369511a86ab30fff458511f7ca0bc14b33c",
+    "pr": "PENDING_DRAFT_PR",
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "review_conflict": {
+    "pr": 81,
+    "review_head": "ffac4788a4f57b6be8688fb3d976af06ab083e68",
+    "request": "pr81_c00050_collision_prior_worker_partial_20261027",
+    "next": "Review and merge older C00050 first; PR81 must rename its conflicting C00050 and rebase before new review."
+  },
+  "next_action": "Confirm exact-head offline and compile_hold; independent REVIEWER decides main integration; author never merges.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}

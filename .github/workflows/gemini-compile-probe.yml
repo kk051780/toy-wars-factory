@@ -1,0 +1,63 @@
+name: TWF Gemini candidate compile only — no AI use
+on:
+  push:
+    branches:
+      - setup/gemini-free-engine-v1
+    paths:
+      - '.github/workflows/twf-gemini-free-trial.md'
+      - '.github/workflows/gemini-compile-probe.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install gh-aw compiler
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh extension install github/gh-aw
+      - name: Compile Gemini candidate without model inference
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh aw compile .github/workflows/twf-gemini-free-trial.md
+      - name: Check bounded one-shot semantics
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          md=Path(".github/workflows/twf-gemini-free-trial.md").read_text()
+          generated=Path(".github/workflows/twf-gemini-free-trial.lock.yml")
+          assert generated.is_file()
+          lock=generated.read_text()
+          meta=md.split("---",2)[1]
+          assert "engine:" in meta and "id: gemini" in meta
+          assert "gemini-3.8-flash" in meta
+          assert "max-ai-credits: 10" in meta
+          assert "max-daily-ai-credits: 10" in meta
+          assert "cron:" not in meta and "workflow_dispatch" not in meta
+          assert "ops/GEMINI_TRIAL_APPROVED_FUTURE.json" in lock
+          assert "GEMINI_API_KEY" in lock
+          print("PASS: free-tier Gemini candidate compiled; zero AI inference; no recurrence")
+          PY
+      - name: Emit base64 in CI logs for separately authenticated scoped writer
+        run: |
+          python3 - <<'PY'
+          import base64,hashlib
+          from pathlib import Path
+          raw=Path(".github/workflows/twf-gemini-free-trial.lock.yml").read_bytes()
+          print("TWF_GEMINI_LOCK_BYTES:"+str(len(raw)))
+          print("TWF_GEMINI_LOCK_SHA256:"+hashlib.sha256(raw).hexdigest())
+          encoded=base64.b64encode(raw).decode()
+          for i in range(0,len(encoded),3072):
+              print("TWF_GEMINI_LOCK_PART_%04d:%s"%(i//3072,encoded[i:i+3072]))
+          print("TWF_GEMINI_LOCK_END")
+          PY
+      - name: Save exact generated lock for later review
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gemini-compile-no-inference
+          path: .github/workflows/twf-gemini-free-trial.lock.yml
+          retention-days: 30

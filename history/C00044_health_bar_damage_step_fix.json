@@ -1,0 +1,84 @@
+{
+  "id": "C00044",
+  "date": "2026-10-26",
+  "kind": "AUTONOMOUS_COMBAT_HEALTH_BAR_SAME_STEP_FIX",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "3c2af679-5248-8326-9344-3cbcb8d9f9a7",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-3c2af679-5248-8326-9344-3cbcb8d9f9a7",
+    "base": "main",
+    "open_prs": [
+      67
+    ],
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "fc7d307c578690e4f1a4e949802c966e702e7002",
+    "owner_run_id": "3c2af679-5248-8326-9344-3cbcb8d9f9a7",
+    "epoch": 78
+  },
+  "main_base": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+  "defect": {
+    "id": "combat_target_healthbar_one_tick_stale",
+    "cause": "The simulation updates an ally model and health bar before a later enemy damages that ally in the same Heartbeat. The damage changes health but not the already-processed model bar until the following step.",
+    "reproduction": "Run canonical full server in Lua 5.4 harness; insert one PON then one nearby JUNK using the canonical addEntity closure, suppress other spawns and ally attacks. The JUNK reduces PON HP from 40 to 34 but the pre-fix PON bar stays at 3.2 instead of 2.72 on that tick.",
+    "scope": "Deterministic native whole-server mock; not actual Roblox UI/physics/mobile."
+  },
+  "fix": "Refresh the attacked surviving target's health bar immediately after applying damage, sharing the same canonical bar calculation used on each entity's own update. Preserve combat rules, unit attributes, wave and factory timers.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/health_bar_damage_step_spec.lua",
+    "history/C00044_health_bar_damage_step_fix.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 18946,
+      "after_bytes": 19100,
+      "delta_bytes": 154
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 700,
+    "lua_bytes": 27706
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/health_bar_damage_step_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 2742,
+      "delta_bytes": 2742
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "PON/JUNK combat damage, HP, speed, cost and rewards unchanged; only immediate visibility of damage in existing health bars is corrected.",
+  "tests": {
+    "whole_server": "tests/auto/health_bar_damage_step_spec.lua",
+    "negative_control": "Pinned current-main server in CI (.qa/server-before/src/ToyWarsServer.server.lua)",
+    "local": "NOT_RUN_LUA_5_4_RUNTIME_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "6a34ea613e6390717024811e07d0386a3ecbbb2b",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40317866877",
+    "main_qa_note": "Success on gameplay-identical fa9d8a2 ancestor; main HEAD is status-only descendant.",
+    "claim_commit": "fc7d307c578690e4f1a4e949802c966e702e7002",
+    "pr": "PENDING_DRAFT_PR",
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "next_action": "Check new head offline and compile_hold QA. Independent REVIEWER owns merge; owner routine approval not required.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}

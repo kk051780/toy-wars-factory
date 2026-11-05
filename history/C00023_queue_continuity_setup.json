@@ -1,0 +1,152 @@
+{
+  "id": "C00023",
+  "date": "2026-10-25",
+  "observed_at_utc": "2026-10-24T21:54:27.086183+00:00",
+  "kind": "PREVENT_REVIEW_WAIT_FROM_DISABLING_AUTONOMOUS_DEVELOPMENT",
+  "main_base": "0e66049e95bc555bfb2a12aeafe46e73ea420c90",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "pause_incident": {
+    "task_was_enabled": false,
+    "run_id": "c7058bdc-64e4-8332-95ba-06037acb5d28",
+    "scheduled_for": "2026-10-24T18:05:04Z",
+    "completed_at": "2026-10-24T18:08:03.580196Z",
+    "reported_cause": "PR #35 reached reviewable size; worker reported pausing itself to avoid repeated wait notifications.",
+    "pr": 35,
+    "head": "1fdc549d0d708230cc642b18ceb020f28efa0806",
+    "qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40114787373",
+    "qa_conclusion": "success"
+  },
+  "task_resume_confirmed": true,
+  "queue_v2_runtime_verified": false,
+  "authorization": {
+    "owner_instruction": "自動化優先させたい。いつまで俺は指示送らなきゃいけない？ 自動で今やってるゲームの修正やれる体制作れよ",
+    "authorization_date": "2026-10-25",
+    "setup_main_integration_authorized": true,
+    "cloud_scheduled_game_fixes_authorized": true,
+    "routine_edit_approval_required": false,
+    "recurring_ai_authorized": true,
+    "recurring_ai_scope": "Existing ChatGPT connected-GitHub task only; hourly draft PR creation and repair.",
+    "new_inference_authorized": false,
+    "new_inference_scope": "No new Gemini/external provider API invocation, key read, model/cap/billing change. Existing ChatGPT task execution is authorized.",
+    "automatic_merge_authorized": false,
+    "roblox_publish_authorized": false,
+    "gemini_trial": "CONSUMED_SINGLE_RUN",
+    "prerequisite": "Routine connected-GitHub edits/tests/draft PRs no longer wait for another 進めて. Main integration of future game fixes, external provider inference and Roblox publication still require their existing approvals. Validate the registered task by its service run, actual code PR and matching CI, not registration alone.",
+    "setup_pr": 34,
+    "setup_merge_status": "COMPLETED",
+    "latest_owner_instruction": "自動ゲーム開発の体制整備を進めて",
+    "scheduler_controls": "Owner/controller only; scheduled worker may not alter its schedule or enabled state.",
+    "queue_scope": "Up to three independent draft PRs; existing integration and publication approvals remain."
+  },
+  "completed": [
+    "Read actual task state and matched latest service result: task was disabled after run c7058bdc-64e4-8332-95ba-06037acb5d28 reported self-pausing for PR #35 integration wait.",
+    "Confirm PR #35 evolved to seven added files, six commits and successful exact-head CI 40114787373 after repairing its own wave-fixture mistakes. Preserve that review-ready work.",
+    "Implement a bounded queue: failed CI first, pending CI wait, successful PRs preserved, fresh main-based UUID branch if under three open PRs, full queue waits without scheduler changes.",
+    "Add branch namespace validation for both legacy and UUID lanes and apply the existing trusted-base scope check to the full repair namespace. No path permissions or QA gates are removed.",
+    "Resume the existing hourly task with explicit prohibition of self-disabling or scheduler changes. The new prompt waits for queue_version>=2 on main before edits.",
+    "Execute whole-server native baseline property probe: FeltBattlefield, FactoryFloor and LobbyGround all have CanCollide=false. Prepare this concrete source defect for the next automatic repair trial; no physics/Studio claim.",
+    "Keep all four game sources unchanged in this controller setup; exact source baseline/history and all model/cap/credential/release holds are preserved."
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 678,
+    "lua_bytes": 26753
+  },
+  "baseline_floor_probe": {
+    "server_blob": "8d6a40fcb602a728f8876ca62194a0acb4bb45b9",
+    "false_floors": [
+      "FeltBattlefield",
+      "FactoryFloor",
+      "LobbyGround"
+    ],
+    "failures": 3,
+    "engine_tested": false
+  },
+  "characters_touched": [],
+  "external_provider_calls": 0,
+  "provider_credentials_read": false,
+  "qa": {
+    "current_setup_ci": "PENDING",
+    "local_python": "PASS_74",
+    "new_service_game_fix": "PENDING",
+    "local_policy": "PASS_21",
+    "queue_snapshot": "PASS_PR35_SUCCESS_DOES_NOT_BLOCK_START",
+    "workflow_yaml_and_shell_parse": "PASS"
+  },
+  "changed_files": [
+    ".github/workflows/bootstrap-quality.yml",
+    "config/autonomous_repair.json",
+    "tools/check_auto_diff.py",
+    "tools/repair_queue.py",
+    "tests/test_repair_queue.py",
+    "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+    "docs/AUTONOMOUS_REPAIR.md",
+    "docs/AUTOMATION_READINESS.md",
+    "PROJECT_STATE.json",
+    "history/C00023_queue_continuity_setup.json"
+  ],
+  "generated_files": [
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "limitations": [
+    "The new queue/scheduler behavior and a source-changing automatic repair still need real service/PR/CI validation after deployment.",
+    "The queue is limited to three pending draft PRs; integration remains an owner decision, and full capacity must wait without disabling the task.",
+    "Floor baseline proves object properties in native Lua substitutes only, not Roblox physics, actual falling, mobile or multiplayer.",
+    "Gemini/external API, automatic main merge and Roblox publication remain held."
+  ],
+  "next_action": "Deploy queue v2, then validate one real automatic game-source fix on a new UUID branch while PR #35 remains review-ready. Verify the task stays enabled. Keep failed-CI repair priority, three-PR cap and all existing merge/provider/release boundaries.",
+  "file_size_deltas": {
+    ".github/workflows/bootstrap-quality.yml": {
+      "before": 9258,
+      "after": 9340,
+      "delta": 82
+    },
+    "config/autonomous_repair.json": {
+      "before": 1303,
+      "after": 2332,
+      "delta": 1029
+    },
+    "tools/check_auto_diff.py": {
+      "before": 2799,
+      "after": 3380,
+      "delta": 581
+    },
+    "tools/repair_queue.py": {
+      "before": 0,
+      "after": 3219,
+      "delta": 3219
+    },
+    "tests/test_repair_queue.py": {
+      "before": 0,
+      "after": 4744,
+      "delta": 4744
+    },
+    "ops/CHATGPT_GAME_REPAIR_PROMPT.md": {
+      "before": 5666,
+      "after": 7264,
+      "delta": 1598
+    },
+    "docs/AUTONOMOUS_REPAIR.md": {
+      "before": 4275,
+      "after": 4407,
+      "delta": 132
+    },
+    "docs/AUTOMATION_READINESS.md": {
+      "before": 2159,
+      "after": 1559,
+      "delta": -600
+    },
+    "PROJECT_STATE.json": {
+      "before": 28014,
+      "after": 28447,
+      "delta": 433
+    },
+    "history/C00023_queue_continuity_setup.json": {
+      "before": 0,
+      "after": 6868,
+      "delta": 6868
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "id": "C00047",
+  "date": "2026-10-27",
+  "kind": "TRUST_ROOT_SYSTEM_SCOPE_HEAD_MODE_CORRECTION",
+  "issue": 72,
+  "pull_request": 78,
+  "base_main": "c512ed9e155ebaba97e0098a7f75fb56510e0516",
+  "previous_pr_head": "9a1e5fee5dab802eb90891bf2f90b52aa1690bfd",
+  "role": "CONTROLLER",
+  "actor_operation_id": "0c4ce7ce-ab36-4126-842c-eab76a87e1cd",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "01e218e4a2f8b39a116c40b8f4d3397001b4f054",
+    "epoch": 90,
+    "owner_run_id": "0c4ce7ce-ab36-4126-842c-eab76a87e1cd"
+  },
+  "cause": "Name-status M does not distinguish a content edit from a 100644 to 100755 executable-mode transition; the original PR78 CLI admitted both.",
+  "change": "Read immutable committed modes from both trusted main-ancestor base and candidate head. Only their 100644-blob intersection can authorize maintenance; candidate data cannot create authority.",
+  "changed_files": [
+    "tools/check_meta_diff.py",
+    "tests/test_system_maintenance_head_modes.py",
+    "docs/TRUSTED_SYSTEM_MAINTENANCE_SCOPE.md",
+    "history/C00047_system_scope_head_mode_correction.json"
+  ],
+  "tests": {
+    "local_python_suite": {
+      "status": "PASS",
+      "tests": 315,
+      "skipped": 0
+    },
+    "new_real_git_cli_regressions": 12,
+    "existing_maintenance_regressions_preserved": 7,
+    "exact_original_checker_blob": "e8567c85c5ff9895052e8b15a1ea288304b3b978",
+    "negative_control": "Original authenticated Git blob permits chmod-only Git M; corrected actual CLI denies it. Mode-preserving edits remain allowed.",
+    "policy_gate": "PASS_21",
+    "gemini_hold": "PASS_OFFLINE_HOLD_ONLY_ZERO_PROVIDER_CALLS",
+    "github_ci": "PENDING_NEW_EXACT_HEAD",
+    "supplemental_review": "APPROVE_LOCAL_CHANGE_ONLY_NOT_REGISTERED_INTEGRATION_REVIEW",
+    "roblox_engine": "NOT_RUN"
+  },
+  "administrative_recovery": {
+    "record": "ops/recovery/EPOCH0088_owner_authorized_revocation.json (coordinator branch)",
+    "revocation_commit": "e17d24c57c02fef1ddee353210f173afb2beed7d",
+    "owner_authorization": "User replied 続けて to the concrete epoch88 administrative revocation question.",
+    "service_completion_asserted": false
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 758,
+    "lua_bytes": 30030
+  },
+  "character_changes": [],
+  "release": "HOLD_ENGINE_UNVERIFIED",
+  "next": "Obtain new exact-head offline/compile_hold success and separate registered read-only trust-root review. Do not self-merge; reviewer integrates with main QA."
+}

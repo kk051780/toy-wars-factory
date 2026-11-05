@@ -1,0 +1,1235 @@
+{
+  "id": "C00122",
+  "date": "2026-10-29",
+  "kind": "SYSTEM_PR112_OWNER_VERBATIM_REVIEW_REPAIR",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "f849220f-dc50-8329-926a-f3b0db1267a2",
+  "base_main": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
+  "observed_at_utc": "2026-10-28T22:01:06Z",
+  "issue": 109,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "a4ef9beea5e4ac1b523407ddf53ccc8ea6c4ef12",
+    "owner_run_id": "f849220f-dc50-8329-926a-f3b0db1267a2",
+    "epoch": 224
+  },
+  "repair_context": {
+    "request": "pr112_owner_verbatim_provenance_20261029",
+    "review_record": "ops/reviews/PR0112_a6ccf32e.json",
+    "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "reviewer_run_id": "481f4d3e-88e0-832e-bba2-ea4fbc2fe466",
+    "verdict": "REQUEST_CHANGES",
+    "old_pr_head": "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+    "original_author_run_id": "7abde498-0150-8327-8579-2b3f808d0acb",
+    "original_claim": {
+      "branch": "twf-repair-coordinator",
+      "claim_commit": "1404bff89ae63c913de3d3c556f37acb6583a636",
+      "owner_run_id": "7abde498-0150-8327-8579-2b3f808d0acb",
+      "epoch": 222
+    },
+    "original_history_blob": "26aebd9badfc616e43cafc1a792669007e5387d1",
+    "original_history_changed": false,
+    "repair_branch": "auto/twf-system-review-7abde498-0150-8327-8579-2b3f808d0acb",
+    "eligibility": "Trusted acquire/verify-pr permit later registered META run to repair the same exact UUID lane with new claim. Original author C00121 task/run/claim unchanged.",
+    "feature_sync_parents": [
+      "a6ccf32ee494cbe48cdf6b9558c01772cb4269db",
+      "5cafd1a4f3f7289dd77257a92977f5899aaa927c"
+    ],
+    "sync_note": "Latest main copied without accepted-blob changes; ancestry-preserving main-to-feature sync, not PR/main integration."
+  },
+  "main_health": {
+    "main": "5cafd1a4f3f7289dd77257a92977f5899aaa927c",
+    "qa": 40774271061,
+    "qa_head": "0bf1dca707655f960b5b1d4f667bf42c30361a3d",
+    "handoff": 40774270909,
+    "qa_jobs": "offline+compile_hold PASS",
+    "direct_compare_status_only": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "pr111": "MERGED_ALREADY; not reimplemented"
+  },
+  "problem": "C00121 stored an AI paraphrase as OWNER_ORIGINAL_IDEA; internal hashes cannot establish verbatim source or chat authentication.",
+  "implementation": "Append transcript extraction with exact repo/issue/comment binding, explicit original chat NOT_AVAILABLE/NOT_VERIFIED and owner text comparison. Reject hash-consistent paraphrases and archived provenance in candidate ancestry. Old C00121 immutable; active checkpoint below withdraws3 rejected records, appends exact full transcription, separate DERIVED summary and2 freshly linked game variants.",
+  "stock_checkpoint": {
+    "supersedes_active_view": "C00121 stock is rejected historical input; use this append-only correction as current view",
+    "records": [
+      {
+        "schema": 2,
+        "idea_id": "OWNER-20261028-DUAL-EVOLUTION",
+        "project_id": "toy-wars-factory",
+        "origin": "OWNER_ORIGINAL_IDEA",
+        "original_text": "今回のようにキャラクターを増やしたいとか、新たなアイデアを俺が君に吹き込むことがある。こういうアイデアはしっかりストックしておいて、要である自動開発で寝ているうちにどうやったら勝ち目があるかを検証したあとに、必勝、ベストなアイデアを既存システムに統合するという仕組みを自動開発体制に組み込む必要がある。これは、定期的に行うWEB上の最新情報、勝てるノウハウを調査し、既存システムをブラッシュアップし続ける重要な仕組みとの両輪としたい。俺の吹き込むアイデアはいわばオリジナリティになる。これを組み込んでくれ。",
+        "original_sha256": "8534ef5f224b1e8cd4bcbbbada136dcb87c8652f88ae71d840cf79e01133bd35",
+        "source_ref": "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6480372522",
+        "captured_at": "2026-10-28T21:28:29Z",
+        "owner_priority": 3,
+        "observations": [],
+        "derived_from": [],
+        "stage": "CAPTURED",
+        "events": [],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "SYSTEM",
+        "variant_of": null,
+        "duplicate_of": null,
+        "provenance_sha256": "2a63ca504b8293f68e6bf0965882bfce8a2b3cd23dbdc5a8c5d0a06df6227763"
+      },
+      {
+        "schema": 2,
+        "idea_id": "OWNER-20261028-CHARACTER-VARIETY",
+        "project_id": "toy-wars-factory",
+        "origin": "OWNER_ORIGINAL_IDEA",
+        "original_text": "キャラ3体では飽きる。キャラを闇雲に増やさず構想に沿う差別化キャラを増やし、レアキャラの収集価値も検討する",
+        "original_sha256": "579755bc65a7b366c92a3ec3eabc31cf67c566c0093f60e7dafb703e18552fb6",
+        "source_ref": "NOT_AVAILABLE",
+        "captured_at": "2026-10-28T21:28:29Z",
+        "owner_priority": 3,
+        "observations": [],
+        "derived_from": [],
+        "stage": "WITHDRAWN",
+        "events": [
+          {
+            "actor": "META:f849220f-dc50-8329-926a-f3b0db1267a2",
+            "occurred_at": "2026-10-28T22:01:06Z",
+            "from": "CAPTURED",
+            "to": "WITHDRAWN",
+            "reason": "PR112 independent review rejected AI-summary-as-owner provenance; retained only as rejected history.",
+            "evidence_refs": [
+              "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808"
+            ]
+          }
+        ],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "GAME",
+        "variant_of": null,
+        "duplicate_of": null,
+        "provenance_sha256": "1990e62546dcb6c6ee4245fc6e5bd44e64bb26e53a229db488c0d7b79a5885f1"
+      },
+      {
+        "schema": 2,
+        "idea_id": "WEB-20261029-DISCOVERY",
+        "project_id": "toy-wars-factory",
+        "origin": "WEB_RESEARCH_IDEA",
+        "original_text": "Measure early friction and return cohorts separately from character hypotheses.",
+        "original_sha256": "cee371efc7f93c1198e1066368bc2779e2259a23c3fbcc5ccec7b4ba1503b8ef",
+        "source_ref": "https://create.roblox.com/docs/discovery",
+        "captured_at": "2026-10-28T21:28:29Z",
+        "owner_priority": 3,
+        "observations": [
+          {
+            "source_url": "https://create.roblox.com/docs/discovery",
+            "checked_at": "2026-10-28T21:28:29Z",
+            "source_kind": "PRIMARY_OFFICIAL",
+            "observed_fact": "Documentation lists first-play bounce and return play-day signals.",
+            "limitation": "Platform guidance is not Toy Wars player data; publication date unavailable.",
+            "published_at": "NOT_AVAILABLE"
+          }
+        ],
+        "derived_from": [],
+        "stage": "CAPTURED",
+        "events": [],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "GAME",
+        "variant_of": null,
+        "duplicate_of": null,
+        "provenance_sha256": "401de19811c75acfaa624d7a434f3e24cd865e4a08b548f13f9c79da8f85aa84"
+      },
+      {
+        "schema": 2,
+        "idea_id": "WEB-20261029-COLLECTION",
+        "project_id": "toy-wars-factory",
+        "origin": "WEB_RESEARCH_IDEA",
+        "original_text": "Consider an original visible collection goal with differentiated silhouettes.",
+        "original_sha256": "e7ed6846fe064f8ce3cdc202871af4b7313161a81a56db75388bb784bb1c74d2",
+        "source_ref": "https://www.biggames.io/post/pet-simulator-99-update-99",
+        "captured_at": "2026-10-28T21:28:29Z",
+        "owner_priority": 3,
+        "observations": [
+          {
+            "source_url": "https://www.biggames.io/post/pet-simulator-99-update-99",
+            "checked_at": "2026-10-28T21:28:29Z",
+            "source_kind": "DEVELOPER_CASE",
+            "observed_fact": "Developer describes a pet index and progression rewards.",
+            "limitation": "Marketing describes mechanics, not proof of retention; do not copy assets.",
+            "published_at": "2026-10-24"
+          }
+        ],
+        "derived_from": [],
+        "stage": "CAPTURED",
+        "events": [],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "GAME",
+        "variant_of": null,
+        "duplicate_of": null,
+        "provenance_sha256": "272bf55b2f3e100dd13371b794f69927f0a1e9eafaae1d1bd42ec577c016ff72"
+      },
+      {
+        "schema": 2,
+        "idea_id": "WEB-20261029-EVALS",
+        "project_id": "toy-wars-factory",
+        "origin": "WEB_RESEARCH_IDEA",
+        "original_text": "Keep repeatable criteria and inspect failures before promoting an idea.",
+        "original_sha256": "75d717e5469d1468f36dad19b539d51648d19167f39f7244402ce8c34312b184",
+        "source_ref": "https://opensource.microsoft.com/blog/2026/10/19/introducing-scope-open-source-evaluation-for-ai-coding-agents/",
+        "captured_at": "2026-10-28T21:28:29Z",
+        "owner_priority": 3,
+        "observations": [
+          {
+            "source_url": "https://opensource.microsoft.com/blog/2026/10/19/introducing-scope-open-source-evaluation-for-ai-coding-agents/",
+            "checked_at": "2026-10-28T21:28:29Z",
+            "source_kind": "DEVELOPER_CASE",
+            "observed_fact": "Publisher describes repeated versioned tasks and evidence inspection.",
+            "limitation": "The case does not measure this system or authorize model execution.",
+            "published_at": "2026-10-19"
+          }
+        ],
+        "derived_from": [],
+        "stage": "CAPTURED",
+        "events": [],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "SYSTEM",
+        "variant_of": null,
+        "duplicate_of": null,
+        "provenance_sha256": "c585f64a4850c4431cce87fe7a24a403f022db59f86e78cdef106df11e8bf7fd"
+      },
+      {
+        "schema": 2,
+        "idea_id": "MIX-20261029-SCOPED-VAULT",
+        "project_id": "toy-wars-factory",
+        "origin": "DERIVED",
+        "original_text": "Preserve raw owner text and Web records in a scoped append-only advisory vault.",
+        "original_sha256": "7c81257a903248e2defb395ecc084acd6a5c61450feddbf3284c712604714afb",
+        "source_ref": "NOT_AVAILABLE",
+        "captured_at": "2026-10-28T21:28:29Z",
+        "owner_priority": 3,
+        "observations": [],
+        "derived_from": [
+          "OWNER-20261028-DUAL-EVOLUTION",
+          "WEB-20261029-EVALS"
+        ],
+        "stage": "EXPERIMENT_DESIGNED",
+        "events": [
+          {
+            "actor": "META:7abde498-0150-8327-8579-2b3f808d0acb",
+            "occurred_at": "2026-10-28T21:28:29Z",
+            "from": "CAPTURED",
+            "to": "RESEARCHED",
+            "reason": "Sources read, two variants and NO_CHANGE compared; falsifiable plan recorded.",
+            "evidence_refs": [
+              "https://github.com/kk051780/toy-wars-factory/issues/109"
+            ]
+          },
+          {
+            "actor": "META:7abde498-0150-8327-8579-2b3f808d0acb",
+            "occurred_at": "2026-10-28T21:28:29Z",
+            "from": "RESEARCHED",
+            "to": "COMPARED",
+            "reason": "Sources read, two variants and NO_CHANGE compared; falsifiable plan recorded.",
+            "evidence_refs": [
+              "https://github.com/kk051780/toy-wars-factory/issues/109"
+            ]
+          },
+          {
+            "actor": "META:7abde498-0150-8327-8579-2b3f808d0acb",
+            "occurred_at": "2026-10-28T21:28:29Z",
+            "from": "COMPARED",
+            "to": "EXPERIMENT_DESIGNED",
+            "reason": "Sources read, two variants and NO_CHANGE compared; falsifiable plan recorded.",
+            "evidence_refs": [
+              "https://github.com/kk051780/toy-wars-factory/issues/109"
+            ]
+          }
+        ],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "SYSTEM",
+        "variant_of": "OWNER-20261028-DUAL-EVOLUTION",
+        "duplicate_of": null,
+        "provenance_sha256": "feaf54768f3fb55bc5e66dc8e93664e2387a04c58335e9c4477d8d28179aa66c"
+      },
+      {
+        "schema": 2,
+        "idea_id": "MIX-20261029-ISSUE-LEDGER",
+        "project_id": "toy-wars-factory",
+        "origin": "DERIVED",
+        "original_text": "Keep a structured issue-only ledger and manually compare variants.",
+        "original_sha256": "e87c34471f2c97f25cd21d4af27b5cd3af80767e4811b8aed658a9b5ddf01785",
+        "source_ref": "NOT_AVAILABLE",
+        "captured_at": "2026-10-28T21:28:29Z",
+        "owner_priority": 3,
+        "observations": [],
+        "derived_from": [
+          "OWNER-20261028-DUAL-EVOLUTION",
+          "WEB-20261029-EVALS"
+        ],
+        "stage": "EXPERIMENT_DESIGNED",
+        "events": [
+          {
+            "actor": "META:7abde498-0150-8327-8579-2b3f808d0acb",
+            "occurred_at": "2026-10-28T21:28:29Z",
+            "from": "CAPTURED",
+            "to": "RESEARCHED",
+            "reason": "Sources read, two variants and NO_CHANGE compared; falsifiable plan recorded.",
+            "evidence_refs": [
+              "https://github.com/kk051780/toy-wars-factory/issues/109"
+            ]
+          },
+          {
+            "actor": "META:7abde498-0150-8327-8579-2b3f808d0acb",
+            "occurred_at": "2026-10-28T21:28:29Z",
+            "from": "RESEARCHED",
+            "to": "COMPARED",
+            "reason": "Sources read, two variants and NO_CHANGE compared; falsifiable plan recorded.",
+            "evidence_refs": [
+              "https://github.com/kk051780/toy-wars-factory/issues/109"
+            ]
+          },
+          {
+            "actor": "META:7abde498-0150-8327-8579-2b3f808d0acb",
+            "occurred_at": "2026-10-28T21:28:29Z",
+            "from": "COMPARED",
+            "to": "EXPERIMENT_DESIGNED",
+            "reason": "Sources read, two variants and NO_CHANGE compared; falsifiable plan recorded.",
+            "evidence_refs": [
+              "https://github.com/kk051780/toy-wars-factory/issues/109"
+            ]
+          }
+        ],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "SYSTEM",
+        "variant_of": "OWNER-20261028-DUAL-EVOLUTION",
+        "duplicate_of": null,
+        "provenance_sha256": "1511fe2f7923d67fc3d5301fa722cdfc6f5b2e121df7eb6bc4ea68b2e6fa742c"
+      },
+      {
+        "schema": 2,
+        "idea_id": "MIX-20261029-CUREBO-STAGED",
+        "project_id": "toy-wars-factory",
+        "origin": "DERIVED",
+        "original_text": "After PR98 adoption, test one support toy with a large heart/toolbag silhouette.",
+        "original_sha256": "44810823b7bf4811e57c00960fa4f27637cb4d989b20c0b4f5bff1c56e31f516",
+        "source_ref": "NOT_AVAILABLE",
+        "captured_at": "2026-10-28T21:28:29Z",
+        "owner_priority": 3,
+        "observations": [],
+        "derived_from": [
+          "OWNER-20261028-CHARACTER-VARIETY",
+          "WEB-20261029-DISCOVERY",
+          "WEB-20261029-COLLECTION"
+        ],
+        "stage": "WITHDRAWN",
+        "events": [
+          {
+            "actor": "META:7abde498-0150-8327-8579-2b3f808d0acb",
+            "occurred_at": "2026-10-28T21:28:29Z",
+            "from": "CAPTURED",
+            "to": "RESEARCHED",
+            "reason": "Sources read, two variants and NO_CHANGE compared; falsifiable plan recorded.",
+            "evidence_refs": [
+              "https://github.com/kk051780/toy-wars-factory/issues/109"
+            ]
+          },
+          {
+            "actor": "META:7abde498-0150-8327-8579-2b3f808d0acb",
+            "occurred_at": "2026-10-28T21:28:29Z",
+            "from": "RESEARCHED",
+            "to": "COMPARED",
+            "reason": "Sources read, two variants and NO_CHANGE compared; falsifiable plan recorded.",
+            "evidence_refs": [
+              "https://github.com/kk051780/toy-wars-factory/issues/109"
+            ]
+          },
+          {
+            "actor": "META:7abde498-0150-8327-8579-2b3f808d0acb",
+            "occurred_at": "2026-10-28T21:28:29Z",
+            "from": "COMPARED",
+            "to": "EXPERIMENT_DESIGNED",
+            "reason": "Sources read, two variants and NO_CHANGE compared; falsifiable plan recorded.",
+            "evidence_refs": [
+              "https://github.com/kk051780/toy-wars-factory/issues/109"
+            ]
+          },
+          {
+            "actor": "META:f849220f-dc50-8329-926a-f3b0db1267a2",
+            "occurred_at": "2026-10-28T22:01:06Z",
+            "from": "EXPERIMENT_DESIGNED",
+            "to": "WITHDRAWN",
+            "reason": "PR112 independent review rejected AI-summary-as-owner provenance; retained only as rejected history.",
+            "evidence_refs": [
+              "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808"
+            ]
+          }
+        ],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "GAME",
+        "variant_of": "OWNER-20261028-CHARACTER-VARIETY",
+        "duplicate_of": null,
+        "provenance_sha256": "63c58d2a72c2b3659710f5d04a2f80eee5d029e3ed404d51746b5182fcb0eef0"
+      },
+      {
+        "schema": 2,
+        "idea_id": "MIX-20261029-FTUE-FIRST",
+        "project_id": "toy-wars-factory",
+        "origin": "DERIVED",
+        "original_text": "Keep three toys and improve first-production feedback before roster expansion.",
+        "original_sha256": "5ad72cfd0d170a628f6ec3d8c33e768009d45314115659a43efbe94eb61ee9e8",
+        "source_ref": "NOT_AVAILABLE",
+        "captured_at": "2026-10-28T21:28:29Z",
+        "owner_priority": 3,
+        "observations": [],
+        "derived_from": [
+          "OWNER-20261028-CHARACTER-VARIETY",
+          "WEB-20261029-DISCOVERY"
+        ],
+        "stage": "WITHDRAWN",
+        "events": [
+          {
+            "actor": "META:7abde498-0150-8327-8579-2b3f808d0acb",
+            "occurred_at": "2026-10-28T21:28:29Z",
+            "from": "CAPTURED",
+            "to": "RESEARCHED",
+            "reason": "Sources read, two variants and NO_CHANGE compared; falsifiable plan recorded.",
+            "evidence_refs": [
+              "https://github.com/kk051780/toy-wars-factory/issues/109"
+            ]
+          },
+          {
+            "actor": "META:7abde498-0150-8327-8579-2b3f808d0acb",
+            "occurred_at": "2026-10-28T21:28:29Z",
+            "from": "RESEARCHED",
+            "to": "COMPARED",
+            "reason": "Sources read, two variants and NO_CHANGE compared; falsifiable plan recorded.",
+            "evidence_refs": [
+              "https://github.com/kk051780/toy-wars-factory/issues/109"
+            ]
+          },
+          {
+            "actor": "META:7abde498-0150-8327-8579-2b3f808d0acb",
+            "occurred_at": "2026-10-28T21:28:29Z",
+            "from": "COMPARED",
+            "to": "EXPERIMENT_DESIGNED",
+            "reason": "Sources read, two variants and NO_CHANGE compared; falsifiable plan recorded.",
+            "evidence_refs": [
+              "https://github.com/kk051780/toy-wars-factory/issues/109"
+            ]
+          },
+          {
+            "actor": "META:f849220f-dc50-8329-926a-f3b0db1267a2",
+            "occurred_at": "2026-10-28T22:01:06Z",
+            "from": "EXPERIMENT_DESIGNED",
+            "to": "WITHDRAWN",
+            "reason": "PR112 independent review rejected AI-summary-as-owner provenance; retained only as rejected history.",
+            "evidence_refs": [
+              "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808"
+            ]
+          }
+        ],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "GAME",
+        "variant_of": "OWNER-20261028-CHARACTER-VARIETY",
+        "duplicate_of": null,
+        "provenance_sha256": "8e8394d3b9f88a2e77306119ce40b0b8569ee22ddfe78ce42c202ca9607da0ed"
+      },
+      {
+        "schema": 2,
+        "idea_id": "OWNER-20261028-CHARACTER-VERBATIM",
+        "project_id": "toy-wars-factory",
+        "origin": "OWNER_ORIGINAL_IDEA",
+        "original_text": "このチャットではゲーム制作のキャラクター、ゲーム構造のブラッシュアップを進める。今の不満はキャラが3つしかないこと。子供は飽きる。ロブロックス見れば分かるけど、キャラの多さは命。レアキャラとかは課金に繋がる。闇雲に増やすのではなく、ゲーム構想にあったナイスキャラをまずは増やそう",
+        "original_sha256": "46de180dc2e7c83fbae82c728b54bd66878d1b3be57f6bb6d5c027ba6586f1b7",
+        "source_ref": "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808",
+        "captured_at": "2026-10-28T22:01:06Z",
+        "owner_priority": 3,
+        "observations": [],
+        "derived_from": [],
+        "stage": "CAPTURED",
+        "events": [],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "GAME",
+        "variant_of": null,
+        "duplicate_of": null,
+        "provenance_sha256": "df60e2a6f87a6dabbeeae6252f8f820abb0116da625fc86e696ae32d82502a11"
+      },
+      {
+        "schema": 2,
+        "idea_id": "MIX-20261029-CHARACTER-SUMMARY",
+        "project_id": "toy-wars-factory",
+        "origin": "DERIVED",
+        "original_text": "キャラ3体では飽きる。キャラを闇雲に増やさず構想に沿う差別化キャラを増やし、レアキャラの収集価値も検討する",
+        "original_sha256": "579755bc65a7b366c92a3ec3eabc31cf67c566c0093f60e7dafb703e18552fb6",
+        "source_ref": "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808",
+        "captured_at": "2026-10-28T22:01:06Z",
+        "owner_priority": 3,
+        "observations": [],
+        "derived_from": [
+          "OWNER-20261028-CHARACTER-VERBATIM"
+        ],
+        "stage": "CAPTURED",
+        "events": [],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "GAME",
+        "variant_of": "OWNER-20261028-CHARACTER-VERBATIM",
+        "duplicate_of": null,
+        "provenance_sha256": "547821576f30df1a3ea2888a2f0ec74175b0e32f3a3f7ab1f73813d41a6778c4"
+      },
+      {
+        "schema": 2,
+        "idea_id": "MIX-20261029-CUREBO-STAGED-R1",
+        "project_id": "toy-wars-factory",
+        "origin": "DERIVED",
+        "original_text": "After PR98 adoption, test one support toy with a large heart/toolbag silhouette.",
+        "original_sha256": "44810823b7bf4811e57c00960fa4f27637cb4d989b20c0b4f5bff1c56e31f516",
+        "source_ref": "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808",
+        "captured_at": "2026-10-28T22:01:06Z",
+        "owner_priority": 3,
+        "observations": [],
+        "derived_from": [
+          "MIX-20261029-CHARACTER-SUMMARY",
+          "WEB-20261029-DISCOVERY",
+          "WEB-20261029-COLLECTION"
+        ],
+        "stage": "EXPERIMENT_DESIGNED",
+        "events": [
+          {
+            "actor": "META:f849220f-dc50-8329-926a-f3b0db1267a2",
+            "occurred_at": "2026-10-28T22:01:06Z",
+            "from": "CAPTURED",
+            "to": "RESEARCHED",
+            "reason": "Recompare preserved hypotheses after verbatim-source correction; no engine/player effect claimed.",
+            "evidence_refs": [
+              "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808"
+            ]
+          },
+          {
+            "actor": "META:f849220f-dc50-8329-926a-f3b0db1267a2",
+            "occurred_at": "2026-10-28T22:01:06Z",
+            "from": "RESEARCHED",
+            "to": "COMPARED",
+            "reason": "Recompare preserved hypotheses after verbatim-source correction; no engine/player effect claimed.",
+            "evidence_refs": [
+              "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808"
+            ]
+          },
+          {
+            "actor": "META:f849220f-dc50-8329-926a-f3b0db1267a2",
+            "occurred_at": "2026-10-28T22:01:06Z",
+            "from": "COMPARED",
+            "to": "EXPERIMENT_DESIGNED",
+            "reason": "Recompare preserved hypotheses after verbatim-source correction; no engine/player effect claimed.",
+            "evidence_refs": [
+              "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808"
+            ]
+          }
+        ],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "GAME",
+        "variant_of": "OWNER-20261028-CHARACTER-VERBATIM",
+        "duplicate_of": null,
+        "provenance_sha256": "cb4297c462831e38cc615bc6e5b9427454d652e960e836792eea42ba89771272"
+      },
+      {
+        "schema": 2,
+        "idea_id": "MIX-20261029-FTUE-FIRST-R1",
+        "project_id": "toy-wars-factory",
+        "origin": "DERIVED",
+        "original_text": "Keep three toys and improve first-production feedback before roster expansion.",
+        "original_sha256": "5ad72cfd0d170a628f6ec3d8c33e768009d45314115659a43efbe94eb61ee9e8",
+        "source_ref": "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808",
+        "captured_at": "2026-10-28T22:01:06Z",
+        "owner_priority": 3,
+        "observations": [],
+        "derived_from": [
+          "MIX-20261029-CHARACTER-SUMMARY",
+          "WEB-20261029-DISCOVERY"
+        ],
+        "stage": "EXPERIMENT_DESIGNED",
+        "events": [
+          {
+            "actor": "META:f849220f-dc50-8329-926a-f3b0db1267a2",
+            "occurred_at": "2026-10-28T22:01:06Z",
+            "from": "CAPTURED",
+            "to": "RESEARCHED",
+            "reason": "Recompare preserved hypotheses after verbatim-source correction; no engine/player effect claimed.",
+            "evidence_refs": [
+              "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808"
+            ]
+          },
+          {
+            "actor": "META:f849220f-dc50-8329-926a-f3b0db1267a2",
+            "occurred_at": "2026-10-28T22:01:06Z",
+            "from": "RESEARCHED",
+            "to": "COMPARED",
+            "reason": "Recompare preserved hypotheses after verbatim-source correction; no engine/player effect claimed.",
+            "evidence_refs": [
+              "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808"
+            ]
+          },
+          {
+            "actor": "META:f849220f-dc50-8329-926a-f3b0db1267a2",
+            "occurred_at": "2026-10-28T22:01:06Z",
+            "from": "COMPARED",
+            "to": "EXPERIMENT_DESIGNED",
+            "reason": "Recompare preserved hypotheses after verbatim-source correction; no engine/player effect claimed.",
+            "evidence_refs": [
+              "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808"
+            ]
+          }
+        ],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "GAME",
+        "variant_of": "OWNER-20261028-CHARACTER-VERBATIM",
+        "duplicate_of": null,
+        "provenance_sha256": "79f9f26db4841269cc3c383ca95db1ad40a85d5ea7356d86a595bd5c2fc1c6c6"
+      }
+    ],
+    "owner_transcriptions": [
+      {
+        "project_id": "toy-wars-factory",
+        "idea_id": "OWNER-20261028-DUAL-EVOLUTION",
+        "repository": "kk051780/toy-wars-factory",
+        "issue_number": 109,
+        "comment_id": 6480372522,
+        "source_ref": "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6480372522",
+        "comment_url": "https://github.com/kk051780/toy-wars-factory/issues/109#issuecomment-6480372522",
+        "original_text": "今回のようにキャラクターを増やしたいとか、新たなアイデアを俺が君に吹き込むことがある。こういうアイデアはしっかりストックしておいて、要である自動開発で寝ているうちにどうやったら勝ち目があるかを検証したあとに、必勝、ベストなアイデアを既存システムに統合するという仕組みを自動開発体制に組み込む必要がある。これは、定期的に行うWEB上の最新情報、勝てるノウハウを調査し、既存システムをブラッシュアップし続ける重要な仕組みとの両輪としたい。俺の吹き込むアイデアはいわばオリジナリティになる。これを組み込んでくれ。",
+        "checked_at": "2026-10-28T22:01:06Z",
+        "original_chat_url": "NOT_AVAILABLE",
+        "original_chat_authentication": "NOT_VERIFIED"
+      },
+      {
+        "project_id": "toy-wars-factory",
+        "idea_id": "OWNER-20261028-CHARACTER-VERBATIM",
+        "repository": "kk051780/toy-wars-factory",
+        "issue_number": 109,
+        "comment_id": 6481271808,
+        "source_ref": "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808",
+        "comment_url": "https://github.com/kk051780/toy-wars-factory/issues/109#issuecomment-6481271808",
+        "original_text": "このチャットではゲーム制作のキャラクター、ゲーム構造のブラッシュアップを進める。今の不満はキャラが3つしかないこと。子供は飽きる。ロブロックス見れば分かるけど、キャラの多さは命。レアキャラとかは課金に繋がる。闇雲に増やすのではなく、ゲーム構想にあったナイスキャラをまずは増やそう",
+        "checked_at": "2026-10-28T22:01:06Z",
+        "original_chat_url": "NOT_AVAILABLE",
+        "original_chat_authentication": "NOT_VERIFIED"
+      }
+    ],
+    "owner_provenance_check": {
+      "basis": "EXACT_MATCH_TO_SUPPLIED_GITHUB_TRANSCRIPT_NOT_AUTHENTICATION",
+      "matched_active_records": [
+        [
+          "toy-wars-factory",
+          "OWNER-20261028-CHARACTER-VERBATIM"
+        ],
+        [
+          "toy-wars-factory",
+          "OWNER-20261028-DUAL-EVOLUTION"
+        ]
+      ],
+      "original_chat_url": "NOT_AVAILABLE",
+      "original_chat_authentication": "NOT_VERIFIED",
+      "archived_unverified_owner_ids": [
+        "OWNER-20261028-CHARACTER-VARIETY"
+      ]
+    },
+    "proposals": {
+      "SYSTEM": [
+        {
+          "candidate_id": "MIX-20261029-SCOPED-VAULT",
+          "idea_refs": [
+            "MIX-20261029-SCOPED-VAULT"
+          ],
+          "hypothesis": "Scoped append-only stock may reduce original idea loss and reinterpretation.",
+          "test_plan": "Rehashed rewrite and cross-game negative controls; independent review then main QA; track lost-origin incidents per observed cycle.",
+          "falsifier": "Reject if raw words/event prefixes can be replaced or tasks cross repositories.",
+          "benefit": {
+            "acquisition": 3,
+            "retention": 3,
+            "strategy": 3,
+            "originality": 3
+          },
+          "effort": {
+            "engineering": 2,
+            "qa": 2,
+            "performance": 2
+          },
+          "confidence": 1,
+          "open_risks": [
+            "No automatic chat ingestion or execution receipt",
+            "A hash is not provider authentication"
+          ]
+        },
+        {
+          "candidate_id": "MIX-20261029-ISSUE-LEDGER",
+          "idea_refs": [
+            "MIX-20261029-ISSUE-LEDGER"
+          ],
+          "hypothesis": "Issue-only templates may preserve context with less initial engineering.",
+          "test_plan": "Compare overwrite/source-loss incidents and recording effort over the same period against vault and no-change.",
+          "falsifier": "Reject if AI interpretations mix with originals or routine effort prevents recording.",
+          "benefit": {
+            "acquisition": 2,
+            "retention": 2,
+            "strategy": 2,
+            "originality": 2
+          },
+          "effort": {
+            "engineering": 1,
+            "qa": 1,
+            "performance": 1
+          },
+          "confidence": 1,
+          "open_risks": [
+            "Manual discipline and linkage remain unverified"
+          ]
+        }
+      ],
+      "GAME": [
+        {
+          "candidate_id": "MIX-20261029-CUREBO-STAGED-R1",
+          "idea_refs": [
+            "MIX-20261029-CUREBO-STAGED-R1"
+          ],
+          "hypothesis": "A support role and collection goal may deepen strategic choice and return interest.",
+          "test_plan": "WAIT PR98 protected adoption; combat/old-character regression; 32/64px silhouette and 4 factories x 20 units/device frame-time test. Then matched opt-in cohort first-production, D1/D7 and play-day study.",
+          "falsifier": "Reject if role is unreadable, support dominates, onboarding worsens or device guardrails regress.",
+          "benefit": {
+            "acquisition": 3,
+            "retention": 3,
+            "strategy": 3,
+            "originality": 3
+          },
+          "effort": {
+            "engineering": 4,
+            "qa": 4,
+            "performance": 4
+          },
+          "confidence": 1,
+          "open_risks": [
+            "PR98 unmerged; Issue102 remains dependent candidate",
+            "Engine, mobile, player effects NOT_RUN"
+          ]
+        },
+        {
+          "candidate_id": "MIX-20261029-FTUE-FIRST-R1",
+          "idea_refs": [
+            "MIX-20261029-FTUE-FIRST-R1"
+          ],
+          "hypothesis": "Clear first-production feedback may reduce first-180-second friction while preserving three toys.",
+          "test_plan": "Compare unchanged main with same device/traffic cohort; validate select-production-first-wave funnel and existing UI/characters before opt-in study.",
+          "falsifier": "Reject if comprehension fails or early-bounce/D1 guardrails worsen without learning gains.",
+          "benefit": {
+            "acquisition": 3,
+            "retention": 3,
+            "strategy": 3,
+            "originality": 3
+          },
+          "effort": {
+            "engineering": 2,
+            "qa": 2,
+            "performance": 2
+          },
+          "confidence": 1,
+          "open_risks": [
+            "Mid-term collection value unknown"
+          ]
+        }
+      ]
+    },
+    "comparisons": {
+      "SYSTEM": {
+        "schema": 2,
+        "project_id": "toy-wars-factory",
+        "ranking": [
+          {
+            "candidate_id": "MIX-20261029-SCOPED-VAULT",
+            "idea_refs": [
+              "MIX-20261029-SCOPED-VAULT"
+            ],
+            "heuristic_score": 4,
+            "confidence": 1,
+            "risks": [
+              "No automatic chat ingestion or execution receipt",
+              "A hash is not provider authentication"
+            ],
+            "hypothesis": "Scoped append-only stock may reduce original idea loss and reinterpretation.",
+            "test_plan": "Rehashed rewrite and cross-game negative controls; independent review then main QA; track lost-origin incidents per observed cycle.",
+            "falsifier": "Reject if raw words/event prefixes can be replaced or tasks cross repositories.",
+            "measured_effect": "NOT_MEASURED",
+            "review_status": "NOT_REVIEWED"
+          },
+          {
+            "candidate_id": "MIX-20261029-ISSUE-LEDGER",
+            "idea_refs": [
+              "MIX-20261029-ISSUE-LEDGER"
+            ],
+            "heuristic_score": 3,
+            "confidence": 1,
+            "risks": [
+              "Manual discipline and linkage remain unverified"
+            ],
+            "hypothesis": "Issue-only templates may preserve context with less initial engineering.",
+            "test_plan": "Compare overwrite/source-loss incidents and recording effort over the same period against vault and no-change.",
+            "falsifier": "Reject if AI interpretations mix with originals or routine effort prevents recording.",
+            "measured_effect": "NOT_MEASURED",
+            "review_status": "NOT_REVIEWED"
+          }
+        ],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "SYSTEM",
+        "owner_source_provenance": {
+          "basis": "EXACT_MATCH_TO_SUPPLIED_GITHUB_TRANSCRIPT_NOT_AUTHENTICATION",
+          "matched_active_records": [
+            [
+              "toy-wars-factory",
+              "OWNER-20261028-CHARACTER-VERBATIM"
+            ],
+            [
+              "toy-wars-factory",
+              "OWNER-20261028-DUAL-EVOLUTION"
+            ]
+          ],
+          "original_chat_url": "NOT_AVAILABLE",
+          "original_chat_authentication": "NOT_VERIFIED",
+          "archived_unverified_owner_ids": [
+            "OWNER-20261028-CHARACTER-VARIETY"
+          ]
+        },
+        "baseline": {
+          "candidate_id": "NO_CHANGE",
+          "measured_effect": "NOT_MEASURED",
+          "test_plan": "Observe unchanged main with the same cohort, device and exposure window"
+        },
+        "metric_status": {
+          "playthrough": "NOT_MEASURED",
+          "first_play_bounce_lt60s": "NOT_MEASURED",
+          "first_play_bounce_61_180s": "NOT_MEASURED",
+          "play_days_D2_D7": "NOT_MEASURED",
+          "play_days_D8_D28": "NOT_MEASURED",
+          "playtime": "NOT_MEASURED",
+          "D1": "NOT_MEASURED",
+          "D7": "NOT_MEASURED",
+          "first_production_funnel": "NOT_MEASURED",
+          "fun": "NOT_MEASURED",
+          "originality": "NOT_MEASURED",
+          "frame_time_p95": "NOT_MEASURED",
+          "engineering_effort": "NOT_MEASURED",
+          "qa_effort": "NOT_MEASURED",
+          "regression_risk": "NOT_MEASURED"
+        },
+        "engine_status": "NOT_RUN",
+        "player_status": "NOT_MEASURED",
+        "lifecycle": [
+          "CAPTURED",
+          "RESEARCHED",
+          "COMPARED",
+          "EXPERIMENT_DESIGNED",
+          "PROTOTYPE_PR",
+          "OFFLINE_VERIFIED",
+          "INDEPENDENT_APPROVED",
+          "MERGED_MAIN_QA",
+          "ENGINE_VERIFIED",
+          "PLAYER_MEASURED"
+        ],
+        "blocked_on": "PROVIDER_BACKED_INDEPENDENT_EXECUTION_EVIDENCE_REQUIRED",
+        "classification": "HYPOTHESIS_ONLY_NOT_MARKET_PROOF",
+        "execution": {
+          "write": false,
+          "dispatch": false,
+          "merge": false,
+          "publish": false,
+          "spend": false
+        },
+        "next": "Require independent prototype+offline test, Roblox engine/mobile proof, then opt-in player study before any measured-effect claim"
+      },
+      "GAME": {
+        "schema": 2,
+        "project_id": "toy-wars-factory",
+        "ranking": [
+          {
+            "candidate_id": "MIX-20261029-FTUE-FIRST-R1",
+            "idea_refs": [
+              "MIX-20261029-FTUE-FIRST-R1"
+            ],
+            "heuristic_score": 6,
+            "confidence": 1,
+            "risks": [
+              "Mid-term collection value unknown"
+            ],
+            "hypothesis": "Clear first-production feedback may reduce first-180-second friction while preserving three toys.",
+            "test_plan": "Compare unchanged main with same device/traffic cohort; validate select-production-first-wave funnel and existing UI/characters before opt-in study.",
+            "falsifier": "Reject if comprehension fails or early-bounce/D1 guardrails worsen without learning gains.",
+            "measured_effect": "NOT_MEASURED",
+            "review_status": "NOT_REVIEWED"
+          },
+          {
+            "candidate_id": "MIX-20261029-CUREBO-STAGED-R1",
+            "idea_refs": [
+              "MIX-20261029-CUREBO-STAGED-R1"
+            ],
+            "heuristic_score": -10,
+            "confidence": 1,
+            "risks": [
+              "PR98 unmerged; Issue102 remains dependent candidate",
+              "Engine, mobile, player effects NOT_RUN"
+            ],
+            "hypothesis": "A support role and collection goal may deepen strategic choice and return interest.",
+            "test_plan": "WAIT PR98 protected adoption; combat/old-character regression; 32/64px silhouette and 4 factories x 20 units/device frame-time test. Then matched opt-in cohort first-production, D1/D7 and play-day study.",
+            "falsifier": "Reject if role is unreadable, support dominates, onboarding worsens or device guardrails regress.",
+            "measured_effect": "NOT_MEASURED",
+            "review_status": "NOT_REVIEWED"
+          }
+        ],
+        "scope": {
+          "repository": "kk051780/toy-wars-factory",
+          "tasks": {
+            "WORKER": "6adbf0d6a7d881918ce181dff2468867",
+            "META": "6add445e4138819197d9cf2b1a02534d",
+            "REVIEWER": "6add6aaceb4c8191b1666fe15f97cd88"
+          }
+        },
+        "domain": "GAME",
+        "owner_source_provenance": {
+          "basis": "EXACT_MATCH_TO_SUPPLIED_GITHUB_TRANSCRIPT_NOT_AUTHENTICATION",
+          "matched_active_records": [
+            [
+              "toy-wars-factory",
+              "OWNER-20261028-CHARACTER-VERBATIM"
+            ],
+            [
+              "toy-wars-factory",
+              "OWNER-20261028-DUAL-EVOLUTION"
+            ]
+          ],
+          "original_chat_url": "NOT_AVAILABLE",
+          "original_chat_authentication": "NOT_VERIFIED",
+          "archived_unverified_owner_ids": [
+            "OWNER-20261028-CHARACTER-VARIETY"
+          ]
+        },
+        "baseline": {
+          "candidate_id": "NO_CHANGE",
+          "measured_effect": "NOT_MEASURED",
+          "test_plan": "Observe unchanged main with the same cohort, device and exposure window"
+        },
+        "metric_status": {
+          "playthrough": "NOT_MEASURED",
+          "first_play_bounce_lt60s": "NOT_MEASURED",
+          "first_play_bounce_61_180s": "NOT_MEASURED",
+          "play_days_D2_D7": "NOT_MEASURED",
+          "play_days_D8_D28": "NOT_MEASURED",
+          "playtime": "NOT_MEASURED",
+          "D1": "NOT_MEASURED",
+          "D7": "NOT_MEASURED",
+          "first_production_funnel": "NOT_MEASURED",
+          "fun": "NOT_MEASURED",
+          "originality": "NOT_MEASURED",
+          "frame_time_p95": "NOT_MEASURED",
+          "engineering_effort": "NOT_MEASURED",
+          "qa_effort": "NOT_MEASURED",
+          "regression_risk": "NOT_MEASURED"
+        },
+        "engine_status": "NOT_RUN",
+        "player_status": "NOT_MEASURED",
+        "lifecycle": [
+          "CAPTURED",
+          "RESEARCHED",
+          "COMPARED",
+          "EXPERIMENT_DESIGNED",
+          "PROTOTYPE_PR",
+          "OFFLINE_VERIFIED",
+          "INDEPENDENT_APPROVED",
+          "MERGED_MAIN_QA",
+          "ENGINE_VERIFIED",
+          "PLAYER_MEASURED"
+        ],
+        "blocked_on": "PROVIDER_BACKED_INDEPENDENT_EXECUTION_EVIDENCE_REQUIRED",
+        "classification": "HYPOTHESIS_ONLY_NOT_MARKET_PROOF",
+        "execution": {
+          "write": false,
+          "dispatch": false,
+          "merge": false,
+          "publish": false,
+          "spend": false
+        },
+        "next": "Require independent prototype+offline test, Roblox engine/mobile proof, then opt-in player study before any measured-effect claim"
+      }
+    },
+    "counts": {
+      "retained_records": 13,
+      "active_records": 10,
+      "active_owner_transcriptions": 2,
+      "active_web_ideas": 3,
+      "active_derived": 5,
+      "withdrawn": 3,
+      "original_chat_authenticated": 0,
+      "main_adoptions": 0,
+      "engine_measured": 0,
+      "player_measured": 0
+    },
+    "withdrawn_ids": [
+      "OWNER-20261028-CHARACTER-VARIETY",
+      "MIX-20261029-CUREBO-STAGED",
+      "MIX-20261029-FTUE-FIRST"
+    ],
+    "replacement_map": {
+      "misclassified_owner": "OWNER-20261028-CHARACTER-VARIETY",
+      "verbatim_owner": "OWNER-20261028-CHARACTER-VERBATIM",
+      "derived_summary": "MIX-20261029-CHARACTER-SUMMARY",
+      "variants": {
+        "MIX-20261029-CUREBO-STAGED": "MIX-20261029-CUREBO-STAGED-R1",
+        "MIX-20261029-FTUE-FIRST": "MIX-20261029-FTUE-FIRST-R1"
+      }
+    },
+    "preserved_unchanged_ids": [
+      "OWNER-20261028-DUAL-EVOLUTION",
+      "WEB-20261029-DISCOVERY",
+      "WEB-20261029-COLLECTION",
+      "WEB-20261029-EVALS",
+      "MIX-20261029-SCOPED-VAULT",
+      "MIX-20261029-ISSUE-LEDGER"
+    ]
+  },
+  "verification": {
+    "source_blob": "df6cf5d2202a9343570bce0957c72c5ca4e4b570",
+    "source_observation": "Actual connected GitHub GET comment responses projected to7 content/identity/time keys, then passed through this exact source. This is transcription comparison, not original chat authentication.",
+    "source_comment_url": "https://github.com/kk051780/toy-wars-factory/issues/109#issuecomment-6481271808",
+    "source_api_url": "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808",
+    "original_chat_url": "NOT_AVAILABLE",
+    "original_chat_authentication": "NOT_VERIFIED",
+    "negative_control": {
+      "old_hash_validation": "PASS_NOT_AUTHENTICATION",
+      "old_checkpoint_rejected": "owner source does not match scoped record",
+      "rehash_with_correct_source_rejected": "owner text is not verbatim transcription"
+    },
+    "caller_JSON_or_hash_is_authentication": false,
+    "comment_snapshots": [
+      {
+        "id": 6480372522,
+        "api_url": "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6480372522",
+        "html_url": "https://github.com/kk051780/toy-wars-factory/issues/109#issuecomment-6480372522",
+        "created_at": "2026-10-28T20:50:23Z",
+        "updated_at": "2026-10-28T20:50:23Z",
+        "body_sha256": "ed61e2572f89df7eba4c49c5f204107530442c2d9190a774c250f207d8a966aa",
+        "checked_at": "2026-10-28T22:01:06Z",
+        "original_chat_authentication": "NOT_VERIFIED"
+      },
+      {
+        "id": 6481271808,
+        "api_url": "https://api.github.com/repos/kk051780/toy-wars-factory/issues/comments/6481271808",
+        "html_url": "https://github.com/kk051780/toy-wars-factory/issues/109#issuecomment-6481271808",
+        "created_at": "2026-10-28T21:36:21Z",
+        "updated_at": "2026-10-28T21:36:21Z",
+        "body_sha256": "bc7249ac8a4023f616992ec0852d8c470216d913e92b7aa1a3a2756a3dd219c0",
+        "checked_at": "2026-10-28T22:01:06Z",
+        "original_chat_authentication": "NOT_VERIFIED"
+      }
+    ],
+    "actual_cli": {
+      "SYSTEM": {
+        "returncode": 0,
+        "variants": 2,
+        "baseline": "NO_CHANGE",
+        "matched_transcriptions": 2,
+        "original_chat_authentication": "NOT_VERIFIED",
+        "engine": "NOT_RUN",
+        "players": "NOT_MEASURED"
+      },
+      "GAME": {
+        "returncode": 0,
+        "variants": 2,
+        "baseline": "NO_CHANGE",
+        "matched_transcriptions": 2,
+        "original_chat_authentication": "NOT_VERIFIED",
+        "engine": "NOT_RUN",
+        "players": "NOT_MEASURED"
+      }
+    }
+  },
+  "tests": {
+    "previous_pr_python": 43,
+    "previous_pr_tests_changed": false,
+    "new_test": "tests/test_system_owner_transcription.py",
+    "new_tests": 13,
+    "focused": "56 PASS (previous43 unchanged plus13 new)",
+    "local_full": {
+      "run": 510,
+      "passed": 509,
+      "failures": 1,
+      "errors": 0,
+      "cause": "Unchanged historical Git ancestry assertion merge_history_reconcile.py:91; snapshot lacks real Git history. No skipped/weakened tests."
+    },
+    "github_ci": "PENDING_NEW_HEAD",
+    "trusted_scope": "PASS_PREFLIGHT; actual new-head claim/scope CI required",
+    "isolated_mutant": {
+      "run": 2,
+      "failures": 2,
+      "errors": 0,
+      "disk_source_unchanged": true
+    }
+  },
+  "changed_files_this_repair": [
+    "tools/system_idea_pipeline.py",
+    "tests/test_system_owner_transcription.py",
+    "docs/research/2026-10-29_scoped_idea_vault.md",
+    "history/C00122_owner_verbatim_review_repair.json"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "protected_controls": "All255 accepted main blobs preserved. Prior C00121 and43 PR regressions preserved byte-for-byte. No checker/workflow/config/accepted test/history/AGENTS/auth/fees/task/publication changes.",
+  "web_research": [
+    {
+      "url": "https://docs.github.com/en/rest/issues/comments#get-an-issue-comment",
+      "published_at": null,
+      "checked_at": "2026-10-28T22:01:06Z",
+      "source_kind": "PRIMARY_OFFICIAL",
+      "finding": "Raw comment API exposes comment ID, repo/issue URLs, body and timestamps; no original-chat authentication contract."
+    },
+    {
+      "url": "https://create.roblox.com/docs/discovery",
+      "published_at": null,
+      "checked_at": "2026-10-28T22:01:06Z",
+      "source_kind": "PRIMARY_OFFICIAL",
+      "finding": "Preserve first-play bounce and return-day hypotheses separately from unmeasured Toy Wars outcomes."
+    },
+    {
+      "url": "https://create.roblox.com/docs/production/experiments",
+      "published_at": null,
+      "checked_at": "2026-10-28T22:01:06Z",
+      "source_kind": "PRIMARY_OFFICIAL",
+      "finding": "Controlled cohort and sample/detectable-effect conditions remain required; no experiment started."
+    }
+  ],
+  "community_research": {
+    "url": "https://www.reddit.com/r/TowerDefense/comments/1tmtqlo/how_do_you_get_over_the_learning_curve_of_a_td/",
+    "published_at_secondary_issue_report": "2026-05-25",
+    "checked_at": "2026-10-28T22:01:06Z",
+    "status": "NOT_VERIFIED_THIS_RUN",
+    "reason": "Direct browser research retrieval returned DisabledError; prior Issue109 report is not a fresh primary body read. No bypass or representative/player-outcome claim."
+  },
+  "limits": [
+    "Comment is a transcription, not an independently owner-authenticated original-chat event",
+    "Automatic chat intake and downstream evidence collection not implemented",
+    "Manual PR110 not merged via ordinary reviewer",
+    "Private engine/multiplayer/mobile/player effect NOT_RUN/NOT_MEASURED"
+  ],
+  "next": "Fresh same-head offline+compile_hold and independent registered REVIEWER; after any APPROVE/main merge require actual main QA/handoff. Author does not self merge.",
+  "repair_file_sizes": [
+    {
+      "path": "tools/system_idea_pipeline.py",
+      "before_bytes": 19988,
+      "after_bytes": 25556
+    },
+    {
+      "path": "tests/test_system_owner_transcription.py",
+      "before_bytes": 0,
+      "after_bytes": 11325
+    },
+    {
+      "path": "docs/research/2026-10-29_scoped_idea_vault.md",
+      "before_bytes": 5896,
+      "after_bytes": 5472
+    }
+  ],
+  "repair_file_size_note": "History final size is measured in actual GitHub compare/shared report after serialization.",
+  "active_stock_scope_matches_registered_tasks": true
+}

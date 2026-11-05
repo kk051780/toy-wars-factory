@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "game_id": "toy-wars-factory",
+  "title": "Toy Wars Factory",
+  "platform": "roblox",
+  "phase": "BOUND_OBSERVE",
+  "repository": "kk051780/toy-wars-factory",
+  "coordination_ref": "twf-repair-coordinator",
+  "roles": {
+    "author": "6adbf0d6a7d881918ce181dff2468867",
+    "reviewer": "6add6aaceb4c8191b1666fe15f97cd88",
+    "meta": "6add445e4138819197d9cf2b1a02534d"
+  },
+  "game_design": {
+    "genre": "Toy factory PvE strategy",
+    "core_loop": [
+      "Choose a toy unit",
+      "Produce toys and earn resources",
+      "Defend the factory against waves",
+      "Upgrade production and retry"
+    ],
+    "audience": "Roblox strategy and factory game players",
+    "novelty_hypothesis": "A tactile toy-production loop combined with differentiated squad tactics improves engagement"
+  },
+  "quality": {
+    "offline": "PASS",
+    "engine": "NOT_RUN",
+    "two_client": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "playtest": "NOT_RUN"
+  },
+  "safety": {
+    "draft_only": true,
+    "independent_review": true,
+    "exact_head_ci": true,
+    "post_merge_main_qa": true,
+    "auto_publish": false,
+    "external_inference": false,
+    "daily_external_budget_usd": 0,
+    "max_open_prs": 3
+  },
+  "source_prefix": "src",
+  "tests_prefix": "tests"
+}

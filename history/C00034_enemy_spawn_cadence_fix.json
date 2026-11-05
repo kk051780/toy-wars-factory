@@ -1,0 +1,96 @@
+{
+  "id": "C00034",
+  "date": "2026-10-25",
+  "kind": "AUTONOMOUS_ENEMY_SPAWN_CADENCE_FIX",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "d62a3a64-210c-832c-9ca3-c923d4cbe127",
+  "queue_decision": {
+    "action": "START",
+    "branch": "auto/twf-game-repair-d62a3a64-210c-832c-9ca3-c923d4cbe127",
+    "base": "main",
+    "open_prs": [],
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "e0454283f907d38c67c8e9a86af956bff839fe18",
+    "owner_run_id": "d62a3a64-210c-832c-9ca3-c923d4cbe127",
+    "epoch": 35
+  },
+  "main_base": "b6fb4d8a94330f1946335aa77af17ab64e1ac502",
+  "defect": {
+    "id": "enemy_spawn_timer_cadence",
+    "cause": "The server resets enemyTimer to 2.3 after overshooting zero, discarding elapsed time.",
+    "reproduction": "Canonical whole-server regression exercises 45 ticks of 0.30s and 52 ticks of 0.26s. Source-derived prediction: old reset spawns four first-wave JUNK, corrected remainder carry spawns five. Not yet executed against old server.",
+    "evidence_scope": "No Roblox engine or device observations."
+  },
+  "fix": "Replace enemyTimer=2.3 with enemyTimer=enemyTimer+2.3; no wave size, grace, balance, price, combat or visual changes.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/enemy_spawn_cadence_spec.lua",
+    "history/C00034_enemy_spawn_cadence_fix.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 18851,
+      "after_bytes": 18868,
+      "delta_bytes": 17
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 681,
+    "lua_bytes": 26968
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/enemy_spawn_cadence_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 1848,
+      "delta_bytes": 1848
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "JUNK spawn timing only; no character attributes or prices changed.",
+  "tests": {
+    "whole_server": "tests/auto/enemy_spawn_cadence_spec.lua",
+    "local": "NOT_RUN",
+    "old_source_negative_control": "NOT_RUN",
+    "ci": "PENDING_CURRENT_MAIN_MERGE_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "b6fb4d8a94330f1946335aa77af17ab64e1ac502",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40176571360",
+    "main_qa_note": "Last verified offline+compile_hold main evidence precedes status-only descendants. Actual new PR-head offline+compile_hold QA required; no current-main game changes.",
+    "claim_commit": "e0454283f907d38c67c8e9a86af956bff839fe18",
+    "backlog": "ops/GAME_IMPROVEMENT_BACKLOG.json#enemy_spawn_timer_cadence",
+    "pr": "https://github.com/kk051780/toy-wars-factory/pull/54",
+    "ci": "PENDING_NEW_MERGE_HEAD"
+  },
+  "next_action": "Verify current-head CI, repair failures on same PR, then independent reviewer; author does not merge.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  },
+  "current_main_reconciliation": {
+    "observed_at": "2026-10-26T06:56:01.707Z",
+    "kind": "CONTROLLER_MAINTENANCE_MAIN_MERGE",
+    "source_original_worker_run_id": "d62a3a64-210c-832c-9ca3-c923d4cbe127",
+    "original_coordination_claim": "e0454283f907d38c67c8e9a86af956bff839fe18",
+    "maintenance_coordination_epoch": 45,
+    "merge_parents": [
+      "9f55b1b7c0346093bee71c22e72bd041c33963f3",
+      "b6fb4d8a94330f1946335aa77af17ab64e1ac502"
+    ],
+    "merged_main_status": "Included existing main docs and system regression updates; source retains only the previously tested one-line enemyTimer remainder fix",
+    "ci_required": "fresh head exact 2 job QA",
+    "independent_reviewer_required": true
+  }
+}

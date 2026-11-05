@@ -1,0 +1,82 @@
+{
+  "id": "C00039",
+  "date": "2026-10-26",
+  "kind": "AUTONOMOUS_SELECTOR_ACTION_TEXT_FIX",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "2ac75762-4ee0-8327-9dc6-fed9a8694fea",
+  "queue_decision": {
+    "action": "START",
+    "change_scheduler": false,
+    "branch": "auto/twf-game-repair-2ac75762-4ee0-8327-9dc6-fed9a8694fea",
+    "base": "main",
+    "open_prs": [],
+    "limit": 3
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "52d961a9d7193596b5848c936300cd48f8bf88fe",
+    "owner_run_id": "2ac75762-4ee0-8327-9dc6-fed9a8694fea",
+    "epoch": 67
+  },
+  "main_base": "0ace6749a50fce2f48f9db5a5e5906d003600fa5",
+  "defect": {
+    "id": "selector_prompt_misleading_make",
+    "cause": "The world ProximityPrompt ActionText says Make <toy>, but the Triggered callback only changes the selected auto-production toy and never buys or spawns a toy immediately.",
+    "reproduction": "Execute the canonical server through tests/roblox_server_harness.lua, inspect the selector ActionText and trigger the GUARDON pad; the pinned old server displays Make GUARDON while coins and Allies remain unchanged.",
+    "scope": "Whole-server native Lua mock only; Roblox physical prompt/UI and multiplayer not tested."
+  },
+  "fix": "Change the three selector prompt action labels from Make <toy> to Select <toy> without changing selection, production, costs, or combat.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/selector_action_text_spec.lua",
+    "history/C00039_selector_action_text_fix.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 18944,
+      "after_bytes": 18946,
+      "delta_bytes": 2
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 695,
+    "lua_bytes": 27552
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/selector_action_text_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 2473,
+      "delta_bytes": 2473
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "Only the text of all three selection pads changes. PON, GUARDON and TANKURU stats, prices, selected values and purchase behavior are unchanged.",
+  "tests": {
+    "whole_server": "tests/auto/selector_action_text_spec.lua",
+    "negative_control": "Pinned old canonical server in CI",
+    "local": "NOT_RUN_LUA_5_4_RUNTIME_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "main_sha": "0ace6749a50fce2f48f9db5a5e5906d003600fa5",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40307770609",
+    "main_qa_note": "Successful gameplay-identical parent 01527e4; current HEAD 0ace674 status-only descendant.",
+    "claim_commit": "52d961a9d7193596b5848c936300cd48f8bf88fe",
+    "pr": "PENDING_DRAFT_PR",
+    "ci": "PENDING_EXACT_HEAD"
+  },
+  "next_action": "Run exact-head Toy Wars bootstrap offline QA. If both offline and compile_hold succeed, pass this source-changing draft to the independent REVIEWER; no author merge.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  }
+}

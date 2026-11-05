@@ -1,0 +1,224 @@
+{
+  "id": "C00033",
+  "date": "2026-10-25",
+  "observed_at_utc": "2026-10-25T07:55:01Z",
+  "kind": "SYSTEM_REPAIR_COMPLETION_EVIDENCE_FRESHNESS",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "3b6d84e8-75fc-832a-90c6-5a5615167fd7",
+  "base_main": "aa2e57b6d63639f81966cac0e4ef399fcb78a527",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "7f7d0facf9f5863adcffeec892d00260c5bb22b1",
+    "owner_run_id": "3b6d84e8-75fc-832a-90c6-5a5615167fd7",
+    "epoch": 34
+  },
+  "queue_decision": "START_SYSTEM_REVIEW_NO_OPEN_META_PR",
+  "problem": "recover_finished_worker accepts an exact-run completion that predates the current holder acquisition, allowing stale evidence from an earlier generation of the same run to release a newer fenced lease.",
+  "reproduction": {
+    "claim_at": "2026-10-25T07:00:00Z",
+    "same_run_completed_at": "2026-10-25T06:59:59Z",
+    "observed_at": "2026-10-25T07:01:00Z",
+    "before": "Returned holder=null on the actual unmodified repair_control module.",
+    "after": "Raises ValueError and preserves the original state. Valid post-claim recovery is unchanged."
+  },
+  "root_cause": "Completion was upper-bounded by observation time but not lower-bounded by holder.acquired_at.",
+  "implementation": "Add one lower-bound comparison, using the existing timezone-aware instant parser. Keep exact owner, terminal status, future-time and fencing checks. Clarify the existing coordination document.",
+  "tests": {
+    "red_control": {
+      "module": "Current-main repair_control.py, unmodified",
+      "new_named_tests": 6,
+      "failing_methods": 4,
+      "failing_assertions_or_subtests": 12,
+      "passing_methods": 2
+    },
+    "local_targeted": {
+      "tests": 41,
+      "conclusion": "PASS",
+      "scope": "29 accepted coordination tests, 6 accepted META scope tests, 6 new recovery tests"
+    },
+    "cleanup_flake_investigation": {
+      "historical_failed_run": 40155248452,
+      "failed_attempt": 1,
+      "job": 121055159147,
+      "error": "TemporaryDirectory cleanup: OSError Directory not empty: objects",
+      "local_repetitions": 20,
+      "tests_per_repetition": 29,
+      "observed_failures": 0,
+      "resolution": "UNRESOLVED_NOT_REPRODUCED; no test is skipped, weakened or retried in CI"
+    },
+    "trusted_meta_scope": "PASS_LOCAL_VIOLATIONS_EMPTY",
+    "github_ci": "PENDING_EXACT_HEAD"
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 681,
+    "lua_bytes": 26951
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "source_ledger": "No game source or accepted test changed; original C00001 baseline remains 25,726 bytes.",
+  "changed_files": [
+    "tools/repair_control.py",
+    "docs/REPAIR_COORDINATION.md",
+    "tests/test_system_recovery_evidence.py",
+    "history/C00033_recovery_completion_freshness.json"
+  ],
+  "primary_sources": [
+    {
+      "url": "https://github.blog/ai-and-ml/generative-ai/under-the-hood-security-architecture-of-github-agentic-workflows/",
+      "published_at": "2026-03-09",
+      "updated_at": null,
+      "checked_at": "2026-10-25T07:55:01Z",
+      "kind": "PRIMARY_OFFICIAL_CASE",
+      "finding": "Stage and vet writes and preserve audit evidence; applies to a recovery write as well as source integration. Older article, not a newly published October case."
+    },
+    {
+      "url": "https://docs.github.com/en/actions/how-tos/manage-workflow-runs/re-run-workflows-and-jobs",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-25T07:55:01Z",
+      "kind": "PRIMARY_OFFICIAL_DOC",
+      "finding": "A rerun is tied to the original SHA/ref. GitHub rerun semantics are not assumed to define ChatGPT retry semantics; exact run/head/time evidence remains required."
+    },
+    {
+      "url": "https://create.roblox.com/docs/performance-optimization/test-on-hardware",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-25T07:55:01Z",
+      "kind": "PRIMARY_OFFICIAL_DOC",
+      "finding": "Emulation cannot establish physical-device memory, thermals and input performance; use real-device traces and a sustained 10–15 minute session. Update date was not exposed."
+    },
+    {
+      "url": "https://create.roblox.com/docs/cloud/reference/features/luau-execution",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-25T07:55:01Z",
+      "kind": "PRIMARY_OFFICIAL_API",
+      "finding": "Version-specific headless task creation and logs require universe/place identifiers and API authorization. No callable Roblox execution connector or configured universe/place identifiers were found in the inspected project manifest; no credentials were read or execution attempted."
+    }
+  ],
+  "web_freshness": "Searched current cases and opened primary documents on 2026-10-25. The verified GitHub article is from 2026-03-09; current documentation did not expose update dates. No newer dated primary case is asserted from snippets.",
+  "observed_operations": {
+    "worker_last_run": {
+      "run_id": "0bf89fd6-6a50-8321-be82-364bb9cc3bb8",
+      "scheduled_for": "2026-10-25T07:05:04Z",
+      "result": "WAIT_LOCK",
+      "sample_denominator": 1
+    },
+    "reviewer_last_run": {
+      "run_id": "3621da58-0814-8330-ae5c-5f8356cd9826",
+      "scheduled_for": "2026-10-25T07:25:00Z",
+      "result": "NO_ELIGIBLE_PR",
+      "sample_denominator": 1
+    },
+    "qa_sample": {
+      "window_start": "2026-10-25T04:23:59Z",
+      "window_end": "2026-10-25T07:42:40Z",
+      "query": "latest 15 repository workflow runs filtered to Toy Wars bootstrap offline QA",
+      "runs": 10,
+      "success": 9,
+      "failure": 1,
+      "elapsed_seconds_range": [
+        23,
+        48
+      ],
+      "elapsed_definition": "workflow updated_at minus created_at, not pure runner time or queue wait",
+      "records": [
+        {
+          "run": 40173771793,
+          "sha": "499f6e7ca8964ab82214b2d968afc82f250087d1",
+          "attempt": 1,
+          "conclusion": "success",
+          "elapsed_seconds": 25
+        },
+        {
+          "run": 40172196489,
+          "sha": "0c28b59545847e683ad2434c52b33e8d0b1d8a5d",
+          "attempt": 1,
+          "conclusion": "success",
+          "elapsed_seconds": 29
+        },
+        {
+          "run": 40171673896,
+          "sha": "09ac45fb283689d76846f0e9721ab2161492107a",
+          "attempt": 1,
+          "conclusion": "success",
+          "elapsed_seconds": 28
+        },
+        {
+          "run": 40170708013,
+          "sha": "d96b92bb70719b478bccf9a40ab779737556eb86",
+          "attempt": 1,
+          "conclusion": "success",
+          "elapsed_seconds": 26
+        },
+        {
+          "run": 40170569882,
+          "sha": "f1e535c8d642adeb832025388f7273e0fa759f53",
+          "attempt": 1,
+          "conclusion": "failure",
+          "elapsed_seconds": 41
+        },
+        {
+          "run": 40164512789,
+          "sha": "be879db59732bbe8c6baf5480d5379b0619380ec",
+          "attempt": 1,
+          "conclusion": "success",
+          "elapsed_seconds": 30
+        },
+        {
+          "run": 40163926778,
+          "sha": "e2952d95c72b9361cf959524399b47821d14f1e5",
+          "attempt": 1,
+          "conclusion": "success",
+          "elapsed_seconds": 23
+        },
+        {
+          "run": 40163275760,
+          "sha": "801cfa01904983d8776d29b20e6ed04065e7d6c5",
+          "attempt": 1,
+          "conclusion": "success",
+          "elapsed_seconds": 26
+        },
+        {
+          "run": 40162167428,
+          "sha": "b1969d6d2dc82af3f53ef5abfc3bf9de370622a9",
+          "attempt": 1,
+          "conclusion": "success",
+          "elapsed_seconds": 30
+        },
+        {
+          "run": 40161736594,
+          "sha": "24089b68fedd97129a9f7dd15cc25e201f579198",
+          "attempt": 1,
+          "conclusion": "success",
+          "elapsed_seconds": 48
+        }
+      ]
+    }
+  },
+  "effect": "Synthetic stale-evidence release is prevented locally. No actual concurrent-write incident or production reduction in failures is claimed. Deployment requires separate task review and main QA.",
+  "protected_controls": "No scheduler, credentials, provider, spending, release, workflow, accepted-test or quality policy changes; no author-side merge.",
+  "next": "Independent REVIEWER checks exact head, trusted scope/claim gate and CI, then post-merge QA. Worker receives game hypotheses separately; hosted engine access and cleanup flake remain unresolved.",
+  "file_size_changes": [
+    {
+      "path": "tools/repair_control.py",
+      "before_bytes": 15737,
+      "after_bytes": 15823,
+      "delta_bytes": 86
+    },
+    {
+      "path": "docs/REPAIR_COORDINATION.md",
+      "before_bytes": 6005,
+      "after_bytes": 6231,
+      "delta_bytes": 226
+    },
+    {
+      "path": "tests/test_system_recovery_evidence.py",
+      "before_bytes": 0,
+      "after_bytes": 4621,
+      "delta_bytes": 4621
+    }
+  ]
+}

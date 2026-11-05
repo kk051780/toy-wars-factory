@@ -1,0 +1,153 @@
+{
+  "id": "C00150",
+  "date": "2026-10-30",
+  "kind": "ISSUE130_RECOVERY_CLASSIFICATION_SOURCE_GREEN_PENDING_EXACT_CI",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "f1661ecf-7000-8333-a3a6-0d42dda44160",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "70e310f19361ba2e2f96832b1fc192698aeabb6f",
+    "owner_run_id": "f1661ecf-7000-8333-a3a6-0d42dda44160",
+    "epoch": 269
+  },
+  "main_base": "0e424593c75e8a65279dd251789aaa5834586263",
+  "issue": 130,
+  "work_id": "TWF-SYSTEM-THROUGHPUT-V2-20261030",
+  "defect": "Unaccepted PR133 classified all post-terminal releases INVALID_LEASE_TIME, although accepted repair_control.recover_finished_worker permits independently evidenced recovery. Pure JSON cannot attest it.",
+  "fix": "Optional strictly scoped host READ lookup matches exact project/repo/main/tasks/runs/epoch/times/claim+release lineage and independent recoverer window. Matched record still NOT_PROVIDER_ATTESTATION. No matching host capability -> UNKNOWN_RECOVERY_PROVENANCE, bounded uncertain foreign interval, excluded owner lease time. Prestart/future/strict-int/exclusive-normal guards remain.",
+  "source_changes": [
+    {
+      "path": "tools/system_throughput_metrics.py",
+      "before_bytes": 0,
+      "after_bytes": 18923,
+      "delta_bytes": 18923
+    }
+  ],
+  "test_changes": [
+    {
+      "path": "tests/test_system_throughput_metrics.py",
+      "before_bytes": 0,
+      "after_bytes": 21161
+    }
+  ],
+  "source_metrics": {
+    "tools/system_throughput_metrics.py": {
+      "bytes": 18923,
+      "lines": 372,
+      "blob": "58472794440d4cb6ba9e499fda2fdb60749b2d50",
+      "sha256": "af62361260f805c9d896eb8e662181fa036347a51fb3c7b28a6e946413696afa"
+    },
+    "tests/test_system_throughput_metrics.py": {
+      "bytes": 21161,
+      "lines": 368,
+      "blob": "4d19db934b4b1bd131ede4f19a0fa78e06d9499b",
+      "sha256": "ec0dee65771fbb814115e96d23b5af1fa1371d8cd5b71ed3a2ea56e65b228708"
+    }
+  },
+  "characters_touched": [],
+  "tests": {
+    "new_on_main": 59,
+    "reused_untrusted_scenarios": 42,
+    "distinct_recovery_methods": 17,
+    "main_red": {
+      "head": "24f97b2cab1ca8d155ed6a8f01281fe08c5c078e",
+      "ci": 40999228060,
+      "python_tests": 820,
+      "failures": 59,
+      "errors": 0,
+      "offline": "failure",
+      "compile_hold": "success",
+      "accepted_761_pass": true
+    },
+    "archived_semantics_reproducer": {
+      "scope": "LOCAL_QUARANTINED_UNACCEPTED_PR133_INPUT_NOT_MAIN",
+      "methods": 59,
+      "errors": 27
+    },
+    "local_green": {
+      "methods": 59,
+      "result": "OK"
+    },
+    "github_exact_green": "PENDING_NEW_HEAD"
+  },
+  "preservation": {
+    "accepted_blobs": 298,
+    "accepted_modified": 0,
+    "accepted_deleted": 0,
+    "prior_history_untouched": true,
+    "archived_C00145_to_C00148_untouched": true
+  },
+  "provenance": {
+    "old_PR133": "CLOSED_UNMERGED_QUARANTINE_NOT_AUTHORITY",
+    "old_run_and_epoch_reused": false,
+    "new_provider_start": "2026-10-30T03:35:41.173905Z",
+    "fresh_claim_at": "2026-10-30T03:41:40Z",
+    "last_connected_stable_start_observed_at": "2026-10-30T03:48:47Z",
+    "immutable_provider_attempt_history": "NOT_AVAILABLE_NOT_FABRICATED"
+  },
+  "research": {
+    "date": "2026-10-30",
+    "primary_sources": [
+      "https://docs.python.org/3/library/datetime.html",
+      "https://docs.python.org/3/library/json.html"
+    ],
+    "finding": "Use aware UTC instants and explicit duplicate/nonfinite JSON rejection. These documents do not authenticate provider lifecycle or recovery.",
+    "comparison": [
+      {
+        "option": "NO_CHANGE",
+        "benefit": "No new source",
+        "cost": "Recovery semantic defect prevents safe adoption",
+        "selected": false
+      },
+      {
+        "option": "Pure UNKNOWN for all postterminal records",
+        "benefit": "No forged proof",
+        "cost": "Cannot represent independently bound host record",
+        "selected": false
+      },
+      {
+        "option": "Narrow host READ lookup plus UNKNOWN fallback",
+        "benefit": "Separates records from provider auth; excludes recovery owner-time",
+        "cost": "17 distinct recovery methods plus independent review required",
+        "selected": true
+      }
+    ],
+    "game_backlog": {
+      "owner_sources": [
+        "Issue109",
+        "Issue115"
+      ],
+      "owner_verbatim_preserved_in_existing_issue": true,
+      "change": "NO_CHANGE_SYSTEM_ROLE",
+      "options": [
+        {
+          "idea": "Selected toy purchase-wait hint",
+          "owner": "WORKER prepared candidate; do not duplicate",
+          "hypothesis": "Reduce novice confusion, acquisition/retention unmeasured",
+          "test": "Native HUD mocked control then actual mobile/player test",
+          "effort": "Small HUD experiment only through WORKER"
+        },
+        {
+          "idea": "Test original factory production/reward explanation",
+          "owner": "Backlog only",
+          "hypothesis": "Improve player comprehension/return rate unmeasured",
+          "test": "Player observation and retention cohort, no source claim",
+          "effort": "Deferred experimental design"
+        }
+      ]
+    }
+  },
+  "limits": {
+    "verification": "NOT_VERIFIED",
+    "live_recovery": "NOT_EXECUTED",
+    "host_callback_positive": "SYNTHETIC_UNIT_FIXTURE_ONLY",
+    "delivery": "NOT_VERIFIED",
+    "A12": false,
+    "A13": false,
+    "measured_speed": "NOT_MEASURED",
+    "official_system": 57,
+    "official_game": 38,
+    "all_authority_false": true,
+    "spend_or_schedule_change": false
+  }
+}

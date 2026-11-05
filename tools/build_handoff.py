@@ -4,7 +4,6 @@ import json
 import hashlib
 import subprocess
 from pathlib import Path
-from datetime import datetime
 from verify_status import status_ok
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -18,6 +17,8 @@ def git(*args):
     return subprocess.check_output(["git",*args],cwd=ROOT,text=True).strip()
 
 def main():
+    if git("rev-parse","--is-shallow-repository") == "true":
+        raise SystemExit("FAIL: shallow Git history cannot identify the source revision; fetch full history first")
     state=read_json("PROJECT_STATE.json")
     chars=read_json("config/characters.json")["characters"]
     policy=read_json("config/quality_policy.json")
@@ -37,12 +38,20 @@ def main():
     verified=state.get("verification",{})
     character_summary=[{"name":u["name_ja"],"id":u["id"],"role":u["role"],"shape":u["shape"],"status":u["status"]} for u in chars]
     record={
-      "schema":1,"canonical_repo":repo,"source_revision":code_sha,
+      "schema":2,"canonical_repo":repo,"source_revision":code_sha,
       "source_metrics":{"files":files,"lines":lines,"bytes":size},
       "delta_from_initial_baseline":delta,"characters":character_summary,
       "game":state["game"],"autonomous_coding":state["autonomous_coding"],
       "verification":verified,"release_decision":state["release_decision"],
       "next":state["next"],
+      "resume_checkpoint":state.get("resume_checkpoint",{}),
+      "review_queue":state.get("review_queue",[]),
+      "cloud_game_repair":state.get("cloud_game_repair",{}),
+      "pending_approvals":state.get("pending_approvals",{}),
+      "execution_coordination":state.get("execution_coordination",{}),
+      "system_review":state.get("system_review",{}),
+      "approval_authority":state.get("approval_authority",{}),
+      "independent_integration":state.get("independent_integration",{}),
       "important":"Actions / Roblox Studio evidence must be checked independently. A generated status page is not proof of runtime health."
     }
     (OUT/"LATEST_STATE.json").write_text(json.dumps(record,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
@@ -55,7 +64,8 @@ def main():
       "- GitHub: https://github.com/"+repo,
       "- 基準ソースコミット: "+code_sha,
       "- ゲーム公開可否: "+state["release_decision"],
-      "- 自律AI開発: "+state["autonomous_coding"]["status"],
+      "- 既存GitHub AIワークフロー: "+state["autonomous_coding"]["status"],
+      "- ChatGPT定期ゲーム修正: "+state.get("cloud_game_repair",{}).get("status","NOT_CONFIGURED"),
       "- PvE: "+state["game"]["pve"],
       "- PvP: "+state["game"]["pvp"],
       "- 協力: "+state["game"]["coop"],
@@ -77,6 +87,59 @@ def main():
       "",
       "## 次の開発優先事項"]
     fields+=["- "+x for x in state.get("next",[])]
+    authority=state.get("approval_authority",{})
+    if authority.get("decision_owner")=="ASSISTANT":
+        fields+=["", "## 委譲された承認判断",
+          "- 通常のゲーム/体制開発・main統合は助手が判断する。所有者への承認返信は不要。",
+          "- 作者と別タスクの審査役が現在headのCIと実差分を確認し、1件ずつ統合してmainを検査する。",
+          "- 完成ロードマップと日次の実測/最新WEB一次資料から次を選ぶ。客観的な品質条件・費用上限は免除しない。"]
+    approvals=state.get("pending_approvals",{})
+    if approvals.get("items"):
+        delegated=approvals.get("decision_owner")=="ASSISTANT"
+        fields+=["", "## 現在の自動審査・統合待ち（観測時点）" if delegated else "## 現在の取り込み承認待ち（観測時点）",
+          "最新一覧: https://github.com/"+repo+"/blob/twf-repair-coordinator/status/PENDING_APPROVALS.md",
+          "", "| PR | 内容 | 現在headのCI |", "| --- | --- | --- |"]
+        for item in approvals["items"]:
+            summary=item["summary"].replace("|","／").replace("\n"," ")
+            fields.append(f"| [#{item['number']}]({item['url']}) | {summary} / {item['kind']} | [合格]({item['ci_url']}) |")
+        fields+=["", "独立審査役が処理する。所有者への承認返信は不要。" if delegated else "承認する場合の返信: "+approvals["approval_text"],
+          "対象headのmain取り込みのみ。公開・課金・外部モデルは含まない。現在GitHubでhead/CIを再確認する。", ""]
+    coordination=state.get("execution_coordination",{})
+    if coordination:
+        fields+=["", "## 手動goと自動実行の競合防止",
+          "- 手動goは既存ゲームタスクへ統一。実行中は追加起動せず確認へ合流する。",
+          "- 共通ロック: twf-repair-coordinator / ops/REPAIR_COORDINATOR.json。expected_sha・force=false・epochを必須にする。",
+          "- ゲーム修正・日次体制改善・独立審査・手動統合が同じロックを使う。docs/REPAIR_COORDINATION.mdを読む。"]
+    system_review=state.get("system_review",{})
+    if system_review:
+        fields+=["", "## 体制とゲームの日次改善",
+          "- タスク: "+system_review.get("task_id","UNKNOWN")+" / 毎朝（Asia/Tokyo）",
+          "- 実測の欠陥と最新WEB一次資料から、体制の最小修正・回帰検査・draft PR、ゲームの根拠付き実験候補を進める。",
+          "- 現在の方式を最適と固定せず、前後の結果と未解決点を記録する。docs/SYSTEM_REVIEW.mdを読む。"]
+    checkpoint=state.get("resume_checkpoint",{})
+    if checkpoint:
+        fields+=["","## 最新の再開地点（観測時点の記録）",
+          "- 記録: "+checkpoint["id"]+" / "+checkpoint["observed_on"],
+          "- 照合したmain: "+checkpoint["observed_main_revision"],
+          "- 証拠: "+checkpoint["evidence_record"]]
+        fields+=["- 完了: "+item for item in checkpoint.get("completed",[])]
+        auth=checkpoint.get("authorization",{})
+        fields+=["- 新規推論承認: "+str(auth.get("new_inference_authorized",False)),
+          "- 定期AI承認: "+str(auth.get("recurring_ai_authorized",False)),
+          "- 自動マージ承認: "+str(auth.get("automatic_merge_authorized",False)),
+          "- Roblox公開承認: "+str(auth.get("roblox_publish_authorized",False)),
+          "- 再実行の前提: "+auth.get("prerequisite","UNKNOWN"),
+          "- 再開する作業: "+checkpoint["next_action"]]
+        fields+=["- 未確認・制限: "+item for item in checkpoint.get("limitations",[])]
+    queue=state.get("review_queue",[])
+    if queue:
+        fields+=["","## 未マージの提案（現在のPR状態はGitHubで再確認）"]
+        for item in queue:
+            fields.append("- PR #"+str(item["number"])+": "+item["status"]+" / "+
+              item["origin"]+" / "+item["purpose"]+" / "+item["url"])
+            if item.get("qa_url"):
+                fields.append("  - QA: "+item["qa_scope"]+" "+item["qa_url"])
+        fields.append("- mainの実装と未マージPRの提案を合算しない。Geminiの成果と別の修正を区別する。")
     fields+=["","## 新しいチャットでAIが必ず行う引き継ぎ手順",
       "1. GitHubコネクタでこのファイルと status/LATEST_STATE.json、PROJECT_STATE.json、AGENTS.md、config/quality_policy.json を読み込む。",
       "2. 最新 main、Actions実行結果、PR、Issuesを直接確認し、生成ファイルのsource_revisionと整合させる。",

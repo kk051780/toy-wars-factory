@@ -1,0 +1,187 @@
+{
+  "id": "C00064",
+  "date": "2026-10-28",
+  "observed_at_utc": "2026-10-27T20:17:00Z",
+  "kind": "SYSTEM_SCOPED_SERVICE_RUN_OBSERVER",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "e5c6e27c-49c4-832d-b6c4-046ac3372c79",
+  "base_main": "bf959fb6ecc484993085ef767ae0c7370fb6db50",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "073a3431316954907089d4da4e5647a060c43351",
+    "owner_run_id": "e5c6e27c-49c4-832d-b6c4-046ac3372c79",
+    "epoch": 139
+  },
+  "issue": 71,
+  "work_request": "issue71_scoped_service_run_observation_after_pr84",
+  "preconditions": {
+    "issue72": "CLOSED; PR79 legacy repair remains on real main, do not duplicate",
+    "pr84": {
+      "merge": "608ca16643667d3866d4c9e451ffd269869aeca9",
+      "independent_reviewer_run_id": "cbd38de1-246c-832c-ac81-0553ae00e4dc",
+      "qa": 40501279576,
+      "handoff": 40501279630
+    },
+    "main_qa": 40575268638,
+    "handoff": 40575268483,
+    "qa_head": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
+    "status_only_compare": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ],
+    "jobs": [
+      {
+        "id": 122439886923,
+        "name": "offline",
+        "head": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
+        "conclusion": "success"
+      },
+      {
+        "id": 122439887427,
+        "name": "compile_hold",
+        "head": "b78bfc55e603d2a1813ad8b61f0629a3921eba56",
+        "conclusion": "success"
+      }
+    ],
+    "coordinator_before": {
+      "ref": "f34f121375055e1357879843053a2792ea443583",
+      "epoch": 138,
+      "holder": null
+    },
+    "open_meta_pr_count": 0
+  },
+  "problem": "Service last_run and latest_result can refer to different executions. Reusing a previous successful report as an active run's completion fabricates lifecycle and can mislead recovery/launch diagnosis.",
+  "implementation": "New read-only companion derives the exact three role task IDs from immutable current-main manifest/policy and coordinator commit/blob/epoch. Host supplies existing GET/PEEK capabilities only. Observe each registered service twice, validate canonical run IDs/aware timestamps/freshness/lifecycle/result identity and cross-role/game separation, reject drift, emit only safe metadata. Preserve expired holders. Original operation errors remain explicitly unavailable; accepted v2 receives absent full inputs and stays INDETERMINATE. All write/start/takeover/dispatch/merge/publish/spend/safe-next-schedule grants false.",
+  "draft_origin": {
+    "service_run_id": "708cfcb7-4de0-8320-bf21-f9e4cbf1947f",
+    "claim": "ccf791b99771a4cfa9babd2c08e8165e8bdb942a",
+    "scope": "Unpublished local source/test draft only; no source commit/PR. Current real service independently reloaded actual main and obtained its own epoch139. Old claim is not used as current authority.",
+    "retired_unpublished_C00054": "Not copied or published; existing game C00054 on main preserved. Use new unused C00064."
+  },
+  "tests": {
+    "new_test_file": "tests/test_system_service_observer.py",
+    "new_python_tests": 30,
+    "new_result": "PASS on this fresh main",
+    "synthetic_game_manifests": 2,
+    "synthetic_scope": "SYNTHETIC_TEST_ONLY",
+    "historical_red_green": {
+      "service_run_id": "708cfcb7-4de0-8320-bf21-f9e4cbf1947f",
+      "case": "Separate-process package import exposed sibling resolution failure: 1 assertion failure. New companion supplies tools sibling path; accepted v2 unchanged, 30 then pass.",
+      "negative_control": "Isolated in-memory mutant omits stable end-service comparison; real new regression fails two subcases, errors0; disk source untouched."
+    },
+    "local_full": {
+      "run": 391,
+      "passed": 390,
+      "failures": 1,
+      "errors": 0,
+      "cause": "Snapshot lacks real Git ancestry, unchanged test_handoff_checkpoint at merge_history_reconcile.py:91. No skip/weakening. Authentic old checker blob e8567c85c5ff9895052e8b15a1ea288304b3b978 inserted locally only after hash verification.",
+      "required": "Fresh full-history GitHub CI both jobs"
+    },
+    "trusted_scope": "Preflight current trusted-main checker required; exact-head CI checks actual scope and immutable claim",
+    "github_ci": "PENDING_NEW_HEAD"
+  },
+  "verification": {
+    "callback_or_stdio": "NOT_VERIFIED",
+    "live": "PENDING actual read-only host GET/PEEK -> exact source path; record only proven scope",
+    "operation_error": "OPERATION_EVIDENCE_UNAVAILABLE, not inferred from prose/permissions/read404; no failure induced",
+    "limits": "No portable origin receipt, real dispatch, permanent connection, long-term reliability or P2 complete claim"
+  },
+  "changed_files": [
+    "tools/system_service_observer.py",
+    "tests/test_system_service_observer.py",
+    "docs/research/2026-10-28_service_observer.md",
+    "history/C00064_scoped_service_observer.json"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 781,
+    "lua_bytes": 31291
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "protected_controls": "Only new A files. All193 accepted main blobs preserved: source, studio_autopilot, checker, policy/config/workflows, AGENTS, accepted tests and C history. No PR51/55 bypass, keys/auth changes, model calls/spend/publish, task mutation/start or author self-merge. Gemini/release/spend HOLD retained.",
+  "primary_sources": [
+    {
+      "url": "https://opensource.microsoft.com/blog/2026/10/19/introducing-scope-open-source-evaluation-for-ai-coding-agents/",
+      "published_at": "2026-10-19",
+      "updated_at": null,
+      "checked_at": "2026-10-27T20:15:43Z",
+      "finding": "Opened primary developer case: versioned configuration and interaction traces support repeatable investigations; one demo/CI pass is not reliability. No Scope/provider inference deployed."
+    },
+    {
+      "url": "https://blog.jetbrains.com/research/2026/10/review-ai-generated/",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-27T20:15:02Z",
+      "finding": "Opened research-team article; trust calibration and fine-grained evidence motivate lifecycle/source/result separation. Exact date absent, URL archived2026/10; not called today's new article."
+    },
+    {
+      "url": "https://github.blog/ai-and-ml/github-copilot/reviewbench-an-open-benchmark-for-ai-code-review/",
+      "published_at": "2026-10-05",
+      "updated_at": null,
+      "checked_at": "2026-10-27T20:15:02Z",
+      "finding": "Rechecked primary implementation case; retain reproducible behavior and independent acceptance as separate evidence."
+    },
+    {
+      "url": "https://create.roblox.com/docs/performance-optimization/test-on-hardware",
+      "published_at": null,
+      "updated_at": null,
+      "checked_at": "2026-10-27T20:15:02Z",
+      "finding": "Opened actual hardware guidance. Real device frame/memory/thermal/touch evidence remains unperformed; no game change."
+    }
+  ],
+  "observations": {
+    "period_start": "2026-10-27T20:05:22Z",
+    "period_end": "2026-10-27T20:17:00Z",
+    "latest_service_samples": 3,
+    "worker": {
+      "run_id": "692f5261-f6f0-8320-8cf7-26fbcd503bf0",
+      "status": "completed",
+      "outcome": "WAIT_LOCK during legitimate reviewer137"
+    },
+    "reviewer": {
+      "run_id": "f524a20f-402c-832f-9c3c-03de40c7c040",
+      "status": "completed",
+      "outcome": "PR90 independently merged, main QA/handoff success"
+    },
+    "meta": {
+      "run_id": "e5c6e27c-49c4-832d-b6c4-046ac3372c79",
+      "status": "in_progress",
+      "claim_epoch": 139
+    },
+    "claim_verification": "First readback did not match, so no implementation writes occurred. Actual ref/state reread verified exact claim073a3431 owner/epoch/expiry before editing; no second claim or overwrite.",
+    "original_host_error": "UNAVAILABLE; no denied write induced",
+    "reliability": "Latest service samples only, no success-rate or uptime inference"
+  },
+  "effect": "New system source and regressions, game change0. Not yet main adopted; live/head CI and independent acceptance remain separate.",
+  "next": "One draft PR; exact-head offline/compile_hold, actual host read-only service peeks through this code, independent registered REVIEWER source/claim review and merge, then main QA/handoff. Keep Issue71 open.",
+  "file_size_changes": [
+    {
+      "path": "tools/system_service_observer.py",
+      "before_bytes": 0,
+      "after_bytes": 14023,
+      "delta_bytes": 14023
+    },
+    {
+      "path": "tests/test_system_service_observer.py",
+      "before_bytes": 0,
+      "after_bytes": 18883,
+      "delta_bytes": 18883
+    },
+    {
+      "path": "docs/research/2026-10-28_service_observer.md",
+      "before_bytes": 0,
+      "after_bytes": 5055,
+      "delta_bytes": 5055
+    }
+  ],
+  "system_source_changes": [
+    {
+      "path": "tools/system_service_observer.py",
+      "before_bytes": 0,
+      "after_bytes": 14023,
+      "delta_bytes": 14023
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "id": "C00032",
+  "date": "2026-10-25",
+  "kind": "AUTONOMOUS_PR45_CURRENT_MAIN_RECONCILIATION",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "42d39884-f1bc-832d-a63f-bb767edb23ce",
+  "queue_decision": {
+    "action": "WORK_REQUEST_OVERRIDE",
+    "selector_action": "START",
+    "reason": "Explicit P0 WORKER request pr45_current_main_rebase_and_ci takes precedence over new feature",
+    "existing_pr": 45,
+    "branch": "auto/twf-game-repair-23cf9c83-ac00-8326-b3e8-d86cc8cad7c7"
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "da34e004909a50b6b84988fb4b3abe940f270c90",
+    "owner_run_id": "42d39884-f1bc-832d-a63f-bb767edb23ce",
+    "epoch": 17
+  },
+  "main_base": "34939a5501a0b8d497c538cd48566e0ecc5060b0",
+  "original_pr_head": "aedc70af353c43bdb1c86038ba338fa5249419d6",
+  "defect": {
+    "id": "pr45_stale_main_heartbeat_integration",
+    "cause": "PR45 was authored before accepted PR44; its previous exact-head CI used main 65b38869 and did not test C00030 and C00031 together.",
+    "reproduction": "Compare main and PR45 original base: accumulated=accumulated-delta (+16 bytes) is missing from PR45 ancestry. Old CI 40153623843 is not current-main combined proof."
+  },
+  "fix": "Merge current main as a second parent into the existing PR45 branch while preserving its existing commit and test. Build the candidate tree from current main, overlay only the +22-byte productionTimer carry fix and its existing regression; update unmerged C00031 metrics.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/production_cadence_spec.lua",
+    "history/C00031_production_timer_cadence_fix.json",
+    "history/C00032_pr45_current_main_reconciliation.json"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 681,
+    "lua_bytes": 26951
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/production_cadence_spec.lua",
+      "before_bytes": 0,
+      "after_bytes": 1997,
+      "delta_bytes": 1997
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "Production timing affects all toy selections; no character stats, prices or shapes changed.",
+  "tests": {
+    "native_whole_server": [
+      "tests/auto/heartbeat_lag_spec.lua",
+      "tests/auto/production_cadence_spec.lua"
+    ],
+    "existing_gates": "Toy Wars bootstrap offline QA (offline and compile_hold)",
+    "local": "NOT_RUN_LUA_5_4_UNAVAILABLE",
+    "ci": "PENDING_EXACT_HEAD_AFTER_LEDGER_FIX",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "pr": "https://github.com/kk051780/toy-wars-factory/pull/45",
+    "old_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40153623843",
+    "main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40155995384",
+    "work_request": "ops/WORK_REQUESTS.json#pr45_current_main_rebase_and_ci",
+    "claim_url": "https://github.com/kk051780/toy-wars-factory/commit/da34e004909a50b6b84988fb4b3abe940f270c90",
+    "previous_failed_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/40156619905"
+  },
+  "next_action": "Confirm exact-head CI passes 137 Python tests, 37 Lua assertions and compile_hold; then independent review of PR45.",
+  "restrictions": {
+    "gemini_rerun": false,
+    "author_main_merge": false,
+    "roblox_publish": false,
+    "scheduler_mutated": false
+  },
+  "prior_coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "6c9ceeabac1f144030440f6409177ef8f3dbb341",
+    "owner_run_id": "42d39884-f1bc-832d-a63f-bb767edb23ce",
+    "epoch": 16
+  },
+  "reconciled_source_diff": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 18829,
+      "after_bytes": 18851,
+      "delta_bytes": 22
+    }
+  ],
+  "ci_failure_repair": {
+    "run": "https://github.com/kk051780/toy-wars-factory/actions/runs/40156619905",
+    "job": "offline",
+    "step": "Independent state and character quality gate",
+    "reproduction": "tests/test_handoff_checkpoint.py sequential ledger expects C00032.before_bytes to equal C00031.after_bytes=18851, but repeated 18829.",
+    "root_cause": "C00032 is a follow-up metadata reconciliation, not a second source edit. Duplicating C00031 source_changes makes the append-only history double-count the same +22 bytes.",
+    "fix": "Keep C00031 as the sole source-changing cycle and record C00032 source_changes=[]; preserve its main-vs-candidate comparison separately as reconciled_source_diff.",
+    "negative_control": "Failed run 40156619905 with 18829 != 18851; no accepted test weakened."
+  }
+}

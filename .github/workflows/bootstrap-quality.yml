@@ -7,7 +7,7 @@ on:
       - "tests/**"
       - "config/**"
       - "tools/**"
-      - ".github/workflows/bootstrap-quality.yml"
+      - ".github/workflows/**"
       - "PROJECT_STATE.json"
   pull_request:
   workflow_dispatch:
@@ -17,13 +17,79 @@ concurrency:
   group: "twf-offline-${{ github.ref }}"
   cancel-in-progress: true
 jobs:
+  compile_hold:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install the same pinned official compiler as the reviewed lock
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh extension install github/gh-aw --pin v0.93.2
+      - name: Recompile the literal incident hold without invoking an agent
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh aw compile .github/workflows/twf-gemini-free-trial.md
+          python3 tools/verify_gemini_hold.py
+          git diff --exit-code -- .github/workflows/twf-gemini-free-trial.lock.yml
+      - name: Preserve compiler output for exact review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: twf-literal-hold-compiled-workflow
+          path: .github/workflows/twf-gemini-free-trial.lock.yml
+          include-hidden-files: true
+          retention-days: 30
   offline:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Install native Lua 5.4
         run: sudo apt-get update -qq && sudo apt-get install -y lua5.4
+      - name: Enforce scheduled repair scope using the trusted base policy
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'auto/twf-game-repair')
+        env:
+          TWF_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          TWF_HEAD_REF: ${{ github.head_ref }}
+        run: |
+          git show "$TWF_BASE_SHA:tools/check_auto_diff.py" > /tmp/twf-check-auto-diff.py
+          git show "$TWF_BASE_SHA:config/autonomous_repair.json" > /tmp/twf-auto-policy.json
+          python3 /tmp/twf-check-auto-diff.py --policy /tmp/twf-auto-policy.json --base "$TWF_BASE_SHA" --head HEAD --branch "$TWF_HEAD_REF"
+      - name: Enforce daily system-review scope using trusted base tools
+        if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'auto/twf-system-review-')
+        env:
+          TWF_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          TWF_HEAD_REF: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/twf-trusted
+          for script in check_auto_diff.py repair_control.py check_meta_diff.py; do
+            git show "$TWF_BASE_SHA:tools/$script" > "/tmp/twf-trusted/$script"
+          done
+          git show "$TWF_BASE_SHA:config/autonomous_repair.json" > /tmp/twf-auto-policy.json
+          python3 /tmp/twf-trusted/check_meta_diff.py --policy /tmp/twf-auto-policy.json --base "$TWF_BASE_SHA" --head HEAD --branch "$TWF_HEAD_REF"
+      - name: Verify immutable shared lease for automatic repair and system-review PRs
+        if: github.event_name == 'pull_request' && (startsWith(github.head_ref, 'auto/twf-game-repair') || startsWith(github.head_ref, 'auto/twf-system-review-'))
+        env:
+          TWF_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          TWF_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          TWF_HEAD_REF: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+          git show "$TWF_BASE_SHA:config/autonomous_repair.json" > /tmp/twf-auto-policy.json
+          version="$(python3 -c 'import json; print(int(json.load(open("/tmp/twf-auto-policy.json")).get("queue_version",0)))')"
+          if [ "$version" -ge 3 ]; then
+            mkdir -p /tmp/twf-trusted
+            git show "$TWF_BASE_SHA:tools/repair_control.py" > /tmp/twf-trusted/repair_control.py
+            git fetch --no-tags origin refs/heads/twf-repair-coordinator:refs/remotes/origin/twf-repair-coordinator
+            python3 /tmp/twf-trusted/repair_control.py verify-pr --policy /tmp/twf-auto-policy.json --base "$TWF_BASE_SHA" --head "$TWF_PR_HEAD_SHA" --branch "$TWF_HEAD_REF" --control-ref refs/remotes/origin/twf-repair-coordinator
+          fi
       - name: Lua parse of game modules (not Luau engine verification)
         run: |
           for file in src/*.lua; do
@@ -31,6 +97,71 @@ jobs:
           done
       - name: Original gameplay regression and 4,000 stress cases
         run: lua5.4 -e 'BALANCE_FILE="src/ToyWarsBalance.lua"; dofile("tests/balance_spec.lua"); print(RESULT_SUMMARY)'
+      - name: Checkout immutable pre-fix server and HUD for negative controls
+        uses: actions/checkout@v4
+        with:
+          ref: 2bf5e40fbca7e5420edcb324319e95c8c4f038a3
+          path: .qa/server-before
+          sparse-checkout: |
+            src/ToyWarsServer.server.lua
+            src/ToyWarsHUD.client.lua
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Confirm the pre-fix server fails exactly the two NaN fixtures
+        env:
+          TWF_SERVER_FILE: .qa/server-before/src/ToyWarsServer.server.lua
+        run: |
+          set +e
+          lua5.4 tests/server_event_spec.lua > .qa/server-event-before.log 2>&1
+          result=$?
+          set -e
+          test "$result" -eq 1
+          python3 - <<'PY'
+          import hashlib,pathlib
+          raw=pathlib.Path('.qa/server-before/src/ToyWarsServer.server.lua').read_bytes()
+          assert hashlib.sha1(b'blob '+str(len(raw)).encode()+bytes([0])+raw).hexdigest()=='5d3d85d28025f83414ea812297bb93a58ea36699'
+          lines=pathlib.Path('.qa/server-event-before.log').read_text().splitlines()
+          failures=[line.split(': ',1)[0] for line in lines if line.startswith('FAIL ')]
+          assert failures==['FAIL selector rejects NaN distance','FAIL upgrade rejects NaN without spending coins'],failures
+          assert lines[-1]=='SERVER_EVENT_SUMMARY 25 passed / 2 failed; Lua mocks, not Roblox engine'
+          print('PASS: exact pinned old server reproduces both defects and passes the other 25 fixtures')
+          PY
+      - name: Execute server events with deterministic services (not Roblox engine)
+        run: |
+          lua5.4 tests/server_event_spec.lua > .qa/server-event-after.log
+          cat .qa/server-event-after.log
+      - name: Confirm the original HUD cannot follow changed balance prices
+        env:
+          TWF_HUD_FILE: .qa/server-before/src/ToyWarsHUD.client.lua
+        run: |
+          set +e
+          lua5.4 tests/hud_price_spec.lua > .qa/hud-price-before.log 2>&1
+          result=$?
+          set -e
+          test "$result" -eq 1
+          python3 - <<'PY'
+          import hashlib,pathlib
+          raw=pathlib.Path('.qa/server-before/src/ToyWarsHUD.client.lua').read_bytes()
+          assert hashlib.sha1(b'blob '+str(len(raw)).encode()+bytes([0])+raw).hexdigest()=='506b2eced0cf74f15341091976090632abbe021a'
+          lines=pathlib.Path('.qa/hud-price-before.log').read_text().splitlines()
+          failures=[line.split(': ',1)[0] for line in lines if line.startswith('FAIL ')]
+          assert failures==['FAIL changed PON price','FAIL changed GUARDON price','FAIL changed TANKURU price','FAIL zero prices','FAIL maximum wallet prices'],failures
+          assert 'PASS canonical prices' in lines
+          assert lines[-1]=='HUD_PRICE_SUMMARY 1 passed / 5 failed; Lua mocks, not Roblox UI'
+          print('PASS: exact original HUD matches current prices but fails all five price-change fixtures')
+          PY
+      - name: Execute shared-price HUD fixtures (not Roblox UI)
+        run: |
+          lua5.4 tests/hud_price_spec.lua > .qa/hud-price-after.log
+          cat .qa/hud-price-after.log
+      - name: Execute additional autonomous repair regressions
+        run: |
+          set -euo pipefail
+          mkdir -p .qa/auto
+          for spec in tests/auto/*_spec.lua; do
+            test -f "$spec" || continue
+            lua5.4 "$spec" | tee ".qa/auto/$(basename "$spec").log"
+          done
       - name: Assemble Studio one-click installer from four canonical files
         run: python3 tools/build_installer.py
       - name: Verify installer embeds exact source and hashes
@@ -70,4 +201,32 @@ jobs:
           path: |
             studio/TOY_WARS_v1_2_ONE_CLICK_INSTALLER.lua
             evidence/SOURCE_MANIFEST.json
+          retention-days: 30
+      - name: Preserve before/after server event evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: twf-server-event-fixtures-not-engine
+          path: |
+            .qa/server-event-before.log
+            .qa/server-event-after.log
+          if-no-files-found: ignore
+          retention-days: 30
+      - name: Preserve before/after HUD price evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: twf-hud-price-fixtures-not-ui
+          path: |
+            .qa/hud-price-before.log
+            .qa/hud-price-after.log
+          if-no-files-found: ignore
+          retention-days: 30
+      - name: Preserve autonomous repair regression evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: twf-autonomous-regressions-not-engine
+          path: .qa/auto/
+          if-no-files-found: ignore
           retention-days: 30

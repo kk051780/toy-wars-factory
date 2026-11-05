@@ -1,0 +1,62 @@
+{
+  "id": "C00022",
+  "date": "2026-10-25",
+  "kind": "AUTO_REGRESSION_FIX_EXISTING_PR",
+  "branch": "auto/twf-game-repair",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "cause": "Exact-head offline CI 40114355546 failed because new base-loss test read Wave from ToyWarsStatus, but canonical server stores Wave in leaderstats. The earlier wave-escape test has the same incorrect Wave lookup and assumes 40 HP after wave clear, omitting canonical +18 HP heal. Correct test fixtures without changing gameplay or weakening assertions.",
+  "changed_files": [
+    "tests/auto/base_loss_reset_spec.lua",
+    "tests/auto/wave_escape_spec.lua",
+    "history/C00022_wave_status_fixture_fix.json"
+  ],
+  "test_fixes": [
+    {
+      "path": "tests/auto/base_loss_reset_spec.lua",
+      "detail": "Read Wave from canonical leaderstats while retaining ToyWarsStatus lookup for BaseHP/Enemies/Allies; preserve reset and restart-grace assertions."
+    },
+    {
+      "path": "tests/auto/wave_escape_spec.lua",
+      "detail": "Read Wave from canonical leaderstats; assert exact 58 HP after five 12-HP escapes and 18-HP wave-clear heal, rather than the incorrect 40."
+    }
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 678,
+    "lua_bytes": 26753
+  },
+  "file_size_deltas": {
+    "tests/auto/base_loss_reset_spec.lua": {
+      "before_bytes": 2457,
+      "after_bytes": 2563,
+      "delta_bytes": 106
+    },
+    "tests/auto/wave_escape_spec.lua": {
+      "before_bytes": 2863,
+      "after_bytes": 2988,
+      "delta_bytes": 125
+    }
+  },
+  "characters_touched": [],
+  "character_impact": "No game source, balance, prices, visuals, or unit behavior changed.",
+  "qa": {
+    "previous_exact_head_ci": "FAIL:https://github.com/kk051780/toy-wars-factory/actions/runs/40114355546",
+    "failure": "tests/auto/base_loss_reset_spec.lua:10 missing status: Wave",
+    "next_exact_head_ci": "PENDING",
+    "local_lua": "NOT_RUN",
+    "roblox_studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "visual": "NOT_RUN"
+  },
+  "evidence_urls": [
+    "https://github.com/kk051780/toy-wars-factory/pull/35",
+    "https://github.com/kk051780/toy-wars-factory/actions/runs/40114355546"
+  ],
+  "external_provider_calls": 0,
+  "provider_credentials_read": false,
+  "auto_merge": false,
+  "roblox_publish": false,
+  "next_action": "Check CI on exact new head. If tests fail, fix this same draft PR before adding coverage; if passed, stop stacking when review scope is too large."
+}

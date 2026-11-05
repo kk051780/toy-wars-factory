@@ -1,0 +1,150 @@
+{
+  "id": "C00133",
+  "date": "2026-10-29",
+  "kind": "SYSTEM_PR124_INCOMPLETE_MANIFEST_REVIEW_REPAIR",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "30f253c2-400c-8322-9609-be068121fb4e",
+  "base_main": "221bc53ce118f5242777c13649f437d18078dcc4",
+  "observed_at_utc": "2026-10-29T14:20:33Z",
+  "issue": 123,
+  "pr": 124,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "f9aed743aea06276956a61515d1c330585d34806",
+    "owner_run_id": "30f253c2-400c-8322-9609-be068121fb4e",
+    "epoch": 250
+  },
+  "original_author": {
+    "run_id": "29b870a0-83b0-8331-948d-942fbef57f57",
+    "claim": "e33427a8b5ed173c6b310b2c31f71fccc6318703",
+    "epoch": 247,
+    "history": "history/C00129_parallel_admission_phase0.json",
+    "preserved_unchanged": true
+  },
+  "prior_repair": {
+    "run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+    "epoch": 248,
+    "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+    "histories": [
+      "history/C00130_pr124_join_review_red_control.json",
+      "history/C00131_pr124_join_review_repair.json"
+    ],
+    "preserved_unchanged": true
+  },
+  "review": {
+    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "run_id": "51d0d0bd-1be8-8328-b6cf-a28aa0e83a51",
+    "recorded_status": "completed",
+    "epoch": 249,
+    "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+    "verdict": "REQUEST_CHANGES_INCOMPLETE_MANIFEST_JOIN_FAIL_CLOSED",
+    "url": "https://github.com/kk051780/toy-wars-factory/pull/124#issuecomment-6498775943",
+    "finding_was_static_not_executed_by_reviewer": true
+  },
+  "stage": "MINIMAL_SOURCE_REPAIR_AFTER_REAL_GITHUB_RED",
+  "red_control": {
+    "head": "cd830891853f5b5c5c70ab13fcb6473b0d415659",
+    "history": "history/C00132_pr124_incomplete_manifest_red_control.json",
+    "unchanged_source_blob": "20c512af8907b18361b2aa179d638547b4d62a79",
+    "run": 40890066161,
+    "attempt": 1,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/40890066161",
+    "offline": {
+      "id": 123504123723,
+      "conclusion": "failure",
+      "python_tests": 709,
+      "assertion_failures": 9,
+      "errors": 0
+    },
+    "compile_hold": {
+      "id": 123504123393,
+      "conclusion": "success"
+    },
+    "trusted_base_scope": "PASS",
+    "immutable_claims_verified": 4,
+    "proof": [
+      "2026-10-29T14:18:11.3302162Z PASS: system review scope",
+      "2026-10-29T14:18:11.6807529Z PASS: repair coordination; 4 immutable coordinator claim(s) verified",
+      "2026-10-29T14:18:19.8454857Z FAIL: test_both_matching_manifests_incomplete_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_both_matching_manifests_incomplete_cannot_join)",
+      "2026-10-29T14:18:19.8471646Z FAIL: test_complete_read_only_candidate_waits_for_incomplete_matching_active (test_system_parallel_admission.IncompleteManifestReviewTests.test_complete_read_only_candidate_waits_for_incomplete_matching_active)",
+      "2026-10-29T14:18:19.8483132Z FAIL: test_complete_read_only_candidate_waits_for_incomplete_same_repo_active (test_system_parallel_admission.IncompleteManifestReviewTests.test_complete_read_only_candidate_waits_for_incomplete_same_repo_active)",
+      "2026-10-29T14:18:19.8493810Z FAIL: test_incomplete_candidate_cannot_join_same_goal_different_work (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_candidate_cannot_join_same_goal_different_work)",
+      "2026-10-29T14:18:19.8505030Z FAIL: test_incomplete_candidate_cannot_join_same_work (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_candidate_cannot_join_same_work)",
+      "2026-10-29T14:18:19.8514992Z FAIL: test_incomplete_read_only_candidate_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_read_only_candidate_cannot_join)",
+      "2026-10-29T14:18:19.8525371Z FAIL: test_incomplete_read_only_candidate_cannot_parallel (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_read_only_candidate_cannot_parallel)",
+      "2026-10-29T14:18:19.8535992Z FAIL: test_matching_incomplete_active_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_matching_incomplete_active_cannot_join) (work='GAME_A001')",
+      "2026-10-29T14:18:19.8545894Z FAIL: test_matching_incomplete_active_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_matching_incomplete_active_cannot_join) (work='GAME_B001')",
+      "2026-10-29T14:18:19.8555592Z Ran 709 tests in 5.861s",
+      "2026-10-29T14:18:19.8555973Z FAILED (failures=9)"
+    ]
+  },
+  "repair": {
+    "path": "tools/system_parallel_admission.py",
+    "description": "Move the unchanged candidate/same-repository active completeness guard before JOIN and READ_ONLY admission, following schema/ledger validation. No condition or authority expansion.",
+    "added_lines": 2,
+    "removed_lines": 2,
+    "source_size_delta_bytes": 0,
+    "old_blob": "20c512af8907b18361b2aa179d638547b4d62a79",
+    "new_blob": "75aa58628ec1df792efae352470e23d9e479b3d0",
+    "new_sha256": "a5bb0ff11451a7b038d96b82ce630ae2df90f219719fdf603f8ad5cfbae539bd",
+    "bytes": 9151,
+    "lines": 189
+  },
+  "tests": {
+    "new_methods": 12,
+    "prior_pr_methods_preserved": 61,
+    "accepted_main_python_tests_preserved": 636,
+    "red_test_blob": "9fe6fd9909fa2a5f0072cc43d309362e7fbd9337",
+    "green_test_blob": "9fe6fd9909fa2a5f0072cc43d309362e7fbd9337",
+    "local_green": {
+      "source_bytes": 9151,
+      "source_lines": 189,
+      "source_blob": "75aa58628ec1df792efae352470e23d9e479b3d0",
+      "source_sha256": "a5bb0ff11451a7b038d96b82ce630ae2df90f219719fdf603f8ad5cfbae539bd",
+      "tests_run": 73,
+      "failures": 0,
+      "errors": 0,
+      "tests_blob": "9fe6fd9909fa2a5f0072cc43d309362e7fbd9337",
+      "tests_sha256": "f9ed0af90af105b6292e80d3828a921869831e55eaceaff22061b6ca1675b77f"
+    },
+    "expected_full_python_tests": 709,
+    "exact_new_head_github_green": "PENDING_AT_COMMIT_CREATION",
+    "positive_controls": [
+      "Complete same-goal/same-normalized-scope JOIN with same/different work IDs",
+      "Incomplete foreign-repository declarations do not block unrelated writer or reader",
+      "Complete read-only empty-ledger stays advisory",
+      "Malformed completeness stays BLOCKED_UNSAFE_INPUT"
+    ]
+  },
+  "files": [
+    {
+      "path": "tools/system_parallel_admission.py",
+      "status": "M_UNMERGED_PR_ONLY"
+    },
+    {
+      "path": "history/C00133_pr124_incomplete_manifest_review_repair.json",
+      "status": "A"
+    }
+  ],
+  "preserved": {
+    "accepted_main_blobs": 278,
+    "histories_C00129_C00130_C00131_unchanged": true,
+    "red_C00132_append_only": true,
+    "prior_61_pr_tests_unchanged": true,
+    "policy_checker_workflow_game_source": true
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "limits": [
+    "Pure caller-manifest validation, NOT_VERIFIED; all write/start/merge/publish/spend/parallel authority false",
+    "Existing single-holder coordinator unchanged; no extra source writer",
+    "No A12/A13 operating proof or points; official automation57%/game38%",
+    "No task/schedule/model/credential/budget/Gemini/publication changes"
+  ],
+  "next": "Fresh exact repaired-head offline+compile_hold and709-test success, new independent registered REVIEWER run, then main QA/handoff if legally adopted; author cannot approve or integrate."
+}

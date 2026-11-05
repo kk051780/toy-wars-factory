@@ -1,0 +1,147 @@
+{
+  "id": "C00014",
+  "date": "2026-10-24",
+  "kind": "OWNER_APPROVED_PR30_GAME_MERGE_AND_POST_MERGE_VERIFICATION",
+  "merged_pr": "https://github.com/kk051780/toy-wars-factory/pull/30",
+  "approved_head": "4366658aa9c71ec30e49476897fbd41f84b1d47c",
+  "merge_commit": "1e29505f62192597de6019f97a8b87447b1998e8",
+  "reviewed_and_merged_tree": "c79c1e149ad68a8a21604c9aa3c8151e64427937",
+  "authorization": {
+    "approved_merge_pr": 30,
+    "approved_merge_head": "4366658aa9c71ec30e49476897fbd41f84b1d47c",
+    "approved_merge_scope": "PR #30 gameplay integration and factual completion record.",
+    "approval_source": "User said 進めて in direct response to the explicit PR #30 main-merge confirmation.",
+    "merge_status": "COMPLETED",
+    "gemini_trial": "CONSUMED_SINGLE_RUN",
+    "new_inference_authorized": false,
+    "recurring_ai_authorized": false,
+    "automatic_merge_authorized": false,
+    "roblox_publish_authorized": false,
+    "prerequisite": "PR #30 is already merged and post-merge QA/handoff passed. Do not request its merge approval again. This specific approval does not authorize future unrelated merges, inference, recurring AI, billing or Roblox publication."
+  },
+  "completed": [
+    "Owner explicitly approved the concrete PR #30 main integration with 進めて; the previous PR #26 stop approval was not reused.",
+    "Recheck unchanged head 4366658aa9c71ec30e49476897fbd41f84b1d47c, clean mergeability, all 15 reviewed file blobs and successful pre-merge CI 40099984529.",
+    "Merge PR #30 at 1e29505f62192597de6019f97a8b87447b1998e8 using the reviewed head SHA lease; merged tree c79c1e149ad68a8a21604c9aa3c8151e64427937 equals the reviewed tree.",
+    "Verify post-merge main QA 40102033728 and handoff 40102033772 both pass on the merge SHA, including 27 event fixtures, 53 Python tests, exact compiler and installer checks.",
+    "Verify the immutable pre-fix server passes 25 fixtures and fails exactly the two NaN fixtures; the canonical fixed server passes all 27. These are native mocks, not Roblox engine evidence.",
+    "Record the actual integrated game metrics: four Lua files, 676 lines and 26,559 bytes; +13 lines/+833 bytes against the original main game source. Original baseline and C00011-C00013 remain unchanged.",
+    "Preserve literal-false Gemini activation, removed reviewer provider transport, consumed one-shot approval, inactive recurring AI and Roblox release hold; no provider calls or credential reads.",
+    "Record completion in canonical project state and regenerated handoff so the next chat resumes after the merged work instead of requesting the same approval."
+  ],
+  "evidence": {
+    "pre_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40099984529",
+    "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40102033728",
+    "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40102033772",
+    "conclusions": "ALL_SUCCESS",
+    "native_server_event_fixtures": 27,
+    "python_tests": 53,
+    "lua_named_assertions": 37,
+    "deterministic_stress_cases": 4000,
+    "policy_checks": 21,
+    "exact_official_compiler_regeneration": true,
+    "exact_installer_source_hashes": true,
+    "deterministic_handoff": true,
+    "negative_control": {
+      "commit": "2bf5e40fbca7e5420edcb324319e95c8c4f038a3",
+      "server_blob": "5d3d85d28025f83414ea812297bb93a58ea36699",
+      "pass": 25,
+      "expected_fail": 2,
+      "failures": [
+        "selector rejects NaN distance",
+        "upgrade rejects NaN without spending coins"
+      ]
+    }
+  },
+  "game_integration": {
+    "status": "MERGED_PR30_MAIN_QA_VERIFIED",
+    "merged_pr": 30,
+    "merged_pr_url": "https://github.com/kk051780/toy-wars-factory/pull/30",
+    "approved_head": "4366658aa9c71ec30e49476897fbd41f84b1d47c",
+    "merge_commit": "1e29505f62192597de6019f97a8b87447b1998e8",
+    "reviewed_and_merged_tree": "c79c1e149ad68a8a21604c9aa3c8151e64427937",
+    "components": [
+      17,
+      20,
+      28,
+      29
+    ],
+    "new_fix": "Reject NaN selector/upgrade distance",
+    "main_base": "9e31c34d4d236a115faa5ff076f3f9af82aa879f",
+    "before": {
+      "files": 4,
+      "lines": 663,
+      "bytes": 25726
+    },
+    "after": {
+      "files": 4,
+      "lines": 676,
+      "bytes": 26559
+    },
+    "delta": {
+      "files": 0,
+      "lines": 13,
+      "bytes": 833
+    },
+    "server_blob": "8d6a40fcb602a728f8876ca62194a0acb4bb45b9",
+    "native_server_event_fixtures": 27,
+    "post_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40102033728",
+    "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40102033772",
+    "origin": "CHAT_ASSISTANT_NOT_GEMINI",
+    "provider_calls": 0
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 676,
+    "lua_bytes": 26559
+  },
+  "this_followup_scope": "Factual project state, regression documentation, append-only completion history and regenerated handoff only. No game, executable, workflow, configuration, approval-policy or provider changes.",
+  "this_followup_game_delta": {
+    "files": 0,
+    "lines": 0,
+    "bytes": 0
+  },
+  "characters_touched": [],
+  "deployed_guards": {
+    "literal_false_gemini_trial": true,
+    "reviewer_direct_provider_transport_removed": true,
+    "handoff_full_history": true,
+    "original_source_baseline_preserved": true
+  },
+  "provider_calls": 0,
+  "provider_credentials_read": false,
+  "changed_files": [
+    "PROJECT_STATE.json",
+    "docs/SERVER_EVENT_QA.md",
+    "history/C00014_approved_game_merge.json"
+  ],
+  "generated_files": [
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "limitations": [
+    "Native service/event/coroutine substitutes test callback logic only; Roblox Studio, physics, replication, real multiplayer, mobile visuals and player fun remain unverified.",
+    "NaN was a synthetic invalid-coordinate fixture; no real client injection exploit was demonstrated.",
+    "Complete Gemini input/framing bounds and a hard financial cap remain unproved; provider inference stays blocked and the consumed trial must not be rerun.",
+    "Related source PRs #17/#20/#25/#28/#29 remain open as preserved proposals; their reviewed gameplay changes are integrated via PR #30. Experimental budget/runtime proposals remain unmerged."
+  ],
+  "next_action": "PR #30 integration is complete. Read C00014, resolve current main and check Actions before new work. Review the separate HUD pricing proposal #13 against the integrated server and current balance, with offline evidence and a reviewable draft if changes are needed. Preserve source drafts and all operational/quality guards; no further merge or provider inference approval is implied.",
+  "file_size_deltas": {
+    "PROJECT_STATE.json": {
+      "before": 18899,
+      "after": 21785,
+      "delta": 2886
+    },
+    "docs/SERVER_EVENT_QA.md": {
+      "before": 3199,
+      "after": 4085,
+      "delta": 886
+    },
+    "history/C00014_approved_game_merge.json": {
+      "before": 0,
+      "after": 7109,
+      "delta": 7109
+    }
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "id": "C00016",
+  "date": "2026-10-25",
+  "timezone": "Asia/Tokyo",
+  "kind": "OWNER_APPROVED_PR32_MERGE_AND_FACTUAL_AUTOMATION_READINESS",
+  "merged_pr": "https://github.com/kk051780/toy-wars-factory/pull/32",
+  "approved_head": "e2cdbb8ddf6efc084031e4900ce754e73f336cbf",
+  "merge_commit": "83465372f6701e20cd92ec7f9e8bd48f945c8da4",
+  "reviewed_and_merged_tree": "5f8fa106da6cc3b495df718bcde66614e1b8e192",
+  "authorization": {
+    "approved_merge_pr": 32,
+    "approved_merge_head": "e2cdbb8ddf6efc084031e4900ce754e73f336cbf",
+    "approved_merge_scope": "PR #32 HUD integration and factual completion/readiness record.",
+    "approval_source": "User said 進めて。 in direct response to the explicit PR #32 main-merge confirmation, and asked how far away full automation is.",
+    "merge_status": "COMPLETED",
+    "gemini_trial": "CONSUMED_SINGLE_RUN",
+    "new_inference_authorized": false,
+    "recurring_ai_authorized": false,
+    "automatic_merge_authorized": false,
+    "roblox_publish_authorized": false,
+    "prerequisite": "PR #32 is already merged and post-merge QA/handoff passed; do not ask for its merge approval again. The automation timing question is not authorization to call a provider, change model/cap/billing, enable recurring AI, automatically merge future code or publish Roblox."
+  },
+  "completed": [
+    "Owner explicitly approved the concrete PR #32 integration with 進めて。; approval of PR #30 was not reused.",
+    "Recheck unchanged head e2cdbb8ddf6efc084031e4900ce754e73f336cbf, clean mergeability, all nine reviewed file blobs and successful pre-merge CI 40103243365.",
+    "Merge PR #32 at 83465372f6701e20cd92ec7f9e8bd48f945c8da4 using the reviewed head lease; merged tree 5f8fa106da6cc3b495df718bcde66614e1b8e192 equals review.",
+    "Verify post-merge main QA 40106001876 and handoff 40106001904 both pass on the merge SHA.",
+    "Verify whole-HUD fixtures: original current-price case passes and exactly five varied-price cases fail; canonical fixed HUD passes all six. All 27 server fixtures, 53 Python tests, balance/stress, compiler, installer and handoff checks also pass.",
+    "Record actual main source: four Lua files / 678 lines / 26,753 bytes; PR #32 adds 194 bytes and two lines only in HUD, preserving original baseline and all prior history.",
+    "Read actual audit/handoff and candidate AI workflow sources. Existing schedules perform audits/handoff, while Gemini activation and reviewer remain held; no successful autonomous coding trial or recurring AI is established.",
+    "Record automation readiness and the unresolved ETA without presenting gameplay fixes as resolution of the financial bound. A proposed 24-48 hour observation period is conditional on a future approved successful bounded trial, not a completion date or scheduled activation.",
+    "Preserve the original PR #13 and other source proposals, and record the completed merge so future chats do not repeat its approval."
+  ],
+  "evidence": {
+    "pre_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40103243365",
+    "post_merge_main_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40106001876",
+    "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40106001904",
+    "conclusions": "ALL_SUCCESS",
+    "native_hud_price_fixtures": 6,
+    "native_server_event_fixtures": 27,
+    "python_tests": 53,
+    "lua_named_assertions": 37,
+    "deterministic_stress_cases": 4000,
+    "policy_checks": 21,
+    "exact_official_compiler_regeneration": true,
+    "exact_installer_source_hashes": true,
+    "deterministic_handoff": true,
+    "hud_negative_control": {
+      "commit": "2bf5e40fbca7e5420edcb324319e95c8c4f038a3",
+      "hud_blob": "506b2eced0cf74f15341091976090632abbe021a",
+      "pass": 1,
+      "expected_fail": 5
+    }
+  },
+  "hud_integration": {
+    "status": "MERGED_PR32_MAIN_QA_VERIFIED",
+    "merged_pr": 32,
+    "merged_pr_url": "https://github.com/kk051780/toy-wars-factory/pull/32",
+    "approved_head": "e2cdbb8ddf6efc084031e4900ce754e73f336cbf",
+    "merge_commit": "83465372f6701e20cd92ec7f9e8bd48f945c8da4",
+    "reviewed_and_merged_tree": "5f8fa106da6cc3b495df718bcde66614e1b8e192",
+    "source_proposal_pr": 13,
+    "hud_blob": "0dcd1f1f16991b3f02b970361eea9f026d1e8688",
+    "main_base": "b4e6901f5880102eb55bd20490eab8c049f2cbc6",
+    "before": {
+      "files": 4,
+      "lines": 676,
+      "bytes": 26559
+    },
+    "after": {
+      "files": 4,
+      "lines": 678,
+      "bytes": 26753
+    },
+    "delta": {
+      "files": 0,
+      "lines": 2,
+      "bytes": 194
+    },
+    "native_hud_price_fixtures": 6,
+    "post_merge_qa": "https://github.com/kk051780/toy-wars-factory/actions/runs/40106001876",
+    "post_merge_handoff": "https://github.com/kk051780/toy-wars-factory/actions/runs/40106001904",
+    "origin": "CHAT_ASSISTANT_NOT_GEMINI",
+    "provider_calls": 0
+  },
+  "automation_readiness": {
+    "observed_on": "2026-10-25",
+    "document": "docs/AUTOMATION_READINESS.md",
+    "offline_qa": "RUNNING_PASS",
+    "handoff": "RUNNING_PASS",
+    "ai_developer": "HELD_NO_SUCCESSFUL_PATCH_PR_TRIAL",
+    "shared_financial_enforcement": "BLOCKED_COMPLETE_INPUT_FRAMING_BOUND_UNPROVEN",
+    "independent_model_review": "HELD_PROVIDER_TRANSPORT_REMOVED",
+    "recurring_ai": "NOT_ACTIVE",
+    "continuous_ai_observation": "NOT_STARTED",
+    "automatic_merge": "NOT_AUTHORIZED_OR_PROVEN",
+    "roblox_engine_and_release": "UNVERIFIED_HOLD",
+    "calendar_eta": "NOT_ESTIMABLE_WHILE_BOUND_UNRESOLVED",
+    "conditional_observation_plan": "Proposed 24-48 hours after a newly authorized bounded single-run including independent review succeeds; not an elapsed-time promise, scheduled activation or engine/release ETA.",
+    "next_priority": "OFFLINE_BOUNDED_AUTOMATION_DESIGN_REVIEW"
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 678,
+    "lua_bytes": 26753
+  },
+  "this_followup_scope": "Factual project state, HUD regression documentation, automation-readiness assessment, append-only completion history and regenerated handoff only. No game, executable, workflow, model, budget, configuration, authorization-policy or provider change.",
+  "this_followup_game_delta": {
+    "files": 0,
+    "lines": 0,
+    "bytes": 0
+  },
+  "characters_touched": [],
+  "provider_calls": 0,
+  "provider_credentials_read": false,
+  "deployed_guards": {
+    "literal_false_gemini_trial": true,
+    "reviewer_direct_provider_transport_removed": true,
+    "original_source_baseline_preserved": true,
+    "no_new_automation_activated": true
+  },
+  "changed_files": [
+    "PROJECT_STATE.json",
+    "docs/HUD_PRICE_QA.md",
+    "docs/AUTOMATION_READINESS.md",
+    "history/C00016_approved_hud_merge.json"
+  ],
+  "generated_files": [
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "limitations": [
+    "HUD fixtures validate text and callbacks in native Lua, not rendering, touch, replication, Studio, real multiplayer or mobile behavior. Runtime balance hot-reloading is not implemented.",
+    "Gemini complete input/framing bounds and shared live financial enforcement remain unproved; developer and independent reviewer are blocked, and the consumed trial must not be rerun.",
+    "An offline QA/handoff schedule does not establish unattended AI development. Continuous AI operation has not begun.",
+    "The 24-48 hour observation allowance is a planning suggestion after prerequisites, not a started test, completion commitment or change to release policy.",
+    "Automatic merge and Roblox publication are not authorized; Studio, multiplayer, mobile visuals and player feedback remain unverified."
+  ],
+  "next_action": "Prioritize an offline automation design review that can establish the approved financial bound for both developer and independent reviewer. Produce a concrete reviewable proposal using new attributable evidence or a different bounded execution path; do not repeat the same pinned SDK inspection as progress. PR #32/#30 and their factual integrations are complete. Keep all inference and recurring execution held pending established bounds and fresh scoped owner authorization.",
+  "file_size_deltas": {
+    "PROJECT_STATE.json": {
+      "before": 21740,
+      "after": 24821,
+      "delta": 3081
+    },
+    "docs/HUD_PRICE_QA.md": {
+      "before": 2880,
+      "after": 3064,
+      "delta": 184
+    },
+    "docs/AUTOMATION_READINESS.md": {
+      "before": 0,
+      "after": 3659,
+      "delta": 3659
+    },
+    "history/C00016_approved_hud_merge.json": {
+      "before": 0,
+      "after": 8615,
+      "delta": 8615
+    }
+  }
+}

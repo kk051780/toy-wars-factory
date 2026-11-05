@@ -1,0 +1,87 @@
+"""Guard exact-scheduled reviewer registration and immutable safety controls."""
+import json
+import pathlib
+import unittest
+from copy import deepcopy
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+NEW = "6add6aaceb4c8191b1666fe15f97cd88"
+OLD = "6add4ea80d3881919da4ea2c1d5def88"
+
+class ReviewerMigrationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.config = json.loads((ROOT / "config/autonomous_repair.json").read_text(encoding="utf-8"))
+        cls.state = json.loads((ROOT / "PROJECT_STATE.json").read_text(encoding="utf-8"))
+        cls.prompt = (ROOT / "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md").read_text(encoding="utf-8")
+    def test_current_registration_consistent(self):
+        self.assertEqual(self.config["integration"]["task_id"], NEW)
+        self.assertEqual(self.state["independent_integration"]["task_id"], NEW)
+        self.assertEqual(self.state["cloud_game_repair"]["independent_reviewer_task"], NEW)
+        self.assertEqual(self.state["system_review"]["independent_reviewer_task"], NEW)
+        self.assertIn(NEW, self.prompt)
+        self.assertNotIn(OLD, self.prompt)
+    def test_existing_workers_unchanged(self):
+        self.assertEqual(self.config["task_id"], "6adbf0d6a7d881918ce181dff2468867")
+        self.assertEqual(self.config["system_review"]["task_id"], "6add445e4138819197d9cf2b1a02534d")
+        self.assertEqual(self.config["coordination"]["branch"], "twf-repair-coordinator")
+        self.assertEqual(self.config["queue_version"], 4)
+    def test_anti_self_review_and_release_hold(self):
+        c = self.config
+        i = c["integration"]
+        self.assertTrue(i["enabled"] and c["automatic_merge_authorized"])
+        self.assertTrue(i["require_independent_task_and_run"] and i["require_exact_head_ci"] and i["require_current_main_qa"])
+        self.assertTrue(i["require_shared_reviewer_lease"] and i["require_post_merge_qa"])
+        self.assertFalse(i["author_may_approve_own_work"] or i["author_task_may_merge"] or i["roblox_publish_authorized"])
+        self.assertFalse(c["external_provider_inference_authorized"])
+        self.assertEqual(self.state["release_decision"], "HOLD_ENGINE_UNVERIFIED")
+    def assert_current_live_proof(self, proof, candidate):
+        self.assertEqual(proof["run_id"], "ed0fc89e-e310-8326-989c-25380dc1467e")
+        self.assertNotEqual(proof["run_id"], candidate["new_candidate_bootstrap"]["run_id"])
+        self.assertEqual(proof["reviewer_task_id"], NEW)
+        self.assertEqual(proof["shared_lease_epoch"], 18)
+        self.assertEqual(proof["pr"], 45)
+        self.assertEqual(proof["accepted_pr_head"], "8676e3447c5e4d01122c59a0c62c8062b90e8a8d")
+        self.assertEqual(proof["merge_commit"], "8f3312ba7b61095f839b7121e2776bfca6245aee")
+        self.assertEqual(proof["post_merge_qa"],
+                         "https://github.com/kk051780/toy-wars-factory/actions/runs/40157791404")
+        self.assertEqual(proof["post_merge_handoff"],
+                         "https://github.com/kk051780/toy-wars-factory/actions/runs/40157791429")
+        self.assertEqual(proof["main_after_generated_status"],
+                         "f728fa525d8b409ef2a08a3da59e4ae7e73e27b1")
+    def test_spoofed_independent_run_or_qa_urls_are_rejected(self):
+        i = self.state["independent_integration"]
+        self.assertIs(i["runtime_verified"], True)
+        spoofed = {
+            "run_id": "00000000-0000-4000-8000-000000000000",
+            "post_merge_qa": "https://false.invalid/actions/runs/40157791404",
+            "post_merge_handoff": "https://false.invalid/actions/runs/40157791429",
+        }
+        for key, fake in spoofed.items():
+            with self.subTest(key=key):
+                claim = deepcopy(i["first_full_cycle"])
+                claim[key] = fake
+                with self.assertRaises(AssertionError):
+                    self.assert_current_live_proof(claim, i)
+    def test_new_candidate_not_falsely_marked_live(self):
+        i = self.state["independent_integration"]
+        # Bootstrap is permanently read-only evidence, not a normal merge.
+        self.assertEqual(i["new_candidate_bootstrap"]["mode"], "READ_ONLY_SUCCESS_NOT_LIVE_INTEGRATION")
+        if i["runtime_verified"]:
+            # Live status is legal only after a DIFFERENT, real reviewer run
+            # produced an identified game PR merge AND passing post-merge QA.
+            self.assertEqual(i["status"], "FIRST_REGULAR_REVIEW_MERGE_AND_MAIN_QA_VERIFIED")
+            self.assertIs(i["is_enabled_confirmed"], True)
+            proof = i["first_full_cycle"]
+            self.assert_current_live_proof(proof, i)
+            self.assertEqual(self.state["cloud_game_repair"]["status"],
+                             "ENABLED_AUTHOR_FIRST_INDEPENDENT_MERGE_AND_MAIN_QA_VERIFIED")
+        else:
+            self.assertEqual(i["status"], "PENDING_EXACT_REVIEWER_CUTOVER")
+            self.assertIs(i["is_enabled_confirmed"], False)
+            self.assertEqual(self.state["cloud_game_repair"]["status"], "ENABLED_AUTHOR_REVIEWER_CUTOVER_PENDING")
+    def test_historical_task_provenance_retained(self):
+        self.assertTrue(any(OLD in str(item) for item in self.state["resume_checkpoint"]["completed"]))
+
+if __name__ == "__main__":
+    unittest.main()

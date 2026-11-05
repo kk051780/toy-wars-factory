@@ -1,0 +1,143 @@
+{
+  "id": "C00013",
+  "date": "2026-10-24",
+  "kind": "FULL_SERVER_EVENT_FIXTURES_AND_NONFINITE_PROXIMITY_CORRECTION",
+  "main_base": "9e31c34d4d236a115faa5ff076f3f9af82aa879f",
+  "parent_proposal_pr": 29,
+  "parent_proposal_head": "2bf5e40fbca7e5420edcb324319e95c8c4f038a3",
+  "components": [
+    17,
+    20,
+    28,
+    29
+  ],
+  "provenance": "ChatGPT offline implementation; not Gemini; no provider call.",
+  "defect": "An above-limit-only distance rejection admits NaN because NaN > 13 is false. Both toy selector and paid upgrade callbacks accept the invalid fixture.",
+  "correction": "Require the distance <= 13 comparison to be true. Missing-root short circuit and the 13-unit threshold are unchanged.",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 18639,
+      "after_bytes": 18653,
+      "delta_bytes": 14,
+      "before_lines": 482,
+      "after_lines": 482,
+      "delta_lines": 0,
+      "line_count_convention": "splitlines(); older records count a trailing empty line in their absolute per-file values."
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 676,
+    "lua_bytes": 26559
+  },
+  "server_git_blob": "8d6a40fcb602a728f8876ca62194a0acb4bb45b9",
+  "negative_control": {
+    "commit": "2bf5e40fbca7e5420edcb324319e95c8c4f038a3",
+    "server_blob": "5d3d85d28025f83414ea812297bb93a58ea36699",
+    "pass": 25,
+    "fail": 2,
+    "failures": [
+      "selector rejects NaN distance",
+      "upgrade rejects NaN without spending coins"
+    ],
+    "real_exploit_demonstrated": false
+  },
+  "fixed_local_event_fixtures": {
+    "lua_version": "5.4 native library",
+    "pass": 27,
+    "fail": 0,
+    "whole_server_loaded": true,
+    "callback_snippets_reimplemented": false
+  },
+  "qa": {
+    "current_github_actions": "PENDING",
+    "parent_integration": "https://github.com/kk051780/toy-wars-factory/actions/runs/40088574401",
+    "parent_lifecycle": "https://github.com/kk051780/toy-wars-factory/actions/runs/40096885886",
+    "roblox_studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "character_audit": "PON/GUARDON/TANKURU stats, costs, shapes, abilities, roles and source definitions unchanged.",
+  "authorization": {
+    "approved_merge_pr": 26,
+    "approved_merge_scope": "Completed stop/handoff integration only; not this game candidate.",
+    "gemini_trial": "CONSUMED_SINGLE_RUN",
+    "new_inference_authorized": false,
+    "recurring_ai_authorized": false,
+    "automatic_merge_authorized": false,
+    "roblox_publish_authorized": false,
+    "prerequisite": "This is an unmerged gameplay candidate. A later explicit approval is needed for this candidate to enter main. No inference, recurring AI, billing or publication authorization is implied."
+  },
+  "provider_calls": 0,
+  "provider_credentials_read": false,
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/test_selector_authority.py",
+    "tests/test_handoff_checkpoint.py",
+    "tests/roblox_server_harness.lua",
+    "tests/server_event_spec.lua",
+    ".github/workflows/bootstrap-quality.yml",
+    "docs/SERVER_EVENT_QA.md",
+    "PROJECT_STATE.json",
+    "history/C00013_nonfinite_proximity_events.json"
+  ],
+  "preserved_parent_files": [
+    "history/C00011_main_based_game_integration.json",
+    "history/C00012_character_lifecycle_guard.json",
+    "tests/test_workshop_backfill.py",
+    "tests/test_character_ready_lifecycle.py"
+  ],
+  "generated_files": [
+    "status/CHAT_HANDOFF.md",
+    "status/LATEST_STATE.json"
+  ],
+  "next_action": "Verify the main-based candidate CI, including immutable pre-fix negative control and the canonical fixed-server fixtures, before asking the owner to approve this concrete gameplay PR. Preserve other source drafts. After explicit integration approval, verify main QA and record that approval without enabling inference or Roblox release.",
+  "file_size_deltas": {
+    "src/ToyWarsServer.server.lua": {
+      "before": 18639,
+      "after": 18653,
+      "delta": 14
+    },
+    "tests/test_selector_authority.py": {
+      "before": 1558,
+      "after": 1565,
+      "delta": 7
+    },
+    "tests/test_handoff_checkpoint.py": {
+      "before": 6769,
+      "after": 6284,
+      "delta": -485
+    },
+    "tests/roblox_server_harness.lua": {
+      "before": 0,
+      "after": 8583,
+      "delta": 8583
+    },
+    "tests/server_event_spec.lua": {
+      "before": 0,
+      "after": 7486,
+      "delta": 7486
+    },
+    ".github/workflows/bootstrap-quality.yml": {
+      "before": 4261,
+      "after": 6314,
+      "delta": 2053
+    },
+    "docs/SERVER_EVENT_QA.md": {
+      "before": 0,
+      "after": 3199,
+      "delta": 3199
+    },
+    "PROJECT_STATE.json": {
+      "before": 17587,
+      "after": 18899,
+      "delta": 1312
+    },
+    "history/C00013_nonfinite_proximity_events.json": {
+      "before": 0,
+      "after": 4899,
+      "delta": 4899
+    }
+  }
+}

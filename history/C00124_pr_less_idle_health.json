@@ -1,0 +1,98 @@
+{
+  "id": "C00124",
+  "date": "2026-10-29",
+  "kind": "SYSTEM_PR_LESS_IDLE_HEALTH",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
+  "base_main": "3d99c3ec30238587af2823c76682343c403042df",
+  "observed_at_utc": "2026-10-29T03:30:20Z",
+  "issue": 114,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "268a6b7517acd21e0965bae9ef9bdbef4c4f855c",
+    "owner_run_id": "6cde9580-6110-832e-a8dd-656aac9bbdf8",
+    "epoch": 231
+  },
+  "problem": "Accepted PR116 incident observer requires an open PR. Add independent PR-less service health without weakening that gate.",
+  "implementation": "New system_idle_health.observe calls accepted service.observe. Exact project/repo/task/run/ref/blob/epoch and two PEEK traces per role; completed/current result, failed/no_update, missing result, timeout, disabled/attention, unreleased lease and detector failure distinct. MAIN_QA_NOT_CHECKED; all authority false. Provisional supplied-data dedup, not authenticated persistence; disappeared alerts remain UNVERIFIED_RECOVERY_CANDIDATE.",
+  "tests": {
+    "new": 20,
+    "focused": "20 PASS, two synthetic game manifests and no PR/Actions API",
+    "negative_control": {
+      "isolated_timeout_mutant": 1,
+      "failures": 1,
+      "errors": 0,
+      "disk_written": false
+    },
+    "local_full": "569 tests: real Git history absent for unchanged historical handoff ancestry assertion; no accepted tests skipped or weakened",
+    "github_ci": "PENDING_NEW_HEAD"
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "files": [
+    {
+      "path": "tools/system_idle_health.py",
+      "bytes": 10619,
+      "lines": 163,
+      "sha256": "1468d078c7e01e1e1801a5229145a86c7cfdbb1db553d3fe3d353f0ace7e86eb",
+      "before_bytes": 0
+    },
+    {
+      "path": "tests/test_system_idle_health.py",
+      "bytes": 10315,
+      "lines": 179,
+      "sha256": "800d34aa4d697fb62a985197023c2ba60c0501c5a252d0a071bccd7ae97e131d",
+      "before_bytes": 0
+    }
+  ],
+  "main_health": {
+    "main": "3d99c3ec30238587af2823c76682343c403042df",
+    "qa": 40782676418,
+    "qa_head": "3009bfefde60311ba58a8962e3fc296db669f75e",
+    "jobs": "offline+compile_hold SUCCESS",
+    "handoff": 40809225059,
+    "status_only_direct_compare": [
+      "status/CHAT_HANDOFF.md",
+      "status/LATEST_STATE.json"
+    ]
+  },
+  "prior_art": {
+    "url": "https://github.com/kk051780/toy-wars-factory/issues/114#issuecomment-6483393493",
+    "use": "Requirements only; ZIP/source not assumed available or claimed. Old no_update runs not GitHub successes."
+  },
+  "research": [
+    {
+      "url": "https://grafana.com/blog/agent-observability-faq-understand-the-value-of-monitoring-evaluating-and-improving-your-ai-agents/",
+      "published_at": "2026-10-27",
+      "checked_at": "2026-10-29T03:30:20Z",
+      "kind": "PRIMARY_DEVELOPER",
+      "finding": "Separate runtime trace/failure classes and regression evaluation; vendor effects not our evidence; no fees."
+    },
+    {
+      "url": "https://create.roblox.com/docs/production/analytics/retention",
+      "published_at": null,
+      "checked_at": "2026-10-29T03:30:20Z",
+      "kind": "PRIMARY_OFFICIAL",
+      "finding": "D1/D7 require real cohorts. First-loop clarity vs differentiated support/collection vs NO_CHANGE remain unmeasured game hypotheses."
+    }
+  ],
+  "protected_controls": "All266 accepted blobs/549 tests preserved; no config/checker/workflow/history/test/permissions/task/fees/publishing modifications.",
+  "limits": [
+    "SYNTHETIC_TEST_ONLY; source authentication NOT_VERIFIED",
+    "No unforced scheduled detection, durable alert persistence, delivery or independently verified recovery; A12+5=0",
+    "Source function does not collect main QA: MAIN_QA_NOT_CHECKED",
+    "No Roblox Studio/multiplayer/mobile/player measurement; protected progress unchanged"
+  ],
+  "next": "Exact new-head offline+compile_hold then registered REVIEWER; author cannot merge; actual post-main QA/handoff and later operational proof required.",
+  "holds": [
+    "GEMINI_SEVERE_HOLD",
+    "SPEND_HOLD",
+    "ROBLOX_RELEASE_HOLD"
+  ]
+}
