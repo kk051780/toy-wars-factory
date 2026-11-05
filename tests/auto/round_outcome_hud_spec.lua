@@ -8,11 +8,12 @@ local function signal()
     function s:Fire(...) for _,fn in ipairs(self.listeners) do fn(...) end end
     return s
 end
-local function fixture()
+local function fixture(lateOutcome)
     local balance=assert(loadfile("src/ToyWarsBalance.lua"))()
     local created,calls={},{}
     local function object(class,value)
-        local o={ClassName=class,Value=value,_children={},Changed=signal(),Activated=signal()}
+        local o={ClassName=class,Value=value,_children={},Changed=signal(),Activated=signal(),ChildAdded=signal()}
+        function o:FindFirstChild(name) return self._children[name] end
         function o:WaitForChild(name)
             return assert(self._children[name],"fixture missing "..name)
         end
@@ -25,9 +26,10 @@ local function fixture()
         stats._children[name]=object("IntValue",value)
     end
     for name,value in pairs({BaseHP=100,FactoryLevel=1,Allies=0,Enemies=0,
-                             SelectedToy="GUARDON",RoundOutcome=""}) do
+                             SelectedToy="GUARDON"}) do
         status._children[name]=object("Value",value)
     end
+    if not lateOutcome then status._children.RoundOutcome=object("StringValue","") end
     local model=object("ModuleScript")
     local storage=object("ReplicatedStorage")
     storage._children={ToyWarsBalance=model,ToyWarsSelectUnit={FireServer=function(_,id) calls[#calls+1]=id end}}
@@ -51,7 +53,13 @@ local function fixture()
     end
     assert(tip and guide and buttons==3,"existing HUD with three choices required")
     return tip,status._children.RoundOutcome,stats._children.Coins,
-           status._children.Allies,guide,calls
+           status._children.Allies,guide,calls,function(value)
+               local child=object("StringValue",value)
+               child.Name="RoundOutcome"
+               status._children.RoundOutcome=child
+               status.ChildAdded:Fire(child)
+               return child
+           end
 end
 local function check(name,fn)
     local ok,err=pcall(fn)
@@ -93,5 +101,15 @@ check("unknown or forged replicated result is treated as neutral",function()
     assert(has(tip,"WAIT GUARDON") and not has(tip,"BASE LOST"),"unknown state ignored")
     assert(#calls==0,"no client action")
 end)
+check("late server result arrives without blocking original HUD",function()
+    local tip,result,coins,allies,guide,calls,inject=fixture(true)
+    assert(result==nil and has(tip,"WAIT GUARDON"),"original HUD must load while result is absent")
+    local late=inject("VICTORY")
+    assert(has(tip,"WAVE 50") and not has(tip,"BASE LOST"),"late result refreshes HUD")
+    late.Value=""
+    late.Changed:Fire()
+    assert(has(tip,"WAIT GUARDON") and #calls==0,"restored guidance without client gameplay event")
+end)
+
 print(string.format("AUTO_ROUND_OUTCOME_HUD_SUMMARY %d passed / %d failed; canonical HUD native Lua mock",passed,failed))
 if failed>0 then os.exit(1) end

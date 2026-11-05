@@ -35,7 +35,9 @@ local lv=status:WaitForChild("FactoryLevel")
 local allies=status:WaitForChild("Allies")
 local enemies=status:WaitForChild("Enemies")
 local selected=status:WaitForChild("SelectedToy")
-local outcome=status:WaitForChild("RoundOutcome")
+-- The server result may arrive after normal workshop values; never block UI startup.
+local found=status.FindFirstChild and status:FindFirstChild("RoundOutcome")
+local outcome=found and found.ClassName=="StringValue" and found or nil
 waiting.Visible=false
 local function round(parent,r)
     local c=Instance.new("UICorner")
@@ -158,9 +160,9 @@ local function refresh()
     local upgradeCost=B.upgradePrice(lv.Value)
     local chosenId=type(selected.Value)=="string" and string.lower(selected.Value) or nil
     local unit=chosenId and B.isUnit(chosenId) and B.UNITS[chosenId] or nil
-    if outcome.Value=="LOSS" then
+    if outcome and outcome.Value=="LOSS" then
         tip.Text="BASE LOST • RESTARTING WAVE 1"
-    elseif outcome.Value=="VICTORY" then
+    elseif outcome and outcome.Value=="VICTORY" then
         tip.Text="WAVE 50 CLEARED • NEW FACTORY RUN"
     elseif allies.Value>=B.MAX_FIELD_UNITS then
         tip.Text=upgradeCost and string.format("FIELD FULL %d/%d • GOLD %d",allies.Value,B.MAX_FIELD_UNITS,upgradeCost)
@@ -177,6 +179,18 @@ local function refresh()
         button.BorderColor3=Color3.fromRGB(255,255,255)
     end
 end
-for _,v in ipairs({coins,wave,kills,hp,lv,allies,enemies,selected,outcome}) do v.Changed:Connect(refresh) end
+local observed={coins,wave,kills,hp,lv,allies,enemies,selected}
+if outcome then observed[#observed+1]=outcome end
+for _,v in ipairs(observed) do v.Changed:Connect(refresh) end
+-- Attach the optional server-owned outcome as soon as replication provides it.
+if status.ChildAdded then
+    status.ChildAdded:Connect(function(child)
+        if not outcome and child.Name=="RoundOutcome" and child.ClassName=="StringValue" then
+            outcome=child
+            outcome.Changed:Connect(refresh)
+            refresh()
+        end
+    end)
+end
 refresh()
 print("TWF_HUD_OK v1.2")
