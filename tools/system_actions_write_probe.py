@@ -28,6 +28,8 @@ WORKFLOW = ".github/workflows/twf-actions-write-capability-probe.yml"
 CONTROL_REF = "twf-repair-coordinator"
 CONTROL_PATH = "ops/REPAIR_COORDINATOR.json"
 CONSENT = "I_AUTHORIZE_ISOLATED_DRAFT_PR_ONLY"
+BRANCH_WORKFLOW = ".github/workflows/twf-actions-branch-write-capability-probe.yml"
+BRANCH_CONSENT = "I_AUTHORIZE_ISOLATED_BRANCH_ONLY"
 HEX = re.compile(r"[0-9a-f]{40}\Z")
 
 
@@ -46,6 +48,12 @@ def valid_sha(value):
 
 def checked_context(env: dict, live_run: dict, live_main: str):
     """Live API data is only authoritative inside a trusted GitHub-hosted job."""
+    mode = env.get("PROBE_MODE", "DRAFT_PR")
+    if mode not in ("DRAFT_PR", "BRANCH_ONLY"):
+        raise ProbeError("PROBE_MODE_DENIED")
+    branch_only = mode == "BRANCH_ONLY"
+    workflow = BRANCH_WORKFLOW if branch_only else WORKFLOW
+    consent = BRANCH_CONSENT if branch_only else CONSENT
     required = ("GITHUB_REPOSITORY", "GITHUB_REPOSITORY_ID", "GITHUB_ACTOR",
                 "GITHUB_EVENT_NAME", "GITHUB_REF", "GITHUB_WORKFLOW_REF",
                 "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "GITHUB_TRIGGERING_ACTOR", "GITHUB_SHA", "PROBE_CONSENT")
@@ -54,8 +62,8 @@ def checked_context(env: dict, live_run: dict, live_main: str):
     if (env["GITHUB_REPOSITORY"] != REPO or env["GITHUB_REPOSITORY_ID"] != str(REPO_ID) or
             env["GITHUB_ACTOR"] != ACTOR or env["GITHUB_TRIGGERING_ACTOR"] != ACTOR or env["GITHUB_EVENT_NAME"] != "workflow_dispatch" or
             env["GITHUB_REF"] != "refs/heads/main" or
-            env["GITHUB_WORKFLOW_REF"] != f"{REPO}/{WORKFLOW}@refs/heads/main" or
-            env["PROBE_CONSENT"] != CONSENT):
+            env["GITHUB_WORKFLOW_REF"] != f"{REPO}/{workflow}@refs/heads/main" or
+            env["PROBE_CONSENT"] != consent):
         raise ProbeError("CONTEXT_DENIED")
     run_id, attempt = env["GITHUB_RUN_ID"], env["GITHUB_RUN_ATTEMPT"]
     if (not re.fullmatch(r"[1-9][0-9]{0,17}", run_id) or
@@ -66,7 +74,7 @@ def checked_context(env: dict, live_run: dict, live_main: str):
         live_run.get("status") != "in_progress" or live_run.get("conclusion") is not None or
         live_run.get("id") != int(run_id) or live_run.get("run_attempt") != int(attempt) or
         live_run.get("event") != "workflow_dispatch" or
-        live_run.get("path") != WORKFLOW or
+        live_run.get("path") != workflow or
         live_run.get("head_repository", {}).get("id") != REPO_ID or
         live_run.get("actor", {}).get("login") != ACTOR or
         live_run.get("triggering_actor", {}).get("login") != ACTOR or
@@ -74,9 +82,12 @@ def checked_context(env: dict, live_run: dict, live_main: str):
         live_run.get("head_sha") != env["GITHUB_SHA"] or live_main != env["GITHUB_SHA"]):
         raise ProbeError("LIVE_RUN_LINEAGE_MISMATCH")
     branch = f"controller/gha-write-probe-{run_id}-a{attempt}"
-    owner = str(uuid.uuid5(uuid.NAMESPACE_URL, f"{REPO}:{WORKFLOW}:{run_id}:{attempt}"))
-    return {"owner":owner, "branch":branch, "main":live_main,
-            "run_id":int(run_id), "attempt":int(attempt)}
+    owner = str(uuid.uuid5(uuid.NAMESPACE_URL, f"{REPO}:{workflow}:{run_id}:{attempt}"))
+    scope = {"owner":owner, "branch":branch, "main":live_main,
+             "run_id":int(run_id), "attempt":int(attempt)}
+    if branch_only:
+        scope["branch_only"] = True
+    return scope
 
 
 class _RejectRedirects(request.HTTPRedirectHandler):
@@ -359,6 +370,9 @@ def create_branch_probe(api, scope):
             "run_attempt":scope["attempt"],"status":"NO_AI_NO_GAME_CHANGE"}
     api.call("PUT", f"/contents/{filename}", {"message":"probe: isolated owner-manual write only",
         "branch":scope["branch"],"content":base64.b64encode((json.dumps(body,sort_keys=True)+"\n").encode()).decode()})
+    if scope.get("branch_only") is True:
+        # Separate least-privilege workflow has NO PR creation permission.
+        return None
     try:
         pr = api.call("POST", "/pulls", {"title":"[PROBE ONLY] Owner-manual GitHub Actions branch/PR permission",
         "head":scope["branch"],"base":"main","draft":True,
@@ -377,7 +391,11 @@ def create_branch_probe(api, scope):
 
 def run(api, env):
     """The only write pathway; fail closed before authority and release own lease."""
-    if env.get("PROBE_CONSENT") != CONSENT:
+    mode = env.get("PROBE_MODE", "DRAFT_PR")
+    if mode not in ("DRAFT_PR", "BRANCH_ONLY"):
+        raise ProbeError("PROBE_MODE_DENIED")
+    required_consent = BRANCH_CONSENT if mode == "BRANCH_ONLY" else CONSENT
+    if env.get("PROBE_CONSENT") != required_consent:
         raise ProbeError("CONSENT_MISSING")
     live_run = api.call("GET", f"/actions/runs/{env.get('GITHUB_RUN_ID', 'invalid')}")
     main = sha_ref(api, "main")
@@ -436,7 +454,9 @@ def run(api, env):
     if failure:
         raise ProbeError(failure)
     if staged_only:
-        return {"status":"BRANCH_VERIFIED_PR_CREATE_DENIED", "pr":None, "wrote":True}
+        status = ("BRANCH_VERIFIED_NO_PR_REQUEST" if scope.get("branch_only")
+                  else "BRANCH_VERIFIED_PR_CREATE_DENIED")
+        return {"status":status, "pr":None, "wrote":True}
     return {"status":"DRAFT_PR_CREATED_NOT_MERGED", "pr":pr, "wrote":True}
 
 
