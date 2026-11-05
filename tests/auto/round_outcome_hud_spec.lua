@@ -157,12 +157,14 @@ check("result banner shows each server result and restores unobstructed guidance
     assert(banner.Visible==true and banner.Text:find("BASE LOST",1,true)
            and banner.Text:find("RESTARTING WAVE 1",1,true),
            "loss must appear in the prominent result banner")
+    assert(banner.Text:find("\n",1,true), "loss must render an actual second line")
     assert(tip.Visible==false and guide.Visible==false,
            "normal hint and onboarding cannot compete with an outcome")
     result.Value="VICTORY";result.Changed:Fire()
     assert(banner.Visible==true and banner.Text:find("WAVE 50 CLEARED",1,true)
            and banner.Text:find("NEW FACTORY RUN",1,true),
            "victory must be distinguishable from loss")
+    assert(banner.Text:find("\n",1,true), "victory must render an actual second line")
     result.Value="";result.Changed:Fire()
     assert(banner.Visible==false and tip.Visible==true
            and tip.Text:find("WAIT GUARDON",1,true),

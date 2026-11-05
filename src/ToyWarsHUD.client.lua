@@ -173,11 +173,11 @@ local function refresh()
     -- result banner keeps LOSS and final-wave VICTORY legible on small screens.
     local outcomeLabel=outcome and outcome.Value or ""
     if outcomeLabel=="LOSS" then
-        resultBanner.Text="BASE LOST\\nRESTARTING WAVE 1"
+        resultBanner.Text="BASE LOST\nRESTARTING WAVE 1"
         resultBanner.TextColor3=Color3.fromRGB(255,145,145)
         resultBanner.Visible=true
     elseif outcomeLabel=="VICTORY" then
-        resultBanner.Text="WAVE 50 CLEARED\\nNEW FACTORY RUN"
+        resultBanner.Text="WAVE 50 CLEARED\nNEW FACTORY RUN"
         resultBanner.TextColor3=Color3.fromRGB(153,255,185)
         resultBanner.Visible=true
     else
