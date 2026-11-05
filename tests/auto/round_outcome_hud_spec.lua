@@ -56,11 +56,12 @@ local function fixture(lateOutcome,duringSubscription)
         print=function() end,
     },{__index=_G})
     assert(loadfile(hud,"t",env))()
-    local tip,guide,buttons
+    local tip,guide,buttons,banner
     buttons=0
     for _,o in ipairs(created) do
         if o.TextStrokeTransparency==0.4 then tip=o end
         if o.Name=="QuickStart" then guide=o end
+        if o.Name=="RoundResultBanner" then banner=o end
         if o.ClassName=="TextButton" then buttons=buttons+1 end
     end
     assert(tip and guide and buttons==3,"existing HUD with three choices required")
@@ -71,7 +72,7 @@ local function fixture(lateOutcome,duringSubscription)
                status._children.RoundOutcome=child
                status.ChildAdded:Fire(child)
                return child
-           end
+           end,banner
 end
 local function check(name,fn)
     local ok,err=pcall(fn)
@@ -147,6 +148,27 @@ for _,recognized in ipairs({"LOSS","VICTORY"}) do
         assert(#calls==0,"client only displays outcome, no gameplay command")
     end)
 end
+
+check("result banner shows each server result and restores unobstructed guidance",function()
+    local tip,result,coins,allies,guide,calls,inject,banner=fixture()
+    assert(banner and banner.Visible==false and tip.Visible==true,
+           "a neutral game session should keep the result banner hidden")
+    result.Value="LOSS";result.Changed:Fire()
+    assert(banner.Visible==true and banner.Text:find("BASE LOST",1,true)
+           and banner.Text:find("RESTARTING WAVE 1",1,true),
+           "loss must appear in the prominent result banner")
+    assert(tip.Visible==false and guide.Visible==false,
+           "normal hint and onboarding cannot compete with an outcome")
+    result.Value="VICTORY";result.Changed:Fire()
+    assert(banner.Visible==true and banner.Text:find("WAVE 50 CLEARED",1,true)
+           and banner.Text:find("NEW FACTORY RUN",1,true),
+           "victory must be distinguishable from loss")
+    result.Value="";result.Changed:Fire()
+    assert(banner.Visible==false and tip.Visible==true
+           and tip.Text:find("WAIT GUARDON",1,true),
+           "banner must leave gameplay readable after the grace period")
+    assert(#calls==0,"UI-only outcome presentation must not send gameplay commands")
+end)
 
 print(string.format("AUTO_ROUND_OUTCOME_HUD_SUMMARY %d passed / %d failed; canonical HUD native Lua mock",passed,failed))
 if failed>0 then os.exit(1) end
