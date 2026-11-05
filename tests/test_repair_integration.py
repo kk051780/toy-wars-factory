@@ -591,6 +591,24 @@ class IntegrationTests(unittest.TestCase):
         self.pr["branch"]="feature/evil"
         self.assertEqual(self.decision()["action"], "SKIP_UNRELATED")
 
+    def test_manual_coordinator_ancestry_boolean_false_not_integer_zero(self):
+        self.enable_manual_candidate()
+        self.assertEqual(self.decision()["action"], "MERGE")
+        self.review["manual_git_evidence"]["claim_to_control_ref"]["behind_by"] = False
+        self.assertEqual(self.decision()["action"], "WAIT_MANUAL_PROOF")
+
+    def test_manual_first_commit_lineage_boolean_false_not_integer_zero(self):
+        self.enable_manual_candidate()
+        self.assertEqual(self.decision()["action"], "MERGE")
+        self.review["manual_git_evidence"]["first_commit_to_head"]["behind_by"] = False
+        self.assertEqual(self.decision()["action"], "WAIT_MANUAL_PROOF")
+
+    def test_manual_main_compare_boolean_false_not_integer_zero(self):
+        self.enable_manual_candidate()
+        self.assertEqual(self.decision()["action"], "MERGE")
+        self.review["manual_git_evidence"]["comparison"]["behind_by"] = False
+        self.assertEqual(self.decision()["action"], "WAIT_MANUAL_PROOF")
+
     def test_good_independent_review_merges_without_owner_reply(self):
         result = self.decision()
         self.assertEqual(result["action"], "MERGE")
