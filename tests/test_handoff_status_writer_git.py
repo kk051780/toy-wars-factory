@@ -266,5 +266,48 @@ class WriterGitBoundary(unittest.TestCase):
 
 
 
+    def test_existing_snapshot_symlink_mode_is_rejected(self):
+        self.change_status()
+        initial = self.run_writer()
+        self.assertEqual(initial.returncode, 0, initial.stderr)
+        other = self.root / "symlink-foreign"
+        command("git", "clone", "-q", "-b", "twf-handoff-snapshots",
+                str(self.remote), str(other))
+        command("git", "config", "user.name", "Synthetic adversary", cwd=other)
+        command("git", "config", "user.email", "synthetic@example.invalid", cwd=other)
+        target = other / "status/CHAT_HANDOFF.md"
+        target.unlink()
+        os.symlink("LATEST_STATE.json", target)
+        command("git", "add", "status/CHAT_HANDOFF.md", cwd=other)
+        command("git", "commit", "-qm", "foreign symlink with same filenames", cwd=other)
+        command("git", "push", "-q", "origin", "HEAD:refs/heads/twf-handoff-snapshots", cwd=other)
+        poisoned = self.snapshot_sha()
+        (self.work / "status/CHAT_HANDOFF.md").write_text("next snapshot\\n")
+        result = self.run_writer()
+        self.assertNotEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.snapshot_sha(), poisoned)
+        self.assertEqual(self.remote_sha(), self.source_sha)
+
+    def test_existing_snapshot_executable_mode_is_rejected(self):
+        self.change_status()
+        initial = self.run_writer()
+        self.assertEqual(initial.returncode, 0, initial.stderr)
+        other = self.root / "executable-foreign"
+        command("git", "clone", "-q", "-b", "twf-handoff-snapshots",
+                str(self.remote), str(other))
+        command("git", "config", "user.name", "Synthetic adversary", cwd=other)
+        command("git", "config", "user.email", "synthetic@example.invalid", cwd=other)
+        (other / "status/LATEST_STATE.json").chmod(0o755)
+        command("git", "add", "status/LATEST_STATE.json", cwd=other)
+        command("git", "commit", "-qm", "foreign executable bit with same filenames", cwd=other)
+        command("git", "push", "-q", "origin", "HEAD:refs/heads/twf-handoff-snapshots", cwd=other)
+        poisoned = self.snapshot_sha()
+        (self.work / "status/CHAT_HANDOFF.md").write_text("next snapshot\\n")
+        result = self.run_writer()
+        self.assertNotEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.snapshot_sha(), poisoned)
+        self.assertEqual(self.remote_sha(), self.source_sha)
+
+
 if __name__ == "__main__":
     unittest.main()
