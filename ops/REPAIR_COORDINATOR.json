@@ -1420,17 +1420,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 443,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "158068aa-d5c3-4179-942f-5756290e4d1f",
-    "task_id": null,
-    "epoch": 443,
-    "acquired_at": "2026-11-05T04:49:24.613Z",
-    "expires_at": "2026-11-05T05:12:24.613Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/issue57-handoff-privilege-split-9b8a6f21",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3074,45 +3064,21 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "8d0a48ec-4b5c-451d-b5e0-7e6e8f6f1c31",
-    "epoch": 442,
-    "released_at": "2026-11-05T04:25:22.388Z",
-    "release_receipt": {
-      "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
-      "claim_commit": "29833ef2625a3d48fedc0b7dcd4bdd1681be96c7",
-      "pr": 179,
-      "pr_head": "acb7d54ba4047a66b1595b47a03e71c7087c7465",
-      "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "ci_run_id": 41967388742,
-      "ci_run_attempt": 1,
-      "ci_event": "pull_request",
-      "ci_conclusion": "success",
-      "ci_python_tests_passed": 833,
-      "ci_lua_round_outcome_hud_passed": 6,
-      "ci_lua_round_outcome_server_passed": 6,
-      "ci_jobs": [
-        "offline:success",
-        "compile_hold:success"
-      ],
-      "original_test_fixtures_restored": 11,
-      "final_pr_diff_files": 7,
-      "manual_review_request_registered": true,
-      "coordinator_review_request_commit": "05131d104c1e7d74e69a444e28aa48d12a345102",
-      "code_paths": [
-        "src/ToyWarsHUD.client.lua",
-        "tests/auto/round_outcome_hud_spec.lua",
-        "history/C98692_round_outcome_legacy_fixture_compat.json"
-      ],
-      "code_commit": "acb7d54ba4047a66b1595b47a03e71c7087c7465",
-      "registered_chatgpt_worker_run_attested": false,
-      "github_native_independent_review": false,
-      "main_merged": false,
-      "roblox_engine_verified": false,
-      "no_paid_service_added": true,
-      "no_secret_permission_billing_changes": true,
-      "postwrite_readback_required": true
-    }
+    "kind": "OWNER_RELEASE_AFTER_HOST_SAFETY_DENIAL",
+    "claim_commit": "93d8dcf62fa2cf3c10cd2193395836bfbeb62cc9",
+    "epoch": 443,
+    "owner_id": "158068aa-d5c3-4179-942f-5756290e4d1f",
+    "target_pr": 181,
+    "target_head_unchanged": "75e551e65757b3140fb7760f9084ea132f108cd7",
+    "main_sha_unchanged": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "source_commit_created": false,
+    "source_write_attempt": "BLOCKED_OPENAI_HOST_SAFETY",
+    "provider_terminal_attested": false,
+    "independent_review": false,
+    "merge": false,
+    "engine_test": false,
+    "spending_incurred": false,
+    "recorded_at": "2026-11-05T04:53:19.743Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
