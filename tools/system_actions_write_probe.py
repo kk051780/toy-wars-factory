@@ -183,7 +183,7 @@ def cas_state(api, oldref, newstate):
 
 
 
-def verify_staged_probe(api, scope):
+def verify_staged_probe(api, scope, *, check_stability=True):
     """Fail closed on exact branch/parent/diff/blob readbacks even if PR creation was denied.
 
     A verified staged branch is NOT a PR, review, merge, or successful CI.
@@ -231,7 +231,7 @@ def verify_staged_probe(api, scope):
     git_blob = hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
     if raw != expected_raw or file.get("sha") != git_blob:
         raise ProbeError("PROBE_FILE_UNVERIFIED")
-    if sha_ref(api,"main") != main_sha or sha_ref(api,branch) != branch_sha:
+    if check_stability and (sha_ref(api,"main") != main_sha or sha_ref(api,branch) != branch_sha):
         raise ProbeError("REF_MOVED_DURING_READBACK")
     return branch_sha
 
@@ -240,7 +240,8 @@ def verify_created_probe(api, scope, number):
     """Keep the original strict draft-PR readback after verifying its staged branch."""
     if type(number) is not int or number < 1:
         raise ProbeError("PR_RESPONSE_UNVERIFIED")
-    branch_sha = verify_staged_probe(api, scope)
+    # The normal PR path keeps its original final ref readback AFTER PR GET.
+    branch_sha = verify_staged_probe(api, scope, check_stability=False)
     main_sha, branch = scope["main"], scope["branch"]
     pr = api.call("GET",f"/pulls/{number}")
     h,b = pr.get("head"),pr.get("base")

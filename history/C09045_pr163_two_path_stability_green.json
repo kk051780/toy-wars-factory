@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "id": "C09045",
+  "kind": "GHA_STAGE_VS_PR_FINAL_REF_CHECK_SEQUENCE_GREEN",
+  "date_utc": "2026-11-05",
+  "pr": 163,
+  "owner_id": "4c908bbd-969c-4f5a-a41d-7c58a2916fd7",
+  "coordinator_epoch": 447,
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "red_head": "d05bf9dca392f702ee3407aa790856784bd8c38d",
+  "green_first_attempt": {
+    "head": "14c32c7ebb7c39a45f5613c45b33d7a43110c181",
+    "run": 41993437691,
+    "new_case_results": "8/8 PASS and 2/2 integration PASS",
+    "offline": "949/950 PASS",
+    "compile_hold": "SUCCESS",
+    "old_test_failure": "test_exact_readback_returns_verified_number expected 2 main reads; refactor accidentally 3"
+  },
+  "correction": "Stage-only verifier always checks main/ref final stability after blob read; ordinary PR verifier preserves original 2 main reads with final ref check AFTER GET /pulls. No fixture weakening, no rights added, fail closed on drift.",
+  "source_path": "tools/system_actions_write_probe.py",
+  "prior_blob": "dce5ec8bb240a5534d8142c1177f139a57821542",
+  "corrected_blob": "ec4001c257ab5ddc3e3f99d39b6ec820dddddf3b",
+  "green_ci": "PENDING",
+  "new_paid_services": 0,
+  "main_merged": false,
+  "engine_verified": false
+}
