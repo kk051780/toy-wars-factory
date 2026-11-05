@@ -1420,17 +1420,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 453,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "70e948a2-508b-44dd-a621-1db22c4fb270",
-    "task_id": null,
-    "epoch": 453,
-    "acquired_at": "2026-11-05T23:43:05.830Z",
-    "expires_at": "2026-11-06T00:13:05.830Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "ops/twf-manual-review-lane",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3074,38 +3064,36 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "OWNER_RELEASE_AFTER_PR12_CURRENT_MAIN_WATCHDOG_ONLY_CI_GREEN",
-    "owner_id": "b6e20b3a-4bca-4bf5-9454-5df07061b11e",
-    "epoch": 452,
-    "claim_commit": "32309754c2df3bbb2ca772ca998d8bbec0fdca76",
-    "work_branch": "proposal/free-tier-actions-budget",
-    "pr": 12,
-    "head": "a7615a0441f63a7826103083c2a04c29639e50bd",
+    "kind": "OWNER_RELEASE_AFTER_PR60_MALFORMED_GITHUB_EVIDENCE_RED_GREEN",
+    "owner_id": "70e948a2-508b-44dd-a621-1db22c4fb270",
+    "epoch": 453,
+    "claim_commit": "d05487766ea9d44921270d9ff670e5bd0addb309",
+    "pr": 60,
+    "branch": "ops/twf-manual-review-lane",
+    "head": "89ad1bc90b586f92b7456b4ecd5a0291fc829d62",
     "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "merge_parents": [
-      "22df6230a38c36ad8aab9731edfb31ce9226a250",
-      "e5deff4d5681bca4823a3da0f848e01bc089ae6e"
-    ],
+    "red_head": "22a4d4e563cf19a2b8bc0ee0e58b44b9ca8af740",
+    "red_ci_run": 42131718613,
+    "red_result": "Python 992 tests; 1 failure and 13 errors from four defect classes",
+    "green_ci_run": 42131973981,
+    "green_result": "offline + compile_hold SUCCESS; Python 992/992",
     "changed_files": [
-      ".github/workflows/loop-watchdog.yml",
-      "docs/ACTIONS_FREE_BUDGET_PLAN.md",
-      "tests/test_idle_watchdog_cadence.py"
+      "tools/repair_integration.py",
+      "tests/test_repair_integration.py",
+      "history/C98740_pr60_fail_closed_provider_metadata.json"
     ],
-    "unchanged_handoff_blob": "0eb766760c9ebe1cbdc3c3c59abcd01310907282",
-    "green_ci_run_id": 42129533853,
-    "green_result": "offline + compile_hold SUCCESS; Python 836/836; 3 new watchdog tests",
-    "original_main_source_metrics": {
-      "files": 4,
-      "lines": 1186,
-      "bytes": 52781
-    },
-    "independent_review": false,
+    "tool_source_bytes_before": 23619,
+    "tool_source_bytes_after": 24083,
+    "game_source_changed": false,
+    "policy_changed": false,
     "main_merged": false,
-    "new_spending_settings_changed": false,
+    "independent_native_review": false,
+    "provider_enforced_branch_protection_verified": false,
     "roblox_engine_run": false,
-    "recorded_at": "2026-11-05T23:30:10.283Z",
-    "released_at": "2026-11-05T23:30:10.283Z",
-    "note": "PR12 originally reduced two cron workflows; now only watchdog is in current-main diff. Theoretical 94.4% fewer watchdog scheduled attempts, NOT verified savings. Protected PR181 handoff scope untouched."
+    "billing_changes": false,
+    "recorded_at": "2026-11-05T23:48:00.696Z",
+    "released_at": "2026-11-05T23:48:00.696Z",
+    "note": "Malformed GitHub jobs, PR CI, review checks, and main QA descendant paths now produce fail-closed decisions. Does not solve native approval or provider branch-protection integration block."
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
