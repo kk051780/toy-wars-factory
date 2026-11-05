@@ -104,6 +104,23 @@ def github_get(path, token):
     except UnicodeDecodeError:
         raise NotVerified("INVALID_RESPONSE") from None
 
+def verify_reread(original, reread):
+    """Second provider GET must retain identity and coherent state; grants no authority."""
+    require(type(reread) is dict and type(reread.get("repository")) is dict, "RUN_CHANGED")
+    require(reread["repository"].get("full_name") == REPO, "RUN_CHANGED")
+    for key in ("id", "run_attempt", "head_sha", "workflow_id", "path",
+                "event", "head_branch"):
+        require(type(reread.get(key)) is type(original.get(key)) and
+                reread.get(key) == original.get(key), "RUN_CHANGED")
+    status = reread.get("status")
+    require(status in ("in_progress", "completed") and "conclusion" in reread, "RUN_CHANGED")
+    if status == "in_progress":
+        require(reread["conclusion"] is None, "RUN_CHANGED")
+    else:
+        require(type(reread["conclusion"]) is str and bool(reread["conclusion"]), "RUN_CHANGED")
+    return True
+
+
 def main():
     keys = ("GITHUB_REPOSITORY", "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "GITHUB_REF",
             "GITHUB_SHA", "GITHUB_EVENT_NAME", "GITHUB_WORKFLOW_REF")
@@ -121,10 +138,7 @@ def main():
         branch = github_get(f"/repos/{REPO}/branches/main", token)
         receipt = check(context, run, branch)
         reread = github_get(run_path, token)
-        require(reread.get("id") == run.get("id") and
-                reread.get("head_sha") == run.get("head_sha") and
-                reread.get("run_attempt") == run.get("run_attempt") and
-                reread.get("status") in ("in_progress", "completed"), "RUN_CHANGED")
+        verify_reread(run, reread)
         print(json.dumps(receipt, ensure_ascii=False, sort_keys=True))
         return 0
     except NotVerified as exc:

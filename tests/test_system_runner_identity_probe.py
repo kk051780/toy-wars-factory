@@ -105,6 +105,35 @@ class RunnerIdentityTests(unittest.TestCase):
         r["id"] = 54321
         self.assertFalse(probe.check(c, r, m)["may_dispatch"])
 
+    def test_reread_same_identity_and_terminal_transition(self):
+        _, run, _ = valid()
+        self.assertTrue(probe.verify_reread(run, dict(run)))
+        self.assertTrue(probe.verify_reread(run, dict(run, status="completed", conclusion="success")))
+
+    def test_reread_rejects_metadata_drift(self):
+        _, run, _ = valid()
+        for key, bad in (("id", 12346), ("run_attempt", 3), ("head_sha", "b" * 40),
+                         ("workflow_id", 99999), ("path", "other.yml"),
+                         ("event", "pull_request"), ("head_branch", "feature")):
+            with self.subTest(key=key), self.assertRaisesRegex(probe.NotVerified, "^RUN_CHANGED$"):
+                probe.verify_reread(run, dict(run, **{key: bad}))
+        with self.assertRaisesRegex(probe.NotVerified, "^RUN_CHANGED$"):
+            probe.verify_reread(run, dict(run, repository={"full_name": "foreign/repo"}))
+
+    def test_reread_rejects_incoherent_status_conclusion(self):
+        _, run, _ = valid()
+        for status, conclusion in (("in_progress", "success"), ("in_progress", "failure"),
+                                   ("completed", None), ("completed", ""), ("cancelled", None)):
+            with self.subTest(status=status, conclusion=str(conclusion)):
+                with self.assertRaisesRegex(probe.NotVerified, "^RUN_CHANGED$"):
+                    probe.verify_reread(run, dict(run, status=status, conclusion=conclusion))
+        missing = dict(run)
+        missing.pop("conclusion")
+        with self.assertRaisesRegex(probe.NotVerified, "^RUN_CHANGED$"):
+            probe.verify_reread(run, missing)
+
+
+
 class RunnerWorkflowTokenIsolationTests(unittest.TestCase):
     """The read-only probe must not give its test suite the run-inspection token."""
     def setUp(self):

@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "cycle": "C93464",
+  "kind": "PR153_READ_ONLY_RUN_REREAD_IMMUTABILITY_GUARD",
+  "observed_at": "2026-11-05T03:46:33Z",
+  "issue": 57,
+  "pr": 153,
+  "baseline": {
+    "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "pr_head": "19f395ddad49a40c883ba1fbab8b99dd78c933a1",
+    "source_blob": "eea187f6deb72f3961a4b6528259908e4374db9d",
+    "test_blob": "54edfbb05679c470d380cf729d68556c5f873db9"
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 440,
+    "owner_id": "37d144f5-6850-4f98-a85c-d3ddd3318c91",
+    "claim_commit": "1d4f2bb4f53932204c373c68566238c4b5a0dc44",
+    "work_branch": "controller/read-only-runner-identity-490539b4"
+  },
+  "description": "Second provider GET must keep the same repository, immutable workflow/run/attempt/source metadata and coherent status/conclusion, even if the run completes.",
+  "changed_files": [
+    "tools/system_runner_identity_probe.py",
+    "tests/test_system_runner_identity_probe.py",
+    "history/C93464_pr153_reread_consistency.json"
+  ],
+  "new_tests": [
+    "test_reread_same_identity_and_terminal_transition",
+    "test_reread_rejects_metadata_drift",
+    "test_reread_rejects_incoherent_status_conclusion"
+  ],
+  "source_delta_chars": 650,
+  "tests_delta_chars": 1616,
+  "verification": {
+    "actual_hosted_exact_head_ci": "PENDING",
+    "manual_workflow_dispatch": false,
+    "registered_chatgpt_worker_attested": false,
+    "independent_review": false,
+    "main_merged": false
+  },
+  "safety": {
+    "no_permissions_change": true,
+    "read_only": true,
+    "no_main_write": true,
+    "no_secret_change": true,
+    "no_billing_change": true,
+    "no_publish": true,
+    "authority_fields_still_false": true
+  }
+}
