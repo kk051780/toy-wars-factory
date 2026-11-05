@@ -1420,17 +1420,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 442,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "8d0a48ec-4b5c-451d-b5e0-7e6e8f6f1c31",
-    "task_id": null,
-    "epoch": 442,
-    "acquired_at": "2026-11-05T04:16:41.173Z",
-    "expires_at": "2026-11-05T04:41:41.173Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/game-round-outcome-be5b6e39",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3075,33 +3065,37 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "7f6c90ce-65fb-4193-8562-8c6b4b68c50d",
-    "epoch": 441,
-    "released_at": "2026-11-05T03:55:48.747Z",
+    "owner_id": "8d0a48ec-4b5c-451d-b5e0-7e6e8f6f1c31",
+    "epoch": 442,
+    "released_at": "2026-11-05T04:25:22.388Z",
     "release_receipt": {
       "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
-      "claim_commit": "93c3b64a9f12f3809b68dbacbd1ba7ec6b43162e",
-      "pr": 181,
-      "pr_head": "75e551e65757b3140fb7760f9084ea132f108cd7",
+      "claim_commit": "29833ef2625a3d48fedc0b7dcd4bdd1681be96c7",
+      "pr": 179,
+      "pr_head": "acb7d54ba4047a66b1595b47a03e71c7087c7465",
       "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "ci_run_id": 41964475137,
+      "ci_run_id": 41967388742,
       "ci_run_attempt": 1,
       "ci_event": "pull_request",
       "ci_conclusion": "success",
-      "ci_python_tests_passed": 874,
+      "ci_python_tests_passed": 833,
+      "ci_lua_round_outcome_hud_passed": 6,
+      "ci_lua_round_outcome_server_passed": 6,
       "ci_jobs": [
         "offline:success",
         "compile_hold:success"
       ],
+      "original_test_fixtures_restored": 11,
+      "final_pr_diff_files": 7,
+      "manual_review_request_registered": true,
+      "coordinator_review_request_commit": "05131d104c1e7d74e69a444e28aa48d12a345102",
       "code_paths": [
-        ".github/workflows/handoff-sync.yml",
-        "tests/test_handoff_status_writer_git.py",
-        "tests/test_handoff_privilege_split.py",
-        "history/C99874_pr181_snapshot_ancestry_guard.json"
+        "src/ToyWarsHUD.client.lua",
+        "tests/auto/round_outcome_hud_spec.lua",
+        "history/C98692_round_outcome_legacy_fixture_compat.json"
       ],
-      "code_commit": "75e551e65757b3140fb7760f9084ea132f108cd7",
+      "code_commit": "acb7d54ba4047a66b1595b47a03e71c7087c7465",
       "registered_chatgpt_worker_run_attested": false,
-      "github_dispatch_activated": false,
       "github_native_independent_review": false,
       "main_merged": false,
       "roblox_engine_verified": false,
