@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "id": "C99873",
+  "date_utc": "2026-11-05",
+  "issue": 57,
+  "pr": 181,
+  "kind": "CI_RED_CORRECTION_PRIOR_SNAPSHOT_OBJECT_MODE",
+  "previous_head": "59d7b0b9ef753dbe2b64d555ca99285fb1264e2a",
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 439,
+    "owner_id": "80a7a397-2dbd-4b92-ac90-a18c0474d6be",
+    "claim_commit": "2b95c67f3eb7c5945a3c076e460b59e9acb0f2b0"
+  },
+  "red_ci": {
+    "run_id": 41962691983,
+    "event": "pull_request",
+    "head": "59d7b0b9ef753dbe2b64d555ca99285fb1264e2a",
+    "offline": "failure",
+    "compile_hold": "success",
+    "python_tests": 871,
+    "failed": [
+      "test_snapshot_branch_second_update_is_fast_forward",
+      "test_unchanged_status_skips_commit_and_push"
+    ],
+    "new_negative_tests": "2/2 PASS"
+  },
+  "diagnosis": "New expected-mode printf supplied two literal backslashes before n; Bash printf emitted backslash-n instead of two expected lines, falsely rejecting safe prior tip.",
+  "changes": [
+    ".github/workflows/handoff-sync.yml",
+    "tests/test_handoff_privilege_split.py",
+    "history/C99873_pr181_mode_guard_escape_regression.json"
+  ],
+  "fix": "Use exactly one slash+n escape in Bash printf and add static regression rejecting double escape.",
+  "ci_status": "PENDING_NEW_HEAD",
+  "limits": [
+    "No live workflow writer or autonomous task run proven",
+    "No main merge/approval or secrets/spend/publication"
+  ]
+}

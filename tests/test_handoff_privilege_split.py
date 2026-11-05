@@ -88,6 +88,13 @@ class HandoffPrivilegeSplit(unittest.TestCase):
         self.assertNotIn("git push origin HEAD:refs/heads/main", writer)
         self.assertNotIn("git push --force", writer)
 
+    def test_exact_prior_git_object_mode_format(self):
+        writer = sections()[1]
+        self.assertIn("git ls-tree -r --format='%(objectmode) %(objecttype) %(path)'", writer)
+        expected = "100644 blob status/CHAT_HANDOFF.md" + chr(92) + "n100644 blob status/LATEST_STATE.json"
+        self.assertIn(expected, writer)
+        self.assertNotIn("status/CHAT_HANDOFF.md" + chr(92) * 2 + "n100644", writer)
+
     def test_writer_only_downloads_passive_artifact(self):
         writer = sections()[1]
         self.assertIn("uses: actions/download-artifact@", writer)

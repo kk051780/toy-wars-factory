@@ -135,7 +135,7 @@ jobs:
             test "$(git rev-parse FETCH_HEAD)" = "$previous"
             test "$(git ls-tree -r --name-only "$previous")" = "$allowed_files"
           # A foreign tip with valid names but a symlink/executable mode is not passive data.
-          test "$(git ls-tree -r --format='%(objectmode) %(objecttype) %(path)' "$previous")" = "$(printf '100644 blob status/CHAT_HANDOFF.md\\n100644 blob status/LATEST_STATE.json')"
+          test "$(git ls-tree -r --format='%(objectmode) %(objecttype) %(path)' "$previous")" = "$(printf '100644 blob status/CHAT_HANDOFF.md\n100644 blob status/LATEST_STATE.json')"
             if [ "$(git rev-parse "$previous^{tree}")" = "$snapshot_tree" ]; then
               echo "NO_CHANGE: avoided fake snapshot progress" >> "$GITHUB_STEP_SUMMARY"
               exit 0
