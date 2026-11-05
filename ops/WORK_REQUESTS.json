@@ -4529,6 +4529,52 @@
       "merge_authorized_by_this_entry": false,
       "provider_enforcement_verified": false,
       "new_spend_authorized": false
+    },
+    {
+      "id": "pr150_official_two_path_windows_inventory_registered_security_review_20261105",
+      "kind": "REGISTERED_REVIEWER_READ_ONLY_PROTECTED_WINDOWS_WORKFLOW_SECURITY_AUDIT",
+      "priority": "P1",
+      "status": "OPEN_READ_ONLY_AUDIT_NO_NATIVE_APPROVAL_NO_MERGE",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "parent_issue": 151,
+      "canonical_issue": 123,
+      "work_id": "TWF-A14-PR150-WINDOWS-STUDIO-DUAL-ROOT-INVENTORY-20261105",
+      "pr": 150,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/150",
+      "branch": "controller/a14-windows-studio-discovery-6b83d2",
+      "head": "f68d2186ed586eb6b9fc8423aae3297716258a8e",
+      "stacked_parent_pr": 149,
+      "parent_head": "68490a335cc6619933f671b8aae63f074c2536c6",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "created_at": "2026-11-05T09:08:38.277Z",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "321fed8579777b79cfacd890430d8c38316a2aed",
+        "epoch": 448,
+        "owner_run_id": "50ed9852-7d4c-4ab0-904a-9092d7aa8b4a"
+      },
+      "original_ci": {
+        "red_head": "e1173eae4b8dbb85169a656ab8a57d925fedbe56",
+        "red_run": 41999062430,
+        "red_expected_failures": 5,
+        "green_head": "f68d2186ed586eb6b9fc8423aae3297716258a8e",
+        "green_run": 41999460596,
+        "green_python_tests": 940,
+        "windows_run": 41999460626,
+        "windows_job": 127150731251,
+        "windows_artifact_id": 13401502439,
+        "windows_zip_sha256": "3e2f229ae418ff56b0dba80e0955974da0365bd0be6fdcc4e0956204df24b303",
+        "official_roots_checked": 2,
+        "official_roots_present": 0
+      },
+      "request": "Independently read-only audit exact PR150 and parent149 heads, new tests, actual Windows provenance, absence scope, Linux QA, no untrusted workflow execution, tokenless permissions, GitHub merge-ref vs PR head, Authenticode strict organization and Windows root variables. Do NOT approve native review / count as independent merge authorization / create installer run or Roblox engine credentials / merge or publish. If proven safe, record scoped PASS security advisory; provider native reviewer and protected private main remain separate blocked gates.",
+      "independent_review_complete": false,
+      "merge_authorized": false,
+      "owner_reply_required": false,
+      "publish_authorized": false,
+      "additional_spend_authorized": false
     }
   ]
 }
