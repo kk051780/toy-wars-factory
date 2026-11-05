@@ -8,7 +8,7 @@ local function signal()
     function s:Fire(...) for _,fn in ipairs(self.listeners) do fn(...) end end
     return s
 end
-local function fixture(lateOutcome)
+local function fixture(lateOutcome,duringSubscription)
     local balance=assert(loadfile("src/ToyWarsBalance.lua"))()
     local created,calls={},{}
     local function object(class,value)
@@ -30,6 +30,18 @@ local function fixture(lateOutcome)
         status._children[name]=object("Value",value)
     end
     if not lateOutcome then status._children.RoundOutcome=object("StringValue","") end
+    if duringSubscription then
+        assert(lateOutcome,"subscription race requires initially absent result")
+        local oldConnect=status.ChildAdded.Connect
+        function status.ChildAdded:Connect(fn)
+            -- Replication occurs after FindFirstChild, before this handler attaches.
+            local child=object("StringValue","VICTORY")
+            child.Name="RoundOutcome"
+            status._children.RoundOutcome=child
+            self:Fire(child) -- Nobody is listening yet: the notification is lost.
+            return oldConnect(self,fn)
+        end
+    end
     local model=object("ModuleScript")
     local storage=object("ReplicatedStorage")
     storage._children={ToyWarsBalance=model,ToyWarsSelectUnit={FireServer=function(_,id) calls[#calls+1]=id end}}
@@ -109,6 +121,15 @@ check("late server result arrives without blocking original HUD",function()
     late.Value=""
     late.Changed:Fire()
     assert(has(tip,"WAIT GUARDON") and #calls==0,"restored guidance without client gameplay event")
+end)
+
+check("outcome arriving inside ChildAdded subscription is reconciled",function()
+    local tip,result,coins,allies,guide,calls=fixture(true,true)
+    assert(result and result.Value=="VICTORY","race injection created authoritative result")
+    assert(has(tip,"WAVE 50") and not guide.Visible,
+           "result already present after subscription must be displayed")
+    result.Value="";result.Changed:Fire()
+    assert(has(tip,"WAIT GUARDON") and #calls==0,"cleared result restores original guidance")
 end)
 
 for _,recognized in ipairs({"LOSS","VICTORY"}) do
