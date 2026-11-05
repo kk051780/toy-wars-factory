@@ -1420,17 +1420,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 439,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "80a7a397-2dbd-4b92-ac90-a18c0474d6be",
-    "task_id": null,
-    "epoch": 439,
-    "acquired_at": "2026-11-05T03:34:35.161Z",
-    "expires_at": "2026-11-05T04:02:35.161Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/issue57-handoff-privilege-split-9b8a6f21",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3075,25 +3065,32 @@
   },
   "last_completed": {
     "kind": "CONTROLLER",
-    "owner_id": "8e25cadc-f7c6-4799-bfc8-d0fd5b3b6f2a",
-    "epoch": 438,
-    "released_at": "2026-11-04T22:33:27.203Z",
+    "owner_id": "80a7a397-2dbd-4b92-ac90-a18c0474d6be",
+    "epoch": 439,
+    "released_at": "2026-11-05T03:41:01.145Z",
     "release_receipt": {
       "kind": "OWNER_RELEASE_NOT_PROVIDER_TERMINAL_PROOF",
-      "claim_commit": "a69f652865a4c2887a2b030cbcd93043293f9f45",
-      "pr": 153,
-      "pr_head": "19f395ddad49a40c883ba1fbab8b99dd78c933a1",
+      "claim_commit": "2b95c67f3eb7c5945a3c076e460b59e9acb0f2b0",
+      "pr": 181,
+      "pr_head": "2fd6b2c029eee57a96e82e94801a5a1e932ac8ba",
       "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "ci_run_id": 41926120928,
-      "ci_run_attempt": 1,
-      "ci_conclusion": "success",
-      "ci_python_tests_passed": 883,
-      "code_paths": [
-        "tools/system_runner_identity_probe.py",
-        "tests/test_system_runner_identity_probe.py",
-        "history/C93463_pr153_run_conclusion_guard.json"
+      "observed_red_ci_run_id": 41962691983,
+      "red_ci_conclusion": "failure",
+      "final_ci_run_id": 41962928347,
+      "final_ci_conclusion": "success",
+      "final_ci_tests_passed": 872,
+      "final_ci_jobs": [
+        "offline:success",
+        "compile_hold:success"
       ],
-      "code_commit": "19f395ddad49a40c883ba1fbab8b99dd78c933a1",
+      "code_paths": [
+        ".github/workflows/handoff-sync.yml",
+        "tests/test_handoff_status_writer_git.py",
+        "tests/test_handoff_privilege_split.py",
+        "history/C99872_pr181_snapshot_prior_tree_mode_guard.json",
+        "history/C99873_pr181_mode_guard_escape_regression.json"
+      ],
+      "code_commit": "2fd6b2c029eee57a96e82e94801a5a1e932ac8ba",
       "registered_chatgpt_worker_run_attested": false,
       "github_dispatch_activated": false,
       "github_native_independent_review": false,
