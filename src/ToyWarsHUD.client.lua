@@ -160,6 +160,10 @@ local function refresh()
     local upgradeCost=B.upgradePrice(lv.Value)
     local chosenId=type(selected.Value)=="string" and string.lower(selected.Value) or nil
     local unit=chosenId and B.isUnit(chosenId) and B.UNITS[chosenId] or nil
+    if outcome and (outcome.Value=="LOSS" or outcome.Value=="VICTORY") then
+        -- Expose the authoritative result instead of leaving onboarding over it.
+        quickStart.Visible=false
+    end
     if outcome and outcome.Value=="LOSS" then
         tip.Text="BASE LOST • RESTARTING WAVE 1"
     elseif outcome and outcome.Value=="VICTORY" then

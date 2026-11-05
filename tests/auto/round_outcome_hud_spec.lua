@@ -81,7 +81,7 @@ check("LOSS server value overrides unaffordable and full-capacity hints",functio
     assert(has(tip,"BASE LOST") and not has(tip,"FIELD FULL"),"authoritative defeat cue")
     coins.Value=0;coins.Changed:Fire()
     assert(has(tip,"BASE LOST"),"coin changes do not obscure defeat")
-    assert(guide.Visible and #calls==0,"display-only feedback")
+    assert(not guide.Visible and #calls==0,"outcome-only feedback dismisses onboarding")
 end)
 check("VICTORY is distinct from loss when wave loops back to one",function()
     local tip,result,coins,allies,guide,calls=fixture()

@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "id": "C98693",
+  "date_utc": "2026-11-05",
+  "kind": "MANUAL_GAME_ROUND_OUTCOME_ONBOARDING_GREEN",
+  "pr": 179,
+  "issue": 179,
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "kind": "CONTROLLER",
+    "epoch": 444,
+    "owner_id": "e36d9c84-8268-4332-b17b-5c564fcaee1c",
+    "claim_commit": "88cb7d6f81d597c2a363bc63d1f4e6f264f77217",
+    "work_branch": "controller/game-round-outcome-be5b6e39"
+  },
+  "red": {
+    "commit": "b5608287139ed9fdb12044337fd17f6af94182cc",
+    "run_id": 41972493957,
+    "attempt": 1,
+    "status": "failure",
+    "expected_new_failures": [
+      "recognized LOSS exposes result even when onboarding is visible",
+      "recognized VICTORY exposes result even when onboarding is visible"
+    ],
+    "compile_hold": "success"
+  },
+  "green": {
+    "run_id": "PENDING_NEW_HEAD",
+    "result": "NOT_YET_VERIFIED"
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 8590,
+      "after_bytes": 8789,
+      "delta_bytes": 199,
+      "before_blob": "b117d7aaef4b4bc013b65d5cdfe50bc0ee711613",
+      "after_blob": "75239be8ec55f42118c5ca2dea9eef661ee0ce43",
+      "added_lines": 4,
+      "removed_lines": 0
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1220,
+    "lua_bytes": 54299
+  },
+  "source_baseline_bytes": 25726,
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/round_outcome_hud_spec.lua",
+    "history/C98693_round_outcome_onboarding_green.json"
+  ],
+  "regression": {
+    "new_cases": 2,
+    "legacy_fixtures_changed": 0,
+    "existing_3_button_ui_kept": true,
+    "client_commands_added": false
+  },
+  "limits": {
+    "roblox_engine_verified": false,
+    "independent_review_required": true,
+    "main_merged": false,
+    "published": false,
+    "new_paid_services": false
+  }
+}
