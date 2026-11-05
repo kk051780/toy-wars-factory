@@ -19,21 +19,44 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $versions = Join-Path $env:LOCALAPPDATA 'Roblox\Versions'
+          # Scope is limited to the two documented Windows Studio installation roots.
+          # A missing environment root is an incomplete inventory, not proof of absence.
+          $roots = @()
+          if (-not [string]::IsNullOrWhiteSpace($env:LOCALAPPDATA)) {
+            $roots += Join-Path $env:LOCALAPPDATA 'Roblox\Versions'
+          }
+          $programFilesX86 = [Environment]::GetEnvironmentVariable('ProgramFiles(x86)')
+          if (-not [string]::IsNullOrWhiteSpace($programFilesX86)) {
+            $roots += Join-Path $programFilesX86 'Roblox\Versions'
+          }
+          $roots = @($roots | Select-Object -Unique)
+          $scanRootsChecked = 0
+          $scanRootsPresent = 0
           $found = @()
-          if (Test-Path -LiteralPath $versions -PathType Container) {
-            $found = @(Get-ChildItem -LiteralPath $versions -Filter 'RobloxStudioBeta.exe' -File -Recurse -ErrorAction Stop)
+          foreach ($root in $roots) {
+            $scanRootsChecked += 1
+            if (Test-Path -LiteralPath $root -PathType Container) {
+              $scanRootsPresent += 1
+              $found += @(Get-ChildItem -LiteralPath $root -Filter 'RobloxStudioBeta.exe' -File -Recurse -ErrorAction Stop)
+            }
           }
           $status = 'STUDIO_NOT_INSTALLED'
           $signatureStatus = 'NOT_APPLICABLE'
-          if ($found.Count -gt 0) {
+          if ($scanRootsChecked -ne 2) {
+            $status = 'HOST_INVENTORY_INCOMPLETE'
+          } elseif ($found.Count -gt 0) {
             $status = 'STUDIO_PRESENT_UNTRUSTED'
-            $candidate = $found[0].FullName
-            $sig = Get-AuthenticodeSignature -LiteralPath $candidate
-            $signatureStatus = [string]$sig.Status
-            if ($sig.Status -eq 'Valid' -and $null -ne $sig.SignerCertificate -and
-                $sig.SignerCertificate.Subject -match '(^|,\s*)O=Roblox Corporation(\s*,|$)') {
-              $status = 'STUDIO_PRESENT_SIGNED'
+            $signatureStatus = 'NO_VALID_SIGNED_CANDIDATE'
+            # The first match may be unsigned; inspect every candidate until
+            # a correctly signed official Studio executable is found.
+            foreach ($candidate in $found) {
+              $sig = Get-AuthenticodeSignature -LiteralPath $candidate.FullName
+              if ($sig.Status -eq 'Valid' -and $null -ne $sig.SignerCertificate -and
+                  $sig.SignerCertificate.Subject -match '(^|,\s*)O=Roblox Corporation(\s*,|$)') {
+                $signatureStatus = [string]$sig.Status
+                $status = 'STUDIO_PRESENT_SIGNED'
+                break
+              }
             }
           }
           $report = [ordered]@{
@@ -46,6 +69,9 @@ jobs:
             head_sha = $env:GITHUB_SHA
             runner_os = $env:RUNNER_OS
             runner_image = $env:ImageVersion
+            scan_scope = 'TWO_OFFICIAL_WINDOWS_LOCATIONS_ONLY'
+            scan_roots_checked = $scanRootsChecked
+            scan_roots_present = $scanRootsPresent
             available_installations_count = $found.Count
             studio_executed = $false
             xml_loaded = $false
