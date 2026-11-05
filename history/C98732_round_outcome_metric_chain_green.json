@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "id": "C98732",
+  "kind": "ROUND_OUTCOME_SUBSCRIBE_RACE_SOURCE_METRIC_CHAIN",
+  "date_utc": "2026-11-05",
+  "pr": 179,
+  "issue": 179,
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "kind": "CONTROLLER",
+    "epoch": 446,
+    "owner_id": "a7bc42d0-5213-4ab6-8b2d-2fd752aae9b4",
+    "claim_commit": "a355b4e44d38fdc52b648c88eef896c67fc4fa73",
+    "work_branch": "controller/game-round-outcome-be5b6e39"
+  },
+  "red": {
+    "commit": "28f81d18bae6c7494b9930c1708da6875c37ef67",
+    "run_id": 41980361324,
+    "compile_hold": "success",
+    "offline": "failure",
+    "fixture": "AUTO_ROUND_OUTCOME_HUD_SUMMARY 8 passed / 1 failed"
+  },
+  "green": {
+    "code_commit": "122cb81e0ac3a4cfaeb800b1ce06d1572d602238",
+    "first_run_id": 41980621945,
+    "hud": "9 passed / 0 failed",
+    "server": "6 passed / 0 failed",
+    "python": "832 passed / 1 failed",
+    "first_run_failure": "test_handoff_checkpoint expects source size ledger",
+    "corrected_ledger": true,
+    "new_head_ci": "PENDING"
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 8789,
+      "after_bytes": 8984,
+      "delta_bytes": 195,
+      "before_blob": "75239be8ec55f42118c5ca2dea9eef661ee0ce43",
+      "after_blob": "794fce48fb771f2657908a77e2db97742000662f",
+      "added_lines": 7,
+      "removed_lines": 4
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1223,
+    "lua_bytes": 54494
+  },
+  "source_baseline_bytes": 25726,
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/round_outcome_hud_spec.lua",
+    "history/C98730_round_outcome_subscribe_red.json",
+    "history/C98731_round_outcome_subscribe_green.json",
+    "history/C98732_round_outcome_metric_chain_green.json"
+  ],
+  "protection": {
+    "main_merged": false,
+    "independent_approval": false,
+    "engine_verified": false,
+    "public_publish": false,
+    "additional_cost": 0
+  }
+}
