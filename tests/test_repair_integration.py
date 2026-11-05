@@ -729,5 +729,40 @@ class IntegrationTests(unittest.TestCase):
         self.assertTrue(game_violations(entries[:1], self.policy))
 
 
+    def test_main_qa_descendant_rejects_malformed_or_empty_changed_paths(self):
+        # A trusted 'verified' flag alone must not allow reusing older main QA.
+        self.main["qa_head"] = "a" * 40
+        for bad in (None, [], "untrusted", {"verified": True, "status": "ahead", "paths": None},
+                    {"verified": True, "status": "ahead", "paths": []},
+                    {"verified": True, "status": "ahead", "paths": [["status/LATEST_STATE.json"]]}):
+            with self.subTest(bad=bad):
+                self.main["comparison_since_qa"] = bad
+                self.assertEqual(self.decision()["action"], "WAIT_MAIN_CI")
+
+    def test_manual_provider_job_unhashable_name_fails_closed(self):
+        # GitHub REST fields are not trusted until validated. Never strand
+        # the separate REVIEWER lease with an uncaught TypeError.
+        self.enable_manual_candidate()
+        good = copy.deepcopy(self.review["manual_git_evidence"])
+        for bad in (["offline"], {"job": "offline"}):
+            with self.subTest(bad=bad):
+                evidence = copy.deepcopy(good)
+                evidence["jobs"][0]["name"] = bad
+                self.review["manual_git_evidence"] = evidence
+                self.assertEqual(self.decision()["action"], "WAIT_MANUAL_PROOF")
+
+    def test_malformed_review_checks_fails_closed(self):
+        for bad in (None, ["scope"], True):
+            with self.subTest(bad=bad):
+                self.review["checks"] = bad
+                self.assertEqual(self.decision()["action"], "WAIT_REVIEW")
+
+    def test_malformed_pr_ci_fails_closed(self):
+        for bad in (None, ["success"], True):
+            with self.subTest(bad=bad):
+                self.pr["ci"] = bad
+                self.assertEqual(self.decision()["action"], "WAIT_CI")
+
+
 if __name__ == "__main__":
     unittest.main()
