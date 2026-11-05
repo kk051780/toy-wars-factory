@@ -96,6 +96,28 @@ class FenceTests(unittest.TestCase):
     def first(self, fence):
         return fence.call(*OPS[0], approved_bodies()[0])
 
+    def test_branch_only_fence_rejects_pr_creation_even_with_canonical_body(self):
+        # If the host later grants broader token rights, BRANCH_ONLY must still
+        # forbid /pulls in source, rather than relying on OAuth permissions.
+        branch_scope = {**SCOPE, "branch_only": True}
+        x = p._PerWriteLeaseFence(self.api, branch_scope, EPOCH, CLAIM)
+        for i, (method, path) in enumerate(OPS[:2]):
+            x.call(method, path, approved_bodies()[i])
+        with self.assertRaisesRegex(p.ProbeError, "SOURCE_WRITE_NOT_IN_ALLOWED_ORDER"):
+            x.call(*OPS[2], approved_bodies()[2])
+        self.assertEqual(self.api.calls, OPS[:2])
+
+    def test_branch_only_fence_gets_do_not_unlock_third_write(self):
+        branch_scope = {**SCOPE, "branch_only": True}
+        x = p._PerWriteLeaseFence(self.api, branch_scope, EPOCH, CLAIM)
+        for i, (method, path) in enumerate(OPS[:2]):
+            x.call(method, path, approved_bodies()[i])
+        x.call("GET", "/git/ref/heads/main")
+        with self.assertRaisesRegex(p.ProbeError, "SOURCE_WRITE_NOT_IN_ALLOWED_ORDER"):
+            x.call(*OPS[2], approved_bodies()[2])
+        self.assertEqual(self.api.calls[:2], OPS[:2])
+        self.assertEqual(self.api.calls[-1], ("GET", "/git/ref/heads/main"))
+
     def test_positive_three_exact_writes(self):
         x = self.fence()
         for i, (method, path) in enumerate(OPS):
