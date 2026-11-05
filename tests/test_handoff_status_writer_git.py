@@ -309,5 +309,35 @@ class WriterGitBoundary(unittest.TestCase):
         self.assertEqual(self.remote_sha(), self.source_sha)
 
 
+    def test_existing_snapshot_hidden_source_ancestor_is_rejected(self):
+        self.change_status()
+        first = self.run_writer()
+        self.assertEqual(first.returncode, 0, first.stderr)
+        other = self.root / "transient-foreign"
+        command("git", "clone", "-q", "-b", "twf-handoff-snapshots",
+                str(self.remote), str(other))
+        command("git", "config", "user.name", "Foreign synthetic fixture", cwd=other)
+        command("git", "config", "user.email", "synthetic@example.invalid", cwd=other)
+        transient = other / "transient-source.py"
+        transient.write_text("raise RuntimeError('not passive data')\n", encoding="utf-8")
+        command("git", "add", "transient-source.py", cwd=other)
+        command("git", "commit", "-qm", "foreign transient executable ancestor", cwd=other)
+        command("git", "rm", "-q", "transient-source.py", cwd=other)
+        command("git", "commit", "-qm", "hide prior source from current tree", cwd=other)
+        command("git", "push", "-q", "origin",
+                "HEAD:refs/heads/twf-handoff-snapshots", cwd=other)
+        foreign = self.snapshot_sha()
+        self.assertEqual(self.snapshot_paths(), ["status/CHAT_HANDOFF.md",
+                                                 "status/LATEST_STATE.json"])
+        self.assertEqual(len(command("git", "--git-dir", str(self.remote),
+                                     "rev-list", foreign).splitlines()), 3)
+        (self.work / "status/CHAT_HANDOFF.md").write_text("new safe status\n")
+        result = self.run_writer()
+        self.assertNotEqual(result.returncode, 0,
+                            "A clean tip may not launder a dirty ancestor")
+        self.assertEqual(self.snapshot_sha(), foreign)
+        self.assertEqual(self.remote_sha(), self.source_sha)
+
+
 if __name__ == "__main__":
     unittest.main()

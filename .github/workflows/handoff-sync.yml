@@ -134,6 +134,16 @@ jobs:
             git fetch --no-tags origin "$snapshot_ref"
             test "$(git rev-parse FETCH_HEAD)" = "$previous"
             test "$(git ls-tree -r --name-only "$previous")" = "$allowed_files"
+          # A clean tip must not conceal executable files in previous Git history.
+          # Keep ancestry checks finite and forbid shallow or merged lineages.
+          test "$(git rev-parse --is-shallow-repository)" = "false"
+          snapshot_chain="$(git rev-list --max-count=513 "$previous")"
+          test -n "$snapshot_chain"
+          test "$(printf '%s\n' "$snapshot_chain" | wc -l)" -le 512
+          while IFS= read -r ancestor; do
+            test "$(git ls-tree -r --format='%(objectmode) %(objecttype) %(path)' "$ancestor")" = "$(printf '100644 blob status/CHAT_HANDOFF.md\n100644 blob status/LATEST_STATE.json')"
+            test "$(git rev-list --parents --max-count=1 "$ancestor" | wc -w)" -le 2
+          done <<< "$snapshot_chain"
           # A foreign tip with valid names but a symlink/executable mode is not passive data.
           test "$(git ls-tree -r --format='%(objectmode) %(objecttype) %(path)' "$previous")" = "$(printf '100644 blob status/CHAT_HANDOFF.md\n100644 blob status/LATEST_STATE.json')"
             if [ "$(git rev-parse "$previous^{tree}")" = "$snapshot_tree" ]; then

@@ -95,6 +95,14 @@ class HandoffPrivilegeSplit(unittest.TestCase):
         self.assertIn(expected, writer)
         self.assertNotIn("status/CHAT_HANDOFF.md" + chr(92) * 2 + "n100644", writer)
 
+    def test_prior_snapshot_history_is_bounded_linear_and_data_only(self):
+        writer = sections()[1]
+        self.assertIn("git rev-parse --is-shallow-repository", writer)
+        self.assertIn("git rev-list --max-count=513", writer)
+        self.assertIn('wc -l)" -le 512', writer)
+        self.assertIn('git rev-list --parents --max-count=1', writer)
+        self.assertIn('done <<< "$snapshot_chain"', writer)
+
     def test_writer_only_downloads_passive_artifact(self):
         writer = sections()[1]
         self.assertIn("uses: actions/download-artifact@", writer)
