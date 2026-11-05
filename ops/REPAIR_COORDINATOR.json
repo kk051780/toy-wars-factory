@@ -1420,17 +1420,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 452,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "b6e20b3a-4bca-4bf5-9454-5df07061b11e",
-    "task_id": null,
-    "epoch": 452,
-    "acquired_at": "2026-11-05T23:25:02.963Z",
-    "expires_at": "2026-11-05T23:55:02.963Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "proposal/free-tier-actions-budget",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3074,37 +3064,38 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "OWNER_RELEASE_AFTER_PR179_RESULT_BANNER_RED_GREEN",
-    "owner_id": "df058148-16da-45c5-b274-124768f390ff",
-    "epoch": 451,
-    "claim_commit": "5656d0a816a7d61a8a05933d1f5a1333cf4daa6b",
-    "pr": 179,
-    "branch": "controller/game-round-outcome-be5b6e39",
+    "kind": "OWNER_RELEASE_AFTER_PR12_CURRENT_MAIN_WATCHDOG_ONLY_CI_GREEN",
+    "owner_id": "b6e20b3a-4bca-4bf5-9454-5df07061b11e",
+    "epoch": 452,
+    "claim_commit": "32309754c2df3bbb2ca772ca998d8bbec0fdca76",
+    "work_branch": "proposal/free-tier-actions-budget",
+    "pr": 12,
+    "head": "a7615a0441f63a7826103083c2a04c29639e50bd",
     "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "head": "6ead77b72290a7de1260078c766465b6fd17dfee",
-    "red_head": "0b0edbc644d93369877a1ba0c1ccb1ff2549bfcd",
-    "red_ci_run": 42104736102,
-    "red_case": "HUD 9/10 one expected fail",
-    "green_ci_run": 42105203300,
-    "green_result": "offline + compile_hold SUCCESS; Python 833/833; HUD native 10/10; server native 6/6",
-    "files_changed": [
-      "src/ToyWarsHUD.client.lua",
-      "tests/auto/round_outcome_hud_spec.lua",
-      "history/C98733_round_outcome_banner_green.json",
-      "history/C98734_round_outcome_banner_newline_fix.json"
+    "merge_parents": [
+      "22df6230a38c36ad8aab9731edfb31ce9226a250",
+      "e5deff4d5681bca4823a3da0f848e01bc089ae6e"
     ],
-    "source_metrics": {
+    "changed_files": [
+      ".github/workflows/loop-watchdog.yml",
+      "docs/ACTIONS_FREE_BUDGET_PLAN.md",
+      "tests/test_idle_watchdog_cadence.py"
+    ],
+    "unchanged_handoff_blob": "0eb766760c9ebe1cbdc3c3c59abcd01310907282",
+    "green_ci_run_id": 42129533853,
+    "green_result": "offline + compile_hold SUCCESS; Python 836/836; 3 new watchdog tests",
+    "original_main_source_metrics": {
       "files": 4,
-      "lines": 1248,
-      "bytes": 55605
+      "lines": 1186,
+      "bytes": 52781
     },
-    "source_size_delta_bytes": 1111,
-    "native_independent_review": false,
+    "independent_review": false,
     "main_merged": false,
+    "new_spending_settings_changed": false,
     "roblox_engine_run": false,
-    "new_spend_authorized": false,
-    "recorded_at": "2026-11-05T20:39:36.474Z",
-    "released_at": "2026-11-05T20:39:36.474Z"
+    "recorded_at": "2026-11-05T23:30:10.283Z",
+    "released_at": "2026-11-05T23:30:10.283Z",
+    "note": "PR12 originally reduced two cron workflows; now only watchdog is in current-main diff. Theoretical 94.4% fewer watchdog scheduled attempts, NOT verified savings. Protected PR181 handoff scope untouched."
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
