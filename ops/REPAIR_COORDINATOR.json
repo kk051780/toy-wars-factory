@@ -1420,17 +1420,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 444,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "e36d9c84-8268-4332-b17b-5c564fcaee1c",
-    "task_id": null,
-    "epoch": 444,
-    "acquired_at": "2026-11-05T05:10:29.802Z",
-    "expires_at": "2026-11-05T05:32:29.805Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/game-round-outcome-be5b6e39",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3074,21 +3064,29 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "OWNER_RELEASE_AFTER_HOST_SAFETY_DENIAL",
-    "claim_commit": "93d8dcf62fa2cf3c10cd2193395836bfbeb62cc9",
-    "epoch": 443,
-    "owner_id": "158068aa-d5c3-4179-942f-5756290e4d1f",
-    "target_pr": 181,
-    "target_head_unchanged": "75e551e65757b3140fb7760f9084ea132f108cd7",
-    "main_sha_unchanged": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "source_commit_created": false,
-    "source_write_attempt": "BLOCKED_OPENAI_HOST_SAFETY",
-    "provider_terminal_attested": false,
+    "kind": "OWNER_RELEASE_AFTER_VERIFIED_GAME_PR_RED_GREEN",
+    "epoch": 444,
+    "owner_id": "e36d9c84-8268-4332-b17b-5c564fcaee1c",
+    "claim_commit": "88cb7d6f81d597c2a363bc63d1f4e6f264f77217",
+    "pr": 179,
+    "previous_head": "acb7d54ba4047a66b1595b47a03e71c7087c7465",
+    "red_commit": "b5608287139ed9fdb12044337fd17f6af94182cc",
+    "red_ci_run_id": 41972493957,
+    "red_expected_failures": 2,
+    "green_commit": "679eec7ccc5765936a9a238f098e29271980ded7",
+    "green_ci_run_id": 41972772000,
+    "green_ci_conclusion": "success",
+    "green_python_tests": 833,
+    "green_hud_tests": 8,
+    "green_server_tests": 6,
+    "review_request_retarget_commit": "62aa4568ea70073fbfa4d0bdbbfa9adc7580dbdb",
+    "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
     "independent_review": false,
-    "merge": false,
-    "engine_test": false,
-    "spending_incurred": false,
-    "recorded_at": "2026-11-05T04:53:19.743Z"
+    "merged": false,
+    "roblox_engine_verified": false,
+    "provider_terminal_attested": false,
+    "new_spending": false,
+    "recorded_at": "2026-11-05T05:18:22.203Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
