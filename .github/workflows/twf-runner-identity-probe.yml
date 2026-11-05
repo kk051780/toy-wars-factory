@@ -1,0 +1,26 @@
+name: TWF read-only GitHub runner identity observation
+on:
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: read
+concurrency:
+  group: twf-identity-read-only-probe
+  cancel-in-progress: false
+jobs:
+  read-only-observation:
+    if: github.repository == 'kk051780/toy-wars-factory' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Verify read-only identity and redirect regressions without GitHub token
+        run: |
+          python3 -m unittest discover -s tests -p 'test_system_runner_identity_*.py' -v
+      - name: Inspect matching GitHub run with read-only token
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 tools/system_runner_identity_probe.py

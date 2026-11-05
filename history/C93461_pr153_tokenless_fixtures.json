@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "cycle": "C93461",
+  "scope": "PR153_GITHUB_ACTIONS_READ_ONLY_IDENTITY_PROBE",
+  "timestamp_utc": "2026-11-04T13:43:00.130Z",
+  "description": "Separate read-only workflow's offline identity regression suite from the GitHub read token; include redirect-attack regression; pin checkout to immutable reviewed v4.2.2 SHA.",
+  "change_reason": "Existing manual workflow's single step set GH_TOKEN for both unit tests and provider GET, unnecessarily exposing runtime credential to offline tests; its wildcard excluded redirect regression and checkout used mutable @v4.",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "b6ffd4761d63e264b1cc7a1c40ea0c78b6149378",
+    "owner_id": "4e6f9acd-293d-49c9-a35a-d5a2de4a7185",
+    "epoch": 434,
+    "work_branch": "controller/read-only-runner-identity-490539b4"
+  },
+  "baseline": {
+    "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "pr": 153,
+    "pr_head": "759fe92e2beaef0ae993ca4385f217853d2ac49b",
+    "workflow_blob": "b0d2956c20226fa1855bfcf167105f28f8fecf86",
+    "tests_blob": "76417ba2110f03fde23f4d1e00542eb2ab9a64b0"
+  },
+  "files": [
+    ".github/workflows/twf-runner-identity-probe.yml",
+    "tests/test_system_runner_identity_probe.py",
+    "history/C93461_pr153_tokenless_fixtures.json"
+  ],
+  "file_delta_chars": {
+    "workflow": 137,
+    "tests": 1988
+  },
+  "characters_touched": [],
+  "new_tests": [
+    "test_offline_identity_and_redirect_fixtures_are_tokenless",
+    "test_token_available_only_to_read_only_live_probe",
+    "test_tokenless_checkout_pinned_to_immutable_source"
+  ],
+  "safety": {
+    "no_new_permissions": true,
+    "read_only_only": true,
+    "maintain_default_main_guard": true,
+    "no_direct_main_write": true,
+    "not_activated": true,
+    "no_merge": true,
+    "no_secrets_changed": true,
+    "no_roblox_publishing": true,
+    "no_billing_changes": true,
+    "not_a_chatgpt_task_attestation": true
+  },
+  "verification": {
+    "prepatch": "old workflow fails these proposed structure checks",
+    "newsource": "static anchor checks pass",
+    "github_hosted": "PENDING"
+  },
+  "next": "Exact-head hosted CI; preserve DRAFT until actual independent review and safe main integration. Dispatch only with fresh explicit owner scope and provider readback."
+}

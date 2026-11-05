@@ -1,0 +1,44 @@
+{
+  "id": "C00212",
+  "date": "2026-10-31",
+  "kind": "PROTECTED_MANUAL_CONTROLLER_READONLY_RUNNER_IDENTITY_PROBE",
+  "issue": 57,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "owner_role": "CONTROLLER",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "bbf9ec3eb832e78545aa52bd0884bbb16d93f23b",
+    "owner_run_id": "490539b4-69b6-4629-86da-315b8c359bc9",
+    "epoch": 300
+  },
+  "added_files": [
+    "tools/system_runner_identity_probe.py",
+    "tests/test_system_runner_identity_probe.py",
+    ".github/workflows/twf-runner-identity-probe.yml"
+  ],
+  "verification": {
+    "offline_local": "34 newly authored negative controls and py_compile passed in isolated pre-upload sandbox; GitHub exact-head CI pending",
+    "github_actions_job": "NOT_TRIGGERED",
+    "external_provider_attestation": "NOT_VERIFIED",
+    "chatgpt_current_run_identity": "NOT_VERIFIED"
+  },
+  "safety": {
+    "auto_schedule_added": false,
+    "github_token_scopes": [
+      "actions: read",
+      "contents: read"
+    ],
+    "repo_writes_by_workflow": false,
+    "workflow_dispatch_only": true,
+    "gemini_inference": false,
+    "roblox_publish": false,
+    "author_self_merge": false
+  },
+  "purpose": "Explore safe independent provider run-context evidence under GitHub Actions; never automatically grant ChatGPT WORKER identity or dispatch.",
+  "collision_repair": {
+    "kind": "RENAMED_UNMERGED_HISTORY_ID_FROM_C00160",
+    "reason": "Duplicate with PR142 and PR152; original source history was a draft, no accepted main journal mutated",
+    "new_author_lease_epoch": 307,
+    "claim_commit": "5c9e9dbf084b2be08145ab3f3ab64b1876dfec57"
+  }
+}

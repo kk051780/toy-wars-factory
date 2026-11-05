@@ -1,0 +1,43 @@
+{
+  "id": "C00214",
+  "date": "2026-10-31",
+  "kind": "PR153_GITHUB_BEARER_REDIRECT_SECURITY_HARDENING_GREEN",
+  "issue": 57,
+  "pr": 153,
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "5c9e9dbf084b2be08145ab3f3ab64b1876dfec57",
+    "owner_run_id": "c875a70d-1540-4f97-9a1c-cf66a17a276e",
+    "epoch": 307
+  },
+  "red": {
+    "head": "ca6d6bbb756c3a2fe197d1651195700cadd3119e",
+    "run_id": 41156098573,
+    "offline": "failure",
+    "reason": "missing _NoRedirect import",
+    "compile_hold": "success"
+  },
+  "source": {
+    "file": "tools/system_runner_identity_probe.py",
+    "fix": "Deny all 3xx without forwarding Authorization; preserve standard HTTPS TLS verification; keep GET-only, no change in token or workflow scope"
+  },
+  "new_tests": {
+    "file": "tests/test_system_runner_identity_redirect.py",
+    "cases": 10
+  },
+  "green_ci": "PENDING_EXACT_HEAD",
+  "independent_review": "PENDING",
+  "history_collision": {
+    "original_draft_id": "C00160",
+    "renumbered": "C00212",
+    "red": "C00213",
+    "green": "C00214"
+  },
+  "permission_increase": false,
+  "chatgpt_worker_identity_attested": false,
+  "github_manual_probe_execution": "NOT_RUN",
+  "main_merged": false,
+  "roblox_engine": "NOT_RUN",
+  "external_spending": "NONE"
+}

@@ -1,0 +1,25 @@
+{
+  "id": "C00213",
+  "date": "2026-10-31",
+  "kind": "PR153_GET_BEARER_REDIRECT_FAIL_FIRST_TEST",
+  "issue": 57,
+  "pr": 153,
+  "source_branch": "controller/read-only-runner-identity-490539b4",
+  "base_head": "9b47f496855f5df6fea5c413c60dc183a7b4cf6f",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "5c9e9dbf084b2be08145ab3f3ab64b1876dfec57",
+    "owner_run_id": "c875a70d-1540-4f97-9a1c-cf66a17a276e",
+    "epoch": 307
+  },
+  "added_tests": [
+    "tests/test_system_runner_identity_redirect.py"
+  ],
+  "reported_security_finding": "PR153 issue comment 6535987122: Python stdlib HTTPRedirectHandler forwards Authorization on cross-origin 302",
+  "expected_red": "Missing _NoRedirect and _SAFE_OPEN before source hardening; exact-head GitHub CI required to confirm",
+  "trusted_workflow": "NO_CHANGE",
+  "permissions_change": "NONE",
+  "provider_attested": false,
+  "auto_merge": false
+}
