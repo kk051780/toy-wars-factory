@@ -70,7 +70,9 @@ def checked_context(env: dict, live_run: dict, live_main: str):
             attempt != "1" or
             not valid_sha(env["GITHUB_SHA"]) or not valid_sha(live_main)):
         raise ProbeError("INVALID_SOURCE_LINEAGE")
-    if not isinstance(live_run, dict) or (
+    if (type(live_run) is not dict or
+        any(type(live_run.get(field)) is not dict
+            for field in ("head_repository", "actor", "triggering_actor")) or
         live_run.get("status") != "in_progress" or live_run.get("conclusion") is not None or
         live_run.get("id") != int(run_id) or live_run.get("run_attempt") != int(attempt) or
         live_run.get("event") != "workflow_dispatch" or
@@ -148,7 +150,8 @@ class GitHubAPI:
 
 def sha_ref(api, name):
     res = api.call("GET", f"/git/ref/heads/{name}")
-    val = res.get("object", {}).get("sha")
+    obj = res.get("object")
+    val = obj.get("sha") if type(obj) is dict else None
     if not valid_sha(val):
         raise ProbeError("REF_INVALID")
     return val
@@ -159,12 +162,15 @@ def state_at(api, refsha):
     if row.get("encoding") != "base64" or row.get("type") != "file":
         raise ProbeError("STATE_BLOB_INVALID")
     try:
-        decoded = base64.b64decode("".join(row["content"].split()), validate=True)
+        encoded = row["content"]
+        if type(encoded) is not str:
+            raise ValueError("coordinator content must be base64 text")
+        decoded = base64.b64decode("".join(encoded.split()), validate=True)
         obj = json.loads(decoded)
         if not isinstance(obj, dict):
             raise ValueError()
         validate(obj)
-    except (ValueError, TypeError, KeyError, UnicodeDecodeError):
+    except (ValueError, TypeError, KeyError, UnicodeDecodeError, binascii.Error):
         raise ProbeError("STATE_INVALID") from None
     return obj
 
@@ -172,7 +178,8 @@ def state_at(api, refsha):
 def cas_state(api, oldref, newstate):
     """Immutable old-parent, non-force fast-forward + exact postwrite reread."""
     commit = api.call("GET", f"/git/commits/{oldref}")
-    base_tree = commit.get("tree", {}).get("sha")
+    tree_obj = commit.get("tree")
+    base_tree = tree_obj.get("sha") if type(tree_obj) is dict else None
     if not valid_sha(base_tree):
         raise ProbeError("CONTROL_TREE_INVALID")
     blob = api.call("POST", "/git/blobs", {"content":json.dumps(newstate,indent=2)+"\n", "encoding":"utf-8"})
