@@ -35,6 +35,9 @@ local lv=status:WaitForChild("FactoryLevel")
 local allies=status:WaitForChild("Allies")
 local enemies=status:WaitForChild("Enemies")
 local selected=status:WaitForChild("SelectedToy")
+-- The server result may arrive after normal workshop values; never block UI startup.
+local found=status.FindFirstChild and status:FindFirstChild("RoundOutcome")
+local outcome=found and found.ClassName=="StringValue" and found or nil
 waiting.Visible=false
 local function round(parent,r)
     local c=Instance.new("UICorner")
@@ -93,6 +96,15 @@ for i,spec in ipairs(choices) do
 end
 local tip=addText(gui,UDim2.new(0.8,0,0,34),UDim2.new(0.1,0,1,-160),"SELECT A TOY TO AUTO-PRODUCE • UPGRADE AT THE GOLD PLATFORM",Color3.fromRGB(255,255,255))
 tip.TextStrokeTransparency=0.4
+-- Present a distinct, high-contrast outcome without taking touch input.
+local resultBanner=addText(gui,UDim2.new(0.74,0,0,60),UDim2.new(0.13,0,0.40,0),
+    "",Color3.fromRGB(255,255,255))
+resultBanner.Name="RoundResultBanner"
+resultBanner.BackgroundTransparency=0.08
+resultBanner.BackgroundColor3=Color3.fromRGB(23,35,54)
+resultBanner.ZIndex=30
+resultBanner.Visible=false
+round(resultBanner,12)
 -- Session-local first-play guide: touch-friendly, dismissible; never sends gameplay commands.
 -- Created only after workshop assignment; no cross-session completion persistence.
 -- ImageButtons keep the three toy-selection TextButtons unambiguous.
@@ -157,7 +169,31 @@ local function refresh()
     local upgradeCost=B.upgradePrice(lv.Value)
     local chosenId=type(selected.Value)=="string" and string.lower(selected.Value) or nil
     local unit=chosenId and B.isUnit(chosenId) and B.UNITS[chosenId] or nil
-    if allies.Value>=B.MAX_FIELD_UNITS then
+    -- A bottom instruction line is easy to miss; a temporary, noninteractive
+    -- result banner keeps LOSS and final-wave VICTORY legible on small screens.
+    local outcomeLabel=outcome and outcome.Value or ""
+    if outcomeLabel=="LOSS" then
+        resultBanner.Text="BASE LOST\nRESTARTING WAVE 1"
+        resultBanner.TextColor3=Color3.fromRGB(255,145,145)
+        resultBanner.Visible=true
+    elseif outcomeLabel=="VICTORY" then
+        resultBanner.Text="WAVE 50 CLEARED\nNEW FACTORY RUN"
+        resultBanner.TextColor3=Color3.fromRGB(153,255,185)
+        resultBanner.Visible=true
+    else
+        resultBanner.Text=""
+        resultBanner.Visible=false
+    end
+    tip.Visible=not resultBanner.Visible
+    if outcome and (outcome.Value=="LOSS" or outcome.Value=="VICTORY") then
+        -- Expose the authoritative result instead of leaving onboarding over it.
+        quickStart.Visible=false
+    end
+    if outcome and outcome.Value=="LOSS" then
+        tip.Text="BASE LOST • RESTARTING WAVE 1"
+    elseif outcome and outcome.Value=="VICTORY" then
+        tip.Text="WAVE 50 CLEARED • NEW FACTORY RUN"
+    elseif allies.Value>=B.MAX_FIELD_UNITS then
         tip.Text=upgradeCost and string.format("FIELD FULL %d/%d • GOLD %d",allies.Value,B.MAX_FIELD_UNITS,upgradeCost)
             or string.format("FIELD FULL %d/%d • MAX LEVEL",allies.Value,B.MAX_FIELD_UNITS)
     elseif unit and coins.Value<unit.cost then
@@ -172,6 +208,21 @@ local function refresh()
         button.BorderColor3=Color3.fromRGB(255,255,255)
     end
 end
-for _,v in ipairs({coins,wave,kills,hp,lv,allies,enemies,selected}) do v.Changed:Connect(refresh) end
+local observed={coins,wave,kills,hp,lv,allies,enemies,selected}
+if outcome then observed[#observed+1]=outcome end
+for _,v in ipairs(observed) do v.Changed:Connect(refresh) end
+-- Subscribe before rechecking: replication can land between first lookup
+-- and ChildAdded registration. Close that gap without blocking normal HUD startup.
+local function bindOutcome(child)
+    if not outcome and child and child.Name=="RoundOutcome" and child.ClassName=="StringValue" then
+        outcome=child
+        outcome.Changed:Connect(refresh)
+        refresh()
+    end
+end
+if status.ChildAdded then status.ChildAdded:Connect(bindOutcome) end
+if not outcome and status.FindFirstChild then
+    bindOutcome(status:FindFirstChild("RoundOutcome"))
+end
 refresh()
 print("TWF_HUD_OK v1.2")

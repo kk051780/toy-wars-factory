@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "C98690",
+  "kind": "MANUAL_GAME_ROUND_OUTCOME_TEST_FIRST_RED",
+  "scope": "GAMEPLAY_SERVER_AUTHORITATIVE_ROUND_RESULT",
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordinator": {
+    "kind": "CONTROLLER",
+    "owner_id": "be5b6e39-d518-4a38-b769-7187059449ab",
+    "epoch": 404,
+    "claim_commit": "c5f12c9db450e59ffde39c354da434a3fd867963",
+    "branch": "controller/game-round-outcome-be5b6e39"
+  },
+  "new_tests": [
+    "tests/auto/round_outcome_spec.lua",
+    "tests/auto/round_outcome_hud_spec.lua"
+  ],
+  "planned_labels": [
+    "LOSS",
+    "VICTORY",
+    ""
+  ],
+  "test_only": true,
+  "ci": "ORIGINAL_HOSTED_PENDING",
+  "notes": "No wave-number inference; player-scoped ephemeral result separate from persisted progress. Native Lua mocks only. Protected draft, no merge or Roblox publish.",
+  "authorization": {
+    "inference": false,
+    "billing": false,
+    "publish": false
+  }
+}

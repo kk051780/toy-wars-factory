@@ -1,0 +1,21 @@
+{
+  "id": "C98730",
+  "date_utc": "2026-11-05",
+  "kind": "ROUND_OUTCOME_FIND_THEN_SUBSCRIBE_RACE_RED",
+  "source_pr": 179,
+  "main_base_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "prior_pr_head": "679eec7ccc5765936a9a238f098e29271980ded7",
+  "owner_id": "a7bc42d0-5213-4ab6-8b2d-2fd752aae9b4",
+  "coordination_epoch": 446,
+  "claim_commit": "a355b4e44d38fdc52b648c88eef896c67fc4fa73",
+  "files_changed": [
+    "tests/auto/round_outcome_hud_spec.lua",
+    "history/C98730_round_outcome_subscribe_red.json"
+  ],
+  "new_regression": "outcome arriving inside ChildAdded subscription is reconciled",
+  "expected_test": "OLD_HUD_FAILS_when_server_result_created_after_FindFirstChild_before_subscription",
+  "provider_red_ci": "PENDING",
+  "source_changed": false,
+  "client_only_no_network": true,
+  "no_provider_merge_or_game_engine": true
+}

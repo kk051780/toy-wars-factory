@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "id": "C98691",
+  "kind": "MANUAL_GAME_ROUND_OUTCOME_GREEN",
+  "pr": 179,
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "parent_red": "1fb136ee55efc505cdfe37e2b6ea238f49006055",
+  "coordinator": {
+    "owner_id": "be5b6e39-d518-4a38-b769-7187059449ab",
+    "epoch": 404,
+    "claim_commit": "c5f12c9db450e59ffde39c354da434a3fd867963",
+    "work_branch": "controller/game-round-outcome-be5b6e39"
+  },
+  "red": {
+    "ci_run": 41396062592,
+    "status": "FAILURE",
+    "offline": "FAILURE",
+    "compile_hold": "SUCCESS",
+    "new_hud_tests_executed": 5,
+    "expected_new_hud_failures": 2,
+    "server_test_executed": "NOT_REACHED_BECAUSE_OFFLINE_FAIL_FAST"
+  },
+  "green": {
+    "ci_run": "PENDING_CORRECTION",
+    "result": "NOT_VERIFIED",
+    "first_attempt": {
+      "ci_run": 41396706126,
+      "offline": "FAILURE",
+      "compile_hold": "SUCCESS",
+      "new_lua_server": "6/6 PASS",
+      "new_lua_hud": "5/5 PASS",
+      "python": "832/833 PASS",
+      "reason": "MISSING_SOURCE_CHANGES_LEDGER_IN_UNMERGED_C98691",
+      "fix": "append verified source_changes and exact source_metrics, no test weakening"
+    }
+  },
+  "change_scope": {
+    "server": "RoundOutcome StringValue LOSS/VICTORY plus restart grace clear",
+    "hud": "use existing tip and explicit state over money/field hints",
+    "fixtures": 11,
+    "new_tests": 11
+  },
+  "no_change": [
+    "DataStore persisted progress record",
+    "three purchase buttons",
+    "Gemini HOLD",
+    "billing",
+    "Roblox publish",
+    "main branch"
+  ],
+  "independent_review": "PENDING",
+  "engine": "NOT_RUN",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 40752,
+      "after_bytes": 41190,
+      "delta_bytes": 438,
+      "before_blob": "d86a0b89a1d811ec6da83da93b24e29235218b04",
+      "after_blob": "eb757e3edac744d9c5dcb999d60a612ddfc82d56",
+      "added_lines": 11,
+      "removed_lines": 0
+    },
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 7709,
+      "after_bytes": 7952,
+      "delta_bytes": 243,
+      "before_blob": "f1b7a2e2e4e6cd0a5703a7f034f50d4e62801467",
+      "after_blob": "3a26c0ae205fb73c44f1dd31c5603139678c3af8",
+      "added_lines": 5,
+      "removed_lines": 0
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1202,
+    "lua_bytes": 53462
+  },
+  "source_baseline_bytes": 25726
+}

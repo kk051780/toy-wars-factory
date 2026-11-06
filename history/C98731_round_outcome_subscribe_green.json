@@ -1,0 +1,31 @@
+{
+  "id": "C98731",
+  "date_utc": "2026-11-05",
+  "kind": "ROUND_OUTCOME_SUBSCRIPTION_RECHECK_GREEN",
+  "pr": 179,
+  "main_base_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "owner_id": "a7bc42d0-5213-4ab6-8b2d-2fd752aae9b4",
+  "epoch": 446,
+  "claim_commit": "a355b4e44d38fdc52b648c88eef896c67fc4fa73",
+  "red_head": "28f81d18bae6c7494b9930c1708da6875c37ef67",
+  "red_ci_run": 41980361324,
+  "red_ci": {
+    "offline": "FAILURE_EXPECTED_1_NEW_REGRESSION",
+    "compile_hold": "SUCCESS",
+    "hud": "8 passed / 1 failed"
+  },
+  "source_path": "src/ToyWarsHUD.client.lua",
+  "source_bytes_before": 8789,
+  "source_bytes_after": 8984,
+  "new_behavior": "Subscribe ChildAdded then immediately re-read FindFirstChild to close missed replication event race; use single bind function; no blocking WaitForChild",
+  "changed_paths": [
+    "src/ToyWarsHUD.client.lua",
+    "history/C98731_round_outcome_subscribe_green.json"
+  ],
+  "existing_native_test": "tests/auto/round_outcome_hud_spec.lua",
+  "green_ci": "PENDING_EXACT_HEAD",
+  "publish": false,
+  "merge": false,
+  "engine_verified": false,
+  "spend": false
+}

@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "id": "C98692",
+  "kind": "MANUAL_GAME_ROUND_OUTCOME_REPLICATION_COMPAT",
+  "pr": 179,
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "previous_pr_head": "9d327e37476fe9f0517f6bd9e670760054025e09",
+  "coordinator": {
+    "epoch": 442,
+    "owner_id": "8d0a48ec-4b5c-451d-b5e0-7e6e8f6f1c31",
+    "claim_commit": "29833ef2625a3d48fedc0b7dcd4bdd1681be96c7",
+    "work_branch": "controller/game-round-outcome-be5b6e39"
+  },
+  "problem": "Mandatory outcome WaitForChild changed 11 old HUD test fixtures and blocked the proposed manual-game change scope; it could also stall a HUD under delayed replication.",
+  "fix": "Keep actual server-owned outcome; optional nonblocking initial FindFirstChild, trusted StringValue ChildAdded listener and server-outcome Changed refresh.",
+  "restored_existing_test_files": [
+    "tests/auto/field_capacity_hud_spec.lua",
+    "tests/auto/first_play_hud_guide_spec.lua",
+    "tests/auto/first_play_role_hints_spec.lua",
+    "tests/auto/queue_notice_allocation_state_spec.lua",
+    "tests/auto/queue_notice_assets_after_allocation_spec.lua",
+    "tests/auto/queue_notice_replication_wait_spec.lua",
+    "tests/auto/restart_guide_accuracy_spec.lua",
+    "tests/auto/selected_toy_waiting_hint_spec.lua",
+    "tests/auto/upgrade_affordability_hud_spec.lua",
+    "tests/auto/workshop_queue_hud_spec.lua",
+    "tests/hud_price_spec.lua"
+  ],
+  "added_new_test": "tests/auto/round_outcome_hud_spec.lua: delayed replication, victory hint, ordinary hint recovery",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 7952,
+      "after_bytes": 8590,
+      "delta_bytes": 638,
+      "before_blob": "3a26c0ae205fb73c44f1dd31c5603139678c3af8",
+      "after_blob": "b117d7aaef4b4bc013b65d5cdfe50bc0ee711613",
+      "added_lines": 14,
+      "removed_lines": 0
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1216,
+    "lua_bytes": 54100
+  },
+  "source_baseline_bytes": 25726,
+  "protected_holds": {
+    "current_main_unchanged": true,
+    "independent_review_required": true,
+    "roblox_engine_verified": false,
+    "no_inference_or_external_spend": true,
+    "no_publish": true
+  },
+  "qa": "PENDING_EXACT_HEAD"
+}

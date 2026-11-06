@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "id": "C98734",
+  "date_utc": "2026-11-05",
+  "kind": "ROUND_OUTCOME_BANNER_ACTUAL_NEWLINE_CORRECTION",
+  "pr": 179,
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "owner_id": "df058148-16da-45c5-b274-124768f390ff",
+    "epoch": 451,
+    "claim_commit": "5656d0a816a7d61a8a05933d1f5a1333cf4daa6b",
+    "work_branch": "controller/game-round-outcome-be5b6e39"
+  },
+  "prior_source_head": "1d47d22c98c01b48cdbbb4f48562a51acd4d9d8c",
+  "prior_ledger": "history/C98733_round_outcome_banner_green.json",
+  "correction": "GitHub source readback proved the first implementation had a double-escaped Lua newline, rendering literal backslash+n. Corrected to a single Lua escape and added 2 direct native HUD assertions for actual line breaks; prior record preserved and not claimed as accepted green.",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 10097,
+      "after_bytes": 10095,
+      "delta_bytes": -2,
+      "before_blob": "96badf877ca5a424d20d6cea928bf589e586bc6b",
+      "after_blob": "3a69d61c66969b3423ce07b448f521fd69e740f8",
+      "added_lines": 0,
+      "removed_lines": 0,
+      "code_reduction_reason": "Remove one redundant backslash in each of two result labels to render actual 2-line text"
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1248,
+    "lua_bytes": 55605
+  },
+  "source_baseline_bytes": 25726,
+  "changed_files": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/round_outcome_hud_spec.lua",
+    "history/C98734_round_outcome_banner_newline_fix.json"
+  ],
+  "old_red": {
+    "head": "0b0edbc644d93369877a1ba0c1ccb1ff2549bfcd",
+    "run": 42104736102,
+    "hud": "9 pass / 1 expected fail"
+  },
+  "green_ci": "PENDING_EXACT_HEAD",
+  "protected_controls_changed": false,
+  "prior_legacy_hud_fixtures_modified": false,
+  "roblox_engine": "NOT_RUN",
+  "main_merged": false,
+  "independent_review": "PENDING",
+  "new_spend_authorized": false
+}
