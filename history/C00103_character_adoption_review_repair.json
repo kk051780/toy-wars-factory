@@ -1,0 +1,73 @@
+{
+  "id": "C00103",
+  "date": "2026-10-28",
+  "kind": "CONTROLLER_PR98_REQUESTED_CHARACTER_ADOPTION_REPAIR",
+  "author_kind": "CONTROLLER",
+  "author_operation_id": "f7b10bdc-c8b0-4353-863c-768b9ef64687",
+  "task_id": null,
+  "run_id": null,
+  "identity_note": "Manual operation UUID, not a registered service run; author may not approve or integrate this repair",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "d1fb5c8facd07b51623797160561d3e6739a0267",
+    "owner_run_id": "f7b10bdc-c8b0-4353-863c-768b9ef64687",
+    "owner_id_kind": "MANUAL_OPERATION_UUID",
+    "epoch": 189
+  },
+  "main_base": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+  "parent_character_head": "8997fdbd364ef9f0aa88ffffecfee3bfc22087bd",
+  "request_id": "pr98_next_character_tests_and_snapshot_scope_20261028",
+  "review_record": "ops/reviews/PR0098_8997fdbd_maintenance.json",
+  "changed_files": [
+    "history/C00100_character_pipeline_pilot.json",
+    "config/autonomous_repair.json",
+    "tests/test_system_character_pipeline.py",
+    "tests/test_system_character_scope.py",
+    "tests/auto/character_pages_spec.lua",
+    "tests/test_system_character_history.py",
+    "history/C00103_character_adoption_review_repair.json"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1155,
+    "lua_bytes": 50216
+  },
+  "source_baseline_bytes": 25726,
+  "source_delta_vs_current_main_bytes": 4989,
+  "characters_touched": [],
+  "preserved_characters": [
+    "pon",
+    "guardon",
+    "tankuru",
+    "curebo"
+  ],
+  "fixes": [
+    "Replace fixed live catalog/ranking totals with exact roster membership and baseline invariants; execute a valid next promotion and an additional planned candidate",
+    "Keep original six pager expectations on explicit four-unit fixture; add five and seven-unit full-page traversal/highlighting/empty-tail/wrap/selection/no-navigation-commands, single-page and delayed leaderstats/balance guide cases",
+    "Restore deep-copied initial04ae server ledger from actual immutable blobs; Git-based parity tests verify initial/current source metrics, hashes, deltas and both historical reconciliation snapshots",
+    "Remove unadmitted META document permission; explicit regression rejects that edit while preserving admitted exact WORKER catalog M permission"
+  ],
+  "tests": {
+    "local_python_character_cases": 19,
+    "local_pager_cases": 11,
+    "old_ranking_negative_control": "Valid promotion catalog passes then old ranking assertion fails7!=8",
+    "historical_parity_cases": 4,
+    "historical_parity_execution": "Requires actual Git history; fresh exact-head CI required",
+    "expected_full_python_cases": 477,
+    "full_ci": "PENDING_NEW_EXACT_HEAD",
+    "independent_review": "PENDING_NEW_EXACT_HEAD",
+    "engine": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "acquisition": "NOT_MEASURED"
+  },
+  "restrictions": {
+    "accepted_history_and_tests_changed": false,
+    "source_changed": false,
+    "normal_reviewer_lane_expanded": false,
+    "regular_schedule_changed": false,
+    "spending_or_publish_authorized": false
+  },
+  "next_action": "Full fresh offline+compile_hold CI, then independent task/run review of the new exact head and all four original blockers. Author does not self-approve or integrate."
+}

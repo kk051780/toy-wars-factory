@@ -1,0 +1,58 @@
+{
+  "id": "C98771",
+  "schema": 1,
+  "date_utc": "2026-11-06",
+  "kind": "PR98_CUREBO_PATIENT_ESCORT_GAMEPLAY",
+  "pr": 98,
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "previous_pr_head": "85915a2983951b79bce64e4a736e47962390871b",
+  "coordination": {
+    "epoch": 460,
+    "owner_id": "c15e9350-74e2-453f-99e2-228c4c85ec16",
+    "claim_commit": "3a102a88f102857e56f9374c4a3bfce1aed8945e",
+    "branch": "ops/twf-character-pipeline-20261028"
+  },
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/curebo_support_spec.lua",
+    "history/C98771_curebo_patient_escort.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "cddeb43dadf039b7f5d0e78041f6b3e3b2da907a",
+      "before_bytes": 43750,
+      "after_bytes": 44798,
+      "delta_bytes": 1048,
+      "before_lines": 959,
+      "after_lines": 985,
+      "delta_lines": 26
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1322,
+    "lua_bytes": 58818
+  },
+  "characters_touched": [
+    "curebo"
+  ],
+  "other_characters_source_logic_preserved": true,
+  "root_cause": "Healer repaired nearby allies but otherwise used generic enemy-chasing movement, leaving its wounded patients unprotected.",
+  "fix": "CUREBO now maintains a standoff position while an ally needs repair, escorts the nearest wounded ally outside 70% of repair range, and preserves enemy combat/normal movement when no patient is hurt.",
+  "new_regressions": 3,
+  "checks": {
+    "original_CI": "https://github.com/kk051780/toy-wars-factory/actions/runs/42157899420",
+    "new_exact_head_CI": "PENDING",
+    "roblox_studio": "NOT_RUN",
+    "android_visual": "NOT_RUN",
+    "two_client": "NOT_RUN"
+  },
+  "limits": {
+    "main_merged": false,
+    "independent_native_review": false,
+    "free_actions_quota_remaining_verified": false,
+    "additional_charges_authorized": false,
+    "roblox_publish_authorized": false
+  }
+}

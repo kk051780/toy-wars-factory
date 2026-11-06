@@ -30,6 +30,7 @@ local UNIT_COLORS = {
     pon = Color3.fromRGB(45, 209, 210),
     guardon = Color3.fromRGB(72, 130, 239),
     tankuru = Color3.fromRGB(255, 166, 83),
+    curebo = Color3.fromRGB(169, 229, 206),
     junk = Color3.fromRGB(173, 83, 118),
 }
 local selectEvent = ReplicatedStorage:WaitForChild("ToyWarsSelectUnit")
@@ -410,7 +411,7 @@ local function createToyModel(id, x, z)
     local c = UNIT_COLORS[id]
     local core = modelPart(m,"Core",Vector3.new(0,1.7,0),Vector3.new(3,3,2.4),c,false)
     m.PrimaryPart = core
-    modelPart(m,"Face",Vector3.new(0,2.1,-1.28),Vector3.new(2,1.3,0.12),Color3.fromRGB(250,251,255),false)
+    local face = modelPart(m,"Face",Vector3.new(0,2.1,-1.28),Vector3.new(2,1.3,0.12),Color3.fromRGB(250,251,255),false)
     if id == "pon" then
         modelPart(m,"Antenna",Vector3.new(0,3.5,0),Vector3.new(0.5,1.0,0.5),Color3.fromRGB(250,210,76),true)
         modelPart(m,"Feet",Vector3.new(0,0.25,0),Vector3.new(3.5,0.5,2.8),Color3.fromRGB(30,100,140),false)
@@ -422,6 +423,30 @@ local function createToyModel(id, x, z)
         core.CFrame = CFrame.new(0,1.45,0)
         modelPart(m,"Cannon",Vector3.new(0,2.8,-3),Vector3.new(1.0,1.0,5),Color3.fromRGB(55,70,92),false)
         modelPart(m,"Tracks",Vector3.new(0,0.3,0),Vector3.new(5.5,0.6,6),Color3.fromRGB(60,65,85),false)
+    elseif id == "curebo" then
+        -- Seventeen primitive parts including the HP bar; no imported texture.
+        core.Size = Vector3.new(3.2,2.3,2.4)
+        core.CFrame = CFrame.new(0,1.4,0)
+        modelPart(m,"RepairHead",Vector3.new(0,3.0,0),Vector3.new(2.8,2.4,2.5),Color3.fromRGB(247,239,211),true)
+        face.CFrame = CFrame.new(0,3.0,-1.28)
+        face.Size = Vector3.new(2,1.1,0.12)
+        for _,xEye in ipairs({-0.52,0.52}) do
+            modelPart(m,"RepairEye",Vector3.new(xEye,3.1,-1.37),Vector3.new(0.26,0.38,0.18),Color3.fromRGB(24,39,51),true)
+        end
+        local pink=Color3.fromRGB(255,105,165)
+        for _,xLobe in ipairs({-0.36,0.36}) do
+            modelPart(m,"HeartLobe",Vector3.new(xLobe,1.8,-1.28),Vector3.new(0.6,0.55,0.18),pink,false)
+        end
+        modelPart(m,"HeartMiddle",Vector3.new(0,1.4,-1.28),Vector3.new(1.3,0.4,0.18),pink,false)
+        modelPart(m,"HeartTip",Vector3.new(0,1.0,-1.28),Vector3.new(0.55,0.4,0.18),pink,false)
+        modelPart(m,"ToolBag",Vector3.new(0,2,1.55),Vector3.new(2.6,1.8,0.6),Color3.fromRGB(143,105,64),false)
+        local brass=Color3.fromRGB(235,189,75)
+        modelPart(m,"WinderStem",Vector3.new(0,3.3,1.5),Vector3.new(0.45,1,0.45),brass,false)
+        modelPart(m,"WinderBar",Vector3.new(0,3.9,1.5),Vector3.new(2.6,0.5,0.45),brass,false)
+        for _,xRing in ipairs({-0.9,0.9}) do
+            modelPart(m,"WinderRing",Vector3.new(xRing,4.1,1.5),Vector3.new(0.9,0.9,0.3),brass,true)
+            modelPart(m,"RepairFoot",Vector3.new(xRing,0.2,0),Vector3.new(1.1,0.5,1.7),c,false)
+        end
     else
         modelPart(m,"ScrapHat",Vector3.new(0,3.8,0),Vector3.new(3.8,0.7,3.0),Color3.fromRGB(91,59,78),false)
         modelPart(m,"Feet",Vector3.new(0,0.2,0),Vector3.new(3.3,0.5,2.5),Color3.fromRGB(120,66,90),false)
@@ -473,11 +498,11 @@ local function makePlot(player, state)
     local base = part(map,"BlueprintVault",Vector3.new(14,7,5),CFrame.new(x,4.0,-45),Color3.fromRGB(75,118,238),Enum.Material.Metal)
     label(base, player.DisplayName.."'s\nBLUEPRINT VAULT",235,77,7)
 
-    local choices = {{"pon", x+8}, {"guardon", x+20},{"tankuru",x+32}}
+    local choices = {{"pon", x+8}, {"guardon", x+20},{"tankuru",x+32},{"curebo",x+32,-28}}
     for _, entry in ipairs(choices) do
         local id = entry[1]
         local px = entry[2]
-        local pad = part(map,id.."Selector",Vector3.new(9,1.4,8),CFrame.new(px,1.2,-40),UNIT_COLORS[id],Enum.Material.Neon)
+        local pad = part(map,id.."Selector",Vector3.new(9,1.4,8),CFrame.new(px,1.2,entry[3] or -40),UNIT_COLORS[id],Enum.Material.Neon)
         label(pad,string.upper(id).."\n"..B.UNITS[id].cost.." coins",150,65,3.3)
         local prompt=Instance.new("ProximityPrompt")
         prompt.ObjectText="Toy printer"
@@ -602,11 +627,72 @@ local function refreshHealthBar(e)
     end
 end
 
+local function repairAlly(state,e,dt)
+    local data=B.UNITS[e.id]
+    e.repairCooldown=math.max(0,(e.repairCooldown or 0)-dt)
+    if e.repairCooldown>0 then return end
+    local target,bestRatio,bestDistance=nil,math.huge,math.huge
+    local now=state.combatTime or 0
+    for _,ally in ipairs(state.entities) do
+        if ally~=e and ally.alive and ally.side==e.side and ally.health>0 and
+                ally.health<ally.maxHealth and (ally.repairAvailableAt or 0)<=now then
+            local dx,dz=ally.x-e.x,ally.z-e.z
+            local distance=dx*dx+dz*dz
+            local ratio=ally.health/ally.maxHealth
+            if distance<=data.repairRange*data.repairRange and
+                    (ratio<bestRatio or (ratio==bestRatio and distance<bestDistance)) then
+                target,bestRatio,bestDistance=ally,ratio,distance
+            end
+        end
+    end
+    if target then
+        target.health=math.min(target.maxHealth,target.health+data.repairAmount)
+        -- Shared per-target lock prevents multiple repair toys stacking a burst.
+        target.repairAvailableAt=now+data.repairCooldown
+        e.repairCooldown=data.repairCooldown
+        refreshHealthBar(target)
+        -- Reuse the modeled 3D head for a short, server-owned repair flash.
+        -- No new parts, assets, network remotes or permanent effects.
+        local repairHead=e.model and e.model:FindFirstChild("RepairHead")
+        if repairHead and repairHead:IsA("BasePart") then
+            repairHead.Material=Enum.Material.Neon
+            repairHead.Color=Color3.fromRGB(102,255,198)
+            e.repairFlashUntil=now+0.45
+        end
+    end
+end
+
 local function updateEntity(state,e,dt)
     if not e.alive then return end
     local data=B.UNITS[e.id]
+    if data.repairAmount and e.side=="ally" then repairAlly(state,e,dt) end
+    if e.repairFlashUntil and (state.combatTime or 0)>=e.repairFlashUntil then
+        e.repairFlashUntil=nil
+        local repairHead=e.model and e.model:FindFirstChild("RepairHead")
+        if repairHead and repairHead:IsA("BasePart") then
+            repairHead.Material=Enum.Material.SmoothPlastic
+            repairHead.Color=Color3.fromRGB(247,239,211)
+        end
+    end
     local remaining=e.cooldown>0 and e.cooldown-dt or 0
     e.cooldown=math.max(0,remaining)
+    -- Support toys escort the nearest injured ally; they should not abandon
+    -- a patient to chase a distant enemy while their repair is cooling down.
+    local escort=nil
+    if data.repairAmount and e.side=="ally" then
+        local bestDistance=math.huge
+        for _,ally in ipairs(state.entities) do
+            if ally~=e and ally.alive and ally.side=="ally"
+                and ally.health>0 and ally.health<ally.maxHealth then
+                local dx,dz=ally.x-e.x,ally.z-e.z
+                local squared=dx*dx+dz*dz
+                if squared<bestDistance then
+                    bestDistance=squared
+                    escort=ally
+                end
+            end
+        end
+    end
     local target, dist=closestOpponent(state,e)
     if target and dist <= data.range then
         if e.cooldown<=0 then
@@ -621,7 +707,18 @@ local function updateEntity(state,e,dt)
     else
         local tx= e.x
         local tz= e.side=="ally" and 40 or -41
-        if target then tx=target.x;tz=target.z end
+        if escort then
+            -- A nearby patient needs a stationary escort, not the default enemy waypoint.
+            tx=e.x;tz=e.z
+            local dx,dz=escort.x-e.x,escort.z-e.z
+            -- Stay close enough to repair, but don't crowd the patient.
+            local followDistance=data.repairRange*0.7
+            if dx*dx+dz*dz>followDistance*followDistance then
+                tx=escort.x;tz=escort.z
+            end
+        elseif target then
+            tx=target.x;tz=target.z
+        end
         local dx=tx-e.x
         local dz=tz-e.z
         local distance=math.sqrt(dx*dx+dz*dz)
@@ -675,6 +772,7 @@ local function simulate(state,dt)
     -- UpdateAsync may yield past expiry; never pay income on its return.
     if stopExpiredProgressLease(state) then return end
     if not state.active or sessions[state.player] ~= state or state.player.Parent ~= Players then return end
+    state.combatTime=(state.combatTime or 0)+dt
     local income=B.incomePerSecond(state.level.Value)
     if not income then income=6 end
     state.incomeCarry=state.incomeCarry+income*dt
@@ -901,3 +999,4 @@ RunService.Heartbeat:Connect(function(dt)
     for _,state in pairs(sessions) do simulate(state,delta) end
 end)
 print("TWF_BOOT_OK v1.2: server PVE auto factory and toy battle arena loaded")
+
