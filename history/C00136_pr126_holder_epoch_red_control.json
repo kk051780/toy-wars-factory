@@ -1,0 +1,68 @@
+{
+  "id": "C00136",
+  "date": "2026-10-30",
+  "kind": "SYSTEM_PR126_HOLDER_EPOCH_TYPE_RED_CONTROL",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "d746314f-15a8-832f-80fa-d479f030d398",
+  "base_main": "3dda8d0ad7601bdf2b650ed10abd935bfa370091",
+  "observed_at_utc": "2026-10-29T22:03:50Z",
+  "issue": 123,
+  "pr": 126,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "1c03230b8d6a35022d023918aec311af2605f0ce",
+    "owner_run_id": "d746314f-15a8-832f-80fa-d479f030d398",
+    "epoch": 257
+  },
+  "original_author": {
+    "run_id": "47b45262-2f40-8329-b6cd-3a4b4643b055",
+    "claim": "ca8d1dba24ba61f8f757262a4281e43560f081db",
+    "epoch": 255,
+    "histories": [
+      "history/C00134_owned_lease_finalization_red_control.json",
+      "history/C00135_owned_lease_finalization_capa.json"
+    ],
+    "preserved_unchanged": true
+  },
+  "formal_review": {
+    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "run_id": "73434dcc-91f8-8327-8231-3e7e067b4fab",
+    "epoch": 256,
+    "head": "9bbf9e819c886099802b4ccbf69f1e0cf2718939",
+    "verdict": "REQUEST_CHANGES_BOOL_FLOAT_HOLDER_EPOCH_FAIL_CLOSED",
+    "url": "https://github.com/kk051780/toy-wars-factory/issues/123#issuecomment-6509231333",
+    "finding_static_not_executed": true
+  },
+  "stage": "TEST_FIRST_EXACT_REJECTED_PR_SOURCE_UNCHANGED",
+  "source": {
+    "path": "tools/repair_control.py",
+    "blob": "a7ebe381c302e54ec08db000d1b562650856c559",
+    "unchanged": true
+  },
+  "tests": {
+    "new_methods": 12,
+    "local": {
+      "tests_run": 12,
+      "assertion_failures": 14,
+      "errors": 0
+    },
+    "scope": "Real source behavior with synthetic Host callbacks; NOT provider authentication",
+    "expected_full_python_tests": 749,
+    "prior737_tests_unchanged": true,
+    "github_red": "PENDING_AT_COMMIT_CREATION"
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "limits": [
+    "Same PR126/branch; preserve original author and old RED/GREEN history",
+    "No source repair yet in this commit; expected RED",
+    "Strict-int positive and same-owner late primitive release must remain supported",
+    "No merges/parallel writer/provider attestation/A12/A13/fees/Gemini/schedule/credential/publication changes"
+  ],
+  "next": "Confirm actual exact-head GitHub RED then minimally guard stored and supplied generations, exact new-head two-job GREEN, original-owner release and new independent registered review."
+}

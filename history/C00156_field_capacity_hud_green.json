@@ -1,0 +1,67 @@
+{
+  "id": "C00156",
+  "date": "2026-10-30",
+  "kind": "FIELD_CAPACITY_HUD_GREEN",
+  "issue": 115,
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "4844c90e-ef6c-8324-b867-c89b833e2ed9",
+  "main_base": "d0c1bf60d733a0db51d12c0295805d7741ce62eb",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "9cde74db985ddff9f5f0d507a6d2c6cbfc0ff736",
+    "owner_run_id": "4844c90e-ef6c-8324-b867-c89b833e2ed9",
+    "epoch": 278
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 7445,
+      "after_bytes": 7709,
+      "delta_bytes": 264,
+      "before_blob": "f7f6f44dc33fd39b9b0634d4034007c1bb989b50",
+      "after_blob": "f1b7a2e2e4e6cd0a5703a7f034f50d4e62801467",
+      "added_lines": 3,
+      "removed_lines": 0
+    }
+  ],
+  "test_changes": [
+    {
+      "path": "tests/auto/field_capacity_hud_spec.lua",
+      "new_cases": 7
+    }
+  ],
+  "tests": {
+    "red": {
+      "head": "e7710663ea9b818d59c329f80ff5e5c354e9ecbd",
+      "run_id": 41014897762,
+      "offline": "failure",
+      "compile_hold": "success",
+      "native_field_capacity": "2 passed / 5 failed",
+      "scope_and_lease": "passed"
+    },
+    "green": {
+      "head": "PENDING",
+      "run_id": "PENDING",
+      "native_field_capacity": "PENDING",
+      "python_expected": 833,
+      "prior_ci_failed": {
+        "run_id": 41015051300,
+        "python_tests": 833,
+        "errors": 1,
+        "reason": "C00156 missing source_metrics; fixed in unmerged draft record"
+      }
+    }
+  },
+  "characters_touched": [],
+  "server_economy_unchanged": true,
+  "roblox_engine": "NOT_RUN",
+  "mobile_ui": "NOT_VERIFIED",
+  "player_impact": "UNVERIFIED",
+  "safety_holds": "PRESERVED",
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1186,
+    "lua_bytes": 52781
+  },
+  "source_baseline_bytes": 25726
+}

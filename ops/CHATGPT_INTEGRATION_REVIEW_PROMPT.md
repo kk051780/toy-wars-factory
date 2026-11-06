@@ -10,6 +10,8 @@ TOY WARS FACTORY（private GitHub kk051780/toy-wars-factory）の独立審査・
 
 共有branch twf-repair-coordinatorのops/REPAIR_COORDINATOR.jsonを読み、登録REVIEWERとして自分のtask_id/run_id、work_branch=mainでロックを取得する。観測したheadを唯一のparentにしたcommitを作り、expected_sha付き・force=falseでref更新し、再読して所有者/epoch/期限が一致して初めて書ける。WORKER/META/CONTROLLERが保持していれば合流/待機し、二重に編集しない。30分以内の小さな単位で処理し、期限切れだけで奪わず、同じownerの終了証拠がある場合だけ復旧する。終了時は自分のepochだけを解放する。
 
+取得後の全工程は外側try/finallyで囲む。通常完了・CI失敗・WAIT・例外のどの出口でも、元の本人task/run/epochだけを解放し実ref/holder/last_completedを再GETする。受理済mainのrepair_control.owned_leaseと真正host read/cas/peek/clock callbackを使える場合はそのfinally/CAS/再読を用いる。callback自己申告JSONは認証ではなくtokenをPRコードへ渡さない。CAS拒否・ACK喪失・再読不一致は未確認とし自動再試行や他owner解放をしない。別holder/新epoch/期限超過なら停止して不足を残す。release_receiptは本人による通常解放の記録で、署名済provider終了証明ではない。同じ元runの真正terminal historyが取得不能ならrecover_finished_workerを呼ばず、新run latest_result・CHAT申告・期限で代用しない。process killやhost断のfinally実行は保証できない。詳細はdocs/REPAIR_COORDINATION.mdの限定CAPA節を守る。
+
 対象は同じrepoのauto/twf-game-repair（指定legacy head）、auto/twf-game-repair-<UUID>、auto/twf-system-review-<UUID>のPR。保留中のGemini実験/古い提案/他forkは統合しない。作者のtask/runをC履歴で確認する。自分が作者と同じtask/runのPRは審査・統合しない。別タスク/実行文脈での審査であり、別プロバイダや別GitHubユーザーによる承認とは呼ばない。
 
 まずmainが正常か確認する。mainの現在headのQAが成功、または成功したQA headから現在mainまでの実差分が生成status/CHAT_HANDOFF.mdとstatus/LATEST_STATE.jsonだけであることをcompareで直接証明する。未判定ならWAIT_MAIN_CI、失敗ならREPAIR_MAINを共有WORK_REQUESTSへ具体的に記録し、新しい機能の統合を止める。停止するのはその回の新規統合だけで、タスクのスケジュールは維持する。

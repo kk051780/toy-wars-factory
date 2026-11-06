@@ -1,0 +1,73 @@
+{
+  "id": "C00138",
+  "date": "2026-10-30",
+  "kind": "SYSTEM_GITHUB_EVIDENCE_HOLDER_EPOCH_RED_CONTROL",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+  "base_main": "7f198fa99ee4ee28d580172885a4183cf0773adc",
+  "observed_at_utc": "2026-10-29 22:54:03 UTC",
+  "issue": 114,
+  "related": [
+    123,
+    126
+  ],
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "0fa55eaa205b9ccaf27894d9332a553f4d7779ed",
+    "owner_run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+    "epoch": 260
+  },
+  "stage": "TEST_FIRST_LOCAL_RED_SOURCE_UNCHANGED",
+  "defect": {
+    "path": "tools/system_github_evidence.py",
+    "blob": "2eed374c00b037cc8f0d48a1aaf1f04b7831aa33",
+    "description": "The separate accepted GET collector equality-checks stored holder.epoch without strict int type. True/1.0 aliases1; False/0.0 aliases0; synthetic immutable blob fixture is wrongly accepted. PR126 repair_control is already accepted and is NOT modified or recredited.",
+    "organic_service_incident": false
+  },
+  "tests": {
+    "new_methods": 12,
+    "local_red": {
+      "run": 12,
+      "failures": 13,
+      "errors": 0
+    },
+    "test": {
+      "bytes": 4343,
+      "lines": 91,
+      "blob": "55cd18c624a0ea9cf7234fe5c0e1c0a84ef8003d",
+      "sha256": "ce7caf33613651173fa9a746e20882eda34d68ff6baad048d4037e29bb48cf0d"
+    },
+    "prior749_preserved": true,
+    "scope": "SYNTHETIC_TEST_ONLY; actual collector execution over two synthetic game/repo/role fixtures; no provider authentication"
+  },
+  "live_observation": {
+    "accepted_main": "7f198fa99ee4ee28d580172885a4183cf0773adc",
+    "source": "tools/system_idle_health.py",
+    "blob": "499624fc9b2a6b75a53bae3b5bf7c4afa0069fef",
+    "get_callbacks": 12,
+    "peek_callbacks": 6,
+    "state": "OBSERVED_HEALTHY",
+    "new_incidents": 0,
+    "own_run": "f5288a51-22e0-8327-a48b-335833cc9a00",
+    "latest_result_binding": "PREVIOUS_RUN",
+    "trigger_origin": "NOT_EXPOSED_BY_PEEK",
+    "delivery": "NOT_VERIFIED",
+    "main_qa": "MAIN_QA_NOT_CHECKED_IN_CLASSIFIER; SEPARATE_CONNECTED_GITHUB_MAIN_QA_VERIFIED",
+    "source_not_changed": true
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "characters_touched": [],
+  "game_source_delta_bytes": 0,
+  "limits": [
+    "New source PR only; no author merge",
+    "No actual new organic anomaly/delivery/recovery evidence, A12/A13+0",
+    "No protected config/schedule/workflow/AGENTS/tests/history modification; Issue128 separate",
+    "Original epoch251 terminal UNATTESTED; no takeover",
+    "Real GitHub RED CI pending at commit creation"
+  ],
+  "next": "Publish test-first RED, then one strict-int source guard and exact-head green CI; independent reviewer"
+}

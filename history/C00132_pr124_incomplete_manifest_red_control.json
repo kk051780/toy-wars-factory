@@ -1,0 +1,115 @@
+{
+  "id": "C00132",
+  "date": "2026-10-29",
+  "kind": "SYSTEM_PR124_INCOMPLETE_MANIFEST_RED_CONTROL",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "30f253c2-400c-8322-9609-be068121fb4e",
+  "base_main": "221bc53ce118f5242777c13649f437d18078dcc4",
+  "issue": 123,
+  "pr": 124,
+  "observed_at_utc": "2026-10-29T14:17:45Z",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "f9aed743aea06276956a61515d1c330585d34806",
+    "owner_run_id": "30f253c2-400c-8322-9609-be068121fb4e",
+    "epoch": 250
+  },
+  "original_author": {
+    "run_id": "29b870a0-83b0-8331-948d-942fbef57f57",
+    "claim": "e33427a8b5ed173c6b310b2c31f71fccc6318703",
+    "epoch": 247,
+    "history": "history/C00129_parallel_admission_phase0.json",
+    "preserved_unchanged": true
+  },
+  "prior_repair": {
+    "run_id": "fd071c64-5944-832f-a0c4-5c7368eb21dc",
+    "epoch": 248,
+    "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+    "histories": [
+      "history/C00130_pr124_join_review_red_control.json",
+      "history/C00131_pr124_join_review_repair.json"
+    ],
+    "preserved_unchanged": true
+  },
+  "review": {
+    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "run_id": "51d0d0bd-1be8-8328-b6cf-a28aa0e83a51",
+    "recorded_status": "completed",
+    "epoch": 249,
+    "head": "7e7e8f523f9f3d0dfd09ce59c3b00c4f3e406739",
+    "verdict": "REQUEST_CHANGES_INCOMPLETE_MANIFEST_JOIN_FAIL_CLOSED",
+    "url": "https://github.com/kk051780/toy-wars-factory/pull/124#issuecomment-6498775943",
+    "finding_was_static_not_executed_by_reviewer": true
+  },
+  "stage": "TESTS_ADDED_BEFORE_ANY_SOURCE_FIX",
+  "source_fix_applied": false,
+  "unchanged_source": {
+    "path": "tools/system_parallel_admission.py",
+    "blob": "20c512af8907b18361b2aa179d638547b4d62a79",
+    "bytes": 9151,
+    "lines": 189
+  },
+  "problem": "JOIN_EXISTING and READ_ONLY_PARALLEL bypass completeness; an incomplete candidate or a same-repository active row must WAIT_INCOMPLETE_MANIFEST before either early return.",
+  "tests": {
+    "new_methods": 12,
+    "prior_pr_methods_preserved": 61,
+    "accepted_main_tests_preserved": 636,
+    "local": {
+      "source_unchanged_blob": "20c512af8907b18361b2aa179d638547b4d62a79",
+      "tests_run": 73,
+      "failures": 9,
+      "errors": 0,
+      "failure_tests": [
+        "test_both_matching_manifests_incomplete_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_both_matching_manifests_incomplete_cannot_join)",
+        "test_complete_read_only_candidate_waits_for_incomplete_matching_active (test_system_parallel_admission.IncompleteManifestReviewTests.test_complete_read_only_candidate_waits_for_incomplete_matching_active)",
+        "test_complete_read_only_candidate_waits_for_incomplete_same_repo_active (test_system_parallel_admission.IncompleteManifestReviewTests.test_complete_read_only_candidate_waits_for_incomplete_same_repo_active)",
+        "test_incomplete_candidate_cannot_join_same_goal_different_work (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_candidate_cannot_join_same_goal_different_work)",
+        "test_incomplete_candidate_cannot_join_same_work (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_candidate_cannot_join_same_work)",
+        "test_incomplete_read_only_candidate_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_read_only_candidate_cannot_join)",
+        "test_incomplete_read_only_candidate_cannot_parallel (test_system_parallel_admission.IncompleteManifestReviewTests.test_incomplete_read_only_candidate_cannot_parallel)",
+        "test_matching_incomplete_active_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_matching_incomplete_active_cannot_join) (work='GAME_A001')",
+        "test_matching_incomplete_active_cannot_join (test_system_parallel_admission.IncompleteManifestReviewTests.test_matching_incomplete_active_cannot_join) (work='GAME_B001')"
+      ],
+      "new_methods": 12
+    },
+    "github_red": "PENDING_AT_COMMIT_CREATION",
+    "expected_full_python_tests": 709,
+    "positive_controls": [
+      "complete same-goal/same-scope same/different work JOIN",
+      "incomplete foreign repository does not block either writer or reader",
+      "complete read-only empty-ledger remains advisory parallel",
+      "malformed completeness fails schema validation, not admission"
+    ],
+    "source_used": "Actual unchanged PR Python module; no copied implementation in fixtures",
+    "authority": "All write/start/merge/publish/spend/provider flags remain false/NOT_VERIFIED"
+  },
+  "files": [
+    {
+      "path": "tests/test_system_parallel_admission.py",
+      "status": "M_UNMERGED_PR_ONLY",
+      "change": "Append12 tests; prior61 methods unchanged"
+    },
+    {
+      "path": "history/C00132_pr124_incomplete_manifest_red_control.json",
+      "status": "A"
+    }
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "game_source_delta_bytes": 0,
+  "characters_touched": [],
+  "execution": {
+    "acquire_helper": "Accepted main repair_control.acquire executed in local Python with canonical helper blob4d6e61eb8b2f1276abbc33bd99e7da48bc19959c; actual connected CAS/re-read verified epoch250",
+    "github_ci": "Existing pull_request workflow only; no workflow dispatch or auth changes"
+  },
+  "limits": [
+    "Synthetic manifest regressions do not attest live provider identity or authorize source writers",
+    "Original C00129/C00130/C00131 remain immutable",
+    "A12/A13 +0; automation57%/game38%; holds unchanged"
+  ],
+  "next": "Wait for actual GitHub CI red on this unchanged source, then smallest same-PR completeness-order repair with separate append-only history and fresh exact-head two-job green. Separate registered REVIEWER required; no author merge."
+}

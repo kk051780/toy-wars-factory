@@ -1,0 +1,43 @@
+{
+  "id": "C00140",
+  "date": "2026-10-30",
+  "kind": "APPEND_ONLY_LOCAL_TEST_COUNT_CORRECTION",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+  "base_main": "7f198fa99ee4ee28d580172885a4183cf0773adc",
+  "observed_at_utc": "2026-10-29T22:56:17Z",
+  "issue": 114,
+  "pr": 129,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "0fa55eaa205b9ccaf27894d9332a553f4d7779ed",
+    "owner_run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+    "epoch": 260
+  },
+  "correction": {
+    "history": "history/C00139_github_evidence_holder_epoch_repair.json",
+    "immutable_original_retained": true,
+    "wrong_fields": {
+      "tests.local_accepted_github_evidence": 28,
+      "tests.local_accepted_provider_transport": 25
+    },
+    "actual_executed_counts": {
+      "tests.local_accepted_github_evidence": 41,
+      "tests.local_accepted_provider_transport": 31
+    },
+    "other_counts_unchanged": {
+      "new_methods": 12,
+      "accepted_idle_health": 20,
+      "full_expected": 761
+    },
+    "reason": "C00139 mistakenly copied anticipated local suite sizes instead of the actual output; this append records measured 41 and31, both OK. Not new tests or extra progress."
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "characters_touched": [],
+  "game_source_delta_bytes": 0,
+  "next": "Use real exact final HEAD logs; independent review; never overwrite C00138/C00139"
+}

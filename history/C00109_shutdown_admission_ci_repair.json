@@ -1,0 +1,94 @@
+{
+  "id": "C00109",
+  "date": "2026-10-28",
+  "kind": "AUTONOMOUS_SHUTDOWN_ADMISSION_CI_REPAIR",
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "run_id": "95aef457-a224-8332-ac0b-f8e3e80c9ae0",
+  "queue_decision": {
+    "action": "REPAIR_CI",
+    "pr": 106,
+    "branch": "auto/twf-game-repair-95aef457-a224-8332-ac0b-f8e3e80c9ae0",
+    "open_prs": [
+      106
+    ],
+    "change_scheduler": false
+  },
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "2870e31ef485b31d5e32462322da465270b1c38a",
+    "owner_run_id": "95aef457-a224-8332-ac0b-f8e3e80c9ae0",
+    "epoch": 205
+  },
+  "main_base": "c3189d75d4b9bc49d79204c9bab17265e57813f4",
+  "prior_pr_head": "63421acc8732274bb3e1e348c100f1711b2db2c0",
+  "defect": {
+    "id": "shutdown_late_join_backfill_progress_race",
+    "ci_failure": "Offline job 40703250946: accepted progression_backfill_save_order_spec.lua requires a GetAsync that started before shutdown to finish admission. First implementation incorrectly rejected that already-pending join.",
+    "root_cause": "A shutdown fence must reject new join/backfill initiated after shutdown, not invalidate a join already pending before shutdown. That pending join must not accrue gameplay or retain a lease."
+  },
+  "fix": "Retain shutdown entry/backfill fence; allow pre-shutdown pending read/claim to finish the accepted workshop assignment, then freeze its state and finalize its owned progress immediately. Regress canonical pending read/claim, pre-shutdown backfill and old-main negatives. Accepted tests unchanged.",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/progression_shutdown_admission_spec.lua",
+    "history/C00109_shutdown_admission_ci_repair.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 36890,
+      "after_bytes": 37103,
+      "delta_bytes": 213
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1110,
+    "lua_bytes": 48247
+  },
+  "main_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1098,
+    "lua_bytes": 47757
+  },
+  "source_baseline_bytes": 25726,
+  "test_changes": [
+    {
+      "path": "tests/auto/progression_shutdown_admission_spec.lua",
+      "before_bytes": 6070,
+      "after_bytes": 6795,
+      "delta_bytes": 725
+    }
+  ],
+  "characters_touched": [],
+  "character_impact": "No changes to existing toy prices, stats, models, HUD selectors, waiting notice or guide.",
+  "tests": {
+    "new_canonical_lua_cases": 5,
+    "pinned_main_negative_controls": 2,
+    "accepted_server_27": "UNCHANGED",
+    "accepted_hud_6": "UNCHANGED",
+    "local_lua": "NOT_RUN",
+    "prior_ci": {
+      "id": 40703250946,
+      "head": "63421acc8732274bb3e1e348c100f1711b2db2c0",
+      "offline": "failure",
+      "compile_hold": "success"
+    },
+    "new_head_ci": "PENDING",
+    "roblox_engine": "NOT_RUN",
+    "real_datastore": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN"
+  },
+  "evidence": {
+    "claim_commit": "2870e31ef485b31d5e32462322da465270b1c38a",
+    "pr": 106,
+    "head": "PENDING_FINAL_COMMIT_CANNOT_SELF_REFERENCE"
+  },
+  "next_action": "Check exact new-head offline and compile_hold, independent REVIEWER only. No accepted-test changes or owner approval request.",
+  "restrictions": {
+    "scheduler_mutated": false,
+    "gemini_rerun": false,
+    "roblox_publish": false,
+    "author_main_merge": false
+  }
+}

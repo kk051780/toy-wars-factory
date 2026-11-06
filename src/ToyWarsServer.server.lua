@@ -15,6 +15,13 @@ world.Parent = workspace
 local MAX_PLOTS = 4
 local SPACING = 108
 local sessions = {}
+local shuttingDown = false
+-- Keep departing saves visible to shutdown after their session is removed.
+local finalSavesInFlight = {}
+-- Track atomic claims whose responses can outlive BindToClose.
+local pendingClaims = {}
+local pendingClaimCleanups = {}
+local shutdownDeadline
 -- A kicked player may remain in Players until disconnect; never retry its failed load.
 local rejectedLoads = {}
 local occupied = {}
@@ -92,6 +99,38 @@ local function newSessionToken()
     end
     return nil
 end
+-- Release only this token if its UpdateAsync response is still pending at close.
+local function schedulePendingClaimCleanup(player,claim)
+    if claim.cleanupScheduled then return end
+    claim.cleanupScheduled=true
+    pendingClaimCleanups[claim]=true
+    task.spawn(function()
+        task.wait(5) -- preserve accepted short admissions; reserve cleanup budget
+        if pendingClaims[player]~=claim then
+            pendingClaimCleanups[claim]=nil
+            return
+        end
+        claim.cancelled=true
+        local cleaned=false
+        for attempt=1,SAVE_RETRY_COUNT do
+            local ok=pcall(function()
+                progressStore:UpdateAsync(claim.key,function(current,keyInfo)
+                    if not validProgress(current) or current.sessionOwner~=claim.token then return nil end
+                    local updated={}
+                    for field,value in pairs(current) do updated[field]=value end
+                    updated.sessionOwner=nil;updated.sessionLeaseUntil=nil
+                    if keyInfo then return updated,keyInfo:GetUserIds(),keyInfo:GetMetadata() end
+                    return updated
+                end)
+            end)
+            if ok then cleaned=true;break end
+            if attempt<SAVE_RETRY_COUNT then task.wait(SAVE_RETRY_SECONDS) end
+        end
+        if not cleaned then warn("TWF: shutdown pending claim cleanup unavailable for",player.UserId) end
+        if pendingClaims[player]==claim then pendingClaims[player]=nil end
+        pendingClaimCleanups[claim]=nil
+    end)
+end
 local function loadProgress(player,pending)
     if not progressStore then return nil,false,"STORE_UNAVAILABLE" end
     local key="p:"..tostring(player.UserId)
@@ -99,14 +138,20 @@ local function loadProgress(player,pending)
     if not ok then return nil,false,"READ_UNAVAILABLE" end
     if record~=nil and not validProgress(record) then return nil,false,"SCHEMA_UNSUPPORTED" end
     if sessions[player]~=pending or player.Parent~=Players then return nil,false,"DEPARTED" end
+    if shuttingDown and shutdownDeadline and os.clock()>=shutdownDeadline-10 then return nil,false,"DEPARTED" end
     local token=newSessionToken()
     if not token then return nil,false,"CLAIM_UNAVAILABLE" end
     for attempt=1,SESSION_RETRY_COUNT do
         if sessions[player]~=pending or player.Parent~=Players then return nil,false,"DEPARTED" end
+        if shuttingDown and shutdownDeadline and os.clock()>=shutdownDeadline-10 then return nil,false,"DEPARTED" end
         local now=leaseNow()
         local blocked,invalid=false,false
+        local claim={key=key,token=token,cancelled=false}
+        pendingClaims[player]=claim
+        if shuttingDown then schedulePendingClaimCleanup(player,claim) end
         local claimedOk,claimed=pcall(function()
             return progressStore:UpdateAsync(key,function(current,keyInfo)
+                if claim.cancelled or (shuttingDown and shutdownDeadline and os.clock()>=shutdownDeadline) then return nil end
                 -- Never trust the earlier GetAsync snapshot inside this atomic CAS.
                 if current~=nil and not validProgress(current) then invalid=true;return nil end
                 if current and current.sessionOwner and current.sessionOwner~=token
@@ -127,19 +172,32 @@ local function loadProgress(player,pending)
                 return updated
             end)
         end)
+        if pendingClaims[player]==claim then pendingClaims[player]=nil end
+        if not claim.cancelled then pendingClaimCleanups[claim]=nil end
+        if claim.cancelled then return nil,false,"DEPARTED" end
         if claimedOk and claimed~=nil then
             if sessions[player]~=pending or player.Parent~=Players then
                 -- The claim may have yielded past disconnect. Release only this token.
-                pcall(function()
-                    progressStore:UpdateAsync(key,function(current,keyInfo)
-                        if not validProgress(current) or current.sessionOwner~=token then return nil end
-                        local updated={}
-                        for field,value in pairs(current) do updated[field]=value end
-                        updated.sessionOwner=nil;updated.sessionLeaseUntil=nil
-                        if keyInfo then return updated,keyInfo:GetUserIds(),keyInfo:GetMetadata() end
-                        return updated
+                -- A transient DataStore error must not strand a departed player's
+                -- just-committed claim for the full lease duration.
+                local cleanupOk=false
+                for cleanupAttempt=1,SAVE_RETRY_COUNT do
+                    local ok=pcall(function()
+                        progressStore:UpdateAsync(key,function(current,keyInfo)
+                            if not validProgress(current) or current.sessionOwner~=token then return nil end
+                            local updated={}
+                            for field,value in pairs(current) do updated[field]=value end
+                            updated.sessionOwner=nil;updated.sessionLeaseUntil=nil
+                            if keyInfo then return updated,keyInfo:GetUserIds(),keyInfo:GetMetadata() end
+                            return updated
+                        end)
                     end)
-                end)
+                    if ok then cleanupOk=true;break end
+                    if cleanupAttempt<SAVE_RETRY_COUNT then task.wait(SAVE_RETRY_SECONDS) end
+                end
+                if not cleanupOk then
+                    warn("TWF: departed claim cleanup unavailable for",player.UserId)
+                end
                 return nil,false,"DEPARTED"
             end
             return claimed,true
@@ -209,6 +267,37 @@ local function saveProgress(player,state)
         if attempt<SAVE_RETRY_COUNT then task.wait(SAVE_RETRY_SECONDS) end
     end
     warn("TWF: progress save retries exhausted; progress may be unsaved for",player.UserId)
+end
+-- Reserve finalization synchronously so delayed spawned saves cannot duplicate it.
+local function runFinalSave(player,state)
+    local ok=pcall(saveProgress,player,state)
+    finalSavesInFlight[player]=nil
+    if not ok then warn("TWF: unexpected final save failure for",player.UserId) end
+end
+local function finalizeProgress(player,state,spawnAsync)
+    if finalSavesInFlight[player] then return end
+    finalSavesInFlight[player]=true
+    if spawnAsync then
+        task.spawn(runFinalSave,player,state)
+    else
+        runFinalSave(player,state)
+    end
+end
+-- A failed refresh is tolerable only while this exact session's local lease is live.
+-- Preserve final-save CAS on expiry: earlier earnings may still be committed
+-- if no other server has claimed the record.
+local function stopExpiredProgressLease(state)
+    local expected=state.persistSnapshot
+    if state.persistAllowed and not state.persistFinalizing and expected and expected.sessionOwner
+        and (not expected.sessionLeaseUntil or leaseNow()>=expected.sessionLeaseUntil) then
+        state.active=false
+        warn("TWF: progress lease expired for",state.player.UserId)
+        if type(state.player.Kick)=="function" then
+            state.player:Kick("Toy Wars: progress session expired. Please rejoin.")
+        end
+        return true
+    end
+    return false
 end
 local function refreshProgressLease(state)
     if not progressStore or not state.persistAllowed or not state.persistSnapshot
@@ -424,10 +513,12 @@ local function makePlot(player, state)
         prompt.Parent=pad
         prompt.Triggered:Connect(function(actor)
             if actor ~= player or not state.active then return end
+            if stopExpiredProgressLease(state) then return end
             -- Never trust a client-triggered prompt without checking server-side proximity.
             local character=actor.Character
             local root=character and character:FindFirstChild("HumanoidRootPart")
             if not root or not ((root.Position-pad.Position).Magnitude <= 13) then return end
+            if not ((root.Position-pad.Position).Magnitude <= prompt.MaxActivationDistance + 1) then return end
             state.selected=id
             refreshStatus(state)
         end)
@@ -455,10 +546,11 @@ local function makePlot(player, state)
     refreshUpgrade()
     upgradePrompt.Triggered:Connect(function(actor)
         if actor ~= player or not state.active then return end
+        if stopExpiredProgressLease(state) then return end
         -- A forged proximity event must not upgrade from across the map.
         local character=actor.Character
         local root=character and character:FindFirstChild("HumanoidRootPart")
-        if not root or not ((root.Position-station.Position).Magnitude <= 13) then return end
+        if not root or not ((root.Position-station.Position).Magnitude <= upgradePrompt.MaxActivationDistance + 1) then return end
         local price=B.upgradePrice(state.level.Value)
         if not price or state.coins.Value<price then return end
         state.coins.Value = state.coins.Value-price
@@ -631,8 +723,10 @@ local function resetAfterLoss(state)
 end
 
 local function simulate(state,dt)
-    if not state.active then return end
+    if not state.active or stopExpiredProgressLease(state) then return end
     refreshProgressLease(state)
+    -- UpdateAsync may yield past expiry; never pay income on its return.
+    if stopExpiredProgressLease(state) then return end
     if not state.active or sessions[state.player] ~= state or state.player.Parent ~= Players then return end
     state.combatTime=(state.combatTime or 0)+dt
     local income=B.incomePerSecond(state.level.Value)
@@ -703,6 +797,7 @@ lobbyGround.CanCollide = true
 
 local function join(player)
     if player.Parent ~= Players or sessions[player] then return end
+    if shuttingDown then return end
     if rejectedLoads[player] then return end
     local slot=chooseSlot()
     if not slot then
@@ -727,6 +822,7 @@ local function join(player)
         end
         -- A failed load also frees a reserved plot. Admit the next queued player;
         -- the rejected player can still be in Players until Kick completes.
+        if shuttingDown then return end
         for _,waiting in ipairs(Players:GetPlayers()) do
             if waiting ~= player and waiting.Parent == Players and not sessions[waiting] and not rejectedLoads[waiting] then
                 task.spawn(join,waiting)
@@ -762,6 +858,13 @@ local function join(player)
     }
     sessions[player]=state
     makePlot(player,state)
+    if shuttingDown then
+        -- This join began before shutdown: preserve queue admission, but
+        -- immediately freeze and release its lease without unsavable gameplay.
+        state.active=false
+        finalizeProgress(player,state,true)
+        return
+    end
     local function characterReady(character)
         -- Retry bounded waits for a slow HumanoidRootPart, not a replaced character.
         local root
@@ -783,6 +886,7 @@ end
 selectEvent.OnServerEvent:Connect(function(player,selected)
     local state=sessions[player]
     if not state or not state.active then return end
+    if stopExpiredProgressLease(state) then return end
     if not B.isUnit(selected) then return end
     if os.clock() - (state.lastSelection or -100) < 0.12 then return end
     state.lastSelection=os.clock()
@@ -800,7 +904,8 @@ Players.PlayerRemoving:Connect(function(player)
     if state.map and state.map.Parent then state.map:Destroy() end
     sessions[player]=nil
     -- Finalize departing progress before a waiting player's GetAsync can yield.
-    saveProgress(player,state)
+    finalizeProgress(player,state)
+    if shuttingDown then return end
     -- Assign a newly freed plot to one player who was waiting at capacity.
     for _,waiting in ipairs(Players:GetPlayers()) do
         if waiting ~= player and waiting.Parent == Players and not sessions[waiting] and not rejectedLoads[waiting] then
@@ -811,9 +916,32 @@ Players.PlayerRemoving:Connect(function(player)
 end)
 if type(game.BindToClose) == "function" then
     game:BindToClose(function()
+        -- Block late admissions before freezing the shutdown save set.
+        shuttingDown=true
+        local deadline=os.clock()+25 -- Roblox waits at most 30 seconds for BindToClose.
+        shutdownDeadline=deadline
+        for player,claim in pairs(pendingClaims) do schedulePendingClaimCleanup(player,claim) end
+        local closing={}
         for player,state in pairs(sessions) do
-            if state.active then saveProgress(player,state) end
+            -- Freeze gameplay before any final UpdateAsync can yield.
+            if state.coins then
+                state.active=false
+                closing[#closing+1]={player=player,state=state}
+            end
         end
+        -- Start every other save before the first synchronous save yields.
+        -- Keep one synchronous path for the one-player shutdown case.
+        for i=2,#closing do
+            local item=closing[i]
+            finalizeProgress(item.player,item.state,true)
+        end
+        if closing[1] then
+            finalizeProgress(closing[1].player,closing[1].state)
+        end
+        -- PlayerRemoving may have cleared sessions while UpdateAsync was yielding.
+        while (next(finalSavesInFlight) or next(pendingClaimCleanups)) and os.clock()<deadline do task.wait(0.1) end
+        if next(finalSavesInFlight) then warn("TWF: shutdown final save still pending") end
+        if next(pendingClaimCleanups) then warn("TWF: shutdown pending claim cleanup still pending") end
     end)
 end
 for _,player in ipairs(Players:GetPlayers()) do task.spawn(join,player) end

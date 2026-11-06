@@ -1,0 +1,150 @@
+{
+  "id": "C00139",
+  "date": "2026-10-30",
+  "kind": "SYSTEM_GITHUB_EVIDENCE_STRICT_HOLDER_EPOCH_REPAIR",
+  "task_id": "6add445e4138819197d9cf2b1a02534d",
+  "run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+  "base_main": "7f198fa99ee4ee28d580172885a4183cf0773adc",
+  "observed_at_utc": "2026-10-29T22:55:53Z",
+  "issue": 114,
+  "pr": 129,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "0fa55eaa205b9ccaf27894d9332a553f4d7779ed",
+    "owner_run_id": "f5288a51-22e0-8327-a48b-335833cc9a00",
+    "epoch": 260
+  },
+  "stage": "ONE_LINE_STRICT_TYPE_REPAIR_AFTER_ACTUAL_GITHUB_RED",
+  "red_control": {
+    "head": "f484a601125efd778de81e175fee62b132284c5b",
+    "run": 40969342145,
+    "attempt": 1,
+    "python_tests": 761,
+    "failures": 13,
+    "errors": 0,
+    "jobs": [
+      {
+        "name": "offline",
+        "id": 123781846464,
+        "head": "f484a601125efd778de81e175fee62b132284c5b",
+        "conclusion": "failure"
+      },
+      {
+        "name": "compile_hold",
+        "id": 123781846838,
+        "head": "f484a601125efd778de81e175fee62b132284c5b",
+        "conclusion": "success"
+      }
+    ],
+    "proof": [
+      "2026-10-29T22:54:37.8743942Z PASS: system review scope",
+      "2026-10-29T22:54:38.5398445Z PASS: repair coordination; 1 immutable coordinator claim(s) verified",
+      "2026-10-29T22:54:47.2143141Z Ran 761 tests in 6.351s",
+      "2026-10-29T22:54:47.2143715Z FAILED (failures=13)"
+    ],
+    "history": "history/C00138_github_evidence_holder_epoch_red.json",
+    "old_source_blob": "2eed374c00b037cc8f0d48a1aaf1f04b7831aa33"
+  },
+  "repair": {
+    "path": "tools/system_github_evidence.py",
+    "new": {
+      "bytes": 22296,
+      "lines": 412,
+      "blob": "73e71972209bf1937560c8250e0aaf76ef759f89",
+      "sha256": "275bbc0ae6ef8eb0fdadf30925b4963046eac8f10be14fba6d02fc309700e992"
+    },
+    "lines_added": 1,
+    "lines_removed": 1,
+    "description": "Require exact int for stored holder epoch before equality. No PR validation, CAS, source identity, auth or task privilege change; repair_control PR126 untouched."
+  },
+  "tests": {
+    "new_methods": 12,
+    "expected_full_python": 761,
+    "local_new": 12,
+    "local_accepted_github_evidence": 28,
+    "local_accepted_idle_health": 20,
+    "local_accepted_provider_transport": 25,
+    "scope": "SYNTHETIC_TEST_ONLY; actual accepted collector over two games and all holder kinds; fixture PASS is not connected provider proof",
+    "new_test": {
+      "bytes": 4343,
+      "lines": 91,
+      "blob": "55cd18c624a0ea9cf7234fe5c0e1c0a84ef8003d",
+      "sha256": "ce7caf33613651173fa9a746e20882eda34d68ff6baad048d4037e29bb48cf0d"
+    },
+    "red_green_test_bytes_identical": true,
+    "exact_head_green": "PENDING_AT_COMMIT_CREATION"
+  },
+  "preserved": {
+    "previous749_tests": true,
+    "all_old_history": true,
+    "old_main_other290_blobs": true,
+    "pr126_source_and_C00134_to_C00137": true,
+    "shared33_detailed_entries": true,
+    "protected_config_workflows_AGENTS_source": true
+  },
+  "live_observation": {
+    "accepted_main": "7f198fa99ee4ee28d580172885a4183cf0773adc",
+    "source": "tools/system_idle_health.py",
+    "blob": "499624fc9b2a6b75a53bae3b5bf7c4afa0069fef",
+    "get_callbacks": 12,
+    "peek_callbacks": 6,
+    "state": "OBSERVED_HEALTHY",
+    "new_incidents": 0,
+    "own_run": "f5288a51-22e0-8327-a48b-335833cc9a00",
+    "latest_result_binding": "PREVIOUS_RUN",
+    "trigger_origin": "NOT_EXPOSED_BY_PEEK",
+    "delivery": "NOT_VERIFIED",
+    "main_qa": "MAIN_QA_NOT_CHECKED_IN_CLASSIFIER; SEPARATE_CONNECTED_GITHUB_MAIN_QA_VERIFIED",
+    "source_not_changed": true
+  },
+  "research": {
+    "retrieved_on": "2026-10-30",
+    "primary_url": "https://docs.python.org/3/library/stdtypes.html",
+    "fact": "Python bool is an int subclass; numeric equality alone does not enforce exact stored generation type.",
+    "system_options": [
+      {
+        "id": "NO_CHANGE",
+        "result": "Reproduced malformed holder epoch accepted; no extra work"
+      },
+      {
+        "id": "NORMALIZE",
+        "result": "Rejected hypothesis: coercion hides malformed persisted state; more compatibility and QA risk"
+      },
+      {
+        "id": "STRICT_REJECT",
+        "result": "Selected one-line exact-type guard; low implementation cost; new adversarial regression; performance effect NOT_MEASURED"
+      }
+    ],
+    "game_options": [
+      {
+        "id": "NO_CHANGE",
+        "result": "Selected while system safety is prioritized; gameplay effect NOT_MEASURED"
+      },
+      {
+        "id": "FIRST_LOOP_CLARITY",
+        "result": "Owner first-loop acquisition/early-exit hypothesis; UI/mobile QA needed; NOT_MEASURED"
+      },
+      {
+        "id": "DIFFERENTIATED_COLLECTION",
+        "result": "Preserved OWNER verbatim/DERIVED ledger; differentiated role/collection hypothesis; model/animation/battle/UI and QA burden higher; NOT_MEASURED"
+      }
+    ],
+    "owner_origin": "Existing C00122 origin/DERIVED preserved, original chat authentication NOT_VERIFIED"
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1173,
+    "lua_bytes": 51896
+  },
+  "characters_touched": [],
+  "game_source_delta_bytes": 0,
+  "limits": [
+    "No new organic service anomaly, persistence, notification delivery or independently confirmed recovery",
+    "Trigger origin is NOT_EXPOSED_BY_PEEK; scheduled_for alone is not unforced attestation",
+    "Original epoch251 terminal remains UNATTESTED",
+    "A12/A13 award0; official protected57/game38 unchanged",
+    "Issue128 cadence reconciliation is separate protected work, no task/schedule/config mutation",
+    "No author approve/merge, external inference/spend, credentials or Roblox publication"
+  ],
+  "next": "Verify exact new-head offline+compile_hold/logs, normal own epoch260 release/readback, separate registered REVIEWER then main QA/handoff"
+}
