@@ -1396,6 +1396,71 @@
         "released_at": "2026-11-06T06:07:01.656Z",
         "note": "Only isolated CI and mock Studio host gate retargeted. Original protected PR149/main remain unchanged, real signed Windows host unavailable/unverified, no upload/approval or real engine execution."
       }
+    },
+    {
+      "at": "2026-11-06T07:44:40.650Z",
+      "kind": "PR98_AUTHOR_ADDITIONAL_HEADS_HANDOFF",
+      "original_request": {
+        "author_first_commit": "04ae31b1447ec352e504f96b72dd91ea78d24db2",
+        "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "branch": "ops/twf-character-pipeline-20261028",
+        "ci_run": 42157899420,
+        "claim_commit": "e7f0797bba357c3e6a7193ebc94e1ffb42da5fa8",
+        "created_at": "2026-11-06T03:15:13.269Z",
+        "epoch": 455,
+        "head": "85915a2983951b79bce64e4a736e47962390871b",
+        "kind": "CONTROLLER",
+        "number": 98,
+        "owner_id": "2e9c32dd-879b-49a9-a2af-565a3f9d2026",
+        "repository": "kk051780/toy-wars-factory",
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "scope": "EXACT_HEAD_PROTECTED_CHARACTER_CATALOG_SOURCE_WITH_NEW_TEST_AND_HISTORY",
+        "status": "AWAIT_PR60_POLICY_BOOTSTRAP_AND_REGISTERED_REVIEWER",
+        "note": "2026-11-06 epoch456 actual existing PR98 change: strict B.PLAYABLE_IDS equals active catalog & B.UNITS roster; 4 new Python regression methods; C98767 append-only. Exact head 85915a2983951b79bce64e4a736e47962390871b original Actions #42157899420 offline+compile_hold green, Python865/865, CUREBO Lua12/12, pages11/11, lifecycle4/4; canonical Lua unchanged 4 files/1296 lines/57770 bytes. No independent native review, main merge, engine/mobile proof, billing/permission modification.",
+        "last_updated_at": "2026-11-06T03:42:30.569Z"
+      },
+      "note": "Keep historical manual CONTROLLER claim; retarget only exact head/CI after distinct author epochs460/461, no reviewer approval claim."
+    },
+    {
+      "at": "2026-11-06T07:44:40.650Z",
+      "kind": "PRESERVE_PRIOR_LAST_COMPLETED",
+      "before_epoch": 461,
+      "record": {
+        "kind": "MANUAL_CONTROLLER_PR98_CUREBO_ESCORT_FIXED_EXACT_HEAD_CI_GREEN",
+        "owner_id": "c15e9350-74e2-453f-99e2-228c4c85ec16",
+        "epoch": 460,
+        "claim_commit": "3a102a88f102857e56f9374c4a3bfce1aed8945e",
+        "branch": "ops/twf-character-pipeline-20261028",
+        "pr": 98,
+        "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "first_source_head": "3eb01e60f2444686ecb3bbc1b15cf876e98d8589",
+        "red_ci": 42176856011,
+        "final_head": "4e1ea196be8b9a81346b427691f8e37ddbc665e2",
+        "final_ci": 42177160766,
+        "final_ci_status": "offline+compile_hold SUCCESS",
+        "python_tests": "865/865",
+        "curebo_lua": "15/15",
+        "character_pages_lua": "11/11",
+        "changes": [
+          "src/ToyWarsServer.server.lua",
+          "tests/auto/curebo_support_spec.lua",
+          "history/C98771_curebo_patient_escort.json",
+          "history/C98772_curebo_escort_red_green_fix.json"
+        ],
+        "gameplay_src_modified": true,
+        "source_metrics": {
+          "lua_files": 4,
+          "lua_lines": 1324,
+          "lua_bytes": 58935
+        },
+        "main_merged": false,
+        "independent_native_review": false,
+        "roblox_engine_verified": false,
+        "mobile_verified": false,
+        "spending_authorized": false,
+        "public_release": false,
+        "recorded_at": "2026-11-06T06:53:35.695Z"
+      }
     }
   ],
   "controller_maintenance": {
@@ -1481,17 +1546,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 461,
-  "holder": {
-    "acquired_at": "2026-11-06T07:41:22.066Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "epoch": 461,
-    "expires_at": "2026-11-06T08:06:22.066Z",
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "13bfb402-73a3-4b39-9517-7820a94961d0",
-    "task_id": null,
-    "work_branch": "ops/twf-character-pipeline-20261028"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3135,40 +3190,40 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "MANUAL_CONTROLLER_PR98_CUREBO_ESCORT_FIXED_EXACT_HEAD_CI_GREEN",
-    "owner_id": "c15e9350-74e2-453f-99e2-228c4c85ec16",
-    "epoch": 460,
-    "claim_commit": "3a102a88f102857e56f9374c4a3bfce1aed8945e",
+    "kind": "MANUAL_CONTROLLER_PR98_CUREBO_3D_REPAIR_SIGNAL_CI_GREEN",
+    "owner_id": "13bfb402-73a3-4b39-9517-7820a94961d0",
+    "epoch": 461,
+    "claim_commit": "c4b8b7896215fec19b4b76278dfc47b3fbf29bec",
     "branch": "ops/twf-character-pipeline-20261028",
     "pr": 98,
-    "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "first_source_head": "3eb01e60f2444686ecb3bbc1b15cf876e98d8589",
-    "red_ci": 42176856011,
-    "final_head": "4e1ea196be8b9a81346b427691f8e37ddbc665e2",
-    "final_ci": 42177160766,
-    "final_ci_status": "offline+compile_hold SUCCESS",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "head": "6b2c59f155ca21463c733917d647ecb9a1b8e89b",
+    "CI": 42182687969,
+    "CI_status": "offline+compile_hold SUCCESS",
     "python_tests": "865/865",
-    "curebo_lua": "15/15",
-    "character_pages_lua": "11/11",
-    "changes": [
+    "curebo_lua": "18/18",
+    "hud_pages_lua": "11/11",
+    "source_changes": [
       "src/ToyWarsServer.server.lua",
       "tests/auto/curebo_support_spec.lua",
-      "history/C98771_curebo_patient_escort.json",
-      "history/C98772_curebo_escort_red_green_fix.json"
+      "history/C98773_curebo_heal_3d_flash.json"
     ],
-    "gameplay_src_modified": true,
     "source_metrics": {
       "lua_files": 4,
-      "lua_lines": 1324,
-      "lua_bytes": 58935
+      "lua_lines": 1340,
+      "lua_bytes": 59754
     },
+    "new_3d_parts": 0,
+    "player_visible_code_change": "0.45s server-authoritative existing RepairHead neon mint repair flash, reset to original",
+    "manual_review_request_retargeted": true,
     "main_merged": false,
     "independent_native_review": false,
-    "roblox_engine_verified": false,
-    "mobile_verified": false,
-    "spending_authorized": false,
-    "public_release": false,
-    "recorded_at": "2026-11-06T06:53:35.695Z"
+    "Roblox_Studio_verified": false,
+    "Android_verified": false,
+    "free_quota_remaining": "UNKNOWN",
+    "new_paid_service": false,
+    "published": false,
+    "recorded_at": "2026-11-06T07:44:40.650Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
@@ -3264,11 +3319,11 @@
       "author_first_commit": "04ae31b1447ec352e504f96b72dd91ea78d24db2",
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "branch": "ops/twf-character-pipeline-20261028",
-      "ci_run": 42157899420,
+      "ci_run": 42182687969,
       "claim_commit": "e7f0797bba357c3e6a7193ebc94e1ffb42da5fa8",
       "created_at": "2026-11-06T03:15:13.269Z",
       "epoch": 455,
-      "head": "85915a2983951b79bce64e4a736e47962390871b",
+      "head": "6b2c59f155ca21463c733917d647ecb9a1b8e89b",
       "kind": "CONTROLLER",
       "number": 98,
       "owner_id": "2e9c32dd-879b-49a9-a2af-565a3f9d2026",
@@ -3276,8 +3331,8 @@
       "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "scope": "EXACT_HEAD_PROTECTED_CHARACTER_CATALOG_SOURCE_WITH_NEW_TEST_AND_HISTORY",
       "status": "AWAIT_PR60_POLICY_BOOTSTRAP_AND_REGISTERED_REVIEWER",
-      "note": "2026-11-06 epoch456 actual existing PR98 change: strict B.PLAYABLE_IDS equals active catalog & B.UNITS roster; 4 new Python regression methods; C98767 append-only. Exact head 85915a2983951b79bce64e4a736e47962390871b original Actions #42157899420 offline+compile_hold green, Python865/865, CUREBO Lua12/12, pages11/11, lifecycle4/4; canonical Lua unchanged 4 files/1296 lines/57770 bytes. No independent native review, main merge, engine/mobile proof, billing/permission modification.",
-      "last_updated_at": "2026-11-06T03:42:30.569Z"
+      "note": "2026-11-06 game source additions by separate manual CONTROLLER epochs460 +461: CUREBO follows wounded allies (3 Lua regressions; red then green) and emits 0.45s 3D neon repair pulse (3 Lua regressions). Final exact head 6b2c59f155ca21463c733917d647ecb9a1b8e89b, exact pull_request Actions #42182687969 offline + compile_hold SUCCESS; Python 865/865, CUREBO 18/18, character pages 11/11. Original PR98 authored first-commit/claim/owner from epoch455 remain historical provenance; new claim epoch461 c4b8b7896215fec19b4b76278dfc47b3fbf29bec. Independent native reviewer & PR60 policy bootstrap MISSING. main unchanged, no publish or paid spend.",
+      "last_updated_at": "2026-11-06T07:44:40.650Z"
     }
   ],
   "operational_routing_updates": [
