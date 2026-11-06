@@ -1461,6 +1461,40 @@
         "public_release": false,
         "recorded_at": "2026-11-06T06:53:35.695Z"
       }
+    },
+    {
+      "at": "2026-11-06T08:54:00.360Z",
+      "kind": "MANUAL_PR179_VICTORY_REROUTE",
+      "previous_review_request": {
+        "author_first_commit": "1fb136ee55efc505cdfe37e2b6ea238f49006055",
+        "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "branch": "controller/game-round-outcome-be5b6e39",
+        "ci_run": 42105203300,
+        "claim_commit": "c5f12c9db450e59ffde39c354da434a3fd867963",
+        "created_at": "2026-11-02T05:47:26Z",
+        "epoch": 404,
+        "head": "6ead77b72290a7de1260078c766465b6fd17dfee",
+        "kind": "CONTROLLER",
+        "note": "2026-11-06 result-banner game UI continuation: epoch451, claim 5656d0..., original red test-only head 0b0edbc run42104736102 HUD 9/10 expected single failure; final source head 6ead77b... Actions #42105203300 both jobs SUCCESS, Python833/833, HUD native10/10, server native6/6, source metrics 4 files/1248 lines/55605 bytes. C98733+C98734 append-only; existing eleven accepted HUD fixture files untouched. Independent registered REVIEWER/PR60 bootstrap and native approvals STILL MISSING. No main merge, engine proof, paid spend or publication.",
+        "number": 179,
+        "owner_id": "be5b6e39-d518-4a38-b769-7187059449ab",
+        "repository": "kk051780/toy-wars-factory",
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "scope": "EXACT_HEAD_SAME_REPO_GAME_SOURCE_WITH_NEW_TEST_AND_HISTORY",
+        "status": "AWAIT_PR60_POLICY_BOOTSTRAP_AND_REGISTERED_REVIEWER"
+      },
+      "history": "PR179 prior REVIEW_REQUEST source was exact authored epoch404 head, retained as historical. New unique CONTROLLER epoch463 added gameplay source at fadd31c, red CI 42190501355 due to strict history metrics, and followup append-only ledger C98775 at head 5474919a with GREEN CI 42190798632."
+    },
+    {
+      "at": "2026-11-06T08:54:00.360Z",
+      "kind": "PRESERVE_PRIOR_LAST_COMPLETED",
+      "before_epoch": 463,
+      "record": {
+        "kind": "CONTROLLER",
+        "owner_id": "d774203f-3715-4c90-a64d-1032765733d4",
+        "epoch": 462,
+        "released_at": "2026-11-06T07:57:56.630Z"
+      }
     }
   ],
   "controller_maintenance": {
@@ -1546,17 +1580,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 463,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "2b2a8a15-bfd8-4a81-b47f-53d579fcb493",
-    "task_id": null,
-    "epoch": 463,
-    "acquired_at": "2026-11-06T08:47:53.512Z",
-    "expires_at": "2026-11-06T09:12:53.512Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/game-round-outcome-be5b6e39"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3200,10 +3224,48 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "d774203f-3715-4c90-a64d-1032765733d4",
-    "epoch": 462,
-    "released_at": "2026-11-06T07:57:56.630Z"
+    "kind": "MANUAL_CONTROLLER_PR179_WAVE50_FRESH_RUN_EXACT_HEAD_CI_GREEN",
+    "owner_id": "2b2a8a15-bfd8-4a81-b47f-53d579fcb493",
+    "epoch": 463,
+    "claim_commit": "16b5d65faa265859a9869424c044e3f1ed248cd9",
+    "branch": "controller/game-round-outcome-be5b6e39",
+    "pr": 179,
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "first_source_commit": "fadd31ccf34cbb0725d1006e7db15799141286c3",
+    "initial_ci_run": 42190501355,
+    "initial_ci_result": "offline FAILURE due to missing source ledger; compile_hold SUCCESS",
+    "final_source_head": "5474919a4ca96edbcd10e3f7e4df4353a9c2f16c",
+    "final_ci_run": 42190798632,
+    "final_ci_status": "offline+compile_hold SUCCESS",
+    "python_tests": "833/833",
+    "outcome_lua": "8/8",
+    "outcome_hud_lua": "10/10",
+    "changes": [
+      "src/ToyWarsServer.server.lua",
+      "tests/auto/round_outcome_spec.lua",
+      "history/C98774_victory_fresh_run_reset.json",
+      "history/C98775_victory_ledger_chain_fix.json"
+    ],
+    "source_metrics": {
+      "lua_files": 4,
+      "lua_lines": 1254,
+      "lua_bytes": 55939
+    },
+    "source_delta_bytes": 334,
+    "source_delta_lines": 6,
+    "new_native_server_tests": 2,
+    "characters_touched": "none stat changed; game entity lifecycle at VICTORY",
+    "manual_review_request_retargeted": true,
+    "independent_native_review": false,
+    "main_merged": false,
+    "roblox_engine_verified": false,
+    "Android_verified": false,
+    "multiplayer_verified": false,
+    "spending_authorized": false,
+    "new_paid_services": 0,
+    "public_release": false,
+    "github_actions_free_quota_remaining": "UNKNOWN",
+    "recorded_at": "2026-11-06T08:54:00.360Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
@@ -3281,19 +3343,20 @@
       "author_first_commit": "1fb136ee55efc505cdfe37e2b6ea238f49006055",
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "branch": "controller/game-round-outcome-be5b6e39",
-      "ci_run": 42105203300,
+      "ci_run": 42190798632,
       "claim_commit": "c5f12c9db450e59ffde39c354da434a3fd867963",
       "created_at": "2026-11-02T05:47:26Z",
       "epoch": 404,
-      "head": "6ead77b72290a7de1260078c766465b6fd17dfee",
+      "head": "5474919a4ca96edbcd10e3f7e4df4353a9c2f16c",
       "kind": "CONTROLLER",
-      "note": "2026-11-06 result-banner game UI continuation: epoch451, claim 5656d0..., original red test-only head 0b0edbc run42104736102 HUD 9/10 expected single failure; final source head 6ead77b... Actions #42105203300 both jobs SUCCESS, Python833/833, HUD native10/10, server native6/6, source metrics 4 files/1248 lines/55605 bytes. C98733+C98734 append-only; existing eleven accepted HUD fixture files untouched. Independent registered REVIEWER/PR60 bootstrap and native approvals STILL MISSING. No main merge, engine proof, paid spend or publication.",
+      "note": "2026-11-06 update (continuation epoch463 owner 2b2a8a15..., legal CAS claim 16b5d65...): final wave50 victory now clears surviving ally models, restores vault100, preserves coin reward/factory upgrade/defeated count, and restarts production cadence. In-wave 49->50 remains intact. Red CI #42190501355 Python handoff bytes 832/833 due to C98774 missing source_changes, append-only C98775 corrected. FINAL exact-head Actions #42190798632 two jobs SUCCESS, Python 833/833, authoritative RoundOutcome Lua 8/8 incl 2 new cases, HUD Lua10/10. Source Lua +6 lines/+334 bytes total four Lua files 1254 lines/55939 bytes. Separate native GitHub review and PR60 bootstrap still missing. main unchanged, no Studio/Android/two-client proof, no paid services, no publish. Original epoch404 author claim/first commit preserved; this update must be independently reviewed at new head.",
       "number": 179,
       "owner_id": "be5b6e39-d518-4a38-b769-7187059449ab",
       "repository": "kk051780/toy-wars-factory",
       "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "scope": "EXACT_HEAD_SAME_REPO_GAME_SOURCE_WITH_NEW_TEST_AND_HISTORY",
-      "status": "AWAIT_PR60_POLICY_BOOTSTRAP_AND_REGISTERED_REVIEWER"
+      "status": "AWAIT_PR60_POLICY_BOOTSTRAP_AND_REGISTERED_REVIEWER",
+      "last_updated_at": "2026-11-06T08:54:00.360Z"
     },
     {
       "author_first_commit": "04ae31b1447ec352e504f96b72dd91ea78d24db2",
