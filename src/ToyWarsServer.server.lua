@@ -692,6 +692,8 @@ local function updateEntity(state,e,dt)
         local tx= e.x
         local tz= e.side=="ally" and 40 or -41
         if escort then
+            -- A nearby patient needs a stationary escort, not the default enemy waypoint.
+            tx=e.x;tz=e.z
             local dx,dz=escort.x-e.x,escort.z-e.z
             -- Stay close enough to repair, but don't crowd the patient.
             local followDistance=data.repairRange*0.7

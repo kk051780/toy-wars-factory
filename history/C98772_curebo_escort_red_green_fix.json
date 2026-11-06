@@ -1,0 +1,44 @@
+{
+  "id": "C98772",
+  "schema": 1,
+  "date_utc": "2026-11-06",
+  "kind": "PR98_CUREBO_ESCORT_RED_TO_GREEN_FIX",
+  "pr": 98,
+  "previous_pr_head": "3eb01e60f2444686ecb3bbc1b15cf876e98d8589",
+  "coordination": {
+    "epoch": 460,
+    "owner_id": "c15e9350-74e2-453f-99e2-228c4c85ec16",
+    "claim_commit": "3a102a88f102857e56f9374c4a3bfce1aed8945e",
+    "branch": "ops/twf-character-pipeline-20261028"
+  },
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "history/C98772_curebo_escort_red_green_fix.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "4fe25861caacb78d9b3c397677d26c223dee35e1",
+      "before_bytes": 44798,
+      "after_bytes": 44915,
+      "delta_bytes": 117
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1324,
+    "lua_bytes": 58935
+  },
+  "red": {
+    "run": 42176856011,
+    "lua_curebo": "14/15",
+    "failure": "Healer still followed default enemy waypoint while injured ally was within follow distance."
+  },
+  "fix": "Set escort waypoint to the healer's own location before optionally advancing to an out-of-range patient.",
+  "green_CI": "PENDING_EXACT_HEAD",
+  "main_merged": false,
+  "native_review": "PENDING",
+  "roblox_engine": "NOT_RUN",
+  "additional_paid_services": false,
+  "public_release": false
+}
