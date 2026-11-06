@@ -1495,6 +1495,55 @@
         "epoch": 462,
         "released_at": "2026-11-06T07:57:56.630Z"
       }
+    },
+    {
+      "at": "2026-11-06T10:07:48.739Z",
+      "kind": "PRESERVE_PRIOR_COMPLETION_BEFORE_CROSS_PR_ISOLATED_QA",
+      "epoch": 463,
+      "record": {
+        "kind": "MANUAL_CONTROLLER_PR179_WAVE50_FRESH_RUN_EXACT_HEAD_CI_GREEN",
+        "owner_id": "2b2a8a15-bfd8-4a81-b47f-53d579fcb493",
+        "epoch": 463,
+        "claim_commit": "16b5d65faa265859a9869424c044e3f1ed248cd9",
+        "branch": "controller/game-round-outcome-be5b6e39",
+        "pr": 179,
+        "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "first_source_commit": "fadd31ccf34cbb0725d1006e7db15799141286c3",
+        "initial_ci_run": 42190501355,
+        "initial_ci_result": "offline FAILURE due to missing source ledger; compile_hold SUCCESS",
+        "final_source_head": "5474919a4ca96edbcd10e3f7e4df4353a9c2f16c",
+        "final_ci_run": 42190798632,
+        "final_ci_status": "offline+compile_hold SUCCESS",
+        "python_tests": "833/833",
+        "outcome_lua": "8/8",
+        "outcome_hud_lua": "10/10",
+        "changes": [
+          "src/ToyWarsServer.server.lua",
+          "tests/auto/round_outcome_spec.lua",
+          "history/C98774_victory_fresh_run_reset.json",
+          "history/C98775_victory_ledger_chain_fix.json"
+        ],
+        "source_metrics": {
+          "lua_files": 4,
+          "lua_lines": 1254,
+          "lua_bytes": 55939
+        },
+        "source_delta_bytes": 334,
+        "source_delta_lines": 6,
+        "new_native_server_tests": 2,
+        "characters_touched": "none stat changed; game entity lifecycle at VICTORY",
+        "manual_review_request_retargeted": true,
+        "independent_native_review": false,
+        "main_merged": false,
+        "roblox_engine_verified": false,
+        "Android_verified": false,
+        "multiplayer_verified": false,
+        "spending_authorized": false,
+        "new_paid_services": 0,
+        "public_release": false,
+        "github_actions_free_quota_remaining": "UNKNOWN",
+        "recorded_at": "2026-11-06T08:54:00.360Z"
+      }
     }
   ],
   "controller_maintenance": {
@@ -1580,17 +1629,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 464,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "5fdba7d0-4b93-4f93-8869-d551b73904bd",
-    "task_id": null,
-    "epoch": 464,
-    "acquired_at": "2026-11-06T10:00:31.783Z",
-    "expires_at": "2026-11-06T10:25:31.783Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "bootstrap/twf-current-curebo-outcome-integration-20261106"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3234,48 +3273,58 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "MANUAL_CONTROLLER_PR179_WAVE50_FRESH_RUN_EXACT_HEAD_CI_GREEN",
-    "owner_id": "2b2a8a15-bfd8-4a81-b47f-53d579fcb493",
-    "epoch": 463,
-    "claim_commit": "16b5d65faa265859a9869424c044e3f1ed248cd9",
-    "branch": "controller/game-round-outcome-be5b6e39",
-    "pr": 179,
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "first_source_commit": "fadd31ccf34cbb0725d1006e7db15799141286c3",
-    "initial_ci_run": 42190501355,
-    "initial_ci_result": "offline FAILURE due to missing source ledger; compile_hold SUCCESS",
-    "final_source_head": "5474919a4ca96edbcd10e3f7e4df4353a9c2f16c",
-    "final_ci_run": 42190798632,
-    "final_ci_status": "offline+compile_hold SUCCESS",
-    "python_tests": "833/833",
-    "outcome_lua": "8/8",
+    "kind": "MANUAL_CONTROLLER_ISOLATED_LATEST_PR98_PR179_INTEGRATION_QA_GREEN",
+    "owner_id": "5fdba7d0-4b93-4f93-8869-d551b73904bd",
+    "epoch": 464,
+    "claim_commit": "5881aa167066ddbe5770e8e1ed7dde7d930262b4",
+    "branch": "bootstrap/twf-current-curebo-outcome-integration-20261106",
+    "base_source_pr98": "6b2c59f155ca21463c733917d647ecb9a1b8e89b",
+    "source_pr179": "5474919a4ca96edbcd10e3f7e4df4353a9c2f16c",
+    "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "head": "46d216070ac554d2f8a9d55838aada37f28901b9",
+    "ci_run": 42200081648,
+    "ci_event": "push",
+    "ci_status": "offline+compile_hold SUCCESS",
+    "python_tests": "865/865",
+    "curebo_native_lua": "18/18",
+    "four_toy_hud": "11/11",
+    "outcome_server_lua": "8/8",
     "outcome_hud_lua": "10/10",
-    "changes": [
-      "src/ToyWarsServer.server.lua",
-      "tests/auto/round_outcome_spec.lua",
-      "history/C98774_victory_fresh_run_reset.json",
-      "history/C98775_victory_ledger_chain_fix.json"
-    ],
+    "combined_outcome_hud": "5/5",
+    "cross_server_curebo_victory": "1/1",
+    "features": "Latest fourth toy, wounded escort and heal neon, server LOSS/VICTORY notices and fresh wave50 cycle combined in one isolated source and native QA. Old CUREBO/GUARDON 3D model cleanup and new CUREBO manufacturing verified in Lua deterministic harness.",
     "source_metrics": {
       "lua_files": 4,
-      "lua_lines": 1254,
-      "lua_bytes": 55939
+      "lua_lines": 1409,
+      "lua_bytes": 62951
     },
-    "source_delta_bytes": 334,
-    "source_delta_lines": 6,
-    "new_native_server_tests": 2,
-    "characters_touched": "none stat changed; game entity lifecycle at VICTORY",
-    "manual_review_request_retargeted": true,
-    "independent_native_review": false,
+    "source_delta": {
+      "lines": 69,
+      "bytes": 3197
+    },
+    "changed_paths": [
+      "src/ToyWarsServer.server.lua",
+      "src/ToyWarsHUD.client.lua",
+      "tests/auto/round_outcome_spec.lua",
+      "tests/auto/round_outcome_hud_spec.lua",
+      "tests/auto/curebo_round_result_integration_spec.lua",
+      "tests/auto/curebo_victory_cycle_spec.lua",
+      "history/C98776_current_curebo_outcome_combined_qa.json"
+    ],
+    "isolated_qa_only": true,
+    "new_pr_created": false,
+    "PR98_modified": false,
+    "PR179_modified": false,
     "main_merged": false,
+    "independent_native_review": false,
     "roblox_engine_verified": false,
     "Android_verified": false,
     "multiplayer_verified": false,
     "spending_authorized": false,
-    "new_paid_services": 0,
-    "public_release": false,
-    "github_actions_free_quota_remaining": "UNKNOWN",
-    "recorded_at": "2026-11-06T08:54:00.360Z"
+    "additional_paid_services": 0,
+    "published": false,
+    "remaining_free_actions_quota": "UNKNOWN",
+    "recorded_at": "2026-11-06T10:07:48.739Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
