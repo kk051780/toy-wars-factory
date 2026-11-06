@@ -194,6 +194,35 @@ class XmlArtifacts(unittest.TestCase):
             with self.subTest(k=k):
                 self.assertFalse(x.actions_export_allowed({**valid,k:v}))
 
+    def test_racing_xml_created_after_preflight_is_not_deleted(self):
+        from unittest.mock import patch
+        xml=self.out/x.XML_NAME
+        real_open=Path.open
+        def racing(path,mode='r',*args,**kwargs):
+            if path==xml and mode=='xb':
+                xml.write_bytes(b'FOREIGN_XML_RACE_WINNER')
+                raise FileExistsError('another writer created XML')
+            return real_open(path,mode,*args,**kwargs)
+        with patch.object(Path,'open',autospec=True,side_effect=racing):
+            with self.assertRaises(x.ExportBlocked):x.export(self.root,self.out)
+        self.assertEqual(xml.read_bytes(),b'FOREIGN_XML_RACE_WINNER')
+        self.assertFalse((self.out/x.RECEIPT_NAME).exists())
+
+    def test_racing_receipt_created_after_xml_is_not_deleted(self):
+        from unittest.mock import patch
+        receipt=self.out/x.RECEIPT_NAME
+        real_open=Path.open
+        def racing(path,mode='r',*args,**kwargs):
+            if path==receipt and mode=='xb':
+                receipt.write_bytes(b'FOREIGN_RECEIPT_RACE_WINNER')
+                raise FileExistsError('another writer created receipt')
+            return real_open(path,mode,*args,**kwargs)
+        with patch.object(Path,'open',autospec=True,side_effect=racing):
+            with self.assertRaises(x.ExportBlocked):x.export(self.root,self.out)
+        self.assertEqual(receipt.read_bytes(),b'FOREIGN_RECEIPT_RACE_WINNER')
+        self.assertTrue((self.out/x.XML_NAME).exists())
+        with self.assertRaises(x.ExportBlocked):x.export(self.root,self.out)
+
     def test_zz_existing_actions_will_upload_real_xml_evidence(self):
         """Export into existing .qa/auto artifact on Actions, no workflow edit.
 

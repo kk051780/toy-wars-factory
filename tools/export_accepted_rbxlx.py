@@ -143,8 +143,9 @@ def export(root: Path, target_dir: Path) -> dict:
         with json_path.open("xb") as stream:
             stream.write(payload)
     except OSError:
-        xml_path.unlink(missing_ok=True)
-        json_path.unlink(missing_ok=True)
+        # Never unlink by name: a competing writer may have created this path
+        # after preflight and our exclusive open cannot prove ownership.
+        # Any leftover bytes in a failed CI artifact remain UNTRUSTED.
         raise ExportBlocked("failed to write XML candidate; no upload attempted") from None
     _require(xml_path.read_bytes() == binary and json_path.read_bytes() == payload,
              "export readback mismatch")
