@@ -721,6 +721,12 @@ local function simulate(state,dt)
         if new then state.coins.Value=new end
         state.baseHP.Value=math.min(100,state.baseHP.Value+18)
         if state.wave.Value>=B.MAX_WAVE then
+            -- A completed 50-wave run starts with a clean battlefield and vault.
+            -- Keep earned coins, defeats and factory upgrades as the run reward.
+            for _,e in ipairs(state.entities) do removeEntity(e) end
+            state.entities={}
+            state.baseHP.Value=100
+            state.productionTimer=1
             state.roundOutcome.Value="VICTORY"
             state.wave.Value=1
         else

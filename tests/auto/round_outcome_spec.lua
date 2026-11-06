@@ -96,6 +96,63 @@ check("final-wave server clear announces VICTORY instead of LOSS",function()
     eq(result.Value,"","victory notice expires")
 end)
 
+check("final-wave victory clears surviving toys and restores vault for a fresh run",function()
+    local h,p,coins,wave,hp,result=fixture()
+    local s=stateFor(h,p)
+    s.productionTimer=0.1
+    h.runService.Heartbeat:Fire(0.3)
+    local ally
+    for _,e in ipairs(s.entities) do if e.side=="ally" then ally=e;break end end
+    assert(ally and ally.alive and ally.model.Parent,"actual PON must spawn for this test")
+    local model=ally.model
+    s.wave.Value=B.MAX_WAVE
+    s.enemyTarget=B.waveSize(B.MAX_WAVE)
+    s.enemiesMade=s.enemyTarget
+    s.enemyTimer=20
+    s.waveBreak=0
+    s.productionTimer=20
+    s.incomeCarry=0
+    s.baseHP.Value=49
+    s.coins.Value=150
+    local previousLevel=s.level.Value
+    local previousKills=s.kills.Value
+    h.runService.Heartbeat:Fire(0.3)
+    eq(result.Value,"VICTORY","server announces the actual completed final wave")
+    eq(wave.Value,1,"new cycle starts at wave one")
+    eq(hp.Value,100,"victory starts the new run with full vault HP")
+    eq(#s.entities,0,"victory removes previous run field units")
+    assert(model.Parent==nil and not ally.alive,"old 3D ally model must be destroyed")
+    eq(s.enemyTarget,B.waveSize(1),"new run uses first-wave enemy size")
+    eq(s.waveBreak,5,"new run retains result announcement grace")
+    eq(s.productionTimer,1,"new cycle starts normal production cadence")
+    eq(s.level.Value,previousLevel,"factory upgrade is retained")
+    eq(s.kills.Value,previousKills,"defeated counter is retained")
+    assert(s.coins.Value>=150+B.waveReward(B.MAX_WAVE),"wave victory rewards coins")
+end)
+
+check("ordinary wave 49 to 50 keeps surviving toys and earned vault HP",function()
+    local h,p,coins,wave,hp,result=fixture()
+    local s=stateFor(h,p)
+    s.productionTimer=0.1
+    h.runService.Heartbeat:Fire(0.3)
+    local ally
+    for _,e in ipairs(s.entities) do if e.side=="ally" then ally=e;break end end
+    assert(ally and ally.model.Parent,"ordinary wave has a living toy")
+    s.wave.Value=B.MAX_WAVE-1
+    s.enemyTarget=B.waveSize(B.MAX_WAVE-1)
+    s.enemiesMade=s.enemyTarget
+    s.enemyTimer=20
+    s.waveBreak=0
+    s.productionTimer=20
+    s.baseHP.Value=49
+    h.runService.Heartbeat:Fire(0.3)
+    eq(wave.Value,B.MAX_WAVE,"wave 49 should advance to wave 50")
+    eq(result.Value,"","only full completion signals victory")
+    eq(hp.Value,67,"ordinary wave only grants the existing 18 HP recovery")
+    assert(ally.alive and ally.model.Parent and #s.entities>0,
+           "ordinary wave keeps surviving allies for the next battle")
+end)
+
 check("outcome belongs only to the affected player",function()
     local h=Harness.new(source)
     local a=h:addPlayer(h:newPlayer())

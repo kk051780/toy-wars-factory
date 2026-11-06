@@ -1,0 +1,65 @@
+{
+  "id": "C98774",
+  "schema": 1,
+  "date_utc": "2026-11-06",
+  "kind": "GAME_VICTORY_FRESH_CYCLE_FIELD_AND_VAULT_RESET",
+  "pr": 179,
+  "prior_pr_head": "6ead77b72290a7de1260078c766465b6fd17dfee",
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 463,
+    "owner_id": "2b2a8a15-bfd8-4a81-b47f-53d579fcb493",
+    "claim_commit": "16b5d65faa265859a9869424c044e3f1ed248cd9",
+    "work_branch": "controller/game-round-outcome-be5b6e39"
+  },
+  "cause": "Wave50 VICTORY merely reset wave number to one while survivor army and a partly damaged vault remained; on-screen NEW FACTORY RUN did not start a fresh defense.",
+  "change": "On authentic wave50 clear only, remove prior-run entity models and list, refill vault to 100 and reset production delay. Keep wave reward coins, factory upgrades, defeated count and selected toy. Wave49-to-50 retains survivors and old 18 HP heal. No new network/permissions/paid resources.",
+  "changed_paths": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/round_outcome_spec.lua",
+    "history/C98774_victory_fresh_run_reset.json"
+  ],
+  "source_delta": {
+    "path": "src/ToyWarsServer.server.lua",
+    "before_sha": "eb757e3edac744d9c5dcb999d60a612ddfc82d56",
+    "before_bytes": 41190,
+    "after_bytes": 41524,
+    "delta_bytes": 334,
+    "before_lines": 915,
+    "after_lines": 921,
+    "delta_lines": 6
+  },
+  "test_delta": {
+    "path": "tests/auto/round_outcome_spec.lua",
+    "before_sha": "3f9c52891ba5b9182d50058a64974ffde7b53aea",
+    "previous_cases": 6,
+    "new_cases": 8,
+    "added_cases": 2,
+    "delta_bytes": 2533
+  },
+  "feature_scope": {
+    "affected_characters": [
+      "pon",
+      "guardon",
+      "tankuru",
+      "junk"
+    ],
+    "change_type": "round_cleanup_only",
+    "no_unit_stats_changed": true,
+    "prior_PR98_fourth_curebo_not_integrated": true
+  },
+  "verification": {
+    "hosted_CI": "PENDING_EXACT_HEAD",
+    "roblox_engine": "NOT_RUN",
+    "android": "NOT_RUN",
+    "two_client": "NOT_RUN",
+    "native_review": false,
+    "main_merged": false
+  },
+  "spending": {
+    "additional_paid_services": 0,
+    "github_actions_remaining": "UNKNOWN"
+  },
+  "reference_existing_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/42105203300"
+}
