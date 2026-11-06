@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "id": "C98775",
+  "date_utc": "2026-11-06",
+  "kind": "GAME_VICTORY_FRESH_RUN_SOURCE_METRIC_CHAIN_CORRECTION",
+  "pr": 179,
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "prior_source_head": "fadd31ccf34cbb0725d1006e7db15799141286c3",
+  "predecessor_ledger": "history/C98774_victory_fresh_run_reset.json",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 463,
+    "owner_id": "2b2a8a15-bfd8-4a81-b47f-53d579fcb493",
+    "claim_commit": "16b5d65faa265859a9869424c044e3f1ed248cd9",
+    "work_branch": "controller/game-round-outcome-be5b6e39"
+  },
+  "cause": "PR179 gameplay fix was real and 8/8 round outcome native tests passed, but new C98774 ledger used nonstandard source_delta instead of source_changes; Python exact source byte chain expected 41190, found 41524, causing hosted Actions #42190501355 offline FAILURE.",
+  "fix": "Append a second immutable C record with exact source_changes and source_metrics for the already committed code change, preserving C98774 and the strict Python chain and all safety gates. No game code, policy, tests, main, fees or permissions changed.",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 41190,
+      "after_bytes": 41524,
+      "delta_bytes": 334,
+      "before_blob": "eb757e3edac744d9c5dcb999d60a612ddfc82d56",
+      "after_blob": "1dda447a17e15a77ac7d9d27062162ffae90ccda",
+      "added_lines": 6,
+      "removed_lines": 0
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1254,
+    "lua_bytes": 55939
+  },
+  "source_baseline_bytes": 25726,
+  "changed_files": [
+    "history/C98775_victory_ledger_chain_fix.json"
+  ],
+  "failed_exact_head_ci": {
+    "run": 42190501355,
+    "head": "fadd31ccf34cbb0725d1006e7db15799141286c3",
+    "status": "offline FAILURE; compile_hold SUCCESS",
+    "round_outcome_server": "8/8 PASS",
+    "python": "832/833 PASS",
+    "root_cause": "test_handoff_checkpoint.py:89 missing source_changes ledger"
+  },
+  "green_ci": "PENDING_EXACT_HEAD",
+  "independent_review": "PENDING",
+  "main_merged": false,
+  "roblox_engine": "NOT_RUN",
+  "android": "NOT_RUN",
+  "new_spend_authorized": false
+}
