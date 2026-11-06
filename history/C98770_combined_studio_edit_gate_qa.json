@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "id": "C98770",
+  "date_utc": "2026-11-06",
+  "kind": "COMBINED_STUDIO_EDIT_PINNED_HOST_QA_NONENGINE",
+  "repo": "kk051780/toy-wars-factory",
+  "source_pr": 149,
+  "source_pr_head": "68490a335cc6619933f671b8aae63f074c2536c6",
+  "target_branch": "bootstrap/twf-curebo-outcome-combined-qa-20261106",
+  "parent_qa_head": "8fb7bc522a995fbac6ca0c42ad7c61cc14a9814b",
+  "main_unchanged": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "lease": {
+    "epoch": 459,
+    "owner_id": "c2c192ca-4b3e-438e-9c62-8a0df6999d22",
+    "claim_commit": "60080850ea671f39844c752bed0dfd48962ae1de"
+  },
+  "scope": "Reuse exact existing PR149 Studio edit-mode gate (signer, anti-TOCTOU, no retry), retarget SHA-only to unmerged combined 4-toy + round-outcome XML in isolated QA branch; no live Studio runner or secrets",
+  "source_changes": [],
+  "lua_source_modified": false,
+  "target_github_artifact_id": 13478848965,
+  "source_actions_run": 42166605719,
+  "expected_xml_sha256": "eb090d086e0a65341bae6cc84691cd0135f274dd41b07fdebc334d7255fc04cb",
+  "expected_xml_bytes": 62635,
+  "expected_github_zip_sha256": "9c8110e5a6b9e3d3f7e82bcb541be02775fd66bc2576181c81b0394af5df9bb5",
+  "expected_qa_source_head": "8fb7bc522a995fbac6ca0c42ad7c61cc14a9814b",
+  "modified_files": [
+    "tools/studio_host_gate.py",
+    "tests/test_studio_host_gate.py"
+  ],
+  "exact_unmodified_pr149_file_blobs": {
+    "tools/launch_trusted_studio_probe.ps1": "8f848a6460e02dd86b822b8982fb15ae28e39c36",
+    "tools/twf_local_place_probe.luau": "7dda865e48ac1e65848233e652ace238c0b7f21f",
+    "tests/test_studio_snapshot_race.py": "2931501f24af47c7c269993723edcb3c72251ff0",
+    "tests/test_studio_signer_organization.py": "d04486d75f3800131cd99ab105c24ab1cdacdaa7"
+  },
+  "additional_integration_tests": 8,
+  "real_windows_studio_run": false,
+  "real_roblox_engine_run": false,
+  "real_host_signature_authentication": false,
+  "native_independent_reviewer_approval": false,
+  "main_merged": false,
+  "private_roblox_place_saved": false,
+  "public_published": false,
+  "no_billing_or_permission_changes": true,
+  "ci_status": "PENDING_EXACT_HEAD",
+  "note": "QA-only candidate is not source-main accepted nor native review; previous protected PR149 unchanged. No actual Studio host invocation from this action."
+}
