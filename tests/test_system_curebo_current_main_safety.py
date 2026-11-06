@@ -30,22 +30,25 @@ class CureboCurrentMainSafetyTests(unittest.TestCase):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.server)
 
-    def test_authoritative_loss_and_victory_results_preserved(self):
+    def test_accepted_main_wave_reset_and_save_lifecycle_survive(self):
+        # The PR179 RoundOutcome feature is still DRAFT, not in accepted main.
         for marker in (
-            'outcome.Name="RoundOutcome"',
-            'state.roundOutcome.Value="VICTORY"',
-            'state.roundOutcome.Value="LOSS"',
-            'state.wave.Value=1',
+            "local function resetAfterLoss(state)",
+            "if state.baseHP.Value<=0 then",
+            "refreshProgressLease(state)",
+            "stopExpiredProgressLease(state)",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.server)
 
-    def test_late_replication_and_outcome_client_remain_nonblocking(self):
+    def test_original_onboarding_works_with_four_toy_pagination(self):
         for marker in (
-            'status:FindFirstChild("RoundOutcome")',
-            "status.ChildAdded:Connect(bindOutcome)",
-            'outcome.Changed:Connect(refresh)',
-            'outcome.Value=="VICTORY"',
+            "WorkshopQueueNotice",
+            "local function showPage(delta)",
+            "navigation.Visible=pageCount>1",
+            "skipButton.Activated:Connect",
+            "nextButton.Activated:Connect",
+            "refresh=function()",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, self.hud)

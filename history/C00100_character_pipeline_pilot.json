@@ -34,32 +34,7 @@
     "tests/auto/character_pages_spec.lua",
     "history/C00100_character_pipeline_pilot.json"
   ],
-  "source_changes": [
-    {
-      "path": "src/ToyWarsBalance.lua",
-      "before_bytes": 3070,
-      "after_bytes": 3304,
-      "delta_bytes": 234,
-      "before_blob": "e78a07c7551f19183316803706c5602cd4049459",
-      "after_blob": "b254be5ff0a6643dc634ef5ed17d3d0e3f663d20"
-    },
-    {
-      "path": "src/ToyWarsServer.server.lua",
-      "before_bytes": 34083,
-      "after_bytes": 37081,
-      "delta_bytes": 2998,
-      "before_blob": "01614fae4cca597f174efbd82845afc768d2af47",
-      "after_blob": "cc347bf34ee1961e319e49eabf4a3b5616455fb8"
-    },
-    {
-      "path": "src/ToyWarsHUD.client.lua",
-      "before_bytes": 6824,
-      "after_bytes": 8581,
-      "delta_bytes": 1757,
-      "before_blob": "3f2d9932396bc2eea90f96336912abbdf67ffeca",
-      "after_blob": "145f8caa63b92bdf1515060fd05c0135ebbd073f"
-    }
-  ],
+  "source_changes": [],
   "source_metrics": {
     "lua_files": 4,
     "lua_lines": 1155,
@@ -166,5 +141,45 @@
   "current_base_reconciliation": {
     "history": "history/C00102_character_current_main_reconciliation.json",
     "reason": "Unmerged C00100 now follows accepted persistence records through C00082. Original authored snapshot remains preserved above; no accepted history or tests changed."
-  }
+  },
+  "pre_forward_port_snapshot": {
+    "main_base": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+    "source_metrics": {
+      "lua_files": 4,
+      "lua_lines": 1155,
+      "lua_bytes": 50216
+    },
+    "source_changes": [
+      {
+        "path": "src/ToyWarsBalance.lua",
+        "before_bytes": 3070,
+        "after_bytes": 3304,
+        "delta_bytes": 234,
+        "before_blob": "e78a07c7551f19183316803706c5602cd4049459",
+        "after_blob": "b254be5ff0a6643dc634ef5ed17d3d0e3f663d20"
+      },
+      {
+        "path": "src/ToyWarsServer.server.lua",
+        "before_bytes": 34083,
+        "after_bytes": 37081,
+        "delta_bytes": 2998,
+        "before_blob": "01614fae4cca597f174efbd82845afc768d2af47",
+        "after_blob": "cc347bf34ee1961e319e49eabf4a3b5616455fb8"
+      },
+      {
+        "path": "src/ToyWarsHUD.client.lua",
+        "before_bytes": 6824,
+        "after_bytes": 8581,
+        "delta_bytes": 1757,
+        "before_blob": "3f2d9932396bc2eea90f96336912abbdf67ffeca",
+        "after_blob": "145f8caa63b92bdf1515060fd05c0135ebbd073f"
+      }
+    ],
+    "original_blob": "fc4d8bb8b3ec1b0f9457c840b524354833422522",
+    "authored_head": "8997fdbd364ef9f0aa88ffffecfee3bfc22087bd",
+    "archive_path": "history/PR98_C00100_authored_snapshot_20261028.json",
+    "note": "Historical author-base source record retained separately from actual current-main merge chronology"
+  },
+  "canonical_source_chain_status": "HISTORICAL_BRANCH_AUTHORED_NOT_A_CURRENT_MAIN_CHANGE",
+  "current_main_forward_port_source_record": "history/C98766_character_current_main_forward_port.json"
 }

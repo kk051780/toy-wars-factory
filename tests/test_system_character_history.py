@@ -50,8 +50,9 @@ class CharacterHistoryTests(unittest.TestCase):
         self.check_metrics(snapshot["source_metrics"], snapshot["head"])
 
     def test_reconciled_ledger_matches_its_immutable_authored_git_sources(self):
-        self.check_changes(self.record["source_changes"], self.record["main_base"], RECONCILED_HEAD)
-        self.check_metrics(self.record["source_metrics"], RECONCILED_HEAD)
+        snapshot = self.record["pre_forward_port_snapshot"]
+        self.check_changes(snapshot["source_changes"], snapshot["main_base"], RECONCILED_HEAD)
+        self.check_metrics(snapshot["source_metrics"], RECONCILED_HEAD)
         self.assertEqual(self.record["source_baseline_bytes"], 25726)
 
     def test_later_head_source_changes_do_not_rewrite_the_recorded_snapshot(self):
