@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "id": "C98778",
+  "kind": "COMBINED_XML_FOREIGN_FILE_RACE_GUARD",
+  "date_utc": "2026-11-06",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "candidate_game_source_commit": "46d216070ac554d2f8a9d55838aada37f28901b9",
+  "work_branch": "bootstrap/twf-current-curebo-outcome-integration-20261106",
+  "origin_pr_183": "https://github.com/kk051780/toy-wars-factory/pull/183",
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1409,
+    "lua_bytes": 62951
+  },
+  "source_changes": [],
+  "coordination": {
+    "epoch": 467,
+    "owner_id": "f12aeb14-43f3-4512-b9ec-cfb7ba9f2612",
+    "claim_commit": "a7037d73b9ad4c8c42688e816754fbd35a868d21",
+    "branch": "twf-repair-coordinator",
+    "work_branch": "bootstrap/twf-current-curebo-outcome-integration-20261106"
+  },
+  "changed_files": [
+    "tools/export_accepted_rbxlx.py",
+    "tests/test_system_xml_artifact_export.py",
+    "history/C98778_combined_xml_foreign_ownership_guard.json"
+  ],
+  "changed_code_bytes": {
+    "tools/export_accepted_rbxlx.py": {
+      "before": 7857,
+      "after": 7996,
+      "delta": 139
+    },
+    "tests/test_system_xml_artifact_export.py": {
+      "before": 10064,
+      "after": 11626,
+      "delta": 1562
+    }
+  },
+  "root_cause": "Exclusive open xb is safe only against overwriting; deleting by pathname in the exception handler may remove a different writer's file created after preflight.",
+  "repair": "Reuse the existing two-file patch and both adversarial regression tests from protected draft PR183 without merging that branch or modifying original protected PRs.",
+  "expected_new_negative_tests": 2,
+  "expected_ci": "PENDING_EXACT_HEAD",
+  "previous_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/42298788709",
+  "studio": "NOT_RUN",
+  "multiplayer": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "independent_native_review": false,
+  "main_merged": false,
+  "additional_paid_spend": 0,
+  "next": "Require exact-head CI then independent review of protected PR184 and PR183 overlap; no Roblox upload or main merge"
+}

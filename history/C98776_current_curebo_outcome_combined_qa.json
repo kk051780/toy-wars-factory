@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "id": "C98776",
+  "kind": "ISOLATED_CURRENT_PR98_PR179_COMBINED_GAMEPLAY_QA",
+  "date_utc": "2026-11-06",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "work_branch": "bootstrap/twf-current-curebo-outcome-integration-20261106",
+  "source_pr98_head": "6b2c59f155ca21463c733917d647ecb9a1b8e89b",
+  "source_pr179_head": "5474919a4ca96edbcd10e3f7e4df4353a9c2f16c",
+  "coordination": {
+    "epoch": 464,
+    "owner_id": "5fdba7d0-4b93-4f93-8869-d551b73904bd",
+    "claim_commit": "5881aa167066ddbe5770e8e1ed7dde7d930262b4",
+    "branch": "twf-repair-coordinator",
+    "work_branch": "bootstrap/twf-current-curebo-outcome-integration-20261106"
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 45734,
+      "after_bytes": 46506,
+      "delta_bytes": 772,
+      "before_blob": "0b81ec44a0558a4946c8272bb50d9274b0c10cc6",
+      "after_blob": "57211f6c4179b5ada8d8215f6ad8bad1d076aa86",
+      "added_lines": 17,
+      "removed_lines": 0
+    },
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 9466,
+      "after_bytes": 11891,
+      "delta_bytes": 2425,
+      "before_blob": "27a220c1e113f9a2e966dd063bc5922672a757fc",
+      "after_blob": "05d72aae6924cc5d93fe14595e9af2cdeb4f73fd",
+      "added_lines": 52,
+      "removed_lines": 0
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1409,
+    "lua_bytes": 62951
+  },
+  "source_baseline_bytes": 25726,
+  "before_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1340,
+    "lua_bytes": 59754
+  },
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/round_outcome_spec.lua",
+    "tests/auto/round_outcome_hud_spec.lua",
+    "tests/auto/curebo_round_result_integration_spec.lua",
+    "tests/auto/curebo_victory_cycle_spec.lua",
+    "history/C98776_current_curebo_outcome_combined_qa.json"
+  ],
+  "behavior": "Current PR98 CUREBO escort and neon repair remain while server-owned LOSS/VICTORY banners, normal result clear, and latest PR179 wave50 fresh-vault cleanup coexist; real joint server native test resets old CUREBO/GUARDON and permits fresh CUREBO manufacture.",
+  "test_basis": {
+    "PR98_native_CUREBO": 18,
+    "PR179_native_server_outcome": 8,
+    "PR179_native_HUD_outcome": 10,
+    "preexisting_combined_HUD": 5,
+    "new_joint_server": 1
+  },
+  "engine": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "two_client": "NOT_RUN",
+  "independent_native_review": false,
+  "main_merged": false,
+  "original_PR98_PR179_branches_untouched": true,
+  "new_paid_spend": 0,
+  "github_actions_remaining": "UNKNOWN",
+  "CI": "PENDING_EXACT_HEAD"
+}

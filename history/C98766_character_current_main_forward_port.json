@@ -1,0 +1,85 @@
+{
+  "id": "C98766",
+  "schema": 1,
+  "date_utc": "2026-11-06",
+  "kind": "CUREBO_CURRENT_MAIN_FORWARD_PORT_VERIFIED_SOURCE_CHAIN",
+  "pr": 98,
+  "source_base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_forward_port_commit": "fdcfdc81057005afbdff750eeb6e221a5ed83bf5",
+  "source_forward_port_tree": "5ebc0537d8695b753b3a849f560289f22d6172b1",
+  "coordination": {
+    "epoch": 455,
+    "claim_commit": "e7f0797bba357c3e6a7193ebc94e1ffb42da5fa8",
+    "owner_id": "2e9c32dd-879b-49a9-a2af-565a3f9d2026",
+    "branch": "ops/twf-character-pipeline-20261028"
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsBalance.lua",
+      "before_bytes": 3070,
+      "after_bytes": 3304,
+      "delta_bytes": 234,
+      "before_blob": "e78a07c7551f19183316803706c5602cd4049459",
+      "after_blob": "b254be5ff0a6643dc634ef5ed17d3d0e3f663d20"
+    },
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 7709,
+      "after_bytes": 9466,
+      "delta_bytes": 1757,
+      "before_blob": "f1b7a2e2e4e6cd0a5703a7f034f50d4e62801467",
+      "after_blob": "27a220c1e113f9a2e966dd063bc5922672a757fc"
+    },
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 40752,
+      "after_bytes": 43750,
+      "delta_bytes": 2998,
+      "before_blob": "d86a0b89a1d811ec6da83da93b24e29235218b04",
+      "after_blob": "cddeb43dadf039b7f5d0e78041f6b3e3b2da907a"
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1296,
+    "lua_bytes": 57770
+  },
+  "main_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1186,
+    "lua_bytes": 52781
+  },
+  "source_baseline_bytes": 25726,
+  "source_delta_vs_current_main_bytes": 4989,
+  "characters_touched": [
+    "curebo"
+  ],
+  "preserved_characters": [
+    "pon",
+    "guardon",
+    "tankuru"
+  ],
+  "game_change": "Existing CUREBO 32-coin supporter, repair and model plus 3-button pagination brought forward to accepted main by an ordinary two-parent PR-branch merge. Retains accepted lease/shutdown/progress code.",
+  "authored_history_preserved_original_blob": "fc4d8bb8b3ec1b0f9457c840b524354833422522",
+  "archived_history": "history/PR98_C00100_authored_snapshot_20261028.json",
+  "archived_authored_source_snapshot": "history/C00100_character_pipeline_pilot.json::pre_forward_port_snapshot",
+  "ci_prior": {
+    "run": 42154035887,
+    "result": "FAILURE",
+    "native_curebo": "12/12",
+    "native_pages": "11/11",
+    "native_progress": "4/4",
+    "failed": "1 historical author-base source-chain mismatch and 7 premature assumptions about unmerged PR179"
+  },
+  "ci_new": "PENDING_EXACT_HEAD",
+  "independent_review": "PENDING",
+  "main_merged": false,
+  "engine": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "protected_gates_waived": false,
+  "accepted_main_history_modified": false,
+  "external_inference_authorized": false,
+  "new_cost_authorized": false,
+  "publication_authorized": false,
+  "note": "Source history recorded as a new current-main delta after all accepted C source records; old author-base measures retained in original archival JSON. PR179 victory/outcome is unmerged and not silently pulled into this PR."
+}

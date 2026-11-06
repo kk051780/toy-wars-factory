@@ -1,0 +1,105 @@
+{
+  "id": "C00101",
+  "date": "2026-10-28",
+  "kind": "CONTROLLER_CHARACTER_LEDGER_REVIEW_REPAIR",
+  "author_kind": "CONTROLLER",
+  "author_operation_id": "8cc6639f-5b15-4b6d-b6a8-5987938c19e4",
+  "task_id": null,
+  "run_id": null,
+  "identity_note": "Interactive manual operation UUID, not a registered service run",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "7c7be229a364f739cbd46da6eb60c5f512846017",
+    "owner_run_id": "8cc6639f-5b15-4b6d-b6a8-5987938c19e4",
+    "owner_id_kind": "MANUAL_OPERATION_UUID",
+    "epoch": 169
+  },
+  "main_base": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+  "parent_character_head": "f830f259dcbaa58aa79ab15162f7d73123003ab5",
+  "changed_files": [
+    "history/C00100_character_pipeline_pilot.json",
+    "history/C00101_character_ledger_review_repair.json"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 891,
+    "lua_bytes": 36280
+  },
+  "source_baseline_bytes": 25726,
+  "source_delta_vs_main_bytes": 4989,
+  "source_parity": [
+    {
+      "path": "src/ToyWarsBalance.lua",
+      "blob": "b254be5ff0a6643dc634ef5ed17d3d0e3f663d20",
+      "bytes": 3304
+    },
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "blob": "145f8caa63b92bdf1515060fd05c0135ebbd073f",
+      "bytes": 8581
+    },
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "blob": "48f3206006a1b16582f03b041144541c73a9640f",
+      "bytes": 23145
+    },
+    {
+      "path": "src/ToyWarsSmokeTest.server.lua",
+      "blob": "ccba431909c664909e2680785648d0402fedf3c3",
+      "bytes": 1250
+    }
+  ],
+  "defect": {
+    "symptom": "C00100 recorded36281 bytes/892 lines, actual GitHub source tree36280 bytes/891 lines",
+    "cause": "Working-copy SmokeTest had one extra newline, while its canonical GitHub blob was unchanged. The local aggregate therefore included one byte/line not committed.",
+    "fix": "Correct only the two aggregate fields in the unmerged C00100. Preserve every canonical source blob, before/after source chain, baseline, accepted regression and objective gate.",
+    "prevention": "Measure and match each src blob against the authenticated tree before summing bytes/lines; use existing immutable ledger CI instead of weakening it."
+  },
+  "prior_independent_review": {
+    "task_id": "6ae16fe9b8908191b93c85b0c2782f01",
+    "run_id": "2b0b62b0-2c34-8333-ba76-4368301aaf22",
+    "head": "f830f259dcbaa58aa79ab15162f7d73123003ab5",
+    "verdict": "REQUEST_CHANGES",
+    "ci_run": 40628409906
+  },
+  "main_sync": {
+    "ref": "6b5cdc899ab6b135c281698ffd9568c3a30dd88f",
+    "includes_pr": 97,
+    "source_changed": false,
+    "reason": "Bring accepted deterministic persistence harness into candidate before fresh CI. No candidate edit to accepted harness or assertions."
+  },
+  "tests": {
+    "new_character_python": 16,
+    "auto_lua_suites": 27,
+    "curebo_server_cases": 12,
+    "character_page_cases": 6,
+    "accepted_server_cases": 27,
+    "accepted_hud_price_cases": 6,
+    "balance_assertions": 37,
+    "stress_cases": 4000,
+    "local_lua_executor": "texlua (LuaTeX), offline mocks",
+    "source_git_blob_parity": "PASS_FOUR_CANONICAL_LUA",
+    "installer": "PASS_FOUR_CANONICAL_LUA_EMBEDDED_AND_HASHED",
+    "full_github_ci": "PENDING_NEW_EXACT_HEAD",
+    "separate_review": "PENDING_NEW_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "acquisition": "NOT_MEASURED"
+  },
+  "characters_touched": [],
+  "runtime_source_changed": false,
+  "time_accounting": {
+    "recorded_at": "2026-10-28T04:14:55.038Z",
+    "active_seconds": null,
+    "reason": "No continuous active-time instrument; queued waiting and earlier sessions are not claimed as development time."
+  },
+  "next_action": "Fresh offline and compile_hold CI on repaired head, then repeat the separate read-only scoped character maintenance audit. Author does not self-approve or merge. PR94 registered reviewer remains independent.",
+  "restrictions": {
+    "spending_or_publication": false,
+    "schedule_change": false,
+    "accepted_tests_changed": false,
+    "original_character_stats_changed": false
+  }
+}

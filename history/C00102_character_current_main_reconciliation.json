@@ -1,0 +1,94 @@
+{
+  "id": "C00102",
+  "date": "2026-10-28",
+  "kind": "CONTROLLER_CHARACTER_CURRENT_MAIN_RECONCILIATION",
+  "author_kind": "CONTROLLER",
+  "author_operation_id": "5f5a4403-cfeb-4942-abd0-eeceffba1310",
+  "task_id": null,
+  "run_id": null,
+  "identity_note": "Manual operation UUID, not a service run",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "83f2bd76d87f190744370cfd976f9c4a08ed7792",
+    "owner_run_id": "5f5a4403-cfeb-4942-abd0-eeceffba1310",
+    "owner_id_kind": "MANUAL_OPERATION_UUID",
+    "epoch": 187
+  },
+  "main_base": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+  "parent_character_head": "04ae31b1447ec352e504f96b72dd91ea78d24db2",
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "history/C00100_character_pipeline_pilot.json",
+    "history/C00102_character_current_main_reconciliation.json",
+    "tests/auto/curebo_progression_lifecycle_spec.lua"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1155,
+    "lua_bytes": 50216
+  },
+  "source_baseline_bytes": 25726,
+  "source_delta_vs_current_main_bytes": 4989,
+  "source_delta_vs_previous_candidate_bytes": 13936,
+  "characters_touched": [
+    "curebo"
+  ],
+  "preserved_characters": [
+    "pon",
+    "guardon",
+    "tankuru"
+  ],
+  "defect": {
+    "cause": "PR98 predates accepted PR94 persistence and PR99 failed-load backfill repairs; automatic three-way merge conflicts at simulate entry. Read-only reaudit returned no_update, not approval.",
+    "fix": "Preserve latest main in full, run refreshProgressLease and its post-yield lifecycle fence before advancing combatTime or repairing. Rebase the unmerged C00100 source ledger onto the actual current main; preserve its initial snapshot and C00101.",
+    "protected_history_and_tests": "Every already accepted history/test blob remains identical to current main; only unmerged C00100 is reconciled."
+  },
+  "source_parity": [
+    {
+      "path": "src/ToyWarsBalance.lua",
+      "blob": "b254be5ff0a6643dc634ef5ed17d3d0e3f663d20",
+      "bytes": 3304
+    },
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "blob": "145f8caa63b92bdf1515060fd05c0135ebbd073f",
+      "bytes": 8581
+    },
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "blob": "cc347bf34ee1961e319e49eabf4a3b5616455fb8",
+      "bytes": 37081
+    },
+    {
+      "path": "src/ToyWarsSmokeTest.server.lua",
+      "blob": "ccba431909c664909e2680785648d0402fedf3c3",
+      "bytes": 1250
+    }
+  ],
+  "tests": {
+    "new_integration_cases": 4,
+    "negative_control": "Removing exact post-refresh lifecycle fence must produce stale repair and fail the same noStaleRepair assertion",
+    "local_executor": "texlua Lua 5.4 compatible mocks",
+    "full_github_ci": "PENDING_NEW_EXACT_HEAD",
+    "independent_review": "PENDING_NEW_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "market_effect": "NOT_MEASURED"
+  },
+  "time_accounting": {
+    "recorded_at": "2026-10-28T11:06:52.702079+00:00",
+    "active_seconds": null,
+    "reason": "No continuous active-time instrumentation; waiting is not claimed as active work."
+  },
+  "next_action": "Fresh full CI against latest main; separate registered scoped maintenance review and integration, then post-merge main QA/handoff. Author does not self-approve or integrate.",
+  "restrictions": {
+    "roblox_publish": false,
+    "paid_inference": false,
+    "accepted_tests_changed": false,
+    "baseline_changed": false,
+    "normal_reviewer_lane_expanded": false,
+    "regular_schedules_changed": false
+  }
+}

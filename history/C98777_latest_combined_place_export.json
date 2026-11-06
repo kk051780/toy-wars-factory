@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "id": "C98777",
+  "kind": "CURRENT_FOUR_TOY_VICTORY_SOURCE_PINNED_RBXLX_CANDIDATE",
+  "date_utc": "2026-11-06",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "candidate_game_source_commit": "46d216070ac554d2f8a9d55838aada37f28901b9",
+  "work_branch": "bootstrap/twf-current-curebo-outcome-integration-20261106",
+  "original_exporter_source": "bootstrap/twf-curebo-outcome-combined-qa-20261106",
+  "source_pin": {
+    "src/ToyWarsBalance.lua": "b254be5ff0a6643dc634ef5ed17d3d0e3f663d20",
+    "src/ToyWarsServer.server.lua": "57211f6c4179b5ada8d8215f6ad8bad1d076aa86",
+    "src/ToyWarsHUD.client.lua": "05d72aae6924cc5d93fe14595e9af2cdeb4f73fd",
+    "src/ToyWarsSmokeTest.server.lua": "ccba431909c664909e2680785648d0402fedf3c3"
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_bytes": 62951,
+    "lua_lines": 1409
+  },
+  "coordination": {
+    "epoch": 465,
+    "owner_id": "644fded5-1ee2-4f88-9dc0-e76b9a06391e",
+    "claim_commit": "dbc35353fb764b52753c175a73c0c4f06d773c06",
+    "branch": "twf-repair-coordinator",
+    "work_branch": "bootstrap/twf-current-curebo-outcome-integration-20261106"
+  },
+  "changed_files": [
+    "tools/export_accepted_rbxlx.py",
+    "tests/test_system_xml_artifact_export.py",
+    "history/C98777_latest_combined_place_export.json"
+  ],
+  "source_changes": [],
+  "candidate_rbxlx": "twf_current_4toy_victory_NOT_ENGINE_VERIFIED.rbxlx",
+  "receipt": "twf_current_4toy_victory_UNTRUSTED_receipt.json",
+  "expected_actions_artifact_name": "twf-autonomous-regressions-not-engine",
+  "motive": "New latest joint game commit 46d216 carries CUREBO wounded escort/neon and authentic wave50 fresh cycle, while original source-pinned Roblox exporter still targeted older server snapshot. Reuse preexisting offline-only XML packaging, repin exact 4 Git blobs and branch, validate embedded source, emit untrusted receipt in already existing Actions artifact path. Never run engine or upload.",
+  "test_cases": 24,
+  "engine": "NOT_RUN",
+  "mobile": "NOT_RUN",
+  "two_clients": "NOT_RUN",
+  "independent_native_approval": false,
+  "main_merged": false,
+  "original_source_PR98_modified": false,
+  "original_source_PR179_modified": false,
+  "new_workflow": false,
+  "new_permissions": false,
+  "new_secrets": false,
+  "new_roblox_upload": false,
+  "public_publishing": false,
+  "additional_paid_spend": 0,
+  "github_actions_free_minutes_remaining": "UNKNOWN",
+  "expected_CI": "PENDING_EXACT_HEAD"
+}
