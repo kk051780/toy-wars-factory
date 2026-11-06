@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "id": "C98768",
+  "kind": "ISOLATED_COMBINED_CUREBO_ROUND_RESULT_SOURCE_QA",
+  "date_utc": "2026-11-06",
+  "parent_PR98_head": "85915a2983951b79bce64e4a736e47962390871b",
+  "pr179_source_head": "6ead77b72290a7de1260078c766465b6fd17dfee",
+  "accepted_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_test_commit": "751194a14a9bc9292914100531ced47d93b45580",
+  "work_branch": "bootstrap/twf-curebo-outcome-combined-qa-20261106",
+  "coordinator": {
+    "epoch": 457,
+    "owner_id": "6c2d6a8f-a1bb-4a04-9c89-5329f19b51d4",
+    "claim_commit": "b573bbe22ce672e4ba1b9836ccb3413cfee60f18"
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_bytes": 43750,
+      "after_bytes": 44188,
+      "delta_bytes": 438,
+      "before_blob": "cddeb43dadf039b7f5d0e78041f6b3e3b2da907a",
+      "after_blob": "8faa93bccb6815e39246221f758e5b1f3fd191d7"
+    },
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_bytes": 9466,
+      "after_bytes": 11891,
+      "delta_bytes": 2425,
+      "before_blob": "27a220c1e113f9a2e966dd063bc5922672a757fc",
+      "after_blob": "05d72aae6924cc5d93fe14595e9af2cdeb4f73fd"
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1359,
+    "lua_bytes": 60633
+  },
+  "before_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1296,
+    "lua_bytes": 57770
+  },
+  "source_baseline_bytes": 25726,
+  "changed_paths": [
+    "src/ToyWarsServer.server.lua",
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/round_outcome_hud_spec.lua",
+    "tests/auto/round_outcome_spec.lua",
+    "tests/auto/curebo_round_result_integration_spec.lua",
+    "history/C98768_combined_curebo_round_result_qa.json"
+  ],
+  "original_CUREBO_pr98_tests_preserved": true,
+  "original_PR179_native_test_blobs_exact": [
+    "c3326746a794fcfb2f0b710ae28b00073844c3ba",
+    "3f9c52891ba5b9182d50058a64974ffde7b53aea"
+  ],
+  "combined_sources_match_local_offline_tested_zip_github_blobs": true,
+  "scope": "Standalone ephemeral bootstrap QA branch, not a PR, not main integration, no author/reviewer identity claim. Uses GitHub native Lua 5.4 test step. Studio, mobile, 2-client tests still required.",
+  "expected_ci": "PENDING_PROVIDER_GITHUB_ACTIONS",
+  "independent_review": "NOT_VERIFIED",
+  "main_merged": false,
+  "roblox_engine": "NOT_RUN",
+  "android": "NOT_RUN",
+  "public_release": false,
+  "protection": {
+    "owner_authorized_existing_resources_only": true,
+    "no_billing_or_permission_changes": true,
+    "no_main_change": true,
+    "no_native_self_approval": true,
+    "no_publishing": true
+  }
+}
