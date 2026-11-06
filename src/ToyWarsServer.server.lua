@@ -651,6 +651,14 @@ local function repairAlly(state,e,dt)
         target.repairAvailableAt=now+data.repairCooldown
         e.repairCooldown=data.repairCooldown
         refreshHealthBar(target)
+        -- Reuse the modeled 3D head for a short, server-owned repair flash.
+        -- No new parts, assets, network remotes or permanent effects.
+        local repairHead=e.model and e.model:FindFirstChild("RepairHead")
+        if repairHead and repairHead:IsA("BasePart") then
+            repairHead.Material=Enum.Material.Neon
+            repairHead.Color=Color3.fromRGB(102,255,198)
+            e.repairFlashUntil=now+0.45
+        end
     end
 end
 
@@ -658,6 +666,14 @@ local function updateEntity(state,e,dt)
     if not e.alive then return end
     local data=B.UNITS[e.id]
     if data.repairAmount and e.side=="ally" then repairAlly(state,e,dt) end
+    if e.repairFlashUntil and (state.combatTime or 0)>=e.repairFlashUntil then
+        e.repairFlashUntil=nil
+        local repairHead=e.model and e.model:FindFirstChild("RepairHead")
+        if repairHead and repairHead:IsA("BasePart") then
+            repairHead.Material=Enum.Material.SmoothPlastic
+            repairHead.Color=Color3.fromRGB(247,239,211)
+        end
+    end
     local remaining=e.cooldown>0 and e.cooldown-dt or 0
     e.cooldown=math.max(0,remaining)
     -- Support toys escort the nearest injured ally; they should not abandon
