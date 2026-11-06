@@ -1420,17 +1420,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 455,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "2e9c32dd-879b-49a9-a2af-565a3f9d2026",
-    "task_id": null,
-    "epoch": 455,
-    "acquired_at": "2026-11-06T02:56:17.662Z",
-    "expires_at": "2026-11-06T03:26:17.662Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "ops/twf-character-pipeline-20261028",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3074,37 +3064,52 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "OWNER_RELEASE_AFTER_PR163_PROVIDER_SHAPE_RED_GREEN",
-    "owner_id": "e79b1204-af80-4114-af4e-7cc30a12d5e6",
-    "epoch": 454,
-    "claim_commit": "d4e9db1bfaffb9ab69da6244817d7a35457c3dc7",
-    "pr": 163,
-    "branch": "controller/actions-write-pilot-8df31af2",
-    "head": "b8466ba51356fd2b4bd73b9c33e0dcc57b6a86a8",
+    "kind": "OWNER_RELEASE_AFTER_PR98_CUREBO_CURRENT_MAIN_FORWARD_PORT_GREEN",
+    "owner_id": "2e9c32dd-879b-49a9-a2af-565a3f9d2026",
+    "epoch": 455,
+    "claim_commit": "e7f0797bba357c3e6a7193ebc94e1ffb42da5fa8",
+    "pr": 98,
+    "branch": "ops/twf-character-pipeline-20261028",
+    "head": "b9427e9c90371b45f70b6eacc337e9110ca5a903",
     "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "red_head": "d677e0ad8279cc385ebd671cb7242d0374c9558f",
-    "red_ci_run_id": 42139956675,
-    "red_result": "Python 964 cases; 18 malformed provider response errors, expected RED",
-    "green_ci_run_id": 42140184934,
-    "green_result": "offline + compile_hold SUCCESS; Python 964/964 incl 5 new test methods",
-    "changed_files": [
-      "tools/system_actions_write_probe.py",
-      "tests/test_system_actions_write_probe_provider_shapes.py",
-      "history/C09049_pr163_malformed_provider_fencing.json"
+    "sync_merge_commit": "fdcfdc81057005afbdff750eeb6e221a5ed83bf5",
+    "history_reconciliation_commit": "b9427e9c90371b45f70b6eacc337e9110ca5a903",
+    "source_metrics": {
+      "lua_files": 4,
+      "lua_lines": 1296,
+      "lua_bytes": 57770
+    },
+    "base_source_metrics": {
+      "lua_files": 4,
+      "lua_lines": 1186,
+      "lua_bytes": 52781
+    },
+    "source_delta_bytes": 4989,
+    "ci_run_id": 42155046818,
+    "ci_result": "offline+compile_hold success; Python 861/861; CUREBO Lua 12/12; pages 11/11; progression/lifecycle 4/4",
+    "original_red_runs": [
+      42153601104,
+      42154035887
     ],
-    "source_bytes_before": 23698,
-    "source_bytes_after": 24069,
-    "source_delta_bytes": 371,
-    "game_source_changed": false,
-    "workflow_permissions_changed": false,
-    "actual_scheduled_writer_proof": false,
-    "main_merged": false,
+    "changed_files": [
+      "src/ToyWarsServer.server.lua",
+      "src/ToyWarsHUD.client.lua",
+      "src/ToyWarsBalance.lua",
+      "config/characters.json",
+      "history/C00100_character_pipeline_pilot.json",
+      "history/PR98_C00100_authored_snapshot_20261028.json",
+      "history/C98766_character_current_main_forward_port.json",
+      "tests/test_system_character_history.py",
+      "tests/test_system_curebo_current_main_safety.py"
+    ],
     "native_independent_review": false,
+    "main_merged": false,
     "roblox_engine_run": false,
-    "new_spending_settings_changed": false,
-    "recorded_at": "2026-11-06T00:55:53.502Z",
-    "released_at": "2026-11-06T00:55:53.502Z",
-    "note": "Malformed API responses now return sanitised ProbeError before unsafe operations; native reviewer/protection/main adoption remain blocked."
+    "billing_changed": false,
+    "permissions_changed": false,
+    "recorded_at": "2026-11-06T03:15:13.269Z",
+    "released_at": "2026-11-06T03:15:13.269Z",
+    "note": "CUREBO code now current-main compatible, protected DRAFT, independent PR60 bootstrap remains blocked. PR179 RoundOutcome draft kept separate; no status claim of release readiness."
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
@@ -3195,6 +3200,24 @@
       "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "scope": "EXACT_HEAD_SAME_REPO_GAME_SOURCE_WITH_NEW_TEST_AND_HISTORY",
       "status": "AWAIT_PR60_POLICY_BOOTSTRAP_AND_REGISTERED_REVIEWER"
+    },
+    {
+      "author_first_commit": "04ae31b1447ec352e504f96b72dd91ea78d24db2",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "branch": "ops/twf-character-pipeline-20261028",
+      "ci_run": 42155046818,
+      "claim_commit": "e7f0797bba357c3e6a7193ebc94e1ffb42da5fa8",
+      "created_at": "2026-11-06T03:15:13.269Z",
+      "epoch": 455,
+      "head": "b9427e9c90371b45f70b6eacc337e9110ca5a903",
+      "kind": "CONTROLLER",
+      "number": 98,
+      "owner_id": "2e9c32dd-879b-49a9-a2af-565a3f9d2026",
+      "repository": "kk051780/toy-wars-factory",
+      "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "scope": "EXACT_HEAD_PROTECTED_CHARACTER_CATALOG_SOURCE_WITH_NEW_TEST_AND_HISTORY",
+      "status": "AWAIT_PR60_POLICY_BOOTSTRAP_AND_REGISTERED_REVIEWER",
+      "note": "2026-11-06 CUREBO legacy PR98 actual main-sync: head b9427e9, exact original Actions 42155046818 SUCCESS offline/compile_hold, Python861/861; CUREBO native heal 12/12, character page 11/11, progression 4/4; current main source 52781 -> candidate 57770 bytes, 1186 ->1296 lines, +4989 bytes. Original source authored C00100 preserved byte-for-byte as PR98 archive; new current-main history C98766; accepted main historical records/tests unchanged. Protected config/autonomous_repair.json, repository_gate.py, source paths need separate independent review; GitHub native reviews 0 and private Free provider protection not independently verified. NO main merge, engine run, publication, permission/billing changes."
     }
   ],
   "operational_routing_updates": [
