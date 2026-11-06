@@ -758,6 +758,7 @@ local function resetAfterLoss(state)
     state.entities={}
     state.baseHP.Value=100
     state.wave.Value=1
+    state.roundOutcome.Value="LOSS"
     state.coins.Value=math.max(40,state.coins.Value)
     state.enemiesMade=0
     state.enemyTarget=B.waveSize(1)
@@ -797,6 +798,9 @@ local function simulate(state,dt)
 
     if state.waveBreak>0 then
         state.waveBreak=math.max(0,state.waveBreak-dt)
+        if state.waveBreak==0 and state.roundOutcome.Value~="" then
+            state.roundOutcome.Value=""
+        end
     else
         state.enemyTimer=state.enemyTimer-dt
         if state.enemyTimer<=0 and state.enemiesMade<state.enemyTarget then
@@ -815,6 +819,13 @@ local function simulate(state,dt)
         if new then state.coins.Value=new end
         state.baseHP.Value=math.min(100,state.baseHP.Value+18)
         if state.wave.Value>=B.MAX_WAVE then
+            -- A completed 50-wave run starts with a clean battlefield and vault.
+            -- Keep earned coins, defeats and factory upgrades as the run reward.
+            for _,e in ipairs(state.entities) do removeEntity(e) end
+            state.entities={}
+            state.baseHP.Value=100
+            state.productionTimer=1
+            state.roundOutcome.Value="VICTORY"
             state.wave.Value=1
         else
             state.wave.Value=state.wave.Value+1
@@ -892,11 +903,17 @@ local function join(player)
     selected.Name="SelectedToy"
     selected.Value="PON"
     selected.Parent=status
+    -- Transient result signal. This does NOT enter DataStore progress records.
+    local outcome=Instance.new("StringValue")
+    outcome.Name="RoundOutcome"
+    outcome.Value=""
+    outcome.Parent=status
     local state={
         slot=slot,x=plotCenter(slot),active=true,map=nil,player=player,persistAllowed=persistAllowed,
         persistSnapshot=progressSnapshot(progress),nextLeaseRefresh=leaseNow()+SESSION_REFRESH_SECONDS,
         coins=coins,wave=wave,kills=kills,baseHP=hp,level=level,
         unitsValue=units,enemiesValue=enemies,selectedValue=selected,selected="pon",
+        roundOutcome=outcome,
         entities={},spawnOrdinal=0,enemyTarget=B.waveSize(wave.Value),enemiesMade=0,
         productionTimer=1.2,enemyTimer=0.1,waveBreak=4,incomeCarry=0,
     }
