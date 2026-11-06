@@ -1546,17 +1546,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 462,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "d774203f-3715-4c90-a64d-1032765733d4",
-    "task_id": null,
-    "epoch": 462,
-    "acquired_at": "2026-11-06T07:50:17.997Z",
-    "expires_at": "2026-11-06T08:20:17.997Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/a14-export-race-guard-20261106-d774203f",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3200,40 +3190,10 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "MANUAL_CONTROLLER_PR98_CUREBO_3D_REPAIR_SIGNAL_CI_GREEN",
-    "owner_id": "13bfb402-73a3-4b39-9517-7820a94961d0",
-    "epoch": 461,
-    "claim_commit": "c4b8b7896215fec19b4b76278dfc47b3fbf29bec",
-    "branch": "ops/twf-character-pipeline-20261028",
-    "pr": 98,
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "head": "6b2c59f155ca21463c733917d647ecb9a1b8e89b",
-    "CI": 42182687969,
-    "CI_status": "offline+compile_hold SUCCESS",
-    "python_tests": "865/865",
-    "curebo_lua": "18/18",
-    "hud_pages_lua": "11/11",
-    "source_changes": [
-      "src/ToyWarsServer.server.lua",
-      "tests/auto/curebo_support_spec.lua",
-      "history/C98773_curebo_heal_3d_flash.json"
-    ],
-    "source_metrics": {
-      "lua_files": 4,
-      "lua_lines": 1340,
-      "lua_bytes": 59754
-    },
-    "new_3d_parts": 0,
-    "player_visible_code_change": "0.45s server-authoritative existing RepairHead neon mint repair flash, reset to original",
-    "manual_review_request_retargeted": true,
-    "main_merged": false,
-    "independent_native_review": false,
-    "Roblox_Studio_verified": false,
-    "Android_verified": false,
-    "free_quota_remaining": "UNKNOWN",
-    "new_paid_service": false,
-    "published": false,
-    "recorded_at": "2026-11-06T07:44:40.650Z"
+    "kind": "CONTROLLER",
+    "owner_id": "d774203f-3715-4c90-a64d-1032765733d4",
+    "epoch": 462,
+    "released_at": "2026-11-06T07:57:56.630Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
