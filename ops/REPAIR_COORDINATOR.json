@@ -1688,17 +1688,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 469,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "394b2b20-062a-47e3-9dd3-7dde6fe812c7",
-    "task_id": null,
-    "epoch": 469,
-    "acquired_at": "2026-11-06T22:54:36.072Z",
-    "expires_at": "2026-11-06T23:06:36.072Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "ops/twf-manual-review-lane"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3342,24 +3332,27 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "MANUAL_CONTROLLER_PR184_CI_EVIDENCE_AND_PROTECTED_REVIEW_HANDOFF",
-    "epoch": 468,
-    "owner_id": "controller-review-handoff-20261107-0745",
-    "claim_commit": "ec1de1a012447e78e2829ac0b47c9d9ee485c3d2",
-    "branch": "bootstrap/twf-current-curebo-outcome-integration-20261106",
-    "pr_number": 184,
-    "head": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
-    "pr_ci": 42305157001,
-    "push_ci": 42305151306,
-    "python_tests": "891/891",
-    "game_source_delta_bytes": 0,
-    "changed_source_files": [],
-    "operation": "PR metadata-only verified CI/review handoff, 5 protected path flags",
-    "independent_native_review": false,
+    "kind": "MANUAL_CONTROLLER_PR60_TO_PR184_SCOPE_INCOMPATIBILITY_AUDIT",
+    "epoch": 469,
+    "owner_id": "394b2b20-062a-47e3-9dd3-7dde6fe812c7",
+    "claim_commit": "99393133b9c641a348a75d8599e4e897ac3ac435",
+    "branch": "ops/twf-manual-review-lane",
+    "pr60_head": "89ad1bc90b586f92b7456b4ecd5a0291fc829d62",
+    "pr184_head": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+    "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/60#issuecomment-6697842957",
+    "blockers": [
+      "PR184_BRANCH_NOT_IN_MANUAL_CONTROLLER_LANE",
+      "PR184_PROTECTED_PATHS_OUTSIDE_GAME_SCOPE",
+      "PROVIDER_ENFORCED_MAIN_PROTECTION_NOT_AVAILABLE",
+      "NATIVE_INDEPENDENT_REVIEW_ABSENT"
+    ],
+    "source_changed": false,
+    "review_submitted": false,
     "main_merged": false,
     "roblox_engine_verified": false,
     "additional_paid_services": 0,
-    "recorded_at": "2026-11-06T22:49:12.265Z"
+    "recorded_at": "2026-11-06T22:55:43.723Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
