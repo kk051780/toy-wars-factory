@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "id": "C98769",
+  "date_utc": "2026-11-06",
+  "kind": "COMBINED_CUREBO_ROUND_RESULT_PINNED_XML_OUTPUT_CI_CANDIDATE",
+  "coordinator": {
+    "epoch": 458,
+    "owner_id": "a3e2dd6b-4707-4b0e-8adf-3e63650c4b55",
+    "claim_commit": "d60d0ed59688b69acbed9c7773d2aeef87f85838",
+    "branch": "bootstrap/twf-curebo-outcome-combined-qa-20261106"
+  },
+  "scope": "isolated bootstrap QA, not source PR, not production or Roblox Studio verification",
+  "accepted_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "pinned_combined_source_commit": "f22504161ba0aae469afd8d8a919cb7a2db33cb3",
+  "prior_hosted_ci": 42163475488,
+  "prior_ci_result": "SUCCESS_OFFLINE_AND_COMPILE_HOLD",
+  "prior_native_integration_tests": "5/5",
+  "expected_xml_sha256": "eb090d086e0a65341bae6cc84691cd0135f274dd41b07fdebc334d7255fc04cb",
+  "source_paths_and_blob_ids": {
+    "src/ToyWarsBalance.lua": "b254be5ff0a6643dc634ef5ed17d3d0e3f663d20",
+    "src/ToyWarsServer.server.lua": "8faa93bccb6815e39246221f758e5b1f3fd191d7",
+    "src/ToyWarsHUD.client.lua": "05d72aae6924cc5d93fe14595e9af2cdeb4f73fd",
+    "src/ToyWarsSmokeTest.server.lua": "ccba431909c664909e2680785648d0402fedf3c3"
+  },
+  "four_game_lua_files_unchanged": true,
+  "source_changes": [],
+  "inherited_from_existing_protected_PR147": [
+    "tools/export_accepted_rbxlx.py",
+    "tests/test_system_xml_artifact_export.py"
+  ],
+  "changed_files": [
+    "tools/export_accepted_rbxlx.py",
+    "tests/test_system_xml_artifact_export.py",
+    "history/C98769_combined_source_pinned_xml_export.json"
+  ],
+  "expected_new_python_tests": 23,
+  "actual_new_head_ci": "PENDING",
+  "github_actions_artifact": "twf-autonomous-regressions-not-engine",
+  "no_network_requests": true,
+  "no_roblox_upload": true,
+  "roblox_engine_verified": false,
+  "mobile_verified": false,
+  "multiplayer_verified": false,
+  "separate_reviewer_approval": false,
+  "main_merged": false,
+  "pr98_merged": false,
+  "pr179_merged": false,
+  "public_roblox_publishing_authorized": false,
+  "new_paid_service_authorized": false,
+  "permissions_changed": false
+}
