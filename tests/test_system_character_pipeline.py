@@ -86,6 +86,9 @@ class CharacterPipelineTests(unittest.TestCase):
         self.catalog['characters'].append(candidate)
         registration=f"    {candidate['id']} = {{name = \"NEXT FIXTURE\", cost = 40}},\n"
         self.balance=self.balance.replace('    junk =',registration+'    junk =',1)
+        self.balance=self.balance.replace(
+            'B.PLAYABLE_IDS = {"pon", "guardon", "tankuru", "curebo"}',
+            'B.PLAYABLE_IDS = {"pon", "guardon", "tankuru", "curebo", "'+candidate['id']+'"}')
         self.assertEqual(self.errors(),[])
         self.assertEqual({c['id'] for c in self.catalog['characters']},before | {candidate['id']})
         self.assertEqual(len(self.catalog['characters'])+len(self.catalog['candidates']),total)
@@ -101,6 +104,40 @@ class CharacterPipelineTests(unittest.TestCase):
         self.assertIn('future_fixture',{c['id'] for c in assess(self.catalog)})
         self.test_active_and_planned_rosters_are_consistent()
         self.test_ranking_is_deterministic_and_does_not_count_skins()
+
+
+    def test_playable_roster_matches_all_active_characters(self):
+        self.assertEqual(self.errors(), [])
+        hud=(ROOT/'src/ToyWarsHUD.client.lua').read_text()
+        self.assertIn('local unitOrder=B.PLAYABLE_IDS', hud)
+        self.assertIn('local id=unitOrder[(page-1)*3+i]', hud)
+        self.assertIn('visibleIds[i]=id', hud)
+
+    def test_missing_or_unknown_playable_unit_fails_closed(self):
+        before='B.PLAYABLE_IDS = {"pon", "guardon", "tankuru", "curebo"}'
+        self.assertEqual(self.balance.count(before), 1)
+        for after in (
+            'B.PLAYABLE_IDS = {"pon", "guardon", "tankuru"}',
+            'B.PLAYABLE_IDS = {"pon", "guardon", "tankuru", "impostor"}',
+        ):
+            with self.subTest(after=after):
+                self.assertIn('catalog and playable HUD roster disagree',
+                              self.errors(b=self.balance.replace(before, after)))
+
+    def test_duplicate_npc_and_dynamic_playable_roster_fail_closed(self):
+        before='B.PLAYABLE_IDS = {"pon", "guardon", "tankuru", "curebo"}'
+        for after in (
+            'B.PLAYABLE_IDS = {"pon", "guardon", "pon", "curebo"}',
+            'B.PLAYABLE_IDS = {"pon", "guardon", "junk", "curebo"}',
+            'B.PLAYABLE_IDS = getCharacterList()',
+            'B.PLAYABLE_IDS = {"pon", "guardon", "tankuru", curebo}',
+        ):
+            with self.subTest(after=after):
+                self.assertTrue(self.errors(b=self.balance.replace(before, after)))
+
+    def test_multiple_playable_assignments_are_not_accepted(self):
+        mutated=self.balance+'\nB.PLAYABLE_IDS = {"pon", "guardon", "tankuru", "curebo"}\n'
+        self.assertIn('playable roster missing or ambiguous',self.errors(b=mutated))
 
 
 if __name__=='__main__':unittest.main()

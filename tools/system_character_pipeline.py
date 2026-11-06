@@ -24,6 +24,29 @@ def registered_ids(source):
     return set(ids) - {"junk"}
 
 
+def playable_ids(source):
+    matches = re.findall(r"(?m)^[ \t]*B\.PLAYABLE_IDS[ \t]*=[ \t]*(.*)$", source)
+    if len(matches) != 1:
+        raise ValueError("playable roster missing or ambiguous")
+    definition = matches[0].strip()
+    if not (definition.startswith("{") and definition.endswith("}")):
+        raise ValueError("playable roster must be a literal list")
+    tokens = [part.strip() for part in definition[1:-1].split(",")]
+    if tokens and not tokens[-1]:
+        tokens.pop()
+    if not tokens:
+        raise ValueError("playable roster empty")
+    ids = []
+    for token in tokens:
+        match = re.fullmatch(r"([\"'])([a-z][a-z0-9_]*)\1", token)
+        if not match:
+            raise ValueError("nonliteral playable character id")
+        ids.append(match.group(2))
+    if len(ids) != len(set(ids)) or "junk" in ids:
+        raise ValueError("duplicate or NPC in playable roster")
+    return set(ids)
+
+
 def catalog_errors(catalog, balance_source, required):
     errors = []
     active = catalog.get("characters")
@@ -44,6 +67,8 @@ def catalog_errors(catalog, balance_source, required):
     try:
         if active_ids != registered_ids(balance_source):
             errors.append("catalog and executable balance roster disagree")
+        if active_ids != playable_ids(balance_source):
+            errors.append("catalog and playable HUD roster disagree")
     except ValueError as exc:
         errors.append(str(exc))
     for c in entries:

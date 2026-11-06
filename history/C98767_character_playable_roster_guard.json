@@ -1,0 +1,45 @@
+{
+  "id": "C98767",
+  "schema": 1,
+  "date_utc": "2026-11-06",
+  "kind": "PR98_PLAYABLE_ROSTER_GUARD",
+  "pr": 98,
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "previous_pr_head": "b9427e9c90371b45f70b6eacc337e9110ca5a903",
+  "coordination": {
+    "epoch": 456,
+    "owner_id": "4d8c6c3a-c87f-4ed7-b58b-a85061098462",
+    "claim_commit": "3a1eba2533242f2662474ebe6cc98d764439b9aa",
+    "branch": "ops/twf-character-pipeline-20261028"
+  },
+  "changed_files": [
+    "tools/system_character_pipeline.py",
+    "tests/test_system_character_pipeline.py",
+    "history/C98767_character_playable_roster_guard.json"
+  ],
+  "source_changes": [],
+  "gameplay_src_changed": false,
+  "existing_four_lua_blobs_unchanged": true,
+  "root_cause": "Catalog and executable B.UNITS roster were compared, but B.PLAYABLE_IDS used by real HUD pagination was not verified. A new active character could be unselectable.",
+  "fix": "Require strict one-time literal playable roster with unique non-NPC ids and exact active catalog equivalence. Enforce via existing repo gate and character pipeline.",
+  "tests_added": [
+    "valid active/hud binding",
+    "missing/unknown playable unit",
+    "duplicate/NPC/dynamic/nonliteral id",
+    "double assignments"
+  ],
+  "existing_promotion_test_updated": true,
+  "verification": {
+    "original_hosted_CI": "PENDING_EXACT_HEAD",
+    "local_offline_patch_applicability": "PASS",
+    "isolated_parser_cases": "7/7",
+    "roblox_engine": "NOT_RUN"
+  },
+  "limits": {
+    "native_independent_review": false,
+    "main_merged": false,
+    "permissions_changed": false,
+    "new_spend_authorized": false,
+    "publishing_authorized": false
+  }
+}
