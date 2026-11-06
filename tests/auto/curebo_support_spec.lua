@@ -96,6 +96,29 @@ check("primitive model keeps its heart, eyes and winder within budget",function(
         assert(healer.model:FindFirstChild(name),"missing low-detail signature "..name)
     end
 end)
+check("CUREBO stays in repair reach instead of rushing distant JUNK",function()
+    local h,p,s,target,healer,enemy=fixture()
+    enemy.z=28
+    local initial=healer.z
+    beat(h)
+    assert(target.health==58,"actual support repair still fires")
+    assert(healer.z==initial,"healer should hold position beside its injured ally")
+end)
+check("CUREBO pursues injured ally instead of enemy when out of repair reach",function()
+    local h,p,s,target,healer,enemy=fixture()
+    target.z=-18
+    enemy.z=28
+    beat(h)
+    assert(target.health==50,"no repair outside the real range")
+    assert(healer.z < -0.4,"healer must move toward injured ally, not distant enemy")
+end)
+check("CUREBO without a patient retains normal enemy pursuit",function()
+    local h,p,s,target,healer,enemy=fixture()
+    target.health=target.maxHealth
+    enemy.z=28
+    beat(h)
+    assert(healer.z > 0.4,"no injured ally: preserve the existing combat route")
+end)
 check("negative control: the same healing assertion detects a disabled repair call",function()
     local f=assert(io.open(server,"rb"));local src=f:read("*a");f:close()
     local mutant,n=src:gsub('if data%.repairAmount and e%.side=="ally" then repairAlly%(state,e,dt%) end','')

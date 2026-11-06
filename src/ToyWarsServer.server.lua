@@ -660,6 +660,23 @@ local function updateEntity(state,e,dt)
     if data.repairAmount and e.side=="ally" then repairAlly(state,e,dt) end
     local remaining=e.cooldown>0 and e.cooldown-dt or 0
     e.cooldown=math.max(0,remaining)
+    -- Support toys escort the nearest injured ally; they should not abandon
+    -- a patient to chase a distant enemy while their repair is cooling down.
+    local escort=nil
+    if data.repairAmount and e.side=="ally" then
+        local bestDistance=math.huge
+        for _,ally in ipairs(state.entities) do
+            if ally~=e and ally.alive and ally.side=="ally"
+                and ally.health>0 and ally.health<ally.maxHealth then
+                local dx,dz=ally.x-e.x,ally.z-e.z
+                local squared=dx*dx+dz*dz
+                if squared<bestDistance then
+                    bestDistance=squared
+                    escort=ally
+                end
+            end
+        end
+    end
     local target, dist=closestOpponent(state,e)
     if target and dist <= data.range then
         if e.cooldown<=0 then
@@ -674,7 +691,16 @@ local function updateEntity(state,e,dt)
     else
         local tx= e.x
         local tz= e.side=="ally" and 40 or -41
-        if target then tx=target.x;tz=target.z end
+        if escort then
+            local dx,dz=escort.x-e.x,escort.z-e.z
+            -- Stay close enough to repair, but don't crowd the patient.
+            local followDistance=data.repairRange*0.7
+            if dx*dx+dz*dz>followDistance*followDistance then
+                tx=escort.x;tz=escort.z
+            end
+        elseif target then
+            tx=target.x;tz=target.z
+        end
         local dx=tx-e.x
         local dz=tz-e.z
         local distance=math.sqrt(dx*dx+dz*dz)
