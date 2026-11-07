@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "kind": "LIVE_PROVIDER_MAIN_RULESET_VERIFICATION_PR163",
+  "date_utc": "2026-11-07",
+  "repo": "kk051780/toy-wars-factory",
+  "repo_visibility": "public",
+  "repo_private": false,
+  "default_branch": "main",
+  "main_head": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "main_protected": true,
+  "provider_ruleset": {
+    "id": 26750913,
+    "name": "main",
+    "enforcement": "active",
+    "source_type": "Repository",
+    "applies_to": {
+      "exclude": [],
+      "include": [
+        "~DEFAULT_BRANCH"
+      ]
+    },
+    "active_rules": [
+      {
+        "type": "deletion"
+      },
+      {
+        "type": "non_fast_forward"
+      },
+      {
+        "type": "pull_request",
+        "parameters": {
+          "required_approving_review_count": 1,
+          "dismiss_stale_reviews_on_push": true,
+          "required_reviewers": [],
+          "require_code_owner_review": false,
+          "require_last_push_approval": false,
+          "required_review_thread_resolution": false,
+          "require_extra_approval_for_unattributed_changes": true,
+          "allowed_merge_methods": [
+            "merge",
+            "squash",
+            "rebase"
+          ]
+        }
+      },
+      {
+        "type": "required_status_checks",
+        "parameters": {
+          "strict_required_status_checks_policy": true,
+          "do_not_enforce_on_create": false,
+          "required_status_checks": [
+            {
+              "context": "offline",
+              "integration_id": 15368
+            },
+            {
+              "context": "compile_hold",
+              "integration_id": 15368
+            }
+          ]
+        }
+      }
+    ],
+    "current_user_can_bypass": "never",
+    "url": "https://github.com/kk051780/toy-wars-factory/rules/26750913",
+    "created_at": "2026-11-07T17:27:32.782+09:00"
+  },
+  "PR": {
+    "number": 163,
+    "head": "f4d83dd1ab19a8a1cc859b8d4db9bf385c49d083",
+    "draft": true,
+    "author": "kk051780",
+    "linked_issue": 57,
+    "native_reviews": 0,
+    "requested_reviewers": [],
+    "policy_source": "https://github.com/kk051780/toy-wars-factory/pull/163",
+    "previous_exact_head_green_ci_run": 42351893661
+  },
+  "objective_validation": {
+    "main_ruleset_effective": true,
+    "old_main_unprotected_assumption_superseded": true,
+    "native_independent_reviewer_availability": "UNKNOWN_NO_VALID_NATIVE_APPROVAL",
+    "native_approval_count": 0,
+    "required_approval_count": 1,
+    "connected_github_account": "kk051780",
+    "same_as_PR_author": true,
+    "author_cannot_self_approve": true,
+    "strict_status_checks": true,
+    "required_checks": [
+      {
+        "context": "offline",
+        "integration_id": 15368
+      },
+      {
+        "context": "compile_hold",
+        "integration_id": 15368
+      }
+    ],
+    "required_checks_expected_integration_id": 15368,
+    "current_pr_ready_to_merge": false,
+    "scheduled_worker_provider_identity_proven": false,
+    "owner_manual_dispatch_performed": false,
+    "source_write_proven_for_new_actions_probe": false,
+    "classic_branch_protection_endpoint": "GET403_INTEGRATION_NOT_AUTHORIZED_BUT_ACTIVE_RULESET_VERIFIED"
+  },
+  "previous_packet": "ops/review_packets/PR163_issue57_security_advisory_epoch487.json",
+  "boundaries": [
+    "Read-only external provider evidence; no native independent review performed or approved",
+    "Do not bypass active ruleset, impersonate another GitHub reviewer or invent external user",
+    "No protected workflow dispatch, direct-main mutation, spending, mobile publish or rule modification"
+  ],
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 489,
+    "owner_id": "ece6f046-c847-4348-97af-ed2e451ac55d",
+    "claim_commit": "f23b7a21bdd478a1cbb9566f510f8e7bbaa7413a"
+  },
+  "independent_reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "next_action": "Registered task may perform read-only security advisory; native separate Github account approval still required before any authorized main integration",
+  "outcome": "PROTECTED_MAIN_VERIFIED_NATIVE_REVIEWER_MISSING",
+  "main_merged": false,
+  "new_spend": 0
+}

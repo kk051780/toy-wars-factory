@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-07T07:55:57.897Z",
+  "observed_at": "2026-11-07T08:32:53.609Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4653,7 +4653,29 @@
       "provider_branch_protection_proven": false,
       "owner_reply_required": false,
       "incremental_spend": 0,
-      "created_at": "2026-11-07T07:55:57.897Z"
+      "created_at": "2026-11-07T07:55:57.897Z",
+      "native_main_protection_verified": true,
+      "native_main_ruleset_id": 26750913,
+      "native_main_ruleset_url": "https://github.com/kk051780/toy-wars-factory/rules/26750913",
+      "main_visibility": "PUBLIC",
+      "provider_ruleset_verified_main_head": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "required_native_approvals": 1,
+      "observed_native_approvals": 0,
+      "required_checks": [
+        "offline",
+        "compile_hold"
+      ],
+      "author_account": "kk051780",
+      "current_connector_account": "kk051780",
+      "separate_github_approver_verified": false,
+      "native_security_gate_status": "PROVIDER_RULESET_ACTIVE_AWAIT_DISTINCT_APPROVER",
+      "independent_security_advisory_status": "PENDING",
+      "superseded_previous_unprotected_main_claim": true,
+      "evidence_provider_ruleset": "ops/review_packets/PR163_provider_main_ruleset_epoch489.json",
+      "prior_evidence_paths": [
+        "ops/review_packets/PR163_issue57_security_advisory_epoch487.json"
+      ],
+      "updated_at": "2026-11-07T08:32:53.609Z"
     }
   ]
 }
