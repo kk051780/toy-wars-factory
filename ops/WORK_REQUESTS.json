@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-07T21:59:45.890Z",
+  "observed_at": "2026-11-07T22:07:36.598Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4812,7 +4812,7 @@
       "id": "PR181_ISSUE57_PROTECTED_HANDOFF_SECURITY_REVIEW_20261107",
       "kind": "PROTECTED_ISSUE57_PR181_INDEPENDENT_SECURITY_AUDIT_AND_INTEGRATION_READINESS",
       "priority": "P0",
-      "status": "OPEN_EXACT_HEAD_INDEPENDENT_SECURITY_AUDIT_REQUIRED",
+      "status": "OPEN_EXACT_HEAD_INDEPENDENT_SECURITY_REVIEW_AFTER_ROTATION_CI_GREEN",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
@@ -4820,16 +4820,16 @@
       "pr": 181,
       "url": "https://github.com/kk051780/toy-wars-factory/pull/181",
       "branch": "controller/issue57-handoff-privilege-split-9b8a6f21",
-      "head": "03be8ad107be4fc0463893df234621243dcd75ea",
+      "head": "fa2195e2e7c1eed4f1321e50ab274b86ac36e5c6",
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "ci_run": 42358419652,
+      "ci_run": 42418986367,
       "ci_jobs": [
         "offline:success",
         "compile_hold:success"
       ],
-      "evidence_path": "ops/review_packets/PR181_issue57_security_handoff_epoch499.json",
+      "evidence_path": "ops/review_packets/PR181_snapshot_rotation_epoch509.json",
       "created_at": "2026-11-07T09:56:07.827Z",
-      "updated_at": "2026-11-07T09:56:07.827Z",
+      "updated_at": "2026-11-07T22:07:36.598Z",
       "requested_by_role": "MANUAL_CONTROLLER",
       "author_role": "MANUAL_CONTROLLER",
       "source_owner_claim": {
@@ -4842,7 +4842,7 @@
         "claim_commit": "c1fcc7bfe290f5a0b42f70fddcae54f8e6dac207",
         "coord_branch": "twf-repair-coordinator"
       },
-      "review_request": "Separate registered REVIEWER task/run must audit exact PR181 14-file workflow+consumer cutover and main-provider ruleset, pass/fail with evidence; no author self-review; current-head success does not attest security or scheduled GitHub writer. Read packet. No merge unless separate audit PASS and exact main QA/merge preconditions; keep main/publish HOLD.",
+      "review_request": "Separate registered REVIEWER task/run: exact PR181 head fa2195e2e7c1eed4f1321e50ab274b86ac36e5c6, 898 Python tests and 2 hosted CI jobs success run 42418986367. Independently inspect 512-commit archive generation root link validation, all archived refs with 2 regular files, shell+Git race guards, 4 new extracted production-writer local-bare-repo regressions, producer/consumer handoff instructions and expense/security holds. Verify author epoch509 source provenance. Do not reuse old 03be8ad reviewer verdict, merge or mark ready before independent review; keep main/publish HOLD.",
       "approval_required_by_provider": 0,
       "independent_security_review_required_by_repo_policy": true,
       "review_performed": false,
@@ -4851,7 +4851,8 @@
       "main_merged": false,
       "snapshot_writer_live_verified": false,
       "extra_cost_jpy": 0,
-      "next_actor": "REGISTERED_REVIEWER_SEPARATE_TASK_RUN"
+      "next_actor": "REGISTERED_REVIEWER_SEPARATE_TASK_RUN",
+      "previous_evidence_path": "ops/review_packets/PR181_issue57_security_handoff_epoch499.json"
     },
     {
       "id": "PR195_CHARACTER_LITERAL_FIELD_EXACT_HEAD_SECURITY_REVIEW_20261107",

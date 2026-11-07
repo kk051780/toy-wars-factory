@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "kind": "PR181_GENERATIONAL_SNAPSHOT_ROTATION_EXACT_HEAD_INDEPENDENT_SECURITY_HANDOFF",
+  "repository": "kk051780/toy-wars-factory",
+  "issue": 57,
+  "pr": 181,
+  "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/181",
+  "recorded_at_utc": "2026-11-07T22:07:36.598Z",
+  "head": "fa2195e2e7c1eed4f1321e50ab274b86ac36e5c6",
+  "previous_head": "03be8ad107be4fc0463893df234621243dcd75ea",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_commit_message": "fix(pr181): rotate 512-capped passive snapshots safely with exact-writer Git regressions",
+  "source_files": [
+    ".github/workflows/handoff-sync.yml",
+    "AGENTS.md",
+    "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+    "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md",
+    "tools/build_handoff.py",
+    "docs/QA_HANDOFF_PRIVILEGE_SPLIT.md",
+    "tests/test_handoff_generation_rotation.py",
+    "history/C99876_snapshot_rotation.json"
+  ],
+  "author": {
+    "kind": "MANUAL_CONTROLLER",
+    "epoch": 509,
+    "owner_id": "a1a55b37-8ec4-4c86-89f9-f19a04e06d36",
+    "claim_commit": "5976825dd6dd7f6e16c309ad176cf583e352f88c"
+  },
+  "hosted_ci": {
+    "run_id": 42418986367,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42418986367",
+    "head": "fa2195e2e7c1eed4f1321e50ab274b86ac36e5c6",
+    "offline": "success",
+    "compile_hold": "success",
+    "python_suite_pass": 898,
+    "new_actual_writer_git_regressions_pass": 4
+  },
+  "source_scope": {
+    "writer_branch": "twf-handoff-snapshots, then -g0002 etc",
+    "max_per_generation": 512,
+    "archive_validation": "regular-mode 100644 two files at every commit, linear history, orphan generation root references old exact tip, no gaps",
+    "readers": "GitHub current main canonical; optional immutable snapshot generation read-model; stale/invalid reject",
+    "risks": [
+      "Not live writer proof; GH_TOKEN contents write remains repository scoped",
+      "Global atomic multi-ref validation not provider guaranteed",
+      "Reader stored prompts still need post-merge runtime evidence",
+      "No Roblox engine/mobile verification"
+    ]
+  },
+  "independent_security_review": false,
+  "provider_native_review": false,
+  "pr_ready": false,
+  "main_merged": false,
+  "roblox_publish_authorized": false,
+  "extra_spend_jpy": 0,
+  "next_actor": "REGISTERED_REVIEWER"
+}
