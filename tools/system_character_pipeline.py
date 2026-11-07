@@ -44,6 +44,11 @@ def _unit_declaration_start(source):
         if i + 1 < len(words) and words[i + 1] in _ASSIGNMENTS:
             if i == 0 or words[i - 1] != "local" or words[i + 1] != "=":
                 raise ValueError("balance module reassignment is forbidden")
+        # Bracketed module writes can dynamically target UNITS (B[key] = ...).
+        # The canonical balance contract has no bracketed B member lookups,
+        # so fail closed instead of attempting to infer the dynamic key.
+        if words[i + 1:i + 2] == ["["]:
+            raise ValueError("dynamic B member alias or write is forbidden")
         if words[i + 1:i + 3] == [".", "UNITS"]:
             j = i + 3
             dot_form = True
@@ -79,7 +84,19 @@ def _unit_declaration_start(source):
             else:
                 break
 
-        if end < len(words) and words[end] in _ASSIGNMENTS:
+        is_write = end < len(words) and words[end] in _ASSIGNMENTS
+        # Exposing the whole B.UNITS table permits local alias mutation:
+        # local roster=B.UNITS; roster.pon=nil.
+        if end == j and not is_write:
+            raise ValueError("bare B.UNITS reference can escape the roster")
+        # A unit or nested property assigned to another variable may carry
+        # a mutable reference. Prefer conservative rejection to proving
+        # arbitrary Luau alias analysis using a regex-only source checker.
+        if i >= 1 and words[i - 1] == "=":
+            raise ValueError("B.UNITS reference assigned to mutable alias")
+        if i >= 2 and words[i - 1] == "(" and words[i - 2] == "=":
+            raise ValueError("parenthesized B.UNITS alias is forbidden")
+        if is_write:
             if end != j or words[end] != "=" or words[end + 1:end + 2] != ["{"]:
                 raise ValueError("mutable B.UNITS roster is forbidden")
             declarations.append(tokens[i][1])
@@ -96,12 +113,12 @@ def _unit_declaration_start(source):
                 words[i + 1:i + 3] == [",", '"UNITS"']):
             raise ValueError("mutating B.UNITS helper call is forbidden")
 
-    # rawset(B, "UNITS", value) writes the module member without B.UNITS text.
-    for i in range(len(words) - 4):
-        if (words[i:i + 5] in
-                (["rawset", "(", "B", ",", '"UNITS"'],
-                 ["rawset", "(", "B", ",", "'UNITS'"])):
-            raise ValueError("mutating B.UNITS helper call is forbidden")
+    # rawset(B, dynamic_key, value) can change UNITS even when the key is
+    # computed elsewhere; a literal-key-only check is insufficient.
+    for i in range(len(words) - 3):
+        if words[i:i + 4] in (["rawset", "(", "B", ","],
+                              ["setmetatable", "(", "B", ","]):
+            raise ValueError("mutating B module helper call is forbidden")
     if len(declarations) != 1:
         raise ValueError("exactly one literal B.UNITS declaration required")
     return declarations[0]

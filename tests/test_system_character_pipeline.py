@@ -85,6 +85,42 @@ class CharacterPipelineTests(unittest.TestCase):
         self.assertEqual(self.errors(b=prefix + self.balance), [])
 
 
+    def test_whole_roster_alias_exposure_is_rejected(self):
+        for write in (
+            "local units = B.UNITS; units.curebo = nil",
+            "local units = (B.UNITS); units.pon = nil",
+            "mutate(B.UNITS)",
+        ):
+            with self.subTest(write=write):
+                self.assertTrue(self.errors(b=self.balance + "\n" + write))
+
+    def test_unit_reference_alias_exposure_is_rejected(self):
+        for write in (
+            "local unit = B.UNITS.pon; unit.cost = 0",
+            "local unit = B.UNITS[id]; unit.hp = 0",
+            "unit = (B.UNITS.curebo); unit.cost = 0",
+        ):
+            with self.subTest(write=write):
+                self.assertTrue(self.errors(b=self.balance + "\n" + write))
+
+    def test_dynamic_module_key_write_and_rawset_are_rejected(self):
+        for write in (
+            'local key = "UNITS"; B[key] = {}',
+            'local key = "UNITS"; B[key].pon = nil',
+            'local key = "UNITS"; rawset(B, key, {})',
+            'setmetatable(B, {})',
+        ):
+            with self.subTest(write=write):
+                self.assertTrue(self.errors(b=self.balance + "\n" + write))
+
+    def test_read_only_unit_lookups_and_scalar_rules_remain_valid(self):
+        # Canonical B.getUnit() return, isUnit() nil compare, and price
+        # checks are existing legitimate read-only operations.
+        self.assertEqual(self.errors(), [])
+        self.assertIn('return B.UNITS[id]', self.balance)
+        self.assertIn('B.UNITS[id].cost', self.balance)
+
+
     def test_duplicates_across_live_and_planned_are_rejected(self):
         self.catalog['candidates'].append(deepcopy(self.catalog['characters'][0]))
         self.assertTrue(self.errors())
