@@ -33,3 +33,15 @@ draft_checkpoint は保存用のチェックポイント候補を作る純粋関
 - システムがチャット残量を正確に測定しているわけではない。作業単位の短縮・頻繁なcheckpoint・正常なCAS解放でリスクを減らす
 - 本PRでは純粋なcheckpoint作成・後続チャットのread-only preflightのみを実装。自動永続アップロード、サービス終了の真正確認、live parallel leases、無人書込みの本番稼働は未実証
 - Issue #57のGitHub無人writer権限障害、独立REVIEWER、protected/main CI、無料枠、Gemini停止、Roblox非公開を維持
+
+## 5. GitHub Issueコメントへの実保存プロトコル（今回追加）
+
+作業途中のチェックポイントは Issue #123 の**新規コメント**として保存する（既存コメントや他の作業履歴は編集・上書きしない）。手順は、合法な自分の現在ロック確認 → 正しいPR/head/main/coordinatorを取得 → checkpoint を生成 → `render_comment(packet)` で長さとSHA256を確認 → **接続済みの許可されたGitHubアクション**でIssue #123へ追加 → 新規コメントIDと公開URLの確認 → 同じIDをGitHubから再読 → `compare_readback(...)` と現在ref/PR HEADを再検証、の順。
+
+`tools/system_parallel_checkpoint_comment.py` は読み取れる安全なbase64url形式のメッセージを作り、戻ってきたコメント本文・ID・URL・時刻の一致を検査する。これ自体はAPI呼び出しを行わず、真正の保存・ユーザー認証・GitHub権限を証明しない。作業者側の接続ツールと実際のGETが必要。
+
+後続チャットは古いIssueコメントを信用し切らず、最新main、所有epoch、現作業PR head、CI、原本のGitHub refを必ず再照合する。コメントのハッシュが正しくても、それだけで書込み・独立レビュー・merge・孤立ロック解除は許されない。
+
+チャットが突然上限に達した瞬間の最後の操作は記録できないことがある。そのため**重要なGitHub書込み直後**に小さくcheckpointを追加し、ロック正常解放・進捗をGitHubに確定する。GitHub接続が失敗したらチェックポイント保存成功と報告しない。
+
+この候補PRで自動POSTやサービス終了検知まで導入したわけではない。実際の保存は手動CONTROLLERが接続ツール経由で検証した事例を別途記録する。
