@@ -573,8 +573,16 @@ local function addEntity(state, id, side)
     local z=side=="ally" and -24 or 26
     local offset=(state.spawnOrdinal % 5 - 2) * 4
     state.spawnOrdinal=state.spawnOrdinal+1
+    -- Compute wave difficulty at actual server spawn, never from a client or
+    -- by mutating the global unit table used by allies and other sessions.
+    local hp,damage=data.hp,data.damage
+    if side=="enemy" and id=="junk" then
+        local threat=B.junkThreat(state.wave.Value)
+        if not threat then return nil end
+        hp,damage=threat.hp,threat.damage
+    end
     local e={
-        id=id, side=side, health=data.hp, maxHealth=data.hp, cooldown=0,
+        id=id, side=side, health=hp, maxHealth=hp, damage=damage, cooldown=0,
         x=state.x+offset, z=z, alive=true, model=createToyModel(id,state.x+offset,z),
         renderedX=state.x+offset, renderedZ=z,
     }
@@ -696,7 +704,7 @@ local function updateEntity(state,e,dt)
     local target, dist=closestOpponent(state,e)
     if target and dist <= data.range then
         if e.cooldown<=0 then
-            local remain=B.nextHP(target.health,target.maxHealth,data.damage)
+            local remain=B.nextHP(target.health,target.maxHealth,e.damage or data.damage)
             if remain then
                 target.health=remain
                 -- Refresh the damaged victim now, even if its turn already passed.

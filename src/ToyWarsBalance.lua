@@ -59,6 +59,17 @@ function B.waveSize(wave)
     return math.min(3 + 2 * wave, B.MAX_FIELD_UNITS), "ok"
 end
 
+-- Enemy counts cap at 20 from wave 9. Without a separate threat ramp, waves
+-- 10 through 50 spawn identical foes while players keep factory upgrades.
+-- Keep waves 1-10 unchanged; every five subsequent waves increase HP and
+-- attack on the server only. Never mutate the shared JUNK unit definition.
+function B.junkThreat(wave)
+    if not isInteger(wave) or wave < 1 or wave > B.MAX_WAVE then return nil, "invalid_wave" end
+    local tier = math.max(0, math.floor((wave - 1) / 5) - 1)
+    return {hp=B.UNITS.junk.hp + tier * 8,
+        damage=B.UNITS.junk.damage + tier, tier=tier}, "ok"
+end
+
 function B.nextHP(current, maxHP, damage)
     if not isInteger(current) or not isInteger(maxHP) or current < 0 or maxHP < 1 or current > maxHP then
         return nil, "invalid_hp"

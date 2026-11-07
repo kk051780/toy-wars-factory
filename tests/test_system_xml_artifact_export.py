@@ -30,7 +30,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_source_pins_match_actual_four_game_lua_blobs(self):
         files=x.read_pinned_sources(self.root)
         self.assertEqual(len(files),4)
-        self.assertEqual(sum(map(len,files.values())),62951)
+        self.assertEqual(sum(map(len,files.values())),63942)
 
     def test_generated_document_is_deterministic(self):
         a,ar=x.build_place(self.root)
@@ -39,7 +39,7 @@ class XmlArtifacts(unittest.TestCase):
         self.assertEqual(ar,br)
         self.assertEqual(ar['rbxlx_sha256'],hashlib.sha256(a).hexdigest())
         self.assertNotEqual(ar['rbxlx_sha256'],'eb090d086e0a65341bae6cc84691cd0135f274dd41b07fdebc334d7255fc04cb')
-        self.assertGreater(ar['rbxlx_bytes'], 62951)
+        self.assertGreater(ar['rbxlx_bytes'], 63942)
         self.assertEqual(ar['rbxlx_bytes'], len(a))
 
     def test_exact_ten_instances_and_single_remote(self):
@@ -75,9 +75,9 @@ class XmlArtifacts(unittest.TestCase):
     def test_current_combined_gameplay_is_embedded_in_actual_xml(self):
         binary, receipt=x.build_place(self.root)
         self.assertEqual(receipt['unmerged_source_branch_head_sha'],
-                         '46d216070ac554d2f8a9d55838aada37f28901b9')
+                         '9b357a72b35ff0e05b7b4df83453ab9b567ef5b6')
         self.assertEqual(receipt['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
-                         '57211f6c4179b5ada8d8215f6ad8bad1d076aa86')
+                         'a3d018c88bc0360e9849d2e2e4cbe54a33ed77e6')
         doc=ET.fromstring(binary)
         embedded={}
         for item in doc.findall('.//Item'):
@@ -94,6 +94,27 @@ class XmlArtifacts(unittest.TestCase):
         self.assertIn('ToyPageNavigation',embedded['ToyWarsHUD'])
         self.assertIn('RoundResultBanner',embedded['ToyWarsHUD'])
         self.assertIn('curebo',embedded['ToyWarsBalance'])
+
+    def test_wave_50_junk_scaling_is_present_in_embedded_game_xml(self):
+        binary, receipt=x.build_place(self.root)
+        self.assertEqual(receipt['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
+                         '0e4ba5b8872f3d568f9e2da6c271885e61440cbe')
+        self.assertEqual(receipt['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
+                         'a3d018c88bc0360e9849d2e2e4cbe54a33ed77e6')
+        doc=ET.fromstring(binary)
+        source={}
+        for item in doc.findall('.//Item'):
+            name=item.find('./Properties/string[@name="Name"]')
+            code=item.find('./Properties/ProtectedString[@name="Source"]')
+            if name is not None and code is not None:
+                source[name.text]=code.text
+        self.assertIn('function B.junkThreat(wave)',source['ToyWarsBalance'])
+        self.assertIn('local threat=B.junkThreat(state.wave.Value)',source['ToyWarsServer'])
+        self.assertIn('e.damage or data.damage',source['ToyWarsServer'])
+        self.assertIn('state.roundOutcome.Value="VICTORY"',source['ToyWarsServer'])
+        self.assertIn('RoundResultBanner',source['ToyWarsHUD'])
+        self.assertFalse(receipt['roblox_engine_verified'])
+        self.assertFalse(receipt['source_merge_verified'])
 
     def test_no_hidden_network_or_credentials(self):
         a,record=x.build_place(self.root)
@@ -186,7 +207,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_only_pinned_combined_qa_branch_push_emits_artifact(self):
         valid={'GITHUB_ACTIONS':'true','GITHUB_REPOSITORY':x.REPO,
                'GITHUB_EVENT_NAME':'push',
-               'GITHUB_REF':'refs/heads/bootstrap/twf-current-curebo-outcome-integration-20261106'}
+               'GITHUB_REF':'refs/heads/bootstrap/twf-junk-wave-escalation-20261107'}
         self.assertTrue(x.actions_export_allowed(valid))
         for k,v in [('GITHUB_REPOSITORY','other/repo'),('GITHUB_REF','refs/heads/main'),
                     ('GITHUB_REF','refs/heads/feature/other'),('GITHUB_EVENT_NAME','pull_request'),
