@@ -86,6 +86,55 @@ class MalformedProviderFailClosed(unittest.TestCase):
             probe.state_at(api, SHA)
         self.assertEqual(len(api.calls), 1)
 
+    def test_live_run_numeric_identity_must_be_actual_int_not_bool_or_float(self):
+        # Python compares 1.0 and True equal to 1 unless the type is checked.
+        for field, original in (("id", BASE_RUN["id"]),
+                                ("run_attempt", BASE_RUN["run_attempt"])):
+            for invalid in (float(original), True):
+                with self.subTest(field=field, value=invalid):
+                    payload = deepcopy(BASE_RUN)
+                    payload[field] = invalid
+                    with self.assertRaisesRegex(probe.ProbeError,
+                                                "^LIVE_RUN_LINEAGE_MISMATCH$"):
+                        probe.checked_context(BASE_ENV, payload, SHA)
+        for invalid in (float(probe.REPO_ID), True):
+            with self.subTest(repository_id=invalid):
+                payload = deepcopy(BASE_RUN)
+                payload["head_repository"]["id"] = invalid
+                with self.assertRaisesRegex(probe.ProbeError,
+                                            "^LIVE_RUN_LINEAGE_MISMATCH$"):
+                    probe.checked_context(BASE_ENV, payload, SHA)
+
+    def test_nonfinite_github_rest_json_rejected(self):
+        class Reply:
+            def __init__(self, value):
+                self.value = value
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                return False
+            def read(self, n):
+                return self.value[:n]
+
+        for constant in ("NaN", "Infinity", "-Infinity"):
+            with self.subTest(constant=constant):
+                raw = ('{"object":{"id":' + constant + '}}').encode()
+                api = probe.GitHubAPI("offline-test-token",
+                    transport=lambda req, timeout: Reply(raw))
+                with self.assertRaisesRegex(probe.ProbeError, "^RESPONSE_INVALID$"):
+                    api.call("GET", "/git/ref/heads/main")
+
+    def test_nonfinite_coordinator_json_rejected(self):
+        baseline = json.dumps(initial_state(), separators=(",", ":"))
+        for constant in ("NaN", "Infinity", "-Infinity"):
+            with self.subTest(constant=constant):
+                raw = baseline[:-1] + ',"extra":' + constant + '}'
+                api = StubAPI({"type": "file", "encoding": "base64",
+                               "content": base64.b64encode(raw.encode()).decode()})
+                with self.assertRaisesRegex(probe.ProbeError, "^STATE_INVALID$"):
+                    probe.state_at(api, SHA)
+                self.assertEqual(len(api.calls), 1)
+
     def test_null_commit_tree_is_rejected_before_any_cas_write(self):
         for invalid in (None, [], "bad-tree"):
             with self.subTest(invalid=invalid):

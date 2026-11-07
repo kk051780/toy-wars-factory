@@ -56,6 +56,11 @@ def _reject_duplicate_json_pairs(pairs):
     return result
 
 
+def _reject_nonfinite_json_constant(_value):
+    """JSON numbers may not contain NaN or either infinity."""
+    raise ValueError("non-finite JSON number")
+
+
 def checked_context(env: dict, live_run: dict, live_main: str):
     """Live API data is only authoritative inside a trusted GitHub-hosted job."""
     mode = env.get("PROBE_MODE", "DRAFT_PR")
@@ -84,10 +89,13 @@ def checked_context(env: dict, live_run: dict, live_main: str):
         any(type(live_run.get(field)) is not dict
             for field in ("head_repository", "actor", "triggering_actor")) or
         live_run.get("status") != "in_progress" or live_run.get("conclusion") is not None or
-        live_run.get("id") != int(run_id) or live_run.get("run_attempt") != int(attempt) or
+        type(live_run.get("id")) is not int or
+        type(live_run.get("run_attempt")) is not int or
+        live_run["id"] != int(run_id) or live_run["run_attempt"] != int(attempt) or
         live_run.get("event") != "workflow_dispatch" or
         live_run.get("path") != workflow or
-        live_run.get("head_repository", {}).get("id") != REPO_ID or
+        type(live_run["head_repository"].get("id")) is not int or
+        live_run["head_repository"]["id"] != REPO_ID or
         live_run.get("actor", {}).get("login") != ACTOR or
         live_run.get("triggering_actor", {}).get("login") != ACTOR or
         live_run.get("head_branch") != "main" or
@@ -146,7 +154,8 @@ class GitHubAPI:
                 raw = resp.read(2_000_001)
                 if len(raw) > 2_000_000:
                     raise ProbeError("RESPONSE_TOO_LARGE")
-                row = json.loads(raw, object_pairs_hook=_reject_duplicate_json_pairs)
+                row = json.loads(raw, object_pairs_hook=_reject_duplicate_json_pairs,
+                                 parse_constant=_reject_nonfinite_json_constant)
                 if not isinstance(row, dict):
                     raise ProbeError("RESPONSE_INVALID")
                 return row
@@ -176,7 +185,8 @@ def state_at(api, refsha):
         if type(encoded) is not str:
             raise ValueError("coordinator content must be base64 text")
         decoded = base64.b64decode("".join(encoded.split()), validate=True)
-        obj = json.loads(decoded, object_pairs_hook=_reject_duplicate_json_pairs)
+        obj = json.loads(decoded, object_pairs_hook=_reject_duplicate_json_pairs,
+                         parse_constant=_reject_nonfinite_json_constant)
         if not isinstance(obj, dict):
             raise ValueError()
         validate(obj)
