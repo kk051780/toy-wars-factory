@@ -1842,17 +1842,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 484,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "fa8d6e56-7eaa-4ac4-a5c6-b45a06db5f11",
-    "task_id": null,
-    "epoch": 484,
-    "acquired_at": "2026-11-07T07:23:15.626Z",
-    "expires_at": "2026-11-07T07:53:15.626Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/actions-write-pilot-8df31af2",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3496,16 +3486,19 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_GEMINI_AUDIT_PATCH_INTERRUPTED_TOOL_LIMIT",
-    "epoch": 483,
-    "owner_id": "6b0f4b97-c369-440a-a5a3-a04a7beb7009",
+    "kind": "CONTROLLER_PR163_GEMINI_REVIEW_PATCH_COMMITTED_AWAIT_EXACT_HEAD_QA_AND_NATIVE_REVIEW",
+    "epoch": 484,
+    "owner_id": "fa8d6e56-7eaa-4ac4-a5c6-b45a06db5f11",
+    "work_branch": "controller/actions-write-pilot-8df31af2",
+    "claim_commit": "48f0a24f9d050c0cb4108c93916b8ee1362ff2e6",
     "pr_number": 163,
-    "observed_pr_head": "1157e252c7f675454c12f1023ed113d9eaf5e32c",
-    "source_branch_changed": false,
-    "claim_commit": "7b5bca51fbba89beceaff196c678d6bdec3751b3",
-    "released_at": "2026-11-07T07:19:43.553Z",
-    "owner_run_not_authenticated": true,
-    "paid_spend": 0
+    "pr_head": "6a265eeef00b36f0ff4b7d6b585bedc54a88fe81",
+    "main_changed": false,
+    "independent_native_approval": false,
+    "unattended_GitHub_writer_proven": false,
+    "roblox_engine_verified": false,
+    "incremental_spend": 0,
+    "released_at": "2026-11-07T07:26:34.796Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
