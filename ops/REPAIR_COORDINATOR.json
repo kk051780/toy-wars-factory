@@ -1842,17 +1842,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 487,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "b1850e25-3c1c-4276-b6ba-496ee1e8ec07",
-    "task_id": null,
-    "epoch": 487,
-    "acquired_at": "2026-11-07T07:55:08.705Z",
-    "expires_at": "2026-11-07T08:25:08.705Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "twf-repair-coordinator",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3496,21 +3486,23 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_PR163_GEMINI_MEDIUM2_PARTIAL_DISPATCH_TRACE_PROTECTED_DRAFT",
-    "epoch": 486,
-    "owner_id": "41f71f45-d099-452c-ace3-19a216a5041d",
-    "work_branch": "controller/actions-write-pilot-8df31af2",
-    "claim_commit": "ebd4896120c800d0824854a6eb0f218b00a9214c",
-    "pr_number": 163,
+    "kind": "CONTROLLER_PR163_SECURITY_REVIEW_HANDOFF_REGISTERED_NOT_APPROVED",
+    "epoch": 487,
+    "owner_id": "b1850e25-3c1c-4276-b6ba-496ee1e8ec07",
+    "claim_commit": "5810b883138d4c46eda1e6a9772e1c47384b8aec",
+    "coordinator_commit": "6e43f0f47231fdbdd05cec3d7c40634ca1237abd",
+    "request_id": "pr163_issue57_current_head_independent_security_advisory_20261107",
+    "evidence_path": "ops/review_packets/PR163_issue57_security_advisory_epoch487.json",
+    "pr": 163,
     "pr_head": "f4d83dd1ab19a8a1cc859b8d4db9bf385c49d083",
-    "local_regressions": "7_PASS",
-    "exact_head_ci": "PENDING",
+    "github_ci": 42351893661,
     "native_review": "NONE",
-    "main_merged": false,
-    "unattended_writer_proven": false,
+    "merge_allowed": false,
+    "main_changed": false,
     "roblox_engine_verified": false,
-    "new_paid_spend": 0,
-    "released_at": "2026-11-07T07:35:14.146Z"
+    "unattended_writer_proven": false,
+    "incremental_spend": 0,
+    "released_at": "2026-11-07T07:56:36.998Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
