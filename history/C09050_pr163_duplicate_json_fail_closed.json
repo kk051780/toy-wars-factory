@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "id": "C09050",
+  "date_utc": "2026-11-07",
+  "kind": "PR163_DUPLICATE_JSON_PROVIDER_AND_COORDINATOR_FAIL_CLOSED",
+  "pr_number": 163,
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "previous_head": "b8466ba51356fd2b4bd73b9c33e0dcc57b6a86a8",
+  "coordinator": {
+    "epoch": 473,
+    "owner_id": "be75976d-8ae9-40f8-b246-e48b900b9b30",
+    "claim_commit": "0f52c8f6af9b06891b4ee4ee63597402c6cff04d",
+    "work_branch": "controller/actions-write-pilot-8df31af2"
+  },
+  "changed_files": [
+    {
+      "path": "tools/system_actions_write_probe.py",
+      "before_blob": "3d354ecaee36c50a49f4263e8a47a91a8c99f8bb",
+      "after_blob": "241462909a22c3b243359fdd3b0b75163b7ff1ea",
+      "before_bytes": 24069,
+      "after_bytes": 24449,
+      "delta_bytes": 380
+    },
+    {
+      "path": "tests/test_system_actions_write_probe_provider_shapes.py",
+      "before_blob": "7bf86749bbbb857cbba6400c7dc44a6bd523d2a6",
+      "after_blob": "7827e075417e59da016f2d3c08f272ef8c60d7d1",
+      "before_bytes": 3290,
+      "after_bytes": 6890,
+      "delta_bytes": 3600
+    }
+  ],
+  "added_regressions": [
+    "reject top-level GitHub REST duplicate key",
+    "reject nested GitHub REST duplicate key",
+    "reject duplicated coordinator epoch before lease claim"
+  ],
+  "behavior": "JSON object_pairs_hook rejects ambiguous duplicate keys in every nested map for GitHub REST and coordinator state; API reports RESPONSE_INVALID, state reports STATE_INVALID; normal JSON unchanged",
+  "scope": "read-only parser hardening; no new workflow permissions, no new authorized writes, no main merge or publishing",
+  "ci": "PENDING_EXACT_HEAD_PROVIDER_CI",
+  "independent_review": false,
+  "main_merged": false,
+  "hosted_write_proven": false,
+  "roblox_engine_verified": false,
+  "new_paid_spend": 0
+}

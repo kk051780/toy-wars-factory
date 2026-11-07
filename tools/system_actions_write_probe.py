@@ -46,6 +46,16 @@ def valid_sha(value):
     return isinstance(value, str) and HEX.fullmatch(value) is not None
 
 
+def _reject_duplicate_json_pairs(pairs):
+    """Never allow ambiguous provider or coordinator JSON to choose last value."""
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate JSON key")
+        result[key] = value
+    return result
+
+
 def checked_context(env: dict, live_run: dict, live_main: str):
     """Live API data is only authoritative inside a trusted GitHub-hosted job."""
     mode = env.get("PROBE_MODE", "DRAFT_PR")
@@ -136,7 +146,7 @@ class GitHubAPI:
                 raw = resp.read(2_000_001)
                 if len(raw) > 2_000_000:
                     raise ProbeError("RESPONSE_TOO_LARGE")
-                row = json.loads(raw)
+                row = json.loads(raw, object_pairs_hook=_reject_duplicate_json_pairs)
                 if not isinstance(row, dict):
                     raise ProbeError("RESPONSE_INVALID")
                 return row
@@ -144,7 +154,7 @@ class GitHubAPI:
             raise ProbeError("GITHUB_HTTP_"+str(exc.code)) from None
         except (error.URLError, TimeoutError, OSError):
             raise ProbeError("GITHUB_TRANSPORT_FAILED") from None
-        except (json.JSONDecodeError, UnicodeDecodeError):
+        except (ValueError, UnicodeDecodeError):
             raise ProbeError("RESPONSE_INVALID") from None
 
 
@@ -166,7 +176,7 @@ def state_at(api, refsha):
         if type(encoded) is not str:
             raise ValueError("coordinator content must be base64 text")
         decoded = base64.b64decode("".join(encoded.split()), validate=True)
-        obj = json.loads(decoded)
+        obj = json.loads(decoded, object_pairs_hook=_reject_duplicate_json_pairs)
         if not isinstance(obj, dict):
             raise ValueError()
         validate(obj)
