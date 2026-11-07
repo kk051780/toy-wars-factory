@@ -46,7 +46,7 @@ local function fixture(roster,waitingOn)
     local ok,err=coroutine.resume(thread);assert(ok,err)
     local function find(name) for _,o in ipairs(made) do if o.Name==name then return o end end end
     local function resume() local success,e=coroutine.resume(thread);assert(success,e) end
-    return find,calls,made,status,resume
+    return find,calls,made,status,resume,stats
 end
 local function check(name,fn)
     local ok,err=pcall(fn)
@@ -68,6 +68,37 @@ check("first-play guide explains PON courier without breaking exact button price
         assert(button.Text==string.upper(id).." | "..B.UNITS[id].cost,
                "button must retain canonical one-line unit name and exact price")
     end
+end)
+check("boss forecast appears only on imminent and milestone waves",function()
+    local find,calls,_,_,_,stats=fixture()
+    local banner=assert(find("BossWaveWarning"))
+    local wave=assert(stats._children.Wave)
+    local cases={
+        {1,""},{7,""},{8,"CAPTAIN IN 2 WAVES"},{9,"CAPTAIN NEXT WAVE"},
+        {10,"JUNK CAPTAIN\nWAVE 10"},{11,""},{18,"CAPTAIN IN 2 WAVES"},
+        {19,"CAPTAIN NEXT WAVE"},{20,"JUNK CAPTAIN\nWAVE 20"},
+        {21,""},{38,"CAPTAIN IN 2 WAVES"},{39,"CAPTAIN NEXT WAVE"},
+        {40,"JUNK CAPTAIN\nWAVE 40"},{47,""},
+        {49,"CAPTAIN NEXT WAVE"},{50,"JUNK CAPTAIN\nWAVE 50"},
+    }
+    for _,case in ipairs(cases) do
+        wave.Value=case[1];wave.Changed:Fire()
+        assert(banner.Text==case[2],"wrong boss hint on wave "..case[1]..
+            ": "..tostring(banner.Text))
+        assert(banner.Visible==(case[2]~=""),"wrong visibility on wave "..case[1])
+    end
+    assert(#calls==0,"warning must not send gameplay commands")
+end)
+check("captain warning is noninteractive and does not replace price selectors",function()
+    local find,calls,made=fixture()
+    local warning=assert(find("BossWaveWarning"))
+    assert(warning.ClassName=="TextLabel")
+    assert(warning.Position[1]==0.63 and warning.Size[1]==0.34)
+    assert(warning.Text=="" and warning.Visible==false)
+    local count=0
+    for _,obj in ipairs(made) do if obj.ClassName=="TextButton" then count=count+1 end end
+    assert(count==3 and find("pon") and find("guardon") and find("tankuru"))
+    assert(#calls==0)
 end)
 check("page navigation never sends a gameplay request",function()
     local find,calls=fixture();find("GuideSkip").Activated:Fire()
