@@ -1875,8 +1875,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 504,
-  "holder": null,
+  "epoch": 505,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 505,
+    "owner_id": "3ac30a74-70e5-45e6-9ef2-31c747a8344d",
+    "task_id": null,
+    "acquired_at": "2026-11-07T13:00:11.202Z",
+    "expires_at": "2026-11-07T13:20:11.202Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/pon-courier-delivery-20261107-3ac30a74",
+    "scope": "single isolated game feature PON courier delivery bonus on current PR194 exact HEAD, source + new mock regressions + history; no parent/main/workflow/credential changes; no merge/publish/spend"
+  },
   "integration_results": {
     "35": {
       "merged": true,
