@@ -1910,8 +1910,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 509,
-  "holder": null,
+  "epoch": 510,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 510,
+    "owner_id": "d03598c3-8e93-4cd2-84c6-f0cab49bbc5a",
+    "task_id": null,
+    "acquired_at": "2026-11-07T22:11:45.750Z",
+    "expires_at": "2026-11-07T22:34:45.750Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/complete-pve-main-integration-20261108-c8162bda",
+    "scope": "PR199 main-target DRAFT: remove inherited WORKER catalog metadata write authorization from config/autonomous_repair.json; strengthen exact-scope regression and document review-gated manual character promotions; no game Lua/main/PR parent changes, no merge/publish/spend"
+  },
   "integration_results": {
     "35": {
       "merged": true,
