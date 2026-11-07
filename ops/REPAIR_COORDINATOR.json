@@ -1842,17 +1842,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 480,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "52c4e6c7-4c55-4b92-a9db-65768a2f0d1a",
-    "task_id": null,
-    "epoch": 480,
-    "acquired_at": "2026-11-07T07:05:31.562Z",
-    "expires_at": "2026-11-07T07:35:31.562Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "twf-repair-coordinator",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3496,28 +3486,33 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_GUARDON_PVE_PR189_XML_PIN_REPAIRED_UNMERGED",
-    "owner_id": "b73997c1-62c3-4616-8459-6a1cb7d6dd73",
-    "epoch": 479,
-    "claim_commit": "22d1306fd3affffd9e582a0d588e1f4a062b6d8a",
-    "work_branch": "controller/guardon-bodyguard-pve-20261107-f64c50d1",
-    "pr": 189,
-    "pr_head": "b57aa5b324106db7b151c76e89b938b338dcc563",
-    "parent_pr": 187,
-    "changed_files": 6,
-    "server_delta_lines": 30,
-    "new_guardon_native_mock_cases": "12/12 PASS actual Actions 42349214517",
-    "original_ci": "FAIL (exporter refused stale source pin)",
-    "repair": "Update exporter exact server SHA to 0333e0aa... and source-containing commit to 6a75...",
-    "new_ci_run": 42349431697,
-    "new_ci_status_at_release": "IN_PROGRESS",
+    "kind": "CONTROLLER_PVE_PR184_189_INDEPENDENT_REVIEW_QUEUE_REFRESH_NOT_NATIVE_APPROVAL",
+    "epoch": 480,
+    "owner_id": "52c4e6c7-4c55-4b92-a9db-65768a2f0d1a",
+    "claim_commit": "415eb74148e63187a831fbbedf3ef83172c96b64",
+    "work_branch": "twf-repair-coordinator",
+    "packet_commit": "c70951a2ed154786e4f888cfca6d59c3037fdc0c",
+    "evidence_path": "ops/review_packets/PR184_189_stack_preflight_epoch480.json",
+    "existing_work_request_updated": "PR184_187_STACKED_INTEGRATION_READINESS_20261107",
+    "stacked_prs": [
+      184,
+      185,
+      186,
+      187,
+      189
+    ],
+    "separate_qa_pr": 188,
+    "all_six_ci": "SUCCESS_EXACT_HEAD_OFFLINE_AND_COMPILE_HOLD",
+    "native_reviews": "NONE",
+    "provider_main_protection": "UNVERIFIED_403",
+    "pr60": "DRAFT_UNMERGED",
+    "manual_review_requests_mutated": false,
+    "pr_mutated": false,
     "main_merged": false,
-    "independent_native_review": false,
-    "engine_verified": false,
-    "android_verified": false,
-    "incremental_spend": 0,
+    "roblox_engine_verified": false,
+    "extra_spend": 0,
     "owner_release_not_provider_terminal_proof": true,
-    "released_at": "2026-11-07T07:00:59.028Z"
+    "released_at": "2026-11-07T07:07:13.985Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
