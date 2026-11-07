@@ -1841,8 +1841,20 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 499,
-  "holder": null,
+  "epoch": 500,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 500,
+    "owner_id": "5d782d9c-6df3-46c7-9c77-5634944c2b08",
+    "task_id": null,
+    "acquired_at": "2026-11-07T09:59:52.364Z",
+    "expires_at": "2026-11-07T10:21:52.365Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/character-roster-mutation-guard-20261107-51feef51",
+    "work_id": "PR195_LITERAL_ROSTER_INDENT_BYPASS_HARDENING_20261107",
+    "scope": "exact current PR195 only: parser top-level tokenized B.UNITS entries, 3 targeted tests, history; register independent review handoff after green CI; no main, public, user permissions, Gemini, spending, publication"
+  },
   "integration_results": {
     "35": {
       "merged": true,
