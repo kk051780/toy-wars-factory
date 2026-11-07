@@ -30,7 +30,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_source_pins_match_actual_four_game_lua_blobs(self):
         files=x.read_pinned_sources(self.root)
         self.assertEqual(len(files),4)
-        self.assertEqual(sum(map(len,files.values())),63942)
+        self.assertEqual(sum(map(len,files.values())),65529)
 
     def test_generated_document_is_deterministic(self):
         a,ar=x.build_place(self.root)
@@ -39,7 +39,7 @@ class XmlArtifacts(unittest.TestCase):
         self.assertEqual(ar,br)
         self.assertEqual(ar['rbxlx_sha256'],hashlib.sha256(a).hexdigest())
         self.assertNotEqual(ar['rbxlx_sha256'],'eb090d086e0a65341bae6cc84691cd0135f274dd41b07fdebc334d7255fc04cb')
-        self.assertGreater(ar['rbxlx_bytes'], 63942)
+        self.assertGreater(ar['rbxlx_bytes'], 65529)
         self.assertEqual(ar['rbxlx_bytes'], len(a))
 
     def test_exact_ten_instances_and_single_remote(self):
@@ -75,9 +75,9 @@ class XmlArtifacts(unittest.TestCase):
     def test_current_combined_gameplay_is_embedded_in_actual_xml(self):
         binary, receipt=x.build_place(self.root)
         self.assertEqual(receipt['unmerged_source_branch_head_sha'],
-                         '9b357a72b35ff0e05b7b4df83453ab9b567ef5b6')
+                         '261686e05741b42806c8471243a8740aa7fe98b6')
         self.assertEqual(receipt['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
-                         'a3d018c88bc0360e9849d2e2e4cbe54a33ed77e6')
+                         '6ffb707142cebde26776945dff584fd322086653')
         doc=ET.fromstring(binary)
         embedded={}
         for item in doc.findall('.//Item'):
@@ -98,9 +98,9 @@ class XmlArtifacts(unittest.TestCase):
     def test_wave_50_junk_scaling_is_present_in_embedded_game_xml(self):
         binary, receipt=x.build_place(self.root)
         self.assertEqual(receipt['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
-                         '0e4ba5b8872f3d568f9e2da6c271885e61440cbe')
+                         'ede62318d0c51bee1a8f6d086098169729d8bc16')
         self.assertEqual(receipt['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
-                         'a3d018c88bc0360e9849d2e2e4cbe54a33ed77e6')
+                         '6ffb707142cebde26776945dff584fd322086653')
         doc=ET.fromstring(binary)
         source={}
         for item in doc.findall('.//Item'):
@@ -115,6 +115,30 @@ class XmlArtifacts(unittest.TestCase):
         self.assertIn('RoundResultBanner',source['ToyWarsHUD'])
         self.assertFalse(receipt['roblox_engine_verified'])
         self.assertFalse(receipt['source_merge_verified'])
+
+    def test_tenth_wave_captain_is_in_embedded_3d_server_source(self):
+        xml, manifest=x.build_place(self.root)
+        self.assertEqual(manifest['unmerged_source_branch_head_sha'],
+                         '261686e05741b42806c8471243a8740aa7fe98b6')
+        self.assertEqual(manifest['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
+                         'ede62318d0c51bee1a8f6d086098169729d8bc16')
+        self.assertEqual(manifest['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
+                         '6ffb707142cebde26776945dff584fd322086653')
+        doc=ET.fromstring(xml)
+        embedded={}
+        for node in doc.findall('.//Item'):
+            name=node.find('./Properties/string[@name="Name"]')
+            code=node.find('./Properties/ProtectedString[@name="Source"]')
+            if name is not None and code is not None:
+                embedded[name.text]=code.text
+        self.assertIn('function B.junkBoss(wave)', embedded['ToyWarsBalance'])
+        self.assertIn('m.Name="JUNK_CAPTAIN"', embedded['ToyWarsServer'])
+        self.assertIn('"BossCrown"', embedded['ToyWarsServer'])
+        self.assertIn('"BossBeacon"', embedded['ToyWarsServer'])
+        self.assertIn('local captain=B.junkBoss(state.wave.Value)', embedded['ToyWarsServer'])
+        self.assertIn('e.reward or B.UNITS[e.id].reward', embedded['ToyWarsServer'])
+        self.assertIn('state.baseHP.Value-(e.boss and 28 or 12)', embedded['ToyWarsServer'])
+        self.assertFalse(manifest['roblox_engine_verified'])
 
     def test_no_hidden_network_or_credentials(self):
         a,record=x.build_place(self.root)
@@ -207,7 +231,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_only_pinned_combined_qa_branch_push_emits_artifact(self):
         valid={'GITHUB_ACTIONS':'true','GITHUB_REPOSITORY':x.REPO,
                'GITHUB_EVENT_NAME':'push',
-               'GITHUB_REF':'refs/heads/bootstrap/twf-junk-wave-escalation-20261107'}
+               'GITHUB_REF':'refs/heads/bootstrap/twf-junk-captain-boss-20261107'}
         self.assertTrue(x.actions_export_allowed(valid))
         for k,v in [('GITHUB_REPOSITORY','other/repo'),('GITHUB_REF','refs/heads/main'),
                     ('GITHUB_REF','refs/heads/feature/other'),('GITHUB_EVENT_NAME','pull_request'),

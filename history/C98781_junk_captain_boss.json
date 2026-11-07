@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "id": "C98781",
+  "date_utc": "2026-11-07",
+  "kind": "BOSS_JUNK_CAPTAIN_WAVES_10_20_30_40_50",
+  "subject": "Toy Wars Factory server-owned boss plus real 3D generated crown/beacon and reward",
+  "source_commit": "261686e05741b42806c8471243a8740aa7fe98b6",
+  "baseline_stacked_head": "961e0bea8ecc3d9ddf5b383e29feb75571abaa4f",
+  "source_base_pr": 185,
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "isolated_branch": "bootstrap/twf-junk-captain-boss-20261107",
+  "coordinator": {
+    "epoch": 472,
+    "owner_id": "0d652497-b9a9-4d52-bd76-05f4a2ccea91",
+    "claim_commit": "1de994f95969d59ee64472f01dcfdd40735e8344"
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsBalance.lua",
+      "before_blob": "0e4ba5b8872f3d568f9e2da6c271885e61440cbe",
+      "after_blob": "ede62318d0c51bee1a8f6d086098169729d8bc16",
+      "before_bytes": 3899,
+      "after_bytes": 4307,
+      "delta_bytes": 408,
+      "before_lines": 93,
+      "after_lines": 103,
+      "delta_lines": 10
+    },
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "a3d018c88bc0360e9849d2e2e4cbe54a33ed77e6",
+      "after_blob": "6ffb707142cebde26776945dff584fd322086653",
+      "before_bytes": 46902,
+      "after_bytes": 48081,
+      "delta_bytes": 1179,
+      "before_lines": 1027,
+      "after_lines": 1050,
+      "delta_lines": 23
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_bytes": 65529,
+    "lua_lines": 1461
+  },
+  "unchanged_source_blobs": {
+    "src/ToyWarsHUD.client.lua": "05d72aae6924cc5d93fe14595e9af2cdeb4f73fd",
+    "src/ToyWarsSmokeTest.server.lua": "ccba431909c664909e2680785648d0402fedf3c3"
+  },
+  "code_test": "tests/auto/junk_captain_boss_spec.lua",
+  "native_test_cases": 13,
+  "added_exporter_test": "test_tenth_wave_captain_is_in_embedded_3d_server_source",
+  "files_changed": [
+    "src/ToyWarsBalance.lua",
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/junk_captain_boss_spec.lua",
+    "tools/export_accepted_rbxlx.py",
+    "tests/test_system_xml_artifact_export.py",
+    "history/C98781_junk_captain_boss.json"
+  ],
+  "problem": "Late waves were only numerically harder; no visual boss milestone or enhanced rewards. Every 10th wave now has distinct final enemy.",
+  "implementation": {
+    "boss_waves": [
+      10,
+      20,
+      30,
+      40,
+      50
+    ],
+    "spawn_condition": "server enemy count == target-1 and tenth wave",
+    "boss_hp": "3 * existing per-wave JUNK HP",
+    "boss_attack": "per-wave JUNK attack +4",
+    "boss_reward": "40+2*wave",
+    "vault_damage": 28,
+    "normal_vault_damage": 12,
+    "visual_3d": "JUNK_CAPTAIN model with BossCrown + BossBeacon and in-world label; no external models or textures",
+    "other_toys_unchanged": true,
+    "wave50_cycle_unchanged": true
+  },
+  "security": "Server decides; no client remote, model imports, secrets, cost, permissions or publish changes. Artifact exact blob pin repointed; no QA bypass.",
+  "expected_actions_CI": "PENDING",
+  "real_roblox_engine_test": false,
+  "mobile_test": false,
+  "multiplayer_test": false,
+  "main_merged": false,
+  "independent_native_review": false,
+  "extra_paid_cost": 0,
+  "github_actions_free_minutes_remaining": "UNKNOWN",
+  "next": "Exact-head GitHub push and PR CI. Independent review PR184->PR185->this isolated candidate without double merge. Verify real 3D in Roblox engine before claiming visually passed."
+}
