@@ -70,6 +70,16 @@ function B.junkThreat(wave)
         damage=B.UNITS.junk.damage + tier, tier=tier}, "ok"
 end
 
+-- Every 10th wave ends with one distinct server-owned JUNK CAPTAIN.
+-- Compute only from validated wave rules; never modify the global JUNK unit.
+function B.junkBoss(wave)
+    local threat,reason=B.junkThreat(wave)
+    if not threat then return nil,reason end
+    if wave % 10 ~= 0 then return nil,"not_boss_wave" end
+    return {hp=threat.hp*3, damage=threat.damage+4,
+        reward=40+wave*2}, "ok"
+end
+
 function B.nextHP(current, maxHP, damage)
     if not isInteger(current) or not isInteger(maxHP) or current < 0 or maxHP < 1 or current > maxHP then
         return nil, "invalid_hp"
