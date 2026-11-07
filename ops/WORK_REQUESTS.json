@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-07T03:01:06.278Z",
+  "observed_at": "2026-11-07T07:06:40.156Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4580,24 +4580,25 @@
       "id": "PR184_187_STACKED_INTEGRATION_READINESS_20261107",
       "kind": "REVIEW_READY_STACK_BLOCKER_FOR_REGISTERED_INDEPENDENT_REVIEWER",
       "priority": "P1",
-      "status": "BLOCKED_PROVIDER_NATIVE_REVIEW_AND_PROTECTION_UNVERIFIED",
+      "status": "BLOCKED_NATIVE_INDEPENDENT_REVIEW_AND_MAIN_PROTECTION_403",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
       "created_at": "2026-11-07T03:01:06.278Z",
-      "updated_at": "2026-11-07T03:01:06.278Z",
+      "updated_at": "2026-11-07T07:06:40.156Z",
       "source": "READ_ONLY_GITHUB_LIVE_PR_COMPARE_ACTIONS_REVIEW_SNAPSHOT",
-      "evidence_path": "ops/review_packets/PR184_187_stack_preflight_epoch476.json",
+      "evidence_path": "ops/review_packets/PR184_189_stack_preflight_epoch480.json",
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "stack_prs": [
         184,
         185,
         186,
-        187
+        187,
+        189
       ],
-      "exact_final_head": "35d4e0fc2a72a6bfc442561f4222e7497df15975",
-      "latest_success_run": 42329210093,
-      "description": "The 4-PvE-feature PR184→185→186→187 stack is CI GREEN on exact heads with 21 strictly forward commits and 47 changed files, but NO provider-independent reviews, no verified main protection (GET 403), PR60 native review policy still DRAFT, and manual_review_requests contains only PR61/179/98. Do not merge or claim native approval.",
+      "exact_final_head": "b57aa5b324106db7b151c76e89b938b338dcc563",
+      "latest_success_run": 42349431697,
+      "description": "PR184→185→186→187→189 all 5 exact-head GitHub CI runs PASS (offline+compile_hold), plus separate QA PR188 PASS; zero native independent reviewers and unavailable protected-main attestation (GET403). PR60 DRAFT. PR189 touches protected XML exporter and existing tests; requires separate protected audit. No merge or engine claim.",
       "review_request": "Registered REVIEWER: examine exact-head source+ledger+security and actual GitHub reviewer permissions. Obtain an independently valid provider-native approval & effective provider branch-protection proof, or accurately retain BLOCKED. See packetPath for exact hashes/CI. Do not take control of another owner lease or bypass native gate.",
       "scope": [
         "READ_ONLY_AUTHENTICATED_GITHUB_REVIEW_CHECK",
@@ -4610,7 +4611,9 @@
       "merged_count": 0,
       "engine_verified": false,
       "main_unmodified": true,
-      "incremental_cost": 0
+      "incremental_cost": 0,
+      "separate_qa_pr": 188,
+      "title": "PVE integration readiness after Guardon bodyguard (5 stacked + separate QA #188)"
     }
   ]
 }

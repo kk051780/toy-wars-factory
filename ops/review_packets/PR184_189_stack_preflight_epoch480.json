@@ -1,0 +1,184 @@
+{
+  "schema": 1,
+  "kind": "READ_ONLY_EXACT_HEAD_PVE_INTEGRATION_HANDOFF_NOT_NATIVE_APPROVAL",
+  "observed_at": "2026-11-07T07:06:40.156Z",
+  "repository": "kk051780/toy-wars-factory",
+  "created_by_epoch": 480,
+  "creator_origin": "manual_controller_not_a_registered_reviewer",
+  "claim_commit": "415eb74148e63187a831fbbedf3ef83172c96b64",
+  "creator_owner_id": "52c4e6c7-4c55-4b92-a9db-65768a2f0d1a",
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "inherited_previous_preflight": "ops/review_packets/PR184_187_stack_preflight_epoch476.json",
+  "canonical_existing_work_id": "PR184_187_STACKED_INTEGRATION_READINESS_20261107",
+  "stack": [
+    {
+      "pr": 184,
+      "role": "four allies, victory, source-pinned 3D XML",
+      "base": "main",
+      "head": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+      "run_id": 42305157001,
+      "offline_job_id": 128192549467,
+      "compile_hold_job_id": 128192549085,
+      "review_count": 0,
+      "source": "authenticated GitHub connector REST/actions and PR GraphQL review reads",
+      "run_status": "COMPLETED_SUCCESS_EXACT_HEAD",
+      "jobs_status": "offline_SUCCESS_compile_hold_SUCCESS",
+      "review_status": "NO_NATIVE_REVIEW",
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/184",
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42305157001"
+    },
+    {
+      "pr": 185,
+      "role": "escalating JUNK",
+      "base": "bootstrap/twf-current-curebo-outcome-integration-20261106",
+      "head": "961e0bea8ecc3d9ddf5b383e29feb75571abaa4f",
+      "run_id": 42323789115,
+      "offline_job_id": 128254233642,
+      "compile_hold_job_id": 128254234089,
+      "review_count": 0,
+      "source": "authenticated GitHub connector REST/actions and PR GraphQL review reads",
+      "run_status": "COMPLETED_SUCCESS_EXACT_HEAD",
+      "jobs_status": "offline_SUCCESS_compile_hold_SUCCESS",
+      "review_status": "NO_NATIVE_REVIEW",
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/185",
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42323789115"
+    },
+    {
+      "pr": 186,
+      "role": "10-wave JUNK CAPTAIN boss",
+      "base": "bootstrap/twf-junk-wave-escalation-20261107",
+      "head": "85c1cd3504ef7e7929f3e3014dd15737f821adba",
+      "run_id": 42326192434,
+      "offline_job_id": 128261920414,
+      "compile_hold_job_id": 128261920313,
+      "review_count": 0,
+      "source": "authenticated GitHub connector REST/actions and PR GraphQL review reads",
+      "run_status": "COMPLETED_SUCCESS_EXACT_HEAD",
+      "jobs_status": "offline_SUCCESS_compile_hold_SUCCESS",
+      "review_status": "NO_NATIVE_REVIEW",
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/186",
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42326192434"
+    },
+    {
+      "pr": 187,
+      "role": "levelled factory toy throughput",
+      "base": "bootstrap/twf-junk-captain-boss-20261107",
+      "head": "35d4e0fc2a72a6bfc442561f4222e7497df15975",
+      "run_id": 42329356840,
+      "offline_job_id": 128272064123,
+      "compile_hold_job_id": 128272063983,
+      "review_count": 0,
+      "source": "authenticated GitHub connector REST/actions and PR GraphQL review reads",
+      "run_status": "COMPLETED_SUCCESS_EXACT_HEAD",
+      "jobs_status": "offline_SUCCESS_compile_hold_SUCCESS",
+      "review_status": "NO_NATIVE_REVIEW",
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/187",
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42329356840"
+    },
+    {
+      "pr": 189,
+      "role": "guardon protective intercept with XML exporter source re-pin",
+      "base": "bootstrap/twf-factory-throughput-20261107",
+      "head": "b57aa5b324106db7b151c76e89b938b338dcc563",
+      "run_id": 42349431697,
+      "offline_job_id": 128334204227,
+      "compile_hold_job_id": 128334203969,
+      "review_count": 0,
+      "source": "authenticated GitHub connector REST/actions and PR GraphQL review reads",
+      "run_status": "COMPLETED_SUCCESS_EXACT_HEAD",
+      "jobs_status": "offline_SUCCESS_compile_hold_SUCCESS",
+      "review_status": "NO_NATIVE_REVIEW",
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/189",
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42349431697"
+    }
+  ],
+  "independent_qa_pr": {
+    "pr": 188,
+    "role": "Studio read-only smoke QA only (not a game feature; independent main base)",
+    "base": "main",
+    "head": "4c8b90ee079bad6d232113eb615bd017859822a5",
+    "run_id": 42348655007,
+    "offline_job_id": 128331843874,
+    "compile_hold_job_id": 128331844012,
+    "review_count": 0,
+    "draft": true,
+    "run_status": "COMPLETED_SUCCESS_EXACT_HEAD",
+    "jobs_status": "offline_SUCCESS_compile_hold_SUCCESS",
+    "review_status": "NO_NATIVE_REVIEW",
+    "url": "https://github.com/kk051780/toy-wars-factory/pull/188"
+  },
+  "linear_base_adjacency": "PR185 base=PR184 branch; PR186 base=PR185 branch; PR187 base=PR186 branch; PR189 base=PR187 branch; exact base head each read from GitHub",
+  "tested_evidence": {
+    "distinct_head_CI_runs_success": 6,
+    "stack_count": 5,
+    "independent_qa_count": 1,
+    "required_jobs_success_per_head": 2,
+    "provider_native_reviews_observed": 0,
+    "compile_hold_not_native_engine": true,
+    "source_evidence": "GitHub Actions run+jobs and PR heads from live connector",
+    "main_status": "UNCHANGED_UNMERGED",
+    "engine_status": "NOT_RUN",
+    "android_status": "NOT_RUN",
+    "two_clients": "NOT_RUN"
+  },
+  "critical_blockers": [
+    {
+      "code": "PROVIDER_NATIVE_APPROVAL_MISSING",
+      "evidence": "GraphQL reviewer submissions empty for #184-#189 including independent #188; same GitHub account used across ChatGPT contexts does NOT create independent provider reviewer",
+      "status": "BLOCKED"
+    },
+    {
+      "code": "PROVIDER_MAIN_PROTECTION_NOT_ATTESTED",
+      "evidence": "Authenticated branch-protection GET /branches/main/protection -> provider HTTP403 Resource not accessible by integration",
+      "status": "BLOCKED"
+    },
+    {
+      "code": "PR60_BOOTSTRAP_NOT_ADOPTED",
+      "evidence": "PR60 draft at head 89ad1bc90b586f92b7456b4ecd5a0291fc829d62, not merged and itself without native independent review",
+      "status": "BLOCKED"
+    },
+    {
+      "code": "PR189_EXTRA_PROTECTED_FILES",
+      "evidence": "PR189 differs from PR187 in src/ToyWarsServer.server.lua (M), tools/export_accepted_rbxlx.py (M), tests/test_system_xml_artifact_export.py (M), tests/auto/guardon_bodyguard_spec.lua (A), two new history C ledgers (A). Manual #60 ordinary game M+A+A scope does not authorize protected exporter and existing test changes: separate source/policy audit required.",
+      "status": "REVIEW_SCOPE_PROTECTED_NOT_ORDINARY_GAME"
+    },
+    {
+      "code": "ROBLOX_ENGINE_UNVERIFIED",
+      "evidence": "6 successful GitHub offline suites and source-pinned XML bytes are not an engine invocation",
+      "status": "BLOCKED"
+    },
+    {
+      "code": "SCHEDULED_WRITER_NOT_ATTESTED",
+      "evidence": "Issue57 host denial and unverified trusted scheduler identity unresolved",
+      "status": "BLOCKED"
+    }
+  ],
+  "merge_order_after_all_gates": [
+    "184",
+    "185",
+    "186",
+    "187",
+    "189"
+  ],
+  "non_stack_independent_pr": "188 must receive a separate independent review; avoid altering main/stack while outstanding",
+  "overlap_do_not_double_integrate": [
+    98,
+    179,
+    183
+  ],
+  "no_authority_provided": [
+    "DO NOT self-approve or submit a GitHub review as independent",
+    "DO NOT change branch protection or GitHub tokens",
+    "DO NOT merge any draft PR into main",
+    "DO NOT modify PR #60 in lieu of independent bootstrap",
+    "DO NOT claim true Roblox client/Studio/mobile engine execution",
+    "DO NOT create extra paid AI/api/GitHub resources"
+  ],
+  "next_registered_reviewer": "Read packet and verify PR189 protected exporter/test modifications, each source history and exact GitHub CI; obtain actual independent native reviewer & enforceable main protection or keep BLOCKED; user works on Android, no PC required for this step",
+  "manual_review_requests_mutated": false,
+  "provider_native_review_submitted": false,
+  "main_mutated": false,
+  "prs_mutated": false,
+  "incremental_spend_jpy": 0
+}
