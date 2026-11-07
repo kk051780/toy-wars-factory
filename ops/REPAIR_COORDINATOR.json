@@ -1841,8 +1841,20 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 489,
-  "holder": null,
+  "epoch": 490,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 490,
+    "owner_id": "70a2adf8-8f15-42de-91ac-37eab73c868c",
+    "task_id": null,
+    "acquired_at": "2026-11-07T08:35:03.534Z",
+    "expires_at": "2026-11-07T08:53:03.534Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "twf-repair-coordinator",
+    "work_id": "PR184_192_RULESET_INTEGRATION_HANDOFF_20261107",
+    "scope": "coordination metadata-only: append issue182-preserving PR184..192 exact-head review request and source/CI read-only packet; no code/main/Gemini/PR163 edits"
+  },
   "integration_results": {
     "35": {
       "merged": true,
