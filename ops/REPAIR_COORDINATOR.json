@@ -1629,6 +1629,65 @@
         "additional_paid_services": 0,
         "recorded_at": "2026-11-07T01:13:08.538Z"
       }
+    },
+    {
+      "at": "2026-11-07T01:52:01.742Z",
+      "kind": "PRESERVE_PREVIOUS_COMPLETION",
+      "epoch": 472,
+      "record": {
+        "kind": "MANUAL_CONTROLLER_PR185_JUNK_WAVE_SCALING_10_LUA_NATIVE_892_PYTHON_GREEN",
+        "epoch": 471,
+        "owner_id": "b37adc7a-dfa7-4798-975c-654a7b0cb25e",
+        "claim_commit": "f6d57208b33a72762154c9cef66d7e0b11604747",
+        "work_branch": "bootstrap/twf-junk-wave-escalation-20261107",
+        "branch_head": "961e0bea8ecc3d9ddf5b383e29feb75571abaa4f",
+        "original_game_integration_pr": 184,
+        "base_pr_head": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+        "pr_number": 185,
+        "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/185",
+        "source_changes": [
+          "src/ToyWarsBalance.lua",
+          "src/ToyWarsServer.server.lua"
+        ],
+        "tests": [
+          "tests/auto/junk_wave_difficulty_spec.lua",
+          "tests/test_system_xml_artifact_export.py"
+        ],
+        "source_metrics": {
+          "lua_files": 4,
+          "lua_lines": 1428,
+          "lua_bytes": 63942
+        },
+        "history": [
+          "history/C98779_junk_wave_difficulty.json",
+          "history/C98780_junk_wave_exporter_repin.json"
+        ],
+        "native_junk_wave_difficulty": "10/10 Lua 5.4 passed",
+        "python": "892/892",
+        "initial_red_ci": 42323494450,
+        "red_cause": "exact-source pinned XML exporter rejected changed source as designed",
+        "green_ci": 42323782918,
+        "green_jobs": [
+          "offline",
+          "compile_hold"
+        ],
+        "green_ci_status": "SUCCESS_EXACT_HEAD",
+        "artifact_id": 13554520842,
+        "artifact_name": "twf-autonomous-regressions-not-engine",
+        "artifact_zip_sha256": "sha256:cfd103dcb44d251a2fc320452ae9a868b6feae66497842b7c3e8eeb1e93c0011",
+        "artifact_zip_bytes": 41232,
+        "game_balance_phases": "waves1..10 unchanged; wave11+ every five waves +8HP/+1damage, wave50 enemyHP102/damage14",
+        "independent_native_review": false,
+        "main_merged": false,
+        "roblox_engine_verified": false,
+        "mobile_verified": false,
+        "multiplayer_verified": false,
+        "permissions_unchanged": true,
+        "public_roblox_publishing": false,
+        "new_paid_spend": 0,
+        "github_actions_free_remaining": "UNKNOWN",
+        "recorded_at": "2026-11-07T01:24:19.464Z"
+      }
     }
   ],
   "controller_maintenance": {
@@ -1714,17 +1773,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 472,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "0d652497-b9a9-4d52-bd76-05f4a2ccea91",
-    "task_id": null,
-    "epoch": 472,
-    "acquired_at": "2026-11-07T01:44:15.904Z",
-    "expires_at": "2026-11-07T02:09:15.904Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "bootstrap/twf-junk-captain-boss-20261107"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3368,58 +3417,54 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "MANUAL_CONTROLLER_PR185_JUNK_WAVE_SCALING_10_LUA_NATIVE_892_PYTHON_GREEN",
-    "epoch": 471,
-    "owner_id": "b37adc7a-dfa7-4798-975c-654a7b0cb25e",
-    "claim_commit": "f6d57208b33a72762154c9cef66d7e0b11604747",
-    "work_branch": "bootstrap/twf-junk-wave-escalation-20261107",
-    "branch_head": "961e0bea8ecc3d9ddf5b383e29feb75571abaa4f",
-    "original_game_integration_pr": 184,
-    "base_pr_head": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
-    "pr_number": 185,
-    "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/185",
-    "source_changes": [
+    "kind": "MANUAL_CONTROLLER_JUNK_CAPTAIN_BOSS_13_NATIVE_LUA_893_PYTHON_CI_GREEN",
+    "epoch": 472,
+    "owner_id": "0d652497-b9a9-4d52-bd76-05f4a2ccea91",
+    "claim_commit": "1de994f95969d59ee64472f01dcfdd40735e8344",
+    "branch": "bootstrap/twf-junk-captain-boss-20261107",
+    "source_commit": "261686e05741b42806c8471243a8740aa7fe98b6",
+    "head": "85c1cd3504ef7e7929f3e3014dd15737f821adba",
+    "base_pr_number": 185,
+    "base_pr_head": "961e0bea8ecc3d9ddf5b383e29feb75571abaa4f",
+    "pr_number": 186,
+    "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/186",
+    "game_change": "Waves10,20,30,40,50 last enemy gets JUNK_CAPTAIN 3D model with glowing gold BossCrown, BossBeacon, +HP/ATK, reward and vault breach impact",
+    "game_source_files": [
       "src/ToyWarsBalance.lua",
       "src/ToyWarsServer.server.lua"
     ],
-    "tests": [
-      "tests/auto/junk_wave_difficulty_spec.lua",
-      "tests/test_system_xml_artifact_export.py"
-    ],
+    "native_test": "tests/auto/junk_captain_boss_spec.lua",
     "source_metrics": {
       "lua_files": 4,
-      "lua_lines": 1428,
-      "lua_bytes": 63942
+      "lua_lines": 1461,
+      "lua_bytes": 65529
     },
     "history": [
-      "history/C98779_junk_wave_difficulty.json",
-      "history/C98780_junk_wave_exporter_repin.json"
+      "history/C98781_junk_captain_boss.json"
     ],
-    "native_junk_wave_difficulty": "10/10 Lua 5.4 passed",
-    "python": "892/892",
-    "initial_red_ci": 42323494450,
-    "red_cause": "exact-source pinned XML exporter rejected changed source as designed",
-    "green_ci": 42323782918,
-    "green_jobs": [
-      "offline",
-      "compile_hold"
-    ],
-    "green_ci_status": "SUCCESS_EXACT_HEAD",
-    "artifact_id": 13554520842,
+    "new_CI_run_id": 42326115953,
+    "offline": "SUCCESS",
+    "compile_hold": "SUCCESS",
+    "native_boss": "13/13",
+    "native_junk_threat": "10/10",
+    "python_tests": "893/893",
+    "artifact_id": 13555152444,
     "artifact_name": "twf-autonomous-regressions-not-engine",
-    "artifact_zip_sha256": "sha256:cfd103dcb44d251a2fc320452ae9a868b6feae66497842b7c3e8eeb1e93c0011",
-    "artifact_zip_bytes": 41232,
-    "game_balance_phases": "waves1..10 unchanged; wave11+ every five waves +8HP/+1damage, wave50 enemyHP102/damage14",
+    "artifact_zip_sha256": "sha256:9c6fc2d88f4a16ca5d7ba9bd512963fc38f1d3748243426ff8da4741df6ef2fb",
+    "artifact_bytes": 42421,
+    "xml_file": "twf_4toy_junk_captain_NOT_ENGINE_VERIFIED.rbxlx",
+    "xml_bytes": 67552,
+    "xml_sha256": "91db3c7edbef5b490e66bbc97fd0f8d3dc4ddeedb035800d93b4737de51ba040",
     "independent_native_review": false,
     "main_merged": false,
     "roblox_engine_verified": false,
     "mobile_verified": false,
-    "multiplayer_verified": false,
-    "permissions_unchanged": true,
-    "public_roblox_publishing": false,
-    "new_paid_spend": 0,
-    "github_actions_free_remaining": "UNKNOWN",
-    "recorded_at": "2026-11-07T01:24:19.464Z"
+    "two_clients_verified": false,
+    "private_place_uploaded": false,
+    "public_published": false,
+    "extra_paid_spend": 0,
+    "github_actions_free_quota_remaining": "UNKNOWN",
+    "recorded_at": "2026-11-07T01:52:01.742Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
