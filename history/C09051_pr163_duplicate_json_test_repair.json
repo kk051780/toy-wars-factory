@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "id": "C09051",
+  "date_utc": "2026-11-07",
+  "kind": "PR163_DUPLICATE_JSON_FIXTURE_SYNTAX_REPAIR",
+  "pr_number": 163,
+  "original_head": "b8466ba51356fd2b4bd73b9c33e0dcc57b6a86a8",
+  "red_head": "decbf77c2106a93e8e2453b1aa54d4557cad5b38",
+  "red_action": 42328220887,
+  "red_result": {
+    "offline": "FAILURE",
+    "compile_hold": "SUCCESS",
+    "reason": "test fixture syntax corruption: Python SyntaxError, unterminated string literal at line73; generated replacement string contained a literal $' which JavaScript String.replace expanded as suffix",
+    "python": "960 tests ran with 1 import ERROR; newly added tests not executed"
+  },
+  "fix": {
+    "path": "tests/test_system_actions_write_probe_provider_shapes.py",
+    "corrupt_blob": "7827e075417e59da016f2d3c08f272ef8c60d7d1",
+    "correct_blob": "2fa8c0386597d8bafd58d34538656602e990b6f3",
+    "method": "recreated from unchanged original blob with literal callback replacement; 2 negative regression methods included",
+    "source_tools_unchanged": true
+  },
+  "coordinator": {
+    "epoch": 473,
+    "owner_id": "be75976d-8ae9-40f8-b246-e48b900b9b30",
+    "claim_commit": "0f52c8f6af9b06891b4ee4ee63597402c6cff04d"
+  },
+  "ci": "PENDING_EXACT_HEAD_RETRY",
+  "independent_review": false,
+  "main_merged": false,
+  "engine_verified": false,
+  "paid_spend": 0
+}
