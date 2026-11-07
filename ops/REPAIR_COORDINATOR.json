@@ -1842,19 +1842,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 495,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "51feef51-4de9-49cf-b5a2-b4845ea477e3",
-    "epoch": 495,
-    "task_id": null,
-    "acquired_at": "2026-11-07T09:26:26.386Z",
-    "expires_at": "2026-11-07T09:48:26.390Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/character-roster-mutation-guard-20261107-51feef51",
-    "work_id": "PR184_CHARACTER_BALANCE_MUTATION_GUARD_20261107",
-    "scope": "strictly tools/system_character_pipeline.py + tests/test_system_character_pipeline.py + append-only isolated history; parent PR184; NO protected prompts, authorized source_paths, main, Gemini, API/release"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3498,38 +3486,29 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_SOURCERY_PR191_THREE_FINDINGS_FIXED_IN_STACKED_PR194_CI_GREEN",
-    "epoch": 494,
-    "owner_id": "9c3443b2-4a58-4021-b809-c87faf918846",
-    "claim_commit": "e7ef455649e01f75f7f6a8740ad8004ea5d11f47",
-    "work_branch": "controller/tankuru-sourcery-review-fixes-20261107-9c3443b2",
-    "pr_number": 194,
-    "pr_head": "0b5213b0874b81a3ba4438c047165363117a6f08",
-    "original_sourcery_pr": 191,
-    "original_findings": 3,
-    "exact_head_ci": {
-      "id": 42359404531,
-      "status": "COMPLETED_SUCCESS",
-      "offline": "success",
-      "compile_hold": "success",
-      "python_tests": 894,
-      "tankuru_lua_mock_tests": 13
-    },
-    "red_ci": {
-      "id": 42359230450,
-      "offline": "failure",
-      "reason": "source size history missing",
-      "remediation": "history/C98816_tankuru_sourcery_source_delta_receipt.json"
-    },
-    "sourcery_rereview_comment_id": 6705010983,
-    "sourcery_review_verdict": "PENDING_AT_RELEASE",
-    "registered_reviewer_request": "PR194_SOURCERY_PR191_THREE_FIXES_EXACT_HEAD_REVIEW_20261107",
-    "main_merged": false,
-    "prior_branches_changed": false,
-    "independent_native_approval": false,
-    "actual_roblox_engine_verified": false,
+    "kind": "CONTROLLER_PR195_CHARACTER_ROSTER_MUTATION_GUARD_CI_GREEN",
+    "epoch": 495,
+    "owner_id": "51feef51-4de9-49cf-b5a2-b4845ea477e3",
+    "claim_commit": "2641cb56e7dbe6a0d586d55c309415834369c770",
+    "work_branch": "controller/character-roster-mutation-guard-20261107-51feef51",
+    "base_pr": 184,
+    "base_head": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+    "pr": 195,
+    "pr_head": "e42724514eb177db4fd8f660545876683af423d1",
+    "files_changed": 3,
+    "history_id": "C98831",
+    "new_python_regressions": 6,
+    "python_tests": 897,
+    "offline": "PASS",
+    "compile_hold": "PASS",
+    "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42360072808",
+    "independent_review": false,
+    "main_changed": false,
+    "studio_verified": false,
+    "mobile_verified": false,
+    "gemini_untouched": true,
     "incremental_spend_yen": 0,
-    "released_at": "2026-11-07T09:25:20.537Z"
+    "released_at": "2026-11-07T09:32:57.543Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
