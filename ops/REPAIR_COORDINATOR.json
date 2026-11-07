@@ -1842,18 +1842,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 497,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "679d2f66-8ccb-41db-92de-a6316d2eaf1c",
-    "epoch": 497,
-    "task_id": null,
-    "acquired_at": "2026-11-07T09:44:11.415Z",
-    "expires_at": "2026-11-07T09:59:11.415Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/tankuru-sourcery-review-fixes-20261107-9c3443b2",
-    "scope": "PR194 metadata-only correction of obsolete source-commit provenance in description; answer Sourcery false-positive verification with Git blob evidence; no code, PR base, CI, ruleset, main or merge changes"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3497,31 +3486,24 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_PR194_SOURCERY_ROUND2_TWO_FIXES_CI_GREEN_AND_BOT_REVIEW_REQUESTED",
-    "epoch": 496,
-    "owner_id": "4ee9b2cd-6020-4e04-8440-2d850400ac82",
-    "claim_commit": "fc30e7cf5dd018302e7c565c438cd5b3806dca4f",
-    "work_branch": "controller/tankuru-sourcery-review-fixes-20261107-9c3443b2",
-    "pr_number": 194,
+    "kind": "CONTROLLER_PR194_SOURCERY_SOURCE_PROVENANCE_FALSE_POSITIVE_CLARIFIED_METADATA_ONLY",
+    "epoch": 497,
+    "owner_id": "679d2f66-8ccb-41db-92de-a6316d2eaf1c",
+    "claim_commit": "57c851edc87cb2efd8c2872fe05802473d11bd69",
+    "pr": 194,
     "pr_head": "c3fb8b29ca017bfeea3ef6e1298427ae5c07b2d2",
     "source_commit": "0dfadf4f568527ab1751c408fdb94315dea0ad44",
-    "source_blob": "f4206a0355222ca098c7c3dafb7c3316b027e5cc",
-    "exact_head_ci": {
-      "run_id": 42360619619,
-      "offline": "SUCCESS",
-      "compile_hold": "SUCCESS",
-      "python_cases": 894,
-      "tankuru_lua_mock_cases": 15
-    },
-    "sourcery_review_request_comment_id": 6705167518,
-    "sourcery_re_review_verdict": "PENDING",
-    "native_approval": false,
-    "registered_reviewer_request": "PR194_SOURCERY_PR191_THREE_FIXES_EXACT_HEAD_REVIEW_20261107",
+    "source_blobs_verified": 4,
+    "source_blobs_match_all_expected": true,
+    "PR_body_corrected": true,
+    "inline_review_thread_reply": 4501166247,
+    "re_review_comment_id": 6705227044,
+    "source_code_changed": false,
     "main_merged": false,
-    "roblox_engine_verified": false,
-    "unattended_runner_proven": false,
-    "incremental_spend_yen": 0,
-    "released_at": "2026-11-07T09:41:53.955Z"
+    "native_approved": false,
+    "sourcery_final_verdict": "PENDING_AT_RELEASE",
+    "new_paid_spend_yen": 0,
+    "released_at": "2026-11-07T09:47:16.219Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
