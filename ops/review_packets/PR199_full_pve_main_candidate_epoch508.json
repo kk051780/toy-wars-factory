@@ -1,0 +1,98 @@
+{
+  "schema": 1,
+  "type": "P0_FULL_MAIN_BASE_GAME_SOURCE_SECURITY_REVIEW_PACKET",
+  "id": "PR199_FULL_PVE_MAIN_INTEGRATION_SECURITY_REVIEW_20261108",
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 199,
+  "url": "https://github.com/kk051780/toy-wars-factory/pull/199",
+  "created_at": "2026-11-07T21:59:45.890Z",
+  "source_main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "branch": "controller/complete-pve-main-integration-20261108-c8162bda",
+  "exact_pr_head": "f478af3562740ff415c70c8e5f314ef6277cd1ac",
+  "draft": true,
+  "main_unchanged": true,
+  "root_pr": 184,
+  "source_game_parent_pr": 198,
+  "source_game_parent_head": "5c7a456b94c5b400d7c28a90256ef2c62f3e4e15",
+  "security_source_pr": 196,
+  "security_source_head": "02e9fc6ea5bf4fcc51584b189368e9a5c798894d",
+  "game_src_sha": {
+    "src/ToyWarsBalance.lua": "64175b1cda7e4d5e4623d7b28bb80fdc3d64c3b8",
+    "src/ToyWarsServer.server.lua": "181b0ef3a5aedafef4490decdbbe167d769e9932",
+    "src/ToyWarsHUD.client.lua": "7bbd7983ed4bf536bcc8264c3e9a8eca2a213d1f",
+    "src/ToyWarsSmokeTest.server.lua": "ccba431909c664909e2680785648d0402fedf3c3"
+  },
+  "game_source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1641,
+    "lua_bytes": 74583
+  },
+  "changed_files_vs_main": 76,
+  "commits_ahead": 51,
+  "security_patch_blobs": {
+    "parser": "16b1ad1a372894a4cdc191f57f86e70b2ccdde31",
+    "regressions": "1b287a8eb35253c05a5ba3957cb008052a4e59bd"
+  },
+  "history": [
+    "history/C98839_full_game_main_candidate_hardened_roster.json",
+    "history/C98840_integrated_boss_numeric_read_guard.json"
+  ],
+  "red_ci": {
+    "id": 42418038246,
+    "head": "5e941eca7136c339b396e99cd2f62c0e2fcefa13",
+    "offline": "FAIL",
+    "compile_hold": "SUCCESS",
+    "python_failures": 32,
+    "root_cause": "PR196 conservative parser erroneously rejected inherited B.UNITS.junk.hp and B.UNITS.junk.damage primitive scalar RHS reads in gameplay wave scaling"
+  },
+  "green_ci": {
+    "id": 42418236714,
+    "head": "f478af3562740ff415c70c8e5f314ef6277cd1ac",
+    "offline": "SUCCESS",
+    "compile_hold": "SUCCESS",
+    "provider_app_id": 15368,
+    "python_tests": "916/916 PASS",
+    "lua_hud": "14/14 PASS",
+    "lua_pon": "9/9 PASS",
+    "new_integrated_security_tests": "2/2 PASS",
+    "handoff_checks": "PASS",
+    "native_engine": false
+  },
+  "security_warning": "Consolidated game includes PR184's exact extra authorized source path config/characters.json in config/autonomous_repair.json. Review scope against worker host authority. Parser still does NOT do general Lua alias/dataflow analysis across modules; it is a literal-module conservative gate. The 2-field numeric exception applies only to B.UNITS.junk.hp and .damage reads and NOT writes, other aliases, or module replacements.",
+  "provider_ruleset": {
+    "id": 26750913,
+    "enforcement": "active",
+    "required_checks": [
+      "offline",
+      "compile_hold"
+    ],
+    "provider_native_approval_count": 0
+  },
+  "repo_policy": "Independent authenticated reviewer/source-security audit required for this draft despite provider native approvals=0. PR #60 bootstrap and Issue #57/#123 unresolved; separate reviewer must not be the PR author, may not equate green CI to merge authorization.",
+  "source_scope": "All existing game implementations; NO merge or publish, no credential/action workflow, billing or external inference changes; 0 JPY incremental spend",
+  "review_checklist": [
+    "Review all changed files/commits vs current main, including all affected scripts, docs and character catalog",
+    "Audit exact config/autonomous_repair.json source_paths widening to config/characters.json, with fail closed check and no extra host auth",
+    "Audit newly combined character parser numeric whitelist, real mutable roster alias tests, and cross-module limitation",
+    "Audit user data persistence/session lease and client/server Roblox Lua in inherited game stack",
+    "Verify 4 game SHA pins/ XML generated artifact and C00100..C98840 ledger chain; negative-control and current 916 test CI",
+    "Ensure protected main ruleset exact CI/current head, no self-approval, no stale reviewer claims, no duplicate adoption of stacked parents",
+    "Decide independent PASS/REQUEST_CHANGES/BLOCKED; do not merge or publish if any trust gating unmet"
+  ],
+  "owner_claim": {
+    "role": "CONTROLLER",
+    "epoch": 508,
+    "owner_id": "c8162bda-760a-4c47-ad2e-f90d16ef04b3",
+    "claim_commit": "80ce0a6060e40c0f79b37c89c8e94b6fdf2a3cc1"
+  },
+  "assigned_role": "REVIEWER",
+  "registered_task": "6add6aaceb4c8191b1666fe15f97cd88",
+  "independent_review_observed": false,
+  "provider_native_approval_observed": false,
+  "main_merged": false,
+  "studio_verified": false,
+  "android_verified": false,
+  "two_client_verified": false,
+  "published": false,
+  "incremental_spend_jpy": 0
+}

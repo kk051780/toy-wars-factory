@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-07T20:27:28.123Z",
+  "observed_at": "2026-11-07T21:59:45.890Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5016,6 +5016,43 @@
       "main_merged": false,
       "engine_verified": false,
       "additional_spend_jpy": 0
+    },
+    {
+      "id": "PR199_FULL_PVE_MAIN_INTEGRATION_SECURITY_REVIEW_20261108",
+      "kind": "PROTECTED_FULL_MAIN_BASE_GAME_INTEGRATION_P0_SECURITY_REVIEW",
+      "priority": "P0",
+      "status": "OPEN_INDEPENDENT_SECURITY_AND_MAIN_ADOPTION_REVIEW_REQUIRED",
+      "repository": "kk051780/toy-wars-factory",
+      "created_at": "2026-11-07T21:59:45.890Z",
+      "updated_at": "2026-11-07T21:59:45.890Z",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "pr": 199,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/199",
+      "head": "f478af3562740ff415c70c8e5f314ef6277cd1ac",
+      "branch": "controller/complete-pve-main-integration-20261108-c8162bda",
+      "base_branch": "main",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "root_pr": 184,
+      "source_head": "5c7a456b94c5b400d7c28a90256ef2c62f3e4e15",
+      "security_source_head": "02e9fc6ea5bf4fcc51584b189368e9a5c798894d",
+      "evidence_path": "ops/review_packets/PR199_full_pve_main_candidate_epoch508.json",
+      "ci_run": 42418236714,
+      "ci_jobs": [
+        "offline:success",
+        "compile_hold:success"
+      ],
+      "python_tests": 916,
+      "game_lua_bytes": 74583,
+      "changed_files": 76,
+      "commits": 51,
+      "review_request": "Separate registered REVIEWER inspect single consolidated main-base PR199 at exact HEAD, all changed files: inherited PR198 game source, PR196 hardened parser, numeric read exception, first RED 32 failures then exact-head 916/916 GREEN, inherited catalog-write allowance from PR184, provider ruleset/PR60 and Issue57/123 writer identity. Return PASS/REQUEST_CHANGES/BLOCKED. No same-author approval/merge/publish or duplicate upstream adoption.",
+      "independent_review": false,
+      "provider_native_approval_required": 0,
+      "project_security_review_required": true,
+      "main_merged": false,
+      "roblox_engine_verified": false,
+      "added_spend_jpy": 0
     }
   ]
 }
