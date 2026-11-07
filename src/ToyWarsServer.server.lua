@@ -504,7 +504,7 @@ local function makePlot(player, state)
         part(map,"BeltStripe",Vector3.new(7.2,0.12,0.7),CFrame.new(x-8,1.85,z),Color3.fromRGB(85,108,133))
     end
     local machine = part(map,"ToyPrinter",Vector3.new(11,7,7),CFrame.new(x-8,4.2,-46),SLOT_COLORS[state.slot])
-    label(machine,"TOY PRINTER\nAuto-production",220,74,6)
+    local printerLabel=label(machine,"TOY PRINTER\nAuto-production",220,74,6)
     local enemyDoor = part(map,"JunkPortal",Vector3.new(19,9,4),CFrame.new(x,4.7,45),Color3.fromRGB(135,66,105),Enum.Material.Neon)
     label(enemyDoor,"JUNK PIRATES\nIncoming!",220,65,7)
     local base = part(map,"BlueprintVault",Vector3.new(14,7,5),CFrame.new(x,4.0,-45),Color3.fromRGB(75,118,238),Enum.Material.Metal)
@@ -546,6 +546,9 @@ local function makePlot(player, state)
     upgradePrompt.RequiresLineOfSight=false
     upgradePrompt.Parent=station
     local function refreshUpgrade()
+        -- Show actual authoritative print speed on the in-world production machine.
+        local interval=B.productionInterval(state.level.Value) or 3.0
+        printerLabel.Text=string.format("TOY PRINTER\n%.1fs / toy",interval)
         local price=B.upgradePrice(state.level.Value)
         if price then
             upgradeLabel.Text=string.format("UPGRADE Lv.%d to %d\n%d coins",state.level.Value,state.level.Value+1,price)
@@ -817,7 +820,10 @@ local function simulate(state,dt)
 
     state.productionTimer=state.productionTimer-dt
     if state.productionTimer<=0 then
-        state.productionTimer=state.productionTimer+3.0
+        -- Once this print completes, schedule the NEXT toy at the current
+        -- factory speed. Never consume a backlog of purchases in one tick.
+        local interval=B.productionInterval(state.level.Value) or 3.0
+        state.productionTimer=state.productionTimer+interval
         if aliveCount(state,"ally")<B.MAX_FIELD_UNITS then
             local new=B.buy(state.selected,state.coins.Value,aliveCount(state,"ally"))
             if new then
