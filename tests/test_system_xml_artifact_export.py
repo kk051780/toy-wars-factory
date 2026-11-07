@@ -75,9 +75,9 @@ class XmlArtifacts(unittest.TestCase):
     def test_current_combined_gameplay_is_embedded_in_actual_xml(self):
         binary, receipt=x.build_place(self.root)
         self.assertEqual(receipt['unmerged_source_branch_head_sha'],
-                         '9e2a188b8d215b231757e95fa08abdacf4c4c2d3')
+                         '0dfadf4f568527ab1751c408fdb94315dea0ad44')
         self.assertEqual(receipt['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
-                         '6b4f8d2c84d9d333f71b673f819420d1b80f2f3d')
+                         'f4206a0355222ca098c7c3dafb7c3316b027e5cc')
         doc=ET.fromstring(binary)
         embedded={}
         for item in doc.findall('.//Item'):
@@ -100,7 +100,7 @@ class XmlArtifacts(unittest.TestCase):
         self.assertEqual(receipt['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
                          'e2080307182d1ac1c4c4842f1307229b75ca7b12')
         self.assertEqual(receipt['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
-                         '6b4f8d2c84d9d333f71b673f819420d1b80f2f3d')
+                         'f4206a0355222ca098c7c3dafb7c3316b027e5cc')
         doc=ET.fromstring(binary)
         source={}
         for item in doc.findall('.//Item'):
@@ -119,11 +119,11 @@ class XmlArtifacts(unittest.TestCase):
     def test_tenth_wave_captain_is_in_embedded_3d_server_source(self):
         xml, manifest=x.build_place(self.root)
         self.assertEqual(manifest['unmerged_source_branch_head_sha'],
-                         '9e2a188b8d215b231757e95fa08abdacf4c4c2d3')
+                         '0dfadf4f568527ab1751c408fdb94315dea0ad44')
         self.assertEqual(manifest['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
                          'e2080307182d1ac1c4c4842f1307229b75ca7b12')
         self.assertEqual(manifest['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
-                         '6b4f8d2c84d9d333f71b673f819420d1b80f2f3d')
+                         'f4206a0355222ca098c7c3dafb7c3316b027e5cc')
         doc=ET.fromstring(xml)
         embedded={}
         for node in doc.findall('.//Item'):
@@ -143,11 +143,11 @@ class XmlArtifacts(unittest.TestCase):
     def test_factory_speed_is_in_signed_source_pinned_xml_candidate(self):
         binary, manifest=x.build_place(self.root)
         self.assertEqual(manifest['unmerged_source_branch_head_sha'],
-                         '9e2a188b8d215b231757e95fa08abdacf4c4c2d3')
+                         '0dfadf4f568527ab1751c408fdb94315dea0ad44')
         self.assertEqual(manifest['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
                          'e2080307182d1ac1c4c4842f1307229b75ca7b12')
         self.assertEqual(manifest['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
-                         '6b4f8d2c84d9d333f71b673f819420d1b80f2f3d')
+                         'f4206a0355222ca098c7c3dafb7c3316b027e5cc')
         doc=ET.fromstring(binary)
         embedded={}
         for node in doc.findall('.//Item'):
