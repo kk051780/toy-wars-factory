@@ -44,6 +44,15 @@ function B.buy(id, coins, activeCount)
     return coins - B.UNITS[id].cost, "ok"
 end
 
+-- PON is the cheap scout/courier. A successful enemy-line delivery yields
+-- a small cash advantage; other toys retain the original four-coin reward.
+-- Only the server calls this after a real living ally crosses the boundary.
+function B.deliveryReward(id)
+    if not B.isUnit(id) then return nil, "invalid_unit" end
+    if id=="pon" then return 12, "ok" end
+    return 4, "ok"
+end
+
 function B.upgradePrice(level)
     if not isInteger(level) or level < 1 or level >= B.MAX_LEVEL then return nil, "invalid_level" end
     return level * level * 65, "ok"

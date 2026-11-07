@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "id": "C98836",
+  "kind": "PON_COURIER_HUD_PRICE_BACKWARD_COMPAT_REPAIR",
+  "date_utc": "2026-11-07",
+  "branch": "controller/pon-courier-delivery-20261107-3ac30a74",
+  "parent_committed_head": "fd908f6e2fd6eb6a40b73618601992a087597370",
+  "base_pr": 194,
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordinator": {
+    "epoch": 505,
+    "owner_id": "3ac30a74-70e5-45e6-9ef2-31c747a8344d",
+    "claim_commit": "f92e8e1b4d37e01c00beb69440317af94d59ab12"
+  },
+  "previous_source_history": "C98835",
+  "incident": {
+    "action_run": 42375384442,
+    "offline": "FAIL",
+    "compile_hold": "SUCCESS",
+    "failed_step": "Execute shared-price HUD fixtures (not Roblox UI)",
+    "root_cause": "PON price TextButton gained newline, violating accepted HUD price canonical one-line label regex; six fixture scenarios failed.",
+    "resolution": "Preserve exact PON | cost selector while moving the server-derived courier +12 hint to the onboarding guide. Existing original HUD PRICE QA stays untouched, not waived."
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_blob": "da8cb4d13fe4b8a7deac8dec550349fea5830b60",
+      "after_blob": "8afb94f5c7051dfeff86c26cbae7d8c3e6394c1a",
+      "before_bytes": 12543,
+      "after_bytes": 12399,
+      "delta_bytes": -144,
+      "before_lines": 292,
+      "after_lines": 289,
+      "delta_lines": -3
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1617,
+    "lua_bytes": 73376
+  },
+  "tests": {
+    "existing_hud_price_spec_unchanged": true,
+    "character_pages_spec_retained_and_renewed": true,
+    "server_mock_cases": 9,
+    "new_ci": "PENDING"
+  },
+  "original_red_green_history_preserved": true,
+  "game_characters_touched": [
+    "pon"
+  ],
+  "engine_verified": false,
+  "main_merged": false,
+  "independent_review": false,
+  "extra_spending_jpy": 0
+}
