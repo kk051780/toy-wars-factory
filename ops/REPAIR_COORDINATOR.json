@@ -1842,19 +1842,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 481,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "ec4aa5ef-1bb0-44d0-a750-af0aa358fa92",
-    "task_id": null,
-    "epoch": 481,
-    "acquired_at": "2026-11-07T07:13:20.312Z",
-    "expires_at": "2026-11-07T07:33:20.312Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/tankuru-captain-target-20261107-ec4aa5ef",
-    "work_id": "TWF-PVE-TANKURU-CAPTAIN-FOCUS-20261107",
-    "scope": "new stacked draft PR after PR189; source+tests+exact-XML pins; no Gemini files"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3498,33 +3486,26 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_PVE_PR184_189_INDEPENDENT_REVIEW_QUEUE_REFRESH_NOT_NATIVE_APPROVAL",
-    "epoch": 480,
-    "owner_id": "52c4e6c7-4c55-4b92-a9db-65768a2f0d1a",
-    "claim_commit": "415eb74148e63187a831fbbedf3ef83172c96b64",
-    "work_branch": "twf-repair-coordinator",
-    "packet_commit": "c70951a2ed154786e4f888cfca6d59c3037fdc0c",
-    "evidence_path": "ops/review_packets/PR184_189_stack_preflight_epoch480.json",
-    "existing_work_request_updated": "PR184_187_STACKED_INTEGRATION_READINESS_20261107",
-    "stacked_prs": [
-      184,
-      185,
-      186,
-      187,
-      189
-    ],
-    "separate_qa_pr": 188,
-    "all_six_ci": "SUCCESS_EXACT_HEAD_OFFLINE_AND_COMPILE_HOLD",
-    "native_reviews": "NONE",
-    "provider_main_protection": "UNVERIFIED_403",
-    "pr60": "DRAFT_UNMERGED",
-    "manual_review_requests_mutated": false,
-    "pr_mutated": false,
+    "kind": "CONTROLLER_TANKURU_CAPTAIN_DRAFT_PR190",
+    "epoch": 481,
+    "owner_id": "ec4aa5ef-1bb0-44d0-a750-af0aa358fa92",
+    "claim_commit": "5daf40c48da7df3be0bc71e35af5ffe6c9abe19b",
+    "work_branch": "controller/tankuru-captain-target-20261107-ec4aa5ef",
+    "pr": 190,
+    "source_commit": "d37c0d26bb5bc68c1507ea22e57a8175e1982900",
+    "pr_head": "bba564d90d1f880f2dfca83e2fb987818b7c3c59",
+    "files_changed": 6,
+    "new_native_lua_cases": 8,
+    "gameplay": "TANKURU targets living in-range JUNK CAPTAIN before normal junk",
+    "hosted_ci_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/42350531900",
+    "hosted_ci_status": "IN_PROGRESS_AT_RELEASE_NOT_PASS",
+    "independent_review": "NONE",
     "main_merged": false,
+    "gemini_untouched": true,
     "roblox_engine_verified": false,
-    "extra_spend": 0,
+    "spending_delta_yen": 0,
     "owner_release_not_provider_terminal_proof": true,
-    "released_at": "2026-11-07T07:07:13.985Z"
+    "released_at": "2026-11-07T07:16:08.378Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
