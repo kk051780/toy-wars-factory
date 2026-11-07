@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-07T09:24:21.257Z",
+  "observed_at": "2026-11-07T09:40:43.203Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4724,13 +4724,13 @@
       "id": "PR194_SOURCERY_PR191_THREE_FIXES_EXACT_HEAD_REVIEW_20261107",
       "kind": "PROTECTED_GAME_STACKED_SOURCERY_FIX_EXACT_HEAD_REVIEW",
       "priority": "P1",
-      "status": "AWAIT_SOURCERY_REVIEW_AND_STACK_PARENTS",
+      "status": "AWAIT_EXACT_HEAD_SOURCERY_SECOND_REVIEW_AND_STACK_PARENTS",
       "repository": "kk051780/toy-wars-factory",
       "created_at": "2026-11-07T09:24:21.257Z",
-      "updated_at": "2026-11-07T09:24:21.257Z",
+      "updated_at": "2026-11-07T09:40:43.203Z",
       "pr": 194,
       "url": "https://github.com/kk051780/toy-wars-factory/pull/194",
-      "head": "0b5213b0874b81a3ba4438c047165363117a6f08",
+      "head": "c3fb8b29ca017bfeea3ef6e1298427ae5c07b2d2",
       "branch": "controller/tankuru-sourcery-review-fixes-20261107-9c3443b2",
       "base_branch": "controller/printer-3d-progress-20261107-36e10f50",
       "base_head": "db4537051f960cde52649407fdaf4fb54ec41df8",
@@ -4768,19 +4768,14 @@
         "current_head": "0b5213b0874b81a3ba4438c047165363117a6f08"
       },
       "ci": {
-        "id": 42359404531,
-        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42359404531",
-        "head": "0b5213b0874b81a3ba4438c047165363117a6f08",
+        "id": 42360619619,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42360619619",
+        "head": "c3fb8b29ca017bfeea3ef6e1298427ae5c07b2d2",
         "offline": "success",
         "compile_hold": "success",
         "python_cases": 894,
-        "native_tankuru_lua_cases": 13,
-        "red": {
-          "id": 42359230450,
-          "offline": "failure",
-          "reason": "Missing canonical source_changes size ledger for +287 bytes",
-          "fixed_by_append_only": "history/C98816_tankuru_sourcery_source_delta_receipt.json"
-        }
+        "native_tankuru_lua_cases": 15,
+        "prior_green_run": 42359404531
       },
       "changed_files": [
         "history/C98815_tankuru_sourcery_review_geometry.json",
@@ -4798,7 +4793,20 @@
       "main_merged": false,
       "owner_reply_required": false,
       "incremental_spend_yen": 0,
-      "next_actor": "SOURCERY_BOT_THEN_REGISTERED_REVIEWER"
+      "next_actor": "SOURCERY_AI_BOT_THEN_REGISTERED_REVIEWER",
+      "source_reproducibility": {
+        "source_commit": "0dfadf4f568527ab1751c408fdb94315dea0ad44",
+        "server_blob": "f4206a0355222ca098c7c3dafb7c3316b027e5cc",
+        "exporter_pin_checked": true,
+        "history": [
+          "history/C98817_tankuru_sourcery_cannon_occlusion.json",
+          "history/C98818_tankuru_sourcery_exact_source_receipt.json"
+        ]
+      },
+      "sourcery_second_review_request_comment_id": 6705167518,
+      "sourcery_second_review_status": "REQUESTED_PENDING_VERDICT",
+      "sourcery_previous_review_findings": 2,
+      "note": "Second-round fixes committed in source commit 0dfadf4... and exact pin commit c3fb8...; exact-head offline+compile_hold green; Sourcery re-review pending. Draft stacked on PR193; no merge and no engine pass."
     }
   ]
 }
