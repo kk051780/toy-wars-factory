@@ -173,7 +173,7 @@ class XmlArtifacts(unittest.TestCase):
                      and item.find('./Properties/string[@name="Name"]').text == 'ToyWarsHUD'))
         self.assertIn('BossWaveWarning',hud)
         self.assertIn('B.junkBoss(current)',hud)
-        self.assertIn('wave.Changed:Connect(refresh)',hud) if False else None
+        self.assertIn('for _,v in ipairs(observed) do v.Changed:Connect(refresh) end',hud)
         self.assertIn('bossWarning.Visible',hud)
         self.assertFalse(manifest['roblox_engine_verified'])
         self.assertFalse(manifest['source_merge_verified'])
