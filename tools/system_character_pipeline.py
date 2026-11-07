@@ -14,11 +14,105 @@ EFFORT_KEYS = {"model", "animation", "combat", "ui", "qa"}
 APPEAL_KEYS = {"acquisition", "retention", "strategy"}
 
 
+# This is a conservative literal-source gate, not a general Luau interpreter.
+# Ignore strings/comments when locating roster writes. A single literal
+# B.UNITS = { ... } declaration is required; later roster/field writes are
+# forbidden even if the original catalog still matches the first declaration.
+_LUA_TOKEN = re.compile(
+    r'(?P<comment>--\[\[.*?\]\]|--[^\n]*)'
+    r'|(?P<string>"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\')'
+    r'|(?P<name>[A-Za-z_][A-Za-z0-9_]*)'
+    r'|(?P<op>==|~=|<=|>=|\+=|-=|\*=|/=|%=|[^\s])',
+    re.S,
+)
+_ASSIGNMENTS = {"=", "+=", "-=", "*=", "/=", "%="}
+
+
+def _unit_declaration_start(source):
+    tokens = [
+        (match.group(), match.start())
+        for match in _LUA_TOKEN.finditer(source)
+        if match.lastgroup != "comment"
+    ]
+    words = [value for value, _ in tokens]
+    declarations = []
+    for i, word in enumerate(words):
+        if word != "B":
+            continue
+        # Only the original local B = {} is permitted: replacing the module
+        # later bypasses comparisons against the first registered unit table.
+        if i + 1 < len(words) and words[i + 1] in _ASSIGNMENTS:
+            if i == 0 or words[i - 1] != "local" or words[i + 1] != "=":
+                raise ValueError("balance module reassignment is forbidden")
+        if words[i + 1:i + 3] == [".", "UNITS"]:
+            j = i + 3
+            dot_form = True
+        elif (words[i + 1:i + 4] in
+              (["[", '"UNITS"', "]"], ["[", "'UNITS'", "]"])):
+            j = i + 4
+            dot_form = False
+        else:
+            continue
+
+        # The canonical source uses B.UNITS, never B["UNITS"] aliases.
+        if not dot_form:
+            raise ValueError("dynamic B.UNITS alias is forbidden")
+
+        # Consume nested read-only fields such as B.UNITS[id].cost. A write
+        # at any depth must fail, but lookups and ~= / == are not writes.
+        end = j
+        while end < len(words):
+            if (words[end] == "." and end + 1 < len(words) and
+                    re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", words[end + 1])):
+                end += 2
+            elif words[end] == "[":
+                depth = 1
+                end += 1
+                while end < len(words) and depth:
+                    if words[end] == "[":
+                        depth += 1
+                    elif words[end] == "]":
+                        depth -= 1
+                    end += 1
+                if depth:
+                    raise ValueError("unbalanced B.UNITS accessor")
+            else:
+                break
+
+        if end < len(words) and words[end] in _ASSIGNMENTS:
+            if end != j or words[end] != "=" or words[end + 1:end + 2] != ["{"]:
+                raise ValueError("mutable B.UNITS roster is forbidden")
+            declarations.append(tokens[i][1])
+
+        # Lua helpers can mutate the table without a direct assignment.
+        if i >= 2 and words[i - 2:i] in (
+                ["rawset", "("], ["setmetatable", "("]):
+            raise ValueError("mutating B.UNITS helper call is forbidden")
+        if i >= 4 and words[i - 4:i - 2] == ["table", "."] and words[i - 2] in (
+                "clear", "insert", "remove", "move", "sort") and words[i - 1] == "(":
+            raise ValueError("mutating B.UNITS table operation is forbidden")
+
+        if (i >= 2 and words[i - 2:i] == ["rawset", "("] and
+                words[i + 1:i + 3] == [",", '"UNITS"']):
+            raise ValueError("mutating B.UNITS helper call is forbidden")
+
+    # rawset(B, "UNITS", value) writes the module member without B.UNITS text.
+    for i in range(len(words) - 4):
+        if (words[i:i + 5] in
+                (["rawset", "(", "B", ",", '"UNITS"'],
+                 ["rawset", "(", "B", ",", "'UNITS'"])):
+            raise ValueError("mutating B.UNITS helper call is forbidden")
+    if len(declarations) != 1:
+        raise ValueError("exactly one literal B.UNITS declaration required")
+    return declarations[0]
+
+
 def registered_ids(source):
-    block = re.search(r"B\.UNITS\s*=\s*\{(.*?)\n\}", source, re.S)
+    start = _unit_declaration_start(source)
+    block = re.match(r"B\s*\.\s*UNITS\s*=\s*\{(.*?)\n\}", source[start:], re.S)
     if not block:
-        raise ValueError("literal B.UNITS table missing")
-    ids = re.findall(r"^\s{4}([a-z][a-z0-9_]*)\s*=\s*\{", block[1], re.M)
+        raise ValueError("literal B.UNITS table missing or malformed")
+    ids = re.findall(r"^\s{4}([a-z][a-z0-9_]*)\s*=\s*\{", block.group(1), re.M)
     if len(ids) != len(set(ids)) or "junk" not in ids:
         raise ValueError("duplicate unit or missing NPC boundary")
     return set(ids) - {"junk"}

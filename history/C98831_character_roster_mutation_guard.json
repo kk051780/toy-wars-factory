@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "id": "C98831",
+  "date_utc": "2026-11-07",
+  "kind": "PR184_LITERAL_ROSTER_MUTATION_FAIL_CLOSED",
+  "source_branch": "controller/character-roster-mutation-guard-20261107-51feef51",
+  "parent_pr": 184,
+  "parent_head": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "epoch": 495,
+    "owner_id": "51feef51-4de9-49cf-b5a2-b4845ea477e3",
+    "claim_commit": "2641cb56e7dbe6a0d586d55c309415834369c770"
+  },
+  "reason": "The first B.UNITS literal can match the catalog while a later direct/module/field mutation changes playable units. Existing static checker only inspected first regex match.",
+  "changes": [
+    "tools/system_character_pipeline.py",
+    "tests/test_system_character_pipeline.py"
+  ],
+  "checks": [
+    "reject later B.UNITS literal and computed reassignment",
+    "reject bracket alias/field/nested writes/compound Luau assignments",
+    "reject rawset/table helper edits and B replacement",
+    "ignore quoted/commented examples",
+    "keep original 4-playable roster and design proposal policy checks"
+  ],
+  "native_roblox_not_run": true,
+  "tests_offline_not_engine": true,
+  "security_review_required": true,
+  "main_merged": false,
+  "approved": false,
+  "gemini_unchanged": true,
+  "incremental_spend_yen": 0
+}

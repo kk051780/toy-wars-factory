@@ -39,6 +39,52 @@ class CharacterPipelineTests(unittest.TestCase):
         self.assertTrue(self.errors(b=self.balance.replace('    curebo =','    impostor =')))
         self.assertTrue(self.errors(b=self.balance.replace('    curebo =','    pon =')))
 
+    def test_late_literal_and_dynamic_roster_reassignment_fail_closed(self):
+        for write in ('B.UNITS = { impostor = {}, junk = {} }',
+                      'B.UNITS = getNewUnits()',
+                      'B . UNITS = {}'):
+            with self.subTest(write=write):
+                self.assertIn('B.UNITS', ' '.join(self.errors(
+                    b=self.balance + "\n" + write + "\n")))
+
+    def test_bracket_alias_direct_field_and_nested_field_writes_rejected(self):
+        for write in ('B["UNITS"] = {}', "B['UNITS'] = {}",
+                      'B.UNITS.curebo = nil', 'B.UNITS["pon"] = nil',
+                      'B.UNITS.curebo.cost = 0', 'B.UNITS.curebo.cost += 1',
+                      'B.UNITS[id] = nil'):
+            with self.subTest(write=write):
+                self.assertTrue(self.errors(b=self.balance + "\n" + write))
+
+    def test_rawset_and_table_helpers_cannot_replace_roster(self):
+        for write in ('rawset(B, "UNITS", {})',
+                      "rawset(B, 'UNITS', {})",
+                      'rawset(B.UNITS, "pon", nil)',
+                      'table.clear(B.UNITS)',
+                      'table.insert(B.UNITS, "intruder")',
+                      'setmetatable(B.UNITS, {})'):
+            with self.subTest(write=write):
+                self.assertTrue(self.errors(b=self.balance + "\n" + write))
+
+    def test_reassigned_module_table_cannot_bypass_roster(self):
+        self.assertIn("balance module reassignment is forbidden",
+                      self.errors(b=self.balance + "\nB = {UNITS = {}}\n"))
+
+    def test_comments_and_quoted_examples_do_not_trigger_false_writes(self):
+        examples = (
+            '-- B.UNITS = { intruder = {} }',
+            '--[[ B.UNITS.pon = nil ]]',
+            'local example = "B.UNITS.curebo = nil"',
+            "local example2 = 'B[\"UNITS\"] = {}'",
+        )
+        for example in examples:
+            with self.subTest(example=example):
+                self.assertEqual(self.errors(b=self.balance + "\n" + example), [])
+
+    def test_fake_first_roster_in_comment_cannot_override_real_source(self):
+        prefix = '-- B.UNITS = {\n--     intruder = {},\n-- }\n'
+        self.assertEqual(self.errors(b=prefix + self.balance), [])
+
+
     def test_duplicates_across_live_and_planned_are_rejected(self):
         self.catalog['candidates'].append(deepcopy(self.catalog['characters'][0]))
         self.assertTrue(self.errors())
