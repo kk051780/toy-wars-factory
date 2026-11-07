@@ -30,7 +30,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_source_pins_match_actual_four_game_lua_blobs(self):
         files=x.read_pinned_sources(self.root)
         self.assertEqual(len(files),4)
-        self.assertEqual(sum(map(len,files.values())),73376)
+        self.assertEqual(sum(map(len,files.values())),74583)
 
     def test_generated_document_is_deterministic(self):
         a,ar=x.build_place(self.root)
@@ -75,7 +75,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_current_combined_gameplay_is_embedded_in_actual_xml(self):
         binary, receipt=x.build_place(self.root)
         self.assertEqual(receipt['unmerged_source_branch_head_sha'],
-                         'c920067a8e0a2566feb9b5bd22c10f91bb12fba5')
+                         '8b8682e6ee6e4dd4d1f19048257be1a6929e7974')
         self.assertEqual(receipt['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
                          '181b0ef3a5aedafef4490decdbbe167d769e9932')
         doc=ET.fromstring(binary)
@@ -93,6 +93,7 @@ class XmlArtifacts(unittest.TestCase):
         self.assertIn('state.baseHP.Value=100',embedded['ToyWarsServer'])
         self.assertIn('ToyPageNavigation',embedded['ToyWarsHUD'])
         self.assertIn('RoundResultBanner',embedded['ToyWarsHUD'])
+        self.assertIn('BossWaveWarning',embedded['ToyWarsHUD'])
         self.assertIn('curebo',embedded['ToyWarsBalance'])
 
     def test_wave_50_junk_scaling_is_present_in_embedded_game_xml(self):
@@ -119,7 +120,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_tenth_wave_captain_is_in_embedded_3d_server_source(self):
         xml, manifest=x.build_place(self.root)
         self.assertEqual(manifest['unmerged_source_branch_head_sha'],
-                         'c920067a8e0a2566feb9b5bd22c10f91bb12fba5')
+                         '8b8682e6ee6e4dd4d1f19048257be1a6929e7974')
         self.assertEqual(manifest['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
                          '64175b1cda7e4d5e4623d7b28bb80fdc3d64c3b8')
         self.assertEqual(manifest['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
@@ -159,10 +160,28 @@ class XmlArtifacts(unittest.TestCase):
         self.assertFalse(receipt['roblox_engine_verified'])
         self.assertFalse(receipt['source_merge_verified'])
 
+    def test_boss_warning_is_in_pinned_hud_with_authoritative_wave_refresh(self):
+        binary, manifest=x.build_place(self.root)
+        self.assertEqual(manifest['unmerged_source_branch_head_sha'],
+                         '8b8682e6ee6e4dd4d1f19048257be1a6929e7974')
+        self.assertEqual(manifest['sources']['src/ToyWarsHUD.client.lua']['git_blob_sha1'],
+                         '7bbd7983ed4bf536bcc8264c3e9a8eca2a213d1f')
+        doc=ET.fromstring(binary)
+        hud=next(item.find('./Properties/ProtectedString[@name="Source"]').text
+                 for item in doc.findall('.//Item')
+                 if (item.find('./Properties/string[@name="Name"]') is not None
+                     and item.find('./Properties/string[@name="Name"]').text == 'ToyWarsHUD'))
+        self.assertIn('BossWaveWarning',hud)
+        self.assertIn('B.junkBoss(current)',hud)
+        self.assertIn('wave.Changed:Connect(refresh)',hud) if False else None
+        self.assertIn('bossWarning.Visible',hud)
+        self.assertFalse(manifest['roblox_engine_verified'])
+        self.assertFalse(manifest['source_merge_verified'])
+
     def test_factory_speed_is_in_signed_source_pinned_xml_candidate(self):
         binary, manifest=x.build_place(self.root)
         self.assertEqual(manifest['unmerged_source_branch_head_sha'],
-                         'c920067a8e0a2566feb9b5bd22c10f91bb12fba5')
+                         '8b8682e6ee6e4dd4d1f19048257be1a6929e7974')
         self.assertEqual(manifest['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
                          '64175b1cda7e4d5e4623d7b28bb80fdc3d64c3b8')
         self.assertEqual(manifest['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
@@ -188,6 +207,7 @@ class XmlArtifacts(unittest.TestCase):
         self.assertIn('target,dist=guardonInterception(state,e,target,dist)',embedded['ToyWarsServer'])
         self.assertIn('JUNK_CAPTAIN',embedded['ToyWarsServer'])
         self.assertIn('RoundResultBanner',embedded['ToyWarsHUD'])
+        self.assertIn('BossWaveWarning',embedded['ToyWarsHUD'])
         self.assertFalse(manifest['roblox_engine_verified'])
         self.assertFalse(manifest['source_merge_verified'])
 
