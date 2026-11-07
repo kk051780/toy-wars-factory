@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "id": "C98816",
+  "date_utc": "2026-11-07",
+  "kind": "TANKURU_SOURCERY_PROTECTED_SOURCE_METRIC_RECONCILIATION",
+  "source_branch": "controller/tankuru-sourcery-review-fixes-20261107-9c3443b2",
+  "pr": 194,
+  "parent_pr": 193,
+  "parent_head": "db4537051f960cde52649407fdaf4fb54ec41df8",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "owner_id": "9c3443b2-4a58-4021-b809-c87faf918846",
+    "epoch": 494,
+    "claim_commit": "e7ef455649e01f75f7f6a8740ad8004ea5d11f47"
+  },
+  "original_source_commit": "152943211bda32d3b832d37814957b041d212647",
+  "original_review": {
+    "pr": 191,
+    "review_id": 5811235468,
+    "findings": 3
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "fdb738d936e49a7a2d2b0f44b149a5f3be5ad9fd",
+      "after_blob": "6b4f8d2c84d9d333f71b673f819420d1b80f2f3d",
+      "before_bytes": 54241,
+      "after_bytes": 54528,
+      "delta_bytes": 287
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_bytes": 72790
+  },
+  "previous_qa": {
+    "run_id": 42359230450,
+    "offline": "FAIL",
+    "compile_hold": "PASS",
+    "failure": "test_handoff_checkpoint source metric reconciliation: unrecorded +287 server bytes"
+  },
+  "test_fix": "Append immutable source_changes ledger to existing history; do not disable/relax size-chain test",
+  "new_lua_fixture_cases": 3,
+  "roblox_engine_verified": false,
+  "android_verified": false,
+  "two_client_verified": false,
+  "main_merged": false,
+  "independent_review": false,
+  "additional_paid_spend_yen": 0
+}

@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "id": "C98817",
+  "date_utc": "2026-11-07",
+  "kind": "SOURCERY_PR194_CANNON_AND_FLASH_FACE_OCCLUSION_FIX",
+  "source_branch": "controller/tankuru-sourcery-review-fixes-20261107-9c3443b2",
+  "parent_pr": 194,
+  "parent_head": "0b5213b0874b81a3ba4438c047165363117a6f08",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "epoch": 496,
+    "owner_id": "4ee9b2cd-6020-4e04-8440-2d850400ac82",
+    "claim_commit": "fc30e7cf5dd018302e7c565c438cd5b3806dca4f"
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "6b4f8d2c84d9d333f71b673f819420d1b80f2f3d",
+      "after_blob": "f4206a0355222ca098c7c3dafb7c3316b027e5cc",
+      "before_bytes": 54528,
+      "after_bytes": 54528,
+      "delta_bytes": 0
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_bytes": 72790
+  },
+  "added_lua_mock_cases": 2,
+  "expected_tankuru_cases": 15,
+  "design": "TANKURU face Y 1.3 in front of core, below cannon and muzzle flash and above tracks with occlusion guard",
+  "sourcery_followup": {
+    "pr": 194,
+    "latest_review": "COMMENTED_2_FINDINGS",
+    "findings": [
+      "exporter old source commit",
+      "face occluded by cannon"
+    ]
+  },
+  "roblox_engine_verified": false,
+  "independent_review": false,
+  "main_merged": false,
+  "additional_paid_spend_yen": 0
+}

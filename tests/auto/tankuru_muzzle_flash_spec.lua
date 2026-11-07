@@ -39,10 +39,34 @@ local function check(name,fn)
     if ok then passed=passed+1;print("PASS "..name)
     else failed=failed+1;print("FAIL "..name..": "..tostring(err)) end
 end
+local function countFlash(model)
+    local count=0
+    for _,child in ipairs(model:GetChildren()) do
+        if child.Name=="MuzzleFlash" then count=count+1 end
+    end
+    return count
+end
+local function facesIncomingLane(model)
+    local core=assert(model:FindFirstChild("Core"))
+    local cannon=assert(model:FindFirstChild("Cannon"))
+    local face=assert(model:FindFirstChild("Face"))
+    local flash=assert(model:FindFirstChild("MuzzleFlash"))
+    local tracks=assert(model:FindFirstChild("Tracks"))
+    -- Test +Z orientation, full face bounds and all front-facing occluders.
+    local cf,ff=cannon.CFrame,face.CFrame
+    return cf.LookVector and ff.LookVector
+        and cf.LookVector.Z>0.99 and ff.LookVector.Z>0.99
+        and ff.Position.Z-face.Size.Z/2>core.CFrame.Position.Z+core.Size.Z/2
+        and flash.CFrame.Position.Z>cf.Position.Z+cannon.Size.Z/2
+        and ff.Position.Y+face.Size.Y/2<cf.Position.Y-cannon.Size.Y/2
+        and ff.Position.Y+face.Size.Y/2<flash.CFrame.Position.Y-flash.Size.Y/2
+        and ff.Position.Y-face.Size.Y/2>tracks.CFrame.Position.Y+tracks.Size.Y/2
+end
 check("tankuru owns one initially hidden 3D neon flash",function()
     local _,_,entity=fixture()
     local tank=entity("tankuru","ally",0,0)
     local flash=assert(tank.model:FindFirstChild("MuzzleFlash"))
+    assert(countFlash(tank.model)==1,"exactly one pooled flash")
     assert(flash:IsA("BasePart") and flash.Shape=="PartType.Ball")
     assert(flash.Material=="Material.Neon")
     assert(flash.Anchored and not flash.CanCollide and flash.CanTouch==false)
@@ -52,8 +76,48 @@ end)
 check("cannon and face point toward the approaching positive-Z JUNK lane",function()
     local _,_,entity=fixture()
     local tank=entity("tankuru","ally",0,0)
-    assert(tank.model:FindFirstChild("Cannon").CFrame.Position.Z>0)
-    assert(tank.model:FindFirstChild("Face").CFrame.Position.Z>0)
+    assert(facesIncomingLane(tank.model),"visible face and +Z orientation")
+end)
+check("reversed cannon orientation is rejected by the facing predicate",function()
+    local _,_,entity=fixture()
+    local model=entity("tankuru","ally",0,0).model
+    local cannon=model:FindFirstChild("Cannon")
+    local old=cannon.CFrame
+    cannon.CFrame={Position=old.Position,LookVector={X=0,Y=0,Z=-1}}
+    assert(not facesIncomingLane(model))
+end)
+check("occluded face is rejected by the visibility predicate",function()
+    local _,_,entity=fixture()
+    local model=entity("tankuru","ally",0,0).model
+    local face=model:FindFirstChild("Face")
+    local old=face.CFrame
+    face.CFrame={Position={X=0,Y=2.1,Z=1.28},LookVector=old.LookVector}
+    assert(not facesIncomingLane(model))
+end)
+check("forward face hidden by cannon is rejected",function()
+    local _,_,entity=fixture()
+    local model=entity("tankuru","ally",0,0).model
+    local face=assert(model:FindFirstChild("Face"))
+    local old=face.CFrame
+    face.CFrame={Position={X=0,Y=2.1,Z=2.65},LookVector=old.LookVector}
+    assert(not facesIncomingLane(model),"previous face Y must be occluded")
+end)
+check("forward face hidden by a moved muzzle flash is rejected",function()
+    local _,_,entity=fixture()
+    local model=entity("tankuru","ally",0,0).model
+    local flash=assert(model:FindFirstChild("MuzzleFlash"))
+    flash.CFrame={Position={X=0,Y=1.3,Z=5.7}}
+    assert(not facesIncomingLane(model),"flash front projection must be rejected")
+end)
+check("duplicate flash object is detected by exact child count",function()
+    local _,_,entity=fixture()
+    local model=entity("tankuru","ally",0,0).model
+    assert(countFlash(model)==1)
+    local children=model._children -- mock backing list; not a Roblox instance API
+    children[#children+1]={Name="MuzzleFlash"}
+    assert(countFlash(model)==2)
+    table.remove(children)
+    assert(countFlash(model)==1)
 end)
 check("valid tankuru hit illuminates flash and deals normal 19 damage",function()
     local _,s,entity,update=fixture()
@@ -100,6 +164,7 @@ check("same flash instance reused, no per-shot growth",function()
     entity("junk","enemy",0,4)
     local flash=tank.model:FindFirstChild("MuzzleFlash")
     local count=#tank.model:GetChildren()
+    assert(countFlash(tank.model)==1)
     update(s,tank,0.1)
     s.combatTime=0.3;tank.cooldown=10
     update(s,tank,0.1)
@@ -108,6 +173,7 @@ check("same flash instance reused, no per-shot growth",function()
     update(s,tank,0.1)
     assert(flash.Transparency==0.08 and tank.model:FindFirstChild("MuzzleFlash")==flash)
     assert(#tank.model:GetChildren()==count)
+    assert(countFlash(tank.model)==1,"no duplicate flashes after reuse")
 end)
 check("boss focus still applies with the cannon flash",function()
     local _,s,entity,update,boss=fixture()
