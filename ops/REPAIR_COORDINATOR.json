@@ -1842,17 +1842,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 478,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "f64c50d1-80e5-4b3e-998b-0a6b311be468",
-    "task_id": null,
-    "epoch": 478,
-    "acquired_at": "2026-11-07T06:54:07.384Z",
-    "expires_at": "2026-11-07T07:24:07.384Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/guardon-bodyguard-pve-20261107-f64c50d1",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3496,24 +3486,34 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_STUDIO_SMOKE_DRAFT_PR_RECORDED_UNMERGED",
-    "owner_id": "9bbe25b9-8ba8-4b76-8451-29915985920d",
-    "epoch": 477,
-    "claim_commit": "f9a0640cdeb475370ab6911035b7fbecae32ef6b",
-    "work_branch": "controller/studio-smoke-v2-20261107-9bbe25b9",
-    "pr": 188,
-    "pr_head": "4c8b90ee079bad6d232113eb615bd017859822a5",
+    "kind": "CONTROLLER_GUARDON_PVE_DRAFT_PR189_UNMERGED",
+    "owner_id": "f64c50d1-80e5-4b3e-998b-0a6b311be468",
+    "epoch": 478,
+    "claim_commit": "32ae9dafc8ac16f5d4d9598e909b11451320b97b",
+    "work_branch": "controller/guardon-bodyguard-pve-20261107-f64c50d1",
+    "pr": 189,
+    "pr_head": "6a75ea23cf6fb98201e8d48558ea2925a4394a45",
+    "parent_pr": 187,
+    "parent_sha": "35d4e0fc2a72a6bfc442561f4222e7497df15975",
     "changed_files": 3,
-    "added_lines": 349,
-    "deleted_lines": 0,
-    "local_lua_mocks": "10/10 PASS",
-    "github_CI": "PENDING_EXACT_HEAD_CHECK",
-    "independent_review": "NOT_DONE",
+    "source_delta_bytes": 1318,
+    "source_delta_lines": 30,
+    "characters_touched": [
+      "guardon",
+      "pon",
+      "curebo",
+      "junk"
+    ],
+    "native_mock_cases": 12,
+    "hosted_workflow_run_id": 42349214517,
+    "hosted_ci_status_at_release": "IN_PROGRESS",
+    "native_review": "NONE",
     "main_merged": false,
-    "roblox_engine_verified": false,
-    "additional_spend": 0,
+    "studio_verified": false,
+    "android_verified": false,
+    "extra_spend": 0,
     "owner_release_not_provider_terminal_proof": true,
-    "released_at": "2026-11-07T06:49:47.823Z"
+    "released_at": "2026-11-07T06:57:51.321Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
