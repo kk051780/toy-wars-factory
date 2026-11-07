@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "kind": "READ_ONLY_PROVIDER_VERIFIED_INTEGRATION_PRECHECK_NOT_AN_APPROVAL",
+  "observed_at": "2026-11-07T03:01:06.278Z",
+  "created_by_epoch": 476,
+  "creator_origin": "manual_controller",
+  "creator_owner_id": "5329213b-69c1-41fb-9ecb-128056d20b3e",
+  "repository": "kk051780/toy-wars-factory",
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "main_exact_head_ci": {
+    "run_id": 42318129211,
+    "head": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "result": "SUCCESS"
+  },
+  "stack": [
+    {
+      "pr": 184,
+      "title": "CUREBO + wave50 victory + source-pinned XML",
+      "base": "main",
+      "head": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+      "changes": 39,
+      "commits": 15,
+      "ci": 42305151306,
+      "python_tests": 891,
+      "artifact_id": 13545044016,
+      "review_count": 0,
+      "ready_for_merge": false,
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42305151306",
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/184",
+      "ci_status": "GITHUB_PUSH_EXACT_HEAD_SUCCESS"
+    },
+    {
+      "pr": 185,
+      "title": "Post-wave10 JUNK threat escalation",
+      "base": "bootstrap/twf-current-curebo-outcome-integration-20261106",
+      "head": "961e0bea8ecc3d9ddf5b383e29feb75571abaa4f",
+      "changes": 7,
+      "commits": 2,
+      "ci": 42323782918,
+      "python_tests": 892,
+      "artifact_id": 13554520842,
+      "review_count": 0,
+      "ready_for_merge": false,
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42323782918",
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/185",
+      "ci_status": "GITHUB_PUSH_EXACT_HEAD_SUCCESS"
+    },
+    {
+      "pr": 186,
+      "title": "10-wave JUNK CAPTAIN boss",
+      "base": "bootstrap/twf-junk-wave-escalation-20261107",
+      "head": "85c1cd3504ef7e7929f3e3014dd15737f821adba",
+      "changes": 6,
+      "commits": 2,
+      "ci": 42326115953,
+      "python_tests": 893,
+      "artifact_id": 13555152444,
+      "review_count": 0,
+      "ready_for_merge": false,
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42326115953",
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/186",
+      "ci_status": "GITHUB_PUSH_EXACT_HEAD_SUCCESS"
+    },
+    {
+      "pr": 187,
+      "title": "Factory level throughput 3.0s to 1.5s",
+      "base": "bootstrap/twf-junk-captain-boss-20261107",
+      "head": "35d4e0fc2a72a6bfc442561f4222e7497df15975",
+      "changes": 7,
+      "commits": 2,
+      "ci": 42329210093,
+      "python_tests": 894,
+      "artifact_id": 13556427314,
+      "review_count": 0,
+      "ready_for_merge": false,
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42329210093",
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/187",
+      "ci_status": "GITHUB_PUSH_EXACT_HEAD_SUCCESS"
+    }
+  ],
+  "latest_head": "35d4e0fc2a72a6bfc442561f4222e7497df15975",
+  "main_to_tip": {
+    "status": "ahead",
+    "ahead_by": 21,
+    "behind_by": 0,
+    "unique_files_changed": 47,
+    "source_files_changed": [
+      "src/ToyWarsBalance.lua",
+      "src/ToyWarsHUD.client.lua",
+      "src/ToyWarsServer.server.lua"
+    ],
+    "stacked_commit_order_proven": true
+  },
+  "independent_provider_reviews_present": false,
+  "requested_reviewers_pr184": {
+    "users": [],
+    "teams": []
+  },
+  "registered_manual_review_requests": [
+    "PR61",
+    "PR179",
+    "PR98"
+  ],
+  "stack_PRs_registered_in_authoritative_manual_review_requests": false,
+  "current_policy": {
+    "issue": 182,
+    "free_first": true,
+    "incremental_spend_cap": "0 JPY",
+    "author_self_review_prohibited": true,
+    "real_engine_release_hold": true,
+    "pr60_review_policy_bootstrap_status": "DRAFT_UNMERGED"
+  },
+  "native_review_enforcement": {
+    "native_review_guard_file": "tools/native_github_review_gate.py",
+    "current_main_file_present": false,
+    "pr60_file_present": true,
+    "require_provider_verified_reviewer_approval": true,
+    "required_count": "NOT_VERIFIED",
+    "protected_main_api_result": "403_RESOURCE_NOT_ACCESSIBLE_BY_INTEGRATION",
+    "effective_protection_status": "UNKNOWN_NOT_ATTESTED",
+    "native_review_gate_status": "BLOCKED"
+  },
+  "overlaps_not_safe_to_merge_separately": [
+    {
+      "pr": 98,
+      "history": "ancestor of stack tip 35d4e0fc; do not double-merge overlapping feature files"
+    },
+    {
+      "pr": 179,
+      "history": "diverged from stack tip; game outcome changes incorporated by alternate implementation, do not merge as a parallel branch without independent diff reconciliation"
+    },
+    {
+      "pr": 183,
+      "history": "diverged from stack tip; XML export ownership guard included via PR184 integration, do not merge divergent alternative blind"
+    }
+  ],
+  "reason": "All four stacked PRs have exact-head successful Actions and linear ancestry but zero separate provider-native reviews. PR60 native gate is not accepted on main. Integration authorization to merge depends on provider-authenticated independent reviewer and effective main protection; GitHub branch-protection GET403 is insufficient to verify state. No merge may be based solely on a controller's or assistant's self-assessment.",
+  "review_gate_actions": [
+    "An independent authorized reviewer verifies each exact live PR commit, all changed files, C source ledgers and unchanged system security holds.",
+    "Provider-native review is submitted by a user genuinely distinct from author/last pusher, with verified sufficient repository permission and exact-head valid state; do not manufacture identity or review.",
+    "Authorized reviewer reads provider main branch protection/rulesets and confirms effective required-approval settings. If this cannot be proven, leave BLOCKED (do not waive or automatically upgrade).",
+    "Independently verify registered review request provenance and active REVIEWER lease; do not silently insert an unapproved manual review request.",
+    "After genuine approval/green checks, merge one PR at a time in sequence 184 then185 then186 then187; re-fetch current base/head, retarget stacked base only after adoption, re-run exact PR/main CI and halt on any failure; no double-merge of 98/179/183.",
+    "Only then seek explicitly authorized private Roblox engine boot and mobile/multiplayer evidence; native Studio PASS remains false until observed."
+  ],
+  "evidence_type": "read-only-current-GitHub-snapshot-structural-compare-and-actions",
+  "claim_not_made": [
+    "independent reviewer approved",
+    "protected main",
+    "main merged",
+    "Roblox Studio ran",
+    "private Roblox place uploaded",
+    "mobile Play verified",
+    "third-party auth connected",
+    "cloud cost remaining known"
+  ],
+  "incremental_spend": 0,
+  "main_mutated": false,
+  "prs_mutated": false,
+  "github_permissions_mutated": false
+}
