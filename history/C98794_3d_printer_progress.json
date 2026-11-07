@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "id": "C98794",
+  "date_utc": "2026-11-07",
+  "kind": "SERVER_3D_PRINTER_CYCLE_PROGRESS",
+  "source_branch": "controller/printer-3d-progress-20261107-36e10f50",
+  "parent_pr": 192,
+  "parent_head": "1afb1e2d0d44a2a2b251442af21a44153a4639f8",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "epoch": 491,
+    "owner_id": "36e10f50-2ecf-4c9c-969d-3b89dfd7a1ea",
+    "claim_commit": "ff96c98cb94b302d939fc2db76569aacf1bfd641"
+  },
+  "change": "One anchored neon factory progress bar per workshop, 10% step updates only when production cycle progresses; server-owned cycle count, next-print interval, reset on loss/victory, unchanged cash/units and authority.",
+  "reason": "Before change factory printer shows static throughput only; no visible 3D manifestation of the player's production investment during each cycle.",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "a358ef13e1743cabdf0a940a29aa09c8387ac201",
+      "after_blob": "fdb738d936e49a7a2d2b0f44b149a5f3be5ad9fd",
+      "before_bytes": 52516,
+      "after_bytes": 54241,
+      "delta_bytes": 1725
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1600,
+    "lua_bytes": 72503
+  },
+  "new_server_mock_tests": "tests/auto/printer_progress_visual_spec.lua",
+  "native_mock_cases": 11,
+  "characters": [
+    "pon",
+    "guardon",
+    "tankuru",
+    "curebo"
+  ],
+  "game_3d_engine_verified": false,
+  "phone_ui_verified": false,
+  "main_merged": false,
+  "independent_review": false,
+  "additional_paid_spend_yen": 0
+}

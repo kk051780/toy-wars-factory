@@ -13,15 +13,15 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 REPO = "kk051780/toy-wars-factory"
-PINNED_QA_HEAD = "6a65ec62022eadd2f273c3c18312db789f271987"
+PINNED_QA_HEAD = "9e2a188b8d215b231757e95fa08abdacf4c4c2d3"
 EXPECTED = (
     ("ReplicatedStorage", "ToyWarsBalance", "ModuleScript", "src/ToyWarsBalance.lua", "e2080307182d1ac1c4c4842f1307229b75ca7b12"),
-    ("ServerScriptService", "ToyWarsServer", "Script", "src/ToyWarsServer.server.lua", "a358ef13e1743cabdf0a940a29aa09c8387ac201"),
+    ("ServerScriptService", "ToyWarsServer", "Script", "src/ToyWarsServer.server.lua", "fdb738d936e49a7a2d2b0f44b149a5f3be5ad9fd"),
     ("ServerScriptService", "ToyWarsSmokeTest", "Script", "src/ToyWarsSmokeTest.server.lua", "ccba431909c664909e2680785648d0402fedf3c3"),
     ("StarterPlayer/StarterPlayerScripts", "ToyWarsHUD", "LocalScript", "src/ToyWarsHUD.client.lua", "83233206eb2119c4a05aa01bc4f320b554f4f79b"),
 )
-XML_NAME = "twf_4toy_studio_preview_NOT_ENGINE_VERIFIED.rbxlx"
-RECEIPT_NAME = "twf_4toy_studio_preview_UNTRUSTED_receipt.json"
+XML_NAME = "twf_4toy_printer_progress_NOT_ENGINE_VERIFIED.rbxlx"
+RECEIPT_NAME = "twf_4toy_printer_progress_UNTRUSTED_receipt.json"
 
 class ExportBlocked(ValueError):
     pass

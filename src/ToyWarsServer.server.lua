@@ -512,6 +512,13 @@ local function makePlot(player, state)
     end
     local machine = part(map,"ToyPrinter",Vector3.new(11,7,7),CFrame.new(x-8,4.2,-46),SLOT_COLORS[state.slot])
     local printerLabel=label(machine,"TOY PRINTER\nAuto-production",220,74,6)
+    -- One permanent neon bar on each workshop printer: server-owned
+    -- manufacture progress, visible in 3D without client-side guesses.
+    local printerBar=part(map,"ToyPrinterProgress",Vector3.new(0.2,0.3,0.85),
+        CFrame.new(x-11.45+0.1,8.05,-46),Color3.fromRGB(110,255,176),Enum.Material.Neon)
+    state.printerBar=printerBar
+    state.printerText=printerLabel
+    state.printerProgressTick=-1
     local enemyDoor = part(map,"JunkPortal",Vector3.new(19,9,4),CFrame.new(x,4.7,45),Color3.fromRGB(135,66,105),Enum.Material.Neon)
     label(enemyDoor,"JUNK PIRATES\nIncoming!",220,65,7)
     local base = part(map,"BlueprintVault",Vector3.new(14,7,5),CFrame.new(x,4.0,-45),Color3.fromRGB(75,118,238),Enum.Material.Metal)
@@ -578,7 +585,28 @@ local function makePlot(player, state)
         state.coins.Value = state.coins.Value-price
         state.level.Value = state.level.Value+1
         refreshUpgrade()
+        -- A level change applies to the NEXT scheduled print, not retroactively.
+        state.printerProgressTick=-1
     end)
+end
+
+-- Show the exact current scheduled cycle, including when funds or field
+-- capacity will prevent buying; this is NEXT ATTEMPT, not a paid toy promise.
+-- Quantize to 10% steps so the server never redraws 3D parts every Heartbeat.
+local function refreshPrinterProgress(state)
+    local bar=state.printerBar
+    local txt=state.printerText
+    if not bar or not bar.Parent or not txt then return end
+    local cycle=state.productionCycle or 1.2
+    if cycle<=0 then return end
+    local remaining=math.max(0,math.min(cycle,state.productionTimer))
+    local ticks=math.max(0,math.min(10,math.floor(10*(cycle-remaining)/cycle+0.000001)))
+    if ticks==state.printerProgressTick then return end
+    state.printerProgressTick=ticks
+    local width=0.2+0.66*ticks
+    bar.Size=Vector3.new(width,0.3,0.85)
+    bar.CFrame=CFrame.new(state.x-11.45+width/2,8.05,-46)
+    txt.Text=string.format("NEXT PRINT %.1fs\n%d%%",cycle,ticks*10)
 end
 
 local function aliveCount(state, side)
@@ -868,6 +896,8 @@ local function resetAfterLoss(state)
     state.enemyTimer=0.1
     state.waveBreak=4
     state.productionTimer=1
+    state.productionCycle=1
+    state.printerProgressTick=-1
 end
 
 local function simulate(state,dt)
@@ -893,6 +923,8 @@ local function simulate(state,dt)
         -- factory speed. Never consume a backlog of purchases in one tick.
         local interval=B.productionInterval(state.level.Value) or 3.0
         state.productionTimer=state.productionTimer+interval
+        state.productionCycle=interval
+        state.printerProgressTick=-1
         if aliveCount(state,"ally")<B.MAX_FIELD_UNITS then
             local new=B.buy(state.selected,state.coins.Value,aliveCount(state,"ally"))
             if new then
@@ -902,6 +934,7 @@ local function simulate(state,dt)
         end
     end
 
+    refreshPrinterProgress(state)
     if state.waveBreak>0 then
         state.waveBreak=math.max(0,state.waveBreak-dt)
         if state.waveBreak==0 and state.roundOutcome.Value~="" then
@@ -931,6 +964,8 @@ local function simulate(state,dt)
             state.entities={}
             state.baseHP.Value=100
             state.productionTimer=1
+            state.productionCycle=1
+            state.printerProgressTick=-1
             state.roundOutcome.Value="VICTORY"
             state.wave.Value=1
         else
@@ -1036,7 +1071,7 @@ local function join(player)
         unitsValue=units,enemiesValue=enemies,selectedValue=selected,selected="pon",
         roundOutcome=outcome,
         entities={},spawnOrdinal=0,enemyTarget=B.waveSize(wave.Value),enemiesMade=0,
-        productionTimer=1.2,enemyTimer=0.1,waveBreak=4,incomeCarry=0,
+        productionTimer=1.2,productionCycle=1.2,enemyTimer=0.1,waveBreak=4,incomeCarry=0,
     }
     sessions[player]=state
     makePlot(player,state)
