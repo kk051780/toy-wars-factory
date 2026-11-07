@@ -1842,17 +1842,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 477,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "9bbe25b9-8ba8-4b76-8451-29915985920d",
-    "task_id": null,
-    "epoch": 477,
-    "acquired_at": "2026-11-07T06:46:14.189Z",
-    "expires_at": "2026-11-07T07:16:14.189Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/studio-smoke-v2-20261107-9bbe25b9",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3496,35 +3486,24 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_PR184_187_INTEGRATION_REVIEW_BLOCKER_REGISTERED_NOT_REVIEW_APPROVED",
-    "epoch": 476,
-    "owner_id": "5329213b-69c1-41fb-9ecb-128056d20b3e",
-    "claim_commit": "957c0505f0f7533d2abcea7670c842f2d5e9c517",
-    "work_branch": "twf-repair-coordinator",
-    "work_request_id": "PR184_187_STACKED_INTEGRATION_READINESS_20261107",
-    "readiness_packet_path": "ops/review_packets/PR184_187_stack_preflight_epoch476.json",
-    "review_stack": [
-      184,
-      185,
-      186,
-      187
-    ],
-    "latest_head": "35d4e0fc2a72a6bfc442561f4222e7497df15975",
-    "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "commits_ahead": 21,
-    "behind": 0,
-    "unique_files_changed": 47,
-    "exact_head_CI": "4/4 PASS",
-    "native_review": "NONE",
-    "main_branch_protection": "UNVERIFIED_403",
-    "manual_review_request_for_stack": "NOT_REGISTERED_ATTESTED",
-    "pr60_review_gate": "DRAFT_UNMERGED",
-    "artifact_or_game_change": false,
+    "kind": "CONTROLLER_STUDIO_SMOKE_DRAFT_PR_RECORDED_UNMERGED",
+    "owner_id": "9bbe25b9-8ba8-4b76-8451-29915985920d",
+    "epoch": 477,
+    "claim_commit": "f9a0640cdeb475370ab6911035b7fbecae32ef6b",
+    "work_branch": "controller/studio-smoke-v2-20261107-9bbe25b9",
+    "pr": 188,
+    "pr_head": "4c8b90ee079bad6d232113eb615bd017859822a5",
+    "changed_files": 3,
+    "added_lines": 349,
+    "deleted_lines": 0,
+    "local_lua_mocks": "10/10 PASS",
+    "github_CI": "PENDING_EXACT_HEAD_CHECK",
+    "independent_review": "NOT_DONE",
     "main_merged": false,
     "roblox_engine_verified": false,
-    "followup": "REGISTERED_REVIEWER_INDEPENDENT_NATIVE_SOURCE_AND_BRANCH_PROTECTION_PROOF_REQUIRED; NO SELF_APPROVAL_OR_MERGE",
-    "incremental_spend": 0,
-    "recorded_at": "2026-11-07T03:02:40.327Z"
+    "additional_spend": 0,
+    "owner_release_not_provider_terminal_proof": true,
+    "released_at": "2026-11-07T06:49:47.823Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
