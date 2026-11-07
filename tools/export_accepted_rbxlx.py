@@ -13,15 +13,15 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 REPO = "kk051780/toy-wars-factory"
-PINNED_QA_HEAD = "261686e05741b42806c8471243a8740aa7fe98b6"
+PINNED_QA_HEAD = "922537824ef1f5859208261f431ccad4ff727728"
 EXPECTED = (
-    ("ReplicatedStorage", "ToyWarsBalance", "ModuleScript", "src/ToyWarsBalance.lua", "ede62318d0c51bee1a8f6d086098169729d8bc16"),
-    ("ServerScriptService", "ToyWarsServer", "Script", "src/ToyWarsServer.server.lua", "6ffb707142cebde26776945dff584fd322086653"),
+    ("ReplicatedStorage", "ToyWarsBalance", "ModuleScript", "src/ToyWarsBalance.lua", "e2080307182d1ac1c4c4842f1307229b75ca7b12"),
+    ("ServerScriptService", "ToyWarsServer", "Script", "src/ToyWarsServer.server.lua", "66d9abd732d472c4c23a4c0db28ba7d7af16093e"),
     ("ServerScriptService", "ToyWarsSmokeTest", "Script", "src/ToyWarsSmokeTest.server.lua", "ccba431909c664909e2680785648d0402fedf3c3"),
     ("StarterPlayer/StarterPlayerScripts", "ToyWarsHUD", "LocalScript", "src/ToyWarsHUD.client.lua", "05d72aae6924cc5d93fe14595e9af2cdeb4f73fd"),
 )
-XML_NAME = "twf_4toy_junk_captain_NOT_ENGINE_VERIFIED.rbxlx"
-RECEIPT_NAME = "twf_4toy_junk_captain_UNTRUSTED_receipt.json"
+XML_NAME = "twf_4toy_factory_throughput_NOT_ENGINE_VERIFIED.rbxlx"
+RECEIPT_NAME = "twf_4toy_factory_throughput_UNTRUSTED_receipt.json"
 
 class ExportBlocked(ValueError):
     pass
@@ -115,7 +115,7 @@ def actions_export_allowed(environ: dict[str, str]) -> bool:
     event = environ.get('GITHUB_EVENT_NAME')
     ref = environ.get('GITHUB_REF', '')
     return (event == 'push' and
-            ref == 'refs/heads/bootstrap/twf-junk-captain-boss-20261107')
+            ref == 'refs/heads/bootstrap/twf-factory-throughput-20261107')
 
 def export(root: Path, target_dir: Path) -> dict:
     """Write a fresh source-pinned XML into the existing .qa/auto Actions artifact.

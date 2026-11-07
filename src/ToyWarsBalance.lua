@@ -54,6 +54,13 @@ function B.incomePerSecond(level)
     return 6 + (level - 1) * 3, "ok"
 end
 
+-- Higher factory level speeds up the physical production line, not just coins.
+-- Level 1 remains exactly 3.0s; level 6 takes 1.5s per completed toy.
+function B.productionInterval(level)
+    if not isInteger(level) or level < 1 or level > B.MAX_LEVEL then return nil, "invalid_level" end
+    return 3.0 - 0.3 * (level - 1), "ok"
+end
+
 function B.waveSize(wave)
     if not isInteger(wave) or wave < 1 or wave > B.MAX_WAVE then return nil, "invalid_wave" end
     return math.min(3 + 2 * wave, B.MAX_FIELD_UNITS), "ok"
