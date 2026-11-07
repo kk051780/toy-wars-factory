@@ -203,10 +203,16 @@ def cas_state(api, oldref, newstate):
     if not valid_sha(base_tree):
         raise ProbeError("CONTROL_TREE_INVALID")
     blob = api.call("POST", "/git/blobs", {"content":json.dumps(newstate,indent=2)+"\n", "encoding":"utf-8"})
+    blob_sha = blob.get("sha")
+    if not valid_sha(blob_sha):
+        raise ProbeError("CONTROL_BLOB_INVALID")
     tree = api.call("POST", "/git/trees", {"base_tree":base_tree,"tree":[{
-        "path":CONTROL_PATH,"mode":"100644","type":"blob","sha":blob.get("sha")}]})
+        "path":CONTROL_PATH,"mode":"100644","type":"blob","sha":blob_sha}]})
+    tree_sha = tree.get("sha")
+    if not valid_sha(tree_sha):
+        raise ProbeError("CONTROL_TREE_CREATE_INVALID")
     fresh = api.call("POST", "/git/commits", {"message":"coordination: fenced manual GitHub Actions capability probe",
-        "tree":tree.get("sha"),"parents":[oldref]})
+        "tree":tree_sha,"parents":[oldref]})
     newsha = fresh.get("sha")
     if not valid_sha(newsha):
         raise ProbeError("CONTROL_NEW_COMMIT_INVALID")
@@ -468,6 +474,7 @@ def run(api, env):
     except ProbeError as exc:
         failure=str(exc)
     finally:
+        cleanup_error = None
         try:
             current=sha_ref(api,CONTROL_REF)
             st=state_at(api,current)
@@ -478,11 +485,17 @@ def run(api, env):
                 cas_state(api,current,nxt)
             elif claim is not None:
                 # A confirmed claim without our current ownership is unsafe.
-                raise ProbeError("RELEASE_NOT_OWNED")
+                cleanup_error = "RELEASE_NOT_OWNED"
             # If claim failed and we do NOT own the current ref, do not write.
             # Report the original claim failure, never claim a successful run.
         except ProbeError:
-            raise ProbeError("RELEASE_UNCONFIRMED") from None
+            cleanup_error = "RELEASE_UNCONFIRMED"
+        if cleanup_error:
+            # Preserve a sanitized primary error and independent cleanup status.
+            # No retry, foreign lease release, or exception traceback is exposed.
+            if failure:
+                raise ProbeError(f"{failure}__{cleanup_error}") from None
+            raise ProbeError(cleanup_error) from None
     if failure:
         raise ProbeError(failure)
     if staged_only:

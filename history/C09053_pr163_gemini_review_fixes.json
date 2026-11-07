@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "id": "C09053",
+  "date_utc": "2026-11-07",
+  "kind": "ISSUE57_PR163_GEMINI_STATIC_REVIEW_FAILCLOSED_DIAGNOSTICS_AND_ACTIONS_LEAST_PRIVILEGE",
+  "pr_number": 163,
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "previous_head": "1157e252c7f675454c12f1023ed113d9eaf5e32c",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "48f0a24f9d050c0cb4108c93916b8ee1362ff2e6",
+    "epoch": 484,
+    "owner_id": "fa8d6e56-7eaa-4ac4-a5c6-b45a06db5f11",
+    "owner_run_id": "fa8d6e56-7eaa-4ac4-a5c6-b45a06db5f11",
+    "owner_context": "MANUAL_CONTROLLER_NOT_SCHEDULED_OR_PROVIDER_AUTHENTICATED",
+    "work_branch": "controller/actions-write-pilot-8df31af2"
+  },
+  "changed_files": [
+    {
+      "path": "tools/system_actions_write_probe.py",
+      "before_blob": "b0e66b0ae064e367e63a970f2942fbc62b478f15",
+      "after_blob": "c7dcd7fd639e449079c9fdf419533bada80881bd",
+      "before_bytes": 24909,
+      "after_bytes": 25482,
+      "delta_bytes": 573
+    },
+    {
+      "path": ".github/workflows/twf-actions-write-capability-probe.yml",
+      "before_blob": "94e566599beeb1a7503d7ad964d887fee3d63fb8",
+      "after_blob": "a7948acd99cf6cdc9e4d6cb9c04bfa5d71043268",
+      "before_bytes": 1209,
+      "after_bytes": 1288,
+      "delta_bytes": 79
+    },
+    {
+      "path": "tests/test_system_actions_write_probe_claim_receipt.py",
+      "before_blob": "57d86b706052a7cf8ed477eed51c8702e5b449e6",
+      "after_blob": "f9ccfc01bb9e7561c4c554aec6763b81cf07fb51",
+      "before_bytes": 9040,
+      "after_bytes": 9050,
+      "delta_bytes": 10
+    },
+    {
+      "path": "tests/test_system_actions_write_probe_gemini_findings.py",
+      "before_blob": null,
+      "after_blob": "897b5d770e05678fa5cb2a5e199ca55333ca08f3",
+      "before_bytes": 0,
+      "after_bytes": 3655,
+      "delta_bytes": 3655
+    }
+  ],
+  "added_regression_methods": 5,
+  "review_source": "GEMINI_STATIC_SECOND_OPINION_NOT_NATIVE_GITHUB_APPROVAL",
+  "fixes": [
+    "retain primary failure and lease cleanup uncertainty separately with sanitized reason",
+    "job-scoped elevated Actions token and exact SHA checkout",
+    "verify Git blob/tree SHA before subsequent mutation"
+  ],
+  "deferred": [
+    "partial write risk requires separately tested verification",
+    "repeated GET optimization deferred to preserve TOCTOU fences"
+  ],
+  "checks": {
+    "local_candidate_unittest_8_of_8": "PASS",
+    "hosted_exact_head_CI": "PENDING",
+    "native_independent_review": "MISSING",
+    "Roblox_engine": "NOT_TESTED"
+  },
+  "main_merged": false,
+  "workflow_dispatched": false,
+  "new_paid_spend": 0
+}

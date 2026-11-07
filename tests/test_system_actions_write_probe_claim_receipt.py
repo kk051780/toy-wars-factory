@@ -143,7 +143,7 @@ class ClaimReceiptTests(unittest.TestCase):
     def test_unknown_receipt_and_current_read_failure_fails_closed(self):
         x=FakeHost(claim_effect="own",claim_error="ACK_LOST")
         x.fail_current_read=True
-        with self.assertRaisesRegex(target.ProbeError,"^RELEASE_UNCONFIRMED$"):
+        with self.assertRaisesRegex(target.ProbeError,"^ACK_LOST__RELEASE_UNCONFIRMED$"):
             x.run()
         self.assertEqual(len(x.cas_calls),1)
         self.assertEqual(x.source_calls,0)
