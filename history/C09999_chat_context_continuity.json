@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "C09999",
+  "kind": "P0_CHAT_CONTEXT_CAPACITY_CONTINUITY",
+  "created_utc": "2026-11-07",
+  "repo": "kk051780/toy-wars-factory",
+  "issue": 123,
+  "parent_pr": 201,
+  "parent_head": "1721773bf94ec932d86446c4048145df4bc2243d",
+  "coordination": {
+    "epoch": 513,
+    "owner_id": "da7e6d82-8b0d-4e87-a643-8c8c4e37d710",
+    "branch": "controller/p0-chat-continuity-20261108-da7e6d82"
+  },
+  "changed_paths": [
+    "tools/system_parallel_chat_continuity.py",
+    "tests/test_system_parallel_chat_continuity.py",
+    "docs/CHAT_CONTEXT_CONTINUITY_P0.md"
+  ],
+  "semantics": "read-only checksum-bound checkpoint and successor preflight; never automatic orphan unlock",
+  "real_chat_full_detected": false,
+  "provider_authenticated": false,
+  "main_merged": false,
+  "additional_spend_jpy": 0
+}
