@@ -1841,8 +1841,20 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 497,
-  "holder": null,
+  "epoch": 498,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 498,
+    "owner_id": "d799a343-15e3-48f3-97cf-0acf9d7c813d",
+    "task_id": null,
+    "acquired_at": "2026-11-07T09:48:15.958Z",
+    "expires_at": "2026-11-07T10:08:15.958Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/character-roster-mutation-guard-20261107-51feef51",
+    "work_id": "PR195_ALIAS_ESCAPE_ADVERSARIAL_FOLLOWUP_20261107",
+    "scope": "existing PR195 branch only: tools/system_character_pipeline.py, tests/test_system_character_pipeline.py, append-only history C98832, CI; no new PR, main, Gemini, ruleset, protections, release"
+  },
   "integration_results": {
     "35": {
       "merged": true,
