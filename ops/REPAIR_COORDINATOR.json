@@ -1841,8 +1841,20 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 494,
-  "holder": null,
+  "epoch": 495,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "owner_id": "51feef51-4de9-49cf-b5a2-b4845ea477e3",
+    "epoch": 495,
+    "task_id": null,
+    "acquired_at": "2026-11-07T09:26:26.386Z",
+    "expires_at": "2026-11-07T09:48:26.390Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/character-roster-mutation-guard-20261107-51feef51",
+    "work_id": "PR184_CHARACTER_BALANCE_MUTATION_GUARD_20261107",
+    "scope": "strictly tools/system_character_pipeline.py + tests/test_system_character_pipeline.py + append-only isolated history; parent PR184; NO protected prompts, authorized source_paths, main, Gemini, API/release"
+  },
   "integration_results": {
     "35": {
       "merged": true,
