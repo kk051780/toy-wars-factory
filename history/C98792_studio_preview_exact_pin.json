@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "id": "C98792",
+  "kind": "EXACT_SOURCE_PIN_STUDIO_PREVIEW_UNSAVED",
+  "date_utc": "2026-11-07",
+  "branch": "controller/studio-unsaved-pve-preview-20261107-db08b795",
+  "source_commit": "837a59e14b5b240524b26e0e8a78eb4ecc3a6bef",
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1565,
+    "lua_bytes": 70745
+  },
+  "expected_source_blobs": {
+    "src/ToyWarsServer.server.lua": "a358ef13e1743cabdf0a940a29aa09c8387ac201",
+    "src/ToyWarsHUD.client.lua": "939e66b2340200a09b9ff6d5badc9482da33e9c9"
+  },
+  "coordination": {
+    "kind": "CONTROLLER",
+    "epoch": 488,
+    "owner_id": "db08b795-9f1b-471c-977f-9e3e40554e07",
+    "claim_commit": "063706c938e43d5795a8cf1f6a95afac95adaeec"
+  },
+  "changed_files": [
+    "tools/export_accepted_rbxlx.py",
+    "tests/test_system_xml_artifact_export.py"
+  ],
+  "export_allowlist_unchanged": true,
+  "trust_fences_unchanged": true,
+  "studio_or_engine_verified": false,
+  "independent_review": false,
+  "main_merged": false,
+  "additional_paid_yen": 0
+}
