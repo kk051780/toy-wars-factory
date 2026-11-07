@@ -1811,17 +1811,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 475,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "e585e97a-927d-4dab-bf71-e36d8a5af74c",
-    "task_id": null,
-    "epoch": 475,
-    "acquired_at": "2026-11-07T02:52:28.372Z",
-    "expires_at": "2026-11-07T03:16:28.372Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/actions-write-pilot-8df31af2"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3465,59 +3455,30 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "MANUAL_CONTROLLER_PR187_FACTORY_THROUGHPUT_11_LUA_894_PYTHON_EXACT_CI_GREEN",
-    "epoch": 474,
-    "owner_id": "9eb2430b-2db2-4644-a482-6b8a56cf5907",
-    "claim_commit": "fbfeecd25bee4118814b22c72d165ba39495bc9b",
-    "branch": "bootstrap/twf-factory-throughput-20261107",
-    "source_commit": "922537824ef1f5859208261f431ccad4ff727728",
-    "head": "35d4e0fc2a72a6bfc442561f4222e7497df15975",
-    "base_pr_number": 186,
-    "base_head": "85c1cd3504ef7e7929f3e3014dd15737f821adba",
-    "pr_number": 187,
-    "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/187",
-    "change": "Factory upgrade Lv1..Lv6 shortens server-authoritative toy print timer from 3.0s to 1.5s in 0.3s steps; in-world ToyPrinter label mirrors current rate and updates after legitimate upgrade",
-    "changed_game_sources": [
-      "src/ToyWarsBalance.lua",
-      "src/ToyWarsServer.server.lua"
-    ],
-    "source_metrics": {
-      "lua_files": 4,
-      "lua_lines": 1474,
-      "lua_bytes": 66341
-    },
-    "new_native_test": "tests/auto/production_throughput_spec.lua",
-    "local_red_green": {
-      "base": "3 passed / 8 failed",
-      "patched": "11 passed / 0 failed"
-    },
-    "native_lua_5_4": "11/11",
-    "python": "894/894",
-    "hosted_ci": 42329210093,
-    "hosted_ci_conclusion": "success",
-    "hosted_jobs": [
-      "offline",
-      "compile_hold"
-    ],
-    "artifact_id": 13556427314,
-    "artifact_name": "twf-autonomous-regressions-not-engine",
-    "artifact_zip_sha256": "sha256:8db22aa6494fe110d57014a3277a0ede1dfd6ebe97229e4f716adbad1b433dc8",
-    "artifact_bytes": 43382,
-    "append_only_history": [
-      "history/C98782_factory_throughput.json",
-      "history/C98783_factory_throughput_exporter.json"
-    ],
-    "independent_native_review": false,
+    "kind": "MANUAL_CONTROLLER_PR163_STRICT_ID_AND_NONFINITE_JSON_CI_GREEN",
+    "epoch": 475,
+    "owner_id": "e585e97a-927d-4dab-bf71-e36d8a5af74c",
+    "claim_commit": "e3c5e436ff825e1c9d52df10239658bf2e89b64c",
+    "work_branch": "controller/actions-write-pilot-8df31af2",
+    "pr_number": 163,
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "previous_head": "00bcdda0023950801a0256a17e251780d5b3ebac",
+    "final_head": "1157e252c7f675454c12f1023ed113d9eaf5e32c",
+    "source_path": "tools/system_actions_write_probe.py",
+    "source_delta_bytes": 460,
+    "new_regression_tests": 3,
+    "history_path": "history/C09052_pr163_strict_numeric_and_nonfinite_json.json",
+    "ci_run_id": 42331540747,
+    "ci_status": "SUCCESS",
+    "offline": "SUCCESS",
+    "compile_hold": "SUCCESS",
+    "python_tests": "969/969",
+    "native_independent_approval": false,
     "main_merged": false,
-    "real_roblox_studio": false,
-    "real_roblox_play": false,
-    "mobile_verified": false,
-    "two_client_verified": false,
-    "private_place_uploaded": false,
-    "public_published": false,
-    "extra_paid_spend": 0,
-    "github_actions_free_quota_remaining": "UNKNOWN",
-    "recorded_at": "2026-11-07T02:27:56.441Z"
+    "real_actions_write_verified": false,
+    "roblox_engine_verified": false,
+    "additional_paid_services": 0,
+    "recorded_at": "2026-11-07T02:56:39.911Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
