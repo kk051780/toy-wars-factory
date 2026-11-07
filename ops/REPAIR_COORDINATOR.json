@@ -1923,8 +1923,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 511,
-  "holder": null,
+  "epoch": 512,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 512,
+    "owner_id": "9386a221-75e2-4ac3-9a58-7fe7a56676af",
+    "task_id": null,
+    "acquired_at": "2026-11-07T22:31:36.629Z",
+    "expires_at": "2026-11-07T22:54:36.629Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/p0-scoped-lease-shadow-20261108-9386a221",
+    "scope": "P0 Issue123: shadow v2 multi-lease CAS proposal, mock failure/race tests only; stacked on PR200, no runtime permission/main merge"
+  },
   "integration_results": {
     "35": {
       "merged": true,
