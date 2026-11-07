@@ -1923,8 +1923,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 512,
-  "holder": null,
+  "epoch": 513,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 513,
+    "owner_id": "da7e6d82-8b0d-4e87-a643-8c8c4e37d710",
+    "task_id": null,
+    "acquired_at": "2026-11-07T22:40:28.683Z",
+    "expires_at": "2026-11-07T23:04:28.683Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/p0-chat-continuity-20261108-da7e6d82",
+    "scope": "Issue123 P0 chat context-capacity continuity checkpoint + fail-closed successor planner, stacked PR201; no automatic takeover, old live global CAS authoritative"
+  },
   "integration_results": {
     "35": {
       "merged": true,
