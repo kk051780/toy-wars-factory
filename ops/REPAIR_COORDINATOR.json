@@ -1842,17 +1842,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 483,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "6b0f4b97-c369-440a-a5a3-a04a7beb7009",
-    "task_id": null,
-    "epoch": 483,
-    "acquired_at": "2026-11-07T07:19:03.244Z",
-    "expires_at": "2026-11-07T07:49:03.244Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/actions-write-pilot-8df31af2",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3496,29 +3486,16 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_PR190_EXACT_HEAD_CI_CORRECTION_EPOCH482",
-    "epoch": 482,
-    "owner_id": "d5a7083f-6dab-4b60-9e8e-a8c145bf3d98",
-    "claim_commit": "b44a79571c7495d04f8f3f2863141683061fc284",
-    "work_branch": "controller/tankuru-captain-target-20261107-ec4aa5ef",
-    "pr": 190,
-    "pr_head": "ddc2083c20fb9a2883eb5ab2369584679955f1ee",
-    "original_red_ci_run": 42350531900,
-    "original_red_python_failures": 2,
-    "repair_paths": [
-      "history/C98786_tankuru_captain_target.json",
-      "tests/test_system_xml_artifact_export.py",
-      "history/C98788_tankuru_qa_reconciliation.json"
-    ],
-    "source_blob_unchanged": "46e3e52eb4903b8123090772140809049ddef4c4",
-    "hosted_new_head_ci": "PENDING",
-    "independent_review": false,
-    "main_merged": false,
-    "roblox_engine_verified": false,
-    "gemini_untouched": true,
-    "owner_release_not_provider_terminal_proof": true,
-    "additional_spend": 0,
-    "released_at": "2026-11-07T07:18:24.424Z"
+    "kind": "CONTROLLER_GEMINI_AUDIT_PATCH_INTERRUPTED_TOOL_LIMIT",
+    "epoch": 483,
+    "owner_id": "6b0f4b97-c369-440a-a5a3-a04a7beb7009",
+    "pr_number": 163,
+    "observed_pr_head": "1157e252c7f675454c12f1023ed113d9eaf5e32c",
+    "source_branch_changed": false,
+    "claim_commit": "7b5bca51fbba89beceaff196c678d6bdec3751b3",
+    "released_at": "2026-11-07T07:19:43.553Z",
+    "owner_run_not_authenticated": true,
+    "paid_spend": 0
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
