@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "id": "C98784",
+  "kind": "SERVER_OWNED_GUARDON_BODYGUARD_PVE",
+  "date_utc": "2026-11-07",
+  "source_branch": "controller/guardon-bodyguard-pve-20261107-f64c50d1",
+  "baseline_head": "35d4e0fc2a72a6bfc442561f4222e7497df15975",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "baseline_PR": 187,
+  "coordinator": {
+    "epoch": 478,
+    "owner_id": "f64c50d1-80e5-4b3e-998b-0a6b311be468",
+    "claim_commit": "32ae9dafc8ac16f5d4d9598e909b11451320b97b"
+  },
+  "issue": "GUARDON is advertised as a shield guardian but its high HP does not actually protect nearby PON/CUREBO or change enemy targeting.",
+  "fix": "Server-side JUNK and JUNK CAPTAIN may retarget a living GUARDON within 8 studs of the threatened ally, only if the guardian is no more than 4 studs further away than the original target. This is confined to the attacker's current workshop entity list, preventing cross-factory shielding, dead-toy shields, and distant taunt. Existing shield geometry makes the guardian visible in 3D; no new instances, resources or purchasable content.",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "66d9abd732d472c4c23a4c0db28ba7d7af16093e",
+      "after_blob": "0333e0aa60c12709136281c22b2a2fd9569b8587",
+      "before_bytes": 48558,
+      "after_bytes": 49876,
+      "delta_bytes": 1318,
+      "before_lines": 1056,
+      "after_lines": 1086,
+      "delta_lines": 30
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1504,
+    "lua_bytes": 67659
+  },
+  "new_test": "tests/auto/guardon_bodyguard_spec.lua",
+  "proposed_native_mock_cases": 12,
+  "local_red_green": "NOT_EXECUTED; pending exact-head GitHub-hosted Lua5.4 regressions",
+  "native_studio": "NOT_RUN",
+  "two_client": "NOT_RUN",
+  "android": "NOT_RUN",
+  "game_characters_touched": [
+    "guardon",
+    "pon",
+    "curebo",
+    "junk"
+  ],
+  "enemy_scaling_unchanged": true,
+  "boss_stat_generation_unchanged": true,
+  "shared_hud_unchanged": true,
+  "unchanged_lua_blobs": {
+    "src/ToyWarsBalance.lua": "e2080307182d1ac1c4c4842f1307229b75ca7b12",
+    "src/ToyWarsHUD.client.lua": "05d72aae6924cc5d93fe14595e9af2cdeb4f73fd",
+    "src/ToyWarsSmokeTest.server.lua": "ccba431909c664909e2680785648d0402fedf3c3"
+  },
+  "independent_native_review": false,
+  "main_merged": false,
+  "roblox_upload": false,
+  "public_published": false,
+  "additional_paid_spend": 0,
+  "github_actions_free_quota_remaining": "UNKNOWN",
+  "next": "Run all GitHub-hosted CI on the exact stacked PR HEAD. Fix any regression; separate native provider review / branch-protection gate before any merge. No engine claim."
+}
