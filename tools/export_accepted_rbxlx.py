@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a source-pinned, UNVERIFIED CURRENT four-toy+victory XML from isolated QA branch.
+"""Create a source-pinned, UNVERIFIED four-toy+GUARDON shield XML from isolated QA branch.
 
 No HTTP, Roblox credentials, Studio install, or game-source modifications. This
 is a packaging step only. Independent security review and actual Roblox engine
@@ -13,15 +13,15 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 REPO = "kk051780/toy-wars-factory"
-PINNED_QA_HEAD = "922537824ef1f5859208261f431ccad4ff727728"
+PINNED_QA_HEAD = "6a75ea23cf6fb98201e8d48558ea2925a4394a45"
 EXPECTED = (
     ("ReplicatedStorage", "ToyWarsBalance", "ModuleScript", "src/ToyWarsBalance.lua", "e2080307182d1ac1c4c4842f1307229b75ca7b12"),
-    ("ServerScriptService", "ToyWarsServer", "Script", "src/ToyWarsServer.server.lua", "66d9abd732d472c4c23a4c0db28ba7d7af16093e"),
+    ("ServerScriptService", "ToyWarsServer", "Script", "src/ToyWarsServer.server.lua", "0333e0aa60c12709136281c22b2a2fd9569b8587"),
     ("ServerScriptService", "ToyWarsSmokeTest", "Script", "src/ToyWarsSmokeTest.server.lua", "ccba431909c664909e2680785648d0402fedf3c3"),
     ("StarterPlayer/StarterPlayerScripts", "ToyWarsHUD", "LocalScript", "src/ToyWarsHUD.client.lua", "05d72aae6924cc5d93fe14595e9af2cdeb4f73fd"),
 )
-XML_NAME = "twf_4toy_factory_throughput_NOT_ENGINE_VERIFIED.rbxlx"
-RECEIPT_NAME = "twf_4toy_factory_throughput_UNTRUSTED_receipt.json"
+XML_NAME = "twf_4toy_guardon_bodyguard_NOT_ENGINE_VERIFIED.rbxlx"
+RECEIPT_NAME = "twf_4toy_guardon_bodyguard_UNTRUSTED_receipt.json"
 
 class ExportBlocked(ValueError):
     pass
