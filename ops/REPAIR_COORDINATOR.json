@@ -1886,8 +1886,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 505,
-  "holder": null,
+  "epoch": 506,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 506,
+    "owner_id": "b68115c9-6553-4ab5-9196-3d740d7a2346",
+    "task_id": null,
+    "acquired_at": "2026-11-07T20:20:25.439Z",
+    "expires_at": "2026-11-07T20:45:25.439Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/boss-wave-warning-20261108-b68115c9",
+    "scope": "HUD-only JUNK CAPTAIN wave countdown sourced from B.junkBoss; modify HUD and regressions plus source-pinned XML/export history in isolated child PR197; no main, parent, policy, credential, studio or spend changes"
+  },
   "integration_results": {
     "35": {
       "merged": true,
