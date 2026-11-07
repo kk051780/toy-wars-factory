@@ -121,6 +121,34 @@ class CharacterPipelineTests(unittest.TestCase):
         self.assertIn('B.UNITS[id].cost', self.balance)
 
 
+    def test_real_unit_with_altered_indentation_is_still_counted(self):
+        for prefix in ("     ", "\t", "", "      "):
+            record = prefix + "stealth = {name = 'STEALTH'},\n"
+            with self.subTest(prefix=repr(prefix)):
+                mutated=self.balance.replace("    junk =", record+"    junk =", 1)
+                self.assertIn("catalog and executable balance roster disagree",
+                              self.errors(b=mutated))
+
+    def test_inline_unit_on_same_line_is_not_invisible(self):
+        mutated=self.balance.replace("    junk =",
+                                     "    stealth = {cost = 0}, junk =", 1)
+        self.assertIn("catalog and executable balance roster disagree",
+                      self.errors(b=mutated))
+
+    def test_computed_table_key_cannot_hide_from_catalog(self):
+        mutated=self.balance.replace("    junk =",
+                                     '    ["stealth"] = {cost=0},\n    junk =', 1)
+        self.assertIn("nonliteral or unsupported B.UNITS table key",
+                      self.errors(b=mutated))
+
+    def test_comment_and_nested_record_are_parsed_correctly(self):
+        updated=self.balance.replace("    junk =",
+                                     "    -- stealth = {cost = 0},\n    junk =", 1)
+        self.assertEqual(self.errors(b=updated), [])
+        nested=self.balance.replace("    pon = {", "    pon = {traits = {rare = true}, ", 1)
+        self.assertEqual(self.errors(b=nested), [])
+
+
     def test_duplicates_across_live_and_planned_are_rejected(self):
         self.catalog['candidates'].append(deepcopy(self.catalog['characters'][0]))
         self.assertTrue(self.errors())

@@ -125,11 +125,47 @@ def _unit_declaration_start(source):
 
 
 def registered_ids(source):
+    """Parse each real top-level unit field, never infer identity from indent.
+
+    A Lua table field can start after any whitespace or on the same line;
+    regex matching only four leading spaces silently omitted real entries.
+    Tokenizing also excludes comments and strings from the key count.
+    """
     start = _unit_declaration_start(source)
-    block = re.match(r"B\s*\.\s*UNITS\s*=\s*\{(.*?)\n\}", source[start:], re.S)
-    if not block:
+    words = [
+        match.group() for match in _LUA_TOKEN.finditer(source[start:])
+        if match.lastgroup != "comment"
+    ]
+    if words[:5] != ["B", ".", "UNITS", "=", "{"]:
         raise ValueError("literal B.UNITS table missing or malformed")
-    ids = re.findall(r"^\s{4}([a-z][a-z0-9_]*)\s*=\s*\{", block.group(1), re.M)
+    ids = []
+    i = 5
+    while i < len(words):
+        if words[i] == "}":
+            break
+        if (not re.fullmatch(r"[a-z][a-z0-9_]*", words[i]) or
+                words[i + 1:i + 3] != ["=", "{"]):
+            raise ValueError("nonliteral or unsupported B.UNITS table key")
+        ids.append(words[i])
+        i += 2
+        depth = 0
+        while i < len(words):
+            if words[i] == "{":
+                depth += 1
+            elif words[i] == "}":
+                depth -= 1
+                if depth == 0:
+                    i += 1
+                    break
+            i += 1
+        if depth:
+            raise ValueError("unbalanced literal B.UNITS unit record")
+        if i < len(words) and words[i] in (",", ";"):
+            i += 1
+        elif i < len(words) and words[i] != "}":
+            raise ValueError("malformed B.UNITS field separator")
+    else:
+        raise ValueError("unterminated literal B.UNITS table")
     if len(ids) != len(set(ids)) or "junk" not in ids:
         raise ValueError("duplicate unit or missing NPC boundary")
     return set(ids) - {"junk"}
