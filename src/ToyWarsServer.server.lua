@@ -30,6 +30,7 @@ local UNIT_COLORS = {
     pon = Color3.fromRGB(45, 209, 210),
     guardon = Color3.fromRGB(72, 130, 239),
     tankuru = Color3.fromRGB(255, 166, 83),
+    curebo = Color3.fromRGB(169, 229, 206),
     junk = Color3.fromRGB(173, 83, 118),
 }
 local selectEvent = ReplicatedStorage:WaitForChild("ToyWarsSelectUnit")
@@ -404,13 +405,13 @@ local function modelPart(parent, name, offset, size, col, ball)
     return p
 end
 
-local function createToyModel(id, x, z)
+local function createToyModel(id, x, z, boss)
     local m = Instance.new("Model")
     m.Name = id:upper()
     local c = UNIT_COLORS[id]
     local core = modelPart(m,"Core",Vector3.new(0,1.7,0),Vector3.new(3,3,2.4),c,false)
     m.PrimaryPart = core
-    modelPart(m,"Face",Vector3.new(0,2.1,-1.28),Vector3.new(2,1.3,0.12),Color3.fromRGB(250,251,255),false)
+    local face = modelPart(m,"Face",Vector3.new(0,2.1,-1.28),Vector3.new(2,1.3,0.12),Color3.fromRGB(250,251,255),false)
     if id == "pon" then
         modelPart(m,"Antenna",Vector3.new(0,3.5,0),Vector3.new(0.5,1.0,0.5),Color3.fromRGB(250,210,76),true)
         modelPart(m,"Feet",Vector3.new(0,0.25,0),Vector3.new(3.5,0.5,2.8),Color3.fromRGB(30,100,140),false)
@@ -420,13 +421,59 @@ local function createToyModel(id, x, z)
     elseif id == "tankuru" then
         core.Size = Vector3.new(4.5,2,5)
         core.CFrame = CFrame.new(0,1.45,0)
-        modelPart(m,"Cannon",Vector3.new(0,2.8,-3),Vector3.new(1.0,1.0,5),Color3.fromRGB(55,70,92),false)
+        -- Face the incoming +Z JUNK lane; one pooled 3D flash per TANKURU.
+        -- No per-shot instance creation and no changes to combat hit authority.
+        -- Opaque core ends at +Z 2.5; keep entire face outside that plane.
+        -- Both facial plane and cannon LookVector point along the +Z JUNK lane.
+        face.CFrame=CFrame.lookAt(Vector3.new(0,1.3,2.65),Vector3.new(0,1.3,3.65))
+        local cannon=modelPart(m,"Cannon",Vector3.new(0,2.8,3),Vector3.new(1.0,1.0,5),Color3.fromRGB(55,70,92),false)
+        cannon.CFrame=CFrame.lookAt(Vector3.new(0,2.8,3),Vector3.new(0,2.8,4))
         modelPart(m,"Tracks",Vector3.new(0,0.3,0),Vector3.new(5.5,0.6,6),Color3.fromRGB(60,65,85),false)
+        local flash=modelPart(m,"MuzzleFlash",Vector3.new(0,2.8,5.7),Vector3.new(1.6,1.6,1.6),Color3.fromRGB(255,226,96),true)
+        flash.Material=Enum.Material.Neon
+        flash.Transparency=1
+        flash.CanTouch=false
+    elseif id == "curebo" then
+        -- Seventeen primitive parts including the HP bar; no imported texture.
+        core.Size = Vector3.new(3.2,2.3,2.4)
+        core.CFrame = CFrame.new(0,1.4,0)
+        modelPart(m,"RepairHead",Vector3.new(0,3.0,0),Vector3.new(2.8,2.4,2.5),Color3.fromRGB(247,239,211),true)
+        face.CFrame = CFrame.new(0,3.0,-1.28)
+        face.Size = Vector3.new(2,1.1,0.12)
+        for _,xEye in ipairs({-0.52,0.52}) do
+            modelPart(m,"RepairEye",Vector3.new(xEye,3.1,-1.37),Vector3.new(0.26,0.38,0.18),Color3.fromRGB(24,39,51),true)
+        end
+        local pink=Color3.fromRGB(255,105,165)
+        for _,xLobe in ipairs({-0.36,0.36}) do
+            modelPart(m,"HeartLobe",Vector3.new(xLobe,1.8,-1.28),Vector3.new(0.6,0.55,0.18),pink,false)
+        end
+        modelPart(m,"HeartMiddle",Vector3.new(0,1.4,-1.28),Vector3.new(1.3,0.4,0.18),pink,false)
+        modelPart(m,"HeartTip",Vector3.new(0,1.0,-1.28),Vector3.new(0.55,0.4,0.18),pink,false)
+        modelPart(m,"ToolBag",Vector3.new(0,2,1.55),Vector3.new(2.6,1.8,0.6),Color3.fromRGB(143,105,64),false)
+        local brass=Color3.fromRGB(235,189,75)
+        modelPart(m,"WinderStem",Vector3.new(0,3.3,1.5),Vector3.new(0.45,1,0.45),brass,false)
+        modelPart(m,"WinderBar",Vector3.new(0,3.9,1.5),Vector3.new(2.6,0.5,0.45),brass,false)
+        for _,xRing in ipairs({-0.9,0.9}) do
+            modelPart(m,"WinderRing",Vector3.new(xRing,4.1,1.5),Vector3.new(0.9,0.9,0.3),brass,true)
+            modelPart(m,"RepairFoot",Vector3.new(xRing,0.2,0),Vector3.new(1.1,0.5,1.7),c,false)
+        end
     else
         modelPart(m,"ScrapHat",Vector3.new(0,3.8,0),Vector3.new(3.8,0.7,3.0),Color3.fromRGB(91,59,78),false)
         modelPart(m,"Feet",Vector3.new(0,0.2,0),Vector3.new(3.3,0.5,2.5),Color3.fromRGB(120,66,90),false)
     end
-    local hp = part(m,"HealthBar",Vector3.new(3.2,0.33,0.4),CFrame.new(0,4.7,0), id=="junk" and Color3.fromRGB(255,95,102) or Color3.fromRGB(107,255,147),Enum.Material.Neon)
+    if id=="junk" and boss then
+        -- Bosses have a unique in-world silhouette, not just invisible stats.
+        m.Name="JUNK_CAPTAIN"
+        core.Size=Vector3.new(4.6,3.7,3.1)
+        core.CFrame=CFrame.new(0,1.95,0)
+        local crown=part(m,"BossCrown",Vector3.new(4.8,0.65,3.5),
+            CFrame.new(0,4.55,0),Color3.fromRGB(255,208,79),Enum.Material.Neon)
+        local beacon=part(m,"BossBeacon",Vector3.new(1.0,1.1,1.0),
+            CFrame.new(0,5.25,0),Color3.fromRGB(255,91,112),Enum.Material.Neon)
+        beacon.Shape=Enum.PartType.Ball
+        label(crown,"JUNK CAPTAIN\nBOSS WAVE",184,74,3.0)
+    end
+    local hp = part(m,"HealthBar",Vector3.new(3.2,0.33,0.4),CFrame.new(0,boss and 6.0 or 4.7,0), id=="junk" and Color3.fromRGB(255,95,102) or Color3.fromRGB(107,255,147),Enum.Material.Neon)
     hp.Transparency = 0.12
     m.Parent = world
     m:PivotTo(CFrame.new(x,2.5,z))
@@ -467,17 +514,24 @@ local function makePlot(player, state)
         part(map,"BeltStripe",Vector3.new(7.2,0.12,0.7),CFrame.new(x-8,1.85,z),Color3.fromRGB(85,108,133))
     end
     local machine = part(map,"ToyPrinter",Vector3.new(11,7,7),CFrame.new(x-8,4.2,-46),SLOT_COLORS[state.slot])
-    label(machine,"TOY PRINTER\nAuto-production",220,74,6)
+    local printerLabel=label(machine,"TOY PRINTER\nAuto-production",220,74,6)
+    -- One permanent neon bar on each workshop printer: server-owned
+    -- manufacture progress, visible in 3D without client-side guesses.
+    local printerBar=part(map,"ToyPrinterProgress",Vector3.new(0.2,0.3,0.85),
+        CFrame.new(x-11.45+0.1,8.05,-46),Color3.fromRGB(110,255,176),Enum.Material.Neon)
+    state.printerBar=printerBar
+    state.printerText=printerLabel
+    state.printerProgressTick=-1
     local enemyDoor = part(map,"JunkPortal",Vector3.new(19,9,4),CFrame.new(x,4.7,45),Color3.fromRGB(135,66,105),Enum.Material.Neon)
     label(enemyDoor,"JUNK PIRATES\nIncoming!",220,65,7)
     local base = part(map,"BlueprintVault",Vector3.new(14,7,5),CFrame.new(x,4.0,-45),Color3.fromRGB(75,118,238),Enum.Material.Metal)
     label(base, player.DisplayName.."'s\nBLUEPRINT VAULT",235,77,7)
 
-    local choices = {{"pon", x+8}, {"guardon", x+20},{"tankuru",x+32}}
+    local choices = {{"pon", x+8}, {"guardon", x+20},{"tankuru",x+32},{"curebo",x+32,-28}}
     for _, entry in ipairs(choices) do
         local id = entry[1]
         local px = entry[2]
-        local pad = part(map,id.."Selector",Vector3.new(9,1.4,8),CFrame.new(px,1.2,-40),UNIT_COLORS[id],Enum.Material.Neon)
+        local pad = part(map,id.."Selector",Vector3.new(9,1.4,8),CFrame.new(px,1.2,entry[3] or -40),UNIT_COLORS[id],Enum.Material.Neon)
         label(pad,string.upper(id).."\n"..B.UNITS[id].cost.." coins",150,65,3.3)
         local prompt=Instance.new("ProximityPrompt")
         prompt.ObjectText="Toy printer"
@@ -509,6 +563,9 @@ local function makePlot(player, state)
     upgradePrompt.RequiresLineOfSight=false
     upgradePrompt.Parent=station
     local function refreshUpgrade()
+        -- Show actual authoritative print speed on the in-world production machine.
+        local interval=B.productionInterval(state.level.Value) or 3.0
+        printerLabel.Text=string.format("TOY PRINTER\n%.1fs / toy",interval)
         local price=B.upgradePrice(state.level.Value)
         if price then
             upgradeLabel.Text=string.format("UPGRADE Lv.%d to %d\n%d coins",state.level.Value,state.level.Value+1,price)
@@ -531,7 +588,28 @@ local function makePlot(player, state)
         state.coins.Value = state.coins.Value-price
         state.level.Value = state.level.Value+1
         refreshUpgrade()
+        -- A level change applies to the NEXT scheduled print, not retroactively.
+        state.printerProgressTick=-1
     end)
+end
+
+-- Show the exact current scheduled cycle, including when funds or field
+-- capacity will prevent buying; this is NEXT ATTEMPT, not a paid toy promise.
+-- Quantize to 10% steps so the server never redraws 3D parts every Heartbeat.
+local function refreshPrinterProgress(state)
+    local bar=state.printerBar
+    local txt=state.printerText
+    if not bar or not bar.Parent or not txt then return end
+    local cycle=state.productionCycle or 1.2
+    if cycle<=0 then return end
+    local remaining=math.max(0,math.min(cycle,state.productionTimer))
+    local ticks=math.max(0,math.min(10,math.floor(10*(cycle-remaining)/cycle+0.000001)))
+    if ticks==state.printerProgressTick then return end
+    state.printerProgressTick=ticks
+    local width=0.2+0.66*ticks
+    bar.Size=Vector3.new(width,0.3,0.85)
+    bar.CFrame=CFrame.new(state.x-11.45+width/2,8.05,-46)
+    txt.Text=string.format("NEXT PRINT %.1fs\n%d%%",cycle,ticks*10)
 end
 
 local function aliveCount(state, side)
@@ -548,9 +626,28 @@ local function addEntity(state, id, side)
     local z=side=="ally" and -24 or 26
     local offset=(state.spawnOrdinal % 5 - 2) * 4
     state.spawnOrdinal=state.spawnOrdinal+1
+    -- Compute wave difficulty at actual server spawn, never from a client or
+    -- by mutating the global unit table used by allies and other sessions.
+    local hp,damage,reward=data.hp,data.damage,data.reward
+    local boss=false
+    if side=="enemy" and id=="junk" then
+        local threat=B.junkThreat(state.wave.Value)
+        if not threat then return nil end
+        hp,damage=threat.hp,threat.damage
+        -- Only the final spawned JUNK on waves 10,20,30,40,50 is the boss.
+        -- The server owns enemiesMade and enemyTarget; no client supplies this.
+        if state.enemiesMade==state.enemyTarget-1 then
+            local captain=B.junkBoss(state.wave.Value)
+            if captain then
+                boss=true
+                hp,damage,reward=captain.hp,captain.damage,captain.reward
+            end
+        end
+    end
     local e={
-        id=id, side=side, health=data.hp, maxHealth=data.hp, cooldown=0,
-        x=state.x+offset, z=z, alive=true, model=createToyModel(id,state.x+offset,z),
+        id=id, side=side, health=hp, maxHealth=hp,
+        damage=damage, reward=reward, boss=boss, cooldown=0,
+        x=state.x+offset, z=z, alive=true, model=createToyModel(id,state.x+offset,z,boss),
         renderedX=state.x+offset, renderedZ=z,
     }
     state.entities[#state.entities+1]=e
@@ -567,7 +664,7 @@ local function killEntity(state, e, attacker)
     if not e.alive then return end
     removeEntity(e)
     if e.side=="enemy" and attacker and attacker.side=="ally" then
-        local new=B.awardCoins(state.coins.Value,B.UNITS[e.id].reward)
+        local new=B.awardCoins(state.coins.Value,e.reward or B.UNITS[e.id].reward)
         if new then state.coins.Value=new end
         state.kills.Value=state.kills.Value+1
     end
@@ -590,6 +687,50 @@ local function closestOpponent(state, entity)
     return best,best and math.sqrt(bestDistSquared) or math.huge
 end
 
+-- GUARDON's shield makes a genuine tactical difference: nearby allies
+-- are no longer always hit first just because their center is closer to JUNK.
+-- Only a living guardian in THIS workshop can interpose. Bound its distance
+-- from both the threatened ally (8 studs) and the attacker (at most 4 extra
+-- studs of pursuit), so no remote protection or cross-arena targeting occurs.
+local function guardonInterception(state, enemy, target, distance)
+    if enemy.side~="enemy" or not target or target.id=="guardon" then
+        return target,distance
+    end
+    local best,bestSquared=nil,math.huge
+    local pursuitLimit=(distance+4)*(distance+4)
+    for _,ally in ipairs(state.entities) do
+        if ally.alive and ally.side=="ally" and ally.id=="guardon" then
+            local vx,vz=ally.x-target.x,ally.z-target.z
+            if vx*vx+vz*vz<=64 then
+                local dx,dz=ally.x-enemy.x,ally.z-enemy.z
+                local squared=dx*dx+dz*dz
+                if squared<=pursuitLimit and squared<bestSquared then
+                    best,bestSquared=ally,squared
+                end
+            end
+        end
+    end
+    if best then return best,math.sqrt(bestSquared) end
+    return target,distance
+end
+
+-- TANKURU is long-range artillery: when a JUNK CAPTAIN enters firing
+-- range, lock that visible boss instead of wasting shots on nearby minions.
+-- Never chase an out-of-range boss or retarget other toy classes.
+local function tankuruCaptainInRange(state, artillery, range)
+    local chosen,distSquared=nil,range*range
+    for _,enemy in ipairs(state.entities) do
+        if enemy.alive and enemy.side=="enemy" and enemy.boss then
+            local dx,dz=enemy.x-artillery.x,enemy.z-artillery.z
+            local d=dx*dx+dz*dz
+            if d<=distSquared then
+                chosen,distSquared=enemy,d
+            end
+        end
+    end
+    return chosen,chosen and math.sqrt(distSquared) or math.huge
+end
+
 local function refreshHealthBar(e)
     if not e.alive or not e.model or not e.model.Parent then return end
     local bar=e.model:FindFirstChild("HealthBar")
@@ -602,26 +743,116 @@ local function refreshHealthBar(e)
     end
 end
 
+local function repairAlly(state,e,dt)
+    local data=B.UNITS[e.id]
+    e.repairCooldown=math.max(0,(e.repairCooldown or 0)-dt)
+    if e.repairCooldown>0 then return end
+    local target,bestRatio,bestDistance=nil,math.huge,math.huge
+    local now=state.combatTime or 0
+    for _,ally in ipairs(state.entities) do
+        if ally~=e and ally.alive and ally.side==e.side and ally.health>0 and
+                ally.health<ally.maxHealth and (ally.repairAvailableAt or 0)<=now then
+            local dx,dz=ally.x-e.x,ally.z-e.z
+            local distance=dx*dx+dz*dz
+            local ratio=ally.health/ally.maxHealth
+            if distance<=data.repairRange*data.repairRange and
+                    (ratio<bestRatio or (ratio==bestRatio and distance<bestDistance)) then
+                target,bestRatio,bestDistance=ally,ratio,distance
+            end
+        end
+    end
+    if target then
+        target.health=math.min(target.maxHealth,target.health+data.repairAmount)
+        -- Shared per-target lock prevents multiple repair toys stacking a burst.
+        target.repairAvailableAt=now+data.repairCooldown
+        e.repairCooldown=data.repairCooldown
+        refreshHealthBar(target)
+        -- Reuse the modeled 3D head for a short, server-owned repair flash.
+        -- No new parts, assets, network remotes or permanent effects.
+        local repairHead=e.model and e.model:FindFirstChild("RepairHead")
+        if repairHead and repairHead:IsA("BasePart") then
+            repairHead.Material=Enum.Material.Neon
+            repairHead.Color=Color3.fromRGB(102,255,198)
+            e.repairFlashUntil=now+0.45
+        end
+    end
+end
+
 local function updateEntity(state,e,dt)
     if not e.alive then return end
     local data=B.UNITS[e.id]
+    if data.repairAmount and e.side=="ally" then repairAlly(state,e,dt) end
+    if e.repairFlashUntil and (state.combatTime or 0)>=e.repairFlashUntil then
+        e.repairFlashUntil=nil
+        local repairHead=e.model and e.model:FindFirstChild("RepairHead")
+        if repairHead and repairHead:IsA("BasePart") then
+            repairHead.Material=Enum.Material.SmoothPlastic
+            repairHead.Color=Color3.fromRGB(247,239,211)
+        end
+    end
+    if e.muzzleFlashUntil and (state.combatTime or 0)>=e.muzzleFlashUntil then
+        e.muzzleFlashUntil=nil
+        local flash=e.model and e.model:FindFirstChild("MuzzleFlash")
+        if flash and flash:IsA("BasePart") then flash.Transparency=1 end
+    end
     local remaining=e.cooldown>0 and e.cooldown-dt or 0
     e.cooldown=math.max(0,remaining)
+    -- Support toys escort the nearest injured ally; they should not abandon
+    -- a patient to chase a distant enemy while their repair is cooling down.
+    local escort=nil
+    if data.repairAmount and e.side=="ally" then
+        local bestDistance=math.huge
+        for _,ally in ipairs(state.entities) do
+            if ally~=e and ally.alive and ally.side=="ally"
+                and ally.health>0 and ally.health<ally.maxHealth then
+                local dx,dz=ally.x-e.x,ally.z-e.z
+                local squared=dx*dx+dz*dz
+                if squared<bestDistance then
+                    bestDistance=squared
+                    escort=ally
+                end
+            end
+        end
+    end
     local target, dist=closestOpponent(state,e)
+    if e.side=="enemy" then
+        target,dist=guardonInterception(state,e,target,dist)
+    elseif e.side=="ally" and e.id=="tankuru" then
+        local captain,captainDistance=tankuruCaptainInRange(state,e,data.range)
+        if captain then target,dist=captain,captainDistance end
+    end
     if target and dist <= data.range then
         if e.cooldown<=0 then
-            local remain=B.nextHP(target.health,target.maxHealth,data.damage)
+            local remain=B.nextHP(target.health,target.maxHealth,e.damage or data.damage)
             if remain then
                 target.health=remain
                 -- Refresh the damaged victim now, even if its turn already passed.
                 if remain<=0 then killEntity(state,target,e) else refreshHealthBar(target) end
+                if e.side=="ally" and e.id=="tankuru" then
+                    local flash=e.model and e.model:FindFirstChild("MuzzleFlash")
+                    if flash and flash:IsA("BasePart") then
+                        flash.Transparency=0.08
+                        e.muzzleFlashUntil=(state.combatTime or 0)+0.18
+                    end
+                end
             end
             e.cooldown=data.cooldown+math.min(0,remaining)
         end
     else
         local tx= e.x
         local tz= e.side=="ally" and 40 or -41
-        if target then tx=target.x;tz=target.z end
+        if escort then
+            -- A nearby patient needs a stationary escort, not the default enemy waypoint.
+            tx=e.x;tz=e.z
+            local dx,dz=escort.x-e.x,escort.z-e.z
+            -- Stay close enough to repair, but don't crowd the patient.
+            local followDistance=data.repairRange*0.7
+            if dx*dx+dz*dz>followDistance*followDistance then
+                tx=escort.x;tz=escort.z
+            end
+        elseif target then
+            tx=target.x;tz=target.z
+        end
         local dx=tx-e.x
         local dz=tz-e.z
         local distance=math.sqrt(dx*dx+dz*dz)
@@ -632,11 +863,15 @@ local function updateEntity(state,e,dt)
         end
     end
     if e.side=="enemy" and e.z <= -40 then
-        state.baseHP.Value=math.max(0,state.baseHP.Value-12)
+        state.baseHP.Value=math.max(0,state.baseHP.Value-(e.boss and 28 or 12))
         removeEntity(e)
     elseif e.side=="ally" and e.z >= 39 then
-        local coins=B.awardCoins(state.coins.Value,4)
-        if coins then state.coins.Value=coins end
+        -- Server-authoritative courier delivery: never award on a client claim.
+        local reward=B.deliveryReward(e.id)
+        if reward then
+            local coins=B.awardCoins(state.coins.Value,reward)
+            if coins then state.coins.Value=coins end
+        end
         removeEntity(e)
     end
     if e.alive and e.model.Parent then
@@ -661,12 +896,15 @@ local function resetAfterLoss(state)
     state.entities={}
     state.baseHP.Value=100
     state.wave.Value=1
+    state.roundOutcome.Value="LOSS"
     state.coins.Value=math.max(40,state.coins.Value)
     state.enemiesMade=0
     state.enemyTarget=B.waveSize(1)
     state.enemyTimer=0.1
     state.waveBreak=4
     state.productionTimer=1
+    state.productionCycle=1
+    state.printerProgressTick=-1
 end
 
 local function simulate(state,dt)
@@ -675,6 +913,7 @@ local function simulate(state,dt)
     -- UpdateAsync may yield past expiry; never pay income on its return.
     if stopExpiredProgressLease(state) then return end
     if not state.active or sessions[state.player] ~= state or state.player.Parent ~= Players then return end
+    state.combatTime=(state.combatTime or 0)+dt
     local income=B.incomePerSecond(state.level.Value)
     if not income then income=6 end
     state.incomeCarry=state.incomeCarry+income*dt
@@ -687,7 +926,12 @@ local function simulate(state,dt)
 
     state.productionTimer=state.productionTimer-dt
     if state.productionTimer<=0 then
-        state.productionTimer=state.productionTimer+3.0
+        -- Once this print completes, schedule the NEXT toy at the current
+        -- factory speed. Never consume a backlog of purchases in one tick.
+        local interval=B.productionInterval(state.level.Value) or 3.0
+        state.productionTimer=state.productionTimer+interval
+        state.productionCycle=interval
+        state.printerProgressTick=-1
         if aliveCount(state,"ally")<B.MAX_FIELD_UNITS then
             local new=B.buy(state.selected,state.coins.Value,aliveCount(state,"ally"))
             if new then
@@ -697,8 +941,12 @@ local function simulate(state,dt)
         end
     end
 
+    refreshPrinterProgress(state)
     if state.waveBreak>0 then
         state.waveBreak=math.max(0,state.waveBreak-dt)
+        if state.waveBreak==0 and state.roundOutcome.Value~="" then
+            state.roundOutcome.Value=""
+        end
     else
         state.enemyTimer=state.enemyTimer-dt
         if state.enemyTimer<=0 and state.enemiesMade<state.enemyTarget then
@@ -717,6 +965,15 @@ local function simulate(state,dt)
         if new then state.coins.Value=new end
         state.baseHP.Value=math.min(100,state.baseHP.Value+18)
         if state.wave.Value>=B.MAX_WAVE then
+            -- A completed 50-wave run starts with a clean battlefield and vault.
+            -- Keep earned coins, defeats and factory upgrades as the run reward.
+            for _,e in ipairs(state.entities) do removeEntity(e) end
+            state.entities={}
+            state.baseHP.Value=100
+            state.productionTimer=1
+            state.productionCycle=1
+            state.printerProgressTick=-1
+            state.roundOutcome.Value="VICTORY"
             state.wave.Value=1
         else
             state.wave.Value=state.wave.Value+1
@@ -756,6 +1013,17 @@ local function join(player)
     sessions[player]=pending
     local progress, persistAllowed, loadFailure=loadProgress(player,pending)
     if sessions[player]~=pending or player.Parent~=Players then return end
+    -- Local Roblox Studio can demonstrate PvE without an API-enabled DataStore.
+    -- A live server, invalid save or failed atomic session claim NEVER falls back.
+    local studioPreview=false
+    if (loadFailure=="STORE_UNAVAILABLE" or loadFailure=="READ_UNAVAILABLE")
+        and RunService:IsStudio() then
+        studioPreview=true
+        progress=nil
+        persistAllowed=false
+        loadFailure=nil
+        warn("TWF: STUDIO PREVIEW UNSAVED for",player.UserId)
+    end
     if loadFailure then
         sessions[player]=nil;occupied[slot]=nil
         if loadFailure~="DEPARTED" then
@@ -786,6 +1054,10 @@ local function join(player)
     local status=Instance.new("Folder")
     status.Name="ToyWarsStatus"
     status.Parent=player
+    local progressMode=Instance.new("StringValue")
+    progressMode.Name="ProgressMode"
+    progressMode.Value=studioPreview and "STUDIO_PREVIEW_UNSAVED" or "SAVED"
+    progressMode.Parent=status
     local level=setInt(status,"FactoryLevel",progress and progress.factoryLevel or 1)
     local hp=setInt(status,"BaseHP",100)
     local units=setInt(status,"Allies",0)
@@ -794,13 +1066,19 @@ local function join(player)
     selected.Name="SelectedToy"
     selected.Value="PON"
     selected.Parent=status
+    -- Transient result signal. This does NOT enter DataStore progress records.
+    local outcome=Instance.new("StringValue")
+    outcome.Name="RoundOutcome"
+    outcome.Value=""
+    outcome.Parent=status
     local state={
         slot=slot,x=plotCenter(slot),active=true,map=nil,player=player,persistAllowed=persistAllowed,
         persistSnapshot=progressSnapshot(progress),nextLeaseRefresh=leaseNow()+SESSION_REFRESH_SECONDS,
         coins=coins,wave=wave,kills=kills,baseHP=hp,level=level,
         unitsValue=units,enemiesValue=enemies,selectedValue=selected,selected="pon",
+        roundOutcome=outcome,
         entities={},spawnOrdinal=0,enemyTarget=B.waveSize(wave.Value),enemiesMade=0,
-        productionTimer=1.2,enemyTimer=0.1,waveBreak=4,incomeCarry=0,
+        productionTimer=1.2,productionCycle=1.2,enemyTimer=0.1,waveBreak=4,incomeCarry=0,
     }
     sessions[player]=state
     makePlot(player,state)
@@ -901,3 +1179,4 @@ RunService.Heartbeat:Connect(function(dt)
     for _,state in pairs(sessions) do simulate(state,delta) end
 end)
 print("TWF_BOOT_OK v1.2: server PVE auto factory and toy battle arena loaded")
+

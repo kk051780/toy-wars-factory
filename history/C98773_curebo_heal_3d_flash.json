@@ -1,0 +1,55 @@
+{
+  "id": "C98773",
+  "schema": 1,
+  "date_utc": "2026-11-06",
+  "kind": "PR98_CUREBO_HEAL_VISIBLE_3D_FLASH",
+  "pr": 98,
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "previous_pr_head": "4e1ea196be8b9a81346b427691f8e37ddbc665e2",
+  "coordination": {
+    "epoch": 461,
+    "owner_id": "13bfb402-73a3-4b39-9517-7820a94961d0",
+    "claim_commit": "c4b8b7896215fec19b4b76278dfc47b3fbf29bec",
+    "branch": "ops/twf-character-pipeline-20261028"
+  },
+  "changed_files": [
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/curebo_support_spec.lua",
+    "history/C98773_curebo_heal_3d_flash.json"
+  ],
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "3c1985d0919d3a9d5cf8a2c1ca61cc18a5302d95",
+      "before_bytes": 44915,
+      "after_bytes": 45734,
+      "delta_bytes": 819,
+      "before_lines": 987,
+      "after_lines": 1003,
+      "delta_lines": 16
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1340,
+    "lua_bytes": 59754
+  },
+  "characters_touched": [
+    "curebo"
+  ],
+  "other_characters_modified": false,
+  "reason": "Repair effect was numerically functional but lacked visible Roblox part-level feedback; existing CUREBO head stayed cream even while successfully fixing allies.",
+  "fix": "Temporarily switch existing RepairHead Part to mint Neon for 0.45s after an actual server-authoritative ally heal, then restore its exact original material/color; no new parts, asset downloads, remotes, tokens or client authority.",
+  "new_native_Lua_regressions": 3,
+  "original_CI": "https://github.com/kk051780/toy-wars-factory/actions/runs/42177160766",
+  "new_CI": "PENDING_EXACT_HEAD",
+  "limits": {
+    "unmerged": true,
+    "independent_review": false,
+    "roblox_engine": "NOT_RUN",
+    "android_visual": "NOT_RUN",
+    "two_client": "NOT_RUN",
+    "new_paid_service": false,
+    "public_release": false
+  }
+}

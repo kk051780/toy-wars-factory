@@ -1,0 +1,65 @@
+{
+  "id": "C00104",
+  "date": "2026-10-28",
+  "kind": "CONTROLLER_HISTORICAL_SOURCE_TEST_HEAD_INDEPENDENCE_REPAIR",
+  "author_kind": "CONTROLLER",
+  "author_operation_id": "d0193dac-f125-4f66-a0b1-6c824c6e17e2",
+  "task_id": null,
+  "run_id": null,
+  "identity_note": "Manual operation UUID, not a registered service run; author does not approve or integrate",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "c1bba39073fa667f33e5162cbbc959a609b3b601",
+    "owner_run_id": "d0193dac-f125-4f66-a0b1-6c824c6e17e2",
+    "owner_id_kind": "MANUAL_OPERATION_UUID",
+    "epoch": 191
+  },
+  "main_base": "9deab2acbdba8406b02f653ae84b355d92dd499a",
+  "parent_character_head": "0d64eaa9cbd15bb136bd41de24303f82cb98be1b",
+  "changed_files": [
+    "tests/test_system_character_history.py",
+    "history/C00104_character_history_snapshot_anchor_repair.json"
+  ],
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1155,
+    "lua_bytes": 50216
+  },
+  "source_baseline_bytes": 25726,
+  "source_delta_vs_current_main_bytes": 4989,
+  "characters_touched": [],
+  "preserved_characters": [
+    "pon",
+    "guardon",
+    "tankuru",
+    "curebo"
+  ],
+  "defect": {
+    "symptom": "C00100's immutable source_changes/source_metrics are asserted against mutable HEAD, so a later legitimate character source change fails the newly accepted historical test.",
+    "reproduction": "Separate read-only context executed exact test:0d passes; future kururin registration3304->3349 causes after_bytes and total50216->50261 mismatch while C00100 remains unchanged.",
+    "fix": "Anchor the reconciled snapshot to actual immutable8997 authored tree. Keep the accepted cumulative current-HEAD ledger check unchanged. Add a future-HEAD source observation fixture that exercises the same historical validator without requiring any history rewrite.",
+    "prior_four_blockers": "Already repaired by0d64/C00103; retained without runtime source changes"
+  },
+  "tests": {
+    "historical_snapshot_cases": 5,
+    "expected_full_python_cases": 478,
+    "local_proof": "PASS authenticated canonical-source replay of reconciled snapshot and future-HEAD noninterference; the same new test rejects mutable-HEAD binding3304!=3349. Full Git ancestry remains fresh CI evidence.",
+    "full_ci": "PENDING_NEW_EXACT_HEAD",
+    "independent_review": "PENDING_NEW_EXACT_HEAD",
+    "studio": "NOT_RUN",
+    "multiplayer": "NOT_RUN",
+    "mobile": "NOT_RUN",
+    "market_effect": "NOT_MEASURED"
+  },
+  "restrictions": {
+    "accepted_main_tests_changed": false,
+    "accepted_history_changed": false,
+    "runtime_source_changed": false,
+    "source_ledger_or_history_gate_weakened": false,
+    "normal_lane_expanded": false,
+    "regular_tasks_changed": false,
+    "publish_or_spend_authorized": false
+  },
+  "next_action": "New exact-head full CI and independent registered review before one-time protected adoption. Prior0d admission was withdrawn; do not integrate that obsolete candidate."
+}

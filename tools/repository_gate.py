@@ -6,6 +6,7 @@ import subprocess
 import sys
 import hashlib
 from verify_status import status_ok
+from system_character_pipeline import catalog_errors
 
 ROOT=Path(__file__).resolve().parents[1]
 checks=[]
@@ -16,9 +17,9 @@ state=json.loads((ROOT/"PROJECT_STATE.json").read_text(encoding="utf-8"))
 chars=json.loads((ROOT/"config/characters.json").read_text(encoding="utf-8"))
 policy=json.loads((ROOT/"config/quality_policy.json").read_text(encoding="utf-8"))
 units=chars["characters"]
-expected={"pon","guardon","tankuru"}
 ids=[u["id"] for u in units]
-record("character_roster",set(ids)==expected and len(ids)==3)
+character_failures=catalog_errors(chars,(ROOT/"src/ToyWarsBalance.lua").read_text(),policy["character_required"])
+record("character_roster",not character_failures)
 for key in policy["character_required"]:
     record("character_has_"+key,all(key in u and u[key] not in (None,"",[]) for u in units))
 for key in ("combat_class","shape","color"):

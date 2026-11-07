@@ -10,6 +10,13 @@ vectorMT.__sub = function(a,b) return vector(a.X-b.X,a.Y-b.Y,a.Z-b.Z) end
 local function frame(x,y,z)
     return {Position=type(x)=="table" and x or vector(x or 0,y or 0,z or 0)}
 end
+-- Direction-only deterministic mock; not Roblox engine rendering or physics.
+local function lookAt(origin,target)
+    local dx,dy,dz=target.X-origin.X,target.Y-origin.Y,target.Z-origin.Z
+    local len=math.sqrt(dx*dx+dy*dy+dz*dz)
+    assert(len>0,"lookAt requires distinct positions")
+    return {Position=origin,LookVector=vector(dx/len,dy/len,dz/len)}
+end
 
 local fixtureSerial = 0
 local function copyData(value)
@@ -19,7 +26,8 @@ local function copyData(value)
     return copy
 end
 
-function H.new(serverFile, existingCount)
+function H.new(serverFile, existingCount, options)
+    options=options or {}
     fixtureSerial=fixtureSerial+1
     local fixtureId=fixtureSerial
     local h = {now=0, queue={}, serial=0, warnings={}, playerList={}, nextId=0}
@@ -119,7 +127,7 @@ function H.new(serverFile, existingCount)
     h.players=instance("Players");h.players.PlayerAdded=signal();h.players.PlayerRemoving=signal()
     h.storage=instance("ReplicatedStorage")
     h.workspace=instance("Workspace")
-    h.runService={Heartbeat=signal()}
+    h.runService={Heartbeat=signal(),IsStudio=function() return options.studio==true end}
     h.remote=instance("RemoteEvent");h.remote.Name="ToyWarsSelectUnit";h.remote.Parent=h.storage
     local module=instance("ModuleScript");module.Name="ToyWarsBalance";module.Parent=h.storage
     local balance=assert(loadfile("src/ToyWarsBalance.lua"))()
@@ -192,16 +200,20 @@ function H.new(serverFile, existingCount)
     end
     local dataStoreService={}
     function dataStoreService:GetDataStore(name,scope)
+        if options.storeOpenFail then error("injected store open unavailable") end
         assert(type(name)=="string" and #name>0,"store name required")
         local storeKey=name.."\0"..(scope or "global")
         if stores[storeKey] then return stores[storeKey] end
         local records={}
         local store={}
         function store:GetAsync(key)
+            if options.storeReadFail then error("injected store read unavailable") end
             local record=records[key]
             return record and copyData(record.value),keyInfo(record)
         end
         function store:UpdateAsync(key,transform)
+            h.storeUpdates=(h.storeUpdates or 0)+1
+            if options.storeWriteFail then error("injected claim write failure") end
             local record=records[key]
             local updated,ids,metadata=transform(record and copyData(record.value),keyInfo(record))
             if updated==nil then return nil end
@@ -224,7 +236,7 @@ function H.new(serverFile, existingCount)
     local env=setmetatable({
         game={GetService=function(_,name) return assert(services[name],"unsupported service") end},
         workspace=h.workspace,Instance={new=instance},Enum=enums,
-        Vector3={new=vector},CFrame={new=frame},Color3={fromRGB=function(...) return {...} end},
+        Vector3={new=vector},CFrame={new=frame,lookAt=lookAt},Color3={fromRGB=function(...) return {...} end},
         UDim={new=function(...) return {...} end},UDim2={fromOffset=function(...) return {...} end,fromScale=function(...) return {...} end},
         task={spawn=spawn,wait=function(duration) return coroutine.yield(duration or 0) end},
         os={clock=function() return h.now end,time=function() return math.floor(h.now) end},

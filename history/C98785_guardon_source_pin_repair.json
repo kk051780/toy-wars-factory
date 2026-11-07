@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "id": "C98785",
+  "kind": "GUARDON_PVE_SOURCE_PIN_XML_EXPORTER_FAIL_CLOSED_REPAIR",
+  "date_utc": "2026-11-07",
+  "source_branch": "controller/guardon-bodyguard-pve-20261107-f64c50d1",
+  "parent_pr": 189,
+  "baseline_head": "6a75ea23cf6fb98201e8d48558ea2925a4394a45",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "epoch": 479,
+    "owner_id": "b73997c1-62c3-4616-8459-6a1cb7d6dd73",
+    "claim_commit": "22d1306fd3affffd9e582a0d588e1f4a062b6d8a"
+  },
+  "observed_failure": {
+    "hosted_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/42349214517",
+    "new_native_lua_regressions": "12/12 PASS",
+    "xml_export_tests": "ERROR: fail-closed original server SHA pin",
+    "cause": "New server blob 0333e0a... does not match prior pinned blob 66d9abd... from PR187. The source integrity check correctly refused packaging; it must not be bypassed."
+  },
+  "changes": [
+    {
+      "path": "tools/export_accepted_rbxlx.py",
+      "before_blob": "cf1dcfa05a9cc219db699129d88551957d739501",
+      "after_blob": "46cadf844da8478e80ee07d3b9241c5a8cde3be9",
+      "before_bytes": 7986,
+      "after_bytes": 7983,
+      "delta_bytes": -3,
+      "reason_for_size_decrease": "Renamed existing artifact filenames and metadata text; no controls or checks removed."
+    },
+    {
+      "path": "tests/test_system_xml_artifact_export.py",
+      "before_blob": "93dea8ff7a486a83040f9c44c8388e150b477",
+      "after_blob": "5ff7e985de99edb6d0aca67dbb27dfa2e5e7a9f4",
+      "before_bytes": 15879,
+      "after_bytes": 16101,
+      "delta_bytes": 222
+    }
+  ],
+  "new_exact_source_pin": {
+    "server_blob": "0333e0aa60c12709136281c22b2a2fd9569b8587",
+    "source_containing_commit": "6a75ea23cf6fb98201e8d48558ea2925a4394a45",
+    "four_lua_source_total_bytes": 67659
+  },
+  "preserved_guards": [
+    "Source SHA and UTF-8 validation retained",
+    "Fail-closed symlink and XML control-byte check retained",
+    "No duplicate output overwrite or file deletion",
+    "Official GitHub Actions branch event whitelist not broadened",
+    "No new credentials, network or publish logic",
+    "No game source modified in this repair"
+  ],
+  "new_action": "Re-run exact-head GitHub-hosted Lua+Python suite; don't infer Studio/Android or independent review.",
+  "hosted_ci_after_fix": "PENDING",
+  "native_studio_verified": false,
+  "android_verified": false,
+  "main_merged": false,
+  "independent_review_complete": false,
+  "additional_spend": 0
+}

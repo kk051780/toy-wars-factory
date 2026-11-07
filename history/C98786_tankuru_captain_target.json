@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "id": "C98786",
+  "kind": "TANKURU_SERVER_OWNED_CAPTAIN_RANGE_FOCUS",
+  "date_utc": "2026-11-07",
+  "source_branch": "controller/tankuru-captain-target-20261107-ec4aa5ef",
+  "parent_pr": 189,
+  "parent_head": "b57aa5b324106db7b151c76e89b938b338dcc563",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "epoch": 481,
+    "owner_id": "ec4aa5ef-1bb0-44d0-a750-af0aa358fa92",
+    "claim_commit": "5daf40c48da7df3be0bc71e35af5ffe6c9abe19b"
+  },
+  "reason": "Long-range TANKURU previously wasted every shot on the closest weak JUNK even when a dangerous JUNK CAPTAIN had already entered cannon range.",
+  "change": "Only ally TANKURU selects nearest alive JUNK CAPTAIN within its normal 17-stud attack range; out-of-range boss does not change pursuit or default minion targeting. All combat and reward computation remains server-owned.",
+  "changed_source": {
+    "path": "src/ToyWarsServer.server.lua",
+    "before_blob": "0333e0aa60c12709136281c22b2a2fd9569b8587",
+    "after_blob": "46e3e52eb4903b8123090772140809049ddef4c4",
+    "before_bytes": 49876,
+    "after_bytes": 50784,
+    "delta_bytes": 908
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1524,
+    "lua_bytes": 68567
+  },
+  "new_native_test": "tests/auto/tankuru_captain_target_spec.lua",
+  "native_mock_cases": 8,
+  "characters": [
+    "tankuru",
+    "junk",
+    "guardon",
+    "pon"
+  ],
+  "no_gemini_files": true,
+  "main_merged": false,
+  "studio_verified": false,
+  "android_verified": false,
+  "independent_review": false,
+  "additional_paid_spend": 0,
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "0333e0aa60c12709136281c22b2a2fd9569b8587",
+      "after_blob": "46e3e52eb4903b8123090772140809049ddef4c4",
+      "before_bytes": 49876,
+      "after_bytes": 50784,
+      "delta_bytes": 908
+    }
+  ],
+  "correction": {
+    "reason": "First protected PR190 QA showed source C-history required source_changes list; preserve strict ledger accounting rather than weaken tests.",
+    "evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/42350531900",
+    "corrected_in_draft_before_merge": true
+  }
+}

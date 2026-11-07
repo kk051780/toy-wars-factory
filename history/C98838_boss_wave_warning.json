@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "id": "C98838",
+  "kind": "JUNK_CAPTAIN_TWO_WAVE_WARNING_HUD",
+  "date_utc": "2026-11-07",
+  "repository": "kk051780/toy-wars-factory",
+  "branch": "controller/boss-wave-warning-20261108-b68115c9",
+  "parent_pr": 197,
+  "parent_head": "d12a12264506bec15d081f8c2e464bdb0333e246",
+  "source_commit": "8b8682e6ee6e4dd4d1f19048257be1a6929e7974",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordinator": {
+    "epoch": 506,
+    "owner_id": "b68115c9-6553-4ab5-9196-3d740d7a2346",
+    "claim_commit": "9fdfb7c0edd3219028ddb109fbd04a24ac1c7331"
+  },
+  "problem": "JUNK CAPTAIN milestones on waves 10,20,30,40,50 are an unexpected difficulty spike; the existing wave status gave no advance warning.",
+  "change": "Use shared B.junkBoss to display a static noninteractive top-right warning at exactly two waves and one wave before a captain milestone, plus a boss-wave announcement on the milestone. Hide all warnings on ordinary waves and when authoritative LOSS/VICTORY banner is visible. No new remote event, server balance, models or payout changes.",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_blob": "8afb94f5c7051dfeff86c26cbae7d8c3e6394c1a",
+      "after_blob": "7bbd7983ed4bf536bcc8264c3e9a8eca2a213d1f",
+      "before_bytes": 12399,
+      "after_bytes": 13606,
+      "delta_bytes": 1207,
+      "before_lines": 289,
+      "after_lines": 313,
+      "delta_lines": 24
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1641,
+    "lua_bytes": 74583
+  },
+  "source_sha_pins": {
+    "src/ToyWarsBalance.lua": "64175b1cda7e4d5e4623d7b28bb80fdc3d64c3b8",
+    "src/ToyWarsServer.server.lua": "181b0ef3a5aedafef4490decdbbe167d769e9932",
+    "src/ToyWarsHUD.client.lua": "7bbd7983ed4bf536bcc8264c3e9a8eca2a213d1f",
+    "src/ToyWarsSmokeTest.server.lua": "ccba431909c664909e2680785648d0402fedf3c3"
+  },
+  "modified_paths": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/character_pages_spec.lua",
+    "tools/export_accepted_rbxlx.py",
+    "tests/test_system_xml_artifact_export.py",
+    "history/C98838_boss_wave_warning.json"
+  ],
+  "new_lua_tests": 2,
+  "new_python_tests": 1,
+  "already_accepted_tests_unchanged": true,
+  "exporter_security_rules_unchanged": true,
+  "conflicting_pr_source_modified": false,
+  "game_characters_touched": [],
+  "boss_gameplay_unchanged": true,
+  "studio_verified": false,
+  "android_verified": false,
+  "multiplayer_verified": false,
+  "independent_review": false,
+  "merged_main": false,
+  "published": false,
+  "additional_spend_jpy": 0,
+  "ci": "PENDING"
+}

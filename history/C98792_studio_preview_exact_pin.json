@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "id": "C98792",
+  "kind": "EXACT_SOURCE_PIN_STUDIO_PREVIEW_UNSAVED",
+  "date_utc": "2026-11-07",
+  "branch": "controller/studio-unsaved-pve-preview-20261107-db08b795",
+  "source_commit": "6a65ec62022eadd2f273c3c18312db789f271987",
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1565,
+    "lua_bytes": 70778
+  },
+  "expected_source_blobs": {
+    "src/ToyWarsServer.server.lua": "a358ef13e1743cabdf0a940a29aa09c8387ac201",
+    "src/ToyWarsHUD.client.lua": "83233206eb2119c4a05aa01bc4f320b554f4f79b"
+  },
+  "coordination": {
+    "kind": "CONTROLLER",
+    "epoch": 488,
+    "owner_id": "db08b795-9f1b-471c-977f-9e3e40554e07",
+    "claim_commit": "063706c938e43d5795a8cf1f6a95afac95adaeec"
+  },
+  "changed_files": [
+    "tools/export_accepted_rbxlx.py",
+    "tests/test_system_xml_artifact_export.py"
+  ],
+  "export_allowlist_unchanged": true,
+  "trust_fences_unchanged": true,
+  "studio_or_engine_verified": false,
+  "independent_review": false,
+  "main_merged": false,
+  "additional_paid_yen": 0,
+  "correction": {
+    "reason": "First exact-head CI failed after HUD accessed absent FindFirstChild method in accepted minimal Lua HUD fixture; optional lookup kept fail-closed and all server trust boundaries unchanged.",
+    "run": "https://github.com/kk051780/toy-wars-factory/actions/runs/42353686717",
+    "test": "tests/hud_price_spec.lua",
+    "sourceFixCommit": "6a65ec62022eadd2f273c3c18312db789f271987",
+    "notEngineProof": true
+  }
+}

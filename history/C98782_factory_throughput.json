@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "id": "C98782",
+  "kind": "FACTORY_LEVEL_THROUGHPUT_VISIBLE_PRODUCTION_LOOP",
+  "date_utc": "2026-11-07",
+  "source_branch": "bootstrap/twf-factory-throughput-20261107",
+  "baseline_head": "85c1cd3504ef7e7929f3e3014dd15737f821adba",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "baseline_PR": 186,
+  "coordinator": {
+    "epoch": 474,
+    "owner_id": "9eb2430b-2db2-4644-a482-6b8a56cf5907",
+    "claim_commit": "fbfeecd25bee4118814b22c72d165ba39495bc9b"
+  },
+  "issue": "Factory upgrades raised only income, while every toy still took 3.0 seconds to print, undermining the product's factory-throughput strategy core",
+  "fix": "Server-owned production interval decreases from 3.0s (level1) to 1.5s (level6) in 0.3s steps; 3D ToyPrinter billboard updates when a valid server-side station upgrade is paid. Already queued print completes before new interval takes effect. One print per Heartbeat; no free toys or cap bypass.",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsBalance.lua",
+      "before_blob": "ede62318d0c51bee1a8f6d086098169729d8bc16",
+      "after_blob": "e2080307182d1ac1c4c4842f1307229b75ca7b12",
+      "before_bytes": 4307,
+      "after_bytes": 4642,
+      "delta_bytes": 335,
+      "before_lines": 103,
+      "after_lines": 110,
+      "delta_lines": 7
+    },
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "6ffb707142cebde26776945dff584fd322086653",
+      "after_blob": "66d9abd732d472c4c23a4c0db28ba7d7af16093e",
+      "before_bytes": 48081,
+      "after_bytes": 48558,
+      "delta_bytes": 477,
+      "before_lines": 1050,
+      "after_lines": 1056,
+      "delta_lines": 6
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1474,
+    "lua_bytes": 66341
+  },
+  "new_test": "tests/auto/production_throughput_spec.lua",
+  "native_cases": 11,
+  "local_red_green": {
+    "runtime": "texlua deterministic server mock",
+    "before": "3 PASS / 8 FAIL",
+    "after": "11 PASS / 0 FAIL"
+  },
+  "unchanged_lua_blobs": {
+    "src/ToyWarsHUD.client.lua": "05d72aae6924cc5d93fe14595e9af2cdeb4f73fd",
+    "src/ToyWarsSmokeTest.server.lua": "ccba431909c664909e2680785648d0402fedf3c3"
+  },
+  "game_characters_touched": [],
+  "enemy_scaling_unchanged": true,
+  "boss_unchanged": true,
+  "studio_verified": false,
+  "android_verified": false,
+  "two_clients_verified": false,
+  "independent_native_review": false,
+  "main_merged": false,
+  "roblox_upload": false,
+  "public_published": false,
+  "additional_paid_spend": 0,
+  "github_actions_free_quota_remaining": "UNKNOWN",
+  "next": "Pin XML exporter to exact source commit and Git blobs, rerun official GitHub Actions Lua5.4 + all Python tests, then independent native review of PR stack prior to integration"
+}

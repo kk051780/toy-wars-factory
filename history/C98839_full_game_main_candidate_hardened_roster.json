@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "id": "C98839",
+  "kind": "MAIN_TARGET_FULL_GAME_STACK_WITH_PR196_ROSTER_ADMISSION_GUARDS",
+  "date_utc": "2026-11-07",
+  "repository": "kk051780/toy-wars-factory",
+  "branch": "controller/complete-pve-main-integration-20261108-c8162bda",
+  "parent_head": "5c7a456b94c5b400d7c28a90256ef2c62f3e4e15",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "exact_game_source_head": "5c7a456b94c5b400d7c28a90256ef2c62f3e4e15",
+  "source_security_head": "02e9fc6ea5bf4fcc51584b189368e9a5c798894d",
+  "root_pr": 184,
+  "game_stacked_prs": [
+    184,
+    185,
+    186,
+    187,
+    189,
+    190,
+    191,
+    192,
+    193,
+    194,
+    197,
+    198
+  ],
+  "guard_prs": [
+    195,
+    196
+  ],
+  "combined_tree_basis": "Entire PR198 snapshot (49 commits ahead of main), followed by two exact tested files copied byte-for-byte from PR196. No game Lua content changes.",
+  "copy_operations": [
+    {
+      "path": "tools/system_character_pipeline.py",
+      "from_pr196_blob": "786139ac9a7c2db3cccebc5eaa7e9547d2c6e619",
+      "prior_game_blob": "dccec6ae3bd582587febd1a4a2c582dc53dc1634",
+      "prior_bytes": 6995,
+      "after_bytes": 14076
+    },
+    {
+      "path": "tests/test_system_character_pipeline.py",
+      "from_pr196_blob": "43aac54a28667afd4d07e72f590fbcf1989c1c0e",
+      "prior_game_blob": "fc603829369a5e2facc34051c91b60beda66003b",
+      "prior_bytes": 7526,
+      "after_bytes": 15304
+    }
+  ],
+  "quality": {
+    "game_source_files": 4,
+    "game_source_bytes": 74583,
+    "game_source_lua_lines": 1641,
+    "last_game_run": 42410979287,
+    "last_security_run": 42366220402,
+    "combined_ci": "PENDING_NEW_HEAD",
+    "independent_review": "PENDING",
+    "native_engine_verified": false,
+    "main_merged": false
+  },
+  "guard_limitations": "Conservative static parser for literal B.UNITS and mutable B.getUnit use inside balance module only; NOT Lua alias/dataflow analysis across loaded external modules. Standalone PR196 review still required.",
+  "new_config_review_risk": "PR184 broadened config/autonomous_repair.json source_paths by exact config/characters.json. Full source chain retains it. Strict review of write authorization is needed; no granting or execution of extra host/GitHub identity here.",
+  "non_source_changes": "No extra workflows, secrets, branch protection settings, or publishing permissions modified by this consolidation commit.",
+  "gameplay_included": [
+    "CUREBO heal and escort",
+    "wave50 outcome",
+    "JUNK scaling and 10th-wave captains",
+    "production throughput",
+    "GUARDON shield",
+    "TANKURU targeting/muzzle",
+    "Studio unsaved preview (mock, not verified engine)",
+    "3D printer progress",
+    "PON courier",
+    "JUNK CAPTAIN countdown"
+  ],
+  "outstanding_gates": [
+    "Registered independent source/security review",
+    "Review of new config/characters metadata write allowance",
+    "Proof of valid merge procedure under active protected main ruleset",
+    "Roblox Studio/native engine and mobile validation separate from GitHub CI"
+  ],
+  "coordinator": {
+    "epoch": 508,
+    "owner_id": "c8162bda-760a-4c47-ad2e-f90d16ef04b3",
+    "claim_commit": "80ce0a6060e40c0f79b37c89c8e94b6fdf2a3cc1"
+  },
+  "currency_incremental_spend_jpy": 0,
+  "publish_authorized": false
+}

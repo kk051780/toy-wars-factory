@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "id": "C98789",
+  "date_utc": "2026-11-07",
+  "kind": "TANKURU_SERVER_OWNED_POOLED_3D_MUZZLE_FLASH",
+  "source_branch": "controller/tankuru-muzzle-flash-20261107-c37d9252",
+  "parent_pr": 190,
+  "parent_head": "ddc2083c20fb9a2883eb5ab2369584679955f1ee",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "owner_id": "c37d9252-fc92-44ac-bf0c-677e80d375ac",
+    "epoch": 485,
+    "claim_commit": "06d6f17859b502748f932c13730a8227a964f0c5"
+  },
+  "problem": "TANKURU's combat attacks cause health loss but there is no immediate 3D cannon firing feedback; its barrel faces away from the +Z enemy approach.",
+  "fix": "Turn TANKURU's barrel and face toward incoming +Z; add one initially hidden anchored neon Ball MuzzleFlash per TANKURU; a valid authoritative hit briefly reveals it for 0.18 game seconds, then hides it. Zero transient parts per shot.",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "46e3e52eb4903b8123090772140809049ddef4c4",
+      "after_blob": "de6069f2b902a01268c1b5d61fb3d45fea3f3565",
+      "before_bytes": 50784,
+      "after_bytes": 51838,
+      "delta_bytes": 1054
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1543,
+    "lua_bytes": 69621
+  },
+  "affected_characters": [
+    "tankuru"
+  ],
+  "other_toy_combat_unchanged": true,
+  "purchase_cooldown_reward_unchanged": true,
+  "tests": [
+    "tests/auto/tankuru_muzzle_flash_spec.lua"
+  ],
+  "canonical_server_mock_cases": 10,
+  "native_studio_verified": false,
+  "android_verified": false,
+  "independent_review": false,
+  "main_merged": false,
+  "additional_paid_spend_yen": 0
+}

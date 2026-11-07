@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "characters": [
     {
       "id": "pon",
@@ -54,6 +54,590 @@
       "unique_ability": "対構造物砲撃（未実装）",
       "status": "prototype",
       "reference_image": null
+    },
+    {
+      "id": "curebo",
+      "name_ja": "キュアボ",
+      "role": "味方1体の修理",
+      "combat_class": "support",
+      "shape": "heart_lamp_toolbag",
+      "color": "#A9E5CE",
+      "visual_keywords": [
+        "ハートランプ",
+        "工具かばん",
+        "クリーム色の丸い胴体"
+      ],
+      "gameplay_strength": "ガードンなど高耐久の仲間を長く支える",
+      "gameplay_weakness": "低火力。集中攻撃と範囲攻撃に弱い",
+      "unique_ability": "傷ついた生存中の味方1体を一定間隔で修理。自己・工場・倒れたユニットは対象外",
+      "status": "prototype",
+      "design_origin": "prior_master_candidate",
+      "rarity_proposal": "rare",
+      "release_phase": "A1",
+      "synergy_ids": [
+        "guardon",
+        "tankuru"
+      ],
+      "counterplay": "修理役への接近、または修理量を上回る集中攻撃",
+      "manufacture_animation": "胴体に工具かばんが装着され、ハートランプが点灯して出撃",
+      "guaranteed_earnable_unlock": "最初の修理チャレンジを達成して設計図を確定入手",
+      "implementation_complexity": "medium",
+      "reference_image": null,
+      "business_case": {
+        "evidence_status": "HYPOTHESIS_NOT_MEASURED",
+        "acquisition_hook": "キュアボの輪郭と工場での誕生を紹介する",
+        "retention_hypothesis": "解放後に編成を変えて再挑戦する理由になる",
+        "appeal_scores": {
+          "acquisition": 3,
+          "retention": 4,
+          "strategy": 5
+        },
+        "effort_points": {
+          "model": 1,
+          "animation": 1,
+          "combat": 2,
+          "ui": 1,
+          "qa": 2
+        },
+        "observed_new_players": null,
+        "observed_d1_return": null
+      },
+      "visual_contract": {
+        "signature": "大きなピンクのハートと背中の巻き鍵",
+        "primitive_part_budget": 18,
+        "silhouette_pixels": [
+          32,
+          64
+        ],
+        "native_render_verified": false,
+        "use_external_assets": false
+      },
+      "source_review": [
+        "https://www.biggames.io/post/pet-simulator-99-update-99",
+        "https://www.roblox.com/games/3260590327/Tower-Defense-Simulator",
+        "https://www.playadopt.me/news"
+      ]
     }
-  ]
+  ],
+  "candidates": [
+    {
+      "id": "kururin",
+      "name_ja": "クルリン",
+      "role": "近接の小集団への範囲攻撃",
+      "combat_class": "area_melee",
+      "shape": "wide_spinning_top",
+      "color": "#A786F5",
+      "visual_keywords": [
+        "コマの広い円盤",
+        "大きなゼンマイキー",
+        "紫と白のしま"
+      ],
+      "gameplay_strength": "密集した小型の敵をまとめて削る",
+      "gameplay_weakness": "硬い単体と遠距離攻撃に弱い。回転後に隙がある",
+      "unique_ability": "接敵時に短く回転し、範囲内の敵を上限数まで攻撃。連続判定は同じ敵に重複しない",
+      "status": "design_proposal_not_implemented",
+      "design_origin": "new_proposal",
+      "rarity_proposal": "rare",
+      "release_phase": "A1",
+      "synergy_ids": [
+        "guardon",
+        "magnen"
+      ],
+      "counterplay": "離れて射撃、少数の高耐久ユニット",
+      "manufacture_animation": "上下のコマが合体し、キーを巻かれるとくるっと一回転",
+      "guaranteed_earnable_unlock": "小型ジャンクの群れを撃退するチャレンジで確定入手",
+      "implementation_complexity": "medium",
+      "reference_image": null,
+      "business_case": {
+        "evidence_status": "HYPOTHESIS_NOT_MEASURED",
+        "acquisition_hook": "クルリンの輪郭と工場での誕生を紹介する",
+        "retention_hypothesis": "解放後に編成を変えて再挑戦する理由になる",
+        "appeal_scores": {
+          "acquisition": 4,
+          "retention": 4,
+          "strategy": 5
+        },
+        "effort_points": {
+          "model": 1,
+          "animation": 2,
+          "combat": 2,
+          "ui": 1,
+          "qa": 2
+        },
+        "observed_new_players": null,
+        "observed_d1_return": null
+      },
+      "visual_contract": {
+        "signature": "幅の広いコマの円盤",
+        "primitive_part_budget": 18,
+        "silhouette_pixels": [
+          32,
+          64
+        ],
+        "native_render_verified": false,
+        "use_external_assets": false
+      },
+      "source_review": [
+        "https://www.biggames.io/post/pet-simulator-99-update-99",
+        "https://www.roblox.com/games/3260590327/Tower-Defense-Simulator",
+        "https://www.playadopt.me/news"
+      ]
+    },
+    {
+      "id": "banepyon",
+      "name_ja": "バネピョン",
+      "role": "前衛を短距離で跳び越える接近役",
+      "combat_class": "leaper",
+      "shape": "frog_with_spring_legs",
+      "color": "#95D86B",
+      "visual_keywords": [
+        "大きなカエルの目",
+        "黄色い露出バネ",
+        "短い緑の胴体"
+      ],
+      "gameplay_strength": "前列の後ろにいる遠距離役へ近づく",
+      "gameplay_weakness": "着地後に隙があり、低耐久。ポンより生産費が高い",
+      "unique_ability": "射程内の後列へ短い跳躍。壁・戦場境界・拠点へは飛び越えない",
+      "status": "design_proposal_not_implemented",
+      "design_origin": "new_proposal",
+      "rarity_proposal": "rare",
+      "release_phase": "A1",
+      "synergy_ids": [
+        "pon",
+        "mimic"
+      ],
+      "counterplay": "着地先の護衛、分散配置、着地後の攻撃",
+      "manufacture_animation": "脚のバネをぎゅっと縮めて装着し、ベルトの先でぴょんと起動",
+      "guaranteed_earnable_unlock": "前衛の後ろにいる砲撃役を攻略するチャレンジで確定入手",
+      "implementation_complexity": "medium",
+      "reference_image": null,
+      "business_case": {
+        "evidence_status": "HYPOTHESIS_NOT_MEASURED",
+        "acquisition_hook": "バネピョンの輪郭と工場での誕生を紹介する",
+        "retention_hypothesis": "解放後に編成を変えて再挑戦する理由になる",
+        "appeal_scores": {
+          "acquisition": 5,
+          "retention": 4,
+          "strategy": 5
+        },
+        "effort_points": {
+          "model": 2,
+          "animation": 3,
+          "combat": 3,
+          "ui": 1,
+          "qa": 3
+        },
+        "observed_new_players": null,
+        "observed_d1_return": null
+      },
+      "visual_contract": {
+        "signature": "左右の黄色いバネ足とカエルの目",
+        "primitive_part_budget": 18,
+        "silhouette_pixels": [
+          32,
+          64
+        ],
+        "native_render_verified": false,
+        "use_external_assets": false
+      },
+      "source_review": [
+        "https://www.biggames.io/post/pet-simulator-99-update-99",
+        "https://www.roblox.com/games/3260590327/Tower-Defense-Simulator",
+        "https://www.playadopt.me/news"
+      ]
+    },
+    {
+      "id": "magnen",
+      "name_ja": "マグネン",
+      "role": "短時間の移動妨害",
+      "combat_class": "controller",
+      "shape": "horseshoe_magnet_head",
+      "color": "#F46C70",
+      "visual_keywords": [
+        "巨大なU字磁石",
+        "赤と白の磁極",
+        "小さなキャタピラ足"
+      ],
+      "gameplay_strength": "追撃と、タンクルなどの射撃時間を助ける",
+      "gameplay_weakness": "自分の火力が低い。妨害範囲外からの射撃に弱い",
+      "unique_ability": "磁力パルスで近くの敵の移動を短時間遅らせる。初期案では実際の引き寄せ・気絶は行わない",
+      "status": "design_proposal_not_implemented",
+      "design_origin": "new_proposal",
+      "rarity_proposal": "epic",
+      "release_phase": "A2",
+      "synergy_ids": [
+        "tankuru",
+        "kururin"
+      ],
+      "counterplay": "範囲外から射撃、複数方向の接近",
+      "manufacture_animation": "左右の磁極がカチッと合体し、ワッシャーが一瞬だけ宙に浮く",
+      "guaranteed_earnable_unlock": "磁石工房の固定チャレンジを達成して設計図を確定入手",
+      "implementation_complexity": "medium",
+      "reference_image": null,
+      "business_case": {
+        "evidence_status": "HYPOTHESIS_NOT_MEASURED",
+        "acquisition_hook": "マグネンの輪郭と工場での誕生を紹介する",
+        "retention_hypothesis": "解放後に編成を変えて再挑戦する理由になる",
+        "appeal_scores": {
+          "acquisition": 5,
+          "retention": 4,
+          "strategy": 5
+        },
+        "effort_points": {
+          "model": 2,
+          "animation": 1,
+          "combat": 2,
+          "ui": 1,
+          "qa": 2
+        },
+        "observed_new_players": null,
+        "observed_d1_return": null
+      },
+      "visual_contract": {
+        "signature": "頭全体を占めるU字磁石",
+        "primitive_part_budget": 18,
+        "silhouette_pixels": [
+          32,
+          64
+        ],
+        "native_render_verified": false,
+        "use_external_assets": false
+      },
+      "source_review": [
+        "https://www.biggames.io/post/pet-simulator-99-update-99",
+        "https://www.roblox.com/games/3260590327/Tower-Defense-Simulator",
+        "https://www.playadopt.me/news"
+      ]
+    },
+    {
+      "id": "mimic",
+      "name_ja": "ミミック",
+      "role": "囮で敵の狙いをずらす",
+      "combat_class": "decoy",
+      "shape": "windup_box_with_eyes",
+      "color": "#C48B61",
+      "visual_keywords": [
+        "四角い木のおもちゃ箱",
+        "ふたの下の目",
+        "紫の内張り"
+      ],
+      "gameplay_strength": "敵が固まって向かう先を一時的に変える",
+      "gameplay_weakness": "本体も囮も低耐久。範囲攻撃で両方壊れやすい",
+      "unique_ability": "接敵時に低耐久の空箱を1個展開し、近くの敵の狙いを短時間引き受ける",
+      "status": "design_proposal_not_implemented",
+      "design_origin": "prior_master_candidate",
+      "rarity_proposal": "epic",
+      "release_phase": "A2",
+      "synergy_ids": [
+        "banepyon",
+        "tankuru"
+      ],
+      "counterplay": "囮を素早く壊す、範囲攻撃",
+      "manufacture_animation": "普通の箱として完成した後、ふたから目がのぞき、足がぱっと出る",
+      "guaranteed_earnable_unlock": "変装工房の固定チャレンジを達成して設計図を確定入手",
+      "implementation_complexity": "medium_high",
+      "reference_image": null,
+      "business_case": {
+        "evidence_status": "HYPOTHESIS_NOT_MEASURED",
+        "acquisition_hook": "ミミックの輪郭と工場での誕生を紹介する",
+        "retention_hypothesis": "解放後に編成を変えて再挑戦する理由になる",
+        "appeal_scores": {
+          "acquisition": 4,
+          "retention": 4,
+          "strategy": 5
+        },
+        "effort_points": {
+          "model": 2,
+          "animation": 3,
+          "combat": 4,
+          "ui": 1,
+          "qa": 4
+        },
+        "observed_new_players": null,
+        "observed_d1_return": null
+      },
+      "visual_contract": {
+        "signature": "四角い箱と開くふた",
+        "primitive_part_budget": 18,
+        "silhouette_pixels": [
+          32,
+          64
+        ],
+        "native_render_verified": false,
+        "use_external_assets": false
+      },
+      "source_review": [
+        "https://www.biggames.io/post/pet-simulator-99-update-99",
+        "https://www.roblox.com/games/3260590327/Tower-Defense-Simulator",
+        "https://www.playadopt.me/news"
+      ]
+    },
+    {
+      "id": "geardra",
+      "name_ja": "ギアドラ",
+      "role": "予告付きの直線範囲攻撃",
+      "combat_class": "heavy_area_artillery",
+      "shape": "round_windup_dragon",
+      "color": "#4DAF9C",
+      "visual_keywords": [
+        "丸いブリキの竜",
+        "背中の金色の巻き鍵",
+        "短い機械の翼"
+      ],
+      "gameplay_strength": "一直線にまとまった敵への大きな一撃",
+      "gameplay_weakness": "高い生産費、遅い移動、長い予備動作と攻撃後の隙",
+      "unique_ability": "ゼンマイをため、紙吹雪のブレスで直線内の敵を上限数まで攻撃。同時1体/工場",
+      "status": "design_proposal_not_implemented",
+      "design_origin": "new_proposal",
+      "rarity_proposal": "legendary",
+      "release_phase": "A2",
+      "synergy_ids": [
+        "guardon",
+        "magnen"
+      ],
+      "counterplay": "散開、横からの接近、予備動作の間の集中攻撃",
+      "manufacture_animation": "胴体・翼・頭が順に組み上がり、大きな鍵が回ると目を覚まして小さく咆哮",
+      "guaranteed_earnable_unlock": "章の固定試験を達成して完成設計図を確定入手。課金販売を導入する場合も対象を選ぶ確定購入",
+      "implementation_complexity": "medium_high",
+      "reference_image": null,
+      "business_case": {
+        "evidence_status": "HYPOTHESIS_NOT_MEASURED",
+        "acquisition_hook": "ギアドラの輪郭と工場での誕生を紹介する",
+        "retention_hypothesis": "解放後に編成を変えて再挑戦する理由になる",
+        "appeal_scores": {
+          "acquisition": 5,
+          "retention": 5,
+          "strategy": 4
+        },
+        "effort_points": {
+          "model": 4,
+          "animation": 3,
+          "combat": 3,
+          "ui": 1,
+          "qa": 4
+        },
+        "observed_new_players": null,
+        "observed_d1_return": null
+      },
+      "visual_contract": {
+        "signature": "大きな巻き鍵と短い翼の竜",
+        "primitive_part_budget": 24,
+        "silhouette_pixels": [
+          32,
+          64
+        ],
+        "native_render_verified": false,
+        "use_external_assets": false
+      },
+      "source_review": [
+        "https://www.biggames.io/post/pet-simulator-99-update-99",
+        "https://www.roblox.com/games/3260590327/Tower-Defense-Simulator",
+        "https://www.playadopt.me/news"
+      ]
+    },
+    {
+      "id": "pipi",
+      "name_ja": "ピピ",
+      "role": "低空からの偵察・後衛への接近",
+      "combat_class": "hover_scout",
+      "shape": "propeller_bird_star_eyes",
+      "color": "#F4D66B",
+      "visual_keywords": [
+        "大きな頭上プロペラ",
+        "星形の目",
+        "小さな白い翼"
+      ],
+      "gameplay_strength": "地形を活かした移動と後衛への接近",
+      "gameplay_weakness": "低耐久。低空型は通常攻撃でも狙える前提で検証",
+      "unique_ability": "低空移動で後衛へ近づく。全攻撃を回避する飛行にはしない",
+      "status": "design_proposal_not_implemented",
+      "design_origin": "prior_master_candidate",
+      "rarity_proposal": "epic",
+      "release_phase": "B",
+      "synergy_ids": [
+        "mimic",
+        "guardon"
+      ],
+      "counterplay": "通常射撃、接近先の護衛",
+      "manufacture_animation": "プロペラを取り付け、巻き鍵が回るとベルト上からふわっと浮く",
+      "guaranteed_earnable_unlock": "プロペラ島の固定チャレンジで設計図を確定入手",
+      "implementation_complexity": "high",
+      "reference_image": null,
+      "business_case": {
+        "evidence_status": "HYPOTHESIS_NOT_MEASURED",
+        "acquisition_hook": "ピピの輪郭と工場での誕生を紹介する",
+        "retention_hypothesis": "解放後に編成を変えて再挑戦する理由になる",
+        "appeal_scores": {
+          "acquisition": 4,
+          "retention": 4,
+          "strategy": 4
+        },
+        "effort_points": {
+          "model": 2,
+          "animation": 3,
+          "combat": 4,
+          "ui": 1,
+          "qa": 4
+        },
+        "observed_new_players": null,
+        "observed_d1_return": null
+      },
+      "visual_contract": {
+        "signature": "頭の上の大きなプロペラ",
+        "primitive_part_budget": 18,
+        "silhouette_pixels": [
+          32,
+          64
+        ],
+        "native_render_verified": false,
+        "use_external_assets": false
+      },
+      "source_review": [
+        "https://www.biggames.io/post/pet-simulator-99-update-99",
+        "https://www.roblox.com/games/3260590327/Tower-Defense-Simulator",
+        "https://www.playadopt.me/news"
+      ]
+    },
+    {
+      "id": "moguu",
+      "name_ja": "モグー",
+      "role": "見える潜行による迂回",
+      "combat_class": "burrow_flanker",
+      "shape": "drill_nose_mole",
+      "color": "#BE9475",
+      "visual_keywords": [
+        "太いドリル鼻",
+        "砂色の丸い体",
+        "短い掘削アーム"
+      ],
+      "gameplay_strength": "密集した前線を迂回する",
+      "gameplay_weakness": "地上復帰時に隙。潜行中は攻撃不可、位置は砂の盛り上がりで見える",
+      "unique_ability": "短時間だけ潜行し、予告を出して地上へ復帰。潜行中も範囲攻撃は被弾する案",
+      "status": "design_proposal_not_implemented",
+      "design_origin": "prior_master_candidate",
+      "rarity_proposal": "epic",
+      "release_phase": "B",
+      "synergy_ids": [
+        "mimic",
+        "pon"
+      ],
+      "counterplay": "土の移動を見て復帰先を守る、範囲攻撃",
+      "manufacture_animation": "鼻にドリルをねじ込み、試運転で小さな砂山をつくる",
+      "guaranteed_earnable_unlock": "砂場島の固定チャレンジで設計図を確定入手",
+      "implementation_complexity": "high",
+      "reference_image": null,
+      "business_case": {
+        "evidence_status": "HYPOTHESIS_NOT_MEASURED",
+        "acquisition_hook": "モグーの輪郭と工場での誕生を紹介する",
+        "retention_hypothesis": "解放後に編成を変えて再挑戦する理由になる",
+        "appeal_scores": {
+          "acquisition": 4,
+          "retention": 4,
+          "strategy": 5
+        },
+        "effort_points": {
+          "model": 3,
+          "animation": 4,
+          "combat": 5,
+          "ui": 1,
+          "qa": 5
+        },
+        "observed_new_players": null,
+        "observed_d1_return": null
+      },
+      "visual_contract": {
+        "signature": "顔から突き出す短いドリル",
+        "primitive_part_budget": 18,
+        "silhouette_pixels": [
+          32,
+          64
+        ],
+        "native_render_verified": false,
+        "use_external_assets": false
+      },
+      "source_review": [
+        "https://www.biggames.io/post/pet-simulator-99-update-99",
+        "https://www.roblox.com/games/3260590327/Tower-Defense-Simulator",
+        "https://www.playadopt.me/news"
+      ]
+    },
+    {
+      "id": "spanan",
+      "name_ja": "スパナン",
+      "role": "一時的な防衛設備づくり",
+      "combat_class": "builder",
+      "shape": "helmet_wrench_hands",
+      "color": "#E5B552",
+      "visual_keywords": [
+        "大きな作業ヘルメット",
+        "レンチの手",
+        "折りたたみ工具台"
+      ],
+      "gameplay_strength": "守りたい場所に小さな火力を追加できる",
+      "gameplay_weakness": "本体の直接戦闘が弱い。設備を迂回されると効果が小さい",
+      "unique_ability": "短時間で消える玩具タレットを建設。設置可能域と同時数を制限する",
+      "status": "design_proposal_not_implemented",
+      "design_origin": "prior_master_candidate",
+      "rarity_proposal": "rare",
+      "release_phase": "B",
+      "synergy_ids": [
+        "guardon",
+        "curebo"
+      ],
+      "counterplay": "別方向から接近、設備を壊す、建設役への攻撃",
+      "manufacture_animation": "ヘルメットをかぶせ、折りたたみ工具台とレンチが取り付く",
+      "guaranteed_earnable_unlock": "積み木工房の固定チャレンジで設計図を確定入手",
+      "implementation_complexity": "high",
+      "reference_image": null,
+      "business_case": {
+        "evidence_status": "HYPOTHESIS_NOT_MEASURED",
+        "acquisition_hook": "スパナンの輪郭と工場での誕生を紹介する",
+        "retention_hypothesis": "解放後に編成を変えて再挑戦する理由になる",
+        "appeal_scores": {
+          "acquisition": 3,
+          "retention": 5,
+          "strategy": 5
+        },
+        "effort_points": {
+          "model": 3,
+          "animation": 3,
+          "combat": 5,
+          "ui": 2,
+          "qa": 5
+        },
+        "observed_new_players": null,
+        "observed_d1_return": null
+      },
+      "visual_contract": {
+        "signature": "大きなヘルメットとレンチの手",
+        "primitive_part_budget": 18,
+        "silhouette_pixels": [
+          32,
+          64
+        ],
+        "native_render_verified": false,
+        "use_external_assets": false
+      },
+      "source_review": [
+        "https://www.biggames.io/post/pet-simulator-99-update-99",
+        "https://www.roblox.com/games/3260590327/Tower-Defense-Simulator",
+        "https://www.playadopt.me/news"
+      ]
+    }
+  ],
+  "pipeline": {
+    "version": 1,
+    "stage_order": [
+      "research",
+      "benefit_cost",
+      "primitive_blockout",
+      "implementation",
+      "regression",
+      "independent_review",
+      "native_mobile_evidence"
+    ],
+    "first_pilot": "curebo",
+    "one_character_per_pr": true,
+    "market_benefits_are_unverified": true
+  }
 }

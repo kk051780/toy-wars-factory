@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "C98793",
+  "kind": "HUD_FIXTURE_COMPATIBILITY_CI_RECONCILIATION",
+  "date_utc": "2026-11-07",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "epoch": 488,
+    "owner_id": "db08b795-9f1b-471c-977f-9e3e40554e07",
+    "claim_commit": "063706c938e43d5795a8cf1f6a95afac95adaeec"
+  },
+  "branch": "controller/studio-unsaved-pve-preview-20261107-db08b795",
+  "parent_pr": 191,
+  "first_red_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/42353686717",
+  "cause": "Minimal accepted HUD mock status lacks FindFirstChild, so new optional preview lookup raised a nil-method error before price assertions.",
+  "fix": "Use the same guarded status.FindFirstChild pattern used elsewhere in existing client; never remove/waive price test or server fail-closed.",
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1565,
+    "lua_bytes": 70778
+  },
+  "source_fix_commit": "6a65ec62022eadd2f273c3c18312db789f271987",
+  "engine_verified": false,
+  "main_merged": false,
+  "independent_review": false,
+  "additional_paid_yen": 0
+}

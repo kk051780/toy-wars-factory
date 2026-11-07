@@ -7,8 +7,10 @@ B.UNITS = {
     pon = {name = "PON", cost = 10, hp = 40, damage = 9, range = 5.5, speed = 8.5, cooldown = 0.9, reward = 0},
     guardon = {name = "GUARDON", cost = 28, hp = 108, damage = 6, range = 5.6, speed = 5.3, cooldown = 1.2, reward = 0},
     tankuru = {name = "TANKURU", cost = 48, hp = 70, damage = 19, range = 17.0, speed = 4.0, cooldown = 2.1, reward = 0},
+    curebo = {name = "CUREBO", cost = 32, hp = 56, damage = 3, range = 6.0, speed = 4.9, cooldown = 1.4, reward = 0, repairAmount = 8, repairRange = 12, repairCooldown = 3.0},
     junk = {name = "JUNK", cost = 0, hp = 38, damage = 6, range = 5.4, speed = 6.0, cooldown = 1.4, reward = 8},
 }
+B.PLAYABLE_IDS = {"pon", "guardon", "tankuru", "curebo"}
 B.MAX_WAVE = 50
 B.MAX_FIELD_UNITS = 20
 B.MAX_LEVEL = 6
@@ -42,6 +44,15 @@ function B.buy(id, coins, activeCount)
     return coins - B.UNITS[id].cost, "ok"
 end
 
+-- PON is the cheap scout/courier. A successful enemy-line delivery yields
+-- a small cash advantage; other toys retain the original four-coin reward.
+-- Only the server calls this after a real living ally crosses the boundary.
+function B.deliveryReward(id)
+    if not B.isUnit(id) then return nil, "invalid_unit" end
+    if id=="pon" then return 12, "ok" end
+    return 4, "ok"
+end
+
 function B.upgradePrice(level)
     if not isInteger(level) or level < 1 or level >= B.MAX_LEVEL then return nil, "invalid_level" end
     return level * level * 65, "ok"
@@ -52,9 +63,37 @@ function B.incomePerSecond(level)
     return 6 + (level - 1) * 3, "ok"
 end
 
+-- Higher factory level speeds up the physical production line, not just coins.
+-- Level 1 remains exactly 3.0s; level 6 takes 1.5s per completed toy.
+function B.productionInterval(level)
+    if not isInteger(level) or level < 1 or level > B.MAX_LEVEL then return nil, "invalid_level" end
+    return 3.0 - 0.3 * (level - 1), "ok"
+end
+
 function B.waveSize(wave)
     if not isInteger(wave) or wave < 1 or wave > B.MAX_WAVE then return nil, "invalid_wave" end
     return math.min(3 + 2 * wave, B.MAX_FIELD_UNITS), "ok"
+end
+
+-- Enemy counts cap at 20 from wave 9. Without a separate threat ramp, waves
+-- 10 through 50 spawn identical foes while players keep factory upgrades.
+-- Keep waves 1-10 unchanged; every five subsequent waves increase HP and
+-- attack on the server only. Never mutate the shared JUNK unit definition.
+function B.junkThreat(wave)
+    if not isInteger(wave) or wave < 1 or wave > B.MAX_WAVE then return nil, "invalid_wave" end
+    local tier = math.max(0, math.floor((wave - 1) / 5) - 1)
+    return {hp=B.UNITS.junk.hp + tier * 8,
+        damage=B.UNITS.junk.damage + tier, tier=tier}, "ok"
+end
+
+-- Every 10th wave ends with one distinct server-owned JUNK CAPTAIN.
+-- Compute only from validated wave rules; never modify the global JUNK unit.
+function B.junkBoss(wave)
+    local threat,reason=B.junkThreat(wave)
+    if not threat then return nil,reason end
+    if wave % 10 ~= 0 then return nil,"not_boss_wave" end
+    return {hp=threat.hp*3, damage=threat.damage+4,
+        reward=40+wave*2}, "ok"
 end
 
 function B.nextHP(current, maxHP, damage)
@@ -77,3 +116,4 @@ function B.waveReward(wave)
 end
 
 return B
+

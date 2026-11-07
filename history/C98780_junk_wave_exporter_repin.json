@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "id": "C98780",
+  "date_utc": "2026-11-07",
+  "kind": "JUNK_WAVE_SCALING_EXACT_SOURCE_PINNED_EXPORTER_RECONCILIATION",
+  "scope": "existing draft PR185 stacked on PR184; exact-source export pins updated, no weakened QA, no public release",
+  "authoritative_game_source_commit": "9b357a72b35ff0e05b7b4df83453ab9b567ef5b6",
+  "prior_game_source_commit": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "repair_of_failed_ci": {
+    "run_id": 42323494450,
+    "offline": "FAIL",
+    "compile_hold": "SUCCESS",
+    "cause": "Existing exporter and test suite correctly failed to package modified gameplay code because its immutable Git blob pins still referenced earlier PR184 source.",
+    "evidence": "GitHub offline logs: 10/10 new native Lua wave difficulty tests PASS, Python 14 errors all source differs from exact candidate Git blob"
+  },
+  "source_pins": {
+    "src/ToyWarsBalance.lua": "0e4ba5b8872f3d568f9e2da6c271885e61440cbe",
+    "src/ToyWarsServer.server.lua": "a3d018c88bc0360e9849d2e2e4cbe54a33ed77e6",
+    "src/ToyWarsHUD.client.lua": "05d72aae6924cc5d93fe14595e9af2cdeb4f73fd",
+    "src/ToyWarsSmokeTest.server.lua": "ccba431909c664909e2680785648d0402fedf3c3"
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1428,
+    "lua_bytes": 63942
+  },
+  "source_changes": [],
+  "previous_exporter_sha": "ac5c3048803c029e69a5ddc6cdd05408b5b484b4",
+  "previous_exporter_test_sha": "6d3ea56455e5aaa4bc1ac061f2f942cf7cd7b33e",
+  "changed_files": [
+    "tools/export_accepted_rbxlx.py",
+    "tests/test_system_xml_artifact_export.py",
+    "history/C98780_junk_wave_exporter_repin.json"
+  ],
+  "new_exported_xml": "twf_4toy_junk_wave50_NOT_ENGINE_VERIFIED.rbxlx",
+  "new_receipt": "twf_4toy_junk_wave50_UNTRUSTED_receipt.json",
+  "tests_added": 1,
+  "source_bytes_changed": 0,
+  "coordination": {
+    "epoch": 471,
+    "owner_id": "b37adc7a-dfa7-4798-975c-654a7b0cb25e",
+    "claim_commit": "f6d57208b33a72762154c9cef66d7e0b11604747"
+  },
+  "expected_exact_head_hosted_ci": "PENDING",
+  "rbxlx": "NON_ENGINE_XML_ONLY",
+  "studio_run": false,
+  "multiplayer": false,
+  "android": false,
+  "independent_native_review": false,
+  "main_merged": false,
+  "new_permissions": false,
+  "new_paid_services": 0,
+  "additional_spend": 0,
+  "quota_remaining": "UNKNOWN"
+}
