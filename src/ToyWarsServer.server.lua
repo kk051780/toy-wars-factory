@@ -423,8 +423,11 @@ local function createToyModel(id, x, z, boss)
         core.CFrame = CFrame.new(0,1.45,0)
         -- Face the incoming +Z JUNK lane; one pooled 3D flash per TANKURU.
         -- No per-shot instance creation and no changes to combat hit authority.
-        face.CFrame = CFrame.new(0,2.1,1.28)
-        modelPart(m,"Cannon",Vector3.new(0,2.8,3),Vector3.new(1.0,1.0,5),Color3.fromRGB(55,70,92),false)
+        -- Opaque core ends at +Z 2.5; keep entire face outside that plane.
+        -- Both facial plane and cannon LookVector point along the +Z JUNK lane.
+        face.CFrame=CFrame.lookAt(Vector3.new(0,2.1,2.65),Vector3.new(0,2.1,3.65))
+        local cannon=modelPart(m,"Cannon",Vector3.new(0,2.8,3),Vector3.new(1.0,1.0,5),Color3.fromRGB(55,70,92),false)
+        cannon.CFrame=CFrame.lookAt(Vector3.new(0,2.8,3),Vector3.new(0,2.8,4))
         modelPart(m,"Tracks",Vector3.new(0,0.3,0),Vector3.new(5.5,0.6,6),Color3.fromRGB(60,65,85),false)
         local flash=modelPart(m,"MuzzleFlash",Vector3.new(0,2.8,5.7),Vector3.new(1.6,1.6,1.6),Color3.fromRGB(255,226,96),true)
         flash.Material=Enum.Material.Neon

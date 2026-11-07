@@ -10,6 +10,13 @@ vectorMT.__sub = function(a,b) return vector(a.X-b.X,a.Y-b.Y,a.Z-b.Z) end
 local function frame(x,y,z)
     return {Position=type(x)=="table" and x or vector(x or 0,y or 0,z or 0)}
 end
+-- Direction-only deterministic mock; not Roblox engine rendering or physics.
+local function lookAt(origin,target)
+    local dx,dy,dz=target.X-origin.X,target.Y-origin.Y,target.Z-origin.Z
+    local len=math.sqrt(dx*dx+dy*dy+dz*dz)
+    assert(len>0,"lookAt requires distinct positions")
+    return {Position=origin,LookVector=vector(dx/len,dy/len,dz/len)}
+end
 
 local fixtureSerial = 0
 local function copyData(value)
@@ -229,7 +236,7 @@ function H.new(serverFile, existingCount, options)
     local env=setmetatable({
         game={GetService=function(_,name) return assert(services[name],"unsupported service") end},
         workspace=h.workspace,Instance={new=instance},Enum=enums,
-        Vector3={new=vector},CFrame={new=frame},Color3={fromRGB=function(...) return {...} end},
+        Vector3={new=vector},CFrame={new=frame,lookAt=lookAt},Color3={fromRGB=function(...) return {...} end},
         UDim={new=function(...) return {...} end},UDim2={fromOffset=function(...) return {...} end,fromScale=function(...) return {...} end},
         task={spawn=spawn,wait=function(duration) return coroutine.yield(duration or 0) end},
         os={clock=function() return h.now end,time=function() return math.floor(h.now) end},

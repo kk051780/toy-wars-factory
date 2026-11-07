@@ -30,7 +30,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_source_pins_match_actual_four_game_lua_blobs(self):
         files=x.read_pinned_sources(self.root)
         self.assertEqual(len(files),4)
-        self.assertEqual(sum(map(len,files.values())),72503)
+        self.assertEqual(sum(map(len,files.values())),72790)
 
     def test_generated_document_is_deterministic(self):
         a,ar=x.build_place(self.root)
@@ -77,7 +77,7 @@ class XmlArtifacts(unittest.TestCase):
         self.assertEqual(receipt['unmerged_source_branch_head_sha'],
                          '9e2a188b8d215b231757e95fa08abdacf4c4c2d3')
         self.assertEqual(receipt['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
-                         'fdb738d936e49a7a2d2b0f44b149a5f3be5ad9fd')
+                         '6b4f8d2c84d9d333f71b673f819420d1b80f2f3d')
         doc=ET.fromstring(binary)
         embedded={}
         for item in doc.findall('.//Item'):
@@ -100,7 +100,7 @@ class XmlArtifacts(unittest.TestCase):
         self.assertEqual(receipt['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
                          'e2080307182d1ac1c4c4842f1307229b75ca7b12')
         self.assertEqual(receipt['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
-                         'fdb738d936e49a7a2d2b0f44b149a5f3be5ad9fd')
+                         '6b4f8d2c84d9d333f71b673f819420d1b80f2f3d')
         doc=ET.fromstring(binary)
         source={}
         for item in doc.findall('.//Item'):
@@ -123,7 +123,7 @@ class XmlArtifacts(unittest.TestCase):
         self.assertEqual(manifest['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
                          'e2080307182d1ac1c4c4842f1307229b75ca7b12')
         self.assertEqual(manifest['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
-                         'fdb738d936e49a7a2d2b0f44b149a5f3be5ad9fd')
+                         '6b4f8d2c84d9d333f71b673f819420d1b80f2f3d')
         doc=ET.fromstring(xml)
         embedded={}
         for node in doc.findall('.//Item'):
@@ -147,7 +147,7 @@ class XmlArtifacts(unittest.TestCase):
         self.assertEqual(manifest['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
                          'e2080307182d1ac1c4c4842f1307229b75ca7b12')
         self.assertEqual(manifest['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
-                         'fdb738d936e49a7a2d2b0f44b149a5f3be5ad9fd')
+                         '6b4f8d2c84d9d333f71b673f819420d1b80f2f3d')
         doc=ET.fromstring(binary)
         embedded={}
         for node in doc.findall('.//Item'):

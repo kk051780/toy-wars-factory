@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "id": "C98815",
+  "date_utc": "2026-11-07",
+  "kind": "SOURCERY_PR191_THREE_FINDINGS_TANKURU_FACE_FORWARD_ORIENTATION_AND_MUZZLE_UNIQUENESS",
+  "repository": "kk051780/toy-wars-factory",
+  "branch": "controller/tankuru-sourcery-review-fixes-20261107-9c3443b2",
+  "stacked_on": {
+    "pr": 193,
+    "head": "db4537051f960cde52649407fdaf4fb54ec41df8",
+    "base_branch": "controller/printer-3d-progress-20261107-36e10f50"
+  },
+  "source_review": {
+    "pr": 191,
+    "head": "ade96a5d730c407922771aa1275b8de584f2becd",
+    "review_id": 5811235468,
+    "actor": "sourcery-ai[bot]",
+    "status": "COMMENTED_WITH_THREE_MEDIUM_FINDINGS",
+    "github_inline_comment_ids": [
+      4501031563,
+      4501031571,
+      4501031577
+    ],
+    "native_approval": false
+  },
+  "coordination": {
+    "kind": "CONTROLLER",
+    "epoch": 494,
+    "owner_id": "9c3443b2-4a58-4021-b809-c87faf918846",
+    "claim_commit": "e7ef455649e01f75f7f6a8740ad8004ea5d11f47",
+    "task_id": null,
+    "owner_context": "MANUAL_CHAT_NOT_PROVIDER_SCHEDULED_RUN"
+  },
+  "changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "fdb738d936e49a7a2d2b0f44b149a5f3be5ad9fd",
+      "after_blob": "6b4f8d2c84d9d333f71b673f819420d1b80f2f3d",
+      "before_bytes": 54241,
+      "after_bytes": 54528,
+      "delta_bytes": 287
+    },
+    {
+      "path": "tests/roblox_server_harness.lua",
+      "before_blob": "a81649782452f00f079db5d5dcb8a21b3596c367",
+      "after_blob": "6879b402d6cfca763752cf088aff7512e624e5e5",
+      "before_bytes": 11220,
+      "after_bytes": 11593,
+      "delta_bytes": 373
+    },
+    {
+      "path": "tests/auto/tankuru_muzzle_flash_spec.lua",
+      "before_blob": "6220c6f39c39966e47b993a36b22c8934f316959",
+      "after_blob": "ea227fb8190af094376f6b43aa45b62e021c2ee7",
+      "before_bytes": 5806,
+      "after_bytes": 7859,
+      "delta_bytes": 2053
+    },
+    {
+      "path": "tools/export_accepted_rbxlx.py",
+      "before_blob": "8ef00f1cff245560f615ca254971249be4641199",
+      "after_blob": "8fced5138ab28e63560221b69cd59d1ebe3630b4",
+      "before_bytes": 7981,
+      "after_bytes": 7981,
+      "delta_bytes": 0
+    },
+    {
+      "path": "tests/test_system_xml_artifact_export.py",
+      "before_blob": "dd721f8b197d889626ccf1b03f7f5b89ddcc141b",
+      "after_blob": "4461690805f300cb16b63cddf18c4dcf368eac3e",
+      "before_bytes": 16681,
+      "after_bytes": 16681,
+      "delta_bytes": 0
+    }
+  ],
+  "game_source_metrics": {
+    "lua_files": 4,
+    "lua_bytes_after": 72790,
+    "server_before_bytes": 54241,
+    "server_after_bytes": 54528
+  },
+  "regressions": {
+    "original_muzzle_lua_cases": 10,
+    "additional_cases": 3,
+    "positive_and_negative_forward_geometry": true,
+    "exact_one_flash_before_after_reuse": true,
+    "full_hosted_ci": "PENDING"
+  },
+  "scope": "Only TANKURU model geometry and existing harness/test/exporter pin; preserved gameplay damage, cooldown, economics, CUREBO, GUARDON, JUNK, RoundOutcome, premium controls and Roblox HOLD.",
+  "constraints": {
+    "main_merged": false,
+    "source_branch_PR191_mutated": false,
+    "source_branch_PR192_mutated": false,
+    "source_branch_PR193_mutated": false,
+    "independent_approval": false,
+    "roblox_engine_verified": false,
+    "android_verified": false,
+    "two_client_verified": false,
+    "extra_paid_yen": 0
+  },
+  "note": "CFrame.lookAt is an actual Roblox API; Lua harness models only LookVector and Position. SOURCE PINNED_QA_HEAD is prior historical accepted candidate marker not this new PR commit SHA."
+}
