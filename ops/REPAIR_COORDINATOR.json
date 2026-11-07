@@ -1899,17 +1899,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 507,
-  "holder": {
-    "kind": "DISPATCH",
-    "owner_id": "41cdfb32-1eb7-4d54-8f4c-55f70c1c397a",
-    "task_id": null,
-    "epoch": 507,
-    "acquired_at": "2026-11-07T21:49:24.311Z",
-    "expires_at": "2026-11-07T21:51:24.311Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": null,
-    "origin": "dispatch"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3994,5 +3984,13 @@
       "scope": "Historical PR134 source report, independently integrated before this new distinct Issue114 repair."
     }
   ],
-  "task_id": "6adbf0d6a7d881918ce181dff2468867"
+  "task_id": "6adbf0d6a7d881918ce181dff2468867",
+  "manual_dispatch_release": {
+    "epoch": 507,
+    "owner_id": "41cdfb32-1eb7-4d54-8f4c-55f70c1c397a",
+    "origin": "manual_chat_inline_run",
+    "reason": "Existing WORKER run_now resolved INLINE in this chat; no authenticated registered WORKER provider run, therefore no source write or lease adoption",
+    "released_at": "2026-11-07T21:50:25.392Z",
+    "previous_last_completed_preserved": true
+  }
 }
