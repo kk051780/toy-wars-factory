@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "id": "C98841",
+  "kind": "PR199_REVIEW_BLOCKER_WORKER_CATALOG_WRITE_SCOPE_REDUCTION",
+  "date_utc": "2026-11-07",
+  "repository": "kk051780/toy-wars-factory",
+  "branch": "controller/complete-pve-main-integration-20261108-c8162bda",
+  "source_pr": 199,
+  "parent_head": "f478af3562740ff415c70c8e5f314ef6277cd1ac",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "review_gate": "No independent provider-native reviewer; DRAFT hold maintained.",
+  "coordinator": {
+    "epoch": 510,
+    "owner_id": "d03598c3-8e93-4cd2-84c6-f0cab49bbc5a",
+    "claim_commit": "048c11d795ec5ce6f442f2bd3d5afe81af4760de"
+  },
+  "observed_issue": "Inherited PR184 widened scheduled WORKER allowed source_paths from 3 canonical Lua source files to include protected config/characters.json. A fabricated new test was sufficient to pass check_auto_diff authorization; broadens unsupervised writer ability across game+catalog.",
+  "fix": "Revert only allowed path config/autonomous_repair.json to byte-exact protected current-main blob, preserving canonical Lua source permissions and regression requirements. Modify existing character-scope test to reject M config/characters.json even when paired with a new Lua regression; add positive accepted 3-Lua-source regression. Align candidate pipeline docs and WORKER prompt: catalog changes require separate CONTROLLER DRAFT + independent security review.",
+  "changes": [
+    {
+      "path": "config/autonomous_repair.json",
+      "sha": "0ed1fa31b93493299388da068749a0ca64768f43",
+      "bytes": 7564,
+      "before_bytes": 7594,
+      "before_sha": "60de6f585044c0dcbfcf5cd570bf11b6157b937f"
+    },
+    {
+      "path": "tests/test_system_character_scope.py",
+      "sha": "4e4ac33968a0b1ed81b6a7c846c999f198f908a0",
+      "bytes": 3064,
+      "before_bytes": 2376,
+      "before_sha": "3aeecbe1fc1b643dd86a931a529259bb4e87bb09"
+    },
+    {
+      "path": "docs/CHARACTER_PIPELINE.md",
+      "sha": "af093e35c779a588e5d591758edba6b0a4e34768",
+      "bytes": 8544,
+      "before_bytes": 7937,
+      "before_sha": "ddf2782ed4ad428a68e3b0631e54aefa355f487f"
+    },
+    {
+      "path": "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+      "sha": "5068d7008ac164e7fb9fbb45422c2353bcb2534f",
+      "bytes": 14212,
+      "before_bytes": 14020,
+      "before_sha": "e8388ccdd261f43ec6b407a0eb955e7396e783c4"
+    }
+  ],
+  "consequences": {
+    "normal_game_repair_allowed": true,
+    "scheduled_worker_catalog_edits_allowed": false,
+    "manual_reviewed_character_admission_possible": true,
+    "main_modified": false,
+    "automations_changed": false,
+    "game_Lua_modified": false,
+    "quality_gates_weakened": false,
+    "added_spend_jpy": 0
+  },
+  "game_source_metrics": {
+    "files": 4,
+    "bytes": 74583,
+    "lines": 1641
+  },
+  "ci": "PENDING_EXACT_HEAD",
+  "engine_verified": false,
+  "reviewed_independently": false,
+  "merged_main": false,
+  "published": false
+}
