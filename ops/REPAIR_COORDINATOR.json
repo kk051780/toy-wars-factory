@@ -1910,8 +1910,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 508,
-  "holder": null,
+  "epoch": 509,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "owner_id": "a1a55b37-8ec4-4c86-89f9-f19a04e06d36",
+    "task_id": null,
+    "epoch": 509,
+    "acquired_at": "2026-11-07T22:02:03.322Z",
+    "expires_at": "2026-11-07T22:27:03.322Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/issue57-handoff-privilege-split-9b8a6f21",
+    "scope": "Existing protected PR181 only: safe multi-generation 512 cap snapshot rotation workflow and reader documentation/tests; no main merge, no new PR, no publishing/spend"
+  },
   "integration_results": {
     "35": {
       "merged": true,
