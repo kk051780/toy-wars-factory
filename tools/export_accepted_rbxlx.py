@@ -13,15 +13,15 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 REPO = "kk051780/toy-wars-factory"
-PINNED_QA_HEAD = "6a75ea23cf6fb98201e8d48558ea2925a4394a45"
+PINNED_QA_HEAD = "d37c0d26bb5bc68c1507ea22e57a8175e1982900"
 EXPECTED = (
     ("ReplicatedStorage", "ToyWarsBalance", "ModuleScript", "src/ToyWarsBalance.lua", "e2080307182d1ac1c4c4842f1307229b75ca7b12"),
-    ("ServerScriptService", "ToyWarsServer", "Script", "src/ToyWarsServer.server.lua", "0333e0aa60c12709136281c22b2a2fd9569b8587"),
+    ("ServerScriptService", "ToyWarsServer", "Script", "src/ToyWarsServer.server.lua", "46e3e52eb4903b8123090772140809049ddef4c4"),
     ("ServerScriptService", "ToyWarsSmokeTest", "Script", "src/ToyWarsSmokeTest.server.lua", "ccba431909c664909e2680785648d0402fedf3c3"),
     ("StarterPlayer/StarterPlayerScripts", "ToyWarsHUD", "LocalScript", "src/ToyWarsHUD.client.lua", "05d72aae6924cc5d93fe14595e9af2cdeb4f73fd"),
 )
-XML_NAME = "twf_4toy_guardon_bodyguard_NOT_ENGINE_VERIFIED.rbxlx"
-RECEIPT_NAME = "twf_4toy_guardon_bodyguard_UNTRUSTED_receipt.json"
+XML_NAME = "twf_4toy_tankuru_captain_target_NOT_ENGINE_VERIFIED.rbxlx"
+RECEIPT_NAME = "twf_4toy_tankuru_captain_target_UNTRUSTED_receipt.json"
 
 class ExportBlocked(ValueError):
     pass

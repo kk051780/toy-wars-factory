@@ -75,9 +75,9 @@ class XmlArtifacts(unittest.TestCase):
     def test_current_combined_gameplay_is_embedded_in_actual_xml(self):
         binary, receipt=x.build_place(self.root)
         self.assertEqual(receipt['unmerged_source_branch_head_sha'],
-                         '6a75ea23cf6fb98201e8d48558ea2925a4394a45')
+                         'd37c0d26bb5bc68c1507ea22e57a8175e1982900')
         self.assertEqual(receipt['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
-                         '0333e0aa60c12709136281c22b2a2fd9569b8587')
+                         '46e3e52eb4903b8123090772140809049ddef4c4')
         doc=ET.fromstring(binary)
         embedded={}
         for item in doc.findall('.//Item'):
@@ -100,7 +100,7 @@ class XmlArtifacts(unittest.TestCase):
         self.assertEqual(receipt['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
                          'e2080307182d1ac1c4c4842f1307229b75ca7b12')
         self.assertEqual(receipt['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
-                         '0333e0aa60c12709136281c22b2a2fd9569b8587')
+                         '46e3e52eb4903b8123090772140809049ddef4c4')
         doc=ET.fromstring(binary)
         source={}
         for item in doc.findall('.//Item'):
@@ -119,11 +119,11 @@ class XmlArtifacts(unittest.TestCase):
     def test_tenth_wave_captain_is_in_embedded_3d_server_source(self):
         xml, manifest=x.build_place(self.root)
         self.assertEqual(manifest['unmerged_source_branch_head_sha'],
-                         '6a75ea23cf6fb98201e8d48558ea2925a4394a45')
+                         'd37c0d26bb5bc68c1507ea22e57a8175e1982900')
         self.assertEqual(manifest['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
                          'e2080307182d1ac1c4c4842f1307229b75ca7b12')
         self.assertEqual(manifest['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
-                         '0333e0aa60c12709136281c22b2a2fd9569b8587')
+                         '46e3e52eb4903b8123090772140809049ddef4c4')
         doc=ET.fromstring(xml)
         embedded={}
         for node in doc.findall('.//Item'):
@@ -143,11 +143,11 @@ class XmlArtifacts(unittest.TestCase):
     def test_factory_speed_is_in_signed_source_pinned_xml_candidate(self):
         binary, manifest=x.build_place(self.root)
         self.assertEqual(manifest['unmerged_source_branch_head_sha'],
-                         '6a75ea23cf6fb98201e8d48558ea2925a4394a45')
+                         'd37c0d26bb5bc68c1507ea22e57a8175e1982900')
         self.assertEqual(manifest['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
                          'e2080307182d1ac1c4c4842f1307229b75ca7b12')
         self.assertEqual(manifest['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
-                         '0333e0aa60c12709136281c22b2a2fd9569b8587')
+                         '46e3e52eb4903b8123090772140809049ddef4c4')
         doc=ET.fromstring(binary)
         embedded={}
         for node in doc.findall('.//Item'):
@@ -159,6 +159,7 @@ class XmlArtifacts(unittest.TestCase):
         self.assertIn('printerLabel.Text=string.format(',embedded['ToyWarsServer'])
         self.assertIn('state.productionTimer=state.productionTimer+interval',embedded['ToyWarsServer'])
         self.assertIn('local function guardonInterception(state, enemy, target, distance)',embedded['ToyWarsServer'])
+        self.assertIn('local function tankuruCaptainInRange(state, artillery, range)',embedded['ToyWarsServer'])
         self.assertIn('target,dist=guardonInterception(state,e,target,dist)',embedded['ToyWarsServer'])
         self.assertIn('JUNK_CAPTAIN',embedded['ToyWarsServer'])
         self.assertIn('RoundResultBanner',embedded['ToyWarsHUD'])
