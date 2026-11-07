@@ -866,8 +866,12 @@ local function updateEntity(state,e,dt)
         state.baseHP.Value=math.max(0,state.baseHP.Value-(e.boss and 28 or 12))
         removeEntity(e)
     elseif e.side=="ally" and e.z >= 39 then
-        local coins=B.awardCoins(state.coins.Value,4)
-        if coins then state.coins.Value=coins end
+        -- Server-authoritative courier delivery: never award on a client claim.
+        local reward=B.deliveryReward(e.id)
+        if reward then
+            local coins=B.awardCoins(state.coins.Value,reward)
+            if coins then state.coins.Value=coins end
+        end
         removeEntity(e)
     end
     if e.alive and e.model.Parent then

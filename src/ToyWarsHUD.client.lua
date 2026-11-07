@@ -122,6 +122,10 @@ local function showPage(delta)
             local spec={id,B.UNITS[id].name,colors[id] or colors.pon}
             button.Text=string.format("%s | %d",spec[2],B.UNITS[spec[1]].cost)
             if id=="curebo" then button.Text=button.Text.."\nREPAIR ALLIES" end
+            if id=="pon" then
+                local bonus=B.deliveryReward(id)
+                button.Text=button.Text..string.format("\nCOURIER +%d",bonus)
+            end
             button.BackgroundColor3=spec[3]
             buttons[id]=button
         end

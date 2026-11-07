@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "id": "C98835",
+  "kind": "PON_SCOUT_COURIER_CROSS_BOUNDARY_CASH_BONUS",
+  "date_utc": "2026-11-07",
+  "branch": "controller/pon-courier-delivery-20261107-3ac30a74",
+  "base_pr": 194,
+  "base_head": "c3fb8b29ca017bfeea3ef6e1298427ae5c07b2d2",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordinator": {
+    "epoch": 505,
+    "owner_id": "3ac30a74-70e5-45e6-9ef2-31c747a8344d",
+    "claim_commit": "f92e8e1b4d37e01c00beb69440317af94d59ab12"
+  },
+  "issue": "All allied toys earned the same four-coin enemy-boundary delivery reward; PON's intended fast scout/blueprint courier role had no unique pay-off.",
+  "fix": "Validated server-authoritative B.deliveryReward(id) pays 12 coins to a living allied PON actually crossing z>=39; other allies keep four. Invalid/enemy identities get nil. No remote payout or extra spawns; B.awardCoins clamps to MAX_CASH. PON selector advertises exact bonus from shared rules.",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsBalance.lua",
+      "before_blob": "e2080307182d1ac1c4c4842f1307229b75ca7b12",
+      "after_blob": "64175b1cda7e4d5e4623d7b28bb80fdc3d64c3b8",
+      "before_bytes": 4642,
+      "after_bytes": 5026,
+      "delta_bytes": 384,
+      "before_lines": 110,
+      "after_lines": 119,
+      "delta_lines": 9
+    },
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "f4206a0355222ca098c7c3dafb7c3316b027e5cc",
+      "after_blob": "181b0ef3a5aedafef4490decdbbe167d769e9932",
+      "before_bytes": 54528,
+      "after_bytes": 54701,
+      "delta_bytes": 173,
+      "before_lines": 1178,
+      "after_lines": 1182,
+      "delta_lines": 4
+    },
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_blob": "83233206eb2119c4a05aa01bc4f320b554f4f79b",
+      "after_blob": "da8cb4d13fe4b8a7deac8dec550349fea5830b60",
+      "before_bytes": 12342,
+      "after_bytes": 12515,
+      "delta_bytes": 173,
+      "before_lines": 288,
+      "after_lines": 292,
+      "delta_lines": 4
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1620,
+    "lua_bytes": 73492
+  },
+  "new_test": "tests/auto/pon_courier_delivery_spec.lua",
+  "native_test_cases": 9,
+  "existing_hud_regression_added": 1,
+  "changes": [
+    "src/ToyWarsBalance.lua",
+    "src/ToyWarsServer.server.lua",
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/character_pages_spec.lua",
+    "tests/auto/pon_courier_delivery_spec.lua",
+    "history/C98835_pon_courier_delivery.json"
+  ],
+  "game_characters_touched": [
+    "pon"
+  ],
+  "other_unit_economy_unchanged": true,
+  "non_roblox_source_modified": false,
+  "actual_engine": false,
+  "mobile_verified": false,
+  "independent_review": false,
+  "merged_main": false,
+  "published": false,
+  "added_spend_jpy": 0,
+  "ci": "PENDING"
+}
