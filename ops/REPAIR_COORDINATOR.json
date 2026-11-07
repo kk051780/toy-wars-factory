@@ -1898,8 +1898,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 507,
-  "holder": null,
+  "epoch": 508,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 508,
+    "owner_id": "c8162bda-760a-4c47-ad2e-f90d16ef04b3",
+    "task_id": null,
+    "acquired_at": "2026-11-07T21:50:54.746Z",
+    "expires_at": "2026-11-07T22:15:54.746Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/complete-pve-main-integration-20261108-c8162bda",
+    "scope": "DRAFT main-target consolidated game + security-gate candidate, exact PR198 game source + exact PR196 hardened parser/tests; no actual main merge, no other branch edits, no credentials/actions or release"
+  },
   "integration_results": {
     "35": {
       "merged": true,
