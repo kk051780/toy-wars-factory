@@ -1841,8 +1841,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 487,
-  "holder": null,
+  "epoch": 488,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 488,
+    "owner_id": "db08b795-9f1b-471c-977f-9e3e40554e07",
+    "acquired_at": "2026-11-07T07:57:18.470Z",
+    "expires_at": "2026-11-07T08:17:18.474Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/studio-unsaved-pve-preview-20261107-db08b795",
+    "work_id": "TWF-STUDIO-LOCAL-UNSAVED-PREVIEW-20261107",
+    "scope": "stack on PR191 studio-only ephemeral preview UI/server, isolated harness+regressions, strict source-pinned exporter; never Gemini auth/PR163"
+  },
   "integration_results": {
     "35": {
       "merged": true,
