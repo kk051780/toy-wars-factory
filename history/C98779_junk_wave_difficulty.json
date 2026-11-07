@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "id": "C98779",
+  "date_utc": "2026-11-07",
+  "kind": "POST_WAVE10_JUNK_SERVER_AUTHORED_THREAT_SCALING",
+  "scope": "isolated STACKED prototype test branch based on draft PR184, not main acceptance",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "baseline_game_source_head": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+  "review_dependency_pr": 184,
+  "branch": "bootstrap/twf-junk-wave-escalation-20261107",
+  "coordination": {
+    "epoch": 471,
+    "owner_id": "b37adc7a-dfa7-4798-975c-654a7b0cb25e",
+    "claim_commit": "f6d57208b33a72762154c9cef66d7e0b11604747"
+  },
+  "problem": "JUNK count reaches MAX_FIELD_UNITS by wave9; waves 10..50 reused base HP38 and damage6, removing late-wave PvE escalation despite rising player strength.",
+  "fix": "Keep waves1..10 identical; add +8 HP and +1 damage every five waves beginning wave11, capped by MAX_WAVE50, calculated at each authoritative enemy spawn; enemy instance carries its own attack to combat, original shared unit definition and other player sessions stay unchanged.",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsBalance.lua",
+      "before_blob": "b254be5ff0a6643dc634ef5ed17d3d0e3f663d20",
+      "after_blob": "0e4ba5b8872f3d568f9e2da6c271885e61440cbe",
+      "before_bytes": 3304,
+      "after_bytes": 3899,
+      "delta_bytes": 595,
+      "before_lines": 82,
+      "after_lines": 93,
+      "delta_lines": 11
+    },
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "57211f6c4179b5ada8d8215f6ad8bad1d076aa86",
+      "after_blob": "a3d018c88bc0360e9849d2e2e4cbe54a33ed77e6",
+      "before_bytes": 46506,
+      "after_bytes": 46902,
+      "delta_bytes": 396,
+      "before_lines": 1019,
+      "after_lines": 1027,
+      "delta_lines": 8
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1428,
+    "lua_bytes": 63942
+  },
+  "unchanged_sources": [
+    "src/ToyWarsHUD.client.lua",
+    "src/ToyWarsSmokeTest.server.lua"
+  ],
+  "characters_touched": [
+    "JUNK"
+  ],
+  "playable_characters_unchanged": [
+    "PON",
+    "GUARDON",
+    "TANKURU",
+    "CUREBO"
+  ],
+  "native_test": "tests/auto/junk_wave_difficulty_spec.lua",
+  "native_cases": 10,
+  "local_red_green": "LuaTeX Lua 5.3 full-server native-mock: 9 fail/1 pass on original; 10 pass/0 fail on patch. GitHub hosted Lua 5.4: PENDING",
+  "source_paths": [
+    "src/ToyWarsBalance.lua",
+    "src/ToyWarsServer.server.lua"
+  ],
+  "changed_files": [
+    "src/ToyWarsBalance.lua",
+    "src/ToyWarsServer.server.lua",
+    "tests/auto/junk_wave_difficulty_spec.lua",
+    "history/C98779_junk_wave_difficulty.json"
+  ],
+  "actual_studio_pass": false,
+  "android_pass": false,
+  "offline_balancing_player_feedback": false,
+  "independent_native_approval": false,
+  "main_merged": false,
+  "pr184_merged": false,
+  "no_roblox_upload": true,
+  "no_public_publish": true,
+  "additional_paid_spend": 0,
+  "remaining_free_actions_quota": "UNKNOWN",
+  "next": "Run actual GitHub hosted Lua 5.4+Python regression CI exact commit; independently review this stacked source change before adoption."
+}
