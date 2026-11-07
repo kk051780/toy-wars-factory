@@ -36,6 +36,7 @@ def _unit_declaration_start(source):
     ]
     words = [value for value, _ in tokens]
     declarations = []
+    getunit_definitions = 0
     for i, word in enumerate(words):
         if word != "B":
             continue
@@ -49,6 +50,15 @@ def _unit_declaration_start(source):
         # so fail closed instead of attempting to infer the dynamic key.
         if words[i + 1:i + 2] == ["["]:
             raise ValueError("dynamic B member alias or write is forbidden")
+        # B.getUnit returns a mutable B.UNITS[id] record. Disallow calls,
+        # function aliases and reassignments in the checked module, retaining
+        # exactly one canonical method definition.
+        if words[i + 1:i + 3] == [".", "getUnit"]:
+            if i >= 1 and words[i - 1] == "function" and words[i + 3:i + 4] == ["("]:
+                getunit_definitions += 1
+            else:
+                raise ValueError("B.getUnit reference outside declaration is forbidden")
+            continue
         if words[i + 1:i + 3] == [".", "UNITS"]:
             j = i + 3
             dot_form = True
@@ -119,6 +129,8 @@ def _unit_declaration_start(source):
         if words[i:i + 4] in (["rawset", "(", "B", ","],
                               ["setmetatable", "(", "B", ","]):
             raise ValueError("mutating B module helper call is forbidden")
+    if getunit_definitions != 1:
+        raise ValueError("exactly one B.getUnit declaration required")
     if len(declarations) != 1:
         raise ValueError("exactly one literal B.UNITS declaration required")
     return declarations[0]
