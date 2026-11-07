@@ -1841,8 +1841,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 492,
-  "holder": null,
+  "epoch": 493,
+  "holder": {
+    "kind": "CONTROLLER",
+    "owner_id": "f548aa78-623a-4963-8593-4c086bbfa18d",
+    "task_id": null,
+    "epoch": 493,
+    "acquired_at": "2026-11-07T09:04:10.660Z",
+    "expires_at": "2026-11-07T09:24:10.660Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/issue57-handoff-privilege-split-9b8a6f21",
+    "origin": "controller",
+    "scope": "PR181 generated-snapshot consumer cutover only, 4 reader docs/code + offline tests and history; no workflow privilege/main merge"
+  },
   "integration_results": {
     "35": {
       "merged": true,
