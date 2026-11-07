@@ -1726,6 +1726,37 @@
         "additional_paid_services": 0,
         "recorded_at": "2026-11-07T02:19:10.324Z"
       }
+    },
+    {
+      "at": "2026-11-07T03:02:40.327Z",
+      "kind": "PRESERVE_PREVIOUS_COMPLETION",
+      "epoch": 476,
+      "record": {
+        "kind": "MANUAL_CONTROLLER_PR163_STRICT_ID_AND_NONFINITE_JSON_CI_GREEN",
+        "epoch": 475,
+        "owner_id": "e585e97a-927d-4dab-bf71-e36d8a5af74c",
+        "claim_commit": "e3c5e436ff825e1c9d52df10239658bf2e89b64c",
+        "work_branch": "controller/actions-write-pilot-8df31af2",
+        "pr_number": 163,
+        "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+        "previous_head": "00bcdda0023950801a0256a17e251780d5b3ebac",
+        "final_head": "1157e252c7f675454c12f1023ed113d9eaf5e32c",
+        "source_path": "tools/system_actions_write_probe.py",
+        "source_delta_bytes": 460,
+        "new_regression_tests": 3,
+        "history_path": "history/C09052_pr163_strict_numeric_and_nonfinite_json.json",
+        "ci_run_id": 42331540747,
+        "ci_status": "SUCCESS",
+        "offline": "SUCCESS",
+        "compile_hold": "SUCCESS",
+        "python_tests": "969/969",
+        "native_independent_approval": false,
+        "main_merged": false,
+        "real_actions_write_verified": false,
+        "roblox_engine_verified": false,
+        "additional_paid_services": 0,
+        "recorded_at": "2026-11-07T02:56:39.911Z"
+      }
     }
   ],
   "controller_maintenance": {
@@ -1811,17 +1842,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 476,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "owner_id": "5329213b-69c1-41fb-9ecb-128056d20b3e",
-    "task_id": null,
-    "epoch": 476,
-    "acquired_at": "2026-11-07T02:59:27.232Z",
-    "expires_at": "2026-11-07T03:19:27.232Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "twf-repair-coordinator"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3465,30 +3486,35 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "MANUAL_CONTROLLER_PR163_STRICT_ID_AND_NONFINITE_JSON_CI_GREEN",
-    "epoch": 475,
-    "owner_id": "e585e97a-927d-4dab-bf71-e36d8a5af74c",
-    "claim_commit": "e3c5e436ff825e1c9d52df10239658bf2e89b64c",
-    "work_branch": "controller/actions-write-pilot-8df31af2",
-    "pr_number": 163,
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "previous_head": "00bcdda0023950801a0256a17e251780d5b3ebac",
-    "final_head": "1157e252c7f675454c12f1023ed113d9eaf5e32c",
-    "source_path": "tools/system_actions_write_probe.py",
-    "source_delta_bytes": 460,
-    "new_regression_tests": 3,
-    "history_path": "history/C09052_pr163_strict_numeric_and_nonfinite_json.json",
-    "ci_run_id": 42331540747,
-    "ci_status": "SUCCESS",
-    "offline": "SUCCESS",
-    "compile_hold": "SUCCESS",
-    "python_tests": "969/969",
-    "native_independent_approval": false,
+    "kind": "CONTROLLER_PR184_187_INTEGRATION_REVIEW_BLOCKER_REGISTERED_NOT_REVIEW_APPROVED",
+    "epoch": 476,
+    "owner_id": "5329213b-69c1-41fb-9ecb-128056d20b3e",
+    "claim_commit": "957c0505f0f7533d2abcea7670c842f2d5e9c517",
+    "work_branch": "twf-repair-coordinator",
+    "work_request_id": "PR184_187_STACKED_INTEGRATION_READINESS_20261107",
+    "readiness_packet_path": "ops/review_packets/PR184_187_stack_preflight_epoch476.json",
+    "review_stack": [
+      184,
+      185,
+      186,
+      187
+    ],
+    "latest_head": "35d4e0fc2a72a6bfc442561f4222e7497df15975",
+    "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "commits_ahead": 21,
+    "behind": 0,
+    "unique_files_changed": 47,
+    "exact_head_CI": "4/4 PASS",
+    "native_review": "NONE",
+    "main_branch_protection": "UNVERIFIED_403",
+    "manual_review_request_for_stack": "NOT_REGISTERED_ATTESTED",
+    "pr60_review_gate": "DRAFT_UNMERGED",
+    "artifact_or_game_change": false,
     "main_merged": false,
-    "real_actions_write_verified": false,
     "roblox_engine_verified": false,
-    "additional_paid_services": 0,
-    "recorded_at": "2026-11-07T02:56:39.911Z"
+    "followup": "REGISTERED_REVIEWER_INDEPENDENT_NATIVE_SOURCE_AND_BRANCH_PROTECTION_PROOF_REQUIRED; NO SELF_APPROVAL_OR_MERGE",
+    "incremental_spend": 0,
+    "recorded_at": "2026-11-07T03:02:40.327Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
