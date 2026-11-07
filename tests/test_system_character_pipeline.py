@@ -149,6 +149,57 @@ class CharacterPipelineTests(unittest.TestCase):
         self.assertEqual(self.errors(b=nested), [])
 
 
+
+    def test_getunit_returned_record_mutation_fails_closed(self):
+        marker = "\nreturn B"
+        self.assertEqual(self.balance.count(marker), 1)
+        for write in (
+            "B.getUnit('pon').cost = 0",
+            "B . getUnit ('guardon').hp = 9999",
+            'local unit = B.getUnit("pon"); unit.damage = 0',
+            "local unit = (B.getUnit('tankuru')); unit.cooldown = 0",
+            "mutate(B.getUnit('curebo'))",
+        ):
+            with self.subTest(write=write):
+                changed = self.balance.replace(marker, "\n" + write + marker)
+                self.assertIn("B.getUnit reference outside declaration is forbidden",
+                              self.errors(b=changed))
+
+    def test_getunit_function_alias_export_fails_closed(self):
+        for write in (
+            "local get = B.getUnit; get('pon').cost = 0",
+            "someApi(B.getUnit)",
+            "local f = B . getUnit",
+        ):
+            with self.subTest(write=write):
+                changed = self.balance.replace("\nreturn B", "\n" + write + "\nreturn B")
+                self.assertIn("B.getUnit reference outside declaration is forbidden",
+                              self.errors(b=changed))
+
+    def test_getunit_reassignment_missing_and_duplicate_decl_fail_closed(self):
+        self.assertIn("B.getUnit reference outside declaration is forbidden",
+                      self.errors(b=self.balance.replace(
+                          "function B.getUnit(id)", "B.getUnit = function(id)")))
+        self.assertIn("exactly one B.getUnit declaration required",
+                      self.errors(b=self.balance.replace(
+                          "function B.getUnit(id)", "function B.readUnit(id)")))
+        duplicate = self.balance.replace(
+            "\nreturn B", "\nfunction B.getUnit(id) return nil end\nreturn B")
+        self.assertIn("exactly one B.getUnit declaration required",
+                      self.errors(b=duplicate))
+
+    def test_getunit_canonical_reader_and_string_comment_examples_are_safe(self):
+        self.assertEqual(self.errors(), [])
+        for example in (
+            "-- B.getUnit('pon').cost = 0",
+            "--[[ B.getUnit('pon').cost = 0 ]]",
+            """local guide = "B.getUnit('pon').cost = 0" """,
+            """local guide = 'B.getUnit("pon").cost = 0' """,
+        ):
+            with self.subTest(example=example):
+                candidate = self.balance.replace("\nreturn B", "\n" + example + "\nreturn B")
+                self.assertEqual(self.errors(b=candidate), [])
+
     def test_duplicates_across_live_and_planned_are_rejected(self):
         self.catalog['candidates'].append(deepcopy(self.catalog['characters'][0]))
         self.assertTrue(self.errors())

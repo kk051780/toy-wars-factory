@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "id": "C98834",
+  "date_utc": "2026-11-07",
+  "kind": "PR195_INDIRECT_GETUNIT_MUTABLE_ROSTER_GUARD",
+  "parent_pr": 195,
+  "parent_head": "1404d51c25a05b51c285553bc9eab4adea7057b9",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "branch": "controller/pr195-getunit-call-guard-20261107-a42b95",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "epoch": 503,
+    "owner_id": "a42b9596-4bf8-4cbf-9dbf-10436eeb1136",
+    "claim_commit": "edc3fd7654b37157daef2d53cc3aa34b5cdea3a5"
+  },
+  "reason": "B.getUnit(id) returns B.UNITS[id], and indirect reference mutations evade PR195 B.UNITS token checks.",
+  "changes": [
+    "Reject B.getUnit calls and alias exports inside inspected Balance Lua; permit exactly one function declaration.",
+    "Four Python methods cover mutation, alias, reassignment, duplicate, comments and quoted negative controls."
+  ],
+  "changed_paths": [
+    "tools/system_character_pipeline.py",
+    "tests/test_system_character_pipeline.py",
+    "history/C98834_pr195_getunit_alias_guard.json"
+  ],
+  "new_python_methods": 4,
+  "metrics": {
+    "game_source_delta_bytes": 0,
+    "character_changes": [],
+    "tool_bytes_before": 13435,
+    "tool_bytes_after": 14076,
+    "tool_delta_bytes": 641,
+    "test_bytes_before": 12760,
+    "test_bytes_after": 15304,
+    "test_delta_bytes": 2544
+  },
+  "ci": "PENDING",
+  "review": "PENDING_INDEPENDENT",
+  "main_merged": false,
+  "roblox_engine": false,
+  "extra_spending_jpy": 0
+}
