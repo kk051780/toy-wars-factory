@@ -676,6 +676,23 @@ local function guardonInterception(state, enemy, target, distance)
     return target,distance
 end
 
+-- TANKURU is long-range artillery: when a JUNK CAPTAIN enters firing
+-- range, lock that visible boss instead of wasting shots on nearby minions.
+-- Never chase an out-of-range boss or retarget other toy classes.
+local function tankuruCaptainInRange(state, artillery, range)
+    local chosen,distSquared=nil,range*range
+    for _,enemy in ipairs(state.entities) do
+        if enemy.alive and enemy.side=="enemy" and enemy.boss then
+            local dx,dz=enemy.x-artillery.x,enemy.z-artillery.z
+            local d=dx*dx+dz*dz
+            if d<=distSquared then
+                chosen,distSquared=enemy,d
+            end
+        end
+    end
+    return chosen,chosen and math.sqrt(distSquared) or math.huge
+end
+
 local function refreshHealthBar(e)
     if not e.alive or not e.model or not e.model.Parent then return end
     local bar=e.model:FindFirstChild("HealthBar")
@@ -757,6 +774,9 @@ local function updateEntity(state,e,dt)
     local target, dist=closestOpponent(state,e)
     if e.side=="enemy" then
         target,dist=guardonInterception(state,e,target,dist)
+    elseif e.side=="ally" and e.id=="tankuru" then
+        local captain,captainDistance=tankuruCaptainInRange(state,e,data.range)
+        if captain then target,dist=captain,captainDistance end
     end
     if target and dist <= data.range then
         if e.cooldown<=0 then

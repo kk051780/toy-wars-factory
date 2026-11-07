@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "C98787",
+  "kind": "TANKURU_CAPTAIN_XML_EXACT_SOURCE_REPIN",
+  "date_utc": "2026-11-07",
+  "source_branch": "controller/tankuru-captain-target-20261107-ec4aa5ef",
+  "source_commit": "d37c0d26bb5bc68c1507ea22e57a8175e1982900",
+  "parent_pr": 189,
+  "coordination": {
+    "epoch": 481,
+    "owner_id": "ec4aa5ef-1bb0-44d0-a750-af0aa358fa92",
+    "claim_commit": "5daf40c48da7df3be0bc71e35af5ffe6c9abe19b"
+  },
+  "changed_files": [
+    "tools/export_accepted_rbxlx.py",
+    "tests/test_system_xml_artifact_export.py"
+  ],
+  "server_source_git_blob": "46e3e52eb4903b8123090772140809049ddef4c4",
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1524,
+    "lua_bytes": 68567
+  },
+  "source_sha_pins_preserved": true,
+  "xml_qa_only": true,
+  "source_merged": false,
+  "roblox_engine_verified": false,
+  "additional_paid_spend": 0,
+  "artifact_emit_whitelist_unchanged": true,
+  "note": "Existing strict source blob integrity rejection retained. No new branch is authorized to emit or upload candidate artifacts; this is package construction/offline validation only."
+}
