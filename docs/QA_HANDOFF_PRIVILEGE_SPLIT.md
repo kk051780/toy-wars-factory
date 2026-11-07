@@ -23,3 +23,11 @@ Previous original hosted CI evidence: 863 Python tests OK at [Actions #414513409
 Older unrelated draft PRs #12, #19 and #22 also change `handoff-sync.yml`; cherry-pick their intended changes only after source-level conflict review. Source history/characters and established QA/HOLD gates must be preserved.
 
 Original work handoff: <https://github.com/kk051780/toy-wars-factory/issues/57#issuecomment-6572319582>.
+
+## Snapshot reader cutover — protected proposal, not deployed (2026-11-07)
+
+PR181 also updates AGENTS.md, two registered task source prompts and the generated handoff resume instructions. This corrects the documented read-side mismatch but does NOT mean active saved ChatGPT Automations prompts have been updated or executed. Those must be verified separately after review and deployment.
+
+Main remains canonical for code, security, current PR/CI and release holds. Read both `twf-handoff-snapshots/status/CHAT_HANDOFF.md` and `status/LATEST_STATE.json` at one immutable snapshot ref, if available. Validate schema=2, exact canonical_repo, HOLD_ENGINE_UNVERIFIED, 40-hex source_revision. Verify with authenticated GitHub compare that source_revision is identical to, or an ancestor of, current main and the intervening diff contains **only status/** changes. Stale, absent, unavailable or unverified compares mean UNTRUSTED_STALE; use current main/CI/PR directly. Main's generated status is historical fallback only.
+
+The current public-main ruleset #26750913 has PR required, required GitHub Actions App ID 15368 checks offline and compile_hold, required approvals set to 0 by OWNER, no bypass and no force/delete. This does not certify independent code security review. Protected workflow PR remains draft; no source release, scheduled actor write privilege, main merge, extra spending, or Roblox engine test is attested.

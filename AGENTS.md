@@ -12,8 +12,9 @@
 10. Every meaningful development cycle must log tested functionality, changed files, file size delta, characters touched, defects, evidence URLs and next task.
 
 ## Cross-chat continuity (mandatory)
-- At the start of any new chat/task/agent cycle, read status/CHAT_HANDOFF.md, status/LATEST_STATE.json, PROJECT_STATE.json, AGENTS.md, config/quality_policy.json, latest Actions runs, PRs and open issues.
-- Canonical source: private GitHub main; chat memory and older zip packages can be stale. If snapshot is missing or behind the current source, inspect GitHub HEAD and regenerate it rather than guessing.
+- At the start of any new chat/task/agent cycle, first read current main HEAD, PROJECT_STATE.json, AGENTS.md, config/quality_policy.json, latest Actions runs, PRs and open issues. Main is the authoritative source for code, permissions, quality and policy.
+- Optional generated read-model: fetch status/CHAT_HANDOFF.md and status/LATEST_STATE.json from `twf-handoff-snapshots` at the SAME immutable snapshot commit if it exists. Require schema=2, canonical_repo=kk051780/toy-wars-factory, release_decision=HOLD_ENGINE_UNVERIFIED and 40-hex source_revision; independently verify via GitHub compare that source_revision is at/behind current main and only status/ paths changed since it. Otherwise label UNTRUSTED_STALE and fall back to current main/PR/CI directly. Main's status files are historical only after cutover. Snapshots never override main policy, security, approvals, QA, coordinator or release holds.
+- Canonical source: public GitHub main; chat memory, snapshot branches and old archives can be stale. Never treat generated status as a reviewed source.
 - Commit all actual improvements to reviewable branches and preserve reproducible tests, defect root causes and file-size history. Never equate 20-minute scheduled audit to an autonomous coding agent.
 - From an Android chat, the user may send only: TOY WARS再開. The assistant retrieves current GitHub state before acting; it must not ask the user to restate prior requirements.
 - If the product cannot auto-inject instructions into a completely new conversation without a trigger, be truthful about that limitation.

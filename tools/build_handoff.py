@@ -141,8 +141,8 @@ def main():
                 fields.append("  - QA: "+item["qa_scope"]+" "+item["qa_url"])
         fields.append("- mainの実装と未マージPRの提案を合算しない。Geminiの成果と別の修正を区別する。")
     fields+=["","## 新しいチャットでAIが必ず行う引き継ぎ手順",
-      "1. GitHubコネクタでこのファイルと status/LATEST_STATE.json、PROJECT_STATE.json、AGENTS.md、config/quality_policy.json を読み込む。",
-      "2. 最新 main、Actions実行結果、PR、Issuesを直接確認し、生成ファイルのsource_revisionと整合させる。",
+      "1. まずGitHubの現在main HEAD、AGENTS.md、PROJECT_STATE.json、config/quality_policy.json、最新PR/CIを読む。mainがコード・方針の正本。",
+      "2. 補助的なtwf-handoff-snapshots/status/CHAT_HANDOFF.mdとstatus/LATEST_STATE.jsonを同一不変commitから取得。schema=2・canonical_repo・HOLD_ENGINE_UNVERIFIED・source_revisionを検証し、GitHub compareでsource_revision以降のmain変更がstatus/のみと証明できない場合UNTRUSTED_STALEとして棄却。ブランチ不在ならmainのstatusは古い参考値、現在のmain/PR/CIを直接確認。",
       "3. 正本はGitHub。毎回コード変更と品質証拠、サイズ差分、キャラクター監査、再発防止を積み上げる。",
       "4. 無人AIコード生成・Studio試験・面白さの実測を根拠なしに合格扱いしない。",
       "5. プレイヤー向け公開・課金・権限拡張・品質基準緩和にはユーザー承認が必要。",
