@@ -99,12 +99,20 @@ def _unit_declaration_start(source):
         # local roster=B.UNITS; roster.pon=nil.
         if end == j and not is_write:
             raise ValueError("bare B.UNITS reference can escape the roster")
-        # A unit or nested property assigned to another variable may carry
-        # a mutable reference. Prefer conservative rejection to proving
-        # arbitrary Luau alias analysis using a regex-only source checker.
-        if i >= 1 and words[i - 1] == "=":
+        # A unit/roster record assigned to a variable would carry a mutable
+        # reference. An exact primitive leaf read in the existing JUNK threat
+        # formula is different: these fields are literal numeric values in the
+        # canonical roster and the checker still forbids any field write.
+        # Deliberately narrow: NOT a generic "all property reads are safe"
+        # exception and NOT cross-module alias/type analysis.
+        readonly_junk_numeric = words[i:end] in (
+            ["B", ".", "UNITS", ".", "junk", ".", "hp"],
+            ["B", ".", "UNITS", ".", "junk", ".", "damage"],
+        )
+        if i >= 1 and words[i - 1] == "=" and not readonly_junk_numeric:
             raise ValueError("B.UNITS reference assigned to mutable alias")
-        if i >= 2 and words[i - 1] == "(" and words[i - 2] == "=":
+        if (i >= 2 and words[i - 1] == "(" and words[i - 2] == "="
+                and not readonly_junk_numeric):
             raise ValueError("parenthesized B.UNITS alias is forbidden")
         if is_write:
             if end != j or words[end] != "=" or words[end + 1:end + 2] != ["{"]:

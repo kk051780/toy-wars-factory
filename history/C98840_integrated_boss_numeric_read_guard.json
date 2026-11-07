@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "id": "C98840",
+  "kind": "MAIN_INTEGRATION_ROSTER_SCALAR_READ_WHITELIST_NONMUTATING",
+  "repository": "kk051780/toy-wars-factory",
+  "date_utc": "2026-11-07",
+  "branch": "controller/complete-pve-main-integration-20261108-c8162bda",
+  "head_before": "5e941eca7136c339b396e99cd2f62c0e2fcefa13",
+  "game_src_exact_head": "5c7a456b94c5b400d7c28a90256ef2c62f3e4e15",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_game_lua_unchanged": true,
+  "coordinator": {
+    "epoch": 508,
+    "owner_id": "c8162bda-760a-4c47-ad2e-f90d16ef04b3",
+    "claim_commit": "80ce0a6060e40c0f79b37c89c8e94b6fdf2a3cc1"
+  },
+  "failed_merged_ci": {
+    "run_id": 42418038246,
+    "head": "5e941eca7136c339b396e99cd2f62c0e2fcefa13",
+    "offline": "FAIL",
+    "compile_hold": "SUCCESS",
+    "python_tests": 914,
+    "failed_assertions": 32,
+    "cause": "The inherited hardened parser forbade exact primitive numeric B.UNITS.junk.hp/damage reads in existing junkThreat wave progression, misidentifying scalar expressions as mutable unit aliases."
+  },
+  "repair": "Only allow exact token sequences B.UNITS.junk.hp and B.UNITS.junk.damage in alias-expression context; literal data initialized as primitive numbers; continue to reject table/record aliases, dynamic keys, rawset, roster mutations, any B.UNITS.junk.hp field assignment. No broad table property allowlist, no mutable source edits.",
+  "python_provenance": [
+    {
+      "path": "tools/system_character_pipeline.py",
+      "sha": "16b1ad1a372894a4cdc191f57f86e70b2ccdde31",
+      "bytes": 14554
+    },
+    {
+      "path": "tests/test_system_character_pipeline.py",
+      "sha": "1b287a8eb35253c05a5ba3957cb008052a4e59bd",
+      "bytes": 16711
+    }
+  ],
+  "new_tests": 2,
+  "original_security_negative_controls_retained": true,
+  "security_review_required": true,
+  "hosted_combined_green": "PENDING",
+  "main_merged": false,
+  "engine_verified": false,
+  "extra_spend_jpy": 0
+}

@@ -121,6 +121,36 @@ class CharacterPipelineTests(unittest.TestCase):
         self.assertIn('B.UNITS[id].cost', self.balance)
 
 
+    def test_boss_numeric_read_only_fields_preserve_admission(self):
+        # The game must not become unadoptable merely because junkThreat()
+        # computes scalar HP/damage values from the immutable literal roster.
+        self.assertIn('hp=B.UNITS.junk.hp + tier * 8',self.balance)
+        self.assertIn('damage=B.UNITS.junk.damage + tier',self.balance)
+        self.assertEqual(self.errors(),[])
+        for expr in ("B.UNITS.junk.hp", "B.UNITS.junk.damage"):
+            with self.subTest(expr=expr):
+                mutated=self.balance.replace("\nreturn B", 
+                    "\nlocal scalar = " + expr + "\nreturn B")
+                self.assertEqual(self.errors(b=mutated),[])
+
+    def test_boss_scalar_exception_cannot_escape_a_mutable_table(self):
+        for write in (
+            "local stolen = B.UNITS.junk",
+            "local stolen = B.UNITS.pon",
+            "local stolen = B.UNITS[id]",
+            "local stolen = (B.UNITS.curebo)",
+        ):
+            with self.subTest(write=write):
+                self.assertTrue(self.errors(b=self.balance + "\n" + write))
+        for write in (
+            "B.UNITS.junk.hp = {}",
+            "B.UNITS.junk.damage = 0",
+            "B.UNITS.pon.hp = 9000",
+            'local stolen = B.UNITS.pon.hp',
+        ):
+            with self.subTest(write=write):
+                self.assertTrue(self.errors(b=self.balance + "\n" + write))
+
     def test_real_unit_with_altered_indentation_is_still_counted(self):
         for prefix in ("     ", "\t", "", "      "):
             record = prefix + "stealth = {name = 'STEALTH'},\n"
