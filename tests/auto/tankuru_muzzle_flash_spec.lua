@@ -51,12 +51,16 @@ local function facesIncomingLane(model)
     local cannon=assert(model:FindFirstChild("Cannon"))
     local face=assert(model:FindFirstChild("Face"))
     local flash=assert(model:FindFirstChild("MuzzleFlash"))
-    -- Position alone cannot establish rotation. Also require face visibility.
+    local tracks=assert(model:FindFirstChild("Tracks"))
+    -- Test +Z orientation, full face bounds and all front-facing occluders.
     local cf,ff=cannon.CFrame,face.CFrame
     return cf.LookVector and ff.LookVector
         and cf.LookVector.Z>0.99 and ff.LookVector.Z>0.99
         and ff.Position.Z-face.Size.Z/2>core.CFrame.Position.Z+core.Size.Z/2
         and flash.CFrame.Position.Z>cf.Position.Z+cannon.Size.Z/2
+        and ff.Position.Y+face.Size.Y/2<cf.Position.Y-cannon.Size.Y/2
+        and ff.Position.Y+face.Size.Y/2<flash.CFrame.Position.Y-flash.Size.Y/2
+        and ff.Position.Y-face.Size.Y/2>tracks.CFrame.Position.Y+tracks.Size.Y/2
 end
 check("tankuru owns one initially hidden 3D neon flash",function()
     local _,_,entity=fixture()
@@ -89,6 +93,21 @@ check("occluded face is rejected by the visibility predicate",function()
     local old=face.CFrame
     face.CFrame={Position={X=0,Y=2.1,Z=1.28},LookVector=old.LookVector}
     assert(not facesIncomingLane(model))
+end)
+check("forward face hidden by cannon is rejected",function()
+    local _,_,entity=fixture()
+    local model=entity("tankuru","ally",0,0).model
+    local face=assert(model:FindFirstChild("Face"))
+    local old=face.CFrame
+    face.CFrame={Position={X=0,Y=2.1,Z=2.65},LookVector=old.LookVector}
+    assert(not facesIncomingLane(model),"previous face Y must be occluded")
+end)
+check("forward face hidden by a moved muzzle flash is rejected",function()
+    local _,_,entity=fixture()
+    local model=entity("tankuru","ally",0,0).model
+    local flash=assert(model:FindFirstChild("MuzzleFlash"))
+    flash.CFrame={Position={X=0,Y=1.3,Z=5.7}}
+    assert(not facesIncomingLane(model),"flash front projection must be rejected")
 end)
 check("duplicate flash object is detected by exact child count",function()
     local _,_,entity=fixture()
