@@ -448,6 +448,7 @@ def run(api, env):
     pr = None
     staged_only = False
     failure = None
+    source_mutations_attempted = 0
     # Start cleanup BEFORE attempting the remote claim. An unacknowledged PATCH
     # may have written our lease even when cas_state fails during readback.
     try:
@@ -458,10 +459,15 @@ def run(api, env):
         if before!=claim or not owns(live,"CONTROLLER",scope["owner"],epoch,now()):
             raise ProbeError("LEASE_LOST")
         source_api = api
+        source_fence = _PerWriteLeaseFence(source_api, scope, epoch, claim)
         try:
-            api = _PerWriteLeaseFence(source_api, scope, epoch, claim)
+            api = source_fence
             pr=create_branch_probe(api,scope)
         finally:
+            # A source attempt is consumed before its network request: a lost
+            # acknowledgment never prompts a duplicate call. This count does
+            # not prove that any remote write committed.
+            source_mutations_attempted = source_fence._index
             # The verifier and release use the original trusted transport.
             api = source_api
         if pr is None:
@@ -472,7 +478,11 @@ def run(api, env):
         else:
             verify_created_probe(api,scope,pr)
     except ProbeError as exc:
-        failure=str(exc)
+        failure = str(exc)
+        if source_mutations_attempted:
+            # Fixed bounded telemetry only; no token, URL, response body,
+            # unverified claims of success, retries, or branch deletion.
+            failure += f"__SOURCE_MUTATIONS_ATTEMPTED_{source_mutations_attempted}__PARTIAL_WRITE_POSSIBLE"
     finally:
         cleanup_error = None
         try:
