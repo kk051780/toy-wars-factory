@@ -16,6 +16,7 @@ from system_parallel_shadow_leases import inspect, instant, uuid
 from system_parallel_scope_admission import normalized_path
 
 SHA = re.compile(r"[0-9a-f]{40}\Z")
+TASK = re.compile(r"[0-9a-f]{32}\Z")
 HASH = re.compile(r"[0-9a-f]{64}\Z")
 WORK = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:-]{5,127}\Z")
 BRANCH = re.compile(r"(?:controller|auto)/[a-z0-9][a-z0-9._/-]{4,120}\Z")
@@ -90,10 +91,12 @@ def verify_packet(packet):
             all(p not in (".", "..", "") for p in packet["branch"].split("/")),
             "branch")
     uuid(packet["owner_id"])
-    require(type(packet["origin"]) is str and packet["origin"] in ("MANUAL", "REGISTERED"),
+    require(type(packet["origin"]) is str and packet["origin"] in ("MANUAL", "REGISTERED", "SHADOW"),
             "origin")
     if packet["origin"] == "REGISTERED":
-        uuid(packet["task_id"])
+        require(type(packet["task_id"]) is str and
+                TASK.fullmatch(packet["task_id"]) is not None,
+                "registered task ID")
     else:
         require(packet["task_id"] is None, "manual task spoof")
     require(type(packet["lease_epoch"]) is int and packet["lease_epoch"] > 0,
@@ -150,6 +153,10 @@ def draft_checkpoint(snapshot, request, previous=None):
                     owner.get("epoch") == state["epoch"], "owner mismatch")
             origin = "MANUAL" if owner["kind"] == "CONTROLLER" else "REGISTERED"
             task_id = None if origin == "MANUAL" else owner.get("task_id")
+            if origin == "REGISTERED":
+                require(type(state.get("authorized_tasks")) is dict and
+                        state["authorized_tasks"].get(owner["kind"]) == task_id,
+                        "registered task authority missing")
         else:
             selected = [e for e in rows
                         if e["scope"]["work_id"] == request["work_id"] and
@@ -159,11 +166,12 @@ def draft_checkpoint(snapshot, request, previous=None):
             owner = {"owner_id": e["owner_id"], "task_id": e["run_id"],
                      "acquired_at": e["acquired_at"], "expires_at": e["expires_at"],
                      "epoch": e["lease_epoch"]}
-            task_id = e["run_id"]
-            origin = "REGISTERED"
+            task_id = None
+            origin = "SHADOW"
         uuid(owner["owner_id"])
         if origin == "REGISTERED":
-            uuid(task_id)
+            require(type(task_id) is str and TASK.fullmatch(task_id),
+                    "task ID must be 32 hex")
         packet = {
             "schema":1, "project_id":request["project_id"], "repository":snapshot["repository"],
             "work_id":request["work_id"], "branch":request["branch"],
