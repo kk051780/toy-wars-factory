@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "id": "C98783",
+  "date_utc": "2026-11-07",
+  "kind": "EXACT_SOURCE_PINNED_FACT0RY_THROUGHPUT_ARTIFACT",
+  "source_commit": "922537824ef1f5859208261f431ccad4ff727728",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "branch": "bootstrap/twf-factory-throughput-20261107",
+  "coordinator": {
+    "epoch": 474,
+    "owner_id": "9eb2430b-2db2-4644-a482-6b8a56cf5907",
+    "claim_commit": "fbfeecd25bee4118814b22c72d165ba39495bc9b"
+  },
+  "source_pins": {
+    "src/ToyWarsBalance.lua": "e2080307182d1ac1c4c4842f1307229b75ca7b12",
+    "src/ToyWarsServer.server.lua": "66d9abd732d472c4c23a4c0db28ba7d7af16093e",
+    "src/ToyWarsHUD.client.lua": "05d72aae6924cc5d93fe14595e9af2cdeb4f73fd",
+    "src/ToyWarsSmokeTest.server.lua": "ccba431909c664909e2680785648d0402fedf3c3"
+  },
+  "source_changes": [],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1474,
+    "lua_bytes": 66341
+  },
+  "changed_files": [
+    "tools/export_accepted_rbxlx.py",
+    "tests/test_system_xml_artifact_export.py",
+    "history/C98783_factory_throughput_exporter.json"
+  ],
+  "xml_file": "twf_4toy_factory_throughput_NOT_ENGINE_VERIFIED.rbxlx",
+  "receipt_file": "twf_4toy_factory_throughput_UNTRUSTED_receipt.json",
+  "new_embedded_regressions": 1,
+  "exact_hash_gate_weakened": false,
+  "export_event_allowlist": "only push on bootstrap/twf-factory-throughput-20261107",
+  "studio_verified": false,
+  "private_roblox_uploaded": false,
+  "main_merged": false,
+  "independent_review": false,
+  "incremental_cost": 0,
+  "github_actions_quota_remaining": "UNKNOWN",
+  "next": "Require exact-head hosted Python + Lua CI green, then independent review of stacked PR before any merge"
+}
