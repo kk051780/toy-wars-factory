@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "id": "C99876",
+  "date_utc": "2026-11-07T22:05:12.204Z",
+  "kind": "PR181_GENERATIONAL_SNAPSHOT_ROTATION_512_BOUNDED",
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 181,
+  "branch": "controller/issue57-handoff-privilege-split-9b8a6f21",
+  "source_parent": "03be8ad107be4fc0463893df234621243dcd75ea",
+  "base_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 509,
+    "owner_id": "a1a55b37-8ec4-4c86-89f9-f19a04e06d36",
+    "claim_commit": "5976825dd6dd7f6e16c309ad176cf583e352f88c"
+  },
+  "changed_files": [
+    ".github/workflows/handoff-sync.yml",
+    "AGENTS.md",
+    "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+    "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md",
+    "tools/build_handoff.py",
+    "docs/QA_HANDOFF_PRIVILEGE_SPLIT.md",
+    "tests/test_handoff_generation_rotation.py",
+    "history/C99876_snapshot_rotation.json"
+  ],
+  "testing": {
+    "local_isolated_prototype_17_pass": true,
+    "local_patch_fixture_38_pass": true,
+    "hosted_exact_head": "PENDING"
+  },
+  "permissions_changed": false,
+  "main_merged": false,
+  "engine_verified": false,
+  "additional_spend_jpy": 0,
+  "review_required": true
+}

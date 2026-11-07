@@ -120,40 +120,92 @@ jobs:
           state_blob="$(git hash-object -w -- status/LATEST_STATE.json)"
           status_tree="$(printf '100644 blob %s\tCHAT_HANDOFF.md\n100644 blob %s\tLATEST_STATE.json\n' "$handoff_blob" "$state_blob" | git mktree)"
           snapshot_tree="$(printf '040000 tree %s\tstatus\n' "$status_tree" | git mktree)"
+          # Branch rotation is a defensive cap, not a claim of unlimited history.
           snapshot_ref='refs/heads/twf-handoff-snapshots'
+          base_ref="$snapshot_ref"
           allowed_files="$(printf 'status/CHAT_HANDOFF.md\nstatus/LATEST_STATE.json')"
+          allowed_modes="$(printf '100644 blob status/CHAT_HANDOFF.md\n100644 blob status/LATEST_STATE.json')"
           test "$(git ls-tree -r --name-only "$snapshot_tree")" = "$allowed_files"
-
-          # GitHub token only becomes useful in this final data-only step.
-          # Main is NEVER a destination, even if private branch protection is absent.
           gh auth setup-git
           test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$TWF_SOURCE_COMMIT"
-          previous="$(git ls-remote origin "$snapshot_ref" | cut -f1)"
-          parents=()
+          max=512
+          refs="$(git ls-remote origin "$base_ref" "$base_ref-g*" | LC_ALL=C sort -k2,2)"
+          previous=''
+          previous_generation_tip=''
+          previous_generation_count=0
+          gen=1
+          expected_gen=2
+          base_seen=false
+          rotated=false
+          parent=''
+          if [ -n "$refs" ]; then
+            while IFS=$'\t' read -r sha ref; do
+              [[ "$sha" =~ ^[0-9a-f]{40}$ ]]
+              if [ "$ref" = "$base_ref" ]; then
+                test "$base_seen" = false
+                base_seen=true
+                gen=1
+              else
+                test "$base_seen" = true
+                [[ "$ref" =~ ^refs/heads/twf-handoff-snapshots-g[0-9]{4}$ ]]
+                found="$(printf '%s\n' "$ref" | sed -E 's/^.*-g([0-9]{4})$/\1/')"
+                gen=$((10#$found))
+                test "$gen" -eq "$expected_gen"
+                test "$previous_generation_count" -eq "$max"
+                expected_gen=$((expected_gen + 1))
+              fi
+              git fetch --no-tags origin "$ref"
+              test "$(git rev-parse FETCH_HEAD)" = "$sha"
+              test "$(git rev-parse --is-shallow-repository)" = false
+              snapshot_chain="$(git rev-list --max-count=513 "$sha")"
+              test -n "$snapshot_chain"
+              test "$(printf '%s\n' "$snapshot_chain" | wc -l)" -le 512
+              chain_len="$(printf '%s\n' "$snapshot_chain" | wc -l)"
+              test "$chain_len" -le "$max"
+              root_commit="$(printf '%s\n' "$snapshot_chain" | tail -n 1)"
+              test "$(git rev-list --parents --max-count=1 "$root_commit" | wc -w)" -eq 1
+              while IFS= read -r ancestor; do
+                test "$(git ls-tree -r --format='%(objectmode) %(objecttype) %(path)' "$ancestor")" = "$allowed_modes"
+                test "$(git rev-list --parents --max-count=1 "$ancestor" | wc -w)" -le 2
+              done <<< "$snapshot_chain"
+              if [ "$gen" -gt 1 ]; then
+                git log -1 --format=%B "$root_commit" | grep -Fqx "prior-snapshot-tip: $previous_generation_tip"
+                git log -1 --format=%B "$root_commit" | grep -Fqx "snapshot-generation: $gen"
+              fi
+              previous_generation_tip="$sha"
+              previous_generation_count="$chain_len"
+              snapshot_ref="$ref"
+              previous="$sha"
+            done <<< "$refs"
+            test "$base_seen" = true
+          fi
           if [ -n "$previous" ]; then
-            git fetch --no-tags origin "$snapshot_ref"
-            test "$(git rev-parse FETCH_HEAD)" = "$previous"
-            test "$(git ls-tree -r --name-only "$previous")" = "$allowed_files"
-          # A clean tip must not conceal executable files in previous Git history.
-          # Keep ancestry checks finite and forbid shallow or merged lineages.
-          test "$(git rev-parse --is-shallow-repository)" = "false"
-          snapshot_chain="$(git rev-list --max-count=513 "$previous")"
-          test -n "$snapshot_chain"
-          test "$(printf '%s\n' "$snapshot_chain" | wc -l)" -le 512
-          while IFS= read -r ancestor; do
-            test "$(git ls-tree -r --format='%(objectmode) %(objecttype) %(path)' "$ancestor")" = "$(printf '100644 blob status/CHAT_HANDOFF.md\n100644 blob status/LATEST_STATE.json')"
-            test "$(git rev-list --parents --max-count=1 "$ancestor" | wc -w)" -le 2
-          done <<< "$snapshot_chain"
-          # A foreign tip with valid names but a symlink/executable mode is not passive data.
-          test "$(git ls-tree -r --format='%(objectmode) %(objecttype) %(path)' "$previous")" = "$(printf '100644 blob status/CHAT_HANDOFF.md\n100644 blob status/LATEST_STATE.json')"
             if [ "$(git rev-parse "$previous^{tree}")" = "$snapshot_tree" ]; then
-              echo "NO_CHANGE: avoided fake snapshot progress" >> "$GITHUB_STEP_SUMMARY"
+              echo "NO_CHANGE: no new generated status" | tee -a "$GITHUB_STEP_SUMMARY"
               exit 0
             fi
-            parents=(-p "$previous")
+            if [ "$previous_generation_count" -eq "$max" ]; then
+              test "$gen" -lt 9999
+              gen=$((gen + 1))
+              snapshot_ref="$(printf '%s-g%04d' "$base_ref" "$gen")"
+              test -z "$(git ls-remote origin "$snapshot_ref")"
+              rotated=true
+            else
+              parent="$previous"
+            fi
           fi
-          snapshot_commit="$(printf 'chore(handoff-snapshot): accepted main %s\n' "$TWF_SOURCE_COMMIT" | git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit-tree "$snapshot_tree" "${parents[@]}")"
+          # Ref precondition and main freshness. Never reset, delete or force either ref.
+          test "$(git ls-remote origin "$base_ref" "$base_ref-g*" | LC_ALL=C sort -k2,2)" = "$refs"
+          commit_msg="$(printf 'chore(handoff-snapshot): accepted main %s\n' "$TWF_SOURCE_COMMIT")"
+          if [ "$rotated" = true ]; then
+            commit_msg="$(printf '%s\nprior-snapshot-tip: %s\nsnapshot-generation: %s\n' "$commit_msg" "$previous" "$gen")"
+          fi
+          if [ -n "$parent" ]; then
+            snapshot_commit="$(printf '%s\n' "$commit_msg" | git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit-tree "$snapshot_tree" -p "$parent")"
+          else
+            snapshot_commit="$(printf '%s\n' "$commit_msg" | git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit-tree "$snapshot_tree")"
+          fi
           test "$(git ls-tree -r --name-only "$snapshot_commit")" = "$allowed_files"
           test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$TWF_SOURCE_COMMIT"
-          # Non-force fast-forward. Concurrent writers reject rather than overwrite.
           git push origin "$snapshot_commit:$snapshot_ref"
+          printf 'SUCCESS snapshot_generation=%s snapshot_ref=%s\n' "$gen" "$snapshot_ref" >> "$GITHUB_STEP_SUMMARY"
