@@ -1842,19 +1842,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 485,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "epoch": 485,
-    "owner_id": "c37d9252-fc92-44ac-bf0c-677e80d375ac",
-    "task_id": null,
-    "acquired_at": "2026-11-07T07:29:41.926Z",
-    "expires_at": "2026-11-07T07:47:41.927Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/tankuru-muzzle-flash-20261107-c37d9252",
-    "work_id": "TWF-PVE-TANKURU-MUZZLE-FLASH-20261107",
-    "scope": "stack on exact PR190; game server 3D flash/test/ledger and source-pinned exporter; no Gemini or PR163 paths"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3498,19 +3486,28 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_PR163_GEMINI_REVIEW_PATCH_COMMITTED_AWAIT_EXACT_HEAD_QA_AND_NATIVE_REVIEW",
-    "epoch": 484,
-    "owner_id": "fa8d6e56-7eaa-4ac4-a5c6-b45a06db5f11",
-    "work_branch": "controller/actions-write-pilot-8df31af2",
-    "claim_commit": "48f0a24f9d050c0cb4108c93916b8ee1362ff2e6",
-    "pr_number": 163,
-    "pr_head": "6a265eeef00b36f0ff4b7d6b585bedc54a88fe81",
-    "main_changed": false,
-    "independent_native_approval": false,
-    "unattended_GitHub_writer_proven": false,
+    "kind": "CONTROLLER_TANKURU_POOLED_MUZZLE_FLASH_DRAFT_PR191",
+    "epoch": 485,
+    "owner_id": "c37d9252-fc92-44ac-bf0c-677e80d375ac",
+    "claim_commit": "06d6f17859b502748f932c13730a8227a964f0c5",
+    "work_branch": "controller/tankuru-muzzle-flash-20261107-c37d9252",
+    "work_id": "TWF-PVE-TANKURU-MUZZLE-FLASH-20261107",
+    "pr": 191,
+    "pr_head": "ade96a5d730c407922771aa1275b8de584f2becd",
+    "source_commit": "e96b23b471259d8cae53347318678e8dca275c79",
+    "source_blob": "de6069f2b902a01268c1b5d61fb3d45fea3f3565",
+    "changed_files": 6,
+    "source_delta_bytes": 1054,
+    "new_native_lua_cases": 10,
+    "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42351686780",
+    "ci_status": "QUEUED_AT_RELEASE_NO_PASS_ASSERTION",
+    "gemini_work_untouched": true,
+    "main_merged": false,
+    "independent_review": false,
     "roblox_engine_verified": false,
-    "incremental_spend": 0,
-    "released_at": "2026-11-07T07:26:34.796Z"
+    "additional_spend_yen": 0,
+    "owner_release_not_provider_terminal_proof": true,
+    "released_at": "2026-11-07T07:32:31.976Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
