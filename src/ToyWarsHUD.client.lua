@@ -122,10 +122,7 @@ local function showPage(delta)
             local spec={id,B.UNITS[id].name,colors[id] or colors.pon}
             button.Text=string.format("%s | %d",spec[2],B.UNITS[spec[1]].cost)
             if id=="curebo" then button.Text=button.Text.."\nREPAIR ALLIES" end
-            if id=="pon" then
-                local bonus=B.deliveryReward(id)
-                button.Text=button.Text..string.format("\nCOURIER +%d",bonus)
-            end
+
             button.BackgroundColor3=spec[3]
             buttons[id]=button
         end
@@ -183,7 +180,7 @@ local guideTitle=addText(quickStart,UDim2.new(1,-24,0,28),UDim2.new(0,12,0,10),
 guideTitle.Name="GuideTitle"
 guideTitle.ZIndex=21
 local guideSteps={
-    "1/3  PICK A TOY\nPON fast • GUARDON tough • TANKURU ranged. Tap below.",
+    "1/3  PICK A TOY\nPON fast COURIER +"..B.deliveryReward("pon").." • GUARDON tough • TANKURU ranged.",
     "2/3  PRODUCE & DEFEND\nYour factory auto-produces toys; defend the vault from JUNK.",
     "3/3  EARN & UPGRADE\nDefeat JUNK for coins; upgrade at gold. Loss automatically restarts wave 1.",
 }
