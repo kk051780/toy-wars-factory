@@ -1768,6 +1768,20 @@
       "service_completion_asserted": false,
       "unattended_success": false,
       "incremental_spend_yen": 0
+    },
+    {
+      "type": "PR195_ADVISORY_NO_SOURCE",
+      "epoch": 502,
+      "owner_id": "bf92e3ad-3be0-4622-a9ce-a71ae08cf064",
+      "pr_number": 195,
+      "pr_head": "1404d51c25a05b51c285553bc9eab4adea7057b9",
+      "comment_id": 6705585147,
+      "posted": true,
+      "observed_at": "2026-11-07T10:24:39.812Z",
+      "not_native_independent_review": true,
+      "not_merge_authorization": true,
+      "source_change": false,
+      "incremental_spend_yen": 0
     }
   ],
   "controller_maintenance": {
@@ -1853,17 +1867,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 502,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "bf92e3ad-3be0-4622-a9ce-a71ae08cf064",
-    "task_id": null,
-    "epoch": 502,
-    "acquired_at": "2026-11-07T10:24:03.533Z",
-    "expires_at": "2026-11-07T10:54:03.533Z",
-    "base_main_sha": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
-    "work_branch": "controller/pr195-advisory-no-source-edit-20261107",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
