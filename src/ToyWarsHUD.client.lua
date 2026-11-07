@@ -69,6 +69,15 @@ round(panel,13)
 local title=addText(panel,UDim2.new(1,-20,0,28),UDim2.new(0,10,0,5),"TOY WARS FACTORY",Color3.fromRGB(255,216,115))
 local summary=addText(panel,UDim2.new(1,-20,0,29),UDim2.new(0,10,0,39),"Loading...",Color3.fromRGB(251,251,255))
 local subt=addText(panel,UDim2.new(1,-20,0,27),UDim2.new(0,10,0,69),"",Color3.fromRGB(169,226,231))
+-- An event-only warning on the right of the status panel; never sends commands.
+-- Forecast only two waves ahead, sourced from the shared boss-wave rule.
+local bossWarning=addText(gui,UDim2.new(0.34,0,0,52),UDim2.new(0.63,0,0.035,0),"")
+bossWarning.Name="BossWaveWarning"
+bossWarning.BackgroundColor3=Color3.fromRGB(83,38,47)
+bossWarning.BackgroundTransparency=0.12
+bossWarning.TextColor3=Color3.fromRGB(255,218,143)
+bossWarning.Visible=false
+round(bossWarning,10)
 local pane=Instance.new("Frame")
 pane.Name="SelectToy"
 pane.Size=UDim2.new(0.88,0,0,90)
@@ -222,6 +231,18 @@ nextButton.Activated:Connect(function()
     guideText.Text=guideSteps[guidePage]
     if guidePage==#guideSteps then nextCaption.Text="PLAY" end
 end)
+local function bossWaveHint(current)
+    if type(current)~="number" or current~=math.floor(current)
+        or current<1 or current>B.MAX_WAVE then return nil end
+    if B.junkBoss(current) then
+        return string.format("JUNK CAPTAIN\nWAVE %d",current)
+    end
+    local nextWave=math.floor(current/10)*10+10
+    local remaining=nextWave-current
+    if nextWave>B.MAX_WAVE or remaining>2 or not B.junkBoss(nextWave) then return nil end
+    if remaining==1 then return "CAPTAIN NEXT WAVE" end
+    return "CAPTAIN IN 2 WAVES"
+end
 refresh=function()
     summary.Text=string.format("COINS %d  |  WAVE %d  |  VAULT %d%%",coins.Value,wave.Value,hp.Value)
     subt.Text=string.format("LV %d  •  TOYS %d  •  JUNK %d  •  KILLS %d",lv.Value,allies.Value,enemies.Value,kills.Value)
@@ -243,6 +264,9 @@ refresh=function()
         resultBanner.Text=""
         resultBanner.Visible=false
     end
+    -- An authoritative LOSS/VICTORY always takes precedence over a boss forecast.
+    bossWarning.Text=bossWaveHint(wave.Value) or ""
+    bossWarning.Visible=bossWarning.Text~="" and not resultBanner.Visible
     tip.Visible=not resultBanner.Visible
     if outcome and (outcome.Value=="LOSS" or outcome.Value=="VICTORY") then
         -- Expose the authoritative result instead of leaving onboarding over it.
