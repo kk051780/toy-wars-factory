@@ -1842,17 +1842,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 479,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "b73997c1-62c3-4616-8459-6a1cb7d6dd73",
-    "task_id": null,
-    "epoch": 479,
-    "acquired_at": "2026-11-07T06:59:12.092Z",
-    "expires_at": "2026-11-07T07:29:12.092Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/guardon-bodyguard-pve-20261107-f64c50d1",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3496,34 +3486,28 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_GUARDON_PVE_DRAFT_PR189_UNMERGED",
-    "owner_id": "f64c50d1-80e5-4b3e-998b-0a6b311be468",
-    "epoch": 478,
-    "claim_commit": "32ae9dafc8ac16f5d4d9598e909b11451320b97b",
+    "kind": "CONTROLLER_GUARDON_PVE_PR189_XML_PIN_REPAIRED_UNMERGED",
+    "owner_id": "b73997c1-62c3-4616-8459-6a1cb7d6dd73",
+    "epoch": 479,
+    "claim_commit": "22d1306fd3affffd9e582a0d588e1f4a062b6d8a",
     "work_branch": "controller/guardon-bodyguard-pve-20261107-f64c50d1",
     "pr": 189,
-    "pr_head": "6a75ea23cf6fb98201e8d48558ea2925a4394a45",
+    "pr_head": "b57aa5b324106db7b151c76e89b938b338dcc563",
     "parent_pr": 187,
-    "parent_sha": "35d4e0fc2a72a6bfc442561f4222e7497df15975",
-    "changed_files": 3,
-    "source_delta_bytes": 1318,
-    "source_delta_lines": 30,
-    "characters_touched": [
-      "guardon",
-      "pon",
-      "curebo",
-      "junk"
-    ],
-    "native_mock_cases": 12,
-    "hosted_workflow_run_id": 42349214517,
-    "hosted_ci_status_at_release": "IN_PROGRESS",
-    "native_review": "NONE",
+    "changed_files": 6,
+    "server_delta_lines": 30,
+    "new_guardon_native_mock_cases": "12/12 PASS actual Actions 42349214517",
+    "original_ci": "FAIL (exporter refused stale source pin)",
+    "repair": "Update exporter exact server SHA to 0333e0aa... and source-containing commit to 6a75...",
+    "new_ci_run": 42349431697,
+    "new_ci_status_at_release": "IN_PROGRESS",
     "main_merged": false,
-    "studio_verified": false,
+    "independent_native_review": false,
+    "engine_verified": false,
     "android_verified": false,
-    "extra_spend": 0,
+    "incremental_spend": 0,
     "owner_release_not_provider_terminal_proof": true,
-    "released_at": "2026-11-07T06:57:51.321Z"
+    "released_at": "2026-11-07T07:00:59.028Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
