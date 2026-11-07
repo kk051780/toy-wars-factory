@@ -194,6 +194,9 @@ class ChatFullContinuityTests(unittest.TestCase):
         s = copy.deepcopy(self.snap)
         s["state"]["holder"]["kind"] = "WORKER"
         s["state"]["holder"]["task_id"] = TASK
+        s["state"]["authorized_tasks"] = {"WORKER": TASK}
+        s["state"]["authorized_tasks"] = {"WORKER": TASK}
+        s["state"]["authorized_tasks"] = {"WORKER": TASK}
         pkt = draft_checkpoint(s, self.req)["packet"]
         self.assertEqual(pkt["origin"], "REGISTERED")
         self.assertEqual(successor_preflight(pkt, observe(s, self.req, LATE))["status"],
@@ -235,6 +238,17 @@ class ChatFullContinuityTests(unittest.TestCase):
         self.assertEqual(successor_preflight(pkt, observe(s,self.req,LATE),
                                              terminal)["status"], "WAIT_UNTRUSTED_EVIDENCE")
 
+    def test_registered_task_must_match_authorized_tasks(self):
+        s = copy.deepcopy(self.snap)
+        s["state"]["holder"]["kind"] = "WORKER"
+        s["state"]["holder"]["task_id"] = TASK
+        self.assertEqual(draft_checkpoint(s, self.req)["status"],
+                         "WAIT_INVALID_CHECKPOINT")
+        s["state"]["authorized_tasks"] = {
+            "WORKER": "11111111111111111111111111111111"}
+        self.assertEqual(draft_checkpoint(s, self.req)["status"],
+                         "WAIT_INVALID_CHECKPOINT")
+
     def test_shadow_scope_packet_not_a_grant(self):
         s = copy.deepcopy(self.snap)
         s["state"]["holder"] = None
@@ -244,7 +258,7 @@ class ChatFullContinuityTests(unittest.TestCase):
                      "base_sha":"a"*40,"write_paths":["tools/safe.py"],
                      "read_paths":[],"generated_paths":[],"shared_resources":[],
                      "status":"ACTIVE"},
-            "owner_id":OWNER,"run_id":TASK,
+            "owner_id":OWNER,"run_id":"22222222-2222-4222-8222-222222222222",
             "nonce":"11111111-1111-4111-8111-111111111111",
             "lease_epoch":513,"acquired_at":START,"expires_at":END}]}
         out = draft_checkpoint(s, self.req)
