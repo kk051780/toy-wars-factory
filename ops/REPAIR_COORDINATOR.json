@@ -1841,8 +1841,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 493,
-  "holder": null,
+  "epoch": 494,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 494,
+    "owner_id": "9c3443b2-4a58-4021-b809-c87faf918846",
+    "task_id": null,
+    "acquired_at": "2026-11-07T09:14:07.610Z",
+    "expires_at": "2026-11-07T09:44:07.610Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/tankuru-sourcery-review-fixes-20261107-9c3443b2",
+    "scope": "Standalone stacked followup atop PR193 to address Sourcery PR191 3 findings: TANKURU face, orientation, flash uniqueness + pinned exporter; do not change main/PR191/192/193"
+  },
   "integration_results": {
     "35": {
       "merged": true,
