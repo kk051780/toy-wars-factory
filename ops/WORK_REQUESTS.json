@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-07T07:06:40.156Z",
+  "observed_at": "2026-11-07T07:55:57.897Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4614,6 +4614,46 @@
       "incremental_cost": 0,
       "separate_qa_pr": 188,
       "title": "PVE integration readiness after Guardon bodyguard (5 stacked + separate QA #188)"
+    },
+    {
+      "id": "pr163_issue57_current_head_independent_security_advisory_20261107",
+      "kind": "PROTECTED_ISSUE57_PR163_SECURITY_ADVISORY_HANDOFF",
+      "priority": "P0",
+      "status": "OPEN_READ_ONLY_INDEPENDENT_SECURITY_ADVISORY_PENDING",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "parent_issue": 57,
+      "canonical_issue": 57,
+      "pr": 163,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/163",
+      "branch": "controller/actions-write-pilot-8df31af2",
+      "head": "f4d83dd1ab19a8a1cc859b8d4db9bf385c49d083",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "evidence_path": "ops/review_packets/PR163_issue57_security_advisory_epoch487.json",
+      "ci_run": 42351893661,
+      "ci_python_tests": 981,
+      "ci_jobs": [
+        "offline:success",
+        "compile_hold:success"
+      ],
+      "requested_by_role": "MANUAL_CONTROLLER",
+      "author_claim_origin": "INITIAL_PROTECTED_MANUAL_EPOCH315_WITH_LATER_EPOCH484_AND_486_REVISIONS",
+      "coordination": {
+        "branch": "twf-repair-coordinator",
+        "claim_commit": "5810b883138d4c46eda1e6a9772e1c47384b8aec",
+        "epoch": 487,
+        "owner_id": "b1850e25-3c1c-4276-b6ba-496ee1e8ec07"
+      },
+      "request": "Registered reviewer in a genuinely separate task/run must independently inspect exact PR163 46-file diff including both privileged workflow definitions, source API token/lease/partial-write safety, source history and exact-head run #42351893661; return PASS/REQUEST_CHANGES/BLOCKED advisory. DO NOT self-approve or count Gemini static review as provider-native approval. PR60 DRAFT, 0 native reviews, private main protected:false, scheduled writer authority missing. No merge/dispatch/permission change/extra spending/publication.",
+      "next_actor": "REGISTERED_REVIEWER_READ_ONLY_SECURITY_ADVISORY",
+      "review_performed": false,
+      "reviewer_native_approved": false,
+      "main_merged": false,
+      "provider_branch_protection_proven": false,
+      "owner_reply_required": false,
+      "incremental_spend": 0,
+      "created_at": "2026-11-07T07:55:57.897Z"
     }
   ]
 }

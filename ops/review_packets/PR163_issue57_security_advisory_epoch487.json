@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "kind": "PROTECTED_PR163_EXACT_HEAD_REVIEW_HANDOFF",
+  "created_at": "2026-11-07T07:55:57.897Z",
+  "repository": "kk051780/toy-wars-factory",
+  "issue": 57,
+  "pr": 163,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "exact_pr_head": "f4d83dd1ab19a8a1cc859b8d4db9bf385c49d083",
+  "branch": "controller/actions-write-pilot-8df31af2",
+  "github_ci": {
+    "run_id": 42351893661,
+    "run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42351893661",
+    "commit_sha": "f4d83dd1ab19a8a1cc859b8d4db9bf385c49d083",
+    "trigger": "pull_request",
+    "conclusion": "success",
+    "offline": {
+      "job_id": 128341611246,
+      "result": "success",
+      "python_tests": 981
+    },
+    "compile_hold": {
+      "job_id": 128341611502,
+      "result": "success"
+    }
+  },
+  "source_scope": {
+    "changed_files": 46,
+    "includes": [
+      ".github/workflows/twf-actions-write-capability-probe.yml",
+      ".github/workflows/twf-actions-branch-write-capability-probe.yml",
+      "tools/system_actions_write_probe.py",
+      "tools/repair_control.py (dependency on accepted main)",
+      "tests/test_system_actions_write_probe_partial_dispatch.py",
+      "tests/test_system_actions_write_probe_gemini_findings.py"
+    ],
+    "remark": "PR has 46 files. Inspect complete actual GitHub diff, history and core dependency; no full-diff independent review is represented by this packet."
+  },
+  "last_patch": {
+    "head": "f4d83dd1ab19a8a1cc859b8d4db9bf385c49d083",
+    "change": "Sanitized partial source-write telemetry + 7 synthetic tests; no source writes or actual workflow dispatch in QA",
+    "history": "history/C09054_pr163_ambiguous_source_write_diagnostics.json"
+  },
+  "protected_gates": {
+    "native_review_count": 0,
+    "main_protected_false": true,
+    "pr60_policy_gate": "DRAFT_UNMERGED",
+    "privileged_workflows_on_main": false,
+    "live_workflow_dispatch": false,
+    "write_actor_identity": "UNPROVEN_FOR_SCHEDULED_CHATGPT_WORKER"
+  },
+  "required_independent_security_checks": [
+    "Original GitHub-diff audit of both privileged workflow YAML and token-bearing source (46 changed files); identify write paths and denied escalation",
+    "Confirm coordinator CAS and fallback behavior under lost ack, lease owner/epoch, branch-only API mutation budgets",
+    "Confirm both exact-head offline+compile_hold run logs and no production GitHub Actions write execution",
+    "Confirm external GitHub native reviewer identity and effective provider-enforced required checks; no self approval",
+    "Do not mark ready, merge, dispatch privileged workflows, modify settings, publish or spend without separately satisfying all owner gates"
+  ],
+  "source_review_origin": "MANUAL_CONTROLLER_PACKET_PREPARATION_NO_INDEPENDENT_VERDICT",
+  "previous_gemini_review": "PARTIAL_STATIC_4_FILES_NOT_NATIVE_GITHUB_APPROVAL",
+  "requested_actor": {
+    "task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "role": "REGISTERED_REVIEWER",
+    "binding": "REQUIRES_FRESH_PROVIDER_VERIFICATION"
+  },
+  "status": "READ_ONLY_SECURITY_ADVISORY_REQUESTED_NOT_COMPLETED",
+  "native_approval": false,
+  "merge_allowed": false,
+  "main_merged": false,
+  "spend_incremental": 0
+}
