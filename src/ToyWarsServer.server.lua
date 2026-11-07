@@ -405,7 +405,7 @@ local function modelPart(parent, name, offset, size, col, ball)
     return p
 end
 
-local function createToyModel(id, x, z)
+local function createToyModel(id, x, z, boss)
     local m = Instance.new("Model")
     m.Name = id:upper()
     local c = UNIT_COLORS[id]
@@ -451,7 +451,19 @@ local function createToyModel(id, x, z)
         modelPart(m,"ScrapHat",Vector3.new(0,3.8,0),Vector3.new(3.8,0.7,3.0),Color3.fromRGB(91,59,78),false)
         modelPart(m,"Feet",Vector3.new(0,0.2,0),Vector3.new(3.3,0.5,2.5),Color3.fromRGB(120,66,90),false)
     end
-    local hp = part(m,"HealthBar",Vector3.new(3.2,0.33,0.4),CFrame.new(0,4.7,0), id=="junk" and Color3.fromRGB(255,95,102) or Color3.fromRGB(107,255,147),Enum.Material.Neon)
+    if id=="junk" and boss then
+        -- Bosses have a unique in-world silhouette, not just invisible stats.
+        m.Name="JUNK_CAPTAIN"
+        core.Size=Vector3.new(4.6,3.7,3.1)
+        core.CFrame=CFrame.new(0,1.95,0)
+        local crown=part(m,"BossCrown",Vector3.new(4.8,0.65,3.5),
+            CFrame.new(0,4.55,0),Color3.fromRGB(255,208,79),Enum.Material.Neon)
+        local beacon=part(m,"BossBeacon",Vector3.new(1.0,1.1,1.0),
+            CFrame.new(0,5.25,0),Color3.fromRGB(255,91,112),Enum.Material.Neon)
+        beacon.Shape=Enum.PartType.Ball
+        label(crown,"JUNK CAPTAIN\nBOSS WAVE",184,74,3.0)
+    end
+    local hp = part(m,"HealthBar",Vector3.new(3.2,0.33,0.4),CFrame.new(0,boss and 6.0 or 4.7,0), id=="junk" and Color3.fromRGB(255,95,102) or Color3.fromRGB(107,255,147),Enum.Material.Neon)
     hp.Transparency = 0.12
     m.Parent = world
     m:PivotTo(CFrame.new(x,2.5,z))
@@ -575,15 +587,26 @@ local function addEntity(state, id, side)
     state.spawnOrdinal=state.spawnOrdinal+1
     -- Compute wave difficulty at actual server spawn, never from a client or
     -- by mutating the global unit table used by allies and other sessions.
-    local hp,damage=data.hp,data.damage
+    local hp,damage,reward=data.hp,data.damage,data.reward
+    local boss=false
     if side=="enemy" and id=="junk" then
         local threat=B.junkThreat(state.wave.Value)
         if not threat then return nil end
         hp,damage=threat.hp,threat.damage
+        -- Only the final spawned JUNK on waves 10,20,30,40,50 is the boss.
+        -- The server owns enemiesMade and enemyTarget; no client supplies this.
+        if state.enemiesMade==state.enemyTarget-1 then
+            local captain=B.junkBoss(state.wave.Value)
+            if captain then
+                boss=true
+                hp,damage,reward=captain.hp,captain.damage,captain.reward
+            end
+        end
     end
     local e={
-        id=id, side=side, health=hp, maxHealth=hp, damage=damage, cooldown=0,
-        x=state.x+offset, z=z, alive=true, model=createToyModel(id,state.x+offset,z),
+        id=id, side=side, health=hp, maxHealth=hp,
+        damage=damage, reward=reward, boss=boss, cooldown=0,
+        x=state.x+offset, z=z, alive=true, model=createToyModel(id,state.x+offset,z,boss),
         renderedX=state.x+offset, renderedZ=z,
     }
     state.entities[#state.entities+1]=e
@@ -600,7 +623,7 @@ local function killEntity(state, e, attacker)
     if not e.alive then return end
     removeEntity(e)
     if e.side=="enemy" and attacker and attacker.side=="ally" then
-        local new=B.awardCoins(state.coins.Value,B.UNITS[e.id].reward)
+        local new=B.awardCoins(state.coins.Value,e.reward or B.UNITS[e.id].reward)
         if new then state.coins.Value=new end
         state.kills.Value=state.kills.Value+1
     end
@@ -737,7 +760,7 @@ local function updateEntity(state,e,dt)
         end
     end
     if e.side=="enemy" and e.z <= -40 then
-        state.baseHP.Value=math.max(0,state.baseHP.Value-12)
+        state.baseHP.Value=math.max(0,state.baseHP.Value-(e.boss and 28 or 12))
         removeEntity(e)
     elseif e.side=="ally" and e.z >= 39 then
         local coins=B.awardCoins(state.coins.Value,4)
