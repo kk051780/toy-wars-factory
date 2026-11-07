@@ -13,12 +13,12 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 REPO = "kk051780/toy-wars-factory"
-PINNED_QA_HEAD = "837a59e14b5b240524b26e0e8a78eb4ecc3a6bef"
+PINNED_QA_HEAD = "6a65ec62022eadd2f273c3c18312db789f271987"
 EXPECTED = (
     ("ReplicatedStorage", "ToyWarsBalance", "ModuleScript", "src/ToyWarsBalance.lua", "e2080307182d1ac1c4c4842f1307229b75ca7b12"),
     ("ServerScriptService", "ToyWarsServer", "Script", "src/ToyWarsServer.server.lua", "a358ef13e1743cabdf0a940a29aa09c8387ac201"),
     ("ServerScriptService", "ToyWarsSmokeTest", "Script", "src/ToyWarsSmokeTest.server.lua", "ccba431909c664909e2680785648d0402fedf3c3"),
-    ("StarterPlayer/StarterPlayerScripts", "ToyWarsHUD", "LocalScript", "src/ToyWarsHUD.client.lua", "939e66b2340200a09b9ff6d5badc9482da33e9c9"),
+    ("StarterPlayer/StarterPlayerScripts", "ToyWarsHUD", "LocalScript", "src/ToyWarsHUD.client.lua", "83233206eb2119c4a05aa01bc4f320b554f4f79b"),
 )
 XML_NAME = "twf_4toy_studio_preview_NOT_ENGINE_VERIFIED.rbxlx"
 RECEIPT_NAME = "twf_4toy_studio_preview_UNTRUSTED_receipt.json"
