@@ -421,8 +421,15 @@ local function createToyModel(id, x, z, boss)
     elseif id == "tankuru" then
         core.Size = Vector3.new(4.5,2,5)
         core.CFrame = CFrame.new(0,1.45,0)
-        modelPart(m,"Cannon",Vector3.new(0,2.8,-3),Vector3.new(1.0,1.0,5),Color3.fromRGB(55,70,92),false)
+        -- Face the incoming +Z JUNK lane; one pooled 3D flash per TANKURU.
+        -- No per-shot instance creation and no changes to combat hit authority.
+        face.CFrame = CFrame.new(0,2.1,1.28)
+        modelPart(m,"Cannon",Vector3.new(0,2.8,3),Vector3.new(1.0,1.0,5),Color3.fromRGB(55,70,92),false)
         modelPart(m,"Tracks",Vector3.new(0,0.3,0),Vector3.new(5.5,0.6,6),Color3.fromRGB(60,65,85),false)
+        local flash=modelPart(m,"MuzzleFlash",Vector3.new(0,2.8,5.7),Vector3.new(1.6,1.6,1.6),Color3.fromRGB(255,226,96),true)
+        flash.Material=Enum.Material.Neon
+        flash.Transparency=1
+        flash.CanTouch=false
     elseif id == "curebo" then
         -- Seventeen primitive parts including the HP bar; no imported texture.
         core.Size = Vector3.new(3.2,2.3,2.4)
@@ -752,6 +759,11 @@ local function updateEntity(state,e,dt)
             repairHead.Color=Color3.fromRGB(247,239,211)
         end
     end
+    if e.muzzleFlashUntil and (state.combatTime or 0)>=e.muzzleFlashUntil then
+        e.muzzleFlashUntil=nil
+        local flash=e.model and e.model:FindFirstChild("MuzzleFlash")
+        if flash and flash:IsA("BasePart") then flash.Transparency=1 end
+    end
     local remaining=e.cooldown>0 and e.cooldown-dt or 0
     e.cooldown=math.max(0,remaining)
     -- Support toys escort the nearest injured ally; they should not abandon
@@ -785,6 +797,13 @@ local function updateEntity(state,e,dt)
                 target.health=remain
                 -- Refresh the damaged victim now, even if its turn already passed.
                 if remain<=0 then killEntity(state,target,e) else refreshHealthBar(target) end
+                if e.side=="ally" and e.id=="tankuru" then
+                    local flash=e.model and e.model:FindFirstChild("MuzzleFlash")
+                    if flash and flash:IsA("BasePart") then
+                        flash.Transparency=0.08
+                        e.muzzleFlashUntil=(state.combatTime or 0)+0.18
+                    end
+                end
             end
             e.cooldown=data.cooldown+math.min(0,remaining)
         end
