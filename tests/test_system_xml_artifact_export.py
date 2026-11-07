@@ -30,7 +30,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_source_pins_match_actual_four_game_lua_blobs(self):
         files=x.read_pinned_sources(self.root)
         self.assertEqual(len(files),4)
-        self.assertEqual(sum(map(len,files.values())),67659)
+        self.assertEqual(sum(map(len,files.values())),68567)
 
     def test_generated_document_is_deterministic(self):
         a,ar=x.build_place(self.root)

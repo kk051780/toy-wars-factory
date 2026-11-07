@@ -41,5 +41,20 @@
   "studio_verified": false,
   "android_verified": false,
   "independent_review": false,
-  "additional_paid_spend": 0
+  "additional_paid_spend": 0,
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "0333e0aa60c12709136281c22b2a2fd9569b8587",
+      "after_blob": "46e3e52eb4903b8123090772140809049ddef4c4",
+      "before_bytes": 49876,
+      "after_bytes": 50784,
+      "delta_bytes": 908
+    }
+  ],
+  "correction": {
+    "reason": "First protected PR190 QA showed source C-history required source_changes list; preserve strict ledger accounting rather than weaken tests.",
+    "evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/42350531900",
+    "corrected_in_draft_before_merge": true
+  }
 }

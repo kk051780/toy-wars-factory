@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "id": "C98788",
+  "kind": "TANKURU_PR190_STRICT_HISTORY_AND_XML_SIZE_RECONCILIATION",
+  "date_utc": "2026-11-07",
+  "branch": "controller/tankuru-captain-target-20261107-ec4aa5ef",
+  "parent_pr": 190,
+  "original_pr_head": "bba564d90d1f880f2dfca83e2fb987818b7c3c59",
+  "claim_epoch": 482,
+  "claim_commit": "b44a79571c7495d04f8f3f2863141683061fc284",
+  "owner_id": "d5a7083f-6dab-4b60-9e8e-a8c145bf3d98",
+  "failure_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/42350531900",
+  "observed_failure": {
+    "python_tests": 894,
+    "failed": 2,
+    "native_lua": "ALL_EXISTING_NATIVE_TEST_STEPS_GREEN",
+    "compile_hold": "SUCCESS",
+    "details": [
+      "C98786 missing source_changes list, ledger expected old 49876 vs actual 50784",
+      "Exact-source XML expected sum still 67659 vs actual 68567"
+    ]
+  },
+  "repaired_paths": [
+    "history/C98786_tankuru_captain_target.json",
+    "tests/test_system_xml_artifact_export.py"
+  ],
+  "source_files_changed": false,
+  "source_blob_unchanged": "46e3e52eb4903b8123090772140809049ddef4c4",
+  "quality_policy_relaxed": false,
+  "accepted_main_history_changed": false,
+  "independent_review": false,
+  "main_merged": false,
+  "studio_verified": false,
+  "additional_spend_yen": 0,
+  "ci_after_fix": "PENDING"
+}
