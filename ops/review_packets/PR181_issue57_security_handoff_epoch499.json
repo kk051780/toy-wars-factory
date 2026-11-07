@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "kind": "OWNER_PR181_REGISTERED_REVIEWER_SECURITY_HANDOFF",
+  "collected_at_utc": "2026-11-07T09:56:07.827Z",
+  "repository": "kk051780/toy-wars-factory",
+  "issue": 57,
+  "owner_latest_directive_issue": 182,
+  "pr": 181,
+  "pr_url": "https://github.com/kk051780/toy-wars-factory/pull/181",
+  "pr_branch": "controller/issue57-handoff-privilege-split-9b8a6f21",
+  "pr_draft": true,
+  "pr_base_branch": "main",
+  "exact_head": "03be8ad107be4fc0463893df234621243dcd75ea",
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "main_protected": true,
+  "provider_ruleset": {
+    "id": 26750913,
+    "enforcement": "active",
+    "approvals": 0,
+    "required_status_checks": [
+      {
+        "context": "offline",
+        "integration_id": 15368
+      },
+      {
+        "context": "compile_hold",
+        "integration_id": 15368
+      }
+    ],
+    "bypass_actors": []
+  },
+  "exact_head_ci": {
+    "run_id": 42358419652,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42358419652",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "offline",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "compile_hold",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "python_tests_reported_in_logs": 877,
+    "roblox_engine_executed": false
+  },
+  "changed_files": [
+    ".github/workflows/handoff-sync.yml",
+    "AGENTS.md",
+    "docs/QA_HANDOFF_PRIVILEGE_SPLIT.md",
+    "history/C99871_handoff_privilege_split.json",
+    "history/C99872_pr181_snapshot_prior_tree_mode_guard.json",
+    "history/C99873_pr181_mode_guard_escape_regression.json",
+    "history/C99874_pr181_snapshot_ancestry_guard.json",
+    "history/C99875_handoff_snapshot_reader_cutover.json",
+    "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+    "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md",
+    "tests/test_handoff_privilege_split.py",
+    "tests/test_handoff_snapshot_readers.py",
+    "tests/test_handoff_status_writer_git.py",
+    "tools/build_handoff.py"
+  ],
+  "source_observations": [
+    "Accepted main still schedules handoff workflow with contents:write and direct push to main; likely incompatible when status changes under provider main PR-only rule.",
+    "PR181 separates read-only verifier from contents:write passive-data-only writer and publishes only to twf-handoff-snapshots (not to main).",
+    "PR181 uses checksums, JSON schema checks, source revision from accepted main, scoped tree, nonforce push, and guarded linear/passive ancestor policy in Git shell. Hosted CI passing does not prove token write permissions or real scheduled snapshot delivery.",
+    "PR181 read-side instructions now mention immutable snapshot ref and stale rejection; connected Automations' saved prompt refresh and actual runtime reading are not verified.",
+    "Python offline and compile_hold success are implementation evidence, not autonomous reviewer identity, provider approval, snapshot deployment or Roblox Studio evidence."
+  ],
+  "reviewer_checklist": [
+    "Inspect full exact-head PR181 14-file diff and scope; distinguish workflow token rights from read-only job and avoid token use with untrusted executable PR source.",
+    "Verify job gating on push/schedule/workflow_dispatch, artifact integrity, bootstrap workflow choice, shell edge cases, API token and Git ref race/retry behavior.",
+    "Verify orphan data-only snapshot ref initial creation and fast-forward; reject dirty prior snapshots, chain over 512, symlinks, executable modes, unauthorized files, and wrong main/source SHA.",
+    "Review safety of GITHUB_TOKEN contents:write, action SHA pins, gh auth setup-git, shell quoting, no writes to main or arbitrary refs, and whether unexpected write protection prevents it.",
+    "Resolve consumer contract cutover: main canonical, snapshot optional; verify actual registered Automations saved prompts are updated when proposal deployed, not merely repo guidance.",
+    "Compare collisions with PR12/19/22 and main current source; inspect current-head regression scope and possible policy weakens.",
+    "Return a separate-task/run security review PASS, REQUEST_CHANGES or BLOCKED with dated evidence; author cannot review own work. If findings exist leave exact-head draft unmerged.",
+    "Only after independent review, make draft ready and merge under main ruleset; verify exact-head checks and new main QA, provider receipts, handoff read model behavior without claiming Roblox engine."
+  ],
+  "current_restrictions": {
+    "review_performed": false,
+    "independent_security_review": false,
+    "provider_native_approval_required": 0,
+    "provider_native_approval_observed": 0,
+    "independent_chat_review_is_not_native_github_approval": true,
+    "merge_allowed": false,
+    "draft_to_ready_performed": false,
+    "merged_main": false,
+    "writer_deployed": false,
+    "snapshot_ref_runtime_proven": false,
+    "registered_automations_prompts_refreshed": false,
+    "roblox_engine_tested": false,
+    "publish_authorized": false,
+    "additional_spend_jpy": 0
+  },
+  "coordination": {
+    "epoch": 499,
+    "owner_id": "9e15f847-0c5f-4960-b424-09cd521e692d",
+    "claim_commit": "c1fcc7bfe290f5a0b42f70fddcae54f8e6dac207",
+    "coord_branch": "twf-repair-coordinator"
+  }
+}
