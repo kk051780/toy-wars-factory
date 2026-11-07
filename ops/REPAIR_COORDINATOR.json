@@ -1841,8 +1841,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 496,
-  "holder": null,
+  "epoch": 497,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "owner_id": "679d2f66-8ccb-41db-92de-a6316d2eaf1c",
+    "epoch": 497,
+    "task_id": null,
+    "acquired_at": "2026-11-07T09:44:11.415Z",
+    "expires_at": "2026-11-07T09:59:11.415Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/tankuru-sourcery-review-fixes-20261107-9c3443b2",
+    "scope": "PR194 metadata-only correction of obsolete source-commit provenance in description; answer Sourcery false-positive verification with Git blob evidence; no code, PR base, CI, ruleset, main or merge changes"
+  },
   "integration_results": {
     "35": {
       "merged": true,
