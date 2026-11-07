@@ -649,6 +649,33 @@ local function closestOpponent(state, entity)
     return best,best and math.sqrt(bestDistSquared) or math.huge
 end
 
+-- GUARDON's shield makes a genuine tactical difference: nearby allies
+-- are no longer always hit first just because their center is closer to JUNK.
+-- Only a living guardian in THIS workshop can interpose. Bound its distance
+-- from both the threatened ally (8 studs) and the attacker (at most 4 extra
+-- studs of pursuit), so no remote protection or cross-arena targeting occurs.
+local function guardonInterception(state, enemy, target, distance)
+    if enemy.side~="enemy" or not target or target.id=="guardon" then
+        return target,distance
+    end
+    local best,bestSquared=nil,math.huge
+    local pursuitLimit=(distance+4)*(distance+4)
+    for _,ally in ipairs(state.entities) do
+        if ally.alive and ally.side=="ally" and ally.id=="guardon" then
+            local vx,vz=ally.x-target.x,ally.z-target.z
+            if vx*vx+vz*vz<=64 then
+                local dx,dz=ally.x-enemy.x,ally.z-enemy.z
+                local squared=dx*dx+dz*dz
+                if squared<=pursuitLimit and squared<bestSquared then
+                    best,bestSquared=ally,squared
+                end
+            end
+        end
+    end
+    if best then return best,math.sqrt(bestSquared) end
+    return target,distance
+end
+
 local function refreshHealthBar(e)
     if not e.alive or not e.model or not e.model.Parent then return end
     local bar=e.model:FindFirstChild("HealthBar")
@@ -728,6 +755,9 @@ local function updateEntity(state,e,dt)
         end
     end
     local target, dist=closestOpponent(state,e)
+    if e.side=="enemy" then
+        target,dist=guardonInterception(state,e,target,dist)
+    end
     if target and dist <= data.range then
         if e.cooldown<=0 then
             local remain=B.nextHP(target.health,target.maxHealth,e.damage or data.damage)
