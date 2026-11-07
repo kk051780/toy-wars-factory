@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a source-pinned, UNVERIFIED four-toy+GUARDON shield XML from isolated QA branch.
+"""Create a source-pinned, UNVERIFIED four-toy+GUARDON shield+PON courier XML from isolated QA branch.
 
 No HTTP, Roblox credentials, Studio install, or game-source modifications. This
 is a packaging step only. Independent security review and actual Roblox engine
@@ -13,12 +13,12 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 REPO = "kk051780/toy-wars-factory"
-PINNED_QA_HEAD = "0dfadf4f568527ab1751c408fdb94315dea0ad44"
+PINNED_QA_HEAD = "c920067a8e0a2566feb9b5bd22c10f91bb12fba5"
 EXPECTED = (
-    ("ReplicatedStorage", "ToyWarsBalance", "ModuleScript", "src/ToyWarsBalance.lua", "e2080307182d1ac1c4c4842f1307229b75ca7b12"),
-    ("ServerScriptService", "ToyWarsServer", "Script", "src/ToyWarsServer.server.lua", "f4206a0355222ca098c7c3dafb7c3316b027e5cc"),
+    ("ReplicatedStorage", "ToyWarsBalance", "ModuleScript", "src/ToyWarsBalance.lua", "64175b1cda7e4d5e4623d7b28bb80fdc3d64c3b8"),
+    ("ServerScriptService", "ToyWarsServer", "Script", "src/ToyWarsServer.server.lua", "181b0ef3a5aedafef4490decdbbe167d769e9932"),
     ("ServerScriptService", "ToyWarsSmokeTest", "Script", "src/ToyWarsSmokeTest.server.lua", "ccba431909c664909e2680785648d0402fedf3c3"),
-    ("StarterPlayer/StarterPlayerScripts", "ToyWarsHUD", "LocalScript", "src/ToyWarsHUD.client.lua", "83233206eb2119c4a05aa01bc4f320b554f4f79b"),
+    ("StarterPlayer/StarterPlayerScripts", "ToyWarsHUD", "LocalScript", "src/ToyWarsHUD.client.lua", "8afb94f5c7051dfeff86c26cbae7d8c3e6394c1a"),
 )
 XML_NAME = "twf_4toy_printer_progress_NOT_ENGINE_VERIFIED.rbxlx"
 RECEIPT_NAME = "twf_4toy_printer_progress_UNTRUSTED_receipt.json"

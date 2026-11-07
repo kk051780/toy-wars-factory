@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "id": "C98837",
+  "kind": "PON_COURIER_XML_SOURCE_PIN_AND_UTF8_LEDGER_CORRECTION",
+  "date_utc": "2026-11-07",
+  "branch": "controller/pon-courier-delivery-20261107-3ac30a74",
+  "base_pr": 194,
+  "corrected_at_source_commit": "c920067a8e0a2566feb9b5bd22c10f91bb12fba5",
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordinator": {
+    "epoch": 505,
+    "owner_id": "3ac30a74-70e5-45e6-9ef2-31c747a8344d",
+    "claim_commit": "f92e8e1b4d37e01c00beb69440317af94d59ab12"
+  },
+  "prior_failed_runs": [
+    {
+      "run": 42375384442,
+      "offline": "FAIL",
+      "reason": "HUD price multiline incompatibility"
+    },
+    {
+      "run": 42375659089,
+      "offline": "FAIL",
+      "reason": "outdated XML exporter Git blobs and UTF8 source ledger measured JS UTF16 code units"
+    }
+  ],
+  "history_corrections": [
+    {
+      "id": "C98835",
+      "path": "history/C98835_pon_courier_delivery.json",
+      "old_blob": "d447fa141c0a9081a3beafa2399753813a5c49dd",
+      "reason": "HUD origin byte-count offset +28 from UTF8 multi-byte symbols",
+      "old_source_metrics_lua_bytes": 73492,
+      "new_source_metrics_lua_bytes": 73520
+    },
+    {
+      "id": "C98836",
+      "path": "history/C98836_pon_courier_hud_price_compat.json",
+      "old_blob": "70423875aaadd6a7530a4b5fec81c6433ac6a069",
+      "reason": "HUD byte-count offset +28 from UTF8 multi-byte symbols",
+      "old_source_metrics_lua_bytes": 73348,
+      "new_source_metrics_lua_bytes": 73376
+    }
+  ],
+  "original_bad_snapshots_retained_in_git_parent_history": true,
+  "scope": "Draft ledger corrections only; no accepted/main history overwritten. Existing assertions and export pin requirements unchanged; all pinned values advance only to exact current parent source blobs.",
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1617,
+    "lua_bytes": 73376
+  },
+  "source_changes": [],
+  "exact_source_blobs": {
+    "src/ToyWarsBalance.lua": "64175b1cda7e4d5e4623d7b28bb80fdc3d64c3b8",
+    "src/ToyWarsServer.server.lua": "181b0ef3a5aedafef4490decdbbe167d769e9932",
+    "src/ToyWarsHUD.client.lua": "8afb94f5c7051dfeff86c26cbae7d8c3e6394c1a",
+    "src/ToyWarsSmokeTest.server.lua": "ccba431909c664909e2680785648d0402fedf3c3"
+  },
+  "revised_export_pin_source_commit": "c920067a8e0a2566feb9b5bd22c10f91bb12fba5",
+  "new_test": "test_pon_courier_is_in_source_pinned_export_not_just_in_hud",
+  "independent_review": false,
+  "engine_verified": false,
+  "merged_main": false,
+  "extra_spend_jpy": 0
+}
