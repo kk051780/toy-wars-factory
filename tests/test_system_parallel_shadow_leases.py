@@ -4,6 +4,9 @@ import hashlib
 import json
 import threading
 import unittest
+from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 from system_parallel_shadow_leases import claim, release, apply_once, KEY
 
 REPO = "kk051780/toy-wars-factory"
