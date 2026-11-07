@@ -1923,8 +1923,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 514,
-  "holder": null,
+  "epoch": 515,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 515,
+    "owner_id": "aab46269-879c-4c27-b7c4-4f3d3b65cfc0",
+    "task_id": null,
+    "acquired_at": "2026-11-07T23:05:22.755Z",
+    "expires_at": "2026-11-07T23:27:22.755Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/p0-chat-continuity-20261108-da7e6d82",
+    "scope": "P0 issue123: add hosted real-thread CAS race tests to PR202 and isolated GitHub branch contention pilot (no main, no merge, no paid spend), no 2 real actor claim"
+  },
   "integration_results": {
     "35": {
       "merged": true,
