@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "kind": "PROTECTED_CHARACTER_CROSS_MODULE_ALIAS_LIMITATION_EXACT_HEAD_REVIEW",
+  "id": "PR196_GETUNIT_EXTERNAL_MUTATION_EXACT_HEAD_REVIEW_20261107",
+  "repository": "kk051780/toy-wars-factory",
+  "recorded_at": "2026-11-07T11:07:08.105Z",
+  "coordination": {
+    "epoch": 504,
+    "owner_id": "ebb32aef-d786-4e3f-bdaa-6efed4bf0cb3",
+    "claim_commit": "9beaf6e5aa8d4b09adccdaeb6cb29290aa4aab57"
+  },
+  "canonical_main": {
+    "sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "changed": false
+  },
+  "parent_chain": [
+    {
+      "pr": 184,
+      "head": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+      "base": "main",
+      "draft": true,
+      "protected_scope_change": true
+    },
+    {
+      "pr": 195,
+      "head": "1404d51c25a05b51c285553bc9eab4adea7057b9",
+      "base": "bootstrap/twf-current-curebo-outcome-integration-20261106",
+      "draft": true
+    },
+    {
+      "pr": 196,
+      "head": "02e9fc6ea5bf4fcc51584b189368e9a5c798894d",
+      "base": "controller/character-roster-mutation-guard-20261107-51feef51",
+      "draft": true
+    }
+  ],
+  "pr196": {
+    "url": "https://github.com/kk051780/toy-wars-factory/pull/196",
+    "files": [
+      "tools/system_character_pipeline.py",
+      "tests/test_system_character_pipeline.py",
+      "history/C98834_pr195_getunit_alias_guard.json"
+    ],
+    "ci_run_id": 42366220402,
+    "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42366220402",
+    "ci_criteria": {
+      "offline": "SUCCESS",
+      "compile_hold": "SUCCESS",
+      "python_unittest_passed": 909,
+      "new_regressions": 4
+    },
+    "native_github_reviews": 0
+  },
+  "review_observation": {
+    "confirmed_canonical_semantics": "src/ToyWarsBalance.lua exports B.getUnit(id) returning B.UNITS[id] original mutable unit record; src/ToyWarsServer.server.lua addEntity uses local data=B.getUnit(id) to READ health, without observed mutating source in checked server.",
+    "confirmed_pr196_scope": "Static gate detects extra references to B.getUnit within ToyWarsBalance.lua; tests show calls or aliases inserted into BALANCE_SOURCE are rejected. It does not run whole-program source analysis, freeze returned records, or guard a different module that mutates the returned table.",
+    "limitation_example": "In another trusted or accidentally modified Roblox script that imports ToyWarsBalance: local b=require(...); b.getUnit(\"pon\").cost=0. That writes the original shared table absent a runtime guard. This is illustrative, NOT proof of a currently exploited player path.",
+    "risk_classification": "MODULE_INTEGRITY_CROSS_SOURCE_BOUNDARY_LIMITATION, no confirmed client remote exploit",
+    "required_review": [
+      "Confirm threat model: immutable external unit specs vs trusted-only game scripts; explicitly document whether B.getUnit should return a copy/frozen record or external mutation is intentionally supported.",
+      "Inspect current other modules for writes to B.UNITS and getUnit return; add appropriate cross-module regression if a real mutation risk exists, without unreviewed gameplay changes or breakage of pinned exporters.",
+      "Inspect PR196 checker code+4 tests, test against current HEAD and source; check false positives and that B.getUnit remains callable by current server.",
+      "Root PR184 expands config/characters.json agent allowed source scope and touches checker and prompts. Review root policy changes separately; PR196 static tests do not authorize root policy or independent approval.",
+      "Ensure separate registered reviewer task/run identity. Existing provider GitHub ruleset required_approving_review_count=0 does not waive project independent review.",
+      "CI 909 tests and offline mocks are not Roblox Studio, mobile, 2-client, or customer validation."
+    ],
+    "no_actions": {
+      "native_approval": false,
+      "main_merge": false,
+      "pr_ready": false,
+      "roblox_publish": false,
+      "credentials": false,
+      "paid_upgrade": false
+    }
+  },
+  "provider": {
+    "ruleset_id": 26750913,
+    "enforcement": "active",
+    "required_native_approvals": 0,
+    "required_checks": [
+      "offline",
+      "compile_hold"
+    ],
+    "separate_registered_reviewer_verdict": "PENDING"
+  },
+  "flags": {
+    "independent_review": false,
+    "main_merged": false,
+    "engine_verified": false,
+    "mobile_verified": false,
+    "additional_spend_yen": 0
+  }
+}

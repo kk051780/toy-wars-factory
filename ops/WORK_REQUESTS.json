@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-07T10:05:53.503Z",
+  "observed_at": "2026-11-07T11:07:08.105Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4885,6 +4885,36 @@
       "active_ruleset_id": 26750913,
       "provider_required_native_approvals_current": 0,
       "source_head_verified": true,
+      "additional_spend_yen": 0
+    },
+    {
+      "id": "PR196_GETUNIT_EXTERNAL_MUTATION_EXACT_HEAD_REVIEW_20261107",
+      "kind": "PROTECTED_PR196_INDEPENDENT_EXACT_HEAD_CODE_SECURITY_ADVISORY",
+      "priority": "P1",
+      "status": "OPEN_READ_ONLY_INDEPENDENT_SECURITY_ADVISORY_REQUIRED",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "created_at": "2026-11-07T11:07:08.105Z",
+      "updated_at": "2026-11-07T11:07:08.105Z",
+      "pr": 196,
+      "parent_pr": 195,
+      "root_pr": 184,
+      "head": "02e9fc6ea5bf4fcc51584b189368e9a5c798894d",
+      "parent_head": "1404d51c25a05b51c285553bc9eab4adea7057b9",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "evidence_path": "ops/review_packets/PR196_getunit_cross_module_boundary_epoch504.json",
+      "ci_run_id": 42366220402,
+      "ci_jobs": [
+        "offline:success",
+        "compile_hold:success"
+      ],
+      "python_tests": 909,
+      "review_request": "Review exact PR196 static gate and 4 regressions, assess cross-module B.getUnit mutable record exposure (getUnit returns B.UNITS[id] reference), and explicit non-exploit limits. Compare PR195 and protected root PR184 authorization/config changes; do not self/native-approve same author, merge, publish, or claim real Roblox runtime. Return PASS/REQUEST_CHANGES/BLOCKED scope-limited independent advisory with exact HEAD.",
+      "independent_review_observed": false,
+      "native_approval_observed": false,
+      "main_merged": false,
+      "game_engine_verified": false,
       "additional_spend_yen": 0
     }
   ]
