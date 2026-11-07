@@ -971,6 +971,17 @@ local function join(player)
     sessions[player]=pending
     local progress, persistAllowed, loadFailure=loadProgress(player,pending)
     if sessions[player]~=pending or player.Parent~=Players then return end
+    -- Local Roblox Studio can demonstrate PvE without an API-enabled DataStore.
+    -- A live server, invalid save or failed atomic session claim NEVER falls back.
+    local studioPreview=false
+    if (loadFailure=="STORE_UNAVAILABLE" or loadFailure=="READ_UNAVAILABLE")
+        and RunService:IsStudio() then
+        studioPreview=true
+        progress=nil
+        persistAllowed=false
+        loadFailure=nil
+        warn("TWF: STUDIO PREVIEW UNSAVED for",player.UserId)
+    end
     if loadFailure then
         sessions[player]=nil;occupied[slot]=nil
         if loadFailure~="DEPARTED" then
@@ -1001,6 +1012,10 @@ local function join(player)
     local status=Instance.new("Folder")
     status.Name="ToyWarsStatus"
     status.Parent=player
+    local progressMode=Instance.new("StringValue")
+    progressMode.Name="ProgressMode"
+    progressMode.Value=studioPreview and "STUDIO_PREVIEW_UNSAVED" or "SAVED"
+    progressMode.Parent=status
     local level=setInt(status,"FactoryLevel",progress and progress.factoryLevel or 1)
     local hp=setInt(status,"BaseHP",100)
     local units=setInt(status,"Allies",0)

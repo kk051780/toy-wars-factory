@@ -19,7 +19,8 @@ local function copyData(value)
     return copy
 end
 
-function H.new(serverFile, existingCount)
+function H.new(serverFile, existingCount, options)
+    options=options or {}
     fixtureSerial=fixtureSerial+1
     local fixtureId=fixtureSerial
     local h = {now=0, queue={}, serial=0, warnings={}, playerList={}, nextId=0}
@@ -119,7 +120,7 @@ function H.new(serverFile, existingCount)
     h.players=instance("Players");h.players.PlayerAdded=signal();h.players.PlayerRemoving=signal()
     h.storage=instance("ReplicatedStorage")
     h.workspace=instance("Workspace")
-    h.runService={Heartbeat=signal()}
+    h.runService={Heartbeat=signal(),IsStudio=function() return options.studio==true end}
     h.remote=instance("RemoteEvent");h.remote.Name="ToyWarsSelectUnit";h.remote.Parent=h.storage
     local module=instance("ModuleScript");module.Name="ToyWarsBalance";module.Parent=h.storage
     local balance=assert(loadfile("src/ToyWarsBalance.lua"))()
@@ -192,16 +193,20 @@ function H.new(serverFile, existingCount)
     end
     local dataStoreService={}
     function dataStoreService:GetDataStore(name,scope)
+        if options.storeOpenFail then error("injected store open unavailable") end
         assert(type(name)=="string" and #name>0,"store name required")
         local storeKey=name.."\0"..(scope or "global")
         if stores[storeKey] then return stores[storeKey] end
         local records={}
         local store={}
         function store:GetAsync(key)
+            if options.storeReadFail then error("injected store read unavailable") end
             local record=records[key]
             return record and copyData(record.value),keyInfo(record)
         end
         function store:UpdateAsync(key,transform)
+            h.storeUpdates=(h.storeUpdates or 0)+1
+            if options.storeWriteFail then error("injected claim write failure") end
             local record=records[key]
             local updated,ids,metadata=transform(record and copyData(record.value),keyInfo(record))
             if updated==nil then return nil end

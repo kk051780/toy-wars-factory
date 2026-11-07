@@ -27,6 +27,7 @@ waiting.Text="Preparing your workshop..."
 local event=ReplicatedStorage:WaitForChild("ToyWarsSelectUnit")
 local B=require(ReplicatedStorage:WaitForChild("ToyWarsBalance"))
 local status=player:WaitForChild("ToyWarsStatus")
+local progressMode=status:FindFirstChild("ProgressMode")
 local coins=stats:WaitForChild("Coins")
 local wave=stats:WaitForChild("Wave")
 local kills=stats:WaitForChild("Defeated")
@@ -154,6 +155,12 @@ resultBanner.BackgroundColor3=Color3.fromRGB(23,35,54)
 resultBanner.ZIndex=30
 resultBanner.Visible=false
 round(resultBanner,12)
+-- Never mistake temporary local Studio preview coins/upgrades for saved progress.
+local previewNotice=addText(gui,UDim2.new(0.84,0,0,36),UDim2.new(0.08,0,0.33,0),
+    "STUDIO PREVIEW - PROGRESS NOT SAVED",Color3.fromRGB(255,217,119))
+previewNotice.Name="StudioPreviewNotice"
+previewNotice.ZIndex=40
+previewNotice.Visible=progressMode~=nil and progressMode.Value=="STUDIO_PREVIEW_UNSAVED"
 -- Session-local first-play guide: touch-friendly, dismissible; never sends gameplay commands.
 -- Created only after workshop assignment; no cross-session completion persistence.
 -- ImageButtons keep the three toy-selection TextButtons unambiguous.

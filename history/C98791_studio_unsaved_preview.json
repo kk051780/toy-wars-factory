@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "id": "C98791",
+  "kind": "STUDIO_ONLY_UNSAVED_PLAYTEST_PVE",
+  "date_utc": "2026-11-07",
+  "source_branch": "controller/studio-unsaved-pve-preview-20261107-db08b795",
+  "parent_pr": 191,
+  "parent_head": "ade96a5d730c407922771aa1275b8de584f2becd",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "owner_id": "db08b795-9f1b-471c-977f-9e3e40554e07",
+    "epoch": 488,
+    "claim_commit": "063706c938e43d5795a8cf1f6a95afac95adaeec"
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsServer.server.lua",
+      "before_blob": "de6069f2b902a01268c1b5d61fb3d45fea3f3565",
+      "after_blob": "a358ef13e1743cabdf0a940a29aa09c8387ac201",
+      "before_bytes": 51838,
+      "after_bytes": 52516,
+      "delta_bytes": 678
+    },
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_blob": "05d72aae6924cc5d93fe14595e9af2cdeb4f73fd",
+      "after_blob": "939e66b2340200a09b9ff6d5badc9482da33e9c9",
+      "before_bytes": 11891,
+      "after_bytes": 12337,
+      "delta_bytes": 446
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1565,
+    "lua_bytes": 70745
+  },
+  "new_lua_mock_cases": 13,
+  "change": "Studio-only, store-open/read-unavailable local preview with prominent NOT SAVED HUD label, zero persistence. Live, invalid schema, failed session claim retain fail closed.",
+  "affected_characters": [
+    "pon",
+    "guardon",
+    "tankuru",
+    "curebo"
+  ],
+  "engine_verified": false,
+  "android_verified": false,
+  "main_merged": false,
+  "independent_review": false,
+  "additional_paid_yen": 0
+}
