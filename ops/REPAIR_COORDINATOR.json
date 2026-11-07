@@ -1841,8 +1841,20 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 490,
-  "holder": null,
+  "epoch": 491,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 491,
+    "owner_id": "36e10f50-2ecf-4c9c-969d-3b89dfd7a1ea",
+    "task_id": null,
+    "acquired_at": "2026-11-07T08:43:12.954Z",
+    "expires_at": "2026-11-07T09:03:12.955Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/printer-3d-progress-20261107-36e10f50",
+    "work_id": "TWF_3D_PRINTER_PROGRESS_20261107",
+    "scope": "stack only PR192 server production label/bar, deterministic tests and pinned XML; no Gemini/PR163, policy/security, main, scheduler"
+  },
   "integration_results": {
     "35": {
       "merged": true,
