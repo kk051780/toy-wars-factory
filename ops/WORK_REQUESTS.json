@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-07T08:36:54.360Z",
+  "observed_at": "2026-11-07T09:24:21.257Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4719,6 +4719,86 @@
       "main_unmodified": true,
       "incremental_cost_yen": 0,
       "reference_prior_request": "PR184_187_STACKED_INTEGRATION_READINESS_20261107"
+    },
+    {
+      "id": "PR194_SOURCERY_PR191_THREE_FIXES_EXACT_HEAD_REVIEW_20261107",
+      "kind": "PROTECTED_GAME_STACKED_SOURCERY_FIX_EXACT_HEAD_REVIEW",
+      "priority": "P1",
+      "status": "AWAIT_SOURCERY_REVIEW_AND_STACK_PARENTS",
+      "repository": "kk051780/toy-wars-factory",
+      "created_at": "2026-11-07T09:24:21.257Z",
+      "updated_at": "2026-11-07T09:24:21.257Z",
+      "pr": 194,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/194",
+      "head": "0b5213b0874b81a3ba4438c047165363117a6f08",
+      "branch": "controller/tankuru-sourcery-review-fixes-20261107-9c3443b2",
+      "base_branch": "controller/printer-3d-progress-20261107-36e10f50",
+      "base_head": "db4537051f960cde52649407fdaf4fb54ec41df8",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "parent_pr": 193,
+      "depends_on": [
+        184,
+        185,
+        186,
+        187,
+        189,
+        190,
+        191,
+        192,
+        193
+      ],
+      "original_sourcery_review": {
+        "source_pr": 191,
+        "review_id": 5811235468,
+        "findings": 3,
+        "decision": "COMMENTED_FIX_REQUIRED"
+      },
+      "new_sourcery_review_request_comment_id": 6705010983,
+      "review_authorized": false,
+      "native_review_complete": false,
+      "reviewer_provider_identity_verified": false,
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "author": {
+        "role": "MANUAL_CONTROLLER",
+        "owner_id": "9c3443b2-4a58-4021-b809-c87faf918846",
+        "epoch": 494,
+        "claim_commit": "e7ef455649e01f75f7f6a8740ad8004ea5d11f47",
+        "source_first_commit": "152943211bda32d3b832d37814957b041d212647",
+        "current_head": "0b5213b0874b81a3ba4438c047165363117a6f08"
+      },
+      "ci": {
+        "id": 42359404531,
+        "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42359404531",
+        "head": "0b5213b0874b81a3ba4438c047165363117a6f08",
+        "offline": "success",
+        "compile_hold": "success",
+        "python_cases": 894,
+        "native_tankuru_lua_cases": 13,
+        "red": {
+          "id": 42359230450,
+          "offline": "failure",
+          "reason": "Missing canonical source_changes size ledger for +287 bytes",
+          "fixed_by_append_only": "history/C98816_tankuru_sourcery_source_delta_receipt.json"
+        }
+      },
+      "changed_files": [
+        "history/C98815_tankuru_sourcery_review_geometry.json",
+        "history/C98816_tankuru_sourcery_source_delta_receipt.json",
+        "src/ToyWarsServer.server.lua",
+        "tests/auto/tankuru_muzzle_flash_spec.lua",
+        "tests/roblox_server_harness.lua",
+        "tests/test_system_xml_artifact_export.py",
+        "tools/export_accepted_rbxlx.py"
+      ],
+      "scope": "3 Sourcery Medium findings: TANKURU face fully outside core; lookAt orientation +Z; flash exactly one. All existing games/balance and QA gates preserved.",
+      "request": "Independent registered reviewer: wait for current exact-head Sourcery bot review; inspect three original PR191 inline findings, current PR194 actual diff, 894 Python+13 Lua mocks exact-head GitHub run #42359404531, immutable C98815/C98816 source ledgers, and PR193 prior branch dependencies. No source PR191/192/193 rewrite, no main direct integration, no native APPROVE from author, no Roblox engine/publish claim. Report PASS/REQUEST_CHANGES/BLOCKED; later integrate only after actual parent chain, valid independent review and provider rulesets checks.",
+      "engine_verified": false,
+      "android_verified": false,
+      "main_merged": false,
+      "owner_reply_required": false,
+      "incremental_spend_yen": 0,
+      "next_actor": "SOURCERY_BOT_THEN_REGISTERED_REVIEWER"
     }
   ]
 }
