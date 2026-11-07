@@ -61,6 +61,59 @@ def initial_state(packet=None):
             "last_completed": None}
 
 
+
+def scoped_lease_migration_block(state):
+    """Stop legacy acquisition while a v2 scoped writer exists.
+
+    This gate must be installed on EVERY legacy runner *before* anyone
+    enables parallel leases. A prior checkout of legacy code is not fenced
+    by the presence of this function in a newer commit. Do not use this
+    advisory shim as permission to turn on live parallel writes.
+    """
+    blocked = False
+    for key in ("shadow_parallel_leases", "parallel_leases"):
+        if key not in state:
+            continue
+        registry = state[key]
+        if (type(registry) is not dict or set(registry) != {"schema", "entries"} or
+                type(registry["schema"]) is not int or registry["schema"] != 1 or
+                type(registry["entries"]) is not list or
+                len(registry["entries"]) > 2):
+            raise ValueError("unrecognized scoped lease registry")
+        seen_work, seen_owner, seen_branch = set(), set(), set()
+        for entry in registry["entries"]:
+            if (type(entry) is not dict or
+                    set(entry) != {"scope", "owner_id", "run_id", "nonce",
+                                   "lease_epoch", "acquired_at", "expires_at"}):
+                raise ValueError("invalid scoped lease identity")
+            scope = entry["scope"]
+            if (type(scope) is not dict or
+                    type(scope.get("work_id")) is not str or
+                    type(scope.get("branch")) is not str or
+                    not scope["work_id"] or not scope["branch"]):
+                raise ValueError("missing scoped work or branch")
+            for id_key in ("owner_id", "run_id", "nonce"):
+                canonical_id(entry[id_key])
+            work, owner, branch = scope["work_id"], entry["owner_id"], scope["branch"]
+            if work in seen_work or owner in seen_owner or branch in seen_branch:
+                raise ValueError("duplicate scoped identity")
+            seen_work.add(work)
+            seen_owner.add(owner)
+            seen_branch.add(branch)
+            if (type(entry["lease_epoch"]) is not int or
+                    entry["lease_epoch"] < 1 or entry["lease_epoch"] > state["epoch"] or
+                    instant(entry["expires_at"]) <= instant(entry["acquired_at"])):
+                raise ValueError("invalid scoped lease lifetime or epoch")
+            # Expired entry is NOT self-revocation; only verified recovery can
+            # remove it from this same CAS-controlled registry.
+            blocked = True
+    # Explicit freeze marker protects early migration even before scoped rows
+    # are admitted; unknown values fail closed.
+    mode = state.get("parallel_write_migration", "LEGACY_ONLY")
+    if type(mode) is not str or mode not in ("LEGACY_ONLY", "SCOPED_ACTIVE"):
+        raise ValueError("invalid scoped migration mode")
+    return blocked or mode == "SCOPED_ACTIVE"
+
 def acquire(state, kind, owner_id, now, service_status=None, base_main_sha=None, work_branch=None, actor_task_id=None):
     validate(state)
     canonical_id(owner_id)
@@ -79,6 +132,8 @@ def acquire(state, kind, owner_id, now, service_status=None, base_main_sha=None,
             if not work_branch.startswith(prefix):
                 raise ValueError("worker cannot claim an unrelated branch")
             canonical_id(work_branch[len(prefix):])
+    if scoped_lease_migration_block(state):
+        return {"action": "WAIT_SCOPED_LEASES", "state": state, "write": False}
     holder = state["holder"]
     if kind == "DISPATCH":
         if service_status == "in_progress":
