@@ -1802,6 +1802,18 @@
       "review_work_id": "PR197_PON_COURIER_GAMEPLAY_EXACT_HEAD_REVIEW_20261107",
       "no_merge": true,
       "observed_at": "2026-11-07T13:15:49.255Z"
+    },
+    {
+      "kind": "PR198_GAMEPLAY_HUD_AUTHOR_RELEASE",
+      "epoch": 506,
+      "owner_id": "b68115c9-6553-4ab5-9196-3d740d7a2346",
+      "pr": 198,
+      "head": "5c7a456b94c5b400d7c28a90256ef2c62f3e4e15",
+      "ci_run": 42410979287,
+      "review_work_id": "PR198_BOSS_WAVE_WARNING_EXACT_HEAD_REVIEW_20261108",
+      "source_changed": true,
+      "main_merged": false,
+      "observed_at": "2026-11-07T20:27:28.123Z"
     }
   ],
   "controller_maintenance": {
@@ -1887,18 +1899,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 506,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "epoch": 506,
-    "owner_id": "b68115c9-6553-4ab5-9196-3d740d7a2346",
-    "task_id": null,
-    "acquired_at": "2026-11-07T20:20:25.439Z",
-    "expires_at": "2026-11-07T20:45:25.439Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/boss-wave-warning-20261108-b68115c9",
-    "scope": "HUD-only JUNK CAPTAIN wave countdown sourced from B.junkBoss; modify HUD and regressions plus source-pinned XML/export history in isolated child PR197; no main, parent, policy, credential, studio or spend changes"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3542,40 +3543,36 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_PR197_PON_COURIER_GAME_FEATURE_DRAFT_CI_GREEN",
-    "epoch": 505,
-    "owner_id": "3ac30a74-70e5-45e6-9ef2-31c747a8344d",
-    "claim_commit": "f92e8e1b4d37e01c00beb69440317af94d59ab12",
-    "pr": 197,
-    "head": "d12a12264506bec15d081f8c2e464bdb0333e246",
-    "base_pr": 194,
-    "base_sha": "c3fb8b29ca017bfeea3ef6e1298427ae5c07b2d2",
-    "history_ids": [
-      "C98835",
-      "C98836",
-      "C98837"
-    ],
-    "source_bytes": 73376,
-    "characters": [
-      "pon"
-    ],
-    "gameplay_source_modified": true,
-    "ci_run": 42375992724,
+    "kind": "CONTROLLER_PR198_JUNK_CAPTAIN_HUD_WARNING_CI_GREEN",
+    "epoch": 506,
+    "owner_id": "b68115c9-6553-4ab5-9196-3d740d7a2346",
+    "claim_commit": "9fdfb7c0edd3219028ddb109fbd04a24ac1c7331",
+    "pr": 198,
+    "head": "5c7a456b94c5b400d7c28a90256ef2c62f3e4e15",
+    "base_pr": 197,
+    "base_sha": "d12a12264506bec15d081f8c2e464bdb0333e246",
+    "source_metrics": {
+      "lua_files": 4,
+      "lua_lines": 1641,
+      "lua_bytes": 74583
+    },
+    "source_hud_delta_bytes": 1207,
+    "new_hud_lua_tests": 2,
+    "new_python_tests": 1,
+    "history_id": "C98838",
+    "ci_run": 42410979287,
     "ci_offline": "SUCCESS",
     "ci_compile_hold": "SUCCESS",
-    "python_tests": 895,
-    "pon_server_lua": 9,
-    "hud_paging_lua": 12,
-    "prior_red_runs": [
-      42375384442,
-      42375659089
-    ],
-    "review_queue": "PR197_PON_COURIER_GAMEPLAY_EXACT_HEAD_REVIEW_20261107",
+    "python_tests": 896,
+    "hud_lua_tests": 14,
+    "gameplay_source_modified": true,
+    "review_queue": "PR198_BOSS_WAVE_WARNING_EXACT_HEAD_REVIEW_20261108",
+    "review_packet": "ops/review_packets/PR198_boss_wave_warning_epoch506.json",
     "independent_review": false,
     "main_merged": false,
     "engine_verified": false,
     "additional_spend_jpy": 0,
-    "released_at": "2026-11-07T13:15:49.255Z"
+    "released_at": "2026-11-07T20:27:28.123Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-07T13:15:49.255Z",
+  "observed_at": "2026-11-07T20:27:28.123Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4965,6 +4965,57 @@
       "independent_review": false,
       "engine_verified": false,
       "extra_spend_jpy": 0
+    },
+    {
+      "id": "PR198_BOSS_WAVE_WARNING_EXACT_HEAD_REVIEW_20261108",
+      "kind": "PROTECTED_GAME_HUD_CAPTAIN_WARN_EXACT_HEAD_REVIEW",
+      "priority": "P1",
+      "status": "OPEN_READ_ONLY_INDEPENDENT_REVIEW_REQUIRED",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "created_at": "2026-11-07T20:27:28.123Z",
+      "updated_at": "2026-11-07T20:27:28.123Z",
+      "pr": 198,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/198",
+      "branch": "controller/boss-wave-warning-20261108-b68115c9",
+      "head": "5c7a456b94c5b400d7c28a90256ef2c62f3e4e15",
+      "base_branch": "controller/pon-courier-delivery-20261107-3ac30a74",
+      "base_head": "d12a12264506bec15d081f8c2e464bdb0333e246",
+      "parent_pr": 197,
+      "root_pr": 184,
+      "depends_on": [
+        184,
+        185,
+        186,
+        187,
+        189,
+        190,
+        191,
+        192,
+        193,
+        194,
+        197
+      ],
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "ci_run": 42410979287,
+      "ci_jobs": [
+        "offline:success",
+        "compile_hold:success"
+      ],
+      "python_tests": 896,
+      "hud_lua_cases": 14,
+      "source_metrics": {
+        "lua_files": 4,
+        "lua_lines": 1641,
+        "lua_bytes": 74583
+      },
+      "evidence_path": "ops/review_packets/PR198_boss_wave_warning_epoch506.json",
+      "review_request": "Registered separate independent REVIEWER inspect actual PR198 exact HEAD and unchanged accepted QA, JUNK CAPTAIN two-wave forecast, safe client-only warning, source-pinned Roblox XML and HUD metrics. Confirm full parent PR184..197 stack, no native Roblox claim, no same-author approval, no merge until upstream independently authorized. Return scoped PASS/REQUEST_CHANGES/BLOCKED.",
+      "independent_review": false,
+      "main_merged": false,
+      "engine_verified": false,
+      "additional_spend_jpy": 0
     }
   ]
 }
