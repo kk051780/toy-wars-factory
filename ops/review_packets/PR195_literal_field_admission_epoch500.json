@@ -1,0 +1,104 @@
+{
+  "schema": 1,
+  "kind": "EXACT_HEAD_PROTECTED_PR195_ADMISSION_SECURITY_REVIEW_HANDOFF",
+  "id": "PR195_CHARACTER_LITERAL_FIELD_EXACT_HEAD_SECURITY_REVIEW_20261107",
+  "created_at": "2026-11-07T10:05:53.503Z",
+  "repository": "kk051780/toy-wars-factory",
+  "origin": "MANUAL_CONTROLLER_READ_ONLY_TRIAGE_WITH_SCOPED_CAS",
+  "coordination": {
+    "epoch": 500,
+    "owner_id": "5d782d9c-6df3-46c7-9c77-5634944c2b08",
+    "claim_commit": "27e055d289f254e9796ce61d0947ec9e3046cbbd",
+    "work_branch": "controller/character-roster-mutation-guard-20261107-51feef51"
+  },
+  "accepted_main": {
+    "sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "changed": false
+  },
+  "root_pr": {
+    "number": 184,
+    "head": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+    "base": "main",
+    "draft": true,
+    "changed_files": 39,
+    "protected_files": [
+      "config/autonomous_repair.json",
+      "tools/repository_gate.py",
+      "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+      "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md",
+      "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md"
+    ],
+    "overlap": [
+      98,
+      179,
+      183
+    ]
+  },
+  "child_pr": {
+    "number": 195,
+    "head": "1404d51c25a05b51c285553bc9eab4adea7057b9",
+    "branch": "controller/character-roster-mutation-guard-20261107-51feef51",
+    "base_branch": "bootstrap/twf-current-curebo-outcome-integration-20261106",
+    "base_head": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+    "draft": true,
+    "author_account": "kk051780",
+    "changed_files": [
+      "tools/system_character_pipeline.py",
+      "tests/test_system_character_pipeline.py",
+      "history/C98831_character_roster_mutation_guard.json",
+      "history/C98832_character_alias_escape_guard.json",
+      "history/C98833_character_literal_table_field_guard.json"
+    ],
+    "history": [
+      98831,
+      98832,
+      98833
+    ],
+    "ci_run_id": 42362275859,
+    "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42362275859",
+    "ci": {
+      "offline": "success",
+      "compile_hold": "success",
+      "python_unittest": "905/905 PASS",
+      "new_named_py_tests_in_increment": 4
+    }
+  },
+  "verified_new_defect": {
+    "kind": "REAL_LUA_FIELD_HIDDEN_BY_FOUR_SPACE_STATIC_REGEX",
+    "negative_control": "A Lua field with five spaces `     stealth = {},` is valid but not included by previous Python regex `^\\s{4}...` (test-only reproduction)",
+    "fix": "parse every top-level literal field via Lua lexical tokens independent of whitespace and inline placement",
+    "regressions": [
+      "five-space extra real unit rejected",
+      "same-line extra unit rejected",
+      "computed table key fail closed",
+      "comments/nested table remain accepted"
+    ]
+  },
+  "reviewer_requirements": [
+    "independently audit root PR184 policy/agent-scope files (39 paths) and overlapping #98/#179/#183 before adopting any root changes",
+    "independently inspect current PR195 parser+tests, source ancestry, negative controls and exact-head Actions logs; do not treat CI as security approval",
+    "verify valid separately authorized reviewer task identity and independent verdict; common author GitHub account is NOT native separate identity",
+    "do not merge PR184 alone with unchecked weak source catalog validator if PR195 fix remains unreviewed or unadopted",
+    "retain Roblox engine/mobile/two-client verification as NOT_RUN and preserve GitHub strict CI, ruleset, release and spending holds"
+  ],
+  "provider": {
+    "ruleset_id": 26750913,
+    "enforcement": "active",
+    "updated_at": "2026-11-07T17:57:04.462+09:00",
+    "required_native_approval_count_current": 0,
+    "required_checks": [
+      "offline",
+      "compile_hold"
+    ],
+    "observed_native_review_count": 0,
+    "note": "Historical packet epoch490 recorded 1 required native approval; provider ruleset was subsequently updated to 0 on Nov 7, 17:57 JST. No provider native approval is itself not project-independent-review completion."
+  },
+  "flags": {
+    "independent_security_review": false,
+    "normal_integration_approved": false,
+    "main_merged": false,
+    "studio_verified": false,
+    "app_published": false,
+    "extra_spend_yen": 0
+  }
+}

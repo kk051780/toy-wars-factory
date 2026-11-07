@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-07T09:56:07.827Z",
+  "observed_at": "2026-11-07T10:05:53.503Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4852,6 +4852,40 @@
       "snapshot_writer_live_verified": false,
       "extra_cost_jpy": 0,
       "next_actor": "REGISTERED_REVIEWER_SEPARATE_TASK_RUN"
+    },
+    {
+      "id": "PR195_CHARACTER_LITERAL_FIELD_EXACT_HEAD_SECURITY_REVIEW_20261107",
+      "kind": "EXACT_HEAD_PROTECTED_CHARACTER_ADMISSION_SECURITY_REVIEW",
+      "priority": "P1",
+      "status": "OPEN_READ_ONLY_INDEPENDENT_SECURITY_REVIEW_REQUIRED",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "created_at": "2026-11-07T10:05:53.503Z",
+      "updated_at": "2026-11-07T10:05:53.503Z",
+      "source": "AUTHENTICATED_GITHUB_EXACT_HEAD_CI_AND_SOURCE_READ",
+      "evidence_path": "ops/review_packets/PR195_literal_field_admission_epoch500.json",
+      "parent_pr": 184,
+      "pr": 195,
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "root_head": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+      "head": "1404d51c25a05b51c285553bc9eab4adea7057b9",
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42362275859",
+      "ci_python_tests": 905,
+      "ci_jobs": [
+        "offline:success",
+        "compile_hold:success"
+      ],
+      "requested_by_role": "MANUAL_CONTROLLER",
+      "review_request": "Registered separate REVIEWER task/run must inspect exact PR195 (5 changed paths), negative control 5-space Lua unit and top-level token parser, source+history evidence, original protected root PR184 (39 files / auth scope) and original CI. Return evidence-backed PASS/REQUEST_CHANGES/BLOCKED; do not claim native distinct-account approval or merge draft. Main and Roblox HOLD unchanged.",
+      "independent_review_performed": false,
+      "native_review_observed": false,
+      "merge_allowed": false,
+      "root_integration_blocker": "PR184 has older weaker character gate if accepted without reviewed PR195 fix",
+      "active_ruleset_id": 26750913,
+      "provider_required_native_approvals_current": 0,
+      "source_head_verified": true,
+      "additional_spend_yen": 0
     }
   ]
 }
