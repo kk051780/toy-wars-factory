@@ -1841,8 +1841,20 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 481,
-  "holder": null,
+  "epoch": 482,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 482,
+    "owner_id": "d5a7083f-6dab-4b60-9e8e-a8c145bf3d98",
+    "task_id": null,
+    "acquired_at": "2026-11-07T07:17:17.582Z",
+    "expires_at": "2026-11-07T07:37:17.582Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/tankuru-captain-target-20261107-ec4aa5ef",
+    "work_id": "TWF-PVE-TANKURU-CAPTAIN-FOCUS-20261107",
+    "scope": "fix PR190 exact-head red CI, preserve strict history/export QA"
+  },
   "integration_results": {
     "35": {
       "merged": true,
