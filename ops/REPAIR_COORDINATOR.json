@@ -1842,19 +1842,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 492,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "epoch": 492,
-    "owner_id": "42c271a8-1cde-4fb3-9529-edab616d28d2",
-    "task_id": null,
-    "acquired_at": "2026-11-07T09:02:09.666Z",
-    "expires_at": "2026-11-07T09:22:09.666Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "twf-repair-coordinator",
-    "work_id": "SOURCERY_PR191_READ_ONLY_BOT_REVIEW_TRIGGER",
-    "scope": "Single PR191 issue comment @sourcery-ai review; no code, workflow, branch, ruleset, merge or approvals"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3498,36 +3486,22 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_3D_PRINTER_PROGRESS_PR193_CI_GREEN",
-    "epoch": 491,
-    "owner_id": "36e10f50-2ecf-4c9c-969d-3b89dfd7a1ea",
-    "work_branch": "controller/printer-3d-progress-20261107-36e10f50",
-    "claim_commit": "ff96c98cb94b302d939fc2db76569aacf1bfd641",
-    "pr_number": 193,
-    "pr_head": "db4537051f960cde52649407fdaf4fb54ec41df8",
-    "source_commit": "9e2a188b8d215b231757e95fa08abdacf4c4c2d3",
-    "server_blob": "fdb738d936e49a7a2d2b0f44b149a5f3be5ad9fd",
-    "gameplay_change": "one pooled in-world 10pct quantized production progress per workshop; next-cycle level scaling",
-    "files_changed": 6,
-    "source_delta_bytes": 1725,
-    "source_metrics": {
-      "lua_files": 4,
-      "lua_lines": 1600,
-      "lua_bytes": 72503
-    },
-    "new_server_lua_cases": 11,
-    "python_tests": 894,
-    "offline_ci": "PASS",
-    "compile_hold": "PASS",
-    "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42356951688",
-    "main_changed": false,
-    "independent_review": false,
-    "game_engine_verified": false,
-    "mobile_verified": false,
-    "provider_native_approval": false,
-    "gemini_untouched": true,
-    "additional_paid_spend_yen": 0,
-    "released_at": "2026-11-07T08:48:43.704Z"
+    "kind": "CONTROLLER_SOURCERY_PR191_FIRST_REVIEW_COMMAND_POSTED_NOT_APPROVED",
+    "epoch": 492,
+    "owner_id": "42c271a8-1cde-4fb3-9529-edab616d28d2",
+    "claim_commit": "333553971096ff053e4da581a74d9d1431493da0",
+    "pr": 191,
+    "pr_head": "ade96a5d730c407922771aa1275b8de584f2becd",
+    "comment_id": 6704818410,
+    "comment_url": "https://github.com/kk051780/toy-wars-factory/pull/191#issuecomment-6704818410",
+    "sourcery_review": "REQUESTED_NOT_YET_VERIFIED",
+    "native_approval": false,
+    "main_merged": false,
+    "no_paid_spend": 0,
+    "source_modified": false,
+    "workflow_dispatched": false,
+    "rule_modified": false,
+    "released_at": "2026-11-07T09:03:31.447Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
