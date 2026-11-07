@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "C98832",
+  "kind": "PR195_LITERAL_ROSTER_ALIAS_ESCAPE_GUARD",
+  "date_utc": "2026-11-07",
+  "parent_pr": 195,
+  "parent_head": "e42724514eb177db4fd8f660545876683af423d1",
+  "source_branch": "controller/character-roster-mutation-guard-20261107-51feef51",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "epoch": 498,
+    "owner_id": "d799a343-15e3-48f3-97cf-0acf9d7c813d",
+    "claim_commit": "5a9dff0e8a7906aaa4c27238a8bc73d60087b134"
+  },
+  "reason": "Earlier PR195 rejected direct B.UNITS writes but allowed alias escape via local units=B.UNITS and dynamic B[key] and rawset(B, computed_key, ...); static catalog appeared consistent despite later mutations.",
+  "scope": [
+    "tools/system_character_pipeline.py",
+    "tests/test_system_character_pipeline.py",
+    "history/C98832_character_alias_escape_guard.json"
+  ],
+  "changes": [
+    "forbid bare B.UNITS references outside the sole literal declaration",
+    "forbid direct alias assignment of unit/roster reads",
+    "reject bracketed B member access and dynamic rawset(B,key,...)/setmetatable(B,...) while preserving canonical reads"
+  ],
+  "new_named_python_tests": 4,
+  "studio_verified": false,
+  "main_merged": false,
+  "independent_review": false,
+  "additional_spend_yen": 0
+}
