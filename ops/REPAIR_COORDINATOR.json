@@ -1923,8 +1923,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 513,
-  "holder": null,
+  "epoch": 514,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 514,
+    "owner_id": "721548c0-d626-4163-b4ad-0c4e12223b0e",
+    "task_id": null,
+    "acquired_at": "2026-11-07T22:54:23.282Z",
+    "expires_at": "2026-11-07T23:18:23.282Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/p0-chat-continuity-20261108-da7e6d82",
+    "scope": "P0 Issue123 exact PR202 branch: add real GitHub issue-comment checkpoint transport contract/readback verification + failure tests; no unattended auth/automatic unlock, no main merge/publish/spend"
+  },
   "integration_results": {
     "35": {
       "merged": true,
