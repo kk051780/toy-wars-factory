@@ -1,0 +1,246 @@
+{
+  "schema": 1,
+  "kind": "CONTROLLER_READ_ONLY_PROVIDER_NATIVE_GAME_STACK_INTEGRATION_HANDOFF",
+  "date_utc": "2026-11-07",
+  "id": "PR184_192_PROVIDER_RULESET_NATIVE_REVIEW_20261107",
+  "repo": "kk051780/toy-wars-factory",
+  "origin": "manual CONTROLLER (not native independent reviewer)",
+  "recorded_at": "2026-11-07T08:36:54.360Z",
+  "coordination": {
+    "epoch": 490,
+    "owner_id": "70a2adf8-8f15-42de-91ac-37eab73c868c",
+    "claim_commit": "7048a598a907edbfde5646c4094a84b042b89977",
+    "work_branch": "twf-repair-coordinator"
+  },
+  "main": {
+    "sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "changed": false,
+    "public_repo": true,
+    "classic_protection_read": "API403 / unavailable from integration",
+    "provider_ruleset": {
+      "id": 26750913,
+      "enforcement": "active",
+      "applies_to": "~DEFAULT_BRANCH",
+      "reference": "https://github.com/kk051780/toy-wars-factory/rules/26750913",
+      "required_approving_reviews": 1,
+      "dismiss_stale_reviews_on_push": true,
+      "required_checks": [
+        "offline",
+        "compile_hold"
+      ],
+      "strict_up_to_date": true,
+      "allow_force_push": false,
+      "allow_delete": false,
+      "current_user_can_bypass": "never"
+    }
+  },
+  "game_chain": [
+    {
+      "pr": 184,
+      "base": "main",
+      "head": "bootstrap/twf-current-curebo-outcome-integration-20261106",
+      "sha": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+      "ci": 42305157001,
+      "scope": "CUREBO/outcome/4toy XML plus protected config and trust-root checker",
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42305157001",
+      "exact_head_ci_observed": "offline+compile_hold SUCCESS",
+      "status": "DRAFT_UNMERGED_UNREVIEWED"
+    },
+    {
+      "pr": 185,
+      "base": "bootstrap/twf-current-curebo-outcome-integration-20261106",
+      "head": "bootstrap/twf-junk-wave-escalation-20261107",
+      "sha": "961e0bea8ecc3d9ddf5b383e29feb75571abaa4f",
+      "ci": 42323789115,
+      "scope": "JUNK wave-scaling",
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42323789115",
+      "exact_head_ci_observed": "offline+compile_hold SUCCESS",
+      "status": "DRAFT_UNMERGED_UNREVIEWED"
+    },
+    {
+      "pr": 186,
+      "base": "bootstrap/twf-junk-wave-escalation-20261107",
+      "head": "bootstrap/twf-junk-captain-boss-20261107",
+      "sha": "85c1cd3504ef7e7929f3e3014dd15737f821adba",
+      "ci": 42326192434,
+      "scope": "wave10..50 JUNK CAPTAIN boss",
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42326192434",
+      "exact_head_ci_observed": "offline+compile_hold SUCCESS",
+      "status": "DRAFT_UNMERGED_UNREVIEWED"
+    },
+    {
+      "pr": 187,
+      "base": "bootstrap/twf-junk-captain-boss-20261107",
+      "head": "bootstrap/twf-factory-throughput-20261107",
+      "sha": "35d4e0fc2a72a6bfc442561f4222e7497df15975",
+      "ci": 42329356840,
+      "scope": "factory production upgrade speed",
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42329356840",
+      "exact_head_ci_observed": "offline+compile_hold SUCCESS",
+      "status": "DRAFT_UNMERGED_UNREVIEWED"
+    },
+    {
+      "pr": 189,
+      "base": "bootstrap/twf-factory-throughput-20261107",
+      "head": "controller/guardon-bodyguard-pve-20261107-f64c50d1",
+      "sha": "b57aa5b324106db7b151c76e89b938b338dcc563",
+      "ci": 42349431697,
+      "scope": "GUARDON interposition/shield",
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42349431697",
+      "exact_head_ci_observed": "offline+compile_hold SUCCESS",
+      "status": "DRAFT_UNMERGED_UNREVIEWED"
+    },
+    {
+      "pr": 190,
+      "base": "controller/guardon-bodyguard-pve-20261107-f64c50d1",
+      "head": "controller/tankuru-captain-target-20261107-ec4aa5ef",
+      "sha": "ddc2083c20fb9a2883eb5ab2369584679955f1ee",
+      "ci": 42350701620,
+      "scope": "TANKURU boss prioritization",
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42350701620",
+      "exact_head_ci_observed": "offline+compile_hold SUCCESS",
+      "status": "DRAFT_UNMERGED_UNREVIEWED"
+    },
+    {
+      "pr": 191,
+      "base": "controller/tankuru-captain-target-20261107-ec4aa5ef",
+      "head": "controller/tankuru-muzzle-flash-20261107-c37d9252",
+      "sha": "ade96a5d730c407922771aa1275b8de584f2becd",
+      "ci": 42351686780,
+      "scope": "3D cannon muzzle flash",
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42351686780",
+      "exact_head_ci_observed": "offline+compile_hold SUCCESS",
+      "status": "DRAFT_UNMERGED_UNREVIEWED"
+    },
+    {
+      "pr": 192,
+      "base": "controller/tankuru-muzzle-flash-20261107-c37d9252",
+      "head": "controller/studio-unsaved-pve-preview-20261107-db08b795",
+      "sha": "1afb1e2d0d44a2a2b251442af21a44153a4639f8",
+      "ci": 42353822923,
+      "scope": "Studio-only unsaved Play fallback",
+      "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42353822923",
+      "exact_head_ci_observed": "offline+compile_hold SUCCESS",
+      "status": "DRAFT_UNMERGED_UNREVIEWED"
+    }
+  ],
+  "chain_order": [
+    184,
+    185,
+    186,
+    187,
+    189,
+    190,
+    191,
+    192
+  ],
+  "separate_readonly_studio_qa": {
+    "pr": 188,
+    "head": "4c8b90ee079bad6d232113eb615bd017859822a5",
+    "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42348655007",
+    "independent_engine_proof": false
+  },
+  "reviews": {
+    "pr184": 0,
+    "pr192": 0,
+    "native_approval": false,
+    "registered_reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "role_separation": "Separate ChatGPT context != distinct GitHub identity; author cannot self-approve",
+    "native_pending": true
+  },
+  "scope_risks": [
+    {
+      "pr": 184,
+      "paths": [
+        "config/autonomous_repair.json",
+        "tools/repository_gate.py",
+        "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
+        "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
+        "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md"
+      ],
+      "why": "protected agent edit allowance / root policy and checker changes; specifically config/characters.json scope",
+      "review": "independent trust-root/security audit before first integration"
+    },
+    {
+      "pr": 184,
+      "related_prs": [
+        98,
+        179,
+        183
+      ],
+      "why": "overlapping earlier CUREBO, round outcome, and XML race fix branches",
+      "review": "choose ONE adoption route; don't merge duplicate changes"
+    },
+    {
+      "pr": 189,
+      "paths": [
+        "tools/export_accepted_rbxlx.py",
+        "tests/test_system_xml_artifact_export.py"
+      ],
+      "why": "source-pinned XML candidate, NO actual Studio/engine proof",
+      "review": "preserve exact blob pins, CI emit allowlist, no private upload/publication without reviewed authorization"
+    },
+    {
+      "pr": 192,
+      "paths": [
+        "src/ToyWarsServer.server.lua",
+        "src/ToyWarsHUD.client.lua"
+      ],
+      "why": "Studio-only UNSAVED fallback; must never become real server or cross-owner lease bypass",
+      "review": "inspect failed read/open only, compare invalid schema/CAS fail tests and status banner"
+    }
+  ],
+  "exact_checks": [
+    {
+      "pr": 184,
+      "sha": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+      "run": 42305157001
+    },
+    {
+      "pr": 189,
+      "sha": "b57aa5b324106db7b151c76e89b938b338dcc563",
+      "run": 42349431697
+    },
+    {
+      "pr": 190,
+      "sha": "ddc2083c20fb9a2883eb5ab2369584679955f1ee",
+      "run": 42350701620
+    },
+    {
+      "pr": 191,
+      "sha": "ade96a5d730c407922771aa1275b8de584f2becd",
+      "run": 42351686780
+    },
+    {
+      "pr": 192,
+      "sha": "1afb1e2d0d44a2a2b251442af21a44153a4639f8",
+      "run": 42353822923
+    }
+  ],
+  "next_actor": "independent, provider-recognized GitHub reviewer; registered reviewer may perform read-only audit but cannot impersonate second identity",
+  "required_order": [
+    "Review protected root PR #184 and overlapping #98/#179/#183, preserving all quality/security/agent-scope holds.",
+    "Acquire provider-recognized one-approval on current PR heads (not same GitHub account's author); verify rule enforcement and required checks after approval.",
+    "Only when authorized, mark draft ready and merge a single PR with exact head/base and strict CI. Read resulting main and run post-merge main Actions and handoff.",
+    "Rebase/restack next child as needed after parent merge; new exact-head checks and independent native review for each. Avoid merging 8 PRs blindly.",
+    "When code accepted, evaluate supported Roblox private Studio/Cloud engine execution without inferring engine, Android, multi-client, or fun success from Lua mocks."
+  ],
+  "explicit_non_actions": [
+    "NO_AUTHOR_APPROVAL",
+    "NO_MAIN_MERGE",
+    "NO_PUBLIC_GAME_PUBLISH",
+    "NO_ROBLOX_PRIVATE_UPLOAD",
+    "NO_WORKFLOW_OR_PROVIDER_MODIFICATION",
+    "NO_GEMINI_SCOPE_TOUCH",
+    "NO_NEW_PAID_SPEND"
+  ],
+  "flags": {
+    "main_merged": false,
+    "game_ready_for_release": false,
+    "studio_play_verified": false,
+    "mobile_verified": false,
+    "two_client_verified": false,
+    "independent_native_approval": false,
+    "incremental_spend_yen": 0
+  }
+}

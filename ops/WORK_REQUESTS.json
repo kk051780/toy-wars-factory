@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-07T08:32:53.609Z",
+  "observed_at": "2026-11-07T08:36:54.360Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4676,6 +4676,49 @@
         "ops/review_packets/PR163_issue57_security_advisory_epoch487.json"
       ],
       "updated_at": "2026-11-07T08:32:53.609Z"
+    },
+    {
+      "id": "PR184_192_PROVIDER_RULESET_NATIVE_REVIEW_20261107",
+      "kind": "EXACT_HEAD_PROTECTED_GAME_STACK_NATIVE_REVIEW_HANDOFF",
+      "priority": "P1",
+      "status": "OPEN_NATIVE_INDEPENDENT_REVIEW_REQUIRED_PROVIDER_RULESET_ACTIVE",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "created_at": "2026-11-07T08:36:54.360Z",
+      "updated_at": "2026-11-07T08:36:54.360Z",
+      "source": "AUTHENTICATED_GITHUB_READ_ONLY_RULESET_AND_EXACT_HEAD_CI",
+      "evidence_path": "ops/review_packets/PR184_192_active_provider_ruleset_epoch490.json",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "stack_prs": [
+        184,
+        185,
+        186,
+        187,
+        189,
+        190,
+        191,
+        192
+      ],
+      "exact_final_head": "1afb1e2d0d44a2a2b251442af21a44153a4639f8",
+      "latest_success_run": 42353822923,
+      "root_pr": 184,
+      "root_ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42305157001",
+      "leaf_pr": 192,
+      "leaf_ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42353822923",
+      "active_ruleset_id": 26750913,
+      "required_native_approvals": 1,
+      "native_approvals_observed": 0,
+      "description": "8 protected game DRAFT PRs (#184→185→186→187→189→190→191→192) each current-head CI PASS, main ruleset active (1 native approval + offline + compile_hold) but native reviewer count 0. Parent PR184 includes protected config/tools/prompt changes; review carefully. Separate #188 QA, overlaps #98/#179/#183. Do not mix with concurrent Gemini PR163.",
+      "review_request": "Registered REVIEWER read-only inspect exact root #184 trust-root/policy/agent scope, overlap, all current heads & CI, and real provider-recognized approval path; no author self-approval, same-GitHub-account sibling-chat approval, security bypass or unreviewed main merge. One parent at a time; retain HOLD until required evidence.",
+      "review_performed": false,
+      "review_result": "NOT_APPROVED",
+      "merge_allowed": false,
+      "merged_count": 0,
+      "engine_verified": false,
+      "main_unmodified": true,
+      "incremental_cost_yen": 0,
+      "reference_prior_request": "PR184_187_STACKED_INTEGRATION_READINESS_20261107"
     }
   ]
 }
