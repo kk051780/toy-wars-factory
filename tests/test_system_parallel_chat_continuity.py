@@ -195,8 +195,6 @@ class ChatFullContinuityTests(unittest.TestCase):
         s["state"]["holder"]["kind"] = "WORKER"
         s["state"]["holder"]["task_id"] = TASK
         s["state"]["authorized_tasks"] = {"WORKER": TASK}
-        s["state"]["authorized_tasks"] = {"WORKER": TASK}
-        s["state"]["authorized_tasks"] = {"WORKER": TASK}
         pkt = draft_checkpoint(s, self.req)["packet"]
         self.assertEqual(pkt["origin"], "REGISTERED")
         self.assertEqual(successor_preflight(pkt, observe(s, self.req, LATE))["status"],
@@ -206,6 +204,7 @@ class ChatFullContinuityTests(unittest.TestCase):
         s = copy.deepcopy(self.snap)
         s["state"]["holder"]["kind"] = "WORKER"
         s["state"]["holder"]["task_id"] = TASK
+        s["state"]["authorized_tasks"] = {"WORKER": TASK}
         pkt = draft_checkpoint(s, self.req)["packet"]
         terminal = {"task_id":TASK, "run_id":OWNER,
                     "started_at":"2026-11-07T23:59:00Z",
@@ -220,6 +219,7 @@ class ChatFullContinuityTests(unittest.TestCase):
         s = copy.deepcopy(self.snap)
         s["state"]["holder"]["kind"] = "WORKER"
         s["state"]["holder"]["task_id"] = TASK
+        s["state"]["authorized_tasks"] = {"WORKER": TASK}
         pkt = draft_checkpoint(s, self.req)["packet"]
         terminal = {"task_id":TASK,
                     "run_id":"11111111-1111-4111-8111-111111111111",
@@ -232,6 +232,7 @@ class ChatFullContinuityTests(unittest.TestCase):
         s = copy.deepcopy(self.snap)
         s["state"]["holder"]["kind"] = "WORKER"
         s["state"]["holder"]["task_id"] = TASK
+        s["state"]["authorized_tasks"] = {"WORKER": TASK}
         pkt = draft_checkpoint(s, self.req)["packet"]
         terminal = {"task_id":TASK,"run_id":OWNER,"started_at":START,
                     "completed_at":None,"recorded_status":"in_progress"}
