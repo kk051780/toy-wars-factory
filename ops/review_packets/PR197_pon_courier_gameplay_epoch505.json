@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "type": "EXACT_HEAD_PROTECTED_GAMEPLAY_REVIEW_PACKET",
+  "id": "PR197_PON_COURIER_GAMEPLAY_EXACT_HEAD_REVIEW_20261107",
+  "date_utc": "2026-11-07",
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 197,
+  "url": "https://github.com/kk051780/toy-wars-factory/pull/197",
+  "source_branch": "controller/pon-courier-delivery-20261107-3ac30a74",
+  "head": "d12a12264506bec15d081f8c2e464bdb0333e246",
+  "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "root_pr": 184,
+  "parent_pr": 194,
+  "parent_head": "c3fb8b29ca017bfeea3ef6e1298427ae5c07b2d2",
+  "dependencies": [
+    184,
+    185,
+    186,
+    187,
+    189,
+    190,
+    191,
+    192,
+    193,
+    194
+  ],
+  "source_change": "PON enemy-line delivery coin award 4->12 on server, other three playable toys 4 unchanged; player guide displays award from balance; no new remote action.",
+  "verified_source_blobs": {
+    "src/ToyWarsBalance.lua": "64175b1cda7e4d5e4623d7b28bb80fdc3d64c3b8",
+    "src/ToyWarsServer.server.lua": "181b0ef3a5aedafef4490decdbbe167d769e9932",
+    "src/ToyWarsHUD.client.lua": "8afb94f5c7051dfeff86c26cbae7d8c3e6394c1a",
+    "src/ToyWarsSmokeTest.server.lua": "ccba431909c664909e2680785648d0402fedf3c3"
+  },
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1617,
+    "lua_bytes": 73376
+  },
+  "source_history": [
+    "history/C98835_pon_courier_delivery.json",
+    "history/C98836_pon_courier_hud_price_compat.json",
+    "history/C98837_pon_courier_xml_pin_ledger_correction.json"
+  ],
+  "red_runs": [
+    42375384442,
+    42375659089
+  ],
+  "red_reasons": [
+    "HUD multiline label failed accepted exact-price fixture",
+    "old XML source pin + historical UTF8 byte mismatch failed offline"
+  ],
+  "green": {
+    "run": 42375992724,
+    "head": "d12a12264506bec15d081f8c2e464bdb0333e246",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": "895/895 PASS",
+    "new_pon_server_lua": "9/9 PASS",
+    "page_hud_lua": "12/12 PASS",
+    "native_engine": false
+  },
+  "review_scope": [
+    "Read actual PR197 source diff, immutable original C98835/C98836 parent commit history and C98837 corrected draft ledgers",
+    "Confirm exported XML exactly pins new Balance/Server/HUD code while not claiming engine verification",
+    "Review new server-only PON bonus against fake/invalid identity, dead repeat, cross-factory isolation, MAX_CASH, enemy boundary, and original non-PON reward",
+    "Check all 10 gameplay stack dependencies #184..#194 separately before considering adoption",
+    "Check current main policy and independent review provenance; do not self approve / merge / publish"
+  ],
+  "claim": {
+    "epoch": 505,
+    "owner_id": "3ac30a74-70e5-45e6-9ef2-31c747a8344d",
+    "commit": "f92e8e1b4d37e01c00beb69440317af94d59ab12"
+  },
+  "independent_review": false,
+  "native_github_approval": false,
+  "merged_main": false,
+  "roblox_studio_verified": false,
+  "android_verified": false,
+  "gemini_touched": false,
+  "additional_spend_jpy": 0,
+  "observed_at": "2026-11-07T13:15:49.255Z"
+}

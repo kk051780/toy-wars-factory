@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-07T11:07:08.105Z",
+  "observed_at": "2026-11-07T13:15:49.255Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4916,6 +4916,55 @@
       "main_merged": false,
       "game_engine_verified": false,
       "additional_spend_yen": 0
+    },
+    {
+      "id": "PR197_PON_COURIER_GAMEPLAY_EXACT_HEAD_REVIEW_20261107",
+      "kind": "PROTECTED_PON_COURIER_GAMEPLAY_INDEPENDENT_EXACT_HEAD_REVIEW",
+      "priority": "P1",
+      "status": "OPEN_READ_ONLY_INDEPENDENT_REVIEW_REQUIRED",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "created_at": "2026-11-07T13:15:49.255Z",
+      "updated_at": "2026-11-07T13:15:49.255Z",
+      "pr": 197,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/197",
+      "branch": "controller/pon-courier-delivery-20261107-3ac30a74",
+      "head": "d12a12264506bec15d081f8c2e464bdb0333e246",
+      "parent_pr": 194,
+      "base_head": "c3fb8b29ca017bfeea3ef6e1298427ae5c07b2d2",
+      "root_pr": 184,
+      "depends_on": [
+        184,
+        185,
+        186,
+        187,
+        189,
+        190,
+        191,
+        192,
+        193,
+        194
+      ],
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "evidence_path": "ops/review_packets/PR197_pon_courier_gameplay_epoch505.json",
+      "ci_run": 42375992724,
+      "ci_jobs": [
+        "offline:success",
+        "compile_hold:success"
+      ],
+      "python_tests": 895,
+      "native_pon_lua_cases": 9,
+      "source_metrics": {
+        "lua_files": 4,
+        "lua_lines": 1617,
+        "lua_bytes": 73376
+      },
+      "review_request": "Separate authenticated registered REVIEWER must inspect protected PR197 exact HEAD and actual source; validate PON 12 coin courier gameplay, original non-PON 4, native Lua mocks 9/9, HUD 12/12, XML source pin, draft UTF8 ledger C98835/36 correction in C98837 (original failed commits preserved). Inspect parent PR194 and upstream protected game stack/PR60 before any integration. Return scoped PASS/REQUEST_CHANGES/BLOCKED, no same-author native approval or merge; no Roblox engine/publish claims.",
+      "main_merged": false,
+      "independent_review": false,
+      "engine_verified": false,
+      "extra_spend_jpy": 0
     }
   ]
 }
