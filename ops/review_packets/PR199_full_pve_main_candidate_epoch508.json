@@ -8,7 +8,7 @@
   "created_at": "2026-11-07T21:59:45.890Z",
   "source_main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
   "branch": "controller/complete-pve-main-integration-20261108-c8162bda",
-  "exact_pr_head": "f478af3562740ff415c70c8e5f314ef6277cd1ac",
+  "exact_pr_head": "094130a4934f9badfeb62c63b2f6cdb9b483960b",
   "draft": true,
   "main_unchanged": true,
   "root_pr": 184,
@@ -28,7 +28,7 @@
     "lua_bytes": 74583
   },
   "changed_files_vs_main": 76,
-  "commits_ahead": 51,
+  "commits_ahead": 52,
   "security_patch_blobs": {
     "parser": "16b1ad1a372894a4cdc191f57f86e70b2ccdde31",
     "regressions": "1b287a8eb35253c05a5ba3957cb008052a4e59bd"
@@ -46,19 +46,19 @@
     "root_cause": "PR196 conservative parser erroneously rejected inherited B.UNITS.junk.hp and B.UNITS.junk.damage primitive scalar RHS reads in gameplay wave scaling"
   },
   "green_ci": {
-    "id": 42418236714,
-    "head": "f478af3562740ff415c70c8e5f314ef6277cd1ac",
+    "id": 42419686515,
+    "head": "094130a4934f9badfeb62c63b2f6cdb9b483960b",
     "offline": "SUCCESS",
     "compile_hold": "SUCCESS",
     "provider_app_id": 15368,
-    "python_tests": "916/916 PASS",
+    "python_tests": "917/917 PASS",
     "lua_hud": "14/14 PASS",
     "lua_pon": "9/9 PASS",
-    "new_integrated_security_tests": "2/2 PASS",
-    "handoff_checks": "PASS",
+    "scope_catalog_denial_test": "PASS",
+    "scope_lua_positive_test": "PASS",
     "native_engine": false
   },
-  "security_warning": "Consolidated game includes PR184's exact extra authorized source path config/characters.json in config/autonomous_repair.json. Review scope against worker host authority. Parser still does NOT do general Lua alias/dataflow analysis across modules; it is a literal-module conservative gate. The 2-field numeric exception applies only to B.UNITS.junk.hp and .damage reads and NOT writes, other aliases, or module replacements.",
+  "security_warning": "The original PR184 permission expansion was REMOVED on exact PR199 head 094130a4934f9badfeb62c63b2f6cdb9b483960b: config/autonomous_repair.json is Git blob 0ed1fa31b93493299388da068749a0ca64768f43 (identical to main), absent from effective PR diff. Scheduled WORKER cannot write protected config/characters.json; a new Lua regression does not grant config permissions. Character metadata updates require separate protected manual CONTROLLER DRAFT and independent review. The conservative B.UNITS parser remains limited to literal source and cannot attest general cross-module Lua alias safety.",
   "provider_ruleset": {
     "id": 26750913,
     "enforcement": "active",
@@ -77,7 +77,8 @@
     "Audit user data persistence/session lease and client/server Roblox Lua in inherited game stack",
     "Verify 4 game SHA pins/ XML generated artifact and C00100..C98840 ledger chain; negative-control and current 916 test CI",
     "Ensure protected main ruleset exact CI/current head, no self-approval, no stale reviewer claims, no duplicate adoption of stacked parents",
-    "Decide independent PASS/REQUEST_CHANGES/BLOCKED; do not merge or publish if any trust gating unmet"
+    "Decide independent PASS/REQUEST_CHANGES/BLOCKED; do not merge or publish if any trust gating unmet",
+    "Verify current PR199 diff excludes config/autonomous_repair.json and that no worker can edit config/characters.json even when accompanied by a new regression; affirm three canonical Lua edits with regression still pass. Review C98841 exact SHA and current HEAD."
   ],
   "owner_claim": {
     "role": "CONTROLLER",
@@ -94,5 +95,32 @@
   "android_verified": false,
   "two_client_verified": false,
   "published": false,
-  "incremental_spend_jpy": 0
+  "incremental_spend_jpy": 0,
+  "previous_head": "f478af3562740ff415c70c8e5f314ef6277cd1ac",
+  "updated_at": "2026-11-07T22:17:59.514Z",
+  "previous_green_ci": {
+    "id": 42418236714,
+    "head": "f478af3562740ff415c70c8e5f314ef6277cd1ac",
+    "offline": "SUCCESS",
+    "compile_hold": "SUCCESS",
+    "provider_app_id": 15368,
+    "python_tests": "916/916 PASS",
+    "lua_hud": "14/14 PASS",
+    "lua_pon": "9/9 PASS",
+    "new_integrated_security_tests": "2/2 PASS",
+    "handoff_checks": "PASS",
+    "native_engine": false
+  },
+  "previous_security_warning": "Consolidated game includes PR184's exact extra authorized source path config/characters.json in config/autonomous_repair.json. Review scope against worker host authority. Parser still does NOT do general Lua alias/dataflow analysis across modules; it is a literal-module conservative gate. The 2-field numeric exception applies only to B.UNITS.junk.hp and .damage reads and NOT writes, other aliases, or module replacements.",
+  "last_security_fix": {
+    "id": "C98841",
+    "history_path": "history/C98841_pr199_worker_catalog_scope_fail_closed.json",
+    "config_main_blob": "0ed1fa31b93493299388da068749a0ca64768f43",
+    "old_config_blob": "60de6f585044c0dcbfcf5cd570bf11b6157b937f",
+    "source_game_lua_unchanged": true,
+    "docs_aligned": true,
+    "accepted_tests_weakened": false,
+    "new_scope_regression": true,
+    "ci_run": 42419686515
+  }
 }
