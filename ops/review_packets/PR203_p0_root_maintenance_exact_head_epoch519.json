@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "kind": "PR203_ONE_TIME_P0_MAINTENANCE_REVIEW_ADVISORY_ONLY",
+  "repository": "kk051780/toy-wars-factory",
+  "issue": 123,
+  "pr": 203,
+  "exact_head": "1d2f3a4c8d4dc6b9ac9335fdc3c9520226ee2527",
+  "exact_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "normal_merger_path": "SKIP_UNRELATED",
+  "source_paths": [
+    "docs/SCOPED_LEASE_MIGRATION_GATE.md",
+    "history/C10002_legacy_scoped_compatibility_gate.json",
+    "history/C10003_legacy_scoped_merge_guard.json",
+    "history/C10004_legacy_owns_write_fence.json",
+    "tests/test_legacy_scoped_integration_gate.py",
+    "tests/test_legacy_scoped_migration_gate.py",
+    "tests/test_legacy_scoped_owner_cleanup.py",
+    "tools/repair_control.py",
+    "tools/repair_integration.py"
+  ],
+  "ci_run_id": 42429957240,
+  "ci_jobs": {
+    "offline": "success",
+    "compile_hold": "success"
+  },
+  "captured_epoch": 519,
+  "captured_owner_id": "f8f7a3c9-6d42-40fb-9c4a-f6d7ad4934c9",
+  "author_epoch": 518,
+  "author_release_ref": "83a43b2b1ab1540a9558f74f9df8402756a8a4ff",
+  "review_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+  "source_snapshot": "ISSUE123_OWNER_DIRECTIVES_AND_GITHUB_EXACT_REF",
+  "required_checks": [
+    "INDEPENDENT_REVIEWER_AUTHENTIC_RUN_AND_TASK",
+    "PR203_EXACT_LIVE_HEAD_EQUALS_REVIEW_HEAD",
+    "FRESH_MAIN_HEAD_AND_MAIN_QA",
+    "PR203_EXACT_HEAD_OFFLINE_COMPILE_HOLD_GREEN",
+    "PROTECTED_BRANCH_RULES_CURRENT",
+    "TRUSTED_EXCEPTION_LIMITED_TO_PR203_PATHS_AND_HEAD",
+    "ONE_AUTHORIZED_COORDINATOR_CAS_OWNER",
+    "MERGE_THEN_FRESH_MAIN_CI_AND_HANDOFF",
+    "EXPLICIT_OLD_RUNNING_WRITERS_DRAINED_BEFORE_V2_ACTIVATION"
+  ],
+  "authorization": {
+    "native_review": false,
+    "registered_run_authenticated": false,
+    "pr_ready_for_review": false,
+    "merge": false,
+    "real_parallel_active": false
+  },
+  "decision": "WAIT_INDEPENDENT_REVIEW_AND_SPECIAL_ROOT_MAINTENANCE_ROUTE",
+  "recorded_at": "2026-11-08T00:44:22.697Z",
+  "notes": "No executable merge authority. Host must independently GET source PR/main/ref, review run identity and ruleset before any action. No automatic retry on host refusal."
+}
