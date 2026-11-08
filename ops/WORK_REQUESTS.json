@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T10:33:35.238Z",
+  "observed_at": "2026-11-08T10:54:49.166Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5895,27 +5895,29 @@
       "pr": 215,
       "parent_pr": 212,
       "branch": "controller/p0c-readonly-ack-protocol-20261108-b3e2796c",
-      "head": "1e08bdfb5e4b28b51e8dd637c0c87bf5626abcaf",
+      "head": "0115d9579a1f3f95fcc6fac20e69a4d7ae90f48c",
       "draft": true,
       "source_owner_id": "b3e2796c-1acc-42b9-b5a6-734156e44ff0",
       "source_owner_epoch": 554,
-      "status": "OPEN_C3B_HEAD_CHANGED_REQUIRES_FRESH_EXACT_HEAD_CI_AND_INDEPENDENT_REVIEW",
+      "status": "OPEN_C3C_GITHUB_SOURCE_REFETCH_CI964_SUCCESS_INDEPENDENT_REVIEW_REQUIRED",
       "assigned_role": "REVIEWER",
       "independent_reviewed": false,
-      "ci_run_id": null,
+      "ci_run_id": 42473318005,
       "ci_jobs": {
         "offline": "success",
         "compile_hold": "success"
       },
-      "python_tests": null,
-      "ack_tests": 14,
+      "python_tests": 964,
+      "ack_tests": 19,
       "review_packet_path": "ops/review_packets/PR215_p0c_ack_only_epoch554.json",
       "windows_ack_post_verified": false,
       "pc_receiver_installed": false,
       "codex_execution_authorized": false,
-      "next_actor": "Independent authenticated REVIEWER must fetch actual PR215 HEAD + parent PR212 HEAD/current PR211, diff, real CI and review permissions. Examine source authentication and host/HEAD pin, redirect+token nonleakage, lack of idempotency on GitHub Issue comment POST, potential malicious replay, false implication of host attestation. No real Windows POST until explicit approved least-privilege credential and host opt-in. Not an executable command receiver.",
+      "next_actor": "Independent REVIEWER reGET exact PR215 HEAD and raw CI 964, audit source_fetcher default pinned GitHub GET, caller spoof, token/owner opt-in, no producer ACK proof, ambiguous POST idempotency; no windows install/permissions until separate host consent",
       "created_at": "2026-11-08T10:33:35.238Z",
-      "last_updated_at": "2026-11-08T10:44:52.379Z"
+      "last_updated_at": "2026-11-08T10:44:52.379Z",
+      "previous_head": "1e08bdfb5e4b28b51e8dd637c0c87bf5626abcaf",
+      "updated_at": "2026-11-08T10:54:49.166Z"
     }
   ]
 }

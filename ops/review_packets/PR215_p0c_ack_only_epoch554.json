@@ -8,16 +8,16 @@
   "parent_pr": 212,
   "grandparent_pr": 211,
   "parent_head_at_creation": "06da67921b75371e0f955d00ef4d2b71708fc328",
-  "head": "91714f2724f8be64f067c9f0190a97baa4d15397",
+  "head": "0115d9579a1f3f95fcc6fac20e69a4d7ae90f48c",
   "branch": "controller/p0c-readonly-ack-protocol-20261108-b3e2796c",
   "author_epoch": 554,
   "author_owner_id": "b3e2796c-1acc-42b9-b5a6-734156e44ff0",
   "ci": {
-    "run_id": 42471823541,
+    "run_id": 42473318005,
     "offline": "success",
     "compile_hold": "success",
-    "python_passed": 959,
-    "ack_new_tests": 14
+    "python_passed": 964,
+    "ack_new_tests": 19
   },
   "paths": [
     "tools/system_p0c_ack_only.py",
@@ -43,7 +43,7 @@
     "host_attested": false,
     "main_merged": false
   },
-  "review_request": "Independent authenticated REVIEWER must fetch actual PR215 HEAD + parent PR212 HEAD/current PR211, diff, real CI and review permissions. Examine source authentication and host/HEAD pin, redirect+token nonleakage, lack of idempotency on GitHub Issue comment POST, potential malicious replay, false implication of host attestation. No real Windows POST until explicit approved least-privilege credential and host opt-in. Not an executable command receiver.",
+  "review_request": "Review latest head 0115d957..., parent PR212 HEAD 06da679..., original PR211 5b62ba5 and exact CI run42473318005; require source-fetch GET from trusted endpoint and no GET/POST before auth; source_fetcher must never be caller-provided in production. Distinguish GitHub source metadata from PC-origin authenticated proof.",
   "limitations": [
     "source uses Python; host Python installation NOT VERIFIED",
     "GitHub issue comments API no idempotent POST; no retries or exactly-once proof",
@@ -52,5 +52,38 @@
   ],
   "codex_calls": 0,
   "additional_spend_jpy": 0,
-  "created_at": "2026-11-08T10:33:35.238Z"
+  "created_at": "2026-11-08T10:33:35.238Z",
+  "revisions": [
+    {
+      "kind": "C3C_LIVE_PINNED_SOURCE_GET_BEFORE_GITHUB_ACK",
+      "previous_head": "91714f2724f8be64f067c9f0190a97baa4d15397",
+      "new_head": "0115d9579a1f3f95fcc6fac20e69a4d7ae90f48c",
+      "ci_run": 42473318005,
+      "offline": "success",
+      "compile_hold": "success",
+      "python_passed": 964,
+      "ack_regressions": 19,
+      "added_tests": 5,
+      "fix": "After opt-in and existing approved token preflight, fetch_comment_once(comment ID) from fixed GitHub GET then require canonical validation and exact caller body match; reject before POST on GET failure, mismatch and expiry. No Windows origin attestation, source_fetcher injectable only for offline unit fixtures.",
+      "first_ci_failed": {
+        "run": 42473184804,
+        "error": "NameError source in pure make_ack_only",
+        "repaired_in_exact_head": "0115d9579a1f3f95fcc6fac20e69a4d7ae90f48c"
+      },
+      "permissions": {
+        "real_windows_issues_write_credential_verified": false,
+        "owner_pc_auth_verified": false,
+        "real_pc_ack_post": false
+      },
+      "review_required": true,
+      "recorded_at": "2026-11-08T10:54:49.166Z"
+    }
+  ],
+  "actual_ci": {
+    "run_id": 42473318005,
+    "offline": "success",
+    "compile_hold": "success",
+    "python_passed": 964,
+    "ack_new_tests": 19
+  }
 }
