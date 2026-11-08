@@ -1924,18 +1924,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 520,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "epoch": 520,
-    "owner_id": "9ebff29c-e073-447d-94c7-c3796117a5ad",
-    "task_id": null,
-    "acquired_at": "2026-11-08T00:59:09.567Z",
-    "expires_at": "2026-11-08T01:24:09.567Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0-legacy-shadow-compat-20261108-76116caf",
-    "scope": "P0 PR203 Sourcery review 2 High 2 Medium: repair verify_pr migration fence, robust malformed timestamps, expired-row test, residual atomic TOCTOU HOLD; CI and checkpoint; no main or v2 activation"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3579,22 +3568,37 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_P0_PR203_ONE_TIME_MAINTENANCE_REVIEW_QUEUE_EXACT_HEAD",
-    "epoch": 519,
-    "owner_id": "f8f7a3c9-6d42-40fb-9c4a-f6d7ad4934c9",
+    "kind": "CONTROLLER_P0_PR203_SOURCERY_FINDINGS_PARTIAL_FIX_EXACT_HEAD_GREEN",
+    "epoch": 520,
+    "owner_id": "9ebff29c-e073-447d-94c7-c3796117a5ad",
     "pr": 203,
-    "head": "1d2f3a4c8d4dc6b9ac9335fdc3c9520226ee2527",
+    "head": "5e8fa180bc0d12543adae616daa429e62c113086",
     "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "read_only_review_request_id": "P0_ISSUE123_PR203_ONE_TIME_CONTROLLER_MAINTENANCE_GATE_20261108",
-    "review_packet_path": "ops/review_packets/PR203_p0_root_maintenance_exact_head_epoch519.json",
-    "queue_items": 76,
-    "normal_merger_result": "SKIP_UNRELATED_FOR_CONTROLLER_BRANCH",
-    "independent_review": false,
+    "ci_run": 42432766896,
+    "offline": "SUCCESS",
+    "compile_hold": "SUCCESS",
+    "python_tests": 880,
+    "additional_new_tests": 11,
+    "external_review_findings": {
+      "high": 2,
+      "medium": 2
+    },
+    "remediated": [
+      "verify_pr scoped current/parent/claim",
+      "malformed time/object fail closed",
+      "expired test fixture"
+    ],
+    "unresolved": [
+      "HIGH atomic write/merge host CAS fence; live v2 off"
+    ],
+    "independent_registered_review": false,
     "main_merged": false,
-    "pr_head_changed": false,
     "real_two_writers": false,
     "additional_spend_jpy": 0,
-    "released_at": "2026-11-08T00:45:34.473Z"
+    "queue_request_id": "P0_ISSUE123_PR203_ONE_TIME_CONTROLLER_MAINTENANCE_GATE_20261108",
+    "review_packet_path": "ops/review_packets/PR203_p0_sourcery_followup_epoch520.json",
+    "issue_checkpoint": 6715465571,
+    "released_at": "2026-11-08T01:11:55.582Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
