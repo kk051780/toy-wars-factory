@@ -207,6 +207,7 @@ function H.new(serverFile, existingCount, options)
         local records={}
         local store={}
         function store:GetAsync(key)
+            h.storeReads=(h.storeReads or 0)+1
             if options.storeReadFail then error("injected store read unavailable") end
             local record=records[key]
             return record and copyData(record.value),keyInfo(record)
@@ -233,8 +234,17 @@ function H.new(serverFile, existingCount, options)
     local services={Players=h.players,ReplicatedStorage=h.storage,RunService=h.runService,
         DataStoreService=dataStoreService,HttpService=httpService}
     h.services=services
+    -- Explicit shutdown callback capture only for explicit lifecycle mock tests.
+    local gameStub={GetService=function(_,name) return assert(services[name],"unsupported service") end}
+    if options.captureShutdown then
+        function gameStub:BindToClose(callback)
+            assert(type(callback)=="function","shutdown callback must be a function")
+            assert(not h.shutdownCallback,"duplicate shutdown registration")
+            h.shutdownCallback=callback
+        end
+    end
     local env=setmetatable({
-        game={GetService=function(_,name) return assert(services[name],"unsupported service") end},
+        game=gameStub,
         workspace=h.workspace,Instance={new=instance},Enum=enums,
         Vector3={new=vector},CFrame={new=frame,lookAt=lookAt},Color3={fromRGB=function(...) return {...} end},
         UDim={new=function(...) return {...} end},UDim2={fromOffset=function(...) return {...} end,fromScale=function(...) return {...} end},
