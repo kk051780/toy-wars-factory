@@ -9,10 +9,10 @@ def embed(text):
     while f']{bracket}]' in text or f'[{bracket}[' in text: bracket+='='
     return f'[{bracket}[\n{text}\n]{bracket}]'
 modules={
-    'balance': (src/'ToyWarsBalance.lua').read_text(),
-    'server': (src/'ToyWarsServer.server.lua').read_text(),
-    'hud': (src/'ToyWarsHUD.client.lua').read_text(),
-    'smoke': (src/'ToyWarsSmokeTest.server.lua').read_text(),
+    'balance': (src/'ToyWarsBalance.lua').read_text(encoding='utf-8'),
+    'server': (src/'ToyWarsServer.server.lua').read_text(encoding='utf-8'),
+    'hud': (src/'ToyWarsHUD.client.lua').read_text(encoding='utf-8'),
+    'smoke': (src/'ToyWarsSmokeTest.server.lua').read_text(encoding='utf-8'),
 }
 installer='''-- TOY WARS FACTORY v1.2 / INSTALLER FOR ROBLOX STUDIO EDIT-MODE COMMAND BAR
 -- Execute ONCE in EDIT MODE. Installer is repeatable and removes older prototypes.
@@ -72,9 +72,9 @@ print("TWF_INSTALL_OK v1.2 - press Play in Studio and inspect Output for TWF_QA_
 '''
 for key,value in modules.items(): installer=installer.replace('@@'+key+'@@',embed(value))
 dest.parent.mkdir(parents=True,exist_ok=True)
-dest.write_text(installer)
+dest.write_bytes(installer.encode('utf-8'))
 manifest={key:hashlib.sha256(value.encode()).hexdigest() for key,value in modules.items()}
 manifest['installer_sha256']=hashlib.sha256(installer.encode()).hexdigest()
 (root/'evidence').mkdir(parents=True,exist_ok=True)
-(root/'evidence/SOURCE_MANIFEST.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
+(root/'evidence/SOURCE_MANIFEST.json').write_bytes((json.dumps(manifest,ensure_ascii=False,indent=2)+'\n').encode('utf-8'))
 print('built',dest,'bytes',len(installer))
