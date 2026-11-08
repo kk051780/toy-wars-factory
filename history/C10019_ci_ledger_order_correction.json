@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "id": "C10019",
+  "kind": "STUDIO_PREVIEW_LEDGER_ORDER_REGRESSION_RECONCILIATION",
+  "date_utc": "2026-11-08",
+  "pr": 192,
+  "issue": 204,
+  "epoch": 531,
+  "owner_id": "5cb061c3-aa50-40b7-b69b-53dab1c298ae",
+  "failed_head": "17214dc91d2440d28856a364cf13d3fa9be8a102",
+  "failed_ci_run": 42443941243,
+  "failure": "tests/test_handoff_checkpoint.py: expected before HUD bytes 7709 but C10017 recorded 12370 due lexicographic C-file order, not due new HUD Lua test",
+  "resolution": "Preserve C10017 as explanatory observation, register source_changes as C98794 following C98793. No modification to accepted historic C98791/C98792/C98793, no test waiver.",
+  "source_code_changed_in_correction": false,
+  "compiled_engine_tested": false,
+  "no_main_merge": true,
+  "extra_spend_jpy": 0
+}
