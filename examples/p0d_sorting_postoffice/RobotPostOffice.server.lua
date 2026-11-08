@@ -20,15 +20,35 @@ for _, child in ipairs(ServerScriptService:GetChildren()) do
         error("P0D_BLOCKED_OTHER_SERVER_SCRIPTS_PRESENT")
     end
 end
+-- Validate all non-character objects, not only their top-level names.
+-- Default Baseplate and SpawnLocation may have a Texture/Decal decoration.
+-- Unknown subtrees and duplicate default roots fail closed.
 local allowedRoot = {
-    Camera = "Camera",
-    Terrain = "Terrain",
-    Baseplate = "Part",
-    SpawnLocation = "SpawnLocation",
+    Camera = {className = "Camera", childTypes = {}},
+    Terrain = {className = "Terrain", childTypes = {}},
+    Baseplate = {className = "Part", childTypes = {Texture = true, Decal = true}},
+    SpawnLocation = {className = "SpawnLocation", childTypes = {Texture = true, Decal = true}},
 }
+local seenRoot = {}
+local function isActivePlayerCharacter(child)
+    if not child:IsA("Model") then return false end
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player.Character == child then return true end
+    end
+    return false
+end
 for _, child in ipairs(Workspace:GetChildren()) do
-    if allowedRoot[child.Name] ~= child.ClassName then
-        error("P0D_BLOCKED_NONEMPTY_WORKSPACE: " .. child.Name)
+    if not isActivePlayerCharacter(child) then
+        local rule = allowedRoot[child.Name]
+        if not rule or child.ClassName ~= rule.className or seenRoot[child.Name] then
+            error("P0D_BLOCKED_NONEMPTY_WORKSPACE: " .. child.Name)
+        end
+        seenRoot[child.Name] = true
+        for _, descendant in ipairs(child:GetDescendants()) do
+            if descendant.Parent ~= child or not rule.childTypes[descendant.ClassName] then
+                error("P0D_BLOCKED_UNEXPECTED_WORKSPACE_DESCENDANT: " .. descendant.Name)
+            end
+        end
     end
 end
 
@@ -79,11 +99,24 @@ local function addSign(part, text, size)
     label.Parent = gui
 end
 
+local function isAuthorizedInteraction(player, part, detector)
+    if typeof(player) ~= "Instance" or not player:IsA("Player") or player.Parent ~= Players then
+        return false
+    end
+    local character = player.Character
+    local root = character and character:FindFirstChild("HumanoidRootPart")
+    return root ~= nil and root:IsA("BasePart") and
+        (root.Position - part.Position).Magnitude <= detector.MaxActivationDistance
+end
+
 local function addClick(part, onClick)
     local detector = Instance.new("ClickDetector")
     detector.MaxActivationDistance = 42
     detector.Parent = part
-    detector.MouseClick:Connect(onClick)
+    detector.MouseClick:Connect(function(player)
+        if not isAuthorizedInteraction(player, part, detector) then return end
+        onClick(player)
+    end)
 end
 
 local function ensureHUD(player)
@@ -134,6 +167,11 @@ local function selectParcel(player, colorId)
         show(player, "Finished! Click green REPLAY pillar.")
         return
     end
+    if state.delivered[colorId] then
+        state.selected = nil
+        show(player, "That parcel is already delivered. Pick another color.")
+        return
+    end
     state.selected = colorId
     show(player, "Selected " .. colorId .. ". Click the MATCHING bin.")
 end
@@ -147,7 +185,11 @@ local function deliver(player, binId)
         show(player, "Click a parcel first, then its matching bin.")
     elseif state.selected ~= binId then
         show(player, "Wrong bin: try again. Your parcel is still selected.")
+    elseif state.delivered[state.selected] then
+        state.selected = nil
+        show(player, "That parcel was delivered already. Pick a new color.")
     else
+        state.delivered[state.selected] = true
         state.count = state.count + 1
         state.selected = nil
         if state.count == 3 then
@@ -161,10 +203,46 @@ end
 local function replay(player)
     local state = sessions[player]
     if not state then return end
+    if state.count ~= 3 then
+        show(player, "Finish all 3 colors before replay.")
+        return
+    end
     state.count = 0
     state.selected = nil
+    state.delivered = {}
     show(player, "New round: click parcel, then same-color bin.")
 end
+
+-- Real Luau behavior smoke. Runs only inside a successful isolated Studio Play.
+-- GitHub CI's source checks do not execute these assertions.
+local function runStateMachineSmoke()
+    local fakePlayer = {}
+    local state = {count = 0, selected = nil, delivered = {}, objective = nil}
+    sessions[fakePlayer] = state
+    local function verify(condition, name)
+        if not condition then error("P0D_STATE_MACHINE_FAIL_" .. name) end
+    end
+    selectParcel(fakePlayer, "RED")
+    deliver(fakePlayer, "BLUE")
+    verify(state.count == 0 and state.selected == "RED", "WRONG_BIN")
+    deliver(fakePlayer, "RED")
+    verify(state.count == 1 and state.delivered.RED, "FIRST_DELIVERY")
+    selectParcel(fakePlayer, "RED")
+    deliver(fakePlayer, "RED")
+    verify(state.count == 1, "NO_REPEATED_PARCEL")
+    replay(fakePlayer)
+    verify(state.count == 1 and state.delivered.RED, "NO_PREMATURE_REPLAY")
+    selectParcel(fakePlayer, "BLUE")
+    deliver(fakePlayer, "BLUE")
+    selectParcel(fakePlayer, "YELLOW")
+    deliver(fakePlayer, "YELLOW")
+    verify(state.count == 3 and state.delivered.BLUE and state.delivered.YELLOW, "THREE_UNIQUE")
+    replay(fakePlayer)
+    verify(state.count == 0 and next(state.delivered) == nil, "RESET_AFTER_COMPLETE")
+    sessions[fakePlayer] = nil
+    print("P0D_STATE_MACHINE_SMOKE_PASS")
+end
+runStateMachineSmoke()
 
 -- Orient the first player-facing view toward the color sorting station.
 -- This is a disposable Studio test location, not a production teleport.
@@ -224,7 +302,7 @@ local function join(player)
     if player.Character then
         task.defer(orientCharacter, player.Character)
     end
-    local state = {count = 0, selected = nil, objective = nil}
+    local state = {count = 0, selected = nil, delivered = {}, objective = nil}
     sessions[player] = state
     state.objective = ensureHUD(player)
     show(player, "Click a parcel, then a same-color delivery bin.")

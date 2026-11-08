@@ -27,7 +27,7 @@ class PostOfficeContract(unittest.TestCase):
 
     def test_server_owns_sorting_and_resets(self):
         for behavior in (
-            'detector.MouseClick:Connect(onClick)',
+            'detector.MouseClick:Connect(function(player)',
             'state.selected ~= binId',
             'state.count = state.count + 1',
             'state.count == 3',
@@ -56,7 +56,7 @@ class PostOfficeContract(unittest.TestCase):
             'game.PlaceId ~= 0 or game.GameId ~= 0',
             'script.Parent ~= ServerScriptService',
             'child ~= script',
-            'allowedRoot[child.Name] ~= child.ClassName',
+            'child.ClassName ~= rule.className or seenRoot[child.Name]',
         )
         for guard in guards:
             self.assertIn(guard, source)
@@ -75,6 +75,53 @@ class PostOfficeContract(unittest.TestCase):
                        'character:PivotTo(',
                        'objective.AnchorPoint = Vector2.new(0.5, 0)',
                        'UITextSizeConstraint'):
+            self.assertIn(marker, self.source)
+
+    def test_actual_click_range_defense(self):
+        source = self.source
+        for marker in (
+            'isAuthorizedInteraction(player, part, detector)',
+            'root:IsA("BasePart")',
+            '(root.Position - part.Position).Magnitude <= detector.MaxActivationDistance',
+            'if not isAuthorizedInteraction(player, part, detector) then return end',
+        ):
+            self.assertIn(marker, source)
+
+    def test_allowed_character_and_deep_workspace_guard(self):
+        for marker in (
+            'local seenRoot = {}',
+            'isActivePlayerCharacter(child)',
+            'player.Character == child',
+            'seenRoot[child.Name] = true',
+            'child:GetDescendants()',
+            'descendant.Parent ~= child',
+            'P0D_BLOCKED_UNEXPECTED_WORKSPACE_DESCENDANT',
+        ):
+            self.assertIn(marker, self.source)
+
+    def test_unique_parcel_and_replay_contract(self):
+        source = self.source
+        for marker in (
+            'state.delivered[colorId]',
+            'state.delivered[state.selected] = true',
+            'state.count = state.count + 1',
+            'if state.count ~= 3 then',
+            'state.delivered = {}',
+        ):
+            self.assertIn(marker, source)
+
+    def test_real_studio_luau_state_machine_smoke_is_present(self):
+        for marker in (
+            'local function runStateMachineSmoke()',
+            'P0D_STATE_MACHINE_FAIL_',
+            '"WRONG_BIN"',
+            '"NO_REPEATED_PARCEL"',
+            '"NO_PREMATURE_REPLAY"',
+            '"THREE_UNIQUE"',
+            '"RESET_AFTER_COMPLETE"',
+            'P0D_STATE_MACHINE_SMOKE_PASS',
+            'runStateMachineSmoke()',
+        ):
             self.assertIn(marker, self.source)
 
     def test_no_persistence_external_network_or_monetization(self):
