@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "kind": "P0A_AUTHORED_REVIEW_HANDOFF_NOT_INDEPENDENT_ATTESTATION",
+  "repository": "kk051780/toy-wars-factory",
+  "issue": 123,
+  "work_id": "P0_ISSUE123_PR210_SOURCE_PROBE_SCOPE_HARDENING_20261108",
+  "subject_pr": 210,
+  "subject_head": "feceb02b28952c65cac6c1a76a70362af73552ba",
+  "draft": true,
+  "base_pr": 203,
+  "base_head": "224082fc9d8e7a01d70aeeb1c7767932ce63227a",
+  "base_branch": "controller/p0-legacy-shadow-compat-20261108-76116caf",
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "run": {
+    "id": 42447915601,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42447915601",
+    "head": "feceb02b28952c65cac6c1a76a70362af73552ba",
+    "offline": "success",
+    "compile_hold": "success",
+    "python_unittest_count": 963,
+    "python_unittest_result": "OK",
+    "run_provenance": "PR-controlled workflow only, not independently trusted host authority"
+  },
+  "change": {
+    "files": [
+      "tools/repair_source_action_fence.py",
+      "tests/test_repair_source_action_fence.py",
+      "tests/test_repair_source_action_recovery.py"
+    ],
+    "change_kind": "Exact single-repo/branch binding for historical SOURCE_UPDATE_PROBE and interrupted recovery",
+    "new_negative_tests": 4,
+    "test_names": [
+      "test_rejects_foreign_repo_with_valid_syntax",
+      "test_rejects_other_p0_branch_even_with_matching_holder",
+      "test_foreign_repository_recovery_fails_closed",
+      "test_other_p0_branch_recovery_fails_closed"
+    ]
+  },
+  "review": {
+    "required_role": "REVIEWER",
+    "required_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+    "genuine_separate_registered_run_attested": false,
+    "native_approved": false,
+    "owner_self_review_allowed": false,
+    "recheck_exact_head_and_ci": true,
+    "do_not_merge": true,
+    "do_not_mark_ready": true,
+    "do_not_activate_scoped_2writer": true
+  },
+  "unresolved_blockers": [
+    "PR203 native distinct review and protected-main gate incomplete",
+    "Original host source-write/main-merge TOCTOU high not closed",
+    "Original run and old-runner fleet drain not attested",
+    "Issue57 unattended provider write rights unresolved",
+    "No two provider-authenticated distinct GPT writers with real overlapping execution and performance measurement"
+  ],
+  "cost_jpy": 0,
+  "epoch": 537,
+  "author_controller_owner_id": "bba8d5a6-52cf-423d-b0fb-50456b221a5b",
+  "created_at": "2026-11-08T04:49:53.694Z"
+}
