@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "id": "P0_PR203_EPOCH526_INTERRUPTED_SOURCE_RECOVERY",
+  "repository": "kk051780/toy-wars-factory",
+  "issue": 123,
+  "pr": 203,
+  "head": "fb4dc098cea189d968c7ac773e916ae5218aae79",
+  "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "owner_id": "fd7f7f20-23ce-422a-9c29-2749aa438f89",
+  "epoch": 526,
+  "owner_release_status": "RELEASED_SAME_COORDINATOR_COMMIT_READBACK_REQUIRED",
+  "ci": {
+    "run_id": 42439033749,
+    "offline": "success",
+    "compile_hold": "success",
+    "python_tests": 935,
+    "new_tests": 20
+  },
+  "intermediate_ci": {
+    "head": "6606bd81a3e0d67cb471a473125912611b27fa05",
+    "run_id": 42438900451,
+    "status": "failure",
+    "four_failing_tests_fixed": true
+  },
+  "changed_files": 23,
+  "changed_paths": [
+    "docs/SCOPED_LEASE_MIGRATION_GATE.md",
+    "history/C10002_legacy_scoped_compatibility_gate.json",
+    "history/C10003_legacy_scoped_merge_guard.json",
+    "history/C10004_legacy_owns_write_fence.json",
+    "history/C10005_sourcery_review_defect_fence.json",
+    "history/C10007_legacy_merge_preflight_action_hold.json",
+    "history/C10008_action_reservation_candidate.json",
+    "history/C10009_manual_source_probe_contract.json",
+    "history/C10010_real_source_action_probe.json",
+    "history/C10011_interrupted_source_recovery.json",
+    "history/C10012_recovery_reason_metadata_fix.json",
+    "tests/test_legacy_scoped_integration_gate.py",
+    "tests/test_legacy_scoped_migration_gate.py",
+    "tests/test_legacy_scoped_owner_cleanup.py",
+    "tests/test_legacy_scoped_sourcery_regression.py",
+    "tests/test_repair_action_reservation.py",
+    "tests/test_repair_integration.py",
+    "tests/test_repair_source_action_fence.py",
+    "tests/test_repair_source_action_recovery.py",
+    "tools/repair_action_reservation.py",
+    "tools/repair_control.py",
+    "tools/repair_integration.py",
+    "tools/repair_source_action_fence.py"
+  ],
+  "decisions": [
+    "WAIT_UNCERTAIN_NOT_APPLIED_DO_NOT_RETRY",
+    "CANDIDATE_OWNER_RECONCILE_ONLY",
+    "ALREADY_RECONCILED_NO_REPLAY",
+    "WAIT_SERVICE_TERMINATION_ATTESTATION",
+    "WAIT_COORDINATOR_REF_DRIFT",
+    "WAIT_SOURCE_REF_DRIFT"
+  ],
+  "non_authoritative": {
+    "may_write": false,
+    "may_retry": false,
+    "may_release": false,
+    "may_merge": false,
+    "provider_authenticated": false,
+    "real_parallel": false
+  },
+  "remains_open": [
+    "genuine connected host action-level integration",
+    "registered task/run authentication",
+    "old runner fleet-drain",
+    "independent reviewer current-head approval",
+    "real two GPT concurrent writers",
+    "real automatic chat recovery"
+  ],
+  "main_merged": false,
+  "real_parallel_writers": false,
+  "roblox_published": false,
+  "issue_comment": 6716230669,
+  "observed_at": "2026-11-08T02:35:06.296Z"
+}
