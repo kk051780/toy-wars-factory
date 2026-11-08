@@ -4619,7 +4619,7 @@
       "id": "pr163_issue57_current_head_independent_security_advisory_20261107",
       "kind": "PROTECTED_ISSUE57_PR163_SECURITY_ADVISORY_HANDOFF",
       "priority": "P0",
-      "status": "OPEN_READ_ONLY_INDEPENDENT_SECURITY_ADVISORY_PENDING",
+      "status": "OPEN_NEW_HEAD_CI_GREEN_INDEPENDENT_REVIEW_PENDING_ACTION_FENCE_HOLD",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
@@ -4628,11 +4628,11 @@
       "pr": 163,
       "url": "https://github.com/kk051780/toy-wars-factory/pull/163",
       "branch": "controller/actions-write-pilot-8df31af2",
-      "head": "f4d83dd1ab19a8a1cc859b8d4db9bf385c49d083",
+      "head": "8e3df38371db32f569fca9f699fbd953f5eda956",
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "evidence_path": "ops/review_packets/PR163_issue57_security_advisory_epoch487.json",
-      "ci_run": 42351893661,
-      "ci_python_tests": 981,
+      "ci_run": 42522473958,
+      "ci_python_tests": 983,
       "ci_jobs": [
         "offline:success",
         "compile_hold:success"
@@ -4645,8 +4645,8 @@
         "epoch": 487,
         "owner_id": "b1850e25-3c1c-4276-b6ba-496ee1e8ec07"
       },
-      "request": "Registered reviewer in a genuinely separate task/run must independently inspect exact PR163 46-file diff including both privileged workflow definitions, source API token/lease/partial-write safety, source history and exact-head run #42351893661; return PASS/REQUEST_CHANGES/BLOCKED advisory. DO NOT self-approve or count Gemini static review as provider-native approval. PR60 DRAFT, 0 native reviews, private main protected:false, scheduled writer authority missing. No merge/dispatch/permission change/extra spending/publication.",
-      "next_actor": "REGISTERED_REVIEWER_READ_ONLY_SECURITY_ADVISORY",
+      "request": "Registered independent REVIEWER must inspect PR163 NEW exact HEAD 8e3df38371db32f569fca9f699fbd953f5eda956 source diff for timeout→lease HOLD regression and 3 changed files. Verify actual GitHub CI run42522473958 offline+compile_hold SUCCESS, Python 983 PASS. Previous HIGH REQUEST_CHANGES_ADVISORY was on OLD f4d83dd1 only; do not reuse verdict. PR203 pending_source_action only permits the PR203 SOURCE_UPDATE_PROBE history path, cannot yet guard generic PR163 writes; unpatched main repair_control has no pending action fence. Block owner manual workflow dispatch until independently approved host-bound reservation/reconciliation and old runner drain. No main merge, source write authorization, native approval or autonomous worker proof.",
+      "next_actor": "REGISTERED_REVIEWER_NEW_HEAD_INDEPENDENT_ADVISORY",
       "review_performed": false,
       "reviewer_native_approved": false,
       "main_merged": false,
@@ -4669,13 +4669,43 @@
       "current_connector_account": "kk051780",
       "separate_github_approver_verified": false,
       "native_security_gate_status": "PROVIDER_RULESET_ACTIVE_AWAIT_DISTINCT_APPROVER",
-      "independent_security_advisory_status": "PENDING",
+      "independent_security_advisory_status": "PENDING_NEW_HEAD_FRESH_REVIEW",
       "superseded_previous_unprotected_main_claim": true,
       "evidence_provider_ruleset": "ops/review_packets/PR163_provider_main_ruleset_epoch489.json",
       "prior_evidence_paths": [
         "ops/review_packets/PR163_issue57_security_advisory_epoch487.json"
       ],
-      "updated_at": "2026-11-07T08:32:53.609Z"
+      "updated_at": "2026-11-08T21:20:11.645Z",
+      "latest_source_repair": {
+        "commit_sha": "8e3df38371db32f569fca9f699fbd953f5eda956",
+        "prior_head": "f4d83dd1ab19a8a1cc859b8d4db9bf385c49d083",
+        "files": [
+          "tools/system_actions_write_probe.py",
+          "tests/test_system_actions_write_probe_partial_dispatch.py",
+          "tests/test_system_actions_write_probe_delayed_completion.py"
+        ],
+        "github_ci": 42522473958,
+        "python_tests": 983,
+        "jobs": [
+          "offline:success",
+          "compile_hold:success"
+        ],
+        "prior_registered_high_review": {
+          "run_id": "70488fd5-f1dc-8320-aba4-26045e302b8a",
+          "old_head": "f4d83dd1ab19a8a1cc859b8d4db9bf385c49d083",
+          "verdict": "REQUEST_CHANGES_ADVISORY"
+        },
+        "author_coordination": {
+          "epoch": 565,
+          "claim_commit": "65f2d043f90b6c2f90a0b9922dcdd3e5b0a73c51",
+          "release_commit": "2d4ba46436b91e6bda18c2eeb3621c533e1066c2"
+        },
+        "complete": false,
+        "source_reservation_persisted": false,
+        "host_authenticated": false,
+        "independent_native_approval": false,
+        "reviewer_pending": true
+      }
     },
     {
       "id": "PR184_192_PROVIDER_RULESET_NATIVE_REVIEW_20261107",
