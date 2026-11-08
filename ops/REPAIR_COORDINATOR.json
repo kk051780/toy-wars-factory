@@ -4022,19 +4022,19 @@
     "released_at": "2026-11-07T21:50:25.392Z",
     "previous_last_completed_preserved": true
   },
-  "pending_source_action": {
-    "schema": 1,
+  "last_source_action_probe": {
+    "kind": "SOURCE_UPDATE_PROBE_CONNECTED_READBACK_ONLY",
     "operation_id": "7c2b40e1-6bca-43b6-a49c-27cf3e7a23b8",
-    "kind": "SOURCE_UPDATE_PROBE",
-    "repository": "kk051780/toy-wars-factory",
     "work_branch": "controller/p0-legacy-shadow-compat-20261108-76116caf",
-    "work_id": "P0_ISSUE123_PR203_SOURCE_ACTION_PROBE",
     "source_path": "history/C10010_real_source_action_probe.json",
     "before_head": "dbfd3058a0688c09e439c3d57659d336f844f936",
     "after_head": "d62d1c98d42507360d7d71c48bad2857ed4e610e",
-    "main_head": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "owner_id": "83a23b59-9eb0-4ec6-9f4d-753ea02694ea",
-    "owner_epoch": 525,
-    "reserved_at": "2026-11-08T02:13:51.438Z"
+    "source_ref_readback_twice": true,
+    "verified_at": "2026-11-08T02:14:49.112Z",
+    "host_actor_attested": false,
+    "independent_review": false,
+    "real_parallel": false,
+    "actual_connected_github_ref_update": true,
+    "coordinator_reservation_ref": "f372efdda9d2a5fd111c8e3c033d2001b4d51aaa"
   }
 }
