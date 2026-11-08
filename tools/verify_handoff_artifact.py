@@ -31,6 +31,10 @@ def unique_object(pairs):
     return result
 
 
+def reject_nonfinite_constant(value):
+    raise ValueError("non-finite JSON constant: " + value)
+
+
 def verify_archive(path):
     """Verify archive structure, fields and same-archive checksums only.
 
@@ -60,11 +64,14 @@ def verify_archive(path):
                         member.compress_type not in (zipfile.ZIP_STORED,
                                                     zipfile.ZIP_DEFLATED) or
                         (member.create_system == 3 and
-                         stat.S_IFMT(mode) not in (0, stat.S_IFREG))):
+                         (stat.S_IFMT(mode) not in (0, stat.S_IFREG) or
+                          mode & 0o111)):
                     raise ValueError("unsafe ZIP member")
-                payload = archive.read(member)
-                if len(payload) != member.file_size:
-                    raise ValueError("ZIP size mismatch")
+                # Bound decompression even if ZIP metadata is dishonest.
+                with archive.open(member) as stream:
+                    payload = stream.read(MAX_MEMBER)
+                    if len(payload) != member.file_size or stream.read(1):
+                        raise ValueError("ZIP size mismatch")
                 data[member.filename] = payload
     except (zipfile.BadZipFile, RuntimeError, OSError, EOFError) as exc:
         raise ValueError("invalid ZIP") from exc
@@ -74,7 +81,8 @@ def verify_archive(path):
     try:
         data[TWO[0]].decode("utf-8")
         state = json.loads(data[TWO[1]].decode("utf-8"),
-                           object_pairs_hook=unique_object)
+                           object_pairs_hook=unique_object,
+                           parse_constant=reject_nonfinite_constant)
     except (UnicodeDecodeError, json.JSONDecodeError, RecursionError) as exc:
         raise ValueError("invalid text/JSON") from exc
     if (type(state) is not dict or type(state.get("schema")) is not int or
