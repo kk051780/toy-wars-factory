@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "id": "C98794",
+  "kind": "STUDIO_PREVIEW_HUD_DELAYED_PROGRESS_MODE_REPLICATION",
+  "date_utc": "2026-11-08",
+  "source_branch": "controller/studio-unsaved-pve-preview-20261107-db08b795",
+  "parent_pr": 191,
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "owner_id": "5cb061c3-aa50-40b7-b69b-53dab1c298ae",
+    "epoch": 531
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_blob": "83233206eb2119c4a05aa01bc4f320b554f4f79b",
+      "after_blob": "92adaa336532c9d85ff6bb7e66aa78487f39930d",
+      "before_bytes": 12370,
+      "after_bytes": 13482,
+      "delta_bytes": 1112
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1591,
+    "lua_bytes": 71890
+  },
+  "new_lua_mock_cases": 7,
+  "reason": "Client may see ToyWarsStatus before ProgressMode; late replication must not suppress unsaved warning",
+  "change": "Visible pending/unverified save status until ProgressMode arrives; ChildAdded listener plus second FindFirstChild after subscription; SAVED clears pending; late UNSAVED shows explicit warning",
+  "status": "PROTECTED_DRAFT_UNMERGED",
+  "engine_verified": false,
+  "android_verified": false,
+  "independent_review": false,
+  "extra_spend_jpy": 0
+}

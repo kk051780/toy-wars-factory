@@ -11,7 +11,14 @@
     "work_branch": "controller/studio-unsaved-pve-preview-20261107-db08b795"
   },
   "original_head": "1afb1e2d0d44a2a2b251442af21a44153a4639f8",
-  "source_changes": [
+  "reason": "Folder ToyWarsStatus may replicate before its ProgressMode StringValue, so one-time FindFirstChild returns nil and unsaved notice remains invisible",
+  "fix": "Treat missing/unknown as save-unverified warning; ChildAdded subscribe before second FindFirstChild, plus Value Changed refresh",
+  "lua_mock_cases": 7,
+  "original_issue_reference": "P0B_ISSUE204",
+  "no_live_engine_claim": true,
+  "main_merged": false,
+  "additional_spend_jpy": 0,
+  "source_change_observation": [
     {
       "path": "src/ToyWarsHUD.client.lua",
       "before_blob": "83233206eb2119c4a05aa01bc4f320b554f4f79b",
@@ -21,11 +28,7 @@
       "delta_bytes": 1112
     }
   ],
-  "reason": "Folder ToyWarsStatus may replicate before its ProgressMode StringValue, so one-time FindFirstChild returns nil and unsaved notice remains invisible",
-  "fix": "Treat missing/unknown as save-unverified warning; ChildAdded subscribe before second FindFirstChild, plus Value Changed refresh",
-  "lua_mock_cases": 7,
-  "original_issue_reference": "P0B_ISSUE204",
-  "no_live_engine_claim": true,
-  "main_merged": false,
-  "additional_spend_jpy": 0
+  "canonical_source_chain_record": "history/C98794_studio_preview_hud_replication.json",
+  "correction_reason": "The source-size continuity test replays C-named history in lexical order. This initial C10017 file sorted before accepted C98791, reporting a before_bytes of 12370 when prior chain had 7709. Keep this original evidence and locate the authoritative source_changes at C98794 after C98793; do not weaken size-chain tests.",
+  "first_failed_ci_run": 42443941243
 }
