@@ -56,20 +56,50 @@ class Response:
 
 
 class AckOnlyTests(unittest.TestCase):
+    def setUp(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        self.get_calls = []
+        self.post_calls = []
+        self.source_impl = lambda cid: original_comment()
+        self.post_impl = lambda req, timeout: self.fail("unexpected outbound POST")
+        def fake_get(comment_id):
+            self.get_calls.append(comment_id)
+            return self.source_impl(comment_id)
+        def fake_post(req, timeout):
+            self.post_calls.append((req, timeout))
+            return self.post_impl(req, timeout)
+        self.p_get = patch("tools.system_p0c_ack_only.fetch_comment_once", side_effect=fake_get)
+        self.p_opener = patch("tools.system_p0c_ack_only.build_opener",
+                              return_value=SimpleNamespace(open=fake_post))
+        self.p_get.start()
+        self.addCleanup(self.p_get.stop)
+        self.p_opener.start()
+        self.addCleanup(self.p_opener.stop)
+
     def preview(self, obj=None, now=NOW, host=HOST, sha=SHA):
-        return make_ack_only(
+        return make_ack_only(original_comment() if obj is None else obj,
+                             now_utc=now, observed_host=host,
+                             expected_main_sha=sha)
+
+    def deliver(self, obj=None, now=NOW, host=HOST, sha=SHA,
+                optin=True, token=FAKE):
+        return post_ack_only_once(
             original_comment() if obj is None else obj,
             now_utc=now, observed_host=host, expected_main_sha=sha,
+            owner_opt_in=optin, approved_issues_write_token=token,
         )
 
     def test_valid_ping_receipt_has_no_exec_rights(self):
         result = json.loads(self.preview()[len(ACK_PREFIX):])
         self.assertEqual(result["source_comment_id"], CID)
-        self.assertEqual(result["kind"], "UNATTESTED_PING_RECEIPT_CANDIDATE_NO_EXECUTION")
+        self.assertEqual(result["kind"],
+                         "UNATTESTED_PING_RECEIPT_CANDIDATE_NO_EXECUTION")
         self.assertEqual(result["work_id"], WORK)
         for key in ("owner_execution_authorized", "codex_executed",
                     "studio_executed", "git_source_written", "host_attested",
-                    "host_origin_verified", "github_app_proves_owner_pc_authorization"):
+                    "host_origin_verified",
+                    "github_app_proves_owner_pc_authorization"):
             self.assertIs(result[key], False)
 
     def test_bad_action_rejected(self):
@@ -118,118 +148,111 @@ class AckOnlyTests(unittest.TestCase):
         with self.assertRaises(AckBlocked):
             self.preview(now=datetime(2026, 11, 8, 10, 26, tzinfo=timezone.utc))
 
-    def test_default_without_optin_makes_no_post(self):
-        calls = []
+    def test_default_without_optin_makes_no_get_or_post(self):
         with self.assertRaisesRegex(AckBlocked, "OPT_IN"):
-            post_ack_only_once(original_comment(), now_utc=NOW,
-                observed_host=HOST, expected_main_sha=SHA,
-                approved_issues_write_token=FAKE,
-                transport=lambda *args, **kwargs: calls.append(args))
-        self.assertEqual(calls, [])
+            self.deliver(optin=False)
+        self.assertEqual(self.get_calls, [])
+        self.assertEqual(self.post_calls, [])
 
-    def test_without_approved_token_makes_no_post(self):
-        calls = []
+    def test_without_approved_token_makes_no_get_or_post(self):
         with self.assertRaisesRegex(AckBlocked, "TOKEN"):
-            post_ack_only_once(original_comment(), now_utc=NOW,
-                observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
-                transport=lambda *args, **kwargs: calls.append(args))
-        self.assertEqual(calls, [])
+            self.deliver(token=None)
+        self.assertEqual(self.get_calls, [])
+        self.assertEqual(self.post_calls, [])
 
     def test_single_fixed_post_receipt_not_execution(self):
-        calls = []
-        def transport(req, timeout):
-            calls.append((req, timeout))
+        def post(req, timeout):
             self.assertEqual(req.full_url, POST_URL)
             self.assertEqual(req.get_method(), "POST")
-            body = json.loads(req.data.decode("utf-8"))["body"]
-            self.assertTrue(body.startswith(ACK_PREFIX))
-            self.assertNotIn(FAKE, body)
-            content = json.dumps({
-                "id": 1234, "body": body,
-                "issue_url": ROOT + "/issues/204",
-            }).encode()
-            return Response(POST_URL, content)
-        r = post_ack_only_once(original_comment(), now_utc=NOW,
-            observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
-            approved_issues_write_token=FAKE, transport=transport,
-            source_fetcher=lambda comment_id: original_comment())
-        self.assertEqual(len(calls), 1)
-        self.assertEqual(r["ack_comment_id"], 1234)
-        self.assertIs(r["codex_executed"], False)
-        self.assertIs(r["globally_idempotent"], False)
-        self.assertIs(r["host_origin_verified"], False)
+            self.assertEqual(timeout, 10)
+            data = json.loads(req.data.decode("utf-8"))["body"]
+            self.assertTrue(data.startswith(ACK_PREFIX))
+            self.assertNotIn(FAKE, data)
+            body = json.dumps({"id": 1234, "body": data,
+                               "issue_url": ROOT + "/issues/204"}).encode()
+            return Response(POST_URL, body)
+        self.post_impl = post
+        result = self.deliver()
+        self.assertEqual(self.get_calls, [CID])
+        self.assertEqual(len(self.post_calls), 1)
+        self.assertEqual(result["ack_comment_id"], 1234)
+        self.assertIs(result["codex_executed"], False)
+        self.assertIs(result["globally_idempotent"], False)
+        self.assertIs(result["host_origin_verified"], False)
 
     def test_redirected_post_response_rejected(self):
+        self.post_impl = lambda req, timeout: Response("https://evil.example/", b"{}")
         with self.assertRaises(AckBlocked):
-            post_ack_only_once(original_comment(), now_utc=NOW,
-                observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
-                approved_issues_write_token=FAKE,
-                transport=lambda req, timeout: Response("https://evil.example/", b"{}"),
-                source_fetcher=lambda comment_id: original_comment())
+            self.deliver()
+        self.assertEqual(self.get_calls, [CID])
+        self.assertEqual(len(self.post_calls), 1)
 
     def test_missing_source_get_fails_closed_before_post(self):
-        posted = []
+        self.source_impl = lambda cid: (_ for _ in ()).throw(OSError("offline"))
         with self.assertRaisesRegex(AckBlocked, "GET_FAILED_NO_POST"):
-            post_ack_only_once(original_comment(), now_utc=NOW,
-                observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
-                approved_issues_write_token=FAKE,
-                source_fetcher=lambda comment_id: (_ for _ in ()).throw(OSError("offline")),
-                transport=lambda *a, **kw: posted.append(a))
-        self.assertEqual(posted, [])
+            self.deliver()
+        self.assertEqual(self.get_calls, [CID])
+        self.assertEqual(self.post_calls, [])
 
     def test_forged_caller_body_rejected_before_post(self):
         caller = original_comment()
-        caller["body"] = caller["body"] + "\nEXECUTE_CODEX"
-        posted = []
+        caller["body"] += "\nEXECUTE_CODEX"
         with self.assertRaisesRegex(AckBlocked, "BODY_MISMATCH_NO_POST"):
-            post_ack_only_once(caller, now_utc=NOW,
-                observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
-                approved_issues_write_token=FAKE, source_fetcher=lambda cid: original_comment(),
-                transport=lambda *a, **kw: posted.append(a))
-        self.assertEqual(posted, [])
+            self.deliver(obj=caller)
+        self.assertEqual(self.post_calls, [])
 
     def test_git_source_id_mismatch_is_not_accepted(self):
-        posted = []
-        def source_fetcher(cid):
-            self.assertEqual(cid, CID)
-            response = original_comment()
-            response["id"] = CID + 1
-            return response
+        def wrong_source(cid):
+            obj = original_comment()
+            obj["id"] = CID + 1
+            return obj
+        self.source_impl = wrong_source
         with self.assertRaisesRegex(AckBlocked, "ID_MISMATCH_NO_POST"):
-            post_ack_only_once(original_comment(), now_utc=NOW,
-                observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
-                approved_issues_write_token=FAKE, source_fetcher=source_fetcher,
-                transport=lambda *a, **kw: posted.append(a))
-        self.assertEqual(posted, [])
+            self.deliver()
+        self.assertEqual(self.post_calls, [])
 
     def test_expired_source_on_fresh_get_blocks_post(self):
-        calls = []
         with self.assertRaisesRegex(AckBlocked, "SOURCE_PING_NOT_VALID"):
-            post_ack_only_once(original_comment(),
-                now_utc=datetime(2026, 11, 8, 10, 26, tzinfo=timezone.utc),
-                observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
-                approved_issues_write_token=FAKE,
-                source_fetcher=lambda cid: original_comment(),
-                transport=lambda *a, **kw: calls.append(a))
-        self.assertEqual(calls, [])
+            self.deliver(now=datetime(2026, 11, 8, 10, 26,
+                                      tzinfo=timezone.utc))
+        self.assertEqual(self.post_calls, [])
 
     def test_unapproved_token_never_fetches_source(self):
-        gets = []
         with self.assertRaisesRegex(AckBlocked, "TOKEN_REQUIRED"):
-            post_ack_only_once(original_comment(), now_utc=NOW,
-                observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
-                source_fetcher=lambda cid: gets.append(cid))
-        self.assertEqual(gets, [])
+            self.deliver(token=None)
+        self.assertEqual(self.get_calls, [])
 
     def test_transport_errors_do_not_echo_credential(self):
         def fail(req, timeout):
             raise RuntimeError("accidental secret " + FAKE)
+        self.post_impl = fail
         with self.assertRaises(AckBlocked) as context:
-            post_ack_only_once(original_comment(), now_utc=NOW,
-                observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
-                approved_issues_write_token=FAKE, transport=fail,
-                source_fetcher=lambda comment_id: original_comment())
+            self.deliver()
         self.assertNotIn(FAKE, str(context.exception))
+
+    def test_caller_cannot_inject_fake_github_source(self):
+        with self.assertRaises(TypeError):
+            post_ack_only_once(original_comment(), now_utc=NOW,
+                observed_host=HOST, expected_main_sha=SHA,
+                owner_opt_in=True, approved_issues_write_token=FAKE,
+                source_fetcher=lambda cid: original_comment())
+        self.assertEqual(self.get_calls, [])
+        self.assertEqual(self.post_calls, [])
+
+    def test_caller_cannot_inject_fake_post_transport(self):
+        with self.assertRaises(TypeError):
+            post_ack_only_once(original_comment(), now_utc=NOW,
+                observed_host=HOST, expected_main_sha=SHA,
+                owner_opt_in=True, approved_issues_write_token=FAKE,
+                transport=lambda req, timeout: Response(POST_URL, b"{}"))
+        self.assertEqual(self.get_calls, [])
+        self.assertEqual(self.post_calls, [])
+
+    def test_malformed_source_does_not_post(self):
+        self.source_impl = lambda cid: {"id": CID, "body": "not a P0C intent"}
+        with self.assertRaisesRegex(AckBlocked, "BODY_MISMATCH_NO_POST"):
+            self.deliver()
+        self.assertEqual(self.post_calls, [])
 
 
 if __name__ == "__main__":

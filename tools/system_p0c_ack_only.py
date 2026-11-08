@@ -74,12 +74,14 @@ def make_ack_only(comment, *, now_utc, observed_host, expected_main_sha):
 
 def post_ack_only_once(comment, *, now_utc, observed_host,
                        expected_main_sha, owner_opt_in=False,
-                       approved_issues_write_token=None, transport=None,
-                       source_fetcher=fetch_comment_once):
+                       approved_issues_write_token=None):
     """At most one POST attempt; no automatic retries or arbitrary commands.
 
     A token / opt-in permits only a receipt write, NEVER code execution.
     GitHub issue comments cannot enforce global exactly-once delivery.
+    The public API has NO caller-supplied source_fetcher or transport bypass.
+    Tests may patch module functions internally; production calls use pinned GET
+    and fixed POST only.
     """
     if owner_opt_in is not True:
         raise AckBlocked("OWNER_OPT_IN_REQUIRED")
@@ -95,7 +97,7 @@ def post_ack_only_once(comment, *, now_utc, observed_host,
     if type(comment) is not dict or type(comment.get("id")) is not int:
         raise AckBlocked("SOURCE_COMMENT_ID_REQUIRED")
     try:
-        source = source_fetcher(comment["id"])
+        source = fetch_comment_once(comment["id"])
     except Exception:
         raise AckBlocked("GITHUB_SOURCE_GET_FAILED_NO_POST") from None
     if type(source) is not dict or type(source.get("id")) is not int or source["id"] != comment["id"]:
@@ -115,7 +117,7 @@ def post_ack_only_once(comment, *, now_utc, observed_host,
         "Authorization": "Bearer " + token,
     })
     try:
-        opener = transport or build_opener(_NoRedirect()).open
+        opener = build_opener(_NoRedirect()).open
         with opener(req, timeout=10) as response:
             if response.status != 201 or response.geturl() != POST_URL:
                 raise AckBlocked("POST_ENDPOINT_OR_STATUS_MISMATCH")
