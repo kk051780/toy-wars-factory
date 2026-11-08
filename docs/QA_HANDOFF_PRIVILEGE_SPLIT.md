@@ -17,6 +17,8 @@ Run `python3 tools/verify_handoff_artifact.py <downloaded-artifact.zip>` on byte
 
 **A successful verifier result is `ARCHIVE_STRUCTURE_VALID_ONLY`, not a provenance or source-freshness attestation**. The trusted caller must independently GET run/job/artifact identity, ensure the run came from accepted main with successfully completed QA, then use genuine GitHub compare to require `source_revision` is current main or an ancestor with only `status/` changes. On any missing/ambiguous evidence `UNTRUSTED_STALE`; no write, merge, release, or scheduling authorization. This script has no GitHub credentials, remote calls, or filesystem writes except output to stdout; the tests use synthetic local temporary ZIP files.
 
+> **2026-11-08 follow-up, defense in depth:** The proposed `status_writer` stays unconditionally disabled (`&& false`), and its job-level token is now also **`contents: read`**, with **no `GH_TOKEN` binding**. Entire proposed workflow contains **zero `contents: write` grants**, even if the disabled guard is accidentally changed in a later patch. Existing Git mock tests inspect the dormant implementation only and are not evidence of a real privileged GitHub push. A future snapshot writer requires a separately reviewed explicit permissions change; no change to accepted main is made by this DRAFT PR.
+
 ## Confirmed current deployment state
 Accepted main `e5deff4d5681bca4823a3da0f848e01bc089ae6e` still has the old single-job `.github/workflows/handoff-sync.yml` that executes repository tests under `contents: write` and pushes generated status files directly into main. This PR is **not merged/deployed** and is not a production Actions writer proof.
 

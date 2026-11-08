@@ -58,13 +58,16 @@ class HandoffPrivilegeSplit(unittest.TestCase):
 
     def test_default_repo_permissions_read_only(self):
         self.assertIn("\npermissions:\n  contents: read\n", SRC)
-        self.assertEqual(SRC.count("contents: write"), 1)
+        self.assertEqual(SRC.count("contents: write"), 0)
+        self.assertEqual(SRC.count("contents: read"), 3)
+        self.assertNotIn("GH_TOKEN:", SRC)
+        self.assertNotIn("github.token", SRC)
 
     def test_separate_verifier_and_writer(self):
         verify, writer = sections()
         self.assertIn("\n  verify:\n    permissions:\n      contents: read\n", verify)
         self.assertIn("  status_writer:\n    needs: verify\n", writer)
-        self.assertIn("    permissions:\n      contents: write\n", writer)
+        self.assertIn("    permissions:\n      contents: read\n", writer)
 
     def test_source_tests_and_builder_never_run_with_write_job(self):
         verify, writer = sections()
@@ -73,6 +76,14 @@ class HandoffPrivilegeSplit(unittest.TestCase):
             self.assertIn(command, verify)
             self.assertNotIn(command, writer)
         self.assertNotIn("python3 ", writer)
+
+    def test_no_write_scoped_job_or_cached_credentials_anywhere(self):
+        self.assertNotIn("contents: write", SRC)
+        self.assertNotIn("persist-credentials: true", SRC)
+        self.assertNotIn("GH_TOKEN:", SRC)
+        self.assertNotIn("secrets.", SRC)
+        self.assertIn("if: success()", SRC)
+        self.assertIn("&& false", SRC)
 
     def test_no_persisted_checkout_credentials(self):
         self.assertEqual(SRC.count("persist-credentials: false"), 2)
@@ -95,10 +106,13 @@ class HandoffPrivilegeSplit(unittest.TestCase):
         self.assertIn('test "$(git rev-parse HEAD)" = "$TWF_SOURCE_COMMIT"', SRC)
         self.assertIn('git ls-remote origin refs/heads/main | cut -f1', SRC)
 
-    def test_token_only_present_in_final_step(self):
+    def test_disabled_writer_has_no_credential_even_if_guard_changes(self):
         verify, writer = sections()
         self.assertNotIn("github.token", verify)
-        self.assertEqual(writer.count("GH_TOKEN: $" + "{{ github.token }}"), 1)
+        self.assertNotIn("github.token", writer)
+        self.assertNotIn("GH_TOKEN:", SRC)
+        self.assertIn("    permissions:\n      contents: read\n", writer)
+        self.assertIn("&& false", writer)
         self.assertEqual(writer.count("gh auth setup-git"), 1)
         self.assertNotIn("secrets.", SRC)
 

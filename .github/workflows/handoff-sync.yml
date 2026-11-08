@@ -66,12 +66,12 @@ jobs:
   status_writer:
     needs: verify
     # Scheduled audits are read-only; only owner-initiated main dispatch may write passive data.
-    # P0-A privilege HOLD: this repository-wide write-token job is never admitted.
+    # P0-A privilege HOLD: this job is never admitted AND has no write token.
     # Scheduled handoff relies on successful read-only Actions artifacts instead.
     # Separate independent approval + provider control proof required before removal.
     if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && false
     permissions:
-      contents: write
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -107,7 +107,7 @@ jobs:
           install -m 0644 .verified-handoff/LATEST_STATE.json status/LATEST_STATE.json
       - name: Commit exact allowlisted status only, single no-retry push
         env:
-          GH_TOKEN: ${{ github.token }}
+          # Deliberately no GH_TOKEN or other write-capable credential.
           TWF_SOURCE_COMMIT: ${{ github.sha }}
         run: |
           set -euo pipefail
