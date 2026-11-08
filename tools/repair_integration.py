@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import re
 from check_auto_diff import is_worker_branch
-from repair_control import canonical_id, instant, owns
+from repair_control import canonical_id, instant, owns, scoped_lease_migration_block
 
 STATUS_PATHS = {"status/CHAT_HANDOFF.md", "status/LATEST_STATE.json"}
 REVIEW_CHECKS = ("scope", "regression", "source_ledger", "protected_controls", "behavior")
@@ -19,6 +19,15 @@ def decide(policy, main, pr, review, lease, now):
     if (not integration.get("enabled") or not policy.get("automatic_merge_authorized") or
             authority.get("decision_owner") != "ASSISTANT" or authority.get("owner_reply_required") is not False):
         return result("DISABLED", reason="standing delegated integration authority is required")
+    # A valid legacy REVIEWER lease is not sufficient while a v2 scoped
+    # writer exists. This must be checked *again* at integration time,
+    # independently of the old acquire guard. Unknown schema fails closed.
+    try:
+        if scoped_lease_migration_block(lease):
+            return result("WAIT_SCOPED_LEASES",
+                          reason="parallel writer migration blocks legacy integration")
+    except (ValueError, KeyError, TypeError, OverflowError):
+        return result("WAIT_LOCK", reason="unrecognized parallel lease state")
     reviewer_id = review.get("reviewer_run_id")
     try:
         canonical_id(reviewer_id)
@@ -91,8 +100,14 @@ def decide(policy, main, pr, review, lease, now):
         return result("REQUEST_CHANGES", pr=pr["number"], blockers=review.get("blockers", []))
     if any(review.get("checks", {}).get(name) is not True for name in REVIEW_CHECKS):
         return result("WAIT_REVIEW", reason="all review dimensions need evidence")
-    return result("MERGE", pr=pr["number"], expected_head_sha=head,
-                  review_base_sha=main["sha"], merge_method="merge",
+    # P0: this decision is a snapshot, not an atomic GitHub merge permit.
+    # Until a trusted host holds a live coordinator CAS fence throughout the
+    # provider merge + exact-head readback, never emit an executable MERGE.
+    # Unverified owner-supplied markers must not override this hard stop.
+    return result("WAIT_HOST_ACTION_FENCE",
+                  reason="trusted action-bound coordinator CAS and old-runner drain are not verified",
+                  pr=pr["number"], expected_head_sha=head,
+                  review_base_sha=main["sha"],
                   post_merge_qa_required=True, roblox_publish_authorized=False)
 
 

@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "id": "C10004",
+  "kind": "P0_LEGACY_OWNS_WRITE_FENCE_AND_OWN_CLEANUP",
+  "repository": "kk051780/toy-wars-factory",
+  "issue": 123,
+  "pr": 203,
+  "parent_head": "8dede1e90328c93a3687206e654f14cf23499440",
+  "scope": "deny all old legacy owns-based write authorization under scoped registry, permit only verified original owner cleanup",
+  "coordination": {
+    "epoch": 518,
+    "owner_id": "8db68b60-56c2-4fa2-a6aa-821efb1dd380",
+    "branch": "controller/p0-legacy-shadow-compat-20261108-76116caf"
+  },
+  "affected_paths": [
+    "tools/repair_control.py",
+    "tests/test_legacy_scoped_owner_cleanup.py",
+    "docs/SCOPED_LEASE_MIGRATION_GATE.md"
+  ],
+  "new_unit_tests": 13,
+  "author_role": "MANUAL_CONTROLLER",
+  "independent_review": false,
+  "main_merged": false,
+  "scoped_writes_enabled": false,
+  "extra_spend_jpy": 0
+}

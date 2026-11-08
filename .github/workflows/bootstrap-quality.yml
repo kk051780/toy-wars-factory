@@ -13,6 +13,8 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
+  pull-requests: read
 concurrency:
   group: "twf-offline-${{ github.ref }}"
   cancel-in-progress: true
@@ -50,6 +52,40 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Attest read-only GitHub Actions run and PR identity for P0 PR203
+        if: github.event_name == 'pull_request' && github.event.pull_request.number == 203
+        env:
+          TWF_REPOSITORY: ${{ github.repository }}
+          TWF_EVENT_NAME: ${{ github.event_name }}
+          TWF_RUN_ID: ${{ github.run_id }}
+          TWF_RUN_ATTEMPT: ${{ github.run_attempt }}
+          TWF_ACTOR_ID: ${{ github.actor_id }}
+          TWF_PR_NUMBER: ${{ github.event.pull_request.number }}
+          TWF_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          TWF_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          TWF_HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+          TWF_ACTIONS_READ_TOKEN: ${{ github.token }}
+        run: |
+          # Do not execute PR HEAD's unreviewed copy of the verifier.
+          # This is a pinned read-only probe; the workflow is still PR-controlled.
+          set -euo pipefail
+          pinned=adec1e1a642371256fe6b8bd790ccb711bc99251
+          expected_blob=861b3511955e933707538a7dc5ea874caa9bda65
+          git cat-file -e "${pinned}^{commit}"
+          actual_blob="$(git rev-parse "${pinned}:tools/p0_actions_host_evidence.py")"
+          test "$actual_blob" = "$expected_blob"
+          tmpdir="$(mktemp -d)"
+          trap 'rm -rf "$tmpdir"' EXIT
+          git show "${pinned}:tools/p0_actions_host_evidence.py" > "$tmpdir/verified_host_probe.py"
+          python3 -I "$tmpdir/verified_host_probe.py"
+      - name: Preserve read-only P0 hosted-run evidence
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.number == 203
+        uses: actions/upload-artifact@v4
+        with:
+          name: twf-p0-actions-host-readonly
+          path: .qa/p0-actions-run-readonly.json
+          if-no-files-found: ignore
+          retention-days: 30
       - name: Install native Lua 5.4
         run: sudo apt-get update -qq && sudo apt-get install -y lua5.4
       - name: Enforce scheduled repair scope using the trusted base policy

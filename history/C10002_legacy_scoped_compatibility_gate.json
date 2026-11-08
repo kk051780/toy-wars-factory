@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "id": "C10002",
+  "kind": "P0_LEGACY_SCOPED_MIGRATION_COMPATIBILITY_GATE",
+  "repository": "kk051780/toy-wars-factory",
+  "issue": 123,
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "epoch": 516,
+    "owner_id": "76116caf-cd76-41ab-ae7b-6a65b0a18f65",
+    "work_branch": "controller/p0-legacy-shadow-compat-20261108-76116caf"
+  },
+  "scope": "guard preexisting global acquire from mixed-version overlapping scoped leases",
+  "paths": [
+    "tools/repair_control.py",
+    "tests/test_legacy_scoped_migration_gate.py",
+    "docs/SCOPED_LEASE_MIGRATION_GATE.md"
+  ],
+  "added_python_tests": 14,
+  "scoped_v2_deployed": false,
+  "unattended_git_writer_verified": false,
+  "main_merged": false,
+  "additional_spend_jpy": 0
+}

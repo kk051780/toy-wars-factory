@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "id": "C10012",
+  "kind": "P0_RESTART_CLASSIFIER_REASON_METADATA_FIX",
+  "issue": "nested stop(reason, reason=detail) raised TypeError, incorrectly converted normal HOLD/candidate to WAIT_INVALID_RECOVERY_EVIDENCE",
+  "pr": 203,
+  "owner_epoch": 526,
+  "owner_id": "fd7f7f20-23ce-422a-9c29-2749aa438f89",
+  "failed_head": "6606bd81a3e0d67cb471a473125912611b27fa05",
+  "failed_ci_run": 42438900451,
+  "ci_failed_tests": 4,
+  "fix": "use distinct positional code parameter, preserve evidence reason",
+  "new_tests": 1,
+  "expected_total_python_tests": 935,
+  "live_provider_action_granted": false,
+  "permission_change": false,
+  "main_merged": false,
+  "additional_spend_yen": 0
+}

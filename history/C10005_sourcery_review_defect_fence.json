@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "id": "C10005",
+  "kind": "P0_SOURCERY_REVIEW_DEFECT_REGRESSION",
+  "issue": 123,
+  "pr": 203,
+  "audited_head": "1d2f3a4c8d4dc6b9ac9335fdc3c9520226ee2527",
+  "reviewed_by": "sourcery-ai",
+  "review_state": "COMMENTED",
+  "review_findings": {
+    "high": 2,
+    "medium": 2
+  },
+  "owner_epoch": 520,
+  "owner_id": "9ebff29c-e073-447d-94c7-c3796117a5ad",
+  "mitigations": [
+    "verify_pr rejects scoped registry on current coordinator, claim commit and claim parent",
+    "malformed coordinator and lease timestamps raise handled ValueError instead of AttributeError",
+    "expired scoped lease test fixture now truly expires before NOW"
+  ],
+  "not_fixed": [
+    "HIGH TOCTOU: true coordinator CAS-fenced action-level write/merge and old process drainage"
+  ],
+  "new_unit_tests": 11,
+  "old_expiry_test_corrected": true,
+  "factual_status": {
+    "native_registered_reviewer": false,
+    "pr_ready": false,
+    "main_merged": false,
+    "real_parallel": false,
+    "additional_charge_requested": false
+  }
+}

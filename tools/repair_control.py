@@ -28,13 +28,22 @@ def canonical_id(value):
 
 
 def instant(value):
-    moment = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    # Fail closed with a domain error, not an unhandled AttributeError when
+    # a remote coordinator contains a malformed timestamp.
+    if type(value) is not str or not value or len(value) > 64:
+        raise ValueError("invalid coordinator timestamp")
+    try:
+        moment = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except (ValueError, TypeError, OverflowError):
+        raise ValueError("invalid coordinator timestamp") from None
     if moment.tzinfo is None:
         raise ValueError("timezone-aware timestamp required")
     return moment.astimezone(timezone.utc)
 
 
 def validate(state):
+    if type(state) is not dict:
+        raise ValueError("invalid coordinator object")
     if state.get("schema") != 1 or state.get("task_id") != TASK_ID:
         raise ValueError("wrong coordinator schema/task")
     epoch = state.get("epoch")
@@ -61,6 +70,134 @@ def initial_state(packet=None):
             "last_completed": None}
 
 
+
+def scoped_lease_migration_block(state):
+    """Stop legacy acquisition while a v2 scoped writer exists.
+
+    This gate must be installed on EVERY legacy runner *before* anyone
+    enables parallel leases. A prior checkout of legacy code is not fenced
+    by the presence of this function in a newer commit. Do not use this
+    advisory shim as permission to turn on live parallel writes.
+    """
+    if type(state) is not dict or type(state.get("epoch")) is not int:
+        raise ValueError("invalid scoped coordinator object")
+    blocked = False
+    for key in ("shadow_parallel_leases", "parallel_leases"):
+        if key not in state:
+            continue
+        registry = state[key]
+        if (type(registry) is not dict or set(registry) != {"schema", "entries"} or
+                type(registry["schema"]) is not int or registry["schema"] != 1 or
+                type(registry["entries"]) is not list or
+                len(registry["entries"]) > 2):
+            raise ValueError("unrecognized scoped lease registry")
+        seen_work, seen_owner, seen_branch = set(), set(), set()
+        for entry in registry["entries"]:
+            if (type(entry) is not dict or
+                    set(entry) != {"scope", "owner_id", "run_id", "nonce",
+                                   "lease_epoch", "acquired_at", "expires_at"}):
+                raise ValueError("invalid scoped lease identity")
+            scope = entry["scope"]
+            if (type(scope) is not dict or
+                    type(scope.get("work_id")) is not str or
+                    type(scope.get("branch")) is not str or
+                    not scope["work_id"] or not scope["branch"]):
+                raise ValueError("missing scoped work or branch")
+            for id_key in ("owner_id", "run_id", "nonce"):
+                canonical_id(entry[id_key])
+            work, owner, branch = scope["work_id"], entry["owner_id"], scope["branch"]
+            if work in seen_work or owner in seen_owner or branch in seen_branch:
+                raise ValueError("duplicate scoped identity")
+            seen_work.add(work)
+            seen_owner.add(owner)
+            seen_branch.add(branch)
+            if (type(entry["lease_epoch"]) is not int or
+                    entry["lease_epoch"] < 1 or entry["lease_epoch"] > state["epoch"] or
+                    instant(entry["expires_at"]) <= instant(entry["acquired_at"])):
+                raise ValueError("invalid scoped lease lifetime or epoch")
+            # Expired entry is NOT self-revocation; only verified recovery can
+            # remove it from this same CAS-controlled registry.
+            blocked = True
+    # P0 manual CONNECTED-GITHUB source action probe, NOT a production grant.
+    # The record cannot be removed by expiry; it excludes any legacy/scoped
+    # admission and locks the original CONTROLLER holder until Git readback.
+    source_action = state.get("pending_source_action")
+    if source_action is not None:
+        expected = {"schema", "operation_id", "kind", "repository", "work_branch",
+                    "work_id", "source_path", "before_head", "after_head",
+                    "main_head", "owner_id", "owner_epoch", "reserved_at"}
+        if (type(source_action) is not dict or set(source_action) != expected or
+                type(source_action["schema"]) is not int or source_action["schema"] != 1 or
+                source_action["kind"] != "SOURCE_UPDATE_PROBE"):
+            raise ValueError("malformed pending source action")
+        for item in ("operation_id", "owner_id"):
+            canonical_id(source_action[item])
+        if (type(source_action["repository"]) is not str or
+                not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+",
+                                 source_action["repository"]) or
+                type(source_action["work_id"]) is not str or
+                source_action["work_id"] != "P0_ISSUE123_PR203_SOURCE_ACTION_PROBE" or
+                source_action["source_path"] !=
+                "history/C10010_real_source_action_probe.json" or
+                any(type(source_action[k]) is not str or
+                    not re.fullmatch(r"[0-9a-f]{40}", source_action[k])
+                    for k in ("before_head", "after_head", "main_head")) or
+                source_action["before_head"] == source_action["after_head"] or
+                type(source_action["owner_epoch"]) is not int):
+            raise ValueError("invalid pending source action identity")
+        active = state.get("holder")
+        if (type(active) is not dict or active.get("kind") != "CONTROLLER" or
+                active.get("owner_id") != source_action["owner_id"] or
+                active.get("epoch") != source_action["owner_epoch"] or
+                active.get("task_id") is not None or
+                active.get("work_branch") != source_action["work_branch"] or
+                active.get("base_main_sha") != source_action["main_head"] or
+                type(source_action["work_branch"]) is not str or
+                source_action["work_branch"] in ("main", CONTROL_BRANCH) or
+                not source_action["work_branch"].startswith("controller/p0-") or
+                instant(source_action["reserved_at"]) < instant(active["acquired_at"]) or
+                instant(source_action["reserved_at"]) >= instant(active["expires_at"])):
+            raise ValueError("pending source action has no matching controller")
+        blocked = True
+    # A provider action reservation is a hard in-flight operation barrier.
+    # It has no implicit expiry/recovery: only an authenticated host receipt
+    # can reconcile the uncertain outcome and permit its eventual removal.
+    action = state.get("pending_provider_action")
+    if action is not None:
+        required = {"schema", "action_id", "kind", "repository", "pr_number",
+                    "pr_head", "main_head", "reviewer_run_id", "reviewer_task_id",
+                    "holder_epoch", "reserved_at"}
+        if type(action) is not dict or set(action) != required or action["schema"] != 1:
+            raise ValueError("malformed pending provider action")
+        canonical_id(action["action_id"])
+        canonical_id(action["reviewer_run_id"])
+        if (action["kind"] != "MERGE" or
+                type(action["pr_number"]) is not int or action["pr_number"] < 1 or
+                type(action["repository"]) is not str or
+                not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", action["repository"]) or
+                any(type(action[k]) is not str or
+                    not re.fullmatch(r"[0-9a-f]{40}", action[k])
+                    for k in ("pr_head", "main_head"))):
+            raise ValueError("invalid pending provider merge identity")
+        current_holder = state.get("holder")
+        if (type(current_holder) is not dict or
+                current_holder.get("kind") != "REVIEWER" or
+                current_holder.get("owner_id") != action["reviewer_run_id"] or
+                current_holder.get("task_id") != action["reviewer_task_id"] or
+                current_holder.get("epoch") != action["holder_epoch"] or
+                current_holder.get("work_branch") != "main" or
+                state.get("authorized_tasks", {}).get("REVIEWER") != action["reviewer_task_id"] or
+                instant(action["reserved_at"]) < instant(current_holder["acquired_at"]) or
+                instant(action["reserved_at"]) >= instant(current_holder["expires_at"])):
+            raise ValueError("pending action no longer matches live owner")
+        blocked = True
+    # Explicit freeze marker protects early migration even before scoped rows
+    # are admitted; unknown values fail closed.
+    mode = state.get("parallel_write_migration", "LEGACY_ONLY")
+    if type(mode) is not str or mode not in ("LEGACY_ONLY", "SCOPED_ACTIVE"):
+        raise ValueError("invalid scoped migration mode")
+    return blocked or mode == "SCOPED_ACTIVE"
+
 def acquire(state, kind, owner_id, now, service_status=None, base_main_sha=None, work_branch=None, actor_task_id=None):
     validate(state)
     canonical_id(owner_id)
@@ -79,6 +216,8 @@ def acquire(state, kind, owner_id, now, service_status=None, base_main_sha=None,
             if not work_branch.startswith(prefix):
                 raise ValueError("worker cannot claim an unrelated branch")
             canonical_id(work_branch[len(prefix):])
+    if scoped_lease_migration_block(state):
+        return {"action": "WAIT_SCOPED_LEASES", "state": state, "write": False}
     holder = state["holder"]
     if kind == "DISPATCH":
         if service_status == "in_progress":
@@ -111,15 +250,35 @@ def acquire(state, kind, owner_id, now, service_status=None, base_main_sha=None,
     return {"action": "ACQUIRE", "state": next_state, "write": True}
 
 
-def owns(state, kind, owner_id, epoch, now):
+def _owns_legacy_holder(state, kind, owner_id, epoch, now):
+    """Internal holder-only test for releasing the same owner, NEVER write auth."""
     validate(state)
     holder = state["holder"]
     return bool(type(epoch) is int and holder and holder["kind"] == kind and holder["owner_id"] == owner_id
                 and holder["epoch"] == epoch and instant(now) < instant(holder["expires_at"]))
 
 
+def owns(state, kind, owner_id, epoch, now):
+    """Legacy WRITE authorization must stop if a scoped writer may exist.
+
+    Mixed generations may still be unwound by release() only for the exact
+    current owner. This read-only predicate is never provider authentication.
+    """
+    validate(state)
+    if scoped_lease_migration_block(state):
+        return False
+    return _owns_legacy_holder(state, kind, owner_id, epoch, now)
+
+
 def release(state, kind, owner_id, epoch, now, packet=None, reported=False):
     validate(state)
+    if state.get("pending_source_action") is not None:
+        scoped_lease_migration_block(state)  # validate before fail-closed release
+        raise ValueError("pending source action requires verified GitHub reconciliation")
+    if state.get("pending_provider_action") is not None:
+        # A pending GitHub result is NOT made safe by holder expiry or release.
+        scoped_lease_migration_block(state)  # also validates action shape
+        raise ValueError("pending provider action requires authenticated reconciliation")
     if type(epoch) is not int:
         raise ValueError("integer fencing generation required")
     holder = state["holder"]
@@ -176,11 +335,16 @@ def owned_lease(*, repository, kind, owner_id, epoch, task_id, read, cas, peek, 
         validate(row["state"])
         return row
 
-    def live_owner(row):
+    def live_owner(row, *, release_only=False):
         state, at = row["state"], tick()
         holder = state["holder"]
+        # Cleanup may bypass scoped *occupancy*, never scoped schema validation.
+        # A malformed v2 registry is an unresolved incident, not release proof.
+        if release_only:
+            scoped_lease_migration_block(state)
+        owner_check = _owns_legacy_holder if release_only else owns
         if (not task_id or state["authorized_tasks"].get(kind) != task_id or
-                not owns(state, kind, owner_id, epoch, at.isoformat()) or
+                not owner_check(state, kind, owner_id, epoch, at.isoformat()) or
                 holder["task_id"] != task_id or at < instant(holder["acquired_at"]) or
                 (instant(holder["expires_at"])-instant(holder["acquired_at"])).total_seconds() > 1800):
             raise ValueError("not the live registered owner")
@@ -208,13 +372,16 @@ def owned_lease(*, repository, kind, owner_id, epoch, task_id, read, cas, peek, 
                        provider_terminal="NOT_ATTESTED")
         try:
             first = snapshot()
-            if live_owner(first) != anchor:
+            # A mixed v2 entry must stop NEW work, but must not trap an
+            # already verified original owner from legally releasing itself.
+            # Keep exact owner/epoch/task/live-run and double GitHub readback.
+            if live_owner(first, release_only=True) != anchor:
                 raise ValueError("original holder changed")
             second = snapshot()
-            if live_owner(second) != anchor or second != first:
+            if live_owner(second, release_only=True) != anchor or second != first:
                 raise ValueError("coordinator moved during final fence")
             at = tick().isoformat()
-            if not owns(second["state"], kind, owner_id, epoch, at):
+            if not _owns_legacy_holder(second["state"], kind, owner_id, epoch, at):
                 raise ValueError("lease expired before CAS")
             target = release(second["state"], kind, owner_id, epoch, at)
             target["last_completed"]["release_receipt"] = {
@@ -335,6 +502,17 @@ def verify_pr(policy, base, head, branch, control_ref):
         raise ValueError("new work requires a UUID lane")
     if branch != legacy:
         canonical_id(branch[len(prefix):])
+    # Exact grandfathered heads above return only a historical exemption,
+    # explicitly NOT a merge permit, so they need no fresh coordinator ref.
+    # Every ordinary claim-verification path MUST see a genuine ref; an
+    # unavailable/stale/missing object is a hard denial, never an escape.
+    try:
+        current = json.loads(git("show", control_ref + ":" + CONTROL_PATH))
+    except (subprocess.CalledProcessError, json.JSONDecodeError, ValueError):
+        raise ValueError("current coordinator ref cannot be verified") from None
+    validate(current)
+    if scoped_lease_migration_block(current):
+        raise ValueError("legacy PR verification blocked by scoped migration")
     raw = subprocess.check_output(["git", "diff", "--name-status", "--no-renames", "-z", base, head, "--"]).decode().split("\0")
     entries = list(zip(raw[::2], raw[1::2]))
     records = [path for status, path in entries if status in ("A", "M") and re.fullmatch(r"history/C[0-9]{5}_[^/]+\.json", path)]
@@ -351,6 +529,8 @@ def verify_pr(policy, base, head, branch, control_ref):
         subprocess.run(["git", "merge-base", "--is-ancestor", claim, control_ref], check=True, capture_output=True)
         state = json.loads(git("show", claim + ":" + CONTROL_PATH))
         validate(state)
+        if scoped_lease_migration_block(state):
+            raise ValueError("legacy claim contains scoped migration")
         holder = state["holder"]
         if not holder or (holder["kind"], holder["owner_id"], holder["epoch"]) != (kind, owner_id, proof.get("epoch")):
             raise ValueError("claim belongs to another lease owner/generation")
@@ -362,6 +542,8 @@ def verify_pr(policy, base, head, branch, control_ref):
             raise ValueError("invalid claim generation")
         parent = json.loads(git("show", claim + "^:" + CONTROL_PATH))
         validate(parent)
+        if scoped_lease_migration_block(parent):
+            raise ValueError("legacy claim parent contains scoped migration")
         if state.get("authorized_tasks") != parent.get("authorized_tasks"):
             raise ValueError("a claim cannot change registered tasks")
         if state["epoch"] != parent["epoch"] + 1 or (parent["holder"] and (kind != "WORKER" or parent["holder"]["kind"] != "DISPATCH")):

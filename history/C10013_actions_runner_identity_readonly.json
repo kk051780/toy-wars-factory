@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "C10013",
+  "kind": "P0_GITHUB_ACTIONS_RUN_PR_READONLY_IDENTITY",
+  "issue": 123,
+  "pr": 203,
+  "owner_epoch": 527,
+  "owner_id": "edbb10e0-8e25-4400-a5e9-037bd338282d",
+  "source_base_head": "fb4dc098cea189d968c7ac773e916ae5218aae79",
+  "changed_paths": [
+    ".github/workflows/bootstrap-quality.yml",
+    "tools/p0_actions_host_evidence.py",
+    "tests/test_p0_actions_host_evidence.py",
+    "docs/SCOPED_LEASE_MIGRATION_GATE.md",
+    "history/C10013_actions_runner_identity_readonly.json"
+  ],
+  "new_regressions": 18,
+  "github_workflow_permissions": {
+    "contents": "read",
+    "actions": "read",
+    "pull-requests": "read"
+  },
+  "no_new_schedule": true,
+  "no_provider_write": true,
+  "real_github_actions_run_identity_proof_expected": true,
+  "no_chatgpt_task_attestation": true,
+  "no_two_writers": true,
+  "no_main_merge": true,
+  "additional_spend_jpy": 0
+}

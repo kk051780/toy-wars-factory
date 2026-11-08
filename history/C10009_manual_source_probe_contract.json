@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "kind": "P0_HOST_SOURCE_ACTION_MANUAL_TEST_GUARD",
+  "id": "C10009",
+  "issue": 123,
+  "pr": 203,
+  "owner_epoch": 525,
+  "owner_id": "83a23b59-9eb0-4ec6-9f4d-753ea02694ea",
+  "source_before_head": "330a5b6578b6e6db7b117092bc817768fe49a56a",
+  "paths": [
+    "tools/repair_control.py",
+    "tools/repair_source_action_fence.py",
+    "tests/test_repair_source_action_fence.py",
+    "docs/SCOPED_LEASE_MIGRATION_GATE.md",
+    "history/C10009_manual_source_probe_contract.json"
+  ],
+  "new_tests": 17,
+  "expected_live_probe_path": "history/C10010_real_source_action_probe.json",
+  "scope": "DRAFT PR203 branch only",
+  "host_identity_attested": false,
+  "real_two_writers": false,
+  "automatic_merge": false,
+  "scoped_mode_activated": false
+}
