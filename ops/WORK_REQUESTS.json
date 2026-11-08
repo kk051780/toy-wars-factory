@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T02:59:34.559Z",
+  "observed_at": "2026-11-08T03:17:10.467Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5363,6 +5363,53 @@
         "github_actions_provenance_status": "read-only verified; PR workflow still author-controlled",
         "spending_yen": 0
       }
+    },
+    {
+      "id": "P0B_ISSUE204_PR205_WINDOWS_INSTALLER_LF_REVIEW_20261108",
+      "kind": "P0B_WINDOWS_INSTALLER_CROSS_PLATFORM_REVIEW",
+      "priority": "P0",
+      "status": "OPEN_EXACT_HEAD_INDEPENDENT_REVIEW_AND_OWNER_WINDOWS_SHA_VERIFICATION_PENDING",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "issue": 204,
+      "related_parallel_issue": 123,
+      "pr": 205,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/205",
+      "branch": "controller/p0b-windows-installer-lf-20261108-51ac9fdc",
+      "head": "00afb4e4d156ea178e1c332cdb6744ad6b3853d6",
+      "base_branch": "main",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "draft": true,
+      "source_owner_id": "51ac9fdc-1855-40db-8e70-6131c77e6c85",
+      "source_owner_epoch": 530,
+      "source_owner_release_status": "RELEASED_SAME_CHECKPOINT_COMMIT_VERIFY_REMOTE",
+      "source_owner_release_ref": null,
+      "ci_run_id": 42441868768,
+      "ci_jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "python_tests": 840,
+      "new_negative_tests": 7,
+      "changed_files": 3,
+      "changed_paths": [
+        "tools/build_installer.py",
+        "tests/test_windows_installer_lf.py",
+        "history/C10016_windows_installer_lf.json"
+      ],
+      "created_at": "2026-11-08T03:17:10.467Z",
+      "updated_at": "2026-11-08T03:17:10.467Z",
+      "review_packet_path": "ops/review_packets/PR205_p0b_windows_installer_lf_epoch530.json",
+      "source_issue_comment": 6716602567,
+      "parallel_issue_comment": 6716606586,
+      "review_request": "Check exact branch head 00afb4e4d156ea178e1c332cdb6744ad6b3853d6 and hosted workflow run 42441868768 offline/compile_hold success Python840 all seven tests. Fix moves output to explicit UTF8 LF write_bytes, preventing Windows Path.write_text CRLF conversion. Cross-platform source semantics (Luau) unchanged, no protected main or PR203 changes. Independent reviewer must inspect tests, Unicode and potential partial-write behavior, and require actual OWNER Windows Python3.14 builder+disk sha/manifest exact match from isolated worktree (instructions Issue204 comment 6716602567). DRAFT author evidence is not independent approval. Do not merge without legitimate reviewer and main gate. Do not import into Roblox until verified SHA and empty backed-up test place; private DataStore PvE may still block.",
+      "windows_sha256_status": "OWNER_WINDOWS_LOCAL_RETEST_NOT_YET_EXECUTED",
+      "real_roblox_toy_wars_install": false,
+      "p0a_parallel_work_unchanged": true,
+      "no_main_merge": true,
+      "extra_spend_jpy": 0,
+      "next_actor": "SEPARATE_REGISTERED_REVIEWER_AND_OWNER_WINDOWS_CODEX_ISOLATED_WORKTREE_REBUILD"
     }
   ]
 }
