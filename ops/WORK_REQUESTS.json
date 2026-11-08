@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T02:52:22.062Z",
+  "observed_at": "2026-11-08T02:59:34.559Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5070,7 +5070,7 @@
       "id": "P0_ISSUE123_PR203_ONE_TIME_CONTROLLER_MAINTENANCE_GATE_20261108",
       "kind": "PROTECTED_SINGLE_PR_CONTROLLER_TRUST_ROOT_MAINTENANCE_INDEPENDENT_REVIEW",
       "priority": "P0",
-      "status": "PINNED_ACTIONS_HOST_VERIFIER_CI_GREEN_MAIN_AND_PARALLEL_HOLD",
+      "status": "EXACT_HEAD_FROZEN_FOR_DISTINCT_REVIEW_AND_OWNER_WINDOWS_WRITER_PILOT",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
@@ -5080,8 +5080,8 @@
       "head": "224082fc9d8e7a01d70aeeb1c7767932ce63227a",
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "draft": true,
-      "source_owner_epoch": 528,
-      "source_owner_id": "a451510e-99fd-4fbc-9bf4-0cfd9e6ca3b7",
+      "source_owner_epoch": 529,
+      "source_owner_id": "b112bc40-79b6-4670-ac12-d3dbba2844ec",
       "source_owner_release_ref": null,
       "ci_run_id": 42440181999,
       "ci_jobs": {
@@ -5123,12 +5123,12 @@
       ],
       "changed_files": 29,
       "created_at": "2026-11-08T00:44:22.697Z",
-      "updated_at": "2026-11-08T02:52:22.062Z",
+      "updated_at": "2026-11-08T02:59:34.559Z",
       "source": "LIVE_GITHUB_PR_CI_COORDINATOR_READBACK_MANUAL_CONTROLLER_INTAKE",
       "normal_integration_decision": "SKIP_UNRELATED_FOR_CONTROLLER_BRANCH",
       "normal_integration_reason": "accepted main repair_integration.decide only admits signed registered WORKER or META prefixes; never impersonate those identities, never globally broaden allowed prefixes",
       "exception_route": "ONE_TIME_EXPLICIT_P0_CONTROLLER_MAINTENANCE_MODEL_PER_HISTORICAL_PR75_ONLY_AFTER_SEPARATE_REVIEWER_AUTHENTICATION_AND_FRESH_HOST_CHECKS",
-      "review_request": "Current PR203 exact HEAD 224082fc9d8e7a01d70aeeb1c7767932ce63227a, Actions #42440181999 offline+compile_hold SUCCESS Python959; 29 paths. Validate pinned blob 861b3511955e933707538a7dc5ea874caa9bda65 from immutable commit adec1e1a..., and PR workflow still PR-controlled. Register independent REVIEWER only from distinct, authentic registered service run; inline run_now reviewer not accepted as independent. Include full root TOCTOU HIGH old runners not drained, Issue57 unattended GitHub write, no 2 true writers, no main merge. Check coordinator epoch528 release via live ref; do not self-approve or activate.",
+      "review_request": "Do NOT rely on old HEAD or author evidence: independent registered reviewer re-fetch PR203 fixed DRAFT SHA 224082fc9d8e7a01d70aeeb1c7767932ce63227a, original hosted CI 42440181999 offline/compile_hold SUCCESS Python959, inspect all 29 paths incl PR-controlled workflow, pinned script trust limitations; verify old-runner fleet, original host write identity and source/merge TOCTOU still HIGH. Author now intentionally freezes PR HEAD until independent review. Windows Codex P0-B Issue204 has owner-confirmed local Git clone and MCP Play/Stop; as a separate owner-controlled host candidate it may perform READ_ONLY permission discovery, and after permitted isolation/lease only one non-sensitive draft branch write, no main/coordinator direct push, no fake ChatGPT task ID, no bypass to Issue57. No P0 parallel activation or merge without evidence. Baseline CI median 29.5 s, true two-writer=0, speedup unmeasured.",
       "must_not": [
         "AUTHOR_SELF_APPROVE",
         "IMPERSONATE_WORKER_OR_META_BRANCH",
@@ -5157,7 +5157,7 @@
       "real_parallel_writers_verified": false,
       "automatic_chat_recovery_verified": false,
       "additional_spend_yen": 0,
-      "next_actor": "DISTINCT_AUTHENTIC_REGISTERED_REVIEWER_THEN_TRUSTED_HOST_RUNNER",
+      "next_actor": "INDEPENDENT_REGISTERED_REVIEWER_CURRENT_HEAD;OWNER_WINDOWS_CODEX_LOCAL_WRITE_CAPABILITY_ISOLATED_PROBE",
       "sourcery_review": {
         "reviewed_head": "1d2f3a4c8d4dc6b9ac9335fdc3c9520226ee2527",
         "engine": "sourcery-ai",
@@ -5180,7 +5180,7 @@
         "last_sourcery_reviewed_head": "5e8fa180bc0d12543adae616daa429e62c113086",
         "latest_source_head_requires_fresh_review": "224082fc9d8e7a01d70aeeb1c7767932ce63227a"
       },
-      "review_packet_path": "ops/review_packets/PR203_p0_immutable_host_verifier_epoch528.json",
+      "review_packet_path": "ops/review_packets/PR203_p0_freeze_and_windows_owner_host_epoch529.json",
       "prior_exact_head_evidence": {
         "head": "1d2f3a4c8d4dc6b9ac9335fdc3c9520226ee2527",
         "ci_run_id": 42429957240,
@@ -5273,7 +5273,7 @@
         "release_ref": "4a54e42279f0875bad8ab5fc14d8221275ce6fe4",
         "review_packet_path": "ops/review_packets/PR203_p0_action_fence_hold_epoch523.json"
       },
-      "source_owner_release_status": "RELEASED_IN_SAME_CAS_COMMIT_READBACK_REQUIRED",
+      "source_owner_release_status": "RELEASED_IN_SAME_COORDINATOR_CAS_VERIFY_READBACK",
       "prior_epoch524_checkpoint": {
         "head": "330a5b6578b6e6db7b117092bc817768fe49a56a",
         "ci_run_id": 42436735797,
@@ -5299,6 +5299,69 @@
         "ci_run_id": 42439565754,
         "python_tests": 953,
         "review_packet_path": "ops/review_packets/PR203_p0_real_actions_host_readonly_epoch527.json"
+      },
+      "prior_epoch528_checkpoint": {
+        "head": "224082fc9d8e7a01d70aeeb1c7767932ce63227a",
+        "ci_run_id": 42440181999,
+        "python_tests": 959,
+        "review_packet_path": "ops/review_packets/PR203_p0_immutable_host_verifier_epoch528.json"
+      },
+      "host_handoff_current": {
+        "kind": "P0_WINDOWS_OWNER_CODEX_WRITE_HOST_CANDIDATE_ONLY",
+        "issue123_comment": 6716442665,
+        "windows_issue": 204,
+        "verified_existing_pc": {
+          "codex_cli_mcp_connected": true,
+          "studio_read_write_playstop_test_place": true,
+          "git_clone_main_clean": true,
+          "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e"
+        },
+        "unverified": {
+          "remote_git_write_permission": true,
+          "actual_codex_git_push": true,
+          "real_separate_gpt_worker_overlap": true
+        },
+        "next_action": "Windows owner host: fetch current issue+coordinator, read-only Git credential/remote checks; if authorized, acquire isolated genuine work scope and test one harmless branch commit/push/remote readback; draft only; do not write main/coord or bypass owner lock",
+        "pr203_head_frozen": "224082fc9d8e7a01d70aeeb1c7767932ce63227a",
+        "ci_baseline": {
+          "source": "GitHub Actions API run_started_at→updated_at",
+          "sample": 6,
+          "run_ids": [
+            {
+              "id": 42436735797,
+              "seconds": 31
+            },
+            {
+              "id": 42437529670,
+              "seconds": 24
+            },
+            {
+              "id": 42437687685,
+              "seconds": 31
+            },
+            {
+              "id": 42439033749,
+              "seconds": 24
+            },
+            {
+              "id": 42439565754,
+              "seconds": 35
+            },
+            {
+              "id": 42440181999,
+              "seconds": 28
+            }
+          ],
+          "median_seconds": 29.5,
+          "min_seconds": 24,
+          "max_seconds": 35,
+          "ci_only_not_dev_cycle": true,
+          "actual_two_writer_overlap_count": 0,
+          "measured_speedup_percent": null
+        },
+        "registered_independent_reviewer_pending": true,
+        "github_actions_provenance_status": "read-only verified; PR workflow still author-controlled",
+        "spending_yen": 0
       }
     }
   ]

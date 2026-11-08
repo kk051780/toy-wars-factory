@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "id": "P0_PR203_EPOCH529_FREEZE_EXACT_HEAD_WINDOWS_HOST_ROUTE",
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 203,
+  "issue": 123,
+  "head": "224082fc9d8e7a01d70aeeb1c7767932ce63227a",
+  "main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "epoch": 529,
+  "owner_id": "b112bc40-79b6-4670-ac12-d3dbba2844ec",
+  "status": "PRESERVE_FIXED_SHA_FOR_INDEPENDENT_REVIEW; WINDOWS_OWNER_CODEX_HOST_READONLY_FIRST",
+  "source_changes_this_epoch": 0,
+  "ci_run": 42440181999,
+  "ci_jobs": {
+    "offline": "success",
+    "compile_hold": "success"
+  },
+  "python_tests": 959,
+  "pr_changed_files": 29,
+  "ci_wallclock_seconds": {
+    "source": "GitHub Actions API run_started_at→updated_at",
+    "sample": 6,
+    "run_ids": [
+      {
+        "id": 42436735797,
+        "seconds": 31
+      },
+      {
+        "id": 42437529670,
+        "seconds": 24
+      },
+      {
+        "id": 42437687685,
+        "seconds": 31
+      },
+      {
+        "id": 42439033749,
+        "seconds": 24
+      },
+      {
+        "id": 42439565754,
+        "seconds": 35
+      },
+      {
+        "id": 42440181999,
+        "seconds": 28
+      }
+    ],
+    "median_seconds": 29.5,
+    "min_seconds": 24,
+    "max_seconds": 35,
+    "ci_only_not_dev_cycle": true,
+    "actual_two_writer_overlap_count": 0,
+    "measured_speedup_percent": null
+  },
+  "host_candidate": {
+    "issue": 204,
+    "mcp_connected_verified": true,
+    "local_clone_main_clean_verified": true,
+    "local_git_write_attempted": false,
+    "unattended_chatgpt_writer_authenticated": false
+  },
+  "unresolved_high": [
+    "Independent distinct reviewer at current exact HEAD",
+    "Issue57 unattended writer host identity and write denial",
+    "old-runner fleet shutdown evidence",
+    "provider action-bound CAS for production source/merge",
+    "two genuine concurrent GPT writers",
+    "real speedup measurement"
+  ],
+  "forbidden": [
+    "main direct write",
+    "unreviewed merge",
+    "scoped 2writer enable",
+    "Roblox publish",
+    "extra paid services",
+    "lock owner spoof"
+  ],
+  "release_status": "RELEASED_SAME_COMMIT_VERIFY_REMOTE_READBACK",
+  "source_comment": 6716442665,
+  "observed_at": "2026-11-08T02:59:34.559Z"
+}
