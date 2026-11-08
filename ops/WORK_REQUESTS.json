@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T02:17:00.592Z",
+  "observed_at": "2026-11-08T02:17:47.723Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5114,7 +5114,7 @@
       ],
       "changed_files": 20,
       "created_at": "2026-11-08T00:44:22.697Z",
-      "updated_at": "2026-11-08T02:17:00.592Z",
+      "updated_at": "2026-11-08T02:17:47.723Z",
       "source": "LIVE_GITHUB_PR_CI_COORDINATOR_READBACK_MANUAL_CONTROLLER_INTAKE",
       "normal_integration_decision": "SKIP_UNRELATED_FOR_CONTROLLER_BRANCH",
       "normal_integration_reason": "accepted main repair_integration.decide only admits signed registered WORKER or META prefixes; never impersonate those identities, never globally broaden allowed prefixes",
@@ -5202,7 +5202,7 @@
           "force": false,
           "expected_sha_used": true
         },
-        "release_status": "PENDING_OWNER_ONLY_RELEASE",
+        "release_status": "RELEASED_IN_SAME_EXACT_EXPECTED_PARENT_COMMIT_VERIFY_LIVE_REF",
         "registered_host_attestation": false,
         "production_host_action_cas_verified": false,
         "old_runner_drain_verified": false,
@@ -5220,7 +5220,7 @@
         "release_ref": "4a54e42279f0875bad8ab5fc14d8221275ce6fe4",
         "review_packet_path": "ops/review_packets/PR203_p0_action_fence_hold_epoch523.json"
       },
-      "source_owner_release_status": "PENDING_OWNER_ONLY_RELEASE_AFTER_QUEUE_CHECKPOINT",
+      "source_owner_release_status": "RELEASED_IN_SAME_EXACT_EXPECTED_PARENT_COMMIT_VERIFY_LIVE_REF",
       "prior_epoch524_checkpoint": {
         "head": "330a5b6578b6e6db7b117092bc817768fe49a56a",
         "ci_run_id": 42436735797,
