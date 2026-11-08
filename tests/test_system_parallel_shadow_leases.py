@@ -27,7 +27,8 @@ C = ("77777777-7777-4777-8777-777777777777",
 
 def snap():
     return {"repository":REPO,"main_sha":MAIN,"ref_sha":REF,
-            "state":{"schema":1,"epoch":100,"holder":None,"policy":{"keep":True}}}
+            "state":{"schema":1,"epoch":100,"holder":None,"policy":{"keep":True},
+                     "parallel_write_migration":"SCOPED_ACTIVE"}}
 
 def request(name="alpha-work", path="tools/alpha.py", ids=A):
     return {"scope":{"project_id":"toy-wars-factory","repository":REPO,
@@ -76,6 +77,51 @@ class ShadowLeaseTests(unittest.TestCase):
         s=host.read()
         host.apply(s,self.proposed(s,self.b))
         return host
+
+    def test_legacy_default_without_marker_denies_shadow_claim(self):
+        del self.s["state"]["parallel_write_migration"]
+        result=claim(self.s,self.a,NOW)
+        self.assertTrue(result["decision"].startswith("WAIT_INVALID"),result)
+        self.assertFalse(result["may_write"])
+        self.assertIsNone(result["state"])
+
+    def test_explicit_legacy_mode_denies_claim_without_side_effect(self):
+        self.s["state"]["parallel_write_migration"]="LEGACY_ONLY"
+        host=FakeHost(self.s)
+        result=claim(self.s,self.a,NOW)
+        self.assertTrue(result["decision"].startswith("WAIT_INVALID"),result)
+        self.assertEqual(host.count,0)
+        self.assertEqual(host.read(),self.s)
+
+    def test_unknown_migration_marker_denies_shadow_claim(self):
+        self.s["state"]["parallel_write_migration"]="RUN_FREE"
+        result=claim(self.s,self.a,NOW)
+        self.assertTrue(result["decision"].startswith("WAIT_INVALID"),result)
+        self.assertFalse(result["parallel_real"])
+
+    def test_stale_proposal_cannot_cas_after_migration_revoked(self):
+        proposal=self.proposed(self.s,self.a)
+        revoked=copy.deepcopy(self.s)
+        revoked["state"]["parallel_write_migration"]="LEGACY_ONLY"
+        host=FakeHost(revoked)
+        result=host.apply(self.s,proposal)
+        self.assertEqual(result["status"],"WAIT_PRECAS_UNCONFIRMED")
+        self.assertEqual(host.count,0)
+
+    def test_forged_scoped_proposal_never_cas_under_legacy_state(self):
+        proposal=self.proposed(self.s,self.a)
+        legacy=copy.deepcopy(self.s)
+        legacy["state"]["parallel_write_migration"]="LEGACY_ONLY"
+        # Fresh matching host snapshot still may not admit a forged plan.
+        result=FakeHost(legacy).apply(legacy,proposal)
+        self.assertEqual(result["status"],"WAIT_PRECAS_UNCONFIRMED")
+        self.assertFalse(result["may_write"])
+
+    def test_empty_scoped_registries_not_activation_proof(self):
+        self.s["state"][KEY]={"schema":1,"entries":[]}
+        self.s["state"]["parallel_write_migration"]="LEGACY_ONLY"
+        result=claim(self.s,self.a,NOW)
+        self.assertTrue(result["decision"].startswith("WAIT_INVALID"),result)
 
     def test_first_advisory_no_permission(self):
         p=self.proposed(self.s,self.a)

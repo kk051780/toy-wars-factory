@@ -46,6 +46,11 @@ def inspect(snapshot):
     require(type(state) is dict and state.get("schema") == 1 and
             type(state.get("epoch")) is int and state["epoch"] >= 0 and
             "holder" in state, "legacy state shape")
+    # Legacy mode is the safe default. Malformed/foreign migration states
+    # must not silently grant access to this shadow CAS proposal engine.
+    mode = state.get("parallel_write_migration", "LEGACY_ONLY")
+    require(type(mode) is str and mode in ("LEGACY_ONLY", "SCOPED_ACTIVE"),
+            "unrecognized migration mode")
     reg = state.get(KEY, {"schema": 1, "entries": []})
     require(type(reg) is dict and set(reg) == {"schema", "entries"} and
             reg["schema"] == 1 and type(reg["entries"]) is list and
@@ -82,6 +87,11 @@ def claim(snapshot, req, now):
     try:
         state, entries = inspect(snapshot)
         require(state["holder"] is None, "legacy holder is active")
+        # Explicit migration activation is required even for NON-AUTHORIZING
+        # proposals. A recorded marker is NOT fleet-drain/provider proof:
+        # the host must verify those independently before setting it.
+        require(state.get("parallel_write_migration") == "SCOPED_ACTIVE",
+                "scoped mode not active; legacy writer may still run")
         require(type(req) is dict and set(req) ==
                 {"scope", "owner_id", "run_id", "nonce", "expires_at"}, "request shape")
         for k in ("owner_id", "run_id", "nonce"):
@@ -167,6 +177,9 @@ def apply_once(snapshot, proposal, *, read, cas, clock, requested_at):
                     if k not in ("epoch", KEY)), "foreign state mutated")
         _, newrows = inspect({**snapshot, "state": next_state})
         if action == "SHADOW_CLAIM_CAS_PROPOSAL":
+            require(previous.get("parallel_write_migration") == "SCOPED_ACTIVE" and
+                    next_state.get("parallel_write_migration") == "SCOPED_ACTIVE",
+                    "scoped mode not active at CAS admission")
             require(newrows[:-1] == oldrows and len(newrows) == len(oldrows) + 1,
                     "claim changed incumbent")
             added = newrows[-1]
