@@ -28,13 +28,22 @@ def canonical_id(value):
 
 
 def instant(value):
-    moment = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    # Fail closed with a domain error, not an unhandled AttributeError when
+    # a remote coordinator contains a malformed timestamp.
+    if type(value) is not str or not value or len(value) > 64:
+        raise ValueError("invalid coordinator timestamp")
+    try:
+        moment = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except (ValueError, TypeError, OverflowError):
+        raise ValueError("invalid coordinator timestamp") from None
     if moment.tzinfo is None:
         raise ValueError("timezone-aware timestamp required")
     return moment.astimezone(timezone.utc)
 
 
 def validate(state):
+    if type(state) is not dict:
+        raise ValueError("invalid coordinator object")
     if state.get("schema") != 1 or state.get("task_id") != TASK_ID:
         raise ValueError("wrong coordinator schema/task")
     epoch = state.get("epoch")
@@ -70,6 +79,8 @@ def scoped_lease_migration_block(state):
     by the presence of this function in a newer commit. Do not use this
     advisory shim as permission to turn on live parallel writes.
     """
+    if type(state) is not dict or type(state.get("epoch")) is not int:
+        raise ValueError("invalid scoped coordinator object")
     blocked = False
     for key in ("shadow_parallel_leases", "parallel_leases"):
         if key not in state:
@@ -395,6 +406,13 @@ def git(*args):
 def verify_pr(policy, base, head, branch, control_ref):
     if policy.get("queue_version", 0) < 3:
         return "pre-coordination base policy"
+    # This is a non-authorizing CI preflight. The trusted integration host
+    # MUST separately bind the eventual merge to a fresh atomic coordinator
+    # snapshot; a successful historical CLI decision is NOT a merge permit.
+    current = json.loads(git("show", control_ref + ":" + CONTROL_PATH))
+    validate(current)
+    if scoped_lease_migration_block(current):
+        raise ValueError("legacy PR verification blocked by scoped migration")
     head = git("rev-parse", head)
     meta = branch.startswith(policy.get("system_review", {}).get("branch_prefix", "auto/twf-system-review-"))
     kind = "META" if meta else "WORKER"
@@ -427,6 +445,8 @@ def verify_pr(policy, base, head, branch, control_ref):
         subprocess.run(["git", "merge-base", "--is-ancestor", claim, control_ref], check=True, capture_output=True)
         state = json.loads(git("show", claim + ":" + CONTROL_PATH))
         validate(state)
+        if scoped_lease_migration_block(state):
+            raise ValueError("legacy claim contains scoped migration")
         holder = state["holder"]
         if not holder or (holder["kind"], holder["owner_id"], holder["epoch"]) != (kind, owner_id, proof.get("epoch")):
             raise ValueError("claim belongs to another lease owner/generation")
@@ -438,6 +458,8 @@ def verify_pr(policy, base, head, branch, control_ref):
             raise ValueError("invalid claim generation")
         parent = json.loads(git("show", claim + "^:" + CONTROL_PATH))
         validate(parent)
+        if scoped_lease_migration_block(parent):
+            raise ValueError("legacy claim parent contains scoped migration")
         if state.get("authorized_tasks") != parent.get("authorized_tasks"):
             raise ValueError("a claim cannot change registered tasks")
         if state["epoch"] != parent["epoch"] + 1 or (parent["holder"] and (kind != "WORKER" or parent["holder"]["kind"] != "DISPATCH")):

@@ -49,3 +49,12 @@ new gameplay or merge writes.
 This change is tested in `tests/test_legacy_scoped_owner_cleanup.py`.
 It does not solve a process still running pre-upgrade code, or a genuine
 lost ChatGPT run with no authenticated service-completion evidence.
+
+
+## Sourcery external audit: remaining critical atomic admission and merger gap
+
+The external review of exact PR HEAD \`1d2f3a4c…\` reported **2 High + 2 Medium** issues. This follow-on patch addresses the legacy \`verify_pr\` historical authorization gap by checking **current coordinator snapshot, claim and parent** for scoped entries/SCOPED_ACTIVE, changes malformed timestamps and non-object coordinator to a handled \`ValueError\`, and repairs an expired-row test fixture that previously never reached an expired state.
+
+**Remaining unresolved HIGH: stale decision / time-of-check vs time-of-use.** A Python \`acquire\`, \`owns\`, \`verify_pr\` or \`repair_integration.decide\` preflight cannot atomically authorize a *later* branch update or main merge against another GPT's live scoped claim. A genuine v2 writer and merge host must serialize the **actual write/merge action** with a single coordinator CAS/fence generation, require exact actor/task/branch/write-set/head identity and reject after an intervening coordinator ref update. Claiming scoped v2 after a released legacy slot must not race with old-inflight writes. Every legacy old-code process must first be stopped/drained and upgraded. During migration the only permitted live mode stays exclusive v1. **Never infer this HIGH issue is fixed from green CI or the review tool's check conclusion.**
+
+Historical verification is not a live write permit. The hosted test harness can verify local deny decisions, not provider-verified concurrent GPT runs, active-run termination or crash recovery. A separate authenticated reviewer is still required before protected main integration. No authorization to turn on scoped v2 is granted here.

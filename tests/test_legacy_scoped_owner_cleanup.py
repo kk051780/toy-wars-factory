@@ -14,14 +14,15 @@ import repair_control as control
 from test_system_owned_lease_finalization import Host, REPO, NOW, RUN, TASK, OTHER
 
 
-def scoped(epoch=1, expire="2026-10-30T00:20:00Z"):
+def scoped(epoch=1, expire="2026-10-30T00:20:00Z",
+           acquired="2026-10-29T23:50:00Z"):
     return {
         "scope": {"work_id": "p0-scope-alpha", "branch": "controller/p0-alpha"},
         "owner_id": "11111111-1111-4111-8111-111111111111",
         "run_id": "22222222-2222-4222-8222-222222222222",
         "nonce": "33333333-3333-4333-8333-333333333333",
         "lease_epoch": epoch,
-        "acquired_at": "2026-10-30T00:00:00Z",
+        "acquired_at": acquired,
         "expires_at": expire,
     }
 
@@ -50,7 +51,9 @@ class LegacyOwnershipMigrationTests(unittest.TestCase):
         self.assertFalse(self.owns())
 
     def test_expired_scoped_row_does_not_restore_old_write_permission(self):
-        self.add_scoped(expire="2026-10-30T00:00:30Z")
+        self.add_scoped(expire="2026-10-29T23:59:30Z")
+        self.assertLess(control.instant(self.h.state["shadow_parallel_leases"]["entries"][0]["expires_at"]),
+                        control.instant(NOW))
         self.assertFalse(self.owns())
 
     def test_production_registry_alias_denies_old_write_permission(self):
