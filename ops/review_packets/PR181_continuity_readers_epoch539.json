@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "kind": "AUTHOR_CHECKPOINT_NOT_INDEPENDENT_REVIEW",
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 181,
+  "issue": 57,
+  "work_id": "PR181_ISSUE57_PROTECTED_HANDOFF_SECURITY_REVIEW_20261107",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "branch": "controller/issue57-handoff-privilege-split-9b8a6f21",
+  "prior_head": "b48810c43fb7f883987abba3e5c8cf2da34e2982",
+  "head": "2236aa77b6276d2eaf0a4a1ef331a22ac03470a5",
+  "source_owner_id": "5b9e8451-1306-4947-b923-c982c88088c0",
+  "source_owner_epoch": 539,
+  "source_paths": [
+    "docs/CHAT_CONTINUITY_PROTOCOL.md",
+    "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
+    "tests/test_handoff_snapshot_readers.py"
+  ],
+  "python_tests_added": 2,
+  "change": "Explicit main-authoritative vs historical main status; optional immutable snapshot read-model with schema, HOLD, source revision ancestry/only-status compare, bounded generation ancestry, UNTRUSTED_STALE fallback, no authority from snapshots",
+  "ci": {
+    "run": 42449888207,
+    "source_head": "2236aa77b6276d2eaf0a4a1ef331a22ac03470a5",
+    "status": "completed",
+    "conclusion": "success",
+    "offline": "success",
+    "compile_hold": "success",
+    "python_tests": 902,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42449888207"
+  },
+  "main_changed": false,
+  "head_pr203_unchanged": "224082fc9d8e7a01d70aeeb1c7767932ce63227a",
+  "head_pr210_unchanged": "feceb02b28952c65cac6c1a76a70362af73552ba",
+  "registered_distinct_reviewer_pass": false,
+  "live_writer_proven": false,
+  "old_runner_drained": false,
+  "source_host_cas_proven": false,
+  "main_merge": false,
+  "scoped_2writer_active": false,
+  "roblox_published": false,
+  "added_spend_jpy": 0,
+  "recorded_at": "2026-11-08T05:14:15.716Z"
+}
