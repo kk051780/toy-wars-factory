@@ -102,6 +102,61 @@ class BridgeTests(unittest.TestCase):
         r=preflight(packet(2));r["claims"].reverse()
         self.assertRejected(signed_local(r))
 
+    def test_forged_local_url_rehashed_is_rejected(self):
+        r=preflight(packet());r["claims"][0]["observation"]["source_url"]="https://127.0.0.1/"
+        self.assertRejected(signed_local(r))
+
+    def test_forged_lookalike_youtube_url_rejected(self):
+        r=preflight(packet());r["claims"][0]["observation"]["source_url"]="https://youtube.com.attacker.example/watch?v=00000000000"
+        self.assertRejected(signed_local(r))
+
+    def test_forged_unstandard_youtube_url_rejected(self):
+        r=preflight(packet());r["claims"][0]["observation"]["source_url"]="https://youtu.be/00000000000"
+        self.assertRejected(signed_local(r))
+
+    def test_future_checked_at_rehashed_rejected(self):
+        r=preflight(packet());r["claims"][0]["observation"]["checked_at"]="2030-01-01T00:00:00Z"
+        self.assertRejected(signed_local(r))
+
+    def test_unzoned_checked_at_rehashed_rejected(self):
+        r=preflight(packet());r["claims"][0]["observation"]["checked_at"]="2026-11-09T08:00:00"
+        self.assertRejected(signed_local(r))
+
+    def test_future_publication_rehashed_rejected(self):
+        r=preflight(packet());r["claims"][0]["observation"]["published_at"]="2028-01-01"
+        self.assertRejected(signed_local(r))
+
+    def test_fake_metric_rehashed_rejected(self):
+        r=preflight(packet());r["claims"][0]["metric"]={"value":-15,"unit":"CCU"}
+        self.assertRejected(signed_local(r))
+
+    def test_fake_metric_nan_rehashed_rejected(self):
+        r=preflight(packet());r["claims"][0]["metric"]={"value":float("nan"),"unit":"CCU"}
+        self.assertRejected(r)
+
+    def test_fake_metric_bool_rehashed_rejected(self):
+        r=preflight(packet());r["claims"][0]["metric"]={"value":True,"unit":"CCU"}
+        self.assertRejected(signed_local(r))
+
+    def test_fake_claim_kind_rehashed_rejected(self):
+        r=preflight(packet());r["claims"][0]["claim_kind"]="OFFICIAL_RULE"
+        self.assertRejected(signed_local(r))
+
+    def test_fake_hypothesis_rehashed_rejected(self):
+        r=preflight(packet());r["claims"][0]["hypothesis_id"]="../../HACK"
+        self.assertRejected(signed_local(r))
+
+    def test_forged_source_warning_rehashed_rejected(self):
+        r=preflight(packet());r["claims"][0]["observation"]["limitation"]="No direct source transcript."
+        self.assertRejected(signed_local(r))
+
+    def test_required_warning_survives_long_limitation(self):
+        raw=packet();raw["records"][0]["limitation"]="X"*1998
+        r=preflight(raw)
+        self.assertLessEqual(len(r["claims"][0]["observation"]["limitation"]),2000)
+        self.assertIn("Transcript NOT host-verified",r["claims"][0]["observation"]["limitation"])
+        self.assertEqual(prepare_observation_bundle(raw)["authenticity"],"UNVERIFIED")
+
     def test_transcript_claim_input_not_reified_as_verified(self):
         raw=packet();raw["records"][0]["transcript_verified"]=True
         result=prepare_observation_bundle(raw)

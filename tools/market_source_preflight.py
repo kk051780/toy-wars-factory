@@ -169,18 +169,21 @@ def preflight(packet):
         claim_sig = (url, key, claim_kind)
         require(claim_sig not in seen_claims, "duplicate canonical claim")
         seen_claims.add(claim_sig)
-        limitation = row["limitation"]
+        # Preserve mandatory provenance warnings even when the user-supplied
+        # text fills the observation's 2000-character downstream field.
+        warnings = ""
         if source_type == "YOUTUBE_CREATOR":
-            limitation += " | Transcript NOT host-verified; input assertion is untrusted."
+            warnings += " | Transcript NOT host-verified; input assertion is untrusted."
         if claim_kind == "SELF_REPORTED":
-            limitation += " | Self-reported figures NOT independently verified."
+            warnings += " | Self-reported figures NOT independently verified."
         if claim_kind == "PUBLIC_SNAPSHOT":
-            limitation += " | Third-party snapshot; NOT Roblox-confirmed revenue."
+            warnings += " | Third-party snapshot; NOT Roblox-confirmed revenue."
+        limitation = row["limitation"][:2000 - len(warnings)] + warnings
         obs = {
             "source_url": url,
             "checked_at": checked.isoformat().replace("+00:00", "Z"),
             "observed_fact": row["claim"],
-            "limitation": limitation[:2000],
+            "limitation": limitation,
             "source_kind": source_kind,
             "published_at": row["published_at"],
         }
