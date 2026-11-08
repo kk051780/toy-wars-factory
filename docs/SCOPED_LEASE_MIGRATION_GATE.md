@@ -160,3 +160,24 @@ Every result has \`may_write=false\`, \`may_retry=false\`,
 \`host_action_fence_verified=false\` and \`real_parallel=false\`.
 This closes a *candidate interrupted-chat decision gap*, **not** the P0
 unattended host authority/old-runner-drain/actual two-writer blocker.
+
+
+## P0 epoch527: real GitHub Actions runner identity read-only probe
+
+Existing \`.github/workflows/bootstrap-quality.yml\` has a PR203-only step
+that compares GitHub-hosted \`github.run_id\`, run attempt, original GitHub
+actor ID, PR head SHA/base SHA/branch/repository and event with **fresh
+read-only GitHub API** run and PR resources, and archives a token-free
+\`.qa/p0-actions-run-readonly.json\` artifact. The workflow continues to
+use read-only tokens (\`contents:read\`, \`actions:read\`,
+\`pull-requests:read\`); no write permission, schedule, manual
+execution, Gemini, model inference, release, main merge or Roblox publish
+was added. The script is deliberately scoped to this protected DRAFT PR.
+
+This is **real hosted GitHub Actions run provenance**, NOT an OpenAI
+Automation worker identity. An Actions job run is not evidence that an
+old GPT chat stopped, a ChatGPT task can autonomously push, or two GPT
+writers simultaneously own disjoint scoped leases. It must not be
+interpreted as a write grant or production \`SCOPED_ACTIVE\` gate.
+The probe deliberately fails its own CI if the GitHub API run and PR
+identity does not match, rather than silently claiming success.
