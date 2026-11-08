@@ -1923,8 +1923,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 516,
-  "holder": null,
+  "epoch": 517,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 517,
+    "owner_id": "697c70f3-53c9-4f16-bba6-f246db00a3b7",
+    "task_id": null,
+    "acquired_at": "2026-11-08T00:15:41.752Z",
+    "expires_at": "2026-11-08T00:38:41.752Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/p0-legacy-shadow-compat-20261108-76116caf",
+    "scope": "P0 Issue123 PR203 legacy integration decide() bypass of scoped leases: require fail-closed merge decision when scoped writers present; add regression and CI; no merge/main/publish"
+  },
   "integration_results": {
     "35": {
       "merged": true,
