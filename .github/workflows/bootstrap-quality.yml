@@ -65,7 +65,19 @@ jobs:
           TWF_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           TWF_HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
           TWF_ACTIONS_READ_TOKEN: ${{ github.token }}
-        run: python3 tools/p0_actions_host_evidence.py
+        run: |
+          # Do not execute PR HEAD's unreviewed copy of the verifier.
+          # This is a pinned read-only probe; the workflow is still PR-controlled.
+          set -euo pipefail
+          pinned=adec1e1a642371256fe6b8bd790ccb711bc99251
+          expected_blob=861b3511955e933707538a7dc5ea874caa9bda65
+          git cat-file -e "${pinned}^{commit}"
+          actual_blob="$(git rev-parse "${pinned}:tools/p0_actions_host_evidence.py")"
+          test "$actual_blob" = "$expected_blob"
+          tmpdir="$(mktemp -d)"
+          trap 'rm -rf "$tmpdir"' EXIT
+          git show "${pinned}:tools/p0_actions_host_evidence.py" > "$tmpdir/verified_host_probe.py"
+          python3 -I "$tmpdir/verified_host_probe.py"
       - name: Preserve read-only P0 hosted-run evidence
         if: always() && github.event_name == 'pull_request' && github.event.pull_request.number == 203
         uses: actions/upload-artifact@v4

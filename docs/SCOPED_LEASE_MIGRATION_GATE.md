@@ -181,3 +181,21 @@ writers simultaneously own disjoint scoped leases. It must not be
 interpreted as a write grant or production \`SCOPED_ACTIVE\` gate.
 The probe deliberately fails its own CI if the GitHub API run and PR
 identity does not match, rather than silently claiming success.
+
+## P0 epoch528 — immutable read-only verifier pinned during PR203
+
+The real Actions run #42439565754 matched run+PR GitHub API metadata,
+but its `pull_request` workflow executed a PR-controlled script. That result
+is **not independent attestation of a trusted verifier**. This increment
+replaces direct PR-head execution with `git show` from pinned immutable
+commit `adec1e1a642371256fe6b8bd790ccb711bc99251`, checks Git blob
+`861b3511955e933707538a7dc5ea874caa9bda65`, and uses isolated
+`python3 -I` for the read-only comparison. A later PR HEAD script edit
+cannot silently change the executed verifier without also changing the
+review-visible workflow. Six focused regression tests cover the contract.
+
+**Remaining trust gap:** the entire `pull_request` workflow remains
+PR-controlled until reviewed/integrated. This pin is NOT equivalent to
+a protected-base workflow, independent native review or host write grant.
+Production merge/2-writer activation remain HOLD; no new paid service,
+schedule, `pull_request_target`, write token or Roblox publish.

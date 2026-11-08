@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "C10014",
+  "kind": "P0_PINNED_ACTIONS_READONLY_VERIFIER",
+  "issue": 123,
+  "pr": 203,
+  "owner_epoch": 528,
+  "owner_id": "a451510e-99fd-4fbc-9bf4-0cfd9e6ca3b7",
+  "base_head": "adec1e1a642371256fe6b8bd790ccb711bc99251",
+  "pinned_commit": "adec1e1a642371256fe6b8bd790ccb711bc99251",
+  "pinned_blob": "861b3511955e933707538a7dc5ea874caa9bda65",
+  "additional_tests": 6,
+  "changed_paths": [
+    ".github/workflows/bootstrap-quality.yml",
+    "tests/test_p0_pinned_actions_verifier.py",
+    "docs/SCOPED_LEASE_MIGRATION_GATE.md",
+    "history/C10014_pinned_actions_readonly_verifier.json"
+  ],
+  "critical_qualification": "whole PR workflow still mutable by PR author",
+  "independent_security_approval": false,
+  "no_host_write": true,
+  "no_main_merge": true,
+  "no_two_writer_live": true,
+  "additional_spend_jpy": 0
+}
