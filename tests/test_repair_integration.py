@@ -37,12 +37,32 @@ class IntegrationTests(unittest.TestCase):
         self.assertFalse(result["requires_owner_reply"])
         return result
 
-    def test_good_independent_review_merges_without_owner_reply(self):
+    def test_good_independent_review_still_requires_host_action_fence(self):
         result = self.decision()
-        self.assertEqual(result["action"], "MERGE")
+        self.assertEqual(result["action"], "WAIT_HOST_ACTION_FENCE")
         self.assertEqual(result["expected_head_sha"], self.pr["head"])
         self.assertTrue(result["post_merge_qa_required"])
         self.assertFalse(result["roblox_publish_authorized"])
+
+    def test_advisory_merge_decision_never_grants_provider_execution(self):
+        result = self.decision()
+        self.assertEqual(result["action"], "WAIT_HOST_ACTION_FENCE")
+        self.assertNotIn("merge_method", result)
+        self.assertEqual(result["expected_head_sha"], self.pr["head"])
+        self.assertEqual(result["review_base_sha"], self.main["sha"])
+        self.assertFalse(result["roblox_publish_authorized"])
+
+    def test_forged_host_ready_marker_cannot_bypass_action_hold(self):
+        self.policy["host_action_fence_ready"] = True
+        self.review["host_authenticated"] = True
+        self.lease["host_action_fence_ready"] = True
+        self.assertEqual(self.decision()["action"], "WAIT_HOST_ACTION_FENCE")
+
+    def test_coordinator_migration_after_preflight_refuses_reuse(self):
+        first = self.decision()
+        self.assertEqual(first["action"], "WAIT_HOST_ACTION_FENCE")
+        self.lease["parallel_write_migration"] = "SCOPED_ACTIVE"
+        self.assertEqual(self.decision()["action"], "WAIT_SCOPED_LEASES")
 
     def test_missing_standing_authority_disables_integration(self):
         self.policy["approval_authority"]["owner_reply_required"] = True
@@ -92,7 +112,7 @@ class IntegrationTests(unittest.TestCase):
     def test_verified_generated_status_descendant_can_reuse_main_qa(self):
         self.main["qa_head"] = "a" * 40
         self.main["comparison_since_qa"] = {"verified": True, "status": "ahead", "paths": ["status/LATEST_STATE.json"]}
-        self.assertEqual(self.decision()["action"], "MERGE")
+        self.assertEqual(self.decision()["action"], "WAIT_HOST_ACTION_FENCE")
         self.main["comparison_since_qa"]["paths"].append("src/ToyWarsServer.server.lua")
         self.assertEqual(self.decision()["action"], "WAIT_MAIN_CI")
 

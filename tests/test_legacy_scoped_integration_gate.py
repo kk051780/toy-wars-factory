@@ -66,8 +66,8 @@ class ScopedIntegrationGuardTests(unittest.TestCase):
         }
         self.lease[key] = {"schema": 1, "entries": [entry]}
 
-    def test_negative_control_original_review_would_merge(self):
-        self.assertEqual(self.decision()["action"], "MERGE")
+    def test_negative_control_original_review_is_only_preflight(self):
+        self.assertEqual(self.decision()["action"], "WAIT_HOST_ACTION_FENCE")
 
     def test_active_shadow_scopes_block_authorized_merge(self):
         self.registry()
@@ -88,9 +88,9 @@ class ScopedIntegrationGuardTests(unittest.TestCase):
         result = self.decision()
         self.assertEqual(result["action"], "WAIT_SCOPED_LEASES")
 
-    def test_empty_registry_legacy_merge_unchanged(self):
+    def test_empty_registry_legacy_preflight_still_requires_host_fence(self):
         self.lease["shadow_parallel_leases"] = {"schema": 1, "entries": []}
-        self.assertEqual(self.decision()["action"], "MERGE")
+        self.assertEqual(self.decision()["action"], "WAIT_HOST_ACTION_FENCE")
 
     def test_invalid_scoped_schema_waits_instead_of_merging(self):
         self.lease["parallel_leases"] = {"schema": 2, "entries": []}

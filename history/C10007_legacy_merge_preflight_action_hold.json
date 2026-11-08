@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "C10007",
+  "kind": "P0_LEGACY_MERGE_PRECHECK_FAIL_CLOSED",
+  "issue": 123,
+  "pr": 203,
+  "source_base_head": "5e8fa180bc0d12543adae616daa429e62c113086",
+  "owner_epoch": 522,
+  "owner_id": "bf7c646a-92de-4815-89cd-1995db119f65",
+  "changes": [
+    "legacy decide returns WAIT_HOST_ACTION_FENCE instead of executable MERGE",
+    "an approved review still cannot bypass live host-CAS requirements",
+    "explicit spoof marker and concurrent migration negative tests"
+  ],
+  "new_tests": 3,
+  "unchanged": [
+    "real scoped mode remains OFF",
+    "no automatic GitHub merge",
+    "no main or permissions change"
+  ],
+  "unresolved_high": [
+    "actual host-owned write/merge serialization and old runner fleet-drain proof"
+  ],
+  "additional_spend_jpy": 0
+}

@@ -100,8 +100,14 @@ def decide(policy, main, pr, review, lease, now):
         return result("REQUEST_CHANGES", pr=pr["number"], blockers=review.get("blockers", []))
     if any(review.get("checks", {}).get(name) is not True for name in REVIEW_CHECKS):
         return result("WAIT_REVIEW", reason="all review dimensions need evidence")
-    return result("MERGE", pr=pr["number"], expected_head_sha=head,
-                  review_base_sha=main["sha"], merge_method="merge",
+    # P0: this decision is a snapshot, not an atomic GitHub merge permit.
+    # Until a trusted host holds a live coordinator CAS fence throughout the
+    # provider merge + exact-head readback, never emit an executable MERGE.
+    # Unverified owner-supplied markers must not override this hard stop.
+    return result("WAIT_HOST_ACTION_FENCE",
+                  reason="trusted action-bound coordinator CAS and old-runner drain are not verified",
+                  pr=pr["number"], expected_head_sha=head,
+                  review_base_sha=main["sha"],
                   post_merge_qa_required=True, roblox_publish_authorized=False)
 
 

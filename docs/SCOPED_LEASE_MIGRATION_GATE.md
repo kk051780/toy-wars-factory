@@ -58,3 +58,19 @@ The external review of exact PR HEAD \`1d2f3a4c…\` reported **2 High + 2 Mediu
 **Remaining unresolved HIGH: stale decision / time-of-check vs time-of-use.** A Python \`acquire\`, \`owns\`, \`verify_pr\` or \`repair_integration.decide\` preflight cannot atomically authorize a *later* branch update or main merge against another GPT's live scoped claim. A genuine v2 writer and merge host must serialize the **actual write/merge action** with a single coordinator CAS/fence generation, require exact actor/task/branch/write-set/head identity and reject after an intervening coordinator ref update. Claiming scoped v2 after a released legacy slot must not race with old-inflight writes. Every legacy old-code process must first be stopped/drained and upgraded. During migration the only permitted live mode stays exclusive v1. **Never infer this HIGH issue is fixed from green CI or the review tool's check conclusion.**
 
 Historical verification is not a live write permit. The hosted test harness can verify local deny decisions, not provider-verified concurrent GPT runs, active-run termination or crash recovery. A separate authenticated reviewer is still required before protected main integration. No authorization to turn on scoped v2 is granted here.
+
+## P0 follow-up: non-authorizing legacy merge preflight (epoch522)
+
+Even an otherwise APPROVED legacy review can become stale after `decide()`
+returns but before the actual GitHub merge. The protective candidate therefore
+returns `WAIT_HOST_ACTION_FENCE` (and **never** `MERGE`) once all old review,
+CI, exact-head and legacy lease checks pass. `expected_head_sha` and
+`review_base_sha` are read-only context, **not** permission. A caller-supplied
+`host_action_fence_ready` flag cannot re-enable a merge.
+
+This is a **fail-closed temporary block**, not a completed action-level host
+adapter or proof of two live writers. Re-enable merge execution only through
+independently audited host-owned reservation/CAS spanning the provider operation
+and readback, with original runner fleet drained. It deliberately blocks
+otherwise-approved automatic integration if no such adapter exists; do not
+silently fall back to direct GitHub merge.
