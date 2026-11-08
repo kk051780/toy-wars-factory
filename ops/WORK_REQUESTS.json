@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T02:03:41.092Z",
+  "observed_at": "2026-11-08T02:17:00.592Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5070,26 +5070,26 @@
       "id": "P0_ISSUE123_PR203_ONE_TIME_CONTROLLER_MAINTENANCE_GATE_20261108",
       "kind": "PROTECTED_SINGLE_PR_CONTROLLER_TRUST_ROOT_MAINTENANCE_INDEPENDENT_REVIEW",
       "priority": "P0",
-      "status": "REQUEST_CHANGES_HOST_ACTOR_AUTH_AND_ACTION_RESERVATION_PROVIDER_INTEGRATION_UNPROVEN",
+      "status": "SOURCE_ACTION_CONNECTED_CAS_PROBE_SUCCESS_UNATTENDED_HOST_AND_PARALLEL_UNPROVEN",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
       "issue": 123,
       "pr": 203,
       "branch": "controller/p0-legacy-shadow-compat-20261108-76116caf",
-      "head": "330a5b6578b6e6db7b117092bc817768fe49a56a",
+      "head": "d62d1c98d42507360d7d71c48bad2857ed4e610e",
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "draft": true,
-      "source_owner_epoch": 524,
-      "source_owner_id": "a7cc428d-c110-4e88-baa9-2d4096ba738b",
+      "source_owner_epoch": 525,
+      "source_owner_id": "83a23b59-9eb0-4ec6-9f4d-753ea02694ea",
       "source_owner_release_ref": null,
-      "ci_run_id": 42436735797,
+      "ci_run_id": 42437687685,
       "ci_jobs": {
         "offline": "success",
         "compile_hold": "success"
       },
-      "python_tests": 898,
-      "new_negative_tests": 65,
+      "python_tests": 915,
+      "new_negative_tests": 82,
       "changed_paths": [
         "docs/SCOPED_LEASE_MIGRATION_GATE.md",
         "history/C10002_legacy_scoped_compatibility_gate.json",
@@ -5098,24 +5098,28 @@
         "history/C10005_sourcery_review_defect_fence.json",
         "history/C10007_legacy_merge_preflight_action_hold.json",
         "history/C10008_action_reservation_candidate.json",
+        "history/C10009_manual_source_probe_contract.json",
+        "history/C10010_real_source_action_probe.json",
         "tests/test_legacy_scoped_integration_gate.py",
         "tests/test_legacy_scoped_migration_gate.py",
         "tests/test_legacy_scoped_owner_cleanup.py",
         "tests/test_legacy_scoped_sourcery_regression.py",
         "tests/test_repair_action_reservation.py",
         "tests/test_repair_integration.py",
+        "tests/test_repair_source_action_fence.py",
         "tools/repair_action_reservation.py",
         "tools/repair_control.py",
-        "tools/repair_integration.py"
+        "tools/repair_integration.py",
+        "tools/repair_source_action_fence.py"
       ],
-      "changed_files": 16,
+      "changed_files": 20,
       "created_at": "2026-11-08T00:44:22.697Z",
-      "updated_at": "2026-11-08T02:03:41.092Z",
+      "updated_at": "2026-11-08T02:17:00.592Z",
       "source": "LIVE_GITHUB_PR_CI_COORDINATOR_READBACK_MANUAL_CONTROLLER_INTAKE",
       "normal_integration_decision": "SKIP_UNRELATED_FOR_CONTROLLER_BRANCH",
       "normal_integration_reason": "accepted main repair_integration.decide only admits signed registered WORKER or META prefixes; never impersonate those identities, never globally broaden allowed prefixes",
       "exception_route": "ONE_TIME_EXPLICIT_P0_CONTROLLER_MAINTENANCE_MODEL_PER_HISTORICAL_PR75_ONLY_AFTER_SEPARATE_REVIEWER_AUTHENTICATION_AND_FRESH_HOST_CHECKS",
-      "review_request": "Registered independent reviewer must inspect exact PR203 head 330a5b6578b6e6db7b117092bc817768fe49a56a, exact CI 42436735797 (offline & compile_hold success, Python898), all 16 paths, new pending_provider_action gate and release prohibition, unknown ACK/CAS/ref-drift negatives; confirm only fake host/zero provider merge authority. Host must implement genuine task/run/old runner drain, provider operation kept under CAS reservation, readback and authenticated terminal resolution before any MERGE or live 2 writers. Re-fetch current coord to prove epoch524 self-release; do NOT accept this queue update as release proof. No self-approval, main merge, scoped activation, Roblox publish or paid tools.",
+      "review_request": "Registered independent REVIEWER must re-fetch PR203 exact HEAD d62d1c98d42507360d7d71c48bad2857ed4e610e, exact hosted CI #42437687685 Python915 jobs offline/compile_hold success, all 20 changed paths, inspect SOURCE_UPDATE_PROBE guard and history/C10010 marker, verify provider connected CAS reservation f372efd and settlement 4645a513 including branch readback. This is only manual 1-source update, no authentic registered host identity/old-runner drain/atomic production merge. Do not accept as actual 2 writers. Verify epoch525 owner release independently; no self-approval or main merge. Production HIGH and Issue57 remain.",
       "must_not": [
         "AUTHOR_SELF_APPROVE",
         "IMPERSONATE_WORKER_OR_META_BRANCH",
@@ -5144,7 +5148,7 @@
       "real_parallel_writers_verified": false,
       "automatic_chat_recovery_verified": false,
       "additional_spend_yen": 0,
-      "next_actor": "REGISTERED_INDEPENDENT_REVIEWER_AND_TRUSTED_HOST_ADAPTER",
+      "next_actor": "REGISTERED_INDEPENDENT_REVIEWER_AND_REAL_HOST_CAPABILITY_INTEGRATION",
       "sourcery_review": {
         "reviewed_head": "1d2f3a4c8d4dc6b9ac9335fdc3c9520226ee2527",
         "engine": "sourcery-ai",
@@ -5163,11 +5167,11 @@
           "HIGH: actual write/merge atomic coordinator fence and old-runner drain"
         ],
         "new_head": "5e8fa180bc0d12543adae616daa429e62c113086",
-        "exact_head_ci_run_id": 42436735797,
+        "exact_head_ci_run_id": 42437687685,
         "last_sourcery_reviewed_head": "5e8fa180bc0d12543adae616daa429e62c113086",
-        "latest_source_head_requires_fresh_review": "330a5b6578b6e6db7b117092bc817768fe49a56a"
+        "latest_source_head_requires_fresh_review": "d62d1c98d42507360d7d71c48bad2857ed4e610e"
       },
-      "review_packet_path": "ops/review_packets/PR203_p0_action_reservation_epoch524.json",
+      "review_packet_path": "ops/review_packets/PR203_p0_live_source_probe_epoch525.json",
       "prior_exact_head_evidence": {
         "head": "1d2f3a4c8d4dc6b9ac9335fdc3c9520226ee2527",
         "ci_run_id": 42429957240,
@@ -5183,23 +5187,30 @@
         "review_packet_path": "ops/review_packets/PR203_p0_sourcery_followup_epoch520.json"
       },
       "action_fence_current": {
-        "head": "330a5b6578b6e6db7b117092bc817768fe49a56a",
-        "kind": "NON_AUTHORIZING_PERSISTENT_PROVIDER_MERGE_RESERVATION_PROPOSAL",
-        "expected_integration_decision": "WAIT_HOST_ACTION_FENCE",
-        "mock_cas_only": true,
-        "may_execute": false,
-        "provider_action_called": false,
-        "actual_host_fencing_verified": false,
+        "kind": "REAL_CONNECTED_GITHUB_MANUAL_SINGLE_SOURCE_OPERATION",
+        "head": "d62d1c98d42507360d7d71c48bad2857ed4e610e",
+        "ci_run_id": 42437687685,
+        "proof": {
+          "action_id": "7c2b40e1-6bca-43b6-a49c-27cf3e7a23b8",
+          "controller_epoch": 525,
+          "coordinator_reservation_commit": "f372efdda9d2a5fd111c8e3c033d2001b4d51aaa",
+          "source_before": "dbfd3058a0688c09e439c3d57659d336f844f936",
+          "source_after": "d62d1c98d42507360d7d71c48bad2857ed4e610e",
+          "source_double_readback": true,
+          "coordinator_reconciliation_commit": "4645a513cde0e253da99d64c9a2f96bb9c8e7966",
+          "provider_connected_update": true,
+          "force": false,
+          "expected_sha_used": true
+        },
+        "release_status": "PENDING_OWNER_ONLY_RELEASE",
+        "registered_host_attestation": false,
+        "production_host_action_cas_verified": false,
         "old_runner_drain_verified": false,
         "independent_review": false,
         "real_parallel_writers": false,
-        "ci_run_id": 42436735797,
-        "new_tests": 15,
-        "owner_epoch": 524,
-        "release_status": "PENDING_PROPER_SELF_RELEASE",
-        "issue_comment": 6715940065,
-        "pr_comment": 6715940480,
-        "remaining_high": "Actual action-bound provider CAS/runner-drain/host permission"
+        "merge_authorized": false,
+        "merge_executed": false,
+        "source_proof_comment": 6716065367
       },
       "prior_epoch523_checkpoint": {
         "head": "dbdc21845bd974547522ef202660cd6a0e2f67df",
@@ -5209,7 +5220,14 @@
         "release_ref": "4a54e42279f0875bad8ab5fc14d8221275ce6fe4",
         "review_packet_path": "ops/review_packets/PR203_p0_action_fence_hold_epoch523.json"
       },
-      "source_owner_release_status": "PENDING_EPOCH524_SELF_RELEASE_AFTER_QUEUE_CHECKPOINT"
+      "source_owner_release_status": "PENDING_OWNER_ONLY_RELEASE_AFTER_QUEUE_CHECKPOINT",
+      "prior_epoch524_checkpoint": {
+        "head": "330a5b6578b6e6db7b117092bc817768fe49a56a",
+        "ci_run_id": 42436735797,
+        "python_tests": 898,
+        "changed_files": 16,
+        "review_packet_path": "ops/review_packets/PR203_p0_action_reservation_epoch524.json"
+      }
     }
   ]
 }
