@@ -7,17 +7,18 @@
   "pr": 212,
   "parent_pr": 211,
   "parent_exact_head": "5b62ba5163e11cd9e7e3d63923bf219c5863cde9",
-  "head": "ba3b22add2126a11eaff2bd7a51d00f0e4cee333",
+  "head": "4240094deb08067aa167e5ad9bd289e5d4c07085",
   "base_branch": "controller/p0c-readonly-intake-20261108-4ac8192f",
   "source_branch": "controller/p0c-windows-receive-once-20261108-b527e773",
   "author_epoch": 545,
   "author_owner_id": "b527e773-97b5-45e9-9c2e-71c209ab45c7",
   "actual_ci": {
-    "run_id": 42456801683,
+    "run_id": 42458129581,
     "offline": "success",
     "compile_hold": "success",
-    "python_passed": 885,
-    "new_win_receipt_tests": 27
+    "python_passed": 909,
+    "new_win_receipt_tests": 27,
+    "new_scan_tests": 24
   },
   "changed_paths": [
     "tools/system_p0c_windows_receive_once.py",
@@ -43,7 +44,25 @@
     "main_merged": false,
     "roblox_published": false
   },
-  "review_request": "Separate authenticated security reviewer inspect PR211 parent exact head and PR212 child exact head CI; no author self-approval. Verify actual real Github user/app attribution cannot be confused with authorization; ensure redirects, replay and trust boundary. Run no Windows actions from mere comment.",
+  "review_request": "Independent reviewer must audit current PR212 head 4240094... and parent PR211 before any PC opt-in, including private repo GITHUB_TOKEN handling, no-redirect behavior, pagination/replay/status semantics. Original HEAD ba3b22a tests are historical.",
   "additional_spend_jpy": 0,
-  "created_at": "2026-11-08T06:58:37.706Z"
+  "created_at": "2026-11-08T06:58:37.706Z",
+  "revisions": [
+    {
+      "kind": "C2B_READ_ONLY_LATEST_COMMENT_SCAN",
+      "previous_head": "ba3b22add2126a11eaff2bd7a51d00f0e4cee333",
+      "new_head": "4240094deb08067aa167e5ad9bd289e5d4c07085",
+      "ci_run": 42458129581,
+      "python_passed": 909,
+      "new_tests": 24,
+      "changed_paths": [
+        "tools/system_p0c_windows_receive_once.py",
+        "tools/system_p0c_windows_scan_once.py",
+        "tests/test_system_p0c_windows_scan_once.py",
+        "docs/QA_P0C_WINDOWS_SCAN_ONCE.md"
+      ],
+      "security": "no comment-id needed; Windows one-shot manual run only; GITHUB_TOKEN from existing approved env required for private repo; redirect refusals; still no Codex execution, relay or service",
+      "recorded_at": "2026-11-08T07:18:30.771Z"
+    }
+  ]
 }

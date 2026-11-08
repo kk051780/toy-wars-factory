@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T06:58:37.706Z",
+  "observed_at": "2026-11-08T07:18:30.771Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5785,25 +5785,33 @@
       "parent_pr": 211,
       "parent_exact_head": "5b62ba5163e11cd9e7e3d63923bf219c5863cde9",
       "branch": "controller/p0c-windows-receive-once-20261108-b527e773",
-      "head": "ba3b22add2126a11eaff2bd7a51d00f0e4cee333",
+      "head": "4240094deb08067aa167e5ad9bd289e5d4c07085",
       "draft": true,
       "source_owner_epoch": 545,
       "source_owner_id": "b527e773-97b5-45e9-9c2e-71c209ab45c7",
-      "status": "OPEN_EXACT_HEAD_CI_GREEN_REGISTERED_REVIEWER_REQUIRED",
-      "ci_run_id": 42456801683,
+      "status": "OPEN_EXACT_HEAD_C2B_SCAN_GREEN_DISTINCT_SECURITY_REVIEW_REQUIRED",
+      "ci_run_id": 42458129581,
       "ci_jobs": {
         "offline": "success",
         "compile_hold": "success"
       },
-      "python_tests": 885,
-      "new_negative_tests": 27,
+      "python_tests": 909,
+      "new_negative_tests": 51,
       "review_packet_path": "ops/review_packets/PR212_p0c_windows_once_epoch545.json",
       "assigned_role": "REVIEWER",
       "independent_reviewed": false,
       "pc_receiver_installed": false,
       "main_merged": false,
-      "next_actor": "Separate registered reviewer C1/C2A source+provider attribution, then owner-opt-in Windows single comment receipt only; no auto Codex invocation",
-      "created_at": "2026-11-08T06:58:37.706Z"
+      "next_actor": "Separate authenticated reviewer verifies 211/212 current HEAD and redirect/private credential trust boundaries; then owner opt-in one-shot real Windows read receipt; auto relay remains unproven",
+      "created_at": "2026-11-08T06:58:37.706Z",
+      "previous_head": "ba3b22add2126a11eaff2bd7a51d00f0e4cee333",
+      "updated_at": "2026-11-08T07:18:30.771Z",
+      "changed_paths": [
+        "tools/system_p0c_windows_receive_once.py",
+        "tools/system_p0c_windows_scan_once.py",
+        "tests/test_system_p0c_windows_scan_once.py",
+        "docs/QA_P0C_WINDOWS_SCAN_ONCE.md"
+      ]
     }
   ]
 }
