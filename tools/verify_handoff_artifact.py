@@ -65,7 +65,7 @@ def verify_archive(path):
                                                     zipfile.ZIP_DEFLATED) or
                         (member.create_system == 3 and
                          (stat.S_IFMT(mode) not in (0, stat.S_IFREG) or
-                          mode & 0o111)):
+                          mode & 0o111))):
                     raise ValueError("unsafe ZIP member")
                 # Bound decompression even if ZIP metadata is dishonest.
                 with archive.open(member) as stream:
