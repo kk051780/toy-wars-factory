@@ -17,7 +17,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: twf-handoff-main
+  group: twf-handoff-${{ github.ref == 'refs/heads/main' && 'main' || github.ref }}
   cancel-in-progress: false
 jobs:
   verify:
@@ -65,7 +65,8 @@ jobs:
           retention-days: 30
   status_writer:
     needs: verify
-    if: github.ref == 'refs/heads/main'
+    # Scheduled audits are read-only; only owner-initiated main dispatch may write passive data.
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -129,6 +130,9 @@ jobs:
           gh auth setup-git
           test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$TWF_SOURCE_COMMIT"
           max=512
+          # Limit total historical audit work: four generations of up to 512 snapshots.
+          # At the cap, fail closed until an independently reviewed archive policy exists.
+          max_generations=4
           refs="$(git ls-remote origin "$base_ref" "$base_ref-g*" | LC_ALL=C sort -k2,2)"
           previous=''
           previous_generation_tip=''
@@ -150,6 +154,7 @@ jobs:
                 [[ "$ref" =~ ^refs/heads/twf-handoff-snapshots-g[0-9]{4}$ ]]
                 found="$(printf '%s\n' "$ref" | sed -E 's/^.*-g([0-9]{4})$/\1/')"
                 gen=$((10#$found))
+                test "$gen" -le "$max_generations"
                 test "$gen" -eq "$expected_gen"
                 test "$previous_generation_count" -eq "$max"
                 expected_gen=$((expected_gen + 1))
@@ -187,6 +192,7 @@ jobs:
             if [ "$previous_generation_count" -eq "$max" ]; then
               test "$gen" -lt 9999
               gen=$((gen + 1))
+              test "$gen" -le "$max_generations"
               snapshot_ref="$(printf '%s-g%04d' "$base_ref" "$gen")"
               test -z "$(git ls-remote origin "$snapshot_ref")"
               rotated=true
@@ -208,4 +214,11 @@ jobs:
           test "$(git ls-tree -r --name-only "$snapshot_commit")" = "$allowed_files"
           test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$TWF_SOURCE_COMMIT"
           git push origin "$snapshot_commit:$snapshot_ref"
+          # GitHub cannot atomically compare main and update the data-only snapshot
+          # under the current main PR-only ruleset. Detect a post-push race,
+          # report failure rather than success; readers must reject stale snapshots.
+          if [ "$(git ls-remote origin refs/heads/main | cut -f1)" != "$TWF_SOURCE_COMMIT" ]; then
+            echo "STALE_MAIN_AFTER_PUSH: reject stale read-model; do not report success" >&2
+            exit 1
+          fi
           printf 'SUCCESS snapshot_generation=%s snapshot_ref=%s\n' "$gen" "$snapshot_ref" >> "$GITHUB_STEP_SUMMARY"

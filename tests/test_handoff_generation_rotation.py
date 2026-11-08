@@ -54,6 +54,13 @@ class RotationOfActualWriter(unittest.TestCase):
                           'show','-s','--format=%B',root)
         self.assertIn('prior-snapshot-tip: '+archived, message)
         self.assertIn('snapshot-generation: 2', message)
+        modes = command('git', '--git-dir', str(self.fixture.remote),
+                        'ls-tree', '-r', '--format=%(objectmode) %(objecttype) %(path)',
+                        root).splitlines()
+        self.assertEqual(modes, [
+            '100644 blob status/CHAT_HANDOFF.md',
+            '100644 blob status/LATEST_STATE.json',
+        ], 'every rollover root must contain exactly two passive regular files')
         self.assertEqual(self.ref('refs/heads/main'), self.fixture.source_sha)
 
     def test_no_change_at_cap_is_not_a_new_generation(self):

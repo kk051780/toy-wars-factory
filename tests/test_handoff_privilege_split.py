@@ -30,6 +30,22 @@ def manifest(folder):
 
 
 class HandoffPrivilegeSplit(unittest.TestCase):
+    def test_scheduled_audits_read_only_and_manual_dispatch_separate_group(self):
+        self.assertIn("cron: '13,33,53 * * * *'", SRC)
+        self.assertIn("github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'", SRC)
+        self.assertIn("group: twf-handoff-${{ github.ref == 'refs/heads/main' && 'main' || github.ref }}", SRC)
+        self.assertNotIn("group: twf-handoff-main\n", SRC)
+
+    def test_bounded_generation_validation_and_post_push_stale_detection(self):
+        writer = sections()[1]
+        self.assertIn("max_generations=4", writer)
+        self.assertGreaterEqual(writer.count('test "$gen" -le "$max_generations"'), 2)
+        self.assertIn("STALE_MAIN_AFTER_PUSH", writer)
+        self.assertLess(writer.index('git push origin "$snapshot_commit:$snapshot_ref"'),
+                        writer.index("STALE_MAIN_AFTER_PUSH"))
+        self.assertLess(writer.index("STALE_MAIN_AFTER_PUSH"),
+                        writer.index("SUCCESS snapshot_generation="))
+
     def test_default_repo_permissions_read_only(self):
         self.assertIn("\npermissions:\n  contents: read\n", SRC)
         self.assertEqual(SRC.count("contents: write"), 1)

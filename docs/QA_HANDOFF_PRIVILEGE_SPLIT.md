@@ -1,5 +1,8 @@
 # Handoff workflow: read-only QA + snapshot-only writer (protected draft)
 
+> **2026-11-08 P0-A security follow-up (still protected DRAFT):** Live GitHub repository visibility is **public** and main ruleset #26750913 is active; older paragraphs about private-repo 403 failures are historical and not current policy evidence. PR181's new status_writer must be main `workflow_dispatch` only; scheduled/main-push audit verification stays read-only. Non-main dispatches receive a distinct concurrency group, while main dispatches serialize. The writer now fails closed if more than four 512-commit snapshot generations exist, and checks main again after a push to avoid falsely reporting success on a raced change. **This post-push check is detection, NOT atomic cross-ref protection:** a stale data-only snapshot might already have been written; readers must reject it by source/main validation. None of this authenticates unattended ChatGPT writers, overrides PR-only main policy, or permits source/Roblox publication. Independent review and hosted CI are still required.
+
+
 ## Confirmed current deployment state
 Accepted main `e5deff4d5681bca4823a3da0f848e01bc089ae6e` still has the old single-job `.github/workflows/handoff-sync.yml` that executes repository tests under `contents: write` and pushes generated status files directly into main. This PR is **not merged/deployed** and is not a production Actions writer proof.
 
