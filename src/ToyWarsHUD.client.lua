@@ -192,13 +192,35 @@ local function refreshPreviewNotice()
     end
 end
 
-local function rescanProgressMode()
+local modeValueConnection=nil
+local modeChildConnections={}
+local rescanProgressMode
+local function unwatchModeChild(child)
+    local connections=modeChildConnections[child]
+    if connections then
+        for _,connection in ipairs(connections) do connection:Disconnect() end
+        modeChildConnections[child]=nil
+    end
+end
+local function watchModeChild(child)
+    if modeChildConnections[child] or not child.GetPropertyChangedSignal then return end
+    -- Watch all names: an unrelated child can be renamed INTO ProgressMode.
+    modeChildConnections[child]={
+        child:GetPropertyChangedSignal("Name"):Connect(function() rescanProgressMode() end),
+        child:GetPropertyChangedSignal("Parent"):Connect(function()
+            if child.Parent~=status then unwatchModeChild(child) end
+            rescanProgressMode()
+        end),
+    }
+end
+rescanProgressMode=function()
     local found=nil
     local count=0
     -- GetChildren detects duplicate same-name StringValues unlike FindFirstChild.
     if status.GetChildren then
         for _,child in ipairs(status:GetChildren()) do
-            if child.Name=="ProgressMode" then
+            watchModeChild(child)
+            if child.Parent==status and child.Name=="ProgressMode" then
                 count=count+1
                 if child.ClassName=="StringValue" then found=child end
             end
@@ -213,11 +235,17 @@ local function rescanProgressMode()
     progressModeConflict=count>1
     local selected=(count==1) and found or nil
     if selected~=progressMode then
+        if modeValueConnection then modeValueConnection:Disconnect();modeValueConnection=nil end
         progressMode=selected
         if selected and selected.Changed then
             -- The old Value may still emit Changed after ChildRemoved or replacement.
-            selected.Changed:Connect(function()
-                if progressMode==selected then refreshPreviewNotice() end
+            modeValueConnection=selected.Changed:Connect(function()
+                if progressMode~=selected then return end
+                if selected.Parent~=status or selected.Name~="ProgressMode" then
+                    rescanProgressMode()
+                    return
+                end
+                refreshPreviewNotice()
             end)
         end
     end
@@ -226,12 +254,14 @@ end
 -- Connect both event handlers before scanning to avoid the replication race.
 if status.ChildAdded then
     status.ChildAdded:Connect(function(child)
-        if child.Name=="ProgressMode" then rescanProgressMode() end
+        watchModeChild(child)
+        rescanProgressMode()
     end)
 end
 if status.ChildRemoved then
     status.ChildRemoved:Connect(function(child)
-        if child.Name=="ProgressMode" then rescanProgressMode() end
+        unwatchModeChild(child)
+        rescanProgressMode()
     end)
 end
 rescanProgressMode()
