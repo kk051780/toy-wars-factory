@@ -40,6 +40,19 @@ class SnapshotReaderContract(unittest.TestCase):
                          "GitHub compare", "承認", "公開許可"):
             self.assertIn(required, text)
 
+    def test_scheduled_run_artifact_is_read_only_optional_handoff(self):
+        for path in ("AGENTS.md", "docs/CHAT_CONTINUITY_PROTOCOL.md",
+                     "tools/build_handoff.py", "docs/QA_HANDOFF_PRIVILEGE_SPLIT.md"):
+            with self.subTest(path=path):
+                source = (ROOT / path).read_text(encoding="utf-8")
+                for item in ("toy-wars-handoff", "UNTRUSTED_STALE",
+                             "source_revision", "status/"):
+                    self.assertIn(item, source)
+        workflow = (ROOT / ".github/workflows/handoff-sync.yml").read_text(encoding="utf-8")
+        self.assertIn("if: success()", workflow)
+        self.assertIn("&& false", workflow)
+        self.assertNotIn("if: always()", workflow)
+
     def test_reader_protocol_never_downgrades_main_or_approval_hold(self):
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
         docs = (ROOT / "docs/QA_HANDOFF_PRIVILEGE_SPLIT.md").read_text(encoding="utf-8")

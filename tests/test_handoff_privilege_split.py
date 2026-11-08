@@ -46,6 +46,16 @@ class HandoffPrivilegeSplit(unittest.TestCase):
         self.assertLess(writer.index("STALE_MAIN_AFTER_PUSH"),
                         writer.index("SUCCESS snapshot_generation="))
 
+    def test_proposed_writer_is_disabled_and_scheduled_artifact_requires_success(self):
+        verify, writer = sections()
+        self.assertIn("if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && false", writer)
+        self.assertIn("P0-A privilege HOLD", writer)
+        self.assertIn("if: success()", verify)
+        self.assertNotIn("if: always()", verify)
+        self.assertIn("name: toy-wars-handoff", verify)
+        self.assertIn("contents: read", verify)
+        self.assertNotIn("GH_TOKEN:", verify)
+
     def test_default_repo_permissions_read_only(self):
         self.assertIn("\npermissions:\n  contents: read\n", SRC)
         self.assertEqual(SRC.count("contents: write"), 1)

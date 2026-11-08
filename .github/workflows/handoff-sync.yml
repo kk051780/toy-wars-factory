@@ -53,7 +53,7 @@ jobs:
           test -f status/LATEST_STATE.json
           (cd status && sha256sum CHAT_HANDOFF.md LATEST_STATE.json > HANDOFF_SHA256SUMS.txt)
       - name: Archive audited two-file status and its checksums
-        if: always()
+        if: success()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4 resolved 2026-11-02
         with:
           name: toy-wars-handoff
@@ -66,7 +66,10 @@ jobs:
   status_writer:
     needs: verify
     # Scheduled audits are read-only; only owner-initiated main dispatch may write passive data.
-    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+    # P0-A privilege HOLD: this repository-wide write-token job is never admitted.
+    # Scheduled handoff relies on successful read-only Actions artifacts instead.
+    # Separate independent approval + provider control proof required before removal.
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && false
     permissions:
       contents: write
     runs-on: ubuntu-latest

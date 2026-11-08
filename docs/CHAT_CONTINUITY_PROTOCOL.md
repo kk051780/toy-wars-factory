@@ -4,6 +4,8 @@
 
 新しいチャットでは、まず現在main HEAD、PROJECT_STATE.json、AGENTS.md、config/quality_policy.json、PR・Actions・Issues・twf-repair-coordinator をGitHubから直接取得する。mainの status/CHAT_HANDOFF.md と status/LATEST_STATE.json は歴史的な生成資料であり最新の正本とは扱わない。
 
+読取り専用の追加経路：GitHub Actions の main 対象 `.github/workflows/handoff-sync.yml` 実行が completed/success で、QA job が成功し、`toy-wars-handoff` 成果物が未期限切れの場合にのみ、同一 run から ZIP を取得できる。ZIP のファイル名・個数・大きさ・symlink・重複を確認し、`CHAT_HANDOFF.md` と `LATEST_STATE.json` を取得する。`HANDOFF_SHA256SUMS.txt` がある新方式では両ファイルのハッシュも検証する（旧方式のZIPにはハッシュ表がない）。本来のmainソース SHA とrun HEADを照合し、schema=2、canonical_repo=kk051780/toy-wars-factory、release_decision=HOLD_ENGINE_UNVERIFIED、source_revision の40桁hex、main祖先関係、以後の変更がstatus/のみを別途検証する。不在・失敗・古いrun・不一致・不確証はUNTRUSTED_STALEとして破棄。監査の20分間隔はGitHubの起動保証ではない。この方法は読取りだけで `contents: write` を必要とせず、コードの書込み・本番許可を付与しない。
+
 補助的なread-modelが必要な場合だけ、twf-handoff-snapshots の status/CHAT_HANDOFF.md と status/LATEST_STATE.json を**同一不変commit SHA**から読む。schema=2、canonical_repo=kk051780/toy-wars-factory、release_decision=HOLD_ENGINE_UNVERIFIED、40桁hexのsource_revisionを検査し、GitHub compareで現在mainに対する祖先性とsource_revision以降の変更が status/ のみであることを独立確認する。twf-handoff-snapshots-g0002以降も世代連続性・全祖先の2つの100644通常ファイル・512個以下の直列履歴・孤立rootのprior-snapshot-tip連鎖を検証する。欠落・不一致・不確証時はUNTRUSTED_STALEとして破棄し、main/PR/CIから直接再構成する。スナップショットは承認・権限・実機検証・公開許可の根拠ではない。
 
 同じChatGPTプロジェクト内の新しいチャットで「TOY WARS再開」の一言を送れば、AIは上記の状態取得から始める。古いチャットの記憶や添付よりGitHubの現物を優先する。

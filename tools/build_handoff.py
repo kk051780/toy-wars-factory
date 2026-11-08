@@ -142,6 +142,7 @@ def main():
         fields.append("- mainの実装と未マージPRの提案を合算しない。Geminiの成果と別の修正を区別する。")
     fields+=["","## 新しいチャットでAIが必ず行う引き継ぎ手順",
       "1. まずGitHubの現在main HEAD、AGENTS.md、PROJECT_STATE.json、config/quality_policy.json、最新PR/CIを読む。mainがコード・方針の正本。",
+      "読取り専用の別経路: 成功したmainのhandoff-sync GitHub Actions runの toy-wars-handoff 成果物を同じrunから取得できる場合、ZIPの2つのstatusデータと任意のSHA256 manifestを検証。schema=2、canonical_repo、HOLD_ENGINE_UNVERIFIED、source_revisionとmain compareでstatus/以外の差が無いことまで確認。失敗・期限切れ・不明はUNTRUSTED_STALE。実GitHub書込みトークンは不要。",
       "2. 補助的なtwf-handoff-snapshots/status/CHAT_HANDOFF.mdとstatus/LATEST_STATE.jsonを同一不変commitから取得。schema=2・canonical_repo・HOLD_ENGINE_UNVERIFIED・source_revisionを検証し、GitHub compareでsource_revision以降のmain変更がstatus/のみと証明できない場合UNTRUSTED_STALEとして棄却。512コミット超過時はtwf-handoff-snapshots-g0002等の連続した世代を列挙し、全世代の2ファイル100644/512直列履歴と後続rootのprior-snapshot-tip旧tip連鎖を照合し、最新世代の単一不変SHAを使う。検査不能ならUNTRUSTED_STALE。ブランチ不在ならmainのstatusは古い参考値、現在のmain/PR/CIを直接確認。",
       "3. 正本はGitHub。毎回コード変更と品質証拠、サイズ差分、キャラクター監査、再発防止を積み上げる。",
       "4. 無人AIコード生成・Studio試験・面白さの実測を根拠なしに合格扱いしない。",
