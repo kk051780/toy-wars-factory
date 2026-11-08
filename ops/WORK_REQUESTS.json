@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T02:35:06.296Z",
+  "observed_at": "2026-11-08T02:43:16.133Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5070,27 +5070,28 @@
       "id": "P0_ISSUE123_PR203_ONE_TIME_CONTROLLER_MAINTENANCE_GATE_20261108",
       "kind": "PROTECTED_SINGLE_PR_CONTROLLER_TRUST_ROOT_MAINTENANCE_INDEPENDENT_REVIEW",
       "priority": "P0",
-      "status": "READ_ONLY_INTERRUPTED_SOURCE_RECOVERY_CI_GREEN_HOST_AND_PARALLEL_STILL_UNPROVEN",
+      "status": "REAL_GITHUB_ACTIONS_HOST_READONLY_PROVENANCE_PROVEN_CHATGPT_WRITER_UNATTESTED",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
       "issue": 123,
       "pr": 203,
       "branch": "controller/p0-legacy-shadow-compat-20261108-76116caf",
-      "head": "fb4dc098cea189d968c7ac773e916ae5218aae79",
+      "head": "adec1e1a642371256fe6b8bd790ccb711bc99251",
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "draft": true,
-      "source_owner_epoch": 526,
-      "source_owner_id": "fd7f7f20-23ce-422a-9c29-2749aa438f89",
+      "source_owner_epoch": 527,
+      "source_owner_id": "edbb10e0-8e25-4400-a5e9-037bd338282d",
       "source_owner_release_ref": null,
-      "ci_run_id": 42439033749,
+      "ci_run_id": 42439565754,
       "ci_jobs": {
         "offline": "success",
         "compile_hold": "success"
       },
-      "python_tests": 935,
-      "new_negative_tests": 102,
+      "python_tests": 953,
+      "new_negative_tests": 120,
       "changed_paths": [
+        ".github/workflows/bootstrap-quality.yml",
         "docs/SCOPED_LEASE_MIGRATION_GATE.md",
         "history/C10002_legacy_scoped_compatibility_gate.json",
         "history/C10003_legacy_scoped_merge_guard.json",
@@ -5102,27 +5103,30 @@
         "history/C10010_real_source_action_probe.json",
         "history/C10011_interrupted_source_recovery.json",
         "history/C10012_recovery_reason_metadata_fix.json",
+        "history/C10013_actions_runner_identity_readonly.json",
         "tests/test_legacy_scoped_integration_gate.py",
         "tests/test_legacy_scoped_migration_gate.py",
         "tests/test_legacy_scoped_owner_cleanup.py",
         "tests/test_legacy_scoped_sourcery_regression.py",
+        "tests/test_p0_actions_host_evidence.py",
         "tests/test_repair_action_reservation.py",
         "tests/test_repair_integration.py",
         "tests/test_repair_source_action_fence.py",
         "tests/test_repair_source_action_recovery.py",
+        "tools/p0_actions_host_evidence.py",
         "tools/repair_action_reservation.py",
         "tools/repair_control.py",
         "tools/repair_integration.py",
         "tools/repair_source_action_fence.py"
       ],
-      "changed_files": 23,
+      "changed_files": 27,
       "created_at": "2026-11-08T00:44:22.697Z",
-      "updated_at": "2026-11-08T02:35:06.296Z",
+      "updated_at": "2026-11-08T02:43:16.133Z",
       "source": "LIVE_GITHUB_PR_CI_COORDINATOR_READBACK_MANUAL_CONTROLLER_INTAKE",
       "normal_integration_decision": "SKIP_UNRELATED_FOR_CONTROLLER_BRANCH",
       "normal_integration_reason": "accepted main repair_integration.decide only admits signed registered WORKER or META prefixes; never impersonate those identities, never globally broaden allowed prefixes",
       "exception_route": "ONE_TIME_EXPLICIT_P0_CONTROLLER_MAINTENANCE_MODEL_PER_HISTORICAL_PR75_ONLY_AFTER_SEPARATE_REVIEWER_AUTHENTICATION_AND_FRESH_HOST_CHECKS",
-      "review_request": "REGISTERED REVIEWER: fetch PR203 current exact head fb4dc098cea189d968c7ac773e916ae5218aae79, hosted Actions #42439033749 offline/compile_hold success Python935, all 23 changed paths, new interrupted source read-only classification and 20 new tests, check old-head DO NOT RETRY and after-head reconcile candidate no actual write authority. Note failed intermediate HEAD 6606bd81 CI #42438900451 fixed by distinct code/reason args. Independently check coordinator epoch526 release and prior epoch525 actual single-source CAS; NO registered host identity/old-runner drain/real two GPT writer proof/approved merge. Preserve HOLD.",
+      "review_request": "REGISTERED INDEPENDENT REVIEWER: re-fetch PR203 exact head adec1e1a642371256fe6b8bd790ccb711bc99251, real hosted Actions run #42439565754 offline/compile_hold both success; Python953/953; GitHub runner read-only validation step confirmed original run/attempt/actor/PR refs against live REST API and artifact ID13600564706. Review 27 PR changed files and new workflow permission scopes actions/read + pull-requests/read (no write), checkout, exact host PR number guard, fixed GitHub API URL, non-disclosure; check possible untrusted PR workflow runner risks. This does NOT authenticate any registered ChatGPT WORKER, previous checkout fleet, or write permission (#57). No merge or scoped v2; original production atomic host action and two actual independent writers remain unresolved. Confirm coordinator epoch527 release readback and durable queue.",
       "must_not": [
         "AUTHOR_SELF_APPROVE",
         "IMPERSONATE_WORKER_OR_META_BRANCH",
@@ -5151,7 +5155,7 @@
       "real_parallel_writers_verified": false,
       "automatic_chat_recovery_verified": false,
       "additional_spend_yen": 0,
-      "next_actor": "REGISTERED_INDEPENDENT_REVIEWER_AND_TRUSTED_HOST_ACTOR_ADAPTER",
+      "next_actor": "REGISTERED_REVIEWER_EXACT_HEAD_AND_HOST_WRITER_CAPABILITY_AUTHORIZATION",
       "sourcery_review": {
         "reviewed_head": "1d2f3a4c8d4dc6b9ac9335fdc3c9520226ee2527",
         "engine": "sourcery-ai",
@@ -5170,11 +5174,11 @@
           "HIGH: actual write/merge atomic coordinator fence and old-runner drain"
         ],
         "new_head": "5e8fa180bc0d12543adae616daa429e62c113086",
-        "exact_head_ci_run_id": 42439033749,
+        "exact_head_ci_run_id": 42439565754,
         "last_sourcery_reviewed_head": "5e8fa180bc0d12543adae616daa429e62c113086",
-        "latest_source_head_requires_fresh_review": "fb4dc098cea189d968c7ac773e916ae5218aae79"
+        "latest_source_head_requires_fresh_review": "adec1e1a642371256fe6b8bd790ccb711bc99251"
       },
-      "review_packet_path": "ops/review_packets/PR203_p0_interrupted_chat_recovery_epoch526.json",
+      "review_packet_path": "ops/review_packets/PR203_p0_real_actions_host_readonly_epoch527.json",
       "prior_exact_head_evidence": {
         "head": "1d2f3a4c8d4dc6b9ac9335fdc3c9520226ee2527",
         "ci_run_id": 42429957240,
@@ -5190,9 +5194,9 @@
         "review_packet_path": "ops/review_packets/PR203_p0_sourcery_followup_epoch520.json"
       },
       "action_fence_current": {
-        "kind": "REAL_CONNECTED_GITHUB_MANUAL_SINGLE_SOURCE_OPERATION",
-        "head": "fb4dc098cea189d968c7ac773e916ae5218aae79",
-        "ci_run_id": 42439033749,
+        "kind": "GITHUB_ACTIONS_HOST_RUN_PR_IDENTITY_READONLY_VERIFIED",
+        "head": "adec1e1a642371256fe6b8bd790ccb711bc99251",
+        "ci_run_id": 42439565754,
         "proof": {
           "action_id": "7c2b40e1-6bca-43b6-a49c-27cf3e7a23b8",
           "controller_epoch": 525,
@@ -5205,7 +5209,7 @@
           "force": false,
           "expected_sha_used": true
         },
-        "release_status": "RELEASED_IN_SAME_COMMIT_VERIFY_LIVE_REF",
+        "release_status": "RELEASED_SAME_COORD_COMMIT_VERIFY_LIVE_REF",
         "registered_host_attestation": false,
         "production_host_action_cas_verified": false,
         "old_runner_drain_verified": false,
@@ -5221,7 +5225,31 @@
         "failed_intermediate_ci": 42438900451,
         "fail_fixed_current_ci": 42439033749,
         "epoch": 526,
-        "issue_checkpoint": 6716230669
+        "issue_checkpoint": 6716230669,
+        "hosted_run": 42439565754,
+        "python_tests": 953,
+        "offline": "success",
+        "compile_hold": "success",
+        "evidence_artifact_id": 13600564706,
+        "evidence_artifact_name": "twf-p0-actions-host-readonly",
+        "github_actions_pr_identity_matched": true,
+        "origin": "GITHUB_ACTIONS_API_READONLY",
+        "token_emitted": false,
+        "github_api_write_attempt": false,
+        "github_workflow_permissions": {
+          "contents": "read",
+          "actions": "read",
+          "pull-requests": "read"
+        },
+        "chatgpt_task_authenticated": false,
+        "unattended_github_write_proven": false,
+        "old_runner_fleet_drained": false,
+        "host_action_toctou_fixed": false,
+        "actual_two_gpt_parallel": false,
+        "independent_review_approved": false,
+        "issue_comment": 6716300290,
+        "pr_comment": 6716300931,
+        "owner_epoch": 527
       },
       "prior_epoch523_checkpoint": {
         "head": "dbdc21845bd974547522ef202660cd6a0e2f67df",
@@ -5231,7 +5259,7 @@
         "release_ref": "4a54e42279f0875bad8ab5fc14d8221275ce6fe4",
         "review_packet_path": "ops/review_packets/PR203_p0_action_fence_hold_epoch523.json"
       },
-      "source_owner_release_status": "RELEASED_IN_SAME_EXACT_EXPECTED_PARENT_COMMIT_VERIFY_LIVE_REF",
+      "source_owner_release_status": "RELEASED_SAME_CHECKPOINT_COMMIT_VERIFY_LIVE_REF",
       "prior_epoch524_checkpoint": {
         "head": "330a5b6578b6e6db7b117092bc817768fe49a56a",
         "ci_run_id": 42436735797,
@@ -5244,6 +5272,13 @@
         "ci_run_id": 42437687685,
         "python_tests": 915,
         "review_packet_path": "ops/review_packets/PR203_p0_live_source_probe_epoch525.json"
+      },
+      "prior_epoch526_checkpoint": {
+        "head": "fb4dc098cea189d968c7ac773e916ae5218aae79",
+        "ci_run_id": 42439033749,
+        "python_tests": 935,
+        "release_ref": "490989b2004ab4216c982cc6599af76bdbd6ef7a",
+        "review_packet_path": "ops/review_packets/PR203_p0_interrupted_chat_recovery_epoch526.json"
       }
     }
   ]
