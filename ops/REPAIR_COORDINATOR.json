@@ -2052,17 +2052,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 553,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "83e715d0-1d91-48a1-bbcc-f12fa9202130",
-    "task_id": null,
-    "epoch": 553,
-    "acquired_at": "2026-11-08T10:22:02.927Z",
-    "expires_at": "2026-11-08T10:52:02.927Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0d-route-a-prototype-20261108-83e715d0",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3706,21 +3696,18 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_P0B_PR209_R4_HUD_TWO_RACES_UBUNTU_CI_PASS",
-    "work_id": "P0B_REMOTE_R4_20261108_PR209_PROTECTED_CI_A",
-    "epoch": 543,
-    "owner_id": "d73ce86f-75df-4700-82e9-26f4c45e1628",
-    "claim_commit": "4ceb3fa6ddeae310647ea685f4fdc856c0dccba1",
-    "head": "bd78ae0a3bef6a35d5be5726fdb3a93fc9a46e90",
-    "pr": 209,
-    "ci_run": 42454017149,
-    "python_tests": 927,
-    "xml_tests": 31,
-    "review_packet_path": "ops/review_packets/PR209_r4_hud_2races_epoch543.json",
-    "independent_review": false,
+    "kind": "CONTROLLER_P0D_ROUTE_A_DRAFT_SOURCE_ONLY",
+    "owner_id": "83e715d0-1d91-48a1-bbcc-f12fa9202130",
+    "epoch": 553,
+    "work_id": "P0D_ISSUE213_ROUTE_A_PROTOTYPE_20261108_83E715D0",
+    "pr": 214,
+    "head": "83a2b253c9c36c7e02be6eed0ac0163a6e746847",
     "main_merged": false,
-    "engine_verified": false,
-    "released_at": "2026-11-08T06:17:58Z",
+    "independent_review": false,
+    "studio_verified": false,
+    "ci_verified": false,
+    "source_files": 3,
+    "released_at": "2026-11-08T10:25:24.958Z",
     "service_terminal_proof": false
   },
   "last_completed_integration": {
@@ -4183,6 +4170,24 @@
       "service_terminal_proof": false,
       "additional_spend_jpy": 0,
       "released_at": "2026-11-08T04:30:28.507Z"
+    },
+    {
+      "kind": "CONTROLLER_P0B_PR209_R4_HUD_TWO_RACES_UBUNTU_CI_PASS",
+      "work_id": "P0B_REMOTE_R4_20261108_PR209_PROTECTED_CI_A",
+      "epoch": 543,
+      "owner_id": "d73ce86f-75df-4700-82e9-26f4c45e1628",
+      "claim_commit": "4ceb3fa6ddeae310647ea685f4fdc856c0dccba1",
+      "head": "bd78ae0a3bef6a35d5be5726fdb3a93fc9a46e90",
+      "pr": 209,
+      "ci_run": 42454017149,
+      "python_tests": 927,
+      "xml_tests": 31,
+      "review_packet_path": "ops/review_packets/PR209_r4_hud_2races_epoch543.json",
+      "independent_review": false,
+      "main_merged": false,
+      "engine_verified": false,
+      "released_at": "2026-11-08T06:17:58Z",
+      "service_terminal_proof": false
     }
   ]
 }
