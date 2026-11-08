@@ -102,35 +102,40 @@ class PartialWriteDiagnostics(unittest.TestCase):
     def test_ambiguous_first_dispatch_reports_one_attempt(self):
         h = Host(fail_at=1)
         with self.assertRaisesRegex(p.ProbeError,
-             '^GITHUB_TRANSPORT_FAILED__SOURCE_MUTATIONS_ATTEMPTED_1__PARTIAL_WRITE_POSSIBLE$'):
+             '^GITHUB_TRANSPORT_FAILED__SOURCE_MUTATIONS_ATTEMPTED_1__PARTIAL_WRITE_POSSIBLE__SOURCE_ACTION_UNRESOLVED_NO_RELEASE$'):
             h.execute()
         self.assertEqual(h.dispatched, [('POST', '/git/refs')])
-        self.assertEqual(h.release_count, 1)
+        self.assertEqual(h.release_count, 0)
+        self.assertEqual(h.cas_count, 1)
 
     def test_ambiguous_second_dispatch_keeps_evidence_and_never_retries(self):
         h = Host(fail_at=2)
         with self.assertRaisesRegex(p.ProbeError,
-             '^GITHUB_TRANSPORT_FAILED__SOURCE_MUTATIONS_ATTEMPTED_2__PARTIAL_WRITE_POSSIBLE$'):
+             '^GITHUB_TRANSPORT_FAILED__SOURCE_MUTATIONS_ATTEMPTED_2__PARTIAL_WRITE_POSSIBLE__SOURCE_ACTION_UNRESOLVED_NO_RELEASE$'):
             h.execute()
         self.assertEqual(len(h.dispatched), 2)
         self.assertEqual(h.dispatched[1][0], 'PUT')
-        self.assertEqual(h.release_count, 1)
+        self.assertEqual(h.release_count, 0)
+        self.assertEqual(h.cas_count, 1)
 
     def test_failed_pr_create_reports_three_attempts_no_cleanup_mutation(self):
         h = Host(fail_at=3)
         with self.assertRaisesRegex(p.ProbeError,
-             '^GITHUB_TRANSPORT_FAILED__SOURCE_MUTATIONS_ATTEMPTED_3__PARTIAL_WRITE_POSSIBLE$'):
+             '^GITHUB_TRANSPORT_FAILED__SOURCE_MUTATIONS_ATTEMPTED_3__PARTIAL_WRITE_POSSIBLE__SOURCE_ACTION_UNRESOLVED_NO_RELEASE$'):
             h.execute()
         self.assertEqual(h.dispatched[-1], ('POST', '/pulls'))
         self.assertEqual(len(h.dispatched), 3)
-        self.assertEqual(h.release_count, 1)
+        self.assertEqual(h.release_count, 0)
+        self.assertEqual(h.cas_count, 1)
 
-    def test_cleanup_error_retains_attempt_count_and_primary_error(self):
+    def test_ambiguous_write_skips_cleanup_cas_even_if_cleanup_would_fail(self):
         h = Host(fail_at=2, cleanup_fail=True)
         with self.assertRaisesRegex(p.ProbeError,
-             '^GITHUB_TRANSPORT_FAILED__SOURCE_MUTATIONS_ATTEMPTED_2__PARTIAL_WRITE_POSSIBLE__RELEASE_UNCONFIRMED$'):
+             '^GITHUB_TRANSPORT_FAILED__SOURCE_MUTATIONS_ATTEMPTED_2__PARTIAL_WRITE_POSSIBLE__SOURCE_ACTION_UNRESOLVED_NO_RELEASE$'):
             h.execute()
         self.assertEqual(len(h.dispatched), 2)
+        self.assertEqual(h.release_count, 0)
+        self.assertEqual(h.cas_count, 1)
 
     def test_successful_branch_only_probe_has_no_error_marker(self):
         h = Host(mode='BRANCH_ONLY')

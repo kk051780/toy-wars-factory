@@ -449,6 +449,7 @@ def run(api, env):
     staged_only = False
     failure = None
     source_mutations_attempted = 0
+    source_verified = False
     # Start cleanup BEFORE attempting the remote claim. An unacknowledged PATCH
     # may have written our lease even when cas_state fails during readback.
     try:
@@ -477,6 +478,7 @@ def run(api, env):
             staged_only = True
         else:
             verify_created_probe(api,scope,pr)
+        source_verified = True
     except ProbeError as exc:
         failure = str(exc)
         if source_mutations_attempted:
@@ -486,6 +488,11 @@ def run(api, env):
     finally:
         cleanup_error = None
         try:
+            # Once source mutation is sent, the lost response may precede a
+            # delayed GitHub commit. Never unlock before terminal settlement.
+            # The pending action must be reconciled by an authenticated owner.
+            if source_mutations_attempted and not source_verified:
+                raise ProbeError("SOURCE_ACTION_UNRESOLVED_NO_RELEASE")
             current=sha_ref(api,CONTROL_REF)
             st=state_at(api,current)
             if owns(st,"CONTROLLER",scope["owner"],epoch,now()):
@@ -498,8 +505,10 @@ def run(api, env):
                 cleanup_error = "RELEASE_NOT_OWNED"
             # If claim failed and we do NOT own the current ref, do not write.
             # Report the original claim failure, never claim a successful run.
-        except ProbeError:
-            cleanup_error = "RELEASE_UNCONFIRMED"
+        except ProbeError as exc:
+            cleanup_error = ("SOURCE_ACTION_UNRESOLVED_NO_RELEASE"
+                             if str(exc) == "SOURCE_ACTION_UNRESOLVED_NO_RELEASE"
+                             else "RELEASE_UNCONFIRMED")
         if cleanup_error:
             # Preserve a sanitized primary error and independent cleanup status.
             # No retry, foreign lease release, or exception traceback is exposed.
