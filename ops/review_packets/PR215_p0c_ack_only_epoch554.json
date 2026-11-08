@@ -8,7 +8,7 @@
   "parent_pr": 212,
   "grandparent_pr": 211,
   "parent_head_at_creation": "06da67921b75371e0f955d00ef4d2b71708fc328",
-  "head": "0115d9579a1f3f95fcc6fac20e69a4d7ae90f48c",
+  "head": "eba2cd8e2e74c5639b51d442f9d719430bc80fd4",
   "branch": "controller/p0c-readonly-ack-protocol-20261108-b3e2796c",
   "author_epoch": 554,
   "author_owner_id": "b3e2796c-1acc-42b9-b5a6-734156e44ff0",
@@ -43,7 +43,7 @@
     "host_attested": false,
     "main_merged": false
   },
-  "review_request": "Review latest head 0115d957..., parent PR212 HEAD 06da679..., original PR211 5b62ba5 and exact CI run42473318005; require source-fetch GET from trusted endpoint and no GET/POST before auth; source_fetcher must never be caller-provided in production. Distinguish GitHub source metadata from PC-origin authenticated proof.",
+  "review_request": "Independent review PR215 exact HEAD eba2cd8e2e74c5639b51d442f9d719430bc80fd4 and raw GitHub run #42482472597; test source provider genuine GET and POST override not publicly injectable, no owner auth, no Windows ACK, no global idempotence. Old head CI 964 not reused.",
   "limitations": [
     "source uses Python; host Python installation NOT VERIFIED",
     "GitHub issue comments API no idempotent POST; no retries or exactly-once proof",
@@ -77,13 +77,31 @@
       },
       "review_required": true,
       "recorded_at": "2026-11-08T10:54:49.166Z"
+    },
+    {
+      "kind": "C3D_PUBLIC_SOURCE_AND_TRANSPORT_INJECTION_REMOVED",
+      "previous_head": "0115d9579a1f3f95fcc6fac20e69a4d7ae90f48c",
+      "new_head": "eba2cd8e2e74c5639b51d442f9d719430bc80fd4",
+      "ci_run": 42482472597,
+      "python_passed": 967,
+      "ack_tests": 22,
+      "added_tests": 3,
+      "security": "No caller supplied source_fetcher/transport accepted by post_ack_only_once. Fixed GitHub REST GET & no-redirect POST; mock patch only in unit test runtime. Does not authenticate owner PC or ensure exactly-once, no deployed receiver.",
+      "changed_paths": [
+        "tools/system_p0c_ack_only.py",
+        "tests/test_system_p0c_ack_only.py",
+        "docs/QA_P0C_ACK_ONLY_PROTOCOL.md"
+      ],
+      "windows_manual_auth_diagnostic": "V3 tool prepared by prior chat but result still unknown; no token provided or checked",
+      "review_required": true,
+      "recorded_at": "2026-11-08T12:56:41.806Z"
     }
   ],
   "actual_ci": {
-    "run_id": 42473318005,
+    "run_id": 42482472597,
     "offline": "success",
     "compile_hold": "success",
-    "python_passed": 964,
-    "ack_new_tests": 19
+    "python_passed": 967,
+    "ack_new_tests": 22
   }
 }

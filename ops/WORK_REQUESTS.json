@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T10:54:49.166Z",
+  "observed_at": "2026-11-08T12:56:41.806Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5904,29 +5904,32 @@
       "pr": 215,
       "parent_pr": 212,
       "branch": "controller/p0c-readonly-ack-protocol-20261108-b3e2796c",
-      "head": "0115d9579a1f3f95fcc6fac20e69a4d7ae90f48c",
+      "head": "eba2cd8e2e74c5639b51d442f9d719430bc80fd4",
       "draft": true,
       "source_owner_id": "b3e2796c-1acc-42b9-b5a6-734156e44ff0",
       "source_owner_epoch": 554,
-      "status": "OPEN_C3C_GITHUB_SOURCE_REFETCH_CI964_SUCCESS_INDEPENDENT_REVIEW_REQUIRED",
+      "status": "OPEN_C3D_NO_INJECTABLE_SOURCE_OR_TRANSPORT_CI967_REVIEW_REQUIRED",
       "assigned_role": "REVIEWER",
       "independent_reviewed": false,
-      "ci_run_id": 42473318005,
+      "ci_run_id": 42482472597,
       "ci_jobs": {
         "offline": "success",
         "compile_hold": "success"
       },
-      "python_tests": 964,
-      "ack_tests": 19,
+      "python_tests": 967,
+      "ack_tests": 22,
       "review_packet_path": "ops/review_packets/PR215_p0c_ack_only_epoch554.json",
       "windows_ack_post_verified": false,
       "pc_receiver_installed": false,
       "codex_execution_authorized": false,
-      "next_actor": "Independent REVIEWER reGET exact PR215 HEAD and raw CI 964, audit source_fetcher default pinned GitHub GET, caller spoof, token/owner opt-in, no producer ACK proof, ambiguous POST idempotency; no windows install/permissions until separate host consent",
+      "next_actor": "Separate authenticated reviewer current exact PR215 head eba2cd8 and CI #42482472597; verify no source_fetcher/transport kwargs, patched tests only; check token least-privilege and non-idempotent GitHub POST unresolved. Actual Windows gh auth V3 result is not yet supplied.",
       "created_at": "2026-11-08T10:33:35.238Z",
       "last_updated_at": "2026-11-08T10:44:52.379Z",
-      "previous_head": "1e08bdfb5e4b28b51e8dd637c0c87bf5626abcaf",
-      "updated_at": "2026-11-08T10:54:49.166Z"
+      "previous_head": "0115d9579a1f3f95fcc6fac20e69a4d7ae90f48c",
+      "updated_at": "2026-11-08T12:56:41.806Z",
+      "owner_pc_auth_verified": false,
+      "source_injection_allowed": false,
+      "transport_injection_allowed": false
     }
   ]
 }

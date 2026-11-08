@@ -2022,6 +2022,28 @@
       "main_merged": false,
       "additional_spend_jpy": 0,
       "recorded_at": "2026-11-08T10:54:49.166Z"
+    },
+    {
+      "kind": "P0C_C3D_PRODUCTION_ACK_INJECTION_BYPASS_REMOVED",
+      "work_id": "P0C_WINDOWS_GITHUB_ACK_ONLY_C3A_20261108_C",
+      "epoch": 560,
+      "owner_id": "47c2dc7d-0278-48ee-a728-0373adab027a",
+      "issue": 204,
+      "pr": 215,
+      "parent_pr": 212,
+      "head": "eba2cd8e2e74c5639b51d442f9d719430bc80fd4",
+      "previous_head": "0115d9579a1f3f95fcc6fac20e69a4d7ae90f48c",
+      "ci_run": 42482472597,
+      "python_tests": 967,
+      "ack_tests": 22,
+      "added_tests": 3,
+      "review_packet_path": "ops/review_packets/PR215_p0c_ack_only_epoch554.json",
+      "pc_ack_post": false,
+      "owner_gh_auth_unknown": true,
+      "codex_calls": 0,
+      "main_merged": false,
+      "additional_spend_jpy": 0,
+      "recorded_at": "2026-11-08T12:56:41.806Z"
     }
   ],
   "controller_maintenance": {
@@ -2107,17 +2129,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 560,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "47c2dc7d-0278-48ee-a728-0373adab027a",
-    "task_id": null,
-    "epoch": 560,
-    "acquired_at": "2026-11-08T12:52:52.904Z",
-    "expires_at": "2026-11-08T13:12:52.904Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0c-readonly-ack-protocol-20261108-b3e2796c",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
