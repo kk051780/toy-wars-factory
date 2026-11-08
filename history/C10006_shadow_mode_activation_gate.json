@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "id": "C10006",
+  "kind": "P0_SCOPED_SHADOW_EXPLICIT_MIGRATION_ADMISSION_FENCE",
+  "issue": 123,
+  "pr": 201,
+  "repository": "kk051780/toy-wars-factory",
+  "base_candidate_head": "1721773bf94ec932d86446c4048145df4bc2243d",
+  "coordination": {
+    "epoch": 521,
+    "owner_id": "e2d12b4a-62cf-4f0a-8477-ce5e63a194a2",
+    "work_branch": "controller/p0-scoped-lease-shadow-20261108-9386a221"
+  },
+  "modified": [
+    "tools/system_parallel_shadow_leases.py",
+    "tests/test_system_parallel_shadow_leases.py"
+  ],
+  "added": [
+    "history/C10006_shadow_mode_activation_gate.json"
+  ],
+  "semantics": "Advisory shadow claims rejected absent explicit SCOPED_ACTIVE, including LEGACY_ONLY and unknown mode, with pre-CAS recheck. No host write grant. Registration alone does not prove legacy runner drained.",
+  "new_regression_tests": 6,
+  "auth_attested": false,
+  "real_parallel": false,
+  "main_merged": false,
+  "no_additional_spending": true
+}
