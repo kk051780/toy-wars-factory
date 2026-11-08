@@ -1923,8 +1923,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 520,
-  "holder": null,
+  "epoch": 521,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 521,
+    "owner_id": "e2d12b4a-62cf-4f0a-8477-ce5e63a194a2",
+    "task_id": null,
+    "acquired_at": "2026-11-08T01:17:13.144Z",
+    "expires_at": "2026-11-08T01:39:13.144Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/p0-scoped-lease-shadow-20261108-9386a221",
+    "scope": "P0 issue123 PR201 shadow 2-writer candidate: refuse claim & apply_once unless SCOPED_ACTIVE, preserve release/false may_write. Add regressions/CI, no v2 live/merge/main direct changes; note PR202 parent drift."
+  },
   "integration_results": {
     "35": {
       "merged": true,
