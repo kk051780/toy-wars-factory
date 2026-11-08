@@ -7,19 +7,19 @@
   "pr": 212,
   "parent_pr": 211,
   "parent_exact_head": "5b62ba5163e11cd9e7e3d63923bf219c5863cde9",
-  "head": "da9e5c3ec01c6e4465a1cac92043b3647a9ea7d9",
+  "head": "06da67921b75371e0f955d00ef4d2b71708fc328",
   "base_branch": "controller/p0c-readonly-intake-20261108-4ac8192f",
   "source_branch": "controller/p0c-windows-receive-once-20261108-b527e773",
   "author_epoch": 545,
   "author_owner_id": "b527e773-97b5-45e9-9c2e-71c209ab45c7",
   "actual_ci": {
-    "run_id": 42462501202,
+    "run_id": 42464625904,
     "offline": "success",
     "compile_hold": "success",
-    "python_passed": 941,
+    "python_passed": 945,
     "new_win_receipt_tests": 27,
-    "new_scan_tests": 36,
-    "new_sqlite_receipt_tests": 20
+    "new_scan_tests": 38,
+    "new_sqlite_receipt_tests": 22
   },
   "changed_paths": [
     "tools/system_p0c_windows_receive_once.py",
@@ -44,9 +44,12 @@
     "pc_receiver_installed": false,
     "main_merged": false,
     "roblox_published": false,
-    "local_receipt_candidate_only": true
+    "local_receipt_candidate_only": true,
+    "windows_sqlite_ledger_enabled": false,
+    "chat_to_github_ping_verified": true,
+    "github_to_windows_receipt_verified": false
   },
-  "review_request": "Review current exact PR212 head da9e5c3 and raw CI941; audit SQLite path/symlinks/atomicity, fail-closed status and replay under crashes/races, optional scanner wiring, owner auth still absent, PRIVATE/PUBLIC credential handling. Distinct authenticated review required.",
+  "review_request": "Independently audit PR212 exact HEAD 06da679... after audit #6719262373. Verify Windows path writes blocked before GET/local open, no-ledger GET remains usable, actual owner execution auth absent, GH API PING result only proves sender half. Exact CI run 42464625904 log 945.",
   "additional_spend_jpy": 0,
   "created_at": "2026-11-08T06:58:37.706Z",
   "revisions": [
@@ -114,6 +117,40 @@
       "guards": "SQLite BEGIN IMMEDIATE / UNIQUE work_id, nonce, comment_id; repeat same-host blocked. Explicit filepath only; no PC process, no CodeX, no Studio, no owner auth, no remote action. Local DB path may be unsafe or modified; host-side test not done.",
       "review_status": "REQUEST_CHANGES_ADVISORY_RECHECK_REQUIRED",
       "recorded_at": "2026-11-08T08:22:01.518Z"
+    },
+    {
+      "kind": "C2E_SAFE_WINDOWS_LEDGER_HOLD_AND_LIVE_CHATGPT_TO_GITHUB_PING",
+      "previous_head": "da9e5c3ec01c6e4465a1cac92043b3647a9ea7d9",
+      "new_head": "06da67921b75371e0f955d00ef4d2b71708fc328",
+      "ci_run": 42464625904,
+      "offline": "success",
+      "compile_hold": "success",
+      "python_passed": 945,
+      "added_regressions": 4,
+      "audit_source": "https://github.com/kk051780/toy-wars-factory/issues/204#issuecomment-6719262373",
+      "change_paths": [
+        "tools/system_p0c_readonly_receipt_ledger.py",
+        "tools/system_p0c_windows_scan_once.py",
+        "tests/test_system_p0c_readonly_receipt_ledger.py",
+        "tests/test_system_p0c_windows_scan_once.py",
+        "docs/QA_P0C_ONE_SHOT_LEDGER_INTEGRATION.md",
+        "docs/QA_P0C_WINDOWS_LEDGER_HOLD.md"
+      ],
+      "security": "Fail-closed Windows local SQLite path writes at CLI BEFORE network and at library BEFORE file open, responding to ACL/junction/reparse/TOCTOU review; Linux test DB remains prototype only. No PC process deployed, no Codex invoked.",
+      "live_ping": {
+        "id": 6719485219,
+        "created_at": "2026-11-08T08:52:15Z",
+        "expires_at": "2026-11-08T09:01:07Z",
+        "github_api_since_page1_found": true,
+        "owner_login": "kk051780",
+        "connector_slug": "chatgpt-codex-connector",
+        "body_exact": true,
+        "pc_delivery": false,
+        "owner_execution_auth": false
+      },
+      "future": "Owner-approved no-ledger Windows one-shot receive (no installation until review) then formal authentic receiver with protected CAS; cannot silently run Codex.",
+      "registered_independent_reviewer_required": true,
+      "created_at": "2026-11-08T08:53:25.445Z"
     }
   ]
 }

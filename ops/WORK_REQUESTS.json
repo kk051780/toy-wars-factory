@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T08:22:01.518Z",
+  "observed_at": "2026-11-08T08:53:25.445Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5785,27 +5785,27 @@
       "parent_pr": 211,
       "parent_exact_head": "5b62ba5163e11cd9e7e3d63923bf219c5863cde9",
       "branch": "controller/p0c-windows-receive-once-20261108-b527e773",
-      "head": "da9e5c3ec01c6e4465a1cac92043b3647a9ea7d9",
+      "head": "06da67921b75371e0f955d00ef4d2b71708fc328",
       "draft": true,
       "source_owner_epoch": 545,
       "source_owner_id": "b527e773-97b5-45e9-9c2e-71c209ab45c7",
-      "status": "OPEN_C2D_SQLITE_RECEIPT_941_GREEN_DISTINCT_SECURITY_REVIEW_REQUIRED",
-      "ci_run_id": 42462501202,
+      "status": "OPEN_C2E_GITHUB_PING_SENT_CI945_WINDOWS_SQLITE_DISABLED_INDEPENDENT_REVIEW_REQUIRED",
+      "ci_run_id": 42464625904,
       "ci_jobs": {
         "offline": "success",
         "compile_hold": "success"
       },
-      "python_tests": 941,
+      "python_tests": 945,
       "new_negative_tests": 83,
       "review_packet_path": "ops/review_packets/PR212_p0c_windows_once_epoch545.json",
       "assigned_role": "REVIEWER",
       "independent_reviewed": false,
       "pc_receiver_installed": false,
       "main_merged": false,
-      "next_actor": "Distinct authenticated security REVIEWER re-inspect exact PR212 HEAD da9e5c... and CI #42462501202; then owner opt-in single Windows read-only scan+SQLite receipt. No live Codex auto relay.",
+      "next_actor": "Independent registered security review current PR212 exact head and CI945; real Windows no-ledger single read-only receipt requires host opt-in. New PING after expiry; no Codex/autostart/service.",
       "created_at": "2026-11-08T06:58:37.706Z",
-      "previous_head": "b5b0e0982141f072172e0c3450f4e47d5e28be57",
-      "updated_at": "2026-11-08T08:22:01.518Z",
+      "previous_head": "da9e5c3ec01c6e4465a1cac92043b3647a9ea7d9",
+      "updated_at": "2026-11-08T08:53:25.445Z",
       "changed_paths": [
         "tools/system_p0c_windows_receive_once.py",
         "tools/system_p0c_windows_scan_once.py",
@@ -5822,7 +5822,15 @@
       "windows_service_installed": false,
       "codex_execution_authorized": false,
       "cryptographic_owner_authorization": false,
-      "distributed_cas_replay_verified": false
+      "distributed_cas_replay_verified": false,
+      "windows_sqlite_ledger_enabled": false,
+      "windows_sqlite_write_blocked": true,
+      "windows_receiver_installed": false,
+      "actual_windows_readonly_receipt_verified": false,
+      "chat_to_github_ping_verified": true,
+      "ping_comment_id": 6719485219,
+      "ping_comment_url": "https://github.com/kk051780/toy-wars-factory/issues/204#issuecomment-6719485219",
+      "ping_expires_at": "2026-11-08T09:01:07Z"
     }
   ]
 }
