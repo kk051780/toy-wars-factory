@@ -15,3 +15,8 @@ The separate post_ack_only_once() function is a proof-of-concept *potential* Git
 Tests: tests/test_system_p0c_ack_only.py uses fake transport and pinned 2026-11-08 live-PING fixtures; all offline. No effect on game code. The candidate is designed for independent reviewer evaluation, then a separate OWNER-approved least-privilege Windows identity/transport test. Windows is currently known to have PowerShell V2; availability of Python on the PC is unknown. This is a source protocol, not an end-user installer.
 
 Codex remains a quota-limited bridge for actual Studio-only operations; no changes in the user-approved security gates. No merge, publish or additional charge.
+
+
+## C3C security remediation (2026-11-08)
+The source of a returned ACK must be the GitHub REST comment endpoint, never the untrusted caller-supplied comment dictionary. In the gated POST candidate, after explicit opt-in and approved token preflight but before POST, a fixed GitHub GET `fetch_comment_once(source_comment_id)` is now mandatory by default. The fetched GitHub comment must have the same ID and body as the caller-selected comment; strict `examine_comment` checks canonical source URLs, actor/app metadata and short TTL against the re-fetched record. Fetch failure, changed content or expired original message blocks before any POST. The injected `source_fetcher` exists only for offline fixture tests and must not be supplied by a real caller.
+This strengthens source integrity but does NOT authenticate Windows host or original owner execution permission. It does NOT provide exactly-once POST, GitHub write-credential provenance or a Windows runtime. No new Windows GitHub credential was requested or used.

@@ -13,6 +13,7 @@ from urllib.request import Request, build_opener, HTTPRedirectHandler
 
 from tools.system_p0c_windows_receive_once import (
     HOST, REPO, ISSUE, PREFIX, _no_duplicates, examine_comment,
+    fetch_comment_once,
 )
 
 ROOT = "https://api.github.com/repos/" + REPO
@@ -51,7 +52,7 @@ def make_ack_only(comment, *, now_utc, observed_host, expected_main_sha):
         result = {
             "schema": 1, "kind": "UNATTESTED_PING_RECEIPT_CANDIDATE_NO_EXECUTION",
             "repo": REPO, "source_issue": ISSUE,
-            "source_comment_id": comment["id"],
+            "source_comment_id": source["id"],
             "work_id": data["work_id"], "host_claim": HOST,
             "pinned_main_sha": expected_main_sha,
             "source_body_sha256": hashlib.sha256(body.encode("utf-8")).hexdigest(),
@@ -73,7 +74,8 @@ def make_ack_only(comment, *, now_utc, observed_host, expected_main_sha):
 
 def post_ack_only_once(comment, *, now_utc, observed_host,
                        expected_main_sha, owner_opt_in=False,
-                       approved_issues_write_token=None, transport=None):
+                       approved_issues_write_token=None, transport=None,
+                       source_fetcher=fetch_comment_once):
     """At most one POST attempt; no automatic retries or arbitrary commands.
 
     A token / opt-in permits only a receipt write, NEVER code execution.
@@ -87,7 +89,22 @@ def post_ack_only_once(comment, *, now_utc, observed_host,
     if (not isinstance(token, str) or not 12 <= len(token) <= 2048
             or any(c in token for c in ("\n", "\r", "\x00"))):
         raise AckBlocked("APPROVED_ISSUES_WRITE_TOKEN_REQUIRED")
-    text = make_ack_only(comment, now_utc=now_utc,
+    # Caller dictionaries are untrusted, even when their fields appear canonical.
+    # Re-fetch the comment from the pinned GitHub REST endpoint (GET only).
+    # This runs after both opt-in/token gates and before any POST.
+    if type(comment) is not dict or type(comment.get("id")) is not int:
+        raise AckBlocked("SOURCE_COMMENT_ID_REQUIRED")
+    try:
+        source = source_fetcher(comment["id"])
+    except Exception:
+        raise AckBlocked("GITHUB_SOURCE_GET_FAILED_NO_POST") from None
+    if type(source) is not dict or type(source.get("id")) is not int or source["id"] != comment["id"]:
+        raise AckBlocked("GITHUB_SOURCE_ID_MISMATCH_NO_POST")
+    # Prevent a stale or edited caller-supplied body from being silently
+    # interpreted as a new provider-verified receipt.
+    if comment.get("body") != source.get("body"):
+        raise AckBlocked("GITHUB_SOURCE_BODY_MISMATCH_NO_POST")
+    text = make_ack_only(source, now_utc=now_utc,
                          observed_host=observed_host,
                          expected_main_sha=expected_main_sha)
     payload = json.dumps({"body": text}, separators=(",", ":")).encode("utf-8")

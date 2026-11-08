@@ -151,7 +151,8 @@ class AckOnlyTests(unittest.TestCase):
             return Response(POST_URL, content)
         r = post_ack_only_once(original_comment(), now_utc=NOW,
             observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
-            approved_issues_write_token=FAKE, transport=transport)
+            approved_issues_write_token=FAKE, transport=transport,
+            source_fetcher=lambda comment_id: original_comment())
         self.assertEqual(len(calls), 1)
         self.assertEqual(r["ack_comment_id"], 1234)
         self.assertIs(r["codex_executed"], False)
@@ -163,7 +164,62 @@ class AckOnlyTests(unittest.TestCase):
             post_ack_only_once(original_comment(), now_utc=NOW,
                 observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
                 approved_issues_write_token=FAKE,
-                transport=lambda req, timeout: Response("https://evil.example/", b"{}"))
+                transport=lambda req, timeout: Response("https://evil.example/", b"{}"),
+                source_fetcher=lambda comment_id: original_comment())
+
+    def test_missing_source_get_fails_closed_before_post(self):
+        posted = []
+        with self.assertRaisesRegex(AckBlocked, "GET_FAILED_NO_POST"):
+            post_ack_only_once(original_comment(), now_utc=NOW,
+                observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
+                approved_issues_write_token=FAKE,
+                source_fetcher=lambda comment_id: (_ for _ in ()).throw(OSError("offline")),
+                transport=lambda *a, **kw: posted.append(a))
+        self.assertEqual(posted, [])
+
+    def test_forged_caller_body_rejected_before_post(self):
+        caller = original_comment()
+        caller["body"] = caller["body"] + "\nEXECUTE_CODEX"
+        posted = []
+        with self.assertRaisesRegex(AckBlocked, "BODY_MISMATCH_NO_POST"):
+            post_ack_only_once(caller, now_utc=NOW,
+                observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
+                approved_issues_write_token=FAKE, source_fetcher=lambda cid: original_comment(),
+                transport=lambda *a, **kw: posted.append(a))
+        self.assertEqual(posted, [])
+
+    def test_git_source_id_mismatch_is_not_accepted(self):
+        posted = []
+        def source_fetcher(cid):
+            self.assertEqual(cid, CID)
+            response = original_comment()
+            response["id"] = CID + 1
+            return response
+        with self.assertRaisesRegex(AckBlocked, "ID_MISMATCH_NO_POST"):
+            post_ack_only_once(original_comment(), now_utc=NOW,
+                observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
+                approved_issues_write_token=FAKE, source_fetcher=source_fetcher,
+                transport=lambda *a, **kw: posted.append(a))
+        self.assertEqual(posted, [])
+
+    def test_expired_source_on_fresh_get_blocks_post(self):
+        calls = []
+        with self.assertRaisesRegex(AckBlocked, "SOURCE_PING_NOT_VALID"):
+            post_ack_only_once(original_comment(),
+                now_utc=datetime(2026, 11, 8, 10, 26, tzinfo=timezone.utc),
+                observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
+                approved_issues_write_token=FAKE,
+                source_fetcher=lambda cid: original_comment(),
+                transport=lambda *a, **kw: calls.append(a))
+        self.assertEqual(calls, [])
+
+    def test_unapproved_token_never_fetches_source(self):
+        gets = []
+        with self.assertRaisesRegex(AckBlocked, "TOKEN_REQUIRED"):
+            post_ack_only_once(original_comment(), now_utc=NOW,
+                observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
+                source_fetcher=lambda cid: gets.append(cid))
+        self.assertEqual(gets, [])
 
     def test_transport_errors_do_not_echo_credential(self):
         def fail(req, timeout):
@@ -171,7 +227,8 @@ class AckOnlyTests(unittest.TestCase):
         with self.assertRaises(AckBlocked) as context:
             post_ack_only_once(original_comment(), now_utc=NOW,
                 observed_host=HOST, expected_main_sha=SHA, owner_opt_in=True,
-                approved_issues_write_token=FAKE, transport=fail)
+                approved_issues_write_token=FAKE, transport=fail,
+                source_fetcher=lambda comment_id: original_comment())
         self.assertNotIn(FAKE, str(context.exception))
 
 
