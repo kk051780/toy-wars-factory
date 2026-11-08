@@ -23,3 +23,29 @@ The current shadow registries are still non-authorizing. This guard is an **upgr
 A separate code inspection discovered that accepted-main `tools/repair_integration.py:decide` can return `MERGE` for a valid old REVIEWER holder without checking scoped-registry occupancy. During migration an inconsistent mixed legacy and scoped state must **never** pass the integration gate. The same `scoped_lease_migration_block(lease)` preflight now runs inside `decide` before the review/merge decision. On occupied scoped rows or `SCOPED_ACTIVE`, it yields `WAIT_SCOPED_LEASES`. Malformed registry/migration mode yields `WAIT_LOCK`, not `MERGE` or an unchecked exception. Nine dedicated negative tests, including an otherwise-mergeable review and an expired scoped row, are added in `tests/test_legacy_scoped_integration_gate.py`.
 
 This still cannot prevent **old, unpatched production processes** from running pre-upgrade code. Neither the migration guard nor this follow-on merge gate authorizes normal PR #203 self-approval or main integration. Enabling v2 before all old runners are drained remains forbidden.
+
+## Legacy owns() and owner-only finally cleanup (P0, follow-up)
+
+A third path bypassed acquisition/integration fencing: accepted-main
+`repair_control.owns` checked only a legacy holder tuple and expiry.
+Callers could misinterpret that truthy response as authorization to write
+while a v2 scoped writer already existed. The candidate implementation
+now returns **false for all legacy write-role checks** whenever a scoped
+entry or SCOPED_ACTIVE migration marker exists; malformed registries raise
+rather than grant write rights. This must be deployed to *every* host
+before scoped v2 activation, and its return value is **still not external
+provider attestation**.
+
+An already-verified existing owner must retain the ability to release
+*only its own legacy holder* without deleting scoped entries. The internal
+`owned_lease` finally path therefore separately verifies the exact owner,
+epoch, authorized task and live original run against two unchanged GitHub
+snapshots before one nonforced expected-SHA cleanup CAS. This exceptional
+cleanup bypasses only scoped **occupancy**, not scoped schema validity;
+invalid scoped data or changed owner/epoch aborts cleanup and reports
+the situation rather than writing a false release receipt. It never grants
+new gameplay or merge writes.
+
+This change is tested in `tests/test_legacy_scoped_owner_cleanup.py`.
+It does not solve a process still running pre-upgrade code, or a genuine
+lost ChatGPT run with no authenticated service-completion evidence.
