@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T20:47:46.961Z",
+  "observed_at": "2026-11-08T20:49:17.897Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -6004,11 +6004,11 @@
       "source_owner_epoch": 564,
       "source_owner_id": "65f7fda7-b862-4ac2-962d-39c1484e5877",
       "assigned_role": "REVIEWER",
-      "status": "OPEN_EXACT_HEAD_CI_QUEUED_INDEPENDENT_REVIEW_REQUIRED",
+      "status": "OPEN_EXACT_HEAD_CI_GREEN_DISTINCT_REGISTERED_REVIEW_REQUIRED",
       "ci_run_id": 42521857783,
       "ci_jobs": {
-        "offline": "PENDING",
-        "compile_hold": "PENDING"
+        "offline": "success",
+        "compile_hold": "success"
       },
       "local_tests": 46,
       "independent_reviewed": false,
@@ -6021,7 +6021,11 @@
       ],
       "extra_spend": false,
       "created_at": "2026-11-08T20:47:46.961Z",
-      "next_actor": "A distinct registered independent reviewer: verify exact PR216 HEAD + GitHub-hosted CI, source/market boundary, provider-auth claims, no network/writes; no main merge without integration gates."
+      "next_actor": "A distinct registered independent reviewer: verify exact PR216 HEAD + GitHub-hosted CI, source/market boundary, provider-auth claims, no network/writes; no main merge without integration gates.",
+      "python_tests": 879,
+      "new_regression_tests": 46,
+      "review_packet_path": "ops/review_packets/PR216_market_source_preflight_epoch564.json",
+      "updated_at": "2026-11-08T20:49:17.897Z"
     }
   ]
 }

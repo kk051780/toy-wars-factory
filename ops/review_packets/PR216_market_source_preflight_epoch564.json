@@ -12,7 +12,7 @@
   "requested_role": "REVIEWER",
   "author_is_reviewer": false,
   "hosted_ci_run": 42521857783,
-  "hosted_ci_status": "QUEUED_NOT_YET_PROVEN",
+  "hosted_ci_status": "SUCCESS",
   "source_files": [
     "tools/market_source_preflight.py",
     "tools/market_observation_bridge.py",
@@ -33,5 +33,12 @@
   "main_merged": false,
   "release_authorized": false,
   "incremental_spend_usd": 0,
-  "created_at": "2026-11-08T20:47:46.961Z"
+  "created_at": "2026-11-08T20:47:46.961Z",
+  "hosted_ci_jobs": {
+    "offline": "success",
+    "compile_hold": "success"
+  },
+  "hosted_python_tests": 879,
+  "hosted_ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42521857783",
+  "registered_independent_review": "PENDING"
 }

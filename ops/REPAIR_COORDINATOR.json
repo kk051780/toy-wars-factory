@@ -2129,17 +2129,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 564,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "65f7fda7-b862-4ac2-962d-39c1484e5877",
-    "task_id": null,
-    "epoch": 564,
-    "acquired_at": "2026-11-08T20:43:26.177Z",
-    "expires_at": "2026-11-08T21:03:26.177Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0-market-source-preflight-20261109-65f7fda7",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3783,22 +3773,22 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_P0D_RUNTIME_RECEIPT_RECONCILIATION_AND_XML_NEGATIVE_TESTS",
-    "owner_id": "31656d93-6121-4cc0-9a24-75c794fba688",
-    "epoch": 563,
-    "work_id": "P0D_ISSUE213_ROUTE_A_PROTOTYPE_20261108_83E715D0",
-    "pr": 214,
-    "head": "b69d1787d6c2c04b26cb1913a002a2ba4d2abc46",
-    "engine_trial_report": "https://github.com/kk051780/toy-wars-factory/issues/213#issuecomment-6726701143",
-    "engine_attestation": false,
-    "ci_run_id": 42521085359,
-    "python_tests": 858,
-    "xml_contract_tests": 13,
-    "registered_independent_review": false,
-    "route_b_ran": false,
+    "kind": "CONTROLLER_P0_MARKET_SOURCE_PREFLIGHT_PR216_CI_GREEN",
+    "owner_id": "65f7fda7-b862-4ac2-962d-39c1484e5877",
+    "epoch": 564,
+    "work_id": "P0_MARKET_ISSUE109_SOURCE_PREFLIGHT_PR216_20261109",
+    "pr": 216,
+    "head": "c91c3ce9d0768c4468ff5a1fd5e592869730e983",
+    "ci_run_id": 42521857783,
+    "python_tests": 879,
+    "market_new_tests": 46,
+    "ci_offline": "success",
+    "ci_compile_hold": "success",
+    "independent_reviewed": false,
     "main_merged": false,
+    "auto_market_collector_enabled": false,
     "service_terminal_proof": false,
-    "released_at": "2026-11-08T20:39:08.251Z"
+    "released_at": "2026-11-08T20:49:17.897Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
@@ -4361,6 +4351,24 @@
       "main_merged": false,
       "service_terminal_proof": false,
       "released_at": "2026-11-08T19:27:47.615Z"
+    },
+    {
+      "kind": "CONTROLLER_P0D_RUNTIME_RECEIPT_RECONCILIATION_AND_XML_NEGATIVE_TESTS",
+      "owner_id": "31656d93-6121-4cc0-9a24-75c794fba688",
+      "epoch": 563,
+      "work_id": "P0D_ISSUE213_ROUTE_A_PROTOTYPE_20261108_83E715D0",
+      "pr": 214,
+      "head": "b69d1787d6c2c04b26cb1913a002a2ba4d2abc46",
+      "engine_trial_report": "https://github.com/kk051780/toy-wars-factory/issues/213#issuecomment-6726701143",
+      "engine_attestation": false,
+      "ci_run_id": 42521085359,
+      "python_tests": 858,
+      "xml_contract_tests": 13,
+      "registered_independent_review": false,
+      "route_b_ran": false,
+      "main_merged": false,
+      "service_terminal_proof": false,
+      "released_at": "2026-11-08T20:39:08.251Z"
     }
   ]
 }
