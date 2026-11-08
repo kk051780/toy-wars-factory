@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T12:56:41.806Z",
+  "observed_at": "2026-11-08T20:47:46.961Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5989,6 +5989,39 @@
       "owner_pc_auth_verified": false,
       "source_injection_allowed": false,
       "transport_injection_allowed": false
+    },
+    {
+      "id": "P0_MARKET_ISSUE109_SOURCE_PREFLIGHT_PR216_20261109",
+      "kind": "P0_MARKET_OFFLINE_SOURCE_PREFLIGHT_OBSERVATION_ADAPTER",
+      "priority": "P0",
+      "repository": "kk051780/toy-wars-factory",
+      "issue": 109,
+      "pr": 216,
+      "branch": "controller/p0-market-source-preflight-20261109-65f7fda7",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "head": "c91c3ce9d0768c4468ff5a1fd5e592869730e983",
+      "draft": true,
+      "source_owner_epoch": 564,
+      "source_owner_id": "65f7fda7-b862-4ac2-962d-39c1484e5877",
+      "assigned_role": "REVIEWER",
+      "status": "OPEN_EXACT_HEAD_CI_QUEUED_INDEPENDENT_REVIEW_REQUIRED",
+      "ci_run_id": 42521857783,
+      "ci_jobs": {
+        "offline": "PENDING",
+        "compile_hold": "PENDING"
+      },
+      "local_tests": 46,
+      "independent_reviewed": false,
+      "main_merged": false,
+      "source_paths": [
+        "tools/market_source_preflight.py",
+        "tools/market_observation_bridge.py",
+        "tests/test_market_source_preflight.py",
+        "tests/test_market_observation_bridge.py"
+      ],
+      "extra_spend": false,
+      "created_at": "2026-11-08T20:47:46.961Z",
+      "next_actor": "A distinct registered independent reviewer: verify exact PR216 HEAD + GitHub-hosted CI, source/market boundary, provider-auth claims, no network/writes; no main merge without integration gates."
     }
   ]
 }
