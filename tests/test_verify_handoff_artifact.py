@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 import warnings
 import zipfile
 
@@ -140,6 +141,48 @@ class HandoffArtifactTrustBoundary(unittest.TestCase):
             (member("LATEST_STATE.json"), json.dumps(VALID).encode()),
         ])
         self.assert_rejected(giant)
+
+
+    def test_nonfinite_json_constants_rejected_in_nested_untrusted_fields(self):
+        # A fully checksummed ZIP must not make non-standard JSON valid.
+        for literal in ("NaN", "Infinity", "-Infinity"):
+            with self.subTest(value=literal):
+                raw = json.dumps(VALID)[:-1].encode() + (
+                    ', "extra": {"nested": ' + literal + '}}').encode()
+                handoff = b"# passive status\n"
+                checksum = (
+                    hashlib.sha256(handoff).hexdigest()
+                    + "  CHAT_HANDOFF.md\n"
+                    + hashlib.sha256(raw).hexdigest()
+                    + "  LATEST_STATE.json\n"
+                ).encode()
+                self.assert_rejected(archive_bytes(entries=[
+                    (member("CHAT_HANDOFF.md"), handoff),
+                    (member("LATEST_STATE.json"), raw),
+                    (member("HANDOFF_SHA256SUMS.txt"), checksum),
+                ]))
+
+    def test_executable_regular_file_is_not_passive(self):
+        self.assert_rejected(archive_bytes(entries=[
+            (member("CHAT_HANDOFF.md", stat.S_IFREG | 0o755), b"no exec\n"),
+            (member("LATEST_STATE.json"), json.dumps(VALID).encode()),
+        ]))
+
+    def test_verifier_reads_zip_members_with_explicit_expansion_cap(self):
+        actual_read = zipfile.ZipExtFile.read
+        requested = []
+
+        def bounded_read(stream, size=-1):
+            requested.append(size)
+            if size < 0 or size > verifier.MAX_MEMBER:
+                raise AssertionError("unbounded ZIP expansion read")
+            return actual_read(stream, size)
+
+        with mock.patch.object(zipfile.ZipExtFile, "read", bounded_read):
+            result = self.inspect(archive_bytes())
+        self.assertEqual(result["status"], "ARCHIVE_STRUCTURE_VALID_ONLY")
+        self.assertTrue(requested)
+        self.assertTrue(all(0 <= amount <= verifier.MAX_MEMBER for amount in requested))
 
     def test_cli_never_claims_authority_and_failure_nonzero(self):
         self.zip_path.write_bytes(archive_bytes(manifest=False))
