@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "id": "C98842",
+  "kind": "P0B_PR199_UNSAVED_PREVIEW_HUD_REPLICATION_INTEGRATION",
+  "date_utc": "2026-11-08",
+  "repository": "kk051780/toy-wars-factory",
+  "branch": "controller/p0b-pr199-studio-preview-integration-20261108",
+  "source_issue": 204,
+  "source_review_pr": 192,
+  "lifecycle_evidence_pr": 206,
+  "parent_pr": 199,
+  "parent_head": "094130a4934f9badfeb62c63b2f6cdb9b483960b",
+  "source_update_commit": "5b9a7d4b1b1bcc102da7f992199af24b0f0a0494",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "epoch": 533,
+    "owner_id": "83b7d0a9-4a1e-4c3b-b979-0c5d332ba219"
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_blob": "7bbd7983ed4bf536bcc8264c3e9a8eca2a213d1f",
+      "after_blob": "290c9b71c45d8fcbb2a3e7dfcb0581fdaeef2e81",
+      "before_bytes": 13606,
+      "after_bytes": 14718,
+      "delta_bytes": 1112
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1667,
+    "lua_bytes": 75695
+  },
+  "integration_features": [
+    "unsaved_preview_pending_warning",
+    "late_progressmode_childadded",
+    "progressmode_changed",
+    "17_lifecycle_lua_mocks",
+    "7_hud_lua_mocks"
+  ],
+  "preserved_gameplay": true,
+  "independent_review": false,
+  "engine_verified": false,
+  "main_merged": false,
+  "additional_spend_jpy": 0
+}

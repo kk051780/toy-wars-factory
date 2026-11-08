@@ -95,5 +95,63 @@ check("visible HUD declares preview cannot save progress",function()
     assert(ui:find("STUDIO PREVIEW - PROGRESS NOT SAVED",1,true))
     assert(ui:find('progressMode.Value=="STUDIO_PREVIEW_UNSAVED"',1,true))
 end)
+
+-- P0-B: exercise the real whole-server loop beyond lease renewal/expiry, not
+-- only one heartbeat. A failed initial GetAsync is counted separately from
+-- subsequent DataStore calls; preview must never retry or write after recovery.
+check("unsaved preview remains write-free past 45/180s despite store recovery",function()
+    local opts={studio=true,storeReadFail=true}
+    local h=H.new(path,0,opts)
+    local p=h:addPlayer(h:newPlayer())
+    preview(h,p,h:status(p,"ProgressMode"))
+    assert(h.storeReads==1 and h.storeUpdates==nil)
+    h:advance(46)
+    h.runService.Heartbeat:Fire(0.25)
+    assert(h.storeReads==1 and h.storeUpdates==nil)
+    opts.storeReadFail=false -- simulate service recovery after preview admitted
+    h:advance(135) -- 181s total, past nominal 180s ownership expiry
+    h.runService.Heartbeat:Fire(0.25)
+    h:advance(50)
+    h.runService.Heartbeat:Fire(0.25)
+    assert(h.storeReads==1 and h.storeUpdates==nil)
+    assert(h:workshop(p) and h:status(p,"ProgressMode").Value=="STUDIO_PREVIEW_UNSAVED")
+    h:removePlayer(p)
+    assert(h.storeUpdates==nil and h:mapCount()==0)
+end)
+
+check("unsaved preview shutdown callback performs zero persistent writes",function()
+    local opts={studio=true,storeReadFail=true,captureShutdown=true}
+    local h=H.new(path,0,opts)
+    local p=h:addPlayer(h:newPlayer())
+    preview(h,p,h:status(p,"ProgressMode"))
+    assert(type(h.shutdownCallback)=="function")
+    opts.storeReadFail=false
+    h:advance(181)
+    h.runService.Heartbeat:Fire(0.25)
+    h.shutdownCallback()
+    assert(h.storeReads==1 and h.storeUpdates==nil)
+end)
+
+check("four unsaved workshops all shut down without UpdateAsync",function()
+    local h=H.new(path,0,{studio=true,storeReadFail=true,captureShutdown=true})
+    for i=1,4 do
+        local p=h:addPlayer(h:newPlayer())
+        preview(h,p,h:status(p,"ProgressMode"))
+    end
+    assert(h:mapCount()==4 and type(h.shutdownCallback)=="function")
+    h.shutdownCallback()
+    assert(h.storeUpdates==nil)
+end)
+
+check("unsaved player departure before shutdown does not start save",function()
+    local h=H.new(path,0,{studio=true,storeReadFail=true,captureShutdown=true})
+    local p=h:addPlayer(h:newPlayer())
+    preview(h,p,h:status(p,"ProgressMode"))
+    h:removePlayer(p)
+    assert(h:mapCount()==0 and h.storeUpdates==nil)
+    h.shutdownCallback()
+    assert(h.storeUpdates==nil)
+end)
+
 print(string.format("STUDIO_UNSAVED_PREVIEW_SUMMARY %d passed / %d failed; canonical Lua mocks only",okCount,badCount))
 if badCount>0 then os.exit(1) end
