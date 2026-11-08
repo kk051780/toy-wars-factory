@@ -2129,17 +2129,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 567,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "c8a0e634-738e-4f95-8b4c-4f63121cb233",
-    "task_id": null,
-    "epoch": 567,
-    "acquired_at": "2026-11-08T21:22:18.153Z",
-    "expires_at": "2026-11-08T21:40:18.153Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0-market-source-preflight-20261109-65f7fda7",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3783,10 +3773,23 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "e8443caf-9e8d-4db5-9396-72c8fb7a10c4",
-    "epoch": 566,
-    "released_at": "2026-11-08T21:21:13.910Z"
+    "kind": "CONTROLLER_P0_MARKET_PR216_REHASH_REPORT_VALIDATION_HARDENING",
+    "owner_id": "c8a0e634-738e-4f95-8b4c-4f63121cb233",
+    "epoch": 567,
+    "work_id": "P0_MARKET_ISSUE109_SOURCE_PREFLIGHT_PR216_20261109",
+    "pr": 216,
+    "previous_head": "c91c3ce9d0768c4468ff5a1fd5e592869730e983",
+    "head": "2e48d2abaceb7cfb5b05994cd151e03c6755f915",
+    "ci_run_id": 42525047346,
+    "python_tests": 892,
+    "market_tests": 59,
+    "new_negative_tests": 13,
+    "ci_offline": "success",
+    "ci_compile_hold": "success",
+    "independent_reviewed": false,
+    "main_merged": false,
+    "service_terminal_proof": false,
+    "released_at": "2026-11-08T21:26:11.857Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
@@ -4367,6 +4370,12 @@
       "main_merged": false,
       "service_terminal_proof": false,
       "released_at": "2026-11-08T20:39:08.251Z"
+    },
+    {
+      "kind": "CONTROLLER",
+      "owner_id": "e8443caf-9e8d-4db5-9396-72c8fb7a10c4",
+      "epoch": 566,
+      "released_at": "2026-11-08T21:21:13.910Z"
     }
   ]
 }
