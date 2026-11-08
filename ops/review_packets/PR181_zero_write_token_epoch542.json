@@ -3,8 +3,8 @@
   "kind": "P0_A_AUTHOR_CHECKPOINT_NOT_INDEPENDENT_VERDICT",
   "repo": "kk051780/toy-wars-factory",
   "pr": 181,
-  "head": "2078c0c901586e5c2cbdfd7871f6ae8d876a0ad5",
-  "previous_head": "4b0cc93d73a90e259855cd1f4fd8a7c42a2a6a44",
+  "head": "ef2949470fe52e4e96bff4e9e93952c24eee57f3",
+  "previous_head": "2078c0c901586e5c2cbdfd7871f6ae8d876a0ad5",
   "source_branch": "controller/issue57-handoff-privilege-split-9b8a6f21",
   "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
   "owner_id": "67ad38f6-96ab-408f-8842-e9ecff4b8ada",
@@ -24,15 +24,15 @@
     "job_status_writer_run_already_deployed": false
   },
   "ci": {
-    "run_id": 42453219959,
-    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42453219959",
+    "run_id": 42469584798,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42469584798",
     "status": "completed",
     "conclusion": "success",
     "jobs": {
       "offline": "success",
       "compile_hold": "success"
     },
-    "python_tests": 916
+    "python_tests": 919
   },
   "limitations": [
     "Cannot infer source runner token branch scope or trusted host identity from source CI",
@@ -46,5 +46,20 @@
   "scoped_2writer_active": false,
   "extra_spend_jpy": 0,
   "roblox_publish": false,
-  "recorded_at": "2026-11-08T06:05:23.738Z"
+  "recorded_at": "2026-11-08T10:03:20.364Z",
+  "last_source_revision": {
+    "work_id": "P0A_PR181_ZIP_VERIFY_NONFINITE_EXEC_BOUNDED_20261108_A",
+    "controller_epoch_claims": [
+      550,
+      551
+    ],
+    "source_change_paths": [
+      "tools/verify_handoff_artifact.py",
+      "tests/test_verify_handoff_artifact.py",
+      "history/C99877_pr181_zip_json_hardening.json"
+    ],
+    "red_ci": 42469410626,
+    "green_ci": 42469584798,
+    "independent_review": false
+  }
 }
