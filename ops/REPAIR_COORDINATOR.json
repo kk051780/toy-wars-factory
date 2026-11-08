@@ -1923,8 +1923,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 517,
-  "holder": null,
+  "epoch": 518,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 518,
+    "owner_id": "8db68b60-56c2-4fa2-a6aa-821efb1dd380",
+    "task_id": null,
+    "acquired_at": "2026-11-08T00:25:15.515Z",
+    "expires_at": "2026-11-08T00:49:15.515Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "controller/p0-legacy-shadow-compat-20261108-76116caf",
+    "scope": "P0 Issue123 PR203 legacy owns write-authority shadow/scoped migration barrier; preserve own verified cleanup; new negative tests and exact-head CI; no main changes or activation"
+  },
   "integration_results": {
     "35": {
       "merged": true,
