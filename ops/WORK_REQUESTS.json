@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T03:55:28.813Z",
+  "observed_at": "2026-11-08T04:04:28.271Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5560,6 +5560,51 @@
         "PUBLISH_ROBLOX",
         "INCUR_ADDITIONAL_FEES"
       ]
+    },
+    {
+      "id": "P0B_ISSUE204_PR207_MAIN_PVE_STUDIO_SAFE_PREVIEW_EXACT_HEAD_REVIEW_20261108",
+      "kind": "P0B_FULL_PVE_MAIN_CANDIDATE_STUDIO_PREVIEW_UNSAVED_INTEGRATION_REVIEW",
+      "priority": "P0",
+      "status": "OPEN_EXACT_HEAD_CI_GREEN_REGISTERED_REVIEWER_REQUIRED",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "issue": 204,
+      "pr": 207,
+      "base_pr": 199,
+      "head": "c82195fda857a9a9b44bec016b4db20b431bb997",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "branch": "controller/p0b-pr199-studio-preview-integration-20261108",
+      "review_packet_path": "ops/review_packets/PR207_p0b_studio_preview_integration_epoch533.json",
+      "source_owner_epoch": 533,
+      "source_owner_id": "83b7d0a9-4a1e-4c3b-b979-0c5d332ba219",
+      "source_owner_release_status": "CAS_RELEASE_IN_SAME_COORDINATOR_CHECKPOINT_PENDING_READBACK",
+      "ci_run_id": 42445207211,
+      "ci_jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "studio_preview_lua_cases": 17,
+      "hud_replication_lua_cases": 7,
+      "changed_files": 7,
+      "changed_paths": [
+        "src/ToyWarsHUD.client.lua",
+        "tests/roblox_server_harness.lua",
+        "tests/auto/studio_unsaved_preview_spec.lua",
+        "tests/auto/studio_preview_hud_replication_spec.lua",
+        "tools/export_accepted_rbxlx.py",
+        "tests/test_system_xml_artifact_export.py",
+        "history/C98842_p0b_preview_hud_integration.json"
+      ],
+      "draft": true,
+      "independent_reviewed": false,
+      "engine_verified": false,
+      "main_merged": false,
+      "additional_spend_jpy": 0,
+      "review_request": "Independent registered reviewer inspects new HUD status ChildAdded+second lookup+Changed to prevent hiding unsaved mode; 17 full-server lifecycle mocks include 46/181/231s, restoration, PlayerRemoving and 4 player BindToClose; verify harness opt-in callback behavior, history source blob/metrics/pins, latest hosted CI, and the full PR199 inherited game/security main-diff provenance. Do not treat CI/mocks as Studio proof. Check exact source head before review.",
+      "next_actor": "REGISTERED_INDEPENDENT_REVIEWER_ROOT_STACK_PR199_AND_P0B_PR207;THEN_PROTECTED_MAIN_INTEGRATION_AND_ISOLATED_WINDOWS_STUDIO_PLAYTEST",
+      "created_at": "2026-11-08T04:04:28.271Z",
+      "updated_at": "2026-11-08T04:04:28.271Z"
     }
   ]
 }
