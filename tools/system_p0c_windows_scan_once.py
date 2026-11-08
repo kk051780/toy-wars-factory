@@ -10,8 +10,9 @@ import json
 import os
 import platform
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from urllib.request import Request, build_opener
+from urllib.parse import quote
 from tools.system_p0c_windows_receive_once import (
     HOST, PREFIX, REPO, ISSUE, _NoRedirect, _no_duplicates, examine_comment,
 )
@@ -30,25 +31,34 @@ def _blocked(reason, *, page_count=0):
         "owner_authorized": False, "codex_execution_authorized": False,
         "may_run_commands": False, "pc_action_executed": False,
         "is_background_receiver": False,
+        "replay_history_verified": False,
     }
 
 
-def page_url(page):
+def page_url(page, since=None):
     if type(page) is not int or page < 1 or page > MAX_PAGES:
         raise ValueError("page outside bounded range")
-    return ROOT + "/issues/" + str(ISSUE) + "/comments?per_page=100&page=" + str(page)
+    url = ROOT + "/issues/" + str(ISSUE) + "/comments?per_page=100&page=" + str(page)
+    if since is not None:
+        if type(since) is not str:
+            raise ValueError("invalid UTC since")
+        parsed = datetime.strptime(since, "%Y-%m-%dT%H:%M:%SZ")
+        if parsed.strftime("%Y-%m-%dT%H:%M:%SZ") != since:
+            raise ValueError("noncanonical UTC since")
+        url += "&since=" + quote(since, safe="")
+    return url
 
 
-def fetch_issue_comments_page(page, *, token, opener=None):
+def fetch_issue_comments_page(page, *, token=None, since=None, opener=None):
     """GET only an allowlisted GitHub path; reject every redirect before following."""
-    url = page_url(page)
-    if not isinstance(token, str) or not token or "\n" in token or "\r" in token:
-        raise ValueError("missing or invalid GitHub read token")
-    request = Request(url, headers={
-        "Accept": "application/vnd.github+json",
-        "User-Agent": "TOY-WARS-P0C-ReadOnly-Scan/1",
-        "Authorization": "Bearer " + token,
-    }, method="GET")
+    url = page_url(page, since=since)
+    if token is not None and (not isinstance(token, str) or not token or "\n" in token or "\r" in token):
+        raise ValueError("invalid GitHub read token")
+    headers = {"Accept": "application/vnd.github+json",
+               "User-Agent": "TOY-WARS-P0C-ReadOnly-Scan/1"}
+    if token:
+        headers["Authorization"] = "Bearer " + token
+    request = Request(url, headers=headers, method="GET")
     opener = opener or build_opener(_NoRedirect())
     with opener.open(request, timeout=10) as response:
         if response.status != 200 or response.geturl() != url:
@@ -65,13 +75,14 @@ def fetch_issue_comments_page(page, *, token, opener=None):
     return obj
 
 
-def inspect_issue_intents(*, fetcher, observed_host, now_utc, seen_work_ids=()):
+def inspect_issue_intents(*, fetcher, observed_host, now_utc, seen_work_ids=(), seen_nonces=()):
     """Review at most five pages, return latest valid diagnostic (never execute)."""
     if observed_host != HOST:
         return _blocked("host mismatch before network")
     if not isinstance(now_utc, datetime) or now_utc.tzinfo is None or now_utc.utcoffset() is None:
         return _blocked("invalid clock before network")
     candidates = []
+    scanned_ids, scanned_nonces = set(), set()
     pages = 0
     try:
         for page in range(1, MAX_PAGES + 1):
@@ -90,15 +101,23 @@ def inspect_issue_intents(*, fetcher, observed_host, now_utc, seen_work_ids=()):
                     continue
                 decision = examine_comment(
                     comment, comment_id=comment_id, now_utc=now_utc,
-                    observed_host=observed_host, seen_work_ids=seen_work_ids,
+                    observed_host=observed_host,
                 )
                 if decision["status"] == "READ_ONLY_GITHUB_RECEIPT_MATCHED_NO_EXECUTION":
+                    detail = json.loads(body[len(PREFIX):], object_pairs_hook=_no_duplicates)
+                    work_id, nonce = detail["work_id"], detail["nonce"]
+                    if work_id in seen_work_ids or nonce in seen_nonces:
+                        return _blocked("prior claim/replay ID or nonce", page_count=pages)
+                    if work_id in scanned_ids or nonce in scanned_nonces:
+                        return _blocked("duplicate work_id or nonce in recent scan", page_count=pages)
+                    scanned_ids.add(work_id)
+                    scanned_nonces.add(nonce)
                     candidates.append(decision)
             if len(items) < PAGE_SIZE:
                 break
         else:
             # Never present an incomplete scan as the latest comment.
-            return _blocked("bounded pagination incomplete", page_count=pages)
+            return _blocked("recent update burst exceeds bounded pagination", page_count=pages)
     except Exception as exc:
         # Do not leak tokens or raw response body into diagnostic logs.
         return _blocked("GitHub read failed: " + type(exc).__name__, page_count=pages)
@@ -112,6 +131,7 @@ def inspect_issue_intents(*, fetcher, observed_host, now_utc, seen_work_ids=()):
     return {
         **selected, "pages_checked": pages,
         "validated_candidates": len(candidates),
+        "window_deduplicated": True, "replay_history_verified": False,
         "is_background_receiver": False,
     }
 
@@ -129,9 +149,10 @@ def run_scan_once(*, now_utc=None, observed_host=None, token=None,
             return _blocked("network scan only allowed on Windows")
         if token is None:
             token = os.environ.get("GITHUB_TOKEN")
-        if not token:
-            return _blocked("GitHub read credential absent; no network request")
-        fetcher = lambda page: fetch_issue_comments_page(page, token=token)
+        # GitHub Issue comments support since=; look back 11 min for all unexpired intents.
+        # Public repo: anonymous GET permitted. Private repo: 401/404 fails closed.
+        since = (now_utc.astimezone(timezone.utc) - timedelta(minutes=11)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        fetcher = lambda page: fetch_issue_comments_page(page, token=token, since=since)
     return inspect_issue_intents(
         fetcher=fetcher, observed_host=observed_host, now_utc=now_utc,
     )

@@ -17,7 +17,7 @@ def real_candidate(n=6718344277, work_id="P0C_SCAN_ONCE_SAMPLE_20261108_A"):
         "schema":1,"repo":REPO,"issuer_claim":"kk051780",
         "source_kind":"CHATGPT_GITHUB_INTENT_UNTRUSTED",
         "action":"PING_STATUS_READONLY","work_id":work_id,
-        "nonce":"0123456789abcdef0123456789abcdef",
+        "nonce":format(n, "032x"),
         "host_id":HOST,"target_branch":"main",
         "main_sha":"e5deff4d5681bca4823a3da0f848e01bc089ae6e",
         "issued_at":"2026-11-08T06:40:00Z",
@@ -122,6 +122,54 @@ class ScanOnceTests(unittest.TestCase):
         self.assertEqual(r["status"],"READ_ONLY_GITHUB_RECEIPT_MATCHED_NO_EXECUTION")
         self.deny(r)
 
+    def test_duplicate_work_id_blocks_entire_scan(self):
+        a=real_candidate(110,"P0C_SCAN_ONCE_SAMPLE_20261108_A")
+        b=real_candidate(111,"P0C_SCAN_ONCE_SAMPLE_20261108_A")
+        r,_=self.scan({1:[a,b]})
+        self.assertEqual(r["status"],"READ_ONLY_RECEIVER_BLOCKED")
+        self.assertIn("duplicate",r["reason"])
+    def test_same_nonce_across_different_work_ids_blocks(self):
+        a=real_candidate(110,"P0C_SCAN_ONCE_SAMPLE_20261108_A")
+        b=real_candidate(111,"P0C_SCAN_ONCE_SAMPLE_20261108_B")
+        body=json.loads(b["body"][len(PREFIX):])
+        body["nonce"]=json.loads(a["body"][len(PREFIX):])["nonce"]
+        b["body"]=PREFIX+json.dumps(body)
+        r,_=self.scan({1:[a,b]})
+        self.assertEqual(r["status"],"READ_ONLY_RECEIVER_BLOCKED")
+        self.assertIn("duplicate",r["reason"])
+    def test_seen_work_id_external_claim_blocks(self):
+        a=real_candidate()
+        r=inspect_issue_intents(fetcher=lambda page:[a],observed_host=HOST,now_utc=NOW,
+                                seen_work_ids={"P0C_SCAN_ONCE_SAMPLE_20261108_A"})
+        self.assertEqual(r["status"],"READ_ONLY_RECEIVER_BLOCKED")
+    def test_seen_nonce_external_claim_blocks(self):
+        a=real_candidate(110)
+        r=inspect_issue_intents(fetcher=lambda page:[a],observed_host=HOST,now_utc=NOW,
+                                seen_nonces={format(110,"032x")})
+        self.assertEqual(r["status"],"READ_ONLY_RECEIVER_BLOCKED")
+    def test_one_shot_replay_is_not_persistent_proof(self):
+        r,_=self.scan({1:[real_candidate()]})
+        self.assertIs(r["replay_history_verified"],False)
+        r2,_=self.scan({1:[real_candidate()]})
+        self.assertIs(r2["replay_history_verified"],False)
+        self.assertEqual(r2["status"],"READ_ONLY_GITHUB_RECEIPT_MATCHED_NO_EXECUTION")
+    def test_real_windows_scan_filters_recent_updates(self):
+        seen=[]
+        def fake(page,*,token,since):
+            seen.append((page,token,since))
+            return [real_candidate()]
+        with patch("tools.system_p0c_windows_scan_once.sys.platform","win32"), patch(
+            "tools.system_p0c_windows_scan_once.fetch_issue_comments_page",side_effect=fake
+        ):
+            r=run_scan_once(now_utc=NOW,observed_host=HOST,token=None)
+        self.assertEqual(r["status"],"READ_ONLY_GITHUB_RECEIPT_MATCHED_NO_EXECUTION")
+        self.assertEqual(seen,[(1,None,"2026-11-08T06:31:00Z")])
+    def test_since_url_cannot_inject_other_host(self):
+        u=page_url(1,since="2026-11-08T06:31:00Z")
+        self.assertIn("since=2026-11-08T06%3A31%3A00Z",u)
+        for bad in ("https://evil.com","2026-11-08T06:31:00Z&x=evil","2026-15-99T06:31:00Z"):
+            with self.assertRaises(ValueError):page_url(1,since=bad)
+
 class FakeResponse:
     status=200
     def __init__(self,url,payload):self.url=url;self.payload=payload
@@ -143,7 +191,13 @@ class TransportTests(unittest.TestCase):
         self.assertEqual(o.requests[0].get_header("Authorization"),"Bearer TEST_READ_TOKEN")
         self.assertNotIn("TEST_READ_TOKEN",o.requests[0].full_url)
         self.assertEqual(o.requests[0].get_method(),"GET")
-    def test_no_token_fails_before_network(self):
+    def test_anonymous_public_get_never_adds_authorization(self):
+        o=FakeOpener(FakeResponse(page_url(1),b"[]"))
+        result=fetch_issue_comments_page(1,token=None,opener=o)
+        self.assertEqual(result,[])
+        self.assertIsNone(o.requests[0].get_header("Authorization"))
+        self.assertEqual(o.requests[0].get_method(),"GET")
+    def test_invalid_empty_supplied_token_rejected_before_network(self):
         o=FakeOpener(FakeResponse(page_url(1),b"[]"))
         with self.assertRaises(ValueError):fetch_issue_comments_page(1,token="",opener=o)
         self.assertEqual(o.requests,[])
