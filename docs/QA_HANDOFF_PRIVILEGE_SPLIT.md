@@ -11,6 +11,12 @@ To avoid granting broad `GITHUB_TOKEN contents:write` during migration, the cand
 
 Read artifact only from a **completed successful main-branch run** whose HEAD is known; check individual verify job conclusion and artifact ID/name/expiry, ZIP paths/size/symlinks/duplicates, two passive data files, new-format two-file manifest if present, schema/repo/HOLD/source SHA syntax, and live GitHub ancestry/diff (between source_revision and current main only `status/`). A missing artifact, stale source, invalid compare, expired artifact, or unknown run provenance is `UNTRUSTED_STALE`. GitHub scheduled triggers are best-effort, not a guaranteed 20-minute cadence. This fallback uses no repository write token.
 
+## Offline ZIP verifier (PR181 follow-on, untrusted data boundary)
+
+Run `python3 tools/verify_handoff_artifact.py <downloaded-artifact.zip>` on bytes from a separately authenticated completed/success GitHub main-branch handoff Actions run. The verifier checks exact two passive files (plus optional same-run SHA256 manifest), rejects duplicate/foreign ZIP entries, traversal, symlinks, encrypted entries, compression expansion and oversized entries, duplicate JSON keys, and requires schema=2, canonical repo, HOLD_ENGINE_UNVERIFIED, 40-hex source revision. Old-format ZIP is accepted as `legacy_zip_crc_only_no_sha256_manifest`, explicitly NOT promoted to checksum-verified provenance.
+
+**A successful verifier result is `ARCHIVE_STRUCTURE_VALID_ONLY`, not a provenance or source-freshness attestation**. The trusted caller must independently GET run/job/artifact identity, ensure the run came from accepted main with successfully completed QA, then use genuine GitHub compare to require `source_revision` is current main or an ancestor with only `status/` changes. On any missing/ambiguous evidence `UNTRUSTED_STALE`; no write, merge, release, or scheduling authorization. This script has no GitHub credentials, remote calls, or filesystem writes except output to stdout; the tests use synthetic local temporary ZIP files.
+
 ## Confirmed current deployment state
 Accepted main `e5deff4d5681bca4823a3da0f848e01bc089ae6e` still has the old single-job `.github/workflows/handoff-sync.yml` that executes repository tests under `contents: write` and pushes generated status files directly into main. This PR is **not merged/deployed** and is not a production Actions writer proof.
 
