@@ -27,7 +27,6 @@ waiting.Text="Preparing your workshop..."
 local event=ReplicatedStorage:WaitForChild("ToyWarsSelectUnit")
 local B=require(ReplicatedStorage:WaitForChild("ToyWarsBalance"))
 local status=player:WaitForChild("ToyWarsStatus")
-local progressMode=status.FindFirstChild and status:FindFirstChild("ProgressMode") or nil
 local coins=stats:WaitForChild("Coins")
 local wave=stats:WaitForChild("Wave")
 local kills=stats:WaitForChild("Defeated")
@@ -170,7 +169,34 @@ local previewNotice=addText(gui,UDim2.new(0.84,0,0,36),UDim2.new(0.08,0,0.33,0),
     "STUDIO PREVIEW - PROGRESS NOT SAVED",Color3.fromRGB(255,217,119))
 previewNotice.Name="StudioPreviewNotice"
 previewNotice.ZIndex=40
-previewNotice.Visible=progressMode~=nil and progressMode.Value=="STUDIO_PREVIEW_UNSAVED"
+-- In Roblox replication the folder may arrive before its StringValue child.
+-- Missing or unrecognized progress mode must NEVER silently imply saved progress.
+local progressMode=nil
+local function refreshPreviewNotice()
+    if not progressMode then
+        previewNotice.Text="PROGRESS STATUS PENDING - SAVE UNVERIFIED"
+        previewNotice.Visible=true
+    elseif progressMode.Value=="STUDIO_PREVIEW_UNSAVED" then
+        previewNotice.Text="STUDIO PREVIEW - PROGRESS NOT SAVED"
+        previewNotice.Visible=true
+    elseif progressMode.Value=="SAVED" then
+        previewNotice.Visible=false
+    else
+        previewNotice.Text="PROGRESS STATUS UNVERIFIED - DO NOT EXPECT SAVE"
+        previewNotice.Visible=true
+    end
+end
+local function bindProgressMode(child)
+    if not child or child.Name~="ProgressMode" or child.ClassName~="StringValue"
+        or progressMode==child then return end
+    progressMode=child
+    if child.Changed then child.Changed:Connect(refreshPreviewNotice) end
+    refreshPreviewNotice()
+end
+-- Register first, then re-read: closes the replication race without yielding.
+if status.ChildAdded then status.ChildAdded:Connect(bindProgressMode) end
+if status.FindFirstChild then bindProgressMode(status:FindFirstChild("ProgressMode")) end
+refreshPreviewNotice()
 -- Session-local first-play guide: touch-friendly, dismissible; never sends gameplay commands.
 -- Created only after workshop assignment; no cross-session completion persistence.
 -- ImageButtons keep the three toy-selection TextButtons unambiguous.
