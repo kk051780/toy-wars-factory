@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "repo": "kk051780/toy-wars-factory",
+  "work_id": "P0C_WINDOWS_RECEIVE_ONCE_C2A_20261108_B",
+  "priority": "P0",
+  "issue": 204,
+  "pr": 212,
+  "parent_pr": 211,
+  "parent_exact_head": "5b62ba5163e11cd9e7e3d63923bf219c5863cde9",
+  "head": "ba3b22add2126a11eaff2bd7a51d00f0e4cee333",
+  "base_branch": "controller/p0c-readonly-intake-20261108-4ac8192f",
+  "source_branch": "controller/p0c-windows-receive-once-20261108-b527e773",
+  "author_epoch": 545,
+  "author_owner_id": "b527e773-97b5-45e9-9c2e-71c209ab45c7",
+  "actual_ci": {
+    "run_id": 42456801683,
+    "offline": "success",
+    "compile_hold": "success",
+    "python_passed": 885,
+    "new_win_receipt_tests": 27
+  },
+  "changed_paths": [
+    "tools/system_p0c_windows_receive_once.py",
+    "tests/test_system_p0c_windows_receive_once.py",
+    "docs/QA_P0C_WINDOWS_RECEIVE_ONCE.md"
+  ],
+  "source_properties": {
+    "only_single_https_get": true,
+    "win_only_real_network": true,
+    "no_shell_or_codex": true,
+    "no_studio": true,
+    "no_local_writes": true,
+    "no_poller": true,
+    "no_background_service": true,
+    "requires_manual_pc_launch": true
+  },
+  "gates": {
+    "independent_review": false,
+    "pc_execution_authorized": false,
+    "chat_to_pc_automated_delivery": false,
+    "host_opt_in_observed": false,
+    "pc_receiver_installed": false,
+    "main_merged": false,
+    "roblox_published": false
+  },
+  "review_request": "Separate authenticated security reviewer inspect PR211 parent exact head and PR212 child exact head CI; no author self-approval. Verify actual real Github user/app attribution cannot be confused with authorization; ensure redirects, replay and trust boundary. Run no Windows actions from mere comment.",
+  "additional_spend_jpy": 0,
+  "created_at": "2026-11-08T06:58:37.706Z"
+}

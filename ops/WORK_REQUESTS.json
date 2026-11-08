@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T06:47:33.976Z",
+  "observed_at": "2026-11-08T06:58:37.706Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5774,6 +5774,36 @@
       ],
       "next_actor": "Independent authenticated security reviewer for exact PR211 HEAD. Windows OWNER opt-in and real endpoint E2E only after review.",
       "created_at": "2026-11-08T06:47:33.976Z"
+    },
+    {
+      "id": "P0C_WINDOWS_RECEIVE_ONCE_C2A_20261108_B",
+      "kind": "P0C_WINDOWS_READONLY_GITHUB_COMMENT_GET_C2A",
+      "priority": "P0",
+      "repository": "kk051780/toy-wars-factory",
+      "issue": 204,
+      "pr": 212,
+      "parent_pr": 211,
+      "parent_exact_head": "5b62ba5163e11cd9e7e3d63923bf219c5863cde9",
+      "branch": "controller/p0c-windows-receive-once-20261108-b527e773",
+      "head": "ba3b22add2126a11eaff2bd7a51d00f0e4cee333",
+      "draft": true,
+      "source_owner_epoch": 545,
+      "source_owner_id": "b527e773-97b5-45e9-9c2e-71c209ab45c7",
+      "status": "OPEN_EXACT_HEAD_CI_GREEN_REGISTERED_REVIEWER_REQUIRED",
+      "ci_run_id": 42456801683,
+      "ci_jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "python_tests": 885,
+      "new_negative_tests": 27,
+      "review_packet_path": "ops/review_packets/PR212_p0c_windows_once_epoch545.json",
+      "assigned_role": "REVIEWER",
+      "independent_reviewed": false,
+      "pc_receiver_installed": false,
+      "main_merged": false,
+      "next_actor": "Separate registered reviewer C1/C2A source+provider attribution, then owner-opt-in Windows single comment receipt only; no auto Codex invocation",
+      "created_at": "2026-11-08T06:58:37.706Z"
     }
   ]
 }
