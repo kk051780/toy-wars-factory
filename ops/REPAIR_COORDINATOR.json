@@ -1924,18 +1924,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 521,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "epoch": 521,
-    "owner_id": "e2d12b4a-62cf-4f0a-8477-ce5e63a194a2",
-    "task_id": null,
-    "acquired_at": "2026-11-08T01:17:13.144Z",
-    "expires_at": "2026-11-08T01:39:13.144Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0-scoped-lease-shadow-20261108-9386a221",
-    "scope": "P0 issue123 PR201 shadow 2-writer candidate: refuse claim & apply_once unless SCOPED_ACTIVE, preserve release/false may_write. Add regressions/CI, no v2 live/merge/main direct changes; note PR202 parent drift."
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3579,37 +3568,30 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_P0_PR203_SOURCERY_FINDINGS_PARTIAL_FIX_EXACT_HEAD_GREEN",
-    "epoch": 520,
-    "owner_id": "9ebff29c-e073-447d-94c7-c3796117a5ad",
-    "pr": 203,
-    "head": "5e8fa180bc0d12543adae616daa429e62c113086",
+    "kind": "CONTROLLER_P0_PR201_SCOPED_SHADOW_MIGRATION_MODE_FAILCLOSED_CI_GREEN",
+    "epoch": 521,
+    "owner_id": "e2d12b4a-62cf-4f0a-8477-ce5e63a194a2",
+    "pr": 201,
+    "head": "8289909c476b323506915a79a8603acf971b0fab",
     "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "ci_run": 42432766896,
+    "ci_run": 42433897595,
     "offline": "SUCCESS",
     "compile_hold": "SUCCESS",
-    "python_tests": 880,
-    "additional_new_tests": 11,
-    "external_review_findings": {
-      "high": 2,
-      "medium": 2
-    },
-    "remediated": [
-      "verify_pr scoped current/parent/claim",
-      "malformed time/object fail closed",
-      "expired test fixture"
-    ],
-    "unresolved": [
-      "HIGH atomic write/merge host CAS fence; live v2 off"
-    ],
-    "independent_registered_review": false,
+    "python_tests": 1043,
+    "new_tests": 6,
+    "shadow_mode_required": "SCOPED_ACTIVE",
+    "mode_absent_denied": true,
+    "mode_legacy_denied": true,
+    "cas_recheck": true,
+    "child_pr202_old_base": "1721773bf94ec932d86446c4048145df4bc2243d",
+    "child_pr202_followup_required": true,
+    "root_pr203_unresolved_atomic_toctou": true,
+    "real_parallel_writers": false,
+    "independent_review": false,
     "main_merged": false,
-    "real_two_writers": false,
     "additional_spend_jpy": 0,
-    "queue_request_id": "P0_ISSUE123_PR203_ONE_TIME_CONTROLLER_MAINTENANCE_GATE_20261108",
-    "review_packet_path": "ops/review_packets/PR203_p0_sourcery_followup_epoch520.json",
-    "issue_checkpoint": 6715465571,
-    "released_at": "2026-11-08T01:11:55.582Z"
+    "checkpoint_issue_comment": 6715577004,
+    "released_at": "2026-11-08T01:24:46.441Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
