@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "kind": "PR203_BOT_FINDING_REMEDIATION_AND_HIGH_TOCTOU_HOLD",
+  "repository": "kk051780/toy-wars-factory",
+  "issue": 123,
+  "pr": 203,
+  "branch": "controller/p0-legacy-shadow-compat-20261108-76116caf",
+  "prior_exact_head": "1d2f3a4c8d4dc6b9ac9335fdc3c9520226ee2527",
+  "exact_head": "5e8fa180bc0d12543adae616daa429e62c113086",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "ci_run_id": 42432766896,
+  "ci_jobs": {
+    "offline": "success",
+    "compile_hold": "success"
+  },
+  "python_tests": 880,
+  "new_tests_in_latest_patch": 11,
+  "new_tests_root_pr": 47,
+  "changed_paths": [
+    "docs/SCOPED_LEASE_MIGRATION_GATE.md",
+    "history/C10002_legacy_scoped_compatibility_gate.json",
+    "history/C10003_legacy_scoped_merge_guard.json",
+    "history/C10004_legacy_owns_write_fence.json",
+    "history/C10005_sourcery_review_defect_fence.json",
+    "tests/test_legacy_scoped_integration_gate.py",
+    "tests/test_legacy_scoped_migration_gate.py",
+    "tests/test_legacy_scoped_owner_cleanup.py",
+    "tests/test_legacy_scoped_sourcery_regression.py",
+    "tools/repair_control.py",
+    "tools/repair_integration.py"
+  ],
+  "actor_kind": "MANUAL_CONTROLLER",
+  "owner_epoch": 520,
+  "owner_id": "9ebff29c-e073-447d-94c7-c3796117a5ad",
+  "external_review": {
+    "engine": "sourcery-ai",
+    "review_state": "COMMENTED",
+    "reported_findings": {
+      "high": 2,
+      "medium": 2
+    },
+    "fixed_specific_findings": [
+      "verify_pr claim and parent and current coordinator ref migration fence",
+      "ValueError for malformed timestamp and state",
+      "expiry fixture corrected"
+    ],
+    "remaining": [
+      "HIGH TOCTOU: host CAS-fenced actual source update or merge; block live scoped v2"
+    ]
+  },
+  "formal_review": {
+    "registered_reviewer_attested": false,
+    "native_review_approval": false,
+    "main_merged": false
+  },
+  "deployment": {
+    "old_runners_drained": false,
+    "scoped_real_writes_enabled": false,
+    "real_two_writer_test": false
+  },
+  "next_action": "Distinct registered reviewer inspect 11 paths exact head and unresolved High; separately design host-atomic action fence before any v2 activation. Never self-approve or merge DRAFT.",
+  "updated_at": "2026-11-08T01:07:48.848Z"
+}

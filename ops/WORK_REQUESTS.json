@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T00:44:22.697Z",
+  "observed_at": "2026-11-08T01:07:48.848Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5070,40 +5070,42 @@
       "id": "P0_ISSUE123_PR203_ONE_TIME_CONTROLLER_MAINTENANCE_GATE_20261108",
       "kind": "PROTECTED_SINGLE_PR_CONTROLLER_TRUST_ROOT_MAINTENANCE_INDEPENDENT_REVIEW",
       "priority": "P0",
-      "status": "OPEN_EXACT_HEAD_INDEPENDENT_REVIEW_AND_ONE_TIME_INTEGRATION_ROUTING_REQUIRED",
+      "status": "REQUEST_CHANGES_HIGH_ATOMIC_ACTION_FENCE_OPEN_EXACT_HEAD_REVIEW",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
       "issue": 123,
       "pr": 203,
       "branch": "controller/p0-legacy-shadow-compat-20261108-76116caf",
-      "head": "1d2f3a4c8d4dc6b9ac9335fdc3c9520226ee2527",
+      "head": "5e8fa180bc0d12543adae616daa429e62c113086",
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "draft": true,
       "source_owner_epoch": 518,
       "source_owner_id": "8db68b60-56c2-4fa2-a6aa-821efb1dd380",
       "source_owner_release_ref": "83a43b2b1ab1540a9558f74f9df8402756a8a4ff",
-      "ci_run_id": 42429957240,
+      "ci_run_id": 42432766896,
       "ci_jobs": {
         "offline": "success",
         "compile_hold": "success"
       },
-      "python_tests": 869,
-      "new_negative_tests": 36,
+      "python_tests": 880,
+      "new_negative_tests": 47,
       "changed_paths": [
         "docs/SCOPED_LEASE_MIGRATION_GATE.md",
         "history/C10002_legacy_scoped_compatibility_gate.json",
         "history/C10003_legacy_scoped_merge_guard.json",
         "history/C10004_legacy_owns_write_fence.json",
+        "history/C10005_sourcery_review_defect_fence.json",
         "tests/test_legacy_scoped_integration_gate.py",
         "tests/test_legacy_scoped_migration_gate.py",
         "tests/test_legacy_scoped_owner_cleanup.py",
+        "tests/test_legacy_scoped_sourcery_regression.py",
         "tools/repair_control.py",
         "tools/repair_integration.py"
       ],
-      "changed_files": 9,
+      "changed_files": 11,
       "created_at": "2026-11-08T00:44:22.697Z",
-      "updated_at": "2026-11-08T00:44:22.697Z",
+      "updated_at": "2026-11-08T01:07:48.848Z",
       "source": "LIVE_GITHUB_PR_CI_COORDINATOR_READBACK_MANUAL_CONTROLLER_INTAKE",
       "normal_integration_decision": "SKIP_UNRELATED_FOR_CONTROLLER_BRANCH",
       "normal_integration_reason": "accepted main repair_integration.decide only admits signed registered WORKER or META prefixes; never impersonate those identities, never globally broaden allowed prefixes",
@@ -5137,7 +5139,33 @@
       "real_parallel_writers_verified": false,
       "automatic_chat_recovery_verified": false,
       "additional_spend_yen": 0,
-      "next_actor": "REGISTERED_REVIEWER_OR_SEPARATE_AUTHENTIC_MAINTENANCE_ADMISSION"
+      "next_actor": "REGISTERED_REVIEWER_OR_SEPARATE_AUTHENTIC_MAINTENANCE_ADMISSION",
+      "sourcery_review": {
+        "reviewed_head": "1d2f3a4c8d4dc6b9ac9335fdc3c9520226ee2527",
+        "engine": "sourcery-ai",
+        "submitted_state": "COMMENTED",
+        "completed_at": "2026-11-08T00:54:43Z",
+        "findings": {
+          "high": 2,
+          "medium": 2
+        },
+        "fixed_in_current_head": [
+          "legacy verify_pr scoped entry bypass",
+          "malformed scoped timestamp fail-closed",
+          "expired lease test actually expires"
+        ],
+        "unresolved": [
+          "HIGH: actual write/merge atomic coordinator fence and old-runner drain"
+        ],
+        "new_head": "5e8fa180bc0d12543adae616daa429e62c113086",
+        "exact_head_ci_run_id": 42432766896
+      },
+      "review_packet_path": "ops/review_packets/PR203_p0_sourcery_followup_epoch520.json",
+      "prior_exact_head_evidence": {
+        "head": "1d2f3a4c8d4dc6b9ac9335fdc3c9520226ee2527",
+        "ci_run_id": 42429957240,
+        "review_packet_path": "ops/review_packets/PR203_p0_root_maintenance_exact_head_epoch519.json"
+      }
     }
   ]
 }
