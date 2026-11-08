@@ -7,18 +7,19 @@
   "pr": 212,
   "parent_pr": 211,
   "parent_exact_head": "5b62ba5163e11cd9e7e3d63923bf219c5863cde9",
-  "head": "b5b0e0982141f072172e0c3450f4e47d5e28be57",
+  "head": "da9e5c3ec01c6e4465a1cac92043b3647a9ea7d9",
   "base_branch": "controller/p0c-readonly-intake-20261108-4ac8192f",
   "source_branch": "controller/p0c-windows-receive-once-20261108-b527e773",
   "author_epoch": 545,
   "author_owner_id": "b527e773-97b5-45e9-9c2e-71c209ab45c7",
   "actual_ci": {
-    "run_id": 42460163130,
+    "run_id": 42462501202,
     "offline": "success",
     "compile_hold": "success",
-    "python_passed": 917,
+    "python_passed": 941,
     "new_win_receipt_tests": 27,
-    "new_scan_tests": 32
+    "new_scan_tests": 36,
+    "new_sqlite_receipt_tests": 20
   },
   "changed_paths": [
     "tools/system_p0c_windows_receive_once.py",
@@ -42,9 +43,10 @@
     "host_opt_in_observed": false,
     "pc_receiver_installed": false,
     "main_merged": false,
-    "roblox_published": false
+    "roblox_published": false,
+    "local_receipt_candidate_only": true
   },
-  "review_request": "Exact current PR212 head b5b0e098... (not old 4240094...); independently review since-filter/duplicate fail-closed, user token optional on PUBLIC GitHub, no durable replay, no codex. Formally approve only with real independent auth.",
+  "review_request": "Review current exact PR212 head da9e5c3 and raw CI941; audit SQLite path/symlinks/atomicity, fail-closed status and replay under crashes/races, optional scanner wiring, owner auth still absent, PRIVATE/PUBLIC credential handling. Distinct authenticated review required.",
   "additional_spend_jpy": 0,
   "created_at": "2026-11-08T06:58:37.706Z",
   "revisions": [
@@ -83,6 +85,35 @@
       "codex_policy": "Bridge only for compact necessary Studio/Windows MCP preflights; GitHub+ChatGPT own code and CI. No continuous Codex polling/reinstalls or extra spend.",
       "registered_reviewer_required": true,
       "created_at": "2026-11-08T07:48:01.466Z"
+    },
+    {
+      "kind": "C2D_LOCAL_DURABLE_SQLITE_READONLY_RECEIPT_CANDIDATE",
+      "previous_head": "b5b0e0982141f072172e0c3450f4e47d5e28be57",
+      "new_head": "da9e5c3ec01c6e4465a1cac92043b3647a9ea7d9",
+      "ci_run": 42462501202,
+      "python_passed": 941,
+      "added_tests": 24,
+      "change_chain": [
+        {
+          "head": "c98f0dccb025e2b0ba3e3beae456512307d59f2d",
+          "change": "SQLite atomic receipt library plus 20 tests and doc"
+        },
+        {
+          "head": "da9e5c3ec01c6e4465a1cac92043b3647a9ea7d9",
+          "change": "explicit --receipt-ledger scan integration plus 4 tests and doc"
+        }
+      ],
+      "paths": [
+        "tools/system_p0c_readonly_receipt_ledger.py",
+        "tests/test_system_p0c_readonly_receipt_ledger.py",
+        "docs/QA_P0C_DURABLE_RECEIPTS.md",
+        "tools/system_p0c_windows_scan_once.py",
+        "tests/test_system_p0c_windows_scan_once.py",
+        "docs/QA_P0C_ONE_SHOT_LEDGER_INTEGRATION.md"
+      ],
+      "guards": "SQLite BEGIN IMMEDIATE / UNIQUE work_id, nonce, comment_id; repeat same-host blocked. Explicit filepath only; no PC process, no CodeX, no Studio, no owner auth, no remote action. Local DB path may be unsafe or modified; host-side test not done.",
+      "review_status": "REQUEST_CHANGES_ADVISORY_RECHECK_REQUIRED",
+      "recorded_at": "2026-11-08T08:22:01.518Z"
     }
   ]
 }

@@ -1921,6 +1921,30 @@
       "main_merged": false,
       "additional_spend_jpy": 0,
       "recorded_at": "2026-11-08T07:48:01.466Z"
+    },
+    {
+      "kind": "P0C_C2D_SQLITE_REPLAY_CANDIDATE_CI941",
+      "epoch": 548,
+      "owner_id": "a018c650-5f30-49c7-9f6c-00b7e314d5cc",
+      "issue": 204,
+      "work_id": "P0C_WINDOWS_RECEIVE_ONCE_C2A_20261108_B",
+      "pr": 212,
+      "head": "da9e5c3ec01c6e4465a1cac92043b3647a9ea7d9",
+      "previous_head": "b5b0e0982141f072172e0c3450f4e47d5e28be57",
+      "ci_run": 42462501202,
+      "python_tests": 941,
+      "new_tests": 24,
+      "review_packet_path": "ops/review_packets/PR212_p0c_windows_once_epoch545.json",
+      "codex_calls": 0,
+      "pc_host_executed": false,
+      "pc_receiver_installed": false,
+      "source_only": true,
+      "local_sqlite_replay_candidate": true,
+      "distributed_cas_replay_verified": false,
+      "independent_review": false,
+      "main_merged": false,
+      "additional_spend_jpy": 0,
+      "recorded_at": "2026-11-08T08:22:01.518Z"
     }
   ],
   "controller_maintenance": {
@@ -2006,17 +2030,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 548,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "a018c650-5f30-49c7-9f6c-00b7e314d5cc",
-    "task_id": null,
-    "epoch": 548,
-    "acquired_at": "2026-11-08T08:14:03.188Z",
-    "expires_at": "2026-11-08T08:39:03.188Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0c-windows-receive-once-20261108-b527e773",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,

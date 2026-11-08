@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T07:48:01.466Z",
+  "observed_at": "2026-11-08T08:22:01.518Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5785,27 +5785,27 @@
       "parent_pr": 211,
       "parent_exact_head": "5b62ba5163e11cd9e7e3d63923bf219c5863cde9",
       "branch": "controller/p0c-windows-receive-once-20261108-b527e773",
-      "head": "b5b0e0982141f072172e0c3450f4e47d5e28be57",
+      "head": "da9e5c3ec01c6e4465a1cac92043b3647a9ea7d9",
       "draft": true,
       "source_owner_epoch": 545,
       "source_owner_id": "b527e773-97b5-45e9-9c2e-71c209ab45c7",
-      "status": "OPEN_EXACT_HEAD_917_GREEN_ADVISORY_FIX_AWAITING_INDEPENDENT_SECURITY_REVIEW",
-      "ci_run_id": 42460163130,
+      "status": "OPEN_C2D_SQLITE_RECEIPT_941_GREEN_DISTINCT_SECURITY_REVIEW_REQUIRED",
+      "ci_run_id": 42462501202,
       "ci_jobs": {
         "offline": "success",
         "compile_hold": "success"
       },
-      "python_tests": 917,
-      "new_negative_tests": 59,
+      "python_tests": 941,
+      "new_negative_tests": 83,
       "review_packet_path": "ops/review_packets/PR212_p0c_windows_once_epoch545.json",
       "assigned_role": "REVIEWER",
       "independent_reviewed": false,
       "pc_receiver_installed": false,
       "main_merged": false,
-      "next_actor": "Independent registered reviewer inspect CURRENT PR212 head and raw 917 tests for dedup and since cutoff; static advisory fixes, NO PC receiver/execution. Repeat-scan replay still lacks durable CAS.",
+      "next_actor": "Distinct authenticated security REVIEWER re-inspect exact PR212 HEAD da9e5c... and CI #42462501202; then owner opt-in single Windows read-only scan+SQLite receipt. No live Codex auto relay.",
       "created_at": "2026-11-08T06:58:37.706Z",
-      "previous_head": "4240094deb08067aa167e5ad9bd289e5d4c07085",
-      "updated_at": "2026-11-08T07:48:01.466Z",
+      "previous_head": "b5b0e0982141f072172e0c3450f4e47d5e28be57",
+      "updated_at": "2026-11-08T08:22:01.518Z",
       "changed_paths": [
         "tools/system_p0c_windows_receive_once.py",
         "tools/system_p0c_windows_scan_once.py",
@@ -5814,7 +5814,15 @@
       ],
       "bridge_role": "CODEX_BRIDGE_ONLY_QUOTA_CONSERVATION",
       "execution_authorized": false,
-      "chat_to_pc_delivery_verified": false
+      "chat_to_pc_delivery_verified": false,
+      "replay_in_same_scan_blocked": true,
+      "local_durable_replay_candidate": true,
+      "local_replay_tested_in_ubuntu_ci": true,
+      "real_windows_receipt_verified": false,
+      "windows_service_installed": false,
+      "codex_execution_authorized": false,
+      "cryptographic_owner_authorization": false,
+      "distributed_cas_replay_verified": false
     }
   ]
 }
