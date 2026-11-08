@@ -200,6 +200,7 @@ function H.new(serverFile, existingCount, options)
         local records={}
         local store={}
         function store:GetAsync(key)
+            h.storeReads=(h.storeReads or 0)+1
             if options.storeReadFail then error("injected store read unavailable") end
             local record=records[key]
             return record and copyData(record.value),keyInfo(record)
@@ -226,8 +227,18 @@ function H.new(serverFile, existingCount, options)
     local services={Players=h.players,ReplicatedStorage=h.storage,RunService=h.runService,
         DataStoreService=dataStoreService,HttpService=httpService}
     h.services=services
+    -- The normal fixture intentionally omits BindToClose. Explicit tests opt in
+    -- so shutdown lifecycle behavior can be exercised, not silently skipped.
+    local gameStub={GetService=function(_,name) return assert(services[name],"unsupported service") end}
+    if options.captureShutdown then
+        function gameStub:BindToClose(callback)
+            assert(type(callback)=="function","shutdown callback must be a function")
+            assert(not h.shutdownCallback,"duplicate shutdown registration")
+            h.shutdownCallback=callback
+        end
+    end
     local env=setmetatable({
-        game={GetService=function(_,name) return assert(services[name],"unsupported service") end},
+        game=gameStub,
         workspace=h.workspace,Instance={new=instance},Enum=enums,
         Vector3={new=vector},CFrame={new=frame},Color3={fromRGB=function(...) return {...} end},
         UDim={new=function(...) return {...} end},UDim2={fromOffset=function(...) return {...} end,fromScale=function(...) return {...} end},
