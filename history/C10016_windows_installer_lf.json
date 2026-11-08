@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "C10016",
+  "kind": "P0B_WINDOWS_CANONICAL_INSTALLER_LF_BINARY_WRITE",
+  "issue": 204,
+  "related_p0_issue": 123,
+  "owner_epoch": 530,
+  "owner_id": "51ac9fdc-1855-40db-8e70-6131c77e6c85",
+  "coordination_branch": "twf-repair-coordinator",
+  "work_branch": "controller/p0b-windows-installer-lf-20261108-51ac9fdc",
+  "main_parent": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_script_before_blob": "bb92ec0856f02028b48ae812c03cb9227bdd36b1",
+  "evidence": "Windows Python 3.14.10 built 54681-char installer but observed disk SHA256 mismatch; exact local CRLF->LF diagnosis pending owner measured hashes",
+  "mechanism": "Path.write_text may translate LF to CRLF on Windows while SHA256(manifest) hashes in-memory LF string",
+  "change": "Use explicit UTF-8 read_text and write_bytes for canonical LF source/manifest outputs; do not affect generated installer Luau logic",
+  "new_tests": 7,
+  "scope": [
+    "tools/build_installer.py",
+    "tests/test_windows_installer_lf.py",
+    "history/C10016_windows_installer_lf.json"
+  ],
+  "no_gameplay_logic_changed": true,
+  "not_studio_installed": true,
+  "not_main_merged": true,
+  "not_approved": true,
+  "extra_spend_jpy": 0,
+  "roblox_published": false
+}
