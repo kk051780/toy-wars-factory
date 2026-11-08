@@ -101,3 +101,30 @@ reconciling the reservation using a new expected-SHA CAS. Until that actor and
 the old-runner fleet drain are evidenced, `repair_integration.decide` remains
 `WAIT_HOST_ACTION_FENCE` for otherwise-approved PRs. Two-writer scoped
 activation, independent approval and main integration remain HOLD.
+
+## P0 epoch525: real connected-GitHub CAS source action test (limited to PR203 branch)
+
+The addition `tools/repair_source_action_fence.py` has an intentionally narrow
+`SOURCE_UPDATE_PROBE` contract: only a named CONTROLLER owner/epoch, exact PR203
+work branch, source history path, source old/new commit SHA, original main SHA,
+operation ID and recorded work ID. It builds a coordinator-reservation proposal
+and a later double-source-ref readback settlement proposal. Neither is an
+executable GitHub permission; these pure functions cannot authenticate
+connected provider inputs.
+
+`repair_control.scoped_lease_migration_block` validates and blocks the new
+`pending_source_action` inside the shared coordinator. Owner-only legacy
+`release()` refuses to discard a pending source action, even on expiry or
+ambiguous GitHub result. Unknown fields, wrong holder, malformed SHAs or changed
+scope raise errors. The source probe can NEVER target main, shared coordinator,
+ordinary game code, or Roblox. The source update MUST be performed in-between
+two confirmed CAS writes by a genuinely connected manual host, reading both
+GitHub refs. Losing a CAS or ambiguous source readback leaves the reservation
+on HOLD; it is not cleared automatically. Manual connected readback is NOT
+unattended registered task authentication or proof that old runners drained.
+
+This is a bound operational **single branch update test**, not a generic
+host-enforced lease adapter for production writer/merge. `MERGE` remains
+`WAIT_HOST_ACTION_FENCE`; scoped v2 stays OFF. Do not treat fixture tests,
+manual user delegation, or a successful GitHub ref update as two GPT writers
+running in parallel.

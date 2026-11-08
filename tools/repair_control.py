@@ -118,6 +118,47 @@ def scoped_lease_migration_block(state):
             # Expired entry is NOT self-revocation; only verified recovery can
             # remove it from this same CAS-controlled registry.
             blocked = True
+    # P0 manual CONNECTED-GITHUB source action probe, NOT a production grant.
+    # The record cannot be removed by expiry; it excludes any legacy/scoped
+    # admission and locks the original CONTROLLER holder until Git readback.
+    source_action = state.get("pending_source_action")
+    if source_action is not None:
+        expected = {"schema", "operation_id", "kind", "repository", "work_branch",
+                    "work_id", "source_path", "before_head", "after_head",
+                    "main_head", "owner_id", "owner_epoch", "reserved_at"}
+        if (type(source_action) is not dict or set(source_action) != expected or
+                type(source_action["schema"]) is not int or source_action["schema"] != 1 or
+                source_action["kind"] != "SOURCE_UPDATE_PROBE"):
+            raise ValueError("malformed pending source action")
+        for item in ("operation_id", "owner_id"):
+            canonical_id(source_action[item])
+        if (type(source_action["repository"]) is not str or
+                not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+",
+                                 source_action["repository"]) or
+                type(source_action["work_id"]) is not str or
+                source_action["work_id"] != "P0_ISSUE123_PR203_SOURCE_ACTION_PROBE" or
+                source_action["source_path"] !=
+                "history/C10010_real_source_action_probe.json" or
+                any(type(source_action[k]) is not str or
+                    not re.fullmatch(r"[0-9a-f]{40}", source_action[k])
+                    for k in ("before_head", "after_head", "main_head")) or
+                source_action["before_head"] == source_action["after_head"] or
+                type(source_action["owner_epoch"]) is not int):
+            raise ValueError("invalid pending source action identity")
+        active = state.get("holder")
+        if (type(active) is not dict or active.get("kind") != "CONTROLLER" or
+                active.get("owner_id") != source_action["owner_id"] or
+                active.get("epoch") != source_action["owner_epoch"] or
+                active.get("task_id") is not None or
+                active.get("work_branch") != source_action["work_branch"] or
+                active.get("base_main_sha") != source_action["main_head"] or
+                type(source_action["work_branch"]) is not str or
+                source_action["work_branch"] in ("main", CONTROL_BRANCH) or
+                not source_action["work_branch"].startswith("controller/p0-") or
+                instant(source_action["reserved_at"]) < instant(active["acquired_at"]) or
+                instant(source_action["reserved_at"]) >= instant(active["expires_at"])):
+            raise ValueError("pending source action has no matching controller")
+        blocked = True
     # A provider action reservation is a hard in-flight operation barrier.
     # It has no implicit expiry/recovery: only an authenticated host receipt
     # can reconcile the uncertain outcome and permit its eventual removal.
@@ -231,6 +272,9 @@ def owns(state, kind, owner_id, epoch, now):
 
 def release(state, kind, owner_id, epoch, now, packet=None, reported=False):
     validate(state)
+    if state.get("pending_source_action") is not None:
+        scoped_lease_migration_block(state)  # validate before fail-closed release
+        raise ValueError("pending source action requires verified GitHub reconciliation")
     if state.get("pending_provider_action") is not None:
         # A pending GitHub result is NOT made safe by holder expiry or release.
         scoped_lease_migration_block(state)  # also validates action shape
