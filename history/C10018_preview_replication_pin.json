@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "C10018",
+  "kind": "P0B_EXACT_SOURCE_PIN_STUDIO_PREVIEW_HUD_REPLICATION",
+  "issue": 204,
+  "pr": 192,
+  "owner_epoch": 531,
+  "owner_id": "5cb061c3-aa50-40b7-b69b-53dab1c298ae",
+  "work_branch": "controller/studio-unsaved-pve-preview-20261107-db08b795",
+  "source_commit": "b09e66a8be14867063450075c7d6f1f6e389bcae",
+  "source_blob": "92adaa336532c9d85ff6bb7e66aa78487f39930d",
+  "base_hud_blob": "83233206eb2119c4a05aa01bc4f320b554f4f79b",
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1591,
+    "lua_bytes": 71890
+  },
+  "pinned_existing_four_sources": true,
+  "staged_exporter_path": "tools/export_accepted_rbxlx.py",
+  "added_hud_replication_tests": "tests/auto/studio_preview_hud_replication_spec.lua",
+  "observed_red_on_roblox_engine": false,
+  "exact_head_ci_pending": true,
+  "reasons": [
+    "client status folder may replicate before progress mode",
+    "missing/unknown mode must warn as unsaved until verified"
+  ],
+  "main_merged": false,
+  "independent_review": false,
+  "extra_spend_jpy": 0
+}

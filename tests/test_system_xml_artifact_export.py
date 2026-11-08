@@ -30,7 +30,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_source_pins_match_actual_four_game_lua_blobs(self):
         files=x.read_pinned_sources(self.root)
         self.assertEqual(len(files),4)
-        self.assertEqual(sum(map(len,files.values())),70778)
+        self.assertEqual(sum(map(len,files.values())),71890)
 
     def test_generated_document_is_deterministic(self):
         a,ar=x.build_place(self.root)
@@ -75,7 +75,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_current_combined_gameplay_is_embedded_in_actual_xml(self):
         binary, receipt=x.build_place(self.root)
         self.assertEqual(receipt['unmerged_source_branch_head_sha'],
-                         '6a65ec62022eadd2f273c3c18312db789f271987')
+                         'b09e66a8be14867063450075c7d6f1f6e389bcae')
         self.assertEqual(receipt['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
                          'a358ef13e1743cabdf0a940a29aa09c8387ac201')
         doc=ET.fromstring(binary)
@@ -119,7 +119,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_tenth_wave_captain_is_in_embedded_3d_server_source(self):
         xml, manifest=x.build_place(self.root)
         self.assertEqual(manifest['unmerged_source_branch_head_sha'],
-                         '6a65ec62022eadd2f273c3c18312db789f271987')
+                         'b09e66a8be14867063450075c7d6f1f6e389bcae')
         self.assertEqual(manifest['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
                          'e2080307182d1ac1c4c4842f1307229b75ca7b12')
         self.assertEqual(manifest['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
@@ -143,7 +143,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_factory_speed_is_in_signed_source_pinned_xml_candidate(self):
         binary, manifest=x.build_place(self.root)
         self.assertEqual(manifest['unmerged_source_branch_head_sha'],
-                         '6a65ec62022eadd2f273c3c18312db789f271987')
+                         'b09e66a8be14867063450075c7d6f1f6e389bcae')
         self.assertEqual(manifest['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
                          'e2080307182d1ac1c4c4842f1307229b75ca7b12')
         self.assertEqual(manifest['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
