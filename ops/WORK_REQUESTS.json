@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T03:49:28.801Z",
+  "observed_at": "2026-11-08T03:55:28.813Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5512,6 +5512,54 @@
       "roblox_published": false,
       "extra_spend_jpy": 0,
       "next_actor": "REGISTERED_INDEPENDENT_REVIEWER_ROOT_STACK_SECURITY;THEN_OWNER_WINDOWS_CODEX_BACKED_UP_STUDIO_PLAYTEST"
+    },
+    {
+      "id": "P0B_ISSUE204_PR206_STUDIO_UNSAVED_LIFECYCLE_EXACT_HEAD_REVIEW_20261108",
+      "kind": "P0B_STUDIO_UNSAVED_PVE_LIFECYCLE_INDEPENDENT_REVIEW",
+      "priority": "P0",
+      "status": "OPEN_EXACT_HEAD_CI_GREEN_INDEPENDENT_REVIEW_REQUIRED",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "issue": 204,
+      "pr": 206,
+      "branch": "controller/p0b-studio-lifecycle-gpt6-20261108",
+      "head": "8630dee1e215f7a7aa44c45592f6f57fb6ec97fa",
+      "base_branch": "controller/studio-unsaved-pve-preview-20261107-db08b795",
+      "base_pr": 192,
+      "base_parent_head": "985fbf3710b2068c888fe409e71377f844debec7",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "draft": true,
+      "source_owner_epoch": 532,
+      "source_owner_id": "d62a46f0-d1ce-4d80-9d22-1b2b267f4065",
+      "ci_run_id": 42444601774,
+      "ci_jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "studio_preview_lua_cases": 17,
+      "added_lifecycle_lua_cases": 4,
+      "changed_files": 2,
+      "changed_paths": [
+        "tests/roblox_server_harness.lua",
+        "tests/auto/studio_unsaved_preview_spec.lua"
+      ],
+      "created_at": "2026-11-08T03:55:28.813Z",
+      "updated_at": "2026-11-08T03:55:28.813Z",
+      "review_request": "Registered independent REVIEWER: re-read exact PR206 HEAD 8630dee1e215f7a7aa44c45592f6f57fb6ec97fa and real hosted workflow 42444601774 offline+compile_hold success; inspect both test/harness paths, opt-in BindToClose callback with unchanged default behavior, GetAsync read counter semantics, and 4 new mock scenarios: >45s, >180s, DataStore restoration, single/four players shutdown and player departure, each zero UpdateAsync. Verify no false Studio/mobile proof, no source changes, no main merge. Confirm #192 parent exact head 985fbf3710b2 and latest CI; find gaps in long-running lease/ownership. This is author mock evidence only, not registered independent approval. Review output should be PASS/REQUEST_CHANGES/BLOCKED, no self-approval and no automatic merge.",
+      "additional_spend_jpy": 0,
+      "independent_reviewed": false,
+      "real_roblox_playtested": false,
+      "main_merged": false,
+      "next_actor": "REGISTERED_INDEPENDENT_REVIEWER;PROTECTED_INTEGRATION_COORDINATOR",
+      "must_not": [
+        "SELF_APPROVE",
+        "MERGE_DRAFT",
+        "WRITE_MAIN",
+        "BYPASS_COORDINATOR",
+        "PUBLISH_ROBLOX",
+        "INCUR_ADDITIONAL_FEES"
+      ]
     }
   ]
 }
