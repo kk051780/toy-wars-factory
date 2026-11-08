@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "kind": "AUTHOR_ONLY_VERIFIER_HANDOFF_NOT_REGISTERED_APPROVAL",
+  "repository": "kk051780/toy-wars-factory",
+  "issue": 57,
+  "pr": 181,
+  "head": "4b0cc93d73a90e259855cd1f4fd8a7c42a2a6a44",
+  "prior_head": "35acf7f44a5948830e77cec98e62e059a506590c",
+  "branch": "controller/issue57-handoff-privilege-split-9b8a6f21",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "owner_epoch": 541,
+  "owner_id": "ac0da6a4-5d30-44ed-ab59-e18fc174b5dd",
+  "changed_this_commit": [
+    "tools/verify_handoff_artifact.py",
+    "tests/test_verify_handoff_artifact.py",
+    "docs/QA_HANDOFF_PRIVILEGE_SPLIT.md"
+  ],
+  "new_python_tests": 11,
+  "validation_contract": {
+    "input": "downloaded GitHub Actions ZIP bytes only",
+    "mode": "OFFLINE_NO_GITHUB_IO",
+    "archive_member_allowlist": [
+      "CHAT_HANDOFF.md",
+      "LATEST_STATE.json",
+      "HANDOFF_SHA256SUMS.txt"
+    ],
+    "checks": [
+      "duplicate ZIP names",
+      "unexpected paths",
+      "symlink/file modes",
+      "entry and total expansion budget",
+      "encrypted/compression type",
+      "UTF8",
+      "duplicate JSON object keys",
+      "schema=2",
+      "canonical repository",
+      "HOLD release",
+      "strict40hex source revision",
+      "two-file exact SHA256 manifest if present"
+    ],
+    "old_format": "legacy ZIP CRC only, explicitly no SHA256 manifest",
+    "success_verdict": "ARCHIVE_STRUCTURE_VALID_ONLY",
+    "provider_run_authenticated": false,
+    "main_ancestry_verified": false,
+    "write_authorized": false
+  },
+  "ci": {
+    "run": 42452649957,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42452649957",
+    "status": "completed",
+    "conclusion": "success",
+    "offline": "success",
+    "compile_hold": "success",
+    "python_tests": 915
+  },
+  "unresolved": [
+    "caller must separately authenticate run/job/artifact and GitHub main/CI/source_revision ancestry",
+    "old accepted-main scheduled GitHub Actions workflow retains write-scoped legacy until PR181 independently integrated",
+    "Sourcery request on this new head pending",
+    "registered REVIEWER head-specific approval missing",
+    "Issue57 unattended host GitHub write and PR203 TOCTOU still unresolved",
+    "2 real GPT writers overlap not demonstrated",
+    "P0-B Roblox physical studio separate"
+  ],
+  "spend_jpy": 0,
+  "main_changed": false,
+  "writer_job_enabled": false,
+  "merge": false,
+  "roblox_published": false,
+  "created_at": "2026-11-08T05:56:55.266Z"
+}
