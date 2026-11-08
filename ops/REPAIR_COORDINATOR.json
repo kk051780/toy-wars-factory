@@ -1839,6 +1839,25 @@
       "review_required": true,
       "main_merged": false,
       "observed_at": "2026-11-07T22:17:59.514Z"
+    },
+    {
+      "kind": "P0C_READONLY_COMMAND_INTAKE_C1_PROTECTED_DRAFT_CI_SUCCESS",
+      "work_id": "P0C_CHAT_TO_WINDOWS_READONLY_INTAKE_20261108_A",
+      "epoch": 544,
+      "owner_id": "4ac8192f-85be-455b-9177-9e0e0e08c761",
+      "issue": 204,
+      "pr": 211,
+      "head": "5b62ba5163e11cd9e7e3d63923bf219c5863cde9",
+      "ci_run": 42456074493,
+      "ci_python_tests": 858,
+      "p0c_negative_tests": 25,
+      "queue_request": "P0C_CHAT_TO_WINDOWS_READONLY_INTAKE_20261108_A",
+      "review_packet_path": "ops/review_packets/PR211_p0c_command_intake_epoch544.json",
+      "status": "P0C_C1_SOURCE_CANDIDATE_READY_FOR_INDEPENDENT_REVIEW",
+      "pc_receiver_installed": false,
+      "command_relay_verified": false,
+      "main_merged": false,
+      "observed_at": "2026-11-08T06:47:33.976Z"
     }
   ],
   "controller_maintenance": {
@@ -1924,17 +1943,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 544,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "4ac8192f-85be-455b-9177-9e0e0e08c761",
-    "task_id": null,
-    "epoch": 544,
-    "acquired_at": "2026-11-08T06:42:49.630Z",
-    "expires_at": "2026-11-08T07:07:49.630Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0c-readonly-intake-20261108-4ac8192f",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,

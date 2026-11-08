@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "work_id": "P0C_CHAT_TO_WINDOWS_READONLY_INTAKE_20261108_A",
+  "repo": "kk051780/toy-wars-factory",
+  "issue": 204,
+  "pr": 211,
+  "source_branch": "controller/p0c-readonly-intake-20261108-4ac8192f",
+  "head": "5b62ba5163e11cd9e7e3d63923bf219c5863cde9",
+  "base": "main",
+  "base_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "author_epoch": 544,
+  "author_owner_id": "4ac8192f-85be-455b-9177-9e0e0e08c761",
+  "head_ci": {
+    "run_id": 42456074493,
+    "offline": "success",
+    "compile_hold": "success",
+    "python_passed": 858,
+    "p0c_cases": 25
+  },
+  "changed_files": [
+    "tools/system_p0c_command_intake.py",
+    "tests/test_system_p0c_command_intake.py",
+    "docs/QA_P0C_COMMAND_INTAKE.md"
+  ],
+  "review_state": "DISTINCT_AUTHENTICATED_REVIEW_REQUIRED",
+  "draft": true,
+  "main_merged": false,
+  "windows_receiver_installed": false,
+  "pc_delivery_verified": false,
+  "pc_codex_execution_verified": false,
+  "execution_authorized": false,
+  "public_issue_comment_trusted": false,
+  "security_gates": [
+    "owner_verified_source",
+    "host_opt_in",
+    "anti_replay",
+    "lease_cas",
+    "no_unattended_execution",
+    "no_arbitrary_commands"
+  ],
+  "additional_spend_jpy": 0,
+  "recorded_at": "2026-11-08T06:47:33.976Z"
+}
