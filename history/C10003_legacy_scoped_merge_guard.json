@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "id": "C10003",
+  "kind": "P0_LEGACY_MERGE_SCOPED_LEASE_FENCE",
+  "repository": "kk051780/toy-wars-factory",
+  "parent_pr": 203,
+  "parent_head": "d0b978e234af1e06305a2a0af3878db48f8a09ca",
+  "issue": 123,
+  "coordination": {
+    "epoch": 517,
+    "owner_id": "697c70f3-53c9-4f16-bba6-f246db00a3b7",
+    "branch": "controller/p0-legacy-shadow-compat-20261108-76116caf"
+  },
+  "modified_paths": [
+    "tools/repair_integration.py",
+    "docs/SCOPED_LEASE_MIGRATION_GATE.md"
+  ],
+  "added_paths": [
+    "tests/test_legacy_scoped_integration_gate.py",
+    "history/C10003_legacy_scoped_merge_guard.json"
+  ],
+  "tests_added": 9,
+  "control_plane": "legacy decision read-only behavior; no live v2 activation",
+  "formal_independent_review": false,
+  "main_merged": false,
+  "additional_spend_jpy": 0
+}

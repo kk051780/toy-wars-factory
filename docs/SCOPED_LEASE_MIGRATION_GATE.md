@@ -17,3 +17,9 @@ This independent root PR adds a conservative read of `shadow_parallel_leases`, `
 5. Only when the genuinely provider-attested, least-privilege v2 CAS adapter is reviewed and proven, migrate to short atomic scoped claims and run two distinct authenticated nonoverlapping writers with independent CI/review. Do not infer actual parallelism from fake-host or a single GPT sending two CAS calls.
 
 The current shadow registries are still non-authorizing. This guard is an **upgrade prerequisite, not a license to turn on 2-writer writes**. Do not change the current coordinator JSON to SCOPED_ACTIVE, add live entries or bypass host denial from Issue #57. No main direct write, paid models, Gemini activation, or Roblox publication.
+
+## Integration decision also requires the migration barrier
+
+A separate code inspection discovered that accepted-main `tools/repair_integration.py:decide` can return `MERGE` for a valid old REVIEWER holder without checking scoped-registry occupancy. During migration an inconsistent mixed legacy and scoped state must **never** pass the integration gate. The same `scoped_lease_migration_block(lease)` preflight now runs inside `decide` before the review/merge decision. On occupied scoped rows or `SCOPED_ACTIVE`, it yields `WAIT_SCOPED_LEASES`. Malformed registry/migration mode yields `WAIT_LOCK`, not `MERGE` or an unchecked exception. Nine dedicated negative tests, including an otherwise-mergeable review and an expired scoped row, are added in `tests/test_legacy_scoped_integration_gate.py`.
+
+This still cannot prevent **old, unpatched production processes** from running pre-upgrade code. Neither the migration guard nor this follow-on merge gate authorizes normal PR #203 self-approval or main integration. Enabling v2 before all old runners are drained remains forbidden.
