@@ -166,11 +166,24 @@ def acquire(state, kind, owner_id, now, service_status=None, base_main_sha=None,
     return {"action": "ACQUIRE", "state": next_state, "write": True}
 
 
-def owns(state, kind, owner_id, epoch, now):
+def _owns_legacy_holder(state, kind, owner_id, epoch, now):
+    """Internal holder-only test for releasing the same owner, NEVER write auth."""
     validate(state)
     holder = state["holder"]
     return bool(type(epoch) is int and holder and holder["kind"] == kind and holder["owner_id"] == owner_id
                 and holder["epoch"] == epoch and instant(now) < instant(holder["expires_at"]))
+
+
+def owns(state, kind, owner_id, epoch, now):
+    """Legacy WRITE authorization must stop if a scoped writer may exist.
+
+    Mixed generations may still be unwound by release() only for the exact
+    current owner. This read-only predicate is never provider authentication.
+    """
+    validate(state)
+    if scoped_lease_migration_block(state):
+        return False
+    return _owns_legacy_holder(state, kind, owner_id, epoch, now)
 
 
 def release(state, kind, owner_id, epoch, now, packet=None, reported=False):
@@ -231,11 +244,12 @@ def owned_lease(*, repository, kind, owner_id, epoch, task_id, read, cas, peek, 
         validate(row["state"])
         return row
 
-    def live_owner(row):
+    def live_owner(row, *, release_only=False):
         state, at = row["state"], tick()
         holder = state["holder"]
+        owner_check = _owns_legacy_holder if release_only else owns
         if (not task_id or state["authorized_tasks"].get(kind) != task_id or
-                not owns(state, kind, owner_id, epoch, at.isoformat()) or
+                not owner_check(state, kind, owner_id, epoch, at.isoformat()) or
                 holder["task_id"] != task_id or at < instant(holder["acquired_at"]) or
                 (instant(holder["expires_at"])-instant(holder["acquired_at"])).total_seconds() > 1800):
             raise ValueError("not the live registered owner")
@@ -263,13 +277,16 @@ def owned_lease(*, repository, kind, owner_id, epoch, task_id, read, cas, peek, 
                        provider_terminal="NOT_ATTESTED")
         try:
             first = snapshot()
-            if live_owner(first) != anchor:
+            # A mixed v2 entry must stop NEW work, but must not trap an
+            # already verified original owner from legally releasing itself.
+            # Keep exact owner/epoch/task/live-run and double GitHub readback.
+            if live_owner(first, release_only=True) != anchor:
                 raise ValueError("original holder changed")
             second = snapshot()
-            if live_owner(second) != anchor or second != first:
+            if live_owner(second, release_only=True) != anchor or second != first:
                 raise ValueError("coordinator moved during final fence")
             at = tick().isoformat()
-            if not owns(second["state"], kind, owner_id, epoch, at):
+            if not _owns_legacy_holder(second["state"], kind, owner_id, epoch, at):
                 raise ValueError("lease expired before CAS")
             target = release(second["state"], kind, owner_id, epoch, at)
             target["last_completed"]["release_receipt"] = {
