@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "id": "P0B_PR192_HUD_REPLICATION_EPOCH531_LIVE_CI",
+  "repository": "kk051780/toy-wars-factory",
+  "issue": 204,
+  "pr": 192,
+  "head": "985fbf3710b2068c888fe409e71377f844debec7",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "owner_id": "5cb061c3-aa50-40b7-b69b-53dab1c298ae",
+  "owner_epoch": 531,
+  "owner_release": "RELEASED_IN_SAME_COMMIT_REMOTE_READBACK_REQUIRED",
+  "changes": {
+    "kind": "Fix late replicated Studio ProgressMode unsaved banner",
+    "source_commit": "b09e66a8be14867063450075c7d6f1f6e389bcae",
+    "hud_blob": "92adaa336532c9d85ff6bb7e66aa78487f39930d",
+    "lua_source_bytes": 71890,
+    "lua_source_lines": 1591,
+    "tests_added": 7,
+    "lua_test_summary": "7 passed / 0 failed"
+  },
+  "source_failure": {
+    "run": 42443941243,
+    "status": "failed",
+    "cause": "C10017 history lexical ordering breaks strict per-file bytes chain",
+    "corrected_without_test_waiver": true
+  },
+  "ci": {
+    "run_id": 42444117496,
+    "head": "985fbf3710b2068c888fe409e71377f844debec7",
+    "offline": "success",
+    "compile_hold": "success",
+    "python_tests": 894,
+    "new_lua_tests": "7/7 PASS",
+    "handoff_source_confirmed": true
+  },
+  "parent_stack": [
+    {
+      "pr": 184,
+      "head": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+      "qa_run": 42305157001
+    },
+    {
+      "pr": 185,
+      "head": "961e0bea8ecc3d9ddf5b383e29feb75571abaa4f",
+      "qa_run": 42323789115
+    },
+    {
+      "pr": 186,
+      "head": "85c1cd3504ef7e7929f3e3014dd15737f821adba",
+      "qa_run": 42326192434
+    },
+    {
+      "pr": 187,
+      "head": "35d4e0fc2a72a6bfc442561f4222e7497df15975",
+      "qa_run": 42329356840
+    },
+    {
+      "pr": 189,
+      "head": "b57aa5b324106db7b151c76e89b938b338dcc563",
+      "qa_run": 42349431697
+    },
+    {
+      "pr": 190,
+      "head": "ddc2083c20fb9a2883eb5ab2369584679955f1ee",
+      "qa_run": 42350701620
+    },
+    {
+      "pr": 191,
+      "head": "ade96a5d730c407922771aa1275b8de584f2becd",
+      "qa_run": 42351686780
+    },
+    {
+      "pr": 192,
+      "head": "985fbf3710b2068c888fe409e71377f844debec7",
+      "qa_run": 42444117496
+    }
+  ],
+  "parent_stack_verified_from_github": true,
+  "windows_owner_evidence": {
+    "main_installer_sha_verified": true,
+    "studio_installer_print_pass": true,
+    "all_five_studio_instances_readback_pass": true,
+    "preview_unmerged_not_engine_run": true
+  },
+  "security_holds": {
+    "independent_reviewer": false,
+    "main_merged": false,
+    "proven_real_two_gpt_writers": false,
+    "roblox_published": false,
+    "spend_yen": 0,
+    "coordinator_mode": "LEGACY_ONLY"
+  },
+  "comments": {
+    "issue204": 6716888206,
+    "pr192": 6716889324
+  },
+  "queue_request": "P0B_ISSUE204_PR192_STUDIO_PREVIEW_REPLICATION_GATE_20261108",
+  "observed_at": "2026-11-08T03:49:28.801Z"
+}

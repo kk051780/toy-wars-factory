@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T03:17:10.467Z",
+  "observed_at": "2026-11-08T03:49:28.801Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5410,6 +5410,108 @@
       "no_main_merge": true,
       "extra_spend_jpy": 0,
       "next_actor": "SEPARATE_REGISTERED_REVIEWER_AND_OWNER_WINDOWS_CODEX_ISOLATED_WORKTREE_REBUILD"
+    },
+    {
+      "id": "P0B_ISSUE204_PR192_STUDIO_PREVIEW_REPLICATION_GATE_20261108",
+      "kind": "P0B_STUDIO_UNSAVED_LOCAL_PVE_AND_HUD_REPLICATION_SECURITY_REVIEW",
+      "priority": "P0",
+      "status": "OPEN_EXACT_HEAD_REVIEW_AND_PARENT_CHAIN_CLEARANCE_REQUIRED",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "issue": 204,
+      "parallel_issue": 123,
+      "pr": 192,
+      "url": "https://github.com/kk051780/toy-wars-factory/pull/192",
+      "branch": "controller/studio-unsaved-pve-preview-20261107-db08b795",
+      "head": "985fbf3710b2068c888fe409e71377f844debec7",
+      "base_branch": "controller/tankuru-muzzle-flash-20261107-c37d9252",
+      "base_head": "ade96a5d730c407922771aa1275b8de584f2becd",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "draft": true,
+      "source_owner_epoch": 531,
+      "source_owner_id": "5cb061c3-aa50-40b7-b69b-53dab1c298ae",
+      "source_owner_release_status": "RELEASED_SAME_COORDINATOR_CAS_RECHECK_REMOTE",
+      "source_owner_release_ref": null,
+      "ci_run_id": 42444117496,
+      "ci_jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "python_tests": 894,
+      "new_hud_replication_lua_cases": 7,
+      "new_lua_summary": "STUDIO_PREVIEW_HUD_REPLICATION_SUMMARY 7 passed / 0 failed",
+      "changed_files": 14,
+      "changed_paths": [
+        "src/ToyWarsHUD.client.lua",
+        "tests/auto/studio_preview_hud_replication_spec.lua",
+        "tools/export_accepted_rbxlx.py",
+        "tests/test_system_xml_artifact_export.py",
+        "history/C98794_studio_preview_hud_replication.json",
+        "history/C10017_preview_hud_replication.json",
+        "history/C10018_preview_replication_pin.json",
+        "history/C10019_ci_ledger_order_correction.json"
+      ],
+      "first_failed_ci": 42443941243,
+      "first_failed_reason": "chronological source-metric history chain; corrected without test waiver",
+      "current_source_bytes": 71890,
+      "current_source_lines": 1591,
+      "parent_stack": [
+        {
+          "pr": 184,
+          "head": "861dadb00872aef55dcdfed149b917b24ca3e4d0",
+          "qa_run": 42305157001
+        },
+        {
+          "pr": 185,
+          "head": "961e0bea8ecc3d9ddf5b383e29feb75571abaa4f",
+          "qa_run": 42323789115
+        },
+        {
+          "pr": 186,
+          "head": "85c1cd3504ef7e7929f3e3014dd15737f821adba",
+          "qa_run": 42326192434
+        },
+        {
+          "pr": 187,
+          "head": "35d4e0fc2a72a6bfc442561f4222e7497df15975",
+          "qa_run": 42329356840
+        },
+        {
+          "pr": 189,
+          "head": "b57aa5b324106db7b151c76e89b938b338dcc563",
+          "qa_run": 42349431697
+        },
+        {
+          "pr": 190,
+          "head": "ddc2083c20fb9a2883eb5ab2369584679955f1ee",
+          "qa_run": 42350701620
+        },
+        {
+          "pr": 191,
+          "head": "ade96a5d730c407922771aa1275b8de584f2becd",
+          "qa_run": 42351686780
+        },
+        {
+          "pr": 192,
+          "head": "985fbf3710b2068c888fe409e71377f844debec7",
+          "qa_run": 42444117496
+        }
+      ],
+      "review_packet_path": "ops/review_packets/PR192_p0b_studio_preview_replication_epoch531.json",
+      "created_at": "2026-11-08T03:49:28.801Z",
+      "updated_at": "2026-11-08T03:49:28.801Z",
+      "issue_comment": 6716888206,
+      "pr_comment": 6716889324,
+      "review_request": "P0-B equal-priority G5. Independent registered REVIEWER must re-read PR192 current HEAD 985fbf3710b2068c888fe409e71377f844debec7, final Actions 42444117496 offline/compile_hold success Python894 and Lua7, exact 14-file change list; verify studio-only READ_UNAVAILABLE/STORE_UNAVAILABLE no persistence, live/invalid profile/foreign owner fail-closed; inspect newly repaired HUD late ProgressMode replication and default pending warning; verify C98794 source chain, pinned exporter intermediate commit b09e66a8... and original failed CI 42443941243 correction; audit parent 7 DRAFT PRs #184 #185 #186 #187 #189 #190 #191 all exact-head CI success, no parent main merge or changing base. Do not install candidate into owner Studio existing main test place until independent gate and isolated backup; player Play + 3D still NOT VERIFIED. P0-A PR203 review and writer CAS High still pending. Same GitHub OAuth GitHub approval is NOT independent registered task approval.",
+      "windows_owner_studio_main_installer_verified": true,
+      "windows_owner_studio_source_readback_verified": true,
+      "studio_preview_candidate_engine_play_verified": false,
+      "actual_two_writer_parallel_verified": false,
+      "main_merged": false,
+      "roblox_published": false,
+      "extra_spend_jpy": 0,
+      "next_actor": "REGISTERED_INDEPENDENT_REVIEWER_ROOT_STACK_SECURITY;THEN_OWNER_WINDOWS_CODEX_BACKED_UP_STUDIO_PLAYTEST"
     }
   ]
 }
