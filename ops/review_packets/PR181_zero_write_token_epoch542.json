@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "kind": "P0_A_AUTHOR_CHECKPOINT_NOT_INDEPENDENT_VERDICT",
+  "repo": "kk051780/toy-wars-factory",
+  "pr": 181,
+  "head": "2078c0c901586e5c2cbdfd7871f6ae8d876a0ad5",
+  "previous_head": "4b0cc93d73a90e259855cd1f4fd8a7c42a2a6a44",
+  "source_branch": "controller/issue57-handoff-privilege-split-9b8a6f21",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "owner_id": "67ad38f6-96ab-408f-8842-e9ecff4b8ada",
+  "owner_epoch": 542,
+  "changed": [
+    ".github/workflows/handoff-sync.yml",
+    "tests/test_handoff_privilege_split.py",
+    "docs/QA_HANDOFF_PRIVILEGE_SPLIT.md"
+  ],
+  "new_regression": "test_no_write_scoped_job_or_cached_credentials_anywhere",
+  "security_assertions": {
+    "whole_workflow_contents_write_count": 0,
+    "whole_workflow_contents_read_count": 3,
+    "whole_workflow_GH_TOKEN_binding_count": 0,
+    "job_status_writer_conditional_false": true,
+    "job_status_writer_contents_read": true,
+    "job_status_writer_run_already_deployed": false
+  },
+  "ci": {
+    "run_id": 42453219959,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42453219959",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": {
+      "offline": "success",
+      "compile_hold": "success"
+    },
+    "python_tests": 916
+  },
+  "limitations": [
+    "Cannot infer source runner token branch scope or trusted host identity from source CI",
+    "Existing deployed main still runs legacy scheduled write-scoped handoff",
+    "PR181 not native distinct REVIEWER approved, DRAFT and not merged",
+    "PR203 source/merge TOCTOU and Issue57 independent worker identity remain unresolved",
+    "No 2-GPT overlap observed"
+  ],
+  "independent_review": false,
+  "main_merged": false,
+  "scoped_2writer_active": false,
+  "extra_spend_jpy": 0,
+  "roblox_publish": false,
+  "recorded_at": "2026-11-08T06:05:23.738Z"
+}
