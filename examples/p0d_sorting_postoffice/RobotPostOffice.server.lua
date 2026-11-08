@@ -3,6 +3,34 @@
 -- Never install in the Toy Wars production place.
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
+local ServerScriptService = game:GetService("ServerScriptService")
+local RunService = game:GetService("RunService")
+
+-- Defense-in-depth only. The owner/Windows Codex must still verify the exact
+-- Studio instance and isolated file BEFORE installing this script; PlaceId=0
+-- cannot distinguish two different local files.
+if not RunService:IsStudio() or game.PlaceId ~= 0 or game.GameId ~= 0 then
+    error("P0D_BLOCKED_NOT_UNPUBLISHED_LOCAL_STUDIO")
+end
+if script.Parent ~= ServerScriptService then
+    error("P0D_BLOCKED_WRONG_SCRIPT_CONTAINER")
+end
+for _, child in ipairs(ServerScriptService:GetChildren()) do
+    if child ~= script then
+        error("P0D_BLOCKED_OTHER_SERVER_SCRIPTS_PRESENT")
+    end
+end
+local allowedRoot = {
+    Camera = "Camera",
+    Terrain = "Terrain",
+    Baseplate = "Part",
+    SpawnLocation = "SpawnLocation",
+}
+for _, child in ipairs(Workspace:GetChildren()) do
+    if allowedRoot[child.Name] ~= child.ClassName then
+        error("P0D_BLOCKED_NONEMPTY_WORKSPACE: " .. child.Name)
+    end
+end
 
 local ROOT_NAME = "P0D_RobotPostOffice_TrialOnly"
 if Workspace:FindFirstChild(ROOT_NAME) then
@@ -69,14 +97,19 @@ local function ensureHUD(player)
     gui.Parent = playerGui
     local objective = Instance.new("TextLabel")
     objective.Name = "Objective"
-    objective.Size = UDim2.new(0.8, 0, 0, 96)
-    objective.Position = UDim2.new(0.1, 0, 0, 30)
+    objective.Size = UDim2.new(0.86, 0, 0, 92)
+    objective.AnchorPoint = Vector2.new(0.5, 0)
+    objective.Position = UDim2.new(0.5, 0, 0, 70)
     objective.BackgroundColor3 = Color3.fromRGB(24, 39, 58)
     objective.BackgroundTransparency = 0.12
     objective.TextColor3 = Color3.new(1, 1, 1)
     objective.Font = Enum.Font.GothamBold
     objective.TextScaled = true
     objective.TextWrapped = true
+    local textLimit = Instance.new("UITextSizeConstraint")
+    textLimit.MaxTextSize = 26
+    textLimit.MinTextSize = 12
+    textLimit.Parent = objective
     objective.Text = "ROBOT POST OFFICE / SORT 3 PARCELS"
     objective.Parent = gui
     local corner = Instance.new("UICorner")
@@ -133,6 +166,18 @@ local function replay(player)
     show(player, "New round: click parcel, then same-color bin.")
 end
 
+-- Orient the first player-facing view toward the color sorting station.
+-- This is a disposable Studio test location, not a production teleport.
+local trialSpawn = Instance.new("SpawnLocation")
+trialSpawn.Name = "P0D_TestOnlySpawn"
+trialSpawn.Anchored = true
+trialSpawn.Neutral = true
+trialSpawn.Duration = 0
+trialSpawn.Size = Vector3.new(6, 1, 6)
+trialSpawn.Position = Vector3.new(0, 0.5, -10)
+trialSpawn.Color = Color3.fromRGB(83, 177, 123)
+trialSpawn.Parent = world
+
 makePart("TrialFloor", Vector3.new(48, 1, 36), Vector3.new(0, -0.5, -26),
     Color3.fromRGB(194, 202, 216), world)
 makePart("BackWall", Vector3.new(48, 10, 1), Vector3.new(0, 5, -43),
@@ -164,7 +209,21 @@ local replayPillar = makePart("ReplayPillar", Vector3.new(4, 7, 4),
 addSign(replayPillar, "REPLAY", 160)
 addClick(replayPillar, replay)
 
+local function orientCharacter(character)
+    local root = character:WaitForChild("HumanoidRootPart", 10)
+    if root and character.Parent then
+        character:PivotTo(CFrame.lookAt(Vector3.new(0, 4, -10), Vector3.new(0, 4, -28)))
+    end
+end
+
 local function join(player)
+    player.RespawnLocation = trialSpawn
+    player.CharacterAdded:Connect(function(character)
+        task.defer(orientCharacter, character)
+    end)
+    if player.Character then
+        task.defer(orientCharacter, player.Character)
+    end
     local state = {count = 0, selected = nil, objective = nil}
     sessions[player] = state
     state.objective = ensureHUD(player)

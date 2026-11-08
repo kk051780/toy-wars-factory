@@ -49,6 +49,34 @@ class PostOfficeContract(unittest.TestCase):
         ):
             self.assertIn(behavior, self.source)
 
+    def test_isolation_guards_before_world_creation(self):
+        source = self.source
+        guards = (
+            'RunService:IsStudio()',
+            'game.PlaceId ~= 0 or game.GameId ~= 0',
+            'script.Parent ~= ServerScriptService',
+            'child ~= script',
+            'allowedRoot[child.Name] ~= child.ClassName',
+        )
+        for guard in guards:
+            self.assertIn(guard, source)
+            self.assertLess(source.index(guard), source.index('world.Parent = Workspace'))
+        for marker in ('P0D_BLOCKED_NOT_UNPUBLISHED_LOCAL_STUDIO',
+                       'P0D_BLOCKED_OTHER_SERVER_SCRIPTS_PRESENT',
+                       'P0D_BLOCKED_NONEMPTY_WORKSPACE'):
+            self.assertIn(marker, source)
+
+    def test_first_player_spawn_and_orientation(self):
+        for marker in ('Instance.new("SpawnLocation")',
+                       'trialSpawn.Parent = world',
+                       'player.RespawnLocation = trialSpawn',
+                       'player.CharacterAdded:Connect',
+                       'CFrame.lookAt(',
+                       'character:PivotTo(',
+                       'objective.AnchorPoint = Vector2.new(0.5, 0)',
+                       'UITextSizeConstraint'):
+            self.assertIn(marker, self.source)
+
     def test_no_persistence_external_network_or_monetization(self):
         for forbidden in (
             "DataStoreService", "HttpService", "InsertService",
