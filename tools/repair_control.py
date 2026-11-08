@@ -406,13 +406,6 @@ def git(*args):
 def verify_pr(policy, base, head, branch, control_ref):
     if policy.get("queue_version", 0) < 3:
         return "pre-coordination base policy"
-    # This is a non-authorizing CI preflight. The trusted integration host
-    # MUST separately bind the eventual merge to a fresh atomic coordinator
-    # snapshot; a successful historical CLI decision is NOT a merge permit.
-    current = json.loads(git("show", control_ref + ":" + CONTROL_PATH))
-    validate(current)
-    if scoped_lease_migration_block(current):
-        raise ValueError("legacy PR verification blocked by scoped migration")
     head = git("rev-parse", head)
     meta = branch.startswith(policy.get("system_review", {}).get("branch_prefix", "auto/twf-system-review-"))
     kind = "META" if meta else "WORKER"
@@ -429,6 +422,17 @@ def verify_pr(policy, base, head, branch, control_ref):
         raise ValueError("new work requires a UUID lane")
     if branch != legacy:
         canonical_id(branch[len(prefix):])
+    # Exact grandfathered heads above return only a historical exemption,
+    # explicitly NOT a merge permit, so they need no fresh coordinator ref.
+    # Every ordinary claim-verification path MUST see a genuine ref; an
+    # unavailable/stale/missing object is a hard denial, never an escape.
+    try:
+        current = json.loads(git("show", control_ref + ":" + CONTROL_PATH))
+    except (subprocess.CalledProcessError, json.JSONDecodeError, ValueError):
+        raise ValueError("current coordinator ref cannot be verified") from None
+    validate(current)
+    if scoped_lease_migration_block(current):
+        raise ValueError("legacy PR verification blocked by scoped migration")
     raw = subprocess.check_output(["git", "diff", "--name-status", "--no-renames", "-z", base, head, "--"]).decode().split("\0")
     entries = list(zip(raw[::2], raw[1::2]))
     records = [path for status, path in entries if status in ("A", "M") and re.fullmatch(r"history/C[0-9]{5}_[^/]+\.json", path)]
