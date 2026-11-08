@@ -247,6 +247,10 @@ def owned_lease(*, repository, kind, owner_id, epoch, task_id, read, cas, peek, 
     def live_owner(row, *, release_only=False):
         state, at = row["state"], tick()
         holder = state["holder"]
+        # Cleanup may bypass scoped *occupancy*, never scoped schema validation.
+        # A malformed v2 registry is an unresolved incident, not release proof.
+        if release_only:
+            scoped_lease_migration_block(state)
         owner_check = _owns_legacy_holder if release_only else owns
         if (not task_id or state["authorized_tasks"].get(kind) != task_id or
                 not owner_check(state, kind, owner_id, epoch, at.isoformat()) or
