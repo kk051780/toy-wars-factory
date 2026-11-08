@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T08:53:25.445Z",
+  "observed_at": "2026-11-08T10:03:20.364Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4812,7 +4812,7 @@
       "id": "PR181_ISSUE57_PROTECTED_HANDOFF_SECURITY_REVIEW_20261107",
       "kind": "PROTECTED_ISSUE57_PR181_INDEPENDENT_SECURITY_AUDIT_AND_INTEGRATION_READINESS",
       "priority": "P0",
-      "status": "OPEN_EXACT_HEAD_CI_GREEN_ZERO_WRITE_TOKEN_HOLD_DISTINCT_REVIEW_REQUIRED",
+      "status": "OPEN_EXACT_HEAD_CI_GREEN_ZIP_VERIFIER_HARDENED_DISTINCT_REVIEW_HOLD",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
@@ -4820,16 +4820,16 @@
       "pr": 181,
       "url": "https://github.com/kk051780/toy-wars-factory/pull/181",
       "branch": "controller/issue57-handoff-privilege-split-9b8a6f21",
-      "head": "2078c0c901586e5c2cbdfd7871f6ae8d876a0ad5",
+      "head": "ef2949470fe52e4e96bff4e9e93952c24eee57f3",
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "ci_run": 42453219959,
+      "ci_run": 42469584798,
       "ci_jobs": [
         "offline:success",
         "compile_hold:success"
       ],
       "evidence_path": "ops/review_packets/PR181_zero_write_token_epoch542.json",
       "created_at": "2026-11-07T09:56:07.827Z",
-      "updated_at": "2026-11-08T06:05:23.738Z",
+      "updated_at": "2026-11-08T10:03:20.364Z",
       "requested_by_role": "MANUAL_CONTROLLER",
       "author_role": "MANUAL_CONTROLLER",
       "source_owner_claim": {
@@ -4843,7 +4843,7 @@
         "claim_commit": "c1fcc7bfe290f5a0b42f70fddcae54f8e6dac207",
         "coord_branch": "twf-repair-coordinator"
       },
-      "review_request": "Independent registered REVIEWER must verify PR181 exact HEAD 2078c0c901586e5c2cbdfd7871f6ae8d876a0ad5; hosted run42453219959 offline/compile_hold SUCCESS Python916; all workflow permissions contents:read 3 scopes and zero contents:write, zero GH_TOKEN binding, status_writer &&false, successful-only artifact, original main still legacy until verified protected integration. Check no silent changes to frozen PR203/210. Human reviewer still outstanding.",
+      "review_request": "Independent registered reviewer: re-fetch PR181 current exact HEAD ef2949470fe52e4e96bff4e9e93952c24eee57f3, run 42469584798, 919/919 Python PASS and both required jobs PASS; security changes in tools/verify_handoff_artifact.py and tests/test_verify_handoff_artifact.py plus new C99877 history. Review untrusted JSON NaN/Infinity rejection, ZIP read size cap, non-executable passive files, old main contents:write handoff removal candidate, mandatory false job, zero write-token workflow. New source was authored under separate legitimate CONTROLLER epochs550/551, not provider-independent approval. Native GitHub approval still 0, protected main merge HOLD, no autonomous writer proof.",
       "approval_required_by_provider": 0,
       "independent_security_review_required_by_repo_policy": true,
       "review_performed": false,
@@ -4854,7 +4854,21 @@
       "extra_cost_jpy": 0,
       "next_actor": "REGISTERED_REVIEWER_SEPARATE_TASK_RUN; protected-main integration only with legitimate distinct review/source authority",
       "previous_evidence_path": "ops/review_packets/PR181_issue57_security_handoff_epoch499.json",
-      "python_tests": 916
+      "python_tests": 919,
+      "last_source_repair": {
+        "work_id": "P0A_PR181_ZIP_VERIFY_NONFINITE_EXEC_BOUNDED_20261108_A",
+        "source_owner_epochs": [
+          550,
+          551
+        ],
+        "source_claim_commits": [
+          "9894d7a24726da7b3b4deae6056595a386d05a3a",
+          "924dcb4bd50250528259d32c8bd6c824fea4bfde"
+        ],
+        "red_ci_run": 42469410626,
+        "green_ci_run": 42469584798,
+        "author_only": true
+      }
     },
     {
       "id": "PR195_CHARACTER_LITERAL_FIELD_EXACT_HEAD_SECURITY_REVIEW_20261107",
