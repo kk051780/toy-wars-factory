@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "C10020",
+  "kind": "P0B_COMBINED_PVE_WINDOWS_INSTALLER_LF_INTEGRATION",
+  "date_utc": "2026-11-08",
+  "repository": "kk051780/toy-wars-factory",
+  "related_issue": 204,
+  "source_pr": 205,
+  "source_pr_head": "00afb4e4d156ea178e1c332cdb6744ad6b3853d6",
+  "base_pr": 207,
+  "base_pr_head": "c82195fda857a9a9b44bec016b4db20b431bb997",
+  "branch": "controller/p0b-windows-preview-installer-20261108",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "owner_id": "a6a984f3-a9cf-4c85-94e0-cdcd8a06c688",
+    "epoch": 534
+  },
+  "change": "Bring canonical UTF-8 LF read/write of Windows installer + 7 existing regression cases to complete four-toy PvE integration candidate; add 3 whole-asset hash and preview marker regressions.",
+  "changed_paths": [
+    "tools/build_installer.py",
+    "tests/test_windows_installer_lf.py",
+    "tests/test_p0b_integrated_preview_installer.py",
+    "history/C10020_p0b_windows_preview_installer.json"
+  ],
+  "installer_source_blob": "4cdaac43e8d18469e30ac9099a04bef7116c8998",
+  "new_test_cases": 10,
+  "main_merged": false,
+  "independent_review": false,
+  "roblox_engine_verified": false,
+  "roblox_published": false,
+  "additional_spend_yen": 0
+}
