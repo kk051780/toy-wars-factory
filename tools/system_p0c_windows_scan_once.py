@@ -13,6 +13,7 @@ import sys
 from datetime import datetime, timezone, timedelta
 from urllib.request import Request, build_opener
 from urllib.parse import quote
+from tools.system_p0c_readonly_receipt_ledger import record_readonly_receipt_once
 from tools.system_p0c_windows_receive_once import (
     HOST, PREFIX, REPO, ISSUE, _NoRedirect, _no_duplicates, examine_comment,
 )
@@ -75,7 +76,7 @@ def fetch_issue_comments_page(page, *, token=None, since=None, opener=None):
     return obj
 
 
-def inspect_issue_intents(*, fetcher, observed_host, now_utc, seen_work_ids=(), seen_nonces=()):
+def inspect_issue_intents(*, fetcher, observed_host, now_utc, seen_work_ids=(), seen_nonces=(), receipt_ledger_path=None):
     """Review at most five pages, return latest valid diagnostic (never execute)."""
     if observed_host != HOST:
         return _blocked("host mismatch before network")
@@ -83,6 +84,7 @@ def inspect_issue_intents(*, fetcher, observed_host, now_utc, seen_work_ids=(), 
         return _blocked("invalid clock before network")
     candidates = []
     scanned_ids, scanned_nonces = set(), set()
+    candidate_comments = {}
     pages = 0
     try:
         for page in range(1, MAX_PAGES + 1):
@@ -113,6 +115,7 @@ def inspect_issue_intents(*, fetcher, observed_host, now_utc, seen_work_ids=(), 
                     scanned_ids.add(work_id)
                     scanned_nonces.add(nonce)
                     candidates.append(decision)
+                    candidate_comments[comment_id] = comment
             if len(items) < PAGE_SIZE:
                 break
         else:
@@ -128,16 +131,30 @@ def inspect_issue_intents(*, fetcher, observed_host, now_utc, seen_work_ids=(), 
         }
     # Highest GitHub comment id within bounded complete scan is the latest.
     selected = max(candidates, key=lambda x: x["comment_id"])
-    return {
+    output = {
         **selected, "pages_checked": pages,
         "validated_candidates": len(candidates),
         "window_deduplicated": True, "replay_history_verified": False,
         "is_background_receiver": False,
     }
+    if receipt_ledger_path is None:
+        return output
+    # Explicit path means opt-in local metadata persistence, never execution.
+    receipt = record_readonly_receipt_once(
+        comment=candidate_comments[selected["comment_id"]],
+        now_utc=now_utc, observed_host=observed_host,
+        database_path=receipt_ledger_path,
+    )
+    return {
+        **output, "status": receipt["status"], "reason": receipt["reason"],
+        "receipt_written": receipt["receipt_written"],
+        "persistent_local_replay_blocked":
+            receipt["status"] == "READ_ONLY_REPLAY_BLOCKED_NO_ACTION",
+    }
 
 
 def run_scan_once(*, now_utc=None, observed_host=None, token=None,
-                  fetcher=None):
+                  fetcher=None, receipt_ledger_path=None):
     if now_utc is None:
         now_utc = datetime.now(timezone.utc)
     if observed_host is None:
@@ -155,16 +172,22 @@ def run_scan_once(*, now_utc=None, observed_host=None, token=None,
         fetcher = lambda page: fetch_issue_comments_page(page, token=token, since=since)
     return inspect_issue_intents(
         fetcher=fetcher, observed_host=observed_host, now_utc=now_utc,
+        receipt_ledger_path=receipt_ledger_path,
     )
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="P0-C single read-only GitHub queue scan, no Codex execution")
+    parser = argparse.ArgumentParser(description="P0-C single GitHub scan, no Codex execution")
     parser.add_argument("--scan-once", action="store_true", required=True)
-    parser.parse_args(argv)
-    result = run_scan_once()
+    parser.add_argument("--receipt-ledger", default=None,
+                        help="Explicit local metadata receipt DB path; no command execution")
+    args = parser.parse_args(argv)
+    result = run_scan_once(receipt_ledger_path=args.receipt_ledger)
     print(json.dumps(result, sort_keys=True, ensure_ascii=False))
-    return 0 if result["status"] == "READ_ONLY_GITHUB_RECEIPT_MATCHED_NO_EXECUTION" else 2
+    return 0 if result["status"] in (
+        "READ_ONLY_GITHUB_RECEIPT_MATCHED_NO_EXECUTION",
+        "READ_ONLY_RECEIPT_RECORDED_NO_ACTION",
+    ) else 2
 
 
 if __name__ == "__main__":

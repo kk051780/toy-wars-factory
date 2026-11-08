@@ -1,6 +1,8 @@
 """P0-C scan-once: no manual comment-id, no PC action."""
 import json
+import tempfile
 import unittest
+from pathlib import Path
 from datetime import datetime, timezone
 from unittest.mock import patch
 from tools.system_p0c_windows_receive_once import HOST, PREFIX
@@ -169,6 +171,40 @@ class ScanOnceTests(unittest.TestCase):
         self.assertIn("since=2026-11-08T06%3A31%3A00Z",u)
         for bad in ("https://evil.com","2026-11-08T06:31:00Z&x=evil","2026-15-99T06:31:00Z"):
             with self.assertRaises(ValueError):page_url(1,since=bad)
+
+    def test_manual_opt_in_ledger_blocks_repeat(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path=Path(folder)/"p0c-readonly-receipts.sqlite3"
+            item=real_candidate()
+            first=inspect_issue_intents(fetcher=lambda p:[item],observed_host=HOST,
+                    now_utc=NOW,receipt_ledger_path=path)
+            second=inspect_issue_intents(fetcher=lambda p:[item],observed_host=HOST,
+                    now_utc=NOW,receipt_ledger_path=path)
+            self.assertEqual(first["status"],"READ_ONLY_RECEIPT_RECORDED_NO_ACTION")
+            self.assertEqual(second["status"],"READ_ONLY_REPLAY_BLOCKED_NO_ACTION")
+            self.assertTrue(second["persistent_local_replay_blocked"])
+            self.assertFalse(second["may_run_commands"])
+    def test_default_scan_has_no_persisted_ledger(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path=Path(folder)/"p0c-readonly-receipts.sqlite3"
+            result=inspect_issue_intents(fetcher=lambda p:[real_candidate()],
+                       observed_host=HOST,now_utc=NOW)
+            self.assertEqual(result["status"],"READ_ONLY_GITHUB_RECEIPT_MATCHED_NO_EXECUTION")
+            self.assertFalse(path.exists())
+    def test_bad_opt_in_path_is_fail_closed(self):
+        result=inspect_issue_intents(fetcher=lambda p:[real_candidate()],
+                 observed_host=HOST,now_utc=NOW,receipt_ledger_path="relative.db")
+        self.assertEqual(result["status"],"READ_ONLY_RECEIPT_BLOCKED_NO_ACTION")
+        self.assertFalse(result["receipt_written"])
+        self.assertFalse(result["may_run_commands"])
+    def test_explicit_ledger_does_not_grant_codex(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path=Path(folder)/"p0c-readonly-receipts.sqlite3"
+            result=run_scan_once(fetcher=lambda page:[real_candidate()],
+                      now_utc=NOW,observed_host=HOST,receipt_ledger_path=path)
+            self.assertTrue(result["receipt_written"])
+            self.assertFalse(result["codex_execution_authorized"])
+            self.assertFalse(result["pc_action_executed"])
 
 class FakeResponse:
     status=200
