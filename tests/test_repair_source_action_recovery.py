@@ -155,6 +155,17 @@ class RecoveryTests(unittest.TestCase):
                   "host_action_fence_verified", "real_parallel"):
             self.assertFalse(v[k], k)
 
+    def test_reason_metadata_does_not_turn_a_hold_into_invalid_evidence(self):
+        v = self.result()
+        self.assertEqual(v["action"], "WAIT_UNCERTAIN_NOT_APPLIED_DO_NOT_RETRY")
+        self.assertIn("in-flight", v["reason"])
+        self.assertFalse(v["may_retry"])
+        self.snap["source_head"] = AFTER
+        updated = self.result()
+        self.assertEqual(updated["action"], "CANDIDATE_OWNER_RECONCILE_ONLY")
+        self.assertIn("provider", updated["reason"])
+        self.assertFalse(updated["may_write"])
+
     def test_pending_source_action_cannot_be_replayed_after_completion(self):
         self.snap["source_head"] = AFTER
         v = self.result()

@@ -150,8 +150,10 @@ def inspect_interrupted_probe(snapshot_first, snapshot_second, request, *,
     inside Python. A matching result is NOT a provider attestation, release
     grant, write retry, or proof the original ChatGPT run terminated.
     """
-    def stop(reason, **extra):
-        return reply(reason, may_retry=False, may_release=False, **extra)
+    def stop(code, **extra):
+        # "reason" is evidence metadata, never the positional action code.
+        # Keep them distinct: duplicate kwargs must not collapse a valid HOLD.
+        return reply(code, may_retry=False, may_release=False, **extra)
 
     try:
         if (type(snapshot_first) is not dict or
