@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "kind": "P0B_HUD_PROGRESS_MODE_REMOVAL_DUPLICATE_FAIL_CLOSED_REVIEW",
+  "issue": 204,
+  "repo": "kk051780/toy-wars-factory",
+  "pr": 209,
+  "branch": "controller/p0b-pr208-progressmode-lifecycle-20261108",
+  "head": "35b482e49841710db1b178e87129c3fca2c2e117",
+  "parent_pr": 208,
+  "parent_head": "206c83674d0258b36771b9ceedadb6be30485035",
+  "inherited_prs": [
+    199,
+    207,
+    208
+  ],
+  "reviewer_advisory_comment": 6717204320,
+  "source_commit": "fbbb1d0b31f63e1fa22b63a8ce7a1739521b0c1e",
+  "source_blob": "c48743468682b2f9808520cc5db8d435410cb11b",
+  "source_bytes": {
+    "before": 14718,
+    "after": 15944,
+    "delta": 1226,
+    "total_4_sources": 76921
+  },
+  "lease": {
+    "epoch": 535,
+    "owner_id": "c64dbe42-4260-4e38-94c0-c295b8346a48"
+  },
+  "ci": {
+    "run_id": 42447007551,
+    "offline": "success",
+    "compile_hold": "success",
+    "preview_lua": 17,
+    "hud_lua": 12,
+    "hud_added_lua": 5
+  },
+  "changed_paths": [
+    "src/ToyWarsHUD.client.lua",
+    "tests/auto/studio_preview_hud_replication_spec.lua",
+    "tools/export_accepted_rbxlx.py",
+    "tests/test_system_xml_artifact_export.py",
+    "history/C98843_p0b_progressmode_removed_duplicate.json"
+  ],
+  "review_request": "Dedicated P0-B reviewer separately inspect exact PR209 HEAD and hosted CI 42447007551 and original reviewer advisory 6717204320. Confirm ChildAdded+ChildRemoved subscriptions before GetChildren scan, fail-closed warning on missing/unrecognized/duplicate ProgressMode, stale Changed from removed object is ignored, and original 7 + new 5 HUD mocks prove these states. Confirm retained 17 DataStore lifecycle mock tests and parent PR208 builder safety; source blob C98843, XML pinned bytes/commit. Check Roblox real-engine not proven; only accept read-only advisory or auth actual separate actor. No self-approval; do not merge this DRAFT or main and do not publish Roblox. On unresolved flaws, write path-specific REQUEST_CHANGES in Issue #204.",
+  "native_review": false,
+  "independent_review": false,
+  "main_merged": false,
+  "roblox_engine_tested": false,
+  "roblox_published": false,
+  "additional_paid_jpy": 0,
+  "created_at": "2026-11-08T04:30:28.507Z"
+}
