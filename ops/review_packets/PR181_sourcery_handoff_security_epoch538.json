@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "kind": "P0A_AUTHOR_EPOCH538_HANDOFF_NOT_REVIEWER_APPROVAL",
+  "repository": "kk051780/toy-wars-factory",
+  "issue": 123,
+  "parent_issue": 57,
+  "pr": 181,
+  "head": "b48810c43fb7f883987abba3e5c8cf2da34e2982",
+  "previous_head": "fa2195e2e7c1eed4f1321e50ab274b86ac36e5c6",
+  "base_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_branch": "controller/issue57-handoff-privilege-split-9b8a6f21",
+  "author_epoch": 538,
+  "author_owner_id": "ec408a94-733e-46b9-b15b-59d18bd3b1a2",
+  "source_paths_changed_this_turn": [
+    ".github/workflows/handoff-sync.yml",
+    "tests/test_handoff_privilege_split.py",
+    "tests/test_handoff_generation_rotation.py",
+    "docs/QA_HANDOFF_PRIVILEGE_SPLIT.md"
+  ],
+  "corrected": [
+    {
+      "item": 5,
+      "change": "GitHub Actions concurrency now segregates non-main ref manual dispatches from serial main runs"
+    },
+    {
+      "item": 6,
+      "change": "rollover root regression asserts two exact 100644 passive file tree entries"
+    },
+    {
+      "item": 7,
+      "change": "status_writer runs only on main workflow_dispatch; schedule and main push audit remain read-only"
+    },
+    {
+      "item": 4,
+      "change": "bound number of archived 512-commit generations to four, fail closed at capacity"
+    },
+    {
+      "item": 3,
+      "change": "post-push main readback reports stale source as failure; NOT atomic main-to-snapshot CAS and cannot undo stale snapshot"
+    }
+  ],
+  "already_source_addressed": [
+    "AGENTS.md main status historical; snapshot optional validated and never authoritative",
+    "tools/build_handoff.py source_revision compare instructions",
+    "Live GitHub repository is public; Sourcery private-repo note does not reflect current settings"
+  ],
+  "remaining": [
+    "Original PR181 is unmerged; old main writer still live",
+    "Real trusted-host cross-ref atomic compare is not implemented; stale snapshot may be created by racing main, readers reject",
+    "Active saved automation reader migration not globally attested",
+    "True registered reviewer/human security approval not completed",
+    "Actual GitHub privileged writer run from accepted main not performed",
+    "Independent old-runner drain + #203/#210 source host CAS + Issue57 provider authentication + real 2GPT overlap unresolved"
+  ],
+  "ci": {
+    "run_id": 42449323726,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42449323726",
+    "head": "b48810c43fb7f883987abba3e5c8cf2da34e2982",
+    "offline": "success",
+    "compile_hold": "success",
+    "python_unittest_count": 900,
+    "result": "OK",
+    "note": "PR-triggered hosted tests only, not live status_writer execution"
+  },
+  "sourcery_initial": {
+    "issues": 7,
+    "review_type": "COMMENTED",
+    "date": "2026-11-08"
+  },
+  "genuine_registered_reviewer_run_verified": false,
+  "merge_authorized": false,
+  "main_changed": false,
+  "scoped_2writer_activated": false,
+  "additional_spend_jpy": 0,
+  "created_at": "2026-11-08T05:06:24.215Z"
+}

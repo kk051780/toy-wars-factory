@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T04:49:53.694Z",
+  "observed_at": "2026-11-08T05:06:24.215Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -4812,7 +4812,7 @@
       "id": "PR181_ISSUE57_PROTECTED_HANDOFF_SECURITY_REVIEW_20261107",
       "kind": "PROTECTED_ISSUE57_PR181_INDEPENDENT_SECURITY_AUDIT_AND_INTEGRATION_READINESS",
       "priority": "P0",
-      "status": "OPEN_EXACT_HEAD_INDEPENDENT_SECURITY_REVIEW_AFTER_ROTATION_CI_GREEN",
+      "status": "OPEN_EXACT_HEAD_CI_GREEN_SOURCERY_FOLLOWUP_REVIEW_REQUIRED",
       "assigned_role": "REVIEWER",
       "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
       "repository": "kk051780/toy-wars-factory",
@@ -4820,21 +4820,22 @@
       "pr": 181,
       "url": "https://github.com/kk051780/toy-wars-factory/pull/181",
       "branch": "controller/issue57-handoff-privilege-split-9b8a6f21",
-      "head": "fa2195e2e7c1eed4f1321e50ab274b86ac36e5c6",
+      "head": "b48810c43fb7f883987abba3e5c8cf2da34e2982",
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "ci_run": 42418986367,
+      "ci_run": 42449323726,
       "ci_jobs": [
         "offline:success",
         "compile_hold:success"
       ],
-      "evidence_path": "ops/review_packets/PR181_snapshot_rotation_epoch509.json",
+      "evidence_path": "ops/review_packets/PR181_sourcery_handoff_security_epoch538.json",
       "created_at": "2026-11-07T09:56:07.827Z",
-      "updated_at": "2026-11-07T22:07:36.598Z",
+      "updated_at": "2026-11-08T05:06:24.215Z",
       "requested_by_role": "MANUAL_CONTROLLER",
       "author_role": "MANUAL_CONTROLLER",
       "source_owner_claim": {
-        "epoch": 493,
-        "owner_id": "f548aa78-623a-4963-8593-4c086bbfa18d"
+        "epoch": 538,
+        "owner_id": "ec408a94-733e-46b9-b15b-59d18bd3b1a2",
+        "release_status": "WITH_THIS_CHECKPOINT"
       },
       "this_handoff_claim": {
         "epoch": 499,
@@ -4842,7 +4843,7 @@
         "claim_commit": "c1fcc7bfe290f5a0b42f70fddcae54f8e6dac207",
         "coord_branch": "twf-repair-coordinator"
       },
-      "review_request": "Separate registered REVIEWER task/run: exact PR181 head fa2195e2e7c1eed4f1321e50ab274b86ac36e5c6, 898 Python tests and 2 hosted CI jobs success run 42418986367. Independently inspect 512-commit archive generation root link validation, all archived refs with 2 regular files, shell+Git race guards, 4 new extracted production-writer local-bare-repo regressions, producer/consumer handoff instructions and expense/security holds. Verify author epoch509 source provenance. Do not reuse old 03be8ad reviewer verdict, merge or mark ready before independent review; keep main/publish HOLD.",
+      "review_request": "7 Sourcery items at prior head, author repair epoch538 new HEAD b48810c43fb7f883987abba3e5c8cf2da34e2982; actual hosted CI 42449323726 900/900; independently re-review current exact head, main source write concurrency and manual dispatch, generation bound/rotation, reader provenance. Note post-push main check detects but does not atomically prevent stale snapshots. No author self approval.",
       "approval_required_by_provider": 0,
       "independent_security_review_required_by_repo_policy": true,
       "review_performed": false,
@@ -4851,8 +4852,9 @@
       "main_merged": false,
       "snapshot_writer_live_verified": false,
       "extra_cost_jpy": 0,
-      "next_actor": "REGISTERED_REVIEWER_SEPARATE_TASK_RUN",
-      "previous_evidence_path": "ops/review_packets/PR181_issue57_security_handoff_epoch499.json"
+      "next_actor": "REGISTERED_REVIEWER_SEPARATE_TASK_RUN; old main writer remains live until protected integration",
+      "previous_evidence_path": "ops/review_packets/PR181_issue57_security_handoff_epoch499.json",
+      "python_tests": 900
     },
     {
       "id": "PR195_CHARACTER_LITERAL_FIELD_EXACT_HEAD_SECURITY_REVIEW_20261107",
