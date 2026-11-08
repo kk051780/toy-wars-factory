@@ -2107,17 +2107,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 559,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "7c3013bd-ac82-4c35-955f-08f96bbab725",
-    "task_id": null,
-    "epoch": 559,
-    "acquired_at": "2026-11-08T12:45:34.291Z",
-    "expires_at": "2026-11-08T13:07:34.291Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0d-route-a-prototype-20261108-83e715d0",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3761,22 +3751,22 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_P0D_SOURCERY_7_FINDINGS_CORRECTIONS",
+    "kind": "CONTROLLER_P0D_SOURCERY_STALE_AVATAR_FIX",
+    "owner_id": "7c3013bd-ac82-4c35-955f-08f96bbab725",
+    "epoch": 559,
     "work_id": "P0D_ISSUE213_ROUTE_A_PROTOTYPE_20261108_83E715D0",
-    "owner_id": "6410e0b9-463a-4803-9043-3f2cc0159d17",
-    "epoch": 558,
-    "head": "88e124da043c3393e9fc17f8372624f060afb6f7",
     "pr": 214,
-    "ci_run_id": 42473663454,
-    "python_tests": 844,
-    "p0d_static_tests": 11,
+    "head": "23b6d639486d86ccb334b73d5297ec2fc53ac66f",
+    "ci_run_id": 42481859366,
+    "python_tests": 845,
+    "p0d_static_tests": 12,
     "ci_offline": "success",
     "ci_compile_hold": "success",
     "independent_review": false,
     "engine_verified": false,
     "main_merged": false,
     "service_terminal_proof": false,
-    "released_at": "2026-11-08T10:59:51.869Z"
+    "released_at": "2026-11-08T12:48:24.315Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
@@ -4286,6 +4276,24 @@
       "engine_verified": false,
       "service_terminal_proof": false,
       "released_at": "2026-11-08T10:39:45.134Z"
+    },
+    {
+      "kind": "CONTROLLER_P0D_SOURCERY_7_FINDINGS_CORRECTIONS",
+      "work_id": "P0D_ISSUE213_ROUTE_A_PROTOTYPE_20261108_83E715D0",
+      "owner_id": "6410e0b9-463a-4803-9043-3f2cc0159d17",
+      "epoch": 558,
+      "head": "88e124da043c3393e9fc17f8372624f060afb6f7",
+      "pr": 214,
+      "ci_run_id": 42473663454,
+      "python_tests": 844,
+      "p0d_static_tests": 11,
+      "ci_offline": "success",
+      "ci_compile_hold": "success",
+      "independent_review": false,
+      "engine_verified": false,
+      "main_merged": false,
+      "service_terminal_proof": false,
+      "released_at": "2026-11-08T10:59:51.869Z"
     }
   ]
 }
