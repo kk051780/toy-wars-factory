@@ -30,7 +30,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_source_pins_match_actual_four_game_lua_blobs(self):
         files=x.read_pinned_sources(self.root)
         self.assertEqual(len(files),4)
-        self.assertEqual(sum(map(len,files.values())),76921)
+        self.assertEqual(sum(map(len,files.values())),78120)
 
     def test_generated_document_is_deterministic(self):
         a,ar=x.build_place(self.root)
@@ -75,7 +75,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_current_combined_gameplay_is_embedded_in_actual_xml(self):
         binary, receipt=x.build_place(self.root)
         self.assertEqual(receipt['unmerged_source_branch_head_sha'],
-                         'fbbb1d0b31f63e1fa22b63a8ce7a1739521b0c1e')
+                         'cd104e3a6766ad0e37c763dd1e4d49624234276e')
         self.assertEqual(receipt['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
                          '181b0ef3a5aedafef4490decdbbe167d769e9932')
         doc=ET.fromstring(binary)
@@ -120,7 +120,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_tenth_wave_captain_is_in_embedded_3d_server_source(self):
         xml, manifest=x.build_place(self.root)
         self.assertEqual(manifest['unmerged_source_branch_head_sha'],
-                         'fbbb1d0b31f63e1fa22b63a8ce7a1739521b0c1e')
+                         'cd104e3a6766ad0e37c763dd1e4d49624234276e')
         self.assertEqual(manifest['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
                          '64175b1cda7e4d5e4623d7b28bb80fdc3d64c3b8')
         self.assertEqual(manifest['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],
@@ -163,9 +163,9 @@ class XmlArtifacts(unittest.TestCase):
     def test_boss_warning_is_in_pinned_hud_with_authoritative_wave_refresh(self):
         binary, manifest=x.build_place(self.root)
         self.assertEqual(manifest['unmerged_source_branch_head_sha'],
-                         'fbbb1d0b31f63e1fa22b63a8ce7a1739521b0c1e')
+                         'cd104e3a6766ad0e37c763dd1e4d49624234276e')
         self.assertEqual(manifest['sources']['src/ToyWarsHUD.client.lua']['git_blob_sha1'],
-                         'c48743468682b2f9808520cc5db8d435410cb11b')
+                         'ffd2c9db01f70605e87f25cee3b2c50372202fb8')
         doc=ET.fromstring(binary)
         hud=next(item.find('./Properties/ProtectedString[@name="Source"]').text
                  for item in doc.findall('.//Item')
@@ -181,7 +181,7 @@ class XmlArtifacts(unittest.TestCase):
     def test_factory_speed_is_in_signed_source_pinned_xml_candidate(self):
         binary, manifest=x.build_place(self.root)
         self.assertEqual(manifest['unmerged_source_branch_head_sha'],
-                         'fbbb1d0b31f63e1fa22b63a8ce7a1739521b0c1e')
+                         'cd104e3a6766ad0e37c763dd1e4d49624234276e')
         self.assertEqual(manifest['sources']['src/ToyWarsBalance.lua']['git_blob_sha1'],
                          '64175b1cda7e4d5e4623d7b28bb80fdc3d64c3b8')
         self.assertEqual(manifest['sources']['src/ToyWarsServer.server.lua']['git_blob_sha1'],

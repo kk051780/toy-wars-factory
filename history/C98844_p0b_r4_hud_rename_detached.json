@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "id": "C98844",
+  "kind": "P0B_PR209_R4_IMPORT_RENAME_DETACHED_HUD_REGRESSION",
+  "work_id": "P0B_REMOTE_R4_20261108_PR209_PROTECTED_CI_A",
+  "repository": "kk051780/toy-wars-factory",
+  "date_utc": "2026-11-08",
+  "issue": 204,
+  "pr": 209,
+  "base_head": "35b482e49841710db1b178e87129c3fca2c2e117",
+  "branch": "controller/p0b-pr208-progressmode-lifecycle-20261108",
+  "source_commit": "cd104e3a6766ad0e37c763dd1e4d49624234276e",
+  "local_source_commit": "37c0a06bffe5d3c47aabaa780fd514432d212a75",
+  "local_head": "32d6734e5f201ad1286c827fea82d1fd42f250ae",
+  "coordination": {
+    "kind": "CONTROLLER",
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "4ceb3fa6ddeae310647ea685f4fdc856c0dccba1",
+    "owner_id": "d73ce86f-75df-4700-82e9-26f4c45e1628",
+    "epoch": 543
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_blob": "c48743468682b2f9808520cc5db8d435410cb11b",
+      "after_blob": "ffd2c9db01f70605e87f25cee3b2c50372202fb8",
+      "before_bytes": 15944,
+      "after_bytes": 17143,
+      "delta_bytes": 1199,
+      "reduction_rationale": "Removed stale value-only refresh and name-filtered child handlers; replaced with bounded identity watchers and detached callback rescan; no feature removed."
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1735,
+    "lua_bytes": 78120
+  },
+  "local_lua_mock_passed": 123,
+  "ci_status": "PENDING_AT_AUTHORING",
+  "independent_review": false,
+  "engine_verified": false,
+  "main_merged": false,
+  "roblox_published": false,
+  "extra_spend_jpy": 0
+}
