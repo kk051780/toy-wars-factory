@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "id": "P0_ISSUE123_PR203_ACTION_FENCE_HOLD_EPOCH523",
+  "repo": "kk051780/toy-wars-factory",
+  "issue": 123,
+  "pr": 203,
+  "head": "dbdc21845bd974547522ef202660cd6a0e2f67df",
+  "baseline": "5e8fa180bc0d12543adae616daa429e62c113086",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "owner_epoch": 522,
+  "owner_id": "bf7c646a-92de-4815-89cd-1995db119f65",
+  "owner_release_ref": "4a54e42279f0875bad8ab5fc14d8221275ce6fe4",
+  "hosted_ci": {
+    "run_id": 42436138650,
+    "offline": "success",
+    "compile_hold": "success",
+    "python_tests": 883,
+    "new_tests": 3
+  },
+  "changed_files": 13,
+  "changed_paths": [
+    "docs/SCOPED_LEASE_MIGRATION_GATE.md",
+    "history/C10002_legacy_scoped_compatibility_gate.json",
+    "history/C10003_legacy_scoped_merge_guard.json",
+    "history/C10004_legacy_owns_write_fence.json",
+    "history/C10005_sourcery_review_defect_fence.json",
+    "history/C10007_legacy_merge_preflight_action_hold.json",
+    "tests/test_legacy_scoped_integration_gate.py",
+    "tests/test_legacy_scoped_migration_gate.py",
+    "tests/test_legacy_scoped_owner_cleanup.py",
+    "tests/test_legacy_scoped_sourcery_regression.py",
+    "tests/test_repair_integration.py",
+    "tools/repair_control.py",
+    "tools/repair_integration.py"
+  ],
+  "code_effect": "legacy integration preflight no longer returns MERGE; returns WAIT_HOST_ACTION_FENCE",
+  "review_verdict": "REQUEST_CHANGES_UNRESOLVED_HOST_ACTION_CAS_OLD_RUNNER_DRAIN",
+  "formal_native_reviewer_approved": false,
+  "main_merged": false,
+  "real_two_gpt_writers": false,
+  "automatic_chat_recovery": false,
+  "safety_hold": [
+    "no scoped activation",
+    "no direct main push",
+    "no merge",
+    "no Roblox publish",
+    "no extra charges"
+  ],
+  "handoff_links": {
+    "pr_comment": "https://github.com/kk051780/toy-wars-factory/pull/203#issuecomment-6715861058",
+    "issue_comment": "https://github.com/kk051780/toy-wars-factory/issues/123#issuecomment-6715861395"
+  },
+  "observed_at": "2026-11-08T01:55:55.161Z"
+}
