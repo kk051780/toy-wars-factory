@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "id": "C10017",
+  "kind": "P0B_STUDIO_PREVIEW_HUD_REPLICATION_FAIL_CLOSED",
+  "issue": 204,
+  "pr": 192,
+  "coordination": {
+    "kind": "CONTROLLER",
+    "epoch": 531,
+    "owner_id": "5cb061c3-aa50-40b7-b69b-53dab1c298ae",
+    "work_branch": "controller/studio-unsaved-pve-preview-20261107-db08b795"
+  },
+  "original_head": "1afb1e2d0d44a2a2b251442af21a44153a4639f8",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_blob": "83233206eb2119c4a05aa01bc4f320b554f4f79b",
+      "after_blob": "92adaa336532c9d85ff6bb7e66aa78487f39930d",
+      "before_bytes": 12370,
+      "after_bytes": 13482,
+      "delta_bytes": 1112
+    }
+  ],
+  "reason": "Folder ToyWarsStatus may replicate before its ProgressMode StringValue, so one-time FindFirstChild returns nil and unsaved notice remains invisible",
+  "fix": "Treat missing/unknown as save-unverified warning; ChildAdded subscribe before second FindFirstChild, plus Value Changed refresh",
+  "lua_mock_cases": 7,
+  "original_issue_reference": "P0B_ISSUE204",
+  "no_live_engine_claim": true,
+  "main_merged": false,
+  "additional_spend_jpy": 0
+}
