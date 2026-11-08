@@ -11,7 +11,7 @@ import json
 import platform
 import sys
 from datetime import datetime, timezone
-from urllib.request import Request, urlopen
+from urllib.request import Request, build_opener, HTTPRedirectHandler
 
 from tools.system_p0c_command_intake import inspect_untrusted_intent
 
@@ -52,6 +52,13 @@ def api_url(comment_id):
     return GITHUB_URL_ROOT + "/issues/comments/" + str(comment_id)
 
 
+class _NoRedirect(HTTPRedirectHandler):
+    """Never forward an HTTP request to any redirected endpoint."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
 def fetch_comment_once(comment_id):
     """One GET only, fixed host and path, no redirects accepted."""
     url = api_url(comment_id)
@@ -59,7 +66,7 @@ def fetch_comment_once(comment_id):
         "Accept": "application/vnd.github+json",
         "User-Agent": "TOY-WARS-P0C-ReadOnly-Preflight/1",
     }, method="GET")
-    with urlopen(request, timeout=10) as response:
+    with build_opener(_NoRedirect()).open(request, timeout=10) as response:
         if response.geturl() != url or response.status != 200:
             raise ValueError("unexpected GitHub response URL/status")
         raw = response.read(MAX_RESPONSE_BYTES + 1)
