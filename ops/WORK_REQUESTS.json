@@ -5895,26 +5895,27 @@
       "pr": 215,
       "parent_pr": 212,
       "branch": "controller/p0c-readonly-ack-protocol-20261108-b3e2796c",
-      "head": "91714f2724f8be64f067c9f0190a97baa4d15397",
+      "head": "1e08bdfb5e4b28b51e8dd637c0c87bf5626abcaf",
       "draft": true,
       "source_owner_id": "b3e2796c-1acc-42b9-b5a6-734156e44ff0",
       "source_owner_epoch": 554,
-      "status": "OPEN_C3A_EXACT_HEAD_CI959_GREEN_DISTINCT_REVIEW_REQUIRED",
+      "status": "OPEN_C3B_HEAD_CHANGED_REQUIRES_FRESH_EXACT_HEAD_CI_AND_INDEPENDENT_REVIEW",
       "assigned_role": "REVIEWER",
       "independent_reviewed": false,
-      "ci_run_id": 42471823541,
+      "ci_run_id": null,
       "ci_jobs": {
         "offline": "success",
         "compile_hold": "success"
       },
-      "python_tests": 959,
+      "python_tests": null,
       "ack_tests": 14,
       "review_packet_path": "ops/review_packets/PR215_p0c_ack_only_epoch554.json",
       "windows_ack_post_verified": false,
       "pc_receiver_installed": false,
       "codex_execution_authorized": false,
       "next_actor": "Independent authenticated REVIEWER must fetch actual PR215 HEAD + parent PR212 HEAD/current PR211, diff, real CI and review permissions. Examine source authentication and host/HEAD pin, redirect+token nonleakage, lack of idempotency on GitHub Issue comment POST, potential malicious replay, false implication of host attestation. No real Windows POST until explicit approved least-privilege credential and host opt-in. Not an executable command receiver.",
-      "created_at": "2026-11-08T10:33:35.238Z"
+      "created_at": "2026-11-08T10:33:35.238Z",
+      "last_updated_at": "2026-11-08T10:44:52.379Z"
     }
   ]
 }

@@ -1987,6 +1987,20 @@
       "authz_proved": false,
       "main_merged": false,
       "recorded_at": "2026-11-08T10:33:35.238Z"
+    },
+    {
+      "kind": "P0C_C3B_NON_ATTESTATION_PAYLOAD_HARDENING",
+      "epoch": 556,
+      "owner_id": "bf1bda82-8120-4b44-9000-70db2ef91045",
+      "pr": 215,
+      "head": "1e08bdfb5e4b28b51e8dd637c0c87bf5626abcaf",
+      "previous_head": "91714f2724f8be64f067c9f0190a97baa4d15397",
+      "ci_pending": true,
+      "independent_review": false,
+      "pc_executed": false,
+      "codex_calls": 0,
+      "main_merged": false,
+      "recorded_at": "2026-11-08T10:44:52.379Z"
     }
   ],
   "controller_maintenance": {
@@ -2072,17 +2086,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 556,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "bf1bda82-8120-4b44-9000-70db2ef91045",
-    "task_id": null,
-    "epoch": 556,
-    "acquired_at": "2026-11-08T10:43:07.853Z",
-    "expires_at": "2026-11-08T10:58:07.853Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0c-readonly-ack-protocol-20261108-b3e2796c",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
