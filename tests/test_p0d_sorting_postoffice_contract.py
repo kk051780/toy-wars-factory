@@ -124,6 +124,15 @@ class PostOfficeContract(unittest.TestCase):
         ):
             self.assertIn(marker, self.source)
 
+    def test_stale_character_is_not_teleported_after_respawn(self):
+        source = self.source
+        fn = source.split("local function orientCharacter(player, character)", 1)[1].split("local function join(player)", 1)[0]
+        self.assertIn("player.Character == character", fn)
+        self.assertLess(fn.index("player.Character == character"), fn.index("character:PivotTo("))
+        self.assertIn("task.defer(orientCharacter, player, character)", source)
+        self.assertIn("task.defer(orientCharacter, player, player.Character)", source)
+        self.assertNotIn("task.defer(orientCharacter, character)", source)
+
     def test_no_persistence_external_network_or_monetization(self):
         for forbidden in (
             "DataStoreService", "HttpService", "InsertService",

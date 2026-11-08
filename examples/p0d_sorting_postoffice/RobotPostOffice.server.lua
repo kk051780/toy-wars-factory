@@ -287,9 +287,10 @@ local replayPillar = makePart("ReplayPillar", Vector3.new(4, 7, 4),
 addSign(replayPillar, "REPLAY", 160)
 addClick(replayPillar, replay)
 
-local function orientCharacter(character)
+local function orientCharacter(player, character)
+    -- An obsolete avatar may remain parented after a newer character spawns.
     local root = character:WaitForChild("HumanoidRootPart", 10)
-    if root and character.Parent then
+    if root and character.Parent and player.Character == character then
         character:PivotTo(CFrame.lookAt(Vector3.new(0, 4, -10), Vector3.new(0, 4, -28)))
     end
 end
@@ -297,10 +298,10 @@ end
 local function join(player)
     player.RespawnLocation = trialSpawn
     player.CharacterAdded:Connect(function(character)
-        task.defer(orientCharacter, character)
+        task.defer(orientCharacter, player, character)
     end)
     if player.Character then
-        task.defer(orientCharacter, player.Character)
+        task.defer(orientCharacter, player, player.Character)
     end
     local state = {count = 0, selected = nil, delivered = {}, objective = nil}
     sessions[player] = state
