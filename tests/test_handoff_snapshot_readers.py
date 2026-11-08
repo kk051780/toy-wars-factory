@@ -8,6 +8,8 @@ FILES = [
  "ops/CHATGPT_GAME_REPAIR_PROMPT.md",
  "ops/CHATGPT_INTEGRATION_REVIEW_PROMPT.md",
  "tools/build_handoff.py",
+ "docs/CHAT_CONTINUITY_PROTOCOL.md",
+ "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md",
 ]
 
 class SnapshotReaderContract(unittest.TestCase):
@@ -21,6 +23,23 @@ class SnapshotReaderContract(unittest.TestCase):
                 self.assertIn("UNTRUSTED_STALE", source)
                 self.assertIn("HOLD_ENGINE_UNVERIFIED", source)
                 self.assertIn("main", source)
+    def test_continuity_and_system_review_know_immutable_snapshot_fallback(self):
+        for path in ("docs/CHAT_CONTINUITY_PROTOCOL.md",
+                     "ops/CHATGPT_SYSTEM_REVIEW_PROMPT.md"):
+            with self.subTest(path=path):
+                source = (ROOT / path).read_text(encoding="utf-8")
+                for item in ("同一不変", "歴史", "twf-repair-coordinator",
+                             "100644", "prior-snapshot-tip", "UNTRUSTED_STALE"):
+                    self.assertIn(item, source)
+                self.assertNotIn("private GitHub", source)
+
+    def test_continuity_snapshot_does_not_implicitly_authorize_anything(self):
+        text = (ROOT / "docs/CHAT_CONTINUITY_PROTOCOL.md").read_text(encoding="utf-8")
+        for required in ("schema=2", "canonical_repo=kk051780/toy-wars-factory",
+                         "release_decision=HOLD_ENGINE_UNVERIFIED", "source_revision",
+                         "GitHub compare", "承認", "公開許可"):
+            self.assertIn(required, text)
+
     def test_reader_protocol_never_downgrades_main_or_approval_hold(self):
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
         docs = (ROOT / "docs/QA_HANDOFF_PRIVILEGE_SPLIT.md").read_text(encoding="utf-8")

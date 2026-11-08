@@ -1,8 +1,10 @@
 # TOY WARS FACTORY — チャット間継続規約
 
-唯一の正本は private GitHub repository kk051780/toy-wars-factory の main ブランチ。
+コード・権限・品質・公開判断の唯一の正本は GitHub repository kk051780/toy-wars-factory の現在の main ブランチ。2026-11-08に公開を確認したが毎回GitHubから権限を再確認する。生成 status は正本ではない。
 
-新しいチャットでは、GitHub連携で status/CHAT_HANDOFF.md と status/LATEST_STATE.json を読み、PROJECT_STATE.json、AGENTS.md、quality_policy.jsonも照合する。その後、最新Actions、main、PR、Issuesを直接確認し、未完了の続きから開発する。
+新しいチャットでは、まず現在main HEAD、PROJECT_STATE.json、AGENTS.md、config/quality_policy.json、PR・Actions・Issues・twf-repair-coordinator をGitHubから直接取得する。mainの status/CHAT_HANDOFF.md と status/LATEST_STATE.json は歴史的な生成資料であり最新の正本とは扱わない。
+
+補助的なread-modelが必要な場合だけ、twf-handoff-snapshots の status/CHAT_HANDOFF.md と status/LATEST_STATE.json を**同一不変commit SHA**から読む。schema=2、canonical_repo=kk051780/toy-wars-factory、release_decision=HOLD_ENGINE_UNVERIFIED、40桁hexのsource_revisionを検査し、GitHub compareで現在mainに対する祖先性とsource_revision以降の変更が status/ のみであることを独立確認する。twf-handoff-snapshots-g0002以降も世代連続性・全祖先の2つの100644通常ファイル・512個以下の直列履歴・孤立rootのprior-snapshot-tip連鎖を検証する。欠落・不一致・不確証時はUNTRUSTED_STALEとして破棄し、main/PR/CIから直接再構成する。スナップショットは承認・権限・実機検証・公開許可の根拠ではない。
 
 同じChatGPTプロジェクト内の新しいチャットで「TOY WARS再開」の一言を送れば、AIは上記の状態取得から始める。古いチャットの記憶や添付よりGitHubの現物を優先する。
 
