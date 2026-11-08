@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "id": "C10008",
+  "kind": "P0_PROVIDER_ACTION_RESERVATION_CANDIDATE",
+  "issue": 123,
+  "pr": 203,
+  "base_head": "dbdc21845bd974547522ef202660cd6a0e2f67df",
+  "owner_epoch": 524,
+  "owner_id": "a7cc428d-c110-4e88-baa9-2d4096ba738b",
+  "source": "legacy coordinator root migration hold",
+  "file_paths": [
+    "tools/repair_control.py",
+    "tools/repair_action_reservation.py",
+    "tests/test_repair_action_reservation.py",
+    "docs/SCOPED_LEASE_MIGRATION_GATE.md"
+  ],
+  "new_tests": 15,
+  "provider_authority": false,
+  "provider_merge_called": false,
+  "authoritative_host_auth": false,
+  "pending_live_coordinator_written": false,
+  "merge_advisory_gate": "WAIT_HOST_ACTION_FENCE",
+  "unresolved": [
+    "authenticated provider adapter",
+    "old runner fleet drain",
+    "independent security review",
+    "real two GPT writer proof"
+  ],
+  "additional_spend_jpy": 0
+}

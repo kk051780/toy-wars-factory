@@ -118,6 +118,38 @@ def scoped_lease_migration_block(state):
             # Expired entry is NOT self-revocation; only verified recovery can
             # remove it from this same CAS-controlled registry.
             blocked = True
+    # A provider action reservation is a hard in-flight operation barrier.
+    # It has no implicit expiry/recovery: only an authenticated host receipt
+    # can reconcile the uncertain outcome and permit its eventual removal.
+    action = state.get("pending_provider_action")
+    if action is not None:
+        required = {"schema", "action_id", "kind", "repository", "pr_number",
+                    "pr_head", "main_head", "reviewer_run_id", "reviewer_task_id",
+                    "holder_epoch", "reserved_at"}
+        if type(action) is not dict or set(action) != required or action["schema"] != 1:
+            raise ValueError("malformed pending provider action")
+        canonical_id(action["action_id"])
+        canonical_id(action["reviewer_run_id"])
+        if (action["kind"] != "MERGE" or
+                type(action["pr_number"]) is not int or action["pr_number"] < 1 or
+                type(action["repository"]) is not str or
+                not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", action["repository"]) or
+                any(type(action[k]) is not str or
+                    not re.fullmatch(r"[0-9a-f]{40}", action[k])
+                    for k in ("pr_head", "main_head"))):
+            raise ValueError("invalid pending provider merge identity")
+        current_holder = state.get("holder")
+        if (type(current_holder) is not dict or
+                current_holder.get("kind") != "REVIEWER" or
+                current_holder.get("owner_id") != action["reviewer_run_id"] or
+                current_holder.get("task_id") != action["reviewer_task_id"] or
+                current_holder.get("epoch") != action["holder_epoch"] or
+                current_holder.get("work_branch") != "main" or
+                state.get("authorized_tasks", {}).get("REVIEWER") != action["reviewer_task_id"] or
+                instant(action["reserved_at"]) < instant(current_holder["acquired_at"]) or
+                instant(action["reserved_at"]) >= instant(current_holder["expires_at"])):
+            raise ValueError("pending action no longer matches live owner")
+        blocked = True
     # Explicit freeze marker protects early migration even before scoped rows
     # are admitted; unknown values fail closed.
     mode = state.get("parallel_write_migration", "LEGACY_ONLY")
@@ -199,6 +231,10 @@ def owns(state, kind, owner_id, epoch, now):
 
 def release(state, kind, owner_id, epoch, now, packet=None, reported=False):
     validate(state)
+    if state.get("pending_provider_action") is not None:
+        # A pending GitHub result is NOT made safe by holder expiry or release.
+        scoped_lease_migration_block(state)  # also validates action shape
+        raise ValueError("pending provider action requires authenticated reconciliation")
     if type(epoch) is not int:
         raise ValueError("integer fencing generation required")
     holder = state["holder"]

@@ -74,3 +74,30 @@ independently audited host-owned reservation/CAS spanning the provider operation
 and readback, with original runner fleet drained. It deliberately blocks
 otherwise-approved automatic integration if no such adapter exists; do not
 silently fall back to direct GitHub merge.
+
+## P0 action reservation candidate — epoch524 (read-only provider integration)
+
+This protected candidate adds `tools/repair_action_reservation.py`: a
+**non-authorizing** MERGE reservation planner and injected one-shot CAS
+adapter. A valid legacy REVIEWER owner can propose a pending action with exact
+repository, PR SHA, main SHA, run/task, epoch and unique action UUID. A
+reservation is stored in the **same** coordinator state as the old lease.
+`acquire`, `owns` and `decide` now block while it exists, including if
+the old holder expires. `release` refuses to remove that holder while the
+provider result is still ambiguous. A malformed reservation also fails closed.
+
+The new module has *no GitHub merge/write client* and all its responses
+explicitly state `may_execute=false`, `provider_authenticated=false`. The
+injected CAS callback in tests is a **fake host**, not a privileged runtime.
+No `pending_provider_action` is written into the live shared coordinator by
+this PR. There is intentionally no autonomous expiry or release from an
+uncertain provider result.
+
+**Next missing component**: a separately approved host action adapter
+authenticating the original registered reviewer and all runner versions,
+performing exactly one provider merge with expected head/base while retaining
+this reservation, verifying the resulting actual GitHub state and only then
+reconciling the reservation using a new expected-SHA CAS. Until that actor and
+the old-runner fleet drain are evidenced, `repair_integration.decide` remains
+`WAIT_HOST_ACTION_FENCE` for otherwise-approved PRs. Two-writer scoped
+activation, independent approval and main integration remain HOLD.
