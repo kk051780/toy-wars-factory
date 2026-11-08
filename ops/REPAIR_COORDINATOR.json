@@ -1923,8 +1923,19 @@
     "source_commit": "c00d4d552ea1098b91e3b855cdb87e3e68b65950",
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
-  "epoch": 518,
-  "holder": null,
+  "epoch": 519,
+  "holder": {
+    "kind": "CONTROLLER",
+    "origin": "controller",
+    "epoch": 519,
+    "owner_id": "f8f7a3c9-6d42-40fb-9c4a-f6d7ad4934c9",
+    "task_id": null,
+    "acquired_at": "2026-11-08T00:42:50.423Z",
+    "expires_at": "2026-11-08T01:03:50.423Z",
+    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "work_branch": "twf-repair-coordinator",
+    "scope": "Issue123 P0 protected PR203 exact-head independent review queue + one-time maintenance route evidence only; no new source PR, no merge, no main writes, no schedule expansion"
+  },
   "integration_results": {
     "35": {
       "merged": true,
