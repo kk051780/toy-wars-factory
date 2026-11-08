@@ -76,6 +76,17 @@ class SourceProbeTests(unittest.TestCase):
             self.snap["work_branch"] = branch
             self.assertEqual(self.propose()["action"], "WAIT_INVALID_SOURCE_PROPOSAL")
 
+    def test_rejects_foreign_repo_with_valid_syntax(self):
+        for repository in ("another/repository", "kk051780/toy-wars-factory-fork"):
+            self.snap["repository"] = repository
+            self.assertEqual(self.propose()["action"], "WAIT_INVALID_SOURCE_PROPOSAL")
+
+    def test_rejects_other_p0_branch_even_with_matching_holder(self):
+        for branch in ("controller/p0-other-project", "controller/p0b-pr208-progressmode-lifecycle-20261108"):
+            self.snap["work_branch"] = branch
+            self.snap["state"]["holder"]["work_branch"] = branch
+            self.assertEqual(self.propose()["action"], "WAIT_INVALID_SOURCE_PROPOSAL")
+
     def test_rejects_forged_task_or_owner(self):
         self.req["owner_id"] = ACTION
         self.assertEqual(self.propose()["action"], "WAIT_NOT_LIVE_CONTROLLER")
