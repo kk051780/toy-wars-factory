@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T04:04:28.271Z",
+  "observed_at": "2026-11-08T04:09:38.002Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5605,6 +5605,46 @@
       "next_actor": "REGISTERED_INDEPENDENT_REVIEWER_ROOT_STACK_PR199_AND_P0B_PR207;THEN_PROTECTED_MAIN_INTEGRATION_AND_ISOLATED_WINDOWS_STUDIO_PLAYTEST",
       "created_at": "2026-11-08T04:04:28.271Z",
       "updated_at": "2026-11-08T04:04:28.271Z"
+    },
+    {
+      "id": "P0B_ISSUE204_PR208_WINDOWS_FOUR_TOY_INSTALLER_INTEGRITY_REVIEW_20261108",
+      "kind": "P0B_WINDOWS_STUDIO_FOUR_TOY_PREVIEW_INSTALLER_INDEPENDENT_REVIEW",
+      "priority": "P0",
+      "status": "OPEN_EXACT_HEAD_CI_GREEN_INDEPENDENT_REVIEW_REQUIRED",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "issue": 204,
+      "pr": 208,
+      "head": "206c83674d0258b36771b9ceedadb6be30485035",
+      "base_pr": 207,
+      "branch": "controller/p0b-windows-preview-installer-20261108",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "review_packet_path": "ops/review_packets/PR208_p0b_windows_four_toy_installer_epoch534.json",
+      "source_owner_epoch": 534,
+      "source_owner_id": "a6a984f3-a9cf-4c85-94e0-cdcd8a06c688",
+      "draft": true,
+      "ci_run_id": 42445593544,
+      "ci_jobs": {
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "new_tests": 10,
+      "changed_files": 4,
+      "changed_paths": [
+        "tools/build_installer.py",
+        "tests/test_windows_installer_lf.py",
+        "tests/test_p0b_integrated_preview_installer.py",
+        "history/C10020_p0b_windows_preview_installer.json"
+      ],
+      "independent_reviewed": false,
+      "main_merged": false,
+      "engine_verified": false,
+      "additional_spend_jpy": 0,
+      "review_request": "Independent registered reviewer: verify exact HEAD and hosted CI, 7 PR205 Windows LF source-hash tests and 3 new integrated four-toy source SHA+byte determinism tests. Audit that generated Luau installer is unreviewed, destructive for same-named Studio objects, needs isolated backed-up place. Review source/manifest encoding on Windows Python 3.14 and candidate's four Luau sources including unsaved HUD. Integrate only after full parent PR199/207 security provenance and P0-A lock gates; do not self-approve or auto-merge.",
+      "next_actor": "INDEPENDENT_REGISTERED_REVIEWER;THEN_OWNER_WINDOWS_FOUR_TOY_STUDIO_BACKED_UP_ISOLATED_PREVIEW",
+      "created_at": "2026-11-08T04:09:38.002Z",
+      "updated_at": "2026-11-08T04:09:38.002Z"
     }
   ]
 }
