@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "id": "C99874",
+  "date_utc": "2026-11-05",
+  "issue": 57,
+  "pr": 181,
+  "kind": "PROTECTED_SNAPSHOT_ANCESTRY_HISTORY_FAIL_CLOSED",
+  "previous_pr_head": "2fd6b2c029eee57a96e82e94801a5a1e932ac8ba",
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 441,
+    "owner_id": "7f6c90ce-65fb-4193-8562-8c6b4b68c50d",
+    "claim_commit": "93c3b64a9f12f3809b68dbacbd1ba7ec6b43162e",
+    "work_branch": "controller/issue57-handoff-privilege-split-9b8a6f21"
+  },
+  "defect": "Existing snapshot tip's names and 100644 modes may be clean even when a prior commit contains an executable/unreviewed file, so appending the tip preserves that unsafe historical object.",
+  "fix": "When resuming a snapshot branch, deny shallow, >512 history entries, non-data trees and merge-parent count. Do not rewrite or forcibly reset existing branch; reject contaminated history.",
+  "changed_files": [
+    ".github/workflows/handoff-sync.yml",
+    "tests/test_handoff_status_writer_git.py",
+    "tests/test_handoff_privilege_split.py",
+    "history/C99874_pr181_snapshot_ancestry_guard.json"
+  ],
+  "tests_added": [
+    "test_existing_snapshot_hidden_source_ancestor_is_rejected",
+    "test_prior_snapshot_history_is_bounded_linear_and_data_only"
+  ],
+  "test_scope": "Synthetic local Git ancestry only; original hosted exact-head CI pending",
+  "limitations": [
+    "Boundary 512 entries may require independently reviewed future retention/rotation policy",
+    "No GitHub live writer, ChatGPT Automations identity or independent native reviewer confirmed",
+    "No main merge, no billing upgrade, no Roblox engine access"
+  ]
+}

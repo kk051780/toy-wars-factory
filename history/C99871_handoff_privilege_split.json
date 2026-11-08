@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "id": "C99871",
+  "date_utc": "2026-11-02",
+  "issue": 57,
+  "kind": "PROTECTED_HANDOFF_LEAST_PRIVILEGE_WRITER_SPLIT_CANDIDATE",
+  "status": "DRAFT_UNMERGED_NO_LIVE_WRITE_PROOF",
+  "work_id": "TWF-ISSUE57-HANDOFF-READONLY-VERIFY-STATUS-WRITER-20261102",
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_workflow_git_blob": "0eb766760c9ebe1cbdc3c3c59abcd01310907282",
+  "candidate_workflow_git_blob": "4ca9b5a00a1a0c8ada5b6d3637437dd65723bee0",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "e733d6feb70e45335943c9a588c544a22024b741",
+    "epoch": 416,
+    "owner_run_id": "9b8a6f21-36c7-4d88-9e02-1b357e24a91c",
+    "work_branch": "controller/issue57-handoff-privilege-split-9b8a6f21"
+  },
+  "adopted_prepared_candidate": {
+    "library_path": "/ToyWars/Handoff_LeastPrivilege_TwoJob_24tests_20261102.zip",
+    "zip_sha256": "013918895ceb4e08c1c6928b30adb1a762e42bc82ada4912e4429c8f6484927b",
+    "local_tests_passed": 24,
+    "source_issue_comment": "https://github.com/kk051780/toy-wars-factory/issues/57#issuecomment-6572319582"
+  },
+  "changed_files": [
+    ".github/workflows/handoff-sync.yml",
+    "tests/test_handoff_privilege_split.py",
+    "docs/QA_HANDOFF_PRIVILEGE_SPLIT.md",
+    "history/C99871_handoff_privilege_split.json"
+  ],
+  "added_hosted_regression_methods": 15,
+  "hosted_ci": "PENDING_EXACT_HEAD",
+  "scope": "SEPARATE_READ_ONLY_QA_FROM_STATUS_ONLY_GITHUB_WRITER",
+  "known_overlapping_paths_unrelated_intent_prs": [
+    12,
+    19,
+    22
+  ],
+  "safety": {
+    "main_modified": false,
+    "new_schedule_added": false,
+    "registered_task_modified": false,
+    "github_settings_modified": false,
+    "live_workflow_dispatched": false,
+    "workflows_merged": false,
+    "github_writer_attested": false,
+    "gpt_worker_identity_fixed": false,
+    "billing": false,
+    "gemini_inference": false,
+    "roblox_publish": false
+  },
+  "holds": [
+    "INDEPENDENT_SECURITY_REVIEW_REQUIRED",
+    "PRIVATE_MAIN_PROVIDER_ENFORCEMENT_UNVERIFIED",
+    "NO_PRIVILEGED_DISPATCH",
+    "NO_AUTO_PUBLISH"
+  ]
+}

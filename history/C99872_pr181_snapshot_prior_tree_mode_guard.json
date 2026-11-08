@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "id": "C99872",
+  "date_utc": "2026-11-05",
+  "issue": 57,
+  "pr": 181,
+  "kind": "PROTECTED_SNAPSHOT_PRIOR_TREE_MODE_FAIL_CLOSED",
+  "source_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_pr_head": "b2664862d7c027ff5508e8b6ca3a2d60dbca4d0c",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 439,
+    "owner_id": "80a7a397-2dbd-4b92-ac90-a18c0474d6be",
+    "claim_commit": "2b95c67f3eb7c5945a3c076e460b59e9acb0f2b0",
+    "work_branch": "controller/issue57-handoff-privilege-split-9b8a6f21"
+  },
+  "changed_files": [
+    ".github/workflows/handoff-sync.yml",
+    "tests/test_handoff_status_writer_git.py",
+    "history/C99872_pr181_snapshot_prior_tree_mode_guard.json"
+  ],
+  "defect": "Prior snapshot branch tip was checked by filename only; a malicious symlink (120000) or executable blob (100755) with identical two names could become accepted parent.",
+  "fix": "Require both exact 100644 blob modes and allowlisted paths before using any prior snapshot tip; no source/workflow execution under write token.",
+  "local_git_smoke": "regular accepted, symlink rejected, executable rejected: 3/3 PASS",
+  "hosted_ci": "PENDING_EXACT_HEAD",
+  "limitations": [
+    "Do not infer historical ancestry audit from a tip-only mode check",
+    "No provider-signed scheduled-run identity or true GitHub writer run proven",
+    "Protected DRAFT only; independent review required",
+    "No main merge, billing, secret or Roblox changes"
+  ]
+}

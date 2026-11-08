@@ -1,8 +1,8 @@
 2026-10-25の最新指示：通常の承認判断は助手へ全権委譲済み。所有者の返信待ちを通常工程にせず、作者とは別の独立審査役が検証して統合する。
 
-TOY WARS FACTORY（private GitHub kk051780/toy-wars-factory）の開発体制とゲーム改善を点検し、最新WEB事例と実測から次の小さな改善を進める。所有者は2026-10-25に、現行体制をベストと考えず、体制自身の問題確認・改善とゲーム開発の双方を日々進化させることを明示的に要求した。単なる監視結果や「有効」の表示を改善成果に数えない。
+TOY WARS FACTORY（GitHub kk051780/toy-wars-factory、公開状態は現在の接続で再確認）の開発体制とゲーム改善を点検し、最新WEB事例と実測から次の小さな改善を進める。所有者は2026-10-25に、現行体制をベストと考えず、体制自身の問題確認・改善とゲーム開発の双方を日々進化させることを明示的に要求した。単なる監視結果や「有効」の表示を改善成果に数えない。
 
-最初にGitHubの現在main、AGENTS.md、PROJECT_STATE.json、status/CHAT_HANDOFF.md、status/LATEST_STATE.json、config/quality_policy.json、config/characters.json、config/autonomous_repair.json、docs/REPAIR_COORDINATION.md、docs/SYSTEM_REVIEW.md、tools/repair_control.py、最新PR・Actions・Issuesを読む。GitHubが正本でローカル継続は仮定しない。mainのqueue_version>=4、system_review.enabled=true、自分のtask_idがsystem_review.task_idと一致することを確認する。未配備・不一致なら読み取りだけで終了し、タスクを停止しない。
+最初にGitHubの現在main HEAD、AGENTS.md、PROJECT_STATE.json、config/quality_policy.json、config/characters.json、config/autonomous_repair.json、docs/REPAIR_COORDINATION.md、docs/SYSTEM_REVIEW.md、tools/repair_control.py、最新PR・Actions・Issues、twf-repair-coordinator を読む。mainの status/CHAT_HANDOFF.md と status/LATEST_STATE.json は歴史的生成情報であり現在の継続根拠に用いない。補助的なtwf-handoff-snapshotsから2つのstatusファイルを同一不変commit SHAで取得できた場合のみ、schema=2、canonical_repo=kk051780/toy-wars-factory、release_decision=HOLD_ENGINE_UNVERIFIED、source_revision=40hexを検査し、GitHub compareで現在mainへの祖先性とその後の変更が status/ のみであることを独立照合する。次世代twf-handoff-snapshots-g0002以降は世代連続性、全祖先の2つの100644通常ファイル、直列512上限、孤立rootのprior-snapshot-tip連鎖も検証する。欠落・不一致・不確証ならUNTRUSTED_STALEとして破棄し、最新main/PR/CIから直接再構成する。生成物は承認・権限・実機確認の証拠ではない。GitHubが正本でローカル継続は仮定しない。mainのqueue_version>=4、system_review.enabled=true、自分のtask_idがsystem_review.task_idと一致することを確認する。未配備・不一致なら読み取りだけで終了し、タスクを停止しない。
 
 自分とゲーム修正タスクの実行記録を、設定にある正確なtask_idを指定したpeekで確認する。自分の正規サービスrun UUIDが確定しなければ編集しない。ワーカーによるAutomationsの作成・変更・停止・削除・追加起動は禁止。監査・待機・通知省略のために自身を無効にしない。
 

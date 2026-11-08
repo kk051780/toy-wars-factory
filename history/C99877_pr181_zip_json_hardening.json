@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "kind": "CONTROLLER_PROTECTED_PR181_ZIP_VERIFIER_SECURITY_HARDENING",
+  "work_id": "P0A_PR181_ZIP_VERIFY_NONFINITE_EXEC_BOUNDED_20261108_A",
+  "pr": 181,
+  "previous_head": "2078c0c901586e5c2cbdfd7871f6ae8d876a0ad5",
+  "claim_commit": "9894d7a24726da7b3b4deae6056595a386d05a3a",
+  "owner_id": "8e3aab03-26fc-4b6e-a47a-63aba64ce41e",
+  "epoch": 550,
+  "reviewed_independent": false,
+  "source_paths": [
+    "tools/verify_handoff_artifact.py",
+    "tests/test_verify_handoff_artifact.py"
+  ],
+  "issues_fixed": [
+    "unbounded ZIP member read",
+    "executable-marked passive ZIP",
+    "nonstandard NaN Infinity JSON constant"
+  ],
+  "tests_added": [
+    "test_nonfinite_json_constants_rejected_in_nested_untrusted_fields",
+    "test_executable_regular_file_is_not_passive",
+    "test_verifier_reads_zip_members_with_explicit_expansion_cap"
+  ],
+  "ci": "PENDING",
+  "main_merged": false,
+  "approved": false,
+  "spend_jpy": 0,
+  "notes": "Legacy status writer on main remains unchanged. This is protected draft source and test changes only."
+}

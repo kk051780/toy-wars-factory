@@ -15,46 +15,213 @@ on:
     - cron: '13,33,53 * * * *'
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
-  group: twf-handoff-main
+  group: twf-handoff-${{ github.ref == 'refs/heads/main' && 'main' || github.ref }}
   cancel-in-progress: false
 jobs:
-  update:
+  verify:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact accepted source, no persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4 resolved 2026-11-02
         with:
-          persist-credentials: true
+          ref: ${{ github.sha }}
+          persist-credentials: false
           fetch-depth: 0
-      - name: Validate status and characters
+      - name: Validate status and characters without write permission
         run: |
+          set -euo pipefail
           python3 -m unittest discover -s tests -p 'test_*.py' -v
           python3 tools/repository_gate.py
       - name: Rebuild portable handoff and size gate
-        run: python3 tools/build_handoff.py
+        run: |
+          set -euo pipefail
+          python3 tools/build_handoff.py
       - name: Report audit run without claiming AI coding
         run: |
           echo "### TOY WARS HANDOFF CYCLE" >> "$GITHUB_STEP_SUMMARY"
           echo "This snapshots repository progress; it does not run an AI developer." >> "$GITHUB_STEP_SUMMARY"
           head -n 26 status/CHAT_HANDOFF.md >> "$GITHUB_STEP_SUMMARY"
-      - name: Save only substantive changes
+      - name: Build exact two-file passive status manifest
         run: |
-          if git diff --quiet -- status/ && [ -z "$(git ls-files --others --exclude-standard status/)" ]; then
-            echo "NO_CHANGE: avoided fake progress" >> "$GITHUB_STEP_SUMMARY"
-          else
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add status/CHAT_HANDOFF.md status/LATEST_STATE.json
-            git commit -m 'chore(handoff): sync cross-chat state'
-            git push origin HEAD:main
-          fi
-      - name: Archive individual audit snapshot
-        if: always()
-        uses: actions/upload-artifact@v4
+          set -euo pipefail
+          test -f status/CHAT_HANDOFF.md
+          test -f status/LATEST_STATE.json
+          (cd status && sha256sum CHAT_HANDOFF.md LATEST_STATE.json > HANDOFF_SHA256SUMS.txt)
+      - name: Archive audited two-file status and its checksums
+        if: success()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4 resolved 2026-11-02
         with:
           name: toy-wars-handoff
-          path: status/
+          path: |
+            status/CHAT_HANDOFF.md
+            status/LATEST_STATE.json
+            status/HANDOFF_SHA256SUMS.txt
           if-no-files-found: ignore
           retention-days: 30
+  status_writer:
+    needs: verify
+    # Scheduled audits are read-only; only owner-initiated main dispatch may write passive data.
+    # P0-A privilege HOLD: this job is never admitted AND has no write token.
+    # Scheduled handoff relies on successful read-only Actions artifacts instead.
+    # Separate independent approval + provider control proof required before removal.
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && false
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout accepted main commit only (no token cache)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4 resolved 2026-11-02
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Download passive files from this run's verified job
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4 resolved 2026-11-02
+        with:
+          name: toy-wars-handoff
+          path: .verified-handoff
+      - name: Inspect passive artifact, never execute files from it
+        run: |
+          set -euo pipefail
+          test "$(find .verified-handoff -mindepth 1 -maxdepth 1 | wc -l)" -eq 3
+          for file in CHAT_HANDOFF.md LATEST_STATE.json HANDOFF_SHA256SUMS.txt; do
+            test -f ".verified-handoff/$file"
+            test ! -L ".verified-handoff/$file"
+            test "$(wc -c < ".verified-handoff/$file")" -lt 500000
+          done
+          test "$(wc -l < .verified-handoff/HANDOFF_SHA256SUMS.txt)" -eq 2
+          grep -Eq '^[0-9a-f]{64}  CHAT_HANDOFF\.md$' .verified-handoff/HANDOFF_SHA256SUMS.txt
+          grep -Eq '^[0-9a-f]{64}  LATEST_STATE\.json$' .verified-handoff/HANDOFF_SHA256SUMS.txt
+          (cd .verified-handoff && sha256sum --check --status HANDOFF_SHA256SUMS.txt)
+          # Matching hashes are integrity, not schema or source-policy proof.
+          # Use the runner-provided jq parser, never Python/repository code with a write token.
+          # -s rejects multiple concatenated JSON documents, not just invalid syntax.
+          jq -s -e 'length == 1 and (.[0] | type == "object" and .schema == 2 and .canonical_repo == "kk051780/toy-wars-factory" and .release_decision == "HOLD_ENGINE_UNVERIFIED" and (.source_revision | type == "string" and test("^[0-9a-f]{40}$")))' .verified-handoff/LATEST_STATE.json >/dev/null
+          install -m 0644 .verified-handoff/CHAT_HANDOFF.md status/CHAT_HANDOFF.md
+          install -m 0644 .verified-handoff/LATEST_STATE.json status/LATEST_STATE.json
+      - name: Commit exact allowlisted status only, single no-retry push
+        env:
+          # Deliberately no GH_TOKEN or other write-capable credential.
+          TWF_SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$TWF_SOURCE_COMMIT"
+          test "$(git status --porcelain --untracked-files=no | grep -v '^.. status/' | wc -l)" -eq 0
+          # Match the builder's substantive source revision, not a forged hex SHA.
+          expected_source_revision="$(git log -1 --format=%H -- src tests tools docs config PROJECT_STATE.json AGENTS.md .github history)"
+          test -n "$expected_source_revision"
+          jq -e --arg expected "$expected_source_revision" '.source_revision == $expected' status/LATEST_STATE.json >/dev/null
+
+          # Construct a tree from the exact two passive files. No source,
+          # workflow or executable from main is placed on the snapshot ref.
+          handoff_blob="$(git hash-object -w -- status/CHAT_HANDOFF.md)"
+          state_blob="$(git hash-object -w -- status/LATEST_STATE.json)"
+          status_tree="$(printf '100644 blob %s\tCHAT_HANDOFF.md\n100644 blob %s\tLATEST_STATE.json\n' "$handoff_blob" "$state_blob" | git mktree)"
+          snapshot_tree="$(printf '040000 tree %s\tstatus\n' "$status_tree" | git mktree)"
+          # Branch rotation is a defensive cap, not a claim of unlimited history.
+          snapshot_ref='refs/heads/twf-handoff-snapshots'
+          base_ref="$snapshot_ref"
+          allowed_files="$(printf 'status/CHAT_HANDOFF.md\nstatus/LATEST_STATE.json')"
+          allowed_modes="$(printf '100644 blob status/CHAT_HANDOFF.md\n100644 blob status/LATEST_STATE.json')"
+          test "$(git ls-tree -r --name-only "$snapshot_tree")" = "$allowed_files"
+          gh auth setup-git
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$TWF_SOURCE_COMMIT"
+          max=512
+          # Limit total historical audit work: four generations of up to 512 snapshots.
+          # At the cap, fail closed until an independently reviewed archive policy exists.
+          max_generations=4
+          refs="$(git ls-remote origin "$base_ref" "$base_ref-g*" | LC_ALL=C sort -k2,2)"
+          previous=''
+          previous_generation_tip=''
+          previous_generation_count=0
+          gen=1
+          expected_gen=2
+          base_seen=false
+          rotated=false
+          parent=''
+          if [ -n "$refs" ]; then
+            while IFS=$'\t' read -r sha ref; do
+              [[ "$sha" =~ ^[0-9a-f]{40}$ ]]
+              if [ "$ref" = "$base_ref" ]; then
+                test "$base_seen" = false
+                base_seen=true
+                gen=1
+              else
+                test "$base_seen" = true
+                [[ "$ref" =~ ^refs/heads/twf-handoff-snapshots-g[0-9]{4}$ ]]
+                found="$(printf '%s\n' "$ref" | sed -E 's/^.*-g([0-9]{4})$/\1/')"
+                gen=$((10#$found))
+                test "$gen" -le "$max_generations"
+                test "$gen" -eq "$expected_gen"
+                test "$previous_generation_count" -eq "$max"
+                expected_gen=$((expected_gen + 1))
+              fi
+              git fetch --no-tags origin "$ref"
+              test "$(git rev-parse FETCH_HEAD)" = "$sha"
+              test "$(git rev-parse --is-shallow-repository)" = false
+              snapshot_chain="$(git rev-list --max-count=513 "$sha")"
+              test -n "$snapshot_chain"
+              test "$(printf '%s\n' "$snapshot_chain" | wc -l)" -le 512
+              chain_len="$(printf '%s\n' "$snapshot_chain" | wc -l)"
+              test "$chain_len" -le "$max"
+              root_commit="$(printf '%s\n' "$snapshot_chain" | tail -n 1)"
+              test "$(git rev-list --parents --max-count=1 "$root_commit" | wc -w)" -eq 1
+              while IFS= read -r ancestor; do
+                test "$(git ls-tree -r --format='%(objectmode) %(objecttype) %(path)' "$ancestor")" = "$allowed_modes"
+                test "$(git rev-list --parents --max-count=1 "$ancestor" | wc -w)" -le 2
+              done <<< "$snapshot_chain"
+              if [ "$gen" -gt 1 ]; then
+                git log -1 --format=%B "$root_commit" | grep -Fqx "prior-snapshot-tip: $previous_generation_tip"
+                git log -1 --format=%B "$root_commit" | grep -Fqx "snapshot-generation: $gen"
+              fi
+              previous_generation_tip="$sha"
+              previous_generation_count="$chain_len"
+              snapshot_ref="$ref"
+              previous="$sha"
+            done <<< "$refs"
+            test "$base_seen" = true
+          fi
+          if [ -n "$previous" ]; then
+            if [ "$(git rev-parse "$previous^{tree}")" = "$snapshot_tree" ]; then
+              echo "NO_CHANGE: no new generated status" | tee -a "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            if [ "$previous_generation_count" -eq "$max" ]; then
+              test "$gen" -lt 9999
+              gen=$((gen + 1))
+              test "$gen" -le "$max_generations"
+              snapshot_ref="$(printf '%s-g%04d' "$base_ref" "$gen")"
+              test -z "$(git ls-remote origin "$snapshot_ref")"
+              rotated=true
+            else
+              parent="$previous"
+            fi
+          fi
+          # Ref precondition and main freshness. Never reset, delete or force either ref.
+          test "$(git ls-remote origin "$base_ref" "$base_ref-g*" | LC_ALL=C sort -k2,2)" = "$refs"
+          commit_msg="$(printf 'chore(handoff-snapshot): accepted main %s\n' "$TWF_SOURCE_COMMIT")"
+          if [ "$rotated" = true ]; then
+            commit_msg="$(printf '%s\nprior-snapshot-tip: %s\nsnapshot-generation: %s\n' "$commit_msg" "$previous" "$gen")"
+          fi
+          if [ -n "$parent" ]; then
+            snapshot_commit="$(printf '%s\n' "$commit_msg" | git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit-tree "$snapshot_tree" -p "$parent")"
+          else
+            snapshot_commit="$(printf '%s\n' "$commit_msg" | git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit-tree "$snapshot_tree")"
+          fi
+          test "$(git ls-tree -r --name-only "$snapshot_commit")" = "$allowed_files"
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$TWF_SOURCE_COMMIT"
+          git push origin "$snapshot_commit:$snapshot_ref"
+          # GitHub cannot atomically compare main and update the data-only snapshot
+          # under the current main PR-only ruleset. Detect a post-push race,
+          # report failure rather than success; readers must reject stale snapshots.
+          if [ "$(git ls-remote origin refs/heads/main | cut -f1)" != "$TWF_SOURCE_COMMIT" ]; then
+            echo "STALE_MAIN_AFTER_PUSH: reject stale read-model; do not report success" >&2
+            exit 1
+          fi
+          printf 'SUCCESS snapshot_generation=%s snapshot_ref=%s\n' "$gen" "$snapshot_ref" >> "$GITHUB_STEP_SUMMARY"

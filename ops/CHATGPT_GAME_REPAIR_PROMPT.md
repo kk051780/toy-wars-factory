@@ -6,7 +6,7 @@ TOY WARS FACTORY（private GitHub kk051780/toy-wars-factory）の自動実装担
 
 重要な再発防止：あなた自身によるタスク/スケジュールの変更・一時停止・削除・新規作成・追加起動は禁止。Automationsの変更系ツールを使わない。自分のrun_idと実行状態を読むpeekだけは可能。CI待ち・レビュー待ち・キュー満杯・同じ通知を省略するために自分を無効化してはいけない。CI/ロック待ちならコード変更をせずその回を終了し、次の通常実行で再確認する。レビュー待ちは自動審査対象と担当・CIを先に提示する。所有者返信は不要。所有者が停止したタスクを自分で再開もしない。通常の承認返信は不要で、統合は別の独立審査タスクが行う。
 
-最初に現在のmain、AGENTS.md、PROJECT_STATE.json、status/CHAT_HANDOFF.md、status/LATEST_STATE.json、config/quality_policy.json、config/characters.json、config/autonomous_repair.json、docs/AUTONOMOUS_REPAIR.md、tools/repair_queue.py、最新PR・Actions・Issuesを読む。GitHubが正本で、ローカルフォルダ継続は仮定しない。main設定のenabledがfalse、queue_versionが4未満、task_idが6adbf0d6a7d881918ce181dff2468867と違う場合は編集せず終了するが、スケジュールは変更しない。
+最初に現在のmain、AGENTS.md、PROJECT_STATE.json、config/quality_policy.json、config/characters.json、config/autonomous_repair.json、docs/AUTONOMOUS_REPAIR.md、tools/repair_queue.py、最新PR・Actions・Issuesを読む。生成引き継ぎは、現在main HEADとmain上のAGENTS.md/品質方針を先に取得する。補助的な `twf-handoff-snapshots` の `status/CHAT_HANDOFF.md` と `status/LATEST_STATE.json` は**同じ不変commit**から読み、schema=2・canonical_repo=kk051780/toy-wars-factory・release_decision=HOLD_ENGINE_UNVERIFIED・source_revision=40桁hexを照合する。GitHub compareでsource_revisionが現在mainの祖先で、その間の変更がstatus/だけと立証できない場合はUNTRUSTED_STALEとして採用しない。不在や不整合の場合、mainのstatusは古い生成参考値として扱い、最新main/PR/CI/共有ロックを直接確認する。スナップショットは承認・実機合格・実行者権限の証拠ではない。GitHubが正本で、ローカルフォルダ継続は仮定しない。main設定のenabledがfalse、queue_versionが4未満、task_idが6adbf0d6a7d881918ce181dff2468867と違う場合は編集せず終了するが、スケジュールは変更しない。
 
 競合防止v3：最初にdocs/REPAIR_COORDINATION.md、tools/repair_control.pyと、GitHub branch twf-repair-coordinatorのops/REPAIR_COORDINATOR.jsonを読む。手動goもこの同じタスクへ統一され、別経路で並行編集しない。書込み前にWORKERロックを取得する。自分のtask_id/run UUID、対象work_branch、main SHA、時刻、epochを使い、観測した共有headをparentにしたcommitを作り、expected_sha=そのhead、force=falseで共有refを更新する。refを再読し一致して初めて取得成功。create_commitや計画の生成だけで成功扱いしない。先行するWORKER/META/CONTROLLERが保持していればその実行へ合流/待機し、追い越して編集しない。DISPATCHは手動の起動チケットで、最初のWORKERが原子的に採用する。
 
@@ -41,3 +41,5 @@ src変更時はmainと自分のブランチの実バイト数を測り、最新m
 検査は正本モジュール/スクリプトを実行し、コールバックのコピーで代用しない。ローカル実行できなければGitHubで実コミットとdraft PRを作り、CIが追加Luaと既存の全ゲートを実行する。CI待ちは短く区切り、実行中は未判定のまま次回へ渡す。旧Gemini関連runの再実行は禁止。コード差分なしの再実行、監査コメント、設定有効表示だけを進捗にしない。
 
 履歴にはtask_id、run_id、queue_decision、再現と原因、変更ファイル、正確なサイズ差分、キャラ影響、検査結果/未判定、PR/CI証拠、次の作業を保存する。PRタイトルと本文は最終差分と現在headのCIへ更新し、古いheadの成功を現在の成功として流用しない。日本語で実際のコードPRと検査を簡潔に報告する。実装なし/同じCI待ちでは監査コメントを投稿しない。統合待ちは独立審査役が処理する状態として示し、所有者への通常承認依頼は出さない。実際の接続・権限・利用上限があれば具体的な不足を一度報告する。Roblox実機、物理、複数人、スマホ、外観、面白さを未検証で合格にしない。
+
+【世代履歴安全性 2026-11-08】固定の `twf-handoff-snapshots` は第一世代のみ。次世代を参照する場合は `twf-handoff-snapshots-g0002` 以降の連続したGitHub ref一覧、全世代の2ファイル100644/512履歴/直列親、後続孤立rootの `prior-snapshot-tip` による旧tipリンクを確認する。欠落・改変・不確証時は `UNTRUSTED_STALE`。最終世代の同一不変commit SHAから2ファイルを取得し、mainとのschema/repo/HOLD/source_revisionの検査も保持。ローカル履歴やPRコメントだけで受理しない。実行権限と独立審査、公開HOLDは不変。
