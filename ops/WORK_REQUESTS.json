@@ -5854,12 +5854,12 @@
       "issue": 213,
       "pr": 214,
       "branch": "controller/p0d-route-a-prototype-20261108-83e715d0",
-      "head": "b80b9480de3700940122bbebb667801ceff22ab4",
+      "head": "88e124da043c3393e9fc17f8372624f060afb6f7",
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "draft": true,
-      "source_owner_epoch": 555,
-      "source_owner_id": "b9d946e0-5959-4583-ac6f-0af1947d1ad6",
-      "status": "OPEN_DRAFT_ROUTE_A_SPAWN_AND_FAIL_CLOSED_FIXED_CI_QUEUED_INDEPENDENT_REVIEW_REQUIRED",
+      "source_owner_epoch": 558,
+      "source_owner_id": "6410e0b9-463a-4803-9043-3f2cc0159d17",
+      "status": "DRAFT_ROUTE_A_SOURCERY7_FIXES_NEW_HEAD_CI844_PASS_INDEPENDENT_REVIEW_REQUIRED_ENGINE_NOT_TESTED",
       "source_paths": [
         "examples/p0d_sorting_postoffice/RobotPostOffice.server.lua",
         "tests/test_p0d_sorting_postoffice_contract.py",
@@ -5872,18 +5872,27 @@
       "p0b_c_windows_receiver_authorized": false,
       "codex_calls": 0,
       "created_at": "2026-11-08T10:25:24.958Z",
-      "next_actor": "Distinct authenticated review of exact PR214 HEAD and CI + independent isolated Studio T1-T6 (no Save/Publish)",
-      "previous_head": "83a2b253c9c36c7e02be6eed0ac0163a6e746847",
-      "updated_at": "2026-11-08T10:39:45.134Z",
+      "next_actor": "Sourcery exact-new-head review and distinct authenticated reviewer; OWNER-isolated Roblox Studio runtime smoke/Play-Stop T1-T6 after preflight",
+      "previous_head": "b80b9480de3700940122bbebb667801ceff22ab4",
+      "updated_at": "2026-11-08T10:59:51.869Z",
       "changed_paths": [
         "examples/p0d_sorting_postoffice/RobotPostOffice.server.lua",
         "tests/test_p0d_sorting_postoffice_contract.py",
         "docs/QA_P0D_ROUTE_A_PROTOTYPE.md"
       ],
-      "ci_run_id": 42472324571,
+      "ci_run_id": 42473663454,
       "ci_jobs": {
-        "offline": "queued",
-        "compile_hold": "queued"
+        "offline": "success",
+        "compile_hold": "success"
+      },
+      "python_tests": 844,
+      "p0d_static_tests": 11,
+      "sourcery_review": {
+        "previous_head": "b80b9480de3700940122bbebb667801ceff22ab4",
+        "review_id": 5817592394,
+        "findings": 7,
+        "addressed_in_candidate_head": "88e124da043c3393e9fc17f8372624f060afb6f7",
+        "latest_head_re_review": "NOT_REQUESTED_YET"
       }
     },
     {

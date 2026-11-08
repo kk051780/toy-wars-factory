@@ -2107,17 +2107,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 558,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "6410e0b9-463a-4803-9043-3f2cc0159d17",
-    "task_id": null,
-    "epoch": 558,
-    "acquired_at": "2026-11-08T10:56:02.019Z",
-    "expires_at": "2026-11-08T11:20:02.019Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0d-route-a-prototype-20261108-83e715d0",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3761,19 +3751,22 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_P0D_ROUTE_A_PREVIEW_SPAWN_PREFLIGHT",
-    "owner_id": "b9d946e0-5959-4583-ac6f-0af1947d1ad6",
-    "epoch": 555,
+    "kind": "CONTROLLER_P0D_SOURCERY_7_FINDINGS_CORRECTIONS",
     "work_id": "P0D_ISSUE213_ROUTE_A_PROTOTYPE_20261108_83E715D0",
+    "owner_id": "6410e0b9-463a-4803-9043-3f2cc0159d17",
+    "epoch": 558,
+    "head": "88e124da043c3393e9fc17f8372624f060afb6f7",
     "pr": 214,
-    "head": "b80b9480de3700940122bbebb667801ceff22ab4",
-    "ci_run": 42472324571,
-    "ci_verified": false,
+    "ci_run_id": 42473663454,
+    "python_tests": 844,
+    "p0d_static_tests": 11,
+    "ci_offline": "success",
+    "ci_compile_hold": "success",
     "independent_review": false,
-    "main_merged": false,
     "engine_verified": false,
+    "main_merged": false,
     "service_terminal_proof": false,
-    "released_at": "2026-11-08T10:39:45.134Z"
+    "released_at": "2026-11-08T10:59:51.869Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
@@ -4268,6 +4261,21 @@
       "source_files": 3,
       "released_at": "2026-11-08T10:25:24.958Z",
       "service_terminal_proof": false
+    },
+    {
+      "kind": "CONTROLLER_P0D_ROUTE_A_PREVIEW_SPAWN_PREFLIGHT",
+      "owner_id": "b9d946e0-5959-4583-ac6f-0af1947d1ad6",
+      "epoch": 555,
+      "work_id": "P0D_ISSUE213_ROUTE_A_PROTOTYPE_20261108_83E715D0",
+      "pr": 214,
+      "head": "b80b9480de3700940122bbebb667801ceff22ab4",
+      "ci_run": 42472324571,
+      "ci_verified": false,
+      "independent_review": false,
+      "main_merged": false,
+      "engine_verified": false,
+      "service_terminal_proof": false,
+      "released_at": "2026-11-08T10:39:45.134Z"
     }
   ]
 }
