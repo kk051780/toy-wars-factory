@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T04:30:28.507Z",
+  "observed_at": "2026-11-08T04:43:34.379Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5688,6 +5688,46 @@
       "next_actor": "DEDICATED_P0B_INDEPENDENT_REVIEWER;THEN_PROTECTED_CANDIDATE_MAIN_REVIEW_AND_OWNER_WINDOWS_STUDIO_PLAYTEST",
       "created_at": "2026-11-08T04:30:28.507Z",
       "updated_at": "2026-11-08T04:30:28.507Z"
+    },
+    {
+      "id": "P0_ISSUE123_PR210_SOURCE_PROBE_SCOPE_HARDENING_20261108",
+      "kind": "PROTECTED_FOLLOW_ON_SOURCE_PROBE_SCOPE_FIX",
+      "priority": "P0",
+      "status": "OPEN_EXACT_HEAD_CI_RUNNING_INDEPENDENT_REVIEW_REQUIRED",
+      "assigned_role": "REVIEWER",
+      "assigned_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+      "repository": "kk051780/toy-wars-factory",
+      "issue": 123,
+      "pr": 210,
+      "branch": "controller/p0a-pr203-source-probe-scope-20261108-2a4196",
+      "base_branch": "controller/p0-legacy-shadow-compat-20261108-76116caf",
+      "base_pr": 203,
+      "base_parent_head": "224082fc9d8e7a01d70aeeb1c7767932ce63227a",
+      "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+      "head": "feceb02b28952c65cac6c1a76a70362af73552ba",
+      "draft": true,
+      "source_owner_epoch": 536,
+      "source_owner_id": "2a4196f4-c5e1-4e3e-8f76-f4d3a54e01c9",
+      "ci_run_id": 42447915601,
+      "ci_jobs": {
+        "offline": "in_progress",
+        "compile_hold": "in_progress"
+      },
+      "added_negative_python_tests": 4,
+      "changed_files": 3,
+      "changed_paths": [
+        "tools/repair_source_action_fence.py",
+        "tests/test_repair_source_action_fence.py",
+        "tests/test_repair_source_action_recovery.py"
+      ],
+      "independent_reviewed": false,
+      "main_merged": false,
+      "scoped_2writer_activated": false,
+      "additional_spend_jpy": 0,
+      "review_request": "Independently review current exact head and CI after completion; PR210 depends on frozen PR203, do not imply host action CAS or real 2writer grant",
+      "next_actor": "Registered independent REVIEWER after CI, then trusted host/fleet drain and protected-main QA",
+      "created_at": "2026-11-08T04:43:34.379Z",
+      "updated_at": "2026-11-08T04:43:34.379Z"
     }
   ]
 }
