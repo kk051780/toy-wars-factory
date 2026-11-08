@@ -7,18 +7,18 @@
   "pr": 212,
   "parent_pr": 211,
   "parent_exact_head": "5b62ba5163e11cd9e7e3d63923bf219c5863cde9",
-  "head": "4240094deb08067aa167e5ad9bd289e5d4c07085",
+  "head": "b5b0e0982141f072172e0c3450f4e47d5e28be57",
   "base_branch": "controller/p0c-readonly-intake-20261108-4ac8192f",
   "source_branch": "controller/p0c-windows-receive-once-20261108-b527e773",
   "author_epoch": 545,
   "author_owner_id": "b527e773-97b5-45e9-9c2e-71c209ab45c7",
   "actual_ci": {
-    "run_id": 42458129581,
+    "run_id": 42460163130,
     "offline": "success",
     "compile_hold": "success",
-    "python_passed": 909,
+    "python_passed": 917,
     "new_win_receipt_tests": 27,
-    "new_scan_tests": 24
+    "new_scan_tests": 32
   },
   "changed_paths": [
     "tools/system_p0c_windows_receive_once.py",
@@ -44,7 +44,7 @@
     "main_merged": false,
     "roblox_published": false
   },
-  "review_request": "Independent reviewer must audit current PR212 head 4240094... and parent PR211 before any PC opt-in, including private repo GITHUB_TOKEN handling, no-redirect behavior, pagination/replay/status semantics. Original HEAD ba3b22a tests are historical.",
+  "review_request": "Exact current PR212 head b5b0e098... (not old 4240094...); independently review since-filter/duplicate fail-closed, user token optional on PUBLIC GitHub, no durable replay, no codex. Formally approve only with real independent auth.",
   "additional_spend_jpy": 0,
   "created_at": "2026-11-08T06:58:37.706Z",
   "revisions": [
@@ -63,6 +63,26 @@
       ],
       "security": "no comment-id needed; Windows one-shot manual run only; GITHUB_TOKEN from existing approved env required for private repo; redirect refusals; still no Codex execution, relay or service",
       "recorded_at": "2026-11-08T07:18:30.771Z"
+    },
+    {
+      "kind": "C2C_AUDIT_ADVISORY_FIX_DEDUP_RECENT_WINDOW_BRIDGE_ONLY",
+      "previous_head": "4240094deb08067aa167e5ad9bd289e5d4c07085",
+      "new_head": "b5b0e0982141f072172e0c3450f4e47d5e28be57",
+      "ci_run": 42460163130,
+      "offline": "success",
+      "compile_hold": "success",
+      "python_passed": 917,
+      "new_tests": 8,
+      "changed_paths": [
+        "tools/system_p0c_windows_scan_once.py",
+        "tests/test_system_p0c_windows_scan_once.py",
+        "docs/QA_P0C_BRIDGE_ONLY_BUDGET.md"
+      ],
+      "audit_source": "https://github.com/kk051780/toy-wars-factory/issues/204#issuecomment-6718837987",
+      "security": "same-work_id/nonce in one scan and externally supplied prior IDs fail closed. since= now-11m filters old issue history. Repo confirmed PUBLIC, anonymous read-only GET is permitted; private without credential fails. No persisted replay CAS; no Windows operations, no Codex invocation.",
+      "codex_policy": "Bridge only for compact necessary Studio/Windows MCP preflights; GitHub+ChatGPT own code and CI. No continuous Codex polling/reinstalls or extra spend.",
+      "registered_reviewer_required": true,
+      "created_at": "2026-11-08T07:48:01.466Z"
     }
   ]
 }

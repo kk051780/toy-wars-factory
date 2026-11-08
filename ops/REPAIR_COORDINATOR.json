@@ -1898,6 +1898,29 @@
       "main_merged": false,
       "review_pending": true,
       "recorded_at": "2026-11-08T07:18:30.771Z"
+    },
+    {
+      "kind": "P0C_C2C_AUDIT_FIX_CI917_CODEX_BRIDGE_ONLY",
+      "work_id": "P0C_WINDOWS_RECEIVE_ONCE_C2A_20261108_B",
+      "epoch": 547,
+      "owner_id": "78c95750-105f-4088-b942-32a6dd44e234",
+      "issue": 204,
+      "pr": 212,
+      "head": "b5b0e0982141f072172e0c3450f4e47d5e28be57",
+      "prior_head": "4240094deb08067aa167e5ad9bd289e5d4c07085",
+      "ci_run": 42460163130,
+      "python_tests": 917,
+      "new_regressions": 8,
+      "review_packet_path": "ops/review_packets/PR212_p0c_windows_once_epoch545.json",
+      "codex_usage": "ZERO_THIS_TASK",
+      "codex_bridge_only": true,
+      "read_only_source_only": true,
+      "independent_review": false,
+      "pc_delivery": false,
+      "pc_execution": false,
+      "main_merged": false,
+      "additional_spend_jpy": 0,
+      "recorded_at": "2026-11-08T07:48:01.466Z"
     }
   ],
   "controller_maintenance": {
@@ -1983,17 +2006,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 547,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "78c95750-105f-4088-b942-32a6dd44e234",
-    "task_id": null,
-    "epoch": 547,
-    "acquired_at": "2026-11-08T07:42:46.946Z",
-    "expires_at": "2026-11-08T08:07:46.946Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0c-windows-receive-once-20261108-b527e773",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
