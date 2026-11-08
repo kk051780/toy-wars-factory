@@ -1924,17 +1924,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 543,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "d73ce86f-75df-4700-82e9-26f4c45e1628",
-    "task_id": null,
-    "epoch": 543,
-    "acquired_at": "2026-11-08T06:13:44Z",
-    "expires_at": "2026-11-08T06:43:44.000Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0b-pr208-progressmode-lifecycle-20261108",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3578,30 +3568,22 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_P0B_PR209_HUD_PROGRESSMODE_REMOVAL_CI_SUCCESS",
-    "epoch": 535,
-    "owner_id": "c64dbe42-4260-4e38-94c0-c295b8346a48",
-    "issue": 204,
+    "kind": "CONTROLLER_P0B_PR209_R4_HUD_TWO_RACES_UBUNTU_CI_PASS",
+    "work_id": "P0B_REMOTE_R4_20261108_PR209_PROTECTED_CI_A",
+    "epoch": 543,
+    "owner_id": "d73ce86f-75df-4700-82e9-26f4c45e1628",
+    "claim_commit": "4ceb3fa6ddeae310647ea685f4fdc856c0dccba1",
+    "head": "bd78ae0a3bef6a35d5be5726fdb3a93fc9a46e90",
     "pr": 209,
-    "parent_pr": 208,
-    "head": "35b482e49841710db1b178e87129c3fca2c2e117",
-    "source_commit": "fbbb1d0b31f63e1fa22b63a8ce7a1739521b0c1e",
-    "ci_run": 42447007551,
-    "offline": "SUCCESS",
-    "compile_hold": "SUCCESS",
-    "hud_lua_passed": 12,
-    "preview_lua_passed": 17,
-    "changed_files": 5,
-    "queue_count": 82,
-    "review_packet_path": "ops/review_packets/PR209_p0b_progressmode_lifecycle_epoch535.json",
-    "reviewer_task_id": "Automation_65b2b98b794c81919b38c20f62042f34",
+    "ci_run": 42454017149,
+    "python_tests": 927,
+    "xml_tests": 31,
+    "review_packet_path": "ops/review_packets/PR209_r4_hud_2races_epoch543.json",
     "independent_review": false,
     "main_merged": false,
-    "roblox_published": false,
     "engine_verified": false,
-    "service_terminal_proof": false,
-    "additional_spend_jpy": 0,
-    "released_at": "2026-11-08T04:30:28.507Z"
+    "released_at": "2026-11-08T06:17:58Z",
+    "service_terminal_proof": false
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
@@ -4036,5 +4018,33 @@
     "real_parallel": false,
     "actual_connected_github_ref_update": true,
     "coordinator_reservation_ref": "f372efdda9d2a5fd111c8e3c033d2001b4d51aaa"
-  }
+  },
+  "last_completed_history": [
+    {
+      "kind": "CONTROLLER_P0B_PR209_HUD_PROGRESSMODE_REMOVAL_CI_SUCCESS",
+      "epoch": 535,
+      "owner_id": "c64dbe42-4260-4e38-94c0-c295b8346a48",
+      "issue": 204,
+      "pr": 209,
+      "parent_pr": 208,
+      "head": "35b482e49841710db1b178e87129c3fca2c2e117",
+      "source_commit": "fbbb1d0b31f63e1fa22b63a8ce7a1739521b0c1e",
+      "ci_run": 42447007551,
+      "offline": "SUCCESS",
+      "compile_hold": "SUCCESS",
+      "hud_lua_passed": 12,
+      "preview_lua_passed": 17,
+      "changed_files": 5,
+      "queue_count": 82,
+      "review_packet_path": "ops/review_packets/PR209_p0b_progressmode_lifecycle_epoch535.json",
+      "reviewer_task_id": "Automation_65b2b98b794c81919b38c20f62042f34",
+      "independent_review": false,
+      "main_merged": false,
+      "roblox_published": false,
+      "engine_verified": false,
+      "service_terminal_proof": false,
+      "additional_spend_jpy": 0,
+      "released_at": "2026-11-08T04:30:28.507Z"
+    }
+  ]
 }
