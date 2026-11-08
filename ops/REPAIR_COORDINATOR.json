@@ -1924,18 +1924,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 519,
-  "holder": {
-    "kind": "CONTROLLER",
-    "origin": "controller",
-    "epoch": 519,
-    "owner_id": "f8f7a3c9-6d42-40fb-9c4a-f6d7ad4934c9",
-    "task_id": null,
-    "acquired_at": "2026-11-08T00:42:50.423Z",
-    "expires_at": "2026-11-08T01:03:50.423Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "twf-repair-coordinator",
-    "scope": "Issue123 P0 protected PR203 exact-head independent review queue + one-time maintenance route evidence only; no new source PR, no merge, no main writes, no schedule expansion"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3579,27 +3568,22 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_P0_PR203_LEGACY_OWNS_WRITE_FENCE_AND_VERIFIED_SELF_CLEANUP_CI_GREEN",
-    "epoch": 518,
-    "owner_id": "8db68b60-56c2-4fa2-a6aa-821efb1dd380",
+    "kind": "CONTROLLER_P0_PR203_ONE_TIME_MAINTENANCE_REVIEW_QUEUE_EXACT_HEAD",
+    "epoch": 519,
+    "owner_id": "f8f7a3c9-6d42-40fb-9c4a-f6d7ad4934c9",
     "pr": 203,
     "head": "1d2f3a4c8d4dc6b9ac9335fdc3c9520226ee2527",
     "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "ci_run": 42429957240,
-    "offline": "SUCCESS",
-    "compile_hold": "SUCCESS",
-    "python_tests": 869,
-    "new_tests_root_pr": 36,
-    "legacy_acquire_guard": true,
-    "legacy_owns_write_guard": true,
-    "legacy_integration_guard": true,
-    "verified_original_owner_cleanup": true,
-    "provider_attested_2writers": false,
+    "read_only_review_request_id": "P0_ISSUE123_PR203_ONE_TIME_CONTROLLER_MAINTENANCE_GATE_20261108",
+    "review_packet_path": "ops/review_packets/PR203_p0_root_maintenance_exact_head_epoch519.json",
+    "queue_items": 76,
+    "normal_merger_result": "SKIP_UNRELATED_FOR_CONTROLLER_BRANCH",
     "independent_review": false,
     "main_merged": false,
-    "actual_scoped_writes_enabled": false,
-    "added_spend_yen": 0,
-    "released_at": "2026-11-08T00:30:57.497Z"
+    "pr_head_changed": false,
+    "real_two_writers": false,
+    "additional_spend_jpy": 0,
+    "released_at": "2026-11-08T00:45:34.473Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
