@@ -206,6 +206,26 @@ class ScanOnceTests(unittest.TestCase):
             self.assertFalse(result["codex_execution_authorized"])
             self.assertFalse(result["pc_action_executed"])
 
+    def test_windows_ledger_flag_blocks_before_network(self):
+        requests=[]
+        with patch("tools.system_p0c_windows_scan_once.sys.platform","win32"):
+            r=run_scan_once(now_utc=NOW,observed_host=HOST,
+              fetcher=lambda page:requests.append(page),
+              receipt_ledger_path=r"C:\temp\p0c-readonly-receipts.sqlite3")
+        self.assertEqual(requests,[])
+        self.assertEqual(r["status"],"READ_ONLY_RECEIVER_BLOCKED")
+        self.assertIn("Windows ledger disabled",r["reason"])
+        self.assertFalse(r["may_run_commands"])
+
+    def test_windows_no_ledger_readonly_remains_available(self):
+        calls=[]
+        with patch("tools.system_p0c_windows_scan_once.sys.platform","win32"):
+            r=run_scan_once(now_utc=NOW,observed_host=HOST,
+              fetcher=lambda page:(calls.append(page) or [real_candidate()]))
+        self.assertEqual(calls,[1])
+        self.assertEqual(r["status"],"READ_ONLY_GITHUB_RECEIPT_MATCHED_NO_EXECUTION")
+        self.assertFalse(r["pc_action_executed"])
+
 class FakeResponse:
     status=200
     def __init__(self,url,payload):self.url=url;self.payload=payload

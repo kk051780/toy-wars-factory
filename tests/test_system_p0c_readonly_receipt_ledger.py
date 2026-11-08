@@ -2,6 +2,7 @@
 import json
 import sqlite3
 import tempfile
+from unittest.mock import patch
 import unittest
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
@@ -160,6 +161,20 @@ class ReceiptLedgerTests(unittest.TestCase):
             self.skipTest("symlinks unavailable in runner")
         r=self.record()
         self.assertFalse(r["receipt_written"])
+
+    def test_windows_ledger_disabled_before_any_open(self):
+        with patch("tools.system_p0c_readonly_receipt_ledger.sys.platform", "win32"):
+            r=self.record()
+        self.assertEqual(r["status"],"READ_ONLY_RECEIPT_BLOCKED_NO_ACTION")
+        self.assertIn("Windows SQLite ledger disabled",r["reason"])
+        self.assertFalse(self.path.exists())
+
+    def test_windows_unsafe_parent_does_not_get_created(self):
+        path=Path(self.temp.name)/"not-existing"/DB_BASENAME
+        with patch("tools.system_p0c_readonly_receipt_ledger.sys.platform", "win32"):
+            r=self.record(path=path)
+        self.assertFalse(r["receipt_written"])
+        self.assertFalse(path.parent.exists())
 
     def test_same_ledger_persists_across_new_instance(self):
         self.record()

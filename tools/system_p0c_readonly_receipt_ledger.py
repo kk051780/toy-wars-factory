@@ -11,6 +11,7 @@ import hashlib
 import json
 import os
 import sqlite3
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -67,6 +68,10 @@ def record_readonly_receipt_once(*, comment, now_utc, observed_host, database_pa
     """
     if observed_host != HOST:
         return _out(_STATUS_DENIED, "wrong PC host")
+    # Windows reparse/ACL/TOCTOU have not been independently verified.
+    # Fail closed before any local DB path check or open.
+    if sys.platform == "win32":
+        return _out(_STATUS_DENIED, "Windows SQLite ledger disabled pending safe-open audit")
     if (not isinstance(now_utc, datetime) or now_utc.tzinfo is None
             or now_utc.utcoffset() is None):
         return _out(_STATUS_DENIED, "non-UTC-aware clock")

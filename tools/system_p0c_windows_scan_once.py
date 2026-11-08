@@ -161,6 +161,9 @@ def run_scan_once(*, now_utc=None, observed_host=None, token=None,
         observed_host = platform.node().upper()
     if observed_host != HOST:
         return _blocked("host mismatch before network")
+    # Windows local SQLite is blocked before any provider GET.
+    if receipt_ledger_path is not None and sys.platform == "win32":
+        return _blocked("Windows ledger disabled: ACL/reparse/path-TOCTOU hold")
     if fetcher is None:
         if sys.platform != "win32":
             return _blocked("network scan only allowed on Windows")
