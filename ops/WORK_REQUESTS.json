@@ -5872,12 +5872,12 @@
       "issue": 213,
       "pr": 214,
       "branch": "controller/p0d-route-a-prototype-20261108-83e715d0",
-      "head": "23b6d639486d86ccb334b73d5297ec2fc53ac66f",
+      "head": "9dbc41cac1e9a8454526c429010598ec737c9c9a",
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
       "draft": true,
-      "source_owner_epoch": 559,
-      "source_owner_id": "7c3013bd-ac82-4c35-955f-08f96bbab725",
-      "status": "DRAFT_ROUTE_A_SOURCERY_1_ADDITIONAL_FIX_CI845_PASS_NEW_HEAD_REVIEW_PENDING_STUDIO_NOT_TESTED",
+      "source_owner_epoch": 562,
+      "source_owner_id": "62e74ba2-36fa-4540-b72e-97e8185975b2",
+      "status": "P0D_ROUTE_A_SOURCE_PINNED_RBXLX_READY_CI849_PASS_ENGINE_NOT_TESTED_NEW_HEAD_REVIEW_PENDING",
       "source_paths": [
         "examples/p0d_sorting_postoffice/RobotPostOffice.server.lua",
         "tests/test_p0d_sorting_postoffice_contract.py",
@@ -5890,27 +5890,35 @@
       "p0b_c_windows_receiver_authorized": false,
       "codex_calls": 0,
       "created_at": "2026-11-08T10:25:24.958Z",
-      "next_actor": "External Sourcery re-review of exact PR214 SHA; registered distinct independent reviewer and isolated Studio Play/Stop T1–T6",
-      "previous_head": "88e124da043c3393e9fc17f8372624f060afb6f7",
-      "updated_at": "2026-11-08T12:48:24.315Z",
+      "next_actor": "Third party source review of current PR214 HEAD and local Windows open-only isolated test of source-pinned .rbxlx; then real Studio Play T1-T6",
+      "previous_head": "23b6d639486d86ccb334b73d5297ec2fc53ac66f",
+      "updated_at": "2026-11-08T19:27:47.615Z",
       "changed_paths": [
         "examples/p0d_sorting_postoffice/RobotPostOffice.server.lua",
         "tests/test_p0d_sorting_postoffice_contract.py",
         "docs/QA_P0D_ROUTE_A_PROTOTYPE.md"
       ],
-      "ci_run_id": 42481859366,
+      "ci_run_id": 42515073474,
       "ci_jobs": {
         "offline": "success",
         "compile_hold": "success"
       },
-      "python_tests": 845,
-      "p0d_static_tests": 12,
+      "python_tests": 849,
+      "p0d_static_tests": 16,
       "sourcery_review": {
         "previous_head": "88e124da043c3393e9fc17f8372624f060afb6f7",
         "review_id": 5817622852,
         "findings": 1,
         "addressed_in_candidate_head": "23b6d639486d86ccb334b73d5297ec2fc53ac66f",
         "latest_head_re_review": "PENDING"
+      },
+      "xml_artifact": {
+        "path": "examples/p0d_sorting_postoffice/P0D_RobotPostOffice_LOCAL_TEST_UNVERIFIED.rbxlx",
+        "source_sha": "772aabf544b2bceb8fe4883043f7e54fd6753923",
+        "xml_sha": "7e670591bdaf38d48ef44c149dfa16af2d087cec",
+        "studio_open_verified": false,
+        "roblox_engine_verified": false,
+        "generated_from_pr_source": true
       }
     },
     {

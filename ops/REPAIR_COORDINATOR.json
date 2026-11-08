@@ -2129,17 +2129,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 562,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "62e74ba2-36fa-4540-b72e-97e8185975b2",
-    "task_id": null,
-    "epoch": 562,
-    "acquired_at": "2026-11-08T19:25:08.554Z",
-    "expires_at": "2026-11-08T19:50:08.554Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0d-route-a-prototype-20261108-83e715d0",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3783,22 +3773,21 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_P0D_SOURCERY_STALE_AVATAR_FIX",
-    "owner_id": "7c3013bd-ac82-4c35-955f-08f96bbab725",
-    "epoch": 559,
+    "kind": "CONTROLLER_P0D_XML_ISOLATED_STUDIO_TRIAL_PACKAGE",
     "work_id": "P0D_ISSUE213_ROUTE_A_PROTOTYPE_20261108_83E715D0",
+    "owner_id": "62e74ba2-36fa-4540-b72e-97e8185975b2",
+    "epoch": 562,
     "pr": 214,
-    "head": "23b6d639486d86ccb334b73d5297ec2fc53ac66f",
-    "ci_run_id": 42481859366,
-    "python_tests": 845,
-    "p0d_static_tests": 12,
+    "head": "9dbc41cac1e9a8454526c429010598ec737c9c9a",
+    "ci_run": 42515073474,
+    "python_tests": 849,
+    "p0d_static_tests": 16,
     "ci_offline": "success",
     "ci_compile_hold": "success",
-    "independent_review": false,
     "engine_verified": false,
     "main_merged": false,
     "service_terminal_proof": false,
-    "released_at": "2026-11-08T12:48:24.315Z"
+    "released_at": "2026-11-08T19:27:47.615Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
@@ -4326,6 +4315,24 @@
       "main_merged": false,
       "service_terminal_proof": false,
       "released_at": "2026-11-08T10:59:51.869Z"
+    },
+    {
+      "kind": "CONTROLLER_P0D_SOURCERY_STALE_AVATAR_FIX",
+      "owner_id": "7c3013bd-ac82-4c35-955f-08f96bbab725",
+      "epoch": 559,
+      "work_id": "P0D_ISSUE213_ROUTE_A_PROTOTYPE_20261108_83E715D0",
+      "pr": 214,
+      "head": "23b6d639486d86ccb334b73d5297ec2fc53ac66f",
+      "ci_run_id": 42481859366,
+      "python_tests": 845,
+      "p0d_static_tests": 12,
+      "ci_offline": "success",
+      "ci_compile_hold": "success",
+      "independent_review": false,
+      "engine_verified": false,
+      "main_merged": false,
+      "service_terminal_proof": false,
+      "released_at": "2026-11-08T12:48:24.315Z"
     }
   ]
 }
