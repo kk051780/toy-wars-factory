@@ -4829,7 +4829,7 @@
       ],
       "evidence_path": "ops/review_packets/PR181_zero_write_token_epoch542.json",
       "created_at": "2026-11-07T09:56:07.827Z",
-      "updated_at": "2026-11-08T10:03:20.364Z",
+      "updated_at": "2026-11-08T19:24:15.880Z",
       "requested_by_role": "MANUAL_CONTROLLER",
       "author_role": "MANUAL_CONTROLLER",
       "source_owner_claim": {
@@ -4843,7 +4843,7 @@
         "claim_commit": "c1fcc7bfe290f5a0b42f70fddcae54f8e6dac207",
         "coord_branch": "twf-repair-coordinator"
       },
-      "review_request": "Independent registered reviewer: re-fetch PR181 current exact HEAD ef2949470fe52e4e96bff4e9e93952c24eee57f3, run 42469584798, 919/919 Python PASS and both required jobs PASS; security changes in tools/verify_handoff_artifact.py and tests/test_verify_handoff_artifact.py plus new C99877 history. Review untrusted JSON NaN/Infinity rejection, ZIP read size cap, non-executable passive files, old main contents:write handoff removal candidate, mandatory false job, zero write-token workflow. New source was authored under separate legitimate CONTROLLER epochs550/551, not provider-independent approval. Native GitHub approval still 0, protected main merge HOLD, no autonomous writer proof.",
+      "review_request": "Registered REVIEWER read-only full 21/21 static patch advisory PASS on exact head ef2949470fe52e4e96bff4e9e93952c24eee57f3, genuine scheduled run 1c632f37-d148-8330-8eaa-c0e8459e8fc6. This is NOT a native APPROVED, and cannot be used to unlock merge. Next gate: trusted provider CURRENT_INVOCATION binding/independent reviewer native authority, then safe protected-main PR integration and old cron writer retirement with post-main Actions proof. Do not repeat same-head full static audit unless changed.",
       "approval_required_by_provider": 0,
       "independent_security_review_required_by_repo_policy": true,
       "review_performed": false,
@@ -4868,6 +4868,24 @@
         "red_ci_run": 42469410626,
         "green_ci_run": 42469584798,
         "author_only": true
+      },
+      "latest_registered_advisory": {
+        "verdict": "SOURCE_FULL_REVIEW_PASS_ADVISORY",
+        "scope": "STATIC_ALL_21_CHANGED_PATCHES_ONLY_NOT_DYNAMIC_AUTH",
+        "files_reviewed": 21,
+        "total_changed_files": 21,
+        "pr_head": "ef2949470fe52e4e96bff4e9e93952c24eee57f3",
+        "ci_run": 42469584798,
+        "reviewer_task_id": "6add6aaceb4c8191b1666fe15f97cd88",
+        "reviewer_run_id": "1c632f37-d148-8330-8eaa-c0e8459e8fc6",
+        "provider_run_status": "completed",
+        "provider_completion_time": "2026-11-08T18:25:40.826016Z",
+        "advisory_not_native_review": true,
+        "author_observed_from_other_run": true,
+        "formal_approval": false,
+        "source_integration_hold": true,
+        "reviewed_at": "2026-11-08T19:24:15.880Z",
+        "limitation": "No provider authenticated write/approve current invocation; no native GitHub APPROVED; no full dynamic runtime proofs"
       }
     },
     {
