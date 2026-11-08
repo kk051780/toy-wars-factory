@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "repo": "kk051780/toy-wars-factory",
+  "priority": "P0",
+  "issue": 204,
+  "work_id": "P0C_WINDOWS_GITHUB_ACK_ONLY_C3A_20261108_C",
+  "pr": 215,
+  "parent_pr": 212,
+  "grandparent_pr": 211,
+  "parent_head_at_creation": "06da67921b75371e0f955d00ef4d2b71708fc328",
+  "head": "91714f2724f8be64f067c9f0190a97baa4d15397",
+  "branch": "controller/p0c-readonly-ack-protocol-20261108-b3e2796c",
+  "author_epoch": 554,
+  "author_owner_id": "b3e2796c-1acc-42b9-b5a6-734156e44ff0",
+  "ci": {
+    "run_id": 42471823541,
+    "offline": "success",
+    "compile_hold": "success",
+    "python_passed": 959,
+    "ack_new_tests": 14
+  },
+  "paths": [
+    "tools/system_p0c_ack_only.py",
+    "tests/test_system_p0c_ack_only.py",
+    "docs/QA_P0C_ACK_ONLY_PROTOCOL.md"
+  ],
+  "live_source_ping": {
+    "comment_id": 6720260802,
+    "work_id": "P0C_LIVE_RECEIVER_20261108101723_3043571",
+    "owner_windows_foreground_observed": true,
+    "screenshot_evidence": "owner-provided screenshot in 2026-11-08 project conversation",
+    "windows_git_ack_post_observed": false
+  },
+  "safety_gates": {
+    "draft": true,
+    "independent_approved": false,
+    "receiver_installed": false,
+    "owner_approved_issues_write_token_provisioned": false,
+    "window_pc_python_verified": false,
+    "actual_windows_ack": false,
+    "authorized_pc_command": false,
+    "provider_cas_replay_resolved": false,
+    "host_attested": false,
+    "main_merged": false
+  },
+  "review_request": "Independent authenticated REVIEWER must fetch actual PR215 HEAD + parent PR212 HEAD/current PR211, diff, real CI and review permissions. Examine source authentication and host/HEAD pin, redirect+token nonleakage, lack of idempotency on GitHub Issue comment POST, potential malicious replay, false implication of host attestation. No real Windows POST until explicit approved least-privilege credential and host opt-in. Not an executable command receiver.",
+  "limitations": [
+    "source uses Python; host Python installation NOT VERIFIED",
+    "GitHub issue comments API no idempotent POST; no retries or exactly-once proof",
+    "return-path code not installed/active; no GitHub Issue ACK originated from PC",
+    "local offline 22-test source zip separate from PR; PR source tested with 14 tests"
+  ],
+  "codex_calls": 0,
+  "additional_spend_jpy": 0,
+  "created_at": "2026-11-08T10:33:35.238Z"
+}

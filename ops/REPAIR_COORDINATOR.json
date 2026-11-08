@@ -1967,6 +1967,26 @@
       "independent_review": false,
       "review_packet_path": "ops/review_packets/PR212_p0c_windows_once_epoch545.json",
       "time": "2026-11-08T08:53:25.445Z"
+    },
+    {
+      "kind": "P0C_C3A_GITHUB_ACK_ONLY_PROTOCOL_CI959",
+      "work_id": "P0C_WINDOWS_GITHUB_ACK_ONLY_C3A_20261108_C",
+      "issue": 204,
+      "pr": 215,
+      "parent_pr": 212,
+      "head": "91714f2724f8be64f067c9f0190a97baa4d15397",
+      "epoch": 554,
+      "owner_id": "b3e2796c-1acc-42b9-b5a6-734156e44ff0",
+      "ci_run": 42471823541,
+      "python_tests": 959,
+      "added_tests": 14,
+      "review_packet_path": "ops/review_packets/PR215_p0c_ack_only_epoch554.json",
+      "status": "SOURCE_REVIEW_REQUIRED_NO_WINDOWS_ACK",
+      "codex_calls": 0,
+      "pc_executed": false,
+      "authz_proved": false,
+      "main_merged": false,
+      "recorded_at": "2026-11-08T10:33:35.238Z"
     }
   ],
   "controller_maintenance": {
@@ -2052,17 +2072,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 554,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "b3e2796c-1acc-42b9-b5a6-734156e44ff0",
-    "task_id": null,
-    "epoch": 554,
-    "acquired_at": "2026-11-08T10:29:12.208Z",
-    "expires_at": "2026-11-08T10:49:12.208Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0c-readonly-ack-protocol-20261108-b3e2796c",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
