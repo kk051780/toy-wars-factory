@@ -128,3 +128,35 @@ host-enforced lease adapter for production writer/merge. `MERGE` remains
 `WAIT_HOST_ACTION_FENCE`; scoped v2 stays OFF. Do not treat fixture tests,
 manual user delegation, or a successful GitHub ref update as two GPT writers
 running in parallel.
+
+
+## P0 epoch526: immutable interrupted-run recovery classification
+
+The new read-only \`inspect_interrupted_probe\` handles the exact
+\`SOURCE_UPDATE_PROBE\` contract from epoch525. A successor GPT/chat must
+fetch **two independent current coordinator snapshots**, two source refs,
+two PR heads, two main refs and the target commit's actual first parent via
+trusted providers. The function verifies identical coordinator snapshots,
+owner/work/operation identity, matching non-expired holder, unchanged
+source/PR/main refs and first-parent lineage. These parameters are still
+untrusted Python values: **no provider-authentication claim is made.**
+
+Outcomes are deliberately *non-authorizing*:
+
+- \`WAIT_UNCERTAIN_NOT_APPLIED_DO_NOT_RETRY\`: source still at old HEAD.
+  This does NOT prove the original provider call did not take place; do not
+  issue another write while original run outcome is ambiguous.
+- \`CANDIDATE_OWNER_RECONCILE_ONLY\`: source & PR now both target HEAD, actual
+  parent+coordinator+main appear consistent. Only a host that can authenticate
+  the original live owner and connected ref callbacks may proceed to a
+  separate coordinator CAS reconciliation; this function never removes it.
+- \`ALREADY_RECONCILED_NO_REPLAY\`: coordinator's persisted audit matches
+  exact action and source ref; record progress, do not redo it.
+- Any conflicting/missing evidence, stale PR, changed main/coordinator,
+  expired original lease or different operation => WAIT/HOLD, no takeover.
+
+Every result has \`may_write=false\`, \`may_retry=false\`,
+\`may_release=false\`, \`provider_authenticated=false\`,
+\`host_action_fence_verified=false\` and \`real_parallel=false\`.
+This closes a *candidate interrupted-chat decision gap*, **not** the P0
+unattended host authority/old-runner-drain/actual two-writer blocker.
