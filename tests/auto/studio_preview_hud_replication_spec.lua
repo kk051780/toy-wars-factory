@@ -1,0 +1,106 @@
+-- Entire canonical HUD Lua mock: replicating ProgressMode after Folder is safe.
+-- Not a Roblox rendering or network/engine test.
+local path="src/ToyWarsHUD.client.lua"
+local passed,failed=0,0
+local function signal()
+    local s={listeners={}}
+    function s:Connect(fn) self.listeners[#self.listeners+1]=fn end
+    function s:Fire(...) for _,fn in ipairs(self.listeners) do fn(...) end end
+    return s
+end
+local function instance(class,value)
+    local o={ClassName=class,Value=value,_children={},
+             Changed=signal(),ChildAdded=signal(),Activated=signal()}
+    function o:WaitForChild(name) return assert(self._children[name],"missing "..name) end
+    function o:FindFirstChild(name) return self._children[name] end
+    return o
+end
+local function tuple(...) return {...} end
+local function setup(initialMode)
+    local balance=assert(loadfile("src/ToyWarsBalance.lua"))()
+    local created={}
+    local player,stats,status,gui=instance("Player"),instance("Folder"),
+       instance("Folder"),instance("PlayerGui")
+    player._children={leaderstats=stats,ToyWarsStatus=status,PlayerGui=gui}
+    for name,value in pairs({Coins=50,Wave=1,Defeated=0}) do
+        stats._children[name]=instance("IntValue",value)
+    end
+    for name,value in pairs({BaseHP=100,FactoryLevel=1,Allies=0,Enemies=0,SelectedToy="PON"}) do
+        status._children[name]=instance("Value",value)
+    end
+    if initialMode then
+        local m=instance("StringValue",initialMode)
+        m.Name="ProgressMode"
+        status._children.ProgressMode=m
+    end
+    local mod=instance("ModuleScript")
+    local remote=instance("RemoteEvent")
+    remote.FireServer=function() end
+    local rep=instance("ReplicatedStorage")
+    rep._children={ToyWarsBalance=mod,ToyWarsSelectUnit=remote}
+    local services={Players={LocalPlayer=player},ReplicatedStorage=rep}
+    local env=setmetatable({
+        game={GetService=function(_,name) return assert(services[name]) end},
+        Instance={new=function(class) local o=instance(class);created[#created+1]=o;return o end},
+        Color3={fromRGB=tuple},UDim={new=tuple},UDim2={new=tuple},
+        Enum={Font={GothamBold="GothamBold"}},
+        require=function(value) assert(value==mod);return balance end,
+        print=function() end
+    },{__index=_G})
+    assert(loadfile(path,"t",env))()
+    local notice
+    for _,o in ipairs(created) do
+        if o.Name=="StudioPreviewNotice" then notice=o end
+    end
+    assert(notice and notice.ClassName=="TextLabel","missing warning banner")
+    local function arrive(mode)
+        local m=instance("StringValue",mode)
+        m.Name="ProgressMode"
+        status._children.ProgressMode=m
+        status.ChildAdded:Fire(m)
+        return m
+    end
+    return notice,arrive,status
+end
+local function check(name,fn)
+    local ok,err=pcall(fn)
+    if ok then passed=passed+1;print("PASS "..name)
+    else failed=failed+1;print("FAIL "..name..": "..tostring(err)) end
+end
+check("missing mode initially shows pending save warning",function()
+    local n=setup()
+    assert(n.Visible and n.Text=="PROGRESS STATUS PENDING - SAVE UNVERIFIED")
+end)
+check("late STUDIO_PREVIEW_UNSAVED turns on explicit warning",function()
+    local n,arrive=setup()
+    arrive("STUDIO_PREVIEW_UNSAVED")
+    assert(n.Visible and n.Text=="STUDIO PREVIEW - PROGRESS NOT SAVED")
+end)
+check("late SAVED hides pending warning",function()
+    local n,arrive=setup()
+    arrive("SAVED")
+    assert(n.Visible==false)
+end)
+check("already replicated preview shows unsaved warning",function()
+    local n=setup("STUDIO_PREVIEW_UNSAVED")
+    assert(n.Visible and n.Text=="STUDIO PREVIEW - PROGRESS NOT SAVED")
+end)
+check("already replicated SAVED hides banner",function()
+    local n=setup("SAVED")
+    assert(n.Visible==false)
+end)
+check("unrecognized mode cannot falsely look saved",function()
+    local n,arrive=setup()
+    arrive("MALFORMED")
+    assert(n.Visible and n.Text=="PROGRESS STATUS UNVERIFIED - DO NOT EXPECT SAVE")
+end)
+check("mode value change refreshes visible warning",function()
+    local n,arrive=setup()
+    local m=arrive("SAVED")
+    assert(n.Visible==false)
+    m.Value="STUDIO_PREVIEW_UNSAVED"
+    m.Changed:Fire(m.Value)
+    assert(n.Visible and n.Text=="STUDIO PREVIEW - PROGRESS NOT SAVED")
+end)
+print(string.format("STUDIO_PREVIEW_HUD_REPLICATION_SUMMARY %d passed / %d failed; Lua mocks not Roblox engine",passed,failed))
+if failed>0 then os.exit(1) end
