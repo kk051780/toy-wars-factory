@@ -65,9 +65,11 @@ class AckOnlyTests(unittest.TestCase):
     def test_valid_ping_receipt_has_no_exec_rights(self):
         result = json.loads(self.preview()[len(ACK_PREFIX):])
         self.assertEqual(result["source_comment_id"], CID)
+        self.assertEqual(result["kind"], "UNATTESTED_PING_RECEIPT_CANDIDATE_NO_EXECUTION")
         self.assertEqual(result["work_id"], WORK)
         for key in ("owner_execution_authorized", "codex_executed",
-                    "studio_executed", "git_source_written", "host_attested"):
+                    "studio_executed", "git_source_written", "host_attested",
+                    "host_origin_verified", "github_app_proves_owner_pc_authorization"):
             self.assertIs(result[key], False)
 
     def test_bad_action_rejected(self):
@@ -154,6 +156,7 @@ class AckOnlyTests(unittest.TestCase):
         self.assertEqual(r["ack_comment_id"], 1234)
         self.assertIs(r["codex_executed"], False)
         self.assertIs(r["globally_idempotent"], False)
+        self.assertIs(r["host_origin_verified"], False)
 
     def test_redirected_post_response_rejected(self):
         with self.assertRaises(AckBlocked):

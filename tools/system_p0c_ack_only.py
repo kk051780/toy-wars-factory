@@ -49,13 +49,14 @@ def make_ack_only(comment, *, now_utc, observed_host, expected_main_sha):
         if data.get("main_sha") != expected_main_sha:
             raise AckBlocked("MAIN_SHA_MISMATCH")
         result = {
-            "schema": 1, "kind": "WINDOWS_PING_RECEIVED_NO_EXECUTION",
+            "schema": 1, "kind": "UNATTESTED_PING_RECEIPT_CANDIDATE_NO_EXECUTION",
             "repo": REPO, "source_issue": ISSUE,
             "source_comment_id": comment["id"],
             "work_id": data["work_id"], "host_claim": HOST,
             "pinned_main_sha": expected_main_sha,
             "source_body_sha256": hashlib.sha256(body.encode("utf-8")).hexdigest(),
-            "host_attested": False,
+            "host_attested": False, "host_origin_verified": False,
+            "github_app_proves_owner_pc_authorization": False,
             "owner_execution_authorized": False,
             "codex_executed": False, "studio_executed": False,
             "git_source_written": False,
@@ -80,6 +81,8 @@ def post_ack_only_once(comment, *, now_utc, observed_host,
     """
     if owner_opt_in is not True:
         raise AckBlocked("OWNER_OPT_IN_REQUIRED")
+    # Caller opt-in is an assertion, not proof of original OWNER identity.
+    # This transport can only acknowledge observation, never authorize PC work.
     token = approved_issues_write_token
     if (not isinstance(token, str) or not 12 <= len(token) <= 2048
             or any(c in token for c in ("\n", "\r", "\x00"))):
@@ -114,6 +117,7 @@ def post_ack_only_once(comment, *, now_utc, observed_host,
             "owner_execution_authorized": False,
             "codex_executed": False, "studio_executed": False,
             "globally_idempotent": False,
+            "host_origin_verified": False,
         }
     except AckBlocked:
         raise
