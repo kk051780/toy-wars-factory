@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "kind": "AUTHOR_EPOCH540_READONLY_ARTIFACT_CUTOVER_NOT_INDEPENDENT_APPROVAL",
+  "repository": "kk051780/toy-wars-factory",
+  "pr": 181,
+  "issue": 57,
+  "work_id": "PR181_ISSUE57_PROTECTED_HANDOFF_SECURITY_REVIEW_20261107",
+  "exact_head": "35acf7f44a5948830e77cec98e62e059a506590c",
+  "parent_head": "2236aa77b6276d2eaf0a4a1ef331a22ac03470a5",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "work_branch": "controller/issue57-handoff-privilege-split-9b8a6f21",
+  "controller": {
+    "owner_id": "f65b7c83-b38f-4057-adb3-252e2fcb3b3a",
+    "epoch": 540
+  },
+  "ci": {
+    "run": 42452164721,
+    "offline": "success",
+    "compile_hold": "success",
+    "python_tests": 904,
+    "head": "35acf7f44a5948830e77cec98e62e059a506590c",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42452164721"
+  },
+  "paths": [
+    ".github/workflows/handoff-sync.yml",
+    "AGENTS.md",
+    "docs/CHAT_CONTINUITY_PROTOCOL.md",
+    "docs/QA_HANDOFF_PRIVILEGE_SPLIT.md",
+    "tools/build_handoff.py",
+    "tests/test_handoff_privilege_split.py",
+    "tests/test_handoff_snapshot_readers.py"
+  ],
+  "actual_readonly_artifact_probe": {
+    "run_id": 42431989633,
+    "event": "schedule",
+    "conclusion": "success",
+    "main_head": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+    "artifact_id": 13597524001,
+    "name": "toy-wars-handoff",
+    "verified_files": [
+      {
+        "name": "CHAT_HANDOFF.md",
+        "size": 12281
+      },
+      {
+        "name": "LATEST_STATE.json",
+        "size": 36721
+      }
+    ],
+    "manifest_present": false,
+    "state_schema": 2,
+    "state_release": "HOLD_ENGINE_UNVERIFIED",
+    "source_revision": "7e3b22efbfd79220360e1e9c5e1b02f7cc417c02",
+    "actual_compare": {
+      "status": "ahead",
+      "ahead_by": 2,
+      "changed_paths": [
+        "status/CHAT_HANDOFF.md",
+        "status/LATEST_STATE.json"
+      ]
+    }
+  },
+  "code_change": {
+    "privileged_status_writer": "HARD_DISABLED_WITH_ALWAYS_FALSE_GUARD",
+    "scheduled_verify": "READ_ONLY",
+    "upload_artifact_condition": "SUCCESS_ONLY",
+    "readers": "OPTIONAL_VERIFIED_ACTIONS_ARTIFACT_OR_VALIDATED_SNAPSHOT_OR_CURRENT_MAIN",
+    "new_python_tests": 2
+  },
+  "limitations": [
+    "PR181 remains DRAFT and accepted main still executes legacy scheduled writer until true protected merge",
+    "Read-only Actions artifact is a generated untrusted status model, not authority for permission or code",
+    "Github schedules are best effort; artifact might be delayed/expired",
+    "No registered human/native PR approval and no production writer deploy test",
+    "Issue57 unattended provider write actor and PR203 host source/merge TOCTOU unresolved",
+    "2 live independent GPT writers and Roblox release not proven"
+  ],
+  "author_self_review": false,
+  "registered_reviewed": false,
+  "merge": false,
+  "scoped_parallel_active": false,
+  "extra_cost_jpy": 0,
+  "created_at": "2026-11-08T05:49:14.403Z"
+}
