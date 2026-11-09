@@ -329,6 +329,49 @@
       "remote_readback_reported": true,
       "windows_restore": "NOT_TESTED",
       "studio_qa": "NOT_TESTED"
+    },
+    {
+      "packet_id": "P0D-D07-GOROGAN-SERVER-AI-20261110-02",
+      "title": "D07 Gorogan bounded server AI (not live rig)",
+      "feature_ids": [
+        "D07"
+      ],
+      "commit": "80483ad6543fd73dfaf8a21ecf7b58dc2eca75e1",
+      "envelope_path": "handoffs/TRAP_RAIDERS_D07_GoroganAI_encrypted.json",
+      "envelope_blob_sha1": "ec1e0fe80e5330ab17a41bb942b98db663fe655c",
+      "readme_path": "handoffs/README_D07_GOROGAN_AI.md",
+      "readme_blob_sha1": "921765f2ed13dc81e1aaded9dc363a74225fd732",
+      "zip_sha256": "0dc7a15c821eb957e1e2a4f16d10922fd32a576c38544c789cb5bb0b16a41516",
+      "depends_on_packets": [
+        "P0D-D07-GOROGAN-VISUAL-20261110-01",
+        "v40-v41-v42-fallback-chatlead-20261110"
+      ],
+      "pc_gate": "AFTER_S1_SERVER_BOSS_OWNER_LOS_PATHFINDING_REVIEW",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "packet_id": "P0D-D07-LIGARDO-VISUAL-20261110-03",
+      "title": "D07 Ligardo S2/S4 visual only",
+      "feature_ids": [
+        "D07"
+      ],
+      "commit": "bd1c4fcc631a2655119df8cfaf5efdf7534cf133",
+      "envelope_path": "handoffs/TRAP_RAIDERS_D07_LIGARDO_encrypted.json",
+      "envelope_blob_sha1": "7bc3924aa79897bd33b6b36a6deb05c858ede5e5",
+      "readme_path": "handoffs/README_D07_LIGARDO.md",
+      "readme_blob_sha1": "8d7761b6bcc9f707612ff6903a4c128ce4e03337",
+      "zip_sha256": "e2ebc8dc2d6b3d410866aca4e41ad4a13dd00284f25f93c47b01bbc5327995dd",
+      "depends_on_packets": [
+        "v40-v41-v42-fallback-chatlead-20261110"
+      ],
+      "pc_gate": "AFTER_S2_S4_SINGLE_BOSS_EVENT_AND_MOBILE_QA",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
     }
   ],
   "policy": {
@@ -357,5 +400,5 @@
       "limited_scope": "648 design records; no 648 models, no server source, no gameplay/Studio QA"
     }
   ],
-  "registry_note": "D01-D17 historical baseline remains fixed; D18 additive design-only backlog is separately counted and not implied to have source/Studio QA."
+  "registry_note": "D01-D17 historical baseline fixed; D18 design-only delivered. PC evidence supplied separately with source links. Registry intentionally does not claim Windows or Studio PASS from ciphertext."
 }
