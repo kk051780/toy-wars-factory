@@ -247,6 +247,24 @@ class IntegrityTests(unittest.TestCase):
         self.art['place_xml']=ET.tostring(root,encoding='utf-8')
         self.doc['evidence']['place_xml_sha256']=hashlib.sha256(self.art['place_xml']).hexdigest()
         self.rejected('xml_unexpected_property')
+    def test_name_property_nested_element_rejected_even_with_matching_digest(self):
+        root=ET.fromstring(self.art['place_xml'])
+        item=root.find('./Item[@class="Workspace"]')
+        field=item.find('./Properties/string[@name="Name"]')
+        ET.SubElement(field,'UnexpectedNested',{'name':'UnsafeConfig'}).text='enabled'
+        self.art['place_xml']=ET.tostring(root,encoding='utf-8')
+        self.doc['evidence']['place_xml_sha256']=hashlib.sha256(self.art['place_xml']).hexdigest()
+        self.rejected('xml_unexpected_nested_property_element')
+    def test_source_property_nested_element_rejected_with_same_source_blob(self):
+        root=ET.fromstring(self.art['place_xml'])
+        item=root.find('.//Item[@class="LocalScript"]')
+        field=item.find('./Properties/ProtectedString[@name="Source"]')
+        original_blob=v._gitblob(field.text.encode('utf-8'))
+        ET.SubElement(field,'UnexpectedNested').text='hidden'
+        self.assertEqual(v._gitblob(field.text.encode('utf-8')), original_blob)
+        self.art['place_xml']=ET.tostring(root,encoding='utf-8')
+        self.doc['evidence']['place_xml_sha256']=hashlib.sha256(self.art['place_xml']).hexdigest()
+        self.rejected('xml_unexpected_nested_property_element')
     def test_png_crc_flip_rejected(self):
         data=bytearray(self.art['screenshot']);data[-8]^=1
         self.art['screenshot']=bytes(data)
