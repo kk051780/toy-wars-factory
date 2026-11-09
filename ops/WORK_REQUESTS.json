@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-09T01:05:59.251Z",
+  "observed_at": "2026-11-09T01:10:41.951Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -6046,13 +6046,13 @@
       "pr": 216,
       "branch": "controller/p0-market-source-preflight-20261109-65f7fda7",
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "head": "2e48d2abaceb7cfb5b05994cd151e03c6755f915",
+      "head": "123ea688f9dfb206238ff1e7e7476baafd361c25",
       "draft": true,
-      "source_owner_epoch": 567,
-      "source_owner_id": "c8a0e634-738e-4f95-8b4c-4f63121cb233",
+      "source_owner_epoch": 570,
+      "source_owner_id": "3dc788d9-6c36-48f2-ad5b-e615be5cce93",
       "assigned_role": "REVIEWER",
-      "status": "OPEN_NEW_HEAD_CI892_GREEN_DISTINCT_REGISTERED_REVIEW_REQUIRED",
-      "ci_run_id": 42525047346,
+      "status": "OPEN_CI912_GREEN_SOURCERY_10_FINDINGS_AUTHOR_FIXED_INDEPENDENT_RE_REVIEW_REQUIRED",
+      "ci_run_id": 42543959018,
       "ci_jobs": {
         "offline": "success",
         "compile_hold": "success"
@@ -6068,13 +6068,15 @@
       ],
       "extra_spend": false,
       "created_at": "2026-11-08T20:47:46.961Z",
-      "next_actor": "Distinct registered independent REVIEWER: review PR216 new HEAD 2e48d2ab, rehashed-report integrity regression, exact-head CI 892/892, then separate formal integration; author has not self-approved.",
-      "python_tests": 892,
-      "new_regression_tests": 59,
+      "next_actor": "Distinct registered independent reviewer: inspect PR216 exact new HEAD 123ea688, 912-test CI, 10 previously flagged findings/79 market regressions, then separately process main integration; no author self-approval",
+      "python_tests": 912,
+      "new_regression_tests": 79,
       "review_packet_path": "ops/review_packets/PR216_market_source_preflight_epoch564.json",
-      "updated_at": "2026-11-08T21:26:11.857Z",
-      "previous_head": "c91c3ce9d0768c4468ff5a1fd5e592869730e983",
-      "last_fix_negative_tests_added": 13
+      "updated_at": "2026-11-09T01:10:41.951Z",
+      "previous_head": "2e48d2abaceb7cfb5b05994cd151e03c6755f915",
+      "last_fix_negative_tests_added": 13,
+      "sourcery_review_previous_head_issues": 10,
+      "sourcery_new_head_review": "PENDING"
     }
   ]
 }

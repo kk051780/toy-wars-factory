@@ -5,13 +5,13 @@
   "issue": 109,
   "pr": 216,
   "source_branch": "controller/p0-market-source-preflight-20261109-65f7fda7",
-  "source_head": "2e48d2abaceb7cfb5b05994cd151e03c6755f915",
+  "source_head": "123ea688f9dfb206238ff1e7e7476baafd361c25",
   "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-  "owner_epoch": 567,
-  "owner_id": "c8a0e634-738e-4f95-8b4c-4f63121cb233",
+  "owner_epoch": 570,
+  "owner_id": "3dc788d9-6c36-48f2-ad5b-e615be5cce93",
   "requested_role": "REVIEWER",
   "author_is_reviewer": false,
-  "hosted_ci_run": 42525047346,
+  "hosted_ci_run": 42543959018,
   "hosted_ci_status": "SUCCESS",
   "source_files": [
     "tools/market_source_preflight.py",
@@ -20,12 +20,12 @@
     "tests/test_market_observation_bridge.py"
   ],
   "source_git_blobs": {
-    "tools/market_source_preflight.py": "dc2c231dd506280314a1f32258c27606cd9e5692",
-    "tools/market_observation_bridge.py": "97d5169833157f4d05ffba1ddbf3a04a22524522",
-    "tests/test_market_source_preflight.py": "f27f9f8ee0cea58149ef51dac66ec3b69e0aa9d0",
-    "tests/test_market_observation_bridge.py": "b626feeaec23601720005e805a9b8d31d714931a"
+    "tools/market_source_preflight.py": "d9a325b5514c09ed1476c1ddf78ebac55962f2ab",
+    "tools/market_observation_bridge.py": "8286782541ca147fc021ba2571b01acdf7de1ce4",
+    "tests/test_market_source_preflight.py": "5646aacbb582eef9b5d6d6f94e864bcc941c5b6a",
+    "tests/test_market_observation_bridge.py": "d1c4e60909ec28e76525d913ef91733f02c3ff76"
   },
-  "local_python_tests": 59,
+  "local_python_tests": 79,
   "independent_security_review": "NOT_PERFORMED",
   "studio_test": "OUT_OF_SCOPE",
   "web_source_authentication": "NOT_IMPLEMENTED",
@@ -38,14 +38,23 @@
     "offline": "success",
     "compile_hold": "success"
   },
-  "hosted_python_tests": 892,
-  "hosted_ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42525047346",
+  "hosted_python_tests": 912,
+  "hosted_ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42543959018",
   "registered_independent_review": "PENDING",
-  "previous_source_head": "c91c3ce9d0768c4468ff5a1fd5e592869730e983",
+  "previous_source_head": "2e48d2abaceb7cfb5b05994cd151e03c6755f915",
   "correction": {
     "risk": "rehashed report bypassed original URL/date/metric validation",
     "negative_tests_added": 13,
     "corrected_git_head": "2e48d2abaceb7cfb5b05994cd151e03c6755f915",
     "engine_evidence": "OUT_OF_SCOPE"
+  },
+  "review_finding_fix": {
+    "source": "Sourcery prior exact head REVIEW_COMMENTED",
+    "review_findings": 10,
+    "current_head": "123ea688f9dfb206238ff1e7e7476baafd361c25",
+    "local_regressions": 79,
+    "prior_head": "2e48d2abaceb7cfb5b05994cd151e03c6755f915",
+    "new_review": "PENDING",
+    "registered_independent_review": "PENDING"
   }
 }

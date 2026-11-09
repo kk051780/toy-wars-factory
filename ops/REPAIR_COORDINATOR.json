@@ -2129,17 +2129,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 570,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "3dc788d9-6c36-48f2-ad5b-e615be5cce93",
-    "task_id": null,
-    "epoch": 570,
-    "acquired_at": "2026-11-09T01:07:35.109Z",
-    "expires_at": "2026-11-09T01:27:35.109Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0-market-source-preflight-20261109-65f7fda7",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3783,10 +3773,24 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER",
-    "owner_id": "1d5cfa20-a373-4f27-a990-e5f981eeff66",
-    "epoch": 568,
-    "released_at": "2026-11-09T00:30:10.324Z"
+    "kind": "CONTROLLER_P0_MARKET_PR216_REVIEW_FINDING_10_HARDENING",
+    "work_id": "P0_MARKET_ISSUE109_SOURCE_PREFLIGHT_PR216_20261109",
+    "owner_id": "3dc788d9-6c36-48f2-ad5b-e615be5cce93",
+    "epoch": 570,
+    "pr": 216,
+    "head": "123ea688f9dfb206238ff1e7e7476baafd361c25",
+    "ci_run_id": 42543959018,
+    "python_tests": 912,
+    "market_tests": 79,
+    "sourcery_previous_findings": 10,
+    "ci_offline": "success",
+    "ci_compile_hold": "success",
+    "new_head_review": "PENDING",
+    "independent_reviewed": false,
+    "main_merged": false,
+    "market_auto_polling_enabled": false,
+    "service_terminal_proof": false,
+    "released_at": "2026-11-09T01:10:41.951Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
@@ -4398,6 +4402,12 @@
       "roblox_published": false,
       "additional_spend_jpy": 0,
       "released_at": "2026-11-09T01:06:40.643Z"
+    },
+    {
+      "kind": "CONTROLLER",
+      "owner_id": "1d5cfa20-a373-4f27-a990-e5f981eeff66",
+      "epoch": 568,
+      "released_at": "2026-11-09T00:30:10.324Z"
     }
   ]
 }
