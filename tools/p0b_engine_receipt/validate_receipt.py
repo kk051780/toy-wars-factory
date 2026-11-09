@@ -213,7 +213,7 @@ def verify_trace(raw: bytes, sid: str, doc: dict) -> list[str]:
     return list(dict.fromkeys(failures))
 
 
-def check(doc, artifacts: dict[str, bytes], expected_head=HEAD):
+def check(doc, artifacts: dict[str, bytes], expected_head: str):
     """Validate only internal consistency against supplied bytes; never attest origin."""
     failures = []
     def need(ok, reason):
@@ -223,7 +223,7 @@ def check(doc, artifacts: dict[str, bytes], expected_head=HEAD):
         return _result(['document_not_object'])
     need(doc.get('schema') == 'p0b-engine-receipt/v2', 'unknown_schema')
     need(doc.get('repo') == REPO and type(doc.get('pr')) is int and doc.get('pr') == 209, 'wrong_source')
-    need(expected_head == HEAD and doc.get('head_sha') == HEAD, 'head_mismatch')
+    need(isinstance(expected_head,str) and bool(re.fullmatch(r'[0-9a-f]{40}',expected_head)) and doc.get('head_sha') == expected_head, 'head_mismatch')
     w = doc.get('work_id')
     need(isinstance(w,str) and bool(re.fullmatch(r'P0B_[A-Z0-9_]{8,100}', w)), 'invalid_work_id')
     need(doc.get('fixture_only') is False, 'fixture_only_or_unknown')
@@ -299,7 +299,7 @@ def main():
     parser.add_argument('receipt_json',type=Path)
     for name in MAX_INPUT:
         parser.add_argument('--'+name.replace('_','-'), type=Path, required=True)
-    parser.add_argument('--expected-head',default=HEAD)
+    parser.add_argument('--expected-head',required=True,help='Exact current PR HEAD verified separately from GitHub; never use an unverified receipt field')
     args = parser.parse_args()
     try:
         doc = json.loads(_read_limited(args.receipt_json, 100_000).decode('utf-8',errors='strict'))
