@@ -1,0 +1,301 @@
+{
+  "schema": "P0D_READONLY_INTAKE_V1",
+  "as_of_jst": "2026-11-10",
+  "repo": "kk051780/toy-wars-factory",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "baseline_feature_ids": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05",
+    "D06",
+    "D07",
+    "D08",
+    "D09",
+    "D10",
+    "D11",
+    "D12",
+    "D13",
+    "D14",
+    "D15",
+    "D16",
+    "D17"
+  ],
+  "pc_partial_feature_ids": [
+    "D01",
+    "D02",
+    "D03",
+    "D04",
+    "D05"
+  ],
+  "pc_reference_sha256": "c56459c29595f5ecde5521565862d0a4ea3c8a426a35cbb1d539ad6e08fd4741",
+  "pc_status": "PARTIAL_NOT_READY",
+  "pc_source_issue": "https://github.com/kk051780/toy-wars-factory/issues/213#issuecomment-6748910837",
+  "sealed_packets": [
+    {
+      "packet_id": "v39-h1-chatlead-ref-20261110",
+      "title": "v39 free stamps",
+      "feature_ids": [
+        "D06"
+      ],
+      "commit": "baa29df8bc3f10f94792fcb135b3ee2a136ad8b8",
+      "envelope_path": "handoffs/TRAP_RAIDERS_v39_handoff_encrypted.json",
+      "envelope_blob_sha1": "60f2d198935c0ce75e37a767c042e4d630a10950",
+      "readme_path": "handoffs/README.md",
+      "readme_blob_sha1": "9097a73bffbd0e3ea31f60e3e613675899b4c626",
+      "zip_sha256": "7d3c5d5c947530cb1874e7ee7dcf55d712c5c8c3bf6f49e5c25de093a7bc349d",
+      "depends_on_packets": [],
+      "pc_gate": "AFTER_V37_FINAL_QA",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "packet_id": "v43A-neutral-skirmish-chatlead-20261110",
+      "title": "v43-A neutral skirmish",
+      "feature_ids": [
+        "D11"
+      ],
+      "commit": "db734240f0157cc125b563656dbd09668226f3ab",
+      "envelope_path": "handoffs/TRAP_RAIDERS_v43A_encrypted.json",
+      "envelope_blob_sha1": "5d98138f4a6367410e464365ecf3a316b2e9647d",
+      "readme_path": "handoffs/README_v43A.md",
+      "readme_blob_sha1": "b86d8aedcfbc42a71894796f3e53a4d61633f9ed",
+      "zip_sha256": "a731bea80cdaa69e360d86743d437e19afe27b5e95119d21bf79bfdedd4bdd8b",
+      "depends_on_packets": [
+        "v39-h1-chatlead-ref-20261110"
+      ],
+      "pc_gate": "AFTER_V39_STUDIO_QA",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "packet_id": "v40-v41-v42-fallback-chatlead-20261110",
+      "title": "v40-42 event/boss/progression fallback",
+      "feature_ids": [
+        "D07",
+        "D08",
+        "D09",
+        "D10"
+      ],
+      "commit": "c0b0bf692410cb651893c38f1a453c93d9f8b3b5",
+      "envelope_path": "handoffs/TRAP_RAIDERS_v40_v42_encrypted.json",
+      "envelope_blob_sha1": "b37deb27ced2ca2e796c09244b50a5065bbb3dfa",
+      "readme_path": "handoffs/README_v40_v42.md",
+      "readme_blob_sha1": "2b30fb002b5200c56f7b256dd826ab2e38e46a86",
+      "zip_sha256": "05a85a7934f6ae1815c9dd50c81a3ff81c3f8e46c9051fe0f8fea1838b8ed9ec",
+      "depends_on_packets": [
+        "v39-h1-chatlead-ref-20261110"
+      ],
+      "pc_gate": "AFTER_COLLISION_REVIEW",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "packet_id": "P0D-V43B-METEOR-20261110-01",
+      "title": "v43-B meteor",
+      "feature_ids": [
+        "D12"
+      ],
+      "commit": "874b4d68c33cefb2ee10d72a655e10aced1445da",
+      "envelope_path": "handoffs/TRAP_RAIDERS_v43B_encrypted.json",
+      "envelope_blob_sha1": "39b79fea2599084e274c65e481eb8d5f4baea0a1",
+      "readme_path": "handoffs/README_v43B.md",
+      "readme_blob_sha1": "af8a21d2104d65a97fa0ea86cca7d9c30fd1ee40",
+      "zip_sha256": "78986ca4c85494cd99417ef2bcdbcd7d9cf294c910fcaffb00fb8dfc35bc2723",
+      "depends_on_packets": [
+        "v40-v41-v42-fallback-chatlead-20261110"
+      ],
+      "pc_gate": "AFTER_SINGLE_EVENT_CHOOSER_REVIEW",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "packet_id": "P0D-D13-SIEGE-RESPONSE-20261110-A",
+      "title": "D13 defender response",
+      "feature_ids": [
+        "D13"
+      ],
+      "commit": "7c948cfdef6a1f4381b738cc5910a085c46d44a5",
+      "envelope_path": "handoffs/TRAP_RAIDERS_D13_encrypted.json",
+      "envelope_blob_sha1": "2a6bd0675fdec37f189bafc54d3c0fe713aea23a",
+      "readme_path": "handoffs/README_D13.md",
+      "readme_blob_sha1": "e39ee602b8568ac3dbc99c46eee82c3e8c55dc2d",
+      "zip_sha256": "2caba203e55acf1afff12da90ac4dc4de64fcf8e4bafaded4ce8134f90f80ccb",
+      "depends_on_packets": [
+        "v39-h1-chatlead-ref-20261110"
+      ],
+      "pc_gate": "AFTER_V39_AND_NPC_ADAPTER_QA",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "packet_id": "P0D-D14-VEHICLE-SEATS-20261110-01",
+      "title": "D14 two-seat cart/raft",
+      "feature_ids": [
+        "D14"
+      ],
+      "commit": "0bcf39c22c583604d72ccac47d29fc9d87b7e662",
+      "envelope_path": "handoffs/TRAP_RAIDERS_D14_VEHICLE_SEATS_encrypted.json",
+      "envelope_blob_sha1": "c81daa06fad15a4e41ae948079c4f5bcfb2fc4c0",
+      "readme_path": "handoffs/README_D14_VEHICLE_SEATS.md",
+      "readme_blob_sha1": "69c1039c774a8644a8977362918cd1aa6c63bfea",
+      "zip_sha256": "475616bd21e88164158db88b3a97e33d4a9b1ce9aaa872fa7a816adf485c9fd3",
+      "depends_on_packets": [
+        "v39-h1-chatlead-ref-20261110"
+      ],
+      "pc_gate": "AFTER_V39_AND_VEHICLE_QA",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "packet_id": "P0D-D15-TRAP-RESCUE-20261110-01",
+      "title": "D15 trap/rescue",
+      "feature_ids": [
+        "D15"
+      ],
+      "commit": "f789276cee28d40d8cdfb59a9c57c303f6d5fd09",
+      "envelope_path": "handoffs/TRAP_RAIDERS_D15_encrypted.json",
+      "envelope_blob_sha1": "7bf2f426afb87a88ed6a9b4dde5253ccf33088f3",
+      "readme_path": "handoffs/README_D15.md",
+      "readme_blob_sha1": "84f87e52efaddd06acea0f6a1197c069b521dc9e",
+      "zip_sha256": "0043b59baffb8de487eb216505ef1bef6652b7147f30f7e9e824014727216cd1",
+      "depends_on_packets": [
+        "v39-h1-chatlead-ref-20261110"
+      ],
+      "pc_gate": "AFTER_V39_AND_COMBAT_QA",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "packet_id": "P0D-D16-SCALE-FX-20261110-01",
+      "title": "D16 temporary scale effect",
+      "feature_ids": [
+        "D16"
+      ],
+      "commit": "7242b32760327a527b868f5405d7782265388fe2",
+      "envelope_path": "handoffs/TRAP_RAIDERS_D16_encrypted.json",
+      "envelope_blob_sha1": "545cf2b35b6405cc1fb669cb37c16e4c97f471c7",
+      "readme_path": "handoffs/README_D16_SCALE_FX.md",
+      "readme_blob_sha1": "44e7236f6dc576ae2c2808bcf9357720ec60b007",
+      "zip_sha256": "d5df52cd3b2fdf26bca05bc38123ac81d27024c944c4a465d66e3a4e0ad0c7cd",
+      "depends_on_packets": [
+        "v40-v41-v42-fallback-chatlead-20261110"
+      ],
+      "pc_gate": "AFTER_EVENT_CHOOSER_QA",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "packet_id": "P0D-D16-VISUAL-REPLICA-20261110-02",
+      "title": "D16 client visual replica",
+      "feature_ids": [
+        "D16"
+      ],
+      "commit": "ec521761a4ceb61f187f0aa83c3a0a5600d16bcb",
+      "envelope_path": "handoffs/TRAP_RAIDERS_D16_VISUAL_encrypted.json",
+      "envelope_blob_sha1": "0bc0a2f35c612eed8b6d457f506e85cd2df4c37a",
+      "readme_path": "handoffs/README_D16_VISUAL_REPLICA.md",
+      "readme_blob_sha1": "04e097e188b61f2c047e5cdc681100fa3cc32c70",
+      "zip_sha256": "31a53ead53095152ac57d2b0ee49b49c37477c5341ef0bdd25c8c463fd911d7d",
+      "depends_on_packets": [
+        "P0D-D16-SCALE-FX-20261110-01"
+      ],
+      "pc_gate": "AFTER_D16_SCALE_AND_MOBILE_QA",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "packet_id": "P0D-D16-CLOCK-RAIN-VFX-20261110-03",
+      "title": "D16 clock rain VFX",
+      "feature_ids": [
+        "D16"
+      ],
+      "commit": "945488ccb9ea47b8ca1ce514efed94372a839a01",
+      "envelope_path": "handoffs/TRAP_RAIDERS_D16_CLOCK_RAIN_encrypted.json",
+      "envelope_blob_sha1": "6ec75537f99a3eaf91d1c57ed1d17885b45c8add",
+      "readme_path": "handoffs/README_D16_CLOCK_RAIN.md",
+      "readme_blob_sha1": "c5e5a31b6ead1985efe2ea102825f216052f5ff7",
+      "zip_sha256": "bcee9a949dc897b1d9a54557a93959ccd8b0e068223310594a8d27ec4fdcea62",
+      "depends_on_packets": [
+        "P0D-D16-SCALE-FX-20261110-01"
+      ],
+      "pc_gate": "AFTER_D16_SCALE_AND_SINGLE_EVENT_REVIEW",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "packet_id": "P0D-D17-PRIVACY-METRICS-20261110-A",
+      "title": "D17 offline engagement metrics",
+      "feature_ids": [
+        "D17"
+      ],
+      "commit": "42e1546480099131f10e2e251e295b8258ecfd88",
+      "envelope_path": "handoffs/TRAP_RAIDERS_D17_encrypted.json",
+      "envelope_blob_sha1": "e564b1b8045be734502a78712f20e5612538aa9c",
+      "readme_path": "handoffs/README_D17.md",
+      "readme_blob_sha1": "5fd34f331a2532a06a2defde9aed1686564ed5b0",
+      "zip_sha256": "e7857702eec8c2b3a3bdc96c5aaedb6720c1f572e7ac138369bf6bfe2b832eb2",
+      "depends_on_packets": [
+        "v39-h1-chatlead-ref-20261110"
+      ],
+      "pc_gate": "AFTER_SERVER_EVENT_REVIEW",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "packet_id": "P0D-D17-COSMETIC-CATALOG-20261110-01",
+      "title": "D17 cosmetic preview",
+      "feature_ids": [
+        "D17"
+      ],
+      "commit": "e2117e9d7dd42ef895b7bae48e6fc9e8520b917d",
+      "envelope_path": "handoffs/TRAP_RAIDERS_D17_encrypted.json",
+      "envelope_blob_sha1": "3af051ea6f0405f97d5c70f585cc2ea32883d7b5",
+      "readme_path": "handoffs/README_D17.md",
+      "readme_blob_sha1": "e92df023a558def10f43cfb385ecb206ccd2ff03",
+      "zip_sha256": "abd8efebae089b40c6837ceccc9fc152b2309ffa6a5b01eaf2dba497bac7e065",
+      "depends_on_packets": [
+        "v39-h1-chatlead-ref-20261110"
+      ],
+      "pc_gate": "AFTER_V39_ENTITLEMENT_QA",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
+    }
+  ],
+  "policy": {
+    "no_decryption": true,
+    "no_network_by_default": true,
+    "no_studio_interaction": true,
+    "no_autoexec_or_merge": true,
+    "no_keys_in_registry": true,
+    "primary_gate": "V37_FINAL_QA",
+    "next_gate": "V39_H1_OWNER_AUTHORIZED_INTEGRATION",
+    "remote_content_verified_by_connector": "2026-11-10 JST; 24/24 fixed file reads, not PC restore"
+  }
+}
