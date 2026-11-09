@@ -1,0 +1,28 @@
+{
+  "id": "C09032",
+  "date": "2026-10-31",
+  "kind": "PR163_PER_WRITE_LEASE_FENCE_GREEN",
+  "issue": 57,
+  "pr": 163,
+  "base_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_red_head": "934e46ac0523138510c5e3303b0eb7a5baaa43b1",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 340,
+    "owner_run_id": "473ba135-4cdb-4e5c-8f96-08e734c698da",
+    "claim_commit": "0f9cadedcc089162ef7a4a316f2b1898df993a6b"
+  },
+  "tests": {
+    "expected": "14 native offline tests in new module; full original CI must be rechecked on exact green head",
+    "result": "PENDING_GITHUB_HOSTED"
+  },
+  "risk": "Non-atomic REST writes retain TOCTOU gap; no live workflow dispatch/host write attested",
+  "state": "PROTECTED_DRAFT_ONLY",
+  "source_paths": [
+    "tools/system_actions_write_probe.py",
+    "tests/test_system_actions_write_probe_per_write_fence.py"
+  ],
+  "main_write": false,
+  "gemini": false,
+  "roblox": false
+}

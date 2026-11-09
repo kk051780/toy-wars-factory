@@ -1,0 +1,38 @@
+{
+  "id": "C09038",
+  "date": "2026-11-02",
+  "kind": "PROTECTED_PR163_PROXY_HANDLER_ORDER_COMPATIBILITY",
+  "issue": 57,
+  "pr": 163,
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "6a61ec3355d43df049ea968246fb5edcebda404a",
+    "owner_run_id": "a1b6c043-3956-4b2d-811b-08f922756d01",
+    "epoch": 391
+  },
+  "prior_green_candidate": "11eceb55dd4fe69c9bb9f486d0b22661ed0a59f4",
+  "observed_ci": {
+    "run_id": 41361283657,
+    "head": "11eceb55dd4fe69c9bb9f486d0b22661ed0a59f4",
+    "offline": "failure",
+    "compile_hold": "success",
+    "python_tests": 921,
+    "failures": 1,
+    "failed_test": "test_default_transport_must_use_rejecting_opener",
+    "new_proxy_tests": "4/4 PASS",
+    "cause": "Existing redirect-regression test requires _RejectRedirects as first build_opener constructor argument."
+  },
+  "fix": {
+    "path": "tools/system_actions_write_probe.py",
+    "from": "request.build_opener(request.ProxyHandler({}), _RejectRedirects()).open",
+    "to": "request.build_opener(_RejectRedirects(), request.ProxyHandler({})).open"
+  },
+  "qa": "PENDING_NEW_EXACT_HEAD_CI",
+  "authority": {
+    "merge": false,
+    "dispatch": false,
+    "publish": false,
+    "spend": false
+  },
+  "note": "Both no-proxy and no-redirect objects are supplied; no existing regression test weakened."
+}

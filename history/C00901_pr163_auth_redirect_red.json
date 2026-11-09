@@ -1,0 +1,31 @@
+{
+  "id": "C00901",
+  "date": "2026-10-31",
+  "kind": "PR163_CROSS_ORIGIN_BEARER_REDIRECT_TEST_FIRST_RED",
+  "issue": 57,
+  "pr": 163,
+  "role": "CONTROLLER",
+  "repository": "kk051780/toy-wars-factory",
+  "work_branch": "controller/actions-write-pilot-8df31af2",
+  "source_head_before": "8bbc02019768a9a12838e70aab2123e72fc895b5",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "d415afea1e52f27dc98a7f31c6fca93f99aa73ca",
+    "owner_run_id": "c187e1e3-3b71-4c79-b098-8e5a377be4a1",
+    "epoch": 316
+  },
+  "finding": "Python urllib HTTPRedirectHandler.redirect_request forwards original Authorization to redirected target for statuses 301/302/303/307/308; unreviewed default urllib.urlopen use is unsafe for a bearer-bearing GitHubAPI.",
+  "proof": "Isolated stdlib test using request.HTTPRedirectHandler.redirect_request; no actual request or token, sentinel only.",
+  "planned_fix": "Default urllib opener with explicitly denying redirect handler; preserve injected test transport. New test file fails on unpatched source.",
+  "source_files": [
+    "tests/test_system_actions_write_probe_redirect.py"
+  ],
+  "verification": "RED_TEST_COMMIT_PENDING_CI",
+  "holds": {
+    "external_inference": "NONE",
+    "roblox_publish": "HOLD",
+    "spending": "NONE",
+    "merge_authorized": false
+  }
+}

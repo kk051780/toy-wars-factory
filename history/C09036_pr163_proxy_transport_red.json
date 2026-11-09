@@ -1,0 +1,31 @@
+{
+  "id": "C09036",
+  "date": "2026-11-02",
+  "kind": "PROTECTED_PR163_ENV_PROXY_TRANSPORT_TEST_FIRST_RED",
+  "issue": 57,
+  "pr": 163,
+  "head_before": "972eaf01a52c65c01a5d97645d57a578f10444ba",
+  "source_blob_before": "2f321ba6b6ba0a7cc9917171721e0d87c5c92d88",
+  "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "6a61ec3355d43df049ea968246fb5edcebda404a",
+    "owner_run_id": "a1b6c043-3956-4b2d-811b-08f922756d01",
+    "epoch": 391
+  },
+  "defect": "GitHubAPI default urllib opener inherits HTTPS_PROXY/ALL_PROXY for bearer-token REST calls; no actual leak alleged.",
+  "files": [
+    "tests/test_system_actions_write_probe_proxy.py",
+    "history/C09036_pr163_proxy_transport_red.json"
+  ],
+  "expected_red": "Two proxy noninheritance tests should fail before source patch; redirect refusal and injected transport should pass.",
+  "qa": "PENDING_EXACT_HEAD_GITHUB_ACTIONS",
+  "authority": {
+    "approve": false,
+    "merge": false,
+    "dispatch": false,
+    "publish": false,
+    "spend": false
+  },
+  "note": "Two GitHub refs main and coordinator checked before isolated PR branch source write."
+}

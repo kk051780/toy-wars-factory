@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "id": "C09046",
+  "date_utc": "2026-11-05",
+  "kind": "GHA_OWNER_ONLY_CONTENTS_WRITE_BRANCH_CAPABILITY_CANDIDATE",
+  "pr": 163,
+  "issue": 57,
+  "main_base_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "pr_head_before": "cd9e586208200ebb987bd975999434f3968f4ae1",
+  "previous_probe_blob": "ec4001c257ab5ddc3e3f99d39b6ec820dddddf3b",
+  "owner_id": "01cc3a1b-b8b6-4188-837e-c9bca21a6b66",
+  "coordination_epoch": 449,
+  "claim_commit": "5d56046a5c47aa221f5cb471ba6d1fe33a7a9f01",
+  "prepared_library": "/ToyWars/TOY_WARS_PR163_branch_only_lane_PREPARED_NOT_APPLIED_20261105.zip",
+  "prepared_zip_sha256": "1d227bd28a55e23902c70ea2e985f5bfa478900ad13b7d02a4c5c93b41c16f3e",
+  "verification": {
+    "previous_package_local_contract_cases": 4,
+    "exact_workflow_blob": "1a3b1cc059d1a04624d094d3eb5585b7e422a782",
+    "exact_tests_blob": "4f18a18ba7cea201db8d1a03d2f2b4581c8184e3",
+    "patched_probe_blob": "0e3e0881b42c735089736836dba6e500ad3df526",
+    "new_native_python_tests": 7,
+    "exact_head_ci": "PENDING"
+  },
+  "scope": {
+    "new_workflow": ".github/workflows/twf-actions-branch-write-capability-probe.yml",
+    "updated_source": "tools/system_actions_write_probe.py",
+    "new_test": "tests/test_system_actions_branch_only_probe.py",
+    "source_authored_from_exact_prev_blob": true,
+    "requires_owner_manual_dispatch": true,
+    "owner_actor": "kk051780",
+    "permitted_github_permissions": [
+      "contents:write",
+      "actions:read"
+    ],
+    "avoids_pr_create_permission": true,
+    "targets_private_branch_only": true,
+    "one_inert_json_only": true,
+    "retains_unchanged_draft_pr_mode": true
+  },
+  "limits": {
+    "new_pr_created": false,
+    "workflow_dispatched": false,
+    "live_GITHUB_TOKEN_write_proven": false,
+    "main_merged": false,
+    "independent_review": false,
+    "roblox_engine_run": false,
+    "public_release": false,
+    "permissions_changed": false,
+    "incremental_spend_yen": 0
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "id": "C09054",
+  "date_utc": "2026-11-07",
+  "kind": "ISSUE57_PR163_GEMINI_MEDIUM2_SOURCE_PARTIAL_WRITE_DIAGNOSTICS",
+  "pr_number": 163,
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "previous_head": "6a265eeef00b36f0ff4b7d6b585bedc54a88fe81",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "ebd4896120c800d0824854a6eb0f218b00a9214c",
+    "epoch": 486,
+    "owner_id": "41f71f45-d099-452c-ace3-19a216a5041d",
+    "owner_context": "MANUAL_CONTROLLER_NOT_SCHEDULED_OR_PROVIDER_AUTHENTICATED",
+    "work_branch": "controller/actions-write-pilot-8df31af2"
+  },
+  "changed_files": [
+    {
+      "path": "tools/system_actions_write_probe.py",
+      "before_blob": "c7dcd7fd639e449079c9fdf419533bada80881bd",
+      "after_blob": "88e29e48a899998bd83bf4adc3d9696a6c265f57",
+      "before_bytes": 25482,
+      "after_bytes": 26122,
+      "delta_bytes": 640
+    },
+    {
+      "path": "tests/test_system_actions_write_probe_partial_dispatch.py",
+      "before_blob": null,
+      "after_blob": "e1aa3a09a17e8c9da5a68a491ea6de502c96c4a2",
+      "before_bytes": 0,
+      "after_bytes": 6195,
+      "delta_bytes": 6195
+    }
+  ],
+  "added_regression_methods": 7,
+  "review_source": "GEMINI_STATIC_SECOND_OPINION_MEDIUM2_NOT_NATIVE_GITHUB_APPROVAL",
+  "effects": [
+    "report bounded source mutations attempted on transport/verification failure",
+    "mark remote partial write possible rather than falsely claiming success",
+    "preserve original sanitized cause and lease cleanup failure when both occur",
+    "never retry, rollback, delete remote branches or change security controls"
+  ],
+  "checks": {
+    "local_unittest_seven_cases": "PASS",
+    "exact_head_GitHub_CI": "PENDING",
+    "native_independent_review": "MISSING",
+    "unattended_writer_run": "NOT_RUN",
+    "Roblox_engine": "NOT_RUN"
+  },
+  "main_merged": false,
+  "workflow_dispatched": false,
+  "new_paid_spend": 0
+}

@@ -1,0 +1,39 @@
+name: TOY WARS owner-manual isolated write capability probe (NOT autonomous coding)
+on:
+  workflow_dispatch:
+    inputs:
+      approval_phrase:
+        description: Explicit owner consent for isolated DRAFT branch and PR only
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: twf-owner-manual-write-capability
+  cancel-in-progress: false
+jobs:
+  isolated_probe:
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    if: >-
+      github.repository == 'kk051780/toy-wars-factory' &&
+      github.actor == 'kk051780' &&
+      github.triggering_actor == 'kk051780' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'workflow_dispatch' &&
+      inputs.approval_phrase == 'I_AUTHORIZE_ISOLATED_DRAFT_PR_ONLY'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Owner-manual writer capability probe, no AI and no main write
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PROBE_CONSENT: ${{ inputs.approval_phrase }}
+        run: |
+          python3 tools/system_actions_write_probe.py

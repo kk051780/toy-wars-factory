@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "id": "C09047",
+  "date_utc": "2026-11-05",
+  "kind": "BRANCH_ONLY_FENCE_CANONICAL_POST_PULLS_REJECTION_RED",
+  "issue": 57,
+  "pr": 163,
+  "coordination_epoch": 450,
+  "owner_id": "0a807dfe-05ab-4e93-ab0a-982164d54d3c",
+  "claim_commit": "9f7d257957286c3b01a43b56d2dfe4915dfc6b1a",
+  "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "original_head": "e2e4d8eb530f36b10dfab6b2f95c1a195ea988b5",
+  "original_fence_code": "_PerWriteLeaseFence: 3 approved writes irrespective of branch_only scope",
+  "new_tests": [
+    "test_branch_only_fence_rejects_pr_creation_even_with_canonical_body",
+    "test_branch_only_fence_gets_do_not_unlock_third_write"
+  ],
+  "expected_red": "Two test failures because the exact-canonical POST /pulls was forwarded after legitimate branch+file writes",
+  "no_pr_created": true,
+  "no_main_write": true,
+  "no_merge": true,
+  "no_dispatch": true,
+  "no_paid_actions": true,
+  "red_ci": "PENDING"
+}

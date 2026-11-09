@@ -1,0 +1,32 @@
+{
+  "id": "C09035",
+  "date": "2026-11-01",
+  "kind": "PR163_COORDINATOR_LATE_REF_DRIFT_GREEN",
+  "issue": 57,
+  "pr": 163,
+  "base_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "source_before": "e5b40a6f84e0e58a14613a8ee83095226d581ef0",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 357,
+    "owner_run_id": "5a931052-befc-4187-a16b-c64e12d8bb75",
+    "claim_commit": "07c962ef765befbb9cf21bd9ef60bcd9b9f3eb62",
+    "work_branch": "controller/actions-write-pilot-8df31af2"
+  },
+  "changed": [
+    "tools/system_actions_write_probe.py",
+    "tests/test_system_actions_write_probe.py",
+    "tests/test_system_actions_write_probe_cas_ref_drift.py"
+  ],
+  "reason": "Coordinator ref can move after a successful initial ref GET while the immutable new state is read. Add a second exact ref GET and four real-source fake-REST regressions. Source mutation is scoped to readback only.",
+  "local_regressions": "previous candidate local 4/4 PASS; native hosted CI PENDING",
+  "safety": {
+    "main_mutated": false,
+    "gemini_operational_hold": "PRESERVED",
+    "roblox_publish_authorized": false,
+    "workflow_dispatch_executed": false,
+    "independent_review": "PENDING",
+    "protected_draft": true,
+    "spending_changes": false
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "C09037",
+  "date": "2026-11-02",
+  "kind": "PROTECTED_PR163_ENV_PROXY_TRANSPORT_GREEN_CANDIDATE",
+  "issue": 57,
+  "pr": 163,
+  "base_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "claim_commit": "6a61ec3355d43df049ea968246fb5edcebda404a",
+    "owner_run_id": "a1b6c043-3956-4b2d-811b-08f922756d01",
+    "epoch": 391
+  },
+  "previous_pr_head": "f95cc84dacb772e8d6732f7683045f1b4d8a4310",
+  "red": {
+    "run_id": 41361156968,
+    "head": "f95cc84dacb772e8d6732f7683045f1b4d8a4310",
+    "offline": "failure",
+    "compile_hold": "success",
+    "python_tests": 921,
+    "expected_failure_count": 2,
+    "assertions": [
+      "test_all_proxy_is_not_inherited",
+      "test_uppercase_and_lowercase_https_proxy_are_not_inherited"
+    ]
+  },
+  "fix": {
+    "path": "tools/system_actions_write_probe.py",
+    "previous_blob": "2f321ba6b6ba0a7cc9917171721e0d87c5c92d88",
+    "expression_before": "else request.build_opener(_RejectRedirects()).open)",
+    "expression_after": "else request.build_opener(request.ProxyHandler({}), _RejectRedirects()).open)"
+  },
+  "green": {
+    "status": "PENDING_ACTUAL_EXACT_HEAD_GITHUB_CI"
+  },
+  "authority": {
+    "approve": false,
+    "merge": false,
+    "dispatch": false,
+    "publish": false,
+    "spend": false
+  },
+  "roblox_engine": "NOT_RUN",
+  "notes": "No original real GitHub token, proxy leak, workflow_dispatch or unattended writer has been exercised; only CI offline regressions."
+}

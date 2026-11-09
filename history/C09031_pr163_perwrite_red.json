@@ -1,0 +1,24 @@
+{
+  "id": "C09031",
+  "date": "2026-10-31",
+  "kind": "PR163_PER_WRITE_LEASE_FENCE_TEST_FIRST_RED",
+  "issue": 57,
+  "pr": 163,
+  "base_main": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "pr_head_before": "00807f26eed840e15926e9940013570255cb2156",
+  "coordination": {
+    "branch": "twf-repair-coordinator",
+    "epoch": 340,
+    "owner_run_id": "473ba135-4cdb-4e5c-8f96-08e734c698da",
+    "claim_commit": "0f9cadedcc089162ef7a4a316f2b1898df993a6b"
+  },
+  "status": "RED_SOURCE_EXPECTED_MISSING",
+  "tests": "14 OFFLINE negative and positive controls; actual GitHub CI pending",
+  "prohibited": [
+    "no live provider call",
+    "no Roblox execution",
+    "no main mutation",
+    "no merge"
+  ],
+  "followup": "Implement per-write control ref/owner/epoch/main recheck in existing PR163 only"
+}

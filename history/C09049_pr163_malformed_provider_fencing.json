@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "id": "C09049",
+  "date_utc": "2026-11-06",
+  "kind": "GITHUB_ACTIONS_PROBE_MALFORMED_PROVIDER_READ_FAIL_CLOSED",
+  "pr": 163,
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "coordinator": {
+    "epoch": 454,
+    "owner_id": "e79b1204-af80-4114-af4e-7cc30a12d5e6",
+    "claim_commit": "d4e9db1bfaffb9ab69da6244817d7a35457c3dc7",
+    "work_branch": "controller/actions-write-pilot-8df31af2"
+  },
+  "red": {
+    "head": "d677e0ad8279cc385ebd671cb7242d0374c9558f",
+    "run_id": 42139956675,
+    "offline_result": "FAILURE",
+    "compile_hold_result": "SUCCESS",
+    "python_total": 964,
+    "errors": 18
+  },
+  "source": {
+    "path": "tools/system_actions_write_probe.py",
+    "before_blob": "f06365a1905ac014e1d84425378a51a448207402",
+    "after_blob": "3d354ecaee36c50a49f4263e8a47a91a8c99f8bb",
+    "before_bytes": 23698,
+    "after_bytes": 24069,
+    "delta_bytes": 371
+  },
+  "test": "tests/test_system_actions_write_probe_provider_shapes.py",
+  "cases": 5,
+  "improvements": [
+    "reject nonobject nested GitHub run identity records before auth field comparison",
+    "reject null/string/list Git ref object as REF_INVALID",
+    "reject malformed coordinator base64 or nonstring content as STATE_INVALID",
+    "reject missing Git commit tree before CAS mutation as CONTROL_TREE_INVALID"
+  ],
+  "result": "AWAIT_EXACT_HEAD_GREEN",
+  "did_not_change": [
+    "workflow permissions",
+    "source write budget",
+    "run actor requirements",
+    "lease fencing",
+    "host security refusal",
+    "main",
+    "billing",
+    "Roblox publication"
+  ],
+  "live_write_proof": false,
+  "independent_native_review": false
+}

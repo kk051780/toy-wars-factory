@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "id": "C09048",
+  "date_utc": "2026-11-05",
+  "kind": "GHA_BRANCH_ONLY_FORBID_THIRD_SOURCE_MUTATION_GREEN",
+  "pr": 163,
+  "issue": 57,
+  "epoch": 450,
+  "owner_id": "0a807dfe-05ab-4e93-ab0a-982164d54d3c",
+  "claim_commit": "9f7d257957286c3b01a43b56d2dfe4915dfc6b1a",
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "red_commit": "c3769ac068dc5851f70cfdf26581c338f2318e82",
+  "red_run_id": 42025842376,
+  "red_evidence": "959 tests; 2 new failures exactly branch-only canonical POST /pulls permitted",
+  "source_path": "tools/system_actions_write_probe.py",
+  "old_source_blob": "0e3e0881b42c735089736836dba6e500ad3df526",
+  "new_semantics": "branch_only: two source mutations only; old DRAFT_PR: three exactly typed mutations",
+  "new_tests": [
+    "test_branch_only_fence_rejects_pr_creation_even_with_canonical_body",
+    "test_branch_only_fence_gets_do_not_unlock_third_write"
+  ],
+  "original_mode_unchanged": true,
+  "permission_changes": false,
+  "merge": false,
+  "publish": false,
+  "incremental_spend_yen": 0,
+  "green_run": "PENDING"
+}

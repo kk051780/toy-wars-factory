@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "id": "C09052",
+  "date_utc": "2026-11-07",
+  "kind": "PR163_GITHUB_LIVE_RUN_NUMERIC_TYPE_AND_JSON_NONFINITE_FAIL_CLOSED",
+  "pr_number": 163,
+  "main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
+  "previous_head": "00bcdda0023950801a0256a17e251780d5b3ebac",
+  "coordinator": {
+    "epoch": 475,
+    "owner_id": "e585e97a-927d-4dab-bf71-e36d8a5af74c",
+    "claim_commit": "e3c5e436ff825e1c9d52df10239658bf2e89b64c",
+    "work_branch": "controller/actions-write-pilot-8df31af2"
+  },
+  "changed_files": [
+    {
+      "path": "tools/system_actions_write_probe.py",
+      "before_blob": "241462909a22c3b243359fdd3b0b75163b7ff1ea",
+      "after_blob": "b0e66b0ae064e367e63a970f2942fbc62b478f15",
+      "before_bytes": 24449,
+      "after_bytes": 24909,
+      "delta_bytes": 460
+    },
+    {
+      "path": "tests/test_system_actions_write_probe_provider_shapes.py",
+      "before_blob": "2fa8c0386597d8bafd58d34538656602e990b6f3",
+      "after_blob": "a03ab4583f2050ebfd87394e0e600626cd5f27e3",
+      "before_bytes": 4918,
+      "after_bytes": 7481,
+      "delta_bytes": 2563
+    }
+  ],
+  "added_regression_methods": 3,
+  "adversarial_inputs": [
+    "live run id float or bool",
+    "live run attempt float or bool including True == 1 pitfall",
+    "live repository id float or bool",
+    "GitHub REST JSON NaN Infinity -Infinity",
+    "base64 coordinator JSON NaN Infinity -Infinity"
+  ],
+  "effects": [
+    "strict type int for hosted run id, attempt and repository id",
+    "reject JSON nonfinite constants at all nesting depths"
+  ],
+  "preserved": [
+    "run/actor/ref/consent exact equality",
+    "BRANCH_ONLY two source mutation limit",
+    "CAS claim and same-epoch release",
+    "no token/permissions policy change",
+    "no scheduling",
+    "no main merge",
+    "no Roblox publishing",
+    "zero incremental spend"
+  ],
+  "test_status": "AWAIT_EXACT_HEAD_GITHUB_CI",
+  "independent_native_review": false,
+  "main_merged": false,
+  "actual_actions_writer_run": false,
+  "roblox_engine_verified": false,
+  "new_paid_spend": 0
+}

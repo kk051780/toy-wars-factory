@@ -1,0 +1,40 @@
+name: TOY WARS owner-manual isolated BRANCH-only write capability probe
+on:
+  workflow_dispatch:
+    inputs:
+      approval_phrase:
+        description: Owner consent for one branch plus one inert JSON file, NO PR
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: twf-owner-manual-branch-only-write-capability
+  cancel-in-progress: false
+jobs:
+  isolated_branch:
+    if: >-
+      github.repository == 'kk051780/toy-wars-factory' &&
+      github.actor == 'kk051780' &&
+      github.triggering_actor == 'kk051780' &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'workflow_dispatch' &&
+      inputs.approval_phrase == 'I_AUTHORIZE_ISOLATED_BRANCH_ONLY'
+    permissions:
+      contents: write
+      actions: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Exact accepted-main checkout without cached credentials
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: One isolated branch and inert probe file; never a PR or main commit
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PROBE_CONSENT: ${{ inputs.approval_phrase }}
+          PROBE_MODE: BRANCH_ONLY
+        run: |
+          python3 tools/system_actions_write_probe.py
