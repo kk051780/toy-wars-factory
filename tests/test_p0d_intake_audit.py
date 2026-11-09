@@ -41,7 +41,7 @@ def build_fixture(p):
 class RegistryTest(unittest.TestCase):
     def test_current_registry_is_valid(self):
         summary=m.validate_registry(load())
-        self.assertEqual(summary['packets'],12)
+        self.assertEqual(summary['packets'],14)
         self.assertEqual(summary['candidate_features'],17)
         self.assertEqual(summary['github_reference_features'],12)
         self.assertEqual(summary['pc_restored_verified'],0)
@@ -52,12 +52,14 @@ class RegistryTest(unittest.TestCase):
         self.assertEqual(d['remote_verification']['status'],'NOT_RUN_THIS_COMMAND')
     def test_identical_paths_different_commits_allowed(self):
         d=load()
-        metrics,cosmetic=d['sealed_packets'][-2:]
+        metrics=next(p for p in d['sealed_packets'] if p['packet_id']=='P0D-D17-PRIVACY-METRICS-20261110-A')
+        cosmetic=next(p for p in d['sealed_packets'] if p['packet_id']=='P0D-D17-COSMETIC-CATALOG-20261110-01')
         self.assertEqual(metrics['envelope_path'],cosmetic['envelope_path'])
         self.assertNotEqual(metrics['commit'],cosmetic['commit'])
         m.validate_registry(d)
     def test_same_commit_path_duplicate_rejected(self):
         d=load(); d['sealed_packets'][-1]['commit']=d['sealed_packets'][-2]['commit']
+        d['sealed_packets'][-1]['envelope_path']=d['sealed_packets'][-2]['envelope_path']
         with self.assertRaisesRegex(m.AuditError,'SAME_COMMIT_PATH_REUSED'):
             m.validate_registry(d)
     def test_duplicate_packet_rejected(self):
