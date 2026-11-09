@@ -88,7 +88,7 @@ class IntegrityTests(unittest.TestCase):
         self.pinpatch.start()
         self.addCleanup(self.pinpatch.stop)
     def verdict(self):
-        return v.check(self.doc,self.art)
+        return v.check(self.doc,self.art,expected_head=v.HEAD)
     def rejected(self,reason):
         result=self.verdict()
         self.assertEqual(result['status'],'REJECTED',result)
@@ -163,6 +163,21 @@ class IntegrityTests(unittest.TestCase):
     def test_stale_head(self):
         self.doc['head_sha']='0'*40
         self.rejected('head_mismatch')
+    def test_current_pr_head_can_differ_from_source_pin_when_verified_externally(self):
+        new_head='d8b5540b125d5db439e7e1584b67fff838c5e137'
+        self.doc['head_sha']=new_head
+        result=v.check(self.doc,self.art,expected_head=new_head)
+        self.assertEqual(result['status'],'ARTIFACT_BYTES_MATCH_UNATTESTED')
+        self.assertFalse(result['engine_verified'])
+    def test_current_pr_head_must_match_external_pinned_value(self):
+        self.doc['head_sha']='d8b5540b125d5db439e7e1584b67fff838c5e137'
+        self.assertIn('head_mismatch',v.check(self.doc,self.art,expected_head=v.HEAD)['failures'])
+    def test_invalid_external_head_rejected(self):
+        self.doc['head_sha']='G'*40
+        self.assertIn('head_mismatch',v.check(self.doc,self.art,expected_head='G'*40)['failures'])
+    def test_unverified_expected_head_cannot_be_omitted(self):
+        with self.assertRaises(TypeError):
+            v.check(self.doc,self.art)
     def test_different_expected_head_arg(self):
         r=v.check(self.doc,self.art,expected_head='0'*40)
         self.assertIn('head_mismatch',r['failures'])
@@ -247,7 +262,7 @@ class IntegrityTests(unittest.TestCase):
             (folder/'receipt.json').write_text(json.dumps(self.doc),encoding='utf8')
             argv=['validate_receipt.py',str(folder/'receipt.json'),'--console',str(folder/'log.txt'),
                   '--screenshot',str(folder/'screen.png'),'--place-xml',str(folder/TEST_PLACE),
-                  '--mcp-trace',str(folder/'mcp.json')]
+                  '--mcp-trace',str(folder/'mcp.json'),'--expected-head',v.HEAD]
             with patch('sys.argv',argv),patch('sys.stdout',new_callable=io.StringIO) as std:
                 self.assertEqual(v.main(),0)
             result=json.loads(std.getvalue())
@@ -263,7 +278,7 @@ class IntegrityTests(unittest.TestCase):
             (folder/'receipt.json').write_text(json.dumps(self.doc),encoding='utf8')
             argv=['validate_receipt.py',str(folder/'receipt.json'),'--console',str(folder/'log.txt'),
                   '--screenshot',str(folder/'screen.png'),'--place-xml',str(folder/TEST_PLACE),
-                  '--mcp-trace',str(folder/'mcp.json')]
+                  '--mcp-trace',str(folder/'mcp.json'),'--expected-head',v.HEAD]
             with patch('sys.argv',argv),patch('sys.stdout',new_callable=io.StringIO) as std:
                 self.assertEqual(v.main(),1)
             self.assertIn('fixture_only_or_unknown',std.getvalue())
@@ -273,7 +288,7 @@ class IntegrityTests(unittest.TestCase):
             path=folder/'receipt.json'
             path.write_text('{',encoding='utf8')
             argv=['validate_receipt.py',str(path),'--console',str(path),
-                  '--screenshot',str(path),'--place-xml',str(path),'--mcp-trace',str(path)]
+                  '--screenshot',str(path),'--place-xml',str(path),'--mcp-trace',str(path),'--expected-head',v.HEAD]
             with patch('sys.argv',argv),patch('sys.stdout',new_callable=io.StringIO) as std:
                 self.assertEqual(v.main(),1)
             self.assertIn('files_unreadable_or_invalid',std.getvalue())
