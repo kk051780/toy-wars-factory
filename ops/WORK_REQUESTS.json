@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-08T21:26:11.857Z",
+  "observed_at": "2026-11-09T01:05:59.251Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5722,15 +5722,15 @@
       "repository": "kk051780/toy-wars-factory",
       "issue": 204,
       "pr": 209,
-      "head": "bd78ae0a3bef6a35d5be5726fdb3a93fc9a46e90",
+      "head": "caf594ace56149eb6ffb65e10c186e9d7a996d76",
       "branch": "controller/p0b-pr208-progressmode-lifecycle-20261108",
       "base_pr": 208,
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "review_packet_path": "ops/review_packets/PR209_r4_hud_2races_epoch543.json",
+      "review_packet_path": "ops/review_packets/PR209_r9_receipt_head_epoch569.json",
       "source_owner_epoch": 543,
       "source_owner_id": "d73ce86f-75df-4700-82e9-26f4c45e1628",
       "draft": true,
-      "ci_run_id": 42454017149,
+      "ci_run_id": 42543539929,
       "ci_jobs": {
         "offline": "success",
         "compile_hold": "success"
@@ -5738,28 +5738,43 @@
       "hud_lua_cases": 17,
       "preview_lua_cases": 17,
       "added_cases": 5,
-      "changed_files": 7,
+      "changed_files": 14,
       "changed_paths": [
+        "docs/P0B_ENGINE_RECEIPT.md",
+        "history/C98843_p0b_progressmode_removed_duplicate.json",
         "history/C98844_p0b_r4_hud_rename_detached.json",
         "history/R3_20261108_PR209_HUD_2RACES_LOCAL.json",
         "src/ToyWarsHUD.client.lua",
         "tests/auto/studio_preview_hud_replication_spec.lua",
+        "tests/test_p0b_engine_receipt.py",
+        "tests/test_p0b_source_pin_integration.py",
         "tests/test_system_xml_artifact_export.py",
         "tools/export_accepted_rbxlx.py",
+        "tools/p0b_engine_receipt/mcp_trace_template.json",
+        "tools/p0b_engine_receipt/receipt_template.json",
+        "tools/p0b_engine_receipt/validate_receipt.py",
         "tools/run_r3_local_qa.py"
       ],
       "independent_reviewed": false,
       "main_merged": false,
       "engine_verified": false,
       "additional_spend_jpy": 0,
-      "review_request": "Dedicated P0-B independent REVIEWER: inspect exact PR209 HEAD bd78ae0a3bef6a35d5be5726fdb3a93fc9a46e90, actual diff, source/pin/C98844 ledger and Ubuntu CI 42454017149 logs. Re-evaluate Sourcery discussion_r4505066053 and discussion_r4505066055, including rename-in/out, detached/renamed queued Changed before child/property notifications, parent/reparent, duplicate ambiguity, bounded event connections and removal/replacement. Confirm XML31 including symlink negatives, HUD17, preview17. Review-only; preserve DRAFT/HOLD, NO merge/main write/Roblox publish. Do not equate CI with independent approval or engine validation.",
+      "review_request": "Dedicated P0-B registered independent REVIEWER: reGET PR209 head caf594ace56149eb6ffb65e10c186e9d7a996d76, base PR208 206c83674d0258b36771b9ceedadb6be30485035, actual 14-file diff and Actions run42543539929 offline/compile_hold success, Python968. Audit unchanged HUD/C98844 races and NEW tools/p0b_engine_receipt/validate_receipt.py source 4 blob pin, XML 10 Item + property allowlist, actual bytes SHA256/PNG CRC/console/MCP event chronology, 40 synthetic unit cases + 1 real exporter source contract. Inspect HEAD distinction: source-pin HEAD bd78ae0a3bef6a35d5be5726fdb3a93fc9a46e90 is NOT candidate PR HEAD; --expected-head required and must be externally reGET/attested (offline verifier itself can't authenticate). Assert no bypass via spoofed user receipt, fixture_only, fake console/images or producer. No merge/main, no Studio execution/publish, no claim of Windows auth / zero datastore writes. All parent PRs remain DRAFT/HOLD.",
       "next_actor": "DEDICATED_P0B_INDEPENDENT_REVIEWER;THEN_PROTECTED_CANDIDATE_MAIN_REVIEW_AND_OWNER_WINDOWS_STUDIO_PLAYTEST",
       "created_at": "2026-11-08T04:30:28.507Z",
-      "updated_at": "2026-11-08T06:17:58Z",
-      "previous_head": "35b482e49841710db1b178e87129c3fca2c2e117",
+      "updated_at": "2026-11-09T01:05:59.251Z",
+      "previous_head": "bd78ae0a3bef6a35d5be5726fdb3a93fc9a46e90",
       "previous_review_packet_path": "ops/review_packets/PR209_p0b_progressmode_lifecycle_epoch535.json",
-      "python_tests": 927,
-      "xml_python_tests": 31
+      "python_tests": 968,
+      "xml_python_tests": 31,
+      "p0b_receipt_synthetic_cases": 40,
+      "p0b_receipt_real_source_contract_cases": 1,
+      "r9_claim_epoch": 569,
+      "r9_claim_owner_id": "8b3ee728-0cb6-4af4-9f41-2eaf8c61209d",
+      "r9_author_commits": [
+        "d8b5540b125d5db439e7e1584b67fff838c5e137",
+        "caf594ace56149eb6ffb65e10c186e9d7a996d76"
+      ]
     },
     {
       "id": "P0_ISSUE123_PR210_SOURCE_PROBE_SCOPE_HARDENING_20261108",
