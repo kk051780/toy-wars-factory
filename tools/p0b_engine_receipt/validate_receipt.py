@@ -143,6 +143,9 @@ def verify_xml_bytes(raw: bytes) -> list[str]:
         for field in ps[0]:
             if set(field.attrib) != {'name'}:
                 errors.append('xml_unexpected_property')
+            # Reject nested XML even when the Name/Source text and blob pin match.
+            if len(field) != 0:
+                errors.append('xml_unexpected_nested_property_element')
             actual_fields.add((field.tag, field.get('name')))
         if actual_fields != expected_fields or len(ps[0]) != len(expected_fields):
             errors.append('xml_unexpected_property')
