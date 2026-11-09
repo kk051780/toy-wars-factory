@@ -2129,17 +2129,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 572,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "b5a2a970-9321-48c8-9456-e2a11b43d3d0",
-    "task_id": null,
-    "epoch": 572,
-    "acquired_at": "2026-11-09T01:27:41.927Z",
-    "expires_at": "2026-11-09T01:52:41.927Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0b-pr208-progressmode-lifecycle-20261108",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -4438,6 +4428,30 @@
       "market_auto_polling_enabled": false,
       "service_terminal_proof": false,
       "released_at": "2026-11-09T01:10:41.951Z"
+    },
+    {
+      "kind": "CONTROLLER_P0B_PR209_R11_XML_NESTED_PROPERTY_HARDENING_CI_SUCCESS",
+      "work_id": "P0B_R11_PR209_NESTED_XML_GUARD_20261109",
+      "epoch": 572,
+      "owner_id": "b5a2a970-9321-48c8-9456-e2a11b43d3d0",
+      "claim_commit": "0465bcc683db9b12ab6421feb76c68dee1b2a182",
+      "head": "a0823ec000e9805eee3598ec376f9833f97123c9",
+      "pr": 209,
+      "issue": 204,
+      "ci_run": 42545809911,
+      "ci_offline": "success",
+      "ci_compile_hold": "success",
+      "python_tests": 970,
+      "negative_cases_added": 2,
+      "source_lua_changed": false,
+      "review_packet_path": "ops/review_packets/PR209_r11_xml_nested_epoch572.json",
+      "independent_review": false,
+      "main_merged": false,
+      "engine_verified": false,
+      "service_terminal_proof": false,
+      "roblox_published": false,
+      "additional_spend_jpy": 0,
+      "released_at": "2026-11-09T01:31:25.993Z"
     }
   ]
 }
