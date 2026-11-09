@@ -27,6 +27,11 @@ class TestRollup(unittest.TestCase):
     def test_feature_and_packet_counts(self):
         s=m.summarize(fixture())
         self.assertEqual((s['indexed_sealed_packets'],s['github_reference_feature_groups'],s['candidate_features_in_all_known_groups'],s['total_known_feature_groups']),(3,2,7,18))
+    def test_delivered_design_still_no_game_code(self):
+        d=fixture();d['new_design_feature_items'][0]['status']='DESIGN_ARTIFACT_DELIVERED_NO_GAME_CODE'
+        s=m.summarize(d)
+        self.assertEqual(s['new_design_artifact_delivered_groups'],1)
+        self.assertEqual(s['candidate_features_in_all_known_groups'],7)
     def test_baseline_fixed(self):
         d=fixture();d['baseline_feature_ids'].append('D18')
         with self.assertRaisesRegex(m.ProgressError,'BASELINE_CHANGED'):m.summarize(d)
