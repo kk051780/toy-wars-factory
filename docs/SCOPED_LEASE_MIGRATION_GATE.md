@@ -199,3 +199,32 @@ PR-controlled until reviewed/integrated. This pin is NOT equivalent to
 a protected-base workflow, independent native review or host write grant.
 Production merge/2-writer activation remain HOLD; no new paid service,
 schedule, `pull_request_target`, write token or Roblox publish.
+
+
+## P0-A PR210 follow-on: OWNER GHA BRANCH_ONLY shared reservation candidate (2026-11-09)
+
+A protected stacked candidate, not main or an active writer. This extends the *existing*
+`pending_source_action` coordinator key with an **exact**
+`OWNER_GHA_BRANCH_PROBE` record (owner-manual GitHub Actions run ID and attempt 1,
+repository `kk051780/toy-wars-factory`, deterministic `controller/gha-write-probe-<run>-a1`
+branch and `ops/probes/gha-write-<run>-a1.json` file, single fixed work ID,
+original CONTROLLER owner/epoch and exact main SHA). The predecessor
+`SOURCE_UPDATE_PROBE` strict PR203 history-file schema is unchanged.
+
+`tools/repair_gha_probe_reservation.py` can **only propose** a CAS state; it never
+sends GitHub mutation, invokes a registered ChatGPT worker, performs CAS, or grants
+permission. Its result always returns `may_write=false`, `may_merge=false`,
+`may_dispatch=false`, `may_release=false`, and `provider_authenticated=false`.
+The candidate `repair_control.scoped_lease_migration_block` treats a valid
+record as a hard block for new workers even after the holder expires; its
+`owns` and `release` remain fail-closed until authenticated terminal
+settlement. Invalid records fail closed, never broaden allowed branch/file/mode.
+
+**Still missing**: trusted main rollout and old-runner drain, an authenticated
+GitHub Actions original-run binding, CAS reservation readback *before each source
+mutation*, one-action provider-dispatch commitment, actual terminal GitHub
+ref/PR reconciliation, and tightly scoped CAS clearance. The current
+`PENDING_SOURCE_DISPATCH` record is deliberately permanent HOLD until that
+trusted integration exists. Neither PR203 nor PR210 is allowed to merge or
+dispatch solely because the offline tests pass. No `SCOPED_ACTIVE`, main direct
+write, extra token permissions, Robox publish, or two-writer enablement.

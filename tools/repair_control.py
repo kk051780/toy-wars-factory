@@ -71,6 +71,50 @@ def initial_state(packet=None):
 
 
 
+
+def _validate_owner_gha_probe_action(state, action):
+    """Validate one precisely scoped, non-authorizing owner-manual BRANCH_ONLY hold.
+
+    This records a planned source action, NOT permission to execute one.
+    The trusted host must authenticate actual GitHub run, coordinator CAS,
+    provider terminal result and reconciliation before any mutation.
+    """
+    required = {"schema", "operation_id", "kind", "repository", "work_branch",
+                "work_id", "source_path", "main_head", "owner_id",
+                "owner_epoch", "reserved_at", "run_id", "run_attempt",
+                "mode", "phase"}
+    if type(action) is not dict or set(action) != required:
+        raise ValueError("malformed owner GHA action")
+    if (type(action["schema"]) is not int or action["schema"] != 1 or
+            action["kind"] != "OWNER_GHA_BRANCH_PROBE" or
+            action["repository"] != "kk051780/toy-wars-factory" or
+            action["work_id"] != "P0_ISSUE57_PR163_OWNER_GHA_BRANCH_ONLY_PROBE" or
+            action["mode"] != "BRANCH_ONLY" or
+            action["phase"] != "PENDING_SOURCE_DISPATCH"):
+        raise ValueError("wrong owner GHA probe scope or phase")
+    canonical_id(action["operation_id"])
+    canonical_id(action["owner_id"])
+    run, attempt = action["run_id"], action["run_attempt"]
+    if (type(run) is not int or run <= 0 or run > 9223372036854775807 or
+            type(attempt) is not int or attempt != 1 or
+            type(action["owner_epoch"]) is not int or
+            type(action["main_head"]) is not str or
+            not re.fullmatch(r"[0-9a-f]{40}", action["main_head"]) or
+            action["work_branch"] != f"controller/gha-write-probe-{run}-a{attempt}" or
+            action["source_path"] != f"ops/probes/gha-write-{run}-a{attempt}.json"):
+        raise ValueError("owner GHA source path or run mismatch")
+    holder = state.get("holder")
+    if (type(holder) is not dict or holder.get("kind") != "CONTROLLER" or
+            holder.get("task_id") is not None or
+            holder.get("owner_id") != action["owner_id"] or
+            holder.get("epoch") != action["owner_epoch"] or
+            holder.get("work_branch") != action["work_branch"] or
+            holder.get("base_main_sha") != action["main_head"] or
+            instant(action["reserved_at"]) < instant(holder["acquired_at"]) or
+            instant(action["reserved_at"]) >= instant(holder["expires_at"])):
+        raise ValueError("owner GHA action has no matching controller")
+
+
 def scoped_lease_migration_block(state):
     """Stop legacy acquisition while a v2 scoped writer exists.
 
@@ -122,6 +166,10 @@ def scoped_lease_migration_block(state):
     # The record cannot be removed by expiry; it excludes any legacy/scoped
     # admission and locks the original CONTROLLER holder until Git readback.
     source_action = state.get("pending_source_action")
+    if type(source_action) is dict and source_action.get("kind") == "OWNER_GHA_BRANCH_PROBE":
+        _validate_owner_gha_probe_action(state, source_action)
+        blocked = True
+        source_action = None  # validated alternate kind; preserve state for release() denial
     if source_action is not None:
         expected = {"schema", "operation_id", "kind", "repository", "work_branch",
                     "work_id", "source_path", "before_head", "after_head",
