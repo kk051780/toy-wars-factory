@@ -9,7 +9,7 @@ The 12 original packet entries were source-checked by the earlier pinned registr
 - D16 glide: `P0D-D16-GLIDE-AUTH-20261110-04` at `c3de5d94eae25e566bdf29452ed1980dae35909d`, ZIP SHA `872e8f9ec5ef38535ee3b295bf301a612e2063835e85cae67ab87bb370aee2cc` (reference permission FSM, **not actual gliding physics**).
 - D07 Gorogan: `P0D-D07-GOROGAN-VISUAL-20261110-01` at `5128e288c7bd119a470c253a9792f4d829c569ec`, ZIP SHA `7d6bb8f1cc31348c8461d0b5e0381a62a02eb3aad888be9789fbd78d992ff917` (model + warning *reference*, **not true boss AI or damage**).
 
-Existing D16 has four separate packets; D17 has two. Never treat packet count as a count of completed features. D18 is a new **design-only** collectibles scope and **not** part of the original 17-feature baseline. It is not commercial source or a deliverable gameplay model.
+Existing D16 has four separate packets; D17 has two. Never treat packet count as a count of completed features. D18 is a new **design-only** collectibles scope and **not** part of the original 17-feature baseline. Another chat delivered a private draft with 648 textual catalog entries, 72 story cards and a public hash manifest at commit `275695238e1278e8fb9e60e82af4b574f2f2dcb6`; the private ZIP was **not uploaded to the public repository**. There are no 648 3D models or playable character assets. D18 increases known scope to 18 but not gameplay-code candidate count.
 
 ## Read-only commands (only when OWNER asks Windows Codex)
 
@@ -28,6 +28,6 @@ The `--output` flag **refuses to overwrite** existing evidence. The progress rol
 
 ## Evidence limits
 
-- New progress rollup unit tests: 18/18 PASS offline on this ChatGPT container. Existing intake v1 suite updated to 14-packet assumptions; its actual execution after this update is not independently shown by the 18 new tests.
+- New progress rollup unit tests: 19/19 PASS offline on this ChatGPT container. Existing intake v1 suite updated to 14-packet assumptions; its actual execution after this update is not independently shown by the 18 new tests.
 - No Lua parser or Studio QA was run. Windows restores remain 0/14 **verified by GitHub evidence**, not proof that a PC user has never privately restored.
 - This status is a snapshot as of 2026-11-10. A newer GitHub claim or genuine PC result supersedes it after verification.
