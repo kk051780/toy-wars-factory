@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "work_id": "P0B_REMOTE_R3_20261108_PR209_HUD_2RACES_LOCAL_A",
+  "result": "BLOCKED_XML_SYMLINK_PRIVILEGE",
+  "local_fix_implemented": true,
+  "parent_pr": 209,
+  "base_head": "35b482e49841710db1b178e87129c3fca2c2e117",
+  "source_commit": "37c0a06bffe5d3c47aabaa780fd514432d212a75",
+  "branch": "codex/r3-pr209-hud-2races-20261108",
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_blob": "c48743468682b2f9808520cc5db8d435410cb11b",
+      "after_blob": "ffd2c9db01f70605e87f25cee3b2c50372202fb8",
+      "before_bytes": 15944,
+      "after_bytes": 17143,
+      "delta_bytes": 1199,
+      "reduction_rationale": "Removed stale value-only refresh and name-filtered child handlers; replaced with bounded identity watchers and detached callback rescan; no feature removed."
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1735,
+    "lua_bytes": 78120
+  },
+  "regressions": {
+    "red_hud": {
+      "passed": 12,
+      "failed": 5
+    },
+    "green_hud": 17,
+    "green_preview": 17,
+    "green_progression": 89,
+    "lua_spec_files": 19,
+    "python_installer_passed": 3,
+    "python_xml_passed": 29,
+    "python_xml_errors": 2
+  },
+  "blockers": [
+    "test_source_symlink_fails: Windows WinError 1314, reproduced outside sandbox",
+    "test_symlinked_qa_directory_refused: Windows WinError 1314, reproduced outside sandbox"
+  ],
+  "test_commands": [
+    "PYTHONPATH=.r3-runtime python -B tools/run_r3_local_qa.py (lupa 2.8 Lua 5.4)",
+    "python -B -m unittest discover -s tests -p test_system_xml_artifact_export.py -v",
+    "python -B -m unittest discover -s tests -p test_p0b_integrated_preview_installer.py -v"
+  ],
+  "installer_manifest_generated_in_temporary_directory": {
+    "balance": "569cd960c2e7d7fbc9db8f003f58128f3cf4b4e74b2fc448399afb9d98c5a693",
+    "server": "6c22e560f86ace5c2c425bcdbb0978632b9e759ba984c7dd6d331fde72afbf7f",
+    "hud": "6e336e68ffc9eca240b9f3ed3c78bbf8f2d2004691275bfa8da4f4e3306a71bf",
+    "smoke": "4da6ddb7630e29c5b51f3dd049d6743949df9cea5071471a8a7d34838391f8f7",
+    "installer_sha256": "958f093bd1a989682980d6320b51a97bbb896587ff3b2fef3242261289bd6888"
+  },
+  "protected_directories_written": false,
+  "characters_touched": [],
+  "shared_cas_mutated": false,
+  "github_code_pushed": false,
+  "main_changed": false,
+  "engine_verified": false,
+  "independent_review": false,
+  "next": "Run the unchanged 31 XML tests on an authorized symlink-capable runner; transfer these local commits to existing protected PR209 only under a separate exact-head CAS/review authorization."
+}

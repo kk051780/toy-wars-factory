@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "id": "C98843",
+  "kind": "P0B_STUDIO_PREVIEW_PROGRESS_MODE_REMOVE_DUPLICATE_REPLICATION_FAIL_CLOSED",
+  "repository": "kk051780/toy-wars-factory",
+  "date_utc": "2026-11-08",
+  "issue": 204,
+  "parent_pr": 208,
+  "base_head": "206c83674d0258b36771b9ceedadb6be30485035",
+  "branch": "controller/p0b-pr208-progressmode-lifecycle-20261108",
+  "source_commit": "fbbb1d0b31f63e1fa22b63a8ce7a1739521b0c1e",
+  "reviewer_advisory_comment": 6717204320,
+  "coordination": {
+    "kind": "CONTROLLER",
+    "epoch": 535,
+    "owner_id": "c64dbe42-4260-4e38-94c0-c295b8346a48"
+  },
+  "source_changes": [
+    {
+      "path": "src/ToyWarsHUD.client.lua",
+      "before_blob": "290c9b71c45d8fcbb2a3e7dfcb0581fdaeef2e81",
+      "after_blob": "c48743468682b2f9808520cc5db8d435410cb11b",
+      "before_bytes": 14718,
+      "after_bytes": 15944,
+      "delta_bytes": 1226
+    }
+  ],
+  "source_metrics": {
+    "lua_files": 4,
+    "lua_lines": 1705,
+    "lua_bytes": 76921
+  },
+  "change": "Treat missing/duplicate/malformed ProgressMode as save-unverified; rescan GetChildren on ChildAdded and ChildRemoved after registering event handlers, ignore Changed from replaced/deleted StringValues.",
+  "new_lua_mock_cases": 5,
+  "existing_cases_preserved": 7,
+  "all_lua_mock_cases": 12,
+  "windows_installer_lf_compatibility_preserved": true,
+  "main_merged": false,
+  "engine_play_verified": false,
+  "independent_review": false,
+  "roblox_published": false,
+  "extra_spend_jpy": 0
+}

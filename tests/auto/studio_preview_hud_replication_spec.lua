@@ -3,16 +3,37 @@
 local path="src/ToyWarsHUD.client.lua"
 local passed,failed=0,0
 local function signal()
-    local s={listeners={}}
-    function s:Connect(fn) self.listeners[#self.listeners+1]=fn end
+    local s={listeners={},active=0}
+    function s:Connect(fn)
+        local connection={connected=true}
+        self.active=self.active+1
+        function connection:Disconnect()
+            if self.connected then s.active=s.active-1;self.connected=false end
+        end
+        self.listeners[#self.listeners+1]=function(...)
+            if connection.connected then fn(...) end
+        end
+        return connection
+    end
     function s:Fire(...) for _,fn in ipairs(self.listeners) do fn(...) end end
     return s
 end
 local function instance(class,value)
-    local o={ClassName=class,Value=value,_children={},
-             Changed=signal(),ChildAdded=signal(),Activated=signal()}
+    local o={ClassName=class,Value=value,_children={},_extraChildren={},
+             Changed=signal(),ChildAdded=signal(),ChildRemoved=signal(),Activated=signal()}
     function o:WaitForChild(name) return assert(self._children[name],"missing "..name) end
     function o:FindFirstChild(name) return self._children[name] end
+    o._properties={}
+    function o:GetPropertyChangedSignal(name)
+        self._properties[name]=self._properties[name] or signal()
+        return self._properties[name]
+    end
+    function o:GetChildren()
+        local result={}
+        for _,v in pairs(self._children) do result[#result+1]=v end
+        for _,v in ipairs(self._extraChildren) do result[#result+1]=v end
+        return result
+    end
     return o
 end
 local function tuple(...) return {...} end
@@ -31,6 +52,7 @@ local function setup(initialMode)
     if initialMode then
         local m=instance("StringValue",initialMode)
         m.Name="ProgressMode"
+        m.Parent=status
         status._children.ProgressMode=m
     end
     local mod=instance("ModuleScript")
@@ -56,11 +78,37 @@ local function setup(initialMode)
     local function arrive(mode)
         local m=instance("StringValue",mode)
         m.Name="ProgressMode"
+        m.Parent=status
         status._children.ProgressMode=m
         status.ChildAdded:Fire(m)
         return m
     end
-    return notice,arrive,status
+    local function removeMode(mode)
+        local removed=false
+        if status._children.ProgressMode==mode then
+            status._children.ProgressMode=nil
+            removed=true
+        end
+        for i,v in ipairs(status._extraChildren) do
+            if v==mode then
+                table.remove(status._extraChildren,i)
+                removed=true
+                break
+            end
+        end
+        assert(removed,"missing mode to remove")
+        mode.Parent=nil
+        status.ChildRemoved:Fire(mode)
+    end
+    local function duplicate(mode)
+        local m=instance("StringValue",mode)
+        m.Name="ProgressMode"
+        m.Parent=status
+        status._extraChildren[#status._extraChildren+1]=m
+        status.ChildAdded:Fire(m)
+        return m
+    end
+    return notice,arrive,status,removeMode,duplicate
 end
 local function check(name,fn)
     local ok,err=pcall(fn)
@@ -102,5 +150,93 @@ check("mode value change refreshes visible warning",function()
     m.Changed:Fire(m.Value)
     assert(n.Visible and n.Text=="STUDIO PREVIEW - PROGRESS NOT SAVED")
 end)
+
+check("removed SAVED immediately restores pending warning",function()
+    local n,_,status,removeMode=setup("SAVED")
+    assert(n.Visible==false)
+    removeMode(status._children.ProgressMode)
+    assert(n.Visible and n.Text=="PROGRESS STATUS PENDING - SAVE UNVERIFIED")
+end)
+check("removed SAVED followed by replacement UNSAVED stays warning",function()
+    local n,arrive,status,removeMode=setup("SAVED")
+    removeMode(status._children.ProgressMode)
+    arrive("STUDIO_PREVIEW_UNSAVED")
+    assert(n.Visible and n.Text=="STUDIO PREVIEW - PROGRESS NOT SAVED")
+end)
+check("stale Changed on removed SAVED never hides replacement UNSAVED",function()
+    local n,arrive,status,removeMode=setup("SAVED")
+    local old=status._children.ProgressMode
+    removeMode(old)
+    arrive("STUDIO_PREVIEW_UNSAVED")
+    old.Value="SAVED"
+    old.Changed:Fire(old.Value)
+    assert(n.Visible and n.Text=="STUDIO PREVIEW - PROGRESS NOT SAVED")
+end)
+check("duplicate SAVED modes show unverified until one is removed",function()
+    local n,_,_,removeMode,duplicate=setup("SAVED")
+    local second=duplicate("SAVED")
+    assert(n.Visible and n.Text=="PROGRESS STATUS UNVERIFIED - DO NOT EXPECT SAVE")
+    removeMode(second)
+    assert(n.Visible==false)
+end)
+check("duplicate UNSAVED with SAVED cannot silently hide save warning",function()
+    local n,_,status,removeMode,duplicate=setup("SAVED")
+    local extra=duplicate("STUDIO_PREVIEW_UNSAVED")
+    assert(n.Visible and n.Text=="PROGRESS STATUS UNVERIFIED - DO NOT EXPECT SAVE")
+    removeMode(status._children.ProgressMode)
+    assert(n.Visible and n.Text=="STUDIO PREVIEW - PROGRESS NOT SAVED")
+    removeMode(extra)
+    assert(n.Visible and n.Text=="PROGRESS STATUS PENDING - SAVE UNVERIFIED")
+end)
+
+check("selected rename and restore without child events rescans",function()
+    local n,_,status=setup("SAVED")
+    local m=status._children.ProgressMode
+    for i=1,20 do
+        m.Name="FormerMode";m:GetPropertyChangedSignal("Name"):Fire()
+        assert(n.Visible,"rename must show warning")
+        m.Name="ProgressMode";m:GetPropertyChangedSignal("Name"):Fire()
+        assert(not n.Visible,"restored unique SAVED")
+    end
+    assert(m.Changed.active==1,"only one active value subscription")
+    assert(m:GetPropertyChangedSignal("Name").active==1,"only one name subscription")
+    m.Changed:Fire("SAVED")
+    assert(not n.Visible)
+end)
+check("renamed-in duplicate and rename-out restore unique mode",function()
+    local n,_,status,_,duplicate=setup("SAVED")
+    local other=duplicate("SAVED")
+    other.Name="Other";other:GetPropertyChangedSignal("Name"):Fire()
+    assert(not n.Visible)
+    other.Name="ProgressMode";other:GetPropertyChangedSignal("Name"):Fire()
+    assert(n.Visible and n.Text=="PROGRESS STATUS UNVERIFIED - DO NOT EXPECT SAVE")
+end)
+check("queued Changed before ChildRemoved cannot trust detached SAVED",function()
+    local n,_,status=setup("SAVED")
+    local old=status._children.ProgressMode
+    status._children.ProgressMode=nil;old.Parent=nil
+    old.Changed:Fire("SAVED")
+    assert(n.Visible and n.Text=="PROGRESS STATUS PENDING - SAVE UNVERIFIED")
+end)
+check("queued Changed before rename signal cannot trust renamed SAVED",function()
+    local n,_,status=setup("SAVED")
+    local old=status._children.ProgressMode
+    old.Name="Other";old.Changed:Fire("SAVED")
+    assert(n.Visible)
+end)
+check("reparent before removal signal and replacement remains unsaved",function()
+    local n,arrive,status=setup("SAVED")
+    local old=status._children.ProgressMode
+    status._children.ProgressMode=nil;old.Parent=instance("Folder")
+    old:GetPropertyChangedSignal("Parent"):Fire()
+    assert(n.Visible)
+    arrive("STUDIO_PREVIEW_UNSAVED")
+    old.Changed:Fire("SAVED");status.ChildRemoved:Fire(old)
+    assert(n.Visible and n.Text=="STUDIO PREVIEW - PROGRESS NOT SAVED")
+    assert(old.Changed.active==0)
+    assert(old:GetPropertyChangedSignal("Name").active==0)
+    assert(old:GetPropertyChangedSignal("Parent").active==0)
+end)
+
 print(string.format("STUDIO_PREVIEW_HUD_REPLICATION_SUMMARY %d passed / %d failed; Lua mocks not Roblox engine",passed,failed))
 if failed>0 then os.exit(1) end

@@ -172,8 +172,13 @@ previewNotice.ZIndex=40
 -- In Roblox replication the folder may arrive before its StringValue child.
 -- Missing or unrecognized progress mode must NEVER silently imply saved progress.
 local progressMode=nil
+local progressModeConflict=false
 local function refreshPreviewNotice()
-    if not progressMode then
+    -- A missing, malformed or duplicate mode must not silently imply persistence.
+    if progressModeConflict then
+        previewNotice.Text="PROGRESS STATUS UNVERIFIED - DO NOT EXPECT SAVE"
+        previewNotice.Visible=true
+    elseif not progressMode then
         previewNotice.Text="PROGRESS STATUS PENDING - SAVE UNVERIFIED"
         previewNotice.Visible=true
     elseif progressMode.Value=="STUDIO_PREVIEW_UNSAVED" then
@@ -186,17 +191,80 @@ local function refreshPreviewNotice()
         previewNotice.Visible=true
     end
 end
-local function bindProgressMode(child)
-    if not child or child.Name~="ProgressMode" or child.ClassName~="StringValue"
-        or progressMode==child then return end
-    progressMode=child
-    if child.Changed then child.Changed:Connect(refreshPreviewNotice) end
+
+local modeValueConnection=nil
+local modeChildConnections={}
+local rescanProgressMode
+local function unwatchModeChild(child)
+    local connections=modeChildConnections[child]
+    if connections then
+        for _,connection in ipairs(connections) do connection:Disconnect() end
+        modeChildConnections[child]=nil
+    end
+end
+local function watchModeChild(child)
+    if modeChildConnections[child] or not child.GetPropertyChangedSignal then return end
+    -- Watch all names: an unrelated child can be renamed INTO ProgressMode.
+    modeChildConnections[child]={
+        child:GetPropertyChangedSignal("Name"):Connect(function() rescanProgressMode() end),
+        child:GetPropertyChangedSignal("Parent"):Connect(function()
+            if child.Parent~=status then unwatchModeChild(child) end
+            rescanProgressMode()
+        end),
+    }
+end
+rescanProgressMode=function()
+    local found=nil
+    local count=0
+    -- GetChildren detects duplicate same-name StringValues unlike FindFirstChild.
+    if status.GetChildren then
+        for _,child in ipairs(status:GetChildren()) do
+            watchModeChild(child)
+            if child.Parent==status and child.Name=="ProgressMode" then
+                count=count+1
+                if child.ClassName=="StringValue" then found=child end
+            end
+        end
+    elseif status.FindFirstChild then
+        local child=status:FindFirstChild("ProgressMode")
+        if child then
+            count=1
+            if child.ClassName=="StringValue" then found=child end
+        end
+    end
+    progressModeConflict=count>1
+    local selected=(count==1) and found or nil
+    if selected~=progressMode then
+        if modeValueConnection then modeValueConnection:Disconnect();modeValueConnection=nil end
+        progressMode=selected
+        if selected and selected.Changed then
+            -- The old Value may still emit Changed after ChildRemoved or replacement.
+            modeValueConnection=selected.Changed:Connect(function()
+                if progressMode~=selected then return end
+                if selected.Parent~=status or selected.Name~="ProgressMode" then
+                    rescanProgressMode()
+                    return
+                end
+                refreshPreviewNotice()
+            end)
+        end
+    end
     refreshPreviewNotice()
 end
--- Register first, then re-read: closes the replication race without yielding.
-if status.ChildAdded then status.ChildAdded:Connect(bindProgressMode) end
-if status.FindFirstChild then bindProgressMode(status:FindFirstChild("ProgressMode")) end
-refreshPreviewNotice()
+-- Connect both event handlers before scanning to avoid the replication race.
+if status.ChildAdded then
+    status.ChildAdded:Connect(function(child)
+        watchModeChild(child)
+        rescanProgressMode()
+    end)
+end
+if status.ChildRemoved then
+    status.ChildRemoved:Connect(function(child)
+        unwatchModeChild(child)
+        rescanProgressMode()
+    end)
+end
+rescanProgressMode()
 -- Session-local first-play guide: touch-friendly, dismissible; never sends gameplay commands.
 -- Created only after workshop assignment; no cross-session completion persistence.
 -- ImageButtons keep the three toy-selection TextButtons unambiguous.
