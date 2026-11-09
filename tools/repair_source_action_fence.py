@@ -13,7 +13,9 @@ from repair_control import (canonical_id, instant, validate,
                             scoped_lease_migration_block)
 
 SHA = re.compile(r"[0-9a-f]{40}\Z")
-REPO = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
+# This is a single PR203 probe, not a generic writer capability.
+PROBE_REPOSITORY = "kk051780/toy-wars-factory"
+PROBE_BRANCH = "controller/p0-legacy-shadow-compat-20261108-76116caf"
 WORK = "P0_ISSUE123_PR203_SOURCE_ACTION_PROBE"
 FILE = "history/C10010_real_source_action_probe.json"
 SNAPSHOT_KEYS = {"repository", "coordinator_ref", "main_head",
@@ -34,13 +36,10 @@ def _validate(snapshot, request):
     if type(request) is not dict or set(request) != REQ_KEYS:
         raise ValueError("source request shape")
     state = validate(snapshot["state"])
-    if (type(snapshot["repository"]) is not str or
-            not REPO.fullmatch(snapshot["repository"]) or
+    if (snapshot["repository"] != PROBE_REPOSITORY or
             any(type(snapshot[k]) is not str or not SHA.fullmatch(snapshot[k])
                 for k in ("coordinator_ref", "main_head", "source_head")) or
-            type(snapshot["work_branch"]) is not str or
-            not snapshot["work_branch"].startswith("controller/p0-") or
-            snapshot["work_branch"] == "twf-repair-coordinator"):
+            snapshot["work_branch"] != PROBE_BRANCH):
         raise ValueError("invalid connected Git ref bindings")
     canonical_id(request["operation_id"])
     canonical_id(request["owner_id"])
@@ -167,11 +166,8 @@ def inspect_interrupted_probe(snapshot_first, snapshot_second, request, *,
         state = validate(snap["state"])
         canonical_id(request["operation_id"])
         canonical_id(request["owner_id"])
-        if (type(snap["repository"]) is not str or
-                not REPO.fullmatch(snap["repository"]) or
-                type(snap["work_branch"]) is not str or
-                not snap["work_branch"].startswith("controller/p0-") or
-                snap["work_branch"] == "twf-repair-coordinator" or
+        if (snap["repository"] != PROBE_REPOSITORY or
+                snap["work_branch"] != PROBE_BRANCH or
                 any(type(snap[k]) is not str or not SHA.fullmatch(snap[k])
                     for k in ("coordinator_ref", "main_head", "source_head")) or
                 type(request["owner_epoch"]) is not int or

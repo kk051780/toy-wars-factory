@@ -109,6 +109,25 @@ class RecoveryTests(unittest.TestCase):
         self.req["owner_id"] = OP
         self.assertEqual(self.result()["action"], "WAIT_FOREIGN_OR_CHANGED_ACTION")
 
+    def test_foreign_repository_recovery_fails_closed(self):
+        self.snap["source_head"] = AFTER
+        self.snap["repository"] = "another/repository"
+        self.snap["state"]["pending_source_action"]["repository"] = "another/repository"
+        result = self.result()
+        self.assertEqual(result["action"], "WAIT_INVALID_RECOVERY_EVIDENCE")
+        self.assertFalse(result["may_write"])
+        self.assertFalse(result["may_retry"])
+
+    def test_other_p0_branch_recovery_fails_closed(self):
+        other = "controller/p0-other-project"
+        self.snap["source_head"] = AFTER
+        self.snap["work_branch"] = other
+        self.snap["state"]["holder"]["work_branch"] = other
+        self.snap["state"]["pending_source_action"]["work_branch"] = other
+        result = self.result()
+        self.assertEqual(result["action"], "WAIT_INVALID_RECOVERY_EVIDENCE")
+        self.assertFalse(result["may_write"])
+
     def test_action_absent_is_not_safe_to_retry(self):
         self.snap["state"].pop("pending_source_action")
         self.assertEqual(self.result()["action"],
