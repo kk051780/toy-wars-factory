@@ -1,0 +1,39 @@
+{
+  "schema": "P0D_PC_EVIDENCE_V1",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "as_of_jst": "2026-11-10",
+  "evidence_level": "WINDOWS_CODEX_REPORT_RECORDED_NOT_INDEPENDENTLY_RERUN",
+  "source_issue_comment": "https://github.com/kk051780/toy-wars-factory/issues/213#issuecomment-6753848890",
+  "coordination_comment": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-6753855564",
+  "pc_local_head_sha1": "93b26aa7a5a92d1aa0b176b9b652320896419949",
+  "pc_place_sha256": "aebcdfac881da2a7467d875f08fd5e4342b2227dfb347d62a4a87060c098f3c2",
+  "pc_cumulative_zip_sha256": "51c82665b448e52eb664144a8d3f8115fbcc5421e7e9fd04d640898ec3dbc1a2",
+  "pc_source_set_sha256": "458fcb49b2e1e0e1a085d429f8d2edf02aad3943015801143575204592fcce71",
+  "pc_manifest_sha256": "3875a1a8b55649fc5f61e8f35dd1e29a6366ae73ceff96d17ac579ae933c2344",
+  "prior_v37_place_sha256": "c56459c29595f5ecde5521565862d0a4ea3c8a426a35cbb1d539ad6e08fd4741",
+  "global_release_status": "PARTIAL_NOT_READY",
+  "pc_studio_exit": "STUDIO_CLOSED_VERIFIED_REPORTED",
+  "packet_results": [
+    {
+      "packet_id": "v39-h1-chatlead-ref-20261110",
+      "pinned_commit": "baa29df8bc3f10f94792fcb135b3ee2a136ad8b8",
+      "restored_zip_sha256": "7d3c5d5c947530cb1874e7ee7dcf55d712c5c8c3bf6f49e5c25de093a7bc349d",
+      "windows_restore": "PASS_REPORTED_BY_WINDOWS_CODEX",
+      "studio_integration": "SCOPED_PASS_REPORTED_BY_WINDOWS_CODEX",
+      "studio_full_qa": "NOT_COMPLETE",
+      "python_tests": "50/50",
+      "implemented_scope": "server awarded free participation stamps, minimal result display and rematch; no DataStore",
+      "scoped_evidence": "2-client winner+2/loss+1/AFK+0, forged remotes rejected, solo four-stage regression and phone landscape emulator",
+      "remaining_qa": [
+        "Final saved-place 2-client supplemental rerun",
+        "Same-account reconnect and stamp integrity",
+        "Real phone hardware testing",
+        "v37 castle bell listening quality",
+        "Final global release/Studio acceptance remains PARTIAL"
+      ]
+    }
+  ],
+  "next_owner_codex_gate": "RECHECK_V39_FINAL_MULTICLIENT_AND_RECONNECT_THEN_V43A_ISOLATED_CONFLICT_REVIEW",
+  "prohibited": "No direct main push, merge, release, real payment, added spend or public plaintext source"
+}
