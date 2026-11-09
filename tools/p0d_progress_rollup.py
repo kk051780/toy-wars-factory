@@ -17,6 +17,9 @@ import sys
 ID = re.compile(r"[A-Za-z0-9_.-]{1,96}\Z")
 FEATURE = re.compile(r"D\d\d\Z")
 SHA = re.compile(r"[a-f0-9]{40}\Z")
+SHA256 = re.compile(r"[a-f0-9]{64}\Z")
+PC_SOURCE = re.compile(r"https://github[.]com/kk051780/toy-wars-factory/issues/213#issuecomment-[0-9]+\Z")
+PC_COORD = re.compile(r"https://github[.]com/kk051780/toy-wars-factory/issues/218#issuecomment-[0-9]+\Z")
 MAX_INPUT = 1_000_000
 
 class ProgressError(ValueError):
@@ -72,7 +75,69 @@ def parse_issue_comments(doc):
     return sorted(rows.values(), key=lambda x: (x["packet_id"], x["commit"]))
 
 
-def summarize(registry, comments=None):
+def validate_pc_evidence(evidence, registry):
+    """Accept *recorded PC reports* only with source references and pinned hashes.
+
+    This does not run Windows/Studio or cryptographically authenticate a GitHub
+    comment. The result must always be presented as SOURCE-REPORTED evidence.
+    """
+    if not isinstance(evidence, dict) or evidence.get("schema") != "P0D_PC_EVIDENCE_V1":
+        raise ProgressError("BAD_PC_EVIDENCE_SCHEMA")
+    if (evidence.get("game_id"), evidence.get("work_id")) != (registry.get("game_id"), registry.get("work_id")):
+        raise ProgressError("PC_EVIDENCE_WRONG_PROJECT")
+    if evidence.get("evidence_level") != "WINDOWS_CODEX_REPORT_RECORDED_NOT_INDEPENDENTLY_RERUN":
+        raise ProgressError("PC_EVIDENCE_NOT_AUTHORITATIVE")
+    if not PC_SOURCE.fullmatch(str(evidence.get("source_issue_comment", ""))):
+        raise ProgressError("PC_EVIDENCE_BAD_SOURCE")
+    if not PC_COORD.fullmatch(str(evidence.get("coordination_comment", ""))):
+        raise ProgressError("PC_EVIDENCE_BAD_COORDINATION_SOURCE")
+    if evidence.get("global_release_status") != "PARTIAL_NOT_READY" or registry.get("pc_status") != "PARTIAL_NOT_READY":
+        raise ProgressError("PC_EVIDENCE_GLOBAL_PASS_UNSUPPORTED")
+    if evidence.get("pc_studio_exit") != "STUDIO_CLOSED_VERIFIED_REPORTED":
+        raise ProgressError("PC_STUDIO_EXIT_NOT_CONFIRMED")
+    if not SHA.fullmatch(str(evidence.get("pc_local_head_sha1", ""))):
+        raise ProgressError("PC_LOCAL_HEAD_INVALID")
+    for field in ("pc_place_sha256", "pc_cumulative_zip_sha256", "pc_source_set_sha256", "pc_manifest_sha256", "prior_v37_place_sha256"):
+        if not SHA256.fullmatch(str(evidence.get(field, ""))):
+            raise ProgressError("PC_HASH_INVALID_" + field)
+    results=evidence.get("packet_results")
+    if not isinstance(results,list) or not results or len(results)>100:
+        raise ProgressError("PC_RESULTS_INVALID")
+    indexed={p["packet_id"]:p for p in registry["sealed_packets"]}
+    seen=set()
+    restored=set(); scoped=set()
+    for result in results:
+        if not isinstance(result,dict):
+            raise ProgressError("PC_PACKET_RESULT_INVALID")
+        ident=result.get("packet_id")
+        if not isinstance(ident,str) or ident in seen or ident not in indexed:
+            raise ProgressError("PC_PACKET_UNKNOWN_OR_DUPLICATE")
+        seen.add(ident)
+        pack=indexed[ident]
+        if (result.get("pinned_commit")!=pack["commit"] or
+            result.get("restored_zip_sha256")!=pack["zip_sha256"]):
+            raise ProgressError("PC_PACKET_PIN_OR_ZIP_MISMATCH")
+        if result.get("windows_restore")!="PASS_REPORTED_BY_WINDOWS_CODEX":
+            raise ProgressError("PC_RESTORE_UNSUPPORTED_STAGE")
+        if result.get("studio_integration")!="SCOPED_PASS_REPORTED_BY_WINDOWS_CODEX":
+            raise ProgressError("PC_STUDIO_STAGE_UNSUPPORTED")
+        if result.get("studio_full_qa")!="NOT_COMPLETE":
+            raise ProgressError("PC_FINAL_STUDIO_NOT_SUPPORTED")
+        todo=result.get("remaining_qa")
+        if not isinstance(todo,list) or not todo or not all(isinstance(x,str) and 4<=len(x)<=180 for x in todo):
+            raise ProgressError("PC_QA_REMAINDERS_REQUIRED")
+        restored.add(ident)
+        scoped.update(pack["feature_ids"])
+    return {"reported_restored":len(restored),"reported_scoped_feature_groups":len(scoped),
+            "source_issue_comment":evidence["source_issue_comment"],
+            "pc_local_head_sha1":evidence["pc_local_head_sha1"],
+            "pc_place_sha256":evidence["pc_place_sha256"],
+            "remaining_qa":list(dict.fromkeys(x for p in results for x in p["remaining_qa"])),
+            "next_owner_codex_gate":evidence.get("next_owner_codex_gate", "RECHECK_ACTUAL_PC_STATUS"),
+            "source_level":evidence["evidence_level"]}
+
+
+def summarize(registry, comments=None, pc_evidence=None):
     if not isinstance(registry, dict) or registry.get("schema") != "P0D_READONLY_INTAKE_V1":
         raise ProgressError("BAD_REGISTRY_SCHEMA")
     if registry.get("game_id") != "TRAP_RAIDERS" or registry.get("work_id") != "p0d-siege-v19":
@@ -132,7 +197,10 @@ def summarize(registry, comments=None):
     ready_ref = len(ref_features)
     discovered = parse_issue_comments(comments) if comments is not None else []
     unknown = [x for x in discovered if x["packet_id"] not in seen]
-    # Only feature groups counted. Two D16 or D17 packets cannot double-count a feature.
+    # Only registered, source-linked PC evidence may contribute to PC stages.
+    # Untrusted public Issue comments are discovery ONLY and never promote QA.
+    pc_data = validate_pc_evidence(pc_evidence,registry) if pc_evidence is not None else None
+    # Only feature groups counted. Multiple D07/D16/D17 packets do not double-count.
     return {
         "schema": "P0D_PROGRESS_V2", "game_id": registry["game_id"],
         "work_id": registry["work_id"], "pc_status": registry["pc_status"],
@@ -143,10 +211,13 @@ def summarize(registry, comments=None):
         "github_reference_feature_groups": ready_ref,
         "indexed_sealed_packets": len(packets),
         "encrypted_artifact_files_indexed": len(packets) * 2,
-        "windows_restored_packets_verified": 0,
-        "github_reference_feature_groups_studio_qa_pass": 0,
-        "pc_blocker": "V37_FINAL_SAVED_PLACE_MULTICLIENT_QA_NOT_ATTESTED",
-        "next_gate": "OWNER_DIRECT_PC_V37_QA_THEN_V39_SINGLE_PACKET",
+        "windows_restored_packets_verified": 0,  # independent tool verification cannot be inferred
+        "windows_restored_packets_pc_reported": pc_data["reported_restored"] if pc_data else 0,
+        "github_reference_feature_groups_studio_qa_pass": 0,  # FULL QA remains unverified
+        "github_reference_feature_groups_studio_scoped_pc_reported": pc_data["reported_scoped_feature_groups"] if pc_data else 0,
+        "pc_evidence": pc_data if pc_data else {"status":"NOT_SUPPLIED_TO_THIS_COMMAND"},
+        "pc_blocker": "V39_FINAL_MULTICLIENT_RECONNECT_REAL_PHONE_SOUND_OUTSTANDING" if pc_data else "PC_REPORT_NOT_SUPPLIED_V37_AND_V39_NEED_RECHECK",
+        "next_gate": pc_data["next_owner_codex_gate"] if pc_data else "VERIFY_LATEST_PC_REPORT_BEFORE_V43A",
         "discovered_unindexed_delivery_claims": unknown,
         "issue_comments_are_pc_attestation": False,
         "remote_readback_performed_by_this_rollup": False,
@@ -158,7 +229,8 @@ def to_markdown(s):
             f"- Historical D01-D17 candidate coverage: **{s['candidate_features_in_historical_baseline']}/{s['historical_baseline_features']}**; not gameplay completion.\n"
             f"- Added design-only groups: **{s['new_design_only_features']}** (design packages delivered **{s['new_design_artifact_delivered_groups']}**). Full known groups: **{s['candidate_features_in_all_known_groups']}/{s['total_known_feature_groups']}** with any code candidate.\n"
             f"- GitHub reference feature groups: **{s['github_reference_feature_groups']}**; sealed packets **{s['indexed_sealed_packets']}**, pinned public files **{s['encrypted_artifact_files_indexed']}**.\n"
-            f"- Windows RESTORE verified: **0/{s['indexed_sealed_packets']}**; reference Studio QA: **0/{s['github_reference_feature_groups']}**. PC v37: **{s['pc_status']}**.\n"
+            f"- Windows RESTORE **PC-reported**: **{s['windows_restored_packets_pc_reported']}/{s['indexed_sealed_packets']}**; scoped Studio integration **PC-reported**: **{s['github_reference_feature_groups_studio_scoped_pc_reported']}/{s['github_reference_feature_groups']}**. Full game QA: **PARTIAL_NOT_READY**.\n"
+            f"- PC report source: **{s['pc_evidence'].get('source_issue_comment','NOT_SUPPLIED')}**; the rollup did not independently access Studio.\n"
             f"- Pending candidate deliveries (NOT verified): **{len(s['discovered_unindexed_delivery_claims'])}**.\n"
             f"- BLOCKER: `{s['pc_blocker']}`. Next: `{s['next_gate']}`.\n\n"
             "**Do not treat Python PASS, encrypted GitHub upload or public Issue comments as PC/Studio PASS.**\n")
@@ -168,13 +240,15 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--registry", required=True, type=Path)
     p.add_argument("--comments", type=Path, help="Optional saved list of GitHub Issue comments; read-only hints")
+    p.add_argument("--pc-evidence", type=Path, help="Explicit source-linked PC report JSON; never self-attests actual Windows execution")
     p.add_argument("--format", choices=("json", "markdown"), default="markdown")
     p.add_argument("--output", type=Path, help="Exclusive-new output; refuse overwrites")
     args = p.parse_args(argv)
     try:
         reg = load_file(args.registry)
         comments = load_file(args.comments) if args.comments else None
-        s = summarize(reg, comments)
+        pc_evidence = load_file(args.pc_evidence) if args.pc_evidence else None
+        s = summarize(reg, comments, pc_evidence)
         out = (json.dumps(s, ensure_ascii=False, indent=2, sort_keys=True) + "\n" if args.format == "json" else to_markdown(s))
         if args.output:
             if not args.output.parent.is_dir() or args.output.parent.is_symlink():
