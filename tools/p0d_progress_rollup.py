@@ -116,14 +116,17 @@ def summarize(registry, comments=None):
     if not isinstance(extras, list) or len(extras) > 100:
         raise ProgressError("BAD_EXTRA_FEATURES")
     extra_ids = set()
+    delivered_design_ids = set()
     for obj in extras:
         if not isinstance(obj, dict):
             raise ProgressError("BAD_EXTRA_FEATURE")
         fid = obj.get("feature_id")
         if not isinstance(fid, str) or not FEATURE.fullmatch(fid) or fid in base or fid in extra_ids:
             raise ProgressError("DUPLICATE_OR_BAD_EXTRA_FEATURE")
-        if obj.get("status") not in ("SOFT_CLAIM_DESIGN_ONLY_NOT_REFERENCE_CODE", "DESIGN_ONLY"):
+        if obj.get("status") not in ("SOFT_CLAIM_DESIGN_ONLY_NOT_REFERENCE_CODE", "DESIGN_ONLY", "DESIGN_ARTIFACT_DELIVERED_NO_GAME_CODE"):
             raise ProgressError("EXTRA_CANNOT_CLAIM_IMPLEMENTED")
+        if obj.get("status") == "DESIGN_ARTIFACT_DELIVERED_NO_GAME_CODE":
+            delivered_design_ids.add(fid)
         extra_ids.add(fid)
     known = len(base) + len(extra_ids)
     ready_ref = len(ref_features)
@@ -134,7 +137,7 @@ def summarize(registry, comments=None):
         "schema": "P0D_PROGRESS_V2", "game_id": registry["game_id"],
         "work_id": registry["work_id"], "pc_status": registry["pc_status"],
         "historical_baseline_features": len(base),
-        "new_design_only_features": len(extra_ids), "total_known_feature_groups": known,
+        "new_design_only_features": len(extra_ids), "new_design_artifact_delivered_groups": len(delivered_design_ids), "total_known_feature_groups": known,
         "candidate_features_in_historical_baseline": len(set(pc) | ref_features),
         "candidate_features_in_all_known_groups": len(set(pc) | ref_features),
         "github_reference_feature_groups": ready_ref,
@@ -153,7 +156,7 @@ def summarize(registry, comments=None):
 def to_markdown(s):
     return ("# TRAP RAIDERS P0-D progress (evidence-scoped)\n\n"
             f"- Historical D01-D17 candidate coverage: **{s['candidate_features_in_historical_baseline']}/{s['historical_baseline_features']}**; not gameplay completion.\n"
-            f"- Added design-only groups: **{s['new_design_only_features']}**. Full known groups: **{s['candidate_features_in_all_known_groups']}/{s['total_known_feature_groups']}** with any code candidate.\n"
+            f"- Added design-only groups: **{s['new_design_only_features']}** (design packages delivered **{s['new_design_artifact_delivered_groups']}**). Full known groups: **{s['candidate_features_in_all_known_groups']}/{s['total_known_feature_groups']}** with any code candidate.\n"
             f"- GitHub reference feature groups: **{s['github_reference_feature_groups']}**; sealed packets **{s['indexed_sealed_packets']}**, pinned public files **{s['encrypted_artifact_files_indexed']}**.\n"
             f"- Windows RESTORE verified: **0/{s['indexed_sealed_packets']}**; reference Studio QA: **0/{s['github_reference_feature_groups']}**. PC v37: **{s['pc_status']}**.\n"
             f"- Pending candidate deliveries (NOT verified): **{len(s['discovered_unindexed_delivery_claims'])}**.\n"
