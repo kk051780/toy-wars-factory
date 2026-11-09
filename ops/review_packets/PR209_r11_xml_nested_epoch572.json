@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "kind": "P0B_R11_NESTED_XML_PROPERTIES_SECURITY_REVIEW",
+  "repository": "kk051780/toy-wars-factory",
+  "issue": 204,
+  "pr": 209,
+  "head": "a0823ec000e9805eee3598ec376f9833f97123c9",
+  "branch": "controller/p0b-pr208-progressmode-lifecycle-20261108",
+  "parent_pr": 208,
+  "parent_head": "206c83674d0258b36771b9ceedadb6be30485035",
+  "prior_review_head": "caf594ace56149eb6ffb65e10c186e9d7a996d76",
+  "work_id": "P0B_R11_PR209_NESTED_XML_GUARD_20261109",
+  "coordination": {
+    "epoch": 572,
+    "owner_id": "b5a2a970-9321-48c8-9456-e2a11b43d3d0",
+    "claim_commit": "0465bcc683db9b12ab6421feb76c68dee1b2a182"
+  },
+  "fix": {
+    "description": "Reject all child XML elements nested inside each Properties Name or ProtectedString Source field",
+    "files": [
+      "tools/p0b_engine_receipt/validate_receipt.py",
+      "tests/test_p0b_engine_receipt.py"
+    ],
+    "new_negative_tests": [
+      "test_name_property_nested_element_rejected_even_with_matching_digest",
+      "test_source_property_nested_element_rejected_with_same_source_blob"
+    ],
+    "source_lua_unchanged": true
+  },
+  "ci": {
+    "run_id": 42545809911,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42545809911",
+    "head": "a0823ec000e9805eee3598ec376f9833f97123c9",
+    "offline": "success",
+    "compile_hold": "success",
+    "python_tests": 970,
+    "xml_negative_tests_added": 2
+  },
+  "changed_files_total": 14,
+  "review_request": "Registered independent P0-B REVIEWER: freshly reGET PR209 exact HEAD a0823ec000e9805eee3598ec376f9833f97123c9 (not old caf594ac), base PR208 HEAD 206c83674d0258b36771b9ceedadb6be30485035, real 14-file cumulative diff and CI run 42545809911 (offline and compile_hold success; Python 970). R11 fixes nested XML child bypass inside Name and Source Properties: inspect verify_xml_bytes() guard len(field)!=0, verify SHA256 recomputed negative tests test_name_property_nested_element_rejected_even_with_matching_digest and test_source_property_nested_element_rejected_with_same_source_blob, SOURCE_BLOBS unchanged. Verify no missing XML whitelisting, adversarial loader/Play spoofing, provenance and legacy HUD race regression. Check R9 head pin decoupling, 40+2 synthetic receipt tests, exact exporter source contract. Neither this author's own review nor Sourcery native APPROVED satisfies independent registered full review. Keep Draft, no main merge, no Windows/MCP/Studio command, no datastore zero claim. P0-C authentication/anti-replay still HOLD.",
+  "independent_review": false,
+  "provider_native_approved": false,
+  "roblox_engine_verified": false,
+  "windows_executed": false,
+  "main_merged": false,
+  "roblox_published": false,
+  "extra_spend_jpy": 0,
+  "created_at": "2026-11-09T01:30:41.507Z"
+}
