@@ -286,6 +286,49 @@
       "remote_readback_reported": true,
       "windows_restore": "NOT_TESTED",
       "studio_qa": "NOT_TESTED"
+    },
+    {
+      "packet_id": "P0D-D16-GLIDE-AUTH-20261110-04",
+      "title": "D16 free glide server authority reference",
+      "feature_ids": [
+        "D16"
+      ],
+      "commit": "c3de5d94eae25e566bdf29452ed1980dae35909d",
+      "envelope_path": "handoffs/TRAP_RAIDERS_D16_GLIDE_encrypted.json",
+      "envelope_blob_sha1": "5d34fdc5964fe5b4d9f7fde914e3ab3974c75d92",
+      "readme_path": "handoffs/README_D16_GLIDE.md",
+      "readme_blob_sha1": "4d376b42386e04ab8cf9c1ff6e5624ec87fe9715",
+      "zip_sha256": "872e8f9ec5ef38535ee3b295bf301a612e2063835e85cae67ab87bb370aee2cc",
+      "depends_on_packets": [
+        "P0D-D14-VEHICLE-SEATS-20261110-01",
+        "P0D-D15-TRAP-RESCUE-20261110-01"
+      ],
+      "pc_gate": "AFTER_V37_V39_AND_MOUNT_TRAP_REWIND_CONTRACT_REVIEW",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "packet_id": "P0D-D07-GOROGAN-VISUAL-20261110-01",
+      "title": "D07 Gorogan visual prefab without server boss AI",
+      "feature_ids": [
+        "D07"
+      ],
+      "commit": "5128e288c7bd119a470c253a9792f4d829c569ec",
+      "envelope_path": "handoffs/TRAP_RAIDERS_D07_Gorogan_encrypted.json",
+      "envelope_blob_sha1": "afe4e9a5722995c1472b4c8e89d5f3ee99ff6d6c",
+      "readme_path": "handoffs/README_D07_GOROGAN.md",
+      "readme_blob_sha1": "7cbb83d161f078ac9ec8ea861b03e5b219939a5a",
+      "zip_sha256": "7d6bb8f1cc31348c8461d0b5e0381a62a02eb3aad888be9789fbd78d992ff917",
+      "depends_on_packets": [
+        "v40-v41-v42-fallback-chatlead-20261110"
+      ],
+      "pc_gate": "AFTER_SINGLE_EVENT_CONTROLLER_AND_LOW_END_VFX_REVIEW",
+      "transport": "AES256_GCM_PUBLIC_CIPHERTEXT",
+      "remote_readback_reported": true,
+      "windows_restore": "NOT_TESTED",
+      "studio_qa": "NOT_TESTED"
     }
   ],
   "policy": {
@@ -297,5 +340,14 @@
     "primary_gate": "V37_FINAL_QA",
     "next_gate": "V39_H1_OWNER_AUTHORIZED_INTEGRATION",
     "remote_content_verified_by_connector": "2026-11-10 JST; 24/24 fixed file reads, not PC restore"
-  }
+  },
+  "new_design_feature_items": [
+    {
+      "feature_id": "D18",
+      "title": "648-entry collectible design atlas, six categories",
+      "status": "SOFT_CLAIM_DESIGN_ONLY_NOT_REFERENCE_CODE",
+      "source_issue_comment": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-6753347530"
+    }
+  ],
+  "registry_note": "D01-D17 historical baseline remains fixed; D18 additive design-only backlog is separately counted and not implied to have source/Studio QA."
 }
