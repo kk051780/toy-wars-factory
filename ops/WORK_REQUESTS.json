@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-09T01:21:19.002Z",
+  "observed_at": "2026-11-09T01:30:41.507Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -5722,15 +5722,15 @@
       "repository": "kk051780/toy-wars-factory",
       "issue": 204,
       "pr": 209,
-      "head": "caf594ace56149eb6ffb65e10c186e9d7a996d76",
+      "head": "a0823ec000e9805eee3598ec376f9833f97123c9",
       "branch": "controller/p0b-pr208-progressmode-lifecycle-20261108",
       "base_pr": 208,
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "review_packet_path": "ops/review_packets/PR209_r9_receipt_head_epoch569.json",
+      "review_packet_path": "ops/review_packets/PR209_r11_xml_nested_epoch572.json",
       "source_owner_epoch": 543,
       "source_owner_id": "d73ce86f-75df-4700-82e9-26f4c45e1628",
       "draft": true,
-      "ci_run_id": 42543539929,
+      "ci_run_id": 42545809911,
       "ci_jobs": {
         "offline": "success",
         "compile_hold": "success"
@@ -5759,22 +5759,24 @@
       "main_merged": false,
       "engine_verified": false,
       "additional_spend_jpy": 0,
-      "review_request": "Dedicated P0-B registered independent REVIEWER: reGET PR209 head caf594ace56149eb6ffb65e10c186e9d7a996d76, base PR208 206c83674d0258b36771b9ceedadb6be30485035, actual 14-file diff and Actions run42543539929 offline/compile_hold success, Python968. Audit unchanged HUD/C98844 races and NEW tools/p0b_engine_receipt/validate_receipt.py source 4 blob pin, XML 10 Item + property allowlist, actual bytes SHA256/PNG CRC/console/MCP event chronology, 40 synthetic unit cases + 1 real exporter source contract. Inspect HEAD distinction: source-pin HEAD bd78ae0a3bef6a35d5be5726fdb3a93fc9a46e90 is NOT candidate PR HEAD; --expected-head required and must be externally reGET/attested (offline verifier itself can't authenticate). Assert no bypass via spoofed user receipt, fixture_only, fake console/images or producer. No merge/main, no Studio execution/publish, no claim of Windows auth / zero datastore writes. All parent PRs remain DRAFT/HOLD.",
+      "review_request": "Registered independent P0-B REVIEWER: freshly reGET PR209 exact HEAD a0823ec000e9805eee3598ec376f9833f97123c9 (not old caf594ac), base PR208 HEAD 206c83674d0258b36771b9ceedadb6be30485035, real 14-file cumulative diff and CI run 42545809911 (offline and compile_hold success; Python 970). R11 fixes nested XML child bypass inside Name and Source Properties: inspect verify_xml_bytes() guard len(field)!=0, verify SHA256 recomputed negative tests test_name_property_nested_element_rejected_even_with_matching_digest and test_source_property_nested_element_rejected_with_same_source_blob, SOURCE_BLOBS unchanged. Verify no missing XML whitelisting, adversarial loader/Play spoofing, provenance and legacy HUD race regression. Check R9 head pin decoupling, 40+2 synthetic receipt tests, exact exporter source contract. Neither this author's own review nor Sourcery native APPROVED satisfies independent registered full review. Keep Draft, no main merge, no Windows/MCP/Studio command, no datastore zero claim. P0-C authentication/anti-replay still HOLD.",
       "next_actor": "DEDICATED_P0B_INDEPENDENT_REVIEWER;THEN_PROTECTED_CANDIDATE_MAIN_REVIEW_AND_OWNER_WINDOWS_STUDIO_PLAYTEST",
       "created_at": "2026-11-08T04:30:28.507Z",
-      "updated_at": "2026-11-09T01:05:59.251Z",
-      "previous_head": "bd78ae0a3bef6a35d5be5726fdb3a93fc9a46e90",
+      "updated_at": "2026-11-09T01:30:41.507Z",
+      "previous_head": "caf594ace56149eb6ffb65e10c186e9d7a996d76",
       "previous_review_packet_path": "ops/review_packets/PR209_p0b_progressmode_lifecycle_epoch535.json",
-      "python_tests": 968,
+      "python_tests": 970,
       "xml_python_tests": 31,
-      "p0b_receipt_synthetic_cases": 40,
+      "p0b_receipt_synthetic_cases": 42,
       "p0b_receipt_real_source_contract_cases": 1,
       "r9_claim_epoch": 569,
       "r9_claim_owner_id": "8b3ee728-0cb6-4af4-9f41-2eaf8c61209d",
       "r9_author_commits": [
         "d8b5540b125d5db439e7e1584b67fff838c5e137",
         "caf594ace56149eb6ffb65e10c186e9d7a996d76"
-      ]
+      ],
+      "r11_claim_epoch": 572,
+      "r11_owner_id": "b5a2a970-9321-48c8-9456-e2a11b43d3d0"
     },
     {
       "id": "P0_ISSUE123_PR210_SOURCE_PROBE_SCOPE_HARDENING_20261108",
