@@ -28,6 +28,6 @@ The `--output` flag **refuses to overwrite** existing evidence. The progress rol
 
 ## Evidence limits
 
-- New progress rollup unit tests: 19/19 PASS offline on this ChatGPT container. Existing intake v1 suite updated to 14-packet assumptions; its actual execution after this update is not independently shown by the 18 new tests.
+- New progress rollup unit tests: 20/20 PASS offline on this ChatGPT container. Existing intake v1 suite updated to 14-packet assumptions; its actual execution after this update is not independently shown by the 18 new tests.
 - No Lua parser or Studio QA was run. Windows restores remain 0/14 **verified by GitHub evidence**, not proof that a PC user has never privately restored.
 - This status is a snapshot as of 2026-11-10. A newer GitHub claim or genuine PC result supersedes it after verification.
