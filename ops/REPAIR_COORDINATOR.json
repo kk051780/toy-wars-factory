@@ -2129,17 +2129,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 569,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "8b3ee728-0cb6-4af4-9f41-2eaf8c61209d",
-    "task_id": null,
-    "epoch": 569,
-    "acquired_at": "2026-11-09T00:58:13.019Z",
-    "expires_at": "2026-11-09T01:23:13.019Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0b-pr208-progressmode-lifecycle-20261108",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -4373,6 +4363,31 @@
       "owner_id": "e8443caf-9e8d-4db5-9396-72c8fb7a10c4",
       "epoch": 566,
       "released_at": "2026-11-08T21:21:13.910Z"
+    },
+    {
+      "kind": "CONTROLLER_P0B_PR209_R9_OFFLINE_RECEIPT_CI_SUCCESS",
+      "work_id": "P0B_R9_PR209_CI_ENGINE_RECEIPT_20261109",
+      "epoch": 569,
+      "owner_id": "8b3ee728-0cb6-4af4-9f41-2eaf8c61209d",
+      "claim_commit": "a0efbbd7d979188219d882d71508c614dfb0c3cc",
+      "head": "caf594ace56149eb6ffb65e10c186e9d7a996d76",
+      "pr": 209,
+      "issue": 204,
+      "ci_run": 42543539929,
+      "ci_offline": "success",
+      "ci_compile_hold": "success",
+      "python_tests": 968,
+      "receipt_unit_cases": 40,
+      "source_export_contract_cases": 1,
+      "source_lua_changed": false,
+      "review_packet_path": "ops/review_packets/PR209_r9_receipt_head_epoch569.json",
+      "independent_review": false,
+      "main_merged": false,
+      "engine_verified": false,
+      "service_terminal_proof": false,
+      "roblox_published": false,
+      "additional_spend_jpy": 0,
+      "released_at": "2026-11-09T01:06:40.643Z"
     }
   ]
 }
