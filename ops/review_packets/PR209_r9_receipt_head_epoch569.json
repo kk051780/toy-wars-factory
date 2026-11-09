@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "kind": "P0B_R9_OFFLINE_ENGINE_RECEIPT_EXACT_HEAD_REVIEW",
+  "repository": "kk051780/toy-wars-factory",
+  "issue": 204,
+  "pr": 209,
+  "branch": "controller/p0b-pr208-progressmode-lifecycle-20261108",
+  "head": "caf594ace56149eb6ffb65e10c186e9d7a996d76",
+  "parent_pr": 208,
+  "parent_head": "206c83674d0258b36771b9ceedadb6be30485035",
+  "source_baseline_head": "bd78ae0a3bef6a35d5be5726fdb3a93fc9a46e90",
+  "work_id": "P0B_R9_PR209_CI_ENGINE_RECEIPT_20261109",
+  "coordination": {
+    "epoch": 569,
+    "owner_id": "8b3ee728-0cb6-4af4-9f41-2eaf8c61209d",
+    "claim_commit": "a0efbbd7d979188219d882d71508c614dfb0c3cc"
+  },
+  "ci": {
+    "run_id": 42543539929,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42543539929",
+    "head": "caf594ace56149eb6ffb65e10c186e9d7a996d76",
+    "offline": "success",
+    "compile_hold": "success",
+    "python_tests": 968,
+    "receipt_synthetic_tests": 40,
+    "integrated_source_pin_tests": 1
+  },
+  "source_changes": {
+    "source_lua_changed": false,
+    "receipt_validator_added": true,
+    "head_pin_decoupled": true,
+    "changed_files": 14,
+    "changed_paths": [
+      "docs/P0B_ENGINE_RECEIPT.md",
+      "history/C98843_p0b_progressmode_removed_duplicate.json",
+      "history/C98844_p0b_r4_hud_rename_detached.json",
+      "history/R3_20261108_PR209_HUD_2RACES_LOCAL.json",
+      "src/ToyWarsHUD.client.lua",
+      "tests/auto/studio_preview_hud_replication_spec.lua",
+      "tests/test_p0b_engine_receipt.py",
+      "tests/test_p0b_source_pin_integration.py",
+      "tests/test_system_xml_artifact_export.py",
+      "tools/export_accepted_rbxlx.py",
+      "tools/p0b_engine_receipt/mcp_trace_template.json",
+      "tools/p0b_engine_receipt/receipt_template.json",
+      "tools/p0b_engine_receipt/validate_receipt.py",
+      "tools/run_r3_local_qa.py"
+    ],
+    "source_blob_baseline": "bd78ae0a3bef6a35d5be5726fdb3a93fc9a46e90",
+    "author_commit_chain": [
+      "d8b5540b125d5db439e7e1584b67fff838c5e137",
+      "caf594ace56149eb6ffb65e10c186e9d7a996d76"
+    ]
+  },
+  "review_request": "Dedicated P0-B registered independent REVIEWER: reGET PR209 head caf594ace56149eb6ffb65e10c186e9d7a996d76, base PR208 206c83674d0258b36771b9ceedadb6be30485035, actual 14-file diff and Actions run42543539929 offline/compile_hold success, Python968. Audit unchanged HUD/C98844 races and NEW tools/p0b_engine_receipt/validate_receipt.py source 4 blob pin, XML 10 Item + property allowlist, actual bytes SHA256/PNG CRC/console/MCP event chronology, 40 synthetic unit cases + 1 real exporter source contract. Inspect HEAD distinction: source-pin HEAD bd78ae0a3bef6a35d5be5726fdb3a93fc9a46e90 is NOT candidate PR HEAD; --expected-head required and must be externally reGET/attested (offline verifier itself can't authenticate). Assert no bypass via spoofed user receipt, fixture_only, fake console/images or producer. No merge/main, no Studio execution/publish, no claim of Windows auth / zero datastore writes. All parent PRs remain DRAFT/HOLD.",
+  "independent_review": false,
+  "git_provider_native_approved": false,
+  "engine_verified": false,
+  "windows_executed": false,
+  "main_merged": false,
+  "roblox_published": false,
+  "additional_spend_jpy": 0,
+  "created_at": "2026-11-09T01:05:59.251Z"
+}
