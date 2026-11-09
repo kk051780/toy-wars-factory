@@ -65,6 +65,11 @@ def public_https(value):
                 "not a public DNS hostname")
         require(not host.endswith((".local", ".internal", ".localhost", ".test")),
                 "local/private hostname")
+        # Abbreviated/octal/hex numeric hosts (127.1, 2130706433, 0x7f.1)
+        # may resolve to local IPv4 on URL consumers, although ipaddress rejects
+        # their noncanonical spelling. Never treat them as normal DNS names.
+        require(not re.fullmatch(r"(?:0[xX][0-9a-fA-F]+|[0-9]+)(?:\.(?:0[xX][0-9a-fA-F]+|[0-9]+))*", host),
+                "numeric IP alias prohibited")
         try:
             ipaddress.ip_address(host)
         except ValueError:
@@ -100,7 +105,7 @@ def canonical_url(value, source_type):
             raise Rejected("wrong creator host")
         require(VIDEO_ID.fullmatch(vid) is not None, "invalid YouTube video ID")
         return "https://www.youtube.com/watch?v=" + vid
-    require(host not in ("youtube.com", "youtu.be", "www.youtube.com", "create.roblox.com"),
+    require(host not in ("youtube.com", "youtu.be", "www.youtube.com", "m.youtube.com", "create.roblox.com"),
             "use the matching specialized source type")
     require(not u.query, "strip tracking/query parameters from non-YouTube source")
     return "https://" + host + (u.path or "/")
@@ -118,11 +123,21 @@ def check_published(value, checked):
     else:
         require(utc(value) <= checked, "publication later than check")
 
+def valid_metric_number(value):
+    """Reject booleans, NaN, infinity and huge ints *without* float conversion."""
+    return (type(value) in (int, float)
+            and -1_000_000_000_000_000 <= value <= 1_000_000_000_000_000
+            and (type(value) is int or math.isfinite(value)))
+
+
 def preflight(packet):
     require(type(packet) is dict and set(packet) == {"schema", "as_of", "records"},
             "packet schema mismatch")
     require(packet["schema"] == SCHEMA, "unsupported schema")
     as_of = utc(packet["as_of"])
+    # The clock prevents outright future dates; it does NOT prove the source
+    # was actually fetched at the caller-reported checked_at timestamp.
+    require(as_of <= datetime.now(timezone.utc), "as_of later than runtime UTC")
     items = packet["records"]
     require(type(items) is list and 1 <= len(items) <= 100,
             "1-100 source claims required")
@@ -159,14 +174,16 @@ def preflight(packet):
             require(type(metric) is dict and set(metric) == {"value", "unit"},
                     "metric schema mismatch")
             val, unit = metric["value"], metric["unit"]
-            require(type(val) in (int, float) and math.isfinite(val)
-                    and abs(val) <= 1e15, "invalid finite numeric metric")
+            require(valid_metric_number(val), "invalid finite numeric metric")
             require(type(unit) is str and unit in METRIC_UNITS, "invalid metric unit")
             if unit != "PERCENT_CHANGE":
                 require(val >= 0, "negative metric")
             require(claim_kind in {"SELF_REPORTED", "PUBLIC_SNAPSHOT"},
                     "title/opinion/rule must not assert numeric outcomes")
-        claim_sig = (url, key, claim_kind)
+        # IDs are independently unique, so including an ID in this signature
+        # would make duplicate-observation detection a no-op. Preserve
+        # distinct facts and separately dated observations from the same URL.
+        claim_sig = (url, checked.isoformat(), claim_kind, row["claim"])
         require(claim_sig not in seen_claims, "duplicate canonical claim")
         seen_claims.add(claim_sig)
         # Preserve mandatory provenance warnings even when the user-supplied
@@ -207,14 +224,57 @@ def preflight(packet):
         "claims": normalized,
     }
 
+MAX_INPUT_BYTES = 1_048_576
+MAX_JSON_DEPTH = 32
+
+
+def bound_json_depth(raw):
+    """Scan bounded bytes before JSON decoding; ignore braces inside strings."""
+    inside, escaped, depth = False, False, 0
+    for byte in raw:
+        if inside:
+            if escaped:
+                escaped = False
+            elif byte == 92:  # backslash
+                escaped = True
+            elif byte == 34:  # double quote
+                inside = False
+        elif byte == 34:
+            inside = True
+        elif byte in (123, 91):  # { [
+            depth += 1
+            require(depth <= MAX_JSON_DEPTH, "JSON nesting too deep")
+        elif byte in (125, 93):  # } ]
+            depth -= 1
+            require(depth >= 0, "unbalanced JSON containers")
+
+
+def unique_json_object(pairs):
+    result = {}
+    for key, value in pairs:
+        require(key not in result, "ambiguous duplicate JSON field")
+        result[key] = value
+    return result
+
+
+def reject_json_constant(_value):
+    raise Rejected("nonfinite JSON constant")
+
+
 def main():
     try:
-        packet = json.load(sys.stdin)
+        raw = sys.stdin.buffer.read(MAX_INPUT_BYTES + 1)
+        require(len(raw) <= MAX_INPUT_BYTES, "oversized input JSON")
+        bound_json_depth(raw)
+        packet = json.loads(raw, object_pairs_hook=unique_json_object,
+                            parse_constant=reject_json_constant)
         print(json.dumps(preflight(packet), ensure_ascii=False, sort_keys=True))
-    except (Rejected, ValueError, TypeError, json.JSONDecodeError) as e:
-        # Never echo untrusted content/URLs in errors.
-        print("REJECTED: " + ("invalid input JSON" if isinstance(e, json.JSONDecodeError) else str(e)),
-              file=sys.stderr)
+    except Rejected as exc:
+        # These diagnostics are constant strings, never supplied input values.
+        print("REJECTED: " + str(exc), file=sys.stderr)
+        return 2
+    except (ValueError, TypeError, UnicodeError, RecursionError, OverflowError):
+        print("REJECTED: invalid input JSON", file=sys.stderr)
         return 2
     return 0
 

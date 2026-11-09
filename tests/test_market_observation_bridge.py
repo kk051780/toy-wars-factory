@@ -16,13 +16,13 @@ def packet(count=1):
         return {
             "claim_id":f"CLAIM_{i:03}", "source_type":"YOUTUBE_CREATOR",
             "url":f"https://youtu.be/{i:011d}", "published_at":"2026-10-10",
-            "checked_at":"2026-11-09T08:00:00Z",
+            "checked_at":"2026-11-08T23:00:00Z",
             "claim":f"Creator claimed this claim number {i}",
             "claim_kind":"TITLE_ONLY", "limitation":"No direct source transcript.",
             "hypothesis_id":"H_001", "metric":None,
             "transcript_verified":False,
         }
-    return {"schema":"MARKET_SOURCE_PREFLIGHT_V1", "as_of":"2026-11-09T09:00:00Z",
+    return {"schema":"MARKET_SOURCE_PREFLIGHT_V1", "as_of":"2026-11-09T00:00:00Z",
             "records":[item(i) for i in range(count)]}
 
 
@@ -94,6 +94,11 @@ class BridgeTests(unittest.TestCase):
         r=preflight(packet());r["claims"][0]["owner_approval"]=True
         self.assertRejected(signed_local(r))
 
+    def test_rehashed_duplicate_observation_distinct_ids_rejected(self):
+        r=preflight(packet(2))
+        r["claims"][1]["observation"]=dict(r["claims"][0]["observation"])
+        self.assertRejected(signed_local(r))
+
     def test_duplicate_ids_fails(self):
         r=preflight(packet(2));r["claims"][1]["claim_id"]="CLAIM_000"
         self.assertRejected(signed_local(r))
@@ -156,6 +161,36 @@ class BridgeTests(unittest.TestCase):
         self.assertLessEqual(len(r["claims"][0]["observation"]["limitation"]),2000)
         self.assertIn("Transcript NOT host-verified",r["claims"][0]["observation"]["limitation"])
         self.assertEqual(prepare_observation_bundle(raw)["authenticity"],"UNVERIFIED")
+
+    def test_huge_metric_rehashed_rejected_not_overflow(self):
+        r=preflight(packet());r["claims"][0]["metric"]={"value":10**500,"unit":"VISITS"}
+        self.assertRejected(signed_local(r))
+
+    def test_future_as_of_rehashed_rejected(self):
+        from datetime import datetime, timezone, timedelta
+        r=preflight(packet());r["as_of"]=(datetime.now(timezone.utc)+timedelta(days=2)).isoformat()
+        self.assertRejected(r)
+
+    def test_result_is_detached_from_input_mutations(self):
+        r=preflight(packet())
+        result=observation_bundle_from_report(r)
+        r["claims"][0]["observation"]["observed_fact"]="MUTATED AFTER VALIDATION"
+        self.assertNotEqual(result["observations"][0]["observed_fact"],"MUTATED AFTER VALIDATION")
+
+    def test_bridge_returns_actual_provenance_values(self):
+        raw=packet()
+        out=prepare_observation_bundle(raw)
+        obs=out["observations"][0]
+        self.assertEqual(obs["source_url"],"https://www.youtube.com/watch?v=00000000000")
+        self.assertEqual(obs["checked_at"],"2026-11-08T23:00:00Z")
+        self.assertEqual(obs["published_at"],"2026-10-10")
+        self.assertEqual(obs["observed_fact"],"Creator claimed this claim number 0")
+        self.assertEqual(obs["source_kind"],"DEVELOPER_CASE")
+        self.assertIn("Transcript NOT host-verified",obs["limitation"])
+
+    def test_nonfinite_report_json_rejected_with_rejected_error(self):
+        r=preflight(packet());r["claims"][0]["metric"]={"value":float("nan"),"unit":"VISITS"}
+        self.assertRejected(r)
 
     def test_transcript_claim_input_not_reified_as_verified(self):
         raw=packet();raw["records"][0]["transcript_verified"]=True

@@ -10,7 +10,7 @@ from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"tools"))
 from market_source_preflight import Rejected, preflight
 
-NOW = "2026-11-09T09:00:00Z"
+NOW = "2026-11-09T00:00:00Z"
 
 def row(**updates):
     v = {
@@ -59,6 +59,21 @@ class SourcePreflightTests(unittest.TestCase):
         a=row()
         b=row(claim_id="CLAIM_002",url="https://youtu.be/ZZZZZZZZZZZ",metric=None)
         self.assertEqual(preflight(packet(a,b))["claims_sha256"],preflight(packet(b,a))["claims_sha256"])
+
+    def test_duplicate_canonical_claim_different_ids_fails(self):
+        a=row()
+        b=row(claim_id="CLAIM_002")
+        self.rejected(packet(a,b))
+
+    def test_same_source_distinct_claim_is_allowed(self):
+        a=row()
+        b=row(claim_id="CLAIM_002", claim="Second distinct claim about onboarding.")
+        self.assertEqual(len(preflight(packet(a,b))["claims"]), 2)
+
+    def test_same_claim_different_checked_at_is_allowed(self):
+        a=row()
+        b=row(claim_id="CLAIM_002", checked_at="2026-11-08T21:00:00+09:00")
+        self.assertEqual(len(preflight(packet(a,b))["claims"]), 2)
 
     def test_duplicate_id_fails(self):
         self.rejected(packet(row(),row(url="https://youtu.be/ZZZZZZZZZZZ")))
@@ -161,6 +176,82 @@ class SourcePreflightTests(unittest.TestCase):
     def test_truncation_of_limit_and_extra_label(self):
         c=preflight(packet(row(limitation="X"*1999)))["claims"][0]
         self.assertLessEqual(len(c["observation"]["limitation"]),2000)
+
+    def test_numeric_ipv4_alias_hosts_rejected(self):
+        for host in ("127.1", "2130706433", "0177.0.0.1", "0x7f.1", "127.0.0.1"):
+            with self.subTest(host=host):
+                self.rejected(packet(row(
+                    source_type="PUBLIC_ROBLOX_CHART", claim_kind="PUBLIC_SNAPSHOT",
+                    url="https://"+host+"/snapshot", metric=None)))
+
+    def test_mobile_youtube_cannot_be_misclassified_generic(self):
+        self.rejected(packet(row(source_type="COMMUNITY_REPORT",claim_kind="OPINION",
+            url="https://m.youtube.com/shorts/ABCDEFGHI01",metric=None)))
+
+    def test_runtime_clock_rejects_spoofed_future_as_of(self):
+        from datetime import datetime, timezone, timedelta
+        future=(datetime.now(timezone.utc)+timedelta(days=2)).isoformat()
+        bad=packet(row(checked_at=future))
+        bad["as_of"]=future
+        self.rejected(bad)
+
+    def test_very_large_metric_is_rejected_not_overflow(self):
+        self.rejected(packet(row(metric={"value":10**500,"unit":"VISITS"})))
+
+    def test_constant_digest_mutation_is_detected(self):
+        a=row()
+        report=preflight(packet(a))
+        changed=preflight(packet(row(claim="Different creator's claim with new evidence.")))
+        self.assertNotEqual(report["claims_sha256"], changed["claims_sha256"])
+
+    def test_cli_duplicate_top_level_key_rejected(self):
+        script=Path(__file__).resolve().parents[1]/"tools"/"market_source_preflight.py"
+        raw='{"schema":"MARKET_SOURCE_PREFLIGHT_V1","schema":"MARKET_SOURCE_PREFLIGHT_V1"}'
+        proc=subprocess.run([sys.executable,"-S",str(script)],input=raw,text=True,
+                            capture_output=True,timeout=10)
+        self.assertEqual(proc.returncode,2)
+        self.assertIn("duplicate JSON field",proc.stderr)
+
+    def test_cli_duplicate_nested_key_rejected(self):
+        script=Path(__file__).resolve().parents[1]/"tools"/"market_source_preflight.py"
+        obj=packet(row())
+        # Inject a second metric key within the otherwise syntactically valid JSON.
+        raw=json.dumps(obj).replace('"value": 1000', '"value": 1000, "value": 1000')
+        proc=subprocess.run([sys.executable,"-S",str(script)],input=raw,text=True,
+                            capture_output=True,timeout=10)
+        self.assertEqual(proc.returncode,2)
+        self.assertIn("duplicate JSON field",proc.stderr)
+
+    def test_cli_excess_payload_rejected_before_json_parsing(self):
+        script=Path(__file__).resolve().parents[1]/"tools"/"market_source_preflight.py"
+        raw='"'+('x' * 1_048_576)+'"'
+        proc=subprocess.run([sys.executable,"-S",str(script)],input=raw,text=True,
+                            capture_output=True,timeout=10)
+        self.assertEqual(proc.returncode,2)
+        self.assertIn("oversized input JSON",proc.stderr)
+
+    def test_cli_deep_json_rejected_preparse(self):
+        script=Path(__file__).resolve().parents[1]/"tools"/"market_source_preflight.py"
+        raw='['*40 + '0' + ']'*40
+        proc=subprocess.run([sys.executable,"-S",str(script)],input=raw,text=True,
+                            capture_output=True,timeout=10)
+        self.assertEqual(proc.returncode,2)
+        self.assertIn("JSON nesting too deep",proc.stderr)
+
+    def test_cli_valid_brackets_in_string_are_not_depth(self):
+        script=Path(__file__).resolve().parents[1]/"tools"/"market_source_preflight.py"
+        raw=packet(row(claim='Brackets '+('['*40)+(']'*40)))
+        proc=subprocess.run([sys.executable,"-S",str(script)],input=json.dumps(raw),text=True,
+                            capture_output=True,timeout=10)
+        self.assertEqual(proc.returncode,0,proc.stderr)
+
+    def test_cli_nonfinite_json_constant_rejected(self):
+        script=Path(__file__).resolve().parents[1]/"tools"/"market_source_preflight.py"
+        raw=json.dumps(packet(row())).replace('1000', 'NaN')
+        proc=subprocess.run([sys.executable,"-S",str(script)],input=raw,text=True,
+                            capture_output=True,timeout=10)
+        self.assertEqual(proc.returncode,2)
+        self.assertIn("nonfinite",proc.stderr)
 
     def test_cli_rejects_input_without_echoing_secret(self):
         exe=Path(__file__).resolve().parents[1]/"tools"/"market_source_preflight.py"

@@ -12,10 +12,12 @@ from typing import Any
 
 try:
     from .market_source_preflight import (Rejected, SCHEMA, KINDS, preflight,
-        canonical_url, utc, check_published, CLAIM_ID, HYPOTHESIS, METRIC_UNITS)
+        canonical_url, utc, check_published, CLAIM_ID, HYPOTHESIS,
+        METRIC_UNITS, valid_metric_number)
 except ImportError:
     from market_source_preflight import (Rejected, SCHEMA, KINDS, preflight,
-        canonical_url, utc, check_published, CLAIM_ID, HYPOTHESIS, METRIC_UNITS)
+        canonical_url, utc, check_published, CLAIM_ID, HYPOTHESIS,
+        METRIC_UNITS, valid_metric_number)
 
 REPORT_KEYS = {"schema", "as_of", "authority", "authorized_actions", "claims_sha256", "claims"}
 CLAIM_KEYS = {"claim_id", "claim_kind", "hypothesis_id", "metric", "source_type",
@@ -26,6 +28,18 @@ OBS_KEYS = {"source_url", "checked_at", "observed_fact", "limitation",
 
 
 def observation_bundle_from_report(report: Any):
+    # A mutable caller object must never be re-read after validation. Turn it
+    # into a detached plain JSON snapshot and validate/copy from that snapshot.
+    try:
+        encoded = json.dumps(report, ensure_ascii=False, sort_keys=True,
+                             separators=(",", ":"), allow_nan=False)
+        if len(encoded) > 1_048_576:
+            raise Rejected("oversized report JSON")
+        report = json.loads(encoded)
+    except Rejected:
+        raise
+    except (ValueError, TypeError, OverflowError, RecursionError, RuntimeError):
+        raise Rejected("invalid report JSON") from None
     if type(report) is not dict or set(report) != REPORT_KEYS:
         raise Rejected("report schema mismatch")
     if report["schema"] != SCHEMA or report["authority"] != "READ_ONLY_UNTRUSTED_INPUT":
@@ -36,6 +50,9 @@ def observation_bundle_from_report(report: Any):
     # freely rehash that report, so the digest is never a substitute for the
     # original preflight's URL/date/metric/claim invariants.
     as_of = utc(report["as_of"])
+    from datetime import datetime, timezone
+    if as_of > datetime.now(timezone.utc):
+        raise Rejected("as_of later than runtime UTC")
     claims = report["claims"]
     if type(claims) is not list or not 1 <= len(claims) <= 20:
         raise Rejected("one idea may hold only 1-20 evidence observations")
@@ -46,7 +63,7 @@ def observation_bundle_from_report(report: Any):
         raise Rejected("invalid report JSON") from None
     if type(report["claims_sha256"]) is not str or report["claims_sha256"] != sha256(plain.encode("utf-8")).hexdigest():
         raise Rejected("local report digest mismatch")
-    seen, observations, claim_ids = set(), [], []
+    seen, seen_observations, observations, claim_ids = set(), set(), [], []
     for row in claims:
         if type(row) is not dict or set(row) != CLAIM_KEYS:
             raise Rejected("claim output schema mismatch")
@@ -83,8 +100,8 @@ def observation_bundle_from_report(report: Any):
             if type(metric) is not dict or set(metric) != {"value", "unit"}:
                 raise Rejected("invalid metric shape")
             value, unit = metric["value"], metric["unit"]
-            if (type(value) not in (int, float) or not math.isfinite(value)
-                    or abs(value) > 1e15 or type(unit) is not str or unit not in METRIC_UNITS):
+            if (not valid_metric_number(value)
+                    or type(unit) is not str or unit not in METRIC_UNITS):
                 raise Rejected("invalid metric value/unit")
             if (unit != "PERCENT_CHANGE" and value < 0) or row["claim_kind"] not in {"SELF_REPORTED", "PUBLIC_SNAPSHOT"}:
                 raise Rejected("metric not permitted for this claim")
@@ -98,6 +115,13 @@ def observation_bundle_from_report(report: Any):
         if warnings and not obs["limitation"].endswith(warnings):
             raise Rejected("required source caveat missing")
         seen.add(row["claim_id"])
+        # The report is caller-supplied; a recomputed digest must not permit
+        # the same source, claim and observation time under a different ID.
+        claim_sig = (obs["source_url"], obs["checked_at"],
+                     row["claim_kind"], obs["observed_fact"])
+        if claim_sig in seen_observations:
+            raise Rejected("duplicate canonical observation")
+        seen_observations.add(claim_sig)
         claim_ids.append(row["claim_id"])
         observations.append(dict(obs))
     if claim_ids != sorted(claim_ids):
