@@ -2129,17 +2129,7 @@
     "tree": "2167a28b494872a89a626544e9b9ae1b074743e5"
   },
   "epoch": 571,
-  "holder": {
-    "kind": "CONTROLLER",
-    "owner_id": "a6dc7403-d593-497c-b448-ce0cb626aa18",
-    "task_id": null,
-    "epoch": 571,
-    "acquired_at": "2026-11-09T01:17:58.391Z",
-    "expires_at": "2026-11-09T01:37:58.391Z",
-    "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-    "work_branch": "controller/p0-market-source-preflight-20261109-65f7fda7",
-    "origin": "controller"
-  },
+  "holder": null,
   "integration_results": {
     "35": {
       "merged": true,
@@ -3783,24 +3773,24 @@
     "service_run_id": "d5c2439a-d8c8-8324-bf06-a3f4abf85c06"
   },
   "last_completed": {
-    "kind": "CONTROLLER_P0_MARKET_PR216_REVIEW_FINDING_10_HARDENING",
+    "kind": "CONTROLLER_P0_MARKET_PR216_CANONICAL_IDEA_CAPTURE_CONTRACT",
+    "owner_id": "a6dc7403-d593-497c-b448-ce0cb626aa18",
+    "epoch": 571,
     "work_id": "P0_MARKET_ISSUE109_SOURCE_PREFLIGHT_PR216_20261109",
-    "owner_id": "3dc788d9-6c36-48f2-ad5b-e615be5cce93",
-    "epoch": 570,
     "pr": 216,
-    "head": "123ea688f9dfb206238ff1e7e7476baafd361c25",
-    "ci_run_id": 42543959018,
-    "python_tests": 912,
-    "market_tests": 79,
-    "sourcery_previous_findings": 10,
+    "head": "c799c15450cc2b7bc7f0f530319dce3be5b18729",
+    "ci_run_id": 42544969562,
+    "python_tests": 918,
+    "market_tests": 85,
+    "new_integration_tests": 6,
     "ci_offline": "success",
     "ci_compile_hold": "success",
-    "new_head_review": "PENDING",
     "independent_reviewed": false,
     "main_merged": false,
+    "source_fetched_from_web": false,
     "market_auto_polling_enabled": false,
     "service_terminal_proof": false,
-    "released_at": "2026-11-09T01:10:41.951Z"
+    "released_at": "2026-11-09T01:21:19.002Z"
   },
   "last_completed_integration": {
     "at": "2026-10-30T06:49:24.269Z",
@@ -4418,6 +4408,26 @@
       "owner_id": "1d5cfa20-a373-4f27-a990-e5f981eeff66",
       "epoch": 568,
       "released_at": "2026-11-09T00:30:10.324Z"
+    },
+    {
+      "kind": "CONTROLLER_P0_MARKET_PR216_REVIEW_FINDING_10_HARDENING",
+      "work_id": "P0_MARKET_ISSUE109_SOURCE_PREFLIGHT_PR216_20261109",
+      "owner_id": "3dc788d9-6c36-48f2-ad5b-e615be5cce93",
+      "epoch": 570,
+      "pr": 216,
+      "head": "123ea688f9dfb206238ff1e7e7476baafd361c25",
+      "ci_run_id": 42543959018,
+      "python_tests": 912,
+      "market_tests": 79,
+      "sourcery_previous_findings": 10,
+      "ci_offline": "success",
+      "ci_compile_hold": "success",
+      "new_head_review": "PENDING",
+      "independent_reviewed": false,
+      "main_merged": false,
+      "market_auto_polling_enabled": false,
+      "service_terminal_proof": false,
+      "released_at": "2026-11-09T01:10:41.951Z"
     }
   ]
 }

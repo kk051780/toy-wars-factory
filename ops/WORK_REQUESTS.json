@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-09T01:10:41.951Z",
+  "observed_at": "2026-11-09T01:21:19.002Z",
   "requests": [
     {
       "id": "main_pr74_pr67_history_ledger_chain_20261026",
@@ -6046,13 +6046,13 @@
       "pr": 216,
       "branch": "controller/p0-market-source-preflight-20261109-65f7fda7",
       "base_main_sha": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-      "head": "123ea688f9dfb206238ff1e7e7476baafd361c25",
+      "head": "c799c15450cc2b7bc7f0f530319dce3be5b18729",
       "draft": true,
-      "source_owner_epoch": 570,
-      "source_owner_id": "3dc788d9-6c36-48f2-ad5b-e615be5cce93",
+      "source_owner_epoch": 571,
+      "source_owner_id": "a6dc7403-d593-497c-b448-ce0cb626aa18",
       "assigned_role": "REVIEWER",
-      "status": "OPEN_CI912_GREEN_SOURCERY_10_FINDINGS_AUTHOR_FIXED_INDEPENDENT_RE_REVIEW_REQUIRED",
-      "ci_run_id": 42543959018,
+      "status": "OPEN_CI918_GREEN_MARKET_IDEA_PIPELINE_INTEGRATED_IN_TESTS_DISTINCT_REVIEW_PENDING",
+      "ci_run_id": 42544969562,
       "ci_jobs": {
         "offline": "success",
         "compile_hold": "success"
@@ -6064,19 +6064,21 @@
         "tools/market_source_preflight.py",
         "tools/market_observation_bridge.py",
         "tests/test_market_source_preflight.py",
-        "tests/test_market_observation_bridge.py"
+        "tests/test_market_observation_bridge.py",
+        "tests/test_market_idea_pipeline_integration.py"
       ],
       "extra_spend": false,
       "created_at": "2026-11-08T20:47:46.961Z",
-      "next_actor": "Distinct registered independent reviewer: inspect PR216 exact new HEAD 123ea688, 912-test CI, 10 previously flagged findings/79 market regressions, then separately process main integration; no author self-approval",
-      "python_tests": 912,
-      "new_regression_tests": 79,
+      "next_actor": "Distinct registered independent REVIEWER checks actual PR216 HEAD c799c154, hosted CI 918 tests, new canonical capture() integration (6 tests) and prior security findings; no author self approval.",
+      "python_tests": 918,
+      "new_regression_tests": 85,
       "review_packet_path": "ops/review_packets/PR216_market_source_preflight_epoch564.json",
-      "updated_at": "2026-11-09T01:10:41.951Z",
-      "previous_head": "2e48d2abaceb7cfb5b05994cd151e03c6755f915",
+      "updated_at": "2026-11-09T01:21:19.002Z",
+      "previous_head": "123ea688f9dfb206238ff1e7e7476baafd361c25",
       "last_fix_negative_tests_added": 13,
       "sourcery_review_previous_head_issues": 10,
-      "sourcery_new_head_review": "PENDING"
+      "sourcery_new_head_review": "PENDING",
+      "integration_tests_added": 6
     }
   ]
 }

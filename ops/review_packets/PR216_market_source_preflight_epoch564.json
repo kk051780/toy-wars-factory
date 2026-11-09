@@ -5,25 +5,27 @@
   "issue": 109,
   "pr": 216,
   "source_branch": "controller/p0-market-source-preflight-20261109-65f7fda7",
-  "source_head": "123ea688f9dfb206238ff1e7e7476baafd361c25",
+  "source_head": "c799c15450cc2b7bc7f0f530319dce3be5b18729",
   "main_base": "e5deff4d5681bca4823a3da0f848e01bc089ae6e",
-  "owner_epoch": 570,
-  "owner_id": "3dc788d9-6c36-48f2-ad5b-e615be5cce93",
+  "owner_epoch": 571,
+  "owner_id": "a6dc7403-d593-497c-b448-ce0cb626aa18",
   "requested_role": "REVIEWER",
   "author_is_reviewer": false,
-  "hosted_ci_run": 42543959018,
+  "hosted_ci_run": 42544969562,
   "hosted_ci_status": "SUCCESS",
   "source_files": [
     "tools/market_source_preflight.py",
     "tools/market_observation_bridge.py",
     "tests/test_market_source_preflight.py",
-    "tests/test_market_observation_bridge.py"
+    "tests/test_market_observation_bridge.py",
+    "tests/test_market_idea_pipeline_integration.py"
   ],
   "source_git_blobs": {
     "tools/market_source_preflight.py": "d9a325b5514c09ed1476c1ddf78ebac55962f2ab",
     "tools/market_observation_bridge.py": "8286782541ca147fc021ba2571b01acdf7de1ce4",
     "tests/test_market_source_preflight.py": "5646aacbb582eef9b5d6d6f94e864bcc941c5b6a",
-    "tests/test_market_observation_bridge.py": "d1c4e60909ec28e76525d913ef91733f02c3ff76"
+    "tests/test_market_observation_bridge.py": "d1c4e60909ec28e76525d913ef91733f02c3ff76",
+    "tests/test_market_idea_pipeline_integration.py": "0d3ed9c21a1fc88f16f96c3b4fb15c60ff114150"
   },
   "local_python_tests": 79,
   "independent_security_review": "NOT_PERFORMED",
@@ -38,10 +40,10 @@
     "offline": "success",
     "compile_hold": "success"
   },
-  "hosted_python_tests": 912,
-  "hosted_ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42543959018",
+  "hosted_python_tests": 918,
+  "hosted_ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/42544969562",
   "registered_independent_review": "PENDING",
-  "previous_source_head": "2e48d2abaceb7cfb5b05994cd151e03c6755f915",
+  "previous_source_head": "123ea688f9dfb206238ff1e7e7476baafd361c25",
   "correction": {
     "risk": "rehashed report bypassed original URL/date/metric validation",
     "negative_tests_added": 13,
@@ -56,5 +58,13 @@
     "prior_head": "2e48d2abaceb7cfb5b05994cd151e03c6755f915",
     "new_review": "PENDING",
     "registered_independent_review": "PENDING"
-  }
+  },
+  "integration_tests": {
+    "canonical_capture_validate_record": 6,
+    "python_tests_in_total": 918,
+    "studio_engine": "NOT_TESTED",
+    "web_source_authenticity": "NOT_VERIFIED",
+    "market_auto_poller": "NOT_ENABLED"
+  },
+  "updated_at": "2026-11-09T01:21:19.002Z"
 }
