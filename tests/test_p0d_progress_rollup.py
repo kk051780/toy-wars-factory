@@ -32,6 +32,25 @@ class TestRollup(unittest.TestCase):
         s=m.summarize(d)
         self.assertEqual(s['new_design_artifact_delivered_groups'],1)
         self.assertEqual(s['candidate_features_in_all_known_groups'],7)
+    def test_14_packets_cover_12_reference_groups_17_of_18(self):
+        d=fixture()
+        scopes=[['D06'],['D07','D08','D09','D10'],['D11'],['D12'],
+                ['D13'],['D14'],['D15'],['D16'],['D16'],['D16'],
+                ['D16'],['D17'],['D17'],['D07']]
+        d['sealed_packets']=[dict(packet_id='p'+str(i),commit=f'{i:040x}',
+                                  feature_ids=ids,envelope_path='handoffs/cipher.json',
+                                  readme_path='handoffs/note.md',
+                                  windows_restore='NOT_TESTED',studio_qa='NOT_TESTED')
+                             for i,ids in enumerate(scopes,1)]
+        d['new_design_feature_items'][0]['status']='DESIGN_ARTIFACT_DELIVERED_NO_GAME_CODE'
+        report=m.summarize(d)
+        self.assertEqual(report['indexed_sealed_packets'],14)
+        self.assertEqual(report['github_reference_feature_groups'],12)
+        self.assertEqual(report['candidate_features_in_historical_baseline'],17)
+        self.assertEqual(report['candidate_features_in_all_known_groups'],17)
+        self.assertEqual(report['total_known_feature_groups'],18)
+        self.assertEqual(report['new_design_artifact_delivered_groups'],1)
+        self.assertEqual(report['windows_restored_packets_verified'],0)
     def test_baseline_fixed(self):
         d=fixture();d['baseline_feature_ids'].append('D18')
         with self.assertRaisesRegex(m.ProgressError,'BASELINE_CHANGED'):m.summarize(d)
