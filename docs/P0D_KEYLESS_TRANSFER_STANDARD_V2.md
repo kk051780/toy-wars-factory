@@ -1,45 +1,42 @@
-# P0-D・P0-A横断｜鍵なし納品標準（OWNER指示 2026-11-10）
+# P0-D 鍵なし成果物移行補助標準（OWNER 2026-11-10）
 
-## 決定
-新規の商用ゲーム成果は、**鍵探しを必要としない OWNER 管理の原本ZIP** とする。現行 `kk051780/toy-wars-factory` は **PUBLIC** なので、平文 ZIP・ゲームソース・未公開のキャラクター設定・秘密鍵をこのリポジトリのブランチ、Draft PR、Issue、CI成果物へ置かない。GitHub に保管するのは公開安全な受領プログラム、仕様、原本・変換後の SHA-256、パケットID、依存関係、ステータスのみ。SHAは完全性照合であり、秘匿や署名の代わりにはならない。
+> **上位正本**：GitHub [#217](https://github.com/kk051780/toy-wars-factory/issues/217) と [#218](https://github.com/kk051780/toy-wars-factory/issues/218) の冒頭にある **TRAP_RAIDERS の `PUBLIC_SOURCE_V1` 特別許可**。この文書はそれを上書きしない。全P0配送の標準策定は #217 #6766538817 の別担当レーンと調整する。本件は D18 企画および旧パックの**元ZIP検証・鍵不要OWNERローカル移行補助ツール**の実装記録である。
 
-## 新規成果物の必須「鍵なし受入」契約
-1. `packet_id`・`game_id=TRAP_RAIDERS`・`work_id=p0d-siege-v19`・担当範囲・依存・実装状態を登録する。
-2. 元 Luau/Python/QA/README/manifest など正規原本を単一の ZIP にまとめ、`sha256` と明細 SHA を取得する。鍵・パスワード・別のZIPの探索は要求しない。
-3. **OWNER専用の安全な経路**（会話ファイルのPCダウンロード、OWNER限定Library→PC、OWNERが明示承認したアクセス制御付き非公開共有先）へ原本を渡す。公開 GitHub に原本の平文を置かない。
-4. Windows Codex は固定受信フォルダー `%USERPROFILE%\TRAP_RAIDERS\handoff\inbox` または `Downloads` の指定ファイルだけを確認し、GitHub台帳の SHA・packet_id・ZIP内部ファイル・安全なパスを検査する。必要な原本がなければ `BLOCKED_SOURCE_NOT_PRESENT`。別パケットのファイルを流用・代替しない。
-5. Codexは隔離した `handoff/staged/<packet_id or bundle_sha>` へ**データとして**展開する。現PCの本体 `CHECKPOINT`/Place/Source を保全。依存/認証/独立監査・合格したパケットだけ、OWNERが直接指示して一件ずつPC/Studioで試す。
-6. `PUBLIC_METADATA_VERIFIED`、`OWNER_BYTES_RECEIVED`、`ZIP_SHA_PASS`、`PC_STAGE_PASS`、`LUAU_PARSE`、`STUDIO_SCOPED_PASS`、`STUDIO_CLOSED_VERIFIED`、`GITHUB_SOURCE_CONFIRMED` を混同しない。
-7. main直書込み・未審査merge・本番公開・実課金・追加支出・P0-A/CAS回避は従来どおり禁止。
+## 第一方式：TRAP RAIDERS オリジナルゲームソースの鍵なし直接納品
 
-## 旧暗号化パックの移行
-- **元のZIPがチャットまたはOWNERのPCにある**：既存GitHubに記録された元ZIP SHAと照合し、`p0d_keyless_migrate.py` で鍵なしオーナー専用バッチZIPへ組み替える。元ZIPのバイト列・正本SHAを変更して「古い復元PASS」を取り消してはならない。新形式は別revision。
-- **Windowsで正規に復号済み**：Windows PCにある元ZIPが正しい元ZIP SHAを満たせば同じ方式で移行できる。元の暗号鍵を再度使う必要はない。
-- **元ZIP不明・鍵だけ失われた**：公開暗号文から元コードを復元することはできない。元制作者に原本ZIPをOWNER専用で再提供してもらう。提供不可の場合は `BLOCKED_SOURCE_NOT_PRESENT` とし、ソースを勝手に捏造・差替えない。もし再実装するなら既存パケットとは別の新規企画・コード・QAとして扱う。
-- **旧AES方式が必要な共同作業**：既存暗号文を無理に解除しない。各元作者が鍵と原本を正規に保持し、OWNERへ私的に渡すことは可能。しかしこれ以後、新しい納品の要件に「鍵の所在を元作者以外が探す」を入れない。
+ユーザーは最初のゲーム `TRAP_RAIDERS / p0d-siege-v19` **の自作ゲームソースの公開を明示許可**している。ゲームコードの新規・再納品は [P0D_PUBLIC_SOURCE_HANDOFF_V1](https://github.com/kk051780/toy-wars-factory/blob/b519a17a3152613666822b7d9660742f93a739b7/handoffs/P0D_PUBLIC_SOURCE_HANDOFF/docs/P0D_PUBLIC_SOURCE_HANDOFF_V1.md) に従う。
 
-## 既存成果物の現在の事実（このチャットからの実測）
-- GitHubの以前の16封筒台帳と、その後の個別パックを合わせ**候補26件**のSHA付き暫定台帳を作成。候補数であり完成ゲーム機能数ではない。今後の最新コメントで追記する。
-- この作業環境から元ZIPを直接照合できたのはD18図鑑 **1/26** 件。正規SHA検査・鍵なしZIP変換・隔離再展開を実施。残り25件はここには元ZIPがないため**未変換**。ただしPCで復元済と報告された v39、v43-A、D07 Rig の3件は、Windowsの元ZIPが正規SHAに一致すれば次に転換できる。現チャットではそのPC実ファイルは受け取っていない。
-- ゴロガン外観・AIについてGitHub #213 Windows実測は**専用鍵不足**。このルールは両パックの復号済を意味しない。
+- 正規の元Luau、Pythonテスト、README、BUILD_MANIFESTを、他チャットと重複しない**一意の隔離branch**へ、平文で**直接コミット**する。
+- 固定40桁commitから**ソース実体の全件**を再取得し、SHAとバイトを検査する。AESの封筒だけ・概要READMEだけでは新方式の納品完了ではない。
+- APIキー、認証情報、本人情報、実プレイヤー情報、無許可第三者IP、他ゲームの非公開ソースなどは公開禁止。公開を許された範囲を超えて、非公開の企画原本を自動公開しない。
+- Codexの真のPC保存Place/CHECKPOINTと依存を照合し、OWNERが直接指示して一つずつ統合する。main直変更・無断merge・Roblox本番公開・実課金・CAS回避禁止。
 
-## 自動化用の安全なコマンド（PC側・OWNERから直接指示）
-公開安全ツールの置き場： `tools/p0d_keyless_migrate.py` ／ `docs/P0D_KEYLESS_MIGRATION_REGISTRY.json`
+## 第二方式：OWNER専用鍵不要ZIP（旧ZIP移行／非公開の資料）
+
+GitHub公開の対象外にある企画資料や既存のオリジナルZIPで、OWNER本人が安全に私的転送する場合は、**パケットごとのAES復号鍵を探さない**。
+
+- 原本ZIPをOWNERのPC `Downloads` か `%USERPROFILE%\TRAP_RAIDERS\handoff\inbox\<packet_id>.zip` の決まった場所へ渡す。
+- `p0d_keyless_migrate.py` は `P0D_KEYLESS_MIGRATION_REGISTRY.json` に登録済みの**元ZIP SHA256**を確認し、安全なZIPエントリだけを解凍・まとめ直す。検査不成立なら一切混ぜない。
+- 鍵不要のバッチZIPは**OWNER管理の非公開ローカルファイル**として生成し、全ファイルSHAを持つ `KEYLESS_RECEIPT.json` を同梱する。`verify --stage` は隔離フォルダーだけを作り、ゲーム本体に書き込まない。
+- 元ZIPがなければ `BLOCKED_SOURCE_NOT_PRESENT`、暗号文だけなら復元できない。旧暗号の復元実績と別々に記録し、**鍵を使わず元の暗号文から復元できた**という虚偽表示をしない。
+- 既存アーカイブの作者が元ソースを持っている場合は、第一方式の公開を許されたゲームコードなら**別revisionのPUBLIC_SOURCE_V1**として再納品するのが優先。元原本がない場合の独立再実装は新しいコード・検証を必要とし、旧バイト一致とは言わない。
+- **鍵なしZIPを公開GitHubへ置くことと、鍵なしでOWNERへ渡すことは別**。非公開であるべき資料はOWNERの私的保存に留める。SHAは秘匿の手段ではない。
+
+## 今回の実際の検証結果
+
+- 2026-11-10 時点の旧・追加受渡し候補26件を、公開安全メタの暫定台帳に整理（**全成果の確定総数ではない**）。他チャットの19件台帳やPC実測と集計基準が違うため単純比較しない。
+- **このチャットのローカル環境**に元ZIPがあったのはD18コレクション1件。SHA照合後、元10ファイルを保持した**鍵不要OWNER専用バッチ**を実制作し、再検証・隔離展開もPASS。残25件はこのチャットに元ZIPが届いていないだけであり、**他チャットやWindowsに原本が存在しないという意味ではない**。
+- Windowsで復元済のv39-H1、v43-A、D07実リグが各々正しい元ZIP SHAを満たせば、PC上で追加移行できる。一方D07外観とAIは最新PC報告でAES鍵不足。元作者の公開ソース再納品または別途認可された再実装が必要。
+- `p0d_keyless_migrate.py` 単体17件PASS、D18鍵不要ZIP構造検査＋外側SHA＋隔離展開PASS。**Studioでのゲーム動作を確認したものではない**。
+
+## 実行例：所有者のPCに正規の元ZIPが存在するときだけ
 
 ```powershell
-# OWNERが正規元ZIPを inbox に <packet_id>.zip として提供した後のみ。
+# 改変禁止の隔離ワークスペースで行う。元ZIP名は正確なpacket_id.zip。
 py -3 tools/p0d_keyless_migrate.py status --registry docs/P0D_KEYLESS_MIGRATION_REGISTRY.json --inbox "$env:USERPROFILE\TRAP_RAIDERS\handoff\inbox"
 py -3 tools/p0d_keyless_migrate.py pack --registry docs/P0D_KEYLESS_MIGRATION_REGISTRY.json --inbox "$env:USERPROFILE\TRAP_RAIDERS\handoff\inbox" --output "$env:USERPROFILE\TRAP_RAIDERS\handoff\keyless\TRAP_RAIDERS_OWNER_KEYLESS_BATCH.zip"
-# packが出力した sha256 を正本台帳へ記録してから検証（推測・コピペ誤り不可）
-py -3 tools/p0d_keyless_migrate.py verify --registry docs/P0D_KEYLESS_MIGRATION_REGISTRY.json --bundle "$env:USERPROFILE\TRAP_RAIDERS\handoff\keyless\TRAP_RAIDERS_OWNER_KEYLESS_BATCH.zip" --sha256 <実測SHA256> --stage "$env:USERPROFILE\TRAP_RAIDERS\handoff\staged"
+# 出力時に報告された実際のSHAを、同じ実ファイルで照合する
+py -3 tools/p0d_keyless_migrate.py verify --registry docs/P0D_KEYLESS_MIGRATION_REGISTRY.json --bundle "$env:USERPROFILE\TRAP_RAIDERS\handoff\keyless\TRAP_RAIDERS_OWNER_KEYLESS_BATCH.zip" --sha256 <実測64桁SHA256> --stage "$env:USERPROFILE\TRAP_RAIDERS\handoff\staged"
 ```
 
-`pack` は元ZIPが無いパケットを出力に混ぜず、`pending` として明示する。全件揃っていなければ `is_partial=true`。すべて必須にする際は `--strict-all` で欠落した場合は失敗する。既存ファイル上書きは許さない。コマンドはCodexへの遠隔命令ではなく、OWNERの実行操作が必要。
-
-## 公開安全Githubメタ
-- Issue #217：新規・旧式移行の共通方針
-- Issue #218：実パケットごとの担当と正本固定SHA・状態
-- Issue #213：Windows実機・Studioの受入QA
-- Issue #219：D18企画図鑑（旧パックと新規構想）
-
-以上はOWNERからの新方針を受けてこのチャットで作成した標準。各既存チャット／Windowsの実作業はこのコメントから自動実行されない。
+#217が全P0方針の正本、#218が実パケット所有/納品台帳、#213がWindows実機QA。GitHubコメントはWindows PCへの自動実行命令ではない。
