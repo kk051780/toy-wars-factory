@@ -1,0 +1,2 @@
+TRAP_RAIDERS | p0d-siege-v19 | P0D-D14-CART-RAIL-MOTION-20261110-02B
+Reference only. D14 two-seat authority stays in `P0D-D14-VEHICLE-SEATS-20261110-01` (fixed commit 0bcf39c22c583604d72ccac47d29fc9d87b7e662). This revised packet adds only pure deterministic server rail-motion policy and server callback adapter returning an abstract pose. **NO prefab/cart visual/raft model**, because another chat already owns D14 CART/RAFT visual. No physics, real player seating or studio QA. OWNER manually restores after PC dependencies.
