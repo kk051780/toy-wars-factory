@@ -1,0 +1,15 @@
+{
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "packet_id": "P0D-D07-GOROGAN-RIG-NAV-DAMAGE-20261110-03",
+  "feature_id": "D07",
+  "slice": "S1/S3 Gorogan opt-in server-owned physical R6 rig, capped Pathfinding navigation, short-lived core-result receipt attestation and server-side Humanoid damage gate",
+  "base_pc_sha": "UNVERIFIED_PC_LOCAL",
+  "depends_on": [
+    "GoroganServerAICore/GoroganServerRuntime:80483ad6543fd73dfaf8a21ecf7b58dc2eca75e1",
+    "GoroganVisualPrefab:5128e288c7bd119a470c253a9792f4d829c569ec",
+    "ChaosEventCore:c0b0bf692410cb651893c38f1a453c93d9f8b3b5",
+    "true P0-D PC stage, RoundCoordinator and server roster"
+  ],
+  "excludes": ["D07 Ligardo", "D08 second event chooser", "D11 NPC ownership", "D14 vehicles", "main/merge/publish/paid"]
+}
