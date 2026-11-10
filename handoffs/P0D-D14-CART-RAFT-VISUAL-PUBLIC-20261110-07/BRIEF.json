@@ -1,0 +1,11 @@
+{
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "packet_id": "P0D-D14-CART-RAFT-VISUAL-20261110-02",
+  "feature_id": "D14",
+  "scope": "Client-only decorative low-poly CART and RAFT and server-authorized visual occupancy badges; not working vehicle physics",
+  "depends_on": ["P0D-D14-VEHICLE-SEATS-20261110-01", "D01 server match lifecycle", "D03 server team roster"],
+  "excludes": ["real VehicleSeat", "physics/buoyancy", "server movement", "health/damage", "egg carrying", "boosts", "external event scheduler", "P0-A/B/C"],
+  "integration_gate": "OWNER PC verifies latest genuine source/Place; v39 scoped QA and v43-A priority gates; one packet at a time; trusted RemoteEvent server source; no client authority",
+  "status": "OFFLINE_REFERENCE_ONLY"
+}
