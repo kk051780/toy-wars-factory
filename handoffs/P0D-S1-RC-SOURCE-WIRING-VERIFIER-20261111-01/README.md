@@ -1,0 +1,30 @@
+# P0-D S1 CHAT independent release-source & project-wiring gate
+
+`game_id=TRAP_RAIDERS` · `work_id=p0d-siege-v19` · packet `P0D-S1-RC-SOURCE-WIRING-VERIFIER-20261111-01`
+
+**Purpose.** Read-only, self-contained, stdlib Python independent check for the one Chat-integrated S1 game RC. It verifies that *actual* `src/`, `assets/`, `default.project.json`, `CHAT_RC_RECEIPT.json` and the *exact plan file used for assembly* agree byte-for-byte; every Rojo `$path` exists, maps to a real script/asset, and every `.luau`/`.lua` source is in the project tree. It blocks bad server/client placement, duplicate canonical authority declarations, symlinks, case-colliding filenames/folders, plan tamper, untracked code and deceptive Studio/publication PASS claims.
+
+## Usage
+
+Requires no keys, packages, network, or Windows. **Run only after** the #220 CHAT-INTEGRATOR produces the actual RC directory and preserves the original source-plan JSON outside the project:
+
+```bash
+python3 tools/verify_rc_wiring.py \
+  --rc /path/to/P0D-S1-KIDS-RC01-assembled \
+  --plan /path/to/P0D_CHAT_RELEASE_PLAN_V1.json
+python3 -m unittest discover -s tests -v
+```
+
+The first command prints a JSON receipt and returns exit code 0 only on the narrowly scoped artifact/wiring PASS; returns 2 with a defect otherwise. It **never edits the RC**, runs game code, launches Studio or performs network requests. If the actual RC or plan has not been delivered, classify integration `RC_PENDING`; **synthetic test success is NOT release readiness**.
+
+## Ownership / integration contract
+
+- #220 `P0D-CHAT-INTEGRATOR-S1-RC01-A` alone writes `rc/p0d-s1-kids-rc01` and assembles game runtime, source plan and `CHAT_RC_RECEIPT.json`.
+- This packet **never changes game logic or an RC branch**. It only audits exact source artifacts and Rojo file placement. Source schema follows the published Chat-first V2 assembler (`P0D_CHAT_RELEASE_PLAN_V1` and `P0D_CHAT_SOURCE_ASSEMBLY_RECEIPT_V1`).
+- A **separate** independently claimed S1 QA lane owns multiplayer/egg/castle/combat/replay/boss-warning *scenario* QA, not this packet. The owners must combine both QA receipts before any `CHAT_RC_READY` decision.
+- The actual S1 gameplay and all native Luau parser, Studio 2client/mobile, latency, physics, DataStore, asset loading and Studio normal-exit tests are **NOT_TESTED** by this verifier. They remain required for owner-directed final Windows QA.
+- Does not certify compliance with copyright/security policy for source *contents*. Exact hashes and mapping cannot establish game correctness; `PASS_SOURCE_WIRING_ONLY` must never be relabeled `STUDIO_PASS`.
+
+## Safety
+
+Public TRAP_RAIDERS plaintext source permission only. No main changes, PR merges, production Roblox publication, purchases/spending or P0-A/B/C protected controls/Automations.
