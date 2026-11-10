@@ -1,0 +1,90 @@
+{
+  "assembly_status": "CHAT_BUILD_READY__OFFLINE_EVIDENCE_ONLY",
+  "contents": [
+    {
+      "path": "default.project.json",
+      "sha256": "454088f71076596c88dc59bdb89d51b28d1764012aa0cb50a49895ad96341c61",
+      "size": 560
+    },
+    {
+      "path": "src/client/HUD.client.luau",
+      "sha256": "97ec71f6482f1191ed7daf5e1d797f5621ba7d8c7992e4d1815b4067af968750",
+      "size": 5604
+    },
+    {
+      "path": "src/server/Game.server.luau",
+      "sha256": "d7abfc3b6ae1412cad995873faec1c5e4a1a9df1c0971991cff919564a628f3f",
+      "size": 16860
+    },
+    {
+      "path": "src/server/MapBuilder.luau",
+      "sha256": "3226e0d1d8a815c13e6e1f8c7bd2789c8cb9fb13f84924f6cd6d49cee6fb4e64",
+      "size": 4846
+    },
+    {
+      "path": "src/server/S1Rules.luau",
+      "sha256": "6c17d358ff905323517511f9c542c7f93b45a6bb514f0bfff54f8ad93240b5f1",
+      "size": 2137
+    },
+    {
+      "path": "src/shared/Config.luau",
+      "sha256": "0313cb70cdfb7584fa875a5cb0921891ac7730b045ad81e2b5651862313ef21b",
+      "size": 747
+    }
+  ],
+  "format": "P0D_CHAT_SOURCE_ASSEMBLY_RECEIPT_V1",
+  "game_id": "TRAP_RAIDERS",
+  "release_approved": false,
+  "release_id": "P0D-S1-KIDS-RC01-SOURCE-SNAPSHOT",
+  "source_plan_sha256": "34ae5c132de58441c282fbb992a97984288ca71e52a74dbd9198603a3077ad66",
+  "source_units": [
+    {
+      "authorities": [],
+      "sha256": "0313cb70cdfb7584fa875a5cb0921891ac7730b045ad81e2b5651862313ef21b",
+      "source_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+      "target_path": "src/shared/Config.luau",
+      "unit_id": "config"
+    },
+    {
+      "authorities": [],
+      "sha256": "97ec71f6482f1191ed7daf5e1d797f5621ba7d8c7992e4d1815b4067af968750",
+      "source_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+      "target_path": "src/client/HUD.client.luau",
+      "unit_id": "hud"
+    },
+    {
+      "authorities": [],
+      "sha256": "3226e0d1d8a815c13e6e1f8c7bd2789c8cb9fb13f84924f6cd6d49cee6fb4e64",
+      "source_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+      "target_path": "src/server/MapBuilder.luau",
+      "unit_id": "map_builder"
+    },
+    {
+      "authorities": [],
+      "sha256": "454088f71076596c88dc59bdb89d51b28d1764012aa0cb50a49895ad96341c61",
+      "source_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+      "target_path": "default.project.json",
+      "unit_id": "project"
+    },
+    {
+      "authorities": [],
+      "sha256": "6c17d358ff905323517511f9c542c7f93b45a6bb514f0bfff54f8ad93240b5f1",
+      "source_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+      "target_path": "src/server/S1Rules.luau",
+      "unit_id": "rules"
+    },
+    {
+      "authorities": [
+        "round",
+        "event_chooser",
+        "damage"
+      ],
+      "sha256": "d7abfc3b6ae1412cad995873faec1c5e4a1a9df1c0971991cff919564a628f3f",
+      "source_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+      "target_path": "src/server/Game.server.luau",
+      "unit_id": "s1_game_server"
+    }
+  ],
+  "studio_status": "NOT_TESTED",
+  "work_id": "p0d-siege-v19"
+}
