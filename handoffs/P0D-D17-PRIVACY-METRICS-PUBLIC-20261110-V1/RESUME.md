@@ -1,0 +1,1 @@
+Queue behind v37 final QA and v39. This pure Python model is NOT Studio source code. Codex should decide whether to port to Luau server adapter after checking real RoundCoordinator; do not run or persist client claimed telemetry. Check hash, audit privacy/consent, and keep release/monetization HOLD.
