@@ -1,0 +1,73 @@
+{
+  "format": "P0D_S1_SOURCE_SNAPSHOT_PREFLIGHT_V1",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "source_snapshot_sha": "35d7d0525388e885aac8281eff2315a59831e0cf",
+  "compatible_assembler_sha": "f5caa9876c6f3eba3ed41787794e6047c6ef8b70",
+  "source_manifest_sha256": "4c1f0a25b4b227ad447a464e9d98477cc9a084987eb671d4e2b8e775e5a824f2",
+  "source_files_verified": [
+    {
+      "path": "default.project.json",
+      "sha256": "454088f71076596c88dc59bdb89d51b28d1764012aa0cb50a49895ad96341c61",
+      "size_bytes": 560,
+      "source_git_blob": "9035dba279830bda1305ccdcd66fcbf94795fe33"
+    },
+    {
+      "path": "src/server/Game.server.luau",
+      "sha256": "d7abfc3b6ae1412cad995873faec1c5e4a1a9df1c0971991cff919564a628f3f",
+      "size_bytes": 16860,
+      "source_git_blob": "0f2c34fe25c00e3251b9ca53952b9ec75400f365"
+    },
+    {
+      "path": "src/server/MapBuilder.luau",
+      "sha256": "3226e0d1d8a815c13e6e1f8c7bd2789c8cb9fb13f84924f6cd6d49cee6fb4e64",
+      "size_bytes": 4846,
+      "source_git_blob": "d2127b8c20c8abd880a21f84aeeb706feeb14ce8"
+    },
+    {
+      "path": "src/server/S1Rules.luau",
+      "sha256": "6c17d358ff905323517511f9c542c7f93b45a6bb514f0bfff54f8ad93240b5f1",
+      "size_bytes": 2137,
+      "source_git_blob": "5652b5b43d753c2fcbd27b6c040a34a3642f71ee"
+    },
+    {
+      "path": "src/shared/Config.luau",
+      "sha256": "0313cb70cdfb7584fa875a5cb0921891ac7730b045ad81e2b5651862313ef21b",
+      "size_bytes": 747,
+      "source_git_blob": "ef10e4288e4732588116cd3e55d3d871ca803ff4"
+    },
+    {
+      "path": "src/client/HUD.client.luau",
+      "sha256": "97ec71f6482f1191ed7daf5e1d797f5621ba7d8c7992e4d1815b4067af968750",
+      "size_bytes": 5604,
+      "source_git_blob": "ecdcd2551347d77c0c1fd78053ea431ae1bc09f3"
+    },
+    {
+      "path": "docs/OFFLINE_TEST_LOG.txt",
+      "sha256": "d5a848d73511e71da087043f6a7686d802afb31c0c512a2ef41135776594993e",
+      "size_bytes": 7290,
+      "source_git_blob": "be2ece741611553fc1f7f2547460c4e5effb9374"
+    }
+  ],
+  "source_check_count": 7,
+  "offline_test_log": "80/80 PASS ORIGINAL_AUTHOR_LOG__NOT_RERUN_ON_GITHUB_SNAPSHOT",
+  "project_rojo_mappings": [
+    "src/server",
+    "src/shared",
+    "src/client/HUD.client.luau"
+  ],
+  "phase": "SOURCE_SNAPSHOT_PLAN_READY_ONLY",
+  "real_python_assembler_on_this_full_source": "NOT_EXECUTED__MUST_RUN_ON_CHECKED_OUT_SOURCE",
+  "actual_assembled_rc_receipt": "NOT_CREATED",
+  "studio": "NOT_TESTED",
+  "pc_source_equivalence": "UNKNOWN",
+  "release_approved": false,
+  "blocking": [
+    "D07 genuine boss/AI and D08 canonical event not integrated in this S1 SHA",
+    "D11 neutral capture and larger original feature set remain unintegrated",
+    "Actual Chat RC receipt and independent static + dynamic QA pending",
+    "Real Roblox Studio multiple clients/mobile/normal exit pending",
+    "Source manifest contains non-standard root status field, source verifier compatibility to recheck before adoption",
+    "The current S1 cosmetic alarm is event_chooser only for this snapshot; D08 canonical original must take ownership if later integrated"
+  ]
+}
