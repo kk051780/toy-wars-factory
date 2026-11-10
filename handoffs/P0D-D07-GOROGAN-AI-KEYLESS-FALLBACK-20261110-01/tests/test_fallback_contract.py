@@ -27,7 +27,8 @@ class Contract(unittest.TestCase):
         self.assertRegex(SOURCE, r"active\s*=\s*false")
 
     def test_server_only_gate(self):
-        self.assertGreaterEqual(SOURCE.count("server_authorized == true"), 2)
+        self.assertIn("trusted.server_authorized ~= true", SOURCE)
+        self.assertIn("s.server_authorized == true", SOURCE)
 
     def test_stale_round_rejected(self):
         self.assertIn("s.match_id == self.match_id", SOURCE)
