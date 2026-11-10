@@ -1,0 +1,20 @@
+{
+  "meta": {"schema": "p0d.s1.trace.v1", "match_id": "demo-001", "epoch": 7, "capture_mode": "SYNTHETIC"},
+  "events": [
+    {"seq": 1, "t": 0.0, "epoch": 7, "kind": "JOIN", "actor": "playerR", "team": "red"},
+    {"seq": 2, "t": 0.1, "epoch": 7, "kind": "JOIN", "actor": "playerB", "team": "blue"},
+    {"seq": 3, "t": 0.2, "epoch": 7, "kind": "START"},
+    {"seq": 4, "t": 0.4, "epoch": 7, "kind": "TAKE", "actor": "playerR"},
+    {"seq": 5, "t": 0.6, "epoch": 7, "kind": "DAMAGE", "actor": "playerB", "target": "playerR", "amount": 10, "after_hp": 90, "receipt_id": "attack-1"},
+    {"seq": 6, "t": 0.7, "epoch": 7, "kind": "REMOTE_REJECT", "actor": "fakeR", "receipt_id": "remote-1", "reason": "forged_epoch"},
+    {"seq": 7, "t": 1.0, "epoch": 7, "kind": "BOSS_WARN", "event_id": "goro-1", "deadline": 3.0},
+    {"seq": 8, "t": 1.03, "epoch": 7, "kind": "WARN_VISIBLE", "event_id": "goro-1", "viewer": "playerR", "shown_remaining": 1.97},
+    {"seq": 9, "t": 1.04, "epoch": 7, "kind": "WARN_VISIBLE", "event_id": "goro-1", "viewer": "playerB", "shown_remaining": 1.96},
+    {"seq": 10, "t": 3.0, "epoch": 7, "kind": "BOSS_HIT", "event_id": "goro-1", "target": "playerB", "amount": 10, "after_hp": 90, "receipt_id": "boss-1"},
+    {"seq": 11, "t": 3.1, "epoch": 7, "kind": "BOSS_CLEAR", "event_id": "goro-1"},
+    {"seq": 12, "t": 3.4, "epoch": 7, "kind": "SCORE", "actor": "playerR", "home_team": "red"},
+    {"seq": 13, "t": 3.5, "epoch": 7, "kind": "END", "winner": "red", "reason": "egg"},
+    {"seq": 14, "t": 4.0, "epoch": 7, "kind": "RESET", "next_epoch": 8},
+    {"seq": 15, "t": 4.1, "epoch": 8, "kind": "DONE"}
+  ]
+}
