@@ -56,3 +56,7 @@ No code in this *example* is a ready damage implementation; it deliberately keep
 Define `S1_D15_TRAP_SOURCE_SELECTED` only if the two module hashes, unique Rojo mounts, original Core provenance, canonical game callback diff and independent real-source QA match. Before actual Studio, status remains `S1_D15_SOURCE_ONLY_NOT_ENGINE_TESTED`.
 
 If performance/first-minute simplicity or integration fails, **skip D15 in S1** without blocking existing 2-player egg/castle first release; keep packet available as an S2 feature. No D15 monetization or pay-to-win switches.
+
+## V1.1 poison receipt contract update
+
+Use the new five-component server-only receipt `matchId:casterId:targetId:successfulCastGeneration:poisonTick`. The canonical Game damage callback must preserve and dedupe this *complete* receipt, not truncate it to the old four fields. Each accepted D15 cast increments generation; rejected intents do not. Same-target recast after the original 12-second cooldown must allow three fresh damage ticks, while repeated ticks from the *same cast* remain ignored. Do not accept `castGeneration` or receipt IDs from client packets. Studio two-round/recast regression remains required.

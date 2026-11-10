@@ -69,6 +69,10 @@ function Bridge.new(originalCore: any, callbacks: any)
         ephemeralIds = {} :: {[Player]: number},
         playersById = {} :: {[number]: Player},
         receipts = {} :: {[string]: boolean},
+        -- A new successful cast must have a fresh damage receipt generation,
+        -- even when its caster and victim are unchanged in the same round.
+        castSequence = 0,
+        castGenerationByTarget = {} :: {[number]: number},
     }, Bridge)
 end
 
@@ -100,6 +104,8 @@ function Bridge:beginRound(serial: number, now: number): (boolean, string)
     self.matchSerial = serial
     self.startedAt = now
     self.receipts = {}
+    self.castSequence = 0
+    self.castGenerationByTarget = {}
     self.state = self.core.new("S1_" .. tostring(serial))
     return true, "TRAP_ROUND_STARTED"
 end
@@ -146,11 +152,17 @@ function Bridge:update(): (boolean, string)
             and event.damage == self.core.CONFIG.DOT_PER_TICK then
             local source = self.playersById[event.casterId]
             local target = self.playersById[event.targetId]
+            local castGeneration = self.castGenerationByTarget[event.targetId]
+            -- Original D15 emits (caster, target, tick), but NO unique cast ID.
+            -- Preserve per-successful-cast generation to avoid treating a
+            -- second legitimate trap as replay of the first one.
             local key = self.state.matchId .. ":" .. tostring(event.casterId)
-                .. ":" .. tostring(event.targetId) .. ":" .. tostring(event.tick)
+                .. ":" .. tostring(event.targetId) .. ":" .. tostring(castGeneration)
+                .. ":" .. tostring(event.tick)
             local sourceTeam = if source then safeTeam(self.hooks.getTeam(source)) else nil
             local targetTeam = if target then safeTeam(self.hooks.getTeam(target)) else nil
-            if not self.receipts[key] and source and target and source.Parent == Players
+            if castGeneration ~= nil and not self.receipts[key]
+                and source and target and source.Parent == Players
                 and target.Parent == Players and getBody(source) ~= nil and getBody(target) ~= nil
                 and sourceTeam ~= nil and targetTeam ~= nil and sourceTeam ~= targetTeam then
                 -- Single existing Game.server damage callback retains sole
@@ -226,8 +238,13 @@ function Bridge:handleIntent(player: Player, action: any, sequenceAuthorized: bo
         if self.hooks.getRole(player) ~= "TRAPPER" then return false, "WRONG_JOB" end
         local target = self:_closest(player, self.core.CONFIG.CAST_RANGE, false)
         if not target then return false, "NO_SERVER_SELECTED_TARGET" end
-        local accepted, reason = self.core.tryCast(self.state, id, self:_id(target))
-        if accepted then self.hooks.onStatus(target, self.core.status(self.state, self:_id(target))) end
+        local targetId = self:_id(target)
+        local accepted, reason = self.core.tryCast(self.state, id, targetId)
+        if accepted then
+            self.castSequence += 1 -- only accepted casts consume a generation
+            self.castGenerationByTarget[targetId] = self.castSequence
+            self.hooks.onStatus(target, self.core.status(self.state, targetId))
+        end
         return accepted, reason
     else
         local target = self:_closest(player, self.core.CONFIG.RESCUE_RANGE, true)
@@ -241,7 +258,10 @@ end
 function Bridge:removePlayer(player: Player)
     local id = self.ephemeralIds[player]
     if id and self.state then self.core.removePlayer(self.state, id) end
-    if id then self.playersById[id] = nil end
+    if id then
+        self.playersById[id] = nil
+        self.castGenerationByTarget[id] = nil
+    end
     self.ephemeralIds[player] = nil
 end
 
@@ -250,6 +270,8 @@ function Bridge:endRound()
     self.state = nil
     self.matchSerial = nil
     self.receipts = {}
+    self.castSequence = 0
+    self.castGenerationByTarget = {}
     for _, p in ipairs(Players:GetPlayers()) do
         self.hooks.onStatus(p, {trapped = false, rooted = false,
             poison = false, immunityRemaining = 0})

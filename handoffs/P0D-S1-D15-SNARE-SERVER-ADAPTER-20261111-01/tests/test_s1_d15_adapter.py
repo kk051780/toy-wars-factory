@@ -57,8 +57,8 @@ def elapsed(start,now,maxlen=3600):
     return t if 0 <= t <= maxlen else None
 
 
-def receipt(match,caster,target,tick):
-    return f"{match}:{caster}:{target}:{tick}"
+def receipt(match,caster,target,cast_gen,tick):
+    return f"{match}:{caster}:{target}:{cast_gen}:{tick}"
 
 
 class CanonicalSourceContract(unittest.TestCase):
@@ -143,7 +143,8 @@ class CanonicalSourceContract(unittest.TestCase):
 
     def test_key_marker_includes_round_and_target_and_tick(self):
         self.assertIn('self.state.matchId .. ":" .. tostring(event.casterId)',SOURCE)
-        self.assertIn('tostring(event.targetId) .. ":" .. tostring(event.tick)',SOURCE)
+        self.assertIn('tostring(event.targetId) .. ":" .. tostring(castGeneration)',SOURCE)
+        self.assertIn('tostring(event.tick)',SOURCE)
 
     def test_no_new_job_is_silently_enabled(self):
         self.assertNotIn('roles[player] = "TRAPPER"',SOURCE)
@@ -195,10 +196,62 @@ class AdapterClockReceiptOracle(unittest.TestCase):
     def test_nan_denied(self):self.assertIsNone(elapsed(0,float('nan')))
     def test_inf_denied(self):self.assertIsNone(elapsed(0,float('inf')))
     def test_negative_inf_denied(self):self.assertIsNone(elapsed(0,float('-inf')))
-    def test_duplicate_receipt_key(self):self.assertEqual(receipt('S1_1',1,2,1),receipt('S1_1',1,2,1))
-    def test_separate_round_key(self):self.assertNotEqual(receipt('S1_1',1,2,1),receipt('S1_2',1,2,1))
-    def test_separate_tick_key(self):self.assertNotEqual(receipt('S1_1',1,2,1),receipt('S1_1',1,2,2))
-    def test_separate_target_key(self):self.assertNotEqual(receipt('S1_1',1,2,1),receipt('S1_1',1,3,1))
+    def test_duplicate_receipt_key(self):self.assertEqual(receipt('S1_1',1,2,1,1),receipt('S1_1',1,2,1,1))
+    def test_separate_round_key(self):self.assertNotEqual(receipt('S1_1',1,2,1,1),receipt('S1_2',1,2,1,1))
+    def test_separate_tick_key(self):self.assertNotEqual(receipt('S1_1',1,2,1,1),receipt('S1_1',1,2,1,2))
+    def test_separate_target_key(self):self.assertNotEqual(receipt('S1_1',1,2,1,1),receipt('S1_1',1,3,1,1))
+
+
+
+class NewCastGenerationRegression(unittest.TestCase):
+    """True bug regression: same pair, same round, fresh cast after cooldown."""
+    def test_same_pair_second_cast_must_not_be_deduped(self):
+        first = {receipt("S1_1", 123, 456, 1, t) for t in (1, 2, 3)}
+        second = {receipt("S1_1", 123, 456, 2, t) for t in (1, 2, 3)}
+        self.assertEqual(len(first | second), 6)
+        self.assertTrue(first.isdisjoint(second))
+
+    def test_repeated_tick_same_cast_still_deduped(self):
+        seen = {receipt("S1_1", 123, 456, 1, 1)}
+        self.assertIn(receipt("S1_1", 123, 456, 1, 1), seen)
+        self.assertNotIn(receipt("S1_1", 123, 456, 2, 1), seen)
+
+    def test_same_target_different_caster_separate(self):
+        self.assertNotEqual(receipt("S1_1", 123, 456, 1, 1), receipt("S1_1", 777, 456, 1, 1))
+
+    def test_next_round_separate_even_cast_generation_resets(self):
+        self.assertNotEqual(receipt("S1_1", 123, 456, 1, 1), receipt("S1_2", 123, 456, 1, 1))
+
+    def test_cast_generation_initialized_and_cleared(self):
+        self.assertIn("castSequence = 0", SOURCE)
+        self.assertIn("castGenerationByTarget = {}", SOURCE)
+        self.assertIn("self.castGenerationByTarget[id] = nil", SOURCE)
+        self.assertGreaterEqual(SOURCE.count("self.castGenerationByTarget = {}"), 2)
+
+    def test_only_successful_cast_gets_new_generation(self):
+        found = SOURCE.index("local accepted, reason = self.core.tryCast")
+        assigned = SOURCE.index("self.castSequence += 1", found)
+        accepted_block = SOURCE.index("if accepted then", found)
+        self.assertLess(accepted_block, assigned)
+        self.assertIn("self.castGenerationByTarget[targetId] = self.castSequence", SOURCE)
+
+    def test_expired_or_missing_generation_fail_closed(self):
+        self.assertIn("if castGeneration ~= nil and not self.receipts[key]", SOURCE)
+        self.assertLess(SOURCE.index("castGeneration ~= nil"), SOURCE.index("self.receipts[key] = true"))
+
+    def test_original_core_does_not_supply_cast_id(self):
+        # This test deliberately proves bridge retains the generation rather
+        # than expecting it in the old immutable author's poison event.
+        self.assertIn("local castGeneration = self.castGenerationByTarget[event.targetId]", SOURCE)
+        self.assertNotIn("event.castId", SOURCE)
+
+    def test_new_cast_id_not_client_controlled(self):
+        self.assertNotIn("data.castGeneration", SOURCE)
+        self.assertNotIn("data.castId", SOURCE)
+
+    def test_status_and_game_damage_still_callback_only(self):
+        self.assertEqual(SOURCE.count("self.hooks.applyPoisonDamage("),1)
+        self.assertNotIn(":TakeDamage(", SOURCE)
 
 
 if __name__=='__main__':unittest.main(verbosity=2)

@@ -37,3 +37,10 @@ Python tests model integration invariants and inspect original Luau interface st
 ## Handoff restriction
 
 This Chat owns only the new unique `handoffs/P0D-S1-D15-SNARE-SERVER-ADAPTER-20261111-01` branch root; original D15 author, `rc/p0d-s1-kids-rc01`, public game, P0-A/B/C protected coordination, main, merges, paid content and five automations untouched. No OWNER/Windows Codex action is implied by this README.
+
+## V1.1 critical recast fix (2026-11-11 JST)
+
+**Supersedes the previous packet source commit** for future #220 adoption.
+The original D15 core emits poison events identified only by match/caster/target/tick, not by an individual cast. A legitimate second cast by the same caster on the same victim, after the 12-second cooldown and 6-second post-release immunity, would otherwise reuse the previous poison receipt key. The old bridge incorrectly discarded second-cast damage as replay.
+
+The revised bridge increments a **server-only successful-cast generation**, appends it to the canonical poison callback receipt, and still deduplicates each tick within that cast. Failed casts do not increment it. A new round resets generation and receipts; removing a player invalidates their target generation. This is source/test evidence only, not real Studio proof. See `docs/RECAST_FIX.md`.

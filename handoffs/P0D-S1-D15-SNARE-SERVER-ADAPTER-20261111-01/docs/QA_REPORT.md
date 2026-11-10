@@ -10,3 +10,7 @@ As of 2026-11-11 JST. Native Luau parse, Roblox Studio, real mobile, public rele
 - Legitimate Studio negative UserIds mapped by private server-only numeric ids, not sent to clients. Server game time is normalized to elapsed seconds 0..3600 to meet original Core.
 
 Offline test suite: `python -m unittest discover -s tests -v`. These test **20 static Luau integration assertions and 32 independent Python deterministic target/clock/receipt behavior cases**. They are not genuine engine runs. Later use actual Studio 2client/mobile and independent replay QA before acceptance.
+
+## V1.1 acceptance delta
+
+Previously 52/52 offline PASS could not detect a second successful trap by the same caster on the same victim in a single match. Source was found to use only `matchId:casterId:targetId:tick` as receipt, which incorrectly reused the same keys after original Core allows recast at 12 seconds. The server-only cast-generation fix is accompanied by 10 new negative/positive tests (62/62 total), including recast uniqueness, stale-tick dedupe, round reset and missing-generation fail-closed. Genuine Luau, native original D15 match integration and Roblox Studio are still NOT_TESTED.
