@@ -1,0 +1,41 @@
+{
+  "schema": "P0D_D14_SEALED_PREFLIGHT_V1",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "repository": "kk051780/toy-wars-factory",
+  "core_cart": ["SEATS", "CART_RAIL", "VISUAL"],
+  "optional": ["RAFT", "RIDER"],
+  "superseded_commits": ["cae5691b622045af57674d922a08a96764354412", "250658457392e016c668de8d3c368499f39714bc"],
+  "packets": [
+    {
+      "role": "SEATS", "packet_id": "P0D-D14-VEHICLE-SEATS-20261110-01", "commit": "0bcf39c22c583604d72ccac47d29fc9d87b7e662",
+      "encrypted_path": "handoffs/TRAP_RAIDERS_D14_VEHICLE_SEATS_encrypted.json", "encrypted_git_blob_sha1": "c81daa06fad15a4e41ae948079c4f5bcfb2fc4c0",
+      "readme_path": "handoffs/README_D14_VEHICLE_SEATS.md", "readme_git_blob_sha1": "69c1039c774a8644a8977362918cd1aa6c63bfea",
+      "restored_zip_sha256": "475616bd21e88164158db88b3a97e33d4a9b1ce9aaa872fa7a816adf485c9fd3"
+    },
+    {
+      "role": "CART_RAIL", "packet_id": "P0D-D14-CART-RAIL-MOTION-20261110-02B", "commit": "2cd3fb9b31bfe7817ca0ceba7456300c3a41bd12",
+      "encrypted_path": "handoffs/TRAP_RAIDERS_D14_CART_RAIL_v2_encrypted.json", "encrypted_git_blob_sha1": "616eee54df3441f031ac07255383b026afe4e30d",
+      "readme_path": "handoffs/README_D14_CART_RAIL_v2.md", "readme_git_blob_sha1": "359af652ab17f30230105cecc77f7bf3730cf640",
+      "restored_zip_sha256": "c38a1536095ce4d64a1691905caff0b055f75038e02354718333ad6a79d88fa5"
+    },
+    {
+      "role": "VISUAL", "packet_id": "P0D-D14-CART-RAFT-VISUAL-20261110-02", "commit": "3c78cd0af618f320fe9d0aafe7569e1e9b95b4b0",
+      "encrypted_path": "handoffs/TRAP_RAIDERS_D14_CART_RAFT_encrypted.json", "encrypted_git_blob_sha1": "e42bb5de97e587310cc25a27d1a9e2150b8ef886",
+      "readme_path": "handoffs/README_D14_CART_RAFT.md", "readme_git_blob_sha1": "51ee7e172d162522eccad5ea389fc257cf132ccf",
+      "restored_zip_sha256": "6a7c63113ae1938247d72d42320fcdd2e1145d36632bdb0c7615eb9962e3458a"
+    },
+    {
+      "role": "RAFT", "packet_id": "P0D-D14-RAFT-WATER-MOTION-20261110-03", "commit": "027fd926a9d315a84f701086448fa5c1febc6697",
+      "encrypted_path": "handoffs/TRAP_RAIDERS_D14_RAFT_encrypted.json", "encrypted_git_blob_sha1": "0cdff554f9b50c228383cc2c5ce4e38714f9f18d",
+      "readme_path": "handoffs/README_D14_RAFT_WATER.md", "readme_git_blob_sha1": "e56c56f11325dfbd5c40a8df982722602fc0d8f0",
+      "restored_zip_sha256": "d218baef4ba958195b9e0ad22a4046313c52c3d150b424e0e99981cb351854c6"
+    },
+    {
+      "role": "RIDER", "packet_id": "P0D-D14-RIDER-ATTACH-SAFETY-20261110-04", "commit": "0af53f121b35f2e822c63514112360d220c92227",
+      "encrypted_path": "handoffs/TRAP_RAIDERS_D14_RIDER_encrypted.json", "encrypted_git_blob_sha1": "e5428374bc11c6c2b201e94d396e3e3cfe746bda",
+      "readme_path": "handoffs/README_D14_RIDER.md", "readme_git_blob_sha1": "b631a0669215928b04d66cba0986713e983d952c",
+      "restored_zip_sha256": "11b7bae8ce25d48e2ba813058583f3a882a4bf19890ca6e004a9e519647616fe"
+    }
+  ]
+}
