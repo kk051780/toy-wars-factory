@@ -1,0 +1,45 @@
+test_01_schema_identity (test_architecture.ArchitectureGeometry.test_01_schema_identity) ... ok
+test_02_game_map_exact (test_architecture.ArchitectureGeometry.test_02_game_map_exact) ... ok
+test_03_no_collision_flag (test_architecture.ArchitectureGeometry.test_03_no_collision_flag) ... ok
+test_04_bounded_part_budget (test_architecture.ArchitectureGeometry.test_04_bounded_part_budget) ... ok
+test_05_exact_art_budget (test_architecture.ArchitectureGeometry.test_05_exact_art_budget) ... ok
+test_06_unique_names (test_architecture.ArchitectureGeometry.test_06_unique_names) ... ok
+test_07_red_blue_symmetry (test_architecture.ArchitectureGeometry.test_07_red_blue_symmetry) ... ok
+test_08_style_allowlist (test_architecture.ArchitectureGeometry.test_08_style_allowlist) ... ok
+test_09_root_schema_valid (test_architecture.ArchitectureGeometry.test_09_root_schema_valid) ... ok
+test_10_expected_two_team_roofs (test_architecture.ArchitectureGeometry.test_10_expected_two_team_roofs) ... ok
+test_11_parapet_both_sides (test_architecture.ArchitectureGeometry.test_11_parapet_both_sides) ... ok
+test_12_crown_both_sides (test_architecture.ArchitectureGeometry.test_12_crown_both_sides) ... ok
+test_13_edge_only_landmark (test_architecture.ArchitectureGeometry.test_13_edge_only_landmark) ... ok
+test_14_no_custom_geometry_around_egg (test_architecture.ArchitectureGeometry.test_14_no_custom_geometry_around_egg) ... ok
+test_15_no_castle_banners_owned_by_D17 (test_architecture.ArchitectureGeometry.test_15_no_castle_banners_owned_by_D17) ... ok
+test_16_not_in_player_path (test_architecture.ArchitectureGeometry.test_16_not_in_player_path) ... ok
+test_17_id_name_prefix (test_architecture.ArchitectureGeometry.test_17_id_name_prefix) ... ok
+test_18_generator_idempotent (test_architecture.ArchitectureGeometry.test_18_generator_idempotent) ... ok
+test_19_generated_plan_exact (test_architecture.ArchitectureGeometry.test_19_generated_plan_exact) ... ok
+test_20_generator_check_mode (test_architecture.ArchitectureGeometry.test_20_generator_check_mode) ... ok
+test_21_boundary_bounding_boxes (test_architecture.ArchitectureGeometry.test_21_boundary_bounding_boxes) ... ok
+test_22_plan_bad_duplicate_rejected (test_architecture.ArchitectureGeometry.test_22_plan_bad_duplicate_rejected) ... ok
+test_23_plan_bad_style_rejected (test_architecture.ArchitectureGeometry.test_23_plan_bad_style_rejected) ... ok
+test_24_plan_bad_large_size_rejected (test_architecture.ArchitectureGeometry.test_24_plan_bad_large_size_rejected) ... ok
+test_25_plan_bad_bounds_rejected (test_architecture.ArchitectureGeometry.test_25_plan_bad_bounds_rejected) ... ok
+test_26_plan_bad_extra_key_rejected (test_architecture.ArchitectureGeometry.test_26_plan_bad_extra_key_rejected) ... ok
+test_27_plan_bad_collision_rejected (test_architecture.ArchitectureGeometry.test_27_plan_bad_collision_rejected) ... ok
+test_28_plan_bad_missing_map_rejected (test_architecture.ArchitectureGeometry.test_28_plan_bad_missing_map_rejected) ... ok
+test_29_plan_budget_exceeded_rejected (test_architecture.ArchitectureGeometry.test_29_plan_budget_exceeded_rejected) ... ok
+test_30_module_is_not_autorunning (test_architecture.RuntimeSafety.test_30_module_is_not_autorunning) ... ok
+test_31_disabled_collisions (test_architecture.RuntimeSafety.test_31_disabled_collisions) ... ok
+test_32_map_root_guard (test_architecture.RuntimeSafety.test_32_map_root_guard) ... ok
+test_33_duplicate_guard (test_architecture.RuntimeSafety.test_33_duplicate_guard) ... ok
+test_34_no_runtime_services_or_remote (test_architecture.RuntimeSafety.test_34_no_runtime_services_or_remote) ... ok
+test_35_no_gameplay_authority (test_architecture.RuntimeSafety.test_35_no_gameplay_authority) ... ok
+test_36_fail_closed_creating (test_architecture.RuntimeSafety.test_36_fail_closed_creating) ... ok
+test_37_atomic_attachment (test_architecture.RuntimeSafety.test_37_atomic_attachment) ... ok
+test_38_invalid_nans_rejected (test_architecture.RuntimeSafety.test_38_invalid_nans_rejected) ... ok
+test_39_luau_plan_required_once (test_architecture.RuntimeSafety.test_39_luau_plan_required_once) ... ok
+test_40_visual_subfolder_only (test_architecture.RuntimeSafety.test_40_visual_subfolder_only) ... ok
+
+----------------------------------------------------------------------
+Ran 40 tests in 1.188s
+
+OK
