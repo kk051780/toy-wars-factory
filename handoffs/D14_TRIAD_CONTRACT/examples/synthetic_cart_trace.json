@@ -1,0 +1,31 @@
+{
+  "schema": "P0D_D14_TRIAD_TRACE_V1",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "provenance": "SYNTHETIC",
+  "round_id": "roundA",
+  "reference_commits": {
+    "seats": "0bcf39c22c583604d72ccac47d29fc9d87b7e662",
+    "motion": "2cd3fb9b31bfe7817ca0ceba7456300c3a41bd12",
+    "visual": "3c78cd0af618f320fe9d0aafe7569e1e9b95b4b0"
+  },
+  "routes": [
+    {"cart_id": "cartA", "team": "BLUE", "speed": 10, "nodes": [[0,0,0],[10,0,0],[20,0,0]]}
+  ],
+  "events": [
+    {"type":"ROUND_START","seq":1,"ms":0,"round_id":"roundA","source":"SERVER"},
+    {"type":"BOARD","seq":2,"ms":0,"round_id":"roundA","source":"SERVER","cart_id":"cartA","team":"BLUE","player":"p_driver1","seat":"DRIVER","alive":true,"mounted":true,"carrier":false,"snared":false},
+    {"type":"POSE","seq":3,"ms":0,"round_id":"roundA","source":"SERVER","cart_id":"cartA","team":"BLUE","position":[0,0,0],"leg":1,"progress":0,"moving":false},
+    {"type":"ADVANCE","seq":4,"ms":10,"round_id":"roundA","source":"SERVER","cart_id":"cartA","team":"BLUE","player":"p_driver1","command_seq":1,"leg":1},
+    {"type":"POSE","seq":5,"ms":510,"round_id":"roundA","source":"SERVER","cart_id":"cartA","team":"BLUE","position":[5,0,0],"leg":1,"progress":0.5,"moving":true},
+    {"type":"VISUAL","seq":6,"ms":520,"round_id":"roundA","source":"CLIENT_VIEW","cart_id":"cartA","team":"BLUE","pose_seq":5,"seat_count":1,"visual_kind":"CART"},
+    {"type":"POSE","seq":7,"ms":1010,"round_id":"roundA","source":"SERVER","cart_id":"cartA","team":"BLUE","position":[10,0,0],"leg":2,"progress":0,"moving":false},
+    {"type":"ADVANCE","seq":8,"ms":1020,"round_id":"roundA","source":"SERVER","cart_id":"cartA","team":"BLUE","player":"p_driver1","command_seq":2,"leg":2},
+    {"type":"POSE","seq":9,"ms":1520,"round_id":"roundA","source":"SERVER","cart_id":"cartA","team":"BLUE","position":[15,0,0],"leg":2,"progress":0.5,"moving":true},
+    {"type":"VISUAL","seq":10,"ms":1530,"round_id":"roundA","source":"CLIENT_VIEW","cart_id":"cartA","team":"BLUE","pose_seq":9,"seat_count":1,"visual_kind":"CART"},
+    {"type":"POSE","seq":11,"ms":2020,"round_id":"roundA","source":"SERVER","cart_id":"cartA","team":"BLUE","position":[20,0,0],"leg":3,"progress":0,"moving":false},
+    {"type":"UNBOARD","seq":12,"ms":2030,"round_id":"roundA","source":"SERVER","cart_id":"cartA","team":"BLUE","player":"p_driver1","seat":"DRIVER"},
+    {"type":"POSE","seq":13,"ms":2040,"round_id":"roundA","source":"SERVER","cart_id":"cartA","team":"BLUE","position":[20,0,0],"leg":3,"progress":0,"moving":false},
+    {"type":"ROUND_END","seq":14,"ms":2050,"round_id":"roundA","source":"SERVER"}
+  ]
+}
