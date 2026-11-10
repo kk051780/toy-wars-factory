@@ -1,0 +1,112 @@
+{
+  "baseline_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+  "format": "P0D_S1_ANALYTIC_LOWER_BOUND_REPORT_V1",
+  "limitations": [
+    "Not simultaneous physically achievable routes",
+    "No defender, obstacle, packet loss, respawn, lag or NPC effects",
+    "Cannot establish empirical player balance, fun, retention or monetization",
+    "Proposed profile optional OFF; #220 sole integration owner"
+  ],
+  "scenarios": {
+    "baseline": {
+      "BLUE": {
+        "GUARDIAN": {
+          "assumptions": "no_enemy_no_obstacles_no_latency_2d_optimistic_geometry",
+          "castle_attack_lb_s": 24.65,
+          "castle_to_egg_lb_ratio": 0.8013,
+          "castle_total_lb_s": 35.11667,
+          "castle_walk_lb_s": 10.46667,
+          "egg_total_lb_s": 43.82488,
+          "hits_required": 30,
+          "role": "GUARDIAN",
+          "team": "BLUE"
+        },
+        "RAIDER": {
+          "assumptions": "no_enemy_no_obstacles_no_latency_2d_optimistic_geometry",
+          "castle_attack_lb_s": 17.85,
+          "castle_to_egg_lb_ratio": 0.74837,
+          "castle_total_lb_s": 26.11316,
+          "castle_walk_lb_s": 8.26316,
+          "egg_total_lb_s": 34.89332,
+          "hits_required": 22,
+          "role": "RAIDER",
+          "team": "BLUE"
+        }
+      },
+      "RED": {
+        "GUARDIAN": {
+          "assumptions": "no_enemy_no_obstacles_no_latency_2d_optimistic_geometry",
+          "castle_attack_lb_s": 24.65,
+          "castle_to_egg_lb_ratio": 0.8013,
+          "castle_total_lb_s": 35.11667,
+          "castle_walk_lb_s": 10.46667,
+          "egg_total_lb_s": 43.82488,
+          "hits_required": 30,
+          "role": "GUARDIAN",
+          "team": "RED"
+        },
+        "RAIDER": {
+          "assumptions": "no_enemy_no_obstacles_no_latency_2d_optimistic_geometry",
+          "castle_attack_lb_s": 17.85,
+          "castle_to_egg_lb_ratio": 0.74837,
+          "castle_total_lb_s": 26.11316,
+          "castle_walk_lb_s": 8.26316,
+          "egg_total_lb_s": 34.89332,
+          "hits_required": 22,
+          "role": "RAIDER",
+          "team": "RED"
+        }
+      }
+    },
+    "candidate": {
+      "BLUE": {
+        "GUARDIAN": {
+          "assumptions": "no_enemy_no_obstacles_no_latency_2d_optimistic_geometry",
+          "castle_attack_lb_s": 34.85,
+          "castle_to_egg_lb_ratio": 1.03404,
+          "castle_total_lb_s": 45.31667,
+          "castle_walk_lb_s": 10.46667,
+          "egg_total_lb_s": 43.82488,
+          "hits_required": 42,
+          "role": "GUARDIAN",
+          "team": "BLUE"
+        },
+        "RAIDER": {
+          "assumptions": "no_enemy_no_obstacles_no_latency_2d_optimistic_geometry",
+          "castle_attack_lb_s": 28.9,
+          "castle_to_egg_lb_ratio": 1.06505,
+          "castle_total_lb_s": 37.16316,
+          "castle_walk_lb_s": 8.26316,
+          "egg_total_lb_s": 34.89332,
+          "hits_required": 35,
+          "role": "RAIDER",
+          "team": "BLUE"
+        }
+      },
+      "RED": {
+        "GUARDIAN": {
+          "assumptions": "no_enemy_no_obstacles_no_latency_2d_optimistic_geometry",
+          "castle_attack_lb_s": 34.85,
+          "castle_to_egg_lb_ratio": 1.03404,
+          "castle_total_lb_s": 45.31667,
+          "castle_walk_lb_s": 10.46667,
+          "egg_total_lb_s": 43.82488,
+          "hits_required": 42,
+          "role": "GUARDIAN",
+          "team": "RED"
+        },
+        "RAIDER": {
+          "assumptions": "no_enemy_no_obstacles_no_latency_2d_optimistic_geometry",
+          "castle_attack_lb_s": 28.9,
+          "castle_to_egg_lb_ratio": 1.06505,
+          "castle_total_lb_s": 37.16316,
+          "castle_walk_lb_s": 8.26316,
+          "egg_total_lb_s": 34.89332,
+          "hits_required": 35,
+          "role": "RAIDER",
+          "team": "RED"
+        }
+      }
+    }
+  }
+}
