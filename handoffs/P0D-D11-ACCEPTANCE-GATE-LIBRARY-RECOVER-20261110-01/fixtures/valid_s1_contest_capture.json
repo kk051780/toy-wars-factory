@@ -1,0 +1,20 @@
+{
+  "schema": "P0D_NEUTRAL_TRACE_V1", "game_id": "TRAP_RAIDERS", "work_id": "p0d-siege-v19", "source": "synthetic", "stage": "S1",
+  "events": [
+    {"type":"MATCH_START","seq":1,"t":0},
+    {"type":"NPC_BASELINE","seq":2,"t":0,"npc":"S1_NEUTRAL_A","legacy_owner":"NONE","v43_owner":"NONE"},
+    {"type":"CLAIM_START","seq":3,"t":1,"npc":"S1_NEUTRAL_A","actor":"A","team":"BLUE","alive":true,"egg_carrier":false,"near":true,"server_accepted":true},
+    {"type":"CLAIM_CONTEST","seq":4,"t":2,"npc":"S1_NEUTRAL_A","actor":"B","team":"RED"},
+    {"type":"CLAIM_DENIED","seq":5,"t":2,"npc":"S1_NEUTRAL_A","reason":"CONTESTED"},
+    {"type":"CLAIM_RESET","seq":6,"t":2.1,"npc":"S1_NEUTRAL_A"},
+    {"type":"CLAIM_START","seq":7,"t":3,"npc":"S1_NEUTRAL_A","actor":"B","team":"RED","alive":true,"egg_carrier":false,"near":true,"server_accepted":true},
+    {"type":"CLAIM_COMMIT","seq":8,"t":6,"npc":"S1_NEUTRAL_A","actor":"B","team":"RED"},
+    {"type":"OWNER_SNAPSHOT","seq":9,"t":6,"npc":"S1_NEUTRAL_A","legacy_owner":"NONE","v43_owner":"RED"},
+    {"type":"LEASE_EXPIRE","seq":10,"t":14,"npc":"S1_NEUTRAL_A"},
+    {"type":"OWNER_SNAPSHOT","seq":11,"t":14,"npc":"S1_NEUTRAL_A","legacy_owner":"NONE","v43_owner":"NONE"},
+    {"type":"COOLDOWN_EXPIRE","seq":12,"t":18,"npc":"S1_NEUTRAL_A"},
+    {"type":"MATCH_END","seq":13,"t":20},
+    {"type":"OWNER_SNAPSHOT","seq":14,"t":20,"npc":"S1_NEUTRAL_A","legacy_owner":"NONE","v43_owner":"NONE"},
+    {"type":"FINAL","seq":15,"t":20}
+  ]
+}
