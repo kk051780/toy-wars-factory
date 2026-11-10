@@ -1,0 +1,22 @@
+test_01_good_source_integrity (test_p0d_keyless_migrate.KeylessLegacyTests.test_01_good_source_integrity) ... ok
+test_02_source_sha_rejects_tamper (test_p0d_keyless_migrate.KeylessLegacyTests.test_02_source_sha_rejects_tamper) ... ok
+test_03_no_source_does_not_make_bundle (test_p0d_keyless_migrate.KeylessLegacyTests.test_03_no_source_does_not_make_bundle) ... ok
+test_04_source_zip_slip_rejected (test_p0d_keyless_migrate.KeylessLegacyTests.test_04_source_zip_slip_rejected) ... ok
+test_05_source_symlink_rejected (test_p0d_keyless_migrate.KeylessLegacyTests.test_05_source_symlink_rejected) ... ok
+test_06_case_collision_rejected (test_p0d_keyless_migrate.KeylessLegacyTests.test_06_case_collision_rejected) ... ok
+test_07_good_bundle_only_verified_original (test_p0d_keyless_migrate.KeylessLegacyTests.test_07_good_bundle_only_verified_original) ... ok
+test_08_bundle_sha_rejects_tamper (test_p0d_keyless_migrate.KeylessLegacyTests.test_08_bundle_sha_rejects_tamper) ... ok
+test_09_output_never_overwritten (test_p0d_keyless_migrate.KeylessLegacyTests.test_09_output_never_overwritten) ... ok
+test_10_strict_all_rejects_missing (test_p0d_keyless_migrate.KeylessLegacyTests.test_10_strict_all_rejects_missing) ... ok
+test_11_partial_ledger_truthful (test_p0d_keyless_migrate.KeylessLegacyTests.test_11_partial_ledger_truthful) ... ok
+test_12_stage_safely_and_no_second_overwrite (test_p0d_keyless_migrate.KeylessLegacyTests.test_12_stage_safely_and_no_second_overwrite) ... ok
+test_13_wrong_registry_source_hash_rejects_bundle (test_p0d_keyless_migrate.KeylessLegacyTests.test_13_wrong_registry_source_hash_rejects_bundle) ... ok
+test_14_duplicate_packet_registry_rejected (test_p0d_keyless_migrate.KeylessLegacyTests.test_14_duplicate_packet_registry_rejected) ... ok
+test_15_received_bundle_member_sha_rejected (test_p0d_keyless_migrate.KeylessLegacyTests.test_15_received_bundle_member_sha_rejected) ... ok
+test_16_source_non_ascii_and_nested_paths_safe (test_p0d_keyless_migrate.KeylessLegacyTests.test_16_source_non_ascii_and_nested_paths_safe) ... ok
+test_17_misleading_dotdot_rejected (test_p0d_keyless_migrate.KeylessLegacyTests.test_17_misleading_dotdot_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.024s
+
+OK
