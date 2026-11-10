@@ -1,0 +1,107 @@
+{
+  "baseline": {
+    "round": {
+      "serverOwned": true,
+      "phase": "RESULT_FINALIZED",
+      "matchId": "tr_20261109_s4_0089",
+      "mapId": "S4",
+      "durationSeconds": 60,
+      "winnerTeam": "BLUE",
+      "participantUserIds": [
+        101,
+        102
+      ],
+      "eggDeliveredByUserId": 101,
+      "eggDeliveredByTeam": "BLUE",
+      "participantTeams": {
+        "101": "BLUE",
+        "102": "RED"
+      }
+    },
+    "player": {
+      "userId": 101,
+      "job": "BEAST_TAMER",
+      "team": "BLUE",
+      "activeSeconds": 43,
+      "actionCounts": {
+        "enemyHits": 1,
+        "objectiveInteractions": 1,
+        "trapsTriggered": 0,
+        "minionOrders": 1,
+        "allySupport": 0,
+        "structuresBuilt": 0,
+        "eggCarryActions": 0
+      },
+      "assistFlags": {
+        "defense": true,
+        "rescue": true,
+        "siege": true
+      }
+    }
+  },
+  "cases": {
+    "win_with_egg": {
+      "won": true,
+      "eggDelivered": true
+    },
+    "no_egg": {
+      "round": {
+        "eggDeliveredByUserId": null,
+        "eggDeliveredByTeam": null
+      },
+      "won": true,
+      "eggDelivered": false
+    },
+    "loss": {
+      "round": {
+        "participantTeams": {
+          "101": "RED",
+          "102": "BLUE"
+        },
+        "eggDeliveredByUserId": 102
+      },
+      "player": {
+        "team": "RED"
+      },
+      "won": false,
+      "eggDelivered": false
+    },
+    "draw": {
+      "round": {
+        "winnerTeam": "DRAW",
+        "eggDeliveredByUserId": null,
+        "eggDeliveredByTeam": null
+      },
+      "won": false,
+      "eggDelivered": false
+    },
+    "not_final": {
+      "round": {
+        "phase": "IN_PROGRESS"
+      },
+      "error": "ROUND_NOT_FINALIZED"
+    },
+    "not_server_owned": {
+      "round": {
+        "serverOwned": false
+      },
+      "error": "ROUND_NOT_FINALIZED"
+    },
+    "bad_map": {
+      "round": {
+        "mapId": "ADMIN"
+      },
+      "error": "INVALID_MAP"
+    },
+    "bad_participant": {
+      "expectedUserId": 105,
+      "error": "PARTICIPANT_MISMATCH"
+    },
+    "egg_on_wrong_team": {
+      "round": {
+        "eggDeliveredByTeam": "RED"
+      },
+      "error": "INVALID_EGG_RECEIPT"
+    }
+  }
+}
