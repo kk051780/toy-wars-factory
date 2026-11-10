@@ -1,0 +1,193 @@
+{
+  "schema": "P0D_KEYLESS_MIGRATION_REGISTRY_V1",
+  "as_of_jst": "2026-11-10",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "source": "GitHub Issue #218, latest #213 PC reports and pinned D18 v7 manifest",
+  "public_repo": "kk051780/toy-wars-factory",
+  "note": "This registry contains only non-secret packet IDs, fixed source refs, expected original ZIP SHA256, and observed/unknown source states; no original plaintext sources or AES keys. Counts are candidate packets, not all released game features. Superseded deliveries omitted.",
+  "packets": [
+    {
+      "packet_id": "v39-h1-chatlead-ref-20261110",
+      "feature_id": "D06",
+      "source_commit": "baa29df8bc3f10f94792fcb135b3ee2a136ad8b8",
+      "original_zip_sha256": "7d3c5d5c947530cb1874e7ee7dcf55d712c5c8c3bf6f49e5c25de093a7bc349d",
+      "pc_observed_at_inventory": "PC_RESTORED_REPORTED"
+    },
+    {
+      "packet_id": "v43A-neutral-skirmish-chatlead-20261110",
+      "feature_id": "D11",
+      "source_commit": "db734240f0157cc125b563656dbd09668226f3ab",
+      "original_zip_sha256": "a731bea80cdaa69e360d86743d437e19afe27b5e95119d21bf79bfdedd4bdd8b",
+      "pc_observed_at_inventory": "PC_RESTORED_REPORTED"
+    },
+    {
+      "packet_id": "v40-v41-v42-fallback-chatlead-20261110",
+      "feature_id": "D07,D08,D09,D10",
+      "source_commit": "c0b0bf692410cb651893c38f1a453c93d9f8b3b5",
+      "original_zip_sha256": "05a85a7934f6ae1815c9dd50c81a3ff81c3f8e46c9051fe0f8fea1838b8ed9ec",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-V43B-METEOR-20261110-01",
+      "feature_id": "D12",
+      "source_commit": "874b4d68c33cefb2ee10d72a655e10aced1445da",
+      "original_zip_sha256": "78986ca4c85494cd99417ef2bcdbcd7d9cf294c910fcaffb00fb8dfc35bc2723",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D13-SIEGE-RESPONSE-20261110-A",
+      "feature_id": "D13",
+      "source_commit": "7c948cfdef6a1f4381b738cc5910a085c46d44a5",
+      "original_zip_sha256": "2caba203e55acf1afff12da90ac4dc4de64fcf8e4bafaded4ce8134f90f80ccb",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D14-VEHICLE-SEATS-20261110-01",
+      "feature_id": "D14",
+      "source_commit": "0bcf39c22c583604d72ccac47d29fc9d87b7e662",
+      "original_zip_sha256": "475616bd21e88164158db88b3a97e33d4a9b1ce9aaa872fa7a816adf485c9fd3",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D15-TRAP-RESCUE-20261110-01",
+      "feature_id": "D15",
+      "source_commit": "f789276cee28d40d8cdfb59a9c57c303f6d5fd09",
+      "original_zip_sha256": "0043b59baffb8de487eb216505ef1bef6652b7147f30f7e9e824014727216cd1",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D16-SCALE-FX-20261110-01",
+      "feature_id": "D16",
+      "source_commit": "7242b32760327a527b868f5405d7782265388fe2",
+      "original_zip_sha256": "d5df52cd3b2fdf26bca05bc38123ac81d27024c944c4a465d66e3a4e0ad0c7cd",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D16-VISUAL-REPLICA-20261110-02",
+      "feature_id": "D16",
+      "source_commit": "ec521761a4ceb61f187f0aa83c3a0a5600d16bcb",
+      "original_zip_sha256": "31a53ead53095152ac57d2b0ee49b49c37477c5341ef0bdd25c8c463fd911d7d",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D16-CLOCK-RAIN-VFX-20261110-03",
+      "feature_id": "D16",
+      "source_commit": "945488ccb9ea47b8ca1ce514efed94372a839a01",
+      "original_zip_sha256": "bcee9a949dc897b1d9a54557a93959ccd8b0e068223310594a8d27ec4fdcea62",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D17-PRIVACY-METRICS-20261110-A",
+      "feature_id": "D17",
+      "source_commit": "42e1546480099131f10e2e251e295b8258ecfd88",
+      "original_zip_sha256": "e7857702eec8c2b3a3bdc96c5aaedb6720c1f572e7ac138369bf6bfe2b832eb2",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D17-COSMETIC-CATALOG-20261110-01",
+      "feature_id": "D17",
+      "source_commit": "e2117e9d7dd42ef895b7bae48e6fc9e8520b917d",
+      "original_zip_sha256": "abd8efebae089b40c6837ceccc9fc152b2309ffa6a5b01eaf2dba497bac7e065",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D16-GLIDE-AUTH-20261110-04",
+      "feature_id": "D16",
+      "source_commit": "c3de5d94eae25e566bdf29452ed1980dae35909d",
+      "original_zip_sha256": "872e8f9ec5ef38535ee3b295bf301a612e2063835e85cae67ab87bb370aee2cc",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D07-GOROGAN-VISUAL-20261110-01",
+      "feature_id": "D07",
+      "source_commit": "5128e288c7bd119a470c253a9792f4d829c569ec",
+      "original_zip_sha256": "7d6bb8f1cc31348c8461d0b5e0381a62a02eb3aad888be9789fbd78d992ff917",
+      "pc_observed_at_inventory": "PC_BLOCKED_MISSING_AES_KEY"
+    },
+    {
+      "packet_id": "P0D-D07-GOROGAN-SERVER-AI-20261110-02",
+      "feature_id": "D07",
+      "source_commit": "80483ad6543fd73dfaf8a21ecf7b58dc2eca75e1",
+      "original_zip_sha256": "0dc7a15c821eb957e1e2a4f16d10922fd32a576c38544c789cb5bb0b16a41516",
+      "pc_observed_at_inventory": "PC_BLOCKED_MISSING_AES_KEY"
+    },
+    {
+      "packet_id": "P0D-D07-LIGARDO-VISUAL-20261110-03",
+      "feature_id": "D07",
+      "source_commit": "bd1c4fcc631a2655119df8cfaf5efdf7534cf133",
+      "original_zip_sha256": "e2ebc8dc2d6b3d410866aca4e41ad4a13dd00284f25f93c47b01bbc5327995dd",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D07-LIGARDO-SERVER-AI-20261110-04",
+      "feature_id": "D07",
+      "source_commit": "d6f34afc3a04b2d67ce31eac9e2044cbb44a0bc5",
+      "original_zip_sha256": "0dbfa84325c275a1e010230535bc389ba4606cb872cc400f2d1f97d9411afd2c",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D07-GOROGAN-RIG-NAV-DAMAGE-20261110-03",
+      "feature_id": "D07",
+      "source_commit": "e7801615c5b70346dfaec189f195a65f5b597ec9",
+      "original_zip_sha256": "9ceadcf6d2af1361e92683021e3d174da058b5e4aeeda748f90a8f69309e047c",
+      "pc_observed_at_inventory": "PC_RESTORED_REPORTED"
+    },
+    {
+      "packet_id": "P0D-D07-GOROGAN-COMBINED-WIRING-20261110-04",
+      "feature_id": "D07",
+      "source_commit": "05fb3b1b986a2d8dfb925bce7592b13da6f61316",
+      "original_zip_sha256": "0f676b2dd1408ff3d995975a8d6b18db783eea2a3b2a87708f9ebe954d5ad2b0",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D08-CANONICAL-EVENT-BRIDGE-20261110-01",
+      "feature_id": "D08",
+      "source_commit": "2ecf899d1202c6bf6868355dc02d2a3ad4f03d47",
+      "original_zip_sha256": "576921a613b8330549b2e8fd89c7fa96e6b9e3d9a26146903072f1bde969058f",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D14-CART-RAFT-VISUAL-20261110-02",
+      "feature_id": "D14",
+      "source_commit": "3c78cd0af618f320fe9d0aafe7569e1e9b95b4b0",
+      "original_zip_sha256": "6a7c63113ae1938247d72d42320fcdd2e1145d36632bdb0c7615eb9962e3458a",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D14-CART-RAIL-MOTION-20261110-02B",
+      "feature_id": "D14",
+      "source_commit": "2cd3fb9b31bfe7817ca0ceba7456300c3a41bd12",
+      "original_zip_sha256": "c38a1536095ce4d64a1691905caff0b055f75038e02354718333ad6a79d88fa5",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D14-RAFT-WATER-MOTION-20261110-03",
+      "feature_id": "D14",
+      "source_commit": "027fd926a9d315a84f701086448fa5c1febc6697",
+      "original_zip_sha256": "d218baef4ba958195b9e0ad22a4046313c52c3d150b424e0e99981cb351854c6",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D14-RIDER-ATTACH-SAFETY-20261110-04",
+      "feature_id": "D14",
+      "source_commit": "0af53f121b35f2e822c63514112360d220c92227",
+      "original_zip_sha256": "11b7bae8ce25d48e2ba813058583f3a882a4bf19890ca6e004a9e519647616fe",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D14-SERVER-VISUAL-PUBLISHER-20261110-06",
+      "feature_id": "D14",
+      "source_commit": "72cc724bb9826c7958620a26587265815649d469",
+      "original_zip_sha256": "8e4e9a3f20965f5c6fda21dadd7cdb81a898a1f9fb5c5462dcd165c4e157a27c",
+      "pc_observed_at_inventory": "SOURCE_UNCONFIRMED"
+    },
+    {
+      "packet_id": "P0D-D18-COLLECTION-ATLAS-20261110-01",
+      "feature_id": "D18",
+      "source_commit": "81b56cdfebf3b01569cb85365697cdaf8a61ad70",
+      "original_zip_sha256": "0e1d696161b16b2c63370c6021421ecdf22b12f3108932a47e06da366ba56fb5",
+      "pc_observed_at_inventory": "OWNER_SOURCE_AVAILABLE"
+    }
+  ]
+}
