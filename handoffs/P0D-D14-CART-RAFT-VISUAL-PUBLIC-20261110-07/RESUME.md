@@ -1,0 +1,3 @@
+# Resume D14 visual only
+
+Packet P0D-D14-CART-RAFT-VISUAL-20261110-02. Integrate only after v37/v39 actual PC saved-Place checks, v43-A coordination if needed and D14 existing server occupancy review. Never edit existing server VehicleSeatCore or create another seat controller. No main/merge/publish/paid services. Preserve source and Place hashes. Use OWNER-private key and safe restore; verify ZIP manifest before reading source. Compare Luau source for `OnClientEvent` client-only behavior, limited anchored noncolliding Parts and cleanup. Emit measured evidence for PC gate. UI/glider/boss unrelated.
