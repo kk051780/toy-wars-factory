@@ -54,6 +54,36 @@ jobs:
           fi
           grep -F 'manifest schema mismatch' /tmp/p0d_original_manifest.log
           echo 'P0D_ORIGINAL_MANIFEST_KNOWN_SCHEMA_BLOCKER_CONFIRMED'
+      - name: Verify corrected canonical manifest with original official verifier on disposable copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          tmp_game="$(mktemp -d)"
+          cp -a releases/P0D_S1_KIDS_RC01/. "$tmp_game/"
+          fixed=handoffs/P0D-S1-CANONICAL-MANIFEST-FIX-20261111-01/BUILD_MANIFEST_S1_FIXED.json
+          cp "$fixed" "$tmp_game/BUILD_MANIFEST.json"
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py verify \
+            --root "$tmp_game" \
+            --packet-id P0D-S1-KIDS-RC01-SOURCE-INTEGRATION-20261111-01
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py verify \
+            --root handoffs/P0D-S1-CANONICAL-MANIFEST-FIX-20261111-01 \
+            --packet-id P0D-S1-CANONICAL-MANIFEST-FIX-20261111-01
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          original=Path('releases/P0D_S1_KIDS_RC01/BUILD_MANIFEST.json')
+          proposed=Path('handoffs/P0D-S1-CANONICAL-MANIFEST-FIX-20261111-01/BUILD_MANIFEST_S1_FIXED.json')
+          old=json.loads(original.read_bytes())
+          new=json.loads(proposed.read_bytes())
+          assert set(old)==set(new)|{'status'}, 'NOT_ONLY_EXTRA_ROOT_STATUS'
+          assert {k:v for k,v in old.items() if k!='status'}==new, 'ALTERED_SOURCE_FILE_OR_METADATA'
+          assert len(new['files'])==15
+          assert new['packet_id']=='P0D-S1-KIDS-RC01-SOURCE-INTEGRATION-20261111-01'
+          assert all(old['files'][i]==new['files'][i] for i in range(15))
+          print('P0D_CANONICAL_MANIFEST_REPAIR_PASS: 15/15 original source entries unchanged; only forbidden status root removed')
+          print('P0D_NO_GAME_RUNTIME_CHANGE: game source files and original manifest unchanged in checkout')
+          PY
+          git diff --exit-code -- releases/P0D_S1_KIDS_RC01
       - name: Run real S1 original offline Python regression suite
         shell: bash
         run: |
