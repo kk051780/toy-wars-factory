@@ -2,13 +2,18 @@
   "entries": [
     {
       "path": "README.md",
-      "sha256": "579345d0eda1441decec709685f8e48826c27bd400dd214099b2cde3276e5c55",
-      "size": 2806
+      "sha256": "8065de69e2c9591241798e76679e66d01a01cf78f99d7967d8ef97692c245b21",
+      "size": 4099
     },
     {
       "path": "docs/QA_MATRIX.md",
-      "sha256": "25686482337b044fd22c17e384cf4b34db1c5657f38eac70c5d48b387e52c5e0",
-      "size": 1340
+      "sha256": "f789e19419024ef2ed466dd9342967c27eecc472008e518db3c24a146a519827",
+      "size": 2461
+    },
+    {
+      "path": "tests/test_source_snapshot.py",
+      "sha256": "a81a24f69481388d536351c531c5708c77345ceda49da1e6b8b393ca8a41edac",
+      "size": 7616
     },
     {
       "path": "tests/test_verify_rc_wiring.py",
@@ -19,13 +24,19 @@
       "path": "tools/verify_rc_wiring.py",
       "sha256": "5db5aa2e8e2fd7a0e7a240be45c8b7f302747dc7f74ccdc6388cab8830bc01d4",
       "size": 12351
+    },
+    {
+      "path": "tools/verify_source_snapshot.py",
+      "sha256": "a2c294abb15885d1a3427e3be51e37f08833fec9c1284a97f60f55b694abc474",
+      "size": 5104
     }
   ],
   "format": "P0D_PUBLIC_SOURCE_V1",
   "game_id": "TRAP_RAIDERS",
   "game_rc_status": "RC_PENDING",
   "packet_id": "P0D-S1-RC-SOURCE-WIRING-VERIFIER-20261111-01",
-  "source_provenance": "NEW_INDEPENDENT_CHAT_SOURCE_WIRING_QA_NOT_GAME_CODE",
+  "public_source_allowed": true,
+  "source_provenance": "NEW_CHAT_STATIC_SOURCE_AND_PRE_RC_SNAPSHOT_QA_NOT_GAME_CODE",
   "studio_status": "NOT_TESTED",
   "work_id": "p0d-siege-v19"
 }

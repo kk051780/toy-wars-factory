@@ -28,3 +28,29 @@ The first command prints a JSON receipt and returns exit code 0 only on the narr
 ## Safety
 
 Public TRAP_RAIDERS plaintext source permission only. No main changes, PR merges, production Roblox publication, purchases/spending or P0-A/B/C protected controls/Automations.
+
+## Added V1.1: pre-RC real-source snapshot gate (2026-11-11)
+
+The sole integration writer currently publishes the **in-progress** source under
+`releases/P0D_S1_KIDS_RC01/`, with `BUILD_MANIFEST.json` in the
+`P0D_PUBLIC_SOURCE_V1` schema rather than the **final**
+`P0D_CHAT_RELEASE_PLAN_V1` + `CHAT_RC_RECEIPT.json` pair. To avoid waiting
+for the RC, run an *additional narrowly scoped* independent check now:
+
+```bash
+python3 tools/verify_source_snapshot.py \
+  --source-root /path/to/repo/releases/P0D_S1_KIDS_RC01
+```
+
+This checks actual game source bytes/SHA256/size against the project's current
+manifest; Rojo `$path` mapping and script side; missing, untracked, symlink,
+case-collision and false status claims. An output of
+`PASS_SOURCE_SNAPSHOT_ONLY__NOT_FINAL_RC` is **not** the independent final
+RC acceptance, is **not** gameplay scenario verification, and does **not**
+authorize Codex, Studio PASS, or Roblox publication. The strict final-RC
+checker above stays unchanged and must run on the assembled RC with its exact
+source plan after the integration writer has finished.
+
+Both tools are read-only and work with stdlib Python. The snapshot tool is a
+separate new acceptance target for early source hygiene, not a way to bypass
+the Chat-first V2 assembly and true runtime tests.

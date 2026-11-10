@@ -10,3 +10,18 @@
 | Honest labels | Source build only; Studio and release not approved | false Studio/live publication claim |
 
 **Hard boundary:** Each test under `tests/` uses a **synthetic fixture**, not true P0-D gameplay Luau or Roblox Studio. Thus offline QA above supports the build mechanism but DOES NOT imply actual gameplay works. When #220 releases its RC source tree, rerun the same checker on that exact RC+plan and store the output as an immutable independent QA receipt. Do not claim `CHAT_RC_READY` before the separate scenario QA and owner/integrator release gates pass.
+
+## Pre-RC snapshot (V1.1 supplemental checks)
+
+| Item | Evidence | Expected failure |
+| --- | --- | --- |
+| `BUILD_MANIFEST.json` source identity and complete file coverage | Actual file bytes exactly match `sha256`, `size`, and each file is listed once | mismatched, missing, extra, duplicate, invalid paths |
+| `default.project.json` composition | Real paths exist and each script has a correct server/client mount | missing project, wrong mount, duplicate case |
+| Source-only truthfulness | `docs/RELEASE_STATUS.json` explicitly indicates no Studio/game readiness and no approval | false `game_ready`, Studio PASS or owner release |
+| Bootstrap | At least one `.server.luau` and `.client.luau` bootstrap is present | non-runnable source-only modules |
+
+All `tests/test_source_snapshot.py` scenarios are synthetic, and a PASS on
+those tests is **not** a pass against the integrator's actual source. The
+integrator or an independent auditor must clone the pinned source commit,
+run the snapshot tool against the real `releases/P0D_S1_KIDS_RC01` directory,
+and capture the report before scoring the pre-RC source gate.
