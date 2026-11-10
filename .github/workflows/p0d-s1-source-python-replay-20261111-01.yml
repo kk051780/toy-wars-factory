@@ -1,0 +1,98 @@
+# Source-only P0-D test; no inference, Studio, deploy, write token, or OWNER PC.
+# Deliberately isolated to this one branch and workflow file change.
+name: P0D S1 historical-source Python replay (no Studio)
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-source-python-replay-20261111-01
+    paths:
+      - .github/workflows/p0d-s1-source-python-replay-20261111-01.yml
+permissions:
+  contents: read
+concurrency:
+  group: p0d-s1-replay-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  python-source-only:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Checkout isolated source snapshot
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify pinned source and policy context
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f releases/P0D_S1_KIDS_RC01/src/server/Game.server.luau
+          test -f handoffs/P0D_S1_SOURCE_PLAN_SNAPSHOT_20261111_01/SOURCE_PLAN_S1_SNAPSHOT.json
+          test -f handoffs/P0D-S1-SNAPSHOT-ASSEMBLED-MIRROR-20261111-01/assembled/CHAT_RC_RECEIPT.json
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          source=pathlib.Path('releases/P0D_S1_KIDS_RC01')
+          m=json.loads((source/'BUILD_MANIFEST.json').read_text(encoding='utf-8'))
+          expected={'status','files','format','game_id','packet_id','public_source_allowed','work_id'}
+          assert set(m)==expected, f'unexpected original source manifest root keys: {set(m)}'
+          for entry in m['files']:
+              p=source/entry['path']
+              b=p.read_bytes()
+              assert hashlib.sha256(b).hexdigest()==entry['sha256'], entry['path']
+              assert len(b)==entry['size'], entry['path']
+          print('P0D_ORIGINAL_SOURCE_MANIFEST_BYTES: 15/15 PASS (schema remains known invalid)')
+          PY
+      - name: Reproduce known original manifest strict-contract FAIL (must fail for precise reason)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py verify \
+              --root releases/P0D_S1_KIDS_RC01 \
+              --packet-id P0D-S1-KIDS-RC01-SOURCE-INTEGRATION-20261111-01 > /tmp/p0d_original_manifest.log 2>&1; then
+            echo "UNEXPECTED ORIGINAL STRICT-MANIFEST PASS: review changed source"
+            exit 1
+          fi
+          grep -F 'manifest schema mismatch' /tmp/p0d_original_manifest.log
+          echo 'P0D_ORIGINAL_MANIFEST_KNOWN_SCHEMA_BLOCKER_CONFIRMED'
+      - name: Run real S1 original offline Python regression suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s releases/P0D_S1_KIDS_RC01/tests -v 2>&1 | tee /tmp/p0d_s1_original_tests.log
+          grep -F 'Ran 80 tests' /tmp/p0d_s1_original_tests.log
+          grep -x 'OK' /tmp/p0d_s1_original_tests.log
+      - name: Execute actual Python source assembler on six real source units
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_S1_SOURCE_PLAN_SNAPSHOT_20261111_01/tools/chat_rc_assemble.py \
+            --plan handoffs/P0D_S1_SOURCE_PLAN_SNAPSHOT_20261111_01/SOURCE_PLAN_S1_SNAPSHOT.json \
+            --source-root releases/P0D_S1_KIDS_RC01 \
+            --out /tmp/p0d_s1_actual_python_assembled
+          test -f /tmp/p0d_s1_actual_python_assembled/CHAT_RC_RECEIPT.json
+      - name: Compare actual generated source bytes + receipt to exact immutable Git mirror
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          base=pathlib.Path('handoffs/P0D-S1-SNAPSHOT-ASSEMBLED-MIRROR-20261111-01/assembled')
+          actual=pathlib.Path('/tmp/p0d_s1_actual_python_assembled')
+          plan=pathlib.Path('handoffs/P0D_S1_SOURCE_PLAN_SNAPSHOT_20261111_01/SOURCE_PLAN_S1_SNAPSHOT.json')
+          expected=json.loads((base/'CHAT_RC_RECEIPT.json').read_text(encoding='utf-8'))
+          result=json.loads((actual/'CHAT_RC_RECEIPT.json').read_text(encoding='utf-8'))
+          assert result==expected, 'S1_RC_RECEIPT_DIFF_FROM_SOURCE_MIRROR'
+          assert (actual/'CHAT_RC_RECEIPT.json').read_bytes()==(base/'CHAT_RC_RECEIPT.json').read_bytes(), 'S1_RC_RECEIPT_BYTE_DIFF'
+          assert result['source_plan_sha256']==hashlib.sha256(plan.read_bytes()).hexdigest(), 'S1_PLAN_HASH_DIFF'
+          assert result['studio_status']=='NOT_TESTED' and result['release_approved'] is False, 'FALSE_STUDIO_RELEASE_CLAIM'
+          assert len(result['source_units'])==6 and len(result['contents'])==6, 'SOURCE_COUNT_DIFF'
+          for item in result['contents']:
+              p=item['path']
+              one=(base/p).read_bytes()
+              two=(actual/p).read_bytes()
+              assert one==two, p
+              assert hashlib.sha256(two).hexdigest()==item['sha256'], p
+              assert len(two)==item['size'], p
+          print('P0D_ACTUAL_PYTHON_ASSEMBLER_REPLAY_PASS source=6/6 receipt=EXACT_BYTES')
+          print('P0D_S1_FINAL_RELEASE_NOT_READY: initial-source only; D07 D08 D11 and actual Studio QA pending')
+          PY
