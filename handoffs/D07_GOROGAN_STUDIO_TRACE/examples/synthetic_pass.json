@@ -1,0 +1,172 @@
+{
+  "clients": 2,
+  "environment": "UNPUBLISHED_STUDIO",
+  "events": [
+    {
+      "authority": "SERVER",
+      "kind": "ROUND_START",
+      "ms": 0,
+      "round_id": "ROUND_SYNTH_001",
+      "seq": 1
+    },
+    {
+      "authority": "SERVER",
+      "kind": "TRIGGER",
+      "mode": "SERVER_QA_ONLY",
+      "ms": 50,
+      "round_id": "ROUND_SYNTH_001",
+      "seq": 2,
+      "source": "SERVER_TEST_COMMAND"
+    },
+    {
+      "authority": "SERVER",
+      "boss_id": "BOSS_SYNTH",
+      "kind": "SPAWN",
+      "ms": 100,
+      "pos": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "round_id": "ROUND_SYNTH_001",
+      "seq": 3,
+      "server_owned": true
+    },
+    {
+      "authority": "SERVER",
+      "boss_id": "BOSS_SYNTH",
+      "kind": "NAV_REQUEST",
+      "mechanism": "PATHFINDING_MOVETO",
+      "ms": 150,
+      "round_id": "ROUND_SYNTH_001",
+      "seq": 4
+    },
+    {
+      "authority": "SERVER",
+      "boss_id": "BOSS_SYNTH",
+      "grounded": true,
+      "kind": "MOVE_SAMPLE",
+      "ms": 350,
+      "pos": [
+        0.5,
+        0,
+        0
+      ],
+      "root_anchored": false,
+      "round_id": "ROUND_SYNTH_001",
+      "seq": 5,
+      "server_owned": true,
+      "source": "SERVER_HUMANOID_ROOT"
+    },
+    {
+      "authority": "SERVER",
+      "boss_id": "BOSS_SYNTH",
+      "grounded": true,
+      "kind": "MOVE_SAMPLE",
+      "ms": 700,
+      "pos": [
+        1.4,
+        0,
+        0
+      ],
+      "root_anchored": false,
+      "round_id": "ROUND_SYNTH_001",
+      "seq": 6,
+      "server_owned": true,
+      "source": "SERVER_HUMANOID_ROOT"
+    },
+    {
+      "attack_id": "A_SYNTH_1",
+      "authority": "SERVER",
+      "boss_id": "BOSS_SYNTH",
+      "kind": "TELEGRAPH",
+      "ms": 1000,
+      "round_id": "ROUND_SYNTH_001",
+      "seq": 7,
+      "visible_blue": true,
+      "visible_red": true
+    },
+    {
+      "attack_id": "A_SYNTH_1",
+      "authority": "SERVER",
+      "boss_id": "BOSS_SYNTH",
+      "fresh_server_snapshot": true,
+      "kind": "ATTACK_RESOLVE",
+      "ms": 3200,
+      "receipt": "CORE_STOMP_RESOLVE",
+      "round_id": "ROUND_SYNTH_001",
+      "seq": 8
+    },
+    {
+      "attack_id": "A_SYNTH_1",
+      "authority": "SERVER",
+      "boss_id": "BOSS_SYNTH",
+      "damage": 8,
+      "distance_studs": 6,
+      "invulnerable": false,
+      "kind": "HIT",
+      "max_range_studs": 12,
+      "ms": 3201,
+      "round_id": "ROUND_SYNTH_001",
+      "safezone": false,
+      "seq": 9,
+      "server_los": true,
+      "server_roster_verified": true,
+      "target_alive": true,
+      "target_token": "ANON_P1"
+    },
+    {
+      "attack_id": "A_SYNTH_1",
+      "authority": "SERVER",
+      "boss_id": "BOSS_SYNTH",
+      "kind": "HIT_DENIED",
+      "ms": 3202,
+      "reason": "SAFEZONE",
+      "round_id": "ROUND_SYNTH_001",
+      "seq": 10
+    },
+    {
+      "authority": "SERVER",
+      "kind": "REMOTE_REJECTED",
+      "ms": 3203,
+      "reason": "CLIENT_DAMAGE",
+      "round_id": "ROUND_SYNTH_001",
+      "seq": 11
+    },
+    {
+      "authority": "SERVER",
+      "kind": "ROUND_END",
+      "ms": 10100,
+      "round_id": "ROUND_SYNTH_001",
+      "seq": 12
+    },
+    {
+      "authority": "SERVER",
+      "boss_id": "BOSS_SYNTH",
+      "boss_instances_remaining": 0,
+      "kind": "CLEANUP",
+      "ms": 10110,
+      "round_id": "ROUND_SYNTH_001",
+      "seq": 13
+    }
+  ],
+  "evidence": {
+    "local_source_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "log_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "owned_studio_pid_exited": true,
+    "saved_place_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "stop_edit_save": true
+  },
+  "feature_id": "D07",
+  "game_id": "TRAP_RAIDERS",
+  "output_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "place_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "round_id": "ROUND_SYNTH_001",
+  "run_id": "RUN_SYNTH_001",
+  "schema": "P0D_GOROGAN_STUDIO_TRACE_V1",
+  "source_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "stage": "S1",
+  "trace_origin": "SYNTHETIC",
+  "trigger_mode": "SERVER_QA_ONLY",
+  "work_id": "p0d-siege-v19"
+}
