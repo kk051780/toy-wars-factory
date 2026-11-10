@@ -1,0 +1,51 @@
+{
+  "format": "P0D_S1_BALANCE_CONTRACT_V1",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "release_id": "P0D-S1-KIDS-RC01",
+  "baseline_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+  "baseline_file_sha1": {
+    "releases/P0D_S1_KIDS_RC01/src/shared/Config.luau": "ef10e4288e4732588116cd3e55d3d871ca803ff4",
+    "releases/P0D_S1_KIDS_RC01/src/server/MapBuilder.luau": "d2127b8c20c8abd880a21f84aeeb706feeb14ce8",
+    "releases/P0D_S1_KIDS_RC01/src/server/Game.server.luau": "0f2c34fe25c00e3251b9ca53952b9ec75400f365"
+  },
+  "arena": {
+    "spawn_x_abs": 68,
+    "egg_x_abs": 98,
+    "egg_z": -20,
+    "score_x_abs": 82,
+    "score_z": 20,
+    "enemy_core_x_abs": 107,
+    "enemy_core_z": 0,
+    "interaction_distance": 12,
+    "castle_reach": 18,
+    "prompt_hold_seconds": 0.35,
+    "captures_to_win": 2
+  },
+  "baseline": {
+    "castle_hp": 300,
+    "castle_attack_damage": {
+      "RAIDER": 14,
+      "GUARDIAN": 10
+    },
+    "attack_cooldown_seconds": 0.85,
+    "role_walk_speed": {
+      "RAIDER": 19,
+      "GUARDIAN": 15
+    },
+    "match_seconds": 360
+  },
+  "candidate": {
+    "castle_hp": 420,
+    "castle_attack_damage": {
+      "RAIDER": 12,
+      "GUARDIAN": 10
+    },
+    "attack_cooldown_seconds": 0.85,
+    "role_walk_speed": {
+      "RAIDER": 19,
+      "GUARDIAN": 15
+    },
+    "match_seconds": 360
+  }
+}
