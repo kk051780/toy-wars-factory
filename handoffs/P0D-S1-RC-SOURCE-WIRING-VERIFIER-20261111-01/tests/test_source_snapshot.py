@@ -42,6 +42,7 @@ class SnapshotFixture(unittest.TestCase):
         }
         self.manifest = {"format": "P0D_PUBLIC_SOURCE_V1", "game_id": "TRAP_RAIDERS",
                          "work_id": "p0d-siege-v19", "public_source_allowed": True,
+                         "packet_id": "P0D-S1-KIDS-RC01-SOURCE-INTEGRATION-20261111-01",
                          "files": []}
         self.flush()
 
@@ -52,7 +53,7 @@ class SnapshotFixture(unittest.TestCase):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(blob)
             entries.append({"path": rel, "sha256": hashlib.sha256(blob).hexdigest(), "size": len(blob)})
-        self.manifest["files"] = entries
+        self.manifest["files"] = sorted(entries, key=lambda x: x["path"])
         (self.root / "BUILD_MANIFEST.json").write_bytes(encode(self.manifest))
 
     def deny(self, contains):
@@ -83,7 +84,7 @@ class SourceSnapshotTests(SnapshotFixture):
         self.deny("UNTRACKED_SOURCE_OR_FILE")
 
     def test_manifest_duplicate(self):
-        self.manifest["files"].append(copy.deepcopy(self.manifest["files"][0]))
+        self.manifest["files"].append(copy.deepcopy(self.manifest["files"][-1]))
         (self.root / "BUILD_MANIFEST.json").write_bytes(encode(self.manifest))
         self.deny("DUPLICATE_MANIFEST_ENTRY")
 
@@ -180,6 +181,67 @@ class SourceSnapshotTests(SnapshotFixture):
     def test_false_rc_receipt(self):
         (self.root / "CHAT_RC_RECEIPT.json").write_text("{}")
         self.deny("UNTRACKED_SOURCE_OR_FILE")
+
+    def test_real_integrator_source_has_forbidden_extra_status_field(self):
+        # Exact known defect from immutable integrator commit 35d7d052...
+        self.manifest["status"] = "CHAT_INTEGRATION_IN_PROGRESS__STUDIO_NOT_TESTED"
+        (self.root / "BUILD_MANIFEST.json").write_bytes(encode(self.manifest))
+        self.deny("PUBLIC_SOURCE_MANIFEST_SCHEMA_MISMATCH")
+
+    def test_missing_packet_identifier(self):
+        self.manifest.pop("packet_id")
+        (self.root / "BUILD_MANIFEST.json").write_bytes(encode(self.manifest))
+        self.deny("PUBLIC_SOURCE_MANIFEST_SCHEMA_MISMATCH")
+
+    def test_bad_packet_identifier(self):
+        self.manifest["packet_id"] = "ab"
+        (self.root / "BUILD_MANIFEST.json").write_bytes(encode(self.manifest))
+        self.deny("INVALID_PUBLIC_SOURCE_PACKET_ID")
+
+    def test_canonical_encoding_required(self):
+        (self.root / "BUILD_MANIFEST.json").write_bytes(
+            json.dumps(self.manifest, ensure_ascii=True, sort_keys=False).encode())
+        self.deny("NONCANONICAL_PUBLIC_SOURCE_MANIFEST")
+
+    def test_extra_manifest_entry_field(self):
+        self.manifest["files"][0]["optional"] = True
+        (self.root / "BUILD_MANIFEST.json").write_bytes(encode(self.manifest))
+        self.deny("INVALID_MANIFEST_ENTRY_SCHEMA")
+
+    def test_manifest_entries_must_be_sorted(self):
+        self.manifest["files"].reverse()
+        (self.root / "BUILD_MANIFEST.json").write_bytes(encode(self.manifest))
+        self.deny("UNSORTED_PUBLIC_SOURCE_MANIFEST")
+
+    def test_public_secret_pattern(self):
+        self.raw["docs/RELEASE_STATUS.json"] += b"ghp_1234567890abcdefghijklmnopqrstuvwxyz"
+        self.flush()
+        self.deny("PUBLIC_SOURCE_SECRET_PATTERN")
+
+    def test_hidden_path_from_manifest(self):
+        self.raw["src/server/.Hidden.luau"] = b"return {}\n"
+        self.flush()
+        self.deny("HIDDEN_PUBLIC_SOURCE_PATH")
+
+    def test_unsupported_file_extension(self):
+        self.raw["src/server/sneaky.exe"] = b"evil"
+        self.flush()
+        self.deny("NON_SOURCE_PUBLIC_EXTENSION")
+
+    def test_non_utf8_file(self):
+        self.raw["docs/HELP.txt"] = b"\xff\x80"
+        self.flush()
+        self.deny("PUBLIC_FILE_NOT_UTF8")
+
+    def test_max_file_size(self):
+        self.raw["docs/HELP.txt"] = b"x" * (2 * 1024 * 1024 + 1)
+        self.flush()
+        self.deny("PUBLIC_FILE_TOO_LARGE")
+
+    def test_credentials_file_name(self):
+        self.raw["docs/credentials.json"] = b"{}"
+        self.flush()
+        self.deny("CREDENTIAL_LIKE_FILE_NAME")
 
 
 if __name__ == "__main__":

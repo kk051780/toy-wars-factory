@@ -38,3 +38,16 @@ and capture the report before scoring the pre-RC source gate.
   even on the same side of the client/server security boundary.
 
 Scenarios above are synthetic fixture cases, separate from real game source QA.
+
+## V1.3 official public-source handoff schema regression
+
+* Exactly six schema keys at the manifest root, including `packet_id`;
+  extra `status` must **fail**, even if every listed source byte matches.
+* Exact `path`/`size`/`sha256` entries, sorted by path, canonical Unicode JSON
+  indentation and trailing newline, valid packet ID and no duplicate keys.
+* No hidden files, disallowed extensions, credential-like filenames, non-UTF-8,
+  oversized per-file or aggregate payload, or obvious public-source secrets.
+* This is **handoff compatibility**, not runtime engine or multiplayer QA.
+* Observed real S1 fixed SHA `35d7d0525388e885aac8281eff2315a59831e0cf`:
+  `BUILD_MANIFEST.json` includes forbidden root key `status`; the source's
+  previous 15/15 byte-size/hash result is *not* full PUBLIC_SOURCE_V1 PASS.

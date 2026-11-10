@@ -71,3 +71,28 @@ Original V2 singular `authority` files and legacy V2 receipts remain supported.
 The separate compatible assembler is an optional author-owned SOURCE candidate;
 these offline tests do not prove the fork's native Roblox behavior or certify
 that the game has truly only one runtime event/round/damage writer.
+
+## V1.3 — Strict original PUBLIC_SOURCE_V1 compatibility and real S1 defect
+
+`verify_source_snapshot.py` now checks **the official handoff schema**, not merely
+source-byte consistency. It enforces exactly six canonical root keys, including
+`packet_id`, the exact canonical JSON encoding and sorted file entries, exact
+`path`/`size`/`sha256` per file, the original 250-file / 2 MiB per file / 10 MiB
+package limits, UTF-8 text, allowlisted public-source extensions, hidden and
+credential-style names, and high-confidence secret patterns. Its old acceptance
+condition was too permissive: it accepted the S1 initial source manifest at
+`35d7d0525388e885aac8281eff2315a59831e0cf` despite an additional root
+`status` key that the official `p0d_public_pack.py verify` rejects. That finding
+is documented in `docs/ACTUAL_S1_SCHEMA_FINDING.md`.
+
+The **old** result "15/15 files SHA match + 3/3 Rojo paths" remains a valid
+statement about those subchecks, **but the full early snapshot gate now must
+return `FAIL_SOURCE_SNAPSHOT` / `PUBLIC_SOURCE_MANIFEST_SCHEMA_MISMATCH`** until
+#220's sole integration author regenerates the canonical manifest. No direct
+patch is made to another chat's RC branch.
+
+The in-progress S1 is not the final RC. Separate `verify_rc_wiring.py` still
+requires the final original `P0D_CHAT_RELEASE_PLAN_V1` and authentic
+`CHAT_RC_RECEIPT.json`. Neither a manifest fix nor the synthetic QA test suite
+proves boss integration, native Luau compilation, Roblox multiplayer, Studio,
+first-player retention or OWNER release approval.
