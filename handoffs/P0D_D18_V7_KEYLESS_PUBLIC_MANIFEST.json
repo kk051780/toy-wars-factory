@@ -1,0 +1,54 @@
+{
+  "schema": "P0D_D18_V7_PUBLIC_SAFE_SHA_MANIFEST",
+  "as_of_jst": "2026-11-10",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "packet_id": "P0D-D18-COLLECTION-ATLAS-20261110-01",
+  "revision": "WAVE5_NO_KEY_HANDOFF_V7",
+  "private_owner_only_zip": {
+    "filename": "TRAP_RAIDERS_D18_V7_NO_KEY_OWNER_TRANSFER.zip",
+    "bytes": 571217,
+    "sha256": "0e1d696161b16b2c63370c6021421ecdf22b12f3108932a47e06da366ba56fb5",
+    "external_key_required": false,
+    "password_required": false,
+    "contains_nesting_zip": false,
+    "members": 10,
+    "location": "OWNER PRIVATE CHATGPT LIBRARY OR WINDOWS LOCAL, NOT PUBLIC GITHUB"
+  },
+  "private_owner_only_excel": {
+    "filename": "TRAP_RAIDERS_COLLECTION_ATLAS_648_v7.xlsx",
+    "bytes": 322348,
+    "sha256": "1b316a5b8e922231e19d749b26cb3931de497d37ce4d19addaf07c4f60837e2a"
+  },
+  "public_receiver": {
+    "path": "tools/p0d_d18_receive_no_key.py",
+    "sha256": "9a09954fc3f1ef67b83ade428b84d7221237b7d9ef59e2a697b020905c8fad48",
+    "file_discovery": "OWNER Downloads OR USERPROFILE/TRAP_RAIDERS/handoff/inbox, never entire disk",
+    "fail_closed": true
+  },
+  "edited_counts": {
+    "original_concepts": 648,
+    "previous_curated": 54,
+    "v7_new": 12,
+    "total_curated": 66,
+    "unreviewed": 582,
+    "flagships_curated": 60,
+    "flagships_unreviewed": 12
+  },
+  "offline_qa": {
+    "catalog_tests": "110/110 PASS",
+    "receiver_synthetic_tests": "11/11 PASS",
+    "positive_sha_and_isolated_stage": "PASS",
+    "incorrect_outer_sha": "REJECTED",
+    "incorrect_inner_sha": "REJECTED",
+    "zip_traversal": "REJECTED",
+    "duplicate_member": "REJECTED",
+    "ambiguous_input_paths": "REJECTED",
+    "studio": "NOT_TESTED",
+    "3d_assets": "NOT_CREATED",
+    "owner_windows_receipt": "NOT_OBSERVED"
+  },
+  "private_content_on_public_github": false,
+  "p0a_cas_main_merge_publish_purchase_extra_cost": "HOLD",
+  "warning": "Unencrypted ZIP remains confidential; SHA protects integrity not confidentiality. Never upload ZIP to PUBLIC GitHub. No remote automatic PC execution."
+}
