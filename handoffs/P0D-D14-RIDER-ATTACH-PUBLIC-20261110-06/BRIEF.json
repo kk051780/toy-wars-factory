@@ -1,0 +1,12 @@
+{
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "packet_id": "P0D-D14-RIDER-ATTACH-SAFETY-20261110-04",
+  "feature_id": "D14",
+  "feature_slice": "Server-only rider mount and dismount safety contract, disabled physical adapter for two trusted riders",
+  "scope": "Round/vehicle/seatEpoch/character generation checks; immediate revoke on round end or invalid roster; 1.5s authority lease; experimental server WeldConstraint bridge default DISABLED",
+  "depends_on": ["D14 VehicleSeatCore", "D14 CART rail/RAFT water movement", "D14 CART/RAFT visual", "D01 server match", "D03 trusted roster"],
+  "excluded": ["seat reservation ledger", "vehicle movement", "boat buoyancy", "true Roblox Seat API integration", "gameplay combat", "Roblox publication", "client move CFrame authority"],
+  "base_pc_source": "UNVERIFIED_PC_LOCAL",
+  "production_integration": "NOT_TESTED"
+}
