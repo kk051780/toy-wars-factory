@@ -1,0 +1,18 @@
+{
+  "game_id": "TRAP_RAIDERS", "work_id": "p0d-siege-v19",
+  "packet_id": "P0D-D07-GOROGAN-COMBINED-WIRING-20261110-04",
+  "feature_id": "D07", "classification": "REFERENCE_ONLY",
+  "scope": "one server-only optional orchestration adapter for existing Gorogan AI, physical R6 driver, damage gate, attack receipt window and client visual broadcasts",
+  "latest_pc_evidence": "https://github.com/kk051780/toy-wars-factory/issues/213#issuecomment-6758415195",
+  "external_dependencies": [
+    {"name":"v40 event chooser", "commit":"c0b0bf692410cb651893c38f1a453c93d9f8b3b5"},
+    {"name":"Gorogan AI", "commit":"80483ad6543fd73dfaf8a21ecf7b58dc2eca75e1"},
+    {"name":"Gorogan rig/damage/receipt", "commit":"e7801615c5b70346dfaec189f195a65f5b597ec9"},
+    {"name":"Gorogan client visual", "commit":"5128e288c7bd119a470c253a9792f4d829c569ec"}
+  ],
+  "studio_qa": "NOT_TESTED",
+  "last_pc_saved_place_sha256": "a60ed5f7497ae0c3cbac717e32f2c62577c3ec3bef7eceb0b4b40f44b834e28f",
+  "base_pc_sha": "UNVERIFIED_PC_LOCAL",
+  "single_writer": "OWNER-directed Windows Codex only",
+  "prohibitions": ["main_direct_write", "merge", "publish", "real_charge", "extra_spend", "public_plaintext_commercial_luau"]
+}
