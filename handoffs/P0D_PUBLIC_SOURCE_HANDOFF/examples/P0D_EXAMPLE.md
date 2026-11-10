@@ -1,0 +1,3 @@
+# Example of a correct future P0-D source handoff
+
+This is illustrative documentation, not a game module or completion claim. A real feature packet must contain its **actual** reviewed `.luau` files and tests alongside a deterministic `BUILD_MANIFEST.json` and a README describing dependencies. Its GitHub issue record must point to a fixed commit that contains *all* source files, not merely a README/ZIP checksum. The Windows Codex can then retrieve and inspect source without asking for an AES key. Historical sealed packets retain their original identity and must be separately replaced by a new, verified public-source packet when keys cannot be recovered.
