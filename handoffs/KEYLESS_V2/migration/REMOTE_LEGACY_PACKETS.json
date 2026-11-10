@@ -1,0 +1,235 @@
+{
+  "format": "P0D_KEYLESS_V2_LEGACY_REMOTE_INDEX",
+  "source_issue": 218,
+  "scope": "Only [P0D_DELIVERY] records from current issue; not exhaustive",
+  "migration_target": "PRIVATE_GITHUB_REPO_DIRECT_OR_OWNER_PUBLIC_RECIPIENT_V2",
+  "notes": "GitHub currently PUBLIC; no private game source or manual AES key uploaded. Preexisting legacy AES envelopes are preserved as immutable evidence. Missing source can only be resealed by originating chat/private Library/Windows owner.",
+  "packets": [
+    {
+      "packet_id": "P0D-D07-GOROGAN-COMBINED-WIRING-20261110-04",
+      "feature_id": "D07",
+      "issue_comment_id": 6765801194,
+      "github_fixed_commit": "05fb3b1b986a2d8dfb925bce7592b13da6f61316",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/tree/05fb3b1b986a2d8dfb925bce7592b13da6f61316/handoffs",
+      "existing_plain_zip_sha256": "0f676b2dd1408ff3d995975a8d6b18db783eea2a3b2a87708f9ebe954d5ad2b0",
+      "migration_status": "ORIGINAL_SOURCE_LOCAL_AVAILABLE_WAIT_RECIPIENT",
+      "next_action": "SEAL_FROM_PRIVATE_BUNDLE_AFTER_RECIPIENT_ENROLL"
+    },
+    {
+      "packet_id": "P0D-D07-GOROGAN-RIG-NAV-DAMAGE-20261110-03",
+      "feature_id": "D07",
+      "issue_comment_id": 6758377652,
+      "github_fixed_commit": "e7801615c5b70346dfaec189f195a65f5b597ec9",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/tree/e7801615c5b70346dfaec189f195a65f5b597ec9/handoffs",
+      "existing_plain_zip_sha256": "9ceadcf6d2af1361e92683021e3d174da058b5e4aeeda748f90a8f69309e047c",
+      "migration_status": "ORIGINAL_SOURCE_LOCAL_AVAILABLE_WAIT_RECIPIENT",
+      "next_action": "SEAL_FROM_PRIVATE_BUNDLE_AFTER_RECIPIENT_ENROLL"
+    },
+    {
+      "packet_id": "P0D-D07-GOROGAN-SERVER-AI-20261110-02",
+      "feature_id": "D07",
+      "issue_comment_id": 6753894452,
+      "github_fixed_commit": "80483ad6543fd73dfaf8a21ecf7b58dc2eca75e1",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/tree/80483ad6543fd73dfaf8a21ecf7b58dc2eca75e1/handoffs",
+      "existing_plain_zip_sha256": "0dc7a15c821eb957e1e2a4f16d10922fd32a576c38544c789cb5bb0b16a41516",
+      "migration_status": "ORIGINAL_SOURCE_LOCAL_AVAILABLE_WAIT_RECIPIENT",
+      "next_action": "SEAL_FROM_PRIVATE_BUNDLE_AFTER_RECIPIENT_ENROLL"
+    },
+    {
+      "packet_id": "P0D-D07-GOROGAN-STUDIO-TRACE-GATE-20261110-01",
+      "feature_id": "D07",
+      "issue_comment_id": 6766016694,
+      "github_fixed_commit": "94857bdca2885d27693e1c3c50786697a5ab4d13",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/tree/94857bdca2885d27693e1c3c50786697a5ab4d13/handoffs/D07_GOROGAN_STUDIO_TRACE",
+      "existing_plain_zip_sha256": "eea8d4e05ad855bf3fc8729815cbfebfcca5d2ebcc77b11328377489df953d24",
+      "migration_status": "PUBLIC_SAFE_NO_CHANGE_REQUIRED",
+      "next_action": "KEEP_IMMUTABLE"
+    },
+    {
+      "packet_id": "P0D-D07-GOROGAN-VISUAL-20261110-01",
+      "feature_id": "D07",
+      "issue_comment_id": 6753535979,
+      "github_fixed_commit": "5128e288c7bd119a470c253a9792f4d829c569ec",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/tree/5128e288c7bd119a470c253a9792f4d829c569ec/handoffs",
+      "existing_plain_zip_sha256": "7d6bb8f1cc31348c8461d0b5e0381a62a02eb3aad888be9789fbd78d992ff917",
+      "migration_status": "ORIGINAL_SOURCE_LOCAL_AVAILABLE_WAIT_RECIPIENT",
+      "next_action": "SEAL_FROM_PRIVATE_BUNDLE_AFTER_RECIPIENT_ENROLL"
+    },
+    {
+      "packet_id": "P0D-D07-LIGARDO-SERVER-AI-20261110-04",
+      "feature_id": "D07",
+      "issue_comment_id": 6754356764,
+      "github_fixed_commit": "d6f34afc3a04b2d67ce31eac9e2044cbb44a0bc5",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/blob/d6f34afc3a04b2d67ce31eac9e2044cbb44a0bc5/handoffs/TRAP_RAIDERS_D07_LIGARDO_AI_encrypted.json",
+      "existing_plain_zip_sha256": "0dbfa84325c275a1e010230535bc389ba4606cb872cc400f2d1f97d9411afd2c",
+      "migration_status": "ORIGINAL_SOURCE_NOT_MOUNTED_ASSIGN_ORIGIN_CHAT",
+      "next_action": "ORIGIN_CHAT_RESEAL_ITS_PRIVATE_ORIGINAL"
+    },
+    {
+      "packet_id": "P0D-D07-LIGARDO-VISUAL-20261110-03",
+      "feature_id": "D07",
+      "issue_comment_id": 6753924414,
+      "github_fixed_commit": "bd1c4fcc631a2655119df8cfaf5efdf7534cf133",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/blob/bd1c4fcc631a2655119df8cfaf5efdf7534cf133/handoffs/TRAP_RAIDERS_D07_LIGARDO_encrypted.json",
+      "existing_plain_zip_sha256": "e2ebc8dc2d6b3d410866aca4e41ad4a13dd00284f25f93c47b01bbc5327995dd",
+      "migration_status": "ORIGINAL_SOURCE_NOT_MOUNTED_ASSIGN_ORIGIN_CHAT",
+      "next_action": "ORIGIN_CHAT_RESEAL_ITS_PRIVATE_ORIGINAL"
+    },
+    {
+      "packet_id": "P0D-D08-CANONICAL-EVENT-BRIDGE-20261110-01",
+      "feature_id": "D08",
+      "issue_comment_id": 6766106378,
+      "github_fixed_commit": "2ecf899d1202c6bf6868355dc02d2a3ad4f03d47",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/tree/2ecf899d1202c6bf6868355dc02d2a3ad4f03d47/handoffs",
+      "existing_plain_zip_sha256": "576921a613b8330549b2e8fd89c7fa96e6b9e3d9a26146903072f1bde969058f",
+      "migration_status": "ORIGINAL_SOURCE_LOCAL_AVAILABLE_WAIT_RECIPIENT",
+      "next_action": "SEAL_FROM_PRIVATE_BUNDLE_AFTER_RECIPIENT_ENROLL"
+    },
+    {
+      "packet_id": "P0D-D11-V43A-ACCEPTANCE-GATE-20261110-01",
+      "feature_id": "D11",
+      "issue_comment_id": 6754421449,
+      "github_fixed_commit": "a9038099c2e1ce333bb005f5a1af0259f22cf554",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/tree/a9038099c2e1ce333bb005f5a1af0259f22cf554/handoffs/D11_V43A_ACCEPTANCE",
+      "existing_plain_zip_sha256": null,
+      "migration_status": "PUBLIC_SAFE_NO_CHANGE_REQUIRED",
+      "next_action": "KEEP_IMMUTABLE"
+    },
+    {
+      "packet_id": "P0D-D14-CART-RAFT-VISUAL-20261110-02",
+      "feature_id": "D14",
+      "issue_comment_id": 6758102999,
+      "github_fixed_commit": "3c78cd0af618f320fe9d0aafe7569e1e9b95b4b0",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/blob/3c78cd0af618f320fe9d0aafe7569e1e9b95b4b0/handoffs/TRAP_RAIDERS_D14_CART_RAFT_encrypted.json",
+      "existing_plain_zip_sha256": "6a7c63113ae1938247d72d42320fcdd2e1145d36632bdb0c7615eb9962e3458a",
+      "migration_status": "ORIGINAL_SOURCE_NOT_MOUNTED_ASSIGN_ORIGIN_CHAT",
+      "next_action": "ORIGIN_CHAT_RESEAL_ITS_PRIVATE_ORIGINAL"
+    },
+    {
+      "packet_id": "P0D-D14-CART-RAIL-MOTION-20261110-02B",
+      "feature_id": "D14",
+      "issue_comment_id": 6758172361,
+      "github_fixed_commit": "2cd3fb9b31bfe7817ca0ceba7456300c3a41bd12",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/blob/2cd3fb9b31bfe7817ca0ceba7456300c3a41bd12/handoffs/TRAP_RAIDERS_D14_CART_RAIL_v2_encrypted.json",
+      "existing_plain_zip_sha256": "c38a1536095ce4d64a1691905caff0b055f75038e02354718333ad6a79d88fa5",
+      "migration_status": "ORIGINAL_SOURCE_NOT_MOUNTED_ASSIGN_ORIGIN_CHAT",
+      "next_action": "ORIGIN_CHAT_RESEAL_ITS_PRIVATE_ORIGINAL"
+    },
+    {
+      "packet_id": "P0D-D14-FIVE-PACKET-PREFLIGHT-20261110-01",
+      "feature_id": "D14",
+      "issue_comment_id": 6765739624,
+      "github_fixed_commit": "161032464f24b9f147b5b15e3e487598bc45261b",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/tree/161032464f24b9f147b5b15e3e487598bc45261b/handoffs/D14_FIVE_PACK_PREFLIGHT",
+      "existing_plain_zip_sha256": null,
+      "migration_status": "PUBLIC_SAFE_NO_CHANGE_REQUIRED",
+      "next_action": "KEEP_IMMUTABLE"
+    },
+    {
+      "packet_id": "P0D-D14-RAFT-WATER-MOTION-20261110-03",
+      "feature_id": "D14",
+      "issue_comment_id": 6758310226,
+      "github_fixed_commit": "027fd926a9d315a84f701086448fa5c1febc6697",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/blob/027fd926a9d315a84f701086448fa5c1febc6697/handoffs/TRAP_RAIDERS_D14_RAFT_encrypted.json",
+      "existing_plain_zip_sha256": "d218baef4ba958195b9e0ad22a4046313c52c3d150b424e0e99981cb351854c6",
+      "migration_status": "ORIGINAL_SOURCE_NOT_MOUNTED_ASSIGN_ORIGIN_CHAT",
+      "next_action": "ORIGIN_CHAT_RESEAL_ITS_PRIVATE_ORIGINAL"
+    },
+    {
+      "packet_id": "P0D-D14-RIDER-ATTACH-SAFETY-20261110-04",
+      "feature_id": "D14",
+      "issue_comment_id": 6758507323,
+      "github_fixed_commit": "0af53f121b35f2e822c63514112360d220c92227",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/blob/0af53f121b35f2e822c63514112360d220c92227/handoffs/TRAP_RAIDERS_D14_RIDER_encrypted.json",
+      "existing_plain_zip_sha256": "11b7bae8ce25d48e2ba813058583f3a882a4bf19890ca6e004a9e519647616fe",
+      "migration_status": "ORIGINAL_SOURCE_NOT_MOUNTED_ASSIGN_ORIGIN_CHAT",
+      "next_action": "ORIGIN_CHAT_RESEAL_ITS_PRIVATE_ORIGINAL"
+    },
+    {
+      "packet_id": "P0D-D14-SERVER-VISUAL-PUBLISHER-20261110-06",
+      "feature_id": "D14",
+      "issue_comment_id": 6766041603,
+      "github_fixed_commit": "72cc724bb9826c7958620a26587265815649d469",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/blob/72cc724bb9826c7958620a26587265815649d469/handoffs/TRAP_RAIDERS_D14_OUTBOUND_encrypted.json",
+      "existing_plain_zip_sha256": "8e4e9a3f20965f5c6fda21dadd7cdb81a898a1f9fb5c5462dcd165c4e157a27c",
+      "migration_status": "ORIGINAL_SOURCE_NOT_MOUNTED_ASSIGN_ORIGIN_CHAT",
+      "next_action": "ORIGIN_CHAT_RESEAL_ITS_PRIVATE_ORIGINAL"
+    },
+    {
+      "packet_id": "P0D-D14-VEHICLE-SEATS-20261110-01",
+      "feature_id": "D14",
+      "issue_comment_id": 6752623772,
+      "github_fixed_commit": "0bcf39c22c583604d72ccac47d29fc9d87b7e662",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/blob/0bcf39c22c583604d72ccac47d29fc9d87b7e662/handoffs/TRAP_RAIDERS_D14_VEHICLE_SEATS_encrypted.json",
+      "existing_plain_zip_sha256": "475616bd21e88164158db88b3a97e33d4a9b1ce9aaa872fa7a816adf485c9fd3",
+      "migration_status": "ORIGINAL_SOURCE_NOT_MOUNTED_ASSIGN_ORIGIN_CHAT",
+      "next_action": "ORIGIN_CHAT_RESEAL_ITS_PRIVATE_ORIGINAL"
+    },
+    {
+      "packet_id": "P0D-D15-TRAP-RESCUE-20261110-01",
+      "feature_id": "D15",
+      "issue_comment_id": 6752542543,
+      "github_fixed_commit": "f789276cee28d40d8cdfb59a9c57c303f6d5fd09",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/tree/f789276cee28d40d8cdfb59a9c57c303f6d5fd09/handoffs",
+      "existing_plain_zip_sha256": "0043b59baffb8de487eb216505ef1bef6652b7147f30f7e9e824014727216cd1",
+      "migration_status": "ORIGINAL_SOURCE_LOCAL_AVAILABLE_WAIT_RECIPIENT",
+      "next_action": "SEAL_FROM_PRIVATE_BUNDLE_AFTER_RECIPIENT_ENROLL"
+    },
+    {
+      "packet_id": "P0D-D16-CLOCK-RAIN-VFX-20261110-03",
+      "feature_id": "D16",
+      "issue_comment_id": 6753232132,
+      "github_fixed_commit": "945488ccb9ea47b8ca1ce514efed94372a839a01",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/blob/945488ccb9ea47b8ca1ce514efed94372a839a01/handoffs/TRAP_RAIDERS_D16_CLOCK_RAIN_encrypted.json",
+      "existing_plain_zip_sha256": "bcee9a949dc897b1d9a54557a93959ccd8b0e068223310594a8d27ec4fdcea62",
+      "migration_status": "ORIGINAL_SOURCE_NOT_MOUNTED_ASSIGN_ORIGIN_CHAT",
+      "next_action": "ORIGIN_CHAT_RESEAL_ITS_PRIVATE_ORIGINAL"
+    },
+    {
+      "packet_id": "P0D-D16-GLIDE-AUTH-20261110-04",
+      "feature_id": "D16",
+      "issue_comment_id": 6753494579,
+      "github_fixed_commit": "c3de5d94eae25e566bdf29452ed1980dae35909d",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/blob/c3de5d94eae25e566bdf29452ed1980dae35909d/handoffs/TRAP_RAIDERS_D16_GLIDE_encrypted.json",
+      "existing_plain_zip_sha256": "872e8f9ec5ef38535ee3b295bf301a612e2063835e85cae67ab87bb370aee2cc",
+      "migration_status": "ORIGINAL_SOURCE_NOT_MOUNTED_ASSIGN_ORIGIN_CHAT",
+      "next_action": "ORIGIN_CHAT_RESEAL_ITS_PRIVATE_ORIGINAL"
+    },
+    {
+      "packet_id": "P0D-D16-SCALE-FX-20261110-01",
+      "feature_id": "D16",
+      "issue_comment_id": 6752538897,
+      "github_fixed_commit": "7242b32760327a527b868f5405d7782265388fe2",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/blob/7242b32760327a527b868f5405d7782265388fe2/handoffs/TRAP_RAIDERS_D16_encrypted.json",
+      "existing_plain_zip_sha256": "d5df52cd3b2fdf26bca05bc38123ac81d27024c944c4a465d66e3a4e0ad0c7cd",
+      "migration_status": "ORIGINAL_SOURCE_NOT_MOUNTED_ASSIGN_ORIGIN_CHAT",
+      "next_action": "ORIGIN_CHAT_RESEAL_ITS_PRIVATE_ORIGINAL"
+    },
+    {
+      "packet_id": "P0D-D16-VISUAL-REPLICA-20261110-02",
+      "feature_id": "D16",
+      "issue_comment_id": 6752901995,
+      "github_fixed_commit": "ec521761a4ceb61f187f0aa83c3a0a5600d16bcb",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/blob/ec521761a4ceb61f187f0aa83c3a0a5600d16bcb/handoffs/TRAP_RAIDERS_D16_VISUAL_encrypted.json",
+      "existing_plain_zip_sha256": "31a53ead53095152ac57d2b0ee49b49c37477c5341ef0bdd25c8c463fd911d7d",
+      "migration_status": "ORIGINAL_SOURCE_NOT_MOUNTED_ASSIGN_ORIGIN_CHAT",
+      "next_action": "ORIGIN_CHAT_RESEAL_ITS_PRIVATE_ORIGINAL"
+    },
+    {
+      "packet_id": "P0D-D17-COSMETIC-CATALOG-20261110-01",
+      "feature_id": "D17",
+      "issue_comment_id": 6752807822,
+      "github_fixed_commit": "e2117e9d7dd42ef895b7bae48e6fc9e8520b917d",
+      "existing_artifact_url": "https://github.com/kk051780/toy-wars-factory/tree/e2117e9d7dd42ef895b7bae48e6fc9e8520b917d/handoffs",
+      "existing_plain_zip_sha256": "abd8efebae089b40c6837ceccc9fc152b2309ffa6a5b01eaf2dba497bac7e065",
+      "migration_status": "ORIGINAL_SOURCE_LOCAL_AVAILABLE_WAIT_RECIPIENT",
+      "next_action": "SEAL_FROM_PRIVATE_BUNDLE_AFTER_RECIPIENT_ENROLL"
+    }
+  ],
+  "counts": {
+    "recorded": 22,
+    "local_source_available": 7,
+    "originating_chat_needed": 12,
+    "public_safe": 3
+  }
+}
