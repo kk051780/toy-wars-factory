@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "packet_id": "v43A-neutral-skirmish-chatlead-20261110",
+  "classification": "REFERENCE_ONLY",
+  "base_pc_source_sha": "UNVERIFIED_PC_LOCAL",
+  "feature_slices": ["S1-neutral-zombie-beast-skirmish", "contested-capture-3s", "temporary-allegiance-8s", "faction-hostility-server-contract"],
+  "requires": ["v37 latest saved-Place QA", "v39-H1 handoff decision", "server RoundCoordinator authentic actor snapshots"],
+  "intended_commit_scope": "PC-isolated-Place-only",
+  "studio_verified": false,
+  "github_source_public": false
+}
