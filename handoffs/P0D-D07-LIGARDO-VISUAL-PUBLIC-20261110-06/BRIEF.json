@@ -1,0 +1,14 @@
+{
+  "format": "P0D_REFERENCE_BRIEF_V1",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "packet_id": "P0D-D07-LIGARDO-VISUAL-20261110-03",
+  "feature_id": "D07",
+  "scope": "S2/S4 LIGARDO decorative client-only Roblox 3D; no server AI, hitbox or event scheduler",
+  "base_pc_sha": "UNVERIFIED_PC_LOCAL",
+  "dependencies": ["D01 server round", "D02 S2/S4 stages", "D07 prior one-event selector"],
+  "excludes": ["D07 Gorogan S1/S3", "D07 Gorogan server AI", "D08", "D12", "D13", "D14", "D15", "D16", "D17", "D18"],
+  "safety": ["No server-authored event picker", "No gameplay damage", "No real NPC", "No main/merge/Roblox publish or spend"],
+  "runtime": "Roblox Luau only after OWNER-directed PC source review",
+  "qa": "offline unit/static verification only; Luau compile/Studio/Windows NOT_TESTED"
+}
