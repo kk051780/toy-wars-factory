@@ -14,3 +14,13 @@ Offline test suite: `python -m unittest discover -s tests -v`. These test **20 s
 ## V1.1 acceptance delta
 
 Previously 52/52 offline PASS could not detect a second successful trap by the same caster on the same victim in a single match. Source was found to use only `matchId:casterId:targetId:tick` as receipt, which incorrectly reused the same keys after original Core allows recast at 12 seconds. The server-only cast-generation fix is accompanied by 10 new negative/positive tests (62/62 total), including recast uniqueness, stale-tick dedupe, round reset and missing-generation fail-closed. Genuine Luau, native original D15 match integration and Roblox Studio are still NOT_TESTED.
+
+## V1.2 epoch / intent anti-flood change
+
+13 additional executable Python boundary assertions/oracle checks added,
+result **75/75 PASS**. New callbacks require `getRoundSerial` equality at
+round init and before roster/poison processing. Server-owned minimum 0.15s
+intent interval rejects repeat actions before any `self:update()` scan;
+invalid clocks, stale rounds, and caller-supplied client time fail closed.
+No extra network / HP / match writer. Rate state clears on player departure
+and new round. All results are source/behavior-model **NOT native Luau tests**.

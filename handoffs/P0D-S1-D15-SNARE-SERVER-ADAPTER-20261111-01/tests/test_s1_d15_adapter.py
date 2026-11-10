@@ -138,7 +138,7 @@ class CanonicalSourceContract(unittest.TestCase):
         self.assertIn("self.ephemeralNext += 1",SOURCE)
 
     def test_bad_or_missing_callbacks_stop(self):
-        for name in ("getTeam","getRole","getPhase","serverNow","applyPoisonDamage","onStatus"):
+        for name in ("getTeam","getRole","getPhase","getRoundSerial","serverNow","applyPoisonDamage","onStatus"):
             self.assertIn('callbacks.'+name,SOURCE)
 
     def test_key_marker_includes_round_and_target_and_tick(self):
@@ -253,5 +253,68 @@ class NewCastGenerationRegression(unittest.TestCase):
         self.assertEqual(SOURCE.count("self.hooks.applyPoisonDamage("),1)
         self.assertNotIn(":TakeDamage(", SOURCE)
 
+
+
+class EpochAndFloodProtection(unittest.TestCase):
+    """Boundary regressions; Python oracle, NOT Roblox Lua execution."""
+
+    def test_real_round_serial_hook_mandatory(self):
+        self.assertIn('type(callbacks.getRoundSerial) == "function"', SOURCE)
+        self.assertIn('self.hooks.getRoundSerial() ~= serial', SOURCE)
+
+    def test_reject_stale_round_before_poison(self):
+        updater = SOURCE[SOURCE.index('function Bridge:update()'):SOURCE.index('function Bridge:_closest')]
+        self.assertLess(updater.index('self.hooks.getRoundSerial() ~= self.matchSerial'), updater.index('self.core.advance('))
+
+    def test_reject_stale_round_before_server_scan(self):
+        actions = SOURCE[SOURCE.index('function Bridge:handleIntent('):SOURCE.index('function Bridge:removePlayer(')]
+        self.assertLess(actions.index('self.hooks.getRoundSerial() ~= self.matchSerial'), actions.index('self:update()'))
+
+    def test_rate_limit_checked_before_roster_reconciliation(self):
+        actions = SOURCE[SOURCE.index('function Bridge:handleIntent('):SOURCE.index('function Bridge:removePlayer(')]
+        self.assertLess(actions.index('INTENT_RATE_LIMITED'), actions.index('self:update()'))
+        self.assertIn('serverClock + MIN_INTENT_INTERVAL', actions)
+
+    def test_rate_limit_uses_server_clock(self):
+        self.assertIn('local serverClock = self.hooks.serverNow()', SOURCE)
+        self.assertNotIn('os.time()', SOURCE)
+        self.assertNotIn('tick()', SOURCE)
+
+    def test_rate_limit_real_time_boundary(self):
+        gate = 1000.0 + 0.15
+        self.assertTrue(1000.0 < gate)
+        self.assertTrue(1000.149 < gate)
+        self.assertFalse(1000.15001 < gate)
+
+    def test_clock_nan_rejected_before_status(self):
+        actions = SOURCE[SOURCE.index('function Bridge:handleIntent('):SOURCE.index('function Bridge:removePlayer(')]
+        self.assertIn('serverClock ~= serverClock', actions)
+        self.assertLess(actions.index('BAD_CANONICAL_CLOCK'), actions.index('self:update()'))
+
+    def test_rate_limit_restored_for_new_round(self):
+        self.assertGreaterEqual(SOURCE.count('self.intentNextAt = {}'), 2)
+        self.assertIn('self.intentNextAt[id] = nil', SOURCE)
+
+    def test_has_single_damage_callback_only(self):
+        self.assertEqual(SOURCE.count('self.hooks.applyPoisonDamage('), 1)
+        self.assertNotIn('OnServerEvent:Connect', SOURCE)
+
+    def test_old_round_reject_model(self):
+        def allowed(live_serial, bridge_serial, phase):
+            return phase == 'ACTIVE' and live_serial == bridge_serial
+        self.assertFalse(allowed(3, 2, 'ACTIVE'))
+        self.assertFalse(allowed(2, 2, 'RESULTS'))
+        self.assertTrue(allowed(2, 2, 'ACTIVE'))
+
+    def test_role_not_granted_by_adapter(self):
+        self.assertNotIn('roles[player] = "TRAPPER"', SOURCE)
+
+    def test_source_same_rpc_action_names(self):
+        for label in ['TRAP_CAST', 'TRAP_RESCUE', 'TRAP_ESCAPE']:
+            self.assertIn(label, SOURCE)
+
+    def test_received_client_timestamp_never_used(self):
+        self.assertNotIn('data.timestamp', SOURCE)
+        self.assertNotIn('data.serverNow', SOURCE)
 
 if __name__=='__main__':unittest.main(verbosity=2)

@@ -60,3 +60,23 @@ If performance/first-minute simplicity or integration fails, **skip D15 in S1** 
 ## V1.1 poison receipt contract update
 
 Use the new five-component server-only receipt `matchId:casterId:targetId:successfulCastGeneration:poisonTick`. The canonical Game damage callback must preserve and dedupe this *complete* receipt, not truncate it to the old four fields. Each accepted D15 cast increments generation; rejected intents do not. Same-target recast after the original 12-second cooldown must allow three fresh damage ticks, while repeated ticks from the *same cast* remain ignored. Do not accept `castGeneration` or receipt IDs from client packets. Studio two-round/recast regression remains required.
+
+## V1.2 REQUIRED new game callback and rate-control guard
+
+Add `getRoundSerial = function() return match.serial end` to the bridge's
+`TrapBridge.new(TrapCore, callbacks)` table. This is a **required** function,
+not an optional compatibility fallback. It comes from the original genuine
+`Game.server.luau` match lifecycle and must never be client supplied.
+
+`beginRound(match.serial, match.startedAt)` now refuses mismatched serial;
+`update()` and `handleIntent()` refuse stale serial after unexpected new round.
+Call `trap:endRound()` on all terminal paths and then `trap:beginRound()` on
+new ACTIVE rounds as before. `STALE_ROUND` is a hold/fail-closed signal, not
+permission to fabricate a receipt or bypass the sole game controller.
+
+`handleIntent()` now accepts at most one trap action per Player per 0.15s
+from `callbacks.serverNow()` before roster reconciliation; `Rules.validSeq`
+and real OnServerEvent actor validation must still be enforced by the sole
+Game listener. The bridge does not prevent unrelated Game Remote actions,
+so the integrating Game remains responsible for overall Remote flood defense.
+Verify correct rejection under real 2client repeated action and round rollover.

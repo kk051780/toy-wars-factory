@@ -13,6 +13,7 @@ local RESCUE = "TRAP_RESCUE"
 local ESCAPE = "TRAP_ESCAPE"
 local MAX_VERTICAL_DELTA = 9
 local MIN_FORWARD_DOT = 0.15
+local MIN_INTENT_INTERVAL = 0.15 -- seconds, measured only by canonical server clock
 local EPHEMERAL_BASE = 900000000000000 -- within original Core validId <= 10^15
 local EPHEMERAL_LIMIT = 900000001000000
 
@@ -55,6 +56,7 @@ function Bridge.new(originalCore: any, callbacks: any)
     assert(type(callbacks) == "table" and type(callbacks.getTeam) == "function"
         and type(callbacks.getRole) == "function"
         and type(callbacks.getPhase) == "function"
+        and type(callbacks.getRoundSerial) == "function"
         and type(callbacks.serverNow) == "function"
         and type(callbacks.applyPoisonDamage) == "function"
         and type(callbacks.onStatus) == "function",
@@ -73,6 +75,7 @@ function Bridge.new(originalCore: any, callbacks: any)
         -- even when its caster and victim are unchanged in the same round.
         castSequence = 0,
         castGenerationByTarget = {} :: {[number]: number},
+        intentNextAt = {} :: {[number]: number},
     }, Bridge)
 end
 
@@ -101,11 +104,13 @@ function Bridge:beginRound(serial: number, now: number): (boolean, string)
         return false, "BAD_CANONICAL_ROUND"
     end
     if self.state ~= nil then return false, "ROUND_ALREADY_ACTIVE" end
+    if self.hooks.getRoundSerial() ~= serial then return false, "ROUND_SERIAL_MISMATCH" end
     self.matchSerial = serial
     self.startedAt = now
     self.receipts = {}
     self.castSequence = 0
     self.castGenerationByTarget = {}
+    self.intentNextAt = {}
     self.state = self.core.new("S1_" .. tostring(serial))
     return true, "TRAP_ROUND_STARTED"
 end
@@ -140,6 +145,7 @@ end
 
 function Bridge:update(): (boolean, string)
     if not self.state or self.hooks.getPhase() ~= "ACTIVE" then return false, "ROUND_NOT_ACTIVE" end
+    if self.hooks.getRoundSerial() ~= self.matchSerial then return false, "STALE_ROUND" end
     local elapsed = self:_clock()
     if elapsed == nil then return false, "BAD_CANONICAL_CLOCK" end
     self:_syncPlayers() -- always reconcile deaths/teams BEFORE scheduled DOT
@@ -222,12 +228,25 @@ function Bridge:handleIntent(player: Player, action: any, sequenceAuthorized: bo
     end
     if not self.state or self.hooks.getPhase() ~= "ACTIVE" then return false, "ROUND_NOT_ACTIVE" end
     if action ~= CAST and action ~= RESCUE and action ~= ESCAPE then return false, "UNKNOWN_TRAP_ACTION" end
+    if self.hooks.getRoundSerial() ~= self.matchSerial then return false, "STALE_ROUND" end
     if not safeTeam(self.hooks.getTeam(player)) or not getBody(player) then
         return false, "NO_ACTIVE_ACTOR"
     end
+    -- Enforce one bounded trap intent per player before O(players) roster
+    -- reconciliation. A monotonic seq alone does not limit RemoteEvent spam.
+    local id = self:_id(player)
+    local serverClock = self.hooks.serverNow()
+    if type(serverClock) ~= "number" or serverClock ~= serverClock
+        or serverClock == math.huge or serverClock == -math.huge then
+        return false, "BAD_CANONICAL_CLOCK"
+    end
+    if serverClock < self.startedAt then return false, "BAD_CANONICAL_CLOCK" end
+    if serverClock < (self.intentNextAt[id] or -math.huge) then
+        return false, "INTENT_RATE_LIMITED"
+    end
     local updated, why = self:update()
     if not updated then return false, why end
-    local id = self:_id(player)
+    self.intentNextAt[id] = serverClock + MIN_INTENT_INTERVAL
     if action == ESCAPE then
         local accepted, reason = self.core.tryEscape(self.state, id)
         if accepted then self.hooks.onStatus(player, self.core.status(self.state, id)) end
@@ -261,6 +280,7 @@ function Bridge:removePlayer(player: Player)
     if id then
         self.playersById[id] = nil
         self.castGenerationByTarget[id] = nil
+        self.intentNextAt[id] = nil
     end
     self.ephemeralIds[player] = nil
 end
@@ -272,6 +292,7 @@ function Bridge:endRound()
     self.receipts = {}
     self.castSequence = 0
     self.castGenerationByTarget = {}
+    self.intentNextAt = {}
     for _, p in ipairs(Players:GetPlayers()) do
         self.hooks.onStatus(p, {trapped = false, rooted = false,
             poison = false, immunityRemaining = 0})

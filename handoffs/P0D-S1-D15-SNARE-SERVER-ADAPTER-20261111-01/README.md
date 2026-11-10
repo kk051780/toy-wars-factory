@@ -44,3 +44,21 @@ This Chat owns only the new unique `handoffs/P0D-S1-D15-SNARE-SERVER-ADAPTER-202
 The original D15 core emits poison events identified only by match/caster/target/tick, not by an individual cast. A legitimate second cast by the same caster on the same victim, after the 12-second cooldown and 6-second post-release immunity, would otherwise reuse the previous poison receipt key. The old bridge incorrectly discarded second-cast damage as replay.
 
 The revised bridge increments a **server-only successful-cast generation**, appends it to the canonical poison callback receipt, and still deduplicates each tick within that cast. Failed casts do not increment it. A new round resets generation and receipts; removing a player invalidates their target generation. This is source/test evidence only, not real Studio proof. See `docs/RECAST_FIX.md`.
+
+## V1.2 — match epoch + remote intent flood hardening
+
+V1.2 adds a **required canonical game callback** `getRoundSerial()` returning
+`match.serial`. `beginRound()` validates it before creating effects; `update()`
+and `handleIntent()` fail closed with `STALE_ROUND` if the real Game has changed
+rounds, even if it is already `ACTIVE` again. This blocks stale poison and
+intent actions during a missed reset/end hook.
+
+Trap intent handling also checks a server-clock 0.15-second per-player interval
+**before** the full-roster update, reducing the cost of rapidly increasing
+RemoteEvent sequences. No timers, tasks, or extra network listeners are added.
+Rate-limit state resets on new round, end, and player departure. Canonical
+`Game.server.luau` still authenticates the invoking player and valid seq and
+remains sole damage/round authority. See `docs/EPOCH_INTENT_GUARD.md`.
+
+Offline Python regressions: **75/75 PASS**, including 13 V1.2 guards. NOT
+Luau execution, Roblox Studio QA, or proof of integrated release readiness.
