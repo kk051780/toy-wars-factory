@@ -1,0 +1,10 @@
+{
+  "game_id":"TRAP_RAIDERS", "work_id":"p0d-siege-v19", "packet_id":"P0D-D16-SCALE-FX-20261110-01",
+  "feature_id":"D16", "feature_slice":"v41 GIANT_ONE / MINI_ALL visual-only bounded scale state; no real avatar edits",
+  "base_pc_sha":"UNVERIFIED_PC_LOCAL", "owner_goal":"short amusing equal-cost non-P2W transformation effects",
+  "integration":"Server-only D08 event choice -> ScaleFxCore.begin; server match tick -> advance; player disconnect -> leave; round end -> close",
+  "no_new_event_scheduler":true, "only_one_event_per_match":true,"duration_sec":8,
+  "scale_milli":{"GIANT_ONE":1600,"MINI_ALL":700},
+  "limits":{"max_roster":16,"client_remote_is_authority":false,"damage_hp_hitbox_speed_changed":false},
+  "forbidden":["actual character scaling in this package","main merge","roblox publish","real purchase","additional spending","private source plaintext upload"]
+}
