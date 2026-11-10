@@ -1,0 +1,17 @@
+# Windows Codex acceptance — D16/D08 gate V2, no auto-enable
+
+1. On OWNER direct PC instruction, read latest issue #218 top and comments, #213 latest real Windows status, #217 contract. Preserve latest actual PC HEAD, CHECKPOINT/RESUME, Place/Source ZIP and SHA256 in a separate isolated backup; do not assume v43-A is newest. `main` is not a staging area.
+2. Only inspect package `P0D-D16-SCALE-D08-ATOMIC-CANCEL-V2-20261111-01` pinned to its own SHA/BUILD_MANIFEST; run full remote reGET of every file and repeat Python tests in a new isolated directory. **V1 gate is NOT approved for import.** Compare implementation against pinned original optional scale core SHA `883ca3b790c938587c5d9c305a887a1ffff1249f` and D08 bridge SHA `70dcc3b50129c288441452776360588184ca6c22`.
+3. Verify `readRound` is genuine monotonic server-owned state (matchId/stage/epoch/startedAt/deadline/now/active). `readRoster` and `chooseGiantTarget` must only use true server Player IDs and reject client-supplied attributes. No client event can directly call `onWeatherActivate`. Review all live D08 WEATHER subtype names; the reference mapping is **empty by design**. Reject guesswork like `WX02_SMALL -> MINI_ALL` until PC game semantics and event calendar are explicitly confirmed.
+4. Crucial: D08 currently expects one `onWeatherActivate` handler; this *optional* scale gate does not handle METEOR/GLIDE/CLOCK etc. A reviewed owner PC dispatcher must preserve all non-scale weather handlers. Do not attach a second D08 picker or change random percentages or D07 boss dispatch. When mapping is reviewed, enabling requires `enabled=true`, `approvedByOwner=true`, `visualRendererReady=true`; leave OFF until actual client display is verified. Never deploy both V1 and V2 or both alternative client renderers.
+5. Luau native parse/type checking must be performed on exact source (Python static tests do not execute Luau). Run isolated 2-client (and preferably 3-client) Studio cases for activation, early cleanup before callbacks resume, event epoch rollover, match end, stop during `readRoster` / target read, post-STOP stale callback, RNG once, normal weather routing and genuine client appearance. Use Studio emulator/mobile reduced motion, no real hitbox scaling, ownership/performance checks.
+6. Server shutdown: ensure D08 CLEANUP is always called before event references are discarded; `Gate:stop` is an additional guard. The gate's internal `Core.close` must return successful when legitimately active; any false result permanently blocks the adapter. The server weather router must own any outgoing client cleanup; pure reference code does not render anything and cannot itself remove a Roblox 3D effect. Inspect risk of update callbacks yielding before enabling.
+7. Report **actual** Luau parser status, PC receipt/source/Place SHA and real 2-client/mobile/Studio quit PID evidence to #213/#218. No passing claim for stages not run. Do not merge/publish/charge or change P0 A/B/C authentication/CAS.
+
+## Adoption decision
+
+- `SOURCE_READY`: fixed-commit keyless files full remote SHA verified.
+- `PC_RECEIVED`: Windows Codex actually read the files and checked manifest.
+- `STUDIO_PASS`: real native Luau and multiplayer Studio tests measured, including normal owned-PID quit.
+
+Currently only SOURCE_READY is intended by this package. Exact old D16 original keyless migration is still `BLOCKED`, even if V2 is fully delivered.
