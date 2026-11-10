@@ -1,0 +1,11 @@
+{
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "packet_id": "P0D-D16-VISUAL-REPLICA-20261110-02",
+  "feature_id": "D16",
+  "feature_slice": "Client-local ghost scale effect for existing D16 pure server state; no live avatar physics edits",
+  "base_pc_sha": "UNVERIFIED_PC_LOCAL",
+  "dependencies": ["D16 ScaleFxCore fixed commit 7242b32760327a527b868f5405d7782265388fe2", "D08 existing singleton event chooser", "D01 trusted RoundCoordinator", "server-only snapshot->TTL adapter"],
+  "limits": {"duration_seconds": 8, "max_roster": 16, "rendered_players_per_client": 8, "rendered_parts_per_player": 18, "render_distance_studs": 90, "physical_scale": false, "visual_ghost_transparency_min": 0.42},
+  "forbidden": ["create separate event scheduler", "scale physical Character", "client-supplied damage", "clone scripts into Workspace", "persistent game data", "main commit", "Roblox publish", "real purchases", "unapproved expenses"]
+}

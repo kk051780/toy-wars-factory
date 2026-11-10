@@ -1,0 +1,15 @@
+# TRAP RAIDERS D16 client visual replica reference
+
+This is a **second, independent D16 packet**. The first D16 packet is already GitHub encrypted at immutable commit `7242b32760327a527b868f5405d7782265388fe2`. This addon provides a pure snapshot display policy and a local, non-collidable, translucent pose-following enlarged/minified ghost effect. Original Characters are **never resized, made invisible, slowed, teleported or damaged**. At most 8 avatars x 18 parts/client within 90 studs are rendered. This is a reference—not a confirmed playable Studio integration.
+
+## Single-authority contract (required before integration)
+
+Only the existing D08 event chooser may call the original D16 `ScaleFxCore.begin` after server-side checks. D16 must not create an independent scheduler. The trusted server RoundCoordinator uses a dedicated server-owned RemoteEvent `ReplicatedStorage.TrapRaiders.ScaleFxDisplay` and server-replicated `ActiveRoundId` attribute. It broadcasts **only display-only** fields: `matchId`, `eventId`, `status`, `kind`, `targets` (stringified Roblox UserIds), `scaleMilli`, `remainingSeconds`. For ACTIVE status, server computes `remainingSeconds = math.clamp(snapshot.expiresAt - serverRoundElapsedSeconds, 0, 8)`. **The original D16 `expiresAt` uses the round clock; do NOT compare directly with `os.clock()` or Unix time.** This packet deliberately uses TTL for the client-local deadline. Never accept a client RemoteEvent to begin/alter a real round event.
+
+Client `ScaleFxClientPolicy.accept` checks match/event identity, type/target caps, scale ratio, TTL, duplicate replay and target reduction only. Terminal EXPIRED/CLOSED clears replicas, as does round-ID change, locally elapsed TTL, character respawn, source disappearance and explicit controller destroy. No local visual code can grant combat powers. `ScaleFxClientBootstrap.client.luau` is an optional integration example and **is not a turnkey script** until the real v37 paths are reviewed on Windows.
+
+## Real Studio acceptance before adopting
+
+Review the 3 Luau sources for syntax and API signatures. Validate that the source server truly emits only one event per round and maps targets to numeric Player.UserId strings; server-only authoritative clock; no second event scheduler. In an isolated unpublished Place, Play/Stop single & 2-client: both teams GIANT_ONE/MINI_ALL; 8-second TTL, disconnect, death/respawn, round end, rapid rematch, matching round ID, delayed/replayed packets, 90-stud visibility, 8-person cap, avatars with accessories/R6/R15, Android-size emulator FPS and Studio Output. Confirm original Character `.Size`, `CanCollide`, `CanTouch`, `CanQuery`, health, hitboxes and NPC physics remain unchanged. Close only Codex-owned Studio instance normally and verify PID exit. Record any cosmetic clipping/lag as failures or limitations.
+
+No personal data, private game source plaintext or keys in PUBLIC GitHub. Separate stage flags: Python policy tests != Luau parse != Studio Play != Windows restore != independently reviewed source. Other P0-D feature owners remain untouched.
