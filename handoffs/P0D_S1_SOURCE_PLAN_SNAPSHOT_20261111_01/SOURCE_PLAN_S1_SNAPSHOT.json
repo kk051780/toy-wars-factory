@@ -1,0 +1,102 @@
+{
+  "format": "P0D_CHAT_RELEASE_PLAN_V1",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "release_id": "P0D-S1-KIDS-RC01-SOURCE-SNAPSHOT",
+  "phase": "CHAT_BUILD_READY",
+  "units": [
+    {
+      "unit_id": "project",
+      "source_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+      "source_path": "default.project.json",
+      "target_path": "default.project.json",
+      "sha256": "454088f71076596c88dc59bdb89d51b28d1764012aa0cb50a49895ad96341c61",
+      "depends_on": [],
+      "variant_family": "none",
+      "authority": "none"
+    },
+    {
+      "unit_id": "s1_game_server",
+      "source_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+      "source_path": "src/server/Game.server.luau",
+      "target_path": "src/server/Game.server.luau",
+      "sha256": "d7abfc3b6ae1412cad995873faec1c5e4a1a9df1c0971991cff919564a628f3f",
+      "depends_on": [
+        "config",
+        "map_builder",
+        "rules"
+      ],
+      "variant_family": "none",
+      "authorities": [
+        "round",
+        "event_chooser",
+        "damage"
+      ]
+    },
+    {
+      "unit_id": "map_builder",
+      "source_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+      "source_path": "src/server/MapBuilder.luau",
+      "target_path": "src/server/MapBuilder.luau",
+      "sha256": "3226e0d1d8a815c13e6e1f8c7bd2789c8cb9fb13f84924f6cd6d49cee6fb4e64",
+      "depends_on": [
+        "config"
+      ],
+      "variant_family": "none",
+      "authority": "none"
+    },
+    {
+      "unit_id": "rules",
+      "source_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+      "source_path": "src/server/S1Rules.luau",
+      "target_path": "src/server/S1Rules.luau",
+      "sha256": "6c17d358ff905323517511f9c542c7f93b45a6bb514f0bfff54f8ad93240b5f1",
+      "depends_on": [],
+      "variant_family": "none",
+      "authority": "none"
+    },
+    {
+      "unit_id": "config",
+      "source_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+      "source_path": "src/shared/Config.luau",
+      "target_path": "src/shared/Config.luau",
+      "sha256": "0313cb70cdfb7584fa875a5cb0921891ac7730b045ad81e2b5651862313ef21b",
+      "depends_on": [],
+      "variant_family": "none",
+      "authority": "none"
+    },
+    {
+      "unit_id": "hud",
+      "source_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+      "source_path": "src/client/HUD.client.luau",
+      "target_path": "src/client/HUD.client.luau",
+      "sha256": "97ec71f6482f1191ed7daf5e1d797f5621ba7d8c7992e4d1815b4067af968750",
+      "depends_on": [
+        "config"
+      ],
+      "variant_family": "none",
+      "authority": "none"
+    }
+  ],
+  "capabilities": [
+    "match_lifecycle",
+    "team_spawn",
+    "input_mobile",
+    "capture_objective",
+    "combat_damage",
+    "victory_defeat",
+    "client_hud",
+    "map_art",
+    "entrypoint"
+  ],
+  "offline_checks": [
+    {
+      "test": "source_s1_offline_80_80",
+      "status": "PASS",
+      "log_path": "docs/OFFLINE_TEST_LOG.txt",
+      "sha256": "d5a848d73511e71da087043f6a7686d802afb31c0c512a2ef41135776594993e"
+    }
+  ],
+  "studio_status": "NOT_TESTED",
+  "publish_approved": false
+}
