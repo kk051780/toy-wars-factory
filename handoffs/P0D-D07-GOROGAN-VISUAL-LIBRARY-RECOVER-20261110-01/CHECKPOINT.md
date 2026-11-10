@@ -1,0 +1,9 @@
+STATE=CHAT_D07_GOROGAN_VISUAL_REFERENCE_CODED
+GAME_ID=TRAP_RAIDERS
+WORK_ID=p0d-siege-v19
+PACKET_ID=P0D-D07-GOROGAN-VISUAL-20261110-01
+BASE_PC_SHA=UNVERIFIED_PC_LOCAL
+LAST_KNOWN_PC=v37 PARTIAL_NOT_READY; confirm newest #213 before integration
+SCOPE=S1/S3 3D stock Parts client visual only; no AI/damage/scheduling
+PENDING=Luau compile, real server adapter, 2client, Studio mobile/render/performance/exit
+EXCLUDES=main/merge/Roblox release/monetization/protected P0-A B C
