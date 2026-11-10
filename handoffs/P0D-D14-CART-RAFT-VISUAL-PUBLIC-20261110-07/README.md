@@ -1,0 +1,11 @@
+# TRAP RAIDERS D14 cart / raft cosmetic visual reference
+
+Private ZIP for Codex: **3 Luau modules**, independent Python protocol oracle, offline unit/property/shape tests, SHA build manifest, this brief and QA instructions. It **does not** instantiate drivable Roblox seats, physics, boats, vehicle suspension, steering or server gameplay. The server's existing D14 occupancy/state remains the one authority.
+
+`VehicleVisualPolicy.luau`: finite client presentation state; only increasing global server sequence from same round, two whitelisted vehicle types, 4 instances maximum, coordinate bound ±8192, TTL <=20s, removal and stop cleanup. No user IDs transmitted, only booleans for occupied seat badges. `VehicleVisualModels.luau`: anchored and noncolliding low-poly 3D Cart and Raft. `VehicleVisualClient.luau`: LocalScript-only visual module disabled unless `options.enabled=true`; uses trusted server RemoteEvent only; TTL sweeps at 4Hz; closes only its own folder and connections.
+
+The server must create and verify the real CFrame, round, team, driver/passenger occupancy and ordered event sequence from server authority. **Never accept a client-supplied visual packet as trusted game data.** The client visual module cannot authenticate origin by itself. Model local world positions may need physical offset review in Studio. These are reference modules, not a drop-in prefab. Never call `FireServer` to trigger seat occupancy.
+
+CLI: `python -m unittest discover -s tests -q`; inspect `BUILD_MANIFEST.json` SHA list; restore with vetted `restore_handoff_safe.py` from commit `d37eec1b653d060ae27568ddcd5f501da9662081`, passing expected work, game, packet and ZIP hash. Local private key only from OWNER. Do not run a remote Lua script from ciphertext or merge this branch into main.
+
+Read-only integration plan: after OWNER verifies current Windows PC Place SHA and v39 final QA, compare D14 old seat FSM at `0bcf39c22c583604d72ccac47d29fc9d87b7e662` then integrate display only in unpublished isolated Place. Test 2client, 1client disconnect, 4 vehicles, stale event, double occupancy badge, 2s stop cleanup, mobile frame time, R6/R15 camera, no collisions or movement change, normal Studio exit and owned PID disappearance. Windows/source sync and Studio QA are **NOT_TESTED** by ChatGPT.
