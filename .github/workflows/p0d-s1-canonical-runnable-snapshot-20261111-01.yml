@@ -1,0 +1,76 @@
+# Exactly one isolated historical-source snapshot replay, no automation or AI.
+name: P0D S1 canonical playable source snapshot offline QA
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-canonical-runnable-snapshot-20261111-01
+    paths:
+      - .github/workflows/p0d-s1-canonical-runnable-snapshot-20261111-01.yml
+permissions:
+  contents: read
+jobs:
+  strict-public-source:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Read only isolated checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify canonical S1 source-only package with original PUBLIC_SOURCE_V1 policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py verify \
+            --root handoffs/P0D-S1-CANONICAL-RUNNABLE-SNAPSHOT-20261111-01 \
+            --packet-id P0D-S1-KIDS-RC01-SOURCE-INTEGRATION-20261111-01
+          python3 - <<'PY'
+          import pathlib,json,hashlib
+          base=pathlib.Path('handoffs/P0D-S1-CANONICAL-RUNNABLE-SNAPSHOT-20261111-01/')
+          old=pathlib.Path('releases/P0D_S1_KIDS_RC01')
+          m=json.loads((base/'BUILD_MANIFEST.json').read_bytes())
+          assert set(m)=={'files','format','game_id','packet_id','public_source_allowed','work_id'}
+          assert len(m['files'])==15
+          for item in m['files']:
+              bp=(base/item['path']).read_bytes()
+              op=(old/item['path']).read_bytes()
+              assert bp==op, 'SOURCE_CHANGED '+item['path']
+              assert hashlib.sha256(bp).hexdigest()==item['sha256']
+              assert len(bp)==item['size']
+          assert (base/'docs/RELEASE_STATUS.json').read_bytes()==(old/'docs/RELEASE_STATUS.json').read_bytes()
+          print('P0D_STRICT_S1_GAME_SNAPSHOT_MANIFEST_OK_15_OF_15')
+          print('P0D_REPACK_SAME_GAMEPLAY_BYTES_NO_NEW_FEATURES')
+          PY
+      - name: Run entire original Python S1 regression against clean standalone snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s handoffs/P0D-S1-CANONICAL-RUNNABLE-SNAPSHOT-20261111-01/tests -v 2>&1 | tee /tmp/p0d_s1_standalone_tests.log
+          grep -F 'Ran 80 tests' /tmp/p0d_s1_standalone_tests.log
+          grep -x OK /tmp/p0d_s1_standalone_tests.log
+      - name: Run real compatible Python assembler against standalone corrected snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_S1_SOURCE_PLAN_SNAPSHOT_20261111_01/tools/chat_rc_assemble.py \
+            --plan handoffs/P0D_S1_SOURCE_PLAN_SNAPSHOT_20261111_01/SOURCE_PLAN_S1_SNAPSHOT.json \
+            --source-root handoffs/P0D-S1-CANONICAL-RUNNABLE-SNAPSHOT-20261111-01 \
+            --out /tmp/p0d_s1_canonical_source_assembled
+          python3 - <<'PY'
+          import pathlib,json,hashlib
+          actual=pathlib.Path('/tmp/p0d_s1_canonical_source_assembled')
+          known=pathlib.Path('handoffs/P0D-S1-SNAPSHOT-ASSEMBLED-MIRROR-20261111-01/assembled')
+          receiptA=(actual/'CHAT_RC_RECEIPT.json').read_bytes()
+          receiptB=(known/'CHAT_RC_RECEIPT.json').read_bytes()
+          assert receiptA==receiptB, 'REAL_PYTHON_RECEIPT_NOT_SAME_BYTES'
+          receipt=json.loads(receiptA)
+          assert receipt['studio_status']=='NOT_TESTED' and receipt['release_approved'] is False
+          assert len(receipt['contents'])==6 and len(receipt['source_units'])==6
+          for f in receipt['contents']:
+              p=f['path']
+              assert (actual/p).read_bytes()==(known/p).read_bytes(), p
+              assert hashlib.sha256((actual/p).read_bytes()).hexdigest()==f['sha256'], p
+          print('P0D_CANONICAL_STANDALONE_S1_6_SOURCES_PYTHON_RECEIPT_EXACT')
+          print('P0D_SOURCE_SNAPSHOT_ONLY_BOSS_EVENT_GAMEPLAY_STUDIO_NOT_TESTED')
+          PY
