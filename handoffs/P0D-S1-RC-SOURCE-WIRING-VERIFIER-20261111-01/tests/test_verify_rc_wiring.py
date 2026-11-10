@@ -197,7 +197,7 @@ class TestWiring(ReleaseFixture):
         self.assertFails("CLIENT_SCRIPT_OUTSIDE_CLIENT")
 
     def test_server_unmounted(self):
-        self.project["tree"]["ServerScriptService"]["$path"] = "src/shared"
+        self.project["tree"]["ServerScriptService"]["$path"] = "src/server/Events.server.luau"
         self.replace_project()
         self.assertFails("SOURCE_LUAU_NOT_MOUNTED")
 
@@ -225,6 +225,98 @@ class TestWiring(ReleaseFixture):
         (self.rc / "src/shared/State.luau").unlink()
         (self.rc / "src/shared/State.txt").write_text("hello")
         self.assertFails("RECEIPT_FILE_MISSING")
+
+    def replace_project(self):
+        b = (json.dumps(self.project, sort_keys=True) + "\n").encode()
+        (self.rc / "default.project.json").write_bytes(b)
+        self.plan["units"][0]["sha256"] = digest(b)
+        self.receipt["source_units"][0]["sha256"] = digest(b)
+        self.receipt["contents"][0]["sha256"] = digest(b)
+        self.receipt["contents"][0]["size"] = len(b)
+        self.save()
+
+
+
+
+class TestMultiAuthorityAndDoubleMount(ReleaseFixture):
+    """Independent adversarial tests of the optional real one-Game authority model."""
+
+    def make_multi(self):
+        for row in self.plan["units"]:
+            if row["unit_id"] == "u1":
+                row.pop("authority", None)
+                row["authorities"] = ["round", "event_chooser", "damage"]
+            else:
+                row["authority"] = "none"
+        for plan_row, receipt_row in zip(self.plan["units"], self.receipt["source_units"]):
+            receipt_row["authorities"] = list(plan_row.get("authorities", []))
+        self.save()
+
+    def test_valid_single_source_multi_authority(self):
+        self.make_multi()
+        got = audit(self.rc, self.plan_path)
+        self.assertEqual(set(got["authority_declarations"]), {"round", "event_chooser", "damage"})
+        self.assertEqual(set(got["authority_declarations"].values()), {"u1"})
+
+    def test_duplicated_role_in_single_unit(self):
+        self.make_multi()
+        self.plan["units"][1]["authorities"] = ["round", "round", "damage"]
+        self.save()
+        self.assertFails("DUPLICATE_AUTHORITY_IN_UNIT")
+
+    def test_extra_unit_claims_same_role(self):
+        self.make_multi()
+        self.plan["units"][2].pop("authority")
+        self.plan["units"][2]["authorities"] = ["round"]
+        self.receipt["source_units"][2]["authorities"] = ["round"]
+        self.save()
+        self.assertFails("DUPLICATE_OR_INVALID_AUTHORITY")
+
+    def test_forged_receipt_authorities_rejected(self):
+        self.make_multi()
+        self.receipt["source_units"][1]["authorities"] = ["round"]
+        self.save()
+        self.assertFails("RECEIPT_AUTHORITY_MISMATCH")
+
+    def test_missing_role_attestation_rejected(self):
+        self.make_multi()
+        self.receipt["source_units"][1].pop("authorities")
+        self.save()
+        self.assertFails("RECEIPT_AUTHORITIES_NOT_ATTESTED")
+
+    def test_both_auth_fields_rejected(self):
+        self.make_multi()
+        self.plan["units"][1]["authority"] = "round"
+        self.save()
+        self.assertFails("AUTHORITY_AMBIGUOUS_FIELDS")
+
+    def test_empty_plural_list_rejected(self):
+        self.make_multi()
+        self.plan["units"][1]["authorities"] = []
+        self.save()
+        self.assertFails("INVALID_AUTHORITIES_LIST")
+
+    def test_unsupported_role_rejected(self):
+        self.make_multi()
+        self.plan["units"][1]["authorities"] = ["round", "remote_override", "damage"]
+        self.save()
+        self.assertFails("INVALID_AUTHORITIES_LIST")
+
+    def test_wrong_role_type_rejected(self):
+        self.make_multi()
+        self.plan["units"][1]["authorities"] = "round"
+        self.save()
+        self.assertFails("INVALID_AUTHORITIES_LIST")
+
+    def test_single_source_mounted_twice_in_server_tree(self):
+        self.project["tree"]["ServerScriptService"]["DuplicateGame"] = {"$path": "src/server/Round.server.luau"}
+        self.replace_project()
+        self.assertFails("DUPLICATE_PROJECT_MAPPING")
+
+    def test_duplicate_project_mapping_with_shared_module(self):
+        self.project["tree"]["ReplicatedStorage"]["DuplicateShared"] = {"$path": "src/shared/State.luau"}
+        self.replace_project()
+        self.assertFails("DUPLICATE_PROJECT_MAPPING")
 
     def replace_project(self):
         b = (json.dumps(self.project, sort_keys=True) + "\n").encode()

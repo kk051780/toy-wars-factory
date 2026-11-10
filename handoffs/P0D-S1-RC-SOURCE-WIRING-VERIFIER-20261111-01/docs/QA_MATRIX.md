@@ -25,3 +25,16 @@ those tests is **not** a pass against the integrator's actual source. The
 integrator or an independent auditor must clone the pinned source commit,
 run the snapshot tool against the real `releases/P0D_S1_KIDS_RC01` directory,
 and capture the report before scoring the pre-RC source gate.
+
+## V1.2 extra acceptance (multi-authority + duplicate-mount)
+
+- Accept genuine one-unit plural `round`, `event_chooser`, `damage`, while still
+  supporting the exact original singular schema.
+- Reject a role duplicated inside one source declaration, claimed by a second
+  unit, unrecognized, malformed, zero-length plural, or with both fields.
+- Reject missing/stale/forged `source_units[].authorities` attestation in
+  compatible-assembler receipts, without interpreting SHA evidence as runtime proof.
+- Reject multiple Rojo `$path` entries that mount the **same** Luau/module twice,
+  even on the same side of the client/server security boundary.
+
+Scenarios above are synthetic fixture cases, separate from real game source QA.

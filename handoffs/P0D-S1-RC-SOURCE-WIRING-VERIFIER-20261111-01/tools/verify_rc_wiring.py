@@ -152,10 +152,20 @@ def test_project(root: Path, files: dict[str, Path], known: set[str]) -> int:
                 raise QAError("SERVER_SCRIPT_OUTSIDE_SERVER:" + p)
             if p.endswith((".client.lua", ".client.luau")) and not client_side:
                 raise QAError("CLIENT_SCRIPT_OUTSIDE_CLIENT:" + p)
+    # A script mounted twice is executed twice by Rojo, even if the source
+    # manifest contains just one copy. This can silently duplicate damage and
+    # event authority in the actual Roblox DataModel.
+    mounted = {}
+    for ancestry, mapped in mappings:
+        for rel in files:
+            if is_executable(rel) and is_reachable(rel, mapped):
+                if rel in mounted:
+                    raise QAError("DUPLICATE_PROJECT_MAPPING:" + rel)
+                mounted[rel] = ancestry
     for p in known:
         if not p.startswith("src/"):
             continue
-        if p.endswith((".lua", ".luau")) and not any(is_reachable(p, src) for _, src in mappings):
+        if p.endswith((".lua", ".luau")) and p not in mounted:
             raise QAError("SOURCE_LUAU_NOT_MOUNTED:" + p)
     return len(mappings)
 
@@ -233,7 +243,7 @@ def audit(rc: Path, plan_path: Path) -> dict:
             raise QAError("RECEIPT_UNIT_TARGET_INVALID:" + dest)
         r_ids.add(uid)
         r_destinations.add(dest)
-    expected = {(r["unit_id"], r["source_commit"], r["target_path"], r["sha256"]) for r in units}
+    expected = {(r["unit_id"], r["source_commit"], r["target_path"], r["sha256"]): r for r in units}
     owner = {}
     units_seen = set()
     for row in p_units:
@@ -243,12 +253,36 @@ def audit(rc: Path, plan_path: Path) -> dict:
         if not isinstance(uid, str) or uid in units_seen:
             raise QAError("DUPLICATE_PLAN_UNIT")
         units_seen.add(uid)
-        if (uid, src, dest, h) not in expected:
+        match = expected.get((uid, src, dest, h))
+        if match is None:
             raise QAError("PLAN_UNIT_NOT_IN_RECEIPT:" + uid)
-        a = row.get("authority", "none")
-        if a != "none":
-            if a not in AUTHORITIES or a in owner:
-                raise QAError("DUPLICATE_OR_INVALID_AUTHORITY:" + str(a))
+        # Support the optional Chat-first assembler's authentic multi-authority
+        # representation while retaining the original V2 singular schema.
+        if "authority" in row and "authorities" in row:
+            raise QAError("AUTHORITY_AMBIGUOUS_FIELDS")
+        if "authorities" in row:
+            roles = row["authorities"]
+            if not isinstance(roles, list) or len(roles) == 0 or len(roles) > len(AUTHORITIES):
+                raise QAError("INVALID_AUTHORITIES_LIST")
+            if any(not isinstance(a, str) or a not in AUTHORITIES for a in roles):
+                raise QAError("INVALID_AUTHORITIES_LIST")
+            if len(set(roles)) != len(roles):
+                raise QAError("DUPLICATE_AUTHORITY_IN_UNIT")
+        else:
+            auth = row.get("authority", "none")
+            if not isinstance(auth, str) or (auth != "none" and auth not in AUTHORITIES):
+                raise QAError("INVALID_AUTHORITY")
+            roles = [] if auth == "none" else [auth]
+        # The compatible assembler emits a role array for each source unit.
+        # A forged receipt that omits or changes it must not be treated as proof.
+        if "authorities" in match:
+            if match["authorities"] != roles:
+                raise QAError("RECEIPT_AUTHORITY_MISMATCH:" + uid)
+        elif "authorities" in row:
+            raise QAError("RECEIPT_AUTHORITIES_NOT_ATTESTED:" + uid)
+        for a in roles:
+            if a in owner:
+                raise QAError("DUPLICATE_OR_INVALID_AUTHORITY:" + a)
             owner[a] = uid
     for a in ("round", "event_chooser", "damage"):
         if a not in owner:

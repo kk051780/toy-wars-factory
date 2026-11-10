@@ -54,3 +54,20 @@ source plan after the integration writer has finished.
 Both tools are read-only and work with stdlib Python. The snapshot tool is a
 separate new acceptance target for early source hygiene, not a way to bypass
 the Chat-first V2 assembly and true runtime tests.
+
+## V1.2 independent hardening: plural canonical authorities and duplicate Rojo mount
+
+The single-writer integrator may select the separate, optional compatible release assembler
+from commit `f5caa9876c6f3eba3ed41787794e6047c6ef8b70`.
+That assembler permits ONE actual `Game.server.luau` unit to declare
+`"authorities": ["round", "event_chooser", "damage"]`, without creating fake
+second authorities. This independent gate now validates the full source-plan roles,
+checks the assembler's attested `source_units[].authorities` against each unit,
+rejects ambiguous singular/plural fields, duplicate/unknown roles, stale or forged
+receipts, and rejects any executable source mounted under more than one Rojo
+`$path` (which would load the same script twice).
+
+Original V2 singular `authority` files and legacy V2 receipts remain supported.
+The separate compatible assembler is an optional author-owned SOURCE candidate;
+these offline tests do not prove the fork's native Roblox behavior or certify
+that the game has truly only one runtime event/round/damage writer.
