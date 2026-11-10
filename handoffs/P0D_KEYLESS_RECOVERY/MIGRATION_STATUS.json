@@ -1,0 +1,228 @@
+{
+  "format": "P0D_KEYLESS_BATCH_V1",
+  "target_private_repo": "kk051780/trap-raiders-private-source",
+  "visibility_required": "PRIVATE",
+  "as_of_jst": "2026-11-10",
+  "repository_created": false,
+  "migration_status": "LOCAL_SOURCE_RECOVERED_WAITING_PRIVATE_REPO",
+  "encryption": "NONE",
+  "individual_decryption_key": "NONE",
+  "note": "Keyless means PRIVATE access control, not plaintext on public GitHub. No Codex integration or Studio test implied.",
+  "packets": [
+    {
+      "packet_id": "P0D-D13-SIEGE-RESPONSE-20261110-A",
+      "feature_id": "D13",
+      "legacy_encrypted_commit": "7c948cfdef6a1f4381b738cc5910a085c46d44a5",
+      "original_zip_sha256": "2caba203e55acf1afff12da90ac4dc4de64fcf8e4bafaded4ce8134f90f80ccb",
+      "original_zip_bytes": 9183,
+      "status": "LOCAL_RECOVERED_KEYLESS_BUNDLE_NOT_GITHUB_PRIVATE_UPLOADED",
+      "files": [
+        {
+          "path": "BRIEF.md",
+          "sha256": "07345ec80a5465cfb0aa6e2ffeb8d41c111301cb28caab63c5dbf84ba1d804cd",
+          "bytes": 1193
+        },
+        {
+          "path": "BUILD_MANIFEST.json",
+          "sha256": "75438b4f799a343549ab8112888ac38ba11e05aac3ecf4fdd4d8408dec78b8bf",
+          "bytes": 1492
+        },
+        {
+          "path": "CHECKPOINT.md",
+          "sha256": "3c1253840ad50047f6054c2987db3484993e2be6de73622cfb93e667a357a30b",
+          "bytes": 313
+        },
+        {
+          "path": "QA_PLAN.md",
+          "sha256": "d204b6f187389371de61c00a56d19eb22634622a44ce517d466dce10e97a5181",
+          "bytes": 1796
+        },
+        {
+          "path": "README.md",
+          "sha256": "4d72eec8c76bfa63ef52b5f8c7049d9a0f3e54cdca71e61352560683177d8f5e",
+          "bytes": 743
+        },
+        {
+          "path": "RESUME.md",
+          "sha256": "cd177d7314c193d4ca39a8486511092bf3417cd00b871706420b63f686d04e9f",
+          "bytes": 608
+        },
+        {
+          "path": "luau/SiegeResponseDecisionCore.luau",
+          "sha256": "d2353116e3a2a384ede4241b1029bbce37396b03f1bf090f0073525070d9ae55",
+          "bytes": 5075
+        },
+        {
+          "path": "tests/siege_oracle.py",
+          "sha256": "916bcac93661b47649c90593a0e965670a0e1c034e33d7a1e9e12ddb21f55e62",
+          "bytes": 3300
+        },
+        {
+          "path": "tests/test_siege_oracle.py",
+          "sha256": "299c8c4d2aae7ec2b0556203d52b579a3749dfb8f56dc0f81f394aea7e9982af",
+          "bytes": 6066
+        }
+      ]
+    },
+    {
+      "packet_id": "P0D-D17-PRIVACY-METRICS-20261110-A",
+      "feature_id": "D17",
+      "legacy_encrypted_commit": "42e1546480099131f10e2e251e295b8258ecfd88",
+      "original_zip_sha256": "e7857702eec8c2b3a3bdc96c5aaedb6720c1f572e7ac138369bf6bfe2b832eb2",
+      "original_zip_bytes": 6159,
+      "status": "LOCAL_RECOVERED_KEYLESS_BUNDLE_NOT_GITHUB_PRIVATE_UPLOADED",
+      "files": [
+        {
+          "path": "BRIEF.md",
+          "sha256": "63e7a95a3aa68253502d40e8bd4eaf8333779b6091f2e41361107bbe42c49011",
+          "bytes": 1021
+        },
+        {
+          "path": "BUILD_MANIFEST.json",
+          "sha256": "b341e8fe495b05dba78835751120ce34a65dee407cd95949fcbfb4fee3f0b2f5",
+          "bytes": 1329
+        },
+        {
+          "path": "CHECKPOINT.md",
+          "sha256": "e66ee35f7aaa2c4c56d99214b0db3291eab1f245cbec1f5ae6292aa831558137",
+          "bytes": 186
+        },
+        {
+          "path": "QA_PLAN.md",
+          "sha256": "108596a21efe34a766fb2b396f95e13490688e43dbd5b1058872dcfb14c06b84",
+          "bytes": 1037
+        },
+        {
+          "path": "README.md",
+          "sha256": "708012c113d78c28e12144a6a4fcf6ba32b4e498d9432da6a601758a992f59d1",
+          "bytes": 568
+        },
+        {
+          "path": "RESUME.md",
+          "sha256": "84aadad8c3baf36a8121fc66dcd2d665afea3c8e8708a40505eac7347556ce83",
+          "bytes": 301
+        },
+        {
+          "path": "engagement_metrics.py",
+          "sha256": "fa94b756345befd846293bc8d3a222e002e4251f330a1c1d2fe50c2e60a1008d",
+          "bytes": 3792
+        },
+        {
+          "path": "tests/test_engagement_metrics.py",
+          "sha256": "32f8f2d58995eb77ec6cf96e1aaee9334d7bfdb4f48a0c937332de34d6b934d9",
+          "bytes": 4552
+        }
+      ]
+    },
+    {
+      "packet_id": "P0D-D14-CART-RAIL-MOTION-20261110-02B",
+      "feature_id": "D14",
+      "legacy_encrypted_commit": "2cd3fb9b31bfe7817ca0ceba7456300c3a41bd12",
+      "original_zip_sha256": "c38a1536095ce4d64a1691905caff0b055f75038e02354718333ad6a79d88fa5",
+      "original_zip_bytes": 11799,
+      "status": "LOCAL_RECOVERED_KEYLESS_BUNDLE_NOT_GITHUB_PRIVATE_UPLOADED",
+      "files": [
+        {
+          "path": "BUILD_MANIFEST.json",
+          "sha256": "f522e2d39eaa30a2eebb14e3a53153c87864a31f2ced80df8717b654f1af754b",
+          "bytes": 1900
+        },
+        {
+          "path": "README_PRIVATE.md",
+          "sha256": "1e863d4083b9731d405a37f5d47b59d09ae28ece245255ce10174a832a5e8a6c",
+          "bytes": 579
+        },
+        {
+          "path": "docs/BRIEF.md",
+          "sha256": "18f29247bb6db8f49c4aef509abc8c3cedd4dd64c25429a41a508bc5fffb2fc1",
+          "bytes": 1886
+        },
+        {
+          "path": "docs/QA_PLAN.md",
+          "sha256": "a3fe08bc29c98072da40164ec43a8a45173570ce8d7bdad6cf9939e114a1e6c9",
+          "bytes": 1730
+        },
+        {
+          "path": "docs/QA_REPORT.md",
+          "sha256": "13abc4dd202cd62945274e15cad17037dca1c7899a2c0d52e0fe375459935119",
+          "bytes": 738
+        },
+        {
+          "path": "docs/RESUME.md",
+          "sha256": "2d9e48ea4f457b7f77d7885b155690e8e298dc7c01b38239d7f82b755363400b",
+          "bytes": 528
+        },
+        {
+          "path": "luau/CartMotionCore.luau",
+          "sha256": "40dbcc8a3c48743c02fc5bc2221c92412b91eaa81466d6dc7f45cfaf13443e99",
+          "bytes": 4748
+        },
+        {
+          "path": "luau/CartServerAdapter.luau",
+          "sha256": "2ec43d9de626c746197dc41c7a1e7e365af7cdc173963c3658b267d556cd158e",
+          "bytes": 1784
+        },
+        {
+          "path": "tests/test_cart_motion.py",
+          "sha256": "ea3ce6097f3fe5e6906b716000b2d61f580b3370f452e96db59fdcec59410a44",
+          "bytes": 8257
+        },
+        {
+          "path": "tools/cart_motion_oracle.py",
+          "sha256": "97eb9fd96eb9100d6ef7dec6e5eb7ddee8c2a851e843f20e23413bb0d9e7187c",
+          "bytes": 3387
+        },
+        {
+          "path": "tools/verify_manifest.py",
+          "sha256": "4706c57eaf1edaf04d835a0a4a899a3febced5866bc3ac2572dd5a982967b48f",
+          "bytes": 929
+        }
+      ]
+    },
+    {
+      "packet_id": "P0D-D14-SERVER-VISUAL-PUBLISHER-20261110-06",
+      "feature_id": "D14",
+      "legacy_encrypted_commit": "72cc724bb9826c7958620a26587265815649d469",
+      "original_zip_sha256": "8e4e9a3f20965f5c6fda21dadd7cdb81a898a1f9fb5c5462dcd165c4e157a27c",
+      "original_zip_bytes": 12169,
+      "status": "LOCAL_RECOVERED_KEYLESS_BUNDLE_NOT_GITHUB_PRIVATE_UPLOADED",
+      "files": [
+        {
+          "path": "BUILD_MANIFEST.json",
+          "sha256": "6812c1e6dd2f37488208839962780edf5af84213e23ac34e1e674a877867a8dd",
+          "bytes": 1154
+        },
+        {
+          "path": "docs/INTEGRATION.md",
+          "sha256": "23637ea1bf8e9726c606c7568767eaf7b4a83df770683e5f2f7e1191c3f29a5a",
+          "bytes": 4692
+        },
+        {
+          "path": "docs/QA_STATUS.md",
+          "sha256": "bca8fe8fe4ca17f3408be42393a4d155c8e34ac968583da1623fbb7c360b3d5c",
+          "bytes": 1634
+        },
+        {
+          "path": "luau/D14ServerVisualOutboundAdapter.luau",
+          "sha256": "cc0690c11880ecaff480d546ba49b8c3f875774f36e2ed364016dee3aad30071",
+          "bytes": 2929
+        },
+        {
+          "path": "luau/D14VisualPublisherCore.luau",
+          "sha256": "dfc32793706a53fedcba55e116a5877c8bde76551bfbc51e0e43ab1ed1c8ca7d",
+          "bytes": 6095
+        },
+        {
+          "path": "tests/test_outbound_policy.py",
+          "sha256": "43b8f7d3e4836a6eea42f10fd0b7d0bb3186695f43f8a2777f8f84b2547d22c1",
+          "bytes": 12979
+        },
+        {
+          "path": "tools/verify_source_packet.py",
+          "sha256": "b3188fce0513147a63692391d341f47ec0d06c7e326cea9bf5cefcb557298837",
+          "bytes": 1181
+        }
+      ]
+    }
+  ]
+}
