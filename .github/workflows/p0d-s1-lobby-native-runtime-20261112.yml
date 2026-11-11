@@ -62,15 +62,18 @@ jobs:
             failure) verdict="FAIL_REAL_LUAU_RUN" ;;
             *) verdict="NOT_COMPLETE" ;;
           esac
-          gh issue comment 218 --repo kk051780/toy-wars-factory --body "[P0D_PROGRESS_V3][NATIVE_LOBBY_REPLAY_ACTIONS_RECEIPT]
-packet_id=P0D-S1-LOBBY-NATIVE-LUAU-SEMANTIC-REPLAY-20261112-01
-source_candidate_sha=9de6496282c7bd4dcea586563f75da71d08d77ec
-actual_source_planner_sha256=35c546f33e0454ceaf7fa26cf5ee44763673c6764906cc249ef282bb096ea404
-Luau_upstream_sha=f46d879e28302a430029304f7f6a162aed66f103
-CI_branch_commit=$CI_COMMIT
-GitHub_Actions_run=https://github.com/kk051780/toy-wars-factory/actions/runs/$CI_RUN_ID
-GitHub_Actions_step_status=$CI_JOB_STATUS
-result=$verdict
-assertions_exhaustive=511_expected seeded=512_expected
-result_scope=ACTUAL_PURE_LUAU_PLANNER_SEMANTICS_ONLY__NOT_ROBLOX_STUDIO_OR_GAME_RELEASE
-No_other_repo_source_mutation=true"
+          {
+            echo "[P0D_PROGRESS_V3][NATIVE_LOBBY_REPLAY_ACTIONS_RECEIPT]"
+            echo "packet_id=P0D-S1-LOBBY-NATIVE-LUAU-SEMANTIC-REPLAY-20261112-01"
+            echo "source_candidate_sha=9de6496282c7bd4dcea586563f75da71d08d77ec"
+            echo "actual_source_planner_sha256=35c546f33e0454ceaf7fa26cf5ee44763673c6764906cc249ef282bb096ea404"
+            echo "Luau_upstream_sha=f46d879e28302a430029304f7f6a162aed66f103"
+            echo "CI_branch_commit=$CI_COMMIT"
+            echo "GitHub_Actions_run=https://github.com/kk051780/toy-wars-factory/actions/runs/$CI_RUN_ID"
+            echo "GitHub_Actions_step_status=$CI_JOB_STATUS"
+            echo "result=$verdict"
+            echo "assertions_exhaustive=511_expected seeded=512_expected"
+            echo "result_scope=ACTUAL_PURE_LUAU_PLANNER_SEMANTICS_ONLY__NOT_ROBLOX_STUDIO_OR_GAME_RELEASE"
+            echo "No_other_repo_source_mutation=true"
+          } > /tmp/p0d_lobby_native_actions_receipt.txt
+          gh issue comment 218 --repo kk051780/toy-wars-factory --body-file /tmp/p0d_lobby_native_actions_receipt.txt
