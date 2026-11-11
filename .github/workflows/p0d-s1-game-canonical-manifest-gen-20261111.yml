@@ -51,6 +51,37 @@ jobs:
           python3 -m unittest discover -s handoffs/P0D-S1-GAME-CANONICAL-HOST-PATCH-20261111-01/tools -p 'test_game_entrypoint.py' -v 2>&1 | tee /tmp/p0d_game_host_test.log
           grep -F 'Ran 18 tests' /tmp/p0d_game_host_test.log
           grep -x OK /tmp/p0d_game_host_test.log
+      - name: Actually assemble 16 source-project units using the canonical Chat Python assembler
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_S1_SOURCE_PLAN_SNAPSHOT_20261111_01/tools/chat_rc_assemble.py \
+            --plan handoffs/P0D-S1-GAME-CANONICAL-HOST-PATCH-20261111-01/SOURCE_PLAN_CANDIDATE.json \
+            --source-root handoffs/P0D-S1-GAME-CANONICAL-HOST-PATCH-20261111-01/candidate \
+            --out /tmp/p0d_s1_actual_game_entrypoint_assembled
+          python3 - <<'PY'
+          import base64,hashlib,json,pathlib
+          assembled=pathlib.Path('/tmp/p0d_s1_actual_game_entrypoint_assembled')
+          source=pathlib.Path('handoffs/P0D-S1-GAME-CANONICAL-HOST-PATCH-20261111-01/candidate')
+          rc=assembled/'CHAT_RC_RECEIPT.json'
+          data=json.loads(rc.read_bytes())
+          assert data['studio_status']=='NOT_TESTED'
+          assert data['release_approved'] is False
+          assert data['assembly_status']=='CHAT_BUILD_READY__OFFLINE_EVIDENCE_ONLY'
+          assert len(data['source_units'])==16
+          assert len(data['contents'])==16
+          assert any(item['target_path']=='src/server/Game.server.luau' for item in data['source_units'])
+          for f in data['contents']:
+              dest=(assembled/f['path']).read_bytes()
+              src=(source/f['path']).read_bytes()
+              assert dest==src, f['path']
+              assert hashlib.sha256(src).hexdigest()==f['sha256'], f['path']
+              assert len(src)==f['size'], f['path']
+          print('P0D_S1_ACTUAL_16_UNIT_SOURCE_ASSEMBLY_PASS')
+          print('P0D_S1_SOURCE_RECEIPT_SHA256='+hashlib.sha256(rc.read_bytes()).hexdigest())
+          print('P0D_S1_SOURCE_RECEIPT_B64='+base64.b64encode(rc.read_bytes()).decode('ascii'))
+          print('P0D_S1_GAME_STUDIO_NOT_TESTED_RELEASE_NOT_APPROVED')
+          PY
       - name: Confirm source git branches not mutated or published
         shell: bash
         run: |
