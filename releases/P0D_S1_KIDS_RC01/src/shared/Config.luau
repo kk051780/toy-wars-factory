@@ -15,6 +15,7 @@ return {
     CastleReach = 18,
     AttackCooldown = 0.85,
     RoleSelectCooldown = 2,
+    -- Guardian trap numeric authority lives in S1TrapRules; client cannot override it.
     RespawnInvulnerability = 2.5,
     InteractDistance = 12,
     SnapshotInterval = 0.5,
