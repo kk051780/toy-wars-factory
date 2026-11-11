@@ -1,0 +1,71 @@
+# One isolated source-only S1 STOMP ring test, no Studio/AI/write token.
+name: P0D S1 D07 actual attack-center local cue source QA
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-d07-spatial-stomp-ring-20261111-01
+    paths:
+      - .github/workflows/p0d-s1-d07-spatial-stomp-ring-20261111.yml
+permissions:
+  contents: read
+concurrency:
+  group: p0d-s1-d07-spatial-ring
+  cancel-in-progress: false
+jobs:
+  source-only-test:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout isolated visual source branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Generate strict PUBLIC_SOURCE_V1 manifest in ephemeral runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py build \
+            --root handoffs/P0D-S1-D07-SPATIAL-STOMP-RING-20261111-01/candidate \
+            --packet-id P0D-S1-D07-SPATIAL-STOMP-RING-20261111-01
+          python3 - <<'PY'
+          import base64,hashlib,pathlib
+          p=pathlib.Path('handoffs/P0D-S1-D07-SPATIAL-STOMP-RING-20261111-01/candidate/BUILD_MANIFEST.json')
+          b=p.read_bytes()
+          print('P0D_SPATIAL_SOURCE_B64='+base64.b64encode(b).decode('ascii'))
+          print('P0D_SPATIAL_SOURCE_SHA256='+hashlib.sha256(b).hexdigest())
+          PY
+      - name: Existing S1 candidate original Python 80 regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s handoffs/P0D-S1-D07-SPATIAL-STOMP-RING-20261111-01/candidate/tests -v 2>&1 | tee /tmp/s1_game_tests.log
+          grep -F 'Ran 80 tests' /tmp/s1_game_tests.log
+          grep -x OK /tmp/s1_game_tests.log
+      - name: Existing S1 host Game exact-source 18 regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover \
+            -s handoffs/P0D-S1-GAME-CANONICAL-HOST-PATCH-20261111-01/tools \
+            -p test_game_entrypoint.py -v 2>&1 | tee /tmp/s1_game_entrypoint_tests.log
+          grep -F 'Ran 18 tests' /tmp/s1_game_entrypoint_tests.log
+          grep -x OK /tmp/s1_game_entrypoint_tests.log
+      - name: Run spatial D07 warning new 18 source and negative contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s handoffs/P0D-S1-D07-SPATIAL-STOMP-RING-20261111-01/tests -v 2>&1 | tee /tmp/s1_spatial_visual_tests.log
+          grep -F 'Ran 18 tests' /tmp/s1_spatial_visual_tests.log
+          grep -x OK /tmp/s1_spatial_visual_tests.log
+      - name: Strict official verify plus no main or original source mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py verify \
+            --root handoffs/P0D-S1-D07-SPATIAL-STOMP-RING-20261111-01/candidate \
+            --packet-id P0D-S1-D07-SPATIAL-STOMP-RING-20261111-01
+          git diff --exit-code -- releases/P0D_S1_KIDS_RC01
+          echo P0D_S1_D07_SPATIAL_SOURCE_ONLY_OFFLINE_NOT_STUDIO
