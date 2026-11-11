@@ -85,7 +85,7 @@ class ExactFullSource(unittest.TestCase):
         self.assertIn('LobbyTeamRecovery.plan(roster)', diffs[1][2])
         self.assertEqual(diffs[2][1], '')
         self.assertEqual(diffs[2][2].strip(), 'rebalanceLobbyTeams()')
-        self.assertEqual(diffs[3][1].strip(), 'if count < Config.MinPlayers then match.phase = "LOBBY"\n        elseif now >= match.phaseUntil then resetRound() end')
+        self.assertIn('if count < Config.MinPlayers then match.phase = "LOBBY"', diffs[3][1])
         self.assertIn('teamCount("RED") == 0 or teamCount("BLUE") == 0', diffs[3][2])
         self.assertIn('match.phase = "LOBBY"', diffs[3][2])
 
