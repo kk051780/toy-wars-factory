@@ -128,6 +128,10 @@ end
 function Controller:_recover(entry)
     local root = entry.root
     if not root or not root.Parent or not self.safePad.Parent then return end
+    -- A player teleported to another arena must NEVER be dragged back to this pad.
+    local localPos = self.zone.CFrame:PointToObjectSpace(root.Position)
+    if math.abs(localPos.X) > self.zone.Size.X * 0.6
+        or math.abs(localPos.Z) > self.zone.Size.Z * 0.6 then return end
     local bottom = self.zone.Position.Y - self.zone.Size.Y * 0.5
     if root.Position.Y >= bottom - Policy.SAFETY_DEPTH then return end
     local char = entry.char
