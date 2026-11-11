@@ -365,8 +365,9 @@ print("P0D_NATIVE_ACTUAL_GAME_SERVER_LIFECYCLE_PASS assertions="..tostring(check
 # in memory, never RC or any tracked game file.
 MUTATIONS=[
  ("client_replay_seq_bypass","Game",
-  "if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end",
-  "if false then return end","GAME_S1_ASSERT_replay_attack_seq_after_cooldown"),
+  'local function applyAttack(player: Player, data)\n    if type(data) ~= "table" or data.action ~= "ATTACK" then return end\n    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end',
+  'local function applyAttack(player: Player, data)\n    if type(data) ~= "table" or data.action ~= "ATTACK" then return end\n    if false then return end',
+  "GAME_S1_ASSERT_replay_attack_seq_after_cooldown"),
  ("steal_own_egg","Rules",
   "and team ~= eggTeam and not carrying and eggAtBase",
   "and not carrying and eggAtBase","GAME_S1_ASSERT_cannot_take_own_egg"),
@@ -436,7 +437,7 @@ def main():
         print(match.group(0))
         for name,module,old,new,expected in MUTATIONS:
             src=sources[module]
-            expected_count=2 if name=="client_replay_seq_bypass" else 1
+            expected_count=1 # fully-qualified mutation anchors
             if src.count(old)!=expected_count:
                 raise RuntimeError("AMBIGUOUS_MUTATION_ANCHOR_"+name+" "+str(src.count(old)))
             bad=dict(sources);bad[module]=src.replace(old,new,1)
