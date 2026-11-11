@@ -59,3 +59,9 @@ jobs:
           set -euo pipefail
           python3 -m py_compile handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_boss_receipt_gate.py
           python3 handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_boss_receipt_gate.py --repo . --luau /tmp/p0d-luau/build/luau
+      - name: Execute real D07 Core plus Window plus Boundary plus Combined under native Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_d07_chain_gate.py
+          python3 handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_d07_chain_gate.py --repo . --luau /tmp/p0d-luau/build/luau
