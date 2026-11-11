@@ -1,0 +1,11 @@
+# P0-D S1 corrected D07/D08 + spatial + lobby — independent native & real assembler QA
+
+This is a standalone read-only audit for **TRAP_RAIDERS** release candidate source from immutable commit `9de6496282c7bd4dcea586563f75da71d08d77ec`. It is an actual 28-source-file S1 Rojo game candidate including original recovered D07 physical Gorogan, D08 Chaos v40, spatial STOMP ring, independently reviewed D08 terminal and Studio-negative player ID fixes, and newly merged LOBBY team-deadlock recovery. The guarded D07/D08 runtime remains OFF by default.
+
+This QA branch only adds one branch-scoped CI workflow and an independent checked-out Python runner. The runner reuses untouched previous QA Git objects `824d2693f2371db832203cb13b35f79b3c24e6bc` and `a940f0ea896cf8d3f2b6c6700e92ade608fdc52b` from independently completed prior static QA. The official upstream Luau compiler source is fixed to `luau-lang/luau@f46d879e28302a430029304f7f6a162aed66f103`. None of the game's modules are modified by this packet.
+
+Workflow checks **all 28** original candidate manifest files using the existing strict public-source manifest verifier, builds and invokes official native Luau on **18 actual Luau** files (includes the newly merged LobbyTeamRecovery module), includes valid/invalid compiler controls, runs the **original real Python Chat assembler** on **19 source/project units**, compares the actual generated receipt bytes exactly against the immutable author receipt, and verifies server/client Rojo project mappings and a single Game owner of round/event/damage. Four temporary fail-closed mutation probes cover Luau code tampering, fake Studio status, duplicate authority and false manifest status.
+
+The required runner is in `tools/verify_composite_native_qa.py`; it receives the path to the native `luau-compile` binary. This is an incremental independent language/assembly gate, **NOT** Roblox Studio execution, 2-client physics, mobile play, market fit, actual game release or user OWNER approval.
+
+The **official** game-release RC remains solely in `rc/p0d-s1-kids-rc01` and must be updated by the #220 integrator, not by this independent QA chat. No merge/main edit, production Roblox publish, paid service, Windows Codex, P0-A/B/C security coordinator or existing automation modification is authorized.

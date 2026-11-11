@@ -1,0 +1,57 @@
+name: P0D S1 28-file independent native Luau and assembly QA
+
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-28-source-native-assembly-qa-20261112-01
+
+permissions:
+  contents: read
+
+jobs:
+  independent-28-source-game-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Check out candidate source and this independent verifier
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Pin original composite source parent
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD^)" = "9de6496282c7bd4dcea586563f75da71d08d77ec"
+          test "$(git branch --show-current)" = "handoff/p0d-s1-28-source-native-assembly-qa-20261112-01"
+      - name: Install stdlib-only Python interpreter
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Checkout pinned official Luau source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _third_party_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Verify upstream source commit is exact
+        shell: bash
+        run: |
+          test "$(git -C _third_party_luau rev-parse HEAD)" = "f46d879e28302a430029304f7f6a162aed66f103"
+      - name: Build official Luau compile CLI
+        shell: bash
+        run: |
+          cmake -S _third_party_luau -B /tmp/p0d-luau-28-build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d-luau-28-build --target Luau.Compile.CLI --config Release --parallel 2
+          test -x /tmp/p0d-luau-28-build/luau-compile
+      - name: Run independent actual 28-file source, 19-unit assembly and native Luau
+        shell: bash
+        run: |
+          python3 handoffs/P0D-S1-28-SOURCE-NATIVE-ASSEMBLY-QA-20261112-01/tools/verify_composite_native_qa.py /tmp/p0d-luau-28-build/luau-compile
+      - name: Ensure original game and verifier were never altered
+        shell: bash
+        run: |
+          test -z "$(git status --porcelain --untracked-files=no)"
