@@ -51,7 +51,17 @@ V.__sub=function(a,b) return V.new(a.X-b.X,a.Y-b.Y,a.Z-b.Z) end
 local Vector3=V
 local UDim2={fromOffset=function() return {} end,fromScale=function() return {} end}
 local Color3={fromRGB=function(r,g,b) return {r,g,b} end, new=function(r,g,b) return {r,g,b} end}
-local CFrame={new=function(x,y,z) return {Position=V.new(x,y,z),__type="CFrame"} end}
+local CF={}
+CF.__add=function(a,b)
+ if type(a)~="table" or a.__type~="CFrame"
+     or type(b)~="table" or b.__type~="Vector3" then
+  error("TEST_ONLY_INVALID_CFRAME_ADD")
+ end
+ return setmetatable({Position=a.Position+b,__type="CFrame"},CF)
+end
+local CFrame={new=function(x,y,z)
+ return setmetatable({Position=V.new(x,y,z),__type="CFrame"},CF)
+end}
 local BrickColor={new=function(c) return c end}
 local enumGroup=setmetatable({}, {__index=function(_,k) return k end})
 local Enum={RaycastFilterType={Exclude="Exclude"},Material=enumGroup,Font=enumGroup,PartType=enumGroup}
