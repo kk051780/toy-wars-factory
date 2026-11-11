@@ -315,6 +315,10 @@ send(pRed,"ATTACK",1,{targetId=202,damage=999})
 eq(pBlue.Character.hum.Health,preHp-24,"replay_attack_seq_blocked")
 send(pRed,"ATTACK",2,{targetId=202,damage=999})
 eq(pBlue.Character.hum.Health,preHp-24,"attack_cooldown")
+-- Replay the SAME seq after cooldown expires: old packet must NEVER hit.
+tick(26.9)
+send(pRed,"ATTACK",1,{targetId=202,damage=999})
+eq(pBlue.Character.hum.Health,preHp-24,"replay_attack_seq_after_cooldown")
 tick(27)
 send(pRed,"ATTACK",3,{targetId=202,damage=999})
 eq(pBlue.Character.hum.Health,preHp-48,"second_legitimate_melee")
@@ -343,7 +347,7 @@ print("P0D_NATIVE_ACTUAL_GAME_SERVER_LIFECYCLE_PASS assertions="..tostring(check
 MUTATIONS=[
  ("client_replay_seq_bypass","Game",
   "if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end",
-  "if false then return end","GAME_S1_ASSERT_replay_attack_seq_blocked"),
+  "if false then return end","GAME_S1_ASSERT_replay_attack_seq_after_cooldown"),
  ("steal_own_egg","Rules",
   "and team ~= eggTeam and not carrying and eggAtBase",
   "and not carrying and eggAtBase","GAME_S1_ASSERT_cannot_take_own_egg"),
