@@ -6,6 +6,7 @@ sole integrator's receipt, or grant a Roblox release score/permission.
 """
 import argparse
 import hashlib
+import json
 from pathlib import Path
 import re
 import subprocess
@@ -157,6 +158,48 @@ def luau_parse(luau, client, server):
         compile_check(src + "\nlocal = 1\n", False)
         print("P0D_STUDIO_PASSIVE_LUAU_PARSE_PASS_" + kind + " negative=1")
 
+
+def verify_manifest(root):
+    p = root / "STUDIO_PASSIVE_PROBE_MANIFEST.json"
+    doc = json.loads(p.read_text("utf8"))
+    check(set(doc) == {"format", "game_id", "work_id", "packet_id",
+                       "public_source_allowed", "files"},
+          "PROBE_MANIFEST_ROOT_SCHEMA")
+    check(doc["format"] == "P0D_PUBLIC_SOURCE_V1"
+          and doc["game_id"] == "TRAP_RAIDERS"
+          and doc["work_id"] == "p0d-siege-v19"
+          and doc["packet_id"] ==
+          "P0D-S1-STUDIO-READONLY-CLIENT-SNAPSHOT-PROBE-20261112-09"
+          and doc["public_source_allowed"] is True,
+          "PROBE_MANIFEST_IDENTITY")
+    expected = {
+        "StudioPassiveClientProbe.client.luau",
+        "StudioPassiveServerProbe.server.luau",
+        "STUDIO_PASSIVE_PROBE_README.md",
+        "audit_studio_passive_probes.py",
+    }
+    check(isinstance(doc["files"], list) and len(doc["files"]) == 4,
+          "PROBE_MANIFEST_COUNT")
+    listed = set()
+    for record in doc["files"]:
+        check(isinstance(record, dict) and
+              set(record) == {"path", "sha256", "size"},
+              "PROBE_MANIFEST_FILE_SCHEMA")
+        name = record["path"]
+        check(isinstance(name, str) and name in expected
+              and name not in listed, "PROBE_MANIFEST_PATH")
+        check(type(record["size"]) is int and record["size"] > 0
+              and isinstance(record["sha256"], str)
+              and re.fullmatch(r"[0-9a-f]{64}", record["sha256"]),
+              "PROBE_MANIFEST_DIGEST_SCHEMA")
+        raw = (root / name).read_bytes()
+        check(len(raw) == record["size"] and
+              hashlib.sha256(raw).hexdigest() == record["sha256"],
+              "PROBE_MANIFEST_SOURCE_MISMATCH_" + name)
+        listed.add(name)
+    check(listed == expected, "PROBE_MANIFEST_MISSING_FILES")
+    print("P0D_PASSIVE_PROBE_PUBLIC_MANIFEST_PASS files=4/4")
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo", default=".")
@@ -165,6 +208,7 @@ def main():
     root = Path(__file__).resolve().parent
     client = (root / "StudioPassiveClientProbe.client.luau").read_text("utf8")
     server = (root / "StudioPassiveServerProbe.server.luau").read_text("utf8")
+    verify_manifest(root)
     exact_official_contract(opts.repo)
     basic(client, "CLIENT")
     basic(server, "SERVER")
