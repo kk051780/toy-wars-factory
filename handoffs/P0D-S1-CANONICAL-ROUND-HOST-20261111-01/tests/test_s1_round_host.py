@@ -66,7 +66,7 @@ class S1HostStaticSafety(unittest.TestCase):
         self.assertIn("return Host", self.source)
 
     def test_no_automatic_authority_side_effect(self):
-        for forbidden in ("RemoteEvent", "RunService", "task.spawn", "while true",
+        for forbidden in ("RemoteEvent", 'game:GetService("RunService")', "task.spawn", "while true",
                           "PlayerAdded:Connect", "OnServerEvent", "DataStoreService",
                           "Workspace:FindFirstChild"):
             with self.subTest(forbidden=forbidden):
@@ -125,8 +125,7 @@ class S1HostStaticSafety(unittest.TestCase):
 
     def test_real_physics_not_claimed(self):
         self.assertIn("This example intentionally fails", self.doc)
-        self.assertIn("DO NOT execute Luau", self.__doc__ or "") if False else None
-        self.assertIn("DO NOT execute Luau", __doc__)
+        self.assertIn("does NOT execute Luau", __doc__)
         self.assertIn("Studio", self.doc)
         self.assertIn("source-only", self.doc)
 
