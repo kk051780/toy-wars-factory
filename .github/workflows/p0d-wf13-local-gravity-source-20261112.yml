@@ -1,0 +1,47 @@
+name: P0D WF13 isolated low-gravity source and real native Luau
+on:
+  push:
+    branches:
+      - handoff/p0d-wf13-local-gravity-prototype-20261112-01
+    paths:
+      - 'handoffs/P0D-WF13-LOCAL-GRAVITY-PROTOTYPE-20261112-01/**'
+      - '.github/workflows/p0d-wf13-local-gravity-source-20261112.yml'
+permissions:
+  contents: read
+jobs:
+  native-source-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Strict SHA256 source manifest before test Python creates pycache
+        run: python3 handoffs/P0D-WF13-LOCAL-GRAVITY-PROTOTYPE-20261112-01/tools/verify_manifest.py
+      - name: Actual Python source and mutation negative controls
+        run: python3 -m unittest discover -s handoffs/P0D-WF13-LOCAL-GRAVITY-PROTOTYPE-20261112-01/tests -p 'test_*.py' -v
+      - name: Build PINNED native Luau CLI from upstream source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/wf13-luau
+          git -C /tmp/wf13-luau init -q
+          git -C /tmp/wf13-luau remote add origin https://github.com/luau-lang/luau.git
+          git -C /tmp/wf13-luau fetch --quiet --depth 1 origin f46d879e28302a430029304f7f6a162aed66f103
+          git -C /tmp/wf13-luau checkout --quiet FETCH_HEAD
+          test "$(git -C /tmp/wf13-luau rev-parse HEAD)" = "f46d879e28302a430029304f7f6a162aed66f103"
+          cmake -S /tmp/wf13-luau -B /tmp/wf13-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_CLI=ON -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/wf13-luau/build --config Release --target Luau.Repl.CLI Luau.Compile.CLI -j 2
+      - name: Actual original four Luau files native syntax compilation
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in handoffs/P0D-WF13-LOCAL-GRAVITY-PROTOTYPE-20261112-01/src/*.luau; do
+            /tmp/wf13-luau/build/luau-compile "$file" > /dev/null
+            echo "WF13_NATIVE_LUAU_COMPILE_PASS $file"
+          done
+      - name: Actual original WF13Policy numeric function semantic execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-WF13-LOCAL-GRAVITY-PROTOTYPE-20261112-01/tools/build_native_policy_runner.py /tmp/wf13_policy_native.luau
+          /tmp/wf13-luau/build/luau /tmp/wf13_policy_native.luau | tee /tmp/wf13_native_result.txt
+          grep -q 'WF13_NATIVE_ACTUAL_POLICY_PASS cases=18' /tmp/wf13_native_result.txt
