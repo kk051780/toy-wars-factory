@@ -131,11 +131,11 @@ class SpatialTelegraphSourceContract(unittest.TestCase):
         self.assertEqual(mapped["TrapRaidersHUD"]["$path"],"src/client/HUD.client.luau")
         self.assertEqual(mapped["GoroganVisualPolicy"]["$path"],"src/client/GoroganVisualPolicy.luau")
         self.assertEqual(mapped["S1GoroganStompRing"]["$path"],"src/client/S1GoroganStompRing.client.luau")
-        self.assertEqual(len(mapped),4)
+        self.assertEqual(len(mapped),5)
 
     def test_no_duplicate_client_or_server_bootstrap(self):
         self.assertEqual(len(list((GAME/"src/server").glob("*.server.luau"))),1)
-        self.assertEqual(len(list((GAME/"src/client").glob("*.client.luau"))),2)
+        self.assertEqual(len(list((GAME/"src/client").glob("*.client.luau"))),3)
 
     def test_strict_manifest_once_created(self):
         f=GAME/"BUILD_MANIFEST.json"
@@ -143,7 +143,7 @@ class SpatialTelegraphSourceContract(unittest.TestCase):
         m=json.loads(f.read_bytes())
         self.assertEqual(set(m),{"files","format","game_id","packet_id","public_source_allowed","work_id"})
         files={x["path"]:x for x in m["files"]}
-        self.assertEqual(len(files),28)
+        self.assertEqual(len(files),30)
         self.assertEqual(len(m["files"]),len(files))
         self.assertIn("src/client/GoroganVisualPolicy.luau",files)
         self.assertIn("src/client/S1GoroganStompRing.client.luau",files)
