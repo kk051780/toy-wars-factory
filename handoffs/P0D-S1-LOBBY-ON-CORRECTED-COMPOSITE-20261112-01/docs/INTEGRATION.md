@@ -1,0 +1,8 @@
+# Sole #220 S1 integration recipe
+1. Verify newer combined source provenance: commit ff291d7a5e6dc53e841552d1abc3cbdf9a805f48, Game blob SHA1 3a7eae61fa6bc89f3b0dd99ef392fbee8ab613b1, path handoffs/P0D-S1-D07D08-CORRECTED-SPATIAL-COMPOSITE-20261111-01/candidate/src/server/Game.server.luau. Our modified full Game SHA256 bb293b7eb028d6b364934a20fe7ff79630ac4e82342b84168cb41e10059e6366. If official RC has advanced, STOP replacing whole Game; review four in-place hunks and manually carry them forward.
+2. Existing corrected composite 27-file project already provides original D07/D08 Boss Host and binding, rig, visual ring, and standalone Rojo wiring. Add **just** src/server/LobbyTeamRecovery.luau sibling ModuleScript and source delta of src/server/Game.server.luau to official RC; do not replace D07/D08 modules with older ones.
+3. Expected four changes: new pure module require, LOBBY-only rebalance function, one LOBBY tick call before readiness check, COUNTDOWN abort when one side has 0. Existing Game still sole match/score/egg/server damage owner.
+4. **Run integrated source-level regression**: 2 RED 0 BLUE -> 1v1 during LOBBY; 4 RED 0 BLUE ->2v2; 3v1 ->2v2; 1 player never starts; one side leaves during COUNTDOWN -> LO B BY; all sides present -> ACTIVE; ACTIVE and RESULTS do not rebalance; confirm no loss of D07/D08 boss visuals, host alarms and damage callbacks.
+5. Update RC canonical six-field PUBLIC_SOURCE_V1 manifest, receipt, Rojo compile wiring, then independent static and gameplay QA, then final OWNER-direct Windows Studio2client/mobiles. No per-packet Codex, live public release, or paid changes.
+
+No other authority branch or repo main was modified by this feature pack.
