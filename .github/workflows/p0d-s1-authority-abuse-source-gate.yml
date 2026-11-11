@@ -1,0 +1,25 @@
+name: P0D S1 authority abuse source gate
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-authority-abuse-gate-20261112-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Compile gate Python syntax
+        run: python -m py_compile handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/audit_authority.py
+      - name: Fetch exact immutable source commit and audit it
+        shell: bash
+        run: |
+          set -euo pipefail
+          SHA=b103389e2089f9ff5a08984fe2f8f6f02aa8b1bc
+          git cat-file -e "$SHA^{commit}" || git fetch --no-tags --depth=1 origin "$SHA"
+          python handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/audit_authority.py --repo .
