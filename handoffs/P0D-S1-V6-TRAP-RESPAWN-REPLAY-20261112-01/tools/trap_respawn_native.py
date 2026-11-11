@@ -88,12 +88,14 @@ local pBlueBackup=makePlayer(204)
 Players.users={pRed,pBlue,pRedBackup,pBlueBackup}
 Players.PlayerAdded:Fire(pBlueBackup)
 eq(pBlueBackup.Team.Name,"BLUE","standby_blue_assigned")
-Players.users={pRed,pRedBackup,pBlueBackup}
+-- Roblox PlayerRemoving fires before the player is removed from Players.
+-- Retain the departing player inside GetPlayers during the event callback.
 Players.PlayerRemoving:Fire(pBlue)
 eq(last(pRed).phase,"ACTIVE","owner_exit_with_teammate_match_continues")
 eq(third.Destroyed,true,"owner_exit_removes_trap_while_active")
-Players.users={pRed,pRedBackup}
+Players.users={pRed,pRedBackup,pBlueBackup}
 Players.PlayerRemoving:Fire(pBlueBackup)
+Players.users={pRed,pRedBackup}
 '''
 
 # Exact in-memory mutations: the genuine source MUST detect each unsafe variant.
