@@ -11,7 +11,7 @@ class SourceContract(unittest.TestCase):
   self.assertEqual(m["format"],"P0D_PUBLIC_SOURCE_V1")
   self.assertEqual(m["game_id"],"TRAP_RAIDERS")
   self.assertEqual(m["work_id"],"p0d-siege-v19")
-  self.assertEqual(len(m["files"]),5)
+  self.assertEqual(len(m["files"]),6)
   for f in m["files"]:
    p=(ROOT/f["path"]).resolve()
    self.assertTrue(p.is_relative_to(ROOT.resolve()))
