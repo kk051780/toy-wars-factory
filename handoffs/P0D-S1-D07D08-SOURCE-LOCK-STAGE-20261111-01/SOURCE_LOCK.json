@@ -1,0 +1,153 @@
+{
+  "format": "P0D_S1_D07_D08_SOURCE_STAGE_LOCK_V1",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "packet_id": "P0D-S1-D07D08-SOURCE-LOCK-STAGE-20261111-01",
+  "release_id": "P0D-S1-KIDS-RC01",
+  "base_s1_game_sha": "35d7d0525388e885aac8281eff2315a59831e0cf",
+  "status": "PUBLIC_SOURCE_STAGED_ONLY_NOT_EXECUTABLE_RC",
+  "public_source_allowed": true,
+  "selected": [
+    {
+      "filename": "GoroganClientAdapter.client.luau",
+      "source_commit": "e9b0a7496a69bda3e0e6527ff4d112d50cf70e80",
+      "source_path": "handoffs/P0D-D07-GOROGAN-VISUAL-LIBRARY-RECOVER-20261110-01/luau/GoroganClientAdapter.client.luau",
+      "sha256": "a095f8b274ddbb7a116fc8aba634b59868fe00f8936ca37a0874cd7f3c6812e7",
+      "size": 3176,
+      "git_blob": "b1257497364039a8f55a7e788f28567d18b26d5d",
+      "side": "client",
+      "role": "boss_visual_listener",
+      "staged_path": "staged/src/client/GoroganClientAdapter.client.luau"
+    },
+    {
+      "filename": "GoroganVisualPolicy.luau",
+      "source_commit": "e9b0a7496a69bda3e0e6527ff4d112d50cf70e80",
+      "source_path": "handoffs/P0D-D07-GOROGAN-VISUAL-LIBRARY-RECOVER-20261110-01/luau/GoroganVisualPolicy.luau",
+      "sha256": "73c9bce0d6426fe3155a73e2ffa89a1ffd2bdf70b8938a814c4fc4c0cb273b10",
+      "size": 4757,
+      "git_blob": "351bf52e78020de0f879aa74064caf9fb8231ade",
+      "side": "client",
+      "role": "visual_state",
+      "staged_path": "staged/src/client/GoroganVisualPolicy.luau"
+    },
+    {
+      "filename": "GoroganVisualPrefab.luau",
+      "source_commit": "e9b0a7496a69bda3e0e6527ff4d112d50cf70e80",
+      "source_path": "handoffs/P0D-D07-GOROGAN-VISUAL-LIBRARY-RECOVER-20261110-01/luau/GoroganVisualPrefab.luau",
+      "sha256": "7364ba6b8fb305c08a0b56bb0648f83819a07d79d4a12e3025cf67703cf50cdf",
+      "size": 5656,
+      "git_blob": "14d06daf97321da78190ca28538c017a379e762b",
+      "side": "client",
+      "role": "visual_prefab",
+      "staged_path": "staged/src/client/GoroganVisualPrefab.luau"
+    },
+    {
+      "filename": "CanonicalEventBridge.luau",
+      "source_commit": "70dcc3b50129c288441452776360588184ca6c22",
+      "source_path": "handoffs/P0D-D08-CANONICAL-BRIDGE-PUBLIC-RECOVER-20261110-01/luau/CanonicalEventBridge.luau",
+      "sha256": "a54797ce97e433d3fc12e627c27f884b78bb148a3fbd506e0156fed7759aabd2",
+      "size": 10971,
+      "git_blob": "ce01536e3173e55099c4d6be543f83b9644d1950",
+      "side": "server",
+      "role": "event_bridge",
+      "staged_path": "staged/src/server/CanonicalEventBridge.luau"
+    },
+    {
+      "filename": "ChaosEventCore.luau",
+      "source_commit": "3c40c7dd80e6ec134f3124b6a6a0f625951792f4",
+      "source_path": "handoffs/P0D-D07-D08-D10-CHAOS-LIBRARY-RECOVER-20261110-01/luau/ChaosEventCore.luau",
+      "sha256": "f6d6901a8dcb61cec1095e383e485950144d39ea43737c9b33d4351a66e88726",
+      "size": 4447,
+      "git_blob": "ee8d02ae5175d19904d357a530c05faf80b6bf8a",
+      "side": "server",
+      "role": "event_policy",
+      "staged_path": "staged/src/server/ChaosEventCore.luau"
+    },
+    {
+      "filename": "GoroganAttackReceiptWindow.luau",
+      "source_commit": "14935dca217391a7d82d809a3856ee602c446704",
+      "source_path": "handoffs/P0D-D07-GOROGAN-RIGNAV-LIBRARY-RECOVER-20261110-01/luau/GoroganAttackReceiptWindow.luau",
+      "sha256": "1284882c9c2c87cb2075345d01ccac7d722693499e0b2eaa0cf659267b488f45",
+      "size": 1828,
+      "git_blob": "bc8e4e954c06c1db8778649a84cda135ff56e9d1",
+      "side": "server",
+      "role": "damage_receipt",
+      "staged_path": "staged/src/server/GoroganAttackReceiptWindow.luau"
+    },
+    {
+      "filename": "GoroganCombinedRuntime.luau",
+      "source_commit": "80a1f0ce15adfb475df0c95677f9966bb760a8ae",
+      "source_path": "handoffs/P0D-D07-GOROGAN-COMBINED-LIBRARY-RECOVER-20261110-01/luau/GoroganCombinedRuntime.luau",
+      "sha256": "5f365839de76249c4477bf74a97591584fd0e09e328adbe4a05b00f81902786b",
+      "size": 10587,
+      "git_blob": "f10dedf357476e658857131c0843f237825a1c0f",
+      "side": "server",
+      "role": "boss_orchestrator",
+      "staged_path": "staged/src/server/GoroganCombinedRuntime.luau"
+    },
+    {
+      "filename": "GoroganDamageBoundary.luau",
+      "source_commit": "14935dca217391a7d82d809a3856ee602c446704",
+      "source_path": "handoffs/P0D-D07-GOROGAN-RIGNAV-LIBRARY-RECOVER-20261110-01/luau/GoroganDamageBoundary.luau",
+      "sha256": "229cbee9a2b1b4d11d78fe065f18ee7b9eee3d5a8d1b9243c287883665dcca1e",
+      "size": 4947,
+      "git_blob": "031b0c4a5370a891434de42ada8d76642c080433",
+      "side": "server",
+      "role": "damage_boundary",
+      "staged_path": "staged/src/server/GoroganDamageBoundary.luau"
+    },
+    {
+      "filename": "GoroganRigDriver.luau",
+      "source_commit": "14935dca217391a7d82d809a3856ee602c446704",
+      "source_path": "handoffs/P0D-D07-GOROGAN-RIGNAV-LIBRARY-RECOVER-20261110-01/luau/GoroganRigDriver.luau",
+      "sha256": "64a27dc2cab176749cc9a1f40bb47266cec9a32b280e78f8280b78eaf092e747",
+      "size": 9188,
+      "git_blob": "1f6204105be724ca734e2654e42472667a8efcc6",
+      "side": "server",
+      "role": "boss_physics",
+      "staged_path": "staged/src/server/GoroganRigDriver.luau"
+    },
+    {
+      "filename": "GoroganServerAICore.luau",
+      "source_commit": "d65adccef6ce08ec48854ff2cc99f77e69e0765e",
+      "source_path": "handoffs/P0D-D07-GOROGAN-AI-LIBRARY-RECOVER-20261110-01/luau/GoroganServerAICore.luau",
+      "sha256": "fa483be147f452434cf41847e41c576cc92d45e0e4ed1d9d7582a189106ea787",
+      "size": 6689,
+      "git_blob": "f0ecf36242f1543eccf915948129f21f99a6bc92",
+      "side": "server",
+      "role": "boss_ai",
+      "staged_path": "staged/src/server/GoroganServerAICore.luau"
+    },
+    {
+      "filename": "TrustedGoroganActivationMapper.luau",
+      "source_commit": "d3159f9b5369ff28163a92ffc8123f4f3e816631",
+      "source_path": "handoffs/P0D-D08-D07-TRUSTED-ACTIVATE-MAPPER-20261111-01/luau/TrustedGoroganActivationMapper.luau",
+      "sha256": "46513abb081bfc27bf1354a060370ac817a4eaf714f211b74a5d95f369eadbea",
+      "size": 6684,
+      "git_blob": "b30aadc41634f77109559e31cff4d63fabeff19a",
+      "side": "server",
+      "role": "event_to_boss_mapper",
+      "staged_path": "staged/src/server/TrustedGoroganActivationMapper.luau"
+    }
+  ],
+  "excludes": [
+    "GoroganServerRuntime.luau (duplicate of Combined runtime)",
+    "CanonicalEventServerAdapter.server.luau (unreviewed independent startup)",
+    "Smoke.server.luau (test-only auto-run)",
+    "NeutralBossControlCore.luau (different policy path)",
+    "FairProgressionFallback.luau (D10 out of S1 scope)",
+    "TimeSafetyCore.luau (optional legacy helper, not needed for this wiring)",
+    "second ChaosEventCore, any second event-roll chooser, any second damage callback",
+    "duplicating existing D08-D07 mapper commit d3159f9b5369ff28163a92ffc8123f4f3e816631"
+  ],
+  "gate_status": {
+    "selected_11_remote_git_blobs": "VERIFIED",
+    "selected_11_remote_byte_sizes": "VERIFIED",
+    "S1_Rojo_added_and_checked": "NOT_DONE",
+    "S1_Game_canonical_callback_wiring": "NOT_DONE",
+    "S1_real_D07_D08_gameplay": "NOT_TESTED",
+    "S1_native_Luau": "NOT_TESTED",
+    "S1_2client_mobile_Studio": "NOT_TESTED",
+    "OWNER_release_approval": "NO"
+  }
+}
