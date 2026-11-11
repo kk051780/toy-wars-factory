@@ -1,0 +1,47 @@
+name: P0D S1 result-copy genuine native Luau semantic QA
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-result-localization-20261112-01
+    paths:
+      - 'handoffs/P0D-S1-RESULT-LOCALIZATION-20261112-01/**'
+      - 'handoffs/P0D-S1-RESULT-NATIVE-LUAU-REPLAY-20261112-02/**'
+      - '.github/workflows/p0d-s1-result-native-luau-20261112.yml'
+permissions:
+  contents: read
+jobs:
+  native-result-copy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact branch source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Run existing actual Python source equivalence tests
+        working-directory: handoffs/P0D-S1-RESULT-LOCALIZATION-20261112-01
+        run: python3 -m unittest discover -s tests -p test_result_copy.py -v
+      - name: Checkout pinned official Luau
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _third_party_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Compile official native CLI + interpreter
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _third_party_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _third_party_luau -B /tmp/p0d-result-native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d-result-native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          test -x /tmp/p0d-result-native/luau-compile
+          test -x /tmp/p0d-result-native/luau
+      - name: Execute exact marked result function in native Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-S1-RESULT-NATIVE-LUAU-REPLAY-20261112-02/tools/run_native_result_replay.py /tmp/p0d-result-native/luau-compile /tmp/p0d-result-native/luau
+      - name: Source remains unmodified
+        run: test -z "$(git status --porcelain --untracked-files=no)"
