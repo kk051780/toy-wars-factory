@@ -142,6 +142,7 @@ local function makePlayer(uid)
    if self.Health<=0 then self.Died:Fire() end
   end
   local ch={root=root,head=head,hum=hum,__type="Instance"}
+  hum.Parent=ch -- TEST DOUBLE for real Roblox humanoid parenting; required by slow restore
   function ch:FindFirstChild(name)
    if name=="HumanoidRootPart" then return self.root end
    if name=="Head" then return self.head end
