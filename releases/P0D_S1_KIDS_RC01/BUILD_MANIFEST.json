@@ -2,8 +2,8 @@
   "files": [
     {
       "path": "CHAT_RC_RECEIPT.json",
-      "sha256": "660c8b728d9a6cf7df334c3ba94e6813cdff33cd71368a7b13e3f37fad5e15da",
-      "size": 2038
+      "sha256": "525ee27d94a9a2b8b5a1ba6a2924d5470d29e12fa0b8520d634c8550224ad6d1",
+      "size": 2888
     },
     {
       "path": "default.project.json",
@@ -22,8 +22,8 @@
     },
     {
       "path": "docs/QA_AND_GAPS.md",
-      "sha256": "2c753543dd57fb85fe044d6d1c9ee69791b55588f07584dc35f5dfb36b4976fa",
-      "size": 3872
+      "sha256": "055983e7a00f03a7a42be03db7049b5454053f2ba7c1ff68d58355bb5d6496ef",
+      "size": 5170
     },
     {
       "path": "docs/RC_CHECKPOINT_V4.md",
@@ -31,19 +31,24 @@
       "size": 1850
     },
     {
+      "path": "docs/RC_CHECKPOINT_V6.md",
+      "sha256": "1112c41cfee5f13acdecebe83af9278f5dfda3c46d7ff393bedc38489299e1cb",
+      "size": 1737
+    },
+    {
       "path": "docs/RELEASE_STATUS.json",
-      "sha256": "4bf5efef5555063c248d48c1d91be5fcadd0029a6f51c540363af8e369b53a68",
-      "size": 1993
+      "sha256": "1c5030c3ab817358ec90a457d3167823f3026694ef925dad06df07fee28860bc",
+      "size": 2664
     },
     {
       "path": "docs/SOURCE_SELECTION.json",
-      "sha256": "f798e3164ea092d0a2fd2158c56bee02650c774f02a3b273a7c8198ca5010596",
-      "size": 1886
+      "sha256": "c5c2214ce4769ca53e0095f2addce9cb05919b1bd023c26b5db1daafc3cb2c6b",
+      "size": 2299
     },
     {
       "path": "README.md",
-      "sha256": "7459bc727a894d17bea5a5ff8762231f45c9a8821e27b84cd7292ba716274ee6",
-      "size": 5247
+      "sha256": "61ebbdff0f2b31429a9d66d7014c8d300805b7d485277d88f6fd7d562bdcf6f3",
+      "size": 6606
     },
     {
       "path": "src/client/FirstMinuteCoach.client.luau",
@@ -57,8 +62,8 @@
     },
     {
       "path": "src/client/HUD.client.luau",
-      "sha256": "b2c17440a486cb94d3c033c065ad26e9f991b88411d7fba340e9ce204583cb3d",
-      "size": 8336
+      "sha256": "5339765c888e4492f98b3cf4b8f879314a62f322c59633f832eb0eb1c2a1e987",
+      "size": 9015
     },
     {
       "path": "src/client/S1GoroganStompRing.client.luau",
@@ -77,8 +82,8 @@
     },
     {
       "path": "src/server/Game.server.luau",
-      "sha256": "75a5b455be7997383f23dcb4ac2f8b94b810492edc0bdb5ac8c90a18754bc0f0",
-      "size": 23069
+      "sha256": "d9e0db6980447406db7cd013b56da305ae0eb1eb499377806ae14e655acfe465",
+      "size": 28993
     },
     {
       "path": "src/server/GoroganAttackReceiptWindow.luau",
@@ -131,14 +136,19 @@
       "size": 2137
     },
     {
+      "path": "src/server/S1TrapRules.luau",
+      "sha256": "180e0092dc673d521bf3a0b44a6da0f549f28daf1c33dbbc844b8b5707a8168b",
+      "size": 2628
+    },
+    {
       "path": "src/server/TrustedGoroganActivationMapper.luau",
       "sha256": "46513abb081bfc27bf1354a060370ac817a4eaf714f211b74a5d95f369eadbea",
       "size": 6684
     },
     {
       "path": "src/shared/Config.luau",
-      "sha256": "0313cb70cdfb7584fa875a5cb0921891ac7730b045ad81e2b5651862313ef21b",
-      "size": 747
+      "sha256": "c88c23a86f5ad343d8d368f73266a627902dacde60217c0a8a04fe4de1c0bee1",
+      "size": 835
     },
     {
       "path": "src/shared/FirstMinuteModel.luau",
@@ -151,14 +161,29 @@
       "size": 6526
     },
     {
+      "path": "tests/test_guardian_trap_contract.py",
+      "sha256": "b98901a33beaa1e84a7e036f2c714de396ec4e05c62492584ec37e821a1cd1bc",
+      "size": 2710
+    },
+    {
       "path": "tests/test_s1_rules.py",
       "sha256": "85136f866e9349e8a6aa86e6ac85a14a31c54169bcae0c3d77eae886c4e968f6",
       "size": 7176
     },
     {
       "path": "tests/test_static_source.py",
-      "sha256": "98a64f2f904eff0cb88d707d63f4bccf1e69b6959efea325430301de939dfc10",
-      "size": 4331
+      "sha256": "9d0583ed44df2afc2c16acbd6459247151e0b6081dc19982d1bc5a567a3f6930",
+      "size": 5198
+    },
+    {
+      "path": "tools/native_game_trap_integration.py",
+      "sha256": "9a47a85ea9284d06ee74c85a8e1237af5b1770d3b7cfe93d1478a61f21f7a568",
+      "size": 19633
+    },
+    {
+      "path": "tools/verify_guardian_trap_native.py",
+      "sha256": "27f14737c0d8cdcb79c1712b67689edb5e42098aa3bb485239f32049f31eec56",
+      "size": 4232
     }
   ],
   "format": "P0D_PUBLIC_SOURCE_V1",

@@ -8,6 +8,7 @@ local Config = require(ReplicatedStorage:WaitForChild("TrapRaidersShared"):WaitF
 local Rules = require(script.Parent:WaitForChild("S1Rules"))
 local MapBuilder = require(script.Parent:WaitForChild("MapBuilder"))
 local LobbyTeamRecovery = require(script.Parent:WaitForChild("LobbyTeamRecovery"))
+local TrapRules = require(script.Parent:WaitForChild("S1TrapRules"))
 -- The existing Game is the ONLY match/event/HP/egg owner.
 local CanonicalHost = require(script.Parent:WaitForChild("S1CanonicalRoundHost"))
 local BossBinding = require(script.Parent:WaitForChild("S1GoroganLiveBindings"))
@@ -38,10 +39,17 @@ local teamInstances = {
     BLUE = setupTeam("BLUE", Config.TeamColors.BLUE),
 }
 local map = MapBuilder.build(Config)
+local trapFolder = Instance.new("Folder")
+trapFolder.Name = "S1_GUARDIAN_TRAPS"
+trapFolder.Parent = map.model
 local roles: {[Player]: string} = {}
 local lastSeq: {[Player]: number} = {}
 local lastAttack: {[Player]: number} = {}
 local lastRoleChange: {[Player]: number} = {}
+local lastTrap: {[Player]: number} = {}
+local slowed: {[Player]: any} = {}
+local traps: {any} = {}
+local trapSerial = 0
 local invulnUntil: {[Player]: number} = {}
 local carry: {[Player]: string} = {}
 local carryVisuals: {[Player]: Instance} = {}
@@ -126,6 +134,124 @@ local function giveEggVisual(player: Player)
     txt.Parent = b
     carryVisuals[player] = b
 end
+-- Guardian traps stay inside the EXISTING Game.server round/combat authority.
+-- No second Remote, scheduler, damage owner, client position or monetization.
+local function restoreSlow(player: Player)
+    local record = slowed[player]
+    slowed[player] = nil
+    if record and record.hum and record.hum.Parent and record.hum.Health > 0 then
+        record.hum.WalkSpeed = Config.RoleWalkSpeed[roles[player] or "RAIDER"]
+    end
+end
+local function clearTraps()
+    for _, rec in ipairs(traps) do
+        if rec.part then rec.part:Destroy() end
+    end
+    table.clear(traps)
+    for player, _ in pairs(slowed) do restoreSlow(player) end
+end
+local function countTraps(team: string): number
+    local count = 0
+    for _, rec in ipairs(traps) do
+        if rec.team == team then count += 1 end
+    end
+    return count
+end
+local function placeTrap(player: Player, data)
+    if type(data) ~= "table" or data.action ~= "PLACE_TRAP" then return end
+    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end
+    lastSeq[player] = data.seq -- consume even invalid intent, same server authority as ATTACK
+    local team = getTeamName(player)
+    local alive, root = healthy(player)
+    if not alive or not root or (team ~= "RED" and team ~= "BLUE") then return end
+    local now = serverNow()
+    local side = map.teams[team]
+    local avoid = {}
+    for _, pt in ipairs({side.egg.Position, side.scorePad.Position,
+        side.core.Position, side.spawn.Position}) do
+        table.insert(avoid, {x = pt.X, z = pt.Z})
+    end
+    if not TrapRules.canPlace({
+        phase = match.phase, team = team, role = roles[player] or "RAIDER",
+        alive = alive, carrying = carry[player] ~= nil,
+        now = now, lastAt = lastTrap[player] or -math.huge,
+        x = root.Position.X, y = root.Position.Y, z = root.Position.Z,
+        count = countTraps(team), avoid = avoid,
+    }) then return end
+    lastTrap[player] = now
+    trapSerial += 1
+    local disc = Instance.new("Part")
+    disc.Name = "S1_VISIBLE_TRAP_" .. team .. "_" .. tostring(trapSerial)
+    disc.Anchored = true
+    disc.CanCollide = false
+    disc.CanTouch = false
+    disc.CanQuery = false -- traps never obstruct melee raycast or castle aim
+    disc.Size = Vector3.new(9, 0.25, 9)
+    disc.Position = Vector3.new(root.Position.X, -0.72, root.Position.Z)
+    disc.Material = Enum.Material.Neon
+    disc.Color = Config.TeamColors[team]
+    disc.Transparency = 0.18
+    disc.Parent = trapFolder
+    local label = Instance.new("BillboardGui")
+    label.Size = UDim2.fromOffset(160, 48)
+    label.StudsOffsetWorldSpace = Vector3.new(0, 2, 0)
+    label.AlwaysOnTop = true
+    label.Parent = disc
+    local text = Instance.new("TextLabel")
+    text.Size = UDim2.fromScale(1, 1)
+    text.BackgroundTransparency = 0.25
+    text.TextScaled = true
+    text.Text = "🪤 ふむとスロー！　ジャンプで回避"
+    text.TextColor3 = Color3.new(1, 1, 1)
+    text.Parent = label
+    table.insert(traps, {team = team, owner = player,
+        x = root.Position.X, z = root.Position.Z,
+        expiresAt = now + TrapRules.LIFETIME, part = disc})
+    -- Existing authoritative tick broadcasts the next snapshot.
+end
+local function tickTraps(now: number)
+    for player, record in pairs(slowed) do
+        local alive, _, hum = healthy(player)
+        if not alive or hum ~= record.hum or now >= record.untilAt then
+            restoreSlow(player)
+        end
+    end
+    for i = #traps, 1, -1 do
+        local rec = traps[i]
+        local triggered: Player? = nil
+        if match.phase == "ACTIVE" and now < rec.expiresAt then
+            for _, player in ipairs(Players:GetPlayers()) do
+                local team = getTeamName(player)
+                local alive, root, hum = healthy(player)
+                if alive and root and hum and TrapRules.shouldTrigger({
+                    phase = match.phase, healthy = alive,
+                    trapTeam = rec.team, enemyTeam = team,
+                    invulnerable = now < (invulnUntil[player] or 0),
+                    now = now, expiresAt = rec.expiresAt,
+                    x = rec.x, z = rec.z,
+                    enemyX = root.Position.X, enemyY = root.Position.Y,
+                    enemyZ = root.Position.Z,
+                }) then
+                    local slow = TrapRules.slowSpeed(Config.RoleWalkSpeed[roles[player] or "RAIDER"])
+                    if slow then
+                        local current = slowed[player]
+                        slowed[player] = {hum = hum,
+                            untilAt = math.max(now + TrapRules.SLOW_SECONDS,
+                                if current then current.untilAt else 0)}
+                        hum.WalkSpeed = slow
+                        triggered = player
+                        break
+                    end
+                end
+            end
+        end
+        if triggered or now >= rec.expiresAt or match.phase ~= "ACTIVE" then
+            rec.part:Destroy()
+            table.remove(traps, i)
+        end
+    end
+end
+
 local function snapshotFor(player: Player)
     local now = serverNow()
     local seconds = 0
@@ -144,6 +270,9 @@ local function snapshotFor(player: Player)
         reason = match.reason, alarm = match.alarm,
         alarmTime = math.max(0, math.ceil(match.alarmUntil - now)),
         redPlayers = teamCount("RED"), bluePlayers = teamCount("BLUE"),
+        trapCooldown = math.max(0, math.ceil((lastTrap[player] or -math.huge)
+            + TrapRules.COOLDOWN - now)),
+        trapRole = (roles[player] or "RAIDER") == "GUARDIAN",
     }
 end
 local function broadcast()
@@ -271,11 +400,13 @@ local function stopRound(winner: string, reason: string)
     match.alarm = "IDLE"
     match.alarmUntil = 0
     setObjectiveEnabled(false)
+    clearTraps()
     for _, p in ipairs(Players:GetPlayers()) do dropEgg(p) end
     broadcast()
 end
 local function resetRound()
     stopCanonical("ROUND_RESET")
+    clearTraps()
     match.serial += 1
     match.phase = "ACTIVE"
     match.startedAt = serverNow()
@@ -290,6 +421,7 @@ local function resetRound()
     for _, p in ipairs(Players:GetPlayers()) do
         dropEgg(p)
         lastAttack[p] = -math.huge
+        lastTrap[p] = -math.huge
         -- Player seq stays monotonic across round transitions; never rewind replay ceiling.
         p:LoadCharacter()
     end
@@ -346,6 +478,7 @@ local function assignSpawn(player: Player, character: Model)
         hum.WalkSpeed = Config.RoleWalkSpeed[role]
         invulnUntil[player] = serverNow() + Config.RespawnInvulnerability
         hum.Died:Connect(function()
+            restoreSlow(player)
             dropEgg(player)
             invulnUntil[player] = 0
         end)
@@ -462,6 +595,7 @@ remote.OnServerEvent:Connect(function(player: Player, data)
     if type(data) ~= "table" then return end
     if data.action == "ATTACK" then applyAttack(player, data)
     elseif data.action == "ROLE" then applyRole(player, data)
+    elseif data.action == "PLACE_TRAP" then placeTrap(player, data)
     end
 end)
 
@@ -471,6 +605,7 @@ local function onJoin(player: Player)
     lastSeq[player] = 0
     lastAttack[player] = -math.huge
     lastRoleChange[player] = -math.huge
+    lastTrap[player] = -math.huge
     invulnUntil[player] = 0
     player.CharacterAdded:Connect(function(character)
         dropEgg(player)
@@ -484,10 +619,18 @@ for _, player in ipairs(Players:GetPlayers()) do onJoin(player) end
 Players.PlayerRemoving:Connect(function(player)
     local side = getTeamName(player)
     dropEgg(player)
+    restoreSlow(player)
+    for i = #traps, 1, -1 do
+        if traps[i].owner == player then
+            traps[i].part:Destroy()
+            table.remove(traps, i)
+        end
+    end
     roles[player] = nil
     lastSeq[player] = nil
     lastAttack[player] = nil
     lastRoleChange[player] = nil
+    lastTrap[player] = nil
     invulnUntil[player] = nil
     if match.phase == "ACTIVE" and side ~= "NONE" then
         local surviving = Rules.opponent(side)
@@ -497,6 +640,7 @@ end)
 
 local function tickRound()
     local now = serverNow()
+    tickTraps(now)
     local count = #Players:GetPlayers()
     if match.phase == "LOBBY" then
         rebalanceLobbyTeams()

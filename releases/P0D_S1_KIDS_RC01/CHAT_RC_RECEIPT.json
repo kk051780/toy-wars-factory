@@ -1,5 +1,5 @@
 {
-  "format": "P0D_CHAT_RC_SOURCE_IMPORT_RECEIPT_V4",
+  "format": "P0D_CHAT_RC_SOURCE_IMPORT_RECEIPT_V6",
   "game_id": "TRAP_RAIDERS",
   "work_id": "p0d-siege-v19",
   "release_id": "P0D-S1-KIDS-RC01",
@@ -7,20 +7,20 @@
   "previous_rc_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
   "import_commit": "17ffd5c28bf15aeefa5f524291534f064f74029f",
   "candidate_source_commit": "b103389e2089f9ff5a08984fe2f8f6f02aa8b1bc",
-  "src_subtree_sha": "01aede07b64973a32ba02647c10a9e8b8f8c3285",
+  "src_subtree_sha": "11f5828763122bd9facf78817a419fffe5516434",
   "declared_original_candidate_source_files": 30,
-  "source_luau_count": 20,
-  "source_origins": "Initial 20 identical Luau candidate import then one HUD-only verified replacement; final current 20 Luau blobs all equal 33-file native-tested candidate",
+  "source_luau_count": 21,
+  "source_origins": "Initial 20 identical Luau candidate import then one HUD-only verified replacement; final current 20 Luau blobs all equal 33-file native-tested candidate; V6 Guardian trap by exclusive integrator, Game+HUD+Config modified and 1 new original pure TrapRules, unchanged boss",
   "source_adoption": "IN_RC_TREE_CONFIRMED_BY_GIT_TREE_SHA",
-  "source_review": "Original 30/30 immutable candidate source audit; latest HUD native tested; final manifest exact Git tree/source hashes require independent RC QA",
-  "official_20_file_native": "EXACT_LUAU_BLOBS_MATCH_UPSTREAM_NATIVE_PASS__OFFICIAL_RC_STUDIO_NOT_TESTED",
-  "independent_actual_RC_QA": "NOT_TESTED",
+  "source_review": "Original 30/30 immutable candidate source audit; latest HUD native tested; final manifest exact Git tree/source hashes require independent RC QA; V6 stage actual native20->21 compile, Game67, rules29, mutants8 PASS but FINAL RC independent/Studio NOT_TESTED",
+  "official_20_file_native": "SUPERSEDED_21_SOURCES_NATIVE_RETEST_REQUIRED",
+  "independent_actual_RC_QA": "PREVIOUS_V5_PASS__V6_PENDING",
   "roblox_studio_2client_mobile": "NOT_TESTED",
   "boss_release_flags": "BOTH_FALSE_IN_GAME_SOURCE",
   "physical_damage_qa": "NOT_TESTED",
   "owner_public_release_approved": false,
   "owner_pc_place_equivalent": false,
-  "game_release_progress_pct": "CHECK_LATEST_220_AUDIT",
+  "game_release_progress_pct": "75_PREVIOUS_AUDIT_NOT_YET_REAPPROVED_FOR_V6",
   "notes": "Receipt is a source import provenance, not an execution/build/studio attestation.",
   "selected_client_result_hud": {
     "source_commit": "0ca2b7ea9f29aa79727b2e7e53a01af093df5b90",
@@ -34,5 +34,17 @@
     "native_compiler": "20/20",
     "python": "88/88",
     "result_semantics": "15/15 with 2 negative controls"
+  },
+  "guardian_trap_stage": {
+    "stage_code_commit": "e60c9668de9f5c758f5cf0429df944fc32b2bb16",
+    "game_blob": "7c5229f600f17537bc1bbbb0b96b6a2435875374",
+    "traprules_blob": "feabd705e4cfa5483d440e506277080f226343ef",
+    "hud_blob": "ee594fbc34e6bf938518fae32c0642c852f11f9e",
+    "config_blob": "62023303118454fa395f6bfce4c3a50552f840da",
+    "native_stage": "COMPLETED_SUCCESS_21_LUAU_29_RULES_67_GAME_8_NEGATIVE",
+    "actual_studio": "NOT_TESTED",
+    "boss_enabled": false,
+    "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43115707875",
+    "final_studio": "NOT_TESTED"
   }
 }

@@ -67,10 +67,13 @@ local status = label(gui, "Status", UDim2.new(.76, 0, 0, 34), UDim2.new(.12, 0, 
     Color3.fromRGB(255, 232, 135), 14)
 status.Text = "2人そろうと開始。卵を奪って自陣の納品台へ！"
 local instructions = label(gui, "Instructions", UDim2.new(.55, 0, 0, 42),
-    UDim2.new(.12, 0, 1, -58), Color3.fromRGB(231, 240, 255), 13)
+    UDim2.new(.2, 0, 1, -58), Color3.fromRGB(231, 240, 255), 13)
 instructions.Text = "敵の卵に近づいてE／タップで奪取 → 自陣の台へ。城を攻撃しても勝てる！"
 local attack = button(gui, "Attack", "⚔ 攻撃\nFキー", UDim2.fromOffset(126, 88),
     UDim2.new(1, -140, 1, -16), Color3.fromRGB(211, 75, 72))
+local trapButton = button(gui, "GuardianTrap", "🪤 罠設置\nTキー",
+    UDim2.fromOffset(110, 74), UDim2.new(.02, 0, 1, -16), Color3.fromRGB(168, 105, 56))
+trapButton.Visible = false
 local roleRaider = button(gui, "RaiderRole", "🏃 速攻", UDim2.fromOffset(92, 53),
     UDim2.new(.02, 0, 1, -64), Color3.fromRGB(59, 128, 208))
 local roleGuardian = button(gui, "GuardianRole", "🛡 守護", UDim2.fromOffset(92, 53),
@@ -85,11 +88,13 @@ local function action(kind: string, role: string?)
     remote:FireServer({action = kind, role = role, seq = seq})
 end
 attack.MouseButton1Click:Connect(function() action("ATTACK", nil) end)
+trapButton.MouseButton1Click:Connect(function() action("PLACE_TRAP", nil) end)
 roleRaider.MouseButton1Click:Connect(function() action("ROLE", "RAIDER") end)
 roleGuardian.MouseButton1Click:Connect(function() action("ROLE", "GUARDIAN") end)
 UserInputService.InputBegan:Connect(function(input, processed)
     if processed then return end
-    if input.KeyCode == Enum.KeyCode.F then action("ATTACK", nil) end
+    if input.KeyCode == Enum.KeyCode.F then action("ATTACK", nil)
+    elseif input.KeyCode == Enum.KeyCode.T then action("PLACE_TRAP", nil) end
 end)
 
 local function displayRole(role: string): string
@@ -181,4 +186,9 @@ remote.OnClientEvent:Connect(function(s)
     roleRaider.Visible = s.phase ~= "ACTIVE"
     roleGuardian.Visible = s.phase ~= "ACTIVE"
     attack.Visible = s.phase == "ACTIVE"
+    trapButton.Visible = s.phase == "ACTIVE" and s.role == "GUARDIAN"
+    local trapCooldown = if type(s.trapCooldown) == "number" and s.trapCooldown > 0
+        then math.ceil(s.trapCooldown) else 0
+    trapButton.Text = if trapCooldown > 0 then ("🪤 あと " .. tostring(trapCooldown) .. "秒")
+        else "🪤 罠設置\nTキー"
 end)

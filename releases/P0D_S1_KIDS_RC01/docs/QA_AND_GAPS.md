@@ -21,3 +21,10 @@ No confirmed public users, D1/D7, payer conversion or net income. No native Stud
 
 ## HUD-only V5 overlay additional evidence
 The sole RC writer has selected exact HUD blob 458a23e83d261c51b3bec174e36e183960532f8c from native-tested full-game candidate `0ca2b7ea9f29aa79727b2e7e53a01af093df5b90`. The whole official `src/` Luau tree after this single-file patch is `01aede07b64973a32ba02647c10a9e8b8f8c3285`, exactly identical to source CI `https://github.com/kk051780/toy-wars-factory/actions/runs/43105877169` (20/20 official Luau compiler, original 88/88 Python plus 15/15 result semantic native, 2 rejected negative controls). No server/Remote/gameplay authority modified. Actual official release tree still needs independent specific-SHA QA and Roblox Studio/2client/mobile/real boss attack; both canonical boss flags stay OFF.
+
+## Guardian trap V6 release review (source-only)
+
+- Exactly one new server-only `S1TrapRules.luau`, existing single Game/Remote owns deployment and slow, existing HUD adds Guardian-only touch/T button. Config only has a comment (not damage or competitive multiplier). Client no trap position/hit/damage.
+- Prevent spam and exploit: shared ascending seq, active/alive/Guardian/no carried egg, 20s cooldown, <=2 active per team, only own half, 15-stud safety clearance from egg/core/score/spawn, no client-selected placement. Traps visible on BOTH teams, 25s expiry, 5-stud trigger, jump dodge, 3s slow then base movement restored.
+- Validate immediately in real native Luau whole Game on MOCK services, plus true 21-file compiler. Then independent exact official RC source/negative tests and genuine Rojo build. These source/mocks are **NOT** Studio physics or actual mobile evidence.
+- Final Studio: two players with Guardian and Raider in BOTH teams, trap visibility and impossible enemy-half placement, jump avoids, one trigger/no duplicate slow, no role-based attack damage inflation, trap clears on victory/disconnect/death/round, mobile UI not overlapping other guide, touch and T same action; minimum FPS and normal Studio close. D07/D08 still OFF, no public release without owner decision.

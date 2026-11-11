@@ -54,6 +54,21 @@ class SourceContract(unittest.TestCase):
     def test_no_public_secret(self):
         for f in ROOT.rglob('*.luau'):
             self.assertNotRegex(f.read_text(),r'(?i)(secret[_-]?key\s*=|private[_-]?key\s*=|token\s*=\s*"[A-Za-z0-9]{28})')
+    def test_single_server_guardian_trap_authority(self):
+        trap=(ROOT/"src/server/S1TrapRules.luau").read_text()
+        self.assertIn('elseif data.action == "PLACE_TRAP" then placeTrap(player, data)',self.server)
+        self.assertEqual(self.server.count("OnServerEvent:Connect"),1)
+        self.assertIn("TrapRules.canPlace",self.server)
+        self.assertIn("TrapRules.shouldTrigger",self.server)
+        self.assertIn('role ~= "GUARDIAN"',trap)
+        self.assertIn("slowSpeed",trap)
+        self.assertNotIn("FireServer",trap)
+        self.assertNotIn("RemoteEvent",trap)
+        self.assertNotIn("DataStoreService",trap)
+    def test_mobile_guardian_trap_intent_no_coordinates(self):
+        self.assertIn('action("PLACE_TRAP", nil)',self.client)
+        self.assertIn("Enum.KeyCode.T",self.client)
+        self.assertNotIn("Vector3.new",self.client)
     def test_no_roblox_live_publish(self):self.assertNotIn('Publish',self.server)
     def test_rojo_file_suffixes(self):self.assertTrue((ROOT/'src/server/Game.server.luau').is_file() and (ROOT/'src/client/HUD.client.luau').is_file())
 

@@ -1,13 +1,13 @@
 {
-  "format": "P0D_S1_SOURCE_LOCK_V4",
+  "format": "P0D_S1_SOURCE_LOCK_V6",
   "game_id": "TRAP_RAIDERS",
   "work_id": "p0d-siege-v19",
   "release_id": "P0D-S1-KIDS-RC01",
   "prior_official_rc_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
   "source_candidate_fixed_sha": "b103389e2089f9ff5a08984fe2f8f6f02aa8b1bc",
   "source_import_commit": "17ffd5c28bf15aeefa5f524291534f064f74029f",
-  "source_git_tree_sha": "01aede07b64973a32ba02647c10a9e8b8f8c3285",
-  "source_lock_provenance": "19 of 20 Luau Git blobs exact original 30 source, 1 original HUD results-only patch exact from 33-file native-tested composite, Rojo unchanged; all current Luau src tree identical composite",
+  "source_git_tree_sha": "11f5828763122bd9facf78817a419fffe5516434",
+  "source_lock_provenance": "P0D S1 V6 extends original verified v5 source with one new pure original S1TrapRules ModuleScript and server+client+config Guardian-trap source changes from sole owner staging e60c9668; old boss original modules unchanged, D07_D08 OFF.",
   "current_official_stage": "CHAT_ASSEMBLED_SOURCE_LOCKED__STUDIO_NOT_TESTED",
   "single_authorities": {
     "round": "src/server/Game.server.luau",
@@ -27,13 +27,22 @@
     "actual_upstream_source_full_hash": "PASS_30_OF_30",
     "actual_ours_rc_full_hash": "PENDING",
     "upstream_28_luau": "PARTIAL_PASS",
-    "this_rc_20_luau": "SOURCE_BLOB_EQUIVALENT_TO_NATIVE_PASS_NOT_ENGINE",
-    "this_rc_dynamic_trace": "NOT_VERIFIED",
+    "this_rc_20_luau": "SUPERSEDED_BY_V6_NEEDS_21_NEW_SOURCES",
+    "this_rc_dynamic_trace": "PRIOR_V5_EXACT_SOURCE_ONLY__V6_NEW_QA_PENDING",
     "studio_2client": "NOT_TESTED",
     "owner_release": "NOT_AUTHORIZED",
     "upstream_full20_luau": "PASS_GITHUB_ACTIONS_43105877169_ON_EXACT_SOURCE_EQUIVALENT_CANDIDATE"
   },
   "owner_pc_source_current": "UNKNOWN_NOT_AVAILABLE__DO_NOT_OVERWRITE",
   "selected_result_hud_composite_commit": "0ca2b7ea9f29aa79727b2e7e53a01af093df5b90",
-  "selected_result_hud_blob_sha1": "458a23e83d261c51b3bec174e36e183960532f8c"
+  "selected_result_hud_blob_sha1": "458a23e83d261c51b3bec174e36e183960532f8c",
+  "guardian_trap": {
+    "source_stage_commit": "e60c9668de9f5c758f5cf0429df944fc32b2bb16",
+    "new_rule_module": "src/server/S1TrapRules.luau",
+    "round_damage_remote_owner": "src/server/Game.server.luau",
+    "new_remote_created": false,
+    "owner_half_only": true,
+    "live_engine": "NOT_TESTED",
+    "pending_independent_qa": true
+  }
 }

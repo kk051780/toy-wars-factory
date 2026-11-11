@@ -2,12 +2,12 @@
   "game_id": "TRAP_RAIDERS",
   "work_id": "p0d-siege-v19",
   "release_id": "P0D-S1-KIDS-RC01",
-  "status_schema": "P0D_RC_SOURCE_V4",
-  "phase": "CHAT_ASSEMBLED_SOURCE_LOCKED__CHAT_QA_PENDING",
+  "status_schema": "P0D_RC_SOURCE_V6",
+  "phase": "CHAT_ASSEMBLED__S1_GUARDIAN_TRAP_NATIVE_PASS__NEW_RC_QA_PENDING",
   "source_import_commit": "17ffd5c28bf15aeefa5f524291534f064f74029f",
   "source_candidate_fixed_commit": "b103389e2089f9ff5a08984fe2f8f6f02aa8b1bc",
   "original_rc_baseline_sha": "35d7d0525388e885aac8281eff2315a59831e0cf",
-  "game_source_luau_files": 20,
+  "game_source_luau_files": 21,
   "gameplay_source_present": [
     "team_spawn",
     "two_team_egg_capture",
@@ -16,14 +16,15 @@
     "win_result_rematch",
     "lobby_team_recovery",
     "first_minute_ux",
-    "D07_D08_MODULES_IN_TREE_DISABLED"
+    "D07_D08_MODULES_IN_TREE_DISABLED",
+    "S1_GUARDIAN_AUTH_TRAP_SLOW_OWN_HALF"
   ],
   "boss_activation_flags": {
     "CANONICAL_S1_ENABLED": false,
     "D07_D08_RELEASE_REVIEW_APPROVED": false
   },
-  "independent_qa": "PARTIAL_UPSTREAM_CANDIDATE_ONLY__FINAL_RC_NOT_TESTED",
-  "full_source_native_luau": "NOT_VERIFIED_CURRENT_RC",
+  "independent_qa": "PRIOR_RC_INDEPENDENT_PASS__NEW_TRAP_ACTUAL_RC_UNVERIFIED",
+  "full_source_native_luau": "STAGE_SOURCE_EXACT_21_OF_21_LUAU_NATIVE_COMPILER_PASS_NOT_ROBLOX_ENGINE",
   "roblox_studio_2client": "NOT_TESTED_CURRENT_RC",
   "physical_mobile": "NOT_TESTED_CURRENT_RC",
   "latest_owner_windows_pc_source_equivalence": "UNKNOWN_NOT_ASSERTED",
@@ -38,11 +39,26 @@
   ],
   "protected_main_unchanged": true,
   "owner_codex_per_pack_requested": false,
-  "next_acceptance": "Independent QA on exact official RC SHA and 20 source+manifest / dynamic trace, then OWNER direct Windows Studio",
+  "next_acceptance": "Independent exact final new RC 37/37 SHA manifest, 21 native Luau, 21 module Rojo .rbxlx, after that OWNER direct final Windows Studio 2client/mobile/trap/boss-scope",
   "source_hud_overlay_commit": "0ca2b7ea9f29aa79727b2e7e53a01af093df5b90",
-  "source_git_tree_sha": "01aede07b64973a32ba02647c10a9e8b8f8c3285",
-  "native_luau_status": "UPSTREAM_EXACT_20_LUAU_CANDIDATE_NATIVE_COMPILE_PASS__ACTUAL_RC_ENGINE_NOT_TESTED",
+  "source_git_tree_sha": "11f5828763122bd9facf78817a419fffe5516434",
+  "native_luau_status": "STAGE_REAL_GAME67_RULES29_MUTATION8_ACTUAL_CI_SUCCESS_NOT_STUDIO",
   "native_ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43105877169",
   "source_original_luau_files_unchanged": 19,
-  "client_hud_source_updated_exact": true
+  "client_hud_source_updated_exact": true,
+  "gameplay_trap": {
+    "guardian_only": true,
+    "server_owned": true,
+    "active_half": "OWN",
+    "cooldown_s": 20,
+    "lifetime_s": 25,
+    "slow_s": 3,
+    "slow_factor": 0.55,
+    "bonus_damage": 0,
+    "max_per_team": 2,
+    "physical_real_studio": "NOT_TESTED"
+  },
+  "source_only_stage_commit": "e60c9668de9f5c758f5cf0429df944fc32b2bb16",
+  "guardian_trap_ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43115707875",
+  "guardian_trap_ci_head": "2502ab1cda5a2f0d355968b567148714dd605c61"
 }
