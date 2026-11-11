@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 from verify_wf13_rojo_xml import IntegrityError, prop, verify
 
+@unittest.skipUnless(os.environ.get("WF13_REAL_ROJO_PLACE"), "requires actually built Rojo XML")
 class WF13RealXMLTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
