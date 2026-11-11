@@ -1,0 +1,65 @@
+name: P0D S1 exact actual Game plus MapBuilder native Luau integration
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-real-game-map-native-20261112-05
+permissions:
+  contents: read
+jobs:
+  real-mapbuilder-native-qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout isolated QA with official RC source Git history
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify exact official source and keyless QA manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '5dc6c958ea5549b1e859d6d250e6179e731181fb^{commit}'
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          root=Path("handoffs/P0D-S1-REAL-GAME-MAP-NATIVE-20261112-05")
+          m=json.loads((root/"BUILD_MANIFEST.json").read_bytes())
+          assert set(m)=={"files","format","game_id","packet_id","public_source_allowed","work_id"}
+          assert m["format"]=="P0D_PUBLIC_SOURCE_V1" and m["public_source_allowed"] is True
+          assert len(m["files"])==2
+          for f in m["files"]:
+            assert set(f)=={"path","size","sha256"}
+            p=root/f["path"]
+            assert p.is_file() and not p.is_symlink()
+            data=p.read_bytes()
+            assert len(data)==f["size"] and hashlib.sha256(data).hexdigest()==f["sha256"]
+          print("P0D_GAME_MAP_KEYLESS_SOURCE_MANIFEST_2_OF_2_PASS")
+          PY
+      - name: Checkout exact official upstream Luau compiler and interpreter sources
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _map_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build real native Luau CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _map_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _map_luau -B /tmp/p0d-native-real-game-map -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d-native-real-game-map --target Luau.Repl.CLI --parallel 4
+      - name: Execute real five original native Luau Game and Map modules with seven source mutation controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-S1-REAL-GAME-MAP-NATIVE-20261112-05/tools/run_original_game_and_map.py \
+            --repo . --luau /tmp/p0d-native-real-game-map/luau
+      - name: Ensure tracked sources are unmodified
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
