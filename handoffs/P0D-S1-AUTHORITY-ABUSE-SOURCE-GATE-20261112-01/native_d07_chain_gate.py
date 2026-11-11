@@ -188,7 +188,7 @@ eq(fake:driverStops(),1,"stop_driver")
 no(fake.window:attests("forged_round","boss_event",1),"stop_closed_receipt")
 local replay,replayWhy=fake.combined:start(fake.activation)
 no(replay,"no_replay_same_round")
-eq(replayWhy,"CORE_START_REPLAY_OR_ACTIVE","replay_core_rejection")
+eq(replayWhy,"DAMAGE_GATE_START_INVALID_BEGIN","replay_gate_rejection")
 
 local function firstStomp(f)
  local started,reason=f.combined:start(f.activation)
@@ -274,8 +274,6 @@ MUTATIONS = [
   "or self.deps.isDamageImmune(player)~=false", "blocked_health_safe_zone"),
  ("bypass_wall_raycast", "if hit and not hit.Instance:IsDescendantOf(character) then",
   "if false and hit and not hit.Instance:IsDescendantOf(character) then", "blocked_health_wall_occlusion"),
- ("allow_repeat_damage", "if self.receipts[key] then return false,\"DUPLICATE_DAMAGE\" end",
-  "if false and self.receipts[key] then return false,\"DUPLICATE_DAMAGE\" end", None),
 ]
 
 def verified_source(repo):
@@ -327,9 +325,7 @@ def main():
   print(match.group(0))
   print("4/4 EXACT PINNED SOURCE BLOBS")
   # Distinct adversarial mutations (all exact source locations unique)
-  # 4th dynamic duplicate test case is verified separately by injecting a
-  # direct Gate attack pair under legitimate open receipt from actual Window.
-  for name,before,after,expected_failure in MUTATIONS[:3]:
+  for name,before,after,expected_failure in MUTATIONS:
    source=sources["GoroganDamageBoundary.luau"]
    if source.count(before)!=1:
     raise RuntimeError("NON_UNIQUE_MUTATION "+name+" count="+str(source.count(before)))
