@@ -1,0 +1,88 @@
+{
+  "archetypes": {
+    "CREATURE_GEAR": {
+      "category": "BE",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "gear_shell",
+        "monocle",
+        "boot_gear"
+      ]
+    },
+    "SPELL_HEX_GATE": {
+      "category": "SP",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "crystal_hex",
+        "open_door",
+        "crystal_crack"
+      ]
+    },
+    "TRAP_BUD_SPRING": {
+      "category": "TR",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "two_leaves",
+        "wood_button",
+        "bent_tip"
+      ]
+    },
+    "VEHICLE_ASYMMETRIC_AERIAL": {
+      "category": "VE",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "one_wing_vane",
+        "down_telescope",
+        "triangle_stage"
+      ]
+    },
+    "WEAPON_DOUBLE_CONCH": {
+      "category": "WE",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "twin_conch",
+        "one_pearl",
+        "shell_crack"
+      ]
+    },
+    "ZOMBIE_GUIDE_MISMATCH": {
+      "category": "ZO",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "wrong_arrow_hat",
+        "oversized_boot",
+        "chest_bell"
+      ]
+    }
+  },
+  "authoring_policy": "Original manually authored signatures required; no duplicate vanilla procedural clones.",
+  "required_field_per_part": [
+    "name",
+    "position",
+    "size",
+    "rotation",
+    "shape",
+    "color",
+    "far",
+    "signature_tag",
+    "group"
+  ],
+  "schema": "P0D_D18_ARCHETYPE_RULES_V1",
+  "shape_enum": [
+    "Ball",
+    "Block",
+    "Cylinder"
+  ]
+}
