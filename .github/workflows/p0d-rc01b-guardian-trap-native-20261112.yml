@@ -1,0 +1,92 @@
+name: P0D S1 Guardian Trap actual source + native Game controller QA
+on:
+  push:
+    branches:
+      - stage/p0d-s1-guardian-trap-rc01b-20261112
+permissions:
+  contents: read
+jobs:
+  source-and-native-guardian-trap:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      GAME_ROOT: releases/P0D_S1_KIDS_RC01
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Checkout exact isolated stage source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Assert isolated changes and unmodified boss enable flags
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 5dc6c958ea5549b1e859d6d250e6179e731181fb HEAD
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("releases/P0D_S1_KIDS_RC01/src/server/Game.server.luau").read_text()
+          assert "local CANONICAL_S1_ENABLED = false" in p
+          assert "local D07_D08_RELEASE_REVIEW_APPROVED = false" in p
+          assert p.count("OnServerEvent:Connect")==1
+          print("P0D_GUARDIAN_TRAP_SINGLE_OWNER_BOSS_OFF_SOURCE_PASS")
+          PY
+      - name: Run real game Python tests and added trap contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s "$GAME_ROOT/tests" -p 'test*.py' -v
+      - name: Checkout exact pinned native Luau compiler + interpreter
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _third_party_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build native Luau CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _third_party_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _third_party_luau -B /tmp/p0d-native-guardian-trap -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d-native-guardian-trap --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Native compile every real game Luau source plus reject bad syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess,tempfile
+          root=Path("releases/P0D_S1_KIDS_RC01/src")
+          src=sorted(root.rglob("*.luau"))
+          assert len(src)==21,f"expected 21 got {len(src)}"
+          compiler="/tmp/p0d-native-guardian-trap/luau-compile"
+          with tempfile.TemporaryDirectory() as tmp:
+              good=Path(tmp)/"good.luau";bad=Path(tmp)/"bad.luau"
+              good.write_text("local x: number=1\nreturn x\n")
+              bad.write_text("local function bad( end")
+              assert subprocess.run([compiler,"-O0",str(good)],stdout=subprocess.DEVNULL,stderr=subprocess.PIPE).returncode==0
+              assert subprocess.run([compiler,"-O0",str(bad)],stdout=subprocess.DEVNULL,stderr=subprocess.PIPE).returncode!=0
+          for i,p in enumerate(src,1):
+              x=subprocess.run([compiler,"-O0",str(p)],stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
+              assert x.returncode==0, f"Luau parse error {p}: {x.stderr[-1200:]!r}"
+              print(f"P0D_REAL_TRAP_GAME_NATIVE_COMPILE_PASS {i}/21 {p.relative_to(root)}",flush=True)
+          print("P0D_REAL_TRAP_GAME_NATIVE_COMPILE_ALL_21_NEGATIVE_1_PASS")
+          PY
+      - name: Execute exact S1TrapRules with 29 numeric assertions and 3 mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$GAME_ROOT/tools/verify_guardian_trap_native.py" --luau /tmp/p0d-native-guardian-trap/luau
+      - name: Execute actual Game.server controller with trap in mocked Roblox services
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$GAME_ROOT/tools/native_game_trap_integration.py" --repo . --luau /tmp/p0d-native-guardian-trap/luau
+      - name: Keep all checked-out source unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
+          echo "P0D_STUDIO_NOT_TESTED_TRAP_NATIVE_SOURCE_ONLY"
