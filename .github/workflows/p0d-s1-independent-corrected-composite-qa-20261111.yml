@@ -1,0 +1,39 @@
+name: P0D S1 independent corrected composite actual source QA
+
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-independent-corrected-composite-ci-20261111-01
+
+permissions:
+  contents: read
+
+jobs:
+  independent-readonly-composite-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Checkout only the isolated QA candidate
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Verify exact corrected composite parent SHA
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD^)" = "ff291d7a5e6dc53e841552d1abc3cbdf9a805f48"
+          test "$(git branch --show-current)" = "handoff/p0d-s1-independent-corrected-composite-ci-20261111-01"
+      - name: Install fixed Python runtime without package dependencies
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Execute independent original source snapshot and real Python assembly
+        shell: bash
+        run: |
+          python3 handoffs/P0D-S1-INDEPENDENT-CORRECTED-COMPOSITE-QA-20261111-01/tools/run_independent_composite_qa.py
+      - name: Confirm no permanent local source modifications
+        shell: bash
+        run: |
+          test -z "$(git status --porcelain)"
