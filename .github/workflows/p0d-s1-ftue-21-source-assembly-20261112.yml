@@ -1,0 +1,67 @@
+name: P0D S1 original FTUE 21 source Python Chat build and canonical SHA
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-ftue-on-d07d08-spatial-lobby-20261112-01
+    paths:
+      - .github/workflows/p0d-s1-ftue-21-source-assembly-20261112.yml
+permissions:
+  contents: read
+jobs:
+  source-only-ftue-assembly:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Read-only source checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check strict 30-file source manifest via official public pack tool
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py verify \
+            --root handoffs/P0D-S1-FTUE-ON-D07D08-SPATIAL-LOBBY-20261112-01/candidate \
+            --packet-id P0D-S1-FTUE-D07D08-SPATIAL-LOBBY-20261112-01
+      - name: Run real source-only 21-unit Chat assembler and exact receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_S1_SOURCE_PLAN_SNAPSHOT_20261111_01/tools/chat_rc_assemble.py \
+            --plan handoffs/P0D-S1-FTUE-ON-D07D08-SPATIAL-LOBBY-20261112-01/SOURCE_PLAN_FTUE.json \
+            --source-root handoffs/P0D-S1-FTUE-ON-D07D08-SPATIAL-LOBBY-20261112-01/candidate \
+            --out /tmp/p0d_s1_ftue_original_21_source_assembly
+          python3 - <<'PY'
+          import pathlib,hashlib,json,base64
+          source=pathlib.Path('handoffs/P0D-S1-FTUE-ON-D07D08-SPATIAL-LOBBY-20261112-01/candidate')
+          out=pathlib.Path('/tmp/p0d_s1_ftue_original_21_source_assembly')
+          plan=pathlib.Path('handoffs/P0D-S1-FTUE-ON-D07D08-SPATIAL-LOBBY-20261112-01/SOURCE_PLAN_FTUE.json')
+          raw=(out/'CHAT_RC_RECEIPT.json').read_bytes()
+          receipt=json.loads(raw)
+          assert receipt['studio_status']=='NOT_TESTED' and receipt['release_approved'] is False
+          assert receipt['assembly_status']=='CHAT_BUILD_READY__OFFLINE_EVIDENCE_ONLY'
+          assert receipt['source_plan_sha256']==hashlib.sha256(plan.read_bytes()).hexdigest()
+          assert len(receipt['source_units'])==21 and len(receipt['contents'])==21
+          actual={x['target_path'] for x in receipt['source_units']}
+          assert len(actual)==21
+          assert 'src/server/Game.server.luau' in actual
+          assert 'src/shared/FirstMinuteModel.luau' in actual
+          assert 'src/client/FirstMinuteCoach.client.luau' in actual
+          for f in receipt['contents']:
+              a=(source/f['path']).read_bytes()
+              b=(out/f['path']).read_bytes()
+              assert a==b
+              assert hashlib.sha256(b).hexdigest()==f['sha256']
+              assert len(b)==f['size']
+          print('P0D_S1_FTUE_ORIGINAL_21_UNIT_REAL_PYTHON_ASSEMBLY_PASS')
+          print('P0D_S1_FTUE_ORIGINAL_RECEIPT_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('P0D_S1_FTUE_ORIGINAL_RECEIPT_B64='+base64.b64encode(raw).decode('ascii'))
+          print('P0D_S1_FTUE_STUDIO_NOT_TESTED_NO_PUBLISH')
+          PY
+      - name: No release branch edits
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- releases/P0D_S1_KIDS_RC01
