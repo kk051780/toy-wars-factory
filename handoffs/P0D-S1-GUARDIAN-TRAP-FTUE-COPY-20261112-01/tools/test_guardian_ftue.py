@@ -121,6 +121,7 @@ g=Coach.view(guard,68)
 eq(g.visible,true,"manual_help_after_60")
 eq(g.title,"守護：仲間を守ろう！","manual_late_guardian_help")
 Coach.setHidden(guard,true)
+eq(guard.dismissed,true,"real_dismissal_state")
 eq(Coach.view(guard,68).visible,false,"close_trap_help")
 Coach.setHidden(guard,false)
 eq(Coach.view(guard,68).visible,true,"reopen_trap_help")
@@ -182,7 +183,7 @@ MUTATIONS=[
  ("score_priority_missing","if state.scored then","if false then",
   "P0D_TRAP_FTUE_ASSERT_guardian_scored_priority"),
  ("hide_help_disabled","state.dismissed = hidden","state.dismissed = false",
-  "P0D_TRAP_FTUE_ASSERT_close_trap_help"),
+  "P0D_TRAP_FTUE_ASSERT_real_dismissal_state"),
 ]
 
 def assertok(flag,msg):
