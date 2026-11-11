@@ -1,0 +1,20 @@
+name: P0D S1 result-copy source QA (isolated)
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-result-localization-20261112-01
+  pull_request:
+    paths:
+      - "handoffs/P0D-S1-RESULT-LOCALIZATION-20261112-01/**"
+      - ".github/workflows/p0d-s1-result-copy-qa-20261112.yml"
+permissions:
+  contents: read
+jobs:
+  result-copy-source-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run actual 11 Python tests over pinned full HUD source
+        working-directory: handoffs/P0D-S1-RESULT-LOCALIZATION-20261112-01
+        run: python3 -m unittest discover -s tests -p 'test_result_copy.py' -v
