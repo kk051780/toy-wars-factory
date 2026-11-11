@@ -4,17 +4,32 @@
     "$className": "DataModel",
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
-      "TrapRaidersShared": {"$path": "src/shared"}
+      "TrapRaidersShared": {
+        "$path": "src/shared"
+      }
     },
     "ServerScriptService": {
       "$className": "ServerScriptService",
-      "TrapRaidersS1": {"$path": "src/server"}
+      "TrapRaidersS1": {
+        "$path": "src/server"
+      }
     },
     "StarterPlayer": {
       "$className": "StarterPlayer",
       "StarterPlayerScripts": {
         "$className": "StarterPlayerScripts",
-        "TrapRaidersHUD": {"$path": "src/client/HUD.client.luau"}
+        "TrapRaidersHUD": {
+          "$path": "src/client/HUD.client.luau"
+        },
+        "GoroganVisualPolicy": {
+          "$path": "src/client/GoroganVisualPolicy.luau"
+        },
+        "S1GoroganStompRing": {
+          "$path": "src/client/S1GoroganStompRing.client.luau"
+        },
+        "TrapRaidersCoach": {
+          "$path": "src/client/FirstMinuteCoach.client.luau"
+        }
       }
     }
   }

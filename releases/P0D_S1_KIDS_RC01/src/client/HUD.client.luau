@@ -78,6 +78,7 @@ local roleGuardian = button(gui, "GuardianRole", "🛡 守護", UDim2.fromOffset
 
 local seq = 0
 local lastSerial = -1
+local bossVisual: {serial: number, eventId: string, lastSeq: number, cueUntil: number}? = nil
 local function action(kind: string, role: string?)
     seq += 1
     -- No target, position, score, damage or client-side server timestamps in payload.
@@ -108,15 +109,49 @@ local function phaseText(s): string
     return "対戦中｜残り " .. tostring(s.time) .. "秒" .. carrying .. warning
 end
 remote.OnClientEvent:Connect(function(s)
-    if type(s) ~= "table" or s.kind ~= "SNAPSHOT" then return end
+    if type(s) ~= "table" then return end
+    if s.kind == "BOSS_VISUAL" then
+        -- Display only; no boss choice, physics, HP or Remote FireServer.
+        if type(s.serial) ~= "number" or s.serial ~= lastSerial
+            or s.bossId ~= "GOROGAN"
+            or s.eventId ~= "G07_" .. tostring(lastSerial)
+            or type(s.seq) ~= "number" or s.seq % 1 ~= 0
+            or s.seq < 1 or s.seq > 10000
+            or type(s.serverSentAt) ~= "number"
+            or s.serverSentAt ~= s.serverSentAt then return end
+        if bossVisual and s.seq <= bossVisual.lastSeq then return end
+        if s.visualKind == "START" then
+            bossVisual = {serial = lastSerial, eventId = s.eventId,
+                lastSeq = s.seq, cueUntil = 0}
+        elseif bossVisual and bossVisual.eventId == s.eventId then
+            bossVisual.lastSeq = s.seq
+            if s.visualKind == "STOMP" then
+                bossVisual.cueUntil = s.serverSentAt + 2
+                local seconds = math.max(0, bossVisual.cueUntil - workspace:GetServerTimeNow())
+                if seconds > 0 then
+                    status.Text = "⚠ 巨獣の踏みつけ！あと " .. string.format("%.1f", seconds) .. "秒"
+                end
+            elseif s.visualKind == "END" then
+                bossVisual = nil
+            end
+        end
+        return
+    end
+    if s.kind ~= "SNAPSHOT" then return end
     if type(s.serial) ~= "number" or s.serial < lastSerial then return end
     if type(s.scores) ~= "table" or type(s.hp) ~= "table" then return end
+    if s.serial > lastSerial or s.phase ~= "ACTIVE" then bossVisual = nil end
     lastSerial = s.serial
     top.Text = string.format("🔴 %d / 🏰 %d       🔵 %d / 🏰 %d\n自分:%s・%s  |  %d対%d人",
         s.scores.RED or 0, s.hp.RED or 0, s.scores.BLUE or 0,
         s.hp.BLUE or 0, s.team or "?", displayRole(s.role),
         s.redPlayers or 0, s.bluePlayers or 0)
     status.Text = phaseText(s)
+    if bossVisual and bossVisual.serial == s.serial
+        and bossVisual.cueUntil > workspace:GetServerTimeNow() then
+        local remain = bossVisual.cueUntil - workspace:GetServerTimeNow()
+        status.Text ..= " ⚠ 巨獣の踏みつけ " .. string.format("%.1f", remain) .. "秒"
+    end
     roleRaider.Visible = s.phase ~= "ACTIVE"
     roleGuardian.Visible = s.phase ~= "ACTIVE"
     attack.Visible = s.phase == "ACTIVE"

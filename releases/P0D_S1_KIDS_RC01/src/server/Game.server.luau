@@ -7,6 +7,14 @@ local TeamsService = game:GetService("Teams")
 local Config = require(ReplicatedStorage:WaitForChild("TrapRaidersShared"):WaitForChild("Config"))
 local Rules = require(script.Parent:WaitForChild("S1Rules"))
 local MapBuilder = require(script.Parent:WaitForChild("MapBuilder"))
+local LobbyTeamRecovery = require(script.Parent:WaitForChild("LobbyTeamRecovery"))
+-- The existing Game is the ONLY match/event/HP/egg owner.
+local CanonicalHost = require(script.Parent:WaitForChild("S1CanonicalRoundHost"))
+local BossBinding = require(script.Parent:WaitForChild("S1GoroganLiveBindings"))
+local CANONICAL_S1_ENABLED = false -- explicit #220 sole-integrator decision
+local D07_D08_RELEASE_REVIEW_APPROVED = false -- distinct owner safety gate
+local canonicalHost: any = nil
+local bossBinding: any = nil
 
 if ReplicatedStorage:FindFirstChild("TrapRaidersS1Remote") then
     error("DUPLICATE_S1_RUNTIME: refused second authoritative remote")
@@ -49,7 +57,6 @@ local match = {
     hp = {RED = Config.CastleMaxHp, BLUE = Config.CastleMaxHp},
     eggOwners = {} :: {[string]: Player?},
     alarm = "IDLE",
-    nextAlarmAt = 0,
     alarmUntil = 0,
 }
 
@@ -144,6 +151,110 @@ local function broadcast()
         remote:FireClient(p, snapshotFor(p))
     end
 end
+-- The original S1 Remote remains the sole player network endpoint.
+-- Only the SERVER emits a bounded boss visual record; never an activation intent.
+local function sendBossVisual(packet)
+    if type(packet) ~= "table" or match.phase ~= "ACTIVE"
+        or packet.matchId ~= "S1_" .. tostring(match.serial)
+        or packet.stageId ~= "S1" or packet.bossId ~= "GOROGAN"
+        or packet.eventId ~= "G07_" .. tostring(match.serial)
+        or (packet.kind ~= "START" and packet.kind ~= "STOMP"
+            and packet.kind ~= "END")
+        or type(packet.seq) ~= "number" or packet.seq % 1 ~= 0
+        or packet.seq < 1 or packet.seq > 10000 then
+        return false
+    end
+    -- Original CombinedRuntime emits the true server attack center for
+    -- START / STOMP. Never invent a client target or silently drop it.
+    local position = nil
+    if packet.kind == "START" or packet.kind == "STOMP" then
+        local p = packet.position
+        if type(p) ~= "table"
+            or type(p.x) ~= "number" or type(p.y) ~= "number"
+            or type(p.z) ~= "number" or p.x ~= p.x
+            or p.y ~= p.y or p.z ~= p.z
+            or math.abs(p.x) > 2048 or p.y < -100 or p.y > 700
+            or math.abs(p.z) > 2048 then
+            return false -- never show a false attack center
+        end
+        position = {x = p.x, y = p.y, z = p.z}
+    end
+    local emittedAt = serverNow()
+    for _, player in ipairs(Players:GetPlayers()) do
+        remote:FireClient(player, {
+            kind = "BOSS_VISUAL", visualKind = packet.kind,
+            bossId = packet.bossId, eventId = packet.eventId,
+            serial = match.serial, seq = packet.seq,
+            stageId = "S1", position = position,
+            serverSentAt = emittedAt,
+        })
+    end
+    return true
+end
+
+local function stopCanonical(reason: string)
+    -- Disarm while the OLD epoch is still active; clear before next serial.
+    local oldHost, oldBinding = canonicalHost, bossBinding
+    canonicalHost, bossBinding = nil, nil
+    if oldHost then
+        local ok, result = pcall(function() return oldHost:stop(reason) end)
+        if not ok or result ~= true then warn("S1_D08_STOP_UNCONFIRMED") end
+    end
+    if oldBinding then
+        local ok, result = pcall(function()
+            return oldBinding:abort("S1_" .. tostring(match.serial))
+        end)
+        if not ok or result ~= true then warn("S1_D07_PHYSICAL_ABORT_UNCONFIRMED") end
+    end
+end
+
+local function startCanonical()
+    if not CANONICAL_S1_ENABLED or not D07_D08_RELEASE_REVIEW_APPROVED then
+        return -- no unsupported event is promised in initial S1
+    end
+    local ok, why = pcall(function()
+        local binding = BossBinding.new({
+            approvedByOwner = true, readMatch = function() return match end,
+            serverTime = serverNow, map = map,
+            getPlayerTeam = getTeamName,
+            getInvulnerableUntil = function(player)
+                return invulnUntil[player] or 0
+            end,
+            sendBossVisual = sendBossVisual,
+        })
+        bossBinding = binding -- set before constructing Host to permit failed-init abort
+        local host = CanonicalHost.new({
+            approvedByOwner = true, enableCanonicalS1 = true,
+            readMatch = function() return match end,
+            serverTime = serverNow,
+            serverRoll = function(_matchId, _epoch)
+                return math.random(0, 99) -- exactly one trusted D08 invocation
+            end,
+            makeCombined = function(mapper)
+                return binding:makeCombined(mapper)
+            end,
+            abortCombined = function(roundId)
+                return binding:abort(roundId)
+            end,
+            setAlarm = function(state, untilAt, epoch)
+                if match.serial ~= epoch then return true end
+                if state ~= "IDLE" and state ~= "WARNING"
+                    and state ~= "SIGNAL" then return false end
+                match.alarm, match.alarmUntil = state, untilAt
+                return true
+            end,
+            broadcast = broadcast,
+        })
+        if host:status().enabled ~= true then error("S1_CANONICAL_NOT_ENABLED") end
+        canonicalHost = host
+    end)
+    if not ok then
+        warn("S1_D08_D07_INIT_FAILED", why)
+        stopCanonical("INIT_FAILED")
+        match.alarm, match.alarmUntil = "IDLE", 0
+    end
+end
+
 local function setObjectiveEnabled(enabled: boolean)
     for _, name in ipairs({"RED", "BLUE"}) do
         map.teams[name].eggPrompt.Enabled = enabled and match.eggOwners[name] == nil
@@ -152,6 +263,7 @@ local function setObjectiveEnabled(enabled: boolean)
 end
 local function stopRound(winner: string, reason: string)
     if match.phase ~= "ACTIVE" then return end
+    stopCanonical("ROUND_END")
     match.phase = "RESULTS"
     match.phaseUntil = serverNow() + Config.ResultsSeconds
     match.winner = winner
@@ -163,6 +275,7 @@ local function stopRound(winner: string, reason: string)
     broadcast()
 end
 local function resetRound()
+    stopCanonical("ROUND_RESET")
     match.serial += 1
     match.phase = "ACTIVE"
     match.startedAt = serverNow()
@@ -173,7 +286,6 @@ local function resetRound()
     match.winner = ""
     match.reason = ""
     match.alarm = "IDLE"
-    match.nextAlarmAt = match.startedAt + 55
     match.alarmUntil = 0
     for _, p in ipairs(Players:GetPlayers()) do
         dropEgg(p)
@@ -183,6 +295,7 @@ local function resetRound()
     end
     for _, team in ipairs({"RED", "BLUE"}) do resetEgg(team) end
     setObjectiveEnabled(true)
+    startCanonical()
     broadcast()
 end
 local function chooseTeam(player: Player)
@@ -190,6 +303,35 @@ local function chooseTeam(player: Player)
     player.Team = teamInstances[name]
     player.Neutral = false
 end
+-- Only LOBBY may correct team balance; never touch a live round or countdown.
+-- This is a small attachment to the existing server controller, not another authority.
+local function rebalanceLobbyTeams()
+    if match.phase ~= "LOBBY" then return end
+    local online = Players:GetPlayers()
+    if #online < Config.MinPlayers then return end
+    local roster = {}
+    local byUserId = {}
+    for _, player in ipairs(online) do
+        table.insert(roster, {userId = player.UserId, team = getTeamName(player)})
+        byUserId[player.UserId] = player
+    end
+    local planned = LobbyTeamRecovery.plan(roster)
+    if planned == nil then return end
+    for _, move in ipairs(planned) do
+        local player = byUserId[move.userId]
+        if player and player.Parent == Players and getTeamName(player) == move.from then
+            -- Defensive cleanup: no carried egg survives a lobby team move.
+            dropEgg(player)
+            player.Team = teamInstances[move.to]
+            player.Neutral = false
+            local alive, root = healthy(player)
+            if alive and root then
+                root.CFrame = map.teams[move.to].spawn + Vector3.new(0, 2, 0)
+            end
+        end
+    end
+end
+
 local function assignSpawn(player: Player, character: Model)
     local root = character:WaitForChild("HumanoidRootPart", 10)
     local hum = character:WaitForChild("Humanoid", 10)
@@ -357,12 +499,15 @@ local function tickRound()
     local now = serverNow()
     local count = #Players:GetPlayers()
     if match.phase == "LOBBY" then
+        rebalanceLobbyTeams()
         if count >= Config.MinPlayers and teamCount("RED") > 0 and teamCount("BLUE") > 0 then
             match.phase = "COUNTDOWN"
             match.phaseUntil = now + Config.IntermissionSeconds
         end
     elseif match.phase == "COUNTDOWN" then
-        if count < Config.MinPlayers then match.phase = "LOBBY"
+        -- Players can leave during countdown; do not start a one-sided game.
+        if count < Config.MinPlayers or teamCount("RED") == 0 or teamCount("BLUE") == 0 then
+            match.phase = "LOBBY"
         elseif now >= match.phaseUntil then resetRound() end
     elseif match.phase == "ACTIVE" then
         if teamCount("RED") <= 0 then stopRound("BLUE", "TEAM_EMPTY")
@@ -372,16 +517,16 @@ local function tickRound()
             local blue = match.scores.BLUE * 1000 + match.hp.BLUE
             stopRound(if red == blue then "DRAW" else (if red > blue then "RED" else "BLUE"), "TIME_LIMIT")
         else
-            -- Single optional deterministic spectacle scheduler, no second RNG/authority.
-            if match.alarm == "IDLE" and now >= match.nextAlarmAt then
-                match.alarm = "WARNING"
-                match.alarmUntil = now + 3
-            elseif match.alarm == "WARNING" and now >= match.alarmUntil then
-                match.alarm = "SIGNAL"
-                match.alarmUntil = now + 6
-            elseif match.alarm == "SIGNAL" and now >= match.alarmUntil then
-                match.alarm = "IDLE"
-                match.nextAlarmAt = now + 62
+            -- D08 only advances within this already-existing authoritative tick.
+            if canonicalHost then
+                local ok, success, reason = pcall(function()
+                    return canonicalHost:tick()
+                end)
+                if not ok or success ~= true then
+                    warn("S1_D08_TICK_FAIL_CLOSED", reason)
+                    stopCanonical("TICK_FAILED")
+                    match.alarm, match.alarmUntil = "IDLE", 0
+                end
             end
         end
     elseif match.phase == "RESULTS" then
