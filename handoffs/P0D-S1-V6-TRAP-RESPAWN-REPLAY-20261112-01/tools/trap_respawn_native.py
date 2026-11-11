@@ -105,7 +105,8 @@ MUTANTS = (
          "if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end",
          "if false then return end"), "GAME_S1_ASSERT_stale_seq_rejected_even_after_cooldown"),
     ("respawn_slow_state_leak", "Game", RESPAWN_ANCHOR,
-     "if false then", "GAME_S1_ASSERT_old_character_slow_record_cleaned"),
+     "if not alive or false or now >= record.untilAt then",
+     "GAME_S1_ASSERT_old_character_slow_record_cleaned"),
     ("owner_trap_ghost_on_exit", "Game", OWNER_ANCHOR,
      "if false then", "GAME_S1_ASSERT_owner_exit_removes_trap_while_active"),
 )
