@@ -45,7 +45,7 @@ class S1ActualGamePatchContract(unittest.TestCase):
 
     def test_entire_original_map_rules_config_are_byte_preserved(self):
         for path in ("src/server/MapBuilder.luau", "src/server/S1Rules.luau",
-                     "src/shared/Config.luau", "default.project.json"):
+                     "src/shared/Config.luau"):
             self.assertEqual((GAME/path).read_bytes(), (SOURCE/path).read_bytes(), path)
 
     def test_exact_ten_original_and_reviewed_server_modules_staged(self):
@@ -104,7 +104,8 @@ class S1ActualGamePatchContract(unittest.TestCase):
         for token in ('packet.matchId ~= "S1_" .. tostring(match.serial)',
                       'packet.eventId ~= "G07_" .. tostring(match.serial)',
                       'packet.bossId ~= "GOROGAN"', 'packet.seq % 1 ~= 0',
-                      'kind = "BOSS_VISUAL"', "serverSentAt = serverNow()"):
+                      'kind = "BOSS_VISUAL"', "serverSentAt = emittedAt",
+                      "local emittedAt = serverNow()"):
             self.assertIn(token, self.g)
         self.assertNotIn("remote:FireServer", self.g)
         self.assertEqual(self.g.count("remote:FireClient(player, {"), 1)
@@ -130,12 +131,21 @@ class S1ActualGamePatchContract(unittest.TestCase):
         self.assertEqual(self.cfg["tree"]["StarterPlayer"]["StarterPlayerScripts"]["TrapRaidersHUD"]["$path"],
                          "src/client/HUD.client.luau")
 
+    def test_rojo_changed_only_to_mount_reviewed_local_visual_siblings(self):
+        import copy
+        original = json.loads((SOURCE/"default.project.json").read_text(encoding="utf-8"))
+        candidate = copy.deepcopy(self.cfg)
+        st=candidate["tree"]["StarterPlayer"]["StarterPlayerScripts"]
+        self.assertEqual(st.pop("GoroganVisualPolicy"), {"$path":"src/client/GoroganVisualPolicy.luau"})
+        self.assertEqual(st.pop("S1GoroganStompRing"), {"$path":"src/client/S1GoroganStompRing.client.luau"})
+        self.assertEqual(candidate, original)
+
     def test_package_root_manifest_is_strict_public_source_v1(self):
         self.assertEqual(set(self.manifest), {"files","format","game_id","packet_id","public_source_allowed","work_id"})
         self.assertEqual(self.manifest["format"], "P0D_PUBLIC_SOURCE_V1")
         self.assertEqual(self.manifest["game_id"], "TRAP_RAIDERS")
         self.assertEqual(self.manifest["public_source_allowed"], True)
-        self.assertEqual(len(self.manifest["files"]), 25)
+        self.assertEqual(len(self.manifest["files"]), 27)
 
     def test_manifest_has_every_candidate_file_once_except_itself(self):
         entries = self.manifest["files"]
