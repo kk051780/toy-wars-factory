@@ -1,0 +1,79 @@
+name: P0D WF13 REAL Rojo isolated Place source gate
+on:
+  push:
+    branches:
+      - handoff/p0d-wf13-local-gravity-prototype-20261112-01
+    paths:
+      - 'handoffs/P0D-WF13-LOCAL-GRAVITY-PROTOTYPE-20261112-01/**'
+      - '.github/workflows/p0d-wf13-real-rojo-place-20261112.yml'
+permissions:
+  contents: read
+jobs:
+  real-rojo-isolated:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      WF13_ROOT: handoffs/P0D-WF13-LOCAL-GRAVITY-PROTOTYPE-20261112-01
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify unencrypted source SHA256 manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$WF13_ROOT/tools/verify_manifest.py"
+      - name: Download real Rojo 7.7.1 and verify upstream release archive SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --retry 3 --retry-delay 2 \
+            "https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip" \
+            --output "$RUNNER_TEMP/rojo-linux-x86_64.zip"
+          printf '%s\n' "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  $RUNNER_TEMP/rojo-linux-x86_64.zip" | sha256sum -c
+          python3 - <<'PY'
+          import os, pathlib, zipfile, stat
+          dst = pathlib.Path(os.environ["RUNNER_TEMP"])/"rojo"
+          with zipfile.ZipFile(pathlib.Path(os.environ["RUNNER_TEMP"])/"rojo-linux-x86_64.zip") as z:
+              names = [x for x in z.namelist() if x.rsplit("/",1)[-1] == "rojo"]
+              assert len(names) == 1, names
+              data = z.read(names[0])
+              assert len(data)>1_000_000
+              dst.write_bytes(data)
+          dst.chmod(dst.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+          PY
+          "$RUNNER_TEMP/rojo" --version | tee "$RUNNER_TEMP/rojo_version.txt"
+          grep -F "7.7.1" "$RUNNER_TEMP/rojo_version.txt"
+      - name: ACTUAL Rojo build from isolated original Luau source (not S1 game)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _wf13_rojo_build
+          "$RUNNER_TEMP/rojo" build "$WF13_ROOT/default.project.json" -o "_wf13_rojo_build/WF13_ISOLATED_DEMO.rbxlx"
+          test -s "_wf13_rojo_build/WF13_ISOLATED_DEMO.rbxlx"
+          echo "WF13_ACTUAL_ROJO_BINARY_CREATED"
+      - name: Verify exact four source bytes, scene wiring, rejected dangerous XML
+        shell: bash
+        run: |
+          set -euo pipefail
+          export WF13_REAL_ROJO_PLACE="$PWD/_wf13_rojo_build/WF13_ISOLATED_DEMO.rbxlx"
+          python3 "$WF13_ROOT/tools/verify_wf13_rojo_xml.py" \
+            --place "$WF13_REAL_ROJO_PLACE" \
+            --receipt "_wf13_rojo_build/WF13_REAL_PLACE_RECEIPT.json"
+          python3 -m unittest discover -s "$WF13_ROOT/tests" -p 'test_wf13_rojo_xml.py' -v
+      - name: Store review-only real build result
+        uses: actions/upload-artifact@v4
+        with:
+          name: WF13-REAL-ROJO-PLACE-ISOLATED-REVIEW-ONLY
+          path: |
+            _wf13_rojo_build/WF13_ISOLATED_DEMO.rbxlx
+            _wf13_rojo_build/WF13_REAL_PLACE_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Do not allow editing checked-in source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
+          echo "WF13_ACTUAL_ROJO_BUT_ROBLOX_STUDIO_NOT_TESTED"
