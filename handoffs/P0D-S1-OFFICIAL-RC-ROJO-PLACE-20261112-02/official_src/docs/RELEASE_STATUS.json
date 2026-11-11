@@ -1,0 +1,48 @@
+{
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "release_id": "P0D-S1-KIDS-RC01",
+  "status_schema": "P0D_RC_SOURCE_V4",
+  "phase": "CHAT_ASSEMBLED_SOURCE_LOCKED__CHAT_QA_PENDING",
+  "source_import_commit": "17ffd5c28bf15aeefa5f524291534f064f74029f",
+  "source_candidate_fixed_commit": "b103389e2089f9ff5a08984fe2f8f6f02aa8b1bc",
+  "original_rc_baseline_sha": "35d7d0525388e885aac8281eff2315a59831e0cf",
+  "game_source_luau_files": 20,
+  "gameplay_source_present": [
+    "team_spawn",
+    "two_team_egg_capture",
+    "server_damage_hp",
+    "map_and_castles",
+    "win_result_rematch",
+    "lobby_team_recovery",
+    "first_minute_ux",
+    "D07_D08_MODULES_IN_TREE_DISABLED"
+  ],
+  "boss_activation_flags": {
+    "CANONICAL_S1_ENABLED": false,
+    "D07_D08_RELEASE_REVIEW_APPROVED": false
+  },
+  "independent_qa": "PARTIAL_UPSTREAM_CANDIDATE_ONLY__FINAL_RC_NOT_TESTED",
+  "full_source_native_luau": "NOT_VERIFIED_CURRENT_RC",
+  "roblox_studio_2client": "NOT_TESTED_CURRENT_RC",
+  "physical_mobile": "NOT_TESTED_CURRENT_RC",
+  "latest_owner_windows_pc_source_equivalence": "UNKNOWN_NOT_ASSERTED",
+  "human_first_play": "NOT_TESTED",
+  "first_release_authorized": false,
+  "monetization_enabled": false,
+  "excluded_from_s1_required": [
+    "S2_S4",
+    "D18_648_CATALOGUE",
+    "D11_NEUTRAL_CAPTURE",
+    "7_JOB_EXPANSION"
+  ],
+  "protected_main_unchanged": true,
+  "owner_codex_per_pack_requested": false,
+  "next_acceptance": "Independent QA on exact official RC SHA and 20 source+manifest / dynamic trace, then OWNER direct Windows Studio",
+  "source_hud_overlay_commit": "0ca2b7ea9f29aa79727b2e7e53a01af093df5b90",
+  "source_git_tree_sha": "01aede07b64973a32ba02647c10a9e8b8f8c3285",
+  "native_luau_status": "UPSTREAM_EXACT_20_LUAU_CANDIDATE_NATIVE_COMPILE_PASS__ACTUAL_RC_ENGINE_NOT_TESTED",
+  "native_ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43105877169",
+  "source_original_luau_files_unchanged": 19,
+  "client_hud_source_updated_exact": true
+}

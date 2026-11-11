@@ -1,0 +1,26 @@
+# TRAP RAIDERS — S1 official Chat-integrated source RC01
+
+**Status as of 2026-11-12 JST: CHAT_ASSEMBLED_SOURCE_LOCKED; independent actual-RC QA and Roblox Studio final QA are NOT_TESTED. FIRST_RELEASE=NOT_AUTHORIZED.**
+
+The owner selected a new sole Chat integrator [#220](https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-6807677640). Existing official RC commit `35d7d0525388e885aac8281eff2315a59831e0cf` was preserved and the verified 30-file candidate from immutable GitHub `b103389e2089f9ff5a08984fe2f8f6f02aa8b1bc` was copied byte-for-byte into the one release tree in import commit `17ffd5c28bf15aeefa5f524291534f064f74029f`. The full 20 original candidate Luau script/module bytes under `src/` and Rojo project mapping were imported without gameplay edits, rather than composing a new competing S1 authority. The remaining docs in this RC reflect the *actual integrated source tree*, superseding the earlier standalone README.
+
+## Included, source-built functionality (NOT confirmed running on actual Roblox Studio)
+- Single `Game.server.luau` authority for two teams, lobby rebalance/empty-team recovery, 7s countdown, 6min match, 2 egg captures or castle HP win, death/carry cleanup, result/rematch.
+- Procedural two-castle map and egg pads, server-validated melee/range/LOS/HP and basic RAIDER/GUARDIAN roles, existing touch and mobile input, Japanese HUD.
+- Original D07 Gorogan AI/rig/server attack receipt/boundary and D08 canonical event modules, plus temporal/spatial warning ring and trusted event bridge. **Present in source but NOT ACTIVE: `CANONICAL_S1_ENABLED=false` and `D07_D08_RELEASE_REVIEW_APPROVED=false` in Game.server.luau.** This keeps untested boss damage from silently appearing in release.
+- Original `LobbyTeamRecovery.luau` integrated through one server owner, and `FirstMinuteCoach.client.luau` + `FirstMinuteModel.luau` mounted by Rojo for the first 60 seconds.
+- Source project has 20 Luau files, single server match/remote authority and no DataStore, paid assets or production publish API.
+
+## Safety and exact evidence
+- Candidate 30/30 all-file independent byte+SHA256 audit: [#220](https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-6807077309).
+- Official RC import commit `17ffd5c28bf15aeefa5f524291534f064f74029f` was built from GitHub blobs and exact source subtrees under a non-main branch using expected-SHA non-force update. Subsequent docs and receipt are a separate provenance overlay; game Luau sources were not changed.
+- Previous 28-file composite actually passed Python 238/238 and source assembler 19/19 (not the same as the current 30-file RC). Original native pure module tests have separate PASS evidence; **20-file full candidate Actions workflows were still QUEUED** when checked. No whole RC native compile/engine PASS is implied.
+- `BUILD_MANIFEST.json` uses strict six-key PUBLIC_SOURCE_V1 schema with an immutable SHA256/UTF8-length entry for every non-manifest file, and `CHAT_RC_RECEIPT.json` preserves original source and stage. `docs/RC_CHECKPOINT_V4.md` includes rollback.
+- [All-chat rule #218](https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-6807393284); [Official global progress rubric #220](https://github.com/kk051780/toy-wars-factory/issues/220); [PC engine evidence #213](https://github.com/kk051780/toy-wars-factory/issues/213).
+
+## Blockers and prohibited operations
+Independent QA must execute on **this exact official RC tree**; source-only unit/negative and native tests cannot stand in for a real two-client Studio/gameplay/phone test. D07 boss remains opt-in OFF pending approval and attack/telegraph physical validation; D11 neutral/7-class full game/collection D18 are not S1 mandatory and are not included. OWNER Windows latest v43-A Place/source remains separate, and must be backed up and compared before final owner-directed Codex/Studio testing. No main merge, Roblox live publish, monetization, spending, protected P0-A/B/C CAS/auth/review or existing Automation changes.
+
+## 2026-11-12 V5 verified-result HUD update (supersedes V4's all-20-original-current-source snapshot)
+
+After the initial exact-30-source adoption, the sole Chat integrator additionally selected ONE client-only full HUD RESULT_COPY patch from immutable standalone full-game native-tested source `0ca2b7ea9f29aa79727b2e7e53a01af093df5b90`, original HUD Git blob 7a699f35cd3f5e7cf6178f7a45a71d0ead3247c5 -> result HUD Git blob 458a23e83d261c51b3bec174e36e183960532f8c. This makes all **20 actual Luau source blobs** and Rojo project match the later `0ca2b7ea9f29aa79727b2e7e53a01af093df5b90` composite; **19/20 other Lua sources remain identical to original imported baseline**. No Game/server/Remote/D07/D08/HP/egg logic changed. Japanese child-readable result reason text, unknown fallback, bounded countdown are native Luau tested at exact candidate commit (GitHub Actions 43105877169: 20/20 Luau compiler, 88/88 Python, 15 native semantic checks with two negative controls). This is NOT a native Roblox Studio test, and the genuine whole official RC independent QA still remains open. V5 `CHAT_RC_RECEIPT.json`, `docs/SOURCE_SELECTION.json` and `BUILD_MANIFEST.json` are current provenance; V4 checkpoint is historical.
