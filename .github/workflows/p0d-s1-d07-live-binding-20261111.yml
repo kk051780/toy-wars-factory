@@ -1,0 +1,56 @@
+name: P0D S1 D07 original physical binding offline QA
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-d07-live-authority-binding-20261111-01
+    paths:
+      - handoffs/P0D-S1-D07-LIVE-AUTHORITY-BINDING-20261111-01/**
+      - .github/workflows/p0d-s1-d07-live-binding-20261111.yml
+permissions:
+  contents: read
+jobs:
+  source-safe:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout isolated Chat source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Generate and verify canonical public source candidate (runner only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py build \
+            --root handoffs/P0D-S1-D07-LIVE-AUTHORITY-BINDING-20261111-01 \
+            --packet-id P0D-S1-GOROGAN-LIVE-SERVER-BINDING-20261111-01
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py verify \
+            --root handoffs/P0D-S1-D07-LIVE-AUTHORITY-BINDING-20261111-01 \
+            --packet-id P0D-S1-GOROGAN-LIVE-SERVER-BINDING-20261111-01
+          python3 - <<'PY'
+          import json,pathlib,hashlib
+          root=pathlib.Path('handoffs/P0D-S1-D07-LIVE-AUTHORITY-BINDING-20261111-01')
+          manifest=(root/'BUILD_MANIFEST.json').read_text(encoding='utf-8')
+          print("P0D_CANONICAL_MANIFEST_PAYLOAD_START")
+          print(manifest.replace('\n','').strip())
+          print("P0D_CANONICAL_MANIFEST_PAYLOAD_END")
+          print("P0D_BINDING_MANIFEST_SHA256",hashlib.sha256(manifest.encode('utf-8')).hexdigest())
+          PY
+      - name: Actual independent Python static and negative S1 D07 adapter tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s handoffs/P0D-S1-D07-LIVE-AUTHORITY-BINDING-20261111-01/tests -v 2>&1 | tee /tmp/p0d_d07_live_binding_tests.log
+          grep -x OK /tmp/p0d_d07_live_binding_tests.log
+      - name: Previous source host regression and baseline S1 game offline tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s handoffs/P0D-S1-CANONICAL-ROUND-HOST-20261111-01/tests -v 2>&1 | tee /tmp/p0d_s1_canonical_host.log
+          grep -x OK /tmp/p0d_s1_canonical_host.log
+          python3 -m unittest discover -s releases/P0D_S1_KIDS_RC01/tests -v 2>&1 | tee /tmp/p0d_s1_initial_game.log
+          grep -F 'Ran 80 tests' /tmp/p0d_s1_initial_game.log
+          grep -x OK /tmp/p0d_s1_initial_game.log
+          git diff --exit-code -- releases/P0D_S1_KIDS_RC01
+          echo 'P0D_S1_D07_LIVE_BINDING_OFFLINE_SOURCE_REGRESSION_COMPLETE__STUDIO_NOT_TESTED'
