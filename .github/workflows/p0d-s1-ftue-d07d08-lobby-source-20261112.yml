@@ -1,0 +1,75 @@
+name: P0D S1 original FTUE first minute + D07D08 lobby source CI
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-ftue-on-d07d08-spatial-lobby-20261112-01
+    paths:
+      - .github/workflows/p0d-s1-ftue-d07d08-lobby-source-20261112.yml
+permissions:
+  contents: read
+concurrency:
+  group: p0d-s1-ftue-d07d08-lobby-source-20261112
+  cancel-in-progress: false
+jobs:
+  full-real-source-only:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Read only isolated code checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Produce strict canonical 30-file GAME source manifest using official tool
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py build \
+            --root handoffs/P0D-S1-FTUE-ON-D07D08-SPATIAL-LOBBY-20261112-01/candidate \
+            --packet-id P0D-S1-FTUE-D07D08-SPATIAL-LOBBY-20261112-01
+          python3 - <<'PY'
+          import base64,hashlib,pathlib
+          b=pathlib.Path('handoffs/P0D-S1-FTUE-ON-D07D08-SPATIAL-LOBBY-20261112-01/candidate/BUILD_MANIFEST.json').read_bytes()
+          print('P0D_FTUE_GAME_MANIFEST_SHA256='+hashlib.sha256(b).hexdigest())
+          print('P0D_FTUE_GAME_MANIFEST_B64='+base64.b64encode(b).decode('ascii'))
+          PY
+      - name: Actual original base S1 game 80 Python regressions
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s handoffs/P0D-S1-FTUE-ON-D07D08-SPATIAL-LOBBY-20261112-01/candidate/tests -v 2>&1 | tee /tmp/ftue_base.log
+          grep -F 'Ran 80 tests' /tmp/ftue_base.log
+          grep -x OK /tmp/ftue_base.log
+      - name: Actual existing D07D08 spatial+LOBBY 58 and NEW FTUE 12 source regressions
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s handoffs/P0D-S1-FTUE-ON-D07D08-SPATIAL-LOBBY-20261112-01/tests -v 2>&1 | tee /tmp/ftue_integrated.log
+          grep -F 'Ran 70 tests' /tmp/ftue_integrated.log
+          grep -x OK /tmp/ftue_integrated.log
+      - name: Actual original lobby author's independent 66 Python tests
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s handoffs/P0D-S1-FTUE-ON-D07D08-SPATIAL-LOBBY-20261112-01/lobby-evidence/tests -v 2>&1 | tee /tmp/ftue_lobby.log
+          grep -F 'Ran 66 tests' /tmp/ftue_lobby.log
+          grep -x OK /tmp/ftue_lobby.log
+      - name: Actual original corrected D07D08 author's independent 34 Python tests
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s handoffs/P0D-S1-FTUE-ON-D07D08-SPATIAL-LOBBY-20261112-01/overlay-evidence/tests -v 2>&1 | tee /tmp/ftue_overlay.log
+          grep -F 'Ran 34 tests' /tmp/ftue_overlay.log
+          grep -x OK /tmp/ftue_overlay.log
+      - name: Actually execute FIRST60 original independent 20 cases unchanged
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s handoffs/P0D-S1-FTUE-ON-D07D08-SPATIAL-LOBBY-20261112-01/ftue-original-evidence/tests -v 2>&1 | tee /tmp/ftue_original.log
+          grep -F 'Ran 20 tests' /tmp/ftue_original.log
+          grep -x OK /tmp/ftue_original.log
+      - name: Verify strict official GAME source manifest and protected release unchanged
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py verify \
+            --root handoffs/P0D-S1-FTUE-ON-D07D08-SPATIAL-LOBBY-20261112-01/candidate \
+            --packet-id P0D-S1-FTUE-D07D08-SPATIAL-LOBBY-20261112-01
+          git diff --exit-code -- releases/P0D_S1_KIDS_RC01
+          echo P0D_S1_FTUE_GAME_SOURCE_ONLY_NOT_NATIVE_STUDIO
