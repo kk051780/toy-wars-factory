@@ -195,7 +195,7 @@ MUTATIONS=[
  ("defeat_auto_hide",'if elapsed > 60 and not state.manualHelp then','if false then','FTUE_INTEGRATED_ASSERT_auto_hide_after_60'),
  ("skip_scored_milestone",'if own > state.initialScore then state.scored = true end','if false then state.scored = true end','FTUE_INTEGRATED_ASSERT_real_first_score_seen'),
  ("ignore_guardian_role",'if s.role == "GUARDIAN" then','if false then','FTUE_INTEGRATED_ASSERT_guardian_role_first_12_sec'),
- ("never_hide_manual",'state.dismissed = hidden','state.dismissed = false','FTUE_INTEGRATED_ASSERT_close_help_dismisses'),
+ ("never_hide_manual",'state.dismissed = hidden','state.dismissed = false','FTUE_INTEGRATED_ASSERT_dismissal_state'),
 ]
 def verified_model(repo):
  p=subprocess.run(["git","-C",repo,"show",RC+":"+MODEL_PATH],capture_output=True,check=False)
