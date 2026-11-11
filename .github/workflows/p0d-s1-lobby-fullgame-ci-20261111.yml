@@ -1,0 +1,39 @@
+name: P0D S1 Lobby Full-Source Evidence
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-lobby-fullgame-ci-20261111-03
+permissions:
+  contents: read
+jobs:
+  source-locked-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Checkout new CI packet and previously completed full source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Checkout immutable original S1 source
+        uses: actions/checkout@v4
+        with:
+          ref: 35d7d0525388e885aac8281eff2315a59831e0cf
+          path: immutable_baseline
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Checkout immutable previous original lobby recovery packet
+        uses: actions/checkout@v4
+        with:
+          ref: 7693d47180c25c078debba9a5cb0ad294580601f
+          path: previous_patch
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Run previously unpublished full-source original Python tests
+        run: python3 -m unittest discover -s handoffs/P0D-S1-LOBBY-TEAM-DEADLOCK-FULL-GAME-20261111-02/tests -p 'test_*.py' -v
+      - name: Run exact four-hunk, SHA-locked original-vs-patched source proof
+        run: python3 -m unittest discover -s handoffs/P0D-S1-LOBBY-FULLGAME-CI-20261111-03/tests -p 'test_*.py' -v
+      - name: Run previous 66 original Python regression scenarios
+        run: python3 -m unittest discover -s previous_patch/handoffs/P0D-S1-LOBBY-TEAM-DEADLOCK-RECOVERY-20261111-01/tests -p 'test_*.py' -v
+      - name: Validate new PUBLIC_SOURCE_V1 package
+        run: python3 handoffs/P0D-S1-LOBBY-FULLGAME-CI-20261111-03/tools/verify_package.py
