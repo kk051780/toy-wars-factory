@@ -108,6 +108,9 @@ local function handleVisual(s)
             seq = s.seq, position = s.position,
         }, now)
         if result == "STARTED" then
+            -- Budget the physical server boss's 14s TTL from the trusted
+            -- SERVER emission time, not from delayed client receipt.
+            candidate.expiresAt = math.min(candidate.expiresAt, s.serverSentAt + 14)
             visual = candidate
             lastEventId = s.eventId
         end
