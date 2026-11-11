@@ -1,0 +1,27 @@
+{
+  "format": "P0D_CHAT_INTEGRATOR_SOURCE_SELECTION_V1",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "release_id": "P0D-S1-KIDS-RC01",
+  "phase": "INITIAL_ACTUAL_SOURCE_INTEGRATION",
+  "status": "NOT_FINAL_RC_READY",
+  "local_pc_place_sha": "UNKNOWN_NOT_ACCESSIBLE_TO_CHAT",
+  "integrated_runtime": {
+    "kind": "new_full_standalone_chat_vertical_slice",
+    "one_round_owner": "src/server/Game.server.luau",
+    "one_combat_owner": "src/server/Game.server.luau",
+    "one_event_owner": "src/server/Game.server.luau",
+    "map": "src/server/MapBuilder.luau",
+    "client": "src/client/HUD.client.luau",
+    "module_import_source": "THIS_PACKET_ONLY"
+  },
+  "originals_tracked_not_integrated": [
+    {"feature": "D07_GOROGAN", "status": "NOT_INTEGRATED"},
+    {"feature": "D08_CANONICAL_EVENT", "commit": "70dcc3b50129c288441452776360588184ca6c22", "status": "NOT_INTEGRATED"},
+    {"feature": "D11_NEUTRAL_SKIRMISH", "commit": "9f350a76e7c7b81360453cfa400ee9131cca4922", "status": "NOT_INTEGRATED"},
+    {"feature": "D16_SCALE_ORIGINAL", "commit": "584b11ef24cf3d44695d86b505207491bbd3844e", "status": "NOT_INTEGRATED"},
+    {"feature": "D16_VISUAL_ORIGINAL", "commit": "226a5664ed50131868391289723c130d35abf48f", "status": "NOT_INTEGRATED"}
+  ],
+  "studio": "NOT_TESTED",
+  "owner_release_approval": false
+}
