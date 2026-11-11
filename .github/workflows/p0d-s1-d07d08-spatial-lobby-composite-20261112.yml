@@ -66,6 +66,39 @@ jobs:
             -s handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/overlay-evidence/tests -v 2>&1 | tee /tmp/s1_lobby_overlay.log
           grep -F 'Ran 34 tests' /tmp/s1_lobby_overlay.log
           grep -x OK /tmp/s1_lobby_overlay.log
+      - name: Actually assemble 19 immutable source/project units with original Python release assembler
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_S1_SOURCE_PLAN_SNAPSHOT_20261111_01/tools/chat_rc_assemble.py \
+            --plan handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/SOURCE_PLAN_LOBBY.json \
+            --source-root handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/candidate \
+            --out /tmp/p0d_s1_spatial_lobby_composite_assembled
+          python3 - <<'PY'
+          import base64,hashlib,json,pathlib
+          root=pathlib.Path('handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/candidate')
+          out=pathlib.Path('/tmp/p0d_s1_spatial_lobby_composite_assembled')
+          plan=pathlib.Path('handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/SOURCE_PLAN_LOBBY.json')
+          p=out/'CHAT_RC_RECEIPT.json'
+          raw=p.read_bytes()
+          receipt=json.loads(raw)
+          assert receipt['assembly_status']=='CHAT_BUILD_READY__OFFLINE_EVIDENCE_ONLY'
+          assert receipt['studio_status']=='NOT_TESTED'
+          assert receipt['release_approved'] is False
+          assert len(receipt['source_units'])==19 and len(receipt['contents'])==19
+          assert receipt['source_plan_sha256']==hashlib.sha256(plan.read_bytes()).hexdigest()
+          assert sum(x['target_path']=='src/server/Game.server.luau' for x in receipt['source_units'])==1
+          assert any(x['target_path']=='src/server/LobbyTeamRecovery.luau' for x in receipt['source_units'])
+          for item in receipt['contents']:
+              original=(root/item['path']).read_bytes()
+              rendered=(out/item['path']).read_bytes()
+              assert original==rendered, item['path']
+              assert len(rendered)==item['size'] and hashlib.sha256(rendered).hexdigest()==item['sha256']
+          print('P0D_LOBBY_SPATIAL_REAL_PYTHON_ASSEMBLY_PASS_19_19')
+          print('P0D_LOBBY_SPATIAL_RECEIPT_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('P0D_LOBBY_SPATIAL_RECEIPT_B64='+base64.b64encode(raw).decode('ascii'))
+          print('P0D_LOBBY_SPATIAL_SOURCE_ONLY_NO_STUDIO_OR_PUBLISH')
+          PY
       - name: Strict official source verify and original release source unchanged
         shell: bash
         run: |
