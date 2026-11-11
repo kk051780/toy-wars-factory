@@ -35,10 +35,17 @@ local function clearRing()
     ringUntil = 0
 end
 
-local function clearRound()
+local function endVisual()
+    -- Do not forget that this round has already consumed its single
+    -- server-authoritative Gorogan START. A duplicate/replayed START
+    -- after a true END or TTL expiry MUST NOT resurrect the local cue.
     clearRing()
     visual = nil
-    lastEventId = nil
+end
+
+local function clearRound()
+    endVisual()
+    lastEventId = nil -- only reset for a NEW epoch or non-ACTIVE phase
 end
 
 local function showRing(position, untilAt: number)
@@ -137,7 +144,7 @@ local function handleVisual(s)
             stageId = "S1", bossId = "GOROGAN", eventId = s.eventId,
             seq = s.seq,
         }, now)
-        if result == "ENDED" then clearRound() end
+        if result == "ENDED" then endVisual() end
     end
 end
 
@@ -159,7 +166,7 @@ local heartbeat = RunService.Heartbeat:Connect(function(dt)
     if ringUntil > 0 and now >= ringUntil then clearRing() end
     if visual then
         local result = Policy.expire(visual, now)
-        if result == "EXPIRED" then clearRound() end
+        if result == "EXPIRED" then endVisual() end
     end
 end)
 
