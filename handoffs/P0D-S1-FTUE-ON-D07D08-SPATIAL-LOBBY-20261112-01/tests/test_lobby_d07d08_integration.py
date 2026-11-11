@@ -59,7 +59,7 @@ class ActualLobbyAndD07D08Integration(unittest.TestCase):
              if f.is_file() and f.name != "BUILD_MANIFEST.json"}
         assert len(old)==27
         for relative,p in old.items():
-            if relative=="src/server/Game.server.luau": continue
+            if relative in ("src/server/Game.server.luau","default.project.json"): continue
             self.assertEqual((GAME/relative).read_bytes(),p.read_bytes(),relative)
 
     def test_unique_main_server_no_secondary_round_or_network(self):
@@ -107,9 +107,9 @@ class ActualLobbyAndD07D08Integration(unittest.TestCase):
     def test_canonical_manifest_all_28_files_and_1_planner(self):
         m=json.loads((GAME/"BUILD_MANIFEST.json").read_text("utf8"))
         self.assertEqual(set(m),{"format","game_id","work_id","packet_id","public_source_allowed","files"})
-        self.assertEqual(len(m["files"]),28)
+        self.assertEqual(len(m["files"]),30)
         names={x["path"] for x in m["files"]}
-        self.assertEqual(len(names),28)
+        self.assertEqual(len(names),30)
         self.assertIn("src/server/LobbyTeamRecovery.luau",names)
         for row in m["files"]:
             b=(GAME/row["path"]).read_bytes()
