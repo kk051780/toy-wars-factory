@@ -1,0 +1,76 @@
+name: P0D S1 V6 real Guardian trap respawn and replay native QA
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-v6-trap-respawn-replay-20261112-01
+permissions:
+  contents: read
+jobs:
+  original-v6-trap-native:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - name: Checkout isolated branch and full immutable source history
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Assert pinned official RC is a real reachable commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '1263a03701211a652b99b91d2339575dc8104eff^{commit}'
+      - name: Verify source manifest plus eight local Python tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          root=pathlib.Path("handoffs/P0D-S1-V6-TRAP-RESPAWN-REPLAY-20261112-01")
+          obj=json.loads((root/"BUILD_MANIFEST.json").read_bytes())
+          assert obj["format"]=="P0D_PUBLIC_SOURCE_V1"
+          assert obj["public_source_allowed"] is True
+          assert obj["game_id"]=="TRAP_RAIDERS"
+          assert obj["work_id"]=="p0d-siege-v19"
+          assert len(obj["files"])==3
+          for entry in obj["files"]:
+              assert set(entry)=={"path","size","sha256"}
+              path=root/entry["path"]
+              assert path.is_file() and not path.is_symlink()
+              raw=path.read_bytes()
+              assert len(raw)==entry["size"],path
+              assert hashlib.sha256(raw).hexdigest()==entry["sha256"],path
+          print("P0D_V6_TRAP_MANIFEST_3_OF_3_PASS")
+          PY
+          python3 -B handoffs/P0D-S1-V6-TRAP-RESPAWN-REPLAY-20261112-01/tools/trap_respawn_native.py --selftest
+          PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+            -s handoffs/P0D-S1-V6-TRAP-RESPAWN-REPLAY-20261112-01/tests -v
+      - name: Checkout pinned genuine Luau CLI source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _third_party_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Compile native Luau interpreter
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _third_party_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _third_party_luau -B /tmp/p0d-s1-v6-trap-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d-s1-v6-trap-native --target Luau.Repl.CLI --parallel 4
+      - name: Execute original real Game plus lifecycle assertions and 3 independent unsafe mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 \
+            handoffs/P0D-S1-V6-TRAP-RESPAWN-REPLAY-20261112-01/tools/trap_respawn_native.py \
+            --repo . --luau /tmp/p0d-s1-v6-trap-native/luau
+      - name: Verify no tracked source was changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
