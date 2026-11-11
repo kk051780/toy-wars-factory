@@ -12,8 +12,8 @@ import unittest
 ROOT=Path(__file__).resolve().parents[1]
 GAME=ROOT/"candidate"
 PREVIOUS=Path("handoffs/P0D-S1-D07D08-CORRECTED-SPATIAL-COMPOSITE-20261111-01/candidate")
-LOBBY_SCRIPT=Path("handoffs/P0D-S1-LOBBY-TEAM-DEADLOCK-RECOVERY-20261111-01/tools/apply_game_patch.py")
-LOBBY_SOURCE=Path("handoffs/P0D-S1-LOBBY-TEAM-DEADLOCK-FULL-GAME-20261111-02/src/server/LobbyTeamRecovery.luau")
+LOBBY_SCRIPT=ROOT/"lobby-evidence/tools/apply_game_patch.py"
+LOBBY_SOURCE=ROOT/"lobby-evidence/src/LobbyTeamRecovery.luau"
 SOURCE_IDS={
   "host":"61501c982619e54db6a09cf11b188ef872c1666e",
   "binding":"9cde26d7806a6ec20cd8648953eb37d1eefdc2c8",
