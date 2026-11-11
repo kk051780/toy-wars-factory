@@ -106,3 +106,11 @@ jobs:
           set -euo pipefail
           python3 -m py_compile handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_actual_game_ftue_gate.py
           python3 handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_actual_game_ftue_gate.py --repo . --luau /tmp/p0d-luau/build/luau
+      - name: Audit local-only Studio passive observers against authentic current RC and native Luau syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          RC=5dc6c958ea5549b1e859d6d250e6179e731181fb
+          git cat-file -e "$RC^{commit}" || git fetch --no-tags --depth=1 origin "$RC"
+          python3 -m py_compile handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/audit_studio_passive_probes.py
+          python3 handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/audit_studio_passive_probes.py --repo . --luau /tmp/p0d-luau/build/luau
