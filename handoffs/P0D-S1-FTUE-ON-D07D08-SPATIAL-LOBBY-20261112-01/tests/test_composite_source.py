@@ -58,7 +58,6 @@ class CorrectedSpatialComposite(unittest.TestCase):
         for name in [
             "src/client/HUD.client.luau",
             "src/client/GoroganVisualPolicy.luau",
-            "default.project.json",
         ]:
             self.assertEqual((GAME/name).read_bytes(), (ORIGINAL/name).read_bytes(), name)
 
@@ -98,9 +97,11 @@ class CorrectedSpatialComposite(unittest.TestCase):
         m=json.loads((GAME/"BUILD_MANIFEST.json").read_text("utf-8"))
         self.assertEqual(set(m), {"files", "format", "game_id","packet_id",
                                   "public_source_allowed","work_id"})
-        self.assertEqual(len(m["files"]),28)
+        self.assertEqual(len(m["files"]),30)
         names={x["path"] for x in m["files"]}
-        self.assertEqual(len(names),28)
+        self.assertEqual(len(names),30)
+        self.assertIn("src/client/FirstMinuteCoach.client.luau",names)
+        self.assertIn("src/shared/FirstMinuteModel.luau",names)
         self.assertIn("src/server/LobbyTeamRecovery.luau",names)
         self.assertIn("src/server/S1CanonicalRoundHost.luau",names)
         self.assertIn("src/server/S1GoroganLiveBindings.luau",names)
