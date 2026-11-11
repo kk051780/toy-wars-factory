@@ -234,7 +234,7 @@ function Binding:makeCombined(mapper)
         mintServerEventId = function(activation)
             if me.attempted or not liveMatch(me)
                 or not mapper:isCanonicalActivation(activation) then
-                return "INVALID_REPLAY"
+                return nil
             end
             me.attempted = true
             me.activeEventId = "G07_" .. tostring(me.serial)
@@ -299,6 +299,7 @@ function Binding:abort(roundId)
         end)
         success = success and ok and result == true
     end
+    if self.combined and self.combined.active then success = false end
     if self.driver and self.driver.model then success = false end
     if self.gate and self.gate.active then success = false end
     clearEvent(self)
