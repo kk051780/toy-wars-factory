@@ -1,0 +1,56 @@
+name: P0D S1 19 source assembler only (read-only isolated)
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-d07d08-spatial-lobby-composite-20261112-01
+    paths:
+      - .github/workflows/p0d-s1-lobby-19-assembler-isolated-20261112.yml
+permissions:
+  contents: read
+jobs:
+  source-assembler-only:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Read-only source checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Original official public source SHA verify
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py verify \
+            --root handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/candidate \
+            --packet-id P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01
+      - name: Actual Python immutable 19 unit S1 source assembly and exact receipt
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_S1_SOURCE_PLAN_SNAPSHOT_20261111_01/tools/chat_rc_assemble.py \
+            --plan handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/SOURCE_PLAN_LOBBY.json \
+            --source-root handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/candidate \
+            --out /tmp/p0d_lobby_actual_19_assembly_only
+          python3 - <<'PY'
+          import base64,hashlib,json,pathlib
+          game=pathlib.Path('handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/candidate')
+          output=pathlib.Path('/tmp/p0d_lobby_actual_19_assembly_only')
+          plan=pathlib.Path('handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/SOURCE_PLAN_LOBBY.json')
+          raw=(output/'CHAT_RC_RECEIPT.json').read_bytes()
+          r=json.loads(raw)
+          assert r['studio_status']=='NOT_TESTED' and r['release_approved'] is False
+          assert r['assembly_status']=='CHAT_BUILD_READY__OFFLINE_EVIDENCE_ONLY'
+          assert len(r['source_units'])==19 and len(r['contents'])==19
+          assert r['source_plan_sha256']==hashlib.sha256(plan.read_bytes()).hexdigest()
+          assert sum(x['target_path']=='src/server/Game.server.luau' for x in r['source_units'])==1
+          for f in r['contents']:
+              a=(game/f['path']).read_bytes()
+              b=(output/f['path']).read_bytes()
+              assert a==b and hashlib.sha256(b).hexdigest()==f['sha256']
+              assert len(b)==f['size']
+          print('P0D_S1_19_SOURCE_ASSEMBLY_INDEPENDENT_PASS')
+          print('P0D_S1_19_RECEIPT_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('P0D_S1_19_RECEIPT_B64='+base64.b64encode(raw).decode('ascii'))
+          print('P0D_S1_NATIVE_STUDIO_NOT_TESTED_NO_RELEASE')
+          PY
