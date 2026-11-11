@@ -1,0 +1,246 @@
+{
+  "assembly_status": "CHAT_BUILD_READY__OFFLINE_EVIDENCE_ONLY",
+  "contents": [
+    {
+      "path": "default.project.json",
+      "sha256": "60dc21336423b03c6d9fe68346dce83d24d33b05b040adfeab85f58879d83d58",
+      "size": 819
+    },
+    {
+      "path": "src/client/GoroganVisualPolicy.luau",
+      "sha256": "73c9bce0d6426fe3155a73e2ffa89a1ffd2bdf70b8938a814c4fc4c0cb273b10",
+      "size": 4757
+    },
+    {
+      "path": "src/client/HUD.client.luau",
+      "sha256": "50d9d9a6fc56ee796bc7999ce030c9cfc5d5af697591760c9e444eaefeb5de07",
+      "size": 7405
+    },
+    {
+      "path": "src/client/S1GoroganStompRing.client.luau",
+      "sha256": "4ee50c040e9dc6ecb2c6de4f376b13606b978df1dcc0422b07a07ab8eb5fcfc1",
+      "size": 6567
+    },
+    {
+      "path": "src/server/CanonicalEventBridge.luau",
+      "sha256": "a54797ce97e433d3fc12e627c27f884b78bb148a3fbd506e0156fed7759aabd2",
+      "size": 10971
+    },
+    {
+      "path": "src/server/ChaosEventCore.luau",
+      "sha256": "f6d6901a8dcb61cec1095e383e485950144d39ea43737c9b33d4351a66e88726",
+      "size": 4447
+    },
+    {
+      "path": "src/server/Game.server.luau",
+      "sha256": "75a5b455be7997383f23dcb4ac2f8b94b810492edc0bdb5ac8c90a18754bc0f0",
+      "size": 23069
+    },
+    {
+      "path": "src/server/GoroganAttackReceiptWindow.luau",
+      "sha256": "1284882c9c2c87cb2075345d01ccac7d722693499e0b2eaa0cf659267b488f45",
+      "size": 1828
+    },
+    {
+      "path": "src/server/GoroganCombinedRuntime.luau",
+      "sha256": "5f365839de76249c4477bf74a97591584fd0e09e328adbe4a05b00f81902786b",
+      "size": 10587
+    },
+    {
+      "path": "src/server/GoroganDamageBoundary.luau",
+      "sha256": "229cbee9a2b1b4d11d78fe065f18ee7b9eee3d5a8d1b9243c287883665dcca1e",
+      "size": 4947
+    },
+    {
+      "path": "src/server/GoroganRigDriver.luau",
+      "sha256": "64a27dc2cab176749cc9a1f40bb47266cec9a32b280e78f8280b78eaf092e747",
+      "size": 9188
+    },
+    {
+      "path": "src/server/GoroganServerAICore.luau",
+      "sha256": "fa483be147f452434cf41847e41c576cc92d45e0e4ed1d9d7582a189106ea787",
+      "size": 6689
+    },
+    {
+      "path": "src/server/LobbyTeamRecovery.luau",
+      "sha256": "35c546f33e0454ceaf7fa26cf5ee44763673c6764906cc249ef282bb096ea404",
+      "size": 2240
+    },
+    {
+      "path": "src/server/MapBuilder.luau",
+      "sha256": "3226e0d1d8a815c13e6e1f8c7bd2789c8cb9fb13f84924f6cd6d49cee6fb4e64",
+      "size": 4846
+    },
+    {
+      "path": "src/server/S1CanonicalRoundHost.luau",
+      "sha256": "c17b62aa4e98d0f6f2a8ba0c673365b424e4334f39020c97326a71fc9935515b",
+      "size": 10181
+    },
+    {
+      "path": "src/server/S1GoroganLiveBindings.luau",
+      "sha256": "fca2906db63fc62cea51fc99188ddaff20f90a3a27fe6868094a2d0aa793334c",
+      "size": 13797
+    },
+    {
+      "path": "src/server/S1Rules.luau",
+      "sha256": "6c17d358ff905323517511f9c542c7f93b45a6bb514f0bfff54f8ad93240b5f1",
+      "size": 2137
+    },
+    {
+      "path": "src/server/TrustedGoroganActivationMapper.luau",
+      "sha256": "46513abb081bfc27bf1354a060370ac817a4eaf714f211b74a5d95f369eadbea",
+      "size": 6684
+    },
+    {
+      "path": "src/shared/Config.luau",
+      "sha256": "0313cb70cdfb7584fa875a5cb0921891ac7730b045ad81e2b5651862313ef21b",
+      "size": 747
+    }
+  ],
+  "format": "P0D_CHAT_SOURCE_ASSEMBLY_RECEIPT_V1",
+  "game_id": "TRAP_RAIDERS",
+  "release_approved": false,
+  "release_id": "P0D-S1-KIDS-RC01-D07D08-SPATIAL-LOBBY-OPTIN-SOURCE",
+  "source_plan_sha256": "6e9f4e690eaec9e190aefd3a9f41ce19be8f478a9ef5581ebc666edcac4be3c1",
+  "source_units": [
+    {
+      "authorities": [],
+      "sha256": "fca2906db63fc62cea51fc99188ddaff20f90a3a27fe6868094a2d0aa793334c",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/server/S1GoroganLiveBindings.luau",
+      "unit_id": "boss_binding"
+    },
+    {
+      "authorities": [],
+      "sha256": "a54797ce97e433d3fc12e627c27f884b78bb148a3fbd506e0156fed7759aabd2",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/server/CanonicalEventBridge.luau",
+      "unit_id": "canonical_bridge"
+    },
+    {
+      "authorities": [],
+      "sha256": "c17b62aa4e98d0f6f2a8ba0c673365b424e4334f39020c97326a71fc9935515b",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/server/S1CanonicalRoundHost.luau",
+      "unit_id": "canonical_host"
+    },
+    {
+      "authorities": [],
+      "sha256": "f6d6901a8dcb61cec1095e383e485950144d39ea43737c9b33d4351a66e88726",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/server/ChaosEventCore.luau",
+      "unit_id": "chaos_event_core"
+    },
+    {
+      "authorities": [],
+      "sha256": "0313cb70cdfb7584fa875a5cb0921891ac7730b045ad81e2b5651862313ef21b",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/shared/Config.luau",
+      "unit_id": "config"
+    },
+    {
+      "authorities": [],
+      "sha256": "fa483be147f452434cf41847e41c576cc92d45e0e4ed1d9d7582a189106ea787",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/server/GoroganServerAICore.luau",
+      "unit_id": "gorogan_ai"
+    },
+    {
+      "authorities": [],
+      "sha256": "5f365839de76249c4477bf74a97591584fd0e09e328adbe4a05b00f81902786b",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/server/GoroganCombinedRuntime.luau",
+      "unit_id": "gorogan_combined"
+    },
+    {
+      "authorities": [],
+      "sha256": "229cbee9a2b1b4d11d78fe065f18ee7b9eee3d5a8d1b9243c287883665dcca1e",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/server/GoroganDamageBoundary.luau",
+      "unit_id": "gorogan_damage_gate"
+    },
+    {
+      "authorities": [],
+      "sha256": "1284882c9c2c87cb2075345d01ccac7d722693499e0b2eaa0cf659267b488f45",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/server/GoroganAttackReceiptWindow.luau",
+      "unit_id": "gorogan_receipt"
+    },
+    {
+      "authorities": [],
+      "sha256": "64a27dc2cab176749cc9a1f40bb47266cec9a32b280e78f8280b78eaf092e747",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/server/GoroganRigDriver.luau",
+      "unit_id": "gorogan_rig"
+    },
+    {
+      "authorities": [],
+      "sha256": "73c9bce0d6426fe3155a73e2ffa89a1ffd2bdf70b8938a814c4fc4c0cb273b10",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/client/GoroganVisualPolicy.luau",
+      "unit_id": "gorogan_visual_policy"
+    },
+    {
+      "authorities": [],
+      "sha256": "50d9d9a6fc56ee796bc7999ce030c9cfc5d5af697591760c9e444eaefeb5de07",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/client/HUD.client.luau",
+      "unit_id": "hud"
+    },
+    {
+      "authorities": [],
+      "sha256": "35c546f33e0454ceaf7fa26cf5ee44763673c6764906cc249ef282bb096ea404",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/server/LobbyTeamRecovery.luau",
+      "unit_id": "lobby_team_recovery"
+    },
+    {
+      "authorities": [],
+      "sha256": "3226e0d1d8a815c13e6e1f8c7bd2789c8cb9fb13f84924f6cd6d49cee6fb4e64",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/server/MapBuilder.luau",
+      "unit_id": "map_builder"
+    },
+    {
+      "authorities": [],
+      "sha256": "60dc21336423b03c6d9fe68346dce83d24d33b05b040adfeab85f58879d83d58",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "default.project.json",
+      "unit_id": "project"
+    },
+    {
+      "authorities": [],
+      "sha256": "6c17d358ff905323517511f9c542c7f93b45a6bb514f0bfff54f8ad93240b5f1",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/server/S1Rules.luau",
+      "unit_id": "rules"
+    },
+    {
+      "authorities": [
+        "round",
+        "event_chooser",
+        "damage"
+      ],
+      "sha256": "75a5b455be7997383f23dcb4ac2f8b94b810492edc0bdb5ac8c90a18754bc0f0",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/server/Game.server.luau",
+      "unit_id": "s1_game_server"
+    },
+    {
+      "authorities": [],
+      "sha256": "4ee50c040e9dc6ecb2c6de4f376b13606b978df1dcc0422b07a07ab8eb5fcfc1",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/client/S1GoroganStompRing.client.luau",
+      "unit_id": "s1_spatial_stomp_ring"
+    },
+    {
+      "authorities": [],
+      "sha256": "46513abb081bfc27bf1354a060370ac817a4eaf714f211b74a5d95f369eadbea",
+      "source_commit": "421e01b9ea5fca5b009649521cc478402001dada",
+      "target_path": "src/server/TrustedGoroganActivationMapper.luau",
+      "unit_id": "trusted_mapper"
+    }
+  ],
+  "studio_status": "NOT_TESTED",
+  "work_id": "p0d-siege-v19"
+}
