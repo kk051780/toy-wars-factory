@@ -1,0 +1,58 @@
+# One isolated no-write source-only CI for the NEW S1 Game entrypoint patch.
+name: P0D S1 Game D07 D08 source candidate first CI
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-game-canonical-host-patch-20261111-01
+    paths:
+      - .github/workflows/p0d-s1-game-canonical-manifest-gen-20261111.yml
+permissions:
+  contents: read
+concurrency:
+  group: p0d-s1-game-canonical-patch
+  cancel-in-progress: false
+jobs:
+  source-patch-test:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source-only patch branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Build manifest with official source pack tool (temporary runner only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py build \
+            --root handoffs/P0D-S1-GAME-CANONICAL-HOST-PATCH-20261111-01/candidate \
+            --packet-id P0D-S1-CANONICAL-GAME-PATCH-20261111-01
+          python3 - <<'PY'
+          import base64, pathlib, hashlib
+          root=pathlib.Path('handoffs/P0D-S1-GAME-CANONICAL-HOST-PATCH-20261111-01/candidate')
+          raw=(root/'BUILD_MANIFEST.json').read_bytes()
+          print('P0D_SOURCE_MANIFEST_B64='+base64.b64encode(raw).decode('ascii'))
+          print('P0D_SOURCE_MANIFEST_SHA='+hashlib.sha256(raw).hexdigest())
+          PY
+      - name: Run real candidate S1 Python game regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s handoffs/P0D-S1-GAME-CANONICAL-HOST-PATCH-20261111-01/candidate/tests -v 2>&1 | tee /tmp/p0d_game_candidate_test.log
+          grep -F 'Ran 80 tests' /tmp/p0d_game_candidate_test.log
+          grep -x OK /tmp/p0d_game_candidate_test.log
+      - name: Run independent source authority and negative candidate contract tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s handoffs/P0D-S1-GAME-CANONICAL-HOST-PATCH-20261111-01/tools -p 'test_game_entrypoint.py' -v 2>&1 | tee /tmp/p0d_game_host_test.log
+          grep -F 'Ran 18 tests' /tmp/p0d_game_host_test.log
+          grep -x OK /tmp/p0d_game_host_test.log
+      - name: Confirm source git branches not mutated or published
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- releases/P0D_S1_KIDS_RC01
+          test "$(git ls-files --others --exclude-standard releases/P0D_S1_KIDS_RC01 | wc -l)" -eq 0
+          echo P0D_CANDIDATE_CI_OFFLINE_ONLY_NO_STUDIO_NO_RELEASE
