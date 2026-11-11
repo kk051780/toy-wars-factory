@@ -24,7 +24,15 @@ class SourceContract(unittest.TestCase):
     def test_no_client_coordinate_payload(self):self.assertNotRegex(self.client,r'remote:FireServer\(\{[^}]*Position')
     def test_no_client_target(self):self.assertNotIn('target =',self.client)
     def test_single_round_controller(self):self.assertEqual(self.server.count('local function tickRound'),1)
-    def test_no_second_weather_picker(self):self.assertNotIn('math.random',self.server)
+    def test_single_authoritative_canonical_server_roll(self):
+        # The new v40+D08 event host needs exactly ONE trusted server roll.
+        # It is invoked ONLY by the existing Game tick through original D08,
+        # never by another scheduler, client target or separate server Script.
+        self.assertEqual(self.server.count('math.random(0, 99)'),1)
+        self.assertEqual(self.server.count('serverRoll = function(_matchId, _epoch)'),1)
+        self.assertEqual(self.server.count('CanonicalHost.new('),1)
+        self.assertNotIn('nextAlarmAt',self.server)
+        self.assertNotIn('while true do\n        canonicalHost:tick()',self.server)
     def test_server_validates_seq(self):self.assertIn('Rules.validSeq',self.server)
     def test_server_validates_distance(self):self.assertIn('Config.InteractDistance',self.server)
     def test_server_validates_aim(self):self.assertIn('look:Dot',self.server)
