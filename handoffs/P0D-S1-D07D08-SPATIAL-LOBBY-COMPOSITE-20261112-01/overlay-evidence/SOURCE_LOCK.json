@@ -1,0 +1,29 @@
+{
+  "format": "P0D_S1_D07_D08_TWO_DEFECT_OVERLAY_V1",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "packet_id": "P0D-S1-D07D08-TWO-DEFECT-COMPAT-OVERLAY-20261111-01",
+  "baseline_source_commit": "4b66dd8a9b34a45cf12e58684e0e4372df3f8b07",
+  "source_only": true,
+  "studio_tested": false,
+  "release_approved": false,
+  "original_host_git_blob": "db28bafed6372f9fb2d4fa53c433d046999b64e2",
+  "original_binding_git_blob": "db2a5d2ee5e655b2a9beffe33747cf1fba47c37e",
+  "corrections": [
+    {
+      "path": "src/server/S1CanonicalRoundHost.luau",
+      "git_blob_sha1": "61501c982619e54db6a09cf11b188ef872c1666e",
+      "change": "D08 successful terminal cleanup failclosed and repeat acceptance same round only"
+    },
+    {
+      "path": "src/server/S1GoroganLiveBindings.luau",
+      "git_blob_sha1": "9cde26d7806a6ec20cd8648953eb37d1eefdc2c8",
+      "change": "Resolve exact positive and Studio-negative server Player.UserId safely"
+    }
+  ],
+  "offline_js_checks": {
+    "total": 45,
+    "passed": 45,
+    "native_luau_ran": false
+  }
+}
