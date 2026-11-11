@@ -39,7 +39,11 @@ check("floor", "RED", "RED", "EGG_CAPTURE", 2.9, "勝利！　卵を運んで得
 print("NATIVE_LUAU_RESULT_ASSERTIONS=" .. tostring(count))
 """
 def run(args, expect=True):
-    p = subprocess.run(args, capture_output=True, text=True, timeout=30)
+    if pathlib.Path(args[0]).name == "luau-compile":
+        # Compiler stdout is binary bytecode, not valid UTF-8 text.
+        p = subprocess.run(args, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, timeout=30)
+    else:
+        p = subprocess.run(args, capture_output=True, text=True, timeout=30)
     if (p.returncode == 0) != expect:
         raise AssertionError("PROCESS_FAILED args=%s rc=%s stdout=%s stderr=%s" % (args, p.returncode, p.stdout[-1000:], p.stderr[-1000:]))
     return p.stdout
