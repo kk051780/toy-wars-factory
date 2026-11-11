@@ -411,7 +411,8 @@ def main():
         print(match.group(0))
         for name,module,old,new,expected in MUTATIONS:
             src=sources[module]
-            if src.count(old)!=1:
+            expected_count=2 if name=="client_replay_seq_bypass" else 1
+            if src.count(old)!=expected_count:
                 raise RuntimeError("AMBIGUOUS_MUTATION_ANCHOR_"+name+" "+str(src.count(old)))
             bad=dict(sources);bad[module]=src.replace(old,new,1)
             code,out=run(args.luau,path,bad)
