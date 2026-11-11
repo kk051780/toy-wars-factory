@@ -1,6 +1,6 @@
 --!strict
 -- WF13ZoneController: opt-in, original, isolated server-side low gravity.
--- No RemoteEvents, awards, egg authority, global gravity change, or auto-start.
+-- No network messages, prizes, egg authority, global gravity change, or auto-start.
 local Policy = require(script.Parent.WF13Policy)
 
 local Controller = {}
