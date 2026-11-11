@@ -138,6 +138,7 @@ class S1ActualGamePatchContract(unittest.TestCase):
         st=candidate["tree"]["StarterPlayer"]["StarterPlayerScripts"]
         self.assertEqual(st.pop("GoroganVisualPolicy"), {"$path":"src/client/GoroganVisualPolicy.luau"})
         self.assertEqual(st.pop("S1GoroganStompRing"), {"$path":"src/client/S1GoroganStompRing.client.luau"})
+        self.assertEqual(st.pop("TrapRaidersCoach"), {"$path":"src/client/FirstMinuteCoach.client.luau"})
         self.assertEqual(candidate, original)
 
     def test_package_root_manifest_is_strict_public_source_v1(self):
@@ -145,7 +146,7 @@ class S1ActualGamePatchContract(unittest.TestCase):
         self.assertEqual(self.manifest["format"], "P0D_PUBLIC_SOURCE_V1")
         self.assertEqual(self.manifest["game_id"], "TRAP_RAIDERS")
         self.assertEqual(self.manifest["public_source_allowed"], True)
-        self.assertEqual(len(self.manifest["files"]), 28)
+        self.assertEqual(len(self.manifest["files"]), 30)
 
     def test_manifest_has_every_candidate_file_once_except_itself(self):
         entries = self.manifest["files"]
