@@ -96,6 +96,8 @@ class WF13Tests(unittest.TestCase):
     def test_safe_noncombat_scene_and_stairs(self):
         self.assertIn('WF13LocalGravityBubble', S)
         self.assertIn('NoPayFreeGround', S)
+        self.assertIn('Instance.new("SpawnLocation")', S)
+        self.assertIn("spawn.Neutral = true", S)
         self.assertIn('FreeStair%02d', S)
         self.assertIn('WF13SafeRecoveryPad', S)
         self.assertIn('SkyCastleDeck', S)
