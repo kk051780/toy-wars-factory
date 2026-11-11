@@ -1,0 +1,747 @@
+{
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "packet_id": "P0D-D18-STARLAUNCH-THUNDERHORN-SHOWCASE-20261112-03",
+  "canon_editorial_commit": "176bfc400ef6ec561b129a8163a0f4776e1b9ee4",
+  "source_type": "NEW_ORIGINAL_SOURCE_FROM_V8_EDITORIAL",
+  "models": [
+    {
+      "id": "TRCA-TR-009",
+      "name": "星跳ねの発射台",
+      "category": "TR",
+      "category_ja": "罠",
+      "rarity": "MYTHIC",
+      "world": "星屑の廃都",
+      "art_hook": "横長の倒れた三日月台座、片持ちL字の望遠筒、星ボタン、青い帰還リボン",
+      "description": "遠くに飛ばすより安全に帰ることを選ぶ跳ね台",
+      "parts": [
+        {
+          "name": "MoonBaseLeft",
+          "shape": "Block",
+          "position": [
+            -0.9,
+            0.35,
+            0
+          ],
+          "size": [
+            0.6,
+            0.22,
+            1.6
+          ],
+          "color": [
+            25,
+            34,
+            80
+          ],
+          "rotation_z": 17,
+          "far_detail": false
+        },
+        {
+          "name": "MoonBaseCenter",
+          "shape": "Block",
+          "position": [
+            0,
+            0.17,
+            0
+          ],
+          "size": [
+            1.7,
+            0.24,
+            1.1
+          ],
+          "color": [
+            27,
+            40,
+            92
+          ],
+          "rotation_z": 0,
+          "far_detail": false
+        },
+        {
+          "name": "MoonBaseRight",
+          "shape": "Block",
+          "position": [
+            0.9,
+            0.35,
+            0
+          ],
+          "size": [
+            0.6,
+            0.22,
+            1.6
+          ],
+          "color": [
+            25,
+            34,
+            80
+          ],
+          "rotation_z": -17,
+          "far_detail": false
+        },
+        {
+          "name": "MoonTipLeft",
+          "shape": "Ball",
+          "position": [
+            -1.15,
+            0.52,
+            0
+          ],
+          "size": [
+            0.32,
+            0.3,
+            0.34
+          ],
+          "color": [
+            231,
+            185,
+            83
+          ],
+          "rotation_z": 0,
+          "far_detail": true
+        },
+        {
+          "name": "MoonTipRight",
+          "shape": "Ball",
+          "position": [
+            1.15,
+            0.52,
+            0
+          ],
+          "size": [
+            0.32,
+            0.3,
+            0.34
+          ],
+          "color": [
+            231,
+            185,
+            83
+          ],
+          "rotation_z": 0,
+          "far_detail": true
+        },
+        {
+          "name": "TelescopeStand",
+          "shape": "Block",
+          "position": [
+            0.12,
+            0.95,
+            0
+          ],
+          "size": [
+            0.32,
+            1.6,
+            0.34
+          ],
+          "color": [
+            155,
+            112,
+            57
+          ],
+          "rotation_z": 0,
+          "far_detail": false
+        },
+        {
+          "name": "TelescopeArm",
+          "shape": "Block",
+          "position": [
+            0.58,
+            1.7,
+            0
+          ],
+          "size": [
+            1.4,
+            0.34,
+            0.42
+          ],
+          "color": [
+            215,
+            166,
+            74
+          ],
+          "rotation_z": -24,
+          "far_detail": false
+        },
+        {
+          "name": "TelescopeEnd",
+          "shape": "Block",
+          "position": [
+            1.2,
+            2.05,
+            0
+          ],
+          "size": [
+            0.65,
+            0.4,
+            0.5
+          ],
+          "color": [
+            229,
+            183,
+            85
+          ],
+          "rotation_z": -24,
+          "far_detail": false
+        },
+        {
+          "name": "TelescopeRim",
+          "shape": "Ball",
+          "position": [
+            1.43,
+            2.23,
+            0
+          ],
+          "size": [
+            0.3,
+            0.48,
+            0.48
+          ],
+          "color": [
+            245,
+            208,
+            132
+          ],
+          "rotation_z": 0,
+          "far_detail": true
+        },
+        {
+          "name": "StarButton",
+          "shape": "Ball",
+          "position": [
+            0,
+            0.43,
+            -0.64
+          ],
+          "size": [
+            0.46,
+            0.21,
+            0.25
+          ],
+          "color": [
+            255,
+            235,
+            126
+          ],
+          "rotation_z": 0,
+          "far_detail": false
+        },
+        {
+          "name": "StarButtonAccent",
+          "shape": "Block",
+          "position": [
+            0,
+            0.57,
+            -0.67
+          ],
+          "size": [
+            0.14,
+            0.1,
+            0.16
+          ],
+          "color": [
+            255,
+            250,
+            222
+          ],
+          "rotation_z": 45,
+          "far_detail": true
+        },
+        {
+          "name": "SpringLeft",
+          "shape": "Block",
+          "position": [
+            -0.62,
+            -0.09,
+            -0.35
+          ],
+          "size": [
+            0.18,
+            0.27,
+            0.24
+          ],
+          "color": [
+            173,
+            153,
+            112
+          ],
+          "rotation_z": 0,
+          "far_detail": true
+        },
+        {
+          "name": "SpringRight",
+          "shape": "Block",
+          "position": [
+            0.62,
+            -0.09,
+            0.35
+          ],
+          "size": [
+            0.18,
+            0.27,
+            0.24
+          ],
+          "color": [
+            173,
+            153,
+            112
+          ],
+          "rotation_z": 0,
+          "far_detail": true
+        },
+        {
+          "name": "FootLeft",
+          "shape": "Block",
+          "position": [
+            -0.85,
+            -0.17,
+            0.4
+          ],
+          "size": [
+            0.56,
+            0.23,
+            0.53
+          ],
+          "color": [
+            30,
+            41,
+            91
+          ],
+          "rotation_z": 0,
+          "far_detail": false
+        },
+        {
+          "name": "FootRight",
+          "shape": "Block",
+          "position": [
+            0.85,
+            -0.17,
+            0.4
+          ],
+          "size": [
+            0.56,
+            0.23,
+            0.53
+          ],
+          "color": [
+            30,
+            41,
+            91
+          ],
+          "rotation_z": 0,
+          "far_detail": false
+        },
+        {
+          "name": "RibbonBlue",
+          "shape": "Block",
+          "position": [
+            0.66,
+            1.76,
+            -0.33
+          ],
+          "size": [
+            0.6,
+            0.07,
+            0.17
+          ],
+          "color": [
+            64,
+            152,
+            215
+          ],
+          "rotation_z": -24,
+          "far_detail": false
+        },
+        {
+          "name": "RibbonTail",
+          "shape": "Block",
+          "position": [
+            0.45,
+            1.51,
+            -0.33
+          ],
+          "size": [
+            0.12,
+            0.48,
+            0.14
+          ],
+          "color": [
+            64,
+            152,
+            215
+          ],
+          "rotation_z": 8,
+          "far_detail": true
+        },
+        {
+          "name": "ReturnStar",
+          "shape": "Ball",
+          "position": [
+            -1.36,
+            0.85,
+            -0.11
+          ],
+          "size": [
+            0.22,
+            0.23,
+            0.23
+          ],
+          "color": [
+            255,
+            237,
+            141
+          ],
+          "rotation_z": 0,
+          "far_detail": true
+        }
+      ]
+    },
+    {
+      "id": "TRCA-WE-045",
+      "name": "雷鳥ホルン",
+      "category": "WE",
+      "category_ja": "武器",
+      "rarity": "LEGENDARY",
+      "world": "雷鳥の空庭",
+      "art_hook": "稲妻型ホルン管、非対称の翼、雲形の音口、羽根札",
+      "description": "大きな雷でなく小さな一音で勇気を伝える応援団長",
+      "parts": [
+        {
+          "name": "HornZigLower",
+          "shape": "Block",
+          "position": [
+            -0.47,
+            0.85,
+            0
+          ],
+          "size": [
+            0.54,
+            1.04,
+            0.42
+          ],
+          "color": [
+            253,
+            205,
+            76
+          ],
+          "rotation_z": -34,
+          "far_detail": false
+        },
+        {
+          "name": "HornZigMid",
+          "shape": "Block",
+          "position": [
+            0.05,
+            1.38,
+            0
+          ],
+          "size": [
+            0.67,
+            0.36,
+            0.47
+          ],
+          "color": [
+            243,
+            194,
+            66
+          ],
+          "rotation_z": 25,
+          "far_detail": false
+        },
+        {
+          "name": "HornZigUpper",
+          "shape": "Block",
+          "position": [
+            0.39,
+            1.9,
+            0
+          ],
+          "size": [
+            0.5,
+            1.04,
+            0.4
+          ],
+          "color": [
+            253,
+            205,
+            76
+          ],
+          "rotation_z": -35,
+          "far_detail": false
+        },
+        {
+          "name": "HornBellCloud",
+          "shape": "Ball",
+          "position": [
+            0.52,
+            2.44,
+            0
+          ],
+          "size": [
+            0.89,
+            0.5,
+            0.75
+          ],
+          "color": [
+            187,
+            223,
+            244
+          ],
+          "rotation_z": 0,
+          "far_detail": false
+        },
+        {
+          "name": "CloudBellLeft",
+          "shape": "Ball",
+          "position": [
+            0.22,
+            2.47,
+            -0.28
+          ],
+          "size": [
+            0.43,
+            0.35,
+            0.38
+          ],
+          "color": [
+            187,
+            223,
+            244
+          ],
+          "rotation_z": 0,
+          "far_detail": true
+        },
+        {
+          "name": "CloudBellRight",
+          "shape": "Ball",
+          "position": [
+            0.82,
+            2.47,
+            0.24
+          ],
+          "size": [
+            0.43,
+            0.35,
+            0.38
+          ],
+          "color": [
+            187,
+            223,
+            244
+          ],
+          "rotation_z": 0,
+          "far_detail": true
+        },
+        {
+          "name": "OpenWing",
+          "shape": "Block",
+          "position": [
+            -0.2,
+            1.89,
+            0.55
+          ],
+          "size": [
+            1.06,
+            0.2,
+            0.57
+          ],
+          "color": [
+            106,
+            82,
+            160
+          ],
+          "rotation_z": 32,
+          "far_detail": false
+        },
+        {
+          "name": "ClosedWing",
+          "shape": "Block",
+          "position": [
+            -0.54,
+            1.6,
+            -0.49
+          ],
+          "size": [
+            0.53,
+            0.18,
+            0.38
+          ],
+          "color": [
+            92,
+            69,
+            149
+          ],
+          "rotation_z": -24,
+          "far_detail": false
+        },
+        {
+          "name": "OpenFeather",
+          "shape": "Block",
+          "position": [
+            -0.56,
+            2.12,
+            0.75
+          ],
+          "size": [
+            0.53,
+            0.14,
+            0.24
+          ],
+          "color": [
+            176,
+            180,
+            232
+          ],
+          "rotation_z": 28,
+          "far_detail": true
+        },
+        {
+          "name": "ClosedFeather",
+          "shape": "Block",
+          "position": [
+            -0.72,
+            1.5,
+            -0.71
+          ],
+          "size": [
+            0.37,
+            0.15,
+            0.21
+          ],
+          "color": [
+            176,
+            180,
+            232
+          ],
+          "rotation_z": -24,
+          "far_detail": true
+        },
+        {
+          "name": "FeatherTag",
+          "shape": "Block",
+          "position": [
+            -0.27,
+            0.59,
+            -0.53
+          ],
+          "size": [
+            0.22,
+            0.47,
+            0.18
+          ],
+          "color": [
+            181,
+            217,
+            251
+          ],
+          "rotation_z": -12,
+          "far_detail": false
+        },
+        {
+          "name": "FeatherTagStripe",
+          "shape": "Block",
+          "position": [
+            -0.28,
+            0.51,
+            -0.64
+          ],
+          "size": [
+            0.12,
+            0.2,
+            0.06
+          ],
+          "color": [
+            68,
+            86,
+            146
+          ],
+          "rotation_z": 0,
+          "far_detail": true
+        },
+        {
+          "name": "SilentStar",
+          "shape": "Ball",
+          "position": [
+            1.01,
+            2.7,
+            -0.15
+          ],
+          "size": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "color": [
+            255,
+            238,
+            155
+          ],
+          "rotation_z": 0,
+          "far_detail": true
+        },
+        {
+          "name": "HornStand",
+          "shape": "Block",
+          "position": [
+            0.12,
+            0.29,
+            0.2
+          ],
+          "size": [
+            0.24,
+            0.64,
+            0.31
+          ],
+          "color": [
+            59,
+            51,
+            101
+          ],
+          "rotation_z": 0,
+          "far_detail": false
+        },
+        {
+          "name": "StandFoot",
+          "shape": "Block",
+          "position": [
+            0.12,
+            0.04,
+            0.2
+          ],
+          "size": [
+            1.05,
+            0.2,
+            0.74
+          ],
+          "color": [
+            65,
+            54,
+            113
+          ],
+          "rotation_z": 0,
+          "far_detail": false
+        },
+        {
+          "name": "BellEdge",
+          "shape": "Block",
+          "position": [
+            0.84,
+            2.54,
+            0
+          ],
+          "size": [
+            0.17,
+            0.52,
+            0.73
+          ],
+          "color": [
+            246,
+            237,
+            192
+          ],
+          "rotation_z": 0,
+          "far_detail": true
+        }
+      ]
+    }
+  ]
+}
