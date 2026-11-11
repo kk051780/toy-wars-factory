@@ -100,3 +100,9 @@ jobs:
           set -euo pipefail
           python3 -m py_compile handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_actual_game_lifecycle_gate.py
           python3 handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_actual_game_lifecycle_gate.py --repo . --luau /tmp/p0d-luau/build/luau
+      - name: Execute ACTUAL S1 Game snapshots through original FirstMinuteModel 60-second cross-module QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_actual_game_ftue_gate.py
+          python3 handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_actual_game_ftue_gate.py --repo . --luau /tmp/p0d-luau/build/luau
