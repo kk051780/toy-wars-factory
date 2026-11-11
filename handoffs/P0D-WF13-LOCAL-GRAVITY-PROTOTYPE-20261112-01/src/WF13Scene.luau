@@ -35,6 +35,15 @@ function Scene.build(parent: Instance)
         Color3.fromRGB(37, 53, 94), Enum.Material.SmoothPlastic, true)
     local safePad = part(folder, "WF13SafeRecoveryPad", Vector3.new(14, 1, 14),
         Vector3.new(-58, 1, 0), blue, Enum.Material.Neon, true)
+    local spawn = Instance.new("SpawnLocation")
+    spawn.Name = "WF13FreeStart"
+    spawn.Size = Vector3.new(12, 1, 12)
+    spawn.Position = Vector3.new(-58, 2, 0)
+    spawn.Anchored = true
+    spawn.Neutral = true
+    spawn.CanCollide = true
+    spawn.Enabled = true
+    spawn.Parent = folder
 
     local zone = part(folder, "WF13LocalGravityBubble", Vector3.new(82, 58, 82),
         Vector3.new(0, 27, 0), purple, Enum.Material.Neon, false)
