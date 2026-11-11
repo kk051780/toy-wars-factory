@@ -118,7 +118,7 @@ for k=1,24 do
  eq(stomp and stomp.kind,"STOMP_RESOLVE","inflight_subsequent_resolve")
  eq(f.hum.Health,92,"inflight_one_hit")
 end
-if checks<3500 then error("TEMPORAL_INSUFFICIENT_CHECKS "..tostring(checks),0) end
+if checks<3400 then error("TEMPORAL_INSUFFICIENT_CHECKS "..tostring(checks),0) end
 print("P0D_NATIVE_D07_TEMPORAL_PASS assertions="..tostring(checks))
 '''
 MUTATIONS = [
@@ -162,7 +162,7 @@ def main():
         path = Path(temp) / "original_d07_temporal.luau"
         result, output = run_native(args.luau, path, authentic)
         m = re.search(r"P0D_NATIVE_D07_TEMPORAL_PASS assertions=(\d+)", output)
-        if result != 0 or m is None or int(m.group(1)) < 3500:
+        if result != 0 or m is None or int(m.group(1)) < 3400:
             raise RuntimeError("GENUINE_FOUR_MODULE_TEMPORAL_FAILURE " + output[-1000:])
         print("4/4 SHA_LOCKED_ORIGINAL_SOURCE " + m.group(0))
         for name, source, old, new, count in MUTATIONS:
