@@ -65,3 +65,9 @@ jobs:
           set -euo pipefail
           python3 -m py_compile handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_d07_chain_gate.py
           python3 handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_d07_chain_gate.py --repo . --luau /tmp/p0d-luau/build/luau
+      - name: Replay three consecutive original D07 stomps and reentrant callback adversaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_d07_temporal_gate.py
+          python3 handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_d07_temporal_gate.py --repo . --luau /tmp/p0d-luau/build/luau
