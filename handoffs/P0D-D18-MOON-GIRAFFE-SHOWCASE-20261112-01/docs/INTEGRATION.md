@@ -1,0 +1,8 @@
+# Optional S1 noncombat showroom — #220 sole integrator review
+
+1. Only the sole #220 CHAT-INTEGRATOR can include this isolated visual candidate; otherwise SKIP without affecting S1 release. Never auto-install or replace existing models/Gameplay.
+2. Before inclusion read #218 latest, #219 D18 canon, #220 actual S1 RC source and #213 actual Windows baseline. Keep `src/MoonGiraffeShowcase.luau` as one ModuleScript inside a dedicated non-gameplay folder, and opt-in call `local Model=require(module).Build(workspace, CFrame.new(0,3,0))` only in a separately approved copied unpublished Studio test Place; do not place inside active arena or create a second map builder.
+3. Validate actual Roblox native Luau compilation; isolated Play/Stop; 48px single-color silhouette; 2client/mobile 3D camera and no HUD occlusion; near 18 Part / far 15 visible; four pose targets; Build/Destroy lifecycle; perf/memory; visual recognizability compared with BE018 and ZO054; Studio closes normally. These checks **have not been executed**.
+4. Recheck source against exact pinned v8 ID, character name, rarity; verify each `BUILD_MANIFEST` source file size/SHA. Reject if source changed or stale.
+5. Never change egg/castle/HP/attack, D07 boss, D11 zombies, D14 transport, D17 cosmetic ownership, new remote, wins, monetization, map authority, main, merge or live game. Implement no unlock/progression. No automatic billing.
+6. Rollback: remove the optional single module reference & display call from the S1 candidate only; restore prior immutable RC snapshot. If poor FPS or HUD clutter, SKIP. OWNER directs final Codex/Studio only once near-complete RC assembled, not per mascot.
