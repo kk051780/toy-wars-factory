@@ -336,7 +336,7 @@ eq(pBlue.Character.hum.Health,preHp-24,"attack_cooldown")
 tick(26.9)
 send(pRed,"ATTACK",1,{targetId=202,damage=999})
 eq(pBlue.Character.hum.Health,preHp-24,"replay_attack_seq_after_cooldown")
-tick(27)
+tick(27.2) -- preserve full 0.85s cooldown after first hit at t26.2
 send(pRed,"ATTACK",3,{targetId=202,damage=999})
 eq(pBlue.Character.hum.Health,preHp-48,"second_legitimate_melee")
 -- Direction/range and block raycast forbid remote-suggested damage.
