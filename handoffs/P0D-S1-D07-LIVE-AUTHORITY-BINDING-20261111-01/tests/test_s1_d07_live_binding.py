@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OLD_ROOT = ROOT.parents[1] / "P0D-S1-CANONICAL-ROUND-HOST-20261111-01"
+OLD_ROOT = ROOT.parent / "P0D-S1-CANONICAL-ROUND-HOST-20261111-01"
 SRC = (ROOT / "src/S1GoroganLiveBindings.luau").read_text("utf-8")
 DOC = (ROOT / "docs/INTEGRATION.md").read_text("utf-8")
 ORIGINAL = {
@@ -122,7 +122,7 @@ class StaticBindingTests(unittest.TestCase):
         self.assertIn("deps.approvedByOwner == true",SRC)
         self.assertIn("mapper:isCanonicalActivation(activation)",SRC)
         self.assertIn('if me.attempted or not liveMatch(me)',SRC)
-        self.assertRegex(SRC,r"me\\.activeEventId = \"G07_\"")
+        self.assertIn('me.activeEventId = "G07_"',SRC)
         self.assertIn("return nil",SRC)
 
     def test_precise_source_game_match_id(self):
