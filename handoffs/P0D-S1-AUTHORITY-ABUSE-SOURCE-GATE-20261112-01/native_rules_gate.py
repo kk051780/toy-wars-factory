@@ -129,7 +129,7 @@ MUTATIONS=[
  ("score_without_home_egg", "and ownEggAtBase", "and true"),
  ("attack_without_cooldown", "now - previousTime >= cooldown", "true"),
  ("loosen_attack_direction", "dot >= 0.1", "dot >= -1"),
- ("invert_winner", "return \"RED\" end", "return \"BLUE\" end"),
+ ("invert_winner", 'if scores.RED >= cap or castles.BLUE <= 0 then return "RED" end', 'if scores.RED >= cap or castles.BLUE <= 0 then return "BLUE" end'),
 ]
 def git_source(repo):
     r=subprocess.run(["git","-C",repo,"show",f"{PIN}:{PATH}"],
