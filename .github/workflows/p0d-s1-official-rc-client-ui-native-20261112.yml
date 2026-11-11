@@ -1,0 +1,63 @@
+name: P0D S1 exact official RC client HUD plus Coach native integration
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-official-rc-client-ui-native-20261112-03
+permissions:
+  contents: read
+jobs:
+  real-hud-coach-luau:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout source QA branch with original release histories
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify immutable official RC commit and our keyless source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e "5dc6c958ea5549b1e859d6d250e6179e731181fb^{commit}"
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib
+          root=Path("handoffs/P0D-S1-OFFICIAL-RC-CLIENT-UI-NATIVE-20261112-03")
+          raw=(root/"BUILD_MANIFEST.json").read_bytes()
+          manifest=json.loads(raw)
+          assert set(manifest)=={"files","format","game_id","packet_id","public_source_allowed","work_id"}
+          assert manifest["format"]=="P0D_PUBLIC_SOURCE_V1" and manifest["public_source_allowed"] is True
+          assert len(manifest["files"])==2
+          for item in manifest["files"]:
+            assert set(item)=={"path","size","sha256"}
+            data=(root/item["path"]).read_bytes()
+            assert len(data)==item["size"] and hashlib.sha256(data).hexdigest()==item["sha256"]
+          print("P0D_NATIVE_CLIENT_KEYLESS_SOURCE_MANIFEST_2_OF_2_PASS")
+          PY
+      - name: Checkout exact upstream official Luau
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Build genuine native Luau compiler and interpreter
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _native_luau -B /tmp/p0d-native-client-ui -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d-native-client-ui --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Run ACTUAL unchanged official client LocalScripts and model in native Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-S1-OFFICIAL-RC-CLIENT-UI-NATIVE-20261112-03/tools/run_native_client_ui.py \
+            --repo . --luau /tmp/p0d-native-client-ui/luau
+      - name: No tracked source mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
