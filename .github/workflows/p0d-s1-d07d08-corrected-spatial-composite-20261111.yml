@@ -58,6 +58,37 @@ jobs:
           python3 -B -m unittest discover -s handoffs/P0D-S1-D07D08-CORRECTED-SPATIAL-COMPOSITE-20261111-01/overlay-source/tests -v 2>&1 | tee /tmp/s1_overlay.log
           grep -F 'Ran 34 tests' /tmp/s1_overlay.log
           grep -x OK /tmp/s1_overlay.log
+      - name: ACTUAL Python release assembler on 18 true candidate source and project units
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_S1_SOURCE_PLAN_SNAPSHOT_20261111_01/tools/chat_rc_assemble.py \
+            --plan handoffs/P0D-S1-D07D08-CORRECTED-SPATIAL-COMPOSITE-20261111-01/SOURCE_PLAN_CORRECTED.json \
+            --source-root handoffs/P0D-S1-D07D08-CORRECTED-SPATIAL-COMPOSITE-20261111-01/candidate \
+            --out /tmp/p0d_d07d08_corrected_real_source
+          python3 - <<'PY'
+          import base64,hashlib,json,pathlib
+          root=pathlib.Path('handoffs/P0D-S1-D07D08-CORRECTED-SPATIAL-COMPOSITE-20261111-01/candidate')
+          target=pathlib.Path('/tmp/p0d_d07d08_corrected_real_source')
+          plan=pathlib.Path('handoffs/P0D-S1-D07D08-CORRECTED-SPATIAL-COMPOSITE-20261111-01/SOURCE_PLAN_CORRECTED.json')
+          b=(target/'CHAT_RC_RECEIPT.json').read_bytes()
+          receipt=json.loads(b)
+          assert receipt['studio_status']=='NOT_TESTED'
+          assert receipt['release_approved'] is False
+          assert receipt['assembly_status']=='CHAT_BUILD_READY__OFFLINE_EVIDENCE_ONLY'
+          assert len(receipt['source_units'])==18 and len(receipt['contents'])==18
+          assert receipt['source_plan_sha256']==hashlib.sha256(plan.read_bytes()).hexdigest()
+          for f in receipt['contents']:
+              original=(root/f['path']).read_bytes()
+              compiled=(target/f['path']).read_bytes()
+              assert original==compiled
+              assert hashlib.sha256(compiled).hexdigest()==f['sha256']
+              assert len(compiled)==f['size']
+          print('P0D_CORRECTED_REAL_PYTHON_ASSEMBLY_PASS_18_18')
+          print('P0D_CORRECTED_RECEIPT_SHA256='+hashlib.sha256(b).hexdigest())
+          print('P0D_CORRECTED_RECEIPT_B64='+base64.b64encode(b).decode('ascii'))
+          print('P0D_CORRECTED_SOURCE_ONLY_D07_D08_NOT_ACTIVATED_STUDIO_NOT_TESTED')
+          PY
       - name: Strict official public source checks on overlay and new actual full composite
         shell: bash
         run: |
