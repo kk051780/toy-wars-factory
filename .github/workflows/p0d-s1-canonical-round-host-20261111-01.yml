@@ -1,0 +1,43 @@
+# Opt-in source preflight only. No AI, Roblox Studio, PC, deployment, or write token.
+name: P0D S1 original D08 D07 server round host source QA
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-canonical-round-host-20261111-01
+    paths:
+      - .github/workflows/p0d-s1-canonical-round-host-20261111-01.yml
+permissions:
+  contents: read
+jobs:
+  source-only:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Checkout isolated original sources
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Inspect exact original APIs and S1 safety host with Python
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s handoffs/P0D-S1-CANONICAL-ROUND-HOST-20261111-01/tests -v
+          python3 -m unittest discover -s releases/P0D_S1_KIDS_RC01/tests -v 2>&1 | tee /tmp/s1_original_tests.log
+          grep -F 'Ran 80 tests' /tmp/s1_original_tests.log
+          grep -x OK /tmp/s1_original_tests.log
+      - name: Build exact canonical handoff manifest from real Git checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py build \
+            --root handoffs/P0D-S1-CANONICAL-ROUND-HOST-20261111-01 \
+            --packet-id P0D-S1-AUTHORITATIVE-D08-D07-HOST-20261111-01
+          echo "P0D_MANIFEST_BEGIN"
+          cat handoffs/P0D-S1-CANONICAL-ROUND-HOST-20261111-01/BUILD_MANIFEST.json
+          echo "P0D_MANIFEST_END"
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py verify \
+            --root handoffs/P0D-S1-CANONICAL-ROUND-HOST-20261111-01 \
+            --packet-id P0D-S1-AUTHORITATIVE-D08-D07-HOST-20261111-01
+          git diff --exit-code -- releases/P0D_S1_KIDS_RC01
+          echo "P0D_S1_D08_D07_SOURCE_PREFLIGHT_PASS"
