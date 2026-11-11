@@ -119,7 +119,9 @@ class SpatialTelegraphSourceContract(unittest.TestCase):
         c=self.client
         self.assertIn('s.phase ~= "ACTIVE" then clearRound()',c)
         self.assertIn('s.visualKind == "END"',c)
-        self.assertIn('if result == "EXPIRED" then clearRound() end',c)
+        self.assertIn('if result == "EXPIRED" then endVisual() end',c)
+        self.assertIn('if result == "ENDED" then endVisual() end',c)
+        self.assertIn('lastEventId = nil -- only reset for a NEW epoch or non-ACTIVE phase',c)
         self.assertIn("script.Destroying:Connect",c)
         self.assertIn("connection:Disconnect()",c)
         self.assertIn("heartbeat:Disconnect()",c)
