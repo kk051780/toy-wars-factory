@@ -1,0 +1,88 @@
+{
+  "format": "P0D_WORLD_ROUTE_TACTIC_V1",
+  "game_id": "TRAP_RAIDERS",
+  "issue": "https://github.com/kk051780/toy-wars-factory/issues/224",
+  "source_mode": "ORIGINAL_DESIGN_AND_3D_SOURCE_ONLY",
+  "not_implemented": [
+    "sea swim physics",
+    "sea NPC spawns",
+    "real egg stealing in sea",
+    "glider vehicle",
+    "combat buffs",
+    "real S1 score"
+  ],
+  "prior_world_atlas_sha": "4a75a271fda7afbf786493edd42bc2c645a18b60",
+  "zero_pay_advantage": true,
+  "records": [
+    {
+      "id": "SEA_BRIDGE",
+      "zone": "陸→港",
+      "child_action": "あおい橋をあるく",
+      "role_item_tactic": "乗り物担当が港の位置を教え、盾役と一緒に表の道で城へ",
+      "counterplay": "橋は見通しが良く守り側も待ち伏せ・撤退できる",
+      "marketing_hook_7s": "海のお城へ行ける青い橋を見つけた！",
+      "marketing_script_15s": "橋を渡ると青い港が見えた！仲間と正面から海底城をめざす。敵が来たらどうする？",
+      "H0": "現行S1の陸上マップのみ・同人数・同試合時間",
+      "H1": "追加をSEA_BRIDGEのルート1つに限定して比較",
+      "failure_recovery": "歩行可能な迂回と帰還・危険落下時はロビーへ復帰。正規Studio実測までは安全効果未確認",
+      "test_metric": "初回60秒発見・帰還率・完走・再戦率・モバイルFPSと転落率",
+      "status": "SOURCE_ONLY_NOT_STUDIO_TESTED"
+    },
+    {
+      "id": "SEA_BUBBLE_A",
+      "zone": "港→海底城",
+      "child_action": "あわのさかをくだる",
+      "role_item_tactic": "魔獣使い候補の海獣の目印を追い、罠役が出口の動線を考える",
+      "counterplay": "出口と入口が見える、物理的に通行可能な通常坂。海獣はまだ未実装",
+      "marketing_hook_7s": "青い泡の奥にもう一つのお城！",
+      "marketing_script_15s": "港から泡をたどって海の底へ！透明な道は誰でも使える。見つからずにゴールできる？",
+      "H0": "現行S1の陸上マップのみ・同人数・同試合時間",
+      "H1": "追加をSEA_BUBBLE_Aのルート1つに限定して比較",
+      "failure_recovery": "歩行可能な迂回と帰還・危険落下時はロビーへ復帰。正規Studio実測までは安全効果未確認",
+      "test_metric": "初回60秒発見・帰還率・完走・再戦率・モバイルFPSと転落率",
+      "status": "SOURCE_ONLY_NOT_STUDIO_TESTED"
+    },
+    {
+      "id": "SEA_BUBBLE_B",
+      "zone": "陸→海底城",
+      "child_action": "みどりのひみつ道へ",
+      "role_item_tactic": "ゾンビ使い候補の囮で正面に注意を向け、仲間は秘密の緑路を進む",
+      "counterplay": "緑色の印と出口が防衛側にも可視。無料の歩行路で反撃可能",
+      "marketing_hook_7s": "正面の敵をすりぬける秘密の海底道！",
+      "marketing_script_15s": "敵が青い橋を守っている間に、緑の坂を発見！誰でも歩ける海底の裏口から仲間と挑もう。",
+      "H0": "現行S1の陸上マップのみ・同人数・同試合時間",
+      "H1": "追加をSEA_BUBBLE_Bのルート1つに限定して比較",
+      "failure_recovery": "歩行可能な迂回と帰還・危険落下時はロビーへ復帰。正規Studio実測までは安全効果未確認",
+      "test_metric": "初回60秒発見・帰還率・完走・再戦率・モバイルFPSと転落率",
+      "status": "SOURCE_ONLY_NOT_STUDIO_TESTED"
+    },
+    {
+      "id": "SKY_RAINBOW_A",
+      "zone": "陸→天空城",
+      "child_action": "きいろのさかをのぼる",
+      "role_item_tactic": "戦士の盾で味方を守りながら黄色の斜路を登る",
+      "counterplay": "守る側が接近を見通せる。攻めも守りも使える一本道",
+      "marketing_hook_7s": "黄色の虹を登ると空のお城！",
+      "marketing_script_15s": "草原に空へ続く黄色の道を発見！仲間を守って天空城に到着。上から見える世界はどうなっている？",
+      "H0": "現行S1の陸上マップのみ・同人数・同試合時間",
+      "H1": "追加をSKY_RAINBOW_Aのルート1つに限定して比較",
+      "failure_recovery": "歩行可能な迂回と帰還・危険落下時はロビーへ復帰。正規Studio実測までは安全効果未確認",
+      "test_metric": "初回60秒発見・帰還率・完走・再戦率・モバイルFPSと転落率",
+      "status": "SOURCE_ONLY_NOT_STUDIO_TESTED"
+    },
+    {
+      "id": "SKY_RAINBOW_B",
+      "zone": "陸→天空城",
+      "child_action": "むらさきのさかをのぼる",
+      "role_item_tactic": "魔法職候補の視界サインで黄色側を警戒させ、紫側から接近",
+      "counterplay": "紫ルートも目印あり、警戒方向を変更できる。透明化は未実装",
+      "marketing_hook_7s": "空のお城に実は裏道が二つ！",
+      "marketing_script_15s": "敵が黄色い坂を見ている！じゃあ紫色の坂を登ろう。空の城まで登って大逆転できるかな？",
+      "H0": "現行S1の陸上マップのみ・同人数・同試合時間",
+      "H1": "追加をSKY_RAINBOW_Bのルート1つに限定して比較",
+      "failure_recovery": "歩行可能な迂回と帰還・危険落下時はロビーへ復帰。正規Studio実測までは安全効果未確認",
+      "test_metric": "初回60秒発見・帰還率・完走・再戦率・モバイルFPSと転落率",
+      "status": "SOURCE_ONLY_NOT_STUDIO_TESTED"
+    }
+  ]
+}
