@@ -54,7 +54,7 @@ local Vector3=V
 local UDim2={fromOffset=function() return {} end,fromScale=function() return {} end}
 local Color3={fromRGB=function(r,g,b) return {r,g,b} end,new=function(r,g,b) return {r,g,b} end}
 local BrickColor={new=function(c) return c end}
-local Enum={RaycastFilterType={Exclude="Exclude"}}
+local Enum={RaycastFilterType={Exclude="Exclude"}, Material={Neon="Neon"}}
 local RaycastParams={new=function() return {} end}
 local function signal()
  local s={listeners={}}
