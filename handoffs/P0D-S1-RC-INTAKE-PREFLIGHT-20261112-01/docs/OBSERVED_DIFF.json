@@ -1,0 +1,55 @@
+{
+  "schema": "P0D_S1_RC_INTAKE_DIFF_V1",
+  "rc_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+  "candidate_commit": "b103389e2089f9ff5a08984fe2f8f6f02aa8b1bc",
+  "rc_root": "releases/P0D_S1_KIDS_RC01",
+  "candidate_root": "handoffs/P0D-S1-FTUE-ON-D07D08-SPATIAL-LOBBY-20261112-01/candidate",
+  "rc_files": 15,
+  "candidate_files": 30,
+  "unchanged": [
+    "README.md",
+    "docs/CHECKPOINT_RESUME.md",
+    "docs/OFFLINE_TEST_LOG.txt",
+    "docs/QA_AND_GAPS.md",
+    "docs/RELEASE_STATUS.json",
+    "docs/SOURCE_SELECTION.json",
+    "src/server/MapBuilder.luau",
+    "src/server/S1Rules.luau",
+    "src/shared/Config.luau",
+    "tests/s1_reference.py",
+    "tests/test_s1_rules.py"
+  ],
+  "changed": [
+    "default.project.json",
+    "src/client/HUD.client.luau",
+    "src/server/Game.server.luau",
+    "tests/test_static_source.py"
+  ],
+  "added": [
+    "src/client/FirstMinuteCoach.client.luau",
+    "src/client/GoroganVisualPolicy.luau",
+    "src/client/S1GoroganStompRing.client.luau",
+    "src/server/CanonicalEventBridge.luau",
+    "src/server/ChaosEventCore.luau",
+    "src/server/GoroganAttackReceiptWindow.luau",
+    "src/server/GoroganCombinedRuntime.luau",
+    "src/server/GoroganDamageBoundary.luau",
+    "src/server/GoroganRigDriver.luau",
+    "src/server/GoroganServerAICore.luau",
+    "src/server/LobbyTeamRecovery.luau",
+    "src/server/S1CanonicalRoundHost.luau",
+    "src/server/S1GoroganLiveBindings.luau",
+    "src/server/TrustedGoroganActivationMapper.luau",
+    "src/shared/FirstMinuteModel.luau"
+  ],
+  "removed": [],
+  "counts": {
+    "unchanged": 11,
+    "changed": 4,
+    "added": 15,
+    "removed": 0
+  },
+  "legacy_rc_manifest_extra_status": true,
+  "candidate_manifest_six_keys": true,
+  "note": "Source metadata comparison only, original exact source manifests fetched through Github connector; not Studio or an owner-scored overall percentage."
+}
