@@ -1,0 +1,21 @@
+{
+  "name": "WF13_ISOLATED_GRAVITY_DEMO",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "WF13Demo": {
+        "$path": "src/WF13Demo.server.luau"
+      },
+      "WF13Policy": {
+        "$path": "src/WF13Policy.luau"
+      },
+      "WF13ZoneController": {
+        "$path": "src/WF13ZoneController.luau"
+      },
+      "WF13Scene": {
+        "$path": "src/WF13Scene.luau"
+      }
+    }
+  }
+}
