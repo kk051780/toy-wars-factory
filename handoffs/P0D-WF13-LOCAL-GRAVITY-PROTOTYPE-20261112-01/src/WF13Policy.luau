@@ -33,7 +33,8 @@ end
 
 function Policy.landingForce(mass: number, gravity: number, elapsed: number): number
     if not finite(elapsed) or elapsed < 0 or elapsed >= Policy.LANDING_SECONDS then return 0 end
-    return Policy.upwardForce(mass, gravity, 1 - Policy.LANDING_ASSIST * (1 - elapsed / Policy.LANDING_SECONDS))
+    if not finite(mass) or not finite(gravity) or mass <= 0 or gravity <= 0 then return 0 end
+    return mass * gravity * Policy.LANDING_ASSIST * (1 - elapsed / Policy.LANDING_SECONDS)
 end
 
 function Policy.clampVelocity(vx: number, vy: number, vz: number): (number, number, number)
