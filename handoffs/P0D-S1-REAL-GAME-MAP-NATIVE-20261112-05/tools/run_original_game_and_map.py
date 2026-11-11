@@ -111,7 +111,9 @@ function Instance.new(class)
  setmetatable(obj,{__newindex=function(self,k,v)
   rawset(self,k,v)
   if k=="Parent" and v~=nil then
-   if type(v.children)~="table" then error("TEST_ONLY_PARENT_WITHOUT_CHILDREN") end
+   if type(v)~="table" or (v.__type~="Instance" and v~=workspace) then
+    error("TEST_ONLY_UNKNOWN_PARENT") end
+   if type(v.children)~="table" then v.children={} end
    table.insert(v.children,self)
   end
  end})
