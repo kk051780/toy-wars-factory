@@ -163,12 +163,29 @@ local function sendBossVisual(packet)
         or packet.seq < 1 or packet.seq > 10000 then
         return false
     end
+    -- Original CombinedRuntime emits the true server attack center for
+    -- START / STOMP. Never invent a client target or silently drop it.
+    local position = nil
+    if packet.kind == "START" or packet.kind == "STOMP" then
+        local p = packet.position
+        if type(p) ~= "table"
+            or type(p.x) ~= "number" or type(p.y) ~= "number"
+            or type(p.z) ~= "number" or p.x ~= p.x
+            or p.y ~= p.y or p.z ~= p.z
+            or math.abs(p.x) > 2048 or p.y < -100 or p.y > 700
+            or math.abs(p.z) > 2048 then
+            return false -- never show a false attack center
+        end
+        position = {x = p.x, y = p.y, z = p.z}
+    end
+    local emittedAt = serverNow()
     for _, player in ipairs(Players:GetPlayers()) do
         remote:FireClient(player, {
             kind = "BOSS_VISUAL", visualKind = packet.kind,
             bossId = packet.bossId, eventId = packet.eventId,
             serial = match.serial, seq = packet.seq,
-            serverSentAt = serverNow(),
+            stageId = "S1", position = position,
+            serverSentAt = emittedAt,
         })
     end
     return true
