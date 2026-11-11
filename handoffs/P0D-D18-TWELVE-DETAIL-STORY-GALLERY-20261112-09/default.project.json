@@ -1,0 +1,81 @@
+{
+  "name": "D18DetailedGalleryTwelveIsolated",
+  "tree": {
+    "$className": "DataModel",
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "D18DetailGalleryDemo": {
+          "$path": "src/DisabledGalleryDemo.client.luau"
+        },
+        "D18GalleryCatalog": {
+          "$path": "src/D18GalleryCatalog.luau"
+        },
+        "D18GalleryController": {
+          "$path": "src/D18GalleryController.luau"
+        },
+        "D18DetailedGalleryPreview": {
+          "$path": "src/D18DetailedGalleryPreview.luau"
+        },
+        "D18DetailModels": {
+          "$className": "Folder",
+          "Mascots": {
+            "$className": "Folder",
+            "MascotPreviewFactory": {
+              "$path": "src/D18DetailModels/Mascots/MascotPreviewFactory.luau"
+            },
+            "MascotPreviewCatalog": {
+              "$path": "src/D18DetailModels/Mascots/MascotPreviewCatalog.luau"
+            }
+          },
+          "Moon": {
+            "$className": "Folder",
+            "MoonGiraffeShowcase": {
+              "$path": "src/D18DetailModels/Moon/MoonGiraffeShowcase.luau"
+            }
+          },
+          "Resonance": {
+            "$className": "Folder",
+            "ShowcaseFactory": {
+              "$path": "src/D18DetailModels/Resonance/ShowcaseFactory.luau"
+            },
+            "ShowcaseCatalog": {
+              "$path": "src/D18DetailModels/Resonance/ShowcaseCatalog.luau"
+            }
+          },
+          "Star": {
+            "$className": "Folder",
+            "D18ShowcaseFactory": {
+              "$path": "src/D18DetailModels/Star/D18ShowcaseFactory.luau"
+            },
+            "ShowcaseCatalog": {
+              "$path": "src/D18DetailModels/Star/ShowcaseCatalog.luau"
+            }
+          },
+          "Trio": {
+            "$className": "Folder",
+            "D18ShowcaseFactory": {
+              "$path": "src/D18DetailModels/Trio/D18ShowcaseFactory.luau"
+            },
+            "ShowcaseCatalog": {
+              "$path": "src/D18DetailModels/Trio/ShowcaseCatalog.luau"
+            }
+          },
+          "FinalV8": {
+            "$className": "Folder",
+            "ShowcaseFactory": {
+              "$path": "src/D18DetailModels/FinalV8/ShowcaseFactory.luau"
+            },
+            "ShowcaseCatalog": {
+              "$path": "src/D18DetailModels/FinalV8/ShowcaseCatalog.luau"
+            }
+          }
+        },
+        "D18StoryBeats": {
+          "$path": "src/D18StoryBeats.luau"
+        }
+      }
+    }
+  }
+}

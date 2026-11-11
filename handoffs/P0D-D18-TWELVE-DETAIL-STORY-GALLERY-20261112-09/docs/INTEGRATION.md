@@ -1,0 +1,15 @@
+# Opt-in integration & real QA gate
+
+This packet is a **self-contained isolated Rojo source candidate**, all original model factories+catalogs are bundled exactly (9 original Luau source files) in their own module folders; old D18 gallery catalog is exact original, controller is a new source patch. **DO NOT overlay this entire project on #220 official RC or put catalog/factories in one folder** (name collisions).
+
+1. Validate all 10 original source byte SHA/size in `docs/SOURCE_PROVENANCE.json` against `BUILD_MANIFEST.json`. Confirm 10 canonical IDs and no unexpected modules, remotes, reward, DataStore, paid calls.
+2. In a NEW unpublished test place only: `rojo build default.project.json` then inspect `StarterPlayerScripts/D18DetailModels/{Mascots,Moon,Resonance,Star,Trio}` child modules and `D18DetailedGalleryPreview/D18GalleryController/D18GalleryCatalog`; the example LocalScript stays disabled by `ENABLED=false`.
+3. For manual test only in isolated Place, an approved local client can explicitly call `require(StarterPlayerScripts.D18GalleryController).mount(LocalPlayer.PlayerGui)`, or OWNER authorizes enabling the demo. No server replication/remote used.
+4. Test every 10 IDs, camera framing/zoom, 4 poses, manual yaw, LOD near/far, category filtering, session favorites and close/reopen >=25 cycles (especially SP027/VE090 factory `live` counter). Verify no particles, physics, NPC attacks, crash, thumbnail occlusion, VR/mobile touch/48px legibility, FPS low-end, 2 clients and Studio normal exit. Some authors' model PivotTo center may need camera/pose tuning after true engine verification.
+5. If integrating into the actual S1 release: only #220 integrator may choose INCLUDE_OR_SKIP, review conflicts with current HUD/FTUE/remote authority, migrate selected source modules using official immutable source manifests and independent QA. Keep #220 exclusive RC writes, no per-packet Windows Codex test; OWNER directs one final complete RC PC/Studio QA only.
+6. Rollback: remove optional D18 gallery LocalScript/modules completely from cloned Place; official S1 unchanged. No main merge or Roblox public publish, paid/spend, P0ABC controls or automation changes.
+
+Caveat: `Model:GetBoundingBox` / folder-in-WorldModel display and exact camera/collision are **source-level hypotheses** until actual Studio test. Offline Python structural tests cannot certify native Luau/Roblox engine behavior.
+
+## 2026-11-12: 12体対応差分
+別ソース FinalV8 フォルダを追加し、Rojoマップに二つの元のLuauをバイト不変で配線。画面内12体のみ、既存ゲームRCは更新せず。詳細3D元ソースのStudio/スマホ実機合格は未検証。
