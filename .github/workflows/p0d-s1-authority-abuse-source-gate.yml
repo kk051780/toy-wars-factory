@@ -81,3 +81,16 @@ jobs:
           git cat-file -e "$SRC^{commit}" || git fetch --no-tags --depth=1 origin "$SRC"
           python3 -m py_compile handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_actual_official_rc_gate.py
           python3 handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_actual_official_rc_gate.py --repo . --luau /tmp/p0d-luau/build/luau
+      - name: Independently verify updated Japanese HUD official RC and rerun authentic native modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          for PIN in \
+            5dc6c958ea5549b1e859d6d250e6179e731181fb \
+            fffdda7024def24b6ce756c39fa6e0c2fa35b288 \
+            0ca2b7ea9f29aa79727b2e7e53a01af093df5b90
+          do
+            git cat-file -e "$PIN^{commit}" || git fetch --no-tags --depth=1 origin "$PIN"
+          done
+          python3 -m py_compile handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_updated_official_rc_gate.py
+          python3 handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_updated_official_rc_gate.py --repo . --luau /tmp/p0d-luau/build/luau
