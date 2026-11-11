@@ -145,7 +145,7 @@ class S1ActualGamePatchContract(unittest.TestCase):
         self.assertEqual(self.manifest["format"], "P0D_PUBLIC_SOURCE_V1")
         self.assertEqual(self.manifest["game_id"], "TRAP_RAIDERS")
         self.assertEqual(self.manifest["public_source_allowed"], True)
-        self.assertEqual(len(self.manifest["files"]), 27)
+        self.assertEqual(len(self.manifest["files"]), 28)
 
     def test_manifest_has_every_candidate_file_once_except_itself(self):
         entries = self.manifest["files"]
@@ -163,7 +163,7 @@ class S1ActualGamePatchContract(unittest.TestCase):
     def test_luau_modules_no_second_bootscript(self):
         self.assertFalse(any("CanonicalEventServerAdapter.server" in p.name for p in GAME.rglob("*")))
         self.assertFalse(any("GoroganClientAdapter.client" in p.name for p in GAME.rglob("*")))
-        self.assertEqual(len(list((GAME/"src/server").glob("*.luau"))), 13)
+        self.assertEqual(len(list((GAME/"src/server").glob("*.luau"))), 14)
         # 1 game Script + 2 game originals + 10 original/host/binding sibling Modules.
 
     def test_no_claim_of_live_engine_verification(self):
