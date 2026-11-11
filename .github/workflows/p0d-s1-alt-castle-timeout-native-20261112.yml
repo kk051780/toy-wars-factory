@@ -1,0 +1,65 @@
+name: P0D official S1 Game castle destroy & time-out genuine native Luau
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-alt-castle-timeout-native-20261112-04
+permissions:
+  contents: read
+jobs:
+  official-original-game-castle-timeout:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout immutable official game history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify fixed upstream RC and exact keyless source-manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e "5dc6c958ea5549b1e859d6d250e6179e731181fb^{commit}"
+          python3 - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          root=Path("handoffs/P0D-S1-ALT-CASTLE-TIMEOUT-NATIVE-20261112-04")
+          manifest=json.loads((root/"BUILD_MANIFEST.json").read_bytes())
+          assert set(manifest)=={"files","format","game_id","packet_id","public_source_allowed","work_id"}
+          assert manifest["format"]=="P0D_PUBLIC_SOURCE_V1" and manifest["public_source_allowed"] is True
+          assert manifest["game_id"]=="TRAP_RAIDERS" and len(manifest["files"])==2
+          for row in manifest["files"]:
+             assert set(row)=={"path","sha256","size"}
+             path=root/row["path"]
+             raw=path.read_bytes()
+             assert len(raw)==row["size"] and hashlib.sha256(raw).hexdigest()==row["sha256"]
+          assert {p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file()} == {x["path"] for x in manifest["files"]} | {"BUILD_MANIFEST.json"}
+          print("P0D_ALT_CASTLE_TIMEOUT_PUBLIC_SOURCE_2_OF_2_PASS")
+          PY
+      - name: Get authentic pinned upstream official Luau
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Build real upstream native Luau compiler and interpreter
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _native_luau -B /tmp/p0d-alt-castle-luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d-alt-castle-luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Execute ORIGINAL Game.server and real rules in native Luau + negative mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-S1-ALT-CASTLE-TIMEOUT-NATIVE-20261112-04/tools/native_alt_castle_timeout.py \
+            --repo . --luau /tmp/p0d-alt-castle-luau/luau
+      - name: Ensure no tracked source writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
+          echo "P0D_ALT_CASTLE_TIMEOUT_STUDIO_NOT_TESTED_GAME_UNCHANGED"
