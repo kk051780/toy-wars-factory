@@ -20,7 +20,7 @@ BLOBS={
     "src/server/Game.server.luau":"3d3c5934e110099517fc4a7eb5aa914fcd52f145",
     "src/server/S1Rules.luau":"5652b5b43d753c2fcbd27b6c040a34a3642f71ee",
     "src/server/LobbyTeamRecovery.luau":"db1a369133550bc8356a4ee3ac22b97fcb1b46c4",
-    "src/shared/Config.luau":"ef10e4288e4732588116cd3d871ca803ff4",
+    "src/shared/Config.luau":"ef10e4288e4732588116cd3e55d3d871ca803ff4",
     "src/server/MapBuilder.luau":"d2127b8c20c8abd880a21f84aeeb706feeb14ce8",
 }
 SOURCES={
