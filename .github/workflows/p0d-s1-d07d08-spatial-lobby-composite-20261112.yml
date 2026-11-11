@@ -1,0 +1,77 @@
+# Source-only, no Roblox publish / paid / AI calls / write tokens.
+name: P0D S1 D07D08 spatial + lobby exact single-game candidate
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-d07d08-spatial-lobby-composite-20261112-01
+    paths:
+      - .github/workflows/p0d-s1-d07d08-spatial-lobby-composite-20261112.yml
+permissions:
+  contents: read
+concurrency:
+  group: p0d-s1-lobby-spatial-d07d08-ci-20261112
+  cancel-in-progress: false
+jobs:
+  source-integration-only:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Source-only clone on public read-only runner
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Generate canonical 28-source manifest in disposable runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py build \
+            --root handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/candidate \
+            --packet-id P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01
+          python3 - <<'PY'
+          import base64,hashlib,pathlib
+          raw=pathlib.Path('handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/candidate/BUILD_MANIFEST.json').read_bytes()
+          print('P0D_LOBBY_28_MANIFEST_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('P0D_LOBBY_28_MANIFEST_B64='+base64.b64encode(raw).decode('ascii'))
+          PY
+      - name: Actual original S1 game Python 80 regressions against composed source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/candidate/tests -v 2>&1 | tee /tmp/s1_lobby_original.log
+          grep -F 'Ran 80 tests' /tmp/s1_lobby_original.log
+          grep -x OK /tmp/s1_lobby_original.log
+      - name: Actual S1 game 19 plus D07 visual 18 plus overlay composition 9 plus lobby merge 12 tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/tests -v 2>&1 | tee /tmp/s1_lobby_merge.log
+          grep -F 'Ran 58 tests' /tmp/s1_lobby_merge.log
+          grep -x OK /tmp/s1_lobby_merge.log
+      - name: Reproduce exact original lobby planner author's 66 tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover \
+            -s handoffs/P0D-S1-LOBBY-TEAM-DEADLOCK-RECOVERY-20261111-01/tests -v 2>&1 | tee /tmp/s1_lobby_planner.log
+          grep -F 'Ran 66 tests' /tmp/s1_lobby_planner.log
+          grep -x OK /tmp/s1_lobby_planner.log
+      - name: Reproduce independent D07 D08 corrective author's 34 regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover \
+            -s handoffs/P0D-S1-D07D08-CORRECTED-SPATIAL-COMPOSITE-20261111-01/overlay-source/tests -v 2>&1 | tee /tmp/s1_lobby_overlay.log
+          grep -F 'Ran 34 tests' /tmp/s1_lobby_overlay.log
+          grep -x OK /tmp/s1_lobby_overlay.log
+      - name: Strict official source verify and original release source unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py verify \
+            --root handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/candidate \
+            --packet-id P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01
+          git diff --exit-code -- releases/P0D_S1_KIDS_RC01
+          echo P0D_COMPOSITE_LOBBY_D07D08_FULL_SOURCE_NO_STUDIO_NO_RELEASE
