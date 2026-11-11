@@ -330,8 +330,8 @@ MUTATIONS=[
   'match.hp[enemy] = math.max(0, match.hp[enemy] - (data.damage or Config.CastleAttackDamage[roles[player] or "RAIDER"]))',
   "GAME_ALT_ASSERT_server_bounded_castle_damage"),
  ("castle_cooldown_bypass","Rules",
-  'return phase == "ACTIVE" and alive and now >= previousTime',
-  'return phase == "ACTIVE" and alive',
+  'and now - previousTime >= cooldown',
+  'and true',
   "GAME_ALT_ASSERT_castle_attack_cooldown_reject"),
 ]
 
