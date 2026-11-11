@@ -2,23 +2,42 @@
   "game_id": "TRAP_RAIDERS",
   "work_id": "p0d-siege-v19",
   "release_id": "P0D-S1-KIDS-RC01",
-  "phase": "CHAT_INTEGRATION_IN_PROGRESS",
-  "studio_status": "NOT_TESTED",
-  "native_luau_status": "NOT_TESTED",
-  "owner_pc_intake": "NOT_TESTED",
-  "source_gameplay_slices": [
-    "team_spawn", "match_lifecycle", "capture_objective", "castle_hp",
-    "server_combat_damage", "victory_defeat_rematch", "client_hud",
-    "mobile_button", "procedural_map", "two_basic_roles", "cosmetic_alarm"
+  "status_schema": "P0D_RC_SOURCE_V4",
+  "phase": "CHAT_ASSEMBLED_SOURCE_LOCKED__CHAT_QA_PENDING",
+  "source_import_commit": "17ffd5c28bf15aeefa5f524291534f064f74029f",
+  "source_candidate_fixed_commit": "b103389e2089f9ff5a08984fe2f8f6f02aa8b1bc",
+  "original_rc_baseline_sha": "35d7d0525388e885aac8281eff2315a59831e0cf",
+  "game_src_git_tree_sha": "b95f91fcf802607ff9d5f45a816553b295f68b8a",
+  "game_source_luau_files": 20,
+  "gameplay_source_present": [
+    "team_spawn",
+    "two_team_egg_capture",
+    "server_damage_hp",
+    "map_and_castles",
+    "win_result_rematch",
+    "lobby_team_recovery",
+    "first_minute_ux",
+    "D07_D08_MODULES_IN_TREE_DISABLED"
   ],
-  "not_integrated": [
-    "D07_GOROGAN_AUTHENTIC", "D08_CANONICAL_EVENT_ORIGINAL",
-    "D11_NEUTRAL_CAPTURE_ORIGINAL", "D14_VEHICLES",
-    "D16_SCALE_AND_VISUAL_ORIGINAL", "D18_COLLECTOR_LIBRARY"
+  "boss_activation_flags": {
+    "CANONICAL_S1_ENABLED": false,
+    "D07_D08_RELEASE_REVIEW_APPROVED": false
+  },
+  "independent_qa": "PARTIAL_UPSTREAM_CANDIDATE_ONLY__FINAL_RC_NOT_TESTED",
+  "full_source_native_luau": "NOT_VERIFIED_CURRENT_RC",
+  "roblox_studio_2client": "NOT_TESTED_CURRENT_RC",
+  "physical_mobile": "NOT_TESTED_CURRENT_RC",
+  "latest_owner_windows_pc_source_equivalence": "UNKNOWN_NOT_ASSERTED",
+  "human_first_play": "NOT_TESTED",
+  "first_release_authorized": false,
+  "monetization_enabled": false,
+  "excluded_from_s1_required": [
+    "S2_S4",
+    "D18_648_CATALOGUE",
+    "D11_NEUTRAL_CAPTURE",
+    "7_JOB_EXPANSION"
   ],
-  "game_ready": false,
-  "release_approved": false,
-  "main_touched": false,
-  "codex_requested": false,
-  "independent_chat_qa": "NOT_RUN"
+  "protected_main_unchanged": true,
+  "owner_codex_per_pack_requested": false,
+  "next_acceptance": "Run independent real 32-file RC manifest/source readback + native Luau20 and actual RC trace/negative QA; then direct OWNER final Studio QA"
 }

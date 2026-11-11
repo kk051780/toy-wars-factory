@@ -1,27 +1,36 @@
 {
-  "format": "P0D_CHAT_INTEGRATOR_SOURCE_SELECTION_V1",
+  "format": "P0D_S1_SOURCE_LOCK_V4",
   "game_id": "TRAP_RAIDERS",
   "work_id": "p0d-siege-v19",
   "release_id": "P0D-S1-KIDS-RC01",
-  "phase": "INITIAL_ACTUAL_SOURCE_INTEGRATION",
-  "status": "NOT_FINAL_RC_READY",
-  "local_pc_place_sha": "UNKNOWN_NOT_ACCESSIBLE_TO_CHAT",
-  "integrated_runtime": {
-    "kind": "new_full_standalone_chat_vertical_slice",
-    "one_round_owner": "src/server/Game.server.luau",
-    "one_combat_owner": "src/server/Game.server.luau",
-    "one_event_owner": "src/server/Game.server.luau",
-    "map": "src/server/MapBuilder.luau",
-    "client": "src/client/HUD.client.luau",
-    "module_import_source": "THIS_PACKET_ONLY"
+  "prior_official_rc_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
+  "source_candidate_fixed_sha": "b103389e2089f9ff5a08984fe2f8f6f02aa8b1bc",
+  "source_import_commit": "17ffd5c28bf15aeefa5f524291534f064f74029f",
+  "source_git_tree_sha": "b95f91fcf802607ff9d5f45a816553b295f68b8a",
+  "source_lock_provenance": "30 immutable candidate paths copied by identical Git blob and tree SHAs; docs/receipt subsequently overlaid; 20 Luau never edited in overlay",
+  "current_official_stage": "CHAT_ASSEMBLED_SOURCE_LOCKED__STUDIO_NOT_TESTED",
+  "single_authorities": {
+    "round": "src/server/Game.server.luau",
+    "damage": "src/server/Game.server.luau",
+    "event_chooser": "src/server/Game.server.luau",
+    "remote": "TrapRaidersS1Remote"
   },
-  "originals_tracked_not_integrated": [
-    {"feature": "D07_GOROGAN", "status": "NOT_INTEGRATED"},
-    {"feature": "D08_CANONICAL_EVENT", "commit": "70dcc3b50129c288441452776360588184ca6c22", "status": "NOT_INTEGRATED"},
-    {"feature": "D11_NEUTRAL_SKIRMISH", "commit": "9f350a76e7c7b81360453cfa400ee9131cca4922", "status": "NOT_INTEGRATED"},
-    {"feature": "D16_SCALE_ORIGINAL", "commit": "584b11ef24cf3d44695d86b505207491bbd3844e", "status": "NOT_INTEGRATED"},
-    {"feature": "D16_VISUAL_ORIGINAL", "commit": "226a5664ed50131868391289723c130d35abf48f", "status": "NOT_INTEGRATED"}
-  ],
-  "studio": "NOT_TESTED",
-  "owner_release_approval": false
+  "source_and_flags": {
+    "D07_D08_luau_source_included": true,
+    "CANONICAL_S1_ENABLED": false,
+    "D07_D08_RELEASE_REVIEW_APPROVED": false,
+    "D11_neutral": "NOT_INCLUDED",
+    "D16_scale_visual": "NOT_INCLUDED",
+    "D18_collector": "NOT_INCLUDED"
+  },
+  "qagates": {
+    "actual_upstream_source_full_hash": "PASS_30_OF_30",
+    "actual_ours_rc_full_hash": "PENDING",
+    "upstream_28_luau": "PARTIAL_PASS",
+    "this_rc_20_luau": "NOT_VERIFIED",
+    "this_rc_dynamic_trace": "NOT_VERIFIED",
+    "studio_2client": "NOT_TESTED",
+    "owner_release": "NOT_AUTHORIZED"
+  },
+  "owner_pc_source_current": "UNKNOWN_NOT_AVAILABLE__DO_NOT_OVERWRITE"
 }

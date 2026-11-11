@@ -1,29 +1,22 @@
-# TRAP RAIDERS — Chat-first S1 whole-game vertical slice RC01
+# TRAP RAIDERS — S1 official Chat-integrated source RC01
 
-**Status: CHAT_INTEGRATION_IN_PROGRESS / Roblox Studio NOT_TESTED / NOT_RELEASE_APPROVED.**
+**Status as of 2026-11-12 JST: CHAT_ASSEMBLED_SOURCE_LOCKED; independent actual-RC QA and Roblox Studio final QA are NOT_TESTED. FIRST_RELEASE=NOT_AUTHORIZED.**
 
-This is a **real, independently source-reconstructible Roblox game project**, not just a collection of reference modules or a PC Codex instruction. It belongs to the owner-authorized PUBLIC source `TRAP_RAIDERS / p0d-siege-v19`, the sole CHAT-INTEGRATOR claim at Issue #220. It is a standalone new S1 implementation because the actual newest owner Windows Place/Source remains unavailable to this chat. **Do not claim it is a byte-preserving reconstruction of v43-A or a tested improvement to the local saved PC Place.**
+The owner selected a new sole Chat integrator [#220](https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-6807677640). Existing official RC commit `35d7d0525388e885aac8281eff2315a59831e0cf` was preserved and the verified 30-file candidate from immutable GitHub `b103389e2089f9ff5a08984fe2f8f6f02aa8b1bc` was copied byte-for-byte into the one release tree in import commit `17ffd5c28bf15aeefa5f524291534f064f74029f`. The full 20 original candidate Luau script/module bytes under `src/` and Rojo project mapping were imported without gameplay edits, rather than composing a new competing S1 authority. The remaining docs in this RC reflect the *actual integrated source tree*, superseding the earlier standalone README.
 
-## What the source actually implements
+## Included, source-built functionality (NOT confirmed running on actual Roblox Studio)
+- Single `Game.server.luau` authority for two teams, lobby rebalance/empty-team recovery, 7s countdown, 6min match, 2 egg captures or castle HP win, death/carry cleanup, result/rematch.
+- Procedural two-castle map and egg pads, server-validated melee/range/LOS/HP and basic RAIDER/GUARDIAN roles, existing touch and mobile input, Japanese HUD.
+- Original D07 Gorogan AI/rig/server attack receipt/boundary and D08 canonical event modules, plus temporal/spatial warning ring and trusted event bridge. **Present in source but NOT ACTIVE: `CANONICAL_S1_ENABLED=false` and `D07_D08_RELEASE_REVIEW_APPROVED=false` in Game.server.luau.** This keeps untested boss damage from silently appearing in release.
+- Original `LobbyTeamRecovery.luau` integrated through one server owner, and `FirstMinuteCoach.client.luau` + `FirstMinuteModel.luau` mounted by Rojo for the first 60 seconds.
+- Source project has 20 Luau files, single server match/remote authority and no DataStore, paid assets or production publish API.
 
-- Single server script owns S1 match lifecycle: 2+ players, auto-balanced RED/BLUE, 7-second countdown, 6-minute match, 9-second results, automatic rematch. Player exit/suspension is bounded.
-- Procedural source-created arena with two colored castles, eggs, enemy egg pickup ProximityPrompts, own base delivery pad, map landmarks and spawns. A fall rescue sends players back to spawn.
-- Score 2 captured opponent eggs **or** destroy enemy castle HP (starts at 300) to win. Own egg must be home to score.
-- Server-only combat using server-observed player facing, range, raycast obstruction, invulnerability window, role-specific damage and cooldown. No client-provided target, coordinates, score, health or damage.
-- RAIDER and GUARDIAN roles differ in speed, health and damage; role selection only outside active round (never mid-combat healing).
-- Keyboard `F` / mobile tap attack; native Roblox thumbstick, jump and ProximityPrompt input. Japanese HUD for score/time/roles/objectives/result.
-- One deterministic cosmetic alarm state sequence (not Gorogan boss): WARN 3s, SIGNAL 6s. No duplicate selector, weather RNG, economy, save writes, paid items or DataStore.
-- Multi-file Rojo `default.project.json` into ServerScriptService, ReplicatedStorage and StarterPlayerScripts. No external asset IDs, private Roblox Place, secret API keys or plugins in the scripts.
+## Safety and exact evidence
+- Candidate 30/30 all-file independent byte+SHA256 audit: [#220](https://github.com/kk051780/toy-wars-factory/issues/220#issuecomment-6807077309).
+- Official RC import commit `17ffd5c28bf15aeefa5f524291534f064f74029f` was built from GitHub blobs and exact source subtrees under a non-main branch using expected-SHA non-force update. Subsequent docs and receipt are a separate provenance overlay; game Luau sources were not changed.
+- Previous 28-file composite actually passed Python 238/238 and source assembler 19/19 (not the same as the current 30-file RC). Original native pure module tests have separate PASS evidence; **20-file full candidate Actions workflows were still QUEUED** when checked. No whole RC native compile/engine PASS is implied.
+- `BUILD_MANIFEST.json` uses strict six-key PUBLIC_SOURCE_V1 schema with an immutable SHA256/UTF8-length entry for every non-manifest file, and `CHAT_RC_RECEIPT.json` preserves original source and stage. `docs/RC_CHECKPOINT_V4.md` includes rollback.
+- [All-chat rule #218](https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-6807393284); [Official global progress rubric #220](https://github.com/kk051780/toy-wars-factory/issues/220); [PC engine evidence #213](https://github.com/kk051780/toy-wars-factory/issues/213).
 
-## How to load, when final owner-directed Studio QA starts
-
-1. On an isolated, unpublished empty Place, with Rojo installed (owner Windows Codex final QA only), use `rojo serve` then the Studio Rojo sync plugin. Source tree: `default.project.json`, `src/server`, `src/shared`, `src/client`.
-2. Verify only ONE server entry `TrapRaidersS1/Game.server.luau` is running and no other game owns RED/BLUE teams or `TrapRaidersS1Remote`. The script deliberately errors on collisions rather than silently overriding the PC game.
-3. Test 2 clients (RED/BLUE), native touch/mobile, steal/recover/deliver egg, castle melee, death/drop/rejoin, fake RemoteEvent payload, role switch, results/rematch, Studio Play/Stop and clean exit.
-4. See `docs/QA_AND_GAPS.md` before deciding anything about full-game readiness. These are instructions, not evidence tests happened.
-
-## Intentional limits
-
-This is the **first genuine integrated S1 executable vertical slice**, not yet a final release candidate. **D07 original Gorogan 3D/AI/D08 canonical event, D11 neutral capture, 7-job full system, D14 vehicle, D16 original SCALE+VISUAL and D18 648-character library are not imported into the runnable project yet.** The alarm is cosmetic only; it does *not* substitute for the original D07 boss or count toward the full game QA. The direct owner/PC source comparison and actual Studio parse, server replication, 2-client, mobile and finish checks have not been run. Chat-side static / Python behavior regressions are only development evidence.
-
-Build policy, governance and readback: [Issue #218](https://github.com/kk051780/toy-wars-factory/issues/218), [Chat S1 release train #220](https://github.com/kk051780/toy-wars-factory/issues/220), [policy SHA ae80548...](https://github.com/kk051780/toy-wars-factory/tree/ae80548d0c6905b4ee35e7cdedd3928d344ff239/handoffs/P0D_CHAT_FIRST_RELEASE_FACTORY_V2_20261111_01). `main`, production Roblox publish and payment remain unauthorized.
+## Blockers and prohibited operations
+Independent QA must execute on **this exact official RC tree**; source-only unit/negative and native tests cannot stand in for a real two-client Studio/gameplay/phone test. D07 boss remains opt-in OFF pending approval and attack/telegraph physical validation; D11 neutral/7-class full game/collection D18 are not S1 mandatory and are not included. OWNER Windows latest v43-A Place/source remains separate, and must be backed up and compared before final owner-directed Codex/Studio testing. No main merge, Roblox live publish, monetization, spending, protected P0-A/B/C CAS/auth/review or existing Automation changes.

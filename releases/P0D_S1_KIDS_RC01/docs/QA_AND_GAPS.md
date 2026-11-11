@@ -1,26 +1,20 @@
-# S1 Chat-first source integration QA / outstanding gaps
+# Actual official S1 RC — verified gates and remaining work (2026-11-12 JST)
 
-## What may be asserted
+**In-source ≠ running in Roblox.** This `rc/p0d-s1-kids-rc01` now includes a 30-file full game composition from pinned source candidate `b103389e2089f9ff5a08984fe2f8f6f02aa8b1bc` (import `17ffd5c28bf15aeefa5f524291534f064f74029f`). The immutable `src/` subtree contains 20 actual Luau source files. 30/30 original candidate source SHA256 audit was independently recorded; the source tree was imported at identical Git blobs. Previous 28-file build Python 238/238 and 19/19 assembler do NOT validate the extended 30-file final RC.
 
-- Luau source and project file exist, with a server match authority, server map, client HUD, a shared configuration module, server objective/combat validation and canonical one-event sequence.
-- Python standard-library reference model and static source checks pass if local test report says so.
-- This does **NOT** attest Rojo sync, Luau native compile, Roblox Studio multiplayer or mobile, actual data persistence, or approved Roblox game launch.
+### Source/logic status
+- Server game match authority and one remote/match/event/damage are defined in `Game.server.luau`. D07/D08 modules are source-present but **explicitly OFF** (`CANONICAL_S1_ENABLED=false`, `D07_D08_RELEASE_REVIEW_APPROVED=false`). Their physical hit behavior cannot be assumed from tests.
+- LobbyTeamRecovery and first-minute coach source were added with Rojo mappings. No new server authoritative listener from the client modules.
+- Candidate source QA readback: 30/30 SHA256 independently re-computed by separate QA chat; underlying official RC imported exact tree. Full candidate 20 Luau compiler and 21-unit assembler GitHub Actions run status checked as QUEUED, so **NOT PASS** here.
+- Independent original S1Rules and D07 attack-window/tightly scoped native Luau tests have PASS evidence, but test executables run outside real Roblox engine and outside this official entire RC.
+- Other recommended UI/cosmetic patches and D18 10 optional source-only models are **not selected into this release** pending independent review.
 
-## Unresolved before `CHAT_RC_READY`
+### Next acceptance in order
+1. Recheck actual **official RC** `BUILD_MANIFEST.json`, every exact GitHub byte/SHA256 and single authority Rojo; inspect source lock and docs, update #220.
+2. Compile all 20 actual RC Luau source files with real Luau (positive and deliberately invalid negative compiler controls); run original Python source tests against actual RC root; run a negative actual-source integration trace under separate QA ownership.
+3. Resolve D07/D08 gated activation: reconcile true canonical event and one true damage receipt/2-client warning, including historical red 0.93sec vs blue 1.96sec. Keep OFF if engine proof absent.
+4. Only after Chat independent QA and near-final RC, OWNER explicitly initiates Windows Codex single batch: checkpoint latest private PC Place/source/HEAD, compare imports, real Studio 2client/phone, death/quit/reset, mobile HUD & performance, fake Remote/replay, actual boss warning/hit/avoid if enabled, normal Studio shutdown.
+5. Human child-friendly first-play and rematch review, discovery/analytics and safe non-P2W value plan, explicit separate OWNER release permission. No payments, game publication, or hidden data collection.
 
-1. Reconcile this standalone source-built S1 implementation with latest actual Windows owner game Place and original D01/D06/D08/D11 source. This is not yet an original-source package merge. Choose one round/event/damage authority. Preserve saved v43-A and D07 integrated source as historical immutable baseline.
-2. Original D07 Gorogan is missing: true boss rig movement, client mesh, the 2-second warning clock issue reported in earlier PC QA, one authentic attack damage receipt and cleanup. Current `WARNING/SIGNAL` is an unrelated cosmetic alarm, not a pass for D07.
-3. User-facing richer lobby, music/sound, team change, match objectives tutorial, more content, accessible reduced-motion settings, death HUD, physical mobile QA and network disconnect recovery need independent Chat/source implementation or final Studio testing.
-4. No DataStore/write semantics are implemented in this S1 demo. Round state and scores reset after match; no paid items. If persistent progress is added later, offline failure/replay tests are mandatory.
-5. Chat-independent QA needs to read immutable final build commit, verify source/module wiring and feature completeness, then issue its own receipt on a separate branch.
-
-## S1 offline regression targets
-
-- Prevent a third client from dictating arbitrary damage/position, repeating a stale seq, attack spamming or scoring from afar.
-- Stealing own egg, stealing a held egg, scoring the wrong egg, scoring while own egg is stolen, multiple egg carriers, death/quit cleanup, cross-team attack, spawn invulnerability.
-- Role-change heal exploit while active, spectator/non-team intents, stale match result/restart, no minimum players, falling into void without permanent soft-lock.
-- Single match/event/damage owner. Only one `OnServerEvent` entry. No duplicated boss or second event chooser.
-
-## Windows final QA (only after whole RC ready + direct OWNER request)
-
-Native Luau load and Rojo source path, Studio Play/Stop, owned client/server PID normal exit, 2+ clients touch & desktop, real ProximityPrompt and melee hit geometry, coin/reward if added, fake remote and excessive event replay, join/leave and egg carry cleanup, 2 capture vs castle destruction, timer draw, no accidental experience publish. Preserve newest owner PC Place/HEAD/checkpoint before any import. `StudioStatus=NOT_TESTED` until actual logs.
+### Data truth
+No confirmed public users, D1/D7, payer conversion or net income. No native Studio pass for *this RC*. Preliminary historical PC partial testing (#213) is NOT an approval for newly copied source. Original PC Place is never overwritten by a GitHub Chat commit.
