@@ -60,6 +60,35 @@ jobs:
           python3 -B -m unittest discover -s handoffs/P0D-S1-D07-SPATIAL-STOMP-RING-20261111-01/tests -v 2>&1 | tee /tmp/s1_spatial_visual_tests.log
           grep -F 'Ran 18 tests' /tmp/s1_spatial_visual_tests.log
           grep -x OK /tmp/s1_spatial_visual_tests.log
+      - name: Real 18-unit Chat Python source assembler and source digest replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D_S1_SOURCE_PLAN_SNAPSHOT_20261111_01/tools/chat_rc_assemble.py \
+            --plan handoffs/P0D-S1-D07-SPATIAL-STOMP-RING-20261111-01/SOURCE_PLAN_SPATIAL.json \
+            --source-root handoffs/P0D-S1-D07-SPATIAL-STOMP-RING-20261111-01/candidate \
+            --out /tmp/p0d_spatial_d07_real_18_source
+          python3 - <<'PY'
+          import base64,hashlib,json,pathlib
+          src=pathlib.Path('handoffs/P0D-S1-D07-SPATIAL-STOMP-RING-20261111-01/candidate')
+          dest=pathlib.Path('/tmp/p0d_spatial_d07_real_18_source')
+          receipt=(dest/'CHAT_RC_RECEIPT.json').read_bytes()
+          obj=json.loads(receipt)
+          assert obj['studio_status']=='NOT_TESTED'
+          assert obj['release_approved'] is False
+          assert obj['assembly_status']=='CHAT_BUILD_READY__OFFLINE_EVIDENCE_ONLY'
+          assert len(obj['source_units'])==18 and len(obj['contents'])==18
+          for item in obj['contents']:
+              a=(src/item['path']).read_bytes()
+              b=(dest/item['path']).read_bytes()
+              assert a==b
+              assert hashlib.sha256(b).hexdigest()==item['sha256']
+              assert len(b)==item['size']
+          print('P0D_D07_SPATIAL_REAL_CHAT_ASSEMBLY_PASS_18_OF_18')
+          print('P0D_D07_SPATIAL_RECEIPT_SHA256='+hashlib.sha256(receipt).hexdigest())
+          print('P0D_D07_SPATIAL_RECEIPT_B64='+base64.b64encode(receipt).decode('ascii'))
+          print('P0D_D07_SPATIAL_STUDIO_NOT_TESTED')
+          PY
       - name: Strict official verify plus no main or original source mutations
         shell: bash
         run: |
