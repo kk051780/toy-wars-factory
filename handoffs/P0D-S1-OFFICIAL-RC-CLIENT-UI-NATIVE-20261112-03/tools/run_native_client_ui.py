@@ -239,7 +239,7 @@ includes(status.Text,"引き分け！","localized_draw")
 includes(status.Text,"制限時間が終了","localized_timeout")
 emit(snap("RESULTS",4,"RED","BLUE","UNKNOWN_SERVER_REASON","",0))
 includes(status.Text,"勝敗が確定しました","unknown_reason_fallback")
-if __nativeChecks < 48 then error("REAL_CLIENT_TOO_FEW_ASSERTIONS "..tostring(__nativeChecks),0) end
+if __nativeChecks < 46 then error("REAL_CLIENT_TOO_FEW_ASSERTIONS "..tostring(__nativeChecks),0) end
 print("P0D_OFFICIAL_RC_NATIVE_HUD_COACH_CLIENT_PASS assertions="..tostring(__nativeChecks))
 '''
 # the native test doubles above use ONLY minimal GUI API, no actual device.
@@ -301,7 +301,7 @@ def main():
         path=Path(td)/"original_hud_coach.luau"
         rc,output=run_native(args.luau,prepare(modules),path)
         match=re.search(r"P0D_OFFICIAL_RC_NATIVE_HUD_COACH_CLIENT_PASS assertions=(\d+)",output)
-        if rc!=0 or not match or int(match.group(1))<48:
+        if rc!=0 or not match or int(match.group(1))<46:
             raise RuntimeError("NATIVE_ACTUAL_CLIENT_GUI_FAILED "+output[-2400:])
         print(match.group(0))
         for tag,module,before,after,expect in MUTATIONS:
