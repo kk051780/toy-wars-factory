@@ -30,14 +30,19 @@ end}
 local function Event()
     local o={_callbacks={}}
     function o:Connect(callback)
-        table.insert(self._callbacks,callback)
+        local entry={callback=callback,connected=true}
+        table.insert(self._callbacks,entry)
         local connection={Connected=true}
-        function connection:Disconnect() self.Connected=false end
-        self._callbacks[#self._callbacks].connection=connection
+        function connection:Disconnect()
+            self.Connected=false
+            entry.connected=false
+        end
         return connection
     end
     function o:Fire(...)
-        for _,callback in ipairs(self._callbacks) do callback(...) end
+        for _,entry in ipairs(self._callbacks) do
+            if entry.connected then entry.callback(...) end
+        end
     end
     return o
 end
