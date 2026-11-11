@@ -55,7 +55,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -B -m unittest discover \
-            -s handoffs/P0D-S1-LOBBY-TEAM-DEADLOCK-RECOVERY-20261111-01/tests -v 2>&1 | tee /tmp/s1_lobby_planner.log
+            -s handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/lobby-evidence/tests -v 2>&1 | tee /tmp/s1_lobby_planner.log
           grep -F 'Ran 66 tests' /tmp/s1_lobby_planner.log
           grep -x OK /tmp/s1_lobby_planner.log
       - name: Reproduce independent D07 D08 corrective author's 34 regressions
@@ -63,7 +63,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -B -m unittest discover \
-            -s handoffs/P0D-S1-D07D08-CORRECTED-SPATIAL-COMPOSITE-20261111-01/overlay-source/tests -v 2>&1 | tee /tmp/s1_lobby_overlay.log
+            -s handoffs/P0D-S1-D07D08-SPATIAL-LOBBY-COMPOSITE-20261112-01/overlay-evidence/tests -v 2>&1 | tee /tmp/s1_lobby_overlay.log
           grep -F 'Ran 34 tests' /tmp/s1_lobby_overlay.log
           grep -x OK /tmp/s1_lobby_overlay.log
       - name: Strict official source verify and original release source unchanged
