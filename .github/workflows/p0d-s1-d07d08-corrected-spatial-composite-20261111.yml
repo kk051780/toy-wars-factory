@@ -44,12 +44,12 @@ jobs:
           python3 -B -m unittest discover -s handoffs/P0D-S1-D07D08-CORRECTED-SPATIAL-COMPOSITE-20261111-01/candidate/tests -v 2>&1 | tee /tmp/s1_original.log
           grep -F 'Ran 80 tests' /tmp/s1_original.log
           grep -x OK /tmp/s1_original.log
-      - name: Actual full-composite Game 18 plus visual 18 plus composition 9 tests
+      - name: Actual full-composite Game 19 plus visual 18 plus composition 9 tests
         shell: bash
         run: |
           set -euo pipefail
           python3 -B -m unittest discover -s handoffs/P0D-S1-D07D08-CORRECTED-SPATIAL-COMPOSITE-20261111-01/tests -v 2>&1 | tee /tmp/s1_composite.log
-          grep -F 'Ran 45 tests' /tmp/s1_composite.log
+          grep -F 'Ran 46 tests' /tmp/s1_composite.log
           grep -x OK /tmp/s1_composite.log
       - name: ACTUALLY RUN independent overlay author's previously unexecuted 34 tests
         shell: bash
