@@ -1,0 +1,111 @@
+name: P0D G5 original land sea sky source and real Rojo binary QA
+on:
+  push:
+    branches:
+      - handoff/p0d-world-link-g5-20261112-01
+    paths:
+      - 'handoffs/P0D-WORLD-LINK-G5-20261112-01/**'
+      - '.github/workflows/p0d-world-link-g5-20261112.yml'
+permissions:
+  contents: read
+jobs:
+  native-original-route-graph:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      G5_ROOT: handoffs/P0D-WORLD-LINK-G5-20261112-01
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Strict public source manifest
+        run: python3 "$G5_ROOT/tools/verify_manifest.py"
+      - name: Python contract and source mutation tests (real XML skipped until built)
+        run: python3 -m unittest discover -s "$G5_ROOT/tests" -p 'test_*.py' -v
+      - name: Compile PINNED official original upstream Luau interpreter
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet --filter=blob:none --no-checkout https://github.com/luau-lang/luau.git /tmp/g5-luau
+          git -C /tmp/g5-luau fetch --quiet --depth 1 origin f46d879e28302a430029304f7f6a162aed66f103
+          git -C /tmp/g5-luau checkout --quiet FETCH_HEAD
+          test "$(git -C /tmp/g5-luau rev-parse HEAD)" = "f46d879e28302a430029304f7f6a162aed66f103"
+          cmake -S /tmp/g5-luau -B /tmp/g5-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_CLI=ON -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/g5-luau/build --config Release --target Luau.Repl.CLI Luau.Compile.CLI -j 2
+      - name: Compile all 3 original source files and EXECUTE original route graph
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in "$G5_ROOT"/src/*.luau; do
+            /tmp/g5-luau/build/luau-compile "$f" > /dev/null
+            echo "WORLD_LINK_G5_ACTUAL_LUAU_COMPILE_PASS $f"
+          done
+          python3 "$G5_ROOT/tools/build_native_route_runner.py" --dir /tmp/g5-graph
+          /tmp/g5-luau/build/luau /tmp/g5-graph/positive.luau | tee /tmp/g5-graph-positive.txt
+          grep -q "WORLD_LINK_G5_NATIVE_GRAPH_PASS assertions=" /tmp/g5-graph-positive.txt
+          for bad in BAD_PAID_ROUTE BAD_UNKNOWN_NODE BAD_DUPLICATE_ROUTE_ID BAD_NO_RETURN_ROUTE; do
+            if /tmp/g5-luau/build/luau "/tmp/g5-graph/$bad.luau" > "/tmp/g5-$bad.txt" 2>&1; then
+              echo "WORLD_LINK_G5_UNSAFE_MUTATION_ACCEPTED $bad"; exit 1
+            fi
+            grep -q "G5_NATIVE_ROUTES_FAIL" "/tmp/g5-$bad.txt"
+          done
+          echo "WORLD_LINK_G5_NATIVE_MUTANTS_4_OF_4_REJECTED"
+  actual-pinned-rojo-standalone-place:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      G5_ROOT: handoffs/P0D-WORLD-LINK-G5-20261112-01
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Verify same plaintext source lock independently
+        run: python3 "$G5_ROOT/tools/verify_manifest.py"
+      - name: Install SHA256-checked original Rojo 7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --show-error --silent --location --retry 3 --retry-delay 2 \
+            "https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip" \
+            --output "$RUNNER_TEMP/rojo.zip"
+          printf '%s\n' "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  $RUNNER_TEMP/rojo.zip" | sha256sum -c
+          python3 - <<'PY'
+          import os, pathlib, stat, zipfile
+          t=pathlib.Path(os.environ["RUNNER_TEMP"])
+          with zipfile.ZipFile(t/"rojo.zip") as z:
+              names=[n for n in z.namelist() if n.rsplit("/",1)[-1]=="rojo"]
+              assert len(names)==1
+              binary=z.read(names[0])
+              assert len(binary)>1_000_000
+              path=t/"rojo"
+              path.write_bytes(binary)
+              path.chmod(path.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+          PY
+          "$RUNNER_TEMP/rojo" --version | grep "7.7.1"
+      - name: Create ACTUAL .rbxlx with original source and verify source bytes/negative XML
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _g5_rojo_artifacts
+          "$RUNNER_TEMP/rojo" build "$G5_ROOT/default.project.json" -o "_g5_rojo_artifacts/G5_LAND_SEA_SKY_REVIEW.rbxlx"
+          test -s "_g5_rojo_artifacts/G5_LAND_SEA_SKY_REVIEW.rbxlx"
+          export WORLD_G5_REAL_ROJO_PLACE="$PWD/_g5_rojo_artifacts/G5_LAND_SEA_SKY_REVIEW.rbxlx"
+          python3 "$G5_ROOT/tools/verify_rojo_xml.py" --place "$WORLD_G5_REAL_ROJO_PLACE" --receipt "_g5_rojo_artifacts/SOURCE_BYTE_RECEIPT.json"
+          python3 -m unittest discover -s "$G5_ROOT/tests" -p 'test_real_rojo.py' -v
+          echo "WORLD_LINK_G5_REAL_ROJO_ARTIFACT_BUILT_SOURCE_ONLY"
+      - name: Store review-only artifact for owner when needed
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-G5-LAND-SEA-SKY-REAL-ROJO-REVIEW-ONLY
+          path: |
+            _g5_rojo_artifacts/G5_LAND_SEA_SKY_REVIEW.rbxlx
+            _g5_rojo_artifacts/SOURCE_BYTE_RECEIPT.json
+          retention-days: 14
+          if-no-files-found: error
+      - name: No tracked source mutation
+        shell: bash
+        run: |
+          test -z "$(git status --porcelain --untracked-files=no)"
+          echo "WORLD_LINK_G5_ROBLOX_STUDIO_MOBILE_NOT_TESTED"
