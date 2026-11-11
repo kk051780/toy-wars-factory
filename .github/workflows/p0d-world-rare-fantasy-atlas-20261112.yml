@@ -1,0 +1,18 @@
+name: P0D rare-world design data contract
+on:
+  push:
+    branches:
+      - handoff/p0d-world-rare-fantasy-atlas-20261112-01
+    paths:
+      - 'handoffs/P0D-WORLD-RARE-FANTASY-ATLAS-20261112-01/**'
+      - '.github/workflows/p0d-world-rare-fantasy-atlas-20261112.yml'
+permissions:
+  contents: read
+jobs:
+  design-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Python built-in editorial QA
+        run: python3 -m unittest discover -s handoffs/P0D-WORLD-RARE-FANTASY-ATLAS-20261112-01 -p 'test_rare_world_fields.py' -v
