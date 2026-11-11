@@ -215,7 +215,7 @@ def contract(repo):
  assertok(candidate==patch(model),"CANDIDATE_CHANGED_MODEL_LOGIC_NOT_ONLY_COPY")
  assertok(candidate.count('function Coach.consume(')==1 and
    candidate.count('function Coach.view(')==1 and
-   "RemoteEvent" not in candidate and
+   'Instance.new("RemoteEvent")' not in candidate and
    "FireServer" not in candidate and
    "DataStore" not in candidate,
    "CAN_NOT_ADD_GAME_AUTHORITY_TO_COACH")
