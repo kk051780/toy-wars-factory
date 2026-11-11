@@ -23,3 +23,33 @@ jobs:
           SHA=b103389e2089f9ff5a08984fe2f8f6f02aa8b1bc
           git cat-file -e "$SHA^{commit}" || git fetch --no-tags --depth=1 origin "$SHA"
           python handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/audit_authority.py --repo .
+  native-s1rules:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Fetch immutable actual S1Rules source
+        shell: bash
+        run: |
+          set -euo pipefail
+          SHA=b103389e2089f9ff5a08984fe2f8f6f02aa8b1bc
+          git cat-file -e "$SHA^{commit}" || git fetch --no-tags --depth=1 origin "$SHA"
+          python3 -m py_compile handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_rules_gate.py
+      - name: Build pinned official Luau interpreter
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/luau-lang/luau.git /tmp/p0d-luau
+          git -C /tmp/p0d-luau checkout --quiet --detach f46d879e28302a430029304f7f6a162aed66f103
+          test "$(git -C /tmp/p0d-luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S /tmp/p0d-luau -B /tmp/p0d-luau/build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_CLI=ON -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/p0d-luau/build --target Luau.Repl.CLI --parallel 4
+          test -x /tmp/p0d-luau/build/luau
+      - name: Execute exact S1Rules under native Luau and detect five mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_rules_gate.py --repo . --luau /tmp/p0d-luau/build/luau
