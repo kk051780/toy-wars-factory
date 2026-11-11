@@ -1,0 +1,10 @@
+OFFLINE_TEST_LOG — P0D S1 Lobby Team Deadlock Recovery
+Date JST: 2026-11-11
+Python: 3.13.5
+Command: python -m unittest discover -s tests -p test_*.py -v
+Observed result: Ran 66 tests; OK (66/66 PASS)
+Test categories: deterministic stable minimal team moves, red/blue all-on-one-side lobbies, 3v1 and 4v0, idle single, negative Studio UserIds, invalid/duplicate/fractional/nonfinite/malformed rosters, ACTIVE/COUNTDOWN/RESULTS no reassignment, strict Game source patch matching and refuse overwrite/in-place, canonical manifest verify.
+Verified REAL Game base source GitBlob via GitHub connector: 0f2c34fe25c00e3251b9ca53952b9ec75400f365 at immutable commit 35d7d0525388e885aac8281eff2315a59831e0cf.
+Patch tool main CLI source-content application to complete original Game.server.luau: NOT_EXECUTED in this container because raw source not mounted. Original four snippets were verified by read-only GitHub content inspection; dummy fixture transform was executed by test. #220 integrator must execute patch against an actual full source file and run Studio after selection.
+Luau interpreter / Roblox Studio / 2-client / actual player QA: NOT_TESTED.
+ZIP and GitHub fixed readback: separately verified at handoff.
