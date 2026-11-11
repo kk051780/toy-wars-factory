@@ -32,12 +32,10 @@ jobs:
           set -euo pipefail
           # Python unittest imports generated __pycache__ bytecode, which is NOT source.
           find handoffs/P0D-S1-CANONICAL-ROUND-HOST-20261111-01 -type d -name __pycache__ -prune -exec rm -rf {} +
-          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py build \
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py verify \
             --root handoffs/P0D-S1-CANONICAL-ROUND-HOST-20261111-01 \
             --packet-id P0D-S1-AUTHORITATIVE-D08-D07-HOST-20261111-01
-          echo "P0D_MANIFEST_BEGIN"
-          cat handoffs/P0D-S1-CANONICAL-ROUND-HOST-20261111-01/BUILD_MANIFEST.json
-          echo "P0D_MANIFEST_END"
+          sha256sum handoffs/P0D-S1-CANONICAL-ROUND-HOST-20261111-01/BUILD_MANIFEST.json
           python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py verify \
             --root handoffs/P0D-S1-CANONICAL-ROUND-HOST-20261111-01 \
             --packet-id P0D-S1-AUTHORITATIVE-D08-D07-HOST-20261111-01
