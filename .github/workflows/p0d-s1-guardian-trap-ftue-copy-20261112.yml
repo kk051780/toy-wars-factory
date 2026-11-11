@@ -1,0 +1,41 @@
+name: P0D S1 current V6 Guardian trap child FTUE pure model native QA
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-guardian-trap-ftue-copy-20261112-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  v6-first-minute-native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout only isolated handoff source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Fetch exact authoritative V6 official game source
+        shell: bash
+        run: |
+          set -euo pipefail
+          SHA=1263a03701211a652b99b91d2339575dc8104eff
+          git cat-file -e "$SHA^{commit}" || git fetch --no-tags origin "$SHA"
+          git cat-file -e "$SHA^{commit}"
+          python3 -m py_compile handoffs/P0D-S1-GUARDIAN-TRAP-FTUE-COPY-20261112-01/tools/test_guardian_ftue.py
+      - name: Build genuine pinned official Luau interpreter
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/luau-lang/luau.git /tmp/p0d-luau
+          git -C /tmp/p0d-luau checkout --quiet --detach f46d879e28302a430029304f7f6a162aed66f103
+          test "$(git -C /tmp/p0d-luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S /tmp/p0d-luau -B /tmp/p0d-luau/build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_CLI=ON -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/p0d-luau/build --target Luau.Repl.CLI --parallel 4
+          test -x /tmp/p0d-luau/build/luau
+      - name: Test exact V6 trap server/HUD contract, full model, and nine malicious variants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-S1-GUARDIAN-TRAP-FTUE-COPY-20261112-01/tools/test_guardian_ftue.py --repo . --luau /tmp/p0d-luau/build/luau
