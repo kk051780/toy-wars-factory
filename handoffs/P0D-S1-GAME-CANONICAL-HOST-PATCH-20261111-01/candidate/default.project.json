@@ -1,0 +1,21 @@
+{
+  "name": "TRAP_RAIDERS_S1_CHAT_RC01",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "TrapRaidersShared": {"$path": "src/shared"}
+    },
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "TrapRaidersS1": {"$path": "src/server"}
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "TrapRaidersHUD": {"$path": "src/client/HUD.client.luau"}
+      }
+    }
+  }
+}
