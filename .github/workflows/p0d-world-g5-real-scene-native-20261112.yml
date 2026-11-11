@@ -1,0 +1,79 @@
+name: P0D G5 ACTUAL original Luau Scene.build geometry/route semantics
+on:
+  push:
+    branches:
+      - qa/p0d-world-g5-real-scene-native-20261112-01
+    paths:
+      - 'handoffs/P0D-WORLD-G5-REAL-SCENE-QA-20261112-01/**'
+      - '.github/workflows/p0d-world-g5-real-scene-native-20261112.yml'
+permissions:
+  contents: read
+jobs:
+  exact-original-scene-native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      QA_ROOT: handoffs/P0D-WORLD-G5-REAL-SCENE-QA-20261112-01
+      FROZEN_ROOT: handoffs/P0D-WORLD-LINK-G5-20261112-01
+      FROZEN_SHA: 2ef409420eff477abb1d6c1b9c95964f29684e42
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Fail unless original user source is identical to pinned #224 commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor "$FROZEN_SHA" HEAD
+          git diff --exit-code "$FROZEN_SHA" HEAD -- "$FROZEN_ROOT"
+          test "$(git hash-object "$FROZEN_ROOT/src/WorldLinkScene.luau")" = "645e5ecc213a0e7463b77e419f3764d3395cd1d8"
+          test "$(git hash-object "$FROZEN_ROOT/src/WorldLinkRoutes.luau")" = "3ff7debee01839ee595479b1cdefa169f8b153d3"
+          python3 "$FROZEN_ROOT/tools/verify_manifest.py"
+          echo "WORLD_G5_EXACT_FROZEN_ORIGINAL_SOURCE_12_OF_12_PASS"
+      - name: QA generator can compile before expensive real Luau setup
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$QA_ROOT/tools/build_real_scene_runner.py" --output-dir /tmp/p0d-g5-native-scene
+          test "$(find /tmp/p0d-g5-native-scene -name '*.luau' | wc -l)" -eq 6
+          test -s /tmp/p0d-g5-native-scene/positive.luau
+          echo "WORLD_G5_NATIVE_SCENE_SIX_REAL_SOURCE_RUNNERS_READY"
+      - name: Build upstream SHA-pinned genuine native Luau interpreter
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d-g5-luau
+          git -C /tmp/p0d-g5-luau init -q
+          git -C /tmp/p0d-g5-luau remote add origin https://github.com/luau-lang/luau.git
+          git -C /tmp/p0d-g5-luau fetch --quiet --depth 1 origin f46d879e28302a430029304f7f6a162aed66f103
+          git -C /tmp/p0d-g5-luau checkout --quiet FETCH_HEAD
+          test "$(git -C /tmp/p0d-g5-luau rev-parse HEAD)" = "f46d879e28302a430029304f7f6a162aed66f103"
+          cmake -S /tmp/p0d-g5-luau -B /tmp/p0d-g5-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_CLI=ON -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/p0d-g5-luau/build --config Release --target Luau.Repl.CLI Luau.Compile.CLI -j 2
+      - name: Execute true original Scene.build and reject five broken real source variants
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in /tmp/p0d-g5-native-scene/*.luau; do
+            /tmp/p0d-g5-luau/build/luau-compile "$f" > /dev/null
+            echo "WORLD_G5_REAL_SCENE_NATIVE_SOURCE_COMPILE_PASS $f"
+          done
+          /tmp/p0d-g5-luau/build/luau /tmp/p0d-g5-native-scene/positive.luau | tee /tmp/p0d-g5-scene-positive.log
+          grep -q "WORLD_G5_ACTUAL_NATIVE_SCENE_PASS assertions=" /tmp/p0d-g5-scene-positive.log
+          for bad in BAD_ROUTES_NONCOLLIDABLE BAD_SEA_SECRET_DISCONNECTED BAD_SKY_CASTLE_UNREACHABLE BAD_CHILD_SECRET_SIGN BAD_NONEXCLUSIVE_WORLD; do
+            if /tmp/p0d-g5-luau/build/luau "/tmp/p0d-g5-native-scene/$bad.luau" > "/tmp/p0d-g5-$bad.log" 2>&1; then
+              echo "WORLD_G5_REAL_SCENE_UNSAFE_MUTANT_ACCEPTED: $bad"
+              exit 1
+            fi
+            grep -q "G5_NATIVE_REAL_SCENE_FAIL" "/tmp/p0d-g5-$bad.log"
+          done
+          echo "WORLD_G5_REAL_SCENE_UNSAFE_MUTANTS_5_OF_5_REJECTED"
+      - name: Leave production S1 source and branch untouched
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code "$FROZEN_SHA" HEAD -- "$FROZEN_ROOT"
+          test -z "$(git status --porcelain --untracked-files=no)"
+          echo "WORLD_G5_SOURCE_ONLY_NO_REAL_ROBLOX_STUDIO_TEST"
