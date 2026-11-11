@@ -333,7 +333,7 @@ eq(pBlue.Character.hum.Health,preHp-24,"replay_attack_seq_blocked")
 send(pRed,"ATTACK",2,{targetId=202,damage=999})
 eq(pBlue.Character.hum.Health,preHp-24,"attack_cooldown")
 -- Replay the SAME seq after cooldown expires: old packet must NEVER hit.
-tick(26.9)
+tick(27.1) -- true replay check AFTER 0.85s attack cooldown has passed
 send(pRed,"ATTACK",1,{targetId=202,damage=999})
 eq(pBlue.Character.hum.Health,preHp-24,"replay_attack_seq_after_cooldown")
 tick(27.2) -- preserve full 0.85s cooldown after first hit at t26.2
