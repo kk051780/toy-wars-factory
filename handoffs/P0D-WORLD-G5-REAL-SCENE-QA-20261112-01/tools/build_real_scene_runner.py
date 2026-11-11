@@ -24,7 +24,7 @@ CFrame={
     Angles=function(x,y,z) return setmetatable({angle=z},CF) end
 }
 local function RobloxObject(class)
-    local data={ClassName=class,_children={},attributes={}}
+    local data={ClassName=class,Name=class,_children={},attributes={}}
     local obj
     obj=setmetatable({},{
         __index=function(_,key)
@@ -227,7 +227,7 @@ def main():
             'walkRamp(folder,"SEA_BUBBLE_B_DryRamp",-4,2,-105,-22,30,13,green)',1),
         "BAD_SKY_CASTLE_UNREACHABLE":s.replace(
             'walkRamp(folder,"SKY_RAINBOW_A_Upper",95,25,175,49,-33,15,yellow)',
-            'walkRamp(folder,"SKY_RAINBOW_A_Upper",95,25,115,49,-33,15,yellow)',1),
+            'walkRamp(folder,"SKY_RAINBOW_A_Upper",95,25,175,35,-33,15,yellow)',1),
         "BAD_CHILD_SECRET_SIGN":s.replace(
             '"🐠 ひみつの みち\\nみどりの さか"',
             '"🐠 ひみつの みち\\nみちが ない"',1),
