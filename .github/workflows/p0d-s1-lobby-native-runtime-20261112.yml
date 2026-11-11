@@ -1,5 +1,11 @@
 name: P0D S1 lobby genuine native Luau runtime semantic gate
 on:
+  pull_request:
+    branches:
+      - handoff/p0d-s1-lobby-native-ci-review-base-20261112
+    paths:
+      - 'handoffs/P0D-S1-LOBBY-NATIVE-LUAU-REPLAY-20261112-01/**'
+      - '.github/workflows/p0d-s1-lobby-native-runtime-20261112.yml'
   push:
     branches:
       - handoff/p0d-s1-lobby-native-luau-replay-20261112-01
