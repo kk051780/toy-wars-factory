@@ -14,7 +14,8 @@ local function vec(x,y,z) return {X=x,Y=y,Z=z} end
 Vector3={new=vec}
 Color3={fromRGB=function(r,g,b) return {R=r,G=g,B=b} end}
 Enum={Material={Grass="Grass",SmoothPlastic="SmoothPlastic",Glass="Glass",
-    Neon="Neon",WoodPlanks="WoodPlanks"},PartType={Ball="Ball"}}
+    Neon="Neon",WoodPlanks="WoodPlanks"},PartType={Ball="Ball"},
+    Font={GothamBold="GothamBold"}}
 UDim2={fromOffset=function(x,y) return {kind="offset",X=x,Y=y} end,
     fromScale=function(x,y) return {kind="scale",X=x,Y=y} end}
 local CF={}
