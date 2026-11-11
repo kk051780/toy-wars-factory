@@ -141,7 +141,9 @@ class S1ActualGamePatchContract(unittest.TestCase):
         entries = self.manifest["files"]
         named = [x["path"] for x in entries]
         self.assertEqual(len(named), len(set(named)))
-        actual = sorted(p.relative_to(GAME).as_posix() for p in GAME.rglob("*") if p.is_file() and p.name!="BUILD_MANIFEST.json")
+        actual = sorted(p.relative_to(GAME).as_posix() for p in GAME.rglob("*")
+                        if p.is_file() and p.name != "BUILD_MANIFEST.json"
+                        and "__pycache__" not in p.parts and p.suffix != ".pyc")
         self.assertEqual(sorted(named), actual)
         for entry in entries:
             b = (GAME/entry["path"]).read_bytes()
