@@ -1,0 +1,79 @@
+name: P0D S1 final Windows Studio receipt guard - source-only CI
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-final-studio-evidence-gate-20261112-01
+permissions:
+  contents: read
+jobs:
+  verify-final-studio-receipt-gate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    env:
+      P0D_GATE: handoffs/P0D-S1-FINAL-STUDIO-EVIDENCE-GATE-20261112-01
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Checkout isolated source-only audit branch without write credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify exact unchanged official source baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 5dc6c958ea5549b1e859d6d250e6179e731181fb HEAD
+          git diff --exit-code 5dc6c958ea5549b1e859d6d250e6179e731181fb HEAD -- releases/P0D_S1_KIDS_RC01
+          echo "P0D_OFFICIAL_RC_NOT_MODIFIED_AND_EXACT_BASE_PASS"
+      - name: Check PUBLIC_SOURCE_V1 packet and SHA256 against actual bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, pathlib
+          root=pathlib.Path('handoffs/P0D-S1-FINAL-STUDIO-EVIDENCE-GATE-20261112-01')
+          m=json.loads((root/'BUILD_MANIFEST.json').read_bytes())
+          assert set(m)=={'files','format','game_id','packet_id','public_source_allowed','work_id'}
+          assert m['format']=='P0D_PUBLIC_SOURCE_V1'
+          assert m['game_id']=='TRAP_RAIDERS' and m['public_source_allowed'] is True
+          assert len(m['files'])==4
+          paths=set()
+          for e in m['files']:
+              assert set(e)=={'path','sha256','size'}
+              p=root/e['path']
+              assert p.is_file() and not p.is_symlink()
+              data=p.read_bytes()
+              assert hashlib.sha256(data).hexdigest()==e['sha256'] and len(data)==e['size']
+              assert e['path'] not in paths
+              paths.add(e['path'])
+          allfiles={str(p.relative_to(root)).replace('\\','/') for p in root.rglob('*') if p.is_file()}
+          assert allfiles==paths|{'BUILD_MANIFEST.json'}
+          print('P0D_FINAL_STUDIO_RECEIPT_PUBLIC_4_OF_4_SHA256_PASS')
+          PY
+      - name: Run real standard-library positive and 28 negative tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile "$P0D_GATE/validate_studio_receipt.py" "$P0D_GATE/tests/test_studio_receipt.py"
+          python3 -m unittest discover -s "$P0D_GATE/tests" -p 'test*.py' -v
+          echo "P0D_FINAL_STUDIO_RECEIPT_UNIT_29_OF_29_PASS"
+      - name: Run deliberately NOT_TESTED example through real CLI and demand nonzero
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          python3 "$P0D_GATE/validate_studio_receipt.py" "$P0D_GATE/example_not_tested.json" --evidence-root "$RUNNER_TEMP" > "$RUNNER_TEMP/p0d_gate_output.json"
+          code=$?
+          set -e
+          test "$code" -eq 2
+          python3 - <<'PY'
+          import json,os,pathlib
+          o=json.loads((pathlib.Path(os.environ['RUNNER_TEMP'])/'p0d_gate_output.json').read_text())
+          assert o['status']=='BLOCKED'
+          assert o['roblox_publishing_permitted'] is False
+          assert 'BOSS_DISABLED_ENGINE_GATE_UNRESOLVED_HUMAN_REVIEW_REQUIRED' in o['errors']
+          assert o['passed_scenarios']==0
+          print('P0D_NOT_TESTED_REAL_CLI_FAIL_CLOSED_PASS')
+          PY
+          test -z "$(git status --porcelain --untracked-files=no)"
+          echo "P0D_PC_STUDIO_NOT_RUN___DO_NOT_CREDIT_ENGINE_OR_RELEASE"
