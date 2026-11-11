@@ -1,0 +1,54 @@
+name: P0D S1 official native Luau compiler syntax gate
+
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-native-luau-syntax-gate-20261112-01
+
+permissions:
+  contents: read
+
+jobs:
+  pinned-native-luau-source-syntax:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Checkout immutable S1 composite plus independent QA
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Validate exact candidate parent identity
+        shell: bash
+        run: |
+          test "$(git rev-parse HEAD^)" = "cd3c862bf69e0c3daed90c273995abbab96c260a"
+          test "$(git branch --show-current)" = "handoff/p0d-s1-native-luau-syntax-gate-20261112-01"
+          test -f handoffs/P0D-S1-D07D08-CORRECTED-SPATIAL-COMPOSITE-20261111-01/candidate/BUILD_MANIFEST.json
+      - name: Checkout pinned official Luau compiler source (read-only)
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _third_party_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Verify official compiler commit before building
+        shell: bash
+        run: |
+          test "$(git -C _third_party_luau rev-parse HEAD)" = "f46d879e28302a430029304f7f6a162aed66f103"
+      - name: Build official native luau-compile from pinned source
+        shell: bash
+        run: |
+          cmake -S _third_party_luau -B /tmp/p0d-luau-build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d-luau-build --target Luau.Compile.CLI --config Release --parallel 2
+          test -x /tmp/p0d-luau-build/luau-compile
+      - name: Compile all 17 exact original S1 candidate Luau files
+        shell: bash
+        run: |
+          python3 handoffs/P0D-S1-NATIVE-LUAU-SYNTAX-QA-20261112-01/tools/native_luau_syntax_gate.py /tmp/p0d-luau-build/luau-compile
+      - name: Ensure source checkout stayed unchanged
+        shell: bash
+        run: |
+          test -z "$(git status --porcelain --untracked-files=no)"
