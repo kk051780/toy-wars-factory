@@ -16,6 +16,8 @@ jobs:
     if: github.repository == 'kk051780/toy-wars-factory'
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
     steps:
       - name: Checkout source-only patch branch
         uses: actions/checkout@v4
@@ -53,6 +55,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python3 handoffs/P0D_PUBLIC_SOURCE_HANDOFF/tools/p0d_public_pack.py verify \
+            --root handoffs/P0D-S1-GAME-CANONICAL-HOST-PATCH-20261111-01/candidate \
+            --packet-id P0D-S1-CANONICAL-GAME-PATCH-20261111-01
           git diff --exit-code -- releases/P0D_S1_KIDS_RC01
           test "$(git ls-files --others --exclude-standard releases/P0D_S1_KIDS_RC01 | wc -l)" -eq 0
           echo P0D_CANDIDATE_CI_OFFLINE_ONLY_NO_STUDIO_NO_RELEASE
