@@ -95,14 +95,40 @@ end)
 local function displayRole(role: string): string
     return if role == "GUARDIAN" then "守護" else "速攻"
 end
+-- RESULT_COPY_BEGIN: results copy only; no new Remote or game authority.
+local RESULT_REASONS = {
+    EGG_CAPTURE = "卵を運んで得点",
+    CASTLE_DESTROYED = "城が破壊された",
+    OPPONENT_LEFT = "相手が退出した",
+    TEAM_EMPTY = "相手チームの人数が不足",
+    TIME_LIMIT = "制限時間が終了",
+}
+local function resultLine(s): string
+    local outcome = "試合終了"
+    if s.winner == "DRAW" then
+        outcome = "引き分け！"
+    elseif s.winner == "RED" or s.winner == "BLUE" then
+        if s.team == "RED" or s.team == "BLUE" then
+            outcome = if s.winner == s.team then "勝利！" else "敗北！"
+        end
+    end
+    local reason = if type(s.reason) == "string"
+        then (RESULT_REASONS[s.reason] or "勝敗が確定しました")
+        else "勝敗が確定しました"
+    local seconds = 0
+    if type(s.time) == "number" and s.time == s.time and s.time >= 0
+        and s.time <= 3600 then
+        seconds = math.floor(s.time)
+    end
+    -- RESULTS ends at the lobby. A new round still needs enough players.
+    return outcome .. "　" .. reason .. "｜次の準備まで " .. tostring(seconds) .. " 秒"
+end
+-- RESULT_COPY_END
+
 local function phaseText(s): string
     if s.phase == "LOBBY" then return "準備中：2人集まると開始。役職を選ぼう！" end
     if s.phase == "COUNTDOWN" then return "開始まで " .. tostring(s.time) .. " 秒！" end
-    if s.phase == "RESULTS" then
-        if s.winner == "DRAW" then return "引き分け！ 次の試合まで " .. tostring(s.time) .. " 秒" end
-        return (if s.winner == s.team then "勝利！" else "試合終了")
-            .. " 理由：" .. tostring(s.reason) .. "　再戦まで " .. tostring(s.time) .. " 秒"
-    end
+    if s.phase == "RESULTS" then return resultLine(s) end
     local carrying = if s.carrying ~= "" then " 🥚敵の卵を持っている！自陣へ！" else ""
     local warning = if s.alarm == "WARNING" then " ⚠ 襲撃の予兆 " .. tostring(s.alarmTime) .. "秒"
         else (if s.alarm == "SIGNAL" then " ⚡警報発動中！" else "")

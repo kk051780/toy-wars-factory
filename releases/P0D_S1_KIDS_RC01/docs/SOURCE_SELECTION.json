@@ -6,8 +6,8 @@
   "prior_official_rc_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
   "source_candidate_fixed_sha": "b103389e2089f9ff5a08984fe2f8f6f02aa8b1bc",
   "source_import_commit": "17ffd5c28bf15aeefa5f524291534f064f74029f",
-  "source_git_tree_sha": "b95f91fcf802607ff9d5f45a816553b295f68b8a",
-  "source_lock_provenance": "30 immutable candidate paths copied by identical Git blob and tree SHAs; docs/receipt subsequently overlaid; 20 Luau never edited in overlay",
+  "source_git_tree_sha": "01aede07b64973a32ba02647c10a9e8b8f8c3285",
+  "source_lock_provenance": "19 of 20 Luau Git blobs exact original 30 source, 1 original HUD results-only patch exact from 33-file native-tested composite, Rojo unchanged; all current Luau src tree identical composite",
   "current_official_stage": "CHAT_ASSEMBLED_SOURCE_LOCKED__STUDIO_NOT_TESTED",
   "single_authorities": {
     "round": "src/server/Game.server.luau",
@@ -27,10 +27,13 @@
     "actual_upstream_source_full_hash": "PASS_30_OF_30",
     "actual_ours_rc_full_hash": "PENDING",
     "upstream_28_luau": "PARTIAL_PASS",
-    "this_rc_20_luau": "NOT_VERIFIED",
+    "this_rc_20_luau": "SOURCE_BLOB_EQUIVALENT_TO_NATIVE_PASS_NOT_ENGINE",
     "this_rc_dynamic_trace": "NOT_VERIFIED",
     "studio_2client": "NOT_TESTED",
-    "owner_release": "NOT_AUTHORIZED"
+    "owner_release": "NOT_AUTHORIZED",
+    "upstream_full20_luau": "PASS_GITHUB_ACTIONS_43105877169_ON_EXACT_SOURCE_EQUIVALENT_CANDIDATE"
   },
-  "owner_pc_source_current": "UNKNOWN_NOT_AVAILABLE__DO_NOT_OVERWRITE"
+  "owner_pc_source_current": "UNKNOWN_NOT_AVAILABLE__DO_NOT_OVERWRITE",
+  "selected_result_hud_composite_commit": "0ca2b7ea9f29aa79727b2e7e53a01af093df5b90",
+  "selected_result_hud_blob_sha1": "458a23e83d261c51b3bec174e36e183960532f8c"
 }

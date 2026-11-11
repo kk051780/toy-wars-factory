@@ -7,19 +7,32 @@
   "previous_rc_commit": "35d7d0525388e885aac8281eff2315a59831e0cf",
   "import_commit": "17ffd5c28bf15aeefa5f524291534f064f74029f",
   "candidate_source_commit": "b103389e2089f9ff5a08984fe2f8f6f02aa8b1bc",
-  "src_subtree_sha": "b95f91fcf802607ff9d5f45a816553b295f68b8a",
+  "src_subtree_sha": "01aede07b64973a32ba02647c10a9e8b8f8c3285",
   "declared_original_candidate_source_files": 30,
   "source_luau_count": 20,
-  "source_origins": "GitHub pinned blobs/tree; no byte rewrite to candidate Luau",
+  "source_origins": "Initial 20 identical Luau candidate import then one HUD-only verified replacement; final current 20 Luau blobs all equal 33-file native-tested candidate",
   "source_adoption": "IN_RC_TREE_CONFIRMED_BY_GIT_TREE_SHA",
-  "source_review": "independent candidate SHA256 30/30 upstream; actual full RC manifest/sha and native QA next",
-  "official_20_file_native": "NOT_VERIFIED",
+  "source_review": "Original 30/30 immutable candidate source audit; latest HUD native tested; final manifest exact Git tree/source hashes require independent RC QA",
+  "official_20_file_native": "EXACT_LUAU_BLOBS_MATCH_UPSTREAM_NATIVE_PASS__OFFICIAL_RC_STUDIO_NOT_TESTED",
   "independent_actual_RC_QA": "NOT_TESTED",
   "roblox_studio_2client_mobile": "NOT_TESTED",
   "boss_release_flags": "BOTH_FALSE_IN_GAME_SOURCE",
   "physical_damage_qa": "NOT_TESTED",
   "owner_public_release_approved": false,
   "owner_pc_place_equivalent": false,
-  "game_release_progress_pct": "PENDING_ITEMIZED_220_AUDIT",
-  "notes": "Receipt is a source import provenance, not an execution/build/studio attestation."
+  "game_release_progress_pct": "CHECK_LATEST_220_AUDIT",
+  "notes": "Receipt is a source import provenance, not an execution/build/studio attestation.",
+  "selected_client_result_hud": {
+    "source_commit": "0ca2b7ea9f29aa79727b2e7e53a01af093df5b90",
+    "source_blob_sha1": "458a23e83d261c51b3bec174e36e183960532f8c",
+    "base_blob_sha1": "7a699f35cd3f5e7cf6178f7a45a71d0ead3247c5",
+    "scope": "HUD RESULTS copy only"
+  },
+  "upstream_full_source_ci": {
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43105877169",
+    "result": "COMPLETED_SUCCESS",
+    "native_compiler": "20/20",
+    "python": "88/88",
+    "result_semantics": "15/15 with 2 negative controls"
+  }
 }

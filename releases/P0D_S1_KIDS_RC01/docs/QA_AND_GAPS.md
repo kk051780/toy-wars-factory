@@ -18,3 +18,6 @@
 
 ### Data truth
 No confirmed public users, D1/D7, payer conversion or net income. No native Studio pass for *this RC*. Preliminary historical PC partial testing (#213) is NOT an approval for newly copied source. Original PC Place is never overwritten by a GitHub Chat commit.
+
+## HUD-only V5 overlay additional evidence
+The sole RC writer has selected exact HUD blob 458a23e83d261c51b3bec174e36e183960532f8c from native-tested full-game candidate `0ca2b7ea9f29aa79727b2e7e53a01af093df5b90`. The whole official `src/` Luau tree after this single-file patch is `01aede07b64973a32ba02647c10a9e8b8f8c3285`, exactly identical to source CI `https://github.com/kk051780/toy-wars-factory/actions/runs/43105877169` (20/20 official Luau compiler, original 88/88 Python plus 15/15 result semantic native, 2 rejected negative controls). No server/Remote/gameplay authority modified. Actual official release tree still needs independent specific-SHA QA and Roblox Studio/2client/mobile/real boss attack; both canonical boss flags stay OFF.
