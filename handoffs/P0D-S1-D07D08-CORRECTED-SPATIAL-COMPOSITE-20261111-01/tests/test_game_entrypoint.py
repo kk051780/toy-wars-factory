@@ -27,8 +27,8 @@ ORIGINAL_MODULE_BLOBS = {
     "GoroganDamageBoundary": "031b0c4a5370a891434de42ada8d76642c080433",
     "GoroganRigDriver": "1f6204105be724ca734e2654e42472667a8efcc6",
     "GoroganServerAICore": "f0ecf36242f1543eccf915948129f21f99a6bc92",
-    "S1CanonicalRoundHost": None,
-    "S1GoroganLiveBindings": "db2a5d2ee5e655b2a9beffe33747cf1fba47c37e",
+    "S1CanonicalRoundHost": "61501c982619e54db6a09cf11b188ef872c1666e",
+    "S1GoroganLiveBindings": "9cde26d7806a6ec20cd8648953eb37d1eefdc2c8",
     "TrustedGoroganActivationMapper": "b30aadc41634f77109559e31cff4d63fabeff19a",
 }
 class S1ActualGamePatchContract(unittest.TestCase):
