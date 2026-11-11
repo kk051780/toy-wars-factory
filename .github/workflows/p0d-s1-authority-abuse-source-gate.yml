@@ -94,3 +94,9 @@ jobs:
           done
           python3 -m py_compile handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_updated_official_rc_gate.py
           python3 handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_updated_official_rc_gate.py --repo . --luau /tmp/p0d-luau/build/luau
+      - name: Run authentic Game.server two-player egg heist winner rematch lifecycle native Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_actual_game_lifecycle_gate.py
+          python3 handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/native_actual_game_lifecycle_gate.py --repo . --luau /tmp/p0d-luau/build/luau
