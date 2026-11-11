@@ -143,7 +143,7 @@ class SpatialTelegraphSourceContract(unittest.TestCase):
         m=json.loads(f.read_bytes())
         self.assertEqual(set(m),{"files","format","game_id","packet_id","public_source_allowed","work_id"})
         files={x["path"]:x for x in m["files"]}
-        self.assertEqual(len(files),27)
+        self.assertEqual(len(files),28)
         self.assertEqual(len(m["files"]),len(files))
         self.assertIn("src/client/GoroganVisualPolicy.luau",files)
         self.assertIn("src/client/S1GoroganStompRing.client.luau",files)
