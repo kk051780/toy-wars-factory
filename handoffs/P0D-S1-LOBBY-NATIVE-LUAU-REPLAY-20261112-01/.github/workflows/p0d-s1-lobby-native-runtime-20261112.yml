@@ -8,6 +8,7 @@ on:
       - '.github/workflows/p0d-s1-lobby-native-runtime-20261112.yml'
 permissions:
   contents: read
+  issues: write # only for posting this CI result to Issue #218; no code write
 jobs:
   replay-original-lobby-module:
     runs-on: ubuntu-24.04
@@ -46,3 +47,30 @@ jobs:
         run: |
           set -euo pipefail
           python3 handoffs/P0D-S1-LOBBY-NATIVE-LUAU-REPLAY-20261112-01/tools/run_native_lobby_replay.py --luau /tmp/p0d-official-luau/build/luau --planner /tmp/p0d-s1-native-input/LobbyTeamRecovery.luau
+      - name: Report actual native result to P0D Issue 218
+        if: always()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CI_JOB_STATUS: ${{ job.status }}
+          CI_RUN_ID: ${{ github.run_id }}
+          CI_COMMIT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          case "$CI_JOB_STATUS" in
+            success) verdict="PASS_REAL_LUAU_RUN" ;;
+            failure) verdict="FAIL_REAL_LUAU_RUN" ;;
+            *) verdict="NOT_COMPLETE" ;;
+          esac
+          gh issue comment 218 --repo kk051780/toy-wars-factory --body "[P0D_PROGRESS_V3][NATIVE_LOBBY_REPLAY_ACTIONS_RECEIPT]
+packet_id=P0D-S1-LOBBY-NATIVE-LUAU-SEMANTIC-REPLAY-20261112-01
+source_candidate_sha=9de6496282c7bd4dcea586563f75da71d08d77ec
+actual_source_planner_sha256=35c546f33e0454ceaf7fa26cf5ee44763673c6764906cc249ef282bb096ea404
+Luau_upstream_sha=f46d879e28302a430029304f7f6a162aed66f103
+CI_branch_commit=$CI_COMMIT
+GitHub_Actions_run=https://github.com/kk051780/toy-wars-factory/actions/runs/$CI_RUN_ID
+GitHub_Actions_step_status=$CI_JOB_STATUS
+result=$verdict
+assertions_exhaustive=511_expected seeded=512_expected
+result_scope=ACTUAL_PURE_LUAU_PLANNER_SEMANTICS_ONLY__NOT_ROBLOX_STUDIO_OR_GAME_RELEASE
+No_other_repo_source_mutation=true"
