@@ -20,3 +20,7 @@ The CI workflow downloads precisely `candidate/src/server/LobbyTeamRecovery.luau
 Final output must include `P0D_LOBBY_NATIVE_SEMANTIC_PASS` and `LUAU_NATIVE_RUNTIME_SEMANTIC_PASS`, the exact expected original SHA, and an assertion count of at least 5,000. **Do not claim PASS until an actual Actions run yields a completed SUCCESS and readable execution log.**
 
 This is a pure Luau planner semantic test, **not** real player/team teleports, Roblox server loop, native Studio, PvP, mobile latency, monetization or first-release approval. Only Issue #220's sole S1 integrator may use the source evidence and authorize integration and eventual OWNER-directed real Studio QA.
+
+## Automated evidence receipt
+
+After the Luau run, the branch-only workflow posts its **actual** success/failure status and Actions run link to public Issue #218. The workflow has `contents: read` (cannot mutate game source) and `issues: write` (CI result reporting only); it does not merge, modify the RC, publish Roblox, spend money or request Windows Codex. If this receipt is absent or logs are inaccessible, CI must remain **UNKNOWN**, not PASS.
