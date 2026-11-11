@@ -45,3 +45,19 @@ jobs:
           python3 handoffs/P0D-WF13-LOCAL-GRAVITY-PROTOTYPE-20261112-01/tools/build_native_policy_runner.py /tmp/wf13_policy_native.luau
           /tmp/wf13-luau/build/luau /tmp/wf13_policy_native.luau | tee /tmp/wf13_native_result.txt
           grep -q 'WF13_NATIVE_ACTUAL_POLICY_PASS cases=18' /tmp/wf13_native_result.txt
+      - name: Actual whole original WF13 Controller native lifecycle and malicious mutation tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-WF13-LOCAL-GRAVITY-PROTOTYPE-20261112-01/tools/build_native_controller_runner.py --output-dir /tmp/wf13-controller-native
+          /tmp/wf13-luau/build/luau /tmp/wf13-controller-native/positive.luau | tee /tmp/wf13-controller-positive.txt
+          grep -q 'WF13_NATIVE_ACTUAL_CONTROLLER_PASS cases=' /tmp/wf13-controller-positive.txt
+          if /tmp/wf13-luau/build/luau /tmp/wf13-controller-native/BAD_CLIENT_NETWORK_OWNER.luau > /tmp/wf13-controller-bad-owner.txt 2>&1; then
+            echo "WF13_INVALID_OWNER_MUTATION_INCORRECTLY_ACCEPTED"; exit 1
+          fi
+          if /tmp/wf13-luau/build/luau /tmp/wf13-controller-native/BAD_NO_REAL_REGION_CHECK.luau > /tmp/wf13-controller-bad-region.txt 2>&1; then
+            echo "WF13_INVALID_REGION_MUTATION_INCORRECTLY_ACCEPTED"; exit 1
+          fi
+          grep -q 'WF13_NATIVE_CONTROLLER_FAILED' /tmp/wf13-controller-bad-owner.txt
+          grep -q 'WF13_NATIVE_CONTROLLER_FAILED' /tmp/wf13-controller-bad-region.txt
+          echo "WF13_NATIVE_REAL_CONTROLLER_UNSAFE_MUTATIONS_2_OF_2_REJECTED"
