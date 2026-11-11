@@ -1,0 +1,45 @@
+name: P0D S1 Japanese child-friendly 3D map signage candidate native QA
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-jp-map-signs-20261112-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-japanese-map:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout isolated unchanged public source branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Fetch immutable OFFICIAL RC and independent base MapBuilder native QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          for PIN in \
+            5dc6c958ea5549b1e859d6d250e6179e731181fb \
+            c71d209c56ff3bb33ed0eb2628886b69c2541e81
+          do
+            git cat-file -e "$PIN^{commit}" || git fetch --no-tags origin "$PIN"
+            git cat-file -e "$PIN^{commit}"
+          done
+          python3 -m py_compile handoffs/P0D-S1-JP-MAP-SIGNS-20261112-01/tools/test_jp_map.py
+      - name: Build real pinned official Luau CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/luau-lang/luau.git /tmp/p0d-luau
+          git -C /tmp/p0d-luau checkout --quiet --detach f46d879e28302a430029304f7f6a162aed66f103
+          test "$(git -C /tmp/p0d-luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S /tmp/p0d-luau -B /tmp/p0d-luau/build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_CLI=ON -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/p0d-luau/build --target Luau.Repl.CLI --parallel 4
+          test -x /tmp/p0d-luau/build/luau
+      - name: Real original MapBuilder geometry tests and new 8 Japanese text changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-S1-JP-MAP-SIGNS-20261112-01/tools/test_jp_map.py --repo . --luau /tmp/p0d-luau/build/luau
