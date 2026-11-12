@@ -149,7 +149,7 @@ class FullGameReview(unittest.TestCase):
     def test_eight_hud_boss_visual_and_touch_controls_preserved(self):
         self.assertEqual(self.hud.count('remote.OnClientEvent:Connect('),1)
         self.assertEqual(self.hud.count('remote:FireServer'),1)
-        self.assertIn('if data.kind == "BOSS_VISUAL" then',self.hud)
+        self.assertIn('if s.kind == "BOSS_VISUAL" then',self.hud)
         self.assertIn('UDim2.new(1, -140, 1, -110)',self.hud)
         self.assertIn('GuardianTrap',self.hud)
         for forbidden in ("MarketplaceService","DataStoreService","PublishAsync"):
