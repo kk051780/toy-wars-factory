@@ -14,11 +14,11 @@ class OriginalServerFullPipeline(unittest.TestCase):
  def test_no_server_logic_duplicated_in_python(self):
   self.assertIn("source=server",H)
   self.assertIn("runActualUnmodifiedServerSource",H)
-  self.assertIn("only external Roblox Instance",R)
+  self.assertIn("external Roblox engine",R)
  def test_studio_opt_in_runner_only(self):
   self.assertIn('local ENABLE_RARE_DISCOVERY_STUDIO_BOOK = false',H)
   self.assertIn('local ENABLE_RARE_DISCOVERY_STUDIO_BOOK = true',H)
-  self.assertIn('original source files',R)
+  self.assertIn('Original source files',R)
  def test_two_clients_and_four_real_creature_slots(self):
   for needle in ["local userA,rootA,humanA,uiA=newPlayer()",
        "local userB,rootB,humanB,uiB=newPlayer()",
