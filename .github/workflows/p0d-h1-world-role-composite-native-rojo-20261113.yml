@@ -1,0 +1,149 @@
+name: P0D H1 combined sky sea creatures Raider Wind private native Rojo
+on:
+  push:
+    branches:
+      - integration/p0d-h1-role-world-composite-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  h1-real-source:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      H1: handoffs/P0D-H1-COMPOSITE-20261113-01
+      H1_BASE_COMMIT: c73f305fb412927aee05b399a4f54a2a16d0579f
+      ROLE_COMMIT: f6c98bc90cd14221d7a0c5940c9641c9fb14d8d8
+    steps:
+      - name: Checkout ONLY isolated H1 source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exact full 24-H1 heritage plus exact role Game HUD Wind source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,pathlib,subprocess
+          repo=pathlib.Path(os.environ["H1"])
+          base=os.environ["H1_BASE_COMMIT"]
+          role=os.environ["ROLE_COMMIT"]
+          original="handoffs/P0D-H1-WORLD-CREATURES-20261113-01/src/"
+          names=subprocess.check_output(["git","ls-tree","-r","--name-only",base,original],text=True).splitlines()
+          scripts=[p for p in names if p.endswith(".luau")]
+          assert len(scripts)==24,len(scripts)
+          changed={"src/server/Game.server.luau","src/client/HUD.client.luau"}
+          for old in scripts:
+              rel=old[len(original):]
+              if rel in changed:continue
+              data=subprocess.check_output(["git","show",base+":"+old])
+              assert (repo/"src"/rel).read_bytes()==data,rel
+          for rel in ["src/server/Game.server.luau","src/client/HUD.client.luau",
+                      "src/server/S1RaiderWindRules.luau"]:
+              old="releases/P0D_S1_KIDS_RC01/"+rel
+              data=subprocess.check_output(["git","show",role+":"+old])
+              assert (repo/rel).read_bytes()==data,rel
+          scripts=sorted((repo/"src").rglob("*.luau"))
+          assert len(scripts)==25,len(scripts)
+          game=(repo/"src/server/Game.server.luau").read_text(encoding="utf8")
+          wind=(repo/"src/server/S1RaiderWindRules.luau").read_text(encoding="utf8")
+          overlay=(repo/"src/server/H1FunWorld.server.luau").read_text(encoding="utf8")
+          hud=(repo/"src/client/HUD.client.luau").read_text(encoding="utf8")
+          for term in ["WIND_BURST","stopWind(player)","S1RaiderWindRules"]:
+              assert term in game,term
+          assert "Wind.canActivate" in wind and "Wind.COOLDOWN = 18" in wind
+          assert "SKY_WALKWAY" in overlay and "SEA_LOW_CAUSEWAY" in overlay
+          assert 'Models.create("SPACE"' in overlay
+          assert "WIND_BURST" in hud
+          assert 'remote.Name = "TrapRaidersS1Remote"' in game
+          assert game.count('remote.Name = "TrapRaidersS1Remote"')==1
+          assert 'RemoteEvent' not in overlay and "DataStore" not in overlay
+          assert "CANONICAL_S1_ENABLED = false" in game
+          assert "D07_D08_RELEASE_REVIEW_APPROVED = false" in game
+          print("H1_COMPOSITE_22_H1_SOURCE_BLOBS_EXACT")
+          print("H1_COMPOSITE_3_WIND_SOURCE_BLOBS_EXACT")
+          print("H1_COMPOSITE_25_TOTAL_LUAU_SOURCE_CONTRACT_PASS")
+          PY
+      - name: Fetch pinned official Rojo 7.7.1 release
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/p0d_h1_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_h1_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import pathlib,stat,zipfile
+          with zipfile.ZipFile("/tmp/p0d_h1_rojo.zip") as z:
+              p=[n for n in z.namelist() if n.rsplit("/",1)[-1]=="rojo"]
+              assert len(p)==1
+              f=pathlib.Path("/tmp/p0d_h1_rojo");f.write_bytes(z.read(p[0]))
+              f.chmod(f.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_h1_rojo --version | grep -F 7.7.1
+      - name: Real Rojo build of H1 entire 25-script unpublished game
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_h1_out
+          /tmp/p0d_h1_rojo build "$H1/default.project.json" \
+            -o /tmp/p0d_h1_out/TRAP_RAIDERS_H1_COMPOSITE_STUDIO_ONLY.rbxlx
+          test -s /tmp/p0d_h1_out/TRAP_RAIDERS_H1_COMPOSITE_STUDIO_ONLY.rbxlx
+      - name: Prove full original source and added source exists 24/24 byte exact in actual Roblox XML
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import collections,os,pathlib,xml.etree.ElementTree as ET,hashlib,json
+          root=pathlib.Path(os.environ["H1"])
+          src=sorted((root/"src").rglob("*.luau"))
+          assert len(src)==25,len(src)
+          place=pathlib.Path("/tmp/p0d_h1_out/TRAP_RAIDERS_H1_COMPOSITE_STUDIO_ONLY.rbxlx")
+          tree=ET.fromstring(place.read_bytes())
+          actual=[]
+          classes=collections.Counter()
+          for item in tree.iter("Item"):
+              kind=item.attrib.get("class")
+              if kind not in ("Script","LocalScript","ModuleScript"):continue
+              code=item.find("./Properties/string[@name='Source']")
+              if code is not None:
+                  actual.append(code.text or "")
+                  classes[kind]+=1
+          expected=collections.Counter(x.read_text(encoding="utf8") for x in src)
+          assert collections.Counter(actual)==expected,(len(actual),len(expected),classes)
+          assert classes["Script"]==2 and classes["LocalScript"]==3 and classes["ModuleScript"]==20,classes
+          receipt={"game":"TRAP_RAIDERS","H1_commit":os.environ.get("GITHUB_SHA"),
+              "source_count":25,"scene":"SKY_SEA_2_MOVING_CREATURES_RAIDER_WIND_GUARDIAN_TRAP",
+              "real_rojo":True,"studio_tested":False,"mobile_tested":False,
+              "published":False,"sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
+              "rbxlx_bytes":place.stat().st_size}
+          pathlib.Path("/tmp/p0d_h1_out/H1_SOURCE_RECEIPT.json").write_text(
+              json.dumps(receipt,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
+          print("REAL_ROJO_H1_XML_SOURCE_25_OF_25_BYTE_EXACT",classes)
+          PY
+      - name: Compile actual 25 original and new Luau sources with pinned native compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/p0d_h1_luau
+          git -C /tmp/p0d_h1_luau fetch --depth 1 origin f46d879e28302a430029304f7f6a162aed66f103
+          git -C /tmp/p0d_h1_luau checkout --detach FETCH_HEAD
+          test "$(git -C /tmp/p0d_h1_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S /tmp/p0d_h1_luau -B /tmp/p0d_h1_native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_h1_native --target Luau.Compile.CLI --parallel 4
+          find "$H1/src" -name '*.luau' -print0 | while IFS= read -r -d '' file; do
+              /tmp/p0d_h1_native/luau-compile "$file" >/dev/null
+          done
+          echo "H1_25_OF_25_NATIVE_LUAU_COMPILE_PASS"
+      - name: Upload unpublished H1 original game only after proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-H1-ROLE-WORLD-COMPOSITE-STUDIO-ONLY
+          path: |
+            /tmp/p0d_h1_out/TRAP_RAIDERS_H1_COMPOSITE_STUDIO_ONLY.rbxlx
+            /tmp/p0d_h1_out/H1_SOURCE_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 7
