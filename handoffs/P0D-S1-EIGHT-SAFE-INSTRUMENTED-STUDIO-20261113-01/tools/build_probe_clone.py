@@ -17,7 +17,7 @@ import subprocess
 import sys
 import xml.etree.ElementTree as ET
 
-REPO = Path(__file__).resolve().parents[2]
+REPO = Path(__file__).resolve().parents[3]
 PREVIEW_SHA = "3120b9d3c0a5ec58c9f2613c5d186f3493b54f83"
 PROBE_SHA = "e2662b540f2312c95af67a1761ea05842482919d"
 PROBE_ROOT = "handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01"
