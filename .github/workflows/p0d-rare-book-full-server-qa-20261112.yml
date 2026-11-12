@@ -1,0 +1,76 @@
+name: P0D rare notebook full original server native Luau 2client integration
+on:
+  push:
+    branches:
+      - qa/p0d-rare-book-full-server-pipeline-20261112-01
+    paths:
+      - 'handoffs/P0D-RARE-BOOK-FULL-SERVER-QA-20261112-01/**'
+      - '.github/workflows/p0d-rare-book-full-server-qa-20261112.yml'
+permissions:
+  contents: read
+jobs:
+  full-original-studio-server-under-native-luau:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      QA_ROOT: handoffs/P0D-RARE-BOOK-FULL-SERVER-QA-20261112-01
+      OLD_WORLD: handoffs/P0D-WORLD-RARE-4REALMS-3D-20261112-01
+      OLD_NEUTRAL: handoffs/P0D-WORLD-RARE-NEUTRAL-ENCOUNTERS-20261112-01
+      OLD_BOOK: handoffs/P0D-RARE-DISCOVERY-BOOK-20261112-01
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Gate all 3 immutable originals, own source and absolute scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 17e16ae8b323bc5a35aba62981b2b593029939df HEAD
+          git diff --exit-code 17e16ae8b323bc5a35aba62981b2b593029939df HEAD -- "$OLD_WORLD" "$OLD_NEUTRAL" "$OLD_BOOK"
+          python3 "$OLD_WORLD/tools/verify_manifest.py"
+          python3 "$OLD_NEUTRAL/tools/verify_manifest.py"
+          python3 "$OLD_BOOK/tools/verify_manifest.py"
+          python3 "$QA_ROOT/tools/verify_manifest.py"
+          echo "RARE_BOOK_ORIGINAL_THREE_ALL_MANIFEST_AND_SOURCE_UNTOUCHED"
+      - name: Run independent harness contracts
+        shell: bash
+        run: python3 -m unittest discover -s "$QA_ROOT/tests" -p 'test_*.py' -v
+      - name: Build pinned genuine upstream native Luau executable
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/rarebook-full-luau
+          git -C /tmp/rarebook-full-luau init -q
+          git -C /tmp/rarebook-full-luau remote add origin https://github.com/luau-lang/luau.git
+          git -C /tmp/rarebook-full-luau fetch --quiet --depth 1 origin f46d879e28302a430029304f7f6a162aed66f103
+          git -C /tmp/rarebook-full-luau checkout --quiet FETCH_HEAD
+          test "$(git -C /tmp/rarebook-full-luau rev-parse HEAD)" = "f46d879e28302a430029304f7f6a162aed66f103"
+          cmake -S /tmp/rarebook-full-luau -B /tmp/rarebook-full-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_CLI=ON -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/rarebook-full-luau/build --config Release --target Luau.Repl.CLI Luau.Compile.CLI -j 2
+      - name: Run eight original source bodies in ONE native VM, with 2 simulated engine Players
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$QA_ROOT/tools/build_full_server_runner.py" --output /tmp/rarebook-full-server-cases
+          test "$(find /tmp/rarebook-full-server-cases -name '*.luau' | wc -l)" -eq 7
+          for source in /tmp/rarebook-full-server-cases/*.luau; do
+            /tmp/rarebook-full-luau/build/luau-compile "$source" >/dev/null
+          done
+          /tmp/rarebook-full-luau/build/luau /tmp/rarebook-full-server-cases/positive.luau | tee /tmp/rarebook-full-success.log
+          grep -q "RARE_BOOK_FULL_SERVER_NATIVE_PASS assertions=" /tmp/rarebook-full-success.log
+          for bad in BAD_SERVER_ACCEPTS_FAR BAD_SERVER_ACCEPTS_DEAD BAD_SERVER_ACCEPTS_ANCHORED BAD_SERVER_USES_FIRST_PLAYER_UI BAD_SERVER_PREMATURE_2CLIENT_PASS BAD_SERVER_EXTRA_REWARD_LOG; do
+            if /tmp/rarebook-full-luau/build/luau "/tmp/rarebook-full-server-cases/$bad.luau" > "/tmp/$bad.log" 2>&1; then
+              echo "P0D_RARE_BOOK_FULL_SERVER_BAD_MUTANT_ACCEPTED $bad"; exit 1
+            fi
+            grep -q "RARE_BOOK_FULL_SERVER_NATIVE_FAIL" "/tmp/$bad.log"
+          done
+          echo "RARE_BOOK_FULL_SERVER_SIX_ACTUAL_MUTANTS_REJECTED_PASS"
+      - name: Leave all originals and RC source unmodified
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code 17e16ae8b323bc5a35aba62981b2b593029939df HEAD -- "$OLD_WORLD" "$OLD_NEUTRAL" "$OLD_BOOK"
+          test -z "$(git status --porcelain --untracked-files=no)"
+          echo "RARE_BOOK_REAL_ROBLOX_STUDIO_2CLIENT_MOBILE_NOT_TESTED"
