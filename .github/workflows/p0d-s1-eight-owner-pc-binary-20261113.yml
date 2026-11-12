@@ -1,0 +1,118 @@
+name: P0D S1 eight-safe actual CI binary keyless OWNER PC transport verification
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-eight-owner-pc-binary-20261113-12
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real-eight-owner-pc-binary:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      P0D_KIT: handoffs/P0D-S1-EIGHT-OWNER-PC-BINARY-20261113-12
+      P0D_REVIEW: handoffs/P0D-S1-EIGHT-SAFE-HUD-FULL-REVIEW-20261113-11
+      P0D_PLACE: releases/P0D_S1_KIDS_RC01
+      P0D_ZIP: /tmp/P0D_S1_EIGHT_SAFE_OWNER_PC_QA.zip
+      PYTHONDONTWRITEBYTECODE: '1'
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout isolated GitHub owner PC transfer branch, no push credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Strict no-game-code-change provenance and validate 37-file original eight source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e 7b4f95a3f424741bbe8ff1c555c5f5a2ed64d4bd^{commit}
+          changed="$(git diff --name-only 7b4f95a3f424741bbe8ff1c555c5f5a2ed64d4bd HEAD)"
+          if echo "$changed" | grep -E '^(releases/|src/|tools/|tests/|docs/)' ; then
+            echo "UNAUTHORIZED_GAME_SOURCE_CHANGED" >&2; exit 2
+          fi
+          if echo "$changed" | grep -Ev '^(handoffs/P0D-S1-EIGHT-OWNER-PC-BINARY-20261113-12/|.github/workflows/p0d-s1-eight-owner-pc-binary-20261113.yml$)' ; then
+            echo "UNEXPECTED_PATH_CHANGED" >&2; exit 2
+          fi
+          python3 -B "$P0D_REVIEW/verify_eight_review.py"
+          python3 -B -m unittest discover -s "$P0D_PLACE/tests" -p 'test_*.py' -v
+          test -z "$(git status --porcelain --untracked-files=no)"
+      - name: Confirm original exact eight CI completed and official read-only artifact not expired
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api repos/kk051780/toy-wars-factory/actions/runs/43257388055 --jq \
+            '[.head_sha, .status, .conclusion] | @tsv' > /tmp/p0d_orig_run.txt
+          grep -Fx "$(printf '%s\t%s\t%s' 7b4f95a3f424741bbe8ff1c555c5f5a2ed64d4bd completed success)" /tmp/p0d_orig_run.txt
+          gh api repos/kk051780/toy-wars-factory/actions/artifacts/13961872174 --jq \
+            '[.id, .name, .expired] | @tsv' > /tmp/p0d_orig_artifact.txt
+          grep -Fx "$(printf '%s\t%s\t%s' 13961872174 P0D-S1-EIGHT-SAFE-HUD-REVIEW-ONLY false)" /tmp/p0d_orig_artifact.txt
+      - name: Retrieve actual previously proven eight Rojo binary, not reconstructed fake
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_eight_original
+          gh run download 43257388055 -R kk051780/toy-wars-factory \
+            --name P0D-S1-EIGHT-SAFE-HUD-REVIEW-ONLY --dir /tmp/p0d_eight_original
+          test "$(find /tmp/p0d_eight_original -maxdepth 1 -type f | wc -l)" -eq 2
+          printf '%s\n' 'b27f401cd6aed7242665098a4cf323184fe13f2ef964b59a3c97b82daf998d04  /tmp/p0d_eight_original/TRAP_RAIDERS_S1_EIGHT_SAFE_HUD_REVIEW.rbxlx' | sha256sum -c
+          test "$(stat -c %s /tmp/p0d_eight_original/TRAP_RAIDERS_S1_EIGHT_SAFE_HUD_REVIEW.rbxlx)" -eq 159080
+      - name: Reverify real original 21 scripts and 12 broken source variants; create keyless self-contained PC ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$P0D_KIT/build_owner_kit.py" \
+            --original-artifact-dir /tmp/p0d_eight_original \
+            --output-zip "$P0D_ZIP" \
+            --scratch-parent /tmp
+          python3 -B "$P0D_KIT/owner_pc.py" --zip "$P0D_ZIP"
+      - name: Genuine 24 tamper and isolation tests using downloaded original CI binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          export P0D_OWNER_ZIP="$P0D_ZIP"
+          python3 -B -m unittest discover -s "$P0D_KIT" -p 'test_owner_pc.py' -v
+          mkdir -p /tmp/p0d_eight_pc_extracted /tmp/p0d_eight_pc_scratch
+          python3 - <<'PY'
+          import os,zipfile
+          with zipfile.ZipFile(os.environ["P0D_ZIP"],"r") as z:
+            z.extractall("/tmp/p0d_eight_pc_extracted")
+          PY
+          python3 -B "$P0D_KIT/owner_pc.py" --bundle /tmp/p0d_eight_pc_extracted
+          python3 -B "$P0D_KIT/owner_pc.py" --bundle /tmp/p0d_eight_pc_extracted \
+            --prepare --destination /tmp/p0d_eight_pc_scratch
+          test -z "$(git status --porcelain --untracked-files=no)"
+      - name: Report cryptographically pinned but NOT_STUDIO OWNER ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum "$P0D_ZIP"
+          stat -c %s "$P0D_ZIP"
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib
+          p=pathlib.Path(os.environ["P0D_ZIP"])
+          receipt={
+            "format":"P0D_EIGHT_OWNER_BINARY_NOT_STUDIO_V1",
+            "real_complete_original_ci_binary_sha256":"b27f401cd6aed7242665098a4cf323184fe13f2ef964b59a3c97b82daf998d04",
+            "owner_pc_package_zip_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
+            "owner_pc_package_zip_bytes":p.stat().st_size,
+            "original_ci_run_id":43257388055,
+            "original_artifact_id":13961872174,
+            "real_Studio_two_clients_tested":False,
+            "mobile_tested":False,
+            "owner_public_release_approved":False,
+          }
+          pathlib.Path("/tmp/P0D_S1_EIGHT_OWNER_PC_ZIP_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n")
+          print("P0D_EIGHT_OWNER_REAL_BINARY_PC_KIT_PREPARED_NOT_STUDIO")
+          PY
+      - name: Save only isolated source-audited ZIP and receipt, never publish to Roblox
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-S1-EIGHT-SAFE-OWNER-PC-QA-KEYLESS
+          path: |
+            /tmp/P0D_S1_EIGHT_SAFE_OWNER_PC_QA.zip
+            /tmp/P0D_S1_EIGHT_OWNER_PC_ZIP_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 14
