@@ -1,0 +1,130 @@
+{
+  "schema": "P0D_D18_BATCH6_CHILD_SAFE_GAMEPLAY_IDEA_CARDS_V1",
+  "status": "DESIGN_HYPOTHESIS_ONLY_NOT_IMPLEMENTED",
+  "gameplay_impl": false,
+  "studio_tested": false,
+  "purchase_enabled": false,
+  "game_id": "TRAP_RAIDERS",
+  "source_character_commit": "cc5555136861d206bc963a175a0aef2c62ac424e",
+  "policy": "S2+ only; existing 7 professions and canonical server attack/event/egg authority stay sole; zero advantage from rarity or paid purchase; no game/RC writes.",
+  "characters": [
+    {
+      "id": "TRCA-BE-099",
+      "name": "夢菓子の空竜",
+      "category": "BE",
+      "rarity": "レジェンド",
+      "world": "夢菓子の遊園",
+      "recognition": "ほしのはね＋あめのしっぽ",
+      "player_action": "雲の道をひらく",
+      "profession_synergy": "魔獣使いの空中移動を支援する短い雲足場",
+      "proposal": "限定エリアに短時間だけ見える雲足場を1列配置する。宝保持中の近道には使えず、敵にも同じ道が見える",
+      "counterplay": "敵も雲足場を使える／足場が消える前の予兆を全員に表示",
+      "hard_limits": [
+        "宝を持つと発動不可",
+        "設置個数・生存時間・クールダウンに上限",
+        "当たり判定はサーバー正本"
+      ]
+    },
+    {
+      "id": "TRCA-SP-108",
+      "name": "七鈴の光",
+      "category": "SP",
+      "rarity": "レジェンド",
+      "world": "暁鐘の王城",
+      "recognition": "7つのすず＋金いろのわ",
+      "player_action": "すずで道をてらす",
+      "profession_synergy": "魔法使いの支援。短い時間だけ味方が目的地への矢印を見られる",
+      "proposal": "卵と自軍帰還地点の位置を最大数秒示す一時的な道案内エフェクト。敵を透視せず、通常HUDにも分かる目標のみ",
+      "counterplay": "対戦相手の位置は公開されず、既存の地形・扉で攻略を防げる",
+      "hard_limits": [
+        "敵プレイヤー位置を透視しない",
+        "既存HUDと同一情報を提示",
+        "購入者専用能力にしない"
+      ]
+    },
+    {
+      "id": "TRCA-VE-054",
+      "name": "海鐘の灯台車",
+      "category": "VE",
+      "rarity": "レジェンド",
+      "world": "泡音の水都",
+      "recognition": "まるいサンゴのくるま＋ちいさなとうだい",
+      "player_action": "あかりをたよりにすすむ",
+      "profession_synergy": "建築士が使う水上経路の補助乗り物候補",
+      "proposal": "海上の規定コースだけを安全速度で移動する2席の灯台車。水中や空中へ無制限に飛ばない",
+      "counterplay": "大きな光と動く音で発見でき、岸から別ルートで先回りできる",
+      "hard_limits": [
+        "2席以上を勝手に生成しない",
+        "乗車中の無敵・高速化なし",
+        "陸上脱出・スタック救済を用意"
+      ]
+    },
+    {
+      "id": "TRCA-WE-018",
+      "name": "葉笛ホルン",
+      "category": "WE",
+      "rarity": "ミシック",
+      "world": "苔灯の深森",
+      "recognition": "くるんとしたはっぱ＋きのこのボタン",
+      "player_action": "はっぱのねをならす",
+      "profession_synergy": "忍者・戦士の森での合流合図。チームに位置目印を示す",
+      "proposal": "音を鳴らした本人の位置を味方にも敵にも短時間示す。隠密を解いて仲間を集める判断",
+      "counterplay": "敵も音の方向を知り待ち伏せできる",
+      "hard_limits": [
+        "課金で音量/範囲を有利にしない",
+        "視覚マーカーを併用し難聴者にも公平",
+        "隠密状態の自動追跡を行わない"
+      ]
+    },
+    {
+      "id": "TRCA-ZO-099",
+      "name": "観覧車の呼び込み兵",
+      "category": "ZO",
+      "rarity": "レジェンド",
+      "world": "夢菓子の遊園",
+      "recognition": "かんらんしゃのぼうし＋きっぷのはた",
+      "player_action": "こっちだよとあんない",
+      "profession_synergy": "ゾンビ使いの進軍ルートを見える形で示す",
+      "proposal": "ゾンビ達の歩く方向を味方に見える旗で表示。戦闘能力・数の増加はない",
+      "counterplay": "旗は相手にも見え、進軍ルートを予測・遮断できる",
+      "hard_limits": [
+        "既存ゾンビ使いの上限数を増やさない",
+        "敵の操作権を奪わない",
+        "召喚・報酬判定は既存サーバー正本"
+      ]
+    },
+    {
+      "id": "TRCA-TR-072",
+      "name": "布跳ね台",
+      "category": "TR",
+      "rarity": "レジェンド",
+      "world": "月縫いの墓園",
+      "recognition": "ぬいめのみかづき＋ふかふかまくら",
+      "player_action": "ぽよんととびあがる",
+      "profession_synergy": "トラッパーの高低差移動。自分も味方も敵も利用可能",
+      "proposal": "屋根への一段ジャンプだけを補助する見える跳ね台。進行方向矢印・着地点を事前表示",
+      "counterplay": "敵も同じ跳ね台を使用でき、着地地点が公開されている",
+      "hard_limits": [
+        "卵所持中は既存運搬ルール優先",
+        "無限連続バウンド防止",
+        "境界外へ押し出さない"
+      ]
+    }
+  ],
+  "experiments": [
+    {
+      "id": "D18_B6_H1",
+      "H0": "元のキャラ名と図鑑一覧だけ表示",
+      "H1": "3秒で見分けられるシルエットと一言アクションを並べた図鑑",
+      "metric": "初見児童が区別できる6体の数／自発的に追加タップする人数",
+      "observed_result": "UNKNOWN"
+    },
+    {
+      "id": "D18_B6_H2",
+      "H0": "今のS1で新能力を追加しない",
+      "H1": "S2+私的試遊で、1種類のみ対抗手段を表示した試作と比較",
+      "metric": "新機能を理解した割合／不公平と感じた割合／試合完走率",
+      "observed_result": "UNKNOWN"
+    }
+  ]
+}
