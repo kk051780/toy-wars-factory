@@ -34,7 +34,7 @@ jobs:
           names=subprocess.check_output(["git","ls-tree","-r","--name-only",base,original],text=True).splitlines()
           scripts=[p for p in names if p.endswith(".luau")]
           assert len(scripts)==24,len(scripts)
-          changed={"src/server/Game.server.luau","src/client/HUD.client.luau"}
+          changed={"server/Game.server.luau","client/HUD.client.luau"}
           for old in scripts:
               rel=old[len(original):]
               if rel in changed:continue
@@ -91,7 +91,7 @@ jobs:
           /tmp/p0d_h1_rojo build "$H1/default.project.json" \
             -o /tmp/p0d_h1_out/TRAP_RAIDERS_H1_COMPOSITE_STUDIO_ONLY.rbxlx
           test -s /tmp/p0d_h1_out/TRAP_RAIDERS_H1_COMPOSITE_STUDIO_ONLY.rbxlx
-      - name: Prove full original source and added source exists 24/24 byte exact in actual Roblox XML
+      - name: Prove full combined source embedded 25/25 byte exact in actual Roblox XML
         shell: bash
         run: |
           set -euo pipefail
