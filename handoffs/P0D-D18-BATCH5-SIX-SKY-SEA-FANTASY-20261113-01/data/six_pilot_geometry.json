@@ -1,0 +1,2047 @@
+{
+  "schema": "P0D_D18_SIX_ARCHETYPE_SOURCE_V1",
+  "game_id": "TRAP_RAIDERS",
+  "generation_mode": "SIX_MANUALLY_AUTHORED_ORIGINAL_DISPLAY_ONLY",
+  "max_far_parts": 18,
+  "max_near_parts": 24,
+  "source_atlas_sha256": "cf5ec26836842ce55a764c5ad66c711f00da0ed4cc30d80dad0df851e2656e01",
+  "characters": {
+    "TRCA-BE-045": {
+      "id": "TRCA-BE-045",
+      "category": "BE",
+      "category_ja": "魔獣",
+      "name": "天鼓の雷獣",
+      "world": "雷鳥の空庭",
+      "rarity": "レジェンド",
+      "story": "雷が苦手な小鳥を最後まで置いていかなかった。天鼓の雷獣は、その日の出来事を忘れないために、雲上の誓いの鐘に羽根形の導電紋と雲の房を一つ残した。持ち主が負けた日も同じ表情で迎える。",
+      "signature_silhouette": "稲妻の三つ編みたてがみ、胸の太鼓、上向きの雲しっぽの雷獣",
+      "signature_tags": [
+        "bolt_mane",
+        "sky_drum",
+        "cloud_tail"
+      ],
+      "archetype": "BE_THUNDER_CLOUD_GUARD",
+      "palette": {
+        "gold": [
+          247,
+          200,
+          54
+        ],
+        "indigo": [
+          84,
+          67,
+          155
+        ],
+        "sky": [
+          102,
+          217,
+          238
+        ],
+        "cream": [
+          245,
+          245,
+          213
+        ],
+        "dark": [
+          43,
+          40,
+          97
+        ]
+      },
+      "parts": [
+        {
+          "name": "胴",
+          "signature_tag": "support",
+          "group": "body",
+          "shape": "Ball",
+          "color": "indigo",
+          "position": [
+            0,
+            0.1,
+            0
+          ],
+          "size": [
+            1.8,
+            1.1,
+            1.2
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "大きい頭",
+          "signature_tag": "support",
+          "group": "head",
+          "shape": "Ball",
+          "color": "cream",
+          "position": [
+            0.8,
+            0.7,
+            0
+          ],
+          "size": [
+            1,
+            0.94,
+            1
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "左耳",
+          "signature_tag": "support",
+          "group": "head",
+          "shape": "Ball",
+          "color": "gold",
+          "position": [
+            0.8,
+            1.3,
+            -0.36
+          ],
+          "size": [
+            0.35,
+            0.44,
+            0.35
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "右耳",
+          "signature_tag": "support",
+          "group": "head",
+          "shape": "Ball",
+          "color": "gold",
+          "position": [
+            0.8,
+            1.3,
+            0.36
+          ],
+          "size": [
+            0.35,
+            0.44,
+            0.35
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "たてがみ縦",
+          "signature_tag": "bolt_mane",
+          "group": "mane",
+          "shape": "Block",
+          "color": "gold",
+          "position": [
+            -0.08,
+            1.45,
+            0
+          ],
+          "size": [
+            0.35,
+            1.3,
+            0.28
+          ],
+          "rotation": [
+            0,
+            0,
+            35
+          ],
+          "far": true
+        },
+        {
+          "name": "稲妻枝",
+          "signature_tag": "bolt_mane",
+          "group": "mane",
+          "shape": "Block",
+          "color": "sky",
+          "position": [
+            -0.45,
+            1,
+            -0.4
+          ],
+          "size": [
+            0.35,
+            0.95,
+            0.25
+          ],
+          "rotation": [
+            0,
+            0,
+            -35
+          ],
+          "far": true
+        },
+        {
+          "name": "胸の太鼓",
+          "signature_tag": "sky_drum",
+          "group": "drum",
+          "shape": "Cylinder",
+          "color": "gold",
+          "position": [
+            0.45,
+            0.2,
+            1.08
+          ],
+          "size": [
+            0.83,
+            0.76,
+            0.25
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "太鼓の目",
+          "signature_tag": "sky_drum",
+          "group": "drum",
+          "shape": "Ball",
+          "color": "dark",
+          "position": [
+            0.45,
+            0.2,
+            1.22
+          ],
+          "size": [
+            0.28,
+            0.28,
+            0.18
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "雲しっぽ根",
+          "signature_tag": "cloud_tail",
+          "group": "tail",
+          "shape": "Block",
+          "color": "sky",
+          "position": [
+            -1,
+            0.48,
+            0
+          ],
+          "size": [
+            0.8,
+            0.36,
+            0.4
+          ],
+          "rotation": [
+            0,
+            0,
+            25
+          ],
+          "far": true
+        },
+        {
+          "name": "雲しっぽ先",
+          "signature_tag": "cloud_tail",
+          "group": "tail",
+          "shape": "Ball",
+          "color": "cream",
+          "position": [
+            -1.45,
+            0.85,
+            0
+          ],
+          "size": [
+            0.82,
+            0.72,
+            0.82
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "左足",
+          "signature_tag": "support",
+          "group": "body",
+          "shape": "Ball",
+          "color": "indigo",
+          "position": [
+            0.6,
+            -0.53,
+            -0.4
+          ],
+          "size": [
+            0.45,
+            0.42,
+            0.35
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "右足",
+          "signature_tag": "support",
+          "group": "body",
+          "shape": "Ball",
+          "color": "indigo",
+          "position": [
+            0.6,
+            -0.53,
+            0.4
+          ],
+          "size": [
+            0.45,
+            0.42,
+            0.35
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "head": {
+            "dy": 0.15
+          },
+          "drum": {
+            "rz": 8
+          }
+        },
+        "win": {
+          "mane": {
+            "dy": 0.2
+          },
+          "tail": {
+            "dy": 0.18
+          }
+        },
+        "loss": {
+          "head": {
+            "dy": -0.2
+          },
+          "tail": {
+            "dy": -0.18
+          }
+        }
+      },
+      "provenance": {
+        "atlas_sha256": "cf5ec26836842ce55a764c5ad66c711f00da0ed4cc30d80dad0df851e2656e01"
+      }
+    },
+    "TRCA-SP-054": {
+      "id": "TRCA-SP-054",
+      "category": "SP",
+      "category_ja": "魔法",
+      "name": "灯台の大潮",
+      "world": "泡音の水都",
+      "rarity": "レジェンド",
+      "story": "沈んだ手紙を届けたお礼に海が道をひらいた。灯台の大潮は、その日の出来事を忘れないために、灯台の眠る窓に真珠の泡と波打つヒレを一つ残した。持ち主が負けた日も同じ表情で迎える。",
+      "signature_silhouette": "C字の波の門、小さな灯台、三つの真珠泡が漂う海の魔法",
+      "signature_tags": [
+        "wave_gate",
+        "lighthouse_beacon",
+        "pearl_foam"
+      ],
+      "archetype": "SP_TIDAL_LIGHTHOUSE",
+      "palette": {
+        "teal": [
+          65,
+          177,
+          183
+        ],
+        "coral": [
+          252,
+          145,
+          143
+        ],
+        "white": [
+          241,
+          251,
+          253
+        ],
+        "deep": [
+          23,
+          91,
+          134
+        ],
+        "gold": [
+          251,
+          205,
+          106
+        ]
+      },
+      "parts": [
+        {
+          "name": "波の土台",
+          "signature_tag": "support",
+          "group": "wave",
+          "shape": "Cylinder",
+          "color": "deep",
+          "position": [
+            0,
+            -0.45,
+            0
+          ],
+          "size": [
+            2.2,
+            0.3,
+            1.2
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "左波柱",
+          "signature_tag": "wave_gate",
+          "group": "wave",
+          "shape": "Block",
+          "color": "teal",
+          "position": [
+            -0.9,
+            0.4,
+            0
+          ],
+          "size": [
+            0.36,
+            1.85,
+            0.4
+          ],
+          "rotation": [
+            0,
+            0,
+            -20
+          ],
+          "far": true
+        },
+        {
+          "name": "波の上辺",
+          "signature_tag": "wave_gate",
+          "group": "wave",
+          "shape": "Block",
+          "color": "teal",
+          "position": [
+            -0.4,
+            1.35,
+            0
+          ],
+          "size": [
+            1.25,
+            0.28,
+            0.4
+          ],
+          "rotation": [
+            0,
+            0,
+            23
+          ],
+          "far": true
+        },
+        {
+          "name": "波の泡冠",
+          "signature_tag": "wave_gate",
+          "group": "wave",
+          "shape": "Ball",
+          "color": "white",
+          "position": [
+            0.28,
+            1.3,
+            0
+          ],
+          "size": [
+            0.68,
+            0.3,
+            0.45
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "灯台の塔",
+          "signature_tag": "lighthouse_beacon",
+          "group": "beacon",
+          "shape": "Cylinder",
+          "color": "white",
+          "position": [
+            1,
+            -0.02,
+            -0.25
+          ],
+          "size": [
+            0.44,
+            1.3,
+            0.44
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "灯台屋根",
+          "signature_tag": "lighthouse_beacon",
+          "group": "beacon",
+          "shape": "Block",
+          "color": "coral",
+          "position": [
+            1,
+            0.75,
+            -0.25
+          ],
+          "size": [
+            0.7,
+            0.28,
+            0.66
+          ],
+          "rotation": [
+            0,
+            0,
+            15
+          ],
+          "far": true
+        },
+        {
+          "name": "灯台の光",
+          "signature_tag": "lighthouse_beacon",
+          "group": "beacon",
+          "shape": "Ball",
+          "color": "gold",
+          "position": [
+            1,
+            1.08,
+            -0.25
+          ],
+          "size": [
+            0.42,
+            0.4,
+            0.4
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "真珠泡大",
+          "signature_tag": "pearl_foam",
+          "group": "foam",
+          "shape": "Ball",
+          "color": "white",
+          "position": [
+            -0.72,
+            0.68,
+            1
+          ],
+          "size": [
+            0.46,
+            0.46,
+            0.46
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "真珠泡中",
+          "signature_tag": "pearl_foam",
+          "group": "foam",
+          "shape": "Ball",
+          "color": "coral",
+          "position": [
+            -0.12,
+            1.36,
+            0.83
+          ],
+          "size": [
+            0.3,
+            0.3,
+            0.3
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "真珠泡小",
+          "signature_tag": "pearl_foam",
+          "group": "foam",
+          "shape": "Ball",
+          "color": "white",
+          "position": [
+            0.48,
+            0.94,
+            0.88
+          ],
+          "size": [
+            0.22,
+            0.22,
+            0.22
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "wave": {
+            "dy": 0.12
+          },
+          "beacon": {
+            "dy": 0.1
+          }
+        },
+        "win": {
+          "foam": {
+            "dy": 0.25
+          },
+          "beacon": {
+            "dy": 0.16
+          }
+        },
+        "loss": {
+          "wave": {
+            "dy": -0.15
+          },
+          "foam": {
+            "dy": -0.12
+          }
+        }
+      },
+      "provenance": {
+        "atlas_sha256": "cf5ec26836842ce55a764c5ad66c711f00da0ed4cc30d80dad0df851e2656e01"
+      }
+    },
+    "TRCA-VE-018": {
+      "id": "TRCA-VE-018",
+      "category": "VE",
+      "category_ja": "乗り物",
+      "name": "祖樹の散歩台",
+      "world": "苔灯の深森",
+      "rarity": "ミシック",
+      "story": "帰れなかった子のために森の出口をあけた。祖樹の散歩台は、その日の出来事を忘れないために、森番の大切な切り株に葉ときのこで包んだランタンを一つ残した。持ち主が負けた日も同じ表情で迎える。",
+      "signature_silhouette": "きのこの苔屋根、座れることが分かるベンチ、揺れるランタンの散歩台",
+      "signature_tags": [
+        "moss_canopy",
+        "open_bench",
+        "glow_lantern"
+      ],
+      "archetype": "VE_FOREST_WALKING_GARDEN",
+      "palette": {
+        "leaf": [
+          78,
+          161,
+          102
+        ],
+        "moss": [
+          128,
+          183,
+          81
+        ],
+        "bark": [
+          116,
+          78,
+          65
+        ],
+        "cream": [
+          247,
+          230,
+          170
+        ],
+        "amber": [
+          250,
+          190,
+          86
+        ]
+      },
+      "parts": [
+        {
+          "name": "木の台車",
+          "signature_tag": "support",
+          "group": "base",
+          "shape": "Block",
+          "color": "bark",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "size": [
+            2.8,
+            0.33,
+            1.7
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "前車輪左",
+          "signature_tag": "support",
+          "group": "wheel",
+          "shape": "Cylinder",
+          "color": "moss",
+          "position": [
+            0.93,
+            -0.35,
+            -0.8
+          ],
+          "size": [
+            0.65,
+            0.65,
+            0.32
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "前車輪右",
+          "signature_tag": "support",
+          "group": "wheel",
+          "shape": "Cylinder",
+          "color": "moss",
+          "position": [
+            0.93,
+            -0.35,
+            0.8
+          ],
+          "size": [
+            0.65,
+            0.65,
+            0.32
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "後車輪左",
+          "signature_tag": "support",
+          "group": "wheel",
+          "shape": "Cylinder",
+          "color": "moss",
+          "position": [
+            -0.93,
+            -0.35,
+            -0.8
+          ],
+          "size": [
+            0.65,
+            0.65,
+            0.32
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "後車輪右",
+          "signature_tag": "support",
+          "group": "wheel",
+          "shape": "Cylinder",
+          "color": "moss",
+          "position": [
+            -0.93,
+            -0.35,
+            0.8
+          ],
+          "size": [
+            0.65,
+            0.65,
+            0.32
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "木の柱",
+          "signature_tag": "moss_canopy",
+          "group": "roof",
+          "shape": "Cylinder",
+          "color": "bark",
+          "position": [
+            -0.56,
+            1.07,
+            0
+          ],
+          "size": [
+            0.36,
+            1.9,
+            0.42
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "大きな苔屋根",
+          "signature_tag": "moss_canopy",
+          "group": "roof",
+          "shape": "Ball",
+          "color": "leaf",
+          "position": [
+            -0.56,
+            2.13,
+            0
+          ],
+          "size": [
+            2.25,
+            0.55,
+            1.8
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "屋根の縁",
+          "signature_tag": "moss_canopy",
+          "group": "roof",
+          "shape": "Ball",
+          "color": "moss",
+          "position": [
+            -0.56,
+            1.94,
+            0
+          ],
+          "size": [
+            2.65,
+            0.26,
+            2
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "ベンチ座面",
+          "signature_tag": "open_bench",
+          "group": "seat",
+          "shape": "Block",
+          "color": "cream",
+          "position": [
+            0.55,
+            0.5,
+            0
+          ],
+          "size": [
+            1.15,
+            0.18,
+            0.8
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "ベンチ背もたれ",
+          "signature_tag": "open_bench",
+          "group": "seat",
+          "shape": "Block",
+          "color": "bark",
+          "position": [
+            0.06,
+            0.88,
+            0
+          ],
+          "size": [
+            0.18,
+            0.65,
+            0.8
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "ランタンひも",
+          "signature_tag": "glow_lantern",
+          "group": "lantern",
+          "shape": "Cylinder",
+          "color": "bark",
+          "position": [
+            -1.2,
+            1.54,
+            0.65
+          ],
+          "size": [
+            0.13,
+            0.53,
+            0.13
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "森の灯",
+          "signature_tag": "glow_lantern",
+          "group": "lantern",
+          "shape": "Ball",
+          "color": "amber",
+          "position": [
+            -1.2,
+            1.2,
+            0.65
+          ],
+          "size": [
+            0.36,
+            0.48,
+            0.36
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "roof": {
+            "dy": 0.12
+          },
+          "lantern": {
+            "dy": 0.06
+          }
+        },
+        "win": {
+          "roof": {
+            "dy": 0.22
+          },
+          "lantern": {
+            "dy": 0.2
+          }
+        },
+        "loss": {
+          "roof": {
+            "dy": -0.1
+          },
+          "lantern": {
+            "dy": -0.14
+          }
+        }
+      },
+      "provenance": {
+        "atlas_sha256": "cf5ec26836842ce55a764c5ad66c711f00da0ed4cc30d80dad0df851e2656e01"
+      }
+    },
+    "TRCA-WE-072": {
+      "id": "TRCA-WE-072",
+      "category": "WE",
+      "category_ja": "武器",
+      "name": "おばけホルン",
+      "world": "月縫いの墓園",
+      "rarity": "レジェンド",
+      "story": "一人ぼっちのおばけに仲間がいると教えた。おばけホルンは、その日の出来事を忘れないために、おやすみの円舞台に縫い目のある布と小さな三日月を一つ残した。持ち主が負けた日も同じ表情で迎える。",
+      "signature_silhouette": "白いおばけ布、片側に寄る三日月型ホルン、空中の音符の楽器",
+      "signature_tags": [
+        "ghost_sheet",
+        "moon_horn",
+        "floating_note"
+      ],
+      "archetype": "WE_GHOST_MOON_HORN",
+      "palette": {
+        "white": [
+          234,
+          235,
+          250
+        ],
+        "purple": [
+          163,
+          142,
+          211
+        ],
+        "deep": [
+          64,
+          55,
+          106
+        ],
+        "silver": [
+          197,
+          204,
+          225
+        ],
+        "blue": [
+          102,
+          179,
+          214
+        ]
+      },
+      "parts": [
+        {
+          "name": "おばけの胴",
+          "signature_tag": "ghost_sheet",
+          "group": "hood",
+          "shape": "Ball",
+          "color": "white",
+          "position": [
+            0,
+            0.35,
+            0
+          ],
+          "size": [
+            1.15,
+            1.42,
+            1
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "布の左裾",
+          "signature_tag": "ghost_sheet",
+          "group": "hood",
+          "shape": "Block",
+          "color": "white",
+          "position": [
+            -0.48,
+            -0.32,
+            -0.33
+          ],
+          "size": [
+            0.35,
+            0.77,
+            0.45
+          ],
+          "rotation": [
+            0,
+            0,
+            -15
+          ],
+          "far": true
+        },
+        {
+          "name": "布の右裾",
+          "signature_tag": "ghost_sheet",
+          "group": "hood",
+          "shape": "Block",
+          "color": "purple",
+          "position": [
+            -0.48,
+            -0.32,
+            0.33
+          ],
+          "size": [
+            0.35,
+            0.59,
+            0.45
+          ],
+          "rotation": [
+            0,
+            0,
+            17
+          ],
+          "far": true
+        },
+        {
+          "name": "左目",
+          "signature_tag": "support",
+          "group": "hood",
+          "shape": "Ball",
+          "color": "deep",
+          "position": [
+            0.53,
+            0.63,
+            -0.25
+          ],
+          "size": [
+            0.15,
+            0.2,
+            0.16
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "右目",
+          "signature_tag": "support",
+          "group": "hood",
+          "shape": "Ball",
+          "color": "deep",
+          "position": [
+            0.53,
+            0.63,
+            0.25
+          ],
+          "size": [
+            0.15,
+            0.2,
+            0.16
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "ホルンの管",
+          "signature_tag": "moon_horn",
+          "group": "horn",
+          "shape": "Cylinder",
+          "color": "silver",
+          "position": [
+            -0.72,
+            0.48,
+            0
+          ],
+          "size": [
+            1.52,
+            0.22,
+            0.23
+          ],
+          "rotation": [
+            0,
+            0,
+            20
+          ],
+          "far": true
+        },
+        {
+          "name": "月角の上",
+          "signature_tag": "moon_horn",
+          "group": "horn",
+          "shape": "Block",
+          "color": "purple",
+          "position": [
+            -1.55,
+            1.02,
+            0
+          ],
+          "size": [
+            0.28,
+            0.95,
+            0.32
+          ],
+          "rotation": [
+            0,
+            0,
+            35
+          ],
+          "far": true
+        },
+        {
+          "name": "月角の下",
+          "signature_tag": "moon_horn",
+          "group": "horn",
+          "shape": "Block",
+          "color": "purple",
+          "position": [
+            -1.55,
+            0.06,
+            0
+          ],
+          "size": [
+            0.28,
+            0.83,
+            0.32
+          ],
+          "rotation": [
+            0,
+            0,
+            -28
+          ],
+          "far": true
+        },
+        {
+          "name": "ホルンの口",
+          "signature_tag": "moon_horn",
+          "group": "horn",
+          "shape": "Cylinder",
+          "color": "blue",
+          "position": [
+            -1.78,
+            0.56,
+            0
+          ],
+          "size": [
+            0.58,
+            0.7,
+            0.25
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "音符の丸",
+          "signature_tag": "floating_note",
+          "group": "note",
+          "shape": "Ball",
+          "color": "blue",
+          "position": [
+            -1.55,
+            1.7,
+            0.4
+          ],
+          "size": [
+            0.31,
+            0.31,
+            0.31
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "音符の棒",
+          "signature_tag": "floating_note",
+          "group": "note",
+          "shape": "Block",
+          "color": "deep",
+          "position": [
+            -1.37,
+            1.98,
+            0.4
+          ],
+          "size": [
+            0.14,
+            0.6,
+            0.14
+          ],
+          "rotation": [
+            0,
+            0,
+            15
+          ],
+          "far": true
+        },
+        {
+          "name": "音符の旗",
+          "signature_tag": "floating_note",
+          "group": "note",
+          "shape": "Block",
+          "color": "purple",
+          "position": [
+            -1.16,
+            2.17,
+            0.4
+          ],
+          "size": [
+            0.42,
+            0.14,
+            0.12
+          ],
+          "rotation": [
+            0,
+            0,
+            24
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "hood": {
+            "dy": 0.11
+          },
+          "note": {
+            "dy": 0.17
+          }
+        },
+        "win": {
+          "hood": {
+            "dy": 0.23
+          },
+          "note": {
+            "dy": 0.25
+          }
+        },
+        "loss": {
+          "hood": {
+            "dy": -0.14
+          },
+          "note": {
+            "dy": -0.1
+          }
+        }
+      },
+      "provenance": {
+        "atlas_sha256": "cf5ec26836842ce55a764c5ad66c711f00da0ed4cc30d80dad0df851e2656e01"
+      }
+    },
+    "TRCA-ZO-090": {
+      "id": "TRCA-ZO-090",
+      "category": "ZO",
+      "category_ja": "ゾンビ",
+      "name": "迷宮の道案内兵",
+      "world": "砂時計の迷宮",
+      "rarity": "レジェンド",
+      "story": "道に迷った旅人のために自分の時間を分けた。迷宮の道案内兵は、その日の出来事を忘れないために、二度と閉じない時の扉に砂粒の粒子と回転する目盛を一つ残した。持ち主が負けた日も同じ表情で迎える。",
+      "signature_silhouette": "砂時計の帽子、左右逆向き看板、左右違う大きさの靴を持つ迷宮の案内兵",
+      "signature_tags": [
+        "hourglass_helmet",
+        "direction_sign",
+        "uneven_boots"
+      ],
+      "archetype": "ZO_TIME_MAZE_GUIDE",
+      "palette": {
+        "sand": [
+          235,
+          196,
+          112
+        ],
+        "blue": [
+          80,
+          98,
+          152
+        ],
+        "mint": [
+          134,
+          193,
+          176
+        ],
+        "linen": [
+          234,
+          225,
+          201
+        ],
+        "dark": [
+          62,
+          61,
+          88
+        ]
+      },
+      "parts": [
+        {
+          "name": "案内兵の胴",
+          "signature_tag": "support",
+          "group": "body",
+          "shape": "Ball",
+          "color": "linen",
+          "position": [
+            0,
+            0.15,
+            0
+          ],
+          "size": [
+            1.05,
+            1.15,
+            0.8
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "布の頭",
+          "signature_tag": "support",
+          "group": "head",
+          "shape": "Ball",
+          "color": "sand",
+          "position": [
+            0,
+            1.02,
+            0
+          ],
+          "size": [
+            0.87,
+            0.84,
+            0.78
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "帽子上",
+          "signature_tag": "hourglass_helmet",
+          "group": "hat",
+          "shape": "Block",
+          "color": "blue",
+          "position": [
+            0,
+            1.83,
+            0
+          ],
+          "size": [
+            0.84,
+            0.19,
+            0.58
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "帽子くびれ",
+          "signature_tag": "hourglass_helmet",
+          "group": "hat",
+          "shape": "Cylinder",
+          "color": "sand",
+          "position": [
+            0,
+            1.57,
+            0
+          ],
+          "size": [
+            0.24,
+            0.34,
+            0.33
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "帽子下",
+          "signature_tag": "hourglass_helmet",
+          "group": "hat",
+          "shape": "Block",
+          "color": "blue",
+          "position": [
+            0,
+            1.33,
+            0
+          ],
+          "size": [
+            0.72,
+            0.19,
+            0.58
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "看板の柱",
+          "signature_tag": "direction_sign",
+          "group": "sign",
+          "shape": "Block",
+          "color": "dark",
+          "position": [
+            0.84,
+            0.4,
+            0.8
+          ],
+          "size": [
+            0.16,
+            1.48,
+            0.17
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "右向き看板",
+          "signature_tag": "direction_sign",
+          "group": "sign",
+          "shape": "Block",
+          "color": "mint",
+          "position": [
+            0.92,
+            1.18,
+            0.8
+          ],
+          "size": [
+            1.2,
+            0.25,
+            0.24
+          ],
+          "rotation": [
+            0,
+            0,
+            16
+          ],
+          "far": true
+        },
+        {
+          "name": "左向き看板",
+          "signature_tag": "direction_sign",
+          "group": "sign",
+          "shape": "Block",
+          "color": "sand",
+          "position": [
+            0.68,
+            0.83,
+            0.8
+          ],
+          "size": [
+            0.82,
+            0.2,
+            0.21
+          ],
+          "rotation": [
+            0,
+            0,
+            -18
+          ],
+          "far": true
+        },
+        {
+          "name": "左の小靴",
+          "signature_tag": "uneven_boots",
+          "group": "feet",
+          "shape": "Block",
+          "color": "blue",
+          "position": [
+            0.13,
+            -0.57,
+            -0.3
+          ],
+          "size": [
+            0.43,
+            0.49,
+            0.4
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "右の大靴",
+          "signature_tag": "uneven_boots",
+          "group": "feet",
+          "shape": "Block",
+          "color": "sand",
+          "position": [
+            0.18,
+            -0.58,
+            0.3
+          ],
+          "size": [
+            0.7,
+            0.55,
+            0.59
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "胸の時計",
+          "signature_tag": "support",
+          "group": "body",
+          "shape": "Ball",
+          "color": "mint",
+          "position": [
+            0.45,
+            0.16,
+            0
+          ],
+          "size": [
+            0.23,
+            0.33,
+            0.23
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "head": {
+            "dy": 0.13
+          },
+          "sign": {
+            "rz": 14
+          }
+        },
+        "win": {
+          "sign": {
+            "dy": 0.2
+          },
+          "hat": {
+            "dy": 0.16
+          }
+        },
+        "loss": {
+          "head": {
+            "dy": -0.13
+          },
+          "sign": {
+            "rz": -14
+          }
+        }
+      },
+      "provenance": {
+        "atlas_sha256": "cf5ec26836842ce55a764c5ad66c711f00da0ed4cc30d80dad0df851e2656e01"
+      }
+    },
+    "TRCA-TR-099": {
+      "id": "TRCA-TR-099",
+      "category": "TR",
+      "category_ja": "罠",
+      "name": "ぼよん跳ね玉",
+      "world": "夢菓子の遊園",
+      "rarity": "レジェンド",
+      "story": "泣いている子のために最後の観覧車を回した。ぼよん跳ね玉は、その日の出来事を忘れないために、閉園しない小さな舞台にお菓子色の柔らかい幾何学を一つ残した。持ち主が負けた日も同じ表情で迎える。",
+      "signature_silhouette": "ピンクのしましま跳ね玉、見える二本ばね、大きな上矢印の罠",
+      "signature_tags": [
+        "striped_candy_orb",
+        "visible_double_spring",
+        "large_up_arrow"
+      ],
+      "archetype": "TR_CANDY_BOUNCE_ORB",
+      "palette": {
+        "pink": [
+          253,
+          136,
+          184
+        ],
+        "mint": [
+          133,
+          225,
+          197
+        ],
+        "lilac": [
+          183,
+          154,
+          237
+        ],
+        "cream": [
+          254,
+          235,
+          192
+        ],
+        "dark": [
+          105,
+          65,
+          145
+        ]
+      },
+      "parts": [
+        {
+          "name": "大きな跳ね玉",
+          "signature_tag": "striped_candy_orb",
+          "group": "orb",
+          "shape": "Ball",
+          "color": "pink",
+          "position": [
+            0,
+            0.78,
+            0
+          ],
+          "size": [
+            1.8,
+            1.75,
+            1.8
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "右上の縞",
+          "signature_tag": "striped_candy_orb",
+          "group": "orb",
+          "shape": "Block",
+          "color": "mint",
+          "position": [
+            0.28,
+            1.2,
+            0.74
+          ],
+          "size": [
+            0.28,
+            0.94,
+            0.18
+          ],
+          "rotation": [
+            0,
+            0,
+            29
+          ],
+          "far": true
+        },
+        {
+          "name": "左下の縞",
+          "signature_tag": "striped_candy_orb",
+          "group": "orb",
+          "shape": "Block",
+          "color": "cream",
+          "position": [
+            -0.4,
+            0.43,
+            0.72
+          ],
+          "size": [
+            0.26,
+            0.86,
+            0.16
+          ],
+          "rotation": [
+            0,
+            0,
+            -24
+          ],
+          "far": true
+        },
+        {
+          "name": "玉の星",
+          "signature_tag": "striped_candy_orb",
+          "group": "orb",
+          "shape": "Ball",
+          "color": "lilac",
+          "position": [
+            0,
+            1.72,
+            0
+          ],
+          "size": [
+            0.42,
+            0.28,
+            0.45
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "跳ね台の土台",
+          "signature_tag": "support",
+          "group": "base",
+          "shape": "Block",
+          "color": "dark",
+          "position": [
+            0,
+            -0.54,
+            0
+          ],
+          "size": [
+            2.2,
+            0.27,
+            2.1
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "左ばね",
+          "signature_tag": "visible_double_spring",
+          "group": "spring",
+          "shape": "Cylinder",
+          "color": "mint",
+          "position": [
+            -0.55,
+            -0.2,
+            0
+          ],
+          "size": [
+            0.27,
+            0.6,
+            0.27
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "右ばね",
+          "signature_tag": "visible_double_spring",
+          "group": "spring",
+          "shape": "Cylinder",
+          "color": "mint",
+          "position": [
+            0.55,
+            -0.2,
+            0
+          ],
+          "size": [
+            0.27,
+            0.6,
+            0.27
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "ばねの縞左",
+          "signature_tag": "visible_double_spring",
+          "group": "spring",
+          "shape": "Cylinder",
+          "color": "cream",
+          "position": [
+            -0.55,
+            0.05,
+            0
+          ],
+          "size": [
+            0.43,
+            0.1,
+            0.43
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "ばねの縞右",
+          "signature_tag": "visible_double_spring",
+          "group": "spring",
+          "shape": "Cylinder",
+          "color": "cream",
+          "position": [
+            0.55,
+            0.05,
+            0
+          ],
+          "size": [
+            0.43,
+            0.1,
+            0.43
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "大上矢印の棒",
+          "signature_tag": "large_up_arrow",
+          "group": "arrow",
+          "shape": "Block",
+          "color": "cream",
+          "position": [
+            1.5,
+            0.64,
+            0
+          ],
+          "size": [
+            0.23,
+            1.3,
+            0.3
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "矢印の左肩",
+          "signature_tag": "large_up_arrow",
+          "group": "arrow",
+          "shape": "Block",
+          "color": "cream",
+          "position": [
+            1.32,
+            1.24,
+            0
+          ],
+          "size": [
+            0.23,
+            0.68,
+            0.3
+          ],
+          "rotation": [
+            0,
+            0,
+            40
+          ],
+          "far": true
+        },
+        {
+          "name": "矢印の右肩",
+          "signature_tag": "large_up_arrow",
+          "group": "arrow",
+          "shape": "Block",
+          "color": "cream",
+          "position": [
+            1.68,
+            1.24,
+            0
+          ],
+          "size": [
+            0.23,
+            0.68,
+            0.3
+          ],
+          "rotation": [
+            0,
+            0,
+            -40
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "orb": {
+            "dy": -0.18
+          },
+          "spring": {
+            "dy": -0.1
+          }
+        },
+        "win": {
+          "orb": {
+            "dy": 0.26
+          },
+          "arrow": {
+            "dy": 0.2
+          }
+        },
+        "loss": {
+          "orb": {
+            "dy": -0.2
+          },
+          "arrow": {
+            "dy": -0.1
+          }
+        }
+      },
+      "provenance": {
+        "atlas_sha256": "cf5ec26836842ce55a764c5ad66c711f00da0ed4cc30d80dad0df851e2656e01"
+      }
+    }
+  }
+}
