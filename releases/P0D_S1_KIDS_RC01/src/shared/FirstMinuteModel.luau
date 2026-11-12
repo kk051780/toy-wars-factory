@@ -5,6 +5,7 @@ local Coach = {}
 
 export type State = {
     serial: number,
+    lastUpdateId: number,
     activeAt: number?,
     initialScore: number,
     scored: boolean,
@@ -23,7 +24,7 @@ end
 
 function Coach.new(): State
     return {
-        serial = -1, activeAt = nil, initialScore = 0,
+        serial = -1, lastUpdateId = -1, activeAt = nil, initialScore = 0,
         scored = false, carried = false, dismissed = false,
         manualHelp = false, latest = nil,
     }
@@ -47,6 +48,14 @@ function Coach.consume(state: State, packet: any, localNow: number): boolean
     if packet.carrying ~= "" and packet.carrying ~= "RED" and packet.carrying ~= "BLUE" then return false end
     if type(packet.role) ~= "string" or (packet.role ~= "RAIDER" and packet.role ~= "GUARDIAN") then return false end
     if type(localNow) ~= "number" or localNow ~= localNow or math.abs(localNow) > 1000000000 then return false end
+    -- A server-monotonic SNAPSHOT ordinal protects same-round GUI ordering.
+    -- Legacy unversioned snapshots are accepted only until a versioned one.
+    local id = packet.updateId
+    if id ~= nil then
+        if not wholeNumber(id) or id <= state.lastUpdateId then return false end
+    elseif state.lastUpdateId >= 0 then
+        return false
+    end
 
     if packet.serial > state.serial then
         state.serial = packet.serial
@@ -65,6 +74,7 @@ function Coach.consume(state: State, packet: any, localNow: number): boolean
         if packet.carrying ~= "" then state.carried = true end
     end
     state.latest = packet
+    if id ~= nil then state.lastUpdateId = id end
     return true
 end
 
