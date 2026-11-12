@@ -19,7 +19,8 @@ class FullActualHudClientOrdering(unittest.TestCase):
     def test_exact_three_hunks(self):
         self.assertEqual(len(m.PATCHES),3)
     def test_keep_touch_controls_and_boss_visual(self):
-        self.assertIn('UDim2.new(1, -140, 1, -110)',"".join(x[1] for x in m.PATCHES)+m.LUAU_TESTS)
+        self.assertIn('UDim2.new(1, -140, 1, -110)',
+            (Path(__file__).resolve().parents[1]/"candidate/src/client/HUD.client.luau").read_text())
         self.assertIn("BOSS_VISUAL",m.LUAU_TESTS)
     def test_same_serial_role_replay(self):
         self.assertIn("late_same_serial_role_rejected",m.LUAU_TESTS)
