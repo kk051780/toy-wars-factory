@@ -1,0 +1,58 @@
+name: P0D S1 genuine 8safe Game snapshots to HUD and Coach single Luau VM
+on:
+  push:
+    branches:
+      - qa/p0d-s1-eight-real-server-hud-coach-native-20261113-13
+permissions:
+  contents: read
+jobs:
+  eight-real-original-end-to-end:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      P0D_QA: handoffs/P0D-S1-EIGHT-REAL-SERVER-HUD-COACH-NATIVE-20261113-13
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout exact isolated QA source and full pinned Git provenance
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Prevent editing any existing game/other chat source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '7b4f95a3f424741bbe8ff1c555c5f5a2ed64d4bd^{commit}'
+          git cat-file -e 'b92372d27c1ed498a06b9135d0931e944bdcd39a^{commit}'
+          git cat-file -e '82847cb97d06394f8fba5ec5c88e644dce0a336b^{commit}'
+          changed="$(git diff --name-only 7b4f95a3f424741bbe8ff1c555c5f5a2ed64d4bd HEAD)"
+          if echo "$changed" | grep -Ev '^(handoffs/P0D-S1-EIGHT-REAL-SERVER-HUD-COACH-NATIVE-20261113-13/|.github/workflows/p0d-s1-eight-real-hud-coach-native-20261113.yml$)' ; then
+            echo "QA_BRANCH_CHANGED_GAME_OR_OTHER_OWNER" >&2; exit 2
+          fi
+          python3 -B "$P0D_QA/run_eight_real_hud_coach.py" --selftest
+          python3 -B "$P0D_QA/run_eight_real_hud_coach.py" --repo . --source-only
+          test -z "$(git status --porcelain --untracked-files=no)"
+      - name: Checkout exact upstream real Luau VM source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_eight_upstream_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Compile native Luau interpreter
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_eight_upstream_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_eight_upstream_luau -B /tmp/p0d_eight_real_hud_native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_eight_real_hud_native --target Luau.Repl.CLI --parallel 4
+      - name: Run actual original game server generated packets into actual HUD and Coach, and harmful source mutation controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$P0D_QA/run_eight_real_hud_coach.py" \
+            --repo . --luau /tmp/p0d_eight_real_hud_native/luau
+          test -z "$(git status --porcelain --untracked-files=no)"
