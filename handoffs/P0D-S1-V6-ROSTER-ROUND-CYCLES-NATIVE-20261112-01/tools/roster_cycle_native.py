@@ -104,7 +104,7 @@ AFTER='if checks<75 then error("GAME_S1_TOO_FEW_ASSERTIONS "..tostring(checks),0
 MUTANTS=(
  ("force_all_joiners_blue", "Game",
   'local name = if teamCount("RED") <= teamCount("BLUE") then "RED" else "BLUE"',
-  'local name = "BLUE"',
+  'local name = if teamCount("RED") == 0 then "RED" else "BLUE"',
   "GAME_S1_ASSERT_late_join_balances_red"),
  ("fail_to_drop_enemy_egg_on_departure", "Game",
   'local side = getTeamName(player)\n    dropEgg(player)\n    restoreSlow(player)',
