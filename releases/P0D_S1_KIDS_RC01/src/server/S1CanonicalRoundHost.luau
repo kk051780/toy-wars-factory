@@ -184,7 +184,8 @@ function Host:tick()
     end
     if self.combinedActive and not self.closed then
         local good, cmd, reason = pcall(function() return self.combined:heartbeat() end)
-        if not good or reason == "HEARTBEAT_FAIL_CLOSED" then
+        if not good or reason ~= nil
+            or (cmd ~= nil and type(cmd) ~= "table") then
             self.inTick = false
             self:stop("D07_HEARTBEAT_FAILED")
             return false, reason or "D07_HEARTBEAT_FAILED"
