@@ -1,0 +1,26 @@
+name: P0D H1 source-wall collision independent QA
+on:
+  push:
+    branches:
+      - qa/p0d-h1-actual-route-wall-intersections-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-geometry-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python regression confirms actual source and detects four obstructions
+        run: |
+          python3 handoffs/P0D-H1-ROUTE-WALL-QA-20261113-01/verify_routes.py --selftest
+          set +e
+          python3 handoffs/P0D-H1-ROUTE-WALL-QA-20261113-01/verify_routes.py --check
+          result=$?
+          set -e
+          if [ "$result" -ne 2 ]; then
+            echo "H1 original source obstruction profile unexpectedly changed; investigate before integration"
+            exit 1
+          fi
+          echo "H1_SOURCE_QA_EXPECTED_BLOCKED_4_INTERSECTIONS (GAMEPLAY NOT READY)"
