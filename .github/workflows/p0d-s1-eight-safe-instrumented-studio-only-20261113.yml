@@ -99,7 +99,7 @@ jobs:
           def modify(name,fn):
             root=ET.fromstring(raw)
             fn(root)
-            return ET.tostring(root,encoding="utf8",xml_declaration=True)
+            return ET.tostring(root,encoding="utf-8",xml_declaration=True)
           def corrupt_source(r,item_name):
             item=named(r,item_name)
             fields=[x for x in item.findall("./Properties/*") if x.get("name")=="Source"]
