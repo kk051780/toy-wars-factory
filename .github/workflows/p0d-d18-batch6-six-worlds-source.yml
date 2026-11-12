@@ -25,5 +25,7 @@ jobs:
         run: python3 tools/generate_catalog.py --check
       - name: Original six IDs and adversarial negative source checks
         run: python3 -m unittest discover -s tests -v
+      - name: Strict keyless SHA256 source manifest check
+        run: python3 tools/verify_manifest.py
       - name: Scope disclaimer
         run: echo "SOURCE_QA_ONLY STUDIO_2CLIENT_MOBILE_HUMAN_NOT_TESTED"
