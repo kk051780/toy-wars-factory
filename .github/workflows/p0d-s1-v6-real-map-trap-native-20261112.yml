@@ -1,0 +1,78 @@
+name: P0D S1 V6 actual Game Map Guardian trap native composition
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-v6-real-map-trap-composed-20261112-01
+permissions:
+  contents: read
+jobs:
+  actual-original-v6-six-module-composition:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - name: Checkout exact QA branch with all official pinned Git history
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify immutable official/current six source and old test runner commits
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '1263a03701211a652b99b91d2339575dc8104eff^{commit}'
+          git cat-file -e 'b2ae7828b641ab5acccc279117d36c6c413b543b^{commit}'
+      - name: Validate keyless source SHA256 manifest and Python fail-closed tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          root=Path("handoffs/P0D-S1-V6-REAL-MAP-TRAP-COMPOSED-20261112-01")
+          m=json.loads((root/"BUILD_MANIFEST.json").read_bytes())
+          assert set(m)=={"files","format","game_id","packet_id","public_source_allowed","work_id"}
+          assert m["format"]=="P0D_PUBLIC_SOURCE_V1"
+          assert m["public_source_allowed"] is True
+          assert m["game_id"]=="TRAP_RAIDERS" and m["work_id"]=="p0d-siege-v19"
+          assert len(m["files"])==3
+          for entry in m["files"]:
+            assert set(entry)=={"path","size","sha256"}
+            path=root/entry["path"]
+            assert path.is_file() and not path.is_symlink()
+            data=path.read_bytes()
+            assert len(data)==entry["size"],path
+            assert hashlib.sha256(data).hexdigest()==entry["sha256"],path
+          print("P0D_S1_V6_REAL_MAP_TRAP_MANIFEST_3_OF_3_PASS")
+          PY
+          python3 -B handoffs/P0D-S1-V6-REAL-MAP-TRAP-COMPOSED-20261112-01/tools/run_v6_game_map_trap.py --selftest
+          PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+            -s handoffs/P0D-S1-V6-REAL-MAP-TRAP-COMPOSED-20261112-01/tests -v
+      - name: Checkout immutable genuine native Luau source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _official_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build native Luau CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _official_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _official_luau -B /tmp/p0d-s1-v6-map-trap-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d-s1-v6-map-trap-native --target Luau.Repl.CLI --parallel 4
+      - name: Execute six actual official sources and five targeted unsafe mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 \
+            handoffs/P0D-S1-V6-REAL-MAP-TRAP-COMPOSED-20261112-01/tools/run_v6_game_map_trap.py \
+            --repo . --luau /tmp/p0d-s1-v6-map-trap-native/luau
+      - name: No protected tracked source or candidate source was modified
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
