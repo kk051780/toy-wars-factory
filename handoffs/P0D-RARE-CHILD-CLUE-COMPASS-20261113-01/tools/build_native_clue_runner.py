@@ -6,7 +6,8 @@ engine service doubles. Test-only optin overrides a flag in generated QA only.
 from pathlib import Path
 import argparse,importlib.util
 ROOT=Path(__file__).resolve().parents[1]
-PARENT_HARNESS=ROOT.parent/"P0D-RARE-BOOK-FULL-SERVER-QA-20261112-01/tools/build_full_server_runner.py"
+# Copy is byte-exact from successful P0D-RARE-BOOK-FULL-SERVER-QA-20261112-01 at fixed commit a675a3416b3aeaa9100a0c9627684060c4a02292.
+PARENT_HARNESS=ROOT/"tools/base_full_server_runner_pinned.py"
 spec=importlib.util.spec_from_file_location("p0d_original_full_server_source_qa",PARENT_HARNESS)
 assert spec and spec.loader
 base=importlib.util.module_from_spec(spec)
