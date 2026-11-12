@@ -1,0 +1,136 @@
+name: P0D rare 4/4 discovery book true native Luau and real Rojo
+on:
+  push:
+    branches:
+      - handoff/p0d-rare-discovery-book-20261112-01
+    paths:
+      - 'handoffs/P0D-RARE-DISCOVERY-BOOK-20261112-01/**'
+      - '.github/workflows/p0d-rare-discovery-book-20261112.yml'
+permissions:
+  contents: read
+jobs:
+  genuine-luau-two-independent-session-books:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 17
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      NEW_ROOT: handoffs/P0D-RARE-DISCOVERY-BOOK-20261112-01
+      ORIG_NEUTRAL: handoffs/P0D-WORLD-RARE-NEUTRAL-ENCOUNTERS-20261112-01
+      ORIG_WORLD: handoffs/P0D-WORLD-RARE-4REALMS-3D-20261112-01
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Prove previous original 4world and moving neutral sources frozen exactly
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 6ad87b25004165e7e2ede489bceb2ccaaf3abe70 HEAD
+          git diff --exit-code 6ad87b25004165e7e2ede489bceb2ccaaf3abe70 HEAD -- "$ORIG_NEUTRAL" "$ORIG_WORLD"
+          python3 "$ORIG_WORLD/tools/verify_manifest.py"
+          python3 "$ORIG_NEUTRAL/tools/verify_manifest.py"
+          python3 "$NEW_ROOT/tools/verify_manifest.py"
+          echo "RARE_BOOK_ALL_THREE_FROZEN_SOURCE_MANIFESTS_PASS"
+      - name: Python independent safety + source mutation controls
+        run: python3 -m unittest discover -s "$NEW_ROOT/tests" -p 'test_*.py' -v
+      - name: Compile SHA-pinned upstream genuine Luau command-line runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/book-luau
+          git -C /tmp/book-luau init -q
+          git -C /tmp/book-luau remote add origin https://github.com/luau-lang/luau.git
+          git -C /tmp/book-luau fetch --quiet --depth 1 origin f46d879e28302a430029304f7f6a162aed66f103
+          git -C /tmp/book-luau checkout --quiet FETCH_HEAD
+          test "$(git -C /tmp/book-luau rev-parse HEAD)" = "f46d879e28302a430029304f7f6a162aed66f103"
+          cmake -S /tmp/book-luau -B /tmp/book-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_CLI=ON -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/book-luau/build --config Release --target Luau.Repl.CLI Luau.Compile.CLI -j 2
+      - name: Run exact original Book+HUD+QA Plan code, 2 independent players, reject eight unsafe source mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          for source in "$NEW_ROOT"/src/*.luau; do
+            /tmp/book-luau/build/luau-compile "$source" > /dev/null
+            echo "RARE_BOOK_ORIGINAL_SOURCE_NATIVE_COMPILE_PASS $source"
+          done
+          python3 "$NEW_ROOT/tools/build_native_book_runner.py" --output /tmp/book-source-runners
+          test "$(find /tmp/book-source-runners -name '*.luau' | wc -l)" -eq 9
+          for source in /tmp/book-source-runners/*.luau; do
+            /tmp/book-luau/build/luau-compile "$source" > /dev/null
+          done
+          /tmp/book-luau/build/luau /tmp/book-source-runners/positive.luau | tee /tmp/book-positive.txt
+          grep -q "RARE_BOOK_TRUE_ORIGINAL_NATIVE_PASS assertions=" /tmp/book-positive.txt
+          for bad in BAD_DOUBLE_COUNT BAD_REUSE_SERIAL BAD_MISSING_FOUND BAD_SESSION_START_4 BAD_FOURTH_WORLD_SKIPPED BAD_NO_CUE BAD_UI_LIES_4 BAD_TWO_IDENTICAL_PANELS; do
+            if /tmp/book-luau/build/luau "/tmp/book-source-runners/$bad.luau" > "/tmp/$bad.log" 2>&1; then
+              echo "RARE_BOOK_UNSAFE_MUTANT_INCORRECTLY_ACCEPTED $bad"; exit 1
+            fi
+            grep -q "RARE_BOOK_NATIVE_ORIGINAL_FAIL" "/tmp/$bad.log"
+          done
+          echo "RARE_BOOK_ORIGINAL_LUAU_EIGHT_UNSAFE_MUTANTS_DENIED_PASS"
+  genuine-rojo-eight-exact-script-review-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      NEW_ROOT: handoffs/P0D-RARE-DISCOVERY-BOOK-20261112-01
+      ORIG_NEUTRAL: handoffs/P0D-WORLD-RARE-NEUTRAL-ENCOUNTERS-20261112-01
+      ORIG_WORLD: handoffs/P0D-WORLD-RARE-4REALMS-3D-20261112-01
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Three exact keyless manifests independently required
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$ORIG_WORLD/tools/verify_manifest.py"
+          python3 "$ORIG_NEUTRAL/tools/verify_manifest.py"
+          python3 "$NEW_ROOT/tools/verify_manifest.py"
+      - name: Download and SHA256 verify official original Rojo 7.7.1 archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --retry 3 --retry-delay 2 \
+            "https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip" \
+            -o "$RUNNER_TEMP/rojo.zip"
+          printf '%s\n' "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  $RUNNER_TEMP/rojo.zip" | sha256sum -c
+          python3 - <<'PY'
+          import os,pathlib,stat,zipfile
+          target=pathlib.Path(os.environ["RUNNER_TEMP"])
+          with zipfile.ZipFile(target/"rojo.zip") as z:
+              options=[n for n in z.namelist() if n.rsplit("/",1)[-1]=="rojo"]
+              assert len(options)==1
+              data=z.read(options[0])
+              assert len(data)>1_000_000
+              binary=target/"rojo"
+              binary.write_bytes(data)
+              binary.chmod(binary.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          "$RUNNER_TEMP/rojo" --version | grep -F "7.7.1"
+      - name: Build actual original standalone .rbxlx eight exact Lua source bytes and seven tampering rejects
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _book_real_rojo
+          "$RUNNER_TEMP/rojo" build "$NEW_ROOT/default.project.json" -o "_book_real_rojo/RARE_FOUR_BOOK_TWO_CLIENT_QA_REVIEW_ONLY.rbxlx"
+          export RARE_BOOK_REAL_ROJO_PLACE="$PWD/_book_real_rojo/RARE_FOUR_BOOK_TWO_CLIENT_QA_REVIEW_ONLY.rbxlx"
+          test -s "$RARE_BOOK_REAL_ROJO_PLACE"
+          python3 "$NEW_ROOT/tools/verify_real_rojo.py" --place "$RARE_BOOK_REAL_ROJO_PLACE" --receipt "_book_real_rojo/EIGHT_SOURCE_BYTE_RECEIPT.json"
+          python3 -m unittest discover -s "$NEW_ROOT/tests" -p 'test_real_rojo.py' -v
+          echo "RARE_BOOK_REAL_ROJO_REVIEW_ONLY__NO_REAL_STUDIO"
+      - name: Store authentic source-only compiled review artifact and original SHA receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-RARE-BOOK-REAL-ROJO-OWNER-STUDIO-REVIEW-ONLY
+          path: |
+            _book_real_rojo/RARE_FOUR_BOOK_TWO_CLIENT_QA_REVIEW_ONLY.rbxlx
+            _book_real_rojo/EIGHT_SOURCE_BYTE_RECEIPT.json
+          retention-days: 14
+          if-no-files-found: error
+      - name: No tracked source changes or fake Studio success
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
+          echo "RARE_BOOK_2CLIENT_REAL_ROBLOX_STUDIO_MOBILE_NOT_TESTED"
