@@ -633,8 +633,17 @@ Players.PlayerRemoving:Connect(function(player)
     lastTrap[player] = nil
     invulnUntil[player] = nil
     if match.phase == "ACTIVE" and side ~= "NONE" then
-        local surviving = Rules.opponent(side)
-        if teamCount(side) <= 1 then stopRound(surviving, "OPPONENT_LEFT") end
+        -- Robust to PlayerRemoving before OR after GetPlayers() drops the leaver.
+        -- Count only distinct teammates, never the player being removed.
+        local teammates = 0
+        for _, other in ipairs(Players:GetPlayers()) do
+            if other ~= player and getTeamName(other) == side then
+                teammates += 1
+            end
+        end
+        if teammates == 0 then
+            stopRound(Rules.opponent(side), "OPPONENT_LEFT")
+        end
     end
 end)
 
