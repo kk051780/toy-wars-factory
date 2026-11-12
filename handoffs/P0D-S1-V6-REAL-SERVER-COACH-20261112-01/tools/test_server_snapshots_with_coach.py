@@ -68,7 +68,8 @@ eq(__real_Coach.view(redCoach,12).title,"得点できたね！","real_red_scorin
     'eq(last(pRed).phase,"RESULTS","winning_result_phase")': r'''
 local oldResultsSnapshot=last(pRed)
 eq(__real_Coach.consume(redCoach,oldResultsSnapshot,14),true,"real_result_consumes")
-eq(__real_Coach.view(redCoach,14).title,"つぎの対戦も挑戦しよう！",
+local resultView=__real_Coach.view(redCoach,14)
+eq(if resultView then resultView.title else "", "つぎの対戦も挑戦しよう！",
    "real_results_view")
 ''',
     'eq(last(pRed).serial,2,"new_serial_for_rematch")': r'''
