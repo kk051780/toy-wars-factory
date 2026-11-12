@@ -98,7 +98,20 @@ def prepare(repo: Path):
     upstream=locked(repo,UPSTREAM,UPSTREAM_PATH,UPSTREAM_BLOB)
     ns={"__name__":"_frozen_real_p0d_exit_qa"}
     exec(compile(upstream,UPSTREAM_PATH,"exec"),ns)
-    engine,base,sources,source_playerfix=ns["load"](repo)
+    # Load only frozen original six real modules and frozen QA test body.
+    # The old #234 isolated candidate file is NOT in this new branch; its
+    # bytes are derived from pinned original and known exact source hunk.
+    upstream_roster=ns["pinned_source"](repo,ns["UPSTREAM"],ns["UPSTREAM_FILE"],ns["UPSTREAM_BLOB"])
+    roster={"__name__":"_p0d_frozen_six_source_roster_runtime"}
+    exec(compile(upstream_roster,ns["UPSTREAM_FILE"],"exec"),roster)
+    if roster["OFFICIAL"]!=ns["OFFICIAL"]:
+        raise RuntimeError("FROZEN_ROSTER_OFFICIAL_CHANGED")
+    engine,base,sources=roster["load"](repo)
+    base["LUAU_TEST"]=ns["exactly"](base["LUAU_TEST"],ns["BEFORE"],
+        ns["BEFORE"]+"\n"+ns["PRE_ADD"],"include_both_order_join_test")
+    base["LUAU_TEST"]=ns["exactly"](base["LUAU_TEST"],ns["AFTER"],
+        ns["AFTER"]+"\n"+ns["POST_ADD"],"include_both_order_exit_test")
+    source_playerfix=ns["exactly"](sources["Game"],ns["OLD"],ns["NEW"],"source_only_exit_fix")
     game=locked(repo,PREVIEW,PREVIEW_ROOT+"src/server/Game.server.luau",GAME_BLOB)
     five=locked(repo,FIVE_PREVIEW,PREVIEW_ROOT+"src/server/Game.server.luau",FIVE_GAME_BLOB)
     if game!=once(five,ns["OLD"],ns["NEW"],"exact_six_playerremoving_hunk"):
@@ -160,7 +173,6 @@ def selftest():
     for m in ("six_escape_x_drop_blue_egg","six_escape_z_red_spawn_x",
               "six_escape_y_red_spawn_y","six_escape_x_linear_velocity_zero"):
         assert m in ARENA
-    assert "other ~= player" in locked if False else True
     print("P0D_SIX_DYNAMIC_SELFTEST_PASS checks=7")
 
 def main():
