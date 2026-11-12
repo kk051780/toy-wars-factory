@@ -1,0 +1,12 @@
+# TRAP RAIDERS S1 six-way SAFE UX integration REVIEW
+
+- Purpose: isolate one complete original S1 Rojo source preview with six distinct source safety/child-UX improvements.
+- OWN feature_slice: CHAT-INTEGRATION-SUPPORT-S1-SIX-SAFE-REVIEW-20261112-06. This branch is **NOT** the sole official RC writer. Official baseline RC is `1263a03701211a652b99b91d2339575dc8104eff`; base complete five-source preview is `d37c70d884d8dcfd45ee2d621f59583e573c54ee`.
+- Contents: full `releases/P0D_S1_KIDS_RC01` inherited from five-source review (37-file BUILD_MANIFEST) with exactly the extra order-independent `Players.PlayerRemoving` patch. This patch is taken from fixed source `4024c21238f913ffa226a38e4bd092de43d02af6` and DOES NOT discard the earlier X/Z arena-edge recovery.
+- Existing five variations: Japanese castle/egg signs (MapBuilder), Guardian 0-60s trap explanation (FirstMinuteModel), safe right-side mobile GuardianTrap button (HUD), out-of-arena recovery including egg drop / slowdown cancel / velocity reset / spawn immunity (Game), D07/D08 heartbeat nil/error fail-closed (S1CanonicalRoundHost, OFF by default).
+- Sixth variation: removal ordering independent of `GetPlayers()`, counting teammates with `other ~= player`, no false early game stop if a team still has members.
+- Exact new Game Git blob: `a575ef5175ace5aab59f1dbe3ad8dc74d3d1860d`; SHA256: `cf69ebde5c2c970d313d337c1479c64700215247dff837f21830c9ff7cec12ff`; UTF-8 bytes: 29989. New `BUILD_MANIFEST.json` encodes this change, all other source modules retained unchanged.
+- Offline six-source verifier: `verify_six_review.py`; independent strict embedded 21 Luau sources + 9 XML negative mutation checks: `verify_real_rojo.py`. Action workflow pins Rojo 7.7.1 ZIP SHA256 and upstream Luau compiler commit. Do not assert PASS before inspecting the actual workflow run, its head SHA and job logs.
+- Scope remains **REVIEW-ONLY**. Studio true multiplayer/mobility/physics/network performance, child human tests, PC checkpoint, D07 ON scenario, public release approval remain NOT_TESTED/NOT_AUTHORIZED.
+- Official `rc/p0d-s1-kids-rc01`, `main`, protected P0A/B/C, Roblox publish, billing, Windows Codex, existing automations must not be modified from this branch.
+- Adoption: sole #220 integrator independently check CI, exact baseline, tests, source compare and choose INCLUDE_OR_SKIP. Cherry-pick controlled source lines + regenerated manifest only, never blindly merge preview branch or mistakenly treat the original Gameserver PlayerRemoving patch as applied in live Studio.
