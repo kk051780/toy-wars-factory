@@ -42,6 +42,13 @@ class TestH1Mascot(unittest.TestCase):
   p=json.loads((ROOT/"default.project.json").read_text(encoding="utf8"))
   p["tree"]["StarterPlayer"]["StarterPlayerScripts"].pop("D18MascotGuide")
   with self.assertRaises(ValueError):verify_contract(project=p)
+ def test_hint_updates_only_on_objective_change(self):
+  s=(ROOT/"src/client/D18MascotGuide.client.luau").read_text(encoding="utf8")
+  self.assertIn('state.lastHintName~=current.partName',s)
+  self.assertIn('state.lastHintName=current.partName',s)
+ def test_reject_unbounded_hint_redraw(self):
+  s=(ROOT/"src/client/D18MascotGuide.client.luau").read_text(encoding="utf8").replace('state.hintUntil>0 and state.lastHintName~=current.partName','state.hintUntil>0')
+  self.assertNotIn('state.hintUntil>0 and state.lastHintName~=current.partName',s)
  def test_no_extra_remote(self):
   self.assertNotIn('RemoteEvent',(ROOT/"src/client/D18MascotGuide.client.luau").read_text(encoding="utf8"))
 if __name__=="__main__":unittest.main()

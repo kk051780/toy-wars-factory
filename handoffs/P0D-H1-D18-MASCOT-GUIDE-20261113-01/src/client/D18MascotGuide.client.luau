@@ -88,6 +88,7 @@ local function speak()
     state.lastSpeak=now
     state.tapUntil=now+1.35
     state.hintUntil=now+5
+    state.lastHintName=current.partName
     local found=drawPath(current)
     if current.carrying then
         state.label.Text=if found then "🥚 おかえり！じぶんの色の台へ！" else "🥚 じぶんの色の台へ！"
@@ -170,7 +171,7 @@ local function spawnMascot(team)
     state={
         team=team,model=model,definition=modelData,parts=parts,
         origin=origin,anchor=anchor,prompt=prompt,label=label,
-        lastSpeak=-100,tapUntil=-1,hintUntil=-1
+        lastSpeak=-100,tapUntil=-1,hintUntil=-1,lastHintName=nil
     }
     model.Parent=root
     prompt.Triggered:Connect(function() speak() end)
@@ -216,8 +217,9 @@ local remoteConn=remote.OnClientEvent:Connect(function(message)
     if not state or state.team~=current.team then
         dropMascot()
         spawnMascot(current.team)
-    elseif state.hintUntil>0 then
-        -- The carried-egg state can change while a path hint is displayed.
+    elseif state.hintUntil>0 and state.lastHintName~=current.partName then
+        -- Retarget only on carrying transition; avoid repeatedly allocating cosmetic Parts.
+        state.lastHintName=current.partName
         drawPath(current)
     end
 end)
