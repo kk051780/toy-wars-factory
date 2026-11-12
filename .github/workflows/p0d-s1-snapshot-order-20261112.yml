@@ -1,0 +1,83 @@
+name: P0D S1 exact original seven-source same-round SNAPSHOT order candidate QA
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-snapshot-coach-order-20261112-01
+permissions:
+  contents: read
+jobs:
+  real-server-coach-out-of-order:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout immutable original source history and isolated candidate
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify immutable official game and genuine seven-source native harness pins
+        shell: bash
+        run: |
+          set -euo pipefail
+          for SHA in \
+            1263a03701211a652b99b91d2339575dc8104eff \
+            24061fd7fc165c506f9a862ba48ceaf80b6345bb \
+            84d061d81ffd28418f6e28e9e85bb684dd0daaf7 \
+            b2ae7828b641ab5acccc279117d36c6c413b543b \
+            e29d37737890671d458072bebe729127878700f6
+          do
+            git cat-file -e "$SHA^{commit}"
+          done
+      - name: Verify all five original/candidate files by full SHA256 and Python contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path("handoffs/P0D-S1-SNAPSHOT-COACH-ORDER-20261112-01")
+          lock=json.loads((root/"BUILD_MANIFEST.json").read_bytes())
+          assert set(lock)=={"files","format","game_id","packet_id","public_source_allowed","work_id"}
+          assert lock["format"]=="P0D_PUBLIC_SOURCE_V1" and lock["game_id"]=="TRAP_RAIDERS"
+          assert lock["work_id"]=="p0d-siege-v19" and lock["public_source_allowed"] is True
+          assert len(lock["files"])==5
+          for f in lock["files"]:
+              assert set(f)=={"path","sha256","size"}
+              p=root/f["path"]
+              assert p.is_file() and not p.is_symlink()
+              raw=p.read_bytes()
+              assert f["size"]==len(raw) and f["sha256"]==hashlib.sha256(raw).hexdigest(),p
+          print("P0D_S1_SNAPSHOT_ORDER_EXACT_SOURCE_SHA256_5_OF_5_PASS")
+          PY
+          python3 -B handoffs/P0D-S1-SNAPSHOT-COACH-ORDER-20261112-01/tools/test_snapshot_order.py --selftest
+          PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+            -s handoffs/P0D-S1-SNAPSHOT-COACH-ORDER-20261112-01/tests -v
+      - name: Checkout genuine pinned upstream native Luau language interpreter
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Compile genuine pinned native Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _native_luau -B /tmp/p0d-s1-snapshot-order -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d-s1-snapshot-order --target Luau.Repl.CLI --parallel 4
+      - name: Execute real original Game and Coach candidates plus six intentional unsafe mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 \
+            handoffs/P0D-S1-SNAPSHOT-COACH-ORDER-20261112-01/tools/test_snapshot_order.py \
+            --repo . --luau /tmp/p0d-s1-snapshot-order/luau
+      - name: Assert no tracked original game files modified
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
