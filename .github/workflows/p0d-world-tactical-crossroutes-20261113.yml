@@ -1,0 +1,13 @@
+name: p0d-world-tactical-crossroutes-offline
+on:
+  push:
+    branches:
+      - handoff/p0d-world-tactical-crossroutes-20261113-01
+  workflow_dispatch:
+jobs:
+  graph-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test authored world graph, fairness, emergency recovery, and negative cases
+        run: python -m unittest discover -s 'handoffs/P0D-WORLD-TACTICAL-CROSSROUTES-20261113-01/tests' -p 'test_*.py' -v
