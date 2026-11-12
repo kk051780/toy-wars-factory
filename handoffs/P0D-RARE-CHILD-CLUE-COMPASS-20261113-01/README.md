@@ -1,0 +1,23 @@
+# TRAP RAIDERS S2+ / 子どもの「次に探す」幻想幻獣ヒント
+
+Issue #243. This is a new original optional S2+ candidate for the previously frozen #236 session-only discovery book / #232 animated fantasy neutral creatures / #230 original four themed castles. It **does not** modify any earlier source or game release.
+
+## Player-facing feature
+Original `RareCluePolicy.luau` presents **one short, child-readable hint** for the first undiscovered species after 0/4, 1/4, 2/4, or 3/4. Two honest, distinct address modes avoid misleading a young player:
+- `TEST_HUB` (this unpublished owner-only QA Place): `テスト: みどりの ひろばで そらをみよう`. The source test bench spawns its four animated animals close to the shared green hub instead of at their own world's castles.
+- `WORLD` (FUTURE, **NOT integrated into the current test Place**): original world-specific free-road landmark cues, e.g. 紫のはし／金の坂／赤い岩道／太陽と月. No exact hidden rare spawn positions, no paywalls.
+- When all four are found in the per-session source book, show `4/4！みつけたね。 べつの みちも あるいてみよう`. No daily streaks, fabricated coins, rewards, forced repeat play, guilt, time limits or notifications.
+
+`RareClueHUD.luau` mounts a **single** wrapped line under the original four Japanese entry rows inside that player's original `RareDiscoverySessionBook` `ScreenGui`. It does not create RemoteEvents or client-originated claims; repeated mount is idempotent. Candidate `RareDiscoveryCluePreview.server.luau` is EXACT previous frozen full original Studio server script plus **only four bounded hooks** (two imports, safe policy validation, per-discovery hint update, per-player hint mount), independently verified by `tools/verify_candidate_delta.py`. The Studio preview remains **DISABLED BY DEFAULT**, server-only, rejects live Roblox and S1 official map overlap. No D18 collectible ID or persistence.
+
+## Actual native and Roblox Place QA
+`tools/build_native_clue_runner.py` reuses existing separate #239 original full-server source execution harness. It loads the candidate's full **original inherited source game server** along with all original seven unchanged gameplay modules + both NEW original Clue modules in one SHA-pinned genuine native Luau interpreter. Only the external Roblox service APIs are test doubles (fake Players, RootParts, UI Instances, Heartbeat, ProximityPrompt); game logic and original code are real. The test-only runner overrides the default-disabled flag in its temporary output, **never in GitHub's original scripts**.
+
+The full 85 original game-server assertions and more clue-specific checks confirm two separate `PlayerGui` 0/4→4/4, no duplicate rewards, new user starts 0/4, 4/4 celebration, exact TEST_HUB location, no display lies, no accidental UI stacking and hint source matches original Book. Nine deliberately corrupted source variants must be rejected: wrong player book, reset to empty book, wrong hub location, fake coin reward, daily FOMO, hidden clue, undersized panel, stacking two clue labels and WORLD cues misleading players in QA hub.
+
+The independent Rojo 7.7.1 real `.rbxlx` build must contain exactly ten original-source scripts: frozen 2 World +2 Neutral +3 Book + new Clue Policy/HintHUD/Studio candidate; prove exact embedded Luau bytes, one disabled server authority and real binary corruption rejection. This **does NOT execute actual Roblox Studio**, real 2-client/server replication, actual touch or actual mobile FPS.
+
+## Owner-only protected real Studio QA (NOT performed by this chat)
+Download fixed-sha actual Rojo review binary from GitHub Actions; verify its source SHA256 receipt. Open in **new unpublished backed-up** private Studio Place. Toggle `ENABLE_RARE_DISCOVERY_STUDIO_BOOK=true` **in that throwaway local copy only**, not in repository, never in official S1. Start real 2 clients, observe the 104-second four-creature near-central-hub preview. Confirm both independently see 0/4→4/4, correct short green-hub hint before 4/4, encouraging noncompulsive celebration after 4/4, prompt requires real physical proximity and remains accessible on actual phone. Check Japanese text, video, prompts, camera, FPS/loading/streaming and screen-control overlap. Log genuine Studio build + phone model and accept/reject. Do not publish, merge, claim real odds or measured child retention until tested.
+
+Owner alone decides if this source passes and is suitable for a future seasonal/rare-world feature; source-only GitHub CI never grants #222 world G5+, #236 real-game completion, D18 canonical collection or #220 S1 initial release percent. No payment, published Roblox, Windows Codex, P0ABC CAS or active automation changes.
