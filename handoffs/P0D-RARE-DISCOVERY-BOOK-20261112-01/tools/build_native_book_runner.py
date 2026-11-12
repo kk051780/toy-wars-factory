@@ -179,7 +179,7 @@ def main():
       "BAD_REUSE_SERIAL":(srcbook.replace("if serial==book.lastSerial then","if false then",1),srcplan,srchud),
       "BAD_MISSING_FOUND":(srcbook.replace("found[id]=true","found[id]=false",1),srcplan,srchud),
       "BAD_SESSION_START_4":(srcbook.replace("found={},count=0","found={},count=4",1),srcplan,srchud),
-      "BAD_TEST_NEVER_STOPS":(srcbook,srcplan.replace("if slot>=4 then return nil,slot end","if slot>=5 then return nil,slot end",1),srchud),
+      "BAD_FOURTH_WORLD_SKIPPED":(srcbook,srcplan.replace("if slot>=4 then return nil,slot end","if slot>=3 then return nil,slot end",1),srchud),
       "BAD_NO_CUE":(srcbook,srcplan.replace("Plan.PROMPT_DELAY_SECONDS = 2","Plan.PROMPT_DELAY_SECONDS = 0",1),srchud),
       "BAD_UI_LIES_4":(srcbook,srcplan,srchud.replace("title.Text=Book.progress(book)",'title.Text="発見ずかん 4/4"',1)),
       "BAD_TWO_IDENTICAL_PANELS":(srcbook,srcplan,srchud.replace('if old then old:Destroy() end','if false then old:Destroy() end',1)),
