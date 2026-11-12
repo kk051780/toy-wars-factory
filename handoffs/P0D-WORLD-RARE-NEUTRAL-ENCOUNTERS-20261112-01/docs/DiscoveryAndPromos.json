@@ -1,0 +1,74 @@
+{
+  "format": "P0D_RARE_NEUTRAL_DISCOVERY_STUDIO_V1",
+  "issue": "https://github.com/kk051780/toy-wars-factory/issues/232",
+  "mode": "PRIVATE_STUDIO_SOURCE_ONLY_S2PLUS",
+  "actual_gameplay_implemented": false,
+  "d18_canonical_collection": false,
+  "rewards": false,
+  "configured_preview_chance_per_45seconds": 0.12,
+  "observed_true_spawn_rates": "NOT_MEASURED",
+  "creatures": [
+    {
+      "id": "SPACE",
+      "name": "星くじら",
+      "visible_behavior": "ゆっくり浮遊・周回",
+      "child_one_action": "紫の星が光ったら空を見よう",
+      "class_item_tactic_hypothesis": "乗り物係が遠景を見つけ、戦士が安全な帰路を教える",
+      "defender_counterplay": "中立で捕獲不可。対戦相手も同じ条件で発見できる",
+      "promo_7s": "星くじらが宇宙の城に現れた！",
+      "promo_15s": "紫の星がキラリ。宇宙の城を見上げると、星くじらがゆっくり飛んでいる。近づいて『みつけた！』を押そう。",
+      "actual_ai": "ORIGINAL_SCRIPTED_VISUAL_MOVEMENT_ONLY",
+      "rare_drop": "NONE"
+    },
+    {
+      "id": "CELESTIAL",
+      "name": "虹羽ペガサス",
+      "visible_behavior": "雲の庭で跳ねる",
+      "child_one_action": "金の坂を登り雲の上を見よう",
+      "class_item_tactic_hypothesis": "魔法使いが雲の目印を知らせ、忍者が裏道から観察",
+      "defender_counterplay": "誰でも雲の広場に行ける。先着による独占は禁止",
+      "promo_7s": "天空神殿にペガサスが！",
+      "promo_15s": "金色と白い坂道から空へ。虹羽ペガサスが雲でジャンプするのを見つけよう。近づいたら無料の発見ボタン。",
+      "actual_ai": "ORIGINAL_SCRIPTED_VISUAL_MOVEMENT_ONLY",
+      "rare_drop": "NONE"
+    },
+    {
+      "id": "EMBER",
+      "name": "マグマモグラ",
+      "visible_behavior": "顔を出しては隠れる",
+      "child_one_action": "赤い光が揺れたら地面を見よう",
+      "class_item_tactic_hypothesis": "建築士が安全な足場を案内し、トラッパーが裏道から観察",
+      "defender_counterplay": "溶岩装飾は無害。発見は全員同じ条件",
+      "promo_7s": "魔界にモグラがひょっこり！",
+      "promo_15s": "赤い溶岩の飾りのそばに何かいる。モグラが地面からひょっこり！隠れる前に見つけられるかな？",
+      "actual_ai": "ORIGINAL_SCRIPTED_VISUAL_MOVEMENT_ONLY",
+      "rare_drop": "NONE"
+    },
+    {
+      "id": "ECLIPSE",
+      "name": "双面の幻獣",
+      "visible_behavior": "太陽と月の間を移動",
+      "child_one_action": "月と太陽の両方を見よう",
+      "class_item_tactic_hypothesis": "忍者が月側、魔獣使いが太陽側から観察",
+      "defender_counterplay": "月と太陽の2道は常時無料で閉じ込めない",
+      "promo_7s": "昼と夜の城に幻獣が出現！",
+      "promo_15s": "太陽と月の光が交代する不思議な城。2つの道から近づくと幻獣がゆっくり動いている。『みつけた！』を押そう。",
+      "actual_ai": "ORIGINAL_SCRIPTED_VISUAL_MOVEMENT_ONLY",
+      "rare_drop": "NONE"
+    }
+  ],
+  "research": {
+    "H0": "前回の4幻想世界の静止した幻獣像のみ",
+    "H1": "各世界1種類の中立幻獣が稀に現れ動き、無料の発見操作ができる",
+    "metrics": [
+      "気づくまでの秒数",
+      "接近までの時間",
+      "発見操作率",
+      "スマホFPS",
+      "再訪率",
+      "対戦公平性"
+    ],
+    "results": "NOT_TESTED"
+  },
+  "advertising_guard": "実機動画・ゲームへの統合の前に実ゲーム機能として宣伝しない"
+}
