@@ -1,0 +1,88 @@
+{
+  "schema": "P0D_D18_ARCHETYPE_RULES_V1",
+  "archetypes": {
+    "BE_THUNDER_CLOUD_GUARD": {
+      "category": "BE",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "bolt_mane",
+        "sky_drum",
+        "cloud_tail"
+      ]
+    },
+    "SP_TIDAL_LIGHTHOUSE": {
+      "category": "SP",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "wave_gate",
+        "lighthouse_beacon",
+        "pearl_foam"
+      ]
+    },
+    "VE_FOREST_WALKING_GARDEN": {
+      "category": "VE",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "moss_canopy",
+        "open_bench",
+        "glow_lantern"
+      ]
+    },
+    "WE_GHOST_MOON_HORN": {
+      "category": "WE",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "ghost_sheet",
+        "moon_horn",
+        "floating_note"
+      ]
+    },
+    "ZO_TIME_MAZE_GUIDE": {
+      "category": "ZO",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "hourglass_helmet",
+        "direction_sign",
+        "uneven_boots"
+      ]
+    },
+    "TR_CANDY_BOUNCE_ORB": {
+      "category": "TR",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "striped_candy_orb",
+        "visible_double_spring",
+        "large_up_arrow"
+      ]
+    }
+  },
+  "authoring_policy": "Original Batch5 six manually authored noncombat low-poly collectible class previews; safe WorldModel only",
+  "required_field_per_part": [
+    "name",
+    "position",
+    "size",
+    "rotation",
+    "shape",
+    "color",
+    "far",
+    "signature_tag",
+    "group"
+  ],
+  "shape_enum": [
+    "Ball",
+    "Block",
+    "Cylinder"
+  ]
+}
