@@ -54,6 +54,6 @@ class CurrentWaypointContracts(unittest.TestCase):
    self.assertIn(x,tool)
  def test_no_studio_pass_misattribution(self):
   readme=(R/"README.md").read_text("utf-8")
-  self.assertIn("does NOT",readme)
+  self.assertIn("does **NOT**",readme)
   self.assertIn("2 clients",readme)
 if __name__=="__main__":unittest.main()
