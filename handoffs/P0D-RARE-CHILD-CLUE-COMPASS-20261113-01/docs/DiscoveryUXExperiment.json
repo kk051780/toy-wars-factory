@@ -1,0 +1,50 @@
+{
+  "packet": "P0D_RARE_CHILD_CLUE_COMPASS_V1",
+  "issue": "https://github.com/kk051780/toy-wars-factory/issues/243",
+  "status": "S2PLUS_SOURCE_ONLY",
+  "user_visible_features": [
+    {
+      "label": "次の手がかり",
+      "scenario": "0/4–3/4",
+      "description": "次に未発見の幻獣に関する短い手がかり。ワールド本番候補は世界と目印の方向のみ、非公開検証場では緑の広場へ案内",
+      "reward": "NONE"
+    },
+    {
+      "label": "4/4 おめでとう",
+      "scenario": "after four unique discovers",
+      "description": "違う道からも探してみよう、という自由な再探索の提案。繰り返し義務や期限なし",
+      "reward": "NONE"
+    },
+    {
+      "label": "友達も別々に発見できる",
+      "scenario": "independent two player sessions",
+      "description": "自分の図鑑だけをサーバーで更新。相手の発見や報酬を奪わず、競争を強制しない",
+      "reward": "NONE"
+    }
+  ],
+  "storyboards": {
+    "seconds7": "0–2秒：ずかん0/4。2–5秒：緑の広場の星くじらに近づく。5–7秒：ずかん1/4とつぎのヒント。※実際の宣伝はStudio実機映像を撮ってから",
+    "seconds15": "0–3秒：友達と星くじらを探す。3–7秒：2人それぞれが発見して1/4。7–10秒：ヒントを読んで次の幻獣を探す。10–13秒：4/4でおめでとう。13–15秒：ちがうみちもあるいてみよう（自由探索）"
+  },
+  "hypothesis": {
+    "H0": "発見図鑑のみ、ヒントなし",
+    "H1": "新ヒント1行＋4/4のお祝い。初見で迷わず次を探せるがプレッシャーは増やさない",
+    "owner_studio_metrics": [
+      "初めて発見するまでの時間",
+      "最初のヒントを理解できた割合",
+      "2人が別々に4/4完了できたか",
+      "4/4後に自由探索するか",
+      "スマホ画面の表示・プロンプトとUI重なり",
+      "リアルなFPSとメモリ"
+    ],
+    "observed": "NOT_TESTED"
+  },
+  "safety": {
+    "chance_or_drop_display": "NONE",
+    "live_real_npc_collection": "NOT_CANONICAL_D18",
+    "money_purchases_dailies": "DISALLOWED",
+    "push_reminders": "NONE",
+    "production_publish": "NOT_APPROVED",
+    "real_Studio_two_client_mobile": "NOT_TESTED"
+  }
+}
