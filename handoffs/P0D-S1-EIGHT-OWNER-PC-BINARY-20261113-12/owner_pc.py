@@ -171,7 +171,7 @@ def verify_zip(path: Path):
             for entry in z.infolist():
                 if (entry.filename!=Path(entry.filename).name or
                     entry.filename.startswith(".") or
-                    not entry.is_file() or entry.flag_bits&1 or
+                    entry.is_dir() or entry.flag_bits&1 or
                     stat.S_IFMT(entry.external_attr>>16)==stat.S_IFLNK or
                     entry.file_size>500000):
                     raise Blocked("ZIP_UNSAFE_ENTRY")
