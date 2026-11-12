@@ -1,0 +1,132 @@
+name: P0D rare neutral moving real source native Luau and actual Rojo binary
+on:
+  push:
+    branches:
+      - handoff/p0d-world-rare-neutral-encounters-20261112-01
+    paths:
+      - 'handoffs/P0D-WORLD-RARE-NEUTRAL-ENCOUNTERS-20261112-01/**'
+      - '.github/workflows/p0d-rare-neutral-encounters-20261112.yml'
+permissions:
+  contents: read
+jobs:
+  original-native-movement-policy-and-models:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 17
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      RARE_ROOT: handoffs/P0D-WORLD-RARE-NEUTRAL-ENCOUNTERS-20261112-01
+      RARE_ORIGINAL: handoffs/P0D-WORLD-RARE-4REALMS-3D-20261112-01
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify both original immutable World and new keyless SHA256 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 2dd00f7932292f9f54d5c1cdc689d76cef4f9718 HEAD
+          git diff --exit-code 2dd00f7932292f9f54d5c1cdc689d76cef4f9718 HEAD -- "$RARE_ORIGINAL"
+          python3 "$RARE_ORIGINAL/tools/verify_manifest.py"
+          python3 "$RARE_ROOT/tools/verify_manifest.py"
+          echo "RARE_NEUTRAL_FROZEN_ORIGINAL_WORLD_AND_NEW_SOURCE_PASS"
+      - name: Python exact source contract, mutations, and real-Rojo tests skipped honestly
+        run: python3 -m unittest discover -s "$RARE_ROOT/tests" -p 'test_*.py' -v
+      - name: Build true upstream native Luau tools from fixed original source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/rare-neutral-luau
+          git -C /tmp/rare-neutral-luau init -q
+          git -C /tmp/rare-neutral-luau remote add origin https://github.com/luau-lang/luau.git
+          git -C /tmp/rare-neutral-luau fetch --quiet --depth 1 origin f46d879e28302a430029304f7f6a162aed66f103
+          git -C /tmp/rare-neutral-luau checkout --quiet FETCH_HEAD
+          test "$(git -C /tmp/rare-neutral-luau rev-parse HEAD)" = "f46d879e28302a430029304f7f6a162aed66f103"
+          cmake -S /tmp/rare-neutral-luau -B /tmp/rare-neutral-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_CLI=ON -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/rare-neutral-luau/build --config Release --target Luau.Repl.CLI Luau.Compile.CLI -j 2
+      - name: Compile original + run actual new Policy and 4 moving Model objects in native Luau with 8 unsafe source mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in "$RARE_ROOT"/src/*.luau; do
+            /tmp/rare-neutral-luau/build/luau-compile "$f" > /dev/null
+            echo "RARE_NEUTRAL_ORIGINAL_SOURCE_LUAU_COMPILE_PASS $f"
+          done
+          python3 "$RARE_ROOT/tools/build_native_neutral_runner.py" --output-dir /tmp/rare-neutral-native
+          test "$(find /tmp/rare-neutral-native -name '*.luau' | wc -l)" -eq 9
+          for f in /tmp/rare-neutral-native/*.luau; do
+            /tmp/rare-neutral-luau/build/luau-compile "$f" > /dev/null
+          done
+          /tmp/rare-neutral-luau/build/luau /tmp/rare-neutral-native/positive.luau | tee /tmp/rare-neutral-positive.txt
+          grep -q "RARE_NEUTRAL_REAL_ORIGINAL_LUAU_NATIVE_PASS assertions=" /tmp/rare-neutral-positive.txt
+          for bad in BAD_ODDS_ALWAYS_SPAWN BAD_MULTIPLE_SIMULTANEOUS BAD_NO_DISCOVERY_TELEGRAPH BAD_TOO_FAST_REROLL BAD_AWARDS_FLAG BAD_NEUTRAL_COLLISION BAD_PAY_TO_DISCOVER BAD_MODEL_NOT_MOVING; do
+            if /tmp/rare-neutral-luau/build/luau "/tmp/rare-neutral-native/$bad.luau" > "/tmp/$bad.txt" 2>&1; then
+              echo "RARE_NEUTRAL_UNSAFE_CODE_MUTANT_ACCEPTED $bad"; exit 1
+            fi
+            grep -q "RARE_NEUTRAL_NATIVE_FAIL" "/tmp/$bad.txt"
+          done
+          echo "RARE_NEUTRAL_REAL_ORIGINAL_SOURCE_EIGHT_UNSAFE_MUTANTS_REJECTED"
+  genuine-rojo-binary-with-five-exact-Luau:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 13
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      RARE_ROOT: handoffs/P0D-WORLD-RARE-NEUTRAL-ENCOUNTERS-20261112-01
+      RARE_ORIGINAL: handoffs/P0D-WORLD-RARE-4REALMS-3D-20261112-01
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Double original source and new source integrity gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$RARE_ORIGINAL/tools/verify_manifest.py"
+          python3 "$RARE_ROOT/tools/verify_manifest.py"
+      - name: SHA256 verify real upstream original Rojo 7.7.1 executable zip
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --retry 3 --retry-delay 2 \
+            "https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip" \
+            -o "$RUNNER_TEMP/rojo.zip"
+          printf '%s\n' "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  $RUNNER_TEMP/rojo.zip" | sha256sum -c
+          python3 - <<'PY'
+          import os,pathlib,stat,zipfile
+          t=pathlib.Path(os.environ["RUNNER_TEMP"])
+          with zipfile.ZipFile(t/"rojo.zip") as z:
+              options=[n for n in z.namelist() if n.rsplit("/",1)[-1]=="rojo"]
+              assert len(options)==1
+              raw=z.read(options[0])
+              assert len(raw)>1_000_000
+              dest=t/"rojo"
+              dest.write_bytes(raw)
+              dest.chmod(dest.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+          PY
+          "$RUNNER_TEMP/rojo" --version | grep -F "7.7.1"
+      - name: Actually build Rojo Roblox .rbxlx and adversarially inspect real 5 original embedded scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _rare_neutral_review
+          "$RUNNER_TEMP/rojo" build "$RARE_ROOT/default.project.json" -o "_rare_neutral_review/RARE_NEUTRAL_ENCOUNTER_REVIEW_ONLY.rbxlx"
+          export RARE_NEUTRAL_ACTUAL_ROJO_PLACE="$PWD/_rare_neutral_review/RARE_NEUTRAL_ENCOUNTER_REVIEW_ONLY.rbxlx"
+          test -s "$RARE_NEUTRAL_ACTUAL_ROJO_PLACE"
+          python3 "$RARE_ROOT/tools/verify_real_rojo.py" --place "$RARE_NEUTRAL_ACTUAL_ROJO_PLACE" --receipt "_rare_neutral_review/ACTUAL_SOURCE_RECEIPT.json"
+          python3 -m unittest discover -s "$RARE_ROOT/tests" -p 'test_real_rojo.py' -v
+          echo "RARE_NEUTRAL_REAL_ROJO_SOURCE_ONLY__NOT_ROBLOX_STUDIO"
+      - name: Store review-only original source Place and actual XML receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-RARE-NEUTRAL-ORIGINAL-FIVE-SCRIPT-REAL-ROJO-REVIEW-ONLY
+          path: |
+            _rare_neutral_review/RARE_NEUTRAL_ENCOUNTER_REVIEW_ONLY.rbxlx
+            _rare_neutral_review/ACTUAL_SOURCE_RECEIPT.json
+          retention-days: 14
+          if-no-files-found: error
+      - name: Ensure no protected source edits
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
+          echo "RARE_NEUTRAL_TRUE_ROBLOX_STUDIO_MOBILE_2CLIENT_NOT_TESTED"
