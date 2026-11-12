@@ -1,0 +1,37 @@
+{
+  "packet_id": "P0D-S1-ARENA-ESCAPE-RECOVERY-20261112-02",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "release_id": "P0D-S1-KIDS-RC01",
+  "delivery_mode": "PUBLIC_SOURCE_V1",
+  "isolated_branch": "handoff/p0d-s1-arena-escape-recovery-20261112-02",
+  "official_parent_rc_sha": "1263a03701211a652b99b91d2339575dc8104eff",
+  "original_unchanged_game_git_blob": "7c5229f600f17537bc1bbbb0b96b6a2435875374",
+  "original_unchanged_map_git_blob": "d2127b8c20c8abd880a21f84aeeb706feeb14ce8",
+  "source_only": true,
+  "official_rc_modified": false,
+  "studio_tested": false,
+  "files": [
+    {
+      "path": "candidate/src/server/Game.server.luau",
+      "git_blob_sha1": "5e671bbda4d27532a4480a7645e4fab3cb3bccf3"
+    },
+    {
+      "path": "tests/test_recovery_contract.py",
+      "git_blob_sha1": "f8815bb30056ebc41a1005d3380b627398a90a5e"
+    },
+    {
+      "path": "README.md",
+      "git_blob_sha1": "32ffabfa6c54be1694058ea0a7743ac53978697f"
+    }
+  ],
+  "test_receipts": {
+    "source_aware_js_exact_original_and_boundary_checks": "22/22 PASS",
+    "geometry_only_python_unittest": "12/12 PASS",
+    "committed_source_aware_python_tests": "NOT_EXECUTED",
+    "native_luau": "NOT_TESTED",
+    "roblox_studio": "NOT_TESTED"
+  },
+  "owner_release_approval": false,
+  "note": "Only sole #220 integrator may review optional adoption after exact current RC + map hash recheck."
+}
