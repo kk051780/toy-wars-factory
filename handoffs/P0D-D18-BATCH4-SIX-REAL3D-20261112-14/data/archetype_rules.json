@@ -1,0 +1,88 @@
+{
+  "archetypes": {
+    "CREATURE_CRYSTAL_DRAGON": {
+      "category": "BE",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "hex_ice",
+        "one_horn",
+        "floating_shield"
+      ]
+    },
+    "SPELL_BROKEN_STAR_HOME": {
+      "category": "SP",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "broken_star_bell",
+        "silver_music_arc",
+        "yellow_home_ribbon"
+      ]
+    },
+    "TRAP_COPPER_HALF_GEAR": {
+      "category": "TR",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "half_copper_gear",
+        "big_direction_arrow",
+        "double_spring"
+      ]
+    },
+    "VEHICLE_STAR_TRIWHEEL_SCOPE": {
+      "category": "VE",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "asymmetric_three_wheels",
+        "star_telescope",
+        "visible_seat"
+      ]
+    },
+    "WEAPON_TWIN_STAR_HORN": {
+      "category": "WE",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "two_horn_mouths",
+        "cracked_star_stone",
+        "note_antenna"
+      ]
+    },
+    "ZOMBIE_MOSS_MUSHROOM_GUARD": {
+      "category": "ZO",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "giant_leaf_hat",
+        "soft_cloth_body",
+        "mismatched_mushroom_boots"
+      ]
+    }
+  },
+  "authoring_policy": "Fourth original hand-authored six tactical-character preview wave; 3 far-visible shape cues each; client WorldModel-only; gameplay candidate actions are NOT implemented.",
+  "required_field_per_part": [
+    "name",
+    "position",
+    "size",
+    "rotation",
+    "shape",
+    "color",
+    "far",
+    "signature_tag",
+    "group"
+  ],
+  "schema": "P0D_D18_ARCHETYPE_RULES_V1",
+  "shape_enum": [
+    "Ball",
+    "Block",
+    "Cylinder"
+  ]
+}
