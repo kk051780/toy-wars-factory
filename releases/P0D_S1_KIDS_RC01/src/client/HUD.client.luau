@@ -74,6 +74,11 @@ local attack = button(gui, "Attack", "⚔ 攻撃\nFキー", UDim2.fromOffset(126
 local trapButton = button(gui, "GuardianTrap", "🪤 罠設置\nTキー",
     UDim2.fromOffset(110, 74), UDim2.new(1, -140, 1, -110), Color3.fromRGB(168, 105, 56))
 trapButton.Visible = false
+-- The same mobile slot is shared by Guardian trap and Raider wind burst.
+local windButton = button(gui, "RaiderWind", "🌪 風走り\nRキー",
+    UDim2.fromOffset(110, 74), UDim2.new(1, -140, 1, -110),
+    Color3.fromRGB(55, 139, 192))
+windButton.Visible = false
 local roleRaider = button(gui, "RaiderRole", "🏃 速攻", UDim2.fromOffset(92, 53),
     UDim2.new(.02, 0, 1, -64), Color3.fromRGB(59, 128, 208))
 local roleGuardian = button(gui, "GuardianRole", "🛡 守護", UDim2.fromOffset(92, 53),
@@ -90,12 +95,14 @@ local function action(kind: string, role: string?)
 end
 attack.MouseButton1Click:Connect(function() action("ATTACK", nil) end)
 trapButton.MouseButton1Click:Connect(function() action("PLACE_TRAP", nil) end)
+windButton.MouseButton1Click:Connect(function() action("WIND_BURST", nil) end)
 roleRaider.MouseButton1Click:Connect(function() action("ROLE", "RAIDER") end)
 roleGuardian.MouseButton1Click:Connect(function() action("ROLE", "GUARDIAN") end)
 UserInputService.InputBegan:Connect(function(input, processed)
     if processed then return end
     if input.KeyCode == Enum.KeyCode.F then action("ATTACK", nil)
-    elseif input.KeyCode == Enum.KeyCode.T then action("PLACE_TRAP", nil) end
+    elseif input.KeyCode == Enum.KeyCode.T then action("PLACE_TRAP", nil)
+    elseif input.KeyCode == Enum.KeyCode.R then action("WIND_BURST", nil) end
 end)
 
 local function displayRole(role: string): string
@@ -199,8 +206,14 @@ remote.OnClientEvent:Connect(function(s)
     roleGuardian.Visible = s.phase ~= "ACTIVE"
     attack.Visible = s.phase == "ACTIVE"
     trapButton.Visible = s.phase == "ACTIVE" and s.role == "GUARDIAN"
+    windButton.Visible = s.phase == "ACTIVE" and s.role == "RAIDER"
     local trapCooldown = if type(s.trapCooldown) == "number" and s.trapCooldown > 0
         then math.ceil(s.trapCooldown) else 0
     trapButton.Text = if trapCooldown > 0 then ("🪤 あと " .. tostring(trapCooldown) .. "秒")
         else "🪤 罠設置\nTキー"
+    local windCooldown = if type(s.windCooldown) == "number" and s.windCooldown >= 0
+        and s.windCooldown <= 3600 then math.ceil(s.windCooldown) else 0
+    windButton.Text = if s.windActive == true then "🌪 風走り中！"
+        elseif windCooldown > 0 then ("🌪 あと " .. tostring(windCooldown) .. "秒")
+        else "🌪 風走り\nRキー"
 end)
