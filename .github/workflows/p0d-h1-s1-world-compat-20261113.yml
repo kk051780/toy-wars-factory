@@ -1,0 +1,28 @@
+name: P0D H1 S1 actual source world-boundaries independent QA
+on:
+  push:
+    branches:
+      - qa/p0d-h1-s1-world-compat-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-world-qa:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Require genuinely unchanged original complete S1 source
+        run: |
+          set -euo pipefail
+          git cat-file -e 3120b9d3c0a5ec58c9f2613c5d186f3493b54f83^{commit}
+          test -z "$(git diff --name-only 3120b9d3c0a5ec58c9f2613c5d186f3493b54f83 HEAD -- releases/P0D_S1_KIDS_RC01)"
+      - name: Run pinned true S1 source cross-contract and deliberate bad mutants
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s 'handoffs/P0D-H1-S1-WORLD-COMPAT-20261113-01/tests' -p 'test_*.py' -v
+          test -z "$(git status --porcelain --untracked-files=no)"
