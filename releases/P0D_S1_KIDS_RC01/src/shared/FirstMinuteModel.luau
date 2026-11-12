@@ -74,7 +74,7 @@ function Coach.view(state: State, localNow: number): View?
     if not s then return nil end
     if state.dismissed then return {title = "", detail = "", visible = false, tone = "normal"} end
     if s.phase == "LOBBY" then
-        return {title = "まず役職をえらぼう", detail = "速攻は足が速い／守護は体力が多い。2人そろうとスタート！", visible = true, tone = "normal"}
+        return {title = "まず役職をえらぼう", detail = "速攻は足が速い／守護は体力が多く、罠を置ける！2人でスタート！", visible = true, tone = "normal"}
     end
     if s.phase == "COUNTDOWN" then
         return {title = "もうすぐ対戦！", detail = "敵のお城で卵を取り、自分のお城の納品台へ運ぼう。", visible = true, tone = "normal"}
@@ -95,12 +95,18 @@ function Coach.view(state: State, localNow: number): View?
     end
     if elapsed < 12 then
         if s.role == "GUARDIAN" then
-            return {title = "守護：卵を守ろう！", detail = "自分のお城の卵を守りながら敵を追い返そう。攻撃は右下！", visible = true, tone = "normal"}
+            return {title = "守護：卵を守ろう！", detail = "自分の卵を守ろう！右下の罠ボタンで足止め。敵が踏むと足が遅くなるよ！", visible = true, tone = "normal"}
         end
         return {title = "敵のお城の卵をねらおう！", detail = "移動して敵の卵に近づこう。出たボタンをタップして取れるよ。", visible = true, tone = "normal"}
     end
     if elapsed < 32 then
+        if s.role == "GUARDIAN" then
+            return {title = "守護：罠を置こう！", detail = "自分の陣地でTキーか右下の罠ボタンを押そう。敵を足止めできるよ！", visible = true, tone = "normal"}
+        end
         return {title = "卵を取ると得点チャンス！", detail = "敵の卵 → 自分の城の納品台。取られたら追いかけよう。", visible = true, tone = "normal"}
+    end
+    if s.role == "GUARDIAN" then
+        return {title = "守護：仲間を守ろう！", detail = "罠は自分の陣地で置こう。20秒たてば次の罠！敵の卵も奪えるよ。", visible = true, tone = "normal"}
     end
     return {title = "城を攻める作戦もあるよ", detail = "敵のお城のコアは右下の攻撃で壊せる。まずは卵を探そう！", visible = true, tone = "normal"}
 end
