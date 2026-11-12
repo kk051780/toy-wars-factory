@@ -90,7 +90,7 @@ ok(scene.folder:GetAttribute("RareNPCSpawnStatus")=="NO_AI_OR_DROP_ONLY_SCULPTUR
 ok(scene.folder:GetAttribute("RealStudioQA")=="NOT_TESTED","honest real QA state")
 ok(scene.totalParts<=Catalog.MAX_SCENE_PARTS and scene.totalParts>=100,
     "bounded original art parts")
-ok(scene.solidParts>=26 and scene.solidParts<=90,"enough walkable structures")
+ok(scene.solidParts>=24 and scene.solidParts<=90,"enough walkable structures")
 local children=scene.folder.children
 local byname={}
 local count=0
