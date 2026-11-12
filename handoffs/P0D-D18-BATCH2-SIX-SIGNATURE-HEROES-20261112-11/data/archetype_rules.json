@@ -1,0 +1,88 @@
+{
+  "archetypes": {
+    "CREATURE_COMET_DRAGON": {
+      "category": "BE",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "comet_tail",
+        "cracked_star",
+        "lopsided_horn"
+      ]
+    },
+    "SPELL_FOREST_ECHO": {
+      "category": "SP",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "open_leaf_ring",
+        "mushroom_lantern",
+        "echo_orb"
+      ]
+    },
+    "TRAP_GENTLE_RIPPLE": {
+      "category": "TR",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "concentric_rings",
+        "rising_splash",
+        "direction_arrow"
+      ]
+    },
+    "VEHICLE_GEAR_OBSERVATORY": {
+      "category": "VE",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "tooth_wheel",
+        "sky_telescope",
+        "open_driver_seat"
+      ]
+    },
+    "WEAPON_ICE_SILVER_HORN": {
+      "category": "WE",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "silver_trumpet",
+        "ice_hex_badge",
+        "hanging_ice_chime"
+      ]
+    },
+    "ZOMBIE_THUNDER_FLAG": {
+      "category": "ZO",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "split_flag",
+        "feather_hat",
+        "mismatched_boots"
+      ]
+    }
+  },
+  "authoring_policy": "Manually authored original six-class silhouettes. Not color-swap clones. 3 distinct far-LOD signature tags each.",
+  "required_field_per_part": [
+    "name",
+    "position",
+    "size",
+    "rotation",
+    "shape",
+    "color",
+    "far",
+    "signature_tag",
+    "group"
+  ],
+  "schema": "P0D_D18_ARCHETYPE_RULES_V1",
+  "shape_enum": [
+    "Ball",
+    "Block",
+    "Cylinder"
+  ]
+}
