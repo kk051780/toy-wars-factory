@@ -1,0 +1,24 @@
+{
+  "name": "P0D_RARE_NEUTRAL_ENCOUNTER_S2_PREVIEW_ONLY",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "RareRealmCatalog": {
+        "$path": "../P0D-WORLD-RARE-4REALMS-3D-20261112-01/src/RareRealmCatalog.luau"
+      },
+      "RareRealmScene": {
+        "$path": "../P0D-WORLD-RARE-4REALMS-3D-20261112-01/src/RareRealmScene.luau"
+      },
+      "RareEncounterPolicy": {
+        "$path": "src/RareEncounterPolicy.luau"
+      },
+      "RareEncounterModels": {
+        "$path": "src/RareEncounterModels.luau"
+      },
+      "RareEncounterPreview": {
+        "$path": "src/RareEncounterPreview.server.luau"
+      }
+    }
+  }
+}
