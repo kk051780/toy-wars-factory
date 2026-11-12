@@ -77,16 +77,16 @@ function MapBuilder.build(config)
         base.Parent = folder
         local core = part(base, name .. "_CASTLE_CORE", Vector3.new(10, 13, 10),
             Vector3.new(sign * 107, 6.5, 0), accent, Enum.Material.Neon)
-        billboard(core, name .. " CASTLE HP", 11)
+        billboard(core, (if name == "RED" then "赤チームの城" else "青チームの城"), 11)
         local egg = part(base, name .. "_EGG", Vector3.new(4, 5, 4),
             Vector3.new(sign * 98, 2.5, -20), COLOR.gold, Enum.Material.Neon, false)
         egg.Shape = Enum.PartType.Ball
-        local eggPrompt = prompt(egg, "Steal egg", name .. " treasure")
-        billboard(egg, name .. " EGG", 5)
+        local eggPrompt = prompt(egg, "卵を取る", (if name == "RED" then "赤チームの卵" else "青チームの卵"))
+        billboard(egg, (if name == "RED" then "赤チームの卵" else "青チームの卵"), 5)
         local pad = part(base, name .. "_SCORE_PAD", Vector3.new(12, .5, 12),
             Vector3.new(sign * 82, -.5, 20), accent, Enum.Material.Neon, false)
-        local scorePrompt = prompt(pad, "Deliver egg", name .. " scoring pad")
-        billboard(pad, "DELIVER HERE", 4)
+        local scorePrompt = prompt(pad, "卵を届ける", (if name == "RED" then "赤の納品台" else "青の納品台"))
+        billboard(pad, "卵はここへ！", 4)
         for _, z in ipairs({-44, 44}) do
             part(base, name .. "_WALL", Vector3.new(40, 14, 5),
                 Vector3.new(sign * 103, 7, z), COLOR.wall, Enum.Material.Cobblestone)
@@ -100,7 +100,7 @@ function MapBuilder.build(config)
         end
         local spawn = part(base, name .. "_SPAWN", Vector3.new(13, .5, 13),
             Vector3.new(sign * 68, -.5, 0), accent, Enum.Material.Neon, false)
-        billboard(spawn, name .. " SPAWN", 4)
+        billboard(spawn, (if name == "RED" then "赤チームのスタート" else "青チームのスタート"), 4)
         result.teams[name] = {core = core, egg = egg, eggPrompt = eggPrompt,
             scorePad = pad, scorePrompt = scorePrompt,
             spawn = CFrame.new(sign * 68, 5, 0)}
