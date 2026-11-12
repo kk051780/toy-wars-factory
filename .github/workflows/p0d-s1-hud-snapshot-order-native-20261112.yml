@@ -1,0 +1,74 @@
+name: P0D S1 actual full HUD SNAPSHOT monotonic native Luau QA
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-hud-snapshot-order-20261112-09
+permissions:
+  contents: read
+jobs:
+  actual-original-hud-client-native:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact original 7safe release and isolated HUD candidate source history
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify actual immutable 7safe Game and source commits
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '6cc131d3de06fe8799d00f475fc446a526e4b2c4^{commit}'
+          git cat-file -e '1263a03701211a652b99b91d2339575dc8104eff^{commit}'
+      - name: Strict SHA256 input manifest, HUD original exact 3 change check, and unit contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          root=pathlib.Path("handoffs/P0D-S1-HUD-SNAPSHOT-ORDER-20261112-09")
+          m=json.loads((root/"BUILD_MANIFEST.json").read_bytes())
+          assert set(m)=={"files","format","game_id","packet_id","public_source_allowed","work_id"}
+          assert m["format"]=="P0D_PUBLIC_SOURCE_V1" and m["game_id"]=="TRAP_RAIDERS"
+          assert m["work_id"]=="p0d-siege-v19" and m["public_source_allowed"] is True
+          assert len(m["files"])==4
+          for f in m["files"]:
+              assert set(f)=={"path","sha256","size"}
+              path=root/f["path"]
+              assert path.is_file() and not path.is_symlink()
+              raw=path.read_bytes()
+              assert len(raw)==f["size"] and hashlib.sha256(raw).hexdigest()==f["sha256"],path
+          print("P0D_S1_ACTUAL_HUD_SHA256_MANIFEST_4_OF_4_PASS")
+          PY
+          PYTHONDONTWRITEBYTECODE=1 python3 -B \
+            handoffs/P0D-S1-HUD-SNAPSHOT-ORDER-20261112-09/tools/check_hud_native.py --selftest
+          PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+            -s handoffs/P0D-S1-HUD-SNAPSHOT-ORDER-20261112-09/tests -v
+          PYTHONDONTWRITEBYTECODE=1 python3 -B \
+            handoffs/P0D-S1-HUD-SNAPSHOT-ORDER-20261112-09/tools/check_hud_native.py --repo . --source-only
+      - name: Checkout fixed genuine upstream native Luau source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Build real upstream native Luau VM
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _native_luau -B /tmp/p0d_s1_hud_order_luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_s1_hud_order_luau --target Luau.Repl.CLI --parallel 4
+      - name: Execute actual original full HUD Luau and reject six dangerous source mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 -B \
+            handoffs/P0D-S1-HUD-SNAPSHOT-ORDER-20261112-09/tools/check_hud_native.py \
+            --repo . --luau /tmp/p0d_s1_hud_order_luau/luau
+          test -z "$(git status --porcelain --untracked-files=no)"
