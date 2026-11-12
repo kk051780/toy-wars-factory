@@ -1,0 +1,130 @@
+name: P0D G5 real Studio owner-evidence PREP only (native+Rojo)
+on:
+  push:
+    branches:
+      - handoff/p0d-world-g5-studio-evidence-20261112-01
+    paths:
+      - 'handoffs/P0D-WORLD-G5-STUDIO-EVIDENCE-20261112-01/**'
+      - '.github/workflows/p0d-world-g5-studio-evidence-20261112.yml'
+permissions:
+  contents: read
+jobs:
+  genuine-native-checkpoint-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      G5_ROOT: handoffs/P0D-WORLD-G5-STUDIO-EVIDENCE-20261112-01
+      G5_ORIGINAL: handoffs/P0D-WORLD-LINK-G5-20261112-01
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Lock original G5 source to 2ef4094 without edits
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code 2ef409420eff477abb1d6c1b9c95964f29684e42 HEAD -- "$G5_ORIGINAL"
+          test "$(git hash-object "$G5_ORIGINAL/src/WorldLinkScene.luau")" = "645e5ecc213a0e7463b77e419f3764d3395cd1d8"
+          test "$(git hash-object "$G5_ORIGINAL/src/WorldLinkRoutes.luau")" = "3ff7debee01839ee595479b1cdefa169f8b153d3"
+          python3 "$G5_ORIGINAL/tools/verify_manifest.py"
+          python3 "$G5_ROOT/tools/verify_manifest.py"
+          echo "G5_STUDIO_ORIGINAL_12_LOCKED_AND_PROBE_9_SHA256_PASS"
+      - name: Run Python QA and no synthetic Studio-pass claims
+        run: python3 -m unittest discover -s "$G5_ROOT/tests" -p 'test_*.py' -v
+      - name: Build official upstream Luau CLI at an immutable commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/g5-studio-luau
+          git -C /tmp/g5-studio-luau init -q
+          git -C /tmp/g5-studio-luau remote add origin https://github.com/luau-lang/luau.git
+          git -C /tmp/g5-studio-luau fetch --quiet --depth 1 origin f46d879e28302a430029304f7f6a162aed66f103
+          git -C /tmp/g5-studio-luau checkout --quiet FETCH_HEAD
+          test "$(git -C /tmp/g5-studio-luau rev-parse HEAD)" = "f46d879e28302a430029304f7f6a162aed66f103"
+          cmake -S /tmp/g5-studio-luau -B /tmp/g5-studio-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_CLI=ON -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/g5-studio-luau/build --config Release --target Luau.Repl.CLI Luau.Compile.CLI -j 2
+      - name: Execute original waypoint plan and negative mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/g5-studio-luau/build/luau-compile "$G5_ROOT/src/WorldG5StudioEvidence.server.luau" >/dev/null
+          /tmp/g5-studio-luau/build/luau-compile "$G5_ROOT/src/G5StudioCheckpointPlan.luau" >/dev/null
+          python3 "$G5_ROOT/tools/build_studio_plan_runner.py" --dir /tmp/g5-studio-plan
+          test "$(find /tmp/g5-studio-plan -name '*.luau' | wc -l)" -eq 6
+          for test in /tmp/g5-studio-plan/*.luau; do
+            /tmp/g5-studio-luau/build/luau-compile "$test" >/dev/null
+          done
+          /tmp/g5-studio-luau/build/luau /tmp/g5-studio-plan/positive.luau | tee /tmp/g5-studio-positive.txt
+          grep -q "G5_NATIVE_ACTUAL_STUDIO_CHECKPOINT_PLAN_PASS assertions=" /tmp/g5-studio-positive.txt
+          for bad in BAD_NO_RETURN BAD_CHEAT_SPEED BAD_HUGE_RADIUS BAD_SEA_CASTLE_TARGET BAD_REPEATED_ROUTE_ID; do
+            if /tmp/g5-studio-luau/build/luau "/tmp/g5-studio-plan/$bad.luau" > "/tmp/$bad.log" 2>&1; then
+              echo "G5_STUDIO_UNSAFE_PLAN_ACCEPTED $bad"; exit 1
+            fi
+            grep -q "G5_REAL_STUDIO_PLAN_NATIVE_FAIL" "/tmp/$bad.log"
+          done
+          echo "G5_STUDIO_PLAN_NATIVE_MUTATIONS_5_OF_5_REJECTED"
+  real-rojo-review-only-binary:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      G5_ROOT: handoffs/P0D-WORLD-G5-STUDIO-EVIDENCE-20261112-01
+      G5_ORIGINAL: handoffs/P0D-WORLD-LINK-G5-20261112-01
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Strict exact two original source trees
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$G5_ORIGINAL/tools/verify_manifest.py"
+          python3 "$G5_ROOT/tools/verify_manifest.py"
+      - name: Install SHA256-pinned genuine Rojo 7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --show-error --silent --location --retry 3 --retry-delay 2 \
+             "https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip" \
+             --output "$RUNNER_TEMP/rojo.zip"
+          printf '%s\n' "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  $RUNNER_TEMP/rojo.zip" | sha256sum -c
+          python3 - <<'PY'
+          import os, pathlib, stat, zipfile
+          t=pathlib.Path(os.environ["RUNNER_TEMP"])
+          with zipfile.ZipFile(t/"rojo.zip") as z:
+              names=[x for x in z.namelist() if x.rsplit("/",1)[-1]=="rojo"]
+              assert len(names)==1
+              data=z.read(names[0])
+              assert len(data)>1000000
+              target=t/"rojo"
+              target.write_bytes(data)
+              target.chmod(target.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+          PY
+          "$RUNNER_TEMP/rojo" --version | grep 7.7.1
+      - name: ACTUAL standalone .rbxlx four sources exact and 8 binary tamper negatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _g5_studio_review
+          "$RUNNER_TEMP/rojo" build "$G5_ROOT/default.project.json" -o "_g5_studio_review/G5_STUDIO_OWNER_REVIEW_ONLY.rbxlx"
+          export G5_STUDIO_REAL_ROJO_PLACE="$PWD/_g5_studio_review/G5_STUDIO_OWNER_REVIEW_ONLY.rbxlx"
+          test -s "$G5_STUDIO_REAL_ROJO_PLACE"
+          python3 "$G5_ROOT/tools/verify_studio_rojo_xml.py" --place "$G5_STUDIO_REAL_ROJO_PLACE" --receipt "_g5_studio_review/SOURCE_RECEIPT.json"
+          python3 -m unittest discover -s "$G5_ROOT/tests" -p 'test_real_rojo.py' -v
+          echo "G5_STUDIO_PREP_REAL_ROJO_BUILT__NOT_ACTUAL_STUDIO_PASS"
+      - name: Keep actual binary and review receipt for OWNER local protected clone
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-G5-STUDIO-EVIDENCE-PROBE-REVIEW-ONLY
+          path: |
+            _g5_studio_review/G5_STUDIO_OWNER_REVIEW_ONLY.rbxlx
+            _g5_studio_review/SOURCE_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: No tracked code changes
+        shell: bash
+        run: |
+          test -z "$(git status --porcelain --untracked-files=no)"
+          echo "G5_REAL_ROBLOX_STUDIO_TWO_CLIENTS_MOBILE_NOT_TESTED"
