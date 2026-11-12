@@ -111,6 +111,10 @@ def validate_corrected(original,corrected):
     _,_,sea_width=cp["SEA_LOW_CAUSEWAY"]
     sea_z=cp["SEA_LOW_CAUSEWAY"][0][2]
     assert sea_z-sea_width/2 > -69
+    # Sky ramp approach avoids original noncolliding score pads z=14..26 as well as walls.
+    for name in ("SKY_RAMP_RED","SKY_RAMP_BLUE"):
+        a,b,width=cp[name]
+        assert min(a[2],b[2])-width/2 > 26, ("score pad approach occlusion",name)
     # Side connectors x=±72 +/-width/2 do NOT intersect inner edge of castle side wall at |x|=83.
     for name in ("SEA_ENTRY_RED","SEA_ENTRY_BLUE"):
         xs=[cp[name][0][0],cp[name][1][0]]
@@ -133,7 +137,7 @@ class H1WallOverlapTests(unittest.TestCase):
     def test_exact_original_map_blob(self):
         self.assertEqual(git_blob_hash(MAP.read_bytes()),"94655d019fdf9798fa24a350ebf49f8290465ac0")
     def test_exact_qa_candidate_blob(self):
-        self.assertEqual(git_blob_hash(self.fixed_bytes),"5beafbd78a0e624b598fd8a7308a004196124428")
+        self.assertEqual(git_blob_hash(self.fixed_bytes),"cc764b9caaa293ff747489e02e607af4502ddca4")
     def test_original_has_four_obvious_route_wall_overlaps(self):
         expected={
             ("SKY_RAMP_RED","RED","N"),
@@ -160,7 +164,7 @@ class H1WallOverlapTests(unittest.TestCase):
                                'Vector3.new(-99,0,-45),Vector3.new(99,0,-45)')
         with self.assertRaises(AssertionError):validate_corrected(self.orig,bad)
     def test_mutant_revert_sky_ramp_into_wall_is_rejected(self):
-        bad=self.fixed.replace('Vector3.new(-86,0,28),Vector3.new(-46,16,28)',
+        bad=self.fixed.replace('Vector3.new(-86,0,32.5),Vector3.new(-46,16,32.5)',
                                'Vector3.new(-91,0,43),Vector3.new(-52,16,43)')
         with self.assertRaises(AssertionError):validate_corrected(self.orig,bad)
     def test_mutant_drop_one_sea_connector_is_rejected(self):
@@ -173,6 +177,10 @@ class H1WallOverlapTests(unittest.TestCase):
     def test_mutant_sky_climb_too_steep_is_rejected(self):
         bad=self.fixed.replace('Vector3.new(-86,0,28),Vector3.new(-46,16,28)',
                                'Vector3.new(-66,0,28),Vector3.new(-46,16,28)')
+        with self.assertRaises(AssertionError):validate_corrected(self.orig,bad)
+    def test_mutant_sky_approach_occludes_score_pad_rejected(self):
+        bad=self.fixed.replace('Vector3.new(-86,0,32.5),Vector3.new(-46,16,32.5)',
+                               'Vector3.new(-86,0,28),Vector3.new(-46,16,28)')
         with self.assertRaises(AssertionError):validate_corrected(self.orig,bad)
     def test_mutant_out_of_bounds_sea_is_rejected(self):
         bad=self.fixed.replace('Vector3.new(-72,0,-55),Vector3.new(72,0,-55)',
