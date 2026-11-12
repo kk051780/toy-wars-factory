@@ -189,7 +189,7 @@ for _,id in ipairs(Policy.ROUTE_ORDER) do
     end
     ok(bodyParts==pet.originalParts,"physical parts count matches real source")
     ok(pet.prompt.ClassName=="ProximityPrompt","actual discovery engine prompt")
-    ok(pet.prompt.ActionText=="みつけた!","child accessible safe discover cue")
+    ok(pet.prompt.ActionText=="みつけた！","child accessible safe discover cue")
     ok(pet.prompt.HoldDuration>=0 and pet.prompt.HoldDuration<=0.5,
         "small child can discover quickly")
     ok(pet.prompt.MaxActivationDistance<=Policy.MIN_INTERACTION_DISTANCE,
