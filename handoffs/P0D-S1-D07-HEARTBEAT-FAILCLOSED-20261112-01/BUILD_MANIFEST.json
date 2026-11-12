@@ -1,0 +1,41 @@
+{
+  "packet_id": "P0D-S1-D07-HEARTBEAT-FAILCLOSED-20261112-01",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "release_id": "P0D-S1-KIDS-RC01",
+  "delivery_mode": "PUBLIC_SOURCE_V1",
+  "source_only": true,
+  "boss_enabled": false,
+  "latest_verified_baseline_rc_commit": "1263a03701211a652b99b91d2339575dc8104eff",
+  "original_host_git_blob": "61501c982619e54db6a09cf11b188ef872c1666e",
+  "original_combined_runtime_git_blob": "f10dedf357476e658857131c0843f237825a1c0f",
+  "requires_reverify_official_head": true,
+  "paths": [
+    {
+      "path": "candidate/src/server/S1CanonicalRoundHost.luau",
+      "git_blob_sha1": "1808fa630b13ad2be2dfdac188823957530b9086"
+    },
+    {
+      "path": "tests/test_source_contract.py",
+      "git_blob_sha1": "4eea07482594cfe5736ef077cc079fce91b8db86"
+    },
+    {
+      "path": "README.md",
+      "git_blob_sha1": "8d44de4bab2edfcbc97043a12327b0ba80d4f930"
+    }
+  ],
+  "verification": {
+    "exact_real_rc_source_readback": true,
+    "only_one_guard_patch": true,
+    "inline_js_source_contract_checks": {
+      "passed": 17,
+      "total": 17
+    },
+    "committed_python_unittest_executed": false,
+    "real_luau_runtime_executed": false,
+    "real_roblox_studio_executed": false,
+    "real_mobile_executed": false
+  },
+  "safety": "NO_MAIN_NO_RC_NO_MERGE_NO_PUBLISH_NO_CHARGE_NO_PC_CODEX",
+  "status": "SOURCE_ONLY_REVIEW_CANDIDATE_NOT_RC_READY"
+}
