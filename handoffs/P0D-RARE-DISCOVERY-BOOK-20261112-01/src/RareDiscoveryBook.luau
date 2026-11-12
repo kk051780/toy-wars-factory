@@ -26,7 +26,9 @@ function Book.accept(book,id: string,serial: number)
         return book,"INVALID"
     end
     if serial<book.lastSerial then return book,"STALE" end
-    if serial==book.lastSerial and Book.has(book,id) then return book,"REPEAT" end
+    if serial==book.lastSerial then
+        return book,Book.has(book,id) and "REPEAT" or "STALE"
+    end
     if Book.has(book,id) then return book,"ALREADY_SEEN" end
     if book.count>=#Book.ORDER then return book,"FULL" end
     local found={}
