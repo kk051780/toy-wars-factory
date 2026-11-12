@@ -131,7 +131,8 @@ def prepare(repo: Path):
     if source_playerfix!=once(sources["Game"],ns["OLD"],ns["NEW"],"exact_playerfix_candidate"):
         raise RuntimeError("FROZEN_UPSTREAM_QA_CHANGES")
     sources=dict(sources,Game=game,MapBuilder=original_map)
-    base=dict(base)
+    # Keep the original source module global environment: its build() reads
+    # FAKES/LUAU_TEST from this dict, so copying would silently skip new QA.
     base["FAKES"]=once(base["FAKES"],FAKE_OLD,FAKE_NEW,"external_zero_vector")
     base["LUAU_TEST"]=once(base["LUAU_TEST"],TRIGGER,ARENA+"\n"+TRIGGER,"arena_before_removed_joiner")
     if base["LUAU_TEST"].count("\"six_escape_")<12:
@@ -144,7 +145,7 @@ def execute(repo: Path,luau: str):
         output=Path(temp)/"actual_six_game_native.luau"
         status,log=engine["run"](luau,output,base,sources)
         m=re.search(r"P0D_NATIVE_ORIGINAL_GAME_MAP_COMPOSED_PASS assertions=(\d+)",log)
-        if status!=0 or not m or int(m.group(1))<142:
+        if status!=0 or not m or int(m.group(1))<154:
             raise RuntimeError("SIX_REAL_NATIVE_POSITIVE_FAILED "+log[-2200:])
         print("P0D_SIX_REAL_GAME_MAP_ROSTER_ESCAPE_NATIVE_PASS assertions="+m.group(1))
         for name,needle,mutation,expected in MUTANTS:
