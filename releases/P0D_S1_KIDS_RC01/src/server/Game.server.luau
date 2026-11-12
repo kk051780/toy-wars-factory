@@ -252,7 +252,10 @@ local function tickTraps(now: number)
     end
 end
 
+-- Server-only monotonic replication ordinal, never reset on match changes.
+local snapshotUpdateId = 0
 local function snapshotFor(player: Player)
+    snapshotUpdateId += 1
     local now = serverNow()
     local seconds = 0
     if match.phase == "ACTIVE" then
@@ -262,6 +265,7 @@ local function snapshotFor(player: Player)
     end
     return {
         kind = "SNAPSHOT", serial = match.serial, phase = match.phase,
+        updateId = snapshotUpdateId, -- view ordering only, not gameplay authority
         time = seconds, scores = {RED = match.scores.RED, BLUE = match.scores.BLUE},
         hp = {RED = match.hp.RED, BLUE = match.hp.BLUE},
         maxHp = Config.CastleMaxHp,
