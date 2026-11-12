@@ -1,0 +1,589 @@
+{
+  "packet_id": "P0D-H1-S1-WORLD-COMPAT-20261113-01",
+  "game_id": "TRAP_RAIDERS",
+  "source_commit": "3120b9d3c0a5ec58c9f2613c5d186f3493b54f83",
+  "source_origin": "releases/P0D_S1_KIDS_RC01",
+  "stage": "INDEPENDENT_SOURCE_AUDIT_AND_CONCEPTUAL_H1_ROUTE_ONLY",
+  "studio_qa": "NOT_TESTED",
+  "s1_written": false,
+  "h1_actual_integrated": false,
+  "real_player_metrics": "UNKNOWN",
+  "source_files": [
+    {
+      "file": "src/shared/Config.luau",
+      "sha256": "c88c23a86f5ad343d8d368f73266a627902dacde60217c0a8a04fe4de1c0bee1"
+    },
+    {
+      "file": "src/server/Game.server.luau",
+      "sha256": "ce151d2b41026c454af4b7ac0954e67a0458d401498fbe487a4c9874f6346515"
+    },
+    {
+      "file": "src/server/MapBuilder.luau",
+      "sha256": "e05e0566d9471fa066db4e23f59b1ffd222a426a37bb4386b23ffc9a25cb5171"
+    },
+    {
+      "file": "src/server/S1Rules.luau",
+      "sha256": "6c17d358ff905323517511f9c542c7f93b45a6bb514f0bfff54f8ad93240b5f1"
+    },
+    {
+      "file": "src/server/S1TrapRules.luau",
+      "sha256": "180e0092dc673d521bf3a0b44a6da0f549f28daf1c33dbbc844b8b5707a8168b"
+    },
+    {
+      "file": "src/client/HUD.client.luau",
+      "sha256": "ab9155c3e62522cf32f69ba18a042ff3f32c3e6064e483f48147e8c043edeee8"
+    }
+  ],
+  "implemented_roles": {
+    "RAIDER": {
+      "display": "速攻",
+      "health": 100,
+      "speed": 19,
+      "combat_damage": 24,
+      "castle_damage": 14,
+      "permitted_now": true,
+      "proposed_h1_tactics": "海沿いの遠回りを利用した速攻。新能力なし",
+      "only_existing_abilities": true
+    },
+    "GUARDIAN": {
+      "display": "守護",
+      "health": 135,
+      "speed": 15,
+      "combat_damage": 18,
+      "castle_damage": 10,
+      "permitted_now": true,
+      "proposed_h1_tactics": "現行の自陣地上罠で出口防御。卵運搬中・空中で罠禁止",
+      "only_existing_abilities": true
+    }
+  },
+  "conceptual_future_roles": [
+    "戦士",
+    "魔法使い",
+    "忍者",
+    "トラッパー",
+    "建築士",
+    "魔獣使い",
+    "ゾンビ使い"
+  ],
+  "future_roles_executable_in_s1": false,
+  "play_bounds": {
+    "abs_x_recovery": 130,
+    "abs_z_recovery": 76,
+    "y_below_recovery": -30,
+    "actual_grass_arena": [
+      250,
+      142
+    ],
+    "boundary_z": 71,
+    "breaks_egg_on_out_of_bounds": true
+  },
+  "guardian_trap_limits": {
+    "team_half_red_max_x": -9,
+    "team_half_blue_min_x": 9,
+    "abs_x": 116,
+    "abs_z": 55,
+    "y_min": 2,
+    "y_max": 8,
+    "cooldown_s": 20,
+    "max_per_team": 2,
+    "objective_clearance": 15,
+    "forbidden_when_carrying": true
+  },
+  "locations": {
+    "RED": {
+      "spawn": [
+        -68,
+        5,
+        0
+      ],
+      "egg": [
+        -98,
+        2.5,
+        -20
+      ],
+      "score_pad": [
+        -82,
+        -0.5,
+        20
+      ],
+      "castle_core": [
+        -107,
+        6.5,
+        0
+      ]
+    },
+    "BLUE": {
+      "spawn": [
+        68,
+        5,
+        0
+      ],
+      "egg": [
+        98,
+        2.5,
+        -20
+      ],
+      "score_pad": [
+        82,
+        -0.5,
+        20
+      ],
+      "castle_core": [
+        107,
+        6.5,
+        0
+      ]
+    }
+  },
+  "proposed_route_studies": [
+    {
+      "id": "RED_SEA",
+      "team": "RED",
+      "enemy": "BLUE",
+      "kind": "SEA",
+      "title": "海上低床の側面進入",
+      "stage": "STUDY_ONLY_NOT_PHYSICALLY_BUILT",
+      "free_entry": true,
+      "raider_and_guardian_access": true,
+      "egg_carry_allowed": true,
+      "no_new_ability": true,
+      "no_portal_teleport": true,
+      "return_to_original_score_pad": true,
+      "outbound_root_waypoints": [
+        [
+          -68,
+          5,
+          0
+        ],
+        [
+          -50,
+          5,
+          -35
+        ],
+        [
+          -20,
+          5,
+          -40
+        ],
+        [
+          0,
+          5,
+          -40
+        ],
+        [
+          20,
+          5,
+          -40
+        ],
+        [
+          50,
+          5,
+          -35
+        ],
+        [
+          85,
+          5,
+          -20
+        ],
+        [
+          98,
+          5,
+          -20
+        ]
+      ],
+      "return_root_waypoints": [
+        [
+          98,
+          5,
+          -20
+        ],
+        [
+          85,
+          5,
+          -20
+        ],
+        [
+          50,
+          5,
+          -35
+        ],
+        [
+          20,
+          5,
+          -40
+        ],
+        [
+          0,
+          5,
+          -40
+        ],
+        [
+          -20,
+          5,
+          -40
+        ],
+        [
+          -50,
+          5,
+          -35
+        ],
+        [
+          -82,
+          5,
+          20
+        ]
+      ],
+      "defender_counterplay": "入口に見える敵の気配。守護は現行合法位置に地上罠",
+      "child_cue": "海の青い足場を歩く",
+      "required_real_studio_checks": [
+        "actual_platform_collision",
+        "safe_ramps_to_egg",
+        "LOS_damage_regression",
+        "eggs_and_own_pad_not_obscured",
+        "2_real_clients",
+        "mobile_camera_and_FPS",
+        "death_or_fall_no_free_score"
+      ]
+    },
+    {
+      "id": "RED_SKY",
+      "team": "RED",
+      "enemy": "BLUE",
+      "kind": "SKY",
+      "title": "空中橋の側面進入",
+      "stage": "STUDY_ONLY_NOT_PHYSICALLY_BUILT",
+      "free_entry": true,
+      "raider_and_guardian_access": true,
+      "egg_carry_allowed": true,
+      "no_new_ability": true,
+      "no_portal_teleport": true,
+      "return_to_original_score_pad": true,
+      "outbound_root_waypoints": [
+        [
+          -68,
+          5,
+          0
+        ],
+        [
+          -50,
+          10,
+          29
+        ],
+        [
+          -20,
+          18,
+          38
+        ],
+        [
+          0,
+          18,
+          38
+        ],
+        [
+          20,
+          18,
+          38
+        ],
+        [
+          50,
+          10,
+          29
+        ],
+        [
+          85,
+          5,
+          -12
+        ],
+        [
+          98,
+          5,
+          -20
+        ]
+      ],
+      "return_root_waypoints": [
+        [
+          98,
+          5,
+          -20
+        ],
+        [
+          85,
+          5,
+          -12
+        ],
+        [
+          50,
+          10,
+          29
+        ],
+        [
+          20,
+          18,
+          38
+        ],
+        [
+          0,
+          18,
+          38
+        ],
+        [
+          -20,
+          18,
+          38
+        ],
+        [
+          -50,
+          10,
+          29
+        ],
+        [
+          -82,
+          5,
+          20
+        ]
+      ],
+      "defender_counterplay": "橋の出口に見える警告。地上の出口だけ既存合法罠",
+      "child_cue": "雲の橋を登る",
+      "required_real_studio_checks": [
+        "actual_platform_collision",
+        "safe_ramps_to_egg",
+        "LOS_damage_regression",
+        "eggs_and_own_pad_not_obscured",
+        "2_real_clients",
+        "mobile_camera_and_FPS",
+        "death_or_fall_no_free_score"
+      ]
+    },
+    {
+      "id": "BLUE_SEA",
+      "team": "BLUE",
+      "enemy": "RED",
+      "kind": "SEA",
+      "title": "海上低床の側面進入",
+      "stage": "STUDY_ONLY_NOT_PHYSICALLY_BUILT",
+      "free_entry": true,
+      "raider_and_guardian_access": true,
+      "egg_carry_allowed": true,
+      "no_new_ability": true,
+      "no_portal_teleport": true,
+      "return_to_original_score_pad": true,
+      "outbound_root_waypoints": [
+        [
+          68,
+          5,
+          0
+        ],
+        [
+          50,
+          5,
+          -35
+        ],
+        [
+          20,
+          5,
+          -40
+        ],
+        [
+          0,
+          5,
+          -40
+        ],
+        [
+          -20,
+          5,
+          -40
+        ],
+        [
+          -50,
+          5,
+          -35
+        ],
+        [
+          -85,
+          5,
+          -20
+        ],
+        [
+          -98,
+          5,
+          -20
+        ]
+      ],
+      "return_root_waypoints": [
+        [
+          -98,
+          5,
+          -20
+        ],
+        [
+          -85,
+          5,
+          -20
+        ],
+        [
+          -50,
+          5,
+          -35
+        ],
+        [
+          -20,
+          5,
+          -40
+        ],
+        [
+          0,
+          5,
+          -40
+        ],
+        [
+          20,
+          5,
+          -40
+        ],
+        [
+          50,
+          5,
+          -35
+        ],
+        [
+          82,
+          5,
+          20
+        ]
+      ],
+      "defender_counterplay": "入口に見える敵の気配。守護は現行合法位置に地上罠",
+      "child_cue": "海の青い足場を歩く",
+      "required_real_studio_checks": [
+        "actual_platform_collision",
+        "safe_ramps_to_egg",
+        "LOS_damage_regression",
+        "eggs_and_own_pad_not_obscured",
+        "2_real_clients",
+        "mobile_camera_and_FPS",
+        "death_or_fall_no_free_score"
+      ]
+    },
+    {
+      "id": "BLUE_SKY",
+      "team": "BLUE",
+      "enemy": "RED",
+      "kind": "SKY",
+      "title": "空中橋の側面進入",
+      "stage": "STUDY_ONLY_NOT_PHYSICALLY_BUILT",
+      "free_entry": true,
+      "raider_and_guardian_access": true,
+      "egg_carry_allowed": true,
+      "no_new_ability": true,
+      "no_portal_teleport": true,
+      "return_to_original_score_pad": true,
+      "outbound_root_waypoints": [
+        [
+          68,
+          5,
+          0
+        ],
+        [
+          50,
+          10,
+          29
+        ],
+        [
+          20,
+          18,
+          38
+        ],
+        [
+          0,
+          18,
+          38
+        ],
+        [
+          -20,
+          18,
+          38
+        ],
+        [
+          -50,
+          10,
+          29
+        ],
+        [
+          -85,
+          5,
+          -12
+        ],
+        [
+          -98,
+          5,
+          -20
+        ]
+      ],
+      "return_root_waypoints": [
+        [
+          -98,
+          5,
+          -20
+        ],
+        [
+          -85,
+          5,
+          -12
+        ],
+        [
+          -50,
+          10,
+          29
+        ],
+        [
+          -20,
+          18,
+          38
+        ],
+        [
+          0,
+          18,
+          38
+        ],
+        [
+          20,
+          18,
+          38
+        ],
+        [
+          50,
+          10,
+          29
+        ],
+        [
+          82,
+          5,
+          20
+        ]
+      ],
+      "defender_counterplay": "橋の出口に見える警告。地上の出口だけ既存合法罠",
+      "child_cue": "雲の橋を登る",
+      "required_real_studio_checks": [
+        "actual_platform_collision",
+        "safe_ramps_to_egg",
+        "LOS_damage_regression",
+        "eggs_and_own_pad_not_obscured",
+        "2_real_clients",
+        "mobile_camera_and_FPS",
+        "death_or_fall_no_free_score"
+      ]
+    }
+  ],
+  "integration_policy": {
+    "authority": "Game.server.luau",
+    "new_damage_or_round_owner": false,
+    "new_remote": false,
+    "new_client_position_or_score_selection": false,
+    "reward_or_purchase": false,
+    "f2p_route_pair": true,
+    "only_original_server_egg_and_score_pad": true,
+    "final_rojo_studio_required": true,
+    "next_owner": "H1 integrator #248 only; #220 sole actual official RC writer."
+  },
+  "h0": "Frozen eight-safe S1 as-is; private OWNER subjective evaluation only",
+  "h1": "One visible and physically verified sky/ocean pair inside original bounds with unchanged two-class actions and real egg capture."
+}
