@@ -64,7 +64,7 @@ def verify_files(files: dict[str,bytes]) -> dict:
             raise Blocked("BUNDLE_FILE_HASH_MISMATCH:"+name)
     if len(files[PLACE]) != ORIGINAL_BYTES or sha(files[PLACE]) != ORIGINAL_SHA256:
         raise Blocked("WRONG_GAME_BINARY_SOURCE")
-    if not files[PLACE].startswith(b"<roblox"):
+    if b"<roblox" not in files[PLACE][:512]:
         raise Blocked("GAME_NOT_XML_ROBLOX_PLACE")
     lock=parse_json(files[LOCK],"SOURCE_LOCK")
     required = {
