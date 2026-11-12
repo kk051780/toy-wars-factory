@@ -9,6 +9,7 @@ local Rules = require(script.Parent:WaitForChild("S1Rules"))
 local MapBuilder = require(script.Parent:WaitForChild("MapBuilder"))
 local LobbyTeamRecovery = require(script.Parent:WaitForChild("LobbyTeamRecovery"))
 local TrapRules = require(script.Parent:WaitForChild("S1TrapRules"))
+local WindRules = require(script.Parent:WaitForChild("S1RaiderWindRules"))
 -- The existing Game is the ONLY match/event/HP/egg owner.
 local CanonicalHost = require(script.Parent:WaitForChild("S1CanonicalRoundHost"))
 local BossBinding = require(script.Parent:WaitForChild("S1GoroganLiveBindings"))
@@ -47,6 +48,9 @@ local lastSeq: {[Player]: number} = {}
 local lastAttack: {[Player]: number} = {}
 local lastRoleChange: {[Player]: number} = {}
 local lastTrap: {[Player]: number} = {}
+local lastWind: {[Player]: number} = {}
+local windUntil: {[Player]: number} = {}
+local windHighlight: {[Player]: Instance} = {}
 local slowed: {[Player]: any} = {}
 local traps: {any} = {}
 local trapSerial = 0
@@ -133,6 +137,17 @@ local function giveEggVisual(player: Player)
     txt.TextColor3 = Color3.fromRGB(255, 229, 98)
     txt.Parent = b
     carryVisuals[player] = b
+end
+-- Wind burst is a mobility-only extension of the SAME server/Remote/seq authority.
+local function stopWind(player: Player)
+    windUntil[player] = nil
+    local old = windHighlight[player]
+    windHighlight[player] = nil
+    if old then old:Destroy() end
+    local alive, _, hum = healthy(player)
+    if alive and hum and slowed[player] == nil then
+        hum.WalkSpeed = Config.RoleWalkSpeed[roles[player] or "RAIDER"]
+    end
 end
 -- Guardian traps stay inside the EXISTING Game.server round/combat authority.
 -- No second Remote, scheduler, damage owner, client position or monetization.
@@ -234,6 +249,7 @@ local function tickTraps(now: number)
                 }) then
                     local slow = TrapRules.slowSpeed(Config.RoleWalkSpeed[roles[player] or "RAIDER"])
                     if slow then
+                        stopWind(player) -- Guardian trap always cancels Raider wind.
                         local current = slowed[player]
                         slowed[player] = {hum = hum,
                             untilAt = math.max(now + TrapRules.SLOW_SECONDS,
@@ -277,6 +293,9 @@ local function snapshotFor(player: Player)
         trapCooldown = math.max(0, math.ceil((lastTrap[player] or -math.huge)
             + TrapRules.COOLDOWN - now)),
         trapRole = (roles[player] or "RAIDER") == "GUARDIAN",
+        windCooldown = math.max(0, math.ceil((lastWind[player] or -math.huge)
+            + WindRules.COOLDOWN - now)),
+        windActive = (windUntil[player] or 0) > now,
     }
 end
 local function broadcast()
@@ -405,7 +424,10 @@ local function stopRound(winner: string, reason: string)
     match.alarmUntil = 0
     setObjectiveEnabled(false)
     clearTraps()
-    for _, p in ipairs(Players:GetPlayers()) do dropEgg(p) end
+    for _, p in ipairs(Players:GetPlayers()) do
+        stopWind(p)
+        dropEgg(p)
+    end
     broadcast()
 end
 local function resetRound()
@@ -423,9 +445,11 @@ local function resetRound()
     match.alarm = "IDLE"
     match.alarmUntil = 0
     for _, p in ipairs(Players:GetPlayers()) do
+        stopWind(p)
         dropEgg(p)
         lastAttack[p] = -math.huge
         lastTrap[p] = -math.huge
+        lastWind[p] = -math.huge
         -- Player seq stays monotonic across round transitions; never rewind replay ceiling.
         p:LoadCharacter()
     end
@@ -476,12 +500,14 @@ local function assignSpawn(player: Player, character: Model)
         if team == "RED" or team == "BLUE" then
             root.CFrame = map.teams[team].spawn + Vector3.new(0, 2, 0)
         end
+        stopWind(player) -- no burst survives respawn or a new Humanoid
         local role = roles[player] or "RAIDER"
         hum.MaxHealth = Config.RoleHealth[role]
         hum.Health = hum.MaxHealth
         hum.WalkSpeed = Config.RoleWalkSpeed[role]
         invulnUntil[player] = serverNow() + Config.RespawnInvulnerability
         hum.Died:Connect(function()
+            stopWind(player)
             restoreSlow(player)
             dropEgg(player)
             invulnUntil[player] = 0
@@ -498,6 +524,7 @@ for _, team in ipairs({"RED", "BLUE"}) do
             if within(player, map.teams[team].egg.Position, Config.InteractDistance)
                 then 0 else 1e8, alive, carry[player] ~= nil, free,
             Config.InteractDistance) then return end
+        stopWind(player) -- cannot carry an egg at burst speed
         match.eggOwners[team] = player
         carry[player] = team
         map.teams[team].egg.Transparency = 1
@@ -580,6 +607,39 @@ local function applyAttack(player: Player, data)
     if winner then stopRound(winner, "CASTLE_DESTROYED") else broadcast() end
 end
 
+-- H1 RAIDER wind: server accepts intent only, never client position or speed.
+local function applyWind(player: Player, data)
+    if type(data) ~= "table" or data.action ~= "WIND_BURST" then return end
+    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end
+    lastSeq[player] = data.seq -- consume all replayed and rejected intents
+    local team = getTeamName(player)
+    local alive, root, hum = healthy(player)
+    if not alive or not root or not hum then return end
+    local now = serverNow()
+    if not WindRules.canActivate({
+        phase = match.phase, team = team, role = roles[player] or "RAIDER",
+        alive = alive, carrying = carry[player] ~= nil, slowed = slowed[player] ~= nil,
+        active = (windUntil[player] or 0) > now, now = now,
+        lastAt = lastWind[player] or -math.huge,
+        x = root.Position.X, y = root.Position.Y, z = root.Position.Z,
+    }) then return end
+    stopWind(player)
+    lastWind[player] = now
+    windUntil[player] = now + WindRules.DURATION
+    hum.WalkSpeed = WindRules.SPEED
+    -- Obvious warning to opposing Guardians: flank sprint is NOT stealth/invulnerability.
+    local glow = Instance.new("Highlight")
+    glow.Name = "S1_RAIDER_WIND_SERVER_TELL"
+    glow.FillColor = Color3.fromRGB(98, 208, 255)
+    glow.OutlineColor = Color3.fromRGB(247, 251, 255)
+    glow.FillTransparency = 0.45
+    glow.OutlineTransparency = 0.1
+    glow.DepthMode = Enum.HighlightDepthMode.Occluded
+    glow.Parent = player.Character
+    windHighlight[player] = glow
+    broadcast()
+end
+
 local function applyRole(player: Player, data)
     if type(data) ~= "table" or data.action ~= "ROLE" then return end
     if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end
@@ -591,6 +651,7 @@ local function applyRole(player: Player, data)
     local now = serverNow()
     if now - (lastRoleChange[player] or -math.huge) < Config.RoleSelectCooldown then return end
     lastRoleChange[player] = now
+    stopWind(player)
     roles[player] = role
     remote:FireClient(player, snapshotFor(player))
 end
@@ -600,6 +661,7 @@ remote.OnServerEvent:Connect(function(player: Player, data)
     if data.action == "ATTACK" then applyAttack(player, data)
     elseif data.action == "ROLE" then applyRole(player, data)
     elseif data.action == "PLACE_TRAP" then placeTrap(player, data)
+    elseif data.action == "WIND_BURST" then applyWind(player, data)
     end
 end)
 
@@ -610,6 +672,7 @@ local function onJoin(player: Player)
     lastAttack[player] = -math.huge
     lastRoleChange[player] = -math.huge
     lastTrap[player] = -math.huge
+    lastWind[player] = -math.huge
     invulnUntil[player] = 0
     player.CharacterAdded:Connect(function(character)
         dropEgg(player)
@@ -623,6 +686,7 @@ for _, player in ipairs(Players:GetPlayers()) do onJoin(player) end
 Players.PlayerRemoving:Connect(function(player)
     local side = getTeamName(player)
     dropEgg(player)
+    stopWind(player)
     restoreSlow(player)
     for i = #traps, 1, -1 do
         if traps[i].owner == player then
@@ -635,6 +699,9 @@ Players.PlayerRemoving:Connect(function(player)
     lastAttack[player] = nil
     lastRoleChange[player] = nil
     lastTrap[player] = nil
+    lastWind[player] = nil
+    windUntil[player] = nil
+    windHighlight[player] = nil
     invulnUntil[player] = nil
     if match.phase == "ACTIVE" and side ~= "NONE" then
         -- Robust to PlayerRemoving before OR after GetPlayers() drops the leaver.
@@ -654,6 +721,14 @@ end)
 local function tickRound()
     local now = serverNow()
     tickTraps(now)
+    -- Clean up boosts through the ONLY existing authoritative 0.5-second tick.
+    for player, untilAt in pairs(windUntil) do
+        local alive = healthy(player)
+        if match.phase ~= "ACTIVE" or not alive or now >= untilAt
+            or carry[player] ~= nil or slowed[player] ~= nil then
+            stopWind(player)
+        end
+    end
     local count = #Players:GetPlayers()
     if match.phase == "LOBBY" then
         rebalanceLobbyTeams()
@@ -706,6 +781,7 @@ local function tickRound()
                 local team = getTeamName(player)
                 if team == "RED" or team == "BLUE" then
                     dropEgg(player)
+                    stopWind(player)
                     restoreSlow(player)
                     root.AssemblyLinearVelocity = Vector3.zero
                     root.AssemblyAngularVelocity = Vector3.zero
