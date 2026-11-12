@@ -86,7 +86,7 @@ MUTATIONS = [
     ("trap_uses_forged_location", "Game",
      "x = root.Position.X, y = root.Position.Y, z = root.Position.Z,\n        count = countTraps(team), avoid = avoid,",
      "x = data.position.x, y = data.position.y, z = data.position.z,\n        count = countTraps(team), avoid = avoid,",
-     "GAME_S1_ASSERT_v6_genuine_blue_trap_created"),
+     "GAME_S1_ASSERT_v6_egg_clearance_uses_real_map"),
     ("trap_melee_ray_query_blocked", "Game",
      "disc.CanQuery = false -- traps never obstruct melee raycast or castle aim",
      "disc.CanQuery = true -- deliberate broken variant",
