@@ -1,0 +1,85 @@
+name: P0D S1 V6 Guardian mobile right-side trap HUD source QA
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-v6-mobile-guardian-hud-safe-20261112-01
+permissions:
+  contents: read
+jobs:
+  exact-source-mobile-guardian-hud:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - name: Checkout full source history and isolated candidate
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Confirm official source commit available
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '1263a03701211a652b99b91d2339575dc8104eff^{commit}'
+      - name: Verify public manifest and exact one line source diff and landscape negative layouts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          root=Path("handoffs/P0D-S1-V6-MOBILE-GUARDIAN-HUD-SAFE-20261112-01")
+          m=json.loads((root/"BUILD_MANIFEST.json").read_bytes())
+          assert set(m)=={"files","format","game_id","packet_id","public_source_allowed","work_id"}
+          assert m["format"]=="P0D_PUBLIC_SOURCE_V1" and m["public_source_allowed"] is True
+          assert m["game_id"]=="TRAP_RAIDERS" and m["work_id"]=="p0d-siege-v19"
+          assert len(m["files"])==4
+          for entry in m["files"]:
+              assert set(entry)=={"path","sha256","size"}
+              path=root/entry["path"]
+              assert path.is_file() and not path.is_symlink()
+              raw=path.read_bytes()
+              assert len(raw)==entry["size"]
+              assert hashlib.sha256(raw).hexdigest()==entry["sha256"]
+          print("P0D_V6_GUARDIAN_MOBILE_SOURCE_MANIFEST_4_OF_4_PASS")
+          PY
+          python3 -B handoffs/P0D-S1-V6-MOBILE-GUARDIAN-HUD-SAFE-20261112-01/tools/verify_guardian_mobile_layout.py --repo .
+          python3 -B handoffs/P0D-S1-V6-MOBILE-GUARDIAN-HUD-SAFE-20261112-01/tools/verify_guardian_mobile_layout.py --selftest
+          PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+            -s handoffs/P0D-S1-V6-MOBILE-GUARDIAN-HUD-SAFE-20261112-01/tests -v
+      - name: Checkout fixed Luau compiler source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _fixed_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Build genuine native Luau compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _fixed_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _fixed_luau -B /tmp/p0d-v6-guardian-hud-compile -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d-v6-guardian-hud-compile --target Luau.Compile.CLI --parallel 4
+      - name: Compile untouched official original and exact isolated Guardian candidate and reject broken syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          git show '1263a03701211a652b99b91d2339575dc8104eff:releases/P0D_S1_KIDS_RC01/src/client/HUD.client.luau' > /tmp/p0d-original-v6-HUD.client.luau
+          compiler=/tmp/p0d-v6-guardian-hud-compile/luau-compile
+          test -x "$compiler"
+          "$compiler" /tmp/p0d-original-v6-HUD.client.luau > /dev/null
+          "$compiler" handoffs/P0D-S1-V6-MOBILE-GUARDIAN-HUD-SAFE-20261112-01/candidate/src/client/HUD.client.luau > /dev/null
+          echo 'local = 7' > /tmp/p0d-bad-guard-hud.luau
+          if "$compiler" /tmp/p0d-bad-guard-hud.luau > /dev/null 2>&1; then
+            echo 'ERROR: invalid Luau compiled successfully' >&2; exit 1
+          fi
+          echo P0D_V6_REAL_NATIVE_ORIGINAL_AND_CANDIDATE_HUD_COMPILE_PASS
+          echo P0D_V6_INVALID_NATIVE_HUD_SYNTAX_REJECTED
+      - name: Verify no tracked source changed by QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
