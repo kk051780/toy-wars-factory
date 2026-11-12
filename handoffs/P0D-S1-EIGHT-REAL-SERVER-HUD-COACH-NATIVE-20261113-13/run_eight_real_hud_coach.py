@@ -290,7 +290,7 @@ def execute(repo: Path, luau: str) -> int:
 
 def selftest():
     assert len(EIGHT)==len(SEVEN)==len(HUD_BLOB)==40
-    assert git_blob(b"abc")=="f2ba8f84ab5c1bce84a7b441cb1959cfc709b7f"
+    assert git_blob(b"abc")=="f2ba8f84ab5c1bce84a7b441cb1959cfc7093b7f"
     assert len(ANCHORS)==8 and len(HUD_MUTANTS)==2 and len(GAME_MUTANTS)==1
     assert len({x[1] for x in ANCHORS})==8
     assert "P0D_EIGHT_REAL_GAME_COACH_HUD_SAME_VM_PASS" in HUD_REPLAY
