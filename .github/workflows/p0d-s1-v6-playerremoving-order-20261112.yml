@@ -1,0 +1,81 @@
+name: P0D S1 V6 PlayerRemoving order independent real Luau
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-v6-playerremoving-order-20261112-01
+permissions:
+  contents: read
+jobs:
+  native-order-source-candidate:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - name: Checkout exact isolated fix candidate full Git source history
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Require immutable exact official and upstream six-source roster commits
+        shell: bash
+        run: |
+          set -euo pipefail
+          for sha in 1263a03701211a652b99b91d2339575dc8104eff 664284d6ec29741060bead3bd0df66e9ea6b1e76 84d061d81ffd28418f6e28e9e85bb684dd0daaf7 b2ae7828b641ab5acccc279117d36c6c413b543b
+          do
+            git cat-file -e "$sha^{commit}"
+          done
+      - name: Check complete public-source SHA256 manifest and exact candidate source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          root=Path("handoffs/P0D-S1-V6-PLAYERREMOVING-ORDER-20261112-01")
+          manifest=json.loads((root/"BUILD_MANIFEST.json").read_bytes())
+          assert set(manifest)=={"format","game_id","work_id","packet_id","public_source_allowed","official_pin","files"}
+          assert manifest["format"]=="P0D_PUBLIC_SOURCE_V1"
+          assert manifest["public_source_allowed"] is True
+          assert manifest["game_id"]=="TRAP_RAIDERS"
+          assert manifest["work_id"]=="p0d-siege-v19"
+          assert manifest["official_pin"]=="1263a03701211a652b99b91d2339575dc8104eff"
+          assert len(manifest["files"])==4
+          for row in manifest["files"]:
+            assert set(row)=={"path","size","sha256"}
+            p=root/row["path"]
+            assert p.is_file() and not p.is_symlink()
+            b=p.read_bytes()
+            assert len(b)==row["size"] and hashlib.sha256(b).hexdigest()==row["sha256"],p
+          print("P0D_V6_PLAYERREMOVING_SHA256_MANIFEST_4_OF_4_PASS")
+          PY
+          python3 -B handoffs/P0D-S1-V6-PLAYERREMOVING-ORDER-20261112-01/tools/validate_remove_order_native.py --selftest
+          PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+            -s handoffs/P0D-S1-V6-PLAYERREMOVING-ORDER-20261112-01/tests -v
+      - name: Fetch pinned genuine upstream Luau CLI source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_fixed
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build actual native Luau interpreter
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _native_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _native_fixed -B /tmp/p0d_playerremoving_luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_playerremoving_luau --target Luau.Repl.CLI --parallel 4
+      - name: Reproduce original event-order bug and prove real original six-script candidate plus four source mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 \
+            handoffs/P0D-S1-V6-PLAYERREMOVING-ORDER-20261112-01/tools/validate_remove_order_native.py \
+            --repo . --luau /tmp/p0d_playerremoving_luau/luau
+      - name: Ensure all tracked source remained unchanged during CI
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
