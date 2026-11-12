@@ -1,0 +1,279 @@
+{
+  "format": "P0D_S1_EIGHT_REAL_STUDIO_QA_NOT_TESTED_V1",
+  "source_place_sha256": "b27f401cd6aed7242665098a4cf323184fe13f2ef964b59a3c97b82daf998d04",
+  "studio_tested": false,
+  "owner_publish_approval": false,
+  "qa_release_authorized": false,
+  "scenarios": [
+    {
+      "id": "ENGINE_BOOT",
+      "category": "Studio",
+      "description": "Roblox Studio opens this isolated exact unpublished place without replacing previous local work",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "ENGINE_CLOSE",
+      "category": "Studio",
+      "description": "Stop Play, close Studio normally, no leftover running or modified production place",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "TWO_CLIENT_CONNECT",
+      "category": "TwoClient",
+      "description": "Two separate clients join in isolated Studio test without crashing",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "TEAMS_SPLIT",
+      "category": "TwoClient",
+      "description": "Two players are put into RED and BLUE teams by server",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "COUNTDOWN",
+      "category": "TwoClient",
+      "description": "Countdown starts only with at least one per team",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "SPAWN_COLOR",
+      "category": "TwoClient",
+      "description": "Each client respawns at own color castle",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "JAPANESE_LABELS",
+      "category": "UX",
+      "description": "Japanese egg/castle delivery labels readable for child player",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "CHILD_FTUE_60S",
+      "category": "UX",
+      "description": "First 60 seconds explain stealing egg, returning and role selection",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "EGG_RED_TAKE",
+      "category": "Egg",
+      "description": "BLUE player steals RED egg with legitimate proximity prompt",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "EGG_BLUE_TAKE",
+      "category": "Egg",
+      "description": "RED player steals BLUE egg with legitimate proximity prompt",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "EGG_SCORE",
+      "category": "Egg",
+      "description": "Carried enemy egg can score at own delivery pad",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "EGG_CARRIER_QUIT",
+      "category": "Egg",
+      "description": "Carrier disconnect returns held egg and re-enables prompt",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "CASTLE_ATTACK",
+      "category": "Combat",
+      "description": "Server evaluates real distance/aim/obstruction before damaging castle",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "ATTACK_SECURITY",
+      "category": "Security",
+      "description": "Client cannot choose arbitrary damage/target or forged position",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "TRAP_GUARDIAN",
+      "category": "Trap",
+      "description": "Guardian can place trap using legitimate server-side position",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "TRAP_EXCLUSION",
+      "category": "Trap",
+      "description": "Trap cannot be placed inside egg/goal clearance radius",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "TRAP_SLOW",
+      "category": "Trap",
+      "description": "Enemy trap slows, then speed resets; ally not slowed",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "MOBILE_ATTACK_RIGHT",
+      "category": "Mobile",
+      "description": "Touch attack stays right of native thumbstick and jump",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "MOBILE_GUARDIAN_TRAP",
+      "category": "Mobile",
+      "description": "Guardian touch trap button visible, hittable and not overlapping controls",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "MOBILE_ROLE_SWAP",
+      "category": "Mobile",
+      "description": "Role controls respond on a physical phone in lobby",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "MOBILE_PERFORMANCE",
+      "category": "Mobile",
+      "description": "Physical mobile test records FPS, UI scaling, input and memory evidence",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "ARENA_X_BOUNDARY",
+      "category": "Arena",
+      "description": "X>130 server returns player to team spawn without carrying egg",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "ARENA_Z_BOUNDARY",
+      "category": "Arena",
+      "description": "abs(Z)>76 server returns player to team spawn",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "ARENA_Y_FALL",
+      "category": "Arena",
+      "description": "Y<-30 server returns player to team spawn",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "ARENA_RECOVERY_EGG",
+      "category": "Arena",
+      "description": "Escaping while carrying enemy egg returns real egg + zeroes velocities",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "TEAMMATE_EXIT",
+      "category": "Exit",
+      "description": "Team member leaves with another teammate remaining: round continues",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "LAST_PLAYER_EXIT",
+      "category": "Exit",
+      "description": "Last player on a team leaves: opponent wins once, no ghost win",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "HUD_LATE_OLD_PACKET",
+      "category": "Network",
+      "description": "Old same-round SNAPSHOT arriving after new does not overwrite HUD/Score/Buttons",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "COACH_LATE_OLD_PACKET",
+      "category": "Network",
+      "description": "Old same-round SNAPSHOT does not rollback 60s guide after newer update",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    },
+    {
+      "id": "RESULTS_REMATCH",
+      "category": "Rematch",
+      "description": "Results and new match reset objectives/HP/score without accepting stale seq",
+      "status": "NOT_TESTED",
+      "evidence": [],
+      "actual_observation": null,
+      "owner_reviewed": false
+    }
+  ]
+}
