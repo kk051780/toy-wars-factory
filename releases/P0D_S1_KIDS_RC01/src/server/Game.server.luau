@@ -681,13 +681,24 @@ local function tickRound()
             match.alarm = "IDLE"
         end
     end
+    -- Recovery uses the existing server-only authoritative tick. Exact current
+    -- S1 GrassArena is 250 x 142 studs; five studs outside is no longer playable.
+    -- No client request or egg carry can choose a free teleport destination.
     for _, player in ipairs(Players:GetPlayers()) do
         local alive, root = healthy(player)
-        if alive and root and root.Position.Y < -30 then
-            local team = getTeamName(player)
-            if team == "RED" or team == "BLUE" then
-                dropEgg(player)
-                root.CFrame = map.teams[team].spawn + Vector3.new(0, 4, 0)
+        if alive and root then
+            local position = root.Position
+            if position.Y < -30 or math.abs(position.X) > 130
+                or math.abs(position.Z) > 76 then
+                local team = getTeamName(player)
+                if team == "RED" or team == "BLUE" then
+                    dropEgg(player)
+                    restoreSlow(player)
+                    root.AssemblyLinearVelocity = Vector3.zero
+                    root.AssemblyAngularVelocity = Vector3.zero
+                    root.CFrame = map.teams[team].spawn + Vector3.new(0, 4, 0)
+                    invulnUntil[player] = now + Config.RespawnInvulnerability
+                end
             end
         end
     end
