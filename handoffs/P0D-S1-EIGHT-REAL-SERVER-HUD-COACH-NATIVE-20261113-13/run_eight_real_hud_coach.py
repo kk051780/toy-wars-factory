@@ -199,7 +199,7 @@ GAME_MUTANTS = (
     ("server_ordinal_never_increments",
      "snapshotUpdateId += 1",
      "-- snapshotUpdateId += 1",
-     "GAME_S1_ASSERT_real_coach_tracks_first_update_id"),
+     "GAME_S1_ASSERT_real_guardian_role_snapshot_consumes"),
 )
 
 def load(repo: Path):
