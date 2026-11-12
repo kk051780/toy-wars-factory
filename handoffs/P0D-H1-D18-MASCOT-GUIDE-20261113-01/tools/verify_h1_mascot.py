@@ -31,7 +31,7 @@ def verify_manifest():
   path=row["path"]
   check(path.startswith("src/") and ".." not in Path(path).parts and path not in names,"bad manifest path")
   raw=(ROOT/path).read_bytes()
-  sha=hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\\0"+raw).hexdigest()
+  sha=hashlib.sha1(b"blob "+str(len(raw)).encode()+bytes([0])+raw).hexdigest()
   check(sha==row["git_blob_sha1"] and len(raw)==row["bytes"],"manifest source changed "+path)
   names.add(path)
  check(len(names)==27 and NEW_NAMES<=names,"missing expected 27 exact source")
