@@ -1,0 +1,31 @@
+name: P0D-D18 Batch8 source-only & mutation QA
+on:
+  push:
+    branches:
+      - handoff/p0d-d18-batch8-six-original-display-20261113-01
+  workflow_dispatch:
+jobs:
+  original-batch8-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Strict canonical and immutable content verification
+        run: |
+          cd handoffs/P0D-D18-BATCH8-SIX-ORIGINAL-DISPLAY-20261113-01
+          python tools/verify_batch8.py
+      - name: Python source-only positive and negative regression
+        run: |
+          cd handoffs/P0D-D18-BATCH8-SIX-ORIGINAL-DISPLAY-20261113-01
+          python -m unittest discover -s tests -v
+      - name: Ensure no gameplay, new remote or monetization authority
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          root=Path('handoffs/P0D-D18-BATCH8-SIX-ORIGINAL-DISPLAY-20261113-01/src')
+          blocked=('DataStoreService','MarketplaceService','RemoteEvent','OnServerEvent','Humanoid','PlayerAdded')
+          for file in root.glob('*.luau'):
+              src=file.read_text(encoding='utf8')
+              assert not any(x in src for x in blocked),file
+          print('BATCH8_DISPLAY_ONLY_SOURCE_SAFETY_PASS')
+          PY

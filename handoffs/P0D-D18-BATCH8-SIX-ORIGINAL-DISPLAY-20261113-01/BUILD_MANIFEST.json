@@ -1,0 +1,64 @@
+{
+  "schema": "P0D_D18_BATCH8_PUBLIC_SOURCE_MANIFEST_V1",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "delivery_mode": "PUBLIC_SOURCE_V1",
+  "no_keys": true,
+  "source_atlas_sha256": "cf5ec26836842ce55a764c5ad66c711f00da0ed4cc30d80dad0df851e2656e01",
+  "atlas_sha256": "cf5ec26836842ce55a764c5ad66c711f00da0ed4cc30d80dad0df851e2656e01",
+  "parent_batch7_source": "8e990b3f408be3c61ff8dc5bd5532c10e0ddb344",
+  "source_files": [
+    {
+      "path": "data/models.json",
+      "git_blob_sha1": "62f070aef64cff8a05a5a51920de6ca9ed4b04a8",
+      "bytes": 52073
+    },
+    {
+      "path": "src/D18Batch8Catalog.luau",
+      "git_blob_sha1": "109e282b983c228f83ccdb3e53bd27d2f68c957b",
+      "bytes": 23807
+    },
+    {
+      "path": "src/D18Batch8Factory.luau",
+      "git_blob_sha1": "9ba528e8517c0535e84f74eb2afbf5dc456a7415",
+      "bytes": 2694
+    },
+    {
+      "path": "src/DisabledPreview.client.luau",
+      "git_blob_sha1": "a1754cbedc51ad6bcd8a0123f9769d98d2d192c3",
+      "bytes": 205
+    },
+    {
+      "path": "default.project.json",
+      "git_blob_sha1": "f4c095a38412335855f6717d5af023d6532af64a",
+      "bytes": 511
+    },
+    {
+      "path": "design/CHARACTER_CARDS.md",
+      "git_blob_sha1": "7a2ba798e4b128c2ea538f15dcc6b7cb9a9b03ea",
+      "bytes": 4272
+    },
+    {
+      "path": "README.md",
+      "git_blob_sha1": "26c9dbf3ed4950bb33477aec69d1940dc30ee6ec",
+      "bytes": 1305
+    },
+    {
+      "path": "tools/verify_batch8.py",
+      "git_blob_sha1": "afa09c044679bf7e873766d0f04c7840068017c2",
+      "bytes": 4284
+    },
+    {
+      "path": "tests/test_batch8.py",
+      "git_blob_sha1": "f01b13a354dfc4728d98e04b2df7ecc1dd6491dc",
+      "bytes": 1972
+    },
+    {
+      "path": "tests/test_mutants.py",
+      "git_blob_sha1": "4017068eaada747d1aa5d94a1ec9abd9f9a85967",
+      "bytes": 1603
+    }
+  ],
+  "actual_studio": "NOT_TESTED",
+  "code_stage": "source-only S2+ optional, no S1 adoption"
+}
