@@ -43,9 +43,9 @@ eq(last(pThree).carrying,"BLUE","late_join_can_carry_enemy_egg")
 eq(arena.teams.BLUE.egg.Transparency,1,"late_join_stolen_egg_hidden")
 -- Roblox event is fired BEFORE Players list loses the leaving member.
 Players.PlayerRemoving:Fire(pThree)
+eq(last(pRed).phase,"ACTIVE","departing_red_has_surviving_teammate")
 eq(arena.teams.BLUE.egg.Transparency,0,"carrier_departure_restores_egg")
 eq(arena.teams.BLUE.eggPrompt.Enabled,true,"carrier_departure_unlocks_egg")
-eq(last(pRed).phase,"ACTIVE","departing_red_has_surviving_teammate")
 Players.users={pRed,pBlue,pFour}
 tick(33.1)
 eq(last(pRed).redPlayers,1,"red_team_after_departure")
