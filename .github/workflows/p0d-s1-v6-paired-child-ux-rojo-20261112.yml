@@ -1,0 +1,84 @@
+name: P0D S1 V6 combined two child UX exact 21 source real Rojo review
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-v6-child-ux-combined-20261112-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  paired-v6-rojo-real-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      P0D_PACK: handoffs/P0D-S1-V6-CHILD-UX-COMBINED-20261112-01
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Checkout immutable isolated review branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Fetch exact historical production and independently tested UX candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          for PIN in \
+            1263a03701211a652b99b91d2339575dc8104eff \
+            78f849af28e15d7e990dd2690f2cafff0854d001 \
+            e29d37737890671d458072bebe729127878700f6
+          do
+            git cat-file -e "$PIN^{commit}" || git fetch --no-tags origin "$PIN"
+            git cat-file -e "$PIN^{commit}"
+          done
+          python3 -m py_compile "$P0D_PACK/tools/check_paired_ux_rojo.py"
+      - name: Download official Rojo v7.7.1 and verify immutable ZIP digest
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --retry 3 --retry-delay 2 \
+            "https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip" \
+            --output "$RUNNER_TEMP/pinned_rojo.zip"
+          printf '%s\n' "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  $RUNNER_TEMP/pinned_rojo.zip" | sha256sum -c
+          python3 - <<'PY'
+          import os, pathlib, stat, zipfile
+          base = pathlib.Path(os.environ["RUNNER_TEMP"])
+          with zipfile.ZipFile(base/"pinned_rojo.zip") as z:
+              entries=[x for x in z.namelist() if x.rsplit("/",1)[-1]=="rojo"]
+              assert len(entries)==1, entries
+              content=z.read(entries[0])
+              assert len(content)>1_000_000
+              out=base/"p0d_rojo"
+              out.write_bytes(content)
+              out.chmod(out.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+          print("P0D_V6_PAIRED_OFFICIAL_ROJO_ZIP_SHA256_PASS")
+          PY
+          "$RUNNER_TEMP/p0d_rojo" --version | tee "$RUNNER_TEMP/rojo_version.txt"
+          grep -F '7.7.1' "$RUNNER_TEMP/rojo_version.txt"
+      - name: Build actual 21 script V6 plus 2 vetted child UX sources as Roblox XML Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/p0d_rojo" build "$P0D_PACK/preview/default.project.json" \
+            -o "$RUNNER_TEMP/TRAP_RAIDERS_S1_V6_PAIRED_UX_REVIEW.rbxlx"
+          test -s "$RUNNER_TEMP/TRAP_RAIDERS_S1_V6_PAIRED_UX_REVIEW.rbxlx"
+          echo "P0D_V6_PAIRED_REAL_ROJO_BUILD_SUCCESS"
+      - name: Verify every actual Rojo XML Script against original 19 and exact 2 prior candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$P0D_PACK/tools/check_paired_ux_rojo.py" \
+            --repo . \
+            --place "$RUNNER_TEMP/TRAP_RAIDERS_S1_V6_PAIRED_UX_REVIEW.rbxlx" \
+            --receipt "$RUNNER_TEMP/PAIRED_V6_REVIEW_ONLY_RECEIPT.json"
+          test -z "$(git status --porcelain --untracked-files=no)"
+      - name: Attach review-only nonpublished game file for sole integrator
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-S1-V6-PAIRED-JP-UX-REVIEW-ONLY
+          path: |
+            ${{ runner.temp }}/TRAP_RAIDERS_S1_V6_PAIRED_UX_REVIEW.rbxlx
+            ${{ runner.temp }}/PAIRED_V6_REVIEW_ONLY_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 6
