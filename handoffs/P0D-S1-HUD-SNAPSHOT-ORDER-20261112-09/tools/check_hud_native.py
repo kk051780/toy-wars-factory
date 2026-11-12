@@ -56,7 +56,7 @@ PATCHES = [
 ]
 MUTANTS = [
     ("ignore_update_id", "local id = s.updateId",
-     "local id = nil", "HUD_S1_ASSERT_late_same_serial_role_rejected"),
+     "local id = nil", "HUD_S1_ASSERT_late_same_serial_attack_preserved"),
     ("allow_duplicate", "id <= lastUpdateId then return end",
      "id < lastUpdateId then return end", "HUD_S1_ASSERT_duplicate_snapshot_rejected"),
     ("allow_fractional", "or id > 1000000000 or id % 1 ~= 0",
@@ -67,7 +67,7 @@ MUTANTS = [
      "(id <= lastUpdateId and s.serial <= lastSerial) then return end",
      "HUD_S1_ASSERT_old_cross_round_update_id_rejected"),
     ("allow_same_round_old_results", "id <= lastUpdateId then return end",
-     "id < -1 then return end", "HUD_S1_ASSERT_late_same_serial_role_rejected"),
+     "id < -1 then return end", "HUD_S1_ASSERT_late_same_serial_attack_preserved"),
 ]
 
 LUAU_SETUP = r'''
