@@ -1,0 +1,151 @@
+name: P0D S2 rare hub current guide native full server real Rojo
+on:
+  push:
+    branches:
+      - handoff/p0d-rare-studio-wayfinding-20261113-02
+    paths:
+      - 'handoffs/P0D-RARE-STUDIO-WAYFINDING-20261113-02/**'
+      - '.github/workflows/p0d-rare-studio-wayfinding-20261113.yml'
+permissions:
+  contents: read
+jobs:
+  original-full-server-guides-native-luau:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      OWN: handoffs/P0D-RARE-STUDIO-WAYFINDING-20261113-02
+      W: handoffs/P0D-WORLD-RARE-4REALMS-3D-20261112-01
+      N: handoffs/P0D-WORLD-RARE-NEUTRAL-ENCOUNTERS-20261112-01
+      B: handoffs/P0D-RARE-DISCOVERY-BOOK-20261112-01
+      C: handoffs/P0D-RARE-CHILD-CLUE-COMPASS-20261113-01
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: All four prior original roots must be immutable
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 5ba43f1212ac89d63b1928646e5817e9e489655e HEAD
+          git diff --exit-code 5ba43f1212ac89d63b1928646e5817e9e489655e HEAD -- "$W" "$N" "$B" "$C"
+          python3 "$W/tools/verify_manifest.py"
+          python3 "$N/tools/verify_manifest.py"
+          python3 "$B/tools/verify_manifest.py"
+          python3 "$C/tools/verify_manifest.py"
+          python3 "$OWN/tools/verify_manifest.py"
+          python3 "$OWN/tools/verify_candidate_delta.py"
+          echo "P0D_WAYFINDING_FOUR_ORIGINAL_FROZEN_SOURCE_MANIFESTS_PASS"
+      - name: Source contracts and no invented Roblox Studio pass
+        run: python3 -m unittest discover -s "$OWN/tests" -p 'test_*.py' -v
+      - name: Build exact SHA pinned genuine upstream Luau interpreters
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/current-guide-luau
+          git -C /tmp/current-guide-luau init -q
+          git -C /tmp/current-guide-luau remote add origin https://github.com/luau-lang/luau.git
+          git -C /tmp/current-guide-luau fetch --quiet --depth 1 origin f46d879e28302a430029304f7f6a162aed66f103
+          git -C /tmp/current-guide-luau checkout --quiet FETCH_HEAD
+          test "$(git -C /tmp/current-guide-luau rev-parse HEAD)" = "f46d879e28302a430029304f7f6a162aed66f103"
+          cmake -S /tmp/current-guide-luau -B /tmp/current-guide-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_CLI=ON -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/current-guide-luau/build --config Release --target Luau.Repl.CLI Luau.Compile.CLI -j 2
+      - name: Execute genuine original 11 Luau game sources in one VM with 2 simulated Players
+        shell: bash
+        run: |
+          set -euo pipefail
+          for source in "$OWN"/src/*.luau; do
+            /tmp/current-guide-luau/build/luau-compile "$source" > /dev/null
+            echo "P0D_WAYFINDING_NEW_ORIGINAL_COMPILE_PASS $source"
+          done
+          python3 "$OWN/tools/build_native_wayfinder_runner.py" --output /tmp/current-guide-cases
+          test "$(find /tmp/current-guide-cases -name '*.luau' | wc -l)" -eq 8
+          for source in /tmp/current-guide-cases/*.luau; do
+            /tmp/current-guide-luau/build/luau-compile "$source" > /dev/null
+          done
+          /tmp/current-guide-luau/build/luau /tmp/current-guide-cases/positive.luau | tee /tmp/current-guide-positive.log
+          grep -q "P0D_RARE_WAYFINDING_FULL_SERVER_NATIVE_PASS assertions=" /tmp/current-guide-positive.log
+          for bad in BAD_ALL_SIGNS_VISIBLE BAD_COLLIDING_SIGN BAD_SIGNS_ALL_AT_HUB_CENTER BAD_EXPIRY_SIGN_NOT_CLEARED BAD_FALSE_REWARD_ADVERT BAD_SERVER_HIGHLIGHTS_WRONG_CREATURE BAD_SERVER_SKIPS_CLEAR; do
+            if /tmp/current-guide-luau/build/luau "/tmp/current-guide-cases/$bad.luau" > "/tmp/$bad.log" 2>&1; then
+              echo "P0D_WAYFINDING_MUTANT_BADLY_ACCEPTED $bad"; exit 1
+            fi
+            grep -q "RARE_BOOK_FULL_SERVER_NATIVE_FAIL" "/tmp/$bad.log"
+          done
+          echo "P0D_WAYFINDING_SEVEN_SOURCE_MUTATIONS_DENIED_PASS"
+      - name: No source change to previous game or cross-chat lanes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code 5ba43f1212ac89d63b1928646e5817e9e489655e HEAD -- "$W" "$N" "$B" "$C"
+          test -z "$(git status --porcelain --untracked-files=no)"
+          echo "P0D_WAYFINDING_STUDIO_2CLIENT_PHONE_NOT_TESTED"
+  actual-rojo-eleven-byte-exact-script-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      OWN: handoffs/P0D-RARE-STUDIO-WAYFINDING-20261113-02
+      W: handoffs/P0D-WORLD-RARE-4REALMS-3D-20261112-01
+      N: handoffs/P0D-WORLD-RARE-NEUTRAL-ENCOUNTERS-20261112-01
+      B: handoffs/P0D-RARE-DISCOVERY-BOOK-20261112-01
+      C: handoffs/P0D-RARE-CHILD-CLUE-COMPASS-20261113-01
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Five separate keyless source roots and only-five-additive-server hooks
+        shell: bash
+        run: |
+          set -euo pipefail
+          for dir in "$W" "$N" "$B" "$C" "$OWN"; do
+            python3 "$dir/tools/verify_manifest.py"
+          done
+          python3 "$OWN/tools/verify_candidate_delta.py"
+      - name: Fetch genuine source-pinned original Rojo7.7.1 binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --retry 3 --retry-delay 2 \
+            "https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip" \
+            -o "$RUNNER_TEMP/rojo.zip"
+          printf '%s\n' "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  $RUNNER_TEMP/rojo.zip" | sha256sum -c
+          python3 - <<'PY'
+          import os,pathlib,stat,zipfile
+          root=pathlib.Path(os.environ["RUNNER_TEMP"])
+          with zipfile.ZipFile(root/"rojo.zip") as z:
+              names=[n for n in z.namelist() if n.rsplit("/",1)[-1]=="rojo"]
+              assert len(names)==1
+              data=z.read(names[0])
+              assert len(data)>1_000_000
+              dest=root/"rojo"
+              dest.write_bytes(data)
+              dest.chmod(dest.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          "$RUNNER_TEMP/rojo" --version | grep -F "7.7.1"
+      - name: Build actual original 11-source .rbxlx with strict 5 manifest byte audit and 9 binary mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _rare_wayfinding_real_rojo
+          "$RUNNER_TEMP/rojo" build "$OWN/default.project.json" -o "_rare_wayfinding_real_rojo/RARE_CURRENT_GUIDES_OWNER_REVIEW_ONLY.rbxlx"
+          export P0D_WAYFINDING_REAL_ROJO_PLACE="$PWD/_rare_wayfinding_real_rojo/RARE_CURRENT_GUIDES_OWNER_REVIEW_ONLY.rbxlx"
+          test -s "$P0D_WAYFINDING_REAL_ROJO_PLACE"
+          python3 "$OWN/tools/verify_real_rojo.py" --place "$P0D_WAYFINDING_REAL_ROJO_PLACE" --receipt "_rare_wayfinding_real_rojo/EXACT_ELEVEN_SOURCE_RECEIPT.json"
+          python3 -m unittest discover -s "$OWN/tests" -p 'test_real_rojo.py' -v
+          echo "P0D_WAYFINDING_REAL_ROJO_REVIEW_ONLY_STUDIO_NOT_TESTED"
+      - name: Keep actual immutable Rojo binary and source receipts for owner Studio review
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-RARE-WAYFINDING-11-REAL-LUAU-OWNER-STUDIO-REVIEW-ONLY
+          path: |
+            _rare_wayfinding_real_rojo/RARE_CURRENT_GUIDES_OWNER_REVIEW_ONLY.rbxlx
+            _rare_wayfinding_real_rojo/EXACT_ELEVEN_SOURCE_RECEIPT.json
+          retention-days: 14
+          if-no-files-found: error
+      - name: Never claim actual Roblox Studio tested by GitHub
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
+          echo "P0D_WAYFINDING_REAL_STUDIO_2CLIENT_MOBILE_NOT_TESTED"
