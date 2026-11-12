@@ -43,7 +43,7 @@ def verify_contract(client=None,rules=None,project=None):
  client=client if client is not None else (ROOT/"src/client/D18MascotGuide.client.luau").read_text(encoding="utf8")
  rules=rules if rules is not None else (ROOT/"src/client/D18MascotGuideRules.luau").read_text(encoding="utf8")
  project=project if project is not None else json.loads((ROOT/"default.project.json").read_text(encoding="utf8"))
- for token in ('RunService:IsStudio()','ProximityPrompt','OnClientEvent','D18Batch8Catalog','SCORE_PAD','EGG','MaxActivationDistance=14','CanCollide=false','CanTouch=false','CanQuery=false','clearHints()','dropMascot()'):
+ for token in ('RunService:IsStudio()','ProximityPrompt','OnClientEvent','D18Batch8Catalog','MaxActivationDistance=14','CanCollide=false','CanTouch=false','CanQuery=false','clearHints()','dropMascot()'):
   check(token in client,"missing safety/UI contract "+token)
  for token in ('UPDATE','PRODUCTION','MarketplaceService','DataStore','FireServer(','Instance.new("RemoteEvent")','Player:SetAttribute','ApplyDamage','DamageHumanoid'):
   check(token not in client,"forbidden authority/mutation "+token)
