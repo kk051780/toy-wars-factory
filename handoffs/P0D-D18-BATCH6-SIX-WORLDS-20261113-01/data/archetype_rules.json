@@ -1,0 +1,88 @@
+{
+  "schema": "P0D_D18_ARCHETYPE_RULES_V1",
+  "archetypes": {
+    "BE_CANDY_SKY_DRAGON": {
+      "category": "BE",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "star_wing",
+        "lollipop_tail",
+        "jelly_crown"
+      ]
+    },
+    "SP_SEVEN_BELLS_LIGHT": {
+      "category": "SP",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "seven_bells",
+        "golden_halo",
+        "sunbeam_ribbon"
+      ]
+    },
+    "VE_SEA_BELL_LIGHTHOUSE": {
+      "category": "VE",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "lighthouse_roof",
+        "coral_wheels",
+        "anchor_bell"
+      ]
+    },
+    "WE_LEAF_WHISTLE_HORN": {
+      "category": "WE",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "rolled_leaf_tube",
+        "mushroom_keys",
+        "butterfly_note"
+      ]
+    },
+    "ZO_CARNIVAL_GUIDE": {
+      "category": "ZO",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "ferris_hat",
+        "ticket_flag",
+        "uneven_shoes"
+      ]
+    },
+    "TR_STITCHED_CLOTH_BOUNCER": {
+      "category": "TR",
+      "near_max": 24,
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "signature_tags": [
+        "stitched_crescent",
+        "pillow_bounce",
+        "up_arrow"
+      ]
+    }
+  },
+  "authoring_policy": "Original Batch6 child-legible 3D source-only preview art, six unique geometry archetypes, no gameplay or server authority.",
+  "required_field_per_part": [
+    "name",
+    "position",
+    "size",
+    "rotation",
+    "shape",
+    "color",
+    "far",
+    "signature_tag",
+    "group"
+  ],
+  "shape_enum": [
+    "Ball",
+    "Block",
+    "Cylinder"
+  ]
+}
