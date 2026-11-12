@@ -59,14 +59,14 @@ def potential_overlaps(paths,walls):
     return hits
 
 def certain_centerline_intrusions(paths,walls):
-    # Direct path CENTER (not just width bound) travels into solid wall interior.
+    # Path CENTER'S WALKABLE DECK (sample 0.5 stud above center) enters solid wall.
     hits=set()
     for name,(a,b,width) in paths.items():
         for team,label,x,y,z in walls:
             for i in range(1,100):
                 t=i/100
                 p=tuple(a[k]+(b[k]-a[k])*t for k in range(3))
-                if x[0]<p[0]<x[1] and y[0]<p[1]<y[1] and z[0]<p[2]<z[1]:
+                if x[0]<p[0]<x[1] and y[0]<p[1]+0.5<y[1] and z[0]<p[2]<z[1]:
                     hits.add((name,team,label))
                     break
     return hits
