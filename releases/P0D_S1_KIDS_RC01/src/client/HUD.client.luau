@@ -81,6 +81,7 @@ local roleGuardian = button(gui, "GuardianRole", "🛡 守護", UDim2.fromOffset
 
 local seq = 0
 local lastSerial = -1
+local lastUpdateId = -1 -- never reset between rounds; view-only HUD ordering
 local bossVisual: {serial: number, eventId: string, lastSeq: number, cueUntil: number}? = nil
 local function action(kind: string, role: string?)
     seq += 1
@@ -170,9 +171,20 @@ remote.OnClientEvent:Connect(function(s)
     end
     if s.kind ~= "SNAPSHOT" then return end
     if type(s.serial) ~= "number" or s.serial < lastSerial then return end
+    -- Same-round stale SNAPSHOTs must never roll back score, phase or buttons.
+    -- Use the same numeric and legacy-upgrade policy as FirstMinuteModel.
+    local id = s.updateId
+    if id ~= nil then
+        if type(id) ~= "number" or id ~= id or id < 0
+            or id > 1000000000 or id % 1 ~= 0
+            or id <= lastUpdateId then return end
+    elseif lastUpdateId >= 0 then
+        return
+    end
     if type(s.scores) ~= "table" or type(s.hp) ~= "table" then return end
     if s.serial > lastSerial or s.phase ~= "ACTIVE" then bossVisual = nil end
     lastSerial = s.serial
+    if id ~= nil then lastUpdateId = id end
     top.Text = string.format("🔴 %d / 🏰 %d       🔵 %d / 🏰 %d\n自分:%s・%s  |  %d対%d人",
         s.scores.RED or 0, s.hp.RED or 0, s.scores.BLUE or 0,
         s.hp.BLUE or 0, s.team or "?", displayRole(s.role),
