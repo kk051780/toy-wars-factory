@@ -1,0 +1,40 @@
+{
+  "packet_id": "P0D-H1-ROUTE-OVERLAP-QA-20261113-01",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "source_h1_commit": "c73f305fb412927aee05b399a4f54a2a16d0579f",
+  "source_h1_overlay_blob": "6de8a8b4f17afd4e11c4be8eb1db556506d9c8df",
+  "source_h1_original_map_blob": "94655d019fdf9798fa24a350ebf49f8290465ac0",
+  "status": "QA_CANDIDATE_ONLY_NO_OFFICIAL_RC_WRITE",
+  "studio_qa": "NOT_TESTED",
+  "independent_actual_js_original_wall_intrusions": 4,
+  "independent_js_candidate_wall_intrusions": 0,
+  "python_unit_tests_authored": 16,
+  "github_ci_execution": "NOT_VERIFIED",
+  "files": [
+    {
+      "path": "handoffs/P0D-H1-ROUTE-OVERLAP-QA-20261113-01/candidate/H1FunWorld_wall_clearance_REVIEW_ONLY.server.luau",
+      "bytes": 6420,
+      "sha256": "dd9acdcc5a0dfe858e2533de77d9d35c32d0f7372b83d33e0e4d31fc10c3bbc1",
+      "blob_sha": "cc764b9caaa293ff747489e02e607af4502ddca4"
+    },
+    {
+      "path": "handoffs/P0D-H1-ROUTE-OVERLAP-QA-20261113-01/tests/test_h1_wall_overlap.py",
+      "bytes": 10088,
+      "sha256": "d5c7721695a910cbc88f2ea35192a71c2c54018f89532af5894220b3ccba297c",
+      "blob_sha": "ea9fed8c3d814eb87ab4b4b830a7d6440a433de5"
+    },
+    {
+      "path": "handoffs/P0D-H1-ROUTE-OVERLAP-QA-20261113-01/README.md",
+      "bytes": 3918,
+      "sha256": "e8abb3c20c1bea9a6ef58050e3cbdf39be3bb5dcec1b6f57b88c48eb7bc27110",
+      "blob_sha": "6985914ce24b87907c8a8463aaf2c822cb54f24d"
+    },
+    {
+      "path": ".github/workflows/p0d-h1-field-wall-route-qa-20261113.yml",
+      "bytes": 1165,
+      "sha256": "5985ea5296916f06223bb80e77a817ce5d6d77dcb937c65310eb4b308374d352",
+      "blob_sha": "3a49913b1fa164a439863c2a70064757fc7a5739"
+    }
+  ]
+}
