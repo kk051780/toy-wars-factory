@@ -1,0 +1,30 @@
+name: P0D H1 field wall route independent source and geometry review
+on:
+  push:
+    branches:
+      - qa/p0d-h1-source-route-overlap-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  route-source-review:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Ensure original H1+S1 source is identical to immutable parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e 'c73f305fb412927aee05b399a4f54a2a16d0579f^{commit}'
+          test -z "$(git diff --name-only c73f305fb412927aee05b399a4f54a2a16d0579f HEAD -- handoffs/P0D-H1-WORLD-CREATURES-20261113-01 releases/P0D_S1_KIDS_RC01)"
+      - name: Execute actual-source wall intersection and 15 regression/mutant tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s 'handoffs/P0D-H1-ROUTE-OVERLAP-QA-20261113-01/tests' -p 'test_*.py' -v
+          test -z "$(git status --porcelain --untracked-files=no)"
