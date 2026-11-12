@@ -19,7 +19,8 @@ local stamp=0
 local stageByPlayer={}
 local lastByPlayer={}
 local completedByPlayer={}
-local lastEmitByPlayer={}
+local routeStartedAtByPlayer={}
+local characterConns={}
 local connectionList={}
 local readyEmitted=false
 
@@ -68,7 +69,7 @@ local function fresh(player)
     stageByPlayer[player]={}
     completedByPlayer[player]={}
     lastByPlayer[player]=nil
-    lastEmitByPlayer[player]={}
+    routeStartedAtByPlayer[player]={}
     for _,id in ipairs(Plan.ROUTE_ORDER) do
         stageByPlayer[player][id]=1
     end
@@ -140,8 +141,17 @@ local function tickPlayer(player, now)
     for _,id in ipairs(Plan.ROUTE_ORDER) do
         if completedByPlayer[player][id]~=true then
             local stage=stageByPlayer[player][id]
+            local started=routeStartedAtByPlayer[player][id]
+            if started and now-started > Plan.LIMIT_PER_ROUTE_SECONDS then
+                stage=1
+                stageByPlayer[player][id]=1
+                routeStartedAtByPlayer[player][id]=nil
+                emit("ROUTE_TIMEOUT",string.format("player_local=%s route=%s checkpoint_reset=true",
+                    tostring(player.UserId),id))
+            end
             local nextStage,complete=Plan.advance(id,stage,pos.X,pos.Y,pos.Z)
             if nextStage~=stage then
+                if stage==1 then routeStartedAtByPlayer[player][id]=now end
                 stageByPlayer[player][id]=nextStage
                 local list=Plan.ROUTES[id]
                 local label=list[stage] and list[stage].label or "END"
@@ -157,16 +167,25 @@ local function tickPlayer(player, now)
     end
 end
 
-for _,player in ipairs(Players:GetPlayers()) do fresh(player) end
-table.insert(connectionList,Players.PlayerAdded:Connect(function(player)
+local function bindPlayer(player)
     fresh(player)
+    characterConns[player]=player.CharacterRemoving:Connect(function()
+        fresh(player)
+        emit("CHARACTER","respawn_or_death=true route_checkpoints_reset=true")
+    end)
+end
+for _,player in ipairs(Players:GetPlayers()) do bindPlayer(player) end
+table.insert(connectionList,Players.PlayerAdded:Connect(function(player)
+    bindPlayer(player)
     emit("PLAYER","join=one_client status=WAITING_FOR_PHYSICAL_WALK")
 end))
 table.insert(connectionList,Players.PlayerRemoving:Connect(function(player)
+    local c=characterConns[player]
+    if c then c:Disconnect(); characterConns[player]=nil end
     stageByPlayer[player]=nil
     completedByPlayer[player]=nil
     lastByPlayer[player]=nil
-    lastEmitByPlayer[player]=nil
+    routeStartedAtByPlayer[player]=nil
     emit("PLAYER","leave=one_client status=EVIDENCE_NOT_PERSISTED")
 end))
 local accumulator=0
@@ -181,6 +200,10 @@ end))
 
 game:BindToClose(function()
     for _,connection in ipairs(connectionList) do connection:Disconnect() end
+    for player,connection in pairs(characterConns) do
+        connection:Disconnect()
+        characterConns[player]=nil
+    end
     emit("SHUTDOWN",string.format("active_clients=%d full_scene_gate_pass=%s",
         activeClientCount(),tostring(readyEmitted)))
     if folder and folder.Parent then folder:Destroy() end
