@@ -1,0 +1,176 @@
+{
+  "schema": "P0D_PRODUCT_STUDIO_ACTION_CARDS_V1",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "stage": "PRELAUNCH",
+  "created_jst": "2026-11-12",
+  "planning_only": true,
+  "source_atlas_sha256": "cf5ec26836842ce55a764c5ad66c711f00da0ed4cc30d80dad0df851e2656e01",
+  "baseline_d18_source_pin": "74dc24dca8510fb10c00df30d5d64e8aec9e8660",
+  "source_3d_before": 30,
+  "source_3d_after": 30,
+  "not_started_3d_count": 42,
+  "scope": "Game design and collectible editorial only: 0 new Luau models, 0 game integrated, 0 owner RC changes",
+  "six_idea_cards": [
+    {
+      "id": "TRCA-BE-036",
+      "category": "BE",
+      "category_ja": "魔獣",
+      "name": "永久晶ドラ",
+      "rarity": "ミシック",
+      "world": "氷鏡の宮",
+      "shape": [
+        "六角の氷片を背にした丸いドラゴン",
+        "片側だけ大きな氷角",
+        "体の前に離れて浮く透明な六角盾"
+      ],
+      "child_action": "自分の城門を守るとき、氷片ドラを呼んで通路を一度ふさぐ",
+      "job_synergy": "魔獣使いが配置し、建築士の壁の横に一時的な抜け道の選択を生む",
+      "effect_candidate": "自陣の決められた通路に4秒だけ視認可能な半透明バリア。チーム同時1体。卵は運べない",
+      "counter": "相手は別通路へ回るか、詠唱2秒後に消えるのを待てる。敵にも残り時間の表示",
+      "abuse_guard": "城門完全封鎖は禁止。少なくとも別の歩行通路を常時開放。味方との衝突なし。購入優遇なし",
+      "child_cue": "六角の盾=まもる"
+    },
+    {
+      "id": "TRCA-SP-009",
+      "category": "SP",
+      "category_ja": "魔法",
+      "name": "鐘を帰す星歌",
+      "rarity": "ミシック",
+      "world": "星屑の廃都",
+      "shape": [
+        "中央が割れた五角星の鐘",
+        "星の周囲を一周しない銀色の楽譜弧",
+        "下に垂れる黄色の帰り道リボン"
+      ],
+      "child_action": "宝を持ったら鐘を鳴らして自分の城への矢印を出す",
+      "job_synergy": "魔法使いが帰還の道筋を示し、忍者の隠密運搬に過度な速度強化なしで協力できる",
+      "effect_candidate": "卵所持者に自陣への地面矢印を5秒表示。移動速度と実座標情報の相手への漏洩は変えない",
+      "counter": "相手には発動音と近距離の光だけ見える。ワープではないので待ち伏せや追跡が成立",
+      "abuse_guard": "敵位置は表示しない。卵ドロップと試合終了で即消去。1所持につき1回を上限",
+      "child_cue": "鐘と矢印=かえる"
+    },
+    {
+      "id": "TRCA-VE-009",
+      "category": "VE",
+      "category_ja": "乗り物",
+      "name": "星帰りの観測台",
+      "rarity": "ミシック",
+      "world": "星屑の廃都",
+      "shape": [
+        "左右非対称の三輪ミニ観測車",
+        "大きな割れ星の望遠鏡",
+        "子どもが座る位置が見える空いた席"
+      ],
+      "child_action": "星の観測車に乗り、敵の城へつながる高台を探す",
+      "job_synergy": "建築士が安全路を作り、魔獣使いが地上から護衛する",
+      "effect_candidate": "1人乗り、歩行より遅い安全観測車。視点を少し高くできるが卵所持中は乗車不可",
+      "counter": "相手から車体と乗員が見え、地形の裏側から近づける。攻撃不可でも即脱出可能",
+      "abuse_guard": "地形外・崖越え飛行禁止。敵陣スポーン妨害禁止。降車/通信切断時に安全な地面へ",
+      "child_cue": "望遠鏡と席=みわたす"
+    },
+    {
+      "id": "TRCA-WE-009",
+      "category": "WE",
+      "category_ja": "武器",
+      "name": "星音ホルン",
+      "rarity": "ミシック",
+      "world": "星屑の廃都",
+      "shape": [
+        "大小二つの違う向きのラッパ口",
+        "中央のひび割れ星石",
+        "短い黄色い音符アンテナ"
+      ],
+      "child_action": "ホルンを鳴らして味方に『ここを守ろう』の合図を出す",
+      "job_synergy": "戦士の突撃ではなく守備合流を助け、職業不問の意思疎通を作る",
+      "effect_candidate": "6秒間味方だけが見られる定型ピン。音と光は両陣営に聞こえる/見える。ダメージ0",
+      "counter": "敵はホルンの鳴った方向を聞けるため待ち伏せできる。位置の完全秘匿不可",
+      "abuse_guard": "スパム防止25秒間隔。個人チャット/ボイス入力不要。敵味方の実名表示なし",
+      "child_cue": "二つのラッパ口=なかまをよぶ"
+    },
+    {
+      "id": "TRCA-ZO-018",
+      "category": "ZO",
+      "category_ja": "ゾンビ",
+      "name": "森番もこもこ兵",
+      "rarity": "ミシック",
+      "world": "苔灯の深森",
+      "shape": [
+        "葉の大きな三角ぼうし",
+        "ふんわり大きな布胴体",
+        "左右高さの違う茸ランタン靴"
+      ],
+      "child_action": "もこもこ兵を呼び、壊れた扉の前で1回だけ守ってもらう",
+      "job_synergy": "ゾンビ使いの召喚に守備側の役割を与え、罠師の片側防衛と組み合わせられる",
+      "effect_candidate": "破損扉の直前で8秒間立つ軽量NPC。相手の接近を小さく知らせるがHPダメージ0・卵を触れない",
+      "counter": "敵は別方向から入るか、見つかる前にNPCを遠回りさせられる。召喚位置は見える",
+      "abuse_guard": "1チーム最大1体、通知は毎秒連打しない。NPC増殖・無限ループ・対人追跡を禁止",
+      "child_cue": "茸の靴と大きな帽子=みはる"
+    },
+    {
+      "id": "TRCA-TR-027",
+      "category": "TR",
+      "category_ja": "罠",
+      "name": "歯輪の跳ね台",
+      "rarity": "ミシック",
+      "world": "歯車の赤峡谷",
+      "shape": [
+        "半分だけ欠けた大きな赤銅歯車",
+        "正面に描いた大きな矢印",
+        "横から見える短い二重バネ"
+      ],
+      "child_action": "矢印を見てジャンプ台に乗り、城壁の低い場所を越える",
+      "job_synergy": "罠師が道を作り、忍者/建築士が普段と違う侵入路を検討する",
+      "effect_candidate": "地面設置1個、設置予告2秒、上向き+前向きの短い跳躍。使用者全員に同じ飛距離、卵所持中は不使用",
+      "counter": "敵も台を使える。設置矢印が全員に見え、設置者は隠せない",
+      "abuse_guard": "崖/スポーン/水面の上を禁止、落下救済必須、プレイヤーの強制操作不可。購入優遇なし",
+      "child_cue": "大矢印とバネ=とぶ"
+    }
+  ],
+  "experiments": [
+    {
+      "id": "EXP-FTUE-01",
+      "stage": "PRIVATE_CHILD_PLAYTEST",
+      "H0": "初回S1で道案内以外の新しい装備説明を表示しない",
+      "H1": "再戦後に『鐘と矢印=帰る』の3秒説明を1回だけ表示する",
+      "primary_metric": "卵を持った状態で自陣の方向を自力で指させるか (yes/no)",
+      "secondary_metric": "初めて卵を拾ってから帰還を試みるまでの秒数",
+      "decision_gate": "子ども複数名が混乱なく説明でき、実操作に悪影響がないこと。少人数は定性試験であり有意差断定不可",
+      "rollback": "説明オーバーレイをオフにし、現S1 UIへ戻す"
+    },
+    {
+      "id": "EXP-REPLAY-01",
+      "stage": "POST_RELEASE_AFTER_OWNER_APPROVAL",
+      "H0": "試合終了後の再戦画面だけを表示",
+      "H1": "試合終了後に無料コレクション1体の次章ヒントを控えめに表示。購入/ガチャ誘導なし",
+      "primary_metric": "再戦ボタンを選んだセッションの比率",
+      "secondary_metric": "再戦までの時間、D1/D7、60秒離脱、ストア非訪問者の不利益",
+      "decision_gate": "再戦率の改善が観測され、初回離脱率/子どもの理解/公平性が悪化しないこと。実測前は全値UNKNOWN",
+      "rollback": "カードを消し既存の再戦画面だけに戻す"
+    }
+  ],
+  "market_sources": [
+    {
+      "date_utc": "2026-11-12 06:00 UTC",
+      "kind": "third_party_public_chart",
+      "url": "https://www.zing.co.uk/industry-resources/roblox/charts/",
+      "observation": "Steal An Egg 606.4k, Throw Food For Animals 206.6k, Murder Mystery 2 140.2k concurrent players at snapshot",
+      "interpretation": "Collection and immediate understandable play loops have strong attention, but no causal or revenue proof for TRAP RAIDERS"
+    },
+    {
+      "date_utc": "2026-11-12",
+      "kind": "official_documentation",
+      "url": "https://create.roblox.com/docs/discovery",
+      "observation": "First-play bounce under 60 seconds and 61-180 seconds, play days, playtime, intentional co-play are recommendation signals",
+      "interpretation": "Give children an action immediately; instrument retention only after genuine live traffic"
+    }
+  ],
+  "rules": [
+    "All six items are new authored designs, not existing source 3D models",
+    "All proposed capabilities are S2+ candidate mechanics and must not enter S1 without sole #220 review, gameplay authority tests and OWNER approval",
+    "No direct egg teleport, no purchase-only gameplay advantage, no hidden opponent information extraction",
+    "All artwork concepts use original primitive geometry; no copyrighted character/branding asset reuse",
+    "Children must see both action cue and defender counterplay",
+    "Cost control targets 24 near/16 far simple anchored display Parts; engine/physics/multiclient/mobile remains NOT_TESTED"
+  ]
+}
