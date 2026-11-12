@@ -1,0 +1,32 @@
+name: P0D D18 Batch4 Original 3D Source Validation
+on:
+  push:
+    branches:
+      - handoff/p0d-d18-batch4-six-real3d-20261112-14
+    paths:
+      - 'handoffs/P0D-D18-BATCH4-SIX-REAL3D-20261112-14/**'
+      - '.github/workflows/p0d-d18-batch4-six-real3d-source-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: p0d-d18-batch4-six-real3d-source-ci
+  cancel-in-progress: false
+jobs:
+  python-source-verification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    defaults:
+      run:
+        working-directory: handoffs/P0D-D18-BATCH4-SIX-REAL3D-20261112-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deterministic original Roblox Luau catalog regeneration
+        run: python3 tools/generate_catalog.py --check
+      - name: Six character source rules and negative mutations
+        run: python3 -m unittest discover -v -s tests
+      - name: Exact PUBLIC_SOURCE_V1 source manifest
+        run: python3 tools/verify_manifest.py
+      - name: Explicitly exclude Roblox runtime qualification
+        run: |
+          echo 'SOURCE_QA_ONLY: Studio real 2client/mobile/human NOT_TESTED'
