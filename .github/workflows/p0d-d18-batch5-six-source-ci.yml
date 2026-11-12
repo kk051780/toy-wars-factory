@@ -1,0 +1,29 @@
+name: P0D D18 Batch5 Original Six 3D Source CI
+on:
+  push:
+    branches:
+      - handoff/p0d-d18-batch5-six-sky-sea-fantasy-20261113-01
+    paths:
+      - 'handoffs/P0D-D18-BATCH5-SIX-SKY-SEA-FANTASY-20261113-01/**'
+      - '.github/workflows/p0d-d18-batch5-six-source-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: p0d-d18-batch5-six-source-ci
+  cancel-in-progress: false
+jobs:
+  source-only-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    defaults:
+      run:
+        working-directory: handoffs/P0D-D18-BATCH5-SIX-SKY-SEA-FANTASY-20261113-01
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deterministic authored Luau source verification
+        run: python3 tools/generate_catalog.py --check
+      - name: Six original models + unsafe mutation rejection
+        run: python3 -m unittest discover -s tests -v
+      - name: Studio scope disclaimer
+        run: echo "SOURCE_ONLY - genuine Roblox Studio 2 client/mobile/human NOT_TESTED"
