@@ -89,7 +89,7 @@ def expected_sources():
         raw = file.read_bytes()
         if rel in EXPECTED_BLOBS:
             require(git_blob(raw) == EXPECTED_BLOBS[rel],
-                    "SIX_SELECTED_SOURCE_SHA_CHANGED_" + rel)
+                    "SEVEN_SELECTED_SOURCE_SHA_CHANGED_" + rel)
         expected[dest] = (cls, raw)
     require(len(expected) == 21, "MISSING_EXPECTED_SCRIPT")
     require(sum(v[0] == "Script" for v in expected.values()) == 1, "WRONG_GAME_OWNER_COUNT")
@@ -223,7 +223,7 @@ def main():
         "server_scripts": 1,
         "local_scripts": 3,
         "module_scripts": 17,
-        "rojo_xml_mutations_rejected": 9,
+        "rojo_xml_mutations_rejected": 11,
         "place_sha256": hashlib.sha256(raw).hexdigest(),
         "place_bytes": len(raw),
         "studio_tested": False,
