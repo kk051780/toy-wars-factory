@@ -1,0 +1,55 @@
+name: P0D S1 six-safe complete original Game Map dynamic native QA
+on:
+  push:
+    branches:
+      - qa/p0d-s1-six-safe-arena-exit-native-20261112-07
+permissions:
+  contents: read
+jobs:
+  six-dynamic-qa:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      P0D_QA: handoffs/P0D-S1-SIX-ARENA-EXIT-NATIVE-QA-20261112-07/run_six_real_native.py
+    steps:
+      - name: Checkout isolated QA source and exact source history
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Validate frozen source commits and independent selftest
+        shell: bash
+        run: |
+          set -euo pipefail
+          for sha in 65785c2e3b9bc37a6962f9ace128fbfcbb670901 4024c21238f913ffa226a38e4bd092de43d02af6 664284d6ec29741060bead3bd0df66e9ea6b1e76 d37c70d884d8dcfd45ee2d621f59583e573c54ee; do
+            git cat-file -e "$sha^{commit}"
+          done
+          python3 -B "$P0D_QA" --selftest
+      - name: Checkout exact upstream native Luau interpreter source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_six_dynamic_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build genuine pinned native Luau CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_six_dynamic_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_six_dynamic_luau -B /tmp/p0d_six_dynamic_luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_six_dynamic_luau --target Luau.Repl.CLI --parallel 4
+      - name: Execute authentic six original S1 modules and negative mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$P0D_QA" --repo . --luau /tmp/p0d_six_dynamic_luau/luau
+      - name: Forbid any tracked game source modification
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
