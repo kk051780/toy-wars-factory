@@ -54,6 +54,10 @@ class G5StandaloneContracts(unittest.TestCase):
         self.assertIn("action=RESET_ROUTE_CHECKPOINTS",S)
         self.assertIn("lastByPlayer[player]",S)
         self.assertIn("PlayerRemoving",S)
+        self.assertIn("CharacterRemoving:Connect",S)
+        self.assertIn("Plan.LIMIT_PER_ROUTE_SECONDS",S)
+        self.assertIn("ROUTE_TIMEOUT",S)
+        self.assertIn("routeStartedAtByPlayer[player]",S)
         self.assertIn("Connect(function(dt)",S)
 
     def test_original_modules_reused_not_reimplemented(self):
