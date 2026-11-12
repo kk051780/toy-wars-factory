@@ -63,9 +63,8 @@ MUTANTS = [
      "or id > 1000000000 or false", "HUD_S1_ASSERT_fractional_update_id_rejected"),
     ("allow_legacy_downgrade", "elseif lastUpdateId >= 0 then",
      "elseif false then", "HUD_S1_ASSERT_unversioned_after_upgrade_rejected"),
-    ("reset_id_each_new_serial", "if id ~= nil then lastUpdateId = id end",
-     "if id ~= nil then lastUpdateId = id end\n"
-     "    if s.serial > lastSerial then lastUpdateId = -1 end",
+    ("reset_id_each_new_serial", "id <= lastUpdateId then return end",
+     "(id <= lastUpdateId and s.serial <= lastSerial) then return end",
      "HUD_S1_ASSERT_old_cross_round_update_id_rejected"),
     ("allow_same_round_old_results", "id <= lastUpdateId then return end",
      "id < -1 then return end", "HUD_S1_ASSERT_late_same_serial_role_rejected"),
@@ -340,7 +339,7 @@ def selftest():
     assert blob(b"abc")=="f2ba8f84ab5c1bce84a7b441cb1959cfc7093b7f"
     assert len(PATCHES)==3 and len(MUTANTS)==6
     assert len({m[0] for m in MUTANTS})==6
-    assert "HUD_S1_ASSERT_duplicate_snapshot_rejected" in (LUAU_TESTS.replace("eq(","HUD_S1_ASSERT_"))
+    assert '"duplicate_snapshot_rejected"' in LUAU_TESTS
     assert "old_cross_round_update_id_rejected" in LUAU_TESTS
     assert exact("a@b","@","x","good")=="axb"
     for item,key in [("text","missing"),("two two","two")]:
