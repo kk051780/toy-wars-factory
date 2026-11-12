@@ -1,0 +1,1130 @@
+{
+  "packet_id": "P0D-WORLD-TACTICAL-CROSSROUTES-20261113-01",
+  "status": "DESIGN_AND_OFFLINE_GRAPH_QA",
+  "stage": "S2_PLUS_OPTIONAL",
+  "actual_scene_geometry": "NOT_CREATED",
+  "studio_qa": "NOT_TESTED",
+  "published": "NOT_AUTHORIZED",
+  "source_canonical": "https://github.com/kk051780/toy-wars-factory/issues/222",
+  "roster_note": "Seven Japanese labels are conceptual archetypes only, NOT verified role API IDs; reconcile with actual game source prior to integration.",
+  "roles": [
+    "戦士",
+    "魔法使い",
+    "忍者",
+    "トラッパー",
+    "建築士",
+    "魔獣使い",
+    "ゾンビ使い"
+  ],
+  "worlds": [
+    "LAND",
+    "SEA",
+    "SKY",
+    "COSMIC",
+    "CELESTIAL",
+    "EMBER",
+    "ECLIPSE"
+  ],
+  "routes": [
+    {
+      "realm": "LAND",
+      "origin": "HUB",
+      "target": "LAND_CASTLE",
+      "route_a": "LAND_A",
+      "route_b": "LAND_B",
+      "label_a": "城前の無料スロープ",
+      "label_b": "常設無料の安全迂回路B"
+    },
+    {
+      "realm": "SEA",
+      "origin": "HUB",
+      "target": "SEA_CASTLE",
+      "route_a": "SEA_A",
+      "route_b": "SEA_B",
+      "label_a": "景色仕掛けA: 無料・両チーム",
+      "label_b": "常設無料の安全迂回路B"
+    },
+    {
+      "realm": "SKY",
+      "origin": "HUB",
+      "target": "SKY_CASTLE",
+      "route_a": "SKY_A",
+      "route_b": "SKY_B",
+      "label_a": "景色仕掛けA: 無料・両チーム",
+      "label_b": "常設無料の安全迂回路B"
+    },
+    {
+      "realm": "COSMIC",
+      "origin": "HUB",
+      "target": "COSMIC_CASTLE",
+      "route_a": "COSMIC_A",
+      "route_b": "COSMIC_B",
+      "label_a": "景色仕掛けA: 無料・両チーム",
+      "label_b": "常設無料の安全迂回路B"
+    },
+    {
+      "realm": "CELESTIAL",
+      "origin": "HUB",
+      "target": "CELESTIAL_CASTLE",
+      "route_a": "CELESTIAL_A",
+      "route_b": "CELESTIAL_B",
+      "label_a": "景色仕掛けA: 無料・両チーム",
+      "label_b": "常設無料の安全迂回路B"
+    },
+    {
+      "realm": "EMBER",
+      "origin": "HUB",
+      "target": "EMBER_CASTLE",
+      "route_a": "EMBER_A",
+      "route_b": "EMBER_B",
+      "label_a": "景色仕掛けA: 無料・両チーム",
+      "label_b": "常設無料の安全迂回路B"
+    },
+    {
+      "realm": "ECLIPSE",
+      "origin": "HUB",
+      "target": "ECLIPSE_CASTLE",
+      "route_a": "ECLIPSE_A",
+      "route_b": "ECLIPSE_B",
+      "label_a": "景色仕掛けA: 無料・両チーム",
+      "label_b": "常設無料の安全迂回路B"
+    }
+  ],
+  "edges": [
+    {
+      "id": "LAND_A_HUB_TO_LAND_A",
+      "from": "HUB",
+      "to": "LAND_A",
+      "realm": "LAND",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "LAND_A_LAND_A_TO_LAND_CASTLE",
+      "from": "LAND_A",
+      "to": "LAND_CASTLE",
+      "realm": "LAND",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "LAND_A_LAND_CASTLE_TO_LAND_A",
+      "from": "LAND_CASTLE",
+      "to": "LAND_A",
+      "realm": "LAND",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "LAND_A_LAND_A_TO_HUB",
+      "from": "LAND_A",
+      "to": "HUB",
+      "realm": "LAND",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "LAND_B_HUB_TO_LAND_B",
+      "from": "HUB",
+      "to": "LAND_B",
+      "realm": "LAND",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "LAND_B_LAND_B_TO_LAND_CASTLE",
+      "from": "LAND_B",
+      "to": "LAND_CASTLE",
+      "realm": "LAND",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "LAND_B_LAND_CASTLE_TO_LAND_B",
+      "from": "LAND_CASTLE",
+      "to": "LAND_B",
+      "realm": "LAND",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "LAND_B_LAND_B_TO_HUB",
+      "from": "LAND_B",
+      "to": "HUB",
+      "realm": "LAND",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SEA_A_HUB_TO_SEA_A",
+      "from": "HUB",
+      "to": "SEA_A",
+      "realm": "SEA",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SEA_A_SEA_A_TO_SEA_CASTLE",
+      "from": "SEA_A",
+      "to": "SEA_CASTLE",
+      "realm": "SEA",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SEA_A_SEA_CASTLE_TO_SEA_A",
+      "from": "SEA_CASTLE",
+      "to": "SEA_A",
+      "realm": "SEA",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SEA_A_SEA_A_TO_HUB",
+      "from": "SEA_A",
+      "to": "HUB",
+      "realm": "SEA",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SEA_B_HUB_TO_SEA_B",
+      "from": "HUB",
+      "to": "SEA_B",
+      "realm": "SEA",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SEA_B_SEA_B_TO_SEA_CASTLE",
+      "from": "SEA_B",
+      "to": "SEA_CASTLE",
+      "realm": "SEA",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SEA_B_SEA_CASTLE_TO_SEA_B",
+      "from": "SEA_CASTLE",
+      "to": "SEA_B",
+      "realm": "SEA",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SEA_B_SEA_B_TO_HUB",
+      "from": "SEA_B",
+      "to": "HUB",
+      "realm": "SEA",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SKY_A_HUB_TO_SKY_A",
+      "from": "HUB",
+      "to": "SKY_A",
+      "realm": "SKY",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SKY_A_SKY_A_TO_SKY_CASTLE",
+      "from": "SKY_A",
+      "to": "SKY_CASTLE",
+      "realm": "SKY",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SKY_A_SKY_CASTLE_TO_SKY_A",
+      "from": "SKY_CASTLE",
+      "to": "SKY_A",
+      "realm": "SKY",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SKY_A_SKY_A_TO_HUB",
+      "from": "SKY_A",
+      "to": "HUB",
+      "realm": "SKY",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SKY_B_HUB_TO_SKY_B",
+      "from": "HUB",
+      "to": "SKY_B",
+      "realm": "SKY",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SKY_B_SKY_B_TO_SKY_CASTLE",
+      "from": "SKY_B",
+      "to": "SKY_CASTLE",
+      "realm": "SKY",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SKY_B_SKY_CASTLE_TO_SKY_B",
+      "from": "SKY_CASTLE",
+      "to": "SKY_B",
+      "realm": "SKY",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "SKY_B_SKY_B_TO_HUB",
+      "from": "SKY_B",
+      "to": "HUB",
+      "realm": "SKY",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "COSMIC_A_HUB_TO_COSMIC_A",
+      "from": "HUB",
+      "to": "COSMIC_A",
+      "realm": "COSMIC",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "COSMIC_A_COSMIC_A_TO_COSMIC_CASTLE",
+      "from": "COSMIC_A",
+      "to": "COSMIC_CASTLE",
+      "realm": "COSMIC",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "COSMIC_A_COSMIC_CASTLE_TO_COSMIC_A",
+      "from": "COSMIC_CASTLE",
+      "to": "COSMIC_A",
+      "realm": "COSMIC",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "COSMIC_A_COSMIC_A_TO_HUB",
+      "from": "COSMIC_A",
+      "to": "HUB",
+      "realm": "COSMIC",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "COSMIC_B_HUB_TO_COSMIC_B",
+      "from": "HUB",
+      "to": "COSMIC_B",
+      "realm": "COSMIC",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "COSMIC_B_COSMIC_B_TO_COSMIC_CASTLE",
+      "from": "COSMIC_B",
+      "to": "COSMIC_CASTLE",
+      "realm": "COSMIC",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "COSMIC_B_COSMIC_CASTLE_TO_COSMIC_B",
+      "from": "COSMIC_CASTLE",
+      "to": "COSMIC_B",
+      "realm": "COSMIC",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "COSMIC_B_COSMIC_B_TO_HUB",
+      "from": "COSMIC_B",
+      "to": "HUB",
+      "realm": "COSMIC",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "CELESTIAL_A_HUB_TO_CELESTIAL_A",
+      "from": "HUB",
+      "to": "CELESTIAL_A",
+      "realm": "CELESTIAL",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "CELESTIAL_A_CELESTIAL_A_TO_CELESTIAL_CASTLE",
+      "from": "CELESTIAL_A",
+      "to": "CELESTIAL_CASTLE",
+      "realm": "CELESTIAL",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "CELESTIAL_A_CELESTIAL_CASTLE_TO_CELESTIAL_A",
+      "from": "CELESTIAL_CASTLE",
+      "to": "CELESTIAL_A",
+      "realm": "CELESTIAL",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "CELESTIAL_A_CELESTIAL_A_TO_HUB",
+      "from": "CELESTIAL_A",
+      "to": "HUB",
+      "realm": "CELESTIAL",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "CELESTIAL_B_HUB_TO_CELESTIAL_B",
+      "from": "HUB",
+      "to": "CELESTIAL_B",
+      "realm": "CELESTIAL",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "CELESTIAL_B_CELESTIAL_B_TO_CELESTIAL_CASTLE",
+      "from": "CELESTIAL_B",
+      "to": "CELESTIAL_CASTLE",
+      "realm": "CELESTIAL",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "CELESTIAL_B_CELESTIAL_CASTLE_TO_CELESTIAL_B",
+      "from": "CELESTIAL_CASTLE",
+      "to": "CELESTIAL_B",
+      "realm": "CELESTIAL",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "CELESTIAL_B_CELESTIAL_B_TO_HUB",
+      "from": "CELESTIAL_B",
+      "to": "HUB",
+      "realm": "CELESTIAL",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "EMBER_A_HUB_TO_EMBER_A",
+      "from": "HUB",
+      "to": "EMBER_A",
+      "realm": "EMBER",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "EMBER_A_EMBER_A_TO_EMBER_CASTLE",
+      "from": "EMBER_A",
+      "to": "EMBER_CASTLE",
+      "realm": "EMBER",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "EMBER_A_EMBER_CASTLE_TO_EMBER_A",
+      "from": "EMBER_CASTLE",
+      "to": "EMBER_A",
+      "realm": "EMBER",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "EMBER_A_EMBER_A_TO_HUB",
+      "from": "EMBER_A",
+      "to": "HUB",
+      "realm": "EMBER",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "EMBER_B_HUB_TO_EMBER_B",
+      "from": "HUB",
+      "to": "EMBER_B",
+      "realm": "EMBER",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "EMBER_B_EMBER_B_TO_EMBER_CASTLE",
+      "from": "EMBER_B",
+      "to": "EMBER_CASTLE",
+      "realm": "EMBER",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "EMBER_B_EMBER_CASTLE_TO_EMBER_B",
+      "from": "EMBER_CASTLE",
+      "to": "EMBER_B",
+      "realm": "EMBER",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "EMBER_B_EMBER_B_TO_HUB",
+      "from": "EMBER_B",
+      "to": "HUB",
+      "realm": "EMBER",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "ECLIPSE_A_HUB_TO_ECLIPSE_A",
+      "from": "HUB",
+      "to": "ECLIPSE_A",
+      "realm": "ECLIPSE",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "ECLIPSE_A_ECLIPSE_A_TO_ECLIPSE_CASTLE",
+      "from": "ECLIPSE_A",
+      "to": "ECLIPSE_CASTLE",
+      "realm": "ECLIPSE",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "ECLIPSE_A_ECLIPSE_CASTLE_TO_ECLIPSE_A",
+      "from": "ECLIPSE_CASTLE",
+      "to": "ECLIPSE_A",
+      "realm": "ECLIPSE",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "ECLIPSE_A_ECLIPSE_A_TO_HUB",
+      "from": "ECLIPSE_A",
+      "to": "HUB",
+      "realm": "ECLIPSE",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "ECLIPSE_B_HUB_TO_ECLIPSE_B",
+      "from": "HUB",
+      "to": "ECLIPSE_B",
+      "realm": "ECLIPSE",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "ECLIPSE_B_ECLIPSE_B_TO_ECLIPSE_CASTLE",
+      "from": "ECLIPSE_B",
+      "to": "ECLIPSE_CASTLE",
+      "realm": "ECLIPSE",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "ECLIPSE_B_ECLIPSE_CASTLE_TO_ECLIPSE_B",
+      "from": "ECLIPSE_CASTLE",
+      "to": "ECLIPSE_B",
+      "realm": "ECLIPSE",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    },
+    {
+      "id": "ECLIPSE_B_ECLIPSE_B_TO_HUB",
+      "from": "ECLIPSE_B",
+      "to": "HUB",
+      "realm": "ECLIPSE",
+      "access": "FREE",
+      "teams": [
+        "RED",
+        "BLUE"
+      ],
+      "carry_allowed": true,
+      "passable_without_class": true,
+      "recovery_pad": "HUB",
+      "max_wait_s": 12
+    }
+  ],
+  "cards": [
+    {
+      "field_id": "WF-25",
+      "realm": "SEA",
+      "name": "潮流リフト水門",
+      "child_one_action": "光る泡の丸へ乗ると海底城の乾いた入口へ上昇",
+      "three_second_cue": "潮鐘が鳴って水の道が12秒だけ切り替わる",
+      "free_alternate": "海岸の無料階段を登る",
+      "defender_telegraph": "相手も使える潮鐘と上昇予告が出る",
+      "defender_counterplay": "守備側は出口前の防壁へ移動できるが両経路は同時封鎖不可",
+      "fail_safe": "水中転落時は港の安全床へ8秒以内に戻す",
+      "egg_carry_strategy": "港から泡の縦道を使う卵運搬チームの脱出",
+      "class_combo_examples": "戦士が先導し魔法使いが退路を作る案",
+      "promo_7s": "泡に入る→水の下に城が見える→卵を持って帰る",
+      "promo_15s": "海底城を背景に泡リフトで抜け出す。実装後の実プレイのみ撮影",
+      "class_archetypes": [
+        "戦士",
+        "魔法使い",
+        "忍者",
+        "トラッパー",
+        "建築士",
+        "魔獣使い",
+        "ゾンビ使い"
+      ],
+      "no_class_or_purchase_required": true,
+      "warning_before_s": 2,
+      "max_closed_s": 12,
+      "recovery_within_s": 8,
+      "h0": "同じ入口/人数/装備/試合時間で地形仕掛けなし",
+      "h1": "この仕掛け1個だけ追加したときの初回経路発見率、卵持帰り率、迷子回復、再戦意向の比較",
+      "adoption": "PARK_S2_PLUS",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "field_id": "WF-26",
+      "realm": "SKY",
+      "name": "風見鳥の三叉風橋",
+      "child_one_action": "色の付いた風車を回すと雲の橋が動く",
+      "three_second_cue": "橋の切替前に風見鳥が2秒羽ばたく",
+      "free_alternate": "誰でも歩ける常設雲階段",
+      "defender_telegraph": "風向きは両陣営へ同時表示",
+      "defender_counterplay": "守備側は橋の向かう先で待てるが常設階段は消せない",
+      "fail_safe": "落下したら地上の柔らかい帰還床へ8秒以内",
+      "egg_carry_strategy": "空中城への陽動突入と卵を持った別出口への退避",
+      "class_combo_examples": "忍者の静かな潜入とトラッパーの出口守備案",
+      "promo_7s": "風車を回す→橋が曲がる→空の城門へ走る",
+      "promo_15s": "風橋を動かして追手をかわす。将来の撮影案",
+      "class_archetypes": [
+        "戦士",
+        "魔法使い",
+        "忍者",
+        "トラッパー",
+        "建築士",
+        "魔獣使い",
+        "ゾンビ使い"
+      ],
+      "no_class_or_purchase_required": true,
+      "warning_before_s": 2,
+      "max_closed_s": 12,
+      "recovery_within_s": 8,
+      "h0": "同じ入口/人数/装備/試合時間で地形仕掛けなし",
+      "h1": "この仕掛け1個だけ追加したときの初回経路発見率、卵持帰り率、迷子回復、再戦意向の比較",
+      "adoption": "PARK_S2_PLUS",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "field_id": "WF-27",
+      "realm": "COSMIC",
+      "name": "星雲の足あと回廊",
+      "child_one_action": "光る星の足跡を順に踏むと安全な近道が見える",
+      "three_second_cue": "星の足跡は切替2秒前に点灯",
+      "free_alternate": "無料の固定した星の坂道",
+      "defender_telegraph": "守備側にも足跡が見え、隠し無敵路ではない",
+      "defender_counterplay": "追う側は坂道から先回りでき、通路独占不可",
+      "fail_safe": "迷ったら星灯りの安全地点へ自動案内",
+      "egg_carry_strategy": "宇宙城からの卵持ち帰りに立体的な選択肢",
+      "class_combo_examples": "建築士のバリケード案と魔獣使いの案内獣案",
+      "promo_7s": "星を踏む→道が浮かぶ→仲間と脱出",
+      "promo_15s": "星の道が現れて宇宙城へ抜ける。重力変更は別WF13の未統合機能",
+      "class_archetypes": [
+        "戦士",
+        "魔法使い",
+        "忍者",
+        "トラッパー",
+        "建築士",
+        "魔獣使い",
+        "ゾンビ使い"
+      ],
+      "no_class_or_purchase_required": true,
+      "warning_before_s": 2,
+      "max_closed_s": 12,
+      "recovery_within_s": 8,
+      "h0": "同じ入口/人数/装備/試合時間で地形仕掛けなし",
+      "h1": "この仕掛け1個だけ追加したときの初回経路発見率、卵持帰り率、迷子回復、再戦意向の比較",
+      "adoption": "PARK_S2_PLUS",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "field_id": "WF-28",
+      "realm": "CELESTIAL",
+      "name": "虹鐘の二重門",
+      "child_one_action": "二つの虹の鐘を順番に鳴らすと門が開く",
+      "three_second_cue": "鐘の光が2秒前に両チームへ伝わる",
+      "free_alternate": "無料の雲の脇階段",
+      "defender_telegraph": "鐘と門の状態は色以外に形と音で示す",
+      "defender_counterplay": "守備側は鐘へ接近できるが門の閉塞は12秒以下",
+      "fail_safe": "扉に挟まらない退避床と8秒以内救済",
+      "egg_carry_strategy": "一人が鐘役、一人が卵護衛の協力戦術",
+      "class_combo_examples": "ゾンビ使いのおとり案と戦士の護衛案",
+      "promo_7s": "ベルを鳴らす→虹門が開く→友だちが通る",
+      "promo_15s": "天空神殿で2人が協力する名場面。動画は実装後に収録",
+      "class_archetypes": [
+        "戦士",
+        "魔法使い",
+        "忍者",
+        "トラッパー",
+        "建築士",
+        "魔獣使い",
+        "ゾンビ使い"
+      ],
+      "no_class_or_purchase_required": true,
+      "warning_before_s": 2,
+      "max_closed_s": 12,
+      "recovery_within_s": 8,
+      "h0": "同じ入口/人数/装備/試合時間で地形仕掛けなし",
+      "h1": "この仕掛け1個だけ追加したときの初回経路発見率、卵持帰り率、迷子回復、再戦意向の比較",
+      "adoption": "PARK_S2_PLUS",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "field_id": "WF-29",
+      "realm": "EMBER",
+      "name": "溶岩冷却の水車橋",
+      "child_one_action": "大きな青い水車を回すと赤い床が青い安全橋になる",
+      "three_second_cue": "水車の回転と冷却音で2秒予告",
+      "free_alternate": "火山外周の無料石の橋",
+      "defender_telegraph": "水車は誰でも回せる・溶岩は実ダメージ付与禁止の試作",
+      "defender_counterplay": "守備側は水車を再操作できるが両出口の同時閉鎖不可",
+      "fail_safe": "安全な足場からの復帰パッドを常設",
+      "egg_carry_strategy": "冷却の短い橋で城へ入り、石橋から卵を運び出す",
+      "class_combo_examples": "魔法使いの水の演出案と建築士の防壁案",
+      "promo_7s": "水車を回す→溶岩が青くなる→城へ走る",
+      "promo_15s": "灼熱の城に一瞬の青い道。初回は安全重視",
+      "class_archetypes": [
+        "戦士",
+        "魔法使い",
+        "忍者",
+        "トラッパー",
+        "建築士",
+        "魔獣使い",
+        "ゾンビ使い"
+      ],
+      "no_class_or_purchase_required": true,
+      "warning_before_s": 2,
+      "max_closed_s": 12,
+      "recovery_within_s": 8,
+      "h0": "同じ入口/人数/装備/試合時間で地形仕掛けなし",
+      "h1": "この仕掛け1個だけ追加したときの初回経路発見率、卵持帰り率、迷子回復、再戦意向の比較",
+      "adoption": "PARK_S2_PLUS",
+      "studio_qa": "NOT_TESTED"
+    },
+    {
+      "field_id": "WF-30",
+      "realm": "ECLIPSE",
+      "name": "昼夜合わせ鏡の回廊",
+      "child_one_action": "太陽と月の鏡を押すと左右の通路が切り替わる",
+      "three_second_cue": "切替2秒前に両側の鏡が回転",
+      "free_alternate": "常に開いた無料の中央廊下",
+      "defender_telegraph": "昼夜切替が見える・暗闇でも卵と帰還矢印は常時明るい",
+      "defender_counterplay": "守備側は反対側で待つが中央廊下は塞げない",
+      "fail_safe": "暗所迷子時は8秒以内に明るい中央通路へ帰還",
+      "egg_carry_strategy": "追跡回避の経路選択、透明化・無敵は与えない",
+      "class_combo_examples": "忍者が陽動しゾンビ使いの囮が別路を使う案",
+      "promo_7s": "鏡を押す→昼と夜の道が逆になる→卵を持って戻る",
+      "promo_15s": "光と闇が入れ替わる逆転劇。暗すぎる演出は禁止",
+      "class_archetypes": [
+        "戦士",
+        "魔法使い",
+        "忍者",
+        "トラッパー",
+        "建築士",
+        "魔獣使い",
+        "ゾンビ使い"
+      ],
+      "no_class_or_purchase_required": true,
+      "warning_before_s": 2,
+      "max_closed_s": 12,
+      "recovery_within_s": 8,
+      "h0": "同じ入口/人数/装備/試合時間で地形仕掛けなし",
+      "h1": "この仕掛け1個だけ追加したときの初回経路発見率、卵持帰り率、迷子回復、再戦意向の比較",
+      "adoption": "PARK_S2_PLUS",
+      "studio_qa": "NOT_TESTED"
+    }
+  ],
+  "acceptance": "Under ANY SINGLE directed path edge outage, both teams with or without egg still reach every fantasy castle from HUB and return; separate true Studio physics/streaming/player QA required."
+}
