@@ -1,0 +1,199 @@
+name: P0D S1 Eight Safe Studio QA-Only Vetted Passive Probe Place
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-eight-safe-instrumented-studio-20261113-01
+permissions:
+  contents: read
+jobs:
+  genuine-eight-safe-unpublished-instrumented-probe:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 22
+    env:
+      P0D_QA: handoffs/P0D-S1-EIGHT-SAFE-INSTRUMENTED-STUDIO-20261113-01
+      P0D_S1_PROJECT: releases/P0D_S1_KIDS_RC01
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout exact review game source and old frozen vetted passive observer sources
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Read and pin source, forbid any official branch ref rewriting
+        shell: bash
+        run: |
+          set -euo pipefail
+          for SHA in 3120b9d3c0a5ec58c9f2613c5d186f3493b54f83 \
+                     e2662b540f2312c95af67a1761ea05842482919d \
+                     1263a03701211a652b99b91d2339575dc8104eff; do
+            git cat-file -e "$SHA^{commit}"
+          done
+          mkdir -p /tmp/p0d_eight_qa
+          git show e2662b540f2312c95af67a1761ea05842482919d:handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/StudioPassiveClientProbe.client.luau > /tmp/p0d_eight_qa/StudioPassiveClientProbe.client.luau
+          git show e2662b540f2312c95af67a1761ea05842482919d:handoffs/P0D-S1-AUTHORITY-ABUSE-SOURCE-GATE-20261112-01/StudioPassiveServerProbe.server.luau > /tmp/p0d_eight_qa/StudioPassiveServerProbe.server.luau
+          test "$(git hash-object /tmp/p0d_eight_qa/StudioPassiveClientProbe.client.luau)" = c0fb0a8ff39ba02277bd4484604b80f3207d7756
+          test "$(git hash-object /tmp/p0d_eight_qa/StudioPassiveServerProbe.server.luau)" = 6272cbd587c714046685aba82be775c6dad21057
+      - name: Run 20 source, security, immutable, no fake Studio PASS parser selftests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s "$P0D_QA/tests" -v
+      - name: Fetch immutable official Rojo 7.7.1 and verify distributor archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/p0d_eight_qa/rojo-7.7.1.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_eight_qa/rojo-7.7.1.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,pathlib,stat
+          with zipfile.ZipFile("/tmp/p0d_eight_qa/rojo-7.7.1.zip") as z:
+            members=[n for n in z.namelist() if n.rsplit("/",1)[-1]=="rojo"]
+            assert len(members)==1
+            p=pathlib.Path("/tmp/p0d_eight_qa/rojo")
+            p.write_bytes(z.read(members[0]))
+            p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_eight_qa/rojo --version | grep -F '7.7.1'
+      - name: Build actual original full 8safe unpublished Rojo game and compare exact original real CI SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/p0d_eight_qa/rojo build "$P0D_S1_PROJECT/default.project.json" \
+            -o /tmp/p0d_eight_qa/TRAP_RAIDERS_S1_EIGHT_SAFE_HUD_REVIEW.rbxlx
+          printf '%s\n' 'b27f401cd6aed7242665098a4cf323184fe13f2ef964b59a3c97b82daf998d04  /tmp/p0d_eight_qa/TRAP_RAIDERS_S1_EIGHT_SAFE_HUD_REVIEW.rbxlx' | sha256sum -c
+          test "$(wc -c </tmp/p0d_eight_qa/TRAP_RAIDERS_S1_EIGHT_SAFE_HUD_REVIEW.rbxlx)" -eq 159080
+      - name: Inject ONLY two original pinned Studio read-only observer scripts into separate QA clone
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$P0D_QA/tools/build_probe_clone.py" \
+            --place /tmp/p0d_eight_qa/TRAP_RAIDERS_S1_EIGHT_SAFE_HUD_REVIEW.rbxlx \
+            --output /tmp/p0d_eight_qa/P0D_S1_EIGHT_SAFE_STUDIO_QA_ONLY_DO_NOT_PUBLISH.rbxlx \
+            --receipt /tmp/p0d_eight_qa/QA_ONLY_SOURCE_AND_PLACE_RECEIPT.json
+      - name: Deliberately corrupt original and passive Lua; prove all changes and duplicates are rejected
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,sys,importlib.util,copy,xml.etree.ElementTree as ET
+          from pathlib import Path
+          p=Path(os.environ["P0D_QA"])/"tools"/"build_probe_clone.py"
+          spec=importlib.util.spec_from_file_location("probe_build",p)
+          m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+          v,orig=m.upstream()
+          probes=m.safe_probes()
+          raw=Path("/tmp/p0d_eight_qa/P0D_S1_EIGHT_SAFE_STUDIO_QA_ONLY_DO_NOT_PUBLISH.rbxlx").read_bytes()
+          good=m.verify_injected(raw,v,orig,probes)
+          assert good["all_script_count"]==23
+          def named(r,name):
+            matches=[]
+            for item in r.iter("Item"):
+              p=item.find("Properties")
+              if p is not None and any(t.get("name")=="Name" and t.text==name for t in p):
+                matches.append(item)
+            assert len(matches)==1
+            return matches[0]
+          def modify(name,fn):
+            root=ET.fromstring(raw)
+            fn(root)
+            return ET.tostring(root,encoding="utf8",xml_declaration=True)
+          def corrupt_source(r,item_name):
+            item=named(r,item_name)
+            fields=[x for x in item.findall("./Properties/*") if x.get("name")=="Source"]
+            assert len(fields)==1
+            fields[0].text=(fields[0].text or "")+" -- malicious change"
+          negatives={}
+          negatives["original_Game_source_changed"]=modify("Game",lambda r:corrupt_source(r,"Game"))
+          negatives["read_only_client_probe_changed"]=modify(m.INJECTED_CLIENT,lambda r:corrupt_source(r,m.INJECTED_CLIENT))
+          negatives["read_only_server_probe_changed"]=modify(m.INJECTED_SERVER,lambda r:corrupt_source(r,m.INJECTED_SERVER))
+          def remove_probe(r):
+            item=named(r,m.INJECTED_CLIENT)
+            par=next(x for x in r.iter() if item in x)
+            par.remove(item)
+          negatives["missing_client_probe"]=modify(m.INJECTED_CLIENT,remove_probe)
+          def duplicate_game(r):
+            item=named(r,"Game")
+            par=next(x for x in r.iter() if item in x)
+            par.append(copy.deepcopy(item))
+          negatives["duplicated_game_owner"]=modify("Game",duplicate_game)
+          def change_probe_class(r):
+            named(r,m.INJECTED_SERVER).set("class","LocalScript")
+          negatives["server_probe_wrong_class"]=modify(m.INJECTED_SERVER,change_probe_class)
+          for name,bad in negatives.items():
+            try:
+              m.verify_injected(bad,v,orig,probes)
+            except (ValueError,AssertionError):
+              print("P0D_STUDIO_QA_CLONE_MUTANT_REJECTED "+name)
+            else:
+              raise AssertionError("UNSAFE_QA_CLONE_MUTANT_ACCEPTED "+name)
+          assert len(negatives)==6
+          print("P0D_STUDIO_QA_CLONE_6_OF_6_XML_MUTANTS_REJECTED")
+          PY
+      - name: Checkout fixed upstream real Luau source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Compile original 21 real game scripts plus two pinned Studio probes using genuine native Luau compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _native_luau -B /tmp/p0d_eight_qa/luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_eight_qa/luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import pathlib,subprocess
+          scripts=list(pathlib.Path("releases/P0D_S1_KIDS_RC01/src").rglob("*.luau"))
+          scripts += list(pathlib.Path("/tmp/p0d_eight_qa").glob("StudioPassive*.luau"))
+          assert len(scripts)==23,len(scripts)
+          for file in scripts:
+              p=subprocess.run(["/tmp/p0d_eight_qa/luau/luau-compile",str(file)],
+                               stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
+              assert p.returncode==0,(file,p.stderr.decode()[-500:])
+          bad=pathlib.Path("/tmp/p0d_eight_qa/bad_source.luau")
+          bad.write_text("local = 1\n")
+          assert subprocess.run(["/tmp/p0d_eight_qa/luau/luau-compile",str(bad)],
+                                stdout=subprocess.DEVNULL,stderr=subprocess.PIPE).returncode!=0
+          print("P0D_S1_STUDIO_QA_CLONE_23_OF_23_REAL_LUAU_COMPILE_PASS")
+          print("P0D_S1_STUDIO_QA_CLONE_BROKEN_SYNTAX_REJECTED")
+          PY
+      - name: Create source-receipt-only thirty-four NOT_TESTED manual QA worksheet
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import importlib.util, pathlib, json, os
+          p=pathlib.Path(os.environ["P0D_QA"])/"tools/review_studio_probe_logs.py"
+          spec=importlib.util.spec_from_file_location("source_QA_log",p)
+          m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+          values={"game_id":"TRAP_RAIDERS","release_id":"P0D-S1-KIDS-RC01",
+              "purpose":"MANUAL_STUDIO_OR_OWNER_QA_NOT_TESTED",
+              "studio_tested":False,"real_two_clients_tested":False,
+              "real_mobile_tested":False,"published":False,
+              "manual_cases":[{"id":n,"status":"NOT_TESTED","evidence":""}
+                              for n in m.REQUIRED_MANUAL_CASES]}
+          assert len(values["manual_cases"])==34
+          pathlib.Path("/tmp/p0d_eight_qa/QA_34_CASES_ALL_NOT_TESTED.json").write_text(
+              json.dumps(values,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
+          PY
+          cp "$P0D_QA/README.md" /tmp/p0d_eight_qa/README_QA_ONLY_DO_NOT_PUBLISH.md
+          cp "$P0D_QA/tools/review_studio_probe_logs.py" /tmp/p0d_eight_qa/review_studio_probe_logs.py
+          test -z "$(git status --porcelain --untracked-files=no)"
+      - name: Save unpublished QA-only 23-script Place and manual evidence tools
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-S1-EIGHT-SAFE-STUDIO-QA-ONLY-READONLY-PROBES
+          path: |
+            /tmp/p0d_eight_qa/P0D_S1_EIGHT_SAFE_STUDIO_QA_ONLY_DO_NOT_PUBLISH.rbxlx
+            /tmp/p0d_eight_qa/QA_ONLY_SOURCE_AND_PLACE_RECEIPT.json
+            /tmp/p0d_eight_qa/QA_34_CASES_ALL_NOT_TESTED.json
+            /tmp/p0d_eight_qa/review_studio_probe_logs.py
+            /tmp/p0d_eight_qa/README_QA_ONLY_DO_NOT_PUBLISH.md
+          if-no-files-found: error
+          retention-days: 14
