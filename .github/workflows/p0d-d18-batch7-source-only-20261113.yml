@@ -1,0 +1,26 @@
+name: P0D-D18 Batch7 source-only check
+on:
+  push:
+    branches:
+      - handoff/p0d-d18-batch7-six-child-explore-20261113-01
+  workflow_dispatch:
+jobs:
+  python-source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Batch7 source-only unit tests
+        run: |
+          cd handoffs/P0D-D18-BATCH7-SIX-CHILD-EXPLORE-20261113-01
+          python -m unittest discover -s tests -v
+      - name: Verify no accidental remote or payment integration
+        run: |
+          python - <<'PY'
+          import pathlib
+          root=pathlib.Path('handoffs/P0D-D18-BATCH7-SIX-CHILD-EXPLORE-20261113-01/src')
+          for p in root.glob('*.luau'):
+              text=p.read_text(encoding='utf8')
+              assert not any(s in text for s in ('DataStoreService','MarketplaceService','RemoteEvent','OnServerEvent','Humanoid')),p
+          print('BATCH7_SOURCE_SAFETY_PASS')
+          PY
