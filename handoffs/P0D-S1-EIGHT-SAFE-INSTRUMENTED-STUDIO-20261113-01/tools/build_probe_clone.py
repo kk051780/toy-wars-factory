@@ -179,7 +179,7 @@ def generate(original_xml: bytes, probes: dict[str, str], verify):
             "ServerScriptService" if label == "server" else "StarterPlayerScripts"
         )
         create_probe(parent, unique, cls, probes[label])
-    output = ET.tostring(root, encoding="utf8", xml_declaration=True)
+    output = ET.tostring(root, encoding="utf-8", xml_declaration=True)
     proof = verify_injected(output, verifier, expected, probes)
     return output, proof
 
