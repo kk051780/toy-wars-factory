@@ -236,15 +236,19 @@ def load(repo: Path):
     return prior,engine,base,sources,coach,game,hud,hudmod
 
 def compose(prior,engine,base,sources,coach,hud,hudmod) -> str:
-    local=dict(base)
-    test=local["LUAU_TEST"]
+    # Frozen builder closes over the shared source namespace, not a copy.
+    original_tests=base["LUAU_TEST"]
+    test=original_tests
     for i,(anchor,name) in enumerate(ANCHORS):
         if i==0:
             test=exactly(test,anchor,"local __eightTrace={}\n"+anchor+"\n__eightTrace."+name+"=last(pBlue)","eight_packet_"+name)
         else:
             test=exactly(test,anchor,anchor+"\n__eightTrace."+name+"=last(pBlue)","eight_packet_"+name)
-    local["LUAU_TEST"]=test
-    composed=prior["compose"](engine,local,sources,coach)
+    try:
+        base["LUAU_TEST"]=test
+        composed=prior["compose"](engine,base,sources,coach)
+    finally:
+        base["LUAU_TEST"]=original_tests
     replay=HUD_REPLAY
     for key,value in [
         ("__HUD_LUAU_SETUP__",hudmod["LUAU_SETUP"]),
