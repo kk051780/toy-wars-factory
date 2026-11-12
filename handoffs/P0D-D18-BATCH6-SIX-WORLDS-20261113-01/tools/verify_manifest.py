@@ -19,7 +19,7 @@ for row in rows:
     content=file.read_bytes()
     assert len(content)==row["utf8_bytes"], "size mismatch: "+name
     assert hashlib.sha256(content).hexdigest()==row["sha256"], "sha256 mismatch: "+name
-    git_blob=b"blob "+str(len(content)).encode()+b"\\0"+content
+    git_blob=b"blob "+str(len(content)).encode()+bytes([0])+content
     assert hashlib.sha1(git_blob).hexdigest()==row["git_blob_sha1"], "git blob mismatch: "+name
 actual={str(p.relative_to(ROOT)) for p in ROOT.rglob("*") if p.is_file() and
     p.name!="BUILD_MANIFEST.json" and "__pycache__" not in p.parts and not p.name.endswith(".pyc")}
