@@ -189,7 +189,7 @@ HUD_MUTANTS = (
     ("hud_accept_old_update",
      "or id <= lastUpdateId then return end",
      "or id < -1 then return end",
-     "HUD_S1_ASSERT_real_client_late_lobby_trap_still_visible"),
+     "HUD_S1_ASSERT_real_client_real_score_does_not_rollback"),
     ("hud_hide_guardian_trap",
      'trapButton.Visible = s.phase == "ACTIVE" and s.role == "GUARDIAN"',
      "trapButton.Visible = false",
