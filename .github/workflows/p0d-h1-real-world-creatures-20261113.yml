@@ -90,7 +90,7 @@ jobs:
           for item in tree.iter("Item"):
               kind=item.attrib.get("class")
               if kind not in ("Script","LocalScript","ModuleScript"):continue
-              code=item.find("./Properties/string[@name='Source']") or item.find("./Properties/ProtectedString[@name='Source']")
+              code=item.find("./Properties/string[@name='Source']")
               if code is not None:
                   actual.append(code.text or "")
                   classes[kind]+=1
