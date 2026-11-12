@@ -1,0 +1,81 @@
+name: P0D S1 V6 real server SNAPSHOT to validated child Guardian Coach native QA
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-v6-real-server-coach-20261112-01
+permissions:
+  contents: read
+jobs:
+  seven-real-original-game-to-child-coach:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout entire pinned source history and test branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify all exact original RC upstream QA and child Coach source commits
+        shell: bash
+        run: |
+          set -euo pipefail
+          for SHA in 1263a03701211a652b99b91d2339575dc8104eff \
+            84d061d81ffd28418f6e28e9e85bb684dd0daaf7 \
+            b2ae7828b641ab5acccc279117d36c6c413b543b \
+            e29d37737890671d458072bebe729127878700f6
+          do
+            git cat-file -e "$SHA^{commit}"
+          done
+      - name: Verify strict source manifest and Python cross-module contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          root=Path("handoffs/P0D-S1-V6-REAL-SERVER-COACH-20261112-01")
+          m=json.loads((root/"BUILD_MANIFEST.json").read_bytes())
+          assert set(m)=={"files","format","game_id","packet_id","public_source_allowed","work_id"}
+          assert m["format"]=="P0D_PUBLIC_SOURCE_V1" and m["public_source_allowed"] is True
+          assert m["game_id"]=="TRAP_RAIDERS" and m["work_id"]=="p0d-siege-v19"
+          assert len(m["files"])==3
+          for item in m["files"]:
+            assert set(item)=={"path","sha256","size"}
+            path=root/item["path"]
+            assert path.is_file() and not path.is_symlink()
+            raw=path.read_bytes()
+            assert item["size"]==len(raw) and item["sha256"]==hashlib.sha256(raw).hexdigest(), path
+          print("P0D_S1_REAL_SERVER_COACH_SHA256_MANIFEST_3_OF_3_PASS")
+          PY
+          python3 -B handoffs/P0D-S1-V6-REAL-SERVER-COACH-20261112-01/tools/test_server_snapshots_with_coach.py --selftest
+          PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+            -s handoffs/P0D-S1-V6-REAL-SERVER-COACH-20261112-01/tests -v
+      - name: Checkout fixed genuine upstream native Luau
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build genuine native Luau virtual machine
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _native_luau -B /tmp/p0d-s1-snapshot-coach-luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d-s1-snapshot-coach-luau --target Luau.Repl.CLI --parallel 4
+      - name: Execute exact original seven-source game snapshot and child Coach tests plus six original source mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 \
+            handoffs/P0D-S1-V6-REAL-SERVER-COACH-20261112-01/tools/test_server_snapshots_with_coach.py \
+            --repo . --luau /tmp/p0d-s1-snapshot-coach-luau/luau
+      - name: Validate no tracked official release code was modified
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
