@@ -1,0 +1,76 @@
+name: P0D S1 V6 actual roster departure countdown replay real Luau QA
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-v6-roster-round-cycles-native-20261112-01
+permissions:
+  contents: read
+jobs:
+  exact-original-game-roster-rounds:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - name: Checkout branch with complete frozen source history
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify current official source and pinned earlier real-map native harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '1263a03701211a652b99b91d2339575dc8104eff^{commit}'
+          git cat-file -e '84d061d81ffd28418f6e28e9e85bb684dd0daaf7^{commit}'
+          git cat-file -e 'b2ae7828b641ab5acccc279117d36c6c413b543b^{commit}'
+      - name: Strict manifest and Python QA source contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,pathlib
+          base=pathlib.Path("handoffs/P0D-S1-V6-ROSTER-ROUND-CYCLES-NATIVE-20261112-01")
+          lock=json.loads((base/"BUILD_MANIFEST.json").read_bytes())
+          assert lock["format"]=="P0D_PUBLIC_SOURCE_V1"
+          assert lock["game_id"]=="TRAP_RAIDERS" and lock["work_id"]=="p0d-siege-v19"
+          assert lock["public_source_allowed"] is True
+          assert len(lock["files"])==3
+          for x in lock["files"]:
+              assert set(x)=={"path","size","sha256"}
+              p=base/x["path"]
+              assert p.is_file() and not p.is_symlink()
+              b=p.read_bytes()
+              assert len(b)==x["size"] and hashlib.sha256(b).hexdigest()==x["sha256"],p
+          print("P0D_V6_ROSTER_SHA256_3_OF_3_PASS")
+          PY
+          python3 -B handoffs/P0D-S1-V6-ROSTER-ROUND-CYCLES-NATIVE-20261112-01/tools/roster_cycle_native.py --selftest
+          PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+            -s handoffs/P0D-S1-V6-ROSTER-ROUND-CYCLES-NATIVE-20261112-01/tests -v
+      - name: Checkout exact upstream real native Luau engine
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build real native Luau CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _native_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _native_luau -B /tmp/p0d_s1_roster_luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_s1_roster_luau --target Luau.Repl.CLI --parallel 4
+      - name: Run actual original real 6-source roster plus five deliberate unsafe Game mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 \
+            handoffs/P0D-S1-V6-ROSTER-ROUND-CYCLES-NATIVE-20261112-01/tools/roster_cycle_native.py \
+            --repo . --luau /tmp/p0d_s1_roster_luau/luau
+      - name: Check official tracked files and QA source remained unmodified
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
