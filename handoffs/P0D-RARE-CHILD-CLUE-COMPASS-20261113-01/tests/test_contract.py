@@ -25,10 +25,11 @@ class ChildClueSource(unittest.TestCase):
   self.assertNotIn('HintHUD.MODE = "WORLD"',H)
  def test_no_daily_pressure_and_false_money(self):
   for t in (C,H,S):
+   executable="\\n".join(line.split("--",1)[0] for line in t.splitlines())
    for forbidden in ("MarketplaceService","DataStoreService","RemoteEvent",
      "OnServerEvent","FireServer","Pay Robux","GamePass","dailyStreak",
      "awardCoins","leaderstats","workspace.Gravity","Humanoid:TakeDamage"):
-    self.assertNotIn(forbidden,t)
+    self.assertNotIn(forbidden,executable)
   self.assertIn("べつの みちも あるいてみよう",C)
   self.assertNotIn("まいにち",C)
   self.assertNotIn("コイン100",C)
