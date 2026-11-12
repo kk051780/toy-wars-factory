@@ -40,7 +40,7 @@ class G5StandaloneContracts(unittest.TestCase):
         self.assertIn("allPhysical",S)
         self.assertIn("G5_REAL_STUDIO_LOCAL_EVIDENCE",S)
         self.assertIn("outbound_and_return=PASS",S)
-        self.assertIn("event=GATE", "event=GATE") # explicit marker assembled at runtime
+        self.assertIn('emit("GATE",', S) # actual receipt marker is composed at runtime
 
     def test_no_trusting_user_network_remote(self):
         for name in ("RemoteEvent","OnServerEvent","FireServer","DataStoreService",
