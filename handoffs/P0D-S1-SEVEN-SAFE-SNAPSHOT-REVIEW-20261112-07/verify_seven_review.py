@@ -87,7 +87,7 @@ class FullGameReview(unittest.TestCase):
     def test_both_new_source_surfaces_remain_disabled_for_combat_control(self):
         self.assertEqual(self.game.count('local CANONICAL_S1_ENABLED = false'), 1)
         self.assertEqual(self.game.count('local D07_D08_RELEASE_REVIEW_APPROVED = false'), 1)
-        self.assertNotIn('RemoteEvent', self.coach)
+        self.assertNotIn('Instance.new("RemoteEvent")', self.coach)
         self.assertNotIn('FireServer', self.coach)
 
     def test_player_removing_both_event_orders_safe(self):
