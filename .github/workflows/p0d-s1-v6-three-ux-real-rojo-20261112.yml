@@ -1,0 +1,111 @@
+name: P0D S1 V6 three exact child UX full 21-source Rojo review
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-v6-three-ux-real-rojo-20261112-01
+permissions:
+  contents: read
+jobs:
+  three-ux-real-rojo-native-qa:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      PACK: handoffs/P0D-S1-V6-THREE-UX-REAL-ROJO-20261112-01
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout exact isolated branch and immutable complete source history
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify all original commits and Python source/geometry/provenance tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          for sha in 1263a03701211a652b99b91d2339575dc8104eff 78f849af28e15d7e990dd2690f2cafff0854d001 e29d37737890671d458072bebe729127878700f6 10940c76d708f99be908c587094c00757b22e7f6
+          do
+            git cat-file -e "$sha^{commit}" || git fetch --no-tags origin "$sha"
+            git cat-file -e "$sha^{commit}"
+          done
+          python3 -B -m unittest discover -s "$PACK/tests" -v
+      - name: Get genuine Rojo 7.7.1 pinned release zip
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/p0d_three_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_three_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,stat,pathlib
+          with zipfile.ZipFile("/tmp/p0d_three_rojo.zip") as z:
+              paths=[x for x in z.namelist() if x.rsplit("/",1)[-1]=="rojo"]
+              assert len(paths)==1
+              raw=z.read(paths[0])
+              assert len(raw)>1000000
+              p=pathlib.Path("/tmp/p0d_three_rojo")
+              p.write_bytes(raw)
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_three_rojo --version | grep -F 7.7.1
+      - name: Build full actual 21 script unpublished Rojo XML Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_three_output
+          /tmp/p0d_three_rojo build "$PACK/preview/default.project.json" \
+            -o /tmp/p0d_three_output/TRAP_RAIDERS_S1_V6_THREE_UX_REVIEW.rbxlx
+          test -s /tmp/p0d_three_output/TRAP_RAIDERS_S1_V6_THREE_UX_REVIEW.rbxlx
+      - name: Strictly verify exact 21 embedded Lua source bytes and reject 9 malicious XML changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$PACK/tools/check_three_ux_rojo.py" \
+            --repo . \
+            --place /tmp/p0d_three_output/TRAP_RAIDERS_S1_V6_THREE_UX_REVIEW.rbxlx \
+            --receipt /tmp/p0d_three_output/THREE_UX_REVIEW_ONLY_RECEIPT.json
+          test -z "$(git status --porcelain --untracked-files=no)"
+      - name: Checkout pinned real native Luau compiler source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build Luau syntax compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_luau -B /tmp/p0d_three_native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_three_native --target Luau.Compile.CLI --parallel 4
+      - name: Native compile all 21 actual Luau sources and reject one broken source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib,subprocess,os
+          files=sorted((pathlib.Path(os.environ["PACK"])/"preview/src").rglob("*.luau"))
+          assert len(files)==21, len(files)
+          c="/tmp/p0d_three_native/luau-compile"
+          for f in files:
+              p=subprocess.run([c,str(f)],stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
+              assert p.returncode==0,(f,p.stderr.decode(errors="replace")[-300:])
+          invalid=pathlib.Path("/tmp/p0d_three_invalid.luau")
+          invalid.write_text("local = 7\n",encoding="utf8")
+          assert subprocess.run([c,str(invalid)],stdout=subprocess.DEVNULL,stderr=subprocess.PIPE).returncode != 0
+          print("P0D_V6_THREE_UX_NATIVE_COMPILE_21_OF_21_PASS")
+          print("P0D_V6_THREE_UX_NATIVE_BAD_SYNTAX_REJECTED")
+          PY
+      - name: Attach review-only unpublicized complete game rbxlx to CI
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-S1-V6-THREE-UX-FULL-GAME-REVIEW-ONLY
+          path: |
+            /tmp/p0d_three_output/TRAP_RAIDERS_S1_V6_THREE_UX_REVIEW.rbxlx
+            /tmp/p0d_three_output/THREE_UX_REVIEW_ONLY_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 14
