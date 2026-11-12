@@ -1,0 +1,91 @@
+name: P0D S1 independent actual seven-safe complete Game and Coach native cross QA
+on:
+  push:
+    branches:
+      - handoff/p0d-s1-seven-safe-real-order-cross-qa-20261112-08
+permissions:
+  contents: read
+jobs:
+  original-seven-safe-real-game-and-coach:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 22
+    steps:
+      - name: Checkout frozen seven-safe parent and all earlier source refs
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Validate seven source snapshot and original official provenance refs
+        shell: bash
+        run: |
+          set -euo pipefail
+          for SHA in \
+            d319b56d1552713da482189048473f266c7b3fdc \
+            65785c2e3b9bc37a6962f9ace128fbfcbb670901 \
+            1263a03701211a652b99b91d2339575dc8104eff \
+            24061fd7fc165c506f9a862ba48ceaf80b6345bb \
+            6ed1e7e3585e26aff153c7c0c2be2fe68b459ff3 \
+            84d061d81ffd28418f6e28e9e85bb684dd0daaf7 \
+            e29d37737890671d458072bebe729127878700f6
+          do
+            git cat-file -e "$SHA^{commit}"
+          done
+      - name: Verify exact own three-source SHA256 manifest and Python test contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib,hashlib,json
+          root=pathlib.Path("handoffs/P0D-S1-SEVEN-SAFE-REAL-ORDER-CROSS-QA-20261112-08")
+          m=json.loads((root/"BUILD_MANIFEST.json").read_bytes())
+          assert set(m)=={"files","format","game_id","packet_id","public_source_allowed","work_id"}
+          assert m["format"]=="P0D_PUBLIC_SOURCE_V1" and m["game_id"]=="TRAP_RAIDERS"
+          assert m["work_id"]=="p0d-siege-v19" and m["public_source_allowed"] is True
+          assert len(m["files"])==3
+          for row in m["files"]:
+              assert set(row)=={"path","sha256","size"}
+              p=root/row["path"]
+              assert p.is_file() and not p.is_symlink()
+              raw=p.read_bytes()
+              assert len(raw)==row["size"] and hashlib.sha256(raw).hexdigest()==row["sha256"],p
+          print("P0D_SEVEN_SAFE_OWN_MANIFEST_SHA256_3_OF_3_PASS")
+          PY
+          PYTHONDONTWRITEBYTECODE=1 python3 -B handoffs/P0D-S1-SEVEN-SAFE-REAL-ORDER-CROSS-QA-20261112-08/tools/seven_safe_real_native.py --selftest
+          PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover \
+            -s handoffs/P0D-S1-SEVEN-SAFE-REAL-ORDER-CROSS-QA-20261112-08/tests -v
+      - name: Audit all seven source original hunk provenance and complete 37 release file SHA256
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 -B \
+            handoffs/P0D-S1-SEVEN-SAFE-REAL-ORDER-CROSS-QA-20261112-08/tools/seven_safe_real_native.py \
+            --repo . --provenance-only
+      - name: Checkout exact pinned genuine Luau interpreter source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build genuine native Luau VM
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_luau -B /tmp/p0d_s1_seven_safe_luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_s1_seven_safe_luau --target Luau.Repl.CLI --parallel 4
+      - name: Run seven-safe actual source original Game real Map, Coach, player departure and six unsafe source mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 -B \
+            handoffs/P0D-S1-SEVEN-SAFE-REAL-ORDER-CROSS-QA-20261112-08/tools/seven_safe_real_native.py \
+            --repo . --luau /tmp/p0d_s1_seven_safe_luau/luau
+      - name: Ensure official sources are not modified
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
