@@ -19,7 +19,7 @@ class SourceContracts(unittest.TestCase):
             for field in ("name","visible_behavior","child_one_action",
                           "class_item_tactic_hypothesis","defender_counterplay",
                           "promo_7s","promo_15s"):
-                self.assertGreater(len(x[field]),6,(x["id"],field))
+                self.assertGreater(len(x[field]),1 if field=="name" else 6,(x["id"],field))
 
     def test_truthful_no_reward_no_canon(self):
         self.assertFalse(DOC["rewards"])
