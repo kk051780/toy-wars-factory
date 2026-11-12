@@ -1,0 +1,29 @@
+name: P0D D18 Batch6 Six Worlds Original 3D Source QA
+on:
+  push:
+    branches:
+      - handoff/p0d-d18-batch6-six-worlds-20261113-01
+    paths:
+      - 'handoffs/P0D-D18-BATCH6-SIX-WORLDS-20261113-01/**'
+      - '.github/workflows/p0d-d18-batch6-six-worlds-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: p0d-d18-batch6-six-worlds-qa
+  cancel-in-progress: false
+jobs:
+  original-source-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    defaults:
+      run:
+        working-directory: handoffs/P0D-D18-BATCH6-SIX-WORLDS-20261113-01
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exact deterministic Luau data catalog
+        run: python3 tools/generate_catalog.py --check
+      - name: Original six IDs and adversarial negative source checks
+        run: python3 -m unittest discover -s tests -v
+      - name: Scope disclaimer
+        run: echo "SOURCE_QA_ONLY STUDIO_2CLIENT_MOBILE_HUMAN_NOT_TESTED"
