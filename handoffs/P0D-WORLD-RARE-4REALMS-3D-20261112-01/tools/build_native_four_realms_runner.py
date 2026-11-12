@@ -215,7 +215,7 @@ def main():
        "BAD_NONSOLID_WALKWAY":s.replace("item.CanCollide=solid","item.CanCollide=false",1),
        "BAD_SKY_ROAD_MISALIGNED":s.replace(
            'Vector3.new(-22,data.center.y+2,z-54)',
-           'Vector3.new(-22,data.center.y+2,z-100)',1),
+           'Vector3.new(-22,data.center.y+2,z-66)',1),
        "BAD_RARE_SCULPTURE_MISSING":s.replace(
            'sculpture(id,base,color,rgb(247,226,156))',
            'local _removedAnimal = true',1),
