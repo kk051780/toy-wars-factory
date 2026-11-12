@@ -1,0 +1,7 @@
+# Third fantasy batch safe optional integration gate
+
+- Pinned frozen predecessor source: `d99a18065ec28c11597672fab8931df1cb46160b` (earlier 24 original source prototype IDs). This packet adds exactly six standalone new original preview catalog entries, but does not merge or edit the existing 12-item story Gallery.
+- Standalone `default.project.json` mounts only to CLIENT `StarterPlayerScripts`; disabled demonstration is never automatically run. Do not mount into protected RC. `Factory.Build(WorldModel, id, CFrame)` requires WorldModel of local `ViewportFrame`, MAX_ACTIVE=12 and all parts `Anchored/CanCollide=false/CanTouch=false/CanQuery=false/CastShadow=false`.
+- `SetPose idle/tap/win/loss`, `SetLod(true=far)`, `SetYaw` multiples of 45 in [0,360), `GetStatus`, `Destroy`. No Humanoid, server, DataStore, Marketplace, RemoteEvent, tokens, paid progression or real inventory ownership.
+- Source filenames `next54_source_queue.json` retained from earlier wave for generator compatibility. It contains **42**, not 54, NOT_STARTED IDs after this packet; each category has 7. Rename only in a future separate schema-versioned packet, not by silent edits.
+- Required live gates (NOT TESTED here): genuine Luau compiler and renderer in isolated unpublished Roblox Studio, ≥2 client safety and shared server context, mobile UI/48px silhouette and FPS, safe Studio shutdown, child playtest, independent #220 integration approval.

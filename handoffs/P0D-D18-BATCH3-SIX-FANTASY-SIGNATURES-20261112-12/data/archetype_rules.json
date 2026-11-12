@@ -1,0 +1,88 @@
+{
+  "archetypes": {
+    "CREATURE_SEABELL_WHALE": {
+      "category": "BE",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "crescent_flukes",
+        "pearl_bubbles",
+        "hanging_bell"
+      ]
+    },
+    "SPELL_STITCHED_MOON": {
+      "category": "SP",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "stitched_crescent",
+        "lantern_thread",
+        "return_star"
+      ]
+    },
+    "TRAP_SIXFOLD_SNOW": {
+      "category": "TR",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "sixfold_snowflake",
+        "upward_arrow",
+        "soft_spring"
+      ]
+    },
+    "VEHICLE_CANDY_FERRIS": {
+      "category": "VE",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "ferris_ring",
+        "open_bench",
+        "ticket_mast"
+      ]
+    },
+    "WEAPON_HOURGLASS_HORN": {
+      "category": "WE",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "hourglass_bell",
+        "clock_marks",
+        "sand_capsule"
+      ]
+    },
+    "ZOMBIE_FORGE_KEEPER": {
+      "category": "ZO",
+      "far_max": 18,
+      "min_far_signature_roles": 3,
+      "near_max": 30,
+      "signature_tags": [
+        "peak_helmet",
+        "ring_key",
+        "odd_mittens"
+      ]
+    }
+  },
+  "authoring_policy": "Third authored wave: six distinct child-recognizable near/far silhouettes, no palette-swaps. 3 individual signature tags required in far LOD. Source-only WorldModel.",
+  "required_field_per_part": [
+    "name",
+    "position",
+    "size",
+    "rotation",
+    "shape",
+    "color",
+    "far",
+    "signature_tag",
+    "group"
+  ],
+  "schema": "P0D_D18_ARCHETYPE_RULES_V1",
+  "shape_enum": [
+    "Ball",
+    "Block",
+    "Cylinder"
+  ]
+}
