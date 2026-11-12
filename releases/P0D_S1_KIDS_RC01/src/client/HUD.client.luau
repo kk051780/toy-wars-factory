@@ -72,7 +72,7 @@ instructions.Text = "敵の卵に近づいてE／タップで奪取 → 自陣�
 local attack = button(gui, "Attack", "⚔ 攻撃\nFキー", UDim2.fromOffset(126, 88),
     UDim2.new(1, -140, 1, -16), Color3.fromRGB(211, 75, 72))
 local trapButton = button(gui, "GuardianTrap", "🪤 罠設置\nTキー",
-    UDim2.fromOffset(110, 74), UDim2.new(.02, 0, 1, -16), Color3.fromRGB(168, 105, 56))
+    UDim2.fromOffset(110, 74), UDim2.new(1, -140, 1, -110), Color3.fromRGB(168, 105, 56))
 trapButton.Visible = false
 local roleRaider = button(gui, "RaiderRole", "🏃 速攻", UDim2.fromOffset(92, 53),
     UDim2.new(.02, 0, 1, -64), Color3.fromRGB(59, 128, 208))
