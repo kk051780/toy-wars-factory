@@ -320,8 +320,15 @@ ok(contains("event=TWO_CLIENT_INDEPENDENT_BOOK_4_OF_4"),
 ok(countLines("event=TWO_CLIENT_INDEPENDENT_BOOK_4_OF_4")==1,
     "two-client 4/4 gate emitted exactly once")
 ok(countLines("event=NEW_DISCOVERY")==8,"eight actual server-proximity unique events")
-ok(countLines("no_inventory=true")==8,
-    "every discovery must truthfully state no items or currency were awarded")
+local truthfulDiscoveryReceipts=0
+for _,entry in ipairs(logs) do
+    if string.find(entry,"event=NEW_DISCOVERY",1,true) and
+       string.find(entry,"no_inventory=true",1,true) then
+        truthfulDiscoveryReceipts+=1
+    end
+end
+ok(truthfulDiscoveryReceipts==8,
+    "all eight actual discoveries must state no real inventory or currency")
 ok(not contains("reward_coins="),
     "never claim unearned coins, gameplay rewards or monetization from a scene-only preview")
 ok(countLines("event=CREATURE_VISIBLE")==4,"exactly four original model spawn events")
