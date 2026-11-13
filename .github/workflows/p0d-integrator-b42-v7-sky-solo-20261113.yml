@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Original rich H1 and new source-lock 43 count
+      - name: Original rich H1 and Studio-audit source-lock 44 count
         shell: bash
         run: |
           set -euo pipefail
@@ -39,7 +39,7 @@ jobs:
           test "$(git -C _p0d_solo_upstream rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
           cmake -S _p0d_solo_upstream -B /tmp/p0d_solo_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
           cmake --build /tmp/p0d_solo_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
-      - name: Compile actual assembled original 42 plus solo = 43 Luau
+      - name: Compile actual B42 42 plus solo and diagnostic = 44 Luau
         shell: bash
         run: |
           set -euo pipefail
@@ -49,8 +49,8 @@ jobs:
             /tmp/p0d_solo_luau/luau-compile "$file" > /tmp/luau_compile_out 2>&1 || { cat /tmp/luau_compile_out; exit 1; }
             n=$((n+1))
           done < <(find "$DIST/src" -name '*.luau' -type f -print0)
-          test "$n" -eq 43
-          echo P0D_B42_V7_SKYCASTLE_SOLO_NATIVE_43_OF_43_PASS
+          test "$n" -eq 44
+          echo P0D_B42_V7_SKYCASTLE_SOLO_AUDIT_NATIVE_44_OF_44_PASS
       - name: Execute original Studio solo policy in real pinned Luau CLI
         shell: bash
         run: |
@@ -77,7 +77,7 @@ jobs:
               p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
           PY
           /tmp/p0d_solo_rojo --version | grep -F '7.7.1'
-      - name: Build genuine private Studio 43 script Place and source-equivalence
+      - name: Build genuine Studio private 44 script Place and audit presence
         shell: bash
         run: |
           set -euo pipefail
@@ -103,29 +103,34 @@ jobs:
               embedded[code.text or '']+=1
               name=item.find("./Properties/string[@name='Name']")
               if name is not None:names[(kind,name.text)]+=1
-          assert embedded==originals and sum(embedded.values())==43,(len(embedded),len(originals))
-          assert kinds=={'Script':2,'LocalScript':5,'ModuleScript':36},kinds
+          assert embedded==originals and sum(embedded.values())==44,(len(embedded),len(originals))
+          assert kinds=={'Script':2,'LocalScript':6,'ModuleScript':36},kinds
           assert names[('Script','Game')]==1
           assert names[('Script','H1FunWorld')]==1
           assert names[('ModuleScript','StudioSoloPreviewRules')]==1
+          assert names[('LocalScript','P0DStudioTrialAudit')]==1
+          assert any('[P0D_STUDIO_FUN_CHECK]' in src and
+                     'EGG_CARRIED' in src and 'SCORE_CONFIRMED' in src
+                     for src in embedded)
           lock=json.loads((d/'SOURCE_LOCK.json').read_text('utf8'))
-          assert lock['unchanged_original_h1_scripts']==41 and lock['script_total']==43
+          assert lock['unchanged_original_h1_scripts']==41 and lock['script_total']==44
           assert lock['official_rc_adopted'] is False and lock['published'] is False
           h=hashlib.sha256(p.read_bytes()).hexdigest()
           receipt={'status':'RICH_B42_V7_SKYCASTLE_STUDIO_SOLO_ONLY',
-            'source_43_of_43':True,'original_42_unchanged':41,
+            'source_44_of_44':True,'original_42_unchanged':41,
+            'mapped_studio_readonly_diagnostic':True,
             'server_Game':1,'H1FunWorld':1,'first90_retained':True,
             'earned_evolution_retained':True,'actual_Studio_2client':'NOT_TESTED',
             'actual_Studio_1client':'NOT_TESTED','android':'NOT_TESTED',
             'owner_fun':'NOT_TESTED','official_rc_adopted':False,
             'published':False,'place_sha256':h}
           pathlib.Path('/tmp/p0d-solo-artifacts/PRIVATE_PLACE_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+"\n")
-          print('P0D_B42_V7_SKYCASTLE_SOLO_ROJO_43_OF_43_PASS',h)
+          print('P0D_B42_V7_SKYCASTLE_SOLO_AUDIT_ROJO_44_OF_44_PASS',h)
           PY
       - name: Upload only nonpublished review file and source proof
         uses: actions/upload-artifact@v4
         with:
-          name: P0D-B42-V7-SKYCASTLE-STUDIO-SOLO-43-PRIVATE-PLACE
+          name: P0D-B42-V7-SKYCASTLE-LATCHED-SOLO-AUDIT-44-PRIVATE-PLACE
           path: |
             /tmp/p0d-solo-artifacts/EGG_RAID_RUMBLE_B42_V7_SKYCASTLE_STUDIO_SOLO_PRIVATE.rbxlx
             /tmp/p0d-solo-artifacts/SOURCE_LOCK.json
