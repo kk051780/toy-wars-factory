@@ -88,7 +88,7 @@ def apply(dist:Path,profile:str,enabled_override:bool|None=None)->bool:
     assert cfg["tree"]["ServerScriptService"]["TrapRaidersS1"]["$path"]=="src/server"
     server=cfg["tree"]["ServerStorage"]
     attrs=server["$attributes"]
-    assert attrs["P0D_RC_ENABLE_STARRY_PATH_V1"] is True
+    assert attrs.get("P0D_RC_ENABLE_STARRY_PATH_V1") is True,"MISSING_STAR_BOOT_FLAG"
     assert attrs["P0D_RC_ENABLE_WCS_F01_C01"] is True
     assert ATTR not in attrs,"SHARDS_DUPLICATE_RUNTIME_FLAG"
     # No writes before all source, boot, authority and prior-lock checks.
