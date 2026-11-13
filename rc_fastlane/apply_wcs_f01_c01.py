@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Apply one source-locked Crystal Canyon Script AFTER the successful 57-source RC assembly.
 No Game, Remote, Store, reward, combat, or saved-data modifications.
-The build flag controls whether the Script exists; Studio false attribute is an additional boot-only kill switch.
+The build flag controls whether the Script exists; Studio missing/false attribute is the default-OFF boot gate, explicit true is required.
 """
 from __future__ import annotations
 import argparse
@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 FEATURE_ID = "WCS_F01_C01"
 FEATURE_PATH = ROOT / "features/wcs_f01_c01/WCS_CrystalCanyon.server.luau"
-FEATURE_GIT_BLOB = "1eeadde39b00fc19e82544c7b6decb7b0dabf2b9"
+FEATURE_GIT_BLOB = "96ff818b8c4148a565cfd2a721475a20119e1a28"
 DEST_REL = "server/WCS_CrystalCanyon.server.luau"
 
 def git_blob(data: bytes) -> str:
@@ -37,7 +37,7 @@ def apply(dist: Path, profile: str, enabled_override: bool | None = None) -> boo
     assert git_blob(data) == FEATURE_GIT_BLOB, "WCS_SOURCE_BLOB_DRIFT"
     text = data.decode("utf8")
     assert 'if not RunService:IsStudio() then' in text
-    assert 'ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")==false' in text
+    assert 'ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01") ~= true' in text
     assert text.count('local function playerIsInGateClosureZone()') == 1
     assert text.count("nextOpenAllowed = os.clock() + REOPEN_COOLDOWN") == 1
     assert "nextOpenAllowed = now + OPEN_SECONDS + REOPEN_COOLDOWN" not in text
