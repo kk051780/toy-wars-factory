@@ -1,6 +1,10 @@
 -- P0D-WEATHER-METEOR-SHORTCUT-V1: neutral, reversible route event.
 -- Isolated original feature code; only #220 may wire into official RC.
 -- No Remote, Game, Store, HP, score, XP, damage or purchase authority.
+local RunService = game:GetService("RunService")
+if not RunService:IsStudio() then
+    return -- unpublished Studio-only until owner approves release
+end
 local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
 local TweenService = game:GetService("TweenService")
@@ -21,35 +25,71 @@ local function isEnabled(): boolean
     return flag ~= nil and flag:IsA("BoolValue") and flag.Value == true
 end
 
-local function getAnchors(): (BasePart?, BasePart?)
+local function validRoute(a: Vector3, b: Vector3): boolean
+    local delta = b - a
+    local planar = Vector3.new(delta.X, 0, delta.Z).Magnitude
+    return planar >= MIN_LENGTH and planar <= MAX_LENGTH
+        and math.abs(delta.Y) <= MAX_HEIGHT_DIFFERENCE
+        and math.abs(a.X) <= 120 and math.abs(b.X) <= 120
+        and math.abs(a.Z) <= 68 and math.abs(b.Z) <= 68
+end
+
+-- Priority: explicit author anchors; fallback only to verified original WCS banks.
+-- The WCS stage is made by another server Script, so allow bounded boot ordering.
+local function getAnchors(): (Vector3?, Vector3?)
     local folder = Workspace:FindFirstChild(ANCHOR_FOLDER)
-    if not folder then
+    if folder then
+        local a = folder:FindFirstChild("A")
+        local b = folder:FindFirstChild("B")
+        if a and b and a:IsA("BasePart") and b:IsA("BasePart") then
+            if a.Anchored and b.Anchored and validRoute(a.Position, b.Position) then
+                return a.Position, b.Position
+            end
+            warn("[P0D_METEOR] Explicit A/B anchors invalid; not auto-overriding")
+            return nil, nil
+        end
+        warn("[P0D_METEOR] Partial explicit anchor folder; refusing WCS fallback")
         return nil, nil
     end
-    local a = folder:FindFirstChild("A")
-    local b = folder:FindFirstChild("B")
-    if not (a and b and a:IsA("BasePart") and b:IsA("BasePart")) then
+
+    if ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01") ~= true then
         return nil, nil
     end
-    local offset = b.Position - a.Position
-    local flat = Vector3.new(offset.X, 0, offset.Z)
-    local span = flat.Magnitude
-    if span < MIN_LENGTH or span > MAX_LENGTH or math.abs(offset.Y) > MAX_HEIGHT_DIFFERENCE then
+    local world = Workspace:FindFirstChild("P0D_WCS_CrystalCanyon")
+        or Workspace:WaitForChild("P0D_WCS_CrystalCanyon", 12)
+    if not world or not world:IsA("Model") then
+        return nil, nil
+    end
+    local west = world:FindFirstChild("WestBank") or world:WaitForChild("WestBank", 5)
+    local east = world:FindFirstChild("EastBank") or world:WaitForChild("EastBank", 5)
+    if not (west and east and west:IsA("BasePart") and east:IsA("BasePart")
+        and west.Anchored and east.Anchored and west.CanCollide and east.CanCollide) then
+        return nil, nil
+    end
+    -- WCS has safe fixed crossing at local z=+30 and Moguron gate at z=0.
+    -- A second crossing at bank's far z edge +8 does not replace either.
+    local z = math.max(west.Position.Z - west.Size.Z * 0.5,
+        east.Position.Z - east.Size.Z * 0.5) + 8
+    local y = math.min(west.Position.Y + west.Size.Y * 0.5,
+        east.Position.Y + east.Size.Y * 0.5) + 0.6
+    local a = Vector3.new(west.Position.X + west.Size.X * 0.5 - 1.5, y, z)
+    local b = Vector3.new(east.Position.X - east.Size.X * 0.5 + 1.5, y, z)
+    if not validRoute(a, b) then
         return nil, nil
     end
     return a, b
 end
 
 -- Each segment is a real temporary walking surface. Both teams can use it.
-local function buildRoute(parent: Folder, a: BasePart, b: BasePart): {BasePart}
-    local flat = Vector3.new(b.Position.X - a.Position.X, 0, b.Position.Z - a.Position.Z)
+local function buildRoute(parent: Folder, a: Vector3, b: Vector3): {BasePart}
+    local flat = Vector3.new(b.X - a.X, 0, b.Z - a.Z)
     local span = flat.Magnitude
     local count = math.min(MAX_BRIDGE_PARTS, math.ceil(span / 7))
     local direction = flat.Unit
     local segments = {}
     for i = 1, count do
         local t = (i - 0.5) / count
-        local center = a.Position:Lerp(b.Position, t) - Vector3.new(0, 0.65, 0)
+        local center = a:Lerp(b, t) - Vector3.new(0, 0.65, 0)
         local part = Instance.new("Part")
         part.Name = string.format("MeteorBridge_%02d", i)
         part.Anchored = true
@@ -145,7 +185,7 @@ local runtime = Instance.new("Folder")
 runtime.Name = RUNTIME_FOLDER
 runtime.Parent = Workspace
 local segments = buildRoute(runtime, a, b)
-local midpoint = a.Position:Lerp(b.Position, 0.5)
+local midpoint = a:Lerp(b, 0.5)
 local gui = announce(runtime, midpoint)
 local label = gui:FindFirstChild("Message")
 if label then
