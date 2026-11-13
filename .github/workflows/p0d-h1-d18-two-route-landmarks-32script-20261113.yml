@@ -1,0 +1,91 @@
+name: P0D H1 32-script full game plus D18 original landmarks native Rojo
+on:
+  push:
+    branches:
+      - integration/p0d-h1-d18-world-discovery-20261113-01
+permissions:
+  contents: read
+jobs:
+  h1-egg-joy-native-rojo:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 24
+    env:
+      D18: handoffs/P0D-H1-D18-WORLD-DISCOVERY-20261113-01
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout private game source and verified product-studio slice
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Verify original 30-game sources plus one exact D18 source and one local display script
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$D18/tools/assemble.py" --assemble
+          python3 -B -m unittest discover -s "$D18/tests" -p 'test_d18_integration.py' -v
+          echo D18_H1_8_SOURCE_TEST_METHODS_AND_10_HOSTILE_MUTANTS_PASS
+          test -s "$D18/dist/TRAP_RAIDERS_H1_D18_WORLD_DISCOVERY_STUDIO_ONLY/SOURCE_RECEIPT.json"
+          python3 -B "handoffs/P0D-H1-FAST-JOY-COMBINED-20261113-01/tests/generate_native_test.py" --write /tmp/p0d_h1_d18_egg_joy_native.luau
+      - name: Download exact official Rojo 7.7.1 binary with SHA256 pin
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_h1_d18_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_h1_d18_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import pathlib,stat,zipfile
+          with zipfile.ZipFile("/tmp/p0d_h1_d18_rojo.zip") as z:
+              found=[n for n in z.namelist() if n.rsplit("/",1)[-1]=="rojo"]
+              assert len(found)==1
+              p=pathlib.Path("/tmp/p0d_h1_d18_rojo");p.write_bytes(z.read(found[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_h1_d18_rojo --version | grep -F 7.7.1
+      - name: Build complete H1 original 30 preserved plus two D18 scripts to 32 original Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_h1_d18_out
+          /tmp/p0d_h1_d18_rojo build "$D18/dist/TRAP_RAIDERS_H1_D18_WORLD_DISCOVERY_STUDIO_ONLY/default.project.json" -o /tmp/p0d_h1_d18_out/TRAP_RAIDERS_H1_D18_TWO_LANDMARKS_STUDIO_ONLY.rbxlx
+          test -s /tmp/p0d_h1_d18_out/TRAP_RAIDERS_H1_D18_TWO_LANDMARKS_STUDIO_ONLY.rbxlx
+      - name: Prove Rojo XML 30 unchanged game sources plus D18 original catalog and local client
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$D18/tests/check_built.py" --place /tmp/p0d_h1_d18_out/TRAP_RAIDERS_H1_D18_TWO_LANDMARKS_STUDIO_ONLY.rbxlx
+      - name: Fetch pinned official Luau native compiler and interpreter
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/p0d_h1_d18_luau
+          git -C /tmp/p0d_h1_d18_luau fetch --depth 1 origin f46d879e28302a430029304f7f6a162aed66f103
+          git -C /tmp/p0d_h1_d18_luau checkout --detach FETCH_HEAD
+          test "$(git -C /tmp/p0d_h1_d18_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S /tmp/p0d_h1_d18_luau -B /tmp/p0d_h1_d18_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_h1_d18_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Native compile all 32 Luau and execute original egg transition policy edge cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          n=0
+          while IFS= read -r -d '' file; do
+              /tmp/p0d_h1_d18_native/luau-compile "$file" >/dev/null
+              n=$((n+1))
+          done < <(find "$D18/dist/TRAP_RAIDERS_H1_D18_WORLD_DISCOVERY_STUDIO_ONLY/src" -name '*.luau' -print0)
+          test "$n" -eq 32
+          echo "P0D_H1_D18_GAME_NATIVE_COMPILER_32_OF_32_PASS"
+          /tmp/p0d_h1_d18_native/luau-compile /tmp/p0d_h1_d18_egg_joy_native.luau >/dev/null
+          /tmp/p0d_h1_d18_native/luau /tmp/p0d_h1_d18_egg_joy_native.luau | tee /tmp/p0d_h1_d18_out/NATIVE_EGG_JOY_RULES_TEST_LOG.txt
+          grep -E '^P0D_EGG_JOY_NATIVE_LUAU_TESTS_PASS_[0-9]+$' /tmp/p0d_h1_d18_out/NATIVE_EGG_JOY_RULES_TEST_LOG.txt
+      - name: Preserve exact unpublished private game and source audit only
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-H1-D18-TWO-LANDMARKS-FULL-GAME-NOT-PUBLISH
+          path: |
+            /tmp/p0d_h1_d18_out/TRAP_RAIDERS_H1_D18_TWO_LANDMARKS_STUDIO_ONLY.rbxlx
+            /tmp/p0d_h1_d18_out/NATIVE_EGG_JOY_RULES_TEST_LOG.txt
+            handoffs/P0D-H1-D18-WORLD-DISCOVERY-20261113-01/dist/TRAP_RAIDERS_H1_D18_WORLD_DISCOVERY_STUDIO_ONLY/SOURCE_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 7
