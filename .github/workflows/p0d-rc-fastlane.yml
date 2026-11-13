@@ -159,6 +159,53 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_star_path.py --profile rich51 --dist "$DIST"
           fi
+      - name: Apply one HUD-only narrow-screen relay touch fix, verify full OFF rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 - <<'PY'
+          import os,hashlib,json
+          from pathlib import Path
+          d=Path(os.environ["DIST"])
+          before={p.relative_to(d).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                 for p in sorted((d/"src").rglob("*.luau"))}
+          assert len(before)==61
+          from pathlib import Path
+          locks={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in
+                 (d/"SOURCE_LOCK.json",d/"RC_FEATURE_LOCK.json",d/"default.project.json")}
+          Path("/tmp/p0d_ui_source_before.json").write_text(json.dumps(before,sort_keys=True))
+          Path("/tmp/p0d_ui_locks_before.json").write_text(json.dumps(locks,sort_keys=True))
+          PY
+            python3 -B rc_fastlane/apply_relay_touch_layout.py --dist "$DIST" --enabled off
+            python3 - <<'PY'
+          import os,hashlib,json
+          from pathlib import Path
+          d=Path(os.environ["DIST"])
+          original=json.loads(Path("/tmp/p0d_ui_source_before.json").read_text())
+          actual={p.relative_to(d).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                  for p in sorted((d/"src").rglob("*.luau"))}
+          assert original==actual,("TOUCH_OFF_CHANGED_SOURCE",sorted(set(original)^set(actual)))
+          originals=json.loads(Path("/tmp/p0d_ui_locks_before.json").read_text())
+          for name,sha in originals.items():
+              assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==sha,("TOUCH_OFF_CHANGED_LOCK_OR_PROJECT",name)
+          print("P0D_RC61_MOBILE_TOUCH_OFF_BYTE_EXACT_61_SOURCE_LOCK_PROJECT_PASS")
+          PY
+            python3 -B rc_fastlane/apply_relay_touch_layout.py --dist "$DIST" --enabled on
+            python3 - <<'PY'
+          import os,hashlib,json
+          from pathlib import Path
+          d=Path(os.environ["DIST"])
+          original=json.loads(Path("/tmp/p0d_ui_source_before.json").read_text())
+          actual={p.relative_to(d).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                  for p in sorted((d/"src").rglob("*.luau"))}
+          assert len(actual)==61
+          assert sorted(k for k in original if original[k]!=actual[k])==["src/client/HUD.client.luau"]
+          assert hashlib.sha256((d/"default.project.json").read_bytes()).hexdigest()==json.loads(Path("/tmp/p0d_ui_locks_before.json").read_text())[str(d/"default.project.json")]
+          print("P0D_RC61_MOBILE_ONLY_HUD_CHANGED_OTHER60_BYTE_EXACT_PASS")
+          PY
+          fi
       - name: Independent actual final61 HUD mobile-touch overlap diagnostic
         shell: bash
         run: |
