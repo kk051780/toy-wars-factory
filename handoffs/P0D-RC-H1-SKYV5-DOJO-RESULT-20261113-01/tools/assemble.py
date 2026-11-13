@@ -44,7 +44,7 @@ def assemble():
     assert 'availableSkills={"beast", "weapon"}' in client
     assert 'type(snapshot.dojo)' in client
     assert 'チーム得点' in client
-    assert '個人撃破' in client
+    assert 'musouLastKOs' not in client and 'neutralDefeats=' not in client
     for invalid in ('FireServer(', 'FireClient(', 'OnServerEvent:Connect(',
                     'GetDataStore(', 'UpdateAsync(', 'MarketplaceService',
                     'PromptProductPurchase('):
