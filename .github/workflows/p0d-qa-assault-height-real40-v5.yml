@@ -1,0 +1,142 @@
+name: P0D QA independent fixed 40+V5 assault height native Rojo
+on:
+  push:
+    branches:
+      - qa/p0d-horde-respawn-telegraph-20261113-01
+    paths:
+      - 'handoffs/P0D-INDEPENDENT-HORDE-RESPAWN-QA-20261113-01/tools/patch_v5_assault_height_real40.py'
+      - '.github/workflows/p0d-qa-assault-height-real40-v5.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-fixed-independent-private-place:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: 1952154b33422dabc2b4e8ce8eafd8d6df1b6b34
+          path: _p0d_author_v5
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: cb2540dc4a3e5b819c0e3598d4af5e2b6dca76d3
+          path: _p0d_author_v5/_p0d_frozen_39
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: 1b21bf8e5fc6afa5c74813d7f1037f877e1273ed
+          path: _p0d_author_v5/_p0d_frozen_40
+          persist-credentials: false
+      - name: Verify all three frozen original parent heads and reconstruct original author full40
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_author_v5 rev-parse HEAD)" = 1952154b33422dabc2b4e8ce8eafd8d6df1b6b34
+          test "$(git -C _p0d_author_v5/_p0d_frozen_39 rev-parse HEAD)" = cb2540dc4a3e5b819c0e3598d4af5e2b6dca76d3
+          test "$(git -C _p0d_author_v5/_p0d_frozen_40 rev-parse HEAD)" = 1b21bf8e5fc6afa5c74813d7f1037f877e1273ed
+          ROOT=_p0d_author_v5/handoffs/P0D-MUSOU-CHAOS-H1-20261113-01
+          python3 -B "$ROOT/tests/test_40_v5_bridge.py"
+          python3 -B "$ROOT/tools/build_40_evolution_v5.py" --assemble
+          D="$ROOT/dist/EGG_RAID_RUMBLE_H1_EVOLUTION_MUSOU_V5_PRIVATE_BRIDGE"
+          python3 -B handoffs/P0D-INDEPENDENT-HORDE-RESPAWN-QA-20261113-01/tools/patch_v5_assault_height_real40.py --dist "$D"
+          test "$(git hash-object "$D/src/server/Game.server.luau")" = 8063e92a2186c0aad16178c99bf0bb92ba395d9e
+          test "$(git hash-object "$D/src/server/MusouHorde.luau")" = 8c147c801e7fa1ff362922d66c9a6fd432fc8b6e
+          python3 - "$D" <<'PY'
+          import pathlib,hashlib,json,sys
+          d=pathlib.Path(sys.argv[1]); s=d/'src'
+          j=json.loads((d/'ASSAULT_HEIGHT_QA_SOURCE_LOCK.json').read_text('utf8'))
+          assert j['full_source_count']==40 and j['unchanged_script_count']==39
+          assert j['after_game_blob']=='8063e92a2186c0aad16178c99bf0bb92ba395d9e'
+          files=list(s.rglob('*.luau'));assert len(files)==40
+          for name,expected in j['patched_source_sha256'].items():
+              assert hashlib.sha256((s/name).read_bytes()).hexdigest()==expected
+          print('P0D_QA_SOURCE_LOCK_COMPLETE_40_39_UNCHANGED')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_native_qa_luau
+          persist-credentials: false
+      - name: Real native Luau compiler and original V5 behavioral safety
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_native_qa_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_native_qa_luau -B /tmp/p0d_qa_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_qa_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          ROOT=_p0d_author_v5/handoffs/P0D-MUSOU-CHAOS-H1-20261113-01
+          D="$ROOT/dist/EGG_RAID_RUMBLE_H1_EVOLUTION_MUSOU_V5_PRIVATE_BRIDGE"
+          n=0
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_qa_native/luau-compile "$f" >/dev/null
+            n=$((n+1))
+          done < <(find "$D/src" -type f -name '*.luau' -print0)
+          test "$n" -eq 40
+          echo P0D_QA_ASSAULT_HEIGHT_TRUE_NATIVE_COMPILE_40_PASS
+          python3 -B "$ROOT/tools/generate_native_horde_state_test.py" --write /tmp/qa_horde.luau
+          /tmp/p0d_qa_native/luau /tmp/qa_horde.luau | tee /tmp/qa_horde.txt
+          grep -F MUSOU_HORDE_NATIVE_50_STATE_ASSERTIONS_PASS /tmp/qa_horde.txt
+          python3 -B "$ROOT/tools/generate_native_combat_test.py" --write /tmp/qa_combat.luau
+          /tmp/p0d_qa_native/luau /tmp/qa_combat.luau | tee /tmp/qa_combat.txt
+          grep -F MUSOU_COMBAT_NATIVE_26_ASSERTIONS_PASS /tmp/qa_combat.txt
+      - name: Get immutable Rojo 7.7.1 and build private corrected Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/qa_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/qa_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import pathlib,zipfile,stat
+          with zipfile.ZipFile('/tmp/qa_rojo.zip') as z:
+              a=[x for x in z.namelist() if x.split('/')[-1]=='rojo']
+              assert len(a)==1
+              p=pathlib.Path('/tmp/qa_rojo');p.write_bytes(z.read(a[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/qa_rojo --version | grep -F 7.7.1
+          ROOT=_p0d_author_v5/handoffs/P0D-MUSOU-CHAOS-H1-20261113-01
+          D="$ROOT/dist/EGG_RAID_RUMBLE_H1_EVOLUTION_MUSOU_V5_PRIVATE_BRIDGE"
+          mkdir -p /tmp/p0d_qa_assault_height
+          /tmp/qa_rojo build "$D/default.project.json" -o /tmp/p0d_qa_assault_height/EGG_RAID_RUMBLE_40V5_ASSAULT_HEIGHT_QA_PRIVATE.rbxlx
+          cp "$D/ASSAULT_HEIGHT_QA_SOURCE_LOCK.json" /tmp/p0d_qa_assault_height/
+          cp /tmp/qa_horde.txt /tmp/p0d_qa_assault_height/HORDE_MOCK_NATIVE.txt
+          cp /tmp/qa_combat.txt /tmp/p0d_qa_assault_height/COMBAT_POLICY_NATIVE.txt
+          python3 - "$D" <<'PY'
+          import pathlib,collections,xml.etree.ElementTree as ET,sys,json,hashlib
+          d=pathlib.Path(sys.argv[1]);p=pathlib.Path('/tmp/p0d_qa_assault_height/EGG_RAID_RUMBLE_40V5_ASSAULT_HEIGHT_QA_PRIVATE.rbxlx')
+          expected=collections.Counter(f.read_text('utf8') for f in (d/'src').rglob('*.luau'))
+          bodies=[];classes=collections.Counter();games=0
+          for item in ET.fromstring(p.read_bytes()).iter('Item'):
+              k=item.get('class')
+              if k not in ('ModuleScript','Script','LocalScript'):continue
+              s=item.find("./Properties/string[@name='Source']")
+              if s is None:continue
+              n=item.find("./Properties/string[@name='Name']")
+              if k=='Script' and n is not None and n.text=='Game':games+=1
+              bodies.append(s.text or '');classes[k]+=1
+          assert len(bodies)==40 and collections.Counter(bodies)==expected
+          assert classes=={'Script':2,'LocalScript':5,'ModuleScript':33},classes
+          assert games==1
+          game=[s for s in bodies if 'remote.Name = "TrapRaidersS1Remote"' in s]
+          assert len(game)==1
+          assert game[0].count('local hits=horde:hit(sweepOrigin,currentRoot.CFrame.LookVector,')==1
+          assert 'evolutionGuards[player]={untilAt=scoutExpiresAt,' in game[0]
+          result={'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
+                  'scripts':40,'game_count':games,'exact_rojo_match':True,
+                  'native_luau_compiler_40_pass':True,'real_studio':False,'android':False,
+                  'official_rc':False}
+          pathlib.Path('/tmp/p0d_qa_assault_height/QA_NATIVE_ROJO_RESULT.json').write_text(json.dumps(result,indent=2)+'\n')
+          print('P0D_QA_HEIGHT_ROJO_EXACT_40_PASS',result['sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: P0D-EGG-RUMBLE-40V5-ASSAULT-HEIGHT-PRIVATE-QA
+          path: /tmp/p0d_qa_assault_height/
+          retention-days: 7
+          if-no-files-found: error
