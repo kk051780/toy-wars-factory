@@ -150,6 +150,33 @@ jobs:
           fi
       - uses: actions/checkout@v4
         with:
+          repository: kk051780/toy-wars-factory
+          ref: f1c0866423c2c1d36a5cd8eafe8cee7558b1a1dd
+          path: _p0d_relay_author
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: d09a52a3b7ca1fe400e30370606d5751751a6941
+          path: _p0d_relay_policy
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Safely layer exact classic egg relay after source-exact WCS+7jobs PRIVATE59
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            test "$(git -C _p0d_relay_author rev-parse HEAD)" = f1c0866423c2c1d36a5cd8eafe8cee7558b1a1dd
+            test "$(git -C _p0d_relay_policy rev-parse HEAD)" = d09a52a3b7ca1fe400e30370606d5751751a6941
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            AUTHOR=_p0d_relay_author/handoffs/P0D-EGG-RELAY-CLASSIC-LIVE-20261114-01
+            POLICY=_p0d_relay_policy/handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/src/EggRelayPolicy.luau
+            python3 -B handoffs/P0D-WCS-7JOBS-EGG-PRIVATE60-20261114-01/apply_egg_overlay.py --dist "$DIST" --author "$AUTHOR" --policy "$POLICY" --off-test
+            python3 -B handoffs/P0D-WCS-7JOBS-EGG-PRIVATE60-20261114-01/apply_egg_overlay.py --dist "$DIST" --author "$AUTHOR" --policy "$POLICY"
+          fi
+      - uses: actions/checkout@v4
+        with:
           repository: luau-lang/luau
           ref: f46d879e28302a430029304f7f6a162aed66f103
           path: _p0d_rc_luau
@@ -176,7 +203,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -241,7 +268,8 @@ jobs:
           species_enabled=(p=='rich51' and flags['features']['SCOUT_SPECIES_V1']['enabled'])
           wcs_enabled=(p=='rich51' and flags['features']['WCS_F01_C01']['enabled'])
           jobs_enabled=(p=='rich51' and flags['features']['SEVEN_JOBS_PVE_V1']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(jobs_enabled),'rich47':47,'legacy21':21}[p]
+          egg_classic_enabled=(p=='rich51' and flags['features']['EGG_RELAY_CLASSIC_V1']['enabled'])
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(jobs_enabled)+int(egg_classic_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -327,6 +355,12 @@ jobs:
               assert sum('GetAttribute("P0D_RC_ENABLE_SEVEN_JOBS_PVE")' in src for src in included)==1
           else:
               assert titles[('ModuleScript','SevenJobsRules')]==0
+          if egg_classic_enabled:
+              assert titles[('ModuleScript','EggRelayPolicy')]==1
+              assert sum('applyClassicEggRelay' in src for src in included)==1
+              assert sum('relayButton.MouseButton1Click:Connect(fireClassicEggRelay)' in src for src in included)==1
+          else:
+              assert titles[('ModuleScript','EggRelayPolicy')]==0
           if p=='rich51':
               assert titles[('Script','V4TrainingBridge')]==1
               assert titles[('LocalScript','V4TrialOverlay')]==1
@@ -351,6 +385,9 @@ jobs:
             'sevenjobs_private_candidate_included':bool(jobs_enabled),
             'sevenjobs_engine_qa':'NOT_TESTED',
             'sevenjobs_full_pvp_roles':'NOT_IMPLEMENTED',
+            'egg_classic_relay_included':bool(egg_classic_enabled),
+            'egg_h2_five_egg_relay':'INTENTIONALLY_DISABLED',
+            'egg_relay_real_Studio_2client':'NOT_TESTED',
             'species_engine_qa':'NOT_TESTED',
             'saved_beast_engine_qa':'NOT_TESTED',
             'saved_pve_minion_only':True if saved_pve_enabled else None,
@@ -360,7 +397,7 @@ jobs:
             'android':'NOT_TESTED','owner_fun':'NOT_TESTED',
             'production_publish':False,'sixskill_persistent':False,
             's1_score_prior_only':75,
-            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':jobs_enabled},
+            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':jobs_enabled,'EGG_RELAY_CLASSIC_V1':egg_classic_enabled},
             'base_author_51_preserved':True if realm_enabled else None,
             'new_realms_studio_2client':'NOT_TESTED'}
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
