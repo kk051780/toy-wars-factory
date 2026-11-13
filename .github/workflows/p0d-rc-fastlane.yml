@@ -6,6 +6,7 @@ on:
       - feature/p0d-private61-native105-size-qa-20261114
       - feature/p0d-private62-starry-meteor-20261114-01
       - feature/p0d-integrator-private62-mobile-20261114
+      - feature/p0d-twin-biomes-four-npc-private63-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -223,6 +224,20 @@ jobs:
           PY
             python3 -B rc_fastlane/rc62_touch_geometry_audit.py --hud "$DIST/src/client/HUD.client.luau"
           fi
+      - name: Create two new bank biomes and four unique interactive NPC species (PRIVATE63)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_twin_biomes.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_twin_biomes.py --profile rich51 --dist "$DIST" --enabled false
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            echo P0D_PRIVATE63_TWIN_BIOMES_OFF_PRESERVES_ALL_PARENT62_BYTES_PASS
+            python3 -B rc_fastlane/apply_twin_biomes.py --profile rich51 --dist "$DIST" --enabled true
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -251,7 +266,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['TWIN_BIOMES_4NPC_V1']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -377,7 +392,8 @@ jobs:
           egg_enabled=(p=='rich51' and flags['features']['EGG_RELAY_CLASSIC_V1']['enabled'])
           star_enabled=(p=='rich51' and flags['features']['STARRY_PATH_V1']['enabled'])
           meteor_enabled=(p=='rich51' and flags['features']['METEOR_FOURTH_V1']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled)+int(meteor_enabled),'rich47':47,'legacy21':21}[p]
+          twin_enabled=(p=='rich51' and flags['features']['TWIN_BIOMES_4NPC_V1']['enabled'])
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled)+int(meteor_enabled)+int(twin_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -512,6 +528,33 @@ jobs:
               print('P0D_PRIVATE62_METEOR_FOURTH_REAL_ROJO_BOOLVALUE_PASS')
           else:
               assert titles[('Script','MeteorFourth')]==0
+          if twin_enabled:
+              assert wcs_enabled and star_enabled and meteor_enabled and seven_enabled and egg_enabled
+              assert titles[('Script','TwinBiomes')]==1
+              twin=(base/'src/server/TwinBiomes.server.luau').read_text('utf8')
+              for species in ('AWARIN','SANGORU','RAIKO','KUMONON'):
+                  assert 'id = "'+species+'"' in twin, ('MISSING_NPC_SPECIES',species)
+              for world_name in ('CoralGarden_','ThunderLookout_'):
+                  assert world_name in twin,('MISSING_NEW_BIOME',world_name)
+              assert twin.count('world:SetAttribute("CharacterInstances", 8)')==1
+              assert twin.count('world:SetAttribute("BothTeamsAccess", true)')==1
+              assert 'if not value or not value:IsA("BoolValue") or value.Value ~= true then' in twin
+              project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
+              boot=project['ServerStorage']['P0D_ENABLE_TWIN_BIOMES_V1']
+              assert boot['$className']=='BoolValue' and boot['$properties']['Value'] is True
+              root=ET.fromstring(target.read_bytes())
+              startup=[]
+              for node in root.iter('Item'):
+                  if node.get('class')!='BoolValue':continue
+                  name=node.find("./Properties/string[@name='Name']")
+                  if name is not None and name.text=='P0D_ENABLE_TWIN_BIOMES_V1':
+                      startup.append(node)
+              assert len(startup)==1,('TWIN_BIOMES_BOOT_ROJO_MISSING',len(startup))
+              flag_true=startup[0].find("./Properties/bool[@name='Value']")
+              assert flag_true is not None and (flag_true.text or '').lower()=='true'
+              print('P0D_PRIVATE63_TWO_WORLDS_FOUR_SPECIES_EIGHT_NPCS_ROJO_SOURCE_EXACT_PASS')
+          else:
+              assert titles[('Script','TwinBiomes')]==0
           if p=='rich51':
               assert titles[('Script','V4TrainingBridge')]==1
               assert titles[('LocalScript','V4TrialOverlay')]==1
@@ -535,7 +578,7 @@ jobs:
             'rc_branch_commit':os.environ['GITHUB_SHA'],'place_sha256':digest,
             'source_count':sum(actual.values()),'exact_rojo_binary':True,
             'actual_uncompressed_place_bytes':place_bytes,
-            'source_candidate_stage':'STARRY61_PLUS_METEOR_PRIVATE62_NOT_OFFICIAL_RC',
+            'source_candidate_stage':'WCS_STAR_METEOR_AND_TWIN_WORLDS_PRIVATE63_NOT_OFFICIAL_RC',
             'native_policy_cases_7jobs':33 if p=='rich51' else None,
             'native_policy_cases_relay':41 if p=='rich51' else None,
             'native_original_Game_relay_cases':31 if p=='rich51' else None,
@@ -548,6 +591,9 @@ jobs:
             'egg_relay_classic_one_egg_included':bool(egg_enabled),
             'starry_path_third_canyon_route_included':bool(star_enabled),
             'meteor_fourth_canyon_route_included':bool(meteor_enabled),
+            'twin_biomes_two_fields_four_species_included':bool(twin_enabled),
+            'twin_biomes_real_studio_2client':'NOT_TESTED',
+            'twin_biomes_collected_persisted':False,
             'meteor_engine_2client':'NOT_TESTED',
             'starry_path_engine_2client':'NOT_TESTED',
             'egg_relay_five_egg_supported':False,
@@ -564,7 +610,7 @@ jobs:
             'android':'NOT_TESTED','owner_fun':'NOT_TESTED',
             'production_publish':False,'sixskill_persistent':False,
             's1_score_prior_only':75,
-            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled},
+            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled,'TWIN_BIOMES_4NPC_V1':twin_enabled},
             'base_author_51_preserved':True if realm_enabled else None,
             'new_realms_studio_2client':'NOT_TESTED'}
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
@@ -576,6 +622,21 @@ jobs:
           set -euo pipefail
           python3 -B rc_fastlane/progress.py --out /tmp/p0d_rc_out/FEATURE_PROGRESS.md --json /tmp/p0d_rc_out/FEATURE_PROGRESS.json
           grep -F P0D /tmp/p0d_rc_out/FEATURE_PROGRESS.md | head -2
+      - name: Auto-measure actual Place bytes, Script count and source-exact SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B rc_fastlane/rc_capacity.py --out-dir /tmp/p0d_rc_out
+          if [ "$PROFILE" = rich51 ]; then
+            python3 - <<'PY'
+          import json
+          report=json.load(open('/tmp/p0d_rc_out/RC_CAPACITY_REPORT.json'))
+          assert report['native_source_count']==63,('EXPECTED_TWIN63',report['native_source_count'])
+          assert report['rbxlx_bytes']>507197 and report['rbxlx_bytes']<2000000
+          print('P0D_PRIVATE63_BIOMES_CAPACITY_SOURCE_SHA_PASS',
+                report['rbxlx_bytes'],report['sha256'])
+          PY
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: P0D-CANONICAL-RC-STUDIO-${{ env.PROFILE }}
