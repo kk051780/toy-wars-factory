@@ -47,6 +47,7 @@ jobs:
           set -euo pipefail
           python3 -B -m unittest discover -s "$ROOT/tests" -p test_project_static.py -v
           python3 -B -m unittest discover -s "$ROOT/tests" -p test_evolution_battle_static.py -v
+          python3 -B -m unittest discover -s "$ROOT/tests" -p test_formdex_static.py -v
       - name: Checkout pinned native Luau source
         uses: actions/checkout@v4
         with:
