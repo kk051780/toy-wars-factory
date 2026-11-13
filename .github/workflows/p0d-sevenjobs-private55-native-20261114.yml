@@ -62,7 +62,7 @@ jobs:
           test "$(git -C _p0d_job_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
           cmake -S _p0d_job_luau -B /tmp/p0d_job_luau_build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
           cmake --build /tmp/p0d_job_luau_build --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
-      - name: Actual native compile all 55 and pure server policy 33 cases
+      - name: Actual native compile all 58 and pure server policy 33 cases
         shell: bash
         run: |
           set -euo pipefail
@@ -101,7 +101,7 @@ jobs:
             x=Path('/tmp/p0d_jobs_rojo');x.write_bytes(z.read(keys[0]))
             x.chmod(x.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
           PY
-      - name: Genuine 55-source private .rbxlx and authority-proof receipt
+      - name: Genuine 58-source private .rbxlx and authority-proof receipt
         shell: bash
         run: |
           set -euo pipefail
@@ -114,7 +114,7 @@ jobs:
           from collections import Counter
           import hashlib,json
           base=Path('_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE')
-          place=Path('/tmp/p0d_jobs_out/P0D_SEVEN_JOBS_PVE_PRIVATE55.rbxlx')
+          place=Path('/tmp/p0d_jobs_out/P0D_SEVEN_JOBS_PVE_PRIVATE58.rbxlx')
           expected=Counter(p.read_text('utf8') for p in (base/'src').rglob('*.luau'))
           actual=Counter()
           names=Counter()
@@ -129,7 +129,8 @@ jobs:
           assert actual==expected and sum(actual.values())==58,(len(actual),len(expected))
           assert names[('Script','Game')]==1
           assert names[('ModuleScript','PersistentHatchStore')]==1
-          assert names[('ModuleScript','SevenJobsRules')]==1\n          assert names[('ModuleScript','SavedPveMasteryPolicy')]==1
+          assert names[('ModuleScript','SevenJobsRules')]==1
+          assert names[('ModuleScript','SavedPveMasteryPolicy')]==1
           assert names[('ModuleScript','SavedBeastEvolutionPolicy')]==1
           assert names[('ModuleScript','ScoutSpeciesPolicy')]==1
           assert names[('Script','RealmHunt')]==1
@@ -141,7 +142,7 @@ jobs:
           receipt['real_rojo_exact']='58_OF_58_PASS'
           receipt['official_rc_adopted']=False
           receipt['actual_studio_engine']='NOT_TESTED'
-          Path('/tmp/p0d_jobs_out/PRIVATE55_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          Path('/tmp/p0d_jobs_out/PRIVATE58_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
           print('P0D_SEVEN_JOBS_REAL_ROJO_EXACT_58_OF_58_PASS',receipt['place_sha256'])
           PY
           cp /tmp/p0d_job_native.out /tmp/p0d_jobs_out/NATIVE_POLICY_RESULT.txt
