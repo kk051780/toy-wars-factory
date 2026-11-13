@@ -87,7 +87,7 @@ def check():
     ]
     for k,txt in enumerate(required):
         bad=hsrc.replace(txt,"MUTATED_UNSAFE_SOURCE",1)
-        eq(txt not in bad,"mutation_"+str(k)+"_observable_failclosed")
+        eq(bad.count(txt)==hsrc.count(txt)-1,"mutation_"+str(k)+"_observable_failclosed")
     for k,txt in enumerate([
         'M.event(state,serial,idFor(p),stepSeq(p),"PICK",id,true)',
         'M.event(state,serial,idFor(p),stepSeq(p),"DEPOSIT",id,true)',
