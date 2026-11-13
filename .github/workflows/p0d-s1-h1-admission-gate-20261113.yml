@@ -1,0 +1,34 @@
+name: P0D S1 H1 admission QA only
+on:
+  push:
+    branches:
+      - qa/p0d-s1-h1-admission-gate-20261113-01
+    paths:
+      - 'handoffs/P0D-S1-H1-ADMISSION-GATE-20261113-01/**'
+      - '.github/workflows/p0d-s1-h1-admission-gate-20261113.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  admission-unit-and-failclosed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Checkout own isolated branch
+        uses: actions/checkout@v4
+      - name: Unit tests NOT Roblox Studio
+        working-directory: handoffs/P0D-S1-H1-ADMISSION-GATE-20261113-01
+        run: python3 -m unittest discover -v -p 'test_*.py'
+      - name: Assert unselected candidate remains blocked
+        working-directory: handoffs/P0D-S1-H1-ADMISSION-GATE-20261113-01
+        shell: bash
+        run: |
+          set +e
+          python3 admission_gate.py CURRENT_H1_ADMISSION.json > output.json
+          status=$?
+          set -e
+          test "$status" -eq 2
+          grep -q '"decision": "BLOCKED"' output.json
+          grep -q 'PRODUCT_NOT_OFFICIALLY_SELECTED' output.json
+          grep -q 'STUDIO_2CLIENT_NOT_VERIFIED' output.json
+          echo "PASS: Source QA cannot certify owner Studio, Android or FUN."
