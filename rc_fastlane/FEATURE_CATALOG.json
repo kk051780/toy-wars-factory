@@ -1,0 +1,565 @@
+{
+  "schema": "P0D_OWNER_PORTFOLIO_V1",
+  "as_of_jst": "2026-11-14",
+  "rc_branch": "rc/p0d-s1-kids-rc01",
+  "active_source": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
+  "verified_rc_head": "50bf5b4851fc0eb7c16052f578d6360ec54cd63a",
+  "official_s1_previous_score": 75,
+  "stages": {
+    "IDEA": "企画段階",
+    "SOURCE": "独立コード/3Dあり・正式RC未統合",
+    "RC": "正式RCのStudio用ビルドに搭載・実機未検証",
+    "STUDIO": "Studio実機証拠あり",
+    "FUN": "人間の面白さ評価合格"
+  },
+  "progress_scoring": {
+    "IDEA": 20,
+    "SOURCE": 40,
+    "RC": 70,
+    "STUDIO": 90,
+    "FUN": 100
+  },
+  "progress_note": "工程到達率は仮配点の可視化であり公開完成率ではない。特にRCはRojoビルド成功であってRobloxエンジン試験成功ではない",
+  "rows": [
+    {
+      "id": "P0D-001",
+      "group": "基本",
+      "name": "2チーム対戦",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/220",
+      "note": "陣営・城の基盤",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    },
+    {
+      "id": "P0D-002",
+      "group": "基本",
+      "name": "卵強奪・持ち帰り",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/220",
+      "note": "基本勝敗配線",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    },
+    {
+      "id": "P0D-003",
+      "group": "基本",
+      "name": "城・HP・攻撃",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/220",
+      "note": "城破壊演出は別",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    },
+    {
+      "id": "P0D-004",
+      "group": "基本",
+      "name": "勝敗・再戦",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/220",
+      "note": "結果と再戦",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    },
+    {
+      "id": "P0D-005",
+      "group": "基本",
+      "name": "1卵／5卵のモード選択",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/279",
+      "note": "51本版で搭載",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    },
+    {
+      "id": "P0D-006",
+      "group": "基本",
+      "name": "レア卵・特殊報酬",
+      "stage": "IDEA",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/275",
+      "note": "収集用構想",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-007",
+      "group": "基本",
+      "name": "仲間への卵リレー",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/219",
+      "note": "独立ルールのみ",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-008",
+      "group": "戦闘",
+      "name": "7職業のフル実装",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
+      "note": "旧PC実験、現H1は2職中心",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-009",
+      "group": "戦闘",
+      "name": "戦士・接近戦",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
+      "note": "旧PC実装参考",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-010",
+      "group": "戦闘",
+      "name": "魔法使い・回復",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
+      "note": "現H1未接続",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-011",
+      "group": "戦闘",
+      "name": "忍者・透明",
+      "stage": "IDEA",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
+      "note": "役職案",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-012",
+      "group": "戦闘",
+      "name": "トラッパーの罠",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/220",
+      "note": "基本罠あり",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    },
+    {
+      "id": "P0D-013",
+      "group": "戦闘",
+      "name": "建築士・壁と橋",
+      "stage": "IDEA",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
+      "note": "実戦建築なし",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-014",
+      "group": "戦闘",
+      "name": "魔獣使い・召喚",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/280",
+      "note": "独立スカウト候補",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-015",
+      "group": "戦闘",
+      "name": "ゾンビ使い・支配",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
+      "note": "旧PC試作",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-016",
+      "group": "戦闘",
+      "name": "雑魚群れの無双撃破",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/220",
+      "note": "V7 Horde同梱",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    },
+    {
+      "id": "P0D-017",
+      "group": "戦闘",
+      "name": "中立精鋭・強敵",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
+      "note": "独立候補",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-018",
+      "group": "戦闘",
+      "name": "拘束・捕獲",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
+      "note": "高度な拘束は未統合",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-019",
+      "group": "戦闘",
+      "name": "ダウン・救助・復活",
+      "stage": "IDEA",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
+      "note": "仕様中心",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-020",
+      "group": "戦闘",
+      "name": "巨人・ドラゴン",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
+      "note": "旧候補。H1未採用",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-021",
+      "group": "戦闘",
+      "name": "時間操作・覚醒",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
+      "note": "個別能力試作",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-022",
+      "group": "世界",
+      "name": "地上の城塞",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/220",
+      "note": "基本地形",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    },
+    {
+      "id": "P0D-023",
+      "group": "世界",
+      "name": "海上ルート・港",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/220",
+      "note": "現H1ルート搭載",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    },
+    {
+      "id": "P0D-024",
+      "group": "世界",
+      "name": "天空城・空中ルート",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/220",
+      "note": "SkyV5地形",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    },
+    {
+      "id": "P0D-025",
+      "group": "世界",
+      "name": "海底城・潜水",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/222",
+      "note": "独立3D候補",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-026",
+      "group": "世界",
+      "name": "複数ステージの選択",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
+      "note": "旧PC側に試作",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-027",
+      "group": "世界",
+      "name": "宇宙・無重力",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/222",
+      "note": "ドーム試作",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-028",
+      "group": "世界",
+      "name": "天国・地獄・幻想",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/222",
+      "note": "独立3D候補",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-029",
+      "group": "世界",
+      "name": "レア魔獣の発見",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/222",
+      "note": "独立出現・探索",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-030",
+      "group": "世界",
+      "name": "ジャンプ台・風ダッシュ",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/222",
+      "note": "現51への全部の採用は不明",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-031",
+      "group": "世界",
+      "name": "船・車・飛行",
+      "stage": "IDEA",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/222",
+      "note": "乗物として実戦未配線",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-032",
+      "group": "世界",
+      "name": "雷・吹雪・流星群",
+      "stage": "IDEA",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
+      "note": "天候イベント案",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-033",
+      "group": "世界",
+      "name": "巨大化・小型化",
+      "stage": "IDEA",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
+      "note": "特殊イベント案",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-034",
+      "group": "収集育成",
+      "name": "看板キャラ72体",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/219",
+      "note": "3Dソース、実戦数とは別",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-035",
+      "group": "収集育成",
+      "name": "キャラ100体拡張",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/283",
+      "note": "素材ソース候補",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-036",
+      "group": "収集育成",
+      "name": "648体の図鑑",
+      "stage": "IDEA",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/219",
+      "note": "構想。実戦未達",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-037",
+      "group": "収集育成",
+      "name": "無料孵化と所有",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/275",
+      "note": "独立試作",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-038",
+      "group": "収集育成",
+      "name": "魔獣装備・スカウト",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/280",
+      "note": "1種の実戦試作",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-039",
+      "group": "収集育成",
+      "name": "魔法・武器等の実戦装備",
+      "stage": "IDEA",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/275",
+      "note": "全分類で未完成",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-040",
+      "group": "収集育成",
+      "name": "プレイヤーLv・XP",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/286",
+      "note": "一部ソース。全体の永続化未確認",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-041",
+      "group": "収集育成",
+      "name": "職・装備熟練",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/281",
+      "note": "独立Luau",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-042",
+      "group": "収集育成",
+      "name": "長期成長のPvE無双",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/285",
+      "note": "バランスポリシー候補",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-043",
+      "group": "収集育成",
+      "name": "分岐・神話進化",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/287",
+      "note": "独立進化ルール",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-044",
+      "group": "収集育成",
+      "name": "進化形態図鑑",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/287",
+      "note": "FormDex候補",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-045",
+      "group": "収集育成",
+      "name": "XP・所有・進化の保存",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/286",
+      "note": "実Datastore未検証",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-046",
+      "group": "ロビー収益",
+      "name": "初回90秒ガイド",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/220",
+      "note": "First90同梱",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    },
+    {
+      "id": "P0D-047",
+      "group": "ロビー収益",
+      "name": "魔獣・武器修行",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/220",
+      "note": "2分野のH1訓練",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    },
+    {
+      "id": "P0D-048",
+      "group": "ロビー収益",
+      "name": "6分野の修行台",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/220",
+      "note": "追加4分野はセッション限定",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    },
+    {
+      "id": "P0D-049",
+      "group": "ロビー収益",
+      "name": "訓練の選択・ランダム",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/220",
+      "note": "セッション試作",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    },
+    {
+      "id": "P0D-050",
+      "group": "ロビー収益",
+      "name": "フレンドXP",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/220",
+      "note": "同じサーバーの検証は実機未実施",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    },
+    {
+      "id": "P0D-051",
+      "group": "ロビー収益",
+      "name": "修行の永続保存",
+      "stage": "SOURCE",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/219",
+      "note": "Store移行・欠損防止必要",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-052",
+      "group": "ロビー収益",
+      "name": "ロビー展示・ランキング",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
+      "note": "独立プレビュー",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-053",
+      "group": "ロビー収益",
+      "name": "時短・レア課金",
+      "stage": "IDEA",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/219",
+      "note": "収益構想。実課金なし",
+      "rc_evidence": null
+    },
+    {
+      "id": "P0D-054",
+      "group": "ロビー収益",
+      "name": "試合後の次行動ガイド",
+      "stage": "RC",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/220",
+      "note": "7秒カードと道場目印",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43483997763"
+    }
+  ]
+}
