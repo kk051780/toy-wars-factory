@@ -1,0 +1,183 @@
+name: P0D S2 C5 Real Owner Avatar Gate Crossing Observer 49 Private Place
+on:
+  push:
+    branches:
+      - feature/p0d-horde-heist-gate-20261113-01
+    paths:
+      - 'handoffs/P0D-HORDE-HEIST-GATE-20261113-01/**'
+      - '.github/workflows/p0d-s2-b42-v7-49-c5-owner-gate-qa-20261113.yml'
+  workflow_dispatch:
+jobs:
+  verify-build-real-private-place:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout EXACT immutable B42 plus V7 original full builder
+        uses: actions/checkout@v4
+        with:
+          ref: 70714a081a555d716832bb6a640611e05a1f3eca
+          path: _frozen_v7
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Checkout EXACT immutable original B42
+        uses: actions/checkout@v4
+        with:
+          ref: 837853e66278e38bb79f6399c3e8bfc9a2403be6
+          path: _b42
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Checkout EXACT immutable original Musou V7 source for source lock
+        uses: actions/checkout@v4
+        with:
+          ref: 76cc75b71f0a1a7a5a9976f14c10276c636493f2
+          path: _v7
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Python gate/route tests and ORIGINAL V7+B42+world source contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-HORDE-HEIST-GATE-20261113-01
+          python3 -B -m unittest discover -s "$ROOT/tests" -v
+          python3 -B "$ROOT/tools/check_locked_upstream.py"
+      - name: Build actual 48 Luau source based on immutable owner B42 plus V7
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _frozen_v7 rev-parse HEAD)" = "70714a081a555d716832bb6a640611e05a1f3eca"
+          ROOT=handoffs/P0D-HORDE-HEIST-GATE-20261113-01
+          python3 -B "$ROOT/tools/build_49_c5_owner_engine_observer.py" --original-v7-repo _frozen_v7 \
+            --output "$PWD/_p0d_private/P0D_B42_V7_S2_C5_OBSERVED_49_PRIVATE"
+      - name: Checkout exact pinned Luau C++ toolchain
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_gate_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Native compile full original 48 and execute real gate state runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_gate_luau rev-parse HEAD)" = "f46d879e28302a430029304f7f6a162aed66f103"
+          cmake -S _p0d_gate_luau -B /tmp/p0d_gate_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_gate_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          DIST=_p0d_private/P0D_B42_V7_S2_C5_OBSERVED_49_PRIVATE
+          n=0
+          while IFS= read -r -d '' path; do
+            /tmp/p0d_gate_native/luau-compile "$path" >/tmp/p0d_gate_compile_log.txt 2>&1 || { cat /tmp/p0d_gate_compile_log.txt; exit 1; }
+            n=$((n+1))
+          done < <(find "$DIST/src" -type f -name '*.luau' -print0)
+          test "$n" -eq 49
+          ROOT=handoffs/P0D-HORDE-HEIST-GATE-20261113-01
+          python3 -B "$ROOT/tools/generate_native_gate_test.py" /tmp/p0d_gate_native_test.luau
+          /tmp/p0d_gate_native/luau-compile /tmp/p0d_gate_native_test.luau >/dev/null
+          /tmp/p0d_gate_native/luau /tmp/p0d_gate_native_test.luau | tee /tmp/p0d_gate_native.log
+          grep -F P0D_GATE_NATIVE_ELITE_BRIDGE_RULES_PASS /tmp/p0d_gate_native.log
+          python3 -B _frozen_v7/handoffs/P0D-FIRST90-MUSOUV7-UPGRADE-20261113-01/tools/generate_native_horde_state_test.py --write /tmp/p0d_horde_v7.luau
+          /tmp/p0d_gate_native/luau /tmp/p0d_horde_v7.luau | tee /tmp/p0d_v7_native.log
+          grep -F MUSOU_HORDE_NATIVE_79_STATE_ASSERTIONS_PASS /tmp/p0d_v7_native.log
+          python3 -B "$ROOT/tools/generate_native_solo_test.py" --write /tmp/p0d_solo_policy.luau
+          /tmp/p0d_gate_native/luau-compile /tmp/p0d_solo_policy.luau >/dev/null
+          /tmp/p0d_gate_native/luau /tmp/p0d_solo_policy.luau | tee /tmp/p0d_studio_solo_native.log
+          grep -F P0D_S2_STUDIO_SOLO_34_NATIVE_ASSERTIONS_PASS /tmp/p0d_studio_solo_native.log
+          python3 -B "$ROOT/tools/generate_native_c3_latch_test.py" --write /tmp/p0d_c3_latch_native.luau
+          /tmp/p0d_gate_native/luau-compile /tmp/p0d_c3_latch_native.luau >/dev/null
+          /tmp/p0d_gate_native/luau /tmp/p0d_c3_latch_native.luau | tee /tmp/p0d_c3_latch_native.log
+          grep -F P0D_C3_SOLO_LATCH_50_NATIVE_ASSERTIONS_PASS /tmp/p0d_c3_latch_native.log
+          echo P0D_C5_GATE_AVATAR_QA_49_FULL_NATIVE_COMPILER_PASS
+      - name: Obtain pinned Rojo with SHA256-verified ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_gate_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_gate_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,stat,pathlib
+          with zipfile.ZipFile('/tmp/p0d_gate_rojo.zip') as z:
+              names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(names)==1
+              out=pathlib.Path('/tmp/p0d_gate_rojo')
+              out.write_bytes(z.read(names[0]))
+              out.chmod(out.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_gate_rojo --version | grep -F 7.7.1
+      - name: Build actual private Rojo .rbxlx and verify all 48 exact source bodies
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIST=_p0d_private/P0D_B42_V7_S2_C5_OBSERVED_49_PRIVATE
+          mkdir -p /tmp/p0d_s2_c5_trial
+          /tmp/p0d_gate_rojo build "$DIST/default.project.json" -o /tmp/p0d_s2_c5_trial/P0D_B42_V7_S2_C5_OBSERVED_49_PRIVATE_UNPUBLISHED.rbxlx
+          cp "$DIST/SOURCE_LOCK.json" /tmp/p0d_s2_c5_trial/
+          cp /tmp/p0d_gate_native.log /tmp/p0d_s2_c5_trial/GATE_NATIVE_TEST.txt
+          cp /tmp/p0d_studio_solo_native.log /tmp/p0d_s2_c5_trial/SOLO_NATIVE_34_QA.txt
+          cp /tmp/p0d_c3_latch_native.log /tmp/p0d_s2_c5_trial/C3_LATCH_NATIVE_50_QA.txt
+          cp /tmp/p0d_v7_native.log /tmp/p0d_s2_c5_trial/HORDE_V7_NATIVE_TEST.txt
+          python3 - <<'PY'
+          import pathlib,collections,xml.etree.ElementTree as ET,json,hashlib
+          root=pathlib.Path('_p0d_private/P0D_B42_V7_S2_C5_OBSERVED_49_PRIVATE')
+          place=pathlib.Path('/tmp/p0d_s2_c5_trial/P0D_B42_V7_S2_C5_OBSERVED_49_PRIVATE_UNPUBLISHED.rbxlx')
+          expected=collections.Counter(p.read_text('utf-8') for p in (root/'src').rglob('*.luau'))
+          actual=collections.Counter();types=collections.Counter();games=0;h1=0
+          for item in ET.fromstring(place.read_bytes()).iter('Item'):
+              kind=item.get('class')
+              if kind not in ('Script','LocalScript','ModuleScript'):continue
+              source=item.find("./Properties/string[@name='Source']")
+              name=item.find("./Properties/string[@name='Name']")
+              if source is None:continue
+              actual[source.text or '']+=1
+              types[kind]+=1
+              if kind=='Script' and name is not None and name.text=='Game':games+=1
+              if kind=='Script' and name is not None and name.text=='H1FunWorld':h1+=1
+          assert types=={'Script':2,'LocalScript':6,'ModuleScript':41},types
+          assert actual==expected and sum(actual.values())==49
+          assert (games,h1)==(1,1)
+          visual=next(t for t in actual if 'local GateVisual = {}' in t)
+          assert 'door.CanCollide = false\n        door.CanQuery = false' in visual
+          assert 'door.CanQuery = true\n        door.CanCollide = true' in visual
+          runtime=next(t for t in actual if 'function GateLiveRuntime:tick(' in t)
+          assert 'ELITE_KO_CONFIRMED' in runtime and 'SEA_GATES_MOUNTED' in runtime
+          assert 'part.Size+Vector3.new(4,4,20)' in runtime
+          assert 'ROUND_END_SAFE_OPEN' in runtime
+          assert '精鋭を倒そう' in runtime
+          observer=next(t for t in actual if '[P0D_GATE_ENGINE_QA]' in t)
+          assert 'REAL_AVATAR_CROSSED_OPEN_' in observer
+          assert 'originalRemote.OnClientEvent:Connect(' in observer
+          assert 'if not RunService:IsStudio() then return end' in observer
+          assert 'FireServer(' not in observer
+          assert 'Instance.new(' not in observer
+          solo=next(t for t in actual if 'function Solo.activePractice(' in t)
+          assert 'wasSoloAtRoundStart == true' in solo
+          g=next(t for t in actual if 'local s2HeistGate=GateLiveRuntime.new(map.model)' in t)
+          assert g.count('s2HeistGate:beforeHit(horde)')==2
+          assert g.count('s2HeistGate:tick(')==1
+          assert g.count('match.studioSolo = StudioSoloGateRules.isPractice(')==1
+          assert g.count('StudioSoloGateRules.activePractice(')==1
+          assert g.count('remote.OnServerEvent:Connect(')==1
+          assert g.count('remote.Name = "TrapRaidersS1Remote"')==1
+          info={'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+            'scripts':49,'server_scripts':2,'client_scripts':6,'module_scripts':41,
+            'original_b42_v7_sources_unchanged':41,'new_modules':6,
+            'previous_C4_sources_unchanged':48,'mounted_gate_objective':True,
+            'phase_only_output_logs':True,'safe_approach_margin':10.6,
+            'read_only_client_actual_crossing_observer':True,
+            'open_door_query_safe':True,
+            'solo_epoch_latched':True,
+            'one_server_game':True,'one_authoritative_remote':True,'original_h1_world':True,
+            'studio_solo':'NOT_TESTED','studio_2client':'NOT_TESTED','android':'NOT_TESTED','owner_fun':'NOT_TESTED',
+            'official_product_select':False,'official_rc_adopted':False,'published':False}
+          pathlib.Path('/tmp/p0d_s2_c5_trial/PLACE_SHA256_AND_QA.json').write_text(json.dumps(info,indent=2)+'\n')
+          print('P0D_PRIVATE_S2_C5_49_ROJO_ALL_SOURCE_EXACT_SUCCESS',info['place_sha256'])
+          PY
+      - name: Upload nonpublished private trial (seven-day retention)
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-C5-B42-V7-GATE-REAL-AVATAR-OBSERVER-49-PRIVATE-STUDIO
+          path: /tmp/p0d_s2_c5_trial/
+          if-no-files-found: error
+          retention-days: 7
