@@ -91,6 +91,15 @@ jobs:
           /tmp/p0d_new_luau/luau-compile rc_fastlane/features/realm_hunt/RealmHunt.server.luau > /tmp/p0d_new_server.luau.out
           /tmp/p0d_new_luau/luau-compile rc_fastlane/features/realm_hunt/RealmHuntHUD.client.luau > /tmp/p0d_new_client.luau.out
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
+      - name: Apply exact source-locked per-feature Studio V4 idle/friend overlay (optional)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            python3 -B rc_fastlane/apply_overlays.py \
+              --dist "_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE" \
+              --profile "$PROFILE"
+          fi
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash
         run: |
@@ -141,6 +150,26 @@ jobs:
               n=e.find("./Properties/string[@name='Name']")
               if n is not None:titles[(e.get('class'),n.text)]+=1
           assert included==actual,('SOURCE_MISMATCH',len(included),len(actual))
+          if p=='rich51':
+              f=json.load(open('rc_fastlane/ACTIVE.json',encoding='utf8'))['feature_switches']['V4_IDLE_FRIEND_SAFE_FIX']
+              assert f['rollback']=='DISABLE_OVERLAY_RETAIN_RICH51'
+              live=f['enabled']
+              srcs=list(included.elements())
+              has_server=any('player:IsFriendsWithAsync(other.UserId)' in x and 'NoCombatBuff' in x for x in srcs)
+              has_client=any('player.Idled:Connect(' in x and 'UserInputService.InputBegan:Connect(' in x for x in srcs)
+              assert has_server==live and has_client==live,('OVERLAY_SWITCH_MISMATCH',live,has_server,has_client)
+              lock=json.load(open(base/'SOURCE_LOCK.json',encoding='utf8'))
+              assert (lock.get('rc_overlay',{}).get('id')=='V4_IDLE_FRIEND_SAFE_FIX')==live
+              assert lock['blobs']=={f.relative_to(base/'src').as_posix():
+                            hashlib.sha1(b'blob '+str(len(f.read_bytes())).encode()+b'\\0'+f.read_bytes()).hexdigest()
+                            for f in (base/'src').rglob('*.luau')},'RC_PROFILE_SOURCE_LOCK'
+              if live:
+                  assert lock['rc_overlay']['untouched_original_game_scripts']==49
+                  assert sorted(lock['rc_overlay']['only_changed_scripts'])==[
+                    'client/V4TrialOverlay.client.luau','server/V4TrainingBridge.server.luau']
+                  print('P0D_RC_FASTLANE_V4_2FILE_SWITCH_49_ORIGINAL_BYTES_PASS')
+              else:
+                  print('P0D_RC_FASTLANE_V4_SWITCH_OFF_ORIGINAL51_PASS')
           assert titles[('Script','Game')]==1,('DUPLICATE_GAME',titles)
           if realm_enabled:
               assert titles[('Script','RealmHunt')]==1
@@ -155,7 +184,12 @@ jobs:
               assert titles[('Script','V4TrainingBridge')]==0
           digest=hashlib.sha256(target.read_bytes()).hexdigest()
           source=os.environ['EXPECTED_SOURCE']
+          overlay_ids=(
+            ['V4_IDLE_FRIEND_SAFE_FIX'] if p=='rich51' and json.load(
+                open('rc_fastlane/ACTIVE.json',encoding='utf8')
+              )['feature_switches']['V4_IDLE_FRIEND_SAFE_FIX']['enabled'] else [])
           receipt={'release_id':'P0D-S1-KIDS-RC01','profile':p,'source_commit':source,
+            'source_overlays':overlay_ids,'composite_rc_source_commit':os.environ['GITHUB_SHA'],
             'rc_branch_commit':os.environ['GITHUB_SHA'],'place_sha256':digest,
             'source_count':sum(actual.values()),'exact_rojo_binary':True,
             'single_game':True,'owner_studio_2client':'NOT_TESTED',
