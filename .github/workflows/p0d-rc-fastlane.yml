@@ -440,9 +440,9 @@ jobs:
           if star_enabled:
               assert wcs_enabled and seven_enabled and egg_enabled
               assert titles[('Script','StarfallPath')]==1
-              assert sum('P0D_STARRY_PATH' in src for src in included)==1
+              assert sum('stage.Name="P0D_STARRY_PATH"' in src for src in included)==1
               assert sum('if active and os.clock()>=expiresAt and not occupied()' in src for src in included)==1
-              assert sum('GetAttribute("P0D_RC_ENABLE_STARRY_PATH_V1")~=true' in src for src in included)==1
+              assert sum('GetAttribute("P0D_RC_ENABLE_STARRY_PATH_V1")~=true' in src for src in included)==1+int(shards_enabled)
               project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
               assert project['ServerStorage']['$attributes']['P0D_RC_ENABLE_STARRY_PATH_V1'] is True
           else:
