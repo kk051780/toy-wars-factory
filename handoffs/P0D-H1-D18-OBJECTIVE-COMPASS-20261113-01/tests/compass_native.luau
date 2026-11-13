@@ -1,0 +1,43 @@
+-- Native Luau runtime actual test of shipped source logic: NOT Roblox Studio render simulation.
+local C=require("../src/client/D18ObjectiveCompassRules")
+local count=0
+local function ok(test,label)
+    assert(test,label)
+    count+=1
+end
+local function angle(dx,dz)
+    return C.angleDegrees(1,0,0,1,dx,dz)
+end
+local function near(a,b)
+    return a~=nil and math.abs(a-b)<0.0001
+end
+ok(near(angle(0,10),0),"ahead")
+ok(near(angle(10,0),90),"right")
+ok(near(angle(-10,0),-90),"left")
+ok(near(angle(10,10),45),"right diagonal")
+ok(near(angle(-10,10),-45),"left diagonal")
+ok(math.abs(angle(0,-10))==180,"behind")
+ok(near(angle(0,1),0),"direction magnitude invariant")
+ok(near(angle(0,100000),0),"large finite distance")
+ok(near(C.angleDegrees(0,1,-1,0,-10,0),0),"camera turns left orientation")
+ok(near(C.angleDegrees(0,1,-1,0,0,10),90),"camera turns right target")
+ok(near(C.angleDegrees(0,-1,1,0,10,0),0),"camera east")
+ok(near(C.angleDegrees(0,-1,1,0,0,-10),90),"camera east right side")
+ok(C.angleDegrees(1,0,0,1,0,0)==nil,"same position")
+ok(C.angleDegrees(1,0,0,1,0.3,0.2)==nil,"tiny movement")
+ok(C.angleDegrees(0,0,0,1,1,1)==nil,"bad camera right")
+ok(C.angleDegrees(1,0,0,0,1,1)==nil,"bad camera forward")
+ok(C.angleDegrees(nil,0,0,1,1,1)==nil,"nil right")
+ok(C.angleDegrees(1,nil,0,1,1,1)==nil,"nil right-z")
+ok(C.angleDegrees(1,0,nil,1,1,1)==nil,"nil forward")
+ok(C.angleDegrees(1,0,0,nil,1,1)==nil,"nil forward-z")
+ok(C.angleDegrees(1,0,0,1,nil,1)==nil,"nil target-x")
+ok(C.angleDegrees(1,0,0,1,1,nil)==nil,"nil target-z")
+ok(C.angleDegrees(1,0,0,1,"one",1)==nil,"string target")
+ok(C.angleDegrees(1,0,0,1,0/0,1)==nil,"nan target")
+ok(C.angleDegrees(1,0,0,1,1e10,1)==nil,"bound target")
+ok(C.title(false)=="敵の卵の方向","enemy egg label")
+ok(C.title(true)=="じぶんの台の方向","own score label")
+ok(C.title(nil)==nil,"bad label")
+ok(C.title("TRUE")==nil,"string carrying label")
+print("P0D_H1_COMPASS_REAL_NATIVE_POLICY_PASS assertions="..tostring(count))
