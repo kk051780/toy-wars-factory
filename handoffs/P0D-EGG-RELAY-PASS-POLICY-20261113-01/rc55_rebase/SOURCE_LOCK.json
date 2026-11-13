@@ -1,0 +1,45 @@
+{
+  "schema": "P0D_EGG_RELAY_CURRENT_RC55_TO_56_ISOLATED_REBASE_V1",
+  "official_verified_rc_head": "0dd7f4418d06200e40688c79c8290745cb56834d",
+  "official_verified_actions_run_id": 43501488524,
+  "official_verified_artifact_id": 14074311951,
+  "official_current55_place_sha256": "e439aa5d7372e77b0949bb681ed7342485a541c3738f7c7aceede1b6ea23b8c0",
+  "isolated_source_candidate56_sha256": "d9b594bc869fee10dd2d2f7fadfb316f655fedc1316425e639ab437dd8c77afc",
+  "base_source_count": 55,
+  "candidate_source_count": 56,
+  "base_source_bodies_byte_identical": 53,
+  "changed_only": [
+    "Game",
+    "H2FiveEggRules"
+  ],
+  "added_only": [
+    "EggRelayPolicy"
+  ],
+  "original_Game_sha256": "",
+  "candidate_Game_sha256": "fab4d0923caa7c121b9b7895dcecaf2eb6df1c761ffd327bcc7de4567c8ecae0",
+  "candidate_H2_sha256": "425214be04747c2a7e4dc57dd5de0b700c3002643a795f949a479f2f52965873",
+  "lock_patch_blobs": {
+    "Game.patch": "a20a1f2599af5ec9f62c5b05206b89886341906b",
+    "H2FiveEggRules.patch": "92b04190d01483354a361e059559f7ac95fbef95"
+  },
+  "pure_policy_git_blob": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
+  "saved_weapon_mastery_module_byte_identical": true,
+  "saved_sixskill_profile_module_byte_identical": true,
+  "existing_original_Game_one": true,
+  "existing_original_Remote_one": true,
+  "source_rebase_python_integrity_16": "16/16 PASS executed locally",
+  "h2_original_plus_relay_lua54_compat_20": "20/20 PASS executed locally",
+  "full_native_luau_compiler_56": "NOT_TESTED",
+  "genuine_Rojo_build_56": "NOT_TESTED",
+  "Roblox_Studio_2client": "NOT_TESTED",
+  "Android": "NOT_TESTED",
+  "Owner_FUN": "NOT_TESTED",
+  "important_parallel_ownership": "Draft PR #296 separately proposes CLASSIC one-egg transfer only. Avoid applying both Game diffs; take H2 5-egg transition as complementary missing feature, sole #220 selects one Game hook.",
+  "stage": "ISOLATED_SOURCE_CANDIDATE_NOT_OFFICIAL_RC",
+  "official_rc_adopted": false,
+  "main_changed": false,
+  "published": false,
+  "paid": false,
+  "next_owner": "#220 sole integrator after current SHA source/authority QA",
+  "rollback": "Source-locked EGG_RELAY_V1 flag disabled and existing official RC55 source restored; official #220 adds assembler switch"
+}
