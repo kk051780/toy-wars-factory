@@ -191,7 +191,7 @@ applyClassicEggRelay(receiver,reverse)
 assert(broadcasts==n and carry[receiver]=="BLUE","immediate bounce back cooldown")
 caseCount+=1
 print("P0D_EGG_RELAY_ACTUAL_GAME_NATIVE_30_CASES_PASS")
-assert(caseCount==30,("EXPECTED_30_CASES",caseCount))
+assert(caseCount==30,"EXPECTED_30_CASES: "..tostring(caseCount))
 '''
 def main():
     p=argparse.ArgumentParser()
