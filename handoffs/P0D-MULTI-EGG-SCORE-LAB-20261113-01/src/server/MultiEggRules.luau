@@ -139,6 +139,17 @@ function Rules.advance(m: any,seconds: any): (boolean,string)
         else
             m.winner="BLUE"
         end
+        -- At timeout release every carrier without duplicating or losing an egg.
+        -- Pure-score model ends with a conserved non-carried 5-egg set.
+        for _,egg in pairs(m.eggs) do
+            if egg.state == "CARRIED" then
+                egg.state="DROPPED"
+                egg.controller=nil
+                egg.holder=nil
+                egg.heldSeconds=0
+                egg.transferSeq+=1
+            end
+        end
         m.carryByPlayer={}
     end
     return true,"TICK"
