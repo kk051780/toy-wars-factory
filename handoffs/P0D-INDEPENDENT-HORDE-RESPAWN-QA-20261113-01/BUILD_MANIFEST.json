@@ -37,6 +37,23 @@
     {
       "path": "DOWNSTREAM_INHERITANCE_BLOCKER.md",
       "blob_sha1": "9cae16a3c8e5a33ad5114898394463c3738c76e8"
+    },
+    {
+      "path": "tools/audit_v4_inheritance.mjs",
+      "blob_sha1": "cdfd196c463c664a56631e0585a6f4ee8f286d19"
+    },
+    {
+      "path": "tests/test_v4_inheritance.mjs",
+      "blob_sha1": "ad526a50abc13785d252caca3b4e9b83ea21bdcf"
+    },
+    {
+      "path": "V4_POWER_REGRESSION_REBASE_GATE.md",
+      "blob_sha1": "db38af629c74821d50b9d8c95192d8394714c967"
+    },
+    {
+      "path": ".github/workflows/p0d-horde-independent-v4-ci.yml",
+      "blob_sha1": "378e7c0e23c18880712b305b00ad8f0054da639d",
+      "repo_root_external": true
     }
   ],
   "evidence": {
@@ -53,7 +70,7 @@
     "actual_fun": "UNKNOWN",
     "official_S1_game_release_last_pct": 75
   },
-  "blocker": "Old #288 V2 elite bug is fixed in #288 V3, but separate earned-power H1 still inherits V2 old Horde exact blob and old builder SHA. Owner must rebase and re-run native+Studio; #250/#220 no adoption until reconciled.",
+  "blocker": "Original #288 V4 repairs stale elite tell, real-world floor grounding, and mob-vs-castle double damage in its OWN source. Earned-power39 still inherits #288 V2 for Horde and old Game and must be explicitly rebased with no power regression, CI/native and Studio FUN before #250 selection/#220 RC.",
   "protected": "No main, RC, merges, live publish, purchases, spend, owner PC/Codex, P0 A/B/C auth/CAS, 5 Automations",
   "downstream_inheritance": {
     "power_frozen_commit": "cb2540dc4a3e5b819c0e3598d4af5e2b6dca76d3",
@@ -67,5 +84,27 @@
     "power_branch_native_CI_status": "PASS_OWN_POLICY_AND_COMPILATION_NOT_FULL_HORDE_SAFETY",
     "power_game_play_status": "NOT_STUDIO_TESTED",
     "product_selection": "BLOCK_UNTIL_FIXED_HORDE_REBASE_AND_QA"
+  },
+  "v4_regression_audit": {
+    "latest_original_v4_commit": "376e943673dc089a5381e0d46570b92185a5d32a",
+    "original_v4_horde_blob": "7edfda9e5a1d4ac8ae47d66ea7cf908eb8e4af6e",
+    "original_v4_game_blob": "fba78a510ba7f9044cd7ce7a6d40b69ee59c1a03",
+    "power_39_immutable_commit": "cb2540dc4a3e5b819c0e3598d4af5e2b6dca76d3",
+    "power_39_horde_blob": "c1ef565f4e8b11a6e8ff7eac5ed55c8f268a4553",
+    "power_39_game_blob": "ac995ea5e960942a557ee0a2a4116bff8ceadfe8",
+    "old_power_assembler_blob": "04f89fa61f773ecd3342c969a9e354ed6703170e",
+    "observed_blockers": [
+      "stale elite telegraph across KO-respawn",
+      "fixed Y mob spawn floats over original map",
+      "same ATTACK may hit mob and castle core without mobHits guard"
+    ],
+    "in_call_v8_actual_git_source_checks": "33/33 PASS",
+    "separate_node_cli_tests": "31 assertions authored; not proven executed",
+    "github_actions_workflow_source": "NEW; completed run unconfirmed",
+    "actual_roblox_studio_2client": "NOT_TESTED",
+    "android_first_90s": "NOT_TESTED",
+    "power_feature_game_rebase": "NOT_DONE; old bridge remains source unsafe",
+    "sole_official_RC": "NOT_MODIFIED",
+    "human_fun_gate": "NO_GO"
   }
 }
