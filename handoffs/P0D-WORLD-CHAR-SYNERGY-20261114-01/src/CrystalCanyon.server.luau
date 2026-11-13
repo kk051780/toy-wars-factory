@@ -63,7 +63,7 @@ for i = 1, 7 do
     crystal.CanCollide = false
 end
 
--- All teams use the same gate. Closing waits until every player has left the bridge.
+-- All teams use the same gate. Keep it open only while a living avatar occupies the gate collision zone.
 local gate = makePart("ShortcutGate", Vector3.new(3, 9, 12), 0, 4.5, 0, violet, Enum.Material.Neon, 0.15)
 local gateOpen = false
 local openUntil = 0
@@ -71,14 +71,14 @@ local nextOpenAllowed = 0
 local OPEN_SECONDS = 14
 local REOPEN_COOLDOWN = 4
 
-local function playerIsOnBridge()
+local function playerIsInGateClosureZone()
     for _, player in ipairs(Players:GetPlayers()) do
         local character = player.Character
         local root = character and character:FindFirstChild("HumanoidRootPart")
         local humanoid = character and character:FindFirstChildOfClass("Humanoid")
         if root and humanoid and humanoid.Health > 0 then
             local localPoint = anchor.CFrame:PointToObjectSpace(root.Position)
-            if math.abs(localPoint.X) <= 27 and math.abs(localPoint.Z) <= 8
+            if math.abs(localPoint.X) <= 3.5 and math.abs(localPoint.Z) <= 8
                 and localPoint.Y >= -3 and localPoint.Y <= 13 then
                 return true
             end
@@ -88,6 +88,11 @@ local function playerIsOnBridge()
 end
 
 local function setGateOpen(open)
+    -- The cooldown begins when the gate ACTUALLY closes, including when
+    -- a player delays closure beyond the nominal 14-second open period.
+    if gateOpen and not open then
+        nextOpenAllowed = os.clock() + REOPEN_COOLDOWN
+    end
     gateOpen = open
     gate.CanCollide = not open
     gate.Transparency = open and 0.9 or 0.15
@@ -167,7 +172,7 @@ setGateOpen(false)
 
 task.spawn(function()
     while world.Parent do
-        if gateOpen and os.clock() >= openUntil and not playerIsOnBridge() then
+        if gateOpen and os.clock() >= openUntil and not playerIsInGateClosureZone() then
             setGateOpen(false)
         end
         task.wait(0.5)
