@@ -1,0 +1,71 @@
+name: P0D EGG RUMBLE level journey UX native Luau source
+on:
+  push:
+    branches:
+      - feature/p0d-egg-rumble-level-journey-ui-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-level-journey-native:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 24
+    env:
+      ROOT: handoffs/P0D-LEVEL-JOURNEY-UX-20261113-01
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout owner branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Fail closed if any prior original Game RC policy or other lane changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=cf2d99b3289c69a0f0e076fed6dccb2e4b261299
+          git cat-file -e "$BASE^{commit}"
+          while IFS= read -r path; do
+            case "$path" in
+              handoffs/P0D-LEVEL-JOURNEY-UX-20261113-01/*|.github/workflows/p0d-egg-rumble-level-journey-20261113.yml)
+                echo "OWN_FILE $path"
+                ;;
+              *)
+                echo "BLOCKED_OTHER_FEATURE_OR_PROTECTED_SOURCE $path" >&2
+                exit 1
+                ;;
+            esac
+          done < <(git diff --name-only "$BASE" HEAD)
+          test "$(git hash-object "$ROOT/src/ProgressionRules.luau")" = a72830b039a46ca02d02f6aab7d6a4805bec8860
+      - name: Execute Python source and policy boundary tests
+        run: python3 -B -m unittest discover -s "$ROOT/tests" -p test_project_static.py -v
+      - name: Obtain EXACT pinned original native Luau VM/compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_level_journey_vm
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build pinned native Luau VM and compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_level_journey_vm rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_level_journey_vm -B /tmp/p0d_level_journey_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_level_journey_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Run actual original #281 + new #284 native tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_level_journey_artifact
+          python3 -B "$ROOT/tests/run_native_level_journey.py" --luau /tmp/p0d_level_journey_native/luau --compiler /tmp/p0d_level_journey_native/luau-compile | tee /tmp/p0d_level_journey_artifact/NATIVE_LEVEL_JOURNEY_TEST_LOG.txt
+          grep -E '^P0D_LEVEL_JOURNEY_ACTUAL_NATIVE_PASS_[0-9]+$' /tmp/p0d_level_journey_artifact/NATIVE_LEVEL_JOURNEY_TEST_LOG.txt
+      - name: Upload source and runtime truth, not Studio or live adoption
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D_LEVEL_JOURNEY_NATIVE_UX_SOURCE_ONLY_NO_STUDIO
+          path: /tmp/p0d_level_journey_artifact/NATIVE_LEVEL_JOURNEY_TEST_LOG.txt
+          retention-days: 7
+          if-no-files-found: error
