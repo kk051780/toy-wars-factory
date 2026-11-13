@@ -61,20 +61,27 @@ local function sign(name,pos,message)
 end
 -- Existing 8-safe arena is 250x142. No alteration of eggs, castles or spawns.
 -- TWO REAL PHYSICAL ALTERNATIVE ROUTES plus original center ground route.
-path("SKY_RAMP_RED",Vector3.new(-91,0,43),Vector3.new(-52,16,43),15,rgb(143,216,255))
-path("SKY_WALKWAY",Vector3.new(-52,16,43),Vector3.new(52,16,43),18,rgb(218,244,255))
-path("SKY_RAMP_BLUE",Vector3.new(52,16,43),Vector3.new(91,0,43),15,rgb(143,216,255))
-box("SKY_SAFETY_RAIL_1",Vector3.new(104,3,1),Vector3.new(0,19,33.5),rgb(119,176,225),true)
-box("SKY_SAFETY_RAIL_2",Vector3.new(104,3,1),Vector3.new(0,19,52.5),rgb(119,176,225),true)
-sign("SKY_SIGN_RED",Vector3.new(-78,5,43),"☁ そらのみち\nみんなで使えるよ")
-sign("SKY_SIGN_BLUE",Vector3.new(78,5,43),"☁ そらのみち\n上から回り込もう")
-local sea=box("COSMETIC_SEA",Vector3.new(222,0.2,29),Vector3.new(0,-0.72,-49),
+-- QA geometry candidate (not integrated): castle walls are solid at x=±103,z=±44.
+-- Approach along the inner-wall clear corridor instead of placing feet inside walls.
+path("SKY_RAMP_RED",Vector3.new(-86,0,32.5),Vector3.new(-46,16,32.5),12,rgb(143,216,255))
+path("SKY_WALKWAY",Vector3.new(-46,16,32.5),Vector3.new(46,16,32.5),16,rgb(218,244,255))
+path("SKY_RAMP_BLUE",Vector3.new(46,16,32.5),Vector3.new(86,0,32.5),12,rgb(143,216,255))
+box("SKY_SAFETY_RAIL_1",Vector3.new(92,3,1),Vector3.new(0,19,24),rgb(119,176,225),true)
+box("SKY_SAFETY_RAIL_2",Vector3.new(92,3,1),Vector3.new(0,19,41),rgb(119,176,225),true)
+sign("SKY_SIGN_RED",Vector3.new(-77,5,32.5),"☁ そらのみち\nみんなで使えるよ")
+sign("SKY_SIGN_BLUE",Vector3.new(77,5,32.5),"☁ そらのみち\n上から回り込もう")
+local sea=box("COSMETIC_SEA",Vector3.new(220,0.2,24),Vector3.new(0,-0.72,-55),
     rgb(40,155,218),false,Enum.Material.Neon)
 sea.Transparency=0.35
-path("SEA_LOW_CAUSEWAY",Vector3.new(-99,0,-45),Vector3.new(99,0,-45),15,
+-- Three connected non-teleport, FREE, anchored segments; end connectors bypass wall inside x=±83.
+path("SEA_LOW_CAUSEWAY",Vector3.new(-72,0,-55),Vector3.new(72,0,-55),12,
     rgb(245,202,123))
-sign("SEA_SIGN_RED",Vector3.new(-77,2,-48),"🌊 うみのみち\n敵も通れる")
-sign("SEA_SIGN_BLUE",Vector3.new(77,2,-48),"🌊 うみのみち\n卵を運ぼう")
+path("SEA_ENTRY_RED",Vector3.new(-72,0,-55),Vector3.new(-72,0,-20),10,rgb(245,202,123))
+path("SEA_ENTRY_BLUE",Vector3.new(72,0,-55),Vector3.new(72,0,-20),10,rgb(245,202,123))
+box("SEA_SAFETY_RAIL_N",Vector3.new(120,3,1),Vector3.new(0,2,-48),rgb(245,202,123),true)
+box("SEA_SAFETY_RAIL_S",Vector3.new(120,3,1),Vector3.new(0,2,-62),rgb(245,202,123),true)
+sign("SEA_SIGN_RED",Vector3.new(-68,2,-52),"🌊 うみのみち\n敵も通れる")
+sign("SEA_SIGN_BLUE",Vector3.new(68,2,-52),"🌊 うみのみち\n卵を運ぼう")
 for i=-2,2 do
     orb("SEA_FOAM_"..tostring(i),Vector3.new(i*38,0,-60),
         Vector3.new(12,1.2,6),rgb(175,231,255),0.3)
