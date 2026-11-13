@@ -628,9 +628,19 @@
       "stage": "SOURCE",
       "release": "S2+",
       "evidence": "https://github.com/kk051780/toy-wars-factory/issues/219",
-      "note": "峡谷の第3ルート。両岸で起動、16秒開き、在橋者がいれば閉じない。SOURCE候補・Studio未検証",
-      "source_git_blob": "49f57b6d99357205e9c0b9a720d74ccbab947a87"
+      "note": "峡谷の第3ルート。両岸で起動、16秒開き、在橋者がいれば閉じない。SOURCE候補・Studio未検証 起動待機はWCS最大102sに対してStarfall120sへ修正（#318ソース採用）。",
+      "source_git_blob": "311d4c75e38f896f24c982afbc6f9d5c35e90cb4"
+    },
+    {
+      "id": "P0D-062",
+      "group": "世界・収集",
+      "name": "星降る橋・6つのかけら探索と称号",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/pull/312",
+      "note": "元の星の橋の6地点で収集。重複不可、6/6で一時的な星エフェクトと頭上称号。セッション限定・保存/得点/XP/課金なし。候補のみ・Studio未検証 星橋の最大待機120+20+15sより長い170sに延長。",
+      "source_git_blob": "51421d36a9d6e4caf675d666cbddffedcec923d1"
     }
   ],
-  "last_progress_change": "candidate row P0D-061 is SOURCE only; official 21/58 RC remains unchanged"
+  "last_progress_change": "P0D-061 and P0D-062 source boot-order safety fix pending same-head CI; official 21/58 unchanged."
 }

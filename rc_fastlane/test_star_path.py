@@ -86,6 +86,30 @@ class StarPathIntegration(unittest.TestCase):
         self.assertIn('GetAttribute("P0D_RC_ENABLE_STARRY_PATH_V1")~=true',content)
         self.assertNotIn('GetAttribute("P0D_RC_ENABLE_STARRY_PATH_V1")==false',content)
         self.assertIn('if not RunService:IsStudio() then return end',content)
+    def test_starfall_wait_does_not_timeout_before_wcs_can_boot(self):
+        # WCS waits for arena (45s), H1 sky world (45s), and SkyV5 (12s).
+        # A 20s Starfall anchor timeout silently loses the entire third route
+        # on valid, slow Studio startup; it needs the full dependency budget.
+        import re
+        wcs=(star.ROOT/"features/wcs_f01_c01/WCS_CrystalCanyon.server.luau").read_text("utf8")
+        prerequisites=[
+            (r'arena=Workspace:WaitForChild\("TRAP_RAIDERS_S1",(\d+)\)',45),
+            (r'sky=arena:WaitForChild\("H1_FUN_WORLD",(\d+)\)',45),
+            (r'sky:WaitForChild\("SKY_WALKWAY",(\d+)\)',12),
+        ]
+        budget=0
+        for pattern,expected in prerequisites:
+            matches=re.findall(pattern,wcs)
+            self.assertEqual(len(matches),1,(pattern,matches))
+            self.assertEqual(int(matches[0]),expected)
+            budget+=int(matches[0])
+        code=star.SOURCE.read_text("utf8")
+        starts=re.findall(r'Workspace:WaitForChild\("P0D_CrystalCanyonAnchor",(\d+)\)',code)
+        self.assertEqual(len(starts),1,starts)
+        self.assertGreaterEqual(int(starts[0]),budget+5)
+        self.assertIn('if not anchor or not anchor:IsA("BasePart") or not canyon or not canyon:IsA("Model") then',code)
+        self.assertIn('canyon:WaitForChild("ShortcutBridge",15)',code)
+
     def test_safety_no_damage_reward_save_remote(self):
         content=star.SOURCE.read_text("utf8")
         for term in ("TakeDamage(","UpdateAsync(","GetDataStore(","RemoteEvent",

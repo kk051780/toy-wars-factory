@@ -271,10 +271,24 @@
       "state": "SOURCE_PRIVATE61_CI_NOT_YET_VERIFIED",
       "name": "星降る橋・第三峡谷ルート",
       "one_server_script": true,
-      "source_git_blob": "49f57b6d99357205e9c0b9a720d74ccbab947a87",
+      "source_git_blob": "311d4c75e38f896f24c982afbc6f9d5c35e90cb4",
       "existing_Game_Remote_Store_unchanged": true,
       "independent_switch": true,
       "engine": "NOT_TESTED"
+    },
+    {
+      "id": "STAR_SHARDS_V1",
+      "name": "星のかけら6個探索・コスメティック探検家称号",
+      "state": "SOURCE_PRIVATE62_PENDING_VALIDATION",
+      "script_count_change": 1,
+      "source_git_blob": "51421d36a9d6e4caf675d666cbddffedcec923d1",
+      "independent_switch": true,
+      "no_new_Game_Remote_Store": true,
+      "progress": "per player UserId session only; duplicates rejected",
+      "reward": "visible head badge and 30-second purely cosmetic aura",
+      "rollback": "FEATURE_SWITCHES.features.STAR_SHARDS_V1.enabled=false restores private61",
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED"
     }
   ],
   "next_source_adoption_contract": {
