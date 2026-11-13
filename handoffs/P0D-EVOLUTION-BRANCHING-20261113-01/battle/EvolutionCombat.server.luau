@@ -212,8 +212,8 @@ local function cast(player)
     if not form or form.formId~=st.form.formId or form.category~="BEAST" then
         msg(player,"ERROR","進化状態が無効");return
     end
-    -- Defensive evolution must actually be near the castle; neither
-    -- a teammate across the map nor an egg carrier can remote-shield it.
+    -- Defensive evolution must actually be near the castle;
+    -- teammates cannot place a castle shield remotely.
     if form.branch=="GUARD" and
         (core(player).Position-castle.Position).Magnitude>33 then
         msg(player,"ERROR","守護技は城の近くで発動してね")
