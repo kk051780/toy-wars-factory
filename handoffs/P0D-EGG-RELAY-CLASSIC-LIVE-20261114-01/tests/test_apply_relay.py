@@ -171,7 +171,10 @@ class RealOriginalPatchContract(unittest.TestCase):
         self.lock_source()
         relay.run(self.dist, POLICY_SOURCE)
         g = (self.src / relay.GAME).read_text("utf8")
-        self.assertIn('if not RunService:IsStudio() or EXPERIMENTAL_FIVE_EGG_MODE', g)
+        self.assertIn('if not classicRelayEnabled() or EXPERIMENTAL_FIVE_EGG_MODE', g)
+        self.assertIn('P0D_RC_ENABLE_EGG_RELAY_CLASSIC', g)
+        self.assertIn('flag == nil or (flag:IsA("BoolValue") and flag.Value == true)', g)
+        self.assertIn('relayEnabled = classicRelayEnabled()', g)
         self.assertIn('or match.phase ~= "ACTIVE"', g)
         self.assertEqual(g.count("H2Score.deposit("),
                          GAME_SOURCE.read_text("utf8").count("H2Score.deposit("))
