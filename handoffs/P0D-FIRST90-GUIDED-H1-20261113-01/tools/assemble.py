@@ -9,10 +9,11 @@ BASE=REPO/"handoffs/P0D-EARNED-EVOLUTION-FULL-H1-20261113-01"
 OLD=BASE/"dist/EGG_RAID_RUMBLE_EARNED_EVOLUTION_FULL_H1_PRIVATE_STUDIO_ONLY"
 DIST=OWN/"dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED"
 OVERRIDES={
- "server/Game.server.luau":("Game.server.luau","d01fb000e399240180fd8f4ca2b632c2500ea20c"),
- "client/HUD.client.luau":("HUD.client.luau","58140a33da247dc582403b1b0638e3643ab797fe"),
+ "server/Game.server.luau":("Game.server.luau","21b866e801a53ba7ebd66132ae55fe28608750d6"),
+ "client/HUD.client.luau":("HUD.client.luau","ce6707dc1f833600e1c6913504d30911b24cb2a4"),
  "server/MusouHorde.luau":("MusouHorde.luau","8c147c801e7fa1ff362922d66c9a6fd432fc8b6e"),
- "server/First90GuideRules.luau":("First90GuideRules.luau","644073946930d63e6b06c20ca249739b9ecfa5ad"),
+ "server/First90GuideRules.luau":("First90GuideRules.luau","0cbf26aaebf66a7548d4299fb6ede4bee47cfa70"),
+ "server/First90WaypointRules.luau":("First90WaypointRules.luau","69c81d82eac5189d34eed801099ab52b559f2b52"),
 }
 def gitblob(data:bytes)->str:
  return hashlib.sha1(b"blob "+str(len(data)).encode()+b"\0"+data).hexdigest()
@@ -32,8 +33,8 @@ def main():
   target=DIST/"src"/rel;target.parent.mkdir(exist_ok=True,parents=True)
   target.write_bytes((OWN/"inputs"/filename).read_bytes())
  now=scripts(DIST)
- assert len(now)==41,len(now)
- assert sorted(set(now)-set(original))==["server/First90GuideRules.luau"]
+ assert len(now)==42,len(now)
+ assert sorted(set(now)-set(original))==["server/First90GuideRules.luau","server/First90WaypointRules.luau"]
  edits=sorted(k for k in original if original[k]!=now[k])
  assert edits==["client/HUD.client.luau","server/Game.server.luau","server/MusouHorde.luau"],edits
  assert all(now[k]==original[k] for k in original if k not in edits)
@@ -62,14 +63,14 @@ def main():
  proj=DIST/"default.project.json"
  info=json.loads(proj.read_text("utf8"))
  assert info["tree"]["ServerScriptService"]["TrapRaidersS1"]["$path"]=="src/server"
- info["name"]="EGG_RAID_RUMBLE_FIRST90_GUIDED_41_PRIVATE_STUDIO_UNPUBLISHED"
+ info["name"]="EGG_RAID_RUMBLE_FIRST90_GUIDED_42_PRIVATE_STUDIO_UNPUBLISHED"
  proj.write_text(json.dumps(info,ensure_ascii=False,indent=2)+"\n","utf8")
  lock={
   "packet_id":"P0D-FIRST90-GUIDED-H1-20261113-01",
   "source_parent_full_40":"1b21bf8e5fc6afa5c74813d7f1037f877e1273ed",
   "source_latest_horde_v5":"adb1150951c5b5a6221f71204ce91ea693e34847",
   "original_unchanged":37,"original_changed":edits,
-  "source_count":41,"new_pure_policy":["server/First90GuideRules.luau"],
+  "source_count":42,"new_pure_policy":["server/First90GuideRules.luau","server/First90WaypointRules.luau"],
   "one_server_game":True,"one_remote":True,
   "first90_certified_server_only":True,
   "studio_only":True,"published":False,"paid":False,
@@ -78,7 +79,7 @@ def main():
   "source_blob_sha1":{k:gitblob(v) for k,v in sorted(now.items())}
  }
  (DIST/"SOURCE_LOCK.json").write_text(json.dumps(lock,ensure_ascii=False,indent=2)+"\n","utf8")
- print("P0D_FIRST90_41_LUAU_REAL_SINGLE_GAME_ASSEMBLED_PASS")
+ print("P0D_FIRST90_42_LUAU_REAL_SINGLE_GAME_ASSEMBLED_PASS")
 if __name__=="__main__":
  a=argparse.ArgumentParser();a.add_argument("--assemble",action="store_true",required=True)
  a.parse_args();main()
