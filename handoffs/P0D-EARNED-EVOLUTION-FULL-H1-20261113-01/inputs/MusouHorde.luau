@@ -71,11 +71,26 @@ local function makeBody(folder: Folder, id: number, elite: boolean, p: Vector3)
     model:PivotTo(CFrame.new(p))
     return model,body,text
 end
+local function groundTop(world: Instance,x: number,z: number): number
+    -- Read actual original MapBuilder walkable parts, not a hard-coded
+    -- assumed Y. Source-map arena center -3, size4 -> ground top -1;
+    -- road center -.85, thickness .3 -> drivable top -.70.
+    local arena=world:FindFirstChild("GrassArena")
+    assert(arena and arena:IsA("BasePart"),"MUSOU_SOURCE_MAP_ARENA_REQUIRED")
+    local y=arena.Position.Y+arena.Size.Y*.5
+    local road=world:FindFirstChild("CenterRoad")
+    if road and road:IsA("BasePart")
+        and math.abs(x-road.Position.X)<=road.Size.X*.5
+        and math.abs(z-road.Position.Z)<=road.Size.Z*.5 then
+        y=math.max(y,road.Position.Y+road.Size.Y*.5)
+    end
+    return y
+end
 function Horde.new(world: Instance)
     local folder=Instance.new("Folder")
     folder.Name="EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT"
     folder.Parent=world
-    return setmetatable({folder=folder,mobs={},round=-1,lastTick=0,kills=0},Horde)
+    return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0},Horde)
 end
 function Horde:clear()
     for _,m in ipairs(self.mobs) do m.model:Destroy() end
@@ -91,7 +106,11 @@ function Horde:reset(round: number,now: number)
         local elite=(i==MAX_ACTIVE)
         local x=if elite then 0 else ((i-1)%4-1.5)*16
         local z=if elite then 0 else (if i<=4 then -18 else 18)
-        local base=Vector3.new(x,if elite then 3.4 else 2.7,z)
+        -- Spawn one body-height above the REAL playable floor (not levitating).
+        -- CenterRoad and GrassArena are unchanged original MapBuilder parts.
+        local feetY=groundTop(self.world,x,z)
+        local halfBody=if elite then 2.5 else 1.65
+        local base=Vector3.new(x,feetY+halfBody,z)
         local model,body,cue=makeBody(self.folder,i,elite,base)
         table.insert(self.mobs,{
             model=model,body=body,cue=cue,pos=base,home=base,
