@@ -171,7 +171,8 @@ function Horde:tick(now: number,players: {Player},healthy: (Player)->(boolean,Ba
             end
             if m.elite and m.tellUntil>0 and now>=m.tellUntil then
                 local target=m.target
-                local ok,root=false,nil
+                local ok: boolean=false
+                local root: BasePart?=nil
                 if target then ok,root=healthy(target) end
                 if ok and root then
                     local _,dist=horizontal(m.pos,root.Position)
