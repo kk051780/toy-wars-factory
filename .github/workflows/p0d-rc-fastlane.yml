@@ -130,6 +130,14 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_wcs_f01_c01.py --profile rich51 --dist "$DIST"
           fi
+      - name: Integrate original Seven Jobs PvE narrow Game/HUD patch after WCS
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_seven_jobs_pve.py --dist "$DIST"
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -158,7 +166,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -222,7 +230,8 @@ jobs:
           saved_beast_enabled=(p=='rich51' and flags['features']['SAVED_BEAST_EVOLUTION']['enabled'])
           species_enabled=(p=='rich51' and flags['features']['SCOUT_SPECIES_V1']['enabled'])
           wcs_enabled=(p=='rich51' and flags['features']['WCS_F01_C01']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled),'rich47':47,'legacy21':21}[p]
+          seven_enabled=(p=='rich51' and flags['features']['SEVEN_JOBS_PVE_V1']['enabled'])
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -303,6 +312,15 @@ jobs:
               assert sum('playerIsInGateClosureZone()' in src for src in included)==1
           else:
               assert titles[('Script','WCS_CrystalCanyon')]==0
+          if seven_enabled:
+              assert titles[('ModuleScript','SevenJobsRules')]==1
+              assert sum('action("JOB_SKILL",nil)' in src for src in included)==1
+              assert sum('P0D_RC_ENABLE_SEVEN_JOBS_PVE' in src for src in included)==1
+              assert sum('horde:hit(source,dir,damage,serverNow(),player.Character)' in src for src in included)==1
+              assert 'SavedPveMasteryPolicy' in ''.join(included.elements())
+              assert json.loads((base/'default.project.json').read_text('utf8'))['tree']['ServerStorage']['$attributes']['P0D_RC_ENABLE_SEVEN_JOBS_PVE'] is True
+          else:
+              assert titles[('ModuleScript','SevenJobsRules')]==0
           if p=='rich51':
               assert titles[('Script','V4TrainingBridge')]==1
               assert titles[('LocalScript','V4TrialOverlay')]==1
@@ -323,6 +341,9 @@ jobs:
             'saved_beast_evolution_included':bool(saved_beast_enabled),
             'existing_three_scout_species_included':bool(species_enabled),
             'wcs_crystal_canyon_moguron_included':bool(wcs_enabled),
+            'seven_jobs_neutral_pve_included':bool(seven_enabled),
+            'seven_jobs_pvp_full_implementation':False,
+            'seven_jobs_engine':'NOT_TESTED',
             'wcs_engine_physics':'NOT_TESTED',
             'species_engine_qa':'NOT_TESTED',
             'saved_beast_engine_qa':'NOT_TESTED',
@@ -333,7 +354,7 @@ jobs:
             'android':'NOT_TESTED','owner_fun':'NOT_TESTED',
             'production_publish':False,'sixskill_persistent':False,
             's1_score_prior_only':75,
-            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled},
+            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled},
             'base_author_51_preserved':True if realm_enabled else None,
             'new_realms_studio_2client':'NOT_TESTED'}
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')

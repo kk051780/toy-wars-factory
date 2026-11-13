@@ -239,6 +239,22 @@
       "android": "NOT_TESTED",
       "owner_fun": "NOT_TESTED",
       "boot_attribute": "Rojo sets ServerStorage.P0D_RC_ENABLE_WCS_F01_C01=true only in WCS-included private candidate; missing/false runtime flag is OFF"
+    },
+    {
+      "id": "SEVEN_JOBS_PVE_V1",
+      "summary": "Seven distinct player jobs with neutral PvE moves, lobby job select and Q/mobile skill",
+      "state": "CANDIDATE_RC59_UNADOPTED",
+      "profiles": [
+        "rich51"
+      ],
+      "independent_switch": true,
+      "rollback": "FEATURE_SWITCHES.features.SEVEN_JOBS_PVE_V1.enabled=false keeps WCS58 code",
+      "author_commit": "98edf843fb8a8f6123c13a67745b216712bfe63d",
+      "original_game_hud_author_patched": true,
+      "server_owned_damage": true,
+      "studio_2client": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED"
     }
   ],
   "next_source_adoption_contract": {
