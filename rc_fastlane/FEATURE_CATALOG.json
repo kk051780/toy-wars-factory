@@ -3,7 +3,7 @@
   "as_of_jst": "2026-11-14",
   "rc_branch": "rc/p0d-s1-kids-rc01",
   "active_source": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
-  "verified_rc_head": "2e86ac4fd0d4cb67fd7c673dc4e891b2af6bdc2c",
+  "verified_rc_head": "0dd7f4418d06200e40688c79c8290745cb56834d",
   "official_s1_previous_score": 75,
   "stages": {
     "IDEA": "企画段階",
@@ -575,12 +575,12 @@
       "id": "P0D-056",
       "group": "育成・戦闘",
       "name": "保存武器Lvに連動した中立PvE強化",
-      "stage": "SOURCE",
+      "stage": "RC",
       "release": "S1",
       "evidence": "https://github.com/kk051780/toy-wars-factory/tree/rc/p0d-s1-kids-rc01/rc_fastlane/features/saved_pve",
-      "note": "武器Lv5/10/20/30で雑魚への攻撃+5/+10/+15/+20%。既存覚醒と非加算・対人変化なし。RC CI待ち",
-      "rc_evidence": null
+      "note": "既存覚醒×短期道場と保存武器Lv倍率を比較し強い方を中立雑魚への攻撃に適用（最大Lv30で+20%）。55本の公式RCビルド成功、実機未試験",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43501488524"
     }
   ],
-  "last_progress_change": "P0D-056 new source module Game patch pending GitHub Actions; RC count remains 18 until current head pass"
+  "last_progress_change": "P0D-056 SOURCE->RC via exact HEAD native Luau 55/55+Rojo run 43501488524; RC19/56"
 }

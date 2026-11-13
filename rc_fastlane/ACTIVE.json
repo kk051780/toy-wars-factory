@@ -46,7 +46,7 @@
   "owner_fun": "NOT_TESTED",
   "production_publish_authorized": false,
   "rollback_granularity": "REALM_HUNT_V1 and SIX_SKILL_DURABLE per-feature OFF, V4_IDLE_FRIEND_SAFE_FIX via ACTIVE, rich47/legacy21 fallback; original Game/Store source pinned",
-  "status": "P0D_RICH55_SAVED_WEAPON_PVE_SOURCE_PENDING_CI",
+  "status": "RC_RICH55_PVE_SAVED_MASTERY_BUILD_SUCCESS_ENGINE_NOT_TESTED",
   "release_progress_last_official": 75,
   "first_verified_run": {
     "workflow_run_id": 43483022604,
@@ -97,7 +97,13 @@
       "neutral_horde_only": true,
       "non_stacking_earned_power": true,
       "engine_qa": "NOT_TESTED",
-      "flag": "rc_fastlane/FEATURE_SWITCHES.json"
+      "flag": "rc_fastlane/FEATURE_SWITCHES.json",
+      "first_verified_build": {
+        "head": "0dd7f4418d06200e40688c79c8290745cb56834d",
+        "run_id": 43501488524,
+        "script_count": 55,
+        "conclusion": "success"
+      }
     }
   },
   "feature_switches": {

@@ -66,7 +66,7 @@
     },
     "SAVED_PVE_MASTERY": {
       "enabled": true,
-      "status": "PENDING_NATIVE_LUAU_AND_RC_SOURCE_EXACT_CI",
+      "status": "RC_NATIVE_55_OF_55_EXACT_ROJO_PASS_STUDIO_NOT_TESTED",
       "dependency": "SIX_SKILL_DURABLE.enabled=true",
       "rollback": "set enabled=false to restore exact RICH54, same RC branch; no Store migrations reversed",
       "author_module_git_blob": "edd50ab4b7ff3b50ca26df47c04cb51d0f96152a",
@@ -83,7 +83,12 @@
       },
       "no_stacking": true,
       "pvp_multiplier_untouched": true,
-      "save_and_rejoin_engine_test": "NOT_TESTED"
+      "save_and_rejoin_engine_test": "NOT_TESTED",
+      "first_successful_build": {
+        "head": "0dd7f4418d06200e40688c79c8290745cb56834d",
+        "run_id": 43501488524,
+        "artifact_id": 14074311951
+      }
     }
   }
 }

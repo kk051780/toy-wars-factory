@@ -66,3 +66,5 @@
 実際の中立敵を倒したときの効果を確認するStudio 2client/Android/FUNおよびDEV DataStoreの実際の保存/再ログインは未試験。ソース・CIと実機を混同しない。
 
 **既存戦闘の保存**：元の中立PvE倍率は覚醒倍率×短期道場の武器Lv倍率。この積を元の baseline として保持し、その倍率とDEV保存武器Lvの倍率（最大1.20）の大きい方を採る。最終上限は3.8、対人・BEAST召喚/城攻撃は一切変更なし。Game/HUDの唯一authorityは従来どおり。
+
+**実証済みSOURCE/Place**：保存武器Lv→中立PvE強化。<https://github.com/kk051780/toy-wars-factory/actions/runs/43501488524> にて全55 Luauネイティブコンパイル、既存Game/Store/Remote唯一性、完全ソース入りRojo未公開Studio PlaceまでPASS。前54本のうちGameだけ更新・純粋な新Module1本を追加。実際のRobloxエンジンのSave/再ログイン/中立敵戦闘試験は未完了。55企画から56企画、RC18→19件。

@@ -161,7 +161,7 @@
     {
       "id": "SAVED_PVE_MASTERY",
       "summary": "Authoritative saved WEAPON level tiers 5/10/20/30 amplify only neutral PvE; no buff stacking",
-      "state": "SOURCE_ADOPTION_PENDING_RC_BUILD",
+      "state": "INCLUDED_IN_ACTIVE_RICH55_SOURCE_BUILD_PASSED",
       "profiles": [
         "rich51"
       ],
@@ -176,7 +176,11 @@
       "rollback": "SAVED_PVE_MASTERY.enabled=false restores rich54",
       "studio_test": "NOT_TESTED",
       "pvp_unaffected": true,
-      "pay_to_win": false
+      "pay_to_win": false,
+      "ci_run": 43501488524,
+      "rc_commit": "0dd7f4418d06200e40688c79c8290745cb56834d",
+      "exact_native_scripts": 55,
+      "roblox_studio": "NOT_TESTED"
     }
   ],
   "next_source_adoption_contract": {
