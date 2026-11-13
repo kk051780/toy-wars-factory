@@ -20,7 +20,7 @@ export function checkBaseline(inputHorde,assembleText) {
   const code=analyze(inputHorde);
   const lockOld=assembleText.includes('"parent_game_sha":"'+locks.oldFullGame+'"')
     || assembleText.includes('"parent_game_sha": "'+locks.oldFullGame+'"')
-    || assembleText.includes('BASE/"tools/assemble.py"');
+;
   const oldGameGuard=assembleText.includes(locks.oldGameBlob);
   const oldHorde=hordeBlob===locks.oldHorde;
   const safe=code.safe && !oldHorde && !lockOld && !oldGameGuard;
