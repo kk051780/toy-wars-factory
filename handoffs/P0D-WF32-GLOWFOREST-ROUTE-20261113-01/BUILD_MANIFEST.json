@@ -1,0 +1,37 @@
+{
+  "packet": "P0D_WF32_GLOWFOREST_PHYSICAL_GATE_20261113_01",
+  "branch": "feature/p0d-wf32-glowforest-route-20261113-01",
+  "stage": "ISOLATED_SOURCE_ONLY_NOT_RC",
+  "source_files": [
+    {
+      "path": "src/ForestGateRules.lua",
+      "utf16_chars": 907
+    },
+    {
+      "path": "src/WF32Forest.server.lua",
+      "utf16_chars": 5115
+    },
+    {
+      "path": "default.project.json",
+      "utf16_chars": 324
+    },
+    {
+      "path": "tests/test_wf32_source.py",
+      "utf16_chars": 1775
+    },
+    {
+      "path": "README.md",
+      "utf16_chars": 2708
+    }
+  ],
+  "test_status": "UNEXECUTED_STATIC_TEST_AUTHORED",
+  "studio_status": "NOT_TESTED",
+  "forbidden": [
+    "main write",
+    "merge",
+    "publish",
+    "paid",
+    "PC",
+    "existing RC edit"
+  ]
+}
