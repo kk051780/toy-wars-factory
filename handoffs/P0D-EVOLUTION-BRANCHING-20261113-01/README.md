@@ -68,3 +68,21 @@ GitHub Actions uses exact pinned native luau-lang source version `f46d879e28302a
 Next real game integration requires #220 sole integrator to select and join #281/#285/#275 and #286 profile in ONE original Game; choose ONE original H1/H2 Game server + one Remote. Then actual dedicated BEAST Stage1 moving/summon + explicit attacker-vs-guardian action, enemy seeing and defending against it, persistent reconnect and 2-client+Android QA. Other five categories extend after success.
 
 Official only S1 release estimate as last audited: 75/100; real owner original early-session FUN gate NO_GO. This isolated feature's source/QA completion must not inflate it. No main writes/merges, live Roblox publish, purchase/pricing changes, paid combat/egg luck, PC Codex, P0-A/B/C CAS or five automations modifications.
+
+## V2：分岐進化が「実際に異なる働き」をするStudio専用PvEラボ
+
+追加日：2026-11-13 JST。前述の原創ドラゴン外見展示とは独立した battle.project.json を追加。既存の EvolutionRules.luau をサーバー側から呼び、魔獣 forest_scout の攻撃分岐と守備分岐が実際に異なる結果を生むソースを用意した。**正式ゲームH1/H2には未統合。**
+
+- battle/EvolutionCombat.server.luau：原創3D進化ドラゴン、城HP120、敵中立NPC（最大14体・HP60・城へ進軍）、紅蓮進化は周囲17studs（神話25）内のNPC HumanoidへサーバーでTakeDamage、蒼潮進化は城への攻撃を8秒・3回（神話5回）までサーバー側で遮断、技再使用12秒。
+- battle/EvolutionCombat.client.luau：スマホ横画面でも押せる進化4択と技発動ボタン、残クールダウン、城HPと中立NPC数。実アカウントデータは変更しないことを画面に表示。
+- **進化の段階・素材は訓練用の仮想実績**：進化形態を素早く試すため、専用Studioサーバーが仮想Lv40・熟練Lv10と架空の正規11試合を内部生成し、正規のEvolutionRules.evolveを呼ぶ。実ゲームでの育成・アイテム取得・進化達成を証明するものではない。何もDataStoreへ保存しない。
+- サーバーはフォーム4択ホワイトリスト、選択1秒制限、12秒間の技再発動拒否、サーバー正本フォーム検証、NPC射程、城シールド残りヒット数を確認する。プレイヤーへのダメージや、PvPのレベル差はこのラボでは評価できない。
+- PvEは既存の#285正式戦闘計算器ではない独立の検証用。元H1/H2のGame/Remote、#286持続XP、#220公式RCを変更しない。無断本番公開なし。
+
+Rojo（OWNER PCに導入済みの場合）の再現コマンド：
+
+    cd handoffs/P0D-EVOLUTION-BRANCHING-20261113-01
+    rojo build default.project.json -o EVO_VISUAL_PRIVATE.rbxlx
+    rojo build battle.project.json -o EVO_BATTLE_PRIVATE.rbxlx
+
+**OWNER実機確認が必要な事項：** 2clientの同一NPC撃破・同じ城HP変化、守護のヒット遮断、技連打12秒拒否、他人から見える魔獣、スマホ誤タップ/視認性、14体NPC＋神話演出のFPS、スタック/長時間試遊。現在この実機試験は未実施。別レーンの#220のみ正式ゲームへの選定・統合が可能であり、#250製品採用手順も変わらない。
