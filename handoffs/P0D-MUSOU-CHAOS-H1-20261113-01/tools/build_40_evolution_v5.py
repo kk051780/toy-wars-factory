@@ -27,7 +27,7 @@ ORIG40_BLOBS={
  "server/MusouHorde.luau":"7edfda9e5a1d4ac8ae47d66ea7cf908eb8e4af6e",
  "server/EvolutionRules.luau":"0efca67b41e34917038fdc883c8ad34f3eb3c2e2",
 }
-V5_HORDE_BLOB="8c147c801e7fa1ff362922d66c9a6fd432fc8b6e"
+V5_HORDE_BLOB="e67b186f08a0e9ca20d5f09a7c5b22205e2b7240"
 BASE39_POWER_BLOB="86e79877cf0e58603a4de67db29155bf98cc511d"
 
 def gitblob(raw:bytes)->str:
