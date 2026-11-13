@@ -42,6 +42,14 @@ end
 part("ArenaIsland",Vector3.new(24,2,24),CFrame.new(0,0,0),Color3.fromRGB(238,194,103))
 local centerEgg=part("DecorationEgg",Vector3.new(5,7,5),CFrame.new(0,5,0),Color3.fromRGB(255,226,124),map,Enum.PartType.Ball)
 centerEgg.CanCollide=false
+local rarePrompt=Instance.new("ProximityPrompt")
+rarePrompt.ActionText="幻の卵を拾う"
+rarePrompt.ObjectText="争奪用の試作卵"
+rarePrompt.HoldDuration=0.35
+rarePrompt.MaxActivationDistance=9
+rarePrompt.Enabled=false
+rarePrompt.Parent=centerEgg
+local rareHolderId=nil
 
 local function getRoot(player)
     local c=player.Character
@@ -109,6 +117,38 @@ local function constructScout(owner,color)
     model.Parent=map
     return model,prompt
 end
+-- Server-certified possession of the private demo rare egg. This does not mutate #277 H2 score.
+rarePrompt.Triggered:Connect(function(actor)
+    local uid=idFor(actor)
+    local hrp=getRoot(actor)
+    if s.phase~="ACTIVE" or rareHolderId or not uid or not hrp then return end
+    if (hrp.Position-centerEgg.Position).Magnitude>10 then return end
+    rareHolderId=uid
+    rarePrompt.Enabled=false
+    centerEgg.Color=Color3.fromRGB(233,144,255)
+    notify(actor,"INFO","幻の卵を獲得！終了まで所持すれば特別孵化のチャンス")
+end)
+task.spawn(function()
+    while true do
+        if rareHolderId and s.phase=="ACTIVE" then
+            local holder=nil
+            for _,p in ipairs(allPlayers()) do
+                if idFor(p)==rareHolderId then holder=p break end
+            end
+            local root=holder and getRoot(holder)
+            local humanoid=holder and holder.Character and holder.Character:FindFirstChildOfClass("Humanoid")
+            if not root or not humanoid or humanoid.Health<=0 then
+                rareHolderId=nil
+                centerEgg.CFrame=CFrame.new(0,5,0)
+                centerEgg.Color=Color3.fromRGB(255,226,124)
+                rarePrompt.Enabled=true
+            else
+                centerEgg.CFrame=CFrame.new(root.Position+Vector3.new(0,5,0))
+            end
+        end
+        task.wait(.12)
+    end
+end)
 local function sendSnapshot(player)
     local uid=idFor(player)
     if not uid then return end
@@ -201,6 +241,12 @@ for _,plr in ipairs(allPlayers()) do addPlayer(plr) end
 Players.PlayerRemoving:Connect(function(player)
     local uid=idFor(player)
     if uid then clearScout(uid) end
+    if uid and rareHolderId==uid then
+        rareHolderId=nil
+        centerEgg.CFrame=CFrame.new(0,5,0)
+        centerEgg.Color=Color3.fromRGB(255,226,124)
+        rarePrompt.Enabled=s.phase=="ACTIVE"
+    end
     plrIds[player]=nil
 end)
 remote.OnServerEvent:Connect(function(player,action,arg)
@@ -235,8 +281,12 @@ task.spawn(function()
             if #allPlayers()>=2 and s.phase=="LOBBY" then
                 local epoch=s.epoch+1
                 Rules.startRound(s,epoch)
+                rareHolderId=nil
+                centerEgg.CFrame=CFrame.new(0,5,0)
+                centerEgg.Color=Color3.fromRGB(255,226,124)
+                rarePrompt.Enabled=true
                 for _,player in ipairs(allPlayers()) do
-                    notify(player,"INFO","20秒の偵察ラウンド開始！魔獣召喚ボタンを押してね")
+                    notify(player,"INFO","20秒ラウンド開始！中央の幻卵を拾う・偵察魔獣で追う")
                     sendSnapshot(player)
                 end
                 task.wait(20)
@@ -245,10 +295,14 @@ task.spawn(function()
                     local uid=idFor(player)
                     if uid then
                         eligible[uid]=true
-                        rare[uid]=false -- no egg authority in this isolated demo
+                        rare[uid]=(rareHolderId==uid) -- certified private demo carrier at buzzer
                     end
                 end
                 local ok=Rules.finishRound(s,epoch,eligible,rare)
+                rareHolderId=nil
+                rarePrompt.Enabled=false
+                centerEgg.CFrame=CFrame.new(0,5,0)
+                centerEgg.Color=Color3.fromRGB(255,226,124)
                 clearAllScouts()
                 if ok then
                     for _,player in ipairs(allPlayers()) do
