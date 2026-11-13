@@ -1,0 +1,27 @@
+{
+  "schema": "P0D_CLASSIC_RELAY_RICH55_CLOCK_AND_CI_SOURCE_QA",
+  "observation": "Original canonical Game.serverNow() uses workspace:GetServerTimeNow() (Unix seconds, ~1.79e9 in 2026); original pure EggRelayPolicy.isNumber accepts |n|<1e9. Direct use would reject ALL real passes INVALID_SERVER_CLOCK.",
+  "fix": "Use os.clock() for the relay's server-owned nowSec and per-egg 12-second lastRelayAtSec and cooldown HUD; no other Game clocks changed.",
+  "baseline_original_author_game_commit": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
+  "baseline_author_relay_policy_gitblob": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
+  "feature_id": "EGG_RELAY_CLASSIC_V1",
+  "full_RC55_compatibility_pinned_head": "0dd7f4418d06200e40688c79c8290745cb56834d",
+  "run_evidence": {
+    "source_remote_fetch_and_unique_anchor_apply": "PASS",
+    "new_clock_and_CI_static_checks": "21/21 PASS",
+    "prior_source_static_checks": "38/38 PASS",
+    "actual_python_patcher_execution": "NOT_VERIFIED",
+    "native_luau_compile": "NOT_VERIFIED",
+    "rojo_rc56": "NOT_VERIFIED",
+    "studio": "NOT_TESTED",
+    "android": "NOT_TESTED",
+    "owner_fun": "NOT_TESTED"
+  },
+  "workflow": ".github/workflows/p0d-egg-relay-classic-rc55-candidate-ci.yml",
+  "workflow_scope": "Unpublished isolated CI candidate. Original 55-source RC55 is rebuilt from frozen Git sources and exact author overlays; relay modifies only canonical Game + HUD and adds pure original EggRelayPolicy. 56 source compile and exact Rojo are required before source admission. The workflow file being committed does not mean run has passed.",
+  "not_official_RC": true,
+  "release_progress": 75,
+  "main_unchanged": true,
+  "no_publish": true,
+  "no_paid": true
+}
