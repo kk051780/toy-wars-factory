@@ -80,26 +80,26 @@ def server_patch(source):
     # two populated teams and original TEAM_EMPTY outcomes.
     require_exactly_once(source, 'local Players = game:GetService("Players")', "original Players service")
     source = source.replace('local Players = game:GetService("Players")',
-        'local Players = game:GetService("Players")\\n'
+        'local Players = game:GetService("Players")\n'
         'local RunService = game:GetService("RunService")', 1)
     require_exactly_once(source, 'local First90Classic = require(script.Parent:WaitForChild("S1First90ClassicWaypointRules"))', "new target rules")
     source = source.replace(
         'local First90Classic = require(script.Parent:WaitForChild("S1First90ClassicWaypointRules"))',
-        'local First90Classic = require(script.Parent:WaitForChild("S1First90ClassicWaypointRules"))\\n'
+        'local First90Classic = require(script.Parent:WaitForChild("S1First90ClassicWaypointRules"))\n'
         'local StudioSolo = require(script.Parent:WaitForChild("StudioSoloPreviewRules"))', 1)
     solo_checks = [
         ('if count >= Config.MinPlayers and teamCount("RED") > 0 and teamCount("BLUE") > 0 then',
-         'if StudioSolo.canStart(RunService:IsStudio(), count, teamCount("RED"),\\n'
+         'if StudioSolo.canStart(RunService:IsStudio(), count, teamCount("RED"),\n'
          '                teamCount("BLUE"), Config.MinPlayers) then'),
         ('if count < Config.MinPlayers or teamCount("RED") == 0 or teamCount("BLUE") == 0 then',
-         'if not StudioSolo.canStart(RunService:IsStudio(), count, teamCount("RED"),\\n'
+         'if not StudioSolo.canStart(RunService:IsStudio(), count, teamCount("RED"),\n'
          '                teamCount("BLUE"), Config.MinPlayers) then'),
-        ('if teamCount("RED") <= 0 then stopRound("BLUE", "TEAM_EMPTY")\\n'
-         '        elseif teamCount("BLUE") <= 0 then stopRound("RED", "TEAM_EMPTY")\\n'
+        ('if teamCount("RED") <= 0 then stopRound("BLUE", "TEAM_EMPTY")\n'
+         '        elseif teamCount("BLUE") <= 0 then stopRound("RED", "TEAM_EMPTY")\n'
          '        elseif now >= match.deadline then',
-         'local emptyWinner = StudioSolo.emptyWinner(RunService:IsStudio(), count,\\n'
-         '            teamCount("RED"), teamCount("BLUE"))\\n'
-         '        if emptyWinner then stopRound(emptyWinner, "TEAM_EMPTY")\\n'
+         'local emptyWinner = StudioSolo.emptyWinner(RunService:IsStudio(), count,\n'
+         '            teamCount("RED"), teamCount("BLUE"))\n'
+         '        if emptyWinner then stopRound(emptyWinner, "TEAM_EMPTY")\n'
          '        elseif now >= match.deadline then'),
     ]
     for old, new in solo_checks:
