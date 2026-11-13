@@ -67,4 +67,4 @@ def verify_manifest():
  return True
 if __name__=="__main__":
  d=json.loads((ROOT/"data/models.json").read_text(encoding="utf8"))
- validate_models(d);verify_manifest();print("BATCH10_CANON_AND_SOURCE_MANIFEST_PASS models=6 files=10")
+ validate_models(d);verify_manifest();print("BATCH10_CANON_AND_SOURCE_MANIFEST_PASS models=6 files=11")
