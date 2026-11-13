@@ -9,12 +9,13 @@
   "tested": {
     "git_remote_readback_exact_patch_anchors": "15/15 PASS",
     "source_static_invariants": "42/42 PASS",
-    "python_test_cases": "11 authored for pinned B42 and synthetic 57->58 source fixture; execution NOT confirmed",
-    "luau_native": "NOT_VERIFIED",
+    "python_test_cases": "11/11 REAL GITHUB ACTIONS PASS, exact candidate HEAD 8c67a51933c57f2805c2c846e2552ac12dda0b30",
+    "luau_native": "58/58 REAL GITHUB ACTIONS native Luau compiler PASS, exact candidate HEAD 8c67a51933c57f2805c2c846e2552ac12dda0b30",
     "engine_studio": "NOT_TESTED",
     "android": "NOT_TESTED",
     "fun": "NOT_TESTED",
-    "rojo_58": "NOT_VERIFIED"
+    "rojo_58": "58/58 genuine source-exact Rojo PLACE PASS, exact candidate HEAD 8c67a51933c57f2805c2c846e2552ac12dda0b30",
+    "native_policy": "41/41 actual original pure Luau cases PASS"
   },
   "source_changes": {
     "Game": "9 exact source changes",
@@ -30,5 +31,7 @@
   "no_merge": true,
   "no_publish": true,
   "no_paid": true,
-  "claim_limit": "Static JS checks do not establish Python, native Luau, Rojo or Roblox engine execution. Candidate 57-source fixture uses 55 dummy modules; actual full 57-source integration must be tested via exact official checkout."
+  "claim_limit": "Actual successful CI applies only to exact recorded source HEAD 8c67a51933c57f2805c2c846e2552ac12dda0b30. New receipt/README commits do not mean newer HEAD passed. No real Studio gameplay, 2-client, Android, dev datastore save/rejoin or FUN proof, no official RC adoption.",
+  "actually_verified_run_id": 43508893406,
+  "actual_ci_receipt": "handoffs/P0D-EGG-RELAY-CLASSIC-LIVE-20261114-01/QA_RICH58_NATIVE_SUCCESS.json"
 }
