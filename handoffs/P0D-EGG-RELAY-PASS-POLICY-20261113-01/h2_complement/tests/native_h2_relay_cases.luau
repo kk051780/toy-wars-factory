@@ -1,0 +1,143 @@
+--!strict
+-- Exact real Luau source tests; Rules is assembled from canonical locked H2 + V2 patch.
+-- No Roblox engine/Game/Raycast/Remote is emulated.
+local n = 0
+local function check(name, f)
+    local ok, detail = pcall(f)
+    if not ok then
+        error("NATIVE_H2_CASE_FAILED:" .. name .. ":" .. tostring(detail))
+    end
+    n += 1
+end
+
+local ids = {"R1","R2","B1","B2","N1"}
+local teams = {"RED","BLUE"}
+for _, eggId in ipairs(ids) do
+    for _, side in ipairs(teams) do
+        check("atomic two-pass conserve "..eggId.." "..side, function()
+            local m=Rules.new()
+            local isok=Rules.pickup(m,eggId,1,side)
+            assert(isok and Rules.assertConserved(m))
+            m.eggs[eggId].heldSeconds=7
+            local previousScore=m.scores.RED+m.scores.BLUE
+            local ok1,why1,seq1=Rules.relayWithVersion(m,eggId,1,1,2,side)
+            assert(ok1 and why1=="RELAY" and seq1==2)
+            assert(m.carryByPlayer[1]==nil and m.carryByPlayer[2]==eggId)
+            assert(m.eggs[eggId].heldSeconds==7 and Rules.assertConserved(m))
+            local ok2,why2,seq2=Rules.relayWithVersion(m,eggId,2,2,3,side)
+            assert(ok2 and why2=="RELAY" and seq2==3)
+            assert(m.carryByPlayer[2]==nil and m.carryByPlayer[3]==eggId)
+            assert(m.scores.RED+m.scores.BLUE==previousScore and Rules.assertConserved(m))
+        end)
+        check("score exactly once "..eggId.." "..side,function()
+            local m=Rules.new()
+            assert(Rules.pickup(m,eggId,1,side))
+            assert(Rules.relayWithVersion(m,eggId,1,1,2,side))
+            assert(Rules.relayWithVersion(m,eggId,2,2,3,side))
+            local scoreBefore=m.scores[side]
+            local ok,why,bonus=Rules.deposit(m,3,side)
+            assert(ok and why=="DEPOSIT" and m.scores[side]==scoreBefore+bonus)
+            local retry=Rules.deposit(m,3,side)
+            assert(retry==false and m.scores[side]==scoreBefore+bonus)
+            assert(Rules.assertConserved(m))
+        end)
+        check("anti-replay no-mut "..eggId.." "..side,function()
+            local m=Rules.new()
+            assert(Rules.pickup(m,eggId,1,side))
+            assert(Rules.relayWithVersion(m,eggId,1,1,2,side))
+            local events=m.events
+            local stale=Rules.relayWithVersion(m,eggId,1,1,3,side)
+            assert(stale==false and m.events==events)
+            assert(m.carryByPlayer[1]==nil and m.carryByPlayer[2]==eggId)
+            local staleVersion=Rules.relayWithVersion(m,eggId,1,2,3,side)
+            assert(staleVersion==false and m.events==events and Rules.assertConserved(m))
+        end)
+    end
+end
+
+local function setup()
+    local m=Rules.new()
+    assert(Rules.pickup(m,"B1",1,"RED"))
+    assert(Rules.assertConserved(m))
+    return m
+end
+check("self recipient rejects",function()
+    local m=setup()
+    local ok=Rules.relayWithVersion(m,"B1",1,1,1,"RED")
+    assert(not ok and Rules.assertConserved(m))
+end)
+check("wrong team rejects",function()
+    local m=setup()
+    local ok=Rules.relayWithVersion(m,"B1",1,1,2,"BLUE")
+    assert(not ok and Rules.assertConserved(m))
+end)
+check("occupied hand rejects",function()
+    local m=setup()
+    assert(Rules.pickup(m,"B2",2,"RED"))
+    local ok=Rules.relayWithVersion(m,"B1",1,1,2,"RED")
+    assert(not ok and Rules.assertConserved(m))
+end)
+check("invalid id rejects",function()
+    local m=setup()
+    assert(not Rules.relayWithVersion(m,"B3",1,1,2,"RED"))
+end)
+check("claimed egg mismatched rejects",function()
+    local m=setup()
+    assert(not Rules.relayWithVersion(m,"R1",0,1,2,"RED"))
+end)
+check("unverified initial version rejects",function()
+    local m=setup()
+    assert(not Rules.relayWithVersion(m,"B1",0,1,2,"RED"))
+end)
+check("future version rejects",function()
+    local m=setup()
+    assert(not Rules.relayWithVersion(m,"B1",2,1,2,"RED"))
+end)
+check("fraction seq rejects",function()
+    local m=setup()
+    assert(not Rules.relayWithVersion(m,"B1",1.3,1,2,"RED"))
+end)
+check("NaN seq rejects",function()
+    local m=setup()
+    assert(not Rules.relayWithVersion(m,"B1",0/0,1,2,"RED"))
+end)
+check("overflow seq rejects",function()
+    local m=setup()
+    assert(not Rules.relayWithVersion(m,"B1",9007199254740992,1,2,"RED"))
+end)
+check("negative user id rejects",function()
+    local m=setup()
+    assert(not Rules.relayWithVersion(m,"B1",1,1,-2,"RED"))
+end)
+check("zero user id rejects",function()
+    local m=setup()
+    assert(not Rules.relayWithVersion(m,"B1",1,0,2,"RED"))
+end)
+check("inactive round rejects",function()
+    local m=setup();m.active=false
+    assert(not Rules.relayWithVersion(m,"B1",1,1,2,"RED"))
+end)
+check("missing events rejects",function()
+    local m=setup();m.events=nil
+    assert(not Rules.relayWithVersion(m,"B1",1,1,2,"RED"))
+end)
+check("not conserved alias rejects",function()
+    local m=setup();m.carryByPlayer[3]="B1"
+    assert(not Rules.relayWithVersion(m,"B1",1,1,2,"RED"))
+end)
+check("not conserved removed egg rejects",function()
+    local m=setup();m.eggs.N1=nil
+    assert(not Rules.relayWithVersion(m,"B1",1,1,2,"RED"))
+end)
+check("other holder can't forge pass",function()
+    local m=setup()
+    assert(not Rules.relayWithVersion(m,"B1",1,2,3,"RED"))
+end)
+check("end round no egg loss",function()
+    local m=setup()
+    assert(Rules.relayWithVersion(m,"B1",1,1,2,"RED"))
+    for i=1,Rules.LENGTH_SECONDS do assert(Rules.advance(m,1)) end
+    assert(m.active==false and Rules.assertConserved(m) and m.carryByPlayer[2]==nil)
+end)
+assert(n==47,"NATIVE_CASE_COUNT_MISMATCH:"..tostring(n))
+print("P0D_H2_RELAY_NATIVE_47_OF_47_PASS")
