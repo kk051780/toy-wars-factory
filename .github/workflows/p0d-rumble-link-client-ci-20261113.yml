@@ -1,0 +1,39 @@
+name: P0D Rumble Link independent source-only checks
+on:
+  push:
+    branches:
+      - feature/p0d-rumble-link-client-preview-20261113-01
+    paths:
+      - 'handoffs/P0D-RUMBLE-LINK-CLIENT-PREVIEW-20261113-01/**'
+      - '.github/workflows/p0d-rumble-link-client-ci-20261113.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python reference oracle (not native Luau)
+        run: |
+          cd handoffs/P0D-RUMBLE-LINK-CLIENT-PREVIEW-20261113-01
+          python -m unittest discover -s tests -p 'test_contract.py' -v
+      - name: Build genuine upstream Luau CLI isolated from game
+        shell: bash
+        run: |
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/p0d-upstream-luau
+          git -C /tmp/p0d-upstream-luau rev-parse HEAD
+          cmake -S /tmp/p0d-upstream-luau -B /tmp/p0d-upstream-luau-build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/p0d-upstream-luau-build --config Release --target Luau.Repl.CLI Luau.Compiler.CLI -j 3
+      - name: Native Luau bytecode compile and actual VM assertions
+        shell: bash
+        run: |
+          COMPILER=/tmp/p0d-upstream-luau-build/luau-compile
+          LUAU=/tmp/p0d-upstream-luau-build/luau
+          "$COMPILER" 'handoffs/P0D-RUMBLE-LINK-CLIENT-PREVIEW-20261113-01/src/RumbleLinkCueRules.luau' >/dev/null
+          "$COMPILER" 'handoffs/P0D-RUMBLE-LINK-CLIENT-PREVIEW-20261113-01/demo/RumbleLinkPreview.client.luau' >/dev/null
+          "$COMPILER" 'handoffs/P0D-RUMBLE-LINK-CLIENT-PREVIEW-20261113-01/tests/native_contract.luau' >/dev/null
+          "$LUAU" 'handoffs/P0D-RUMBLE-LINK-CLIENT-PREVIEW-20261113-01/tests/native_contract.luau'
