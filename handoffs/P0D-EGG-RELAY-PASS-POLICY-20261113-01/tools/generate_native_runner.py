@@ -10,9 +10,9 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "src" / "EggRelayPolicy.luau"
 CASES = ROOT / "tests" / "native_policy_cases.luau"
 MANIFEST = ROOT / "SOURCE_MANIFEST.json"
-EXPECTED_SOURCE_SHA256 = "9dd74ba29fec61c9214c2059ce19da8337bf7ed46c0b31c96f16bf865b9ae7b4"
-EXPECTED_SOURCE_GITBLOB = "dd5e5e19fb16c79bc54bfdef04c941cde418b0b4"
-EXPECTED_CASES_GITBLOB = "fc827f4f16f4745f85faef867596f208b76ee0dc"
+EXPECTED_SOURCE_SHA256 = "7515fecbb4994d39bccdd7dba49229bcb151ab64d084da84e332c41f7bc5dfa0"
+EXPECTED_SOURCE_GITBLOB = "ef9b65bd6520231f299f21c5cfe2aa250798c8d0"
+EXPECTED_CASES_GITBLOB = "801ac8f52cc3fec9bc159b73803853aea845a582"
 
 
 def blob_sha(raw: bytes) -> str:
@@ -31,8 +31,8 @@ def verify(source: bytes, cases: bytes, manifest: dict):
     assert manifest.get("official_rc_adopted") is False, "FORBIDDEN_OFFICIAL_RC_CLAIM"
     assert manifest.get("product_selected") is False, "FORBIDDEN_PRODUCT_SELECTED_CLAIM"
     assert manifest.get("roblox_studio") == "NOT_TESTED", "FORBIDDEN_STUDIO_PASS_CLAIM"
-    assert len(re.findall(rb'\bcheck\("', cases)) == 39, "NATIVE_CASE_COUNT_MISMATCH"
-    assert b"P0D_EGG_RELAY_NATIVE_POLICY_39_CASES_PASS" in cases, "NATIVE_PASS_MARKER_MISSING"
+    assert len(re.findall(rb'\bcheck\("', cases)) == 41, "NATIVE_CASE_COUNT_MISMATCH"
+    assert b"P0D_EGG_RELAY_NATIVE_POLICY_41_CASES_PASS" in cases, "NATIVE_PASS_MARKER_MISSING"
 
 
 def render(source: bytes, cases: bytes, manifest: dict) -> str:
