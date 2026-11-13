@@ -1,0 +1,64 @@
+name: P0D independent V4 source regression audit
+on:
+  push:
+    branches:
+      - qa/p0d-horde-respawn-telegraph-20261113-01
+    paths:
+      - 'handoffs/P0D-INDEPENDENT-HORDE-RESPAWN-QA-20261113-01/**'
+      - '.github/workflows/p0d-horde-independent-v4-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pinned-source-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch exact old v2, corrected v3/v4, and old power refs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin 55ad13b45907a5a3e9deae7196a7c202a0672c0c
+          git fetch --no-tags --depth=1 origin 1117513a27f66f44e0a2dbaa0e387812d2bc0c73
+          git fetch --no-tags --depth=1 origin 376e943673dc089a5381e0d46570b92185a5d32a
+          git fetch --no-tags --depth=1 origin cb2540dc4a3e5b819c0e3598d4af5e2b6dca76d3
+          mkdir -p /tmp/p0d-horde-v4qa
+          OLD=handoffs/P0D-MUSOU-CHAOS-H1-20261113-01/inputs
+          POWER=handoffs/P0D-MUSOU-EARNED-POWER-H1-20261113-01
+          git show 55ad13b45907a5a3e9deae7196a7c202a0672c0c:$OLD/MusouHorde.luau >/tmp/p0d-horde-v4qa/v2-horde.luau
+          git show 1117513a27f66f44e0a2dbaa0e387812d2bc0c73:$OLD/MusouHorde.luau >/tmp/p0d-horde-v4qa/v3-horde.luau
+          git show 376e943673dc089a5381e0d46570b92185a5d32a:$OLD/MusouHorde.luau >/tmp/p0d-horde-v4qa/v4-horde.luau
+          git show cb2540dc4a3e5b819c0e3598d4af5e2b6dca76d3:$OLD/MusouHorde.luau >/tmp/p0d-horde-v4qa/power-horde.luau
+          git show 55ad13b45907a5a3e9deae7196a7c202a0672c0c:$OLD/Game.server.luau >/tmp/p0d-horde-v4qa/v2-game.luau
+          git show 376e943673dc089a5381e0d46570b92185a5d32a:$OLD/Game.server.luau >/tmp/p0d-horde-v4qa/v4-game.luau
+          git show cb2540dc4a3e5b819c0e3598d4af5e2b6dca76d3:$POWER/inputs/Game.server.luau >/tmp/p0d-horde-v4qa/power-game.luau
+          git show cb2540dc4a3e5b819c0e3598d4af5e2b6dca76d3:$POWER/tools/assemble.py >/tmp/p0d-horde-v4qa/power-assemble.py
+          test "$(git hash-object /tmp/p0d-horde-v4qa/v2-horde.luau)" = c1ef565f4e8b11a6e8ff7eac5ed55c8f268a4553
+          test "$(git hash-object /tmp/p0d-horde-v4qa/v3-horde.luau)" = 57c70e364b721d24e9e36eaeaf8be6dfd9fca592
+          test "$(git hash-object /tmp/p0d-horde-v4qa/v4-horde.luau)" = 7edfda9e5a1d4ac8ae47d66ea7cf908eb8e4af6e
+          test "$(git hash-object /tmp/p0d-horde-v4qa/power-assemble.py)" = 04f89fa61f773ecd3342c969a9e354ed6703170e
+      - name: Exact original life-cycle mutation checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          node handoffs/P0D-INDEPENDENT-HORDE-RESPAWN-QA-20261113-01/tests/test_horde_respawn.mjs /tmp/p0d-horde-v4qa/v2-horde.luau
+          node handoffs/P0D-INDEPENDENT-HORDE-RESPAWN-QA-20261113-01/tests/test_downstream_inheritance.mjs \
+            /tmp/p0d-horde-v4qa/v2-horde.luau \
+            /tmp/p0d-horde-v4qa/v3-horde.luau \
+            /tmp/p0d-horde-v4qa/power-horde.luau \
+            /tmp/p0d-horde-v4qa/power-assemble.py
+      - name: Full V4 vs earned-power source safe-mode tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          node handoffs/P0D-INDEPENDENT-HORDE-RESPAWN-QA-20261113-01/tests/test_v4_inheritance.mjs \
+            /tmp/p0d-horde-v4qa/v2-horde.luau \
+            /tmp/p0d-horde-v4qa/v4-horde.luau \
+            /tmp/p0d-horde-v4qa/power-horde.luau \
+            /tmp/p0d-horde-v4qa/v2-game.luau \
+            /tmp/p0d-horde-v4qa/v4-game.luau \
+            /tmp/p0d-horde-v4qa/power-game.luau \
+            /tmp/p0d-horde-v4qa/power-assemble.py
