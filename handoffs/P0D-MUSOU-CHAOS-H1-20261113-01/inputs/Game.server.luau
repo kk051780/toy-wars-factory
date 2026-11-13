@@ -67,6 +67,10 @@ local lastNet: {[Player]: number} = {}
 local netImmuneUntil: {[Player]: number} = {}
 local mobCombo: {[Player]: number} = {}
 local mobComboUntil: {[Player]: number} = {}
+-- Per-player monotonic server hit receipt; display only, no XP/score authority.
+local mobImpactSeq: {[Player]: number} = {}
+local mobLastHits: {[Player]: number} = {}
+local mobLastKOs: {[Player]: number} = {}
 local lastWind: {[Player]: number} = {}
 local windUntil: {[Player]: number} = {}
 local windHighlight: {[Player]: Instance} = {}
@@ -773,6 +777,9 @@ snapshotFor = function(player: Player)
         musouActive = RunService:IsStudio() and match.phase=="ACTIVE",
         musouMobCount = horde:livingCount(),
         musouCombo = if now<(mobComboUntil[player] or 0) then mobCombo[player] or 0 else 0,
+        musouImpactSeq = mobImpactSeq[player] or 0,
+        musouLastHits = mobLastHits[player] or 0,
+        musouLastKOs = mobLastKOs[player] or 0,
         netBound = slowed[player]~=nil and slowed[player].kind=="NET",
         netRescueNearby = hasBoundAllyNearby(player),
         netCooldown = math.max(0,(lastNet[player] or -math.huge)+MusouBind.NET_COOLDOWN-now),
@@ -1193,6 +1200,9 @@ local function resetRound()
         netImmuneUntil[p] = 0
         mobCombo[p] = 0
         mobComboUntil[p] = 0
+        mobLastHits[p] = 0
+        mobLastKOs[p] = 0
+        -- Do NOT reset mobImpactSeq: HUD rejects stale replay across rounds.
         -- Player seq stays monotonic across round transitions; never rewind replay ceiling.
         p:LoadCharacter()
     end
@@ -1433,13 +1443,18 @@ local function applyAttack(player: Player, data)
     lastAttack[player] = now
     local look = root.CFrame.LookVector
     -- Original ATTACK cooldown/seq/phase also gates PvE. No second Remote or damage event.
+    local mobHits = 0
     if RunService:IsStudio() then
-        local touched = horde:hit(root.Position,look,
+        local touched, defeated = horde:hit(root.Position,look,
             Config.CombatDamage[roles[player] or "RAIDER"],now,player.Character)
+        mobHits=touched
         if touched>0 then
             mobCombo[player]=if now<(mobComboUntil[player] or 0)
                 then math.min(99,(mobCombo[player] or 0)+touched) else touched
             mobComboUntil[player]=now+2.4
+            mobImpactSeq[player]=(mobImpactSeq[player] or 0)+1
+            mobLastHits[player]=touched
+            mobLastKOs[player]=defeated
         end
     end
     local chosen = nil
@@ -1470,6 +1485,9 @@ local function applyAttack(player: Player, data)
         if ok and hum then hum:TakeDamage(Config.CombatDamage[roles[player] or "RAIDER"]) end
         return
     end
+    -- One slash may sweep mobs + duel a player, but cannot simultaneously
+    -- damage the CASTLE core beyond them. Clear its guards before siege.
+    if mobHits>0 then return end
     local enemy = Rules.opponent(team)
     local core = map.teams[enemy].core
     local distance = (core.Position - root.Position).Magnitude
@@ -1589,6 +1607,9 @@ local function onJoin(player: Player)
     netImmuneUntil[player] = 0
     mobCombo[player] = 0
     mobComboUntil[player] = 0
+    mobImpactSeq[player] = 0
+    mobLastHits[player] = 0
+    mobLastKOs[player] = 0
     invulnUntil[player] = 0
     player.CharacterAdded:Connect(function(character)
         cleanupScout(player)
@@ -1634,6 +1655,9 @@ Players.PlayerRemoving:Connect(function(player)
     netImmuneUntil[player] = nil
     mobCombo[player] = nil
     mobComboUntil[player] = nil
+    mobImpactSeq[player] = nil
+    mobLastHits[player] = nil
+    mobLastKOs[player] = nil
     windUntil[player] = nil
     windHighlight[player] = nil
     invulnUntil[player] = nil
