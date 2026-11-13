@@ -81,7 +81,7 @@ local function verifiedFriends(player,record,now)
         local result={}
         for _,other in ipairs(Players:GetPlayers()) do
             if other~=player and other.UserId>0 then
-                local ok,friend=pcall(function() return player:IsFriendsWith(other.UserId) end)
+                local ok,friend=pcall(function() return player:IsFriendsWithAsync(other.UserId) end)
                 if ok and friend then result[other.UserId]=true end
             end
         end
