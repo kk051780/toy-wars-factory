@@ -1,0 +1,94 @@
+{
+  "schema": "P0D_RC61_MOBILE_PORTRAIT_RELAY_TOUCH_COLLISION_FIX_REAL_CI_V1",
+  "date_jst": "2026-11-14",
+  "stage": "ISOLATED_PR_CHILD_SOURCE_QA_NOT_OFFICIAL_RC_ADOPTION",
+  "scope": "Mobile HUD input collision on real combined WCS+SevenJobs+EggRelay+StarPath 61; separate from other chats' world/characters/capacity/rollback cases",
+  "source_parent_pr": 312,
+  "fix_draft_pr": 320,
+  "actual_green_code_sha": "7f83e391a57021be130db605611f8db95ff1b484",
+  "actual_green_ci_run_id": 43527391898,
+  "actual_green_ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43527391898",
+  "actual_green_job_id": 132236430373,
+  "conclusion": "completed_success",
+  "before_fail_evidence": {
+    "source_sha": "da00eb85801654c8ce97fc90f04893a0c77eb94b",
+    "run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43526463325",
+    "actual_393x851_relay_rect": [
+      140.5,
+      629,
+      252.5,
+      687
+    ],
+    "actual_393x851_rescue_rect": [
+      128,
+      604,
+      243,
+      666
+    ],
+    "actual_393x851_collision": "CONFIRMED_SOURCE_GEOMETRY_OVERLAP",
+    "actual_375x812_relay_vs_short_net": "CONFIRMED_SOURCE_GEOMETRY_OVERLAP",
+    "actual_851x393_landscape": "NO_OVERLAP"
+  },
+  "fix": {
+    "only_changed_existing_source": "client/HUD.client.luau",
+    "all_other_source_bodies_byte_identical": 60,
+    "source_total": 61,
+    "NoSecond_Game_Remote_Store": true,
+    "portrait_threshold_px": 650,
+    "narrow_relay_slot": "x=10..122, y=viewport_height-185 .. viewport_height-127",
+    "wide_relay_slot": "original centered x=0.5*width-56..+56 y=height-222..height-164",
+    "live_rotation_source_connections": [
+      "Workspace.CurrentCamera changed",
+      "Camera.ViewportSize changed"
+    ],
+    "feature_off_byte_exact_original61_source_and_project_and_locks": "PASS"
+  },
+  "verified_real_ci": {
+    "mobile_non_overlap_screen_shapes": 12,
+    "other_button_contracts_per_screen": 12,
+    "mobile_static_geometry_pairs": 144,
+    "mobile_geometry_pass": 144,
+    "original_relay_Game_function_native_cases": 31,
+    "full_source_native_compile": 61,
+    "full_source_rojo_embedded_exact": 61,
+    "unmodified_base_star_bridge_and_7jobs_and_crystal_canyon": "PASS",
+    "original_EggRelayPolicy_41_native_in_this_run": "NOT_REEXECUTED; verified in sibling PR315 native105 source; not to be counted for this SHA",
+    "original_SevenJobs_33_native_in_this_run": "NOT_REEXECUTED; verified in sibling PR315 native105 source; not to be counted for this SHA",
+    "Studio_engine": "NOT_TESTED",
+    "Android_real_tap": "NOT_TESTED",
+    "two_clients": "NOT_TESTED",
+    "owner_FUN": "NOT_TESTED"
+  },
+  "artifact": {
+    "id": 14085996941,
+    "name": "P0D-CANONICAL-RC-STUDIO-rich51",
+    "warning": "Artifact inherited name CANONICAL is NOT actually official RC, this is draft feature branch",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43527391898/artifacts/14085996941",
+    "whole_zip_bytes": 157257,
+    "actual_rojo_place_uncompressed_bytes": 553496,
+    "place_sha256": "5555b3edaf75f9728ae5ffcaa5fc93ce2f4760b91711e234a01f73a8b9a069ba",
+    "previous_private61_place_uncompressed_bytes": 552390,
+    "added_place_bytes_vs_previous_private61": 1106,
+    "official57_place_uncompressed_bytes": 507197,
+    "candidate_place_delta_vs_official57_bytes": 46299,
+    "official57_artifact_zip_bytes": 143300
+  },
+  "official_snapshot_as_of_review": {
+    "sha": "34d6d384d04ba1d4a394331a3e5c74f798e57a22",
+    "script_count": 57,
+    "official_idea_RC": 21,
+    "official_idea_SOURCE": 27,
+    "official_idea_IDEA": 10,
+    "official_idea_total": 58,
+    "adopted_percent": 36.2,
+    "started_percent": 82.8,
+    "last_release_readiness": "75/100 FUN_NO_GO (not recomputed)"
+  },
+  "sole_writer_handoff": "#220 authenticated CAS writer only; add this HUD-only adapted source after the chosen single RC61 stack, run mobile 12 viewport geometry + 61 native Luau/Rojo on new official HEAD, update unique RC catalog only on actual official success. No wholesale PR merge.",
+  "prohibitions": [
+    "NO MAIN WRITE",
+    "NO UNAUTHORIZED RC BRANCH CHANGE",
+    "NO GAME PUBLISH",
+    "NO PAID OR SPENDING"
+  ]
+}
