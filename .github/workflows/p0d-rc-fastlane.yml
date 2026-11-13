@@ -204,6 +204,29 @@ jobs:
           done < <(find "$DIST/src" -type f -name '*.luau' -print0)
           test "$n" -eq "$WANT"
           echo "P0D_CANONICAL_RC_FULL_SOURCE_LUAU_COMPILE_PASS $n/$WANT"
+      - name: Native runtime check 41 real relay policy cases + 30 extracted updated Game server transaction cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            if [ ! -x /tmp/p0d_new_luau/luau ]; then
+              cmake -S _p0d_rc_luau -B /tmp/p0d_new_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+              cmake --build /tmp/p0d_new_luau --target Luau.Repl.CLI --parallel 4
+            fi
+            python3 -B _egg/handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/tools/generate_native_runner.py --out /tmp/p0d_egg_policy41.luau
+            /tmp/p0d_new_luau/luau-compile /tmp/p0d_egg_policy41.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/p0d_egg_policy41.luau | tee /tmp/p0d_egg_policy41.log
+            grep -Fx 'P0D_EGG_RELAY_NATIVE_POLICY_41_CASES_PASS' /tmp/p0d_egg_policy41.log
+            python3 -B _egg/handoffs/P0D-EGG-RELAY-CLASSIC-LIVE-20261114-01/tools/generate_native_game_harness.py \
+              --game "$DIST/src/server/Game.server.luau" \
+              --policy _egg/handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/src/EggRelayPolicy.luau \
+              --out /tmp/p0d_egg_combined_actual_game30.luau
+            /tmp/p0d_new_luau/luau-compile /tmp/p0d_egg_combined_actual_game30.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/p0d_egg_combined_actual_game30.luau | tee /tmp/p0d_egg_combined_actual_game30.log
+            grep -Fx 'P0D_EGG_RELAY_ACTUAL_GAME_NATIVE_30_CASES_PASS' /tmp/p0d_egg_combined_actual_game30.log
+            echo P0D_WCS_JOBS_RELAY_REAL60_NATIVE41_PLUS_ACTUAL_GAME30_SUCCESS
+          fi
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash
         run: |
