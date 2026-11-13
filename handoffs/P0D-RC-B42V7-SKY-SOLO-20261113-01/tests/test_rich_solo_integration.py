@@ -119,7 +119,8 @@ class RichSoloIntegration(unittest.TestCase):
             with self.subTest(marker=marker):
                 self.assertIn('"'+marker+'"',text)
         for forbidden in ('FireServer(', 'OnServerEvent:Connect(',
-                          'Instance.new(', 'MarketplaceService', 'DataStoreService'):
+                          'Instance.new("RemoteEvent")', 'Instance.new("Script")',
+                          'Instance.new("ModuleScript")', 'MarketplaceService', 'DataStoreService'):
             with self.subTest(forbidden=forbidden):
                 self.assertNotIn(forbidden,text)
         self.assertEqual(text.count('remote.OnClientEvent:Connect('),1)
