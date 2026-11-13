@@ -1,0 +1,168 @@
+--- original/Game.luau
++++ candidate/Game.luau
+@@ -7,10 +7,13 @@
+ local RunService = game:GetService("RunService")
+ local HttpService = game:GetService("HttpService")
+ local DataStoreService = game:GetService("DataStoreService")
++local ServerStorage = game:GetService("ServerStorage")
+ -- EGG RAID RUMBLE: H2 5-egg alternative is private Studio only.
+ -- Normal runtime / published Game remains the original unchanged one-egg mode.
+ local EXPERIMENTAL_FIVE_EGG_MODE = false -- selected per round; 5 eggs Studio-only for this private build
+ local H2Score = require(script.Parent:WaitForChild("H2FiveEggRules"))
++-- P0D-EGG-RELAY-001: pure eligibility, no second Game/Remote/Score state.
++local EggRelayPolicy = require(script.Parent:WaitForChild("EggRelayPolicy"))
+ local ModeVote = require(script.Parent:WaitForChild("ModeVoteRules"))
+ -- Exact original #275 free-hatch entitlement module, no duplicate rewards authority.
+ local RewardRules = require(script.Parent:WaitForChild("RewardEquipRules"))
+@@ -148,6 +151,13 @@
+ local invulnUntil: {[Player]: number} = {}
+ local carry: {[Player]: string} = {}
+ local carryVisuals: {[Player]: Instance} = {}
++-- Pass uses the existing one Game and original H2FiveEggRules score state.
++local relayPromptAttachments: {[Player]: Instance} = {}
++local relayLastAt: {[string]: number} = {}
++local relayVersions: {[string]: number} = {}
++local relayAcceptedSeq: {[number]: number} = {}
++local relayRequestSerial = 0
++local tryServerEggRelay: any = nil
+ local match = {
+     serial = 0,
+     phase = "LOBBY",
+@@ -556,6 +566,9 @@
+ local function removeCarrierVisual(player: Player)
+     local v = carryVisuals[player]
+     carryVisuals[player] = nil
++    local attachment=relayPromptAttachments[player]
++    relayPromptAttachments[player]=nil
++    if attachment then attachment:Destroy() end
+     if v then v:Destroy() end
+ end
+ local function resetEgg(team: string)
+@@ -610,6 +623,26 @@
+     txt.TextColor3 = Color3.fromRGB(255, 229, 98)
+     txt.Parent = b
+     carryVisuals[player] = b
++    -- One existing carried egg, one optional team-receiver prompt; NO Remote.
++    -- OFF at any time on the trusted ServerStorage attribute disables all passes.
++    if not RunService:IsStudio() or ServerStorage:GetAttribute("P0D_RC_ENABLE_EGG_RELAY") == false then
++        return
++    end
++    local att=Instance.new("Attachment")
++    att.Name="P0D_EggRelayReceiverAttachment"
++    att.Parent=head
++    local prompt=Instance.new("ProximityPrompt")
++    prompt.Name="P0D_EGG_RELAY_V1"
++    prompt.ActionText="🥚 パスを受け取る"
++    prompt.ObjectText="味方連携"
++    prompt.HoldDuration=0.35
++    prompt.MaxActivationDistance=8
++    prompt.RequiresLineOfSight=true
++    prompt.Parent=att
++    relayPromptAttachments[player]=att
++    prompt.Triggered:Connect(function(receiver: Player)
++        if tryServerEggRelay then tryServerEggRelay(player,receiver) end
++    end)
+ end
+ -- Wind burst is a mobility-only extension of the SAME server/Remote/seq authority.
+ local function stopWind(player: Player)
+@@ -1483,6 +1516,9 @@
+     stopCanonical("ROUND_RESET")
+     clearTraps()
+     match.serial += 1
++    table.clear(relayLastAt)
++    table.clear(relayVersions)
++    table.clear(relayAcceptedSeq)
+     if RunService:IsStudio() then
+         for _,p in ipairs(Players:GetPlayers()) do
+             if delayedRestore[p] then restoreSavedProfile(p) end
+@@ -1699,6 +1735,90 @@
+     broadcast()
+ end
+ 
++-- EGG_RELAY_V1: ONE canonical Game holds ALL egg state; receiver activates
++-- the carried egg's ProximityPrompt. Identity/range/raycast are SERVER-SOURCED.
++-- Only Studio private play for this proof (no live feature or new Remote).
++tryServerEggRelay=function(carrier: Player, receiver: Player)
++    if not RunService:IsStudio() or ServerStorage:GetAttribute("P0D_RC_ENABLE_EGG_RELAY")==false
++        or match.phase~="ACTIVE" or match.serial<1 then return end
++    if carrier==receiver or carrier.Parent~=Players or receiver.Parent~=Players then return end
++    local eggId=carry[carrier]
++    if not eggId or carry[receiver]~=nil then return end
++    local team=getTeamName(carrier)
++    if (team~="RED" and team~="BLUE") or getTeamName(receiver)~=team then return end
++    local aliveA,rootA=healthy(carrier)
++    local aliveB,rootB=healthy(receiver)
++    if not aliveA or not aliveB or not rootA or not rootB
++        or slowed[carrier]~=nil or slowed[receiver]~=nil then return end
++    local fromId=h2Ids[carrier] or carrier.UserId
++    local toId=h2Ids[receiver] or receiver.UserId
++    if type(fromId)~="number" or type(toId)~="number" or fromId<=0 or toId<=0 then return end
++    local actualVersion=relayVersions[eggId] or 0
++    if EXPERIMENTAL_FIVE_EGG_MODE then
++        local egg=h2ScoreState and h2ScoreState.eggs[eggId]
++        local def=h2Eggs[eggId]
++        if not egg or not def or not h2ScoreState.active
++            or egg.state~="CARRIED" or egg.holder~=fromId
++            or def.owner==team then return end
++        actualVersion=egg.transferSeq
++    elseif match.eggOwners[eggId]~=carrier or eggId==team then
++        return
++    end
++    local sourcePos=rootA.Position+Vector3.new(0,1.4,0)
++    local targetPos=rootB.Position+Vector3.new(0,1.4,0)
++    local ray=RaycastParams.new()
++    ray.FilterType=Enum.RaycastFilterType.Exclude
++    ray.FilterDescendantsInstances={carrier.Character,receiver.Character}
++    ray.IgnoreWater=false
++    local blocked=workspace:Raycast(sourcePos,targetPos-sourcePos,ray)~=nil
++    local serverElapsed=math.max(0,serverNow()-match.startedAt)
++    local seq=relayRequestSerial+1
++    local world={
++        phase="PLAYING",roundEpoch=match.serial,nowSec=serverElapsed,
++        lastAcceptedSeqByUser=relayAcceptedSeq,
++        serverLineOfSightClear=not blocked,
++        players={
++            [fromId]={alive=aliveA,stunned=slowed[carrier]~=nil,
++                restrained=slowed[carrier]~=nil,team=team,carriedEggId=eggId,
++                serverPosition={x=rootA.Position.X,y=rootA.Position.Y,z=rootA.Position.Z}},
++            [toId]={alive=aliveB,stunned=slowed[receiver]~=nil,
++                restrained=slowed[receiver]~=nil,team=team,carriedEggId=carry[receiver],
++                serverPosition={x=rootB.Position.X,y=rootB.Position.Y,z=rootB.Position.Z}},
++        },
++        eggs={[eggId]={id=eggId,phase="CARRIED",carrierUserId=fromId,
++            relayEligible=true,transferSeq=actualVersion,lastRelayAtSec=relayLastAt[eggId]}},
++    }
++    local allowed,receipt=EggRelayPolicy.evaluate(world,{
++        actorUserId=fromId,targetUserId=toId,eggId=eggId,seq=seq,
++        roundEpoch=match.serial,expectedTransferSeq=actualVersion,
++    })
++    if not allowed then return end
++    -- End-to-end no-yield recheck; score and carry state are not client-authored.
++    if match.phase~="ACTIVE" or carry[carrier]~=eggId or carry[receiver]~=nil
++        or getTeamName(carrier)~=team or getTeamName(receiver)~=team then return end
++    if EXPERIMENTAL_FIVE_EGG_MODE then
++        local ok=H2Score.relay(h2ScoreState,fromId,toId,team)
++        if not ok then return end
++        if not H2Score.assertConserved(h2ScoreState) then
++            error("EGG_RELAY_H2_CONSERVATION_FAILED")
++        end
++    else
++        if match.eggOwners[eggId]~=carrier then return end
++        match.eggOwners[eggId]=receiver
++        relayVersions[eggId]=receipt.newTransferSeq
++    end
++    -- The single Game owns both views; no extra points, XP, receipts or damage.
++    carry[carrier]=nil
++    carry[receiver]=eggId
++    relayAcceptedSeq[fromId]=receipt.acceptedRequestSeq
++    relayRequestSerial=seq
++    relayLastAt[eggId]=serverElapsed
++    stopWind(receiver)
++    removeCarrierVisual(carrier)
++    giveEggVisual(receiver)
++    broadcast()
++end
++
+ createFiveEggs()
+ if RunService:IsStudio() then
+     for _,id in ipairs({"R2","B2","N1"}) do
