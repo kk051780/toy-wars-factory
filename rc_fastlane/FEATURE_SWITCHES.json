@@ -194,7 +194,7 @@
       "enabled": true,
       "status": "PRIVATE61_CANDIDATE_NOT_CANONICAL",
       "feature": "WCS third route; star bridge via both shores, 16s on, 7s after real closure",
-      "source_git_blob": "49f57b6d99357205e9c0b9a720d74ccbab947a87",
+      "source_git_blob": "311d4c75e38f896f24c982afbc6f9d5c35e90cb4",
       "source_path": "rc_fastlane/features/star_path/StarfallPath.server.luau",
       "dependencies": [
         "WCS_F01_C01",
@@ -206,6 +206,27 @@
       "rollback": "Set enabled=false to restore exact prior private60",
       "changes_to_Game_Store_Remote": false,
       "engine": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED"
+    },
+    "METEOR_FOURTH_V1": {
+      "enabled": true,
+      "status": "PRIVATE62_SOURCE_CANDIDATE_NOT_CANONICAL",
+      "feature": "55s quiet + 5s warning + 22s collision bridge, fourth distinct WCS canyon route; Starfall existing third lane",
+      "source_git_blob": "4845ffa98b0b17a506a993682dc84f9de0fd5e30",
+      "source_path": "rc_fastlane/features/meteor_fourth/MeteorFourth.server.luau",
+      "dependencies": [
+        "WCS_F01_C01",
+        "SEVEN_JOBS_PVE_V1",
+        "EGG_RELAY_CLASSIC_V1",
+        "STARRY_PATH_V1"
+      ],
+      "runtime_flag": "ServerStorage BoolValue P0D_ENABLE_METEOR_SHORTCUT_V1 true only, missing/false OFF and Studio only",
+      "geometry": "WCS bank local z=-17, min 3 stud width-aware clearance to existing z=-35 Starfall and z=0 gate and +30 permanent crossing",
+      "fail_closed": "world/StarStep_01/banks/gate/safe part missing, bad geometry, duplicate runtime, invalid flag",
+      "rollback": "enabled=false preserves exact existing 61-source Place, project and locks",
+      "official_rc_adopted": false,
+      "engine_studio": "NOT_TESTED",
       "android": "NOT_TESTED",
       "owner_fun": "NOT_TESTED"
     }
