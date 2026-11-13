@@ -1,0 +1,257 @@
+name: P0D H1 child-first 90 seconds server-certified guide plus H1 v5 native QA
+on:
+  push:
+    branches:
+      - experiment/p0d-first90-guided-h1-20261113-01
+    paths:
+      - 'handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/**'
+      - '.github/workflows/p0d-first90-guided-h1-20261113.yml'
+  workflow_dispatch:
+jobs:
+  original-game-source-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test source-level safety + preserve previous H1 39-source tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -B handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/tests/test_first90_game.py
+          python -B handoffs/P0D-EARNED-EVOLUTION-FULL-H1-20261113-01/tests/test_evolution_h1.py
+          python -B handoffs/P0D-MUSOU-EARNED-POWER-H1-20261113-01/tests/test_power_bridge.py
+      - name: Rebuild original 41 actual Luau code with ONE Game/Remote
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -B handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/tools/assemble.py --assemble
+          python3 - <<'PY'
+          import pathlib,json
+          d=pathlib.Path("handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED")
+          j=json.loads((d/"SOURCE_LOCK.json").read_text("utf8"))
+          assert j["source_count"]==41
+          assert j["original_unchanged"]==37
+          assert len(j["source_blob_sha1"])==41
+          assert len(list((d/"src").rglob("*.luau")))==41
+          assert j["official_rc_adopted"] is False and j["actual_studio_tested"] is False
+          print("P0D_EVOLUTION_FULL_H1_REAL_41_LUAU_SOURCE_ASSEMBLY_PASS")
+          PY
+      - name: Checkout frozen upstream Luau native toolchain
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_evo_upstream
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build native Luau compiler/runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_evo_upstream rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_evo_upstream -B /tmp/p0d_evo_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_evo_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Compile ALL 41 scripts and execute genuine evolution + Store UpdateAsync logic
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-FIRST90-GUIDED-H1-20261113-01
+          DIST="$ROOT/dist/EGG_RAID_RUMBLE_EARNED_EVOLUTION_FULL_H1_PRIVATE_STUDIO_ONLY"
+          n=0
+          while IFS= read -r -d '' path; do
+            /tmp/p0d_evo_native/luau-compile "$path" >/dev/null
+            n=$((n+1))
+          done < <(find "$DIST/src" -type f -name '*.luau' -print0)
+          test "$n" -eq 41
+          echo P0D_REAL_EVOLUTION_41_LUAU_NATIVE_COMPILE_PASS
+          python3 -B "handoffs/P0D-EARNED-EVOLUTION-FULL-H1-20261113-01/tools/run_native_evolution.py" --luau /tmp/p0d_evo_native/luau --compiler /tmp/p0d_evo_native/luau-compile | tee /tmp/evo_pure.log
+          grep -E 'P0D_EVOLUTION_ORIGINAL_NATIVE_PASS_[0-9]+' /tmp/evo_pure.log
+          python3 -B "handoffs/P0D-EARNED-EVOLUTION-FULL-H1-20261113-01/tools/generate_atomic_evolution_native.py" --write /tmp/p0d_evo_atomic_test.luau
+          /tmp/p0d_evo_native/luau-compile /tmp/p0d_evo_atomic_test.luau >/dev/null
+          /tmp/p0d_evo_native/luau /tmp/p0d_evo_atomic_test.luau | tee /tmp/evo_store.log
+          grep -E '^P0D_ATOMIC_EVOLUTION_NATIVE_[0-9]+_ASSERTIONS_PASS$' /tmp/evo_store.log
+          python3 -B handoffs/P0D-MUSOU-EARNED-POWER-H1-20261113-01/tools/generate_native_power_test.py --write /tmp/p0d_evo_power_test.luau
+          /tmp/p0d_evo_native/luau-compile /tmp/p0d_evo_power_test.luau >/dev/null
+          /tmp/p0d_evo_native/luau /tmp/p0d_evo_power_test.luau | tee /tmp/evo_power.log
+          grep -E '^P0D_POWER_NATIVE_[0-9]+_ASSERTIONS_PASS      - name: Get pinned Rojo7.7.1 with SHA256 verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_evolution_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_evolution_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,stat,pathlib
+          with zipfile.ZipFile("/tmp/p0d_evolution_rojo.zip") as z:
+              options=[p for p in z.namelist() if p.split("/")[-1]=="rojo"]
+              assert len(options)==1
+              path=pathlib.Path("/tmp/p0d_evolution_rojo")
+              path.write_bytes(z.read(options[0]))
+              path.chmod(path.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_evolution_rojo --version | grep -F 7.7.1
+      - name: Build and confirm EXACT 41-script unpublished Roblox Place source
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIST=handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED
+          mkdir -p /tmp/p0d_evolution_place
+          /tmp/p0d_evolution_rojo build "$DIST/default.project.json" -o /tmp/p0d_evolution_place/EGG_RAID_RUMBLE_EVOLVED_BEAST_H1_UNPUBLISHED.rbxlx
+          cp "$DIST/SOURCE_LOCK.json" /tmp/p0d_evolution_place/SOURCE_LOCK.json
+          cp /tmp/evo_pure.log /tmp/p0d_evolution_place/NATIVE_EVOLUTION_POLICY.txt
+          cp /tmp/evo_store.log /tmp/p0d_evolution_place/NATIVE_ATOMIC_PROFILE_QA.txt
+          cp /tmp/evo_power.log /tmp/p0d_evolution_place/NATIVE_POWER_QA.txt
+          cp /tmp/first90_policy.log /tmp/p0d_evolution_place/NATIVE_FIRST90_QA.txt
+          python3 - <<'PY'
+          import pathlib,xml.etree.ElementTree as ET,collections,json,hashlib
+          root=pathlib.Path("handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED")
+          place=pathlib.Path("/tmp/p0d_evolution_place/EGG_RAID_RUMBLE_EVOLVED_BEAST_H1_UNPUBLISHED.rbxlx")
+          original=collections.Counter(p.read_text("utf8") for p in (root/"src").rglob("*.luau"))
+          cls=collections.Counter();scripts=collections.Counter();oneGame=0
+          for item in ET.fromstring(place.read_bytes()).iter("Item"):
+              ty=item.get("class")
+              if ty not in ("Script","LocalScript","ModuleScript"):continue
+              code=item.find("./Properties/string[@name='Source']")
+              if code is None:continue
+              cls[ty]+=1;scripts[code.text or ""]+=1
+              name=item.find("./Properties/string[@name='Name']")
+              if ty=="Script" and name is not None and name.text=="Game":oneGame+=1
+          assert cls=={"Script":2,"LocalScript":5,"ModuleScript":34},cls
+          assert scripts==original and sum(scripts.values())==41
+          assert oneGame==1 and sum("TrapRaidersS1Remote" in k for k in scripts)>=1
+          meta={"sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
+            "real_Studio_tested":False,"android_tested":False,"owner_fun_accepted":False,
+            "original_module_count":41,"official_rc_adopted":False,"published":False,
+            "paid":False}
+          pathlib.Path("/tmp/p0d_evolution_place/PLACE_EXACT_SOURCE.json").write_text(json.dumps(meta,indent=2)+"\n")
+          print("P0D_EVOLUTION_REAL_ROJO_41_OF_41_EXACT_SOURCE_PASS",meta["sha256"])
+          PY
+      - name: Upload review-only private build, NEVER publish to Roblox
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-FIRST90-V5-41-LUAU-PRIVATE-STUDIO-RBXLX
+          path: /tmp/p0d_evolution_place/
+          retention-days: 7
+          if-no-files-found: error
+ /tmp/evo_power.log
+          python3 -B handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/tools/generate_native_first90.py --write /tmp/p0d_first90_native_test.luau
+          /tmp/p0d_evo_native/luau-compile /tmp/p0d_first90_native_test.luau >/dev/null
+          /tmp/p0d_evo_native/luau /tmp/p0d_first90_native_test.luau | tee /tmp/first90_policy.log
+          grep -E '^P0D_FIRST90_NATIVE_[0-9]+_ASSERTIONS_PASS      - name: Get pinned Rojo7.7.1 with SHA256 verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_evolution_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_evolution_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,stat,pathlib
+          with zipfile.ZipFile("/tmp/p0d_evolution_rojo.zip") as z:
+              options=[p for p in z.namelist() if p.split("/")[-1]=="rojo"]
+              assert len(options)==1
+              path=pathlib.Path("/tmp/p0d_evolution_rojo")
+              path.write_bytes(z.read(options[0]))
+              path.chmod(path.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_evolution_rojo --version | grep -F 7.7.1
+      - name: Build and confirm EXACT 41-script unpublished Roblox Place source
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIST=handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED
+          mkdir -p /tmp/p0d_evolution_place
+          /tmp/p0d_evolution_rojo build "$DIST/default.project.json" -o /tmp/p0d_evolution_place/EGG_RAID_RUMBLE_EVOLVED_BEAST_H1_UNPUBLISHED.rbxlx
+          cp "$DIST/SOURCE_LOCK.json" /tmp/p0d_evolution_place/SOURCE_LOCK.json
+          cp /tmp/evo_pure.log /tmp/p0d_evolution_place/NATIVE_EVOLUTION_POLICY.txt
+          cp /tmp/evo_store.log /tmp/p0d_evolution_place/NATIVE_ATOMIC_PROFILE_QA.txt
+          cp /tmp/evo_power.log /tmp/p0d_evolution_place/NATIVE_POWER_QA.txt
+          python3 - <<'PY'
+          import pathlib,xml.etree.ElementTree as ET,collections,json,hashlib
+          root=pathlib.Path("handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED")
+          place=pathlib.Path("/tmp/p0d_evolution_place/EGG_RAID_RUMBLE_EVOLVED_BEAST_H1_UNPUBLISHED.rbxlx")
+          original=collections.Counter(p.read_text("utf8") for p in (root/"src").rglob("*.luau"))
+          cls=collections.Counter();scripts=collections.Counter();oneGame=0
+          for item in ET.fromstring(place.read_bytes()).iter("Item"):
+              ty=item.get("class")
+              if ty not in ("Script","LocalScript","ModuleScript"):continue
+              code=item.find("./Properties/string[@name='Source']")
+              if code is None:continue
+              cls[ty]+=1;scripts[code.text or ""]+=1
+              name=item.find("./Properties/string[@name='Name']")
+              if ty=="Script" and name is not None and name.text=="Game":oneGame+=1
+          assert cls=={"Script":2,"LocalScript":5,"ModuleScript":34},cls
+          assert scripts==original and sum(scripts.values())==41
+          assert oneGame==1 and sum("TrapRaidersS1Remote" in k for k in scripts)>=1
+          meta={"sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
+            "real_Studio_tested":False,"android_tested":False,"owner_fun_accepted":False,
+            "original_module_count":41,"official_rc_adopted":False,"published":False,
+            "paid":False}
+          pathlib.Path("/tmp/p0d_evolution_place/PLACE_EXACT_SOURCE.json").write_text(json.dumps(meta,indent=2)+"\n")
+          print("P0D_EVOLUTION_REAL_ROJO_41_OF_41_EXACT_SOURCE_PASS",meta["sha256"])
+          PY
+      - name: Upload review-only private build, NEVER publish to Roblox
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-FIRST90-V5-41-LUAU-PRIVATE-STUDIO-RBXLX
+          path: /tmp/p0d_evolution_place/
+          retention-days: 7
+          if-no-files-found: error
+ /tmp/first90_policy.log
+      - name: Get pinned Rojo7.7.1 with SHA256 verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_evolution_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_evolution_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,stat,pathlib
+          with zipfile.ZipFile("/tmp/p0d_evolution_rojo.zip") as z:
+              options=[p for p in z.namelist() if p.split("/")[-1]=="rojo"]
+              assert len(options)==1
+              path=pathlib.Path("/tmp/p0d_evolution_rojo")
+              path.write_bytes(z.read(options[0]))
+              path.chmod(path.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_evolution_rojo --version | grep -F 7.7.1
+      - name: Build and confirm EXACT 41-script unpublished Roblox Place source
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIST=handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED
+          mkdir -p /tmp/p0d_evolution_place
+          /tmp/p0d_evolution_rojo build "$DIST/default.project.json" -o /tmp/p0d_evolution_place/EGG_RAID_RUMBLE_EVOLVED_BEAST_H1_UNPUBLISHED.rbxlx
+          cp "$DIST/SOURCE_LOCK.json" /tmp/p0d_evolution_place/SOURCE_LOCK.json
+          cp /tmp/evo_pure.log /tmp/p0d_evolution_place/NATIVE_EVOLUTION_POLICY.txt
+          cp /tmp/evo_store.log /tmp/p0d_evolution_place/NATIVE_ATOMIC_PROFILE_QA.txt
+          cp /tmp/evo_power.log /tmp/p0d_evolution_place/NATIVE_POWER_QA.txt
+          python3 - <<'PY'
+          import pathlib,xml.etree.ElementTree as ET,collections,json,hashlib
+          root=pathlib.Path("handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED")
+          place=pathlib.Path("/tmp/p0d_evolution_place/EGG_RAID_RUMBLE_EVOLVED_BEAST_H1_UNPUBLISHED.rbxlx")
+          original=collections.Counter(p.read_text("utf8") for p in (root/"src").rglob("*.luau"))
+          cls=collections.Counter();scripts=collections.Counter();oneGame=0
+          for item in ET.fromstring(place.read_bytes()).iter("Item"):
+              ty=item.get("class")
+              if ty not in ("Script","LocalScript","ModuleScript"):continue
+              code=item.find("./Properties/string[@name='Source']")
+              if code is None:continue
+              cls[ty]+=1;scripts[code.text or ""]+=1
+              name=item.find("./Properties/string[@name='Name']")
+              if ty=="Script" and name is not None and name.text=="Game":oneGame+=1
+          assert cls=={"Script":2,"LocalScript":5,"ModuleScript":34},cls
+          assert scripts==original and sum(scripts.values())==41
+          assert oneGame==1 and sum("TrapRaidersS1Remote" in k for k in scripts)>=1
+          meta={"sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
+            "real_Studio_tested":False,"android_tested":False,"owner_fun_accepted":False,
+            "original_module_count":41,"official_rc_adopted":False,"published":False,
+            "paid":False}
+          pathlib.Path("/tmp/p0d_evolution_place/PLACE_EXACT_SOURCE.json").write_text(json.dumps(meta,indent=2)+"\n")
+          print("P0D_EVOLUTION_REAL_ROJO_41_OF_41_EXACT_SOURCE_PASS",meta["sha256"])
+          PY
+      - name: Upload review-only private build, NEVER publish to Roblox
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-FIRST90-V5-41-LUAU-PRIVATE-STUDIO-RBXLX
+          path: /tmp/p0d_evolution_place/
+          retention-days: 7
+          if-no-files-found: error
