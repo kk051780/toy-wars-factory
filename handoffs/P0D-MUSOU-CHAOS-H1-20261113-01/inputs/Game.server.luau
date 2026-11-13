@@ -446,6 +446,10 @@ end
 local function restoreSlow(player: Player)
     local record = slowed[player]
     slowed[player] = nil
+    -- Early ally/self release must remove the bind outline immediately.
+    if record and record.highlight and record.highlight.Parent then
+        record.highlight:Destroy()
+    end
     if record and record.hum and record.hum.Parent and record.hum.Health > 0 then
         record.hum.WalkSpeed = Config.RoleWalkSpeed[roles[player] or "RAIDER"]
         -- Existing trap records have no jump state; only short NET binds restore it.
@@ -579,9 +583,18 @@ local function hasBoundAllyNearby(player: Player): boolean
         if other~=player and getTeamName(other)==team then
             local rec=slowed[other]
             local targetOk,targetRoot=healthy(other)
-            if rec and rec.kind=="NET" and targetOk and targetRoot
-                and (targetRoot.Position-root.Position).Magnitude<=MusouBind.RESCUE_RANGE then
-                return true
+            if rec and rec.kind=="NET" and targetOk and targetRoot then
+                local delta=targetRoot.Position-root.Position
+                if delta.Magnitude<=MusouBind.RESCUE_RANGE then
+                    local params=RaycastParams.new()
+                    params.FilterType=Enum.RaycastFilterType.Exclude
+                    params.FilterDescendantsInstances={player.Character :: Model,horde.folder}
+                    local hit=workspace:Raycast(root.Position,delta,params)
+                    if hit==nil or (other.Character~=nil
+                        and hit.Instance:IsDescendantOf(other.Character)) then
+                        return true
+                    end
+                end
             end
         end
     end
@@ -645,6 +658,9 @@ local function applyNet(player: Player,data)
     glow.OutlineColor=Color3.fromRGB(245,246,255)
     glow.FillTransparency=.5
     glow.Parent=nearest.Character
+    -- Stored as part of the exact same authoritative movement record.
+    -- Debris is only fail-safe for interrupted shutdowns.
+    slowed[nearest].highlight=glow
     game:GetService("Debris"):AddItem(glow,MusouBind.NET_DURATION)
     broadcast()
 end
