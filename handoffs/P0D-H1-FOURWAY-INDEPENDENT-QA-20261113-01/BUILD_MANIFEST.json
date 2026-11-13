@@ -1,0 +1,50 @@
+{
+  "packet_id": "P0D-H1-FOURWAY-INDEPENDENT-QA-20261113-01",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "audited_h1_immutable_commit": "1498c2d344ede2d9da6c2bfdd025ebc1a15ec48b",
+  "expected_game_source_count": 28,
+  "original_wind_blob": "7d5706774b874759e7ab994dc0654c3ae9a46502",
+  "original_trap_blob": "feabd705e4cfa5483d440e506277080f226343ef",
+  "original_d18_guide_rule_blob": "328b8a4d70261e633f163a5e166822a29d7eb1ba",
+  "official_RC_writer": false,
+  "source_changes_original_game": false,
+  "owner_studio_2client_pass": false,
+  "published": false,
+  "native_luau_CI_execution": "NOT_VERIFIED_AT_CREATION",
+  "assembled_original_game_CI": "#255 originally verified 28/28 native compiler/Rojo byte exact; this isolated QA reassembles unchanged source",
+  "source_test_methods": 18,
+  "receipt_test_methods": 4,
+  "files": [
+    {
+      "path": "handoffs/P0D-H1-FOURWAY-INDEPENDENT-QA-20261113-01/tests/test_h1_fourway_source.py",
+      "size": 12739,
+      "sha256": "bb096ead984012fc848288ed8634f9e38529bd166aec4fbb39d57aabf72a9273",
+      "git_blob": "cc15129a243dc3643aa83434c0c41fb5a700f032"
+    },
+    {
+      "path": "handoffs/P0D-H1-FOURWAY-INDEPENDENT-QA-20261113-01/tests/test_manifest.py",
+      "size": 2080,
+      "sha256": "6c936fd5757dbd8a538b8171b54bd3ec67cf4f0eb80614eb97c856875597e14f",
+      "git_blob": "deccb57707f2e4af61baec7c388d3afb966e12f5"
+    },
+    {
+      "path": "handoffs/P0D-H1-FOURWAY-INDEPENDENT-QA-20261113-01/tools/generate_native_policy_test.py",
+      "size": 7391,
+      "sha256": "37acfee1017dd02cdccc88050a82da4533d1d3c8a65ecf212a4fe8b7dea5946b",
+      "git_blob": "1101f112b22808c189dd0c9d87a394a66c243ea4"
+    },
+    {
+      "path": "handoffs/P0D-H1-FOURWAY-INDEPENDENT-QA-20261113-01/README.md",
+      "size": 5466,
+      "sha256": "9cabf46f9c37714ee1bac0a92285f928d8e9e486f0db3916fd4d209bb6d08e2b",
+      "git_blob": "4bc831bc25c3d62f818b2445795f5f609e111481"
+    },
+    {
+      "path": ".github/workflows/p0d-h1-fourway-independent-qa-20261113.yml",
+      "size": 3623,
+      "sha256": "99df28a14cc9a300638b1f0a83259c277520a830e79b0ea67f2575f1f4934234",
+      "git_blob": "03914203c2027ce2147c24c387062d23fdb43f8b"
+    }
+  ]
+}
