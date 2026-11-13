@@ -161,6 +161,14 @@ jobs:
           /tmp/p0d_luau/luau /tmp/P0D_RELAY_NATIVE.generated.luau | tee /tmp/p0d_relay_native.log
           grep -Fx 'P0D_EGG_RELAY_NATIVE_POLICY_41_CASES_PASS' /tmp/p0d_relay_native.log
           echo P0D_EGG_RELAY_RICH58_NATIVE_LUAU_COMPILE_PASS
+          # Execute the ACTUAL extracted Game.server relay function, not just pure policy.
+          python3 -B handoffs/P0D-EGG-RELAY-CLASSIC-LIVE-20261114-01/tools/generate_native_game_harness.py \
+            --game "$DIST/src/server/Game.server.luau" \
+            --policy handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/src/EggRelayPolicy.luau \
+            --out /tmp/P0D_RELAY_ACTUAL_GAME_NATIVE.generated.luau
+          /tmp/p0d_luau/luau-compile /tmp/P0D_RELAY_ACTUAL_GAME_NATIVE.generated.luau >/dev/null
+          /tmp/p0d_luau/luau /tmp/P0D_RELAY_ACTUAL_GAME_NATIVE.generated.luau | tee /tmp/p0d_relay_actual_game.log
+          grep -Fx 'P0D_EGG_RELAY_ACTUAL_GAME_NATIVE_30_CASES_PASS' /tmp/p0d_relay_actual_game.log
       - name: Install official checksum-pinned Rojo 7.7.1
         shell: bash
         run: |
