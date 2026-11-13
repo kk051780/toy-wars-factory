@@ -1,0 +1,48 @@
+{
+  "schema": "P0D_FAST_RC_V1",
+  "date_jst": "2026-11-14",
+  "release_id": "P0D-S1-KIDS-RC01",
+  "canonical_branch": "rc/p0d-s1-kids-rc01",
+  "active_profile": "rich51",
+  "active_source_commit": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
+  "previous_official_rc_commit": "1263a03701211a652b99b91d2339575dc8104eff",
+  "source_profiles": {
+    "rich51": {
+      "source_commit": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
+      "source_count": 51,
+      "core": "H1 egg1/5, First90, V7 Horde, SkyV5, original two-skill combat, result+waypoint",
+      "optional": [
+        "V4 six-skill SESSION ONLY preview"
+      ],
+      "persistent_six_skill": false
+    },
+    "rich47": {
+      "source_commit": "f74686cbfc601436962df8aeb8da7a1b3ff92152",
+      "source_count": 47,
+      "core": "H1 egg1/5, First90, V7 Horde, SkyV5, original two-skill combat, result+waypoint",
+      "optional": [],
+      "persistent_six_skill": false
+    },
+    "legacy21": {
+      "source_commit": "1263a03701211a652b99b91d2339575dc8104eff",
+      "source_count": 21,
+      "core": "S1 original egg/castle/trap/coach",
+      "optional": []
+    }
+  },
+  "required_fast_gates": [
+    "PINNED_SOURCE_SHA",
+    "NO_DUPLICATE_SERVER_GAME",
+    "NO_DUPLICATE_REMOTE",
+    "SOURCE_EXACT_ROJO_BINARY",
+    "NO_MAIN_PUSH_OR_PUBLISH"
+  ],
+  "human_studio_gate": "DEFER_TO_OWNER_BATCH_REVIEW",
+  "android": "NOT_TESTED",
+  "studio_2client": "NOT_TESTED",
+  "owner_fun": "NOT_TESTED",
+  "production_publish_authorized": false,
+  "rollback_granularity": "profile (rich51 -> rich47 -> legacy21); per-feature core switches require refactor, not claimed",
+  "status": "RC_PROFILE_SELECTED_BUILD_PENDING_THIS_COMMIT",
+  "release_progress_last_official": 75
+}
