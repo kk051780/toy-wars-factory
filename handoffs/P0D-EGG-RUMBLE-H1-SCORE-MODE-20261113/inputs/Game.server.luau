@@ -1,0 +1,980 @@
+--!strict
+-- TRAP RAIDERS S1 Chat build: exactly one match/event/combat/objective authority.
+-- This source is not a patched copy of the OWNER's newest Windows Place.
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TeamsService = game:GetService("Teams")
+local RunService = game:GetService("RunService")
+-- EGG RAID RUMBLE: H2 5-egg alternative is private Studio only.
+-- Normal runtime / published Game remains the original unchanged one-egg mode.
+local EXPERIMENTAL_FIVE_EGG_MODE = RunService:IsStudio()
+local H2Score = require(script.Parent:WaitForChild("H2FiveEggRules"))
+local Config = require(ReplicatedStorage:WaitForChild("TrapRaidersShared"):WaitForChild("Config"))
+local Rules = require(script.Parent:WaitForChild("S1Rules"))
+local MapBuilder = require(script.Parent:WaitForChild("MapBuilder"))
+local LobbyTeamRecovery = require(script.Parent:WaitForChild("LobbyTeamRecovery"))
+local TrapRules = require(script.Parent:WaitForChild("S1TrapRules"))
+local WindRules = require(script.Parent:WaitForChild("S1RaiderWindRules"))
+-- The existing Game is the ONLY match/event/HP/egg owner.
+local CanonicalHost = require(script.Parent:WaitForChild("S1CanonicalRoundHost"))
+local BossBinding = require(script.Parent:WaitForChild("S1GoroganLiveBindings"))
+local CANONICAL_S1_ENABLED = false -- explicit #220 sole-integrator decision
+local D07_D08_RELEASE_REVIEW_APPROVED = false -- distinct owner safety gate
+local canonicalHost: any = nil
+local bossBinding: any = nil
+
+if ReplicatedStorage:FindFirstChild("TrapRaidersS1Remote") then
+    error("DUPLICATE_S1_RUNTIME: refused second authoritative remote")
+end
+local remote = Instance.new("RemoteEvent")
+remote.Name = "TrapRaidersS1Remote"
+remote.Parent = ReplicatedStorage
+
+local function setupTeam(name: string, color: Color3): Team
+    local existing = TeamsService:FindFirstChild(name)
+    assert(existing == nil, "TEAM_NAME_COLLISION: do not modify another game")
+    local team = Instance.new("Team")
+    team.Name = name
+    team.TeamColor = BrickColor.new(color)
+    team.AutoAssignable = false
+    team.Parent = TeamsService
+    return team
+end
+local teamInstances = {
+    RED = setupTeam("RED", Config.TeamColors.RED),
+    BLUE = setupTeam("BLUE", Config.TeamColors.BLUE),
+}
+local map = MapBuilder.build(Config)
+local trapFolder = Instance.new("Folder")
+trapFolder.Name = "S1_GUARDIAN_TRAPS"
+trapFolder.Parent = map.model
+local roles: {[Player]: string} = {}
+local lastSeq: {[Player]: number} = {}
+local lastAttack: {[Player]: number} = {}
+local lastRoleChange: {[Player]: number} = {}
+local lastTrap: {[Player]: number} = {}
+local lastWind: {[Player]: number} = {}
+local windUntil: {[Player]: number} = {}
+local windHighlight: {[Player]: Instance} = {}
+local slowed: {[Player]: any} = {}
+local traps: {any} = {}
+local trapSerial = 0
+local invulnUntil: {[Player]: number} = {}
+local carry: {[Player]: string} = {}
+local carryVisuals: {[Player]: Instance} = {}
+local match = {
+    serial = 0,
+    phase = "LOBBY",
+    phaseUntil = 0,
+    startedAt = 0,
+    deadline = 0,
+    winner = "",
+    reason = "",
+    scores = {RED = 0, BLUE = 0},
+    hp = {RED = Config.CastleMaxHp, BLUE = Config.CastleMaxHp},
+    eggOwners = {} :: {[string]: Player?},
+    alarm = "IDLE",
+    alarmUntil = 0,
+}
+
+-- Only the ORIGINAL Game.server owns the H2 match, egg interactions and scoring.
+-- Additional physical eggs/score Parts are children of the existing MapBuilder arena.
+local h2ScoreState: any = nil
+local h2Eggs: {[string]: any} = {}
+local h2Ids: {[Player]: number} = {}
+local h2NextId = 0
+
+local function serverNow(): number
+    return workspace:GetServerTimeNow()
+end
+local function getTeamName(player: Player): string
+    if player.Team == teamInstances.RED then return "RED" end
+    if player.Team == teamInstances.BLUE then return "BLUE" end
+    return "NONE"
+end
+local function healthy(player: Player): (boolean, BasePart?, Humanoid?)
+    local character = player.Character
+    if not character then return false, nil, nil end
+    local root = character:FindFirstChild("HumanoidRootPart")
+    local hum = character:FindFirstChildOfClass("Humanoid")
+    if root == nil or not root:IsA("BasePart") or not hum or hum.Health <= 0 then
+        return false, nil, nil
+    end
+    return true, root, hum
+end
+local function within(player: Player, world: Vector3, dist: number): boolean
+    local ok, root = healthy(player)
+    return ok and root ~= nil and (root.Position - world).Magnitude <= dist
+end
+local function teamCount(name: string): number
+    local n = 0
+    for _, p in ipairs(Players:GetPlayers()) do
+        if getTeamName(p) == name then n += 1 end
+    end
+    return n
+end
+local function removeCarrierVisual(player: Player)
+    local v = carryVisuals[player]
+    carryVisuals[player] = nil
+    if v then v:Destroy() end
+end
+local function resetEgg(team: string)
+    match.eggOwners[team] = nil
+    map.teams[team].egg.Transparency = 0
+    map.teams[team].eggPrompt.Enabled = match.phase == "ACTIVE"
+end
+local function dropEgg(player: Player)
+    local egg = carry[player]
+    if egg == nil then return end
+    if EXPERIMENTAL_FIVE_EGG_MODE then
+        local def=h2Eggs[egg]
+        local uid=h2Ids[player]
+        if h2ScoreState and uid and h2ScoreState.active then
+            H2Score.drop(h2ScoreState,uid)
+        end
+        carry[player]=nil
+        removeCarrierVisual(player)
+        if def then
+            local root=player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+            local pos=if root and root:IsA("BasePart")
+                then Vector3.new(math.clamp(root.Position.X,-116,116),3,
+                                 math.clamp(root.Position.Z,-65,65))
+                else def.home
+            def.part.CFrame=CFrame.new(pos)
+            def.part.Transparency=0
+            def.prompt.Enabled=match.phase=="ACTIVE" and h2ScoreState~=nil
+                and h2ScoreState.active==true
+        end
+        return
+    end
+    carry[player] = nil
+    removeCarrierVisual(player)
+    if match.eggOwners[egg] == player then resetEgg(egg) end
+end
+local function giveEggVisual(player: Player)
+    removeCarrierVisual(player)
+    local character = player.Character
+    local head = character and character:FindFirstChild("Head")
+    if not head or not head:IsA("BasePart") then return end
+    local b = Instance.new("BillboardGui")
+    b.Name = "S1_CARRIED_EGG"
+    b.Size = UDim2.fromOffset(100, 80)
+    b.StudsOffsetWorldSpace = Vector3.new(0, 3.8, 0)
+    b.AlwaysOnTop = true
+    b.Parent = head
+    local txt = Instance.new("TextLabel")
+    txt.Size = UDim2.fromScale(1, 1)
+    txt.BackgroundTransparency = 1
+    txt.Text = "🥚"
+    txt.TextScaled = true
+    txt.TextColor3 = Color3.fromRGB(255, 229, 98)
+    txt.Parent = b
+    carryVisuals[player] = b
+end
+-- Wind burst is a mobility-only extension of the SAME server/Remote/seq authority.
+local function stopWind(player: Player)
+    windUntil[player] = nil
+    local old = windHighlight[player]
+    windHighlight[player] = nil
+    if old then old:Destroy() end
+    local alive, _, hum = healthy(player)
+    if alive and hum and slowed[player] == nil then
+        hum.WalkSpeed = Config.RoleWalkSpeed[roles[player] or "RAIDER"]
+    end
+end
+-- Guardian traps stay inside the EXISTING Game.server round/combat authority.
+-- No second Remote, scheduler, damage owner, client position or monetization.
+local function restoreSlow(player: Player)
+    local record = slowed[player]
+    slowed[player] = nil
+    if record and record.hum and record.hum.Parent and record.hum.Health > 0 then
+        record.hum.WalkSpeed = Config.RoleWalkSpeed[roles[player] or "RAIDER"]
+    end
+end
+local function clearTraps()
+    for _, rec in ipairs(traps) do
+        if rec.part then rec.part:Destroy() end
+    end
+    table.clear(traps)
+    for player, _ in pairs(slowed) do restoreSlow(player) end
+end
+local function countTraps(team: string): number
+    local count = 0
+    for _, rec in ipairs(traps) do
+        if rec.team == team then count += 1 end
+    end
+    return count
+end
+local function placeTrap(player: Player, data)
+    if type(data) ~= "table" or data.action ~= "PLACE_TRAP" then return end
+    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end
+    lastSeq[player] = data.seq -- consume even invalid intent, same server authority as ATTACK
+    local team = getTeamName(player)
+    local alive, root = healthy(player)
+    if not alive or not root or (team ~= "RED" and team ~= "BLUE") then return end
+    local now = serverNow()
+    local side = map.teams[team]
+    local avoid = {}
+    for _, pt in ipairs({side.egg.Position, side.scorePad.Position,
+        side.core.Position, side.spawn.Position}) do
+        table.insert(avoid, {x = pt.X, z = pt.Z})
+    end
+    if not TrapRules.canPlace({
+        phase = match.phase, team = team, role = roles[player] or "RAIDER",
+        alive = alive, carrying = carry[player] ~= nil,
+        now = now, lastAt = lastTrap[player] or -math.huge,
+        x = root.Position.X, y = root.Position.Y, z = root.Position.Z,
+        count = countTraps(team), avoid = avoid,
+    }) then return end
+    lastTrap[player] = now
+    trapSerial += 1
+    local disc = Instance.new("Part")
+    disc.Name = "S1_VISIBLE_TRAP_" .. team .. "_" .. tostring(trapSerial)
+    disc.Anchored = true
+    disc.CanCollide = false
+    disc.CanTouch = false
+    disc.CanQuery = false -- traps never obstruct melee raycast or castle aim
+    disc.Size = Vector3.new(9, 0.25, 9)
+    disc.Position = Vector3.new(root.Position.X, -0.72, root.Position.Z)
+    disc.Material = Enum.Material.Neon
+    disc.Color = Config.TeamColors[team]
+    disc.Transparency = 0.18
+    disc.Parent = trapFolder
+    local label = Instance.new("BillboardGui")
+    label.Size = UDim2.fromOffset(160, 48)
+    label.StudsOffsetWorldSpace = Vector3.new(0, 2, 0)
+    label.AlwaysOnTop = true
+    label.Parent = disc
+    local text = Instance.new("TextLabel")
+    text.Size = UDim2.fromScale(1, 1)
+    text.BackgroundTransparency = 0.25
+    text.TextScaled = true
+    text.Text = "🪤 ふむとスロー！　ジャンプで回避"
+    text.TextColor3 = Color3.new(1, 1, 1)
+    text.Parent = label
+    table.insert(traps, {team = team, owner = player,
+        x = root.Position.X, z = root.Position.Z,
+        expiresAt = now + TrapRules.LIFETIME, part = disc})
+    -- Existing authoritative tick broadcasts the next snapshot.
+end
+local function tickTraps(now: number)
+    for player, record in pairs(slowed) do
+        local alive, _, hum = healthy(player)
+        if not alive or hum ~= record.hum or now >= record.untilAt then
+            restoreSlow(player)
+        end
+    end
+    for i = #traps, 1, -1 do
+        local rec = traps[i]
+        local triggered: Player? = nil
+        if match.phase == "ACTIVE" and now < rec.expiresAt then
+            for _, player in ipairs(Players:GetPlayers()) do
+                local team = getTeamName(player)
+                local alive, root, hum = healthy(player)
+                if alive and root and hum and TrapRules.shouldTrigger({
+                    phase = match.phase, healthy = alive,
+                    trapTeam = rec.team, enemyTeam = team,
+                    invulnerable = now < (invulnUntil[player] or 0),
+                    now = now, expiresAt = rec.expiresAt,
+                    x = rec.x, z = rec.z,
+                    enemyX = root.Position.X, enemyY = root.Position.Y,
+                    enemyZ = root.Position.Z,
+                }) then
+                    local slow = TrapRules.slowSpeed(Config.RoleWalkSpeed[roles[player] or "RAIDER"])
+                    if slow then
+                        stopWind(player) -- Guardian trap always cancels Raider wind.
+                        local current = slowed[player]
+                        slowed[player] = {hum = hum,
+                            untilAt = math.max(now + TrapRules.SLOW_SECONDS,
+                                if current then current.untilAt else 0)}
+                        hum.WalkSpeed = slow
+                        triggered = player
+                        break
+                    end
+                end
+            end
+        end
+        if triggered or now >= rec.expiresAt or match.phase ~= "ACTIVE" then
+            rec.part:Destroy()
+            table.remove(traps, i)
+        end
+    end
+end
+
+-- Server-only monotonic replication ordinal, never reset on match changes.
+local snapshotUpdateId = 0
+local function snapshotFor(player: Player)
+    snapshotUpdateId += 1
+    local now = serverNow()
+    local seconds = 0
+    if match.phase == "ACTIVE" then
+        seconds = math.max(0, math.ceil(match.deadline - now))
+    elseif match.phase == "COUNTDOWN" or match.phase == "RESULTS" then
+        seconds = math.max(0, math.ceil(match.phaseUntil - now))
+    end
+    return {
+        kind = "SNAPSHOT", serial = match.serial, phase = match.phase,
+        updateId = snapshotUpdateId, -- view ordering only, not gameplay authority
+        time = seconds, scores = {RED = match.scores.RED, BLUE = match.scores.BLUE},
+        hp = {RED = match.hp.RED, BLUE = match.hp.BLUE},
+        maxHp = Config.CastleMaxHp,
+        team = getTeamName(player), role = roles[player] or "RAIDER",
+        carrying = if EXPERIMENTAL_FIVE_EGG_MODE and carry[player]~=nil
+            then (if carry[player]=="N1" then "NEUTRAL"
+                else (if string.sub(carry[player],1,1)=="R" then "RED" else "BLUE"))
+            else carry[player] or "",
+        eggId = if EXPERIMENTAL_FIVE_EGG_MODE then carry[player] or "" else "",
+        scoreMode = if EXPERIMENTAL_FIVE_EGG_MODE then "FIVE_EGG_SCORE" else "ONE_EGG_CAPTURE",
+        winner = match.winner,
+        reason = match.reason, alarm = match.alarm,
+        alarmTime = math.max(0, math.ceil(match.alarmUntil - now)),
+        redPlayers = teamCount("RED"), bluePlayers = teamCount("BLUE"),
+        trapCooldown = math.max(0, math.ceil((lastTrap[player] or -math.huge)
+            + TrapRules.COOLDOWN - now)),
+        trapRole = (roles[player] or "RAIDER") == "GUARDIAN",
+        windCooldown = math.max(0, math.ceil((lastWind[player] or -math.huge)
+            + WindRules.COOLDOWN - now)),
+        windActive = (windUntil[player] or 0) > now,
+    }
+end
+local function broadcast()
+    for _, p in ipairs(Players:GetPlayers()) do
+        remote:FireClient(p, snapshotFor(p))
+    end
+end
+-- The original S1 Remote remains the sole player network endpoint.
+-- Only the SERVER emits a bounded boss visual record; never an activation intent.
+local function sendBossVisual(packet)
+    if type(packet) ~= "table" or match.phase ~= "ACTIVE"
+        or packet.matchId ~= "S1_" .. tostring(match.serial)
+        or packet.stageId ~= "S1" or packet.bossId ~= "GOROGAN"
+        or packet.eventId ~= "G07_" .. tostring(match.serial)
+        or (packet.kind ~= "START" and packet.kind ~= "STOMP"
+            and packet.kind ~= "END")
+        or type(packet.seq) ~= "number" or packet.seq % 1 ~= 0
+        or packet.seq < 1 or packet.seq > 10000 then
+        return false
+    end
+    -- Original CombinedRuntime emits the true server attack center for
+    -- START / STOMP. Never invent a client target or silently drop it.
+    local position = nil
+    if packet.kind == "START" or packet.kind == "STOMP" then
+        local p = packet.position
+        if type(p) ~= "table"
+            or type(p.x) ~= "number" or type(p.y) ~= "number"
+            or type(p.z) ~= "number" or p.x ~= p.x
+            or p.y ~= p.y or p.z ~= p.z
+            or math.abs(p.x) > 2048 or p.y < -100 or p.y > 700
+            or math.abs(p.z) > 2048 then
+            return false -- never show a false attack center
+        end
+        position = {x = p.x, y = p.y, z = p.z}
+    end
+    local emittedAt = serverNow()
+    for _, player in ipairs(Players:GetPlayers()) do
+        remote:FireClient(player, {
+            kind = "BOSS_VISUAL", visualKind = packet.kind,
+            bossId = packet.bossId, eventId = packet.eventId,
+            serial = match.serial, seq = packet.seq,
+            stageId = "S1", position = position,
+            serverSentAt = emittedAt,
+        })
+    end
+    return true
+end
+
+local function stopCanonical(reason: string)
+    -- Disarm while the OLD epoch is still active; clear before next serial.
+    local oldHost, oldBinding = canonicalHost, bossBinding
+    canonicalHost, bossBinding = nil, nil
+    if oldHost then
+        local ok, result = pcall(function() return oldHost:stop(reason) end)
+        if not ok or result ~= true then warn("S1_D08_STOP_UNCONFIRMED") end
+    end
+    if oldBinding then
+        local ok, result = pcall(function()
+            return oldBinding:abort("S1_" .. tostring(match.serial))
+        end)
+        if not ok or result ~= true then warn("S1_D07_PHYSICAL_ABORT_UNCONFIRMED") end
+    end
+end
+
+local function startCanonical()
+    if not CANONICAL_S1_ENABLED or not D07_D08_RELEASE_REVIEW_APPROVED then
+        return -- no unsupported event is promised in initial S1
+    end
+    local ok, why = pcall(function()
+        local binding = BossBinding.new({
+            approvedByOwner = true, readMatch = function() return match end,
+            serverTime = serverNow, map = map,
+            getPlayerTeam = getTeamName,
+            getInvulnerableUntil = function(player)
+                return invulnUntil[player] or 0
+            end,
+            sendBossVisual = sendBossVisual,
+        })
+        bossBinding = binding -- set before constructing Host to permit failed-init abort
+        local host = CanonicalHost.new({
+            approvedByOwner = true, enableCanonicalS1 = true,
+            readMatch = function() return match end,
+            serverTime = serverNow,
+            serverRoll = function(_matchId, _epoch)
+                return math.random(0, 99) -- exactly one trusted D08 invocation
+            end,
+            makeCombined = function(mapper)
+                return binding:makeCombined(mapper)
+            end,
+            abortCombined = function(roundId)
+                return binding:abort(roundId)
+            end,
+            setAlarm = function(state, untilAt, epoch)
+                if match.serial ~= epoch then return true end
+                if state ~= "IDLE" and state ~= "WARNING"
+                    and state ~= "SIGNAL" then return false end
+                match.alarm, match.alarmUntil = state, untilAt
+                return true
+            end,
+            broadcast = broadcast,
+        })
+        if host:status().enabled ~= true then error("S1_CANONICAL_NOT_ENABLED") end
+        canonicalHost = host
+    end)
+    if not ok then
+        warn("S1_D08_D07_INIT_FAILED", why)
+        stopCanonical("INIT_FAILED")
+        match.alarm, match.alarmUntil = "IDLE", 0
+    end
+end
+
+local function setObjectiveEnabled(enabled: boolean)
+    for _, name in ipairs({"RED", "BLUE"}) do
+        map.teams[name].eggPrompt.Enabled = enabled and
+            (if EXPERIMENTAL_FIVE_EGG_MODE then
+                h2ScoreState~=nil and h2ScoreState.active and
+                h2ScoreState.eggs[if name=="RED" then "R1" else "B1"].state~="CARRIED"
+            else match.eggOwners[name] == nil)
+        map.teams[name].scorePrompt.Enabled = enabled
+    end
+    if EXPERIMENTAL_FIVE_EGG_MODE then
+        for _,def in pairs(h2Eggs) do
+            def.prompt.Enabled=enabled and h2ScoreState~=nil and h2ScoreState.active
+                and h2ScoreState.eggs[def.id].state~="CARRIED"
+        end
+    end
+end
+local function stopRound(winner: string, reason: string)
+    if match.phase ~= "ACTIVE" then return end
+    stopCanonical("ROUND_END")
+    match.phase = "RESULTS"
+    match.phaseUntil = serverNow() + Config.ResultsSeconds
+    match.winner = winner
+    match.reason = reason
+    match.alarm = "IDLE"
+    match.alarmUntil = 0
+    setObjectiveEnabled(false)
+    clearTraps()
+    for _, p in ipairs(Players:GetPlayers()) do
+        stopWind(p)
+        dropEgg(p)
+    end
+    broadcast()
+end
+local function resetRound()
+    stopCanonical("ROUND_RESET")
+    clearTraps()
+    match.serial += 1
+    match.phase = "ACTIVE"
+    match.startedAt = serverNow()
+    match.deadline = match.startedAt + Config.MatchSeconds
+    match.scores = {RED = 0, BLUE = 0}
+    match.hp = {RED = Config.CastleMaxHp, BLUE = Config.CastleMaxHp}
+    match.eggOwners = {}
+    match.winner = ""
+    match.reason = ""
+    match.alarm = "IDLE"
+    match.alarmUntil = 0
+    for _, p in ipairs(Players:GetPlayers()) do
+        stopWind(p)
+        dropEgg(p)
+        lastAttack[p] = -math.huge
+        lastTrap[p] = -math.huge
+        lastWind[p] = -math.huge
+        -- Player seq stays monotonic across round transitions; never rewind replay ceiling.
+        p:LoadCharacter()
+    end
+    for _, team in ipairs({"RED", "BLUE"}) do resetEgg(team) end
+    if EXPERIMENTAL_FIVE_EGG_MODE then
+        h2ScoreState=H2Score.new()
+        match.deadline=match.startedAt+H2Score.LENGTH_SECONDS
+        for _,def in pairs(h2Eggs) do
+            def.part.CFrame=CFrame.new(def.home)
+            def.part.Transparency=0
+        end
+    end
+    setObjectiveEnabled(true)
+    startCanonical()
+    broadcast()
+end
+local function chooseTeam(player: Player)
+    local name = if teamCount("RED") <= teamCount("BLUE") then "RED" else "BLUE"
+    player.Team = teamInstances[name]
+    player.Neutral = false
+end
+-- Only LOBBY may correct team balance; never touch a live round or countdown.
+-- This is a small attachment to the existing server controller, not another authority.
+local function rebalanceLobbyTeams()
+    if match.phase ~= "LOBBY" then return end
+    local online = Players:GetPlayers()
+    if #online < Config.MinPlayers then return end
+    local roster = {}
+    local byUserId = {}
+    for _, player in ipairs(online) do
+        table.insert(roster, {userId = player.UserId, team = getTeamName(player)})
+        byUserId[player.UserId] = player
+    end
+    local planned = LobbyTeamRecovery.plan(roster)
+    if planned == nil then return end
+    for _, move in ipairs(planned) do
+        local player = byUserId[move.userId]
+        if player and player.Parent == Players and getTeamName(player) == move.from then
+            -- Defensive cleanup: no carried egg survives a lobby team move.
+            dropEgg(player)
+            player.Team = teamInstances[move.to]
+            player.Neutral = false
+            local alive, root = healthy(player)
+            if alive and root then
+                root.CFrame = map.teams[move.to].spawn + Vector3.new(0, 2, 0)
+            end
+        end
+    end
+end
+
+local function assignSpawn(player: Player, character: Model)
+    local root = character:WaitForChild("HumanoidRootPart", 10)
+    local hum = character:WaitForChild("Humanoid", 10)
+    if root and root:IsA("BasePart") and hum and hum:IsA("Humanoid") then
+        local team = getTeamName(player)
+        if team == "RED" or team == "BLUE" then
+            root.CFrame = map.teams[team].spawn + Vector3.new(0, 2, 0)
+        end
+        stopWind(player) -- no burst survives respawn or a new Humanoid
+        local role = roles[player] or "RAIDER"
+        hum.MaxHealth = Config.RoleHealth[role]
+        hum.Health = hum.MaxHealth
+        hum.WalkSpeed = Config.RoleWalkSpeed[role]
+        invulnUntil[player] = serverNow() + Config.RespawnInvulnerability
+        hum.Died:Connect(function()
+            stopWind(player)
+            restoreSlow(player)
+            dropEgg(player)
+            invulnUntil[player] = 0
+        end)
+    end
+end
+
+-- EGG RAID RUMBLE experiment: replace only the original egg prompt behavior
+-- while keeping ORIGINAL S1 combat, Guardian traps, Raider wind, teams and Remote.
+local function createFiveEggs()
+    if not EXPERIMENTAL_FIVE_EGG_MODE then return end
+    local extras={
+        R2={owner="RED",home=Vector3.new(-98,2.5,20)},
+        B2={owner="BLUE",home=Vector3.new(98,2.5,20)},
+        N1={owner="NEUTRAL",home=Vector3.new(0,3,0)}
+    }
+    h2Eggs.R1={id="R1",owner="RED",
+        part=map.teams.RED.egg,prompt=map.teams.RED.eggPrompt,
+        home=map.teams.RED.egg.Position}
+    h2Eggs.B1={id="B1",owner="BLUE",
+        part=map.teams.BLUE.egg,prompt=map.teams.BLUE.eggPrompt,
+        home=map.teams.BLUE.egg.Position}
+    for id,data in pairs(extras) do
+        local egg=Instance.new("Part")
+        egg.Name="H2_REAL_SCORE_EGG_"..id
+        egg.Shape=Enum.PartType.Ball
+        egg.Size=Vector3.new(3,3.6,3)
+        egg.Material=Enum.Material.Neon
+        egg.Color=if data.owner=="RED" then Color3.fromRGB(255,98,114)
+            elseif data.owner=="BLUE" then Color3.fromRGB(88,163,255)
+            else Color3.fromRGB(255,221,95)
+        egg.Anchored=true;egg.CanCollide=false;egg.CanTouch=false
+        egg.Position=data.home
+        egg.Parent=map.model
+        local prompt=Instance.new("ProximityPrompt")
+        prompt.Name="H2_SERVER_AUTH_EGG_"..id
+        prompt.ActionText="卵を拾う"
+        prompt.ObjectText="🥚 "..id
+        prompt.MaxActivationDistance=Config.InteractDistance
+        prompt.HoldDuration=.12
+        prompt.RequiresLineOfSight=false
+        prompt.Enabled=false;prompt.Parent=egg
+        h2Eggs[id]={id=id,owner=data.owner,part=egg,prompt=prompt,home=data.home}
+    end
+    for id,def in pairs(h2Eggs) do
+        def.prompt.ObjectText="🥚 "..id.." "..def.owner
+    end
+end
+
+local function pickupFiveEgg(player:Player,id:string)
+    if not EXPERIMENTAL_FIVE_EGG_MODE or match.phase~="ACTIVE"
+        or h2ScoreState==nil or h2ScoreState.active~=true then return end
+    local def=h2Eggs[id];local uid=h2Ids[player]
+    if not def or not uid or not def.prompt.Enabled or carry[player]~=nil then return end
+    local alive=healthy(player)
+    local side=getTeamName(player)
+    if not alive or (side~="RED" and side~="BLUE")
+        or not within(player,def.part.Position,Config.InteractDistance) then return end
+    local success=H2Score.pickup(h2ScoreState,id,uid,side)
+    if not success then return end
+    stopWind(player)
+    carry[player]=id
+    def.part.Transparency=1;def.prompt.Enabled=false
+    giveEggVisual(player)
+    broadcast()
+end
+
+local function depositFiveEgg(player:Player,side:string)
+    if not EXPERIMENTAL_FIVE_EGG_MODE or match.phase~="ACTIVE"
+        or h2ScoreState==nil or h2ScoreState.active~=true then return end
+    local uid=h2Ids[player]
+    local eggId=carry[player]
+    if not uid or not eggId or getTeamName(player)~=side
+        or not healthy(player)
+        or not within(player,map.teams[side].scorePad.Position,Config.InteractDistance) then return end
+    local ok=H2Score.deposit(h2ScoreState,uid,side)
+    if not ok then return end
+    local def=h2Eggs[eggId]
+    carry[player]=nil
+    removeCarrierVisual(player)
+    local pad=map.teams[side].scorePad
+    local index=if eggId=="R1" or eggId=="B1" then -2
+        elseif eggId=="R2" or eggId=="B2" then 2 else 0
+    def.part.CFrame=CFrame.new(pad.Position+Vector3.new(index,4,0))
+    def.part.Transparency=0
+    def.prompt.Enabled=true
+    match.scores.RED=h2ScoreState.scores.RED
+    match.scores.BLUE=h2ScoreState.scores.BLUE
+    broadcast()
+end
+
+createFiveEggs()
+if EXPERIMENTAL_FIVE_EGG_MODE then
+    for _,id in ipairs({"R2","B2","N1"}) do
+        h2Eggs[id].prompt.Triggered:Connect(function(player:Player)
+            pickupFiveEgg(player,id)
+        end)
+    end
+end
+
+for _, team in ipairs({"RED", "BLUE"}) do
+    map.teams[team].eggPrompt.Triggered:Connect(function(player: Player)
+        if EXPERIMENTAL_FIVE_EGG_MODE then
+            pickupFiveEgg(player,if team=="RED" then "R1" else "B1")
+            return
+        end
+        local thiefTeam = getTeamName(player)
+        local alive = healthy(player)
+        local free = match.eggOwners[team] == nil
+        if not Rules.canSteal(match.phase, thiefTeam, team,
+            if within(player, map.teams[team].egg.Position, Config.InteractDistance)
+                then 0 else 1e8, alive, carry[player] ~= nil, free,
+            Config.InteractDistance) then return end
+        stopWind(player) -- cannot carry an egg at burst speed
+        match.eggOwners[team] = player
+        carry[player] = team
+        map.teams[team].egg.Transparency = 1
+        map.teams[team].eggPrompt.Enabled = false
+        giveEggVisual(player)
+        broadcast()
+    end)
+    map.teams[team].scorePrompt.Triggered:Connect(function(player: Player)
+        if EXPERIMENTAL_FIVE_EGG_MODE then
+            depositFiveEgg(player,team)
+            return
+        end
+        local alive = healthy(player)
+        local playerTeam = getTeamName(player)
+        local ownEggHome = match.eggOwners[team] == nil
+        if not Rules.canScore(match.phase, playerTeam, team,
+            if within(player, map.teams[team].scorePad.Position, Config.InteractDistance)
+                then 0 else 1e8, alive, carry[player], ownEggHome,
+            Config.InteractDistance) then return end
+        local stolenTeam = carry[player]
+        if not stolenTeam or match.eggOwners[stolenTeam] ~= player then return end
+        dropEgg(player)
+        match.scores[team] += 1
+        local winner = Rules.winner(match.scores, match.hp, Config.CapturesToWin)
+        if winner then stopRound(winner, "EGG_CAPTURE") else broadcast() end
+    end)
+end
+
+local function applyAttack(player: Player, data)
+    if type(data) ~= "table" or data.action ~= "ATTACK" then return end
+    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end
+    lastSeq[player] = data.seq
+    local team = getTeamName(player)
+    if team ~= "RED" and team ~= "BLUE" then return end
+    local alive, root = healthy(player)
+    if not alive or root == nil then return end
+    local now = serverNow()
+    if not Rules.canAttack(now, lastAttack[player] or -math.huge, match.phase,
+        alive, Config.AttackCooldown) then return end
+    lastAttack[player] = now
+    local look = root.CFrame.LookVector
+    local chosen = nil
+    local best = Config.AttackReach + 0.001
+    for _, other in ipairs(Players:GetPlayers()) do
+        if other ~= player and getTeamName(other) == Rules.opponent(team) then
+            local enemyAlive, enemyRoot = healthy(other)
+            if enemyAlive and enemyRoot and now >= (invulnUntil[other] or 0) then
+                local displacement = enemyRoot.Position - root.Position
+                local dist = displacement.Magnitude
+                local dot = if dist > 0.0001 then look:Dot(displacement.Unit) else 1
+                if Rules.damageCandidate(dist, dot, Config.AttackReach) and dist < best then
+                    -- Reject hits through solid parts; whitelist target's character only.
+                    local params = RaycastParams.new()
+                    params.FilterType = Enum.RaycastFilterType.Exclude
+                    params.FilterDescendantsInstances = {player.Character :: Model}
+                    local hit = workspace:Raycast(root.Position, displacement, params)
+                    if hit == nil or (other.Character and hit.Instance:IsDescendantOf(other.Character)) then
+                        chosen = other
+                        best = dist
+                    end
+                end
+            end
+        end
+    end
+    if chosen then
+        local ok, _, hum = healthy(chosen)
+        if ok and hum then hum:TakeDamage(Config.CombatDamage[roles[player] or "RAIDER"]) end
+        return
+    end
+    local enemy = Rules.opponent(team)
+    local core = map.teams[enemy].core
+    local distance = (core.Position - root.Position).Magnitude
+    local aim = if distance > 0.001 then look:Dot((core.Position - root.Position).Unit) else 1
+    if not Rules.damageCandidate(distance, aim, Config.CastleReach) then return end
+    -- Fail closed when a map wall or solid decoration occludes the castle core.
+    local params = RaycastParams.new()
+    params.FilterType = Enum.RaycastFilterType.Exclude
+    params.FilterDescendantsInstances = {player.Character :: Model}
+    local hit = workspace:Raycast(root.Position, core.Position - root.Position, params)
+    if hit and hit.Instance ~= core then return end
+    -- Castle damage is server-owned; client never sends its preferred damage/target.
+    match.hp[enemy] = math.max(0, match.hp[enemy] - Config.CastleAttackDamage[roles[player] or "RAIDER"])
+    local winner = if EXPERIMENTAL_FIVE_EGG_MODE then nil
+        else Rules.winner(match.scores, match.hp, Config.CapturesToWin)
+    if winner then stopRound(winner, "CASTLE_DESTROYED") else broadcast() end
+end
+
+-- H1 RAIDER wind: server accepts intent only, never client position or speed.
+local function applyWind(player: Player, data)
+    if type(data) ~= "table" or data.action ~= "WIND_BURST" then return end
+    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end
+    lastSeq[player] = data.seq -- consume all replayed and rejected intents
+    local team = getTeamName(player)
+    local alive, root, hum = healthy(player)
+    if not alive or not root or not hum then return end
+    local now = serverNow()
+    if not WindRules.canActivate({
+        phase = match.phase, team = team, role = roles[player] or "RAIDER",
+        alive = alive, carrying = carry[player] ~= nil, slowed = slowed[player] ~= nil,
+        active = (windUntil[player] or 0) > now, now = now,
+        lastAt = lastWind[player] or -math.huge,
+        x = root.Position.X, y = root.Position.Y, z = root.Position.Z,
+    }) then return end
+    stopWind(player)
+    lastWind[player] = now
+    windUntil[player] = now + WindRules.DURATION
+    hum.WalkSpeed = WindRules.SPEED
+    -- Obvious warning to opposing Guardians: flank sprint is NOT stealth/invulnerability.
+    local glow = Instance.new("Highlight")
+    glow.Name = "S1_RAIDER_WIND_SERVER_TELL"
+    glow.FillColor = Color3.fromRGB(98, 208, 255)
+    glow.OutlineColor = Color3.fromRGB(247, 251, 255)
+    glow.FillTransparency = 0.45
+    glow.OutlineTransparency = 0.1
+    glow.DepthMode = Enum.HighlightDepthMode.Occluded
+    glow.Parent = player.Character
+    windHighlight[player] = glow
+    broadcast()
+end
+
+local function applyRole(player: Player, data)
+    if type(data) ~= "table" or data.action ~= "ROLE" then return end
+    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end
+    lastSeq[player] = data.seq
+    local role = data.role
+    if role ~= "RAIDER" and role ~= "GUARDIAN" then return end
+    -- Prevent role-change healing in combat.
+    if match.phase == "ACTIVE" then return end
+    local now = serverNow()
+    if now - (lastRoleChange[player] or -math.huge) < Config.RoleSelectCooldown then return end
+    lastRoleChange[player] = now
+    stopWind(player)
+    roles[player] = role
+    remote:FireClient(player, snapshotFor(player))
+end
+
+remote.OnServerEvent:Connect(function(player: Player, data)
+    if type(data) ~= "table" then return end
+    if data.action == "ATTACK" then applyAttack(player, data)
+    elseif data.action == "ROLE" then applyRole(player, data)
+    elseif data.action == "PLACE_TRAP" then placeTrap(player, data)
+    elseif data.action == "WIND_BURST" then applyWind(player, data)
+    end
+end)
+
+local function onJoin(player: Player)
+    chooseTeam(player)
+    if EXPERIMENTAL_FIVE_EGG_MODE then
+        h2NextId+=1
+        h2Ids[player]=h2NextId -- positive server ID, Studio fake UserIds can be negative
+    end
+    roles[player] = "RAIDER"
+    lastSeq[player] = 0
+    lastAttack[player] = -math.huge
+    lastRoleChange[player] = -math.huge
+    lastTrap[player] = -math.huge
+    lastWind[player] = -math.huge
+    invulnUntil[player] = 0
+    player.CharacterAdded:Connect(function(character)
+        dropEgg(player)
+        task.spawn(assignSpawn, player, character)
+    end)
+    if player.Character then task.spawn(assignSpawn, player, player.Character) end
+    remote:FireClient(player, snapshotFor(player))
+end
+Players.PlayerAdded:Connect(onJoin)
+for _, player in ipairs(Players:GetPlayers()) do onJoin(player) end
+Players.PlayerRemoving:Connect(function(player)
+    local side = getTeamName(player)
+    dropEgg(player)
+    h2Ids[player]=nil
+    stopWind(player)
+    restoreSlow(player)
+    for i = #traps, 1, -1 do
+        if traps[i].owner == player then
+            traps[i].part:Destroy()
+            table.remove(traps, i)
+        end
+    end
+    roles[player] = nil
+    lastSeq[player] = nil
+    lastAttack[player] = nil
+    lastRoleChange[player] = nil
+    lastTrap[player] = nil
+    lastWind[player] = nil
+    windUntil[player] = nil
+    windHighlight[player] = nil
+    invulnUntil[player] = nil
+    if match.phase == "ACTIVE" and side ~= "NONE" then
+        -- Robust to PlayerRemoving before OR after GetPlayers() drops the leaver.
+        -- Count only distinct teammates, never the player being removed.
+        local teammates = 0
+        for _, other in ipairs(Players:GetPlayers()) do
+            if other ~= player and getTeamName(other) == side then
+                teammates += 1
+            end
+        end
+        if teammates == 0 then
+            stopRound(Rules.opponent(side), "OPPONENT_LEFT")
+        end
+    end
+end)
+
+local function tickRound()
+    local now = serverNow()
+    tickTraps(now)
+    -- Clean up boosts through the ONLY existing authoritative 0.5-second tick.
+    for player, untilAt in pairs(windUntil) do
+        local alive = healthy(player)
+        if match.phase ~= "ACTIVE" or not alive or now >= untilAt
+            or carry[player] ~= nil or slowed[player] ~= nil then
+            stopWind(player)
+        end
+    end
+    local count = #Players:GetPlayers()
+    if match.phase == "LOBBY" then
+        rebalanceLobbyTeams()
+        if count >= Config.MinPlayers and teamCount("RED") > 0 and teamCount("BLUE") > 0 then
+            match.phase = "COUNTDOWN"
+            match.phaseUntil = now + Config.IntermissionSeconds
+        end
+    elseif match.phase == "COUNTDOWN" then
+        -- Players can leave during countdown; do not start a one-sided game.
+        if count < Config.MinPlayers or teamCount("RED") == 0 or teamCount("BLUE") == 0 then
+            match.phase = "LOBBY"
+        elseif now >= match.phaseUntil then resetRound() end
+    elseif match.phase == "ACTIVE" then
+        if EXPERIMENTAL_FIVE_EGG_MODE and h2ScoreState and h2ScoreState.active then
+            local desired=math.clamp(math.floor(now-match.startedAt),0,H2Score.LENGTH_SECONDS)
+            local backlog=math.min(math.max(desired-h2ScoreState.now,0),10)
+            for _=1,backlog do H2Score.advance(h2ScoreState,1) end
+            assert(H2Score.assertConserved(h2ScoreState),"H2_REAL_H1_FIVE_EGG_INTEGRITY")
+            match.scores.RED=h2ScoreState.scores.RED
+            match.scores.BLUE=h2ScoreState.scores.BLUE
+        end
+        if teamCount("RED") <= 0 then stopRound("BLUE", "TEAM_EMPTY")
+        elseif teamCount("BLUE") <= 0 then stopRound("RED", "TEAM_EMPTY")
+        elseif EXPERIMENTAL_FIVE_EGG_MODE and h2ScoreState
+            and h2ScoreState.active==false then
+            stopRound(h2ScoreState.winner,"FIVE_EGG_SCORE_240S")
+        elseif now >= match.deadline then
+            local red=if EXPERIMENTAL_FIVE_EGG_MODE then match.scores.RED
+                else match.scores.RED*1000+match.hp.RED
+            local blue=if EXPERIMENTAL_FIVE_EGG_MODE then match.scores.BLUE
+                else match.scores.BLUE*1000+match.hp.BLUE
+            stopRound(if red==blue then "DRAW" else (if red>blue then "RED" else "BLUE"),
+                if EXPERIMENTAL_FIVE_EGG_MODE then "FIVE_EGG_TIME_LIMIT" else "TIME_LIMIT")
+        else
+            -- D08 only advances within this already-existing authoritative tick.
+            if canonicalHost then
+                local ok, success, reason = pcall(function()
+                    return canonicalHost:tick()
+                end)
+                if not ok or success ~= true then
+                    warn("S1_D08_TICK_FAIL_CLOSED", reason)
+                    stopCanonical("TICK_FAILED")
+                    match.alarm, match.alarmUntil = "IDLE", 0
+                end
+            end
+        end
+    elseif match.phase == "RESULTS" then
+        if now >= match.phaseUntil then
+            match.phase = "LOBBY"
+            match.winner = ""
+            match.reason = ""
+            match.alarm = "IDLE"
+        end
+    end
+    -- Recovery uses the existing server-only authoritative tick. Exact current
+    -- S1 GrassArena is 250 x 142 studs; five studs outside is no longer playable.
+    -- No client request or egg carry can choose a free teleport destination.
+    for _, player in ipairs(Players:GetPlayers()) do
+        local alive, root = healthy(player)
+        if alive and root then
+            local position = root.Position
+            if position.Y < -30 or math.abs(position.X) > 130
+                or math.abs(position.Z) > 76 then
+                local team = getTeamName(player)
+                if team == "RED" or team == "BLUE" then
+                    dropEgg(player)
+                    stopWind(player)
+                    restoreSlow(player)
+                    root.AssemblyLinearVelocity = Vector3.zero
+                    root.AssemblyAngularVelocity = Vector3.zero
+                    root.CFrame = map.teams[team].spawn + Vector3.new(0, 4, 0)
+                    invulnUntil[player] = now + Config.RespawnInvulnerability
+                end
+            end
+        end
+    end
+end
+
+task.spawn(function()
+    while true do
+        tickRound()
+        broadcast()
+        task.wait(Config.SnapshotInterval)
+    end
+end)
