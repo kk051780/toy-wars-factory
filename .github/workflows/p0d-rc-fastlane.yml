@@ -6,6 +6,12 @@ on:
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - 'rc_fastlane/**'
+      - '.github/workflows/p0d-rc-fastlane.yml'
   workflow_dispatch:
     inputs:
       profile:
