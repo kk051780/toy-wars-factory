@@ -28,6 +28,12 @@ def source_check():
         assert term in game,term
     assert game.count('remote.Name = "TrapRaidersS1Remote"')==1
     assert hud.count('action("WIND_BURST", nil)')==2
+    # Egg-carrier/cooldown UX must match the existing server-failclosed policy.
+    assert 'trapButton.Active = s.phase == "ACTIVE" and s.role == "GUARDIAN"' in hud
+    assert 'not carryingEgg and trapCooldown == 0' in hud
+    assert 'windButton.Active = s.phase == "ACTIVE" and s.role == "RAIDER"' in hud
+    assert 'not carryingEgg and windCooldown == 0 and s.windActive ~= true' in hud
+    assert '🥚 卵運搬中' in hud and '風走り不可' in hud
     assert 's.role ~= "RAIDER"' in wind and 's.carrying == true' in wind
     print("P0D_H1_WIND_SOURCE_MANIFEST_38_OF_38_PASS")
 
