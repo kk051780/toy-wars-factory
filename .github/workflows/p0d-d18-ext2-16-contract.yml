@@ -1,0 +1,25 @@
+name: P0D D18 Ext2 16 original source contract
+on:
+  push:
+    branches:
+      - feature/p0d-d18-extension2-sixteen-100-roster-20261113-01
+  workflow_dispatch:
+jobs:
+  source-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run EXT2 16 prototype validation
+        run: python3 -m unittest discover -s handoffs/P0D-D18-EXT2-SIXTEEN-20261113-01/tests -v
+      - name: Source count and allowed path audit
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('handoffs/P0D-D18-EXT2-SIXTEEN-20261113-01/data/collection_contract.json')
+          d=json.loads(p.read_text())
+          assert d['totalSourcePrototypeCount']==100
+          assert all(i['itemId'].startswith('TRCX-') and i['sourceItemOnly'] for i in d['items'])
+          print('EXT2 original 16 source only PASS; not Studio or live')
+          PY
