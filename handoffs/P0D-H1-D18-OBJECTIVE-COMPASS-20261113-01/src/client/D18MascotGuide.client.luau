@@ -10,7 +10,8 @@ if not player then return end
 
 local Catalog=require(script.Parent:WaitForChild("D18Batch8Catalog",10))
 local Rules=require(script.Parent:WaitForChild("D18MascotGuideRules",10))
-if not Catalog or not Rules then return end
+local Compass=require(script.Parent:WaitForChild("D18ObjectiveCompassRules",10))
+if not Catalog or not Rules or not Compass then return end
 local ARENA=workspace:WaitForChild("TRAP_RAIDERS_S1",30)
 local remote=ReplicatedStorage:WaitForChild("TrapRaidersS1Remote",30)
 if not ARENA or not remote then
@@ -33,14 +34,54 @@ local previousSerial=-1
 local previousUpdate=-1
 local accumulator=0
 local age=0
-local hints={}
-
-local function clearHints()
-    for _,part in ipairs(hints) do part:Destroy() end
-    table.clear(hints)
+-- The compass only appears after the user asks the mascot. No passive compass or extra actions.
+local playerGui=player:WaitForChild("PlayerGui",20)
+if not playerGui then return end
+local guideGui=Instance.new("ScreenGui")
+guideGui.Name="H1D18ObjectiveCompass"
+guideGui.ResetOnSpawn=false
+guideGui.IgnoreGuiInset=false
+guideGui.DisplayOrder=15
+guideGui.Parent=playerGui
+local panel=Instance.new("Frame")
+panel.Name="CompassPanel"
+panel.Position=UDim2.new(.02,0,.30,0)
+panel.Size=UDim2.fromOffset(184,65)
+panel.BackgroundColor3=Color3.fromRGB(33,43,68)
+panel.BackgroundTransparency=.13
+panel.BorderSizePixel=0
+panel.Visible=false
+panel.Active=false
+panel.Parent=guideGui
+local corner=Instance.new("UICorner")
+corner.CornerRadius=UDim.new(0,11)
+corner.Parent=panel
+local arrow=Instance.new("TextLabel")
+arrow.Name="BearingArrow"
+arrow.Size=UDim2.fromOffset(55,55)
+arrow.Position=UDim2.fromOffset(3,5)
+arrow.BackgroundTransparency=1
+arrow.Text="↑"
+arrow.TextSize=42
+arrow.Font=Enum.Font.GothamBold
+arrow.TextColor3=Color3.fromRGB(255,227,116)
+arrow.Parent=panel
+local instruction=Instance.new("TextLabel")
+instruction.Name="ObjectiveName"
+instruction.Position=UDim2.fromOffset(58,6)
+instruction.Size=UDim2.fromOffset(120,53)
+instruction.BackgroundTransparency=1
+instruction.Font=Enum.Font.GothamBold
+instruction.TextSize=14
+instruction.TextColor3=Color3.fromRGB(255,255,255)
+instruction.TextWrapped=true
+instruction.Text="方向だけの目印"
+instruction.Parent=panel
+local function hideCompass()
+    panel.Visible=false
 end
 local function dropMascot()
-    clearHints()
+    hideCompass()
     if state then
         state.model:Destroy()
         state=nil
@@ -53,33 +94,27 @@ local function destinationPart(view)
     if not part or not part:IsA("BasePart") then return nil end
     return part
 end
-local function drawPath(view)
-    clearHints()
-    local goal=destinationPart(view)
-    if not state or not goal then return false end
-    local start=state.origin.Position
-    local delta=Vector3.new(goal.Position.X-start.X,0,goal.Position.Z-start.Z)
-    if delta.Magnitude<2 then return false end
-    local direction=delta.Unit
-    for i=1,4 do
-        local p=Instance.new("Part")
-        p.Name="H1_Local_Egg_Guide_Step_"..i
-        p.Size=Vector3.new(.65,.14,1.3)
-        p.Anchored=true
-        p.CanCollide=false
-        p.CanTouch=false
-        p.CanQuery=false
-        p.CastShadow=false
-        p.Material=Enum.Material.Neon
-        p.Color=Color3.fromRGB(255,221,107)
-        p.Transparency=.08+i*.12
-        local pos=Vector3.new(start.X,-.62,start.Z)+direction*(2+i*2.5)
-        p.CFrame=CFrame.lookAt(pos,pos+direction)
-        p.Parent=root
-        table.insert(hints,p)
+local function updateCompass()
+    if not state or not current or state.hintUntil<0 then hideCompass(); return false end
+    local goal=destinationPart(current)
+    local character=player.Character
+    local avatar=character and character:FindFirstChild("HumanoidRootPart")
+    local camera=workspace.CurrentCamera
+    if not goal or not avatar or not avatar:IsA("BasePart") or not camera then
+        hideCompass()
+        return false
     end
+    local delta=goal.Position-avatar.Position
+    local look=camera.CFrame.LookVector
+    local right=camera.CFrame.RightVector
+    local angle=Compass.angleDegrees(right.X,right.Z,look.X,look.Z,delta.X,delta.Z)
+    if angle==nil then hideCompass(); return false end
+    arrow.Rotation=angle
+    instruction.Text=Compass.title(current.carrying) or "方向だけの目印"
+    panel.Visible=true
     return true
 end
+
 local function speak()
     if not state or not current then return end
     if current.phase~="ACTIVE" and current.phase~="COUNTDOWN" then return end
@@ -87,14 +122,10 @@ local function speak()
     if now-state.lastSpeak<2 then return end
     state.lastSpeak=now
     state.tapUntil=now+1.35
-    state.hintUntil=now+5
+    state.hintUntil=now+6
     state.lastHintName=current.partName
-    local found=drawPath(current)
-    if current.carrying then
-        state.label.Text=if found then "🥚 おかえり！じぶんの色の台へ！" else "🥚 じぶんの色の台へ！"
-    else
-        state.label.Text=if found then "🐲 光のみちをたどって敵の卵へ！" else "🐲 敵のお城の卵を見つけよう！"
-    end
+    updateCompass()
+    state.label.Text=if current.carrying then "🥚 やじるしで自分の台へ！" else "🐲 やじるしで敵の卵へ！"
     state.label.TextColor3=Color3.fromRGB(255,238,141)
 end
 
@@ -198,9 +229,12 @@ local function render(now)
     state.anchor.CFrame=state.origin*CFrame.new(0,1.1+bob,0)
     if state.hintUntil>0 and now>=state.hintUntil then
         state.hintUntil=-1
-        clearHints()
+        hideCompass()
         state.label.Text="🐲 たまごの道を教えるよ！"
         state.label.TextColor3=Color3.fromRGB(251,247,225)
+    elseif state.hintUntil>0 then
+        -- Follow the child's actual avatar and camera while the short hint is active.
+        updateCompass()
     end
 end
 
@@ -218,9 +252,9 @@ local remoteConn=remote.OnClientEvent:Connect(function(message)
         dropMascot()
         spawnMascot(current.team)
     elseif state.hintUntil>0 and state.lastHintName~=current.partName then
-        -- Retarget only on carrying transition; avoid repeatedly allocating cosmetic Parts.
+        -- Retarget only on a real change to the server-authoritative objective.
         state.lastHintName=current.partName
-        drawPath(current)
+        updateCompass()
     end
 end)
 local beat=RunService.Heartbeat:Connect(function(dt)
@@ -236,5 +270,6 @@ script.Destroying:Connect(function()
     beat:Disconnect()
     remoteConn:Disconnect()
     dropMascot()
+    guideGui:Destroy()
     root:Destroy()
 end)
