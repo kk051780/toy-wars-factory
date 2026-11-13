@@ -53,7 +53,7 @@ def assemble():
       '🥚 卵運搬中','風走り不可'
     ]
     for token in required:assert token in new_hud,token
-    assert 'remote:FireServer' not in new_hud,"HUD direct remote authority changed"
+    assert new_hud.count('remote:FireServer({action = kind, role = role, seq = seq})')==1,"original single HUD Remote call changed"
     assert 'action("WIND_BURST", nil)' in new_hud
     assert 'action("PLACE_TRAP", nil)' in new_hud
     assert "MarketplaceService" not in new_hud and "DataStoreService" not in new_hud
