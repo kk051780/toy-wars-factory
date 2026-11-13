@@ -206,7 +206,8 @@ end
 local function cast(player)
     local st=states[player]
     if not st or not st.form or st.form.stage<2 or not st.dragon then return end
-    if not core(player) then return end
+    local playerRoot=core(player)
+    if not playerRoot then return end
     if now()-st.lastCast<12 then msg(player,"ERROR","技の再使用まで待ってね");return end
     local form=E.form(st.profile,"forest_scout",{forest_scout=1})
     if not form or form.formId~=st.form.formId or form.category~="BEAST" then
@@ -215,13 +216,13 @@ local function cast(player)
     -- Defensive evolution must actually be near the castle;
     -- teammates cannot place a castle shield remotely.
     if form.branch=="GUARD" and
-        (core(player).Position-castle.Position).Magnitude>33 then
+        (playerRoot.Position-castle.Position).Magnitude>33 then
         msg(player,"ERROR","守護技は城の近くで発動してね")
         return
     end
     st.lastCast=now()
     if form.branch=="ASSAULT" then
-        local origin=core(player).Position
+        local origin=playerRoot.Position
         local radius=if form.stage>=3 then 25 else 17
         pulse(origin,radius,Color3.fromRGB(255,138,88))
         local hits=0
