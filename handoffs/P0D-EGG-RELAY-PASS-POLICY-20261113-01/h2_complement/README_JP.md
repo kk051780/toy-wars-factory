@@ -45,3 +45,18 @@ local ok, reason, newSeq = H2Score.relayWithVersion(
 - **結果：最新RC56のBEAST進化/SAVED_PVE保存レベル/修行/秘境、Game、Store、Remote/HUDを変えずに、本H2純粋遷移だけを組み込める正確な差分が成立。** ただし実ゲームにパス用のGameハンドラを追加しなければユーザーはまだ遊べない。公式RCに本差分を適用した事実はない。
 - 別レーンPR #296は通常1卵Game/HUD対応。Game本体は一本の統合だけを選ぶ。現在の正式企画到達率は別途 #220 の報告が正本であり、本候補では加点しない。
 - この検証の固定証拠は `RC56_COMPATIBILITY_PROOF.json`、再実行可能なオーナー用ZIP `P0D_H2_EGG_RELAY_V2_READY_FOR_220.zip` に保管。
+
+
+## V3：ネイティブLuau検証を独立CI化（2026-11-14）
+
+正式RC56の5卵ルール原本の固定Git Blob `0999d69391c176b9b95b04c5444d822e63d7ce04` を**GitHub内にバイト同一のテストFixture**として配置しました。以前のH2-only差分 `68f3df613ad548ab56e755adf91d797a979e8552` は未変更です。
+
+- `tests/H2FiveEggRules.AUTHOR_LOCKED.luau` — 元H2正本の完全固定ファイル
+- `tests/native_h2_relay_cases.luau` — **48件の本物のLuau構文テストソース**。5卵×2チーム×3項目=30件、18個の独立負例・異常系。実ユーザー権限/距離/LOSは既存Game側の責任であり、純粋な5卵ルール内には捏造しない
+- `tools/build_native_h2_runner.py` — 元ソース/新パッチ/48テストそれぞれGitBlob固定、fuzz=0で元ソースのパッチ適用→結果GitBlob確認→逆適用で原本100%復元を確認してから、**本来のLuau原文のまま**1つの実行ソースを出力
+- `.github/workflows/p0d-h2-relay-v2-native-20261114.yml` — 作者隔離branch専用、Luau上流 `f46d879e28302a430029304f7f6a162aed66f103` を固定ビルドし、`luau-compile` / `luau`で48件実行、標識 `P0D_H2_RELAY_NATIVE_48_OF_48_PASS` を確かめる
+- `NATIVE_48_CI_RECEIPT.json` — Source/CI/Roblox Studioの合否を別管理
+
+**このターンの実測**：Pythonで元のRC56ソース/パッチの原本GitBlob・fuzz=0適用・厳密逆パッチを再検証（3/3 PASS）、従来実H2ロジックのLua5.4互換29/29を再実行してPASS。GitHubにおける48テストの存在と固定SHAは確認済み。
+
+**未確認**：新CIの実行IDと成功結果、ネイティブLuau実行48/48、最新全RC内56+スクリプトRojo、Studio2client/Android/FUN。PRのみを返すGitHub commit-run照会結果0件を、push CIが失敗/未実施だと断定しない。**ここまでで正式RCへ採用済みという報告は禁止**。最新RCの唯一Game/Remote/Storeの改造は#220だけが行う。
