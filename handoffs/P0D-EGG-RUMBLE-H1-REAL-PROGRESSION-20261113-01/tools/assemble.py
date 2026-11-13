@@ -33,24 +33,24 @@ def build():
  assert data["tree"]["ServerScriptService"]["TrapRaidersS1"]["$path"]=="src/server"
  data["name"]="EGG_RAID_RUMBLE_H1_TWO_MODES_XP_MASTERY_DEV_STUDIO_UNPUBLISHED"
  project.write_text(json.dumps(data,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
- all=src(NEW)
- assert len(all)==35,len(all)
- assert sorted(set(all)-set(old))==["server/ProgressionRules.luau"]
- assert sorted(k for k in old if all[k]!=old[k])==[
+ newfiles=src(NEW)
+ assert len(newfiles)==35,len(newfiles)
+ assert sorted(set(newfiles)-set(old))==["server/ProgressionRules.luau"]
+ assert sorted(k for k in old if newfiles[k]!=old[k])==[
    "client/HUD.client.luau","server/Game.server.luau",
    "server/PersistentHatchStore.luau"]
- assert all(all[k]==old[k] for k in old if k not in
+ assert all(newfiles[k]==old[k] for k in old if k not in
     ("client/HUD.client.luau","server/Game.server.luau","server/PersistentHatchStore.luau"))
- assert all(blob(all[k])==val for k,val in PIN.items())
- assert len([k for k in all if k.endswith("/Game.server.luau")])==1
- assert len([k for k in all if k.endswith(".server.luau")])==2
- assert len([k for k in all if k.endswith(".client.luau")])==5
- assert blob(all["server/RewardEquipRules.luau"])=="0edf0993e41785b1e206b6ad09955a9984a346e5"
- assert blob(all["server/H2FiveEggRules.luau"])=="0999d69391c176b9b95b04c5444d822e63d7ce04"
- g=all["server/Game.server.luau"].decode()
- h=all["client/HUD.client.luau"].decode()
- store=all["server/PersistentHatchStore.luau"].decode()
- xp=all["server/ProgressionRules.luau"].decode()
+ assert all(blob(newfiles[k])==val for k,val in PIN.items())
+ assert len([k for k in newfiles if k.endswith("/Game.server.luau")])==1
+ assert len([k for k in newfiles if k.endswith(".server.luau")])==2
+ assert len([k for k in newfiles if k.endswith(".client.luau")])==5
+ assert blob(newfiles["server/RewardEquipRules.luau"])=="0edf0993e41785b1e206b6ad09955a9984a346e5"
+ assert blob(newfiles["server/H2FiveEggRules.luau"])=="0999d69391c176b9b95b04c5444d822e63d7ce04"
+ g=newfiles["server/Game.server.luau"].decode()
+ h=newfiles["client/HUD.client.luau"].decode()
+ store=newfiles["server/PersistentHatchStore.luau"].decode()
+ xp=newfiles["server/ProgressionRules.luau"].decode()
  assert g.count('remote.Name = "TrapRaidersS1Remote"')==1
  assert g.count('remote.OnServerEvent:Connect(')==1
  assert "Progression.recordEvent(round,eventId,kind,true)" in g
@@ -94,7 +94,7 @@ def build():
   "studio_2_client_actual_tested":False,"Android_tested":False,
   "owner_fun_gate_accepted":False,"live_Place_approved":False,
   "published":False,"paid":False,"same_DataStore_migration_source":"existing_schema1 optional progress",
-  "source_gitblob":{k:blob(v) for k,v in all.items()}
+  "source_gitblob":{k:blob(v) for k,v in newfiles.items()}
  }
  (NEW/"SOURCE_LOCK.json").write_text(json.dumps(record,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
  print("EGG_RUMBLE_TRUE_FULL_H1_2_MODES_35_SOURCE_XP_MASTERY_AND_INVENTORY_ATOMIC_ASSEMBLY_PASS")
