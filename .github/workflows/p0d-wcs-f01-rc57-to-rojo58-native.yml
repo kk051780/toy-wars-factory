@@ -1,0 +1,225 @@
+name: P0D WCS F01 canonical RC57 to real Rojo58 source candidate
+on:
+  push:
+    branches:
+      - feature/p0d-wcs-f01-rojo58-rc57-20261114-01
+    paths:
+      - 'handoffs/P0D-WCS-F01-ROJO58-RC57-20261114-01/tools/**'
+      - '.github/workflows/p0d-wcs-f01-rc57-to-rojo58-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  wcs-canyon-native58:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      DIST: _p0d_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+      ORIG_HEAD: 34d6d384d04ba1d4a394331a3e5c74f798e57a22
+      SRC_HEAD: 79123d35cd7afdd5f4f9941675bc2d2cf382ac4e
+    steps:
+      - name: Checkout child of original PR298 author source, no official RC write
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout exact successful official 57-source RC with saved scout species
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 34d6d384d04ba1d4a394331a3e5c74f798e57a22
+          path: _rc57
+          persist-credentials: false
+      - name: Checkout immutable original actual Game author 51 source
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 79123d35cd7afdd5f4f9941675bc2d2cf382ac4e
+          path: _p0d_source
+          persist-credentials: false
+      - name: Validate official and original author commits
+        run: |
+          set -euo pipefail
+          test "$(git -C _rc57 rev-parse HEAD)" = "$ORIG_HEAD"
+          test "$(git -C _p0d_source rev-parse HEAD)" = "$SRC_HEAD"
+          python3 - <<'PY'
+          import json
+          a=json.load(open("handoffs/P0D-WCS-F01-RC57-SAFE-HANDOFF-20261114-01/SOURCE_LOCK.json"))
+          assert a["canonical_head_at_source_authoring"]=="34d6d384d04ba1d4a394331a3e5c74f798e57a22"
+          assert a["author_script_git_blob"]=="9b891ae8b0dd579ccf1cd477b8b012e03415c0b0"
+          assert a["native_luau_for_this_new_source"]=="NOT_TESTED"
+          assert a["pending_rc_script_count"]==58
+          print("P0D_WCS_F01_AUTHOR_SOURCE_AND_REAL_RC57_LOCK_CONFIRMED")
+          PY
+      - name: Execute original author 12 Python negative and gate safety tests
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover \
+            -s handoffs/P0D-WCS-F01-RC57-SAFE-HANDOFF-20261114-01/tests \
+            -p 'test_handoff_source.py' -v
+          echo P0D_WCS_F01_ORIGINAL_AUTHOR_PYTHON_12_CASES_PASS
+      - name: Assemble original canonical rich51 author game once
+        run: |
+          set -euo pipefail
+          python3 -B _p0d_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/tools/assemble.py --assemble
+      - name: Apply all official RC57 features in exact original order
+        run: |
+          set -euo pipefail
+          python3 -B _rc57/rc_fastlane/apply_overlays.py --profile rich51 --dist "$DIST"
+          python3 -B -m unittest discover -s _rc57/rc_fastlane -p test_realm_hunt.py -v
+          python3 -B _rc57/rc_fastlane/integrate.py --profile rich51 --dist "$DIST"
+          python3 -B _rc57/rc_fastlane/apply_sixskill_durable.py --profile rich51 --dist "$DIST"
+          python3 -B _rc57/rc_fastlane/apply_saved_pve.py --profile rich51 --dist "$DIST"
+          python3 -B _rc57/rc_fastlane/apply_saved_beast.py --profile rich51 --dist "$DIST"
+          python3 -B _rc57/rc_fastlane/apply_scout_species.py --profile rich51 --dist "$DIST"
+      - name: Snapshot 57 genuine source files and explicit OFF rollback
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,json,hashlib
+          from pathlib import Path
+          d=Path(os.environ["DIST"])
+          src=d/"src"
+          b={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+             for p in sorted(src.rglob("*.luau"))}
+          assert len(b)==57,("CURRENT_RC57_NOT_BUILT",len(b))
+          assert "server/ScoutSpeciesPolicy.luau" in b and "server/SavedBeastEvolutionPolicy.luau" in b
+          blobs=(d/"SOURCE_LOCK.json").read_bytes()
+          feature=(d/"RC_FEATURE_LOCK.json").read_bytes()
+          Path("/tmp/wcs57_original.json").write_text(json.dumps(b,sort_keys=True))
+          Path("/tmp/wcs57_lock.sha").write_text(hashlib.sha256(blobs).hexdigest()+"\n"+
+             hashlib.sha256(feature).hexdigest())
+          print("P0D_WCS_F01_ORIGINAL57_IMMUTABLE_SNAPSHOT_PASS")
+          PY
+          python3 -B handoffs/P0D-WCS-F01-ROJO58-RC57-20261114-01/tools/apply_wcs.py --dist "$DIST" --enabled off
+          python3 - <<'PY'
+          import os,json,hashlib
+          from pathlib import Path
+          d=Path(os.environ["DIST"]);src=d/"src"
+          b=json.loads(Path("/tmp/wcs57_original.json").read_text())
+          a={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+             for p in sorted(src.rglob("*.luau"))}
+          assert a==b, "WCS_SOURCE_OFF_DRIFT"
+          s=Path("/tmp/wcs57_lock.sha").read_text().splitlines()
+          assert hashlib.sha256((d/"SOURCE_LOCK.json").read_bytes()).hexdigest()==s[0]
+          assert hashlib.sha256((d/"RC_FEATURE_LOCK.json").read_bytes()).hexdigest()==s[1]
+          print("P0D_WCS_F01_SOURCE_OFF_RETURNS_EXACT57_PASS")
+          PY
+      - name: Add exactly original PR298 WCS server script as 58th
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/P0D-WCS-F01-ROJO58-RC57-20261114-01/tools/apply_wcs.py --dist "$DIST" --enabled on
+      - name: Verify 57 of 57 original sources byte-identical and both source locks
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,json,hashlib
+          from pathlib import Path
+          d=Path(os.environ["DIST"]);src=d/"src"
+          orig=json.loads(Path("/tmp/wcs57_original.json").read_text())
+          final={p.relative_to(src).as_posix():p.read_bytes() for p in sorted(src.rglob("*.luau"))}
+          assert len(final)==58
+          assert all(hashlib.sha256(final[k]).hexdigest()==v for k,v in orig.items()),"EXISTING_RC57_SOURCE_DRIFT"
+          assert sorted(set(final)-set(orig))==["server/WCS_CrystalCanyon.server.luau"]
+          game=final["server/Game.server.luau"].decode()
+          assert game.count('remote.OnServerEvent:Connect(')==1
+          assert game.count('remote.Name = "TrapRaidersS1Remote"')==1
+          assert game.count("ScoutSpecies.attack(")==1
+          assert game.count("SavedBeastEvolution.choose(")==1
+          assert game.count("SavedPvePolicy.mergeWithEarned(")==1
+          def blob(b):
+              return hashlib.sha1(b"blob "+str(len(b)).encode()+bytes([0])+b).hexdigest()
+          pins={k:blob(v) for k,v in final.items()}
+          for n,key,count in (("SOURCE_LOCK.json","blobs","total_scripts"),
+                               ("RC_FEATURE_LOCK.json","source_gitblobs","total_sources")):
+              lock=json.loads((d/n).read_text())
+              assert lock[count]==58 and lock[key]==pins,(n,"SOURCE_LOCK_DRIFT")
+          assert json.loads((d/"RC_FEATURE_LOCK.json").read_text())["feature_flags"]["WCS_F01_C01_FLOATING_CANYON"] is True
+          assert blob(final["server/WCS_CrystalCanyon.server.luau"])=="9b891ae8b0dd579ccf1cd477b8b012e03415c0b0"
+          print("P0D_WCS_F01_57_UNCHANGED_PLUS_ONE_EXACT_GATE_SAFE_SCRIPT_PASS")
+          PY
+      - name: Checkout pinned Luau compiler source (not engine)
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau
+          persist-credentials: false
+      - name: Cache exact pinned original Luau CLI
+        uses: actions/cache@v4
+        with:
+          path: /tmp/p0d_wcs_luau
+          key: p0d-wcs-f01-native-luau-f46d879e28302-ubuntu-v1
+      - name: Compile all genuine 58 Luau scripts and source
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          if [ ! -x /tmp/p0d_wcs_luau/luau-compile ]; then
+            cmake -S _luau -B /tmp/p0d_wcs_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+            cmake --build /tmp/p0d_wcs_luau --target Luau.Compile.CLI --parallel 4
+          fi
+          n=0
+          while IFS= read -r -d '' f; do
+              /tmp/p0d_wcs_luau/luau-compile "$f" >/dev/null
+              n=$((n+1))
+          done < <(find "$DIST/src" -name '*.luau' -type f -print0)
+          test "$n" -eq 58
+          echo P0D_WCS_F01_RICH58_NATIVE_LUAU_COMPILE_PASS
+      - name: Download and checksum verify official Rojo v7.7.1
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_wcs_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_wcs_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile,stat
+          with zipfile.ZipFile("/tmp/p0d_wcs_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.rsplit("/",1)[-1]=="rojo"]
+              assert len(names)==1
+              out=Path("/tmp/p0d_wcs_rojo")
+              out.write_bytes(z.read(names[0]))
+              out.chmod(out.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_wcs_rojo --version | grep -F 7.7.1
+      - name: Build real new private58 Studio Place and verify all script bytes
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_wcs_artifacts
+          /tmp/p0d_wcs_rojo build "$DIST/default.project.json" -o /tmp/p0d_wcs_artifacts/P0D_WCS_F01_RICH58_UNPUBLISHED.rbxlx
+          python3 - <<'PY'
+          import os,collections,hashlib,pathlib,xml.etree.ElementTree as ET,json
+          d=pathlib.Path(os.environ["DIST"])
+          actual=collections.Counter(p.read_text("utf8") for p in (d/"src").rglob("*.luau"))
+          place=pathlib.Path("/tmp/p0d_wcs_artifacts/P0D_WCS_F01_RICH58_UNPUBLISHED.rbxlx")
+          built=collections.Counter()
+          names=collections.Counter()
+          for e in ET.fromstring(place.read_bytes()).iter("Item"):
+              if e.get("class") not in ("Script","LocalScript","ModuleScript"):continue
+              src=e.find("./Properties/string[@name='Source']")
+              if src is not None:
+                  built[src.text or ""]+=1
+                  name=e.find("./Properties/string[@name='Name']")
+                  if name is not None:names[(e.get("class"),name.text)]+=1
+          assert sum(actual.values())==58
+          assert built==actual,("REAL_ROJO_NOT_SOURCE_EXACT",sum(built.values()))
+          assert names[("Script","Game")]==1
+          assert names[("Script","WCS_CrystalCanyon")]==1
+          assert names[("ModuleScript","ScoutSpeciesPolicy")]==1
+          print("P0D_WCS_F01_REAL_ROJO_RICH58_SOURCE_EXACT_PASS")
+          receipt={"schema":"P0D_WCS_F01_RC57_TO_PRIVATE58_REAL_ROJO_SUCCESS",
+              "actual_original_rc57_sha":"34d6d384d04ba1d4a394331a3e5c74f798e57a22",
+              "source_count":58,"unchanged_orig":57,"added":"server/WCS_CrystalCanyon.server.luau",
+              "author_script_git_blob":"9b891ae8b0dd579ccf1cd477b8b012e03415c0b0",
+              "actual_rojo_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
+              "python_author12":"PASS","native_luau58":"PASS","rojo58_source_exact":"PASS",
+              "real_Studio":"NOT_TESTED","Android":"NOT_TESTED","owner_FUN":"NOT_TESTED",
+              "official_rc_adopted":False,"published":False,"paid":False}
+          (pathlib.Path("/tmp/p0d_wcs_artifacts")/"WCS_F01_CANDIDATE_VERIFIED.json").write_text(
+              json.dumps(receipt,indent=2,ensure_ascii=False)+"\n","utf8")
+          PY
+          cp "$DIST/RC_FEATURE_LOCK.json" /tmp/p0d_wcs_artifacts/RC_FEATURE_LOCK.json
+      - name: Publish private candidate artifact only, never game
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-WCS-F01-CANYON-RC57-TO-PRIVATE58-REAL-ROJO
+          path: /tmp/p0d_wcs_artifacts/
+          retention-days: 7
