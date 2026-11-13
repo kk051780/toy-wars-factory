@@ -42,7 +42,7 @@ jobs:
           python3 -B handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/tools/generate_native_runner.py --out /tmp/p0d_egg_relay_native/EGG_RELAY_NATIVE_QA.generated.luau
           /tmp/p0d_egg_relay_native/luau-compile /tmp/p0d_egg_relay_native/EGG_RELAY_NATIVE_QA.generated.luau >/dev/null
           /tmp/p0d_egg_relay_native/luau /tmp/p0d_egg_relay_native/EGG_RELAY_NATIVE_QA.generated.luau | tee /tmp/p0d_egg_relay_native/EGG_RELAY_NATIVE_QA.log
-          grep -Fx "P0D_EGG_RELAY_NATIVE_POLICY_39_CASES_PASS" /tmp/p0d_egg_relay_native/EGG_RELAY_NATIVE_QA.log
+          grep -Fx "P0D_EGG_RELAY_NATIVE_POLICY_41_CASES_PASS" /tmp/p0d_egg_relay_native/EGG_RELAY_NATIVE_QA.log
       - name: Assert S2 source only, official product and Studio not claimed
         run: |
           set -euo pipefail
