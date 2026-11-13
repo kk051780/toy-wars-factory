@@ -69,7 +69,8 @@ jobs:
           python3 -B handoffs/P0D-B42-V7-SKYCASTLE-SOLO-20261113-01/tools/generate_native_studio_solo.py --write /tmp/p0d_studio_solo_native.luau
           /tmp/p0d_luau/luau-compile /tmp/p0d_studio_solo_native.luau >/dev/null
           /tmp/p0d_luau/luau /tmp/p0d_studio_solo_native.luau | tee /tmp/p0d_solo_native.log
-          grep -E '^P0D_S1_STUDIO_SOLO_NATIVE_30_ASSERTIONS_PASS
+          grep -F 'P0D_S1_STUDIO_SOLO_NATIVE_30_ASSERTIONS_PASS' /tmp/p0d_solo_native.log
+          echo P0D_B42_V7_SKYCASTLE_SOLO_NATIVE_43_AND_30_SOLO_PASS
       - name: Obtain pinned Rojo 7.7.1 with sha256
         shell: bash
         run: |
