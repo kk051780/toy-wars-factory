@@ -37,6 +37,10 @@
       "path": ".github/workflows/p0d-rumble-link-client-ci-20261113.yml",
       "git_blob_sha1": "b1df86de722b7763ffa21c8264de3c7ca569f2c8",
       "root_external": true
+    },
+    {
+      "path": "docs/INTAKE_COMPAT_286_READONLY.md",
+      "git_blob_sha1": "fd7721c96eba18be69e8f54ce41e6e55ad62e61c"
     }
   ],
   "validations": {
@@ -49,8 +53,13 @@
     "original_game_integration": "NOT_ADOPTED",
     "human_fun": "UNKNOWN",
     "official_S1_last_pct": 75,
-    "fun_gate": "NO_GO"
+    "fun_gate": "NO_GO",
+    "local_frozen_python_22_pass": true,
+    "local_frozen_git_blob_count_verified": 4,
+    "local_frozen_test_command": "python -m unittest discover -s tests -p test_contract.py -v",
+    "local_frozen_execution_claim": "22/22 PASS on byte-equal source and Python tests, independent of CI",
+    "game_286_read_only_source_audit": "DONE; authenticated cooperation DTO absent, one SCOUT_ASSIST candidate only"
   },
-  "blocking_gates": "#250 PRODUCT_SELECT; #220 authentic one Game source epoch DTO and sole RC writer; Owner real 2client Android + FUN",
+  "blocking_gates": "#250 S1_PLUS product decision; #220 single authority source/DTO selection; native CI; owner real 2client Android H0/H1 human FUN",
   "protections": "No main/direct merge/production Roblox publish/paid/Codex/other owner branches/CAS/automations"
 }
