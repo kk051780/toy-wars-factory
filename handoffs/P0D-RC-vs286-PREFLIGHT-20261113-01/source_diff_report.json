@@ -1,0 +1,74 @@
+{
+  "schema": "P0D_SOURCE_INTEGRATION_PREFLIGHT_V1",
+  "date_jst": "2026-11-13",
+  "source_refs": {
+    "official": {
+      "ref": "rc/p0d-s1-kids-rc01",
+      "game": "releases/P0D_S1_KIDS_RC01/src/server/Game.server.luau",
+      "hud": "releases/P0D_S1_KIDS_RC01/src/client/HUD.client.luau",
+      "game_sha": "7c5229f600f17537bc1bbbb0b96b6a2435875374",
+      "hud_sha": "ee594fbc34e6bf938518fae32c0642c852f11f9e"
+    },
+    "candidate": {
+      "ref": "a0331e2e452f4e8e6530d32562ba5ff657b011d9",
+      "game": "handoffs/P0D-EGG-RUMBLE-H1-REAL-PROGRESSION-20261113-01/inputs/Game.server.luau",
+      "hud": "handoffs/P0D-EGG-RUMBLE-H1-REAL-PROGRESSION-20261113-01/inputs/HUD.client.luau",
+      "game_sha": "28a51605efcee572029154f978761622959df587",
+      "hud_sha": "6ef75cc76002e14b00cfb984cc799098e5cd033a"
+    }
+  },
+  "source_measured": {
+    "server": {
+      "official_lines": 703,
+      "candidate_lines": 1583,
+      "ordered_common_lines": 688,
+      "changed_old_lines": 15,
+      "semantic_change_groups": 7
+    },
+    "hud": {
+      "official_lines": 195,
+      "candidate_lines": 420,
+      "ordered_common_lines": 188,
+      "changed_old_lines": 7,
+      "semantic_change_groups": 7
+    },
+    "method": "longest common subsequence of exact source lines, not a proof of semantic equivalence"
+  },
+  "confirmed_risks": [
+    {
+      "code": "R01",
+      "where": "ModeVote and H2 game",
+      "detail": "SCORE_5 activation is Studio-only and not production ready",
+      "owner": "#220"
+    },
+    {
+      "code": "R02",
+      "where": "XP/free hatch/owned and save",
+      "detail": "DEV Studio-only DataStore and gating; real Roblox positive UserId reconnect and migration not tested",
+      "owner": "#220"
+    },
+    {
+      "code": "R03",
+      "where": "score, win, player leaving, fall recovery",
+      "detail": "Semantic changes in original Game lines; maintain one combat/egg/round authority",
+      "owner": "#220"
+    },
+    {
+      "code": "R04",
+      "where": "HUD",
+      "detail": "Mode vote, trap, scout and level controls need real Android first90 clarity/performance testing",
+      "owner": "independent QA"
+    },
+    {
+      "code": "R05",
+      "where": "owner fun review",
+      "detail": "Previous owner judged current 8safe game plain; official last75/100, FUN_NO_GO",
+      "owner": "#250 and OWNER"
+    }
+  ],
+  "next": "Product #250 must select the experiment; #220 sole integrator makes an isolated actual patch/build and independent native QA, then OWNER real 2client+Android test",
+  "no_source_write_to_rc": true,
+  "no_merge_or_publish": true,
+  "studio_tested": false,
+  "final_release_ready": false
+}
