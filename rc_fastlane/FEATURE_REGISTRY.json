@@ -96,11 +96,16 @@
     {
       "id": "SIX_SKILL_DURABLE",
       "summary": "Saved six-skill XP, real daily focus budget",
-      "state": "SOURCE_CANDIDATE_ONLY_NOT_IN_RC",
-      "profiles": [],
-      "rollback": "none",
-      "independent_switch": false,
-      "blocker": "Store field/schema migration, real Game API ownership"
+      "state": "SOURCE_ADOPTION_PENDING_CI_SAMEKEY_DEV",
+      "profiles": [
+        "rich51"
+      ],
+      "rollback": "disable SIX_SKILL_DURABLE feature switch and rebuild rich53",
+      "independent_switch": true,
+      "blocker": "Store field/schema migration, real Game API ownership",
+      "source_author_commit": "68625792b1882bd69db0342e46efd342d842bbcc",
+      "source_rule": "one existing Game, one existing Store, same DEV U_<full UserId> key, atomic replay receipts",
+      "profile_migration_status": "NOT_ENGINE_TESTED"
     },
     {
       "id": "ALL_SEVEN_JOBS",

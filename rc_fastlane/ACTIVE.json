@@ -46,7 +46,7 @@
   "owner_fun": "NOT_TESTED",
   "production_publish_authorized": false,
   "rollback_granularity": "rich51 V4_IDLE_FRIEND_SAFE_FIX enabled=true/false; whole rich51 -> rich47 -> legacy21; other H1 per-feature switches still unimplemented",
-  "status": "RC_RICH53_COMBINED_V4_FIX_AND_REALM_HUNT_BUILD_PASSED",
+  "status": "RC_RICH54_DURABLE_SIX_SKILL_PATCH_CI_PENDING",
   "release_progress_last_official": 75,
   "first_verified_run": {
     "workflow_run_id": 43483022604,
@@ -71,6 +71,16 @@
         "all_source_count": 53,
         "conclusion": "success"
       }
+    },
+    "SIX_SKILL_DURABLE": {
+      "enabled": true,
+      "dev_store_only": true,
+      "persisted_saved_only_if_real_data_store_ack": true,
+      "existing_source_count": 53,
+      "expected_source_count": 54,
+      "studio_real_save": "NOT_TESTED",
+      "mobile": "NOT_TESTED",
+      "config": "rc_fastlane/FEATURE_SWITCHES.json"
     }
   },
   "feature_switches": {

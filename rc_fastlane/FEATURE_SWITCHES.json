@@ -36,6 +36,27 @@
         "paid",
         "publish"
       ]
+    },
+    "SIX_SKILL_DURABLE": {
+      "enabled": true,
+      "status": "SOURCE_LOCKED_RC_INTEGRATION_CI_PENDING",
+      "release_scope": "Studio_DEV_only_no_public_DataStore",
+      "rollback": "DISABLE_54_TO_53",
+      "store_key": "EXISTING_ORIGINAL_U_REAL_USERID_KEY",
+      "original_full_uid": true,
+      "async_idempotent_game_receipt": true,
+      "patch_authors": {
+        "Game": "5c80b0e3d265fccfc8914b1a0d16cc6418f24d09",
+        "PersistentHatchStore": "5b06b6009f223c6054d9973bedc3f1ac24f2864d",
+        "SixSkillAtomicProfile": "aeadd5a8e0d367ddfa639df161843f9a74637c87"
+      },
+      "source_overlays": [
+        "server/Game.server.luau",
+        "server/PersistentHatchStore.luau",
+        "client/V4TrialOverlay.client.luau",
+        "server/SixSkillAtomicProfile.luau"
+      ],
+      "proven_engine_save": false
     }
   }
 }

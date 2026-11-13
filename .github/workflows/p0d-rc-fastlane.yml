@@ -83,6 +83,14 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/integrate.py --profile rich51 --dist "$DIST"
           fi
+      - name: Integrate author-pinned six-skill DEV persistence on the same Game Store
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_sixskill_durable.py --profile rich51 --dist "$DIST"
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -111,7 +119,13 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=53
+            WANT=$(python3 - <<'PY'
+import json
+x=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))
+print(53 + int(x['features']['SIX_SKILL_DURABLE']['enabled']))
+PY
+)
+
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
             WANT=47
@@ -169,7 +183,8 @@ jobs:
           actual=collections.Counter(f.read_text('utf8') for f in (base/'src').rglob('*.luau'))
           flags=json.load(open('rc_fastlane/FEATURE_SWITCHES.json',encoding='utf8'))
           realm_enabled=flags['features']['REALM_HUNT_V1']['enabled'] and p=='rich51'
-          expected={'rich51':51+int(realm_enabled)*2,'rich47':47,'legacy21':21}[p]
+          durable_enabled=(p=='rich51' and flags['features']['SIX_SKILL_DURABLE']['enabled'])
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -201,6 +216,13 @@ jobs:
               else:
                   print('P0D_RC_FASTLANE_V4_SWITCH_OFF_ORIGINAL51_PASS')
           assert titles[('Script','Game')]==1,('DUPLICATE_GAME',titles)
+          if durable_enabled:
+              assert titles[('ModuleScript','SixSkillAtomicProfile')]==1
+              assert any('PersistentHatch.settleSixSkill(' in s for s in included)
+              assert any('function Store.settleSixSkill(' in s for s in included)
+              assert any('P0D_V4_SavedRemaining' in s for s in included)
+          else:
+              assert titles[('ModuleScript','SixSkillAtomicProfile')]==0
           if realm_enabled:
               assert titles[('Script','RealmHunt')]==1
               assert titles[('LocalScript','RealmHuntHUD')]==1
@@ -222,6 +244,8 @@ jobs:
             'source_overlays':overlay_ids,'composite_rc_source_commit':os.environ['GITHUB_SHA'],
             'rc_branch_commit':os.environ['GITHUB_SHA'],'place_sha256':digest,
             'source_count':sum(actual.values()),'exact_rojo_binary':True,
+            'sixskill_durable_dev_code_included':bool(durable_enabled),
+            'sixskill_real_Studio_DEV_UpdateAsync':'NOT_TESTED',
             'single_game':True,'owner_studio_2client':'NOT_TESTED',
             'android':'NOT_TESTED','owner_fun':'NOT_TESTED',
             'production_publish':False,'sixskill_persistent':False,

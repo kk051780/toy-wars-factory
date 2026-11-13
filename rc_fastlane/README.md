@@ -47,3 +47,13 @@
 
 ### 2026-11-14 実証済みRC：修行改善+4秘境探索
 1つのRCで51本作者ソースを起点に、V4修行の2本をソース固定で差し替え（残り49本は不変）、REALM_HUNT_V1の2本を追加。最終計53本。GitHub Actions [43488586444](https://github.com/kk051780/toy-wars-factory/actions/runs/43488586444) でLuauネイティブ新規2本、検査、53ソース完全照合、Rojoによる未公開Studio用Placeの生成すべてSUCCESS。実機/FUNはNOT_TESTED。秘境機能OFFは `rc_fastlane/FEATURE_SWITCHES.json`、修行改善OFFは `ACTIVE.json.feature_switches` で独立に切戻し可能。企画台帳のP0D-055はRCに昇格し、17/55件に増加。
+
+## 2026-11-14 次のRC候補：6技能の本物の保存（DEVのみ）
+
+独立作者の検証済み `Game.patch`/`PersistentHatchStore.patch` と純粋 `SixSkillAtomicProfile.luau` を**原本SHAでピン留め**して、元の唯一の Game/Store のみが更新を行う方式で統合。強い安全条件があるため **現在はRC同一HEAD CI結果が出るまで採用数を増やさない**。
+- 元のStudio DEV DataStoreの U_<本物のUserId> キーだけを使用。別保存キーも新writerも新Remoteも作らない。
+- serverが本人、同じチームの実パッド・30秒連続・卵を持っていない・友達数を検証し、重複保存しない更新トークンを生成。1件1 UpdateAsync、曖昧応答も同トークンで再試行。
+- Serverのみ署名したカウンターを画面に伝える。実Saveの確認が取れない限り「保存成功」と表示しない。
+- 旧保存データの未対応フィールドは**上書きで失わない**よう、不明レガシーの形はfail-closed。
+- READY_TO_TRAIN/SAVEDはAPI応答が実際に成功した場合のみ。GitHub CI SUCCESSも本物のRoblox DataStore/API試験にはならない。
+- 正式RCから独立OFF：`FEATURE_SWITCHES.json.features.SIX_SKILL_DURABLE.enabled=false` で元の53本へ戻せる。
