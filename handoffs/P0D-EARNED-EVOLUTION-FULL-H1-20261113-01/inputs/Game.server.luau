@@ -18,6 +18,8 @@ local PersistentHatch = require(script.Parent:WaitForChild("PersistentHatchStore
 local Progression = require(script.Parent:WaitForChild("ProgressionRules")) -- exact #281 original source
 -- Original #285 server-only earned power rules, byte-identical import.
 local Power = require(script.Parent:WaitForChild("PowerFantasyRules"))
+-- Byte-identical #287 EvolutionRules; stored by the SAME original hatch profile.
+local Evolution = require(script.Parent:WaitForChild("EvolutionRules"))
 -- #288 experimental helpers only. Original Game remains sole server combat/egg authority.
 local MusouHorde = require(script.Parent:WaitForChild("MusouHorde"))
 local MusouBind = require(script.Parent:WaitForChild("MusouBindRules"))
@@ -132,6 +134,7 @@ local progressionEventSerial=0
 -- Isolated H1: server-side earned power is one state per player/match.
 local earnedPower: {[Player]: any} = {}
 local earnedPowerVisual: {[Player]: Highlight} = {}
+local evolutionPending: {[Player]: boolean} = {}
 local function progressUid(player: Player): number?
     return if player.UserId>0 then PersistentHatch.policyUserId(player.UserId)
         else h2Ids[player]
@@ -143,6 +146,15 @@ local snapshotFor: (Player) -> any
 local function canWriteProfile(player: Player): boolean
     return RunService:IsStudio() and player.UserId>0
         and studioHatchStore~=nil and persistenceState[player]=="SAVED"
+end
+local function savedEvolutionForm(player: Player): any?
+    local raw=persistentProfiles[player]
+    if not raw or persistenceState[player]~="SAVED" or player.UserId<=0 then
+        return nil
+    end
+    local evo=PersistentHatch.toEvolutionProfile(raw,player.UserId)
+    if not evo then return nil end
+    return Evolution.form(evo,raw.equipped,raw.owned)
 end
 local function restoreSavedProfile(player: Player)
     local profile=persistentProfiles[player]
@@ -240,6 +252,8 @@ local function loadHatchProfile(player: Player)
     end)
 end
 local scoutModels: {[Player]: Model} = {}
+-- GUARD forms protect real teammates from actual neutral mob impacts, not PvP.
+local evolutionGuards: {[Player]: {untilAt: number,hits: number}} = {}
 local scoutActivitySerial: {[Player]: number} = {}
 local SCOUT_DURATION=5
 local SCOUT_MAX_TEAM=3
@@ -763,6 +777,17 @@ snapshotFor = function(player: Player)
     local p=progressionProfile[player]
     local r=progressionRound[player]
     local powerState=earnedPower[player]
+    local evo=if profile and persistenceState[player]=="SAVED"
+        and player.UserId>0 then
+        PersistentHatch.toEvolutionProfile(profile,player.UserId) else nil
+    local evoForm=if evo and profile
+        then Evolution.form(evo,profile.equipped,profile.owned) else nil
+    local evoMastery=if profile and profile.progress and profile.progress.mastery
+        then profile.progress.mastery[profile.equipped] else nil
+    local evoNext=if evo and profile and profile.progress
+        then Evolution.nextEvolution(evo,profile.equipped,profile.owned,
+            profile.progress.level,if evoMastery then evoMastery.level else 1)
+        else nil
     local masteryItem=if r and type(r.equippedItemId)=="string" then r.equippedItemId
         else selected
     local mastery=if p and p.mastery and p.mastery[masteryItem]
@@ -826,6 +851,19 @@ snapshotFor = function(player: Player)
         powerSecondsLeft = if powerState and powerState.awakeningEndsAt
             then math.max(0,powerState.awakeningEndsAt-powerSecond()) else 0,
         powerMinionMultiplier = earnedDamageMultiplier(player,"MINION"),
+        -- Real canonical DEV DataStore state only. No fake evolution stage.
+        evoEnabled = RunService:IsStudio() and evo~=nil,
+        evoPending = evolutionPending[player]==true,
+        evoStage = if evoForm then evoForm.stage else 0,
+        evoBranch = if evoForm then evoForm.branch else "NONE",
+        evoFormId = if evoForm then evoForm.formId else "",
+        evoFragments = if evo then evo.fragments else 0,
+        evoNextStage = if evoNext and not evoNext.complete then evoNext.toStage else 0,
+        evoNextCost = if evoNext and not evoNext.complete then evoNext.fragmentCost else 0,
+        evoCanUpgrade = evoNext~=nil and evoNext.complete==false
+            and evoNext.available==true,
+        evoBranchChoice = evoNext~=nil and evoNext.needsChoice==true,
+        evoCombatActive = evoForm~=nil and evoForm.stage>=2,
         -- Read-only view; never accepts mob hit or net outcome from the client.
         musouActive = RunService:IsStudio() and match.phase=="ACTIVE",
         musouMobCount = horde:livingCount(),
@@ -978,6 +1016,7 @@ end
 -- Free Hatch -> actual BEAST scout thin authoritative server-only adapter.
 -- One existing Remote and single original Game owns epoch, eligibility and ability.
 local function cleanupScout(player: Player)
+    evolutionGuards[player]=nil
     scoutActivitySerial[player]=(scoutActivitySerial[player] or 0)+1
     local old=scoutModels[player]
     scoutModels[player]=nil
@@ -1025,8 +1064,17 @@ local function spawnActualScout(player: Player,token: any)
     end
     if teamCountActive>=SCOUT_MAX_TEAM or scoutModels[player]~=nil then return false end
     local model=Instance.new("Model")
-    model.Name="EGG_RUMBLE_OWNED_REAL_SCOUT"
-    local color=if token.cosmetic=="star" then Color3.fromRGB(255,210,86)
+    local evolutionForm=savedEvolutionForm(player) -- verified saved and equipped item
+    local stage=if evolutionForm then evolutionForm.stage else 0
+    local branch=if evolutionForm then evolutionForm.branch else "NONE"
+    local scale=if stage>=3 then 1.65 elseif stage>=2 then 1.3
+        elseif stage>=1 then 1.12 else 1
+    model.Name=if evolutionForm then "EVOLVED_REAL_SCOUT_"..evolutionForm.formId
+        else "EGG_RUMBLE_OWNED_REAL_SCOUT"
+    local color=if stage>=3 then Color3.fromRGB(255,211,80)
+        elseif stage>=2 and branch=="ASSAULT" then Color3.fromRGB(239,91,76)
+        elseif stage>=2 and branch=="GUARD" then Color3.fromRGB(89,171,250)
+        elseif token.cosmetic=="star" then Color3.fromRGB(255,210,86)
         elseif token.cosmetic=="forest" then Color3.fromRGB(89,230,146)
         else Color3.fromRGB(175,220,250)
     local function piece(name:string,shape:Enum.PartType,size:Vector3,transparency:number): Part
@@ -1042,10 +1090,16 @@ local function spawnActualScout(player: Player,token: any)
         part.Parent=model
         return part
     end
-    local body=piece("FriendlyScoutBody",Enum.PartType.Ball,Vector3.new(2.7,2.7,2.7),.1)
-    local left=piece("LeftWing",Enum.PartType.Block,Vector3.new(1.8,.35,.95),.2)
-    local right=piece("RightWing",Enum.PartType.Block,Vector3.new(1.8,.35,.95),.2)
-    local eye=piece("ForwardEye",Enum.PartType.Ball,Vector3.new(.7,.7,.7),0)
+    local body=piece("FriendlyScoutBody",Enum.PartType.Ball,Vector3.new(2.7,2.7,2.7)*scale,.1)
+    local left=piece("LeftWing",Enum.PartType.Block,Vector3.new(1.8,.35,.95)*scale,.2)
+    local right=piece("RightWing",Enum.PartType.Block,Vector3.new(1.8,.35,.95)*scale,.2)
+    local eye=piece("ForwardEye",Enum.PartType.Ball,Vector3.new(.7,.7,.7)*scale,0)
+    local evolvedAura: Part?=nil
+    if stage>=2 then
+        evolvedAura=piece(if branch=="GUARD" then "REAL_GUARD_SHIELD"
+            else "REAL_ASSAULT_AURA",Enum.PartType.Ball,
+            Vector3.new(4.5,4.5,4.5)*scale,.72)
+    end
     eye.Color=Color3.fromRGB(255,255,255)
     local beam=piece("LiveEnemyCarrierScanBeam",Enum.PartType.Block,Vector3.new(.16,.16,1),.42)
     model.PrimaryPart=body
@@ -1054,7 +1108,14 @@ local function spawnActualScout(player: Player,token: any)
     scoutActivitySerial[player]=(scoutActivitySerial[player] or 0)+1
     local generation=scoutActivitySerial[player]
     local epoch=match.serial
+    -- The only H1 Game owns both actual abilities; no new Remote or scheduler
+    -- beyond the existing timed scout lifecycle.
+    if stage>=2 and branch=="GUARD" then
+        evolutionGuards[player]={untilAt=serverNow()+8,
+            hits=if stage>=3 then 5 else 3}
+    end
     task.spawn(function()
+        local nextEvolvedStrike=0
         local highlighted: Highlight?=nil
         local t=0
         while t<SCOUT_DURATION and scoutModels[player]==model
@@ -1065,9 +1126,23 @@ local function spawnActualScout(player: Player,token: any)
             local anchor=currentRoot.Position+Vector3.new(0,4.5,0)
                 +currentRoot.CFrame.LookVector*3.5
             body.CFrame=CFrame.new(anchor)
-            left.CFrame=body.CFrame*CFrame.new(-1.7,.1,0)
-            right.CFrame=body.CFrame*CFrame.new(1.7,.1,0)
-            eye.CFrame=body.CFrame*CFrame.new(0,0,-1.25)
+            left.CFrame=body.CFrame*CFrame.new(-1.7*scale,.1,0)
+            right.CFrame=body.CFrame*CFrame.new(1.7*scale,.1,0)
+            eye.CFrame=body.CFrame*CFrame.new(0,0,-1.25*scale)
+            if evolvedAura then evolvedAura.CFrame=body.CFrame end
+            if stage>=2 and branch=="ASSAULT"
+                and serverNow()>=nextEvolvedStrike then
+                -- Existing server horde:hit authority, PvE ONLY. Do not stack
+                -- permanent evolution with #285 PvP multiplier or award kill XP.
+                local hits=horde:hit(anchor,currentRoot.CFrame.LookVector,
+                    if stage>=3 then 40 else 26,serverNow(),player.Character)
+                if hits>0 then
+                    mobImpactSeq[player]=(mobImpactSeq[player] or 0)+1
+                    mobLastHits[player]=hits
+                    mobLastKOs[player]=0
+                end
+                nextEvolvedStrike=serverNow()+12
+            end
             local target,character=visibleCarrierTarget(player,currentRoot)
             if target and character then
                 if highlighted and highlighted.Adornee~=character then highlighted:Destroy();highlighted=nil end
@@ -1647,6 +1722,58 @@ local function applyEarnedAwaken(player: Player,data)
     broadcast()
 end
 
+local function applyEvolveScout(player: Player,data)
+    if type(data)~="table" or data.action~="EVOLVE_SCOUT" then return end
+    if not Rules.validSeq(data.seq,lastSeq[player] or 0) then return end
+    lastSeq[player]=data.seq
+    if not RunService:IsStudio() or match.phase~="LOBBY"
+        or evolutionPending[player]==true or not canWriteProfile(player)
+        or getTeamName(player)=="NONE" then return end
+    -- Client chooses only a branch for the equipped item. No item/level/shard,
+    -- receipt, target, stat, XP, or damage is accepted from client.
+    local choice=data.role
+    if choice~="NONE" and choice~="ASSAULT" and choice~="GUARD" then return end
+    local raw=persistentProfiles[player]
+    local evo=if raw then PersistentHatch.toEvolutionProfile(raw,player.UserId) else nil
+    local mastery=if raw and raw.progress and raw.progress.mastery
+        then raw.progress.mastery[raw.equipped] else nil
+    local nextStage=if evo and raw and raw.progress
+        then Evolution.nextEvolution(evo,raw.equipped,raw.owned,
+            raw.progress.level,if mastery then mastery.level else 1) else nil
+    if not nextStage or nextStage.complete==true
+        or nextStage.available~=true
+        or (nextStage.needsChoice and choice=="NONE")
+        or (not nextStage.needsChoice and choice~="NONE") then return end
+    local requestId="E"..HttpService:GenerateGUID(false)
+    evolutionPending[player]=true
+    outstandingWrites+=1
+    task.spawn(function()
+        local success=false
+        local updated=nil
+        for attempt=1,3 do
+            local ok,record=PersistentHatch.evolve(studioHatchStore,
+                player.UserId,requestId,choice)
+            if ok then success=true;updated=record;break end
+            if attempt<3 then task.wait(attempt*.5) end
+        end
+        if player.Parent==Players then
+            if success and updated then
+                local prior=persistentProfiles[player]
+                if not prior or updated.revision>=prior.revision then
+                    persistentProfiles[player]=updated
+                end
+                persistenceState[player]="SAVED"
+            else
+                persistenceState[player]="SAVE_FAILED"
+                warn("P0D_EVOLUTION_SAVE_UNCONFIRMED",player.UserId)
+            end
+            evolutionPending[player]=nil
+            broadcast()
+        end
+        outstandingWrites-=1
+    end)
+end
+
 local function applyModeVote(player: Player,data)
     if type(data)~="table" or data.action~="MODE_VOTE" then return end
     if not Rules.validSeq(data.seq,lastSeq[player] or 0) then return end
@@ -1673,6 +1800,7 @@ remote.OnServerEvent:Connect(function(player: Player, data)
     elseif data.action == "ACTIVATE_SCOUT" then applyActualScout(player,data)
     elseif data.action == "NET_THROW" then applyNet(player,data)
     elseif data.action == "AWAKEN_POWER" then applyEarnedAwaken(player,data)
+    elseif data.action == "EVOLVE_SCOUT" then applyEvolveScout(player,data)
     elseif data.action == "BREAK_FREE" or data.action == "RESCUE" then
         applyBreakOrRescue(player,data)
     end
@@ -1728,6 +1856,7 @@ Players.PlayerRemoving:Connect(function(player)
     progressionEvents[player]=nil
     progressionStatus[player]=nil
     progressionLastAward[player]=nil
+    evolutionPending[player]=nil
     local state=earnedPower[player]
     if state then Power.endRound(state) end
     earnedPower[player]=nil
@@ -1792,9 +1921,21 @@ local function tickRound()
     if RunService:IsStudio() and match.phase=="ACTIVE" then
         for _,impact in ipairs(horde:tick(now,Players:GetPlayers(),healthy)) do
             local victim=impact.player
-            local ok,_,hum=healthy(victim)
-            if ok and hum and now>=(invulnUntil[victim] or 0) then
-                hum:TakeDamage(impact.damage)
+            local ok,victimRoot,hum=healthy(victim)
+            if ok and hum and victimRoot and now>=(invulnUntil[victim] or 0) then
+                local blocked=false
+                for owner,shield in pairs(evolutionGuards) do
+                    local ownerOk,ownerRoot=healthy(owner)
+                    if ownerOk and ownerRoot
+                        and shield.hits>0 and now<shield.untilAt
+                        and getTeamName(owner)==getTeamName(victim)
+                        and (victimRoot.Position-ownerRoot.Position).Magnitude<=13 then
+                        shield.hits-=1
+                        blocked=true
+                        break
+                    end
+                end
+                if not blocked then hum:TakeDamage(impact.damage) end
             end
         end
     end
