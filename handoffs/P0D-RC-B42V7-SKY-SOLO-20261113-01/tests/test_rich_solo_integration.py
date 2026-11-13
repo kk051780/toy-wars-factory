@@ -10,7 +10,7 @@ GAME="21b866e801a53ba7ebd66132ae55fe28608750d6"
 HORDE="fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 SKY="0a6360392f4384dc2f0ab1e9afc1d840d66a22b8"
 SOLO="de0e0df12346de2b4e7b607c74eddaaac693dc99"
-AUDIT="1fadb6f3b796e33335267653b1ce3f414401df13"
+AUDIT="b09e5fa2b3374cb88cad789b2c4966d4c777b3ef"
 
 def blob(raw):
     return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
@@ -114,7 +114,8 @@ class RichSoloIntegration(unittest.TestCase):
         self.assertIn('if not RunService:IsStudio() then return end',text)
         self.assertIn('[P0D_STUDIO_FUN_CHECK]',text)
         for marker in ("PHASE", "FIRST90", "EGG_CARRIED",
-                       "SCORE_CONFIRMED", "RESULT", "SKY_SOURCE", "BLOCKED"):
+                       "SCORE_CONFIRMED", "RESULT", "SKY_SOURCE", "BLOCKED",
+                       "SKY_WITH_EGG", "SCORE_AFTER_SKY"):
             with self.subTest(marker=marker):
                 self.assertIn('"'+marker+'"',text)
         for forbidden in ('FireServer(', 'OnServerEvent:Connect(',
@@ -123,6 +124,16 @@ class RichSoloIntegration(unittest.TestCase):
                 self.assertNotIn(forbidden,text)
         self.assertEqual(text.count('remote.OnClientEvent:Connect('),1)
         self.assertIn('if n>=110 then return end',text)
+        self.assertIn('4/4',text)
+        self.assertIn('HumanoidRootPart',text)
+        self.assertIn('hum.FloorMaterial~=Enum.Material.Air',text)
+        self.assertIn('activeSerial==lastSerial',text)
+        self.assertIn('skyWithEggSerial==serial and activeSerial==serial',text)
+        self.assertIn('continuity NOT_PROVEN',text)
+        self.assertEqual(self.receipt["audit_stage_checklist"],
+                         ["ACTIVE","EGG_CARRIED","SKY_WITH_EGG","SCORE_AFTER_SKY"])
+        self.assertEqual(text.count('Instance.new("ScreenGui")'),1)
+        self.assertIn('if not RunService:IsStudio() then return end',text)
 
     def test_old_hud_and_world_remain_byte_identical(self):
         for path in ["client/HUD.client.luau","server/H1FunWorld.server.luau",
