@@ -1,0 +1,107 @@
+name: P0D Product Studio neutral beast physical choice full H1 game private build
+on:
+  push:
+    branches:
+      - feature/p0d-studio-neutral-gate-beast-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  neutral-beast-real-game:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 24
+    env:
+      OWN: handoffs/P0D-STUDIO-NEUTRAL-GATE-BEAST-20261113-01
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout immutable author game and separate new S2 monster scripts
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Protect full original H1 game and official RC
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '8f2a4aed7f6483f0bd00e31fcd733a823aa5c008^{commit}'
+          test -z "$(git diff --name-only 8f2a4aed7f6483f0bd00e31fcd733a823aa5c008 HEAD -- releases/P0D_S1_KIDS_RC01 handoffs/P0D-H1-COMPOSITE-20261113-01 handoffs/P0D-H1-FAST-ROUTES-WITH-UX-20261113-01)"
+      - name: Fail closed if 2 original new server Luau sources changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/tools/assemble.py" --check-input
+      - name: Reassemble one original entire 28-source H1 game plus 2 real new server scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/tools/assemble.py" --assemble
+          test -s "$OWN/dist/TRAP_RAIDERS_H2_GATE_BEAST_STUDIO_ONLY/SOURCE_LOCK.json"
+      - name: Download immutable SHA256-confirmed Rojo 7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/beast_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/beast_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile,stat
+          with zipfile.ZipFile('/tmp/beast_rojo.zip') as z:
+              a=[v for v in z.namelist() if v.rsplit('/',1)[-1]=='rojo']
+              assert len(a)==1
+              p=Path('/tmp/beast_rojo')
+              p.write_bytes(z.read(a[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/beast_rojo --version | grep -F 7.7.1
+      - name: Build genuine unpublished entire 30-Luau single-game Rojo Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_beast
+          /tmp/beast_rojo build "$OWN/dist/TRAP_RAIDERS_H2_GATE_BEAST_STUDIO_ONLY/default.project.json" -o /tmp/p0d_beast/TRAP_RAIDERS_H2_NEUTRAL_BEAST_PRIVATE_DO_NOT_PUBLISH.rbxlx
+          test -s /tmp/p0d_beast/TRAP_RAIDERS_H2_NEUTRAL_BEAST_PRIVATE_DO_NOT_PUBLISH.rbxlx
+          python3 -B "$OWN/tools/assemble.py" --verify-xml /tmp/p0d_beast/TRAP_RAIDERS_H2_NEUTRAL_BEAST_PRIVATE_DO_NOT_PUBLISH.rbxlx --receipt /tmp/p0d_beast/H2_NEUTRAL_BEAST_BYTE_EXACT_RECEIPT.json
+      - name: Checkout pinned genuine native Luau compiler and runtime
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_neutral_beast_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build native Luau from immutable source revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_neutral_beast_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_neutral_beast_luau -B /tmp/p0d_beast_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_beast_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Compile EVERY actual whole game Luau 30 of 30
+        shell: bash
+        run: |
+          set -euo pipefail
+          n=0
+          while IFS= read -r -d '' source; do
+              /tmp/p0d_beast_native/luau-compile "$source" >/dev/null
+              n=$((n+1))
+          done < <(find "$OWN/dist/TRAP_RAIDERS_H2_GATE_BEAST_STUDIO_ONLY/src" -name '*.luau' -print0)
+          test "$n" -eq 30
+          echo 'H2_BEAST_REAL_GAME_NATIVE_COMPILE_30_OF_30_PASS'
+      - name: Actually execute real Luau monster alert and non-trapping state machine and mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/tests/test_actual_gate_policy.py" --luau /tmp/p0d_beast_native/luau | tee /tmp/p0d_beast/H2_NEUTRAL_BEAST_NATIVE_POLICY_LOG.txt
+          grep -E '^P0D_NEUTRAL_BEAST_NATIVE_POLICY_PASS_[0-9]+$' /tmp/p0d_beast/H2_NEUTRAL_BEAST_NATIVE_POLICY_LOG.txt
+          grep -F 'P0D_NEUTRAL_BEAST_NATIVE_MUTANTS_PASS_8' /tmp/p0d_beast/H2_NEUTRAL_BEAST_NATIVE_POLICY_LOG.txt
+      - name: Upload original optional private game and actual native policy logs NEVER publish
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-H2-NEUTRAL-GATE-BEAST-REAL-30-LUAU-STUDIO-ONLY
+          path: |
+            /tmp/p0d_beast/TRAP_RAIDERS_H2_NEUTRAL_BEAST_PRIVATE_DO_NOT_PUBLISH.rbxlx
+            /tmp/p0d_beast/H2_NEUTRAL_BEAST_BYTE_EXACT_RECEIPT.json
+            /tmp/p0d_beast/H2_NEUTRAL_BEAST_NATIVE_POLICY_LOG.txt
+          retention-days: 7
+          if-no-files-found: error
