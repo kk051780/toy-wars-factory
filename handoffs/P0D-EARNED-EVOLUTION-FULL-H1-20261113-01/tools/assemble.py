@@ -65,7 +65,8 @@ def assemble():
  assert '*earnedDamageMultiplier(player,"PLAYER")' in game
  assert 'local hits=horde:hit(anchor,currentRoot.CFrame.LookVector,' in game
  assert 'if not blocked then hum:TakeDamage(impact.damage) end' in game
- assert "m.attackAt=now+1.5 -- fair re-entry" in horde\n assert "MUSOU_SOURCE_MAP_ARENA_REQUIRED" in horde
+ assert "m.attackAt=now+1.5 -- fair re-entry" in horde
+ assert "MUSOU_SOURCE_MAP_ARENA_REQUIRED" in horde
  assert "if mobHits>0 then return end" in game
  assert "Evolution.creditRound(evo,data.id,round.objectiveEvents" in store
  assert "return store:UpdateAsync(key,function(original)" in store
