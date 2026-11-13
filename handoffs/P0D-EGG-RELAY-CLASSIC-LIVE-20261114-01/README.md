@@ -55,3 +55,13 @@ While preparing the candidate, sole #220 RC writer integrated `SCOUT_SPECIES_V1`
 
 **Scope limit:** This is **NOT official canonical RC-adopted**. Sole #220 must source-admit with reversible OFF and verify that exact newer canonical HEAD; engine Studio play, two clients, mobile, real DEV DataStore rejoin and owner FUN have not been tested. Five-egg H2 relay remains separate. No main push/merge, publish or paid features.
 
+
+## V6: actual canonical Game pass handler native gameplay test proven
+
+The preceding run only compiled all sources and exercised the standalone policy. New author source `tools/generate_native_game_harness.py` extracts the **exact live** `applyClassicEggRelay` implementation and `classicRelayEnabled` from the assembled 58-script Game, loads the unchanged original pure EggRelayPolicy and runs that real function in pinned native Luau using deterministic mocked Roblox services. The suite has **30/30 transaction cases**, including successful transfers, distance/vertical thresholds, fake Studio negative UserIds, LOS blocked, dead/stunned/restrained, carried-egg conservation, stale epoch and transfer seq, replayed request, 12s cooldown/expiry, runtime false, published non-Studio false, H2 mode forbidden and immediate bounceback denial.
+
+- FIRST real **30/30 native Game** success: [GitHub Actions 43513102026](https://github.com/kk051780/toy-wars-factory/actions/runs/43513102026), source SHA `7c14ba74c1a6118d2a568d372b81356141ad95d9`, Python11/11, policy41/41, 58/58 native source, source-exact Rojo all PASS; artifact14078064988.
+- Optimized same-source repeat **SUCCESS**: [GitHub Actions 43513482289](https://github.com/kk051780/toy-wars-factory/actions/runs/43513482289), SHA `c3b92a35ffd8ac8ca9bb528bc2dae44ce9c13190`, artifact [14079032545](https://github.com/kk051780/toy-wars-factory/actions/runs/43513482289/artifacts/14079032545); identical 11/41/30/58/native-Rojo PASS. Pinned Luau CLI binary cache was first populated; subsequent cache-hit timing is not yet verified.
+- CI now triggers on **code/test/manifest or workflow** changes, not README/QA receipt-only edits. See `QA_NATIVE_GAME30_PASS.json` for exact provenance, earlier failed red runs and their test-only fixes.
+
+**Not yet proven:** Roblox Studio gameplay/physics and actual two-client pass, Android controls, DEV save/rejoin, player FUN, any H2 five-egg pass, or official #220 RC adoption. One Game/Remote/Store authority, no public/main/paid writes.
