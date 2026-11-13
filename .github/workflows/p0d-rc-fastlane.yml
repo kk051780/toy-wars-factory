@@ -161,7 +161,7 @@ jobs:
               lock=json.load(open(base/'SOURCE_LOCK.json',encoding='utf8'))
               assert (lock.get('rc_overlay',{}).get('id')=='V4_IDLE_FRIEND_SAFE_FIX')==live
               assert lock['blobs']=={f.relative_to(base/'src').as_posix():
-                            hashlib.sha1(b'blob '+str(len(f.read_bytes())).encode()+b'\\0'+f.read_bytes()).hexdigest()
+                            hashlib.sha1(b'blob '+str(len(f.read_bytes())).encode()+bytes([0])+f.read_bytes()).hexdigest()
                             for f in (base/'src').rglob('*.luau')},'RC_PROFILE_SOURCE_LOCK'
               if live:
                   assert lock['rc_overlay']['untouched_original_game_scripts']==49
