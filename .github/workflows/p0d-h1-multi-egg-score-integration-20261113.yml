@@ -1,0 +1,109 @@
+name: P0D actual H1 full game five-egg SCORE ON and original H0 OFF private Studio
+on:
+  push:
+    branches:
+      - integration/p0d-h1-multi-egg-five-score-studio-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-H1-one-Game-score-mode:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 26
+    env:
+      OWN: handoffs/P0D-H1-MULTI-EGG-SCORE-INTEGRATED-20261113-01
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout original whole H1 private game and isolated additive H2
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Fail closed if source owners or RC/Game immutable base overwritten
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '1f63a529dc512487145cea86557d38cec7f19e03^{commit}'
+          test -z "$(git diff --name-only 1f63a529dc512487145cea86557d38cec7f19e03 HEAD -- releases/P0D_S1_KIDS_RC01 handoffs/P0D-H1-COMPOSITE-20261113-01 handoffs/P0D-H1-FAST-ROUTES-WITH-UX-20261113-01 handoffs/P0D-H1-FAST-JOY-COMBINED-20261113-01)"
+      - name: Reassemble exact original full H1 30 into H2 33 Luau H0 OFF and H2 ON
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/tools/assemble.py" --assemble
+          python3 -B "$OWN/tests/test_full_game_fusion.py" | tee /tmp/p0d_h2_full_source_contract.log
+      - name: Obtain checksum pinned Rojo compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_h2_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_h2_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile,stat
+          with zipfile.ZipFile('/tmp/p0d_h2_rojo.zip') as z:
+              a=[x for x in z.namelist() if x.rsplit('/',1)[-1]=='rojo']
+              assert len(a)==1
+              p=Path('/tmp/p0d_h2_rojo')
+              p.write_bytes(z.read(a[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_h2_rojo --version | grep -F '7.7.1'
+      - name: Build actual complete separate H0 OFF and H2 SCORE ON Roblox Studio places
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_h2_score
+          for mode in OFF ON; do
+              p="$OWN/dist/TRAP_RAIDERS_H2_MULTI_EGG_\${mode}_PRIVATE_STUDIO"
+              dest="/tmp/p0d_h2_score/TRAP_RAIDERS_H1_MULTI_EGG_\${mode}_PRIVATE_DO_NOT_PUBLISH.rbxlx"
+              /tmp/p0d_h2_rojo build "$p/default.project.json" -o "$dest"
+              test -s "$dest"
+              python3 -B "$OWN/tools/assemble.py" --verify-xml "$dest" --mode "$mode" --receipt "/tmp/p0d_h2_score/H1_SCORE_\${mode}_EXACT_SOURCE_RECEIPT.json"
+          done
+      - name: Checkout exact original upstream Luau for true native source compilation
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_h2_full_game_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Compile native Luau compiler and runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_h2_full_game_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_h2_full_game_luau -B /tmp/p0d_h2_full_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_h2_full_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Compile all 33 exact actual H1 Lua scripts for BOTH score OFF and ON
+        shell: bash
+        run: |
+          set -euo pipefail
+          for mode in OFF ON; do
+              total=0
+              while IFS= read -r -d '' src; do
+                  /tmp/p0d_h2_full_native/luau-compile "$src" >/dev/null
+                  total=$((total+1))
+              done < <(find "$OWN/dist/TRAP_RAIDERS_H2_MULTI_EGG_\${mode}_PRIVATE_STUDIO/src" -name '*.luau' -print0)
+              test "$total" = 33
+              echo "P0D_H2_ACTUAL_FULL_H1_NATIVE_COMPILE_\${mode}_33_OF_33_PASS"
+          done
+      - name: Execute actual mounted original multi-egg Lua 124 assertions and ten hostile mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/tests/run_actual_multi_egg_luau.py" --luau /tmp/p0d_h2_full_native/luau | tee /tmp/p0d_h2_score/MOUNTED_ORIGINAL_MULTI_EGG_NATIVE_LOG.txt
+          grep -F 'P0D_MULTI_EGG_REAL_LUAU_POLICY_PASS_124' /tmp/p0d_h2_score/MOUNTED_ORIGINAL_MULTI_EGG_NATIVE_LOG.txt
+          grep -F 'P0D_MULTI_EGG_NATIVE_MUTANTS_PASS_10' /tmp/p0d_h2_score/MOUNTED_ORIGINAL_MULTI_EGG_NATIVE_LOG.txt
+      - name: Persist private actual full existing H1 score ON/OFF variants and original-source proofs
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-H1-ORIGINAL-FULL-GAME-FIVE-EGG-SCORE-OFF-ON-33-LUAU-STUDIO-ONLY
+          path: |
+            /tmp/p0d_h2_score/*.rbxlx
+            /tmp/p0d_h2_score/*RECEIPT.json
+            /tmp/p0d_h2_score/MOUNTED_ORIGINAL_MULTI_EGG_NATIVE_LOG.txt
+            /tmp/p0d_h2_full_source_contract.log
+          retention-days: 7
+          if-no-files-found: error
