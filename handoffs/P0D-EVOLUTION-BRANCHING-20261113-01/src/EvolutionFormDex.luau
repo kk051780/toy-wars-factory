@@ -39,6 +39,9 @@ local function validReceipt(receipt)
         if stage==2 and (receipt.choice~="ASSAULT" and receipt.choice~="GUARD") then
             return false
         end
+        if stage==2 and receipt.choice~=receipt.branch then
+            return false
+        end
         if stage==3 and receipt.choice~="NONE" then return false end
     else
         if stage<2 or receipt.choice~=receipt.branch then return false end
