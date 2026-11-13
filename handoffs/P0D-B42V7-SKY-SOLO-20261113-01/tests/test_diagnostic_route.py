@@ -17,7 +17,12 @@ def safe(s):
       and all(f not in s for f in forbid)
       and s.count("remote.OnClientEvent:Connect(")==1
       and "skyWithEggSerial==serial and activeSerial==serial" in s
-      and "hum.FloorMaterial~=Enum.Material.Air" in s)
+      and "hum.FloorMaterial~=Enum.Material.Air" in s
+      and "workspace:Raycast(pos,Vector3.new(0,-9,0),rayParams)" in s
+      and "hit.Instance==deck" in s
+      and "local previousCarry=lastCarry" in s
+      and "qualifiesSkyScore(scoreRose,carry,previousCarry" in s
+      and "invalidatesSkyRoute(skyWithEggSerial==serial" in s)
 
 class OriginalSourceAndAudit(unittest.TestCase):
     def test_source_count_43(self):
@@ -85,8 +90,29 @@ class OriginalSourceAndAudit(unittest.TestCase):
         self.assertFalse(safe(AUDIT.replace("hum.FloorMaterial~=Enum.Material.Air","true")))
     def test_fails_if_extra_remote_listener(self):
         self.assertFalse(safe(AUDIT+' remote.OnClientEvent:Connect(function() end)'))
+    def test_deck_requires_exact_physical_raycast(self):
+        self.assertIn("rayParams.FilterDescendantsInstances={character}",AUDIT)
+        self.assertIn("if hit and hit.Instance==deck then",AUDIT)
+    def test_drop_before_score_clears_sky_progress(self):
+        self.assertIn("local previousCarry=lastCarry",AUDIT)
+        self.assertIn("local validSameEggDeposit=qualifiesSkyScore",AUDIT)
+        self.assertIn('log("ROUTE_RESET"',AUDIT)
+        self.assertIn("skyCarryEgg=\"\"",AUDIT)
+    def test_previous_carry_read_before_overwrite(self):
+        self.assertLess(AUDIT.index("local previousCarry=lastCarry"),AUDIT.index("lastCarry=carry"))
+    def test_false_score_blocked_for_multiple_players(self):
+        self.assertIn("population==1",AUDIT)
+        self.assertIn('log("SCORE_NOT_QUALIFIED"',AUDIT)
+    def test_false_score_blocked_for_respawn(self):
+        self.assertIn("player.Character==skyCarryCharacter",AUDIT)
+    def test_fails_if_exact_deck_raycast_replaced(self):
+        self.assertFalse(safe(AUDIT.replace("hit.Instance==deck","true")))
+    def test_fails_if_previous_carry_ignored(self):
+        self.assertFalse(safe(AUDIT.replace("qualifiesSkyScore(scoreRose,carry,previousCarry","qualifiesSkyScore(scoreRose,carry,lastCarry")))
+    def test_fails_if_route_invalidated_ignored(self):
+        self.assertFalse(safe(AUDIT.replace("invalidatesSkyRoute(skyWithEggSerial==serial","false or (skyWithEggSerial==serial")))
     def test_user_facing_distinction(self):
-        self.assertIn("continuity NOT_PROVEN",AUDIT)
+        self.assertIn("real walking/FUN still owner-verified",AUDIT)
         self.assertIn("Owner must physically walk/carry/play",AUDIT)
 
 if __name__=="__main__":unittest.main(verbosity=2)
