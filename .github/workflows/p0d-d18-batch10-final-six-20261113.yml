@@ -1,0 +1,116 @@
+name: P0D D18 Batch10 six original 3D source-native preview QA
+on:
+  push:
+    branches:
+      - feature/p0d-d18-batch10-final-six-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  batch10:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      D18: handoffs/P0D-D18-BATCH10-FINAL-SIX-20261113-01
+    steps:
+      - name: Checkout canonical previous 60 and isolated Batch10 six originals
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Execute canonical 72 registry and actual 6 3D source safety Python tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$D18/tools/verify_batch10.py"
+          python3 -m unittest discover -s "$D18/tests" -p 'test_*.py' -v
+          echo "D18_BATCH10_SIX_ORIGINAL_MODELS_REGISTRY_66_72_AND_NEGATIVE_TESTS_PASS"
+      - name: Fetch official pinned Rojo 7.7.1 with exact binary archive hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/d18_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/d18_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import pathlib,zipfile,stat
+          with zipfile.ZipFile("/tmp/d18_rojo.zip") as z:
+              n=[p for p in z.namelist() if p.rsplit("/",1)[-1]=="rojo"]
+              assert len(n)==1,n
+              p=pathlib.Path("/tmp/d18_rojo")
+              p.write_bytes(z.read(n[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/d18_rojo --version | grep -F 7.7.1
+      - name: Real Rojo preview-only project and original 4/4 embedded Luau byte integrity
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/d18_batch10_out
+          /tmp/d18_rojo build "$D18/default.project.json" -o /tmp/d18_batch10_out/P0D_D18_BATCH10_DISABLED_PRIVATE_PREVIEW.rbxlx
+          python3 - <<'PY'
+          import collections,hashlib,json,os,pathlib,xml.etree.ElementTree as ET
+          root=pathlib.Path(os.environ["D18"])
+          sources=list((root/"src").rglob("*.luau"))
+          assert len(sources)==4,len(sources)
+          place=pathlib.Path("/tmp/d18_batch10_out/P0D_D18_BATCH10_DISABLED_PRIVATE_PREVIEW.rbxlx")
+          xml=ET.fromstring(place.read_bytes())
+          actual=[];classes=collections.Counter()
+          for item in xml.iter("Item"):
+              kind=item.attrib.get("class")
+              if kind not in ("ModuleScript","LocalScript","Script"):continue
+              src=item.find("./Properties/string[@name='Source']")
+              if src is None:continue
+              actual.append(src.text or "")
+              classes[kind]+=1
+          assert classes=={"ModuleScript":2,"LocalScript":2},classes
+          assert collections.Counter(actual)==collections.Counter(p.read_text(encoding="utf8") for p in sources),len(actual)
+          receipt={
+              "stage":"PRELAUNCH_NONCOMBAT_DISABLED_PREVIEW_ONLY",
+              "source_models_canonical":6,
+              "prior_models_source":66,"after_batch_models_source":72,
+              "official_rc_new_model_count":0,"script_count":4,
+              "original_luau_byte_equal":True,"native_luau_compiled":False,
+              "studio_tested":False,"mobile_tested":False,
+              "published":False,"commit":os.environ["GITHUB_SHA"],
+              "place_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
+              "place_bytes":place.stat().st_size
+          }
+          pathlib.Path("/tmp/d18_batch10_out/SOURCE_PROOF.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
+          print("D18_BATCH10_ORIGINAL_4_OF_4_SOURCE_LUAU_REAL_ROJO_XML_PASS",dict(classes))
+          PY
+      - name: Native compiler validates 4 exact original Luau Studio-only gallery sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/d18_batch10_luau
+          git -C /tmp/d18_batch10_luau fetch --depth 1 origin f46d879e28302a430029304f7f6a162aed66f103
+          git -C /tmp/d18_batch10_luau checkout --detach FETCH_HEAD
+          test "$(git -C /tmp/d18_batch10_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S /tmp/d18_batch10_luau -B /tmp/d18_batch10_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/d18_batch10_native --target Luau.Compile.CLI --parallel 4
+          count=0
+          while IFS= read -r -d '' file; do
+              /tmp/d18_batch10_native/luau-compile "$file" >/dev/null
+              count=$((count+1))
+          done < <(find "$D18/src" -name '*.luau' -print0)
+          test "$count" -eq 4
+          python3 - <<'PY'
+          import json,pathlib
+          p=pathlib.Path("/tmp/d18_batch10_out/SOURCE_PROOF.json")
+          d=json.loads(p.read_text(encoding="utf8"))
+          d["native_luau_compiled"]=True
+          p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
+          PY
+          echo D18_BATCH10_4_OF_4_REAL_NATIVE_LUAU_PASS
+      - name: Upload disabled source preview and exact receipt NOT publish
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-D18-BATCH10-FINAL-SIX-DISABLED-STUDIO-ONLY
+          path: |
+            /tmp/d18_batch10_out/P0D_D18_BATCH10_DISABLED_PRIVATE_PREVIEW.rbxlx
+            /tmp/d18_batch10_out/SOURCE_PROOF.json
+          if-no-files-found: error
+          retention-days: 7
