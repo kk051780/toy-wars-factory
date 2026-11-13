@@ -1,0 +1,21 @@
+{
+  "name": "EggRumbleEvolutionOriginalPrivateGallery",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "EvolutionGallery": {
+        "$path": "demo/EvolutionGallery.server.luau"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "EvolutionGalleryCamera": {
+          "$path": "demo/EvolutionGalleryCamera.client.luau"
+        }
+      }
+    }
+  }
+}

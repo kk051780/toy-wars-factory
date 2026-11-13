@@ -1,0 +1,126 @@
+{
+  "schema": "P0D_EVOLUTION_SOURCE_MANIFEST_V6_FORMDEX_COUNTERFEIT_HISTORY_HARDENING",
+  "date_jst": "2026-11-13",
+  "brand": "EGG RAID RUMBLE",
+  "internal_game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "owner_issue": 287,
+  "feature_slice": "P0D-EVOLUTION-BRANCHING-PURE-POLICY-20261113-01",
+  "base_commit": "5e18a52e1e74f10cc1b85ac3b60f695e064bb088",
+  "branch": "feature/p0d-evolution-branching-pure-20261113-01",
+  "state": "SOURCE_LOCKED_AND_STATIC_CHECKED__NEW_FORMDEX_NATIVE_CI_PROOF_PENDING",
+  "official_s1_last_percent": 75,
+  "owner_fun_gate": "NO_GO",
+  "evidence": {
+    "source_readback": "14_GIT_BLOBS_LOCKED_AFTER_THIS_MANIFEST_UPDATE",
+    "formdex_and_gallery_source_checks": "23_OF_23_EXECUTED_V8_SOURCE_CONTRACT_PASS",
+    "historical_core_evolution_native": "98_98_NATIVE_PASS_PRIOR_SHA_ab88a849f5beb1d13933a2968862bd3d2c268a45_RUN_43380269360",
+    "historical_static_tests": "40_40_PASS_PRIOR_SHA_ab88a849f5beb1d13933a2968862bd3d2c268a45_RUN_43380269360",
+    "original_studio_gallery_build": "SOURCE_EXACT_PASS_PRIOR_RUN_43380269360",
+    "original_studio_battle_build": "SOURCE_EXACT_3_OF_3_PASS_PRIOR_RUN_43380269360_BEFORE_FORMDEX",
+    "formdex_native": "NEW_72+_ASSERTION_CALLS_AUTHORED_NOT_VERIFIED_EXECUTED",
+    "updated_studio_battle_source_build": "4_SCRIPTS_NOT_YET_ROJO_VERIFIED",
+    "updated_static_python_tests": "26_AUTHORED_NOT_YET_VERIFIED_EXECUTED",
+    "real_roblox_two_client": "NOT_TESTED",
+    "android_physical": "NOT_TESTED",
+    "real_account_data_store_evolution_save": "NOT_IMPLEMENTED",
+    "official_H1H2_game_formdex": "NOT_IMPLEMENTED",
+    "official_s1_last_percent": 75,
+    "fun_gate": "NO_GO",
+    "draft_qa_pr": "https://github.com/kk051780/toy-wars-factory/pull/289",
+    "new_receipt_cost_and_duplicate_evolve_guards": "CODE_DELIVERED",
+    "new_local_source_invariant_checks": "10_OF_10_EXECUTED_V8_STATIC_SOURCE_PASS",
+    "new_native_luau_FormDex_regressions": "74_CALL_SITES_AUTHORED_NATIVE_RUN_NOT_YET_VERIFIED",
+    "new_FormDex_static_python": "8_AUTHORED_CI_NOT_YET_VERIFIED",
+    "new_all_Python_static": "17_ORIGINAL+26_BATTLE+8_FORMDEX=51_EXPECTED_AUTHORED",
+    "historical_native_core": "98_ACTUAL_PASSED_AT_PRE_FORMDEX_ORIGINAL_COMMIT_ab88a849",
+    "last_actual_original_native_and_Rojo": "https://github.com/kk051780/toy-wars-factory/actions/runs/43380269360",
+    "current_new_native_result": "NOT_VERIFIED",
+    "current_Rojo_for_4_source_battle": "NOT_VERIFIED",
+    "original_single_Game_H1_integration": "NOT_IMPLEMENTED_BY_THIS_LANE",
+    "Android_2client_OWNER_FUN": "NOT_TESTED"
+  },
+  "files": [
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/src/EvolutionRules.luau",
+      "git_blob_sha": "0efca67b41e34917038fdc883c8ad34f3eb3c2e2",
+      "chars": 9984
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/src/EvolutionFormDex.luau",
+      "git_blob_sha": "15f6ea8fd296128e9fe5f26683f28631b7a23e5b",
+      "chars": 7660
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/tests/run_native_evolution.py",
+      "git_blob_sha": "a17e0e78f47de8bde545ae5335cb4ab65c213a6c",
+      "chars": 9468
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/tests/run_native_formdex.py",
+      "git_blob_sha": "b38ab1c345417ca4f96c44913bf322403a355ef0",
+      "chars": 10756
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/demo/EvolutionGallery.server.luau",
+      "git_blob_sha": "1bb7aa7ee1025a278ee3ba36e7a4ae12c9a8df83",
+      "chars": 6623
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/demo/EvolutionGalleryCamera.client.luau",
+      "git_blob_sha": "f1498d7c70d1d90c84bf7c5a2a20de6089208a52",
+      "chars": 2998
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/default.project.json",
+      "git_blob_sha": "5b58f39bcc652a035a85fa40f0f1c705c3b1e9ef",
+      "chars": 532
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/tests/test_project_static.py",
+      "git_blob_sha": "93405ca1e618457d62b1a299fc7591582ea78ea9",
+      "chars": 4256
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/README.md",
+      "git_blob_sha": "c066918e6f06719949a553f94f00799bf4d2abfc",
+      "chars": 13095
+    },
+    {
+      "path": ".github/workflows/p0d-evolution-branching-20261113.yml",
+      "git_blob_sha": "d627845dea8291ae14b8b9accc03b759c4b57b90",
+      "chars": 17579
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/battle/EvolutionCombat.server.luau",
+      "git_blob_sha": "ad04e9a7406d6a265103a2808c3f0847fc8819ba",
+      "chars": 14498
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/battle/EvolutionCombat.client.luau",
+      "git_blob_sha": "7edccb953c129bd927d9d1b4959545e977ff2196",
+      "chars": 5741
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/battle.project.json",
+      "git_blob_sha": "04b5350f4c07deca6ff1dd3c5718052fff9eed1a",
+      "chars": 676
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/tests/test_evolution_battle_static.py",
+      "git_blob_sha": "55d425132310ad33f584ec58eabf37d2f4b0a4de",
+      "chars": 7824
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/tests/test_formdex_static.py",
+      "git_blob_sha": "6689ba769110d77db24912c83bebd8f96683169c",
+      "chars": 2391
+    }
+  ],
+  "notes": [
+    "FormDex new receipt cost checks match EXACT original EvolutionRules on three permanent stages and respec; rejects duplicate original EVOLVE for same item-stage, but accepts legitimate SWITCH historic branches.",
+    "All changes isolated to unique root and own feature-only CI workflow; no Game/Remote/DataStore writes or protected main/RC merges.",
+    "Previous confirmed 98 original native and 40 python tests + 2 Rojo builds are for prior checkpoint only and not new FormDex result.",
+    "QA draft branch is not game release, no real persistence or owner FUN accepted."
+  ]
+}
