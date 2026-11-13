@@ -1,0 +1,164 @@
+{
+  "schema": "P0D_H1_D18_WIND_WALLCLEAR_REAL_UNPUBLISHED_SRC_LOCK_V1",
+  "game_id": "TRAP_RAIDERS",
+  "adoption_id": "P0D-FUN-H1-001",
+  "stage": "PRIVATE_STUDIO_CANDIDATE_NOT_ADOPTED",
+  "source_base": "#252 composite 25 sources SHA 3c537a551e173fffaf0e1039c90d04250313c6d8",
+  "sha_world_review": "2494fa855d77e1ef6dd2c5f8b8d21fbef90fc44a",
+  "sha_d18_guide": "bce72bd3b36f5a331afc939ede6a7779fb9545b9",
+  "original_25_count": 25,
+  "source_count": 28,
+  "patched_world_blob_sha": "cc764b9caaa293ff747489e02e607af4502ddca4",
+  "client_extra_blobs": {
+    "src/client/D18Batch8Catalog.luau": "41079553d2141940fc3fee57b23969e292770614",
+    "src/client/D18MascotGuideRules.luau": "328b8a4d70261e633f163a5e166822a29d7eb1ba",
+    "src/client/D18MascotGuide.client.luau": "39a2e35e4b2e8635d6d87359cd86f783aedf8756"
+  },
+  "source_files": [
+    {
+      "path": "src/client/D18Batch8Catalog.luau",
+      "blob_sha1": "41079553d2141940fc3fee57b23969e292770614",
+      "bytes": 23810
+    },
+    {
+      "path": "src/client/D18MascotGuide.client.luau",
+      "blob_sha1": "39a2e35e4b2e8635d6d87359cd86f783aedf8756",
+      "bytes": 8792
+    },
+    {
+      "path": "src/client/D18MascotGuideRules.luau",
+      "blob_sha1": "328b8a4d70261e633f163a5e166822a29d7eb1ba",
+      "bytes": 1482
+    },
+    {
+      "path": "src/client/FirstMinuteCoach.client.luau",
+      "blob_sha1": "63f7c013c8523cd628d3d2ffe8da5d08b6adfbd9",
+      "bytes": 3865
+    },
+    {
+      "path": "src/client/GoroganVisualPolicy.luau",
+      "blob_sha1": "351bf52e78020de0f879aa74064caf9fb8231ade",
+      "bytes": 4757
+    },
+    {
+      "path": "src/client/HUD.client.luau",
+      "blob_sha1": "6d273404800e1d25fb1405bc52249b3ab47c1b41",
+      "bytes": 10397
+    },
+    {
+      "path": "src/client/S1GoroganStompRing.client.luau",
+      "blob_sha1": "9ccef4453911d384ab7ee835cc5c311a629e6238",
+      "bytes": 6567
+    },
+    {
+      "path": "src/server/CanonicalEventBridge.luau",
+      "blob_sha1": "ce01536e3173e55099c4d6be543f83b9644d1950",
+      "bytes": 10971
+    },
+    {
+      "path": "src/server/ChaosEventCore.luau",
+      "blob_sha1": "ee8d02ae5175d19904d357a530c05faf80b6bf8a",
+      "bytes": 4447
+    },
+    {
+      "path": "src/server/Game.server.luau",
+      "blob_sha1": "adecfee41a594bdd54393050b4890a5733a536ce",
+      "bytes": 33507
+    },
+    {
+      "path": "src/server/GoroganAttackReceiptWindow.luau",
+      "blob_sha1": "bc8e4e954c06c1db8778649a84cda135ff56e9d1",
+      "bytes": 1828
+    },
+    {
+      "path": "src/server/GoroganCombinedRuntime.luau",
+      "blob_sha1": "f10dedf357476e658857131c0843f237825a1c0f",
+      "bytes": 10587
+    },
+    {
+      "path": "src/server/GoroganDamageBoundary.luau",
+      "blob_sha1": "031b0c4a5370a891434de42ada8d76642c080433",
+      "bytes": 4947
+    },
+    {
+      "path": "src/server/GoroganRigDriver.luau",
+      "blob_sha1": "1f6204105be724ca734e2654e42472667a8efcc6",
+      "bytes": 9188
+    },
+    {
+      "path": "src/server/GoroganServerAICore.luau",
+      "blob_sha1": "f0ecf36242f1543eccf915948129f21f99a6bc92",
+      "bytes": 6689
+    },
+    {
+      "path": "src/server/H1FunWorld.server.luau",
+      "blob_sha1": "cc764b9caaa293ff747489e02e607af4502ddca4",
+      "bytes": 6420
+    },
+    {
+      "path": "src/server/LobbyTeamRecovery.luau",
+      "blob_sha1": "db1a369133550bc8356a4ee3ac22b97fcb1b46c4",
+      "bytes": 2240
+    },
+    {
+      "path": "src/server/MapBuilder.luau",
+      "blob_sha1": "94655d019fdf9798fa24a350ebf49f8290465ac0",
+      "bytes": 5130
+    },
+    {
+      "path": "src/server/RareEncounterModels.luau",
+      "blob_sha1": "30594595d91f18f4b870c3c8109c8155f55f78bd",
+      "bytes": 5565
+    },
+    {
+      "path": "src/server/RareEncounterPolicy.luau",
+      "blob_sha1": "52364faac20d4bd92fb6fde54ea0ce7f2ca1a84e",
+      "bytes": 4516
+    },
+    {
+      "path": "src/server/S1CanonicalRoundHost.luau",
+      "blob_sha1": "1808fa630b13ad2be2dfdac188823957530b9086",
+      "bytes": 10214
+    },
+    {
+      "path": "src/server/S1GoroganLiveBindings.luau",
+      "blob_sha1": "9cde26d7806a6ec20cd8648953eb37d1eefdc2c8",
+      "bytes": 13797
+    },
+    {
+      "path": "src/server/S1RaiderWindRules.luau",
+      "blob_sha1": "7d5706774b874759e7ab994dc0654c3ae9a46502",
+      "bytes": 1093
+    },
+    {
+      "path": "src/server/S1Rules.luau",
+      "blob_sha1": "5652b5b43d753c2fcbd27b6c040a34a3642f71ee",
+      "bytes": 2137
+    },
+    {
+      "path": "src/server/S1TrapRules.luau",
+      "blob_sha1": "feabd705e4cfa5483d440e506277080f226343ef",
+      "bytes": 2628
+    },
+    {
+      "path": "src/server/TrustedGoroganActivationMapper.luau",
+      "blob_sha1": "b30aadc41634f77109559e31cff4d63fabeff19a",
+      "bytes": 6684
+    },
+    {
+      "path": "src/shared/Config.luau",
+      "blob_sha1": "62023303118454fa395f6bfce4c3a50552f840da",
+      "bytes": 835
+    },
+    {
+      "path": "src/shared/FirstMinuteModel.luau",
+      "blob_sha1": "d8dda6b1781375612c123f8c83b6f23fe45d09f1",
+      "bytes": 6331
+    }
+  ],
+  "authority": "ONE_ORIGINAL_GAME_SERVER_NO_NEW_REMOTE",
+  "physical_studio_two_client": "NOT_TESTED",
+  "smartphone": "NOT_TESTED",
+  "owner_fun": "NO_GO_PENDING",
+  "official_rc": "NOT_ADOPTED"
+}
