@@ -1,0 +1,52 @@
+{
+  "schema": "P0D_EGG_RELAY_SOURCE_MANIFEST_V1",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "adoption_id": "P0D-EGG-RELAY-001",
+  "status": "SOURCE_POLICY_ONLY_NOT_IN_GAME",
+  "target_release": "S2_OPTIONAL",
+  "source_origin_head": "e76b50fab19bc3d42a6b26c75ae1eb9e1cf0ec45",
+  "source_qa": "PYTHON_REFERENCE_33_33_LOCAL_PASS",
+  "native_luau": "NOT_TESTED",
+  "roblox_studio": "NOT_TESTED",
+  "studio_2client": "NOT_TESTED",
+  "android": "NOT_TESTED",
+  "owner_fun": "NOT_TESTED",
+  "product_selected": false,
+  "official_rc_adopted": false,
+  "no_second_game": true,
+  "no_second_remote": true,
+  "files": [
+    {
+      "path": "src/EggRelayPolicy.luau",
+      "git_blob_sha": "dd5e5e19fb16c79bc54bfdef04c941cde418b0b4",
+      "sha256": "9dd74ba29fec61c9214c2059ce19da8337bf7ed46c0b31c96f16bf865b9ae7b4",
+      "bytes": 5196
+    },
+    {
+      "path": "tests/reference_policy.py",
+      "git_blob_sha": "aa9b53ee7805b652921f273d89e2862ea288f02c",
+      "sha256": "efa97bd83d5fa1cc685769e36fa1745ab842179d29434712a741b17324c5bc51",
+      "bytes": 3842
+    },
+    {
+      "path": "tests/test_reference_policy.py",
+      "git_blob_sha": "12a32a326dcd4f0b938e0e05763a9fa323397465",
+      "sha256": "189922d96cb95f2bf066723c0a9d9bd8d2b4b79178589a558100ca50fb0ebed1",
+      "bytes": 5510
+    },
+    {
+      "path": "INTEGRATION_CONTRACT.md",
+      "git_blob_sha": "3d22fb8ccab26095fc7ef281140b42452a0f6fc0"
+    },
+    {
+      "path": "README.md",
+      "git_blob_sha": "5532fc20b5da2d1c445065944ca9d4653c9a6999"
+    }
+  ],
+  "limitations": [
+    "Python behavior mirror does not execute Luau",
+    "Policy returns decision only; actual egg transfer requires sole Game integration",
+    "No Studio, Android, or owner play evidence"
+  ]
+}
