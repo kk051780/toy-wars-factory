@@ -21,9 +21,10 @@ class WCSContractTests(unittest.TestCase):
         ids = [x["id"] for x in self.data["worlds"] + self.data["characters"]]
         self.assertEqual(len(ids), len(set(ids)))
 
-    def test_f01_c01_is_only_source_ready_pair(self):
-        self.assertEqual([x["id"] for x in self.data["worlds"] if x["stage"] == "SOURCE"], ["WCS-F01"])
-        self.assertEqual([x["id"] for x in self.data["characters"] if x["stage"] == "SOURCE"], ["WCS-C01"])
+    def test_source_ready_pairs_do_not_claim_studio(self):
+        self.assertEqual([x["id"] for x in self.data["worlds"] if x["stage"] == "SOURCE"], ["WCS-F01", "WCS-F02"])
+        self.assertEqual([x["id"] for x in self.data["characters"] if x["stage"] == "SOURCE"], ["WCS-C01", "WCS-C03"])
+        self.assertEqual(self.data["integration_gate"]["native_studio"], "NOT_TESTED")
 
     def test_no_core_authority_or_purchases(self):
         without_comments = "\n".join(
