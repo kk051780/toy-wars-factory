@@ -22,6 +22,7 @@ local Power = require(script.Parent:WaitForChild("PowerFantasyRules"))
 local Evolution = require(script.Parent:WaitForChild("EvolutionRules"))
 -- One read-only FIRST90 guide; no separate gameplay authority.
 local First90Guide = require(script.Parent:WaitForChild("First90GuideRules"))
+local First90Waypoint = require(script.Parent:WaitForChild("First90WaypointRules"))
 -- #288 experimental helpers only. Original Game remains sole server combat/egg authority.
 local MusouHorde = require(script.Parent:WaitForChild("MusouHorde"))
 local MusouBind = require(script.Parent:WaitForChild("MusouBindRules"))
@@ -805,6 +806,44 @@ snapshotFor = function(player: Player)
         then Evolution.nextEvolution(evo,profile.equipped,profile.owned,
             profile.progress.level,if evoMastery then evoMastery.level else 1)
         else nil
+    -- The original MapBuilder owns all actual egg/pad parts; the server chooses
+    -- ONLY presently eligible eggs or one's real pad. Client cannot choose a
+    -- destination or send back a position. 5-egg mode sees only prompt-enabled eggs.
+    local first90Target=nil
+    if RunService:IsStudio() and first90.visible==true then
+        local alive,root=healthy(player)
+        local team=getTeamName(player)
+        if alive and root and (team=="RED" or team=="BLUE") then
+            local origin={x=root.Position.X,y=root.Position.Y,z=root.Position.Z}
+            local pad=map.teams[team].scorePad.Position
+            local candidates={}
+            if first90.step=="PICKUP" then
+                if EXPERIMENTAL_FIVE_EGG_MODE then
+                    for _,id in ipairs({"N1","R1","B1","R2","B2"}) do
+                        local def=h2Eggs[id]
+                        if def and def.prompt.Enabled and def.part.Transparency<.9 then
+                            local pos=def.part.Position
+                            table.insert(candidates,{id=id,owner=def.owner,
+                                available=true,x=pos.X,y=pos.Y,z=pos.Z})
+                        end
+                    end
+                else
+                    local enemy=Rules.opponent(team)
+                    local egg=map.teams[enemy]
+                    if egg.eggPrompt.Enabled and egg.egg.Transparency<.9
+                        and match.eggOwners[enemy]==nil then
+                        local pos=egg.egg.Position
+                        table.insert(candidates,{id=if enemy=="RED" then "R1" else "B1",
+                            owner=enemy,available=true,x=pos.X,y=pos.Y,z=pos.Z})
+                    end
+                end
+            end
+            first90Target=First90Waypoint.select(match.phase,
+                math.max(0,math.floor(now-match.startedAt)),
+                team,if EXPERIMENTAL_FIVE_EGG_MODE then "SCORE_5" else "CLASSIC",
+                first90.step,origin,{x=pad.X,y=pad.Y,z=pad.Z},candidates)
+        end
+    end
     local masteryItem=if r and type(r.equippedItemId)=="string" then r.equippedItemId
         else selected
     local mastery=if p and p.mastery and p.mastery[masteryItem]
@@ -886,6 +925,7 @@ snapshotFor = function(player: Player)
         musouMobCount = horde:livingCount(),
         musouEliteWarningSeconds = eliteWarning,
         first90 = first90,
+        first90Target = first90Target,
         musouCombo = if now<(mobComboUntil[player] or 0) then mobCombo[player] or 0 else 0,
         musouImpactSeq = mobImpactSeq[player] or 0,
         musouLastHits = mobLastHits[player] or 0,
