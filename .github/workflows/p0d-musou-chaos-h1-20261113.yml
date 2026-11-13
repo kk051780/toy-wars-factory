@@ -32,3 +32,98 @@ jobs:
           assert len(list((r/'src').rglob('*.luau')))==37
           print('FULL_SOURCE_37_LUAU_BUILD_INVENTORY_PASS (not native Luau parse / not Studio)')
           PY
+
+      - name: Get pinned upstream genuine Luau compiler/runtime
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _musou_upstream_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build native Luau compiler and executable
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _musou_upstream_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _musou_upstream_luau -B /tmp/musou_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/musou_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Native compile all 37 game scripts, run binding negative tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-MUSOU-CHAOS-H1-20261113-01
+          DIST="$ROOT/dist/EGG_RAID_RUMBLE_MUSOU_CHAOS_H1_DEV_STUDIO_ONLY"
+          n=0
+          while IFS= read -r -d '' script; do
+              /tmp/musou_native/luau-compile "$script" >/dev/null
+              n=$((n+1))
+          done < <(find "$DIST/src" -type f -name '*.luau' -print0)
+          test "$n" -eq 37
+          echo MUSOU_CHAOS_37_LUAU_NATIVE_COMPILER_PASS
+          python3 -B "$ROOT/tools/generate_native_bind_test.py" --write /tmp/p0d_musou_native_bind_test.luau
+          /tmp/musou_native/luau-compile /tmp/p0d_musou_native_bind_test.luau >/dev/null
+          /tmp/musou_native/luau /tmp/p0d_musou_native_bind_test.luau | tee /tmp/p0d_musou_native_bind_log.txt
+          grep -F MUSOU_BIND_NATIVE_20_ASSERTIONS_PASS /tmp/p0d_musou_native_bind_log.txt
+      - name: Download pinned Rojo 7.7.1 (sha256-verified)
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/musou_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/musou_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,stat
+          from pathlib import Path
+          with zipfile.ZipFile('/tmp/musou_rojo.zip') as z:
+              names=[p for p in z.namelist() if p.split('/')[-1]=='rojo']
+              assert len(names)==1
+              exe=Path('/tmp/musou_rojo')
+              exe.write_bytes(z.read(names[0]))
+              exe.chmod(exe.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/musou_rojo --version | grep -F 7.7.1
+      - name: Build actual private Roblox .rbxlx and check exact 37 bodies
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-MUSOU-CHAOS-H1-20261113-01
+          DIST="$ROOT/dist/EGG_RAID_RUMBLE_MUSOU_CHAOS_H1_DEV_STUDIO_ONLY"
+          mkdir -p /tmp/musou_place
+          /tmp/musou_rojo build "$DIST/default.project.json" -o /tmp/musou_place/EGG_RAID_RUMBLE_MUSOU_H1_PRIVATE_UNPUBLISHED.rbxlx
+          cp "$DIST/SOURCE_LOCK.json" /tmp/musou_place/SOURCE_LOCK.json
+          cp /tmp/p0d_musou_native_bind_log.txt /tmp/musou_place/NATIVE_BIND_TEST.txt
+          python3 - <<'PY'
+          import pathlib,collections,xml.etree.ElementTree as ET,json,hashlib
+          root=pathlib.Path('handoffs/P0D-MUSOU-CHAOS-H1-20261113-01/dist/EGG_RAID_RUMBLE_MUSOU_CHAOS_H1_DEV_STUDIO_ONLY')
+          place=pathlib.Path('/tmp/musou_place/EGG_RAID_RUMBLE_MUSOU_H1_PRIVATE_UNPUBLISHED.rbxlx')
+          source=collections.Counter(p.read_text('utf-8') for p in (root/'src').rglob('*.luau'))
+          cls=collections.Counter();bodies=[];nGame=0
+          for item in ET.fromstring(place.read_bytes()).iter('Item'):
+              cl=item.get('class')
+              if cl not in ('Script','LocalScript','ModuleScript'):continue
+              el=item.find("./Properties/string[@name='Source']")
+              if el is None:continue
+              name=item.find("./Properties/string[@name='Name']")
+              if cl=='Script' and name is not None and name.text=='Game':nGame+=1
+              cls[cl]+=1;bodies.append(el.text or '')
+          assert cls=={'Script':2,'LocalScript':5,'ModuleScript':30},cls
+          assert len(bodies)==37 and collections.Counter(bodies)==source,(len(bodies),len(source))
+          assert nGame==1
+          game=[v for v in bodies if 'remote.Name = "TrapRaidersS1Remote"' in v]
+          assert len(game)==1 and game[0].count('remote.OnServerEvent:Connect(')==1
+          assert 'horde:reset(match.serial,serverNow())' in game[0]
+          assert 'horde:hit(root.Position,look,' in game[0]
+          result={'sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+                  'studio_tested':False,'android_tested':False,'official_rc_adopted':False,
+                  'script_count':37,'original_unchanged_count':33,
+                  'visible_game':'EGG RAID RUMBLE','single_Game':True}
+          pathlib.Path('/tmp/musou_place/ACTUAL_PLACE_EXACT_SOURCE.json').write_text(json.dumps(result,indent=2)+'\n')
+          print('MUSOU_CHAOS_REAL_PRIVATE_ROJO_37_OF_37_EXACT_GAME_PASS',result['sha256'])
+          PY
+      - name: Attach nonpublished test Place to private comparison artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-MUSOU-H1-37LUAU-PRIVATE-STUDIO-RBXLX
+          path: /tmp/musou_place/
+          retention-days: 7
+          if-no-files-found: error
