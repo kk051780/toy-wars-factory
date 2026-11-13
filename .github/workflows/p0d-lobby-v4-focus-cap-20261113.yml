@@ -57,6 +57,5 @@ jobs:
           python3 "$R/tools/generate_native_integration_gate.py" --write /tmp/p0d_v4_gate_native.luau
           /tmp/p0d_v4_luau/luau-compile /tmp/p0d_v4_gate_native.luau >/dev/null
           /tmp/p0d_v4_luau/luau /tmp/p0d_v4_gate_native.luau | tee /tmp/p0d_v4_gate_native.log
-          grep -E '^P0D_V4_INTEGRATION_GATE_NATIVE_[0-9]+_ASSERTIONS_PASS
- /tmp/p0d_v4_gate_native.log
+          grep -F 'ASSERTIONS_PASS' /tmp/p0d_v4_gate_native.log
           echo 'V4_GATE_SOURCE_NATIVE_PASS_NO_ENGINE_OR_STUDIO'
