@@ -8,7 +8,7 @@ Relay.MAX_VERTICAL_STUDS = 4
 Relay.MIN_SECONDS_BETWEEN_PASSES = 12
 
 local function isInt(n)
-    return type(n) == "number" and n == n and n % 1 == 0 and math.abs(n) < 1000000000
+    return type(n) == "number" and n == n and n % 1 == 0 and math.abs(n) <= 9007199254740991
 end
 
 local function isNumber(n)
