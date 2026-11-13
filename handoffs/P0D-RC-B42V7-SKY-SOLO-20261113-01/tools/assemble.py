@@ -19,7 +19,7 @@ B42_GAME="21b866e801a53ba7ebd66132ae55fe28608750d6"
 ORIGINAL_WORLD="0a6360392f4384dc2f0ab1e9afc1d840d66a22b8"
 ORIGINAL_HORDE="fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 SOLO_RULE="de0e0df12346de2b4e7b607c74eddaaac693dc99"
-AUDIT_CLIENT="1fadb6f3b796e33335267653b1ce3f414401df13"
+AUDIT_CLIENT="b09e5fa2b3374cb88cad789b2c4966d4c777b3ef"
 
 def blob(raw:bytes)->str:
     return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
@@ -89,6 +89,12 @@ def main():
                       "OnServerEvent:Connect(", "Instance.new("):
         assert forbidden not in audit_text, "AUDIT_NOT_READONLY"
     assert 'if not RunService:IsStudio() then return end' in audit_text
+    assert 'SKY_WITH_EGG' in audit_text and 'SCORE_AFTER_SKY' in audit_text
+    assert 'HumanoidRootPart' in audit_text and 'hum.FloorMaterial' in audit_text
+    assert 'lastSerial' in audit_text and 'skyWithEggSerial' in audit_text
+    assert 'scoreAfterSkySerial' in audit_text and 'refreshStatus' in audit_text
+    assert 'ScreenGui' in audit_text and '4/4' in audit_text
+    assert 'continuity NOT_PROVEN' in audit_text
     assert blob((UPSTREAM/"src/H1FunWorld_SKY_CASTLE_TEST.server.luau").read_bytes())==ORIGINAL_WORLD
     subprocess.run([sys.executable,"-B",str(UPSTREAM/"tools/assemble.py"),"--assemble"],
                    cwd=REPO,check=True)
@@ -145,7 +151,8 @@ def main():
        "new_module_original_blob":SOLO_RULE,
        "audit_script":"client/P0DStudioTrialAudit.client.luau",
        "audit_original_author_blob":AUDIT_CLIENT,
-       "audit_author_sha":"fb95ddd42418a87595c209b381399e94b3bb99ad",
+       "audit_author_sha":"2033fc1eff730c416474792510c431270775e639",
+       "audit_stage_checklist":["ACTIVE","EGG_CARRIED","SKY_WITH_EGG","SCORE_AFTER_SKY"],
        "audit_readonly_studio_only":True,
        "modified_original":["server/Game.server.luau"],
        "script_total":44,"game_count":1,"one_remote":True,
