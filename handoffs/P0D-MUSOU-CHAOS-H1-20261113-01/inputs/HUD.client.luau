@@ -456,8 +456,17 @@ remote.OnClientEvent:Connect(function(s)
             then math.clamp(math.floor(s.musouMobCount),0,9) else 0
         local combo=if type(s.musouCombo)=="number"
             then math.clamp(math.floor(s.musouCombo),0,99) else 0
-        mobCue.Text="⚔ 中立兵 "..tostring(alive).."体  |  "
-            ..(if combo>1 then tostring(combo).."連撃！" else "斬って進もう！")
+        -- Real server clock only. The red disk shows the same 9-stud
+        -- radius that the server uses when the elite attack resolves.
+        local warn=s.musouEliteWarningSeconds
+        local remaining=if type(warn)=="number" and warn==warn and warn>0
+            and warn<=1.5 then math.ceil(warn*10)/10 else 0
+        mobCue.Text=if remaining>0
+            then "⚠ 赤い円の外へ！ "..tostring(remaining).."秒"
+            else "⚔ 中立兵 "..tostring(alive).."体  |  "
+                ..(if combo>1 then tostring(combo).."連撃！" else "斬って進もう！")
+        mobCue.TextColor3=if remaining>0 then Color3.fromRGB(255,110,90)
+            else Color3.fromRGB(255,221,132)
     end
     currentNetBound=s.netBound==true
     local netCd=if type(s.netCooldown)=="number" and s.netCooldown>=0
