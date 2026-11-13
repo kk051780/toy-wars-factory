@@ -1,0 +1,21 @@
+{
+  "name": "P0D_H2_MULTI_EGG_SCORE_5_EGGS_STUDIO_LAB_ONLY",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "MultiEggLab": {
+        "$path": "src/server"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "MultiEggHUD": {
+          "$path": "src/client/MultiEggHUD.client.luau"
+        }
+      }
+    }
+  }
+}
