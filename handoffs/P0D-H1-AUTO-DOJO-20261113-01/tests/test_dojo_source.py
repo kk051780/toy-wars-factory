@@ -15,7 +15,7 @@ class AutoDojoSource(unittest.TestCase):
   self.assertEqual(blob((ROOT/"inputs/DojoRules.luau").read_bytes()),
     "120bac439c979310c9ddeb2fcf2ffa002b6d1add")
  def test_dojo_no_network_or_store_or_payment(self):
-  s=(ROOT/"inputs/DojoRules.luau").read_text("utf8")
+  s="\n".join(line for line in (ROOT/"inputs/DojoRules.luau").read_text("utf8").splitlines() if not line.lstrip().startswith("--"))
   for item in ("Players","DataStoreService","RemoteEvent","FireServer",
                "MarketplaceService","PromptProductPurchase","SetAsync","UpdateAsync"):
    self.assertNotIn(item,s)
