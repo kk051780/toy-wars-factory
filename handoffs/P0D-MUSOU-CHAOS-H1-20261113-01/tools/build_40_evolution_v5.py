@@ -68,7 +68,10 @@ def upgrade_game(s:str)->str:
   ("            task.wait(.2);t+=.2","            task.wait(.2)","REMOVE_FAKE_ELAPSED_CLOCK"),
  ]:
   assert s.count(before)==1,("PATCH_CONFLICT_FAIL_CLOSED",label,s.count(before))
-  assert after not in s,("DUPLICATE_PATCH_FAIL_CLOSED",label)
+  # Generic task.wait(.2) legitimately appears in other original Game loops.
+  # Require the exact source anchor once; reject duplicated specific tokens.
+  if label!="REMOVE_FAKE_ELAPSED_CLOCK":
+   assert after not in s,("DUPLICATE_PATCH_FAIL_CLOSED",label)
   s=s.replace(before,after,1)
  return s
 
