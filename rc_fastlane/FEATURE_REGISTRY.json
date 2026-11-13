@@ -222,6 +222,22 @@
       "original_55_unmodified": true,
       "studio_test": "NOT_TESTED",
       "verified_module_git_blob": "d5a229cafe643cdea15c54877368cc3af72552be"
+    },
+    {
+      "id": "WCS_F01_C01",
+      "summary": "Crystal Canyon elevated two-team fair entry, two Mogurones and 14s bridge/cooldown",
+      "state": "CANDIDATE_SOURCE_LOCKED_RC58_CI_PENDING_NOT_OFFICIAL",
+      "profiles": [
+        "rich51"
+      ],
+      "rollback": "FEATURE_SWITCHES.features.WCS_F01_C01.enabled=false -> exact prior rich57",
+      "independent_switch": true,
+      "source_git_blob": "1eeadde39b00fc19e82544c7b6decb7b0dabf2b9",
+      "source_script": "server/WCS_CrystalCanyon.server.luau",
+      "source_original57_preserved": true,
+      "studio_2client": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED"
     }
   ],
   "next_source_adoption_contract": {

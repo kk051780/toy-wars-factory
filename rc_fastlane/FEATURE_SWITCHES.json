@@ -140,6 +140,26 @@
         "source_count": 57,
         "conclusion": "success"
       }
+    },
+    "WCS_F01_C01": {
+      "enabled": true,
+      "status": "RC58_CANDIDATE_ONLY_EXACT_HEAD_CI_PENDING",
+      "gameplay": "Studio-only elevated Crystal Canyon/Moguron gate, route and 14-second shortcut",
+      "source": [
+        {
+          "path": "rc_fastlane/features/wcs_f01_c01/WCS_CrystalCanyon.server.luau",
+          "dest": "server/WCS_CrystalCanyon.server.luau",
+          "blob": "1eeadde39b00fc19e82544c7b6decb7b0dabf2b9"
+        }
+      ],
+      "dependency": "SCOUT_SPECIES_V1 and H1 SkyV5 existing 57-source canonical RC",
+      "runtime_off": "Set ServerStorage attribute P0D_RC_ENABLE_WCS_F01_C01=false before Studio Play",
+      "rollback": "Set WCS_F01_C01.enabled=false and rebuild original 57-source canonical RC",
+      "native_luau": "NOT_RUN_ON_NEW_CANDIDATE_HEAD",
+      "source_exact_rojo": "NOT_RUN_ON_NEW_CANDIDATE_HEAD",
+      "engine_2client": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "fun": "NOT_TESTED"
     }
   }
 }
