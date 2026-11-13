@@ -294,6 +294,12 @@ jobs:
               assert titles[('LocalScript','RealmHuntHUD')]==0
           if wcs_enabled:
               assert titles[('Script','WCS_CrystalCanyon')]==1
+              assert sum('GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")~=true' in src for src in included)==1
+          if p=='rich51':
+              boot_attr=json.loads((base/'default.project.json').read_text('utf8'))['tree'].get('ServerStorage',{}).get('$attributes',{}).get('P0D_RC_ENABLE_WCS_F01_C01')
+              assert boot_attr is (True if wcs_enabled else None),('WCS_BOOT_ATTR_MISMATCH',boot_attr,wcs_enabled)
+          if wcs_enabled:
+              assert titles[('Script','WCS_CrystalCanyon')]==1
               assert sum('playerIsInGateClosureZone()' in src for src in included)==1
           else:
               assert titles[('Script','WCS_CrystalCanyon')]==0

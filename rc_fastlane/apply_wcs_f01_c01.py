@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 FEATURE_ID = "WCS_F01_C01"
 FEATURE_PATH = ROOT / "features/wcs_f01_c01/WCS_CrystalCanyon.server.luau"
-FEATURE_GIT_BLOB = "1eeadde39b00fc19e82544c7b6decb7b0dabf2b9"
+FEATURE_GIT_BLOB = "7d2afad5e9b8df410ea0eb83ad962cf42ab98e71"
 DEST_REL = "server/WCS_CrystalCanyon.server.luau"
 
 def git_blob(data: bytes) -> str:
@@ -37,7 +37,7 @@ def apply(dist: Path, profile: str, enabled_override: bool | None = None) -> boo
     assert git_blob(data) == FEATURE_GIT_BLOB, "WCS_SOURCE_BLOB_DRIFT"
     text = data.decode("utf8")
     assert 'if not RunService:IsStudio() then' in text
-    assert 'ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")==false' in text
+    assert 'ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")~=true' in text
     assert text.count('local function playerIsInGateClosureZone()') == 1
     assert text.count("nextOpenAllowed = os.clock() + REOPEN_COOLDOWN") == 1
     assert "nextOpenAllowed = now + OPEN_SECONDS + REOPEN_COOLDOWN" not in text
@@ -56,10 +56,20 @@ def apply(dist: Path, profile: str, enabled_override: bool | None = None) -> boo
     assert lock["blobs"] == {p: git_blob(v) for p, v in sorted(before.items())}, "BASE57_LOCK_MISMATCH"
     cfg = json.loads((dist / "default.project.json").read_text(encoding="utf8"))
     assert cfg["tree"]["ServerScriptService"]["TrapRaidersS1"]["$path"] == "src/server"
+    # Build-time opt-in: Rojo embeds this explicit server-owned attribute in the
+    # private Place. Source still fails closed when attr is absent/false.
+    server_storage = cfg["tree"].setdefault("ServerStorage", {"$className": "ServerStorage"})
+    assert isinstance(server_storage, dict)
+    attributes = server_storage.setdefault("$attributes", {})
+    assert isinstance(attributes, dict)
+    assert "P0D_RC_ENABLE_WCS_F01_C01" not in attributes, "WCS_ATTR_ALREADY_PRESENT"
+    attributes["P0D_RC_ENABLE_WCS_F01_C01"] = True
     target = dist / "src" / DEST_REL
     assert not target.exists()
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_bytes(data)
+    (dist / "default.project.json").write_text(
+        json.dumps(cfg, ensure_ascii=False, indent=2) + "\n", encoding="utf8")
     after = sources(dist)
     assert len(after) == 58
     assert set(after) - set(before) == {DEST_REL}
@@ -71,7 +81,8 @@ def apply(dist: Path, profile: str, enabled_override: bool | None = None) -> boo
         "id": FEATURE_ID, "author_script_blob": FEATURE_GIT_BLOB,
         "previous_57_scripts_byte_identical": True,
         "single_game_remote_store": True,
-        "studio_only": True, "engine_test": "NOT_TESTED",
+        "studio_only": True, "explicit_rojo_serverstorage_boot_true": True,
+        "missing_runtime_flag_fails_closed": True, "engine_test": "NOT_TESTED",
         "rollback": "Disable FEATURE_SWITCHES.features.WCS_F01_C01.enabled and rebuild",
     }
     lock_path.write_text(json.dumps(lock, ensure_ascii=False, indent=2) + "\n", encoding="utf8")

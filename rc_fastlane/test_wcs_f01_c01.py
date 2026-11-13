@@ -36,6 +36,8 @@ class WCSIntegration(unittest.TestCase):
         self.assertEqual(len(after),58)
         self.assertEqual({p:after[p] for p in self.before},self.before)
         self.assertEqual(after[wcs.DEST_REL],wcs.FEATURE_PATH.read_bytes())
+        cfg=json.loads((self.dist/"default.project.json").read_text("utf8"))
+        self.assertIs(cfg["tree"]["ServerStorage"]["$attributes"]["P0D_RC_ENABLE_WCS_F01_C01"],True)
         lock=json.loads((self.dist/"SOURCE_LOCK.json").read_text("utf8"))
         self.assertEqual(lock["total_scripts"],58)
         self.assertEqual(lock["blobs"],{p:wcs.git_blob(v) for p,v in after.items()})
@@ -44,6 +46,8 @@ class WCSIntegration(unittest.TestCase):
     def test_off_preserves_all_57(self):
         self.assertFalse(wcs.apply(self.dist,"rich51",False))
         self.assertEqual(wcs.sources(self.dist),self.before)
+        cfg=json.loads((self.dist/"default.project.json").read_text("utf8"))
+        self.assertNotIn("ServerStorage",cfg["tree"])
 
     def test_other_profiles_never_add_script(self):
         self.assertFalse(wcs.apply(self.dist,"rich47",True))
@@ -75,10 +79,16 @@ class WCSIntegration(unittest.TestCase):
         self.assertEqual(wcs.git_blob(raw),wcs.FEATURE_GIT_BLOB)
         s=raw.decode("utf8")
         self.assertIn('if not RunService:IsStudio() then',s)
-        self.assertIn('ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")==false',s)
+        self.assertIn('ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")~=true',s)
         self.assertIn("playerIsInGateClosureZone()",s)
         self.assertIn("nextOpenAllowed = os.clock() + REOPEN_COOLDOWN",s)
         self.assertNotIn("nextOpenAllowed = now + OPEN_SECONDS + REOPEN_COOLDOWN",s)
+
+    def test_missing_runtime_attribute_is_not_an_enable(self):
+        s=wcs.FEATURE_PATH.read_text("utf8")
+        self.assertIn('GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")~=true',s)
+        self.assertNotIn('GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")==false',s)
+        self.assertNotIn('GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")==nil',s)
 
     def test_no_extra_game_remote_store_or_paid_writes(self):
         s=wcs.FEATURE_PATH.read_text("utf8")

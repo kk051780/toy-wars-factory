@@ -143,17 +143,17 @@
     },
     "WCS_F01_C01": {
       "enabled": true,
-      "status": "RC58_CANDIDATE_ONLY_EXACT_HEAD_CI_PENDING",
+      "status": "RC58_CANDIDATE_DEFAULT_OFF_IF_MISSING_ATTR_CI_PENDING",
       "gameplay": "Studio-only elevated Crystal Canyon/Moguron gate, route and 14-second shortcut",
       "source": [
         {
           "path": "rc_fastlane/features/wcs_f01_c01/WCS_CrystalCanyon.server.luau",
           "dest": "server/WCS_CrystalCanyon.server.luau",
-          "blob": "1eeadde39b00fc19e82544c7b6decb7b0dabf2b9"
+          "blob": "7d2afad5e9b8df410ea0eb83ad962cf42ab98e71"
         }
       ],
       "dependency": "SCOUT_SPECIES_V1 and H1 SkyV5 existing 57-source canonical RC",
-      "runtime_off": "Set ServerStorage attribute P0D_RC_ENABLE_WCS_F01_C01=false before Studio Play",
+      "runtime_off": "Unset/false ServerStorage.P0D_RC_ENABLE_WCS_F01_C01 prevents startup. Rojo project explicitly sets true only in included private RC build; operator can set false before Play.",
       "rollback": "Set WCS_F01_C01.enabled=false and rebuild original 57-source canonical RC",
       "native_luau": "NOT_RUN_ON_NEW_CANDIDATE_HEAD",
       "source_exact_rojo": "NOT_RUN_ON_NEW_CANDIDATE_HEAD",
