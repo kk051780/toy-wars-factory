@@ -121,7 +121,9 @@ jobs:
           h=(src/'client/HUD.client.luau').read_text()
           assert h.count('local seq = 0')==1 and h.count('EGG_RELAY')==1
           assert 'ClassicEggRelay' in h and 'KeyCode.H' in h
-          assert 'if not RunService:IsStudio() or EXPERIMENTAL_FIVE_EGG_MODE' in g
+          assert 'if not classicRelayEnabled() or EXPERIMENTAL_FIVE_EGG_MODE' in g
+          assert 'P0D_RC_ENABLE_EGG_RELAY_CLASSIC' in g
+          assert 'relayEnabled = classicRelayEnabled()' in g
           def blob(raw):
               return hashlib.sha1(b'blob '+str(len(raw)).encode()+bytes([0])+raw).hexdigest()
           pinned={p:blob((src/p).read_bytes()) for p in sorted(after)}
