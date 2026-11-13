@@ -69,6 +69,23 @@ local function makeBody(folder: Folder, id: number, elite: boolean, p: Vector3)
     text.TextScaled=true
     text.Text=if elite then "⚠ 精鋭" else "中立兵"
     text.Parent=gui
+    -- Exactly ONE reusable overhead damage pop per NPC. No instance
+    -- spawn on hit, no client-claimed damage, no extra Remote or scheduler.
+    local popup=Instance.new("BillboardGui")
+    popup.Name="RealDamagePopup"
+    popup.AlwaysOnTop=true
+    popup.Enabled=false
+    popup.Size=UDim2.fromOffset(104,42)
+    popup.StudsOffsetWorldSpace=Vector3.new(0,if elite then 8.6 else 6.7,0)
+    popup.Parent=body
+    local popupText=Instance.new("TextLabel")
+    popupText.Size=UDim2.fromScale(1,1)
+    popupText.BackgroundTransparency=1
+    popupText.TextScaled=true
+    popupText.TextStrokeTransparency=.12
+    popupText.TextColor3=Color3.fromRGB(255,245,146)
+    popupText.Text=""
+    popupText.Parent=popup
     -- One cheap, noninteractive replicated warning disk. Exactly the same
     -- radius as server elite melee, never a client-authoritative hitbox.
     local zone: Part?=nil
@@ -141,7 +158,7 @@ local function makeBody(folder: Folder, id: number, elite: boolean, p: Vector3)
     end
     model.Parent=folder
     model:PivotTo(CFrame.new(p))
-    return model,body,text,zone,arms,eyes
+    return model,body,text,zone,arms,eyes,popup,popupText
 end
 local function groundTop(world: Instance,x: number,z: number): number
     -- Read actual original MapBuilder walkable parts, not a hard-coded
@@ -187,9 +204,10 @@ function Horde:reset(round: number,now: number)
         local feetY=groundTop(self.world,x,z)
         local halfBody=if elite then 2.5 else 1.65
         local base=Vector3.new(x,feetY+halfBody,z)
-        local model,body,cue,zone,arms,eyes=makeBody(self.folder,i,elite,base)
+        local model,body,cue,zone,arms,eyes,popup,popupText=makeBody(self.folder,i,elite,base)
         table.insert(self.mobs,{
-            model=model,body=body,cue=cue,zone=zone,arms=arms,eyes=eyes,id=i,
+            model=model,body=body,cue=cue,zone=zone,arms=arms,eyes=eyes,
+            popup=popup,popupText=popupText,popupUntil=0,hidden=false,id=i,
             pos=base,home=base,
             hp=if elite then ELITE_HP else MINION_HP,
             maxHp=if elite then ELITE_HP else MINION_HP,
@@ -230,7 +248,15 @@ function Horde:hit(origin: Vector3,facing: Vector3,damage: number,now: number,ig
                 if Combat.canSweep(dist,vertical,facingDot,ray==nil) then
                     touched+=1
                     local dealt=math.max(1,math.min(math.floor(damage),40))
-                    m.hp=math.max(0,m.hp-dealt)
+                    local beforeHp=m.hp
+                    m.hp=math.max(0,beforeHp-dealt)
+                    local realDamage=beforeHp-m.hp
+                    m.popupText.Text=if m.hp<=0 then "💥 撃破！" else "−"..tostring(realDamage)
+                    m.popupText.TextColor3=if m.hp<=0
+                        then Color3.fromRGB(255,185,95)
+                        else Color3.fromRGB(255,245,146)
+                    m.popup.Enabled=true
+                    m.popupUntil=now+.72
                     m.flashUntil=now+.18
                     m.body.Color=Color3.fromRGB(253,231,111)
                     -- A normal enemy loses its immediate melee response when
@@ -257,7 +283,10 @@ function Horde:hit(origin: Vector3,facing: Vector3,damage: number,now: number,ig
                         m.deadUntil=now+8
                         m.attackAt=now+9.5
                         m.cue.Text=if m.elite then "💥 精鋭撃破！" else "💥 撃破！"
-                        m.model:PivotTo(CFrame.new(m.pos+Vector3.new(0,-30,0)))
+                        -- Keep real replicated KO visible for .72s, then sink
+                        -- the noninteractive body. HP is already zero, so a
+                        -- visible KO can never attack or yield another kill.
+                        m.hidden=false
                     else
                         m.cue.Text=(if m.elite then "精鋭 " else "中立 ")..tostring(m.hp).."/"..tostring(m.maxHp)
                     end
@@ -272,6 +301,9 @@ function Horde:tick(now: number,players: {Player},healthy: (Player)->(boolean,Ba
     self.lastTick=now
     local impacts={}
     for _,m in ipairs(self.mobs) do
+        if m.popup.Enabled and now>=m.popupUntil then
+            m.popup.Enabled=false
+        end
         if m.hp>0 then
             -- Fixed nine-entity cap; lightweight per-tick articulated silhouette.
             -- Cosmetic only: no physical target, hitbox or rewards are derived.
@@ -286,6 +318,9 @@ function Horde:tick(now: number,players: {Player},healthy: (Player)->(boolean,Ba
         if m.hp<=0 then
             if now>=m.deadUntil then
                 m.hp=m.maxHp
+                m.hidden=false
+                m.popup.Enabled=false
+                m.popupUntil=0
                 m.pos=m.home
                 m.attackAt=now+1.5 -- fair re-entry; no instant hit on respawn
                 m.tellUntil=0
@@ -295,6 +330,9 @@ function Horde:tick(now: number,players: {Player},healthy: (Player)->(boolean,Ba
                 m.body.Color=if m.elite then Color3.fromRGB(120,75,175) else Color3.fromRGB(68,151,107)
                 m.model:PivotTo(CFrame.new(m.home))
                 m.cue.Text=if m.elite then "⚠ 精鋭" else "中立兵"
+            elseif not m.hidden and now>=m.popupUntil then
+                m.hidden=true
+                m.model:PivotTo(CFrame.new(m.pos+Vector3.new(0,-30,0)))
             end
         else
             local nearest=nil
