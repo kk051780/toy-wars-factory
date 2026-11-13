@@ -1,0 +1,175 @@
+{
+  "schema": "P0D_EGG_RELAY_CLASSIC_PATCH_STATIC_QA_V1",
+  "author_child_branch": "feature/p0d-egg-relay-classic-live-20261114-01",
+  "source_baseline_commit": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
+  "base_game_gitblob": "21b866e801a53ba7ebd66132ae55fe28608750d6",
+  "base_hud_gitblob": "ce6707dc1f833600e1c6913504d30911b24cb2a4",
+  "source_policy_gitblob": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
+  "game_patch_ops": 9,
+  "hud_patch_ops": 6,
+  "checks": [
+    {
+      "id": "exact_game_anchor_0",
+      "passed": true
+    },
+    {
+      "id": "exact_game_anchor_1",
+      "passed": true
+    },
+    {
+      "id": "exact_game_anchor_2",
+      "passed": true
+    },
+    {
+      "id": "exact_game_anchor_3",
+      "passed": true
+    },
+    {
+      "id": "exact_game_anchor_4",
+      "passed": true
+    },
+    {
+      "id": "exact_game_anchor_5",
+      "passed": true
+    },
+    {
+      "id": "exact_game_anchor_6",
+      "passed": true
+    },
+    {
+      "id": "exact_game_anchor_7",
+      "passed": true
+    },
+    {
+      "id": "exact_game_anchor_8",
+      "passed": true
+    },
+    {
+      "id": "exact_hud_anchor_0",
+      "passed": true
+    },
+    {
+      "id": "exact_hud_anchor_1",
+      "passed": true
+    },
+    {
+      "id": "exact_hud_anchor_2",
+      "passed": true
+    },
+    {
+      "id": "exact_hud_anchor_3",
+      "passed": true
+    },
+    {
+      "id": "exact_hud_anchor_4",
+      "passed": true
+    },
+    {
+      "id": "exact_hud_anchor_5",
+      "passed": true
+    },
+    {
+      "id": "single_game_server_remote",
+      "passed": true
+    },
+    {
+      "id": "single_named_remote",
+      "passed": true
+    },
+    {
+      "id": "unchanged_five_egg_deposit_count",
+      "passed": true
+    },
+    {
+      "id": "unchanged_classic_deposit_count",
+      "passed": true
+    },
+    {
+      "id": "one_egg_two_player_atomic_reassignment",
+      "passed": true
+    },
+    {
+      "id": "policy_import_once",
+      "passed": true
+    },
+    {
+      "id": "fresh_raycast",
+      "passed": true
+    },
+    {
+      "id": "five_egg_fails_closed",
+      "passed": true
+    },
+    {
+      "id": "studio_negative_user_ids_supported",
+      "passed": true
+    },
+    {
+      "id": "high_ID_bound",
+      "passed": true
+    },
+    {
+      "id": "egg_cooldown",
+      "passed": true
+    },
+    {
+      "id": "server_seq_replay",
+      "passed": true
+    },
+    {
+      "id": "per_round_reset",
+      "passed": true
+    },
+    {
+      "id": "mobile_pass_button",
+      "passed": true
+    },
+    {
+      "id": "touch_pass_request",
+      "passed": true
+    },
+    {
+      "id": "keyboard_H_request",
+      "passed": true
+    },
+    {
+      "id": "single_HUD_seq",
+      "passed": true
+    },
+    {
+      "id": "single_original_client_remote",
+      "passed": true
+    },
+    {
+      "id": "existing_server_remote_routing",
+      "passed": true
+    },
+    {
+      "id": "accepted_snapshot_only",
+      "passed": true
+    },
+    {
+      "id": "no_client_score_authority",
+      "passed": true
+    },
+    {
+      "id": "policy_git_blob_locked",
+      "passed": true
+    },
+    {
+      "id": "official_rc_still_unadopted",
+      "passed": true
+    }
+  ],
+  "passed": 38,
+  "total": 38,
+  "actual_execution": "REMOTE_GITHUB_READBACK_SOURCE_TEXT_PATCH_AND_JAVASCRIPT_STATIC_CHECKS",
+  "python_script_execution": "NOT_RUN",
+  "native_luau": "NOT_RUN",
+  "studio_1client": "NOT_TESTED",
+  "studio_2client": "NOT_TESTED",
+  "android": "NOT_TESTED",
+  "owner_fun": "NOT_TESTED",
+  "official_rc_adopted": false,
+  "notes": "No one-client Play or Rojo was executed, this is not an official RC build. 1-egg mode only."
+}
