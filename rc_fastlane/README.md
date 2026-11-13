@@ -10,7 +10,7 @@
 ## 2026-11-14 最初の直結
 `rich51` を現行RC主開発profileに選択（最新の51本ソース・自動ビルドの対象）。厳密固定SHA `79123d35cd7afdd5f4f9941675bc2d2cf382ac4e`。
 - 51本は既存47本のGame/Storeを**バイト同一**に保ち、セッション限定6技能修行台4ファイルを追加。前回元branch CI成功の証拠： https://github.com/kk051780/toy-wars-factory/actions/runs/43479603989
-- **本RCの新workflowがPASSするまでは、RC build=NOT_VERIFIED**。Studio実プレイ・Android・人間FUNは依然NOT_TESTED。元候補の未確認事項を持ち越す。
+- **本RCで初回ビルドが実際にPASS済み**：RC SHA `5a0864fe9d3980dd6e0fdd9aa44f4d0169009166`、Actions [43483022604](https://github.com/kk051780/toy-wars-factory/actions/runs/43483022604)、51/51 RojoバイナリSourceExact、Game 1本。以後のHEADは毎回独立ビルドで再判定。Studio実プレイ・Android・人間FUNは依然NOT_TESTED。元候補の未確認事項を持ち越す。
 - **6技能の永続保存/日次30分枠/追加4技能の実戦能力は未完成**。元H1 2技能LvとV4セッションLvはまだ別体系。保存統合は元Store担当が互換性・移行を処理するまで禁止。
 
 ## 切り離し方法（現時点）
@@ -21,6 +21,8 @@
 ## ビルド
 `.github/workflows/p0d-rc-fastlane.yml` をRC branchへpushすると active profile `rich51` が自動ビルドされ、`P0D-CANONICAL-RC-STUDIO` artifactに`.rbxlx`と検査receiptが出る。source SHA一致→元作者のassemble→Rojo 7.7.1 checksumピン→51/51 XMLソース一致/一意のGame確認という **1回だけの検査**。
 `workflow_dispatch` で `rich47` / `legacy21` を個別ビルドもできる（RC本線profileは変えない）。本workflowはRead-only、main変更/merge/Publish/課金/PC操作を行わない。
+
+新機能の実装／ロールバック粒度は [`FEATURE_REGISTRY.json`](FEATURE_REGISTRY.json) に記録し、個別スイッチ未実装を隠さない。
 
 ## 次の統合優先
 1. ACTIVE `rich51`新RCのビルド成否確認と修正（同一source SHAの再生成だけ）。

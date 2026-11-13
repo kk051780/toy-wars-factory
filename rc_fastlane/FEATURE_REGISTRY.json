@@ -1,0 +1,126 @@
+{
+  "schema": "P0D_RC_FEATURE_REGISTRY_V1",
+  "release": "P0D-S1-KIDS-RC01",
+  "canonical_source": "rc_fastlane/ACTIVE.json",
+  "verified_original_rc": "1263a03701211a652b99b91d2339575dc8104eff",
+  "policy": "Develop directly against one canonical RC build; isolate fixes with rollback ID; no human Studio QA before RC source admission, retain before publish",
+  "features": [
+    {
+      "id": "CORE_S1",
+      "summary": "Team/HP/castle/carry/win/rematch/trap",
+      "state": "PRESENT_LEGACY21",
+      "profiles": [
+        "legacy21",
+        "rich47",
+        "rich51"
+      ],
+      "rollback": "legacy21",
+      "independent_switch": false
+    },
+    {
+      "id": "EGG_DUAL_MODE",
+      "summary": "Egg1 classic / Egg5 score mode",
+      "state": "INCLUDED_IN_ACTIVE_RICH51_SOURCE",
+      "profiles": [
+        "rich47",
+        "rich51"
+      ],
+      "rollback": "legacy21",
+      "independent_switch": false
+    },
+    {
+      "id": "H1_SKYV5",
+      "summary": "Skycastle and land/sea routes",
+      "state": "INCLUDED_IN_ACTIVE_RICH51_SOURCE",
+      "profiles": [
+        "rich47",
+        "rich51"
+      ],
+      "rollback": "legacy21",
+      "independent_switch": false
+    },
+    {
+      "id": "H1_MUSOU_V7",
+      "summary": "Neutral PvE horde/fast combat",
+      "state": "INCLUDED_IN_ACTIVE_RICH51_SOURCE",
+      "profiles": [
+        "rich47",
+        "rich51"
+      ],
+      "rollback": "legacy21",
+      "independent_switch": false
+    },
+    {
+      "id": "H1_AUTO_DOJO_2",
+      "summary": "BEAST/WEAPON PvE short progression",
+      "state": "INCLUDED_IN_ACTIVE_RICH51_SOURCE",
+      "profiles": [
+        "rich47",
+        "rich51"
+      ],
+      "rollback": "legacy21",
+      "independent_switch": false
+    },
+    {
+      "id": "V4_SIX_SKILL_SESSION",
+      "summary": "Extra MAGIC/ZOMBIE/VEHICLE/BUILDING preview only; no persistence/powers",
+      "state": "INCLUDED_IN_ACTIVE_RICH51_SOURCE",
+      "profiles": [
+        "rich51"
+      ],
+      "rollback": "rich47",
+      "independent_switch": true,
+      "switch_scope": "whole V4 4-file bundle via profile"
+    },
+    {
+      "id": "SIX_SKILL_DURABLE",
+      "summary": "Saved six-skill XP, real daily focus budget",
+      "state": "SOURCE_CANDIDATE_ONLY_NOT_IN_RC",
+      "profiles": [],
+      "rollback": "none",
+      "independent_switch": false,
+      "blocker": "Store field/schema migration, real Game API ownership"
+    },
+    {
+      "id": "ALL_SEVEN_JOBS",
+      "summary": "Seven live classes in current H1",
+      "state": "NOT_IN_ACTIVE_RICH51_AS_SEVEN",
+      "profiles": [],
+      "rollback": "none",
+      "independent_switch": false
+    },
+    {
+      "id": "EGG_RELAY",
+      "summary": "Transfer carried egg to teammate",
+      "state": "SOURCE_POLICY_ONLY_NOT_IN_GAME",
+      "profiles": [],
+      "rollback": "none",
+      "independent_switch": false
+    },
+    {
+      "id": "FULL_100_CHARACTER_PLAYABLE",
+      "summary": "Collection all 100 characters in live game",
+      "state": "3D_SOURCE_ONLY_NOT_LIVE",
+      "profiles": [],
+      "rollback": "none",
+      "independent_switch": false
+    }
+  ],
+  "next_source_adoption_contract": {
+    "fields": [
+      "feature_id",
+      "source_commit40",
+      "file_sha",
+      "single_game_authority",
+      "dependency_profile",
+      "compatibility_test",
+      "rollback_id",
+      "owner",
+      "rc_adoption_commit"
+    ],
+    "studio_gate": "not_before_each_RC_merge",
+    "release_gate": "owner_studio_and_fun_and_safety_approval"
+  },
+  "last_studio": "NOT_TESTED",
+  "last_official_completion_pct": 75
+}

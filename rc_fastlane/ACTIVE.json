@@ -43,6 +43,14 @@
   "owner_fun": "NOT_TESTED",
   "production_publish_authorized": false,
   "rollback_granularity": "profile (rich51 -> rich47 -> legacy21); per-feature core switches require refactor, not claimed",
-  "status": "RC_PROFILE_SELECTED_BUILD_PENDING_THIS_COMMIT",
-  "release_progress_last_official": 75
+  "status": "RC_CURRENT_RICH51_SOURCE_SELECTED_AND_INITIAL_BINARY_PASS",
+  "release_progress_last_official": 75,
+  "first_verified_run": {
+    "workflow_run_id": 43483022604,
+    "rc_head_sha": "5a0864fe9d3980dd6e0fdd9aa44f4d0169009166",
+    "source_exact_count": 51,
+    "artifact_id": 14066271707,
+    "job_conclusion": "success"
+  },
+  "verification_rule": "Every RC HEAD needs its own GitHub Actions conclusion; first pass applies only to indicated rc_head_sha"
 }
