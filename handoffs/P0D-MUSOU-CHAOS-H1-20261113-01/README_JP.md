@@ -18,7 +18,7 @@ python -B handoffs/P0D-MUSOU-CHAOS-H1-20261113-01/tools/assemble.py --assemble
 組立器は #286 の既存 `tools/assemble.py` を呼び、正規の元ゲーム35本をバイト同一で再現してから、独立rootの4個のファイルを貼る。出力は `dist/EGG_RAID_RUMBLE_MUSOU_CHAOS_H1_DEV_STUDIO_ONLY`。既存distがあれば上書きせずFail（新規作業dirで実行）。`SOURCE_LOCK.json`は37本のSHA256/Git Blobを残す。既存 #220 RC/main/OWNER実PCは触らない。実際のLuauコンパイル/Rojo/Studio、2client/Android、ネットワーク遅延などは未検証のため **NOT_TESTED**。
 
 ## 私的試遊での検収
-1. 構築36? ではなく **37本**の同一Game/Remote構成をLuau構文・Rojo生成確認する。元のXP/保存/二モード用ネイティブ試験も回帰。
+1. **37本**の同一Game/Remote構成をLuau構文・Rojo生成確認する。元のXP/保存/二モード用ネイティブ試験も回帰。
 2. Android横画面の攻撃/網/救助/風走りボタンが重ならないことを確認。2人のうちどちらも卵を運べ、得点／再戦が成功。
 3. 雑魚8体を範囲攻撃し、HP/死亡/8秒再生成/予兆からの精鋭攻撃と回避/2人共闘/サーバーFPS・CPUを観測する。負荷/視認性悪化ならモブ数を減らす。
 4. 網のLOS/射程外/対味方/倒れたプレイヤー/連打/改ざんしたRemote/連続拘束防止/運搬中の使用拒否/本人B脱出/味方B救出/切断時の解除/RESPAWNを反例QA。二重報酬・無限XPがないこと。
