@@ -14,7 +14,7 @@ end
 
 local function eq(a, b)
     if type(a) ~= type(b) then return false end
-    if type(a) ~= "table" then return a == b end
+    if type(a) ~= "table" then return a == b or (type(a) == "number" and a ~= a and b ~= b) end
     for k, v in pairs(a) do
         if not eq(v, b[k]) then return false end
     end
