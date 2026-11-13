@@ -45,8 +45,8 @@
   "studio_2client": "NOT_TESTED",
   "owner_fun": "NOT_TESTED",
   "production_publish_authorized": false,
-  "rollback_granularity": "rich51 V4_IDLE_FRIEND_SAFE_FIX enabled=true/false; whole rich51 -> rich47 -> legacy21; other H1 per-feature switches still unimplemented",
-  "status": "RC_RICH54_DURABLE_SIX_SKILL_PATCH_CI_PENDING",
+  "rollback_granularity": "REALM_HUNT_V1 and SIX_SKILL_DURABLE per-feature OFF, V4_IDLE_FRIEND_SAFE_FIX via ACTIVE, rich47/legacy21 fallback; original Game/Store source pinned",
+  "status": "RC_RICH54_SIX_SKILL_DEV_PERSISTENCE_COMPILED_BUILD_PASSED",
   "release_progress_last_official": 75,
   "first_verified_run": {
     "workflow_run_id": 43483022604,
@@ -80,7 +80,13 @@
       "expected_source_count": 54,
       "studio_real_save": "NOT_TESTED",
       "mobile": "NOT_TESTED",
-      "config": "rc_fastlane/FEATURE_SWITCHES.json"
+      "config": "rc_fastlane/FEATURE_SWITCHES.json",
+      "first_verified_build": {
+        "head": "2e86ac4fd0d4cb67fd7c673dc4e891b2af6bdc2c",
+        "run_id": 43491029567,
+        "source_count": 54,
+        "success": true
+      }
     }
   },
   "feature_switches": {

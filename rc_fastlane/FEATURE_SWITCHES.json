@@ -39,7 +39,7 @@
     },
     "SIX_SKILL_DURABLE": {
       "enabled": true,
-      "status": "SOURCE_LOCKED_RC_INTEGRATION_CI_PENDING",
+      "status": "RC_54_LUAU_AND_ROJO_BUILD_PASS_ENGINE_NOT_TESTED",
       "release_scope": "Studio_DEV_only_no_public_DataStore",
       "rollback": "DISABLE_54_TO_53",
       "store_key": "EXISTING_ORIGINAL_U_REAL_USERID_KEY",
@@ -56,7 +56,13 @@
         "client/V4TrialOverlay.client.luau",
         "server/SixSkillAtomicProfile.luau"
       ],
-      "proven_engine_save": false
+      "proven_engine_save": false,
+      "first_successful_ci": {
+        "head": "2e86ac4fd0d4cb67fd7c673dc4e891b2af6bdc2c",
+        "run_id": 43491029567,
+        "source_count": 54,
+        "conclusion": "success"
+      }
     }
   }
 }

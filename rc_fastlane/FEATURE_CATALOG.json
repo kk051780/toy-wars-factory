@@ -3,7 +3,7 @@
   "as_of_jst": "2026-11-14",
   "rc_branch": "rc/p0d-s1-kids-rc01",
   "active_source": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
-  "verified_rc_head": "087dfabeeb3b1c52f323c16459255ec164a21f5b",
+  "verified_rc_head": "2e86ac4fd0d4cb67fd7c673dc4e891b2af6bdc2c",
   "official_s1_previous_score": 75,
   "stages": {
     "IDEA": "企画段階",
@@ -525,11 +525,11 @@
       "id": "P0D-051",
       "group": "ロビー収益",
       "name": "修行の永続保存",
-      "stage": "SOURCE",
+      "stage": "RC",
       "release": "S1",
       "evidence": "https://github.com/kk051780/toy-wars-factory/issues/219",
-      "note": "Store移行・欠損防止必要",
-      "rc_evidence": null
+      "note": "Studio開発用の6技能XP/日次集中枠の保存処理を既存Game+Storeへ統合。54/54 Luau+Rojo成功。実API保存・再ログイン未検証",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43491029567"
     },
     {
       "id": "P0D-052",
@@ -572,5 +572,5 @@
       "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43488586444"
     }
   ],
-  "last_progress_change": "P0D-055 SOURCE->RC with combined V4+Realm exact RC CI 43488586444; 17/55"
+  "last_progress_change": "P0D-051 SOURCE->RC exact 54/54 compile+Rojo HEAD 2e86ac4f Actions43491029567; 18/55"
 }

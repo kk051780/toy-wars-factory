@@ -57,3 +57,6 @@
 - 旧保存データの未対応フィールドは**上書きで失わない**よう、不明レガシーの形はfail-closed。
 - READY_TO_TRAIN/SAVEDはAPI応答が実際に成功した場合のみ。GitHub CI SUCCESSも本物のRoblox DataStore/API試験にはならない。
 - 正式RCから独立OFF：`FEATURE_SWITCHES.json.features.SIX_SKILL_DURABLE.enabled=false` で元の53本へ戻せる。
+
+### 最新確定：RC rich54（Studio開発用保存コード）
+54/54 native Luau + Rojo exact-source SUCCESS: https://github.com/kk051780/toy-wars-factory/actions/runs/43491029567  固定成功HEAD `2e86ac4fd0d4cb67fd7c673dc4e891b2af6bdc2c`。ゲームの第一保存キーは変更せず、Game/Store/UIのみ差分・純粋Ledger1本追加。RC工程でソース実装に進んだ項目は P0D-051、**18/55**。保存・再ログインの実Roblox Studio APIテストはまだ行っていないので、保存機能の完全完成宣言ではない。公開・課金はしない。
