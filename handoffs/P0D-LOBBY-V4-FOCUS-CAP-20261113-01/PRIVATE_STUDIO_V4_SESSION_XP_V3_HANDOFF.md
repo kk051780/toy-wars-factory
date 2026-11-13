@@ -1,0 +1,31 @@
+# P0D V4 — 6-SKILL SESSION XP & LEVEL PREVIEW V3
+**2026-11-13 JST | owner: CHAT-P0D-LOBBY-V4-FOCUS-CAP-SCHEDULER-20261113-01 | product UNSELECTED | no official RC write**
+
+## DELIVERED actual binary + reproducible developer pack in originating chat
+- **PRIVATE** Roblox Studio Place `P0D_V4_SIX_SKILL_SESSION_XP_V3_PRIVATE.rbxlx`.
+- Frozen exact Place SHA256 `ec1df47bd522831ee91bf2986e504e076f3373129628de5f9e82329a89897b47` (458194 bytes).
+- Full independently rebuildable pack `P0D_V4_SESSION_XP_6SKILL_V3_PRIVATE_QA.zip` SHA256 `aa7986a9fa11dc729dc6da8c2b2423df5375bfe8501c78abd878200bfecd768b`, 291826 bytes; includes full **frozen actual V2 source Place**, Python builder, original Scheduler and new pure XP ModuleScript, complete generated V3 Game/HUD texts, exact V2→V3 2-script patch, 14-source static tests, native 54-assertion test, Japanese README, SHA/source receipt. Owner directly downloads them in the originating ChatGPT conversation. **ZIP and Place are NOT in GitHub**; GitHub holds this handoff and the exact new pure module under own source root. To reproduce in another chat transfer original ZIP from OWNER.
+- Frozen baseline 12-pad V2 private Place SHA256 `95d0c1da301572341316c72570e72bc8c59b4621f69d6ad1aa6a56aa778bf3be`; parent H1 two-pad saved Game remains identical except V4 server Game/HUD preview changes.
+- New pure `src/SessionSixSkillXPPreview.luau` Git blob `ceb8f4f6caca37954cb3d61ef3e1756368b966e0`, SHA256 `1d272a9ea2b37e69ff710958a74e92fcd24ce0ff5027efd1c62f8bae07ad9090`. This module is distinct from earlier three-module persistent-capability `TrainingIntegrationGate` and `SixSkillCreditProjection` (which require actual single-Store capability not yet provided).
+
+## Actual GAME change
+- V2 **46 actual embedded scripts** → V3 **47 embedded scripts**, two unchanged server Scripts count2; client LocalScript6 and ModuleScript39. EXACT pre-existing 46 scripts modified in **only TWO original bodies**: original authoritative server `Game` and `V4TrialHUD`; **other 44 source bodies byte-identical**. Newly added ONE purely server-required `SessionSixSkillXPPreview` ModuleScript, no extra game authority, Remote, profile writer, player save key or shop/purchase.
+- Original RED/BLUE 6 pads each remain; 4 new MAGIC/ZOMBIE/VEHICLE/BUILDING pads now truthfully labeled `セッション育成・保存なし`. Original BEAST/WEAPON real H1 saved 2skill XP handling unchanged.
+- The **existing sole Game** calls original server-authoritative `FocusTrainingScheduler.settle(state,floor(serverNow()),onValidPad,verifiedSameServerFriendCount,false)`. The returned signed segment tuple `{skill,seconds,bonusBps,mode}` feeds `V4XP.apply` exactly once with full validation. No XP is credited when not physically on own team pad, carrying egg, RESULTS phase, dead, or loading profile.
+- Added separate in-memory `v4TrialXP[player]` six-skill micro-XP map, initialized on actual join, cleared on leave. Client receives **read-only** `v4Trial.sessionXPLevels` under original server snapshot, plus `saveStatus=NOT_SAVED`, `xpCredited=false` to distinguish from original real saved XP. V4 HUD now shows all six session levels, XP into current level, XP to next and elapsed training seconds.
+- PROPOSED tuning only: 10XP per training second, server-verified same-server friends +25% XP each max4 (+100%), XP cost to next = 100×current level², max Level30. No actual PvP, HP, speed, ability, monster or NPC buff changed. These levels are for on-screen skill progression proof, not permanent account values.
+- Free choice timer: proposal 30min per JST calendar day (in local session), followed by 10min shuffled six-way random. **CRITICAL PRODUCT GAP**: this preview DOES NOT PERSIST daily focus quota, so reconnect/server hop resets the 30min budget. It cannot be called a production-enforced 30min/day cap. The Studio-only `V4_TEST_CAP` debug control changes quota only, grants **ZERO XP** and cannot affect persisted H1 Store.
+
+## Actual QA
+- Real private V3 `.rbxlx` XML extracted and every script passed **PINNED native Luau compile 47/47** from upstream `f46d879e28302a430029304f7f6a162aed66f103`; Script2, LocalScript6, ModuleScript39.
+- A native Luau runtime directly executes exact original `FocusTrainingScheduler` + new `SessionSixSkillXPPreview` sources: **54/54 assertions PASS**. Includes all six, 2/4 friends, 30min focus→random earning, 1min XP→Lv, maxLv30, false/malformed segments, profile missing 4 keys, 120sec limiter, no repeated timestamp double-credit.
+- Real isolated private file XML, old authority, unchanged 44, HUD and no new DataStore/Remote/payments: **14/14 pytest PASS**. Clean ZIP extraction rebuild from fixed V2 confirmed *exact* final SHA256 and re-ran14/14 PASS.
+- **NOT tested:** real Roblox Studio engine Play 1client/2client, real same-server friend, Android, owner FUN, 6skill durable Store or actual PvP skill effects. Native compile/runtime tests do **not** establish Roblox runtime acceptance.
+
+## Downstream guards
+- Product V4 candidate **UNSELECTED** in #250; previous private B42 owner FUN gate remains priority. This specific visual/session XP V3 is optional private comparative H1, not adopted official S1/RC.
+- Existing saved two-skill H1 author feature `CHAT-P0D-DOJO-CANONICAL-PROFILE-PERSIST-20261113-01` exclusively owns original PersistentHatchStore/Profile/Saved XP; do not modify or silently migrate its BEAST/WEAPON values. Next original Store owner must add durable six-skill ledger+JST daily quota+atomic per-session idempotent XP receipts in SAME original DataStore key, ensure original Game and Store single authority and duplicate/reconnect prevention, native/Studio tests, #250 selection, #220 sole RC.
+- Official S1 last FUN score **75/100 FUN_NO_GO** unchanged, V4 evidence gates **2/8** (idea+isolated source), not release completion %. main/merge/Roblox publish/live payments/spend/OWNER PC/CAS/P0ABC/five automations remain untouched.
+
+## Owner immediate action
+Open provided `P0D_V4_SIX_SKILL_SESSION_XP_V3_PRIVATE.rbxlx` in Windows Roblox Studio, Play; stand on e.g. MAGIC, see MAGIC Lv1→2 as XP crosses100; 2+ sec real update display; try UI selected other skill; test debug quota then RANDOM; leave pad and see XP stop; restart Play see session-only levels reset. Report errors, framerate, fun and UX before any product decision.
