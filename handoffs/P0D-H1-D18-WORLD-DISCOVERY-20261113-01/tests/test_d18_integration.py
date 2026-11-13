@@ -10,6 +10,12 @@ def verify_client(s):
       "TRCA-BE-108","TRCA-TR-090","model:Destroy()"]
     for c in checks:
         if c not in s:raise AssertionError("D18_CLIENT_CONTRACT_MISSING:"+c)
+    import re
+    if not re.search(r"MAX_NEARBY_MODELS=2(?=\\s|$)",s):
+        raise AssertionError("D18_INSTANCE_CAP_CHANGED")
+    for field in ("CanCollide=false","CanTouch=false","CanQuery=false"):
+        if s.count(field)!=2:
+            raise AssertionError("D18_BOTH_PART_AND_PROMPT_ANCHOR_MUST_BE_NONCOLLIDING:"+field)
     for forbidden in ["FireServer","RemoteEvent","DataStoreService","MarketplaceService",
       "TakeDamage","GetAsync","SetAsync","ProcessReceipt","Humanoid.WalkSpeed"]:
         if forbidden in s:raise AssertionError("D18_CLIENT_AUTHORITY_VIOLATION:"+forbidden)
