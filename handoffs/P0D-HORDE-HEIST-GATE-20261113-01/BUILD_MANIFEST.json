@@ -1,0 +1,40 @@
+{
+  "packet_id": "P0D-HORDE-HEIST-GATE-S2-20261113-01",
+  "game": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "feature_slice": "CHAT-P0D-GAME-DESIGN-HORDE-HEIST-BRIDGE-TACTICAL-CHOICE-20261113-01",
+  "intent": "S2+ isolated source candidate, not formal S1 RC",
+  "policy": "PUBLIC_SOURCE_V1",
+  "integration_state": "NOT_SELECTED_NOT_WIRED_NOT_STUDIO_TESTED",
+  "source_content": [
+    {
+      "path": "src/GateRules.luau",
+      "git_blob_sha1": "bcd9f18d75dc12edada37cf5faa33c889ca81046"
+    },
+    {
+      "path": "src/GateVisual.luau",
+      "git_blob_sha1": "0bf1d1f68db4682dfee5fd71f459eb59df7ec139"
+    },
+    {
+      "path": "tests/test_gate_rules.py",
+      "git_blob_sha1": "fdd60852dad24f6df4376a87ffedd4cff97648f0",
+      "sha256": "589885b8dee9a3f538dc85e3c95819b0b6c4674c485e4240238eead1a1f6ee88"
+    },
+    {
+      "path": "README.md",
+      "git_blob_sha1": "1204a2abba114dc47c62540bc77c9fed41648800"
+    }
+  ],
+  "actual_python_unittest": {
+    "executed": 14,
+    "passed": 14,
+    "verified_exact_git_blob": "fdd60852dad24f6df4376a87ffedd4cff97648f0"
+  },
+  "native_luau": "NOT_TESTED",
+  "rojo": "NOT_TESTED",
+  "roblox_studio": "NOT_TESTED",
+  "android": "NOT_TESTED",
+  "owner_original_source_readback": "PASS_4_OF_4",
+  "official_rc_adopted": false,
+  "required_next_owner": "#250 product selection only after S1 H1; #288 Horde server hook / #222 World MapBuilder contracts; #220 sole RC integrator"
+}
