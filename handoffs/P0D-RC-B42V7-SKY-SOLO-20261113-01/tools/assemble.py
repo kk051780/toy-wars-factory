@@ -63,7 +63,7 @@ def hunk_game(game:str)->str:
     assert game.count('remote.Name = "TrapRaidersS1Remote"')==1
     assert game.count('local function tickRound()')==1
     assert game.count('local function resetRound()')==1
-    assert game.count('local function snapshotFor(player: Player)')==1
+    assert game.count('snapshotFor = function(player: Player)')==1
     return game
 
 def main():
