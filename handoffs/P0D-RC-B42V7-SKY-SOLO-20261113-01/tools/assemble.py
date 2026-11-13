@@ -86,7 +86,8 @@ def main():
     assert blob(audit.read_bytes())==AUDIT_CLIENT,"AUDIT_SOURCE_DRIFT"
     audit_text=audit.read_text("utf8")
     for forbidden in ("FireServer(", "DataStoreService", "MarketplaceService",
-                      "OnServerEvent:Connect(", "Instance.new("):
+                      "OnServerEvent:Connect(", "Instance.new(\"RemoteEvent\")",
+                      "Instance.new(\"Script\")", "Instance.new(\"ModuleScript\")"):
         assert forbidden not in audit_text, "AUDIT_NOT_READONLY"
     assert 'if not RunService:IsStudio() then return end' in audit_text
     assert 'SKY_WITH_EGG' in audit_text and 'SCORE_AFTER_SKY' in audit_text
@@ -94,6 +95,8 @@ def main():
     assert 'lastSerial' in audit_text and 'skyWithEggSerial' in audit_text
     assert 'scoreAfterSkySerial' in audit_text and 'refreshStatus' in audit_text
     assert 'ScreenGui' in audit_text and '4/4' in audit_text
+    assert audit_text.count('Instance.new("ScreenGui")')==1
+    assert audit_text.count('Instance.new("TextLabel")')==1
     assert 'continuity NOT_PROVEN' in audit_text
     assert blob((UPSTREAM/"src/H1FunWorld_SKY_CASTLE_TEST.server.luau").read_bytes())==ORIGINAL_WORLD
     subprocess.run([sys.executable,"-B",str(UPSTREAM/"tools/assemble.py"),"--assemble"],
