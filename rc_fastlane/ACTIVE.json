@@ -14,7 +14,10 @@
       "optional": [
         "V4 six-skill SESSION ONLY preview"
       ],
-      "persistent_six_skill": false
+      "persistent_six_skill": false,
+      "overlays": [
+        "V4_IDLE_FRIEND_SAFE_FIX"
+      ]
     },
     "rich47": {
       "source_commit": "f74686cbfc601436962df8aeb8da7a1b3ff92152",
@@ -42,8 +45,8 @@
   "studio_2client": "NOT_TESTED",
   "owner_fun": "NOT_TESTED",
   "production_publish_authorized": false,
-  "rollback_granularity": "profile (rich51 -> rich47 -> legacy21); per-feature core switches require refactor, not claimed",
-  "status": "RC_RICH51_REALM_HUNT_INTEGRATION_CI_PENDING",
+  "rollback_granularity": "rich51 V4_IDLE_FRIEND_SAFE_FIX enabled=true/false; whole rich51 -> rich47 -> legacy21; other H1 per-feature switches still unimplemented",
+  "status": "RC_RICH51_OVERLAY_SWITCH_SOURCE_PENDING_CI",
   "release_progress_last_official": 75,
   "first_verified_run": {
     "workflow_run_id": 43483022604,
@@ -62,6 +65,22 @@
       "gameplay": "four in-world secret ProximityPrompts and 4/4 celebration",
       "engine_verification": "NOT_TESTED",
       "feature_switch": "rc_fastlane/FEATURE_SWITCHES.json"
+    }
+  },
+  "feature_switches": {
+    "V4_IDLE_FRIEND_SAFE_FIX": {
+      "enabled": true,
+      "feature_id": "V4_IDLE_FRIEND_SAFE_FIX",
+      "source_author_commit": "b7de8f8b7b4cccfb49d2d81c1ee4438d13a4b286",
+      "source_originals_unchanged": 49,
+      "override_source_git_blobs": {
+        "server/V4TrainingBridge.server.luau": "dbb7171add2b29e337171e547bc40101c2b0dce4",
+        "client/V4TrialOverlay.client.luau": "7ad4ce4fa9d545cb33836c06dc56c0a03e384666"
+      },
+      "rollback": "DISABLE_OVERLAY_RETAIN_RICH51",
+      "real_studio_2client": "NOT_TESTED",
+      "real_android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED"
     }
   }
 }
