@@ -1,0 +1,59 @@
+{
+  "schema": "P0D_WCS_F01_REAL_NATIVE_ROJO58_HANDOFF_RECEIPT_V1",
+  "date_jst": "2026-11-14",
+  "source_feature_id": "WCS_F01_C01_FLOATING_CANYON",
+  "pr_original_author": 298,
+  "pr_child_source_qa": 301,
+  "isolated_success_commit": "6ad5a999413080a66e6ea9b73880d025024fd377",
+  "official_rc_ref_at_assembly": "34d6d384d04ba1d4a394331a3e5c74f798e57a22",
+  "original_author_game_source_ref": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
+  "ci_run_id": 43515233758,
+  "ci_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43515233758",
+  "ci_job_id": 132195410935,
+  "ci_result": "completed_success",
+  "published": false,
+  "official_rc_adopted": false,
+  "actual_proof": {
+    "author_12_real_python_negative_tests": "12/12 PASS; exact original GitBlob checked",
+    "original_57_scripts_byte_identical": "57/57 PASS",
+    "feature_off_byte_exact_57": "PASS",
+    "one_author_wcs_script_added": "PASS",
+    "author_luau_gitblob": "9b891ae8b0dd579ccf1cd477b8b012e03415c0b0",
+    "original_scout_beast_weapon_source_preserved": true,
+    "unique_game_remote_store_source_preflight": "PASS; no new Game/Remote/Store code",
+    "native_luau_compile": "58/58 PASS",
+    "pinned_rojo_version": "7.7.1 checksum PASS",
+    "actual_rojo_embedded_source_exact": "58/58 PASS",
+    "private_artifact_id": 14079019166,
+    "private_artifact_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43515233758/artifacts/14079019166",
+    "private_artifact_name": "P0D-WCS-F01-CANYON-RC57-TO-PRIVATE58-REAL-ROJO",
+    "artifact_size_bytes": 142982
+  },
+  "required_integrator_action": "Sole #220 recheck latest live canonical head; copy only new WCS author Luau module under existing src/server, add independent flag WCS_F01_C01_FLOATING_CANYON into canonical FEATURE_SWITCHES and canonical source lock; re-run one same-HEAD official 58/58 native+Rojo; catalog/registry promotion only after official success; no duplicate author WCS module or whole old Place.",
+  "rollback": "Feature source omission returns identical 57 scripts; Studio ServerStorage attribute P0D_RC_ENABLE_WCS_F01_C01=false must be configured before boot to suppress WCS.",
+  "still_not_tested": [
+    "real Roblox Studio gameplay",
+    "physical walking and gate occupancy in engine",
+    "2 real clients",
+    "Android and touch navigation",
+    "saved DEV DataStore rejoin",
+    "owner FUN evaluation"
+  ],
+  "safety": [
+    "NO canonical RC writes from this lane",
+    "NO main merge",
+    "NO Roblox publication",
+    "NO paid features",
+    "NO extra fees",
+    "NO automation edits"
+  ],
+  "official_catalog_at_check": {
+    "total": 58,
+    "RC": 21,
+    "SOURCE": 27,
+    "IDEA": 10,
+    "rc_rate_percent": 36.2
+  },
+  "official_release_readiness_historical": 75,
+  "no_fun_go": true
+}
