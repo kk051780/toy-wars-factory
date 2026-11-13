@@ -27,7 +27,7 @@ BASE_45_SHA = "79804116b0a144a33c6466340cfb476eefa3ca4d"
 V5_SHA = "f607cf4de4ac50e1e886adbd5b9f6070fe5c0450"
 
 def blob(data: bytes) -> str:
-    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\\0" + data).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
 
 def scripts(root: Path):
     return {p.relative_to(root / "src").as_posix(): p.read_bytes()
@@ -56,7 +56,7 @@ def assemble():
     if cfg["tree"]["StarterPlayer"]["StarterPlayerScripts"]["P0DStudioTrialAudit"]["$path"] != "src/client/P0DStudioTrialAudit.client.luau":
         raise RuntimeError("FAIL_CLOSED_DIAGNOSTIC_MAPPING")
     cfg["name"] = "P0D_H1_B42_V7_SKY_GROUNDDOCK_V5_DOJO_PRIVATE"
-    cfg_path.write_text(json.dumps(cfg, ensure_ascii=False, indent=2) + "\\n", "utf8")
+    cfg_path.write_text(json.dumps(cfg, ensure_ascii=False, indent=2) + "\n", "utf8")
     new = scripts(DEST)
     changed = sorted(k for k in old if old[k] != new.get(k))
     if len(new) != 45 or set(old) != set(new) or changed != [world_key]:
@@ -98,7 +98,7 @@ def assemble():
         "dojo_session_only_beast_weapon": True,
         "source_blobs": {k: blob(v) for k, v in sorted(new.items())},
     }
-    (DEST / "SOURCE_LOCK.json").write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + "\\n", "utf8")
+    (DEST / "SOURCE_LOCK.json").write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + "\n", "utf8")
     print("P0D_H1_DOJO_SKY_V5_45_SOURCE_DIFF_ONE_WORLD_PASS")
     return receipt
 
