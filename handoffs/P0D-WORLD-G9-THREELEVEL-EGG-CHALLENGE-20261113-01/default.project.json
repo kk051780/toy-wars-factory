@@ -1,0 +1,24 @@
+{
+  "name": "TRAP_RAIDERS_G9_THREE_LEVEL_EGG_TAG_STUDIO_ONLY",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "G9_Three_Level_Play": {
+        "$className": "Folder",
+        "G8TravelRules": {
+          "$path": "src/G8TravelRules.luau"
+        },
+        "G8World": {
+          "$path": "src/G8World.server.luau"
+        },
+        "G9EggRules": {
+          "$path": "src/G9EggRules.luau"
+        },
+        "G9EggGame": {
+          "$path": "src/G9EggGame.server.luau"
+        }
+      }
+    }
+  }
+}
