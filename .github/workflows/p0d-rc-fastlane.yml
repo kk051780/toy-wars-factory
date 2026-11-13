@@ -95,7 +95,7 @@ jobs:
         with:
           path: /tmp/p0d_new_luau
           key: p0d-rc-luau-ubuntu-f46d879e28302-v1
-      - name: Compile ONLY the two newly added real Luau sources
+      - name: Compile every actual canonical RC Luau source using same pinned compiler
         shell: bash
         run: |
           set -euo pipefail
@@ -109,6 +109,27 @@ jobs:
           /tmp/p0d_new_luau/luau-compile rc_fastlane/features/realm_hunt/RealmHunt.server.luau > /tmp/p0d_new_server.luau.out
           /tmp/p0d_new_luau/luau-compile rc_fastlane/features/realm_hunt/RealmHuntHUD.client.luau > /tmp/p0d_new_client.luau.out
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            WANT=53
+          elif [ "$PROFILE" = rich47 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
+            WANT=47
+          else
+            DIST=releases/P0D_S1_KIDS_RC01
+            WANT=21
+          fi
+          n=0
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" > /tmp/p0d_rc_native_source.out 2>&1 || {
+              cat /tmp/p0d_rc_native_source.out
+              echo "P0D_CANONICAL_RC_LUAU_COMPILE_FAILED $file"
+              exit 1
+            }
+            n=$((n+1))
+          done < <(find "$DIST/src" -type f -name '*.luau' -print0)
+          test "$n" -eq "$WANT"
+          echo "P0D_CANONICAL_RC_FULL_SOURCE_LUAU_COMPILE_PASS $n/$WANT"
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash
         run: |
