@@ -46,7 +46,7 @@
   "owner_fun": "NOT_TESTED",
   "production_publish_authorized": false,
   "rollback_granularity": "rich51 V4_IDLE_FRIEND_SAFE_FIX enabled=true/false; whole rich51 -> rich47 -> legacy21; other H1 per-feature switches still unimplemented",
-  "status": "RC_RICH51_OVERLAY_SWITCH_SOURCE_PENDING_CI",
+  "status": "RC_RICH53_COMBINED_V4_FIX_AND_REALM_HUNT_BUILD_PASSED",
   "release_progress_last_official": 75,
   "first_verified_run": {
     "workflow_run_id": 43483022604,
@@ -64,7 +64,13 @@
       "expected_place_script_count": 53,
       "gameplay": "four in-world secret ProximityPrompts and 4/4 celebration",
       "engine_verification": "NOT_TESTED",
-      "feature_switch": "rc_fastlane/FEATURE_SWITCHES.json"
+      "feature_switch": "rc_fastlane/FEATURE_SWITCHES.json",
+      "first_verified_build": {
+        "head": "087dfabeeb3b1c52f323c16459255ec164a21f5b",
+        "run_id": 43488586444,
+        "all_source_count": 53,
+        "conclusion": "success"
+      }
     }
   },
   "feature_switches": {

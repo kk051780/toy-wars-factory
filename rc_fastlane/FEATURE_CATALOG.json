@@ -3,7 +3,7 @@
   "as_of_jst": "2026-11-14",
   "rc_branch": "rc/p0d-s1-kids-rc01",
   "active_source": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
-  "verified_rc_head": "50bf5b4851fc0eb7c16052f578d6360ec54cd63a",
+  "verified_rc_head": "087dfabeeb3b1c52f323c16459255ec164a21f5b",
   "official_s1_previous_score": 75,
   "stages": {
     "IDEA": "企画段階",
@@ -565,12 +565,12 @@
       "id": "P0D-055",
       "group": "世界",
       "name": "4秘境スタンプ・制覇演出",
-      "stage": "SOURCE",
+      "stage": "RC",
       "release": "S1",
       "evidence": "https://github.com/kk051780/toy-wars-factory/tree/rc/p0d-s1-kids-rc01/rc_fastlane/features/realm_hunt",
-      "note": "空・海・炎・星。現行RCへの同梱をCI検証中。4/4で22秒の外見エフェクト、保存・能力なし",
-      "rc_evidence": null
+      "note": "4つの秘境に本物の発見プロンプトと4/4達成演出。元49本保持＋既存V4改善2本＋新規2本=53本のRCビルド成功。実機・永続保存未検証",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43488586444"
     }
   ],
-  "last_progress_change": "New IDEA P0D-055 -> actual Luau SOURCE; pending same-HEAD RC exact build before RC promotion"
+  "last_progress_change": "P0D-055 SOURCE->RC with combined V4+Realm exact RC CI 43488586444; 17/55"
 }

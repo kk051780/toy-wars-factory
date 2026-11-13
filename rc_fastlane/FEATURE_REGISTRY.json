@@ -123,7 +123,7 @@
     {
       "id": "REALM_HUNT_V1",
       "summary": "4 fantasy landmark ProximityPrompts -> 4/4 session discovery + temporary glow",
-      "state": "PENDING_EXACT_HEAD_CI",
+      "state": "INCLUDED_IN_ACTIVE_RICH53_RC_BUILD_PASSED",
       "profiles": [
         "rich51"
       ],
@@ -135,7 +135,13 @@
       "rollback": "set enabled=false and rebuild the same RC; preserves original 51 bytes",
       "independent_switch": true,
       "no_authority": "no Game/Remote/Store/score/HP/XP writes",
-      "studio_test": "NOT_TESTED"
+      "studio_test": "NOT_TESTED",
+      "ci_run": 43488586444,
+      "rc_commit": "087dfabeeb3b1c52f323c16459255ec164a21f5b",
+      "verified_rojo_sources": 53,
+      "original_49_unmodified": true,
+      "v4_pair_overlaid": true,
+      "engine_studio": "NOT_TESTED"
     }
   ],
   "next_source_adoption_contract": {

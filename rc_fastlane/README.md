@@ -44,3 +44,6 @@
 
 ## RC追加機能：REALM_HUNT_V1（天空・海・炎・星）
 4個の秘密の印を実際のマップに配置。生きたプレイヤーが近付いて発見プロンプトを押すと、サーバーのセッション用探索数が1/4ずつ増え、4/4で22秒の金色の演出が発動。Studio内のカウンターはサーバー属性で更新。卵/スコア/HP/戦闘/永続保存/課金は触らない。独立2スクリプト、元の51スクリプトは変更なし。機能スイッチは `rc_fastlane/FEATURE_SWITCHES.json` で無効化可能。実Roblox Studioは未試験。
+
+### 2026-11-14 実証済みRC：修行改善+4秘境探索
+1つのRCで51本作者ソースを起点に、V4修行の2本をソース固定で差し替え（残り49本は不変）、REALM_HUNT_V1の2本を追加。最終計53本。GitHub Actions [43488586444](https://github.com/kk051780/toy-wars-factory/actions/runs/43488586444) でLuauネイティブ新規2本、検査、53ソース完全照合、Rojoによる未公開Studio用Placeの生成すべてSUCCESS。実機/FUNはNOT_TESTED。秘境機能OFFは `rc_fastlane/FEATURE_SWITCHES.json`、修行改善OFFは `ACTIVE.json.feature_switches` で独立に切戻し可能。企画台帳のP0D-055はRCに昇格し、17/55件に増加。
