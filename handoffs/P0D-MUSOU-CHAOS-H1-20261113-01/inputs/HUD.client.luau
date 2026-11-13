@@ -4,6 +4,7 @@
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 local remote = ReplicatedStorage:WaitForChild("TrapRaidersS1Remote") :: RemoteEvent
 
@@ -86,16 +87,22 @@ local windButton = button(gui, "RaiderWind", "🌪 風走り\nRキー",
     Color3.fromRGB(55, 139, 192))
 windButton.Visible = false
 -- Studio H1-only: readable extra controls in free right-middle space.
-local netButton = button(gui,"ShortCaptureNet","🕸 網で捕獲\\nNキー",
+local netButton = button(gui,"ShortCaptureNet","🕸 網で捕獲\nNキー",
     UDim2.fromOffset(110,62),UDim2.new(1,-140,1,-185),Color3.fromRGB(112,83,173))
 netButton.Visible=false
-local rescueButton=button(gui,"BreakOrRescue","⛓ 仲間を救助\\nBキー",
+local rescueButton=button(gui,"BreakOrRescue","⛓ 仲間を救助\nBキー",
     UDim2.fromOffset(115,62),UDim2.new(1,-265,1,-185),Color3.fromRGB(66,154,151))
 rescueButton.Visible=false
 local mobCue=label(gui,"MusouHordeCue",UDim2.new(.56,0,0,27),
     UDim2.new(.22,0,0,142),Color3.fromRGB(255,221,132),14)
 mobCue.Text="⚔ 中立兵の群れ！"
 mobCue.Visible=false
+-- Server-derived impact feedback. Local visual only; never client-side damage.
+local impactToast=label(gui,"MusouHitFlash",UDim2.fromOffset(225,52),
+    UDim2.new(.5,-112,.45,-26),Color3.fromRGB(255,220,104),24)
+impactToast.TextStrokeTransparency=.15
+impactToast.Visible=false
+impactToast.Text=""
 local roleRaider = button(gui, "RaiderRole", "🏃 速攻", UDim2.fromOffset(92, 53),
     UDim2.new(.02, 0, 1, -64), Color3.fromRGB(59, 128, 208))
 local roleGuardian = button(gui, "GuardianRole", "🛡 守護", UDim2.fromOffset(92, 53),
@@ -177,6 +184,8 @@ local equipButtons={
 
 local seq = 0
 local currentNetBound=false -- display state ONLY; server independently validates
+local lastImpactSeq=-1
+local impactDisplayEpoch=0
 local lastSerial = -1
 local lastUpdateId = -1 -- never reset between rounds; view-only HUD ordering
 local bossVisual: {serial: number, eventId: string, lastSeq: number, cueUntil: number}? = nil
@@ -316,6 +325,33 @@ remote.OnClientEvent:Connect(function(s)
         s.hp.BLUE or 0, s.team or "?", displayRole(s.role),
         s.redPlayers or 0, s.bluePlayers or 0)
     status.Text = phaseText(s)
+    if s.musouActive==true then
+        local hitSeq=s.musouImpactSeq
+        if type(hitSeq)=="number" and hitSeq==hitSeq and hitSeq%1==0
+            and hitSeq>=0 and hitSeq<=1000000000 and hitSeq>lastImpactSeq then
+            lastImpactSeq=hitSeq
+            local hits=s.musouLastHits
+            local kos=s.musouLastKOs
+            if type(hits)=="number" and hits%1==0 and hits>=1 and hits<=6
+                and type(kos)=="number" and kos%1==0 and kos>=0 and kos<=hits then
+                impactDisplayEpoch+=1
+                local epoch=impactDisplayEpoch
+                impactToast.Text=if kos>0 then "💥 "..tostring(kos).."体撃破！  "
+                    ..tostring(hits).."HIT" else "⚔ "..tostring(hits).."HIT！"
+                impactToast.TextSize=21
+                impactToast.TextTransparency=0
+                impactToast.Visible=true
+                TweenService:Create(impactToast,TweenInfo.new(.18,Enum.EasingStyle.Back,
+                    Enum.EasingDirection.Out),{TextSize=29}):Play()
+                task.delay(.42,function()
+                    if impactDisplayEpoch==epoch then impactToast.Visible=false end
+                end)
+            end
+        end
+    else
+        impactDisplayEpoch+=1
+        impactToast.Visible=false
+    end
     local level=if type(s.progressLevel)=="number"
         and s.progressLevel%1==0 and s.progressLevel>=1 and s.progressLevel<=50
         then s.progressLevel else 1
@@ -431,13 +467,13 @@ remote.OnClientEvent:Connect(function(s)
         and not currentNetBound and (type(s.carrying)~="string" or s.carrying=="")
     netButton.AutoButtonColor=netButton.Active
     netButton.Text=if netCd>0 then "🕸 あと"..tostring(netCd).."秒"
-        else "🕸 網で捕獲\\nNキー"
+        else "🕸 網で捕獲\nNキー"
     rescueButton.Visible=s.musouActive==true
         and (currentNetBound or s.netRescueNearby==true)
     rescueButton.Active=rescueButton.Visible
     rescueButton.AutoButtonColor=rescueButton.Active
-    rescueButton.Text=if currentNetBound then "⛓ 自力で脱出\\nBキー"
-        else "🤝 仲間を救助\\nBキー"
+    rescueButton.Text=if currentNetBound then "⛓ 自力で脱出\nBキー"
+        else "🤝 仲間を救助\nBキー"
     trapButton.Visible = s.phase == "ACTIVE" and s.role == "GUARDIAN"
     windButton.Visible = s.phase == "ACTIVE" and s.role == "RAIDER"
     local trapCooldown = if type(s.trapCooldown) == "number" and s.trapCooldown > 0
