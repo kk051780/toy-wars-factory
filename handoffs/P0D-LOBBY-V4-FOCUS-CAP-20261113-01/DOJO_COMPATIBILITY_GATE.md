@@ -1,0 +1,31 @@
+# V4 Focus Cap → H1 Beast/Weapon Dojo: SOURCE-REAL Compatibility Gate
+**Date:** 2026-11-13 JST · **Product:** P0D-LOBBY-TRAINING-001 · **Not yet integrated**
+
+## Pinned artifacts
+- V4 isolated verified scheduler source: `a00caf954aacfca03c92a75b0165c1bafd4de8fd` Git blob, published parent commit `e834884fc370f63fc823a08eba2c59efef7fab45` and native CI [43407707040](https://github.com/kk051780/toy-wars-factory/actions/runs/43407707040): **Python 34/34 + native Luau 35 assertions PASS.** Native test is SOURCE LEVEL, not Studio.
+- Original H1 game/stations author (DO NOT WRITE): `ce4e1ebcf6d16313c9d144c56129bdfae548e1bf`, `handoffs/P0D-H1-AUTO-DOJO-20261113-01/inputs/DojoRules.luau` Git blob `120bac439c979310c9ddeb2fcf2ffa002b6d1add`, pinned CI [43405555634](https://github.com/kk051780/toy-wars-factory/actions/runs/43405555634).
+- Existing original H1 game's Game module is the **sole server round/XP/Store/Remote authority**, never add duplicate Script, RemoteEvent, new DataStore writer or merge either source into main.
+
+## Actual source mismatch (integration BLOCKER, not harmless)
+1. Current H1 Dojo has only `VALID={BEAST=true,WEAPON=true}`; V4 scheduler emits six skills (`MAGIC/ZOMBIE/VEHICLE/BUILDING` included). Blindly feeding these four to Dojo.tick returns false silently: random training could fail to advance 4/6 time. **Do not silently drop events or call this integrated.**
+2. Current H1 Dojo.tick requires server delta `0 < delta <= 1.5` seconds, **session lifetime** `MAX_SECONDS_PER_SKILL=180`, progression to max Lv5, *no permanent storage*. V4 scheduler returns `{skill, seconds, bonusBps, mode}` segments up to **120 seconds**, a **30min free-choice quota and 10min random rotation**, and policy snapshot. Plugging raw segment duration into Dojo.tick fails; only repeated server-verified <=1.5-second tick credit can use legacy H1. Proper persistent progression requires original server Save/Store owner integration.
+3. Current H1 Dojo accepts only `friendPresent:boolean` and gives `FRIEND_XP_MULTIPLIER=1.5` (single-or-more friends). V4 returns verified friend count based basis points: **10000,12500,15000,17500,20000** for 0..4+. Simply substituting a true/false boolean gives incorrect +25%-per-friend behavior.
+4. Existing H1 two pads are explicitly located near each side of spawn and each pad is already linked to BEAST or WEAPON. V4 free-choice permits any of six while standing at station; requires UI selection, player-owned selection and server-side session-latched skill decision rather than hard-assigning the pad's kind. Keep red/blue identical.
+5. Current H1 pads are *Studio-session-only*: they do **not** persist skill XP and progression, and original game still carries its own session stats. V4's `snapshot` is only metadata; its presence does not mean the original Game saves it.
+6. Current H1 uses a server `0.5s` tick and server friend detection via `Player:IsFriendsWith`. V4 scheduler floors server Unix time to integer seconds; calling twice in one second will correctly award once, but wrap interpolation/adaptation correctly. Before/after station switch, exiting the lobby, friend join/exit, server shutdown and datastore write, settle previous segment exactly once using previous trusted state. **Never grant elapsed XP to a player after leaving station or disconnected.**
+
+## Accepted integration sequence after #250 selects product
+1. Owner of H1 station branch produces a **new separately versioned** private H1 variant, never overwrite the frozen H1 baseline. V4 author only edits own scheduler module; H1 owner integrates stations & UI. Keep full frozen source SHA and true Game/HUD diff.
+2. Single real Game on server checks on-pad proximity, alive/team/phase; obtains trusted server time and verified distinct same-server friends; calls V4 `settle` on a real training session. `settle` returns time segments only (NOT XP) and must be converted through the one authoritative profile XP store. Decide six-skill profile schema and level cost curve, runtime and PvP normalization; test smooth 2-client/Android reward accrual and fairness.
+3. Server enforces free cumulative 30min per **JST calendar day**, 10min randomized shifts after quota, client never chooses `unlimitedFocus=true`; permanent entitlement only after a separate OWNER-approved commerce review. Display choice, training type, free time remaining, next reset, friend count and actual XP receipts via existing read-only HUD snapshot.
+4. Claim progress save under one profile session lock + conflict-aware UpdateAsync; account for no offline progress, multiple servers, failed save, join->leave, duplicate callback, friend leave midtick. No per-second DataStore writes.
+5. Independent QA checks native Luau source and full real game Rojo Place, Then #250 private trial select, #220 `[P0D_RC_INTEGRATION_DECISION]` with sole official RC SHA, OWNER real Studio1client/2client/Android FUN evidence. No automatic Codex PC execution. Until this, **source verified ≠ actual integrated**.
+
+## Specific QA acceptance cases
+- Selected MAGiC free for 25min then WEAPON for 5min uses *one shared* 30min budget. After exhaustion, all six appear in six 10min random slots; no two consecutive slots use same path across cycle boundary.
+- 1 real same-server friend +25%, 2 +50%, 4 +100%, 5 still +100%; fake client claimed friend or disconnected friend earns 0 extra. Current H1 ×1.5 behavior is NOT equal.
+- Switching pad, team, server or entering egg match cannot continue training via stale state; signed-in new server resumes quota correctly and does not double-award.
+- On JST midnight, quota resets based on server-controlled time; previous-day segment split and new-day segment accounted once.
+- No premium pass, no payment prompts, no product catalog, no parental coercion or paid-exclusive PvP power in prototype. Roblox idle auto-disconnect stays intact.
+
+**Current disposition**: V4 `SCHEDULER_NATIVE_SOURCE_QA_PASS`; H1 `TWO_STATION_SOURCE_QA_PASS`; **V4+H1 integrated = NO**. The next acceptance is a formal #250 candidate decision, dedicated isolated integration owner, full native+Rojo pipeline and actual OWNER Studio FUN. Prior #250 private B42 and sole #220 S1 last75/100 FUN_NO_GO stay unchanged.
