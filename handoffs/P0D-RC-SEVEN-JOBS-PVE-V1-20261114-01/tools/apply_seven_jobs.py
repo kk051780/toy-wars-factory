@@ -16,7 +16,7 @@ ORIGINAL={
  "client/TrapRaidersHUD.client.luau":"3f2654199c2531bea34371a4ea33beecf65d1e306ecd91e86f5164ab3ddca06d",
 }
 AFTER={
- "server/Game.server.luau":"8fa1a3df2965a538905ad8e6da18ade27c11218062293b14cadf1676459f7476",
+ "server/Game.server.luau":"0a8a1873011f8b444169738d53c176dd40eeae0f70140f61bbf097e381dffbf7",
  "client/TrapRaidersHUD.client.luau":"5a9a6376750430ebbe976637dd8e320debadd337700138641c2360b2e78c89a5",
  "server/SevenJobsRules.luau":"cd4de7c232f2303e719000fddc2b52f54b38f461416cb4d33316c8fac24fb3d8",
 }
@@ -54,6 +54,11 @@ def apply(dist):
    subprocess.run(["patch","--fuzz=0","--batch","--forward","-p1","-i",
                    str(patch)],cwd=td,check=True,capture_output=True,text=True)
    after=f.read_bytes()
+  if key=="server/Game.server.luau":
+   # Required safety fix after author patch: turret never occludes LOS raycasts.
+   old=b"wall.Anchored=true;wall.CanCollide=false;wall.CanTouch=false"
+   assert after.count(old)==1,"TURRET_GUARD_DRIFT"
+   after=after.replace(old,old+b";wall.CanQuery=false")
   assert hash_bytes(after)==AFTER[key],("WRONG_PATCH_RESULT",key)
   (dist/"src"/key).write_bytes(after)
  new_src=(ROOT/"src/SevenJobsRules.luau").read_bytes()
