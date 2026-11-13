@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - feature/p0d-evolution-branching-pure-20261113-01
+  pull_request:
+    branches:
+      - feature/p0d-power-fantasy-policy-20261113-01
   workflow_dispatch:
 permissions:
   contents: read
