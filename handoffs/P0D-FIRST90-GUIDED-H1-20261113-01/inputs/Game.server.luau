@@ -1130,11 +1130,11 @@ local function spawnActualScout(player: Player,token: any)
     -- The only H1 Game owns both actual abilities; no new Remote or scheduler
     -- beyond the existing timed scout lifecycle.
     if stage>=2 and branch=="GUARD" then
-        evolutionGuards[player]={untilAt=serverNow()+8,
+        evolutionGuards[player]={untilAt=serverNow()+SCOUT_DURATION,
             hits=if stage>=3 then 5 else 3}
     end
     task.spawn(function()
-        local nextEvolvedStrike=0
+        local evolvedStrikeUsed=false -- one meaningful hit per authorized 5sec scout token
         local highlighted: Highlight?=nil
         local t=0
         while t<SCOUT_DURATION and scoutModels[player]==model
@@ -1149,18 +1149,17 @@ local function spawnActualScout(player: Player,token: any)
             right.CFrame=body.CFrame*CFrame.new(1.7*scale,.1,0)
             eye.CFrame=body.CFrame*CFrame.new(0,0,-1.25*scale)
             if evolvedAura then evolvedAura.CFrame=body.CFrame end
-            if stage>=2 and branch=="ASSAULT"
-                and serverNow()>=nextEvolvedStrike then
+            if stage>=2 and branch=="ASSAULT" and not evolvedStrikeUsed then
                 -- Existing server horde:hit authority, PvE ONLY. Do not stack
                 -- permanent evolution with #285 PvP multiplier or award kill XP.
                 local hits=horde:hit(anchor,currentRoot.CFrame.LookVector,
                     if stage>=3 then 40 else 26,serverNow(),player.Character)
                 if hits>0 then
+                    evolvedStrikeUsed=true
                     mobImpactSeq[player]=(mobImpactSeq[player] or 0)+1
                     mobLastHits[player]=hits
                     mobLastKOs[player]=0
                 end
-                nextEvolvedStrike=serverNow()+12
             end
             local target,character=visibleCarrierTarget(player,currentRoot)
             if target and character then
