@@ -1,0 +1,29 @@
+--- official54/V4TrialOverlay.luau
++++ candidate54/V4TrialOverlay.luau
+@@ -66,10 +66,12 @@
+ local function render()
+     local saved=player:GetAttribute("P0D_V4_SaveStatus")=="SAVED"
+     local saveState=tostring(player:GetAttribute("P0D_V4_SaveStatus") or "LOCAL_ONLY")
++    local previewAllowed=player:GetAttribute("P0D_V4_PreviewAllowed")~=false
+     baseWarning=if saved then "DEV保存確認済 / 対戦強化なし"
++        elseif not previewAllowed then "試作XPは停止・DEV保存は未確認"
+         else "保存状況:"..saveState.." / 体験XP"
+     footer.Text=baseWarning
+-    local active=player:GetAttribute("P0D_V4_Active")==true
++    local active=previewAllowed and player:GetAttribute("P0D_V4_Active")==true
+     local mode=player:GetAttribute(if saved then "P0D_V4_SavedMode" else "P0D_V4_Mode")
+     local left=tonumber(player:GetAttribute(if saved then "P0D_V4_SavedRemaining" else "P0D_V4_Remaining")) or 1800
+     local current=player:GetAttribute(if saved then "P0D_V4_SavedSkill" else "P0D_V4_Current") or "-"
+@@ -83,7 +85,11 @@
+         local lv=tonumber(player:GetAttribute(prefix..skill.."_LV")) or 1
+         local xp=tonumber(player:GetAttribute(prefix..skill.."_XP")) or 0
+         local nextXP=tonumber(player:GetAttribute(prefix..skill.."_NEXT")) or 100
+-        rows[i].Text=string.format("%s   Lv%d   XP%d  次まで%d",display,lv,xp,nextXP)
++        if not saved and not previewAllowed then
++            rows[i].Text=display.."  試作XP：停止中"
++        else
++            rows[i].Text=string.format("%s   Lv%d   XP%d  次まで%d",display,lv,xp,nextXP)
++        end
+     end
+ end
+ local toggle=Instance.new("TextButton")
