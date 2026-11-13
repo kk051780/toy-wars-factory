@@ -55,11 +55,11 @@ jobs:
           set -euo pipefail
           mkdir -p /tmp/p0d_h2_score
           for mode in OFF ON; do
-              p="$OWN/dist/TRAP_RAIDERS_H2_MULTI_EGG_\${mode}_PRIVATE_STUDIO"
-              dest="/tmp/p0d_h2_score/TRAP_RAIDERS_H1_MULTI_EGG_\${mode}_PRIVATE_DO_NOT_PUBLISH.rbxlx"
+              p="$OWN/dist/TRAP_RAIDERS_H2_MULTI_EGG_${mode}_PRIVATE_STUDIO"
+              dest="/tmp/p0d_h2_score/TRAP_RAIDERS_H1_MULTI_EGG_${mode}_PRIVATE_DO_NOT_PUBLISH.rbxlx"
               /tmp/p0d_h2_rojo build "$p/default.project.json" -o "$dest"
               test -s "$dest"
-              python3 -B "$OWN/tools/assemble.py" --verify-xml "$dest" --mode "$mode" --receipt "/tmp/p0d_h2_score/H1_SCORE_\${mode}_EXACT_SOURCE_RECEIPT.json"
+              python3 -B "$OWN/tools/assemble.py" --verify-xml "$dest" --mode "$mode" --receipt "/tmp/p0d_h2_score/H1_SCORE_${mode}_EXACT_SOURCE_RECEIPT.json"
           done
       - name: Checkout exact original upstream Luau for true native source compilation
         uses: actions/checkout@v4
@@ -85,9 +85,9 @@ jobs:
               while IFS= read -r -d '' src; do
                   /tmp/p0d_h2_full_native/luau-compile "$src" >/dev/null
                   total=$((total+1))
-              done < <(find "$OWN/dist/TRAP_RAIDERS_H2_MULTI_EGG_\${mode}_PRIVATE_STUDIO/src" -name '*.luau' -print0)
+              done < <(find "$OWN/dist/TRAP_RAIDERS_H2_MULTI_EGG_${mode}_PRIVATE_STUDIO/src" -name '*.luau' -print0)
               test "$total" = 33
-              echo "P0D_H2_ACTUAL_FULL_H1_NATIVE_COMPILE_\${mode}_33_OF_33_PASS"
+              echo "P0D_H2_ACTUAL_FULL_H1_NATIVE_COMPILE_${mode}_33_OF_33_PASS"
           done
       - name: Execute actual mounted original multi-egg Lua 124 assertions and ten hostile mutants
         shell: bash
