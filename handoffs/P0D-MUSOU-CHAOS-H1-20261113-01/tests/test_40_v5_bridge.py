@@ -23,6 +23,11 @@ check(len(b.P39)==len(b.P40)==len(b.H1V5)==40,"immutable pins")
 check(len(b.ORIG40_BLOBS)==5,"five exact frozen original40 overlays")
 check(all(len(v)==40 for v in b.ORIG40_BLOBS.values()),"original40 blob pins")
 check(len(b.V5_HORDE_BLOB)==40 and len(b.BASE39_POWER_BLOB)==40,"real source blobs")
+visual_source=(b.OWN/"inputs/MusouHorde.luau").read_bytes()
+check(b.gitblob(visual_source)==b.V5_HORDE_BLOB,"real V6 Horde exact GitBlob freeze")
+check('MovingClaw_' in visual_source.decode() and 'CrownHorn_' in visual_source.decode(),"real V6 3D toy models")
+check('m.arms[1].Orientation' in visual_source.decode() and 'm.attackAt=math.max(m.attackAt,now+.65)' in visual_source.decode(),"actual V6 visual movement and hit delay")
+
 check(b.HUD_OLD!=b.HUD_NEW,"real HUD count patch")
 # Test genuine immutable author 40 source; no hand-made dummy source.
 game_path=b.ORIG40/"Game.server.luau"
