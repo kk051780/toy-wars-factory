@@ -3,15 +3,17 @@
 -- Original MapBuilder owner must select collision-safe CFrame.
 local GateVisual = {}
 
-function GateVisual.create(parent: Instance, transform: CFrame): Model
+function GateVisual.create(parent: Instance, transform: CFrame, corridorWidth: number): Model
     assert(typeof(transform) == "CFrame", "CFrame required")
+    assert(type(corridorWidth) == "number" and corridorWidth == corridorWidth
+        and corridorWidth >= 6 and corridorWidth <= 24, "valid corridorWidth required")
     local model = Instance.new("Model")
     model.Name = "NeutralEliteSharedRouteGate"
 
     local door = Instance.new("Part")
     door.Name = "PhysicalDoor"
     door.Anchored = true
-    door.Size = Vector3.new(8, 12, 1.2)
+    door.Size = Vector3.new(corridorWidth, 12, 1.2)
     door.CFrame = transform
     door.Material = Enum.Material.Neon
     door.Color = Color3.fromRGB(64, 163, 241)
