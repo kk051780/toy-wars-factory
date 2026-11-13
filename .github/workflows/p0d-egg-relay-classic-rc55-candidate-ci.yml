@@ -4,13 +4,15 @@ on:
     branches:
       - feature/p0d-egg-relay-classic-live-20261114-01
     paths:
-      - 'handoffs/P0D-EGG-RELAY-CLASSIC-LIVE-20261114-01/**'
+      - 'handoffs/P0D-EGG-RELAY-CLASSIC-LIVE-20261114-01/PATCH_OPS.json'
+      - 'handoffs/P0D-EGG-RELAY-CLASSIC-LIVE-20261114-01/tools/**'
+      - 'handoffs/P0D-EGG-RELAY-CLASSIC-LIVE-20261114-01/tests/**'
       - '.github/workflows/p0d-egg-relay-classic-rc55-candidate-ci.yml'
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  rc56-relay-candidate:
+  rc57-relay-candidate:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -143,22 +145,35 @@ jobs:
           ref: f46d879e28302a430029304f7f6a162aed66f103
           path: _luau
           persist-credentials: false
-      - name: Compile all 58 actual files and execute original policy 41 cases
+      - name: Cache only exact-pinned native Luau compiler and runner binaries
+        uses: actions/cache@v4
+        with:
+          path: /tmp/p0d_relay_luau_cli
+          key: p0d-egg-relay-native-luau-f46d879e28302a430029304f7f6a162aed66f103-ubuntu-v1
+      - name: Compile all 58 actual files, 41 policy cases and 30 real Game cases
         shell: bash
         run: |
           set -euo pipefail
           test "$(git -C _luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
-          cmake -S _luau -B /tmp/p0d_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/p0d_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          if [ ! -x /tmp/p0d_relay_luau_cli/luau-compile ] || [ ! -x /tmp/p0d_relay_luau_cli/luau ]; then
+            cmake -S _luau -B /tmp/p0d_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+            cmake --build /tmp/p0d_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+            mkdir -p /tmp/p0d_relay_luau_cli
+            cp -p /tmp/p0d_luau/luau-compile /tmp/p0d_relay_luau_cli/luau-compile
+            cp -p /tmp/p0d_luau/luau /tmp/p0d_relay_luau_cli/luau
+            echo P0D_EGG_RELAY_LUAU_NATIVE_CLI_BUILT_AND_CACHED
+          else
+            echo P0D_EGG_RELAY_LUAU_NATIVE_CLI_CACHE_HIT
+          fi
           n=0
           while IFS= read -r -d '' file; do
-            /tmp/p0d_luau/luau-compile "$file" >/dev/null
+            /tmp/p0d_relay_luau_cli/luau-compile "$file" >/dev/null
             n=$((n+1))
           done < <(find "$DIST/src" -type f -name '*.luau' -print0)
           test "$n" -eq 58
           python3 -B handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/tools/generate_native_runner.py --out /tmp/P0D_RELAY_NATIVE.generated.luau
-          /tmp/p0d_luau/luau-compile /tmp/P0D_RELAY_NATIVE.generated.luau >/dev/null
-          /tmp/p0d_luau/luau /tmp/P0D_RELAY_NATIVE.generated.luau | tee /tmp/p0d_relay_native.log
+          /tmp/p0d_relay_luau_cli/luau-compile /tmp/P0D_RELAY_NATIVE.generated.luau >/dev/null
+          /tmp/p0d_relay_luau_cli/luau /tmp/P0D_RELAY_NATIVE.generated.luau | tee /tmp/p0d_relay_native.log
           grep -Fx 'P0D_EGG_RELAY_NATIVE_POLICY_41_CASES_PASS' /tmp/p0d_relay_native.log
           echo P0D_EGG_RELAY_RICH58_NATIVE_LUAU_COMPILE_PASS
           # Execute the ACTUAL extracted Game.server relay function, not just pure policy.
@@ -166,8 +181,8 @@ jobs:
             --game "$DIST/src/server/Game.server.luau" \
             --policy handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/src/EggRelayPolicy.luau \
             --out /tmp/P0D_RELAY_ACTUAL_GAME_NATIVE.generated.luau
-          /tmp/p0d_luau/luau-compile /tmp/P0D_RELAY_ACTUAL_GAME_NATIVE.generated.luau >/dev/null
-          /tmp/p0d_luau/luau /tmp/P0D_RELAY_ACTUAL_GAME_NATIVE.generated.luau | tee /tmp/p0d_relay_actual_game.log
+          /tmp/p0d_relay_luau_cli/luau-compile /tmp/P0D_RELAY_ACTUAL_GAME_NATIVE.generated.luau >/dev/null
+          /tmp/p0d_relay_luau_cli/luau /tmp/P0D_RELAY_ACTUAL_GAME_NATIVE.generated.luau | tee /tmp/p0d_relay_actual_game.log
           grep -Fx 'P0D_EGG_RELAY_ACTUAL_GAME_NATIVE_30_CASES_PASS' /tmp/p0d_relay_actual_game.log
       - name: Install official checksum-pinned Rojo 7.7.1
         shell: bash
