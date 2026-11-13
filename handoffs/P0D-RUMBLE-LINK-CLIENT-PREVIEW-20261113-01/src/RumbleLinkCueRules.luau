@@ -17,20 +17,25 @@ local function validSeq(n)
  return finite(n) and n%1==0 and n>=1 and n<=1000000000
 end
 function M.new()
- return {roundId=nil, lastSeq=0, nextAllowed=0}
+ return {roundId=nil, roundSerial=0, lastSeq=0, nextAllowed=0}
 end
 -- packet must be derived by the sole #220 integrator from an authenticated
 -- server->client status event. This module is NOT an authentication boundary.
--- packet={roundId,seq,kind,team,expiresAt}
+-- packet={roundId,roundSerial,seq,kind,team,expiresAt}
 function M.accept(state,packet,now,localTeam)
  if type(state)~="table" or type(packet)~="table" or not finite(now) then return nil end
  if localTeam~="RED" and localTeam~="BLUE" then return nil end
- if packet.team~=localTeam or not validId(packet.roundId) or not validSeq(packet.seq) then return nil end
+ if packet.team~=localTeam or not validId(packet.roundId) or not validSeq(packet.roundSerial) or not validSeq(packet.seq) then return nil end
  local cue=CUES[packet.kind]
  if not cue or not finite(packet.expiresAt) then return nil end
  if packet.expiresAt<now or packet.expiresAt>now+4 then return nil end
- if state.roundId~=packet.roundId then
-  state.roundId=packet.roundId; state.lastSeq=0; state.nextAllowed=0
+ local currentSerial=state.roundSerial or 0
+ if not finite(currentSerial) or currentSerial%1~=0 or currentSerial<0 then return nil end
+ if packet.roundSerial<currentSerial then return nil end
+ if packet.roundSerial==currentSerial and state.roundId~=packet.roundId then return nil end
+ if packet.roundSerial>currentSerial then
+  state.roundId=packet.roundId; state.roundSerial=packet.roundSerial
+  state.lastSeq=0; state.nextAllowed=0
  end
  if packet.seq<=state.lastSeq then return nil end
  state.lastSeq=packet.seq
