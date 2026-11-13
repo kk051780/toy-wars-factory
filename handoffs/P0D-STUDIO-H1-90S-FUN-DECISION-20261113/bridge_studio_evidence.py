@@ -115,8 +115,9 @@ def judge_manual_and_probe(manual:dict,paths:dict)->dict:
     # "studio_2client", mobile_checked, owner_confirmation, pickup, score or route proof.
     ans=decider.evaluate(manual)
     # Contradictory manual declaration is safely rejected, not silently fixed.
-    if manual.get("h0",{}).get("server_red_blue_logs") is not True or \
-        manual.get("h1",{}).get("server_red_blue_logs") is not True:
+    if not isinstance(manual.get("h0"),dict) or not isinstance(manual.get("h1"),dict) or \
+        manual["h0"].get("server_red_blue_logs") is not True or \
+        manual["h1"].get("server_red_blue_logs") is not True:
         return hold("HOLD_OWNER_MUST_ACK_LOG_REVIEW",
                     "Original logs are present, but OWNER has not checked each saved output.",
                     assessments)
