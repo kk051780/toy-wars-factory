@@ -58,11 +58,15 @@ def integrate(dist,profile):
     )
     txt=replace1(txt,'local function applyAttack(player: Player, data)',
         hook+'local function applyAttack(player: Player, data)')
-    txt=replace1(txt,'*earnedDamageMultiplier(player,"MINION"),now,player.Character)',
+    txt=replace1(txt,'*earnedDamageMultiplier(player,"MINION")\n'
+        '                *Dojo.pveDamageMultiplier(dojoStates[player],"WEAPON"),now,player.Character)',
         '*SavedPvePolicy.mergeWithEarned(\n'
-        '                    earnedDamageMultiplier(player,"MINION"),\n'
+        '                    earnedDamageMultiplier(player,"MINION")\n'
+        '                    *Dojo.pveDamageMultiplier(dojoStates[player],"WEAPON"),\n'
         '                    savedPveMinionMultiplier(player)),now,player.Character)')
     assert txt.count("savedPveMinionMultiplier(player)")==1
+    assert txt.count('Dojo.pveDamageMultiplier(dojoStates[player],"WEAPON")')==1
+    assert txt.count('Dojo.pveDamageMultiplier(dojoStates[player],"BEAST")')==1
     assert txt.count("SavedPvePolicy.mergeWithEarned(")==1
     assert txt.count("PersistentHatch.settleSixSkill(")==1
     assert txt.count('remote.OnServerEvent:Connect(')==1
