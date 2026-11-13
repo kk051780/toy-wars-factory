@@ -1,0 +1,66 @@
+name: P0D 5-Egg Relay V2 Native Luau Isolated QA
+on:
+  push:
+    branches:
+      - feature/p0d-egg-relay-pass-policy-20261113-01
+    paths:
+      - 'handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/h2_complement/**'
+      - '.github/workflows/p0d-h2-relay-v2-native-20261114.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: p0d-h2-relay-v2-isolated
+  cancel-in-progress: true
+jobs:
+  native-author-lock-and-48-cases:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fail-closed rebuild of actual authored H2 and strict reverse
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/h2_complement/tools/build_native_h2_runner.py --out /tmp/p0d_h2_48_native.luau
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_h2_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/cache@v4
+        with:
+          path: /tmp/p0d_h2_native
+          key: p0d-h2-luau-ubuntu-f46d879e28302-v1
+      - name: Build the genuine pinned Luau compiler and runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_h2_luau rev-parse HEAD)" = "f46d879e28302a430029304f7f6a162aed66f103"
+          if [ ! -x /tmp/p0d_h2_native/luau-compile ] || [ ! -x /tmp/p0d_h2_native/luau ]; then
+            cmake -S _p0d_h2_luau -B /tmp/p0d_h2_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+            cmake --build /tmp/p0d_h2_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          fi
+      - name: Native Luau compile and execute all 48 five-egg rule tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/p0d_h2_native/luau-compile /tmp/p0d_h2_48_native.luau > /tmp/p0d_h2_compile.log
+          /tmp/p0d_h2_native/luau /tmp/p0d_h2_48_native.luau | tee /tmp/p0d_h2_test.log
+          grep -Fx "P0D_H2_RELAY_NATIVE_48_OF_48_PASS" /tmp/p0d_h2_test.log
+          echo P0D_H2_NATIVE_AUTHOR_REAL_LUAU_48_SOURCE_AND_RUNTIME_PASS
+      - name: Explicit non-claims and source scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/h2_complement/SOURCE_LOCK.json').read_text()
+          assert 'official_rc_adopted' in s or '"full_canonical_rc"' in s
+          assert 'NOT_INTEGRATED' in s or '"full_canonical_rc": "NOT_INTEGRATED"' in s
+          print('P0D_H2_NATIVE_QA_IS_SOURCE_ONLY_NOT_STUDIO_OR_OFFICIAL_RC')
+          PY
