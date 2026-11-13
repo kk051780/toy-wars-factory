@@ -17,7 +17,7 @@ class NativeHarnessIntegrityTests(unittest.TestCase):
         self.cases = (ROOT / "tests" / "native_policy_cases.luau").read_bytes()
         self.manifest = json.loads((ROOT / "SOURCE_MANIFEST.json").read_text("utf-8"))
 
-    def test_original_39_cases_expand_into_luau(self):
+    def test_original_41_cases_expand_into_luau(self):
         expanded = builder.render(self.source, self.cases, self.manifest)
         self.assertIn("local Relay = (function()", expanded)
         self.assertIn("function Relay.evaluate(world, request)", expanded)
