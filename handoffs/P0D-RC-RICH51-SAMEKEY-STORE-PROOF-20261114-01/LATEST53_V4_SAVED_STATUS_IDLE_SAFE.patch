@@ -1,0 +1,77 @@
+--- original/V4TrialOverlay.luau
++++ proposed/V4TrialOverlay.luau
+@@ -37,7 +37,7 @@
+     return text
+ end
+ local title=label("Title",5,21,14,Color3.fromRGB(232,216,128))
+-title.Text="6系統 修行（体験版）"
++title.Text="6系統 修行（保存検証候補）"
+ local status=label("Status",27,29,11,Color3.fromRGB(187,233,255))
+ local skills={
+     {"BEAST","魔獣"},{"MAGIC","魔法"},{"WEAPON","武器"},
+@@ -52,34 +52,49 @@
+ footer.TextWrapped=true
+ -- Roblox disconnects idle clients after ~20m. Warn human; do not synthesize input.
+ -- This Studio-only session preview loses XP on disconnect and must never claim 30m unattended persistence.
+-local baseWarning="保存なし / 対戦強化なし / 課金なし"
++-- Never claim a durable save until the ONE original Game/Store sets SAVED.
++-- Preserve human idle warning; real input returns to CURRENT save state,
++-- not a stale hardcoded no-save label.
++local idleAlert=""
++local refresh: (() -> ())?=nil
+ player.Idled:Connect(function(idleSeconds)
+     if idleSeconds>=18*60 then
+-        footer.Text="⚠ 間もなく自動切断・修行XPは保存なし"
++        idleAlert="⚠ 自動切断が近い / 保存状態は下記の表示に従う"
+     elseif idleSeconds>=14*60 then
+-        footer.Text="⚠ 約20分無操作で切断・保存なし"
++        idleAlert="⚠ 約20分無操作で切断 / 必要なら再入場"
+     end
++    if refresh then refresh() end
+ end)
+ UserInputService.InputBegan:Connect(function()
+-    footer.Text=baseWarning
++    idleAlert=""
++    if refresh then refresh() end
+ end)
+ local function render()
++    -- The server alone is authoritative. Session preview is always fallback.
++    local saveState=player:GetAttribute("P0D_V4_SaveStatus") or "LOCAL_ONLY"
++    local saved=(saveState=="SAVED")
+     local active=player:GetAttribute("P0D_V4_Active")==true
+-    local mode=player:GetAttribute("P0D_V4_Mode")
+-    local left=tonumber(player:GetAttribute("P0D_V4_Remaining")) or 1800
+-    local current=player:GetAttribute("P0D_V4_Current") or "-"
++    local prefix=if saved then "P0D_V4_SAVED_" else "P0D_V4_"
++    local mode=player:GetAttribute(if saved then "P0D_V4_SavedMode" else "P0D_V4_Mode")
++    local left=tonumber(player:GetAttribute(
++        if saved then "P0D_V4_SavedRemaining" else "P0D_V4_Remaining")) or 1800
++    local current=player:GetAttribute(if saved then "P0D_V4_SavedSkill" else "P0D_V4_Current") or "-"
+     local friends=tonumber(player:GetAttribute("P0D_V4_Friends")) or 0
++    local saveLabel=if saved then "保存確認済み(DEV) / 対戦強化なし"
++        else "保存状態:"..tostring(saveState).." / 体験XPのみ"
++    footer.Text=if idleAlert~="" then idleAlert else saveLabel
+     status.Text=string.format("%s  %s %s / 残り%dm / 友達%d",
+         active and "修行中" or "待機", mode=="FOCUS" and "集中" or "ランダム",
+         tostring(current), math.ceil(left/60), math.floor(friends))
+     for i,entry in ipairs(skills) do
+         local skill,display=entry[1],entry[2]
+-        local lv=tonumber(player:GetAttribute("P0D_V4_"..skill.."_LV")) or 1
+-        local xp=tonumber(player:GetAttribute("P0D_V4_"..skill.."_XP")) or 0
+-        local nextXP=tonumber(player:GetAttribute("P0D_V4_"..skill.."_NEXT")) or 100
++        local lv=tonumber(player:GetAttribute(prefix..skill.."_LV")) or 1
++        local xp=tonumber(player:GetAttribute(prefix..skill.."_XP")) or 0
++        local nextXP=tonumber(player:GetAttribute(prefix..skill.."_NEXT")) or 100
+         rows[i].Text=string.format("%s   Lv%d   XP%d  次まで%d",display,lv,xp,nextXP)
+     end
+ end
++refresh=render
+ local toggle=Instance.new("TextButton")
+ toggle.Name="Fold";toggle.AnchorPoint=Vector2.new(0,1)
+ toggle.Position=UDim2.new(0,8,1,-256)
+@@ -99,4 +114,4 @@
+     if string.sub(attr,1,7)=="P0D_V4_" then render() end
+ end)
+ render()
+-print("[P0D_V4_BRIDGE] SESSION_ONLY_UI_LOADED; NOT real saved skills")
++print("[P0D_V4_RC54] SAVE_BACKEND_ACK_ONLY; human idle warning retained")
