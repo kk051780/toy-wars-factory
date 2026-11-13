@@ -1,0 +1,33 @@
+// Offline original-source invariant and deliberate mutation checks.
+// Static QA only: not real Lua VM or Roblox Studio/playtest.
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+import {analyze,gitBlobSha,pinnedInput} from "../tools/audit_horde_respawn.mjs";
+const f=process.argv[2]||pinnedInput.path;
+const original=readFileSync(f,"utf8");
+let checked=0;
+const verify=(condition,name)=>{assert.ok(condition,name);checked+=1};
+verify(gitBlobSha(original)===pinnedInput.gitBlob,"original #288 exact git blob");
+const v0=analyze(original);
+verify(v0.requiresFix===true,"original still exposes stale elite pending action");
+verify(v0.eliteArmed===true,"genuine delayed elite resolver still exists");
+verify(v0.deathTell===false,"original no death tell reset");
+verify(v0.deathTarget===false,"original no death target reset");
+verify(v0.respawnTell===false,"original no respawn tell reset");
+verify(v0.respawnTarget===false,"original no respawn target reset");
+const deathAnchor="m.deadUntil=now+8";
+const respawnAnchor="m.hp=m.maxHp\n                m.pos=m.home";
+verify(original.includes(deathAnchor)&&original.includes(respawnAnchor),"targeted anchors stable");
+const deathPatch="m.deadUntil=now+8\n                        m.tellUntil=0\n                        m.target=nil\n                        m.attackAt=now+2.5";
+const respawnPatch="m.hp=m.maxHp\n                m.tellUntil=0\n                m.target=nil\n                m.attackAt=now+2.5\n                m.pos=m.home";
+const fixed=original.replace(deathAnchor,deathPatch).replace(respawnAnchor,respawnPatch);
+verify(analyze(fixed).safe===true,"exact suggested patch closes both state transitions");
+verify(analyze(fixed.replace("m.tellUntil=0\n                        m.target=nil","m.target=nil")).safe===false,"mutant death missing tell rejected");
+verify(analyze(fixed.replace("m.tellUntil=0\n                m.target=nil","m.target=nil")).safe===false,"mutant respawn missing tell rejected");
+verify(analyze(fixed.replace("m.target=nil\n                        m.attackAt","m.attackAt")).safe===false,"mutant death stale target rejected");
+verify(analyze(fixed.replace("m.target=nil\n                m.attackAt","m.attackAt")).safe===false,"mutant respawn stale target rejected");
+verify(analyze(original.replace(deathAnchor,deathAnchor+"\n                        -- m.tellUntil=0 m.target=nil")).safe===false,"comments do not count");
+verify(analyze(original.replace("local Horde = {}","local Horde = {}\n-- m.tellUntil=0 m.target=nil")).safe===false,"unrelated source comments do not count");
+verify(original.includes("m.deadUntil=now+8"),"8s respawn delay remains");
+verify(original.includes("m.tellUntil=now+1.5"),"1.5s telegraph exists");
+console.log("INDEPENDENT_HORDE_RESPAWN_STATIC_QA_PASS",checked,"checks; original is correctly classified UNSAFE");
