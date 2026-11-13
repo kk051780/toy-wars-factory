@@ -23,3 +23,6 @@ This is **NOT integrated** into #282 source, #220 official RC, or original H1 ga
 
 ## Rollback / guardrails
 If cues distract a child, obscure the egg, alter gameplay, show erroneous enemy-only data, worsen phone load or fail H0 parity, disable/omit this package. No direct-main push, automatic merge, live publish, payments, PC Codex invocation, P0 A/B/C or automation change.
+
+## Round replay hardening (2026-11-13)
+The client-only cue policy requires an authenticated server-issued positive integer `roundSerial` that never decreases for the client session. A packet from an older round or a different roundId with the same serial is ignored. Integration into any real match must map this field from a pre-existing canonical server round epoch, not invent an independent second match counter. Real game schema adapter remains unimplemented and unapproved.
