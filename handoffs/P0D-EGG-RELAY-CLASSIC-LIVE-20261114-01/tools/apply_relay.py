@@ -1,77 +1,122 @@
 #!/usr/bin/env python3
-"""Apply source-locked Egg Relay classic-only patch to a prepared UNPUBLISHED RC dist.
-Author candidate ONLY. #220 sole official RC integrator owns any adoption.
-Usage: python3 tools/apply_relay.py --dist PATH --policy PATH
-Run AFTER other original canonical overlays, never on main / live Place.
+"""Fail-closed PRE-FLIGHT ONLY original-Game/HUD patch for unpublished RC.
+The sole #220 RC writer must adopt in canonical RC after genuine native/Rojo QA.
+No Game, Store, Remote or public place is created here.
 """
-import argparse, hashlib, json
+from __future__ import annotations
+import argparse
+import hashlib
+import json
 from pathlib import Path
-ROOT=Path(__file__).resolve().parents[1]
-def blob(data):
-    return hashlib.sha1(b"blob "+str(len(data)).encode()+b"\0"+data).hexdigest()
-def patch(data,ops):
-    for index,entry in enumerate(ops):
-        anchor=entry["anchor"]
-        assert data.count(anchor)==1,("ANCHOR_DRIFT",index,anchor[:100])
-        data=data.replace(anchor,entry["replace"],1)
+
+ROOT = Path(__file__).resolve().parents[1]
+FEATURE = "EGG_RELAY_CLASSIC_V1"
+GAME = "server/Game.server.luau"
+HUD = "client/HUD.client.luau"
+POLICY = "server/EggRelayPolicy.luau"
+
+def blob(data: bytes) -> str:
+    return hashlib.sha1(b"blob " + str(len(data)).encode() + bytes([0]) + data).hexdigest()
+
+def patch(data: str, ops: list[dict]) -> str:
+    for index, entry in enumerate(ops):
+        anchor = entry["anchor"]
+        assert type(anchor) is str and type(entry["replace"]) is str
+        assert anchor and data.count(anchor) == 1, ("ANCHOR_DRIFT", index, anchor[:100])
+        data = data.replace(anchor, entry["replace"], 1)
     return data
-def run(dist,policy):
-    spec=json.loads((ROOT/"PATCH_OPS.json").read_text(encoding="utf8"))
-    assert spec["feature_id"]=="EGG_RELAY_CLASSIC_V1"
-    assert spec["rc_integrated"] is False
-    assert spec["real_studio"]=="NOT_TESTED"
-    raw=policy.read_bytes()
-    assert blob(raw)==spec["source_policy_gitblob"],"POLICY_DRIFT"
-    src=dist/"src"
-    game=src/"server/Game.server.luau"
-    hud=src/"client/HUD.client.luau"
-    mod=src/"server/EggRelayPolicy.luau"
-    assert not mod.exists(),"NO_SECOND_MODULE_OR_DOUBLE_PATCH"
-    beforeGame=game.read_text(encoding="utf8")
-    beforeHud=hud.read_text(encoding="utf8")
-    assert beforeGame.count("remote.OnServerEvent:Connect(")==1
-    assert beforeGame.count('remote.Name = "TrapRaidersS1Remote"')==1
-    assert beforeHud.count("local seq = 0")==1
-    assert "local function applyClassicEggRelay" not in beforeGame
-    afterGame=patch(beforeGame,spec["game_ops"])
-    afterHud=patch(beforeHud,spec["hud_ops"])
-    assert afterGame.count("remote.OnServerEvent:Connect(")==1
-    assert afterGame.count("H2Score.deposit(")==beforeGame.count("H2Score.deposit(")
-    assert afterGame.count("match.scores[team] += 1")==beforeGame.count("match.scores[team] += 1")
-    assert afterHud.count("local seq = 0")==1
-    assert 'EGG_RELAY' in afterGame and 'EGG_RELAY' in afterHud
-    game.write_text(afterGame,encoding="utf8")
-    hud.write_text(afterHud,encoding="utf8")
-    mod.write_bytes(raw)
-    lockFile=dist/"SOURCE_LOCK.json"
-    if lockFile.exists():
-        lock=json.loads(lockFile.read_text("utf8"))
-        lock["blobs"]={p.relative_to(src).as_posix():blob(p.read_bytes())
+
+def source_bodies(src: Path) -> dict[str, bytes]:
+    return {p.relative_to(src).as_posix(): p.read_bytes()
             for p in sorted(src.rglob("*.luau"))}
-        lock["total_scripts"]=len(lock["blobs"])
-        lock["relay_classic_preview"]={"feature_id":"EGG_RELAY_CLASSIC_V1",
-            "stage":"SOURCE_CANDIDATE_NOT_OFFICIAL_RC",
-            "5_egg":"NOT_SUPPORTED","real_studio":"NOT_TESTED",
-            "rollback":"omit this patch and rebuild same base"}
-        lockFile.write_text(json.dumps(lock,ensure_ascii=False,indent=2)+"\n","utf8")
-    # Same dist may include the RC feature receipt. A changed source inventory
-    # must update BOTH lockfiles; never leave a stale 54-source stamp for 55.
-    featureLock=dist/"RC_FEATURE_LOCK.json"
-    if featureLock.exists():
-        receipt=json.loads(featureLock.read_text("utf8"))
-        hashes={p.relative_to(src).as_posix():blob(p.read_bytes())
-            for p in sorted(src.rglob("*.luau"))}
-        assert type(receipt.get("total_sources")) is int
-        assert len(hashes)==receipt["total_sources"]+1,"SOURCE_COUNT_MISMATCH"
-        receipt["total_sources"]=len(hashes)
-        receipt["source_gitblobs"]=hashes
-        receipt.setdefault("feature_flags",{})["EGG_RELAY_CLASSIC_V1"]=True
-        receipt["relay_stage"]="SOURCE_CANDIDATE_NOT_ENGINE_TESTED"
-        featureLock.write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n","utf8")
-    print("CLASSIC_EGG_RELAY_PATCH_SOURCE_APPLIED_3_FILES_NOT_STUDIO")
-if __name__=="__main__":
-    p=argparse.ArgumentParser()
-    p.add_argument("--dist",type=Path,required=True)
-    p.add_argument("--policy",type=Path,required=True)
-    a=p.parse_args()
-    run(a.dist,a.policy)
+
+def run(dist: Path, policy: Path) -> None:
+    spec = json.loads((ROOT / "PATCH_OPS.json").read_text(encoding="utf8"))
+    assert spec["feature_id"] == FEATURE
+    assert spec["rc_integrated"] is False and spec["real_studio"] == "NOT_TESTED"
+    assert len(spec["game_ops"]) == 9 and len(spec["hud_ops"]) == 6
+
+    # Stage all inputs and validate original RC authority/locks BEFORE writes.
+    src = dist / "src"
+    bodies = source_bodies(src)
+    assert GAME in bodies and HUD in bodies and POLICY not in bodies
+    assert len(bodies) in (2, 56), ("UNSUPPORTED_BASE_SOURCE_COUNT", len(bodies))
+    pins = {p: blob(data) for p, data in bodies.items()}
+    lock_file = dist / "SOURCE_LOCK.json"
+    assert lock_file.is_file(), "MISSING_ORIGINAL_SOURCE_LOCK"
+    lock = json.loads(lock_file.read_text(encoding="utf8"))
+    assert lock.get("total_scripts") == len(bodies), "STALE_SOURCE_COUNT"
+    assert lock.get("blobs") == pins, "SOURCE_LOCK_MISMATCH"
+    receipt_file = dist / "RC_FEATURE_LOCK.json"
+    receipt = None
+    if receipt_file.exists():
+        receipt = json.loads(receipt_file.read_text(encoding="utf8"))
+        assert receipt.get("total_sources") == len(bodies), "STALE_FEATURE_COUNT"
+        assert receipt.get("source_gitblobs") == pins, "FEATURE_LOCK_MISMATCH"
+        assert FEATURE not in receipt.get("feature_flags", {}), "FEATURE_DUPLICATE_ADMISSION"
+
+    raw_policy = policy.read_bytes()
+    assert blob(raw_policy) == spec["source_policy_gitblob"], "POLICY_BLOB_DRIFT"
+    before_game = bodies[GAME].decode("utf8")
+    before_hud = bodies[HUD].decode("utf8")
+    assert before_game.count('remote.OnServerEvent:Connect(') == 1
+    assert before_game.count('remote.Name = "TrapRaidersS1Remote"') == 1
+    assert before_hud.count("local seq = 0") == 1
+    assert "local function applyClassicEggRelay" not in before_game
+
+    after_game = patch(before_game, spec["game_ops"])
+    after_hud = patch(before_hud, spec["hud_ops"])
+    assert after_game.count('remote.OnServerEvent:Connect(') == 1
+    assert after_game.count('remote.Name = "TrapRaidersS1Remote"') == 1
+    assert after_game.count("H2Score.deposit(") == before_game.count("H2Score.deposit(")
+    assert after_game.count("match.scores[team] += 1") == before_game.count("match.scores[team] += 1")
+    assert after_game.count("match.eggOwners[egg]=target") == 1
+    assert after_game.count("carry[target]=egg") == 1
+    assert after_game.count("workspace:Raycast(rootA.Position, direction, rayParams)") == 1
+    assert after_game.count("local now = os.clock()") == 1, "RELAY_MUST_USE_MONOTONIC_CLOCK"
+    assert 'or EXPERIMENTAL_FIVE_EGG_MODE' in after_game, "H2_NOT_ATOMICALLY_SUPPORTED"
+    assert after_hud.count("local seq = 0") == 1
+    assert after_hud.count("relayButton.MouseButton1Click:Connect(fireClassicEggRelay)") == 1
+    assert after_hud.count('KeyCode.H') == 1
+    assert 'EGG_RELAY' in after_hud and 'EGG_RELAY' in after_game
+
+    # Stage the full final source inventory before any on-disk changes.
+    after = dict(bodies)
+    after[GAME] = after_game.encode("utf8")
+    after[HUD] = after_hud.encode("utf8")
+    after[POLICY] = raw_policy
+    assert len(after) == len(bodies) + 1
+    assert sorted(k for k in bodies if bodies[k] != after[k]) == [HUD, GAME]
+    assert sorted(set(after) - set(bodies)) == [POLICY]
+    target_pins = {p: blob(raw) for p, raw in sorted(after.items())}
+    lock["blobs"] = target_pins
+    lock["total_scripts"] = len(after)
+    lock["relay_classic_preview"] = {
+        "feature_id": FEATURE,
+        "stage": "SOURCE_CANDIDATE_NOT_OFFICIAL_RC",
+        "five_egg_mode": "NOT_SUPPORTED",
+        "engine_studio": "NOT_TESTED",
+        "rollback": "omit patch and rebuild original current RC",
+    }
+    if receipt is not None:
+        receipt["total_sources"] = len(after)
+        receipt["source_gitblobs"] = target_pins
+        receipt.setdefault("feature_flags", {})[FEATURE] = True
+        receipt["relay_stage"] = "SOURCE_CANDIDATE_NOT_ENGINE_TESTED"
+
+    # All expected, deterministic failures are above this point. Do not mutate
+    # the original working dist if policy SHA, anchors or either lock is wrong.
+    (src / GAME).write_bytes(after[GAME])
+    (src / HUD).write_bytes(after[HUD])
+    (src / POLICY).write_bytes(after[POLICY])
+    lock_file.write_text(json.dumps(lock, ensure_ascii=False, indent=2) + "\n", encoding="utf8")
+    if receipt is not None:
+        receipt_file.write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + "\n", encoding="utf8")
+    print("P0D_EGG_RELAY_CLASSIC_PREFLIGHT_PATCH_APPLIED_NOT_ENGINE_VERIFIED")
+
+if __name__ == "__main__":
+    cli = argparse.ArgumentParser()
+    cli.add_argument("--dist", type=Path, required=True)
+    cli.add_argument("--policy", type=Path, required=True)
+    args = cli.parse_args()
+    run(args.dist, args.policy)
