@@ -48,6 +48,6 @@ class G8Tests(unittest.TestCase):
   p["tree"]["ServerScriptService"]["G8_Three_Level_Demo"].pop("G8World")
   with self.assertRaises(KeyError):contract(project=p)
  def test_story_is_not_H1_egg_game(self):
-  self.assertIn("not H1", (ROOT/"README.md").read_text(encoding="utf8").lower().replace("original s1","h1"))
+  self.assertIn("not h1", (ROOT/"README.md").read_text(encoding="utf8").lower())
 if __name__=="__main__":unittest.main()
 

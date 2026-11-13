@@ -35,3 +35,6 @@ Source acceptance: G8-A planning distinct/child counterplay PASS when card revie
 
 ## スマホ操作の確認項目
 スマホ横画面で各輪に近づくとタップ操作のProximityPromptが表示される設計。現時点で実機スマホ/Androidの入力・画面占有・FPSはNOT_TESTED。音声や色で次の行き先を読めるか、端末別に合否判定を要求する。
+
+## 実コードの作業範囲
+サーバーの現実装は5本のProximityPrompt移動、居場所・生存・許可グラフ・連打確認だけ。実コードで敵卵を奪う/水中で泳ぐ/勝敗が変わる効果は一切無い。これらは別のGameへ将来統合する際に独立QAが必要。
