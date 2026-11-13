@@ -72,7 +72,9 @@ function Guide.view(phase:any,elapsed:any,state:any,data:any):any
             else "🥚 敵の卵を盗もう！近づいてタップ")
     end
     if state.pickup and not state.deposit and elapsed<75 then
-        return cue("SCORE","🏰 卵を自陣へ運んで得点しよう！")
+        -- Egg is NOT carried now: false “return home” guidance would
+        -- mislead a child after KO/drop. Reacquire a real available egg.
+        return cue("PICKUP","🥚 卵を落としたら、もう一度ひろおう！")
     end
     if not state.scout and elapsed>=20 and elapsed<80 and bool(data.scoutReady) then
         return cue("SCOUT","🐉 魔獣を呼んで敵の卵運びを探そう！")
