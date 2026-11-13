@@ -46,7 +46,7 @@ def check_probe(data:bytes,expected_blob:str|None=None)->bool:
     if expected_blob is not None and git_blob(data)!=expected_blob:
         raise ValueError("ORIGINAL_VETTED_PROBE_BLOB_CHANGED")
     body=data.decode("utf-8")
-    if "RunService:IsStudio()" not in body or "return end" not in body:
+    if 'if not RunService:IsStudio() then return end' not in body:
         raise ValueError("PROBE_MISSING_STUDIO_ONLY_GUARD")
     if "P0D_STUDIO_PROBE_V1" not in body:
         raise ValueError("PROBE_LOG_PREFIX_MISSING")
@@ -60,7 +60,7 @@ def negative_safety_tests():
     good=safe.decode("utf-8")
     mutants=[
         good.replace('RunService:IsStudio()', 'true',1),
-        good.replace('P0D_STUDIO_PROBE_V1', 'IGNORED_PROBE',1),
+        good.replace('P0D_STUDIO_PROBE_V1', 'IGNORED_PROBE'),
         good+'\nremote:FireServer({action="DAMAGE"})\n',
         good+'\nInstance.new("RemoteEvent")\n',
         good+'\nlocal s = game:GetService("DataStoreService")\n',
