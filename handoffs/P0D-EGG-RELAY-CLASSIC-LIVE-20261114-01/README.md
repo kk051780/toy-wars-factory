@@ -40,3 +40,18 @@ Verified source readback and exact JS patch/invariant checks: `QA_PREFLIGHT_V3.j
 ## V4: true latest official RC57 rebase
 
 While preparing the candidate, sole #220 RC writer integrated `SCOUT_SPECIES_V1`: actual official first successful source HEAD `639da1af22f8fcee1e609a2637ef3bbcabf33d6f`, CI [43508325263](https://github.com/kk051780/toy-wars-factory/actions/runs/43508325263), 57/57 native Luau and source-exact Rojo. This isolated candidate builder has now been re-pinned to that **RC57** and applies original Game/Store/Realm/V4/Durable/SavedPve/SavedBeast/**ScoutSpecies** overlays *before* the classic egg-relay source patch. Expected source count: 57→58. Its existing workflow filename refers to rc55 historically, but its code/HEAD are now RC57-only. The candidate has **not** had a verified 58-source native/Rojo success yet, and neither the existing official RC57 nor published Roblox has been modified by this child.
+
+## V5: VERIFIED actual isolated RC58 native build (supersedes earlier "NOT_VERIFIED" entries)
+
+**Actual GitHub Actions SUCCESS** on immutable candidate commit `8c67a51933c57f2805c2c846e2552ac12dda0b30`, run [43508893406](https://github.com/kk051780/toy-wars-factory/actions/runs/43508893406), job `132173653577`. Inspected the completed actual step list and job logs, not inferred from authored YAML.
+
+- Original real RC57 including saved WEAPON, saved BEAST and scout species reconstructed without source drift; exactly 55 of 57 originals byte-identical, only original Game and HUD changed and one pinned pure EggRelayPolicy added to reach **58 scripts**.
+- **11/11** actual Python source patch, negative lock and duplicate/rollback tests PASS.
+- **41/41** actual original native Luau policy cases PASS with author source pin.
+- **58/58** native Luau source compilation PASS and Rojo 7.7.1 checksum verification PASS.
+- **58/58** genuinely embedded Luau source-exact Rojo Studio `.rbxlx` candidate PASS, unpublished.
+- Generated GitHub artifact [P0D-EGG-RELAY-CLASSIC-RICH58-SOURCE-CANDIDATE-UNPUBLISHED](https://github.com/kk051780/toy-wars-factory/actions/runs/43508893406/artifacts/14078031496).
+- Full audited evidence: `QA_RICH58_NATIVE_SUCCESS.json`. Earlier `QA_PREFLIGHT_V3.json` has been updated to record this exact CI proof.
+
+**Scope limit:** This is **NOT official canonical RC-adopted**. Sole #220 must source-admit with reversible OFF and verify that exact newer canonical HEAD; engine Studio play, two clients, mobile, real DEV DataStore rejoin and owner FUN have not been tested. Five-egg H2 relay remains separate. No main push/merge, publish or paid features.
+
