@@ -118,7 +118,8 @@ local progressionStatus: {[Player]: string}={}
 local progressionLastAward: {[Player]: number}={}
 local progressionEventSerial=0
 local function progressUid(player: Player): number?
-    return if player.UserId>0 then player.UserId else h2Ids[player]
+    return if player.UserId>0 then PersistentHatch.policyUserId(player.UserId)
+        else h2Ids[player]
 end
 local delayedRestore: {[Player]: boolean} = {}
 local outstandingWrites=0
