@@ -5,6 +5,7 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 local remote = ReplicatedStorage:WaitForChild("TrapRaidersS1Remote") :: RemoteEvent
 
@@ -110,6 +111,106 @@ first90Cue.TextWrapped=true
 first90Cue.Visible=false
 first90Cue.Active=false
 first90Cue.Text=""
+-- Tiny navigation strip anchored away from attack/escape/scout thumb controls.
+local first90Arrow=label(gui,"First90ActualWaypointArrow",
+    UDim2.fromOffset(260,33),UDim2.fromOffset(17,178),
+    Color3.fromRGB(163,242,255),15)
+first90Arrow.Visible=false
+first90Arrow.Active=false
+first90Arrow.Text=""
+local waypointAnchor: Part?=nil
+local waypointGoal: Vector3?=nil
+local waypointKind=""
+local function clearWaypoint()
+    waypointGoal=nil
+    waypointKind=""
+    first90Arrow.Visible=false
+    if waypointAnchor then
+        waypointAnchor:Destroy()
+        waypointAnchor=nil
+    end
+end
+local function setWaypoint(target:any)
+    if type(target)~="table" or (target.kind~="EGG" and target.kind~="HOME")
+        or type(target.x)~="number" or target.x~=target.x or math.abs(target.x)>200
+        or type(target.y)~="number" or target.y~=target.y or target.y<(-50) or target.y>100
+        or type(target.z)~="number" or target.z~=target.z or math.abs(target.z)>120 then
+        clearWaypoint()
+        return
+    end
+    waypointKind=target.kind
+    waypointGoal=Vector3.new(target.x,target.y,target.z)
+    if not waypointAnchor then
+        local anchor=Instance.new("Part")
+        anchor.Name="FIRST90_LOCAL_WAYPOINT_VISUAL_ONLY"
+        anchor.Size=Vector3.new(.2,.2,.2)
+        anchor.Anchored=true
+        anchor.Transparency=1
+        anchor.CanCollide=false
+        anchor.CanQuery=false
+        anchor.CanTouch=false
+        anchor.CastShadow=false
+        anchor.Parent=workspace -- local client-only: no server map or replication writes
+        waypointAnchor=anchor
+        local board=Instance.new("BillboardGui")
+        board.Name="First90ObjectiveBeacon"
+        board.Adornee=anchor
+        board.Size=UDim2.fromOffset(132,46)
+        board.StudsOffsetWorldSpace=Vector3.new(0,4,0)
+        board.AlwaysOnTop=true
+        board.MaxDistance=300
+        board.Parent=anchor
+        local badge=Instance.new("TextLabel")
+        badge.Name="WorldTarget"
+        badge.BackgroundColor3=Color3.fromRGB(16,36,55)
+        badge.BackgroundTransparency=.08
+        badge.TextColor3=Color3.fromRGB(255,244,164)
+        badge.TextScaled=true
+        badge.Font=Enum.Font.GothamBold
+        badge.TextWrapped=true
+        badge.Size=UDim2.fromScale(1,1)
+        badge.Parent=board
+        local corner=Instance.new("UICorner")
+        corner.CornerRadius=UDim.new(0,12)
+        corner.Parent=badge
+    end
+    waypointAnchor.Position=waypointGoal
+    local board=waypointAnchor:FindFirstChildOfClass("BillboardGui")
+    local labelPart=if board then board:FindFirstChild("WorldTarget") else nil
+    if labelPart and labelPart:IsA("TextLabel") then
+        labelPart.Text=if target.kind=="EGG" then "🥚 ここ！" else "🏰 自陣へ！"
+    end
+end
+RunService.RenderStepped:Connect(function()
+    if not first90Cue.Visible or not waypointGoal then
+        first90Arrow.Visible=false
+        return
+    end
+    local camera=workspace.CurrentCamera
+    local character=player.Character
+    local root=character and character:FindFirstChild("HumanoidRootPart")
+    if not camera or not root or not root:IsA("BasePart") then
+        first90Arrow.Visible=false
+        return
+    end
+    local goal=waypointGoal :: Vector3
+    local d=Vector3.new(goal.X-root.Position.X,0,goal.Z-root.Position.Z)
+    local length=d.Magnitude
+    local arrow="📍"
+    if length>=7 then
+        local facing=Vector3.new(camera.CFrame.LookVector.X,0,camera.CFrame.LookVector.Z)
+        local right=Vector3.new(camera.CFrame.RightVector.X,0,camera.CFrame.RightVector.Z)
+        if facing.Magnitude>0.1 and right.Magnitude>0.1 then
+            local front=d.Unit:Dot(facing.Unit)
+            local side=d.Unit:Dot(right.Unit)
+            arrow=if front>.62 then "↑" elseif front<(-.62) then "↓"
+                elseif side>0 then "→" else "←"
+        end
+    end
+    first90Arrow.Text=arrow.." "..tostring(math.floor(length+.5)).." studs "
+        ..(if waypointKind=="EGG" then "🥚 卵" else "🏰 自陣")
+    first90Arrow.Visible=true
+end)
 local mobCue=label(gui,"MusouHordeCue",UDim2.new(.56,0,0,27),
     UDim2.new(.22,0,0,142),Color3.fromRGB(255,221,132),14)
 mobCue.Text="⚔ 中立兵の群れ！"
@@ -403,6 +504,13 @@ remote.OnClientEvent:Connect(function(s)
         first90Cue.Text="🎯 "..f90.text
         first90Cue.TextColor3=if f90.step=="DODGE" then
             Color3.fromRGB(255,110,90) else Color3.fromRGB(255,247,190)
+        if f90.step=="PICKUP" or f90.step=="RETURN" then
+            setWaypoint(s.first90Target)
+        else
+            clearWaypoint()
+        end
+    else
+        clearWaypoint()
     end
     if s.musouActive==true then
         local hitSeq=s.musouImpactSeq
