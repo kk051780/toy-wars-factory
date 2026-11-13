@@ -72,7 +72,7 @@ jobs:
           python3 -B "$ROOT/tools/generate_native_horde_state_test.py" --write /tmp/p0d_musou_native_horde_test.luau
           /tmp/musou_native/luau-compile /tmp/p0d_musou_native_horde_test.luau >/dev/null
           /tmp/musou_native/luau /tmp/p0d_musou_native_horde_test.luau | tee /tmp/p0d_musou_native_horde_log.txt
-          grep -E '^MUSOU_HORDE_NATIVE_[0-9]+_STATE_ASSERTIONS_PASS
+          grep -E '^MUSOU_HORDE_NATIVE_[0-9]+_STATE_ASSERTIONS_PASS$' /tmp/p0d_musou_native_horde_log.txt
       - name: Download pinned Rojo 7.7.1 (sha256-verified)
         shell: bash
         run: |
