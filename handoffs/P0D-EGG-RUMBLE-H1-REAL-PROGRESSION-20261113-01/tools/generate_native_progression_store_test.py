@@ -172,9 +172,10 @@ local tampered=round(S.makeReceipt("unowned_use_123456789",11),
     "CLASSIC","admin_dragon","LOSS",120,
     ev("picked_up","PICKUP"),ev("use_item","EQUIP_USE"))
 local noCheat,derived=S.settleProgress(ds,U,tampered)
-eq(noCheat,true,"allow_objective_xp_but_ignore_fake_mastery_item")
-eq(derived.progress.mastery.admin_dragon,nil,"no_unowned_mastery")
-eq(derived.progress.mastery.star_scout.xp,12,"real_mastery_unchanged")
+eq(noCheat,false,"fail_closed_unowned_equip_use_even_with_objective")
+eq(derived,nil,"forged_mastery_has_no_transaction_reply")
+eq(ds.values["U_"..tostring(U)].progress.mastery.admin_dragon,nil,"no_unowned_mastery")
+eq(ds.values["U_"..tostring(U)].progress.mastery.star_scout.xp,12,"real_mastery_unchanged")
 ds.failBefore=true
 eq(S.load(ds,U),false,"Studio_disabled_doesnt_claim_read")
 eq(S.settleProgress(ds,U,round(S.makeReceipt("write_denied_123456789",12),
