@@ -157,6 +157,26 @@
       "original_49_unmodified": true,
       "v4_pair_overlaid": true,
       "engine_studio": "NOT_TESTED"
+    },
+    {
+      "id": "SAVED_PVE_MASTERY",
+      "summary": "Authoritative saved WEAPON level tiers 5/10/20/30 amplify only neutral PvE; no buff stacking",
+      "state": "SOURCE_ADOPTION_PENDING_RC_BUILD",
+      "profiles": [
+        "rich51"
+      ],
+      "independent_switch": true,
+      "source_count": 1,
+      "source_files": [
+        "rc_fastlane/features/saved_pve/SavedPveMasteryPolicy.luau"
+      ],
+      "altered_files": [
+        "server/Game.server.luau"
+      ],
+      "rollback": "SAVED_PVE_MASTERY.enabled=false restores rich54",
+      "studio_test": "NOT_TESTED",
+      "pvp_unaffected": true,
+      "pay_to_win": false
     }
   ],
   "next_source_adoption_contract": {

@@ -63,6 +63,27 @@
         "source_count": 54,
         "conclusion": "success"
       }
+    },
+    "SAVED_PVE_MASTERY": {
+      "enabled": true,
+      "status": "PENDING_NATIVE_LUAU_AND_RC_SOURCE_EXACT_CI",
+      "dependency": "SIX_SKILL_DURABLE.enabled=true",
+      "rollback": "set enabled=false to restore exact RICH54, same RC branch; no Store migrations reversed",
+      "author_module_git_blob": "edd50ab4b7ff3b50ca26df47c04cb51d0f96152a",
+      "code": {
+        "pure_module": "server/SavedPveMasteryPolicy.luau",
+        "existing_game_patch": "server/Game.server.luau"
+      },
+      "restrict_to": "Studio DEV saved profile WEAPON level vs neutral horde hits ONLY",
+      "lvl_tiers": {
+        "5": 1.05,
+        "10": 1.1,
+        "20": 1.15,
+        "30": 1.2
+      },
+      "no_stacking": true,
+      "pvp_multiplier_untouched": true,
+      "save_and_rejoin_engine_test": "NOT_TESTED"
     }
   }
 }

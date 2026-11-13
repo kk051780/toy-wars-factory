@@ -60,3 +60,7 @@
 
 ### 最新確定：RC rich54（Studio開発用保存コード）
 54/54 native Luau + Rojo exact-source SUCCESS: https://github.com/kk051780/toy-wars-factory/actions/runs/43491029567  固定成功HEAD `2e86ac4fd0d4cb67fd7c673dc4e891b2af6bdc2c`。ゲームの第一保存キーは変更せず、Game/Store/UIのみ差分・純粋Ledger1本追加。RC工程でソース実装に進んだ項目は P0D-051、**18/55**。保存・再ログインの実Roblox Studio APIテストはまだ行っていないので、保存機能の完全完成宣言ではない。公開・課金はしない。
+
+## 追加機能：保存済み武器レベル→PvE攻撃強化
+元のGameが唯一のサーバー戦闘責任者。Studio DEVの既存保存データ `trainingV4.totalsMicro.WEAPON` から純粋ポリシーがLvを確認して、Lv5=+5%、Lv10=+10%、Lv20=+15%、Lv30=+20%を中立ハード（Horde MINION）への実際の攻撃にだけ適用。従来の一時的な覚醒強化と掛け算しない（強い方を選択・既存倍率最大3.8）。卵を持っているとき、セーブ未確認、Studio外、対人戦では効果なし。新Remote/Store writer/課金なし。独立フラグOFFで既存54本に戻せる。
+実際の中立敵を倒したときの効果を確認するStudio 2client/Android/FUNおよびDEV DataStoreの実際の保存/再ログインは未試験。ソース・CIと実機を混同しない。
