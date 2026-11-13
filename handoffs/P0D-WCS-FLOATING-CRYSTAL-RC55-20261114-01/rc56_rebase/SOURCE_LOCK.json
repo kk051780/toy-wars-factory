@@ -1,0 +1,94 @@
+{
+  "schema": "P0D_WCS_F01_C01_GENUINE_OFFICIAL_RC56_PLUS_ONE_V1",
+  "date_jst": "2026-11-14",
+  "status": "REAL_UNPUBLISHED_STUDIO_BINARY_NATIVE_AND_PYTHON_QA_PASS_OFFICIAL_RC_NOT_ADOPTED",
+  "source_original_author": "issue#293 Draft PR#294",
+  "source_original_author_blob": "c3cf119e26ab0241a7bd2b0b25acca75a4250e10",
+  "source_original_author_bytes": 6520,
+  "new_integrated_single_script_git_blob": "5eb76749414c33c11eb70310b2d1c59c1f945c21",
+  "integrated_script_source_size_bytes": 11028,
+  "original_official_rc56_success_head": "947cddb5351ba95b9b27597b9ec1828a8297cd66",
+  "original_official_rc56_success_run": 43504336646,
+  "original_official_rc56_artifact_id": 14075771698,
+  "original_zip_sha256": "de43ff8676691c1faab498a09f27c64311a5522d7919919834956c26277d26c4",
+  "original_rbxlx_sha256": "3b8df96e32433a645a957604e7f50062a9ffd2e34831d8e6ba21f7ab2bfabc5c",
+  "new_owner_private_rbxlx": "P0D_RICH57_FLOATING_CRYSTAL_CANYON_PRIVATE.rbxlx",
+  "new_owner_private_rbxlx_sha256": "365d6122e73b3199250dc1fb0e01656f88231bd3eb7021f3bfd7af753fca431e",
+  "new_source_count": 57,
+  "original_unchanged_source_count": 56,
+  "classes": {
+    "ModuleScript": 43,
+    "Script": 5,
+    "LocalScript": 9
+  },
+  "only_added_instance": "Script WCS_CrystalCanyon inside original ServerScriptService.TrapRaidersS1",
+  "author_gameplay": {
+    "field": "WCS-F01 クリスタル峡谷",
+    "npc": "WCS-C01 橋掘りモグロン",
+    "prompts_on_both_shores": 2,
+    "gate_open_seconds": 14,
+    "reopen_seconds": 4,
+    "always_open_safe_detour": true,
+    "never_close_with_players_on_bridge": true
+  },
+  "geometric_safety": {
+    "anchor": [
+      0,
+      32,
+      -23
+    ],
+    "bank_extents_x": [
+      -75,
+      75
+    ],
+    "bank_extents_z": [
+      -65.5,
+      19.5
+    ],
+    "original_server_recovery_x": 130,
+    "original_server_recovery_z": 76,
+    "red_entrance_from": [
+      -30,
+      16,
+      18
+    ],
+    "red_entrance_to": [
+      -55,
+      31,
+      -15
+    ],
+    "blue_entrance_from": [
+      30,
+      16,
+      18
+    ],
+    "blue_entrance_to": [
+      55,
+      31,
+      -15
+    ],
+    "guardrails": 4,
+    "approx_ramp_grade": 0.362
+  },
+  "server_toggle": "ServerStorage.P0D_RC_ENABLE_WCS_F01_C01=false before startup",
+  "requires": "Original H1_FUN_WORLD.SKY_WALKWAY; skips world without real physical approach",
+  "original_game_remote_store_saved_weapon_saved_beast_source_unchanged": true,
+  "actual_local_native_luau_compile": "57/57 PASS",
+  "actual_local_python_unit_and_negative_cases": "31/31 PASS",
+  "clean_room_unzip_rebuild_and_retest": "PASS, byte exact same Place SHA",
+  "owner_bundle_filename": "P0D_RC57_FLOATING_CRYSTAL_CANYON_QA_20261114.zip",
+  "owner_bundle_sha256": "2c364aa58835209af12b85290149c11befa10343092855951adbdfbab5f40b7e",
+  "roblox_studio_engine": "NOT_TESTED",
+  "android": "NOT_TESTED",
+  "studio_two_client": "NOT_TESTED",
+  "owner_fun": "NOT_TESTED",
+  "dev_datastore_rejoin": "NOT_TESTED",
+  "official_rc_adopted": false,
+  "published": false,
+  "paid": false,
+  "main_merged": false,
+  "owner_pc_modified": false,
+  "rollback": "omit the one WCS_CrystalCanyon Script or set server flag false; base56 retained; do not overwrite new canonical RC if HEAD has advanced",
+  "last_official_release_fun_score": 75,
+  "last_official_release_fun_status": "FUN_NO_GO"
+}
