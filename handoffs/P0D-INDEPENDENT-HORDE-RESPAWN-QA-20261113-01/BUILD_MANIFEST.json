@@ -25,6 +25,18 @@
     {
       "path": "README.md",
       "blob_sha1": "d25314b1a70d26813d483ec0a94b0128fa2b59fa"
+    },
+    {
+      "path": "tools/audit_downstream_inheritance.mjs",
+      "blob_sha1": "49bc5862c6bec5ab54878e97ac3aeedd7903326d"
+    },
+    {
+      "path": "tests/test_downstream_inheritance.mjs",
+      "blob_sha1": "f33a5390c3157009d6927b49a0e34644815037e5"
+    },
+    {
+      "path": "DOWNSTREAM_INHERITANCE_BLOCKER.md",
+      "blob_sha1": "9cae16a3c8e5a33ad5114898394463c3738c76e8"
     }
   ],
   "evidence": {
@@ -34,13 +46,26 @@
     "illustrative_patch_marked_safe": true,
     "node_test_file_authored_cases": 17,
     "node_repository_execution": "NOT_EXECUTED",
-    "original_author_fix": "NOT_APPLIED",
+    "original_author_fix": "FIXED_ON_DISTINCT_ORIGINAL_288_V3_SHA1117513a27f66f44e0a2dbaa0e387812d2bc0c73",
     "native_Luau": "NOT_TESTED",
     "real_roblox_studio": "NOT_TESTED",
     "Android": "NOT_TESTED",
     "actual_fun": "UNKNOWN",
     "official_S1_game_release_last_pct": 75
   },
-  "blocker": "Original #288 author must reset elite tellUntil/target at death AND respawn, then independent QA and human Studio; #250 and #220 adoption decision only.",
-  "protected": "No main, RC, merges, live publish, purchases, spend, owner PC/Codex, P0 A/B/C auth/CAS, 5 Automations"
+  "blocker": "Old #288 V2 elite bug is fixed in #288 V3, but separate earned-power H1 still inherits V2 old Horde exact blob and old builder SHA. Owner must rebase and re-run native+Studio; #250/#220 no adoption until reconciled.",
+  "protected": "No main, RC, merges, live publish, purchases, spend, owner PC/Codex, P0 A/B/C auth/CAS, 5 Automations",
+  "downstream_inheritance": {
+    "power_frozen_commit": "cb2540dc4a3e5b819c0e3598d4af5e2b6dca76d3",
+    "power_original_Horde_blob": "c1ef565f4e8b11a6e8ff7eac5ed55c8f268a4553",
+    "power_assembler_blob": "04f89fa61f773ecd3342c969a9e354ed6703170e",
+    "corrected_author_H1_v3_commit": "1117513a27f66f44e0a2dbaa0e387812d2bc0c73",
+    "corrected_Horde_blob": "57c70e364b721d24e9e36eaeaf8be6dfd9fca592",
+    "independent_real_GitHub_source_checks_18_of_18": "PASS",
+    "local_v8_18_tests": "EXECUTED_THIS_TURN",
+    "repository_node_test_execution": "NOT_VERIFIED",
+    "power_branch_native_CI_status": "PASS_OWN_POLICY_AND_COMPILATION_NOT_FULL_HORDE_SAFETY",
+    "power_game_play_status": "NOT_STUDIO_TESTED",
+    "product_selection": "BLOCK_UNTIL_FIXED_HORDE_REBASE_AND_QA"
+  }
 }
