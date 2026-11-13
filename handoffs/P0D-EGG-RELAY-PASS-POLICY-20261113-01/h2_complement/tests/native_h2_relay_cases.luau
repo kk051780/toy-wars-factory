@@ -139,5 +139,5 @@ check("end round no egg loss",function()
     for i=1,Rules.LENGTH_SECONDS do assert(Rules.advance(m,1)) end
     assert(m.active==false and Rules.assertConserved(m) and m.carryByPlayer[2]==nil)
 end)
-assert(n==47,"NATIVE_CASE_COUNT_MISMATCH:"..tostring(n))
-print("P0D_H2_RELAY_NATIVE_47_OF_47_PASS")
+assert(n==48,"NATIVE_CASE_COUNT_MISMATCH:"..tostring(n))
+print("P0D_H2_RELAY_NATIVE_48_OF_48_PASS")
