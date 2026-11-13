@@ -9,7 +9,7 @@ import pathlib
 import shutil
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-REPO = ROOT.parents[2]
+REPO = ROOT.parents[1]
 SOURCE = REPO / "releases" / "P0D_S1_KIDS_RC01"
 DIST = ROOT / "dist" / "TRAP_RAIDERS_S1_FIRST90_CLASSIC_PRIVATE_UNPUBLISHED"
 FROZEN_RC_SHA = "1263a03701211a652b99b91d2339575dc8104eff"
