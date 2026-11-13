@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+"""Offline source-integrity checks, NOT a native Luau or Studio execution test."""
+from __future__ import annotations
+from pathlib import Path
+import hashlib,subprocess,sys
+OWN=Path(__file__).resolve().parents[1]
+REPO=OWN.parents[1]
+BASE=REPO/"handoffs/P0D-EGG-RUMBLE-H1-REAL-PROGRESSION-20261113-01/inputs"
+checks=0
+def check(x,msg):
+    global checks
+    assert x,msg
+    checks+=1
+g=(OWN/"inputs/Game.server.luau").read_text(encoding="utf-8")
+h=(OWN/"inputs/HUD.client.luau").read_text(encoding="utf-8")
+m=(OWN/"inputs/MusouHorde.luau").read_text(encoding="utf-8")
+b=(OWN/"inputs/MusouBindRules.luau").read_text(encoding="utf-8")
+oldg=(BASE/"Game.server.luau").read_text(encoding="utf-8")
+oldh=(BASE/"HUD.client.luau").read_text(encoding="utf-8")
+for source,name in [(g,"Game"),(h,"HUD"),(m,"horde"),(b,"bind")]:
+    check(len(source)>1000,f"{name} real source missing")
+check(g.count("remote.OnServerEvent:Connect(")==oldg.count("remote.OnServerEvent:Connect(")==1,"one remote handler")
+check(g.count('remote.Name = "TrapRaidersS1Remote"')==1,"one remote")
+check(g.count("local function tickRound()")==1 and g.count("local function applyAttack(")==1,"one tick and attack")
+check(g.count("Progression.recordEvent(round,eventId,kind,true)")==1,"server XP unchanged")
+check(g.count("Progression.commit(profile,round,outcome,duration,true)")==1,"XP reward authority unchanged")
+check(g.count("RewardRules.finishRound(")==oldg.count("RewardRules.finishRound(")==1,"reward unchanged")
+check(g.count("PersistentHatch.settleProgress(")==oldg.count("PersistentHatch.settleProgress(")==1,"store unchanged")
+check(g.count("ModeVote.tally(")==oldg.count("ModeVote.tally("),"mode vote unchanged")
+check("horde:reset(match.serial,serverNow())" in g,"real Game spawn")
+check("horde:tick(now,Players:GetPlayers(),healthy)" in g,"single Game tick")
+check("horde:hit(root.Position,look," in g,"original ATTACK delivers AoE")
+check('if not RunService:IsStudio() or type(data)~="table" or data.action~="NET_THROW"' in g,"net Studio gate")
+check('if not RunService:IsStudio() or type(data)~="table" or (data.action~="BREAK_FREE"' in g,"escape Studio gate")
+check("MusouBind.canTarget(" in g and "netImmuneUntil[nearest]" in g,"server target cooldown and immunity")
+check("if MusouBind.canRescue(" in g,"server rescue")
+check("if MusouBind.canBreak(" in g,"self breakout")
+check('if now<(mobComboUntil[player] or 0)' in g,"view-only combo")
+check('if not Rules.validSeq(data.seq,lastSeq[player] or 0)' in g,"sequence gate")
+check('params.FilterDescendantsInstances={player.Character :: Model,horde.folder}' in g,"wall-raycast")
+check('PlayerRemoving:Connect(' in g,"player cleanup")
+check("clearTraps()" in g and "horde:clear()" in g,"reset cleanup")
+check("Humanoid:TakeDamage" not in h,"no client damage")
+check("NET_THROW" in h and "BREAK_FREE" in h and "RESCUE" in h,"touch UI actions")
+check("Enum.KeyCode.N" in h and "Enum.KeyCode.B" in h,"keyboard actions")
+check(h.count("remote:FireServer(")==oldh.count("remote:FireServer(")==3,"one client action sequence helper")
+check("local currentNetBound=false" in h,"view state")
+check("RemoteEvent" not in m and "FireServer" not in m and "task.spawn" not in m,"no separate authority")
+check("MINIONS = 8" in m and "MAX_ACTIVE = 9" in m,"mob budget")
+check('table.insert(impacts,{player=target,damage=11,kind="ELITE"})' in m,"elite telegraph damage request")
+check("m.tellUntil=now+1.5" in m,"warn before elite")
+check("self.kills+=1" in m and "recordServerProgress" not in m,"no kill XP farm")
+check("NET_DURATION=1.2" in b and "NET_IMMUNITY=8" in b and "BREAK_DELAY=.45" in b,"CC cap")
+check("Rules.NET_COOLDOWN=14" in b and "Rules.RESCUE_RANGE=8" in b,"cooldown and rescue")
+check("MarketplaceService" not in g and "MarketplaceService" not in h,"no payment")
+check('EXPERIMENTAL_FIVE_EGG_MODE=RunService:IsStudio() and chosenMode==ModeVote.SCORE' in g,"old dual mode")
+print(f"OFFLINE_SOURCE_RULES_CHECK_PASS {checks}/{checks}; native/Studio/Android NOT_TESTED")
