@@ -27,6 +27,10 @@ visual_source=(b.OWN/"inputs/MusouHorde.luau").read_bytes()
 check(b.gitblob(visual_source)==b.V5_HORDE_BLOB,"real V6 Horde exact GitBlob freeze")
 check('MovingClaw_' in visual_source.decode() and 'CrownHorn_' in visual_source.decode(),"real V6 3D toy models")
 check('m.arms[1].Orientation' in visual_source.decode() and 'm.attackAt=math.max(m.attackAt,now+.65)' in visual_source.decode(),"actual V6 visual movement and hit delay")
+check('popup.Name="RealDamagePopup"' in visual_source.decode(),"v7 overhead damage GUI exists in actual one Horde module")
+check('local realDamage=beforeHp-m.hp' in visual_source.decode(),"v7 popup never exaggerates actual lost HP")
+check('m.popupUntil=now+.72' in visual_source.decode(),"v7 short bounded one-GUI impact effect")
+check('elseif not m.hidden and now>=m.popupUntil then' in visual_source.decode(),"v7 KO remains visible for short feedback window")
 
 check(b.HUD_OLD!=b.HUD_NEW,"real HUD count patch")
 # Test genuine immutable author 40 source; no hand-made dummy source.
