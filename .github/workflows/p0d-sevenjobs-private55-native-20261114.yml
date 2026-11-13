@@ -1,4 +1,4 @@
-name: P0D SevenJobs private55 native/Rojo source exact (NOT official RC)
+name: P0D SevenJobs private56 native/Rojo after official Saved PvE (NOT official RC)
 on:
   push:
     branches:
@@ -22,18 +22,25 @@ jobs:
           ref: 79123d35cd7afdd5f4f9941675bc2d2cf382ac4e
           path: _p0d_pinned_source
           persist-credentials: false
-      - name: Rebuild exact author H1 rich51, then original RC54 overlays
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 0dd7f4418d06200e40688c79c8290745cb56834d
+          path: _p0d_current55
+          persist-credentials: false
+      - name: Rebuild exact author H1 rich51, then current official RC55 overlays
         shell: bash
         run: |
           set -euo pipefail
           ROOT=handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01
           DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
           python3 -B _p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/tools/assemble.py --assemble
-          python3 -B rc_fastlane/apply_overlays.py --dist "$DIST" --profile rich51
-          python3 -B rc_fastlane/integrate.py --profile rich51 --dist "$DIST"
-          python3 -B rc_fastlane/apply_sixskill_durable.py --profile rich51 --dist "$DIST"
+          python3 -B _p0d_current55/rc_fastlane/apply_overlays.py --dist "$DIST" --profile rich51
+          python3 -B _p0d_current55/rc_fastlane/integrate.py --profile rich51 --dist "$DIST"
+          python3 -B _p0d_current55/rc_fastlane/apply_sixskill_durable.py --profile rich51 --dist "$DIST"
+          python3 -B _p0d_current55/rc_fastlane/apply_saved_pve.py --profile rich51 --dist "$DIST"
           python3 -B "$ROOT/tools/apply_seven_jobs.py" --dist "$DIST"
-          test "$(find "$DIST/src" -name '*.luau' -type f | wc -l)" -eq 55
+          test "$(find "$DIST/src" -name '*.luau' -type f | wc -l)" -eq 56
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -58,8 +65,8 @@ jobs:
             /tmp/p0d_job_luau_build/luau-compile "$file" >/tmp/p0d_job_compile.out 2>&1 || { cat /tmp/p0d_job_compile.out; exit 1; }
             n=$((n+1))
           done < <(find "$DIST/src" -name '*.luau' -type f -print0)
-          test "$n" -eq 55
-          echo P0D_SEVEN_JOBS_REAL_NATIVE_LUAU_55_OF_55_PASS
+          test "$n" -eq 56
+          echo P0D_SEVEN_JOBS_REAL_NATIVE_LUAU_56_OF_56_PASS
           python3 - <<'PY'
           from pathlib import Path
           root=Path('handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01')
@@ -92,7 +99,7 @@ jobs:
           set -euo pipefail
           DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
           mkdir -p /tmp/p0d_jobs_out
-          /tmp/p0d_jobs_rojo build "$DIST/default.project.json" -o /tmp/p0d_jobs_out/P0D_SEVEN_JOBS_PVE_PRIVATE55.rbxlx
+          /tmp/p0d_jobs_rojo build "$DIST/default.project.json" -o /tmp/p0d_jobs_out/P0D_SEVEN_JOBS_PVE_PRIVATE56.rbxlx
           python3 - <<'PY'
           from pathlib import Path
           import xml.etree.ElementTree as E
@@ -111,26 +118,26 @@ jobs:
             actual[source.text or '']+=1
             name=el.find("./Properties/string[@name='Name']")
             if name is not None:names[(kind,name.text)]+=1
-          assert actual==expected and sum(actual.values())==55,(len(actual),len(expected))
+          assert actual==expected and sum(actual.values())==56,(len(actual),len(expected))
           assert names[('Script','Game')]==1
           assert names[('ModuleScript','PersistentHatchStore')]==1
-          assert names[('ModuleScript','SevenJobsRules')]==1
+          assert names[('ModuleScript','SevenJobsRules')]==1\n          assert names[('ModuleScript','SavedPveMasteryPolicy')]==1
           assert names[('Script','RealmHunt')]==1
           assert names[('LocalScript','V4TrialOverlay')]==1
           receipt=json.loads((base/'P0D_SEVEN_JOBS_RECEIPT.json').read_text('utf8'))
           receipt['place_sha256']=hashlib.sha256(place.read_bytes()).hexdigest()
-          receipt['real_native_luau']='55_OF_55_PASS'
+          receipt['real_native_luau']='56_OF_56_PASS'
           receipt['native_policy']='33_OF_33_PASS'
-          receipt['real_rojo_exact']='55_OF_55_PASS'
+          receipt['real_rojo_exact']='56_OF_56_PASS'
           receipt['official_rc_adopted']=False
           receipt['actual_studio_engine']='NOT_TESTED'
           Path('/tmp/p0d_jobs_out/PRIVATE55_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
-          print('P0D_SEVEN_JOBS_REAL_ROJO_EXACT_55_OF_55_PASS',receipt['place_sha256'])
+          print('P0D_SEVEN_JOBS_REAL_ROJO_EXACT_56_OF_56_PASS',receipt['place_sha256'])
           PY
           cp /tmp/p0d_job_native.out /tmp/p0d_jobs_out/NATIVE_POLICY_RESULT.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: P0D-SEVEN-JOBS-PVE-PRIVATE55-UNSELECTED
+          name: P0D-SEVEN-JOBS-PVE-PRIVATE56-UNSELECTED
           path: /tmp/p0d_jobs_out/*
           retention-days: 7
           if-no-files-found: error
