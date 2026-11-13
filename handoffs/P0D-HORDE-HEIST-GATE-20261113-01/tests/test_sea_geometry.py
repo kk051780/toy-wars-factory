@@ -173,8 +173,7 @@ class RoundTripGeometry(unittest.TestCase):
     def test_bad_mirrored_design_may_overlap_elite(self):
         # Mutation guard: central copy at x=0 would be in elite's combat area.
         self.assertTrue(any(overlap(b,(0,0,4,5))
-                            for b in barriers(x_mag=0,open_doors=False)
-                            if b[1] < 10 and b[1] > -20) is False)
+                            for b in barriers(x_mag=0,open_doors=False)))
         self.assertNotEqual(X,0)
 
     def test_fall_back_grass_route_is_public(self):
