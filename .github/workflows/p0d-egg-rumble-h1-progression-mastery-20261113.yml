@@ -40,7 +40,7 @@ jobs:
           test -s /tmp/egg_rumble_native_vote.luau
           test -s /tmp/egg_rumble_native_5egg.luau
           test -s /tmp/egg_rumble_native_rewards.luau
-          python3 -B "$OWN/tools/generate_native_store_test.py" --write /tmp/egg_rumble_native_store.luau
+          python3 -B handoffs/P0D-EGG-RUMBLE-DURABLE-HATCH-20261113-01/tools/generate_native_store_test.py --write /tmp/egg_rumble_native_store.luau
           test -s /tmp/egg_rumble_native_store.luau
           python3 -B "$OWN/tools/generate_native_progression_store_test.py" --write /tmp/egg_rumble_native_progress_store.luau
           test -s /tmp/egg_rumble_native_progress_store.luau
