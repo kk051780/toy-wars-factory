@@ -12,11 +12,11 @@ import zlib
 
 ROOT=Path(__file__).resolve().parents[1]
 ORIGINAL={
- "server/Game.server.luau":"2aa21aa8508f234e178b4cd67b233fbc942b05c989a68e339d86ca7d344168af",
+ "server/Game.server.luau":"aaa03616ee4aadee32bfeb90a0016ca036919a52a2725e908a0c360adf087739",
  "client/TrapRaidersHUD.client.luau":"3f2654199c2531bea34371a4ea33beecf65d1e306ecd91e86f5164ab3ddca06d",
 }
 AFTER={
- "server/Game.server.luau":"efd1b43350b3102bb493e118cff87ffdb3d57984a41b9831c37144250414c77d",
+ "server/Game.server.luau":"6308e02c0d6930af2ec4ba0f86bf280be435ca8b7c46f1c8c8ee81b4164269eb",
  "client/TrapRaidersHUD.client.luau":"6d510976b25789a99686fc58ed6ae4c85dbd2b04f9080e2d4e88e09057506f30",
  "server/SevenJobsRules.luau":"cd4de7c232f2303e719000fddc2b52f54b38f461416cb4d33316c8fac24fb3d8",
 }
@@ -36,7 +36,7 @@ def sources(dist):
 def apply(dist):
  assert dist.is_dir() and (dist/"default.project.json").is_file(),"NO_RC_DIST"
  before=sources(dist)
- assert len(before)==56,("NEED_EXACT_RC56_WITH_SAVED_BEAST",len(before))
+ assert len(before)==57,("NEED_EXACT_RC57_WITH_SCOUT_SPECIES",len(before))
  for key,sha in ORIGINAL.items():
   assert hash_bytes(before[key])==sha,("RC_AUTHOR_DRIFT",key)
  config=json.loads((dist/"default.project.json").read_text("utf8"))
@@ -76,7 +76,7 @@ def apply(dist):
  assert not dest.exists(),"DUPLICATE_JOBS"
  dest.write_bytes(new_src)
  after=sources(dist)
- assert len(after)==57 and len(set(after)-set(before))==1
+ assert len(after)==58 and len(set(after)-set(before))==1
  assert {p for p in before if after[p]!=before[p]}==set(ORIGINAL)
  assert all(after[p]==raw for p,raw in before.items() if p not in ORIGINAL)
  game=after["server/Game.server.luau"].decode()
@@ -92,17 +92,19 @@ def apply(dist):
  assert after["server/PersistentHatchStore.luau"]==before["server/PersistentHatchStore.luau"]
  assert after["server/SavedPveMasteryPolicy.luau"]==before["server/SavedPveMasteryPolicy.luau"]
  assert after["server/SavedBeastEvolutionPolicy.luau"]==before["server/SavedBeastEvolutionPolicy.luau"]
+ assert after["server/ScoutSpeciesPolicy.luau"]==before["server/ScoutSpeciesPolicy.luau"]
+ assert "ScoutSpeciesPolicy" in game
  assert "SavedBeastPolicy." in game or "SavedBeastEvolutionPolicy" in game
  assert "SavedPvePolicy.mergeWithEarned(" in game
  receipt={
   "status":"P0D_SEVEN_JOBS_PVE_OPTIONAL_UNSELECTED",
-  "base_official_sha":"947cddb5351ba95b9b27597b9ec1828a8297cd66",
-  "base_source_count":56,"added_count":1,"changed_existing_count":2,
-  "existing_unchanged_count":54,"total_source_count":57,
+  "base_official_sha":"34d6d384d04ba1d4a394331a3e5c74f798e57a22",
+  "base_source_count":57,"added_count":1,"changed_existing_count":2,
+  "existing_unchanged_count":55,"total_source_count":58,
   "single_Game":True,"single_Remote":True,"Store_byte_identical":True,
   "no_new_DataStore":True,"no_Publication":True,
   "actual_studio_engine":"NOT_TESTED","native_luau":"NOT_TESTED",
-  "official_rc_adopted":False,"pvp_job_balance":"NOT_IMPLEMENTED","saved_weapon_mastery_source_preserved":True,"saved_beast_evolution_source_preserved":True,
+  "official_rc_adopted":False,"pvp_job_balance":"NOT_IMPLEMENTED","saved_weapon_mastery_source_preserved":True,"saved_beast_evolution_source_preserved":True,"scout_species_source_preserved":True,
   "source_blobs":{p:blob(s) for p,s in sorted(after.items())}
  }
  (dist/"P0D_SEVEN_JOBS_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n")
