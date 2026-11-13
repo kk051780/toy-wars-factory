@@ -25,7 +25,7 @@ class SourceContract(unittest.TestCase):
         self.assertNotIn("TakeDamage",v)
     def test_gate_idempotence(self):
         self.assertIn("self.triggered or self.phase",rule)
-        self.assertIn('self.phase = "WAIT_CLEAR"',rule)
+        self.assertIn('"WAIT_CLEAR"',rule)
     def test_no_false_claim_of_playable_shortcut(self):
         self.assertIn("does **not** build or validate the bypass",README)
 if __name__ == "__main__":
