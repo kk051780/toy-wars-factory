@@ -1,0 +1,53 @@
+{
+  "schema": "P0D_PUBLIC_SOURCE_V1_READBACK_MANIFEST_CANDIDATE",
+  "created_jst": "2026-11-13",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "feature_slice": "GAME-DESIGN-COOPERATIVE-RUMBLE-LINK-CLIENT-PREVIEW-20261113-01",
+  "owner_issue": "https://github.com/kk051780/toy-wars-factory/issues/219#issuecomment-6844778859",
+  "source_commit_before_manifest": "d362ecdfede48222d36d4cea65e08d6afd149b0a",
+  "purpose": "Standalone optional client-presentation preview only; no gameplay authority",
+  "files": [
+    {
+      "path": "src/RumbleLinkCueRules.luau",
+      "git_blob_sha1": "27148838a55141e878bfb5b126824d2b6dc2bb27"
+    },
+    {
+      "path": "demo/RumbleLinkPreview.client.luau",
+      "git_blob_sha1": "7f763c95d5f77fdbbb9424a13cc376e0c1ed9c6a"
+    },
+    {
+      "path": "default.project.json",
+      "git_blob_sha1": "1e5430671776ddc30b59e323c33c0299c4963f31"
+    },
+    {
+      "path": "README.md",
+      "git_blob_sha1": "b5cde9ce40ffa285d5f7b97fff9fc071e0bf7240"
+    },
+    {
+      "path": "tests/test_contract.py",
+      "git_blob_sha1": "3b22b1f5f815d1708250f20de425b1841d060b30"
+    }
+  ],
+  "claim_limits": {
+    "original_game_code_modified": false,
+    "official_rc_adopted": false,
+    "source_only": true,
+    "python_test_file_authored": true,
+    "python_tests_against_pinned_git_commit": "NOT_EXECUTED_IN_CI",
+    "offline_draft_python_tests_passed": 17,
+    "real_native_luau": "NOT_TESTED",
+    "real_roblox_studio": "NOT_TESTED",
+    "human_fun": "UNKNOWN",
+    "overall_S1_official_pct_last_reported": 75
+  },
+  "blocked_on": "#250 product adoption + #220 sole RC source and human 2client Android FUN gate",
+  "protected": [
+    "main",
+    "merge",
+    "publish",
+    "paid",
+    "P0-A/B/C CAS",
+    "5 existing automations"
+  ]
+}
