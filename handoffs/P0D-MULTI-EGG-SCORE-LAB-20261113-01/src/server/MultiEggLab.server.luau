@@ -226,8 +226,10 @@ task.spawn(function()
     -- The pure rules dropped carried eggs on expiration; keep actual visual
     -- Parts consistent and un-welded rather than attached after 4 minutes.
     for id,weld in pairs(welds) do
-        local player=idByPlayer[match.eggs[id].holder or -1]
-        local dropAt=if player then safeDropPosition(player) else initial[id]
+        local root=weld.Part0
+        local position=if root then root.Position else initial[id]
+        local dropAt=Vector3.new(math.clamp(position.X,-81,81),
+            3,math.clamp(position.Z,-41,41))
         weld:Destroy()
         welds[id]=nil
         local part=eggWorld[id]
