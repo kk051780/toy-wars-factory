@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-REPO = Path(__file__).resolve().parents[3]
+REPO = Path(__file__).resolve().parents[2]
 SRC = REPO / "handoffs/P0D-H1-COMPOSITE-20261113-01/src"
 OLD_HARNESS = REPO / "releases/P0D_S1_KIDS_RC01/tools/native_game_trap_integration.py"
 SOURCE_SHA = "1498c2d344ede2d9da6c2bfdd025ebc1a15ec48b"
