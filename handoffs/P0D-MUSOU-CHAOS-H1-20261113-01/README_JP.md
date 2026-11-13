@@ -15,7 +15,7 @@ Base #286 fixed commit `a0331e2e452f4e8e6530d32562ba5ff657b011d9` の **35本の
 python -B handoffs/P0D-MUSOU-CHAOS-H1-20261113-01/tests/test_musou_overlay.py
 python -B handoffs/P0D-MUSOU-CHAOS-H1-20261113-01/tools/assemble.py --assemble
 ```
-組立器は #286 の既存 `tools/assemble.py` を呼び、正規の元ゲーム35本をバイト同一で再現してから、独立rootの4個のファイルを貼る。出力は `dist/EGG_RAID_RUMBLE_MUSOU_CHAOS_H1_DEV_STUDIO_ONLY`。既存distがあれば上書きせずFail（新規作業dirで実行）。`SOURCE_LOCK.json`は38本のSHA256/Git Blobを残す。既存 #220 RC/main/OWNER実PCは触らない。実際のLuauコンパイル/Rojo/Studio、2client/Android、ネットワーク遅延などは未検証のため **NOT_TESTED**。
+組立器は #286 の既存 `tools/assemble.py` を呼び、正規の元ゲーム35本をバイト同一で再現してから、独立rootの4個のファイルを貼る。出力は `dist/EGG_RAID_RUMBLE_MUSOU_CHAOS_H1_DEV_STUDIO_ONLY`。既存distがあれば上書きせずFail（新規作業dirで実行）。`SOURCE_LOCK.json`は38本のSHA256/Git Blobを残す。既存 #220 RC/main/OWNER実PCは触らない。実際のネイティブLuauコンパイル／Rojo私的Place生成はGitHub Actionsで確認済み。**実Roblox Studio（2client）/Android・ネットワーク遅延・プレイヤーの楽しさはNOT_TESTED**。
 
 ## 私的試遊での検収
 1. **38本**の同一Game/Remote構成をLuau構文・Rojo生成確認する。元のXP/保存/二モード用ネイティブ試験も回帰。
@@ -29,7 +29,7 @@ python -B handoffs/P0D-MUSOU-CHAOS-H1-20261113-01/tools/assemble.py --assemble
 ## 防御的修正 v2（未実機）
 - 壁・床を無視したモブからの反撃を禁止。直線的な追跡には上下方向の上限を追加し、上空から近付くプレイヤーを地上モブが無限追跡しない。
 - 拘束本人が自力で解除、味方が救助した瞬間に拘束輪郭を破棄。救助可能ボタンも遮蔽物を検査。
-- 追加純ルール `MusouCombatRules` は native Luau 26ケースを予定し、従来 `MusouBindRules` 20ケースと合わせてコンパイル、Rojo全38本の一致をCIに要求。
+- 追加純ルール MusouCombatRules は native Luau 26ケース、MusouBindRules 20ケースの実テストを経て全PASS。さらに実際のMusouHordeをモック環境で実行するv5 50ケースと、Rojo全38本ソース完全一致をCIで検査済み（物理エンジン実機ではない）。
 - ただしStudio内の実装時系列、対戦2client、Android FPS、操作時の不快感は人間試遊で検証するまで未知。
 
 ## v5: 精鋭の予兆を見て回避できる設計（非公開Studio候補）
