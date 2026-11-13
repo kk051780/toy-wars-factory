@@ -165,6 +165,14 @@ jobs:
             python3 -B handoffs/P0D-WCS-JOBS-RELAY-PRIVATE60-20261114-01/apply_relay_after_jobs.py --dist "$DIST" --author "$AUTHOR" --off-test
             python3 -B handoffs/P0D-WCS-JOBS-RELAY-PRIVATE60-20261114-01/apply_relay_after_jobs.py --dist "$DIST" --author "$AUTHOR"
           fi
+      - name: Inspect ACTUAL composed Game and HUD team contract (no simulated claim)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B handoffs/P0D-WCS-JOBS-RELAY-PRIVATE60-20261114-01/qa_actual_team_semantics.py --dist "$DIST"
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
