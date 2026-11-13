@@ -12,11 +12,11 @@ import zlib
 
 ROOT=Path(__file__).resolve().parents[1]
 ORIGINAL={
- "server/Game.server.luau":"452d4c3aa1622e7f36b2d4208b8f8308a6ed322651900e5898db835c7c54c1cc",
+ "server/Game.server.luau":"652cd71f824d6926a09c1042461f907d9a9427cb74919191002381bcef3a187e",
  "client/TrapRaidersHUD.client.luau":"3f2654199c2531bea34371a4ea33beecf65d1e306ecd91e86f5164ab3ddca06d",
 }
 AFTER={
- "server/Game.server.luau":"0a8a1873011f8b444169738d53c176dd40eeae0f70140f61bbf097e381dffbf7",
+ "server/Game.server.luau":"aa1f72d48311e133024a138344f1f9f995e59ca4de647e450e07dfdbd1a6dc9e",
  "client/TrapRaidersHUD.client.luau":"5a9a6376750430ebbe976637dd8e320debadd337700138641c2360b2e78c89a5",
  "server/SevenJobsRules.luau":"cd4de7c232f2303e719000fddc2b52f54b38f461416cb4d33316c8fac24fb3d8",
 }
@@ -36,7 +36,7 @@ def sources(dist):
 def apply(dist):
  assert dist.is_dir() and (dist/"default.project.json").is_file(),"NO_RC_DIST"
  before=sources(dist)
- assert len(before)==54,("NEED_EXACT_RC54",len(before))
+ assert len(before)==55,("NEED_EXACT_RC55_WITH_SAVED_PVE",len(before))
  for key,sha in ORIGINAL.items():
   assert hash_bytes(before[key])==sha,("RC_AUTHOR_DRIFT",key)
  config=json.loads((dist/"default.project.json").read_text("utf8"))
@@ -68,7 +68,7 @@ def apply(dist):
  assert not dest.exists(),"DUPLICATE_JOBS"
  dest.write_bytes(new_src)
  after=sources(dist)
- assert len(after)==55 and len(set(after)-set(before))==1
+ assert len(after)==56 and len(set(after)-set(before))==1
  assert {p for p in before if after[p]!=before[p]}==set(ORIGINAL)
  assert all(after[p]==raw for p,raw in before.items() if p not in ORIGINAL)
  game=after["server/Game.server.luau"].decode()
@@ -82,15 +82,17 @@ def apply(dist):
  assert 'action("JOB_SKILL",nil)' in client
  assert 'SaveStatus' in game and 'settleSixSkill' in game
  assert after["server/PersistentHatchStore.luau"]==before["server/PersistentHatchStore.luau"]
+ assert after["server/SavedPveMasteryPolicy.luau"]==before["server/SavedPveMasteryPolicy.luau"]
+ assert "SavedPvePolicy.mergeWithEarned(" in game
  receipt={
   "status":"P0D_SEVEN_JOBS_PVE_OPTIONAL_UNSELECTED",
-  "base_official_sha":"2e86ac4fd0d4cb67fd7c673dc4e891b2af6bdc2c",
-  "base_source_count":54,"added_count":1,"changed_existing_count":2,
-  "existing_unchanged_count":52,"total_source_count":55,
+  "base_official_sha":"0dd7f4418d06200e40688c79c8290745cb56834d",
+  "base_source_count":55,"added_count":1,"changed_existing_count":2,
+  "existing_unchanged_count":53,"total_source_count":56,
   "single_Game":True,"single_Remote":True,"Store_byte_identical":True,
   "no_new_DataStore":True,"no_Publication":True,
   "actual_studio_engine":"NOT_TESTED","native_luau":"NOT_TESTED",
-  "official_rc_adopted":False,"pvp_job_balance":"NOT_IMPLEMENTED",
+  "official_rc_adopted":False,"pvp_job_balance":"NOT_IMPLEMENTED","saved_weapon_mastery_source_preserved":True,
   "source_blobs":{p:blob(s) for p,s in sorted(after.items())}
  }
  (dist/"P0D_SEVEN_JOBS_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n")
