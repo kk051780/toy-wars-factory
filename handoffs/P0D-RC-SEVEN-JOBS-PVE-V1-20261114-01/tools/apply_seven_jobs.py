@@ -13,17 +13,17 @@ import zlib
 ROOT=Path(__file__).resolve().parents[1]
 ORIGINAL={
  "server/Game.server.luau":"aaa03616ee4aadee32bfeb90a0016ca036919a52a2725e908a0c360adf087739",
- "client/TrapRaidersHUD.client.luau":"3f2654199c2531bea34371a4ea33beecf65d1e306ecd91e86f5164ab3ddca06d",
+ "client/HUD.client.luau":"3f2654199c2531bea34371a4ea33beecf65d1e306ecd91e86f5164ab3ddca06d",
 }
 AFTER={
  "server/Game.server.luau":"6308e02c0d6930af2ec4ba0f86bf280be435ca8b7c46f1c8c8ee81b4164269eb",
- "client/TrapRaidersHUD.client.luau":"6d510976b25789a99686fc58ed6ae4c85dbd2b04f9080e2d4e88e09057506f30",
+ "client/HUD.client.luau":"6d510976b25789a99686fc58ed6ae4c85dbd2b04f9080e2d4e88e09057506f30",
  "server/SevenJobsRules.luau":"cd4de7c232f2303e719000fddc2b52f54b38f461416cb4d33316c8fac24fb3d8",
 }
 PATCHES=[
  ("Game.patch.zlib.b64","Game.luau","server/Game.server.luau",
   "dace60e6a60a9de0960e2b2f91a39033264e8a7e7ed9b83f5c5ddb014176e39c"),
- ("HUD.patch.zlib.b64","TrapRaidersHUD.luau","client/TrapRaidersHUD.client.luau",
+ ("HUD.patch.zlib.b64","TrapRaidersHUD.luau","client/HUD.client.luau",
   "ba56402a37e318c9102a15c7217659bf4a0297fb27fd4c71a5ae81c0cc6c05e2"),
 ]
 def hash_bytes(raw):
@@ -41,7 +41,7 @@ def apply(dist):
   assert hash_bytes(before[key])==sha,("RC_AUTHOR_DRIFT",key)
  config=json.loads((dist/"default.project.json").read_text("utf8"))
  assert config["tree"]["ServerScriptService"]["TrapRaidersS1"]["$path"]=="src/server"
- assert config["tree"]["StarterPlayer"]["StarterPlayerScripts"]["TrapRaidersHUD"]["$path"]=="src/client/TrapRaidersHUD.client.luau"
+ assert config["tree"]["StarterPlayer"]["StarterPlayerScripts"]["TrapRaidersHUD"]["$path"]=="src/client/HUD.client.luau"
  for encoded,filename,key,expected_sha in PATCHES:
   data=(ROOT/"patches"/encoded).read_text("ascii").strip()
   unpacked=zlib.decompress(base64.b64decode(data,validate=True))
@@ -59,7 +59,7 @@ def apply(dist):
    old=b"wall.Anchored=true;wall.CanCollide=false;wall.CanTouch=false"
    assert after.count(old)==1,"TURRET_GUARD_DRIFT"
    after=after.replace(old,old+b";wall.CanQuery=false")
-  if key=="client/TrapRaidersHUD.client.luau":
+  if key=="client/HUD.client.luau":
    # CRITICAL: author HUD diff has a literal LF inside a double-quoted Luau string.
    # Roblox XML is parseable while native Luau compilation would fail. Fix fail-closed.
    old_title='jobTitle.Text="7職業: まずは中立モンスター戦'+chr(10)+'1チーム同職1人 / ロビーで選ぶ"'
@@ -80,7 +80,7 @@ def apply(dist):
  assert {p for p in before if after[p]!=before[p]}==set(ORIGINAL)
  assert all(after[p]==raw for p,raw in before.items() if p not in ORIGINAL)
  game=after["server/Game.server.luau"].decode()
- client=after["client/TrapRaidersHUD.client.luau"].decode()
+ client=after["client/HUD.client.luau"].decode()
  assert game.count("remote.OnServerEvent:Connect(")==1
  assert game.count('remote.Name = "TrapRaidersS1Remote"')==1
  assert 'ServerStorage:GetAttribute("P0D_RC_ENABLE_SEVEN_JOBS_PVE")' in game
