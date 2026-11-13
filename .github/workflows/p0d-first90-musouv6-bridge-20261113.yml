@@ -1,0 +1,121 @@
+name: P0D B42 First90 plus Musou V6 real one-Game bridge
+on:
+  push:
+    branches:
+      - experiment/p0d-first90-musouv6-bridge-20261113-01
+    paths:
+      - 'handoffs/P0D-FIRST90-MUSOUV6-BRIDGE-20261113-01/**'
+      - '.github/workflows/p0d-first90-musouv6-bridge-20261113.yml'
+  workflow_dispatch:
+jobs:
+  build-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Source and B42 regression checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/P0D-FIRST90-MUSOUV6-BRIDGE-20261113-01/tests/test_integration.py
+          python3 -B handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/tests/test_first90_game.py
+          python3 -B handoffs/P0D-EARNED-EVOLUTION-FULL-H1-20261113-01/tests/test_evolution_h1.py
+          python3 -B handoffs/P0D-MUSOU-EARNED-POWER-H1-20261113-01/tests/test_power_bridge.py
+      - name: Rebuild exact B42 and overlay ONLY original V6 Horde
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/P0D-FIRST90-MUSOUV6-BRIDGE-20261113-01/tools/assemble.py --assemble
+      - name: Checkout pinned native Luau
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build Luau compiler and runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_luau -B /tmp/p0d_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Native compile 42 source modules and run actual V6 Horde module test
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-FIRST90-MUSOUV6-BRIDGE-20261113-01
+          DIST="$ROOT/dist/EGG_RAID_RUMBLE_FIRST90_MUSOUV6_SINGLE_GAME_PRIVATE"
+          n=0
+          while IFS= read -r -d '' path; do
+            /tmp/p0d_luau/luau-compile "$path" >/tmp/p0d_luau_compile.out 2>&1 || { cat /tmp/p0d_luau_compile.out; exit 1; }
+            n=$((n+1))
+          done < <(find "$DIST/src" -type f -name '*.luau' -print0)
+          test "$n" -eq 42
+          python3 -B "$ROOT/tools/generate_native_horde_state_test.py" --write /tmp/p0d_v6_real_horde.luau
+          /tmp/p0d_luau/luau-compile /tmp/p0d_v6_real_horde.luau >/dev/null
+          /tmp/p0d_luau/luau /tmp/p0d_v6_real_horde.luau | tee /tmp/p0d_v6_horde.log
+          grep -E '^MUSOU_HORDE_NATIVE_[0-9]+_STATE_ASSERTIONS_PASS$' /tmp/p0d_v6_horde.log
+          python3 -B handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/tools/generate_native_first90.py --write /tmp/p0d_real_first90.luau
+          /tmp/p0d_luau/luau /tmp/p0d_real_first90.luau | grep -E 'P0D_FIRST90_NATIVE_[0-9]+_ASSERTIONS_PASS'
+          python3 -B handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/tools/generate_native_waypoint.py --write /tmp/p0d_real_waypoint.luau
+          /tmp/p0d_luau/luau /tmp/p0d_real_waypoint.luau | grep -E 'P0D_FIRST90_WAYPOINT_NATIVE_[0-9]+_ASSERTIONS_PASS'
+          echo P0D_NATIVE_ALL_42_LUAU_AND_V6_HORDE_PASS
+      - name: Install pinned Rojo with checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/rojo77.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/rojo77.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,stat,pathlib
+          with zipfile.ZipFile("/tmp/rojo77.zip") as z:
+              v=[p for p in z.namelist() if p.split("/")[-1]=="rojo"]
+              assert len(v)==1
+              q=pathlib.Path("/tmp/rojo77");q.write_bytes(z.read(v[0]));q.chmod(q.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/rojo77 --version | grep -F 7.7.1
+      - name: Assemble real unpublished one-Game Place and exact 42-source proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-FIRST90-MUSOUV6-BRIDGE-20261113-01
+          DIST="$ROOT/dist/EGG_RAID_RUMBLE_FIRST90_MUSOUV6_SINGLE_GAME_PRIVATE"
+          mkdir -p /tmp/p0d_review
+          /tmp/rojo77 build "$DIST/default.project.json" -o /tmp/p0d_review/EGG_RAID_RUMBLE_B42_MUSOUV6_UNPUBLISHED.rbxlx
+          cp "$DIST/SOURCE_LOCK.json" /tmp/p0d_review/SOURCE_LOCK.json
+          cp /tmp/p0d_v6_horde.log /tmp/p0d_review/NATIVE_HORDE_QA.txt
+          python3 - <<'PY'
+          import pathlib,collections,xml.etree.ElementTree as ET,hashlib,json
+          r=pathlib.Path("handoffs/P0D-FIRST90-MUSOUV6-BRIDGE-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_MUSOUV6_SINGLE_GAME_PRIVATE")
+          p=pathlib.Path("/tmp/p0d_review/EGG_RAID_RUMBLE_B42_MUSOUV6_UNPUBLISHED.rbxlx")
+          src=collections.Counter(x.read_text("utf8") for x in (r/"src").rglob("*.luau"))
+          seen=collections.Counter();classes=collections.Counter();game=0
+          for e in ET.fromstring(p.read_bytes()).iter("Item"):
+              typ=e.get("class")
+              if typ not in ("Script","LocalScript","ModuleScript"):continue
+              code=e.find("./Properties/string[@name='Source']")
+              if code is None:continue
+              classes[typ]+=1;seen[code.text or ""]+=1
+              name=e.find("./Properties/string[@name='Name']")
+              if typ=="Script" and name is not None and name.text=="Game":game+=1
+          assert classes=={"Script":2,"LocalScript":5,"ModuleScript":35},classes
+          assert seen==src and sum(seen.values())==42
+          assert game==1
+          result={"place_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
+             "source_scripts":42,"game_count":1,"studio_2client":"NOT_TESTED",
+             "android":"NOT_TESTED","owner_FUN":"NOT_TESTED",
+             "official_RC_adopted":False,"published":False}
+          pathlib.Path("/tmp/p0d_review/BUILD_RECEIPT.json").write_text(json.dumps(result,indent=2)+"\n")
+          print("P0D_REAL_ROJO_SINGLE_GAME_42_OF_42_SOURCE_PASS",result["place_sha256"])
+          PY
+      - name: Upload nonpublished private trial Place
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-FIRST90-MUSOUV6-B42-ONE-GAME-PRIVATE-PLACE
+          path: /tmp/p0d_review/
+          retention-days: 7
+          if-no-files-found: error
