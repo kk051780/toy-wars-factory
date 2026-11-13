@@ -41,12 +41,35 @@ class EvolutionBattleStatic(unittest.TestCase):
                   "battle/EvolutionCombat.client.luau"):
             self.assertTrue((ROOT/f).is_file())
 
+    def test_formdex_maps_to_single_existing_game_server(self):
+        t=PROJECT["tree"]
+        self.assertEqual(t["ServerScriptService"]["EvolutionFormDex"]["$path"],
+                         "src/EvolutionFormDex.luau")
+        self.assertIn('Dex=require(script.Parent:WaitForChild("EvolutionFormDex")).new(E)',SERVER)
+        self.assertNotIn("EvolutionFormDex",CLIENT)
+
+    def test_form_history_kept_across_branch_toggle(self):
+        self.assertIn("local profile=st.profile",SERVER)
+        self.assertIn("if not profile then",SERVER)
+        self.assertIn('E.switchBranch(profile,"forest_scout",owned,"LOBBY"',SERVER)
+        self.assertIn('msg(player,"FORMDEX",dex)',SERVER)
+        self.assertIn('Dex.snapshot(profile,owned)',SERVER)
+
+    def test_read_only_formdex_hud_six_forms(self):
+        self.assertIn('kind=="FORMDEX"',CLIENT)
+        self.assertIn('payload.schema=="EGG_RUMBLE_FORM_DEX_V1"',CLIENT)
+        for stage in ("forest_scout_S0","forest_scout_S1",
+                      "forest_scout_S2_ASSAULT","forest_scout_S2_GUARD",
+                      "forest_scout_S3_ASSAULT","forest_scout_S3_GUARD"):
+            self.assertIn(stage,CLIENT)
+        self.assertIn("試作用データ",CLIENT)
+
     def test_only_server_uses_real_evolution_policy(self):
         self.assertIn('E=require(script.Parent:WaitForChild("EvolutionRules"))',SERVER)
         self.assertNotIn("EvolutionRules",CLIENT)
 
     def test_reward_not_real_and_preview_warning(self):
-        self.assertIn("SIMULATED server-certified progression",SERVER)
+        self.assertIn("STUDIO PRIVATE synthetic progression",SERVER)
         self.assertIn("No real match/earned shards/XP",SERVER)
         self.assertIn("STUDIO専用の実戦試作",CLIENT)
 
