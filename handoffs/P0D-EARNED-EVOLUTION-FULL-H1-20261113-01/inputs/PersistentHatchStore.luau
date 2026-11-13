@@ -407,9 +407,11 @@ function Store.evolveTransition(raw:any,uid:any,requestId:any,choice:any)
     local mastery=state.progress.mastery[item]
     local masteryLevel=if mastery and integer(mastery.level)
         then mastery.level else 1
+    local replay=evo.evoReceipts[requestId]~=nil
     local ok,receipt=Evolution.evolve(evo,item,state.owned,
         state.progress.level,masteryLevel,"LOBBY",requestId,choice,true)
     if not ok then return nil,receipt end
+    if replay then return state,"ALREADY_EVOLVED" end
     state.evolution=evo
     state.revision+=1
     if not Store.validate(state) then return nil,"INVALID_EVOLUTION_RESULT" end
