@@ -20,6 +20,22 @@ class EggRelayPolicyTests(unittest.TestCase):
         w,r=fixture();w['phase']='RESULT';self.assertEqual(check(w,r),'ROUND_NOT_PLAYING')
     def test_self_transfer(self):
         w,r=fixture();r['targetUserId']=1;self.assertEqual(check(w,r),'INVALID_PARTICIPANTS')
+    def test_real_large_user_ids_allowed(self):
+        w,r=fixture()
+        a,b=5_000_000_123,5_000_000_456
+        w['players'][a]=w['players'].pop(1)
+        w['players'][b]=w['players'].pop(2)
+        w['lastAcceptedSeqByUser'][a]=w['lastAcceptedSeqByUser'].pop(1)
+        w['eggs']['E2']['carrierUserId']=a
+        r['actorUserId']=a
+        r['targetUserId']=b
+        self.assertEqual(check(w,r),'ACCEPT_POLICY_ONLY')
+
+    def test_above_exact_integer_range_rejected(self):
+        w,r=fixture()
+        r['actorUserId']=9007199254740992
+        self.assertEqual(check(w,r),'INVALID_PARTICIPANTS')
+
     def test_wrong_team(self):
         w,r=fixture();w['players'][2]['team']='BLUE';self.assertEqual(check(w,r),'WRONG_TEAM')
     def test_ghost_target(self):
