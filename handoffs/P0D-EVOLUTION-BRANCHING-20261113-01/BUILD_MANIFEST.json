@@ -13,14 +13,16 @@
   "owner_fun_gate": "NO_GO",
   "evidence": {
     "source_readback": "12_of_12_Git_blob_retrieved",
-    "source_contract_checks": "30_of_30_source_checks_executed_PASS",
+    "source_contract_checks": "33_of_33_executed_V8_source_contract_pass",
     "native_luau_run": "NOT_VERIFIED",
     "python_static_run": "NOT_VERIFIED",
     "real_rojo_build": "NOT_VERIFIED",
     "real_studio_engine_two_clients": "NOT_TESTED",
     "android_physical": "NOT_TESTED",
     "actual_two_mode_game_evolution": "NOT_IMPLEMENTED",
-    "persistent_evolution": "NOT_IMPLEMENTED"
+    "persistent_evolution": "NOT_IMPLEMENTED",
+    "python_static_tests_authored": "17_original_+_23_new_NOT_VERIFIED_EXECUTED",
+    "native_luau_tests_authored": "91_original_assertions_NOT_VERIFIED_EXECUTED"
   },
   "files": [
     {
@@ -65,8 +67,8 @@
     },
     {
       "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/battle/EvolutionCombat.server.luau",
-      "git_blob_sha": "475f6a1c4c6046facd07d95a6992cee4f52ac6d5",
-      "chars": 13173
+      "git_blob_sha": "7f89a89cf5aec300b0c614142107213a503a2434",
+      "chars": 13484
     },
     {
       "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/battle/EvolutionCombat.client.luau",
@@ -80,8 +82,8 @@
     },
     {
       "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/tests/test_evolution_battle_static.py",
-      "git_blob_sha": "4b80ee3972df11ccc1d3ca34f1703838e28ca55f",
-      "chars": 6358
+      "git_blob_sha": "1c2663cfa6344ca24150fb01ad5fd71f41807d67",
+      "chars": 6620
     }
   ],
   "notes": [
