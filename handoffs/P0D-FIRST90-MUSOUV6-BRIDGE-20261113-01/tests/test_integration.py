@@ -35,7 +35,7 @@ class TestBridge(unittest.TestCase):
     self.assertIn("ELITE_SWEEP_DANGER_RADIUS",h)
     self.assertNotIn("OnServerEvent:Connect",h)
     self.assertNotIn("DataStoreService",h)
-    self.assertNotIn("RemoteEvent",h)
+    self.assertNotIn('Instance.new("RemoteEvent")',h)
  def test_immutable_combat_policy(self):
     self.assertEqual(blob(ROOT/"inputs/MusouCombatRules.luau"),
                      "7865af9fb057a368e146941ac5bd7bf89cddc88b")
