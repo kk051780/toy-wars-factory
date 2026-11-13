@@ -49,7 +49,7 @@ def apply(dist: Path, author: Path, enabled: bool) -> bool:
     assert (author / "src/SevenJobsRules.luau").is_file()
     flags = json.loads((ROOT / "rc_fastlane/FEATURE_SWITCHES.json").read_text("utf8"))["features"]
     assert flags["WCS_F01_C01"]["enabled"] is True
-    assert flags["SEVEN_JOBS_PVE_V1"]["enabled"] is True
+    assert type(flags["SEVEN_JOBS_PVE_V1"]["enabled"]) is bool
     assert flags["WCS_F01_C01"]["source"][0]["blob"] == WCS_PIN
     lock_path = dist / "SOURCE_LOCK.json"
     fl_path = dist / "RC_FEATURE_LOCK.json"
@@ -64,7 +64,7 @@ def apply(dist: Path, author: Path, enabled: bool) -> bool:
     assert project["tree"]["ServerScriptService"]["TrapRaidersS1"]["$path"] == "src/server"
     assert project["tree"]["StarterPlayer"]["StarterPlayerScripts"]["TrapRaidersHUD"]["$path"] == "src/client/HUD.client.luau"
     assert project["tree"]["ServerStorage"]["$attributes"]["P0D_RC_ENABLE_WCS_F01_C01"] is True
-    if not enabled:
+    if not enabled or not flags["SEVEN_JOBS_PVE_V1"]["enabled"]:
         assert srcs(dist) == orig
         assert lock_path.read_bytes() == before_lock and fl_path.read_bytes() == before_fl
         print("P0D_COMBINED_JOBS_OFF_WCS58_BYTE_EXACT_PASS")
