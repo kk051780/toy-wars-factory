@@ -43,8 +43,8 @@ class RealOriginalPatchContract(unittest.TestCase):
         (self.src / relay.GAME).write_bytes(GAME_SOURCE.read_bytes())
         (self.src / relay.HUD).write_bytes(HUD_SOURCE.read_bytes())
 
-    def add_extra_54_sources(self):
-        for i in range(54):
+    def add_extra_55_sources(self):
+        for i in range(55):
             p = self.src / ("server/IsolatedDummy%02d.luau" % i)
             p.write_text("return %d\n" % i, encoding="utf8")
 
@@ -91,13 +91,13 @@ class RealOriginalPatchContract(unittest.TestCase):
         self.assertEqual(body.count("H2Score.deposit("),
                          GAME_SOURCE.read_text("utf8").count("H2Score.deposit("))
 
-    def test_fifty_six_stub_sources_increment_to_57_without_overwriting_54(self):
-        self.add_extra_54_sources()
+    def test_fifty_seven_stub_sources_increment_to_58_without_overwriting_55(self):
+        self.add_extra_55_sources()
         before = self.lock_source()
-        self.assertEqual(len(before), 56)
+        self.assertEqual(len(before), 57)
         relay.run(self.dist, POLICY_SOURCE)
         after = relay.source_bodies(self.src)
-        self.assertEqual(len(after), 57)
+        self.assertEqual(len(after), 58)
         for path in before:
             if path not in (relay.GAME, relay.HUD):
                 self.assertEqual(before[path], after[path], path)
