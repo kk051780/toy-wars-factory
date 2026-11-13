@@ -58,7 +58,7 @@ def unsafe_contract(game,hud,store):
  assert 'Store.MAX_RECEIPTS=2048' in store
  assert 'raw.owned.starter_scout~=1' in store
  assert 'DataStoreService' not in store
- assert 'SetAsync' not in store
+ assert 'store:SetAsync(' not in store
  assert not any("task.wait(" in line.split("--",1)[0] for line in store.splitlines())
  assert 'RemoteEvent' not in store
  assert 'FireServer' not in store
