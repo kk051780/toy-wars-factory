@@ -21,8 +21,9 @@ def files(root):
 class RichSoloIntegration(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        subprocess.run([sys.executable,"-B",str(ROOT/"tools/assemble.py"),"--assemble"],
-                       cwd=REPO,check=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        proc=subprocess.run([sys.executable,"-B",str(ROOT/"tools/assemble.py"),"--assemble"],
+                            cwd=REPO,capture_output=True,text=True)
+        assert proc.returncode==0, "RICH_BUILDER_FAILED\n"+proc.stdout+"\n"+proc.stderr
         cls.old=files(UP)
         cls.new=files(DIST)
         cls.receipt=json.loads((DIST/"SOURCE_LOCK.json").read_text("utf8"))
