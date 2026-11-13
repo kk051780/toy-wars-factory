@@ -13,6 +13,15 @@ RECEIPT = {
     "android": True, "owner_fun": True,
     "source_lock_verified": True, "single_authority_review": True,
     "expected_script_counts": {"Script": 1, "LocalScript": 0, "ModuleScript": 0},
+    "evidence": {
+        "official_selection": "https://github.com/example/repo/issues/250#issuecomment-1",
+        "independent_qa": "https://github.com/example/repo/issues/220#issuecomment-1",
+        "studio_2client": "https://github.com/example/repo/issues/220#issuecomment-2",
+        "android": "https://github.com/example/repo/issues/220#issuecomment-3",
+        "owner_fun": "https://github.com/example/repo/issues/250#issuecomment-2",
+        "source_lock": "https://github.com/example/repo/issues/220#issuecomment-4",
+        "authority_review": "https://github.com/example/repo/issues/220#issuecomment-5",
+    },
 }
 XML = b'<roblox><Item class="Script"><Properties><string name="Name">Game</string></Properties></Item></roblox>'
 
@@ -43,6 +52,19 @@ class AdmissionTests(unittest.TestCase):
             r = dict(RECEIPT, expected_place_sha256=hashlib.sha256(dup).hexdigest(),
                      expected_script_counts={"Script": 2, "LocalScript": 0, "ModuleScript": 0})
             self.assertIn("SINGLE_GAME_SCRIPT_NOT_VERIFIED", evaluate(r, p)["blockers"])
+    def test_claimed_pass_without_evidence_is_blocked(self):
+        r = dict(RECEIPT, evidence={})
+        self.assertIn("MISSING_EVIDENCE:official_selection", evaluate(r)["blockers"])
+        self.assertIn("MISSING_EVIDENCE:studio_2client", evaluate(r)["blockers"])
+    def test_non_github_evidence_is_blocked(self):
+        r = dict(RECEIPT, evidence=dict(RECEIPT["evidence"], owner_fun="yes"))
+        self.assertIn("MISSING_EVIDENCE:owner_fun", evaluate(r)["blockers"])
+    def test_oversize_xml_blocks(self):
+        with tempfile.TemporaryDirectory() as t:
+            p = Path(t)/"oversize.rbxlx"
+            with p.open("wb") as f:
+                f.truncate(16*1024*1024+1)
+            self.assertTrue(any("16MiB" in x for x in evaluate(RECEIPT, p)["blockers"]))
     def test_malformed_or_entity_xml_blocks(self):
         with tempfile.TemporaryDirectory() as t:
             p = Path(t)/"dummy.rbxlx"; p.write_bytes(b'<!DOCTYPE foo><roblox/>')
