@@ -4,6 +4,7 @@ on:
     branches:
       - rc/p0d-s1-kids-rc01
       - feature/p0d-private61-native105-size-qa-20261114
+      - feature/p0d-private62-starry-meteor-20261114-01
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -159,6 +160,20 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_star_path.py --profile rich51 --dist "$DIST"
           fi
+      - name: Add automatic fourth-lane Meteor source after real Starfall61
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_meteor_fourth.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_meteor_fourth.py --profile rich51 --dist "$DIST" --enabled false
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            echo P0D_PRIVATE62_METEOR_OFF_PRESERVES_ALL_61_BYTES_PASS
+            python3 -B rc_fastlane/apply_meteor_fourth.py --profile rich51 --dist "$DIST" --enabled true
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -187,7 +202,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -312,7 +327,8 @@ jobs:
           seven_enabled=(p=='rich51' and flags['features']['SEVEN_JOBS_PVE_V1']['enabled'])
           egg_enabled=(p=='rich51' and flags['features']['EGG_RELAY_CLASSIC_V1']['enabled'])
           star_enabled=(p=='rich51' and flags['features']['STARRY_PATH_V1']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled),'rich47':47,'legacy21':21}[p]
+          meteor_enabled=(p=='rich51' and flags['features']['METEOR_FOURTH_V1']['enabled'])
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled)+int(meteor_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -407,7 +423,8 @@ jobs:
               assert titles[('ModuleScript','EggRelayPolicy')]==1
               assert sum('local function applyClassicEggRelay(' in src for src in included)==1
               assert sum('relayButton.MouseButton1Click:Connect(fireClassicEggRelay)' in src for src in included)==1
-              assert sum('return flag ~= nil and flag:IsA("BoolValue")' in src for src in included)==1
+              game_source=(base/'src/server/Game.server.luau').read_text('utf8')
+              assert game_source.count('return flag ~= nil and flag:IsA("BoolValue")')==1
               project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
               assert project['ServerStorage']['P0D_RC_ENABLE_EGG_RELAY_CLASSIC']['$className']=='BoolValue'
               assert project['ServerStorage']['P0D_RC_ENABLE_EGG_RELAY_CLASSIC']['$properties']['Value'] is True
@@ -416,13 +433,36 @@ jobs:
           if star_enabled:
               assert wcs_enabled and seven_enabled and egg_enabled
               assert titles[('Script','StarfallPath')]==1
-              assert sum('P0D_STARRY_PATH' in src for src in included)==1
+              star_source=(base/'src/server/StarfallPath.server.luau').read_text('utf8')
+              assert star_source.count('P0D_STARRY_PATH')>=1
               assert sum('if active and os.clock()>=expiresAt and not occupied()' in src for src in included)==1
               assert sum('GetAttribute("P0D_RC_ENABLE_STARRY_PATH_V1")~=true' in src for src in included)==1
               project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
               assert project['ServerStorage']['$attributes']['P0D_RC_ENABLE_STARRY_PATH_V1'] is True
           else:
               assert titles[('Script','StarfallPath')]==0
+          if meteor_enabled:
+              assert star_enabled and wcs_enabled and seven_enabled and egg_enabled
+              assert titles[('Script','MeteorFourth')]==1
+              meteor=(base/'src/server/MeteorFourth.server.luau').read_text('utf8')
+              assert meteor.count('local QUIET_SECONDS = 55')==1
+              assert 'local z = (west.Position.Z + east.Position.Z) * 0.5 - 17' in meteor
+              project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
+              boot=project['ServerStorage']['P0D_ENABLE_METEOR_SHORTCUT_V1']
+              assert boot['$className']=='BoolValue' and boot['$properties']['Value'] is True
+              root=ET.fromstring(target.read_bytes())
+              flags_xml=[]
+              for node in root.iter('Item'):
+                  if node.get('class')!='BoolValue':continue
+                  name=node.find("./Properties/string[@name='Name']")
+                  if name is not None and name.text=='P0D_ENABLE_METEOR_SHORTCUT_V1':
+                      flags_xml.append(node)
+              assert len(flags_xml)==1,('METEOR_BOOT_ROJO_MISSING',len(flags_xml))
+              value=flags_xml[0].find("./Properties/bool[@name='Value']")
+              assert value is not None and (value.text or '').lower()=='true'
+              print('P0D_PRIVATE62_METEOR_FOURTH_REAL_ROJO_BOOLVALUE_PASS')
+          else:
+              assert titles[('Script','MeteorFourth')]==0
           if p=='rich51':
               assert titles[('Script','V4TrainingBridge')]==1
               assert titles[('LocalScript','V4TrialOverlay')]==1
@@ -437,14 +477,14 @@ jobs:
           place_bytes=target.stat().st_size
           if p=='rich51':
               assert place_bytes>507197 and place_bytes<2000000,('IMPLAUSIBLE_PRIVATE61_PLACE_SIZE',place_bytes)
-              print('P0D_PRIVATE61_ACTUAL_PLACE_RBXLX_BYTES',place_bytes)
-              print('P0D_PRIVATE61_SOURCE_PRESERVED_FOUR_FEATURES',sum(actual.values()),int(wcs_enabled),int(seven_enabled),int(egg_enabled),int(star_enabled))
+              print('P0D_PRIVATE62_ACTUAL_PLACE_RBXLX_BYTES',place_bytes)
+              print('P0D_PRIVATE62_SOURCE_PRESERVED_FIVE_FEATURES',sum(actual.values()),int(wcs_enabled),int(seven_enabled),int(egg_enabled),int(star_enabled),int(meteor_enabled))
           receipt={'release_id':'P0D-S1-KIDS-RC01','profile':p,'source_commit':source,
             'source_overlays':overlay_ids,'composite_rc_source_commit':os.environ['GITHUB_SHA'],
             'rc_branch_commit':os.environ['GITHUB_SHA'],'place_sha256':digest,
             'source_count':sum(actual.values()),'exact_rojo_binary':True,
             'actual_uncompressed_place_bytes':place_bytes,
-            'source_candidate_stage':'QA_CHILD_PRIVATE61_NOT_OFFICIAL_RC',
+            'source_candidate_stage':'STARRY61_PLUS_METEOR_PRIVATE62_NOT_OFFICIAL_RC',
             'native_policy_cases_7jobs':33 if p=='rich51' else None,
             'native_policy_cases_relay':41 if p=='rich51' else None,
             'native_original_Game_relay_cases':31 if p=='rich51' else None,
@@ -456,6 +496,8 @@ jobs:
             'seven_jobs_neutral_pve_included':bool(seven_enabled),
             'egg_relay_classic_one_egg_included':bool(egg_enabled),
             'starry_path_third_canyon_route_included':bool(star_enabled),
+            'meteor_fourth_canyon_route_included':bool(meteor_enabled),
+            'meteor_engine_2client':'NOT_TESTED',
             'starry_path_engine_2client':'NOT_TESTED',
             'egg_relay_five_egg_supported':False,
             'egg_relay_engine':'NOT_TESTED',
@@ -471,7 +513,7 @@ jobs:
             'android':'NOT_TESTED','owner_fun':'NOT_TESTED',
             'production_publish':False,'sixskill_persistent':False,
             's1_score_prior_only':75,
-            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled},
+            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled},
             'base_author_51_preserved':True if realm_enabled else None,
             'new_realms_studio_2client':'NOT_TESTED'}
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
