@@ -13,7 +13,7 @@ import unittest
 THIS=Path(__file__).resolve()
 ROOT=THIS.parents[1]
 REPO=THIS.parents[3]
-OLD=REPO/"handoffs/P0D-H1-ROUTE-OVERLAP-QA-20261113-01/candidate/H1FunWorld_wall_clearance_REVIEW_ONLY.server.luau"
+OLD=ROOT/"tests/fixtures/H1FunWorld_previous_wall_clear.server.luau"
 NEW=ROOT/"inputs/H1FunWorld.server.luau"
 ORIGINAL_MAP=REPO/"handoffs/P0D-H1-WORLD-CREATURES-20261113-01/src/server/MapBuilder.luau"
 CONFIG=REPO/"handoffs/P0D-H1-WORLD-CREATURES-20261113-01/src/shared/Config.luau"
