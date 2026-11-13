@@ -54,6 +54,10 @@
       "path": ".github/workflows/p0d-horde-independent-v4-ci.yml",
       "blob_sha1": "378e7c0e23c18880712b305b00ad8f0054da639d",
       "repo_root_external": true
+    },
+    {
+      "path": "tools/audit_40_scout_lifetime.mjs",
+      "blob_sha1": "970b28d4622d609459c33642e308bc742ceb3a42"
     }
   ],
   "evidence": {
@@ -70,7 +74,7 @@
     "actual_fun": "UNKNOWN",
     "official_S1_game_release_last_pct": 75
   },
-  "blocker": "Original #288 V4 repairs stale elite tell, real-world floor grounding, and mob-vs-castle double damage in its OWN source. Earned-power39 still inherits #288 V2 for Horde and old Game and must be explicitly rebased with no power regression, CI/native and Studio FUN before #250 selection/#220 RC.",
+  "blocker": "New real downloaded 40 Luau .rbxlx verified SHA; actual Game currently says GUARD shield untilAt+8s but SCOUT_DURATION5 and cleanupScout nils evolutionGuards on model expiry, so effective max5s. Independent release QA and owner FUN needed; #288 V5 red attack-zone not yet part of 40.",
   "protected": "No main, RC, merges, live publish, purchases, spend, owner PC/Codex, P0 A/B/C auth/CAS, 5 Automations",
   "downstream_inheritance": {
     "power_frozen_commit": "cb2540dc4a3e5b819c0e3598d4af5e2b6dca76d3",
@@ -106,5 +110,25 @@
     "power_feature_game_rebase": "NOT_DONE; old bridge remains source unsafe",
     "sole_official_RC": "NOT_MODIFIED",
     "human_fun_gate": "NO_GO"
+  },
+  "integrated40_lifetime_qa": {
+    "gameCommit": "1b21bf8e5fc6afa5c74813d7f1037f877e1273ed",
+    "gameGitBlob": "8b5fdf62f764ab6c963758d699cdfc681ed2ef96",
+    "hordeGitBlob": "7edfda9e5a1d4ac8ae47d66ea7cf908eb8e4af6e",
+    "actualUnpublishedPlaceSha256": "b4a817209f0a77ffdc9a228078b445da452de6262d371199d71b1626b63225cf",
+    "real_RBXLX_parsed_script_count": 40,
+    "real_RBXLX_script_classes": "33 ModuleScript, 2 Script, 5 LocalScript",
+    "scout_duration_seconds": 5,
+    "guard_declared_seconds": 8,
+    "guard_actual_upper_bound_seconds": 5,
+    "guard_lifetime_source_mismatch": true,
+    "assault_reuse_cooldown_seconds": 12,
+    "assault_max_attempts_per_spawn": 1,
+    "latest288_v5Full": "adb1150951c5b5a6221f71204ce91ea693e34847",
+    "latest288_v5HordeGitBlob": "8c147c801e7fa1ff362922d66c9a6fd432fc8b6e",
+    "v5DangerZoneIntegratedIn40": false,
+    "localSourceQA": "actual .rbxlx parsed & SHA256 verified; guard mismatch verified by executable Python; new GitHub Node checker authored but NOT_NODE_EXECUTED",
+    "realStudioPlay": "NOT_TESTED",
+    "nextAction": "author of 40 source chooses explicit consistent 5s or visually continuous 8s guard contract and independent runtime QA; rebase optional V5 danger zone separately; no global scout duration edit without original reward token validity/cooldown check"
   }
 }
