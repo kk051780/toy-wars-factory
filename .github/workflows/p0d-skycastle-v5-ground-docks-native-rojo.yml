@@ -1,0 +1,167 @@
+name: P0D B42 V7 SkyCastle V5 physical ground docks private 43-source Rojo
+on:
+  push:
+    branches:
+      - feature/p0d-skycastle-private-route-20261113-01
+    paths:
+      - 'handoffs/P0D-SKYCASTLE-PRIVATE-ROUTE-20261113-01/**'
+      - '.github/workflows/p0d-skycastle-v5-ground-docks-native-rojo.yml'
+  workflow_dispatch:
+jobs:
+  one-game-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Current SKY V5 owner source checkout
+        uses: actions/checkout@v4
+      - name: Frozen original B42 First90 V7 Sky author checkout
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: a3dfc9b98f22b8edf0a7d0d978d65b1072aed933
+          path: _p0d_upstream
+          persist-credentials: false
+      - name: Frozen Studio Solo and strict V4 client diagnostic author checkout
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 634c26a6b698c25a339fc948169c58c4773e9810
+          path: _p0d_v4
+          persist-credentials: false
+      - name: Rebuild EXACT source B42 V7 world in original upstream author repo
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_upstream rev-parse HEAD)" = a3dfc9b98f22b8edf0a7d0d978d65b1072aed933
+          test "$(git -C _p0d_v4 rev-parse HEAD)" = 634c26a6b698c25a339fc948169c58c4773e9810
+          (
+            cd _p0d_upstream
+            python3 -B handoffs/P0D-B42-V7-SKYCASTLE-20261113-01/tools/assemble.py --assemble
+          )
+          ORIG="_p0d_upstream/handoffs/P0D-B42-V7-SKYCASTLE-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_V7_SKYCASTLE_PRIVATE"
+          test -f "$ORIG/src/server/Game.server.luau"
+          test -f "$ORIG/src/server/H1FunWorld.server.luau"
+          cp -a "$ORIG" _p0d_candidate
+          ROOTSOLO="_p0d_v4/handoffs/P0D-B42V7-SKY-SOLO-20261113-01"
+          python3 -B "$ROOTSOLO/tools/studio_solo_patch.py" _p0d_candidate/src/server/Game.server.luau
+          cp "$ROOTSOLO/src/P0DStudioTrialAudit.client.luau" _p0d_candidate/src/client/P0DStudioTrialAudit.client.luau
+          test "$(git hash-object _p0d_candidate/src/client/P0DStudioTrialAudit.client.luau)" = ee96518a7eeaaaba98d2a8e2aff6dad780fae8c7
+          python3 - <<'PY'
+          import pathlib,json,hashlib
+          root=pathlib.Path("_p0d_candidate")
+          p=root/"default.project.json";d=json.loads(p.read_text("utf8"))
+          scripts=d["tree"]["StarterPlayer"]["StarterPlayerScripts"]
+          assert "P0DStudioTrialAudit" not in scripts
+          scripts["P0DStudioTrialAudit"]={"$path":"src/client/P0DStudioTrialAudit.client.luau"}
+          d["name"]="EGG_RAID_RUMBLE_B42_V7_SKY_GROUNDDOCK_V5_SOLO_PRIVATE"
+          p.write_text(json.dumps(d,indent=2,ensure_ascii=False)+"\n","utf8")
+          assert len(list((root/"src").rglob("*.luau")))==43
+          print("P0D_43_SOURCE_ORIGINAL_V4_STUDIO_SOLO_EXACT_REASSEMBLY_PASS")
+          PY
+          cp -a _p0d_candidate _p0d_candidate_h0
+      - name: Overlay ONLY original single world with author's fixed 4 physical docks
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-SKYCASTLE-PRIVATE-ROUTE-20261113-01
+          SOURCE="$ROOT/src/H1FunWorld_SKYCASTLE_GROUNDDOCK_V5.server.luau"
+          TARGET="_p0d_candidate/src/server/H1FunWorld.server.luau"
+          test "$(git hash-object "$SOURCE")" = 7a90affd4eb7eebcdfba39d833a2875ff665d5cf
+          test "$(git hash-object "$TARGET")" = 0a6360392f4384dc2f0ab1e9afc1d840d66a22b8
+          cp "$SOURCE" "$TARGET"
+          P0D_DOCK_CANDIDATE=_p0d_candidate P0D_DOCK_ORIGINAL=_p0d_candidate_h0 \
+            python3 -B "$ROOT/tests/test_ground_docks_v5.py"
+          python3 - <<'PY'
+          import pathlib,hashlib
+          o=pathlib.Path("_p0d_candidate_h0/src")
+          n=pathlib.Path("_p0d_candidate/src")
+          a={p.relative_to(o).as_posix():p.read_bytes() for p in o.rglob("*.luau")}
+          b={p.relative_to(n).as_posix():p.read_bytes() for p in n.rglob("*.luau")}
+          assert len(a)==len(b)==43 and set(a)==set(b)
+          edits=sorted(k for k in a if a[k]!=b[k])
+          assert edits==["server/H1FunWorld.server.luau"],edits
+          assert all(a[k]==b[k] for k in a if k!="server/H1FunWorld.server.luau")
+          assert b["server/Game.server.luau"]==a["server/Game.server.luau"]
+          assert b["client/P0DStudioTrialAudit.client.luau"]==a["client/P0DStudioTrialAudit.client.luau"]
+          print("P0D_SKY_GROUND_DOCK_V5_ACTUAL_43_SOURCE_ONLY_ONE_WORLD_CHANGED_PASS")
+          PY
+      - name: Checkout pinned Luau native compiler from upstream
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Compile all 43 real game Lua scripts with pinned Luau CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_luau -B /tmp/p0d_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_luau --target Luau.Compile.CLI --parallel 4
+          n=0
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_luau/luau-compile "$f" >/tmp/p0d_luau_output 2>&1 || { cat /tmp/p0d_luau_output;exit 1; }
+            n=$((n+1))
+          done < <(find _p0d_candidate/src -name '*.luau' -type f -print0)
+          test "$n" -eq 43
+          echo P0D_SKY_GROUND_DOCK_V5_COMPLETE_43_NATIVE_LUAU_PASS
+      - name: Get pinned genuine Rojo 7.7.1 binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/rojo77.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/rojo77.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,stat,pathlib
+          with zipfile.ZipFile("/tmp/rojo77.zip") as z:
+              paths=[p for p in z.namelist() if p.split("/")[-1]=="rojo"]
+              assert len(paths)==1
+              target=pathlib.Path("/tmp/rojo77")
+              target.write_bytes(z.read(paths[0]))
+              target.chmod(target.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/rojo77 --version | grep -F 7.7.1
+      - name: Build private actual .rbxlx and assert exact embedded 43 Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_deliver
+          /tmp/rojo77 build _p0d_candidate/default.project.json -o /tmp/p0d_deliver/P0D_B42V7_SKYCASTLE_GROUNDDOCK_V5_NATIVE_ROJO_PRIVATE.rbxlx
+          python3 - <<'PY'
+          import pathlib,collections,xml.etree.ElementTree as ET,hashlib,json
+          src=pathlib.Path("_p0d_candidate/src")
+          binary=pathlib.Path("/tmp/p0d_deliver/P0D_B42V7_SKYCASTLE_GROUNDDOCK_V5_NATIVE_ROJO_PRIVATE.rbxlx")
+          expected=collections.Counter(p.read_text("utf8") for p in src.rglob("*.luau"))
+          seen=collections.Counter();classes=collections.Counter();names=collections.Counter()
+          for item in ET.fromstring(binary.read_bytes()).iter("Item"):
+              kind=item.get("class")
+              if kind not in ("Script","LocalScript","ModuleScript"):continue
+              name=item.find("./Properties/string[@name='Name']")
+              source=item.find("./Properties/string[@name='Source']")
+              if name is None or source is None:raise ValueError("missing exact script name/source")
+              classes[kind]+=1;names[name.text]+=1;seen[source.text or ""]+=1
+          assert classes=={"Script":2,"LocalScript":6,"ModuleScript":35},classes
+          assert sum(seen.values())==43 and seen==expected
+          for key in ("Game","H1FunWorld","MusouHorde","P0DStudioTrialAudit"):
+              assert names[key]==1,(key,names)
+          digest=hashlib.sha256(binary.read_bytes()).hexdigest()
+          meta={"place_sha256":digest,"size_bytes":binary.stat().st_size,"script_count":43,
+           "one_world_changed":True,"other_original_42_unchanged":True,
+           "native43_pass":True,"rojo_source43_exact":True,
+           "engine_studio":"NOT_TESTED","studio_two_clients":"NOT_TESTED",
+           "android":"NOT_TESTED","owner_fun":"NOT_TESTED",
+           "official_rc_adopted":False,"published":False,"paid":False}
+          (binary.parent/"PLACE_RECEIPT.json").write_text(json.dumps(meta,indent=2)+"\n")
+          print("P0D_SKY_GROUND_DOCK_V5_REAL_PRIVATE_ROJO_43_EXACT_SOURCE_PASS",digest)
+          PY
+      - name: Upload 7 day private only build
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-B42V7-SKY-GROUNDDOCK-V5-PRIVATE-43-ROJO
+          path: /tmp/p0d_deliver/
+          if-no-files-found: error
+          retention-days: 7
