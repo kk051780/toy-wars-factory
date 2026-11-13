@@ -1,0 +1,50 @@
+name: P0D V4 Free Focus Cap Scheduler isolated native QA
+on:
+  push:
+    branches:
+      - experiment/p0d-lobby-v4-focus-cap-scheduler-20261113-01
+    paths:
+      - 'handoffs/P0D-LOBBY-V4-FOCUS-CAP-20261113-01/**'
+      - '.github/workflows/p0d-lobby-v4-focus-cap-20261113.yml'
+  workflow_dispatch:
+jobs:
+  test-v4-scheduler-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Python reference oracle + source contract
+        run: |
+          python3 -m pip install pytest==8.4.2
+          python3 -m pytest -q handoffs/P0D-LOBBY-V4-FOCUS-CAP-20261113-01/tests/test_focus_scheduler.py
+      - name: Native Luau pinned source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Build native Luau compiler and REPL
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_luau -B /tmp/p0d_v4_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_v4_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Actual V4 Luau compile and native state tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          R=handoffs/P0D-LOBBY-V4-FOCUS-CAP-20261113-01
+          /tmp/p0d_v4_luau/luau-compile "$R/src/FocusTrainingScheduler.luau" >/tmp/p0d_v4_compile.txt
+          python3 "$R/tools/generate_native_focus.py" --write /tmp/p0d_v4_native.luau
+          /tmp/p0d_v4_luau/luau-compile /tmp/p0d_v4_native.luau >/dev/null
+          /tmp/p0d_v4_luau/luau /tmp/p0d_v4_native.luau | tee /tmp/p0d_v4_native.log
+          grep -E '^P0D_V4_FOCUS_NATIVE_[0-9]+_ASSERTIONS_PASS$' /tmp/p0d_v4_native.log
+          echo 'SOURCE_NATIVE_LUAU_PASS_NOT_STUDIO'
