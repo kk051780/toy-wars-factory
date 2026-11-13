@@ -28,7 +28,7 @@ jobs:
           z=zipfile.ZipFile('/tmp/P0D_RC57_OFFICIAL.zip')
           assert z.testzip() is None
           b=z.read('P0D_CANONICAL_RC_rich51.rbxlx')
-          assert hashlib.sha256(b).hexdigest()=='15521b7dadbd96c0ef1ed12367b5fcf2f3738c4428ebf2fb8c43532b39b8a8'
+          assert hashlib.sha256(b).hexdigest()=='15521b7dadbd96c0ef1ed12367b5fcf2f3738c4428ebf2fb8c43532b39b8b1a8'
           print('P0D_WCS_AUTHENTIC_OFFICIAL57_INPUT_PASS')
           PY
       - name: Real negative regression and deterministic new private58 XML
