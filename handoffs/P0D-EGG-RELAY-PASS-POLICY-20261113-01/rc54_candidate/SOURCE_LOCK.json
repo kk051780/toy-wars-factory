@@ -1,0 +1,57 @@
+{
+  "schema": "P0D_EGG_RELAY_ISOLATED_REAL_RC54_SOURCE_LOCK_V1",
+  "feature_id": "P0D-EGG-RELAY-001",
+  "integration_target": "single canonical #220 fastlane, not adopted",
+  "original_rc_first_verified_commit": "2e86ac4fd0d4cb67fd7c673dc4e891b2af6bdc2c",
+  "original_actual_actions_run_id": 43491029567,
+  "original_actual_artifact_id": 14068663217,
+  "original_place_sha256": "1afdb2661b47eafa97985b27eaab5b0236d15f6f6e21863d089cebaf7e745758",
+  "private_candidate_sha256": "c744765df52b572179dd8dc17a28c6592f1c489177ce5a570e40ac529bf78a8a",
+  "private_candidate_size_bytes": 511019,
+  "base_embedded_script_count": 54,
+  "candidate_embedded_script_count": 55,
+  "original_script_bodies_unchanged": 52,
+  "modified_existing_scripts": [
+    "Game",
+    "H2FiveEggRules"
+  ],
+  "new_script": "EggRelayPolicy",
+  "patch_git_blobs": {
+    "rc54_candidate/Game.patch": "a20a1f2599af5ec9f62c5b05206b89886341906b",
+    "rc54_candidate/H2FiveEggRules.patch": "92b04190d01483354a361e059559f7ac95fbef95"
+  },
+  "builder_git_blob": "e7dc92515cf962794fac0738e8db3a0a63c886a6",
+  "original_policy_git_blob": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
+  "source_sha256": {
+    "original_game": "452d4c3aa1622e7f36b2d4208b8f8308a6ed322651900e5898db835c7c54c1cc",
+    "candidate_game": "68c482ae94c3a15bd6ce72df4f6b203e3a67719da4bb7ae10fd139d7e1b7152b",
+    "original_h2": "cdfb7c66f2857f7fba683869bc9fe94edd64d59730ecc0730e46969e77323aca",
+    "candidate_h2": "425214be04747c2a7e4dc57dd5de0b700c3002643a795f949a479f2f52965873",
+    "original_pure_policy": "7515fecbb4994d39bccdd7dba49229bcb151ab64d084da84e332c41f7bc5dfa0"
+  },
+  "local_qa": {
+    "real_xml_source_integrity": "15/15 PASS",
+    "original_h2_plus_new_relay_lua54_compat": "20/20 PASS",
+    "original_pure_egg_relay_reference_python": "43/43 PASS in prior turn",
+    "full_native_luau_compilation": "NOT_TESTED",
+    "native_rojo_source_exact": "NOT_TESTED",
+    "roblox_studio_1client": "NOT_TESTED",
+    "roblox_studio_2client": "NOT_TESTED",
+    "android": "NOT_TESTED",
+    "owner_fun": "NOT_TESTED"
+  },
+  "safety_boundary": {
+    "single_Game": true,
+    "single_Remote": true,
+    "single_Store": true,
+    "score_mutation_during_pass": false,
+    "paid": false,
+    "published": false,
+    "official_rc_adopted": false,
+    "rc_branch_modified": false,
+    "main_modified": false
+  },
+  "rollback": "Set server-owned ServerStorage P0D_RC_ENABLE_EGG_RELAY=false and rebuild original 54 source profile. Sole #220 owner must implement official OFF switch.",
+  "next_owner": "#220 sole RC integrator for acceptance/rebase/real pinned native+Rojo CI",
+  "next_acceptance": "Exact current RC HEAD and source pin, native 55 Luau compile, Rojo SourceExact, authority negative QA, feature flag; only then RC_ADOPTED"
+}
