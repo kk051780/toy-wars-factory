@@ -18,7 +18,7 @@
 +-- Preserve human idle warning; real input returns to CURRENT save state,
 +-- not a stale hardcoded no-save label.
 +local idleAlert=""
-+local refresh: (() -> ())?=nil
++local refresh: (() -> ())? = nil
  player.Idled:Connect(function(idleSeconds)
      if idleSeconds>=18*60 then
 -        footer.Text="⚠ 間もなく自動切断・修行XPは保存なし"
