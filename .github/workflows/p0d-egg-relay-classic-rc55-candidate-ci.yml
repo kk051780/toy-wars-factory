@@ -10,7 +10,7 @@ on:
 permissions:
   contents: read
 jobs:
-  rc55-relay-candidate:
+  rc56-relay-candidate:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Checkout exact first successful canonical 55-source RC
+      - name: Checkout exact successful canonical 56-source RC
         uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
@@ -66,7 +66,7 @@ jobs:
           python3 -B _rc56/rc_fastlane/apply_sixskill_durable.py --profile rich51 --dist "$DIST"
           python3 -B _rc56/rc_fastlane/apply_saved_pve.py --profile rich51 --dist "$DIST"
           python3 -B _rc56/rc_fastlane/apply_saved_beast.py --profile rich51 --dist "$DIST"
-      - name: Freeze current 55 actual game sources before new feature
+      - name: Freeze current 56 actual game sources before new feature
         shell: bash
         run: |
           set -euo pipefail
@@ -123,8 +123,8 @@ jobs:
               key='blobs' if name.startswith('SOURCE') else 'source_gitblobs'
               count='total_scripts' if name.startswith('SOURCE') else 'total_sources'
               assert lock[key]==pinned,(name,'PIN_DRIFT')
-              assert lock[count]==56,(name,lock[count])
-          print('P0D_EGG_RELAY_AUTHENTIC_RICH56_TO_56_ONLY_GAME_HUD_NEW_POLICY_PASS')
+              assert lock[count]==57,(name,lock[count])
+          print('P0D_EGG_RELAY_AUTHENTIC_RICH56_TO_57_ONLY_GAME_HUD_NEW_POLICY_PASS')
           PY
       - name: Checkout exact upstream native Luau toolchain
         uses: actions/checkout@v4
@@ -133,7 +133,7 @@ jobs:
           ref: f46d879e28302a430029304f7f6a162aed66f103
           path: _luau
           persist-credentials: false
-      - name: Compile all 56 actual files and execute original policy 41 cases
+      - name: Compile all 57 actual files and execute original policy 41 cases
         shell: bash
         run: |
           set -euo pipefail
