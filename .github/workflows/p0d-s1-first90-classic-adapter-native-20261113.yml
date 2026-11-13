@@ -1,0 +1,73 @@
+name: P0D sole integrator - original S1 first90 Classic adapter isolated native Luau
+on:
+  push:
+    branches:
+      - integration/p0d-rc-first90-classic-adapter-20261113-01
+    paths:
+      - 'handoffs/P0D-RC-FIRST90-CLASSIC-ADAPTER-20261113-01/**'
+      - '.github/workflows/p0d-s1-first90-classic-adapter-native-20261113.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  first90-original-rc-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Verify original RC source lock and reference behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s handoffs/P0D-RC-FIRST90-CLASSIC-ADAPTER-20261113-01/tests -p 'test_*.py' -v
+      - name: Checkout pinned upstream Luau
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_first90_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Compile upstream native Luau compiler and CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_first90_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_first90_luau -B /tmp/p0d_first90_cli -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_first90_cli --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Compile all actual 21 original RC Luau plus isolated new adapter
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-RC-FIRST90-CLASSIC-ADAPTER-20261113-01
+          n=0
+          while IFS= read -r -d '' path; do
+            /tmp/p0d_first90_cli/luau-compile "$path" >/tmp/p0d_first90_compile.txt 2>&1 || { cat /tmp/p0d_first90_compile.txt; exit 1; }
+            n=$((n+1))
+          done < <(find releases/P0D_S1_KIDS_RC01/src -name '*.luau' -type f -print0)
+          test "$n" -eq 21
+          /tmp/p0d_first90_cli/luau-compile "$ROOT/src/S1First90ClassicWaypointRules.luau" >/dev/null
+          echo P0D_S1_ORIGINAL_21_PLUS_ISOLATED_1_NATIVE_COMPILER_PASS
+      - name: Execute real isolated Luau policy negative-positive native assertions
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-RC-FIRST90-CLASSIC-ADAPTER-20261113-01
+          mkdir -p /tmp/p0d-first90-review
+          python3 -B "$ROOT/tools/generate_native_first90_classic.py" --write /tmp/p0d-first90-review/first90_native_exec.luau
+          /tmp/p0d_first90_cli/luau-compile /tmp/p0d-first90-review/first90_native_exec.luau >/dev/null
+          /tmp/p0d_first90_cli/luau /tmp/p0d-first90-review/first90_native_exec.luau | tee /tmp/p0d-first90-review/NATIVE_FIRST90_QA.txt
+          grep -E '^P0D_S1_FIRST90_CLASSIC_NATIVE_[0-9]+_ASSERTIONS_PASS$' /tmp/p0d-first90-review/NATIVE_FIRST90_QA.txt
+          echo "SOURCE_ONLY_PREVIEW: adapter is NOT mounted in official S1. Roblox Studio and Android NOT_TESTED." > /tmp/p0d-first90-review/REVIEW_ONLY.txt
+      - name: Archive source-only review evidence (never publish)
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-S1-ORIGINAL-FIRST90-ADAPTER-NATIVE-QA-ONLY
+          path: |
+            /tmp/p0d-first90-review/NATIVE_FIRST90_QA.txt
+            /tmp/p0d-first90-review/REVIEW_ONLY.txt
+          retention-days: 7
+          if-no-files-found: error
