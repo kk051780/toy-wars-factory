@@ -1,42 +1,67 @@
 {
   "work_id": "p0d-siege-v19",
-  "feature_slice": "CHAT-P0D-LOBBY-V4-FOCUS-CAP-SCHEDULER-20261113-01",
   "adoption_id": "P0D-LOBBY-TRAINING-001",
-  "scope": "isolated server-side pure skill scheduler; NOT Game/XP/Store/Remote/Place",
-  "target": "S2 or future isolated H1 private trial pending #250 decision",
-  "base_branch": "main",
-  "files": [
+  "feature_slice": "CHAT-P0D-LOBBY-V4-FOCUS-CAP-SCHEDULER-20261113-01",
+  "scope": "isolated server-only pure V4 training time scheduler + fail-closed six-skill credit quote contract",
+  "target_release": "S2+ / optional private H1 only after #250 product gate",
+  "old_baseline_sha": "629cbc280bbf22cc77e9d26cb279bd5e4c561180",
+  "source_tested_commit_sha": "aca7186c1e4d9bfd441657020d0a84dee482f185",
+  "source_native_action_run": "https://github.com/kk051780/toy-wars-factory/actions/runs/43409536825",
+  "test_results": {
+    "Python": "34/34 PASS",
+    "FocusTrainingScheduler_native": "35/35 PASS",
+    "TrainingIntegrationGate_native": "37/37 PASS",
+    "Full_Roblox_Studio": "NOT_TESTED",
+    "Independent_QA": "NOT_TESTED",
+    "Official_RC_Adopted": false
+  },
+  "blobs": [
     {
       "path": "src/FocusTrainingScheduler.luau",
-      "git_blob_sha1": "a00caf954aacfca03c92a75b0165c1bafd4de8fd",
-      "source_exact_local_readback": true
+      "sha1": "a00caf954aacfca03c92a75b0165c1bafd4de8fd"
+    },
+    {
+      "path": "src/TrainingIntegrationGate.luau",
+      "sha1": "45c6c3a51ca0fc6a0167d50b217f05c1323e52b3"
     },
     {
       "path": "tests/test_focus_scheduler.py",
-      "git_blob_sha1": "661f3ba0656fb52e39e6664c869038b815aca79c",
-      "test_run_status": "not run via GitHub Actions; local Python reference variant 34/34 PASS"
+      "sha1": "661f3ba0656fb52e39e6664c869038b815aca79c"
+    },
+    {
+      "path": "tools/generate_native_focus.py",
+      "sha1": "27080047ef3f3614206f06e9d2d7bf1eafd29441"
+    },
+    {
+      "path": "tools/generate_native_integration_gate.py",
+      "sha1": "8ca9f153a351d75bec8889edf1fcb6bac07252db"
+    },
+    {
+      "path": "DOJO_COMPATIBILITY_GATE.md",
+      "sha1": "9e0c51b09826a14511825eb5d1feadaed1617a17"
     },
     {
       "path": "README.md",
-      "git_blob_sha1": "8ae2dff0ac3eb029973987f4517a95964f36e391"
+      "sha1": "8ae2dff0ac3eb029973987f4517a95964f36e391"
+    },
+    {
+      "path": ".github/workflows/p0d-lobby-v4-focus-cap-20261113.yml",
+      "sha1": "3293c8903d85a74cc0ed129738bed049ad08fdad"
     }
   ],
-  "evidence": {
-    "local_python_reference_tests": "34/34 PASS",
-    "native_luau_compiler": "NOT_TESTED",
-    "native_luau_runtime": "NOT_TESTED",
-    "studio": "NOT_TESTED",
-    "android": "NOT_TESTED",
-    "two_client": "NOT_TESTED",
-    "owner_fun": "NOT_TESTED",
-    "official_rc": "NOT_SELECTED",
-    "paid": "OFF"
+  "legacy_h1_contract": {
+    "source_commit": "ce4e1ebcf6d16313c9d144c56129bdfae548e1bf",
+    "DojoRules_blob": "120bac439c979310c9ddeb2fcf2ffa002b6d1add",
+    "h1_supported_skills": [
+      "BEAST",
+      "WEAPON"
+    ],
+    "persistence": "SESSION_ONLY",
+    "friend_bonus": "BOOLEAN_x1_5",
+    "capability_check": "REJECTED_BY_DESIGN"
   },
-  "hazards": [
-    "no duplicate reward via two server sessions without existing session lock",
-    "no XP authority until #220 integration",
-    "no live friend verification, requires trusted adapter",
-    "no complete Studio 3D station"
-  ],
-  "process": "P0D #218/#219 V4; selection #250; sole official RC writer #220; current S1 75/100 FUN_NO_GO unchanged"
+  "integration": "NO; the persisted six-skill+atomic session+XP writer is owned by other feature slices.",
+  "guarantees": "No main/official RC/other author branch changed, no new remote/XP writer/DataStore, no real paid product or Roblox publish.",
+  "owner_fun": "NOT_TESTED",
+  "s1_official_last": "75/100 FUN_NO_GO unchanged"
 }
