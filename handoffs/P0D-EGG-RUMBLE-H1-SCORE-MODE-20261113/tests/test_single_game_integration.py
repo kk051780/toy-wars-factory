@@ -38,6 +38,7 @@ def contract(s):
     assert 'if EXPERIMENTAL_FIVE_EGG_MODE then\n            pickupFiveEgg(player,' in s
     assert 'if EXPERIMENTAL_FIVE_EGG_MODE then\n            depositFiveEgg(player,team)' in s
     assert 'stopWind(player)\n    carry[player]=id' in s
+    assert 'carrying = carry[player] ~= nil, slowed = slowed[player] ~= nil' in s
     assert 'or carry[player]~=nil' in s
     assert 'Rules.canSteal(' in s and 'Rules.canScore(' in s
     assert 'WindRules.canActivate({' in s and 'TrapRules.canPlace({' in s
@@ -145,11 +146,11 @@ class TestRealFullH1MultiEggFusion(unittest.TestCase):
                            "local ok=H2Score.deposit(h2ScoreState,uid,side)\nH2Score.deposit(h2ScoreState,uid,side)")
         with self.assertRaises(AssertionError):contract(m)
     def test_mutant_missing_wind_carrier_rejection(self):
-        m=self.son.replace('or carry[player]~=nil or slowed[player] ~= nil',
-                           'or slowed[player] ~= nil')
+        m=self.son.replace('carrying = carry[player] ~= nil, slowed = slowed[player] ~= nil',
+                           'carrying = false, slowed = slowed[player] ~= nil')
         with self.assertRaises(AssertionError):contract(m)
     def test_mutant_role_loop_deleted_rejected(self):
-        m=self.son.replace('WindRules.canActivate({','-- WindRules.canActivate({')
+        m=self.son.replace('WindRules.canActivate({','WindRules.canFAIL({')
         with self.assertRaises(AssertionError):contract(m)
     def test_mutant_game_silent_second_game_class_rejected(self):
         x=dict(self.on);x["server/FakeGame.server.luau"]=b"--!nocheck"
