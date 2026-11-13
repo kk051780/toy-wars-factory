@@ -7,6 +7,7 @@ local Players=game:GetService("Players")
 local ReplicatedStorage=game:GetService("ReplicatedStorage")
 local TweenService=game:GetService("TweenService")
 local E=require(script.Parent:WaitForChild("EvolutionRules"))
+local Dex=require(script.Parent:WaitForChild("EvolutionFormDex")).new(E)
 local remote=Instance.new("RemoteEvent")
 remote.Name="EggRumbleEvolutionPvEDemoOnly"
 remote.Parent=ReplicatedStorage
@@ -133,30 +134,52 @@ local function serverDemoEvolution(player,stage,branch)
     if not st then return false end
     nextDemo+=1
     local serial=tostring(nextDemo)..":"..tostring(st.userId)
-    local profile=E.newProfile(st.userId)
+    local profile=st.profile
     local owned={forest_scout=1}
-    -- Explicitly SIMULATED server-certified progression solely for this private
-    -- visual QA sandbox. No real match/earned shards/XP; not saved anywhere.
-    for i=1,11 do
-        local ok=E.creditRound(profile,"PREVIEW_ONLY:"..serial..":"..i,2,240,true)
-        if not ok then return false end
+    if not profile then
+        profile=E.newProfile(st.userId)
+        if not profile then return false end
+        -- STUDIO PRIVATE synthetic progression is created once per player.
+        -- Re-selecting branches must keep the same genuine server-side
+        -- original EVO RECEIPTS so the FormDex can remember both branches.
+        -- No real match/earned shards/XP; not saved anywhere.
+        for i=1,40 do
+            local ok=E.creditRound(profile,"PREVIEW_ONLY:"..serial..":"..i,2,240,true)
+            if not ok then return false end
+        end
+        local grown=E.evolve(profile,"forest_scout",owned,10,3,"LOBBY",
+            "dev-stage1:"..serial,"NONE",true)
+        if not grown then return false end
+        local branch2=E.evolve(profile,"forest_scout",owned,25,6,"LOBBY",
+            "dev-stage2:"..serial,branch,true)
+        if not branch2 then return false end
+    else
+        local form=E.form(profile,"forest_scout",owned)
+        if not form then return false end
+        if form.branch~=branch then
+            local switched=E.switchBranch(profile,"forest_scout",owned,"LOBBY",
+                "dev-switch:"..serial,branch,true)
+            if not switched then return false end
+        end
     end
-    local ok=E.evolve(profile,"forest_scout",owned,10,3,"LOBBY",
-        "dev-stage1:"..serial,"NONE",true)
-    if not ok then return false end
-    ok=E.evolve(profile,"forest_scout",owned,25,6,"LOBBY",
-        "dev-stage2:"..serial,branch,true)
-    if not ok then return false end
-    if stage==3 then
-        ok=E.evolve(profile,"forest_scout",owned,40,10,"LOBBY",
+    local latest=E.form(profile,"forest_scout",owned)
+    if not latest then return false end
+    if stage==3 and latest.stage<3 then
+        local evolved=E.evolve(profile,"forest_scout",owned,40,10,"LOBBY",
             "dev-stage3:"..serial,"NONE",true)
-        if not ok then return false end
+        if not evolved then return false end
     end
     st.profile=profile
     st.form=E.form(profile,"forest_scout",owned)
     st.lastCast=-100000
     makeDragon(player,st.form)
     labelState(player)
+    local dex,status=Dex.snapshot(profile,owned)
+    if dex and status=="OK" then
+        msg(player,"FORMDEX",dex)
+    else
+        msg(player,"ERROR","進化図鑑の検証で不正な履歴を拒否した")
+    end
     return true
 end
 local function cleanNpc(id)
