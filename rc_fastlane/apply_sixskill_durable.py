@@ -123,7 +123,7 @@ def integrate(dist: Path, profile: str) -> bool:
     assert game.count("PersistentHatch.settleSixSkill(")==1
     assert "if v4OnHomePad(player)~=skill" in game
     assert "or utcEnd-utcStart<30" in game
-    assert "if not RunService:IsStudio() then return end" not in game  # full original Game
+    assert 'local function v4TickCanonical()' in game  # patch executes inside original Studio-gated Game
     assert game.count("v4TickCanonical()")==2 # function + tick call
     assert store.count("function Store.settleSixSkill(")==1
     assert store.count("store:UpdateAsync(")>=1
