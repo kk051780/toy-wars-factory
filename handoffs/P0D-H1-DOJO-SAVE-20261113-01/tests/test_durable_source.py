@@ -9,7 +9,7 @@ DIST=ROOT/"dist/EGG_RAID_RUMBLE_H1_DOJO_DURABLE_DEV_PRIVATE"
 SHA="a1395194b0b5234003156cd53d23a4909292f29a719125e71da88da3f2829bd4"
 EXPECTED={
  "server/Game.server.luau":"8f258076a9bb9f00cb6f10cf0e9ff2dbd83940689edbdc56ed51c3027d2acfdb",
- "server/PersistentHatchStore.luau":"525d6bacc78e98f79fff8aa2ec8d831d4eb491ce8bae5f6e9ebba69b48ac560b",
+ "server/PersistentHatchStore.luau":"8698b06c4344209b4b63758c142aa33c14f382b1260b76a9c738893e67190b24",
  "client/HUD.client.luau":"50fb7868b936f5df59f562da790901d31222db1a77ae73cdfe686c2966780cab"}
 class DojoDurable(unittest.TestCase):
  def test_checksum_and_3_exact_targets(self):
