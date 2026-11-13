@@ -119,12 +119,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 - <<'PY'
-import json
-x=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))
-print(53 + int(x['features']['SIX_SKILL_DURABLE']['enabled']))
-PY
-)
+            WANT=$(python3 -c "import json; print(53 + int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['SIX_SKILL_DURABLE']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
