@@ -1,0 +1,142 @@
+name: P0D H1 Release Gate Staging ONLY (DEFAULT LIVE OFF)
+on:
+  push:
+    branches:
+      - feature/p0d-h1-live-gate-failclosed-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  h1-release-gate-source:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      OWN: handoffs/P0D-H1-LIVE-GATE-20261113-01
+      DIST: handoffs/P0D-H1-LIVE-GATE-20261113-01/dist/TRAP_RAIDERS_H1_LIVE_GATE_OFF_STUDIO_ONLY
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Prove original #255 and official protected game files untouched
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '1498c2d344ede2d9da6c2bfdd025ebc1a15ec48b^{commit}'
+          test -z "$(git diff --name-only 1498c2d344ede2d9da6c2bfdd025ebc1a15ec48b HEAD -- handoffs/P0D-H1-WOW-4WAY-20261113-01 handoffs/P0D-H1-COMPOSITE-20261113-01 releases/P0D_S1_KIDS_RC01)"
+      - name: Assemble original full 28 H1 + 1 fail-closed shared module, two overlays (29)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/tools/assemble.py" --assemble
+          test "$(find "$DIST/src" -name '*.luau' -type f | wc -l)" -eq 29
+      - name: Fail-closed source audits 17 assertions and original byte provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s "$OWN/tests" -p 'test_*.py' -v
+      - name: Generate actual Luau runtime test; enabled variant in tmp only, never in game
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/tools/generate_native_gate_test.py" --write /tmp/p0d_h1_release_gate_test_only.luau
+          test -s /tmp/p0d_h1_release_gate_test_only.luau
+          grep -Fx 'local LIVE_ENABLE = false -- intentionally disabled for all published games' "$OWN/inputs/H1ReleaseGate.luau"
+      - name: Fetch EXACT Rojo 7.7.1 and verify distributable zip SHA256
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_h1_live_gate_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_h1_live_gate_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          import stat,zipfile
+          with zipfile.ZipFile('/tmp/p0d_h1_live_gate_rojo.zip') as z:
+              names=[p for p in z.namelist() if p.rsplit('/',1)[-1]=='rojo']
+              assert len(names)==1,names
+              p=Path('/tmp/p0d_h1_live_gate_rojo')
+              p.write_bytes(z.read(names[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_h1_live_gate_rojo --version | grep -F 7.7.1
+      - name: Build actual 29-Luau unpublished Studio-only Rojo Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_h1_live_gate
+          /tmp/p0d_h1_live_gate_rojo build "$DIST/default.project.json" -o /tmp/p0d_h1_live_gate/TRAP_RAIDERS_H1_LIVE_GATE_OFF_NOT_PUBLISH.rbxlx
+          test -s /tmp/p0d_h1_live_gate/TRAP_RAIDERS_H1_LIVE_GATE_OFF_NOT_PUBLISH.rbxlx
+      - name: Independently verify actual Rojo XML all29 source bodies and LIVE default OFF
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import collections,hashlib,json,os,xml.etree.ElementTree as ET
+          dist=Path(os.environ['DIST'])
+          place=Path('/tmp/p0d_h1_live_gate/TRAP_RAIDERS_H1_LIVE_GATE_OFF_NOT_PUBLISH.rbxlx')
+          parsed=ET.fromstring(place.read_bytes())
+          modules=[]
+          classes=collections.Counter()
+          for item in parsed.iter('Item'):
+              c=item.attrib.get('class')
+              if c not in ('Script','LocalScript','ModuleScript'):continue
+              x=item.find("./Properties/string[@name='Source']")
+              if x is None:continue
+              classes[c]+=1; modules.append(x.text or '')
+          orig=[p.read_text(encoding='utf-8') for p in sorted((dist/'src').rglob('*.luau'))]
+          assert len(orig)==29 and classes=={'Script':2,'LocalScript':4,'ModuleScript':23},classes
+          assert collections.Counter(modules)==collections.Counter(orig),(len(modules),len(orig))
+          gates=[s for s in modules if 'function ReleaseGate.canRun(' in s]
+          assert len(gates)==1
+          assert 'local LIVE_ENABLE = false' in gates[0]
+          assert 'local APPROVED_GAME_ID = 0' in gates[0] and 'local APPROVED_PLACE_ID = 0' in gates[0]
+          assert not any('local LIVE_ENABLE = true' in s for s in modules)
+          m=json.loads((dist/'SOURCE_LOCK.json').read_text(encoding='utf-8'))
+          m['actual_Rojo_sha256']=hashlib.sha256(place.read_bytes()).hexdigest()
+          m['source_29_of_29_XML_byte_equal']=True
+          m['native_Luau_policy_case_result']='see native output'
+          m['head_commit']=os.environ['GITHUB_SHA']
+          Path('/tmp/p0d_h1_live_gate/H1_LIVE_GATE_STAGE_RECEIPT.json').write_text(json.dumps(m,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+          print('H1_RELEASE_GATE_REAL_29_OF_29_XML_BYTES_MATCH_LIVE_OFF',classes)
+          print('H1_RELEASE_GATE_PLACE_SHA256',m['actual_Rojo_sha256'])
+          PY
+      - name: Checkout original pinned Luau C++ native compiler and REPL
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_h1_release_gate_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build authentic native Luau compiler and interpreter
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_h1_release_gate_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_h1_release_gate_luau -B /tmp/p0d_h1_gate_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_h1_gate_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Native compile full actual29 game scripts and execute TRUE Luau default deny+simulated approval tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r -d '' file; do
+              /tmp/p0d_h1_gate_native/luau-compile "$file" >/dev/null
+              count=$((count+1))
+          done < <(find "$DIST/src" -type f -name '*.luau' -print0)
+          test "$count" -eq 29
+          /tmp/p0d_h1_gate_native/luau-compile /tmp/p0d_h1_release_gate_test_only.luau >/dev/null
+          /tmp/p0d_h1_gate_native/luau /tmp/p0d_h1_release_gate_test_only.luau | tee /tmp/p0d_h1_live_gate/native_policy_result.txt
+          grep -E '^P0D_H1_RELEASE_GATE_REAL_NATIVE_LUAU_PASS_[0-9]+$' /tmp/p0d_h1_live_gate/native_policy_result.txt
+          echo H1_RELEASE_GATE_REAL_29_NATIVE_COMPILE_PASS_LIVE_OFF
+          test -z "$(git status --porcelain --untracked-files=no)"
+      - name: Upload PRIVATE ONLY disabled-live full candidate; NEVER auto publish
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-H1-LIVE-GATE-DEFAULT-OFF-29-LUAU-UNPUBLISHED
+          path: /tmp/p0d_h1_live_gate/
+          if-no-files-found: error
+          retention-days: 7
