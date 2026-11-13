@@ -75,10 +75,16 @@ class WCSIntegration(unittest.TestCase):
         self.assertEqual(wcs.git_blob(raw),wcs.FEATURE_GIT_BLOB)
         s=raw.decode("utf8")
         self.assertIn('if not RunService:IsStudio() then',s)
-        self.assertIn('ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")==false',s)
+        self.assertIn('ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01") ~= true',s)
         self.assertIn("playerIsInGateClosureZone()",s)
         self.assertIn("nextOpenAllowed = os.clock() + REOPEN_COOLDOWN",s)
         self.assertNotIn("nextOpenAllowed = now + OPEN_SECONDS + REOPEN_COOLDOWN",s)
+
+    def test_missing_boot_attribute_cannot_start_feature(self):
+        s=wcs.FEATURE_PATH.read_text("utf8")
+        self.assertIn('GetAttribute("P0D_RC_ENABLE_WCS_F01_C01") ~= true',s)
+        self.assertNotIn('GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")==false',s)
+        self.assertIn('if not RunService:IsStudio() then',s)
 
     def test_no_extra_game_remote_store_or_paid_writes(self):
         s=wcs.FEATURE_PATH.read_text("utf8")
