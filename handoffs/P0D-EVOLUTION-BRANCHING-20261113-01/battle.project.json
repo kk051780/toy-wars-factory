@@ -1,0 +1,24 @@
+{
+  "name": "EggRumbleEvolutionCombatPrivateTrial",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "EvolutionRules": {
+        "$path": "src/EvolutionRules.luau"
+      },
+      "EvolutionCombat": {
+        "$path": "battle/EvolutionCombat.server.luau"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "EvolutionCombat": {
+          "$path": "battle/EvolutionCombat.client.luau"
+        }
+      }
+    }
+  }
+}
