@@ -1,0 +1,50 @@
+{
+  "schema": "P0D_FUN_H1_TRIAL_V1",
+  "stage": "TEMPLATE_NO_HUMAN_DATA",
+  "date_jst": "2026-11-13",
+  "game": "EGG RAID RUMBLE",
+  "adoption_id": "P0D-FUN-H1-001",
+  "source_shas": {
+    "H0": "3120b9d3c0a5ec58c9f2613c5d186f3493b54f83",
+    "A": "5347cf28221badfe45bdcd1c3fc920af7ebb9e5f",
+    "B": "4ebecee91b86f021d02d7e3eaffb3ecefa3e787c",
+    "world_blocked": "c73f305fb412927aee05b399a4f54a2a16d0579f",
+    "world_patch_candidate": "2494fa855d77e1ef6dd2c5f8b8d21fbef90fc44a"
+  },
+  "trials": [],
+  "required_per_trial": [
+    "anonymous_test_id",
+    "adult_or_consented_child",
+    "variant",
+    "source_sha",
+    "role",
+    "device",
+    "resolution",
+    "two_client_verified",
+    "first_objective_understand_seconds",
+    "first_mob_hit_seconds",
+    "first_egg_pickup_seconds",
+    "first_chase_or_escape_seconds",
+    "egg_scored",
+    "voluntary_replay_yes",
+    "free_text_observation",
+    "measured_fps",
+    "major_defect_count"
+  ],
+  "weighted_rubric": {
+    "egg_goal": 20,
+    "combat": 25,
+    "movement_field": 20,
+    "growth": 20,
+    "phone_clarity": 15
+  },
+  "gate": {
+    "source_selection": "NOT_SELECTED",
+    "sole_rc_adopted": false,
+    "studio_two_client": "NOT_TESTED",
+    "physical_android": "NOT_TESTED",
+    "owner_fun": "NO_GO_PENDING",
+    "release_authorized": false
+  },
+  "never_infer_test_from_source": true
+}
