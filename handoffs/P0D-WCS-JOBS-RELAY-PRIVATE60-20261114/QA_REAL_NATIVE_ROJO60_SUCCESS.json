@@ -1,0 +1,94 @@
+{
+  "schema": "P0D_WCS_SEVENJOBS_CLASSIC_EGG_RELAY_PRIVATE60_REAL_NATIVE_ROJO_SUCCESS_V1",
+  "date_jst": "2026-11-14",
+  "status": "ISOLATED_PRIVATE60_CI_SUCCESS_NOT_CANONICAL_RC_ADOPTED",
+  "exact_tested_source_sha": "445ff4c057eb5c05f72c59f1ab670ed8cd68965e",
+  "real_successful_run": 43522746378,
+  "run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43522746378",
+  "job_id": 132220825013,
+  "job_status": "completed",
+  "job_conclusion": "success",
+  "source_layers": [
+    {
+      "stage": "OFFICIAL_RC57_BASE",
+      "commit": "34d6d384d04ba1d4a394331a3e5c74f798e57a22",
+      "source": 57
+    },
+    {
+      "stage": "WCS_CRYSTAL_CANYON",
+      "from_pr": 300,
+      "after_source": 58,
+      "only_new_module": "server/WCS_CrystalCanyon.server.luau"
+    },
+    {
+      "stage": "SEVEN_JOBS_NEUTRAL_PVE",
+      "from_pr": 297,
+      "after_source": 59,
+      "changed_existing": [
+        "server/Game.server.luau",
+        "client/HUD.client.luau"
+      ],
+      "only_new_module": "server/SevenJobsRules.luau"
+    },
+    {
+      "stage": "EGG_RELAY_CLASSIC_1_EGG_ONLY",
+      "from_pr": 296,
+      "after_source": 60,
+      "changed_existing": [
+        "server/Game.server.luau",
+        "client/HUD.client.luau"
+      ],
+      "only_new_module": "server/EggRelayPolicy.luau"
+    }
+  ],
+  "actual_runner_evidence": [
+    "P0D_EGG_RELAY_OFF_RETURNS_EXACT_WCS_SEVENJOBS59",
+    "P0D_WCS_JOBS_EGG_RELAY_REAL59_TO_60_SOURCE_LOCK_PASS",
+    "P0D_CANONICAL_RC_FULL_SOURCE_LUAU_COMPILE_PASS 60/60",
+    "P0D_EGG_RELAY_NATIVE_POLICY_41_CASES_PASS",
+    "P0D_EGG_RELAY_ACTUAL_GAME_NATIVE_30_CASES_PASS",
+    "P0D_WCS_JOBS_RELAY_REAL60_NATIVE41_PLUS_ACTUAL_GAME30_SUCCESS",
+    "Built project to P0D_CANONICAL_RC_rich51.rbxlx",
+    "OFFICIAL_RC_FASTLANE_BINARY_SOURCE_EXACT_PASS rich51 31801ac774c822a954ca3a56de995c8b0d1f35a1d5aaf524c150512c7bb9458d"
+  ],
+  "real_place_sha256": "31801ac774c822a954ca3a56de995c8b0d1f35a1d5aaf524c150512c7bb9458d",
+  "artifact": {
+    "id": 14082764683,
+    "name": "P0D-CANONICAL-RC-STUDIO-rich51",
+    "bytes": 154754,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43522746378/artifacts/14082764683",
+    "note": "HISTORIC WORKFLOW ARTIFACT NAME ONLY; FEATURE BRANCH PRIVATE CANDIDATE, NOT CANONICAL RC"
+  },
+  "code_gates": {
+    "actual_source_count": 60,
+    "actual_native_luau_compile": "60/60 PASS",
+    "actual_rojo_source_exact": "60/60 PASS",
+    "actual_original_author_relay_policy_cases": "41/41 PASS",
+    "actual_extracted_combined_game_relay_cases": "30/30 PASS",
+    "single_original_Game_and_Remote": true,
+    "one_authoritative_Store": true,
+    "wcs_and_sevenjobs_prior59_untouched_except_Game_HUD": true,
+    "classic_source_off": "59/59 FULL PRESERVE PASS",
+    "five_egg_relay": "NOT_IMPLEMENTED"
+  },
+  "not_yet_done": {
+    "canonical_branch_adoption": false,
+    "studio_game_engine": "NOT_TESTED",
+    "two_real_clients": "NOT_TESTED",
+    "android": "NOT_TESTED",
+    "dev_DataStore_save_and_rejoin": "NOT_TESTED",
+    "owner_FUN": "NOT_TESTED",
+    "production_publication": false,
+    "main_merge": false,
+    "paid": false
+  },
+  "gate": "Sole #220 identity/CAS RC writer must reconfirm latest branch SHA, adopt WCS then sevenjobs then classic relay as independently reversible source overlays; official same-HEAD native and Rojo CI SUCCESS before RC registry stage promotion. Do not merge PR#309 as entire RC; author policy cannot double apply H2 patch.",
+  "original_canonical_idea_progress_at_last_check": {
+    "RC": 21,
+    "SOURCE": 27,
+    "IDEA": 10,
+    "total": 58,
+    "rc_percent": 36.2,
+    "source_plus_rc_percent": 82.8
+  }
+}
