@@ -8,8 +8,9 @@ if not RunService:IsStudio() then
     return
 end
 local ServerStorage=game:GetService("ServerStorage")
--- OFF before startup to omit the whole isolated feature. No mid-round floor removal.
-if ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")==false then
+-- Default OFF: only the sole RC builder explicitly opts in by setting attribute true before startup.
+-- nil/false fail closed; no mid-round floor removal.
+if ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01") ~= true then
     return
 end
 local Workspace=game:GetService("Workspace")

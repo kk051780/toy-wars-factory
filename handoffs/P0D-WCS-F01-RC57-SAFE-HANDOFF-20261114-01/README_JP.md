@@ -13,9 +13,16 @@
 
 1. 最新 `rc/p0d-s1-kids-rc01` HEADを再取得し、最低57本の既存Game/Remote/Store/ScoutSpecies/SavedBEAST/WEAPONを絶対に旧ビルドで置換しない。
 2. `WCS_CrystalCanyon.server.luau` を**独立Server Script 1本だけ**既存 `ServerScriptService.TrapRaidersS1` に追加。作者の古い `CrystalCanyon.server.luau` を重複追加しない。
-3. `WCS_F01_C01_FLOATING_CANYON` を標準fastlaneに独立スイッチとして登録。OFFならこのScriptを完全省略し、元57本を再現する。Studio内だけ実行。SkyV5物理道がなければScript自体が退出。
+3. `WCS_F01_C01_FLOATING_CANYON` を標準fastlaneに独立スイッチとして登録。**初期状態はOFF**（ServerStorage属性が無い / `false` ならScriptは何も生成しない）。Studio内で実行する前に `ServerStorage:SetAttribute("P0D_RC_ENABLE_WCS_F01_C01", true)` を明示した場合だけ稼働。ビルドからScriptを除外すれば元57本へ戻せる。SkyV5物理道がなければScript自体が退出。
 4. 同一新HEADで **58/58 native Luau + source-exact Rojo + no second Game/Remote/Store + feature OFF rollback + 原ソースSHA**を確かめ、成功時だけ#250のRC採用へ更新。実機2client/Android/DataStore再ログイン/OWNER FUNは初回公開前の一括ゲート。
 
 > **重要:** 旧RC56 + WCSを作った57本の私的Placeファイルを、最新RC57へそのままコピーしない。現在の保存魔獣進化とスカウト3種の進化/戦闘を失う。
 
 作業ブランチは独立 `feature/p0d-wcs-f01-rc57-safe-handoff-20261114-01`。#293/#295作者ブランチ、#220正式RC、main、公開・課金・Automationsは一切変更しない。
+
+## 2026-11-14 安全修正（独立レビュー候補・正式RC非採用）
+
+- 元作者のServer Scriptは `GetAttribute(...)==false` 判定で、属性未作成の`nil`時に意図せずONになる。上流のCI・独立候補でゲーム内構造物が無条件生成され得るため、**`~= true`（明示的trueのみON）へ変更**。`RunService:IsStudio()`判定と#295の門安全本文は保持。
+- 更新ソース blob `818548e294b35baad5cc0e0c07d4f999ad9cbd34`。元 #295 作者ソース内部blob `3edcb19d91de509afd3de227cbfbca5d75125ec2` は変更しない。
+- `tests/test_handoff_source.py` に `test_missing_flag_must_not_enable` を追加、源blob/構造固定も更新。**13テストを記述、Python実行とLuau native・Rojo・Studio実機は未実施**。実試験成功や正式RC採用は主張しない。
+- #220唯一のwriterだけが現行RC（事前再GET必要）に取り込み、flagをregistry/Builderへ登録して同じHEADで native+Rojo source exact／rollbackのCIを行う。競合する古いPlaceを丸ごと持ち込まない。

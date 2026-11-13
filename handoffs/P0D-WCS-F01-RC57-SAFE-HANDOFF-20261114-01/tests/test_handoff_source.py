@@ -6,7 +6,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "src" / "WCS_CrystalCanyon.server.luau"
-SOURCE_BLOB = "9b891ae8b0dd579ccf1cd477b8b012e03415c0b0"
+SOURCE_BLOB = "818548e294b35baad5cc0e0c07d4f999ad9cbd34"
 AUTHOR_BLOB = "3edcb19d91de509afd3de227cbfbca5d75125ec2"
 START = "-- P0D World-Character Synergy F01+C01 (S2+ isolated candidate)\n"
 STOP = 'world:SetAttribute("WCS_Stage", "SOURCE_CANDIDATE_ONLY")\n'
@@ -17,7 +17,7 @@ def git_blob(b):
 def verify(s):
     required = (
         'if not RunService:IsStudio() then',
-        'GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")==false',
+        'GetAttribute("P0D_RC_ENABLE_WCS_F01_C01") ~= true',
         'WaitForChild("TRAP_RAIDERS_S1",45)',
         'WaitForChild("H1_FUN_WORLD",45)',
         'if not skyWalk or not skyWalk:IsA("BasePart") then',
@@ -62,6 +62,11 @@ class TestWorldHandoff(unittest.TestCase):
 
     def test_contract(self):
         self.assertTrue(verify(self.s))
+
+    def test_missing_flag_must_not_enable(self):
+        with self.assertRaises(ValueError):
+            verify(self.s.replace('GetAttribute("P0D_RC_ENABLE_WCS_F01_C01") ~= true',
+                                  'GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")==false', 1))
 
     def test_no_studio_guard(self):
         with self.assertRaises(ValueError):
