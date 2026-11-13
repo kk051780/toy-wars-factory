@@ -18,6 +18,13 @@ local function userKey(uid:any)
     if not integer(uid) or uid<=0 or uid>999999999999999 then return nil end
     return "U_"..tostring(uid)
 end
+-- Original immutable #281 policy permits integers < 100 million. Roblox real
+-- UserIds can exceed that ceiling; Datastore still uses FULL real UserId.
+-- This normalized value is only a per-record policy identity, never a key.
+function Store.policyUserId(realId:any)
+    if not integer(realId) or realId<=0 or realId>999999999999999 then return nil end
+    return (realId % 99999998)+1
+end
 local function validReceipt(receipt:any)
     return type(receipt)=="string" and #receipt>=12 and #receipt<=110
         and receipt:match("^S[%w%-_]+:%d+$")~=nil
@@ -70,8 +77,9 @@ end
 -- A transient ProgressionRules profile adds playerUserId to one trusted store's
 -- profile. Never trust a playerUserId supplied by a client or saved record.
 function Store.toProgressProfile(raw:any,uid:any)
-    if not integer(uid) or uid<1 or not Store.validate(raw) then return nil end
-    local profile=Progression.newProfile(uid)
+    local innerUid=Store.policyUserId(uid)
+    if innerUid==nil or not Store.validate(raw) then return nil end
+    local profile=Progression.newProfile(innerUid)
     if profile==nil then return nil end
     local current=raw.progress
     if current~=nil then
@@ -261,7 +269,7 @@ function Store.settleProgressTransition(raw:any,uid:any,data:any)
         and Store.ITEMS[data.itemId]==true
         and state.owned[data.itemId] and state.owned[data.itemId]>0
         and state.equipped==data.itemId then data.itemId else nil
-    local round=Progression.newRound(data.id,uid,data.mode,item,item~=nil)
+    local round=Progression.newRound(data.id,profile.playerUserId,data.mode,item,item~=nil)
     if not round then return nil,"INVALID_ROUND" end
     for _,event in ipairs(data.events) do
         if not Progression.recordEvent(round,event.id,event.kind,true) then
