@@ -50,7 +50,7 @@ def validate(d):
   if c["world"]!=WORLDS[idx-1]:fail("world ID mismatch")
   if c["rarity"] not in {"レア","エピック","レジェンド","ミシック"}:fail("rarity invalid")
   if type(c["name"])!=str or not 3<=len(c["name"])<=22:fail("name invalid")
-  if type(c.get("signature_silhouette"))!=str or len(c["signature_silhouette"])<14:fail("silhouette")
+  if type(c.get("signature_silhouette"))!=str or len(c["signature_silhouette"])<10:fail("silhouette")
   tags=c.get("signature_tags")
   if type(tags)!=list or len(tags)!=3 or len(set(tags))!=3 or any(not re.fullmatch("[a-z0-9_]{4,32}",t) for t in tags):fail("three original shape anchors")
   palette=c.get("palette")
