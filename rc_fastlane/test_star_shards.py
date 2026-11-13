@@ -144,5 +144,21 @@ class StarShardsAdmission(unittest.TestCase):
                        "MarketplaceService","GetDataStore(","OnServerEvent:Connect("):
             self.assertNotIn(banned,txt)
 
+    def test_child_visible_quest_hints_and_bridge_only_glow(self):
+        txt=shard.SOURCE.read_text("utf8")
+        self.assertIn('for _,side in ipairs({"WEST","EAST"}) do',txt)
+        self.assertIn('stage:WaitForChild("StarSwitch_"..side,15)',txt)
+        self.assertIn('hint.Name="P0DStarShardQuestHint"',txt)
+        self.assertIn('label.Text="星の橋で ★6つ を集めよう！',txt)
+        self.assertIn('light.Name="StarShardGlow"',txt)
+        self.assertIn('light.Enabled=false',txt)
+        self.assertIn('lights[i].Enabled=active',txt)
+        self.assertIn('prompts[i].Enabled=active',txt)
+        self.assertIn('orbs[i].Transparency=active and 0.08 or 1',txt)
+        self.assertEqual(txt.count('Instance.new("PointLight")'),1)
+        self.assertEqual(txt.count('Instance.new("BillboardGui")'),2)
+        for banned in ('UpdateAsync(', 'TakeDamage(', 'OnServerEvent:Connect('):
+            self.assertNotIn(banned,txt)
+
 if __name__=="__main__":
     unittest.main()
