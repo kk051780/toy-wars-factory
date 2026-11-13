@@ -1,0 +1,52 @@
+name: P0D meteor isolated source QA
+on:
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - 'handoffs/P0D-WEATHER-METEOR-SHORTCUT-V1-20261114-01/**'
+      - '.github/workflows/p0d-weather-meteor-qa.yml'
+  push:
+    branches:
+      - feature/p0d-weather-meteor-shortcut-v1-20261114-01
+    paths:
+      - 'handoffs/P0D-WEATHER-METEOR-SHORTCUT-V1-20261114-01/**'
+      - '.github/workflows/p0d-weather-meteor-qa.yml'
+permissions:
+  contents: read
+jobs:
+  meteor-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Test source policy and route geometry
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/P0D-WEATHER-METEOR-SHORTCUT-V1-20261114-01/test_meteor_shortcut.py
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_meteor_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/cache@v4
+        with:
+          path: /tmp/p0d_new_luau
+          key: p0d-rc-luau-ubuntu-f46d879e28302-v1
+      - name: Compile actual meteor Luau with pinned compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_meteor_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          if [ ! -x /tmp/p0d_new_luau/luau-compile ]; then
+            cmake -S _p0d_meteor_luau -B /tmp/p0d_new_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+            cmake --build /tmp/p0d_new_luau --target Luau.Compile.CLI --parallel 4
+          fi
+          /tmp/p0d_new_luau/luau-compile handoffs/P0D-WEATHER-METEOR-SHORTCUT-V1-20261114-01/MeteorShortcut.server.luau >/tmp/p0d_meteor_bytecode.bin
+          test -s /tmp/p0d_meteor_bytecode.bin
+          echo P0D_METEOR_NATIVE_LUAU_1_OF_1_COMPILE_PASS
