@@ -11,7 +11,7 @@ def verify_client(s):
     for c in checks:
         if c not in s:raise AssertionError("D18_CLIENT_CONTRACT_MISSING:"+c)
     import re
-    if not re.search(r"MAX_NEARBY_MODELS=2(?=\\s|$)",s):
+    if not re.search(r"MAX_NEARBY_MODELS=2(?=\s|$)",s):
         raise AssertionError("D18_INSTANCE_CAP_CHANGED")
     for field in ("CanCollide=false","CanTouch=false","CanQuery=false"):
         if s.count(field)!=2:
