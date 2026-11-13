@@ -59,3 +59,14 @@ jobs:
           /tmp/p0d_v4_luau/luau /tmp/p0d_v4_gate_native.luau | tee /tmp/p0d_v4_gate_native.log
           grep -F 'ASSERTIONS_PASS' /tmp/p0d_v4_gate_native.log
           echo 'V4_GATE_SOURCE_NATIVE_PASS_NO_ENGINE_OR_STUDIO'
+      - name: Native three-source six-skill progression pipeline
+        shell: bash
+        run: |
+          set -euo pipefail
+          R=handoffs/P0D-LOBBY-V4-FOCUS-CAP-20261113-01
+          /tmp/p0d_v4_luau/luau-compile "$R/src/SixSkillCreditProjection.luau" >/dev/null
+          python3 "$R/tools/generate_native_projection_pipeline.py" --write /tmp/p0d_v4_pipeline_native.luau
+          /tmp/p0d_v4_luau/luau-compile /tmp/p0d_v4_pipeline_native.luau >/dev/null
+          /tmp/p0d_v4_luau/luau /tmp/p0d_v4_pipeline_native.luau | tee /tmp/p0d_v4_pipeline_native.log
+          grep -F 'P0D_V4_3SOURCE_PIPELINE_NATIVE_' /tmp/p0d_v4_pipeline_native.log
+          echo 'V4_TRIPLET_PROJECTION_NATIVE_PASS_NOT_PROFILE_SAVED_OR_STUDIO'
