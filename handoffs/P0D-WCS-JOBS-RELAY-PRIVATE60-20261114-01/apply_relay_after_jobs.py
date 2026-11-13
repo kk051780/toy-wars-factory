@@ -36,6 +36,8 @@ def apply_ops(source:str, ops:list, kind:str)->str:
             old='return flag == nil or (flag:IsA("BoolValue") and flag.Value == true)'
             assert replacement.count(old)==1,"AUTHOR_FLAG_SOURCE_DRIFT"
             replacement=replacement.replace(old,'return flag ~= nil and (flag:IsA("BoolValue") and flag.Value == true)')
+            replacement=replacement.replace('-- Default ON in unpublished Studio testing. Set BoolValue false for instant OFF.',
+                                             '-- Default OFF: set BoolValue true before Studio Play to enable relay.')
         source=source.replace(anchor,replacement,1)
     return source
 
