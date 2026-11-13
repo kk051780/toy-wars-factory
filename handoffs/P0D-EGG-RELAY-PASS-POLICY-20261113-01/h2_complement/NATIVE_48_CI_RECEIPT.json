@@ -3,7 +3,6 @@
   "date_jst": "2026-11-14",
   "feature_id": "P0D-EGG-RELAY-001",
   "owner": "H2 pure state transition lane; #220 sole RC integrator",
-  "base_official_rc56_source_commit_corrected": "947cddb5351ba95b9b27597b9ec1828a8297cd66",
   "base_actions": 43504336646,
   "original_h2_git_blob": "0999d69391c176b9b95b04c5444d822e63d7ce04",
   "h2_only_v2_patch_git_blob": "68f3df613ad548ab56e755adf91d797a979e8552",
@@ -33,5 +32,6 @@
   "android": "NOT_TESTED",
   "owner_fun": "NOT_TESTED",
   "safety": "No Game/Remote/Store/main/paid/publish/RC branch writes. No merge. Classic Game+HUD PR296 separate.",
-  "next_acceptance": "Read actual feature Actions Luau compile/48 test logs; then #220 integrates H2 rule and one authoritative existing Game handler under default OFF switch to current RC, runs source-exact canonical Rojo/native tests."
+  "next_acceptance": "Read actual feature Actions Luau compile/48 test logs; then #220 integrates H2 rule and one authoritative existing Game handler under default OFF switch to current RC, runs source-exact canonical Rojo/native tests.",
+  "base_official_rc56_source_commit": "947cddb5351ba95b9b27597b9ec1828a8297cd66"
 }
