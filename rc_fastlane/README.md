@@ -13,6 +13,16 @@
 - **本RCで初回ビルドが実際にPASS済み**：RC SHA `5a0864fe9d3980dd6e0fdd9aa44f4d0169009166`、Actions [43483022604](https://github.com/kk051780/toy-wars-factory/actions/runs/43483022604)、51/51 RojoバイナリSourceExact、Game 1本。以後のHEADは毎回独立ビルドで再判定。Studio実プレイ・Android・人間FUNは依然NOT_TESTED。元候補の未確認事項を持ち越す。
 - **6技能の永続保存/日次30分枠/追加4技能の実戦能力は未完成**。元H1 2技能LvとV4セッションLvはまだ別体系。保存統合は元Store担当が互換性・移行を処理するまで禁止。
 
+## 追加済みの可逆修正：V4_IDLE_FRIEND_SAFE_FIX（Studio専用）
+
+正式RC `rich51` の51本のうち、6技能道場の**既存2本だけ**を固定原作者版に差し替えます。元の49本（唯一のGame・Store・Remote権限を含む）は1バイトも変更しません。
+
+- サーバー：フレンド確認を非推奨の `IsFriendsWith` から `IsFriendsWithAsync` に移し、元の `task.spawn+pcall` と同サーバー確認を維持。無料XPボーナスのルールや倍率は変更しません。
+- クライアント：実際の人間操作がなくなったとき、Robloxの無操作切断が近いことを知らせる警告。**自動操作・擬似入力・AFK回避は一切しません**。保存されていない6技能XPや日次30分の継続利用を保証するものではありません。
+- 作者の元ソース固定：`b7de8f8b7b4cccfb49d2d81c1ee4438d13a4b286`、GitBlob `dbb7171add2b29e337171e547bc40101c2b0dce4` / `7ad4ce4fa9d545cb33836c06dc56c0a03e384666`。既存RC源 `79123d35cd7afdd5f4f9941675bc2d2cf382ac4e` の51本を先に完全再構築した後、RC HEAD内の `rc_fastlane/apply_overlays.py` が強制ソースSHA照合して差し替え。差し替え後も51本をRojoとGit blobで完全照合します。
+- **個別OFF**：`rc_fastlane/ACTIVE.json` の `feature_switches.V4_IDLE_FRIEND_SAFE_FIX.enabled` を `false` に変更し、同じRC CIを再実行。ソース差し替えを行わず以前の51本のバイトへ完全復帰します。既存6技能そのものを外したければ `rich47` profile。メインGameや他H1機能の独立OFFスイッチはまだ未実装。
+- 公式RCのCI成功は**Studio実機2クライアント・Android・面白さの検証を意味しません**。公開前のゲートとして維持。
+
 ## 切り離し方法（現時点）
 1. `ACTIVE.json`のprofileを`rich47`へ変更すると、**V4セッション修行追加4本を外す**（元47本をそのまま使う）。
 2. `legacy21`なら**旧S1に戻す**。前の正式RC `1263a03701211a652b99b91d2339575dc8104eff` は永久に復元可能。
