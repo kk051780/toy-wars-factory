@@ -139,7 +139,13 @@ function Horde:hit(origin: Vector3,facing: Vector3,damage: number,now: number,ig
                     if m.hp<=0 then
                         defeated+=1
                         self.kills+=1
+                        -- Kill is atomic for this one server-owned NPC: cancel ANY
+                        -- windup/target so a dead elite cannot strike after respawn.
+                        m.tellUntil=0
+                        m.target=nil
                         m.deadUntil=now+8
+                        m.attackAt=now+9.5
+                        m.cue.Text=if m.elite then "💥 精鋭撃破！" else "💥 撃破！"
                         m.model:PivotTo(CFrame.new(m.pos+Vector3.new(0,-30,0)))
                     else
                         m.cue.Text=(if m.elite then "精鋭 " else "中立 ")..tostring(m.hp).."/"..tostring(m.maxHp)
@@ -159,6 +165,11 @@ function Horde:tick(now: number,players: {Player},healthy: (Player)->(boolean,Ba
             if now>=m.deadUntil then
                 m.hp=m.maxHp
                 m.pos=m.home
+                m.attackAt=now+1.5 -- fair re-entry; no instant hit on respawn
+                m.tellUntil=0
+                m.target=nil
+                m.flashUntil=0
+                m.body.Color=if m.elite then Color3.fromRGB(120,75,175) else Color3.fromRGB(68,151,107)
                 m.model:PivotTo(CFrame.new(m.home))
                 m.cue.Text=if m.elite then "⚠ 精鋭" else "中立兵"
             end
