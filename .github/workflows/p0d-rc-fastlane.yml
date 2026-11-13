@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - rc/p0d-s1-kids-rc01
+      - feature/p0d-rc61-android-touch-layout-audit-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -157,6 +158,14 @@ jobs:
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_star_path.py --profile rich51 --dist "$DIST"
+          fi
+      - name: Independent actual final61 HUD mobile-touch overlap diagnostic
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            python3 -B rc_fastlane/rc61_touch_geometry_audit.py \
+              --hud _p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE/src/client/HUD.client.luau
           fi
       - uses: actions/checkout@v4
         with:
