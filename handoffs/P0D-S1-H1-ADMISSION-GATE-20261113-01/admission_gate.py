@@ -15,6 +15,8 @@ import xml.etree.ElementTree as ET
 
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
+MAX_XML_BYTES = 16 * 1024 * 1024
+
 REQUIRED = (
     "adoption_id", "official_rc_sha", "candidate_source_sha", "feature_source_qa",
     "product_official_rc_selected", "independent_rc_qa", "studio_2client",
@@ -25,6 +27,9 @@ REQUIRED = (
 
 def scan_place(path: Path) -> dict:
     """Extract *static* embedded Script counts from an unpacked XML .rbxlx."""
+    # Fail before parsing oversized or attacker-controlled XML.
+    if path.stat().st_size > MAX_XML_BYTES:
+        raise ValueError("Place XML exceeds 16MiB static scan limit")
     raw = path.read_bytes()
     if b"<!DOCTYPE" in raw or b"<!ENTITY" in raw:
         raise ValueError("DTD or entity declaration not permitted")
@@ -72,6 +77,24 @@ def evaluate(receipt: dict, place: Path | None = None) -> dict:
                 "source_lock_verified", "single_authority_review"):
         if receipt.get(key) is not True:
             blockers.append(key.upper() + "_NOT_VERIFIED")
+    # Positive flags need attributable evidence. A URL is NOT itself a proof of validity.
+    evidence = receipt.get("evidence", {})
+    if not isinstance(evidence, dict):
+        evidence = {}
+    gated_proofs = {
+        "product_official_rc_selected": "official_selection",
+        "independent_rc_qa": "independent_qa",
+        "studio_2client": "studio_2client",
+        "android": "android",
+        "owner_fun": "owner_fun",
+        "source_lock_verified": "source_lock",
+        "single_authority_review": "authority_review",
+    }
+    for flag, proof_key in gated_proofs.items():
+        if receipt.get(flag) is True:
+            proof = evidence.get(proof_key)
+            if not isinstance(proof, str) or not proof.startswith("https://github.com/"):
+                blockers.append("MISSING_EVIDENCE:" + proof_key)
     scan = None
     if place is not None:
         try:
