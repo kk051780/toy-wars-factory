@@ -12,6 +12,7 @@ def blob(b):
  return hashlib.sha1(b"blob "+str(len(b)).encode()+b"\0"+b).hexdigest()
 def unsafe_contract(game,hud,store):
  assert 'DataStoreService:GetDataStore("EGG_RUMBLE_PRIVATE_STUDIO_HATCH_DEV_V1")' in game
+ assert 'if RunService:IsStudio() then\n    local ok,result=pcall' in game
  assert 'DataStoreGetOptions.new()' in game
  assert 'option.UseCache=false' in game
  assert 'PersistentHatch.load(studioHatchStore,player.UserId,option)' in game
