@@ -4,7 +4,7 @@ from pathlib import Path
 import argparse
 
 ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "src/StudioSoloPreviewRules.luau"
+SRC = ROOT / "inputs/StudioSoloPreviewRules.luau"
 code = SRC.read_text(encoding="utf8")
 assert code.rstrip().endswith("return Solo"), "refuse source drift"
 header = code.rstrip()[:-len("return Solo")]
