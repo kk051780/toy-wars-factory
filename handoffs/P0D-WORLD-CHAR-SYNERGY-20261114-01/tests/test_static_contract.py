@@ -54,8 +54,20 @@ class WCSContractTests(unittest.TestCase):
     def test_gate_timer_and_occupancy_aware_close(self):
         self.assertRegex(self.src, r'OPEN_SECONDS\s*=\s*14')
         self.assertRegex(self.src, r'REOPEN_COOLDOWN\s*=\s*4')
-        self.assertIn('not playerIsOnBridge()', self.src)
+        self.assertIn('not playerIsInGateClosureZone()', self.src)
         self.assertIn('gate.CanCollide = not open', self.src)
+
+    def test_gate_occupancy_does_not_cover_entire_shortcut_bridge(self):
+        # A camper 20 studs down the bridge must not hold the timed gate open.
+        self.assertIn("local function playerIsInGateClosureZone()", self.src)
+        self.assertRegex(self.src, r"math[.]abs\(localPoint[.]X\) <= 3[.]5")
+        self.assertNotIn("math.abs(localPoint.X) <= 27", self.src)
+
+    def test_reopen_cooldown_starts_on_actual_close(self):
+        # Delayed closure must not consume the four-second cooldown early.
+        self.assertIn("if gateOpen and not open then", self.src)
+        self.assertIn("nextOpenAllowed = os.clock() + REOPEN_COOLDOWN", self.src)
+        self.assertIn("now < nextOpenAllowed", self.src)
 
     def test_no_studio_or_release_claim(self):
         self.assertEqual(self.data["release"], "S2+_CANDIDATE_ONLY")
