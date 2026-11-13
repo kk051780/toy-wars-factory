@@ -10,13 +10,13 @@
   "canonical_code_native_compiled": "57/57_PASS",
   "canonical_code_place_sha256": "15521b7dadbd96c0ef1ed12367b5fcf2f3738c4428ebf2fb8c43532b39b8b1a8",
   "author_script_path": "handoffs/P0D-WCS-F01-RC57-SAFE-HANDOFF-20261114-01/src/WCS_CrystalCanyon.server.luau",
-  "author_script_git_blob": "9b891ae8b0dd579ccf1cd477b8b012e03415c0b0",
+  "author_script_git_blob": "818548e294b35baad5cc0e0c07d4f999ad9cbd34",
   "author_295_repaired_body_blob": "3edcb19d91de509afd3de227cbfbca5d75125ec2",
   "original_integrated_input_blob": "5eb76749414c33c11eb70310b2d1c59c1f945c21",
   "older_integrated_input_commit": "de60f7024077d4b3135693a4ca5a87ddcd4ee4a7",
   "repair_source_commit": "dc8f1e038224d1d2d0d64fd9efb0a9c0b1c89303",
-  "source_qa": "JS_ACTUAL_SOURCE_16_OF_16_AND_REMOTE_REFETCH_13_OF_13_PASS",
-  "python_unittest": "AUTHORED_NOT_EXECUTED",
+  "source_qa": "PR298_BASE_SOURCE_QA_PLUS_ONE_FAILCLOSED_GUARD_PATCH; NEW_HEAD_CI_PENDING",
+  "python_unittest": "13_CASES_AUTHORED_NOT_EXECUTED",
   "native_luau_for_this_new_source": "NOT_TESTED",
   "new_rojo_build_58": "NOT_BUILT",
   "studio_engine": "NOT_TESTED",
@@ -24,7 +24,7 @@
   "owner_fun": "NOT_TESTED",
   "pending_rc_script_count": 58,
   "pr_authority": "SOFT_CLAIM_ONLY_NOT_OFFICIAL_RC_WRITER",
-  "required_integration": "sole #220 writer: pin current RC, install only this server source under existing TrapRaidersS1 folder; add reversible feature flag and source-lock, execute same-head native 58/58 + Rojo SourceExact + negative QA, then record adoption",
+  "required_integration": "sole #220 writer: pin current RC; explicit OFF-by-default before startup, only enable if ServerStorage attribute equals true; verify native and Rojo exact source; no legacy source overwrite",
   "dependencies": [
     "H1_FUN_WORLD.SKY_WALKWAY",
     "original Game world bounds"
@@ -39,5 +39,8 @@
     "new Automations"
   ],
   "historical_release_progress": 75,
-  "historical_fun": "FUN_NO_GO"
+  "historical_fun": "FUN_NO_GO",
+  "safe_flag_contract": "DEFAULT_OFF_WHEN_ATTRIBUTE_ABSENT_OR_FALSE; ENABLED_ONLY_EXPLICIT_TRUE; STUDIO_ONLY",
+  "flag_regression_test": "test_missing_flag_must_not_enable",
+  "qa_patch_status": "SOURCE_GUARD_AND_TEST_AUTHORED; PYTHON_NOT_EXECUTED; STUDIO_NOT_TESTED"
 }
