@@ -43,10 +43,34 @@ def insertion(src:str,old:str,new:str,label:str)->str:
 def upgrade_game(s:str)->str:
  assert "Evolution.nextEvolution(" in s and "Power.beginAwaken(" in s
  assert 'if mobHits>0 then return end' in s
- return insertion(s,"        musouMobCount = horde:livingCount(),\n",
+ s=insertion(s,"        musouMobCount = horde:livingCount(),\n",
     "        musouEliteWarningSeconds = if RunService:IsStudio()\n"
     "            then horde:eliteWarningSeconds(now) else 0,\n",
     "EXACT_EVOLUTION40_GAME_SNAPSHOT")
+ # Independent QA detected an *actual* gameplay mismatch in original 40:
+ # token/SCOUT_DURATION=5s, guard claimed 8s but cleanup dies at 5s,
+ # assault 12s repeat never fires during the 5s scout. Preserve token
+ # authority. Use one real clock expiry for existing 5s token AND guard;
+ # stage2+ assault can execute at most 2 opportunities per 5s summon.
+ for before,after,label in [
+  ("    local epoch=match.serial\n    -- The only H1 Game owns both actual abilities;",
+   "    local epoch=match.serial\n    local scoutExpiresAt=serverNow()+SCOUT_DURATION\n    -- The only H1 Game owns both actual abilities;","SCOUT_EXPIRY_CLOCK"),
+  ("evolutionGuards[player]={untilAt=serverNow()+8,",
+   "evolutionGuards[player]={untilAt=scoutExpiresAt,","GUARD_5S_REAL_EXPIRY"),
+  ("        local nextEvolvedStrike=0\n",
+   "        local nextEvolvedStrike=0\n        local evolvedStrikes=0\n","ASSAULT_STRIKE_COUNTER"),
+  ("        local t=0\n        while t<SCOUT_DURATION and scoutModels[player]==model",
+   "        while serverNow()<scoutExpiresAt and scoutModels[player]==model","SCOUT_REAL_CLOCK_DURATION"),
+  ("            if stage>=2 and branch==\"ASSAULT\"\n                and serverNow()>=nextEvolvedStrike then",
+   "            if stage>=2 and branch==\"ASSAULT\"\n                and evolvedStrikes<2 and serverNow()>=nextEvolvedStrike then","ASSAULT_MAX_TWO_OPPORTUNITIES"),
+  ("                nextEvolvedStrike=serverNow()+12",
+   "                evolvedStrikes+=1\n                nextEvolvedStrike=serverNow()+2.5","ASSAULT_REPEAT_2_5S"),
+  ("            task.wait(.2);t+=.2","            task.wait(.2)","REMOVE_FAKE_ELAPSED_CLOCK"),
+ ]:
+  assert s.count(before)==1,("PATCH_CONFLICT_FAIL_CLOSED",label,s.count(before))
+  assert after not in s,("DUPLICATE_PATCH_FAIL_CLOSED",label)
+  s=s.replace(before,after,1)
+ return s
 
 HUD_OLD='''        mobCue.Text="⚔ 中立兵 "..tostring(alive).."体  |  "
             ..(if combo>1 then tostring(combo).."連撃！" else "斬って進もう！")'''
@@ -64,7 +88,28 @@ def upgrade_hud(s:str)->str:
  assert 'EVOLVE_SCOUT' in s and 'AWAKEN_POWER' in s
  assert s.count(HUD_OLD)==1,("PATCH_CONFLICT_FAIL_CLOSED","EXACT_EVOLUTION40_HUD",s.count(HUD_OLD))
  assert HUD_NEW not in s, "DUPLICATE_PATCH_FAIL_CLOSED"
- return s.replace(HUD_OLD,HUD_NEW,1)
+ s=s.replace(HUD_OLD,HUD_NEW,1)
+ # 851x393 landscape: old 0.56w warning banner x.22..78 overlaps
+ # rescue button from w-265..w-150 (y~146-208). Shrink banner and
+ # top/status/level text to avoid earned awakening (x w-140..w-30).
+ for before,after,label in [
+  ('local mobCue=label(gui,"MusouHordeCue",UDim2.new(.56,0,0,27),',
+   'local mobCue=label(gui,"MusouHordeCue",UDim2.new(.35,0,0,27),',
+   'MOBILE_MOB_CUE_NARROW'),
+  ('    UDim2.new(.22,0,0,142),Color3.fromRGB(255,221,132),14)',
+   '    UDim2.new(.20,0,0,142),Color3.fromRGB(255,221,132),14)',
+   'MOBILE_MOB_CUE_CENTER'),
+  ('local status = label(gui, "Status", UDim2.new(.76, 0, 0, 34),',
+   'local status = label(gui, "Status", UDim2.new(.64, 0, 0, 34),',
+   'MOBILE_STATUS_NOT_UNDER_AWAKEN'),
+  ('local progressBadge=label(gui,"RealH1ServerLevel",UDim2.new(.76,0,0,35),',
+   'local progressBadge=label(gui,"RealH1ServerLevel",UDim2.new(.64,0,0,35),',
+   'MOBILE_LEVEL_NOT_UNDER_AWAKEN'),
+ ]:
+  assert s.count(before)==1,("PATCH_CONFLICT_FAIL_CLOSED",label,s.count(before))
+  assert after not in s,("DUPLICATE_PATCH_FAIL_CLOSED",label)
+  s=s.replace(before,after,1)
+ return s
 
 def assemble():
  assert not DIST.exists(),"FAIL_CLOSED_NO_DESTRUCTIVE_REPLACE"
@@ -125,12 +170,19 @@ def assemble():
  assert "Power.beginAwaken(" in g
  assert "horde:eliteWarningSeconds(now)" in g
  assert "if mobHits>0 then return end" in g
+ assert "local scoutExpiresAt=serverNow()+SCOUT_DURATION" in g
+ assert "evolutionGuards[player]={untilAt=scoutExpiresAt," in g
+ assert "while serverNow()<scoutExpiresAt" in g
+ assert "evolvedStrikes<2 and serverNow()>=nextEvolvedStrike" in g
+ assert "nextEvolvedStrike=serverNow()+2.5" in g
  assert "PersistentHatch.settleProgress(" in g
  assert "Evolution.creditRound(" in result["server/PersistentHatchStore.luau"].decode()
  assert h.count("local seq = 0")==1
  assert h.count("remote:FireServer(")==3
  assert "EVOLVE_SCOUT" in h and "AWAKEN_POWER" in h
  assert h.count("s.musouEliteWarningSeconds")==1
+ assert 'MusouHordeCue",UDim2.new(.35,0,0,27)' in h
+ assert 'RealH1ServerLevel",UDim2.new(.64,0,0,35)' in h
  assert len([k for k in result if k.endswith("/Game.server.luau")])==1
  assert len([k for k in result if k.endswith(".server.luau")])==2
  assert len([k for k in result if k.endswith(".client.luau")])==5
