@@ -255,6 +255,16 @@
       "studio_2client": "NOT_TESTED",
       "android": "NOT_TESTED",
       "owner_fun": "NOT_TESTED"
+    },
+    {
+      "id": "EGG_RELAY_CLASSIC_V1",
+      "state": "RC60_COMBINED_SOURCE_ONLY",
+      "summary": "Original Game implements classic 1-egg close teammate handoff with HUD touch/H",
+      "source_policy_gitblob": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
+      "independent_switch": true,
+      "rollback": "FEATURE_SWITCHES.features.EGG_RELAY_CLASSIC_V1.enabled=false restores WCS+Jobs59",
+      "one_original_game_remote_store": true,
+      "studio": "NOT_TESTED"
     }
   ],
   "next_source_adoption_contract": {
