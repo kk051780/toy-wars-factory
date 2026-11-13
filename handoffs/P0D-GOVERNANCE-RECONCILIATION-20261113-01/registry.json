@@ -1,0 +1,319 @@
+{
+  "schema": "P0D_CHANGE_CONTROL_V1",
+  "snapshot_jst": "2026-11-13",
+  "game_id": "TRAP_RAIDERS",
+  "brand": "EGG RAID RUMBLE",
+  "work_id": "p0d-siege-v19",
+  "policy": {
+    "backlog_issue": 219,
+    "product_decision_issue": 250,
+    "official_integrator_issue": 220,
+    "coordination_issue": 218,
+    "official_rc_only_writer": "#220 designated sole CHAT-INTEGRATOR",
+    "max_selected_experiments": 2,
+    "max_parallel_official_rc_writers": 1,
+    "publication": "NOT_AUTHORIZED",
+    "product_fun_gate": "FUN_NO_GO",
+    "last_official_score": "75/100 (historical; not recomputed here)",
+    "never_merge_candidates_automatically": true
+  },
+  "official_rc": {
+    "frozen_reference_sha": "1263a03701211a652b99b91d2339575dc8104eff",
+    "source_root": "releases/P0D_S1_KIDS_RC01",
+    "source_game_blob_sha": "7c5229f600f17537bc1bbbb0b96b6a2435875374",
+    "source_game_lines": 703,
+    "verification": "GITHUB_SOURCE_READ_BACK; NOT ACTUAL STUDIO",
+    "next": "SOLE #220 verify latest official RC HEAD before integration"
+  },
+  "experimental_cumulative_game": {
+    "source_sha": "a0331e2e452f4e8e6530d32562ba5ff657b011d9",
+    "issue": 286,
+    "game_blob_sha": "28a51605efcee572029154f978761622959df587",
+    "source_game_lines": 1583,
+    "all_luau": 35,
+    "official_rc_adopted": false,
+    "studio_2client_accepted": false,
+    "android_accepted": false,
+    "real_datastore_reconnect_accepted": false,
+    "studio_only_technical_gates": [
+      "RunService:IsStudio() gates SCORE_5 selected match",
+      "RunService:IsStudio() gates XP and saving",
+      "RunService:IsStudio() gates free hatch/equip"
+    ],
+    "caution": "Treat as a separate cumulative candidate; never replace official 703-line Game with experimental 1583-line Game wholesale"
+  },
+  "authority_contract": [
+    {
+      "system": "round_mode_and_scoring",
+      "one_writer": "Existing Game.server match authority #220",
+      "risk": "SCORE_5 private Studio only; no duplicate mode/Remote owner",
+      "priority": "HIGH"
+    },
+    {
+      "system": "egg_entitlement_and_rewards",
+      "one_writer": "Existing original server Game + RewardEquipRules",
+      "risk": "Hatch/owned/scout source provisional; no reward duplicate",
+      "priority": "HIGH"
+    },
+    {
+      "system": "player_xp_and_item_mastery",
+      "one_writer": "#281 canonical pure ProgressionRules invoked only by sole Game",
+      "risk": "#286 Studio-only progression, no second reward authority",
+      "priority": "HIGH"
+    },
+    {
+      "system": "inventory_and_evolution_persistence",
+      "one_writer": "One server profile and one atomic UpdateAsync (#282/#286 successor)",
+      "risk": "#287 shard/form requires schema migration, idempotent journal in same profile",
+      "priority": "HIGH"
+    },
+    {
+      "system": "pve_pvp_combat_and_awakening",
+      "one_writer": "One existing combat/damage owner #220, optional #285 policy",
+      "risk": "Never stack evolution raw PvP multiplier, never duplicate damage owner",
+      "priority": "HIGH"
+    },
+    {
+      "system": "horde_boss_capture",
+      "one_writer": "One NPC damage/event owner, D15 restraint contract reuse",
+      "risk": "anti-stunlock and rescue/escape, elite cues, density/FPS mobile",
+      "priority": "HIGH"
+    },
+    {
+      "system": "map_and_client_mobile",
+      "one_writer": "One map builder and one HUD/Remote authority",
+      "risk": "real traversability not showcase-only; StreamingEnabled/phone FPS",
+      "priority": "MEDIUM"
+    }
+  ],
+  "items": [
+    {
+      "id": "P0D-MODE-CLASSIC-SCORE5",
+      "title": "CLASSIC + SCORE_5 lobby choose",
+      "issue": 279,
+      "source_sha": "7e65166bed5b8dc12119a511cfa4974d5b168b31",
+      "stage": "SOURCE_VERIFIED",
+      "bundle_role": "ANCESTOR_CANDIDATE",
+      "superseded_by": "P0D-ONE-GAME-XP-SAVE",
+      "official_rc_adopted": false,
+      "human_fun_accepted": false,
+      "systems": [
+        "round_mode_and_scoring",
+        "map_and_client_mobile"
+      ],
+      "dependencies": [],
+      "supersedes_design": [],
+      "next_owner": "#220 sole CHAT-INTEGRATOR",
+      "next_acceptance": "Diff original round authority versus new mode; prove both options on same original Game; no score overwrite, release build currently Studio-gated"
+    },
+    {
+      "id": "P0D-HATCH-SCOUT",
+      "title": "free hatch -> owned -> equipped -> physical scout",
+      "issue": 280,
+      "source_sha": "6274b38ed13079a97cf3b53d634f815649f6be13",
+      "stage": "SOURCE_VERIFIED",
+      "bundle_role": "ANCESTOR_CANDIDATE",
+      "superseded_by": "P0D-ONE-GAME-XP-SAVE",
+      "official_rc_adopted": false,
+      "human_fun_accepted": false,
+      "systems": [
+        "egg_entitlement_and_rewards",
+        "map_and_client_mobile"
+      ],
+      "dependencies": [
+        "P0D-MODE-CLASSIC-SCORE5"
+      ],
+      "supersedes_design": [],
+      "next_owner": "#220 sole CHAT-INTEGRATOR",
+      "next_acceptance": "Retain original receipt/ownership, observe actual BEAST scout and counter/visual in both modes, no cosmetic-only claim"
+    },
+    {
+      "id": "P0D-HATCH-PERSIST",
+      "title": "atomic DEV inventory and free hatch persistence",
+      "issue": 282,
+      "source_sha": "de8cb430a929e99f97bebcfb3e01633312b26df1",
+      "stage": "SOURCE_VERIFIED",
+      "bundle_role": "ANCESTOR_CANDIDATE",
+      "superseded_by": "P0D-ONE-GAME-XP-SAVE",
+      "official_rc_adopted": false,
+      "human_fun_accepted": false,
+      "systems": [
+        "inventory_and_evolution_persistence",
+        "egg_entitlement_and_rewards"
+      ],
+      "dependencies": [
+        "P0D-HATCH-SCOUT"
+      ],
+      "supersedes_design": [],
+      "next_owner": "#220 sole CHAT-INTEGRATOR",
+      "next_acceptance": "Preserve verified original receipt and atomic UpdateAsync when adopting cumulative game, real positive UserId reconnect pending"
+    },
+    {
+      "id": "P0D-ONE-GAME-XP-SAVE",
+      "title": "one 35-Luau Game with dual mode, beast, XP, mastery, atomic DEV save",
+      "issue": 286,
+      "source_sha": "a0331e2e452f4e8e6530d32562ba5ff657b011d9",
+      "stage": "SOURCE_VERIFIED",
+      "bundle_role": "CUMULATIVE_CANDIDATE",
+      "official_rc_adopted": false,
+      "human_fun_accepted": false,
+      "systems": [
+        "round_mode_and_scoring",
+        "egg_entitlement_and_rewards",
+        "player_xp_and_item_mastery",
+        "inventory_and_evolution_persistence",
+        "map_and_client_mobile"
+      ],
+      "dependencies": [
+        "P0D-MODE-CLASSIC-SCORE5",
+        "P0D-HATCH-SCOUT",
+        "P0D-HATCH-PERSIST"
+      ],
+      "supersedes_design": [],
+      "next_owner": "#220 sole CHAT-INTEGRATOR",
+      "next_acceptance": "Reconcile official 703-line RC Game against isolated 1583-line experimental Game, preserve valid Guardian trap/canonical damage, make H0/H1 review plan; no automatic overlay"
+    },
+    {
+      "id": "P0D-EARNED-MUSOU",
+      "title": "earned PvE domination, capped PvP and temporary awakening",
+      "issue": 285,
+      "source_sha": "5e18a52e1e74f10cc1b85ac3b60f695e064bb088",
+      "stage": "SOURCE_DELIVERED_UNVERIFIED",
+      "bundle_role": "PURE_POLICY_ONLY",
+      "official_rc_adopted": false,
+      "human_fun_accepted": false,
+      "systems": [
+        "pve_pvp_combat_and_awakening",
+        "player_xp_and_item_mastery",
+        "horde_boss_capture"
+      ],
+      "dependencies": [
+        "P0D-ONE-GAME-XP-SAVE"
+      ],
+      "supersedes_design": [
+        "#281 cosmetic/sidegrade-only power assumption (design only; do not change original #281 Luau)"
+      ],
+      "next_owner": "#250 PRODUCT_SELECT + #220 sole integrator",
+      "next_acceptance": "Run genuine native test then server combat contract; original visible AoE/ultimate, beginner fairness, no payment or double multipliers"
+    },
+    {
+      "id": "P0D-PERMANENT-EVOLUTION",
+      "title": "item owned stage0->3 branch+mythic, free shards",
+      "issue": 287,
+      "source_sha": "3fe1f983eb1c4082983768d59da6f216c40b9dcd",
+      "stage": "SOURCE_DELIVERED_UNVERIFIED",
+      "bundle_role": "PURE_POLICY_AND_ISOLATED_GALLERY",
+      "official_rc_adopted": false,
+      "human_fun_accepted": false,
+      "systems": [
+        "inventory_and_evolution_persistence",
+        "player_xp_and_item_mastery",
+        "pve_pvp_combat_and_awakening"
+      ],
+      "dependencies": [
+        "P0D-ONE-GAME-XP-SAVE",
+        "P0D-EARNED-MUSOU"
+      ],
+      "supersedes_design": [],
+      "next_owner": "#250 PRODUCT_SELECT + #220 sole integrator",
+      "next_acceptance": "Genuine native run, same profile schema migration + idempotent receipts, real battle form/counter and earned shards, no duplicate PvP bonuses"
+    },
+    {
+      "id": "P0D-MUSOU-HORDE-CAPTURE",
+      "title": "mass neutral PvE, duel/escape, bounded restraint and rescue",
+      "issue": 219,
+      "source_sha": null,
+      "stage": "IDEA_CARD",
+      "bundle_role": "DESIGN_ONLY",
+      "official_rc_adopted": false,
+      "human_fun_accepted": false,
+      "systems": [
+        "horde_boss_capture",
+        "pve_pvp_combat_and_awakening",
+        "round_mode_and_scoring",
+        "map_and_client_mobile"
+      ],
+      "dependencies": [
+        "P0D-ONE-GAME-XP-SAVE"
+      ],
+      "supersedes_design": [],
+      "next_owner": "#250 PRODUCT_SELECT then exclusive feature author",
+      "next_acceptance": "Select ONE playable neutral horde + elite tell + timed capture/rescue vertical, scope fixed and performance baseline; preserve D15 controller"
+    },
+    {
+      "id": "P0D-WORLD-H1-D18",
+      "title": "traversable fantasy map + character placements trial",
+      "issue": 274,
+      "source_sha": "e827093bd0a35ffcf00ba492134489497f9c0d6e",
+      "stage": "SOURCE_VERIFIED",
+      "bundle_role": "ALTERNATIVE_GAME_EXPERIMENT",
+      "official_rc_adopted": false,
+      "human_fun_accepted": false,
+      "systems": [
+        "map_and_client_mobile",
+        "horde_boss_capture"
+      ],
+      "dependencies": [],
+      "supersedes_design": [],
+      "next_owner": "#250 selector + #220 sole CHAT-INTEGRATOR",
+      "next_acceptance": "H0/H1 compare two actual playable paths/character encounter/first90 on phone; avoid visually impressive no-op map"
+    },
+    {
+      "id": "P0D-RUMBLE-LINK-CUES",
+      "title": "child-readable teamwork cue source/Studio-only synthetic preview",
+      "issue": 219,
+      "source_sha": "6729608887ee1ea4960d98c67ab0e032925433c7",
+      "stage": "SOURCE_DELIVERED_UNVERIFIED",
+      "bundle_role": "UI_PREVIEW_ONLY",
+      "official_rc_adopted": false,
+      "human_fun_accepted": false,
+      "systems": [
+        "map_and_client_mobile"
+      ],
+      "dependencies": [
+        "P0D-ONE-GAME-XP-SAVE"
+      ],
+      "supersedes_design": [],
+      "next_owner": "#250 selector + UI author",
+      "next_acceptance": "Native CI then one read-only server DTO through existing Remote; no alternative Game/Remote or synthetic preview as gameplay"
+    }
+  ],
+  "blockers": [
+    {
+      "code": "B01_BRANCH_LINEAGE_NOT_RC",
+      "severity": "HIGH",
+      "evidence": "Official 1263a037 Game blob7c5229f lines703; experimental #286 Game blob28a51605 lines1583",
+      "next": "#220 publishes explicit patch-level authority/migration diff, no wholesale replacement"
+    },
+    {
+      "code": "B02_STUDIO_ONLY_MODE",
+      "severity": "HIGH",
+      "evidence": "#286 Game.server 1041 sets EXPERIMENTAL_FIVE_EGG_MODE=RunService:IsStudio() and chosenMode==ModeVote.SCORE",
+      "next": "Only after real H0/H1 private QA decide how release runtime safely exposes both game modes"
+    },
+    {
+      "code": "B03_STUDIO_ONLY_XP_SAVE",
+      "severity": "HIGH",
+      "evidence": "#286 Game.server 105/129/271/306/890/1006/1398 guard XP/inventory/load with Studio checks; single DEV DataStore",
+      "next": "Safe production namespace/profile migration + positive-account reconnect + outage QA before activation"
+    },
+    {
+      "code": "B04_DESIGN_PRECEDENCE",
+      "severity": "MEDIUM",
+      "evidence": "#281 cosmetic-only assumptions versus #285 owner earned-strength change",
+      "next": "#250 records explicit new design precedence, no mutation/double source merge"
+    },
+    {
+      "code": "B05_EVOLUTION_PERSISTENT_FORMS_UNVERIFIED",
+      "severity": "HIGH",
+      "evidence": "#287 has source and gallery but no original #286 Game or same UpdateAsync atomic actual integration",
+      "next": "Single profile journal and real form gameplay, independent native/studio QA"
+    },
+    {
+      "code": "B06_PRODUCT_FUN_GATE",
+      "severity": "HIGH",
+      "evidence": "#250 OWNER says prior safe candidate is 陳腐; no latest H1 real human fun approval",
+      "next": "One playable S1_FUN experiment: actual tactical terrain + identifiable roles + neutral sweep/capture, owner side-by-side fun test"
+    }
+  ]
+}
