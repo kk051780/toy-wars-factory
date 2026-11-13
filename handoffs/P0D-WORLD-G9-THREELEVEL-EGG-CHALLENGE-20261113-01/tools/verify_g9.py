@@ -64,7 +64,6 @@ def contract(rule=None,server=None,world=None,project=None):
    "if not RunService:IsStudio() then return end",
    'Workspace:WaitForChild("G8_PRIVATE_3LEVEL_TRAVEL",25)',
    "G9_PRIVATE_EGG_TAG_RAID",
-   'prompt.Triggered:Connect(function(player)',
    'pickup.Triggered:Connect(function(player)',
    'score.Triggered:Connect(function(player)',
    'tag.Triggered:Connect(function(rescuer)',
