@@ -45,6 +45,9 @@ ok(v(10).step=="PICKUP","hit_progresses_to_egg")
 local carried={mode="CLASSIC",carrying=true,eliteWarning=0,bound=false,
  rescueNearby=false,scoutReady=true}
 ok(v(11,nil,carried).step=="RETURN","carry_overrides_attack")
+local stolen={mode="CLASSIC",carrying=true,ownEggSafe=false,eliteWarning=0,
+ bound=false,rescueNearby=false,scoutReady=true}
+ok(v(11,nil,stolen).step=="RECOVER","stolen_own_egg_blocks_fake_score")
 ok(string.find(v(11,nil,carried).text,"自陣",1,true)~=nil,"real_team_return")
 local five={mode="SCORE_5",carrying=true,eliteWarning=0,bound=false,
  rescueNearby=false,scoutReady=true}
