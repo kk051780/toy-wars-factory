@@ -15,13 +15,14 @@ jobs:
       H1: handoffs/P0D-H1-COMPOSITE-20261113-01
       H1_BASE_COMMIT: c73f305fb412927aee05b399a4f54a2a16d0579f
       ROLE_COMMIT: f6c98bc90cd14221d7a0c5940c9641c9fb14d8d8
+      ROUTE_COMMIT: 2494fa855d77e1ef6dd2c5f8b8d21fbef90fc44a
     steps:
       - name: Checkout ONLY isolated H1 source
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Verify exact full 24-H1 heritage plus exact role Game HUD Wind source
+      - name: Verify exact H1 heritage, fixed passable routes, and exact role Game HUD Wind source
         shell: bash
         run: |
           set -euo pipefail
@@ -30,11 +31,12 @@ jobs:
           repo=pathlib.Path(os.environ["H1"])
           base=os.environ["H1_BASE_COMMIT"]
           role=os.environ["ROLE_COMMIT"]
+          route=os.environ["ROUTE_COMMIT"]
           original="handoffs/P0D-H1-WORLD-CREATURES-20261113-01/src/"
           names=subprocess.check_output(["git","ls-tree","-r","--name-only",base,original],text=True).splitlines()
           scripts=[p for p in names if p.endswith(".luau")]
           assert len(scripts)==24,len(scripts)
-          changed={"server/Game.server.luau","client/HUD.client.luau"}
+          changed={"server/Game.server.luau","client/HUD.client.luau","server/H1FunWorld.server.luau"}
           for old in scripts:
               rel=old[len(original):]
               if rel in changed:continue
@@ -45,6 +47,8 @@ jobs:
               old="releases/P0D_S1_KIDS_RC01/"+rel
               data=subprocess.check_output(["git","show",role+":"+old])
               assert (repo/rel).read_bytes()==data,rel
+          fixed_path="handoffs/P0D-H1-ROUTE-OVERLAP-QA-20261113-01/candidate/H1FunWorld_wall_clearance_REVIEW_ONLY.server.luau"
+          assert (repo/"src/server/H1FunWorld.server.luau").read_bytes()==subprocess.check_output(["git","show",route+":"+fixed_path]),"route source provenance"
           scripts=sorted((repo/"src").rglob("*.luau"))
           assert len(scripts)==25,len(scripts)
           game=(repo/"src/server/Game.server.luau").read_text(encoding="utf8")
@@ -62,10 +66,16 @@ jobs:
           assert 'RemoteEvent' not in overlay and "DataStore" not in overlay
           assert "CANONICAL_S1_ENABLED = false" in game
           assert "D07_D08_RELEASE_REVIEW_APPROVED = false" in game
-          print("H1_COMPOSITE_22_H1_SOURCE_BLOBS_EXACT")
+          print("H1_COMPOSITE_21_H1_UNCHANGED_BLOBS_EXACT + 1_OLD_ROUTE_FIXED")
           print("H1_COMPOSITE_3_WIND_SOURCE_BLOBS_EXACT")
           print("H1_COMPOSITE_25_TOTAL_LUAU_SOURCE_CONTRACT_PASS")
           PY
+      - name: Independently reject original wall collisions and validate 6 corrected live routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s "$H1/tests" -p 'test_*.py' -v
+          echo H1_CURRENT_LIVE_ROUTE_WALL_CLEARANCE_16_SOURCE_TESTS_PASS
       - name: Fetch pinned official Rojo 7.7.1 release
         shell: bash
         run: |
