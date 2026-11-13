@@ -1,0 +1,35 @@
+name: P0D S1 Studio solo practice isolated source preflight
+on:
+  push:
+    branches:
+      - integration/p0d-rc-first90-classic-adapter-20261113-01
+    paths:
+      - 'handoffs/P0D-RC-FIRST90-CLASSIC-ADAPTER-20261113-01/**'
+      - '.github/workflows/p0d-s1-studio-solo-preflight-20261113.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run original S1 source locks and 23-module private preview tests
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s handoffs/P0D-RC-FIRST90-CLASSIC-ADAPTER-20261113-01/tests -p 'test_*.py' -v
+      - name: Check assembly count and original protected script status
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/P0D-RC-FIRST90-CLASSIC-ADAPTER-20261113-01/tools/assemble_preview.py --assemble
+          python3 - <<'PY'
+          import json,pathlib
+          root=pathlib.Path("handoffs/P0D-RC-FIRST90-CLASSIC-ADAPTER-20261113-01/dist/TRAP_RAIDERS_S1_FIRST90_CLASSIC_PRIVATE_UNPUBLISHED")
+          lock=json.loads((root/"SOURCE_LOCK.json").read_text())
+          assert lock["source_count"]==23 and lock["unchanged_original_count"]==19
+          assert lock["studio_only_single_client_practice"] is True
+          assert lock["public_server_min_two_teams_unchanged"] is True
+          assert lock["official_rc_adopted"] is False
+          print("P0D_S1_SOLO_SOURCE_PREFLIGHT_23_PASS")
+          PY
