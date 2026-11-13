@@ -15,7 +15,11 @@ p.add_argument("--write",type=Path,required=True)
 args=p.parse_args()
 text=args.source.read_text("utf-8")
 assert text.count(START)==text.count(END)==1,"NATIVE_EXTRACT_SOURCE_DRIFT"
-body=text.split(START,1)[1].split(END,1)[0]
+source_lines=text.splitlines()
+start_line=[i for i,line in enumerate(source_lines) if line.startswith(START)]
+end_line=[i for i,line in enumerate(source_lines) if line.strip()==END]
+assert len(start_line)==len(end_line)==1 and start_line[0]<end_line[0]
+body="\n".join(source_lines[start_line[0]+1:end_line[0]])+"\n"
 assert body.count("local function qualifiesSkyScore(")==1
 assert body.count("local function invalidatesSkyRoute(")==1
 assert 'previousCarry==skyEgg' in body and 'population==1' in body
