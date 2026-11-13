@@ -115,7 +115,7 @@ jobs:
           done < <(find _p0d_solo_dist/src -type f -name '*.luau' -print0)
           test "$n" -eq 43
           echo P0D_STUDIO_SOLO_READONLY_AUDIT_43_NATIVE_LUAU_COMPILE_PASS
-      - name: Execute exact diagnostic Luau predicates in native CLI with 468 real cases
+      - name: Execute exact diagnostic Luau predicates in native CLI with 792 real cases
         shell: bash
         run: |
           set -euo pipefail
@@ -125,7 +125,7 @@ jobs:
             --write /tmp/p0d_sky_receipt_native.luau
           /tmp/p0d_luau/luau-compile /tmp/p0d_sky_receipt_native.luau >/dev/null
           /tmp/p0d_luau/luau /tmp/p0d_sky_receipt_native.luau | tee /tmp/p0d_sky_receipt_native.log
-          grep -F 'P0D_SKY_RECEIPT_NATIVE_468_ASSERTIONS_PASS' /tmp/p0d_sky_receipt_native.log
+          grep -F 'P0D_SKY_RECEIPT_NATIVE_792_ASSERTIONS_PASS' /tmp/p0d_sky_receipt_native.log
       - name: Obtain pinned Rojo 7.7.1
         shell: bash
         run: |
