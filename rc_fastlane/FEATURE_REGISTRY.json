@@ -222,6 +222,74 @@
       "original_55_unmodified": true,
       "studio_test": "NOT_TESTED",
       "verified_module_git_blob": "d5a229cafe643cdea15c54877368cc3af72552be"
+    },
+    {
+      "id": "WCS_F01_C01",
+      "summary": "Crystal Canyon elevated two-team fair entry, two Mogurones and 14s bridge/cooldown",
+      "state": "CANDIDATE_SOURCE_LOCKED_RC58_CI_PENDING_NOT_OFFICIAL",
+      "profiles": [
+        "rich51"
+      ],
+      "rollback": "FEATURE_SWITCHES.features.WCS_F01_C01.enabled=false -> exact prior rich57",
+      "independent_switch": true,
+      "source_git_blob": "7d2afad5e9b8df410ea0eb83ad962cf42ab98e71",
+      "source_script": "server/WCS_CrystalCanyon.server.luau",
+      "source_original57_preserved": true,
+      "studio_2client": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED",
+      "boot_attribute": "Rojo sets ServerStorage.P0D_RC_ENABLE_WCS_F01_C01=true only in WCS-included private candidate; missing/false runtime flag is OFF"
+    },
+    {
+      "id": "SEVEN_JOBS_PVE_V1",
+      "summary": "Seven distinct player jobs with neutral PvE moves, lobby job select and Q/mobile skill",
+      "state": "CANDIDATE_RC59_UNADOPTED",
+      "profiles": [
+        "rich51"
+      ],
+      "independent_switch": true,
+      "rollback": "FEATURE_SWITCHES.features.SEVEN_JOBS_PVE_V1.enabled=false keeps WCS58 code",
+      "author_commit": "98edf843fb8a8f6123c13a67745b216712bfe63d",
+      "original_game_hud_author_patched": true,
+      "server_owned_damage": true,
+      "studio_2client": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED"
+    },
+    {
+      "id": "EGG_RELAY_CLASSIC_V1",
+      "state": "RC60_COMBINED_SOURCE_ONLY",
+      "summary": "Original Game implements classic 1-egg close teammate handoff with HUD touch/H",
+      "source_policy_gitblob": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
+      "independent_switch": true,
+      "rollback": "FEATURE_SWITCHES.features.EGG_RELAY_CLASSIC_V1.enabled=false restores WCS+Jobs59",
+      "one_original_game_remote_store": true,
+      "studio": "NOT_TESTED"
+    },
+    {
+      "id": "STARRY_PATH_V1",
+      "state": "SOURCE_PRIVATE61_CI_NOT_YET_VERIFIED",
+      "name": "星降る橋・第三峡谷ルート",
+      "one_server_script": true,
+      "source_git_blob": "311d4c75e38f896f24c982afbc6f9d5c35e90cb4",
+      "existing_Game_Remote_Store_unchanged": true,
+      "independent_switch": true,
+      "engine": "NOT_TESTED"
+    },
+    {
+      "id": "STAR_SHARDS_V1",
+      "name": "星のかけら6個探索・コスメティック探検家称号",
+      "state": "PRIVATE63_AFTER_METEOR_SOURCE_NOT_OFFICIAL",
+      "script_count_change": 1,
+      "source_git_blob": "abd07316ae23bc0b250ebd31590986b09109ce01",
+      "independent_switch": true,
+      "no_new_Game_Remote_Store": true,
+      "progress": "per player UserId session only; duplicates rejected",
+      "reward": "visible head badge and 30-second purely cosmetic aura",
+      "rollback": "FEATURE_SWITCHES.features.STAR_SHARDS_V1.enabled=false restores meteor private62",
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "wait_seconds": 170
     }
   ],
   "next_source_adoption_contract": {

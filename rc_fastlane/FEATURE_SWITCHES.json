@@ -140,6 +140,116 @@
         "source_count": 57,
         "conclusion": "success"
       }
+    },
+    "WCS_F01_C01": {
+      "enabled": true,
+      "status": "RC58_CANDIDATE_DEFAULT_OFF_IF_MISSING_ATTR_CI_PENDING",
+      "gameplay": "Studio-only elevated Crystal Canyon/Moguron gate, route and 14-second shortcut",
+      "source": [
+        {
+          "path": "rc_fastlane/features/wcs_f01_c01/WCS_CrystalCanyon.server.luau",
+          "dest": "server/WCS_CrystalCanyon.server.luau",
+          "blob": "7d2afad5e9b8df410ea0eb83ad962cf42ab98e71"
+        }
+      ],
+      "dependency": "SCOUT_SPECIES_V1 and H1 SkyV5 existing 57-source canonical RC",
+      "runtime_off": "Unset/false ServerStorage.P0D_RC_ENABLE_WCS_F01_C01 prevents startup. Rojo project explicitly sets true only in included private RC build; operator can set false before Play.",
+      "rollback": "Set WCS_F01_C01.enabled=false and rebuild original 57-source canonical RC",
+      "native_luau": "NOT_RUN_ON_NEW_CANDIDATE_HEAD",
+      "source_exact_rojo": "NOT_RUN_ON_NEW_CANDIDATE_HEAD",
+      "engine_2client": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "fun": "NOT_TESTED"
+    },
+    "SEVEN_JOBS_PVE_V1": {
+      "enabled": true,
+      "status": "WCS_PLUS_SEVEN_JOBS_RC59_CANDIDATE_NOT_OFFICIAL",
+      "source_author_sha": "98edf843fb8a8f6123c13a67745b216712bfe63d",
+      "source_module_blob": "a7253d36cb67df47d4ba65d35af212ed1eb7b5b2",
+      "game_patch_blob": "d81b8acb89b1c243761f1b69610742812eb475a6",
+      "hud_patch_blob": "0b1d233a3040e84ad443f224ab2c6eb460ad0ffa",
+      "existing_game_authority": "one original Game/Remote/Store, no independent damage/XP save",
+      "rollback": "false skips Game/HUD patches and SevenJobsRules module, retains prior WCS-only RC58 candidate",
+      "scope": "7 neutral PvE job moves; not complete 7 PvP professions",
+      "private_studio": "NOT_TESTED",
+      "two_client": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED"
+    },
+    "EGG_RELAY_CLASSIC_V1": {
+      "enabled": true,
+      "status": "WCS_JOBS_RELAY_RC60_PRIVATE_CANDIDATE_NOT_OFFICIAL",
+      "author_policy_gitblob": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
+      "classic_one_egg_only": true,
+      "server_runtime": "Original Game uses explicit BoolValue true under ServerStorage; missing/false means OFF, Studio-only",
+      "user_controls": "H-key and touch GUI, within 8 horizontal and 4 vertical studs",
+      "duplicate_safety": "server validated egg owner, round, target, LOS and 12-second per-egg cooldown",
+      "rollback": "set enabled=false to omit patches and module, retaining WCS+SevenJobs59",
+      "official_rc": false,
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED"
+    },
+    "STARRY_PATH_V1": {
+      "enabled": true,
+      "status": "PRIVATE61_CANDIDATE_NOT_CANONICAL",
+      "feature": "WCS third route; star bridge via both shores, 16s on, 7s after real closure",
+      "source_git_blob": "311d4c75e38f896f24c982afbc6f9d5c35e90cb4",
+      "source_path": "rc_fastlane/features/star_path/StarfallPath.server.luau",
+      "dependencies": [
+        "WCS_F01_C01",
+        "SEVEN_JOBS_PVE_V1",
+        "EGG_RELAY_CLASSIC_V1"
+      ],
+      "runtime_flag": "P0D_RC_ENABLE_STARRY_PATH_V1 ServerStorage attr explicit true; nil/false OFF; Studio only",
+      "safety": "bridge remains on while live character occupies; WCS permanent safe bridge always exists",
+      "rollback": "Set enabled=false to restore exact prior private60",
+      "changes_to_Game_Store_Remote": false,
+      "engine": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED"
+    },
+    "METEOR_FOURTH_V1": {
+      "enabled": true,
+      "status": "PRIVATE62_SOURCE_CANDIDATE_NOT_CANONICAL",
+      "feature": "55s quiet + 5s warning + 22s collision bridge, fourth distinct WCS canyon route; Starfall existing third lane",
+      "source_git_blob": "4845ffa98b0b17a506a993682dc84f9de0fd5e30",
+      "source_path": "rc_fastlane/features/meteor_fourth/MeteorFourth.server.luau",
+      "dependencies": [
+        "WCS_F01_C01",
+        "SEVEN_JOBS_PVE_V1",
+        "EGG_RELAY_CLASSIC_V1",
+        "STARRY_PATH_V1"
+      ],
+      "runtime_flag": "ServerStorage BoolValue P0D_ENABLE_METEOR_SHORTCUT_V1 true only, missing/false OFF and Studio only",
+      "geometry": "WCS bank local z=-17, min 3 stud width-aware clearance to existing z=-35 Starfall and z=0 gate and +30 permanent crossing",
+      "fail_closed": "world/StarStep_01/banks/gate/safe part missing, bad geometry, duplicate runtime, invalid flag",
+      "rollback": "enabled=false preserves exact existing 61-source Place, project and locks",
+      "official_rc_adopted": false,
+      "engine_studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED"
+    },
+    "STAR_SHARDS_V1": {
+      "enabled": true,
+      "state": "PRIVATE63_METEOR_SHARDS_MOBILE_SOURCE_CANDIDATE_NOT_CANONICAL",
+      "source_script": "rc_fastlane/features/star_shards/StarShardHunt.server.luau",
+      "source_git_blob": "abd07316ae23bc0b250ebd31590986b09109ce01",
+      "prerequisites": [
+        "WCS_F01_C01",
+        "STARRY_PATH_V1",
+        "SEVEN_JOBS_PVE_V1",
+        "EGG_RELAY_CLASSIC_V1",
+        "METEOR_FOURTH_V1"
+      ],
+      "scope": "six colorful fragments on live star bridge; unique per-player server session; head badge and temporary cosmetic aura",
+      "runtime_guard": "Studio and explicit true for ServerStorage.P0D_RC_ENABLE_STAR_SHARDS_V1 and STARRY_PATH_V1; nil/false OFF",
+      "safety": "original Game/HUD/Remote/Store/score/HP/XP/paid and saves unchanged",
+      "reversible": "Set enabled=false to preserve exact existing meteor62 source/project/source+feature locks",
+      "studio_2client": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED",
+      "startup_dependency_wait_seconds": 170
     }
   }
 }

@@ -87,8 +87,8 @@
       "name": "仲間への卵リレー",
       "stage": "SOURCE",
       "release": "S2+",
-      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/219",
-      "note": "独立ルールのみ",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/pull/296",
+      "note": "クラシック1卵リレー。WCS＋7職業と同じゲームに実装するRC60候補、正式採用前はSOURCE",
       "rc_evidence": null
     },
     {
@@ -600,7 +600,47 @@
       "evidence": "https://github.com/kk051780/toy-wars-factory/tree/rc/p0d-s1-kids-rc01/rc_fastlane/features/scout_species",
       "note": "元の3種類(default/forest/star)を既存Game内で3D差別化。森は進化後最大2回の軽い攻撃・守護+1回、星は強めの1回攻撃・守護+2回、標準は従来。元55ソース不変、57/57 native+Rojo。実機未検証",
       "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43508325263"
+    },
+    {
+      "id": "P0D-059",
+      "group": "世界",
+      "name": "浮遊クリスタル峡谷・橋掘りモグロン",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/293",
+      "note": "57本完全保持＋新WCS1本。RojoはStudio限定の起動フラグを明示true、未設定なら安全停止。新HEAD CI検証待ち",
+      "source_git_blob": "7d2afad5e9b8df410ea0eb83ad962cf42ab98e71"
+    },
+    {
+      "id": "P0D-060",
+      "group": "戦闘",
+      "name": "7職業PvE専用技（初期MVP）",
+      "stage": "SOURCE",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/pull/297",
+      "note": "本体7職業フル実装とは別のPvE縦切り。RC59候補ビルドと独立QA後も公式RC採用まではSOURCE",
+      "source_git_blob": "a7253d36cb67df47d4ba65d35af212ed1eb7b5b2"
+    },
+    {
+      "id": "P0D-061",
+      "group": "世界",
+      "name": "星降る秘境・第三の橋ルート",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/issues/219",
+      "note": "峡谷の第3ルート。両岸で起動、16秒開き、在橋者がいれば閉じない。SOURCE候補・Studio未検証",
+      "source_git_blob": "311d4c75e38f896f24c982afbc6f9d5c35e90cb4"
+    },
+    {
+      "id": "P0D-062",
+      "group": "世界・収集",
+      "name": "星降る橋・6つのかけら探索と称号",
+      "stage": "SOURCE",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/pull/312",
+      "note": "元の星の橋の6地点で収集。重複不可、6/6で一時的な星エフェクトと頭上称号。セッション限定・保存/得点/XP/課金なし。候補のみ・Studio未検証；流星第四路と共存し、遅延起動170秒に対応したPRIVATE63候補",
+      "source_git_blob": "abd07316ae23bc0b250ebd31590986b09109ce01"
     }
   ],
-  "last_progress_change": "P0D-058 SOURCE->RC exact native Luau 57/57 source-exact Rojo 43508325263; RC21/58 (36.2%)"
+  "last_progress_change": "candidate row P0D-061 is SOURCE only; official 21/58 RC remains unchanged"
 }
