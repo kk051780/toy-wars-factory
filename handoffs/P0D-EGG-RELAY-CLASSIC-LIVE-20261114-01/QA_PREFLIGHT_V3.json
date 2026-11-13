@@ -4,23 +4,23 @@
   "branch": "feature/p0d-egg-relay-classic-live-20261114-01",
   "feature_id": "EGG_RELAY_CLASSIC_V1",
   "baseline": "verified-original Game and HUD B42 source Git blobs 21b866e801a53ba7ebd66132ae55fe28608750d6 and ce6707dc1f833600e1c6913504d30911b24cb2a4",
-  "current_canonical_referenced": "official first verified RC56 HEAD 947cddb5351ba95b9b27597b9ec1828a8297cd66",
-  "candidate_aggregate": "56->57 scripts only if isolated CI runs successfully",
+  "current_canonical_referenced": "official first verified RC57 HEAD 639da1af22f8fcee1e609a2637ef3bbcabf33d6f",
+  "candidate_aggregate": "57->58 scripts only if isolated CI runs successfully",
   "tested": {
     "git_remote_readback_exact_patch_anchors": "15/15 PASS",
     "source_static_invariants": "42/42 PASS",
-    "python_test_cases": "11 authored, not execution confirmed",
+    "python_test_cases": "11 authored for pinned B42 and synthetic 57->58 source fixture; execution NOT confirmed",
     "luau_native": "NOT_VERIFIED",
-    "rojo_57": "NOT_VERIFIED",
     "engine_studio": "NOT_TESTED",
     "android": "NOT_TESTED",
-    "fun": "NOT_TESTED"
+    "fun": "NOT_TESTED",
+    "rojo_58": "NOT_VERIFIED"
   },
   "source_changes": {
     "Game": "9 exact source changes",
     "HUD": "6 exact source changes",
     "new_policy": "one original pure ModuleScript",
-    "preflight_validation": "source/feature Git blob locks, duplicate refusal, policy hash, unique anchor, 2/56 source counts, staged writes after validation",
+    "preflight_validation": "source/feature Git blob locks, duplicate refusal, policy hash, unique anchor, 2/57 source counts, staged writes after validation",
     "runtime_off_switch": "ServerStorage.P0D_RC_ENABLE_EGG_RELAY_CLASSIC BoolValue false, Studio only, missing defaults ON in Studio; always OFF in production",
     "new_regression_test_file": "tests/test_apply_relay.py"
   },
@@ -30,5 +30,5 @@
   "no_merge": true,
   "no_publish": true,
   "no_paid": true,
-  "claim_limit": "Static JS exact source replacement checks do not establish native Python, Luau, Rojo or Roblox engine execution. Candidate test's 56-source fixture uses 54 dummy modules; the full real 56-source integration must be tested separately."
+  "claim_limit": "Static JS checks do not establish Python, native Luau, Rojo or Roblox engine execution. Candidate 57-source fixture uses 55 dummy modules; actual full 57-source integration must be tested via exact official checkout."
 }
