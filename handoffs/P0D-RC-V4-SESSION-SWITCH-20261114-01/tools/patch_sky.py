@@ -20,8 +20,8 @@ def transform(original: bytes) -> bytes:
     s = original.decode("utf8")
     s = once(s, 'local RunService=game:GetService("RunService")', '''local RunService=game:GetService("RunService")
 local ServerStorage=game:GetService("ServerStorage")
--- Sole server configures this before Studio Play. Default ON; NEVER remove
--- solid sky platforms mid-round while a player carries an egg.
+-- The sole server sets this before Studio Play; default remains ON and
+-- avoids removing solid routes under players in the middle of an egg chase.
 local skyEnabled=ServerStorage:GetAttribute("P0D_RC_ENABLE_H1_SKYV5")~=false''')
     s = once(s, "world.Parent=arena", '''world.Parent=arena
 world:SetAttribute("H1SkyV5EnabledAtStartup",skyEnabled)''')
