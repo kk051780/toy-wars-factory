@@ -44,8 +44,8 @@ for vals in itertools.product((False,True),(False,True),
     lines.append(f'assert({expr}=={q(expected)}, "INVALIDATE_{count}")')
     lines.append("passed+=1")
     count+=1
-assert count==468, count
-lines.append('assert(passed==468)')
-lines.append('print("P0D_SKY_RECEIPT_NATIVE_468_ASSERTIONS_PASS")')
+assert count==792, count
+lines.append('assert(passed==792)')
+lines.append('print("P0D_SKY_RECEIPT_NATIVE_792_ASSERTIONS_PASS")')
 args.write.write_text("\n".join(lines)+"\n","utf-8")
 print("P0D_EXACT_DIAGNOSTIC_LUAU_PREDICATE_GENERATED",count)
