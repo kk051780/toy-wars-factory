@@ -1,0 +1,48 @@
+{
+  "schema": "P0D_RC_V4_SESSION_SWITCH_STATIC_SOURCE_DELIVERY_V1",
+  "date_jst": "2026-11-14",
+  "feature_id": "V4_SIX_SKILL_SESSION",
+  "current_canonical_rc_branch": "rc/p0d-s1-kids-rc01",
+  "current_canonical_rc_last_known_head": "50bf5b4851fc0eb7c16052f578d6360ec54cd63a",
+  "canonical_rich51_source_sha": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
+  "downloaded_actual_canonical_rc_artifact_id": 14066271707,
+  "original_rc_place_sha256": "6c9d36d6944301c4fb7317e087f877f5cdeb513b38213608976da4cce1c6bb65",
+  "modified_private_place_sha256": "58f19613545ea358c630ba6a6fedbaef8b6c5b855dd9143ae48054a34ebe6e20",
+  "modified_private_binary_location": "OWNER_CHAT_ONLY_NOT_GITHUB",
+  "original_game_scripts": 51,
+  "resulting_game_scripts": 51,
+  "unchanged_source_bodies": 49,
+  "original_github_blobs": {
+    "V4TrainingBridge": "326ec2cadbc71ef9d1d3a08e797479d1c6e08203",
+    "V4TrialOverlay": "0859702fdd050e0b66a2c0672c419e5c7adb812a"
+  },
+  "new_github_blobs": {
+    "V4TrainingBridge": "06491af532efb6a0e9c29e6ebed7f12b200df69e",
+    "V4TrialOverlay": "90ce2e89b59385d25d2405c91deb00074567abd4"
+  },
+  "actual_test_result": {
+    "native_luau_compiled_scripts": 51,
+    "native_compile_failed": 0,
+    "local_unit_tests_passed": 13,
+    "local_unit_tests_failed": 0,
+    "roblox_studio_engine": "NOT_TESTED"
+  },
+  "server_switch_attribute": "ServerStorage.P0D_RC_ENABLE_V4_SESSION",
+  "status_attribute": "ReplicatedStorage.P0D_RC_V4_SESSION_ACTIVE",
+  "default": "ON",
+  "off_value": false,
+  "added_datastore_writer": false,
+  "modified_game": false,
+  "modified_original_store": false,
+  "modified_remote": false,
+  "modified_score": false,
+  "modified_pvp_buffs": false,
+  "original_fifty_one_script_preview": "SESSION_XP_ONLY_NOT_PERSISTENT",
+  "public_release": false,
+  "paid": false,
+  "official_rc_adopted": false,
+  "rolling_back": "restore original pair of Git blobs / pinned source SHA for original rich51; rich47 profile fallback",
+  "owner_qa_zip_sha256": "0afff125c26234de98427cf3c01d713604a6bc00d582d17da343e0f5101e433e",
+  "next_owner": "#220 sole RC writer for source select + one canonical Actions build; OWNER Studio at batch publish gate",
+  "score_last_official": 75
+}
