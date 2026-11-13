@@ -1,20 +1,21 @@
 {
-  "schema": "P0D_PUBLIC_SOURCE_V1_READBACK_MANIFEST_CANDIDATE",
-  "created_jst": "2026-11-13",
+  "schema": "P0D_PUBLIC_SOURCE_V1_GIT_BLOB_LOCKS",
+  "date_jst": "2026-11-13",
   "game_id": "TRAP_RAIDERS",
   "work_id": "p0d-siege-v19",
+  "brand": "EGG RAID RUMBLE",
   "feature_slice": "GAME-DESIGN-COOPERATIVE-RUMBLE-LINK-CLIENT-PREVIEW-20261113-01",
-  "owner_issue": "https://github.com/kk051780/toy-wars-factory/issues/219#issuecomment-6844778859",
-  "source_commit_before_manifest": "d362ecdfede48222d36d4cea65e08d6afd149b0a",
-  "purpose": "Standalone optional client-presentation preview only; no gameplay authority",
+  "claim": "#219 issuecomment-6844778859",
+  "upstream_base_sha": "de8cb430a929e99f97bebcfb3e01633312b26df1",
+  "purpose": "Optional isolated read-only teammate presentation (4 cues); no Game/Remote/XP/score/save mutation",
   "files": [
     {
       "path": "src/RumbleLinkCueRules.luau",
-      "git_blob_sha1": "27148838a55141e878bfb5b126824d2b6dc2bb27"
+      "git_blob_sha1": "0eb806b1f8565d91e5e797712e720e0395c7d1ee"
     },
     {
       "path": "demo/RumbleLinkPreview.client.luau",
-      "git_blob_sha1": "7f763c95d5f77fdbbb9424a13cc376e0c1ed9c6a"
+      "git_blob_sha1": "7f6ada41142da6fd4d97ac23ee1cbc94d8a412f3"
     },
     {
       "path": "default.project.json",
@@ -22,32 +23,34 @@
     },
     {
       "path": "README.md",
-      "git_blob_sha1": "b5cde9ce40ffa285d5f7b97fff9fc071e0bf7240"
+      "git_blob_sha1": "5da48ff1a7eedd9e12f11d4f21075b6614b23612"
     },
     {
       "path": "tests/test_contract.py",
-      "git_blob_sha1": "3b22b1f5f815d1708250f20de425b1841d060b30"
+      "git_blob_sha1": "e87959533e49d3a0e21b26872e39cf426e68f0af"
+    },
+    {
+      "path": "tests/native_contract.luau",
+      "git_blob_sha1": "0dd2efcff76696decea2995ffe9a2bbae3a91979"
+    },
+    {
+      "path": ".github/workflows/p0d-rumble-link-client-ci-20261113.yml",
+      "git_blob_sha1": "b1df86de722b7763ffa21c8264de3c7ca569f2c8",
+      "root_external": true
     }
   ],
-  "claim_limits": {
-    "original_game_code_modified": false,
-    "official_rc_adopted": false,
-    "source_only": true,
-    "python_test_file_authored": true,
-    "python_tests_against_pinned_git_commit": "NOT_EXECUTED_IN_CI",
-    "offline_draft_python_tests_passed": 17,
-    "real_native_luau": "NOT_TESTED",
+  "validations": {
+    "github_remote_readback": "DONE_FIRST_SIX_SOURCE",
+    "python_source_tests_authored": 22,
+    "python_new_pinned_ci_outcome": "NOT_VERIFIED",
+    "native_luau_vm_assertions_authored": 16,
+    "native_luau_ci_outcome": "NOT_VERIFIED",
     "real_roblox_studio": "NOT_TESTED",
+    "original_game_integration": "NOT_ADOPTED",
     "human_fun": "UNKNOWN",
-    "overall_S1_official_pct_last_reported": 75
+    "official_S1_last_pct": 75,
+    "fun_gate": "NO_GO"
   },
-  "blocked_on": "#250 product adoption + #220 sole RC source and human 2client Android FUN gate",
-  "protected": [
-    "main",
-    "merge",
-    "publish",
-    "paid",
-    "P0-A/B/C CAS",
-    "5 existing automations"
-  ]
+  "blocking_gates": "#250 PRODUCT_SELECT; #220 authentic one Game source epoch DTO and sole RC writer; Owner real 2client Android + FUN",
+  "protections": "No main/direct merge/production Roblox publish/paid/Codex/other owner branches/CAS/automations"
 }
