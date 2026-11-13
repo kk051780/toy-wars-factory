@@ -21,7 +21,9 @@ embedded=[];types=collections.Counter()
 for item in tree.iter("Item"):
     kind=item.attrib.get("class")
     if kind not in {"Script","LocalScript","ModuleScript"}:continue
-    src=item.find("./Properties/string[@name='Source']")
+    props=item.find("Properties")
+    if props is None:continue
+    src=next((n for n in props if n.attrib.get("name")=="Source"),None)
     if src is None:continue
     embedded.append(src.text or "")
     types[kind]+=1
