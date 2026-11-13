@@ -11,7 +11,7 @@ def blob(name):
  p=ROOT/"inputs"/name;b=p.read_bytes()
  return hashlib.sha1(b"blob "+str(len(b)).encode()+b"\0"+b).hexdigest()
 class ActualGameGate(unittest.TestCase):
- def test_01_original_288_v3_horde_exact(self):self.assertEqual(blob("MusouHorde.luau"),"57c70e364b721d24e9e36eaeaf8be6dfd9fca592")
+ def test_01_original_288_v3_horde_exact(self):self.assertEqual(blob("MusouHorde.luau"),"7edfda9e5a1d4ac8ae47d66ea7cf908eb8e4af6e")
  def test_02_original_287_policy_exact(self):self.assertEqual(blob("EvolutionRules.luau"),"0efca67b41e34917038fdc883c8ad34f3eb3c2e2")
  def test_03_recovery_elite_reset(self):self.assertIn("m.attackAt=now+1.5 -- fair re-entry",M)
  def test_04_cancel_dead_elite_windup(self):self.assertIn("m.tellUntil=0",M)
@@ -62,5 +62,5 @@ class ActualGameGate(unittest.TestCase):
  def test_47_store_replay_no_revision_bump(self):self.assertIn('if replay then return state,"ALREADY_EVOLVED" end',S)
  def test_48_store_validate_evo(self):self.assertIn('safeEvolutionRecord(raw.evolution)',S)
  def test_49_data_store_unmodified_name(self):self.assertIn('EGG_RUMBLE_PRIVATE_STUDIO_HATCH_DEV_V1',G)
- def test_50_policy_stage2(self):self.assertIn('NEED_ACCOUNT_LV = { [1]=10, [2]=25, [3]=40 }',E)
+ def test_50_horde_real_map_floor(self):self.assertIn("MUSOU_SOURCE_MAP_ARENA_REQUIRED",M)\n def test_51_policy_stage2(self):self.assertIn('NEED_ACCOUNT_LV = { [1]=10, [2]=25, [3]=40 }',E)
 if __name__=="__main__":unittest.main(verbosity=1)
