@@ -1,0 +1,136 @@
+name: EGG RAID RUMBLE real H1 31 source five egg A B game QA
+on:
+  push:
+    branches:
+      - experiment/p0d-egg-raid-rumble-5eggs-onegame-20261113
+permissions:
+  contents: read
+jobs:
+  full-original-game-fusion:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 27
+    env:
+      OWN: handoffs/P0D-EGG-RUMBLE-H1-SCORE-MODE-20261113
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Prove immutable original H1 and lab
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '1f63a529dc512487145cea86557d38cec7f19e03^{commit}'
+          test -z "$(git diff --name-only 1f63a529dc512487145cea86557d38cec7f19e03 HEAD -- handoffs/P0D-H1-FAST-JOY-COMBINED-20261113-01 handoffs/P0D-MULTI-EGG-SCORE-LAB-20261113-01 releases/P0D_S1_KIDS_RC01)"
+      - name: Assemble both A original-game rules and B five egg scored private Studio
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/tools/assemble.py" --mode ORIGINAL_RULES
+          python3 -B "$OWN/tools/assemble.py" --mode FIVE_EGG_STUDIO
+          python3 -B -m unittest discover -s "$OWN/tests" -p 'test_*.py' -v
+      - name: Download exact original Rojo7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/egg_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/egg_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,stat
+          from pathlib import Path
+          with zipfile.ZipFile('/tmp/egg_rojo.zip') as z:
+              names=[n for n in z.namelist() if n.split('/')[-1]=='rojo']
+              assert len(names)==1
+              p=Path('/tmp/egg_rojo')
+              p.write_bytes(z.read(names[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/egg_rojo --version | grep -F 7.7.1
+      - name: Build both original real H1 31 Luau Roblox A and B Studio Places
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/egg_rumble_out
+          /tmp/egg_rojo build "$OWN/dist/EGG_RAID_RUMBLE_H1_ORIGINAL_RULES_PRIVATE_STUDIO/default.project.json" -o /tmp/egg_rumble_out/EGG_RAID_RUMBLE_A_H1_ORIGINAL_NOT_PUBLISH.rbxlx
+          /tmp/egg_rojo build "$OWN/dist/EGG_RAID_RUMBLE_H2_SCORED_PRIVATE_STUDIO/default.project.json" -o /tmp/egg_rumble_out/EGG_RAID_RUMBLE_B_H1_FIVE_EGG_NOT_PUBLISH.rbxlx
+      - name: Independently verify each real Rojo XML exactly matches full 31 Luau sources and only original Game Remote
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import collections,hashlib,json,os,xml.etree.ElementTree as ET
+          from pathlib import Path
+          own=Path(os.environ['OWN'])
+          out=Path('/tmp/egg_rumble_out')
+          specs=[('A','EGG_RAID_RUMBLE_H1_ORIGINAL_RULES_PRIVATE_STUDIO','EGG_RAID_RUMBLE_A_H1_ORIGINAL_NOT_PUBLISH.rbxlx'),('B','EGG_RAID_RUMBLE_H2_SCORED_PRIVATE_STUDIO','EGG_RAID_RUMBLE_B_H1_FIVE_EGG_NOT_PUBLISH.rbxlx')]
+          proofs=[]
+          for trial,folder,filename in specs:
+              dist=own/'dist'/folder
+              path=out/filename
+              expected=collections.Counter(p.read_text(encoding='utf-8') for p in (dist/'src').rglob('*.luau'))
+              content=[]
+              classes=collections.Counter()
+              game=0
+              for item in ET.fromstring(path.read_bytes()).iter('Item'):
+                  k=item.attrib.get('class')
+                  if k not in ('Script','LocalScript','ModuleScript'):continue
+                  src=item.find("./Properties/string[@name='Source']")
+                  if src is None:continue
+                  classes[k]+=1
+                  content.append(src.text or '')
+                  name=item.find("./Properties/string[@name='Name']")
+                  if k=='Script' and name is not None and name.text=='Game':game+=1
+              assert classes=={'Script':2,'LocalScript':5,'ModuleScript':24},classes
+              assert collections.Counter(content)==expected,(trial,len(content),len(expected))
+              assert game==1,game
+              authorities=[s for s in content if 'remote.Name = "TrapRaidersS1Remote"' in s]
+              assert len(authorities)==1
+              assert authorities[0].count('remote.OnServerEvent:Connect(')==1
+              flag='local EXPERIMENTAL_FIVE_EGG_MODE = false' if trial=='A' else 'local EXPERIMENTAL_FIVE_EGG_MODE = RunService:IsStudio()'
+              assert flag in authorities[0]
+              proofs.append({'variant':trial,'name':filename,'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'size':path.stat().st_size,'full_game_scripts':31,'native_luau_compile':'separate step','Studio_actual_tested':False,'published':False})
+              print('EGG_RUMBLE_VARIANT_'+trial+'_ACTUAL_ROJO_FULL_GAME_31_OF_31_XML_EXACT_SINGLE_GAME_PASS')
+          (out/'REAL_A_B_SOURCE_BINARY_RECEIPTS.json').write_text(json.dumps(proofs,indent=2)+'\n',encoding='utf-8')
+          PY
+      - name: Checkout pinned upstream genuine Luau
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _egg_rumble_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build native Luau interpreter and compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _egg_rumble_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _egg_rumble_luau -B /tmp/egg_luau_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/egg_luau_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Actually native compile 31 real source scripts twice and execute original #272 genuine 5 egg 1212 native policy tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          for mode in EGG_RAID_RUMBLE_H1_ORIGINAL_RULES_PRIVATE_STUDIO EGG_RAID_RUMBLE_H2_SCORED_PRIVATE_STUDIO; do
+            n=0
+            while IFS= read -r -d '' file; do
+              /tmp/egg_luau_native/luau-compile "$file" >/dev/null
+              n=$((n+1))
+            done < <(find "$OWN/dist/$mode/src" -type f -name '*.luau' -print0)
+            test "$n" -eq 31
+            echo EGG_RUMBLE_31_LUAU_NATIVE_COMPILE_PASS
+          done
+          python3 -B handoffs/P0D-MULTI-EGG-SCORE-LAB-20261113-01/tests/generate_native_test.py --write /tmp/egg_rumble_original_policy.luau
+          /tmp/egg_luau_native/luau-compile /tmp/egg_rumble_original_policy.luau >/dev/null
+          /tmp/egg_luau_native/luau /tmp/egg_rumble_original_policy.luau | tee /tmp/egg_rumble_out/FIVE_EGG_ORIGINAL_NATIVE_RULES_LOG.txt
+          grep -E '^P0D_H2_MULTI_EGG_NATIVE_POLICY_PASS_[0-9]+$' /tmp/egg_rumble_out/FIVE_EGG_ORIGINAL_NATIVE_RULES_LOG.txt
+          test -z "$(git status --porcelain --untracked-files=no)"
+      - name: Upload A/B real source private H1 game binary - not publishable
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGG-RAID-RUMBLE-REAL-H1-FIVE-EGG-A-B-PRIVATE-31-LUAU
+          path: /tmp/egg_rumble_out/
+          if-no-files-found: error
+          retention-days: 7
