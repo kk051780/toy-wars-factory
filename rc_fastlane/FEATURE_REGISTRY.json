@@ -73,6 +73,21 @@
       "switch_scope": "whole V4 4-file bundle via profile"
     },
     {
+      "id": "V4_IDLE_FRIEND_SAFE_FIX",
+      "summary": "Studio-only six-skill idle human reminder and real same-server IsFriendsWithAsync verification",
+      "state": "RC_OVERLAY_ENABLED_PENDING_HEAD_CI",
+      "profiles": [
+        "rich51"
+      ],
+      "rollback": "Set ACTIVE.json feature_switches.V4_IDLE_FRIEND_SAFE_FIX.enabled=false and rebuild SAME profile",
+      "independent_switch": true,
+      "switch_scope": "Source-lock 2 existing V4 Script/LocalScript bodies only; no Game/Remote/Store/XP changes",
+      "original_51_source_sha": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
+      "author_fix_sha": "b7de8f8b7b4cccfb49d2d81c1ee4438d13a4b286",
+      "real_studio": "NOT_TESTED",
+      "sixskill_persistence": false
+    },
+    {
       "id": "SIX_SKILL_DURABLE",
       "summary": "Saved six-skill XP, real daily focus budget",
       "state": "SOURCE_CANDIDATE_ONLY_NOT_IN_RC",
