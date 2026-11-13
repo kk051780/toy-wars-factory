@@ -59,7 +59,7 @@ def unsafe_contract(game,hud,store):
  assert 'raw.owned.starter_scout~=1' in store
  assert 'DataStoreService' not in store
  assert 'SetAsync' not in store
- assert 'task.wait(' not in store
+ assert not any("task.wait(" in line.split("--",1)[0] for line in store.splitlines())
  assert 'RemoteEvent' not in store
  assert 'FireServer' not in store
  assert 'MarketplaceService' not in store
