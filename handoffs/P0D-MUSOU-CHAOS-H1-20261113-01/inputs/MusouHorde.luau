@@ -67,9 +67,29 @@ local function makeBody(folder: Folder, id: number, elite: boolean, p: Vector3)
     text.TextScaled=true
     text.Text=if elite then "⚠ 精鋭" else "中立兵"
     text.Parent=gui
+    -- One cheap, noninteractive replicated warning disk. Exactly the same
+    -- radius as server elite melee, never a client-authoritative hitbox.
+    local zone: Part?=nil
+    if elite then
+        local z=Instance.new("Part")
+        z.Name="ELITE_SWEEP_DANGER_RADIUS"
+        z.Shape=Enum.PartType.Ball
+        z.Size=Vector3.new(Combat.ELITE_MELEE_RANGE*2,.12,Combat.ELITE_MELEE_RANGE*2)
+        z.Position=Vector3.new(0,-2.42,0) -- body center -> feet + .08 studs
+        z.Material=Enum.Material.Neon
+        z.Color=Color3.fromRGB(253,86,71)
+        z.Transparency=1
+        z.Anchored=true
+        z.CanCollide=false
+        z.CanTouch=false
+        z.CanQuery=false
+        z.CastShadow=false
+        z.Parent=model
+        zone=z
+    end
     model.Parent=folder
     model:PivotTo(CFrame.new(p))
-    return model,body,text
+    return model,body,text,zone
 end
 local function groundTop(world: Instance,x: number,z: number): number
     -- Read actual original MapBuilder walkable parts, not a hard-coded
@@ -85,6 +105,10 @@ local function groundTop(world: Instance,x: number,z: number): number
         y=math.max(y,road.Position.Y+road.Size.Y*.5)
     end
     return y
+end
+local function anchoredToWalkable(world: Instance,m: any,p: Vector3): Vector3
+    return Vector3.new(p.X,groundTop(world,p.X,p.Z)
+        +(if m.elite then 2.5 else 1.65),p.Z)
 end
 function Horde.new(world: Instance)
     local folder=Instance.new("Folder")
@@ -111,9 +135,9 @@ function Horde:reset(round: number,now: number)
         local feetY=groundTop(self.world,x,z)
         local halfBody=if elite then 2.5 else 1.65
         local base=Vector3.new(x,feetY+halfBody,z)
-        local model,body,cue=makeBody(self.folder,i,elite,base)
+        local model,body,cue,zone=makeBody(self.folder,i,elite,base)
         table.insert(self.mobs,{
-            model=model,body=body,cue=cue,pos=base,home=base,
+            model=model,body=body,cue=cue,zone=zone,pos=base,home=base,
             hp=if elite then ELITE_HP else MINION_HP,
             maxHp=if elite then ELITE_HP else MINION_HP,
             elite=elite,deadUntil=0,attackAt=0,tellUntil=0,
@@ -125,6 +149,14 @@ function Horde:livingCount(): number
     local n=0
     for _,m in ipairs(self.mobs) do if m.hp>0 then n+=1 end end
     return n
+end
+function Horde:eliteWarningSeconds(now: number): number
+    for _,m in ipairs(self.mobs) do
+        if m.elite and m.hp>0 and m.tellUntil>now then
+            return math.clamp(m.tellUntil-now,0,1.5)
+        end
+    end
+    return 0
 end
 function Horde:hit(origin: Vector3,facing: Vector3,damage: number,now: number,ignore: Instance?): (number,number)
     if self.round<0 then return 0,0 end
@@ -149,7 +181,8 @@ function Horde:hit(origin: Vector3,facing: Vector3,damage: number,now: number,ig
                     m.flashUntil=now+.18
                     m.body.Color=Color3.fromRGB(253,231,111)
                     -- Real server-owned short knockback; no ragdoll or physics ownership.
-                    local nextPos=m.pos+unit*math.min(2,math.max(0,dist*.12))
+                    local step=m.pos+unit*math.min(2,math.max(0,dist*.12))
+                    local nextPos=anchoredToWalkable(self.world,m,step)
                     local homeDist=(nextPos-m.home).Magnitude
                     if homeDist<22 then
                         m.pos=nextPos
@@ -162,6 +195,7 @@ function Horde:hit(origin: Vector3,facing: Vector3,damage: number,now: number,ig
                         -- windup/target so a dead elite cannot strike after respawn.
                         m.tellUntil=0
                         m.target=nil
+                        if m.zone then m.zone.Transparency=1 end
                         m.deadUntil=now+8
                         m.attackAt=now+9.5
                         m.cue.Text=if m.elite then "💥 精鋭撃破！" else "💥 撃破！"
@@ -187,6 +221,7 @@ function Horde:tick(now: number,players: {Player},healthy: (Player)->(boolean,Ba
                 m.attackAt=now+1.5 -- fair re-entry; no instant hit on respawn
                 m.tellUntil=0
                 m.target=nil
+                if m.zone then m.zone.Transparency=1 end
                 m.flashUntil=0
                 m.body.Color=if m.elite then Color3.fromRGB(120,75,175) else Color3.fromRGB(68,151,107)
                 m.model:PivotTo(CFrame.new(m.home))
@@ -230,12 +265,14 @@ function Horde:tick(now: number,players: {Player},healthy: (Player)->(boolean,Ba
                 end
                 m.tellUntil=0
                 m.target=nil
+                if m.zone then m.zone.Transparency=1 end
                 m.attackAt=now+4
                 m.cue.Text="精鋭：回避できた？"
             elseif m.elite and nearest and now>=m.attackAt and m.tellUntil==0 and nearestDist<12 then
                 m.tellUntil=now+1.5
                 m.target=nearest
-                m.cue.Text="⚠ 1.5秒後に強撃！"
+                if m.zone then m.zone.Transparency=.62 end
+                m.cue.Text="⚠ 赤い円の外へ！ 1.5秒"
                 m.body.Color=Color3.fromRGB(238,83,75)
             elseif not m.elite and nearest and now>=m.attackAt
                 and canStrike(nearest,false) then
@@ -249,7 +286,8 @@ function Horde:tick(now: number,players: {Player},healthy: (Player)->(boolean,Ba
                 local ok,root=healthy(nearest)
                 if ok and root then
                     local unit=horizontal(m.pos,root.Position)
-                    local nextPos=m.pos+unit*math.min(nearestDist-4.5,dt*(if m.elite then 2.8 else 3.4))
+                    local step=m.pos+unit*math.min(nearestDist-4.5,dt*(if m.elite then 2.8 else 3.4))
+                    local nextPos=anchoredToWalkable(self.world,m,step)
                     if (nextPos-m.home).Magnitude<22 then
                         -- Never cross a solid wall for chase. Do not pathfind hundreds of units.
                         local params=RaycastParams.new()
