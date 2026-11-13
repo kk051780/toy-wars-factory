@@ -192,12 +192,14 @@
       ],
       "new_source": "server/EggRelayPolicy.luau",
       "mode": "ONE_EGG_ONLY_FIVE_EGG_DISABLED",
-      "runtime_default": "OFF: ServerStorage BoolValue P0D_RC_ENABLE_EGG_RELAY_CLASSIC must exist with Value=true before Studio Play",
+      "runtime_default": "No child or false = OFF; private preview build explicitly creates child true; published server always OFF via Studio guard",
       "rollback": "Set EGG_RELAY_CLASSIC_V1.enabled=false to reconstruct exact prior WCS+7Jobs59",
       "official_rc_adopted": false,
       "engine_studio": "NOT_TESTED",
       "android": "NOT_TESTED",
-      "owner_fun": "NOT_TESTED"
+      "owner_fun": "NOT_TESTED",
+      "preview_boot": "When build enabled=true, private Rojo project embeds one ServerStorage BoolValue P0D_RC_ENABLE_EGG_RELAY_CLASSIC with Value=true; when disabled omit child and restore old59",
+      "integration_ci": "REQUIRES_EXACT_HEAD_SOURCE60_NATIVE_AND_ROJO_BOOLVALUE_PRESENT_VERIFICATION"
     }
   }
 }
