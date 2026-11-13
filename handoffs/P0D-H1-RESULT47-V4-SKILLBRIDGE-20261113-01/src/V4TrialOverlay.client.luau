@@ -4,6 +4,7 @@
 local RunService=game:GetService("RunService")
 if not RunService:IsStudio() then return end
 local Players=game:GetService("Players")
+local UserInputService=game:GetService("UserInputService")
 local player=Players.LocalPlayer
 if not player then return end
 local gui=Instance.new("ScreenGui")
@@ -48,6 +49,20 @@ for i,entry in ipairs(skills) do
 end
 local footer=label("Important",198,30,11,Color3.fromRGB(255,189,156))
 footer.Text="保存なし / 対戦強化なし / 課金なし"
+footer.TextWrapped=true
+-- Roblox disconnects idle clients after ~20m. Warn human; do not synthesize input.
+-- This Studio-only session preview loses XP on disconnect and must never claim 30m unattended persistence.
+local baseWarning="保存なし / 対戦強化なし / 課金なし"
+player.Idled:Connect(function(idleSeconds)
+    if idleSeconds>=18*60 then
+        footer.Text="⚠ 間もなく自動切断・修行XPは保存なし"
+    elseif idleSeconds>=14*60 then
+        footer.Text="⚠ 約20分無操作で切断・保存なし"
+    end
+end)
+UserInputService.InputBegan:Connect(function()
+    footer.Text=baseWarning
+end)
 local function render()
     local active=player:GetAttribute("P0D_V4_Active")==true
     local mode=player:GetAttribute("P0D_V4_Mode")
