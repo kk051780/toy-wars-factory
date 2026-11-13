@@ -46,7 +46,7 @@ for i,kind in ipairs(kinds) do
  task.wait(2.6)
  local now=workspace:GetServerTimeNow()
  -- Synthetic demo packets are never routed to game Remote/rewards.
- local c=Rules.accept(state,{roundId="PREVIEW_STUDIO_ONLY",seq=i,
+ local c=Rules.accept(state,{roundId="PREVIEW_STUDIO_ONLY",roundSerial=1,seq=i,
   kind=kind,team="BLUE",expiresAt=now+2},now,"BLUE")
  if c then
   token+=1
