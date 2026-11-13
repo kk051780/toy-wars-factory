@@ -159,7 +159,7 @@ def main():
     ap.add_argument("--luau",required=True)
     ap.add_argument("--compiler",required=True)
     args=ap.parse_args()
-    source=ROOT/"src"/"EvolutionRules.luau"
+    source=ROOT/"inputs"/"EvolutionRules.luau"
     c=subprocess.run([args.compiler,str(source)],capture_output=True,text=True)
     if c.returncode: raise RuntimeError(f"NATIVE COMPILER FAILED: {c.stderr}")
     print("EVOLUTION_POLICY_NATIVE_COMPILE_PASS")
