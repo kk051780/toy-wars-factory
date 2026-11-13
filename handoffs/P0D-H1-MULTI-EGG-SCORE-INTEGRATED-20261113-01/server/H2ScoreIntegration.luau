@@ -3,6 +3,7 @@
 -- ModuleScript, NOT a second enabled Script, no RemoteEvent / DataStore.
 -- DO NOT set live score mode on without OWNER/sole RC approval.
 local H2={}
+local Players=game:GetService("Players")
 local M=require(script.Parent:WaitForChild("H2ScoreRules"))
 
 local function teamName(p)
@@ -199,7 +200,16 @@ function H2.new(args)
         if state.phase=="FINISHED" then
             return {winner=state.winner or "DRAW",reason=state.finishReason or "SCORE"}
         end
+        local priorPhase=state.phase
+        local centralHolder=state.eggs.CENTRE_1.holder
         if M.advance(state,serial,math.max(0,math.floor(elapsedSeconds))) then
+            if priorPhase=="ACTIVE" and state.now>=M.REGULATION and centralHolder then
+                -- Neutral egg is reset for GOLDEN-CENTRE overtime. Clear the
+                -- original Game carry visual too, with no second ownership state.
+                for _,p in ipairs(Players:GetPlayers()) do
+                    if idFor(p)==centralHolder then args.onForcedDrop(p) end
+                end
+            end
             refresh()
             if state.phase=="FINISHED" then
                 return {winner=state.winner or "DRAW",reason=state.finishReason or "SCORE"}
