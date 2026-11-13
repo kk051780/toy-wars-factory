@@ -1,0 +1,72 @@
+--- original/PersistentHatchStore.luau
++++ proposed/PersistentHatchStore.luau
+@@ -8,6 +8,8 @@
+ local Progression=require(script.Parent:WaitForChild("ProgressionRules"))
+ -- Exact pure #287 source; inventory, XP and evolution share ONE profile key.
+ local Evolution=require(script.Parent:WaitForChild("EvolutionRules"))
++-- Optional six-skill migration is SAME PROFILE, never another DataStore key.
++local SixSkill=require(script.Parent:WaitForChild("SixSkillAtomicProfile"))
+ Store.MAX_PROGRESS_ROUNDS=Progression.MAX_RECORDED_ROUNDS
+ Store.SCHEMA=1
+ Store.MAX_RECEIPTS=2048 -- fail closed when full; NEVER silently evict replay keys
+@@ -185,7 +187,8 @@
+             or Store.ITEMS[item]~=true or item=="starter_scout" then return false end
+     end
+     if not safeProgressRecord(raw.progress)
+-        or not safeEvolutionRecord(raw.evolution) then return false end
++        or not safeEvolutionRecord(raw.evolution)
++        or not SixSkill.valid(raw.trainingV4) then return false end
+     return true
+ end
+ local function normalized(raw:any)
+@@ -195,7 +198,8 @@
+         schema=Store.SCHEMA,revision=raw.revision,
+         owned=copyMap(raw.owned),receipts=copyMap(raw.receipts),
+         equipped=raw.equipped,
+-        progress=cloneProgress(raw.progress),evolution=cloneEvolution(raw.evolution)
++        progress=cloneProgress(raw.progress),evolution=cloneEvolution(raw.evolution),
++        trainingV4=if raw.trainingV4~=nil then SixSkill.clone(raw.trainingV4) else nil
+     }
+ end
+ function Store.toRulesRecord(persistent:any)
+@@ -441,4 +445,40 @@
+     if not validReceipt(id) then return nil end
+     return id
+ end
++-- PROPOSAL ONLY. Canonical Store-author must accept + test before using.
++-- The original schema=1 and EXACT original U_<real full UserId> key are preserved.
++-- DataStore callback is PURE, no task.wait/no receipt rerolls or external calls.
++function Store.settleSixSkill(store:any,uid:any,canonicalGrant:any)
++    local key=userKey(uid)
++    if not key or not store or type(canonicalGrant)~="table" then
++        return false,nil,"INVALID_STORE_OR_GRANT" end
++    -- Immutable server-certified snapshot before UpdateAsync potentially retries.
++    local ticket={
++        receipt=canonicalGrant.receipt,
++        utcStart=canonicalGrant.utcStart,
++        utcEnd=canonicalGrant.utcEnd,
++        friendCount=canonicalGrant.friendCount,
++        selectedSkill=canonicalGrant.selectedSkill,
++        verifiedByCanonicalGame=canonicalGrant.verifiedByCanonicalGame,
++    }
++    local ok,updated=pcall(function()
++        return store:UpdateAsync(key,function(original)
++            local nextRecord=normalized(original)
++            if not nextRecord then return nil end -- corrupted original: abort
++            local six,status=SixSkill.settle(nextRecord.trainingV4,uid,ticket)
++            if not six then return nil end
++            if status=="ALREADY_SETTLED" then return nextRecord end
++            nextRecord.trainingV4=six
++            nextRecord.revision+=1
++            if not Store.validate(nextRecord) then return nil end
++            return nextRecord
++        end)
++    end)
++    if not ok or not Store.validate(updated) or not updated.trainingV4
++        or type(updated.trainingV4.receipts)~="table"
++        or updated.trainingV4.receipts[ticket.receipt]~=true then
++        return false,nil,"TRAINING_WRITE_NOT_CONFIRMED"
++    end
++    return true,updated,"PERSISTED_OR_ALREADY_SETTLED"
++end
+ return Store
