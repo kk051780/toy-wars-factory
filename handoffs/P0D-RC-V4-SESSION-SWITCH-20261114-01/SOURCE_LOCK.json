@@ -1,48 +1,58 @@
 {
-  "schema": "P0D_RC_V4_SESSION_SWITCH_STATIC_SOURCE_DELIVERY_V1",
+  "schema": "P0D_RC_RICH51_TWO_FEATURE_SWITCH_CANDIDATE_V2",
   "date_jst": "2026-11-14",
-  "feature_id": "V4_SIX_SKILL_SESSION",
-  "current_canonical_rc_branch": "rc/p0d-s1-kids-rc01",
-  "current_canonical_rc_last_known_head": "50bf5b4851fc0eb7c16052f578d6360ec54cd63a",
-  "canonical_rich51_source_sha": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
-  "downloaded_actual_canonical_rc_artifact_id": 14066271707,
-  "original_rc_place_sha256": "6c9d36d6944301c4fb7317e087f877f5cdeb513b38213608976da4cce1c6bb65",
-  "modified_private_place_sha256": "58f19613545ea358c630ba6a6fedbaef8b6c5b855dd9143ae48054a34ebe6e20",
-  "modified_private_binary_location": "OWNER_CHAT_ONLY_NOT_GITHUB",
-  "original_game_scripts": 51,
-  "resulting_game_scripts": 51,
-  "unchanged_source_bodies": 49,
-  "original_github_blobs": {
-    "V4TrainingBridge": "326ec2cadbc71ef9d1d3a08e797479d1c6e08203",
-    "V4TrialOverlay": "0859702fdd050e0b66a2c0672c419e5c7adb812a"
+  "status": "SOURCE_CANDIDATE_NOT_YET_OFFICIAL_RC",
+  "base_canonical_rc_sha_last_known": "50bf5b4851fc0eb7c16052f578d6360ec54cd63a",
+  "base_canonical_rich51_source_commit": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
+  "base_verified_canonical_rc_artifact_id": 14066271707,
+  "base_verified_real_place_sha256": "6c9d36d6944301c4fb7317e087f877f5cdeb513b38213608976da4cce1c6bb65",
+  "new_actual_locally_generated_private_rbxlx_filename": "P0D_RC_RICH51_V4_AND_SKY_SWITCH_PRIVATE.rbxlx",
+  "new_actual_locally_generated_private_rbxlx_sha256": "1ecabaad4a52c6107ac30b4dfe3740373a9afcff35708b0cca94013a53a54d1d",
+  "new_place_size_bytes": 473266,
+  "private_place_available_in_owner_chat_only": true,
+  "source_count": 51,
+  "original_source_unchanged": 48,
+  "changed_original_sources": [
+    "Script:H1FunWorld",
+    "Script:V4TrainingBridge",
+    "LocalScript:V4TrialOverlay"
+  ],
+  "gitblobs": {
+    "h1_fun_world_old": "7a90affd4eb7eebcdfba39d833a2875ff665d5cf",
+    "h1_fun_world_new": "6e8324bba70a25ba0348a3dfae807f9c9a2e827a",
+    "v4_bridge_old": "326ec2cadbc71ef9d1d3a08e797479d1c6e08203",
+    "v4_bridge_new": "06491af532efb6a0e9c29e6ebed7f12b200df69e",
+    "v4_overlay_old": "0859702fdd050e0b66a2c0672c419e5c7adb812a",
+    "v4_overlay_new": "90ce2e89b59385d25d2405c91deb00074567abd4"
   },
-  "new_github_blobs": {
-    "V4TrainingBridge": "06491af532efb6a0e9c29e6ebed7f12b200df69e",
-    "V4TrialOverlay": "90ce2e89b59385d25d2405c91deb00074567abd4"
-  },
-  "actual_test_result": {
-    "native_luau_compiled_scripts": 51,
-    "native_compile_failed": 0,
-    "local_unit_tests_passed": 13,
-    "local_unit_tests_failed": 0,
-    "roblox_studio_engine": "NOT_TESTED"
-  },
-  "server_switch_attribute": "ServerStorage.P0D_RC_ENABLE_V4_SESSION",
-  "status_attribute": "ReplicatedStorage.P0D_RC_V4_SESSION_ACTIVE",
-  "default": "ON",
-  "off_value": false,
-  "added_datastore_writer": false,
-  "modified_game": false,
-  "modified_original_store": false,
-  "modified_remote": false,
-  "modified_score": false,
-  "modified_pvp_buffs": false,
-  "original_fifty_one_script_preview": "SESSION_XP_ONLY_NOT_PERSISTENT",
-  "public_release": false,
-  "paid": false,
+  "switches": [
+    {
+      "id": "V4_SIX_SKILL_SESSION",
+      "server_attr": "ServerStorage.P0D_RC_ENABLE_V4_SESSION",
+      "default": true,
+      "off_effect": "hide V4 8 preview pads and overlay; no V4 session XP; no offline backlog",
+      "session_xp_only": true
+    },
+    {
+      "id": "H1_SKYV5",
+      "server_attr": "ServerStorage.P0D_RC_ENABLE_H1_SKYV5",
+      "default": true,
+      "boot_only": true,
+      "off_effect": "omit sky castle routes and island; preserve sea and moving fantasy creatures"
+    }
+  ],
+  "native_luau_real_embedded_source_compile": "51/51 PASS LOCAL",
+  "python_actual_xml_and_negative_cases": "17/17 PASS LOCAL",
+  "genuine_roblox_engine": "NOT_TESTED",
+  "android": "NOT_TESTED",
+  "studio_2client": "NOT_TESTED",
+  "owner_fun": "NOT_TESTED",
+  "six_skill_persistent_in_rc": false,
+  "original_game_store_remote_modified": false,
   "official_rc_adopted": false,
-  "rolling_back": "restore original pair of Git blobs / pinned source SHA for original rich51; rich47 profile fallback",
-  "owner_qa_zip_sha256": "0afff125c26234de98427cf3c01d713604a6bc00d582d17da343e0f5101e433e",
-  "next_owner": "#220 sole RC writer for source select + one canonical Actions build; OWNER Studio at batch publish gate",
-  "score_last_official": 75
+  "published": false,
+  "paid": false,
+  "main_changed": false,
+  "rollback_source_commit": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
+  "source_assembly": "tools/assemble_two_switches.py --assemble, then existing canonical RC Rojo build once after #220 adoption"
 }
