@@ -1,7 +1,7 @@
 --!strict
 -- S2+ OPTIONAL physical shortcut choke. SOURCE_ONLY, NOT S1 or RC integrated.
 -- Two mirror-symmetric doors gate the actual H1 SEA route at z=-22.
--- The original central road (z>=12) and SKY route (z=18) remain free.
+-- Free outer grass detours (z>=12), SKY route (z=18) remain available.
 -- Single original Game server must publish ONE GateRules snapshot to BOTH.
 local GateRouteOverlay = {}
 
