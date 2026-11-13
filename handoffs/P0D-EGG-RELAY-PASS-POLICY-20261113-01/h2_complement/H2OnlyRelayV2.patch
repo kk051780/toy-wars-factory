@@ -1,0 +1,40 @@
+--- original/H2FiveEggRules.luau
++++ candidate/H2FiveEggRules.luau
+@@ -182,4 +182,37 @@
+     return true
+ end
+ 
++-- P0D-EGG-RELAY-001 complement to #296 classic-only single-Game feature.
++-- This pure extension touches only existing H2FiveEggRules state.
++-- Canonical Game must establish BOTH players' current team, proximity, LOS,
++-- life/stun state and per-egg cooldown before calling this function.
++function Rules.relayWithVersion(m: any, eggId: any, expectedSeq: any,
++        fromId: any, toId: any, playerTeam: any): (boolean, string, number?)
++    if type(m)~="table" or m.active~=true then return false,"INACTIVE",nil end
++    if type(eggId)~="string" or OWNERS[eggId]==nil
++        or type(expectedSeq)~="number" or expectedSeq~=expectedSeq
++        or expectedSeq<0 or expectedSeq%1~=0 or expectedSeq>9007199254740991
++        or not uid(fromId) or not uid(toId) or fromId==toId
++        or not team(playerTeam) then return false,"INVALID_ARGUMENTS",nil end
++    if type(m.eggs)~="table" or type(m.carryByPlayer)~="table"
++        or type(m.events)~="number" or m.events<0 or m.events%1~=0 then
++        return false,"MISSING_AUTHORITY",nil
++    end
++    -- Refuse any already-corrupted world instead of mutating two divergent views.
++    if not Rules.assertConserved(m) then return false,"INVALID_WORLD_STATE",nil end
++    if m.carryByPlayer[toId]~=nil then return false,"TARGET_OCCUPIED",nil end
++    if m.carryByPlayer[fromId]~=eggId then return false,"STALE_EGG_CARRIER",nil end
++    local egg=m.eggs[eggId]
++    if egg==nil or egg.state~="CARRIED" or egg.holder~=fromId
++        or egg.controller~=playerTeam then return false,"INCONSISTENT_CARRIER",nil end
++    if egg.transferSeq~=expectedSeq then return false,"STALE_TRANSFER_VERSION",nil end
++    -- No yield; this is one in-memory server transaction, not a second writer.
++    m.carryByPlayer[fromId]=nil
++    m.carryByPlayer[toId]=eggId
++    egg.holder=toId
++    egg.transferSeq+=1
++    m.events+=1
++    return true,"RELAY",egg.transferSeq
++end
++
+ return Rules
