@@ -589,7 +589,7 @@ local function hasBoundAllyNearby(player: Player): boolean
 end
 -- No target, position, duration, speed or damage is trusted from the client.
 local function applyNet(player: Player,data)
-    if type(data)~="table" or data.action~="NET_THROW" then return end
+    if not RunService:IsStudio() or type(data)~="table" or data.action~="NET_THROW" then return end
     if not Rules.validSeq(data.seq,lastSeq[player] or 0) then return end
     lastSeq[player]=data.seq
     local now=serverNow()
@@ -649,7 +649,7 @@ local function applyNet(player: Player,data)
     broadcast()
 end
 local function applyBreakOrRescue(player: Player,data)
-    if type(data)~="table" or (data.action~="BREAK_FREE" and data.action~="RESCUE") then return end
+    if not RunService:IsStudio() or type(data)~="table" or (data.action~="BREAK_FREE" and data.action~="RESCUE") then return end
     if not Rules.validSeq(data.seq,lastSeq[player] or 0) then return end
     lastSeq[player]=data.seq
     if match.phase~="ACTIVE" then return end
