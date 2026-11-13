@@ -58,6 +58,9 @@ function Guide.view(phase:any,elapsed:any,state:any,data:any):any
         return cue("RESCUE","🤝 仲間がつかまった！「救助」で助けよう")
     end
     if bool(data.carrying) then
+        if data.mode=="CLASSIC" and data.ownEggSafe==false then
+            return cue("RECOVER","⚠ 自陣の卵も盗まれた！仲間と取り戻そう")
+        end
         return cue("RETURN",if data.mode=="SCORE_5"
             then "🥚 卵を持って自陣の金庫へ！"
             else "🥚 敵の卵を持って自陣の台へ！")
