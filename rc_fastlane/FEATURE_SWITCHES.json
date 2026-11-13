@@ -189,6 +189,25 @@
       "studio": "NOT_TESTED",
       "android": "NOT_TESTED",
       "owner_fun": "NOT_TESTED"
+    },
+    "STARRY_PATH_V1": {
+      "enabled": true,
+      "status": "PRIVATE61_CANDIDATE_NOT_CANONICAL",
+      "feature": "WCS third route; star bridge via both shores, 16s on, 7s after real closure",
+      "source_git_blob": "49f57b6d99357205e9c0b9a720d74ccbab947a87",
+      "source_path": "rc_fastlane/features/star_path/StarfallPath.server.luau",
+      "dependencies": [
+        "WCS_F01_C01",
+        "SEVEN_JOBS_PVE_V1",
+        "EGG_RELAY_CLASSIC_V1"
+      ],
+      "runtime_flag": "P0D_RC_ENABLE_STARRY_PATH_V1 ServerStorage attr explicit true; nil/false OFF; Studio only",
+      "safety": "bridge remains on while live character occupies; WCS permanent safe bridge always exists",
+      "rollback": "Set enabled=false to restore exact prior private60",
+      "changes_to_Game_Store_Remote": false,
+      "engine": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED"
     }
   }
 }
