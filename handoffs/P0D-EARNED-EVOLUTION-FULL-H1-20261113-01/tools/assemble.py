@@ -14,7 +14,7 @@ DIST=OWN/"dist/EGG_RAID_RUMBLE_EARNED_EVOLUTION_FULL_H1_PRIVATE_STUDIO_ONLY"
 OVERRIDES={
  "server/Game.server.luau":("Game.server.luau","8b5fdf62f764ab6c963758d699cdfc681ed2ef96"),
  "client/HUD.client.luau":("HUD.client.luau","8c83efc18f63cea077de3dc3a8006bc11f05200c"),
- "server/PersistentHatchStore.luau":("PersistentHatchStore.luau","6c8b86763977eb11adba2d3159635c342077aa7a"),
+ "server/PersistentHatchStore.luau":("PersistentHatchStore.luau","7e00a53e72479ffa643556ae5fe07c931f7507e"),
  "server/MusouHorde.luau":("MusouHorde.luau","57c70e364b721d24e9e36eaeaf8be6dfd9fca592"),
  "server/EvolutionRules.luau":("EvolutionRules.luau","0efca67b41e34917038fdc883c8ad34f3eb3c2e2"),
 }
