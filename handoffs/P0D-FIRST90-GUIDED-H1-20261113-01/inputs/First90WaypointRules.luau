@@ -33,7 +33,7 @@ function Nav.select(phase:any,elapsed:any,team:any,mode:any,step:any,
         if type(egg)=="table" and type(egg.id)=="string" and #egg.id<=3
             and egg.available==true and point(egg) and
             (egg.owner=="RED" or egg.owner=="BLUE" or egg.owner=="NEUTRAL")
-            and (mode=="SCORE_5" or egg.owner==opposite) then
+            and (egg.owner==opposite or (mode=="SCORE_5" and egg.owner=="NEUTRAL")) then
             local dx=egg.x-origin.x
             local dz=egg.z-origin.z
             local dist2=dx*dx+dz*dz
