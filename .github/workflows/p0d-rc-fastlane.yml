@@ -1,8 +1,8 @@
-name: P0D canonical RC fast-lane Studio build
+name: P0D private60 stacked WCS + SevenJobs + Classic egg relay candidate
 on:
   push:
     branches:
-      - rc/p0d-s1-kids-rc01
+      - feature/p0d-wcs-jobs-relay-private60-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -139,6 +139,23 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_seven_jobs_pve.py --dist "$DIST"
           fi
+      - name: Pin original 9+6 anchored classic relay author code and pure policy
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f1c0866423c2c1d36a5cd8eafe8cee7558b1a1dd
+          path: _egg
+          persist-credentials: false
+      - name: Apply source-locked 59 to 60 one-egg relay on WCS plus SevenJobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _egg rev-parse HEAD)" = f1c0866423c2c1d36a5cd8eafe8cee7558b1a1dd
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_relay_classic_private60.py --dist "$DIST" --enabled off
+            python3 -B rc_fastlane/apply_relay_classic_private60.py --dist "$DIST" --enabled on
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -167,7 +184,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + 1)")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -232,7 +249,7 @@ jobs:
           species_enabled=(p=='rich51' and flags['features']['SCOUT_SPECIES_V1']['enabled'])
           wcs_enabled=(p=='rich51' and flags['features']['WCS_F01_C01']['enabled'])
           seven_enabled=(p=='rich51' and flags['features']['SEVEN_JOBS_PVE_V1']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled),'rich47':47,'legacy21':21}[p]
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+1,'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -323,6 +340,10 @@ jobs:
           else:
               assert titles[('ModuleScript','SevenJobsRules')]==0
           if p=='rich51':
+              assert titles[('ModuleScript','EggRelayPolicy')]==1
+              assert sum('applyClassicEggRelay' in src for src in included)==1
+              assert sum('relayButton.MouseButton1Click:Connect(fireClassicEggRelay)' in src for src in included)==1
+          if p=='rich51':
               assert titles[('Script','V4TrainingBridge')]==1
               assert titles[('LocalScript','V4TrialOverlay')]==1
           if p=='rich47':
@@ -343,6 +364,8 @@ jobs:
             'existing_three_scout_species_included':bool(species_enabled),
             'wcs_crystal_canyon_moguron_included':bool(wcs_enabled),
             'seven_jobs_neutral_pve_included':bool(seven_enabled),
+            'classic_one_egg_relay_source_included':bool(p=='rich51'),
+            'classic_relay_five_egg_mode':'NOT_SUPPORTED',
             'seven_jobs_pvp_full_implementation':False,
             'seven_jobs_engine':'NOT_TESTED',
             'wcs_engine_physics':'NOT_TESTED',
