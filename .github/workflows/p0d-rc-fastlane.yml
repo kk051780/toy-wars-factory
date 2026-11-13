@@ -366,6 +366,18 @@ jobs:
               assert sum('GetAttribute("P0D_RC_ENABLE_SEVEN_JOBS_PVE")' in src for src in included)==1
           else:
               assert titles[('ModuleScript','SevenJobsRules')]==0
+          boot_values=[]
+          for inst in ET.fromstring(target.read_bytes()).iter('Item'):
+              if inst.get('class')!='BoolValue': continue
+              name=inst.find("./Properties/string[@name='Name']")
+              if name is None or name.text!='P0D_RC_ENABLE_EGG_RELAY_CLASSIC': continue
+              prop=inst.find("./Properties/bool[@name='Value']")
+              boot_values.append(None if prop is None else prop.text)
+          assert boot_values==(['true'] if relay_enabled else []),('RELAY_BOOLVALUE_MISSING_OR_DUPLICATE',boot_values)
+          proj=json.loads((base/'default.project.json').read_text('utf8'))
+          child=proj['tree'].get('ServerStorage',{}).get('P0D_RC_ENABLE_EGG_RELAY_CLASSIC')
+          assert child==({"$className":"BoolValue","$properties":{"Value":True}} if relay_enabled else None),('RELAY_PROJECT_BOOT_MISMATCH',child)
+          print('P0D_RELAY_REAL_ROJO_BOOT_BOOLVALUE_SOURCE_CONTRACT_PASS',relay_enabled)
           if relay_enabled:
               assert jobs_enabled and wcs_enabled
               assert titles[('ModuleScript','EggRelayPolicy')]==1
