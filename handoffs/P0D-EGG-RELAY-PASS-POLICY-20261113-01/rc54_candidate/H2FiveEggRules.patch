@@ -1,0 +1,32 @@
+--- original/H2FiveEggRules.luau
++++ candidate/H2FiveEggRules.luau
+@@ -182,4 +182,29 @@
+     return true
+ end
+ 
++-- One canonical H2 transition for team-to-team carried egg relay. NO score bonus.
++-- Called exclusively by original Game after full server validation; no yield.
++function Rules.relay(m: any,fromId: any,toId: any,playerTeam: any): (boolean,string)
++    if type(m)~="table" or m.active~=true then return false,"INACTIVE" end
++    if not uid(fromId) or not uid(toId) or fromId==toId or not team(playerTeam) then
++        return false,"INVALID"
++    end
++    if type(m.carryByPlayer)~="table" or type(m.eggs)~="table" then
++        return false,"MISSING_AUTHORITY_STATE"
++    end
++    if m.carryByPlayer[toId]~=nil then return false,"TARGET_OCCUPIED" end
++    local id=m.carryByPlayer[fromId]
++    if id==nil then return false,"NOT_CARRYING" end
++    local egg=m.eggs[id]
++    if not egg or egg.state~="CARRIED" or egg.holder~=fromId
++        or egg.controller~=playerTeam then return false,"INCONSISTENT_CARRIER" end
++    -- All validation precedes updates. This function does not yield.
++    m.carryByPlayer[fromId]=nil
++    m.carryByPlayer[toId]=id
++    egg.holder=toId
++    egg.transferSeq+=1
++    m.events+=1
++    return true,"RELAY"
++end
++
+ return Rules
