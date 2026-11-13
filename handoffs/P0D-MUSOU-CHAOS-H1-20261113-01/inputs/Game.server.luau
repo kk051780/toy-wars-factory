@@ -776,6 +776,8 @@ snapshotFor = function(player: Player)
         -- Read-only view; never accepts mob hit or net outcome from the client.
         musouActive = RunService:IsStudio() and match.phase=="ACTIVE",
         musouMobCount = horde:livingCount(),
+        musouEliteWarningSeconds = if RunService:IsStudio()
+            then horde:eliteWarningSeconds(now) else 0,
         musouCombo = if now<(mobComboUntil[player] or 0) then mobCombo[player] or 0 else 0,
         musouImpactSeq = mobImpactSeq[player] or 0,
         musouLastHits = mobLastHits[player] or 0,
