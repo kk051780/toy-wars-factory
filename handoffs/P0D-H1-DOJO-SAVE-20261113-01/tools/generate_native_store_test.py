@@ -22,7 +22,7 @@ store_imports={
 '''local Evolution={MAX_FRAGMENTS=9999,MAX_ROUND_RECEIPTS=2048,
     MAX_EVOLUTION_RECEIPTS=2048}''',
 'local Dojo=require(script.Parent:WaitForChild("DojoRules"))':
-'''local Dojo=(function()
+'''Dojo=(function()
 DOJO_RULES_PLACEHOLDER
 end)()''',
 }
@@ -130,7 +130,7 @@ eq("item changes never delete dojo",normalized.dojo.level.BEAST,s.level.BEAST)
 assert(n>=67,n)
 print("P0D_H1_DOJO_DURABLE_NATIVE_"..tostring(n).."_ASSERTIONS_PASS")
 '''
-assembled="local Store=(function()\n"+store+"\nend)()\n"+tests
+assembled="local Dojo\nlocal Store=(function()\n"+store+"\nend)()\n"+tests
 if __name__=="__main__":
  p=argparse.ArgumentParser();p.add_argument("--write",required=True,type=Path)
  opts=p.parse_args()
