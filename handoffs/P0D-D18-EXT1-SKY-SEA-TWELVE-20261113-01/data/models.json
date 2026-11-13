@@ -1,0 +1,3874 @@
+{
+  "schema": "P0D_D18_EXTENSION1_SKY_SEA_12_SOURCE_ONLY_V1",
+  "game_id": "TRAP_RAIDERS",
+  "display_brand": "EGG RAID RUMBLE",
+  "issue": 278,
+  "base72_commit": "6b30db10ea77ea3ea1161976ae29c5d1b634b2d2",
+  "model_source_only": true,
+  "characters": [
+    {
+      "id": "TRCX-BE-001",
+      "name": "雲冠のもこ竜",
+      "category": "BE",
+      "rarity": "レジェンド",
+      "world": "虹雲の漂流庭園",
+      "archetype": "SKYSEA_BE_1",
+      "signature_tags": [
+        "cloud_dome",
+        "wool_horns",
+        "sweeping_tail"
+      ],
+      "signature_silhouette": "雲の王冠・二本の巻角・ほうき雲の尾",
+      "palette": {
+        "main": [
+          138,
+          197,
+          240
+        ],
+        "white": [
+          243,
+          243,
+          255
+        ],
+        "accent": [
+          238,
+          153,
+          112
+        ],
+        "dark": [
+          69,
+          89,
+          154
+        ],
+        "gold": [
+          253,
+          216,
+          123
+        ],
+        "glow": [
+          204,
+          172,
+          244
+        ]
+      },
+      "parts": [
+        {
+          "name": "まんまるの胴",
+          "group": "body",
+          "position": [
+            0,
+            0.2,
+            0
+          ],
+          "size": [
+            1.65,
+            1.22,
+            1.21
+          ],
+          "color": "main",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "ほっぺの顔",
+          "group": "head",
+          "position": [
+            0.7,
+            0.91,
+            0
+          ],
+          "size": [
+            1.07,
+            1.03,
+            1.04
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "左あんよ",
+          "group": "legs",
+          "position": [
+            0.3,
+            -0.52,
+            -0.43
+          ],
+          "size": [
+            0.48,
+            0.57,
+            0.42
+          ],
+          "color": "main",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "右あんよ",
+          "group": "legs",
+          "position": [
+            0.3,
+            -0.52,
+            0.43
+          ],
+          "size": [
+            0.48,
+            0.57,
+            0.42
+          ],
+          "color": "main",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "きらきら目",
+          "group": "head",
+          "position": [
+            1.14,
+            1.03,
+            0.4
+          ],
+          "size": [
+            0.24,
+            0.29,
+            0.13
+          ],
+          "color": "dark",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": false
+        },
+        {
+          "name": "1主意匠冠",
+          "group": "cloud_dome",
+          "position": [
+            0,
+            1.89,
+            0
+          ],
+          "size": [
+            1.22,
+            0.55,
+            0.75
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "cloud_dome",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "1副意匠冠",
+          "group": "cloud_dome",
+          "position": [
+            0.11,
+            2.05,
+            0.445
+          ],
+          "size": [
+            0.5,
+            0.23,
+            0.31
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "cloud_dome",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2主意匠しるし",
+          "group": "wool_horns",
+          "position": [
+            -0.15,
+            1.8,
+            -0.65
+          ],
+          "size": [
+            0.4,
+            0.65,
+            0.34
+          ],
+          "color": "accent",
+          "shape": "Cylinder",
+          "signature_tag": "wool_horns",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2副意匠しるし",
+          "group": "wool_horns",
+          "position": [
+            -0.039999999999999994,
+            1.96,
+            -0.41
+          ],
+          "size": [
+            0.16,
+            0.27,
+            0.14
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "wool_horns",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3主意匠尾",
+          "group": "sweeping_tail",
+          "position": [
+            -1.32,
+            0.65,
+            0
+          ],
+          "size": [
+            0.98,
+            0.42,
+            0.66
+          ],
+          "color": "glow",
+          "shape": "Block",
+          "signature_tag": "sweeping_tail",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3副意匠尾",
+          "group": "sweeping_tail",
+          "position": [
+            -1.21,
+            0.81,
+            0.4
+          ],
+          "size": [
+            0.4,
+            0.17,
+            0.27
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "sweeping_tail",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "cloud_dome": {
+            "dy": 0.15,
+            "rz": 8
+          }
+        },
+        "win": {
+          "wool_horns": {
+            "dy": 0.2,
+            "rz": -9
+          }
+        },
+        "loss": {
+          "sweeping_tail": {
+            "dy": -0.13,
+            "rz": 7
+          }
+        }
+      }
+    },
+    {
+      "id": "TRCX-SP-001",
+      "name": "星結びの虹筆",
+      "category": "SP",
+      "rarity": "エピック",
+      "world": "虹雲の漂流庭園",
+      "archetype": "SKYSEA_SP_1",
+      "signature_tags": [
+        "star_circles",
+        "paintbrush_tip",
+        "rainbow_ribbon"
+      ],
+      "signature_silhouette": "星の二重輪・大きな筆先・虹色リボン",
+      "palette": {
+        "main": [
+          138,
+          197,
+          240
+        ],
+        "white": [
+          243,
+          243,
+          255
+        ],
+        "accent": [
+          238,
+          153,
+          112
+        ],
+        "dark": [
+          69,
+          89,
+          154
+        ],
+        "gold": [
+          253,
+          216,
+          123
+        ],
+        "glow": [
+          204,
+          172,
+          244
+        ]
+      },
+      "parts": [
+        {
+          "name": "紋章の土台",
+          "group": "body",
+          "position": [
+            0,
+            0.24,
+            0
+          ],
+          "size": [
+            1.5,
+            1.44,
+            0.63
+          ],
+          "color": "dark",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "中央の輝き",
+          "group": "body",
+          "position": [
+            0,
+            0.26,
+            0.38
+          ],
+          "size": [
+            0.69,
+            0.67,
+            0.32
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "左の光跡",
+          "group": "body",
+          "position": [
+            -0.81,
+            0.1,
+            0.22
+          ],
+          "size": [
+            0.22,
+            1.44,
+            0.22
+          ],
+          "color": "main",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "右の光跡",
+          "group": "body",
+          "position": [
+            0.82,
+            0.1,
+            0.22
+          ],
+          "size": [
+            0.22,
+            1.44,
+            0.22
+          ],
+          "color": "main",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "小粒の星",
+          "group": "body",
+          "position": [
+            0,
+            0.35,
+            0.64
+          ],
+          "size": [
+            0.14,
+            0.15,
+            0.13
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": false
+        },
+        {
+          "name": "1主意匠冠",
+          "group": "star_circles",
+          "position": [
+            0,
+            1.25,
+            0
+          ],
+          "size": [
+            1.92,
+            0.27,
+            0.56
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "star_circles",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "1副意匠冠",
+          "group": "star_circles",
+          "position": [
+            0.11,
+            1.41,
+            0.35000000000000003
+          ],
+          "size": [
+            0.79,
+            0.11,
+            0.23
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "star_circles",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2主意匠しるし",
+          "group": "paintbrush_tip",
+          "position": [
+            0.62,
+            0.57,
+            0.73
+          ],
+          "size": [
+            0.7,
+            0.77,
+            0.31
+          ],
+          "color": "accent",
+          "shape": "Cylinder",
+          "signature_tag": "paintbrush_tip",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2副意匠しるし",
+          "group": "paintbrush_tip",
+          "position": [
+            0.73,
+            0.73,
+            0.9550000000000001
+          ],
+          "size": [
+            0.29,
+            0.32,
+            0.13
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "paintbrush_tip",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3主意匠尾",
+          "group": "rainbow_ribbon",
+          "position": [
+            -1.25,
+            0.22,
+            0.1
+          ],
+          "size": [
+            0.3,
+            1.56,
+            0.35
+          ],
+          "color": "glow",
+          "shape": "Block",
+          "signature_tag": "rainbow_ribbon",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3副意匠尾",
+          "group": "rainbow_ribbon",
+          "position": [
+            -1.14,
+            0.38,
+            0.34500000000000003
+          ],
+          "size": [
+            0.12,
+            0.64,
+            0.14
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "rainbow_ribbon",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "star_circles": {
+            "dy": 0.15,
+            "rz": 8
+          }
+        },
+        "win": {
+          "paintbrush_tip": {
+            "dy": 0.2,
+            "rz": -9
+          }
+        },
+        "loss": {
+          "rainbow_ribbon": {
+            "dy": -0.13,
+            "rz": 7
+          }
+        }
+      }
+    },
+    {
+      "id": "TRCX-VE-001",
+      "name": "空帆のカモメ艇",
+      "category": "VE",
+      "rarity": "レア",
+      "world": "虹雲の漂流庭園",
+      "archetype": "SKYSEA_VE_1",
+      "signature_tags": [
+        "cloud_wingsail",
+        "gull_beak",
+        "floating_wheels"
+      ],
+      "signature_silhouette": "カモメ羽根帆・突き出したくちばし・丸い雲輪",
+      "palette": {
+        "main": [
+          138,
+          197,
+          240
+        ],
+        "white": [
+          243,
+          243,
+          255
+        ],
+        "accent": [
+          238,
+          153,
+          112
+        ],
+        "dark": [
+          69,
+          89,
+          154
+        ],
+        "gold": [
+          253,
+          216,
+          123
+        ],
+        "glow": [
+          204,
+          172,
+          244
+        ]
+      },
+      "parts": [
+        {
+          "name": "船底の胴",
+          "group": "body",
+          "position": [
+            0,
+            0.1,
+            0
+          ],
+          "size": [
+            2.54,
+            0.44,
+            1.34
+          ],
+          "color": "main",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "客席の上",
+          "group": "body",
+          "position": [
+            0,
+            0.55,
+            0
+          ],
+          "size": [
+            1.29,
+            0.49,
+            0.85
+          ],
+          "color": "white",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "前の飾り",
+          "group": "body",
+          "position": [
+            1.23,
+            0.34,
+            0
+          ],
+          "size": [
+            0.31,
+            0.66,
+            0.98
+          ],
+          "color": "dark",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "後ろの飾り",
+          "group": "body",
+          "position": [
+            -1.21,
+            0.35,
+            0
+          ],
+          "size": [
+            0.31,
+            0.68,
+            0.95
+          ],
+          "color": "dark",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "客席のボタン",
+          "group": "body",
+          "position": [
+            0.3,
+            0.88,
+            0.4
+          ],
+          "size": [
+            0.24,
+            0.2,
+            0.12
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": false
+        },
+        {
+          "name": "1主意匠冠",
+          "group": "cloud_wingsail",
+          "position": [
+            0,
+            1.7,
+            0
+          ],
+          "size": [
+            2.34,
+            0.4,
+            1.49
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "cloud_wingsail",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "1副意匠冠",
+          "group": "cloud_wingsail",
+          "position": [
+            0.11,
+            1.8599999999999999,
+            0.815
+          ],
+          "size": [
+            0.96,
+            0.16,
+            0.61
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "cloud_wingsail",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2主意匠しるし",
+          "group": "gull_beak",
+          "position": [
+            1.18,
+            0.79,
+            0
+          ],
+          "size": [
+            0.75,
+            0.59,
+            0.62
+          ],
+          "color": "accent",
+          "shape": "Cylinder",
+          "signature_tag": "gull_beak",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2副意匠しるし",
+          "group": "gull_beak",
+          "position": [
+            1.29,
+            0.9500000000000001,
+            0.38
+          ],
+          "size": [
+            0.31,
+            0.24,
+            0.25
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "gull_beak",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3主意匠尾",
+          "group": "floating_wheels",
+          "position": [
+            -0.85,
+            -0.45,
+            0.79
+          ],
+          "size": [
+            1.1,
+            1.1,
+            0.3
+          ],
+          "color": "glow",
+          "shape": "Block",
+          "signature_tag": "floating_wheels",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3副意匠尾",
+          "group": "floating_wheels",
+          "position": [
+            -0.74,
+            -0.29000000000000004,
+            1.01
+          ],
+          "size": [
+            0.45,
+            0.45,
+            0.12
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "floating_wheels",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "cloud_wingsail": {
+            "dy": 0.15,
+            "rz": 8
+          }
+        },
+        "win": {
+          "gull_beak": {
+            "dy": 0.2,
+            "rz": -9
+          }
+        },
+        "loss": {
+          "floating_wheels": {
+            "dy": -0.13,
+            "rz": 7
+          }
+        }
+      }
+    },
+    {
+      "id": "TRCX-WE-001",
+      "name": "雷鈴の音叉槍",
+      "category": "WE",
+      "rarity": "エピック",
+      "world": "虹雲の漂流庭園",
+      "archetype": "SKYSEA_WE_1",
+      "signature_tags": [
+        "double_tines",
+        "storm_bells",
+        "long_spear"
+      ],
+      "signature_silhouette": "二叉の穂先・二つの雷鈴・長い柄",
+      "palette": {
+        "main": [
+          138,
+          197,
+          240
+        ],
+        "white": [
+          243,
+          243,
+          255
+        ],
+        "accent": [
+          238,
+          153,
+          112
+        ],
+        "dark": [
+          69,
+          89,
+          154
+        ],
+        "gold": [
+          253,
+          216,
+          123
+        ],
+        "glow": [
+          204,
+          172,
+          244
+        ]
+      },
+      "parts": [
+        {
+          "name": "長い柄",
+          "group": "body",
+          "position": [
+            -0.55,
+            0.15,
+            0
+          ],
+          "size": [
+            0.42,
+            2.12,
+            0.42
+          ],
+          "color": "dark",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "持ち手",
+          "group": "body",
+          "position": [
+            -0.55,
+            -0.9,
+            0
+          ],
+          "size": [
+            0.71,
+            0.42,
+            0.61
+          ],
+          "color": "main",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "中央の軸",
+          "group": "body",
+          "position": [
+            -0.21,
+            0.65,
+            0
+          ],
+          "size": [
+            0.58,
+            0.52,
+            0.5
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "銀色の輪",
+          "group": "body",
+          "position": [
+            -0.56,
+            0.42,
+            0.2
+          ],
+          "size": [
+            0.64,
+            0.23,
+            0.25
+          ],
+          "color": "gold",
+          "shape": "Cylinder",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "柄の小印",
+          "group": "body",
+          "position": [
+            -0.54,
+            -0.4,
+            0.3
+          ],
+          "size": [
+            0.19,
+            0.21,
+            0.13
+          ],
+          "color": "accent",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": false
+        },
+        {
+          "name": "1主意匠冠",
+          "group": "double_tines",
+          "position": [
+            0.03,
+            1.73,
+            -0.42
+          ],
+          "size": [
+            0.39,
+            0.91,
+            0.36
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "double_tines",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "1副意匠冠",
+          "group": "double_tines",
+          "position": [
+            0.14,
+            1.89,
+            -0.16999999999999998
+          ],
+          "size": [
+            0.16,
+            0.37,
+            0.15
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "double_tines",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2主意匠しるし",
+          "group": "storm_bells",
+          "position": [
+            0.1,
+            1.76,
+            0.56
+          ],
+          "size": [
+            0.6,
+            0.62,
+            0.36
+          ],
+          "color": "accent",
+          "shape": "Cylinder",
+          "signature_tag": "storm_bells",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2副意匠しるし",
+          "group": "storm_bells",
+          "position": [
+            0.21000000000000002,
+            1.92,
+            0.81
+          ],
+          "size": [
+            0.25,
+            0.25,
+            0.15
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "storm_bells",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3主意匠尾",
+          "group": "long_spear",
+          "position": [
+            -0.62,
+            -1.22,
+            0
+          ],
+          "size": [
+            0.86,
+            0.25,
+            0.6
+          ],
+          "color": "glow",
+          "shape": "Block",
+          "signature_tag": "long_spear",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3副意匠尾",
+          "group": "long_spear",
+          "position": [
+            -0.51,
+            -1.06,
+            0.37
+          ],
+          "size": [
+            0.35,
+            0.11,
+            0.25
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "long_spear",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "double_tines": {
+            "dy": 0.15,
+            "rz": 8
+          }
+        },
+        "win": {
+          "storm_bells": {
+            "dy": 0.2,
+            "rz": -9
+          }
+        },
+        "loss": {
+          "long_spear": {
+            "dy": -0.13,
+            "rz": 7
+          }
+        }
+      }
+    },
+    {
+      "id": "TRCX-ZO-001",
+      "name": "風縫いの雲兵",
+      "category": "ZO",
+      "rarity": "レア",
+      "world": "虹雲の漂流庭園",
+      "archetype": "SKYSEA_ZO_1",
+      "signature_tags": [
+        "windmill_hat",
+        "cloud_flag",
+        "round_boots"
+      ],
+      "signature_silhouette": "風車帽・雲針旗・丸い布靴",
+      "palette": {
+        "main": [
+          138,
+          197,
+          240
+        ],
+        "white": [
+          243,
+          243,
+          255
+        ],
+        "accent": [
+          238,
+          153,
+          112
+        ],
+        "dark": [
+          69,
+          89,
+          154
+        ],
+        "gold": [
+          253,
+          216,
+          123
+        ],
+        "glow": [
+          204,
+          172,
+          244
+        ]
+      },
+      "parts": [
+        {
+          "name": "おもちゃ兵の胴",
+          "group": "body",
+          "position": [
+            0,
+            0.2,
+            0
+          ],
+          "size": [
+            1.28,
+            1.42,
+            0.92
+          ],
+          "color": "main",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "丸い顔",
+          "group": "head",
+          "position": [
+            0.07,
+            1.24,
+            0
+          ],
+          "size": [
+            1.09,
+            1.04,
+            1.01
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "左のお靴",
+          "group": "legs",
+          "position": [
+            0.3,
+            -0.62,
+            -0.42
+          ],
+          "size": [
+            0.52,
+            0.68,
+            0.49
+          ],
+          "color": "dark",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "右のお靴",
+          "group": "legs",
+          "position": [
+            0.3,
+            -0.62,
+            0.42
+          ],
+          "size": [
+            0.52,
+            0.68,
+            0.49
+          ],
+          "color": "dark",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "小さな目",
+          "group": "head",
+          "position": [
+            0.51,
+            1.35,
+            0.45
+          ],
+          "size": [
+            0.19,
+            0.23,
+            0.13
+          ],
+          "color": "dark",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": false
+        },
+        {
+          "name": "1主意匠冠",
+          "group": "windmill_hat",
+          "position": [
+            0,
+            2.17,
+            0
+          ],
+          "size": [
+            1.42,
+            0.5,
+            1.17
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "windmill_hat",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "1副意匠冠",
+          "group": "windmill_hat",
+          "position": [
+            0.11,
+            2.33,
+            0.655
+          ],
+          "size": [
+            0.58,
+            0.21,
+            0.48
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "windmill_hat",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2主意匠しるし",
+          "group": "cloud_flag",
+          "position": [
+            -0.8,
+            1.45,
+            -0.72
+          ],
+          "size": [
+            0.77,
+            0.71,
+            0.21
+          ],
+          "color": "accent",
+          "shape": "Cylinder",
+          "signature_tag": "cloud_flag",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2副意匠しるし",
+          "group": "cloud_flag",
+          "position": [
+            -0.6900000000000001,
+            1.6099999999999999,
+            -0.5449999999999999
+          ],
+          "size": [
+            0.32,
+            0.29,
+            0.11
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "cloud_flag",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3主意匠尾",
+          "group": "round_boots",
+          "position": [
+            0.43,
+            -0.89,
+            0.45
+          ],
+          "size": [
+            0.58,
+            0.36,
+            0.43
+          ],
+          "color": "glow",
+          "shape": "Block",
+          "signature_tag": "round_boots",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3副意匠尾",
+          "group": "round_boots",
+          "position": [
+            0.54,
+            -0.73,
+            0.7350000000000001
+          ],
+          "size": [
+            0.24,
+            0.15,
+            0.18
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "round_boots",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "windmill_hat": {
+            "dy": 0.15,
+            "rz": 8
+          }
+        },
+        "win": {
+          "cloud_flag": {
+            "dy": 0.2,
+            "rz": -9
+          }
+        },
+        "loss": {
+          "round_boots": {
+            "dy": -0.13,
+            "rz": 7
+          }
+        }
+      }
+    },
+    {
+      "id": "TRCX-TR-001",
+      "name": "そよ風の反転輪",
+      "category": "TR",
+      "rarity": "エピック",
+      "world": "虹雲の漂流庭園",
+      "archetype": "SKYSEA_TR_1",
+      "signature_tags": [
+        "floating_rings",
+        "turn_arrow",
+        "twin_springs"
+      ],
+      "signature_silhouette": "浮遊輪・方向矢印・二重バネ",
+      "palette": {
+        "main": [
+          138,
+          197,
+          240
+        ],
+        "white": [
+          243,
+          243,
+          255
+        ],
+        "accent": [
+          238,
+          153,
+          112
+        ],
+        "dark": [
+          69,
+          89,
+          154
+        ],
+        "gold": [
+          253,
+          216,
+          123
+        ],
+        "glow": [
+          204,
+          172,
+          244
+        ]
+      },
+      "parts": [
+        {
+          "name": "おもちゃの台",
+          "group": "body",
+          "position": [
+            0,
+            0.5,
+            0
+          ],
+          "size": [
+            2.12,
+            0.35,
+            1.56
+          ],
+          "color": "main",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "左の基部",
+          "group": "body",
+          "position": [
+            -0.7,
+            -0.2,
+            -0.44
+          ],
+          "size": [
+            0.54,
+            1,
+            0.47
+          ],
+          "color": "dark",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "右の基部",
+          "group": "body",
+          "position": [
+            -0.7,
+            -0.2,
+            0.44
+          ],
+          "size": [
+            0.54,
+            1,
+            0.47
+          ],
+          "color": "dark",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "底板",
+          "group": "body",
+          "position": [
+            0,
+            -0.68,
+            0
+          ],
+          "size": [
+            2.32,
+            0.24,
+            1.63
+          ],
+          "color": "gold",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "小印のランプ",
+          "group": "body",
+          "position": [
+            0.78,
+            0.9,
+            0.52
+          ],
+          "size": [
+            0.22,
+            0.22,
+            0.16
+          ],
+          "color": "glow",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": false
+        },
+        {
+          "name": "1主意匠冠",
+          "group": "floating_rings",
+          "position": [
+            0,
+            1.3,
+            0
+          ],
+          "size": [
+            1.87,
+            0.34,
+            1.39
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "floating_rings",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "1副意匠冠",
+          "group": "floating_rings",
+          "position": [
+            0.11,
+            1.46,
+            0.7649999999999999
+          ],
+          "size": [
+            0.77,
+            0.14,
+            0.57
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "floating_rings",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2主意匠しるし",
+          "group": "turn_arrow",
+          "position": [
+            0,
+            1.6,
+            0.74
+          ],
+          "size": [
+            0.35,
+            0.71,
+            0.17
+          ],
+          "color": "accent",
+          "shape": "Cylinder",
+          "signature_tag": "turn_arrow",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2副意匠しるし",
+          "group": "turn_arrow",
+          "position": [
+            0.11,
+            1.76,
+            0.895
+          ],
+          "size": [
+            0.14,
+            0.29,
+            0.11
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "turn_arrow",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3主意匠尾",
+          "group": "twin_springs",
+          "position": [
+            -0.58,
+            0.1,
+            -0.42
+          ],
+          "size": [
+            0.43,
+            0.83,
+            0.38
+          ],
+          "color": "glow",
+          "shape": "Block",
+          "signature_tag": "twin_springs",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3副意匠尾",
+          "group": "twin_springs",
+          "position": [
+            -0.47,
+            0.26,
+            -0.15999999999999998
+          ],
+          "size": [
+            0.18,
+            0.34,
+            0.16
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "twin_springs",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "floating_rings": {
+            "dy": 0.15,
+            "rz": 8
+          }
+        },
+        "win": {
+          "turn_arrow": {
+            "dy": 0.2,
+            "rz": -9
+          }
+        },
+        "loss": {
+          "twin_springs": {
+            "dy": -0.13,
+            "rz": 7
+          }
+        }
+      }
+    },
+    {
+      "id": "TRCX-BE-002",
+      "name": "深碧ランタンくらげ",
+      "category": "BE",
+      "rarity": "レジェンド",
+      "world": "珊瑚の月光港",
+      "archetype": "SKYSEA_BE_2",
+      "signature_tags": [
+        "shell_lantern",
+        "glowing_tentacles",
+        "moon_eye"
+      ],
+      "signature_silhouette": "貝殻灯・4本の触手・大きな月の目",
+      "palette": {
+        "main": [
+          87,
+          181,
+          177
+        ],
+        "white": [
+          228,
+          248,
+          231
+        ],
+        "accent": [
+          236,
+          137,
+          119
+        ],
+        "dark": [
+          52,
+          80,
+          133
+        ],
+        "gold": [
+          250,
+          215,
+          151
+        ],
+        "glow": [
+          138,
+          229,
+          226
+        ]
+      },
+      "parts": [
+        {
+          "name": "まんまるの胴",
+          "group": "body",
+          "position": [
+            0,
+            0.2,
+            0
+          ],
+          "size": [
+            1.65,
+            1.22,
+            1.21
+          ],
+          "color": "main",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "ほっぺの顔",
+          "group": "head",
+          "position": [
+            0.7,
+            0.91,
+            0
+          ],
+          "size": [
+            1.07,
+            1.03,
+            1.04
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "左あんよ",
+          "group": "legs",
+          "position": [
+            0.3,
+            -0.52,
+            -0.43
+          ],
+          "size": [
+            0.48,
+            0.57,
+            0.42
+          ],
+          "color": "main",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "右あんよ",
+          "group": "legs",
+          "position": [
+            0.3,
+            -0.52,
+            0.43
+          ],
+          "size": [
+            0.48,
+            0.57,
+            0.42
+          ],
+          "color": "main",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "きらきら目",
+          "group": "head",
+          "position": [
+            1.14,
+            1.03,
+            0.4
+          ],
+          "size": [
+            0.24,
+            0.29,
+            0.13
+          ],
+          "color": "dark",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": false
+        },
+        {
+          "name": "1主意匠冠",
+          "group": "shell_lantern",
+          "position": [
+            0,
+            1.76,
+            0
+          ],
+          "size": [
+            1.68,
+            0.69,
+            1.4
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "shell_lantern",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "1副意匠冠",
+          "group": "shell_lantern",
+          "position": [
+            0.11,
+            1.92,
+            0.77
+          ],
+          "size": [
+            0.69,
+            0.28,
+            0.57
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "shell_lantern",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2主意匠しるし",
+          "group": "glowing_tentacles",
+          "position": [
+            -0.81,
+            -0.52,
+            -0.5
+          ],
+          "size": [
+            0.31,
+            1.13,
+            0.33
+          ],
+          "color": "accent",
+          "shape": "Ball",
+          "signature_tag": "glowing_tentacles",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2副意匠しるし",
+          "group": "glowing_tentacles",
+          "position": [
+            -0.7000000000000001,
+            -0.36,
+            -0.26499999999999996
+          ],
+          "size": [
+            0.13,
+            0.46,
+            0.14
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "glowing_tentacles",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3主意匠尾",
+          "group": "moon_eye",
+          "position": [
+            0.75,
+            1.14,
+            0.64
+          ],
+          "size": [
+            0.69,
+            0.73,
+            0.31
+          ],
+          "color": "glow",
+          "shape": "Cylinder",
+          "signature_tag": "moon_eye",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3副意匠尾",
+          "group": "moon_eye",
+          "position": [
+            0.86,
+            1.2999999999999998,
+            0.865
+          ],
+          "size": [
+            0.28,
+            0.3,
+            0.13
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "moon_eye",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "shell_lantern": {
+            "dy": 0.15,
+            "rz": 8
+          }
+        },
+        "win": {
+          "glowing_tentacles": {
+            "dy": 0.2,
+            "rz": -9
+          }
+        },
+        "loss": {
+          "moon_eye": {
+            "dy": -0.13,
+            "rz": 7
+          }
+        }
+      }
+    },
+    {
+      "id": "TRCX-SP-002",
+      "name": "泡影の水鏡",
+      "category": "SP",
+      "rarity": "エピック",
+      "world": "珊瑚の月光港",
+      "archetype": "SKYSEA_SP_2",
+      "signature_tags": [
+        "bubble_mirror",
+        "three_bubbles",
+        "moon_grip"
+      ],
+      "signature_silhouette": "大きな水鏡・3つの泡・三日月柄",
+      "palette": {
+        "main": [
+          87,
+          181,
+          177
+        ],
+        "white": [
+          228,
+          248,
+          231
+        ],
+        "accent": [
+          236,
+          137,
+          119
+        ],
+        "dark": [
+          52,
+          80,
+          133
+        ],
+        "gold": [
+          250,
+          215,
+          151
+        ],
+        "glow": [
+          138,
+          229,
+          226
+        ]
+      },
+      "parts": [
+        {
+          "name": "紋章の土台",
+          "group": "body",
+          "position": [
+            0,
+            0.24,
+            0
+          ],
+          "size": [
+            1.5,
+            1.44,
+            0.63
+          ],
+          "color": "dark",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "中央の輝き",
+          "group": "body",
+          "position": [
+            0,
+            0.26,
+            0.38
+          ],
+          "size": [
+            0.69,
+            0.67,
+            0.32
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "左の光跡",
+          "group": "body",
+          "position": [
+            -0.81,
+            0.1,
+            0.22
+          ],
+          "size": [
+            0.22,
+            1.44,
+            0.22
+          ],
+          "color": "main",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "右の光跡",
+          "group": "body",
+          "position": [
+            0.82,
+            0.1,
+            0.22
+          ],
+          "size": [
+            0.22,
+            1.44,
+            0.22
+          ],
+          "color": "main",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "小粒の星",
+          "group": "body",
+          "position": [
+            0,
+            0.35,
+            0.64
+          ],
+          "size": [
+            0.14,
+            0.15,
+            0.13
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": false
+        },
+        {
+          "name": "1主意匠冠",
+          "group": "bubble_mirror",
+          "position": [
+            0,
+            1.17,
+            0
+          ],
+          "size": [
+            1.74,
+            1.53,
+            0.36
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "bubble_mirror",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "1副意匠冠",
+          "group": "bubble_mirror",
+          "position": [
+            0.11,
+            1.3299999999999998,
+            0.25
+          ],
+          "size": [
+            0.71,
+            0.63,
+            0.15
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "bubble_mirror",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2主意匠しるし",
+          "group": "three_bubbles",
+          "position": [
+            -0.86,
+            1.49,
+            0.1
+          ],
+          "size": [
+            0.58,
+            0.57,
+            0.43
+          ],
+          "color": "accent",
+          "shape": "Ball",
+          "signature_tag": "three_bubbles",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2副意匠しるし",
+          "group": "three_bubbles",
+          "position": [
+            -0.75,
+            1.65,
+            0.385
+          ],
+          "size": [
+            0.24,
+            0.23,
+            0.18
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "three_bubbles",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3主意匠尾",
+          "group": "moon_grip",
+          "position": [
+            0.62,
+            -0.57,
+            0.18
+          ],
+          "size": [
+            0.63,
+            0.79,
+            0.29
+          ],
+          "color": "glow",
+          "shape": "Cylinder",
+          "signature_tag": "moon_grip",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3副意匠尾",
+          "group": "moon_grip",
+          "position": [
+            0.73,
+            -0.4099999999999999,
+            0.39499999999999996
+          ],
+          "size": [
+            0.26,
+            0.32,
+            0.12
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "moon_grip",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "bubble_mirror": {
+            "dy": 0.15,
+            "rz": 8
+          }
+        },
+        "win": {
+          "three_bubbles": {
+            "dy": 0.2,
+            "rz": -9
+          }
+        },
+        "loss": {
+          "moon_grip": {
+            "dy": -0.13,
+            "rz": 7
+          }
+        }
+      }
+    },
+    {
+      "id": "TRCX-VE-002",
+      "name": "珊瑚潜航カート",
+      "category": "VE",
+      "rarity": "レア",
+      "world": "珊瑚の月光港",
+      "archetype": "SKYSEA_VE_2",
+      "signature_tags": [
+        "coral_dome",
+        "shell_wheels",
+        "round_porthole"
+      ],
+      "signature_silhouette": "珊瑚ドーム・貝車輪・丸い窓",
+      "palette": {
+        "main": [
+          87,
+          181,
+          177
+        ],
+        "white": [
+          228,
+          248,
+          231
+        ],
+        "accent": [
+          236,
+          137,
+          119
+        ],
+        "dark": [
+          52,
+          80,
+          133
+        ],
+        "gold": [
+          250,
+          215,
+          151
+        ],
+        "glow": [
+          138,
+          229,
+          226
+        ]
+      },
+      "parts": [
+        {
+          "name": "船底の胴",
+          "group": "body",
+          "position": [
+            0,
+            0.1,
+            0
+          ],
+          "size": [
+            2.54,
+            0.44,
+            1.34
+          ],
+          "color": "main",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "客席の上",
+          "group": "body",
+          "position": [
+            0,
+            0.55,
+            0
+          ],
+          "size": [
+            1.29,
+            0.49,
+            0.85
+          ],
+          "color": "white",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "前の飾り",
+          "group": "body",
+          "position": [
+            1.23,
+            0.34,
+            0
+          ],
+          "size": [
+            0.31,
+            0.66,
+            0.98
+          ],
+          "color": "dark",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "後ろの飾り",
+          "group": "body",
+          "position": [
+            -1.21,
+            0.35,
+            0
+          ],
+          "size": [
+            0.31,
+            0.68,
+            0.95
+          ],
+          "color": "dark",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "客席のボタン",
+          "group": "body",
+          "position": [
+            0.3,
+            0.88,
+            0.4
+          ],
+          "size": [
+            0.24,
+            0.2,
+            0.12
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": false
+        },
+        {
+          "name": "1主意匠冠",
+          "group": "coral_dome",
+          "position": [
+            0,
+            1.65,
+            0
+          ],
+          "size": [
+            2.19,
+            0.72,
+            1.46
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "coral_dome",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "1副意匠冠",
+          "group": "coral_dome",
+          "position": [
+            0.11,
+            1.8099999999999998,
+            0.8
+          ],
+          "size": [
+            0.9,
+            0.3,
+            0.6
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "coral_dome",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2主意匠しるし",
+          "group": "shell_wheels",
+          "position": [
+            -0.88,
+            -0.44,
+            0.78
+          ],
+          "size": [
+            1.11,
+            1.04,
+            0.31
+          ],
+          "color": "accent",
+          "shape": "Ball",
+          "signature_tag": "shell_wheels",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2副意匠しるし",
+          "group": "shell_wheels",
+          "position": [
+            -0.77,
+            -0.28,
+            1.0050000000000001
+          ],
+          "size": [
+            0.46,
+            0.43,
+            0.13
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "shell_wheels",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3主意匠尾",
+          "group": "round_porthole",
+          "position": [
+            1.3,
+            0.7,
+            0
+          ],
+          "size": [
+            0.57,
+            0.63,
+            0.47
+          ],
+          "color": "glow",
+          "shape": "Cylinder",
+          "signature_tag": "round_porthole",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3副意匠尾",
+          "group": "round_porthole",
+          "position": [
+            1.4100000000000001,
+            0.86,
+            0.305
+          ],
+          "size": [
+            0.23,
+            0.26,
+            0.19
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "round_porthole",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "coral_dome": {
+            "dy": 0.15,
+            "rz": 8
+          }
+        },
+        "win": {
+          "shell_wheels": {
+            "dy": 0.2,
+            "rz": -9
+          }
+        },
+        "loss": {
+          "round_porthole": {
+            "dy": -0.13,
+            "rz": 7
+          }
+        }
+      }
+    },
+    {
+      "id": "TRCX-WE-002",
+      "name": "潮笛の三叉環",
+      "category": "WE",
+      "rarity": "エピック",
+      "world": "珊瑚の月光港",
+      "archetype": "SKYSEA_WE_2",
+      "signature_tags": [
+        "tide_fins",
+        "shell_flute",
+        "tidal_ring"
+      ],
+      "signature_silhouette": "3つの潮流フィン・貝笛・青い輪",
+      "palette": {
+        "main": [
+          87,
+          181,
+          177
+        ],
+        "white": [
+          228,
+          248,
+          231
+        ],
+        "accent": [
+          236,
+          137,
+          119
+        ],
+        "dark": [
+          52,
+          80,
+          133
+        ],
+        "gold": [
+          250,
+          215,
+          151
+        ],
+        "glow": [
+          138,
+          229,
+          226
+        ]
+      },
+      "parts": [
+        {
+          "name": "長い柄",
+          "group": "body",
+          "position": [
+            -0.55,
+            0.15,
+            0
+          ],
+          "size": [
+            0.42,
+            2.12,
+            0.42
+          ],
+          "color": "dark",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "持ち手",
+          "group": "body",
+          "position": [
+            -0.55,
+            -0.9,
+            0
+          ],
+          "size": [
+            0.71,
+            0.42,
+            0.61
+          ],
+          "color": "main",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "中央の軸",
+          "group": "body",
+          "position": [
+            -0.21,
+            0.65,
+            0
+          ],
+          "size": [
+            0.58,
+            0.52,
+            0.5
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "銀色の輪",
+          "group": "body",
+          "position": [
+            -0.56,
+            0.42,
+            0.2
+          ],
+          "size": [
+            0.64,
+            0.23,
+            0.25
+          ],
+          "color": "gold",
+          "shape": "Cylinder",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "柄の小印",
+          "group": "body",
+          "position": [
+            -0.54,
+            -0.4,
+            0.3
+          ],
+          "size": [
+            0.19,
+            0.21,
+            0.13
+          ],
+          "color": "accent",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": false
+        },
+        {
+          "name": "1主意匠冠",
+          "group": "tide_fins",
+          "position": [
+            0.12,
+            1.77,
+            0
+          ],
+          "size": [
+            1.4,
+            0.6,
+            0.56
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "tide_fins",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "1副意匠冠",
+          "group": "tide_fins",
+          "position": [
+            0.22999999999999998,
+            1.93,
+            0.35000000000000003
+          ],
+          "size": [
+            0.57,
+            0.25,
+            0.23
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "tide_fins",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2主意匠しるし",
+          "group": "shell_flute",
+          "position": [
+            0.45,
+            0.95,
+            0.61
+          ],
+          "size": [
+            0.67,
+            0.46,
+            0.39
+          ],
+          "color": "accent",
+          "shape": "Ball",
+          "signature_tag": "shell_flute",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2副意匠しるし",
+          "group": "shell_flute",
+          "position": [
+            0.56,
+            1.1099999999999999,
+            0.875
+          ],
+          "size": [
+            0.27,
+            0.19,
+            0.16
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "shell_flute",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3主意匠尾",
+          "group": "tidal_ring",
+          "position": [
+            -0.5,
+            0.5,
+            0
+          ],
+          "size": [
+            1.51,
+            0.25,
+            0.72
+          ],
+          "color": "glow",
+          "shape": "Cylinder",
+          "signature_tag": "tidal_ring",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3副意匠尾",
+          "group": "tidal_ring",
+          "position": [
+            -0.39,
+            0.66,
+            0.43
+          ],
+          "size": [
+            0.62,
+            0.11,
+            0.3
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "tidal_ring",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "tide_fins": {
+            "dy": 0.15,
+            "rz": 8
+          }
+        },
+        "win": {
+          "shell_flute": {
+            "dy": 0.2,
+            "rz": -9
+          }
+        },
+        "loss": {
+          "tidal_ring": {
+            "dy": -0.13,
+            "rz": 7
+          }
+        }
+      }
+    },
+    {
+      "id": "TRCX-ZO-002",
+      "name": "貝殻の灯番",
+      "category": "ZO",
+      "rarity": "レア",
+      "world": "珊瑚の月光港",
+      "archetype": "SKYSEA_ZO_2",
+      "signature_tags": [
+        "wide_shell_hat",
+        "sea_lantern",
+        "lighthouse_flag"
+      ],
+      "signature_silhouette": "つば広貝殻帽・青いランタン・灯台旗",
+      "palette": {
+        "main": [
+          87,
+          181,
+          177
+        ],
+        "white": [
+          228,
+          248,
+          231
+        ],
+        "accent": [
+          236,
+          137,
+          119
+        ],
+        "dark": [
+          52,
+          80,
+          133
+        ],
+        "gold": [
+          250,
+          215,
+          151
+        ],
+        "glow": [
+          138,
+          229,
+          226
+        ]
+      },
+      "parts": [
+        {
+          "name": "おもちゃ兵の胴",
+          "group": "body",
+          "position": [
+            0,
+            0.2,
+            0
+          ],
+          "size": [
+            1.28,
+            1.42,
+            0.92
+          ],
+          "color": "main",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "丸い顔",
+          "group": "head",
+          "position": [
+            0.07,
+            1.24,
+            0
+          ],
+          "size": [
+            1.09,
+            1.04,
+            1.01
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "左のお靴",
+          "group": "legs",
+          "position": [
+            0.3,
+            -0.62,
+            -0.42
+          ],
+          "size": [
+            0.52,
+            0.68,
+            0.49
+          ],
+          "color": "dark",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "右のお靴",
+          "group": "legs",
+          "position": [
+            0.3,
+            -0.62,
+            0.42
+          ],
+          "size": [
+            0.52,
+            0.68,
+            0.49
+          ],
+          "color": "dark",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "小さな目",
+          "group": "head",
+          "position": [
+            0.51,
+            1.35,
+            0.45
+          ],
+          "size": [
+            0.19,
+            0.23,
+            0.13
+          ],
+          "color": "dark",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": false
+        },
+        {
+          "name": "1主意匠冠",
+          "group": "wide_shell_hat",
+          "position": [
+            0.05,
+            2.05,
+            0
+          ],
+          "size": [
+            1.49,
+            0.54,
+            1.28
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "wide_shell_hat",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "1副意匠冠",
+          "group": "wide_shell_hat",
+          "position": [
+            0.16,
+            2.21,
+            0.71
+          ],
+          "size": [
+            0.61,
+            0.22,
+            0.52
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "wide_shell_hat",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2主意匠しるし",
+          "group": "sea_lantern",
+          "position": [
+            0.68,
+            0.6,
+            0.54
+          ],
+          "size": [
+            0.48,
+            0.77,
+            0.35
+          ],
+          "color": "accent",
+          "shape": "Ball",
+          "signature_tag": "sea_lantern",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2副意匠しるし",
+          "group": "sea_lantern",
+          "position": [
+            0.79,
+            0.76,
+            0.7850000000000001
+          ],
+          "size": [
+            0.2,
+            0.32,
+            0.14
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "sea_lantern",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3主意匠尾",
+          "group": "lighthouse_flag",
+          "position": [
+            -0.88,
+            1.31,
+            -0.68
+          ],
+          "size": [
+            0.76,
+            0.72,
+            0.23
+          ],
+          "color": "glow",
+          "shape": "Cylinder",
+          "signature_tag": "lighthouse_flag",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3副意匠尾",
+          "group": "lighthouse_flag",
+          "position": [
+            -0.77,
+            1.47,
+            -0.49500000000000005
+          ],
+          "size": [
+            0.31,
+            0.3,
+            0.11
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "lighthouse_flag",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "wide_shell_hat": {
+            "dy": 0.15,
+            "rz": 8
+          }
+        },
+        "win": {
+          "sea_lantern": {
+            "dy": 0.2,
+            "rz": -9
+          }
+        },
+        "loss": {
+          "lighthouse_flag": {
+            "dy": -0.13,
+            "rz": 7
+          }
+        }
+      }
+    },
+    {
+      "id": "TRCX-TR-002",
+      "name": "真珠回遊の潮門",
+      "category": "TR",
+      "rarity": "レジェンド",
+      "world": "珊瑚の月光港",
+      "archetype": "SKYSEA_TR_2",
+      "signature_tags": [
+        "pearl_arch",
+        "tide_arrows",
+        "shell_latch"
+      ],
+      "signature_silhouette": "真珠の大門・二つの潮矢印・貝錠",
+      "palette": {
+        "main": [
+          87,
+          181,
+          177
+        ],
+        "white": [
+          228,
+          248,
+          231
+        ],
+        "accent": [
+          236,
+          137,
+          119
+        ],
+        "dark": [
+          52,
+          80,
+          133
+        ],
+        "gold": [
+          250,
+          215,
+          151
+        ],
+        "glow": [
+          138,
+          229,
+          226
+        ]
+      },
+      "parts": [
+        {
+          "name": "おもちゃの台",
+          "group": "body",
+          "position": [
+            0,
+            0.5,
+            0
+          ],
+          "size": [
+            2.12,
+            0.35,
+            1.56
+          ],
+          "color": "main",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "左の基部",
+          "group": "body",
+          "position": [
+            -0.7,
+            -0.2,
+            -0.44
+          ],
+          "size": [
+            0.54,
+            1,
+            0.47
+          ],
+          "color": "dark",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "右の基部",
+          "group": "body",
+          "position": [
+            -0.7,
+            -0.2,
+            0.44
+          ],
+          "size": [
+            0.54,
+            1,
+            0.47
+          ],
+          "color": "dark",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "底板",
+          "group": "body",
+          "position": [
+            0,
+            -0.68,
+            0
+          ],
+          "size": [
+            2.32,
+            0.24,
+            1.63
+          ],
+          "color": "gold",
+          "shape": "Block",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "小印のランプ",
+          "group": "body",
+          "position": [
+            0.78,
+            0.9,
+            0.52
+          ],
+          "size": [
+            0.22,
+            0.22,
+            0.16
+          ],
+          "color": "glow",
+          "shape": "Ball",
+          "signature_tag": "support",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": false
+        },
+        {
+          "name": "1主意匠冠",
+          "group": "pearl_arch",
+          "position": [
+            0,
+            1.6,
+            0
+          ],
+          "size": [
+            2.15,
+            1.28,
+            0.66
+          ],
+          "color": "gold",
+          "shape": "Ball",
+          "signature_tag": "pearl_arch",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "1副意匠冠",
+          "group": "pearl_arch",
+          "position": [
+            0.11,
+            1.76,
+            0.4
+          ],
+          "size": [
+            0.88,
+            0.52,
+            0.27
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "pearl_arch",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2主意匠しるし",
+          "group": "tide_arrows",
+          "position": [
+            0.49,
+            0.9,
+            0.77
+          ],
+          "size": [
+            0.63,
+            0.49,
+            0.28
+          ],
+          "color": "accent",
+          "shape": "Ball",
+          "signature_tag": "tide_arrows",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "2副意匠しるし",
+          "group": "tide_arrows",
+          "position": [
+            0.6,
+            1.06,
+            0.98
+          ],
+          "size": [
+            0.26,
+            0.2,
+            0.11
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "tide_arrows",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3主意匠尾",
+          "group": "shell_latch",
+          "position": [
+            -0.81,
+            0.55,
+            -0.39
+          ],
+          "size": [
+            0.48,
+            0.68,
+            0.34
+          ],
+          "color": "glow",
+          "shape": "Cylinder",
+          "signature_tag": "shell_latch",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        },
+        {
+          "name": "3副意匠尾",
+          "group": "shell_latch",
+          "position": [
+            -0.7000000000000001,
+            0.7100000000000001,
+            -0.15
+          ],
+          "size": [
+            0.2,
+            0.28,
+            0.14
+          ],
+          "color": "white",
+          "shape": "Ball",
+          "signature_tag": "shell_latch",
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "far": true
+        }
+      ],
+      "pose_offsets": {
+        "idle": {},
+        "tap": {
+          "pearl_arch": {
+            "dy": 0.15,
+            "rz": 8
+          }
+        },
+        "win": {
+          "tide_arrows": {
+            "dy": 0.2,
+            "rz": -9
+          }
+        },
+        "loss": {
+          "shell_latch": {
+            "dy": -0.13,
+            "rz": 7
+          }
+        }
+      }
+    }
+  ]
+}
