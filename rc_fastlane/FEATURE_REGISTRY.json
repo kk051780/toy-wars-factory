@@ -222,6 +222,43 @@
       "original_55_unmodified": true,
       "studio_test": "NOT_TESTED",
       "verified_module_git_blob": "d5a229cafe643cdea15c54877368cc3af72552be"
+    },
+    {
+      "id": "WCS_F01_C01",
+      "summary": "Crystal Canyon elevated two-team fair entry, two Mogurones and 14s bridge/cooldown",
+      "state": "CANDIDATE_SOURCE_LOCKED_RC58_CI_PENDING_NOT_OFFICIAL",
+      "profiles": [
+        "rich51"
+      ],
+      "rollback": "FEATURE_SWITCHES.features.WCS_F01_C01.enabled=false -> exact prior rich57",
+      "independent_switch": true,
+      "source_git_blob": "7d2afad5e9b8df410ea0eb83ad962cf42ab98e71",
+      "source_script": "server/WCS_CrystalCanyon.server.luau",
+      "source_original57_preserved": true,
+      "studio_2client": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED",
+      "boot_attribute": "Rojo sets ServerStorage.P0D_RC_ENABLE_WCS_F01_C01=true only in WCS-included private candidate; missing/false runtime flag is OFF"
+    },
+    {
+      "id": "EGG_RELAY_CLASSIC_V1",
+      "summary": "Classic one-egg teammate atomic handoff on existing sole Game/Remote, optional HUD button",
+      "state": "PRIVATE_60_CANDIDATE_NOT_OFFICIAL",
+      "profiles": [
+        "rich51"
+      ],
+      "independent_switch": true,
+      "source_policy_gitblob": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
+      "change_existing": [
+        "server/Game.server.luau",
+        "client/HUD.client.luau"
+      ],
+      "new_module": "server/EggRelayPolicy.luau",
+      "server_authority": "single existing Game/Remote; neither scoring nor Store changed",
+      "five_egg_mode": "FAIL_CLOSED_NOT_SUPPORTED",
+      "rollback": "EGG_RELAY_CLASSIC_V1.enabled=false preserves same WCS+Jobs59",
+      "real_studio": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED"
     }
   ],
   "next_source_adoption_contract": {
