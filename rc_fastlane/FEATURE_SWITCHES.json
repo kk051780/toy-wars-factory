@@ -178,6 +178,23 @@
       "pvp_seven_jobs": "NOT_IMPLEMENTED",
       "studio_engine": "NOT_TESTED",
       "official_rc_adopted": false
+    },
+    "EGG_RELAY_CLASSIC_V1": {
+      "enabled": true,
+      "status": "PRIVATE60_CLASSIC_ONLY_NOT_CANONICAL",
+      "source_author": "PR296 exact SHA f1c0866423c2c1d36a5cd8eafe8cee7558b1a1dd",
+      "source_patch_ops_gitblob": "709804162da1537bdc412a7ce6563a004e5cdadf",
+      "dependency": "WCS_F01_C01 and SEVEN_JOBS_PVE_V1 combined59 and original Game/HUD",
+      "modified_existing": [
+        "server/Game.server.luau",
+        "client/HUD.client.luau"
+      ],
+      "new_pure_policy": "server/EggRelayPolicy.luau",
+      "mode": "ONE_EGG_ONLY; five-egg relay intentionally denied",
+      "runtime_off": "nonStudio OFF; Studio missing/false P0D_RC_ENABLE_EGG_RELAY_CLASSIC BoolValue OFF; preview private Rojo sets explicit true",
+      "rollback": "Set EGG_RELAY_CLASSIC_V1.enabled=false to retain WCS+7jobs source59",
+      "real_engine_2client_android_fun": "NOT_TESTED",
+      "official_rc_adopted": false
     }
   }
 }
