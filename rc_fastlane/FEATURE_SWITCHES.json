@@ -1,0 +1,41 @@
+{
+  "schema": "P0D_RC_FEATURE_SWITCHES_V1",
+  "base_profile": "rich51",
+  "features": {
+    "REALM_HUNT_V1": {
+      "enabled": true,
+      "status": "PENDING_EXACT_HEAD_CI",
+      "rollback": "set enabled=false, re-run same RC builder; source remains in GitHub",
+      "source": [
+        {
+          "path": "rc_fastlane/features/realm_hunt/RealmHunt.server.luau",
+          "dest": "server/RealmHunt.server.luau",
+          "blob": "24f4813f50b97ccab7cbf7a89ef1be062b53d5f4"
+        },
+        {
+          "path": "rc_fastlane/features/realm_hunt/RealmHuntHUD.client.luau",
+          "dest": "client/RealmHuntHUD.client.luau",
+          "blob": "f9c5e0999c7f8be89861b06650a45e367b302d18"
+        }
+      ],
+      "affects": [
+        "world decorations",
+        "proximity discovery",
+        "server session attributes",
+        "small progress HUD"
+      ],
+      "forbidden": [
+        "main",
+        "Remote",
+        "Store",
+        "egg",
+        "score",
+        "HP",
+        "XP",
+        "combat",
+        "paid",
+        "publish"
+      ]
+    }
+  }
+}

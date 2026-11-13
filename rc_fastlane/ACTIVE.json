@@ -43,7 +43,7 @@
   "owner_fun": "NOT_TESTED",
   "production_publish_authorized": false,
   "rollback_granularity": "profile (rich51 -> rich47 -> legacy21); per-feature core switches require refactor, not claimed",
-  "status": "RC_CURRENT_RICH51_SOURCE_SELECTED_AND_INITIAL_BINARY_PASS",
+  "status": "RC_RICH51_REALM_HUNT_INTEGRATION_CI_PENDING",
   "release_progress_last_official": 75,
   "first_verified_run": {
     "workflow_run_id": 43483022604,
@@ -52,5 +52,16 @@
     "artifact_id": 14066271707,
     "job_conclusion": "success"
   },
-  "verification_rule": "Every RC HEAD needs its own GitHub Actions conclusion; first pass applies only to indicated rc_head_sha"
+  "verification_rule": "Every RC HEAD needs its own GitHub Actions conclusion; first pass applies only to indicated rc_head_sha",
+  "optional_live_features": {
+    "REALM_HUNT_V1": {
+      "enabled": true,
+      "base_script_count": 51,
+      "extra_script_count": 2,
+      "expected_place_script_count": 53,
+      "gameplay": "four in-world secret ProximityPrompts and 4/4 celebration",
+      "engine_verification": "NOT_TESTED",
+      "feature_switch": "rc_fastlane/FEATURE_SWITCHES.json"
+    }
+  }
 }

@@ -104,6 +104,23 @@
       "profiles": [],
       "rollback": "none",
       "independent_switch": false
+    },
+    {
+      "id": "REALM_HUNT_V1",
+      "summary": "4 fantasy landmark ProximityPrompts -> 4/4 session discovery + temporary glow",
+      "state": "PENDING_EXACT_HEAD_CI",
+      "profiles": [
+        "rich51"
+      ],
+      "files": [
+        "server/RealmHunt.server.luau",
+        "client/RealmHuntHUD.client.luau"
+      ],
+      "toggle": "rc_fastlane/FEATURE_SWITCHES.json#features.REALM_HUNT_V1.enabled",
+      "rollback": "set enabled=false and rebuild the same RC; preserves original 51 bytes",
+      "independent_switch": true,
+      "no_authority": "no Game/Remote/Store/score/HP/XP writes",
+      "studio_test": "NOT_TESTED"
     }
   ],
   "next_source_adoption_contract": {

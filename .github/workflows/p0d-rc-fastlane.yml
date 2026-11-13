@@ -65,6 +65,32 @@ jobs:
           else
             test -f releases/P0D_S1_KIDS_RC01/default.project.json
           fi
+      - name: Add P0D optional gameplay directly to current RC, never modifying author 51
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_realm_hunt.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/integrate.py --profile rich51 --dist "$DIST"
+          fi
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_rc_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Compile ONLY the two newly added real Luau sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_rc_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_rc_luau -B /tmp/p0d_new_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_new_luau --target Luau.Compile.CLI --parallel 4
+          /tmp/p0d_new_luau/luau-compile rc_fastlane/features/realm_hunt/RealmHunt.server.luau > /tmp/p0d_new_server.luau.out
+          /tmp/p0d_new_luau/luau-compile rc_fastlane/features/realm_hunt/RealmHuntHUD.client.luau > /tmp/p0d_new_client.luau.out
+          echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash
         run: |
@@ -94,12 +120,18 @@ jobs:
             export DIST=releases/P0D_S1_KIDS_RC01
           fi
           /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o /tmp/p0d_rc_out/P0D_CANONICAL_RC_${PROFILE}.rbxlx
+          if [ "$PROFILE" = rich51 ] && [ -f "$DIST/RC_FEATURE_LOCK.json" ]; then
+            cp "$DIST/RC_FEATURE_LOCK.json" /tmp/p0d_rc_out/RC_FEATURE_LOCK.json
+          fi
           python3 - <<'PY'
           import os,json,hashlib,collections,pathlib,xml.etree.ElementTree as ET
           p=os.environ['PROFILE'];base=pathlib.Path(os.environ['DIST'])
           target=pathlib.Path('/tmp/p0d_rc_out')/('P0D_CANONICAL_RC_'+p+'.rbxlx')
           actual=collections.Counter(f.read_text('utf8') for f in (base/'src').rglob('*.luau'))
-          assert sum(actual.values())=={'rich51':51,'rich47':47,'legacy21':21}[p]
+          flags=json.load(open('rc_fastlane/FEATURE_SWITCHES.json',encoding='utf8'))
+          realm_enabled=flags['features']['REALM_HUNT_V1']['enabled'] and p=='rich51'
+          expected={'rich51':51+int(realm_enabled)*2,'rich47':47,'legacy21':21}[p]
+          assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
               if e.get('class') not in ('Script','LocalScript','ModuleScript'):continue
@@ -110,6 +142,12 @@ jobs:
               if n is not None:titles[(e.get('class'),n.text)]+=1
           assert included==actual,('SOURCE_MISMATCH',len(included),len(actual))
           assert titles[('Script','Game')]==1,('DUPLICATE_GAME',titles)
+          if realm_enabled:
+              assert titles[('Script','RealmHunt')]==1
+              assert titles[('LocalScript','RealmHuntHUD')]==1
+          else:
+              assert titles[('Script','RealmHunt')]==0
+              assert titles[('LocalScript','RealmHuntHUD')]==0
           if p=='rich51':
               assert titles[('Script','V4TrainingBridge')]==1
               assert titles[('LocalScript','V4TrialOverlay')]==1
@@ -123,7 +161,10 @@ jobs:
             'single_game':True,'owner_studio_2client':'NOT_TESTED',
             'android':'NOT_TESTED','owner_fun':'NOT_TESTED',
             'production_publish':False,'sixskill_persistent':False,
-            's1_score_prior_only':75}
+            's1_score_prior_only':75,
+            'feature_flags':{'REALM_HUNT_V1':realm_enabled},
+            'base_author_51_preserved':True if realm_enabled else None,
+            'new_realms_studio_2client':'NOT_TESTED'}
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
           print('OFFICIAL_RC_FASTLANE_BINARY_SOURCE_EXACT_PASS',p,digest)
           PY
