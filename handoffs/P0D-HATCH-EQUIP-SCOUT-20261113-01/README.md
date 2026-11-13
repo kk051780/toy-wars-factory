@@ -10,7 +10,7 @@ The server must call `finishRound` with authenticated final scores and a verifie
 `tests/test_rules.py` uses **lupa (Lua 5.4 compatible runtime)** to EXECUTE the ORIGINAL .luau source unchanged, with 16 positive/negative lifecycle tests. This is more than static text checking, but it is **NOT native Luau compile, Roblox Studio server/network physics, Android or actual child play**.
 
 ## What is not delivered
-- A visible 3D summon and movement, real enemy counterplay, D18 original model wiring, world position/team validation, and real two-client replication. `requestScout` only returns a permission token, the real server adapter must spawn the creature. **NOT playable game feature yet**.
+- A production H1/H2-integrated D18 summon with actual original model wiring, persistent entitlement, complete world/role validation and validated two-client Roblox engine behavior. `requestScout` only returns a policy permission token; the added Studio-only mini arena below has an original low-poly 3D mock scout, but it is not a playable **official game feature** and has not passed engine QA.
 - Actual DataStore IO; `export`/`restore` are policy-only trusted server storage boundaries. An integrator must implement datastore write-through with `UpdateAsync`, rate limits, retry/journal receipt handling and session conflict safety.
 - Integration with current H1/H2 Game.server, egg/score engine and round controller. This module DOES NOT introduce duplicate game/egg/HP/reward authority.
 - Purchase features, shop enablement, keys, monetization or automatic game publication.
