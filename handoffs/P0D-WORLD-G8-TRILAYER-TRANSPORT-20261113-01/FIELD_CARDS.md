@@ -32,3 +32,6 @@ Roblox official client/server guidance: Prompt Triggered can be manipulated by c
 Roblox official streaming/performance: large 3D scenes should plan for instance streaming and low-power mobile, actual FPS is UNKNOWN: https://create.roblox.com/docs/workspace/streaming
 
 Source acceptance: G8-A planning distinct/child counterplay PASS when card reviewed; G8-B all 3 tier 3D and 5 real source trips; G8-C Python hostile tests/native pure Luau; G8-D REAL Rojo compiled Place XML verified; G8-E immutable share #222/#219/#218. G8-F actual OWNER private Studio test two clients/Android/H0 vs S1 fun NOT_TESTED. Keep #220 sole release and #222 field progress unchanged. Never publish or merge this standalone demo into official H1.
+
+## スマホ操作の確認項目
+スマホ横画面で各輪に近づくとタップ操作のProximityPromptが表示される設計。現時点で実機スマホ/Androidの入力・画面占有・FPSはNOT_TESTED。音声や色で次の行き先を読めるか、端末別に合否判定を要求する。
