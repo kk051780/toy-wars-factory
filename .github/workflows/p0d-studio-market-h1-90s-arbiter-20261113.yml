@@ -34,7 +34,7 @@ jobs:
           root=Path('handoffs/P0D-STUDIO-H1-90S-FUN-DECISION-20261113')
           p=root/'vendor/review_studio_probe_logs_PINNED_UNCHANGED.py'
           b=p.read_bytes()
-          sha=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\\0'+b).hexdigest()
+          sha=hashlib.sha1(b'blob '+str(len(b)).encode()+bytes([0])+b).hexdigest()
           assert sha=='d2e4580e1ea417225d7e75a6ea83b559a4f677ac',sha
           source=(root/'bridge_studio_evidence.py').read_text(encoding='utf-8')
           assert 'studio_2client_actually_run_by_this_tool' not in source
