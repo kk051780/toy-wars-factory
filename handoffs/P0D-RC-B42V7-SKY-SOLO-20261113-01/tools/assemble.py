@@ -19,6 +19,7 @@ B42_GAME="21b866e801a53ba7ebd66132ae55fe28608750d6"
 ORIGINAL_WORLD="0a6360392f4384dc2f0ab1e9afc1d840d66a22b8"
 ORIGINAL_HORDE="fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 SOLO_RULE="de0e0df12346de2b4e7b607c74eddaaac693dc99"
+AUDIT_CLIENT="1fadb6f3b796e33335267653b1ce3f414401df13"
 
 def blob(raw:bytes)->str:
     return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
@@ -80,7 +81,14 @@ def hunk_game(game:str)->str:
 def main():
     assert not UPSTREAM_DIST.exists() and not DIST.exists(),"FAIL_CLOSED_NO_DIST_OVERWRITE"
     src=ROOT/"src/StudioSoloPreviewRules.luau"
+    audit=ROOT/"src/P0DStudioTrialAudit.client.luau"
     assert blob(src.read_bytes())==SOLO_RULE,"SOLO_SOURCE_DRIFT"
+    assert blob(audit.read_bytes())==AUDIT_CLIENT,"AUDIT_SOURCE_DRIFT"
+    audit_text=audit.read_text("utf8")
+    for forbidden in ("FireServer(", "DataStoreService", "MarketplaceService",
+                      "OnServerEvent:Connect(", "Instance.new("):
+        assert forbidden not in audit_text, "AUDIT_NOT_READONLY"
+    assert 'if not RunService:IsStudio() then return end' in audit_text
     assert blob((UPSTREAM/"src/H1FunWorld_SKY_CASTLE_TEST.server.luau").read_bytes())==ORIGINAL_WORLD
     subprocess.run([sys.executable,"-B",str(UPSTREAM/"tools/assemble.py"),"--assemble"],
                    cwd=REPO,check=True)
@@ -92,21 +100,29 @@ def main():
     game=DIST/"src/server/Game.server.luau"
     game.write_text(hunk_game(game.read_text(encoding="utf8")),encoding="utf8")
     shutil.copyfile(src,DIST/"src/server/StudioSoloPreviewRules.luau")
+    shutil.copyfile(audit,DIST/"src/client/P0DStudioTrialAudit.client.luau")
     project=DIST/"default.project.json"
     config=json.loads(project.read_text(encoding="utf8"))
     assert config["tree"]["ServerScriptService"]["TrapRaidersS1"]["$path"]=="src/server"
-    config["name"]="EGG_RAID_RUMBLE_B42_V7_SKYCASTLE_STUDIO_SOLO_UNPUBLISHED"
+    config["name"]="EGG_RAID_RUMBLE_B42_V7_SKYCASTLE_STUDIO_SOLO_AUDIT_UNPUBLISHED"
+    # Rojo original project maps every StarterPlayerScripts LocalScript explicitly.
+    # A script in src/client is NOT built until it is mapped here.
+    starter=config["tree"]["StarterPlayer"]["StarterPlayerScripts"]
+    assert "P0DStudioTrialAudit" not in starter
+    starter["P0DStudioTrialAudit"]={"$path":"src/client/P0DStudioTrialAudit.client.luau"}
     project.write_text(json.dumps(config,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
     all_scripts=collect(DIST)
-    assert len(all_scripts)==43 and len(original)==42
+    assert len(all_scripts)==44 and len(original)==42
     assert sorted(set(original)-set(all_scripts))==[]
-    assert sorted(set(all_scripts)-set(original))==["server/StudioSoloPreviewRules.luau"]
+    assert sorted(set(all_scripts)-set(original))==[
+        "client/P0DStudioTrialAudit.client.luau",
+        "server/StudioSoloPreviewRules.luau"]
     changed=[p for p in original if original[p]!=all_scripts[p]]
     assert changed==["server/Game.server.luau"],changed
     assert all(all_scripts[p]==original[p] for p in original if p!="server/Game.server.luau")
     assert sum(p.endswith("/Game.server.luau") for p in all_scripts)==1
     assert len([p for p in all_scripts if p.endswith(".server.luau")])==2
-    assert len([p for p in all_scripts if p.endswith(".client.luau")])==5
+    assert len([p for p in all_scripts if p.endswith(".client.luau")])==6
     assert Counter(p.split("/")[0] for p in all_scripts)["server"] >= 25
     # No Gameplay authority duplication. No mutating existing 5-egg / XP / evolution.
     c=all_scripts["server/Game.server.luau"].decode("utf8")
@@ -118,14 +134,21 @@ def main():
     assert c.count('remote.OnServerEvent:Connect(')==1
     assert c.count('local RunService = game:GetService("RunService")')==1
     assert all_scripts["server/StudioSoloPreviewRules.luau"]==src.read_bytes()
+    assert all_scripts["client/P0DStudioTrialAudit.client.luau"]==audit.read_bytes()
+    assert blob(all_scripts["client/P0DStudioTrialAudit.client.luau"])==AUDIT_CLIENT
+    assert config["tree"]["StarterPlayer"]["StarterPlayerScripts"]["P0DStudioTrialAudit"]["$path"]=="src/client/P0DStudioTrialAudit.client.luau"
     lock={
        "status":"RICH_B42_V7_SKYCASTLE_SOLO_UNPUBLISHED_STUDIO_PREVIEW",
        "original_h1_fixed_source_commit":FROZEN_UPSTREAM,
        "original_h1_scripts":42,"unchanged_original_h1_scripts":41,
        "new_module":"server/StudioSoloPreviewRules.luau",
        "new_module_original_blob":SOLO_RULE,
+       "audit_script":"client/P0DStudioTrialAudit.client.luau",
+       "audit_original_author_blob":AUDIT_CLIENT,
+       "audit_author_sha":"fb95ddd42418a87595c209b381399e94b3bb99ad",
+       "audit_readonly_studio_only":True,
        "modified_original":["server/Game.server.luau"],
-       "script_total":43,"game_count":1,"one_remote":True,
+       "script_total":44,"game_count":1,"one_remote":True,
        "solo_isStudio_gate":True,"solo_latched_at_round_start":True,
        "studio_2client_exit_still_ends":True,"published_min_players_unchanged":True,
        "original_first90_waypoint":True,"original_v7_musou":True,
@@ -136,7 +159,7 @@ def main():
        "blobs":{p:blob(content) for p,content in sorted(all_scripts.items())}
     }
     (DIST/"SOURCE_LOCK.json").write_text(json.dumps(lock,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
-    print("P0D_B42_V7_SKYCASTLE_STUDIO_SOLO_43_SOURCE_41_UNCHANGED_PASS")
+    print("P0D_B42_V7_SKYCASTLE_STUDIO_SOLO_AUDIT_44_SOURCE_41_UNCHANGED_PASS")
 
 if __name__=="__main__":
     p=argparse.ArgumentParser()
