@@ -1,0 +1,38 @@
+{
+  "schema": "P0D_EGG_RELAY_RC57_UNIFIED_58_ACTUAL_LOCAL_QA_RECEIPT_V1",
+  "date_jst": "2026-11-14",
+  "source_input": "Only canonical official RC57 actual Actions #43508325263 artifact #14077447164",
+  "source_input_sha256": "15521b7dadbd96c0ef1ed12367b5fcf2f3738c4428ebf2fb8c43532b39b8b1a8",
+  "candidate_isolated_xml_sha256": "ab502740b40a2e62344304461d26d89a91a8bc7ec657091ecc5cf7a9b2bfc5d3",
+  "local_download_bundle": "P0D_EGG_RELAY_RC57_UNIFIED_58_REAL_SOURCE.zip",
+  "local_download_bundle_sha256": "f62e415488be6cfa7fc5e54d9378a7afd92246309dfe09ec2c24cd4c3cc057c3",
+  "bundle_contains_original_place": true,
+  "bundle_contains_source_modified_real_xml": true,
+  "bundle_contains_source_locked_builder_and_tests": true,
+  "cleanroom_extract_sha256_recheck": "11/11 PASS",
+  "cleanroom_rebuild_same_candidate_sha": "PASS",
+  "real_source_regression_python": "26/26 PASS local original and cleanroom",
+  "real_h2_new_method_with_authored_exact_48_cases": "48/48 PASS executed in Lua5.4 compatibility (not native Luau)",
+  "unaltered_script_count": "55/57 PASS",
+  "modified_original_scripts": [
+    "Game",
+    "H2FiveEggRules"
+  ],
+  "new_scripts": [
+    "EggRelayPolicy"
+  ],
+  "existing_original_Game_remote_store_authority_preserved": "static verified, engine not verified",
+  "default_off_source_flag": "ServerStorage P0D_RC_ENABLE_EGG_RELAY must equal true and RunService:IsStudio()",
+  "native_Luau_full_58_compile": "NOT_VERIFIED",
+  "Rojo_exact_58": "NOT_VERIFIED",
+  "Roblox_Studio_2client": "NOT_TESTED",
+  "Android": "NOT_TESTED",
+  "Owner_FUN": "NOT_TESTED",
+  "single_sole_official_RC_writer": "#220",
+  "product_selection": "REQUESTED_NOT_ACKNOWLEDGED",
+  "official_rc_adopted": false,
+  "latest_formal_verified_RC_scripts": 57,
+  "latest_formal_catalog_adoption": "21/58=36.2%; Egg Relay not counted",
+  "official_s1_historical_launch_readiness": "75/100 FUN_NO_GO",
+  "review_note": "This unified Game candidate and PR #296 Classic Game/HUD are competing alternatives; never apply both. H2-only function can complement PR #296. Rebase to exact current RC before any #220 source admission."
+}
