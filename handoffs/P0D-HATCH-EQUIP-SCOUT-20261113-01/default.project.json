@@ -1,0 +1,24 @@
+{
+  "name": "EggRumbleScoutPrivateDemo",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "RewardEquipRules": {
+        "$path": "src/RewardEquipRules.luau"
+      },
+      "ScoutArena": {
+        "$path": "demo/ScoutArena.server.luau"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "ScoutArena": {
+          "$path": "demo/ScoutArena.client.luau"
+        }
+      }
+    }
+  }
+}
