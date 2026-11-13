@@ -1,0 +1,110 @@
+name: P0D H1 PACE ALT improved sea sky kid carrier UI full-game real Rojo
+on:
+  push:
+    branches:
+      - integration/p0d-h1-kids-ui-short-routes-alt-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  h1-four-way-source:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 23
+    env:
+      BUILD_ROOT: handoffs/P0D-H1-FAST-ROUTES-WITH-UX-20261113-01
+    steps:
+      - name: Checkout isolated full H1 source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Prove exactly pinned original 25 plus 4 inputs and assemble complete 28-Luau game
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$BUILD_ROOT/tools/assemble.py" --verify
+          python3 "$BUILD_ROOT/tools/assemble.py" --assemble
+          python3 -B -m unittest discover -s "$BUILD_ROOT/tests" -p 'test_*.py' -v
+          echo H1_ALT_PACE_18_ROUTE_TESTS_6_HUD_TESTS_AND_NEGATIVE_MUTANTS_PASS
+      - name: Fetch pinned Rojo 7.7.1 binary, check archive hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_h1_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_h1_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          import stat,zipfile
+          with zipfile.ZipFile("/tmp/p0d_h1_rojo.zip") as zip:
+              candidates=[i for i in zip.namelist() if i.rsplit("/",1)[-1]=="rojo"]
+              assert len(candidates)==1,candidates
+              out=Path("/tmp/p0d_h1_rojo")
+              out.write_bytes(zip.read(candidates[0]))
+              out.chmod(out.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+          PY
+          /tmp/p0d_h1_rojo --version | grep -F 7.7.1
+      - name: Produce actual 28-Luau original full game Rojo rbxlx for private OWNER Studio only
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_h1_wow
+          /tmp/p0d_h1_rojo build "$BUILD_ROOT/dist/TRAP_RAIDERS_H1_WOW_STUDIO_ONLY/default.project.json" -o /tmp/p0d_h1_wow/TRAP_RAIDERS_H1_FAST_ROUTES_STUDIO_ONLY.rbxlx
+          test -s /tmp/p0d_h1_wow/TRAP_RAIDERS_H1_FAST_ROUTES_STUDIO_ONLY.rbxlx
+      - name: Validate 28 of 28 original source strings embedded in actual Rojo XML and write immutable receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import collections,hashlib,json,xml.etree.ElementTree as ET,os
+          src=Path(os.environ["BUILD_ROOT"])/"dist/TRAP_RAIDERS_H1_WOW_STUDIO_ONLY/src"
+          candidates=sorted(src.rglob("*.luau"))
+          assert len(candidates)==28,len(candidates)
+          place=Path("/tmp/p0d_h1_wow/TRAP_RAIDERS_H1_FAST_ROUTES_STUDIO_ONLY.rbxlx")
+          tree=ET.fromstring(place.read_bytes())
+          lua=[]; kind=collections.Counter()
+          for item in tree.iter("Item"):
+              cls=item.attrib.get("class")
+              if cls not in ("Script","LocalScript","ModuleScript"):continue
+              x=item.find("./Properties/string[@name='Source']")
+              if x is None:continue
+              lua.append(x.text or "")
+              kind[cls]+=1
+          assert kind=={"Script":2,"LocalScript":4,"ModuleScript":22},kind
+          assert collections.Counter(lua)==collections.Counter(f.read_text(encoding="utf-8") for f in candidates),(len(lua),len(candidates))
+          receipt=json.loads((src.parent/"SOURCE_LOCK.json").read_text(encoding="utf-8"))
+          receipt["actual_Rojo_place_sha256"]=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt["rbxlx_file_bytes"]=place.stat().st_size
+          receipt["actual_XML_28_source_bytes_verified"]=True
+          receipt["Github_immutable_build_sha"]=os.environ["GITHUB_SHA"]
+          Path("/tmp/p0d_h1_wow/H1_FOUR_WAY_BUILD_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          print("H1_FOUR_WAY_28_OF_28_REAL_ROJO_XML_BYTE_EXACT",dict(kind))
+          print("H1_PLACE_SHA256",receipt["actual_Rojo_place_sha256"])
+          PY
+      - name: Native Luau compiler compile all 28 real game scripts with pinned revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/p0d_h1_luau
+          git -C /tmp/p0d_h1_luau fetch --depth 1 origin f46d879e28302a430029304f7f6a162aed66f103
+          git -C /tmp/p0d_h1_luau checkout --detach FETCH_HEAD
+          test "$(git -C /tmp/p0d_h1_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S /tmp/p0d_h1_luau -B /tmp/p0d_h1_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_h1_native --target Luau.Compile.CLI --parallel 4
+          number=0
+          while IFS= read -r -d '' file; do
+              /tmp/p0d_h1_native/luau-compile "$file" >/dev/null
+              number=$((number+1))
+          done < <(find "$BUILD_ROOT/dist/TRAP_RAIDERS_H1_WOW_STUDIO_ONLY/src" -name '*.luau' -print0)
+          test "$number" -eq 28
+          echo "H1_FOUR_WAY_28_OF_28_NATIVE_LUAU_COMPILE_PASS"
+      - name: Upload source-built H1 unpublished private Studio-only Place with audit proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-H1-FAST-SEA-SKY-KIDS-UI-4WAY-STUDIO-ONLY-NOT-PUBLISH
+          path: |
+            /tmp/p0d_h1_wow/TRAP_RAIDERS_H1_FAST_ROUTES_STUDIO_ONLY.rbxlx
+            /tmp/p0d_h1_wow/H1_FOUR_WAY_BUILD_RECEIPT.json
+          if-no-files-found: error
+          retention-days: 7
