@@ -50,7 +50,7 @@ def build(zip_path,out_path):
     name=holder.find('./Properties/string[@name="Name"]')
     if holder.get("class")!="Folder" or name is None or name.text!="TrapRaidersS1":raise ValueError("NOT_CANONICAL_GAME_FOLDER")
     add=copy.deepcopy(host)
-    add.set("referent","P0D_WCS_F01_C01_57")
+    add.set("referent","P0D_WCS_F01_C01_56")
     add.find('./Properties/string[@name="Name"]').text="WCS_CrystalCanyon"
     add.find('./Properties/string[@name="Source"]').text=added.decode("utf8")
     holder.append(add)
