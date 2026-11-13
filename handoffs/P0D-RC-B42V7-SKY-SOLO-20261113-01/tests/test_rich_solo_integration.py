@@ -9,7 +9,7 @@ UP=REPO/"handoffs/P0D-B42-V7-SKYCASTLE-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_
 GAME="21b866e801a53ba7ebd66132ae55fe28608750d6"
 HORDE="fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 SKY="0a6360392f4384dc2f0ab1e9afc1d840d66a22b8"
-SOLO="22e7e22e8837dbf44c57fdfb30efd480457022fb"
+SOLO="de0e0df12346de2b4e7b607c74eddaaac693dc99"
 
 def blob(raw):
     return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
@@ -55,7 +55,11 @@ class RichSoloIntegration(unittest.TestCase):
         self.assertEqual(blob(s),SOLO)
         self.assertEqual(g.count('local RunService = game:GetService("RunService")'),1)
         self.assertIn('StudioSolo.canStart(RunService:IsStudio(), count',g)
-        self.assertIn('StudioSolo.emptyWinner(RunService:IsStudio(), count',g)
+        self.assertIn('studioSoloRoundStarted = StudioSolo.isSoloRound(',g)
+        self.assertIn('StudioSolo.emptyWinner(RunService:IsStudio(),',g)
+        self.assertIn('studioSoloRoundStarted, count',g)
+        self.assertTrue(self.receipt["solo_latched_at_round_start"])
+        self.assertTrue(self.receipt["studio_2client_exit_still_ends"])
         self.assertIn('isStudio == true and count == 1',s.decode("utf8"))
         self.assertIn('red > 0 and blue > 0',s.decode("utf8"))
         self.assertFalse(self.receipt["published_min_players_unchanged"] is False)
