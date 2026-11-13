@@ -33,11 +33,13 @@ def blob(raw):
 def sources(dist):
  return {p.relative_to(dist/"src").as_posix():p.read_bytes()
          for p in (dist/"src").rglob("*.luau")}
-def apply(dist):
+def apply(dist, enabled_override=None):
  assert dist.is_dir() and (dist/"default.project.json").is_file(),"NO_RC_DIST"
  before=sources(dist)
  flags=json.loads((Path(__file__).resolve().parent/"FEATURE_SWITCHES.json").read_text("utf8"))["features"]
- if not flags["SEVEN_JOBS_PVE_V1"]["enabled"]:
+ enabled=flags["SEVEN_JOBS_PVE_V1"]["enabled"] if enabled_override is None else enabled_override
+ assert type(enabled) is bool,"SEVEN_JOBS_ENABLE_INVALID"
+ if not enabled:
   print("SEVEN_JOBS_OFF_PRESERVES_EXISTING_SOURCE")
   return {"enabled":False,"source_count":len(before)}
  want=57+int(flags["WCS_F01_C01"]["enabled"])
