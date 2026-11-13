@@ -200,6 +200,22 @@
       "verified_rojo_sources": 56,
       "original_54_source_bodies_unchanged": true,
       "studio_engine": "NOT_TESTED"
+    },
+    {
+      "id": "SCOUT_SPECIES_V1",
+      "summary": "3 existing scouts gain species-specific 3D crests, branching guard and assault behaviors",
+      "state": "SOURCE_CANDIDATE_IN_OFFICIAL_RC_PENDING_CI",
+      "profiles": [
+        "rich51"
+      ],
+      "independent_switch": true,
+      "source_files": [
+        "rc_fastlane/features/scout_species/ScoutSpeciesPolicy.luau"
+      ],
+      "changed_game_source": true,
+      "rollback": "SCOUT_SPECIES_V1.enabled=false restores rich56",
+      "real_studio": "NOT_TESTED",
+      "no_new_store_remote_game": true
     }
   ],
   "next_source_adoption_contract": {
