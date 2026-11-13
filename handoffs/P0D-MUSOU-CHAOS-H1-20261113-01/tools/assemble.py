@@ -60,8 +60,8 @@ def build()->dict:
     assert game.count("horde:reset(match.serial,serverNow())")==1
     assert game.count("horde:tick(now,Players:GetPlayers(),healthy)")==1
     assert game.count("horde:hit(root.Position,look,")==1
-    assert game.count('applyNet(player,data)')==2
-    assert game.count("applyBreakOrRescue(player,data)")==2
+    assert game.count('applyNet(player,data)')==1
+    assert game.count("applyBreakOrRescue(player,data)")==1
     assert "NET_THROW" in game and "BREAK_FREE" in game and "RESCUE" in game
     assert "netImmuneUntil" in game
     assert "if not RunService:IsStudio()" in game
