@@ -10,6 +10,7 @@ on:
     branches:
       - rc/p0d-s1-kids-rc01
       - feature/p0d-wcs-rc58-fastlane-candidate-20261114-02
+      - feature/p0d-wcs-sevenjobs-rc59-candidate-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -139,6 +140,14 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_seven_jobs_pve.py --dist "$DIST"
           fi
+      - name: Add classic 1-egg teammate relay inside one Game after SevenJobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_egg_relay_classic.py --dist "$DIST" --policy rc_fastlane/features/egg_relay_classic/policy/EggRelayPolicy.luau
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -167,7 +176,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -187,6 +196,21 @@ jobs:
           done < <(find "$DIST/src" -type f -name '*.luau' -print0)
           test "$n" -eq "$WANT"
           echo "P0D_CANONICAL_RC_FULL_SOURCE_LUAU_COMPILE_PASS $n/$WANT"
+      - name: Execute 31 native original-Game egg relay transaction safety cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ] && python3 -c "import json; assert json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['EGG_RELAY_CLASSIC_V1']['enabled']"; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/features/egg_relay_classic/tools/generate_native_game_harness.py \
+              --game "$DIST/src/server/Game.server.luau" \
+              --policy "$DIST/src/server/EggRelayPolicy.luau" \
+              --out /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau
+            cmake --build /tmp/p0d_new_luau --target Luau.Repl.CLI --parallel 4
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau | tee /tmp/p0d_egg_native.log
+            grep -Fx P0D_EGG_RELAY_ACTUAL_GAME_NATIVE_31_CASES_PASS /tmp/p0d_egg_native.log
+          fi
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash
         run: |
@@ -232,7 +256,8 @@ jobs:
           species_enabled=(p=='rich51' and flags['features']['SCOUT_SPECIES_V1']['enabled'])
           wcs_enabled=(p=='rich51' and flags['features']['WCS_F01_C01']['enabled'])
           seven_enabled=(p=='rich51' and flags['features']['SEVEN_JOBS_PVE_V1']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled),'rich47':47,'legacy21':21}[p]
+          egg_enabled=(p=='rich51' and flags['features']['EGG_RELAY_CLASSIC_V1']['enabled'])
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -322,6 +347,17 @@ jobs:
               assert json.loads((base/'default.project.json').read_text('utf8'))['tree']['ServerStorage']['$attributes']['P0D_RC_ENABLE_SEVEN_JOBS_PVE'] is True
           else:
               assert titles[('ModuleScript','SevenJobsRules')]==0
+          if egg_enabled:
+              assert seven_enabled and wcs_enabled
+              assert titles[('ModuleScript','EggRelayPolicy')]==1
+              assert sum('local function applyClassicEggRelay(' in src for src in included)==1
+              assert sum('relayButton.MouseButton1Click:Connect(fireClassicEggRelay)' in src for src in included)==1
+              assert sum('return flag ~= nil and flag:IsA("BoolValue")' in src for src in included)==1
+              project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
+              assert project['ServerStorage']['P0D_RC_ENABLE_EGG_RELAY_CLASSIC']['$className']=='BoolValue'
+              assert project['ServerStorage']['P0D_RC_ENABLE_EGG_RELAY_CLASSIC']['$properties']['Value'] is True
+          else:
+              assert titles[('ModuleScript','EggRelayPolicy')]==0
           if p=='rich51':
               assert titles[('Script','V4TrainingBridge')]==1
               assert titles[('LocalScript','V4TrialOverlay')]==1
@@ -343,6 +379,9 @@ jobs:
             'existing_three_scout_species_included':bool(species_enabled),
             'wcs_crystal_canyon_moguron_included':bool(wcs_enabled),
             'seven_jobs_neutral_pve_included':bool(seven_enabled),
+            'egg_relay_classic_one_egg_included':bool(egg_enabled),
+            'egg_relay_five_egg_supported':False,
+            'egg_relay_engine':'NOT_TESTED',
             'seven_jobs_pvp_full_implementation':False,
             'seven_jobs_engine':'NOT_TESTED',
             'wcs_engine_physics':'NOT_TESTED',
@@ -355,7 +394,7 @@ jobs:
             'android':'NOT_TESTED','owner_fun':'NOT_TESTED',
             'production_publish':False,'sixskill_persistent':False,
             's1_score_prior_only':75,
-            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled},
+            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled},
             'base_author_51_preserved':True if realm_enabled else None,
             'new_realms_studio_2client':'NOT_TESTED'}
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
