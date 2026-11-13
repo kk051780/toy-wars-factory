@@ -23,6 +23,15 @@ The actual #288 V7 `Horde:hit` returns aggregate touched/defeated, **not elite-o
 
 An isolated physical door in today's open grass arena is NOT a tactical shortcut. **Do not adopt** until the World/MapBuilder owner defines a collision-safe chokepoint with a completely free alternate path, verifies both teams and all egg paths, and selects the proper corridor width (6–24 studs). Source-only/native CI does not establish real Studio physics.
 
+
+## V3 physical SEA shortcut design candidate (NOT mounted into Game)
+
+Standalone `src/GateRouteOverlay.luau` now creates two mirror-symmetric **physical** gates (x = -36 / +36, z = -22) and their side barricades in the existing H1 sea corridor, only if actual `H1_FUN_WORLD/SEA_LOW_CAUSEWAY/SEA_ENTRY_RED/SEA_ENTRY_BLUE` are present and source-aligned. It **fails closed without creating parts** if the scene is absent, changed, or already patched. Original Game, MapBuilder, First90, Horde, damage, Remote, XP, egg score, and Studio PlayerScripts remain untouched.
+
+Both doors read the **same** server-owned GateRules state; normal grass/sky detours stay open. The intended choice is a fast (conditional) sea/egg approach versus a longer free bypass. An independent, conservative grid model (1.7-stud avatar clearance) produced symmetric **186 open versus 210 closed** grid steps from own spawn to the enemy egg, and 144 open versus >=174 closed for the sea crossing. These are **2D model distances, not actual Roblox path/time/physics results**. Geometry checks compare original castle walls/pillars and genuine A/B-era H1 sea/sky candidate source locks; no collider insertion into the real game is proven.
+
+This is an **S2+ source experiment** only, not approved product selection or #220 RC integration. For actual adoption the H1 world/source owner must review the overlay, and the sole Game authority must call the two original authenticated B42 PvE hit sites and count occupied door space. Full 2-client Studio + Android + egg carrying + rematch + FUN check remain **NOT_TESTED**. Full [V3 physical routing contract](docs/SEA_ROUTE_GAMEPLAY_V3.md).
+
 ## Acceptance status
 - Original isolated Luau source: delivered to its own branch, not a real integrated game.
 - Independent Python state-oracle: `python -m unittest discover -s tests -v`.

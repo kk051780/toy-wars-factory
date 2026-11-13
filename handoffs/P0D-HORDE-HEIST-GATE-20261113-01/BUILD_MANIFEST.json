@@ -33,11 +33,19 @@
     },
     {
       "path": "tools/check_locked_upstream.py",
-      "git_blob_sha1": "9c2e244cbde117f35dd9d6d6ab1415f41a85ba6d"
+      "git_blob_sha1": "765291bfa1325005d02371d12e20823e68bfe3ca"
     },
     {
       "path": "docs/OWNER_SOURCE_BINDING_AND_FIELD_GATE_V2.md",
       "git_blob_sha1": "9582586a5c3870d5afa8eab2789a3735c3b8b892"
+    },
+    {
+      "path": "src/GateRouteOverlay.luau",
+      "git_blob_sha1": "013465a62378722cb35b37e66f9eae399bc4e7e6"
+    },
+    {
+      "path": "tests/test_sea_geometry.py",
+      "git_blob_sha1": "618591ad946295f4fc269830c86fd889ab984edb"
     }
   ],
   "owner_source_lock": {
@@ -67,5 +75,33 @@
   "owner_fun": "UNKNOWN",
   "rc_adopted": false,
   "s1_release_progress_delta": 0,
-  "policies": "No main/merge/publish/paid/CAS/automation changes"
+  "policies": "No main/merge/publish/paid/CAS/automation changes",
+  "geometry_candidate": {
+    "phase": "SOURCE_ONLY",
+    "game_adoption": false,
+    "red_blue_symmetry": true,
+    "gate_positions": [
+      [
+        -36,
+        -22
+      ],
+      [
+        36,
+        -22
+      ]
+    ],
+    "never_seals_all_detours": true,
+    "open_grid_egg_steps": 186,
+    "closed_grid_egg_steps": 210,
+    "geometry_model": "conservative static 2D grid; NOT Roblox physics",
+    "real_studio": "NOT_TESTED"
+  },
+  "last_verified_ci": {
+    "head": "c4df6a5749052a2e25f5c50467a8f4124d7da558",
+    "run": "https://github.com/kk051780/toy-wars-factory/actions/runs/43396139764",
+    "outcome": "COMPLETED_SUCCESS",
+    "tested": "Python unit+geometry, frozen five source readback and 19 static contracts, native Luau compile and generated elite state test",
+    "real_game_built": false
+  },
+  "final_commit_qa_status": "MUST_REVERIFY_EXACT_FINAL_SHA"
 }
