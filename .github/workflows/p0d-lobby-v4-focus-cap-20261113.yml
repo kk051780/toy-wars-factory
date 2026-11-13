@@ -79,7 +79,10 @@ jobs:
           mkdir -p /tmp/p0d_v4_native_cli
           cp /tmp/p0d_v4_luau/luau-compile /tmp/p0d_v4_native_cli/
           cp /tmp/p0d_v4_luau/luau /tmp/p0d_v4_native_cli/
-          sha256sum /tmp/p0d_v4_native_cli/* > /tmp/p0d_v4_native_cli/SHA256SUMS.txt
+          sha256sum /tmp/p0d_v4_native_cli/luau /tmp/p0d_v4_native_cli/luau-compile > /tmp/p0d_v4_native_cli/SHA256SUMS.txt
+          test "$(git -C _p0d_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          tar -czf /tmp/p0d_v4_native_cli/Luau-source-pin-f46d879.tar.gz -C _p0d_luau .
+          sha256sum /tmp/p0d_v4_native_cli/Luau-source-pin-f46d879.tar.gz > /tmp/p0d_v4_native_cli/SOURCE_SHA256.txt
       - name: Upload pinned native Luau compiler for private source-only verification
         uses: actions/upload-artifact@v4
         with:
