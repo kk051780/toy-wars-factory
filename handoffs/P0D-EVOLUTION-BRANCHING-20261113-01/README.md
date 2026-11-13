@@ -1,0 +1,70 @@
+# EGG RAID RUMBLE — 卵→育成→分岐進化→神話形態
+
+OWNER requested 2026-11-13: 「レベルの作り込みはそれだね。あとは進化という要素も欲しい」
+
+- Issue: [#287](https://github.com/kk051780/toy-wars-factory/issues/287)
+- Owner lane: `P0D-EVOLUTION-BRANCHING-PURE-POLICY-20261113-01`.
+- Player-facing game brand **EGG RAID RUMBLE**; original internal `TRAP_RAIDERS`, `p0d-siege-v19` remain unchanged.
+- This source is a new independent **policy + visual Studio gallery**, NOT real match integration. It does not create another `Game.server` or edit/merge #220 release controller.
+- Current dependencies: [#275](https://github.com/kk051780/toy-wars-factory/issues/275) original IDs `starter_scout`, `forest_scout`, `star_scout`; [#281](https://github.com/kk051780/toy-wars-factory/issues/281) real Lv1-50/masteryLv1-10 XP; [#285](https://github.com/kk051780/toy-wars-factory/issues/285) optional permanent combat strength and 8-second once-round awakening; [#280](https://github.com/kk051780/toy-wars-factory/issues/280) first real original scout Game candidate; [#282](https://github.com/kk051780/toy-wars-factory/issues/282) and [#286](https://github.com/kk051780/toy-wars-factory/issues/286) original persistence/XP; [#284](https://github.com/kk051780/toy-wars-factory/issues/284) read-only growth HUD.
+
+## Why evolution is not simply higher stats
+
+Four-stage PERMANENT growth with a **meaningful choice in stage 2**, distinct from #285's **temporary 8-second awakening**. No legendary gets an extra hidden stacking PvP multiplier above #285. A Stage 3 veteran has remarkable body/summoning/elemental effects and large PvE advantage through level/mastery; PvP still has counterplay and capped combat modifiers. Ownership remains exactly the same `itemId` through all forms; changing form never loses the hatch reward, previous collection discovery, or paid skin (not sold here).
+
+| Form | Requirements (both gates) | Evolved fragments (FREE) | Proposed unlock |
+| --- | --- | ---: | --- |
+| 0: 幼体 | Egg ownership | 0 | Base ability is ready immediately |
+| 1: 成長体 | Player Lv10 and item mastery Lv3 | 2 | Updated visible movement, novice tactical improvement |
+| 2: 分岐進化 | Player Lv25 and mastery Lv6 | 5 | Choose attack/area pressure OR guardian/support route |
+| 3: 神話形態 | Player Lv40 and mastery Lv10 | 10 | Immense dragon/VFX and ultimate ability DESIGN target |
+| Final Lv50+ | Lv50 after mythic | No separate mandatory evolution | Optional legendary aura and mastery title |
+
+Gates are **proposed initial tuning**, not observed retention or expected player completion times. The 3 upgrade costs sum to 17 FREE fragments, earn 1 from each legitimate objective-participating 60–360s match, 2 when 2+ server-confirmed objective actions; capped 2/round. Stage2+ branch can be changed for 3 earned fragments in the lobby; do not make a mistaken branch an irreversible loss. Round server + owned/XP verification is mandatory, client cannot directly award materials. No Robux/material boost, pay-to-win evolution, paid random forms, or mandatory purchase.
+
+## Evolution signatures across all six collection categories
+
+| Kind | Assault branch: aggressive play | Guard branch: support/counter |
+| --- | --- | --- |
+| BEAST | `SKY_HUNTER`: aerial spotting + mob pressure (carrier flight forbidden) | `EGG_GUARDIAN`: castle/local egg defense, reveal intruders |
+| SPELL | `STORM_ARC`: dramatic PvE mob chain magic | `ICE_BRIDGE`: clear ally route over water |
+| MOUNT | `SKY_DASH_NO_EGG`: air shortcut without an egg | `SEA_ESCORT`: escort boat, visible counter along coast |
+| ITEM | `ENEMY_SCANNER`: active route insight | `ALLIED_SHIELD`: short defensive cover |
+| ZOMBIE | `MOB_DISTRACTION`: enemies chase summoned decoy | `GATE_BLOCK`: limited castle blocking squad |
+| TRAP | `PRESSURE_SNARE`: warning net/slow | `CASTLE_ALARM`: visible egg-perimeter signal |
+
+**Truthful content count:** This *policy* currently whitelists three actual original #275 BEAST item IDs plus five hypothetical other-category demo IDs. A demo item in the registry is **NOT OWNED and NOT currently playable in the H1 game**. The catalog is designed to be driven from the real D18 canonical source later; items must have verified original 3D, mobile-ready skill, server authority, original cooldown, and actual 2-client engine QA before counting them playable. New monsters are never manufactured by altering existing paid/rare egg odds.
+
+## Implementation contract
+
+- `src/EvolutionRules.luau`: pure SERVER-only profile & evolution state. `newProfile(userId)`, `creditRound(profile,roundId,serverObjectiveCount,duration,serverConfirmed)`, `nextEvolution(profile,itemId,ownedItems,accountLevel,masteryLevel)`, `evolve(profile,itemId,ownedItems,accountLevel,masteryLevel,phase,requestId,choice,serverConfirmed)`, `switchBranch(...)`, `form(...)`.
+- `profile.forms[itemId] = {stage,branch}` and `profile.fragments`. One immutable receipt per `JobId:matchEpoch:userId` fragment settlement, one server-generated `requestId` per evolution action or branch respec. Replaying an exact evolution request returns saved receipt without charging again. Mismatched item/choice on same receipt is conflict. 4,096 receipt cap fails closed pending rolling storage/migration (do not silently delete and make receipts redeemable again). **These source arrays are not persisted here.**
+- **CRITICAL**: Original #281 xp/mastery/owned from #275/280 must be read from the same trusted player profile as evolution, never supplied by client. #282/#286 owner must eventually perform same atomic `UpdateAsync` profile mutation including fragments, forms, earnings receipts, existing owned/equipped/mastery/settled round IDs to avoid inter-server duplicate/lost update. Return state to client only by one Game's existing Remote through its sole integrator, not a new live event.
+- `form().abilityDesignId` and Stage3 `formToken=MYTHIC` are **design signatures only**. They are NOT real combat code or a working legendary dragon. `additionalPvpStatMultiplier=0`, `modelId=NOT_INTEGRATED`, `actualCombatImplemented=false`; #285 remains the combat power budget owner.
+- Existing actual H1 supports two roles and two modes, not seven finished roles. Do not claim all species/classes are live.
+
+## Private 3D vision sample (real source, not completed gameplay)
+
+`demo/EvolutionGallery.server.luau` builds 5 original toy-like dragon appearances with Roblox Parts/Wedges/highlight: (0) tiny mint hatchling, (1) adult wings, (2a) crimson sky assault, (2b) blue water guardian, (3) giant glowing golden mythic. `demo/EvolutionGalleryCamera.client.luau` uses simple touch buttons to inspect each silhouette in the stand-alone `default.project.json` Rojo private Studio. Both scripts exit immediately outside `RunService:IsStudio()`. All materials are original and built from Roblox primitives (no third-party/unlicensed 3D import). No real summon AI/combat/ability/damage/egg ownership/purchase/storage in this gallery.
+
+Repro with owner's existing trusted Rojo installation:
+
+```sh
+cd handoffs/P0D-EVOLUTION-BRANCHING-20261113-01
+rojo build default.project.json -o EGG_RUMBLE_EVOLUTION_GALLERY_PRIVATE.rbxlx
+```
+
+Review human silhouette appeal, HUD mobile camera clipping, minion-only overpower vs PvP effective fairness, attack/guardian route clarity and natural animations. Avatar model quality and mythic particle/FPS are **not validated by this source**, even if original Place compiles.
+
+## Native QA
+
+```sh
+python3 -m unittest discover -s tests -p test_project_static.py -v
+python3 tests/run_native_evolution.py --luau /path/to/real/luau --compiler /path/to/real/luau-compile
+```
+
+GitHub Actions uses exact pinned native luau-lang source version `f46d879e28302a430029304f7f6a162aed66f103`. Runtime checks exercise full form/cost/branch/ownership/receipt replay/AFK/match cap/paid flag, compiled original source. Static tests check Studio-only and project wiring. **Never claim native PASS until an exact-HASH completed-success job with log is confirmed.**
+
+Next real game integration requires #220 sole integrator to select and join #281/#285/#275 and #286 profile in ONE original Game; choose ONE original H1/H2 Game server + one Remote. Then actual dedicated BEAST Stage1 moving/summon + explicit attacker-vs-guardian action, enemy seeing and defending against it, persistent reconnect and 2-client+Android QA. Other five categories extend after success.
+
+Official only S1 release estimate as last audited: 75/100; real owner original early-session FUN gate NO_GO. This isolated feature's source/QA completion must not inflate it. No main writes/merges, live Roblox publish, purchase/pricing changes, paid combat/egg luck, PC Codex, P0-A/B/C CAS or five automations modifications.
