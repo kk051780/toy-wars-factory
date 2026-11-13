@@ -22,7 +22,7 @@ jobs:
           python -B handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/tests/test_first90_game.py
           python -B handoffs/P0D-EARNED-EVOLUTION-FULL-H1-20261113-01/tests/test_evolution_h1.py
           python -B handoffs/P0D-MUSOU-EARNED-POWER-H1-20261113-01/tests/test_power_bridge.py
-      - name: Rebuild original 41 actual Luau code with ONE Game/Remote
+      - name: Rebuild original 42 actual Luau code with ONE Game/Remote
         shell: bash
         run: |
           set -euo pipefail
@@ -31,12 +31,12 @@ jobs:
           import pathlib,json
           d=pathlib.Path("handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED")
           j=json.loads((d/"SOURCE_LOCK.json").read_text("utf8"))
-          assert j["source_count"]==41
+          assert j["source_count"]==42
           assert j["original_unchanged"]==37
-          assert len(j["source_blob_sha1"])==41
-          assert len(list((d/"src").rglob("*.luau")))==41
+          assert len(j["source_blob_sha1"])==42
+          assert len(list((d/"src").rglob("*.luau")))==42
           assert j["official_rc_adopted"] is False and j["roblox_studio_2client_tested"] is False
-          print("P0D_EVOLUTION_FULL_H1_REAL_41_LUAU_SOURCE_ASSEMBLY_PASS")
+          print("P0D_EVOLUTION_FULL_H1_REAL_42_LUAU_SOURCE_ASSEMBLY_PASS")
           PY
       - name: Checkout frozen upstream Luau native toolchain
         uses: actions/checkout@v4
@@ -53,7 +53,7 @@ jobs:
           test "$(git -C _p0d_evo_upstream rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
           cmake -S _p0d_evo_upstream -B /tmp/p0d_evo_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
           cmake --build /tmp/p0d_evo_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
-      - name: Compile ALL 41 scripts and execute genuine evolution + Store UpdateAsync logic
+      - name: Compile ALL 42 scripts and execute genuine evolution + Store UpdateAsync logic
         shell: bash
         run: |
           set -euo pipefail
@@ -68,8 +68,8 @@ jobs:
             fi
             n=$((n+1))
           done < <(find "$DIST/src" -type f -name '*.luau' -print0)
-          test "$n" -eq 41
-          echo P0D_REAL_EVOLUTION_41_LUAU_NATIVE_COMPILE_PASS
+          test "$n" -eq 42
+          echo P0D_REAL_EVOLUTION_42_LUAU_NATIVE_COMPILE_PASS
           python3 -B "handoffs/P0D-EARNED-EVOLUTION-FULL-H1-20261113-01/tools/run_native_evolution.py" --luau /tmp/p0d_evo_native/luau --compiler /tmp/p0d_evo_native/luau-compile | tee /tmp/evo_pure.log
           grep -E 'P0D_EVOLUTION_ORIGINAL_NATIVE_PASS_[0-9]+' /tmp/evo_pure.log
           python3 -B "handoffs/P0D-EARNED-EVOLUTION-FULL-H1-20261113-01/tools/generate_atomic_evolution_native.py" --write /tmp/p0d_evo_atomic_test.luau
@@ -84,6 +84,10 @@ jobs:
           /tmp/p0d_evo_native/luau-compile /tmp/p0d_first90_native_test.luau >/dev/null
           /tmp/p0d_evo_native/luau /tmp/p0d_first90_native_test.luau | tee /tmp/first90_policy.log
           grep -E '^P0D_FIRST90_NATIVE_[0-9]+_ASSERTIONS_PASS$' /tmp/first90_policy.log
+          python3 -B handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/tools/generate_native_waypoint.py --write /tmp/p0d_first90_waypoint.luau
+          /tmp/p0d_evo_native/luau-compile /tmp/p0d_first90_waypoint.luau >/dev/null
+          /tmp/p0d_evo_native/luau /tmp/p0d_first90_waypoint.luau | tee /tmp/first90_waypoint.log
+          grep -E '^P0D_FIRST90_WAYPOINT_NATIVE_[0-9]+_ASSERTIONS_PASS$' /tmp/first90_waypoint.log
       - name: Get pinned Rojo7.7.1 with SHA256 verification
         shell: bash
         run: |
@@ -100,7 +104,7 @@ jobs:
               path.chmod(path.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
           PY
           /tmp/p0d_evolution_rojo --version | grep -F 7.7.1
-      - name: Build and confirm EXACT 41-script unpublished Roblox Place source
+      - name: Build and confirm EXACT 42-script unpublished Roblox Place source
         shell: bash
         run: |
           set -euo pipefail
@@ -112,6 +116,7 @@ jobs:
           cp /tmp/evo_store.log /tmp/p0d_evolution_place/NATIVE_ATOMIC_PROFILE_QA.txt
           cp /tmp/evo_power.log /tmp/p0d_evolution_place/NATIVE_POWER_QA.txt
           cp /tmp/first90_policy.log /tmp/p0d_evolution_place/NATIVE_FIRST90_QA.txt
+          cp /tmp/first90_waypoint.log /tmp/p0d_evolution_place/NATIVE_WAYPOINT_QA.txt
           python3 - <<'PY'
           import pathlib,xml.etree.ElementTree as ET,collections,json,hashlib
           root=pathlib.Path("handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED")
@@ -126,20 +131,20 @@ jobs:
               cls[ty]+=1;scripts[code.text or ""]+=1
               name=item.find("./Properties/string[@name='Name']")
               if ty=="Script" and name is not None and name.text=="Game":oneGame+=1
-          assert cls=={"Script":2,"LocalScript":5,"ModuleScript":34},cls
-          assert scripts==original and sum(scripts.values())==41
+          assert cls=={"Script":2,"LocalScript":5,"ModuleScript":35},cls
+          assert scripts==original and sum(scripts.values())==42
           assert oneGame==1 and sum("TrapRaidersS1Remote" in k for k in scripts)>=1
           meta={"sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
             "real_Studio_tested":False,"android_tested":False,"owner_fun_accepted":False,
-            "original_module_count":41,"official_rc_adopted":False,"published":False,
+            "original_module_count":42,"official_rc_adopted":False,"published":False,
             "paid":False}
           pathlib.Path("/tmp/p0d_evolution_place/PLACE_EXACT_SOURCE.json").write_text(json.dumps(meta,indent=2)+"\n")
-          print("P0D_EVOLUTION_REAL_ROJO_41_OF_41_EXACT_SOURCE_PASS",meta["sha256"])
+          print("P0D_EVOLUTION_REAL_ROJO_42_OF_42_EXACT_SOURCE_PASS",meta["sha256"])
           PY
       - name: Upload review-only private build, NEVER publish to Roblox
         uses: actions/upload-artifact@v4
         with:
-          name: P0D-FIRST90-V5-41-LUAU-PRIVATE-STUDIO-RBXLX
+          name: P0D-FIRST90-WAYPOINT-42-LUAU-PRIVATE-STUDIO-RBXLX
           path: /tmp/p0d_evolution_place/
           retention-days: 7
           if-no-files-found: error
