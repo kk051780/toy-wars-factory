@@ -1,0 +1,45 @@
+name: P0D product studio H1 market-to-one-experiment fail-closed QA
+on:
+  push:
+    branches:
+      - product/p0d-h1-90sec-fun-experiment-arbiter-20261113
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  no-auto-release-product-evidence:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 7
+    env:
+      OWN: handoffs/P0D-STUDIO-H1-90S-FUN-DECISION-20261113
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Real product evidence rules and 28 synthetic adversarial fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s "$OWN/tests" -p 'test_*.py' -v
+      - name: Blank owner evidence MUST hold, no authorizations possible
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/decide_next_ab.py" --input "$OWN/OWNER_STUDIO_H0_H1_BLANK_NOT_TESTED.json" --output /tmp/p0d_product_hold.json
+          python3 - <<'PY'
+          import json
+          x=json.load(open('/tmp/p0d_product_hold.json'))
+          assert x['product_decision']=='HOLD_REAL_PLAY_REQUIRED',x
+          assert x['next_experiment'] is None,x
+          for k in ['official_rc_adopted','publish_authorized','paid_features_authorized','studio_2client_actually_run_by_this_tool','human_acceptance_granted_by_this_tool']:
+              assert x[k] is False,(k,x[k])
+          print("P0D_STUDIO_RESEARCH_EVIDENCE_DEFAULT_HOLD_NOT_TESTED_SAFE")
+          PY
+      - name: No unauthorized original Game or protected source changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=no)"
