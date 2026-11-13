@@ -580,7 +580,17 @@
       "evidence": "https://github.com/kk051780/toy-wars-factory/tree/rc/p0d-s1-kids-rc01/rc_fastlane/features/saved_pve",
       "note": "既存覚醒×短期道場と保存武器Lv倍率を比較し強い方を中立雑魚への攻撃に適用（最大Lv30で+20%）。55本の公式RCビルド成功、実機未試験",
       "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43501488524"
+    },
+    {
+      "id": "P0D-057",
+      "group": "育成・戦闘",
+      "name": "保存魔獣Lvと既存進化・召喚の連動",
+      "stage": "SOURCE",
+      "release": "S1",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/tree/rc/p0d-s1-kids-rc01/rc_fastlane/features/saved_beast",
+      "note": "魔獣Lv5/10/20/30で進化召喚獣の中立PvE攻撃倍率最大+20%、既存道場と非重複、サーバー側召喚モデルにランク表示。RC CI待ち",
+      "rc_evidence": null
     }
   ],
-  "last_progress_change": "P0D-056 SOURCE->RC via exact HEAD native Luau 55/55+Rojo run 43501488524; RC19/56"
+  "last_progress_change": "P0D-057 SOURCE added; RC19/57 pending 56/56 CI"
 }

@@ -89,6 +89,24 @@
         "run_id": 43501488524,
         "artifact_id": 14074311951
       }
+    },
+    "SAVED_BEAST_EVOLUTION": {
+      "enabled": true,
+      "status": "PENDING_RICH56_RC_CI",
+      "dependency": "SIX_SKILL_DURABLE + SAVED_PVE_MASTERY",
+      "rollback": "disable flag for identical prior rich55",
+      "source_git_blob": "24d23ef4bf815bd42122b8a9604622cf46eff453",
+      "scope": "same-key saved BEAST Lv5/10/20/30 on evolved ASSAULT scout PvE hits + label",
+      "power_levels": {
+        "5": 1.05,
+        "10": 1.1,
+        "20": 1.15,
+        "30": 1.2
+      },
+      "data_store_schema_change": false,
+      "another_remote": false,
+      "pvp_change": false,
+      "studio_test": "NOT_TESTED"
     }
   }
 }

@@ -68,3 +68,6 @@
 **既存戦闘の保存**：元の中立PvE倍率は覚醒倍率×短期道場の武器Lv倍率。この積を元の baseline として保持し、その倍率とDEV保存武器Lvの倍率（最大1.20）の大きい方を採る。最終上限は3.8、対人・BEAST召喚/城攻撃は一切変更なし。Game/HUDの唯一authorityは従来どおり。
 
 **実証済みSOURCE/Place**：保存武器Lv→中立PvE強化。<https://github.com/kk051780/toy-wars-factory/actions/runs/43501488524> にて全55 Luauネイティブコンパイル、既存Game/Store/Remote唯一性、完全ソース入りRojo未公開Studio PlaceまでPASS。前54本のうちGameだけ更新・純粋な新Module1本を追加。実際のRobloxエンジンのSave/再ログイン/中立敵戦闘試験は未完了。55企画から56企画、RC18→19件。
+
+## 保存魔獣Lv → 進化済みスカウトの実戦強化（RC検証中）
+Lv5/10/20/30で既存の進化ステージ2/3 ASSAULTスカウト対中立Mob威力をx1.05/1.10/1.15/1.20。短期BEAST道場との高い方を採用し倍率を重複させない。stage>=2の本物の進化スカウト頭上にDEV保存済みランクを表示。元の単一Game/Store/Remoteと保存形式・公開/課金禁止は保持。Studio実機検証は未実施。

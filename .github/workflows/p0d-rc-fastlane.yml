@@ -99,6 +99,14 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_saved_pve.py --profile rich51 --dist "$DIST"
           fi
+      - name: Integrate saved BEAST mastery into original real evolved scout
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_saved_beast.py --profile rich51 --dist "$DIST"
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -127,7 +135,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -188,7 +196,8 @@ jobs:
           realm_enabled=flags['features']['REALM_HUNT_V1']['enabled'] and p=='rich51'
           durable_enabled=(p=='rich51' and flags['features']['SIX_SKILL_DURABLE']['enabled'])
           saved_pve_enabled=(p=='rich51' and flags['features']['SAVED_PVE_MASTERY']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled),'rich47':47,'legacy21':21}[p]
+          saved_beast_enabled=(p=='rich51' and flags['features']['SAVED_BEAST_EVOLUTION']['enabled'])
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -220,6 +229,14 @@ jobs:
               else:
                   print('P0D_RC_FASTLANE_V4_SWITCH_OFF_ORIGINAL51_PASS')
           assert titles[('Script','Game')]==1,('DUPLICATE_GAME',titles)
+          if saved_beast_enabled:
+              assert durable_enabled and saved_pve_enabled
+              assert titles[('ModuleScript','SavedBeastEvolutionPolicy')]==1
+              assert sum('SavedBeastEvolution.choose(' in src for src in included)==1
+              assert sum('SavedBeastEvolution.saved(' in src for src in included)==1
+              assert sum('SavedBeastEvolutionTier' in src for src in included)==1
+          else:
+              assert titles[('ModuleScript','SavedBeastEvolutionPolicy')]==0
           if saved_pve_enabled:
               assert durable_enabled, 'SAVED_MASTERY_REQUIRES_DURABLE'
               assert titles[('ModuleScript','SavedPveMasteryPolicy')]==1
@@ -258,6 +275,8 @@ jobs:
             'source_count':sum(actual.values()),'exact_rojo_binary':True,
             'sixskill_durable_dev_code_included':bool(durable_enabled),
             'saved_pve_mastery_included':bool(saved_pve_enabled),
+            'saved_beast_evolution_included':bool(saved_beast_enabled),
+            'saved_beast_engine_qa':'NOT_TESTED',
             'saved_pve_minion_only':True if saved_pve_enabled else None,
             'saved_pve_engine_qa':'NOT_TESTED',
             'sixskill_real_Studio_DEV_UpdateAsync':'NOT_TESTED',
