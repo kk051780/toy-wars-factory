@@ -32,12 +32,12 @@ class RealPreviewSource(unittest.TestCase):
     def test_source_lock_and_genuine_22_scripts(self):
         lock = json.loads((DIST / "SOURCE_LOCK.json").read_text())
         self.assertEqual(lock["official_rc_sha_frozen"], FROZEN)
-        self.assertEqual(lock["source_count"], 22)
+        self.assertEqual(lock["source_count"], 23)
         self.assertEqual(lock["original_count"], 21)
         self.assertEqual(lock["unchanged_original_count"], 19)
         self.assertFalse(lock["official_rc_adopted"])
         self.assertEqual(lock["real_roblox_studio_2client"], "NOT_TESTED")
-        self.assertEqual(len(list((DIST/"src").rglob("*.luau"))), 22)
+        self.assertEqual(len(list((DIST/"src").rglob("*.luau"))), 23)
         for path, digest in lock["source_git_sha1"].items():
             with self.subTest(path=path):
                 self.assertEqual(gitblob((DIST/path).read_bytes()), digest)
@@ -52,6 +52,12 @@ class RealPreviewSource(unittest.TestCase):
         self.assertIn('match.startedAt', server)
         self.assertIn('enemyBase.eggPrompt.Enabled', server)
         self.assertIn('enemyEgg.Transparency == 0', server)
+        self.assertIn('StudioSolo.canStart(RunService:IsStudio()', server)
+        self.assertIn('StudioSolo.emptyWinner(RunService:IsStudio()', server)
+        self.assertNotIn('MinPlayers = 1', server)
+        solo = (DIST / "src/server/StudioSoloPreviewRules.luau").read_text()
+        self.assertIn('isStudio == true and count == 1', solo)
+        self.assertIn('count >= minPlayers and red > 0 and blue > 0', solo)
         self.assertEqual(len(list((DIST/"src/server").glob("Game.server.luau"))), 1)
 
     def test_client_uses_only_existing_coach_and_remote(self):
