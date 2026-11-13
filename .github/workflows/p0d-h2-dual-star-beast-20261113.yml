@@ -1,0 +1,110 @@
+name: P0D Product Studio original STAR+BEAST complete H1 combined native Rojo QA
+on:
+  push:
+    branches:
+      - integration/p0d-studio-dual-encounter-h2-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  dual-complete-32-source-private-experiment:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 24
+    env:
+      OWN: handoffs/P0D-STUDIO-DUAL-ENCOUNTER-20261113-01
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout source-locked original H1+two source-owned H2 features
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Fail closed when official S1 RC or other feature authors were edited
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e 'e3aaadf6940397f74bb89d8bd54190260deb298d^{commit}'
+          test -z "$(git diff --name-only e3aaadf6940397f74bb89d8bd54190260deb298d HEAD -- releases/P0D_S1_KIDS_RC01 handoffs/P0D-H1-COMPOSITE-20261113-01 handoffs/P0D-H1-FAST-ROUTES-WITH-UX-20261113-01 handoffs/P0D-STUDIO-NEUTRAL-GATE-BEAST-20261113-01)"
+      - name: Assemble exact genuine H1 full 28 plus original beast two and star two
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/tools/assemble.py" --assemble
+          test -s "$OWN/dist/TRAP_RAIDERS_H2_DUAL_ENCOUNTER_STUDIO_ONLY/SOURCE_LOCK.json"
+      - name: Download immutable checksum-confirmed Rojo 7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/dual_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/dual_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile,stat
+          with zipfile.ZipFile('/tmp/dual_rojo.zip') as z:
+              a=[v for v in z.namelist() if v.rsplit('/',1)[-1]=='rojo']
+              assert len(a)==1,a
+              p=Path('/tmp/dual_rojo')
+              p.write_bytes(z.read(a[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/dual_rojo --version | grep -F 7.7.1
+      - name: Build ACTUAL complete 32-Luau unpublished Roblox Place and verify source bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_dual
+          /tmp/dual_rojo build "$OWN/dist/TRAP_RAIDERS_H2_DUAL_ENCOUNTER_STUDIO_ONLY/default.project.json" -o /tmp/p0d_dual/TRAP_RAIDERS_H2_DUAL_ENCOUNTER_PRIVATE_DO_NOT_PUBLISH.rbxlx
+          test -s /tmp/p0d_dual/TRAP_RAIDERS_H2_DUAL_ENCOUNTER_PRIVATE_DO_NOT_PUBLISH.rbxlx
+          python3 -B "$OWN/tools/assemble.py" --verify-xml /tmp/p0d_dual/TRAP_RAIDERS_H2_DUAL_ENCOUNTER_PRIVATE_DO_NOT_PUBLISH.rbxlx --receipt /tmp/p0d_dual/P0D_DUAL_ORIGINAL_32_SOURCE_LOCK_RECEIPT.json
+      - name: Checkout pinned official Luau compiler and VM
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_dual_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Compile genuine pinned native Luau CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_dual_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_dual_luau -B /tmp/p0d_dual_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_dual_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Native compile every real single-game Lua source 32 of 32
+        shell: bash
+        run: |
+          set -euo pipefail
+          n=0
+          while IFS= read -r -d '' source; do
+              /tmp/p0d_dual_native/luau-compile "$source" >/dev/null
+              n=$((n+1))
+          done < <(find "$OWN/dist/TRAP_RAIDERS_H2_DUAL_ENCOUNTER_STUDIO_ONLY/src" -name '*.luau' -print0)
+          test "$n" -eq 32
+          echo 'P0D_DUAL_GENUINE_SINGLE_GAME_32_OF_32_NATIVE_COMPILE_PASS'
+      - name: Execute unchanged original beast native 58 regressions plus 8 malicious mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/P0D-STUDIO-NEUTRAL-GATE-BEAST-20261113-01/tests/test_actual_gate_policy.py --luau /tmp/p0d_dual_native/luau | tee /tmp/p0d_dual/ORIGINAL_BEAST_RULES_NATIVE_LOG.txt
+          grep -F 'P0D_NEUTRAL_BEAST_NATIVE_POLICY_PASS_58' /tmp/p0d_dual/ORIGINAL_BEAST_RULES_NATIVE_LOG.txt
+          grep -F 'P0D_NEUTRAL_BEAST_NATIVE_MUTANTS_PASS_8' /tmp/p0d_dual/ORIGINAL_BEAST_RULES_NATIVE_LOG.txt
+      - name: GENUINELY EXECUTE BOTH original Luau policies together plus nine bad-source mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/tests/test_both_original_policies.py" --luau /tmp/p0d_dual_native/luau | tee /tmp/p0d_dual/COMBINED_REAL_TWO_POLICY_NATIVE_LOG.txt
+          grep -E '^P0D_DUAL_ORIGINAL_BOTH_NATIVE_POLICY_PASS_[0-9]+$' /tmp/p0d_dual/COMBINED_REAL_TWO_POLICY_NATIVE_LOG.txt
+          grep -F 'P0D_DUAL_REAL_NATIVE_HAZARDOUS_MUTANTS_PASS_9' /tmp/p0d_dual/COMBINED_REAL_TWO_POLICY_NATIVE_LOG.txt
+      - name: Upload actual PRIVATE complete game, original-safe source manifest and native logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-H2-DUAL-STAR-BEAST-FULL-32-LUAU-UNPUBLISHED-STUDIO
+          path: |
+            /tmp/p0d_dual/TRAP_RAIDERS_H2_DUAL_ENCOUNTER_PRIVATE_DO_NOT_PUBLISH.rbxlx
+            /tmp/p0d_dual/P0D_DUAL_ORIGINAL_32_SOURCE_LOCK_RECEIPT.json
+            /tmp/p0d_dual/ORIGINAL_BEAST_RULES_NATIVE_LOG.txt
+            /tmp/p0d_dual/COMBINED_REAL_TWO_POLICY_NATIVE_LOG.txt
+          retention-days: 7
+          if-no-files-found: error
