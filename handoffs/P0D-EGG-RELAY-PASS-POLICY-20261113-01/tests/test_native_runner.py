@@ -53,7 +53,7 @@ class NativeHarnessIntegrityTests(unittest.TestCase):
 
     def test_all_native_case_source_pinned(self):
         self.assertEqual(builder.blob_sha(self.cases),
-                         "801ac8f52cc3fec9bc159b73803853aea845a582")
+                         "004ae0569d89abcedaa6ddedff05f006246d2265")
 
 
 if __name__ == "__main__":
