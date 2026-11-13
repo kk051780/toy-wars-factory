@@ -20,3 +20,9 @@ This is **actual source-diff code** for the ONE existing authoritative Game/Remo
 ## QA and release boundary
 
 **Executed:** source adapter generation and 12 static JS invariants on original B42 Game/HUD: PASS. **Not executed:** actual Python patch script, native Luau compile, full source-exact Rojo, Studio two clients, Android, first-time user FUN. This branch is SOURCE_CANDIDATE. Official RC adoption requires #220 sole writer, a reversible RC feature switch, same-current-HEAD build + negative QA. No main write/merge/Roblox publication/paid feature/extra cost.
+
+## V2 compatibility fix and canonical RC55 CI
+
+Original Game's `serverNow()` uses `workspace:GetServerTimeNow()` (2026 Unix epoch exceeds 1e9), while the unchanged isolated EggRelayPolicy validates `nowSec` with an absolute bound below 1e9. Feeding the epoch clock would **reject every normal pass**. Source adapter now obtains `os.clock()` in its own no-yield classic pass transaction and uses the **same server process clock** for per-egg cooldown and HUD remaining. This does not change the canonical match clock, Store, saved XP or five-egg score authority.
+
+Workflow `.github/workflows/p0d-egg-relay-classic-rc55-candidate-ci.yml` has been added in this child feature branch to reconstruct exact successful RC55 HEAD `0dd7f4418d06200e40688c79c8290745cb56834d`, append only Game/HUD patch + one pure module, and check pinned native Luau/56-source Rojo embedded bytes. **Workflow result is not confirmed** merely by committing it. `QA_CLOCK_CI_RECEIPT.json` records 21/21 separate actual GitHub source-level checks, not native or engine proof. Official current RC remains unchanged.
