@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 FEATURE="METEOR_FOURTH_V1"
 ORIGINAL=ROOT/"features/meteor_fourth/MeteorFourth.server.luau"
-PIN="8a7ff2d33f801660f808cf9297e9d829ced39806"
+PIN="4845ffa98b0b17a506a993682dc84f9de0fd5e30"
 DEST="server/MeteorFourth.server.luau"
 FLAG="P0D_ENABLE_METEOR_SHORTCUT_V1"
 
@@ -76,8 +76,8 @@ def apply(dist:Path,profile:str,enabled_override:bool|None=None)->bool:
         "if not RunService:IsStudio() then",
         'flag ~= nil and flag:IsA("BoolValue") and flag.Value == true',
         'GetAttribute("P0D_RC_ENABLE_STARRY_PATH_V1") ~= true',
-        'Workspace:WaitForChild("P0D_STARRY_PATH", 30)',
-        'star:FindFirstChild("StarStep_01")',
+        'Workspace:WaitForChild("P0D_STARRY_PATH", 160)',
+        'star:WaitForChild("StarStep_01", 12)',
         'local z = (west.Position.Z + east.Position.Z) * 0.5 - 17',
         'return math.abs(z-existing.Position.Z) > (width+existing.Size.Z)*0.5+buffer',
         'local function isBridgeOccupied(segments: {BasePart}): boolean',
