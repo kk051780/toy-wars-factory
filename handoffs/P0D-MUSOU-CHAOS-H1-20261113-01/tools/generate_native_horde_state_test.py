@@ -57,7 +57,10 @@ Instance={
             __index={
                 Destroy=function(self) self.destroyed=true end,
                 PivotTo=function(self,cf) self.pivot=cf end,
-                IsDescendantOf=function(self) return false end
+                IsDescendantOf=function(self) return false end,
+                IsA=function(self,k)
+                    return k==self.ClassName or (k=="BasePart" and self.ClassName=="Part")
+                end
             }
         })
     end
@@ -80,9 +83,25 @@ local emptyHealth=function(p)
     if p.alive~=true then return false,nil,nil end
     return true,p.root,{Health=100}
 end
-local h=Horde.new({})
+local arena=Instance.new("Part")
+arena.Position=vec(0,-3,0)
+arena.Size=vec(250,4,142)
+local road=Instance.new("Part")
+road.Position=vec(0,-.85,0)
+road.Size=vec(226,.3,24)
+local world={
+    FindFirstChild=function(self,name)
+        if name=="GrassArena" then return arena end
+        if name=="CenterRoad" then return road end
+        return nil
+    end
+}
+local h=Horde.new(world)
 h:reset(1,0)
 eq(h:livingCount(),9,"spawn nine")
+eq(math.abs(h.mobs[1].pos.Y-1.65-(-1))<.00001,true,"minion feet touch source arena")
+eq(math.abs(h.mobs[9].pos.Y-2.5-(-.7))<.00001,true,"elite feet touch road")
+eq(h.mobs[9].pos.Y<h.mobs[1].pos.Y+2.5,true,"real map height not hardcoded 3.4")
 eq(#h.mobs,9,"record nine")
 local origin=vec(-34,2.7,-18)
 local forward=vec(1,0,0)
