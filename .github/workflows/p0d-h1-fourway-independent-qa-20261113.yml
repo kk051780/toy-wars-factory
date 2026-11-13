@@ -1,0 +1,76 @@
+name: P0D H1 four-way independently execute actual source policies
+on:
+  push:
+    branches:
+      - qa/p0d-h1-fourway-actual-runtime-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  independent-real-source-runtime:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 24
+    env:
+      WOW: handoffs/P0D-H1-WOW-4WAY-20261113-01
+      OWN: handoffs/P0D-H1-FOURWAY-INDEPENDENT-QA-20261113-01
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout actual frozen H1 source plus isolated QA
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Prevent all changes to actual #255 game and protected S1
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '1498c2d344ede2d9da6c2bfdd025ebc1a15ec48b^{commit}'
+          test -z "$(git diff --name-only 1498c2d344ede2d9da6c2bfdd025ebc1a15ec48b HEAD -- handoffs/P0D-H1-WOW-4WAY-20261113-01 handoffs/P0D-H1-COMPOSITE-20261113-01 releases/P0D_S1_KIDS_RC01)"
+      - name: Reassemble the real original 28-Luau actual private whole game unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$WOW/tools/assemble.py" --verify
+          python3 -B "$WOW/tools/assemble.py" --assemble
+      - name: Independent source/game authority/route and original input SHA audits with unsafe mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s "$OWN/tests" -p 'test_*.py' -v
+      - name: Build runtime harness from exact assembled REAL Wind Trap D18 guide source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/tools/generate_native_policy_test.py" --write /tmp/p0d_h1_fourway_actual_native_runtime.luau
+          test -s /tmp/p0d_h1_fourway_actual_native_runtime.luau
+      - name: Fetch exact pinned open Luau compiler and runtime
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_h1_qa_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build the GENUINE native Luau Repl and Compile CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_h1_qa_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_h1_qa_luau -B /tmp/p0d_h1_qa_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_h1_qa_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: ACTUALLY EXECUTE Luau policy runtime 2teams wind guardian traps egg guide and negatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/p0d_h1_qa_native/luau-compile /tmp/p0d_h1_fourway_actual_native_runtime.luau >/dev/null
+          /tmp/p0d_h1_qa_native/luau /tmp/p0d_h1_fourway_actual_native_runtime.luau | tee /tmp/p0d_h1_fourway_actual_native_policy_log.txt
+          grep -E '^P0D_H1_INDEPENDENT_GENUINE_LUAU_POLICY_RUNTIME_PASS_[0-9]+$' /tmp/p0d_h1_fourway_actual_native_policy_log.txt
+          test -z "$(git status --porcelain --untracked-files=no)"
+      - name: Upload independent only proof (NOT a Roblox Studio pass)
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-H1-FOURWAY-INDEPENDENT-NATIVE-POLICY-LOGS-ONLY
+          path: /tmp/p0d_h1_fourway_actual_native_policy_log.txt
+          if-no-files-found: error
+          retention-days: 7
