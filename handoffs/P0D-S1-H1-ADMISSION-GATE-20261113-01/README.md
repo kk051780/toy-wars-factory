@@ -1,24 +1,28 @@
-# P0D-S1 H1 admission safety preflight — 2026-11-13 JST
+# P0D-S1 H1 admission QA V2 — 2026-11-13 JST
 
-This is an **independent, read-only preflight** for #250 / #220. It **does not merge or modify RC**, Studio, or any other author's source.
+Independent read-only fail-closed review, NOT the official RC writer. No merge, main, original authors' source, or Roblox Place is modified.
 
-## Fixed evidence
-- Official S1 last known RC: `1263a03701211a652b99b91d2339575dc8104eff` (last 75/100; FUN_NO_GO).
-- Original integrated candidate: `79804116b0a144a33c6466340cfb476eefa3ca4d`, 45 script source, B42+V7+sky+solo+BEAST/WEAPON Dojo, original native+Rojo Actions 43413293004 SUCCESS.
-- Original candidate private .rbxlx SHA256: `1382bf8b3068c60cccfab1160a2e00baf0e4811c0f81b06008c5eaa4779fdd0e`, artifact 14030766490. This branch contains NO binary copy; source project and private user asset remain under original owner's review.
-- Rollback comparison: `2afffa49d4173b32c1d8772b5b52c988adfbebc4`.
-- The 45-source candidate is a **private optional H1**, not product official selected. Training is only BEAST+WEAPON, session only; NOT six-skill V4 persisted. Last #250 selection is B42 First90 for private H1; no product official RC selection.
-- Latest V4 six-skill pure scheduler `77bb734e562245fb9ff9798a95412b9c563c87a2` and visual demo are **not** bundled into this candidate.
+## Exact evidence
+- New optional PRIVATE H1-V5 candidate: 646cd9bd18b3428235ada06a763f9c5ac65b6883. https://github.com/kk051780/toy-wars-factory/tree/646cd9bd18b3428235ada06a763f9c5ac65b6883/handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01
+- Successful original author CI: https://github.com/kk051780/toy-wars-factory/actions/runs/43415851018 (native Luau 45/45, Rojo 45/45, Python 53, Solo40, Dojo47, strict sky792). Private Place sha256=96dada63baa2b99e321b5f9eb35a0f335aa22925212e66a8a9b32c48cf5ffd2d, artifact 14030858994. This QA branch has NOT independently downloaded the binary.
+- Previous H1 45 candidate rollback: 79804116b0a144a33c6466340cfb476eefa3ca4d. V5 changes precisely two of 45 original source bodies (physical sky ground docks and strict same-egg diagnostic), as source author reported.
+- Last official S1: 1263a03701211a652b99b91d2339575dc8104eff / 75 of 100 / FUN_NO_GO, unchanged.
+- Actual H1 optional source includes B42 egg modes, V7 horde, physical sky, studio solo, 2 BEAST/WEAPON auto-dojo SESSION ONLY. Full six-skill V4 XP/save and payments are NOT INCLUDED.
+- Product #250 has selected original B42 First90 for PRIVATE TEST BASELINE ONLY, not official RC. V5 remains unselected and is not official RC.
 
 ## Run
-`python -m unittest discover -v` (8 local tests PASS at authoring).
-`python admission_gate.py CURRENT_H1_ADMISSION.json` returns exit 2 and explicit blockers, as expected.
-With a legitimate downloaded original .rbxlx, pass `--place /path/to/nonpublished.rbxlx` to verify raw SHA256, Script/LocalScript/ModuleScript counts and one named server Game. This is **static XML inspection only**; it cannot validate running Remote/HP/XP/Store authority or real human FUN.
+python3 -m unittest discover -v -p 'test_*.py'
+python3 admission_gate.py CURRENT_H1_ADMISSION.json
+python3 admission_gate.py CURRENT_H1_ADMISSION.json --place /path/to/original/nonpublished.rbxlx
 
-## Next true integration chain
-1. #250 PRODUCT_DRI obtains owner **real private Studio** feedback for the currently selected B42 baseline and H1 variants, compares H0/H1, then formally selects/rejects a candidate.
-2. #220 sole integrator validates exact source lock, narrow source changes to Game/HUD/DojoRules, independent current RC source QA, single Remote/round/score/HP/XP/store authority, physical world collisions and rollback. **Do not copy wholesale Game twice**.
-3. #220 alone writes official isolated RC branch after formal adoption decision and runs full build/offline QA; OWNER privately performs actual 2-client, Android and FUN checks. Original gate currently **BLOCKED**.
-4. OWNER separately approves any eventual Roblox publication; paid products and additional spend remain OFF.
+Current receipt intentionally exits 2 / BLOCKED for no official selection, actual RC independent QA, real Studio two-client, Android, OWNER FUN, source lock or authority review. If actual original binary supplied later, static scan can validate SHA256, Script/LocalScript/ModuleScript counts, exactly one named server Game, DTD rejection and size bound. It does not test Roblox runtime.
 
-Source QA and optional binary existence **do not** satisfy Studio/Android/FUN. No main write/merge, no published live place, no payments, no Windows Codex execution, no P0-A/B/C CAS/automation changes.
+Positive acceptance flags require attributable GitHub evidence links; links must be independently verified, not trusted at face value. Even all positive gates yield only ELIGIBLE_FOR_SOLE_INTEGRATOR_REVIEW, NEVER RC_INTEGRATED.
+
+## Next actions
+1. OWNER privately tests selected B42 baseline vs optional V5 in actual Roblox Studio. Test two teams, castle/egg carrying over newly grounded sky routes, negative dropped/swapped egg and wrong-score 4/4, Android UX and FUN.
+2. Product DRI #219/#250 formally selects or rejects V5. Private baseline selection does not imply adoption.
+3. Sole #220 integrator alone checks current official RC source-lock and singleton Game/Remote/round/HP/score/XP/store authority, narrow diffs/rollback, and independent real RC QA prior to any source adoption.
+4. OWNER separately authorizes actual publish or paid features. Both remain OFF.
+
+Read-only CI workflow p0d-s1-h1-admission-gate-20261113.yml runs 11 unit tests and confirms current optional candidate remains BLOCKED, without changing existing five automation schedules, main or Windows Codex.
