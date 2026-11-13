@@ -1,0 +1,143 @@
+name: P0D B42 V7 Sky Studio SOLO private 42-source Luau/Rojo
+on:
+  push:
+    branches:
+      - experiment/p0d-b42v7-sky-solo-preview-20261113-01
+    paths:
+      - 'handoffs/P0D-B42V7-SKY-SOLO-20261113-01/**'
+      - '.github/workflows/p0d-b42v7-sky-solo-native-rojo-20261113.yml'
+  workflow_dispatch:
+jobs:
+  isolated-private-game:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    permissions:
+      contents: read
+    steps:
+      - name: Own isolated source checkout
+        uses: actions/checkout@v4
+      - name: Fetch immutable ORIGINAL complete 42-source B42/V7/SkyCastle source author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: a3dfc9b98f22b8edf0a7d0d978d65b1072aed933
+          path: _p0d_parent
+          persist-credentials: false
+      - name: Rebuild frozen ORIGINAL 42-luau via its actual original author
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_parent rev-parse HEAD)" = a3dfc9b98f22b8edf0a7d0d978d65b1072aed933
+          (
+            cd _p0d_parent
+            python3 -B handoffs/P0D-B42-V7-SKYCASTLE-20261113-01/tools/assemble.py --assemble
+          )
+          ORIG="_p0d_parent/handoffs/P0D-B42-V7-SKYCASTLE-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_V7_SKYCASTLE_PRIVATE"
+          test -f "$ORIG/src/server/Game.server.luau"
+          test -f "$ORIG/default.project.json"
+          cp -a "$ORIG" _p0d_solo_dist
+          cp "$ORIG/src/server/Game.server.luau" /tmp/p0d_solo_unchanged_game.luau
+          echo "P0D_PRIVATE_PINNED_42_UPSTREAM_REASSEMBLY_PASS"
+      - name: Apply exactly FOUR Studio-only round changes to original Game, fail closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-B42V7-SKY-SOLO-20261113-01
+          python3 -B "$ROOT/tools/studio_solo_patch.py" _p0d_solo_dist/src/server/Game.server.luau
+          P0D_SOLO_DIST=_p0d_solo_dist P0D_SOLO_GAME_BASE=/tmp/p0d_solo_unchanged_game.luau \
+            python3 -B "$ROOT/tests/test_source_contract.py"
+          python3 - <<'PY'
+          import hashlib,pathlib
+          parent=pathlib.Path("_p0d_parent/handoffs/P0D-B42-V7-SKYCASTLE-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_V7_SKYCASTLE_PRIVATE/src")
+          solo=pathlib.Path("_p0d_solo_dist/src")
+          a={p.relative_to(parent).as_posix():p.read_bytes() for p in parent.rglob("*.luau")}
+          b={p.relative_to(solo).as_posix():p.read_bytes() for p in solo.rglob("*.luau")}
+          assert len(a)==len(b)==42
+          assert sorted(k for k in a if a[k]!=b[k])==["server/Game.server.luau"]
+          assert all(a[k]==b[k] for k in a if k!="server/Game.server.luau")
+          print("P0D_B42V7_SKYSOLO_ONE_GAME_41_UNCHANGED_42_SOURCE_LOCK_PASS")
+          PY
+      - name: Checkout pinned upstream Luau
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build pinned native Luau compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_luau -B /tmp/p0d_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_luau --target Luau.Compile.CLI --parallel 4
+      - name: Actually compile ALL 42 resulting original+patched Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          n=0
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_luau/luau-compile "$f" >/tmp/solo_compile.log 2>&1 || { cat /tmp/solo_compile.log; exit 1; }
+            n=$((n+1))
+          done < <(find _p0d_solo_dist/src -type f -name '*.luau' -print0)
+          test "$n" -eq 42
+          echo P0D_STUDIO_SOLO_COMPLETE_42_NATIVE_LUAU_COMPILE_PASS
+      - name: Obtain pinned Rojo 7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/rojo77.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/rojo77.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,stat,pathlib
+          with zipfile.ZipFile("/tmp/rojo77.zip") as z:
+              files=[p for p in z.namelist() if p.split("/")[-1]=="rojo"]
+              assert len(files)==1
+              f=pathlib.Path("/tmp/rojo77");f.write_bytes(z.read(files[0]))
+              f.chmod(f.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/rojo77 --version | grep -F 7.7.1
+      - name: Create REAL private .rbxlx and verify all exact original+one Game source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_solo_private
+          /tmp/rojo77 build _p0d_solo_dist/default.project.json \
+            -o /tmp/p0d_solo_private/P0D_B42_V7_SKYCASTLE_STUDIO_SOLO_ROJO_PRIVATE.rbxlx
+          python3 - <<'PY'
+          import pathlib,hashlib,collections,xml.etree.ElementTree as ET,json
+          src=pathlib.Path("_p0d_solo_dist/src")
+          binary=pathlib.Path("/tmp/p0d_solo_private/P0D_B42_V7_SKYCASTLE_STUDIO_SOLO_ROJO_PRIVATE.rbxlx")
+          expected=collections.Counter(p.read_text("utf-8") for p in src.rglob("*.luau"))
+          seen=collections.Counter();counts=collections.Counter();names=collections.Counter()
+          for item in ET.fromstring(binary.read_bytes()).iter("Item"):
+              cl=item.get("class")
+              if cl not in ("Script","LocalScript","ModuleScript"):continue
+              source=item.find("./Properties/string[@name='Source']")
+              name=item.find("./Properties/string[@name='Name']")
+              if source is None or name is None:raise ValueError("bad source")
+              counts[cl]+=1;seen[source.text or ""]+=1;names[name.text]+=1
+          assert counts=={"Script":2,"LocalScript":5,"ModuleScript":35},counts
+          assert seen==expected and sum(seen.values())==42
+          assert names["Game"]==names["H1FunWorld"]==names["MusouHorde"]==1
+          game=(src/"server/Game.server.luau").read_text("utf-8")
+          assert game.count('remote.OnServerEvent:Connect(')==1
+          assert game.count('remote.Name = "TrapRaidersS1Remote"')==1
+          data={"place_sha256":hashlib.sha256(binary.read_bytes()).hexdigest(),
+           "source_count":42,"changed_original_script":"Game","original_other_scripts":41,
+           "studio_solo_only":True,"actual_roblox_engine":"NOT_TESTED",
+           "actual_2client":"NOT_TESTED","android":"NOT_TESTED","owner_fun":"NO_GO_PENDING",
+           "official_rc_adopted":False,"published":False}
+          (binary.parent/"PLACE_RECEIPT.json").write_text(json.dumps(data,indent=2)+"\n")
+          print("P0D_STUDIO_SOLO_42_EXACT_ROJO_REAL_PRIVATE_PLACE_PASS",data["place_sha256"])
+          PY
+      - name: Upload unpublished trial artifact only (7 days)
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-B42-V7-SKYCASTLE-STUDIO-SOLO-PRIVATE-ROJO
+          path: /tmp/p0d_solo_private/
+          retention-days: 7
+          if-no-files-found: error
