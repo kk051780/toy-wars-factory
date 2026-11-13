@@ -4,7 +4,42 @@ local RunService=game:GetService("RunService")
 if not RunService:IsStudio() then return end
 local Players=game:GetService("Players")
 local ReplicatedStorage=game:GetService("ReplicatedStorage")
-if Players.LocalPlayer==nil then return end
+local player=Players.LocalPlayer
+if player==nil then return end
+-- Diagnostics ONLY. Visible on the OWNER's private Studio display; never changes the game.
+local panel: TextLabel?=nil
+local function status(stage:string)
+    if panel then panel.Text="Studio試遊の確認（非公開）\n"..stage.."\n判定は本人の実プレイで" end
+end
+task.spawn(function()
+    local gui=player:WaitForChild("PlayerGui",15)
+    if not gui then return end
+    local existing=gui:FindFirstChild("P0DStudioTrialAudit")
+    if existing then existing:Destroy() end
+    local screen=Instance.new("ScreenGui")
+    screen.Name="P0DStudioTrialAudit"
+    screen.ResetOnSpawn=false
+    screen.IgnoreGuiInset=false
+    screen.DisplayOrder=110
+    local label=Instance.new("TextLabel")
+    label.Name="ReadOnlyStatus"
+    label.Size=UDim2.fromOffset(296,92)
+    label.AnchorPoint=Vector2.new(1,1)
+    label.Position=UDim2.new(1,-9,1,-12)
+    label.BackgroundColor3=Color3.fromRGB(15,30,44)
+    label.BackgroundTransparency=.16
+    label.TextColor3=Color3.fromRGB(248,250,255)
+    label.TextScaled=false
+    label.TextSize=13
+    label.TextXAlignment=Enum.TextXAlignment.Left
+    label.TextYAlignment=Enum.TextYAlignment.Center
+    label.TextWrapped=true
+    label.Active=false
+    label.Text="Studio試遊の確認（非公開）\n0/4 試合開始待ち\n判定は本人の実プレイで"
+    label.Parent=screen
+    screen.Parent=gui
+    panel=label
+end)
 local n=0
 local function log(kind:string,msg:string,warning:boolean?)
     if n>=110 then return end
@@ -27,6 +62,24 @@ local lastCarry=""
 local lastScore=-1
 local lastSerial=-1
 local lastMode=""
+local skyDeck: BasePart?=nil
+local skyWithEggSerial=-1
+local scoreAfterSkySerial=-1
+local activeSerial=-1
+local carriedSerial=-1
+local function refreshStatus()
+    if lastSerial<0 or activeSerial~=lastSerial then
+        status("0/4 サーバーの試合開始を待機中")
+    elseif carriedSerial~=lastSerial then
+        status("1/4 敵の卵を取る（サーバー確認待ち）")
+    elseif skyWithEggSerial~=lastSerial then
+        status("2/4 卵を持って天空城の床へ登る")
+    elseif scoreAfterSkySerial~=lastSerial then
+        status("3/4 自陣へ帰って卵を納品する")
+    else
+        status("4/4 卵所持→天空城床→得点を観測！\n移動と楽しさは本人が判定")
+    end
+end
 -- Passive server-authored snapshots: NEVER sends remotes or grants rewards.
 remote.OnClientEvent:Connect(function(msg:any)
     if type(msg)~="table" or msg.kind~="SNAPSHOT" then return end
@@ -40,12 +93,14 @@ remote.OnClientEvent:Connect(function(msg:any)
     if serial~=lastSerial then
         log("ROUND","serial="..tostring(serial).." team="..team)
         lastSerial=serial;lastScore=-1;lastCarry="";lastStep=""
+        activeSerial=-1;carriedSerial=-1;skyWithEggSerial=-1;scoreAfterSkySerial=-1
+        carried=false;scored=false
     end
     if phase~=lastPhase or mode~=lastMode then
         log("PHASE",phase.." mode="..mode.." RED="..tostring(msg.redPlayers)
             .." BLUE="..tostring(msg.bluePlayers).." remaining="..tostring(msg.time))
         lastPhase=phase;lastMode=mode
-        if phase=="ACTIVE" then activeSeen=true end
+        if phase=="ACTIVE" then activeSeen=true;activeSerial=serial end
         if phase=="RESULTS" then
             log("RESULT","winner="..tostring(msg.winner).." reason="..tostring(msg.reason)
                 .." carry_seen="..tostring(carried).." score_seen="..tostring(scored))
@@ -53,7 +108,7 @@ remote.OnClientEvent:Connect(function(msg:any)
     end
     if carry~=lastCarry then
         if carry~="" then
-            carried=true
+            carried=true;carriedSerial=serial
             log("EGG_CARRIED","server-confirmed owner="..carry.." by team="..team)
         elseif lastCarry~="" then
             log("EGG_RELEASED","check next SCORE_CONFIRMED; drop is not a score")
@@ -63,6 +118,10 @@ remote.OnClientEvent:Connect(function(msg:any)
     if lastScore>=0 and score>lastScore then
         scored=true
         log("SCORE_CONFIRMED","team="..team.." score="..tostring(score))
+        if skyWithEggSerial==serial and activeSerial==serial then
+            scoreAfterSkySerial=serial
+            log("SCORE_AFTER_SKY","same-round server score rose after client-grounded sky visit; continuity NOT_PROVEN")
+        end
     end
     lastScore=score
     local first90=msg.first90
@@ -71,6 +130,33 @@ remote.OnClientEvent:Connect(function(msg:any)
     if step~=lastStep then
         log("FIRST90","step="..step)
         lastStep=step
+    end
+    refreshStatus()
+end)
+-- Client-side physical position observation with server-owned carrying snapshot.
+-- This is NOT proof of continuous egg transport: OWNER must manually observe the walk.
+task.spawn(function()
+    while player.Parent~=nil do
+        task.wait(.35)
+        local deck=skyDeck
+        if deck and deck.Parent and lastSerial>=0 and activeSerial==lastSerial
+            and skyWithEggSerial~=lastSerial and lastCarry~="" then
+            local character=player.Character
+            local hum=if character then character:FindFirstChildOfClass("Humanoid") else nil
+            local root=if character then character:FindFirstChild("HumanoidRootPart") else nil
+            if hum and root and root:IsA("BasePart") and hum.Health>0
+                and hum.FloorMaterial~=Enum.Material.Air then
+                local pos=root.Position
+                local top=deck.Position.Y+deck.Size.Y/2
+                if math.abs(pos.X-deck.Position.X)<=deck.Size.X/2-2
+                    and math.abs(pos.Z-deck.Position.Z)<=deck.Size.Z/2-2
+                    and pos.Y>=top+1 and pos.Y<=top+6 then
+                    skyWithEggSerial=lastSerial
+                    log("SKY_WITH_EGG","real character grounded inside deck while server carry snapshot nonempty; local position observation")
+                    refreshStatus()
+                end
+            end
+        end
     end
 end)
 -- Replica inspection is a scene construction check, never a walkability proof.
@@ -92,6 +178,7 @@ task.spawn(function()
         else log("BLOCKED","physical part missing or noncollidable "..name,true) end
     end
     local deck=world:FindFirstChild("FLOATING_SKY_ISLAND")
+    if deck and deck:IsA("BasePart") and deck.CanCollide then skyDeck=deck end
     local top=if deck and deck:IsA("BasePart")
         then deck.Position.Y+deck.Size.Y/2 else -999
     log("SKY_SOURCE","replicated collidable parts="..tostring(count)
@@ -117,6 +204,8 @@ task.delay(120,function()
     else
         log("CHECKPOINT","ACTIVE seen, egg_carried="..tostring(carried)
             ..", score_confirmed="..tostring(scored)
+            ..", sky_egg="..tostring(skyWithEggSerial==lastSerial)
+            ..", score_after_sky="..tostring(scoreAfterSkySerial==lastSerial)
             ..". Owner must physically walk/carry/play and judge FUN.")
     end
 end)
