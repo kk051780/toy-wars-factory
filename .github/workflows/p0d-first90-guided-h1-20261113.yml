@@ -35,7 +35,7 @@ jobs:
           assert j["original_unchanged"]==37
           assert len(j["source_blob_sha1"])==41
           assert len(list((d/"src").rglob("*.luau")))==41
-          assert j["official_rc_adopted"] is False and j["actual_studio_tested"] is False
+          assert j["official_rc_adopted"] is False and j["roblox_studio_2client_tested"] is False
           print("P0D_EVOLUTION_FULL_H1_REAL_41_LUAU_SOURCE_ASSEMBLY_PASS")
           PY
       - name: Checkout frozen upstream Luau native toolchain
