@@ -49,7 +49,7 @@ local checks={
  {"rescue_far",R.canRescue(patch(rescue,"distance",9)),false},
  {"rescue_enemy",R.canRescue(patch(rescue,"teammate",false)),false},
 }
-assert #checks==20
+assert(#checks == 20)
 for _,x in ipairs(checks) do
     assert(x[2]==x[3], "MUSOU_BIND_FAIL_"..tostring(x[1]))
 end
