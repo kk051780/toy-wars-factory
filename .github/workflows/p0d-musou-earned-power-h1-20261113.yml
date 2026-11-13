@@ -1,0 +1,123 @@
+name: P0D Musou H1 earned power genuine source and native QA
+on:
+  push:
+    branches:
+      - experiment/p0d-musou-earned-power-h1-20261113-01
+    paths:
+      - 'handoffs/P0D-MUSOU-EARNED-POWER-H1-20261113-01/**'
+      - '.github/workflows/p0d-musou-earned-power-h1-20261113.yml'
+  workflow_dispatch:
+jobs:
+  native-rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Source-only actual H1 binding checks
+        run: |
+          set -euo pipefail
+          python -B handoffs/P0D-MUSOU-CHAOS-H1-20261113-01/tests/test_musou_overlay.py
+          python -B handoffs/P0D-MUSOU-EARNED-POWER-H1-20261113-01/tests/test_power_bridge.py
+      - name: Rebuild original full ONE H1 39-Luau unpublished Place source
+        run: |
+          set -euo pipefail
+          python -B handoffs/P0D-MUSOU-EARNED-POWER-H1-20261113-01/tools/assemble.py --assemble
+          python - <<'PY'
+          import pathlib,json
+          r=pathlib.Path('handoffs/P0D-MUSOU-EARNED-POWER-H1-20261113-01/dist/EGG_RAID_RUMBLE_MUSOU_EARNED_POWER_H1_PRIVATE_STUDIO_ONLY')
+          d=json.loads((r/'SOURCE_LOCK.json').read_text())
+          assert d['total_luau']==39 and d['unchanged_original_modules']==36
+          assert len(list((r/'src').rglob('*.luau')))==39
+          assert d['official_rc_adopted']==False and d['actual_studio_tested']==False
+          print('P0D_EARNED_POWER_39_LUAU_ORIGINAL_SOURCE_REASSEMBLY_PASS')
+          PY
+      - name: Checkout frozen official upstream Luau compiler and runtime
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_upstream_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build native compiler and executable
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_upstream_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_upstream_luau -B /tmp/p0d_power_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_power_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Native-compile 39 real Luau scripts and execute pure policy negative suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-MUSOU-EARNED-POWER-H1-20261113-01
+          DIST="$ROOT/dist/EGG_RAID_RUMBLE_MUSOU_EARNED_POWER_H1_PRIVATE_STUDIO_ONLY"
+          n=0
+          while IFS= read -r -d '' script; do
+            /tmp/p0d_power_native/luau-compile "$script" >/dev/null
+            n=$((n+1))
+          done < <(find "$DIST/src" -type f -name '*.luau' -print0)
+          test "$n" -eq 39
+          echo P0D_POWER_39_LUAU_NATIVE_COMPILER_PASS
+          python3 -B "$ROOT/tools/generate_native_power_test.py" --write /tmp/p0d_power_native_test.luau
+          /tmp/p0d_power_native/luau-compile /tmp/p0d_power_native_test.luau >/dev/null
+          /tmp/p0d_power_native/luau /tmp/p0d_power_native_test.luau | tee /tmp/p0d_power_native_run.log
+          grep -E '^P0D_POWER_NATIVE_[0-9]+_ASSERTIONS_PASS$' /tmp/p0d_power_native_run.log
+      - name: Install immutable Rojo7.7.1 binary with expected SHA256
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_power_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_power_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,stat,pathlib
+          with zipfile.ZipFile('/tmp/p0d_power_rojo.zip') as z:
+              matched=[x for x in z.namelist() if x.split('/')[-1]=='rojo']
+              assert len(matched)==1
+              out=pathlib.Path('/tmp/p0d_power_rojo')
+              out.write_bytes(z.read(matched[0]))
+              out.chmod(out.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_power_rojo --version | grep -F 7.7.1
+      - name: Build EXACT unpublished 39-Luau private .rbxlx and compare source bodies
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIST=handoffs/P0D-MUSOU-EARNED-POWER-H1-20261113-01/dist/EGG_RAID_RUMBLE_MUSOU_EARNED_POWER_H1_PRIVATE_STUDIO_ONLY
+          mkdir -p /tmp/p0d_power_place
+          /tmp/p0d_power_rojo build "$DIST/default.project.json" -o /tmp/p0d_power_place/EGG_RAID_RUMBLE_MUSOU_POWER_PRIVATE_UNPUBLISHED.rbxlx
+          cp "$DIST/SOURCE_LOCK.json" /tmp/p0d_power_place/SOURCE_LOCK.json
+          cp /tmp/p0d_power_native_run.log /tmp/p0d_power_place/NATIVE_POLICY_QA.txt
+          python3 - <<'PY'
+          import pathlib,xml.etree.ElementTree as ET,collections,hashlib,json
+          r=pathlib.Path('handoffs/P0D-MUSOU-EARNED-POWER-H1-20261113-01/dist/EGG_RAID_RUMBLE_MUSOU_EARNED_POWER_H1_PRIVATE_STUDIO_ONLY')
+          p=pathlib.Path('/tmp/p0d_power_place/EGG_RAID_RUMBLE_MUSOU_POWER_PRIVATE_UNPUBLISHED.rbxlx')
+          original=collections.Counter(x.read_text('utf8') for x in (r/'src').rglob('*.luau'))
+          found=collections.Counter();cl=collections.Counter();games=0
+          for item in ET.fromstring(p.read_bytes()).iter('Item'):
+            cls=item.get('class')
+            if cls not in ('Script','LocalScript','ModuleScript'):continue
+            body=item.find("./Properties/string[@name='Source']")
+            if body is None:continue
+            name=item.find("./Properties/string[@name='Name']")
+            if cls=='Script' and name is not None and name.text=='Game':games+=1
+            cl[cls]+=1;found[body.text or '']+=1
+          assert cl=={'Script':2,'LocalScript':5,'ModuleScript':32},cl
+          assert sum(found.values())==39 and found==original,(len(found),len(original))
+          assert games==1
+          assert sum(1 for x in found if 'remote.Name = "TrapRaidersS1Remote"' in x)==1
+          record={'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'scripts':39,
+             'studio_tested':False,'Android_tested':False,'fun_accepted':False,
+             'official_rc_adopted':False,'published':False,'paid':False}
+          pathlib.Path('/tmp/p0d_power_place/PRIVATE_PLACE_VERIFICATION.json').write_text(json.dumps(record,indent=2)+'\n')
+          print('P0D_MUSOU_POWER_PRIVATE_ROJO_39_OF_39_EXACT_SOURCE_PASS',record['sha256'])
+          PY
+      - name: Publish review-only private prototype artifact, never Roblox
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-MUSOU-POWER-39LUAU-UNPUBLISHED-STUDIO-PLACE
+          path: /tmp/p0d_power_place/
+          retention-days: 7
+          if-no-files-found: error
