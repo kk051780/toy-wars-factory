@@ -107,7 +107,9 @@ def check_geometry(before: str, after: str) -> dict:
         return sum((x-y)**2 for x,y in zip(a,b)) < 0.0001
     assert same(good["SKY_RAMP_RED"][1],good["SKY_WALKWAY"][0])
     assert same(good["SKY_WALKWAY"][1],good["SKY_RAMP_BLUE"][0])
-    assert same(good["SEA_LOW_CAUSEWAY"][0],good["SEA_ENTRY_RED"][0])
+    # New #256 short sea layout: west entry (-72 -> -60), middle (-60 -> +60), east entry (+60 -> +72).
+    # Require exact, non-teleport endpoint closure; do not waive this safety check.
+    assert same(good["SEA_ENTRY_RED"][1],good["SEA_LOW_CAUSEWAY"][0])
     assert same(good["SEA_LOW_CAUSEWAY"][1],good["SEA_ENTRY_BLUE"][0])
     assert all(all(abs(p[i])<bound for i,bound in enumerate((125,120,71))
                    if i in (0,2)) for a,b,_ in good.values() for p in (a,b))
