@@ -1152,7 +1152,7 @@ local function spawnActualScout(player: Player,token: any)
             if stage>=2 and branch=="ASSAULT" and not evolvedStrikeUsed then
                 -- Existing server horde:hit authority, PvE ONLY. Do not stack
                 -- permanent evolution with #285 PvP multiplier or award kill XP.
-                local hits=horde:hit(anchor,currentRoot.CFrame.LookVector,
+                local hits=horde:hit(currentRoot.Position,currentRoot.CFrame.LookVector,
                     if stage>=3 then 40 else 26,serverNow(),player.Character)
                 if hits>0 then
                     evolvedStrikeUsed=true
