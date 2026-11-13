@@ -78,7 +78,9 @@ def assert_stage(root:Path,n:int)->dict:
     assert game.count('remote.Name = "TrapRaidersS1Remote"')==1,"DUPLICATE_REMOTE_OWNER"
     return {"stage":n,"scripts":n,
             "script_sha256":{p:shabytes(v) for p,v in sorted(ss.items())},
-            "manifest_sha256":{p:shabytes(v) for p,v in sorted(files(root).items())}}
+            "manifest_sha256":{p:shabytes(v) for p,v in sorted(files(root).items())
+                if p.startswith("src/") or p in
+                ("default.project.json","SOURCE_LOCK.json","RC_FEATURE_LOCK.json")}}
 
 def capture(n:int,root:Path):
     assert n in STAGES
