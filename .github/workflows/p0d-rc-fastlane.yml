@@ -4,6 +4,7 @@ on:
     branches:
       - rc/p0d-s1-kids-rc01
       - feature/p0d-private60-author-native105-qa-20261114
+      - feature/p0d-private61-wcs7relay-meteor-20261114-01
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -150,6 +151,29 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_egg_relay_classic.py --dist "$DIST" --policy rc_fastlane/features/egg_relay_classic/policy/EggRelayPolicy.luau
           fi
+      - name: Checkout fixed meteor author source from PR311 (not from RC)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 25ee44b852985e770976abb47574c8c915e1e1f3
+          path: _p0d_meteor_author
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Compose REAL meteor shortcut into same private Game source after 60
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            test "$(git -C _p0d_meteor_author rev-parse HEAD)" = 25ee44b852985e770976abb47574c8c915e1e1f3
+            python3 -B _p0d_meteor_author/handoffs/P0D-WEATHER-METEOR-SHORTCUT-V1-20261114-01/test_meteor_shortcut.py
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B handoffs/P0D-WEATHER-METEOR-PRIVATE61-20261114-01/apply_meteor61.py --dist "$DIST" --enabled false
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            echo P0D_PRIVATE61_METEOR_OFF_PRESERVES_ORIGINAL60_ALL_BYTES_PASS
+            python3 -B handoffs/P0D-WEATHER-METEOR-PRIVATE61-20261114-01/apply_meteor61.py --dist "$DIST" --enabled true
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -178,7 +202,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + 1)")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -302,7 +326,8 @@ jobs:
           wcs_enabled=(p=='rich51' and flags['features']['WCS_F01_C01']['enabled'])
           seven_enabled=(p=='rich51' and flags['features']['SEVEN_JOBS_PVE_V1']['enabled'])
           egg_enabled=(p=='rich51' and flags['features']['EGG_RELAY_CLASSIC_V1']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled),'rich47':47,'legacy21':21}[p]
+          meteor_enabled=p=='rich51'
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(meteor_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -403,6 +428,26 @@ jobs:
               assert project['ServerStorage']['P0D_RC_ENABLE_EGG_RELAY_CLASSIC']['$properties']['Value'] is True
           else:
               assert titles[('ModuleScript','EggRelayPolicy')]==0
+          if meteor_enabled:
+              assert wcs_enabled and seven_enabled and egg_enabled
+              assert titles[('Script','MeteorShortcut')]==1
+              assert sum('P0D_ENABLE_METEOR_SHORTCUT_V1' in src for src in included)==1
+              project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
+              boot=project['ServerStorage']['P0D_ENABLE_METEOR_SHORTCUT_V1']
+              assert boot['$className']=='BoolValue' and boot['$properties']['Value'] is True
+              root=ET.fromstring(target.read_bytes())
+              flags_xml=[]
+              for node in root.iter('Item'):
+                  if node.get('class')!='BoolValue':continue
+                  name=node.find("./Properties/string[@name='Name']")
+                  if name is not None and name.text=='P0D_ENABLE_METEOR_SHORTCUT_V1':
+                      flags_xml.append(node)
+              assert len(flags_xml)==1,('MISSING_REAL_ROJO_METEOR_BOOLVALUE',len(flags_xml))
+              value=flags_xml[0].find("./Properties/bool[@name='Value']")
+              assert value is not None and (value.text or '').lower()=='true','METEOR_BOOLVALUE_FALSE'
+              print('P0D_PRIVATE61_METEOR_SOURCE_AND_ROJO_BOOT_FLAG_EXACT_PASS')
+          else:
+              assert titles[('Script','MeteorShortcut')]==0
           if p=='rich51':
               assert titles[('Script','V4TrainingBridge')]==1
               assert titles[('LocalScript','V4TrialOverlay')]==1
@@ -425,6 +470,8 @@ jobs:
             'wcs_crystal_canyon_moguron_included':bool(wcs_enabled),
             'seven_jobs_neutral_pve_included':bool(seven_enabled),
             'egg_relay_classic_one_egg_included':bool(egg_enabled),
+            'meteor_shortcut_private61_included':bool(meteor_enabled),
+            'meteor_studio_engine':'NOT_TESTED',
             'egg_relay_five_egg_supported':False,
             'egg_relay_engine':'NOT_TESTED',
             'seven_jobs_pvp_full_implementation':False,
@@ -439,7 +486,7 @@ jobs:
             'android':'NOT_TESTED','owner_fun':'NOT_TESTED',
             'production_publish':False,'sixskill_persistent':False,
             's1_score_prior_only':75,
-            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled},
+            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'METEOR_SHORTCUT_V1':meteor_enabled},
             'base_author_51_preserved':True if realm_enabled else None,
             'new_realms_studio_2client':'NOT_TESTED'}
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
