@@ -67,11 +67,13 @@ cast.Size=UDim2.fromScale(.24,.12)
 cast.MouseButton1Click:Connect(function()
     remote:FireServer("CAST")
 end)
-local lastState={castle=120,npcs=0,stage=0,branch="NONE",cooldown=12,lastCast=-100000}
+local lastState={castle=120,npcs=0,stage=0,branch="NONE",cooldown=12,cooldownRemaining=0}
+local lastStateReceivedAt=os.clock()
 local lastNoticeAt=0
 remote.OnClientEvent:Connect(function(kind,payload)
     if kind=="STATE" and type(payload)=="table" then
         lastState=payload
+        lastStateReceivedAt=os.clock()
         header.Text="EGG RAID RUMBLE | 城HP "..tostring(payload.castle)..
             " | 中立 "..tostring(payload.npcs).."体"
         local branch=if payload.branch=="ASSAULT" then "紅蓮・範囲攻撃"
@@ -84,8 +86,10 @@ remote.OnClientEvent:Connect(function(kind,payload)
     end
 end)
 RunService.RenderStepped:Connect(function()
-    local since=os.clock()-(tonumber(lastState.lastCast) or -100000)
-    local remain=math.max(0,(tonumber(lastState.cooldown) or 12)-since)
+    -- Server and client os.clock() epochs may differ. Only count down the
+    -- server-certified REMAINING cooldown from local receipt time.
+    local remain=math.max(0,(tonumber(lastState.cooldownRemaining) or 0)-
+        (os.clock()-lastStateReceivedAt))
     cast.Text=if remain>0 then ("再使用まで "..tostring(math.ceil(remain)).."秒")
         else "進化技 発動"
     cast.BackgroundColor3=if remain>0 then Color3.fromRGB(86,86,101)
