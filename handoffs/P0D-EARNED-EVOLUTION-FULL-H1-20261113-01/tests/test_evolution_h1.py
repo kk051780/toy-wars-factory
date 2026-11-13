@@ -62,5 +62,6 @@ class ActualGameGate(unittest.TestCase):
  def test_47_store_replay_no_revision_bump(self):self.assertIn('if replay then return state,"ALREADY_EVOLVED" end',S)
  def test_48_store_validate_evo(self):self.assertIn('safeEvolutionRecord(raw.evolution)',S)
  def test_49_data_store_unmodified_name(self):self.assertIn('EGG_RUMBLE_PRIVATE_STUDIO_HATCH_DEV_V1',G)
- def test_50_horde_real_map_floor(self):self.assertIn("MUSOU_SOURCE_MAP_ARENA_REQUIRED",M)\n def test_51_policy_stage2(self):self.assertIn('NEED_ACCOUNT_LV = { [1]=10, [2]=25, [3]=40 }',E)
+ def test_50_horde_real_map_floor(self):self.assertIn("MUSOU_SOURCE_MAP_ARENA_REQUIRED",M)
+ def test_51_policy_stage2(self):self.assertIn('NEED_ACCOUNT_LV = { [1]=10, [2]=25, [3]=40 }',E)
 if __name__=="__main__":unittest.main(verbosity=1)
