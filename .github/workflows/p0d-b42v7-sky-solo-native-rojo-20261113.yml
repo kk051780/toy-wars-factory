@@ -1,4 +1,4 @@
-name: P0D B42 V7 Sky Studio SOLO private 42-source Luau/Rojo
+name: P0D B42 V7 Sky SOLO private 43-source original gameplay plus read-only audit
 on:
   push:
     branches:
@@ -57,6 +57,31 @@ jobs:
           assert all(a[k]==b[k] for k in a if k!="server/Game.server.luau")
           print("P0D_B42V7_SKYSOLO_ONE_GAME_41_UNCHANGED_42_SOURCE_LOCK_PASS")
           PY
+      - name: Append ONE read-only Studio-only LocalScript, keep original 42 immutable
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-B42V7-SKY-SOLO-20261113-01
+          SOURCE="$ROOT/src/P0DStudioTrialAudit.client.luau"
+          TARGET="_p0d_solo_dist/src/client/P0DStudioTrialAudit.client.luau"
+          test "$(git hash-object "$SOURCE")" = 1fadb6f3b796e33335267653b1ce3f414401df13
+          test ! -e "$TARGET"
+          cp "$SOURCE" "$TARGET"
+          python3 - <<'PY'
+          import pathlib,json
+          s=pathlib.Path("_p0d_solo_dist/src/client/P0DStudioTrialAudit.client.luau").read_text()
+          forbidden=('FireServer(', 'OnServerEvent:Connect(', 'Instance.new("RemoteEvent")',
+             'DataStoreService','MarketplaceService','PromptProductPurchase')
+          assert s.count('if not RunService:IsStudio() then return end')==1
+          assert not any(x in s for x in forbidden),forbidden
+          assert s.count('remote.OnClientEvent:Connect(')==1
+          assert '[P0D_STUDIO_FUN_CHECK]' in s
+          source=list(pathlib.Path("_p0d_solo_dist/src").rglob("*.luau"))
+          assert len(source)==43
+          project=json.loads(pathlib.Path("_p0d_solo_dist/default.project.json").read_text())
+          assert "src/client" in json.dumps(project)
+          print("P0D_OWNER_STUDIO_TRIAL_READONLY_CLIENT_AUDIT_SOURCE_PASS")
+          PY
       - name: Checkout pinned upstream Luau
         uses: actions/checkout@v4
         with:
@@ -72,7 +97,7 @@ jobs:
           test "$(git -C _p0d_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
           cmake -S _p0d_luau -B /tmp/p0d_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
           cmake --build /tmp/p0d_luau --target Luau.Compile.CLI --parallel 4
-      - name: Actually compile ALL 42 resulting original+patched Luau
+      - name: Actually compile ALL 43 resulting original+patched Luau plus read-only audit
         shell: bash
         run: |
           set -euo pipefail
@@ -81,8 +106,8 @@ jobs:
             /tmp/p0d_luau/luau-compile "$f" >/tmp/solo_compile.log 2>&1 || { cat /tmp/solo_compile.log; exit 1; }
             n=$((n+1))
           done < <(find _p0d_solo_dist/src -type f -name '*.luau' -print0)
-          test "$n" -eq 42
-          echo P0D_STUDIO_SOLO_COMPLETE_42_NATIVE_LUAU_COMPILE_PASS
+          test "$n" -eq 43
+          echo P0D_STUDIO_SOLO_READONLY_AUDIT_43_NATIVE_LUAU_COMPILE_PASS
       - name: Obtain pinned Rojo 7.7.1
         shell: bash
         run: |
@@ -100,17 +125,17 @@ jobs:
               f.chmod(f.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
           PY
           /tmp/rojo77 --version | grep -F 7.7.1
-      - name: Create REAL private .rbxlx and verify all exact original+one Game source
+      - name: Create real private 43-Luau Place and verify the original 42 gameplay plus one read-only audit source
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p /tmp/p0d_solo_private
           /tmp/rojo77 build _p0d_solo_dist/default.project.json \
-            -o /tmp/p0d_solo_private/P0D_B42_V7_SKYCASTLE_STUDIO_SOLO_ROJO_PRIVATE.rbxlx
+            -o /tmp/p0d_solo_private/P0D_B42_V7_SKYCASTLE_STUDIO_SOLO_TRIAL_AUDIT_ROJO_PRIVATE.rbxlx
           python3 - <<'PY'
           import pathlib,hashlib,collections,xml.etree.ElementTree as ET,json
           src=pathlib.Path("_p0d_solo_dist/src")
-          binary=pathlib.Path("/tmp/p0d_solo_private/P0D_B42_V7_SKYCASTLE_STUDIO_SOLO_ROJO_PRIVATE.rbxlx")
+          binary=pathlib.Path("/tmp/p0d_solo_private/P0D_B42_V7_SKYCASTLE_STUDIO_SOLO_TRIAL_AUDIT_ROJO_PRIVATE.rbxlx")
           expected=collections.Counter(p.read_text("utf-8") for p in src.rglob("*.luau"))
           seen=collections.Counter();counts=collections.Counter();names=collections.Counter()
           for item in ET.fromstring(binary.read_bytes()).iter("Item"):
@@ -120,24 +145,24 @@ jobs:
               name=item.find("./Properties/string[@name='Name']")
               if source is None or name is None:raise ValueError("bad source")
               counts[cl]+=1;seen[source.text or ""]+=1;names[name.text]+=1
-          assert counts=={"Script":2,"LocalScript":5,"ModuleScript":35},counts
-          assert seen==expected and sum(seen.values())==42
-          assert names["Game"]==names["H1FunWorld"]==names["MusouHorde"]==1
+          assert counts=={"Script":2,"LocalScript":6,"ModuleScript":35},counts
+          assert seen==expected and sum(seen.values())==43
+          assert names["Game"]==names["H1FunWorld"]==names["MusouHorde"]==names["P0DStudioTrialAudit"]==1
           game=(src/"server/Game.server.luau").read_text("utf-8")
           assert game.count('remote.OnServerEvent:Connect(')==1
           assert game.count('remote.Name = "TrapRaidersS1Remote"')==1
           data={"place_sha256":hashlib.sha256(binary.read_bytes()).hexdigest(),
-           "source_count":42,"changed_original_script":"Game","original_other_scripts":41,
+           "source_count":43,"original_gameplay_count":42,"new_diagnostic_only":1,"changed_original_script":"Game","original_other_scripts":41,
            "studio_solo_only":True,"actual_roblox_engine":"NOT_TESTED",
            "actual_2client":"NOT_TESTED","android":"NOT_TESTED","owner_fun":"NO_GO_PENDING",
            "official_rc_adopted":False,"published":False}
           (binary.parent/"PLACE_RECEIPT.json").write_text(json.dumps(data,indent=2)+"\n")
-          print("P0D_STUDIO_SOLO_42_EXACT_ROJO_REAL_PRIVATE_PLACE_PASS",data["place_sha256"])
+          print("P0D_STUDIO_SOLO_AUDIT_43_EXACT_ROJO_REAL_PRIVATE_PLACE_PASS",data["place_sha256"])
           PY
       - name: Upload unpublished trial artifact only (7 days)
         uses: actions/upload-artifact@v4
         with:
-          name: P0D-B42-V7-SKYCASTLE-STUDIO-SOLO-PRIVATE-ROJO
+          name: P0D-B42-V7-SKYCASTLE-STUDIO-SOLO-READONLY-AUDIT-43
           path: /tmp/p0d_solo_private/
           retention-days: 7
           if-no-files-found: error
