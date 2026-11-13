@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Private RC62 portrait relay touchscreen overlap fix. HUD-only and fail closed.
 
-The original WCS+SevenJobs+ClassicRelay+Starfall 61 source bodies are immutable
+The original WCS+SevenJobs+ClassicRelay+Starfall 62 source bodies are immutable
 except one localized button layout function inserted into the EXISTING HUD.
 No new Remote, DataStore, score or state authority. No canonical RC writes.
 """
@@ -16,7 +16,7 @@ HUD="client/HUD.client.luau"
 FEATURE="RC62_RELAY_TOUCH_LAYOUT"
 ORIGINAL="relayButton.Visible=false"
 INSERT="""relayButton.Visible=false
--- RC61 TOUCH: narrow portrait controls must not overlap rescue/net or SevenJobs.
+-- RC62 TOUCH: narrow portrait controls must not overlap rescue/net or SevenJobs.
 -- The existing button() uses AnchorPoint=(0,1). Source geometry:
 -- default centered slot overlaps rescue at width 375-600; use the quiet
 -- left-middle slot on <=650px while retaining the proven landscape slot.
@@ -68,9 +68,9 @@ def run(dist:Path,enabled:bool)->None:
     original_lock=dist/"SOURCE_LOCK.json"
     feature_lock=dist/"RC_FEATURE_LOCK.json"
     lock=json.loads(original_lock.read_text("utf8"))
-    assert lock["total_scripts"]==62 and lock["blobs"]==pins,"RC61_SOURCE_PIN_DRIFT"
+    assert lock["total_scripts"]==62 and lock["blobs"]==pins,"RC62_SOURCE_PIN_DRIFT"
     feature=json.loads(feature_lock.read_text("utf8"))
-    assert feature["total_sources"]==62 and feature["source_gitblobs"]==pins,"RC61_FEATURE_PIN_DRIFT"
+    assert feature["total_sources"]==62 and feature["source_gitblobs"]==pins,"RC62_FEATURE_PIN_DRIFT"
     flags=feature.get("feature_flags",{})
     assert all(flags.get(name)==True for name in
                ("WCS_F01_C01","SEVEN_JOBS_PVE_V1",
@@ -111,13 +111,13 @@ def run(dist:Path,enabled:bool)->None:
         "rollback":"do not run the overlay; exact original 62 scripts/project/locks",
     }
     feature["source_gitblobs"]=newpins
-    feature["rc61_touch_layout_private"]=True
+    feature["rc62_touch_layout_private"]=True
     # All predictable input errors rejected before writes.
     (dist/"src"/HUD).write_bytes(after[HUD])
     original_lock.write_text(json.dumps(lock,ensure_ascii=False,indent=2)+"\n","utf8")
     feature_lock.write_text(json.dumps(feature,ensure_ascii=False,indent=2)+"\n","utf8")
     assert inventory(dist)==after
-    print("P0D_RC62_TOUCH_RELAY_FIX_HUD_ONLY_60_OTHERS_IDENTICAL_PASS")
+    print("P0D_RC62_TOUCH_RELAY_FIX_HUD_ONLY_61_OTHERS_IDENTICAL_PASS")
 
 if __name__=="__main__":
     p=argparse.ArgumentParser()
