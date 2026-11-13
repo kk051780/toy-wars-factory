@@ -1,0 +1,103 @@
+{
+  "schema": "P0D_RICH56_FLOATING_CRYSTAL_CANYON_PRIVATE_SOURCE_LOCK_V1",
+  "feature_id": "WCS_F01_C01_FLOATING_CRYSTAL_CANYON",
+  "date_jst": "2026-11-14",
+  "status": "ACTUAL_OWNER_PRIVATE_RBXLX_NATIVE_QA_PASS_NOT_OFFICIAL_RC",
+  "original_concept_issue": 293,
+  "original_author_pr": 294,
+  "original_author_commit": "412ec1da2e936c5181991fb18fd5c7a014a06fea",
+  "original_author_luau_git_blob": "c3cf119e26ab0241a7bd2b0b25acca75a4250e10",
+  "original_author_luau_byte_len": 6520,
+  "new_integrated_luau_git_blob": "5eb76749414c33c11eb70310b2d1c59c1f945c21",
+  "new_integrated_luau_sha256": "db78050581e0e9b32b49b5181727848a5db3817803ce9f0945e6c82074558bbf",
+  "new_integrated_luau_byte_len": 11028,
+  "canonical_successful_rc55_head": "0dd7f4418d06200e40688c79c8290745cb56834d",
+  "canonical_successful_rc55_run": 43501488524,
+  "canonical_successful_rc55_artifact": 14074311951,
+  "actual_canonical_rc_zip_sha256": "9fd0c0d388dc8d89e44cd32d97a935ab83b57c6f600623a2699a979a901c466c",
+  "actual_canonical_rbxlx_sha256": "e439aa5d7372e77b0949bb681ed7342485a541c3738f7c7aceede1b6ea23b8c0",
+  "new_private_rbxlx_filename": "P0D_RICH56_FLOATING_CRYSTAL_CANYON_PRIVATE.rbxlx",
+  "new_private_rbxlx_sha256": "adc667a507fc3f4e691140888300dc8926f7617e3ae1db148817492081788d0f",
+  "old_source_count": 55,
+  "new_source_count": 56,
+  "byte_identical_old_sources": 55,
+  "only_added_script": "Script WCS_CrystalCanyon in ServerScriptService.TrapRaidersS1",
+  "new_classes": {
+    "Script": 5,
+    "LocalScript": 9,
+    "ModuleScript": 42
+  },
+  "feature_default": "ON in unpublished Studio; OFF if ServerStorage.P0D_RC_ENABLE_WCS_F01_C01 is false before boot",
+  "source_requires": "original H1_FUN_WORLD.SKY_WALKWAY exists; otherwise skip, no stranded world",
+  "geometry": {
+    "canyon_anchor": [
+      0,
+      32,
+      -23
+    ],
+    "west_bank_x_range": [
+      -75,
+      -25
+    ],
+    "east_bank_x_range": [
+      25,
+      75
+    ],
+    "z_range": [
+      -65.5,
+      19.5
+    ],
+    "red_entry_start": [
+      -30,
+      16,
+      18
+    ],
+    "red_entry_end": [
+      -55,
+      31,
+      -15
+    ],
+    "blue_entry_start": [
+      30,
+      16,
+      18
+    ],
+    "blue_entry_end": [
+      55,
+      31,
+      -15
+    ],
+    "entry_paths": 2,
+    "guardrails": 4,
+    "approx_entry_ramp_grade": 0.362,
+    "canonical_game_out_of_bounds_abs_x": 130,
+    "canonical_game_out_of_bounds_abs_z": 76
+  },
+  "gameplay": {
+    "npc": "WCS-C01 橋掘りモグロン on both shores",
+    "shortcut_gate_seconds": 14,
+    "cooldown_seconds": 4,
+    "always_open_detour": true,
+    "occupancy_aware_gate_close": true,
+    "extra_combat_authority": false,
+    "paid": false
+  },
+  "actual_local_qa": {
+    "native_luau_compile_sources": "56/56 PASS",
+    "python_unit_negative_cases": "30/30 PASS",
+    "exact_source_lock": "PASS",
+    "authentic_rc_zip_crc": "PASS",
+    "clean_rebuild_sha": "MATCH"
+  },
+  "browser_studio_engine": "NOT_TESTED",
+  "real_two_client": "NOT_TESTED",
+  "android": "NOT_TESTED",
+  "owner_fun": "NOT_TESTED",
+  "official_rc_adopted": false,
+  "public_release": false,
+  "main_changed": false,
+  "paid_or_spent": false,
+  "rollback": "disable optional feature before original source assembly (or ServerStorage attr false); original RC55 55/55 unchanged",
+  "full_original_artifact_and_owner_private_rbxlx_location": "current ChatGPT conversation ZIP; not GitHub",
+  "source_admission": "#220 sole integrator may adopt a SINGLE additional script via one native+Rojo exact RC CI; do not copy old RC55 over later RC"
+}
