@@ -1,0 +1,78 @@
+{
+  "schema": "P0D_PRIVATE61_REAL_NATIVE105_ROJO61_CAPACITY_RECEIPT_V1",
+  "date_jst": "2026-11-14",
+  "scope": "QA_ONLY_CHILD_OF_PR312",
+  "official_rc_adopted": false,
+  "source_head_at_green": "cfe26efa034ab061ce7a39bd4d4e21e96a51f9b4",
+  "real_actions_run": 43525177648,
+  "real_run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43525177648",
+  "job_id": 132229037985,
+  "actual_conclusion": "completed_success",
+  "source_feature_layers": [
+    "official original single Game 57",
+    "WCS_F01_C01 floating crystal canyon + Moguron",
+    "SEVEN_JOBS_PVE_V1 neutral Horde classes",
+    "EGG_RELAY_CLASSIC_V1 classic one egg pass with explicit BoolValue fail-closed",
+    "STARRY_PATH_V1 mirrored Starfall third route with individual OFF"
+  ],
+  "author_source_pins": {
+    "SevenJobsRules_blob": "a7253d36cb67df47d4ba65d35af212ed1eb7b5b2",
+    "SevenJobsNative_cases_blob": "5bb1b8a507fe05955e257f69af75222ebd638577",
+    "EggRelayPolicy_blob": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
+    "OriginalEggRelayAuthor_source_sha": "f1c0866423c2c1d36a5cd8eafe8cee7558b1a1dd",
+    "StarfallPath_source_blob": "49f57b6d99357205e9c0b9a720d74ccbab947a87"
+  },
+  "verified_green_real_logs": {
+    "wcs_negative_python": "9/9 PASS",
+    "star_bridge_negative_python": "10/10 PASS",
+    "native_SevenJobs_pure": "33/33 PASS",
+    "native_ClassicRelayPolicy_pure": "41/41 PASS",
+    "native_real_unified_Game_relay": "31/31 PASS",
+    "total_native_execution_cases": "105/105 PASS",
+    "native_compilation_all_sources": "61/61 PASS",
+    "real_rojo_7_7_1_source_exact": "61/61 PASS",
+    "one_game_remote_store_inherited_from_source": "PASS",
+    "exact_place_sha256": "fdedffcd9713abd324da37b016fdcb9c0619255ff27139fc7a6d0a4646e06681"
+  },
+  "exact_capacity": {
+    "official57_uncompressed_place_bytes": 507197,
+    "candidate61_uncompressed_place_bytes": 552390,
+    "place_delta_bytes": 45193,
+    "place_delta_percent": 8.91,
+    "official57_actions_artifact_zip_bytes": 143300,
+    "candidate61_actions_artifact_zip_bytes": 156903,
+    "label": "Place .rbxlx source-backed Rojo XML vs whole compressed GitHub artifact ZIP. Not Roblox client memory/mobile APK/network transfer."
+  },
+  "candidate_artifact": {
+    "id": 14083404662,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43525177648/artifacts/14083404662",
+    "name": "P0D-CANONICAL-RC-STUDIO-rich51",
+    "warning": "The inherited artifact file name is historical; this run is a DRAFT feature branch, NOT canonical."
+  },
+  "official_snapshot": {
+    "canonical_sha": "34d6d384d04ba1d4a394331a3e5c74f798e57a22",
+    "official_scripts": 57,
+    "idea_count": 58,
+    "RC": 21,
+    "SOURCE": 27,
+    "IDEA": 10,
+    "RC_pct": 36.2,
+    "started_pct": 82.8,
+    "prior_release_fun": "75/100 FUN_NO_GO"
+  },
+  "handoff": {
+    "preferred_feature_source_PR": 312,
+    "QA_child_branch": "feature/p0d-private61-native105-size-qa-20261114",
+    "sole_writer_ticket": 220,
+    "intake_action": "Canonical branch CAS/identity check; source locked WCS then SevenJobs PvE then Classic1egg then Starfall; independent per-feature OFF; official exact new HEAD full source-native61/61 and real Rojo61/61 plus native105; only then promote catalog stages and update real RC capacity.",
+    "no_direct_canonical_write": true,
+    "no_main_publish_paid": true,
+    "not_engine_verified": [
+      "real Studio physical bridge dynamics",
+      "2 physical clients",
+      "Android/touch",
+      "DEV saved data rejoin",
+      "OWNER FUN"
+    ]
+  }
+}
