@@ -122,6 +122,29 @@ class TwinBiomes(unittest.TestCase):
         for bad in ("game:GetService('MarketplaceService')", "PromptProductPurchase",
                     "PromptGamePassPurchase", "Subscription"):
             self.assertNotIn(bad,SCRIPT)
+    def test_27_reachable_observation_stairs(self):
+        self.assertIn('spec.x, 0.7 + i * 0.75, 13 - i * 2.4',SCRIPT)
+        self.assertIn('spec.x, 5.5, -5, dark, Enum.Material.Slate, true, lookout)',SCRIPT)
+        first_top=0.7+1*0.75+0.85/2
+        pad_top=0.23+0.45/2
+        last_top=0.7+6*0.75+0.85/2
+        deck_top=5.5+1/2
+        self.assertLess(first_top-pad_top,2)
+        self.assertLess(deck_top-last_top,0.5)
+        self.assertTrue(all(abs((0.7+(i+1)*0.75)-(0.7+i*0.75))<=0.75 for i in range(1,6)))
+    def test_28_no_random_player_bias_or_paid_rarity(self):
+        self.assertNotIn("math.random",SCRIPT)
+        self.assertNotIn("player.Team",SCRIPT)
+        self.assertNotIn("GamePass",SCRIPT)
+    def test_29_public_route_beacon_with_no_player_tracking(self):
+        self.assertIn('local function currentRouteText()',SCRIPT)
+        self.assertIn('return "モグロン "',SCRIPT)
+        self.assertNotIn("GetPlayers()",SCRIPT)
+        self.assertNotIn("GetChildren()",SCRIPT)
+    def test_30_no_player_teleports_or_forced_velocity(self):
+        for bad in ("HumanoidRootPart.CFrame", "root.CFrame =", "AssemblyLinearVelocity",
+                    "VectorForce", "BodyVelocity", "PivotTo(", "Humanoid.JumpPower"):
+            self.assertNotIn(bad,SCRIPT)
 
 if __name__=="__main__":
     unittest.main()
