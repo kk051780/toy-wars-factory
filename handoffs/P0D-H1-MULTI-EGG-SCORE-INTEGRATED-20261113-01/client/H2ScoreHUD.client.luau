@@ -43,7 +43,26 @@ end
 local title=textLabel("ModeName",4,22)
 local scoreboard=textLabel("ScoreBoard",28,39)
 local notice=textLabel("NextObjective",72,28)
-local tooltip=textLabel("EggList",99,0)
+-- Avoid two stacked scoreboards in the same mobile viewport.
+-- Existing HUD stays active for buttons; only its old H0 score/status labels
+-- become hidden while a trusted server SCORE_MODE snapshot is active.
+local previousInstructions: string? = nil
+local function syncOriginalHud(scoreEnabled: boolean)
+    local old=player:FindFirstChild("PlayerGui")
+    local hud=old and old:FindFirstChild("TrapRaidersS1HUD")
+    if not hud then return end
+    local score=hud:FindFirstChild("Score")
+    local status=hud:FindFirstChild("Status")
+    if score and score:IsA("GuiObject") then score.Visible=not scoreEnabled end
+    if status and status:IsA("GuiObject") then status.Visible=not scoreEnabled end
+    local instructions=hud:FindFirstChild("Instructions")
+    if instructions and instructions:IsA("TextLabel") then
+        if previousInstructions==nil then previousInstructions=instructions.Text end
+        instructions.Text=if scoreEnabled then
+            "🥚 5個の卵を守って、敵の卵を持ち帰ろう！4分で高得点が勝ち"
+            else previousInstructions
+    end
+end
 title.Text="🥚 エッグ・スコアバトル"
 scoreboard.Text="🔴 0 : 0 🔵   4:00"
 notice.Text="卵をぬすむ・守る・城に届ける！"
@@ -54,8 +73,9 @@ remote.OnClientEvent:Connect(function(data)
     if type(data.serial)~="number" or type(data.updateId)~="number" then return end
     if data.serial<lastSerial or (data.serial==lastSerial and data.updateId<=lastUpdate) then return end
     lastSerial=data.serial;lastUpdate=data.updateId
-    if data.scoreMode~=true then gui.Enabled=false;return end
+    if data.scoreMode~=true then gui.Enabled=false; syncOriginalHud(false); return end
     gui.Enabled=true
+    syncOriginalHud(true)
     local scores=if type(data.scores)=="table" then data.scores else {}
     local red=if type(scores.RED)=="number" then math.floor(scores.RED) else 0
     local blue=if type(scores.BLUE)=="number" then math.floor(scores.BLUE) else 0
