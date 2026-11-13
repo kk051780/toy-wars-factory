@@ -165,7 +165,7 @@ jobs:
           pathlib.Path("/tmp/p0d-first90-review/PLACE_EXACT_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
           print("P0D_S1_FIRST90_STUDIO_SOLO_REAL_ROJO_23_EXACT_SOURCE_PASS",receipt["place_sha256"])
           PY
-      - name: Execute pinned-native Luau 30 studio-solo vs public-team assertions
+      - name: Execute pinned-native Luau 30 Studio solo and public-team assertions
         shell: bash
         run: |
           set -euo pipefail
@@ -173,22 +173,11 @@ jobs:
           python3 -B "$ROOT/tools/generate_native_studio_solo.py" --write /tmp/p0d-first90-review/studio_solo_native.luau
           /tmp/p0d_first90_cli/luau-compile /tmp/p0d-first90-review/studio_solo_native.luau >/dev/null
           /tmp/p0d_first90_cli/luau /tmp/p0d-first90-review/studio_solo_native.luau | tee /tmp/p0d-first90-review/STUDIO_SOLO_NATIVE_QA.txt
-          grep -E '^P0D_S1_STUDIO_SOLO_NATIVE_30_ASSERTIONS_PASS
-        uses: actions/upload-artifact@v4
-        with:
-          name: P0D-S1-FIRST90-CLASSIC-ONE-GAME-PRIVATE-STUDIO-RBXLX
-          path: |
-            /tmp/p0d-first90-review/P0D_S1_FIRST90_CLASSIC_PRIVATE_UNPUBLISHED.rbxlx
-            /tmp/p0d-first90-review/SOURCE_LOCK.json
-            /tmp/p0d-first90-review/PLACE_EXACT_RECEIPT.json
-            /tmp/p0d-first90-review/NATIVE_FIRST90_QA.txt
-          retention-days: 7
-          if-no-files-found: error
- /tmp/p0d-first90-review/STUDIO_SOLO_NATIVE_QA.txt
+          grep -F 'P0D_S1_STUDIO_SOLO_NATIVE_30_ASSERTIONS_PASS' /tmp/p0d-first90-review/STUDIO_SOLO_NATIVE_QA.txt
       - name: Archive isolated unpublished playable-preview file only
         uses: actions/upload-artifact@v4
         with:
-          name: P0D-S1-FIRST90-CLASSIC-ONE-GAME-PRIVATE-STUDIO-RBXLX
+          name: P0D-S1-FIRST90-STUDIO-SOLO-ONE-GAME-PRIVATE-RBXLX
           path: |
             /tmp/p0d-first90-review/P0D_S1_FIRST90_CLASSIC_PRIVATE_UNPUBLISHED.rbxlx
             /tmp/p0d-first90-review/SOURCE_LOCK.json
