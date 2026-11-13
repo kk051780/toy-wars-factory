@@ -1,0 +1,34 @@
+name: P0D Musou Chaos H1 isolated source test
+on:
+  push:
+    branches:
+      - experiment/p0d-musou-chaos-h1-20261113-01
+    paths:
+      - 'handoffs/P0D-MUSOU-CHAOS-H1-20261113-01/**'
+      - '.github/workflows/p0d-musou-chaos-h1-20261113.yml'
+  workflow_dispatch:
+jobs:
+  source-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check original one-Game invariants and misuse negatives
+        run: python -B handoffs/P0D-MUSOU-CHAOS-H1-20261113-01/tests/test_musou_overlay.py
+      - name: Assemble full original 37 Luau game in isolated dist
+        run: python -B handoffs/P0D-MUSOU-CHAOS-H1-20261113-01/tools/assemble.py --assemble
+      - name: Check exact resulting project source inventory
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          r=pathlib.Path('handoffs/P0D-MUSOU-CHAOS-H1-20261113-01/dist/EGG_RAID_RUMBLE_MUSOU_CHAOS_H1_DEV_STUDIO_ONLY')
+          data=json.loads((r/'SOURCE_LOCK.json').read_text())
+          assert data['new_count']==len(data['source_sha256'])==37
+          assert data['original_unchanged']==33
+          assert data['game_remote_count']==1
+          assert (r/'default.project.json').exists()
+          assert len(list((r/'src').rglob('*.luau')))==37
+          print('FULL_SOURCE_37_LUAU_BUILD_INVENTORY_PASS (not native Luau parse / not Studio)')
+          PY
