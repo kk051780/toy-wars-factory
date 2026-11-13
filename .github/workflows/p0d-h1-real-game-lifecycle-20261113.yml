@@ -1,0 +1,64 @@
+name: P0D H1 native authentic full server 2-client lifecycle wind egg guardian
+on:
+  push:
+    branches:
+      - qa/p0d-h1-real-game-server-lifecycle-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-h1-whole-game-server:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 24
+    env:
+      OWN: handoffs/P0D-H1-REAL-GAME-LIFECYCLE-QA-20261113-01
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout genuine frozen #255 game and isolated new QA only
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Fail closed on protected and original code modifications
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '1498c2d344ede2d9da6c2bfdd025ebc1a15ec48b^{commit}'
+          test -z "$(git diff --name-only 1498c2d344ede2d9da6c2bfdd025ebc1a15ec48b HEAD -- releases/P0D_S1_KIDS_RC01 handoffs/P0D-H1-COMPOSITE-20261113-01 handoffs/P0D-H1-WOW-4WAY-20261113-01)"
+      - name: Checkout pinned actual Luau upstream interpreter and compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_h1_lifecycle_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build exact native Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_h1_lifecycle_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_h1_lifecycle_luau -B /tmp/p0d_h1_native_lifecycle -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_h1_native_lifecycle --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Compile real exact H1 Game/Rules/Wind/Trap 2-player controller test fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/test_original_h1_controller.py" --luau /tmp/p0d_h1_native_lifecycle/luau --build-only /tmp/p0d_h1_native_lifecycle/real_controller_test.luau
+          /tmp/p0d_h1_native_lifecycle/luau-compile /tmp/p0d_h1_native_lifecycle/real_controller_test.luau >/dev/null
+          echo "H1_AUTHENTIC_FULL_GAME_CONTROLLER_NATIVE_COMPILE_PASS"
+      - name: EXECUTE authentic server two-player egg win trap wind and 6 unsafe mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/test_original_h1_controller.py" --luau /tmp/p0d_h1_native_lifecycle/luau | tee /tmp/p0d_h1_real_controller_result.log
+          grep -F 'H1_GENUINE_GAME_NATIVE_NEGATIVE_CONTROLS_PASS 6' /tmp/p0d_h1_real_controller_result.log
+          grep -F 'H1_OWNER_STUDIO_2CLIENT_PHONE_FUN_NOT_TESTED' /tmp/p0d_h1_real_controller_result.log
+      - name: Archive source-only original game native proof NOT Studio evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-H1-AUTHENTIC-GAME-NATIVE-LIFECYCLE-LOG-NOT-STUDIO
+          path: /tmp/p0d_h1_real_controller_result.log
+          if-no-files-found: error
+          retention-days: 7
