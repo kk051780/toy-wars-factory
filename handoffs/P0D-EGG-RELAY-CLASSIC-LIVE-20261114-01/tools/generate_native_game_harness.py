@@ -115,6 +115,8 @@ local function runCase(label,configure,expected)
     reset()
     local p=request()
     configure(p)
+    local preVersion=relayVersions.BLUE
+    local preRelayAt=relayLastAt.BLUE
     applyClassicEggRelay(actor,p)
     local passed=(carry[actor]==nil and carry[receiver]=="BLUE"
         and match.eggOwners.BLUE==receiver)
@@ -130,7 +132,7 @@ local function runCase(label,configure,expected)
     else
         assert(broadcasts==0 and removeVisuals==0 and giveVisuals==0,
             label..": unauthorized side effects")
-        assert(relayVersions.BLUE==1 and relayLastAt.BLUE==nil,
+        assert(relayVersions.BLUE==preVersion and relayLastAt.BLUE==preRelayAt,
             label..": unauthorized version/cooldown mutation")
     end
     caseCount+=1
