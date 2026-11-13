@@ -5,6 +5,8 @@
 -- Pure/server-compatible. Inject original EvolutionRules once via Dex.new(E).
 local Dex = {}
 Dex.SCHEMA = "EGG_RUMBLE_FORM_DEX_V1"
+local EVOLVE_COST = { [1]=2, [2]=5, [3]=10 }
+local SWITCH_COST = 3
 
 local function integer(n,lo,hi)
     return type(n)=="number" and n==n and n%1==0 and n>=lo and n<=hi
@@ -47,6 +49,13 @@ local function validReceipt(receipt)
         if stage<2 or receipt.choice~=receipt.branch then return false end
     end
     if stage>=2 and receipt.branch~="ASSAULT" and receipt.branch~="GUARD" then
+        return false
+    end
+    -- Prevent counterfeit free evolutions or forged zero-cost switches
+    -- from poisoning the discovered-form album.
+    local expectedCost=if receipt.action=="EVOLVE" then EVOLVE_COST[stage]
+        else SWITCH_COST
+    if not integer(receipt.cost,0,1000000) or receipt.cost~=expectedCost then
         return false
     end
     return receipt.formId==canonicalFormId(receipt.itemId,stage,receipt.branch)
@@ -95,9 +104,20 @@ function Dex.new(evolution)
         -- Never silently show an unknown allegedly-owned item as an evolution
         -- collectible. Other legitimate inventory item systems can coexist,
         -- but they do not gain a FormDex entry until explicitly catalogued.
+        local seenEvolveStages={}
         for receiptId,receipt in pairs(profile.evoReceipts) do
             if not textId(receiptId,128) or not validReceipt(receipt) then
                 return nil,"INVALID_EVOLUTION_RECEIPT"
+            end
+            if receipt.action=="EVOLVE" then
+                -- The original EvolutionRules has exactly one permanent
+                -- EVOLVE action per stage+item. Further branch discovery
+                -- can happen only through legitimate SWITCH receipts.
+                local uniqueStage=receipt.itemId..":"..tostring(receipt.stage)
+                if seenEvolveStages[uniqueStage] then
+                    return nil,"DUPLICATE_STAGE_EVOLUTION"
+                end
+                seenEvolveStages[uniqueStage]=true
             end
             if discoveredByItem[receipt.itemId]~=nil then
                 if receipt.stage>activeStage[receipt.itemId] then
