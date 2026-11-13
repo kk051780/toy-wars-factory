@@ -9,9 +9,9 @@ BASE=REPO/"handoffs/P0D-EGG-RUMBLE-DURABLE-HATCH-20261113-01"
 OLD=BASE/"dist/EGG_RAID_RUMBLE_TWO_MODES_FREE_HATCH_DATASTORE_PRIVATE_STUDIO"
 NEW=OWN/"dist/EGG_RAID_RUMBLE_H1_TWO_MODES_XP_MASTERY_DEV_STUDIO_ONLY"
 PIN={
-"server/Game.server.luau":"b6c5e8877011a50705906cc22b37abd1428bde00",
+"server/Game.server.luau":"28a51605efcee572029154f978761622959df587",
 "client/HUD.client.luau":"6ef75cc76002e14b00cfb984cc799098e5cd033a",
-"server/PersistentHatchStore.luau":"bb2ecba18e7cb8f7c09ed346a450df8ef253f604",
+"server/PersistentHatchStore.luau":"7205035fa710bfa1e2a629aa9f093b9ddb8fcb9d",
 "server/ProgressionRules.luau":"a72830b039a46ca02d02f6aab7d6a4805bec8860"
 }
 def blob(raw):return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
