@@ -103,6 +103,13 @@ eq(math.abs(h.mobs[1].pos.Y-1.65-(-1))<.00001,true,"minion feet touch source are
 eq(math.abs(h.mobs[9].pos.Y-2.5-(-.7))<.00001,true,"elite feet touch road")
 eq(h.mobs[9].pos.Y<h.mobs[1].pos.Y+2.5,true,"real map height not hardcoded 3.4")
 eq(#h.mobs,9,"record nine")
+local elite=h.mobs[9]
+eq(elite.zone~=nil,true,"elite radius visual exists")
+eq(elite.zone.Size.X,18,"warning radius exactly 9 stud")
+eq(elite.zone.CanQuery,false,"warning visual does not affect raycasts")
+eq(elite.zone.CanCollide,false,"warning visual never blocks runners")
+eq(elite.zone.Transparency,1,"warning hidden outside windup")
+eq(h:eliteWarningSeconds(0),0,"no bogus elite warning")
 local origin=vec(-34,2.7,-18)
 local forward=vec(1,0,0)
 local first=h.mobs[1]
@@ -131,6 +138,7 @@ local e=h.mobs[9]
 local victim={alive=true,root={Position=vec(5,3.4,0)}}
 e.tellUntil=17
 e.target=victim
+e.zone.Transparency=.62
 local eliteHits,eliteKills=h:hit(vec(-10,3.4,0),forward,40,12,nil)
 eq(eliteHits,1,"elite hit")
 eq(eliteKills,0,"elite not one-shot")
@@ -139,19 +147,26 @@ eq(hit2,1,"elite second hit")
 eq(ko2,1,"elite second hit ko")
 eq(e.tellUntil,0,"kill cancels old telegraph")
 eq(e.target,nil,"kill clears old target")
+eq(e.zone.Transparency,1,"kill hides elite ground warning immediately")
+eq(h:eliteWarningSeconds(12.95),0,"dead elite cannot show warning")
 h:tick(20.8,{victim},emptyHealth)
 eq(e.hp,0,"elite not early respawn")
 h:tick(21,{},emptyHealth)
 eq(e.hp,72,"elite respawns after eight")
 eq(e.target,nil,"elite target clean on respawn")
 eq(e.attackAt,22.5,"elite reentry grace")
+eq(e.zone.Transparency,1,"respawn warning hidden")
 -- Check real telegraph state transition, with line-of-sight and dodge.
 local impacts0=h:tick(22.5,{victim},emptyHealth)
 eq(e.tellUntil,24,"elite winds up 1.5s")
+eq(e.zone.Transparency,.62,"elite red 9stud warning visible")
+eq(h:eliteWarningSeconds(23),1,"server remaining-second snapshot")
 eq(#impacts0,0,"no instant elite strike")
 workspace.blocked=true
 local impactedBlocked=h:tick(24,{victim},emptyHealth)
 eq(#impactedBlocked,0,"no hit through wall")
+eq(e.zone.Transparency,1,"elite red ring closes after blocked strike")
+eq(h:eliteWarningSeconds(24),0,"no stale warning after strike")
 workspace.blocked=false
 e.tellUntil=25
 e.target=victim
@@ -174,6 +189,15 @@ local upstairs=h:tick(27,{victim},emptyHealth)
 local upstairsElite=0
 for _,impact in ipairs(upstairs) do if impact.kind=="ELITE" then upstairsElite+=1 end end
 eq(upstairsElite,0,"upper-floor dodge succeeds")
+-- Actual minion chase moves across the original grass->road boundary.
+-- Floor y must follow MapBuilder, not remain at its original spawn.
+local runner={alive=true,root={Position=vec(-24,3,0)}}
+h:tick(30,{runner},emptyHealth)
+h:tick(31,{runner},emptyHealth)
+h:tick(32,{runner},emptyHealth)
+h:tick(33,{runner},emptyHealth)
+eq(first.pos.Z>-12,true,"minion actually crossed onto road")
+eq(math.abs(first.pos.Y-(1.65-.7))<.001,true,"chase snaps feet to road top")
 h:clear()
 eq(h:livingCount(),0,"cleanup clear enemy count")
 eq(#h.mobs,0,"cleanup deletes references")
