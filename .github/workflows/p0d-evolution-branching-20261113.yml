@@ -71,7 +71,166 @@ jobs:
           /tmp/p0d_evolution_native/luau-compile "$ROOT/battle/EvolutionCombat.server.luau" >/dev/null
           /tmp/p0d_evolution_native/luau-compile "$ROOT/battle/EvolutionCombat.client.luau" >/dev/null
           python3 -B "$ROOT/tests/run_native_evolution.py" --luau /tmp/p0d_evolution_native/luau --compiler /tmp/p0d_evolution_native/luau-compile | tee /tmp/p0d_evolution_logs/EVOLUTION_NATIVE_TEST_LOG.txt
-          grep -E '^P0D_EVOLUTION_ORIGINAL_NATIVE_PASS_[0-9]+$' /tmp/p0d_evolution_logs/EVOLUTION_NATIVE_TEST_LOG.txt
+          grep -E '^P0D_EVOLUTION_ORIGINAL_NATIVE_PASS_[0-9]+
+      - name: Obtain PINNED Rojo 7.7.1 binary for two unpublished Studio Places
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_evolution_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_evolution_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,stat
+          from pathlib import Path
+          with zipfile.ZipFile('/tmp/p0d_evolution_rojo.zip') as z:
+              names=[p for p in z.namelist() if p.split('/')[-1]=='rojo']
+              assert len(names)==1,names
+              p=Path('/tmp/p0d_evolution_rojo')
+              p.write_bytes(z.read(names[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_evolution_rojo --version | grep -F 7.7.1
+      - name: Build BOTH isolated Studio-only evolution galleries from real Luau source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_evolution_logs
+          /tmp/p0d_evolution_rojo build "$ROOT/default.project.json" -o /tmp/p0d_evolution_logs/EVOLUTION_GALLERY_PRIVATE_UNPUBLISHED.rbxlx
+          /tmp/p0d_evolution_rojo build "$ROOT/battle.project.json" -o /tmp/p0d_evolution_logs/EVOLUTION_PVE_BATTLE_PRIVATE_UNPUBLISHED.rbxlx
+          test -s /tmp/p0d_evolution_logs/EVOLUTION_GALLERY_PRIVATE_UNPUBLISHED.rbxlx
+          test -s /tmp/p0d_evolution_logs/EVOLUTION_PVE_BATTLE_PRIVATE_UNPUBLISHED.rbxlx
+      - name: Verify real Rojo XML contains every original exact Luau source and one isolated server
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,hashlib,json,collections,xml.etree.ElementTree as ET
+          from pathlib import Path
+          root=Path(os.environ['ROOT'])
+          out=Path('/tmp/p0d_evolution_logs')
+          cases=[
+            ('EVOLUTION_GALLERY_PRIVATE_UNPUBLISHED.rbxlx',
+             ['demo/EvolutionGallery.server.luau','demo/EvolutionGalleryCamera.client.luau'],
+             {'Script':1,'LocalScript':1}),
+            ('EVOLUTION_PVE_BATTLE_PRIVATE_UNPUBLISHED.rbxlx',
+             ['src/EvolutionRules.luau','battle/EvolutionCombat.server.luau','battle/EvolutionCombat.client.luau'],
+             {'Script':1,'LocalScript':1,'ModuleScript':1})
+          ]
+          summary=[]
+          for filename,sourcePaths,expectedClasses in cases:
+              place=out/filename
+              originals=collections.Counter((root/p).read_text(encoding='utf-8') for p in sourcePaths)
+              compiled=[];classes=collections.Counter()
+              for item in ET.fromstring(place.read_bytes()).iter('Item'):
+                  cl=item.get('class')
+                  if cl not in ('Script','LocalScript','ModuleScript'):continue
+                  element=item.find("./Properties/string[@name='Source']")
+                  if element is None: continue
+                  classes[cl]+=1
+                  compiled.append(element.text or '')
+              assert classes==expectedClasses,(filename,classes,expectedClasses)
+              assert len(compiled)==len(sourcePaths),(filename,len(compiled),sourcePaths)
+              assert collections.Counter(compiled)==originals,filename+' SOURCE_BYTES_DIFFER'
+              digest=hashlib.sha256(place.read_bytes()).hexdigest()
+              summary.append(dict(file=filename,sha256=digest,
+                bytes=place.stat().st_size,scriptCount=len(compiled),
+                sourceExact=True,unpublished=True,engineTested=False,
+                phoneTested=False,humanFunAccepted=False))
+              print('REAL_ROJO_SOURCE_EXACT_PASS',filename,len(compiled),'SHA256',digest)
+          (out/'EVOLUTION_SOURCE_TRUTH.json').write_text(json.dumps(summary,indent=2)+'\n')
+          PY
+      - name: Publish test truth log (not a Roblox gameplay PASS)
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D_ORIGINAL_EVOLUTION_NATIVE_POLICY_ONLY_NO_STUDIO
+          path: |
+            /tmp/p0d_evolution_logs/EVOLUTION_NATIVE_TEST_LOG.txt
+            /tmp/p0d_evolution_logs/FORM_DEX_NATIVE_TEST_LOG.txt
+            /tmp/p0d_evolution_logs/EVOLUTION_SOURCE_TRUTH.json
+            /tmp/p0d_evolution_logs/EVOLUTION_GALLERY_PRIVATE_UNPUBLISHED.rbxlx
+            /tmp/p0d_evolution_logs/EVOLUTION_PVE_BATTLE_PRIVATE_UNPUBLISHED.rbxlx
+          retention-days: 7
+          if-no-files-found: error
+ /tmp/p0d_evolution_logs/EVOLUTION_NATIVE_TEST_LOG.txt
+          python3 -B "$ROOT/tests/run_native_formdex.py" --luau /tmp/p0d_evolution_native/luau --compiler /tmp/p0d_evolution_native/luau-compile | tee /tmp/p0d_evolution_logs/FORM_DEX_NATIVE_TEST_LOG.txt
+          grep -E '^P0D_FORM_DEX_NATIVE_PASS_[0-9]+
+      - name: Obtain PINNED Rojo 7.7.1 binary for two unpublished Studio Places
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_evolution_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_evolution_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,stat
+          from pathlib import Path
+          with zipfile.ZipFile('/tmp/p0d_evolution_rojo.zip') as z:
+              names=[p for p in z.namelist() if p.split('/')[-1]=='rojo']
+              assert len(names)==1,names
+              p=Path('/tmp/p0d_evolution_rojo')
+              p.write_bytes(z.read(names[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_evolution_rojo --version | grep -F 7.7.1
+      - name: Build BOTH isolated Studio-only evolution galleries from real Luau source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_evolution_logs
+          /tmp/p0d_evolution_rojo build "$ROOT/default.project.json" -o /tmp/p0d_evolution_logs/EVOLUTION_GALLERY_PRIVATE_UNPUBLISHED.rbxlx
+          /tmp/p0d_evolution_rojo build "$ROOT/battle.project.json" -o /tmp/p0d_evolution_logs/EVOLUTION_PVE_BATTLE_PRIVATE_UNPUBLISHED.rbxlx
+          test -s /tmp/p0d_evolution_logs/EVOLUTION_GALLERY_PRIVATE_UNPUBLISHED.rbxlx
+          test -s /tmp/p0d_evolution_logs/EVOLUTION_PVE_BATTLE_PRIVATE_UNPUBLISHED.rbxlx
+      - name: Verify real Rojo XML contains every original exact Luau source and one isolated server
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,hashlib,json,collections,xml.etree.ElementTree as ET
+          from pathlib import Path
+          root=Path(os.environ['ROOT'])
+          out=Path('/tmp/p0d_evolution_logs')
+          cases=[
+            ('EVOLUTION_GALLERY_PRIVATE_UNPUBLISHED.rbxlx',
+             ['demo/EvolutionGallery.server.luau','demo/EvolutionGalleryCamera.client.luau'],
+             {'Script':1,'LocalScript':1}),
+            ('EVOLUTION_PVE_BATTLE_PRIVATE_UNPUBLISHED.rbxlx',
+             ['src/EvolutionRules.luau','battle/EvolutionCombat.server.luau','battle/EvolutionCombat.client.luau'],
+             {'Script':1,'LocalScript':1,'ModuleScript':1})
+          ]
+          summary=[]
+          for filename,sourcePaths,expectedClasses in cases:
+              place=out/filename
+              originals=collections.Counter((root/p).read_text(encoding='utf-8') for p in sourcePaths)
+              compiled=[];classes=collections.Counter()
+              for item in ET.fromstring(place.read_bytes()).iter('Item'):
+                  cl=item.get('class')
+                  if cl not in ('Script','LocalScript','ModuleScript'):continue
+                  element=item.find("./Properties/string[@name='Source']")
+                  if element is None: continue
+                  classes[cl]+=1
+                  compiled.append(element.text or '')
+              assert classes==expectedClasses,(filename,classes,expectedClasses)
+              assert len(compiled)==len(sourcePaths),(filename,len(compiled),sourcePaths)
+              assert collections.Counter(compiled)==originals,filename+' SOURCE_BYTES_DIFFER'
+              digest=hashlib.sha256(place.read_bytes()).hexdigest()
+              summary.append(dict(file=filename,sha256=digest,
+                bytes=place.stat().st_size,scriptCount=len(compiled),
+                sourceExact=True,unpublished=True,engineTested=False,
+                phoneTested=False,humanFunAccepted=False))
+              print('REAL_ROJO_SOURCE_EXACT_PASS',filename,len(compiled),'SHA256',digest)
+          (out/'EVOLUTION_SOURCE_TRUTH.json').write_text(json.dumps(summary,indent=2)+'\n')
+          PY
+      - name: Publish test truth log (not a Roblox gameplay PASS)
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D_ORIGINAL_EVOLUTION_NATIVE_POLICY_ONLY_NO_STUDIO
+          path: |
+            /tmp/p0d_evolution_logs/EVOLUTION_NATIVE_TEST_LOG.txt
+            /tmp/p0d_evolution_logs/EVOLUTION_SOURCE_TRUTH.json
+            /tmp/p0d_evolution_logs/EVOLUTION_GALLERY_PRIVATE_UNPUBLISHED.rbxlx
+            /tmp/p0d_evolution_logs/EVOLUTION_PVE_BATTLE_PRIVATE_UNPUBLISHED.rbxlx
+          retention-days: 7
+          if-no-files-found: error
+ /tmp/p0d_evolution_logs/FORM_DEX_NATIVE_TEST_LOG.txt
       - name: Obtain PINNED Rojo 7.7.1 binary for two unpublished Studio Places
         shell: bash
         run: |
