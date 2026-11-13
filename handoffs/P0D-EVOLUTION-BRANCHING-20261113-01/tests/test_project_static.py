@@ -23,12 +23,17 @@ class EvolutionBoundaries(unittest.TestCase):
         self.assertIn("if not RunService:IsStudio() then return end",CLIENT)
 
     def test_no_game_or_paid_remote_or_storage(self):
-        forbidden=("RemoteEvent","FireServer","DataStoreService","UpdateAsync",
+        # Documentation may legitimately refer to UpdateAsync as a future
+        # integration contract. Reject REAL calls, not harmless comments.
+        forbidden=("RemoteEvent","FireServer","DataStoreService",
                    "MarketplaceService","ProcessReceipt","PublishAsync","PromptProductPurchase",
                    "TrapRaidersS1Remote")
         for x in forbidden:
             with self.subTest(x=x):
                 self.assertNotIn(x,SRC+SERVER+CLIENT)
+        for invocation in (":UpdateAsync(", ".UpdateAsync(", ":SetAsync(", ".SetAsync("):
+            with self.subTest(invocation=invocation):
+                self.assertNotIn(invocation,SRC+SERVER+CLIENT)
 
     def test_real_275_scout_ids_in_source(self):
         for item in ("starter_scout","forest_scout","star_scout"):
