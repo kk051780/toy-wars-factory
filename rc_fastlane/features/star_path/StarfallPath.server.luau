@@ -7,7 +7,9 @@ local ServerStorage=game:GetService("ServerStorage")
 if ServerStorage:GetAttribute("P0D_RC_ENABLE_STARRY_PATH_V1")~=true then return end
 local Workspace=game:GetService("Workspace")
 local Players=game:GetService("Players")
-local anchor=Workspace:WaitForChild("P0D_CrystalCanyonAnchor",20)
+-- WCS may wait up to 45s for the arena, 45s for H1 world, and 12s for SkyV5.
+-- Starfall must not give up before its prerequisite has finished booting.
+local anchor=Workspace:WaitForChild("P0D_CrystalCanyonAnchor",120)
 local canyon=Workspace:WaitForChild("P0D_WCS_CrystalCanyon",20)
 if not anchor or not anchor:IsA("BasePart") or not canyon or not canyon:IsA("Model") then
     warn("[P0D/STAR] WCS canyon missing: independent star route disabled")

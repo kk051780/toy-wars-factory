@@ -12,8 +12,8 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent
 SOURCE=ROOT/"features/star_shards/StarShardHunt.server.luau"
-SOURCE_GIT_BLOB="8dff1376abe8423c11f5dd0330ad5cc20aaae116"
-PRIOR_STAR_BLOB="49f57b6d99357205e9c0b9a720d74ccbab947a87"
+SOURCE_GIT_BLOB="51421d36a9d6e4caf675d666cbddffedcec923d1"
+PRIOR_STAR_BLOB="311d4c75e38f896f24c982afbc6f9d5c35e90cb4"
 FEATURE="STAR_SHARDS_V1"
 DEST="server/StarShardHunt.server.luau"
 ATTR="P0D_RC_ENABLE_STAR_SHARDS_V1"
@@ -50,6 +50,7 @@ def apply(dist:Path,profile:str,enabled_override:bool|None=None)->bool:
         '-- BEGIN_P0D_STAR_SHARDS_POLICY',
         '-- END_P0D_STAR_SHARDS_POLICY',
         'local locations={1,3,5,6,8,10}',
+        'WaitForChild("P0D_STARRY_PATH",170)',
         'local TOTAL=6',
         'not humanoid or humanoid.Health<=0',
         'player:SetAttribute("P0D_StarShardCount",count)',

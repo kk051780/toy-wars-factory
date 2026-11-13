@@ -10,7 +10,11 @@ if ServerStorage:GetAttribute("P0D_RC_ENABLE_STARRY_PATH_V1")~=true then return 
 
 local Workspace=game:GetService("Workspace")
 local Players=game:GetService("Players")
-local stage=Workspace:WaitForChild("P0D_STARRY_PATH",25)
+-- WCS prerequisite boot may use 45+45+12=102s before creating canyon geometry.
+-- Starfall itself waits for its WCS anchor up to 120s plus canyon (20s)
+-- and bridge (15s); this collector MUST wait beyond the full worst-case budget.
+-- This is finite and fail-closed: no independent treasure world is fabricated.
+local stage=Workspace:WaitForChild("P0D_STARRY_PATH",170)
 if not stage or not stage:IsA("Model") or stage:GetAttribute("FeatureId")~="STARRY_PATH_V1" then
     warn("[P0D/SHARDS] verified original star stage missing; no standalone map")
     return

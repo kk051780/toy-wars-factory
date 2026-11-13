@@ -23,6 +23,7 @@ game=(root/"server/Game.server.luau").read_text("utf8")
 hud=(root/"client/HUD.client.luau").read_text("utf8")
 wcs=(root/"server/WCS_CrystalCanyon.server.luau").read_text("utf8")
 star=(root/"server/StarfallPath.server.luau").read_text("utf8")
+assert 'Workspace:WaitForChild("P0D_CrystalCanyonAnchor",120)' in star, "STARRY_PATH_PREMATURE_TIMEOUT"
 shards=(root/"server/StarShardHunt.server.luau").read_text("utf8")
 project=json.loads((a.dist/"default.project.json").read_text("utf8"))["tree"]
 storage=project["ServerStorage"]
@@ -75,6 +76,7 @@ assert 'if (root.Position-orb.Position).Magnitude>13 then return end' in star
 assert 'P0D_StarShardHunt' in shards
 assert 'local locations={1,3,5,6,8,10}' in shards
 assert 'local TOTAL=6' in shards
+assert 'Workspace:WaitForChild("P0D_STARRY_PATH",170)' in shards, "STAR_SHARDS_PREMATURE_TIMEOUT"
 assert 'stage:GetAttribute("PathOpen")~=true' in shards
 assert 'if not stone.CanCollide then return end' in shards
 assert 'ServerStorage:GetAttribute("P0D_RC_ENABLE_STAR_SHARDS_V1")~=true' in shards

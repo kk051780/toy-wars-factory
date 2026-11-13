@@ -124,6 +124,29 @@ class StarShardsAdmission(unittest.TestCase):
             shard.apply(self.dist,"rich51",True)
         self.assertEqual(shard.sources(self.dist),self.before)
 
+    def test_collector_waits_longer_than_starfall_actual_boot_budget(self):
+        import re
+        root=Path(shard.__file__).resolve().parent
+        wcs=(root/"features/wcs_f01_c01/WCS_CrystalCanyon.server.luau").read_text("utf8")
+        bridge=(root/"features/star_path/StarfallPath.server.luau").read_text("utf8")
+        collector=shard.SOURCE.read_text("utf8")
+        waits=[r'arena=Workspace:WaitForChild\\("TRAP_RAIDERS_S1",(\\d+)\\)',
+               r'sky=arena:WaitForChild\\("H1_FUN_WORLD",(\\d+)\\)',
+               r'sky:WaitForChild\\("SKY_WALKWAY",(\\d+)\\)']
+        wcs_budget=0
+        for pattern in waits:
+            matches=re.findall(pattern,wcs)
+            self.assertEqual(len(matches),1)
+            wcs_budget+=int(matches[0])
+        start=re.findall(r'Workspace:WaitForChild\\("P0D_CrystalCanyonAnchor",(\\d+)\\)',bridge)
+        canyon=re.findall(r'Workspace:WaitForChild\\("P0D_WCS_CrystalCanyon",(\\d+)\\)',bridge)
+        ready=re.findall(r'canyon:WaitForChild\\("ShortcutBridge",(\\d+)\\)',bridge)
+        collector_wait=re.findall(r'Workspace:WaitForChild\\("P0D_STARRY_PATH",(\\d+)\\)',collector)
+        self.assertEqual((len(start),len(canyon),len(ready),len(collector_wait)),(1,1,1,1))
+        self.assertGreaterEqual(int(start[0]),wcs_budget+5)
+        self.assertGreaterEqual(int(collector_wait[0]),int(start[0])+int(canyon[0])+int(ready[0])+10)
+        self.assertEqual(shard.PRIOR_STAR_BLOB,shard.blob(bridge.encode("utf8")))
+
     def test_script_native_policy_markers_and_server_authority(self):
         raw=shard.SOURCE.read_bytes()
         self.assertEqual(shard.blob(raw),shard.SOURCE_GIT_BLOB)
