@@ -78,9 +78,15 @@ jobs:
           assert '[P0D_STUDIO_FUN_CHECK]' in s
           source=list(pathlib.Path("_p0d_solo_dist/src").rglob("*.luau"))
           assert len(source)==43
-          project=json.loads(pathlib.Path("_p0d_solo_dist/default.project.json").read_text())
-          assert "src/client" in json.dumps(project)
-          print("P0D_OWNER_STUDIO_TRIAL_READONLY_CLIENT_AUDIT_SOURCE_PASS")
+          project_file=pathlib.Path("_p0d_solo_dist/default.project.json")
+          project=json.loads(project_file.read_text())
+          scripts=project["tree"]["StarterPlayer"]["StarterPlayerScripts"]
+          assert scripts["$className"]=="StarterPlayerScripts"
+          assert "P0DStudioTrialAudit" not in scripts
+          scripts["P0DStudioTrialAudit"]={"$path":"src/client/P0DStudioTrialAudit.client.luau"}
+          project_file.write_text(json.dumps(project,ensure_ascii=False,indent=2)+"\n")
+          assert scripts["P0DStudioTrialAudit"]["$path"]=="src/client/P0DStudioTrialAudit.client.luau"
+          print("P0D_OWNER_STUDIO_TRIAL_READONLY_CLIENT_AUDIT_SOURCE_AND_ROJO_PROJECT_MAPPING_PASS")
           PY
       - name: Checkout pinned upstream Luau
         uses: actions/checkout@v4
