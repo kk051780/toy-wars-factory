@@ -37,14 +37,14 @@ def inject(original:bytes,enable:bool):
       'local h2Mode: any = nil -- initialized AFTER original Game closure helpers\n',
       "h2_mode_local")
     s=once(s,
-      'local function dropEgg(player: Player)\n'
-      '    local egg = carry[player]\n'
-      '    if egg == nil then return end\n',
-      'local function dropEgg(player: Player)\n'
-      '    local egg = carry[player]\n'
-      '    if egg == nil then return end\n'
-      '    if h2Mode then h2Mode.onDrop(player) end -- server-only score custody\n',
-      "single_original_carry_drop")
+      '    carry[player] = nil\n'
+      '    removeCarrierVisual(player)\n'
+      '    if match.eggOwners[egg] == player then resetEgg(egg) end\n',
+      '    carry[player] = nil\n'
+      '    removeCarrierVisual(player)\n'
+      '    if h2Mode then h2Mode.onDrop(player) end -- after old carry cleared\n'
+      '    if match.eggOwners[egg] == player then resetEgg(egg) end\n',
+      "single_original_drop_safe_sync")
     s=once(s,
       '    return {\n'
       '        kind = "SNAPSHOT", serial = match.serial, phase = match.phase,',
