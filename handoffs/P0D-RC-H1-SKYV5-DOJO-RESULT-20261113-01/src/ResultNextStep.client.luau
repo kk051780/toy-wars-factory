@@ -58,10 +58,66 @@ close.Parent = box
 local shownSerial = -1
 local lastPhase = ""
 local showTicket = 0
+-- ONE local navigation cue for a REAL server-built home-team dojo pad.
+-- Source is the existing Game's PRIVATE_AUTO_DOJO_<TEAM>_<SKILL> station, not
+-- a made-up position or a fake stat. Never sends gameplay remotes.
+local marker: BillboardGui? = nil
+local markerTicket = 0
+local function clearTrainingMarker()
+    markerTicket += 1
+    if marker then
+        marker:Destroy()
+        marker = nil
+    end
+end
+local function pointToInstalledPad(team: string, skill: string?)
+    clearTrainingMarker()
+    if (team ~= "RED" and team ~= "BLUE")
+        or (skill ~= "BEAST" and skill ~= "WEAPON") then return end
+    local arena = workspace:FindFirstChild("TRAP_RAIDERS_S1")
+    if not arena then return end
+    local expected = "PRIVATE_AUTO_DOJO_"..team.."_"..skill
+    local pad = arena:FindFirstChild(expected)
+    -- Refuse any approximate position, opponent pad or unrelated local part.
+    if not pad or not pad:IsA("BasePart")
+        or pad:GetAttribute("P0DTrainingSkill") ~= skill
+        or pad:GetAttribute("FreeTraining") ~= true
+        or pad:GetAttribute("StudioSessionOnly") ~= true then
+        print("[P0D_STUDIO_RESULT_ADVISOR] PAD_NOT_FOUND "..expected)
+        return
+    end
+    local worldCue = Instance.new("BillboardGui")
+    worldCue.Name = "P0D_PrivateDojoNextStep"
+    worldCue.Adornee = pad
+    worldCue.Size = UDim2.fromOffset(180, 58)
+    worldCue.StudsOffsetWorldSpace = Vector3.new(0, 8, 0)
+    worldCue.AlwaysOnTop = true
+    worldCue.MaxDistance = 240
+    local nameLabel = Instance.new("TextLabel")
+    nameLabel.Name = "ActualInstalledPadOnly"
+    nameLabel.Size = UDim2.fromScale(1, 1)
+    nameLabel.BackgroundColor3 = Color3.fromRGB(33, 86, 101)
+    nameLabel.BackgroundTransparency = 0.18
+    nameLabel.TextColor3 = Color3.fromRGB(255, 247, 199)
+    nameLabel.Font = Enum.Font.GothamBold
+    nameLabel.TextScaled = true
+    nameLabel.TextWrapped = true
+    nameLabel.Text = if skill == "BEAST" then "🐉 次はここで魔獣修行！"
+        else "⚔ 次はここで武器修行！"
+    nameLabel.Parent = worldCue
+    worldCue.Parent = playerGui
+    marker = worldCue
+    local ticket = markerTicket
+    -- Do not leave old suggested destinations floating over a NEW battle.
+    task.delay(20, function()
+        if ticket == markerTicket then clearTrainingMarker() end
+    end)
+end
 close.MouseButton1Click:Connect(function()
     showTicket += 1
     box.Visible = false
     close.Visible = false
+    clearTrainingMarker()
 end)
 
 local function dojoView(snapshot: any): ({beast:number, weapon:number, friendBonus:boolean}?)
@@ -105,6 +161,7 @@ local function summarize(msg: any): string
         else "チーム得点: 未確認"
     local dojo = dojoView(msg)
     local adviceText = "もう一度、卵を奪いに行こう！"
+    local suggestedPad: string? = nil
     local bonusText = ""
     if dojo then
         -- Only verified H1 BEAST and WEAPON; no six-skill V4 claim.
@@ -118,8 +175,13 @@ local function summarize(msg: any): string
         if advice.action == "VIEW_EVOLUTION" then
             adviceText = "つぎは進化をチェック！"
         elseif advice.action == "VIEW_TRAINING" then
-            local name = if advice.suggestedSkill == "beast" then "魔獣" else "武器"
-            adviceText = "つぎは"..name.."道場で放置修行！"
+            if advice.suggestedSkill == "beast" then
+                suggestedPad = "BEAST"
+                adviceText = "つぎは魔獣道場で放置修行！"
+            elseif advice.suggestedSkill == "weapon" then
+                suggestedPad = "WEAPON"
+                adviceText = "つぎは武器道場で放置修行！"
+            end
         else
             adviceText = "もう一度、卵を奪いに行こう！"
         end
@@ -127,8 +189,9 @@ local function summarize(msg: any): string
             bonusText = "  フレンド育成ボーナスあり"
         end
     end
-    return resultText.."  |  "..scoreText.."\n"..adviceText..bonusText..
+    local summary = resultText.."  |  "..scoreText.."\n"..adviceText..bonusText..
         "\n7秒で消えます・戦績はサーバー情報のみ"
+    return summary, suggestedPad
 end
 
 remote.OnClientEvent:Connect(function(msg: any)
@@ -141,6 +204,9 @@ remote.OnClientEvent:Connect(function(msg: any)
             box.Visible = false
             close.Visible = false
         end
+        -- Keep the temporary waypoint while waiting in LOBBY/COUNTDOWN,
+        -- remove it as soon as the next ACTIVE round actually starts.
+        if phase == "ACTIVE" and marker then clearTrainingMarker() end
         lastPhase = phase
         return
     end
@@ -149,7 +215,9 @@ remote.OnClientEvent:Connect(function(msg: any)
     shownSerial = serial
     showTicket += 1
     local ticket = showTicket
-    box.Text = summarize(msg)
+    local summary, suggestedPad = summarize(msg)
+    box.Text = summary
+    pointToInstalledPad(if type(msg.team) == "string" then msg.team else "", suggestedPad)
     box.Visible = true
     close.Visible = true
     print("[P0D_STUDIO_RESULT_ADVISOR] RESULTS serial="..tostring(serial)..
