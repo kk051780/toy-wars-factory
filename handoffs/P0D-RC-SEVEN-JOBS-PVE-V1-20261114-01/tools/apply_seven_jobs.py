@@ -22,7 +22,7 @@ AFTER={
 }
 PATCHES=[
  ("Game.patch.zlib.b64","Game.luau","server/Game.server.luau",
-  "dace60e6a60a9de0960e2b2f91a39033264e8a7e7ed9b83f5c5ddb014176e39c"),
+  "8b067b88eed38050e2f71119c83d06c9f3fef67578478024e3b0b1c27b8952ef"),
  ("HUD.patch.zlib.b64","TrapRaidersHUD.luau","client/HUD.client.luau",
   "ba56402a37e318c9102a15c7217659bf4a0297fb27fd4c71a5ae81c0cc6c05e2"),
 ]
