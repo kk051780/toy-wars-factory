@@ -6,6 +6,12 @@ on:
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - 'rc_fastlane/**'
+      - '.github/workflows/p0d-rc-fastlane.yml'
   workflow_dispatch:
     inputs:
       profile:
@@ -115,6 +121,60 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_scout_species.py --profile rich51 --dist "$DIST"
           fi
+      - name: Add source-locked Crystal Canyon/Moguron stage with independent rollback (Studio only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_wcs_f01_c01.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_wcs_f01_c01.py --profile rich51 --dist "$DIST"
+          fi
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 98edf843fb8a8f6123c13a67745b216712bfe63d
+          path: _p0d_sevenjobs_author
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Combine exact author sevenjobs PvE after WCS using only one Game and HUD (PRIVATE CANDIDATE)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            test "$(git -C _p0d_sevenjobs_author rev-parse HEAD)" = 98edf843fb8a8f6123c13a67745b216712bfe63d
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            AUTHOR=_p0d_sevenjobs_author/handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01
+            python3 -B handoffs/P0D-WCS-SEVENJOBS-COMBINED59-20261114-01/apply_combined.py --dist "$DIST" --author "$AUTHOR" --off-test
+            python3 -B handoffs/P0D-WCS-SEVENJOBS-COMBINED59-20261114-01/apply_combined.py --dist "$DIST" --author "$AUTHOR"
+          fi
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f1c0866423c2c1d36a5cd8eafe8cee7558b1a1dd
+          path: _p0d_relay_author
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: d09a52a3b7ca1fe400e30370606d5751751a6941
+          path: _p0d_relay_policy
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Safely layer exact classic egg relay after source-exact WCS+7jobs PRIVATE59
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            test "$(git -C _p0d_relay_author rev-parse HEAD)" = f1c0866423c2c1d36a5cd8eafe8cee7558b1a1dd
+            test "$(git -C _p0d_relay_policy rev-parse HEAD)" = d09a52a3b7ca1fe400e30370606d5751751a6941
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            AUTHOR=_p0d_relay_author/handoffs/P0D-EGG-RELAY-CLASSIC-LIVE-20261114-01
+            POLICY=_p0d_relay_policy/handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/src/EggRelayPolicy.luau
+            python3 -B handoffs/P0D-WCS-7JOBS-EGG-PRIVATE60-20261114-01/apply_egg_overlay.py --dist "$DIST" --author "$AUTHOR" --policy "$POLICY" --off-test
+            python3 -B handoffs/P0D-WCS-7JOBS-EGG-PRIVATE60-20261114-01/apply_egg_overlay.py --dist "$DIST" --author "$AUTHOR" --policy "$POLICY"
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -143,7 +203,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -163,6 +223,64 @@ jobs:
           done < <(find "$DIST/src" -type f -name '*.luau' -print0)
           test "$n" -eq "$WANT"
           echo "P0D_CANONICAL_RC_FULL_SOURCE_LUAU_COMPILE_PASS $n/$WANT"
+      - name: Execute actual final composed SevenJobsRules policy 33 native cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            AUTHOR=_p0d_sevenjobs_author/handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01
+            python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          dist=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE")
+          author=Path("_p0d_sevenjobs_author/handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01")
+          src=(dist/"src/server/SevenJobsRules.luau").read_bytes()
+          src_author=(author/"src/SevenJobsRules.luau").read_bytes()
+          test=(author/"tests/SevenJobsNative.luau").read_bytes()
+          def blob(data):
+              return hashlib.sha1(b"blob "+str(len(data)).encode()+bytes([0])+data).hexdigest()
+          assert src==src_author, "SEVEN_JOBS_FINAL_COMPOSED_SOURCE_MISMATCH"
+          assert blob(src)=="a7253d36cb67df47d4ba65d35af212ed1eb7b5b2"
+          assert blob(test)=="5bb1b8a507fe05955e257f69af75222ebd638577"
+          assert test.count(b'check("')==33, "MUST_RUN_33_DISTINCT_JOB_CASES"
+          generated=b"local R=(function()\n"+src+b"\nend)()\n"+test
+          Path("/tmp/P0D_COMBINED60_SEVENJOBS_NATIVE.luau").write_bytes(generated)
+          print("P0D_SEVENJOBS_COMBINED60_AUTHOR_SOURCE_AND_33_CASES_PINNED_PASS")
+          PY
+            if [ ! -x /tmp/p0d_new_luau/luau ]; then
+              if [ ! -f /tmp/p0d_new_luau/build.ninja ]; then
+                cmake -S _p0d_rc_luau -B /tmp/p0d_new_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+              fi
+              cmake --build /tmp/p0d_new_luau --target Luau.Repl.CLI --parallel 4
+            fi
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_COMBINED60_SEVENJOBS_NATIVE.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_COMBINED60_SEVENJOBS_NATIVE.luau | tee /tmp/p0d_sevenjobs_private60_native.log
+            grep -Fx 'P0D_SEVEN_JOBS_NATIVE_33_OF_33_POLICY_ASSERTIONS_PASS' /tmp/p0d_sevenjobs_private60_native.log
+          fi
+      - name: Execute actual composed Game relay handler native30 plus missing-flag rejection
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            if [ ! -x /tmp/p0d_new_luau/luau ]; then
+              if [ ! -f /tmp/p0d_new_luau/build.ninja ]; then
+                cmake -S _p0d_rc_luau -B /tmp/p0d_new_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+              fi
+              cmake --build /tmp/p0d_new_luau --target Luau.Repl.CLI --parallel 4
+            fi
+            python3 -B _p0d_relay_author/handoffs/P0D-EGG-RELAY-CLASSIC-LIVE-20261114-01/tools/generate_native_game_harness.py \
+              --game "$DIST/src/server/Game.server.luau" \
+              --policy "$DIST/src/server/EggRelayPolicy.luau" \
+              --out /tmp/P0D_COMBINED60_ACTUAL_GAME_NATIVE.luau
+            python3 -B handoffs/P0D-WCS-7JOBS-EGG-PRIVATE60-20261114-01/adapt_native_harness.py \
+              --fixture /tmp/P0D_COMBINED60_ACTUAL_GAME_NATIVE.luau
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_COMBINED60_ACTUAL_GAME_NATIVE.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_COMBINED60_ACTUAL_GAME_NATIVE.luau | tee /tmp/p0d_relay_private60_native.log
+            grep -Fx 'P0D_EGG_RELAY_ACTUAL_GAME_NATIVE_30_CASES_PASS' /tmp/p0d_relay_private60_native.log
+            grep -Fx 'P0D_EGG_CLASSIC_MISSING_FLAG_FAIL_CLOSED_NATIVE_PASS' /tmp/p0d_relay_private60_native.log
+          fi
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash
         run: |
@@ -206,7 +324,10 @@ jobs:
           saved_pve_enabled=(p=='rich51' and flags['features']['SAVED_PVE_MASTERY']['enabled'])
           saved_beast_enabled=(p=='rich51' and flags['features']['SAVED_BEAST_EVOLUTION']['enabled'])
           species_enabled=(p=='rich51' and flags['features']['SCOUT_SPECIES_V1']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled),'rich47':47,'legacy21':21}[p]
+          wcs_enabled=(p=='rich51' and flags['features']['WCS_F01_C01']['enabled'])
+          jobs_enabled=(p=='rich51' and flags['features']['SEVEN_JOBS_PVE_V1']['enabled'])
+          egg_classic_enabled=(p=='rich51' and flags['features']['EGG_RELAY_CLASSIC_V1']['enabled'])
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(jobs_enabled)+int(egg_classic_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -276,6 +397,28 @@ jobs:
           else:
               assert titles[('Script','RealmHunt')]==0
               assert titles[('LocalScript','RealmHuntHUD')]==0
+          if wcs_enabled:
+              assert titles[('Script','WCS_CrystalCanyon')]==1
+              assert sum('GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")~=true' in src for src in included)==1
+          if p=='rich51':
+              boot_attr=json.loads((base/'default.project.json').read_text('utf8'))['tree'].get('ServerStorage',{}).get('$attributes',{}).get('P0D_RC_ENABLE_WCS_F01_C01')
+              assert boot_attr is (True if wcs_enabled else None),('WCS_BOOT_ATTR_MISMATCH',boot_attr,wcs_enabled)
+          if wcs_enabled:
+              assert titles[('Script','WCS_CrystalCanyon')]==1
+              assert sum('playerIsInGateClosureZone()' in src for src in included)==1
+          else:
+              assert titles[('Script','WCS_CrystalCanyon')]==0
+          if jobs_enabled:
+              assert titles[('ModuleScript','SevenJobsRules')]==1
+              assert sum('GetAttribute("P0D_RC_ENABLE_SEVEN_JOBS_PVE")' in src for src in included)==1
+          else:
+              assert titles[('ModuleScript','SevenJobsRules')]==0
+          if egg_classic_enabled:
+              assert titles[('ModuleScript','EggRelayPolicy')]==1
+              assert sum('applyClassicEggRelay' in src for src in included)==1
+              assert sum('relayButton.MouseButton1Click:Connect(fireClassicEggRelay)' in src for src in included)==1
+          else:
+              assert titles[('ModuleScript','EggRelayPolicy')]==0
           if p=='rich51':
               assert titles[('Script','V4TrainingBridge')]==1
               assert titles[('LocalScript','V4TrialOverlay')]==1
@@ -295,6 +438,14 @@ jobs:
             'saved_pve_mastery_included':bool(saved_pve_enabled),
             'saved_beast_evolution_included':bool(saved_beast_enabled),
             'existing_three_scout_species_included':bool(species_enabled),
+            'wcs_crystal_canyon_moguron_included':bool(wcs_enabled),
+            'wcs_engine_physics':'NOT_TESTED',
+            'sevenjobs_private_candidate_included':bool(jobs_enabled),
+            'sevenjobs_engine_qa':'NOT_TESTED',
+            'sevenjobs_full_pvp_roles':'NOT_IMPLEMENTED',
+            'egg_classic_relay_included':bool(egg_classic_enabled),
+            'egg_h2_five_egg_relay':'INTENTIONALLY_DISABLED',
+            'egg_relay_real_Studio_2client':'NOT_TESTED',
             'species_engine_qa':'NOT_TESTED',
             'saved_beast_engine_qa':'NOT_TESTED',
             'saved_pve_minion_only':True if saved_pve_enabled else None,
@@ -304,7 +455,7 @@ jobs:
             'android':'NOT_TESTED','owner_fun':'NOT_TESTED',
             'production_publish':False,'sixskill_persistent':False,
             's1_score_prior_only':75,
-            'feature_flags':{'REALM_HUNT_V1':realm_enabled},
+            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':jobs_enabled,'EGG_RELAY_CLASSIC_V1':egg_classic_enabled},
             'base_author_51_preserved':True if realm_enabled else None,
             'new_realms_studio_2client':'NOT_TESTED'}
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
@@ -316,6 +467,12 @@ jobs:
           set -euo pipefail
           python3 -B rc_fastlane/progress.py --out /tmp/p0d_rc_out/FEATURE_PROGRESS.md --json /tmp/p0d_rc_out/FEATURE_PROGRESS.json
           grep -F P0D /tmp/p0d_rc_out/FEATURE_PROGRESS.md | head -2
+      - name: Record true Roblox Place bytes, source count and SHA (not compressed ZIP)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B rc_fastlane/rc_capacity.py --out-dir /tmp/p0d_rc_out
+          cat /tmp/p0d_rc_out/RC_CAPACITY_REPORT.md
       - uses: actions/upload-artifact@v4
         with:
           name: P0D-CANONICAL-RC-STUDIO-${{ env.PROFILE }}
