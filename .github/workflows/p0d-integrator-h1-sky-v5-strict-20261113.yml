@@ -1,0 +1,172 @@
+name: P0D RC Integrator H1 Dojo Sky V5 Ground Docks Strict Egg Path 45 Private
+on:
+  push:
+    branches:
+      - integration/p0d-h1-dojo-sky-v5-strict-route-20261113-01
+    paths:
+      - 'handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01/**'
+      - '.github/workflows/p0d-integrator-h1-sky-v5-strict-20261113.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  one-authority-private-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Source-lock original 45 then actual V5 Sky docks and strict V4 egg observer
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/P0D-B42-V7-SKYCASTLE-20261113-01/tests/test_skycastle_original.py
+          python3 -B handoffs/P0D-FIRST90-MUSOUV7-UPGRADE-20261113-01/tests/test_upgrade.py
+          python3 -B -m unittest discover -s handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01/tests -p 'test_integration.py' -v
+          P0D_DOCK_CANDIDATE=handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01/dist/P0D_H1_DOJO_SKYV5_STRICT4_PRIVATE           P0D_DOCK_ORIGINAL=handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01/dist/P0D_H1_DOJO_SKYV5_STRICT4_PRIVATE             python3 -B handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01/tests/test_ground_docks_v5.py
+      - name: Checkout pinned upstream Luau source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_solo_upstream
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build pinned native Luau compiler/runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_solo_upstream rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_solo_upstream -B /tmp/p0d_solo_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_solo_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Native compiler pinned whole H1 Dojo V5 physical Sky Strict4 observer 45
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIST=handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01/dist/P0D_H1_DOJO_SKYV5_STRICT4_PRIVATE
+          n=0
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_solo_luau/luau-compile "$file" > /tmp/luau_compile_out 2>&1 || { cat /tmp/luau_compile_out; exit 1; }
+            n=$((n+1))
+          done < <(find "$DIST/src" -name '*.luau' -type f -print0)
+          test "$n" -eq 45
+          echo P0D_H1_DOJO_SKYV5_STRICT4_NATIVE_45_OF_45_PASS
+      - name: Execute original Studio solo policy in real pinned Luau CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-RC-B42V7-SKY-SOLO-20261113-01
+          mkdir -p /tmp/p0d-solo-artifacts
+          python3 -B "$ROOT/tools/generate_native_studio_solo.py" --write /tmp/p0d-solo-artifacts/solo_native_qa.luau
+          /tmp/p0d_solo_luau/luau-compile /tmp/p0d-solo-artifacts/solo_native_qa.luau >/dev/null
+          /tmp/p0d_solo_luau/luau /tmp/p0d-solo-artifacts/solo_native_qa.luau | tee /tmp/p0d-solo-artifacts/NATIVE_SOLO_QA.txt
+          grep -F 'P0D_S1_STUDIO_SOLO_LATCH_NATIVE_40_ASSERTIONS_PASS' /tmp/p0d-solo-artifacts/NATIVE_SOLO_QA.txt
+      - name: Execute original author DojoRules 47 native assertions
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-RC-B42V7-SKY-SOLO-DOJO-H1-20261113-01
+          python3 -B "$ROOT/tools/generate_native_dojo.py" --write /tmp/p0d-solo-artifacts/dojo_native_qa.luau
+          /tmp/p0d_solo_luau/luau-compile /tmp/p0d-solo-artifacts/dojo_native_qa.luau >/dev/null
+          /tmp/p0d_solo_luau/luau /tmp/p0d-solo-artifacts/dojo_native_qa.luau | tee /tmp/p0d-solo-artifacts/NATIVE_DOJO_QA.txt
+          grep -F 'P0D_H1_DOJO_NATIVE_47_ASSERTIONS_PASS' /tmp/p0d-solo-artifacts/NATIVE_DOJO_QA.txt
+      - name: Execute exact strict original observer 792 native predicates
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01
+          python3 -B "$ROOT/tools/generate_native_sky_receipt.py" \
+            --source "$ROOT/dist/P0D_H1_DOJO_SKYV5_STRICT4_PRIVATE/src/client/P0DStudioTrialAudit.client.luau" \
+            --write /tmp/p0d-solo-artifacts/strict_sky_native.luau
+          /tmp/p0d_solo_luau/luau-compile /tmp/p0d-solo-artifacts/strict_sky_native.luau >/dev/null
+          /tmp/p0d_solo_luau/luau /tmp/p0d-solo-artifacts/strict_sky_native.luau | tee /tmp/p0d-solo-artifacts/NATIVE_STRICT_SKY_QA.txt
+          grep -F 'P0D_SKY_RECEIPT_NATIVE_792_ASSERTIONS_PASS' /tmp/p0d-solo-artifacts/NATIVE_STRICT_SKY_QA.txt
+      - name: Get official pinned Rojo v7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_solo_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_solo_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import pathlib,zipfile,stat
+          with zipfile.ZipFile('/tmp/p0d_solo_rojo.zip') as z:
+              options=[x for x in z.namelist() if x.rsplit('/',1)[-1]=='rojo']
+              assert len(options)==1
+              p=pathlib.Path('/tmp/p0d_solo_rojo')
+              p.write_bytes(z.read(options[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_solo_rojo --version | grep -F '7.7.1'
+      - name: Build genuine 45 script private Studio Place physical 4 docks and strict same egg audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIST=handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01/dist/P0D_H1_DOJO_SKYV5_STRICT4_PRIVATE
+          PLACE=/tmp/p0d-solo-artifacts/EGG_RAID_RUMBLE_H1_DOJO_SKYV5_STRICT4_PRIVATE.rbxlx
+          /tmp/p0d_solo_rojo build "$DIST/default.project.json" -o "$PLACE"
+          cp "$DIST/SOURCE_LOCK.json" /tmp/p0d-solo-artifacts/SOURCE_LOCK.json
+          python3 - <<'PY'
+          from collections import Counter
+          import hashlib,json,pathlib,xml.etree.ElementTree as ET
+          p=pathlib.Path('/tmp/p0d-solo-artifacts/EGG_RAID_RUMBLE_H1_DOJO_SKYV5_STRICT4_PRIVATE.rbxlx')
+          d=pathlib.Path('handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01/dist/P0D_H1_DOJO_SKYV5_STRICT4_PRIVATE')
+          originals=Counter(s.read_text('utf8') for s in (d/'src').rglob('*.luau'))
+          embedded=Counter()
+          kinds=Counter()
+          names=Counter()
+          for item in ET.fromstring(p.read_bytes()).iter('Item'):
+              kind=item.get('class')
+              if kind not in ('Script','LocalScript','ModuleScript'):continue
+              code=item.find("./Properties/string[@name='Source']")
+              if code is None:continue
+              kinds[kind]+=1
+              embedded[code.text or '']+=1
+              name=item.find("./Properties/string[@name='Name']")
+              if name is not None:names[(kind,name.text)]+=1
+          assert embedded==originals and sum(embedded.values())==45,(len(embedded),len(originals))
+          assert kinds=={'Script':2,'LocalScript':6,'ModuleScript':37},kinds
+          assert names[('Script','Game')]==1
+          assert names[('Script','H1FunWorld')]==1
+          assert sum('SKY_GROUND_BOOT_RED' in s and 'SKY_SCORE_DOCK_BLUE' in s for s in embedded)==1
+          assert sum('qualifiesSkyScore' in s and 'SCORE_NOT_QUALIFIED' in s for s in embedded)==1
+          assert names[('ModuleScript','DojoRules')]==1
+          assert names[('ModuleScript','StudioSoloPreviewRules')]==1
+          assert names[('LocalScript','P0DStudioTrialAudit')]==1
+          assert any('[P0D_STUDIO_FUN_CHECK]' in src and
+                     'EGG_CARRIED' in src and 'SCORE_CONFIRMED' in src
+                     for src in embedded)
+          lock=json.loads((d/'SOURCE_LOCK.json').read_text('utf8'))
+          assert lock['original_scripts']==45 and lock['identical_to_previous']==43 and lock['total_scripts']==45
+          assert lock['world_ground_docks']==4
+          assert lock['strict_single_egg_sky_score_observer'] is True
+          assert lock['official_rc_adopted'] is False and lock['published'] is False
+          h=hashlib.sha256(p.read_bytes()).hexdigest()
+          receipt={'status':'RICH_B42_V7_SKYCASTLE_STUDIO_SOLO_ONLY',
+            'source_45_of_45':True,'prior_45_source_unchanged':43,
+            'mapped_studio_readonly_diagnostic':True,
+            'sky_4_real_ground_docks':True,
+            'strict_same_egg_receipt':True,
+            'server_authored_beast_weapon_training':True,
+            'session_only':True,'six_skill_v4':False,
+            'server_Game':1,'H1FunWorld':1,'first90_retained':True,
+            'earned_evolution_retained':True,'actual_Studio_2client':'NOT_TESTED',
+            'actual_Studio_1client':'NOT_TESTED','android':'NOT_TESTED',
+            'owner_fun':'NOT_TESTED','official_rc_adopted':False,
+            'published':False,'place_sha256':h}
+          pathlib.Path('/tmp/p0d-solo-artifacts/PRIVATE_PLACE_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+"\n")
+          print('P0D_H1_DOJO_SKYV5_STRICT4_ROJO_EXACT_45_OF_45_PASS',h)
+          PY
+      - name: Upload only nonpublished review file and source proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-H1-DOJO-SKYV5-DOCK-STRICT4-45-PRIVATE-STUDIO-PLACE
+          path: |
+            /tmp/p0d-solo-artifacts/EGG_RAID_RUMBLE_H1_DOJO_SKYV5_STRICT4_PRIVATE.rbxlx
+            /tmp/p0d-solo-artifacts/SOURCE_LOCK.json
+            /tmp/p0d-solo-artifacts/PRIVATE_PLACE_RECEIPT.json
+            /tmp/p0d-solo-artifacts/NATIVE_SOLO_QA.txt
+            /tmp/p0d-solo-artifacts/NATIVE_DOJO_QA.txt
+            /tmp/p0d-solo-artifacts/NATIVE_STRICT_SKY_QA.txt
+          retention-days: 7
+          if-no-files-found: error
