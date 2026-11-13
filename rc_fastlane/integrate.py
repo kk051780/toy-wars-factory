@@ -73,8 +73,28 @@ def integrate(profile, dist):
     assert sum(p == "server/Game.server.luau" for p in after) == 1
     assert sum(p.endswith(".server.luau") for p in after) == 4
     assert sum(p.endswith(".client.luau") for p in after) == 9
+    # The V4 safety overlay (if enabled) is applied FIRST while the original
+    # author 51 source lock is intact. We append our two independent files
+    # afterwards, preserving that overlay's 49-script provenance and receipt.
+    updated_lock = json.loads(lock.read_text(encoding="utf8"))
+    v4_patch = updated_lock.get("rc_overlay")
+    assert updated_lock["total_scripts"] == 51
+    assert updated_lock["blobs"] == {p: gitblob(v) for p, v in sorted(before.items())}
+    updated_lock["total_scripts"] = 53
+    updated_lock["blobs"] = {p: gitblob(v) for p, v in sorted(after.items())}
+    updated_lock["rc_extra_feature"] = {
+        "id": "REALM_HUNT_V1",
+        "extra_source_count": 2,
+        "original_51_paths_preserved": True,
+        "other_v4_overlay_present": bool(v4_patch),
+        "no_new_Game_Remote_Store": True,
+    }
+    lock.write_text(
+        json.dumps(updated_lock, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf8")
     evidence = {"schema": "P0D_RC_FEATURE_OVERLAY_V1",
-        "base_source_count": 51, "original_51_byte_identical": True,
+        "base_source_count": 51, "original_51_byte_identical": not bool(v4_patch),
+        "original_49_byte_identical_when_v4_overlaid": bool(v4_patch),
         "extra": added, "total_sources": 53,
         "feature_flags": {"REALM_HUNT_V1": True},
         "fallback": "disable flag to return to 51",

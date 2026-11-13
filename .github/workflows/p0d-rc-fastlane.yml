@@ -65,6 +65,15 @@ jobs:
           else
             test -f releases/P0D_S1_KIDS_RC01/default.project.json
           fi
+      - name: Apply exact source-locked per-feature Studio V4 idle/friend overlay (optional)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            python3 -B rc_fastlane/apply_overlays.py \
+              --dist "_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE" \
+              --profile "$PROFILE"
+          fi
       - name: Add P0D optional gameplay directly to current RC, never modifying author 51
         shell: bash
         run: |
@@ -81,25 +90,25 @@ jobs:
           path: _p0d_rc_luau
           fetch-depth: 1
           persist-credentials: false
+      - name: Cache same pinned Luau compiler between RC builds
+        uses: actions/cache@v4
+        with:
+          path: /tmp/p0d_new_luau
+          key: p0d-rc-luau-ubuntu-f46d879e28302-v1
       - name: Compile ONLY the two newly added real Luau sources
         shell: bash
         run: |
           set -euo pipefail
           test "$(git -C _p0d_rc_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
-          cmake -S _p0d_rc_luau -B /tmp/p0d_new_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/p0d_new_luau --target Luau.Compile.CLI --parallel 4
+          if [ ! -x /tmp/p0d_new_luau/luau-compile ]; then
+            cmake -S _p0d_rc_luau -B /tmp/p0d_new_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+            cmake --build /tmp/p0d_new_luau --target Luau.Compile.CLI --parallel 4
+          else
+            echo P0D_RC_PINNED_LUAU_CACHE_REUSED
+          fi
           /tmp/p0d_new_luau/luau-compile rc_fastlane/features/realm_hunt/RealmHunt.server.luau > /tmp/p0d_new_server.luau.out
           /tmp/p0d_new_luau/luau-compile rc_fastlane/features/realm_hunt/RealmHuntHUD.client.luau > /tmp/p0d_new_client.luau.out
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
-      - name: Apply exact source-locked per-feature Studio V4 idle/friend overlay (optional)
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [ "$PROFILE" = rich51 ]; then
-            python3 -B rc_fastlane/apply_overlays.py \
-              --dist "_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE" \
-              --profile "$PROFILE"
-          fi
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash
         run: |
