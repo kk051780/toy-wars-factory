@@ -19,11 +19,28 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 1
-      - name: Real product evidence rules and 28 synthetic adversarial fixtures
+      - name: Real product evidence rules and 53 synthetic adversarial cases incl original six-passive-log bridge
         shell: bash
         run: |
           set -euo pipefail
           python3 -B -m unittest discover -s "$OWN/tests" -p 'test_*.py' -v
+      - name: Check pinned original Studio probe parser provenance and bridge source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          root=Path('handoffs/P0D-STUDIO-H1-90S-FUN-DECISION-20261113')
+          p=root/'vendor/review_studio_probe_logs_PINNED_UNCHANGED.py'
+          b=p.read_bytes()
+          sha=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\\0'+b).hexdigest()
+          assert sha=='d2e4580e1ea417225d7e75a6ea83b559a4f677ac',sha
+          source=(root/'bridge_studio_evidence.py').read_text(encoding='utf-8')
+          assert 'studio_2client_actually_run_by_this_tool' not in source
+          assert 'manual_owner_fun_certified' in source and 'real_roblox_engine_two_client_certified' in source
+          print('P0D_PRODUCT_EXACT_ORIGINAL_245_PROBE_PARSER_BLOB_VERIFIED_OBSERVATION_ONLY')
+          PY
       - name: Blank owner evidence MUST hold, no authorizations possible
         shell: bash
         run: |
