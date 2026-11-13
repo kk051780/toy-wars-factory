@@ -1,17 +1,30 @@
-# P0D #220 富裕版のStudioソロ試遊ゲート（正式RC未採用）
+# P0D #220：B42＋V7無双＋天空城／1人Studio試遊＋診断（未公開）
 
-固定元：`a3dfc9b98f22b8edf0a7d0d978d65b1072aed933`。**B42 First90 + V7 Musou（8+1敵、実際のダメージ/KO）+ 物理天空城**の既存作者版をソースベースにしています。
+## これは何か
+本ゲームの旧S1ではなく、B42の卵／First90誘導・XP・進化、V7無双敵のダメージとKO、実際の物理天空城を含む**企画室の充実版**を使った試遊候補です。正式RC・公開サーバーには採用していません。
 
-公開/他作者ブランチは変更しません。元の**42本中41本は1バイトも変えず**、唯一の既存Game内で、Studioだけ1人でも試合開始/継続する分岐を3か所変更、新規の読み取り専用ルール1本を追加し、合計43本です。元のゲームの卵・Score・XP・進化・H2・敵Horde/戦闘・3D世界/Remote・保存元は維持しています。
+- 原本: 42本・固定HEAD `a3dfc9b98f22b8edf0a7d0d978d65b1072aed933`
+- 既存作者のソースは41/42本を完全に保持。元の単一Gameのみ、Studio内の1人試遊条件を変更。
+- 新規サーバールールは `StudioSoloPreviewRules.luau` 1本。**1人で始まった試合かをラッチ**し、2人から途中退出で1人になっても通常試合の終了判定を使います。公開環境は従来どおり2人＋両チーム必須です。
+- さらに作者が納品した `P0DStudioTrialAudit.client.luau`（Git Blob `1fadb6f3b796e33335267653b1ce3f414401df13`）を**改変なし**で追加し、元のHUDに重ならないOutput用診断を使います。
+- 合計**44本**（Game/Remote各1、World1、LocalScript6）。実装内の卵・HP・score・XP・進化・保存は元の権限を維持。診断側はスナップショットを見るだけでFireServerしません。
 
-もとの42本に存在する`RunService`を利用します。条件 `RunService:IsStudio()` が **false** なら従来どおり2人かつRED/BLUE両陣営が必要、片陣営が空になれば試合終了です。1人練習は **非公開Studioのみ**。外部課金・公開・自動マージ・PC自動操作はしません。
+## 検証済み
+GitHub Actions `p0d-integrator-b42-v7-sky-solo-20261113.yml` にて原作者のSkyCastle16件・V7 8件＋独立統合9件＝**33件**、ネイティブLuau **44/44構文**、Soloラッチの実行 **40/40アサート**、Rojo出力XMLで**44/44ソース一致**、唯一Game・World・診断各1を検査しました。
 
-検査は GitHub Actions で以下を実施する想定です。
-- 元作者の本物の42スクリプトを凍結ソースから再ビルドし、変更差分を確認
-- Python source lock 7検査、Luauネイティブコンパイル43本、同一ソロルールを使う30実行アサート
-- ピン留めRojoで、本物の未公開Place .rbxlxを生成し43/43スクリプト一致、Game1/World1/Coach数不変を確認
-- 成果物はGH Actionsの添付ファイル。本人がWindows Studioで開くまで本物のStudio2client/Android/FUN判定は**NOT_TESTED**。
+## 手動試遊：Windows Roblox Studio
+1. GitHub Actionsの最新成功ランから `P0D-B42-V7-SKYCASTLE-LATCHED-SOLO-AUDIT-44-PRIVATE-PLACE` を取得し、ZIPを展開して `.rbxlx` を開きます。**公開は押さない**でください。
+2. Studio → `View` → `Output` を表示、`Test` → `Play` を1名で開始。`[P0D_STUDIO_FUN_CHECK]` で始まるログを確認します。
+3. `PHASE LOBBY → COUNTDOWN → ACTIVE` の順に遷移すること、`FIRST90` で初回の卵目的地が表示されることを確認します。出ない場合はOutput全文の当該ログと再現手順を控えます。
+4. 実際に敵城へ歩いて卵を取得します。`EGG_CARRIED` が出てから自陣へ運び、得点時に `SCORE_CONFIRMED` が出ることを確認します。卵を落としただけでは得点になりません。
+5. V7敵を攻撃して実ダメージ数値とKOを見ます。天空城の登り坂・上面・脱出坂が**実際に歩けるか**確認します。`SKY_SOURCE` は部品の存在検査で、移動可否の証明ではありません。
+6. 別のテストではStudio内に2人を用意して対戦を開始し、片方を退出させます。**元が2人試合なら練習モードに変わらず終了する**ことを確認します。
 
-これは **#250の私的試遊選定B42を置換せず、第三のオプションとして試遊しやすくする**ものです。正式S1 RCは元の`1263a03701211a652b99b91d2339575dc8104eff`で、採用の許可が別途必要。最後の公式スコア75/100、FUN_NO_GOは変更しません。
+## ログの意味と注意
+- `[P0D_STUDIO_FUN_CHECK] BLOCKED` は原本の構成要素が見つからない等の試遊障害候補。
+- `EGG_CARRIED` と `SCORE_CONFIRMED` は**サーバーのSNAPSHOTに基づいたクライアントの観測記録**であり、信頼できる独立サーバー監査ログそのものではありません。
+- 診断はStudio外で動作せず、最大110件。ユーザーID・名前のログを追加していません。Output共有時はその他の個人情報を含む行を除いてください。
+- 検証済みなのは**ソース／ネイティブLuau／Rojo Place生成**です。Windows Studio 1人・2人実プレイ、Android操作、FUN合否はすべて**NOT_TESTED**。本試遊をして初めて判定できます。
 
-**試遊方法：** 出力されたPrivate `.rbxlx` を新しいPlaceとしてWindows Roblox Studioで開き、Test → Playを1名で開始。7秒後にACTIVEへ遷移することを確認。敵城の卵獲得→運搬→自陣台へ運ぶ。攻撃で雑魚のHP数値/KOを確認、物理天空城の坂を自力で歩き、案内が最初の90秒で出るか確認。人間の印象（面白さ/操作しやすさ）を#250に記録する。
+## 採用・権限
+`#250 product_private_trial_selected=B42` を上書きしません。`product_official_rc_selected=NO` のため公式RC `1263a03701211a652b99b91d2339575dc8104eff` は未変更、最後のS1評価 **75/100／FUN_NO_GO** 維持。採用判断後に#220唯一のRC writerが公式差分を審査します。公開・merge・追加課金・PC Codex実行は禁止事項として維持します。
