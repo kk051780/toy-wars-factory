@@ -15,7 +15,7 @@ RESULT_BLOB="a3cc4894db6db04f760e1cd615c2ec5c9444734f"
 EXPECTED_CASES=48
 
 def blob(data:bytes)->str:
-    return hashlib.sha1(b"blob "+str(len(data)).encode()+b"\\0"+data).hexdigest()
+    return hashlib.sha1(b"blob "+str(len(data)).encode()+b"\0"+data).hexdigest()
 
 def checked(path:Path, expected:str)->bytes:
     data=path.read_bytes()
@@ -46,8 +46,8 @@ def build(output:Path)->str:
             capture_output=True,text=True)
         assert undone.returncode==0,("PATCH_ROLLBACK_FAILED",undone.stderr)
         assert current.read_bytes()==source,"ORIGINAL_NOT_FULLY_RECOVERED"
-    code="-- GENERATED EXACT original H2 + V2 patch. Native Luau CLI ONLY; NOT STUDIO.\\n"
-    code+="local Rules=(function()\\n"+result.decode("utf-8")+"end)()\\n"
+    code="-- GENERATED EXACT original H2 + V2 patch. Native Luau CLI ONLY; NOT STUDIO.\n"
+    code+="local Rules=(function()\n"+result.decode("utf-8")+"end)()\n"
     code+=cases.decode("utf-8")
     output.parent.mkdir(parents=True,exist_ok=True)
     output.write_text(code,encoding="utf-8")
