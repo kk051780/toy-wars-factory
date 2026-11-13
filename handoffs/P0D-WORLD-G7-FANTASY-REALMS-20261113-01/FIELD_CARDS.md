@@ -39,3 +39,6 @@ Source observational principles: Roblox Creator Hub onboarding https://create.ro
 - H0 experiment: original game route vs S2 same-match + ONE new optional space corridor and same roles/teams; compare early-90s child understanding, successful egg captures, fair red/blue winrate, rescue rate, FPS and voluntary rematch. Baseline and thresholds NOT_MEASURED.
 - S3+ possibility WF-16 海底虹ガラス港 physically links #222 WF-05 bubble tunnel to surface; distinct task, NOT authored or live now. Always preserve freely walkable surface route.
 - No copying of competitor IP, no Robux payment switches. Design Source / Studio / Owner Approval distinct.
+
+## Explicit child safety & FREE mobility proof boundary
+This visual prototype means **no actual zero-G**, no damage/economy, no paid access; only scenery and one rotating alert. 子どもの安全を優先し、通常の常設通路は無料・常時開放。脱落や帰還困難を生む動作は未統合。既存S1の卵・得点・戦闘権限は一切変更しない。
