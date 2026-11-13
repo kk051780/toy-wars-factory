@@ -1,0 +1,64 @@
+name: P0D EGG RUMBLE power fantasy optional server-policy native
+on:
+  push:
+    branches:
+      - feature/p0d-power-fantasy-policy-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pure-pve-pvp-awakening:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 24
+    env:
+      ROOT: handoffs/P0D-POWER-FANTASY-20261113-01
+      BASE: cf2d99b3289c69a0f0e076fed6dccb2e4b261299
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Ensure no protected Game or other lane changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e "$BASE^{commit}"
+          while IFS= read -r path; do
+            case "$path" in
+              handoffs/P0D-POWER-FANTASY-20261113-01/*|.github/workflows/p0d-power-fantasy-20261113.yml)
+                echo "OWN_SOURCE $path";;
+              *) echo "PROTECTED_PATH_TOUCHED $path" >&2; exit 1;;
+            esac
+          done < <(git diff --name-only "$BASE" HEAD)
+          if grep -r -E 'MarketplaceService|ProcessReceipt|DataStoreService|RemoteEvent|game:GetService' "$ROOT/src"; then
+            echo 'POTENTIAL_DUPLICATE_AUTHORITY_OR_MONETIZATION' >&2; exit 1
+          fi
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_power_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Build pinned Luau CLI interpreter compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_power_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_power_luau -B /tmp/p0d_power_vm -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_power_vm --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Execute original policy and original native test harness
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_power_logs
+          python3 "$ROOT/tests/run_native_power.py" --luau /tmp/p0d_power_vm/luau --compiler /tmp/p0d_power_vm/luau-compile | tee /tmp/p0d_power_logs/POWER_NATIVE_TEST.txt
+          grep -E '^P0D_POWER_FANTASY_GENUINE_NATIVE_PASS_[0-9]+$' /tmp/p0d_power_logs/POWER_NATIVE_TEST.txt
+      - name: Save logs not a Roblox live game
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D_POWER_FANTASY_ORIGINAL_LUAU_POLICY_TEST_ONLY
+          path: /tmp/p0d_power_logs/POWER_NATIVE_TEST.txt
+          retention-days: 7
+          if-no-files-found: error
