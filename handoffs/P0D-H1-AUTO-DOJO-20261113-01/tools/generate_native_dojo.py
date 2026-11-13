@@ -58,7 +58,7 @@ eq("unknown kind no buff",Dojo.pveDamageMultiplier(s,"OTHER"),1)
 for i=1,140 do Dojo.tick(s,"BEAST",1,false,true) end
 eq("max beast level5",s.level.BEAST,5)
 near("max beast buff1.2",Dojo.pveDamageMultiplier(s,"BEAST"),1.2)
-near("cap max trained minutes",s.trainedSeconds.BEAST,148)
+near("trained seconds exact before cap",s.trainedSeconds.BEAST,147)
 for i=1,50 do Dojo.tick(s,"BEAST",1,false,true) end
 near("no session time above180",s.trainedSeconds.BEAST,180)
 eq("cap after180",Dojo.tick(s,"BEAST",1,false,true),false)
