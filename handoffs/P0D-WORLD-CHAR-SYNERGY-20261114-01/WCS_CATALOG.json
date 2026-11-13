@@ -23,7 +23,7 @@
       "name": "逆さま天空研究所",
       "mechanic": "風向き予告つき重力ジャンプ床",
       "counterplay": "普通の階段・落下復帰",
-      "stage": "IDEA"
+      "stage": "SOURCE"
     },
     {
       "id": "WCS-F03",
@@ -74,7 +74,7 @@
       "name": "逆さフクロル",
       "world": "WCS-F02",
       "role": "安全なジャンプ案内",
-      "stage": "IDEA"
+      "stage": "SOURCE"
     },
     {
       "id": "WCS-C04",
@@ -153,6 +153,28 @@
     "sole_writer": "#220",
     "native_studio": "NOT_TESTED",
     "android": "NOT_TESTED",
-    "owner_fun": "NOT_TESTED"
+    "owner_fun": "NOT_TESTED",
+    "optional_anchors": [
+      {
+        "feature_id": "WCS-F01-C01",
+        "part": "P0D_CrystalCanyonAnchor",
+        "attribute": "P0DWorldOptIn",
+        "requires_value": true
+      },
+      {
+        "feature_id": "WCS-F02-C03",
+        "part": "P0D_InvertedSkyAnchor",
+        "attribute": "P0DWorldOptIn",
+        "requires_value": true
+      }
+    ]
+  },
+  "source_feature_ids": [
+    "WCS-F01-C01",
+    "WCS-F02-C03"
+  ],
+  "source_files": {
+    "WCS-F01-C01": "src/CrystalCanyon.server.luau",
+    "WCS-F02-C03": "src/InvertedSkyLab.server.luau"
   }
 }
