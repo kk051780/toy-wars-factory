@@ -1,0 +1,69 @@
+{
+  "schema": "P0D_D18_BATCH9_FIXED_SOURCE_MANIFEST_V1",
+  "game_id": "TRAP_RAIDERS",
+  "atlas_sha256": "cf5ec26836842ce55a764c5ad66c711f00da0ed4cc30d80dad0df851e2656e01",
+  "claim_issue": 265,
+  "source_only": true,
+  "disabled": true,
+  "base_batch8_commit": "7bfb7bd5a4d4531ceaf2deaaf19f7591d3c218cd",
+  "counts": {
+    "previous_source_models": 60,
+    "batch9_new_source_models": 6,
+    "post_batch_source_models": 66,
+    "canonical_atlas_models": 72,
+    "official_RC_new_adopted": 0
+  },
+  "new_model_ids": [
+    "TRCA-BE-081",
+    "TRCA-SP-090",
+    "TRCA-VE-063",
+    "TRCA-WE-108",
+    "TRCA-ZO-027",
+    "TRCA-TR-108"
+  ],
+  "source_files": [
+    {
+      "path": "data/models.json",
+      "git_blob_sha1": "da43e27c778fdc120c3a90b88114bcda1509d466"
+    },
+    {
+      "path": "design/CHARACTER_CARDS.md",
+      "git_blob_sha1": "c17366fdd8ec8dd4fee339c90be4548260fc2904"
+    },
+    {
+      "path": "src/D18Batch9Catalog.luau",
+      "git_blob_sha1": "943de0178216a684fdb6c7d725cb7a8b30f1f8a3"
+    },
+    {
+      "path": "src/D18Batch9Factory.luau",
+      "git_blob_sha1": "198e697499efa1da17581a1b691691f7e111d34c"
+    },
+    {
+      "path": "src/DisabledPreview.client.luau",
+      "git_blob_sha1": "b3f840aeef829e239f29299dc324a441785206d9"
+    },
+    {
+      "path": "default.project.json",
+      "git_blob_sha1": "f561e7fb1d7e98d36281197d3002ff021b519525"
+    },
+    {
+      "path": "README.md",
+      "git_blob_sha1": "a647e5e8011b5671c13eb63bcb35764650cccf0b"
+    },
+    {
+      "path": "tests/test_batch9.py",
+      "git_blob_sha1": "fe149bca8473d8c2bce343e9225461fa4f3ddd3f"
+    },
+    {
+      "path": "tests/test_mutants.py",
+      "git_blob_sha1": "578d579c58ce6c72f7f6c1e9941e73a928e14b3a"
+    },
+    {
+      "path": "tools/verify_batch9.py",
+      "git_blob_sha1": "6fdb9bd7460b7704d40b55bd84ddd1d4235cf1df"
+    }
+  ],
+  "real_studio_tested": false,
+  "mobile_tested": false,
+  "published": false
+}
