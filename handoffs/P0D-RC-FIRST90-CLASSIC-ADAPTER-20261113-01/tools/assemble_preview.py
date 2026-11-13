@@ -76,6 +76,35 @@ def server_patch(source):
         '        kind = "SNAPSHOT", serial = match.serial, phase = match.phase,',
         '        kind = "SNAPSHOT", serial = match.serial, phase = match.phase,\n'
         '        first90Target = first90Target,', 1)
+    # Nonpublished Studio SOLO onboarding. Public server still uses original min2,
+    # two populated teams and original TEAM_EMPTY outcomes.
+    require_exactly_once(source, 'local Players = game:GetService("Players")', "original Players service")
+    source = source.replace('local Players = game:GetService("Players")',
+        'local Players = game:GetService("Players")\\n'
+        'local RunService = game:GetService("RunService")', 1)
+    require_exactly_once(source, 'local First90Classic = require(script.Parent:WaitForChild("S1First90ClassicWaypointRules"))', "new target rules")
+    source = source.replace(
+        'local First90Classic = require(script.Parent:WaitForChild("S1First90ClassicWaypointRules"))',
+        'local First90Classic = require(script.Parent:WaitForChild("S1First90ClassicWaypointRules"))\\n'
+        'local StudioSolo = require(script.Parent:WaitForChild("StudioSoloPreviewRules"))', 1)
+    solo_checks = [
+        ('if count >= Config.MinPlayers and teamCount("RED") > 0 and teamCount("BLUE") > 0 then',
+         'if StudioSolo.canStart(RunService:IsStudio(), count, teamCount("RED"),\\n'
+         '                teamCount("BLUE"), Config.MinPlayers) then'),
+        ('if count < Config.MinPlayers or teamCount("RED") == 0 or teamCount("BLUE") == 0 then',
+         'if not StudioSolo.canStart(RunService:IsStudio(), count, teamCount("RED"),\\n'
+         '                teamCount("BLUE"), Config.MinPlayers) then'),
+        ('if teamCount("RED") <= 0 then stopRound("BLUE", "TEAM_EMPTY")\\n'
+         '        elseif teamCount("BLUE") <= 0 then stopRound("RED", "TEAM_EMPTY")\\n'
+         '        elseif now >= match.deadline then',
+         'local emptyWinner = StudioSolo.emptyWinner(RunService:IsStudio(), count,\\n'
+         '            teamCount("RED"), teamCount("BLUE"))\\n'
+         '        if emptyWinner then stopRound(emptyWinner, "TEAM_EMPTY")\\n'
+         '        elseif now >= match.deadline then'),
+    ]
+    for old, new in solo_checks:
+        require_exactly_once(source, old, "original public countdown/empty team gate")
+        source = source.replace(old, new, 1)
     return source
 
 def coach_patch(source):
@@ -168,6 +197,7 @@ def assemble():
         assert actual == required_sha, f"frozen official RC source changed {path}: {actual}"
 
     assert (ROOT / "src/S1First90ClassicWaypointRules.luau").is_file()
+    assert (ROOT / "src/StudioSoloPreviewRules.luau").is_file()
     if DIST.exists():
         shutil.rmtree(DIST)
     shutil.copytree(SOURCE / "src", DIST / "src")
@@ -181,8 +211,10 @@ def assemble():
     coach.write_text(coach_patch(coach.read_text(encoding="utf8")), encoding="utf8")
     shutil.copy2(ROOT / "src/S1First90ClassicWaypointRules.luau",
                  DIST / "src/server/S1First90ClassicWaypointRules.luau")
+    shutil.copy2(ROOT / "src/StudioSoloPreviewRules.luau",
+                 DIST / "src/server/StudioSoloPreviewRules.luau")
     scripts = sorted((DIST / "src").rglob("*.luau"))
-    assert len(scripts) == 22, len(scripts)
+    assert len(scripts) == 23, len(scripts)
     changed = []
     for p in original:
         rel = p.relative_to(SOURCE)
@@ -207,7 +239,10 @@ def assemble():
         "original_count": len(original),
         "unchanged_original_count": 19,
         "changed_original_paths": changed,
-        "added_paths": ["src/server/S1First90ClassicWaypointRules.luau"],
+        "added_paths": ["src/server/S1First90ClassicWaypointRules.luau",
+                        "src/server/StudioSoloPreviewRules.luau"],
+        "studio_only_single_client_practice": True,
+        "public_server_min_two_teams_unchanged": True,
         "single_game_remote": True,
         "first90_server_snapshot": True,
         "first90_visible_existing_coach": True,
@@ -221,7 +256,7 @@ def assemble():
     }
     (DIST / "SOURCE_LOCK.json").write_text(
         json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf8")
-    print("P0D_S1_FIRST90_CLASSIC_ASSEMBLED_22_LUAU_19_ORIGINAL_UNCHANGED_PASS")
+    print("P0D_S1_FIRST90_CLASSIC_ASSEMBLED_23_LUAU_19_ORIGINAL_UNCHANGED_PASS")
     return manifest
 
 if __name__ == "__main__":
