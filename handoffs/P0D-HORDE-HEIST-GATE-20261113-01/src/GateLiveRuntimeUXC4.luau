@@ -148,6 +148,8 @@ local function updateObjective(label: TextLabel?,phase: string)
         label.Text="通行中！門は安全のため開いている"
     elseif phase=="CLOSED" then
         label.Text="海の門は閉じた！草原から迂回しよう"
+    elseif phase=="ROUND_END" then
+        label.Text="ラウンド終了！次の試合へ"
     else
         label.Text="精鋭を倒そう！海の近道が開く"
     end
@@ -169,7 +171,13 @@ function GateLiveRuntime:tick(now: number,epoch: number,phase: string)
     if not RunService:IsStudio() or self.rules==nil or self.round~=epoch then return end
     if phase~="ACTIVE" then
         if self.route then
+            -- Never end a match by sealing a moving player's route.
             GateRouteOverlay.render(self.route,GateVisual,{phase="OPEN",passable=true})
+            updateObjective(self.objective,"ROUND_END")
+            if self.lastPhase~="ROUND_END" then
+                self.lastPhase="ROUND_END"
+                print("[P0D_GATE_QA] ROUND_END_SAFE_OPEN epoch="..tostring(epoch))
+            end
         end
         return
     end
