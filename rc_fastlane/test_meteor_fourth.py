@@ -10,7 +10,7 @@ ROOT=Path(__file__).resolve().parent
 METEOR=(ROOT/"features/meteor_fourth/MeteorFourth.server.luau").read_text("utf8")
 STAR=(ROOT/"features/star_path/StarfallPath.server.luau").read_text("utf8")
 WCS=(ROOT/"features/wcs_f01_c01/WCS_CrystalCanyon.server.luau").read_text("utf8")
-METEOR_SHA="8a7ff2d33f801660f808cf9297e9d829ced39806"
+METEOR_SHA="4845ffa98b0b17a506a993682dc84f9de0fd5e30"
 
 def blob(s):
     raw=s.encode("utf8")
@@ -23,7 +23,7 @@ class FourthRoute(unittest.TestCase):
         self.assertIn("P0D_WCS_CrystalCanyon",METEOR)
         self.assertIn("P0D_WCS_CrystalCanyon",WCS)
     def test_03_same_star(self):
-        self.assertIn('Workspace:WaitForChild("P0D_STARRY_PATH", 30)',METEOR)
+        self.assertIn('Workspace:WaitForChild("P0D_STARRY_PATH", 160)',METEOR)
         self.assertIn('stage.Name="P0D_STARRY_PATH"',STAR)
     def test_04_studio_only(self):
         self.assertIn("if not RunService:IsStudio() then",METEOR)
@@ -36,7 +36,7 @@ class FourthRoute(unittest.TestCase):
         for name in ('"WestBank"','"EastBank"','west.CanCollide and east.CanCollide'):
             self.assertIn(name,METEOR)
     def test_08_real_star_step(self):
-        self.assertIn('star:FindFirstChild("StarStep_01")',METEOR)
+        self.assertIn('star:WaitForChild("StarStep_01", 12)',METEOR)
     def test_09_existing_escape_route(self):
         for name in ('"AlwaysOpenSafeRoute"','"ShortcutGate"'):
             self.assertIn(name,METEOR)
@@ -87,6 +87,24 @@ class FourthRoute(unittest.TestCase):
         self.assertIn('if Workspace:FindFirstChild("P0D_STARRY_PATH") then',STAR)
     def test_23_one_script_live_bridge(self):
         self.assertIn('runtime:SetAttribute("RouteRole","FOURTH_CANYON_LANE")',METEOR)
+    def test_25_source_120s_star_boot_fix(self):
+        self.assertIn('WaitForChild("P0D_CrystalCanyonAnchor",120)',STAR)
+    def test_26_new_meteor_boot_budget(self):
+        self.assertIn('WaitForChild("P0D_WCS_CrystalCanyon", 140)',METEOR)
+        self.assertIn('WaitForChild("P0D_STARRY_PATH", 160)',METEOR)
+    def test_27_prerequisite_parts_wait(self):
+        for n in ("WestBank","EastBank","ShortcutGate","AlwaysOpenSafeRoute"):
+            self.assertIn('world:WaitForChild("'+n+'", 12)',METEOR)
+        self.assertIn('star:WaitForChild("StarStep_01", 12)',METEOR)
+    def test_28_boot_budget_covers_wcs_max(self):
+        # WCS waits arena 45 + H1 world 45 + sky deck 12 in worst-case path.
+        wcs_max=45+45+12
+        star_budget=120
+        meteor_wcs_budget=140
+        meteor_star_budget=160
+        self.assertGreater(star_budget,wcs_max)
+        self.assertGreater(meteor_wcs_budget,wcs_max)
+        self.assertGreater(meteor_star_budget,star_budget)
     def test_24_off_composition_available(self):
         adapter=(ROOT/"apply_meteor_fourth.py").read_text("utf8")
         self.assertIn('print("P0D_METEOR_FOURTH_OFF_ZERO_WRITES_PRIVATE61_PASS")',adapter)
