@@ -422,7 +422,8 @@ jobs:
               assert titles[('ModuleScript','EggRelayPolicy')]==1
               assert sum('local function applyClassicEggRelay(' in src for src in included)==1
               assert sum('relayButton.MouseButton1Click:Connect(fireClassicEggRelay)' in src for src in included)==1
-              assert sum('return flag ~= nil and flag:IsA("BoolValue")' in src for src in included)==1
+              game_source=(base/'src/server/Game.server.luau').read_text('utf8')
+              assert game_source.count('return flag ~= nil and flag:IsA("BoolValue")')==1, 'EGG_RELAY_GUARD_MUST_REMAIN_IN_ORIGINAL_GAME'
               project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
               assert project['ServerStorage']['P0D_RC_ENABLE_EGG_RELAY_CLASSIC']['$className']=='BoolValue'
               assert project['ServerStorage']['P0D_RC_ENABLE_EGG_RELAY_CLASSIC']['$properties']['Value'] is True
