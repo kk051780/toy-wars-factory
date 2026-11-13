@@ -39,9 +39,11 @@ def build():
         assert forbidden not in server and forbidden not in client,forbidden
     assert "Scheduler.settle(" in server and "Model.apply(" in server
     assert 'verifiedFriends(player,record,now)' in server
-    assert 'player:IsFriendsWith(other.UserId)' in server
+    assert 'player:IsFriendsWithAsync(other.UserId)' in server
     assert 'NoSavedXP' in server and "NoCombatBuff" in server
     assert '保存なし' in server and '保存なし' in client
+    assert 'player.Idled:Connect(' in client and 'UserInputService.InputBegan:Connect(' in client
+    assert 'VirtualInputManager' not in client and 'VirtualUser' not in client
     subprocess.run([sys.executable,"-B",str(PARENT/"tools/assemble.py"),"--assemble"],
                    cwd=REPO,check=True)
     original=sources(BASE)
