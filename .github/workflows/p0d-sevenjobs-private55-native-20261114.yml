@@ -6,6 +6,12 @@ on:
     paths:
       - 'handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01/**'
       - '.github/workflows/p0d-sevenjobs-private55-native-20261114.yml'
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - 'handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01/**'
+      - '.github/workflows/p0d-sevenjobs-private55-native-20261114.yml'
 permissions:
   contents: read
 jobs:
