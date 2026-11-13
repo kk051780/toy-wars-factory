@@ -12,6 +12,7 @@ on:
       - feature/p0d-wcs-rc58-fastlane-candidate-20261114-02
       - feature/p0d-wcs-sevenjobs-rc59-candidate-20261114
       - feature/p0d-wcs-jobs-egg-classic-rc60-candidate-20261114
+      - feature/p0d-wcs-jobs-egg-starry-path-rc61-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -124,6 +125,14 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_scout_species.py --profile rich51 --dist "$DIST"
           fi
+      - name: Source-lock snapshot REAL private build stage 57 for monotonic rollback proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/qa_rollback_matrix.py --capture 57 --dist "$DIST"
+          fi
       - name: Add source-locked Crystal Canyon/Moguron stage with independent rollback (Studio only)
         shell: bash
         run: |
@@ -133,6 +142,14 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_wcs_f01_c01.py --profile rich51 --dist "$DIST"
           fi
+      - name: Source-lock snapshot REAL private build stage 58 for monotonic rollback proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/qa_rollback_matrix.py --capture 58 --dist "$DIST"
+          fi
       - name: Integrate original Seven Jobs PvE narrow Game/HUD patch after WCS
         shell: bash
         run: |
@@ -140,6 +157,14 @@ jobs:
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_seven_jobs_pve.py --dist "$DIST"
+          fi
+      - name: Source-lock snapshot REAL private build stage 59 for monotonic rollback proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/qa_rollback_matrix.py --capture 59 --dist "$DIST"
           fi
       - name: Add classic 1-egg teammate relay inside one Game after SevenJobs
         shell: bash
@@ -149,6 +174,14 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_egg_relay_classic.py --dist "$DIST" --policy rc_fastlane/features/egg_relay_classic/policy/EggRelayPolicy.luau
           fi
+      - name: Source-lock snapshot REAL private build stage 60 for monotonic rollback proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/qa_rollback_matrix.py --capture 60 --dist "$DIST"
+          fi
       - name: Build original WCS third-route Starfall bridge with exact source pin and rollback tests
         shell: bash
         run: |
@@ -157,6 +190,21 @@ jobs:
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_star_path.py --profile rich51 --dist "$DIST"
+          fi
+      - name: Source-lock snapshot REAL private build stage 61 for monotonic rollback proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/qa_rollback_matrix.py --capture 61 --dist "$DIST"
+          fi
+      - name: Test actual 4 independent OFF paths against all original stage sources and boot configs
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            python3 -B rc_fastlane/qa_rollback_matrix.py --verify --receipt /tmp/P0D_PRIVATE61_LAYER_RECEIPT.json
           fi
       - uses: actions/checkout@v4
         with:
@@ -423,6 +471,13 @@ jobs:
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
           print('OFFICIAL_RC_FASTLANE_BINARY_SOURCE_EXACT_PASS',p,digest)
           PY
+      - name: Preserve private61 real rollback chain receipt beside candidate Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            cp /tmp/P0D_PRIVATE61_LAYER_RECEIPT.json /tmp/p0d_rc_out/P0D_PRIVATE61_LAYER_RECEIPT.json
+          fi
       - name: Generate OWNER feature progress in the SAME RC build (no second QA run)
         shell: bash
         run: |
