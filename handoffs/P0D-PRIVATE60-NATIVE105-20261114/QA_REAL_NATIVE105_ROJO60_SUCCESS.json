@@ -1,0 +1,70 @@
+{
+  "schema": "P0D_PRIVATE60_SAME_SOURCE_AUTHOR_NATIVE_105_QA_VERIFIED_V1",
+  "date_jst": "2026-11-14",
+  "official_RC_adopted": false,
+  "stage": "QA_ONLY_CHILD_OF_PR308",
+  "original_source_parent_PR": 308,
+  "exact_tested_SHA": "c3ccb7e490785c8a41244d13f75c9ef2e56b9a33",
+  "github_actions_run": 43523675529,
+  "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43523675529",
+  "job_id": 132224027902,
+  "job_status": "completed",
+  "job_conclusion": "success",
+  "immutable_author_bodies": {
+    "rc_fastlane/features/seven_jobs/src/SevenJobsRules.luau": "a7253d36cb67df47d4ba65d35af212ed1eb7b5b2",
+    "rc_fastlane/features/seven_jobs/tests/SevenJobsNative.luau": "5bb1b8a507fe05955e257f69af75222ebd638577",
+    "rc_fastlane/features/egg_relay_classic/policy/EggRelayPolicy.luau": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
+    "original_relay_author_checkout": "f1c0866423c2c1d36a5cd8eafe8cee7558b1a1dd"
+  },
+  "actual_results": {
+    "original_WCS_Python_negatives": "9/9 PASS",
+    "native_Same_source_7jobs_policy": "33/33 PASS",
+    "native_Same_source_relay_policy": "41/41 PASS",
+    "native_combined_actual_Game_relay_handler": "31/31 PASS",
+    "native_total_case_count": 105,
+    "actual_native_source_compile": "60/60 PASS",
+    "pinned_real_rojo_7_7_1_source_exact": "60/60 PASS",
+    "real_place_sha256": "e2490b25c1fec54a5b89e9087e880e1193cd9178636cb35a37ea8c961647a4ce",
+    "source_game_changed_in_QA_PR": false,
+    "source_HUD_changed_in_QA_PR": false,
+    "author_source_policy_modified_in_QA_PR": false,
+    "WCS_included": true,
+    "SevenJobs_partial_neutral_PvE_included": true,
+    "Classic_OneEgg_Relay_included": true,
+    "H2_five_egg_relay": "NOT IMPLEMENTED",
+    "studio_missing_bool_flag": "OFF tested by extracted Game native case"
+  },
+  "artifact": {
+    "id": 14084631544,
+    "name": "P0D-CANONICAL-RC-STUDIO-rich51",
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43523675529/artifacts/14084631544",
+    "size_bytes": 154874,
+    "warning": "Inherited workflow artifact name; it is a PRIVATE PR candidate, NOT an official RC"
+  },
+  "official_snapshot_before_QA": {
+    "official_ref": "rc/p0d-s1-kids-rc01",
+    "official_sha": "34d6d384d04ba1d4a394331a3e5c74f798e57a22",
+    "official_scripts": 57,
+    "total_ideas": 58,
+    "stage_RC": 21,
+    "stage_SOURCE": 27,
+    "stage_IDEA": 10,
+    "rc_rate_pct": 36.2,
+    "started_rate_pct": 82.8,
+    "last_release_score": "75/100 FUN_NO_GO historical"
+  },
+  "still_unverified": [
+    "actual Roblox Studio engine",
+    "two real clients network pass",
+    "Android touch controls",
+    "saved Dev DataStore rejoin",
+    "owner gameplay fun",
+    "publication approval"
+  ],
+  "required_next": "#220 sole authorized CAS writer must apply safe source as independently reversible flags and re-run exact new canonical HEAD 60/60 native+Rojo, then update unique idea IDs and stage. Do NOT whole-merge child or stale 60 Place.",
+  "efficiency": {
+    "duplicate_historical_PR309": "closed_2026_11_14_as_less_safe_scripting_overlap",
+    "preferred_primary_PR308": "fail_closed_runtime_flag_and_31_native_actual_Game_cases",
+    "this_work": "QA_only_no_game_source_reimplementation"
+  }
+}
