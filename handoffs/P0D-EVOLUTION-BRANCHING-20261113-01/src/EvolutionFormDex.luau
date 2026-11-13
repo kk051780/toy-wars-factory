@@ -1,7 +1,7 @@
 --!strict
 -- EGG RAID RUMBLE #287: READ-ONLY FormDex, reconstructed from ORIGINAL
 -- trusted EvolutionRules canonical profile + persisted evolution receipts.
--- NO granting, DataStore writes, profile mutation, RemoteEvent, Game replacement.
+-- NO granting, persistence writes, profile mutation, live networking, Game replacement.
 -- Pure/server-compatible. Inject original EvolutionRules once via Dex.new(E).
 local Dex = {}
 Dex.SCHEMA = "EGG_RUMBLE_FORM_DEX_V1"
