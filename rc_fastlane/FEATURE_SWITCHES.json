@@ -229,6 +229,38 @@
       "engine_studio": "NOT_TESTED",
       "android": "NOT_TESTED",
       "owner_fun": "NOT_TESTED"
+    },
+    "TWIN_BIOMES_4NPC_V1": {
+      "enabled": true,
+      "status": "PRIVATE63_2_FIELDS_4_NPC_SPECIES_NOT_CANONICAL",
+      "biome_fields": [
+        "TIDAL_CORAL_GARDEN",
+        "STORM_CLOUD_LOOKOUT"
+      ],
+      "neutral_npc_species": [
+        "AWARIN",
+        "SANGORU",
+        "RAIKO",
+        "KUMONON"
+      ],
+      "n_instances": 8,
+      "source_path": "rc_fastlane/features/twin_biomes/TwinBiomes.server.luau",
+      "source_git_blob": "0958e7743669e670cc499035fa6446b7819cea6a",
+      "dependent_source_count": 62,
+      "dependency": [
+        "WCS_F01_C01",
+        "SEVEN_JOBS_PVE_V1",
+        "EGG_RELAY_CLASSIC_V1",
+        "STARRY_PATH_V1",
+        "METEOR_FOURTH_V1"
+      ],
+      "runtime_flag": "ServerStorage BoolValue P0D_ENABLE_TWIN_BIOMES_V1 must be true, otherwise absent/false OFF, Studio only",
+      "function": "Two mirrored themed fields on WCS banks with four shared-route and visual scout NPC effects; no damage or persisted collection",
+      "rollback": "Set enabled=false and retain exactly existing 62-source candidate; no Game/HUD/Remote/Store writes",
+      "owner_fun": "NOT_TESTED",
+      "studio_2client": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "official_rc_adopted": false
     }
   }
 }
