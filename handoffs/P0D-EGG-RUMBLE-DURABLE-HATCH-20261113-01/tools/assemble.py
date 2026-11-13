@@ -70,7 +70,7 @@ def assemble():
  assert 'function Store.grant(' in pure and 'store:UpdateAsync(key,function(original)' in pure
  assert 'store:GetAsync(key,options)' in pure
  assert 'SetAsync(' not in pure
- assert 'task.wait(' not in pure
+ assert not any("task.wait(" in line.split("--",1)[0] for line in pure.splitlines())
  assert hud.count('local seq = 0')==1 and hud.count('remote:FireServer(')==3
  assert 'ActualSaveStatus' in hud and 'SAVE_FAILED' in hud and 'LOCAL_ONLY' in hud
  rec={
