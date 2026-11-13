@@ -57,7 +57,7 @@ function R.apply(state: any,action: any,team: any,userId: any,eggTeam: any,dist2
  if action=="STEAL" then
   if eggTeam~=enemy then return false,"OWN_EGG" end
   if not state.home[eggTeam] or state.carrier[eggTeam]~=0 then return false,"ALREADY_TAKEN" end
-  if state.carrier[team]~=0 then return false,"ALREADY_CARRYING" end
+  if state.carrier[team]==userId then return false,"ALREADY_CARRYING" end
   state.home[eggTeam]=false
   state.carrier[eggTeam]=userId
   state.since[eggTeam]=now
