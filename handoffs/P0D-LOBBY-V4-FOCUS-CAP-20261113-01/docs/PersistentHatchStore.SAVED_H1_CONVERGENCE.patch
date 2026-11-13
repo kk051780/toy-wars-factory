@@ -1,0 +1,72 @@
+--- original/PersistentHatchStore.luau
++++ proposed/PersistentHatchStore.luau
+@@ -9,6 +9,8 @@
+ -- Exact pure #287 source; inventory, XP and evolution share ONE profile key.
+ local Evolution=require(script.Parent:WaitForChild("EvolutionRules"))
+ local Dojo=require(script.Parent:WaitForChild("DojoRules"))
++-- Review-only V4 coexistence; canonical Store authority still owns this code.
++local SixSkill=require(script.Parent:WaitForChild("SixSkillAtomicProfile"))
+ Store.MAX_PROGRESS_ROUNDS=Progression.MAX_RECORDED_ROUNDS
+ Store.SCHEMA=1
+ Store.MAX_RECEIPTS=2048 -- fail closed when full; NEVER silently evict replay keys
+@@ -298,7 +300,9 @@
+     end
+     if not safeProgressRecord(raw.progress)
+         or not safeEvolutionRecord(raw.evolution)
+-        or not safeDojoRecord(raw.dojo) then return false end
++        or not safeDojoRecord(raw.dojo)
++        or raw.dojoV4~=nil -- old prototype alias must NOT be silently discarded
++        or not SixSkill.valid(raw.trainingV4) then return false end
+     return true
+ end
+ normalized=function(raw:any)
+@@ -309,7 +313,8 @@
+         owned=copyMap(raw.owned),receipts=copyMap(raw.receipts),
+         equipped=raw.equipped,
+         progress=cloneProgress(raw.progress),evolution=cloneEvolution(raw.evolution),
+-        dojo=cloneDojo(raw.dojo)
++        dojo=cloneDojo(raw.dojo),
++        trainingV4=if raw.trainingV4~=nil then SixSkill.clone(raw.trainingV4) else nil
+     }
+ end
+ function Store.toRulesRecord(persistent:any)
+@@ -555,4 +560,39 @@
+     if not validReceipt(id) then return nil end
+     return id
+ end
++-- REVIEW ONLY: retained exactly one canonical Store key and one UpdateAsync writer.
++-- Install exclusively in original Store-owner's isolated Game after product review.
++-- Immutable receipt fields must be minted from verified ORIGINAL Game training ticks.
++function Store.settleSixSkill(store:any,uid:any,canonicalGrant:any)
++    local key=userKey(uid)
++    if not key or not store or type(canonicalGrant)~="table" then
++        return false,nil,"INVALID_STORE_OR_GRANT" end
++    local ticket={
++        receipt=canonicalGrant.receipt,
++        utcStart=canonicalGrant.utcStart,
++        utcEnd=canonicalGrant.utcEnd,
++        friendCount=canonicalGrant.friendCount,
++        selectedSkill=canonicalGrant.selectedSkill,
++        verifiedByCanonicalGame=canonicalGrant.verifiedByCanonicalGame,
++    }
++    local ok,updated=pcall(function()
++        return store:UpdateAsync(key,function(original)
++            local nextRecord=normalized(original)
++            if not nextRecord then return nil end
++            local six,status=SixSkill.settle(nextRecord.trainingV4,uid,ticket)
++            if not six then return nil end
++            if status=="ALREADY_SETTLED" then return nextRecord end
++            nextRecord.trainingV4=six
++            nextRecord.revision+=1
++            if not Store.validate(nextRecord) then return nil end
++            return nextRecord
++        end)
++    end)
++    if not ok or not Store.validate(updated) or not updated.trainingV4
++        or type(updated.trainingV4.receipts)~="table"
++        or updated.trainingV4.receipts[ticket.receipt]~=true then
++        return false,nil,"TRAINING_WRITE_NOT_CONFIRMED"
++    end
++    return true,updated,"PERSISTED_OR_ALREADY_SETTLED"
++end
+ return Store
