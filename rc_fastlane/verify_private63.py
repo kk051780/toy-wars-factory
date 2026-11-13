@@ -84,6 +84,12 @@ assert 'ServerStorage:GetAttribute("P0D_RC_ENABLE_STARRY_PATH_V1")~=true' in sha
 assert 'if not RunService:IsStudio() then return end' in shards
 assert 'player:SetAttribute("P0D_StarShardCount",count)' in shards
 assert 'Workspace:WaitForChild("P0D_STARRY_PATH",170)' in shards, "SHARDS_RACE_ON_SLOW_WCS_BOOT"
+assert 'for _,side in ipairs({"WEST","EAST"}) do' in shards, "MISSING_TWO_BANK_QUEST_HINTS"
+assert 'hint.Name="P0DStarShardQuestHint"' in shards, "MISSING_CHILD_VISIBLE_OBJECTIVE"
+assert 'label.Text="星の橋で ★6つ を集めよう！' in shards
+assert 'light.Name="StarShardGlow"' in shards
+assert 'light.Enabled=false' in shards and 'lights[i].Enabled=active' in shards
+assert 'prompts[i].Enabled=active' in shards, "INACTIVE_SHARDS_INTERACTIVE"
 assert 'local QUIET_SECONDS = 55' in meteor
 assert 'local z = (west.Position.Z + east.Position.Z) * 0.5 - 17' in meteor
 assert "local function layoutRelayTouch()" in hud
