@@ -12,12 +12,12 @@ import zlib
 
 ROOT=Path(__file__).resolve().parents[1]
 ORIGINAL={
- "server/Game.server.luau":"652cd71f824d6926a09c1042461f907d9a9427cb74919191002381bcef3a187e",
+ "server/Game.server.luau":"2aa21aa8508f234e178b4cd67b233fbc942b05c989a68e339d86ca7d344168af",
  "client/TrapRaidersHUD.client.luau":"3f2654199c2531bea34371a4ea33beecf65d1e306ecd91e86f5164ab3ddca06d",
 }
 AFTER={
- "server/Game.server.luau":"aa1f72d48311e133024a138344f1f9f995e59ca4de647e450e07dfdbd1a6dc9e",
- "client/TrapRaidersHUD.client.luau":"5a9a6376750430ebbe976637dd8e320debadd337700138641c2360b2e78c89a5",
+ "server/Game.server.luau":"efd1b43350b3102bb493e118cff87ffdb3d57984a41b9831c37144250414c77d",
+ "client/TrapRaidersHUD.client.luau":"6d510976b25789a99686fc58ed6ae4c85dbd2b04f9080e2d4e88e09057506f30",
  "server/SevenJobsRules.luau":"cd4de7c232f2303e719000fddc2b52f54b38f461416cb4d33316c8fac24fb3d8",
 }
 PATCHES=[
@@ -36,7 +36,7 @@ def sources(dist):
 def apply(dist):
  assert dist.is_dir() and (dist/"default.project.json").is_file(),"NO_RC_DIST"
  before=sources(dist)
- assert len(before)==55,("NEED_EXACT_RC55_WITH_SAVED_PVE",len(before))
+ assert len(before)==56,("NEED_EXACT_RC56_WITH_SAVED_BEAST",len(before))
  for key,sha in ORIGINAL.items():
   assert hash_bytes(before[key])==sha,("RC_AUTHOR_DRIFT",key)
  config=json.loads((dist/"default.project.json").read_text("utf8"))
@@ -59,6 +59,14 @@ def apply(dist):
    old=b"wall.Anchored=true;wall.CanCollide=false;wall.CanTouch=false"
    assert after.count(old)==1,"TURRET_GUARD_DRIFT"
    after=after.replace(old,old+b";wall.CanQuery=false")
+  if key=="client/TrapRaidersHUD.client.luau":
+   # CRITICAL: author HUD diff has a literal LF inside a double-quoted Luau string.
+   # Roblox XML is parseable while native Luau compilation would fail. Fix fail-closed.
+   old_title='jobTitle.Text="7職業: まずは中立モンスター戦'+chr(10)+'1チーム同職1人 / ロビーで選ぶ"'
+   new_title=old_title.replace(chr(10),chr(92)+'n')
+   raw=after.decode("utf8")
+   assert raw.count(old_title)==1,("LUAU_MULTILINE_QUOTED_STRING_DRIFT",raw.count(old_title))
+   after=raw.replace(old_title,new_title).encode("utf8")
   assert hash_bytes(after)==AFTER[key],("WRONG_PATCH_RESULT",key)
   (dist/"src"/key).write_bytes(after)
  new_src=(ROOT/"src/SevenJobsRules.luau").read_bytes()
@@ -68,7 +76,7 @@ def apply(dist):
  assert not dest.exists(),"DUPLICATE_JOBS"
  dest.write_bytes(new_src)
  after=sources(dist)
- assert len(after)==56 and len(set(after)-set(before))==1
+ assert len(after)==57 and len(set(after)-set(before))==1
  assert {p for p in before if after[p]!=before[p]}==set(ORIGINAL)
  assert all(after[p]==raw for p,raw in before.items() if p not in ORIGINAL)
  game=after["server/Game.server.luau"].decode()
@@ -83,16 +91,18 @@ def apply(dist):
  assert 'SaveStatus' in game and 'settleSixSkill' in game
  assert after["server/PersistentHatchStore.luau"]==before["server/PersistentHatchStore.luau"]
  assert after["server/SavedPveMasteryPolicy.luau"]==before["server/SavedPveMasteryPolicy.luau"]
+ assert after["server/SavedBeastEvolutionPolicy.luau"]==before["server/SavedBeastEvolutionPolicy.luau"]
+ assert "SavedBeastPolicy." in game or "SavedBeastEvolutionPolicy" in game
  assert "SavedPvePolicy.mergeWithEarned(" in game
  receipt={
   "status":"P0D_SEVEN_JOBS_PVE_OPTIONAL_UNSELECTED",
-  "base_official_sha":"0dd7f4418d06200e40688c79c8290745cb56834d",
-  "base_source_count":55,"added_count":1,"changed_existing_count":2,
-  "existing_unchanged_count":53,"total_source_count":56,
+  "base_official_sha":"947cddb5351ba95b9b27597b9ec1828a8297cd66",
+  "base_source_count":56,"added_count":1,"changed_existing_count":2,
+  "existing_unchanged_count":54,"total_source_count":57,
   "single_Game":True,"single_Remote":True,"Store_byte_identical":True,
   "no_new_DataStore":True,"no_Publication":True,
   "actual_studio_engine":"NOT_TESTED","native_luau":"NOT_TESTED",
-  "official_rc_adopted":False,"pvp_job_balance":"NOT_IMPLEMENTED","saved_weapon_mastery_source_preserved":True,
+  "official_rc_adopted":False,"pvp_job_balance":"NOT_IMPLEMENTED","saved_weapon_mastery_source_preserved":True,"saved_beast_evolution_source_preserved":True,
   "source_blobs":{p:blob(s) for p,s in sorted(after.items())}
  }
  (dist/"P0D_SEVEN_JOBS_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n")
