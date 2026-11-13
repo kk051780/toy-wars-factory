@@ -681,7 +681,7 @@ local function depositFiveEgg(player:Player,side:string)
 end
 
 createFiveEggs()
-if EXPERIMENTAL_FIVE_EGG_MODE then
+if RunService:IsStudio() then
     for _,id in ipairs({"R2","B2","N1"}) do
         h2Eggs[id].prompt.Triggered:Connect(function(player:Player)
             pickupFiveEgg(player,id)
@@ -868,7 +868,7 @@ local function onJoin(player: Player)
     chooseTeam(player)
     modeVotes[player]=nil
     lastModeVote[player]=-math.huge
-    if EXPERIMENTAL_FIVE_EGG_MODE then
+    if RunService:IsStudio() then
         h2NextId+=1
         h2Ids[player]=h2NextId -- positive server ID, Studio fake UserIds can be negative
     end
