@@ -101,7 +101,7 @@ class TestSource(unittest.TestCase):
     def test_project_uses_one_shared_module(self):
         p=json.loads(PROJECT.read_text(encoding="utf-8"))
         self.assertEqual(p["tree"]["ReplicatedStorage"]["TrapRaidersShared"]["$path"],"src/shared")
-        self.assertIn("H1ReleaseGate",self.new["shared/H1ReleaseGate.luau"].decode())
+        self.assertIn("function ReleaseGate.canRun(",self.new["shared/H1ReleaseGate.luau"].decode())
     def test_receipt_no_live_pass(self):
         r=json.loads(RECEIPT.read_text(encoding="utf-8"))
         self.assertFalse(r["module_live_enable"])
