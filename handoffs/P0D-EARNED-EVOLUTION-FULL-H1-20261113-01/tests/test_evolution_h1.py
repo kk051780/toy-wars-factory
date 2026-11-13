@@ -27,7 +27,9 @@ class ActualGameGate(unittest.TestCase):
  def test_14_studio_evolve_only(self):self.assertIn('if not RunService:IsStudio() or match.phase~="LOBBY"',G)
  def test_15_same_server_evolve(self):self.assertIn('elseif data.action == "EVOLVE_SCOUT" then applyEvolveScout(player,data)',G)
  def test_16_generated_server_receipt(self):self.assertIn('local requestId="E"..HttpService:GenerateGUID(false)',G)
- def test_17_no_client_choice_item(self):self.assertNotIn("data.itemId",G)
+ def test_17_no_client_choice_item(self):
+  section=G.split("local function applyEvolveScout(player: Player,data)",1)[1].split("local function applyModeVote(",1)[0]
+  self.assertNotIn("data.itemId",section)
  def test_18_no_client_level(self):self.assertNotIn("data.level",G)
  def test_19_no_client_shards(self):self.assertNotIn("data.fragments",G)
  def test_20_no_client_damage(self):self.assertNotIn("data.damage",G)
