@@ -71,3 +71,105 @@ jobs:
             /tmp/p0d-first90-review/REVIEW_ONLY.txt
           retention-days: 7
           if-no-files-found: error
+      - name: Assemble isolated original-RC-first90 preview (19/21 sources byte identical)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/P0D-RC-FIRST90-CLASSIC-ADAPTER-20261113-01/tools/assemble_preview.py --assemble
+          python3 - <<'PY'
+          import pathlib,json
+          root=pathlib.Path("handoffs/P0D-RC-FIRST90-CLASSIC-ADAPTER-20261113-01/dist/TRAP_RAIDERS_S1_FIRST90_CLASSIC_PRIVATE_UNPUBLISHED")
+          lock=json.loads((root/"SOURCE_LOCK.json").read_text(encoding="utf8"))
+          assert lock["source_count"]==22 and lock["unchanged_original_count"]==19
+          assert lock["single_game_remote"] and lock["first90_server_snapshot"]
+          assert lock["first90_visible_existing_coach"]
+          assert lock["official_rc_adopted"] is False
+          assert len(list((root/"src").rglob("*.luau")))==22
+          print("P0D_S1_FIRST90_CLASSIC_SOURCE_LOCK_19_UNCHANGED_22_TOTAL_PASS")
+          PY
+      - name: Native compiler ALL actually assembled preview 22 Luau scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIST=handoffs/P0D-RC-FIRST90-CLASSIC-ADAPTER-20261113-01/dist/TRAP_RAIDERS_S1_FIRST90_CLASSIC_PRIVATE_UNPUBLISHED
+          n=0
+          while IFS= read -r -d '' path; do
+            /tmp/p0d_first90_cli/luau-compile "$path" >/tmp/p0d_first90_compile.txt 2>&1 || { cat /tmp/p0d_first90_compile.txt; exit 1; }
+            n=$((n+1))
+          done < <(find "$DIST/src" -type f -name '*.luau' -print0)
+          test "$n" -eq 22
+          echo P0D_S1_FIRST90_CLASSIC_ASSEMBLED_22_NATIVE_COMPILER_PASS
+      - name: Download pinned Rojo 7.7.1 only for unpublished local Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_s1_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_s1_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import pathlib,zipfile,stat
+          with zipfile.ZipFile("/tmp/p0d_s1_rojo.zip") as z:
+              a=[x for x in z.namelist() if x.rsplit("/",1)[-1]=="rojo"]
+              assert len(a)==1
+              exe=pathlib.Path("/tmp/p0d_s1_rojo")
+              exe.write_bytes(z.read(a[0]))
+              exe.chmod(exe.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_s1_rojo --version | grep -F '7.7.1'
+      - name: Build genuine unpublished 22 script Roblox Place and check exact XML source
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-RC-FIRST90-CLASSIC-ADAPTER-20261113-01
+          DIST="$ROOT/dist/TRAP_RAIDERS_S1_FIRST90_CLASSIC_PRIVATE_UNPUBLISHED"
+          mkdir -p /tmp/p0d-first90-review
+          PLACE=/tmp/p0d-first90-review/P0D_S1_FIRST90_CLASSIC_PRIVATE_UNPUBLISHED.rbxlx
+          /tmp/p0d_s1_rojo build "$DIST/default.project.json" -o "$PLACE"
+          cp "$DIST/SOURCE_LOCK.json" /tmp/p0d-first90-review/SOURCE_LOCK.json
+          python3 - <<'PY'
+          from collections import Counter
+          import pathlib,json,hashlib,xml.etree.ElementTree as ET
+          root=pathlib.Path("handoffs/P0D-RC-FIRST90-CLASSIC-ADAPTER-20261113-01/dist/TRAP_RAIDERS_S1_FIRST90_CLASSIC_PRIVATE_UNPUBLISHED")
+          target=pathlib.Path("/tmp/p0d-first90-review/P0D_S1_FIRST90_CLASSIC_PRIVATE_UNPUBLISHED.rbxlx")
+          embedded=Counter()
+          cls=Counter()
+          names=Counter()
+          for item in ET.fromstring(target.read_bytes()).iter("Item"):
+              kind=item.get("class")
+              if kind not in ("Script","LocalScript","ModuleScript"):continue
+              s=item.find("./Properties/string[@name='Source']")
+              if s is None: continue
+              embedded[s.text or ""]+=1
+              cls[kind]+=1
+              name=item.find("./Properties/string[@name='Name']")
+              if name is not None: names[(kind,name.text)]+=1
+          actual=Counter(p.read_text(encoding="utf8") for p in (root/"src").rglob("*.luau"))
+          assert embedded==actual and sum(embedded.values())==22,(sum(embedded.values()),sum(actual.values()))
+          assert names[("Script","Game")]==1,names
+          assert names[("LocalScript","TrapRaidersCoach")]==1,names
+          assert names[("ModuleScript","S1First90ClassicWaypointRules")]==1,names
+          receipt={
+              "origin":"FROZEN_1263a037_S1_ORIGINAL_SOURCE",
+              "source_count":22,"unchanged_original":19,"game":1,
+              "first90_visible_existing_coach":True,
+              "place_sha256":hashlib.sha256(target.read_bytes()).hexdigest(),
+              "original_remote_authority":1,
+              "source_xml_exact":True,"published":False,
+              "official_rc_adopted":False,
+              "roblox_studio_engine_test":"NOT_TESTED",
+              "two_client":"NOT_TESTED","android":"NOT_TESTED",
+              "owner_fun":"NOT_TESTED"
+          }
+          pathlib.Path("/tmp/p0d-first90-review/PLACE_EXACT_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
+          print("P0D_S1_FIRST90_CLASSIC_REAL_ROJO_22_EXACT_SOURCE_PASS",receipt["place_sha256"])
+          PY
+      - name: Archive isolated unpublished playable-preview file only
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-S1-FIRST90-CLASSIC-ONE-GAME-PRIVATE-STUDIO-RBXLX
+          path: |
+            /tmp/p0d-first90-review/P0D_S1_FIRST90_CLASSIC_PRIVATE_UNPUBLISHED.rbxlx
+            /tmp/p0d-first90-review/SOURCE_LOCK.json
+            /tmp/p0d-first90-review/PLACE_EXACT_RECEIPT.json
+            /tmp/p0d-first90-review/NATIVE_FIRST90_QA.txt
+          retention-days: 7
+          if-no-files-found: error
