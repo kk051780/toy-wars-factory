@@ -75,128 +75,11 @@ jobs:
           python3 -B handoffs/P0D-MUSOU-EARNED-POWER-H1-20261113-01/tools/generate_native_power_test.py --write /tmp/p0d_evo_power_test.luau
           /tmp/p0d_evo_native/luau-compile /tmp/p0d_evo_power_test.luau >/dev/null
           /tmp/p0d_evo_native/luau /tmp/p0d_evo_power_test.luau | tee /tmp/evo_power.log
-          grep -E '^P0D_POWER_NATIVE_[0-9]+_ASSERTIONS_PASS      - name: Get pinned Rojo7.7.1 with SHA256 verification
-        shell: bash
-        run: |
-          set -euo pipefail
-          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_evolution_rojo.zip
-          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_evolution_rojo.zip' | sha256sum -c
-          python3 - <<'PY'
-          import zipfile,stat,pathlib
-          with zipfile.ZipFile("/tmp/p0d_evolution_rojo.zip") as z:
-              options=[p for p in z.namelist() if p.split("/")[-1]=="rojo"]
-              assert len(options)==1
-              path=pathlib.Path("/tmp/p0d_evolution_rojo")
-              path.write_bytes(z.read(options[0]))
-              path.chmod(path.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
-          PY
-          /tmp/p0d_evolution_rojo --version | grep -F 7.7.1
-      - name: Build and confirm EXACT 41-script unpublished Roblox Place source
-        shell: bash
-        run: |
-          set -euo pipefail
-          DIST=handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED
-          mkdir -p /tmp/p0d_evolution_place
-          /tmp/p0d_evolution_rojo build "$DIST/default.project.json" -o /tmp/p0d_evolution_place/EGG_RAID_RUMBLE_EVOLVED_BEAST_H1_UNPUBLISHED.rbxlx
-          cp "$DIST/SOURCE_LOCK.json" /tmp/p0d_evolution_place/SOURCE_LOCK.json
-          cp /tmp/evo_pure.log /tmp/p0d_evolution_place/NATIVE_EVOLUTION_POLICY.txt
-          cp /tmp/evo_store.log /tmp/p0d_evolution_place/NATIVE_ATOMIC_PROFILE_QA.txt
-          cp /tmp/evo_power.log /tmp/p0d_evolution_place/NATIVE_POWER_QA.txt
-          cp /tmp/first90_policy.log /tmp/p0d_evolution_place/NATIVE_FIRST90_QA.txt
-          python3 - <<'PY'
-          import pathlib,xml.etree.ElementTree as ET,collections,json,hashlib
-          root=pathlib.Path("handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED")
-          place=pathlib.Path("/tmp/p0d_evolution_place/EGG_RAID_RUMBLE_EVOLVED_BEAST_H1_UNPUBLISHED.rbxlx")
-          original=collections.Counter(p.read_text("utf8") for p in (root/"src").rglob("*.luau"))
-          cls=collections.Counter();scripts=collections.Counter();oneGame=0
-          for item in ET.fromstring(place.read_bytes()).iter("Item"):
-              ty=item.get("class")
-              if ty not in ("Script","LocalScript","ModuleScript"):continue
-              code=item.find("./Properties/string[@name='Source']")
-              if code is None:continue
-              cls[ty]+=1;scripts[code.text or ""]+=1
-              name=item.find("./Properties/string[@name='Name']")
-              if ty=="Script" and name is not None and name.text=="Game":oneGame+=1
-          assert cls=={"Script":2,"LocalScript":5,"ModuleScript":34},cls
-          assert scripts==original and sum(scripts.values())==41
-          assert oneGame==1 and sum("TrapRaidersS1Remote" in k for k in scripts)>=1
-          meta={"sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
-            "real_Studio_tested":False,"android_tested":False,"owner_fun_accepted":False,
-            "original_module_count":41,"official_rc_adopted":False,"published":False,
-            "paid":False}
-          pathlib.Path("/tmp/p0d_evolution_place/PLACE_EXACT_SOURCE.json").write_text(json.dumps(meta,indent=2)+"\n")
-          print("P0D_EVOLUTION_REAL_ROJO_41_OF_41_EXACT_SOURCE_PASS",meta["sha256"])
-          PY
-      - name: Upload review-only private build, NEVER publish to Roblox
-        uses: actions/upload-artifact@v4
-        with:
-          name: P0D-FIRST90-V5-41-LUAU-PRIVATE-STUDIO-RBXLX
-          path: /tmp/p0d_evolution_place/
-          retention-days: 7
-          if-no-files-found: error
- /tmp/evo_power.log
+          grep -E '^P0D_POWER_NATIVE_[0-9]+_ASSERTIONS_PASS$' /tmp/evo_power.log
           python3 -B handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/tools/generate_native_first90.py --write /tmp/p0d_first90_native_test.luau
           /tmp/p0d_evo_native/luau-compile /tmp/p0d_first90_native_test.luau >/dev/null
           /tmp/p0d_evo_native/luau /tmp/p0d_first90_native_test.luau | tee /tmp/first90_policy.log
-          grep -E '^P0D_FIRST90_NATIVE_[0-9]+_ASSERTIONS_PASS      - name: Get pinned Rojo7.7.1 with SHA256 verification
-        shell: bash
-        run: |
-          set -euo pipefail
-          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_evolution_rojo.zip
-          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_evolution_rojo.zip' | sha256sum -c
-          python3 - <<'PY'
-          import zipfile,stat,pathlib
-          with zipfile.ZipFile("/tmp/p0d_evolution_rojo.zip") as z:
-              options=[p for p in z.namelist() if p.split("/")[-1]=="rojo"]
-              assert len(options)==1
-              path=pathlib.Path("/tmp/p0d_evolution_rojo")
-              path.write_bytes(z.read(options[0]))
-              path.chmod(path.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
-          PY
-          /tmp/p0d_evolution_rojo --version | grep -F 7.7.1
-      - name: Build and confirm EXACT 41-script unpublished Roblox Place source
-        shell: bash
-        run: |
-          set -euo pipefail
-          DIST=handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED
-          mkdir -p /tmp/p0d_evolution_place
-          /tmp/p0d_evolution_rojo build "$DIST/default.project.json" -o /tmp/p0d_evolution_place/EGG_RAID_RUMBLE_EVOLVED_BEAST_H1_UNPUBLISHED.rbxlx
-          cp "$DIST/SOURCE_LOCK.json" /tmp/p0d_evolution_place/SOURCE_LOCK.json
-          cp /tmp/evo_pure.log /tmp/p0d_evolution_place/NATIVE_EVOLUTION_POLICY.txt
-          cp /tmp/evo_store.log /tmp/p0d_evolution_place/NATIVE_ATOMIC_PROFILE_QA.txt
-          cp /tmp/evo_power.log /tmp/p0d_evolution_place/NATIVE_POWER_QA.txt
-          python3 - <<'PY'
-          import pathlib,xml.etree.ElementTree as ET,collections,json,hashlib
-          root=pathlib.Path("handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED")
-          place=pathlib.Path("/tmp/p0d_evolution_place/EGG_RAID_RUMBLE_EVOLVED_BEAST_H1_UNPUBLISHED.rbxlx")
-          original=collections.Counter(p.read_text("utf8") for p in (root/"src").rglob("*.luau"))
-          cls=collections.Counter();scripts=collections.Counter();oneGame=0
-          for item in ET.fromstring(place.read_bytes()).iter("Item"):
-              ty=item.get("class")
-              if ty not in ("Script","LocalScript","ModuleScript"):continue
-              code=item.find("./Properties/string[@name='Source']")
-              if code is None:continue
-              cls[ty]+=1;scripts[code.text or ""]+=1
-              name=item.find("./Properties/string[@name='Name']")
-              if ty=="Script" and name is not None and name.text=="Game":oneGame+=1
-          assert cls=={"Script":2,"LocalScript":5,"ModuleScript":34},cls
-          assert scripts==original and sum(scripts.values())==41
-          assert oneGame==1 and sum("TrapRaidersS1Remote" in k for k in scripts)>=1
-          meta={"sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
-            "real_Studio_tested":False,"android_tested":False,"owner_fun_accepted":False,
-            "original_module_count":41,"official_rc_adopted":False,"published":False,
-            "paid":False}
-          pathlib.Path("/tmp/p0d_evolution_place/PLACE_EXACT_SOURCE.json").write_text(json.dumps(meta,indent=2)+"\n")
-          print("P0D_EVOLUTION_REAL_ROJO_41_OF_41_EXACT_SOURCE_PASS",meta["sha256"])
-          PY
-      - name: Upload review-only private build, NEVER publish to Roblox
-        uses: actions/upload-artifact@v4
-        with:
-          name: P0D-FIRST90-V5-41-LUAU-PRIVATE-STUDIO-RBXLX
-          path: /tmp/p0d_evolution_place/
-          retention-days: 7
-          if-no-files-found: error
- /tmp/first90_policy.log
+          grep -E '^P0D_FIRST90_NATIVE_[0-9]+_ASSERTIONS_PASS$' /tmp/first90_policy.log
       - name: Get pinned Rojo7.7.1 with SHA256 verification
         shell: bash
         run: |
@@ -224,6 +107,7 @@ jobs:
           cp /tmp/evo_pure.log /tmp/p0d_evolution_place/NATIVE_EVOLUTION_POLICY.txt
           cp /tmp/evo_store.log /tmp/p0d_evolution_place/NATIVE_ATOMIC_PROFILE_QA.txt
           cp /tmp/evo_power.log /tmp/p0d_evolution_place/NATIVE_POWER_QA.txt
+          cp /tmp/first90_policy.log /tmp/p0d_evolution_place/NATIVE_FIRST90_QA.txt
           python3 - <<'PY'
           import pathlib,xml.etree.ElementTree as ET,collections,json,hashlib
           root=pathlib.Path("handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED")
