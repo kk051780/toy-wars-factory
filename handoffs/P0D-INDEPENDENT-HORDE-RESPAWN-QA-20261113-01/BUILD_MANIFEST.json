@@ -1,0 +1,46 @@
+{
+  "schema": "P0D_QA_SOURCE_READBACK_V1",
+  "date_jst": "2026-11-13",
+  "game_id": "TRAP_RAIDERS",
+  "work_id": "p0d-siege-v19",
+  "brand": "EGG RAID RUMBLE",
+  "feature_slice": "QA_MUSOU_ELITE_RESPAWN_TELEGRAPH_INVARIANT_20261113-01",
+  "audit_scope": "STATIC_READ_ONLY_ORIGINAL_288_HORDE_RESPAWN",
+  "original_commit": "55ad13b45907a5a3e9deae7196a7c202a0672c0c",
+  "original_path": "handoffs/P0D-MUSOU-CHAOS-H1-20261113-01/inputs/MusouHorde.luau",
+  "original_git_blob_sha1": "c1ef565f4e8b11a6e8ff7eac5ed55c8f268a4553",
+  "files": [
+    {
+      "path": "tools/audit_horde_respawn.mjs",
+      "blob_sha1": "97476ce2cb8875331fc6c53737ef011ed0cde00e"
+    },
+    {
+      "path": "tests/test_horde_respawn.mjs",
+      "blob_sha1": "719c9c94c0af4c1554d78f78185a35961b4e3921"
+    },
+    {
+      "path": "PATCH_AND_ACCEPTANCE.md",
+      "blob_sha1": "e6154482380fd8a8d5aa29a3a452bc003d8e5548"
+    },
+    {
+      "path": "README.md",
+      "blob_sha1": "d25314b1a70d26813d483ec0a94b0128fa2b59fa"
+    }
+  ],
+  "evidence": {
+    "original_exact_github_blob_read": true,
+    "in_call_v8_source_checks_pass": 16,
+    "original_marked_unsafe": true,
+    "illustrative_patch_marked_safe": true,
+    "node_test_file_authored_cases": 17,
+    "node_repository_execution": "NOT_EXECUTED",
+    "original_author_fix": "NOT_APPLIED",
+    "native_Luau": "NOT_TESTED",
+    "real_roblox_studio": "NOT_TESTED",
+    "Android": "NOT_TESTED",
+    "actual_fun": "UNKNOWN",
+    "official_S1_game_release_last_pct": 75
+  },
+  "blocker": "Original #288 author must reset elite tellUntil/target at death AND respawn, then independent QA and human Studio; #250 and #220 adoption decision only.",
+  "protected": "No main, RC, merges, live publish, purchases, spend, owner PC/Codex, P0 A/B/C auth/CAS, 5 Automations"
+}
