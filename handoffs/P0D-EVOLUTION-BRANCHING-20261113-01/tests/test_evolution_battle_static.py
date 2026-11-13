@@ -106,7 +106,7 @@ class EvolutionBattleStatic(unittest.TestCase):
 
     def test_guardian_must_be_near_castle(self):
         self.assertIn('if form.branch=="GUARD" and',SERVER)
-        self.assertIn('(core(player).Position-castle.Position).Magnitude>33',SERVER)
+        self.assertIn('(playerRoot.Position-castle.Position).Magnitude>33',SERVER)
         self.assertIn('msg(player,"ERROR","守護技は城の近くで発動してね")',SERVER)
 
     def test_no_ability_doubles_pvp_multiplier(self):
