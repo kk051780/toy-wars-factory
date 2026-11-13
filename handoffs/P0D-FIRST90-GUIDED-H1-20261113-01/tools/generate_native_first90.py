@@ -64,7 +64,7 @@ trapped.bound=false
 ok(v(30,nil,trapped).step=="RESCUE","help_preempts_egg")
 ok(Guide.mark(state,7,"PICKUP",true)==true,"actual_server_pickup")
 ok(Guide.mark(state,7,"PICKUP",true)==false,"pickup_replay")
-ok(v(35).step=="SCORE","after_pickup_remind_delivery")
+ok(v(35).step=="PICKUP","after_drop_remind_reacquire")
 ok(Guide.mark(state,7,"DEPOSIT",true)==true,"actual_server_deposit")
 ok(v(40).step=="SCOUT","summon_after_delivering")
 ok(Guide.mark(state,7,"SCOUT",true)==true,"real_scout_active")
