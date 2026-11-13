@@ -82,6 +82,7 @@ local function labelState(player)
         stage=form and form.stage or 0,
         lastCast=st.lastCast,
         cooldown=12,
+        cooldownRemaining=math.max(0,12-(now()-st.lastCast)),
         source="PRIVATE_STUDIO_ONLY",
     })
 end
