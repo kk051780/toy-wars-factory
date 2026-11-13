@@ -229,6 +229,26 @@
       "engine_studio": "NOT_TESTED",
       "android": "NOT_TESTED",
       "owner_fun": "NOT_TESTED"
+    },
+    "STAR_SHARDS_V1": {
+      "enabled": true,
+      "state": "PRIVATE63_SOURCE_QA_PENDING_NOT_OFFICIAL",
+      "source_script": "rc_fastlane/features/star_shards/StarShardHunt.server.luau",
+      "source_git_blob": "1cd252586cb0b1e134eb4112b095346bfe7d3389",
+      "prerequisites": [
+        "WCS_F01_C01",
+        "STARRY_PATH_V1",
+        "SEVEN_JOBS_PVE_V1",
+        "EGG_RELAY_CLASSIC_V1",
+        "METEOR_FOURTH_V1"
+      ],
+      "scope": "Six unique session Starfall shards; 0/6 to 6/6 badge and cosmetic aura only",
+      "runtime_guard": "Studio only, explicit ServerStorage STAR_SHARDS true, WaitForChild Starfall stage up to 180s",
+      "safety": "one Game, no Store/Remote/score/HP/XP/save/damage/paid authority",
+      "rollback": "OFF restores all prior 62 script bodies/project/locks byte-exact",
+      "studio_2client": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED"
     }
   }
 }
