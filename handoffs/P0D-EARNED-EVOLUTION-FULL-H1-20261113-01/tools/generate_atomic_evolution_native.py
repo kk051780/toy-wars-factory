@@ -121,9 +121,9 @@ check(ok2 and fake.record.evolution.fragments==2,
  "same-round repeated network retry cannot mint shards")
 print("P0D_ATOMIC_EVOLUTION_NATIVE_"..tostring(n).."_ASSERTIONS_PASS")
 """
-source="local __P=(function()\n"+pro+"\nend)()\n"+
-       "local __E=(function()\n"+evo+"\nend)()\n"+
-       "local E=__E\nlocal Store=(function()\n"+store+"\nend)()\n"+TEST
+source=("local __P=(function()\n"+pro+"\nend)()\n"+
+        "local __E=(function()\n"+evo+"\nend)()\n"+
+        "local E=__E\nlocal Store=(function()\n"+store+"\nend)()\n"+TEST)
 if __name__=="__main__":
  p=argparse.ArgumentParser();p.add_argument("--write",required=True);args=p.parse_args()
  Path(args.write).write_text(source,"utf8")
