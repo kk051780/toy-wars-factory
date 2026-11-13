@@ -1,0 +1,73 @@
+--- Original/PersistentHatchStore.luau
++++ REVIEW_ONLY/PersistentHatchStore.luau
+@@ -9,6 +9,8 @@
+ -- Exact pure #287 source; inventory, XP and evolution share ONE profile key.
+ local Evolution=require(script.Parent:WaitForChild("EvolutionRules"))
+ local Dojo=require(script.Parent:WaitForChild("DojoRules"))
++-- REVIEW-ONLY optional V4 field: same existing Store, NOT a 2nd writer.
++local V4Core=require(script.Parent:WaitForChild("V4DailyProfileCore"))
+ Store.MAX_PROGRESS_ROUNDS=Progression.MAX_RECORDED_ROUNDS
+ Store.SCHEMA=1
+ Store.MAX_RECEIPTS=2048 -- fail closed when full; NEVER silently evict replay keys
+@@ -298,7 +300,8 @@
+     end
+     if not safeProgressRecord(raw.progress)
+         or not safeEvolutionRecord(raw.evolution)
+-        or not safeDojoRecord(raw.dojo) then return false end
++        or not safeDojoRecord(raw.dojo)
++        or (raw.dojoV4~=nil and not V4Core.validate(raw.dojoV4)) then return false end
+     return true
+ end
+ normalized=function(raw:any)
+@@ -309,9 +312,50 @@
+         owned=copyMap(raw.owned),receipts=copyMap(raw.receipts),
+         equipped=raw.equipped,
+         progress=cloneProgress(raw.progress),evolution=cloneEvolution(raw.evolution),
+-        dojo=cloneDojo(raw.dojo)
++        dojo=cloneDojo(raw.dojo),
++        dojoV4=V4Core.clone(raw.dojoV4)
+     }
+ end
++-- REVIEW_ONLY: integration test target for the CANONICAL Store author.
++-- No production use until migration of H1 BEAST/WEAPON legacy dojo is reviewed.
++function Store.v4Transition(raw:any,tx:any): (any?,string)
++    if type(tx)~="table" then return nil,"INVALID_V4_TRANSACTION" end
++    local state=normalized(raw)
++    if not state then return nil,"CORRUPT_RECORD" end
++    if state.dojoV4==nil then
++        -- Never silently wipe existing saved BEAST/WEAPON Lv5 progression.
++        local blank,why=V4Core.newForUntrainedUser(tx.dayIndex,state.dojo)
++        if not blank then return nil,why or "MIGRATION_REQUIRED" end
++        state.dojoV4=blank
++    end
++    local proposed,why=V4Core.prepare(state.dojoV4,tx)
++    if not proposed then return nil,why end
++    if why=="ALREADY_COMMITTED" then return state,why end
++    state.dojoV4=proposed
++    state.revision+=1
++    if not Store.validate(state) then return nil,"INVALID_RESULT" end
++    return state,"V4_PREPARED_NOT_PERSISTED"
++end
++-- Source QA below uses a Fake UpdateAsync. The REAL Store author alone may
++-- enable this on the original key with session-lock and durable receipts.
++function Store.persistV4Candidate(store:any,uid:any,tx:any): (boolean,any?,string)
++    local key=userKey(uid)
++    if key==nil or store==nil or type(tx)~="table" then
++        return false,nil,"INVALID_V4_CALL"
++    end
++    local ok,result=pcall(function()
++        return store:UpdateAsync(key,function(original)
++            local nextState=Store.v4Transition(original,tx)
++            return nextState -- nil aborts; no yield
++        end)
++    end)
++    if not ok or not Store.validate(result) or result.dojoV4==nil
++        or result.dojoV4.lastToken~=tx.token then
++        return false,nil,"V4_STORE_NOT_CONFIRMED"
++    end
++    return true,result,"V4_CANDIDATE_RECORDED"
++end
++
+ function Store.toRulesRecord(persistent:any)
+     if not Store.validate(persistent) then return nil end
+     local discovered={starter_scout=true}
