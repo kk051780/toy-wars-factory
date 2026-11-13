@@ -60,7 +60,7 @@ print("H2_STAR_JUMP_NATIVE_ACTUAL_POLICY_PASS_"..tostring(n))
 '''
 MUTANTS=[
  ("no_nearby_check",'dx*dx + dy*dy + dz*dz <= P.MAX_DISTANCE*P.MAX_DISTANCE',
-  'true',"STAR_ASSERT_far_11_studs"),
+  'true',"STAR_ASSERT_cannot_activate_remote_pad"),
  ("no_cooldown",'s.now - s.lastAt < P.COOLDOWN',
   'false',"STAR_ASSERT_cooldown_10_of_12"),
  ("no_enemy_access",'s.team ~= "RED" and s.team ~= "BLUE"',
