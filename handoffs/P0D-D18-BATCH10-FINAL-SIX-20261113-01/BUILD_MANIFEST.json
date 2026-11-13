@@ -1,0 +1,75 @@
+{
+  "schema": "P0D_D18_BATCH10_FIXED_SOURCE_MANIFEST_V1",
+  "game_id": "TRAP_RAIDERS",
+  "atlas_sha256": "cf5ec26836842ce55a764c5ad66c711f00da0ed4cc30d80dad0df851e2656e01",
+  "claim_issue": 271,
+  "source_only": true,
+  "studio_only_gallery": true,
+  "gameplay_enabled": false,
+  "base_batch9_commit": "ae04e2e1bf4666acb012da49c5b289cb6ffc2c5c",
+  "counts": {
+    "previous_source_models": 66,
+    "batch10_new_source_models": 6,
+    "post_batch_source_models": 72,
+    "canonical_atlas_models": 72,
+    "official_RC_new_adopted": 0,
+    "source_parts": 81
+  },
+  "new_model_ids": [
+    "TRCA-BE-108",
+    "TRCA-SP-063",
+    "TRCA-VE-081",
+    "TRCA-WE-063",
+    "TRCA-ZO-081",
+    "TRCA-TR-090"
+  ],
+  "source_files": [
+    {
+      "path": "data/models.json",
+      "git_blob_sha1": "71addd88e3a7b14f89169452b8637297d98ef69f"
+    },
+    {
+      "path": "design/CHARACTER_CARDS.md",
+      "git_blob_sha1": "6c33a9cc83584b5b61c05accee5959ce2fff8f3e"
+    },
+    {
+      "path": "src/D18Batch10Catalog.luau",
+      "git_blob_sha1": "d46180c9e071a1a8a2b0b9c8cd9d22a4a89bce43"
+    },
+    {
+      "path": "src/D18Batch10Factory.luau",
+      "git_blob_sha1": "4430d0dd133552c9fdb4451b9c6b1e197843870e"
+    },
+    {
+      "path": "src/D18StudioGallery.client.luau",
+      "git_blob_sha1": "342f8617a184c13e0ead0eec744a6b8945303054"
+    },
+    {
+      "path": "src/DisabledPreview.client.luau",
+      "git_blob_sha1": "2837c49792dded8c7b5a7ac82883d28c55850f34"
+    },
+    {
+      "path": "default.project.json",
+      "git_blob_sha1": "0a2c2d46c350dfe73b6b94a085174316af0aa9ba"
+    },
+    {
+      "path": "tools/verify_batch10.py",
+      "git_blob_sha1": "8f1b6f464e8c19ce2b4daf7f8e54fe0af4f5eb5d"
+    },
+    {
+      "path": "tests/test_batch10.py",
+      "git_blob_sha1": "e1c3476737c624cbf0d2968113c7b810d5fbfc26"
+    },
+    {
+      "path": "tests/test_mutants.py",
+      "git_blob_sha1": "c2aba349be7581f107271784e3a7b818607bfde8"
+    },
+    {
+      "path": "README.md",
+      "git_blob_sha1": "401f057b3438a8b241e051d00f10d97bae1cbd68"
+    }
+  ],
+  "real_studio_tested": false,
+  "mobile_tested": false,
+  "published": false
+}
