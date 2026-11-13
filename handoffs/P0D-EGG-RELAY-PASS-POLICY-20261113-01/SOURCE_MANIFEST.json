@@ -1,13 +1,13 @@
 {
-  "schema": "P0D_EGG_RELAY_SOURCE_MANIFEST_V2",
+  "schema": "P0D_EGG_RELAY_SOURCE_MANIFEST_V3",
   "game_id": "TRAP_RAIDERS",
   "work_id": "p0d-siege-v19",
   "adoption_id": "P0D-EGG-RELAY-001",
   "status": "SOURCE_POLICY_ONLY_NOT_IN_GAME",
   "target_release": "S2_OPTIONAL",
   "source_origin_head": "8e4393955a3009a0ef7cca934cb5fe5b957ee7d5",
-  "source_qa": "PYTHON_REFERENCE_35_35_LOCAL_PASS",
-  "native_luau": "NOT_TESTED",
+  "source_qa": "PYTHON35_PASS_LUA54_COMPAT41_PASS_LUAU_CLI_UNKNOWN",
+  "native_luau": "NOT_VERIFIED",
   "roblox_studio": "NOT_TESTED",
   "studio_2client": "NOT_TESTED",
   "android": "NOT_TESTED",
@@ -49,5 +49,13 @@
     "Policy returns decision only; actual egg transfer requires sole Game integration",
     "No Studio, Android, or owner play evidence"
   ],
-  "notes": "Original v1 policy incorrectly capped all integers at 1e9, excluding billion-scale Roblox UserIds. V2 uses maximum exact integer 2^53-1 and adds boundary coverage."
+  "notes": "Original v1 policy incorrectly capped all integers at 1e9, excluding billion-scale Roblox UserIds. V2 uses maximum exact integer 2^53-1 and adds boundary coverage.",
+  "native_luau_cases_gitblob": "004ae0569d89abcedaa6ddedff05f006246d2265",
+  "native_luau_cases_sha256": "47734f250bac41ec37a5c214cc8a10a81c51433e1d49c03baeca5539d547b402",
+  "native_luau_case_count": 41,
+  "native_luau_correction": "NaN-aware test deepEqual allows invalid-clock state purity check; policy code unchanged",
+  "qa_evidence": "QA_LUA54_EXECUTION_REPORT.md",
+  "canonical_rc_latest_as_reported": "981b4b3616acb20001f4148fc02cc4b29f2b87ae",
+  "rc_integration_status": "NOT_IN_RC",
+  "owner_v5_fastlane": "No per-feature Studio gate before reversible canonical RC integration; sole #220 writer retains authority; Studio/FUN still required pre-publication"
 }
