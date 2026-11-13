@@ -64,7 +64,7 @@ jobs:
           ROOT=handoffs/P0D-B42V7-SKY-SOLO-20261113-01
           SOURCE="$ROOT/src/P0DStudioTrialAudit.client.luau"
           TARGET="_p0d_solo_dist/src/client/P0DStudioTrialAudit.client.luau"
-          test "$(git hash-object "$SOURCE")" = b09e5fa2b3374cb88cad789b2c4966d4c777b3ef
+          test "$(git hash-object "$SOURCE")" = ee96518a7eeaaaba98d2a8e2aff6dad780fae8c7
           test ! -e "$TARGET"
           cp "$SOURCE" "$TARGET"
           python3 - <<'PY'
@@ -103,7 +103,7 @@ jobs:
           set -euo pipefail
           test "$(git -C _p0d_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
           cmake -S _p0d_luau -B /tmp/p0d_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/p0d_luau --target Luau.Compile.CLI --parallel 4
+          cmake --build /tmp/p0d_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
       - name: Actually compile ALL 43 resulting original+patched Luau plus read-only audit
         shell: bash
         run: |
@@ -115,6 +115,17 @@ jobs:
           done < <(find _p0d_solo_dist/src -type f -name '*.luau' -print0)
           test "$n" -eq 43
           echo P0D_STUDIO_SOLO_READONLY_AUDIT_43_NATIVE_LUAU_COMPILE_PASS
+      - name: Execute exact diagnostic Luau predicates in native CLI with 468 real cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-B42V7-SKY-SOLO-20261113-01
+          python3 -B "$ROOT/tests/generate_native_sky_receipt.py" \
+            --source _p0d_solo_dist/src/client/P0DStudioTrialAudit.client.luau \
+            --write /tmp/p0d_sky_receipt_native.luau
+          /tmp/p0d_luau/luau-compile /tmp/p0d_sky_receipt_native.luau >/dev/null
+          /tmp/p0d_luau/luau /tmp/p0d_sky_receipt_native.luau | tee /tmp/p0d_sky_receipt_native.log
+          grep -F 'P0D_SKY_RECEIPT_NATIVE_468_ASSERTIONS_PASS' /tmp/p0d_sky_receipt_native.log
       - name: Obtain pinned Rojo 7.7.1
         shell: bash
         run: |
