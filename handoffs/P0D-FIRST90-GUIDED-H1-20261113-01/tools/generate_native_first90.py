@@ -5,7 +5,7 @@ import argparse,hashlib
 root=Path(__file__).resolve().parents[1]
 body=(root/"inputs/First90GuideRules.luau").read_text("utf8")
 b=body.encode("utf8")
-assert hashlib.sha1(b"blob "+str(len(b)).encode()+b"\0"+b).hexdigest()=="644073946930d63e6b06c20ca249739b9ecfa5ad"
+assert hashlib.sha1(b"blob "+str(len(b)).encode()+b"\0"+b).hexdigest()=="0cbf26aaebf66a7548d4299fb6ede4bee47cfa70"
 assert body.rstrip().endswith("return Guide")
 TEST=r"""
 local n=0
