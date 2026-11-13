@@ -1,0 +1,226 @@
+--- original/Game.luau
++++ proposed/Game.luau
+@@ -25,6 +25,9 @@
+ local First90Waypoint = require(script.Parent:WaitForChild("First90WaypointRules"))
+ local StudioSolo = require(script.Parent:WaitForChild("StudioSoloPreviewRules"))
+ local Dojo = require(script.Parent:WaitForChild("DojoRules"))
++-- SOURCE-LOCKED V4 stored levels use original canonical SAME profile key.
++local V4XP = require(script.Parent:WaitForChild("SessionSixSkillXPPreview"))
++local V4Scheduler = require(script.Parent:WaitForChild("FocusTrainingScheduler"))
+ local studioSoloRoundStarted = false
+ -- #288 experimental helpers only. Original Game remains sole server combat/egg authority.
+ local MusouHorde = require(script.Parent:WaitForChild("MusouHorde"))
+@@ -186,6 +189,13 @@
+ end
+ local persistenceState: {[Player]: string} = {}
+ local persistentProfiles: {[Player]: any} = {}
++-- Only existing original GAME can submit V4 writes to canonical PersistentHatchStore.
++-- Per-player 30-second contiguous server-owned pad windows. One UpdateAsync max per window.
++local v4WindowStart: {[Player]: number} = {}
++local v4WindowSkill: {[Player]: string} = {}
++local v4SavePending: {[Player]: boolean} = {}
++local v4ReceiptSerial = 0
++
+ -- Actual ORIGINAL Game holds server-validated action logs, one per match epoch.
+ local progressionProfile: {[Player]: any}={}
+ local progressionRound: {[Player]: any}={}
+@@ -210,6 +220,56 @@
+     return RunService:IsStudio() and player.UserId>0
+         and studioHatchStore~=nil and persistenceState[player]=="SAVED"
+ end
++
++-- These replicated attributes are sourced from a successful canonical Store load
++-- or acknowledged UpdateAsync only. They never trust client or preview attributes.
++local function publishV4Canonical(player: Player)
++    if player.Parent~=Players then return end
++    local record=persistentProfiles[player]
++    if persistenceState[player]~="SAVED" or not record
++        or not PersistentHatch.validate(record) then
++        player:SetAttribute("P0D_V4_SaveStatus","LOCAL_ONLY")
++        return
++    end
++    local v4=record.trainingV4
++    if v4==nil then
++        player:SetAttribute("P0D_V4_SaveStatus","READY_TO_TRAIN")
++        player:SetAttribute("P0D_V4_SavedRemaining",1800)
++        player:SetAttribute("P0D_V4_SavedMode","RANDOM")
++        player:SetAttribute("P0D_V4_SavedSkill","-")
++        return
++    end
++    if type(v4.totalsMicro)~="table" or type(v4.focusedSeconds)~="number" then
++        player:SetAttribute("P0D_V4_SaveStatus","INVALID_PROFILE")
++        return
++    end
++    -- Use the original exact author XP level curve to view stored MICRO XP.
++    for _,skill in ipairs(V4XP.SKILLS) do
++        local micro=v4.totalsMicro[skill]
++        local lv=V4XP.viewXP(micro)
++        if lv.valid then
++            player:SetAttribute("P0D_V4_SAVED_"..skill.."_LV",lv.level)
++            player:SetAttribute("P0D_V4_SAVED_"..skill.."_XP",lv.xp)
++            player:SetAttribute("P0D_V4_SAVED_"..skill.."_NEXT",lv.xpToNext)
++        else
++            player:SetAttribute("P0D_V4_SaveStatus","INVALID_PROFILE")
++            return
++        end
++    end
++    -- When a new JST day begins, old focusedSeconds is not yet reset until next grant.
++    local jstDay=math.floor((os.time()+32400)/86400)
++    local used=if v4.dayIndex==jstDay then v4.focusedSeconds else 0
++    player:SetAttribute("P0D_V4_SavedRemaining",math.max(0,1800-used))
++    local seed=PersistentHatch.policyUserId(player.UserId)
++    if seed~=nil then
++        local active=V4Scheduler.newState(seed,os.time(),v4)
++        local status=V4Scheduler.getStatus(active,false)
++        player:SetAttribute("P0D_V4_SavedMode",status.mode)
++        player:SetAttribute("P0D_V4_SavedSkill",status.skill)
++    end
++    player:SetAttribute("P0D_V4_SaveStatus","SAVED")
++end
++
+ local function savedEvolutionForm(player: Player): any?
+     local raw=persistentProfiles[player]
+     if not raw or persistenceState[player]~="SAVED" or player.UserId<=0 then
+@@ -303,8 +363,10 @@
+                     progressionStatus[player]="SAVED"
+                 end
+                 restoreSavedProfile(player)
++                publishV4Canonical(player)
+             else
+                 persistenceState[player]="LOCAL_ONLY"
++                player:SetAttribute("P0D_V4_SaveStatus","LOCAL_ONLY")
+                 progressionStatus[player]="LOCAL_ONLY"
+                 warn("EGG_RUMBLE_DEV_DATASTORE_LOAD_FAILED_LOCAL_ONLY",player.UserId)
+             end
+@@ -1941,6 +2003,7 @@
+     dojoStates[player]=Dojo.new()
+     dojoLastTick[player]=serverNow()
+     dojoFriends[player]={}
++    player:SetAttribute("P0D_V4_SaveStatus","LOADING")
+     if RunService:IsStudio() and player.UserId>0 then
+         for _,other in ipairs(Players:GetPlayers()) do
+             if other~=player and other.UserId>0 then
+@@ -2010,6 +2073,9 @@
+     guideProgress[player]=nil
+     dojoStates[player]=nil
+     dojoLastTick[player]=nil
++    v4WindowStart[player]=nil
++    v4WindowSkill[player]=nil
++    v4SavePending[player]=nil
+     dojoFriends[player]=nil
+     local state=earnedPower[player]
+     if state then Power.endRound(state) end
+@@ -2056,6 +2122,104 @@
+         end
+     end
+ end)
++
++
++-- V4 six-skill durable ticket: minted by the ORIGINAL Game; no Remote and no
++-- concurrent background Store writer. Studio-only DEV key until Owner approves public.
++local v4Locations={
++    BEAST={56,-15},WEAPON={56,15},
++    MAGIC={54,-49},ZOMBIE={54,49},
++    VEHICLE={74,-49},BUILDING={74,49},
++}
++local function v4OnHomePad(player: Player): string?
++    if match.phase=="RESULTS" or carry[player]~=nil then return nil end
++    local alive,root=healthy(player)
++    local team=getTeamName(player)
++    if not alive or not root or (team~="RED" and team~="BLUE") then return nil end
++    if math.abs(root.Position.Y-1)>10 then return nil end
++    local sign=if team=="RED" then -1 else 1
++    for _,skill in ipairs(V4XP.SKILLS) do
++        local coord=v4Locations[skill]
++        local dx=root.Position.X-sign*coord[1]
++        local dz=root.Position.Z-coord[2]
++        if dx*dx+dz*dz<=25 then return skill end
++    end
++    return nil
++end
++local function v4VerifiedFriends(player: Player): number
++    local count=0
++    local record=dojoFriends[player]
++    if record==nil then return 0 end
++    for _,other in ipairs(Players:GetPlayers()) do
++        if other~=player and other.UserId>0 and record[other.UserId]==true then
++            count+=1
++        end
++    end
++    return math.min(count,4)
++end
++local function v4SaveOneWindow(player: Player,skill: string,utcStart: number,utcEnd: number)
++    if v4SavePending[player] or not canWriteProfile(player) then return end
++    -- Trust ONLY server-side pad and same-key Game's friend verification.
++    if v4OnHomePad(player)~=skill or utcEnd-utcStart<30
++        or utcEnd-utcStart>120 or utcEnd>os.time()+2 then return end
++    local startDay=math.floor((utcStart+32400)/86400)
++    local endDay=math.floor((utcEnd+32400)/86400)
++    if startDay~=endDay then return end -- split at JST midnight, never cross-day award
++    v4ReceiptSerial+=1
++    local receipt="T"..hatchSessionGUID..":"..tostring(v4ReceiptSerial)
++    local ticket={receipt=receipt,utcStart=utcStart,utcEnd=utcEnd,
++        friendCount=v4VerifiedFriends(player),selectedSkill=skill,
++        verifiedByCanonicalGame=true}
++    v4SavePending[player]=true
++    outstandingWrites+=1
++    player:SetAttribute("P0D_V4_SaveStatus","WRITING")
++    task.spawn(function()
++        local acknowledged=false
++        local updated=nil
++        -- UpdateAsync can commit even when the response is lost: retry SAME token.
++        for attempt=1,3 do
++            if studioHatchStore==nil or player.UserId<=0 then break end
++            local ok,record=PersistentHatch.settleSixSkill(studioHatchStore,player.UserId,ticket)
++            if ok and record then acknowledged=true;updated=record;break end
++            if attempt<3 then task.wait(attempt*.5) end
++        end
++        if acknowledged and updated and player.Parent==Players then
++            local previous=persistentProfiles[player]
++            if previous==nil or updated.revision>=previous.revision then
++                persistentProfiles[player]=updated
++            end
++            publishV4Canonical(player)
++        elseif player.Parent==Players then
++            player:SetAttribute("P0D_V4_SaveStatus","UNCONFIRMED")
++            warn("P0D_V4_SAVED_XP_NOT_CONFIRMED",player.UserId)
++        end
++        v4SavePending[player]=nil
++        outstandingWrites-=1
++    end)
++end
++local function v4TickCanonical()
++    if not RunService:IsStudio() then return end
++    local utcNow=os.time()
++    for _,player in ipairs(Players:GetPlayers()) do
++        local skill=v4OnHomePad(player)
++        if not canWriteProfile(player) or skill==nil then
++            v4WindowStart[player]=nil
++            v4WindowSkill[player]=nil
++        elseif v4WindowSkill[player]~=skill or v4WindowStart[player]==nil then
++            v4WindowSkill[player]=skill
++            v4WindowStart[player]=utcNow
++        elseif utcNow-v4WindowStart[player]>=30 and not v4SavePending[player] then
++            local start=v4WindowStart[player]
++            -- Never award a batch crossing local midnight; restart new day window.
++            if math.floor((start+32400)/86400)~=math.floor((utcNow+32400)/86400) then
++                v4WindowStart[player]=utcNow
++            else
++                v4WindowStart[player]=utcNow
++                v4SaveOneWindow(player,skill,start,utcNow)
++            end
++        end
++    end
++end
+ 
+ local function tickRound()
+     local now = serverNow()
+@@ -2088,6 +2252,8 @@
+             end
+         end
+     end
++    -- Same original Game authority: canonical six-skill Store update (30s batches).
++    v4TickCanonical()
+     -- Reuse the sole 0.5-second Game tick for visible/counterable awakening.
+     for player,fx in pairs(earnedPowerVisual) do
+         local state=earnedPower[player]
