@@ -83,6 +83,22 @@ local function check(name, expected, change)
 end
 
 check("valid team-to-teammate pass", "ACCEPT")
+check("billion scale Roblox player IDs", "ACCEPT", function(w, r)
+    local actor, target = 5000000123, 5000000456
+    w.players[actor] = w.players[1]
+    w.players[target] = w.players[2]
+    w.players[1] = nil
+    w.players[2] = nil
+    w.lastAcceptedSeqByUser[actor] = w.lastAcceptedSeqByUser[1]
+    w.lastAcceptedSeqByUser[1] = nil
+    w.eggs.E2.carrierUserId = actor
+    r.actorUserId = actor
+    r.targetUserId = target
+end)
+check("above maximum exact integer user ID", "INVALID_PARTICIPANTS", function(_, r)
+    r.actorUserId = 9007199254740992
+end)
+
 check("classic/5 egg ID independent", "ACCEPT", function(w, r)
     local egg = w.eggs.E2
     w.eggs.E2 = nil
@@ -204,5 +220,5 @@ check("missing server raycast", "PASS_LINE_OF_SIGHT_BLOCKED", function(w)
     w.serverLineOfSightClear = nil
 end)
 
-assert(tests == 39, "native assertions count changed: " .. tostring(tests))
-print("P0D_EGG_RELAY_NATIVE_POLICY_39_CASES_PASS")
+assert(tests == 41, "native assertions count changed: " .. tostring(tests))
+print("P0D_EGG_RELAY_NATIVE_POLICY_41_CASES_PASS")
