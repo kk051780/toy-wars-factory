@@ -117,7 +117,7 @@
     },
     "SCOUT_SPECIES_V1": {
       "enabled": true,
-      "status": "RICH57_NATIVE_LUAU_AND_ROJO_CI_PENDING",
+      "status": "RICH57_NATIVE_57_LUAU_AND_SOURCE_EXACT_ROJO_SUCCESS_STUDIO_NOT_TESTED",
       "feature": "original three real scout species default/forest/star become visually/behaviorally distinct",
       "dependency": "SAVED_BEAST_EVOLUTION=true",
       "rollback": "disable SCOUT_SPECIES_V1 flag; original rich56 preserved",
@@ -132,7 +132,14 @@
       "original_store_untouched": true,
       "studio_engine": "NOT_TESTED",
       "no_paid": true,
-      "no_pvp_changes": true
+      "no_pvp_changes": true,
+      "first_successful_build": {
+        "head": "639da1af22f8fcee1e609a2637ef3bbcabf33d6f",
+        "run_id": 43508325263,
+        "artifact_id": 14077447164,
+        "source_count": 57,
+        "conclusion": "success"
+      }
     }
   }
 }

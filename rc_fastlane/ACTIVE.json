@@ -46,7 +46,7 @@
   "owner_fun": "NOT_TESTED",
   "production_publish_authorized": false,
   "rollback_granularity": "REALM_HUNT_V1 and SIX_SKILL_DURABLE per-feature OFF, V4_IDLE_FRIEND_SAFE_FIX via ACTIVE, rich47/legacy21 fallback; original Game/Store source pinned",
-  "status": "RICH57_SCOUT_SPECIES_SOURCE_PENDING_RC_CI",
+  "status": "RICH57_SCOUT_SPECIES_3VARIANT_RC_BUILD_SUCCESS_ENGINE_NOT_TESTED",
   "release_progress_last_official": 75,
   "first_verified_run": {
     "workflow_run_id": 43483022604,
@@ -125,7 +125,13 @@
       "expected_sources": 57,
       "only_original_game_and_one_pure_module": true,
       "original_inventory_unchanged": true,
-      "engine_studio": "NOT_TESTED"
+      "engine_studio": "NOT_TESTED",
+      "first_verified_build": {
+        "head": "639da1af22f8fcee1e609a2637ef3bbcabf33d6f",
+        "run_id": 43508325263,
+        "source_count": 57,
+        "conclusion": "success"
+      }
     }
   },
   "feature_switches": {

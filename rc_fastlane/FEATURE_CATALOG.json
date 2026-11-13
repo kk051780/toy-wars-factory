@@ -3,7 +3,7 @@
   "as_of_jst": "2026-11-14",
   "rc_branch": "rc/p0d-s1-kids-rc01",
   "active_source": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
-  "verified_rc_head": "947cddb5351ba95b9b27597b9ec1828a8297cd66",
+  "verified_rc_head": "639da1af22f8fcee1e609a2637ef3bbcabf33d6f",
   "official_s1_previous_score": 75,
   "stages": {
     "IDEA": "企画段階",
@@ -595,12 +595,12 @@
       "id": "P0D-058",
       "group": "収集育成",
       "name": "魔獣3種・進化分岐の固有能力と外観",
-      "stage": "SOURCE",
+      "stage": "RC",
       "release": "S1",
       "evidence": "https://github.com/kk051780/toy-wars-factory/tree/rc/p0d-s1-kids-rc01/rc_fastlane/features/scout_species",
-      "note": "既存3種スカウトの実物3D角/翼/種別ラベルを差別化。森林:二連撃と守護1回増、星:重撃と守護1秒延長、標準:旧挙動。既存Gameの召喚だけを使用。RC CI待ち",
-      "rc_evidence": null
+      "note": "元の3種類(default/forest/star)を既存Game内で3D差別化。森は進化後最大2回の軽い攻撃・守護+1回、星は強めの1回攻撃・守護+2回、標準は従来。元55ソース不変、57/57 native+Rojo。実機未検証",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43508325263"
     }
   ],
-  "last_progress_change": "P0D-058 SOURCE new idea; verified RC20/58 until this build source-exact 57/57 succeeds"
+  "last_progress_change": "P0D-058 SOURCE->RC exact native Luau 57/57 source-exact Rojo 43508325263; RC21/58 (36.2%)"
 }
