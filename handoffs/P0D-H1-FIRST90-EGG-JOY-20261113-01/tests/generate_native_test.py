@@ -7,7 +7,6 @@ p=argparse.ArgumentParser()
 p.add_argument("--write",required=True)
 a=p.parse_args()
 rules=(OWN/"client/EggJoyRules.luau").read_text(encoding="utf8")
-test=String=None
 test='local Rules = (function()\n'+rules+'\nend)()\n'+r'''
 local count = 0
 local function check(ok, message)
