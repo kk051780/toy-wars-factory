@@ -9,7 +9,7 @@ BASE=REPO/"handoffs/P0D-EARNED-EVOLUTION-FULL-H1-20261113-01"
 OLD=BASE/"dist/EGG_RAID_RUMBLE_EARNED_EVOLUTION_FULL_H1_PRIVATE_STUDIO_ONLY"
 DIST=OWN/"dist/EGG_RAID_RUMBLE_FIRST90_H1_PRIVATE_STUDIO_UNPUBLISHED"
 OVERRIDES={
- "server/Game.server.luau":("Game.server.luau","71496d7ea8e84d79c2e7cf353012dacec365fba6"),
+ "server/Game.server.luau":("Game.server.luau","0f3c6fe53ec91f54a26d6ed5cf4a6503488db857"),
  "client/HUD.client.luau":("HUD.client.luau","58140a33da247dc582403b1b0638e3643ab797fe"),
  "server/MusouHorde.luau":("MusouHorde.luau","8c147c801e7fa1ff362922d66c9a6fd432fc8b6e"),
  "server/First90GuideRules.luau":("First90GuideRules.luau","644073946930d63e6b06c20ca249739b9ecfa5ad"),
