@@ -5,6 +5,7 @@ on:
       - rc/p0d-s1-kids-rc01
       - feature/p0d-private61-native105-size-qa-20261114
       - feature/p0d-private62-starry-meteor-20261114-01
+      - feature/p0d-integrator-private62-mobile-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -173,6 +174,54 @@ jobs:
             test "$BEFORE" = "$AFTER"
             echo P0D_PRIVATE62_METEOR_OFF_PRESERVES_ALL_61_BYTES_PASS
             python3 -B rc_fastlane/apply_meteor_fourth.py --profile rich51 --dist "$DIST" --enabled true
+          fi
+      - name: Integrate verified portrait relay HUD fix into actual newest PRIVATE62 source, rollback OFF byte exact
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib,os
+          d=Path(os.environ["DIST"])
+          src={p.relative_to(d/"src").as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+               for p in sorted((d/"src").rglob("*.luau"))}
+          assert len(src)==62,("EXPECTED_METEOR62_SOURCE",len(src))
+          pins={k:hashlib.sha256((d/k).read_bytes()).hexdigest() for k in
+               ("SOURCE_LOCK.json","RC_FEATURE_LOCK.json","default.project.json")}
+          Path("/tmp/p0d_mob62_before_src.json").write_text(json.dumps(src,sort_keys=True))
+          Path("/tmp/p0d_mob62_before_lock.json").write_text(json.dumps(pins,sort_keys=True))
+          print("P0D_MOBILE_INTEGRATOR_SOURCE62_FROZEN")
+          PY
+            python3 -B rc_fastlane/apply_relay_touch_layout_private62.py --dist "$DIST" --enabled off
+            python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib,os
+          d=Path(os.environ["DIST"])
+          orig=json.loads(Path("/tmp/p0d_mob62_before_src.json").read_text())
+          after={p.relative_to(d/"src").as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                 for p in sorted((d/"src").rglob("*.luau"))}
+          assert orig==after,"MOBILE62_OFF_MODIFIED_SOURCE"
+          lock_orig=json.loads(Path("/tmp/p0d_mob62_before_lock.json").read_text())
+          for name,pin in lock_orig.items():
+              assert hashlib.sha256((d/name).read_bytes()).hexdigest()==pin,("MOBILE62_OFF_MODIFIED_PROJECT_OR_LOCK",name)
+          print("P0D_INTEGRATOR62_MOBILE_OFF_ALL62_AND_PROJECT_LOCKS_BYTE_EXACT_PASS")
+          PY
+            python3 -B rc_fastlane/apply_relay_touch_layout_private62.py --dist "$DIST" --enabled on
+            python3 - <<'PY'
+          from pathlib import Path
+          import json,hashlib,os
+          d=Path(os.environ["DIST"])
+          orig=json.loads(Path("/tmp/p0d_mob62_before_src.json").read_text())
+          actual={p.relative_to(d/"src").as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                  for p in sorted((d/"src").rglob("*.luau"))}
+          assert len(actual)==62
+          assert sorted(k for k in orig if orig[k]!=actual[k])==["client/HUD.client.luau"]
+          assert hashlib.sha256((d/"default.project.json").read_bytes()).hexdigest()==json.loads(Path("/tmp/p0d_mob62_before_lock.json").read_text())["default.project.json"]
+          print("P0D_INTEGRATOR62_MOBILE_HUD_ONLY_AND_ORIGINAL_OTHER61_BYTE_IDENTICAL_PASS")
+          PY
+            python3 -B rc_fastlane/rc62_touch_geometry_audit.py --hud "$DIST/src/client/HUD.client.luau"
           fi
       - uses: actions/checkout@v4
         with:
@@ -479,6 +528,8 @@ jobs:
               assert place_bytes>507197 and place_bytes<2000000,('IMPLAUSIBLE_PRIVATE61_PLACE_SIZE',place_bytes)
               print('P0D_PRIVATE62_ACTUAL_PLACE_RBXLX_BYTES',place_bytes)
               print('P0D_PRIVATE62_SOURCE_PRESERVED_FIVE_FEATURES',sum(actual.values()),int(wcs_enabled),int(seven_enabled),int(egg_enabled),int(star_enabled),int(meteor_enabled))
+          if p=='rich51':
+              print('P0D_INTEGRATOR62_ACTUAL_PRIVATE_PLACE_BYTES',target.stat().st_size)
           receipt={'release_id':'P0D-S1-KIDS-RC01','profile':p,'source_commit':source,
             'source_overlays':overlay_ids,'composite_rc_source_commit':os.environ['GITHUB_SHA'],
             'rc_branch_commit':os.environ['GITHUB_SHA'],'place_sha256':digest,
