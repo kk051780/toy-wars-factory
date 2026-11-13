@@ -153,11 +153,38 @@ p.evoReceipts.mismatchedStage2={
 }
 check(Dex.snapshot(p,owned)==nil,"stage2 choice must match actual branch")
 p.evoReceipts.mismatchedStage2=nil
+-- Evolve and switch receipts must reflect the original server's actual
+-- fragment cost. Otherwise a counterfeit free receipt poisons the album.
+p.evoReceipts.zeroCost={
+    itemId="forest_scout",action="EVOLVE",stage=2,branch="GUARD",
+    choice="GUARD",cost=0,formId="forest_scout_S2_GUARD"
+}
+local fake,cause=Dex.snapshot(p,owned)
+check(fake==nil and cause=="INVALID_EVOLUTION_RECEIPT",
+    "forged zero-cost evolution is not a discovery")
+p.evoReceipts.zeroCost=nil
+p.evoReceipts.fakeSwitchCost={
+    itemId="forest_scout",action="SWITCH",stage=3,branch="GUARD",
+    choice="GUARD",cost=0,formId="forest_scout_S3_GUARD"
+}
+fake,cause=Dex.snapshot(p,owned)
+check(fake==nil and cause=="INVALID_EVOLUTION_RECEIPT",
+    "forged free branch switch is not a discovery")
+p.evoReceipts.fakeSwitchCost=nil
+-- The genuine rules cannot evolve stage 2 twice; only respec switches.
+p.evoReceipts.duplicateStage={
+    itemId="forest_scout",action="EVOLVE",stage=2,branch="GUARD",
+    choice="GUARD",cost=5,formId="forest_scout_S2_GUARD"
+}
+fake,cause=Dex.snapshot(p,owned)
+check(fake==nil and cause=="DUPLICATE_STAGE_EVOLUTION",
+    "duplicate stage2 permanent evolution rejected")
+p.evoReceipts.duplicateStage=nil
 -- Extra legacy form from another unowned item must not appear.
 local more=E.newProfile(778)
 more.evoReceipts.foreign={
    itemId="star_scout",action="EVOLVE",stage=1,branch="NONE",choice="NONE",
-   formId="star_scout_S1"
+   formId="star_scout_S1",cost=2
 }
 local foreignDex=Dex.snapshot(more,{forest_scout=1})
 check(foreignDex.discoveredCount==1,"not owned foreign does not grant")
