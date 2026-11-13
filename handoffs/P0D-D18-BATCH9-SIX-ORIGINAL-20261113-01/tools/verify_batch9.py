@@ -56,7 +56,7 @@ def validate_models(d):
  return True
 def verify_manifest():
  manifest=json.loads((ROOT/"BUILD_MANIFEST.json").read_text(encoding="utf8"))
- if manifest.get("source_files") is None or len(manifest["source_files"])!=10:fail("manifest file count")
+ if manifest.get("source_files") is None or len(manifest["source_files"])!=11:fail("manifest file count")
  if manifest.get("atlas_sha256")!=ATLAS:fail("manifest atlas")
  for item in manifest["source_files"]:
   path=item["path"]

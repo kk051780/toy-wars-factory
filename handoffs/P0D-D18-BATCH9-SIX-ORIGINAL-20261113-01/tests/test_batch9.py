@@ -31,6 +31,9 @@ class TestBatch9(unittest.TestCase):
   for w in ('WorldModel','CanCollide=false','CanTouch=false','CanQuery=false','MAX_ACTIVE=12'):
    self.assertIn(w,s)
   self.assertIn('local ENABLED=false',(R/'src/DisabledPreview.client.luau').read_text(encoding='utf8'))
+  gallery=(R/'src/D18StudioGallery.client.luau').read_text(encoding='utf8')
+  for w in ('RunService:IsStudio()', 'ViewportFrame', 'WorldModel', 'Factory.Build', 'Factory.SetPose', 'Factory.SetYaw', 'Catalog.ids()'):
+   self.assertIn(w,gallery)
  def test_catalog_includes_every_id(self):
   s=(R/'src/D18Batch9Catalog.luau').read_text(encoding='utf8')
   for c in self.cs:self.assertIn(c['id'],s)

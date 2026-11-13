@@ -4,14 +4,16 @@
   "atlas_sha256": "cf5ec26836842ce55a764c5ad66c711f00da0ed4cc30d80dad0df851e2656e01",
   "claim_issue": 265,
   "source_only": true,
-  "disabled": true,
+  "studio_only_gallery": true,
+  "gameplay_enabled": false,
   "base_batch8_commit": "7bfb7bd5a4d4531ceaf2deaaf19f7591d3c218cd",
   "counts": {
     "previous_source_models": 60,
     "batch9_new_source_models": 6,
     "post_batch_source_models": 66,
     "canonical_atlas_models": 72,
-    "official_RC_new_adopted": 0
+    "official_RC_new_adopted": 0,
+    "source_parts": 83
   },
   "new_model_ids": [
     "TRCA-BE-081",
@@ -43,16 +45,20 @@
       "git_blob_sha1": "b3f840aeef829e239f29299dc324a441785206d9"
     },
     {
+      "path": "src/D18StudioGallery.client.luau",
+      "git_blob_sha1": "f70893a4ed92aa9c5879e2c8ecc91280c483ddd8"
+    },
+    {
       "path": "default.project.json",
-      "git_blob_sha1": "f561e7fb1d7e98d36281197d3002ff021b519525"
+      "git_blob_sha1": "5ccca74801ab41e85fc9dcacbfca13f837beab14"
     },
     {
       "path": "README.md",
-      "git_blob_sha1": "a647e5e8011b5671c13eb63bcb35764650cccf0b"
+      "git_blob_sha1": "c8d78c7e1f4d76e61ee0287495206b14375f3c72"
     },
     {
       "path": "tests/test_batch9.py",
-      "git_blob_sha1": "fe149bca8473d8c2bce343e9225461fa4f3ddd3f"
+      "git_blob_sha1": "42bf59614a34c090b91cdde2f4ae0baeff0e1aa9"
     },
     {
       "path": "tests/test_mutants.py",
@@ -60,7 +66,7 @@
     },
     {
       "path": "tools/verify_batch9.py",
-      "git_blob_sha1": "6fdb9bd7460b7704d40b55bd84ddd1d4235cf1df"
+      "git_blob_sha1": "1f360f5b22b2f914b0c04fa2d387bfa13297a849"
     }
   ],
   "real_studio_tested": false,

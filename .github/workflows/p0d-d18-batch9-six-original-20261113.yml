@@ -44,7 +44,7 @@ jobs:
               p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
           PY
           /tmp/d18_rojo --version | grep -F 7.7.1
-      - name: Real Rojo preview-only project and original 3/3 embedded Luau byte integrity
+      - name: Real Rojo preview-only project and original 4/4 embedded Luau byte integrity
         shell: bash
         run: |
           set -euo pipefail
@@ -54,7 +54,7 @@ jobs:
           import collections,hashlib,json,os,pathlib,xml.etree.ElementTree as ET
           root=pathlib.Path(os.environ["D18"])
           sources=list((root/"src").rglob("*.luau"))
-          assert len(sources)==3,len(sources)
+          assert len(sources)==4,len(sources)
           place=pathlib.Path("/tmp/d18_batch9_out/P0D_D18_BATCH9_DISABLED_PRIVATE_PREVIEW.rbxlx")
           xml=ET.fromstring(place.read_bytes())
           actual=[];classes=collections.Counter()
@@ -65,13 +65,13 @@ jobs:
               if src is None:continue
               actual.append(src.text or "")
               classes[kind]+=1
-          assert classes=={"ModuleScript":2,"LocalScript":1},classes
+          assert classes=={"ModuleScript":2,"LocalScript":2},classes
           assert collections.Counter(actual)==collections.Counter(p.read_text(encoding="utf8") for p in sources),len(actual)
           receipt={
               "stage":"PRELAUNCH_NONCOMBAT_DISABLED_PREVIEW_ONLY",
               "source_models_canonical":6,
               "prior_models_source":60,"after_batch_models_source":66,
-              "official_rc_new_model_count":0,"script_count":3,
+              "official_rc_new_model_count":0,"script_count":4,
               "original_luau_byte_equal":True,"native_luau_compiled":False,
               "studio_tested":False,"mobile_tested":False,
               "published":False,"commit":os.environ["GITHUB_SHA"],
@@ -79,9 +79,9 @@ jobs:
               "place_bytes":place.stat().st_size
           }
           pathlib.Path("/tmp/d18_batch9_out/SOURCE_PROOF.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
-          print("D18_BATCH9_ORIGINAL_3_OF_3_SOURCE_LUAU_REAL_ROJO_XML_PASS",dict(classes))
+          print("D18_BATCH9_ORIGINAL_4_OF_4_SOURCE_LUAU_REAL_ROJO_XML_PASS",dict(classes))
           PY
-      - name: Native compiler validates 3 exact original Luau preview sources
+      - name: Native compiler validates 4 exact original Luau Studio-only gallery sources
         shell: bash
         run: |
           set -euo pipefail
@@ -96,7 +96,7 @@ jobs:
               /tmp/d18_batch9_native/luau-compile "$file" >/dev/null
               count=$((count+1))
           done < <(find "$D18/src" -name '*.luau' -print0)
-          test "$count" -eq 3
+          test "$count" -eq 4
           python3 - <<'PY'
           import json,pathlib
           p=pathlib.Path("/tmp/d18_batch9_out/SOURCE_PROOF.json")
@@ -104,7 +104,7 @@ jobs:
           d["native_luau_compiled"]=True
           p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
           PY
-          echo D18_BATCH9_3_OF_3_REAL_NATIVE_LUAU_PASS
+          echo D18_BATCH9_4_OF_4_REAL_NATIVE_LUAU_PASS
       - name: Upload disabled source preview and exact receipt NOT publish
         uses: actions/upload-artifact@v4
         with:
