@@ -1,0 +1,74 @@
+name: P0D MULTI-EGG genuine native Luau 5-egg score policy PRE-INTEGRATION only
+on:
+  push:
+    branches:
+      - feature/p0d-multi-egg-score-rules-preintegration-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-multi-egg-authoritative-policy-source-only:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    env:
+      OWN: handoffs/P0D-MULTI-EGG-SCORE-CORE-20261113-01
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout actual immutable original H1 untouched and separate source-only prototype
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Guard official RC + original single-egg H1 unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '8f2a4aed7f6483f0bd00e31fcd733a823aa5c008^{commit}'
+          test -z "$(git diff --name-only 8f2a4aed7f6483f0bd00e31fcd733a823aa5c008 HEAD -- releases/P0D_S1_KIDS_RC01 handoffs/P0D-H1-COMPOSITE-20261113-01 handoffs/P0D-H1-FAST-ROUTES-WITH-UX-20261113-01)"
+          test -f "$OWN/src/MultiEggScoreRules.luau"
+          if grep -r -E 'RemoteEvent|FireServer|DataStore|Marketplace|PublishAsync|TeleportService' "$OWN/src"; then
+             echo 'REFERENCE_RULES_MUST_HAVE_NO_ROBLOX_GAME_AUTHORITY' >&2; exit 1
+          fi
+      - name: Checkout exact official upstream Luau native compiler and VM revision
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_multi_egg_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Build pinned actual native Luau interpreter/compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_multi_egg_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_multi_egg_luau -B /tmp/p0d_multi_egg_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_multi_egg_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Compile actual MULTI EGG Luau original reference engine
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/p0d_multi_egg_native/luau-compile "$OWN/src/MultiEggScoreRules.luau" >/dev/null
+          echo 'P0D_MULTI_EGG_GENUINE_NATIVE_LUAU_ORIGINAL_COMPILE_PASS'
+      - name: Compile exact whole genuine actual Luau test fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/tests/run_actual_multi_egg_luau.py" --luau /tmp/p0d_multi_egg_native/luau --build-test /tmp/p0d_multi_egg_native/real_test.luau | tee /tmp/p0d_multi_egg_native/actual_engine_result.log
+          /tmp/p0d_multi_egg_native/luau-compile /tmp/p0d_multi_egg_native/real_test.luau >/dev/null
+          echo 'P0D_MULTI_EGG_GENUINE_NATIVE_LUAU_ALL_TEST_SOURCE_COMPILE_PASS'
+      - name: Verify 92 plus checks and ten malicious-source mutations all EXECUTED
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -E '^P0D_MULTI_EGG_REAL_LUAU_POLICY_PASS_([0-9]+)$' /tmp/p0d_multi_egg_native/actual_engine_result.log
+          grep -F 'P0D_MULTI_EGG_NATIVE_MUTANTS_PASS_10' /tmp/p0d_multi_egg_native/actual_engine_result.log
+          grep -F 'P0D_MULTI_EGG_ACTUAL_S1_GAME_INTEGRATION_STUDIO_2CLIENT_MOBILE_FUN_NOT_TESTED' /tmp/p0d_multi_egg_native/actual_engine_result.log
+      - name: Preserve original source-only native test proof not an actual game Place
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-MULTI-EGG-5-SCORE-AUTHORITATIVE-REFERENCE-NATIVE-NOT-STUDIO
+          path: /tmp/p0d_multi_egg_native/actual_engine_result.log
+          retention-days: 7
+          if-no-files-found: error
