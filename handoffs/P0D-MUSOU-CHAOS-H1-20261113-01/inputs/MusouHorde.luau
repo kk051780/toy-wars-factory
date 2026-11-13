@@ -1,6 +1,7 @@
 --!strict
 -- P0D H1 / ISOLATED Studio-only neutral encounters. ONE Game.server drives tick/hit.
 -- No RemoteEvent, no task scheduler, no XP/egg/score/damage-player authority.
+local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))
 local Horde = {}
 Horde.__index = Horde
 local MINIONS = 8
@@ -118,9 +119,11 @@ function Horde:hit(origin: Vector3,facing: Vector3,damage: number,now: number,ig
     for _,m in ipairs(self.mobs) do
         if m.hp>0 and touched<6 then
             local unit,dist=horizontal(origin,m.pos)
-            if dist<=13 and direction:Dot(unit)>.1 and math.abs(origin.Y-m.pos.Y)<9 then
+            local vertical=origin.Y-m.pos.Y
+            local facingDot=direction:Dot(unit)
+            if Combat.canSweep(dist,vertical,facingDot,true) then
                 local ray=workspace:Raycast(origin,m.pos-origin,params)
-                if not ray then
+                if Combat.canSweep(dist,vertical,facingDot,ray==nil) then
                     touched+=1
                     local dealt=math.max(1,math.min(math.floor(damage),40))
                     m.hp=math.max(0,m.hp-dealt)
@@ -166,17 +169,34 @@ function Horde:tick(now: number,players: {Player},healthy: (Player)->(boolean,Ba
                 local ok,root=healthy(p)
                 if ok and root then
                     local _,dist=horizontal(m.pos,root.Position)
-                    if dist<nearestDist then nearestDist=dist;nearest=p end
+                    if Combat.canAcquire(dist,root.Position.Y-m.pos.Y)
+                        and dist<nearestDist then
+                        nearestDist=dist
+                        nearest=p
+                    end
                 end
+            end
+            -- NPC damage must respect height and solid walls; visual mobs cannot
+            -- hit someone on another level or behind a fortress wall.
+            local function canStrike(target: Player,elite: boolean): boolean
+                local ok,root=healthy(target)
+                if not ok or not root then return false end
+                local _,dist=horizontal(m.pos,root.Position)
+                local params=RaycastParams.new()
+                params.FilterType=Enum.RaycastFilterType.Exclude
+                params.FilterDescendantsInstances={self.folder}
+                local obstruction=workspace:Raycast(m.pos,root.Position-m.pos,params)
+                local visible=obstruction==nil
+                    or (target.Character~=nil and obstruction.Instance:IsDescendantOf(target.Character))
+                return Combat.canMobStrike(dist,root.Position.Y-m.pos.Y,visible,elite)
             end
             if m.elite and m.tellUntil>0 and now>=m.tellUntil then
                 local target=m.target
                 local ok: boolean=false
                 local root: BasePart?=nil
                 if target then ok,root=healthy(target) end
-                if ok and root then
-                    local _,dist=horizontal(m.pos,root.Position)
-                    if dist<=9 then table.insert(impacts,{player=target,damage=11,kind="ELITE"}) end
+                if ok and root and target and canStrike(target,true) then
+                    table.insert(impacts,{player=target,damage=11,kind="ELITE"})
                 end
                 m.tellUntil=0
                 m.target=nil
@@ -187,7 +207,8 @@ function Horde:tick(now: number,players: {Player},healthy: (Player)->(boolean,Ba
                 m.target=nearest
                 m.cue.Text="⚠ 1.5秒後に強撃！"
                 m.body.Color=Color3.fromRGB(238,83,75)
-            elseif not m.elite and nearest and nearestDist<5 and now>=m.attackAt then
+            elseif not m.elite and nearest and now>=m.attackAt
+                and canStrike(nearest,false) then
                 table.insert(impacts,{player=nearest,damage=3,kind="MINION"})
                 m.attackAt=now+2.5
             end
