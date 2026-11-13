@@ -1,0 +1,29 @@
+{
+  "schema": "P0D_CLASSIC_RELAY_RICH55_CLOCK_AND_CI_SOURCE_QA",
+  "observation": "Original canonical Game.serverNow() uses workspace:GetServerTimeNow() (Unix seconds, ~1.79e9 in 2026); original pure EggRelayPolicy.isNumber accepts |n|<1e9. Direct use would reject ALL real passes INVALID_SERVER_CLOCK.",
+  "fix": "Use os.clock() for the relay's server-owned nowSec and per-egg 12-second lastRelayAtSec and cooldown HUD; no other Game clocks changed.",
+  "baseline_original_author_game_commit": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
+  "baseline_author_relay_policy_gitblob": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
+  "feature_id": "EGG_RELAY_CLASSIC_V1",
+  "run_evidence": {
+    "source_remote_fetch_and_unique_anchor_apply": "PASS",
+    "new_clock_and_CI_static_checks": "21/21 PASS",
+    "prior_source_static_checks": "38/38 PASS",
+    "actual_python_patcher_execution": "NOT_VERIFIED",
+    "native_luau_compile": "NOT_VERIFIED",
+    "rojo_rc56": "NOT_VERIFIED",
+    "studio": "NOT_TESTED",
+    "android": "NOT_TESTED",
+    "owner_fun": "NOT_TESTED",
+    "latest_source_count": 56,
+    "rc57_success": "NOT_VERIFIED"
+  },
+  "workflow": ".github/workflows/p0d-egg-relay-classic-rc55-candidate-ci.yml",
+  "workflow_scope": "Unpublished isolated CI candidate. Rebuild authentic 56-source RC (includes SavedBeastEvolution and SavedPveMastery), add exactly one pure EggRelayPolicy module and change original Game+HUD, expect 57 sources. Native/Rojo full build required; merely committing workflow does not establish PASS.",
+  "not_official_RC": true,
+  "release_progress": 75,
+  "main_unchanged": true,
+  "no_publish": true,
+  "no_paid": true,
+  "full_RC56_compatibility_pinned_head": "947cddb5351ba95b9b27597b9ec1828a8297cd66"
+}

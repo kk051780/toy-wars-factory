@@ -1,0 +1,62 @@
+{
+  "schema": "P0D_CLASSIC_EGG_RELAY_RICH58_NATIVE_RC57_REBASE_CI_VERIFIED_V1",
+  "date_jst": "2026-11-14",
+  "status": "ISOLATED_RICH58_NATIVE_SOURCE_EXACT_SUCCESS_NOT_OFFICIAL_RC",
+  "exact_successful_head": "8c67a51933c57f2805c2c846e2552ac12dda0b30",
+  "run_id": 43508893406,
+  "run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43508893406",
+  "job_id": 132173653577,
+  "job_name": "rc56-relay-candidate",
+  "job_conclusion": "success",
+  "origin_canonical_verified_rc57": "639da1af22f8fcee1e609a2637ef3bbcabf33d6f",
+  "origin_success_run": 43508325263,
+  "native_upstream_sha": "f46d879e28302a430029304f7f6a162aed66f103",
+  "evidence_from_successful_job_log": [
+    "2026-11-13T21:14:34.3446771Z Ran 11 tests in 0.059s",
+    "2026-11-13T21:14:34.3453466Z OK",
+    "2026-11-13T21:14:36.4935677Z P0D_EGG_RELAY_AUTHENTIC_RICH57_TO_58_ONLY_GAME_HUD_NEW_POLICY_PASS",
+    "2026-11-13T21:15:38.8106926Z P0D_EGG_RELAY_NATIVE_POLICY_41_CASES_PASS",
+    "2026-11-13T21:15:38.8128192Z P0D_EGG_RELAY_RICH58_NATIVE_LUAU_COMPILE_PASS",
+    "2026-11-13T21:15:38.9907008Z /tmp/p0d_relay_rojo.zip: OK",
+    "2026-11-13T21:15:39.1507432Z Built project to P0D_EGG_RELAY_CLASSIC_RICH58_SOURCE_CANDIDATE.rbxlx",
+    "2026-11-13T21:15:39.1822378Z P0D_RELAY_UNPUBLISHED_RICH58_ROJO_SOURCE_EXACT_PASS"
+  ],
+  "actual_checks": {
+    "python_negative_preflight": "11/11 PASS",
+    "native_original_EggRelayPolicy": "41/41 PASS",
+    "native_luau_compile": "58/58 PASS",
+    "real_rojo_source_exact": "58/58 PASS",
+    "only_changed_original_modules": [
+      "server/Game.server.luau",
+      "client/HUD.client.luau"
+    ],
+    "only_new_original_policy": "server/EggRelayPolicy.luau",
+    "others_unchanged": 55,
+    "original_Game_count": 1,
+    "original_Remote_count": 1,
+    "original_DataStore_writer_count": "unchanged",
+    "published": false
+  },
+  "artifact": {
+    "id": 14078031496,
+    "name": "P0D-EGG-RELAY-CLASSIC-RICH58-SOURCE-CANDIDATE-UNPUBLISHED",
+    "size_bytes": 140644,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43508893406/artifacts/14078031496"
+  },
+  "launch_gate": {
+    "official_canonical_RC_adoption": false,
+    "roblox_studio_real_engine": "NOT_TESTED",
+    "roblox_studio_2client": "NOT_TESTED",
+    "android": "NOT_TESTED",
+    "real_dev_DataStore_save_rejoin": "NOT_TESTED",
+    "owner_FUN": "NOT_TESTED",
+    "public_publish": false,
+    "main_merge": false,
+    "paid": false
+  },
+  "rollbacks": [
+    "Do not include this isolated 1-egg patch; reuse exact original successful RC57",
+    "Studio ServerStorage BoolValue P0D_RC_ENABLE_EGG_RELAY_CLASSIC=false disables server transfer and HUD eligibility"
+  ],
+  "scope": "S2 classic one-egg teammate pass only, NOT H2 five-egg; separate H2 source policy complements but is not live-integrated"
+}

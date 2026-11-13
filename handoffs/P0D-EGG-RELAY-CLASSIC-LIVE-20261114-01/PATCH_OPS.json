@@ -1,0 +1,95 @@
+{
+  "schema": "P0D_CLASSIC_RELAY_PATCH_V1",
+  "feature_id": "EGG_RELAY_CLASSIC_V1",
+  "game_id": "TRAP_RAIDERS",
+  "target": "S2_PRIVATE_STUDIO_ONLY",
+  "baseline_source_commit": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
+  "baseline_game_gitblob": "21b866e801a53ba7ebd66132ae55fe28608750d6",
+  "baseline_hud_gitblob": "ce6707dc1f833600e1c6913504d30911b24cb2a4",
+  "source_policy_commit": "d09a52a3b7ca1fe400e30370606d5751751a6941",
+  "source_policy_path": "handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/src/EggRelayPolicy.luau",
+  "source_policy_gitblob": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
+  "game_ops": [
+    {
+      "anchor": "local First90Waypoint = require(script.Parent:WaitForChild(\"First90WaypointRules\"))",
+      "replace": "local First90Waypoint = require(script.Parent:WaitForChild(\"First90WaypointRules\"))\nlocal EggRelay = require(script.Parent:WaitForChild(\"EggRelayPolicy\"))"
+    },
+    {
+      "anchor": "local carryVisuals: {[Player]: Instance} = {}",
+      "replace": "local carryVisuals: {[Player]: Instance} = {}\n-- Runtime OFF switch is Studio-only and never creates a second authority.\n-- Default ON in unpublished Studio testing. Set BoolValue false for instant OFF.\nlocal function classicRelayEnabled(): boolean\n    if not RunService:IsStudio() then return false end\n    local flag = game:GetService(\"ServerStorage\"):FindFirstChild(\"P0D_RC_ENABLE_EGG_RELAY_CLASSIC\")\n    return flag == nil or (flag:IsA(\"BoolValue\") and flag.Value == true)\nend\n-- Original Game owns ALL classic-mode egg transfer versions and cooldowns.\nlocal relayVersions: {[string]: number} = {}\nlocal relayLastAt: {[string]: number} = {}\nlocal relayAcceptedSeq: {[Player]: number} = {}"
+    },
+    {
+      "anchor": "    if match.eggOwners[egg] == player then resetEgg(egg) end",
+      "replace": "    if match.eggOwners[egg] == player then resetEgg(egg) end\n    relayVersions[egg] = (relayVersions[egg] or 0) + 1 -- invalidate stale pass receipts"
+    },
+    {
+      "anchor": "        carry[player] = team\n        map.teams[team].egg.Transparency = 1",
+      "replace": "        carry[player] = team\n        relayVersions[team] = (relayVersions[team] or 0) + 1\n        map.teams[team].egg.Transparency = 1"
+    },
+    {
+      "anchor": "    match.eggOwners = {}\n    match.winner = \"\"",
+      "replace": "    match.eggOwners = {}\n    table.clear(relayVersions)\n    table.clear(relayLastAt)\n    table.clear(relayAcceptedSeq)\n    match.winner = \"\""
+    },
+    {
+      "anchor": "        scoreMode = if EXPERIMENTAL_FIVE_EGG_MODE then \"FIVE_EGG_SCORE\" else \"ONE_EGG_CAPTURE\",",
+      "replace": "        scoreMode = if EXPERIMENTAL_FIVE_EGG_MODE then \"FIVE_EGG_SCORE\" else \"ONE_EGG_CAPTURE\",\n        relayEnabled = classicRelayEnabled() and not EXPERIMENTAL_FIVE_EGG_MODE,\n        relayVersion = relayVersions[carry[player] or \"\"] or 0,\n        relayCooldown = if carry[player] and relayLastAt[carry[player]] then\n            math.max(0, 12 - (os.clock() - relayLastAt[carry[player]])) else 0,"
+    },
+    {
+      "anchor": "remote.OnServerEvent:Connect(function(player: Player, data)",
+      "replace": "-- S2 classic-egg-only DEV feature. The sole original Game and Remote remain\n-- authoritative; five-egg score mode is fail-closed until H2Score supports it.\nlocal function applyClassicEggRelay(player: Player, data)\n    if not classicRelayEnabled() or EXPERIMENTAL_FIVE_EGG_MODE\n        or match.phase ~= \"ACTIVE\" or type(data) ~= \"table\"\n        or type(data.targetUserId) ~= \"number\" or data.targetUserId % 1 ~= 0\n        or math.abs(data.targetUserId)>9007199254740991\n        or type(data.eggId) ~= \"string\" then return end\n    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end\n    lastSeq[player] = data.seq\n    local target: Player? = nil\n    for _,candidate in ipairs(Players:GetPlayers()) do\n        if candidate.UserId == data.targetUserId then target = candidate;break end\n    end\n    if not target or target == player or target.Parent ~= Players then return end\n    local egg = carry[player]\n    if egg == nil or egg ~= data.eggId or carry[target] ~= nil\n        or match.eggOwners[egg] ~= player then return end\n    local aliveA, rootA = healthy(player)\n    local aliveB, rootB = healthy(target)\n    if not aliveA or not aliveB or rootA == nil or rootB == nil then return end\n    local direction = rootB.Position - rootA.Position\n    local rayParams = RaycastParams.new()\n    rayParams.FilterType = Enum.RaycastFilterType.Exclude\n    rayParams.FilterDescendantsInstances = {player.Character, target.Character}\n    local blocked = workspace:Raycast(rootA.Position, direction, rayParams) ~= nil\n    local version = relayVersions[egg] or 0\n    -- Process-relative monotonic clock; Unix server time exceeds policy's numeric bound.\n    local now = os.clock()\n    local positions = {\n        [player.UserId] = {alive=true,team=getTeamName(player),\n            stunned=slowed[player]~=nil,restrained=slowed[player]~=nil,\n            carriedEggId=egg,\n            serverPosition={x=rootA.Position.X,y=rootA.Position.Y,z=rootA.Position.Z}},\n        [target.UserId] = {alive=true,team=getTeamName(target),\n            stunned=slowed[target]~=nil,restrained=slowed[target]~=nil,\n            carriedEggId=carry[target],\n            serverPosition={x=rootB.Position.X,y=rootB.Position.Y,z=rootB.Position.Z}},\n    }\n    local world = {phase=\"PLAYING\",roundEpoch=match.serial,\n        nowSec=now,players=positions,\n        eggs={[egg]={id=egg,phase=\"CARRIED\",carrierUserId=player.UserId,\n            relayEligible=true,transferSeq=version,lastRelayAtSec=relayLastAt[egg]}},\n        lastAcceptedSeqByUser={[player.UserId]=relayAcceptedSeq[player] or 0},\n        serverLineOfSightClear=not blocked}\n    local allowed,receipt=EggRelay.evaluate(world,{\n        actorUserId=player.UserId,targetUserId=target.UserId,eggId=egg,\n        roundEpoch=data.roundEpoch,seq=data.seq,\n        expectedTransferSeq=data.expectedTransferSeq})\n    if not allowed or type(receipt)~=\"table\" then return end\n    -- Atomic, no-yield change of exactly ONE egg and TWO players.\n    if match.phase~=\"ACTIVE\" or EXPERIMENTAL_FIVE_EGG_MODE\n        or match.serial~=receipt.roundEpoch\n        or match.eggOwners[egg]~=player or carry[player]~=egg\n        or carry[target]~=nil then return end\n    match.eggOwners[egg]=target\n    carry[player]=nil\n    carry[target]=egg\n    relayVersions[egg]=receipt.newTransferSeq\n    relayLastAt[egg]=now\n    relayAcceptedSeq[player]=data.seq\n    removeCarrierVisual(player)\n    giveEggVisual(target)\n    broadcast() -- snapshots only; no award, HP, score or Store writes\nend\n\nremote.OnServerEvent:Connect(function(player: Player, data)"
+    },
+    {
+      "anchor": "    elseif data.action == \"MODE_VOTE\" then applyModeVote(player,data)",
+      "replace": "    elseif data.action == \"MODE_VOTE\" then applyModeVote(player,data)\n    elseif data.action == \"EGG_RELAY\" then applyClassicEggRelay(player,data)"
+    },
+    {
+      "anchor": "    lastSeq[player] = nil\n    lastAttack[player] = nil",
+      "replace": "    lastSeq[player] = nil\n    relayAcceptedSeq[player] = nil\n    lastAttack[player] = nil"
+    }
+  ],
+  "hud_ops": [
+    {
+      "anchor": "rescueButton.Visible=false",
+      "replace": "rescueButton.Visible=false\nlocal relayButton=button(gui,\"ClassicEggRelay\",\"🤝 仲間にパス\\nHキー\",\n    UDim2.fromOffset(112,58),UDim2.new(.5,-56,1,-164),\n    Color3.fromRGB(114,80,194))\nrelayButton.Visible=false"
+    },
+    {
+      "anchor": "local seq = 0\nlocal evolutionOpen=false",
+      "replace": "local seq = 0\nlocal relayLatest: any=nil\nlocal evolutionOpen=false"
+    },
+    {
+      "anchor": "attack.MouseButton1Click:Connect(function() action(\"ATTACK\", nil) end)",
+      "replace": "-- Single existing HUD sequence counter; no second Remote or client score logic.\nlocal function nearestRelayTeammate(): Player?\n    local s=relayLatest\n    if type(s)~=\"table\" or type(s.team)~=\"string\" then return nil end\n    local char=player.Character\n    local root=char and char:FindFirstChild(\"HumanoidRootPart\")\n    if not root then return nil end\n    local best: Player?=nil\n    local bestDist=math.huge\n    for _,other in ipairs(Players:GetPlayers()) do\n        local oc=other.Character\n        local otherRoot=oc and oc:FindFirstChild(\"HumanoidRootPart\")\n        local hum=oc and oc:FindFirstChildOfClass(\"Humanoid\")\n        if other~=player and other.Team~=nil and other.Team.Name==s.team\n            and otherRoot and hum and hum.Health>0 then\n            local delta=otherRoot.Position-root.Position\n            local horizontal=Vector3.new(delta.X,0,delta.Z).Magnitude\n            if math.abs(delta.Y)<=4 and horizontal<=8 and horizontal<bestDist then\n                best=other\n                bestDist=horizontal\n            end\n        end\n    end\n    return best\nend\nlocal function fireClassicEggRelay()\n    local s=relayLatest\n    if type(s)~=\"table\" or s.phase~=\"ACTIVE\" or s.relayEnabled~=true\n        or s.scoreMode~=\"ONE_EGG_CAPTURE\"\n        or type(s.carrying)~=\"string\" or s.carrying==\"\" then return end\n    local target=nearestRelayTeammate()\n    if not target or type(s.relayVersion)~=\"number\"\n        or s.relayVersion%1~=0 then return end\n    seq+=1\n    remote:FireServer({action=\"EGG_RELAY\",seq=seq,\n        targetUserId=target.UserId,eggId=s.carrying,\n        roundEpoch=s.serial,expectedTransferSeq=s.relayVersion})\nend\nrelayButton.MouseButton1Click:Connect(fireClassicEggRelay)\nattack.MouseButton1Click:Connect(function() action(\"ATTACK\", nil) end)"
+    },
+    {
+      "anchor": "    elseif input.KeyCode == Enum.KeyCode.G then action(\"ACTIVATE_SCOUT\", nil) end",
+      "replace": "    elseif input.KeyCode == Enum.KeyCode.G then action(\"ACTIVATE_SCOUT\", nil)\n    elseif input.KeyCode == Enum.KeyCode.H then fireClassicEggRelay() end"
+    },
+    {
+      "anchor": "    if id ~= nil then lastUpdateId = id end\n    top.Text =",
+      "replace": "    if id ~= nil then lastUpdateId = id end\n    relayLatest=s -- only after accepted SNAPSHOT ordering check\n    top.Text ="
+    },
+    {
+      "anchor": "    local carryingEgg = type(s.carrying) == \"string\" and s.carrying ~= \"\"\n    trapButton.Active",
+      "replace": "    local carryingEgg = type(s.carrying) == \"string\" and s.carrying ~= \"\"\n    relayButton.Visible=carryingEgg and s.relayEnabled==true\n        and s.scoreMode==\"ONE_EGG_CAPTURE\" and s.phase==\"ACTIVE\"\n    relayButton.Active=relayButton.Visible\n    relayButton.AutoButtonColor=relayButton.Active\n    relayButton.Text=\"🤝 近くの仲間へ\\nパス (H)\"\n    trapButton.Active"
+    }
+  ],
+  "changes_only": [
+    "server/Game.server.luau",
+    "client/HUD.client.luau",
+    "server/EggRelayPolicy.luau"
+  ],
+  "five_egg_mode": "INTENTIONALLY_NOT_IMPLEMENTED",
+  "main_written": false,
+  "rc_integrated": false,
+  "real_studio": "NOT_TESTED",
+  "native_luau": "NOT_TESTED",
+  "owner_fun": "NOT_TESTED",
+  "rollback": "disable EGG_RELAY_CLASSIC_V1 patch application; rebuild same rich54 base",
+  "runtime_switch": {
+    "studio_only": true,
+    "server_storage_bool_value": "P0D_RC_ENABLE_EGG_RELAY_CLASSIC",
+    "missing_defaults": "ON_IN_STUDIO",
+    "false": "DISABLE_BOTH_UI_AND_SERVER_TRANSFER",
+    "never_enables_published_game": true
+  }
+}
