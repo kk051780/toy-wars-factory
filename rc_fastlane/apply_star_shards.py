@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent
 SOURCE=ROOT/"features/star_shards/StarShardHunt.server.luau"
-SOURCE_GIT_BLOB="abd07316ae23bc0b250ebd31590986b09109ce01"
+SOURCE_GIT_BLOB="20dc741a00c0cf40d014df70468864b1695e66e1"
 PRIOR_STAR_BLOB="311d4c75e38f896f24c982afbc6f9d5c35e90cb4"
 FEATURE="STAR_SHARDS_V1"
 DEST="server/StarShardHunt.server.luau"
