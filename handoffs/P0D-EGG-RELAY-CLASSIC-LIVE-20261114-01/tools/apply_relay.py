@@ -39,7 +39,7 @@ def run(dist: Path, policy: Path) -> None:
     # Stage all inputs and validate original RC authority/locks BEFORE writes.
     src = dist / "src"
     bodies = source_bodies(src)
-    assert len(bodies) in (2, 56), ("UNSUPPORTED_BASE_SOURCE_COUNT", len(bodies))
+    assert len(bodies) in (2, 57), ("UNSUPPORTED_BASE_SOURCE_COUNT", len(bodies))
     assert GAME in bodies and HUD in bodies and POLICY not in bodies, "DUPLICATE_OR_MISSING_CORE_MODULE"
     pins = {p: blob(data) for p, data in bodies.items()}
     lock_file = dist / "SOURCE_LOCK.json"
