@@ -17,6 +17,7 @@ OVERLAYS={
  "client/HUD.client.luau": "HUD.client.luau",
  "server/MusouHorde.luau": "MusouHorde.luau",
  "server/MusouBindRules.luau": "MusouBindRules.luau",
+ "server/MusouCombatRules.luau": "MusouCombatRules.luau",
 }
 
 def sha1_blob(raw:bytes)->str:
@@ -42,9 +43,9 @@ def build()->dict:
         target.parent.mkdir(parents=True,exist_ok=True)
         target.write_bytes(f.read_bytes())
     actual=files(DIST)
-    assert len(actual)==37,len(actual)
-    assert len(set(actual)-set(old))==2
-    assert set(actual)-set(old)=={"server/MusouHorde.luau","server/MusouBindRules.luau"}
+    assert len(actual)==38,len(actual)
+    assert len(set(actual)-set(old))==3
+    assert set(actual)-set(old)=={"server/MusouHorde.luau","server/MusouBindRules.luau","server/MusouCombatRules.luau"}
     changed={x for x in old if old[x]!=actual[x]}
     assert changed=={"server/Game.server.luau","client/HUD.client.luau"},changed
     assert all(actual[k]==old[k] for k in old if k not in changed)
@@ -63,6 +64,9 @@ def build()->dict:
     assert game.count('applyNet(player,data)')==1
     assert game.count("applyBreakOrRescue(player,data)")==1
     assert "NET_THROW" in game and "BREAK_FREE" in game and "RESCUE" in game
+    assert "local Combat=require(script.Parent:WaitForChild(\"MusouCombatRules\"))" in actual["server/MusouHorde.luau"].decode()
+    assert "canStrike(nearest,false)" in actual["server/MusouHorde.luau"].decode()
+    assert "canStrike(target,true)" in actual["server/MusouHorde.luau"].decode()
     assert "netImmuneUntil" in game
     assert "if not RunService:IsStudio()" in game
     assert game.count("Progression.recordEvent(round,eventId,kind,true)")==1
@@ -82,7 +86,7 @@ def build()->dict:
       "game_id":"TRAP_RAIDERS",
       "brand":"EGG RAID RUMBLE",
       "base_commit":"a0331e2e452f4e8e6530d32562ba5ff657b011d9",
-      "existing_count":35,"new_count":37,"original_unchanged":33,
+      "existing_count":35,"new_count":38,"original_unchanged":33,
       "overlaid_existing":sorted(changed),
       "new_modules":sorted(set(actual)-set(old)),
       "game_remote_count":1,"studio_private_only":True,
@@ -99,4 +103,4 @@ if __name__=="__main__":
     p.add_argument("--assemble",action="store_true",required=True)
     p.parse_args()
     result=build()
-    print("MUSOU_CHAOS_H1_PRIVATE_37_LUAU_ASSEMBLY_PASS",len(result["source_blob_sha1"]))
+    print("MUSOU_CHAOS_H1_PRIVATE_38_LUAU_ASSEMBLY_PASS",len(result["source_blob_sha1"]))
