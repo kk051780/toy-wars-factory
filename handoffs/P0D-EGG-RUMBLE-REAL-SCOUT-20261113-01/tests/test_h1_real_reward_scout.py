@@ -66,6 +66,7 @@ def contract(game,hud,reward):
  assert game.count('elseif data.action == "PLACE_TRAP" then')==1
  assert 'ModeVote.tally(modeVotes,Players:GetPlayers())' in game
  assert 'H2Score.assertConserved(h2ScoreState)' in game
+ assert 'FREE_HATCH' not in hud
  assert hud.count('local seq = 0')==1
  assert hud.count('remote:FireServer(')==3
  assert 'if kind == "MODE_VOTE" then' in hud
