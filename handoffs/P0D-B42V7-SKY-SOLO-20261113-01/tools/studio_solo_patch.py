@@ -24,8 +24,8 @@ def patch_game(source:str)->str:
         'local studioSoloRound = false -- latched only at authoritative round start\n'
         '-- Only the ORIGINAL Game.server owns the H2 match, egg interactions and scoring.')
     s=once(s,'-- ONLY Server Game confirms objective events.',
-'''-- Private Studio local preview only. Published/live ALWAYS requires both teams.
--- Authenticate exactly one real Player already assigned a canonical team, never fake one.
+'''-- Private Studio local preview only. The published/live game always requires BOTH teams.
+-- This checks a real Player on one already assigned original team; never fakes users.
 local function isStudioSoloPlayer(): boolean
     if not RunService:IsStudio() then return false end
     local online = Players:GetPlayers()
@@ -38,7 +38,7 @@ end
     s=once(s,'''local function resetRound()
     stopCanonical("ROUND_RESET")''',
        '''local function resetRound()
-    studioSoloRound = isStudioSoloPlayer() -- match-scoped, not a disconnect bypass
+    studioSoloRound = isStudioSoloPlayer() -- match-scoped; never allows a 2-player disconnect exploit
     stopCanonical("ROUND_RESET")''')
     s=once(s,
        '''if count >= Config.MinPlayers and teamCount("RED") > 0 and teamCount("BLUE") > 0 then''',
