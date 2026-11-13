@@ -60,7 +60,7 @@ jobs:
           python3 -B "$ROOT/tools/generate_native_studio_solo.py" --write /tmp/p0d-solo-artifacts/solo_native_qa.luau
           /tmp/p0d_solo_luau/luau-compile /tmp/p0d-solo-artifacts/solo_native_qa.luau >/dev/null
           /tmp/p0d_solo_luau/luau /tmp/p0d-solo-artifacts/solo_native_qa.luau | tee /tmp/p0d-solo-artifacts/NATIVE_SOLO_QA.txt
-          grep -F 'P0D_S1_STUDIO_SOLO_NATIVE_30_ASSERTIONS_PASS' /tmp/p0d-solo-artifacts/NATIVE_SOLO_QA.txt
+          grep -F 'P0D_S1_STUDIO_SOLO_LATCH_NATIVE_40_ASSERTIONS_PASS' /tmp/p0d-solo-artifacts/NATIVE_SOLO_QA.txt
       - name: Get official pinned Rojo v7.7.1
         shell: bash
         run: |
