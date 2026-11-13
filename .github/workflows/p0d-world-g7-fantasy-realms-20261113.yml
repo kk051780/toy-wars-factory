@@ -1,0 +1,110 @@
+name: P0D G7 three fantasy pocket worlds source native Studio showroom
+on:
+  push:
+    branches:
+      - feature/p0d-world-g7-fantasy-realms-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  studio-fantasy-source:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      G7: handoffs/P0D-WORLD-G7-FANTASY-REALMS-20261113-01
+    steps:
+      - name: Checkout original fantasy source in isolated workspace
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify exactly source-locked fantasy 3D cards and unsafe policy mutation tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$G7"
+          python3 tools/verify_g7.py
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Download official hash-pinned Rojo 7.7.1 builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_g7_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_g7_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import pathlib,stat,zipfile
+          with zipfile.ZipFile("/tmp/p0d_g7_rojo.zip") as z:
+              fs=[name for name in z.namelist() if name.rsplit("/",1)[-1]=="rojo"]
+              assert len(fs)==1
+              p=pathlib.Path("/tmp/p0d_g7_rojo")
+              p.write_bytes(z.read(fs[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_g7_rojo --version | grep -F 7.7.1
+      - name: Build REAL unpublished 3D fantasy studio showroom not H1 game
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_g7_out
+          /tmp/p0d_g7_rojo build "$G7/default.project.json" -o /tmp/p0d_g7_out/WORLD_G7_FANTASY_REALMS_STUDIO_SHOWROOM_ONLY.rbxlx
+          test -s /tmp/p0d_g7_out/WORLD_G7_FANTASY_REALMS_STUDIO_SHOWROOM_ONLY.rbxlx
+      - name: Actual Rojo XML contains exactly 2 source Lua script byte strings, no game owner
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import collections,hashlib,json,os,pathlib,xml.etree.ElementTree as ET
+          base=pathlib.Path(os.environ["G7"])
+          place=pathlib.Path("/tmp/p0d_g7_out/WORLD_G7_FANTASY_REALMS_STUDIO_SHOWROOM_ONLY.rbxlx")
+          xml=ET.fromstring(place.read_bytes())
+          sources=[];counts=collections.Counter()
+          for node in xml.iter("Item"):
+              k=node.attrib.get("class")
+              if k not in ("Script","LocalScript","ModuleScript"):continue
+              v=node.find("./Properties/string[@name='Source']")
+              if v is None:continue
+              sources.append(v.text or "")
+              counts[k]+=1
+          expected=[p.read_text(encoding="utf8") for p in sorted((base/"src").rglob("*.luau"))]
+          assert len(expected)==2 and collections.Counter(sources)==collections.Counter(expected),(counts,len(expected))
+          assert counts=={"Script":1,"ModuleScript":1},counts
+          ticket={"type":"G7_S2_PLUS_STANDALONE_FIELD_STUDIO_ONLY","script_count":2,
+             "actual_Studio_source_2_of_2_byte_exact":True,
+             "genuine_Studio_3D_run":"NOT_TESTED","egg_gameplay":"NOT_INCLUDED",
+             "real_zero_g":"NOT_IMPLEMENTED","real_gates":"NOT_IMPLEMENTED",
+             "mobile_test":"NOT_TESTED","human_fun":"NOT_TESTED",
+             "release_adopted":False,"published":False,
+             "fixed_commit":os.environ["GITHUB_SHA"],"place_bytes":place.stat().st_size,
+             "place_sha256":hashlib.sha256(place.read_bytes()).hexdigest()}
+          pathlib.Path("/tmp/p0d_g7_out/G7_SOURCE_BUILD_RECEIPT.json").write_text(json.dumps(ticket,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
+          print("P0D_G7_REAL_ROJO_STUDIO_PLACE_TWO_SCRIPT_BYTES_EXACT_PASS")
+          PY
+      - name: Compile original 2 scripts with pinned native Luau and execute real event policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/p0d_g7_luau
+          git -C /tmp/p0d_g7_luau fetch --depth 1 origin f46d879e28302a430029304f7f6a162aed66f103
+          git -C /tmp/p0d_g7_luau checkout --detach FETCH_HEAD
+          test "$(git -C /tmp/p0d_g7_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S /tmp/p0d_g7_luau -B /tmp/p0d_g7_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_g7_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          count=0
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_g7_native/luau-compile "$file" >/dev/null
+            count=$((count+1))
+          done < <(find "$G7/src" -name '*.luau' -print0)
+          test "$count" -eq 2
+          cd "$G7"
+          /tmp/p0d_g7_native/luau tests/director_native.luau
+          echo "P0D_G7_REAL_NATIVE_LUAU_TWO_COMPILE_AND_DIRECTOR_RUNTIME_PASS"
+      - name: Upload unpublished standalone fantasy studio source-showcase only
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-WORLD-G7-3-FANTASY-REALMS-STUDIO-ONLY
+          path: |
+            /tmp/p0d_g7_out/WORLD_G7_FANTASY_REALMS_STUDIO_SHOWROOM_ONLY.rbxlx
+            /tmp/p0d_g7_out/G7_SOURCE_BUILD_RECEIPT.json
+          retention-days: 7
+          if-no-files-found: error
