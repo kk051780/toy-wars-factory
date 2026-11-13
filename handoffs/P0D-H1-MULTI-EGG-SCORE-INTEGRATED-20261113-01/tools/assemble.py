@@ -122,7 +122,7 @@ def verify_xml(place,receipt,mode):
             actual[sourceItem.text or ""]+=1
             classes[cls]+=1
     assert expected==actual,("REAL_SCORE_MODE_ROJO_XML_SOURCE_MISMATCH",len(expected),len(actual))
-    assert classes=={"Script":2,"ModuleScript":24,"LocalScript":7},classes
+    assert classes=={"Script":2,"ModuleScript":25,"LocalScript":6},classes
     data=json.loads((dst/"SOURCE_LOCK.json").read_text())
     data.update({"rojo_file_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
             "rojo_file_bytes":place.stat().st_size,"actual_rojo_xml_33_of_33_source_exact":True,
