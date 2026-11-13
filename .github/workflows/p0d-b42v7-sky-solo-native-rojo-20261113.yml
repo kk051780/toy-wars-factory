@@ -64,7 +64,7 @@ jobs:
           ROOT=handoffs/P0D-B42V7-SKY-SOLO-20261113-01
           SOURCE="$ROOT/src/P0DStudioTrialAudit.client.luau"
           TARGET="_p0d_solo_dist/src/client/P0DStudioTrialAudit.client.luau"
-          test "$(git hash-object "$SOURCE")" = 1fadb6f3b796e33335267653b1ce3f414401df13
+          test "$(git hash-object "$SOURCE")" = b09e5fa2b3374cb88cad789b2c4966d4c777b3ef
           test ! -e "$TARGET"
           cp "$SOURCE" "$TARGET"
           python3 - <<'PY'
@@ -88,6 +88,7 @@ jobs:
           assert scripts["P0DStudioTrialAudit"]["$path"]=="src/client/P0DStudioTrialAudit.client.luau"
           print("P0D_OWNER_STUDIO_TRIAL_READONLY_CLIENT_AUDIT_SOURCE_AND_ROJO_PROJECT_MAPPING_PASS")
           PY
+          P0D_SOLO_DIST=_p0d_solo_dist python3 -B "$ROOT/tests/test_diagnostic_route.py"
       - name: Checkout pinned upstream Luau
         uses: actions/checkout@v4
         with:
