@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 FEATURE = "STARRY_PATH_V1"
 SOURCE = ROOT / "features/star_path/StarfallPath.server.luau"
-SOURCE_BLOB = "49f57b6d99357205e9c0b9a720d74ccbab947a87"
+SOURCE_BLOB = "311d4c75e38f896f24c982afbc6f9d5c35e90cb4"
 DEST = "server/StarfallPath.server.luau"
 RUNTIME_ATTRIBUTE = "P0D_RC_ENABLE_STARRY_PATH_V1"
 
