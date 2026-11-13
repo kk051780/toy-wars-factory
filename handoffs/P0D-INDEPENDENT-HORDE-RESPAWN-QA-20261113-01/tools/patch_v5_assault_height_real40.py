@@ -10,7 +10,7 @@ HORDE_BLOB="8c147c801e7fa1ff362922d66c9a6fd432fc8b6e"
 BEFORE="                local hits=horde:hit(anchor,currentRoot.CFrame.LookVector,\n"
 AFTER=("                local sweepOrigin=Vector3.new(anchor.X,currentRoot.Position.Y,anchor.Z)\n"
        "                local hits=horde:hit(sweepOrigin,currentRoot.CFrame.LookVector,\n")
-def blob(data:bytes)->str:return sha1(b"blob "+str(len(data)).encode()+b"\\0"+data).hexdigest()
+def blob(data:bytes)->str:return sha1(b"blob "+str(len(data)).encode()+b"\0"+data).hexdigest()
 def convert(dist:Path)->dict:
  src=dist/"src"
  paths=sorted(src.rglob("*.luau"))
