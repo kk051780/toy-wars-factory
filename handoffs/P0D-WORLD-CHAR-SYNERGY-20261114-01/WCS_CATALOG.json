@@ -1,0 +1,158 @@
+{
+  "schema": "P0D_WCS_V1",
+  "release": "S2+_CANDIDATE_ONLY",
+  "feature_id": "WCS-F01-C01",
+  "scope": "Isolated source: no active RC wiring or native Studio proof",
+  "compatible_existing": {
+    "world_issue": 222,
+    "roster_issue": 283,
+    "sole_rc_issue": 220,
+    "product_issue": 219,
+    "claim_issue": 293
+  },
+  "worlds": [
+    {
+      "id": "WCS-F01",
+      "name": "クリスタル峡谷",
+      "mechanic": "両岸のモグロンを起動し、14秒だけ近道橋のゲートを開ける",
+      "counterplay": "両軍共通・常設迂回路・橋上滞在中は閉鎖停止",
+      "stage": "SOURCE"
+    },
+    {
+      "id": "WCS-F02",
+      "name": "逆さま天空研究所",
+      "mechanic": "風向き予告つき重力ジャンプ床",
+      "counterplay": "普通の階段・落下復帰",
+      "stage": "IDEA"
+    },
+    {
+      "id": "WCS-F03",
+      "name": "月影海底遺跡",
+      "mechanic": "泡路と潮位による別出口",
+      "counterplay": "常設陸ルート",
+      "stage": "IDEA"
+    },
+    {
+      "id": "WCS-F04",
+      "name": "時計仕掛けの廃都",
+      "mechanic": "巨大歯車で城門経路が交替",
+      "counterplay": "門切替予告・地上迂回",
+      "stage": "IDEA"
+    },
+    {
+      "id": "WCS-F05",
+      "name": "砂嵐の蜃気楼市場",
+      "mechanic": "砂嵐時に案内獣が秘密通路を示す",
+      "counterplay": "両軍にヒント・視認性維持",
+      "stage": "IDEA"
+    },
+    {
+      "id": "WCS-F06",
+      "name": "星屑の欠片島",
+      "mechanic": "星の輪で一時的に空路を開く",
+      "counterplay": "全員アクセス・地上退路",
+      "stage": "IDEA"
+    }
+  ],
+  "characters": [
+    {
+      "id": "WCS-C01",
+      "name": "橋掘りモグロン",
+      "world": "WCS-F01",
+      "role": "ゲート起動",
+      "stage": "SOURCE"
+    },
+    {
+      "id": "WCS-C02",
+      "name": "結晶カニトン",
+      "world": "WCS-F01",
+      "role": "橋の状態ヒント",
+      "stage": "IDEA"
+    },
+    {
+      "id": "WCS-C03",
+      "name": "逆さフクロル",
+      "world": "WCS-F02",
+      "role": "安全なジャンプ案内",
+      "stage": "IDEA"
+    },
+    {
+      "id": "WCS-C04",
+      "name": "ガラスコウモリン",
+      "world": "WCS-F02",
+      "role": "上空ルート発見",
+      "stage": "IDEA"
+    },
+    {
+      "id": "WCS-C05",
+      "name": "潮吹きカメル",
+      "world": "WCS-F03",
+      "role": "泡路案内",
+      "stage": "IDEA"
+    },
+    {
+      "id": "WCS-C06",
+      "name": "珊瑚クラゲル",
+      "world": "WCS-F03",
+      "role": "潮位予告",
+      "stage": "IDEA"
+    },
+    {
+      "id": "WCS-C07",
+      "name": "歯車コロリン",
+      "world": "WCS-F04",
+      "role": "門周期の合図",
+      "stage": "IDEA"
+    },
+    {
+      "id": "WCS-C08",
+      "name": "時計キツネコ",
+      "world": "WCS-F04",
+      "role": "裏道発見",
+      "stage": "IDEA"
+    },
+    {
+      "id": "WCS-C09",
+      "name": "砂まきイタチン",
+      "world": "WCS-F05",
+      "role": "砂嵐の道標",
+      "stage": "IDEA"
+    },
+    {
+      "id": "WCS-C10",
+      "name": "磁石ハムリン",
+      "world": "WCS-F05",
+      "role": "鉄扉の起動",
+      "stage": "IDEA"
+    },
+    {
+      "id": "WCS-C11",
+      "name": "星くじら",
+      "world": "WCS-F06",
+      "role": "巨大な空の目印",
+      "stage": "IDEA"
+    },
+    {
+      "id": "WCS-C12",
+      "name": "流星スライム",
+      "world": "WCS-F06",
+      "role": "星輪の予告",
+      "stage": "IDEA"
+    }
+  ],
+  "core_safe": {
+    "no_game_authority": true,
+    "no_score_hp_xp_remote_store": true,
+    "all_classes": true,
+    "both_teams": true,
+    "no_paid_advantage": true
+  },
+  "integration_gate": {
+    "requires": "Workspace.P0D_CrystalCanyonAnchor (BasePart with P0DWorldOptIn=true)",
+    "no_default_map_spawning": true,
+    "sole_writer": "#220",
+    "native_studio": "NOT_TESTED",
+    "android": "NOT_TESTED",
+    "owner_fun": "NOT_TESTED"
+  }
+}
