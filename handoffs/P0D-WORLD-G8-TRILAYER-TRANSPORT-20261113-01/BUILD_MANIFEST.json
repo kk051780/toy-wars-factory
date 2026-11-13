@@ -1,0 +1,47 @@
+{
+  "schema": "P0D_G8_THREE_TIER_SAFE_TRAVEL_PRIVATE_SHA1_V1",
+  "game": "TRAP_RAIDERS",
+  "world_id": "WORLD_G8_TRILAYER",
+  "parent_issue": 222,
+  "feature_ids": [
+    "WF-16",
+    "WF-17",
+    "WF-18"
+  ],
+  "stage": "S2_PLUS_STANDALONE_PRIVATE_STUDIO_ONLY",
+  "base_G7_sha": "3b97a0f8b731e8e2f5c70980631df63fdf9fb890",
+  "source_scripts": 2,
+  "real_source_server_trips": 5,
+  "egg_game_integrated": false,
+  "live_published": false,
+  "studio_2clients": "NOT_TESTED",
+  "phone": "NOT_TESTED",
+  "child_fun": "UNKNOWN",
+  "source_files": [
+    {
+      "path": "src/G8TravelRules.luau",
+      "git_blob_sha1": "e4f1389fc28974e54bf931685de229b274ac8fbf",
+      "bytes": 1406
+    },
+    {
+      "path": "src/G8World.server.luau",
+      "git_blob_sha1": "ccef2ba34e7ce0fc682931af8d8e9180a71beec3",
+      "bytes": 7466
+    },
+    {
+      "path": "default.project.json",
+      "git_blob_sha1": "983ae1228a278a485c8ffb64b73845faec87dc8b",
+      "bytes": 413
+    },
+    {
+      "path": "FIELD_CARDS.md",
+      "git_blob_sha1": "2e448e4ababcb2095d599c024299627f7f734413",
+      "bytes": 4040
+    },
+    {
+      "path": "README.md",
+      "git_blob_sha1": "d3b39cb667642291b70b98b803bd9283df6fa45c",
+      "bytes": 1763
+    }
+  ]
+}
