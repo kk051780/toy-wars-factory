@@ -1,0 +1,60 @@
+name: P0D Egg Relay S2 Source-Only Native Luau QA
+on:
+  push:
+    branches:
+      - feature/p0d-egg-relay-pass-policy-20261113-01
+    paths:
+      - 'handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/**'
+      - '.github/workflows/p0d-egg-relay-policy-native-20261114.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pure-source-native-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exactly own isolated branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python reference plus source drift and false-pass tests
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/tests -p 'test_*.py' -v
+      - name: Checkout pinned real Luau upstream source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_egg_relay_luau_upstream
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Build real Luau runtime CLI and compiler from pinned source
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_egg_relay_luau_upstream rev-parse HEAD)" = "f46d879e28302a430029304f7f6a162aed66f103"
+          cmake -S _p0d_egg_relay_luau_upstream -B /tmp/p0d_egg_relay_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_egg_relay_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Generate only native standalone Luau tests from SHA locked original module
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/tools/generate_native_runner.py --out /tmp/p0d_egg_relay_native/EGG_RELAY_NATIVE_QA.generated.luau
+          /tmp/p0d_egg_relay_native/luau-compile /tmp/p0d_egg_relay_native/EGG_RELAY_NATIVE_QA.generated.luau >/dev/null
+          /tmp/p0d_egg_relay_native/luau /tmp/p0d_egg_relay_native/EGG_RELAY_NATIVE_QA.generated.luau | tee /tmp/p0d_egg_relay_native/EGG_RELAY_NATIVE_QA.log
+          grep -Fx "P0D_EGG_RELAY_NATIVE_POLICY_39_CASES_PASS" /tmp/p0d_egg_relay_native/EGG_RELAY_NATIVE_QA.log
+      - name: Assert S2 source only, official product and Studio not claimed
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/SOURCE_MANIFEST.json")
+          m=json.loads(p.read_text())
+          assert m["status"]=="SOURCE_POLICY_ONLY_NOT_IN_GAME"
+          assert m["product_selected"] is False and m["official_rc_adopted"] is False
+          assert m["roblox_studio"]=="NOT_TESTED"
+          assert m["studio_2client"]=="NOT_TESTED" and m["android"]=="NOT_TESTED"
+          assert m["owner_fun"]=="NOT_TESTED"
+          print("P0D_EGG_RELAY_NO_STUDIO_NO_RC_NO_PRODUCT_SELECTION_ASSERTED")
+          PY
