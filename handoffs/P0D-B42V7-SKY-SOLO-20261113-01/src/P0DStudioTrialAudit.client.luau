@@ -67,6 +67,8 @@ local skyWithEggSerial=-1
 local scoreAfterSkySerial=-1
 local activeSerial=-1
 local carriedSerial=-1
+local skyCarryEgg="" -- exact authoritative snapshot egg ID seen on deck
+local skyCarryCharacter: Model?=nil
 local function refreshStatus()
     if lastSerial<0 or activeSerial~=lastSerial then
         status("0/4 サーバーの試合開始を待機中")
@@ -77,7 +79,7 @@ local function refreshStatus()
     elseif scoreAfterSkySerial~=lastSerial then
         status("3/4 自陣へ帰って卵を納品する")
     else
-        status("4/4 卵所持→天空城床→得点を観測！\n移動と楽しさは本人が判定")
+        status("4/4 同一卵・天空城接地・ソロ得点確認！\n坂の通行と楽しさは本人が判定")
     end
 end
 -- Passive server-authored snapshots: NEVER sends remotes or grants rewards.
@@ -94,13 +96,14 @@ remote.OnClientEvent:Connect(function(msg:any)
         log("ROUND","serial="..tostring(serial).." team="..team)
         lastSerial=serial;lastScore=-1;lastCarry="";lastStep=""
         activeSerial=-1;carriedSerial=-1;skyWithEggSerial=-1;scoreAfterSkySerial=-1
+        skyCarryEgg="";skyCarryCharacter=nil
         carried=false;scored=false
     end
+    if phase=="ACTIVE" then activeSeen=true;activeSerial=serial end
     if phase~=lastPhase or mode~=lastMode then
         log("PHASE",phase.." mode="..mode.." RED="..tostring(msg.redPlayers)
             .." BLUE="..tostring(msg.bluePlayers).." remaining="..tostring(msg.time))
         lastPhase=phase;lastMode=mode
-        if phase=="ACTIVE" then activeSeen=true;activeSerial=serial end
         if phase=="RESULTS" then
             log("RESULT","winner="..tostring(msg.winner).." reason="..tostring(msg.reason)
                 .." carry_seen="..tostring(carried).." score_seen="..tostring(scored))
@@ -115,13 +118,31 @@ remote.OnClientEvent:Connect(function(msg:any)
         end
         lastCarry=carry
     end
-    if lastScore>=0 and score>lastScore then
+    local scoreRose=lastScore>=0 and score>lastScore
+    local population=if type(msg.redPlayers)=="number" and type(msg.bluePlayers)=="number"
+        then msg.redPlayers+msg.bluePlayers else -1
+    local ownerStillSame=skyCarryCharacter~=nil and player.Character==skyCarryCharacter
+    local validSameEggDeposit=scoreRose and carry=="" and lastCarry==skyCarryEgg
+        and skyCarryEgg~="" and population==1 and ownerStillSame
+        and skyWithEggSerial==serial and activeSerial==serial
+    if scoreRose then
         scored=true
         log("SCORE_CONFIRMED","team="..team.." score="..tostring(score))
-        if skyWithEggSerial==serial and activeSerial==serial then
+        if validSameEggDeposit then
             scoreAfterSkySerial=serial
-            log("SCORE_AFTER_SKY","same-round server score rose after client-grounded sky visit; continuity NOT_PROVEN")
+            log("SCORE_AFTER_SKY","single-player, same-server-egg carry->sky-raycast->deposit receipt; real walking/FUN still owner-verified")
+        else
+            log("SCORE_NOT_QUALIFIED","score changed without continuous identical sky egg + real single-player deposit")
         end
+    end
+    -- If the egg changes or disappears before a valid score snapshot, reset the sky
+    -- checkpoint. Never let a drop -> re-pickup -> unrelated score produce a false 4/4.
+    if skyWithEggSerial==serial and scoreAfterSkySerial~=serial
+        and (carry~=skyCarryEgg or not ownerStillSame or phase~="ACTIVE") then
+        skyWithEggSerial=-1
+        skyCarryEgg=""
+        skyCarryCharacter=nil
+        log("ROUTE_RESET","egg lost/swapped, respawned or match left ACTIVE before deposit")
     end
     lastScore=score
     local first90=msg.first90
@@ -140,7 +161,8 @@ task.spawn(function()
         task.wait(.35)
         local deck=skyDeck
         if deck and deck.Parent and lastSerial>=0 and activeSerial==lastSerial
-            and skyWithEggSerial~=lastSerial and lastCarry~="" then
+            and skyWithEggSerial~=lastSerial and lastCarry~=""
+            and #Players:GetPlayers()==1 then
             local character=player.Character
             local hum=if character then character:FindFirstChildOfClass("Humanoid") else nil
             local root=if character then character:FindFirstChild("HumanoidRootPart") else nil
@@ -151,9 +173,18 @@ task.spawn(function()
                 if math.abs(pos.X-deck.Position.X)<=deck.Size.X/2-2
                     and math.abs(pos.Z-deck.Position.Z)<=deck.Size.Z/2-2
                     and pos.Y>=top+1 and pos.Y<=top+6 then
-                    skyWithEggSerial=lastSerial
-                    log("SKY_WITH_EGG","real character grounded inside deck while server carry snapshot nonempty; local position observation")
-                    refreshStatus()
+                    local rayParams=RaycastParams.new()
+                    rayParams.FilterType=Enum.RaycastFilterType.Exclude
+                    rayParams.FilterDescendantsInstances={character}
+                    rayParams.IgnoreWater=true
+                    local hit=workspace:Raycast(pos,Vector3.new(0,-9,0),rayParams)
+                    if hit and hit.Instance==deck then
+                        skyWithEggSerial=lastSerial
+                        skyCarryEgg=lastCarry
+                        skyCarryCharacter=character
+                        log("SKY_WITH_EGG","grounded character raycast hit exact physical island deck while original server snapshot reported egg="..skyCarryEgg)
+                        refreshStatus()
+                    end
                 end
             end
         end
@@ -206,6 +237,7 @@ task.delay(120,function()
             ..", score_confirmed="..tostring(scored)
             ..", sky_egg="..tostring(skyWithEggSerial==lastSerial)
             ..", score_after_sky="..tostring(scoreAfterSkySerial==lastSerial)
+            ..", same_egg_required=true, one_player_required=true"
             ..". Owner must physically walk/carry/play and judge FUN.")
     end
 end)
