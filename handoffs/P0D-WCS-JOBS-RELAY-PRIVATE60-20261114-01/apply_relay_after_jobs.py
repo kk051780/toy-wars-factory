@@ -60,8 +60,16 @@ def run(dist:Path,author:Path,enabled:bool)->bool:
     assert flock["total_sources"]==59 and flock["source_gitblobs"]==pins, "BASE59_FEATURE_LOCK_DRIFT"
     assert flock["feature_flags"]["SEVEN_JOBS_PVE_V1"] is True
     assert FLAG not in flock["feature_flags"]
+    projectpath=dist/"default.project.json"
+    projectraw=projectpath.read_bytes()
+    project=json.loads(projectraw)
+    storage=project["tree"].get("ServerStorage")
+    assert isinstance(storage,dict), "MISSING_SERVERSTORAGE"
+    assert storage.get("$className")=="ServerStorage", "WRONG_SERVERSTORAGE_CLASS"
+    assert storage.get("$attributes",{}).get("P0D_RC_ENABLE_WCS_F01_C01") is True, "WCS_BOOT_CONTRACT_MISSING"
+    assert "P0D_RC_ENABLE_EGG_RELAY_CLASSIC" not in storage, "DUPLICATE_RELAY_BOOT_CHILD"
     if not enabled or not flags[FLAG]["enabled"]:
-        assert srcs(dist)==before and lockpath.read_bytes()==lockraw and flpath.read_bytes()==flraw
+        assert srcs(dist)==before and lockpath.read_bytes()==lockraw and flpath.read_bytes()==flraw and projectpath.read_bytes()==projectraw
         print("P0D_TRIPLE_RELAY_OFF_RESTORES_WCS_JOBS59_BYTE_EXACT_PASS")
         return False
     specpath=author/"PATCH_OPS.json"
@@ -98,11 +106,18 @@ def run(dist:Path,author:Path,enabled:bool)->bool:
     assert all(after[p]==before[p] for p in before if p not in (GAME,HUD))
     assert after["server/PersistentHatchStore.luau"]==before["server/PersistentHatchStore.luau"]
     pins2={p:blob(v) for p,v in sorted(after.items())}
+    # This is an unpublished Studio-only opt-in for the actual playable Place.
+    # The existing fail-closed Game handler remains inactive if child missing.
+    storage["P0D_RC_ENABLE_EGG_RELAY_CLASSIC"]={
+        "$className":"BoolValue","$properties":{"Value":True}}
+    projectnew=(json.dumps(project,ensure_ascii=False,indent=2)+"\n").encode("utf8")
+    assert projectnew != projectraw
     lock["total_scripts"]=60;lock["blobs"]=pins2
     lock["rc_relay_classic_combo_overlay"]={
         "id":FLAG,"source_pin":POLICY_BLOB,"author_ops_pin":OPS_BLOB,
         "previous_59_sources_preserved_except":["server/Game.server.luau","client/HUD.client.luau"],
         "one_original_game_remote_store":True,"studio_runtime_explicit_BoolValue_true_only":True,
+        "studio_private_project_boot_child":"ServerStorage.P0D_RC_ENABLE_EGG_RELAY_CLASSIC BoolValue true",
         "mode":"ONE_EGG_ONLY","stage":"PRIVATE_SOURCE_CANDIDATE_NOT_OFFICIAL",
         "rollback":"disable EGG_RELAY_CLASSIC_V1 then rebuild source59"}
     flock["total_sources"]=60;flock["source_gitblobs"]=pins2
@@ -113,14 +128,17 @@ def run(dist:Path,author:Path,enabled:bool)->bool:
             target=dist/"src"/p;target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(after[p])
         lockpath.write_text(json.dumps(lock,ensure_ascii=False,indent=2)+"\n","utf8")
         flpath.write_text(json.dumps(flock,ensure_ascii=False,indent=2)+"\n","utf8")
+        projectpath.write_bytes(projectnew)
         assert srcs(dist)==after
+        installed=json.loads(projectpath.read_text("utf8"))["tree"]["ServerStorage"]["P0D_RC_ENABLE_EGG_RELAY_CLASSIC"]
+        assert installed == {"$className":"BoolValue","$properties":{"Value":True}}, "PREVIEW_BOOT_MISSING"
         print("P0D_WCS_JOBS_RELAY_PRIVATE60_ONE_GAME_SOURCE_LOCK_PASS")
         return True
     except BaseException:
         for p,v in originals.items(): (dist/"src"/p).write_bytes(v)
         if (dist/"src"/RELAY).exists(): (dist/"src"/RELAY).unlink()
-        lockpath.write_bytes(lockraw);flpath.write_bytes(flraw)
-        assert srcs(dist)==before,"ROLLBACK_SOURCE_MISMATCH"
+        lockpath.write_bytes(lockraw);flpath.write_bytes(flraw);projectpath.write_bytes(projectraw)
+        assert srcs(dist)==before and projectpath.read_bytes()==projectraw,"ROLLBACK_SOURCE_OR_PROJECT_MISMATCH"
         raise
 
 if __name__=="__main__":
