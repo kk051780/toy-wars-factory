@@ -65,6 +65,13 @@ def upgrade_game(s:str)->str:
    "            if stage>=2 and branch==\"ASSAULT\"\n                and evolvedStrikes<2 and serverNow()>=nextEvolvedStrike then","ASSAULT_MAX_TWO_OPPORTUNITIES"),
   ("                nextEvolvedStrike=serverNow()+12",
    "                evolvedStrikes+=1\n                nextEvolvedStrike=serverNow()+2.5","ASSAULT_REPEAT_2_5S"),
+  # The original evolved scout visual floats 4.5 studs above the physical
+  # HumanoidRootPart, while actual Horde sweeps reject |Y|>5. An attack
+  # initiated at VFX altitude can miss grounded mobs at literal melee range.
+  # Damage origin MUST be the real server-certified avatar root.
+  ("local hits=horde:hit(anchor,currentRoot.CFrame.LookVector,",
+   "local hits=horde:hit(currentRoot.Position,currentRoot.CFrame.LookVector,",
+   "ASSAULT_TRUE_AVATAR_GROUND_ORIGIN"),
   ("            task.wait(.2);t+=.2","            task.wait(.2)","REMOVE_FAKE_ELAPSED_CLOCK"),
  ]:
   assert s.count(before)==1,("PATCH_CONFLICT_FAIL_CLOSED",label,s.count(before))
@@ -178,6 +185,8 @@ def assemble():
  assert "while serverNow()<scoutExpiresAt" in g
  assert "evolvedStrikes<2 and serverNow()>=nextEvolvedStrike" in g
  assert "nextEvolvedStrike=serverNow()+2.5" in g
+ assert "local hits=horde:hit(currentRoot.Position,currentRoot.CFrame.LookVector," in g
+ assert "local hits=horde:hit(anchor,currentRoot.CFrame.LookVector," not in g
  assert "PersistentHatch.settleProgress(" in g
  assert "Evolution.creditRound(" in result["server/PersistentHatchStore.luau"].decode()
  assert h.count("local seq = 0")==1
