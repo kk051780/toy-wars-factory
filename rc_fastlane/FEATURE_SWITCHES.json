@@ -121,12 +121,12 @@
       "feature": "original three real scout species default/forest/star become visually/behaviorally distinct",
       "dependency": "SAVED_BEAST_EVOLUTION=true",
       "rollback": "disable SCOUT_SPECIES_V1 flag; original rich56 preserved",
-      "source_git_blob": "67dbf6129673de4be3a8061aebcaa6eafd0462fb",
+      "source_git_blob": "d5a229cafe643cdea15c54877368cc3af72552be",
       "existing_inventory_only": true,
       "types": {
-        "default": "balanced one original assault / 3 or 5 guard hits",
-        "forest": "two lighter assault hits in same five-second scout lifetime / +1 guard absorb",
-        "star": "one stronger assault strike (+12%) / +1 second guard shield"
+        "default": "balanced one original assault / 3 or 5 guard hits within five seconds",
+        "forest": "two lighter assault hits over five seconds / +1 guard absorb",
+        "star": "one stronger assault strike (+12%) / +2 guard absorb hits within original five seconds"
       },
       "original_single_horde_authority": true,
       "original_store_untouched": true,

@@ -3,9 +3,9 @@
 -- Single source of bounded assault/guard balance; no Game/Remote/Store state.
 local Species={}
 local VARIANTS={
-    default={name="まもりのスカウト",role="BALANCED",strikeScale=1,interval=12,maxStrikes=1,guardExtraHits=0,guardSeconds=8},
-    forest={name="森のスカウト",role="SWIFT",strikeScale=.58,interval=2.3,maxStrikes=2,guardExtraHits=1,guardSeconds=8},
-    star={name="星のスカウト",role="BURST",strikeScale=1.12,interval=12,maxStrikes=1,guardExtraHits=0,guardSeconds=9},
+    default={name="まもりのスカウト",role="BALANCED",strikeScale=1,interval=12,maxStrikes=1,guardExtraHits=0,guardSeconds=5},
+    forest={name="森のスカウト",role="SWIFT",strikeScale=.58,interval=2.3,maxStrikes=2,guardExtraHits=1,guardSeconds=5},
+    star={name="星のスカウト",role="BURST",strikeScale=1.12,interval=12,maxStrikes=1,guardExtraHits=2,guardSeconds=5},
 }
 function Species.kind(cosmetic:any): string
     if cosmetic=="forest" then return "forest" end

@@ -10,7 +10,7 @@ import argparse,hashlib,json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 MOD=ROOT/"features/scout_species/ScoutSpeciesPolicy.luau"
-MOD_SHA="67dbf6129673de4be3a8061aebcaa6eafd0462fb"
+MOD_SHA="d5a229cafe643cdea15c54877368cc3af72552be"
 def blob(data):
     return hashlib.sha1(b"blob "+str(len(data)).encode()+bytes([0])+data).hexdigest()
 def allsrc(dist):
@@ -94,17 +94,17 @@ def apply(dist,profile):
         '    model.Parent=map.model -- server-created and replicated to BOTH clients, never local gallery')
 
     code=one(code,
-       '        evolutionGuards[player]={untilAt=serverNow()+8,\n'
+       '        evolutionGuards[player]={untilAt=serverNow()+SCOUT_DURATION,\n'
        '            hits=if stage>=3 then 5 else 3}',
        '        local hitsAllowed,activeSeconds=ScoutSpecies.guard(species,stage)\n'
        '        evolutionGuards[player]={untilAt=serverNow()+activeSeconds,\n'
        '            hits=hitsAllowed}')
 
     code=one(code,
-       '        local nextEvolvedStrike=0\n'
+       '        local evolvedStrikeUsed=false -- one meaningful hit per authorized 5sec scout token\n'
        '        local highlighted: Highlight?=nil',
-       '        local nextEvolvedStrike=0\n'
        '        local assaultCount=0\n'
+       '        local nextEvolvedStrike=0\n'
        '        local highlighted: Highlight?=nil')
 
     code=one(code,
@@ -119,8 +119,7 @@ def apply(dist,profile):
        '            if stage>=2 and branch=="ASSAULT"')
 
     code=one(code,
-       '            if stage>=2 and branch=="ASSAULT"\n'
-       '                and serverNow()>=nextEvolvedStrike then',
+       '            if stage>=2 and branch=="ASSAULT" and not evolvedStrikeUsed then',
        '            local speciesStrikeDamage,speciesInterval,maxSpeciesStrikes=\n'
        '                ScoutSpecies.attack(species,stage)\n'
        '            if stage>=2 and branch=="ASSAULT" and speciesStrikeDamage>0\n'
@@ -128,21 +127,23 @@ def apply(dist,profile):
        '                and serverNow()>=nextEvolvedStrike then')
 
     code=one(code,
-       '                local hits=horde:hit(anchor,currentRoot.CFrame.LookVector,\n'
+       '                local hits=horde:hit(currentRoot.Position,currentRoot.CFrame.LookVector,\n'
        '                    (if stage>=3 then 40 else 26)\n'
        '                    *SavedBeastEvolution.choose(',
-       '                local hits=horde:hit(anchor,currentRoot.CFrame.LookVector,\n'
+       '                local hits=horde:hit(currentRoot.Position,currentRoot.CFrame.LookVector,\n'
        '                    speciesStrikeDamage\n'
        '                    *SavedBeastEvolution.choose(')
 
     code=one(code,
-       '                nextEvolvedStrike=serverNow()+12',
-       '                assaultCount+=1\n'
-       '                nextEvolvedStrike=serverNow()+speciesInterval')
+       '                if hits>0 then\n'
+       '                    evolvedStrikeUsed=true',
+       '                if hits>0 then\n'
+       '                    assaultCount+=1\n'
+       '                    nextEvolvedStrike=serverNow()+speciesInterval')
 
     assert code.count('remote.OnServerEvent:Connect(')==1
     assert code.count('remote.Name = "TrapRaidersS1Remote"')==1
-    assert code.count('horde:hit(anchor,currentRoot.CFrame.LookVector,')==1
+    assert code.count('horde:hit(currentRoot.Position,currentRoot.CFrame.LookVector,')==1
     assert code.count('SavedBeastEvolution.choose(')==1
     assert code.count('Dojo.pveDamageMultiplier(dojoStates[player],"BEAST")')==1
     assert code.count('SavedPvePolicy.mergeWithEarned(')==1
