@@ -33,6 +33,11 @@ local header=title("Progress","進化実戦デモ | 城のHP 120 / 敵 0",
     UDim2.fromScale(.16,.025),UDim2.fromScale(.68,.09))
 local status=title("Form","魔獣の進化形態を選んでね",
     UDim2.fromScale(.20,.13),UDim2.fromScale(.60,.07))
+local formDexLabel=title("FormDex","進化図鑑：未発見 / 6形態",
+    UDim2.fromScale(.18,.22),UDim2.fromScale(.64,.07))
+local formHistory=title("FormHistory","幼体 □  成長 □  紅蓮 □  蒼潮 □  神話紅蓮 □  神話蒼潮 □",
+    UDim2.fromScale(.06,.31),UDim2.fromScale(.88,.085))
+formHistory.TextScaled=true
 local statusLine=title("CombatStatus","技の準備OK",
     UDim2.fromScale(.24,.73),UDim2.fromScale(.52,.07))
 local footer=title("Safety","STUDIO専用の実戦試作｜ゲームの本当の経験値・報酬・保存には影響しません",
@@ -80,6 +85,30 @@ remote.OnClientEvent:Connect(function(kind,payload)
             elseif payload.branch=="GUARD" then "蒼潮・城の守護" else "初期"
         status.Text="進化Lv"..tostring(payload.stage).." "..branch..
             " | "..tostring(payload.form or "")
+    elseif kind=="FORMDEX" and type(payload)=="table" and
+        payload.schema=="EGG_RUMBLE_FORM_DEX_V1" then
+        local row=type(payload.items)=="table" and payload.items[1] or nil
+        if type(row)=="table" and row.itemId=="forest_scout" then
+            local found={}
+            if type(row.discoveredForms)=="table" then
+                for _,form in ipairs(row.discoveredForms) do
+                    if type(form)=="table" and type(form.formId)=="string" then
+                        found[form.formId]=true
+                    end
+                end
+            end
+            local ids={"forest_scout_S0","forest_scout_S1",
+                "forest_scout_S2_ASSAULT","forest_scout_S2_GUARD",
+                "forest_scout_S3_ASSAULT","forest_scout_S3_GUARD"}
+            local labels={"幼体","成長","紅蓮","蒼潮","神話紅蓮","神話蒼潮"}
+            local pieces={}
+            for i,id in ipairs(ids) do
+                table.insert(pieces,labels[i]..(found[id] and " ✓" or " □"))
+            end
+            formDexLabel.Text="進化図鑑：発見 "..tostring(row.discoveredCount)..
+                " / "..tostring(row.totalPossibleForms).."（試作用データ）"
+            formHistory.Text=table.concat(pieces,"   ")
+        end
     elseif (kind=="INFO" or kind=="ERROR") and type(payload)=="string" then
         statusLine.Text=payload
         lastNoticeAt=os.clock()
