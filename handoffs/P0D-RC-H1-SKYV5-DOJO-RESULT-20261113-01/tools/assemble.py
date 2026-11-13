@@ -16,7 +16,7 @@ DIST=ROOT/"dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE"
 ADVISOR=ROOT/"src/NextStepAdvisor.luau"
 CLIENT=ROOT/"src/ResultNextStep.client.luau"
 ADVISOR_BLOB="d212dae56b328d48bfed5dafa742caff9afe82c7"
-CLIENT_BLOB="82266497751a15945f1a87c66a3b9d15738e0a03"
+CLIENT_BLOB="03898fa5d84096f2209e4afacef6e50a96682196"
 BASE_WORLD_BLOB="7a90affd4eb7eebcdfba39d833a2875ff665d5cf"
 BASE_STRICT_BLOB="ee96518a7eeaaaba98d2a8e2aff6dad780fae8c7"
 BASE_DOJO_BLOB="120bac439c979310c9ddeb2fcf2ffa002b6d1add"
@@ -44,6 +44,26 @@ def assemble():
     assert 'availableSkills={"beast", "weapon"}' in client
     assert 'type(snapshot.dojo)' in client
     assert 'チーム得点' in client
+    # Never manufacture coordinates: only highlight the original server pad
+    # matching exact home team and installed H1 BEAST/WEAPON station attributes.
+    for marker in (
+        '"PRIVATE_AUTO_DOJO_"..team.."_"..skill',
+        'workspace:FindFirstChild("TRAP_RAIDERS_S1")',
+        'pad:GetAttribute("P0DTrainingSkill") ~= skill',
+        'pad:GetAttribute("FreeTraining") ~= true',
+        'pad:GetAttribute("StudioSessionOnly") ~= true',
+        'worldCue.Adornee = pad',
+        'worldCue.Parent = playerGui',
+        'task.delay(20, function()',
+        'if phase == "ACTIVE" and marker then clearTrainingMarker() end',
+        'close.MouseButton1Click:Connect(function()',
+        'clearTrainingMarker()',
+        'suggestedPad = "BEAST"',
+        'suggestedPad = "WEAPON"',
+    ):
+        assert marker in client,marker
+    assert client.count('Instance.new("BillboardGui")')==1
+    assert client.count('Instance.new("RemoteEvent")')==0
     assert 'musouLastKOs' not in client and 'neutralDefeats=' not in client
     for invalid in ('FireServer(', 'FireClient(', 'OnServerEvent:Connect(',
                     'GetDataStore(', 'UpdateAsync(', 'MarketplaceService',
@@ -105,6 +125,9 @@ def assemble():
         "total_scripts":47,
         "one_game":True,"one_remote":True,
         "results_card_7_seconds":True,"dismissible":True,
+        "one_verified_installed_pad_waypoint":True,
+        "waypoint_auto_expiry_seconds":20,
+        "only_home_team":True,"studio_local_only":True,
         "studio_only":True,"team_score_only":True,
         "individual_KOs_not_claimed":True,"rescues_not_claimed":True,
         "hatch_readiness_not_claimed":True,
