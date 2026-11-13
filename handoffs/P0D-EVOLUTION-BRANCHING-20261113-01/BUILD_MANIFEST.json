@@ -1,5 +1,5 @@
 {
-  "schema": "P0D_EVOLUTION_SOURCE_MANIFEST_V1",
+  "schema": "P0D_EVOLUTION_SOURCE_MANIFEST_V2",
   "date_jst": "2026-11-13",
   "brand": "EGG RAID RUMBLE",
   "internal_game_id": "TRAP_RAIDERS",
@@ -8,15 +8,18 @@
   "feature_slice": "P0D-EVOLUTION-BRANCHING-PURE-POLICY-20261113-01",
   "base_commit": "5e18a52e1e74f10cc1b85ac3b60f695e064bb088",
   "branch": "feature/p0d-evolution-branching-pure-20261113-01",
-  "state": "PURE_POLICY_AND_PRIVATE_3D_GALLERY_SOURCE_ONLY",
+  "state": "PURE_EVOLUTION_POLICY_AND_TWO_STUDIO_ONLY_PROJECTS_SOURCE",
   "official_s1_last_percent": 75,
   "owner_fun_gate": "NO_GO",
   "evidence": {
-    "source_readback": "8_of_8_verified",
+    "source_readback": "12_of_12_Git_blob_retrieved",
+    "source_contract_checks": "30_of_30_source_checks_executed_PASS",
     "native_luau_run": "NOT_VERIFIED",
     "python_static_run": "NOT_VERIFIED",
-    "rojo_studio": "NOT_VERIFIED",
-    "real_game_evolution": "NOT_IMPLEMENTED",
+    "real_rojo_build": "NOT_VERIFIED",
+    "real_studio_engine_two_clients": "NOT_TESTED",
+    "android_physical": "NOT_TESTED",
+    "actual_two_mode_game_evolution": "NOT_IMPLEMENTED",
     "persistent_evolution": "NOT_IMPLEMENTED"
   },
   "files": [
@@ -52,18 +55,41 @@
     },
     {
       "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/README.md",
-      "git_blob_sha": "679e5bd31ba609d7185ebb1961072355702f3cf3",
-      "chars": 8683
+      "git_blob_sha": "c16fa096a4498eef1ead81f97c29f8ed25a131a0",
+      "chars": 9907
     },
     {
       "path": ".github/workflows/p0d-evolution-branching-20261113.yml",
-      "git_blob_sha": "885d0733ec4ac9cabcee0b2464e3ed72332d1293",
-      "chars": 3482
+      "git_blob_sha": "8e1551518c06aaf0aba9a4555bd14fa131f2a3be",
+      "chars": 3785
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/battle/EvolutionCombat.server.luau",
+      "git_blob_sha": "475f6a1c4c6046facd07d95a6992cee4f52ac6d5",
+      "chars": 13173
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/battle/EvolutionCombat.client.luau",
+      "git_blob_sha": "9ec3714d513744a273e83309712e413e6ff5dfdd",
+      "chars": 4260
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/battle.project.json",
+      "git_blob_sha": "c6be241138ee4bb5c46357d3fe0c3715e3f2373f",
+      "chars": 594
+    },
+    {
+      "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/tests/test_evolution_battle_static.py",
+      "git_blob_sha": "4b80ee3972df11ccc1d3ca34f1703838e28ca55f",
+      "chars": 6358
     }
   ],
   "notes": [
-    "Three real #275 beast IDs and 5 hypothetical future catalog demo IDs, not 6 live categories.",
-    "Stage 3 is a design token; physical giant dragon and ability combat NOT integrated.",
-    "No paid chance or boosts, no protected writes; only #220 sole game RC integration."
+    "Original #287 pure policy source remains byte-identical to prior checkpoint Git Blob 0efca67b41e34917038fdc883c8ad34f3eb3c2e2.",
+    "Two distinct Studio projects: original visual gallery, and new battle.project.json actual server PvE training only.",
+    "Server PvE combat demo uses synthetically advanced earned rounds, NOT canonical H1/H2 XP, valid ownership or persistence.",
+    "ASSAULT does real server TakeDamage to NPC Humanoids inside 17 or 25 studs. GUARD prevents castle damage 3 or 5 hits for 8sec. Both are physically authored SOURCE, NOT engine QA pass.",
+    "All real battle/game/remote/ownership authority remains #220 sole RC; #286 full 35-Luau 2-mode candidate unchanged.",
+    "No publish, main, paid, owner PC, CAS, automations modified."
   ]
 }
