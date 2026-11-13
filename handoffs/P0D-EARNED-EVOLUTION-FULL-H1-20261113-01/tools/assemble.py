@@ -15,7 +15,7 @@ OVERRIDES={
  "server/Game.server.luau":("Game.server.luau","8b5fdf62f764ab6c963758d699cdfc681ed2ef96"),
  "client/HUD.client.luau":("HUD.client.luau","8c83efc18f63cea077de3dc3a8006bc11f05200c"),
  "server/PersistentHatchStore.luau":("PersistentHatchStore.luau","7e00a53e72479ffa643556ae5fe07c931f7507e7"),
- "server/MusouHorde.luau":("MusouHorde.luau","57c70e364b721d24e9e36eaeaf8be6dfd9fca592"),
+ "server/MusouHorde.luau":("MusouHorde.luau","7edfda9e5a1d4ac8ae47d66ea7cf908eb8e4af6e"),
  "server/EvolutionRules.luau":("EvolutionRules.luau","0efca67b41e34917038fdc883c8ad34f3eb3c2e2"),
 }
 def gitblob(raw:bytes)->str:
@@ -65,7 +65,7 @@ def assemble():
  assert '*earnedDamageMultiplier(player,"PLAYER")' in game
  assert 'local hits=horde:hit(anchor,currentRoot.CFrame.LookVector,' in game
  assert 'if not blocked then hum:TakeDamage(impact.damage) end' in game
- assert "m.attackAt=now+1.5 -- fair re-entry" in horde
+ assert "m.attackAt=now+1.5 -- fair re-entry" in horde\n assert "MUSOU_SOURCE_MAP_ARENA_REQUIRED" in horde
  assert "if mobHits>0 then return end" in game
  assert "Evolution.creditRound(evo,data.id,round.objectiveEvents" in store
  assert "return store:UpdateAsync(key,function(original)" in store
