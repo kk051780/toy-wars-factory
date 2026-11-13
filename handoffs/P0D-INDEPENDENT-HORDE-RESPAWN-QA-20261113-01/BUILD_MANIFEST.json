@@ -66,6 +66,19 @@
     {
       "path": "SCOUT_GUARD_HEIGHT_40V5_QA_REPORT.md",
       "blob_sha1": "233797da95517f84b6653f6abc2d1f993e460e68"
+    },
+    {
+      "path": "tools/patch_v5_assault_height_real40.py",
+      "blob_sha1": "cee57ca8d1804d62b702312333fd5d3f86d751db"
+    },
+    {
+      "path": "REAL_40V5_ASSAULT_HEIGHT_H0H1_QA_20261113.md",
+      "blob_sha1": "4a7c8c6998da204de386db4b697112a0b00c820c"
+    },
+    {
+      "path": ".github/workflows/p0d-qa-assault-height-real40-v5.yml",
+      "blob_sha1": "76d6bf70b5eec2911ab0efee15014fc459da2ba2",
+      "repo_root_external": true
     }
   ],
   "evidence": {
@@ -82,7 +95,7 @@
     "actual_fun": "UNKNOWN",
     "official_S1_game_release_last_pct": 75
   },
-  "blocker": "Latest 40+V5 Place now has actual red warning and 40 features; but inherited 5sec scout GUARD 8sec mismatch plus potentially unreachable low minions by assault from visual anchor+4.5. Source-only QA patch uncompiled and not merged. Owner native+Studio QA and #250/#220 gates remain.",
+  "blocker": "Latest original 40+v5 owner fixed GUARD and assault count and mobile HUD. Independent H1 attack-height source-only one-hunk candidate currently local exact verified; new native Luau40 and Rojo40 workflow pending result. Require author decision + #250/#220 + real Studio/Android.",
   "protected": "No main, RC, merges, live publish, purchases, spend, owner PC/Codex, P0 A/B/C auth/CAS, 5 Automations",
   "downstream_inheritance": {
     "power_frozen_commit": "cb2540dc4a3e5b819c0e3598d4af5e2b6dca76d3",
@@ -158,5 +171,24 @@
     "native_luau_patch": "NOT_EXECUTED",
     "real_roblox_studio": "NOT_TESTED",
     "overall_official": "75/100 historical FUN_NO_GO"
+  },
+  "real40_v5_assault_height_repro": {
+    "same_independent_qa_slice": true,
+    "source_original_sha": "1952154b33422dabc2b4e8ce8eafd8d6df1b6b34",
+    "original_author_actual_CI": "https://github.com/kk051780/toy-wars-factory/actions/runs/43386882729",
+    "original_actual_place_sha256": "ea2a0c0752bdf4749d948867f13d274d28edfdd155d25aa9af206eb8b833601d",
+    "original_Game_blob": "c118a3ff17397ea69360cd7481a2db51d2c32756",
+    "after_QA_Game_blob": "8063e92a2186c0aad16178c99bf0bb92ba395d9e",
+    "new_private_XML_H1_sha256": "5411cd36750b0bf1765f502ea161b9b483eec459475fa2e3472d4d82802959f9",
+    "native_frozen_workflow": "p0d-qa-assault-height-real40-v5.yml",
+    "native_CI_status": "NOT_VERIFIED_DO_NOT_CLAIM_PASS",
+    "local_Python_exact_original_XML_source_test": "30/30 PASS_EXECUTED",
+    "source_diff": "one authentic Game PvE assault sweep Y adjusted to user root, all other 39 scripts byte-identical",
+    "original_guard_real5sec": "VERIFIED",
+    "original_assault_max2": "VERIFIED",
+    "source_ownership": "ONLY own QA isolated root+workflow",
+    "real_studio_android_fun": "NOT_TESTED",
+    "official_S1_release_progress_last": 75,
+    "official_fun_gate": "NO_GO"
   }
 }
