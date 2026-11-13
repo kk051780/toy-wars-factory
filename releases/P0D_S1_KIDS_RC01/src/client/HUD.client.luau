@@ -209,11 +209,22 @@ remote.OnClientEvent:Connect(function(s)
     windButton.Visible = s.phase == "ACTIVE" and s.role == "RAIDER"
     local trapCooldown = if type(s.trapCooldown) == "number" and s.trapCooldown > 0
         then math.ceil(s.trapCooldown) else 0
-    trapButton.Text = if trapCooldown > 0 then ("🪤 あと " .. tostring(trapCooldown) .. "秒")
+    -- Children should not tap a button that the server will definitely reject.
+    -- These are display-only affordances; the server remains the authority.
+    local carryingEgg = type(s.carrying) == "string" and s.carrying ~= ""
+    trapButton.Active = s.phase == "ACTIVE" and s.role == "GUARDIAN"
+        and not carryingEgg and trapCooldown == 0
+    trapButton.AutoButtonColor = trapButton.Active
+    trapButton.Text = if carryingEgg then "🥚 卵運搬中\n罠は使えない"
+        elseif trapCooldown > 0 then ("🪤 あと " .. tostring(trapCooldown) .. "秒")
         else "🪤 罠設置\nTキー"
     local windCooldown = if type(s.windCooldown) == "number" and s.windCooldown >= 0
         and s.windCooldown <= 3600 then math.ceil(s.windCooldown) else 0
-    windButton.Text = if s.windActive == true then "🌪 風走り中！"
+    windButton.Active = s.phase == "ACTIVE" and s.role == "RAIDER"
+        and not carryingEgg and windCooldown == 0 and s.windActive ~= true
+    windButton.AutoButtonColor = windButton.Active
+    windButton.Text = if carryingEgg then "🥚 卵運搬中\n風走り不可"
+        elseif s.windActive == true then "🌪 風走り中！"
         elseif windCooldown > 0 then ("🌪 あと " .. tostring(windCooldown) .. "秒")
         else "🌪 風走り\nRキー"
 end)
