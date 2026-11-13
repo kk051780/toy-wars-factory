@@ -1,0 +1,196 @@
+name: P0D Egg Relay classic candidate on authentic RC55
+on:
+  push:
+    branches:
+      - feature/p0d-egg-relay-classic-live-20261114-01
+    paths:
+      - 'handoffs/P0D-EGG-RELAY-CLASSIC-LIVE-20261114-01/**'
+      - '.github/workflows/p0d-egg-relay-classic-rc55-candidate-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rc55-relay-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      DIST: _p0d_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+    steps:
+      - name: Checkout isolated feature branch (never official RC writer)
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Checkout exact first successful canonical 55-source RC
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 0dd7f4418d06200e40688c79c8290745cb56834d
+          path: _rc55
+          persist-credentials: false
+      - name: Checkout source used by original real Game
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 79123d35cd7afdd5f4f9941675bc2d2cf382ac4e
+          path: _p0d_source
+          persist-credentials: false
+      - name: Verify exact pinned source and prevent non-source claims
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _rc55 rev-parse HEAD)" = 0dd7f4418d06200e40688c79c8290745cb56834d
+          test "$(git -C _p0d_source rev-parse HEAD)" = 79123d35cd7afdd5f4f9941675bc2d2cf382ac4e
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('handoffs/P0D-EGG-RELAY-CLASSIC-LIVE-20261114-01/PATCH_OPS.json')
+          m=json.loads(p.read_text())
+          assert m['rc_integrated'] is False
+          assert m['real_studio']=='NOT_TESTED'
+          assert m['feature_id']=='EGG_RELAY_CLASSIC_V1'
+          assert len(m['game_ops'])==9 and len(m['hud_ops'])==6
+          print('P0D_EGG_RELAY_SOURCE_ONLY_NO_RC_CLAIM')
+          PY
+      - name: Assemble actual frozen original rich51 once
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B _p0d_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/tools/assemble.py --assemble
+      - name: Apply exactly original official RC55 features in same order
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B _rc55/rc_fastlane/apply_overlays.py --profile rich51 --dist "$DIST"
+          python3 -B -m unittest discover -s _rc55/rc_fastlane -p test_realm_hunt.py -v
+          python3 -B _rc55/rc_fastlane/integrate.py --profile rich51 --dist "$DIST"
+          python3 -B _rc55/rc_fastlane/apply_sixskill_durable.py --profile rich51 --dist "$DIST"
+          python3 -B _rc55/rc_fastlane/apply_saved_pve.py --profile rich51 --dist "$DIST"
+      - name: Freeze current 55 actual game sources before new feature
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,hashlib,json
+          from pathlib import Path
+          src=Path(os.environ['DIST'])/'src'
+          source={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                  for p in src.rglob('*.luau')}
+          assert len(source)==55,('BASE_NOT_CANONICAL_RICH55',len(source))
+          Path('/tmp/p0d_relay_rc55_before.json').write_text(json.dumps(source,sort_keys=True))
+          print('P0D_EGG_RELAY_BASE_RICH55_FROZEN')
+          PY
+      - name: Apply ONLY isolated classic relay Game+HUD source patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/P0D-EGG-RELAY-CLASSIC-LIVE-20261114-01/tools/apply_relay.py \
+            --dist "$DIST" \
+            --policy handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/src/EggRelayPolicy.luau
+      - name: Compare actual source delta, unique Game and authoritative lockfiles
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,hashlib,json
+          from pathlib import Path
+          dist=Path(os.environ['DIST']);src=dist/'src'
+          before=json.loads(Path('/tmp/p0d_relay_rc55_before.json').read_text())
+          after={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                 for p in src.rglob('*.luau')}
+          assert len(before)==55 and len(after)==56,(len(before),len(after))
+          changes=sorted(p for p in before if before[p]!=after[p])
+          adds=sorted(set(after)-set(before))
+          assert changes==['client/HUD.client.luau','server/Game.server.luau'],changes
+          assert adds==['server/EggRelayPolicy.luau'],adds
+          g=(src/'server/Game.server.luau').read_text()
+          assert g.count('remote.OnServerEvent:Connect(')==1
+          assert g.count('remote.Name = "TrapRaidersS1Remote"')==1
+          assert g.count('H2Score.deposit(')==1
+          assert g.count('match.scores[team] += 1')==1
+          assert g.count('applyClassicEggRelay(player,data)')==1
+          assert g.count('match.eggOwners[egg]=target')==1
+          assert g.count('carry[player]=nil')>=1 and g.count('carry[target]=egg')==1
+          h=(src/'client/HUD.client.luau').read_text()
+          assert h.count('local seq = 0')==1 and h.count('EGG_RELAY')==1
+          assert 'ClassicEggRelay' in h and 'KeyCode.H' in h
+          assert 'if not RunService:IsStudio() or EXPERIMENTAL_FIVE_EGG_MODE' in g
+          def blob(raw):
+              return hashlib.sha1(b'blob '+str(len(raw)).encode()+bytes([0])+raw).hexdigest()
+          pinned={p:blob((src/p).read_bytes()) for p in sorted(after)}
+          for name in ('SOURCE_LOCK.json','RC_FEATURE_LOCK.json'):
+              lock=json.loads((dist/name).read_text())
+              key='blobs' if name.startswith('SOURCE') else 'source_gitblobs'
+              count='total_scripts' if name.startswith('SOURCE') else 'total_sources'
+              assert lock[key]==pinned,(name,'PIN_DRIFT')
+              assert lock[count]==56,(name,lock[count])
+          print('P0D_EGG_RELAY_AUTHENTIC_RICH55_TO_56_ONLY_GAME_HUD_NEW_POLICY_PASS')
+          PY
+      - name: Checkout exact upstream native Luau toolchain
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau
+          persist-credentials: false
+      - name: Compile all 56 actual files and execute original policy 41 cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau -B /tmp/p0d_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          n=0
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_luau/luau-compile "$file" >/dev/null
+            n=$((n+1))
+          done < <(find "$DIST/src" -type f -name '*.luau' -print0)
+          test "$n" -eq 56
+          python3 -B handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/tools/generate_native_runner.py --out /tmp/P0D_RELAY_NATIVE.generated.luau
+          /tmp/p0d_luau/luau-compile /tmp/P0D_RELAY_NATIVE.generated.luau >/dev/null
+          /tmp/p0d_luau/luau /tmp/P0D_RELAY_NATIVE.generated.luau | tee /tmp/p0d_relay_native.log
+          grep -Fx 'P0D_EGG_RELAY_NATIVE_POLICY_41_CASES_PASS' /tmp/p0d_relay_native.log
+          echo P0D_EGG_RELAY_RICH56_NATIVE_LUAU_COMPILE_PASS
+      - name: Install official checksum-pinned Rojo 7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_relay_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_relay_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,stat
+          from pathlib import Path
+          with zipfile.ZipFile('/tmp/p0d_relay_rojo.zip') as z:
+              names=[x for x in z.namelist() if x.rsplit('/',1)[-1]=='rojo']
+              assert len(names)==1
+              p=Path('/tmp/p0d_relay_rojo')
+              p.write_bytes(z.read(names[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_relay_rojo --version | grep -F 7.7.1
+      - name: Assemble genuine private .rbxlx and verify exact script bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_relay_artifacts
+          /tmp/p0d_relay_rojo build "$DIST/default.project.json" -o /tmp/p0d_relay_artifacts/P0D_EGG_RELAY_CLASSIC_RICH56_SOURCE_CANDIDATE.rbxlx
+          python3 - <<'PY'
+          import os,collections,pathlib,xml.etree.ElementTree as ET
+          src=pathlib.Path(os.environ['DIST'])/'src'
+          actual=collections.Counter(p.read_text('utf8') for p in src.rglob('*.luau'))
+          place=pathlib.Path('/tmp/p0d_relay_artifacts/P0D_EGG_RELAY_CLASSIC_RICH56_SOURCE_CANDIDATE.rbxlx')
+          included=collections.Counter()
+          for e in ET.fromstring(place.read_bytes()).iter('Item'):
+              if e.get('class') not in ('Script','LocalScript','ModuleScript'):continue
+              s=e.find("./Properties/string[@name='Source']")
+              if s is not None:included[s.text or '']+=1
+          assert sum(actual.values())==56
+          assert included==actual,('ROJO_EMBEDDED_SOURCE_DRIFT',sum(included.values()))
+          print('P0D_RELAY_UNPUBLISHED_RICH56_ROJO_SOURCE_EXACT_PASS')
+          PY
+          cp handoffs/P0D-EGG-RELAY-CLASSIC-LIVE-20261114-01/QA_STATIC.json /tmp/p0d_relay_artifacts/QA_STATIC.json
+      - name: Upload isolated SOURCE candidate, never publish or merge
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-EGG-RELAY-CLASSIC-RICH56-SOURCE-CANDIDATE-UNPUBLISHED
+          path: /tmp/p0d_relay_artifacts/
+          retention-days: 7
