@@ -1,4 +1,4 @@
-name: EGG RAID RUMBLE 2 modes FREE HATCH equip ACTUAL 3D scout full H1 33 Luau
+name: EGG RAID RUMBLE full two modes FREE hatch equip real scout native QA
 on:
   push:
     branches:
@@ -24,13 +24,13 @@ jobs:
           set -euo pipefail
           git cat-file -e '7e65166bed5b8dc12119a511cfa4974d5b168b31^{commit}'
           test -z "$(git diff --name-only 7e65166bed5b8dc12119a511cfa4974d5b168b31 HEAD -- handoffs/P0D-EGG-RUMBLE-DUAL-MODE-LOBBY-20261113 handoffs/P0D-EGG-RUMBLE-H1-SCORE-MODE-20261113 releases/P0D_S1_KIDS_RC01)"
-      - name: Assemble complete 33-source H1 two modes plus original real reward module
+      - name: Assemble full 33-source H1 two modes and original free hatch module
         shell: bash
         run: |
           set -euo pipefail
           python3 -B "$OWN/tools/assemble.py" --assemble
           python3 -B -m unittest discover -s "$OWN/tests" -p 'test_*.py' -v
-      - name: Generate genuine native Luau vote score and hatch policy tests from ORIGINAL sources
+      - name: Generate genuine native Luau vote, five egg and original hatch/scout policy tests
         shell: bash
         run: |
           set -euo pipefail
@@ -64,7 +64,7 @@ jobs:
           mkdir -p /tmp/egg_rumble_scout
           /tmp/egg_voting_rojo build "$OWN/dist/EGG_RAID_RUMBLE_FREE_HATCH_EQUIP_REAL_3D_SCOUT_PRIVATE_STUDIO/default.project.json" -o /tmp/egg_rumble_scout/EGG_RAID_RUMBLE_2_MODES_FREE_HATCH_REAL_SCOUT_NOT_PUBLISH.rbxlx
           test -s /tmp/egg_rumble_scout/EGG_RAID_RUMBLE_2_MODES_FREE_HATCH_REAL_SCOUT_NOT_PUBLISH.rbxlx
-      - name: Compare all33 real Luau original source bodies embedded in Rojo private Studio Place
+      - name: Verify every one of original 33 Luau source bodies in actual Roblox Place XML
         shell: bash
         run: |
           set -euo pipefail
@@ -128,7 +128,7 @@ jobs:
           test "$(git -C _egg_dual_mode_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
           cmake -S _egg_dual_mode_luau -B /tmp/egg_dual_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
           cmake --build /tmp/egg_dual_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
-      - name: Native compile 33 and execute original vote, 1212 score, full free hatch and scout policy
+      - name: Native compile actual full33 original H1 with server scout + original three native policy harnesses
         shell: bash
         run: |
           set -euo pipefail
@@ -144,26 +144,10 @@ jobs:
           grep -E '^EGG_RUMBLE_ACTUAL_LUAU_LOBBY_MODE_VOTE_PASS_[0-9]+$' /tmp/egg_rumble_scout/ACTUAL_NATIVE_LOBBY_VOTE_POLICY_LOG.txt
           /tmp/egg_dual_luau/luau-compile /tmp/egg_rumble_native_5egg.luau >/dev/null
           /tmp/egg_dual_luau/luau /tmp/egg_rumble_native_5egg.luau | tee /tmp/egg_rumble_scout/ORIGINAL_5_EGG_SCORE_NATIVE_RULES_LOG.txt
-          grep -E '^P0D_H2_MULTI_EGG_NATIVE_POLICY_PASS_1212
-      - name: Upload ONE private game Place with two in-game mode buttons and exact proofs
-        uses: actions/upload-artifact@v4
-        with:
-          name: EGG-RAID-RUMBLE-TWO-MODES-FREE-HATCH-EQUIP-ACTUAL-3D-BEAST-33-LUAU
-          path: /tmp/egg_rumble_scout/
-          retention-days: 7
-          if-no-files-found: error
- /tmp/egg_rumble_scout/ORIGINAL_5_EGG_SCORE_NATIVE_RULES_LOG.txt
+          grep -E '^P0D_H2_MULTI_EGG_NATIVE_POLICY_PASS_1212$' /tmp/egg_rumble_scout/ORIGINAL_5_EGG_SCORE_NATIVE_RULES_LOG.txt
           /tmp/egg_dual_luau/luau-compile /tmp/egg_rumble_native_rewards.luau >/dev/null
           /tmp/egg_dual_luau/luau /tmp/egg_rumble_native_rewards.luau | tee /tmp/egg_rumble_scout/ORIGINAL_275_HATCH_EQUIP_SCOUT_REAL_NATIVE_LOG.txt
-          grep -E '^EGG_RUMBLE_ORIGINAL_FREE_HATCH_EQUIP_SCOUT_REAL_NATIVE_LUAU_PASS_[0-9]+
-      - name: Upload ONE private game Place with two in-game mode buttons and exact proofs
-        uses: actions/upload-artifact@v4
-        with:
-          name: EGG-RAID-RUMBLE-TWO-MODES-FREE-HATCH-EQUIP-ACTUAL-3D-BEAST-33-LUAU
-          path: /tmp/egg_rumble_scout/
-          retention-days: 7
-          if-no-files-found: error
- /tmp/egg_rumble_scout/ORIGINAL_275_HATCH_EQUIP_SCOUT_REAL_NATIVE_LOG.txt
+          grep -E '^EGG_RUMBLE_ORIGINAL_FREE_HATCH_EQUIP_SCOUT_REAL_NATIVE_LUAU_PASS_[0-9]+$' /tmp/egg_rumble_scout/ORIGINAL_275_HATCH_EQUIP_SCOUT_REAL_NATIVE_LOG.txt
           test -z "$(git status --porcelain --untracked-files=no)"
       - name: Upload ONE private game Place with two in-game mode buttons and exact proofs
         uses: actions/upload-artifact@v4
