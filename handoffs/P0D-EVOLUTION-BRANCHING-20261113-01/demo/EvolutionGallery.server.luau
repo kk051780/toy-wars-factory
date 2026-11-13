@@ -1,6 +1,6 @@
 --!strict
 -- Independent original PRIVATE Studio-only visual evolution gallery.
--- NO original H1/H2 Game, inventory, FX authority, purchases or persistent save.
+-- NOT the actual H1/H2 Game. NO inventory, FX authority, purchases or persistent save.
 local RunService=game:GetService("RunService")
 if not RunService:IsStudio() then return end
 local Players=game:GetService("Players")
