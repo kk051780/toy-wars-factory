@@ -185,7 +185,7 @@
     {
       "id": "SAVED_BEAST_EVOLUTION",
       "summary": "saved BEAST tiers and real evolved scout (stage2/3 ASSAULT) PvE strikes and label",
-      "state": "SOURCE_INTEGRATED_PENDING_CI",
+      "state": "INCLUDED_IN_ACTIVE_RICH56_RC_BUILD_PASSED_ENGINE_NOT_TESTED",
       "profiles": [
         "rich51"
       ],
@@ -193,7 +193,13 @@
       "rollback": "disable SAVED_BEAST_EVOLUTION to restore rich55",
       "studio_test": "NOT_TESTED",
       "only_existing_game": true,
-      "pvp_untouched": true
+      "pvp_untouched": true,
+      "ci_run": 43504336646,
+      "rc_commit": "947cddb5351ba95b9b27597b9ec1828a8297cd66",
+      "verified_luau_sources": 56,
+      "verified_rojo_sources": 56,
+      "original_54_source_bodies_unchanged": true,
+      "studio_engine": "NOT_TESTED"
     }
   ],
   "next_source_adoption_contract": {

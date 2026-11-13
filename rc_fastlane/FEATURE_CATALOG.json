@@ -3,7 +3,7 @@
   "as_of_jst": "2026-11-14",
   "rc_branch": "rc/p0d-s1-kids-rc01",
   "active_source": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
-  "verified_rc_head": "0dd7f4418d06200e40688c79c8290745cb56834d",
+  "verified_rc_head": "947cddb5351ba95b9b27597b9ec1828a8297cd66",
   "official_s1_previous_score": 75,
   "stages": {
     "IDEA": "企画段階",
@@ -585,12 +585,12 @@
       "id": "P0D-057",
       "group": "育成・戦闘",
       "name": "保存魔獣Lvと既存進化・召喚の連動",
-      "stage": "SOURCE",
+      "stage": "RC",
       "release": "S1",
       "evidence": "https://github.com/kk051780/toy-wars-factory/tree/rc/p0d-s1-kids-rc01/rc_fastlane/features/saved_beast",
-      "note": "魔獣Lv5/10/20/30で進化召喚獣の中立PvE攻撃倍率最大+20%、既存道場と非重複、サーバー側召喚モデルにランク表示。RC CI待ち",
-      "rc_evidence": null
+      "note": "既存進化段階2以上の実召喚魔獣への育成ランク表示と、ASSAULT魔獣の中立PvE攻撃に保存BEAST倍率を適用。元道場効果と非重複、実機未検証。56/56 native+Rojo成功",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43504336646"
     }
   ],
-  "last_progress_change": "P0D-057 SOURCE added; RC19/57 pending 56/56 CI"
+  "last_progress_change": "P0D-057 SOURCE->RC; native 56/56 + exact Rojo success 43504336646, RC20/57 (35.1%)"
 }

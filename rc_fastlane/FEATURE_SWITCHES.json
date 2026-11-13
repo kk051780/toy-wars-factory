@@ -92,7 +92,7 @@
     },
     "SAVED_BEAST_EVOLUTION": {
       "enabled": true,
-      "status": "PENDING_RICH56_RC_CI",
+      "status": "RICH56_LUAU_AND_SOURCE_EXACT_ROJO_SUCCESS_ENGINE_NOT_TESTED",
       "dependency": "SIX_SKILL_DURABLE + SAVED_PVE_MASTERY",
       "rollback": "disable flag for identical prior rich55",
       "source_git_blob": "24d23ef4bf815bd42122b8a9604622cf46eff453",
@@ -106,7 +106,14 @@
       "data_store_schema_change": false,
       "another_remote": false,
       "pvp_change": false,
-      "studio_test": "NOT_TESTED"
+      "studio_test": "NOT_TESTED",
+      "first_successful_ci": {
+        "head": "947cddb5351ba95b9b27597b9ec1828a8297cd66",
+        "run_id": 43504336646,
+        "artifact_id": 14075771698,
+        "source_count": 56,
+        "conclusion": "success"
+      }
     }
   }
 }

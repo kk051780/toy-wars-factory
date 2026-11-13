@@ -46,7 +46,7 @@
   "owner_fun": "NOT_TESTED",
   "production_publish_authorized": false,
   "rollback_granularity": "REALM_HUNT_V1 and SIX_SKILL_DURABLE per-feature OFF, V4_IDLE_FRIEND_SAFE_FIX via ACTIVE, rich47/legacy21 fallback; original Game/Store source pinned",
-  "status": "RC_RICH56_BEAST_EVOLUTION_SOURCE_PENDING_CI",
+  "status": "RICH56_SAVED_BEAST_EVOLUTION_RC_BUILD_PASSED_ENGINE_NOT_TESTED",
   "release_progress_last_official": 75,
   "first_verified_run": {
     "workflow_run_id": 43483022604,
@@ -112,7 +112,12 @@
       "dev_store_only": true,
       "only_original_Game": true,
       "evolved_scout_label": true,
-      "real_studio": "NOT_TESTED"
+      "real_studio": "NOT_TESTED",
+      "first_verified_build": {
+        "head": "947cddb5351ba95b9b27597b9ec1828a8297cd66",
+        "run_id": 43504336646,
+        "source_count": 56
+      }
     }
   },
   "feature_switches": {

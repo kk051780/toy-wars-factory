@@ -71,3 +71,5 @@
 
 ## 保存魔獣Lv → 進化済みスカウトの実戦強化（RC検証中）
 Lv5/10/20/30で既存の進化ステージ2/3 ASSAULTスカウト対中立Mob威力をx1.05/1.10/1.15/1.20。短期BEAST道場との高い方を採用し倍率を重複させない。stage>=2の本物の進化スカウト頭上にDEV保存済みランクを表示。元の単一Game/Store/Remoteと保存形式・公開/課金禁止は保持。Studio実機検証は未実施。
+
+**2026-11-14最新確定**: HEAD 947cddb5351ba95b9b27597b9ec1828a8297cd66、GitHub Actions 43504336646で全56本Luauコンパイル、Rojo源完全一致、Studio用未公開Place生成成功。RC機能P0D-057採用、20/57件=35.1%。2client/Android/人間FUN/実際のDataStore往復はNOT_TESTED、公式S1過去評価75/100からの更新は未実施。
