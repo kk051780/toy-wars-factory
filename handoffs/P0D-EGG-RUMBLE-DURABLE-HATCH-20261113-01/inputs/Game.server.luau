@@ -111,7 +111,8 @@ local persistenceState: {[Player]: string} = {}
 local persistentProfiles: {[Player]: any} = {}
 local delayedRestore: {[Player]: boolean} = {}
 local outstandingWrites=0
-local pendingSessionGrants: {[Player]: {[string]: string}} = {}
+-- Forward-declared view helper: async persistence completion must not call a nil global.
+local snapshotFor: (Player) -> any
 local function canWriteProfile(player: Player): boolean
     return RunService:IsStudio() and player.UserId>0
         and studioHatchStore~=nil and persistenceState[player]=="SAVED"
@@ -154,7 +155,10 @@ local function commitFreeReward(player: Player,receipt: string,item: string)
             end
         end
         if confirmed and record then
-            persistentProfiles[player]=record
+            local prior=persistentProfiles[player]
+            if not prior or record.revision>=prior.revision then
+                persistentProfiles[player]=record
+            end
             persistenceState[player]="SAVED"
             local grantedItem=record.receipts[receipt]
             if grantedItem then lastFreeHatch[player]=grantedItem end
@@ -183,7 +187,7 @@ local function loadHatchProfile(player: Player)
             -- never shares its namespace with live user data.
             local option=nil
             pcall(function()
-                option=Instance.new("DataStoreGetOptions")
+                option=DataStoreGetOptions.new()
                 option.UseCache=false
             end)
             local ok,profile=PersistentHatch.load(studioHatchStore,player.UserId,option)
@@ -431,7 +435,7 @@ end
 
 -- Server-only monotonic replication ordinal, never reset on match changes.
 local snapshotUpdateId = 0
-local function snapshotFor(player: Player)
+snapshotFor = function(player: Player)
     snapshotUpdateId += 1
     local now = serverNow()
     local uid=h2Ids[player]
@@ -795,7 +799,10 @@ local function applyEquipScout(player: Player,data:any)
         task.spawn(function()
             local confirmed,profile=PersistentHatch.equip(studioHatchStore,player.UserId,item)
             if confirmed then
-                persistentProfiles[player]=profile
+                local prior=persistentProfiles[player]
+                if not prior or profile.revision>=prior.revision then
+                    persistentProfiles[player]=profile
+                end
                 restoreSavedProfile(player)
             else
                 persistenceState[player]="SAVE_FAILED"
@@ -1269,7 +1276,6 @@ Players.PlayerRemoving:Connect(function(player)
     persistenceState[player]=nil
     persistentProfiles[player]=nil
     delayedRestore[player]=nil
-    pendingSessionGrants[player]=nil
     h2Ids[player]=nil
     modeVotes[player]=nil
     lastModeVote[player]=nil
@@ -1402,5 +1408,18 @@ task.spawn(function()
         tickRound()
         broadcast()
         task.wait(Config.SnapshotInterval)
+    end
+end)
+
+-- Do not pretend UpdateAsync is instant. Hold a bounded shutdown grace for
+-- already-started grants; the Studio API can still fail or time out, and the
+-- HUD must never assert a durable save without an acknowledged write.
+game:BindToClose(function()
+    local started=os.clock()
+    while outstandingWrites>0 and os.clock()-started<23 do
+        task.wait(.25)
+    end
+    if outstandingWrites>0 then
+        warn("EGG_RUMBLE_PENDING_HATCH_SAVE_NOT_CONFIRMED",outstandingWrites)
     end
 end)
