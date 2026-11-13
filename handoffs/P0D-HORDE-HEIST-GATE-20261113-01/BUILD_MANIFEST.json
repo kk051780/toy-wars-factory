@@ -1,40 +1,71 @@
 {
   "packet_id": "P0D-HORDE-HEIST-GATE-S2-20261113-01",
-  "game": "TRAP_RAIDERS",
+  "game_id": "TRAP_RAIDERS",
   "work_id": "p0d-siege-v19",
   "feature_slice": "CHAT-P0D-GAME-DESIGN-HORDE-HEIST-BRIDGE-TACTICAL-CHOICE-20261113-01",
-  "intent": "S2+ isolated source candidate, not formal S1 RC",
-  "policy": "PUBLIC_SOURCE_V1",
-  "integration_state": "NOT_SELECTED_NOT_WIRED_NOT_STUDIO_TESTED",
-  "source_content": [
+  "delivery_mode": "PUBLIC_SOURCE_V1",
+  "stage": "S2_ISOLATED_SOURCE_ONLY_NOT_SELECTED",
+  "semantic_contract": "server-side original Elite HP transition and same-round single GateRules state; physical chokepoint not built",
+  "source_blobs": [
     {
       "path": "src/GateRules.luau",
       "git_blob_sha1": "bcd9f18d75dc12edada37cf5faa33c889ca81046"
     },
     {
       "path": "src/GateVisual.luau",
-      "git_blob_sha1": "0bf1d1f68db4682dfee5fd71f459eb59df7ec139"
+      "git_blob_sha1": "f94b495725dc7c53e35e35b4e05e753a9a9dd794"
+    },
+    {
+      "path": "src/EliteKOBridge.luau",
+      "git_blob_sha1": "1de469cf589816956b6a35806b4f094bf52d77b1"
     },
     {
       "path": "tests/test_gate_rules.py",
-      "git_blob_sha1": "fdd60852dad24f6df4376a87ffedd4cff97648f0",
-      "sha256": "589885b8dee9a3f538dc85e3c95819b0b6c4674c485e4240238eead1a1f6ee88"
+      "git_blob_sha1": "fdd60852dad24f6df4376a87ffedd4cff97648f0"
     },
     {
-      "path": "README.md",
-      "git_blob_sha1": "1204a2abba114dc47c62540bc77c9fed41648800"
+      "path": "tests/test_elite_bridge_contract.py",
+      "git_blob_sha1": "417cb8eccebeeef001b27f281d10c5ecaeb4a270"
+    },
+    {
+      "path": "tools/generate_native_gate_test.py",
+      "git_blob_sha1": "18f8a5a6c29656bfec43020e42effa146615afd4"
+    },
+    {
+      "path": "tools/check_locked_upstream.py",
+      "git_blob_sha1": "9c2e244cbde117f35dd9d6d6ab1415f41a85ba6d"
+    },
+    {
+      "path": "docs/OWNER_SOURCE_BINDING_AND_FIELD_GATE_V2.md",
+      "git_blob_sha1": "9582586a5c3870d5afa8eab2789a3735c3b8b892"
     }
   ],
-  "actual_python_unittest": {
-    "executed": 14,
-    "passed": 14,
-    "verified_exact_git_blob": "fdd60852dad24f6df4376a87ffedd4cff97648f0"
+  "owner_source_lock": {
+    "v7_horde": {
+      "commit": "76cc75b71f0a1a7a5a9976f14c10276c636493f2",
+      "blob": "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
+    },
+    "v7_game": {
+      "commit": "76cc75b71f0a1a7a5a9976f14c10276c636493f2",
+      "blob": "5979be7d70a415a8e954ff6a04babf4e3e09fd87"
+    },
+    "b42_game": {
+      "commit": "837853e66278e38bb79f6399c3e8bfc9a2403be6",
+      "blob": "21b866e801a53ba7ebd66132ae55fe28608750d6"
+    }
   },
-  "native_luau": "NOT_TESTED",
+  "first_native_workflow_success": {
+    "run": "https://github.com/kk051780/toy-wars-factory/actions/runs/43394339642",
+    "tested_commit": "8becee4cbae0b504f51f4d825e114fd4cff0a4a5",
+    "final_head_native_qa": "RECHECK_AT_FINAL_COMMIT"
+  },
   "rojo": "NOT_TESTED",
-  "roblox_studio": "NOT_TESTED",
+  "source_wired_to_original_game": false,
+  "physical_route_exists": false,
+  "studio_2client": "NOT_TESTED",
   "android": "NOT_TESTED",
-  "owner_original_source_readback": "PASS_4_OF_4",
-  "official_rc_adopted": false,
-  "required_next_owner": "#250 product selection only after S1 H1; #288 Horde server hook / #222 World MapBuilder contracts; #220 sole RC integrator"
+  "owner_fun": "UNKNOWN",
+  "rc_adopted": false,
+  "s1_release_progress_delta": 0,
+  "policies": "No main/merge/publish/paid/CAS/automation changes"
 }
