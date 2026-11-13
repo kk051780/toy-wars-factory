@@ -21,7 +21,7 @@ class NativeHarnessIntegrityTests(unittest.TestCase):
         expanded = builder.render(self.source, self.cases, self.manifest)
         self.assertIn("local Relay = (function()", expanded)
         self.assertIn("function Relay.evaluate(world, request)", expanded)
-        self.assertIn("P0D_EGG_RELAY_NATIVE_POLICY_39_CASES_PASS", expanded)
+        self.assertIn("P0D_EGG_RELAY_NATIVE_POLICY_41_CASES_PASS", expanded)
 
     def test_detect_original_luau_mutation(self):
         with self.assertRaisesRegex(AssertionError, "SOURCE_SHA256_MISMATCH"):
@@ -49,11 +49,11 @@ class NativeHarnessIntegrityTests(unittest.TestCase):
 
     def test_git_blob_original_source_locked(self):
         self.assertEqual(builder.blob_sha(self.source),
-                         "dd5e5e19fb16c79bc54bfdef04c941cde418b0b4")
+                         "ef9b65bd6520231f299f21c5cfe2aa250798c8d0")
 
     def test_all_native_case_source_pinned(self):
         self.assertEqual(builder.blob_sha(self.cases),
-                         "fc827f4f16f4745f85faef867596f208b76ee0dc")
+                         "801ac8f52cc3fec9bc159b73803853aea845a582")
 
 
 if __name__ == "__main__":
