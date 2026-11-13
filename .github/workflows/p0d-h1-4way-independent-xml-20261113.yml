@@ -1,0 +1,70 @@
+name: P0D H1 four-way independent actual XML + hostile mutation QA
+on:
+  push:
+    branches:
+      - qa/p0d-h1-4way-independent-28script-20261113-01
+permissions:
+  contents: read
+jobs:
+  independent-h1-real-place:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      SRC: handoffs/P0D-H1-WOW-4WAY-20261113-01
+      QA: handoffs/P0D-H1-4WAY-INDEPENDENT-QA-20261113-01/independent_h1_xml.py
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout pinned #255 4way author source + independent QA only
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Confirm original 4-way provenance and NO edits to its source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '1498c2d344ede2d9da6c2bfdd025ebc1a15ec48b^{commit}'
+          test -z "$(git diff 1498c2d344ede2d9da6c2bfdd025ebc1a15ec48b -- "$SRC" | head -c 1)"
+          python3 -B "$SRC/tools/assemble.py" --verify
+      - name: Rebuild complete actual full 28 Luau source tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$SRC/tools/assemble.py" --assemble
+          test -s "$SRC/dist/TRAP_RAIDERS_H1_WOW_STUDIO_ONLY/default.project.json"
+      - name: Download vetted Rojo 7.7.1 independently and verify binary ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_qa_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_qa_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import pathlib,stat,zipfile
+          with zipfile.ZipFile("/tmp/p0d_qa_rojo.zip") as z:
+              files=[x for x in z.namelist() if x.rsplit("/",1)[-1]=="rojo"]
+              assert len(files)==1
+              p=pathlib.Path("/tmp/p0d_qa_rojo")
+              p.write_bytes(z.read(files[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_qa_rojo --version | grep -F 7.7.1
+      - name: Actually generate private 28-script original full Roblox Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/p0d_qa_rojo build "$SRC/dist/TRAP_RAIDERS_H1_WOW_STUDIO_ONLY/default.project.json" -o /tmp/P0D_H1_4WAY_INDEPENDENT_XML_QA.rbxlx
+          test -s /tmp/P0D_H1_4WAY_INDEPENDENT_XML_QA.rbxlx
+      - name: Independently audit all 28 actual game scripts and 16 unsafe source mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$QA" --place /tmp/P0D_H1_4WAY_INDEPENDENT_XML_QA.rbxlx
+          test -z "$(git status --porcelain --untracked-files=no)"
+      - name: Save independent evidence not an OWNER Studio test
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-H1-4WAY-INDEPENDENT-XML-ONLY-NOT-STUDIO
+          path: /tmp/P0D_H1_4WAY_INDEPENDENT_XML_QA.rbxlx
+          if-no-files-found: error
+          retention-days: 7
