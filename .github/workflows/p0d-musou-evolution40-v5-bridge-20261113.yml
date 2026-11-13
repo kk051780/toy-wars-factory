@@ -77,6 +77,10 @@ jobs:
           /tmp/p0d40_native/luau-compile /tmp/p0d40_v5_horde_test.luau >/dev/null
           /tmp/p0d40_native/luau /tmp/p0d40_v5_horde_test.luau | tee /tmp/p0d40_horde_state.log
           grep -F MUSOU_HORDE_NATIVE_50_STATE_ASSERTIONS_PASS /tmp/p0d40_horde_state.log
+          python3 -B "$ROOT/tools/generate_native_evolved_grounded_attack_test.py" --write /tmp/p0d40_grounded_scout_test.luau
+          /tmp/p0d40_native/luau-compile /tmp/p0d40_grounded_scout_test.luau >/dev/null
+          /tmp/p0d40_native/luau /tmp/p0d40_grounded_scout_test.luau | tee /tmp/p0d40_grounded_scout.log
+          grep -F P0D_EVOLVED_ASSAULT_GROUND_ORIGIN_REAL_HORDE_NATIVE_8_ASSERTIONS_PASS /tmp/p0d40_grounded_scout.log
           python3 -B "$ROOT/tools/generate_native_bind_test.py" --write /tmp/p0d40_bind.luau
           /tmp/p0d40_native/luau /tmp/p0d40_bind.luau | tee /tmp/p0d40_bind.log
           grep -F MUSOU_BIND_NATIVE_20_ASSERTIONS_PASS /tmp/p0d40_bind.log
@@ -109,6 +113,7 @@ jobs:
           /tmp/p0d40_rojo build "$DIST/default.project.json" -o /tmp/p0d40_bridge_place/EGG_RAID_RUMBLE_EVOLUTION_MUSOUV5_PRIVATE_UNPUBLISHED.rbxlx
           cp "$DIST/SOURCE_LOCK.json" /tmp/p0d40_bridge_place/SOURCE_LOCK.json
           cp /tmp/p0d40_horde_state.log /tmp/p0d40_bridge_place/NATIVE_ACTUAL_HORDE_MOCK.txt
+          cp /tmp/p0d40_grounded_scout.log /tmp/p0d40_bridge_place/NATIVE_EVOLVED_SCOUT_TRUE_GROUNDED_HIT.txt
           cp /tmp/p0d40_bind.log /tmp/p0d40_bridge_place/NATIVE_BIND_POLICY.txt
           cp /tmp/p0d40_combat.log /tmp/p0d40_bridge_place/NATIVE_COMBAT_POLICY.txt
           python3 - <<'PY'
