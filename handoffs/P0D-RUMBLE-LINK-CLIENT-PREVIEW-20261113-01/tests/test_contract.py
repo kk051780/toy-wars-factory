@@ -14,10 +14,14 @@ def accept(s,p,now,team):
     if team not in ("RED","BLUE") or p.get("team")!=team: return None
     rid=p.get("roundId"); seq=p.get("seq"); exp=p.get("expiresAt")
     if not isinstance(rid,str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,64}",rid): return None
+    serial=p.get("roundSerial")
+    if type(serial) is not int or serial<1 or serial>1000000000: return None
     if type(seq) is not int or seq<1 or seq>1000000000: return None
     if p.get("kind") not in WORDS or type(exp) not in (int,float): return None
     if not isinstance(now,(int,float)) or exp<now or exp>now+4: return None
-    if s.get("roundId")!=rid: s.update(roundId=rid,lastSeq=0,nextAllowed=0)
+    previous=s.get("roundSerial",0)
+    if serial<previous or (serial==previous and rid!=s.get("roundId")): return None
+    if serial>previous: s.update(roundId=rid,roundSerial=serial,lastSeq=0,nextAllowed=0)
     if seq<=s["lastSeq"]: return None
     s["lastSeq"]=seq
     if now<s["nextAllowed"]: return None
@@ -27,7 +31,7 @@ def accept(s,p,now,team):
 class Contract(unittest.TestCase):
     def setUp(self):
         self.s={"roundId":None,"lastSeq":0,"nextAllowed":0}
-        self.p={"roundId":"Round_1","seq":1,"kind":"SCOUT_ASSIST",
+        self.p={"roundId":"Round_1","roundSerial":1,"seq":1,"kind":"SCOUT_ASSIST",
                 "team":"BLUE","expiresAt":11.5}
     def test_four_distinct_cues(self):
         for i,k in enumerate(WORDS):
@@ -52,7 +56,20 @@ class Contract(unittest.TestCase):
         self.assertIsNotNone(accept(self.s,dict(self.p,seq=3,expiresAt=13.5),12.3,"BLUE"))
     def test_new_round_reset(self):
         self.assertIsNotNone(accept(self.s,self.p,10,"BLUE"))
-        self.assertIsNotNone(accept(self.s,dict(self.p,roundId="Round_2",expiresAt=12),11,"BLUE"))
+        self.assertIsNotNone(accept(self.s,dict(self.p,roundId="Round_2",roundSerial=2,expiresAt=12),11,"BLUE"))
+    def test_prior_round_replay_denied(self):
+        self.assertIsNotNone(accept(self.s,dict(self.p,roundSerial=9,roundId="NewRound"),10,"BLUE"))
+        self.assertIsNone(accept(self.s,dict(self.p,roundSerial=8,roundId="OldRound",expiresAt=12.5),11,"BLUE"))
+    def test_same_round_serial_different_id_denied(self):
+        self.assertIsNotNone(accept(self.s,self.p,10,"BLUE"))
+        self.assertIsNone(accept(self.s,dict(self.p,roundId="Forgery",seq=2,expiresAt=12.5),11,"BLUE"))
+    def test_missing_round_serial_denied(self):
+        p=dict(self.p);p.pop("roundSerial")
+        self.assertIsNone(accept(self.s,p,10,"BLUE"))
+    def test_invalid_round_serial_denied(self):
+        self.assertIsNone(accept(self.s,dict(self.p,roundSerial=0),10,"BLUE"))
+    def test_bool_round_serial_denied(self):
+        self.assertIsNone(accept(self.s,dict(self.p,roundSerial=True),10,"BLUE"))
     def test_production_no_authority_source(self):
         for bad in ("FireServer","OnServerEvent","UpdateAsync","SetAsync","GetAsync",
                     "MarketplaceService","DataStoreService","TakeDamage","FireClient"):
