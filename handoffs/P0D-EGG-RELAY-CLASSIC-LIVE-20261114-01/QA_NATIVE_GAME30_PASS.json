@@ -63,5 +63,17 @@
   "no_official_rc_adoption": true,
   "no_main_merge_or_publish": true,
   "no_paid": true,
-  "future_gate": "sole #220 must integrate with reversible independent OFF into newest official RC and run matching full source-native/Rojo CI; then owner Studio/2client/Android/FUN pre-release"
+  "future_gate": "sole #220 must integrate with reversible independent OFF into newest official RC and run matching full source-native/Rojo CI; then owner Studio/2client/Android/FUN pre-release",
+  "cache_optimized_recheck": {
+    "exact_success_head": "c3b92a35ffd8ac8ca9bb528bc2dae44ce9c13190",
+    "run_id": 43513482289,
+    "run_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43513482289",
+    "job_id": 132189356658,
+    "conclusion": "success",
+    "same_checks": "11/11 real Python, 41/41 pure native policy, 30/30 extracted Game handler native Luau, 58/58 source native compile + Rojo source exact",
+    "artifact_id": 14079032545,
+    "artifact_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43513482289/artifacts/14079032545",
+    "cache_result": "first cache miss then native Luau binaries built and GitHub cache saved successfully; next-run cache hit not independently measured",
+    "docs_only_skipped": "new workflow path filter no longer rebuilds for README/QA receipt-only changes; must still verify exact source/workflow SHA for code changes"
+  }
 }
