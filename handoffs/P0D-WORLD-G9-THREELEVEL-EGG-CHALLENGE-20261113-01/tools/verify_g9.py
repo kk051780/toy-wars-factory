@@ -96,8 +96,8 @@ def contract(rule=None,server=None,world=None,project=None):
    'Workspace.Gravity', 'loadstring(', 'Debris:AddItem',
  ):
   check(disallowed not in server and disallowed not in rule,"new authority "+disallowed)
- for team in ("RED","BLUE"):
-  check('team=="'+team+'"' in server,"team missing "+team)
+ check('teamSizes.RED<=teamSizes.BLUE then "RED" else "BLUE"' in server,"both-team assignment")
+ check('for _,team in ipairs(Rules.TEAMS) do' in server,"both egg teams")
  check('if not RunService:IsStudio() then return end' in world,"original G8 game release guard")
  check(world.count('prompt.Triggered:Connect(function(player)')==1,"real G8 trip preserved")
  check('Rules.validate(link.from,link.to' in world,"G8 verified portal still server verified")
