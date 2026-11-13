@@ -58,6 +58,6 @@ class G7WorldQA(unittest.TestCase):
   with self.assertRaises(KeyError):check_contract(project=p)
  def test_card_metadata_not_implemented_gameplay(self):
   cards=(ROOT/"FIELD_CARDS.md").read_text(encoding="utf8")
-  self.assertIn('no actual zero-G',cards.lower().replace('gravity','zero-g'))
+  self.assertIn('no actual zero-g',cards.lower())
 if __name__=="__main__":unittest.main()
 
