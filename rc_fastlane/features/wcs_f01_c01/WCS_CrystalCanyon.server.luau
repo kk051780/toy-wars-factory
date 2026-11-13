@@ -9,10 +9,10 @@ if not RunService:IsStudio() then
 end
 local ServerStorage=game:GetService("ServerStorage")
 -- RC build-time FEATURE_SWITCHES.WCS_F01_C01.enabled is explicit integration opt-in.
--- When included in the unpublished Studio RC, the stage is enabled for play.
--- Studio operator can set P0D_RC_ENABLE_WCS_F01_C01=false BEFORE Play to suppress it.
--- Missing attribute uses explicitly chosen build behavior; never remove stage mid-round.
-if ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")==false then
+-- Source inclusion alone does NOT start the stage: explicit ServerStorage opt-in is required.
+-- Operator sets P0D_RC_ENABLE_WCS_F01_C01=true BEFORE Studio Play; absent/false stays OFF.
+-- Never remove the stage mid-round.
+if ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01") ~= true then
     return
 end
 local Workspace=game:GetService("Workspace")
