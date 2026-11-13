@@ -5,6 +5,7 @@ on:
       - rc/p0d-s1-kids-rc01
       - feature/p0d-private61-native105-size-qa-20261114
       - feature/p0d-private62-starry-meteor-20261114-01
+      - feature/p0d-private63-meteor-shards-mobile-20261114-01
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -174,6 +175,34 @@ jobs:
             echo P0D_PRIVATE62_METEOR_OFF_PRESERVES_ALL_61_BYTES_PASS
             python3 -B rc_fastlane/apply_meteor_fourth.py --profile rich51 --dist "$DIST" --enabled true
           fi
+      - name: Add six collectible shards on the EXISTING meteor62 game, and preserve switch-OFF source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_star_shards.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_star_shards.py --profile rich51 --dist "$DIST" --help >/dev/null
+            python3 -B rc_fastlane/apply_star_shards.py --profile rich47 --dist "$DIST"
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            python3 -B rc_fastlane/apply_star_shards.py --profile rich51 --dist "$DIST"
+            echo P0D_PRIVATE63_METEOR62_PLUS_SHARDS63_SOURCE_ADOPTED_PRIVATE_ONLY
+          fi
+      - name: Make classic egg relay reachable on mobile portrait (HUD only, independent rollback)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_relay_touch_layout.py --dist "$DIST" --enabled off
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            python3 -B rc_fastlane/apply_relay_touch_layout.py --dist "$DIST" --enabled on
+            python3 -B rc_fastlane/rc61_touch_geometry_audit.py --hud "$DIST/src/client/HUD.client.luau"
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -202,7 +231,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -280,6 +309,20 @@ jobs:
             grep -Fx 'P0D_EGG_RELAY_NATIVE_POLICY_41_CASES_PASS' /tmp/p0d60_relay41.log
             echo P0D_PRIVATE61_ONE_GAME_JOBS33_RELAY_POLICY41_REAL_HANDLER31_ALL_PASS
           fi
+      - name: Run 22 real native-Luau shard policy tests from FINAL combined private63 Script
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/features/star_shards/generate_native_runner.py \
+              --script "$DIST/src/server/StarShardHunt.server.luau" \
+              --out /tmp/P0D_STARSHARDS_PRIVATE63_REAL22.luau
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_STARSHARDS_PRIVATE63_REAL22.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_STARSHARDS_PRIVATE63_REAL22.luau | tee /tmp/p0d_private63_shards22.log
+            grep -Fx P0D_STAR_SHARDS_REAL_SOURCE_NATIVE_22_POLICY_CASES_PASS /tmp/p0d_private63_shards22.log
+            echo P0D_PRIVATE63_ALL_NATIVE_33_41_31_22_EQUALS127_PASS
+          fi
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash
         run: |
@@ -328,7 +371,8 @@ jobs:
           egg_enabled=(p=='rich51' and flags['features']['EGG_RELAY_CLASSIC_V1']['enabled'])
           star_enabled=(p=='rich51' and flags['features']['STARRY_PATH_V1']['enabled'])
           meteor_enabled=(p=='rich51' and flags['features']['METEOR_FOURTH_V1']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled)+int(meteor_enabled),'rich47':47,'legacy21':21}[p]
+          shards_enabled=(p=='rich51' and flags['features']['STAR_SHARDS_V1']['enabled'])
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -436,7 +480,7 @@ jobs:
               star_source=(base/'src/server/StarfallPath.server.luau').read_text('utf8')
               assert star_source.count('P0D_STARRY_PATH')>=1
               assert sum('if active and os.clock()>=expiresAt and not occupied()' in src for src in included)==1
-              assert sum('GetAttribute("P0D_RC_ENABLE_STARRY_PATH_V1")~=true' in src for src in included)==1
+              assert sum('GetAttribute("P0D_RC_ENABLE_STARRY_PATH_V1")~=true' in src for src in included)==1+int(shards_enabled), ('STAR_BOOT_GUARD_PER_FEATURE',shards_enabled)
               project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
               assert project['ServerStorage']['$attributes']['P0D_RC_ENABLE_STARRY_PATH_V1'] is True
           else:
@@ -463,6 +507,22 @@ jobs:
               print('P0D_PRIVATE62_METEOR_FOURTH_REAL_ROJO_BOOLVALUE_PASS')
           else:
               assert titles[('Script','MeteorFourth')]==0
+          if shards_enabled:
+              assert meteor_enabled and star_enabled and egg_enabled
+              assert titles[('Script','StarShardHunt')]==1
+              shards=(base/'src/server/StarShardHunt.server.luau').read_text('utf8')
+              assert 'Workspace:WaitForChild("P0D_STARRY_PATH",170)' in shards
+              assert 'local locations={1,3,5,6,8,10}' in shards
+              assert 'local TOTAL=6' in shards
+              assert 'stage:GetAttribute("PathOpen")~=true' in shards
+              assert 'if not stone.CanCollide then return end' in shards
+              assert 'P0D_RC_ENABLE_STAR_SHARDS_V1' in shards
+              project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
+              assert project['ServerStorage']['$attributes']['P0D_RC_ENABLE_STAR_SHARDS_V1'] is True
+          else:
+              assert titles[('Script','StarShardHunt')]==0
+          if p=='rich51':
+              assert 'local function layoutRelayTouch()' in (base/'src/client/HUD.client.luau').read_text('utf8')
           if p=='rich51':
               assert titles[('Script','V4TrainingBridge')]==1
               assert titles[('LocalScript','V4TrialOverlay')]==1
@@ -477,14 +537,14 @@ jobs:
           place_bytes=target.stat().st_size
           if p=='rich51':
               assert place_bytes>507197 and place_bytes<2000000,('IMPLAUSIBLE_PRIVATE61_PLACE_SIZE',place_bytes)
-              print('P0D_PRIVATE62_ACTUAL_PLACE_RBXLX_BYTES',place_bytes)
-              print('P0D_PRIVATE62_SOURCE_PRESERVED_FIVE_FEATURES',sum(actual.values()),int(wcs_enabled),int(seven_enabled),int(egg_enabled),int(star_enabled),int(meteor_enabled))
+              print('P0D_PRIVATE63_ACTUAL_PLACE_RBXLX_BYTES',place_bytes)
+              print('P0D_PRIVATE63_SOURCE_PRESERVED_SIX_FEATURES',sum(actual.values()),int(wcs_enabled),int(seven_enabled),int(egg_enabled),int(star_enabled),int(meteor_enabled),int(shards_enabled))
           receipt={'release_id':'P0D-S1-KIDS-RC01','profile':p,'source_commit':source,
             'source_overlays':overlay_ids,'composite_rc_source_commit':os.environ['GITHUB_SHA'],
             'rc_branch_commit':os.environ['GITHUB_SHA'],'place_sha256':digest,
             'source_count':sum(actual.values()),'exact_rojo_binary':True,
             'actual_uncompressed_place_bytes':place_bytes,
-            'source_candidate_stage':'STARRY61_PLUS_METEOR_PRIVATE62_NOT_OFFICIAL_RC',
+            'source_candidate_stage':'PRIVATE63_METEOR_PLUS_SIX_SHARDS_PLUS_MOBILE_NOT_OFFICIAL_RC',
             'native_policy_cases_7jobs':33 if p=='rich51' else None,
             'native_policy_cases_relay':41 if p=='rich51' else None,
             'native_original_Game_relay_cases':31 if p=='rich51' else None,
@@ -497,6 +557,9 @@ jobs:
             'egg_relay_classic_one_egg_included':bool(egg_enabled),
             'starry_path_third_canyon_route_included':bool(star_enabled),
             'meteor_fourth_canyon_route_included':bool(meteor_enabled),
+            'star_shards_six_fragment_session_quest':bool(shards_enabled),
+            'star_shards_native_policy_cases':22 if shards_enabled else None,
+            'mobile_relay_touch_geometry_12viewports_144checks':True if shards_enabled else None,
             'meteor_engine_2client':'NOT_TESTED',
             'starry_path_engine_2client':'NOT_TESTED',
             'egg_relay_five_egg_supported':False,
@@ -513,12 +576,21 @@ jobs:
             'android':'NOT_TESTED','owner_fun':'NOT_TESTED',
             'production_publish':False,'sixskill_persistent':False,
             's1_score_prior_only':75,
-            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled},
+            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled,'STAR_SHARDS_V1':shards_enabled},
             'base_author_51_preserved':True if realm_enabled else None,
             'new_realms_studio_2client':'NOT_TESTED'}
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
           print('OFFICIAL_RC_FASTLANE_BINARY_SOURCE_EXACT_PASS',p,digest)
           PY
+      - name: Inspect real assembled private63 Rojo boot + Meteor + shards + mobile HUD
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/verify_private63.py \
+              --dist "$DIST" --place /tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx
+          fi
       - name: Generate OWNER feature progress in the SAME RC build (no second QA run)
         shell: bash
         run: |
