@@ -11,7 +11,7 @@ import hashlib
 import json
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 AUTHOR = ROOT / "_egg" / "handoffs" / "P0D-EGG-RELAY-CLASSIC-LIVE-20261114-01"
 ORIGINAL_POLICY = ROOT / "_egg" / "handoffs" / "P0D-EGG-RELAY-PASS-POLICY-20261113-01" / "src" / "EggRelayPolicy.luau"
 FEATURE = "EGG_RELAY_CLASSIC_V1"
