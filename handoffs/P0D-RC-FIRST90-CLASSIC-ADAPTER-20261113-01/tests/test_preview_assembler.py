@@ -57,7 +57,7 @@ class RealPreviewSource(unittest.TestCase):
     def test_client_uses_only_existing_coach_and_remote(self):
         client = (DIST/"src/client/FirstMinuteCoach.client.luau").read_text()
         model = (DIST/"src/shared/FirstMinuteModel.luau").read_bytes()
-        self.assertEqual(client.count("local gui = Instance.new(\\"ScreenGui\\")"), 1)
+        self.assertEqual(client.count('local gui = Instance.new("ScreenGui")'), 1)
         self.assertEqual(client.count('remote.OnClientEvent:Connect'), 1)
         self.assertEqual(client.count('local function repaint()'), 1)
         self.assertIn('first90Text(state.latest)', client)
