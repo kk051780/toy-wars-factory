@@ -21,7 +21,7 @@ INSERT="""relayButton.Visible=false
 -- default centered slot overlaps rescue at width 375-600; use the quiet
 -- left-middle slot on <=650px while retaining the proven landscape slot.
 local relayViewportConnection: RBXScriptConnection?=nil
-local function layoutRelayTouch(): ()
+local function layoutRelayTouch()
     local camera=workspace.CurrentCamera
     local viewWidth=if camera then camera.ViewportSize.X else 800
     if viewWidth<=650 then
@@ -30,7 +30,7 @@ local function layoutRelayTouch(): ()
         relayButton.Position=UDim2.new(.5,-56,1,-164)
     end
 end
-local function bindRelayViewport(): ()
+local function bindRelayViewport()
     if relayViewportConnection then
         relayViewportConnection:Disconnect()
         relayViewportConnection=nil
