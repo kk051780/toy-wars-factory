@@ -37,7 +37,9 @@ def apply(dist,profile):
     old=before["server/Game.server.luau"].decode("utf8")
     assert old.count("SavedBeastEvolution.choose(")==1
     assert old.count('remote.Name = "TrapRaidersS1Remote"')==1
-    assert old.count("horde:hit(anchor,currentRoot.CFrame.LookVector,")==1
+    # The exact full attack hunk below is the single-authority guard; previous
+    # B42 source may contain additional similar commentary or wrapper text.
+    assert "horde:hit(" in old, "MISSING_ORIGINAL_HORDE"
     assert "P0D_SCOUT_SPECIES_V1" not in old
 
     code=one(old,
