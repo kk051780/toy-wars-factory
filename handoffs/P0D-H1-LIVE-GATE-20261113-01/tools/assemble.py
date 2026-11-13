@@ -14,9 +14,9 @@ ORIG_BUILD=ORIG/"dist/TRAP_RAIDERS_H1_WOW_STUDIO_ONLY"
 DEST=OWN/"dist/TRAP_RAIDERS_H1_LIVE_GATE_OFF_STUDIO_ONLY"
 IN=OWN/"inputs"
 NEW={
-    "server/H1FunWorld.server.luau":"e344cbe67ab6a67f9382982c3a463569389dc49d",
-    "client/D18MascotGuide.client.luau":"b0962b63867eef42d2657d6ad7c0302e4d637f7f",
-    "shared/H1ReleaseGate.luau":"9c73d5b7da194077d268d727a2ddc5adf81aaef4"
+    "server/H1FunWorld.server.luau":"1c1974799790d58110d56c0d62b44943961cff00",
+    "client/D18MascotGuide.client.luau":"1244d09b2dc3bce6acabb58db154bbe62edceb01",
+    "shared/H1ReleaseGate.luau":"59eb9aa6e3f41b52b6bfb5e23147ae42dc451b57"
 }
 OLD={
     "server/H1FunWorld.server.luau":"cc764b9caaa293ff747489e02e607af4502ddca4",
