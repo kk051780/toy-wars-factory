@@ -113,7 +113,7 @@ jobs:
           assert counts=={"Script":2,"LocalScript":5,"ModuleScript":37},counts
           assert actual==expected and sum(actual.values())==44
           assert game==1 and world==1
-          assert any('PRIVATE_AUTO_DOJO_RED_BEAST' in s for s in actual)
+          assert any('pad.Name="PRIVATE_AUTO_DOJO_"..side.."_"..kind' in s for s in actual)
           assert any('Dojo.FRIEND_XP_MULTIPLIER = 1.5' in s for s in actual)
           assert sum('remote.OnServerEvent:Connect(' in s for s in actual)==1
           report={"sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
