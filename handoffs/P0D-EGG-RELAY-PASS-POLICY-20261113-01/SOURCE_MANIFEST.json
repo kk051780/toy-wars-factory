@@ -1,12 +1,12 @@
 {
-  "schema": "P0D_EGG_RELAY_SOURCE_MANIFEST_V1",
+  "schema": "P0D_EGG_RELAY_SOURCE_MANIFEST_V2",
   "game_id": "TRAP_RAIDERS",
   "work_id": "p0d-siege-v19",
   "adoption_id": "P0D-EGG-RELAY-001",
   "status": "SOURCE_POLICY_ONLY_NOT_IN_GAME",
   "target_release": "S2_OPTIONAL",
-  "source_origin_head": "e76b50fab19bc3d42a6b26c75ae1eb9e1cf0ec45",
-  "source_qa": "PYTHON_REFERENCE_33_33_LOCAL_PASS",
+  "source_origin_head": "8e4393955a3009a0ef7cca934cb5fe5b957ee7d5",
+  "source_qa": "PYTHON_REFERENCE_35_35_LOCAL_PASS",
   "native_luau": "NOT_TESTED",
   "roblox_studio": "NOT_TESTED",
   "studio_2client": "NOT_TESTED",
@@ -19,21 +19,21 @@
   "files": [
     {
       "path": "src/EggRelayPolicy.luau",
-      "git_blob_sha": "dd5e5e19fb16c79bc54bfdef04c941cde418b0b4",
-      "sha256": "9dd74ba29fec61c9214c2059ce19da8337bf7ed46c0b31c96f16bf865b9ae7b4",
-      "bytes": 5196
+      "git_blob_sha": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
+      "sha256": "7515fecbb4994d39bccdd7dba49229bcb151ab64d084da84e332c41f7bc5dfa0",
+      "bytes": 5203
     },
     {
       "path": "tests/reference_policy.py",
-      "git_blob_sha": "aa9b53ee7805b652921f273d89e2862ea288f02c",
-      "sha256": "efa97bd83d5fa1cc685769e36fa1745ab842179d29434712a741b17324c5bc51",
-      "bytes": 3842
+      "git_blob_sha": "2e5bcc1fb2356f2552b1dc155c5babeaf3b22203",
+      "sha256": "68d10b9c836ae9c6b8f59b5cb0ceab2511cab456aa5d51fd46317c4878b86006",
+      "bytes": 3856
     },
     {
       "path": "tests/test_reference_policy.py",
-      "git_blob_sha": "12a32a326dcd4f0b938e0e05763a9fa323397465",
-      "sha256": "189922d96cb95f2bf066723c0a9d9bd8d2b4b79178589a558100ca50fb0ebed1",
-      "bytes": 5510
+      "git_blob_sha": "aa0ff55dc15d0be1b663ed49aad9433980524ef2",
+      "sha256": "8aaa5c9a9b0a221a28f93961b9d7b210b79e8db381dc9d59ad4e2aca4fffbdd4",
+      "bytes": 6117
     },
     {
       "path": "INTEGRATION_CONTRACT.md",
@@ -48,5 +48,6 @@
     "Python behavior mirror does not execute Luau",
     "Policy returns decision only; actual egg transfer requires sole Game integration",
     "No Studio, Android, or owner play evidence"
-  ]
+  ],
+  "notes": "Original v1 policy incorrectly capped all integers at 1e9, excluding billion-scale Roblox UserIds. V2 uses maximum exact integer 2^53-1 and adds boundary coverage."
 }
