@@ -48,3 +48,15 @@ jobs:
           /tmp/p0d_v4_luau/luau /tmp/p0d_v4_native.luau | tee /tmp/p0d_v4_native.log
           grep -E '^P0D_V4_FOCUS_NATIVE_[0-9]+_ASSERTIONS_PASS$' /tmp/p0d_v4_native.log
           echo 'SOURCE_NATIVE_LUAU_PASS_NOT_STUDIO'
+      - name: Native six-skill XP integration contract anti-silent-drop QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          R=handoffs/P0D-LOBBY-V4-FOCUS-CAP-20261113-01
+          /tmp/p0d_v4_luau/luau-compile "$R/src/TrainingIntegrationGate.luau" >/dev/null
+          python3 "$R/tools/generate_native_integration_gate.py" --write /tmp/p0d_v4_gate_native.luau
+          /tmp/p0d_v4_luau/luau-compile /tmp/p0d_v4_gate_native.luau >/dev/null
+          /tmp/p0d_v4_luau/luau /tmp/p0d_v4_gate_native.luau | tee /tmp/p0d_v4_gate_native.log
+          grep -E '^P0D_V4_INTEGRATION_GATE_NATIVE_[0-9]+_ASSERTIONS_PASS
+ /tmp/p0d_v4_gate_native.log
+          echo 'V4_GATE_SOURCE_NATIVE_PASS_NO_ENGINE_OR_STUDIO'
