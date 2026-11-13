@@ -1,0 +1,27 @@
+{
+  "name": "EggRumbleLevelJourneyPrivatePreview",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "ProgressionRules": {
+        "$path": "src/ProgressionRules.luau"
+      },
+      "LevelJourneyView": {
+        "$path": "src/LevelJourneyView.luau"
+      },
+      "LevelJourneyPreview": {
+        "$path": "demo/LevelJourneyPreview.server.luau"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "LevelJourneyHUD": {
+          "$path": "demo/LevelJourneyHUD.client.luau"
+        }
+      }
+    }
+  }
+}
