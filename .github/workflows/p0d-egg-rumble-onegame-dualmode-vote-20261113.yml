@@ -36,7 +36,7 @@ jobs:
           set -euo pipefail
           python3 -B "$OWN/tools/generate_native_mode_vote_test.py" --write /tmp/egg_rumble_native_vote.luau
           test -s /tmp/egg_rumble_native_vote.luau
-          python3 -B handoffs/P0D-MULTI-EGG-SCORE-LAB-20261113-01/tests/generate_native_test.py --write /tmp/egg_rumble_native_5egg.luau
+          python3 -B "$OWN/tools/generate_native_5egg_test.py" --write /tmp/egg_rumble_native_5egg.luau
       - name: Download genuine pinned Rojo 7.7.1 binary for ONE Roblox Place
         shell: bash
         run: |
