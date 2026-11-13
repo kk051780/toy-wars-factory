@@ -1,5 +1,5 @@
 {
-  "schema": "P0D_EVOLUTION_SOURCE_MANIFEST_V2",
+  "schema": "P0D_EVOLUTION_SOURCE_MANIFEST_V3_REAL_CI_ROJO_CHECKPOINT",
   "date_jst": "2026-11-13",
   "brand": "EGG RAID RUMBLE",
   "internal_game_id": "TRAP_RAIDERS",
@@ -12,17 +12,23 @@
   "official_s1_last_percent": 75,
   "owner_fun_gate": "NO_GO",
   "evidence": {
-    "source_readback": "12_of_12_Git_blob_retrieved",
-    "source_contract_checks": "33_of_33_executed_V8_source_contract_pass",
-    "native_luau_run": "NOT_VERIFIED",
-    "python_static_run": "NOT_VERIFIED",
-    "real_rojo_build": "NOT_VERIFIED",
-    "real_studio_engine_two_clients": "NOT_TESTED",
+    "source_readback": "12/12_Git_blob_retrieved",
+    "source_contract_checks": "33/33_Code_Mode_V8_source_structural_checks_executed_success_before_test_fix",
+    "python_static_tests": "ACTUAL_40/40_PASS_GitHubActions_43379975230_at_pr_sha_bf74f32575e9b027f13bd3c7621522ef9a60c695",
+    "native_luau_tests": "ACTUAL_98/98_PASS_GitHubActions_43379975230_at_pr_sha_bf74f32575e9b027f13bd3c7621522ef9a60c695",
+    "native_compile": "ACTUAL_POLICY_AND_TWO_STUDIO_PROJECT_SCRIPTS_NATIVE_COMPILE_PASS_GitHubActions_43379975230",
+    "rojo_build": "ACTUAL_BOTH_PRIVATE_RBXLX_PASS_GitHubActions_43379975230",
+    "rojo_gallery_source": "REAL_ROJO_SOURCE_EXACT_PASS_2_OF_2",
+    "rojo_battle_source": "REAL_ROJO_SOURCE_EXACT_PASS_3_OF_3",
+    "gallery_rbxlx_sha256": "38304232446ca78176837c67097d0c682982de8ae684d226d2311af8de2ab7a9",
+    "battle_rbxlx_sha256": "670e6f5857146d676ae531ed21df0717ad275736ff4707039fe99ef2662fb9f2",
+    "artifact": "https://github.com/kk051780/toy-wars-factory/actions/runs/43379975230/artifacts/14015568705",
+    "github_draft_pr": "https://github.com/kk051780/toy-wars-factory/pull/289",
+    "latest_manifest_only_commit_ci": "NOT_YET_VERIFIED_WILL_TRIGGER_NEW_RUN",
+    "studio_engine_two_clients": "NOT_TESTED",
     "android_physical": "NOT_TESTED",
     "actual_two_mode_game_evolution": "NOT_IMPLEMENTED",
-    "persistent_evolution": "NOT_IMPLEMENTED",
-    "python_static_tests_authored": "17_original_+_23_new_NOT_VERIFIED_EXECUTED",
-    "native_luau_tests_authored": "91_original_assertions_NOT_VERIFIED_EXECUTED"
+    "persistent_evolution": "NOT_IMPLEMENTED"
   },
   "files": [
     {
@@ -52,8 +58,8 @@
     },
     {
       "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/tests/test_project_static.py",
-      "git_blob_sha": "b229d22531cd3dabd1f17e7d95ecf8047cadef13",
-      "chars": 3915
+      "git_blob_sha": "93405ca1e618457d62b1a299fc7591582ea78ea9",
+      "chars": 4256
     },
     {
       "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/README.md",
@@ -62,8 +68,8 @@
     },
     {
       "path": ".github/workflows/p0d-evolution-branching-20261113.yml",
-      "git_blob_sha": "8e1551518c06aaf0aba9a4555bd14fa131f2a3be",
-      "chars": 3785
+      "git_blob_sha": "60a2b62952800bede7aa109a888c3fdf56be9c59",
+      "chars": 8041
     },
     {
       "path": "handoffs/P0D-EVOLUTION-BRANCHING-20261113-01/battle/EvolutionCombat.server.luau",
@@ -87,11 +93,10 @@
     }
   ],
   "notes": [
-    "Original #287 pure policy source remains byte-identical to prior checkpoint Git Blob 0efca67b41e34917038fdc883c8ad34f3eb3c2e2.",
-    "Two distinct Studio projects: original visual gallery, and new battle.project.json actual server PvE training only.",
-    "Server PvE combat demo uses synthetically advanced earned rounds, NOT canonical H1/H2 XP, valid ownership or persistence.",
-    "ASSAULT does real server TakeDamage to NPC Humanoids inside 17 or 25 studs. GUARD prevents castle damage 3 or 5 hits for 8sec. Both are physically authored SOURCE, NOT engine QA pass.",
-    "All real battle/game/remote/ownership authority remains #220 sole RC; #286 full 35-Luau 2-mode candidate unchanged.",
-    "No publish, main, paid, owner PC, CAS, automations modified."
+    "Exact original #287 pure policy EvolutionRules Git Blob 0efca67b41e34917038fdc883c8ad34f3eb3c2e2 unchanged since V1.",
+    "Pure evolution source is genuine native Luau runtime tested 98 checks. Both separate Rojo 7.7.1 private .rbxlx XML byte source verified from Github run43379975230.",
+    "Demo-only synthetically earned Lv/XP/owned/fragment state: does NOT establish legit H1/H2 profile/replication/real account persistence.",
+    "2-client Roblox engine, Android FPS/controls and human owner FUN NOT TESTED. No official RC/product promotion; #250/#220 remain sole authorities.",
+    "One draft QA PR targeting existing #285 feature branch ONLY; no merge, main, release, paid, PC or CAS writes."
   ]
 }
