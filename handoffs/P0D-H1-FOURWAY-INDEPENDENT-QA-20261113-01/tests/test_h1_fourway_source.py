@@ -49,6 +49,42 @@ def check_exact_blobs():
         actual=blob(x.read_bytes())
         assert actual==h,(p,actual,h)
 
+def swept_ribbon_hits_box(a,b,width,low,high):
+    """Conservative true-3D wall/rock collision gate for angled Roblox path Parts.
+
+    A path() Part in the real source is CFrame.lookAt(midpoint, endpoint) with
+    Size=(width, 2, segment.Magnitude). Its width projects PERPENDICULAR to the
+    horizontal heading, not a bogus width/2 expansion along both X and Z.
+    Height is Y: a raised sky walkway may genuinely pass OVER a low rock.
+    We conservatively expand the obstacle by support widths of the actual
+    oriented local X and local Y axes and intersect its segment against the box.
+    This is source math, not a Roblox physics simulation or Studio PASS.
+    """
+    dx,dy,dz=(b[k]-a[k] for k in range(3))
+    horizontal=(dx*dx+dz*dz)**.5
+    length=(dx*dx+dy*dy+dz*dz)**.5
+    assert horizontal>0 and length>0
+    # Perpendicular to the horizontal heading (local X, sideways).
+    side=(-dz/horizontal, 0.0, dx/horizontal)
+    # Up within the sloped vertical plane (local Y, Part half-height=1).
+    rise=(-dy*dx/(horizontal*length), horizontal/length,
+          -dy*dz/(horizontal*length))
+    half=[abs(side[k])*width/2+abs(rise[k])*1 for k in range(3)]
+    lo=[low[k]-half[k] for k in range(3)]
+    hi=[high[k]+half[k] for k in range(3)]
+    left,right=0.0,1.0
+    for axis,d in enumerate((dx,dy,dz)):
+        if abs(d)<1e-12:
+            if a[axis]<lo[axis] or a[axis]>hi[axis]:
+                return False
+        else:
+            u,v=(lo[axis]-a[axis])/d,(hi[axis]-a[axis])/d
+            left=max(left,min(u,v))
+            right=min(right,max(u,v))
+            if left>right:
+                return False
+    return True
+
 def bounded_route_geometry(map_source,world):
     assert 'Vector3.new(sign * 103, 7, z)' in map_source
     assert 'Vector3.new(40, 14, 5)' in map_source
@@ -67,17 +103,14 @@ def bounded_route_geometry(map_source,world):
     solids={}
     for team,x in (("RED",-103),("BLUE",103)):
         for z in (-44,44):
-            solids[f"{team}_wall_{z}"]=((x-20,x+20),(z-2.5,z+2.5))
+            solids[f"{team}_wall_{z}"]=((x-20,0,z-2.5),(x+20,14,z+2.5))
+    # Five REAL original collision-enabled stone pillars: center y3, size7.
     for i in range(-2,3):
         x=20*i; z=32 if i%2==0 else -32
-        solids[f"rock_{i}"]=((x-3.5,x+3.5),(z-3.5,z+3.5))
-    def overlap(a,b):
-        return min(a[1],b[1])>max(a[0],b[0])
+        solids[f"rock_{i}"]=((x-3.5,-.5,z-3.5),(x+3.5,6.5,z+3.5))
     for name,(a,b,width) in paths.items():
-        horiz=((min(a[0],b[0])-width/2,max(a[0],b[0])+width/2),
-               (min(a[2],b[2])-width/2,max(a[2],b[2])+width/2))
-        for obstacle,rect in solids.items():
-            assert not (overlap(horiz[0],rect[0]) and overlap(horiz[1],rect[1])),(name,obstacle)
+        for obstacle,(lo,hi) in solids.items():
+            assert not swept_ribbon_hits_box(a,b,width,lo,hi),(name,obstacle)
         assert 8<=width<=18
         assert abs(a[0])<=125 and abs(b[0])<=125 and abs(a[2])<=69 and abs(b[2])<=69
         dx=b[0]-a[0];dz=b[2]-a[2]
@@ -231,6 +264,22 @@ class TestIndependentH1FourWay(unittest.TestCase):
             'Vector3.new(-46,16,32.5),Vector3.new(46,16,32.5)',
             'Vector3.new(-35,16,32.5),Vector3.new(46,16,32.5)')
         with self.assertRaises(AssertionError):source_contract(s)
+    def test_sky_bridge_is_safely_above_low_stone_pillars(self):
+        p=bounded_route_geometry(self.s["server/MapBuilder.luau"],
+                                 self.s["server/H1FunWorld.server.luau"])
+        sky=p["SKY_WALKWAY"]
+        # The elevated bridge is 16 studs high, low rocks stop at y=6.5.
+        self.assertEqual(sky[0][1],16)
+        self.assertEqual(sky[1][1],16)
+        self.assertFalse(swept_ribbon_hits_box(
+            sky[0],sky[1],sky[2],(-43.5,-.5,28.5),(-36.5,6.5,35.5)))
+    def test_mutant_sky_ramp_reentering_actual_solid_wall_rejected(self):
+        s=dict(self.s)
+        s["server/H1FunWorld.server.luau"]=s["server/H1FunWorld.server.luau"].replace(
+            'Vector3.new(-86,0,32.5),Vector3.new(-46,16,32.5)',
+            'Vector3.new(-86,0,44),Vector3.new(-46,16,44)')
+        with self.assertRaises(AssertionError):
+            source_contract(s)
     def test_mutant_missing_fantasy_creature_blocked(self):
         s=dict(self.s)
         s["server/H1FunWorld.server.luau"]=s["server/H1FunWorld.server.luau"].replace(
