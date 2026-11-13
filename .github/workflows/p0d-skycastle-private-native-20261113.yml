@@ -1,0 +1,59 @@
+name: P0D SkyCastle B42 private source native Luau gate
+on:
+  push:
+    branches:
+      - feature/p0d-skycastle-private-route-20261113-01
+    paths:
+      - 'handoffs/P0D-SKYCASTLE-PRIVATE-ROUTE-20261113-01/**'
+      - '.github/workflows/p0d-skycastle-private-native-20261113.yml'
+  workflow_dispatch:
+jobs:
+  source-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Actual pinned world source and mutation contract checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT=handoffs/P0D-SKYCASTLE-PRIVATE-ROUTE-20261113-01
+          python3 -B -m unittest discover -s "$ROOT/tests" -p 'test_source_contract.py' -v
+          test "$(git hash-object "$ROOT/src/H1FunWorld_SKY_CASTLE_TEST.server.luau")" = 0a6360392f4384dc2f0ab1e9afc1d840d66a22b8
+          python3 - <<'PY'
+          import json,pathlib,hashlib
+          root=pathlib.Path("handoffs/P0D-SKYCASTLE-PRIVATE-ROUTE-20261113-01")
+          obj=json.loads((root/"SOURCE_LOCK.json").read_text())
+          src=(root/"src/H1FunWorld_SKY_CASTLE_TEST.server.luau").read_bytes()
+          assert hashlib.sha256(src).hexdigest()==obj["world_source_sha256"]
+          assert obj["new_rbxlx_sha256"]=="40666ff599f5ba0a88976688c0c752cbc9839ad02095fbd07f1ec0d62b2f233b"
+          assert obj["source_count"]==42
+          assert obj["official_rc"]=="NOT_ADOPTED"
+          assert obj["studio_2client"]=="NOT_TESTED"
+          print("P0D_SKYCASTLE_FIXED_SOURCE_4_CONTRACT_LOCKS_PASS")
+          PY
+      - name: Checkout frozen upstream Luau source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build pinned native Luau compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_luau -B /tmp/p0d_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_luau --target Luau.Compile.CLI --parallel 4
+      - name: Compile exact isolated original sky scene source
+        shell: bash
+        run: |
+          set -euo pipefail
+          PATHSRC=handoffs/P0D-SKYCASTLE-PRIVATE-ROUTE-20261113-01/src/H1FunWorld_SKY_CASTLE_TEST.server.luau
+          /tmp/p0d_luau/luau-compile "$PATHSRC" >/tmp/p0d_sky_compile.txt 2>&1 || { cat /tmp/p0d_sky_compile.txt; exit 1; }
+          echo P0D_SKYCASTLE_NATIVE_ONE_ORIGINAL_SCENE_LUAU_COMPILE_PASS
+          echo 'NOT_TESTED: Roblox Studio physics, 2 clients, Android, owner FUN, official RC adoption'
