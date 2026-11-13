@@ -7,9 +7,8 @@ end
 -- Right/up orientation: arrow 0 points toward camera forward, +90 camera right, -90 left.
 -- Horizontal projection only; outputs nil if a target or heading is degenerate.
 function Compass.angleDegrees(rx: any, rz: any, lx: any, lz: any, dx: any, dz: any): number?
-    for _,v in ipairs({rx,rz,lx,lz,dx,dz}) do
-        if not finite(v) then return nil end
-    end
+    if not (finite(rx) and finite(rz) and finite(lx) and finite(lz)
+        and finite(dx) and finite(dz)) then return nil end
     local target=dx*dx+dz*dz
     local heading=lx*lx+lz*lz
     local right=rx*rx+rz*rz
