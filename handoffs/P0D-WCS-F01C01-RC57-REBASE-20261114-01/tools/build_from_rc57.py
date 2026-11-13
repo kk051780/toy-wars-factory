@@ -104,7 +104,7 @@ def build(zip_path: Path, output: Path, receipt_path: Path):
         raise ValueError("GAME_OWNER_CHANGED")
     output.parent.mkdir(parents=True,exist_ok=True)
     receipt_path.parent.mkdir(parents=True,exist_ok=True)
-    result = ET.tostring(root, encoding="utf8", xml_declaration=True)
+    result = ET.tostring(root, encoding="utf-8", xml_declaration=True)
     if all_scripts(ET.fromstring(result)) != final: raise ValueError("RESULT_ROUNDTRIP_NOT_EXACT")
     receipt = {
         "schema":"P0D_WCS_RC57_PRIVATE_REBASE_V1",
