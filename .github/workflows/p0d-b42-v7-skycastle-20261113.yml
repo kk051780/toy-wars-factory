@@ -25,7 +25,7 @@ jobs:
           python3 -B handoffs/P0D-FIRST90-GUIDED-H1-20261113-01/tests/test_first90_game.py
           python3 -B handoffs/P0D-EARNED-EVOLUTION-FULL-H1-20261113-01/tests/test_evolution_h1.py
           python3 -B handoffs/P0D-MUSOU-EARNED-POWER-H1-20261113-01/tests/test_power_bridge.py
-      - name: Build real 42 script single Game with only V7 Horde overlay
+      - name: Build real 42 script single Game with V7 Horde and physical SkyCastle world
         shell: bash
         run: |
           set -euo pipefail
@@ -57,7 +57,7 @@ jobs:
             n=$((n+1))
           done < <(find "$DIST/src" -type f -name '*.luau' -print0)
           test "$n" -eq 42
-          python3 -B "$ROOT/tools/generate_native_horde_state_test.py" --write /tmp/p0d_horde_v7.luau
+          python3 -B handoffs/P0D-FIRST90-MUSOUV7-UPGRADE-20261113-01/tools/generate_native_horde_state_test.py --write /tmp/p0d_horde_v7.luau
           /tmp/p0d_luau/luau-compile /tmp/p0d_horde_v7.luau >/dev/null
           /tmp/p0d_luau/luau /tmp/p0d_horde_v7.luau | tee /tmp/p0d_horde_native.log
           grep -E '^MUSOU_HORDE_NATIVE_79_STATE_ASSERTIONS_PASS$' /tmp/p0d_horde_native.log
