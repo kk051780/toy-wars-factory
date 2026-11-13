@@ -36,3 +36,12 @@ local ok, reason, newSeq = H2Score.relayWithVersion(
 5. OWNER V5は機能ごとのStudio試遊をRC採用の前提としないが、**公開前の人間FUN、2client、Android試遊は未達**のまま維持。
 
 本レーンの旧 `rc54_candidate/Game.patch` と `rc55_rebase/rebuild_current_rc55.py` は #296 と競合する代替案なので、**以後はH2-only V2だけを第一推薦**。S1発売品質の最後の公式評価75/100 / FUN_NO_GOは不変です。
+
+
+## 追加検証：最新RC56の本物ソース互換性（2026-11-14）
+
+- 正式唯一RCのSAVED_BEAST_EVOLUTION採用済み初回成功コミット `947cddb5351ba95b9b27597b9ec1828a8297cd66`、本物Actions [43504336646](https://github.com/kk051780/toy-wars-factory/actions/runs/43504336646)、artifact 14075771698 から実`.rbxlx` を取得、SHA256 `3b8df96e32433a645a957604e7f50062a9ffd2e34831d8e6ba21f7ab2bfabc5c` と一致。実54→55→56本のうち**現行56本**を読んでH2原文 SHA256 `cdfb7c66f2857f7fba683869bc9fe94edd64d59730ecc0730e46969e77323aca` がRC55と**バイト同一**であることを実証。
+- H2-only patch `H2OnlyRelayV2.patch` を最新RC56の抽出原文へ `--fuzz=0 --dry-run`→本適用し、結果SHA256 `89e2f07e0000bb6338e44ad41ee812b054226718161136443e64382028558b00` の完全一致PASS。
+- **結果：最新RC56のBEAST進化/SAVED_PVE保存レベル/修行/秘境、Game、Store、Remote/HUDを変えずに、本H2純粋遷移だけを組み込める正確な差分が成立。** ただし実ゲームにパス用のGameハンドラを追加しなければユーザーはまだ遊べない。公式RCに本差分を適用した事実はない。
+- 別レーンPR #296は通常1卵Game/HUD対応。Game本体は一本の統合だけを選ぶ。現在の正式企画到達率は別途 #220 の報告が正本であり、本候補では加点しない。
+- この検証の固定証拠は `RC56_COMPATIBILITY_PROOF.json`、再実行可能なオーナー用ZIP `P0D_H2_EGG_RELAY_V2_READY_FOR_220.zip` に保管。
