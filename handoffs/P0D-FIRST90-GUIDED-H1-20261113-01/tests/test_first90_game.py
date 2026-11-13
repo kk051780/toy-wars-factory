@@ -46,4 +46,17 @@ class First90OriginalSource(unittest.TestCase):
  def test_34_no_false_carry(self):self.assertIn("carrying=carry[player]~=nil",G)
  def test_35_one_client_seq(self):self.assertEqual(H.count("local seq = 0"),1)
  def test_36_no_new_stores(self):self.assertEqual(G.count("DataStoreService:GetDataStore("),1)
+ def test_37_guard_duration_matches_actual_token(self):
+  self.assertIn("evolutionGuards[player]={untilAt=serverNow()+SCOUT_DURATION,",G)
+  self.assertNotIn("evolutionGuards[player]={untilAt=serverNow()+8,",G)
+ def test_38_one_assault_only_after_real_hit(self):
+  self.assertIn("local evolvedStrikeUsed=false",G)
+  self.assertIn("and not evolvedStrikeUsed then",G)
+  self.assertIn("if hits>0 then\n                    evolvedStrikeUsed=true",G)
+  self.assertNotIn("nextEvolvedStrike=serverNow()+12",G)
+ def test_39_original_5sec_scout_token(self):
+  self.assertIn("local SCOUT_DURATION=5",G)
+  self.assertIn("token.duration~=SCOUT_DURATION",G)
+  self.assertIn("while t<SCOUT_DURATION and scoutModels[player]==model",G)
+
 if __name__=="__main__":unittest.main(verbosity=1)
