@@ -62,8 +62,8 @@ if RunService:IsStudio() then
             title.TextWrapped=true
             title.Font=Enum.Font.GothamBold
             title.Text=if kind=="BEAST"
-                then "🐉 まじゅう道場\\\\n乗るだけで修行"
-                else "⚔ ぶき道場\\\\n乗るだけで修行"
+                then "🐉 まじゅう道場\\n乗るだけで修行"
+                else "⚔ ぶき道場\\n乗るだけで修行"
             title.Parent=billboard
             dojoPads[side][kind]=pad
         end
@@ -222,7 +222,7 @@ def patch_hud(s):
         dojoBadge.Text="魔獣 Lv"..tostring(training.beast)
             .."  武器 Lv"..tostring(training.weapon)
             .."  "..(if training.friendBonus==true then "👥×1.5" else "")
-            .."\\\\n"..name.." "..tostring(prog).."/"..tostring(need)
+            .."\\n"..name.." "..tostring(prog).."/"..tostring(need)
             .." (このプレイ中 / 対NPC)"
     end
 ''',
