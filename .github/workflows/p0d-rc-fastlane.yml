@@ -522,7 +522,7 @@ jobs:
               star_source=(base/'src/server/StarfallPath.server.luau').read_text('utf8')
               assert star_source.count('P0D_STARRY_PATH')>=1
               assert sum('if active and os.clock()>=expiresAt and not occupied()' in src for src in included)==1
-              assert sum('GetAttribute("P0D_RC_ENABLE_STARRY_PATH_V1")~=true' in src for src in included)==1
+              assert sum('GetAttribute("P0D_RC_ENABLE_STARRY_PATH_V1")~=true' in src for src in included)==1+int(shard_enabled)
               project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
               assert project['ServerStorage']['$attributes']['P0D_RC_ENABLE_STARRY_PATH_V1'] is True
           else:
