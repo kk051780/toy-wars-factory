@@ -122,7 +122,7 @@ jobs:
             test "$n" -eq 31
             echo EGG_RUMBLE_31_LUAU_NATIVE_COMPILE_PASS
           done
-          python3 -B handoffs/P0D-MULTI-EGG-SCORE-LAB-20261113-01/tests/generate_native_test.py --write /tmp/egg_rumble_original_policy.luau
+          python3 -B "$OWN/tests/generate_native_test.py" --write /tmp/egg_rumble_original_policy.luau
           /tmp/egg_luau_native/luau-compile /tmp/egg_rumble_original_policy.luau >/dev/null
           /tmp/egg_luau_native/luau /tmp/egg_rumble_original_policy.luau | tee /tmp/egg_rumble_out/FIVE_EGG_ORIGINAL_NATIVE_RULES_LOG.txt
           grep -E '^P0D_H2_MULTI_EGG_NATIVE_POLICY_PASS_[0-9]+$' /tmp/egg_rumble_out/FIVE_EGG_ORIGINAL_NATIVE_RULES_LOG.txt
