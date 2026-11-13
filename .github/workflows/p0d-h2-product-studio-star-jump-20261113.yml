@@ -1,0 +1,107 @@
+name: P0D Product Studio original tactical STAR JUMP whole H1 game private build
+on:
+  push:
+    branches:
+      - feature/p0d-studio-star-jump-pads-20261113-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  genuine-h1-h2-one-game-experiment:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 24
+    env:
+      H2: handoffs/P0D-STUDIO-STAR-JUMP-PADS-20261113-01
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout genuine source and optional self-contained gameplay layer
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Ensure original full H1 game/other owner branches untouched
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e '8f2a4aed7f6483f0bd00e31fcd733a823aa5c008^{commit}'
+          test -z "$(git diff --name-only 8f2a4aed7f6483f0bd00e31fcd733a823aa5c008 HEAD -- releases/P0D_S1_KIDS_RC01 handoffs/P0D-H1-COMPOSITE-20261113-01 handoffs/P0D-H1-FAST-ROUTES-WITH-UX-20261113-01)"
+      - name: Validate original 2 server-safe Studio scripts source pins
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$H2/tools/assemble.py" --check-input
+      - name: Reassemble source-exact original H1 complete 28 Luau and two new Star launch scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$H2/tools/assemble.py" --assemble
+          test -s "$H2/dist/TRAP_RAIDERS_H2_STAR_JUMP_STUDIO_ONLY/SOURCE_LOCK.json"
+      - name: Download SHA256-verified Rojo 7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/star_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/star_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import stat,zipfile
+          from pathlib import Path
+          with zipfile.ZipFile('/tmp/star_rojo.zip') as z:
+              names=[n for n in z.namelist() if n.rsplit('/',1)[-1]=='rojo']
+              assert len(names)==1,names
+              p=Path('/tmp/star_rojo')
+              p.write_bytes(z.read(names[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/star_rojo --version | grep -F 7.7.1
+      - name: Build REAL COMPLETE 30-Luau Roblox unpublished Rojo Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_star_place
+          /tmp/star_rojo build "$H2/dist/TRAP_RAIDERS_H2_STAR_JUMP_STUDIO_ONLY/default.project.json" -o /tmp/p0d_star_place/P0D_H2_STAR_JUMP_PRIVATE_STUDIO_ONLY_DO_NOT_PUBLISH.rbxlx
+          test -s /tmp/p0d_star_place/P0D_H2_STAR_JUMP_PRIVATE_STUDIO_ONLY_DO_NOT_PUBLISH.rbxlx
+          python3 -B "$H2/tools/assemble.py" --verify-xml /tmp/p0d_star_place/P0D_H2_STAR_JUMP_PRIVATE_STUDIO_ONLY_DO_NOT_PUBLISH.rbxlx --receipt /tmp/p0d_star_place/P0D_H2_STAR_JUMP_SOURCE_RECEIPT.json
+      - name: Checkout exact native Luau interpreter+compiler fixed revision
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_star_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build genuine native Luau execution tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_star_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_star_luau -B /tmp/p0d_star_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_star_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+      - name: Compile every real complete game source 30 of 30
+        shell: bash
+        run: |
+          set -euo pipefail
+          n=0
+          while IFS= read -r -d '' source; do
+              /tmp/p0d_star_native/luau-compile "$source" >/dev/null
+              n=$((n+1))
+          done < <(find "$H2/dist/TRAP_RAIDERS_H2_STAR_JUMP_STUDIO_ONLY/src" -name '*.luau' -print0)
+          test "$n" -eq 30
+          echo "H2_STAR_JUMP_NATIVE_ORIGINAL_WHOLE_GAME_30_OF_30_COMPILE_PASS"
+      - name: ACTUALLY execute 35 native policy checks + 6 malicious policy mutants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$H2/tests/test_native_star_jump.py" --luau /tmp/p0d_star_native/luau | tee /tmp/p0d_star_place/H2_STAR_JUMP_NATIVE_POLICY_LOG.txt
+          grep -F "H2_STAR_JUMP_NATIVE_ACTUAL_POLICY_PASS_35" /tmp/p0d_star_place/H2_STAR_JUMP_NATIVE_POLICY_LOG.txt
+          grep -F "H2_STAR_JUMP_NATIVE_NEGATIVE_MUTANTS_PASS_6" /tmp/p0d_star_place/H2_STAR_JUMP_NATIVE_POLICY_LOG.txt
+      - name: Upload actual optional PRIVATE gameplay with explicit DO NOT PUBLISH
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-H2-OPTIONAL-STAR-JUMP-30-LUAU-STUDIO-ONLY-NOT-RELEASE
+          path: |
+            /tmp/p0d_star_place/P0D_H2_STAR_JUMP_PRIVATE_STUDIO_ONLY_DO_NOT_PUBLISH.rbxlx
+            /tmp/p0d_star_place/P0D_H2_STAR_JUMP_SOURCE_RECEIPT.json
+            /tmp/p0d_star_place/H2_STAR_JUMP_NATIVE_POLICY_LOG.txt
+          retention-days: 7
+          if-no-files-found: error
