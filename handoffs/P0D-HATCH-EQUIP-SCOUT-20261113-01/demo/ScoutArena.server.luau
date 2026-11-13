@@ -127,7 +127,7 @@ local function spawnScout(owner,uid,token)
     local model,prompt=constructScout(owner,color)
     if not model then return false end
     local entry={model=model,owner=owner,uid=uid,epoch=s.epoch,
-        untilAt=os.clock()+token.duration, interrupted=false}
+        untilAt=os.clock()+token.duration, interrupted=false, detected=false}
     activeScouts[uid]=entry
     prompt.Triggered:Connect(function(actor)
         if activeScouts[uid]~=entry then return end
@@ -164,9 +164,13 @@ local function spawnScout(owner,uid,token)
             model:PivotTo(CFrame.new(nextPos))
             if target and closest<21 then
                 model.TeamSilhouette.FillTransparency=0.15
-                notify(owner,"SCOUT_FOUND","敵を発見！魔獣の光を見て追跡")
+                if not entry.detected then
+                    entry.detected=true
+                    notify(owner,"SCOUT_FOUND","敵を発見！魔獣の光を見て追跡")
+                end
             else
                 model.TeamSilhouette.FillTransparency=0.72
+                entry.detected=false
             end
             task.wait(0.15)
         end
@@ -208,6 +212,10 @@ remote.OnServerEvent:Connect(function(player,action,arg)
         notify(player,ok and "INFO" or "ERROR",ok and ("装備："..arg) or err)
         sendSnapshot(player)
     elseif action=="SCOUT" then
+        if not getRoot(player) then
+            notify(player,"ERROR","キャラ生成待ち")
+            return
+        end
         local ok,token=Rules.requestScout(s,uid,s.epoch,math.floor(os.clock()))
         if ok then
             if not spawnScout(player,uid,token) then
