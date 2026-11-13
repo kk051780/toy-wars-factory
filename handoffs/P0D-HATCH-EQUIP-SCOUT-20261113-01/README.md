@@ -32,3 +32,28 @@ python -m unittest discover -s handoffs/P0D-HATCH-EQUIP-SCOUT-20261113-01/tests 
 
 ## Protection
 Original source only; public GitHub permissions limited to TRAP RAIDERS. No main writes, merges, Roblox publish, paid features, PC Codex, P0A/B/C CAS changes, or automation changes. Official sole #220 S1 remains 75/100 last reported; OWNER fun gate NO_GO. No release recommendation.
+
+## V2 private Roblox Studio proof added (not merged into original game)
+
+New original dedicated `default.project.json` maps policy, server and mobile HUD to **one standalone Roblox Studio place**, not to the original H1/H2 release. `demo/ScoutArena.server.luau` creates a physical 3D two-castle island, a glowing central rare egg and server-validated ProximityPrompt pickup. It tracks the genuine central egg carrier until the round buzzer, drops upon death/disconnect, and selects the matching server-certified FREE hatch pool. An ORIGINAL animated-wing low-poly scout is server-owned, follows its player's position, reveals an enemy nearby, and **can be countered by enemy ProximityPrompt within 9 studs**. It is visible to all clients because the server constructs a Workspace Model; no duplicated Game authority in the actual release project.
+
+`demo/ScoutArena.client.luau` provides simple two-button mobile UI: SUMMON during 20s match, EQUIP in the intermission, and read-only in-game hatch feedback. Two real Studio clients are required to start a private match. The original 5-egg scored battle (#279) is **not** included here: this is an isolated miniature proving post-match item usage with a single private rare egg, not yet production integration. There is NO real persistent save or app store and the project script immediately returns outside Studio.
+
+After acquiring forest_scout or, at most rarely, star_scout, the user can equip it during the next lobby and summon the same tactical scout with a distinct visual appearance in the next match. All seven classes have free starter_scout; rare affects appearance only. Do not infer actual source reliability from authored code alone.
+
+Reproduce after checking this pinned commit and installing **Rojo 7.7.1** in the OWNER's PC:
+
+```sh
+cd handoffs/P0D-HATCH-EQUIP-SCOUT-20261113-01
+rojo build default.project.json -o EGG_RUMBLE_SCOUT_PRIVATE.rbxlx
+```
+
+In a PRIVATE Studio window use **Test → Start** with two clients, watch the Server Output. Test Central Egg pickup, carrier loss on death, 20s buzzer hatch, lobby EQUIP, next round actual 3D summon and enemy 0.5s counter, and phone-scaled HUD. **Do not publish or merge**. The program is intentionally isolated and has not been genuinely compiled with native Luau/Rojo in this conversation, nor executed inside Roblox Studio. The first 90s human FUN gate remains outstanding.
+
+Static source/project boundary QA (Python stdlib only):
+
+```sh
+python -m unittest discover -s tests -p 'test_demo_static.py' -v
+```
+
+The prior 16 Lua-runtime policy tests are independent and require installed `lupa`; never substitute 17 static checks for actual Luau/engine testing. This V2 does NOT change `#220` RC, official source, main, paid settings, P0ABC/CAS or any automation.
