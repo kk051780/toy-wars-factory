@@ -7,9 +7,9 @@ ROOT=pathlib.Path(__file__).resolve().parents[1]
 DIST=pathlib.Path(os.environ["P0D_SOLO_DIST"])
 BASE=pathlib.Path(os.environ["P0D_SOLO_GAME_BASE"])
 OUT=DIST/"src/server/Game.server.luau"
-mod=spec_from_file_location("patch",ROOT/"tools/studio_solo_patch.py")
-spec=module_from_spec(mod)
-mod.loader.exec_module(spec)
+spec=spec_from_file_location("patch",ROOT/"tools/studio_solo_patch.py")
+mod=module_from_spec(spec)
+spec.loader.exec_module(mod)
 def eligible(studio,teams):
     return studio and len(teams)==1 and teams[0] in ("RED","BLUE")
 def start(studio,teams):
