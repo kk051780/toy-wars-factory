@@ -229,6 +229,27 @@
       "engine_studio": "NOT_TESTED",
       "android": "NOT_TESTED",
       "owner_fun": "NOT_TESTED"
+    },
+    "STAR_SHARDS_V1": {
+      "enabled": true,
+      "state": "PRIVATE63_METEOR_SHARDS_MOBILE_SOURCE_CANDIDATE_NOT_CANONICAL",
+      "source_script": "rc_fastlane/features/star_shards/StarShardHunt.server.luau",
+      "source_git_blob": "abd07316ae23bc0b250ebd31590986b09109ce01",
+      "prerequisites": [
+        "WCS_F01_C01",
+        "STARRY_PATH_V1",
+        "SEVEN_JOBS_PVE_V1",
+        "EGG_RELAY_CLASSIC_V1",
+        "METEOR_FOURTH_V1"
+      ],
+      "scope": "six colorful fragments on live star bridge; unique per-player server session; head badge and temporary cosmetic aura",
+      "runtime_guard": "Studio and explicit true for ServerStorage.P0D_RC_ENABLE_STAR_SHARDS_V1 and STARRY_PATH_V1; nil/false OFF",
+      "safety": "original Game/HUD/Remote/Store/score/HP/XP/paid and saves unchanged",
+      "reversible": "Set enabled=false to preserve exact existing meteor62 source/project/source+feature locks",
+      "studio_2client": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED",
+      "startup_dependency_wait_seconds": 170
     }
   }
 }
