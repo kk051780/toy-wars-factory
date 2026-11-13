@@ -40,6 +40,7 @@ local function makeBody(folder: Folder, id: number, elite: boolean, p: Vector3)
     head.Color=if elite then Color3.fromRGB(218,177,100) else Color3.fromRGB(174,214,135)
     head.Position=Vector3.new(0,if elite then 3.8 else 2.9,0)
     head.Parent=model
+    local eyes={}
     for sign=-1,1,2 do
         local eye=Instance.new("Part")
         eye.Name="Eye"
@@ -52,6 +53,7 @@ local function makeBody(folder: Folder, id: number, elite: boolean, p: Vector3)
         eye.Color=Color3.fromRGB(30,30,42)
         eye.Position=Vector3.new(sign*(if elite then .75 else .55),if elite then 4.15 else 3.2,-1.1)
         eye.Parent=model
+        table.insert(eyes,eye)
     end
     local gui=Instance.new("BillboardGui")
     gui.Name="CombatCue"
@@ -87,9 +89,59 @@ local function makeBody(folder: Folder, id: number, elite: boolean, p: Vector3)
         z.Parent=model
         zone=z
     end
+    -- Source-only toy creature silhouette, not a big unanimated cuboid:
+    -- two readable claws, feet that still touch the original map, a chest
+    -- emblem, plus a boss crown. No imported asset, network, physics or hitbox.
+    local accent=if elite then Color3.fromRGB(241,178,75)
+        elseif id%2==0 then Color3.fromRGB(84,204,232)
+        else Color3.fromRGB(243,174,89)
+    local function decor(name: string,size: Vector3,offset: Vector3,
+        color: Color3,shape: Enum.PartType,glow: boolean): Part
+        local part=Instance.new("Part")
+        part.Name=name
+        part.Anchored=true
+        part.CanCollide=false
+        part.CanTouch=false
+        part.CanQuery=false
+        part.CastShadow=false
+        part.Size=size
+        part.Position=offset
+        part.Shape=shape
+        part.Color=color
+        part.Material=if glow then Enum.Material.Neon else Enum.Material.SmoothPlastic
+        part.Parent=model
+        return part
+    end
+    local arms={}
+    for sign=-1,1,2 do
+        local x=sign*(if elite then 2.55 else 1.7)
+        local claw=decor("MovingClaw_"..tostring(sign),
+            if elite then Vector3.new(1,2.5,1.1) else Vector3.new(.8,1.6,.85),
+            Vector3.new(x,if elite then .45 else .1,0),
+            accent,Enum.PartType.Block,false)
+        table.insert(arms,claw)
+        decor("GroundFoot_"..tostring(sign),
+            if elite then Vector3.new(1.45,.9,1.65) else Vector3.new(1,.75,1.15),
+            Vector3.new(sign*(if elite then 1.2 else .75),
+                if elite then -2.05 else -1.275,-.3),
+            accent,Enum.PartType.Block,false)
+    end
+    decor("ChestRune",if elite then Vector3.new(1.55,1.7,.28)
+            else Vector3.new(.9,1,.18),
+        Vector3.new(0,.35,if elite then -1.54 else -1.05),
+        accent,Enum.PartType.Ball,true)
+    if elite then
+        for sign=-1,1,2 do
+            decor("CrownHorn_"..tostring(sign),Vector3.new(.55,1.45,.55),
+                Vector3.new(sign*1.25,5.2,0),accent,Enum.PartType.Ball,true)
+        end
+    else
+        decor("BackSpine",Vector3.new(.55,1.15,.55),
+            Vector3.new(0,1.9,1),accent,Enum.PartType.Ball,false)
+    end
     model.Parent=folder
     model:PivotTo(CFrame.new(p))
-    return model,body,text,zone
+    return model,body,text,zone,arms,eyes
 end
 local function groundTop(world: Instance,x: number,z: number): number
     -- Read actual original MapBuilder walkable parts, not a hard-coded
@@ -135,9 +187,10 @@ function Horde:reset(round: number,now: number)
         local feetY=groundTop(self.world,x,z)
         local halfBody=if elite then 2.5 else 1.65
         local base=Vector3.new(x,feetY+halfBody,z)
-        local model,body,cue,zone=makeBody(self.folder,i,elite,base)
+        local model,body,cue,zone,arms,eyes=makeBody(self.folder,i,elite,base)
         table.insert(self.mobs,{
-            model=model,body=body,cue=cue,zone=zone,pos=base,home=base,
+            model=model,body=body,cue=cue,zone=zone,arms=arms,eyes=eyes,id=i,
+            pos=base,home=base,
             hp=if elite then ELITE_HP else MINION_HP,
             maxHp=if elite then ELITE_HP else MINION_HP,
             elite=elite,deadUntil=0,attackAt=0,tellUntil=0,
@@ -180,6 +233,11 @@ function Horde:hit(origin: Vector3,facing: Vector3,damage: number,now: number,ig
                     m.hp=math.max(0,m.hp-dealt)
                     m.flashUntil=now+.18
                     m.body.Color=Color3.fromRGB(253,231,111)
+                    -- A normal enemy loses its immediate melee response when
+                    -- hit. Elite warning remains readable and uninterruptible.
+                    if not m.elite then
+                        m.attackAt=math.max(m.attackAt,now+.65)
+                    end
                     -- Real server-owned short knockback; no ragdoll or physics ownership.
                     local step=m.pos+unit*math.min(2,math.max(0,dist*.12))
                     local nextPos=anchoredToWalkable(self.world,m,step)
@@ -214,6 +272,17 @@ function Horde:tick(now: number,players: {Player},healthy: (Player)->(boolean,Ba
     self.lastTick=now
     local impacts={}
     for _,m in ipairs(self.mobs) do
+        if m.hp>0 then
+            -- Fixed nine-entity cap; lightweight per-tick articulated silhouette.
+            -- Cosmetic only: no physical target, hitbox or rewards are derived.
+            local sway=math.sin(now*4+m.id)
+            m.arms[1].Orientation=Vector3.new(sway*17,0,sway*6)
+            m.arms[2].Orientation=Vector3.new(-sway*17,0,-sway*6)
+            local blink=math.floor(now*2+m.id*3)%23==0
+            for _,eye in ipairs(m.eyes) do
+                eye.Transparency=if blink then .85 else 0
+            end
+        end
         if m.hp<=0 then
             if now>=m.deadUntil then
                 m.hp=m.maxHp
@@ -260,14 +329,16 @@ function Horde:tick(now: number,players: {Player},healthy: (Player)->(boolean,Ba
                 local ok: boolean=false
                 local root: BasePart?=nil
                 if target then ok,root=healthy(target) end
-                if ok and root and target and canStrike(target,true) then
+                local connected=ok and root~=nil and target~=nil
+                    and canStrike(target,true)
+                if connected then
                     table.insert(impacts,{player=target,damage=11,kind="ELITE"})
                 end
                 m.tellUntil=0
                 m.target=nil
                 if m.zone then m.zone.Transparency=1 end
                 m.attackAt=now+4
-                m.cue.Text="精鋭：回避できた？"
+                m.cue.Text=if connected then "⚠ 強撃命中！" else "✨ 強撃を回避！"
             elseif m.elite and nearest and now>=m.attackAt and m.tellUntil==0 and nearestDist<12 then
                 m.tellUntil=now+1.5
                 m.target=nearest
