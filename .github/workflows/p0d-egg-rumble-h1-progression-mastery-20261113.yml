@@ -1,0 +1,184 @@
+name: EGG RAID RUMBLE real two-mode H1 level mastery atomic full35 native QA
+on:
+  push:
+    branches:
+      - experiment/p0d-egg-rumble-h1-xp-mastery-20261113-01
+permissions:
+  contents: read
+jobs:
+  real-one-roblox-game-two-modes:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 27
+    env:
+      OWN: handoffs/P0D-EGG-RUMBLE-H1-REAL-PROGRESSION-20261113-01
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify original #282 34-Luau source unchanged and sole RC protected
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e 'de8cb430a929e99f97bebcfb3e01633312b26df1^{commit}'
+          test -z "$(git diff --name-only de8cb430a929e99f97bebcfb3e01633312b26df1 HEAD -- handoffs/P0D-EGG-RUMBLE-DURABLE-HATCH-20261113-01 handoffs/P0D-EGG-RUMBLE-REAL-SCOUT-20261113-01 releases/P0D_S1_KIDS_RC01)"
+      - name: Assemble actual 35-source original 2-mode H1 server XP/mastery with shared inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B "$OWN/tools/assemble.py" --assemble
+          python3 -B -m unittest discover -s "$OWN/tests" -p 'test_*.py' -v
+      - name: Generate genuine native Luau vote, five egg and original hatch/scout policy tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/P0D-EGG-RUMBLE-DUAL-MODE-LOBBY-20261113/tools/generate_native_mode_vote_test.py --write /tmp/egg_rumble_native_vote.luau
+          python3 -B handoffs/P0D-EGG-RUMBLE-DUAL-MODE-LOBBY-20261113/tools/generate_native_5egg_test.py --write /tmp/egg_rumble_native_5egg.luau
+          python3 -B "handoffs/P0D-EGG-RUMBLE-REAL-SCOUT-20261113-01/tools/generate_native_reward_test.py" --write /tmp/egg_rumble_native_rewards.luau
+          test -s /tmp/egg_rumble_native_vote.luau
+          test -s /tmp/egg_rumble_native_5egg.luau
+          test -s /tmp/egg_rumble_native_rewards.luau
+          python3 -B "$OWN/tools/generate_native_store_test.py" --write /tmp/egg_rumble_native_store.luau
+          test -s /tmp/egg_rumble_native_store.luau
+          python3 -B "$OWN/tools/generate_native_progression_store_test.py" --write /tmp/egg_rumble_native_progress_store.luau
+          test -s /tmp/egg_rumble_native_progress_store.luau
+      - name: Download genuine pinned Rojo 7.7.1 binary for ONE Roblox Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/egg_voting_rojo.zip
+          printf '%s\n' '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/egg_voting_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,stat
+          from pathlib import Path
+          with zipfile.ZipFile('/tmp/egg_voting_rojo.zip') as z:
+              names=[p for p in z.namelist() if p.split('/')[-1]=='rojo']
+              assert len(names)==1,names
+              b=Path('/tmp/egg_voting_rojo')
+              b.write_bytes(z.read(names[0]))
+              b.chmod(b.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/egg_voting_rojo --version | grep -F 7.7.1
+      - name: Assemble real full H1 egg-game ONE selectable mode .rbxlx
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/egg_rumble_scout
+          /tmp/egg_voting_rojo build "$OWN/dist/EGG_RAID_RUMBLE_H1_TWO_MODES_XP_MASTERY_DEV_STUDIO_ONLY/default.project.json" -o /tmp/egg_rumble_scout/EGG_RAID_RUMBLE_H1_2MODES_LEVEL_MASTERY_STUDIO_UNPUBLISHED.rbxlx
+          test -s /tmp/egg_rumble_scout/EGG_RAID_RUMBLE_H1_2MODES_LEVEL_MASTERY_STUDIO_UNPUBLISHED.rbxlx
+      - name: Verify every one of original 33 Luau source bodies in actual Roblox Place XML
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,collections,hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          root=Path(os.environ['OWN'])/'dist/EGG_RAID_RUMBLE_H1_TWO_MODES_XP_MASTERY_DEV_STUDIO_ONLY'
+          place=Path('/tmp/egg_rumble_scout/EGG_RAID_RUMBLE_H1_2MODES_LEVEL_MASTERY_STUDIO_UNPUBLISHED.rbxlx')
+          original=collections.Counter(p.read_text(encoding='utf-8') for p in (root/'src').rglob('*.luau'))
+          items=[];classes=collections.Counter();games=0
+          for item in ET.fromstring(place.read_bytes()).iter('Item'):
+              cl=item.get('class')
+              if cl not in ('Script','LocalScript','ModuleScript'):continue
+              element=item.find("./Properties/string[@name='Source']")
+              if element is None:continue
+              name=item.find("./Properties/string[@name='Name']")
+              if cl=='Script' and name is not None and name.text=='Game':games+=1
+              classes[cl]+=1;items.append(element.text or '')
+          assert classes=={'Script':2,'LocalScript':5,'ModuleScript':28},classes
+          assert len(items)==35 and collections.Counter(items)==original,(len(items),len(original))
+          assert games==1,games
+          g=[s for s in items if 'remote.Name = "TrapRaidersS1Remote"' in s]
+          assert len(g)==1 and g[0].count('remote.OnServerEvent:Connect(')==1
+          assert 'ModeVote.tally(modeVotes,Players:GetPlayers())' in g[0]
+          assert 'EXPERIMENTAL_FIVE_EGG_MODE=RunService:IsStudio() and chosenMode==ModeVote.SCORE' in g[0]
+          assert 'local EXPERIMENTAL_FIVE_EGG_MODE = false' in g[0]
+          vs=[s for s in items if 'function R.canVote(' in s]
+          assert len(vs)==1 and 'if five>classic' in vs[0]
+          rewards=[s for s in items if 'function Rules.claimFreeHatch(' in s]
+          assert len(rewards)==1 and 'function Rules.requestScout(' in rewards[0]
+          assert 'function Rules.equip(' in rewards[0]
+          assert 'p.nextUseAt=now+COOLDOWN' in rewards[0]
+          assert 'DataStoreService' not in rewards[0]
+          assert 'RewardRules.claimFreeHatch(rewardState,' in g[0]
+          assert 'model.Parent=map.model' in g[0]
+          assert 'highlighted.DepthMode=Enum.HighlightDepthMode.Occluded' in g[0]
+          assert 'RewardRules.requestScout(rewardState,' in g[0]
+          assert 'PersistentHatch.grant(' in g[0]
+          assert 'PersistentHatch.equip(' in g[0]
+          persistent=[s for s in items if 'function Store.grantTransition(' in s]
+          assert len(persistent)==1 and persistent[0].count('store:UpdateAsync(key,function(original)')==3
+          assert 'Store.settleProgressTransition(' in persistent[0]
+          assert 'progress=cloneProgress(raw.progress)' in persistent[0]
+          assert 'function Store.policyUserId(' in persistent[0]
+          assert 'Progression.recordEvent(round,event.id,event.kind,true)' in persistent[0]
+          original_xp=[s for s in items if 'P.XP_CAP_PER_ROUND = 150' in s]
+          assert len(original_xp)==1
+          assert 'function P.commit(' in original_xp[0]
+          assert 'Progression.recordEvent(round,eventId,kind,true)' in g[0]
+          assert 'settleProgressAtRealEnd(winner)' in g[0]
+          assert 'SetAsync(' not in persistent[0]
+          h=[s for s in items if 'local modePanel = Instance.new("Frame")' in s]
+          assert len(h)==1 and h[0].count('remote:FireServer(')==3
+          assert 'BEAST_HATCH_EQUIP' in h[0] and 'SummonRealScout' in h[0]
+          assert 'RealH1ServerLevel' in h[0]
+          assert 'progressLastAward' in h[0]
+          d={'actual_place_name':place.name,'sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+             'bytes':place.stat().st_size,'scripts':35,'authoritative_games':1,
+             'LobbyVoteInOriginalHUD':True,'Score5StudioOnly':True,'NotPublished':True,
+             'RobloxStudio2clientPerformed':False,'humanFUNAccepted':False}
+          Path('/tmp/egg_rumble_scout/SOURCE_EXACT_BINARY_PROOF.json').write_text(json.dumps(d,indent=2)+'\n')
+          print('EGG_RUMBLE_TRUE_ONE_REAL_GAME_2_MODE_SELECT_ROJO_35_OF_35_BYTE_EXACT_PASS')
+          print('EGG_RUMBLE_PLACE_SHA256',d['sha256'])
+          PY
+      - name: Check out upstream genuine native Luau interpreter and compiler fixed SHA
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _egg_dual_mode_luau
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Build actual genuine Luau compiler and interpreter
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _egg_dual_mode_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _egg_dual_mode_luau -B /tmp/egg_dual_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/egg_dual_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Native compile all 35 original H1 and execute original rules plus combined atomic XP
+        shell: bash
+        run: |
+          set -euo pipefail
+          n=0
+          while IFS= read -r -d '' script; do
+              /tmp/egg_dual_luau/luau-compile "$script" >/dev/null
+              n=$((n+1))
+          done < <(find "$OWN/dist/EGG_RAID_RUMBLE_H1_TWO_MODES_XP_MASTERY_DEV_STUDIO_ONLY/src" -type f -name '*.luau' -print0)
+          test "$n" -eq 35
+          echo EGG_RUMBLE_FULL_35_LUAU_NATIVE_COMPILER_PASS
+          /tmp/egg_dual_luau/luau-compile /tmp/egg_rumble_native_vote.luau >/dev/null
+          /tmp/egg_dual_luau/luau /tmp/egg_rumble_native_vote.luau | tee /tmp/egg_rumble_scout/ACTUAL_NATIVE_LOBBY_VOTE_POLICY_LOG.txt
+          grep -E '^EGG_RUMBLE_ACTUAL_LUAU_LOBBY_MODE_VOTE_PASS_[0-9]+$' /tmp/egg_rumble_scout/ACTUAL_NATIVE_LOBBY_VOTE_POLICY_LOG.txt
+          /tmp/egg_dual_luau/luau-compile /tmp/egg_rumble_native_5egg.luau >/dev/null
+          /tmp/egg_dual_luau/luau /tmp/egg_rumble_native_5egg.luau | tee /tmp/egg_rumble_scout/ORIGINAL_5_EGG_SCORE_NATIVE_RULES_LOG.txt
+          grep -E '^P0D_H2_MULTI_EGG_NATIVE_POLICY_PASS_1212$' /tmp/egg_rumble_scout/ORIGINAL_5_EGG_SCORE_NATIVE_RULES_LOG.txt
+          /tmp/egg_dual_luau/luau-compile /tmp/egg_rumble_native_rewards.luau >/dev/null
+          /tmp/egg_dual_luau/luau /tmp/egg_rumble_native_rewards.luau | tee /tmp/egg_rumble_scout/ORIGINAL_275_HATCH_EQUIP_SCOUT_REAL_NATIVE_LOG.txt
+          grep -E '^EGG_RUMBLE_ORIGINAL_FREE_HATCH_EQUIP_SCOUT_REAL_NATIVE_LUAU_PASS_[0-9]+$' /tmp/egg_rumble_scout/ORIGINAL_275_HATCH_EQUIP_SCOUT_REAL_NATIVE_LOG.txt
+          /tmp/egg_dual_luau/luau-compile /tmp/egg_rumble_native_store.luau >/dev/null
+          /tmp/egg_dual_luau/luau /tmp/egg_rumble_native_store.luau | tee /tmp/egg_rumble_scout/REAL_DATASTORE_ATOMIC_NATIVE_MOCK_LOG.txt
+          grep -E '^EGG_RUMBLE_REAL_NATIVE_DATASTORE_UPDATEASYNC_MOCK_CONFLICTS_PASS_[0-9]+$' /tmp/egg_rumble_scout/REAL_DATASTORE_ATOMIC_NATIVE_MOCK_LOG.txt
+          /tmp/egg_dual_luau/luau-compile /tmp/egg_rumble_native_progress_store.luau >/dev/null
+          /tmp/egg_dual_luau/luau /tmp/egg_rumble_native_progress_store.luau | tee /tmp/egg_rumble_scout/REAL_H1_XP_MASTERY_ATOMIC_NATIVE_POLICY_LOG.txt
+          grep -E '^EGG_RUMBLE_NATIVE_ORIGINAL_PROGRESS_AND_INVENTORY_UPDATEASYNC_ATOMIC_PASS_[0-9]+$' /tmp/egg_rumble_scout/REAL_H1_XP_MASTERY_ATOMIC_NATIVE_POLICY_LOG.txt
+          test -z "$(git status --porcelain --untracked-files=no)"
+      - name: Upload ONE private game Place with two in-game mode buttons and exact proofs
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGG-RAID-RUMBLE-TWO-MODES-LEVEL-MASTERY-ATOMIC-35-LUAU
+          path: /tmp/egg_rumble_scout/
+          retention-days: 7
+          if-no-files-found: error
