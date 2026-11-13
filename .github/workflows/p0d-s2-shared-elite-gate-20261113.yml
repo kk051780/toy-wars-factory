@@ -1,0 +1,55 @@
+name: P0D Shared Elite Gate source contract (isolated S2)
+on:
+  push:
+    branches:
+      - feature/p0d-horde-heist-gate-20261113-01
+    paths:
+      - 'handoffs/P0D-HORDE-HEIST-GATE-20261113-01/**'
+      - '.github/workflows/p0d-s2-shared-elite-gate-20261113.yml'
+  workflow_dispatch:
+jobs:
+  source-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Python source and state oracle
+        run: python -B -m unittest discover -s handoffs/P0D-HORDE-HEIST-GATE-20261113-01/tests -v
+      - name: Fetch actual owner V7 full source pinned
+        uses: actions/checkout@v4
+        with:
+          ref: 76cc75b71f0a1a7a5a9976f14c10276c636493f2
+          path: _v7
+          persist-credentials: false
+      - name: Fetch actual B42 First90 source pinned
+        uses: actions/checkout@v4
+        with:
+          ref: 837853e66278e38bb79f6399c3e8bfc9a2403be6
+          path: _b42
+          persist-credentials: false
+      - name: Verify true immutable original Horde and Game API contract
+        run: python -B handoffs/P0D-HORDE-HEIST-GATE-20261113-01/tools/check_locked_upstream.py
+      - name: Fetch fixed upstream native Luau implementation
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gate_native_luau
+          persist-credentials: false
+      - name: Native Luau compile and pure state-machine test
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gate_native_luau rev-parse HEAD)" = "f46d879e28302a430029304f7f6a162aed66f103"
+          cmake -S _gate_native_luau -B /tmp/p0d_gate_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_gate_native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          ROOT=handoffs/P0D-HORDE-HEIST-GATE-20261113-01
+          for f in "$ROOT"/src/*.luau; do
+            /tmp/p0d_gate_native/luau-compile "$f" >/dev/null
+          done
+          python3 -B "$ROOT/tools/generate_native_gate_test.py" /tmp/p0d_gate_native_test.luau
+          /tmp/p0d_gate_native/luau-compile /tmp/p0d_gate_native_test.luau >/dev/null
+          /tmp/p0d_gate_native/luau /tmp/p0d_gate_native_test.luau | tee /tmp/p0d_gate_native.log
+          grep -F P0D_GATE_NATIVE_ELITE_BRIDGE_RULES_PASS /tmp/p0d_gate_native.log
