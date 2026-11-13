@@ -12,6 +12,7 @@ on:
       - feature/p0d-wcs-rc58-fastlane-candidate-20261114-02
       - feature/p0d-wcs-sevenjobs-rc59-candidate-20261114
       - feature/p0d-wcs-jobs-egg-classic-rc60-candidate-20261114
+      - feature/p0d-wcs-jobs-egg-starry-path-rc61-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -124,6 +125,14 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_scout_species.py --profile rich51 --dist "$DIST"
           fi
+      - name: Source-lock snapshot REAL private build stage 57 for monotonic rollback proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/qa_rollback_matrix.py --capture 57 --dist "$DIST"
+          fi
       - name: Add source-locked Crystal Canyon/Moguron stage with independent rollback (Studio only)
         shell: bash
         run: |
@@ -133,6 +142,14 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_wcs_f01_c01.py --profile rich51 --dist "$DIST"
           fi
+      - name: Source-lock snapshot REAL private build stage 58 for monotonic rollback proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/qa_rollback_matrix.py --capture 58 --dist "$DIST"
+          fi
       - name: Integrate original Seven Jobs PvE narrow Game/HUD patch after WCS
         shell: bash
         run: |
@@ -140,6 +157,14 @@ jobs:
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_seven_jobs_pve.py --dist "$DIST"
+          fi
+      - name: Source-lock snapshot REAL private build stage 59 for monotonic rollback proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/qa_rollback_matrix.py --capture 59 --dist "$DIST"
           fi
       - name: Add classic 1-egg teammate relay inside one Game after SevenJobs
         shell: bash
@@ -149,6 +174,14 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_egg_relay_classic.py --dist "$DIST" --policy rc_fastlane/features/egg_relay_classic/policy/EggRelayPolicy.luau
           fi
+      - name: Source-lock snapshot REAL private build stage 60 for monotonic rollback proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/qa_rollback_matrix.py --capture 60 --dist "$DIST"
+          fi
       - name: Build original WCS third-route Starfall bridge with exact source pin and rollback tests
         shell: bash
         run: |
@@ -157,6 +190,21 @@ jobs:
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/apply_star_path.py --profile rich51 --dist "$DIST"
+          fi
+      - name: Source-lock snapshot REAL private build stage 61 for monotonic rollback proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/qa_rollback_matrix.py --capture 61 --dist "$DIST"
+          fi
+      - name: Test actual 4 independent OFF paths against all original stage sources and boot configs
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            python3 -B rc_fastlane/qa_rollback_matrix.py --verify --receipt /tmp/P0D_PRIVATE61_LAYER_RECEIPT.json
           fi
       - uses: actions/checkout@v4
         with:
@@ -220,6 +268,49 @@ jobs:
             /tmp/p0d_new_luau/luau-compile /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau >/dev/null
             /tmp/p0d_new_luau/luau /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau | tee /tmp/p0d_egg_native.log
             grep -Fx P0D_EGG_RELAY_ACTUAL_GAME_NATIVE_31_CASES_PASS /tmp/p0d_egg_native.log
+          fi
+      - name: Checkout exact original 41-case egg relay test author (no change to Game)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f1c0866423c2c1d36a5cd8eafe8cee7558b1a1dd
+          path: _egg_author_41
+          persist-credentials: false
+      - name: Prove original 33 SevenJobs and 41 EggRelay policy cases in same 60-source Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            test "$(git -C _egg_author_41 rev-parse HEAD)" = f1c0866423c2c1d36a5cd8eafe8cee7558b1a1dd
+            export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 - <<'PY'
+          import hashlib,os
+          from pathlib import Path
+          dist=Path(os.environ["DIST"])
+          job=dist/"src/server/SevenJobsRules.luau"
+          original_job=Path("rc_fastlane/features/seven_jobs/src/SevenJobsRules.luau")
+          job_cases=Path("rc_fastlane/features/seven_jobs/tests/SevenJobsNative.luau")
+          relay=dist/"src/server/EggRelayPolicy.luau"
+          original_relay=Path("_egg_author_41/handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/src/EggRelayPolicy.luau")
+          def gitblob(b):return hashlib.sha1(b"blob "+str(len(b)).encode()+bytes([0])+b).hexdigest()
+          assert job.read_bytes()==original_job.read_bytes()
+          assert gitblob(job.read_bytes())=="a7253d36cb67df47d4ba65d35af212ed1eb7b5b2"
+          assert gitblob(job_cases.read_bytes())=="5bb1b8a507fe05955e257f69af75222ebd638577"
+          assert relay.read_bytes()==original_relay.read_bytes()
+          assert gitblob(relay.read_bytes())=="ef9b65bd6520231f299f21c5cfe2aa250798c8d0"
+          src="local R=(function()\n"+job.read_text("utf8")+"\nend)()\n"+job_cases.read_text("utf8")
+          assert "P0D_SEVEN_JOBS_NATIVE_33_OF_33_POLICY_ASSERTIONS_PASS" in src
+          Path("/tmp/p0d60_job33.luau").write_text(src,"utf8")
+          print("P0D_PRIVATE61_AUTHOR_JOB_AND_RELAY_MODULE_SOURCE_EXACT_PASS")
+          PY
+            python3 -B _egg_author_41/handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/tools/generate_native_runner.py --out /tmp/p0d60_relay41.luau
+            /tmp/p0d_new_luau/luau-compile /tmp/p0d60_job33.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/p0d60_job33.luau | tee /tmp/p0d60_job33.log
+            grep -Fx 'P0D_SEVEN_JOBS_NATIVE_33_OF_33_POLICY_ASSERTIONS_PASS' /tmp/p0d60_job33.log
+            /tmp/p0d_new_luau/luau-compile /tmp/p0d60_relay41.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/p0d60_relay41.luau | tee /tmp/p0d60_relay41.log
+            grep -Fx 'P0D_EGG_RELAY_NATIVE_POLICY_41_CASES_PASS' /tmp/p0d60_relay41.log
+            echo P0D_PRIVATE61_ONE_GAME_JOBS33_RELAY_POLICY41_REAL_HANDLER31_ALL_PASS
           fi
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash
@@ -390,10 +481,22 @@ jobs:
             ['V4_IDLE_FRIEND_SAFE_FIX'] if p=='rich51' and json.load(
                 open('rc_fastlane/ACTIVE.json',encoding='utf8')
               )['feature_switches']['V4_IDLE_FRIEND_SAFE_FIX']['enabled'] else [])
+          place_bytes=target.stat().st_size
+          if p=='rich51':
+              assert 507197<place_bytes<2000000,('BAD_PRIVATE61_PLACE_SIZE',place_bytes)
+              print('P0D_PRIVATE61_ACTUAL_PLACE_RBXLX_BYTES',place_bytes)
+              print('P0D_PRIVATE61_SINGLE_RUN_QA105_OFF4_ALL_PASS')
           receipt={'release_id':'P0D-S1-KIDS-RC01','profile':p,'source_commit':source,
             'source_overlays':overlay_ids,'composite_rc_source_commit':os.environ['GITHUB_SHA'],
             'rc_branch_commit':os.environ['GITHUB_SHA'],'place_sha256':digest,
             'source_count':sum(actual.values()),'exact_rojo_binary':True,
+            'actual_uncompressed_place_bytes':place_bytes,
+            'native_policy_cases_7jobs':33 if p=='rich51' else None,
+            'native_policy_cases_relay':41 if p=='rich51' else None,
+            'native_original_Game_relay_cases':31 if p=='rich51' else None,
+            'real_off_matrix_stages':[57,58,59,60,61] if p=='rich51' else [],
+            'real_off_matrix_switches':4 if p=='rich51' else 0,
+            'source_stage':'PRIVATE61_DRAFT_NON_CANONICAL',
             'sixskill_durable_dev_code_included':bool(durable_enabled),
             'saved_pve_mastery_included':bool(saved_pve_enabled),
             'saved_beast_evolution_included':bool(saved_beast_enabled),
@@ -423,6 +526,13 @@ jobs:
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
           print('OFFICIAL_RC_FASTLANE_BINARY_SOURCE_EXACT_PASS',p,digest)
           PY
+      - name: Preserve private61 real rollback chain receipt beside candidate Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            cp /tmp/P0D_PRIVATE61_LAYER_RECEIPT.json /tmp/p0d_rc_out/P0D_PRIVATE61_LAYER_RECEIPT.json
+          fi
       - name: Generate OWNER feature progress in the SAME RC build (no second QA run)
         shell: bash
         run: |

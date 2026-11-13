@@ -30,7 +30,7 @@ def source_bodies(src: Path) -> dict[str, bytes]:
     return {p.relative_to(src).as_posix(): p.read_bytes()
             for p in sorted(src.rglob("*.luau"))}
 
-def run(dist: Path, policy: Path) -> None:
+def run(dist: Path, policy: Path, enabled_override: bool | None = None) -> None:
     spec = json.loads((ROOT / "PATCH_OPS.json").read_text(encoding="utf8"))
     assert spec["feature_id"] == FEATURE
     assert spec["rc_integrated"] is False and spec["real_studio"] == "NOT_TESTED"
@@ -40,7 +40,9 @@ def run(dist: Path, policy: Path) -> None:
     src = dist / "src"
     bodies = source_bodies(src)
     flags=json.loads((Path(__file__).resolve().parent/"FEATURE_SWITCHES.json").read_text("utf8"))["features"]
-    if not flags["EGG_RELAY_CLASSIC_V1"]["enabled"]:
+    enabled=flags["EGG_RELAY_CLASSIC_V1"]["enabled"] if enabled_override is None else enabled_override
+    assert type(enabled) is bool,"EGG_RELAY_ENABLE_INVALID"
+    if not enabled:
         print("P0D_EGG_CLASSIC_OFF_RICH59_PRESERVED")
         return
     assert flags["WCS_F01_C01"]["enabled"] and flags["SEVEN_JOBS_PVE_V1"]["enabled"]
