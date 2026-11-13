@@ -103,6 +103,15 @@ eq(math.abs(h.mobs[1].pos.Y-1.65-(-1))<.00001,true,"minion feet touch source are
 eq(math.abs(h.mobs[9].pos.Y-2.5-(-.7))<.00001,true,"elite feet touch road")
 eq(h.mobs[9].pos.Y<h.mobs[1].pos.Y+2.5,true,"real map height not hardcoded 3.4")
 eq(#h.mobs,9,"record nine")
+local firstLook=h.mobs[1]
+eq(#firstLook.arms,2,"original V6 has two waving visible claws")
+eq(#firstLook.eyes,2,"original V6 has two blinkable toy eyes")
+eq(firstLook.arms[1].CanCollide,false,"visual claws never collide")
+eq(firstLook.arms[1].CanQuery,false,"visual claws never hide raycast targets")
+eq(firstLook.eyes[1].CanQuery,false,"facial detail cannot block LOS")
+h:tick(.2,{},emptyHealth)
+eq(type(firstLook.arms[1].Orientation.X),"number","real source animates visible arms")
+eq(type(firstLook.eyes[1].Transparency),"number","real source controls blinking")
 local elite=h.mobs[9]
 eq(elite.zone~=nil,true,"elite radius visual exists")
 eq(elite.zone.Size.X,18,"warning radius exactly 9 stud")
@@ -113,6 +122,11 @@ eq(h:eliteWarningSeconds(0),0,"no bogus elite warning")
 local origin=vec(-34,2.7,-18)
 local forward=vec(1,0,0)
 local first=h.mobs[1]
+local nick,none=h:hit(origin,forward,5,.25,nil)
+eq(nick,1,"nonfatal visible sword hit")
+eq(none,0,"nonfatal hit grants no defeated credit")
+eq(first.hp,19,"actual minion takes real 5HP")
+eq(first.attackAt,.9,"hit minion cannot instant counterattack")
 local touched,killed=h:hit(origin,forward,24,1,nil)
 eq(touched,1,"one minion struck")
 eq(killed,1,"one minion ko")
@@ -165,6 +179,7 @@ eq(#impacts0,0,"no instant elite strike")
 workspace.blocked=true
 local impactedBlocked=h:tick(24,{victim},emptyHealth)
 eq(#impactedBlocked,0,"no hit through wall")
+eq(e.cue.Text,"✨ 強撃を回避！","elite emits truthful dodge feedback")
 eq(e.zone.Transparency,1,"elite red ring closes after blocked strike")
 eq(h:eliteWarningSeconds(24),0,"no stale warning after strike")
 workspace.blocked=false
@@ -175,6 +190,7 @@ local impacted=h:tick(25,{victim},emptyHealth)
 local eliteCount=0
 for _,impact in ipairs(impacted) do if impact.kind=="ELITE" then eliteCount+=1 end end
 eq(eliteCount,1,"visible elite strike after telegraph")
+eq(e.cue.Text,"⚠ 強撃命中！","elite feedback truthfully reports landed strike")
 e.tellUntil=26
 e.target=victim
 victim.root.Position=vec(22,3.4,0)
