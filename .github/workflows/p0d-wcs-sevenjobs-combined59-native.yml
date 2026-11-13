@@ -1,0 +1,220 @@
+name: P0D WCS plus SevenJobs private 59-source combined native Rojo
+on:
+  push:
+    branches:
+      - feature/p0d-wcs-sevenjobs-combined59-private-20261114-01
+    paths:
+      - 'handoffs/P0D-WCS-SEVENJOBS-COMBINED59-20261114-01/tools/**'
+      - '.github/workflows/p0d-wcs-sevenjobs-combined59-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  combined-private59:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      DIST: _p0d_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Pin official RC57 exact code and feature list
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 34d6d384d04ba1d4a394331a3e5c74f798e57a22
+          path: _rc57
+          persist-credentials: false
+      - name: Pin original authored 51-script base
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 79123d35cd7afdd5f4f9941675bc2d2cf382ac4e
+          path: _p0d_source
+          persist-credentials: false
+      - name: Pin author's source-locked seven-jobs patches
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 98edf843fb8a8f6123c13a67745b216712bfe63d
+          path: _jobs
+          persist-credentials: false
+      - name: Check pinned commits and WCS original Python negative QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _rc57 rev-parse HEAD)" = 34d6d384d04ba1d4a394331a3e5c74f798e57a22
+          test "$(git -C _p0d_source rev-parse HEAD)" = 79123d35cd7afdd5f4f9941675bc2d2cf382ac4e
+          test "$(git -C _jobs rev-parse HEAD)" = 98edf843fb8a8f6123c13a67745b216712bfe63d
+          python3 -B -m unittest discover -s rc_fastlane -p test_wcs_f01_c01.py -v
+          python3 - <<'PY'
+          import json
+          f=json.load(open("rc_fastlane/FEATURE_SWITCHES.json"))["features"]
+          assert f["WCS_F01_C01"]["enabled"] is True
+          assert f["SCOUT_SPECIES_V1"]["enabled"] is True
+          a=json.load(open("rc_fastlane/FEATURE_CATALOG.json"))["rows"]
+          assert a[-1]["id"]=="P0D-059" and a[-1]["stage"]=="SOURCE"
+          print("P0D_COMBINED59_AUTHOR_PINS_AND_WCS_NEGATIVE_QA_PASS")
+          PY
+      - name: Build real original RC57 using exact overlay order
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B _p0d_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/tools/assemble.py --assemble
+          python3 -B rc_fastlane/apply_overlays.py --profile rich51 --dist "$DIST"
+          python3 -B rc_fastlane/integrate.py --profile rich51 --dist "$DIST"
+          python3 -B rc_fastlane/apply_sixskill_durable.py --profile rich51 --dist "$DIST"
+          python3 -B rc_fastlane/apply_saved_pve.py --profile rich51 --dist "$DIST"
+          python3 -B rc_fastlane/apply_saved_beast.py --profile rich51 --dist "$DIST"
+          python3 -B rc_fastlane/apply_scout_species.py --profile rich51 --dist "$DIST"
+      - name: Freeze previous 57 original source bodies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,json,hashlib
+          from pathlib import Path
+          src=Path(os.environ["DIST"])/"src"
+          before={p.relative_to(src).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                  for p in src.rglob("*.luau")}
+          assert len(before)==57
+          assert "server/ScoutSpeciesPolicy.luau" in before
+          Path("/tmp/P0D_COMBINED59_ORIGINAL57.json").write_text(json.dumps(before,sort_keys=True))
+          print("P0D_COMBINED59_ORIGINAL57_FROZEN")
+          PY
+      - name: Apply WCS and exact author #297 jobs patches on separate original57 sandbox
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B handoffs/P0D-WCS-SEVENJOBS-COMBINED59-20261114-01/tools/combine_wcs_jobs.py --dist "$DIST"
+      - name: Verify exactly 55 original unchanged, 2 Game HUD changed, 2 modules added
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,json,hashlib
+          from pathlib import Path
+          src=Path(os.environ["DIST"])/"src"
+          original=json.loads(Path("/tmp/P0D_COMBINED59_ORIGINAL57.json").read_text())
+          after={p.relative_to(src).as_posix():p.read_bytes() for p in src.rglob("*.luau")}
+          assert len(after)==59
+          changed=sorted(k for k in original if hashlib.sha256(after[k]).hexdigest()!=original[k])
+          added=sorted(set(after)-set(original))
+          assert changed==["client/HUD.client.luau","server/Game.server.luau"],changed
+          assert added==["server/SevenJobsRules.luau","server/WCS_CrystalCanyon.server.luau"],added
+          game=after["server/Game.server.luau"].decode()
+          hud=after["client/HUD.client.luau"].decode()
+          assert game.count('remote.OnServerEvent:Connect(')==1
+          assert game.count('remote.Name = "TrapRaidersS1Remote"')==1
+          assert "ScoutSpecies.attack(" in game
+          assert "SavedBeastEvolution.choose(" in game
+          assert "SavedPvePolicy.mergeWithEarned(" in game
+          assert 'action("JOB_PICK",entry[1])' in hud
+          assert 'action("JOB_SKILL",nil)' in hud
+          assert 'ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")~=true' in after["server/WCS_CrystalCanyon.server.luau"].decode()
+          config=json.load(open(Path(os.environ["DIST"])/"default.project.json"))
+          attrs=config["tree"]["ServerStorage"]["$attributes"]
+          assert attrs["P0D_RC_ENABLE_WCS_F01_C01"] is True
+          assert attrs["P0D_RC_ENABLE_SEVEN_JOBS_PVE"] is True
+          def blob(raw):
+              return hashlib.sha1(b"blob "+str(len(raw)).encode()+bytes([0])+raw).hexdigest()
+          pins={k:blob(v) for k,v in after.items()}
+          d=Path(os.environ["DIST"])
+          for filename,key,count in (("SOURCE_LOCK.json","blobs","total_scripts"),("RC_FEATURE_LOCK.json","source_gitblobs","total_sources")):
+              lock=json.load(open(d/filename))
+              assert lock[key]==pins and lock[count]==59,("FINAL_LOCK_DRIFT",filename)
+          print("P0D_COMBINED59_WCS_JOBS_55_ORIGINAL_UNCHANGED_SINGLE_GAME_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau
+          persist-credentials: false
+      - name: Cache pinned Luau compiler + runner
+        uses: actions/cache@v4
+        with:
+          path: /tmp/p0d_combined59_luau
+          key: p0d-combined59-luau-f46d879e28302-ubuntu-v1
+      - name: Compile all 59 native Luau sources and execute 33 author policy cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          if [ ! -x /tmp/p0d_combined59_luau/luau-compile ] || [ ! -x /tmp/p0d_combined59_luau/luau ]; then
+            cmake -S _luau -B /tmp/p0d_combined59_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+            cmake --build /tmp/p0d_combined59_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          fi
+          n=0
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_combined59_luau/luau-compile "$file" >/dev/null
+            n=$((n+1))
+          done < <(find "$DIST/src" -type f -name '*.luau' -print0)
+          test "$n" -eq 59
+          echo P0D_COMBINED59_LUAU_NATIVE59_ALL_PASS
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path("_jobs/handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01")
+          module=(root/"src/SevenJobsRules.luau").read_text("utf8")
+          cases=(root/"tests/SevenJobsNative.luau").read_text("utf8")
+          Path("/tmp/P0D_COMBINED59_NATIVE_JOBS.luau").write_text("local R=(function()\n"+module+"\nend)()\n"+cases,"utf8")
+          PY
+          /tmp/p0d_combined59_luau/luau-compile /tmp/P0D_COMBINED59_NATIVE_JOBS.luau >/dev/null
+          /tmp/p0d_combined59_luau/luau /tmp/P0D_COMBINED59_NATIVE_JOBS.luau | tee /tmp/P0D_COMBINED59_NATIVE_JOBS.log
+          grep -F 'P0D_SEVEN_JOBS_NATIVE_33_OF_33_POLICY_ASSERTIONS_PASS' /tmp/P0D_COMBINED59_NATIVE_JOBS.log
+          echo P0D_COMBINED59_SEVEN_JOBS_NATIVE33_ALL_PASS
+      - name: Verify checksum-pinned Rojo v7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_combined59_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_combined59_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile,stat
+          with zipfile.ZipFile("/tmp/p0d_combined59_rojo.zip") as z:
+              paths=[p for p in z.namelist() if p.rsplit("/",1)[-1]=="rojo"]
+              assert len(paths)==1
+              p=Path("/tmp/p0d_combined59_rojo")
+              p.write_bytes(z.read(paths[0]))
+              p.chmod(p.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_combined59_rojo --version | grep -F 7.7.1
+      - name: Build actual unpublished 59-source Rojo Place and source exact receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_combined59_artifacts
+          /tmp/p0d_combined59_rojo build "$DIST/default.project.json" -o /tmp/p0d_combined59_artifacts/P0D_WCS_SEVENJOBS_PRIVATE59.rbxlx
+          python3 - <<'PY'
+          import os,json,hashlib,collections
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          d=Path(os.environ["DIST"])
+          p=Path("/tmp/p0d_combined59_artifacts/P0D_WCS_SEVENJOBS_PRIVATE59.rbxlx")
+          expected=collections.Counter(x.read_text("utf8") for x in (d/"src").rglob("*.luau"))
+          actual=collections.Counter();titles=collections.Counter()
+          for item in ET.fromstring(p.read_bytes()).iter("Item"):
+              if item.get("class") not in ("Script","LocalScript","ModuleScript"):continue
+              src=item.find("./Properties/string[@name='Source']")
+              if src is not None:
+                  actual[src.text or ""]+=1
+                  n=item.find("./Properties/string[@name='Name']")
+                  if n is not None:titles[(item.get("class"),n.text)]+=1
+          assert sum(expected.values())==59 and actual==expected,("ROJO59_SOURCE_DRIFT",sum(actual.values()))
+          for key in (("Script","Game"),("Script","WCS_CrystalCanyon"),("ModuleScript","SevenJobsRules"),("ModuleScript","ScoutSpeciesPolicy"),("ModuleScript","SavedBeastEvolutionPolicy")):
+              assert titles[key]==1,("MISSING_OR_DUPLICATE",key,titles[key])
+          receipt=json.load(open(d/"P0D_WCS_JOBS59_RECEIPT.json"))
+          receipt.update({"real_rojo59":"SOURCE_EXACT_SUCCESS","native59":"PASS","native_sevenjobs33":"PASS",
+              "place_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),"engine_Studio":"NOT_TESTED",
+              "android":"NOT_TESTED","fun":"NOT_TESTED","official_rc_adopted":False,"published":False})
+          Path("/tmp/p0d_combined59_artifacts/QA_PRIVATE59.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n","utf8")
+          print("P0D_WCS_SEVENJOBS_GENUINE_ROJO59_SOURCE_EXACT_PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: P0D-WCS-SEVENJOBS-PRIVATE59-NOT-OFFICIAL-RC
+          path: /tmp/p0d_combined59_artifacts/
+          retention-days: 7
+          if-no-files-found: error
