@@ -1,0 +1,78 @@
+{
+  "schema": "P0D_COMBINED_RC57_WCS_SEVENJOBS_PRIVATE59_REAL_NATIVE_ROJO_SUCCESS_V1",
+  "date_jst": "2026-11-14",
+  "stage": "ISOLATED_COMBINED_PRIVATE59_BUILT_NOT_CANONICAL_RC_ADOPTED",
+  "actual_successful_source_sha": "c5c711ad68af97391cb3a08b5ad20c3915ff672c",
+  "actions_run_id": 43516735974,
+  "actions_url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43516735974",
+  "job_id": 132200473002,
+  "job_conclusion": "success",
+  "source_baselines": {
+    "official_rc57_sha": "34d6d384d04ba1d4a394331a3e5c74f798e57a22",
+    "wcs_parent_pr300_sha": "db568966f9ef91159cd2489598e485e066064ec9",
+    "sevenjobs_pr297_sha": "98edf843fb8a8f6123c13a67745b216712bfe63d",
+    "original_author_source_sha": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e"
+  },
+  "source_delta": {
+    "before": 57,
+    "after": 59,
+    "existing_unchanged": 55,
+    "existing_changed": [
+      "server/Game.server.luau",
+      "client/HUD.client.luau"
+    ],
+    "new_sources": [
+      "server/SevenJobsRules.luau",
+      "server/WCS_CrystalCanyon.server.luau"
+    ],
+    "kept_original_sole_Game": true,
+    "kept_original_sole_Remote": true,
+    "kept_saved_BEAST_WEAPON_and_scout_species": true,
+    "wcs_original_author_source_preserved": true,
+    "two_boot_flags_explicit_true_in_private_Rojo_project": true,
+    "total_private_source_lock_verified": 59
+  },
+  "actual_evidence_from_completed_job_logs": [
+    "Ran 9 tests in 0.077s",
+    "P0D_COMBINED59_AUTHOR_PINS_AND_WCS_NEGATIVE_QA_PASS",
+    "P0D_COMBINED59_WCS_JOBS_55_ORIGINAL_UNCHANGED_SINGLE_GAME_PASS",
+    "P0D_COMBINED59_LUAU_NATIVE59_ALL_PASS",
+    "P0D_SEVEN_JOBS_NATIVE_33_OF_33_POLICY_ASSERTIONS_PASS",
+    "P0D_WCS_SEVENJOBS_GENUINE_ROJO59_SOURCE_EXACT_PASS",
+    "Built project to P0D_WCS_SEVENJOBS_PRIVATE59.rbxlx"
+  ],
+  "artifact": {
+    "id": 14081226099,
+    "name": "P0D-WCS-SEVENJOBS-PRIVATE59-NOT-OFFICIAL-RC",
+    "size_bytes": 144285,
+    "url": "https://github.com/kk051780/toy-wars-factory/actions/runs/43516735974/artifacts/14081226099",
+    "published": false
+  },
+  "scope": {
+    "wcs": "14-second safe gate, two Moguron, elevated traversal and alternate route; source build tested only",
+    "sevenjobs": "seven selectable classes with neutral Horde PvE abilities; no full PvP career or permanent job ability claim",
+    "source_only_engine_not_tested": true,
+    "owner_studio_2client": "NOT_TESTED",
+    "android": "NOT_TESTED",
+    "dev_saved_rejoin": "NOT_TESTED",
+    "fun": "NOT_TESTED"
+  },
+  "integration": {
+    "sole_writer": "Issue #220",
+    "parent_draft_pr": 300,
+    "child_draft_pr": 304,
+    "required_order": [
+      "WCS via exact current canonical builder and independent OFF switch, same canonical HEAD native+Rojo",
+      "REBASE PR297 jobs Game/HUD with exact author-pinned patch in latest WCS canon, independent feature OFF and same canonical native+Rojo",
+      "Later rebase PR296 EggRelay (same Game/HUD collision), never double-apply old patch"
+    ],
+    "catalog_count": "do not promote candidate or count as adopted; canonical catalog changes only on same-head successful official CI",
+    "prohibition": [
+      "no main merge",
+      "no canonical RC write by source author",
+      "no Roblox publish",
+      "no paid/extra charges",
+      "no parallel Game/Store/Remote writers"
+    ]
+  }
+}
