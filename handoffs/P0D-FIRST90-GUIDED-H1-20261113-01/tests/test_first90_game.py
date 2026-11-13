@@ -5,13 +5,13 @@ import hashlib,unittest
 ROOT=Path(__file__).resolve().parents[1]
 src=lambda s:(ROOT/"inputs"/s).read_text("utf8")
 G=src("Game.server.luau");H=src("HUD.client.luau")
-M=src("MusouHorde.luau");P=src("First90GuideRules.luau")
+M=src("MusouHorde.luau");P=src("First90GuideRules.luau");W=src("First90WaypointRules.luau")
 def blob(s):
  b=(ROOT/"inputs"/s).read_bytes()
  return hashlib.sha1(b"blob "+str(len(b)).encode()+b"\0"+b).hexdigest()
 class First90OriginalSource(unittest.TestCase):
  def test_01_v5_exact_horde(self):self.assertEqual(blob("MusouHorde.luau"),"8c147c801e7fa1ff362922d66c9a6fd432fc8b6e")
- def test_02_exact_policy(self):self.assertEqual(blob("First90GuideRules.luau"),"644073946930d63e6b06c20ca249739b9ecfa5ad")
+ def test_02_exact_policy(self):self.assertEqual(blob("First90GuideRules.luau"),"0cbf26aaebf66a7548d4299fb6ede4bee47cfa70")
  def test_03_v5_red_disk_real(self):self.assertIn("ELITE_SWEEP_DANGER_RADIUS",M)
  def test_04_v5_warning_server_calculated(self):self.assertIn("function Horde:eliteWarningSeconds(now: number)",M)
  def test_05_v5_floor(self):self.assertIn("MUSOU_SOURCE_MAP_ARENA_REQUIRED",M)
@@ -62,4 +62,36 @@ class First90OriginalSource(unittest.TestCase):
  def test_40_real_beast_hit_uses_body_level(self):
   self.assertIn("local hits=horde:hit(currentRoot.Position,currentRoot.CFrame.LookVector,",G)
   self.assertNotIn("local hits=horde:hit(anchor,currentRoot.CFrame.LookVector,",G)
+ def test_41_waypoint_exact_blob(self):
+  self.assertEqual(blob("First90WaypointRules.luau"),"69c81d82eac5189d34eed801099ab52b559f2b52")
+ def test_42_server_chooses_live_egg(self):
+  self.assertIn('def.prompt.Enabled and def.part.Transparency<.9',G)
+  self.assertIn('match.eggOwners[enemy]==nil',G)
+  self.assertIn("First90Waypoint.select(match.phase",G)
+ def test_43_no_client_goal_authority(self):
+  self.assertIn("first90Target = first90Target",G)
+  self.assertIn("setWaypoint(s.first90Target)",H)
+  self.assertNotIn("action(\"NAV",H)
+ def test_44_90s_client_waypoint_cleanup(self):
+  self.assertIn("if f90.step==\"PICKUP\" or f90.step==\"RETURN\" then",H)
+  self.assertIn("waypointAnchor:Destroy()",H)
+  self.assertIn("clearWaypoint()",H)
+ def test_45_no_physical_touch_or_collide(self):
+  self.assertIn("anchor.CanCollide=false",H)
+  self.assertIn("anchor.CanTouch=false",H)
+  self.assertIn("anchor.CanQuery=false",H)
+ def test_46_no_duplicate_render_authority(self):
+  self.assertEqual(H.count("RunService.RenderStepped:Connect("),1)
+  self.assertEqual(G.count('remote.OnServerEvent:Connect('),1)
+ def test_47_real_home_map(self):
+  self.assertIn("map.teams[team].scorePad.Position",G)
+  self.assertIn("owner=def.owner",G)
+ def test_48_no_fake_missing_egg_score(self):
+  self.assertIn('cue("PICKUP","🥚 卵を落としたら、もう一度ひろおう！")',P)
+  self.assertIn('cue("RECOVER","⚠ 自陣の卵も盗まれた！仲間と取り戻そう")',P)
+ def test_49_no_live_waypoint(self):
+  self.assertIn('if RunService:IsStudio() and first90.visible==true then',G)
+ def test_50_mobile_arrow_outside_thumb_buttons(self):
+  self.assertIn("UDim2.fromOffset(17,178)",H)
+  self.assertIn('First90ActualWaypointArrow',H)
 if __name__=="__main__":unittest.main(verbosity=1)
