@@ -1,0 +1,29 @@
+--- Game.server.luau (40+v5 frozen original)
++++ Game.server.luau (independent QA candidate only)
+@@ -1111,11 +1111,11 @@
+     local generation=scoutActivitySerial[player]
+     local epoch=match.serial
+     -- The only H1 Game owns both actual abilities; no new Remote or scheduler
+     -- beyond the existing timed scout lifecycle.
+     if stage>=2 and branch=="GUARD" then
+-        evolutionGuards[player]={untilAt=serverNow()+8,
++        evolutionGuards[player]={untilAt=serverNow()+SCOUT_DURATION,
+             hits=if stage>=3 then 5 else 3}
+     end
+     task.spawn(function()
+         local nextEvolvedStrike=0
+         local highlighted: Highlight?=nil
+@@ -1134,11 +1134,12 @@
+             if evolvedAura then evolvedAura.CFrame=body.CFrame end
+             if stage>=2 and branch=="ASSAULT"
+                 and serverNow()>=nextEvolvedStrike then
+                 -- Existing server horde:hit authority, PvE ONLY. Do not stack
+                 -- permanent evolution with #285 PvP multiplier or award kill XP.
+-                local hits=horde:hit(anchor,currentRoot.CFrame.LookVector,
++                local strikeOrigin=Vector3.new(anchor.X,currentRoot.Position.Y,anchor.Z)
++                local hits=horde:hit(strikeOrigin,currentRoot.CFrame.LookVector,
+                     if stage>=3 then 40 else 26,serverNow(),player.Character)
+                 if hits>0 then
+                     mobImpactSeq[player]=(mobImpactSeq[player] or 0)+1
+                     mobLastHits[player]=hits
+                     mobLastKOs[player]=0
