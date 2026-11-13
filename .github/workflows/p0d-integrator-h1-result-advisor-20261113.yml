@@ -150,8 +150,9 @@ jobs:
           lock=json.loads((d/'SOURCE_LOCK.json').read_text('utf8'))
           assert lock['total_scripts']==47 and lock['original_45_unchanged']==45
           assert lock['results_card_7_seconds'] is True and lock['team_score_only'] is True
-          assert lock['world_ground_docks']==4
-          assert lock['strict_single_egg_sky_score_observer'] is True
+          assert lock['original_45_unchanged']==45
+          assert lock['studio_only'] is True and lock['one_game'] is True and lock['one_remote'] is True
+          assert lock['individual_KOs_not_claimed'] is True and lock['hatch_readiness_not_claimed'] is True
           assert lock['official_rc_adopted'] is False and lock['published'] is False
           h=hashlib.sha256(p.read_bytes()).hexdigest()
           receipt={'status':'RICH_B42_V7_SKYCASTLE_STUDIO_SOLO_ONLY',
