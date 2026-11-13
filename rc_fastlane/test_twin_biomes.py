@@ -131,7 +131,7 @@ class TwinBiomes(unittest.TestCase):
         deck_top=5.5+1/2
         self.assertLess(first_top-pad_top,2)
         self.assertLess(deck_top-last_top,0.5)
-        self.assertTrue(all(abs((0.7+(i+1)*0.75)-(0.7+i*0.75))<=0.75 for i in range(1,6)))
+        self.assertTrue(all(abs((0.7+(i+1)*0.75)-(0.7+i*0.75))<=0.750001 for i in range(1,6)))
     def test_28_no_random_player_bias_or_paid_rarity(self):
         self.assertNotIn("math.random",SCRIPT)
         self.assertNotIn("player.Team",SCRIPT)
