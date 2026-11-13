@@ -223,6 +223,41 @@ jobs:
           done < <(find "$DIST/src" -type f -name '*.luau' -print0)
           test "$n" -eq "$WANT"
           echo "P0D_CANONICAL_RC_FULL_SOURCE_LUAU_COMPILE_PASS $n/$WANT"
+      - name: Execute actual final composed SevenJobsRules policy 33 native cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            AUTHOR=_p0d_sevenjobs_author/handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01
+            python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          dist=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE")
+          author=Path("_p0d_sevenjobs_author/handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01")
+          src=(dist/"src/server/SevenJobsRules.luau").read_bytes()
+          src_author=(author/"src/SevenJobsRules.luau").read_bytes()
+          test=(author/"tests/SevenJobsNative.luau").read_bytes()
+          def blob(data):
+              return hashlib.sha1(b"blob "+str(len(data)).encode()+bytes([0])+data).hexdigest()
+          assert src==src_author, "SEVEN_JOBS_FINAL_COMPOSED_SOURCE_MISMATCH"
+          assert blob(src)=="a7253d36cb67df47d4ba65d35af212ed1eb7b5b2"
+          assert blob(test)=="5bb1b8a507fe05955e257f69af75222ebd638577"
+          assert test.count(b'check("')==33, "MUST_RUN_33_DISTINCT_JOB_CASES"
+          generated=b"local R=(function()\n"+src+b"\nend)()\n"+test
+          Path("/tmp/P0D_COMBINED60_SEVENJOBS_NATIVE.luau").write_bytes(generated)
+          print("P0D_SEVENJOBS_COMBINED60_AUTHOR_SOURCE_AND_33_CASES_PINNED_PASS")
+          PY
+            if [ ! -x /tmp/p0d_new_luau/luau ]; then
+              if [ ! -f /tmp/p0d_new_luau/build.ninja ]; then
+                cmake -S _p0d_rc_luau -B /tmp/p0d_new_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+              fi
+              cmake --build /tmp/p0d_new_luau --target Luau.Repl.CLI --parallel 4
+            fi
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_COMBINED60_SEVENJOBS_NATIVE.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_COMBINED60_SEVENJOBS_NATIVE.luau | tee /tmp/p0d_sevenjobs_private60_native.log
+            grep -Fx 'P0D_SEVEN_JOBS_NATIVE_33_OF_33_POLICY_ASSERTIONS_PASS' /tmp/p0d_sevenjobs_private60_native.log
+          fi
       - name: Execute actual composed Game relay handler native30 plus missing-flag rejection
         shell: bash
         run: |
