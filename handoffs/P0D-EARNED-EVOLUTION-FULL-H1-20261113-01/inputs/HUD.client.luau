@@ -111,6 +111,46 @@ local roleRaider = button(gui, "RaiderRole", "🏃 速攻", UDim2.fromOffset(92,
     UDim2.new(.02, 0, 1, -64), Color3.fromRGB(59, 128, 208))
 local roleGuardian = button(gui, "GuardianRole", "🛡 守護", UDim2.fromOffset(92, 53),
     UDim2.new(.02, 98, 1, -64), Color3.fromRGB(46, 152, 125))
+-- Opens a single modal in lobby, avoiding overlapping mode/owned/role controls.
+local evolutionToggle=button(gui,"OwnedBeastEvolution","🐉 進化",
+    UDim2.fromOffset(92,53),UDim2.new(.02,196,1,-64),
+    Color3.fromRGB(136,89,191))
+evolutionToggle.Visible=false
+local evolutionPanel=Instance.new("Frame")
+evolutionPanel.Name="RealPersistentEvolutionPanel"
+evolutionPanel.AnchorPoint=Vector2.new(.5,0)
+evolutionPanel.Position=UDim2.new(.5,0,.24,0)
+evolutionPanel.Size=UDim2.new(.86,0,0,180)
+evolutionPanel.BackgroundColor3=Color3.fromRGB(28,35,62)
+evolutionPanel.BackgroundTransparency=.02
+evolutionPanel.BorderSizePixel=0
+evolutionPanel.Visible=false
+evolutionPanel.ZIndex=4
+evolutionPanel.Parent=gui
+local evolutionConstraint=Instance.new("UISizeConstraint")
+evolutionConstraint.MinSize=Vector2.new(245,180)
+evolutionConstraint.MaxSize=Vector2.new(710,180)
+evolutionConstraint.Parent=evolutionPanel
+local evoCorner=Instance.new("UICorner")
+evoCorner.CornerRadius=UDim.new(0,12)
+evoCorner.Parent=evolutionPanel
+local evolutionInfo=label(evolutionPanel,"EarnedRealEvolutionStatus",
+    UDim2.new(1,-12,0,100),UDim2.new(0,6,0,8),
+    Color3.fromRGB(235,231,175),14)
+evolutionInfo.ZIndex=5
+evolutionInfo.Text="本物の育成進化：魔獣を装備して条件を達成しよう"
+local evoGrowButton=button(evolutionPanel,"GrowRealBeast","🐉 次の姿へ進化",
+    UDim2.new(.92,0,0,57),UDim2.new(.04,0,1,-8),
+    Color3.fromRGB(108,146,75))
+evoGrowButton.ZIndex=5
+local evoAttackButton=button(evolutionPanel,"ChooseAssaultEvolution","⚔ 攻撃型",
+    UDim2.new(.44,0,0,57),UDim2.new(.04,0,1,-8),
+    Color3.fromRGB(199,79,68))
+evoAttackButton.ZIndex=5
+local evoGuardButton=button(evolutionPanel,"ChooseGuardEvolution","🛡 守護型",
+    UDim2.new(.44,0,0,57),UDim2.new(.52,0,1,-8),
+    Color3.fromRGB(67,125,207))
+evoGuardButton.ZIndex=5
 
 -- Two modes in ONE original H1 game, only a single HUD owns Remote sequence numbers.
 local modePanel = Instance.new("Frame")
@@ -187,6 +227,7 @@ local equipButtons={
 }
 
 local seq = 0
+local evolutionOpen=false
 local currentNetBound=false -- display state ONLY; server independently validates
 local lastSerial = -1
 local lastUpdateId = -1 -- never reset between rounds; view-only HUD ordering
@@ -214,6 +255,19 @@ rescueButton.MouseButton1Click:Connect(function()
 end)
 roleRaider.MouseButton1Click:Connect(function() action("ROLE", "RAIDER") end)
 roleGuardian.MouseButton1Click:Connect(function() action("ROLE", "GUARDIAN") end)
+evolutionToggle.MouseButton1Click:Connect(function()
+    evolutionOpen=not evolutionOpen
+    evolutionPanel.Visible=evolutionOpen
+end)
+evoGrowButton.MouseButton1Click:Connect(function()
+    action("EVOLVE_SCOUT","NONE")
+end)
+evoAttackButton.MouseButton1Click:Connect(function()
+    action("EVOLVE_SCOUT","ASSAULT")
+end)
+evoGuardButton.MouseButton1Click:Connect(function()
+    action("EVOLVE_SCOUT","GUARD")
+end)
 classicMode.MouseButton1Click:Connect(function() action("MODE_VOTE","CLASSIC") end)
 scoreMode.MouseButton1Click:Connect(function() action("MODE_VOTE","SCORE_5") end)
 scoutButton.MouseButton1Click:Connect(function() action("ACTIVATE_SCOUT",nil) end)
@@ -394,7 +448,11 @@ remote.OnClientEvent:Connect(function(s)
         else "敵の卵に近づいてE／タップで奪取 → 自陣の台へ。城を攻撃しても勝てる！"
     local canChoose=(s.phase=="LOBBY" or s.phase=="COUNTDOWN")
         and s.modeScoreAvailable==true
-    modePanel.Visible=canChoose
+    local evolvedMenu=canChoose and s.evoEnabled==true
+    evolutionToggle.Visible=evolvedMenu
+    evolutionToggle.Text=if evolutionOpen then "🐉 戻る" else "🐉 進化"
+    evolutionPanel.Visible=evolvedMenu and evolutionOpen
+    modePanel.Visible=canChoose and not evolutionOpen
     local c=if type(s.voteClassic)=="number" and s.voteClassic>=0 then s.voteClassic else 0
     local v=if type(s.voteFive)=="number" and s.voteFive>=0 then s.voteFive else 0
     local nextMode=if s.modeVote=="SCORE_5" then "🏆 得点バトル" else "🥚 卵どろぼう戦"
@@ -416,7 +474,40 @@ remote.OnClientEvent:Connect(function(s)
         else "⚠️ Studioでは一時保存のみ。再ログインで消えます"
     saveLabel.TextColor3=if saveState=="SAVED" then Color3.fromRGB(153,247,177)
         else Color3.fromRGB(255,207,120)
-    equipPanel.Visible=hatchAvailable and lobby
+    equipPanel.Visible=hatchAvailable and lobby and not evolutionOpen
+    if evolutionPanel.Visible then
+        local stage=if type(s.evoStage)=="number"
+            then math.clamp(math.floor(s.evoStage),0,3) else 0
+        local shards=if type(s.evoFragments)=="number"
+            then math.clamp(math.floor(s.evoFragments),0,100000) else 0
+        local nextStage=if type(s.evoNextStage)=="number"
+            then math.clamp(math.floor(s.evoNextStage),0,3) else 0
+        local cost=if type(s.evoNextCost)=="number"
+            then math.clamp(math.floor(s.evoNextCost),0,10) else 0
+        local branch=if type(s.evoBranch)=="string" then s.evoBranch else "NONE"
+        local busy=s.evoPending==true
+        evolutionInfo.Text="現在 Stage"..tostring(stage).."（"
+            ..(if branch=="ASSAULT" then "攻撃型"
+                elseif branch=="GUARD" then "守護型" else "基本型")
+            .."）  素材 "..tostring(shards).."個\n"
+            ..(if stage>=3 then "✨神話形態に到達！"
+                else "次 Stage"..tostring(nextStage).." 素材"..tostring(cost)
+                    .."個／レベルと熟練度が必要")
+            ..(if busy then "\n保存処理中..." else "")
+        local selectable=s.evoCanUpgrade==true and not busy
+        local branchChoice=s.evoBranchChoice==true
+        evoGrowButton.Visible=not branchChoice and stage<3
+        evoGrowButton.Active=evoGrowButton.Visible and selectable
+        evoGrowButton.AutoButtonColor=evoGrowButton.Active
+        evoGrowButton.Text=if selectable then "🐉 進化させる"
+            else "🔒 成長条件が必要"
+        evoAttackButton.Visible=branchChoice and stage<3
+        evoGuardButton.Visible=branchChoice and stage<3
+        evoAttackButton.Active=evoAttackButton.Visible and selectable
+        evoGuardButton.Active=evoGuardButton.Visible and selectable
+        evoAttackButton.AutoButtonColor=evoAttackButton.Active
+        evoGuardButton.AutoButtonColor=evoGuardButton.Active
+    end
     for _,entry in ipairs(equipButtons) do
         local count=if type(owned[entry.item])=="number" and owned[entry.item]>=0
             then math.floor(owned[entry.item]) else 0
