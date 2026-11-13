@@ -67,7 +67,7 @@ def main(zip_path,out_path):
             if n.text in rows:raise ValueError("DUPLICATE_SCRIPT_NAME")
             rows[n.text]=(item.get("class"),src)
     if len(rows)!=54:raise ValueError("WRONG_SOURCE_COUNT")
-    baseline={n:(kind,el.text or "").encode("utf8") for n,(kind,el) in rows.items()}
+    baseline={n:(el.text or "").encode("utf8") for n,(kind,el) in rows.items()}
     for name,old_blob in BASE_BLOBS.items():
         if blob(baseline[name])!=old_blob:raise ValueError("ORIGINAL_SOURCE_DRIFT: "+name)
     for name,new_blob in TARGET_BLOBS.items():
@@ -77,7 +77,7 @@ def main(zip_path,out_path):
             new=(ROOT/"src"/(name+".luau")).read_bytes()
         if blob(new)!=new_blob:raise ValueError("PATCH_SOURCE_DRIFT: "+name)
         rows[name][1].text=new.decode("utf8")
-    result={n:(kind,el.text or "").encode("utf8") for n,(kind,el) in rows.items()}
+    result={n:(el.text or "").encode("utf8") for n,(kind,el) in rows.items()}
     changed=sorted(n for n in result if result[n]!=baseline[n])
     if changed!=sorted(TARGET_BLOBS):raise ValueError("UNEXPECTED_MODIFIED_SOURCE")
     if len(result)!=54 or sum(result[n]==baseline[n] for n in baseline)!=50:raise ValueError("CHANGED_50_CORE_SOURCES")
