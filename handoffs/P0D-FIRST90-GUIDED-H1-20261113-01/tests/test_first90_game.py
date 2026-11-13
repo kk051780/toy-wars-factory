@@ -59,4 +59,7 @@ class First90OriginalSource(unittest.TestCase):
   self.assertIn("token.duration~=SCOUT_DURATION",G)
   self.assertIn("while t<SCOUT_DURATION and scoutModels[player]==model",G)
 
+ def test_40_real_beast_hit_uses_body_level(self):
+  self.assertIn("local hits=horde:hit(currentRoot.Position,currentRoot.CFrame.LookVector,",G)
+  self.assertNotIn("local hits=horde:hit(anchor,currentRoot.CFrame.LookVector,",G)
 if __name__=="__main__":unittest.main(verbosity=1)
