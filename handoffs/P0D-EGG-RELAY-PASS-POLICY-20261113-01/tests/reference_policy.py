@@ -5,7 +5,7 @@ from math import isfinite
 
 
 def integer(v):
-    return type(v) in (int, float) and isfinite(v) and v % 1 == 0 and abs(v) < 1e9
+    return type(v) in (int, float) and isfinite(v) and v % 1 == 0 and abs(v) <= 9007199254740991
 
 
 def number(v):
