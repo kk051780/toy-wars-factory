@@ -75,7 +75,7 @@ class TestV4Rich51Bridge(unittest.TestCase):
         self.assertIn('Scheduler.settle(',server)
         self.assertIn('Model.apply(',server)
         self.assertIn('Scheduler.selectSkill(',server)
-        self.assertIn('player:IsFriendsWith(other.UserId)',server)
+        self.assertIn('player:IsFriendsWithAsync(other.UserId)',server)
 
     def test_symmetric_all_six_pads(self):
         server=self.after["server/V4TrainingBridge.server.luau"].decode()
@@ -89,6 +89,11 @@ class TestV4Rich51Bridge(unittest.TestCase):
         ui=self.after["client/V4TrialOverlay.client.luau"].decode()
         self.assertIn('保存なし / 対戦強化なし / 課金なし',ui)
         self.assertIn('MouseButton1Click:Connect',ui)
+        self.assertIn('player.Idled:Connect(',ui)
+        self.assertIn('UserInputService.InputBegan:Connect(',ui)
+        self.assertIn('~20m',ui)
+        self.assertNotIn('VirtualInputManager',ui)
+        self.assertNotIn('VirtualUser',ui)
         self.assertIn('if not RunService:IsStudio() then return end',ui)
 
     def test_receipt_and_config_fail_closed(self):
