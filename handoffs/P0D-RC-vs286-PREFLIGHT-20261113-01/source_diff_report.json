@@ -23,7 +23,7 @@
       "candidate_lines": 1583,
       "ordered_common_lines": 688,
       "changed_old_lines": 15,
-      "semantic_change_groups": 7
+      "semantic_change_groups": 8
     },
     "hud": {
       "official_lines": 195,
@@ -70,5 +70,9 @@
   "no_source_write_to_rc": true,
   "no_merge_or_publish": true,
   "studio_tested": false,
-  "final_release_ready": false
+  "final_release_ready": false,
+  "notes": [
+    "8 server semantic groups are snapshot replication ordinal; carried egg DTO; eggPrompt enabling; stop-round cleanup; normal vs score-mode winner; player departure; time-limit score; out-of-bounds recovery.",
+    "7 HUD groups include branding, trap button layout, action routing/keyboard, lobby wording, carrying mode text and trap affordance. Source line commonality does not establish gameplay correctness."
+  ]
 }
