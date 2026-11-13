@@ -127,6 +127,12 @@ jobs:
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
           print('OFFICIAL_RC_FASTLANE_BINARY_SOURCE_EXACT_PASS',p,digest)
           PY
+      - name: Generate OWNER feature progress in the SAME RC build (no second QA run)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B rc_fastlane/progress.py --out /tmp/p0d_rc_out/FEATURE_PROGRESS.md --json /tmp/p0d_rc_out/FEATURE_PROGRESS.json
+          grep -F P0D /tmp/p0d_rc_out/FEATURE_PROGRESS.md | head -2
       - uses: actions/upload-artifact@v4
         with:
           name: P0D-CANONICAL-RC-STUDIO-${{ env.PROFILE }}
