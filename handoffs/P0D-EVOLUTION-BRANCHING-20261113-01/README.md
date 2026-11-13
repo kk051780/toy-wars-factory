@@ -86,3 +86,17 @@ Rojo（OWNER PCに導入済みの場合）の再現コマンド：
     rojo build battle.project.json -o EVO_BATTLE_PRIVATE.rbxlx
 
 **OWNER実機確認が必要な事項：** 2clientの同一NPC撃破・同じ城HP変化、守護のヒット遮断、技連打12秒拒否、他人から見える魔獣、スマホ誤タップ/視認性、14体NPC＋神話演出のFPS、スタック/長時間試遊。現在この実機試験は未実施。別レーンの#220のみ正式ゲームへの選定・統合が可能であり、#250製品採用手順も変わらない。
+
+## V3：進化図鑑の履歴を消さない「FormDex」
+
+新規 `src/EvolutionFormDex.luau` は、**元の `EvolutionRules` の真の所有品・進化形態・サーバー保存済みの進化記録（evoReceipts）を読むだけ**の独立モジュール。プロフィール・レベル・進化素材・図鑑の権利を変更することは一切ない。原本の `EvolutionRules.luau` は変更せず、`Dex.new(EvolutionRules).snapshot(evolutionProfile,ownedItems)` で読み取り専用の画面向けデータを作る。
+
+1品の魔獣につき幼体 S0、成長体 S1、攻撃型 S2、守護型 S2、攻撃神話 S3、守護神話 S3 の **最大6形態**を図鑑で追う。成長後に進化先を切り替えても、一度進化した「別の枝」の履歴は既存の正規 `evoReceipts` に残るため再構築できる。現在装備できる形態はサーバー正規の `forms[itemId]` から求め、**発見済み履歴と現在の装備形態を混同しない**。図鑑から直接過去の枝へ無料で切り替える権利は付けず、正規の `switchBranch` の素材支払いを使う。
+
+本モジュールの出力は `schema=EGG_RUMBLE_FORM_DEX_V1`, `items[]`, `discoveredForms[]`, `activeFormId`, `discoveredCount`, `missingForms`。現時点の #275 実在アイテムIDと未公開デモ用IDを区別する `isCurrentPlayableId` も保持する。偽の進化受領記録（段階矛盾、異なるアイテム・枝・FormID、将来形態の偽造）は復元時に fail-closed で拒否する。
+
+**永続化について**：本モジュールは DataStore を呼ばない。図鑑履歴の根拠となる `evoReceipts` が本番でセーブ/再取得できることはまだ未実装。#286 と競合する第二のデータ保存処理を追加しない。唯一の #220 統合担当が選定後、Owned/Equipped/XP/Mastery/Forms/Fragments/EvoReceipts を *同一* `UpdateAsync` 保存トランザクションへ追加する必要がある。Receipt の容量上限を超えた場合に履歴を削除すると過去の発見が消えるため、履歴の独立した不変要約を同トランザクションで保存する設計は将来の契約課題。
+
+再現可能な純Luau実行試験：`python3 tests/run_native_formdex.py --luau /path/to/luau --compiler /path/to/luau-compile`。正規進化→枝切替→神話両枝取得の完全な発見履歴、未所持、二重進化ID再試行、偽記録拒否、サーバープロフィール不変を実際にオリジナルLuauソースで検証する。Github Actionsの成功時だけ「実行テストPASS」と報告する。
+
+**進化図鑑UI・正式H1/H2の表示・本物の再ログイン保存**はこの段階では未実装。進化図鑑のデータ投影を作ったという事実と、本物のゲームで図鑑を完成させた事実は区別する。
