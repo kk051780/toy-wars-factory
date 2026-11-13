@@ -207,6 +207,9 @@ Players.PlayerRemoving:Connect(function(player)
     if holder then idByPlayer[holder]=nil end
     holderIds[player]=nil
     sideByPlayer[player]=nil
+    -- Pause server scoring when either side has left: no free unattended wins.
+    started=teamCount("RED")>0 and teamCount("BLUE")>0
+    sendScores()
 end)
 task.spawn(function()
     while match.active do
@@ -219,6 +222,19 @@ task.spawn(function()
             end
             sendScores()
         end
+    end
+    -- The pure rules dropped carried eggs on expiration; keep actual visual
+    -- Parts consistent and un-welded rather than attached after 4 minutes.
+    for id,weld in pairs(welds) do
+        local player=idByPlayer[match.eggs[id].holder or -1]
+        local dropAt=if player then safeDropPosition(player) else initial[id]
+        weld:Destroy()
+        welds[id]=nil
+        local part=eggWorld[id]
+        part.Anchored=true
+        part.CanCollide=false
+        part.CFrame=CFrame.new(dropAt)
+        eggPrompts[id].Enabled=false
     end
     sendScores()
 end)
