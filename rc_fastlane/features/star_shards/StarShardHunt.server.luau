@@ -64,6 +64,39 @@ local playerClaimed={} -- [UserId] = {[shardId] = true}; no DataStore
 local registered={}    -- exactly one CharacterAdded hook per Player
 local orbs={}
 local prompts={}
+local lights={}
+
+-- Discoverability: both original Starfall bank switches already summon the
+-- timed bridge; add a quest hint above, not over, their original prompt sign.
+-- This creates no additional button, RemoteEvent or gameplay authority.
+for _,side in ipairs({"WEST","EAST"}) do
+    local switch=stage:WaitForChild("StarSwitch_"..side,15)
+    if switch and switch:IsA("BasePart") then
+        if not switch:FindFirstChild("P0DStarShardQuestHint") then
+            local hint=Instance.new("BillboardGui")
+            hint.Name="P0DStarShardQuestHint"
+            hint.Adornee=switch
+            hint.Size=UDim2.fromOffset(270,74)
+            hint.StudsOffsetWorldSpace=Vector3.new(0,8,0)
+            hint.MaxDistance=82
+            hint.AlwaysOnTop=true
+            hint.Parent=switch
+            local label=Instance.new("TextLabel")
+            label.Name="Objective"
+            label.Size=UDim2.fromScale(1,1)
+            label.BackgroundColor3=Color3.fromRGB(24,17,65)
+            label.BackgroundTransparency=0.2
+            label.TextColor3=Color3.fromRGB(255,240,145)
+            label.TextScaled=true
+            label.TextWrapped=true
+            label.Font=Enum.Font.GothamBold
+            label.Text="星の橋で ★6つ を集めよう！\n6/6で『星の探検家』"
+            label.Parent=hint
+        end
+    else
+        warn("[P0D/SHARDS] original "..side.." star switch unavailable; hint disabled")
+    end
+end
 
 local function showBadge(player)
     local char=player.Character
@@ -168,6 +201,16 @@ for shardId,stone in ipairs(stones) do
     orb.Transparency=1
     orb.Parent=root
     orbs[shardId]=orb
+    -- Six low-power lights only illuminate shards while the physical bridge
+    -- is open. Keep all effects OFF when the stepping stones cannot collide.
+    local light=Instance.new("PointLight")
+    light.Name="StarShardGlow"
+    light.Color=palette[shardId]
+    light.Brightness=0.85
+    light.Range=7
+    light.Enabled=false
+    light.Parent=orb
+    lights[shardId]=light
 
     local prompt=Instance.new("ProximityPrompt")
     prompt.Name="CollectStarShard"
@@ -203,6 +246,7 @@ local function updateVisibility()
     for i=1,TOTAL do
         prompts[i].Enabled=active
         orbs[i].Transparency=active and 0.08 or 1
+        lights[i].Enabled=active
     end
     root:SetAttribute("PathActive",active)
 end
