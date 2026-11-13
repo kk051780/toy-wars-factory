@@ -42,3 +42,6 @@ Source observational principles: Roblox Creator Hub onboarding https://create.ro
 
 ## Explicit child safety & FREE mobility proof boundary
 This visual prototype means **no actual zero-G**, no damage/economy, no paid access; only scenery and one rotating alert. 子どもの安全を優先し、通常の常設通路は無料・常時開放。脱落や帰還困難を生む動作は未統合。既存S1の卵・得点・戦闘権限は一切変更しない。
+
+## 明示的な反撃・対抗策の共通ルール
+レア世界に入ることで一方的な優位は与えない。反撃は両陣営に必ず用意し、見える入口・鐘・色の予兆、常時開放の無料橋、携行中の卵を奪える本来の地上ルートを残す。対抗策がないギミックは本実装へ進めない。
