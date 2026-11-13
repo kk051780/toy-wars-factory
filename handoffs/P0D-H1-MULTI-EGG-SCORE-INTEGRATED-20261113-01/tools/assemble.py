@@ -22,7 +22,7 @@ MODES={"OFF":False,"ON":True}
 INPUTS={
   "server/H2ScoreRules.luau":("inputs/H2ScoreRules.luau","ab35825cfcbf14315eecfae954318b4d92e0a592"),
   "server/H2ScoreIntegration.luau":("server/H2ScoreIntegration.luau","fbb58f9e4cc49fc520f5767b3796ee556b60864a"),
-  "client/H2ScoreHUD.client.luau":("client/H2ScoreHUD.client.luau","f371e01965606d56383599f7434e9b428795a888"),
+  "client/H2ScoreHUD.client.luau":("client/H2ScoreHUD.client.luau","36b34ed8c00086a2dc1375145568a0196d264388"),
 }
 ORIGINAL_SHA={
   "server/Game.server.luau":"adecfee41a594bdd54393050b4890a5733a536ce",
