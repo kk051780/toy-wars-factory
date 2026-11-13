@@ -1,0 +1,85 @@
+name: P0D WCS F01C01 isolated RC57 to private58 verification
+on:
+  push:
+    branches:
+      - feature/p0d-wcs-f01c01-rc57-rebase-20261114-01
+permissions:
+  contents: read
+  actions: read
+jobs:
+  isolated-private58:
+    if: github.repository == 'kk051780/toy-wars-factory'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Retrieve one immutable official57 artifact and validate hashes
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api repos/kk051780/toy-wars-factory/actions/artifacts/14076842489/zip > /tmp/P0D_RC57_OFFICIAL.zip
+          echo '552c506ef2812b220285f716562edfb17cdb285fc985b4cacec82996c88ecbdf  /tmp/P0D_RC57_OFFICIAL.zip' | sha256sum -c
+          python3 - <<'PY'
+          import zipfile,hashlib
+          z=zipfile.ZipFile('/tmp/P0D_RC57_OFFICIAL.zip')
+          assert z.testzip() is None
+          b=z.read('P0D_CANONICAL_RC_rich51.rbxlx')
+          assert hashlib.sha256(b).hexdigest()=='15521b7dadbd96c0ef1ed12367b5fcf2f3738c4428ebf2fb8c43532b39b8a8'
+          print('P0D_WCS_AUTHENTIC_OFFICIAL57_INPUT_PASS')
+          PY
+      - name: Real negative regression and deterministic new private58 XML
+        shell: bash
+        env:
+          P0D_RC57_ARTIFACT_ZIP: /tmp/P0D_RC57_OFFICIAL.zip
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -v -s handoffs/P0D-WCS-F01C01-RC57-REBASE-20261114-01/tests
+          python3 handoffs/P0D-WCS-F01C01-RC57-REBASE-20261114-01/tools/build_from_rc57.py \
+            /tmp/P0D_RC57_OFFICIAL.zip /tmp/P0D_WCS_RC58_PRIVATE.rbxlx /tmp/WCS_RC58_RECEIPT.json
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          fetch-depth: 1
+          persist-credentials: false
+          path: _p0d_wcs_luau
+      - name: Compile EVERY real 58 Luau source with pinned native Luau compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_wcs_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_wcs_luau -B /tmp/p0d_wcs_compiler -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_wcs_compiler --target Luau.Compile.CLI --parallel 4
+          mkdir -p /tmp/wcs58_scripts
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET,pathlib
+          b=pathlib.Path('/tmp/P0D_WCS_RC58_PRIVATE.rbxlx').read_bytes()
+          n=0
+          for e in ET.fromstring(b).iter('Item'):
+              if e.get('class') not in ('Script','LocalScript','ModuleScript'):continue
+              x=e.find("./Properties/string[@name='Source']")
+              assert x is not None
+              n+=1
+              pathlib.Path(f'/tmp/wcs58_scripts/{n:03}.luau').write_text(x.text or '',encoding='utf8')
+          assert n==58,n
+          print('P0D_WCS_EXTRACT_ALL_REAL_58_SCRIPTS_PASS')
+          PY
+          n=0
+          for file in /tmp/wcs58_scripts/*.luau; do
+            /tmp/p0d_wcs_compiler/luau-compile "$file" >/dev/null
+            n=$((n+1))
+          done
+          test "$n" -eq 58
+          echo "P0D_WCS_NATIVE_LUAU_FULL_58_OF_58_PASS"
+      - name: Upload PRIVATE candidate only, never official RC or main
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-WCS-RC57-TO-PRIVATE58
+          path: |
+            /tmp/P0D_WCS_RC58_PRIVATE.rbxlx
+            /tmp/WCS_RC58_RECEIPT.json
+          retention-days: 7
