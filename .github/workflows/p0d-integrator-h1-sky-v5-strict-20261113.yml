@@ -24,7 +24,7 @@ jobs:
           python3 -B handoffs/P0D-B42-V7-SKYCASTLE-20261113-01/tests/test_skycastle_original.py
           python3 -B handoffs/P0D-FIRST90-MUSOUV7-UPGRADE-20261113-01/tests/test_upgrade.py
           python3 -B -m unittest discover -s handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01/tests -p 'test_integration.py' -v
-          P0D_DOCK_CANDIDATE=handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01/dist/P0D_H1_DOJO_SKYV5_STRICT4_PRIVATE           P0D_DOCK_ORIGINAL=handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01/dist/P0D_H1_DOJO_SKYV5_STRICT4_PRIVATE             python3 -B handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01/tests/test_ground_docks_v5.py
+          P0D_DOCK_CANDIDATE=handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01/dist/P0D_H1_DOJO_SKYV5_STRICT4_PRIVATE           P0D_DOCK_ORIGINAL=handoffs/P0D-RC-B42V7-SKY-SOLO-DOJO-H1-20261113-01/dist/P0D_B42_V7_SKYCASTLE_LATCH_AUDIT_DOJO_H1_PRIVATE             python3 -B handoffs/P0D-RC-H1-DOJO-SKYV5-STRICT-20261113-01/tests/test_ground_docks_v5.py
       - name: Checkout pinned upstream Luau source
         uses: actions/checkout@v4
         with:
