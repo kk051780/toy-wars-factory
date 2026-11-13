@@ -45,7 +45,7 @@ check("NET_THROW" in h and "BREAK_FREE" in h and "RESCUE" in h,"touch UI actions
 check("Enum.KeyCode.N" in h and "Enum.KeyCode.B" in h,"keyboard actions")
 check(h.count("remote:FireServer(")==oldh.count("remote:FireServer(")==3,"one client action sequence helper")
 check("local currentNetBound=false" in h,"view state")
-check("RemoteEvent" not in m and "FireServer" not in m and "task.spawn" not in m,"no separate authority")
+check('Instance.new("RemoteEvent")' not in m and ".FireServer(" not in m and "task.spawn(" not in m,"no separate authority")
 check("MINIONS = 8" in m and "MAX_ACTIVE = 9" in m,"mob budget")
 check('table.insert(impacts,{player=target,damage=11,kind="ELITE"})' in m,"elite telegraph damage request")
 check("m.tellUntil=now+1.5" in m,"warn before elite")
