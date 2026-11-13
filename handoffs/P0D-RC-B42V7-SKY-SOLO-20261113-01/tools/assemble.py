@@ -18,7 +18,7 @@ FROZEN_UPSTREAM="a3dfc9b98f22b8edf0a7d0d978d65b1072aed933"
 B42_GAME="21b866e801a53ba7ebd66132ae55fe28608750d6"
 ORIGINAL_WORLD="0a6360392f4384dc2f0ab1e9afc1d840d66a22b8"
 ORIGINAL_HORDE="fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
-SOLO_RULE="22e7e22e8837dbf44c57fdfb30efd480457022fb"
+SOLO_RULE="de0e0df12346de2b4e7b607c74eddaaac693dc99"
 
 def blob(raw:bytes)->str:
     return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
@@ -38,7 +38,8 @@ def hunk_game(game:str)->str:
     game=only_once(game,
         'local First90Waypoint = require(script.Parent:WaitForChild("First90WaypointRules"))',
         'local First90Waypoint = require(script.Parent:WaitForChild("First90WaypointRules"))\n'
-        'local StudioSolo = require(script.Parent:WaitForChild("StudioSoloPreviewRules"))',
+        'local StudioSolo = require(script.Parent:WaitForChild("StudioSoloPreviewRules"))\n'
+        'local studioSoloRoundStarted = false',
         "IMPORT")
     game=only_once(game,
         'if count >= Config.MinPlayers and teamCount("RED") > 0 and teamCount("BLUE") > 0 then',
@@ -51,10 +52,18 @@ def hunk_game(game:str)->str:
         '                teamCount("RED"), teamCount("BLUE"), Config.MinPlayers) then',
         "COUNTDOWN")
     game=only_once(game,
+        '    match.phase = "ACTIVE"\n    match.startedAt = serverNow()',
+        '    -- Latch at round kickoff, not on every later player-count tick.\n'
+        '    studioSoloRoundStarted = StudioSolo.isSoloRound(RunService:IsStudio(),\n'
+        '        #Players:GetPlayers(), teamCount("RED"), teamCount("BLUE"))\n'
+        '    match.phase = "ACTIVE"\n    match.startedAt = serverNow()',
+        "LATCH_SOLO_AT_KICKOFF")
+    game=only_once(game,
         'if teamCount("RED") <= 0 then stopRound("BLUE", "TEAM_EMPTY")\n'
         '        elseif teamCount("BLUE") <= 0 then stopRound("RED", "TEAM_EMPTY")\n'
         '        elseif EXPERIMENTAL_FIVE_EGG_MODE and h2ScoreState',
-        'local emptyWinner = StudioSolo.emptyWinner(RunService:IsStudio(), count,\n'
+        'local emptyWinner = StudioSolo.emptyWinner(RunService:IsStudio(),\n'
+        '            studioSoloRoundStarted, count,\n'
         '            teamCount("RED"), teamCount("BLUE"))\n'
         '        if emptyWinner then stopRound(emptyWinner, "TEAM_EMPTY")\n'
         '        elseif EXPERIMENTAL_FIVE_EGG_MODE and h2ScoreState',
@@ -64,6 +73,8 @@ def hunk_game(game:str)->str:
     assert game.count('local function tickRound()')==1
     assert game.count('local function resetRound()')==1
     assert game.count('snapshotFor = function(player: Player)')==1
+    assert game.count('studioSoloRoundStarted = StudioSolo.isSoloRound(')==1
+    assert game.count('studioSoloRoundStarted, count,')==1
     return game
 
 def main():
@@ -115,7 +126,8 @@ def main():
        "new_module_original_blob":SOLO_RULE,
        "modified_original":["server/Game.server.luau"],
        "script_total":43,"game_count":1,"one_remote":True,
-       "solo_isStudio_gate":True,"published_min_players_unchanged":True,
+       "solo_isStudio_gate":True,"solo_latched_at_round_start":True,
+       "studio_2client_exit_still_ends":True,"published_min_players_unchanged":True,
        "original_first90_waypoint":True,"original_v7_musou":True,
        "original_physical_skycastle":True,
        "original_h2_5egg_and_XP_evolution":True,
