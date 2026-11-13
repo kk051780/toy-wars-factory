@@ -11,8 +11,8 @@
   "native_builder": "tools/generate_native_runner.py",
   "native_builder_gitblob": "c708705721418d6df1ab9de985eed6459f8c5d2e",
   "builder_negative_cases_authored": 8,
-  "builder_negative_cases_executed": "UNKNOWN",
-  "python_reference_tests_executed": "35/35 PASS locally, 2026-11-14",
+  "builder_negative_cases_executed": "8/8 PASS locally using exact source-locked GitHub code",
+  "python_reference_tests_executed": "35/35 PASS locally (same source zip)",
   "ci_workflow_path": ".github/workflows/p0d-egg-relay-policy-native-20261114.yml",
   "ci_workflow_gitblob": "acf69aa22056002edc3b8e03cfa9f9c966e9103b",
   "luau_source_pin": "f46d879e28302a430029304f7f6a162aed66f103",
@@ -36,5 +36,12 @@
   "previous_native_suite_failure": "NaN equality false positive in test deepCompare; Lua5.4 execution failed, corrected only test helper",
   "qa_evidence_report": "QA_LUA54_EXECUTION_REPORT.md",
   "native_luau_qa_level": "SOURCE_ONLY_PLUS_LUA54_COMPAT_EXECUTION_NO_LUAU_CLI",
-  "owner_fastlane_V5": true
+  "owner_fastlane_V5": true,
+  "python_total_tests_executed": "43/43 PASS",
+  "local_runner_source_sha_gitblob": "c708705721418d6df1ab9de985eed6459f8c5d2e",
+  "local_runner_test_sha_gitblob": "0b21c65111c3b104cd0d0123b77b3b93f2df2542",
+  "lua54_from_generated_source_sha256": "8887086bb5ef65472d683c962ab81fa64de93f69a40b1eace8b25425ab96f0a6",
+  "local_zip_sha256": "71705bde70f9d2263489014abd8ecc75616958db5f7fa5e3a4103f42d595df97",
+  "local_zip_contents_note": "Reproducible minimal manifest and exact GitHub source code, fixed cases, Python test runner and Lua5.4 C runner; actual Luau CLI NOT_VERIFIED",
+  "scorecard": "43/43 Python, 41/41 Lua5.4 compatibility, actual Luau CLI unknown, Studio/FUN untested"
 }
