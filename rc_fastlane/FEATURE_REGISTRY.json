@@ -275,6 +275,22 @@
       "existing_Game_Remote_Store_unchanged": true,
       "independent_switch": true,
       "engine": "NOT_TESTED"
+    },
+    {
+      "id": "TWIN_BIOMES_4NPC_V1",
+      "summary": "Two mirrored bank worlds coral reef/storm lookout + four neutral character species (8 total), non-invasive world prompts",
+      "state": "SOURCE_PRIVATE63_NOT_CANONICAL",
+      "profiles": [
+        "rich51"
+      ],
+      "source_git_blob": "0958e7743669e670cc499035fa6446b7819cea6a",
+      "source_script": "server/TwinBiomes.server.luau",
+      "independent_switch": true,
+      "rollback": "Disable in FEATURE_SWITCHES to retain private62 byte-exact",
+      "unmodified_Game_Remote_Store": true,
+      "studio_engine": "NOT_TESTED",
+      "capturable": false,
+      "official_rc_adopted": false
     }
   ],
   "next_source_adoption_contract": {
