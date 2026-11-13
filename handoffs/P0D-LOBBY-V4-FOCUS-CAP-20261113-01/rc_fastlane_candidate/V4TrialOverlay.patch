@@ -1,0 +1,52 @@
+--- original/V4TrialOverlay.luau
++++ proposed/V4TrialOverlay.luau
+@@ -36,7 +36,7 @@
+     return text
+ end
+ local title=label("Title",5,21,14,Color3.fromRGB(232,216,128))
+-title.Text="6系統 修行（体験版）"
++title.Text="6系統 修行（永続検証候補）"
+ local status=label("Status",27,29,11,Color3.fromRGB(187,233,255))
+ local skills={
+     {"BEAST","魔獣"},{"MAGIC","魔法"},{"WEAPON","武器"},
+@@ -47,21 +47,27 @@
+     rows[i]=label(entry[1],53+(i-1)*23,22,12,Color3.fromRGB(236,240,248))
+ end
+ local footer=label("Important",198,30,11,Color3.fromRGB(255,189,156))
+-footer.Text="保存なし / 対戦強化なし / 課金なし"
++footer.Text="保存検証中 / 対戦強化なし / 課金なし"
+ local function render()
++    local saved=player:GetAttribute("P0D_V4_SaveStatus")=="SAVED"
++    local saveState=player:GetAttribute("P0D_V4_SaveStatus") or "LOCAL_ONLY"
++    footer.Text=if saved then "保存確認済み(DEV) / 対戦強化なし"
++        else "保存状態:"..tostring(saveState).." / 体験XP"
+     local active=player:GetAttribute("P0D_V4_Active")==true
+-    local mode=player:GetAttribute("P0D_V4_Mode")
+-    local left=tonumber(player:GetAttribute("P0D_V4_Remaining")) or 1800
+-    local current=player:GetAttribute("P0D_V4_Current") or "-"
++    local mode=player:GetAttribute(if saved then "P0D_V4_SavedMode" else "P0D_V4_Mode")
++    local left=tonumber(player:GetAttribute(
++        if saved then "P0D_V4_SavedRemaining" else "P0D_V4_Remaining")) or 1800
++    local current=player:GetAttribute(if saved then "P0D_V4_SavedSkill" else "P0D_V4_Current") or "-"
+     local friends=tonumber(player:GetAttribute("P0D_V4_Friends")) or 0
+     status.Text=string.format("%s  %s %s / 残り%dm / 友達%d",
+         active and "修行中" or "待機", mode=="FOCUS" and "集中" or "ランダム",
+         tostring(current), math.ceil(left/60), math.floor(friends))
+     for i,entry in ipairs(skills) do
+         local skill,display=entry[1],entry[2]
+-        local lv=tonumber(player:GetAttribute("P0D_V4_"..skill.."_LV")) or 1
+-        local xp=tonumber(player:GetAttribute("P0D_V4_"..skill.."_XP")) or 0
+-        local nextXP=tonumber(player:GetAttribute("P0D_V4_"..skill.."_NEXT")) or 100
++        local prefix=if saved then "P0D_V4_SAVED_" else "P0D_V4_"
++        local lv=tonumber(player:GetAttribute(prefix..skill.."_LV")) or 1
++        local xp=tonumber(player:GetAttribute(prefix..skill.."_XP")) or 0
++        local nextXP=tonumber(player:GetAttribute(prefix..skill.."_NEXT")) or 100
+         rows[i].Text=string.format("%s   Lv%d   XP%d  次まで%d",display,lv,xp,nextXP)
+     end
+ end
+@@ -84,4 +90,4 @@
+     if string.sub(attr,1,7)=="P0D_V4_" then render() end
+ end)
+ render()
+-print("[P0D_V4_BRIDGE] SESSION_ONLY_UI_LOADED; NOT real saved skills")
++print("[P0D_V4_RC52] DEV_STORE_STATUS_READONLY; no public paid")
