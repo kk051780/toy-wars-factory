@@ -38,23 +38,25 @@ end
 -- PRIVATE62: Starfall is already a separate third bridge near canyon local z=-35.
 -- Put this timed meteor route at local z=-17, not at the old auto z=-34.5.
 -- Only real WCS banks + original Starfall world allow installation.
+-- 140s WCS and 160s Star budgets exceed WCS 45+45+12s and the Star120s
+-- startup guard; each prerequisite Part also has a bounded 12s wait.
 local function getAnchors(): (Vector3?, Vector3?)
     if ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01") ~= true
         or ServerStorage:GetAttribute("P0D_RC_ENABLE_STARRY_PATH_V1") ~= true then
         return nil, nil
     end
     local world = Workspace:FindFirstChild("P0D_WCS_CrystalCanyon")
-        or Workspace:WaitForChild("P0D_WCS_CrystalCanyon", 25)
+        or Workspace:WaitForChild("P0D_WCS_CrystalCanyon", 140)
     local star = Workspace:FindFirstChild("P0D_STARRY_PATH")
-        or Workspace:WaitForChild("P0D_STARRY_PATH", 30)
+        or Workspace:WaitForChild("P0D_STARRY_PATH", 160)
     if not world or not world:IsA("Model") or not star or not star:IsA("Model") then
         return nil, nil
     end
-    local west = world:FindFirstChild("WestBank")
-    local east = world:FindFirstChild("EastBank")
-    local gate = world:FindFirstChild("ShortcutGate")
-    local safe = world:FindFirstChild("AlwaysOpenSafeRoute")
-    local starStep = star:FindFirstChild("StarStep_01")
+    local west = world:WaitForChild("WestBank", 12)
+    local east = world:WaitForChild("EastBank", 12)
+    local gate = world:WaitForChild("ShortcutGate", 12)
+    local safe = world:WaitForChild("AlwaysOpenSafeRoute", 12)
+    local starStep = star:WaitForChild("StarStep_01", 12)
     if not (west and east and gate and safe and starStep
         and west:IsA("BasePart") and east:IsA("BasePart")
         and gate:IsA("BasePart") and safe:IsA("BasePart")
