@@ -28,4 +28,17 @@ print("HUD_TEAM_SELECTION_1",len(re.findall(r"other\.Team",block)))
 print("HUD_MATCHES_SNAPSHOT_TEAM",bool(re.search(r"other\.Team\.Name\s*==\s*s\.team",block)))
 print("SERVER_PLAYER_TEAM_ASSIGNMENTS",len(re.findall(r"\b\w+\.Team\s*=",game)))
 print("SERVER_TEAM_COLOR_ASSIGNMENTS",len(re.findall(r"\b\w+\.TeamColor\s*=",game)))
+# Hard fail when game team source or client target selection drifts.
+assert "if player.Team == teamInstances.RED then return \"RED\" end" in game
+assert "if player.Team == teamInstances.BLUE then return \"BLUE\" end" in game
+assert "player.Team = teamInstances[name]" in game
+assert "player.Team = teamInstances[move.to]" in game
+assert "team = getTeamName(player)" in game
+assert 'other.Team.Name==s.team' in block or 'other.Team.Name == s.team' in block
+assert 'type(s.team)~="string"' in block or "type(s.team) ~= \"string\"" in block
+assert "local function applyClassicEggRelay(player: Player, data)" in game
+assert "team=getTeamName(player)" in game
+assert "team=getTeamName(target)" in game
+assert "otherRoot" in block and "horizontal<=8" in block and "math.abs(delta.Y)<=4" in block
+print("P0D_ACTUAL60_GAME_HUD_RELAY_TEAM_CONTRACT_PASS")
 print("P0D_ACTUAL_60_GAME_HUD_TEAM_CONTRACT_DIAGNOSTIC_DONE")
