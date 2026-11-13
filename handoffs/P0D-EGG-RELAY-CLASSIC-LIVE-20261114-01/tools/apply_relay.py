@@ -8,7 +8,7 @@ import argparse, hashlib, json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 def blob(data):
-    return hashlib.sha1(b"blob "+str(len(data)).encode()+b"\\0"+data).hexdigest()
+    return hashlib.sha1(b"blob "+str(len(data)).encode()+b"\0"+data).hexdigest()
 def patch(data,ops):
     for index,entry in enumerate(ops):
         anchor=entry["anchor"]
@@ -53,7 +53,21 @@ def run(dist,policy):
             "stage":"SOURCE_CANDIDATE_NOT_OFFICIAL_RC",
             "5_egg":"NOT_SUPPORTED","real_studio":"NOT_TESTED",
             "rollback":"omit this patch and rebuild same base"}
-        lockFile.write_text(json.dumps(lock,ensure_ascii=False,indent=2)+"\\n","utf8")
+        lockFile.write_text(json.dumps(lock,ensure_ascii=False,indent=2)+"\n","utf8")
+    # Same dist may include the RC feature receipt. A changed source inventory
+    # must update BOTH lockfiles; never leave a stale 54-source stamp for 55.
+    featureLock=dist/"RC_FEATURE_LOCK.json"
+    if featureLock.exists():
+        receipt=json.loads(featureLock.read_text("utf8"))
+        hashes={p.relative_to(src).as_posix():blob(p.read_bytes())
+            for p in sorted(src.rglob("*.luau"))}
+        assert type(receipt.get("total_sources")) is int
+        assert len(hashes)==receipt["total_sources"]+1,"SOURCE_COUNT_MISMATCH"
+        receipt["total_sources"]=len(hashes)
+        receipt["source_gitblobs"]=hashes
+        receipt.setdefault("feature_flags",{})["EGG_RELAY_CLASSIC_V1"]=True
+        receipt["relay_stage"]="SOURCE_CANDIDATE_NOT_ENGINE_TESTED"
+        featureLock.write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n","utf8")
     print("CLASSIC_EGG_RELAY_PATCH_SOURCE_APPLIED_3_FILES_NOT_STUDIO")
 if __name__=="__main__":
     p=argparse.ArgumentParser()
