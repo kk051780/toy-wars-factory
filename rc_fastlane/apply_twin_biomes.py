@@ -49,7 +49,7 @@ def apply(dist: Path, profile: str, override: bool | None = None) -> bool:
     assert DEST not in before, "DUPLICATE_BIOME_SOURCE"
     assert before["server/Game.server.luau"].count(b"remote.OnServerEvent:Connect(") == 1
     assert before["server/SevenJobsRules.luau"] != b""
-    assert before["server/WCS_CrystalCanyon.server.luau"].count(b'Name = "P0D_CrystalCanyonAnchor"') == 1
+    assert before["server/WCS_CrystalCanyon.server.luau"].count(b'anchor.Name="P0D_CrystalCanyonAnchor"') == 1
     assert before["server/MeteorFourth.server.luau"].count(b'local QUIET_SECONDS = 55') == 1
 
     lockpath = dist / "SOURCE_LOCK.json"
