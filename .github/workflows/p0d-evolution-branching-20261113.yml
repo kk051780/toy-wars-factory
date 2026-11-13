@@ -42,6 +42,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -B -m unittest discover -s "$ROOT/tests" -p test_project_static.py -v
+          python3 -B -m unittest discover -s "$ROOT/tests" -p test_evolution_battle_static.py -v
       - name: Checkout pinned native Luau source
         uses: actions/checkout@v4
         with:
@@ -64,6 +65,8 @@ jobs:
           mkdir -p /tmp/p0d_evolution_logs
           /tmp/p0d_evolution_native/luau-compile "$ROOT/demo/EvolutionGallery.server.luau" >/dev/null
           /tmp/p0d_evolution_native/luau-compile "$ROOT/demo/EvolutionGalleryCamera.client.luau" >/dev/null
+          /tmp/p0d_evolution_native/luau-compile "$ROOT/battle/EvolutionCombat.server.luau" >/dev/null
+          /tmp/p0d_evolution_native/luau-compile "$ROOT/battle/EvolutionCombat.client.luau" >/dev/null
           python3 -B "$ROOT/tests/run_native_evolution.py" --luau /tmp/p0d_evolution_native/luau --compiler /tmp/p0d_evolution_native/luau-compile | tee /tmp/p0d_evolution_logs/EVOLUTION_NATIVE_TEST_LOG.txt
           grep -E '^P0D_EVOLUTION_ORIGINAL_NATIVE_PASS_[0-9]+$' /tmp/p0d_evolution_logs/EVOLUTION_NATIVE_TEST_LOG.txt
       - name: Publish test truth log (not a Roblox gameplay PASS)
