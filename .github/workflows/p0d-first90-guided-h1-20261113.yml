@@ -61,7 +61,11 @@ jobs:
           DIST="$ROOT/dist/EGG_RAID_RUMBLE_EARNED_EVOLUTION_FULL_H1_PRIVATE_STUDIO_ONLY"
           n=0
           while IFS= read -r -d '' path; do
-            /tmp/p0d_evo_native/luau-compile "$path" >/dev/null
+            if ! /tmp/p0d_evo_native/luau-compile "$path" >/tmp/p0d_first90_compile.out 2>&1; then
+              echo "P0D_LUAU_COMPILE_FAIL $path"
+              cat /tmp/p0d_first90_compile.out
+              exit 1
+            fi
             n=$((n+1))
           done < <(find "$DIST/src" -type f -name '*.luau' -print0)
           test "$n" -eq 41
