@@ -178,6 +178,26 @@
       "pvp_seven_jobs": "NOT_IMPLEMENTED",
       "studio_engine": "NOT_TESTED",
       "official_rc_adopted": false
+    },
+    "EGG_RELAY_CLASSIC_V1": {
+      "enabled": true,
+      "status": "PRIVATE_WCS_JOBS_RELAY60_CANDIDATE_ONLY_NOT_OFFICIAL",
+      "source_author": "EggRelay Draft PR #296 f1c0866423c2c1d36a5cd8eafe8cee7558b1a1dd",
+      "author_patch_blob": "709804162da1537bdc412a7ce6563a004e5cdadf",
+      "policy_source_blob": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
+      "dependency": "WCS_F01_C01 + SEVEN_JOBS_PVE_V1 combined59",
+      "touches_existing": [
+        "server/Game.server.luau",
+        "client/HUD.client.luau"
+      ],
+      "new_source": "server/EggRelayPolicy.luau",
+      "mode": "ONE_EGG_ONLY_FIVE_EGG_DISABLED",
+      "runtime_default": "OFF: ServerStorage BoolValue P0D_RC_ENABLE_EGG_RELAY_CLASSIC must exist with Value=true before Studio Play",
+      "rollback": "Set EGG_RELAY_CLASSIC_V1.enabled=false to reconstruct exact prior WCS+7Jobs59",
+      "official_rc_adopted": false,
+      "engine_studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED"
     }
   }
 }
