@@ -467,6 +467,12 @@ jobs:
           set -euo pipefail
           python3 -B rc_fastlane/progress.py --out /tmp/p0d_rc_out/FEATURE_PROGRESS.md --json /tmp/p0d_rc_out/FEATURE_PROGRESS.json
           grep -F P0D /tmp/p0d_rc_out/FEATURE_PROGRESS.md | head -2
+      - name: Record true Roblox Place bytes, source count and SHA (not compressed ZIP)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B rc_fastlane/rc_capacity.py --out-dir /tmp/p0d_rc_out
+          cat /tmp/p0d_rc_out/RC_CAPACITY_REPORT.md
       - uses: actions/upload-artifact@v4
         with:
           name: P0D-CANONICAL-RC-STUDIO-${{ env.PROFILE }}
