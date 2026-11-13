@@ -791,6 +791,8 @@ snapshotFor = function(player: Player)
             bound=slowed[player]~=nil and slowed[player].kind=="NET",
             rescueNearby=hasBoundAllyNearby(player),
             carrying=carry[player]~=nil,
+            ownEggSafe=if getTeamName(player)=="RED" or getTeamName(player)=="BLUE"
+                then match.eggOwners[getTeamName(player)]==nil else false,
             scoutReady=if stats then stats.activeUntil<=math.floor(now)
                 and stats.nextUseAt<=math.floor(now) else false
         })
