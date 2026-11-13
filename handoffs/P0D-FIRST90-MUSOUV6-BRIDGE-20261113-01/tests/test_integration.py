@@ -3,7 +3,7 @@
 from pathlib import Path
 import unittest,hashlib,re
 ROOT=Path(__file__).resolve().parents[1]
-REPO=ROOT.parents[2]
+REPO=ROOT.parents[1]
 BASE=REPO/"handoffs/P0D-FIRST90-GUIDED-H1-20261113-01"
 def blob(p):
     raw=p.read_bytes()
