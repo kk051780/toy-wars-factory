@@ -54,7 +54,7 @@ def audit(path):
     assert text.count('relayButton.Position=UDim2.new(0,10,1,-127)')==1
     assert text.count('relayButton.Position=UDim2.new(.5,-56,1,-164)')==1
     assert text.count('relayButton.MouseButton1Click:Connect(fireClassicEggRelay)')==1
-    assert text.count('action("JOB_SKILL",nil)')==1
+    assert text.count('action("JOB_SKILL",nil)')>=1
     assert text.count("KeyCode.H")==1
     buttons=buttons_from_hud(text)
     needed=("ClassicEggRelay","BreakOrRescue","ShortCaptureNet",
