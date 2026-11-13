@@ -113,8 +113,8 @@ jobs:
              ['demo/EvolutionGallery.server.luau','demo/EvolutionGalleryCamera.client.luau'],
              {'Script':1,'LocalScript':1}),
             ('EVOLUTION_PVE_BATTLE_PRIVATE_UNPUBLISHED.rbxlx',
-             ['src/EvolutionRules.luau','battle/EvolutionCombat.server.luau','battle/EvolutionCombat.client.luau'],
-             {'Script':1,'LocalScript':1,'ModuleScript':1})
+             ['src/EvolutionRules.luau','src/EvolutionFormDex.luau','battle/EvolutionCombat.server.luau','battle/EvolutionCombat.client.luau'],
+             {'Script':1,'LocalScript':1,'ModuleScript':2})
           ]
           summary=[]
           for filename,sourcePaths,expectedClasses in cases:
