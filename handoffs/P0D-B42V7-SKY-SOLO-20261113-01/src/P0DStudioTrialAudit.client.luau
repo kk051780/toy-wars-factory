@@ -69,6 +69,21 @@ local activeSerial=-1
 local carriedSerial=-1
 local skyCarryEgg="" -- exact authoritative snapshot egg ID seen on deck
 local skyCarryCharacter: Model?=nil
+-- SOURCE_QA_NATIVE_BEGIN: Pure predicates used by the ACTUAL Studio client observer.
+-- They are read-only proof gates, not combat/egg/server authority.
+local function qualifiesSkyScore(scoreRose: boolean, currentCarry: string,
+    previousCarry: string, skyEgg: string, population: number,
+    sameCharacter: boolean, sameRound: boolean): boolean
+    return scoreRose and currentCarry=="" and previousCarry==skyEgg
+        and skyEgg~="" and population==1 and sameCharacter and sameRound
+end
+local function invalidatesSkyRoute(visited: boolean, completed: boolean,
+    currentCarry: string, skyEgg: string, sameCharacter: boolean,
+    phase: string): boolean
+    return visited and not completed
+        and (currentCarry~=skyEgg or not sameCharacter or phase~="ACTIVE")
+end
+-- SOURCE_QA_NATIVE_END
 local function refreshStatus()
     if lastSerial<0 or activeSerial~=lastSerial then
         status("0/4 サーバーの試合開始を待機中")
@@ -109,6 +124,7 @@ remote.OnClientEvent:Connect(function(msg:any)
                 .." carry_seen="..tostring(carried).." score_seen="..tostring(scored))
         end
     end
+    local previousCarry=lastCarry
     if carry~=lastCarry then
         if carry~="" then
             carried=true;carriedSerial=serial
@@ -122,9 +138,9 @@ remote.OnClientEvent:Connect(function(msg:any)
     local population=if type(msg.redPlayers)=="number" and type(msg.bluePlayers)=="number"
         then msg.redPlayers+msg.bluePlayers else -1
     local ownerStillSame=skyCarryCharacter~=nil and player.Character==skyCarryCharacter
-    local validSameEggDeposit=scoreRose and carry=="" and lastCarry==skyCarryEgg
-        and skyCarryEgg~="" and population==1 and ownerStillSame
-        and skyWithEggSerial==serial and activeSerial==serial
+    local validSameEggDeposit=qualifiesSkyScore(scoreRose,carry,previousCarry,
+        skyCarryEgg,population,ownerStillSame,
+        skyWithEggSerial==serial and activeSerial==serial)
     if scoreRose then
         scored=true
         log("SCORE_CONFIRMED","team="..team.." score="..tostring(score))
@@ -137,8 +153,8 @@ remote.OnClientEvent:Connect(function(msg:any)
     end
     -- If the egg changes or disappears before a valid score snapshot, reset the sky
     -- checkpoint. Never let a drop -> re-pickup -> unrelated score produce a false 4/4.
-    if skyWithEggSerial==serial and scoreAfterSkySerial~=serial
-        and (carry~=skyCarryEgg or not ownerStillSame or phase~="ACTIVE") then
+    if invalidatesSkyRoute(skyWithEggSerial==serial,
+        scoreAfterSkySerial==serial,carry,skyCarryEgg,ownerStillSame,phase) then
         skyWithEggSerial=-1
         skyCarryEgg=""
         skyCarryCharacter=nil
