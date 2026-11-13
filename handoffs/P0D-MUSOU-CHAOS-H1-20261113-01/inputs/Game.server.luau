@@ -569,6 +569,7 @@ local function tickTraps(now: number)
 end
 
 -- #288 H1 experimental horde is a bounded server-ticked helper, NOT a second Game.
+local broadcast: () -> () = function() end -- forward-bound to original sole snapshot publisher
 local horde=MusouHorde.new(map.model)
 local function hasBoundAllyNearby(player: Player): boolean
     local ok,root=healthy(player)
@@ -773,7 +774,7 @@ snapshotFor = function(player: Player)
         windActive = (windUntil[player] or 0) > now,
     }
 end
-local function broadcast()
+broadcast = function()
     for _, p in ipairs(Players:GetPlayers()) do
         remote:FireClient(p, snapshotFor(p))
     end
