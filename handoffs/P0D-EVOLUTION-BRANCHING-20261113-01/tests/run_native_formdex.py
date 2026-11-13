@@ -147,6 +147,12 @@ p.evoReceipts.invalid={
 }
 check(Dex.snapshot(p,owned)==nil,"invalid receipt form ID rejected")
 p.evoReceipts.invalid=nil
+p.evoReceipts.mismatchedStage2={
+    itemId="forest_scout",action="EVOLVE",stage=2,branch="GUARD",
+    choice="ASSAULT",formId="forest_scout_S2_GUARD"
+}
+check(Dex.snapshot(p,owned)==nil,"stage2 choice must match actual branch")
+p.evoReceipts.mismatchedStage2=nil
 -- Extra legacy form from another unowned item must not appear.
 local more=E.newProfile(778)
 more.evoReceipts.foreign={
