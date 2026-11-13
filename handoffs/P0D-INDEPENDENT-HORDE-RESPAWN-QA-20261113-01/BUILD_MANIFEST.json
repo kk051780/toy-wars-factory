@@ -58,6 +58,14 @@
     {
       "path": "tools/audit_40_scout_lifetime.mjs",
       "blob_sha1": "970b28d4622d609459c33642e308bc742ceb3a42"
+    },
+    {
+      "path": "SCOUT_GUARD_HEIGHT_40V5_SOURCE_QA_CANDIDATE.patch",
+      "blob_sha1": "bc3300db4fa7be9e175ba5d4d5c2671b6f57d244"
+    },
+    {
+      "path": "SCOUT_GUARD_HEIGHT_40V5_QA_REPORT.md",
+      "blob_sha1": "233797da95517f84b6653f6abc2d1f993e460e68"
     }
   ],
   "evidence": {
@@ -74,7 +82,7 @@
     "actual_fun": "UNKNOWN",
     "official_S1_game_release_last_pct": 75
   },
-  "blocker": "New real downloaded 40 Luau .rbxlx verified SHA; actual Game currently says GUARD shield untilAt+8s but SCOUT_DURATION5 and cleanupScout nils evolutionGuards on model expiry, so effective max5s. Independent release QA and owner FUN needed; #288 V5 red attack-zone not yet part of 40.",
+  "blocker": "Latest 40+V5 Place now has actual red warning and 40 features; but inherited 5sec scout GUARD 8sec mismatch plus potentially unreachable low minions by assault from visual anchor+4.5. Source-only QA patch uncompiled and not merged. Owner native+Studio QA and #250/#220 gates remain.",
   "protected": "No main, RC, merges, live publish, purchases, spend, owner PC/Codex, P0 A/B/C auth/CAS, 5 Automations",
   "downstream_inheritance": {
     "power_frozen_commit": "cb2540dc4a3e5b819c0e3598d4af5e2b6dca76d3",
@@ -130,5 +138,25 @@
     "localSourceQA": "actual .rbxlx parsed & SHA256 verified; guard mismatch verified by executable Python; new GitHub Node checker authored but NOT_NODE_EXECUTED",
     "realStudioPlay": "NOT_TESTED",
     "nextAction": "author of 40 source chooses explicit consistent 5s or visually continuous 8s guard contract and independent runtime QA; rebase optional V5 danger zone separately; no global scout duration edit without original reward token validity/cooldown check"
+  },
+  "musou_v5_scout_contract_qa": {
+    "source_bridge_sha": "d514ac3642cb8eb385f3ec925fc0525ee256409e",
+    "real_artifact_id": 14018281374,
+    "real_rojo_sha256": "01be347bda8aa48d4c0127fcc3360cc66a8e1e673fdd5ac52cf759e00c15bfdf",
+    "actual_game_blob": "d125bf45caa147666685955bb0a5a1230f334453",
+    "actual_horde_blob": "8c147c801e7fa1ff362922d66c9a6fd432fc8b6e",
+    "game_source_only_patch_candidate_blob": "ba94fbf4fb54a32cdc0c919b98664f1469513cf7",
+    "actual_place_source_scripts": 40,
+    "server_game_count": 1,
+    "remote_declarations": 1,
+    "verified_executed_local_unittest": "20/20 PASS on actual .rbxlx parsed original Game/Horde/Combat",
+    "issues": [
+      "GUARD shield nominal 8s but scout 5s cleanup removes protection",
+      "ASSAULT swept from flying visual anchor rootY+4.5, sample avatar3.0 floor above vs minion center1.65 -> |dy|5.85 exceeds strict sweep max5"
+    ],
+    "proposed_fix": "source-only 2 hunk patch, patch Game source not compiled or adopted",
+    "native_luau_patch": "NOT_EXECUTED",
+    "real_roblox_studio": "NOT_TESTED",
+    "overall_official": "75/100 historical FUN_NO_GO"
   }
 }
