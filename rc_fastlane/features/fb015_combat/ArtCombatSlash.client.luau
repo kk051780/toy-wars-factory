@@ -95,13 +95,11 @@ end
 
 -- No local damage claims and NO creation of a client-to-server command.
 -- A real single outbound RemoteEvent lives under the existing Musou folder.
-local cue=mobs:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1",25)
-if not cue then
-    warn("ART_COMBAT_NO_CUE_AFTER_25S_RETRYING")
-    cue=mobs:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1",60)
-end
-if not cue or not cue:IsA("RemoteEvent") then
-    warn("ART_COMBAT_CUE_UNAVAILABLE_VISUAL_OFF")
+-- Wait without an expiry: a slow Studio scene must not disable visual cues
+-- forever when the server creates Horde after an artificial timeout.
+local cue=mobs:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1")
+if not cue:IsA("RemoteEvent") then
+    warn("ART_COMBAT_INVALID_CUE_VISUAL_OFF")
     return
 end
 local lastRound=nil
@@ -112,6 +110,7 @@ local visualConnection
 local historyConnection
 local epochConnection
 local characterConnection
+local rootConnection
 local pending={}
 local MAX_PENDING_CUES=16
 
@@ -136,16 +135,16 @@ local function acceptVisualCue(id,serial,round,epoch)
     -- not a single high-water mark that discards earlier unseen hits.
     local state=lastByMob[id]
     if not state then
-        state={max=0,seen={},order={}}
+        state={max=0,seen={}}
         lastByMob[id]=state
     end
     if state.seen[serial] or serial<=state.max-16 then return false end
     state.seen[serial]=true
-    table.insert(state.order,serial)
     state.max=math.max(state.max,serial)
-    while #state.order>16 do
-        local expired=table.remove(state.order,1)
-        state.seen[expired]=nil
+    -- Never forget a serial still inside the 16-serial acceptance window.
+    -- Arrival-order eviction would let a delayed snapshot redraw it.
+    for previous in pairs(state.seen) do
+        if previous<=state.max-16 then state.seen[previous]=nil end
     end
     return true
 end
@@ -210,6 +209,9 @@ local function syncServerEpoch()
     lastRound=nil
     table.clear(lastByMob)
     table.clear(pending)
+    -- Attribute replication may deliver history before the new epoch.
+    -- Retry it NOW even if the history Attribute never changes again.
+    replayRecent()
 end
 
 local function drainPending()
@@ -234,23 +236,28 @@ epochConnection=cue:GetAttributeChangedSignal("P0D_ART_EPOCH_V1")
     :Connect(syncServerEpoch)
 syncServerEpoch()
 replayRecent()
-characterConnection=localPlayer.CharacterAdded:Connect(function(character)
-    task.spawn(function()
-        if character:WaitForChild("HumanoidRootPart",15) then
-            drainPending()
-        end
-    end)
-end)
-if localPlayer.Character then
-    local root=localPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if root then drainPending() end
+local function watchCharacter(character)
+    if rootConnection then rootConnection:Disconnect(); rootConnection=nil end
+    local function onRoot(child)
+        if child.Name~="HumanoidRootPart" then return end
+        if rootConnection then rootConnection:Disconnect(); rootConnection=nil end
+        if localPlayer.Character==character then drainPending() end
+    end
+    -- Listen FIRST then check, so a root inserted between operations is
+    -- seen exactly once for both fresh and already-existing characters.
+    rootConnection=character.ChildAdded:Connect(onRoot)
+    local existing=character:FindFirstChild("HumanoidRootPart")
+    if existing then onRoot(existing) end
 end
+characterConnection=localPlayer.CharacterAdded:Connect(watchCharacter)
+if localPlayer.Character then watchCharacter(localPlayer.Character) end
 script.Destroying:Connect(function()
     destroyed=true
     if visualConnection then visualConnection:Disconnect() end
     if historyConnection then historyConnection:Disconnect() end
     if epochConnection then epochConnection:Disconnect() end
     if characterConnection then characterConnection:Disconnect() end
+    if rootConnection then rootConnection:Disconnect() end
     table.clear(lastByMob)
     table.clear(times)
     table.clear(pending)
