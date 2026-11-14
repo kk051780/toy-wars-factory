@@ -1,0 +1,63 @@
+name: P0D FB015 full silhouette motion QA child (private)
+on:
+  push:
+    branches:
+      - qa/fb015-full-silhouette-follow-20261114
+    paths:
+      - 'rc_fastlane/features/art_motion/**'
+      - 'rc_fastlane/test_art_motion_*.py'
+      - 'rc_fastlane/test_fb015_full_silhouette_qa.py'
+      - 'rc_fastlane/compose_fb015_art_motion.py'
+      - '.github/workflows/p0d-fb015-full-silhouette-qa.yml'
+  pull_request:
+    branches:
+      - feature/p0d-fb015-art-motion-v1-20261114
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  visual-motion-real-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Full 41-piece minion silhouette mapping, all nine actors, distance ghost and budget
+        run: python3 -B -m unittest discover -s rc_fastlane -p 'test_fb015_full_silhouette_qa.py' -v
+      - name: Existing source-only author contract
+        run: python3 -B -m unittest discover -s rc_fastlane -p 'test_art_motion_source.py' -v
+      - name: Existing 66→67→68→69 actual builder and safeguarded rollback fixtures
+        run: python3 -B -m unittest discover -s rc_fastlane -p 'test_art_motion_composite.py' -v
+      - name: Verify exact immutable new source blob and 9-actor budget
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          p=Path('rc_fastlane/features/art_motion/NeutralMotion.client.luau')
+          b=p.read_bytes()
+          digest=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          assert digest=='5488d27d7cc5f24f7a4fc24098a368dff2b390c', digest
+          s=b.decode()
+          assert 'MAX_ACTIVE_COSMETIC_PARTS = 104' in s
+          assert 'local copy = source:Clone()' in s
+          assert 'if visual.copy.Parent then visual.copy.Transparency = 1 end' in s
+          print('FB015_FULL_SILHOUETTE_41_PIECES_SOURCE_PIN_PASS', digest)
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_qa_luau
+          persist-credentials: false
+      - name: Compile exact authored Roblox client motion Luau using fixed native compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_qa_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_qa_luau -B /tmp/p0d_fb015_fullfollow_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_fb015_fullfollow_luau --target Luau.Compile.CLI --parallel 4
+          /tmp/p0d_fb015_fullfollow_luau/luau-compile rc_fastlane/features/art_motion/NeutralMotion.client.luau >/dev/null
+          echo FB015_FULL_FIGURE_NATIVE_LUAU_COMPILE_PASS_STUDIO_UNTESTED
