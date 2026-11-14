@@ -727,6 +727,29 @@ jobs:
           path: /tmp/p0d_rc_out/*
           retention-days: 7
           if-no-files-found: error
+      - name: Execute real runtime NPC scanner and rotation with native Luau mocks
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'feature/p0d-npc-oracle-battle-qa-20261114'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B - <<'PY'
+          from pathlib import Path
+          runtime=Path('rc_fastlane/features/talking_npc/TalkingNPCRuntime.server.luau').read_text('utf8')
+          a=runtime.index('local function matchLikelyActive()')
+          b=runtime.index('local function areaFor(position)',a)
+          scanner=runtime[a:b]
+          c=runtime.index('            local quota = {remaining=SCAN_RAYCAST_BUDGET}',b)
+          d=runtime.index('            task.wait(8)',c)
+          passcode=runtime[c:d]
+          native=Path('tests/p0d_npc_real_runtime_scan_native.luau').read_text('utf8')
+          assert native.count('-- ACTUAL_SCANNER_HERE')==1 and native.count('-- ACTUAL_PASS_HERE')==1
+          native=native.replace('-- ACTUAL_SCANNER_HERE',scanner)
+          native=native.replace('-- ACTUAL_PASS_HERE','local function autoPass()'+chr(10)+passcode+chr(10)+'end')
+          Path('/tmp/p0d_real_runtime_scan.luau').write_text(native,encoding='utf8')
+          PY
+          /tmp/p0d_new_luau/luau-compile /tmp/p0d_real_runtime_scan.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/p0d_real_runtime_scan.luau | tee /tmp/p0d_real_runtime_scan.log
+          grep -F P0D_NPC_REAL_RUNTIME_SCANNER_PASS /tmp/p0d_real_runtime_scan.log
       - name: Run authored 25-case Oracle and alert policy in genuine native Luau
         if: ((github.event_name == 'push' && github.ref == 'refs/heads/feature/p0d-npc-oracle-battle-qa-20261114') || (github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'feature/p0d-npc-oracle-battle-qa-20261114')) || (github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'feature/p0d-npc-oracle-battle-qa-20261114')
         shell: bash
