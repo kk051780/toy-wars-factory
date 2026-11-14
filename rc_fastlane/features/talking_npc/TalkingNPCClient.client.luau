@@ -132,34 +132,49 @@ local function initializeAudio()
     return true
 end
 
--- Exactly ONE asynchronous worker can mutate AudioTextToSpeech.Text / VoiceId.
--- A new message replaces any queued stale one, and old completed playback is
--- refused by nonce. No concurrent LoadAsync on the same AudioTextToSpeech node.
+-- Exactly one LoadAsync worker owns one audio node at a time.
+-- If Roblox's service stalls, a 9s watchdog releases the worker and discards
+-- the stalled node. A later request creates a NEW node, never mutating the old.
+local workerGeneration = 0
+local function discardAudio()
+    local oldWire, oldNode, oldOut = wire, audioNode, audioOut
+    wire, audioNode, audioOut = nil, nil, nil
+    for _, item in ipairs({oldWire, oldNode, oldOut}) do
+        if item then pcall(function() item:Destroy() end) end
+    end
+end
 local function pumpAudio()
-    if audioBusy then return end
+    if audioBusy or not audioPending then return end
+    local request = audioPending
+    audioPending = nil
+    if request.nonce ~= speechSerial or not audioEnabled or not gui.Enabled
+        or (os.clock() - lastAudioAt) < TTS_GAP
+        or not initializeAudio() then return end
     audioBusy = true
+    workerGeneration += 1
+    local generation = workerGeneration
+    lastAudioAt = os.clock()
+    local tts = audioNode
+    task.delay(9, function()
+        if workerGeneration ~= generation or not audioBusy then return end
+        workerGeneration += 1 -- invalidate old task, even if its LoadAsync unblocks
+        audioBusy = false
+        discardAudio()
+        if audioPending then pumpAudio() end
+    end)
     task.spawn(function()
-        while audioPending do
-            local request = audioPending
-            audioPending = nil
-            if request.nonce == speechSerial and audioEnabled and gui.Enabled
-                and (os.clock() - lastAudioAt) >= TTS_GAP
-                and initializeAudio() then
-                lastAudioAt = os.clock() -- count attempts, including failed loads
-                local tts = audioNode
-                local ok, status = pcall(function()
-                    tts:Pause()
-                    tts.TimePosition = 0
-                    tts.Text = request.text
-                    tts.VoiceId = request.voiceId
-                    return tts:LoadAsync()
-                end)
-                if not ok or status ~= Enum.AssetFetchStatus.Success then
-                    warn("[P0D/TALK] TTS unavailable; subtitles still visible")
-                elseif request.nonce == speechSerial and audioEnabled and gui.Enabled and card.Visible then
-                    pcall(function() tts:Play() end)
-                end
-            end
+        local ok, status = pcall(function()
+            tts:Pause()
+            tts.TimePosition = 0
+            tts.Text = request.text
+            tts.VoiceId = request.voiceId
+            return tts:LoadAsync()
+        end)
+        if workerGeneration ~= generation then return end
+        if not ok or status ~= Enum.AssetFetchStatus.Success then
+            warn("[P0D/TALK] TTS unavailable; subtitles still visible")
+        elseif request.nonce == speechSerial and audioEnabled and gui.Enabled and card.Visible then
+            pcall(function() tts:Play() end)
         end
         audioBusy = false
         if audioPending then pumpAudio() end
