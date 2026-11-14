@@ -63,6 +63,17 @@ class ArtMotionSourceContract(unittest.TestCase):
         self.assertIn("model.Destroying",s)
         self.assertIn("if not isRunning or not isMinion(model)",s)
 
+    def test_epoch_first_hit_and_nonblocking_cue_setup(self):
+        s=self.motion
+        self.assertNotIn('horde:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1")',s)
+        self.assertIn('horde.ChildAdded:Connect(connectCue)',s)
+        self.assertIn('if not isRunning or cue or not candidate',s)
+        self.assertIn('if cueReadyConnection then cueReadyConnection:Disconnect()',s)
+        self.assertIn('elseif lastRound == nil then',s)
+        # Epoch transition invalidates all earlier character hit/KO poses.
+        self.assertIn('entry.hitAt = -100',s)
+        self.assertIn('entry.koAt = -100',s)
+
     def test_animation_budget_and_spawn_reset(self):
         s = self.motion
         for term in (
@@ -83,6 +94,13 @@ class ArtMotionSourceContract(unittest.TestCase):
             "local function syncServerEpoch()",
             "if not isRunning or not isMinion(model)",
             "if lastEpoch ~= nil and epoch < lastEpoch then return false end",
+            "elseif lastRound == nil then",
+            "lastRound = round",
+            "for _,entry in pairs(records) do",
+            'local cueReadyConnection = horde.ChildAdded:Connect(connectCue)',
+            'connectCue(horde:FindFirstChild("P0D_ART_COMBAT_SIGNAL_V1"))',
+            'if not isRunning or not cue then return end',
+
             "local pendingHits = {}",
             "pendingHits[id] = {at=now, ko=isKO}",
             "if now - pending.at >= .7 then return false end",
