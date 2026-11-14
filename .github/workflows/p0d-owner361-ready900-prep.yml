@@ -1,0 +1,25 @@
+name: P0D OWNER361 READY900 PREP smoke
+
+on:
+  push:
+    branches:
+      - feature/p0d-prep-owner361-ready900-v1-20261114
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ready900-author-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run single-Remote READY/15-minute/off-rollback static author-source checks
+        run: python3 -B -m unittest discover -s rc_fastlane -p 'test_owner361_ready900.py' -v
+      - name: Assert source inputs untouched in A PREP
+        run: |
+          test -f releases/P0D_S1_KIDS_RC01/src/server/Game.server.luau
+          test -f rc_fastlane/apply_owner361_ready900.py
+          test -f rc_fastlane/test_owner361_ready900.py
+          echo 'OWNER361_PREP_STATIC_ONLY_NOT_STUDIO_NOT_OFFICIAL'
