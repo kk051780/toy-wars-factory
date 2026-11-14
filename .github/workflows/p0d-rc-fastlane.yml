@@ -1061,7 +1061,7 @@ jobs:
           candidate=(dist/'src/client/ArtCombatSlash.client.luau').read_bytes()
           assert hashlib.sha1(b'blob '+str(len(candidate)).encode()+bytes([0])+candidate).hexdigest()=='c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba'
           horde=(dist/'src/server/MusouHorde.luau').read_bytes()
-          assert hashlib.sha1(b'blob '+str(len(horde)).encode()+bytes([0])+horde).hexdigest()=='4ed99eb0b5177142b389ba3bf6954b288c804a08'
+          assert hashlib.sha1(b'blob '+str(len(horde)).encode()+bytes([0])+horde).hexdigest()=='e48186a6d717a46c86ec395ffbe778d196ab182d'
           assert b'if RunService:IsStudio() then' in horde and b'P0D_ART_SPARK_V1' in horde
           old=pathlib.Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx')
           digest=hashlib.sha256(place.read_bytes()).hexdigest()
@@ -1071,7 +1071,7 @@ jobs:
               'private_candidate_rbxlx_bytes':place.stat().st_size,
               'source_count':len(scripts),
               'source_gitblob':'c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba',
-              'horde_signal_blob':'4ed99eb0b5177142b389ba3bf6954b288c804a08',
+              'horde_signal_blob':'e48186a6d717a46c86ec395ffbe778d196ab182d',
               'original_rc66_unchanged_scripts':65,
               'single_original_horde_cosmetic_cue_patch_only':True,
               'baseline_rc66_place_bytes':old.stat().st_size,
