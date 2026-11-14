@@ -16,6 +16,7 @@ import hashlib
 import importlib.util
 import json
 from pathlib import Path
+from rc_fastlane import qa_firstplay_p0
 
 ROOT = Path(__file__).resolve().parent
 AUTH = ROOT / "features/firstplay73"
@@ -97,6 +98,10 @@ def compose(previous: dict[str, bytes]) -> tuple[dict[str,bytes], dict]:
         assert required in previous,("FIRSTPLAY_MISSING",required)
     assert previous[GAME].count(b"remote.OnServerEvent:Connect(")==1
     old_mod=modules()
+    # Authored original module is pinned and remains available unmodified in
+    # features/firstplay73; the private candidate includes QA-fix output.
+    old_mod['server/SoloTeamBots.luau']=qa_firstplay_p0.patch_bot(
+        old_mod['server/SoloTeamBots.luau'].decode('utf8')).encode('utf8')
     assert not(set(old_mod)&set(previous))
     author=load_authors()
     source=previous[GAME].decode("utf8")
@@ -105,6 +110,7 @@ def compose(previous: dict[str, bytes]) -> tuple[dict[str,bytes], dict]:
     source=author["ready"].patch_game(source)
     source=author["lobby"].patch_game(source)
     source=author["solo"].patch_game(source)
+    source=qa_firstplay_p0.patch_game(source)
     # Integration-only correction: #366 castle expands GrassArena to 370x294.
     # The authored #376 lobby's old ACTIVE out-of-bounds threshold 130x76
     # would teleport visitors near new castle keeps at x=145. Preserve lobby
@@ -143,6 +149,11 @@ def compose(previous: dict[str, bytes]) -> tuple[dict[str,bytes], dict]:
                           for n,f,h,feat in AUTHORS],
         "parent_art70plus":"FB015_FIVE_ART_CUMULATIVE_PREVIEW_V1",
         "game_authority":"ONLY_OLD_SINGLE_GAME",
+        "postcomposition_source_qa":"rc_fastlane/qa_firstplay_p0.py",
+        "live_game_qa":["late_join_spectator","new_lobby_promotion",
+                        "bot_runtime_fail_closed","active_spawns_via_LoadCharacter",
+                        "battle_boundary_x182_z145","bot_raycast_LOS",
+                        "timeout_path_finite_10"],
         "solo_bot_teams":"2_ally_3_enemy",
         "solo_classic_egg_only":True,"five_egg_ai":"NOT_SUPPORTED",
         "owner_approved":False,"real_studio":"NOT_TESTED",
