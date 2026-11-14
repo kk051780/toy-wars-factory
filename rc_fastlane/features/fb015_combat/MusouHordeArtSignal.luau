@@ -1,6 +1,6 @@
 --!strict
 -- P0D H1 / ISOLATED Studio-only neutral encounters. ONE Game.server drives tick/hit.
--- In Studio only: one outbound cosmetic RemoteEvent + visual-only spark cue.
+-- In Studio only: outbound cosmetic RemoteEvent and server BindableEvent.
 -- No OnServerEvent listener, scheduler, XP/egg/score/damage-player authority.
 local RunService=game:GetService("RunService")
 local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))
@@ -185,14 +185,18 @@ function Horde.new(world: Instance)
     local folder=Instance.new("Folder")
     folder.Name="EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT"
     folder.Parent=world
-    -- Studio-only outbound visuals; live servers create/send no unused packet.
+    -- Studio-only visuals; in production no unused remote or server bus exists.
     local visualCue=nil
+    local hitBus=nil
     if RunService:IsStudio() then
         visualCue=Instance.new("RemoteEvent")
         visualCue.Name="P0D_ART_COMBAT_SIGNAL_V1"
         visualCue.Parent=folder
+        hitBus=Instance.new("BindableEvent")
+        hitBus.Name="P0D_ART_HIT_BUS_V1"
+        hitBus.Parent=folder
     end
-    return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0,artCue=visualCue},Horde)
+    return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0,artCue=visualCue,artHitBus=hitBus},Horde)
 end
 function Horde:clear()
     for _,m in ipairs(self.mobs) do m.model:Destroy() end
@@ -268,14 +272,14 @@ function Horde:hit(origin: Vector3,facing: Vector3,damage: number,now: number,ig
                     m.popupUntil=now+.72
                     m.flashUntil=now+.18
                     m.body.Color=Color3.fromRGB(253,231,111)
-                    -- Every confirmed hit produces BOTH a reliable Studio client
-                    -- arc packet and a synchronous server-only 3D spark cue.
-                    -- Never allow the cosmetic Remote to accept client traffic.
-                    if self.artCue then
+                    -- Every confirmed hit produces a separate private Studio
+                    -- client arc packet and a separate server-only BindableEvent.
+                    -- A property/Attribute would coalesce back-to-back hits.
+                    -- Both channels are appearance-only; no OnServerEvent handler.
+                    if self.artCue and self.artHitBus then
                         m.artHitSeq=(m.artHitSeq or 0)+1
+                        self.artHitBus:Fire(m.body,m.artHitSeq,m.hp<=0,self.round)
                         self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)
-                        m.body:SetAttribute("P0D_ART_SPARK_V1",
-                            tostring(m.artHitSeq).."|"..(if m.hp<=0 then "K" else "H"))
                     end
                     -- A normal enemy loses its immediate melee response when
                     -- hit. Elite warning remains readable and uninterruptible.
