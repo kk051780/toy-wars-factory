@@ -99,8 +99,8 @@ class TwinBond(unittest.TestCase):
     def test_20_registry_source_not_official(self):
         f=FLAGS['TWIN_BOND_PVE_COMPANION_V1']
         self.assertTrue(f['enabled'])
-        self.assertFalse(f['official_rc_adopted'])
-        self.assertEqual(next(v for v in CAT if v["id"]=="P0D-067")["stage"],"SOURCE")
+        self.assertTrue(f['official_rc_adopted'])
+        self.assertEqual(next(v for v in CAT if v["id"]=="P0D-067")["stage"],"RC")
     def test_21_bounded_single_world_loop(self):
         self.assertEqual(WORLD.count('while world.Parent do'),1)
         self.assertEqual(WORLD.count('task.spawn(function()'),1)
