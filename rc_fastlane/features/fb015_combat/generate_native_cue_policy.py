@@ -23,10 +23,22 @@ def compose(raw: str) -> str:
     for text in required:
         if text not in fragment:
             raise RuntimeError("POLICY_RUNTIME_CONTRACT_DRIFT: " + text)
+    start_pending="-- BEGIN_ACTUAL_PENDING_EPOCH_POLICY"
+    end_pending="-- END_ACTUAL_PENDING_EPOCH_POLICY"
+    if raw.count(start_pending)!=1 or raw.count(end_pending)!=1:
+        raise RuntimeError("REAL_PENDING_EPOCH_POLICY_NOT_UNIQUE")
+    pending_fragment=raw.split(start_pending,1)[1].split("\n",1)[1].split(end_pending,1)[0]
+    for marker in ("local function admitPacketEpoch(", "highestPacketEpoch=epoch",
+                   "if pending[i][7]<epoch then table.remove(pending,i) end"):
+        if marker not in pending_fragment:
+            raise RuntimeError("PENDING_EPOCH_SOURCE_DRIFT_"+marker)
     return '''local lastRound=nil
 local lastEpoch=nil
 local lastByMob={}
 ''' + fragment + '''
+local highestPacketEpoch=nil
+local pending={}
+''' + pending_fragment + '''
 local yes,no=0,0
 local function check(actual, expected)
     assert(actual==expected,"EPOCH_AND_OUT_OF_ORDER_POLICY_FAIL")
@@ -95,6 +107,17 @@ assert(not isEpochStale(nil,4),"MISSING_EPOCH_ATTRIBUTE_DROPPED_HIT")
 assert(not isEpochStale(3,3),"EQUAL_EPOCH_MISTAKENLY_STALE")
 assert(isEpochStale(4,3),"OLDER_HIT_NOT_REJECTED")
 print("P0D_FB015_REAL_CLIENT_EPOCH_LAG_NATIVE_PASS")
+-- Actual authored pending-epoch policy: do not lose current-match events.
+assert(admitPacketEpoch(10),"FIRST_NEW_MATCH")
+table.insert(pending,{1,1,1,false,1,1,10,0})
+table.insert(pending,{1,1,1,false,2,1,10,0})
+assert(admitPacketEpoch(10) and #pending==2,"SAME_EPOCH_DROPPED")
+assert(not admitPacketEpoch(9) and #pending==2,"OLD_CUE_ADMITTED")
+assert(admitPacketEpoch(11) and #pending==0,"OLD_MATCH_PENDING_NOT_CLEARED")
+table.insert(pending,{1,1,1,false,1,1,11,0})
+assert(admitPacketEpoch(11) and #pending==1,"CURRENT_EPOCH_QUEUE_LOST")
+assert(not admitPacketEpoch("11"),"BAD_EPOCH_ADMITTED")
+print("P0D_FB015_REAL_PENDING_EPOCH_NATIVE_PASS")
 '''
 
 def main():
