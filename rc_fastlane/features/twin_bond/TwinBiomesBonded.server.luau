@@ -18,6 +18,10 @@ local value = ServerStorage:FindFirstChild(FLAG)
 if not value or not value:IsA("BoolValue") or value.Value ~= true then
     return -- Missing/false = OFF; Studio explicit opt-in only.
 end
+local function bondEnabled()
+    local flag=ServerStorage:FindFirstChild("P0D_ENABLE_TWIN_BOND_PVE_V1")
+    return flag~=nil and flag:IsA("BoolValue") and flag.Value==true
+end
 if ServerStorage:GetAttribute("P0D_RC_ENABLE_WCS_F01_C01") ~= true then
     return
 end
@@ -352,7 +356,7 @@ end
 local function summonBoundCompanion(player, info, level)
     -- Server-only, one anchored noncolliding sphere per player. This is
     -- visual representation; the ONLY actual PvE damage authority is Game.
-    if level < 2 or player.Parent ~= Players then return end
+    if level < 2 or player.Parent ~= Players or not bondEnabled() then return end
     local now=os.clock()
     local granted=Bond.select(player,info.id,level,now)
     if not granted then return end
@@ -510,8 +514,7 @@ task.spawn(function()
             local char=player.Character
             local root=char and char:FindFirstChild("HumanoidRootPart")
             local hum=char and char:FindFirstChildOfClass("Humanoid")
-            if not active or not root or not hum or hum.Health<=0
-                or not companion.part.Parent then
+            if not active or not bondEnabled() or not companion.part.Parent then
                 if companion.part.Parent then companion.part:Destroy() end
                 companionsByPlayer[player]=nil
                 Bond.forget(player)
@@ -519,10 +522,14 @@ task.spawn(function()
                     player:SetAttribute("P0D_TwinBondSpecies",nil)
                     player:SetAttribute("P0D_TwinBondLevel",nil)
                 end
-            else
+            elseif root and hum and hum.Health>0 then
+                -- Respawn/brief character gaps must not erase a live 180s bond.
+                companion.part.Transparency=0
                 local behind=root.Position-root.CFrame.LookVector*2.4
                     +root.CFrame.RightVector*2.2
                 companion.part.CFrame=CFrame.new(behind+Vector3.new(0,2.7+math.sin(timeNow*2)*0.25,0))
+            else
+                companion.part.Transparency=1 -- keep bond; show follower after respawn
             end
         end
         for _,entry in ipairs(animate) do
