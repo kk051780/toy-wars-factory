@@ -149,8 +149,12 @@ def _compose_locked(dist: Path, out: Path, enabled: bool):
     journal = out.with_name(out.name + ".fb015_delete_journal.json")
     tombstone = out.with_name(out.name + ".fb015_deleting")
     trusted=receipt_path(out)
+    # Even dangling symlinks are occupied caller-owned sibling paths.
+    for reserved in (journal,tombstone,trusted):
+        require(not reserved.is_symlink(),
+                "COMPOSITE_RESERVED_SYMLINK_REFUSED")
     if not enabled:
-        if tombstone.exists():
+        if os.path.lexists(tombstone):
             require(not out.exists() and journal.is_file(),
                     "AMBIGUOUS_COMPOSITE_OFF_RETRY")
             record = json.loads(journal.read_text("utf8"))
@@ -180,7 +184,7 @@ def _compose_locked(dist: Path, out: Path, enabled: bool):
                 return True
             print("ART_MINION_COMBO_OFF_ZERO_WRITE")
             return False
-        if journal.exists():
+        if os.path.lexists(journal):
             # Crash after writing journal but before renaming the output.
             prior = json.loads(journal.read_text("utf8"))
             current = verify_private_output(out, dist)
@@ -203,7 +207,7 @@ def _compose_locked(dist: Path, out: Path, enabled: bool):
         trusted.unlink()
         print("ART_MINION_COMBO_PRIVATE68_OFF_RETAINED_ORIGINAL67")
         return True
-    require(not tombstone.exists() and not journal.exists() and not trusted.exists(),
+    require(not os.path.lexists(tombstone) and not os.path.lexists(journal) and not os.path.lexists(trusted),
             "PENDING_OFF_RECOVERY_MUST_FINISH_BEFORE_ENABLE")
     require(out != dist and not out.exists(), "COMPOSITE_ALREADY_PRESENT")
     source, pins, locks, author = baseline(dist)
