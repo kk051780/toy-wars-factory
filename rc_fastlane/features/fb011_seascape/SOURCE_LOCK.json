@@ -1,0 +1,34 @@
+{
+  "schema": "P0D_FB011_PREP_SOURCE_LOCK_V1",
+  "feature_id": "FB011_H1_COASTAL_SEASCAPE_V1",
+  "feedback_id": "FB-011",
+  "owner_priority": "P0_VISUAL_GAMEPLAY",
+  "base_rc": "43543378f976374e2cac2d68b3136ac355d3191b",
+  "origin_source_unchanged_count": 66,
+  "private_candidate_source_count": 67,
+  "scene_author": {
+    "path": "rc_fastlane/features/fb011_seascape/H1CoastalSeascape.server.luau",
+    "git_blob": "44b39c3d8b0df9290c86a139318ca1bf68356814",
+    "dest": "server/FB011_H1CoastalSeascape.server.luau"
+  },
+  "adapter": "rc_fastlane/apply_fb011_seascape.py",
+  "feature_flag": "ON via optional CI step; OFF skip adapter and all 66 original files are byte-identical",
+  "source_lock": "runtime dist/SOURCE_LOCK.json and dist/RC_FEATURE_LOCK.json",
+  "runtime_guard": "Studio only, original H1 COSMETIC_SEA shape required, deduplicate scene folder",
+  "authority": "no Game/Remote/Store/HP/score/egg/XP changes",
+  "known_risks": [
+    "visual acceptance NOT_TESTED",
+    "actual Terrain Water swim route must be tested",
+    "unmerged alternative #369 (mutually exclusive)",
+    "must reconcile FB009/FB010 map #366/#368",
+    "same HEAD CI green is not FUN"
+  ],
+  "original_evidence": {
+    "source_build_head": "fa80e7edc29f4d725d629c2c77e817f5c5baa5c7",
+    "official_rc_build_run_id": 43557416158,
+    "private_source67_artifact_id": 14098449200,
+    "private_place_rbxlx_bytes": 611580,
+    "private_artifact_zip_bytes": 176946
+  },
+  "rollback": "omit the FB011 post-canonical step and rebuild 66-source official RC; Studio reset restores original runtime sea"
+}
