@@ -739,12 +739,12 @@ jobs:
           AFTER=$(find /tmp/p0d_talking_npc_dist -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
           test "$BEFORE" = "$AFTER"
           echo P0D_TALKING_NPC_PREP_SWITCH_OFF_EXACT_BASE_PASS
-          python3 -B rc_fastlane/apply_talking_npc.py --dist /tmp/p0d_talking_npc_dist --enabled true
+          python3 -B rc_fastlane/apply_talking_npc.py --dist /tmp/p0d_talking_npc_dist --output-dist /tmp/p0d_talking_npc_ready --enabled true
           for name in \
             server/TalkingNPCDirector.luau \
             server/TalkingNPCRuntime.server.luau \
             client/TalkingNPCClient.client.luau; do
-              /tmp/p0d_new_luau/luau-compile "/tmp/p0d_talking_npc_dist/src/$name" > /tmp/p0d_talking_npc_compile.out 2>&1 || {
+              /tmp/p0d_new_luau/luau-compile "/tmp/p0d_talking_npc_ready/src/$name" > /tmp/p0d_talking_npc_compile.out 2>&1 || {
                 cat /tmp/p0d_talking_npc_compile.out
                 echo "P0D_TALKING_NPC_NATIVE_COMPILE_FAIL $name"
                 exit 1
@@ -752,12 +752,12 @@ jobs:
           done
           echo P0D_TALKING_NPC_3_OF_3_NATIVE_LUAU_PASS
           mkdir -p /tmp/p0d_talking_npc_out
-          /tmp/p0d_rc_rojo build /tmp/p0d_talking_npc_dist/default.project.json -o /tmp/p0d_talking_npc_out/P0D_PREP_TALKING_NPC_LATEST_PLUS3.rbxlx
+          /tmp/p0d_rc_rojo build /tmp/p0d_talking_npc_ready/default.project.json -o /tmp/p0d_talking_npc_out/P0D_PREP_TALKING_NPC_LATEST_PLUS3.rbxlx
           python3 -B rc_fastlane/verify_talking_npc.py \
-            --dist /tmp/p0d_talking_npc_dist \
+            --dist /tmp/p0d_talking_npc_ready \
             --place /tmp/p0d_talking_npc_out/P0D_PREP_TALKING_NPC_LATEST_PLUS3.rbxlx \
             --receipt /tmp/p0d_talking_npc_out/PREP_RECEIPT.json
-          cp /tmp/p0d_talking_npc_dist/SOURCE_LOCK.json /tmp/p0d_talking_npc_out/PREP_67_SOURCE_LOCK.json
+          cp /tmp/p0d_talking_npc_ready/SOURCE_LOCK.json /tmp/p0d_talking_npc_out/PREP_67_SOURCE_LOCK.json
           echo P0D_TALKING_NPC_STUDIO_PLAY_NOT_TESTED
       - uses: actions/upload-artifact@v4
         if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'feature/p0d-prep-talking-npc-20261114'
