@@ -324,9 +324,9 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
     disabled = dist.with_name(dist.name + ".art_combat_disabling")
     trusted=receipt_path(dist)
     # Recover an interrupted OFF without losing either valid tree.
-    if disabled.exists():
+    if os.path.lexists(disabled):
         require(not enabled, "INTERRUPTED_OFF_RECOVERY_REQUIRES_DISABLED_MODE")
-        if not dist.exists() and backup.exists():
+        if not dist.exists() and os.path.lexists(backup):
             record=validate_candidate_tree(disabled,dist)
             validate_saved_original(backup,record)
             _check_original(backup)
@@ -336,7 +336,7 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
             trusted.unlink()
             print("ART_COMBAT_OFF_INTERRUPTED_SWAP_RECOVERED")
             return True
-        if dist.exists() and not backup.exists():
+        if dist.exists() and not os.path.lexists(backup):
             record=external_receipt(dist)
             validate_saved_original(dist,record)
             _check_original(dist)
@@ -346,7 +346,7 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
             print("ART_COMBAT_OFF_INTERRUPTED_CLEANUP_RECOVERED")
             return True
         raise RuntimeError("AMBIGUOUS_INTERRUPTED_OFF_STATE_KEEP_ALL_DATA")
-    if not dist.exists() and backup.exists():
+    if not dist.exists() and os.path.lexists(backup):
         record=external_receipt(dist)
         validate_saved_original(backup,record)
         _check_original(backup)
@@ -354,8 +354,8 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
         trusted.unlink()
         raise RuntimeError("PREVIOUS_INTERRUPTED_APPLY_RECOVERED_RERUN")
     if not enabled:
-        if not backup.exists():
-            require(not trusted.exists(), "ORPHANED_TRUSTED_RECEIPT_KEEP_ALL_DATA")
+        if not os.path.lexists(backup):
+            require(not os.path.lexists(trusted), "ORPHANED_TRUSTED_RECEIPT_KEEP_ALL_DATA")
             if dist.exists():
                 _check_original(dist)
             print("ART_COMBAT_OFF_CLEAN_ZERO_WRITE")
@@ -367,7 +367,7 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
         require(dist.exists() and (dist / "src" / DEST).exists(), "OFF_BACKUP_STATE_INVALID")
         require(blob((dist / "src" / DEST).read_bytes()) == PIN, "ART_COMBAT_FAIL_CLOSED")
         require(blob((dist / "src" / HORDE).read_bytes()) == HORDE_PATCH_PIN, "ART_COMBAT_FAIL_CLOSED")
-        require(not disabled.exists(), "PREVIOUS_DISABLE_INCOMPLETE")
+        require(not os.path.lexists(disabled), "PREVIOUS_DISABLE_INCOMPLETE")
         os.rename(dist, disabled)
         try:
             os.rename(backup, dist)
@@ -381,14 +381,14 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
         trusted.unlink()
         print("ART_COMBAT_OFF_EXACT_ORIGINAL66_RESTORED")
         return True
-    require(dist.is_dir() and not backup.exists() and not trusted.exists(),
+    require(dist.is_dir() and not os.path.lexists(backup) and not os.path.lexists(trusted),
             "ART_COMBAT_ALREADY_APPLIED_OR_BACKUP_EXISTS")
     prior = _check_original(dist)
     # All source and author preflight validation precedes writing a candidate.
     with tempfile.TemporaryDirectory(prefix=".art_combat_stage_", dir=dist.parent) as tmp:
         staged = Path(tmp) / dist.name
         _stage_candidate(dist, staged, prior)
-        require(not backup.exists(), "ART_COMBAT_FAIL_CLOSED")
+        require(not os.path.lexists(backup), "ART_COMBAT_FAIL_CLOSED")
         atomic_json(trusted,{
             "id":"P0D_FB015_COMBAT_EXTERNAL_RECEIPT_V1",
             "dist":str(dist),
