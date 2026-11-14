@@ -38,15 +38,15 @@ def patch_hud(s: str) -> str:
     s = sub(s, '"First90RealObjectiveGuide",UDim2.new(.62,0,0,44),\n    UDim2.new(.19,0,.61,0)',
             '"First90RealObjectiveGuide",UDim2.new(.48,0,0,29),\n    UDim2.new(.26,0,.19,0)')
     s = sub(s, 'UDim2.fromOffset(260,33),UDim2.fromOffset(17,178)',
-            'UDim2.fromOffset(190,28),UDim2.fromOffset(12,94)')
+            'UDim2.fromOffset(190,28),UDim2.fromOffset(12,118)')
     s = sub(s, '    if s.phase == "LOBBY" then return "準備中：役職と次の試合モードを選ぼう！" end',
             '''    if s.phase == "LOBBY" then
         local total=(if type(s.redPlayers)=="number" then s.redPlayers else 0)
             +(if type(s.bluePlayers)=="number" then s.bluePlayers else 0)
         if RunService:IsStudio() and total==1 then
-            return "▶ 1人練習は自動開始！ 役職を選ぼう"
+            return "▶ 1人練習 自動開始"
         end
-        return "▶ 赤・青がそろうと自動開始。役職を選ぼう"
+        return "▶ 赤・青がそろうと開始"
     end''')
     s = sub(s, '    if s.phase == "COUNTDOWN" then return "開始まで " .. tostring(s.time) .. " 秒！" end',
             '    if s.phase == "COUNTDOWN" then return "▶ 開始まで " .. tostring(s.time) .. " 秒" end')
@@ -57,9 +57,16 @@ def patch_hud(s: str) -> str:
     s = sub(s, '    progressBadge.Visible=s.phase=="ACTIVE"',
             '    progressBadge.Visible=false -- XP stays server-owned; hide bulky text')
     s = sub(s, '    instructions.Visible=s.phase=="ACTIVE"',
-            '    instructions.Visible=false -- redundant multiline help, keep controls')
+            '    instructions.Visible=s.phase=="ACTIVE" -- tiny objective, not a long blocker')
     s = sub(s, '    top.Text=string.format("🏆 🔴 %d 点    🔵 %d 点\\n自分:%s・%s　|　卵5こ得点戦",\n            s.scores.RED or 0,s.scores.BLUE or 0,s.team or "?",displayRole(s.role))',
             '    top.Text=string.format("🏆 🔴%d   🔵%d", s.scores.RED or 0,s.scores.BLUE or 0)')
+    s = sub(s, '"Instructions", UDim2.new(.55, 0, 0, 42),\n    UDim2.new(.2, 0, 1, -58)',
+            '"Instructions", UDim2.new(.45, 0, 0, 25),\n    UDim2.new(.275, 0, 0, 82)')
+    s = sub(s, 'instructions.Text = "敵の卵に近づいてE／タップで奪取 → 自陣の台へ。城を攻撃しても勝てる！"',
+            'instructions.Text = "🥚 敵の卵 → 自陣へ"\ninstructions.Visible=false')
+    s = sub(s, '    instructions.Text=if s.scoreMode=="FIVE_EGG_SCORE" and s.phase=="ACTIVE"\n        then "卵は5こ！ E／タップでひろう→自陣の金庫へ。持って逃げても得点！"\n        else "敵の卵に近づいてE／タップで奪取 → 自陣の台へ。城を攻撃しても勝てる！"',
+            '    instructions.Text=if s.scoreMode=="FIVE_EGG_SCORE" and s.phase=="ACTIVE"\n        then "🥚 集めて得点" else "🥚 敵の卵 → 自陣へ"')
+    assert 'local RunService = game:GetService("RunService")' in s
     assert 'if s.kind ~= "SNAPSHOT" then return end' in s
     assert 'action("MODE_VOTE","CLASSIC")' in s
     return s
