@@ -22,3 +22,10 @@
 Reference: https://create.roblox.com/docs/reference/engine/classes/AudioTextToSpeech
 
 Latest remediation: head/egg announcement, private automatic enemy alert, no stale completed-shard advice, per-NPC cooldown, hot-toggle teardown/restart, conditional HUD visibility, serial TTS load+instance cleanup, immutable transactional preview directory, and explicit enabled Realm Hunt prerequisite. These fixes are **SOURCE ONLY until exact-head CI/Sourcery re-review**.
+
+## Integration constraints added by the review (SOURCE_ONLY)
+- **Authoritative phase required:** automatic/manual nearby-enemy warnings are fail-closed until original Game owner #220 supplies `TRAP_RAIDERS_S1.P0D_AUTH_ROUND_PHASE = "ACTIVE"` in sync with the true match. Do NOT infer phase from team assignment or enable a fake phase. This PREP preview builds without editing original Game and therefore does not yet prove battle alerts.
+- The Oracle uses the individual player's four discovered realm attributes and a separate completion condition; never invents a secret-stage opening.
+- TTS quota budget 20 seconds, auto enemy alerts captions-only, one worker with a 9-second stalled-load watchdog, and no playback after caption expiry.
+- The preview overlay reserves its output directory exclusively and publishes only after source-lock, dependency and transactional checks. It never edits the source distribution.
+- Original snapshot listeners in the legacy HUD and FirstMinuteModel already check `packet.kind == "SNAPSHOT"`; dedicated NPC kind does not change snapshot authority.
