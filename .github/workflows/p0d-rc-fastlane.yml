@@ -1884,3 +1884,74 @@ jobs:
           path: /tmp/p0d_art_gate_samehead/*
           retention-days: 14
           if-no-files-found: warn
+
+      # Five independent author overlays; official 80-source game remains untouched.
+      # Gate source tests are fast. Full PC/Android/Kid FUN human evidence remains NO_GO.
+      - name: 'PRIVATE RC80 ART multi5: HIT, leaf camera, two-biome forest, Gorogan mobile LOD, castle silhouette'
+        if: env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_fb019_hit_visibility_dist
+          A=/tmp/p0d_multi5_hit
+          B=/tmp/p0d_multi5_camera
+          C=/tmp/p0d_multi5_forest
+          D=/tmp/p0d_multi5_beast
+          E=/tmp/p0d_multi5_castle
+          OUT=/tmp/p0d_multi5_artifact
+          mkdir -p "$OUT"
+          test -f "$BASE/SOURCE_LOCK.json"
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb016_camera_v2.py -v
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_forest_v2.py -v
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_gorogan_mobile_lod.py -v
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_castle_gate_silhouette.py -v
+          python3 -B rc_fastlane/apply_fb019_server_ack.py --base "$BASE" --out "$A" --enabled false
+          test ! -e "$A"
+          python3 -B rc_fastlane/apply_fb019_server_ack.py --base "$BASE" --out "$A" --enabled true
+          python3 -B rc_fastlane/apply_fb016_camera_v2.py --base "$A" --out "$B" --enabled true
+          python3 -B rc_fastlane/apply_fb015_forest_v2.py --base "$B" --out "$C" --enabled true
+          python3 -B rc_fastlane/apply_fb015_gorogan_mobile_lod.py --base "$C" --out "$D" --enabled true
+          python3 -B rc_fastlane/apply_fb015_castle_gate_silhouette.py --base "$D" --out "$E" --enabled true
+          test "$(find "$E/src" -name '*.luau' | wc -l)" -eq 80
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done < <(find "$E/src" -type f -name '*.luau' -print0)
+          PLACE="$OUT/P0D_RC80_MULTI5_ART_PRIVATE_STUDIO.rbxlx"
+          /tmp/p0d_rc_rojo build "$E/default.project.json" -o "$PLACE"
+          python3 -m pip install --quiet --disable-pip-version-check defusedxml==0.7.1
+          python3 -B rc_fastlane/verify_fb019_server_ack.py --dist "$E" --place "$PLACE" --receipt "$OUT/FB019_RECEIPT.json"
+          python3 -B rc_fastlane/verify_fb016_camera_v2.py --dist "$E" --place "$PLACE" --receipt "$OUT/FB016_RECEIPT.json"
+          python3 -B rc_fastlane/verify_fb015_forest_v2.py --dist "$E" --place "$PLACE" --receipt "$OUT/FOREST_RECEIPT.json"
+          python3 -B rc_fastlane/verify_fb015_gorogan_mobile_lod.py --dist "$E" --place "$PLACE" --receipt "$OUT/GOROGAN_RECEIPT.json"
+          python3 -B rc_fastlane/verify_fb015_castle_gate_silhouette.py --dist "$E" --place "$PLACE" --receipt "$OUT/CASTLE_RECEIPT.json"
+          python3 -B rc_fastlane/verify_rc80_art_multi.py --base "$BASE" --dist "$E" --place "$PLACE" --receipt "$OUT/MULTI5_SOURCE_RECEIPT.json"
+          python3 -B rc_fastlane/qa_fb019_server_ack_native.py --dist "$E" --out "$OUT/FB019_NATIVE_TEST.luau"
+          /tmp/p0d_new_luau/luau "$OUT/FB019_NATIVE_TEST.luau"
+          python3 -B art_quality/check_art_quality.py --place "$PLACE" --out "$OUT/ART_CHECK_REPORT.json"
+          python3 -B art_quality/check_mobile_fun.py --out "$OUT/MOBILE_KID_FUN_REPORT.json"
+          python3 -B art_quality/check_reference_benchmarks.py --references art_quality/REFERENCE_BENCHMARKS_V2.json --out "$OUT/REFERENCE_BENCHMARK_REPORT.json"
+          cp "$E/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$E/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          cp rc_fastlane/ART_MULTI5_SELECTION_20261115.json "$OUT/ART_MULTI5_SELECTION.json"
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,os
+          o=Path('/tmp/p0d_multi5_artifact')
+          s=json.loads((o/'MULTI5_SOURCE_RECEIPT.json').read_text())
+          a=json.loads((o/'ART_CHECK_REPORT.json').read_text())
+          assert a['source']['source_gate']=='PASS' and a['source']['script_count']==80
+          assert a['art_decision']=='ART_NO_GO' and a['owner_accepted'] is False
+          s['github_run_head_sha']=os.environ['GITHUB_SHA']
+          s['github_head_ref']=os.environ.get('GITHUB_HEAD_REF','')
+          s['base_official_rc_sha']='f4e64c9248423f9c021f633b80e554706f7a66e4'
+          s['owner_acceptance_required']=True
+          (o/'MULTI5_SOURCE_RECEIPT.json').write_text(json.dumps(s,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_MULTI5_SOURCE_GATE_PASS__HUMAN_ART_PENDING',s)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always() && github.event_name == 'pull_request'
+        with:
+          name: P0D-RC80-ART-MULTI5-PRIVATE-SOURCE-NOT-OWNER-GO
+          path: /tmp/p0d_multi5_artifact/*
+          retention-days: 7
+          if-no-files-found: warn

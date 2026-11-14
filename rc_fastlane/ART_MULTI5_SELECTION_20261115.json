@@ -1,0 +1,59 @@
+{
+  "schema": "P0D_ART_MULTI5_AUTHOR_REUSE_V1",
+  "date_jst": "2026-11-15",
+  "official_head": "f4e64c9248423f9c021f633b80e554706f7a66e4",
+  "official_game_source_modified": false,
+  "official_art_adopted": false,
+  "quality_gate_already_canonical": true,
+  "source_count_expected": 80,
+  "changed_source_expected": 6,
+  "ordered": [
+    {
+      "pr": 423,
+      "id": "FB019_ATTACK_RESPONSE_V1",
+      "paths": [
+        "server/Game.server.luau",
+        "client/HUD.client.luau"
+      ]
+    },
+    {
+      "pr": 417,
+      "id": "FB016_ART_CAMERA_SIGHTLINE_V2",
+      "paths": [
+        "client/FoliageCameraFade.client.luau"
+      ]
+    },
+    {
+      "pr": 421,
+      "id": "FB015_FOREST_BIOMES_MONUMENTS_V2",
+      "paths": [
+        "server/FantasyWorldArt.server.luau"
+      ]
+    },
+    {
+      "pr": 426,
+      "id": "FB015_GOROGAN_MOBILE_LOD_V1",
+      "paths": [
+        "client/FB015CharacterArt.client.luau"
+      ]
+    },
+    {
+      "pr": 430,
+      "id": "FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3",
+      "paths": [
+        "server/CastleDetailArt.server.luau"
+      ]
+    }
+  ],
+  "full_evidence": {
+    "screenshots_required": 32,
+    "android_15min": "NOT_TESTED",
+    "child_3min": "NOT_TESTED",
+    "pc_art": "NOT_TESTED",
+    "android_art": "NOT_TESTED",
+    "owner_accepted": false
+  },
+  "status": "PRIVATE_SOURCE_ONLY",
+  "rollback": "Skip per-overlay; original official build remains unchanged",
+  "writer": "B #220 sole authenticated, nonforce CAS on canonical only"
+}
