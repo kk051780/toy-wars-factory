@@ -91,7 +91,7 @@ def generate_manifest(stage: Path, dist: Path, out: Path):
         "files": manifest_contents(stage),
     }
     (stage / MANIFEST).write_text(
-        json.dumps(data, ensure_ascii=False, sort_keys=True, indent=2)+"\\n", "utf8")
+        json.dumps(data, ensure_ascii=False, sort_keys=True, indent=2)+"\n", "utf8")
 
 def verify_private_output(out: Path, dist: Path):
     mf = out / MANIFEST
@@ -130,7 +130,12 @@ def _compose_locked(dist: Path, out: Path, enabled: bool):
             require(not journal.exists(), "STALE_COMPOSITE_DELETE_JOURNAL")
             print("ART_MINION_COMBO_OFF_ZERO_WRITE")
             return False
-        require(not journal.exists(), "STALE_COMPOSITE_DELETE_JOURNAL")
+        if journal.exists():
+            # Crash after writing journal but before renaming the output.
+            prior = json.loads(journal.read_text("utf8"))
+            current = verify_private_output(out, dist)
+            require(prior == current, "INVALID_PREPARED_COMPOSITE_DELETE_JOURNAL")
+            journal.unlink()
         record = verify_private_output(out, dist)
         require((out / "src" / DEST).is_file(), "NO_PRIVATE_MINION_TO_ROLLBACK")
         feature = json.loads((out / "RC_FEATURE_LOCK.json").read_text("utf8"))
@@ -139,7 +144,7 @@ def _compose_locked(dist: Path, out: Path, enabled: bool):
         require(blob((out / "src" / DEST).read_bytes()) == PIN,
                 "COMPOSITE_ROLLBACK_REFUSED_DRIFT")
         # Only after verifying EVERY file may we authorize removal.
-        journal.write_text(json.dumps(record, sort_keys=True)+"\\n", "utf8")
+        journal.write_text(json.dumps(record, sort_keys=True)+"\n", "utf8")
         os.rename(out, tombstone)
         shutil.rmtree(tombstone)
         journal.unlink()
