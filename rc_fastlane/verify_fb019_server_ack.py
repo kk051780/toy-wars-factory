@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Real Studio XML Rojo source-exact and singleton-authority receipt, FB-019."""
 from __future__ import annotations
-import argparse,collections,hashlib,json,xml.etree.ElementTree as ET
+import argparse,collections,hashlib,json
+from defusedxml import ElementTree as ET
 from pathlib import Path
 from apply_fb019_server_ack import read,blob,GAME,HUD,KEY,PIN_GAME,PIN_HUD
 
@@ -26,6 +27,7 @@ def verify(dist:Path,place:Path,receipt:Path):
     assert s.count('kind="P0D_ATTACK_RESULT"')==1
     assert s.count('attackResponse("HIT"')==5
     assert s.count('attackResponse("MISS"')==3
+    assert "if ok and hum and hum.Health>0 then" in s
     for x in ('Rules.validSeq(data.seq','Rules.canAttack(now, lastAttack',
               'horde:hit(', 'SoloTeamBots.tryHumanHit(',
               'match.hp[enemy] = math.max(0',
