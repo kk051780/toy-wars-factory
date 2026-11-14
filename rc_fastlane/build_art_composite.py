@@ -42,10 +42,10 @@ def pinned_art() -> dict[str, bytes]:
     for category, pin, path, basename, flag in SPECS:
         content = (ART / basename).read_bytes()
         assert gitblob(content) == pin, ("UPSTREAM_ART_SOURCE_DRIFT", category)
-        assert "RunService:IsStudio()" in content, ("NOT_STUDIO_SCOPED", category)
+        assert b"RunService:IsStudio()" in content, ("NOT_STUDIO_SCOPED", category)
         for banned in ("MarketplaceService", "PromptProductPurchase(", "DataStoreService",
                        "UpdateAsync(", "FireServer(", "OnServerEvent:Connect("):
-            assert banned not in content, ("ART_UNSAFE_AUTHORITY", category, banned)
+            assert banned.encode("utf8") not in content, ("ART_UNSAFE_AUTHORITY", category, banned)
         sources[path] = content
     assert len(sources) == 5
     assert b"MUSOU_MINION_" not in sources["client/FB015CharacterArt.client.luau"]
