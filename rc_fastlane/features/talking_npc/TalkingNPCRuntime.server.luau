@@ -26,6 +26,8 @@ end
 local active = nil
 local epoch = 0
 local speechTimes = {}  -- [Player] = {[speaker] = os.clock()}
+local lastManualScan = {}
+local scanCursor = 1 -- rotating observer origin prevents starvation
 local lastAlertTarget = {} -- [Player] = enemy.UserId, only after ENEMY_ALERT is sent
 
 local function aliveRoot(player)
@@ -65,11 +67,11 @@ local function visibleEnemy(player, quota)
     if name ~= "RED" and name ~= "BLUE" then return nil end
     local considered = 0
     for _, enemy in ipairs(Players:GetPlayers()) do
-        considered += 1
-        if considered > MAX_ENEMY_CANDIDATES then return nil end
         if enemy ~= player and enemy.Team
             and (enemy.Team.Name == "RED" or enemy.Team.Name == "BLUE")
             and enemy.Team ~= player.Team then
+            considered += 1 -- ignore allies and unassigned roster entries
+            if considered > MAX_ENEMY_CANDIDATES then return nil, nil, "INCOMPLETE" end
             local other = aliveRoot(enemy)
             if other then
                 local d = other.Position - root.Position
@@ -77,7 +79,7 @@ local function visibleEnemy(player, quota)
                     local params = RaycastParams.new()
                     params.FilterType = Enum.RaycastFilterType.Exclude
                     params.FilterDescendantsInstances = {player.Character, enemy.Character}
-                    if quota and quota.remaining <= 0 then return nil end
+                    if quota and quota.remaining <= 0 then return nil, nil, "INCOMPLETE" end
                     if quota then quota.remaining -= 1 end
                     local blocked = Workspace:Raycast(root.Position, d, params)
                     if blocked == nil then return enemy, other end
@@ -85,7 +87,7 @@ local function visibleEnemy(player, quota)
             end
         end
     end
-    return nil
+    return nil, nil, "COMPLETE"
 end
 local function areaFor(position)
     if position.X < -25 then return "west" end
@@ -110,11 +112,11 @@ local function sourceFacts(player, speaker, mode, arena, observedEnemy, observed
             facts.urgent = true
             return facts
         end
-        local enemy, enemyRoot
+        local enemy, enemyRoot, scanStatus
         if mode == "AUTO_ENEMY_ALERT" then
             enemy, enemyRoot = observedEnemy, observedRoot
         else
-            enemy, enemyRoot = visibleEnemy(player, {remaining=MANUAL_RAYCAST_BUDGET})
+            enemy, enemyRoot, scanStatus = visibleEnemy(player, {remaining=MANUAL_RAYCAST_BUDGET})
         end
         if enemy and enemyRoot then
             facts.signal = "ENEMY_ALERT"
@@ -123,7 +125,9 @@ local function sourceFacts(player, speaker, mode, arena, observedEnemy, observed
             facts.urgent = true
             return facts
         end
-        if mode == "AUTO_ENEMY_ALERT" then return nil end
+        if mode == "AUTO_ENEMY_ALERT" or scanStatus == "INCOMPLETE" then
+            return nil -- bounded scan cannot prove safety
+        end
         local starStage = Workspace:FindFirstChild("P0D_STARRY_PATH")
         local shardCount = player:GetAttribute("P0D_StarShardCount")
         if starStage and starStage:GetAttribute("PathOpen") == true
@@ -244,6 +248,13 @@ local function createNPC(folder, arena, name, speaker, position, color, team, an
         local root = aliveRoot(player)
         if not root or (root.Position - core.Position).Magnitude > 13 then return end
         if team and not inTeam(player, team) then return end
+        if speaker == "NAVI" then
+            local now = os.clock()
+            local previous = speechTimes[player] and speechTimes[player][speaker]
+            if not Director.CanSpeak(now, previous, true) then return end
+            if now - (lastManualScan[player] or -math.huge) < 3 then return end
+            lastManualScan[player] = now
+        end
         speak(player, speaker, nil, arena)
     end)
 end
@@ -254,7 +265,9 @@ local function stop()
     active = nil
     if prior and prior.folder.Parent then prior.folder:Destroy() end
     speechTimes = {}
+    lastManualScan = {}
     lastAlertTarget = {}
+    scanCursor = 1
     ReplicatedStorage:SetAttribute(PUBLIC_ENABLED, false)
 end
 local function start()
@@ -295,16 +308,23 @@ local function start()
         while active and active.folder == folder and folder.Parent
             and epoch == generation and ServerStorage:GetAttribute(FLAG) == true do
             local quota = {remaining=SCAN_RAYCAST_BUDGET}
-            for _,player in ipairs(Players:GetPlayers()) do
-                if quota.remaining <= 0 then break end
-                local enemy, enemyRoot = visibleEnemy(player, quota)
-                if enemy and lastAlertTarget[player] ~= enemy.UserId then
-                    if speak(player, "NAVI", "AUTO_ENEMY_ALERT", arena, enemy, enemyRoot) == "ENEMY_ALERT" then
-                        lastAlertTarget[player] = enemy.UserId
+            local roster = Players:GetPlayers()
+            local population = #roster
+            if population > 0 then
+                scanCursor = ((scanCursor - 1) % population) + 1
+                for offset = 0, population - 1 do
+                    if quota.remaining <= 0 then break end
+                    local player = roster[((scanCursor + offset - 1) % population) + 1]
+                    local enemy, enemyRoot, scanStatus = visibleEnemy(player, quota)
+                    if enemy and lastAlertTarget[player] ~= enemy.UserId then
+                        if speak(player, "NAVI", "AUTO_ENEMY_ALERT", arena, enemy, enemyRoot) == "ENEMY_ALERT" then
+                            lastAlertTarget[player] = enemy.UserId
+                        end
+                    elseif not enemy and scanStatus == "COMPLETE" then
+                        lastAlertTarget[player] = nil
                     end
-                elseif not enemy then
-                    lastAlertTarget[player] = nil
                 end
+                scanCursor = (scanCursor % population) + 1
             end
             task.wait(8)
         end
@@ -337,6 +357,7 @@ local function reconcile()
 end
 Players.PlayerRemoving:Connect(function(player)
     speechTimes[player] = nil
+    lastManualScan[player] = nil
     lastAlertTarget[player] = nil
 end)
 ServerStorage:GetAttributeChangedSignal(FLAG):Connect(reconcile)
