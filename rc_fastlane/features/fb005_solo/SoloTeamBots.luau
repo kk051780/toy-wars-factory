@@ -361,9 +361,12 @@ function Bot.tryHumanHit(team,origin,look,reach,attackerCharacter)
             if d<=reach and dot>=.25 and d<closest then
                 local params=RaycastParams.new()
                 params.FilterType=Enum.RaycastFilterType.Exclude
-                params.FilterDescendantsInstances={bot.model,folder,attackerCharacter}
+                -- Only ignore the ATTACKER. A ray must physically hit the
+                -- intended enemy torso; terrain, walls, team-mates and nearer
+                -- bots all block damage to a target behind them.
+                params.FilterDescendantsInstances={attackerCharacter}
                 local hit=workspace:Raycast(origin,delta,params)
-                if not hit then
+                if hit and hit.Instance:IsDescendantOf(bot.model) then
                     best=bot
                     closest=d
                 end
