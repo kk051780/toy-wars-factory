@@ -265,9 +265,9 @@
     },
     "TWIN_BIOMES_4NPC_V1": {
       "enabled": true,
-      "status": "PRIVATE64_SOURCE_MORPH_CODEx_NOT_OFFICIAL",
+      "status": "PRIVATE65_SESSION_LEVEL3_EVOLUTION_NATIVE_QA_PENDING",
       "source_path": "rc_fastlane/features/twin_biomes/TwinBiomes.server.luau",
-      "source_git_blob": "ff48273db7c7f0e240e45fba8b997cad669a5143",
+      "source_git_blob": "ff7c57aae79f03e3fbc72e043fe3f34f5ac373a5",
       "dependency": "Current official RC63 StarShards + WCS + meteor + sevenjobs + relay",
       "fields": [
         "CORAL_GARDEN",
@@ -283,12 +283,15 @@
       "unique_morphs": 4,
       "natural_idle": "CFrame bob and turn, one loop for eight anchored NPC",
       "session_codex": "0/4 to 4/4, Player attributes and 5s discover badge, NOT DataStore",
-      "runtime": "Studio only, explicit true P0D_ENABLE_TWIN_BIOMES_V1 BoolValue, absent/false OFF",
+      "runtime": "Studio-only explicit true boot BoolValue, absent false OFF, no persistence",
       "rollback": "false causes zero source/project/lock edits and retains exact canonical63 build",
       "studio": "NOT_TESTED",
       "android": "NOT_TESTED",
       "owner_fun": "NOT_TESTED",
-      "official_rc_adopted": false
+      "official_rc_adopted": false,
+      "training_policy_git_blob": "b2f8275be676b46fc1ad32050832a4fcf13099af",
+      "source_count": 2,
+      "session_training": "species-specific 1/2/3 tiers at 0/3/7 practice; 20s server cooldown; level3 evolving model + 24s field utility"
     }
   }
 }
