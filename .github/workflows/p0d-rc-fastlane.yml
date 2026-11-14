@@ -535,7 +535,7 @@ jobs:
             /tmp/p0d_new_luau/luau /tmp/P0D_REAL_TWIN_TRAINING38.luau | tee /tmp/p0d_twin_native38.log
             grep -Fx P0D_TWIN_CREATURE_REAL_NATIVE_38_POLICY_CASES_PASS /tmp/p0d_twin_native38.log
           fi
-      - name: Execute 40 real native bond policy checks from actual 66-source module
+      - name: Execute 47 real native bond policy checks from actual 66-source module
         shell: bash
         run: |
           set -euo pipefail
@@ -548,8 +548,8 @@ jobs:
           author=Path('rc_fastlane/features/twin_bond/TwinBondPolicy.luau').read_bytes()
           runner=Path('rc_fastlane/features/twin_bond/TwinBondNative.luau').read_bytes()
           def blob(b):return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
-          assert src==author and blob(src)=='57e9ecfabc3aea27078704cb30c0ac184c031ef7'
-          assert runner.count(b'check("')==43
+          assert src==author and blob(src)=='e5ab733e1baadf2d79eec6ba53463a16ccd8c0c1'
+          assert runner.count(b'check("')==47
           text=src.decode('utf8')
           assert text.count('return Bond')==1
           out=text.rsplit('return Bond',1)[0]+'\n'+runner.decode('utf8')
@@ -558,7 +558,7 @@ jobs:
           PY
             /tmp/p0d_new_luau/luau-compile /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau >/dev/null
             /tmp/p0d_new_luau/luau /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau | tee /tmp/p0d_real_bond_native40.log
-            grep -Fx P0D_TWIN_BOND_REAL_NATIVE_43_POLICY_CASES_PASS /tmp/p0d_real_bond_native40.log
+            grep -Fx P0D_TWIN_BOND_REAL_NATIVE_47_POLICY_CASES_PASS /tmp/p0d_real_bond_native40.log
           fi
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash
@@ -875,7 +875,7 @@ jobs:
             'twin_creature_training_session_only_3_levels':bool(training_enabled),
             'twin_creature_native_real_policy_cases':38 if training_enabled else None,
             'twin_bond_one_active_session_companion_pve_only':bool(bond_enabled),
-            'twin_bond_native_policy_cases':43 if bond_enabled else None,
+            'twin_bond_native_policy_cases':47 if bond_enabled else None,
             'twin_biomes_engine_2client_android_fun':'NOT_TESTED',
             'star_shards_native_policy_cases':22 if shards_enabled else None,
             'mobile_relay_touch_geometry_12viewports_144checks':True if shards_enabled else None,

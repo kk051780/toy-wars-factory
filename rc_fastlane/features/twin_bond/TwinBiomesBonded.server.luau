@@ -517,8 +517,7 @@ task.spawn(function()
             local char=player.Character
             local root=char and char:FindFirstChild("HumanoidRootPart")
             local hum=char and char:FindFirstChildOfClass("Humanoid")
-            if not bondEnabled or not active or not root or not hum or hum.Health<=0
-                or not companion.part.Parent then
+            if not bondEnabled or not active or not companion.part.Parent then
                 if companion.part.Parent then companion.part:Destroy() end
                 companionsByPlayer[player]=nil
                 Bond.forget(player)
@@ -526,7 +525,12 @@ task.spawn(function()
                     player:SetAttribute("P0D_TwinBondSpecies",nil)
                     player:SetAttribute("P0D_TwinBondLevel",nil)
                 end
+            elseif not root or not hum or hum.Health<=0 then
+                -- Hide visuals during death/respawn but retain the original
+                -- server-only 180s lease. On respawn this same part returns.
+                companion.part.Transparency=1
             else
+                companion.part.Transparency=0
                 local behind=root.Position-root.CFrame.LookVector*2.4
                     +root.CFrame.RightVector*2.2
                 companion.part.CFrame=CFrame.new(behind+Vector3.new(0,2.7+math.sin(timeNow*2)*0.25,0))

@@ -24,11 +24,12 @@ function Bond.select(player, speciesId, level, now)
         and now<old.switchAt then
         return false, "SWITCH_COOLDOWN"
     end
+    local same = old and old.untilAt>now and old.species==speciesId
     state[player]={
         species=speciesId,level=level,
-        untilAt=now+MAX_DURATION,
-        switchAt=(old and old.untilAt>now and old.species==speciesId)
-            and old.switchAt or now+SWITCH_WAIT,
+        -- A re-selection may upgrade Lv2->Lv3, never extend the 180s lease.
+        untilAt=(if same then old.untilAt else now+MAX_DURATION),
+        switchAt=(if same then old.switchAt else now+SWITCH_WAIT),
     }
     return true,speciesId
 end

@@ -69,5 +69,14 @@ local same2=Bond.select(p3,"AWARIN",2,315)
 check("same_species_refresh_valid",same2)
 local switchAtOriginalDeadline=Bond.select(p3,"RAIKO",2,320)
 check("same_species_does_not_delay_switch",switchAtOriginalDeadline)
-assert(tested==43, "TWIN_BOND_EXPECTED43_GOT_"..tostring(tested))
-print("P0D_TWIN_BOND_REAL_NATIVE_43_POLICY_CASES_PASS")
+local p4={}
+local startOk=Bond.select(p4,"SANGORU",2,500)
+check("lease_start",startOk)
+local upgradeOk=Bond.select(p4,"SANGORU",3,560)
+check("upgrade_preserves_first_expiry",upgradeOk
+    and Bond.snapshot(p4,560).endsAt==680
+    and Bond.snapshot(p4,560).level==3)
+check("upgrade_bonus_before_expiry",Bond.pveMultiplier(p4,679.99)==1.2)
+check("no_prompt_spam_expiry_extension",Bond.pveMultiplier(p4,680)==1)
+assert(tested==47, "TWIN_BOND_EXPECTED47_GOT_"..tostring(tested))
+print("P0D_TWIN_BOND_REAL_NATIVE_47_POLICY_CASES_PASS")

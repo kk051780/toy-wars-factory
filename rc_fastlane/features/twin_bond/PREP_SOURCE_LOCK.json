@@ -14,21 +14,21 @@
     },
     {
       "path": "rc_fastlane/features/twin_bond/TwinBiomesBonded.server.luau",
-      "blob": "90fab81f6daaf8623c630a8ff702930e8ff358b5"
+      "blob": "5a4b2e623a561ec2ddc72daf1371adb08a8ede27"
     },
     {
       "path": "rc_fastlane/features/twin_bond/TwinBondPolicy.luau",
-      "blob": "57e9ecfabc3aea27078704cb30c0ac184c031ef7"
+      "blob": "e5ab733e1baadf2d79eec6ba53463a16ccd8c0c1"
     },
     {
       "path": "rc_fastlane/features/twin_bond/TwinBondNative.luau",
-      "blob": "535293325e3de96e6bef49dfe4ebe6efc8cbd925"
+      "blob": "d63eeac97a486c021d128cc2dd4f452e75b8b761"
     }
   ],
-  "original_game_parent_git_blob": "cdc995d8a64f6a6f6df5abd43fb8210486328572",
-  "original_trained_twin_git_blob": "ff7c57aae79f03e3fbc72e043fe3f34f5ac373a5",
-  "new_world_blob": "90fab81f6daaf8623c630a8ff702930e8ff358b5",
-  "new_module_blob": "57e9ecfabc3aea27078704cb30c0ac184c031ef7",
+  "original_game_parent_git_blob": "cdc995d8a64f6a6f6df5abd47fb8210486328572",
+  "original_trained_twin_git_blob": "ff7c57aae79f03e3fbc72e047fe3f34f5ac373a5",
+  "new_world_blob": "5a4b2e623a561ec2ddc72daf1371adb08a8ede27",
+  "new_module_blob": "e5ab733e1baadf2d79eec6ba53463a16ccd8c0c1",
   "final_runtime_lock": "SOURCE_LOCK.json",
   "final_feature_lock": "RC_FEATURE_LOCK.json",
   "only_modified": [
@@ -47,5 +47,7 @@
   "sourcery_high_runtime_server_storage_bound": true,
   "existing_pve_cap_enforced": 3.8,
   "bond_flag_off_disables_follower": true,
-  "native_cases": 43
+  "native_cases": 47,
+  "same_species_does_not_extend_180_second_lease": true,
+  "respawn_keeps_bond_until_original_expiry": true
 }
