@@ -10,6 +10,7 @@ on:
       - feature/p0d-rc64-twin-flat-official-intake-20261114
       - feature/p0d-flat65-twin-training-rc-adoption-20261114
       - feature/p0d-bond66-latest-rc346-prep-20261114
+      - feature/p0d-bond66-qa-sourcery-fix-20261114-chat
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -548,17 +549,17 @@ jobs:
           author=Path('rc_fastlane/features/twin_bond/TwinBondPolicy.luau').read_bytes()
           runner=Path('rc_fastlane/features/twin_bond/TwinBondNative.luau').read_bytes()
           def blob(b):return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
-          assert src==author and blob(src)=='d217e8cf03893efeebe437607e196f9a6f27d50f'
-          assert runner.count(b'check("')==40
+          assert src==author and blob(src)=='0dbf7b659c154361b9d6f6d76e4e660cc9caa1cf'
+          assert runner.count(b'check("')==41
           text=src.decode('utf8')
           assert text.count('return Bond')==1
           out=text.rsplit('return Bond',1)[0]+'\n'+runner.decode('utf8')
-          Path('/tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau').write_text(out,'utf8')
-          print('P0D_PRIVATE66_BOND_NATIVE40_ACTUAL_SOURCE_PIN_PASS')
+          Path('/tmp/P0D_REAL_TWIN_BOND_NATIVE41.luau').write_text(out,'utf8')
+          print('P0D_PRIVATE66_BOND_NATIVE41_ACTUAL_SOURCE_PIN_PASS')
           PY
-            /tmp/p0d_new_luau/luau-compile /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau >/dev/null
-            /tmp/p0d_new_luau/luau /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau | tee /tmp/p0d_real_bond_native40.log
-            grep -Fx P0D_TWIN_BOND_REAL_NATIVE_40_POLICY_CASES_PASS /tmp/p0d_real_bond_native40.log
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_REAL_TWIN_BOND_NATIVE41.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_REAL_TWIN_BOND_NATIVE41.luau | tee /tmp/p0d_real_bond_native41.log
+            grep -Fx P0D_TWIN_BOND_REAL_NATIVE_41_POLICY_CASES_PASS /tmp/p0d_real_bond_native41.log
           fi
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash
