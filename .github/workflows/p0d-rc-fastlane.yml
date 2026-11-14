@@ -1949,7 +1949,7 @@ jobs:
           out=Path('/tmp/p0d_art_recompose_output')
           p=out/'P0D_RC80_VISUAL5_PRIVATE_STUDIO.rbxlx'
           report={'canonical_base_sha':'f4e64c9248423f9c021f633b80e554706f7a66e4',
-            'candidate_head':os.environ['GITHUB_SHA'],'candidate_only':True,
+            'workflow_checkout_sha':os.environ['GITHUB_SHA'],'candidate_only':True,
             'official_rc_adopted':False,'source_count':80,
             'place_bytes':p.stat().st_size,'place_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
             'art_decision':'ART_NO_GO','mobile_decision':'MOBILE_NO_GO',
