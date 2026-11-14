@@ -168,7 +168,7 @@ def patch_game(text:str)->str:
     assert text.count('remote.OnServerEvent:Connect(')==1
     assert text.count('local function resetRound()')==1
     assert text.count('local function tickRound()')==1
-    assert text.count('SoloTeamBots.tick(now)')==1
+    assert text.count('pcall(SoloTeamBots.tick,now)')==1
     assert text.count('SoloTeamBots.start(map,')==1
     return text
 
