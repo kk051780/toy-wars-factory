@@ -15,6 +15,7 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
+from fb015_fs_guard import strict_inventory
 
 ROOT = Path(__file__).resolve().parent
 FEATURE = "ART_MINION_THREE_SILHOUETTES_V1"
@@ -40,6 +41,7 @@ def files(dist: Path):
             for p in sorted(src.rglob("*.luau"))}
 
 def baseline(dist: Path):
+    strict_inventory(dist)  # No external symlink targets may enter private68.
     source = files(dist)
     require(len(source) == BASE and DEST not in source, "REQUIRE_CLEAN_PRIVATE67")
     require(blob(source["server/MusouHorde.luau"]) == HIT_CUE_BLOB,
@@ -81,9 +83,7 @@ def baseline(dist: Path):
     return source, pins, locks, author
 
 def manifest_contents(stage: Path) -> dict[str, str]:
-    return {p.relative_to(stage).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in sorted(stage.rglob("*")) if p.is_file()
-            and p.relative_to(stage).as_posix() != MANIFEST}
+    return strict_inventory(stage, exclude=MANIFEST)
 
 def generate_manifest(stage: Path, dist: Path, out: Path):
     data = {
@@ -224,6 +224,8 @@ def _compose_locked(dist: Path, out: Path, enabled: bool):
     return True
 
 def compose(dist: Path, out: Path, enabled: bool):
+    if dist.is_symlink() or out.is_symlink():
+        raise RuntimeError("FB015_SYMLINK_DISTRIBUTION_REFUSED")
     # Linux CI file lock serializes OFF against an in-flight enable.
     dist = dist.resolve()
     out = out.resolve()
