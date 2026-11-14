@@ -1767,6 +1767,12 @@ jobs:
             /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
           done
           /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_fb019_server_ack_out/P0D_RC80_FB019_SERVER_HIT_MISS_PREP_STUDIO.rbxlx
+          python3 -m pip install --disable-pip-version-check -q 'defusedxml==0.7.1'
+          python3 -B rc_fastlane/qa_fb019_server_ack_native.py --dist "$OUT" --out /tmp/p0d_fb019_native_real_game_hud.luau
+          /tmp/p0d_new_luau/luau-compile /tmp/p0d_fb019_native_real_game_hud.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/p0d_fb019_native_real_game_hud.luau | tee /tmp/p0d_fb019_server_ack_out/NATIVE_REAL_ATTACK_HUD_PASS.txt
+          grep -q 'FB019_NATIVE_REAL_GAME_ATTACK_PATHS_PASS' /tmp/p0d_fb019_server_ack_out/NATIVE_REAL_ATTACK_HUD_PASS.txt
+          grep -q 'FB019_NATIVE_REAL_HUD_ACK_CUES_PASS' /tmp/p0d_fb019_server_ack_out/NATIVE_REAL_ATTACK_HUD_PASS.txt
           python3 -B rc_fastlane/verify_fb019_server_ack.py --dist "$OUT" --place /tmp/p0d_fb019_server_ack_out/P0D_RC80_FB019_SERVER_HIT_MISS_PREP_STUDIO.rbxlx --receipt /tmp/p0d_fb019_server_ack_out/ACK_RECEIPT.json
           python3 - <<'PY'
           import os,json
