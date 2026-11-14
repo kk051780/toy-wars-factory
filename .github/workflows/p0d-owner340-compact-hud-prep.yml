@@ -1,0 +1,25 @@
+name: P0D OWNER340 compact HUD PREP mock-contract QA
+on:
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - 'rc_fastlane/apply_owner340_compact_hud.py'
+      - 'rc_fastlane/test_owner340_compact_hud.py'
+      - 'rc_fastlane/features/owner340_compact_hud/**'
+      - '.github/workflows/p0d-owner340-compact-hud-prep.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  mock-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate strict private source-lock and one-slice rollback
+        run: |
+          python3 -m unittest discover -s rc_fastlane -p test_owner340_compact_hud.py -v
+          echo "OWNER340_OFF_AND_PREP_MOCK_TESTS_PASS_NOT_NATIVE_NOT_STUDIO"
