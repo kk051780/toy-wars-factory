@@ -27,12 +27,21 @@ class TestBotPathRaceFix(unittest.TestCase):
         self.assertIn("p:ComputeAsync(planningRoot.Position,goal)",s)
         self.assertIn("epoch==token and bot.pathGeneration==generation",s)
         self.assertIn("bot.root==planningRoot and alive(bot)",s)
+        self.assertIn("bot.lastGoal~=nil and (bot.lastGoal-goal).Magnitude<=8",s)
         self.assertIn("if current then",s)
         self.assertIn("if bot.pathGeneration==generation and bot.root==planningRoot then",s)
         self.assertNotIn("p:ComputeAsync(bot.root.Position,goal)",s)
         guard=s.index("if current then")
         update=s.index("bot.path=path:GetWaypoints()",guard)
         self.assertLess(guard,update)
+
+    def test_same_tick_egg_and_dynamic_guard_target_rerouted(self):
+        s=self.src
+        self.assertNotIn("local target=if bot.carry then",s)
+        self.assertIn("local waypoint=if bot.carry then map.teams[bot.team].scorePad.Position",s)
+        self.assertIn('if bot.lastGoal==nil or (bot.lastGoal-goal).Magnitude>8 then',s)
+        self.assertIn('bot.lastGoal=goal',s)
+        self.assertIn('invalidatePath(bot)\n    end\n    bot.lastGoal=goal\n    pathTo(bot,goal,now)',s)
 
     def test_egg_goal_switch_both_events_revoke_old_path(self):
         s=self.src
@@ -65,7 +74,7 @@ class TestBotPathRaceFix(unittest.TestCase):
 
     def test_bot_start_soft_fail_and_exception_exit_empty_match(self):
         adapter=Path(parent.__file__).read_text("utf8")
-        self.assertEqual(adapter.count("pcall(SoloTeamBots.start,map,"),1)
+        self.assertEqual(adapter.count("local ok,started=pcall(SoloTeamBots.start,map,"),1)
         self.assertIn("if not ok or started~=true then",adapter)
         self.assertIn('stopRound("DRAW","SOLO_BOTS_NOT_READY")',adapter)
         self.assertIn('if match.phase=="ACTIVE" and studioSoloRoundStarted',adapter)
