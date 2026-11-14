@@ -10,12 +10,12 @@ on:
       artifact_run_id:
         description: 'Actions run containing candidate or official actual Studio Place ZIP'
         required: true
-        default: '43636299309'
+        default: '43637955662'
         type: string
       artifact_name:
         description: 'EXACT artifact name from the selected run'
         required: true
-        default: 'P0D-CANONICAL-RC80-FB019-ATTACK-SWING'
+        default: 'P0D-CANONICAL-RC80-FB019-REAL-HIT-V2'
         type: string
       strict_evidence:
         description: 'Require actual PC+Android before/after images and review data'
@@ -39,16 +39,16 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           repository: kk051780/toy-wars-factory
-          run-id: ${{ inputs.artifact_run_id || '43636299309' }}
-          name: ${{ inputs.artifact_name || 'P0D-CANONICAL-RC80-FB019-ATTACK-SWING' }}
+          run-id: ${{ inputs.artifact_run_id || '43637955662' }}
+          name: ${{ inputs.artifact_name || 'P0D-CANONICAL-RC80-FB019-REAL-HIT-V2' }}
           github-token: ${{ github.token }}
           path: /tmp/p0d_art_real_place
       - name: Audit real embedded source and submitted Studio picture evidence
         shell: bash
         env:
           ART_STRICT: ${{ inputs.strict_evidence || 'false' }}
-          ART_RUN_ID: ${{ inputs.artifact_run_id || '43636299309' }}
-          ART_NAME: ${{ inputs.artifact_name || 'P0D-CANONICAL-RC80-FB019-ATTACK-SWING' }}
+          ART_RUN_ID: ${{ inputs.artifact_run_id || '43637955662' }}
+          ART_NAME: ${{ inputs.artifact_name || 'P0D-CANONICAL-RC80-FB019-REAL-HIT-V2' }}
         run: |
           set -euo pipefail
           mkdir -p /tmp/p0d_art_report
