@@ -19,7 +19,18 @@ local function chooseTeam(player: Player)
     return player
 end
 -- FB019 RealDamagePopup authoritative server
-local touched,defeated = horde:hit(player,position)
+    -- Original ATTACK cooldown/seq/phase also gates PvE. No second Remote or damage event.
+    if RunService:IsStudio() then
+        local touched,defeated = horde:hit(player,position)
+    end
+    -- Existing server tick is the sole PvE attack authority; no extra game loop.
+    if RunService:IsStudio() and match.phase=="ACTIVE" then
+        -- The same ORIGINAL Game tick drives Studio bots. No second match loop.
+        if not EXPERIMENTAL_FIVE_EGG_MODE then
+            SoloTeamBots.tick()
+        end
+        horde:tick(now)
+    end
 remote.OnServerEvent:Connect(function(player,data)
     return
 end)
@@ -63,6 +74,11 @@ class PrivateLiveHordeTests(unittest.TestCase):
         self.assertIn('game.PrivateServerId ~= ""',patched)
         self.assertIn('workspace:GetAttribute("'+PRIVATE_ATTR+'") == true',patched)
         self.assertIn("match.serial~=startupSerial",patched)
+        self.assertEqual(patched.count('game.PrivateServerId ~= ""'),3)
+        self.assertEqual(patched.count('workspace:GetAttribute("'+PRIVATE_ATTR+'") == true'),3)
+        self.assertIn('if RunService:IsStudio() and not EXPERIMENTAL_FIVE_EGG_MODE then',patched)
+        self.assertIn('horde:tick(now)',patched)
+        self.assertIn('local touched,defeated = horde:hit(',patched)
         self.assertIn("if RunService:IsStudio() or (",patched)
     def test_one_line_anchor_is_supported(self):
         src=GAME_FIXTURE.replace(
