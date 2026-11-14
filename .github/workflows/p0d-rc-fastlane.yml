@@ -2122,3 +2122,41 @@ jobs:
           path: /tmp/p0d_rc80_art_full4/*
           retention-days: 14
           if-no-files-found: error
+
+      - name: 'P0 #431 LIVE coast: 40-part nonStudio opt-in private, 81 Luau, original ART4 80 exact'
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_live_coast_safe.py -v
+          BASE=/tmp/p0d_rc80_fb015_gorogan_s4
+          OUT=/tmp/p0d_live_coast_private81
+          mkdir -p /tmp/p0d_live_coast_out
+          test -f "$BASE/src/server/MapBuilder.luau"
+          python3 -B rc_fastlane/apply_live_coast_safe.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_live_coast_safe.py --base "$BASE" --out "$OUT" --enabled true
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 81
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' src; do
+            /tmp/p0d_new_luau/luau-compile "$src" >/dev/null
+          done
+          echo P0D_LIVE_COAST_PRIVATE81_ALL_LUAU_NATIVE_PASS
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_live_coast_out/P0D_LIVE_COAST_PRIVATE81_STUDIO.rbxlx
+          python3 -B rc_fastlane/verify_live_coast_safe.py --dist "$OUT" --place /tmp/p0d_live_coast_out/P0D_LIVE_COAST_PRIVATE81_STUDIO.rbxlx --receipt /tmp/p0d_live_coast_out/RECEIPT.json
+          python3 -B art_quality/check_art_quality.py --place /tmp/p0d_live_coast_out/P0D_LIVE_COAST_PRIVATE81_STUDIO.rbxlx --out /tmp/p0d_live_coast_out/ART_CHECK_REPORT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path('/tmp/p0d_live_coast_out/ART_CHECK_REPORT.json').read_text())
+          assert x['source']['source_gate']=='PASS',x['source']['source_violations']
+          assert x['source']['script_count']==81
+          assert x['owner_accepted'] is False and x['art_decision']=='ART_NO_GO'
+          print('P0D_LIVE_COAST_SOURCE_PASS_LIVE_ART_AND_MOBILE_NO_GO')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        with:
+          name: P0D-LIVE-COAST-PRIVATE81-NOT-PUBLISHED
+          path: /tmp/p0d_live_coast_out/*
+          retention-days: 7
+          if-no-files-found: error
