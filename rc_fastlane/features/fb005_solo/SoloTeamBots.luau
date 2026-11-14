@@ -119,8 +119,29 @@ local function respawn(bot)
     if bot.model and bot.model.Parent then bot.model:Destroy() end
     local fresh=makeActor(bot.id,bot.team,bot.style,bot.spawn)
     for key,value in pairs(fresh) do bot[key]=value end
+    bot.deadUntil=0
+    bot.carry=nil
+    bot.carryVisual=nil
+end
+local function showCarriedEgg(bot, yes)
+    if bot.carryVisual then bot.carryVisual:Destroy();bot.carryVisual=nil end
+    if not yes or not bot.model or not bot.model.Parent then return end
+    local shell=Instance.new("Part")
+    shell.Name="VISUAL_CARRIED_ENEMY_EGG"
+    shell.Shape=Enum.PartType.Ball
+    shell.Size=Vector3.new(1.3,1.7,1.3)
+    shell.Color=Color3.fromRGB(255,219,125)
+    shell.Material=Enum.Material.Glass
+    shell.CFrame=bot.model.Torso.CFrame*CFrame.new(0,1.1,-1.3)
+    shell.CanCollide=false;shell.CanTouch=false;shell.CanQuery=false
+    shell.Massless=true
+    shell.Parent=bot.model
+    local weld=Instance.new("WeldConstraint")
+    weld.Part0=bot.model.Torso;weld.Part1=shell;weld.Parent=shell
+    bot.carryVisual=shell
 end
 local function clearCarry(bot)
+    showCarriedEgg(bot,false)
     if bot.carry then
         if callbacks then callbacks.drop(bot,bot.carry) end
         bot.carry=nil
@@ -181,11 +202,14 @@ local function pathTo(bot,goal,now)
     local token=epoch
     bot.planning=true
     task.spawn(function()
-        local path=PathfindingService:CreatePath({
-            AgentRadius=2,AgentHeight=5,AgentCanJump=true,WaypointSpacing=7})
-        local ok=pcall(function() path:ComputeAsync(bot.root.Position,goal) end)
+        local ok,path=pcall(function()
+            local p=PathfindingService:CreatePath({
+                AgentRadius=2,AgentHeight=5,AgentCanJump=true,WaypointSpacing=7})
+            p:ComputeAsync(bot.root.Position,goal)
+            return p
+        end)
         if active and epoch==token and alive(bot) then
-            if ok and path.Status==Enum.PathStatus.Success then
+            if ok and path and path.Status==Enum.PathStatus.Success then
                 bot.path=path:GetWaypoints()
                 bot.pathIndex=math.min(2,#bot.path)
             else
@@ -267,6 +291,7 @@ function Bot.tick(now)
                 and (bot.root.Position-map.teams[enemy].egg.Position).Magnitude<=7 then
                 if callbacks.steal(bot,enemy) then
                     bot.carry=enemy
+                    showCarriedEgg(bot,true)
                     bot.path={}
                     bot.nextRepath=0
                 end
@@ -275,6 +300,7 @@ function Bot.tick(now)
                 if callbacks.deposit(bot,bot.team,bot.carry) then
                     if not active then return end
                     bot.carry=nil
+                    showCarriedEgg(bot,false)
                     bot.path={}
                     bot.nextRepath=0
                 end
