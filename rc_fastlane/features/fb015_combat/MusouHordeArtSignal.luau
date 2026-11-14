@@ -267,7 +267,7 @@ function Horde:hit(origin: Vector3,facing: Vector3,damage: number,now: number,ig
                     -- Unlike replicated Attributes it cannot coalesce quick hits.
                     -- This Remote has NO OnServerEvent listener / hit authority.
                     m.artHitSeq=(m.artHitSeq or 0)+1
-                    self.artCue:FireAllClients(m.pos,origin,m.hp<=0,m.artHitSeq,self.round)
+                    self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)
                     -- A normal enemy loses its immediate melee response when
                     -- hit. Elite warning remains readable and uninterruptible.
                     if not m.elite then
