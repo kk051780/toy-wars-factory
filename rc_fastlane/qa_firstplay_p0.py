@@ -423,9 +423,188 @@ def patch_bot(text: str) -> str:
         return
     end
     pathTo(bot,goal,now)""")
-    assert 'elseif now-bot.lastProgressAt>=5 then' in text
-    assert 'bot.hum:MoveTo(position+detour)' in text
-    assert text.count('lastProgressPos=')>=4
+    # REVIEW #400: 8 source QA issues. Make the detour persistent for
+    # 2.6 seconds, detect *toward-egg* progress in XZ only, and never push an
+    # arrived bot away. Keep logical path leases separate from real outstanding
+    # ComputeAsync workers (which Roblox cannot cancel).
+    text=one(text,
+        "local inflightPaths=0",
+        """local inflightPaths=0
+local MAX_PENDING_PATH_TASKS=10
+local pendingPathTasks=0""")
+    text=one(text,
+        """lastProgressPos=nil,lastProgressAt=0,unstuckAttempts=0}""",
+        """lastProgressDistance=nil,lastProgressAt=0,unstuckAttempts=0,
+        detourGoal=nil,detourUntil=0,pathLease=nil}""")
+    text=one(text,
+        "local function invalidatePath(bot)",
+        """-- Logical slot released at invalidation, never double-released by
+-- a late ComputeAsync completion. The raw worker count stays bounded until
+-- Roblox actually resumes its blocking computation.
+local function releasePathLease(bot)
+    local lease=bot.pathLease
+    if lease and lease.held then
+        lease.held=false
+        inflightPaths=math.max(0,inflightPaths-1)
+    end
+    bot.pathLease=nil
+end
+local function invalidatePath(bot)""")
+    text=one(text,
+        """local function invalidatePath(bot)
+    -- PathfindingService:ComputeAsync yields; old callbacks must never claim""",
+        """local function invalidatePath(bot)
+    releasePathLease(bot)
+    -- PathfindingService:ComputeAsync yields; old callbacks must never claim""")
+    text=one(text,
+        """local function respawn(bot)
+    local nextGeneration=bot.pathGeneration+1""",
+        """local function respawn(bot)
+    releasePathLease(bot)
+    local nextGeneration=bot.pathGeneration+1""")
+    text=one(text,
+        """    for _,bot in ipairs(bots) do
+        clearCarry(bot)""",
+        """    for _,bot in ipairs(bots) do
+        releasePathLease(bot)
+        clearCarry(bot)""")
+    text=one(text,
+        """        invalidatePath(bot)
+        -- Exponential resource cost is avoided via bounded in-flight workers.
+        bot.nextRepath=now+REPATH_SECONDS""",
+        """        invalidatePath(bot)
+        bot.lastGoal=goal
+        -- Exponential resource cost is avoided via bounded in-flight workers.
+        bot.nextRepath=now+REPATH_SECONDS""")
+    text=one(text,
+        """    if bot.planning or now<bot.nextRepath
+        or inflightPaths>=MAX_INFLIGHT_PATHS then return end
+    bot.planningSince=now
+    inflightPaths+=1
+    bot.nextRepath=now+REPATH_SECONDS""",
+        """    if bot.planning or now<bot.nextRepath
+        or inflightPaths>=MAX_INFLIGHT_PATHS
+        or pendingPathTasks>=MAX_PENDING_PATH_TASKS then return end
+    bot.planningSince=now
+    local lease={held=true}
+    bot.pathLease=lease
+    inflightPaths+=1
+    pendingPathTasks+=1
+    bot.nextRepath=now+REPATH_SECONDS""")
+    text=one(text,
+        """        inflightPaths=math.max(0,inflightPaths-1)
+        -- Both the global match and this particular bot/goal must still be""",
+        """        pendingPathTasks=math.max(0,pendingPathTasks-1)
+        if lease.held then
+            lease.held=false
+            inflightPaths=math.max(0,inflightPaths-1)
+        end
+        if bot.pathLease==lease then bot.pathLease=nil end
+        -- Both the global match and this particular bot/goal must still be""")
+    text=one(text,
+        """    if bot.lastGoal==nil or (bot.lastGoal-goal).Magnitude>8 then
+        invalidatePath(bot)
+        bot.lastProgressPos=bot.root.Position
+        bot.lastProgressAt=now
+        bot.unstuckAttempts=0
+    end
+    bot.lastGoal=goal
+    local position=bot.root.Position
+    if bot.lastProgressPos==nil then
+        bot.lastProgressPos=position
+        bot.lastProgressAt=now
+    elseif (position-bot.lastProgressPos).Magnitude>=3.5 then
+        bot.lastProgressPos=position
+        bot.lastProgressAt=now
+        bot.unstuckAttempts=0
+    elseif now-bot.lastProgressAt>=5 then
+        bot.lastProgressPos=position
+        bot.lastProgressAt=now
+        bot.unstuckAttempts=((bot.unstuckAttempts or 0)%4)+1
+        -- End any stalled ComputeAsync candidate; it may finish too late.
+        invalidatePath(bot)
+        -- invalidatePath clears lastGoal for stale async callbacks; restore
+        -- the same valid target so retry counts and alternating sides persist.
+        bot.lastGoal=goal
+        local side=if bot.unstuckAttempts%2==0 then -1 else 1
+        local toGoal=goal-position
+        local lateral=Vector3.new(-toGoal.Z,0,toGoal.X)
+        local detour=if lateral.Magnitude>.2 then
+            lateral.Unit*(side*7) else Vector3.new(side*7,0,0)
+        bot.hum.Jump=true
+        bot.hum:MoveTo(position+detour)
+        return
+    end
+    pathTo(bot,goal,now)""",
+        """    if bot.lastGoal==nil or (bot.lastGoal-goal).Magnitude>8 then
+        invalidatePath(bot)
+        bot.detourGoal=nil
+        bot.detourUntil=0
+        bot.lastProgressDistance=nil
+        bot.lastProgressAt=now
+        bot.unstuckAttempts=0
+    end
+    bot.lastGoal=goal
+    local position=bot.root.Position
+    local flatDistance=Vector3.new(position.X-goal.X,0,position.Z-goal.Z).Magnitude
+    -- Guard stationary defenders already at their intended position.
+    if flatDistance<=4.5 then
+        bot.detourGoal=nil
+        bot.detourUntil=0
+        bot.lastProgressDistance=flatDistance
+        bot.lastProgressAt=now
+        bot.unstuckAttempts=0
+        bot.hum:MoveTo(position)
+        return
+    end
+    -- A sidestep must not be overwritten on the very next 0.5s tick.
+    -- Hold it until within 2.5stud or max 2.6s; no teleport is permitted.
+    -- Any real improvement toward the egg/goal ends a detour immediately.
+    if bot.detourGoal and bot.lastProgressDistance~=nil
+        and flatDistance<=bot.lastProgressDistance-2.5 then
+        bot.detourGoal=nil
+        bot.detourUntil=0
+    end
+    if bot.detourGoal then
+        local gap=Vector3.new(position.X-bot.detourGoal.X,0,
+            position.Z-bot.detourGoal.Z).Magnitude
+        if now<bot.detourUntil and gap>2.5 then
+            bot.hum:MoveTo(bot.detourGoal)
+            return
+        end
+        bot.detourGoal=nil
+        bot.detourUntil=0
+    end
+    if bot.lastProgressDistance==nil
+        or flatDistance<=bot.lastProgressDistance-2.5 then
+        bot.lastProgressDistance=flatDistance
+        bot.lastProgressAt=now
+        bot.unstuckAttempts=0
+    elseif now-bot.lastProgressAt>=5 then
+        bot.lastProgressDistance=flatDistance
+        bot.lastProgressAt=now
+        bot.unstuckAttempts=((bot.unstuckAttempts or 0)%4)+1
+        -- Revoke stale async output; preserve the destination and attempts.
+        invalidatePath(bot)
+        bot.lastGoal=goal
+        local side=if bot.unstuckAttempts%2==0 then -1 else 1
+        local toGoal=goal-position
+        local lateral=Vector3.new(-toGoal.Z,0,toGoal.X)
+        local detour=if lateral.Magnitude>.2 then
+            lateral.Unit*(side*7) else Vector3.new(side*7,0,0)
+        bot.detourGoal=position+detour
+        bot.detourUntil=now+2.6
+        bot.hum.Jump=true
+        bot.hum:MoveTo(bot.detourGoal)
+        return
+    end
+    pathTo(bot,goal,now)""")
+    assert 'MAX_PENDING_PATH_TASKS=10' in text
+    assert 'releasePathLease(bot)' in text
+    assert 'now<bot.detourUntil and gap>2.5' in text
+    assert 'flatDistance<=4.5 then' in text
+    assert 'flatDistance<=bot.lastProgressDistance-2.5' in text
+    assert 'bot.hum:MoveTo(bot.detourGoal)' in text
     assert "if eligible~=1 then Bot.stop();return end" in text
     assert "if eligible~=1 then return false end" in text
     assert text.count("local team=p.Team")>=2
