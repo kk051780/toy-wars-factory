@@ -15,7 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "features/owner372_art/FB015CharacterArt.client.luau"
 DEST = "client/FB015CharacterArt.client.luau"
-BLOB = "b9b2efbdbdf3cb9e1244826a9b68a4a8f45b8398"
+BLOB = "2ff10db1a4171be9abdc276a43dd21b2401da2d8"
 FEATURE = "FB015_GOROGAN_BEAST_VISUAL_V2"
 
 
@@ -41,6 +41,7 @@ def source_safety() -> bytes:
         'RUNESTONE_TITAN', 'WeldConstraint', 'MAX_BEASTS = 2',
         'CanCollide = false', 'CanQuery = false',
         'MAX_DECOR_PARTS = 64', 'MAX_BEASTS = 2',
+        'partCount - ownParts', 'activeBeasts - 1', 'seen[model] = nil',
     ):
         assert token in src, ("MISSING_ART_CONTRACT", token)
     for bad in ("FireServer(", "RemoteEvent", "OnServerEvent:Connect(",

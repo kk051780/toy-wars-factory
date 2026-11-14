@@ -38,6 +38,9 @@ class FB015ArtSource(unittest.TestCase):
         self.assertNotIn("MUSOU_ELITE_TELEGRAPH",s)
         self.assertIn("humanoid.HealthChanged:Connect",s)
         self.assertIn("MAX_DECOR_PARTS = 64",s)
+        self.assertIn("partCount - ownParts",s)
+        self.assertIn("activeBeasts - 1",s)
+        self.assertIn("seen[model] = nil",s)
         self.assertNotIn("FireServer(",s)
 
 

@@ -9,7 +9,7 @@ if not RunService:IsStudio() then return end
 
 local MAX_BEASTS = 2
 local MAX_DECOR_PARTS = 64
-local beasts = 0
+local activeBeasts = 0
 local partCount = 0
 local seen: {[Model]: boolean} = {}
 
@@ -65,6 +65,7 @@ local function attachBeast(model: Model): boolean
         or not head or not head:IsA("BasePart")
         or not humanoid then return false end
 
+    local partCountBefore = partCount
     local art = Instance.new("Folder")
     art.Name = "FB015_BEAST_ART_V2"
     art.Parent = model
@@ -149,12 +150,17 @@ local function attachBeast(model: Model): boolean
         end
         oldHealth = value
     end)
+    local ownParts = partCount - partCountBefore
     model.Destroying:Connect(function()
         damaged:Disconnect()
         pulse:Cancel()
+        -- Release only this beast's visual budget, not the other active beast.
+        partCount = math.max(0, partCount - ownParts)
+        activeBeasts = math.max(0, activeBeasts - 1)
+        seen[model] = nil
     end)
 
-    art:SetAttribute("DecorPartCount", partCount)
+    art:SetAttribute("DecorPartCount", partCount - partCountBefore)
     art:SetAttribute("VisualQA", "NOT_TESTED")
     model:SetAttribute("FB015_ArtSilhouette", "RUNESTONE_TITAN")
     return true
@@ -165,12 +171,12 @@ local function prepare(instance: Instance)
         return
     end
     local model = instance :: Model
-    if seen[model] or beasts >= MAX_BEASTS then return end
+    if seen[model] or activeBeasts >= MAX_BEASTS then return end
     -- GoroganRigDriver constructs complete head/torso before parenting the rig.
     local ok, result = pcall(attachBeast, model)
     if ok and result == true then
         seen[model] = true
-        beasts += 1
+        activeBeasts += 1
     elseif not ok then
         warn("FB015_GOROGAN_VISUAL_SAFE_SKIP", result)
     end
