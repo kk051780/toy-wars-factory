@@ -1025,6 +1025,7 @@ jobs:
           /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau | tee /tmp/p0d_combat_native14.log
           grep -Fx P0D_FB015_REAL_CLIENT_CUE_NATIVE_53_ORDERED_EPOCH_CASES_PASS /tmp/p0d_combat_native14.log
           grep -Fx P0D_FB015_REAL_CLIENT_EPOCH_LAG_NATIVE_PASS /tmp/p0d_combat_native14.log
+          grep -Fx P0D_FB015_REAL_PENDING_EPOCH_NATIVE_PASS /tmp/p0d_combat_native14.log
           python3 -B rc_fastlane/features/fb015_combat/generate_native_history_policy.py --out /tmp/P0D_FB015_ACTUAL_HISTORY.luau
           /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_HISTORY.luau >/dev/null
           /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_HISTORY.luau | tee /tmp/p0d_combat_history.log
@@ -1064,7 +1065,7 @@ jobs:
           assert sp['art_combat']['owner_fun']=='ART_NO_GO'
           assert fp['feature_flags']['ART_COMBAT_SLASH_READONLY_V1'] is True
           candidate=(dist/'src/client/ArtCombatSlash.client.luau').read_bytes()
-          assert hashlib.sha1(b'blob '+str(len(candidate)).encode()+bytes([0])+candidate).hexdigest()=='17c6a9a3404e913b279b348e3b981ac61bfd1b24'
+          assert hashlib.sha1(b'blob '+str(len(candidate)).encode()+bytes([0])+candidate).hexdigest()=='5dcc59469f25f636125032ac802bce2254c2cec6'
           old=pathlib.Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx')
           digest=hashlib.sha256(place.read_bytes()).hexdigest()
           receipt={
@@ -1072,8 +1073,8 @@ jobs:
               'private_candidate_sha256':digest,
               'private_candidate_rbxlx_bytes':place.stat().st_size,
               'source_count':len(scripts),
-              'source_gitblob':'17c6a9a3404e913b279b348e3b981ac61bfd1b24',
-              'horde_signal_blob':'a2d07936bd9fe5bdf3630498c39d61d5a8560d99',
+              'source_gitblob':'5dcc59469f25f636125032ac802bce2254c2cec6',
+              'horde_signal_blob':'48e46b19951143ad63f692d12aa5fc0e8bdeed36',
               'original_rc66_unchanged_scripts':65,
               'single_original_horde_cosmetic_cue_patch_only':True,
               'baseline_rc66_place_bytes':old.stat().st_size,
@@ -1135,8 +1136,8 @@ jobs:
           assert flags['feature_flags']['ART_COMBAT_SLASH_READONLY_V1'] is True
           assert flags['feature_flags']['ART_MINION_THREE_SILHOUETTES_V1'] is True
           assert pins['server/ArtMinionSilhouette.server.luau']=='4d0aac99d670ca4364a7368255d1edc63d28b3a0'
-          assert pins['client/ArtCombatSlash.client.luau']=='17c6a9a3404e913b279b348e3b981ac61bfd1b24'
-          assert pins['server/MusouHorde.luau']=='a2d07936bd9fe5bdf3630498c39d61d5a8560d99'
+          assert pins['client/ArtCombatSlash.client.luau']=='5dcc59469f25f636125032ac802bce2254c2cec6'
+          assert pins['server/MusouHorde.luau']=='48e46b19951143ad63f692d12aa5fc0e8bdeed36'
           baseline=Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx')
           receipt={
               'result':'P0D_FB015_MINION_COMBAT_PRIVATE68_BOTH_SOURCE_EXACT_PASS',
