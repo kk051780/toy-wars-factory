@@ -16,7 +16,9 @@ local horde = arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT")
 
 local FEATURE = "P0D_ART_MOTION_CLIENT_V1"
 local MAX_MODELS = 16
-local MAX_ACTIVE_COSMETIC_PARTS = 56
+-- 3 knights x 10 + 3 wraiths x 10 + 2 brutes x 11 + 1 elite x 10
+-- = 92 existing accessories. 104 gives bounded headroom for replication.
+local MAX_ACTIVE_COSMETIC_PARTS = 104
 local VIEW_RANGE_STUDS = 105
 local ANIM_STEP = 1 / 25
 local connected = {}
@@ -32,18 +34,37 @@ local localArt = Instance.new("Folder")
 localArt.Name = "P0D_FB015_MOTION_COSMETIC_CLIENT_ONLY"
 localArt.Parent = Workspace
 
--- These names refer to the original #374 generated art. We DO NOT recreate
--- geometry or overlap #379/#381 slash particles or #374's hit sparks.
+-- All 41 named pieces across the four original #374 character silhouettes.
+-- Entire rigs must follow moving NPCs, not only selected props; client clones
+-- preserve the exact server silhouette and add zero new gameplay geometry.
+-- Do not overlap #379/#381 slash particles or #374's hit sparks.
 local watchedParts = {
-    KNIGHT = {"ART_KNIGHT_CAPE","ART_KNIGHT_SPEAR_SHAFT",
-              "ART_KNIGHT_SPEAR_TIP","ART_KNIGHT_SHIELD"},
-    WRAITH = {"ART_WRAITH_SHROUD","ART_WRAITH_ORB",
-              "ART_WRAITH_SHOULDER_FIN_-1","ART_WRAITH_SHOULDER_FIN_1"},
-    BRUTE = {"ART_BRUTE_BACK_FUR","ART_BRUTE_MAUL_HANDLE",
-             "ART_BRUTE_MAUL_HEAD","ART_BRUTE_SHOULDER_-1",
-             "ART_BRUTE_SHOULDER_1"},
-    ELITE = {"ART_ELITE_BACK_BANNER","ART_ELITE_GAUNTLET_-1",
-             "ART_ELITE_GAUNTLET_1"},
+    KNIGHT = {
+        "ART_KNIGHT_CHEST", "ART_KNIGHT_HELMET", "ART_KNIGHT_CREST",
+        "ART_KNIGHT_PAULDRON_-1", "ART_KNIGHT_PAULDRON_1",
+        "ART_KNIGHT_SHIELD", "ART_KNIGHT_SHIELD_MARK",
+        "ART_KNIGHT_SPEAR_SHAFT", "ART_KNIGHT_SPEAR_TIP", "ART_KNIGHT_CAPE",
+    },
+    WRAITH = {
+        "ART_WRAITH_HOOD", "ART_WRAITH_COWL", "ART_WRAITH_FACE_VEIL",
+        "ART_WRAITH_CRYSTAL_EYE_-1", "ART_WRAITH_CRYSTAL_EYE_1",
+        "ART_WRAITH_SHOULDER_FIN_-1", "ART_WRAITH_SHOULDER_FIN_1",
+        "ART_WRAITH_CHEST_SIGIL", "ART_WRAITH_ORB", "ART_WRAITH_SHROUD",
+    },
+    BRUTE = {
+        "ART_BRUTE_CHEST_PLATE", "ART_BRUTE_JAW",
+        "ART_BRUTE_TUSK_-1", "ART_BRUTE_TUSK_1",
+        "ART_BRUTE_HORN_-1", "ART_BRUTE_HORN_1",
+        "ART_BRUTE_SHOULDER_-1", "ART_BRUTE_SHOULDER_1",
+        "ART_BRUTE_MAUL_HANDLE", "ART_BRUTE_MAUL_HEAD", "ART_BRUTE_BACK_FUR",
+    },
+    ELITE = {
+        "ART_ELITE_CHEST_ARMOUR", "ART_ELITE_MASK",
+        "ART_ELITE_CURVED_HORN_-1", "ART_ELITE_CURVED_HORN_1",
+        "ART_ELITE_SHOULDER_SPIKE_-1", "ART_ELITE_SHOULDER_SPIKE_1",
+        "ART_ELITE_GAUNTLET_-1", "ART_ELITE_GAUNTLET_1",
+        "ART_ELITE_BACK_BANNER", "ART_ELITE_WAR_CORE",
+    },
 }
 
 local function isMinion(model)
@@ -116,6 +137,14 @@ local function tryEquip(model)
         lastHit=false, phase=(count * 1.19) + (#model.Name * .17),
     }
     activeParts += #attachments
+    -- All server-authored ART_ parts are anchored at their creation CFrame.
+    -- Hide originals immediately after copying the COMPLETE figure, not just
+    -- weapons, or the helmet/chest/armor becomes an immobile spawn ghost.
+    for _,visual in ipairs(attachments) do
+        if visual.original.Parent then
+            visual.original.LocalTransparencyModifier = 1
+        end
+    end
     return true
 end
 
@@ -257,9 +286,13 @@ pulse = RunService.Heartbeat:Connect(function(dt)
                     end
                 end
             else
+                -- IMPORTANT: hiding out-of-range clones must never make the
+                -- server's anchored originals visible back at their SPAWN.
+                -- Original pieces may now be hundreds of studs away from the
+                -- moving NPC; only drop() restores them during cleanup.
                 for _,visual in ipairs(entry.attachments) do
                     if visual.original.Parent then
-                        visual.original.LocalTransparencyModifier = visual.initialModifier
+                        visual.original.LocalTransparencyModifier = 1
                     end
                     if visual.copy.Parent then visual.copy.Transparency = 1 end
                 end

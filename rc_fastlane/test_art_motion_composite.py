@@ -208,7 +208,7 @@ class Motion69Tests(unittest.TestCase):
     def test_manifest_and_motion_security_guards(self):
         self.assertEqual(motion.blob(motion.AUTHOR.read_bytes()),motion.PIN)
         data=motion.AUTHOR.read_text("utf8")
-        for token in ("MAX_MODELS = 16","MAX_ACTIVE_COSMETIC_PARTS = 56",
+        for token in ("MAX_MODELS = 16","MAX_ACTIVE_COSMETIC_PARTS = 104",
                       "VIEW_RANGE_STUDS = 105","ANIM_STEP = 1 / 25",
                       "P0D_ART_MINION_V1","model.Destroying", "script.Destroying"):
             self.assertIn(token,data)

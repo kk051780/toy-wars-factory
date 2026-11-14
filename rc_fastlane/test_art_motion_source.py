@@ -44,7 +44,7 @@ class ArtMotionSourceContract(unittest.TestCase):
     def test_animation_budget_and_spawn_reset(self):
         s = self.motion
         for term in (
-            "MAX_MODELS = 16", "MAX_ACTIVE_COSMETIC_PARTS = 56",
+            "MAX_MODELS = 16", "MAX_ACTIVE_COSMETIC_PARTS = 104",
             "VIEW_RANGE_STUDS = 105", "ANIM_STEP = 1 / 25",
             "horde.ChildAdded", "model.Destroying", "script.Destroying",
             "core.CFrame:ToObjectSpace(source.CFrame)",
