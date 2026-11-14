@@ -61,8 +61,15 @@ def patch_game(src:str)->str:
     src=patch_region(src,"local function resetRound()","local function chooseTeam(",reset)
 
     def role(body:str)->str:
-        return one(body,'    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end\n',
+        # The wide body also contains other handlers with their own replay
+        # ceilings. Split at applyRole's first function-closing end so ONLY
+        # spectator ROLE authority changes, never ATTACK/TRAP/MAGIC logic.
+        assert '\nend\n' in body, "APPLY_ROLE_FIRST_END_MISSING"
+        role_only,others=body.split('\nend\n',1)
+        role_only=one(role_only,
+            '    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end\n',
             ROLE_GUARD+'    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end\n')
+        return role_only+'\nend\n'+others
     src=patch_region(src,"local function applyRole(player: Player, data)",
         "remote.OnServerEvent:Connect(function(player: Player, data)",role)
 
