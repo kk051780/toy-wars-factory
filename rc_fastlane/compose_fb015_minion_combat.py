@@ -21,8 +21,8 @@ SLASH = "ART_COMBAT_SLASH_READONLY_V1"
 AUTHOR = ROOT / "features/art_minion/MinionArtSilhouette.server.luau"
 DEST = "server/ArtMinionSilhouette.server.luau"
 PIN = "ed5cd56789abc4a7bc8ee3a44b8982aae4f3ff62"
-HIT_CUE_BLOB = "acf72809877595921ba2f45f9e4d0220a6338853"
-SLASH_CLIENT_BLOB = "7650d205ecba6cf0bccb50859407633227c57aa1"
+HIT_CUE_BLOB = "6c613406c4c72be31b2a5c38177d54f1af78e617"
+SLASH_CLIENT_BLOB = "c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba"
 BASE = 67
 
 def require(ok, reason):
