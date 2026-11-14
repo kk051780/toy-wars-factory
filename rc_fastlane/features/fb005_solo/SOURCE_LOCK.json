@@ -6,7 +6,7 @@
   "base_official_rc_sha": "43543378f976374e2cac2d68b3136ac355d3191b",
   "adapter": {
     "path": "rc_fastlane/apply_fb005_solo_bots.py",
-    "source_gitblob": "08287fb23cb880c845f905f45f89d8ef93e22eee"
+    "source_gitblob": "b83bb1c7df3221ebedda1bcfd244963e2ed1d972"
   },
   "authored_module": {
     "path": "rc_fastlane/features/fb005_solo/SoloTeamBots.luau",
@@ -38,7 +38,8 @@
     "out of scope H2 five-egg bot rules",
     "do not merge wholesale",
     "async ComputeAsync results discarded after respawn, egg goal change or global bot stop",
-    "stale pathfinder never unlocks a newer plan"
+    "stale pathfinder never unlocks a newer plan",
+    "Bot.start false return triggers DRAW/SOLO_BOTS_NOT_READY instead of silently empty solo match"
   ],
   "verification": {
     "source_regression": "CI_REQUIRED",
@@ -48,8 +49,9 @@
     "engine_studio_two_clients": "NOT_TESTED",
     "mobile_android": "NOT_TESTED",
     "human_fun": "FUN_NO_GO",
-    "path_lifecycle_qa": "SOURCE_TEST_REQUIRED"
+    "path_lifecycle_qa": "SOURCE_TEST_REQUIRED",
+    "solo_start_false_regression": "CI_REQUIRED"
   },
   "roll_back": "omit post-official FB005 adapter and rebuild previous66 locked source",
-  "notes": "This is not a finished AI feature; physical navigation, scoring and human combat still need real Studio acceptance. Must reconcile same Game edits with #363 READY and #376 lobby. QA child changes only bot navigation lifespan, no new authority/score rules. Parent PR #378 author should select these deltas and rerun full pinned same-HEAD build."
+  "notes": "This is not a finished AI feature; physical navigation, scoring and human combat still need real Studio acceptance. Must reconcile same Game edits with #363 READY and #376 lobby. QA child changes only bot navigation lifespan, no new authority/score rules. Parent PR #378 author should select these deltas and rerun full pinned same-HEAD build. Hardened original Game start callback: failed pcall and false result both exit active solo instead of leaving player without AI."
 }
