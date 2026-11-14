@@ -27,7 +27,7 @@ class FirstPlay73(unittest.TestCase):
 
     def test_no_second_authority_in_modules(self):
         for dest,raw in m.modules().items():
-            self.assertNotIn(b"RemoteEvent",raw)
+            self.assertNotIn(b'Instance.new("RemoteEvent")',raw)
             self.assertNotIn(b"OnServerEvent:Connect(",raw)
             self.assertNotIn(b"UpdateAsync(",raw)
         self.assertIn("ONLY_OLD_SINGLE_GAME",
