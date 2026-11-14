@@ -2122,3 +2122,70 @@ jobs:
           path: /tmp/p0d_rc80_art_full4/*
           retention-days: 14
           if-no-files-found: error
+
+      - name: 'P0 #431: first LIVE combat VFX layer, touch-bounded and real-hit-only (PREP)'
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
+          BASE=/tmp/p0d_rc80_fb015_gorogan_s4
+          DIST=/tmp/p0d_p431_live_combat_fx_candidate_dist
+          OUT=/tmp/p0d_p431_live_combat_fx_candidate
+          mkdir -p "$OUT"
+          python3 -B -m unittest discover -s rc_fastlane -p 'test_fb015_live_combat_fx.py' -v
+          python3 -B rc_fastlane/apply_fb015_live_combat_fx.py --base "$BASE" --out "$DIST" --enabled false
+          test ! -e "$DIST"
+          python3 -B rc_fastlane/apply_fb015_live_combat_fx.py --base "$BASE" --out "$DIST" --enabled true
+          test "$(find "$DIST/src" -name '*.luau' | wc -l)" -eq 80
+          find "$DIST/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$DIST/default.project.json" \
+            -o "$OUT/P0D_P431_LIVE_COMBAT_FX_CANDIDATE_STUDIO.rbxlx"
+          python3 -B rc_fastlane/verify_fb015_live_combat_fx.py \
+            --dist "$DIST" \
+            --place "$OUT/P0D_P431_LIVE_COMBAT_FX_CANDIDATE_STUDIO.rbxlx" \
+            --receipt "$OUT/LIVE_COMBAT_FX_SOURCE_RECEIPT.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$OUT/P0D_P431_LIVE_COMBAT_FX_CANDIDATE_STUDIO.rbxlx" \
+            --out "$OUT/ART_CHECK_REPORT.json"
+          python3 -B art_quality/check_live_art_parity.py \
+            --place "$OUT/P0D_P431_LIVE_COMBAT_FX_CANDIDATE_STUDIO.rbxlx" \
+            --out "$OUT/LIVE_ART_PARITY_REPORT.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          r=Path('/tmp/p0d_p431_live_combat_fx_candidate')
+          receipt=json.loads((r/'LIVE_COMBAT_FX_SOURCE_RECEIPT.json').read_text())
+          report=json.loads((r/'ART_CHECK_REPORT.json').read_text())
+          live=json.loads((r/'LIVE_ART_PARITY_REPORT.json').read_text())
+          place=r/'P0D_P431_LIVE_COMBAT_FX_CANDIDATE_STUDIO.rbxlx'
+          assert receipt['source_count']==80 and receipt['other79_byte_exact']
+          assert receipt['place_bytes']==place.stat().st_size
+          assert receipt['place_sha256']==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert receipt['place_sha256']==report['source']['place_sha256']
+          assert report['source']['source_gate']=='PASS'
+          assert receipt['live_enabled_candidate_layers']==1
+          assert receipt['studio_pc']=='NOT_TESTED'
+          assert receipt['android_real_15min']=='NOT_TESTED'
+          assert receipt['owner_accepted'] is False
+          assert report['art_decision']=='ART_NO_GO'
+          assert live['source_gate']=='PASS' and live['script_count']==80
+          assert live['top_studio_only_count']==6,('EXPECTED_SIX_REMAINING_ART_BLOCKERS',live['top_studio_only_count'])
+          assert sum(x['name']=='P0DConfirmedCombatFX' and x['source_guard']!='TOP_STUDIO_ONLY'
+                     for x in live['visual_sources'])==1,'REAL_FX_NONSTUDIO_SOURCE_NOT_ENABLED'
+          assert live['live_art_decision']=='LIVE_ART_NO_GO' and live['owner_accepted'] is False
+          receipt['candidate_test_checkout_sha']=os.environ['GITHUB_SHA']
+          receipt['candidate_feature_branch']=os.environ.get('GITHUB_HEAD_REF','')
+          (r/'LIVE_COMBAT_FX_SOURCE_RECEIPT.json').write_text(
+              json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_P431_ONE_LAYER_LIVE_ART_SOURCE80_ALL_NATIVE_ROJO_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        with:
+          name: P0D-P431-LIVE-COMBAT-FX-ANDROID-BOUNDED-PREP
+          path: /tmp/p0d_p431_live_combat_fx_candidate/*
+          retention-days: 14
+          if-no-files-found: error
