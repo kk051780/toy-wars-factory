@@ -178,6 +178,25 @@ def evidence_audit(manifest_file: Path | None, root: Path | None, place_sha: str
             violations.append("MISSING_FPS_P10:" + dev)
         elif value < FPS_FLOOR[dev]:
             violations.append("FPS_P10_BELOW_FLOOR:" + dev)
+        # A source- or desktop-only visual grade cannot override real mobile playability.
+        median = item.get("fps_median") if isinstance(item, dict) else None
+        if type(median) not in (int, float) or not (0 < median <= 300):
+            violations.append("MISSING_FPS_MEDIAN:" + dev)
+        elif dev == "android" and median < 30:
+            violations.append("MOBILE_MEDIAN_FPS_BELOW_30")
+        minutes = item.get("session_minutes") if isinstance(item, dict) else None
+        if type(minutes) not in (int, float) or minutes < 15:
+            violations.append("MISSING_15_MIN_THERMAL_PLAYTEST:" + dev)
+        if item.get("oom_crash_free") is not True:
+            violations.append("CRASH_OR_OOM_NOT_CLEARED:" + dev)
+        if dev == "android":
+            drop = item.get("warm_fps_drop_fraction")
+            if type(drop) not in (int, float) or not (0 <= drop <= 1):
+                violations.append("MISSING_MOBILE_THERMAL_DROP")
+            elif drop > 0.20:
+                violations.append("MOBILE_WARM_FPS_DROP_OVER_20PCT")
+            if not item.get("memory_mb_peak"):
+                violations.append("MISSING_MOBILE_PEAK_MEMORY")
     if manifest.get("critical_visual_blockers") != []:
         violations.append("CRITICAL_BLOCKERS_NOT_CLEARED")
     if not manifest.get("human_reviewer"):
