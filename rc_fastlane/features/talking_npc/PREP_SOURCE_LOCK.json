@@ -1,0 +1,33 @@
+{
+  "schema": "P0D_TALKING_NPC_PREP_SOURCE_LOCK_V1",
+  "feature_id": "P0D-TALKING-NPC-V1",
+  "type": "ISOLATED_PREP_SOURCE_ONLY",
+  "initial_base_rc": "44b2df61e8452790dc491466d3efbab5e7fb2e8e",
+  "canonical_rc_unmodified": true,
+  "runtime_enabled_in_rc": false,
+  "files": {
+    "TalkingNPCDirector.luau": "910f4bde9bb588c8d97bf7fb1b71cdf877b598c5",
+    "TalkingNPCRuntime.server.luau": "3e013ad9711b05cdc516f8c151aab2e019dc9353",
+    "TalkingNPCClient.client.luau": "1c9c91b3312b0fe95dafabc63e7160a6c3c02a0a"
+  },
+  "dependencies": [
+    "existing Game-owned TrapRaidersS1Remote",
+    "TRAP_RAIDERS_S1 arena",
+    "RunService:IsStudio",
+    "ServerStorage P0D_RC_ENABLE_TALKING_NPC_V1 true"
+  ],
+  "rollback": "Remove optional server/client/module from assembled Place or set ServerStorage flag false before start; existing original Game/Store remain byte-identical.",
+  "tests": {
+    "source_lock": "CHECK_IN_CI",
+    "luau_compile": "CHECK_IN_CI",
+    "real_rojo": "CHECK_IN_CI",
+    "roblox_studio": "NOT_TESTED",
+    "android": "NOT_TESTED",
+    "tts": "NOT_TESTED",
+    "sourcery_review": "OPEN_REVIEW_FINDINGS_PREP_DRAFT",
+    "oracle_battle_source": "ISOLATED_QA_CI_PENDING_ENGINE_NOT_TESTED",
+    "oracle_specific_native": "NEW_DirectorNative_4missing_and_complete_executable__CI_PENDING",
+    "scan_fairness_native": "SOURCE_CI_PENDING"
+  },
+  "no_auto_merge": true
+}
