@@ -75,7 +75,11 @@ def patch(raw:bytes)->bytes:
     assert g.count('game.PrivateServerId ~= ""')==4
     assert g.count('workspace:GetAttribute("'+OWNER_ATTR+'") == true')==4
     assert g.count('if RunService:IsStudio() and studioSoloRoundStarted')==1
-    assert g.count('if RunService:IsStudio() and not EXPERIMENTAL_FIVE_EGG_MODE then')==1
+    assert g.count('if RunService:IsStudio() and not EXPERIMENTAL_FIVE_EGG_MODE then')==2
+    # The two original sites are human-vs-StudioBOT attack and the BOT AI tick.
+    # Both must remain Studio-only; private 1-human battles ONLY Horde monsters.
+    assert 'if RunService:IsStudio() and not EXPERIMENTAL_FIVE_EGG_MODE then\n        local victim=SoloTeamBots.tryHumanHit(' in g
+    assert 'if RunService:IsStudio() and not EXPERIMENTAL_FIVE_EGG_MODE then\n            local ok,err=pcall(SoloTeamBots.tick,now)' in g
     assert 'workspace:SetAttribute("'+OWNER_ATTR+'"' not in g
     # Check exact reversible patch; this protects all other original Game text.
     restored=one(g,NEW_EMPTY,OLD_EMPTY,1)
