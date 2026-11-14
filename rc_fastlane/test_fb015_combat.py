@@ -252,6 +252,64 @@ class ArtCombatQA(unittest.TestCase):
             self.assertTrue(link.is_symlink())
             self.assertEqual((escape/"secret.txt").read_text(),"not part of game")
 
+    def test_coedited_in_tree_manifest_cannot_authorize_delete(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d=fixture(Path(tmp))
+            mod.apply(d,True)
+            user=d/"OWNER_UNRELATED_NOT_FOR_DELETE.txt"
+            user.write_text("preserve",encoding="utf8")
+            manifest=d/mod.TRANSACTION
+            original=manifest.read_bytes()
+            hacked=json.loads(manifest.read_text("utf8"))
+            hacked["candidate"]=mod.whole_tree(d,exclude=mod.TRANSACTION)
+            manifest.write_text(json.dumps(hacked),encoding="utf8")
+            with self.assertRaisesRegex(RuntimeError,"ART_COMBAT_CANDIDATE_EXTRA_OR_CHANGED_FILE"):
+                mod.apply(d,False)
+            self.assertEqual(user.read_text("utf8"),"preserve")
+            user.unlink()
+            manifest.write_bytes(original)
+            self.assertTrue(mod.apply(d,False))
+
+    def test_reserved_manifest_in_original_must_restore_exact_bytes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d=fixture(Path(tmp))
+            reserved=d/mod.TRANSACTION
+            reserved.write_text("ORIGINAL_OWNER_BYTES",encoding="utf8")
+            mod.apply(d,True)
+            backup=mod.backup_dir(d)
+            original=backup/mod.TRANSACTION
+            original.write_text("ALTERED_ORIGINAL_OWNER_BYTES",encoding="utf8")
+            with self.assertRaisesRegex(RuntimeError,"ART_COMBAT_SAVED_ORIGINAL_EXTRA_OR_CHANGED_FILE"):
+                mod.apply(d,False)
+            original.write_text("ORIGINAL_OWNER_BYTES",encoding="utf8")
+            self.assertTrue(mod.apply(d,False))
+            self.assertEqual(reserved.read_text("utf8"),"ORIGINAL_OWNER_BYTES")
+
+    def test_partial_disabled_cleanup_recovers_without_manifest(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d=fixture(Path(tmp))
+            mod.apply(d,True)
+            disabled=d.with_name(d.name+".art_combat_disabling")
+            os.rename(d,disabled)
+            os.rename(mod.backup_dir(d),d)
+            (disabled/mod.TRANSACTION).unlink()
+            (disabled/"src/client/ArtCombatSlash.client.luau").unlink()
+            self.assertTrue(mod.apply(d,False))
+            self.assertFalse(disabled.exists())
+            self.assertFalse(mod.receipt_path(d).exists())
+            self.assertEqual(len(mod.sources(d)),66)
+
+    def test_symlinked_parent_is_refused_before_resolve(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            dist=fixture(root)
+            alias=root/"ALIAS"
+            alias.symlink_to(root,target_is_directory=True)
+            with self.assertRaisesRegex(RuntimeError,"FB015_SYMLINK_PARENT_COMPONENT_REFUSED"):
+                mod.apply(alias/dist.name,True)
+            self.assertTrue(dist.is_dir())
+            self.assertFalse(mod.backup_dir(dist).exists())
+
     def test_uninstalled_off_is_true_zero_write(self):
         with tempfile.TemporaryDirectory() as tmp:
             d=Path(tmp)/"missing"
