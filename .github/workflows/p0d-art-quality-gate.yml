@@ -35,6 +35,24 @@ jobs:
           persist-credentials: false
       - name: Native stdlib unit and negative tests (no synthetic beauty claims)
         run: python3 -B -m unittest discover -s art_quality -p 'test_art_quality.py' -v
+      - name: Benchmark provenance, real-mobile and children-first-play safety QA
+        env:
+          ART_STRICT: ${{ inputs.strict_evidence || 'false' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s art_quality -p 'test_reference_benchmarks.py' -v
+          python3 -B -m unittest discover -s art_quality -p 'test_mobile_fun.py' -v
+          mkdir -p /tmp/p0d_art_report
+          python3 -B art_quality/check_reference_benchmarks.py --references art_quality/REFERENCE_BENCHMARKS_V2.json --out /tmp/p0d_art_report/REFERENCE_BENCHMARK_REPORT.json
+          FUN_ARGS=(--out /tmp/p0d_art_report/MOBILE_KID_FUN_REPORT.json)
+          if [ -f art_quality/evidence/mobile_kid_fun.json ]; then
+            FUN_ARGS+=(--evidence art_quality/evidence/mobile_kid_fun.json)
+          fi
+          if [ "$ART_STRICT" = "true" ]; then
+            FUN_ARGS+=(--strict)
+          fi
+          python3 -B art_quality/check_mobile_fun.py "${FUN_ARGS[@]}"
       - name: Download selected authentic RC Studio Place (never guess latest)
         uses: actions/download-artifact@v4
         with:
