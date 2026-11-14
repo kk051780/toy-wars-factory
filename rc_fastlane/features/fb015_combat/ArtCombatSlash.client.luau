@@ -148,13 +148,20 @@ local function acceptVisualCue(id,serial,round,epoch)
     end
     return true
 end
+local function isEpochStale(authoritativeEpoch,packetEpoch)
+    -- Server RemoteEvent can arrive before its replicated epoch Attribute.
+    -- Reject only OLD packets, never newer confirmed server-owned hits.
+    return type(authoritativeEpoch)=="number"
+        and type(packetEpoch)=="number"
+        and packetEpoch<authoritativeEpoch
+end
 -- END_ACTUAL_CUE_DEDUPE_POLICY
 
 local function onConfirmedHit(id,hitPos,fromPos,isKO,serial,round,epoch)
     if destroyed or typeof(hitPos)~="Vector3" or typeof(fromPos)~="Vector3"
         or type(isKO)~="boolean" then return end
     local authoritativeEpoch=cue:GetAttribute("P0D_ART_EPOCH_V1")
-    if type(authoritativeEpoch)=="number" and epoch~=authoritativeEpoch then return end
+    if isEpochStale(authoritativeEpoch,epoch) then return end
     local root=localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
     if not root then
         -- Preserve actual live packets while the character is respawning.
