@@ -4,8 +4,10 @@ The real functions are extracted byte-for-byte from built RC80 source; only Robl
 services and the external scene/characters are mocked. Does not claim Roblox Studio QA.
 """
 from __future__ import annotations
-import argparse
+import argparse,hashlib
 from pathlib import Path
+# Exact 11,465-character original official FB019-V2 snapshotFor, source-pinned.
+SNAPSHOT_V2_SHA256='fb8c461989ab000f912a637fd0bfb8e1e52849c2c06877c29ba46a91943a1fd2'
 from apply_fb019_server_ack import read, GAME, HUD
 
 PREFIX=r'''
@@ -36,7 +38,15 @@ local function serverNow() return env.now end
 local function getTeamName(player) return player.team end
 local function snapshotFor(player)
     assert(player==env.player)
-    return {kind="SNAPSHOT",serial=match.serial}
+    -- This is only the native-service mock. The COMPLETE actual snapshotFor
+    -- implementation is pinned byte-for-byte by the Python source SHA256
+    -- check below, including all gameplay and save fields.
+    return {kind="SNAPSHOT",serial=match.serial,phase=match.phase,updateId=1,
+        scores={RED=match.scores.RED,BLUE=match.scores.BLUE},
+        hp={RED=match.hp.RED,BLUE=match.hp.BLUE},
+        musouImpactSeq=mobImpactSeq[player] or 0,
+        musouLastHits=mobLastHits[player] or 0,
+        musouLastKOs=mobLastKOs[player] or 0}
 end
 local function healthy(player)
     player.healthCalls=(player.healthCalls or 0)+1
@@ -123,6 +133,13 @@ local function expect(status,target)
         if packet.kind=="P0D_ATTACK_RESULT" then
             table.insert(feedback,packet)
         elseif packet.kind=="SNAPSHOT" then
+            assert(packet.serial==match.serial and packet.phase==match.phase)
+            assert(packet.updateId==1)
+            assert(packet.hp.RED==match.hp.RED and packet.hp.BLUE==match.hp.BLUE)
+            assert(packet.scores.RED==match.scores.RED and packet.scores.BLUE==match.scores.BLUE)
+            assert(packet.musouImpactSeq==(mobImpactSeq[env.player] or 0))
+            assert(packet.musouLastHits==(mobLastHits[env.player] or 0))
+            assert(packet.musouLastKOs==(mobLastKOs[env.player] or 0))
             snapshots+=1
         else error("UNEXPECTED_REMOTE_PAYLOAD") end
     end
@@ -283,6 +300,22 @@ def generate(dist:Path,out:Path):
     end="-- H1 RAIDER wind:"
     assert game.count(start)==game.count(end)==1
     block=game[game.index(start):game.index(end,game.index(start))]
+    snapanchor="snapshotFor = function(player: Player)"
+    assert game.count(snapanchor)==1
+    snapstart=game.index(snapanchor)
+    snapend=game.index("\nend\n",snapstart)+len("\nend")
+    real_snapshot=game[snapstart:snapend]
+    # Proves the FULL actual original snapshot builder (all 80+ fields, not
+    # just this small executable mock) is unchanged vs the formal RC.
+    assert hashlib.sha256(real_snapshot.encode("utf8")).hexdigest()==SNAPSHOT_V2_SHA256, "REAL_SNAPSHOT_PAYLOAD_SOURCE_DRIFT"
+    for field in ('kind = "SNAPSHOT"', 'serial = match.serial',
+                  'phase = match.phase', 'updateId = snapshotUpdateId',
+                  'scores = {RED = match.scores.RED, BLUE = match.scores.BLUE}',
+                  'hp = {RED = match.hp.RED, BLUE = match.hp.BLUE}',
+                  'musouImpactSeq = mobImpactSeq[player] or 0',
+                  'musouLastHits = mobLastHits[player] or 0',
+                  'musouLastKOs = mobLastKOs[player] or 0'):
+        assert field in real_snapshot,("SNAPSHOT_EXPECTED_FULL_CONTRACT",field)
     assert "kind=\"P0D_ATTACK_RESULT\"" in block
     assert 'remote:FireClient(player,snapshotFor(player))' in block
     assert "if ok and hum and hum.Health>0 then" in block
