@@ -999,24 +999,24 @@ jobs:
           print('P0D_PRIVATE64_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
           PY
           fi
-      - name: FB015 six-art ocean-channel PRIVATE72 from original unmodified official66
+      - name: FB015 seven-art fortress-detail PRIVATE73 from original unmodified official66
         if: ${{ env.PROFILE == 'rich51' }}
         shell: bash
         run: |
           set -euo pipefail
           python3 -B -m unittest discover -s rc_fastlane -p 'test_art_composite.py' -v
           DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-          python3 -B rc_fastlane/build_art_composite.py --dist "$DIST" --out /tmp/p0d_six_art_private72 --rojo /tmp/p0d_rc_rojo --luau /tmp/p0d_new_luau/luau-compile --enabled false
-          python3 -B rc_fastlane/build_art_composite.py --dist "$DIST" --out /tmp/p0d_six_art_private72 --rojo /tmp/p0d_rc_rojo --luau /tmp/p0d_new_luau/luau-compile --enabled true
-          test -s /tmp/p0d_six_art_private72/P0D_PRIVATE72_SIX_ART_STUDIO.rbxlx
+          python3 -B rc_fastlane/build_art_composite.py --dist "$DIST" --out /tmp/p0d_seven_art_private73 --rojo /tmp/p0d_rc_rojo --luau /tmp/p0d_new_luau/luau-compile --enabled false
+          python3 -B rc_fastlane/build_art_composite.py --dist "$DIST" --out /tmp/p0d_seven_art_private73 --rojo /tmp/p0d_rc_rojo --luau /tmp/p0d_new_luau/luau-compile --enabled true
+          test -s /tmp/p0d_seven_art_private73/P0D_PRIVATE73_SEVEN_ART_STUDIO.rbxlx
       - uses: actions/upload-artifact@v4
         if: ${{ env.PROFILE == 'rich51' }}
         with:
-          name: P0D-PRIVATE72-SIX-ART-STUDIO
+          name: P0D-PRIVATE73-SEVEN-ART-STUDIO
           path: |
-            /tmp/p0d_six_art_private72/P0D_PRIVATE72_SIX_ART_STUDIO.rbxlx
-            /tmp/p0d_six_art_private72/P0D_PRIVATE72_RECEIPT.json
-            /tmp/p0d_six_art_private72/luau-native-compile.log
+            /tmp/p0d_seven_art_private73/P0D_PRIVATE73_SEVEN_ART_STUDIO.rbxlx
+            /tmp/p0d_seven_art_private73/P0D_PRIVATE73_RECEIPT.json
+            /tmp/p0d_seven_art_private73/luau-native-compile.log
           retention-days: 7
           if-no-files-found: error
       - uses: actions/upload-artifact@v4

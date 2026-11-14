@@ -1,4 +1,4 @@
-"""The complete six-art preview must never mutate canonical RC66."""
+"""The complete seven-art preview must never mutate canonical RC66."""
 import hashlib
 import tempfile
 import unittest
@@ -6,14 +6,15 @@ from pathlib import Path
 from rc_fastlane import build_art_composite as art
 
 
-class SixArtCandidateSafety(unittest.TestCase):
-    def test_all_five_real_source_blobs(self):
-        self.assertEqual(len(art.pinned_art()),6)
+class SevenArtCandidateSafety(unittest.TestCase):
+    def test_all_seven_real_source_blobs(self):
+        self.assertEqual(len(art.pinned_art()),7)
 
     def test_composite_includes_no_server_game_replacement(self):
         a=art.pinned_art()
         self.assertEqual(set(a),{
             "server/CastleBattlefield.server.luau",
+            "server/CastleDetailArt.server.luau",
             "server/FantasyWorldArt.server.luau",
             "server/H1CoastalSeascape.server.luau",
             "server/H1SeaGroundRepair.server.luau",
@@ -22,6 +23,21 @@ class SixArtCandidateSafety(unittest.TestCase):
         })
         self.assertNotIn("server/Game.server.luau",a)
         self.assertNotIn("server/GoroganRigDriver.luau",a)
+
+    def test_castle_detail_layer_has_correct_anchor_and_no_game_collision(self):
+        s=art.pinned_art()["server/CastleDetailArt.server.luau"].decode("utf8")
+        self.assertIn('if not RunService:IsStudio() then return end',s)
+        self.assertIn('OWNER361_CASTLE_WORLD_V1',s)
+        self.assertIn('GATE_TOWER_-1',s)
+        self.assertIn('GRAND_KEEP',s)
+        self.assertIn('PORTCULLIS_ARCH_TOP',s)
+        self.assertIn('KEEP_HERALDRY',s)
+        self.assertIn('BRAZIER_',s)
+        self.assertIn('MAX_PARTS = 190',s)
+        self.assertIn('p.CanCollide = false',s)
+        self.assertIn('p.CanQuery = false',s)
+        self.assertNotIn('Instance.new("RemoteEvent")',s)
+        self.assertNotIn('TakeDamage(',s)
 
     def test_minion_and_gorogan_cosmetics_have_distinct_owners(self):
         a=art.pinned_art()
@@ -53,6 +69,14 @@ class SixArtCandidateSafety(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 art.compose(dist,candidate)
             self.assertFalse(candidate.exists())
+
+    def test_compiler_metadata_has_exact_counts_and_flags(self):
+        import inspect
+        body=inspect.getsource(art.compose)
+        self.assertIn('locks["total_scripts"]=73',body)
+        self.assertIn('features["total_sources"]=73',body)
+        self.assertIn('assert len(after) == 73',body)
+        self.assertIn('LOCK_TOTAL_MUST_MATCH_REAL_SCRIPT_COUNT',body)
 
     def test_all_sources_have_valid_sha_pins(self):
         for category,pin,path,name,flag in art.SPECS:
