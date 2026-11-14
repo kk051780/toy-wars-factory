@@ -674,7 +674,7 @@ local function invalidatePath(bot)""")
     assert 'MAX_PENDING_PATH_TASKS=10' in text
     assert 'releasePathLease(bot)' in text
     assert 'now<bot.detourUntil and gap>2.5' in text
-    assert 'flatDistance<=4.5 then' in text
+    assert 'if (position-goal).Magnitude<=4.5 then' in text
     assert 'flatDistance<=bot.lastProgressDistance-2.5' in text
     assert 'bot.hum:MoveTo(bot.detourGoal)' in text
     assert "if eligible~=1 then Bot.stop();return end" in text
