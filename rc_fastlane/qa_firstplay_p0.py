@@ -599,6 +599,78 @@ local function invalidatePath(bot)""")
         return
     end
     pathTo(bot,goal,now)""")
+    # #402 Sourcery follow-up: errors in GetWaypoints and stop's drop
+    # callbacks must not strand all remaining actors or path leases.
+    # The async callback already releases counters before 'current';
+    # wrap result application as well to keep the coroutine exception-safe.
+    text=one(text,
+        """        if current then
+            if ok and path and path.Status==Enum.PathStatus.Success then
+                bot.path=path:GetWaypoints()
+                bot.pathIndex=math.min(2,#bot.path)
+            else
+                bot.path={}
+                bot.pathIndex=1
+            end
+        end
+        -- Old asynchronous planners must not release a newer planner's lock.""",
+        """        local applied,applyErr=pcall(function()
+            if current then
+                if ok and path and path.Status==Enum.PathStatus.Success then
+                    bot.path=path:GetWaypoints()
+                    bot.pathIndex=math.min(2,#bot.path)
+                else
+                    bot.path={}
+                    bot.pathIndex=1
+                end
+            end
+        end)
+        if not applied then
+            warn("P0D_BOT_PATH_RESULT_FAILED",applyErr)
+            if current then bot.path={};bot.pathIndex=1 end
+        end
+        -- Old asynchronous planners must not release a newer planner's lock.""")
+    text=one(text,
+        """        releasePathLease(bot)
+        clearCarry(bot)
+        if bot.model then bot.model:Destroy() end""",
+        """        releasePathLease(bot)
+        local cleared,clearErr=pcall(clearCarry,bot)
+        if not cleared then warn("P0D_BOT_EGG_DROP_FAILED",clearErr) end
+        bot.carry=nil
+        local destroyed,destroyErr=pcall(function()
+            if bot.model then bot.model:Destroy() end
+        end)
+        if not destroyed then warn("P0D_BOT_MODEL_TEARDOWN_FAILED",destroyErr) end""")
+    text=one(text,
+        """    if folder then folder:Destroy();folder=nil end
+    map=nil;callbacks=nil""",
+        """    if folder then
+        local oldFolder=folder
+        folder=nil
+        local ok,err=pcall(function() oldFolder:Destroy() end)
+        if not ok then warn("P0D_BOT_FOLDER_TEARDOWN_FAILED",err) end
+    end
+    map=nil;callbacks=nil""")
+    text=one(text,
+        """    for key,value in pairs(fresh) do bot[key]=value end
+    bot.pathGeneration=nextGeneration""",
+        """    for key,value in pairs(fresh) do bot[key]=value end
+    -- Lua pairs cannot overwrite previous-life fields with nil.
+    bot.lastProgressDistance=nil
+    bot.lastProgressAt=0
+    bot.unstuckAttempts=0
+    bot.detourGoal=nil
+    bot.detourUntil=0
+    bot.pathLease=nil
+    bot.pathGeneration=nextGeneration""")
+    text=one(text,
+        "if flatDistance<=4.5 then",
+        "if (position-goal).Magnitude<=4.5 then")
+    assert text.count('local applied,applyErr=pcall(function()')==1
+    assert text.count('P0D_BOT_EGG_DROP_FAILED')==1
+    assert text.count('bot.lastProgressDistance=nil')>=2
+    assert 'if (position-goal).Magnitude<=4.5 then' in text
     assert 'MAX_PENDING_PATH_TASKS=10' in text
     assert 'releasePathLease(bot)' in text
     assert 'now<bot.detourUntil and gap>2.5' in text
