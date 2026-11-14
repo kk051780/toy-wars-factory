@@ -154,7 +154,7 @@ def apply(dist: Path, enabled: bool = True, output_dist: Path | None = None) -> 
     if output_dist is None:
         raise ValueError("OUTPUT_DIST_REQUIRED_FOR_IMMUTABLE_PREVIEW")
     output_dist = output_dist.resolve()
-    if output_dist.exists() or output_dist == dist or output_dist in dist.parents:
+    if output_dist.exists() or output_dist == dist or output_dist in dist.parents or dist in output_dist.parents:
         raise ValueError("OUTPUT_DIST_EXISTS_OR_ALIASES_INPUT")
     output_dist.parent.mkdir(parents=True, exist_ok=True)
     temp_root = Path(tempfile.mkdtemp(prefix=".p0d-talk-", dir=output_dist.parent))
