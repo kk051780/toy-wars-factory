@@ -14,6 +14,8 @@ import stat
 import json
 import os
 import tempfile
+import contextlib
+import fcntl
 
 
 def reject_symlink_ancestors(path: Path) -> None:
@@ -83,3 +85,29 @@ def atomic_json(path: Path, payload: dict) -> None:
     finally:
         if os.path.lexists(name):
             os.unlink(name)
+
+@contextlib.contextmanager
+def transaction_parent_locks(*parents: Path):
+    """Cooperate across private67 APPLY and private68 COMPOSE.
+
+    Lock BOTH source and destination parents in stable order, including
+    cross-directory output paths. No lockfile writes on clean no-op OFF.
+    External writers MUST opt into the same protocol: this only protects
+    cooperating private build tools.
+    """
+    paths=sorted({str(Path(p).resolve()) for p in parents})
+    descriptors=[]
+    try:
+        for path in paths:
+            fd=os.open(path,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW)
+            try:
+                fcntl.flock(fd,fcntl.LOCK_EX)
+                descriptors.append(fd)
+            except BaseException:
+                os.close(fd)
+                raise
+        yield
+    finally:
+        for fd in reversed(descriptors):
+            fcntl.flock(fd,fcntl.LOCK_UN)
+            os.close(fd)
