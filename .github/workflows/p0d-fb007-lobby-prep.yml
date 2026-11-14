@@ -1,0 +1,50 @@
+name: P0D FB-007 Lobby Dojo A-PREP source contract
+on:
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - 'rc_fastlane/apply_fb007_lobby.py'
+      - 'rc_fastlane/test_fb007_lobby.py'
+      - 'rc_fastlane/features/fb007_lobby/**'
+      - '.github/workflows/p0d-fb007-lobby-prep.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: OFF byte exact, single server and twelve pads
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb007_lobby.py -v
+          python3 -B -m py_compile rc_fastlane/apply_fb007_lobby.py
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0_luau
+          persist-credentials: false
+      - name: Compile genuine LobbyDojoIsland plus adapted tracked V4 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _p0_luau -B /tmp/p0_fb007_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0_fb007_luau --target Luau.Compile.CLI --parallel 4
+          /tmp/p0_fb007_luau/luau-compile rc_fastlane/features/fb007_lobby/LobbyDojoIsland.luau >/dev/null
+          python3 - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0,'rc_fastlane')
+          import apply_fb007_lobby as m
+          p=Path('/tmp/P0D_FB007_V4_PATCH.luau')
+          p.write_text(m.patch_v4(Path('rc_fastlane/overlays/V4TrainingBridge.server.luau').read_text('utf8')),encoding='utf8')
+          PY
+          /tmp/p0_fb007_luau/luau-compile /tmp/P0D_FB007_V4_PATCH.luau >/dev/null
+          echo 'FB007_MODULE_V4_NATIVE_COMPILE_PASS_NOT_GAME_STUDIO'
