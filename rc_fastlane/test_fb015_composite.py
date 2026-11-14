@@ -66,7 +66,7 @@ class CompositeTest(unittest.TestCase):
                          combo.AUTHOR.read_bytes())
         h=slash.HORDE_AUTHOR.read_bytes()
         self.assertIn(b'if RunService:IsStudio() then',h)
-        self.assertIn(b'if self.artCue then',h)
+        self.assertIn(b'if self.artCue and self.artHitBus then',h)
         self.assertIn(b'self.artHitBus:Fire(m.body,m.artHitSeq,m.hp<=0,self.round)',h)
         self.assertIn(b'Instance.new("BindableEvent")',h)
         self.assertNotIn(b'P0D_ART_SPARK_V1',h)
