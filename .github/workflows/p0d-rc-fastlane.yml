@@ -295,6 +295,16 @@ jobs:
             echo P0D_PRIVATE66_BOND_OFF_EXACT_REAL_OFFICIAL65_PASS
             python3 -B rc_fastlane/apply_twin_bond.py --dist "$DIST" --enabled true
           fi
+      - name: P0-C #361 source-locked ADDITIVE castle private67 (previous 66 source untouched)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_owner361_castle.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_owner361_castle.py --dist "$DIST" --enabled false
+            python3 -B rc_fastlane/apply_owner361_castle.py --dist "$DIST" --enabled true
+          fi
       - name: Check actual built RC66 source lock, approved feature and ledger agree
         if: ${{ env.PROFILE == 'rich51' }}
         shell: bash
@@ -308,7 +318,8 @@ jobs:
           flags=json.loads(Path("rc_fastlane/FEATURE_SWITCHES.json").read_text("utf8"))["features"]
           catalog=json.loads(Path("rc_fastlane/FEATURE_CATALOG.json").read_text("utf8"))
           reg=json.loads(Path("rc_fastlane/FEATURE_REGISTRY.json").read_text("utf8"))
-          assert lock["total_scripts"]==66
+          assert lock["total_scripts"]==67
+          assert lock["rc_owner361_castle_addon"]["original_66_unchanged"] is True
           assert lock["rc_twin_bond_overlay"]["id"]=="TWIN_BOND_PVE_COMPANION_V1"
           assert lock["rc_twin_bond_overlay"]["official_rc_adopted"] is True
           assert flags["TWIN_BOND_PVE_COMPANION_V1"]["official_rc_adopted"] is True
@@ -347,7 +358,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']) + int(f['TWIN_BIOMES_4NPC_V1']['enabled']) + int(f['TWIN_CREATURE_TRAINING_V1']['enabled']) + int(f['TWIN_BOND_PVE_COMPANION_V1']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(54 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']) + int(f['TWIN_BIOMES_4NPC_V1']['enabled']) + int(f['TWIN_CREATURE_TRAINING_V1']['enabled']) + int(f['TWIN_BOND_PVE_COMPANION_V1']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -675,7 +686,7 @@ jobs:
           twin_enabled=(p=='rich51' and flags['features']['TWIN_BIOMES_4NPC_V1']['enabled'])
           training_enabled=(p=='rich51' and flags['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])
           bond_enabled=(p=='rich51' and flags['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
+          expected={'rich51':52+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -989,7 +1000,7 @@ jobs:
             python3 - <<'PY'
           import json
           x=json.load(open('/tmp/p0d_rc_out/RC_CAPACITY_REPORT.json'))
-          assert x['native_source_count']==64+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
+          assert x['native_source_count']==65+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
           assert x['rbxlx_bytes']>571621 and x['rbxlx_bytes']<2000000
           print('P0D_PRIVATE64_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
           PY
