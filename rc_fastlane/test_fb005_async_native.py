@@ -75,21 +75,22 @@ local function newBot()
     function hum:MoveTo(where) self.target=where end
     return {root={Position=v(0)},hum=hum,model={Parent=true},
         nextRepath=0,path={},pathIndex=1,planning=false,
-        lastGoal=nil,pathGeneration=0}
+        lastGoal=nil,pathGeneration=0,planningSince=nil}
 end
 ''',first,path,moving,r'''
--- 1. Target changes while OLD ComputeAsync yields, stale waypoints discarded,
---    new planner remains locked until its own result arrives.
+-- 1. A moved objective invalidates old waypoints but does NOT launch
+--    ComputeAsync every 350 ms. At 3.1s throttle expiry it replans.
 local bot=newBot()
 move(bot,v(100),1)
 assert(#tasks==1 and bot.planning==true,"INITIAL_YIELD_MISSING")
 local firstGeneration=bot.pathGeneration
 move(bot,v(250),2)
-assert(#tasks==2 and bot.pathGeneration>firstGeneration,
-    "NEW_GOAL_DID_NOT_INVALIDATE_OLD_PATH")
+assert(#tasks==1 and bot.pathGeneration>firstGeneration
+    and bot.planning==false,"DYNAMIC_TARGET_COMPUTE_STORM")
 finish(1)
-assert(#bot.path==0 and bot.planning==true,
-    "STALE_PLANNER_ADOPTED_OR_UNLOCKED_NEW_PLANNER")
+assert(#bot.path==0 and bot.planning==false,"STALE_PLANNER_ADOPTED")
+move(bot,v(250),4.3)
+assert(#tasks==2 and bot.planning==true,"NEW_GOAL_NOT_REPLANNED_AFTER_COOLDOWN")
 finish(2)
 assert(#bot.path==2 and bot.path[2].Position.x==250 and bot.planning==false,
     "CURRENT_PLANNER_NOT_APPLIED")
@@ -135,6 +136,22 @@ epoch+=1
 active=false
 finish(idx)
 assert(#eBot.path==0,"OLD_MATCH_PATH_ACCEPTED")
+
+-- 6. A never-ending ComputeAsync may not retain planner lock indefinitely.
+active=true; epoch+=1
+local hang=newBot()
+move(hang,v(120),50)
+local hung=#tasks
+assert(hang.planning==true and hang.planningSince==50,"WATCHDOG_NOT_ARMED")
+move(hang,v(120),53)
+assert(#tasks==hung,"EARLY_WATCHDOG_RESTART")
+move(hang,v(120),59)
+assert(#tasks==hung+1 and hang.planning==true
+    and hang.pathGeneration>1,"HUNG_PATH_NOT_RESTARTED")
+finish(hung)
+assert(hang.planning==true and #hang.path==0,"OLD_HUNG_PLANNER_STOLE_LOCK")
+finish(hung+1)
+assert(hang.planning==false and #hang.path==2,"WATCHDOG_REPLANNER_NOT_APPLIED")
 print("FB005_ASYNC_LIFECYCLE_NATIVE_BEHAVIOR_PASS")
 '''])
 
