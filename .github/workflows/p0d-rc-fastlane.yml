@@ -1996,3 +1996,34 @@ jobs:
           path: /tmp/p0d_rc80_art_world_castle/*
           retention-days: 14
           if-no-files-found: error
+
+
+      - name: 'P0D #431 LIVE-ART source-parity gate: seven Studio-only layers MUST remain NO_GO'
+        if: env.PROFILE == 'rich51'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s art_quality -p test_live_art_parity.py -v
+          mkdir -p /tmp/p0d_live_art_gate
+          python3 -B art_quality/check_live_art_parity.py \
+            --place /tmp/p0d_rc80_art_world_castle/P0D_RC80_ART_WORLD_CASTLE_STUDIO_PREVIEW.rbxlx \
+            --out /tmp/p0d_live_art_gate/LIVE_ART_PARITY_REPORT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('/tmp/p0d_live_art_gate/LIVE_ART_PARITY_REPORT.json').read_text())
+          assert report['source_gate']=='PASS',report.get('source_errors')
+          assert report['script_count']==80
+          assert report['expected_visual_groups']==7
+          assert report['top_studio_only_count']==7
+          assert report['live_art_decision']=='LIVE_ART_NO_GO'
+          assert report['owner_accepted'] is False
+          print('P0D_LIVE_ART_SEVEN_STUDIO_ONLY_CONFIRMED_NO_GO_SOURCE_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always() && env.PROFILE == 'rich51'
+        with:
+          name: P0D-LIVE-ART-PARITY-NO-GO-REPORT-NOT-RUNTIME-PROOF
+          path: /tmp/p0d_live_art_gate/*
+          retention-days: 14
+          if-no-files-found: warn
