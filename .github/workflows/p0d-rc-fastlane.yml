@@ -1038,3 +1038,65 @@ jobs:
           path: /tmp/p0d_rc_out/*
           retention-days: 7
           if-no-files-found: error
+
+      - name: FB005 private67 Studio solo ally/enemy real Game bot source audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb005_solo_bots.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            SRC=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            DST=/tmp/p0d_fb005_private67_dist
+            cp -a "$SRC" "$DST"
+            BEFORE=$(find "$DST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_fb005_solo_bots.py --dist "$DST" --enabled false
+            AFTER=$(find "$DST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            python3 -B rc_fastlane/apply_fb005_solo_bots.py --dist "$DST" --enabled true
+            /tmp/p0d_new_luau/luau-compile "$DST/src/server/Game.server.luau" >/dev/null
+            /tmp/p0d_new_luau/luau-compile "$DST/src/server/SoloTeamBots.luau" >/dev/null
+            mkdir -p /tmp/p0d_fb005_out
+            /tmp/p0d_rc_rojo build "$DST/default.project.json" -o /tmp/p0d_fb005_out/P0D_FB005_PRIVATE67_BOTS.rbxlx
+            cp "$DST/SOURCE_LOCK.json" /tmp/p0d_fb005_out/SOURCE_LOCK.json
+            cp "$DST/RC_FEATURE_LOCK.json" /tmp/p0d_fb005_out/RC_FEATURE_LOCK.json
+            python3 - <<'PY'
+          from pathlib import Path
+          import json,xml.etree.ElementTree as ET,hashlib
+          from rc_fastlane.apply_fb005_solo_bots import sources,blob
+          root=Path("/tmp/p0d_fb005_private67_dist")
+          orig=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE")
+          a=sources(orig); b=sources(root)
+          assert len(a)==66 and len(b)==67
+          assert set(b)-set(a)=={"server/SoloTeamBots.luau"}
+          assert {k for k in a if a[k]!=b[k]}=={"server/Game.server.luau"}
+          pins={p:blob(v) for p,v in sorted(b.items())}
+          assert json.loads((root/"SOURCE_LOCK.json").read_text())["blobs"]==pins
+          assert json.loads((root/"RC_FEATURE_LOCK.json").read_text())["source_gitblobs"]==pins
+          path=Path("/tmp/p0d_fb005_out/P0D_FB005_PRIVATE67_BOTS.rbxlx")
+          doc=ET.parse(path)
+          names={"Script":[],"ModuleScript":[]}
+          for item in doc.iter("Item"):
+              tag=item.get("class")
+              if tag not in names: continue
+              n=item.find("./Properties/string[@name='Name']")
+              if n is not None:names[tag].append(n.text)
+          assert names["Script"].count("Game")==1
+          assert names["ModuleScript"].count("SoloTeamBots")==1
+          assert names["ModuleScript"].count("MusouHorde")==1
+          receipt={"id":"FB005_STUDIO_SOLO_TEAM_BOTS_CLASSIC_V1",
+                   "source_count":67,"original_scripts_preserved":65,
+                   "only_one_existing_game":True,"engine_studio":"NOT_TESTED",
+                   "h2_five_egg_bots":"UNSUPPORTED","owner_fun":"FUN_NO_GO",
+                   "private_place_bytes":path.stat().st_size,
+                   "place_sha256":hashlib.sha256(path.read_bytes()).hexdigest()}
+          Path("/tmp/p0d_fb005_out/FB005_CANDIDATE_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
+          print("FB005_PRIVATE67_ONE_GAME_REAL_BOTS_NATIVE_ROJO_PASS",receipt["private_place_bytes"])
+          PY
+          fi
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-FB005-PRIVATE67-SOLO-BOTS
+          path: /tmp/p0d_fb005_out/*
+          retention-days: 7
+          if-no-files-found: error
