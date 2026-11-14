@@ -1,4 +1,4 @@
-"""The complete seven-art preview must never mutate canonical RC66."""
+"""The complete eight-feature preview must never mutate canonical RC66."""
 import hashlib
 import tempfile
 import unittest
@@ -6,9 +6,9 @@ from pathlib import Path
 from rc_fastlane import build_art_composite as art
 
 
-class SevenArtCandidateSafety(unittest.TestCase):
-    def test_all_seven_real_source_blobs(self):
-        self.assertEqual(len(art.pinned_art()),7)
+class EightFeatureCandidateSafety(unittest.TestCase):
+    def test_all_eight_real_source_blobs(self):
+        self.assertEqual(len(art.pinned_art()),8)
 
     def test_composite_includes_no_server_game_replacement(self):
         a=art.pinned_art()
@@ -20,9 +20,20 @@ class SevenArtCandidateSafety(unittest.TestCase):
             "server/H1SeaGroundRepair.server.luau",
             "server/ArtMinionSilhouette.server.luau",
             "client/FB015CharacterArt.client.luau",
+            "client/BattleHUDGovernor.client.luau",
         })
         self.assertNotIn("server/Game.server.luau",a)
         self.assertNotIn("server/GoroganRigDriver.luau",a)
+
+    def test_numeric_hp_minimal_hud_and_world_label_contract(self):
+        code=art.pinned_art()["client/BattleHUDGovernor.client.luau"].decode("utf8")
+        for token in ("BattleSelfHPNumerical", "HP %d/%d", "TrapRaidersS1Remote",
+                      "TrapRaidersS1HUD", "P0D_HUD_CLEAN_GOVERNOR",
+                      "maxHp", 'phase == "ACTIVE"', "MaxDistance = 36",
+                      "instructionLabel.Visible = false", "updateOptionalAll()"):
+            self.assertIn(token,code)
+        self.assertNotIn("FireServer(",code)
+        self.assertNotIn("DataStoreService",code)
 
     def test_castle_detail_layer_has_correct_anchor_and_no_game_collision(self):
         s=art.pinned_art()["server/CastleDetailArt.server.luau"].decode("utf8")
@@ -110,9 +121,9 @@ class SevenArtCandidateSafety(unittest.TestCase):
     def test_compiler_metadata_has_exact_counts_and_flags(self):
         import inspect
         body=inspect.getsource(art.compose)
-        self.assertIn('locks["total_scripts"]=73',body)
-        self.assertIn('features["total_sources"]=73',body)
-        self.assertIn('assert len(after) == 73',body)
+        self.assertIn('locks["total_scripts"]=74',body)
+        self.assertIn('features["total_sources"]=74',body)
+        self.assertIn('assert len(after) == 74',body)
         self.assertIn('LOCK_TOTAL_MUST_MATCH_REAL_SCRIPT_COUNT',body)
 
     def test_all_sources_have_valid_sha_pins(self):
