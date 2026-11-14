@@ -11,12 +11,14 @@ on:
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
+      - 'art_quality/**'
   pull_request:
     branches:
       - rc/p0d-s1-kids-rc01
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
+      - 'art_quality/**'
   workflow_dispatch:
     inputs:
       profile:
@@ -2165,6 +2167,11 @@ jobs:
             python3 -B rc_fastlane/verify_live_castle_safe.py --dist "$FINAL" --place "$OUT/P0D_RC81_LIVE_SAFE_CASTLE_ART4_STUDIO_PREVIEW.rbxlx" --receipt "$OUT/LIVE_CASTLE_RC81_EXACT.json"
           fi
           python3 -B art_quality/check_art_quality.py --place "$OUT/P0D_RC81_LIVE_SAFE_CASTLE_ART4_STUDIO_PREVIEW.rbxlx" --out "$OUT/ART_QUALITY_RC81_SOURCE.json"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" \
+            --place "$OUT/P0D_RC81_LIVE_SAFE_CASTLE_ART4_STUDIO_PREVIEW.rbxlx" \
+            --receipt "$OUT/RC81_PRE_UPLOAD_FULL_INSTANCE_MAPPING.json" \
+            --count "$SOURCE_COUNT"
           python3 -B art_quality/check_live_art_parity.py --place /tmp/p0d_rc80_art_full4/P0D_RC80_FOUR_ART_FOLIAGE_GOROGAN_STUDIO_PREVIEW.rbxlx --out "$OUT/LEGACY_SEVEN_STUDIO_ONLY_AUDIT.json"
           python3 - <<'PY'
           import hashlib,json,os
@@ -2274,6 +2281,11 @@ jobs:
             python3 -B rc_fastlane/verify_private_live_horde.py --dist "$FINAL" --place "$OUT/P0D_RC81_PRIVATE_HORDE9_LIVE_CASTLE_STUDIO_CANDIDATE.rbxlx" --receipt "$OUT/PRIVATE_HORDE81_SOURCE_RECEIPT.json"
           fi
           python3 -B art_quality/check_art_quality.py --place "$OUT/P0D_RC81_PRIVATE_HORDE9_LIVE_CASTLE_STUDIO_CANDIDATE.rbxlx" --out "$OUT/ART_SOURCE_QA.json"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" \
+            --place "$OUT/P0D_RC81_PRIVATE_HORDE9_LIVE_CASTLE_STUDIO_CANDIDATE.rbxlx" \
+            --receipt "$OUT/RC81_PRE_UPLOAD_FULL_INSTANCE_MAPPING.json" \
+            --count 81
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
