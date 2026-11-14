@@ -2347,6 +2347,7 @@ jobs:
           mkdir -p "$OUT"
           test -f "$BASE/SOURCE_LOCK.json"
           python3 -B -m unittest discover -s rc_fastlane -p test_private_horde_combat.py -v
+          python3 -B -m unittest discover -s art_quality -p test_live_art_expected_scripts.py -v
           python3 -B rc_fastlane/apply_private_horde_combat.py --base "$BASE" --out "$FINAL" --enabled false
           test ! -e "$FINAL"
           python3 -B rc_fastlane/apply_private_horde_combat.py --base "$BASE" --out "$FINAL" --enabled true
@@ -2363,7 +2364,7 @@ jobs:
           python3 -B art_quality/check_art_quality.py \
             --place "$PLACE" --out "$OUT/ART_SOURCE_REPORT.json"
           python3 -B art_quality/check_live_art_parity.py \
-            --place "$PLACE" --out "$OUT/LIVE_ART_REPORT.json"
+            --place "$PLACE" --expected-scripts 81 --out "$OUT/LIVE_ART_REPORT.json"
           python3 -B art_quality/check_mobile_fun.py \
             --out "$OUT/MOBILE_KID_FUN_REPORT.json"
           cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
@@ -2380,6 +2381,7 @@ jobs:
           assert qa['original_B_reset_unchanged'] and qa['one_Game_Horde_HUD']
           assert qa['three_original_Horde_guards_with_private_optin']
           assert art['source']['source_gate']=='PASS' and art['source']['script_count']==81
+          assert live['expected_script_count']==81
           assert live['source_gate']=='PASS' and live['top_studio_only_count']==7
           assert art['art_decision']=='ART_NO_GO' and qa['live_horde_decision']=='LIVE_HORDE_NO_GO'
           result={
