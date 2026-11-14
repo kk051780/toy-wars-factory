@@ -1475,6 +1475,8 @@ jobs:
           test ! -e "$OUT"
           python3 -B rc_fastlane/apply_p0_round_epoch78.py --base "$BASE" --out "$OUT" --enabled true
           python3 -B rc_fastlane/test_p0_round_epoch_role_native.py --game "$OUT/src/server/Game.server.luau" --out /tmp/p0_round_epoch_role_native.luau
+          echo P0_ROUND_EPOCH_NATIVE_EXACT_FIRST_LINES
+          nl -ba /tmp/p0_round_epoch_role_native.luau | sed -n '35,120p'
           /tmp/p0d_new_luau/luau /tmp/p0_round_epoch_role_native.luau | tee /tmp/p0_round_epoch_role_native.log
           grep -Fx P0_PRIVATE78_ROUND_EPOCH_ROLE_NATIVE_9_SCENARIOS_PASS /tmp/p0_round_epoch_role_native.log
           python3 -B rc_fastlane/test_p0_recovery_v2_native.py --dist "$OUT" --out /tmp/p0_round_epoch_recovery_native.luau
