@@ -11,7 +11,7 @@ from pathlib import Path
 
 TARGET = "client/ConfirmedSlashFX.client.luau"
 BASE_BLOB = "4b1dce5635b709d349ab3f00bba7a7cf9d9883bd"
-BASE_HEAD = "1bf25e7e83a38ecbbef588309edd7217b9f39c67"
+BASE_HEAD = "3dfbb52104fac44b71bf3adcaa82933153670099"
 FEATURE = "FB015_LIVE_COMBAT_FX_ANDROID_BOUNDED_V1"
 OLD_GUARD = 'local RunService = game:GetService("RunService")\nif not RunService:IsStudio() then return end'
 NEW_GUARD = '''local RunService = game:GetService("RunService")
