@@ -1147,6 +1147,32 @@ jobs:
           print('P0_PRIVATE70_ROJO_ALL_70_SOURCE_EXACT_PASS',report['place_bytes'],report['place_sha256'])
           PY
           fi
+      - name: Build P0 playable core and all-art PRIVATE77 cumulatively
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_p0_playable_art77.py -v
+          BASE=/tmp/p0d_owner361_composite70_final
+          DIST=/tmp/p0d_playable_art77_dist
+          python3 -B rc_fastlane/apply_p0_playable_art77.py --base "$BASE" --out "$DIST" --enabled false
+          test ! -e "$DIST"
+          python3 -B rc_fastlane/apply_p0_playable_art77.py --base "$BASE" --out "$DIST" --enabled true
+          test "$(find "$DIST/src" -name '*.luau' | wc -l)" -eq 77
+          mkdir -p /tmp/p0d_playable_art77_out
+          find "$DIST/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          echo P0_PRIVATE77_NATIVE_LUAU_77_77_PASS
+          /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o /tmp/p0d_playable_art77_out/P0D_PLAYABLE_ART_PRIVATE77.rbxlx
+          python3 -B rc_fastlane/verify_p0_playable_art77.py --dist "$DIST" --place /tmp/p0d_playable_art77_out/P0D_PLAYABLE_ART_PRIVATE77.rbxlx --receipt /tmp/p0d_playable_art77_out/RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-PLAYABLE-ART-PRIVATE77-STUDIO
+          path: /tmp/p0d_playable_art77_out/*
+          retention-days: 7
+          if-no-files-found: error
       - uses: actions/upload-artifact@v4
         if: ${{ env.PROFILE == 'rich51' }}
         with:
