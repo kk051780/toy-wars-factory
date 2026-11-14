@@ -39,6 +39,19 @@ class SevenArtCandidateSafety(unittest.TestCase):
         self.assertNotIn('Instance.new("RemoteEvent")',s)
         self.assertNotIn('TakeDamage(',s)
 
+    def test_forest_waits_for_expanded_castle_before_scattering(self):
+        code=art.pinned_art()["server/FantasyWorldArt.server.luau"].decode("utf8")
+        gates=("OWNER361_CASTLE_WORLD_V1", "red:FindFirstChild",
+               "blue:FindFirstChild", "ground.Size.Z - 294",
+               "FB015_FOREST_CASTLE_GEOMETRY_NOT_READY_FAIL_CLOSED")
+        for marker in gates:
+            self.assertIn(marker,code)
+        self.assertLess(code.index("OWNER361_CASTLE_WORLD_V1"),
+                        code.index("local sideZ="))
+        self.assertIn('folder:SetAttribute("ForestPlacedAfterCastleExpanded",true)',code)
+        self.assertIn('folder:SetAttribute("ForestSourceMapDepth",ground.Size.Z)',code)
+        self.assertIn('task.wait(.1)',code)
+
     def test_minion_and_gorogan_cosmetics_have_distinct_owners(self):
         a=art.pinned_art()
         self.assertNotIn(b"MUSOU_MINION_",a["client/FB015CharacterArt.client.luau"])

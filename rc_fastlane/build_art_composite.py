@@ -20,7 +20,7 @@ ART = ROOT / "features/art_composite_sources"
 SPECS = (
     ("CASTLE", "3599f7a86be2956d2ecf4f14267dfbb73f8f1074", "server/CastleBattlefield.server.luau", "CastleBattlefield.server.luau", "OWNER361_CASTLE_WORLD_ADDON_V1"),
     ("CASTLE_DETAIL", "da2bf0544682f72ee02280374a27ce2f4fadb5c2", "server/CastleDetailArt.server.luau", "CastleDetailArt.server.luau", "FB015_FORTRESS_DETAIL_ART_V2"),
-    ("WORLD", "f2a1d58ab4420c0f331adb8f6d9d0478cf32ad4a", "server/FantasyWorldArt.server.luau", "FantasyWorldArt.server.luau", "FB015_ART_WORLD_LIGHT_FOLIAGE_V1"),
+    ("WORLD", "dc741ec6d0506cfebf82631cf3583dd4037fbea9", "server/FantasyWorldArt.server.luau", "FantasyWorldArt.server.luau", "FB015_ART_WORLD_LIGHT_FOLIAGE_V1"),
     ("SEA", "44b39c3d8b0df9290c86a139318ca1bf68356814", "server/H1CoastalSeascape.server.luau", "H1CoastalSeascape.server.luau", "FB011_H1_COASTAL_SEASCAPE_V1"),
     ("COAST_CHANNEL", "652bbcb31d91810a8d5d65d25e769c18ddd1f20f", "server/H1SeaGroundRepair.server.luau", "H1SeaGroundRepair.server.luau", "FB015_REAL_SEA_GROUND_V2"),
     ("MINION", "ed5cd56789abc4a7bc8ee3a44b8982aae4f3ff62", "server/ArtMinionSilhouette.server.luau", "MinionArtSilhouette.server.luau", "ART_MINION_THREE_SILHOUETTES_V1"),
@@ -52,6 +52,15 @@ def pinned_art() -> dict[str, bytes]:
     assert len(sources) == 7
     assert b"MUSOU_MINION_" not in sources["client/FB015CharacterArt.client.luau"]
     assert b"Gorogan_ServerRig" not in sources["server/ArtMinionSilhouette.server.luau"]
+    world = sources["server/FantasyWorldArt.server.luau"]
+    assert b'OWNER361_CASTLE_WORLD_V1' in world
+    assert b'ForestPlacedAfterCastleExpanded' in world
+    assert b'FB015_FOREST_CASTLE_GEOMETRY_NOT_READY_FAIL_CLOSED' in world
+    assert b'ground.Size.Z - 294' in world
+    assert b'FindFirstChild("GRAND_KEEP")' in world
+    # This prevents a successful 73-source build from silently planting the
+    # original 142-depth trees into the new -83..-31 ocean channel.
+
     return sources
 
 

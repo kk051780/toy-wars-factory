@@ -12,6 +12,34 @@ local ground = root:WaitForChild("GrassArena",30)
 if not ground or not ground:IsA("BasePart") then return end
 if root:FindFirstChild("P0D_FB015_WORLD_ART_V1") then return end
 
+-- OWNER FB-015 real visual bug fix:
+-- CastleBattlefield asynchronously enlarges GrassArena from 250x142 to
+-- 370x294. Original scatter used its old 142-z measurement in some runs,
+-- planting trees into the new ocean channel (z -83..-31).
+-- Do NOT generate foliage until the actual expanded castle scene is ready.
+local castle = root:WaitForChild("OWNER361_CASTLE_WORLD_V1", 90)
+if not castle then
+    warn("FB015_FOREST_NO_CASTLE_CANNOT_PLACE_TREES")
+    return
+end
+local ready = false
+for _ = 1, 180 do
+    local red = castle:FindFirstChild("RED_CASTLE_ARCHITECTURE")
+    local blue = castle:FindFirstChild("BLUE_CASTLE_ARCHITECTURE")
+    if math.abs(ground.Size.X - 370) < .05
+        and math.abs(ground.Size.Z - 294) < .05
+        and red and red:FindFirstChild("GRAND_KEEP")
+        and blue and blue:FindFirstChild("GRAND_KEEP") then
+        ready = true
+        break
+    end
+    task.wait(.1)
+end
+if not ready then
+    warn("FB015_FOREST_CASTLE_GEOMETRY_NOT_READY_FAIL_CLOSED")
+    return
+end
+
 local folder = Instance.new("Folder")
 folder.Name="P0D_FB015_WORLD_ART_V1"
 folder.Parent=root
@@ -151,5 +179,9 @@ end
 folder:SetAttribute("NonBlocking",true)
 folder:SetAttribute("MaxPartBudget",MAX_PARTS)
 folder:SetAttribute("ActualPartCount",count)
+folder:SetAttribute("ForestPlacedAfterCastleExpanded",true)
+folder:SetAttribute("ForestNorthSouthZ",sideZ)
+folder:SetAttribute("ForestSourceMapWidth",ground.Size.X)
+folder:SetAttribute("ForestSourceMapDepth",ground.Size.Z)
 folder:SetAttribute("ArtPass","FB015_WORLD_PALETTE_FOLIAGE_ONLY")
 folder:SetAttribute("OfficialOwnerAccepted",false)
