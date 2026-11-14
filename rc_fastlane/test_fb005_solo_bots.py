@@ -15,7 +15,7 @@ class Fb005SoloBotContracts(unittest.TestCase):
                        'Bot.tick(', 'Bot.tryHumanHit(', 'callbacks.steal(',
                        'callbacks.deposit(', 'callbacks.drop(', 'callbacks.attackHuman(',
                        'callbacks.attackBot(', 'MAX_BOTS=5', 'HumanoidRootPart',
-                       'SHIELD', 'RAIDER', 'GUARD'):
+                       'GuardianShield', 'RAIDER', 'GUARD'):
             self.assertIn(marker, script)
         for forbidden in ('Instance.new("RemoteEvent")','OnServerEvent:Connect(',
                           'UpdateAsync(', 'DataStoreService',
