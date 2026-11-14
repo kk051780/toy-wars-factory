@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 from apply_private_horde_hit_toast import (
     GAME,HUD,GAME_V2_BLOB,HUD_V2_BLOB,FEATURE,V1_FLAG,V2_FLAG,
-    blob,read,patch_game,patch_hud,apply
+    blob,read,patch_game,patch_hud,apply,GAME_ANCHOR,GAME_INSERT
 )
 BASE=Path(os.getenv("P0D_PRIVATE_HORDE_V2_DIST","/tmp/p0d_horde_private_lifecycle_v2_81"))
 
@@ -58,11 +58,13 @@ class PrivateHitToastV3Tests(unittest.TestCase):
         self.assertIn("local epoch=impactDisplayEpoch",h)
         self.assertIn("if impactDisplayEpoch==epoch then impactToast.Visible=false end",h)
         self.assertIn("task.delay(.42,function()",h)
-    def test_pinned_real_hit_scope_does_not_reward_miss(self):
-        """Pin original Game scope and reject a moved-outside touched hit counter."""
+    def test_original_real_hit_logic_byte_identical(self):
+        """Patch edits snapshot only; real hit/miss logic is pinned, not native-tested here."""
         g=patch_game(self.sources[GAME]).decode("utf8")
-        self.assertLess(g.index("if touched>0 then"),g.index("mobImpactSeq[player]=(mobImpactSeq[player] or 0)+1"))
-        self.assertEqual(g.count("mobImpactSeq[player]=(mobImpactSeq[player] or 0)+1"),1)
+        orig=self.sources[GAME].decode("utf8")
+        self.assertIn("if touched>0 then",orig)
+        self.assertEqual(orig.count("mobImpactSeq[player]=(mobImpactSeq[player] or 0)+1"),1)
+        self.assertEqual(g.replace(GAME_INSERT,GAME_ANCHOR,1),orig)
         self.assertEqual(blob(self.sources[GAME]),GAME_V2_BLOB)
     def test_off_exact_zero_write(self):
         old=read(self.base)
