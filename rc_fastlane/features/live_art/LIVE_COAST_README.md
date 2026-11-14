@@ -10,14 +10,18 @@ The new `P0DLiveCoastalVista.server.luau` Script adds only a **decorative mariti
 - Checks the real `TRAP_RAIDERS_S1`, `GrassArena` size 250×142 at Y=-3, `CenterRoad` Z=0 and width 24, and northern wall `ARENA_BOUNDARY_N` Z=-71 and width 4; missing/moved anchors => **no write**. Explicitly rejects the Studio-expanded 370×294 scene.
 - 40 parts total: two colored smooth surface bands, six sand strips, twelve static foam bands, eight rocks, two islands (base/palm/crown each), two sailboats (hull/mast/sail each). The near ocean only begins north of the original boundary. No Terrain editing, no physics water, no collidable or queryable geometry; no lights, particles, Tween, heartbeat, ScreenGui, permanent labels.
 - No modifications to the seven studio-gated legacy visual scripts. Other coastal/ocean feature source and physics are unchanged. Source/Mode switch is atomically reversible.
-- **Private source-only stage** is 81 scripts with all prior canonical ART4 80 scripts byte-identical, one extra scenic Script. The script is not officially integrated in RC or published.
+- **Private source-only stage** is 82 scripts with all prior official ART4 + MapBuilder-live-castle 82 scripts byte-identical, one extra scenic Script. The script is not officially integrated in RC or published.
 
 ## How to validate without confusing Studio and live
 
-1. Full source QA: check fresh canonical RC80 ART4 source hash/feature flags; stage one author-GitBlob pinned Script; compile 81 Luau; build and examine exact real Rojo Place; match Game/HUD/MapBuilder + new visual Script Source to each instance. Test negative guards, OFF zero-write and rollback.
+1. Full source QA: check fresh canonical RC81 ART4+castle source hash/feature flags; stage one author-GitBlob pinned Script; compile 82 Luau; build and examine exact real Rojo Place; match Game/HUD/MapBuilder + new visual Script Source to each instance. Test negative guards, OFF zero-write and rollback.
 2. The mandatory engine test remains separate: OWNER authorizes a private production-like test server, with this script opt-in correctly set on **server workspace**. Verify the actual baseline arena and that `P0D_PRIVATE_LIVE_COAST_V1` has `ActualPartCount=40`, not merely that source compiled. Confirm there is no new walking collision or effect on eggs, movement and attack.
 3. Capture real screenshots and video from northward facing three different points in the baseline map, at both PC and low-end Android. Check ocean visibility, art coherence, 15-minute median≥30/p10≥25 FPS/thermal degradation≤20%, no crash/OOM and fun/first3min≥4/5. If the boundary doesn't show water from the playable camera, reject or redesign the placement, not manufacture a screenshot.
 4. The private Studio test may not reproduce this candidate: original Owner361 Studio overlay resizes GrassArena, so the coast **correctly refuses to load** when the arena is 370×294. Do not disable this fail-closed check just to get a screenshot. Studio source CI alone is NOT proof of private nonStudio visual parity.
 5. At any mismatch, keep `LIVE_ART_NO_GO / ART_NO_GO / MOBILE_NO_GO / FUN_NO_GO` and revert by omitting the one Script. #220 B alone handles any official source CAS. No main write/regular merge/Roblox public publish/paid use/Windows operation without authorization.
 
 All screenshots and tests are still NOT_RUN / OWNER_ACCEPTED=0 until actual owner testing. The ocean is **scenic, not traversable**, by design.
+
+## Latest official baseline lease
+
+Rebased the entire candidate on pinned **official HEAD bab8e93bfe0bce0baddfe64ee2898962486058af**, which already includes the 81st live-safe MapBuilder castle fallback. The coast is new Script **#82** and does not erase that castle work. Prior PR #445 used obsolete 80-source parent and is superseded; never merge or adopt its historic workflow. Future official HEAD changes require a new source-selective rebase by B before CAS adoption.
