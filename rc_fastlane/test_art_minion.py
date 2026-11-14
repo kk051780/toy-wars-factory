@@ -30,7 +30,7 @@ class MinionArtTest(unittest.TestCase):
 
     def test_original_horde_lifecycle_not_fake_ai_or_second_controller(self):
         self.assertIn("mobsFolder.ChildAdded:Connect(", self.src)
-        self.assertIn('mobsFolder:WaitForChild', "mobsFolder:WaitForChild")  # original folder is awaited at server
+        self.assertIn('arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT", 45)', self.src)
         self.assertIn('model:GetAttribute("P0D_ART_MINION_V1") == true', self.src)
         self.assertIn('model:SetAttribute("P0D_ART_MINION_V1", true)', self.src)
         self.assertIn('model.PrimaryPart', self.src)
