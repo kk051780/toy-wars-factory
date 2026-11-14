@@ -32,7 +32,10 @@ class ArtMotionSourceContract(unittest.TestCase):
         s = self.motion
         self.assertNotIn('Instance.new("Part")', s)
         self.assertNotIn('Instance.new("ParticleEmitter")', s)
-        watched = re.findall(r'"(ART_[A-Z_0-9-]+)"', s)
+        # Only user-facing animated attachments count as authored parts.
+        # Diagnostic labels such as ART_MOTION_NO_ARENA are not geometry.
+        declaration = s.split("local watchedParts = {", 1)[1].split("\n}\n", 1)[0]
+        watched = re.findall(r'"(ART_[A-Z_0-9-]+)"', declaration)
         self.assertGreaterEqual(len(watched), 16)
         for name in watched:
             fragment = re.sub(r"-?1$", "", name.removeprefix("ART_"))
