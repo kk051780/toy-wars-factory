@@ -85,7 +85,7 @@ class ArtCombatQA(unittest.TestCase):
         self.assertIn('self.artHitBus:Fire(m.body,m.artHitSeq,m.hp<=0,self.round)',h)
         self.assertIn('Instance.new("BindableEvent")',h)
         self.assertNotIn('P0D_ART_SPARK_V1',h)
-        self.assertIn("if self.artCue then",h)
+        self.assertIn("if self.artCue and self.artHitBus then",h)
 
     def test_client_only_observes_outbound_hit_and_limit(self):
         s=mod.AUTHOR.read_text()
