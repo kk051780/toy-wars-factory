@@ -15,7 +15,7 @@ END = "-- END_ACTUAL_CUE_DEDUPE_POLICY"
 def compose(raw: str) -> str:
     if raw.count(START) != 1 or raw.count(END) != 1:
         raise RuntimeError("POLICY_SOURCE_BOUNDARY_MISSING_OR_DUPLICATED")
-    fragment = raw.split(START, 1)[1].split(END, 1)[0]
+    fragment = raw.split(START, 1)[1].split("\n", 1)[1].split(END, 1)[0]
     required = ("local function acceptVisualCue(", "serial<=(lastByMob[id] or 0)",
                 "lastByMob[id]=serial", "return true")
     for text in required:
