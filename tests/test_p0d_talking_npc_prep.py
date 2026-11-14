@@ -92,5 +92,56 @@ class TalkingNpcPrepTests(unittest.TestCase):
         self.assertIn('type(packet.text) ~= "string"', s)
 
 
+    def test_sourcery_egg_and_observation_regressions(self):
+        server = self.sources["TalkingNPCRuntime.server.luau"]
+        self.assertIn('head:FindFirstChild("S1_CARRIED_EGG")', server)
+        self.assertIn('mode == "AUTO_ENEMY_ALERT"', server)
+        self.assertIn('mode ~= "AUTO_ENEMY_ALERT"', server)
+        self.assertIn('== "ENEMY_ALERT" then', server)
+        self.assertIn('lastAlertTarget[player] = enemy.UserId', server)
+        self.assertIn('player:GetAttribute("P0D_StarShardComplete") ~= true', server)
+        self.assertIn('local perSpeaker = speechTimes[player] or {}', server)
+        self.assertIn('perSpeaker[speaker] = now', server)
+        self.assertNotIn('lastSpeech[player] = now', server)
+
+    def test_sourcery_hot_flag_and_module_fail_closed(self):
+        server = self.sources["TalkingNPCRuntime.server.luau"]
+        client = self.sources["TalkingNPCClient.client.luau"]
+        self.assertIn('if not directorModule or not directorModule:IsA("ModuleScript") then', server)
+        self.assertIn('pcall(require, directorModule)', server)
+        self.assertIn('GetAttributeChangedSignal(FLAG):Connect(reconcile)', server)
+        self.assertIn('prior.folder:Destroy()', server)
+        self.assertIn('ReplicatedStorage:SetAttribute(PUBLIC_ENABLED, false)', server)
+        self.assertIn('ReplicatedStorage:SetAttribute(PUBLIC_ENABLED, true)', server)
+        self.assertIn('GetAttributeChangedSignal(PUBLIC_ENABLED):Connect(setEnabled)', client)
+        self.assertIn('if not gui.Enabled then return end', client)
+        self.assertIn('card.Visible = false', client)
+
+    def test_sourcery_tts_single_worker_cleanup_and_budget(self):
+        client = self.sources["TalkingNPCClient.client.luau"]
+        self.assertIn('if audioBusy then return end', client)
+        self.assertIn('audioBusy = true', client)
+        self.assertIn('audioPending = nil', client)
+        self.assertIn('request.nonce == speechSerial', client)
+        self.assertIn('TTS_GAP = 20', client)
+        self.assertIn('for _, item in ipairs(staged) do', client)
+        self.assertIn('item:Destroy()', client)
+        self.assertIn('if not audioEnabled then stopVoice() end', client)
+        self.assertIn('audioEnabled = not audioEnabled', client)
+        self.assertIn('card.Visible = true', client)
+        self.assertIn('if packet.automated ~= true then', client)
+        self.assertEqual(client.count('tts:LoadAsync()'), 1)
+
+    def test_overlay_immutable_transaction_and_realms_dependency(self):
+        source = (ROOT / "rc_fastlane" / "apply_talking_npc.py").read_text("utf8")
+        self.assertIn('shutil.copytree(dist, staged)', source)
+        self.assertIn('os.replace(staged, output_dist)', source)
+        self.assertIn('shutil.rmtree(temp_root, ignore_errors=True)', source)
+        self.assertIn('REQUIRE_REALM_HUNT_DIALOGUE', source)
+        self.assertIn('REALM_HUNT_NOT_ENABLED', source)
+        self.assertIn('OUTPUT_DIST_REQUIRED_FOR_IMMUTABLE_PREVIEW', source)
+        self.assertIn('output_dist.exists()', source)
+
+
 if __name__ == "__main__":
     unittest.main()
