@@ -84,6 +84,42 @@ class Motion69Tests(unittest.TestCase):
             self.assertTrue(motion.compose(p68,p69,False))
             self.assertFalse(p69.exists())
 
+    def test_rewritten_self_manifest_cannot_authorize_unrelated_file(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            import hashlib
+            root=Path(temporary)
+            _,p68,_,_,_=self.make_chain(root)
+            p69=root/"private69"
+            motion.compose(p68,p69,True)
+            added=p69/"NOT_OURS.txt"
+            added.write_text("owner content","utf8")
+            mf=p69/motion.MANIFEST
+            record=json.loads(mf.read_text("utf8"))
+            record["files"]["NOT_OURS.txt"]=hashlib.sha256(added.read_bytes()).hexdigest()
+            mf.write_text(json.dumps(record,ensure_ascii=False,sort_keys=True,indent=2)+"\n","utf8")
+            with self.assertRaisesRegex(RuntimeError,"MOTION69_INDEPENDENT_EXPECTED_TREE_DRIFT"):
+                motion.compose(p68,p69,False)
+            self.assertEqual(added.read_text("utf8"),"owner content")
+            self.assertTrue(p69.exists())
+
+    def test_nested_manifest_filename_is_not_ignored(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            import hashlib
+            root=Path(temporary)
+            _,p68,_,_,_=self.make_chain(root)
+            p69=root/"private69"
+            motion.compose(p68,p69,True)
+            nested=p69/"src"/"client"/motion.MANIFEST
+            nested.write_text("nested data","utf8")
+            mf=p69/motion.MANIFEST
+            record=json.loads(mf.read_text("utf8"))
+            record["files"][nested.relative_to(p69).as_posix()] = hashlib.sha256(
+                nested.read_bytes()).hexdigest()
+            mf.write_text(json.dumps(record,ensure_ascii=False,sort_keys=True,indent=2)+"\n","utf8")
+            with self.assertRaisesRegex(RuntimeError,"MOTION69_INDEPENDENT_EXPECTED_TREE_DRIFT"):
+                motion.compose(p68,p69,False)
+            self.assertEqual(nested.read_text("utf8"),"nested data")
+
     def test_off_no_output_writes_zero_and_parent_stays(self):
         with tempfile.TemporaryDirectory() as temporary:
             root=Path(temporary)
