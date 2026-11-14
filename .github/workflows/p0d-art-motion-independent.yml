@@ -52,16 +52,16 @@ jobs:
           persist-credentials: false
       - uses: actions/cache@v4
         with:
-          path: /tmp/p0d_new_luau
-          key: p0d-rc-luau-ubuntu-f46d879e28302-v1
+          path: /tmp/p0d_motion_ind_luau
+          key: p0d-motion-ind-luau-ubuntu-f46d879e28302-v1
       - name: Pinned native Luau compile authored client script
         shell: bash
         run: |
           set -euo pipefail
           test "$(git -C _p0d_motion_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
-          if [ ! -x /tmp/p0d_new_luau/luau-compile ]; then
-            cmake -S _p0d_motion_luau -B /tmp/p0d_new_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-            cmake --build /tmp/p0d_new_luau --target Luau.Compile.CLI --parallel 4
+          if [ ! -x /tmp/p0d_motion_ind_luau/luau-compile ]; then
+            cmake -S _p0d_motion_luau -B /tmp/p0d_motion_ind_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+            cmake --build /tmp/p0d_motion_ind_luau --target Luau.Compile.CLI --parallel 4
           fi
-          /tmp/p0d_new_luau/luau-compile rc_fastlane/features/art_motion/NeutralMotion.client.luau >/dev/null
+          /tmp/p0d_motion_ind_luau/luau-compile rc_fastlane/features/art_motion/NeutralMotion.client.luau >/dev/null
           echo P0D_FB015_MOTION_NATIVE_LUAU_COMPILE_PASS_SOURCE_ONLY_STUDIO_PENDING
