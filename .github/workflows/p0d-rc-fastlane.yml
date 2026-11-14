@@ -545,7 +545,11 @@ jobs:
             'rc_branch_commit':os.environ['GITHUB_SHA'],'place_sha256':digest,
             'source_count':sum(actual.values()),'exact_rojo_binary':True,
             'actual_uncompressed_place_bytes':place_bytes,
-            'source_candidate_stage':'PRIVATE63_METEOR_PLUS_SIX_SHARDS_PLUS_MOBILE_NOT_OFFICIAL_RC',
+            'source_candidate_stage':('CANONICAL_RC63_SOURCE_ADOPTED_STUDIO_NOT_TESTED'
+                if p=='rich51' and os.environ.get('GITHUB_REF')=='refs/heads/rc/p0d-s1-kids-rc01'
+                else 'PRIVATE_CANDIDATE_OR_FALLBACK_NOT_OFFICIAL_RC'),
+            'canonical_rc_source_adopted':bool(
+                p=='rich51' and os.environ.get('GITHUB_REF')=='refs/heads/rc/p0d-s1-kids-rc01'),
             'native_policy_cases_7jobs':33 if p=='rich51' else None,
             'native_policy_cases_relay':41 if p=='rich51' else None,
             'native_original_Game_relay_cases':31 if p=='rich51' else None,
