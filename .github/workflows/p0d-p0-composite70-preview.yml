@@ -1519,6 +1519,47 @@ jobs:
           print("P0_PRIVATE78_ROUND_EPOCH_ROLE_ROJO_ALL78_SOURCE_EXACT_PASS",
             r["place_bytes"],r["place_sha256"])
           PY
+      - name: 'P0 FB005 final fullgame 78 - author402 source exact AI stalled detour and path leases'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_p0_bot_path78.py -v
+          BASE=/tmp/p0d_p0_round_epoch_role_dist
+          OUT=/tmp/p0d_p0_bot_path78_dist
+          python3 -B rc_fastlane/apply_p0_bot_path78.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_p0_bot_path78.py --base "$BASE" --out "$OUT" --enabled true
+          mkdir -p /tmp/p0d_p0_bot_path78_out
+          python3 -B rc_fastlane/verify_p0_bot_path78_move.py --dist "$OUT" --out /tmp/p0d_p0_bot_path78_out/BOT_START_MOVE_NATIVE.luau
+          /tmp/p0d_new_luau/luau /tmp/p0d_p0_bot_path78_out/BOT_START_MOVE_NATIVE.luau | tee /tmp/p0d_p0_bot_path78_out/BOT_START_MOVE_NATIVE.txt
+          grep -Fx P0D_SOLO_REAL_BOT_START_AND_STALL_35_NATIVE_CASES_PASS /tmp/p0d_p0_bot_path78_out/BOT_START_MOVE_NATIVE.txt
+          python3 -B rc_fastlane/verify_p0_bot_path78_actor.py --dist "$OUT" --out /tmp/p0d_p0_bot_path78_out/REAL_ACTOR_NATIVE.luau
+          /tmp/p0d_new_luau/luau /tmp/p0d_p0_bot_path78_out/REAL_ACTOR_NATIVE.luau | tee /tmp/p0d_p0_bot_path78_out/REAL_ACTOR_NATIVE.txt
+          grep -Fx P0D_REAL_BOT_ACTOR_START_STOP_19_NATIVE_CASES_PASS /tmp/p0d_p0_bot_path78_out/REAL_ACTOR_NATIVE.txt
+          python3 -B rc_fastlane/verify_p0_bot_path78_lease.py --dist "$OUT" --out /tmp/p0d_p0_bot_path78_out/REAL_LEASE_NATIVE.luau
+          /tmp/p0d_new_luau/luau /tmp/p0d_p0_bot_path78_out/REAL_LEASE_NATIVE.luau | tee /tmp/p0d_p0_bot_path78_out/REAL_LEASE_NATIVE.txt
+          grep -Fx P0D_REAL_BOT_PATH_LEASE_18_NATIVE_CASES_PASS /tmp/p0d_p0_bot_path78_out/REAL_LEASE_NATIVE.txt
+          python3 -B rc_fastlane/test_p0_spectator_h2_native.py --game "$OUT/src/server/Game.server.luau" --bot "$OUT/src/server/SoloTeamBots.luau" --out /tmp/p0d_p0_bot_path78_out/SPECTATOR_H2_NATIVE.luau
+          /tmp/p0d_new_luau/luau /tmp/p0d_p0_bot_path78_out/SPECTATOR_H2_NATIVE.luau | tee /tmp/p0d_p0_bot_path78_out/SPECTATOR_H2_NATIVE.txt
+          grep -Fx P0_PRIVATE78_SPECTATOR_H2_NATIVE_19_CASES_PASS /tmp/p0d_p0_bot_path78_out/SPECTATOR_H2_NATIVE.txt
+          python3 -B rc_fastlane/test_p0_round_epoch_role_native.py --game "$OUT/src/server/Game.server.luau" --out /tmp/p0d_p0_bot_path78_out/ROUND_EPOCH_ROLE_NATIVE.luau
+          /tmp/p0d_new_luau/luau /tmp/p0d_p0_bot_path78_out/ROUND_EPOCH_ROLE_NATIVE.luau | tee /tmp/p0d_p0_bot_path78_out/ROUND_EPOCH_ROLE_NATIVE.txt
+          grep -Fx P0_PRIVATE78_ROUND_EPOCH_ROLE_NATIVE_9_SCENARIOS_PASS /tmp/p0d_p0_bot_path78_out/ROUND_EPOCH_ROLE_NATIVE.txt
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 78
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done
+          echo P0_PRIVATE78_SOLO_AI_PATH_ALL_78_LUAU_COMPILED
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_p0_bot_path78_out/P0D_ALL_FEATURES_SOLO_BOT_UNSTUCK_PRIVATE78.rbxlx
+          python3 -B rc_fastlane/verify_p0_bot_path78.py --dist "$OUT" --place /tmp/p0d_p0_bot_path78_out/P0D_ALL_FEATURES_SOLO_BOT_UNSTUCK_PRIVATE78.rbxlx --receipt /tmp/p0d_p0_bot_path78_out/RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-ALLFEATURES-AI-UNSTUCK-PRIVATE78-STUDIO
+          path: /tmp/p0d_p0_bot_path78_out/*
+          retention-days: 7
+          if-no-files-found: error
       - uses: actions/upload-artifact@v4
         if: ${{ env.PROFILE == 'rich51' }}
         with:
