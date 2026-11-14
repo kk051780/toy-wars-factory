@@ -104,6 +104,43 @@ def patch_game(text: str) -> str:
                 end
             end"""))
 
+    # Consent / input integrity: COUNTDOWN must support cancellation, while
+    # an ignored READY input during ACTIVE/RESULTS must never consume the
+    # same monotonic seq used by ATTACK/TRAP/MAGIC in this sole original Game.
+    text=in_region(text,
+        "local function toggleMatchReady(player: Player, data)",
+        "remote.OnServerEvent:Connect(",
+        lambda block: one(block,
+            """    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end
+    lastSeq[player] = data.seq
+    if match.phase ~= "LOBBY" then return end
+    local side = getTeamName(player)
+    if side ~= "RED" and side ~= "BLUE" then return end
+    readyForMatch[player] = not (readyForMatch[player] == true)
+    broadcast()""",
+            """    if match.phase ~= "LOBBY" and match.phase ~= "COUNTDOWN" then
+        return
+    end
+    local side = getTeamName(player)
+    if side ~= "RED" and side ~= "BLUE" then return end
+    if match.phase=="COUNTDOWN" and readyForMatch[player]~=true then
+        return
+    end
+    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end
+    lastSeq[player] = data.seq
+    if match.phase=="COUNTDOWN" then
+        -- Explicit last-second revoke, with immediate peer notification.
+        readyForMatch[player]=false
+        match.phase="LOBBY"
+        match.phaseUntil=0
+        broadcast()
+        return
+    end
+    readyForMatch[player] = not (readyForMatch[player] == true)
+    broadcast()"""))
+    assert 'match.phase=="COUNTDOWN" and readyForMatch[player]~=true' in text
+    assert 'match.phaseUntil=0' in text
+
     # Critical lobby-to-battle proof: original resetRound loads every human
     # AFTER phase ACTIVE, CharacterAdded calls assignSpawn(ACTIVE => battle).
     text_start=text.index("local function resetRound()")
@@ -179,4 +216,16 @@ def patch_bot(text: str) -> str:
         -- Both the global match and this particular bot/goal must still be""")
     assert "if eligible~=1 then Bot.stop();return end" in text
     assert text.count("MAX_INFLIGHT_PATHS")>=2
+    return text
+
+def patch_hud(text: str) -> str:
+    # The start button cannot be hidden during countdown because the user
+    # must be able to revoke a READY even after countdown begins.
+    text=one(text,
+        """    readyButton.Visible = s.phase == "LOBBY"
+    readyButton.Text = if s.ready == true then "✓ 準備解除" else "▶ 出撃する" """.rstrip(),
+        """    readyButton.Visible = s.phase == "LOBBY"
+        or (s.phase == "COUNTDOWN" and s.ready == true)
+    readyButton.Text = if s.phase == "COUNTDOWN" then "✕ 出撃中止"
+        elseif s.ready == true then "✓ 準備解除" else "▶ 出撃する" """.rstrip())
     return text
