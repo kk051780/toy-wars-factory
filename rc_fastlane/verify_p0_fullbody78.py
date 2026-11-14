@@ -17,8 +17,10 @@ def verify(dist:Path,place:Path,receipt:Path)->None:
     fl=json.loads((dist/"RC_FEATURE_LOCK.json").read_text("utf8"))
     assert sl["total_scripts"]==fl["total_sources"]==78
     assert sl["blobs"]==fl["source_gitblobs"]==pins
-    assert scripts[DEST]==derived_source(), "FULLBODY_REPLACEMENT_NOT_EXACT"\n    assert scripts[GAME].decode().count(REPAIR)==1,"RESULTS_RECOVERY_MISSING"
-    assert fl["feature_flags"][FEATURE_ID] is True\n    assert fl["p0_fullbody78"]["other77_byte_identical"] is True
+    assert sources[DEST]==derived_source(), "FULLBODY_REPLACEMENT_NOT_EXACT"
+    assert sources[GAME].decode().count(REPAIR)==1,"RESULTS_RECOVERY_MISSING"
+    assert fl["feature_flags"][FEATURE_ID] is True
+    assert fl["p0_fullbody78"]["other77_byte_identical"] is True
     expected=collections.Counter(raw.decode("utf8") for raw in sources.values())
     actual=collections.Counter()
     names=collections.Counter()
@@ -42,7 +44,8 @@ def verify(dist:Path,place:Path,receipt:Path)->None:
         "source_gitblob_match":True,"only_one_Game":True,
         "parent77_untouched":True,"studio_engine":"NOT_TESTED",
         "art_motion_proven_physically":"NOT_TESTED","android_fps":"NOT_TESTED",
-        "owner_art":"ART_NO_GO",\n        "full_silhouette_parts":41,"nine_models_total_parts":92,"owner_fun":"FUN_NO_GO",
+        "owner_art":"ART_NO_GO",
+        "full_silhouette_parts":41,"nine_models_total_parts":92,"owner_fun":"FUN_NO_GO",
         "official_rc_adoption":0,
         "place_bytes":place.stat().st_size,
         "place_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
