@@ -883,7 +883,8 @@ jobs:
             'rc_branch_commit':os.environ['GITHUB_SHA'],'place_sha256':digest,
             'source_count':sum(actual.values()),'exact_rojo_binary':True,
             'actual_uncompressed_place_bytes':place_bytes,
-            'source_candidate_stage':('CANONICAL_RC65_SOURCE_ADOPTED_STUDIO_NOT_TESTED'
+            'source_candidate_stage':(('CANONICAL_RC66_SOURCE_ADOPTED_STUDIO_NOT_TESTED' if bond_enabled
+                else 'CANONICAL_RC65_SOURCE_ADOPTED_STUDIO_NOT_TESTED')
                 if p=='rich51' and os.environ.get('GITHUB_REF')=='refs/heads/rc/p0d-s1-kids-rc01'
                 else 'PRIVATE_CANDIDATE_OR_FALLBACK_NOT_OFFICIAL_RC'),
             'canonical_rc_source_adopted':bool(
