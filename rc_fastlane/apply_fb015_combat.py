@@ -26,7 +26,7 @@ AUTHOR = ROOT / "features/fb015_combat/ArtCombatSlash.client.luau"
 HORDE_AUTHOR = ROOT / "features/fb015_combat/MusouHordeArtSignal.luau"
 DEST = "client/ArtCombatSlash.client.luau"
 HORDE = "server/MusouHorde.luau"
-PIN = "c3e3c89b781d446fd8952bee51ec3a2cac46d1ff"
+PIN = "17c6a9a3404e913b279b348e3b981ac61bfd1b24"
 HORDE_PATCH_PIN = "a2d07936bd9fe5bdf3630498c39d61d5a8560d99"
 ORIGINAL_HORDE_PIN = "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 BASE = 66
@@ -106,6 +106,7 @@ def validate_visual(raw: bytes) -> None:
         "HttpService:JSONDecode(encoded)",
         "workspace:GetServerTimeNow()",
         "makeArc(hitPos,fromPos,isKO)",
+        "if isEpochStale(authoritativeEpoch,epoch) then return end",
         "typeof(hitPos)~=\"Vector3\"",
         "cue:IsA(\"RemoteEvent\")",
         "MAX_BURSTS_PER_SECOND = 9",
