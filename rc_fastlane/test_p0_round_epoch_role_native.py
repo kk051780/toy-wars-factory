@@ -47,10 +47,10 @@ function ModeVote.tally(votes,participants) return "CLASSIC" end
 local modeVotes={}
 local EXPERIMENTAL_FIVE_EGG_MODE=false
 local studioSoloRoundStarted=false
-local function eligibleSoloPlayers() return Players and Players:GetPlayers() or {} end
 local function beginProgressRounds() end
 local Players={online={}}
 function Players:GetPlayers() return self.online end
+local function eligibleSoloPlayers() return Players:GetPlayers() end
 local Config={MatchSeconds=900,CastleMaxHp=100,RoleSelectCooldown=3}
 local t=1
 local function serverNow() return t end
