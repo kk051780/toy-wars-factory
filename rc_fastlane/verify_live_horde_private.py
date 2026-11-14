@@ -43,16 +43,22 @@ def verify(dist:Path,place:Path,receipt:Path):
     game=src[GAME].decode("utf8")
     assert game.count('horde:reset(')==1
     assert game.count("remote.OnServerEvent:Connect(")==1
-    assert game.count('workspace:GetAttribute("'+PRIVATE_ATTR+'") == true')==1
-    assert game.count('game.PrivateServerId ~= ""')==1
+    assert game.count('workspace:GetAttribute("'+PRIVATE_ATTR+'") == true')==3
+    assert game.count('game.PrivateServerId ~= ""')==3
     assert game.count('if RunService:IsStudio() or (')==1
+    assert 'if RunService:IsStudio() and not EXPERIMENTAL_FIVE_EGG_MODE then' in game
+    assert 'horde:tick(now,Players:GetPlayers(),healthy)' in game
+    assert 'local touched,defeated = horde:hit(' in game
+    assert game.count('if RunService:IsStudio() or (game.PrivateServerId ~= ""')==1
+    assert game.count('if (RunService:IsStudio() or (game.PrivateServerId ~= ""')==1
     for banned in ('workspace:SetAttribute("'+PRIVATE_ATTR, 'game.PrivateServerId ='):
         assert banned not in game,("UNSAFE_ENABLER",banned)
     result={
       "schema":"P0D_PRIVATE_LIVE_HORDE_SOURCE_EXACT_81_V1",
       "lua_sources":81,"embedded_sources_exact":81,
       "single_Game":True,"single_MusouHorde":True,"single_HUD":True,
-      "one_original_horde_reset_guarded":True,"changed_sources":[GAME],
+      "one_original_horde_reset_guarded":True,"three_original_horde_sites_controlled":True,
+      "studio_SoloTeamBots_separate":True,"changed_sources":[GAME],
       "other_80_source_byte_exact":True,
       "server_private_id_and_owner_optin":True,"public_default":"OFF",
       "live_horde_decision":"LIVE_HORDE_NO_GO","owner_accepted":False,
