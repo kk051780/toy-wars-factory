@@ -26,6 +26,9 @@ local elapsed = 0
 local activeParts = 0
 local lastRound = nil
 local lastHitSerial = {}
+-- Bounded 9-NPC short-lived cues can arrive before an art model replicates.
+-- Replaying them at their original time avoids inventing later damage events.
+local pendingHits = {}
 -- Server-created anchored art is never locally re-positioned. We animate only
 -- client-owned clones and reveal server originals when outside the view range.
 local localArt = Instance.new("Folder")
@@ -113,8 +116,18 @@ local function tryEquip(model)
     records[model] = {
         core=core, model=model, kind=kind, attachments=attachments,
         prevPos=core.Position, speed=0, hitAt=-100, koAt=-100,
-        lastHit=false, phase=(count * 1.19) + (#model.Name * .17),
+        phase=(count * 1.19) + (#model.Name * .17),
     }
+    local id = if kind == "ELITE" then 9 else tonumber(model.Name:match("(%d+)$"))
+    local pending = id and pendingHits[id]
+    if pending then
+        pendingHits[id] = nil
+        -- Old hits must not be freshly animated when art appears too late.
+        if os.clock() - pending.at < .7 then
+            records[model].hitAt = pending.at
+            if pending.ko then records[model].koAt = pending.at end
+        end
+    end
     activeParts += #attachments
     return true
 end
@@ -195,15 +208,21 @@ if cue:IsA("RemoteEvent") then
             if lastRound ~= nil and round < lastRound then return end
             lastRound = round
             table.clear(lastHitSerial)
+            table.clear(pendingHits)
         end
         if serial <= (lastHitSerial[id] or 0) then return end
         lastHitSerial[id] = serial
+        local now = os.clock()
         local targetName = if id == 9 then "MUSOU_ELITE_TELEGRAPH"
             else "MUSOU_MINION_" .. tostring(id)
         local model = horde:FindFirstChild(targetName)
         local entry = model and records[model]
-        if not entry then return end
-        local now = os.clock()
+        if not entry then
+            -- Do not lose the cue while #374 assembles the replicated art.
+            pendingHits[id] = {at=now, ko=isKO}
+            return
+        end
+        pendingHits[id] = nil
         entry.hitAt = now
         if isKO then entry.koAt = now end
     end)
@@ -222,6 +241,8 @@ pulse = RunService.Heartbeat:Connect(function(dt)
             for _,connection in ipairs(leases) do connection:Disconnect() end
         end
         table.clear(connected)
+        table.clear(lastHitSerial)
+        table.clear(pendingHits)
         for model in pairs(records) do drop(model) end
         if cueConnection then cueConnection:Disconnect() end
         if localArt.Parent then localArt:Destroy() end
@@ -276,6 +297,8 @@ script.Destroying:Connect(function()
         for _,c in ipairs(leases) do c:Disconnect() end
     end
     table.clear(connected)
+    table.clear(lastHitSerial)
+    table.clear(pendingHits)
     for model in pairs(records) do drop(model) end
     if cueConnection then cueConnection:Disconnect() end
     if localArt.Parent then localArt:Destroy() end
