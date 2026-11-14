@@ -1005,3 +1005,67 @@ jobs:
           path: /tmp/p0d_rc_out/*
           retention-days: 7
           if-no-files-found: error
+
+      - name: FB015 test source-locked real MusouHorde visual repair in independent private66
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_musou_art.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            SOURCE=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            DST=/tmp/p0d_fb015_private66_dist
+            cp -a "$SOURCE" "$DST"
+            BEFORE=$(find "$DST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_fb015_musou_art.py --dist "$DST" --enabled false
+            AFTER=$(find "$DST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            python3 -B rc_fastlane/apply_fb015_musou_art.py --dist "$DST" --enabled true
+            /tmp/p0d_new_luau/luau-compile "$DST/src/server/MusouHorde.luau" >/dev/null
+            mkdir -p /tmp/p0d_fb015_out
+            /tmp/p0d_rc_rojo build "$DST/default.project.json" -o /tmp/p0d_fb015_out/P0D_FB015_ART_MINION_PRIVATE66.rbxlx
+            cp "$DST/SOURCE_LOCK.json" /tmp/p0d_fb015_out/SOURCE_LOCK.json
+            cp "$DST/RC_FEATURE_LOCK.json" /tmp/p0d_fb015_out/RC_FEATURE_LOCK.json
+            python3 - <<'PY'
+          from pathlib import Path
+          import json,xml.etree.ElementTree as ET,hashlib
+          from rc_fastlane.apply_fb015_musou_art import sources,blob
+          dist=Path("/tmp/p0d_fb015_private66_dist")
+          before=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE")
+          orig=sources(before);after=sources(dist)
+          changed={k for k in orig if orig[k]!=after[k]}
+          assert len(orig)==66 and len(after)==66
+          assert changed=={"server/MusouHorde.luau"},("UNEXPECTED_AUTHORITY_EDIT",changed)
+          assert orig["server/Game.server.luau"]==after["server/Game.server.luau"]
+          assert orig["shared/Config.luau"]==after["shared/Config.luau"]
+          pins={p:blob(b) for p,b in sorted(after.items())}
+          assert json.loads((dist/"SOURCE_LOCK.json").read_text())["blobs"]==pins
+          assert json.loads((dist/"RC_FEATURE_LOCK.json").read_text())["source_gitblobs"]==pins
+          output=Path("/tmp/p0d_fb015_out/P0D_FB015_ART_MINION_PRIVATE66.rbxlx")
+          tree=ET.parse(output)
+          modules=[];games=[]
+          for node in tree.iter("Item"):
+              n=node.find("./Properties/string[@name='Name']")
+              if n is None:continue
+              if node.get("class")=="ModuleScript": modules.append(n.text)
+              if node.get("class")=="Script" and n.text=="Game": games.append(n.text)
+          assert modules.count("MusouHorde")==1
+          assert len(games)==1
+          receipt={"feature_id":"FB015_ART_MINION_SILHOUETTE_V1",
+                   "owner_feedback":["FB-008","FB-015"],
+                   "status":"PRIVATE66_BUILD_SOURCE_EXACT_STUDIO_NOT_TESTED",
+                   "head":"${{ github.event.pull_request.head.sha || github.sha }}",
+                   "official_adopted":False,"owner_fun":"ART_NO_GO",
+                   "place_bytes":output.stat().st_size,
+                   "place_sha256":hashlib.sha256(output.read_bytes()).hexdigest(),
+                   "source_count":66,"modified":["server/MusouHorde.luau"]}
+          Path("/tmp/p0d_fb015_out/FB015_ART_BUILD_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
+          print("P0D_FB015_ART_MINION_REAL_COMPOSED_PRIVATE66_ROJO_PASS",receipt["place_bytes"])
+          PY
+          fi
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-FB015-ART-MINION-PRIVATE66
+          path: /tmp/p0d_fb015_out/*
+          retention-days: 7
+          if-no-files-found: error
