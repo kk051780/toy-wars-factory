@@ -2505,3 +2505,53 @@ jobs:
           path: /tmp/p0d_rc81_full_bindings_v2_receipts/*
           retention-days: 14
           if-no-files-found: error
+
+      - name: 'P0 #444 PRIVATE Horde passive real-engine evidence probe 82 sources, 0 Game/UI changes'
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export P0D_HORDE_RUNTIME_EVIDENCE_PARENT=/tmp/p0d_horde_private_lifecycle_v2_81
+          BASE="$P0D_HORDE_RUNTIME_EVIDENCE_PARENT"
+          FINAL=/tmp/p0d_horde_evidence_source82
+          OUT=/tmp/p0d_horde_runtime_evidence_out
+          mkdir -p "$OUT"
+          test -f "$BASE/src/server/Game.server.luau"
+          python3 -B -m unittest discover -s rc_fastlane -p test_horde_runtime_evidence.py -v
+          python3 -B rc_fastlane/apply_horde_runtime_evidence.py --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_horde_runtime_evidence.py --base "$BASE" --out "$FINAL" --enabled true
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 82
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          echo PRIVATE_HORDE_RUNTIME_DIAGNOSTIC_82_NATIVE_COMPILE_PASS
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$OUT/P0D_PRIVATE_HORDE_EVIDENCE_82_STUDIO.rbxlx"
+          python3 -B rc_fastlane/verify_horde_runtime_evidence.py --dist "$FINAL" --place "$OUT/P0D_PRIVATE_HORDE_EVIDENCE_82_STUDIO.rbxlx" --receipt "$OUT/EVIDENCE_SOURCE_RECEIPT.json"
+          python3 -B art_quality/check_art_quality.py --place "$OUT/P0D_PRIVATE_HORDE_EVIDENCE_82_STUDIO.rbxlx" --out "$OUT/ART_GATE.json"
+          python3 -B art_quality/check_live_art_parity.py --place "$OUT/P0D_PRIVATE_HORDE_EVIDENCE_82_STUDIO.rbxlx" --expected-scripts 82 --out "$OUT/LIVE_ART_GATE.json"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          out=Path("/tmp/p0d_horde_runtime_evidence_out")
+          source=json.loads((out/"EVIDENCE_SOURCE_RECEIPT.json").read_text())
+          art=json.loads((out/"ART_GATE.json").read_text())
+          live=json.loads((out/"LIVE_ART_GATE.json").read_text())
+          assert source["real_rojo_source_count_exact"]==82
+          assert source["old81_source_bytes_unchanged"] is True
+          assert source["owner_accepted"] is False
+          assert art["source"]["source_gate"]=="PASS"
+          assert art["source"]["script_count"]==82
+          assert art["art_decision"]=="ART_NO_GO"
+          assert live["source_gate"]=="PASS"
+          assert live["expected_script_count"]==82
+          assert live["live_art_decision"]=="LIVE_ART_NO_GO"
+          print("P0_PRIVATE_REAL_ENGINE_PROBE_SOURCE_ONLY_PASS_RUNTIME_NOT_TESTED")
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        with:
+          name: P0D-PRIVATE-HORDE-REAL-ENGINE-PROBE-82-SOURCE-NOGO
+          path: /tmp/p0d_horde_runtime_evidence_out/*
+          retention-days: 7
+          if-no-files-found: error
