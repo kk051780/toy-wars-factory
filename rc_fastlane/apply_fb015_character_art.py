@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""FB-015 neutral soldier / stone beast visuals, reversible PREP only.
+"""FB-015 Gorogan-only beast visuals; minions are owned by separate PR #374.
 
 Adds one Studio-only LocalScript to the latest exact canonical 66 assembly.
 The 66 original script bytes (including Game, Horde and Gorogan) remain intact.
@@ -15,8 +15,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "features/owner372_art/FB015CharacterArt.client.luau"
 DEST = "client/FB015CharacterArt.client.luau"
-BLOB = "00283c5ff200ef202d966f32bad2c49e59badd95"
-FEATURE = "FB015_CHARACTER_VISUAL_STAGE1"
+BLOB = "b9b2efbdbdf3cb9e1244826a9b68a4a8f45b8398"
+FEATURE = "FB015_GOROGAN_BEAST_VISUAL_V2"
 
 
 def gitblob(data: bytes) -> str:
@@ -36,10 +36,9 @@ def source_safety() -> bytes:
     src = data.decode("utf8")
     for token in (
         'if not RunService:IsStudio() then return end',
-        'MUSOU_MINION_', 'MUSOU_ELITE_TELEGRAPH',
-        'Gorogan_ServerRig', 'ScoutCape', 'GuardianShield',
-        'StormHorn_', 'TectonicShoulder_',
-        'FB015_ImpactSparks', 'WeldConstraint',
+        'Gorogan_ServerRig', 'ObsidianChestPlate', 'BoulderPauldron_',
+        'RuneEye_', 'ObsidianBackSpike_', 'FB015GoroganDamageSparks',
+        'RUNESTONE_TITAN', 'WeldConstraint', 'MAX_BEASTS = 2',
         'CanCollide = false', 'CanQuery = false',
         'MAX_MODELS = 28', 'MAX_PARTS = 280',
     ):
@@ -105,7 +104,7 @@ def apply(dist: Path, enabled: bool) -> bool:
     lp.write_text(json.dumps(a, ensure_ascii=False, indent=2) + "\n", "utf8")
     fp.write_text(json.dumps(b, ensure_ascii=False, indent=2) + "\n", "utf8")
     assert sources(dist) == updated
-    print("FB015_CHARACTER_ART_SOURCE_67_AND_BASE_66_IDENTICAL")
+    print("FB015_BEAST_ONLY_SOURCE_67_AND_BASE_66_IDENTICAL")
     return True
 
 

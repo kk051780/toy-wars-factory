@@ -30,10 +30,14 @@ class FB015ArtSource(unittest.TestCase):
 
     def test_stage_has_multiple_distinct_character_kinds(self):
         s=art.source_safety().decode("utf8")
-        for name in ("SCOUT", "GUARDIAN", "STORMCASTER", "CROWNED_ELITE",
-                     "TITAN_STONE_BEAST"):
+        for name in ("Gorogan_ServerRig", "ObsidianChestPlate",
+                     "RuneEye_", "ObsidianBackSpike_", "RUNESTONE_TITAN"):
             self.assertIn(name,s)
         self.assertIn("CanQuery = false",s)
+        self.assertNotIn("MUSOU_MINION_",s)
+        self.assertNotIn("MUSOU_ELITE_TELEGRAPH",s)
+        self.assertIn("Humanoid.HealthChanged:Connect",s)
+        self.assertIn("MAX_DECOR_PARTS = 64",s)
         self.assertNotIn("FireServer(",s)
 
 
