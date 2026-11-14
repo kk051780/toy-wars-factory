@@ -34,6 +34,7 @@ folder.Parent = arena
 
 local lastSpeech = {}
 local lastAlertTarget = {}
+local animated = {}
 local function aliveRoot(player)
     if not player or player.Parent ~= Players then return nil end
     local char = player.Character
@@ -160,6 +161,7 @@ local function npc(name, speaker, position, color, team)
     core.Parent = folder
     core:SetAttribute("TalkRole", speaker)
     core:SetAttribute("Faction", team or "NEUTRAL")
+    table.insert(animated, {core = core, base = core.CFrame, phase = #animated * 1.7})
     local light = Instance.new("PointLight")
     light.Range = 12
     light.Brightness = 1
@@ -205,7 +207,7 @@ end
 -- Both teams get the same ally, while the trickster and Oracle are neutral locations.
 npc("ナビィ 赤チーム", "NAVI", Vector3.new(-69, 3.2, 11), Color3.fromRGB(254, 115, 153), "RED")
 npc("ナビィ 青チーム", "NAVI", Vector3.new(69, 3.2, 11), Color3.fromRGB(94, 193, 255), "BLUE")
-npc("ウソップ あやしい噂", "TRICK", Vector3.new(0, 3.2, -40), Color3.fromRGB(202, 127, 249), nil)
+npc("マドロン あやしい噂", "TRICK", Vector3.new(0, 3.2, -40), Color3.fromRGB(202, 127, 249), nil)
 npc("オラクル 秘境のヒント", "ORACLE", Vector3.new(0, 3.2, 47), Color3.fromRGB(250, 213, 112), nil)
 
 Players.PlayerRemoving:Connect(function(p)
@@ -228,6 +230,20 @@ task.spawn(function()
             end
         end
         task.wait(8)
+    end
+end)
+task.spawn(function()
+    -- One shared lightweight animation loop, 4 decorative nonblocking orbs only.
+    while folder.Parent and ServerStorage:GetAttribute(FLAG) == true do
+        local t = os.clock()
+        for _, entry in ipairs(animated) do
+            if entry.core.Parent then
+                entry.core.CFrame = entry.base
+                    * CFrame.new(0, math.sin(t * 1.4 + entry.phase) * 0.33, 0)
+                    * CFrame.Angles(0, math.sin(t * 0.7 + entry.phase) * 0.25, 0)
+            end
+        end
+        task.wait(0.12)
     end
 end)
 print("[P0D/TALK] optional NPC layer ready; original Game untouched, Studio/FUN NOT_TESTED")
