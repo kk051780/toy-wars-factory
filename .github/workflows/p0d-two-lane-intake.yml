@@ -1,0 +1,53 @@
+name: P0D two-lane latest verified intake (read-only)
+on:
+  push:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - 'tools/p0d_two_lane_queue.py'
+      - 'tests/test_p0d_two_lane_queue.py'
+      - 'rc_fastlane/TWO_LANE_DEVELOPMENT.md'
+      - '.github/workflows/p0d-two-lane-intake.yml'
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    types: [opened, synchronize, reopened, ready_for_review, edited]
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+jobs:
+  prep-inbox:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Read the TRUSTED current official RC source, not PR-provided code
+        uses: actions/checkout@v4
+        with:
+          ref: rc/p0d-s1-kids-rc01
+          persist-credentials: false
+      - name: Test the read-only latest-verified selector
+        run: python3 -m unittest discover -s tests -p test_p0d_two_lane_queue.py -v
+      - name: Resolve current HEAD and only current-HEAD green PREP PRs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/p0d_two_lane
+          python3 -B tools/p0d_two_lane_queue.py \
+            --repo kk051780/toy-wars-factory \
+            --out /tmp/p0d_two_lane/P0D_PREP_INBOX.json
+          python3 - <<'PY'
+          import json
+          p=json.load(open('/tmp/p0d_two_lane/P0D_PREP_INBOX.json',encoding='utf8'))
+          assert p['no_auto_merge'] is True
+          print('P0D_TWO_LANE_LIVE_PREP_INBOX_PASS',p['official_head'],p['ready_count'])
+          for item in p['selected']:
+              print('P0D_PREP_LATEST_READY_FOR_220',item['pr'],item['head'],','.join(item['features']))
+          PY
+      - name: Store read-only queue snapshot (NOT adoption ACK)
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-TWO-LANE-PREP-INBOX
+          path: /tmp/p0d_two_lane/P0D_PREP_INBOX.json
+          retention-days: 7
