@@ -1,0 +1,29 @@
+name: P0D urgent voluntary READY source-contract (PREP only)
+on:
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - "rc_fastlane/apply_core_round_ready.py"
+      - "rc_fastlane/test_core_round_ready.py"
+      - ".github/workflows/p0d-urgent-round-prep.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check reversible READY, 900s and single-Remote invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_core_round_ready.py -v
+          python3 -B -m py_compile rc_fastlane/apply_core_round_ready.py
+      - name: Do not certify Studio game/fun from source tests
+        shell: bash
+        run: echo "PREP_ONLY_SOURCE_CONTRACT_PASS_NOT_STUDIO_NOT_OFFICIAL_RC"
