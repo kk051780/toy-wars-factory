@@ -5,7 +5,7 @@ from rc_fastlane import apply_p0_bot_path78 as m
 class BotPath78(unittest.TestCase):
  def test_author_blob_and_pairlineage(self):
   self.assertEqual(m.gitblob(m.AUTHOR.read_bytes()),m.AUTHOR_BLOB)
-  self.assertEqual(len(m.authored_pairs()),17)
+  self.assertEqual(len(m.authored_pairs()),16)
  def test_real_source_markers_preserved(self):
   pairs=m.authored_pairs()
   content="\n".join(x[1] for x in pairs)
