@@ -23,8 +23,9 @@ local function tagPart(model,name,sz,pos,col,mat)
     local p=Instance.new("Part")
     p.Name=name;p.Size=sz;p.CFrame=pos
     p.Material=mat;p.Color=col
-    p.CanTouch=false;p.CanQuery=false
+    p.CanTouch=false
     p.CanCollide=name=="Torso"
+    p.CanQuery=p.CanCollide
     p.Parent=model
     return p
 end
@@ -272,6 +273,7 @@ function Bot.tick(now)
             elseif bot.carry and
                 (bot.root.Position-map.teams[bot.team].scorePad.Position).Magnitude<=7 then
                 if callbacks.deposit(bot,bot.team,bot.carry) then
+                    if not active then return end
                     bot.carry=nil
                     bot.path={}
                     bot.nextRepath=0
@@ -293,7 +295,7 @@ function Bot.tick(now)
         end
     end
 end
-function Bot.tryHumanHit(team,origin,look,reach)
+function Bot.tryHumanHit(team,origin,look,reach,attackerCharacter)
     if not active then return nil end
     local best=nil
     local closest=reach+.001
@@ -305,7 +307,7 @@ function Bot.tryHumanHit(team,origin,look,reach)
             if d<=reach and dot>=.25 and d<closest then
                 local params=RaycastParams.new()
                 params.FilterType=Enum.RaycastFilterType.Exclude
-                params.FilterDescendantsInstances={bot.model,folder}
+                params.FilterDescendantsInstances={bot.model,folder,attackerCharacter}
                 local hit=workspace:Raycast(origin,delta,params)
                 if not hit then
                     best=bot
