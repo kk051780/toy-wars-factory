@@ -24,9 +24,13 @@ def verify(dist:Path,place:Path,receipt:Path):
     assert s.count("local function applyAttack(player: Player, data)")==1
     assert s.count("remote.OnServerEvent:Connect(")==1
     assert s.count('kind="P0D_ATTACK_RESULT"')==1
-    assert s.count('attackResponse("HIT"')==5
-    assert s.count('attackResponse("MISS"')==3
-    for x in ('Rules.validSeq(data.seq','Rules.canAttack(now, lastAttack',
+    assert s.count('attackResponse("HIT"')==6
+    assert s.count('attackResponse("MISS"')==6
+    for x in ('beforeHealth = hum.Health','hum.Health < beforeHealth',
+              'beforeBotHealth = victim.hum.Health','victim.hum.Health < beforeBotHealth',
+              'beforeCastleHealth = match.hp[enemy]',
+              'match.hp[enemy] < beforeCastleHealth',
+              'Rules.validSeq(data.seq','Rules.canAttack(now, lastAttack',
               'horde:hit(', 'SoloTeamBots.tryHumanHit(',
               'match.hp[enemy] = math.max(0',
               'target=target,serial=match.serial,seq=data.seq'):
