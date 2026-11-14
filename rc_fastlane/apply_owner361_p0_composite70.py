@@ -29,7 +29,7 @@ BASE66_BLOBS_SHA256="5fb70b5af83d217ef67bc5c71f467d71d9cfc3a0a1485c8dd58ebec93e9
 INPUTS={
     "ready":("apply_core_round_ready.py","9460fd8a0bcc95af9eff765aa28960b45fde5e12"),
     "lobby":("apply_fb007_lobby.py","9fcf93b03efd5567f6c5197453fc1817a5105928"),
-    "solo":("apply_fb005_solo_bots.py","2d89ade47b2c1042887d1310adb6bba037732b46"),
+    "solo":("apply_fb005_solo_bots.py","f05740f3c5b04b1577c30bf65773893197077598"),
     "castle":("apply_owner361_castle.py","bc1fa66e33f42f0117377615976ff505b4932af5"),
     "hud":("apply_hud_clean.py","a4e2d73c3e48ba3fa660a7b227f8dca98b377b65"),
 }

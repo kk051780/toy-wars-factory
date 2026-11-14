@@ -1,7 +1,9 @@
 --!nocheck
 -- FB-005 / #361: Studio SOLO 2 ally and 3 opponent team raiders.
 -- THIS IS A PHYSICAL AGENT/INTENT ENGINE ONLY. The sole original Game still
--- validates and writes every egg, score, player HP and winner transaction.
+-- validates and writes egg, score, damage and match castle/player HP/winner.
+-- This module initializes NPC Humanoid MaxHealth/Health on spawn/respawn only;
+-- Game callbacks remain the only handlers for NPC combat damage.
 -- No RemoteEvent, DataStore, TouchPrompt impersonation or fake Player.
 local RunService=game:GetService("RunService")
 local Players=game:GetService("Players")
@@ -111,7 +113,7 @@ local function makeActor(id,team,style,spawn)
     local state={id=id,team=team,style=style,
         model=m,hum=hum,root=root,spawn=spawn,carry=nil,deadUntil=0,
         nextRepath=0,path={},pathIndex=1,planning=false,
-        lastAttack=0,lastGoal=nil,pathGeneration=0}
+        lastAttack=0,lastGoal=nil,pathGeneration=0,planningSince=nil}
     return state
 end
 
@@ -122,8 +124,10 @@ local function invalidatePath(bot)
     bot.lastGoal=nil
     bot.path={}
     bot.pathIndex=1
-    bot.nextRepath=0
+    -- Preserve the throttle: a moving guard target must not trigger a fresh
+    -- ComputeAsync every 350ms while older planning jobs are still yielded.
     bot.planning=false
+    bot.planningSince=nil
 end
 local function respawn(bot)
     local nextGeneration=bot.pathGeneration+1
@@ -210,12 +214,22 @@ local function alive(bot)
     return bot.hum and bot.hum.Health>0 and bot.model and bot.model.Parent~=nil
 end
 local function pathTo(bot,goal,now)
+    -- A stuck ComputeAsync must not lock this bot out of navigation forever.
+    -- Invalidating the generation makes any late worker harmless.
+    if bot.planning and now-(bot.planningSince or now)>=8 then
+        invalidatePath(bot)
+        -- Watchdog invalidation clears lastGoal. Restore the exact current
+        -- intent BEFORE launching a new async worker, else its own
+        -- "lastGoal~=nil" stale-result guard will discard the good result.
+        bot.lastGoal=goal
+    end
     if bot.planning or now<bot.nextRepath then return end
     bot.nextRepath=now+REPATH_SECONDS
     local token=epoch
     local generation=bot.pathGeneration
     local planningRoot=bot.root
     bot.planning=true
+    bot.planningSince=now
     task.spawn(function()
         local ok,path=pcall(function()
             local p=PathfindingService:CreatePath({
@@ -240,6 +254,7 @@ local function pathTo(bot,goal,now)
         -- Old asynchronous planners must not release a newer planner's lock.
         if bot.pathGeneration==generation and bot.root==planningRoot then
             bot.planning=false
+            bot.planningSince=nil
         end
     end)
 end
@@ -296,7 +311,11 @@ end
 function Bot.tick(now)
     if not active or type(now)~="number" or now-lastTick<TICK_MIN then return end
     lastTick=now
-    if #Players:GetPlayers()~=1 then Bot.stop();return end
+    -- Keep the existing Studio practice agents alive when another human
+    -- joins mid-round. Do not silently destroy the only solo opposition;
+    -- a later disconnect must not strand the original player without bots.
+    -- A NEW match with two humans still does not create new solo bots.
+    if #Players:GetPlayers()==0 then Bot.stop();return end
     for _,bot in ipairs(bots) do
         if not alive(bot) then
             if bot.deadUntil==0 then
