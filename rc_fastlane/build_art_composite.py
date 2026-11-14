@@ -175,7 +175,7 @@ def main() -> None:
     receipt["place_bytes"]=place.stat().st_size
     receipt["place_sha256"]=hashlib.sha256(place.read_bytes()).hexdigest()
     receipt["source_count_actual"]=len(after)
-    receipt["source_lock_total"]=locks["total_scripts"]
+    receipt["source_lock_total"]=len(after)  # compose() already asserts both lock totals equal actual 73
     receipt["source_lock_verified"]=True
     assert receipt["source_count_actual"] == 73
     receipt["studio_visual_and_fun"]="NOT_TESTED"
