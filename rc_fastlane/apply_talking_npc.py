@@ -9,6 +9,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
+import shutil
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -29,8 +32,8 @@ def source_bytes(dist: Path) -> dict[str, bytes]:
     return {p.relative_to(src).as_posix(): p.read_bytes()
             for p in sorted(src.rglob("*.luau"))}
 
-def apply(dist: Path, enabled: bool = True) -> bool:
-    """No-op on enabled=False, fail-closed on all other preconditions."""
+def _apply_inplace(dist: Path, enabled: bool = True) -> bool:
+    """Internal only. Mutates a private temporary candidate, never caller dist."""
     if not enabled:
         print("P0D_TALKING_NPC_OFF_PREVIOUS_RC_BYTES_UNCHANGED")
         return False
@@ -76,6 +79,7 @@ def apply(dist: Path, enabled: bool = True) -> bool:
     assert all(path not in existing for path in data), "TALKING_NPC_DUPLICATE_SCRIPT"
     assert sum(path == "server/Game.server.luau" for path in existing) == 1
     assert "server/TwinBiomes.server.luau" in existing, "REQUIRE_CURRENT_PRIVATE64"
+    assert "server/RealmHunt.server.luau" in existing, "REQUIRE_REALM_HUNT_DIALOGUE"
     lock_path = dist / "SOURCE_LOCK.json"
     source_lock = json.loads(lock_path.read_text("utf8"))
     old_pins = {path: git_blob(raw) for path, raw in sorted(existing.items())}
@@ -86,6 +90,7 @@ def apply(dist: Path, enabled: bool = True) -> bool:
     assert feature_lock["total_sources"] == base_count
     assert feature_lock["source_gitblobs"] == old_pins
     assert FEATURE_ID not in feature_lock["feature_flags"]
+    assert feature_lock["feature_flags"].get("REALM_HUNT_V1") is True, "REALM_HUNT_NOT_ENABLED"
 
     project_path = dist / "default.project.json"
     project = json.loads(project_path.read_text("utf8"))
@@ -138,12 +143,40 @@ def apply(dist: Path, enabled: bool = True) -> bool:
     print("P0D_TALKING_NPC_PREP_LATEST_PLUS3_EXACT_SOURCES_PASS", base_count, len(current))
     return True
 
+def apply(dist: Path, enabled: bool = True, output_dist: Path | None = None) -> bool:
+    """Transactional overlay: read-only predecessor, atomically publish new dir."""
+    dist = dist.resolve()
+    if not enabled:
+        print("P0D_TALKING_NPC_OFF_PREVIOUS_RC_BYTES_UNCHANGED")
+        return False
+    if not dist.is_dir():
+        raise ValueError("PREVIEW_DISTRIBUTION_MISSING")
+    if output_dist is None:
+        raise ValueError("OUTPUT_DIST_REQUIRED_FOR_IMMUTABLE_PREVIEW")
+    output_dist = output_dist.resolve()
+    if output_dist.exists() or output_dist == dist or output_dist in dist.parents:
+        raise ValueError("OUTPUT_DIST_EXISTS_OR_ALIASES_INPUT")
+    output_dist.parent.mkdir(parents=True, exist_ok=True)
+    temp_root = Path(tempfile.mkdtemp(prefix=".p0d-talk-", dir=output_dist.parent))
+    try:
+        staged = temp_root / "candidate"
+        shutil.copytree(dist, staged)
+        _apply_inplace(staged, True)
+        if output_dist.exists():
+            raise ValueError("OUTPUT_RACED_WITH_ANOTHER_WRITER")
+        os.replace(staged, output_dist)
+    finally:
+        shutil.rmtree(temp_root, ignore_errors=True)
+    print("P0D_TALKING_NPC_TRANSACTIONAL_PUBLISH_PASS", output_dist)
+    return True
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dist", type=Path, required=True)
     ap.add_argument("--enabled", choices=["true", "false"], default="true")
+    ap.add_argument("--output-dist", type=Path)
     a = ap.parse_args()
-    apply(a.dist, a.enabled == "true")
+    apply(a.dist, a.enabled == "true", a.output_dist)
 
 if __name__ == "__main__":
     main()
