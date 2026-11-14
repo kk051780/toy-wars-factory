@@ -25,5 +25,12 @@
   "replicated_authorization_attribute": "P0D_LIVE_ART_PILOT_SERVER_ALLOWED",
   "client_private_id_direct_check": false,
   "no_public_server_authorization": true,
-  "other_sources_byte_identical": 77
+  "other_sources_byte_identical": 77,
+  "review_notes": [
+    "Roblox DataModel.PrivateServerId is server-only/not replicated. An earlier client-direct check was superseded by server-authenticated workspace attribute.",
+    "Server art script remains Studio-only for its actual castle geometry; in nonStudio it authorizes only in private servers with owner opt-in, then returns without altering world geometry.",
+    "No runtime test done; latest official HEAD may move independently; never promote this old-base candidate without source-selective rebase."
+  ],
+  "server_runtime_start_requirement": "Owner-only test harness sets workspace.P0D_LIVE_ART_PILOT_OPTIN on server before CastleDetailArt script initialization; default is absent/false.",
+  "further_actions": "P0D main B #220 review, cross-check against #437/#439, then PC/Android owner-authorized test; no automatic adoption"
 }
