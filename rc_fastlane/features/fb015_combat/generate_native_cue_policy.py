@@ -74,8 +74,20 @@ check(acceptVisualCue(1,2,8,0),false)
 check(acceptVisualCue(1,2,8,5.5),false)
 check(acceptVisualCue(1,2,8,"5"),false)
 check(acceptVisualCue(1,2,7,5),false)
-assert(yes==15 and no==19,yes,no)
-print("P0D_FB015_REAL_CLIENT_CUE_NATIVE_34_ORDERED_EPOCH_CASES_PASS")
+-- Arrival-order eviction bug regression: max=100 delivered FIRST; then
+-- backfill 85..99. When 101 arrives, only 85 is expired, not serial100.
+lastEpoch=6
+lastRound=nil
+table.clear(lastByMob)
+check(acceptVisualCue(1,100,1,6),true)
+for serial=85,99 do
+    check(acceptVisualCue(1,serial,1,6),true)
+end
+check(acceptVisualCue(1,101,1,6),true)
+check(acceptVisualCue(1,100,1,6),false)
+check(acceptVisualCue(1,85,1,6),false)
+assert(yes==32 and no==21,yes,no)
+print("P0D_FB015_REAL_CLIENT_CUE_NATIVE_53_ORDERED_EPOCH_CASES_PASS")
 '''
 
 def main():
