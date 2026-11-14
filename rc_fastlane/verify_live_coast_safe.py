@@ -61,6 +61,7 @@ def verify(dist:Path,place:Path,receipt_path:Path) -> dict:
         assert "if not RunService:IsStudio() then return end" in named[("Script",name)][0]
     live=before[TARGET].decode("utf8")
     assert 'workspace:GetAttribute("P0D_PRIVATE_LIVE_COAST") ~= true' in live
+    assert 'if not RunService:IsStudio() and game.PrivateServerId == "" then' in live
     assert "Terrain:Fill" not in live and "p.CanCollide = false" in live
     assert "local MAX_PARTS = 40" in live
     result={
@@ -74,6 +75,7 @@ def verify(dist:Path,place:Path,receipt_path:Path) -> dict:
         "old_sea_studio_only_guards":"PRESERVED_UNCHANGED",
         "new_coast_default":"OFF",
         "private_server_opt_in_only":True,
+        "public_server_hard_gate_source_verified":True,
         "created_part_budget":40,
         "new_lights_particles_physics_gui":0,
         "live_runtime_actual":"NOT_TESTED",
