@@ -95,7 +95,7 @@ def patch_game(text:str)->str:
         'local MapBuilder = require(script.Parent:WaitForChild("MapBuilder"))',
         'local MapBuilder = require(script.Parent:WaitForChild("MapBuilder"))\n'
         'local SoloTeamBots = require(script.Parent:WaitForChild("SoloTeamBots"))\n'
-        '-- '..ID)
+        '-- '+ID)
     text=sub(text,'local match = {',
         'local botEggOwners: {[string]: string} = {}\nlocal match = {')
     text=sub(text,
