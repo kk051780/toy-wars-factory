@@ -37,13 +37,13 @@ def re_once(text: str, pattern: str, replacement: str, flags=0) -> str:
 def patch_game(text: str) -> str:
     assert "local readyForMatch: {[Player]: boolean}" not in text, "DUPLICATE_P0_READY_PATCH"
     assert text.count("remote.OnServerEvent:Connect(") == 1, "DUPLICATE_GAME_REMOTE"
-    assert "local function snapshotFor(player: Player)" in text, ("ACTUAL_SNAPSHOT_LINES", [ln for ln in text.splitlines() if "snapshot" in ln.lower() or "OnServerEvent:Connect(" in ln][:35])
+    snapshot_anchor = (if_anchor if (if_anchor := "local snapshotFor: (Player) -> any") in text
+                       else "local function snapshotFor(player: Player)")
+    assert snapshot_anchor in text, ("ACTUAL_SNAPSHOT_LINES", [ln for ln in text.splitlines() if "snapshot" in ln.lower()][:35])
     assert "local function tickRound()" in text
     assert "local function stopRound(" in text
-    text = sub_once(text, "local function snapshotFor(player: Player)",
-        """local readyForMatch: {[Player]: boolean} = {}
-
-local function snapshotFor(player: Player)""")
+    text = sub_once(text, snapshot_anchor,
+        "local readyForMatch: {[Player]: boolean} = {}\n\n" + snapshot_anchor)
     text = re_once(text, r'(kind\s*=\s*"SNAPSHOT"\s*,)',
         r'\1 ready = readyForMatch[player] == true,')
     text = sub_once(text, "local function onJoin(player: Player)",
