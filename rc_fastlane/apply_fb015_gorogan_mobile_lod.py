@@ -80,7 +80,17 @@ local LOW_END_TOUCH = UserInputService.TouchEnabled
 local decorByFolder: {[Instance]: {BasePart}} = {}
 local lodSet: {[Model]: {parts: {BasePart}, glow: PointLight, tier: number}} = {}
 ''')
-    s=one(s,'    partCount += 1\n    p.Name = name\n',
+    s=one(s,'    if partCount >= MAX_DECOR_PARTS then return nil end\\n',
+          '''    -- Six microscopic cosmetic parts are omitted entirely on phones.
+    -- Keep large shoulders/horns/spine for the threatening silhouette.
+    if LOW_END_TOUCH and (name == "ShoulderSigil"
+        or name == "HeartCarving" or name == "ForeheadMask"
+        or name == "JawMask" or name:find("FlankArmor_") ~= nil) then
+        return nil
+    end
+    if partCount >= MAX_DECOR_PARTS then return nil end
+''')
+    s=one(s,'    partCount += 1\\n    p.Name = name\\n',
           '''    partCount += 1
     local ownedParts = decorByFolder[folder]
     if ownedParts then table.insert(ownedParts, p) end
