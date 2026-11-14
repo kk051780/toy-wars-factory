@@ -47,9 +47,15 @@ class ArtMotionSourceContract(unittest.TestCase):
             "MAX_MODELS = 16", "MAX_ACTIVE_COSMETIC_PARTS = 56",
             "VIEW_RANGE_STUDS = 105", "ANIM_STEP = 1 / 25",
             "horde.ChildAdded", "model.Destroying", "script.Destroying",
-            "core.CFrame:ToObjectSpace(art.CFrame)",
-            "if #attachments ~= #watchedParts[kind] then return false end",
-            "core.CFrame * visual.offset * localMotion",
+            "core.CFrame:ToObjectSpace(source.CFrame)",
+            "if #originals ~= #watchedParts[kind]",
+            "local copy = source:Clone()",
+            "original.LocalTransparencyModifier",
+            "visual.copy.CFrame = core.CFrame * visual.offset * localMotion",
+            "cue.OnClientEvent:Connect(",
+            "lastHitSerial[id] = serial",
+            "local added = horde.ChildAdded:Connect(",
+            'Workspace:WaitForChild("TRAP_RAIDERS_S1")',
         ):
             self.assertIn(term, s)
 
