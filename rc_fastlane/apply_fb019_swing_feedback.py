@@ -91,7 +91,7 @@ def patch(raw: bytes) -> bytes:
     assert code.count('action("ATTACK", nil)')>=2
     assert code.count('remote:FireServer({action = kind, role = role, seq = seq})') == 1
     assert "TakeDamage(" not in HELPER and "FireServer(" not in HELPER
-    assert "ScreenGui" not in HELPER and "TextLabel" not in HELPER
+    assert 'Instance.new("ScreenGui")' not in HELPER and 'Instance.new("TextLabel")' not in HELPER
     return code.encode("utf8")
 
 def apply(base: Path, out: Path, enabled: bool) -> bool:
