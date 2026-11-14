@@ -374,6 +374,58 @@ def patch_bot(text: str) -> str:
         """        -- Both the global match and this particular bot/goal must still be""",
         """        inflightPaths=math.max(0,inflightPaths-1)
         -- Both the global match and this particular bot/goal must still be""")
+    # A direct MoveTo cannot get across a blocked castle/bridge. When the
+    # actual bot has made <3.5 studs progress for 5 seconds while trying to
+    # move, invalidate the current/stale path, jump and issue one small
+    # alternating lateral detour. Never teleport or invent egg/damage state.
+    # This stays inside the same bot intent engine and uses existing scheduler.
+    text=one(text,
+        "lastAttack=0,lastGoal=nil,pathGeneration=0}",
+        """lastAttack=0,lastGoal=nil,pathGeneration=0,
+        lastProgressPos=nil,lastProgressAt=0,unstuckAttempts=0}""")
+    text=one(text,
+        """    if bot.lastGoal==nil or (bot.lastGoal-goal).Magnitude>8 then
+        invalidatePath(bot)
+    end
+    bot.lastGoal=goal
+    pathTo(bot,goal,now)""",
+        """    if bot.lastGoal==nil or (bot.lastGoal-goal).Magnitude>8 then
+        invalidatePath(bot)
+        bot.lastProgressPos=bot.root.Position
+        bot.lastProgressAt=now
+        bot.unstuckAttempts=0
+    end
+    bot.lastGoal=goal
+    local position=bot.root.Position
+    if bot.lastProgressPos==nil then
+        bot.lastProgressPos=position
+        bot.lastProgressAt=now
+    elseif (position-bot.lastProgressPos).Magnitude>=3.5 then
+        bot.lastProgressPos=position
+        bot.lastProgressAt=now
+        bot.unstuckAttempts=0
+    elseif now-bot.lastProgressAt>=5 then
+        bot.lastProgressPos=position
+        bot.lastProgressAt=now
+        bot.unstuckAttempts=((bot.unstuckAttempts or 0)%4)+1
+        -- End any stalled ComputeAsync candidate; it may finish too late.
+        invalidatePath(bot)
+        -- invalidatePath clears lastGoal for stale async callbacks; restore
+        -- the same valid target so retry counts and alternating sides persist.
+        bot.lastGoal=goal
+        local side=if bot.unstuckAttempts%2==0 then -1 else 1
+        local toGoal=goal-position
+        local lateral=Vector3.new(-toGoal.Z,0,toGoal.X)
+        local detour=if lateral.Magnitude>.2 then
+            lateral.Unit*(side*7) else Vector3.new(side*7,0,0)
+        bot.hum.Jump=true
+        bot.hum:MoveTo(position+detour)
+        return
+    end
+    pathTo(bot,goal,now)""")
+    assert 'elseif now-bot.lastProgressAt>=5 then' in text
+    assert 'bot.hum:MoveTo(position+detour)' in text
+    assert text.count('lastProgressPos=')>=4
     assert "if eligible~=1 then Bot.stop();return end" in text
     assert "if eligible~=1 then return false end" in text
     assert text.count("local team=p.Team")>=2
