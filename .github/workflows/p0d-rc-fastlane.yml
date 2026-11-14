@@ -439,6 +439,36 @@ jobs:
             /tmp/p0d_new_luau/luau /tmp/p0d_owner_ux_role_castle_native.luau | tee /tmp/p0d_owner_ux_role_castle_native.log
             grep -Fx P0D_OWNER_UX_NATIVE_ROLE_CASTLE_9_CASES_PASS /tmp/p0d_owner_ux_role_castle_native.log
           fi
+      - name: OWNER #341 actual compiled Studio Solo 24 cases (unique Game unchanged)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 - <<'PY'
+          from pathlib import Path
+          import os
+          root=Path(os.environ["DIST"])/"src/server"
+          game=(root/"Game.server.luau").read_text("utf8")
+          src=(root/"StudioSoloPreviewRules.luau").read_text("utf8")
+          assert len(src)>900 and src.count("return Solo")==1
+          assert src.count("function Solo.canStart(")==1
+          assert src.count("function Solo.isSoloRound(")==1
+          assert src.count("function Solo.emptyWinner(")==1
+          assert game.count("StudioSolo.canStart(")==2
+          assert game.count("StudioSolo.isSoloRound(")==1
+          assert game.count("StudioSolo.emptyWinner(")==1
+          assert game.count("RunService:IsStudio()")>=3
+          assert "Config.MinPlayers" in game
+          native=Path("rc_fastlane/features/owner341_solo_qa/StudioSoloNativeAcceptance.luau").read_text("utf8")
+          actual=src.rsplit("return Solo",1)[0]+"\n"+native
+          Path("/tmp/P0D_OWNER341_ACTUAL_SOLO_NATIVE24.luau").write_text(actual,encoding="utf8")
+          print("P0D_OWNER341_GENERATED_FROM_CURRENT_ACTUAL_GAME_POLICY_PASS")
+          PY
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_OWNER341_ACTUAL_SOLO_NATIVE24.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_OWNER341_ACTUAL_SOLO_NATIVE24.luau | tee /tmp/p0d_owner341_solo_native24.log
+            grep -Fx P0D_STUDIO_SOLO_ACTUAL_POLICY_NATIVE_24_CASES_PASS /tmp/p0d_owner341_solo_native24.log
+          fi
       - name: Checkout exact original 41-case egg relay test author (no change to Game)
         uses: actions/checkout@v4
         with:
