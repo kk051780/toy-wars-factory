@@ -22,12 +22,12 @@ def blob(source:str)->str:
 
 class TwinBond(unittest.TestCase):
     def test_01_world_source_pin(self):
-        self.assertEqual(blob(WORLD),"3a28a749bd1df8e4c5acf291b9d350c771074d58")
+        self.assertEqual(blob(WORLD),"45d82ea64be15fd1245f994293bff21b175d98fe")
     def test_02_policy_source_pin(self):
-        self.assertEqual(blob(POLICY),"d217e8cf03893efeebe437607e196f9a6f27d50f")
+        self.assertEqual(blob(POLICY),"0dbf7b659c154361b9d6f6d76e4e660cc9caa1cf")
     def test_03_real_native_40(self):
-        self.assertEqual(NATIVE.count('check("'),40)
-        self.assertIn("assert(tested==40",NATIVE)
+        self.assertEqual(NATIVE.count('check("'),41)
+        self.assertIn("assert(tested==41",NATIVE)
     def test_04_exact_canonical65_parent(self):
         self.assertIn('PREV_COUNT=65',ADAPTER)
         self.assertIn('GAME_PREV="cdc995d8a64f6a6f6df5abd43fb8210486328572"',ADAPTER)
@@ -103,6 +103,28 @@ class TwinBond(unittest.TestCase):
         self.assertIn('buddy:SetAttribute("NoDamageAuthority",true)',WORLD)
         self.assertNotIn('leaderstats',WORLD)
         self.assertNotIn('Humanoid:TakeDamage(',WORLD)
+
+    def test_23_game_service_is_resolved(self):
+        self.assertIn('game:GetService("ServerStorage"):FindFirstChild("P0D_ENABLE_TWIN_BOND_PVE_V1")',ADAPTER)
+        self.assertNotIn('local flag=ServerStorage:FindFirstChild("P0D_ENABLE_TWIN_BOND_PVE_V1")',ADAPTER)
+
+    def test_24_final_game_modifier_caps_all_bonuses(self):
+        self.assertIn('math.min(3.8, savedPveMinionMultiplier(player)',ADAPTER)
+        self.assertIn('*twinBondOnlyNeutralMobBonus(player))),now,player.Character)',ADAPTER)
+
+    def test_25_runtime_bond_off_and_respawn_preservation(self):
+        self.assertIn('or not bondEnabled() then return end',WORLD)
+        self.assertIn('if not active or not bondEnabled() or not companion.part.Parent then',WORLD)
+        self.assertIn('companion.part.Transparency=1 -- keep bond; show follower after respawn',WORLD)
+        self.assertIn('companion.part.Transparency=0',WORLD)
+
+    def test_26_same_species_does_not_reset_switch_timer(self):
+        self.assertIn('and old.switchAt or (now+SWITCH_WAIT)',POLICY)
+        self.assertIn('same_species_refresh_keeps_switch_clock',NATIVE)
+
+    def test_27_studio_gate_fails_closed_as_one_expression(self):
+        self.assertIn('if not RunService:IsStudio() or not flag or not flag:IsA("BoolValue")',ADAPTER)
+        self.assertIn('or flag.Value~=true or match.phase~="ACTIVE" or carry[player]~=nil then',ADAPTER)
 
 if __name__=="__main__":
     unittest.main()
