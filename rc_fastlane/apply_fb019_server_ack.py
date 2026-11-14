@@ -53,10 +53,11 @@ def patch_game(raw:bytes)->bytes:
             hum:TakeDamage(Config.CombatDamage[roles[player] or "RAIDER"]
                 *earnedDamageMultiplier(player,"PLAYER"))
             -- A ForceField or zero effective damage must never display a fake HIT.
-            if hum.Health < beforeHealth then
-                attackResponse("HIT","PLAYER")
-            elseif mobHits>0 then
+            -- If a sweep also hit a real minion, prioritize that result.
+            if mobHits>0 then
                 attackResponse("HIT","MINION")
+            elseif hum.Health < beforeHealth then
+                attackResponse("HIT","PLAYER")
             else
                 attackResponse("MISS","BLOCKED")
             end
@@ -119,7 +120,9 @@ end
 remote.OnClientEvent:Connect(function(packet:any)
     if type(packet)~="table" or packet.kind~="P0D_ATTACK_RESULT"
         or not attack.Visible or packet.serial~=lastSerial then return end
-    if type(packet.seq)~="number" or packet.seq<=lastAttackFeedbackSeq then return end
+    -- An old ACK cannot label a newer swing as its own hit or miss.
+    if type(packet.seq)~="number" or packet.seq~=lastIssuedAttackSeq
+        or packet.seq<=lastAttackFeedbackSeq then return end
     lastAttackFeedbackSeq=packet.seq
     if packet.status=="HIT" then
         flashConfirmedAttack("⚔ 命中!",Color3.fromRGB(54,160,105))
@@ -136,6 +139,10 @@ def patch_hud(raw:bytes)->bytes:
     assert src.count("local function showLocalSwing()")==1
     assert src.count("local function pressAttack()")==1
     assert "P0D_ATTACK_RESULT" not in src
+    src=one(src,"local seq = 0\n",
+        "local seq = 0\nlocal lastIssuedAttackSeq=-1\n")
+    src=one(src,'    seq += 1\n    -- No target, position, score, damage or client-side server timestamps in payload.',
+        '    seq += 1\n    if kind=="ATTACK" then lastIssuedAttackSeq=seq end\n    -- No target, position, score, damage or client-side server timestamps in payload.')
     src=one(src,"attack.Activated:Connect(pressAttack)",
         "attack.Activated:Connect(pressAttack)\n"+CUE_CLIENT)
     assert src.count("attack.Activated:Connect(pressAttack)")==1
