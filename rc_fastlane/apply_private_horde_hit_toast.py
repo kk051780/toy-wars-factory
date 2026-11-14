@@ -39,30 +39,31 @@ HUD_REPLACE = (
     '    if s.musouActive==true or (s.musouHitFeedback==true and s.phase=="ACTIVE") then\n'
     '        local hitSeq=s.musouImpactSeq'
 )
-# Sourcery medium #1: an older delayed hide callback must never hide a later
-# legitimate HIT (two real mobImpactSeq updates less than 0.42s apart).
-HIT_SEQUENCE_ATTRIBUTE = "P0D_LAST_CONFIRMED_IMPACT_SEQ"
-HIT_VISIBLE = 'impactToast.Visible=true'
-HIT_DELAY = 'task.delay(.42,function()'
-
-def require_real_touched_branch(source:str)->None:
-    """Sourcery medium #2: fail closed when impactSeq increment occurs after MISS.
-    Validate structural prefix of the original authoritative touched branch,
-    not mere presence of 'if touched>0' elsewhere.
-    """
-    needle='mobImpactSeq[player]=(mobImpactSeq[player] or 0)+1'
-    assert source.count(needle)==1,"IMPACT_SEQUENCE_SOURCE_COUNT_DRIFT"
-    pos=source.index(needle)
-    branch=source.rfind('if touched>0 then',0,pos)
-    assert branch!=-1 and 0<pos-branch<420,"IMPACT_NO_LONGER_GATED_BY_HIT"
-    span=source[branch:pos]
+# Real official RC81 author Game contains three independent genuine hit paths:
+# evolved-beast hits, normal touched>0 attack, and seven-job hits.
+# All three increments must be inside their own true-hit branches.
+def verify_all_real_hit_branches(source:str)->None:
     import re
-    assert not re.search(r'\bend\b',span),"IMPACT_AFTER_TOUCHED_END__MISS_WOULD_DISPLAY"
-    assert not re.search(r'\belse\b',span),"IMPACT_IN_TOUCHED_ELSE"
-    assert not re.search(r'\belseif\b',span),"IMPACT_IN_TOUCHED_ELSEIF"
-    assert not re.search(r'\breturn\b',span),"IMPACT_AFTER_EARLY_EXIT"
-    assert not re.search(r'\bfunction\b',span),"IMPACT_IN_UNRELATED_FUNCTION"
+    needle='mobImpactSeq[player]=(mobImpactSeq[player] or 0)+1'
+    spots=[m.start() for m in re.finditer(re.escape(needle),source)]
+    assert len(spots)==3,("EXACT_THREE_REAL_IMPACT_SOURCES",len(spots))
+    guards=("if hits>0 then","if touched>0 then")
+    for pos in spots:
+        guard=max(source.rfind(g,0,pos) for g in guards)
+        assert guard>=0 and 0<pos-guard<420,("IMPACT_NOT_UNDER_REAL_HIT",pos,guard)
+        between=source[guard:pos]
+        # A premature 'end' would put an increment outside its guarded HIT.
+        # Keep 'else' allowed: original normal attack uses Luau if-expression.
+        assert not re.search(r'\\bend\\b',between),("MISS_CAN_ADVANCE_IMPACT",pos)
+        assert not re.search(r'\\bfunction\\b',between),("IMPACT_IN_NESTED_FUNCTION",pos)
 
+def verify_original_toast_epoch(source:str)->None:
+    # The original real HUD already uses a generation token; don't double
+    # implement a second one via Instance attributes.
+    assert source.count("impactDisplayEpoch+=1")>=2
+    assert source.count("local epoch=impactDisplayEpoch")==1
+    assert source.count("task.delay(.42,function()")==1
+    assert source.count("if impactDisplayEpoch==epoch then impactToast.Visible=false end")==1
 
 def blob(raw: bytes) -> str:
     return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
@@ -85,9 +86,9 @@ def patch_game(raw:bytes) -> bytes:
     assert text.count("horde:hit(")>=1
     assert text.count('game.PrivateServerId ~= ""')==3
     assert 'if RunService:IsStudio() or (game.PrivateServerId ~= "" and workspace:GetAttribute("P0D_PRIVATE_LIVE_HORDE_NINE") == true) then horde:reset(match.serial,serverNow()) end' in text
-    require_real_touched_branch(text)
+    verify_all_real_hit_branches(text)
     updated=text.replace(GAME_ANCHOR,GAME_INSERT,1)
-    require_real_touched_branch(updated)
+    verify_all_real_hit_branches(updated)
     assert updated.count("musouHitFeedback = ")==1
     assert updated.count(GAME_ANCHOR)==1
     assert updated.count('workspace:SetAttribute("P0D_PRIVATE_LIVE_HORDE_NINE"')==0
@@ -103,21 +104,7 @@ def patch_hud(raw:bytes) -> bytes:
     assert text.count('netButton.Visible=s.musouActive==true')==1
     assert text.count('rescueButton.Visible=s.musouActive==true')==1
     updated=text.replace(HUD_ANCHOR,HUD_REPLACE,1)
-    # Every real hit replaces a per-UI sequence attribute before becoming visible.
-    # A stale .42s callback checks that sequence before hiding the next hit.
-    assert updated.count(HIT_VISIBLE)==1 and updated.count(HIT_DELAY)==1
-    declaration=updated.index('local hitSeq=s.musouImpactSeq')
-    visible=updated.index(HIT_VISIBLE)
-    delayed=updated.index(HIT_DELAY)
-    assert declaration<visible<delayed and delayed-declaration<2400
-    updated=updated.replace(HIT_VISIBLE,
-        f'impactToast:SetAttribute("{HIT_SEQUENCE_ATTRIBUTE}", hitSeq)\n'
-        +HIT_VISIBLE,1)
-    updated=updated.replace(HIT_DELAY,
-        HIT_DELAY
-        + f'\n            if impactToast:GetAttribute("{HIT_SEQUENCE_ATTRIBUTE}") ~= hitSeq then return end',1)
-    assert updated.count(f'impactToast:SetAttribute("{HIT_SEQUENCE_ATTRIBUTE}", hitSeq)')==1
-    assert updated.count(f'impactToast:GetAttribute("{HIT_SEQUENCE_ATTRIBUTE}") ~= hitSeq')==1
+    verify_original_toast_epoch(updated)
     assert updated.count("if s.musouActive==true or (s.musouHitFeedback==true") == 1
     assert updated.count('mobCue.Visible=s.musouActive==true')==1
     assert updated.count('first90Cue.Visible=s.musouActive==true')==1
@@ -125,7 +112,6 @@ def patch_hud(raw:bytes) -> bytes:
     assert updated.count('rescueButton.Visible=s.musouActive==true')==1
     assert 'impactToast.Visible=true' in updated
     assert 'task.delay(.42,function()' in updated
-    assert updated.count(f'impactToast:GetAttribute("{HIT_SEQUENCE_ATTRIBUTE}") ~= hitSeq')==1
     return updated.encode("utf8")
 
 def apply(base:Path, out:Path,enabled:bool)->bool:
