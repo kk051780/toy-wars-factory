@@ -3,10 +3,15 @@ on:
   push:
     branches:
       - feature/p0d-prep-art-combat-slash-20261114
+      - feature/p0d-prep-fb015-minion-combat-composite-20261114
     paths:
       - 'rc_fastlane/apply_fb015_combat.py'
       - 'rc_fastlane/test_fb015_combat.py'
       - 'rc_fastlane/features/fb015_combat/**'
+      - 'rc_fastlane/features/art_minion/**'
+      - 'rc_fastlane/compose_fb015_minion_combat.py'
+      - 'rc_fastlane/test_fb015_composite.py'
+      - '.github/workflows/p0d-rc-fastlane.yml'
       - '.github/workflows/p0d-art-combat-prep.yml'
   pull_request:
     branches:
@@ -15,6 +20,10 @@ on:
       - 'rc_fastlane/apply_fb015_combat.py'
       - 'rc_fastlane/test_fb015_combat.py'
       - 'rc_fastlane/features/fb015_combat/**'
+      - 'rc_fastlane/features/art_minion/**'
+      - 'rc_fastlane/compose_fb015_minion_combat.py'
+      - 'rc_fastlane/test_fb015_composite.py'
+      - '.github/workflows/p0d-rc-fastlane.yml'
       - '.github/workflows/p0d-art-combat-prep.yml'
 permissions:
   contents: read
