@@ -9,7 +9,7 @@ import argparse,hashlib,json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 MODULE=ROOT/"features/fb005_solo/SoloTeamBots.luau"
-MODULE_BLOB="0334a56f3aa1f4ce8d67e547cf60f4582219bc8e"
+MODULE_BLOB="8b99877146d0e25862d55393f1a149a62813ed3f"
 ID="FB005_STUDIO_SOLO_TEAM_BOTS_CLASSIC_V1"
 GAME="server/Game.server.luau"
 DEST="server/SoloTeamBots.luau"
