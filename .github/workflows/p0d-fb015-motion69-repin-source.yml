@@ -1,0 +1,67 @@
+name: P0D FB015 Motion69 repinned ART68 source QA
+on:
+  push:
+    branches:
+      - feature/p0d-fb015-motion69-repin-art68-20261114
+    paths:
+      - 'rc_fastlane/features/art_motion/**'
+      - 'rc_fastlane/compose_fb015_art_motion.py'
+      - 'rc_fastlane/test_art_motion_*.py'
+      - '.github/workflows/p0d-fb015-motion69-repin-source.yml'
+  pull_request:
+    branches:
+      - feature/p0d-prep-fb015-minion-combat-composite-20261114
+    paths:
+      - 'rc_fastlane/features/art_motion/**'
+      - 'rc_fastlane/compose_fb015_art_motion.py'
+      - 'rc_fastlane/test_art_motion_*.py'
+      - '.github/workflows/p0d-fb015-motion69-repin-source.yml'
+permissions:
+  contents: read
+jobs:
+  motion-source-only-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify author exact blob and pinned parent
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          a=Path("rc_fastlane/features/art_motion/NeutralMotion.client.luau").read_bytes()
+          got=hashlib.sha1(b"blob "+str(len(a)).encode()+bytes([0])+a).hexdigest()
+          assert got=="9f3b90aec5c5b6204cd530f8dbf4b20f796428c2",got
+          print("P0D_MOTION_AUTHOR_GITBLOB_PIN_PASS",got)
+          PY
+      - name: All 3 motion source policy tests
+        run: python3 -B -m unittest discover -s rc_fastlane -p 'test_art_motion_source.py' -v
+      - name: All 6 66-to-69 fixture composition and protected OFF tests
+        run: python3 -B -m unittest discover -s rc_fastlane -p 'test_art_motion_composite.py' -v
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_motion_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/cache@v4
+        with:
+          path: /tmp/p0d_motion_repin_ind_luau
+          key: p0d-motion-repin-ind-luau-ubuntu-f46d879e28302-v1
+      - name: Pinned native Luau compile authored client script
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_motion_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          if [ ! -x /tmp/p0d_motion_repin_ind_luau/luau-compile ]; then
+            cmake -S _p0d_motion_luau -B /tmp/p0d_motion_repin_ind_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+            cmake --build /tmp/p0d_motion_repin_ind_luau --target Luau.Compile.CLI --parallel 4
+          fi
+          /tmp/p0d_motion_repin_ind_luau/luau-compile rc_fastlane/features/art_motion/NeutralMotion.client.luau >/dev/null
+          echo P0D_FB015_MOTION_NATIVE_LUAU_COMPILE_PASS_SOURCE_ONLY_STUDIO_PENDING
