@@ -62,6 +62,52 @@ def patch_game(text: str) -> str:
                     then LobbyIsland.spawn(move.to)
                     else map.teams[move.to].spawn + Vector3.new(0, 2, 0)"""))
 
+    # ONE non-authoritative lobby recovery scheduler shared by RESULTS and
+    # neutral late-join promotion. Roblox default CharacterAutoLoads gets its
+    # full RespawnTime grace before manual fallback. Original Character identity
+    # is captured, so an in-progress engine CharacterAdded wins and prevents a
+    # second manual load. Failures retry at most twice, with a cap and guards.
+    # No new server loop, datastore, combat state, or second Game authority.
+    recovery = """-- FB006: shared guarded post-results lobby character recovery.
+local lobbyRecoveryPending: {[Player]: boolean} = {}
+local function scheduleLobbyRecovery(player: Player)
+    if lobbyRecoveryPending[player] or player.Parent~=Players
+        or match.phase~="LOBBY" then return end
+    lobbyRecoveryPending[player]=true
+    local originalCharacter=player.Character
+    local grace=if Players.CharacterAutoLoads
+        then math.max(3,(Players.RespawnTime or 5)+2) else 0.1
+    local attempt
+    attempt=function(number: number)
+        if player.Parent~=Players or match.phase~="LOBBY"
+            or player.Character~=originalCharacter then
+            lobbyRecoveryPending[player]=nil
+            return
+        end
+        local alreadyAlive=healthy(player)
+        if alreadyAlive then
+            lobbyRecoveryPending[player]=nil
+            return
+        end
+        local ok,err=pcall(function() player:LoadCharacter() end)
+        if ok then
+            lobbyRecoveryPending[player]=nil
+        elseif number < 3 then
+            -- Bounded recovery from transient LoadCharacter failures.
+            warn("P0D_LOBBY_RESPAWN_RETRY",number,err)
+            task.delay(2,function() attempt(number+1) end)
+        else
+            lobbyRecoveryPending[player]=nil
+            warn("P0D_LOBBY_RESPAWN_FAILED",err)
+        end
+    end
+    task.delay(grace,function() attempt(1) end)
+end
+
+"""
+    assert text.count('local function tickRound()')==1
+    text=text.replace('local function tickRound()',recovery+'local function tickRound()',1)
+
     # At NEXT lobby, promote neutral spectators to balanced team and stay in lobby
     # with default readiness FALSE. No spectator can join an active roster.
     text=in_region(text,"local function tickRound()",
@@ -79,6 +125,8 @@ def patch_game(text: str) -> str:
                     local ok,root=healthy(entrant)
                     if ok and root then
                         root.CFrame=LobbyIsland.spawn(getTeamName(entrant))
+                    else
+                        scheduleLobbyRecovery(entrant)
                     end
                 end
             end
@@ -152,17 +200,14 @@ def patch_game(text: str) -> str:
             """                        root.CFrame=LobbyIsland.spawn(team)
                     end""",
             """                        root.CFrame=LobbyIsland.spawn(team)
-                    elseif (team=="RED" or team=="BLUE") and p.Parent==Players then
-                        task.defer(function()
-                            if p.Parent~=Players or match.phase~="LOBBY" then return end
-                            local refreshed=healthy(p)
-                            if not refreshed then
-                                local ok,err=pcall(function() p:LoadCharacter() end)
-                                if not ok then warn("P0D_LOBBY_RESPAWN_FAIL",err) end
-                            end
-                        end)
+                    elseif (team=="RED" or team=="BLUE"
+                        or p:GetAttribute("P0D_LateJoinSpectator")==true)
+                        and p.Parent==Players then
+                        scheduleLobbyRecovery(p)
                     end"""))
-    assert text.count('P0D_LOBBY_RESPAWN_FAIL')==1
+    assert text.count('P0D_LOBBY_RESPAWN_FAILED')==1
+    assert text.count('scheduleLobbyRecovery(p)')==1
+    assert text.count('scheduleLobbyRecovery(entrant)')==1
 
     # Critical lobby-to-battle proof: original resetRound loads every human
     # AFTER phase ACTIVE, CharacterAdded calls assignSpawn(ACTIVE => battle).
