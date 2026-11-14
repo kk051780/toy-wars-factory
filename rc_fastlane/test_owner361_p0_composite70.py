@@ -49,12 +49,44 @@ class CompositeP0PreviewTest(unittest.TestCase):
         with TemporaryDirectory() as t:
             d=Path(t)
             with self.assertRaises(AssertionError):
-                m.apply(d,True)
+                m.apply(d,True,d/"out")
             self.assertEqual(list(d.iterdir()),[])
 
     def test_composed_game_guard_against_partial_source(self):
         with self.assertRaises(AssertionError):
             m.patch_owner_game("irrelevant")
+
+    def test_symlink_escape_fails_before_any_writes(self):
+        with TemporaryDirectory() as t:
+            outside=Path(t)/"victim.txt"
+            outside.write_text("unmodified","utf8")
+            d=Path(t)/"dist"
+            d.mkdir()
+            (d/"src").symlink_to(outside)
+            with self.assertRaisesRegex(AssertionError,"P0_SYMLINK_REFUSED"):
+                m.source_map(d)
+            self.assertEqual(outside.read_text("utf8"),"unmodified")
+
+    def test_original_dist_is_not_an_output_location(self):
+        with TemporaryDirectory() as t:
+            d=Path(t)/"dist"
+            d.mkdir()
+            with self.assertRaisesRegex(AssertionError,"OUTPUT_ALREADY_EXISTS"):
+                m.apply(d,True,d)
+
+    def test_gameplay_fixes_are_in_pinned_authors(self):
+        r=m.ready.patch_game.__code__.co_consts
+        src=Path(m.ready.__file__).read_text("utf8")
+        self.assertIn('isReady = not isReady',src)
+        self.assertIn('match.phase = "LOBBY"',src)
+        self.assertIn("    broadcast()",src)
+        self.assertLess(src.index('if match.phase ~= "LOBBY"'),src.index('lastSeq[player] = data.seq'))
+        bot=Path(m.solo.__file__).read_text("utf8")
+        self.assertIn('stopRound("DRAW","SOLO_BOTS_TICK_FAILURE")',bot)
+        hud=m.hud.SOURCE.read_text("utf8")
+        self.assertIn("originalScoreLayout",hud)
+        self.assertIn("scoreLabel.Size = originalScoreLayout.Size",hud)
+        self.assertIn("instructionLabel.Visible = true",hud)
 
     def test_duplicate_feature_rejected(self):
         self.assertEqual(len(set(m.FEATURE_IDS)),len(m.FEATURE_IDS))
