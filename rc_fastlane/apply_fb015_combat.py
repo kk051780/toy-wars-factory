@@ -25,8 +25,8 @@ AUTHOR = ROOT / "features/fb015_combat/ArtCombatSlash.client.luau"
 HORDE_AUTHOR = ROOT / "features/fb015_combat/MusouHordeArtSignal.luau"
 DEST = "client/ArtCombatSlash.client.luau"
 HORDE = "server/MusouHorde.luau"
-PIN = "c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba"
-HORDE_PATCH_PIN = "e48186a6d717a46c86ec395ffbe778d196ab182d"
+PIN = "ba247a0a51477e215986f329f0dae422cd06c2ff"
+HORDE_PATCH_PIN = "51612783152dc84c37ccd743d3f7a4e6c7c43dbd"
 ORIGINAL_HORDE_PIN = "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 BASE = 66
 TRANSACTION = "P0D_ART_COMBAT_FULL_TREE_MANIFEST.json"
@@ -72,10 +72,15 @@ def validate_visual(raw: bytes) -> None:
     for marker in (
         "if not RunService:IsStudio() then return end",
         'arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT")',
-        'mobs:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1")',
+        'mobs:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1",25)',
         "visualConnection=cue.OnClientEvent:Connect(onConfirmedHit)",
         "serial<=(lastByMob[id] or 0)",
         "lastByMob[id]=serial",
+        "lastEpoch=epoch",
+        'historyConnection=cue:GetAttributeChangedSignal("P0D_ART_RECENT_V1")',
+        "replayRecent()",
+        "HttpService:JSONDecode(encoded)",
+        "workspace:GetServerTimeNow()",
         "makeArc(hitPos,fromPos,isKO)",
         "typeof(hitPos)~=\"Vector3\"",
         "cue:IsA(\"RemoteEvent\")",
@@ -109,6 +114,7 @@ local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))'''
     new_header = '''-- In Studio only: outbound cosmetic RemoteEvent and server BindableEvent.
 -- No OnServerEvent listener, scheduler, XP/egg/score/damage-player authority.
 local RunService=game:GetService("RunService")
+local HttpService=game:GetService("HttpService")
 local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))'''
     old_ctor = '''    folder.Parent=world
     return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0},Horde)'''
@@ -119,35 +125,82 @@ local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))'''
     if RunService:IsStudio() then
         visualCue=Instance.new("RemoteEvent")
         visualCue.Name="P0D_ART_COMBAT_SIGNAL_V1"
+        visualCue:SetAttribute("P0D_ART_EPOCH_V1",0)
+        visualCue:SetAttribute("P0D_ART_RECENT_V1","[]")
         visualCue.Parent=folder
         hitBus=Instance.new("BindableEvent")
         hitBus.Name="P0D_ART_HIT_BUS_V1"
         hitBus.Parent=folder
     end
-    return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0,artCue=visualCue,artHitBus=hitBus},Horde)'''
-    seam = '                    m.body.Color=Color3.fromRGB(253,231,111)'
-    extra = '''
-                    -- Every confirmed hit produces a separate private Studio
+    return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0,artCue=visualCue,artHitBus=hitBus,artEpoch=0,artRecent={}},Horde)'''
+    old_reset = '''    self.round=round
+    self.lastTick=now'''
+    new_reset = '''    self.round=round
+    -- Match epochs are monotonic even when the game reuses/lower round IDs.
+    -- Reset the snapshot BEFORE this round can create new hit packets.
+    if self.artCue then
+        self.artEpoch+=1
+        table.clear(self.artRecent)
+        self.artCue:SetAttribute("P0D_ART_EPOCH_V1",self.artEpoch)
+        self.artCue:SetAttribute("P0D_ART_RECENT_V1","[]")
+    end
+    self.lastTick=now
+'''
+    helper = '''-- BEGIN_ACTUAL_RECENT_HIT_RING
+-- Bounded Studio-only snapshot for a slow-joining visual LocalScript.
+-- Live reliable packets still carry every individual hit; replay is deduped.
+local function appendRecentHit(list,hit,now)
+    table.insert(list,hit)
+    for i=#list,1,-1 do
+        if now-list[i][12]>2.5 then table.remove(list,i) end
+    end
+    while #list>12 do table.remove(list,1) end
+end
+-- END_ACTUAL_RECENT_HIT_RING
+'''
+    seam = '''                    m.body.Color=Color3.fromRGB(253,231,111)'''
+    extra = '''                    -- Every confirmed hit produces a separate private Studio
                     -- client arc packet and a separate server-only BindableEvent.
                     -- A property/Attribute would coalesce back-to-back hits.
                     -- Both channels are appearance-only; no OnServerEvent handler.
                     if self.artCue and self.artHitBus then
                         m.artHitSeq=(m.artHitSeq or 0)+1
                         self.artHitBus:Fire(m.body,m.artHitSeq,m.hp<=0,self.round)
-                        self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)
-                    end'''
-    require(old.count(header)==1 and old.count(old_ctor)==1 and old.count(seam)==1,
+                        local stamp=workspace:GetServerTimeNow()
+                        appendRecentHit(self.artRecent,{
+                            m.id,m.pos.X,m.pos.Y,m.pos.Z,
+                            origin.X,origin.Y,origin.Z,
+                            m.hp<=0,m.artHitSeq,self.round,self.artEpoch,stamp
+                        },stamp)
+                        -- The replicated Attribute holds a whole recent HIT LIST,
+                        -- not a single hit whose intermediate state could coalesce.
+                        self.artCue:SetAttribute("P0D_ART_RECENT_V1",
+                            HttpService:JSONEncode(self.artRecent))
+                        self.artCue:FireAllClients(
+                            m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round,self.artEpoch)
+                    end
+'''
+    require(old.count(header)==1 and old.count(old_ctor)==1
+            and old.count(old_reset)==1 and old.count(seam)==1
+            and old.count("function Horde.new(world: Instance)")==1,
             "ORIGINAL_HORDE_SEAM_DRIFT")
-    require(old.replace(header,new_header).replace(old_ctor,new_ctor)
-            .replace(seam,seam+extra) == new,"UNEXPECTED_HORDE_COMBAT_CHANGE")
+    require(old.replace(header,new_header)
+            .replace("function Horde.new(world: Instance)",
+                     helper+"function Horde.new(world: Instance)")
+            .replace(old_ctor,new_ctor).replace(old_reset,new_reset)
+            .replace(seam,seam+extra) == new,
+            "UNEXPECTED_HORDE_COMBAT_CHANGE")
     require(new.count('Instance.new("RemoteEvent")')==1
             and new.count('Instance.new("BindableEvent")')==1
             and new.count("self.artHitBus:Fire(")==1
             and new.count("self.artCue:FireAllClients(")==1
-            and "P0D_ART_SPARK_V1" not in new
-            and 'OnServerEvent:Connect(' not in new
-            and "if RunService:IsStudio() then" in new,
-            "COSMETIC_HIT_BUS_STUDIO_ONLY_NO_AUTHORITY")
+            and new.count('HttpService:JSONEncode(')==1
+            and new.count('P0D_ART_RECENT_V1')>=2
+            and new.count('P0D_ART_EPOCH_V1')>=2
+            and "if RunService:IsStudio() then" in new
+            and 'OnServerEvent:Connect(' not in new,
+            "COSMETIC_HIT_REPLAY_STUDIO_ONLY_NO_AUTHORITY")
+
 
 def _check_original(dist: Path):
     old = sources(dist)
