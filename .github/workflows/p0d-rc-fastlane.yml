@@ -333,6 +333,30 @@ jobs:
           print("P0D_017_ACTUAL_JOINED67_ONE_HORDE_GAME_AND_SOURCE_LOCK_PASS")
           PY
           fi
+      - name: Check actual built RC66 source lock, approved feature and ledger agree
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE")
+          lock=json.loads((root/"SOURCE_LOCK.json").read_text("utf8"))
+          flags=json.loads(Path("rc_fastlane/FEATURE_SWITCHES.json").read_text("utf8"))["features"]
+          catalog=json.loads(Path("rc_fastlane/FEATURE_CATALOG.json").read_text("utf8"))
+          reg=json.loads(Path("rc_fastlane/FEATURE_REGISTRY.json").read_text("utf8"))
+          assert lock["total_scripts"]==66+int(flags["P0D_017_NEUTRAL_ELITE_BOSS_V1"]["enabled"])
+          assert lock["rc_twin_bond_overlay"]["id"]=="TWIN_BOND_PVE_COMPANION_V1"
+          assert lock["rc_twin_bond_overlay"]["official_rc_adopted"] is True
+          assert flags["TWIN_BOND_PVE_COMPANION_V1"]["official_rc_adopted"] is True
+          assert reg["canonical_rc_source_count"]==66
+          assert catalog["verified_rc_head"]==reg["canonical_rc_source_head"]=="2c74382bf24f9fdfd67f3bfcecb9a8a6d7ddd264"
+          assert reg["canonical_rc_acceptance_run"]==43549547549
+          assert len(catalog["rows"])==67
+          assert sum(z["stage"]=="RC" for z in catalog["rows"])==31
+          print("P0D_RC66_REAL_OUTPUT_LOCK_AND_CATALOG_REGISTRY_ADOPTION_RECEIPT_MATCH_PASS")
+          PY
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -649,6 +673,20 @@ jobs:
             /tmp/p0d_new_luau/luau-compile /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau >/dev/null
             /tmp/p0d_new_luau/luau /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau | tee /tmp/p0d_real_bond_native40.log
             grep -Fx P0D_TWIN_BOND_REAL_NATIVE_47_POLICY_CASES_PASS /tmp/p0d_real_bond_native40.log
+          fi
+      - name: Native-execute actual composed Game+real Bond policy (27 cases), cap and live Horde wiring
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/features/twin_bond/generate_game_native.py \
+              --game "$DIST/src/server/Game.server.luau" \
+              --policy "$DIST/src/server/TwinBondPolicy.luau" \
+              --out /tmp/P0D_BOND_REAL_GAME_HELPER27.luau
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_BOND_REAL_GAME_HELPER27.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_BOND_REAL_GAME_HELPER27.luau | tee /tmp/p0d_bond_game18.log
+            grep -Fx P0D_BOND_REAL_GAME_HELPER_NATIVE_27_CASES_PASS /tmp/p0d_bond_game18.log
           fi
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash

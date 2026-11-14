@@ -87,8 +87,22 @@ class TwinBond(unittest.TestCase):
         self.assertIn('if p not in {GAME,TWIN}',ADAPTER)
         self.assertIn('assert body.count(b"remote.OnServerEvent:Connect(")==1',ADAPTER)
     def test_17_independent_zero_write_off(self):
+        # Test actual adapter OFF, not a brittle source-string check.
+        import tempfile
+        import apply_twin_bond
+        with tempfile.TemporaryDirectory() as temp:
+            folder=Path(temp)
+            (folder/"sentinel.bin").write_bytes(b"OFF must never touch output bytes")
+            (folder/"already-empty"/"nested").mkdir(parents=True)
+            def snapshot():
+                # Include directories and their types, not just file bytes.
+                return {p.relative_to(folder).as_posix():
+                        ("dir", None) if p.is_dir() else ("file", p.read_bytes())
+                        for p in folder.rglob("*")}
+            before=snapshot()
+            self.assertFalse(apply_twin_bond.apply(folder,override=False))
+            self.assertEqual(snapshot(),before)
         self.assertIn('P0D_TWIN_BOND_OFF_PRESERVES_OFFICIAL65_ALL_BYTES_PASS',ADAPTER)
-        self.assertLess(ADAPTER.index('if not enabled:'),ADAPTER.index('before=scripts(dist)'))
     def test_18_66th_source_pure_module(self):
         self.assertIn('new[MODULE]=bond',ADAPTER)
         self.assertIn('assert len(new)==66',ADAPTER)
@@ -109,6 +123,22 @@ class TwinBond(unittest.TestCase):
         self.assertIn('buddy:SetAttribute("NoDamageAuthority",true)',WORLD)
         self.assertNotIn('leaderstats',WORLD)
         self.assertNotIn('Humanoid:TakeDamage(',WORLD)
+
+    def test_23_official_rc66_ledger_receipt_consistent(self):
+        registry=json.loads((ROOT/"FEATURE_REGISTRY.json").read_text("utf8"))
+        catalog=json.loads((ROOT/"FEATURE_CATALOG.json").read_text("utf8"))
+        flags=json.loads((ROOT/"FEATURE_SWITCHES.json").read_text("utf8"))["features"]
+        bond=next(v for v in registry["features"] if v["id"]=="TWIN_BOND_PVE_COMPANION_V1")
+        self.assertTrue(bond["official_rc_adopted"])
+        self.assertTrue(flags["TWIN_BOND_PVE_COMPANION_V1"]["official_rc_adopted"])
+        self.assertEqual(registry["canonical_rc_source_count"],66)
+        self.assertEqual(registry["canonical_rc_source_head"],"2c74382bf24f9fdfd67f3bfcecb9a8a6d7ddd264")
+        self.assertEqual(catalog["verified_rc_head"],"2c74382bf24f9fdfd67f3bfcecb9a8a6d7ddd264")
+        self.assertEqual(registry["canonical_rc_acceptance_run"],43549547549)
+        self.assertEqual(sum(row["stage"]=="RC" for row in catalog["rows"]),31)
+        self.assertEqual(len(catalog["rows"]),67)
+        self.assertIn('"official_rc_adopted":flags[FEATURE]["official_rc_adopted"] is True',ADAPTER)
+
 
 if __name__=="__main__":
     unittest.main()
