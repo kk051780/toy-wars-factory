@@ -1,0 +1,7 @@
+# PREP: real canonical RC64 → private65 creature practice and evolution
+
+Single existing `server/TwinBiomes.server.luau` source updated to original author-training code from [PR #330](https://github.com/kk051780/toy-wars-factory/pull/330), plus one NEW pure `server/TwinCreatureTraining.luau` module, not a duplicate Twin world or Game. Original canonical Twin blob `ff48273db7c7f0e240e45fba8b997cad669a5143`, trained Twin blob `ff7c57aae79f03e3fbc72e043fe3f34f5ac373a5`, pure module `b2f8275be676b46fc1ad32050832a4fcf13099af`. A source LCS check showed 434 identical lines of the 444-line official twin world preserved, with bounded additions for practice/visual evolution.
+
+Per user/per species, 20 seconds between training credits, Lv2 at 3, Lv3 at7, temporary field effects 16→20→24 seconds, luminous Lv3 crest. No persistent collection/ownership, real XP, score, game HP/egg authority, payments, DataStore or extra Game/Remote/Store. Original four unique morphs, 8 models, 4/4 session codex and one idle loop remain. Dist switch OFF preserves **all official64 script bodies, Rojo project and both source locks**.
+
+One private65 source-exact Rojo Place, native65/65, original existing 127-case native policy tests, new38-case original training policy runtime tests, and 16 new safety/negative source tests are required from a matching fixed HEAD CI. Studio engine 2player, Android controls and FUN remain NOT_TESTED. No main, official RC writer, merge, publishing, paid, PC or Automations changes.
