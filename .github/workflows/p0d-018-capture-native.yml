@@ -1,0 +1,43 @@
+name: P0D-018 capture PREP source-exact Native Luau validation
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'rc_fastlane/features/capture/**'
+      - 'rc_fastlane/test_capture_source.py'
+      - '.github/workflows/p0d-018-capture-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Static source-authority and rollback checks
+        run: python3 -B -m unittest discover -s rc_fastlane -p test_capture_source.py -v
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_capture_luau
+          persist-credentials: false
+      - name: Build pinned native Luau CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_capture_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_capture_luau -B /tmp/p0d_capture_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_capture_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+      - name: Execute 18 real Native Luau capture policy cases (not Game wiring)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B rc_fastlane/features/capture/build_capture_native.py --out /tmp/p0d_capture_native18.luau
+          /tmp/p0d_capture_luau/luau-compile /tmp/p0d_capture_native18.luau >/dev/null
+          /tmp/p0d_capture_luau/luau /tmp/p0d_capture_native18.luau | tee /tmp/p0d_capture_native.log
+          grep -Fx CAPTURE_NATIVE_18_PASS /tmp/p0d_capture_native.log
+          echo P0D018_CAPTURE_POLICY_NATIVE_18_SUCCESS_NOT_READY_FOR_RC

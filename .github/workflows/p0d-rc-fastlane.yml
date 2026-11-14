@@ -961,6 +961,77 @@ jobs:
           print('P0D_PRIVATE64_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
           PY
           fi
+      - name: P0D-018 independent PRIVATE67 capture Game integration source exact Rojo preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/features/capture/apply_capture_preview.py --dist "$DIST" --preview /tmp/p0d_capture_off --enabled false
+            test ! -e /tmp/p0d_capture_off
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            python3 -B rc_fastlane/features/capture/apply_capture_preview.py --dist "$DIST" --preview /tmp/p0d_capture_private67 --enabled true
+            test -f /tmp/p0d_capture_private67/src/server/CapturePolicy.luau
+            COUNT=$(find /tmp/p0d_capture_private67/src -type f -name '*.luau' | wc -l)
+            test "$COUNT" -eq 67
+            while IFS= read -r -d '' file; do
+              /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+            done < <(find /tmp/p0d_capture_private67/src -type f -name '*.luau' -print0)
+            mkdir -p /tmp/p0d_capture_preview_out
+            /tmp/p0d_rc_rojo build /tmp/p0d_capture_private67/default.project.json -o /tmp/p0d_capture_preview_out/P0D_CAPTURE_PRIVATE67_STUDIO.rbxlx
+            python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET,collections,hashlib,json
+          root=Path('/tmp/p0d_capture_private67')
+          actual=collections.Counter(f.read_text('utf8') for f in (root/'src').rglob('*.luau'))
+          tree=ET.parse('/tmp/p0d_capture_preview_out/P0D_CAPTURE_PRIVATE67_STUDIO.rbxlx')
+          included=collections.Counter()
+          for item in tree.findall('.//Item'):
+              if item.attrib.get('class') not in {'Script','ModuleScript','LocalScript'}:continue
+              props=item.find('Properties')
+              if props is None:continue
+              for element in props:
+                  if element.attrib.get('name')=='Source':
+                      included[element.text or '']+=1
+          assert sum(actual.values())==67 and included==actual,('SOURCE_EXACT_67',sum(included.values()),len(included-actual))
+          game=(root/'src/server/Game.server.luau').read_text('utf8')
+          assert game.count('remote.OnServerEvent:Connect(')==1
+          assert game.count('Capture.begin(')==1 and game.count('Capture.rescue(')==1
+          assert game.count('tryAdvancedCapture(player,now,root,team)')==1
+          assert game.count('P0D_ENABLE_ADV_CAPTURE_V1')==1
+          assert 'if visible and not slowed[player]' in game
+          assert 'rec.kind=="NET" or rec.kind=="CAPTURE"' in game
+          assert game.count('Capture.forget(player)')>=2
+          assert 'Capture.clearRound()' in game
+          assert 'captureVisual:Destroy()' in game
+          assert 'TryAdvancedCapture' not in game
+          orig=Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx').read_bytes()
+          assert hashlib.sha256(orig).hexdigest()=='466a30ed10760bc26c2fb6e93d4850fe5d2a4b508410650b6e8355fb602c58c6'
+          p=Path('/tmp/p0d_capture_preview_out/P0D_CAPTURE_PRIVATE67_STUDIO.rbxlx')
+          b=p.read_bytes()
+          meta={'official_rc_reference':'9feb2ec9f5ad8e96b6b727e9f77260b0a5f60991',
+                'source_count':67,'place_bytes':len(b),'sha256':hashlib.sha256(b).hexdigest(),
+                'existing_game_and_remote_singleton':True,
+                'guardian_net_preserved':True,'trapper_job_skill_original_remote':True,
+                'server_observed_target_and_line_of_sight':True,'off_original_66_bytes_unchanged':True,
+                'stage':'PRIVATE67_CONNECTED_CANDIDATE_NOT_OFFICIAL_RC',
+                'studio_2client':'NOT_TESTED','android':'NOT_TESTED','fun':'NOT_TESTED'}
+          Path('/tmp/p0d_capture_preview_out/P0D_CAPTURE_PREVIEW_RECEIPT.json').write_text(json.dumps(meta,indent=2)+'\n')
+          print('P0D018_ACTUAL67_SOURCE_EXACT_ROJO_PRIVATE_GAME_INTEGRATION_PASS',len(b),meta['sha256'])
+          PY
+            FINAL=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$FINAL"
+            echo P0D018_CANONICAL66_DIST_PRESERVED_BYTE_EXACT_PASS
+          fi
+      - uses: actions/upload-artifact@v4
+        if: env.PROFILE == 'rich51'
+        with:
+          name: P0D-018-PRIVATE67-STUDIO-CAPTURE
+          path: /tmp/p0d_capture_preview_out/*
+          retention-days: 7
+          if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
           name: P0D-CANONICAL-RC-STUDIO-${{ env.PROFILE }}
