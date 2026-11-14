@@ -3,6 +3,7 @@
 from __future__ import annotations
 import importlib.util
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -90,7 +91,75 @@ class Motion69Tests(unittest.TestCase):
             p69=root/"private69"
             self.assertFalse(motion.compose(p68,p69,False))
             self.assertFalse(p69.exists())
+            self.assertFalse((root/".private69.motion69_lock").exists(),
+                             "No-op OFF must not write a persistent sidecar")
             self.assertEqual(original68,prior.snapshot(p68))
+
+    def test_off_recovery_after_journal_before_rename(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            _,p68,_,_,_=self.make_chain(root)
+            p69=root/"private69"
+            motion.compose(p68,p69,True)
+            ticket={"input":str(p68),"output":str(p69),"id":motion.MANIFEST_ID}
+            journal=root/"private69.motion69_journal.json"
+            journal.write_text(json.dumps(ticket)+"\n","utf8")
+            self.assertTrue(motion.compose(p68,p69,False))
+            self.assertFalse(p69.exists())
+            self.assertFalse(journal.exists())
+
+    def test_off_recovery_after_rename_verifies_tombstone(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            _,p68,_,_,_=self.make_chain(root)
+            p69=root/"private69"
+            motion.compose(p68,p69,True)
+            tomb=root/"private69.motion69_removing"
+            journal=root/"private69.motion69_journal.json"
+            journal.write_text(json.dumps({
+                "input":str(p68),"output":str(p69),"id":motion.MANIFEST_ID
+            })+"\n","utf8")
+            os.rename(p69,tomb)
+            unrelated=tomb/"DO_NOT_DELETE.txt"
+            unrelated.write_text("user data","utf8")
+            with self.assertRaisesRegex(RuntimeError,"MOTION69_TREE_DRIFT_NO_REMOVAL"):
+                motion.compose(p68,p69,False)
+            self.assertTrue(tomb.is_dir())
+            self.assertEqual(unrelated.read_text("utf8"),"user data")
+            unrelated.unlink()
+            self.assertTrue(motion.compose(p68,p69,False))
+            self.assertFalse(tomb.exists())
+            self.assertFalse(journal.exists())
+
+    def test_off_recovery_after_deletion_before_journal_cleanup(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            _,p68,_,_,original68=self.make_chain(root)
+            p69=root/"private69"
+            motion.compose(p68,p69,True)
+            journal=root/"private69.motion69_journal.json"
+            journal.write_text(json.dumps({
+                "input":str(p68),"output":str(p69),"id":motion.MANIFEST_ID
+            })+"\n","utf8")
+            # Simulate completed verified removal followed by a crash before
+            # clearing the journal. OFF must finish without touching parent.
+            import shutil
+            shutil.rmtree(p69)
+            self.assertTrue(motion.compose(p68,p69,False))
+            self.assertFalse(journal.exists())
+            self.assertEqual(original68,prior.snapshot(p68))
+
+    def test_symlink_output_refused(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            _,p68,_,_,_=self.make_chain(root)
+            real=root/"unrelated"
+            real.mkdir()
+            link=root/"private69"
+            link.symlink_to(real, target_is_directory=True)
+            with self.assertRaisesRegex(RuntimeError,"SYMLINK_FORBIDDEN"):
+                motion.compose(p68,link,False)
+            self.assertTrue(real.is_dir())
 
     def test_off_cannot_delete_parent_ancestor(self):
         with tempfile.TemporaryDirectory() as temporary:
