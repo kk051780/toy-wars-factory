@@ -300,6 +300,39 @@ jobs:
             echo P0D_PRIVATE66_BOND_OFF_EXACT_REAL_OFFICIAL65_PASS
             python3 -B rc_fastlane/apply_twin_bond.py --dist "$DIST" --enabled true
           fi
+      - name: FB005 audit exact assembled sole Game authority anchors (read-only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            python3 - <<'PY'
+          from pathlib import Path
+          p=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE/src/server/Game.server.luau")
+          ls=p.read_text("utf8").splitlines()
+          keywords=("local function resetEgg(","local function resetRound(",
+            "local function stopRound(","local function setObjectiveEnabled(",
+            "local function tickRound(","local function applyAttack(",
+            "local function getTeamName(","local function healthy(",
+            "scorePrompt.Triggered:Connect","eggPrompt.Triggered:Connect",
+            "local function onJoin(","match = {","broadcast = function()",
+            "local function assignSpawn(","StudioSolo.emptyWinner(",
+            "horde:tick(","local map = ","H2Score.deposit(")
+          found=[]
+          for i,line in enumerate(ls):
+              if any(w in line for w in keywords):
+                  found.append(i)
+          seen=set()
+          print("FB005_SOURCE_AUDIT_BEGIN total",len(ls),"anchors",len(found))
+          for idx in found:
+              lo=max(0,idx-8)
+              hi=min(len(ls),idx+28)
+              for row in range(lo,hi):
+                  if row not in seen:
+                      print(f"FB005_LINE {row+1:04d} {ls[row]}")
+                      seen.add(row)
+          print("FB005_SOURCE_AUDIT_END")
+          PY
+          fi
       - name: Check actual built RC66 source lock, approved feature and ledger agree
         if: ${{ env.PROFILE == 'rich51' }}
         shell: bash
