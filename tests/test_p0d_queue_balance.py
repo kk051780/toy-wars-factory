@@ -17,7 +17,8 @@ def inbox(n=0):
         for i in range(n)
     ]
     return {"schema": "P0D_TWO_LANES_V1", "official_head": SHA,
-            "selected": selected, "ready_count": n}
+            "selected": selected, "ready_count": n,
+            "claims_scan_complete": True, "open_pr_title_claims": []}
 
 
 def catalog():
@@ -71,6 +72,42 @@ class QueueBalanceTest(unittest.TestCase):
         q["selected"][0]["features"] = ["P0D-018"]
         self.assertEqual(balance(q, catalog())["a_suggested_feature_ids"],
                          ["P0D-017", "P0D-040"])
+
+    def test_current_in_progress_draft_preps_are_not_recommended_twice(self):
+        q = inbox(0)
+        q["open_pr_title_claims"] = [
+            {"feature_id": "P0D-018", "pr": 358, "head": HEAD, "draft": True},
+            {"feature_id": "P0D-017", "pr": 359, "head": HEAD, "draft": True},
+        ]
+        r = balance(q, catalog())
+        self.assertEqual(r["queue_state"], "QUEUE_RED")
+        self.assertEqual(r["a_suggested_feature_ids"], ["P0D-040"])
+        self.assertEqual(r["blocked_by_open_pr_claims"],
+                         [{"feature_id": "P0D-017", "prs": [359]},
+                          {"feature_id": "P0D-018", "prs": [358]}])
+
+    def test_no_double_counts_when_pr_already_ready_or_manually_claimed(self):
+        q = inbox(1)
+        q["selected"][0]["features"] = ["P0D-018"]
+        q["open_pr_title_claims"] = [
+            {"feature_id": "P0D-018", "pr": 358, "head": HEAD, "draft": False}]
+        r = balance(q, catalog(), ["P0D-017"])
+        self.assertEqual(r["a_suggested_feature_ids"], ["P0D-040"])
+
+    def test_claim_data_missing_or_incomplete_blocks_a_suggestions(self):
+        q = inbox(0)
+        q["claims_scan_complete"] = False
+        with self.assertRaisesRegex(InvalidSnapshot, "OPEN_PR_CLAIMS_SCAN_INCOMPLETE"):
+            balance(q, catalog())
+        q = inbox(0)
+        del q["open_pr_title_claims"]
+        with self.assertRaisesRegex(InvalidSnapshot, "OPEN_PR_CLAIMS_MISSING"):
+            balance(q, catalog())
+        q = inbox(0)
+        q["open_pr_title_claims"] = [{"feature_id": "P0D-018", "pr": True,
+                                       "head": HEAD, "draft": True}]
+        with self.assertRaisesRegex(InvalidSnapshot, "INVALID_OPEN_PR_CLAIM"):
+            balance(q, catalog())
 
     def test_idea_only_when_source_exhausted(self):
         c = catalog()

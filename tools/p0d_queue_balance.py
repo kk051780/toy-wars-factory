@@ -65,7 +65,25 @@ def balance(queue: dict[str, Any], catalog: dict[str, Any],
     if any(r["stage"] not in ("IDEA", "SOURCE", "RC", "STUDIO", "FUN") for r in rows):
         raise InvalidSnapshot("UNKNOWN_CATALOG_STAGE")
 
+    if queue.get("claims_scan_complete") is not True:
+        raise InvalidSnapshot("OPEN_PR_CLAIMS_SCAN_INCOMPLETE")
+    active_claims = queue.get("open_pr_title_claims")
+    if not isinstance(active_claims, list):
+        raise InvalidSnapshot("OPEN_PR_CLAIMS_MISSING")
+    active_by_id: dict[str, set[int]] = {}
+    for item in active_claims:
+        if (not isinstance(item, dict)
+                or not isinstance(item.get("feature_id"), str)
+                or not _FEATURE.fullmatch(item["feature_id"])
+                or not isinstance(item.get("pr"), int) or isinstance(item["pr"], bool)
+                or item["pr"] < 1
+                or not isinstance(item.get("head"), str)
+                or not _SHA.fullmatch(item["head"])
+                or not isinstance(item.get("draft"), bool)):
+            raise InvalidSnapshot("INVALID_OPEN_PR_CLAIM")
+        active_by_id.setdefault(item["feature_id"], set()).add(item["pr"])
     occupied = _id_list(claimed_feature_ids or [], "CLAIMS")
+    occupied.update(active_by_id)
     seen_ready = set()
     for item in selected:
         if (not isinstance(item, dict)
@@ -120,6 +138,9 @@ def balance(queue: dict[str, Any], catalog: dict[str, Any],
         "catalog_total": len(rows),
         "catalog_stages": statuses,
         "blocked_by_external_claims": sorted(_id_list(claimed_feature_ids or [], "CLAIMS")),
+        "blocked_by_open_pr_claims": [
+            {"feature_id": fid, "prs": sorted(nums)} for fid, nums in sorted(active_by_id.items())
+        ],
         "priority_fun_validation": ["#340 HUD real Studio/Android", "#341 solo launch real Studio"],
         "writer": "ONLY_AUTHENTICATED_ISSUE_220_CAS",
         "human_studio_fun": "NOT_INFERRED",

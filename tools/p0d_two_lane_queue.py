@@ -14,6 +14,8 @@ OFFICIAL = "rc/p0d-s1-kids-rc01"
 RUN_NAME = "P0D canonical RC fast-lane Studio build"
 PIN = re.compile(r"^[0-9a-f]{40}$")
 FEATURE = re.compile(r"^[A-Z][A-Z0-9_-]{2,63}$")
+# Only a PR's own TITLE names an in-progress task; its body can cite unrelated IDs.
+ACTIVE_TITLE_ID = re.compile(r"(?<![A-Za-z0-9_-])P0D-[0-9]{3}(?![A-Za-z0-9_-])")
 
 class GitHubReadOnly:
     def __init__(self, token: str):
@@ -56,7 +58,34 @@ def manifest(body: str) -> dict[str, Any]:
     return {"head": values["PINNED_HEAD"], "base": values["BASE_RC"], "features": feature_ids,
             "source_lock": lock, "rollback": values["ROLLBACK"]}
 
-def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[str], Any], repo: str = REPO) -> dict[str, Any]:
+def active_title_claims(pull_requests: list[dict], repo: str = REPO) -> list[dict[str, Any]]:
+    """Conservatively reserve active A feature IDs from open same-repository RC-target PR titles.
+
+    These are suggestions to avoid duplicate work, NOT ownership/lease evidence.
+    Closed PRs, PR BODY references and other base branches do not reserve work.
+    """
+    claims: list[dict[str, Any]] = []
+    for pr in pull_requests:
+        number = pr.get("number")
+        if not isinstance(number, int) or isinstance(number, bool) or number < 1:
+            continue
+        if pr.get("state") != "open" or (pr.get("base") or {}).get("ref") != OFFICIAL:
+            continue
+        head = pr.get("head") or {}
+        sha = head.get("sha", "")
+        if (head.get("repo") or {}).get("full_name") != repo or not isinstance(sha, str) or not PIN.fullmatch(sha):
+            continue
+        title = pr.get("title") or ""
+        if not isinstance(title, str):
+            continue
+        for feature_id in sorted(set(ACTIVE_TITLE_ID.findall(title))):
+            claims.append({"feature_id": feature_id, "pr": number,
+                           "head": sha, "draft": bool(pr.get("draft"))})
+    return sorted(claims, key=lambda x: (x["feature_id"], x["pr"]))
+
+
+def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[str], Any],
+                  repo: str = REPO, claims_scan_complete: bool = True) -> dict[str, Any]:
     if not PIN.fullmatch(official_sha):
         raise ValueError("INVALID_OFFICIAL_HEAD")
     if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repo):
@@ -127,6 +156,8 @@ def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[s
     examined.sort(key=lambda x: x["pr"])
     return {"schema": "P0D_TWO_LANES_V1", "official_head": official_sha,
             "ready_count": len(selected), "selected": selected, "all_labeled_candidates": examined,
+            "open_pr_title_claims": active_title_claims(pull_requests, repo),
+            "claims_scan_complete": claims_scan_complete,
             "next_owner": "SOLE_AUTHENTICATED_ISSUE_220_INTEGRATOR_CAS_ONLY",
             "no_auto_merge": True, "studio_and_fun_not_inferred": True}
 
@@ -134,12 +165,16 @@ def read_queue(api: Callable[[str], Any], repo: str = REPO) -> dict[str, Any]:
     ref = api(f"/repos/{repo}/git/ref/heads/{OFFICIAL}")
     official_sha = (ref.get("object") or {}).get("sha", "")
     prs = []
+    claims_scan_complete = False
     for page in range(1, 4):
         page_rows = api(f"/repos/{repo}/pulls?state=open&per_page=100&page={page}")
+        if not isinstance(page_rows, list):
+            raise ValueError("INVALID_OPEN_PR_PAGE")
         prs += page_rows
         if len(page_rows) < 100:
+            claims_scan_complete = True
             break
-    return choose_latest(official_sha, prs, api, repo)
+    return choose_latest(official_sha, prs, api, repo, claims_scan_complete=claims_scan_complete)
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__)
