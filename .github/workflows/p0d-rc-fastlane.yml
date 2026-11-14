@@ -47,6 +47,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          # On a PR whose parent #387 is updated concurrently, do not silently
+          # test a synthetic merge ref under the previous source SHA locks.
+          # A follow-up rebased candidate must be independently re-pinned.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
