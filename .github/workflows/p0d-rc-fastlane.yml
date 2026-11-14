@@ -2021,17 +2021,17 @@ jobs:
           for feature in ('FB016_ART_CAMERA_SIGHTLINE_V2','FB015_GOROGAN_MOBILE_LOD_V1'):
               assert type(flags[feature]) is bool
           with open('/tmp/p0d_art_full4_flags.env','w') as out:
-              out.write('CAMERA='+str(flags['FB016_ART_CAMERA_SIGHTLINE_V2']).lower()+'\n')
-              out.write('GOROGAN='+str(flags['FB015_GOROGAN_MOBILE_LOD_V1']).lower()+'\n')
+              out.write('CAMERA_ENABLED='+str(flags['FB016_ART_CAMERA_SIGHTLINE_V2']).lower()+'\n')
+              out.write('GOROGAN_ENABLED='+str(flags['FB015_GOROGAN_MOBILE_LOD_V1']).lower()+'\n')
           PY
           source /tmp/p0d_art_full4_flags.env
-          if [ "$CAMERA" = true ]; then
+          if [ "$CAMERA_ENABLED" = true ]; then
             python3 -B rc_fastlane/apply_fb016_camera_v2.py --base "$BASE" --out "$CAMERA" --enabled true
           else
             python3 -B rc_fastlane/apply_fb016_camera_v2.py --base "$BASE" --out "$CAMERA" --enabled false
             cp -a "$BASE" "$CAMERA"
           fi
-          if [ "$GOROGAN" = true ]; then
+          if [ "$GOROGAN_ENABLED" = true ]; then
             python3 -B rc_fastlane/apply_fb015_gorogan_mobile_lod.py --base "$CAMERA" --out "$FINAL" --enabled true
           else
             python3 -B rc_fastlane/apply_fb015_gorogan_mobile_lod.py --base "$CAMERA" --out "$FINAL" --enabled false
@@ -2045,10 +2045,10 @@ jobs:
           PLACE="$OUT/P0D_RC80_FOUR_ART_FOLIAGE_GOROGAN_STUDIO_PREVIEW.rbxlx"
           python3 -B rc_fastlane/verify_fb015_forest_v2.py --dist "$FINAL" --place "$PLACE" --receipt "$OUT/FOREST_V2_EXACT.json"
           python3 -B rc_fastlane/verify_fb015_castle_gate_silhouette.py --dist "$FINAL" --place "$PLACE" --receipt "$OUT/CASTLE_V3_EXACT.json"
-          if [ "$CAMERA" = true ]; then
+          if [ "$CAMERA_ENABLED" = true ]; then
             python3 -B rc_fastlane/verify_fb016_camera_v2.py --dist "$FINAL" --place "$PLACE" --receipt "$OUT/CAMERA_V2_EXACT.json"
           fi
-          if [ "$GOROGAN" = true ]; then
+          if [ "$GOROGAN_ENABLED" = true ]; then
             python3 -B rc_fastlane/verify_fb015_gorogan_mobile_lod.py --dist "$FINAL" --place "$PLACE" --receipt "$OUT/GOROGAN_LOD_EXACT.json"
           fi
           python3 -B art_quality/check_art_quality.py --place "$PLACE" --out "$OUT/ART_SOURCE_CHECK.json"
