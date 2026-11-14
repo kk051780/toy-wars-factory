@@ -16,33 +16,34 @@ def extract(raw: str) -> str:
         raise RuntimeError("ART_SPARK_POLICY_MISSING_OR_DUPLICATED")
     policy=raw.split(START, 1)[1].split("\n", 1)[1].split(END, 1)[0]
     for marker in (
-        "local function parseSparkCue(raw, lastSerial)",
-        'raw:match("^(%d+)|([HK])$")',
-        "if not seq or seq <= lastSerial",
-        'if kind == "K" then 10 else 4',
+        "local function burstForHit(serial,lastSerial,isKO)",
+        'type(serial) ~= "number"',
+        "serial <= lastSerial",
+        'type(isKO) ~= "boolean"',
+        "if isKO then 10 else 4",
     ):
         if marker not in policy:
             raise RuntimeError("ART_SPARK_SOURCE_DRIFT_"+marker)
     return policy + """
 local cases=0
-local function expect(input,last,serial,burst)
-    local gotSerial,gotBurst=parseSparkCue(input,last)
+local function expect(input,last,ko,serial,burst)
+    local gotSerial,gotBurst=burstForHit(input,last,ko)
     assert(gotSerial==serial and gotBurst==burst,
         "SPARK_CUE_MISMATCH_"..tostring(cases+1))
     cases += 1
 end
-expect("1|H",0,1,4)
-expect("2|H",1,2,4)
-expect("3|H",2,3,4) -- identical damage/continuous color
-expect("4|K",3,4,10) -- KO exactly once
-expect("4|K",4,nil,nil) -- duplicate KO is ignored
-expect("3|H",4,nil,nil) -- stale hit ignored
-expect("1|H",0,1,4) -- NPC spawned in a new round
-expect("1|X",0,nil,nil)
-expect("0|H",0,nil,nil)
-expect("5|K",5,nil,nil)
-expect("",0,nil,nil)
-expect(nil,0,nil,nil)
+expect(1,0,false,1,4)
+expect(2,1,false,2,4)
+expect(3,2,false,3,4) -- fast consecutive real server events
+expect(4,3,true,4,10) -- KO exactly once
+expect(4,4,true,nil,nil) -- replay KO is ignored
+expect(3,4,false,nil,nil) -- stale hit ignored
+expect(1,0,false,1,4) -- new Core on new round
+expect(0,0,false,nil,nil)
+expect(3,3,false,nil,nil)
+expect("3",1,false,nil,nil)
+expect(5,4,nil,nil,nil)
+expect(2.5,1,true,nil,nil)
 assert(cases==12,cases)
 print("P0D_FB015_ACTUAL_MINION_SPARK_NATIVE_12_CASES_PASS")
 """
