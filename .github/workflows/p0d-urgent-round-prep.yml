@@ -6,6 +6,7 @@ on:
     paths:
       - "rc_fastlane/apply_core_round_ready.py"
       - "rc_fastlane/test_core_round_ready.py"
+      - "rc_fastlane/test_core_round_source.py"
       - ".github/workflows/p0d-urgent-round-prep.yml"
   workflow_dispatch:
 permissions:
@@ -22,7 +23,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 -B -m unittest discover -s rc_fastlane -p test_core_round_ready.py -v
+          python3 -B -m unittest discover -s rc_fastlane -p test_core_round*.py -v
           python3 -B -m py_compile rc_fastlane/apply_core_round_ready.py
       - name: Do not certify Studio game/fun from source tests
         shell: bash
