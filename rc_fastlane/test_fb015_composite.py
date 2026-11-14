@@ -254,5 +254,42 @@ class CompositeTest(unittest.TestCase):
             link.unlink()
             self.assertTrue(combo.compose(d,private,False))
 
+    def test_coedited_composite_manifest_and_candidate_preserve_user_data(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            out=root/"private68"
+            combo.compose(d,out,True)
+            rogue=out/"VERY_IMPORTANT_USER_DATA.bin"
+            rogue.write_bytes(b"KEEP ME")
+            mf=out/combo.MANIFEST
+            original=mf.read_bytes()
+            hacked=json.loads(mf.read_text("utf8"))
+            hacked["files"]=combo.manifest_contents(out)
+            mf.write_text(json.dumps(hacked),encoding="utf8")
+            with self.assertRaisesRegex(RuntimeError,"EXTERNAL_COMPOSITE_INVENTORY_MISMATCH"):
+                combo.compose(d,out,False)
+            self.assertEqual(rogue.read_bytes(),b"KEEP ME")
+            rogue.unlink()
+            mf.write_bytes(original)
+            self.assertTrue(combo.compose(d,out,False))
+            self.assertFalse(combo.receipt_path(out).exists())
+
+    def test_external_receipt_can_detect_manifest_bytes_changed_only(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            out=root/"private68"
+            combo.compose(d,out,True)
+            mf=out/combo.MANIFEST
+            raw=mf.read_bytes()
+            mf.write_bytes(raw+b" ")
+            with self.assertRaisesRegex(RuntimeError,"EXTERNAL_COMPOSITE_INVENTORY_MISMATCH"):
+                combo.compose(d,out,False)
+            mf.write_bytes(raw)
+            self.assertTrue(combo.compose(d,out,False))
+
 if __name__ == "__main__":
     unittest.main()
