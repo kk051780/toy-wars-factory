@@ -3,6 +3,7 @@
 -- In Studio only: outbound cosmetic RemoteEvent and server BindableEvent.
 -- No OnServerEvent listener, scheduler, XP/egg/score/damage-player authority.
 local RunService=game:GetService("RunService")
+local HttpService=game:GetService("HttpService")
 local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))
 local Horde = {}
 Horde.__index = Horde
@@ -181,6 +182,17 @@ local function anchoredToWalkable(world: Instance,m: any,p: Vector3): Vector3
     return Vector3.new(p.X,groundTop(world,p.X,p.Z)
         +(if m.elite then 2.5 else 1.65),p.Z)
 end
+-- BEGIN_ACTUAL_RECENT_HIT_RING
+-- Bounded Studio-only snapshot for a slow-joining visual LocalScript.
+-- Live reliable packets still carry every individual hit; replay is deduped.
+local function appendRecentHit(list,hit,now)
+    table.insert(list,hit)
+    for i=#list,1,-1 do
+        if now-list[i][12]>2.5 then table.remove(list,i) end
+    end
+    while #list>12 do table.remove(list,1) end
+end
+-- END_ACTUAL_RECENT_HIT_RING
 function Horde.new(world: Instance)
     local folder=Instance.new("Folder")
     folder.Name="EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT"
@@ -191,12 +203,14 @@ function Horde.new(world: Instance)
     if RunService:IsStudio() then
         visualCue=Instance.new("RemoteEvent")
         visualCue.Name="P0D_ART_COMBAT_SIGNAL_V1"
+        visualCue:SetAttribute("P0D_ART_EPOCH_V1",0)
+        visualCue:SetAttribute("P0D_ART_RECENT_V1","[]")
         visualCue.Parent=folder
         hitBus=Instance.new("BindableEvent")
         hitBus.Name="P0D_ART_HIT_BUS_V1"
         hitBus.Parent=folder
     end
-    return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0,artCue=visualCue,artHitBus=hitBus},Horde)
+    return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0,artCue=visualCue,artHitBus=hitBus,artEpoch=0,artRecent={}},Horde)
 end
 function Horde:clear()
     for _,m in ipairs(self.mobs) do m.model:Destroy() end
@@ -205,6 +219,14 @@ end
 function Horde:reset(round: number,now: number)
     self:clear()
     self.round=round
+    -- Match epochs are monotonic even when the game reuses/lower round IDs.
+    -- Reset the snapshot BEFORE this round can create new hit packets.
+    if self.artCue then
+        self.artEpoch+=1
+        table.clear(self.artRecent)
+        self.artCue:SetAttribute("P0D_ART_EPOCH_V1",self.artEpoch)
+        self.artCue:SetAttribute("P0D_ART_RECENT_V1","[]")
+    end
     self.lastTick=now
     self.kills=0
     -- Center routes within the original 250x142 arena, NOT remote fantasy scenery.
@@ -279,7 +301,18 @@ function Horde:hit(origin: Vector3,facing: Vector3,damage: number,now: number,ig
                     if self.artCue and self.artHitBus then
                         m.artHitSeq=(m.artHitSeq or 0)+1
                         self.artHitBus:Fire(m.body,m.artHitSeq,m.hp<=0,self.round)
-                        self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)
+                        local stamp=workspace:GetServerTimeNow()
+                        appendRecentHit(self.artRecent,{
+                            m.id,m.pos.X,m.pos.Y,m.pos.Z,
+                            origin.X,origin.Y,origin.Z,
+                            m.hp<=0,m.artHitSeq,self.round,self.artEpoch,stamp
+                        },stamp)
+                        -- The replicated Attribute holds a whole recent HIT LIST,
+                        -- not a single hit whose intermediate state could coalesce.
+                        self.artCue:SetAttribute("P0D_ART_RECENT_V1",
+                            HttpService:JSONEncode(self.artRecent))
+                        self.artCue:FireAllClients(
+                            m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round,self.artEpoch)
                     end
                     -- A normal enemy loses its immediate melee response when
                     -- hit. Elite warning remains readable and uninterruptible.
