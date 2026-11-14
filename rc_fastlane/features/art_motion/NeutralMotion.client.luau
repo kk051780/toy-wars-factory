@@ -222,7 +222,9 @@ pulse = RunService.Heartbeat:Connect(function(dt)
             for _,connection in ipairs(leases) do connection:Disconnect() end
         end
         table.clear(connected)
-        table.clear(records)
+        for model in pairs(records) do drop(model) end
+        if cueConnection then cueConnection:Disconnect() end
+        if localArt.Parent then localArt:Destroy() end
         return
     end
     if dt <= 0 or dt > .5 then return end
@@ -243,23 +245,23 @@ pulse = RunService.Heartbeat:Connect(function(dt)
             entry.speed = (entry.speed * .7) + (.3 * (delta.Magnitude / stepDt))
             if root and root:IsA("BasePart")
                 and (root.Position-core.Position).Magnitude <= VIEW_RANGE_STUDS then
-                local popup = core:FindFirstChild("RealDamagePopup")
-                local hit = popup and popup:IsA("BillboardGui") and popup.Enabled == true
-                if hit and not entry.lastHit then entry.hitAt = now end
-                entry.lastHit = hit == true
-                local cue = core:FindFirstChild("CombatCue")
-                local label = cue and cue:FindFirstChildWhichIsA("TextLabel")
-                local ko = label and label.Text:find("撃破",1,true) ~= nil
-                if ko and entry.koAt < entry.hitAt then entry.koAt = now end
                 local t = now + entry.phase
                 for _,visual in ipairs(entry.attachments) do
-                    if visual.part.Parent then
+                    if visual.copy.Parent and visual.original.Parent then
+                        visual.original.LocalTransparencyModifier = 1
                         local localMotion = movementFor(entry.kind, visual.name,
                             entry.speed, t, now-entry.hitAt, now-entry.koAt)
-                        -- Cosmetic CFrame edits on this client only: server-owned
-                        -- Horde Core, actual hits and reward authority untouched.
-                        visual.part.CFrame = core.CFrame * visual.offset * localMotion
+                        visual.copy.Transparency = visual.original.Transparency
+                        -- Never move a replicated server part on the client.
+                        visual.copy.CFrame = core.CFrame * visual.offset * localMotion
                     end
+                end
+            else
+                for _,visual in ipairs(entry.attachments) do
+                    if visual.original.Parent then
+                        visual.original.LocalTransparencyModifier = visual.initialModifier
+                    end
+                    if visual.copy.Parent then visual.copy.Transparency = 1 end
                 end
             end
         end
@@ -274,6 +276,8 @@ script.Destroying:Connect(function()
         for _,c in ipairs(leases) do c:Disconnect() end
     end
     table.clear(connected)
-    table.clear(records)
+    for model in pairs(records) do drop(model) end
+    if cueConnection then cueConnection:Disconnect() end
+    if localArt.Parent then localArt:Destroy() end
 end)
 print("ART_MOTION_SOURCE_WIP_CLIENT_COSMETIC_ONLY_NOT_STUDIO_VERIFIED")
