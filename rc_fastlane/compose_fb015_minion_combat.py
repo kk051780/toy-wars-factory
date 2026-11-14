@@ -38,7 +38,7 @@ def atomic_json(path: Path, payload: dict) -> None:
     try:
         with os.fdopen(fd,"w",encoding="utf8") as f:
             json.dump(payload,f,sort_keys=True,ensure_ascii=False)
-            f.write("\\n")
+            f.write("\n")
             f.flush()
             os.fsync(f.fileno())
         os.replace(name,path)
