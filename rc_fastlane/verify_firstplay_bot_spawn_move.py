@@ -177,6 +177,11 @@ check(Bot.start(world,"RED",authority)==true,
 
 -- Exact move() using a stationary mocked physics position: any direct MoveTo
 -- remains stuck, then actual 5sec watchdog must jump/side-step and replan.
+local function same(a,b)
+  return a and b
+    and math.abs(a.X-b.X)<.1 and math.abs(a.Y-b.Y)<.1
+    and math.abs(a.Z-b.Z)<.1
+end
 local stuck={root={Position=V(0,0,0)},path={},pathIndex=1,
   pathGeneration=0,lastGoal=nil,planning=false,
   hum={Jump=false,MoveTo=function() end}}
@@ -185,32 +190,70 @@ function stuck.hum:MoveTo(destination)
   self.moveCalls=(self.moveCalls or 0)+1
 end
 move(stuck,V(50,0,0),0)
-check(stuck.pathCalls==1 and stuck.hum.lastDestination.X==50,
+check(stuck.pathCalls==1 and same(stuck.hum.lastDestination,V(50,0,0)),
   "FIRST_REAL_MOVETO_TARGET")
 move(stuck,V(50,0,0),4.9)
-check(stuck.hum.lastDestination.X==50 and stuck.unstuckAttempts==0,
+check(same(stuck.hum.lastDestination,V(50,0,0)) and stuck.unstuckAttempts==0,
   "NO_EARLY_STUCK_RECOVERY")
 local generationBefore=stuck.pathGeneration
 move(stuck,V(50,0,0),5.1)
 check(stuck.hum.Jump==true,"STALLED_HUMANOID_JUMPS")
 check(stuck.pathGeneration>generationBefore,"STALLED_INVALIDATES_OLD_PATH")
-check(math.abs(stuck.hum.lastDestination.Z-7)<.1,
+check(same(stuck.hum.lastDestination,V(0,0,7)),
   "FIRST_STUCK_LATERAL_DETOUR")
+check(same(stuck.root.Position,V(0,0,0)),
+  "FIRST_DETOUR_DOES_NOT_TELEPORT")
 check(stuck.unstuckAttempts==1,"WATCHDOG_COUNTS_FIRST_RECOVERY")
+move(stuck,V(50,0,0),5.65)
+check(same(stuck.hum.lastDestination,V(0,0,7)),
+  "HIGH_DETOUR_HELD_ACROSS_NEXT_TICK_NOT_CANCELED")
+check(stuck.unstuckAttempts==1,"DETOUR_HOLD_DOES_NOT_COUNT_AS_SECOND_STALL")
+check(same(stuck.root.Position,V(0,0,0)),
+  "DETOUR_HOLD_DOES_NOT_TELEPORT")
 move(stuck,V(50,0,0),10.2)
-check(math.abs(stuck.hum.lastDestination.Z+7)<.1,
+check(same(stuck.hum.lastDestination,V(0,0,-7)),
   "SECOND_STUCK_ATTEMPT_REVERSES_SIDE")
+check(same(stuck.root.Position,V(0,0,0)),
+  "SECOND_DETOUR_DOES_NOT_TELEPORT")
 check(stuck.unstuckAttempts==2,"BOUNDED_WATCHDOG_SEQUENCE")
 stuck.root.Position=V(5,0,0)
 move(stuck,V(50,0,0),11)
 check(stuck.unstuckAttempts==0,"ACTUAL_MOVEMENT_RESETS_STALL_COUNTER")
-check(stuck.hum.lastDestination.X==50,"PROGRESS_RESUMES_TARGET")
+check(same(stuck.hum.lastDestination,V(50,0,0)),
+  "PROGRESS_RESUMES_FULL_TARGET")
 move(stuck,V(-50,0,0),12)
 check(stuck.unstuckAttempts==0 and stuck.lastGoal.X==-50,
   "NEW_GOAL_RESETS_STUCK_STATE")
-check(stuck.hum.lastDestination.X==-50,
-  "GOAL_CHANGE_MOVES_NEW_DESTINATION")
-print("P0D_SOLO_REAL_BOT_START_AND_STALL_24_NATIVE_CASES_PASS")
+check(same(stuck.hum.lastDestination,V(-50,0,0)),
+  "GOAL_CHANGE_MOVES_FULL_NEW_DESTINATION")
+-- Arrival must never move a guard away from its egg.
+local arrived={root={Position=V(50,0,0)},path={},pathIndex=1,
+  pathGeneration=0,lastGoal=nil,planning=false,
+  hum={MoveTo=function(self,v) self.lastDestination=v end,Jump=false}}
+move(arrived,V(50,0,0),0)
+move(arrived,V(50,0,0),20)
+check(same(arrived.root.Position,V(50,0,0)),
+  "ARRIVAL_NEVER_TELEPORTS")
+check(same(arrived.hum.lastDestination,V(50,0,0)),
+  "ARRIVAL_HOLDS_GOAL_AFTER_TWENTY_SECONDS")
+check((arrived.unstuckAttempts or 0)==0 and arrived.detourGoal==nil,
+  "ARRIVAL_NEVER_DETOURS")
+
+-- XZ lateral displacement / jump height does not count toward egg objective.
+local sideways={root={Position=V(0,0,0)},path={},pathIndex=1,
+  pathGeneration=0,lastGoal=nil,planning=false,
+  hum={MoveTo=function(self,v) self.lastDestination=v end,Jump=false}}
+move(sideways,V(50,0,0),30)
+sideways.root.Position=V(0,2,4)
+move(sideways,V(50,0,0),31)
+move(sideways,V(50,0,0),35.1)
+check(sideways.unstuckAttempts==1 and sideways.detourGoal~=nil,
+  "SIDEWAYS_AND_VERTICAL_DISPLACEMENT_NOT_PROGRESS")
+check(same(sideways.root.Position,V(0,2,4)),
+  "SIDESTEP_PHYSICS_POSITION_NEVER_FORCED")
+check(sideways.detourUntil>35.1,
+  "DETOUR_HAS_FINITE_HOLD_DURATION")
+print("P0D_SOLO_REAL_BOT_START_AND_STALL_35_NATIVE_CASES_PASS")
 '''
 if __name__=="__main__":
     p=argparse.ArgumentParser()
