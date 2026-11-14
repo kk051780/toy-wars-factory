@@ -18,6 +18,8 @@ def verify(dist: Path,out: Path):
     s=(dist/"src/server/SoloTeamBots.luau").read_text("utf8")
     actor=part(s,'local function tagPart(', 'local function releasePathLease(')
     lease=part(s,'local function releasePathLease(', 'local function invalidatePath(')
+    respawn=part(s,'local function respawn(bot)',
+                 'local function showCarriedEgg(bot, yes)')
     carry=part(s,'local function showCarriedEgg(', 'function Bot.stop()')
     stop=part(s,'function Bot.stop()','function Bot.start(')
     start=part(s,'function Bot.start(','local function alive(bot)')
@@ -27,12 +29,13 @@ def verify(dist: Path,out: Path):
         'm:GetDescendants()','part:SetNetworkOwner(nil)'):
         assert term in actor,("ACTOR_FACTORY_DRIFT",term)
     assert 'releasePathLease(bot)' in stop
-    assert 'clearCarry(bot)' in stop
+    assert 'pcall(clearCarry,bot)' in stop
     assert 'bot.model:Destroy()' in stop
-    assert 'folder:Destroy()' in stop
+    assert 'oldFolder:Destroy()' in stop
+    assert 'folder=nil' in stop
     assert '#bots==MAX_BOTS' in start
     out.parent.mkdir(parents=True,exist_ok=True)
-    out.write_text("\n".join((MOCK,actor,lease,carry,stop,start,CASES)),"utf8")
+    out.write_text("\n".join((MOCK,actor,lease,respawn,carry,stop,start,CASES)),"utf8")
     print("P0D_SOLO_ACTUAL_PRODUCTION_ACTOR_AND_STOP_EXACT_PASS")
 
 MOCK=r'''
@@ -137,6 +140,10 @@ local active=false
 local lastTick=-math.huge
 local MAX_BOTS=5
 local inflightPaths=0
+local warningLog={}
+local function warn(...)
+  table.insert(warningLog,{...})
+end
 local world={model=Instance.new("Folder"),
    teams={RED={spawn=CFrame.new(-30,0,0)},
           BLUE={spawn=CFrame.new(30,0,0)}}}
@@ -176,6 +183,38 @@ for _,b in ipairs(bots) do
     "ACTOR_TEAM_TAGS_PRESENT")
 end
 check(allies==2 and opponents==3,"REAL_FORMATION_TWO_VS_THREE")
+-- A new life must explicitly discard fields that new actor sets to nil;
+-- pairs(fresh) never copies nil fields.
+local oldLife=bots[2].model
+bots[2].lastProgressDistance=19
+bots[2].unstuckAttempts=3
+bots[2].detourGoal=V(4,0,4)
+bots[2].detourUntil=99
+local oldLease={held=true}
+bots[2].pathLease=oldLease
+inflightPaths=1
+respawn(bots[2])
+check(oldLife.destroyed==true and bots[2].model~=oldLife,
+  "REAL_RESPAWN_REBUILDS_ACTOR")
+check(bots[2].lastProgressDistance==nil and bots[2].unstuckAttempts==0,
+  "RESPAWN_CLEARS_STALE_LAST_LIFE_PROGRESS")
+check(bots[2].detourGoal==nil and bots[2].detourUntil==0,
+  "RESPAWN_CLEARS_STALE_DETOUR")
+check(inflightPaths==0 and oldLease.held==false
+  and bots[2].pathLease==nil,"RESPAWN_RELEASES_OLD_PATH_LEASE")
+-- A carried egg drop that throws must NOT interrupt the teardown of
+-- all five actors/folder or leave path leases held.
+local visual=Instance.new("Part")
+bots[1].carry="BLUE"
+bots[1].carryVisual=visual
+local dropped=0
+authority.drop=function()
+  dropped+=1
+  error("INJECTED_DROP_FAILURE")
+end
+local lease={held=true}
+bots[2].pathLease=lease
+inflightPaths=1
 local previousModels={}
 for _,b in ipairs(bots) do table.insert(previousModels,b.model) end
 local previousFolder=folder
@@ -186,11 +225,17 @@ check(not active and #bots==0 and folder==nil,
   "REAL_BOT_STOP_CLEARS_ALL_ROSTER_AND_FOLDER")
 check(previousFolder.destroyed==true,
   "REAL_BOT_STOP_DESTROYS_FOLDER")
+check(dropped==1 and #warningLog>=1,
+  "THROWING_EGG_DROP_RECORDED_AND_RECOVERY_CONTINUED")
+check(visual.destroyed==true,"HELD_EGG_VISUAL_DESTROYED")
+check(lease.held==false and inflightPaths==0,
+  "HELD_PATH_LEASE_RELEASED_DESPITE_DROP_FAILURE")
 local deadModels=0
 for _,m in ipairs(previousModels) do
   if m.destroyed and m.Parent==nil then deadModels+=1 end
 end
 check(deadModels==5,"REAL_BOT_STOP_DESTROYS_ALL_FIVE_MODELS")
+authority.drop=function() dropped+=1 end
 Players.online={human,spectator}
 check(Bot.start(world,"RED",authority)==true,
   "REAL_RESTART_AFTER_FAILED_START")
@@ -199,7 +244,7 @@ Bot.stop()
 check(#bots==0 and folder==nil and not active,
   "REAL_STOP_IDEMPOTENT_CLEANUP")
 check(inflightPaths==0,"STOP_RELEASED_ALL_LEASES")
-print("P0D_REAL_BOT_ACTOR_START_STOP_19_NATIVE_CASES_PASS")
+print("P0D_REAL_BOT_ACTOR_START_STOP_26_NATIVE_CASES_PASS")
 '''
 if __name__=="__main__":
     p=argparse.ArgumentParser()

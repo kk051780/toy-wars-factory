@@ -49,24 +49,39 @@ V=function(x,y,z)
 end
 local Enum={PathStatus={Success="Success"}}
 local Paths={}
+local shouldThrowWaypoints=false
+local warnings={}
+local function warn(...) table.insert(warnings,{...}) end
 local PathfindingService={}
 function PathfindingService:CreatePath(config)
   local p={Status=Enum.PathStatus.Success}
   function p:ComputeAsync(start,goal)
     self.start=start;self.goal=goal
+    -- In the real engine ComputeAsync yields: keep the live task genuinely
+    -- suspended until the harness explicitly calls runOne.
+    coroutine.yield()
   end
   function p:GetWaypoints()
+    if shouldThrowWaypoints then error("INJECTED_GETWAYPOINTS_ERROR") end
     return {{Position=V(0,0,0)},{Position=self.goal}}
   end
   table.insert(Paths,p)
   return p
 end
 local task={queue={}}
-function task.spawn(fn) table.insert(task.queue,fn) end
+function task.spawn(fn)
+  local co=coroutine.create(fn)
+  local ok,err=coroutine.resume(co)
+  assert(ok,err)
+  if coroutine.status(co)~="dead" then table.insert(task.queue,co) end
+end
 local function runOne(i)
-  local fn=table.remove(task.queue,i or 1)
-  assert(fn,"missing scheduled async path")
-  fn()
+  local co=table.remove(task.queue,i or 1)
+  assert(co,"missing suspended path worker")
+  assert(coroutine.status(co)=="suspended","not actually suspended")
+  local ok,err=coroutine.resume(co)
+  assert(ok,err)
+  if coroutine.status(co)~="dead" then table.insert(task.queue,co) end
 end
 local REPATH_SECONDS=3.1
 local PATH_TIMEOUT_SECONDS=8
@@ -151,12 +166,43 @@ timebot.lastGoal=target
 pathTo(timebot,target,9)
 check(old.held==false and inflightPaths==0
   and pendingPathTasks==1,"TIMEOUT_INVALIDATES_LEASE")
-check(timebot.lastGoal~=nil and not timebot.planning,
- "TIMEOUT_PRESERVES_GOAL_AND_FREES_PLANNER_FLAG")
+check(timebot.lastGoal==target and not timebot.planning,
+ "TIMEOUT_PRESERVES_EXACT_GOAL_AND_FREES_PLANNER_FLAG")
 runOne()
 check(pendingPathTasks==0 and inflightPaths==0,
  "TIMEOUT_STALE_CALLBACK_NO_DOUBLE_RELEASE")
-print("P0D_REAL_BOT_PATH_LEASE_18_NATIVE_CASES_PASS")
+-- Failure in GetWaypoints used to kill callback without releasing capacity.
+local errorbot=makeBot()
+shouldThrowWaypoints=true
+pathTo(errorbot,target,0)
+check(pendingPathTasks==1 and inflightPaths==1 and #task.queue==1,
+  "THROWING_WAYPOINTS_SUSPENDS_WORKER_AND_HOLDS_SLOT")
+runOne()
+check(pendingPathTasks==0 and inflightPaths==0,
+  "GETWAYPOINTS_FAILURE_RELEASES_ALL_SLOTS")
+check(errorbot.pathIndex==1 and #errorbot.path==0 and not errorbot.planning,
+  "GETWAYPOINTS_FAILURE_RESETS_PATH_SAFELY")
+check(#warnings==1,"GETWAYPOINTS_FAILURE_WARNED")
+shouldThrowWaypoints=false
+-- Never create a new actual task when the suspended workers hit the cap,
+-- even if every invalidated logical lease has been released.
+local hung={}
+for i=1,10 do
+  local b=makeBot()
+  pathTo(b,target,0)
+  table.insert(hung,b)
+end
+for _,b in ipairs(hung) do invalidatePath(b) end
+check(pendingPathTasks==10 and inflightPaths==0 and #task.queue==10,
+  "TEN_ACTUAL_SUSPENDED_WORKERS_NOT_LOGICALLY_HELD")
+local excluded=makeBot()
+pathTo(excluded,target,0)
+check(pendingPathTasks==10 and #task.queue==10,
+  "CAP_STILL_HOLDS_WHEN_ALL_LEASES_INVALIDATED")
+for i=1,10 do runOne() end
+check(pendingPathTasks==0 and inflightPaths==0,
+  "HUNG_CALLBACKS_RESUMED_RECLAIM_CAPACITY")
+print("P0D_REAL_BOT_PATH_LEASE_25_NATIVE_CASES_PASS")
 '''
 if __name__=="__main__":
     p=argparse.ArgumentParser()
