@@ -366,6 +366,22 @@
       "studio_2client": "NOT_TESTED",
       "android": "NOT_TESTED",
       "human_fun": "NOT_TESTED"
+    },
+    {
+      "id": "TWIN_BOND_PVE_COMPANION_V1",
+      "state": "SOURCE_PRIVATE66_NOT_OFFICIAL",
+      "summary": "Bond one of four session-trained companions for180s and max20% neutral PvE melee bonus via sole existing Game writer",
+      "source_module": "server/TwinBondPolicy.luau",
+      "source_module_gitblob": "e5ab733e1baadf2d79eec6ba53463a16ccd8c0c1",
+      "source_replacements": [
+        "server/TwinBiomes.server.luau",
+        "server/Game.server.luau"
+      ],
+      "one_original_Game_Remote_Store": true,
+      "studio_2client": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED",
+      "rollback": "single feature OFF keeps official65 byte exact",
+      "official_rc_adopted": false
     }
   ],
   "next_source_adoption_contract": {

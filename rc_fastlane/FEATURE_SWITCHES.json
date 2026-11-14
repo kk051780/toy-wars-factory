@@ -308,6 +308,31 @@
       "human_fun": "NOT_TESTED",
       "official_rc_adopted": true,
       "prereq_canonical64_head": "cea084baaf33b050d1054692c9654b0c740233de"
+    },
+    "TWIN_BOND_PVE_COMPANION_V1": {
+      "enabled": true,
+      "status": "PRIVATE66_SOURCE_NOT_OFFICIAL",
+      "parent_source_count": 65,
+      "parent_canonical_head": "21da67bd75d339e2fa22f0b79e27663149bd603d",
+      "original_game_git_blob": "cdc995d8a64f6a6f6df5abd43fb8210486328572",
+      "original_trained_twin_blob": "ff7c57aae79f03e3fbc72e043fe3f34f5ac373a5",
+      "bonded_twin_blob": "5a4b2e623a561ec2ddc72daf1371adb08a8ede27",
+      "bond_policy_blob": "e5ab733e1baadf2d79eec6ba53463a16ccd8c0c1",
+      "one_follower_per_player": true,
+      "field_training_prerequisite": "Lv2 or Lv3 species practice in session",
+      "duration_seconds": 180,
+      "switch_wait_seconds": 20,
+      "pve_only_melee_bonus": {
+        "Lv2": 1.1,
+        "Lv3": 1.2
+      },
+      "runtime": "Studio-only ServerStorage BoolValue P0D_ENABLE_TWIN_BOND_PVE_V1=true",
+      "single_attack_owner": "original Game.server.luau, horde:hit on minions, no PvP/castle/egg/Store",
+      "no_DataStore_no_paid": true,
+      "rollback": "OFF build preserves all official65 source/feature locks/project bytes",
+      "studio_2client": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED",
+      "official_rc_adopted": false
     }
   }
 }
