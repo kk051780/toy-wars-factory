@@ -50,7 +50,7 @@ def patch_hud(s: str) -> str:
     end''')
     s = sub(s, '    if s.phase == "COUNTDOWN" then return "開始まで " .. tostring(s.time) .. " 秒！" end',
             '    if s.phase == "COUNTDOWN" then return "▶ 開始まで " .. tostring(s.time) .. " 秒" end')
-    s = sub(s, '    top.Text = string.format("🔴 %d / 🏰 %d       🔵 %d / 🏰 %d\n自分:%s・%s  |  %d対%d人",\n        s.scores.RED or 0, s.hp.RED or 0, s.scores.BLUE or 0,\n        s.hp.BLUE or 0, s.team or "?", displayRole(s.role),\n        s.redPlayers or 0, s.bluePlayers or 0)',
+    s = sub(s, '    top.Text = string.format("🔴 %d / 🏰 %d       🔵 %d / 🏰 %d\\n自分:%s・%s  |  %d対%d人",\n        s.scores.RED or 0, s.hp.RED or 0, s.scores.BLUE or 0,\n        s.hp.BLUE or 0, s.team or "?", displayRole(s.role),\n        s.redPlayers or 0, s.bluePlayers or 0)',
             '    top.Text = string.format("🔴%d   🔵%d   🏰%d/%d",\n        s.scores.RED or 0, s.scores.BLUE or 0, s.hp.RED or 0, s.hp.BLUE or 0)')
     s = sub(s, '    dojoBadge.Visible=valid and s.hatchEnabled==true',
             '    dojoBadge.Visible=valid and s.hatchEnabled==true and s.phase=="LOBBY"')
@@ -58,7 +58,7 @@ def patch_hud(s: str) -> str:
             '    progressBadge.Visible=false -- XP stays server-owned; hide bulky text')
     s = sub(s, '    instructions.Visible=s.phase=="ACTIVE"',
             '    instructions.Visible=false -- redundant multiline help, keep controls')
-    s = sub(s, '    top.Text=string.format("🏆 🔴 %d 点    🔵 %d 点\n自分:%s・%s　|　卵5こ得点戦",\n            s.scores.RED or 0,s.scores.BLUE or 0,s.team or "?",displayRole(s.role))',
+    s = sub(s, '    top.Text=string.format("🏆 🔴 %d 点    🔵 %d 点\\n自分:%s・%s　|　卵5こ得点戦",\n            s.scores.RED or 0,s.scores.BLUE or 0,s.team or "?",displayRole(s.role))',
             '    top.Text=string.format("🏆 🔴%d   🔵%d", s.scores.RED or 0,s.scores.BLUE or 0)')
     assert 'if s.kind ~= "SNAPSHOT" then return end' in s
     assert 'action("MODE_VOTE","CLASSIC")' in s
