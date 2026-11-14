@@ -121,5 +121,9 @@ class TwinBond(unittest.TestCase):
         self.assertIn('math.min(1.2,savedPveMinionMultiplier(player)',ADAPTER)
         self.assertIn('death/respawn intentionally cancels it',WORLD)
 
+    def test_27_game_helper_uses_bound_serverstorage(self):
+        self.assertIn('game:GetService("ServerStorage"):FindFirstChild("P0D_ENABLE_TWIN_BOND_PVE_V1")',ADAPTER)
+        self.assertNotIn('local flag=ServerStorage:FindFirstChild',ADAPTER)
+
 if __name__=="__main__":
     unittest.main()

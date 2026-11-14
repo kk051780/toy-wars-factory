@@ -48,7 +48,7 @@ def patch_game(before:bytes)->bytes:
     helper=b'''local function twinBondOnlyNeutralMobBonus(player:Player):number
     -- Source of companion state is only the server-side NPC ProximityPrompt.
     -- THIS original Game remains the single attack/HP/score/reward authority.
-    local flag=ServerStorage:FindFirstChild("P0D_ENABLE_TWIN_BOND_PVE_V1")
+    local flag=game:GetService("ServerStorage"):FindFirstChild("P0D_ENABLE_TWIN_BOND_PVE_V1")
     if not RunService:IsStudio() or not flag or not flag:IsA("BoolValue")
         or flag.Value~=true or match.phase~="ACTIVE" or carry[player]~=nil then
         return 1
