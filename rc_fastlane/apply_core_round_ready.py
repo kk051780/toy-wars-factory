@@ -82,8 +82,8 @@ end
     if src.count(marker) != 1:
         raise AssertionError("tickRound_missing_or_ambiguous")
     prefix, phase = src.split(marker, 1)
-    phase = once(phase, '        if count >= Config.MinPlayers and',
-        '        if everybodyReady() and count >= Config.MinPlayers and')
+    phase = once(phase, '        if count >= Config.MinPlayers',
+        '        if everybodyReady() and count >= Config.MinPlayers')
     phase = once(phase, '    elseif match.phase == "COUNTDOWN" then',
         '    elseif match.phase == "COUNTDOWN" then\n'
         '        if not everybodyReady() then\n'
