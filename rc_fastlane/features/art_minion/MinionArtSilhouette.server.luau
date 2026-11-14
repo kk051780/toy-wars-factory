@@ -138,6 +138,7 @@ local function burstForHit(serial,lastSerial,isKO)
 end
 -- END_ACTUAL_ART_SPARK_POLICY
 
+-- BEGIN_ACTUAL_ART_SERVER_EVENT
 local activeByCore = {}
 local pendingByCore = {}
 local MAX_PENDING_PER_CORE = 16
@@ -160,6 +161,7 @@ local function onConfirmedServerHit(core,serial,isKO,round)
         end
     end
 end
+-- END_ACTUAL_ART_SERVER_EVENT
 
 local function decorate(model)
     if not model or not model:IsA("Model") or not model.Parent then return end
