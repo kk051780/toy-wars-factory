@@ -83,6 +83,7 @@ class ArtCombatQA(unittest.TestCase):
         self.assertIn('self.artCue:FireAllClients(',h)
         self.assertIn('self.artEpoch',h)
         self.assertIn('P0D_ART_VISUAL_CUE_NON_BLOCKING',h)
+        self.assertIn('P0D_ART_RECENT_HISTORY_NON_BLOCKING',h)
         self.assertIn('pcall(function()',h)
         self.assertIn('P0D_ART_RECENT_V1',h)
         self.assertIn('HttpService:JSONEncode(self.artRecent)',h)
@@ -100,6 +101,8 @@ class ArtCombatQA(unittest.TestCase):
         self.assertIn('cue.OnClientEvent:Connect(onConfirmedHit)',s)
         self.assertIn('if not acceptVisualCue(id,serial,round,epoch) then return end',s)
         self.assertIn('if isEpochStale(authoritativeEpoch,epoch) then return end',s)
+        self.assertIn('if not admitPacketEpoch(epoch) then return end',s)
+        self.assertIn('if pending[i][7]<highestPacketEpoch then table.remove(pending,i) end',s)
         self.assertIn('historyConnection=cue:GetAttributeChangedSignal("P0D_ART_RECENT_V1")',s)
         self.assertIn('HttpService:JSONDecode(encoded)',s)
         self.assertIn("syncServerEpoch()",s)
@@ -354,6 +357,27 @@ class ArtCombatQA(unittest.TestCase):
             self.assertTrue(d.is_dir())
             self.assertFalse(mod.backup_dir(d).exists())
             self.assertEqual((external/"secret.txt").read_text("utf8"),"PRESERVE")
+
+    def test_dangling_reserved_paths_cannot_be_overwritten(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            backup=mod.backup_dir(d)
+            backup.symlink_to(root/"missing_backup")
+            with self.assertRaisesRegex(RuntimeError,"ART_COMBAT_ALREADY_APPLIED"):
+                mod.apply(d,True)
+            self.assertTrue(backup.is_symlink())
+            self.assertFalse((root/"missing_backup").exists())
+            backup.unlink()
+            self.assertTrue(mod.apply(d,True))
+            disabled=d.with_name(d.name+".art_combat_disabling")
+            disabled.symlink_to(root/"missing_disabled")
+            with self.assertRaisesRegex(RuntimeError,
+                    "AMBIGUOUS_INTERRUPTED_OFF_STATE_KEEP_ALL_DATA"):
+                mod.apply(d,False)
+            self.assertTrue(disabled.is_symlink())
+            disabled.unlink()
+            self.assertTrue(mod.apply(d,False))
 
     def test_uninstalled_off_is_true_zero_write(self):
         with tempfile.TemporaryDirectory() as tmp:
