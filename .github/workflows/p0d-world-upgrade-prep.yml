@@ -1,0 +1,29 @@
+name: P0D 3-route castle world PREP source-contract
+on:
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - "rc_fastlane/apply_world_upgrade.py"
+      - "rc_fastlane/test_world_upgrade.py"
+      - "rc_fastlane/features/p0_world_upgrade/**"
+      - ".github/workflows/p0d-world-upgrade-prep.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Source and reversible original66 preservation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_world_upgrade.py -v
+          python3 -B -m py_compile rc_fastlane/apply_world_upgrade.py
+      - name: Report physics/visual/FUN still pending
+        run: echo "WORLD_PREP_SOURCE_ONLY_NOT_STUDIO_OR_OFFICIAL_RC_VERIFIED"
