@@ -4,6 +4,7 @@ on:
     branches:
       - feature/p0d-p0game-composite70-integration-prep-20261114
       - qa/p0d-lobby-team-rebalance-private78-20261114
+      - qa/p0d-spectator-h2-private78-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-p0-composite70-preview.yml'
@@ -1358,5 +1359,68 @@ jobs:
         with:
           name: P0-PLAYABLE-LOBBY-REBALANCE-PRIVATE78-STUDIO-QA-ONLY
           path: /tmp/p0d_p0_lobby_rebalance78_out/*
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: 'P0 #397 spectator / H2 midmatch leaver private78 exact native QA'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p 'test_p0_spectator_h2_source.py' -v
+          BASE=/tmp/p0d_p0_lobby_rebalance78_dist
+          OUT=/tmp/p0d_p0_spectator_h2_dist
+          python3 -B rc_fastlane/apply_p0_spectator_h2_78.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_p0_spectator_h2_78.py --base "$BASE" --out "$OUT" --enabled true
+          python3 -B rc_fastlane/test_p0_spectator_h2_native.py --game "$OUT/src/server/Game.server.luau" --bot "$OUT/src/server/SoloTeamBots.luau" --out /tmp/p0_spectator_h2_exact_native.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_spectator_h2_exact_native.luau | tee /tmp/p0_spectator_h2_exact_native.log
+          grep -Fx P0_PRIVATE78_SPECTATOR_H2_NATIVE_15_CASES_PASS /tmp/p0_spectator_h2_exact_native.log
+          python3 -B rc_fastlane/test_p0_lobby_rebalance78_native.py --game "$OUT/src/server/Game.server.luau" --emit /tmp/p0_spectator_preserve_lobby_native.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_spectator_preserve_lobby_native.luau | tee /tmp/p0_spectator_preserve_lobby_native.log
+          grep -Fx P0_PRIVATE78_LOBBY_TEAM_REBALANCE_NATIVE_7_CASES_PASS /tmp/p0_spectator_preserve_lobby_native.log
+          python3 -B rc_fastlane/verify_p0_results78_native.py --dist "$OUT" --out /tmp/p0_spectator_preserve_results_native.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_spectator_preserve_results_native.luau | tee /tmp/p0_spectator_preserve_results_native.log
+          grep -Fx P0_PRIVATE78_REAL_RESULTS_LOBBY_15_NATIVE_CASES_PASS /tmp/p0_spectator_preserve_results_native.log
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 78
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          echo P0_PRIVATE78_SPECTATOR_NATIVE_LUAU_78_78_PASS
+          mkdir -p /tmp/p0d_p0_spectator_h2_out
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_p0_spectator_h2_out/P0D_PLAYABLE_SPECTATOR_H2_PRIVATE78.rbxlx
+          python3 -B rc_fastlane/verify_p0_fullbody78.py --dist "$OUT" --place /tmp/p0d_p0_spectator_h2_out/P0D_PLAYABLE_SPECTATOR_H2_PRIVATE78.rbxlx --receipt /tmp/p0d_p0_spectator_h2_out/RECEIPT.json
+          python3 - <<'PY'
+          import sys,json
+          from pathlib import Path
+          sys.path.insert(0,'rc_fastlane')
+          from apply_p0_motion78 import read
+          a=read(Path('/tmp/p0d_p0_lobby_rebalance78_dist'))
+          b=read(Path('/tmp/p0d_p0_spectator_h2_dist'))
+          assert len(a)==len(b)==78
+          assert {k for k in a if a[k]!=b[k]}=={'server/Game.server.luau','server/SoloTeamBots.luau'}
+          f=json.loads(Path('/tmp/p0d_p0_spectator_h2_dist/RC_FEATURE_LOCK.json').read_text())
+          assert f['p0_spectator_h2_78']['new_feature_count']==0
+          assert f['p0_spectator_h2_78']['other76_byte_exact']
+          receipt=Path('/tmp/p0d_p0_spectator_h2_out/RECEIPT.json')
+          data=json.loads(receipt.read_text())
+          data.update({
+            'spectator_h2_native':'15_REAL_SOURCE_LUAU_CASES_PASS',
+            'lobby_rebalance_native':'7_REAL_GAME_LUAU_CASES_PASS',
+            'results_native':'15_REAL_GAME_LUAU_CASES_PASS',
+            'modified_existing_sources':['server/Game.server.luau','server/SoloTeamBots.luau'],
+            'other76_sources_byte_exact':True,
+            'feature_count_increment':0,
+            'official_rc_write':False
+          })
+          receipt.write_text(json.dumps(data,indent=2)+'\\n')
+          print('P0_PRIVATE78_SPECTATOR_H2_NATIVE_ROJO_ALL_78_PASS',
+              data['place_bytes'], data['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-PLAYABLE-SPECTATOR-H2-PRIVATE78-STUDIO-QA-ONLY
+          path: /tmp/p0d_p0_spectator_h2_out/*
           retention-days: 7
           if-no-files-found: error
