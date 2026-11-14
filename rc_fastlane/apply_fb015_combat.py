@@ -3,7 +3,8 @@
 
 One original Horde receives ONLY a server-confirmed cosmetic hit cue;
 one Studio-only LocalScript renders VFX. No damage, score, Game, Store,
-Remote, HP, egg or match rules are altered.
+client-to-server handler, HP, egg or match rules are altered.
+One server-to-client cosmetic RemoteEvent is created under original Horde.
 Apply is staged in a sibling and swaps a single directory on same filesystem.
 A persisted complete original distribution allows exact OFF restoration.
 """
@@ -23,10 +24,15 @@ AUTHOR = ROOT / "features/fb015_combat/ArtCombatSlash.client.luau"
 HORDE_AUTHOR = ROOT / "features/fb015_combat/MusouHordeArtSignal.luau"
 DEST = "client/ArtCombatSlash.client.luau"
 HORDE = "server/MusouHorde.luau"
-PIN = "7650d205ecba6cf0bccb50859407633227c57aa1"
-HORDE_PATCH_PIN = "acf72809877595921ba2f45f9e4d0220a6338853"
+PIN = "c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba"
+HORDE_PATCH_PIN = "6c613406c4c72be31b2a5c38177d54f1af78e617"
 ORIGINAL_HORDE_PIN = "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 BASE = 66
+
+def require(ok, reason):
+    if not ok:
+        raise RuntimeError(str(reason))
+
 
 def blob(raw: bytes) -> str:
     return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
@@ -40,19 +46,18 @@ def backup_dir(dist: Path) -> Path:
     return dist.with_name(dist.name + ".art_combat_original66")
 
 def validate_visual(raw: bytes) -> None:
-    assert blob(raw) == PIN, "ART_COMBAT_SOURCE_DRIFT"
+    require(blob(raw) == PIN, "ART_COMBAT_SOURCE_DRIFT")
     src = raw.decode("utf8")
     for marker in (
         "if not RunService:IsStudio() then return end",
         'arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT")',
-        'core:GetAttributeChangedSignal("P0D_ART_HIT_V1")',
-        'core:GetAttribute("P0D_ART_HIT_V1")',
-        "serial <= state.lastSerial",
-        "state.lastSerial = serial",
-        'raw:match("^(%d+)|([KH])|([^|]+)|([^|]+)$")',
-        "core.Position + Vector3.new(dx, 0, dz)",
-        "model:WaitForChild(\"Core\", 15)",
-        'model.Destroying:Connect(function() detach(model) end)',
+        'mobs:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1")',
+        "visualConnection=cue.OnClientEvent:Connect(onConfirmedHit)",
+        "serial<=(lastByMob[id] or 0)",
+        "lastByMob[id]=serial",
+        "makeArc(hitPos,fromPos,isKO)",
+        "typeof(hitPos)~=\"Vector3\"",
+        "cue:IsA(\"RemoteEvent\")",
         "MAX_BURSTS_PER_SECOND = 9",
         "MAX_LIVE = 8",
         "if UserInputService.TouchEnabled then 1 else 2",
@@ -62,53 +67,66 @@ def validate_visual(raw: bytes) -> None:
         "holder.CanQuery = false",
         "holder.CanTouch = false",
     ):
-        assert marker in src, ("ART_COMBAT_REQUIRED_MARKER_MISSING", marker)
+        require(marker in src, ("ART_COMBAT_REQUIRED_MARKER_MISSING", marker))
     for forbidden in (
         'Instance.new("RemoteEvent")', "FireServer(", "OnServerEvent",
         "DataStoreService", "MarketplaceService", "TakeDamage(",
         "UpdateAsync(", "Humanoid.Health =", "SetAttribute(",
         "Camera.CFrame =", "HumanoidRootPart.CFrame =",
         'GetPropertyChangedSignal("Text")',
+        'FireServer(',
+        'OnServerEvent:Connect(',
     ):
-        assert forbidden not in src, ("ART_COMBAT_FORBIDDEN_AUTHORITY", forbidden)
+        require(forbidden not in src, ("ART_COMBAT_FORBIDDEN_AUTHORITY", forbidden))
 
 def validate_horde_patch(before: bytes, after: bytes) -> None:
-    assert blob(before) == ORIGINAL_HORDE_PIN, "ORIGINAL_HORDE_DRIFT"
-    assert blob(after) == HORDE_PATCH_PIN, "ART_HORDE_DRIFT"
+    require(blob(before) == ORIGINAL_HORDE_PIN, "ORIGINAL_HORDE_DRIFT")
+    require(blob(after) == HORDE_PATCH_PIN, "ART_HORDE_DRIFT")
     old, new = before.decode("utf8"), after.decode("utf8")
+    old_ctor = '''    folder.Parent=world
+    return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0},Horde)'''
+    new_ctor = '''    folder.Parent=world
+    -- Pure outbound visual delivery. No OnServerEvent handler or game authority.
+    local visualCue=Instance.new("RemoteEvent")
+    visualCue.Name="P0D_ART_COMBAT_SIGNAL_V1"
+    visualCue.Parent=folder
+    return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0,artCue=visualCue},Horde)'''
     seam = '                    m.body.Color=Color3.fromRGB(253,231,111)'
     extra = '''
-                    -- Server-only confirmation: one changing cue per REAL hit.
-                    -- Encodes serial, hit/KO and true attack origin vector in ONE
-                    -- replicated attribute, so identical damage popups still fire.
+                    -- A reliable outbound message for EACH real server hit.
+                    -- Unlike replicated Attributes it cannot coalesce quick hits.
+                    -- This Remote has NO OnServerEvent listener / hit authority.
                     m.artHitSeq=(m.artHitSeq or 0)+1
-                    local artFrom=origin-m.pos
-                    m.body:SetAttribute("P0D_ART_HIT_V1",string.format(
-                        "%d|%s|%.2f|%.2f",m.artHitSeq,
-                        if m.hp<=0 then "K" else "H",artFrom.X,artFrom.Z))'''
-    assert old.count(seam) == 1
-    assert old.replace(seam, seam + extra) == new, "UNEXPECTED_HORDE_COMBAT_CHANGE"
-    assert new.count('m.body:SetAttribute("P0D_ART_HIT_V1"') == 1
+                    self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)'''
+    require(old.count(old_ctor) == 1 and old.count(seam) == 1,
+            "UNEXPECTED_ORIGINAL_HORDE_SEAMS")
+    require(old.replace(old_ctor, new_ctor).replace(seam, seam + extra) == new,
+            "UNEXPECTED_HORDE_COMBAT_CHANGE")
+    require(new.count('Instance.new("RemoteEvent")') == 1 and
+            new.count("self.artCue:FireAllClients(") == 1 and
+            'OnServerEvent:Connect(' not in new,
+            "COSMETIC_REMOTE_MUST_BE_SERVER_OUTBOUND_ONLY")
+
 
 def _check_original(dist: Path):
     old = sources(dist)
-    assert len(old) == BASE and DEST not in old, "REQUIRE_CLEAN_RC66"
+    require(len(old) == BASE and DEST not in old, "REQUIRE_CLEAN_RC66")
     visual = AUTHOR.read_bytes()
     horde = HORDE_AUTHOR.read_bytes()
     validate_visual(visual)
     validate_horde_patch(old[HORDE], horde)
-    assert old["server/Game.server.luau"].count(b"remote.OnServerEvent:Connect(") == 1, "NONUNIQUE_GAME_REMOTE"
+    require(old["server/Game.server.luau"].count(b"remote.OnServerEvent:Connect(") == 1, "NONUNIQUE_GAME_REMOTE")
     original = {n: blob(raw) for n, raw in sorted(old.items())}
     sp = json.loads((dist / "SOURCE_LOCK.json").read_text("utf8"))
     fp = json.loads((dist / "RC_FEATURE_LOCK.json").read_text("utf8"))
     pr = json.loads((dist / "default.project.json").read_text("utf8"))
-    assert sp["total_scripts"] == BASE and sp["blobs"] == original
-    assert fp["total_sources"] == BASE and fp["source_gitblobs"] == original
-    assert FEATURE not in fp.get("feature_flags", {}), "FEATURE_ALREADY_PRESENT"
+    require(sp["total_scripts"] == BASE and sp["blobs"] == original, "ART_COMBAT_FAIL_CLOSED")
+    require(fp["total_sources"] == BASE and fp["source_gitblobs"] == original, "ART_COMBAT_FAIL_CLOSED")
+    require(FEATURE not in fp.get("feature_flags", {}), "FEATURE_ALREADY_PRESENT")
     starter = pr["tree"]["StarterPlayer"]["StarterPlayerScripts"]
-    assert starter["ResultNextStep"]["$path"] == "src/client/ResultNextStep.client.luau"
-    assert "ArtCombatSlash" not in starter
-    assert pr["tree"]["ServerScriptService"]["TrapRaidersS1"]["$path"] == "src/server"
+    require(starter["ResultNextStep"]["$path"] == "src/client/ResultNextStep.client.luau", "ART_COMBAT_FAIL_CLOSED")
+    require("ArtCombatSlash" not in starter, "ART_COMBAT_FAIL_CLOSED")
+    require(pr["tree"]["ServerScriptService"]["TrapRaidersS1"]["$path"] == "src/server", "ART_COMBAT_FAIL_CLOSED")
     return old, original, sp, fp, pr, visual, horde
 
 def _stage_candidate(dist: Path, stage: Path, prior):
@@ -150,46 +168,64 @@ def _stage_candidate(dist: Path, stage: Path, prior):
     (stage / "RC_FEATURE_LOCK.json").write_text(
         json.dumps(fp, ensure_ascii=False, indent=2) + "\n", encoding="utf8")
     new = sources(stage)
-    assert len(new) == BASE + 1
-    assert all(new[n] == raw for n, raw in old.items() if n != HORDE)
-    assert blob(new[HORDE]) == HORDE_PATCH_PIN and blob(new[DEST]) == PIN
-    assert {n: blob(raw) for n, raw in sorted(new.items())} == next_blobs
+    require(len(new) == BASE + 1, "ART_COMBAT_FAIL_CLOSED")
+    require(all(new[n] == raw for n, raw in old.items() if n != HORDE), "ART_COMBAT_FAIL_CLOSED")
+    require(blob(new[HORDE]) == HORDE_PATCH_PIN and blob(new[DEST]) == PIN, "ART_COMBAT_FAIL_CLOSED")
+    require({n: blob(raw) for n, raw in sorted(new.items())} == next_blobs, "ART_COMBAT_FAIL_CLOSED")
     return receipt
 
 def apply(dist: Path, enabled: bool) -> bool:
     dist = dist.resolve()
     backup = backup_dir(dist)
+    disabled = dist.with_name(dist.name + ".art_combat_disabling")
+    # Recover an interrupted OFF without losing either valid tree.
+    if disabled.exists():
+        require(not enabled, "INTERRUPTED_OFF_RECOVERY_REQUIRES_DISABLED_MODE")
+        if not dist.exists() and backup.exists():
+            _check_original(backup)  # Validate backup before replacing anything.
+            os.rename(backup, dist)
+            shutil.rmtree(disabled)
+            print("ART_COMBAT_OFF_INTERRUPTED_SWAP_RECOVERED")
+            return True
+        if dist.exists() and not backup.exists():
+            _check_original(dist)
+            shutil.rmtree(disabled)
+            print("ART_COMBAT_OFF_INTERRUPTED_CLEANUP_RECOVERED")
+            return True
+        raise RuntimeError("AMBIGUOUS_INTERRUPTED_OFF_STATE_KEEP_ALL_DATA")
     if not dist.exists() and backup.exists():
+        _check_original(backup)
         os.rename(backup, dist)
-        raise RuntimeError("PREVIOUS_INTERRUPTED_SWAP_RECOVERED_RERUN")
+        raise RuntimeError("PREVIOUS_INTERRUPTED_APPLY_RECOVERED_RERUN")
     if not enabled:
         if not backup.exists():
             if dist.exists():
-                assert DEST not in sources(dist), "ENABLED_OVERLAY_WITHOUT_BACKUP"
+                require(DEST not in sources(dist), "ENABLED_OVERLAY_WITHOUT_BACKUP")
             print("ART_COMBAT_OFF_CLEAN_ZERO_WRITE")
             return False
-        assert dist.exists() and (dist / "src" / DEST).exists(), "OFF_BACKUP_STATE_INVALID"
-        assert blob((dist / "src" / DEST).read_bytes()) == PIN
-        assert blob((dist / "src" / HORDE).read_bytes()) == HORDE_PATCH_PIN
-        disabled = dist.with_name(dist.name + ".art_combat_disabling")
-        assert not disabled.exists(), "PREVIOUS_DISABLE_INCOMPLETE"
+        # Fail-closed: corrupt original must NEVER replace known-good candidate.
+        _check_original(backup)
+        require(dist.exists() and (dist / "src" / DEST).exists(), "OFF_BACKUP_STATE_INVALID")
+        require(blob((dist / "src" / DEST).read_bytes()) == PIN, "ART_COMBAT_FAIL_CLOSED")
+        require(blob((dist / "src" / HORDE).read_bytes()) == HORDE_PATCH_PIN, "ART_COMBAT_FAIL_CLOSED")
+        require(not disabled.exists(), "PREVIOUS_DISABLE_INCOMPLETE")
         os.rename(dist, disabled)
         try:
             os.rename(backup, dist)
         except BaseException:
             os.rename(disabled, dist)
             raise
-        shutil.rmtree(disabled)
         _check_original(dist)
+        shutil.rmtree(disabled)
         print("ART_COMBAT_OFF_EXACT_ORIGINAL66_RESTORED")
         return True
-    assert dist.is_dir() and not backup.exists(), "ART_COMBAT_ALREADY_APPLIED_OR_BACKUP_EXISTS"
+    require(dist.is_dir() and not backup.exists(), "ART_COMBAT_ALREADY_APPLIED_OR_BACKUP_EXISTS")
     prior = _check_original(dist)
     # All source and author preflight validation precedes writing a candidate.
     with tempfile.TemporaryDirectory(prefix=".art_combat_stage_", dir=dist.parent) as tmp:
         staged = Path(tmp) / dist.name
         _stage_candidate(dist, staged, prior)
-        assert not backup.exists()
+        require(not backup.exists(), "ART_COMBAT_FAIL_CLOSED")
         os.rename(dist, backup)
         try:
             os.rename(staged, dist)
