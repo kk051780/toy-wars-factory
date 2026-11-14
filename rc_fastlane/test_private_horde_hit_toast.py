@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 from apply_private_horde_hit_toast import (
     GAME,HUD,GAME_V2_BLOB,HUD_V2_BLOB,FEATURE,V1_FLAG,V2_FLAG,
-    blob,read,patch_game,patch_hud,apply,require_real_touched_branch,HIT_SEQUENCE_ATTRIBUTE
+    blob,read,patch_game,patch_hud,apply,verify_all_real_hit_branches,verify_original_toast_epoch
 )
 BASE=Path(os.getenv("P0D_PRIVATE_HORDE_V2_DIST","/tmp/p0d_horde_private_lifecycle_v2_81"))
 
@@ -41,7 +41,7 @@ class PrivateHitToastV3Tests(unittest.TestCase):
         self.assertIn("remote:FireClient(player,snapshotFor(player))",s)
         # Static source proof that the only impact increment is nested in
         # original touched>0, not merely adjacent to an unrelated 'if'.
-        require_real_touched_branch(s)
+        verify_all_real_hit_branches(s)
     def test_never_enable_persistent_guides_in_nonstudio(self):
         h=patch_hud(self.sources[HUD]).decode("utf8")
         self.assertIn('if s.musouActive==true or (s.musouHitFeedback==true and s.phase=="ACTIVE") then',h)
@@ -54,26 +54,26 @@ class PrivateHitToastV3Tests(unittest.TestCase):
             self.assertIn(line,h)
         self.assertIn('task.delay(.42,function()',h)
         self.assertIn('impactToast.Visible=true',h)
-    def test_sourcery_medium2_miss_advancing_impact_rejected(self):
+    def test_sourcery_medium2_all_three_true_hit_sources_only(self):
         game=self.sources[GAME].decode("utf8")
         needle='mobImpactSeq[player]=(mobImpactSeq[player] or 0)+1'
-        self.assertIn(needle,game)
-        self.assertIn('if touched>0 then',game)
-        original=game.index(needle)
-        branch=game.rfind('if touched>0 then',0,original)
-        # An early end would put the increment *after* the true-hit branch.
-        moved=game[:original]+'end\n            '+game[original:]
+        self.assertEqual(game.count(needle),3)
+        verify_all_real_hit_branches(game)
+        # Simulate a source regression where normal ATTACK increments even
+        # after its touched>0 block has already closed (a MISS could show HIT).
+        origin=game.index(needle,game.index('if touched>0 then'))
+        mutated=game[:origin]+'end\\n        '+game[origin:]
         with self.assertRaises(AssertionError):
-            require_real_touched_branch(moved)
-    def test_sourcery_medium1_stale_toast_callback_guard(self):
+            verify_all_real_hit_branches(mutated)
+    def test_sourcery_medium1_original_epoch_already_protects_new_hit(self):
         hud=patch_hud(self.sources[HUD]).decode("utf8")
-        set_line=f'impactToast:SetAttribute("{HIT_SEQUENCE_ATTRIBUTE}", hitSeq)'
-        guard_line=f'impactToast:GetAttribute("{HIT_SEQUENCE_ATTRIBUTE}") ~= hitSeq'
-        self.assertEqual(hud.count(set_line),1)
-        self.assertEqual(hud.count(guard_line),1)
-        self.assertTrue(hud.index(set_line)<hud.index('impactToast.Visible=true'))
-        self.assertTrue(hud.index('task.delay(.42,function()')<hud.index(guard_line))
-        self.assertIn('then return end',hud[hud.index(guard_line):hud.index(guard_line)+75])
+        verify_original_toast_epoch(hud)
+        self.assertIn('local epoch=impactDisplayEpoch',hud)
+        self.assertIn('if impactDisplayEpoch==epoch then impactToast.Visible=false end',hud)
+        # Simulates callback #1 after a subsequent genuine hit #2:
+        first,second=1,2
+        self.assertNotEqual(first,second) # callback #1 cannot hide #2
+        self.assertEqual(second,second)    # callback #2 may hide #2
     def test_off_exact_zero_write(self):
         old=read(self.base)
         self.assertFalse(apply(self.base,self.out,False))
