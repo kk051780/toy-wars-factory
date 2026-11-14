@@ -16,6 +16,8 @@ class SpectatorPrivate78(unittest.TestCase):
             'local function eligibleSoloPlayers(): {Player}',
             'player:SetAttribute("P0D_LateJoinSpectator",true)',
             'roundReady[entrant]=false',
+            'ModeVote.tally(modeVotes,eligibleSoloPlayers())',
+            'if player:GetAttribute("P0D_LateJoinSpectator")==true then return end',
             'LobbyIsland.spawn("RED")',
             'local count = #eligibleSoloPlayers()',
             'local online = eligibleSoloPlayers()',
