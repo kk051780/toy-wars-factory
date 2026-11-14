@@ -42,7 +42,7 @@ local function knight(model, core)
         Vector3.new(0,.15,0),blue,Enum.Material.Metal)
     piece(model,core,"KNIGHT_HELMET",Vector3.new(2.35,1.28,2.4),
         Vector3.new(0,4.05,0),steel,Enum.Material.Metal)
-    piece(model,core,"KNIGHT_CRE ST",Vector3.new(.55,1.35,2.0),
+    piece(model,core,"KNIGHT_CREST",Vector3.new(.55,1.35,2.0),
         Vector3.new(0,4.85,0),gold,Enum.Material.SmoothPlastic,"wedge")
     for _,side in ipairs({-1,1}) do
         piece(model,core,"KNIGHT_PAULDRON_"..side,Vector3.new(1.24,1.1,1.5),
@@ -94,9 +94,9 @@ local function brute(model, core)
         Vector3.new(0,2.35,-1.13),ochre,Enum.Material.Slate)
     for _,side in ipairs({-1,1}) do
         piece(model,core,"BRUTE_TUSK_"..side,Vector3.new(.4,1.25,.45),
-            Vector3.new(side*.94,2.85,-1.23),bone,Enum.Material.Bone,"wedge")
+            Vector3.new(side*.94,2.85,-1.23),bone,Enum.Material.SmoothPlastic,"wedge")
         piece(model,core,"BRUTE_HORN_"..side,Vector3.new(1.02,1.45,.9),
-            Vector3.new(side*1.16,4.13,.35),bone,Enum.Material.Bone,"wedge",0,side*26)
+            Vector3.new(side*1.16,4.13,.35),bone,Enum.Material.SmoothPlastic,"wedge",0,side*26)
         piece(model,core,"BRUTE_SHOULDER_"..side,Vector3.new(1.58,1.7,1.4),
             Vector3.new(side*1.62,1.0,.32),ochre,Enum.Material.Rock)
     end
