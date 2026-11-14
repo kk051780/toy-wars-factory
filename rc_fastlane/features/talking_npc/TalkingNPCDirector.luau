@@ -7,7 +7,7 @@ local Director = {}
 local AREAS = {
     north = "北の道", south = "南の道", east = "東の道",
     west = "西の道", center = "中央", sky = "空のエリア",
-    sea = "海のエリア", cave = "洞窟", home = "自陣",
+    sea = "海のエリア", cave = "洞窟", home = "自陣", star_bridge = "星降る橋",
 }
 local ITEMS = {
     rare_egg = "レア卵", healing = "回復アイテム",
