@@ -1,32 +1,60 @@
 #!/usr/bin/env python3
-"""Private78 full-body 9 NPC costume source+Rojo receipts, source not Studio run."""
-import argparse,json
+"""Native Rojo 78/78 XML embedded Luau source exact. No Studio engine is run."""
+import argparse
+import collections
+import hashlib
+import json
+import xml.etree.ElementTree as ET
 from pathlib import Path
-from verify_p0_results78 import verify as full_rojo
-from apply_p0_fullbody78 import read,derived_source,DEST,gitblob,FLAG
-def verify(dist,place,receipt):
-    full_rojo(dist,place,receipt)
-    s=read(dist)
-    art=derived_source()
-    assert s[DEST]==art
-    features=json.loads((dist/"RC_FEATURE_LOCK.json").read_text("utf8"))
-    assert features["p0_fullbody78"]["adapted_source_gitblob"]==gitblob(art)
-    assert features["p0_fullbody78"]["other77_byte_identical"] is True
-    result=json.loads(receipt.read_text("utf8"))
-    result["private_candidate"]="P0D_PRIVATE78_RESULTS_PLUS_NINE_FULL_COSTUMES"
-    result["full_silhouette_authored_part_types"]=41
-    result["nine_actor_complete_accessories"]=92
-    result["cosmetic_part_budget"]=104
-    result["combat_remote_compatibility"]="OPTIONAL_REMOTE_PLUS_SERVER_POPUP_FALLBACK"
-    result["studio_motion"]="NOT_TESTED"
-    result["owner_art"]="ART_NO_GO"
-    receipt.write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n","utf8")
-    print("P0_PRIVATE78_FULLBODY_78_78_ROJO_SOURCE_EXACT_PASS",
-          result["place_bytes"],result["place_sha256"])
+from apply_p0_motion78 import read,gitblob,DEST,CLIENT_ID,FEATURE_ID
+from apply_p0_fullbody78 import derived_source,FLAG,GAME,REPAIR
+
+def verify(dist:Path,place:Path,receipt:Path)->None:
+    sources=read(dist)
+    assert len(sources)==78
+    pins={name:gitblob(raw) for name,raw in sorted(sources.items())}
+    sl=json.loads((dist/"SOURCE_LOCK.json").read_text("utf8"))
+    fl=json.loads((dist/"RC_FEATURE_LOCK.json").read_text("utf8"))
+    assert sl["total_scripts"]==fl["total_sources"]==78
+    assert sl["blobs"]==fl["source_gitblobs"]==pins
+    assert scripts[DEST]==derived_source(), "FULLBODY_REPLACEMENT_NOT_EXACT"\n    assert scripts[GAME].decode().count(REPAIR)==1,"RESULTS_RECOVERY_MISSING"
+    assert fl["feature_flags"][FEATURE_ID] is True\n    assert fl["p0_fullbody78"]["other77_byte_identical"] is True
+    expected=collections.Counter(raw.decode("utf8") for raw in sources.values())
+    actual=collections.Counter()
+    names=collections.Counter()
+    for item in ET.parse(place).iter("Item"):
+        if item.get("class") not in ("Script","ModuleScript","LocalScript"):continue
+        code=item.find("./Properties/string[@name='Source']")
+        if code is not None:actual[code.text or ""]+=1
+        name=item.find("./Properties/string[@name='Name']")
+        if name is not None:names[(item.get("class"),name.text)]+=1
+    assert actual==expected and sum(actual.values())==78,("MOTION78_XML_SOURCE_DRIFT",sum(actual.values()))
+    for typ,name in (
+        ("Script","Game"),("ModuleScript","SoloTeamBots"),("ModuleScript","LobbyDojoIsland"),
+        ("Script","Owner361CastleBattlefield"),("Script","ArtMinionSilhouette"),
+        ("LocalScript","BattleHUDGovernor"),("LocalScript","FB015GoroganVisual"),
+        ("LocalScript","P0DConfirmedCombatFX"),("LocalScript",CLIENT_ID),
+    ):
+        assert names[(typ,name)]==1,("MOTION78_DUPLICATE_OR_MISSING_SCRIPT",typ,name,names[(typ,name)])
+    output={
+        "private_candidate":"P0D_PRIVATE78_RESULT_LOBBY_9_NPC_FULLBODY",
+        "source_count":78,"actual_luau_source_exact":True,
+        "source_gitblob_match":True,"only_one_Game":True,
+        "parent77_untouched":True,"studio_engine":"NOT_TESTED",
+        "art_motion_proven_physically":"NOT_TESTED","android_fps":"NOT_TESTED",
+        "owner_art":"ART_NO_GO",\n        "full_silhouette_parts":41,"nine_models_total_parts":92,"owner_fun":"FUN_NO_GO",
+        "official_rc_adoption":0,
+        "place_bytes":place.stat().st_size,
+        "place_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
+    }
+    receipt.write_text(json.dumps(output,ensure_ascii=False,indent=2)+"\n","utf8")
+    print("P0_PRIVATE78_FULLBODY_ALL_78_SOURCE_EXACT_PASS",
+          output["place_bytes"],output["place_sha256"])
+
 if __name__=="__main__":
     p=argparse.ArgumentParser()
-    p.add_argument("--dist",required=True,type=Path)
-    p.add_argument("--place",required=True,type=Path)
-    p.add_argument("--receipt",required=True,type=Path)
+    p.add_argument("--dist",type=Path,required=True)
+    p.add_argument("--place",type=Path,required=True)
+    p.add_argument("--receipt",type=Path,required=True)
     a=p.parse_args()
     verify(a.dist,a.place,a.receipt)
