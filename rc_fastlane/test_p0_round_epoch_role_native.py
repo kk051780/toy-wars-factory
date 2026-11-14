@@ -19,20 +19,35 @@ def emit(game:Path,out:Path):
     reset="local function resetRound()"+extract(g,"local function resetRound()","local function chooseTeam(")
     assert reset.count("local startupSerial=match.serial")==1
     assert reset.count("if match.phase~=\"ACTIVE\" or match.serial~=startupSerial then return end")==1
+    # Run EXACT source statements that span the yielding Player:LoadCharacter
+    # and the earliest subsequent epoch guard. Avoid unrelated progression
+    # subsystems in the native mock; full Game compile is a separate CI gate.
     begin=reset.index("    match.serial += 1")
-    end=reset.index("    broadcast()",begin)
-    # Keep ACTUAL authored startup code, from serial assignment through
-    # objectives/canonical reenable. Omit only unrelated preceding cleanup and
-    # trailing network broadcast to isolate the race to a deterministic callback.
-    startup=reset[begin:end]
-    assert startup.index("p:LoadCharacter()") < startup.index("match.serial~=startupSerial")
-    assert startup.index("match.serial~=startupSerial") < startup.index("setObjectiveEnabled(true)")
-    assert startup.index("match.serial~=startupSerial") < startup.index("startCanonical()")
+    first=reset.index("    if RunService:IsStudio()",begin)
+    serial=reset[begin:first]
+    match_line='    match.phase = "ACTIVE"\n'
+    assert reset.count(match_line)==1
+    load=reset.index("p:LoadCharacter()",first)
+    loop_start=reset.rfind("    for _, p in ipairs(Players:GetPlayers()) do",first,load)
+    assert loop_start>=0
+    loop_end=reset.index("    end\n",load)+len("    end\n")
+    loop=reset[loop_start:loop_end]
+    guard_start=reset.index("    -- FB005_PRIVATE78_ROUND_EPOCH_SPECTATOR_ROLE_QA:",loop_end)
+    guard_end=reset.index("    -- All previous epoch egg carriers",guard_start)
+    assert loop_end==guard_start,"ROUND_GUARD_NOT_IMMEDIATELY_AFTER_CHARACTER_LOAD"
+    guard=reset[guard_start:guard_end]
+    assert "match.serial~=startupSerial" in guard
+    for check in ('setObjectiveEnabled(true)','startCanonical()','beginProgressRounds('):
+        assert reset.index("match.serial~=startupSerial")<reset.index(check)
+    enable=reset[reset.index('    setObjectiveEnabled(true)'):].split('\n',1)[0]
+    canonical=reset[reset.index('    startCanonical()'):].split('\n',1)[0]
+    startup=serial+match_line+loop+guard+enable+'\n'+canonical+'\n'
     role="local function applyRole(player: Player, data)"+extract(g,
         "local function applyRole(player: Player, data)",
         "remote.OnServerEvent:Connect(function(player: Player, data)")
     assert 'player:GetAttribute("P0D_LateJoinSpectator")==true' in role
     assert role.index('P0D_LateJoinSpectator') < role.index('Rules.validSeq')
+    assert 'local function applyReady(' in role
     promotion=extract(g,'                    chooseTeam(entrant)\n','                    roundReady[entrant]=false')
     assert 'roles[entrant]="RAIDER"' in promotion
     assert 'lastRoleChange[entrant]=-math.huge' in promotion
@@ -75,6 +90,13 @@ local warnCount=0
 local function warn(...) warnCount+=1 end
 local function clearTraps() end
 local function stopCanonical() end
+local function stopWind(player) end
+local earnedPower,lastWind,lastNet,netImmuneUntil={}, {}, {}, {}
+local mobCombo,mobComboUntil,mobLastHits,mobLastKOs={}, {}, {}, {}
+local guideProgress={}
+local Power={endRound=function(state) end}
+local First90Guide={newRound=function(serial) return {serial=serial} end}
+local function clearEarnedPowerVisual(player) end
 local SoloTeamBots={stop=function() end,start=function() return true end}
 local function check(condition,label) assert(condition,"ROUND_EPOCH_ROLE_"..label) end
 local pause=false
