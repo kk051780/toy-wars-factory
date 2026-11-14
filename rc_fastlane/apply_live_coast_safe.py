@@ -15,7 +15,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 AUTHOR = HERE/"features/live_art/P0DLiveCoastalVista.server.luau"
-AUTHOR_BLOB = "4d211d5ae35a890cc35acb71e30602b848bed5dc"
+AUTHOR_BLOB = "3e49c9f695771289cda498bb1c81f061b0b5ee1e"
 TARGET = "server/P0DLiveCoastalVista.server.luau"
 FEATURE = "FB011_PRIVATE_LIVE_COAST_SCENIC_V1"
 BASE_OFFICIAL = "bab8e93bfe0bce0baddfe64ee2898962486058af"
@@ -36,6 +36,7 @@ def check_author(data: bytes) -> None:
     s=data.decode("utf8")
     must = (
         'if not RunService:IsServer() then return end',
+        'if not RunService:IsStudio() and game.PrivateServerId == "" then',
         'if workspace:GetAttribute("P0D_PRIVATE_LIVE_COAST") ~= true then return end',
         'local ground = arena:FindFirstChild("GrassArena")',
         'local north = arena:FindFirstChild("ARENA_BOUNDARY_N")',
@@ -108,7 +109,7 @@ def apply(base: Path, output: Path, enabled: bool) -> bool:
         "old_sources_byte_exact":81,
         "old_source_count":81,"candidate_source_count":82,
         "one_new_source":TARGET,"new_author_gitblob":AUTHOR_BLOB,
-        "private_runtime_gate":"workspace.P0D_PRIVATE_LIVE_COAST == true",
+        "private_runtime_gate":"nonStudio requires PrivateServerId != empty AND Workspace.P0D_PRIVATE_LIVE_COAST == true",
         "private_flag_default":False,
         "original_7_studio_only_art_scripts": "UNCHANGED",
         "out_of_gameplay_bounds":True,
