@@ -1,7 +1,6 @@
 --!nocheck
--- P0D-TALKING-NPC-V1 / candidate for StarterPlayerScripts/TalkingNPCClient.
--- Client presentation only; all dialogue and team visibility are authorized by server.
--- A NEW Remote is forbidden. Listen to existing TrapRaidersS1Remote, ignore other kinds.
+-- Talking NPC PREP: client captions always, best-effort Japanese TTS only on demand.
+-- One existing Game-owned Remote is reused; never client-chosen enemy location.
 local RunService = game:GetService("RunService")
 if not RunService:IsStudio() then return end
 local Players = game:GetService("Players")
@@ -13,12 +12,14 @@ local playerGui = player:WaitForChild("PlayerGui", 30)
 local remote = ReplicatedStorage:WaitForChild("TrapRaidersS1Remote", 60)
 if not playerGui or not remote or not remote:IsA("RemoteEvent") then return end
 if playerGui:FindFirstChild("P0DTalkingNPCUI") then return end
+local PUBLIC_ENABLED = "P0D_TALKING_NPC_CLIENT_ENABLED"
 
 local gui = Instance.new("ScreenGui")
 gui.Name = "P0DTalkingNPCUI"
 gui.ResetOnSpawn = false
 gui.IgnoreGuiInset = false
 gui.DisplayOrder = 16
+gui.Enabled = ReplicatedStorage:GetAttribute(PUBLIC_ENABLED) == true
 gui.Parent = playerGui
 
 local card = Instance.new("Frame")
@@ -40,7 +41,6 @@ label.Name = "Speaker"
 label.Position = UDim2.fromOffset(12, 5)
 label.Size = UDim2.new(1, -24, 0, 26)
 label.BackgroundTransparency = 1
-label.TextScaled = false
 label.TextSize = 16
 label.Font = Enum.Font.GothamBold
 label.TextColor3 = Color3.fromRGB(140, 229, 255)
@@ -79,26 +79,40 @@ local speechSerial = 0
 local audioNode = nil
 local audioOut = nil
 local wire = nil
+local audioUnsupported = false
+local audioBusy = false
+local audioPending = nil
+local lastAudioAt = -math.huge
+local TTS_GAP = 20 -- seconds: per-client quota guard; also never request automated alerts.
+
+local function stopVoice()
+    audioPending = nil
+    if audioNode then pcall(function() audioNode:Pause() end) end
+end
 voiceToggle.Activated:Connect(function()
     audioEnabled = not audioEnabled
     voiceToggle.Text = audioEnabled and "音声: ON" or "音声: OFF"
-    if not audioEnabled and audioNode then
-        pcall(function() audioNode:Pause() end)
-    end
+    if not audioEnabled then stopVoice() end
 end)
+
 local function initializeAudio()
     if audioNode then return true end
+    if audioUnsupported then return false end
+    local staged = {}
     local ok, obj, output, link = pcall(function()
         local tts = Instance.new("AudioTextToSpeech")
+        table.insert(staged, tts)
         tts.Name = "P0D_NPC_TTS"
         tts.AutoLocalize = true
         tts.Looping = false
         tts.Volume = 0.65
         tts.Parent = SoundService
         local device = Instance.new("AudioDeviceOutput")
+        table.insert(staged, device)
         device.Name = "P0D_NPC_Output"
         device.Parent = SoundService
         local w = Instance.new("Wire")
+        table.insert(staged, w)
         w.Name = "P0D_NPC_Wire"
         w.SourceInstance = tts
         w.TargetInstance = device
@@ -106,35 +120,71 @@ local function initializeAudio()
         return tts, device, w
     end)
     if not ok then
-        warn("[P0D/TALK] audio unsupported; keeping subtitle")
+        for _, item in ipairs(staged) do
+            pcall(function() item:Destroy() end)
+        end
+        audioUnsupported = true
+        warn("[P0D/TALK] audio initialization unsupported; subtitles remain visible")
         return false
     end
     audioNode, audioOut, wire = obj, output, link
     return true
 end
-local function playSpeech(text, voiceId, nonce)
-    if not audioEnabled or not initializeAudio() then return end
-    local tts = audioNode
+
+-- Exactly ONE asynchronous worker can mutate AudioTextToSpeech.Text / VoiceId.
+-- A new message replaces any queued stale one, and old completed playback is
+-- refused by nonce. No concurrent LoadAsync on the same AudioTextToSpeech node.
+local function pumpAudio()
+    if audioBusy then return end
+    audioBusy = true
     task.spawn(function()
-        local ok, status = pcall(function()
-            tts:Pause()
-            tts.TimePosition = 0
-            tts.Text = text
-            tts.VoiceId = voiceId
-            return tts:LoadAsync()
-        end)
-        if not ok or status ~= Enum.AssetFetchStatus.Success then
-            warn("[P0D/TALK] TTS generation failed, captions still visible")
-            return
+        while audioPending do
+            local request = audioPending
+            audioPending = nil
+            if request.nonce == speechSerial and audioEnabled and gui.Enabled
+                and (os.clock() - lastAudioAt) >= TTS_GAP
+                and initializeAudio() then
+                lastAudioAt = os.clock() -- count attempts, including failed loads
+                local tts = audioNode
+                local ok, status = pcall(function()
+                    tts:Pause()
+                    tts.TimePosition = 0
+                    tts.Text = request.text
+                    tts.VoiceId = request.voiceId
+                    return tts:LoadAsync()
+                end)
+                if not ok or status ~= Enum.AssetFetchStatus.Success then
+                    warn("[P0D/TALK] TTS unavailable; subtitles still visible")
+                elseif request.nonce == speechSerial and audioEnabled and gui.Enabled then
+                    pcall(function() tts:Play() end)
+                end
+            end
         end
-        if nonce ~= speechSerial or not audioEnabled then return end
-        pcall(function() tts:Play() end)
+        audioBusy = false
+        if audioPending then pumpAudio() end
     end)
 end
+local function playSpeech(text, voiceId, nonce)
+    if not audioEnabled or not gui.Enabled then return end
+    audioPending = {text = text, voiceId = voiceId, nonce = nonce}
+    pumpAudio()
+end
+
+local function setEnabled()
+    gui.Enabled = ReplicatedStorage:GetAttribute(PUBLIC_ENABLED) == true
+    if not gui.Enabled then
+        speechSerial += 1
+        card.Visible = false
+        stopVoice()
+    end
+end
+ReplicatedStorage:GetAttributeChangedSignal(PUBLIC_ENABLED):Connect(setEnabled)
+setEnabled()
 
 local allowSpeaker = {NAVI = true, TRICK = true, ORACLE = true}
 local allowVoices = {["701"] = true, ["702"] = true}
 local function receive(packet)
+    if not gui.Enabled then return end
     if type(packet) ~= "table" or packet.kind ~= "P0D_NPC_TALK_V1" then return end
     if not allowSpeaker[packet.speakerId] then return end
     if type(packet.text) ~= "string" or #packet.text > 270 then return end
@@ -146,13 +196,13 @@ local function receive(packet)
     label.TextColor3 = packet.suspicious == true
         and Color3.fromRGB(255, 172, 237) or Color3.fromRGB(146, 228, 255)
     message.Text = packet.text
-    card.Visible = true
-    playSpeech(packet.text, packet.voiceId, seq)
+    card.Visible = true -- Must show captions even if TTS is unsupported/muted.
+    if packet.automated ~= true then
+        playSpeech(packet.text, packet.voiceId, seq)
+    end
     task.delay(7, function()
-        if seq == speechSerial and card.Parent then
-            card.Visible = false
-        end
+        if seq == speechSerial and card.Parent then card.Visible = false end
     end)
 end
 remote.OnClientEvent:Connect(receive)
-print("[P0D/TALK] subtitles ready; TTS optional; mobile/engine NOT_TESTED")
+print("[P0D/TALK] subtitles enabled by server; mobile/TTS engine NOT_TESTED")
