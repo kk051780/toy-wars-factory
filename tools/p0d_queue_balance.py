@@ -97,8 +97,19 @@ def balance(queue: dict[str, Any], catalog: dict[str, Any],
             raise InvalidSnapshot("DUPLICATE_OR_EMPTY_READY_FEATURES")
         seen_ready.update(ids)
     occupied.update(seen_ready)
+    catalog_by_id = {r["id"]: r["stage"] for r in rows}
+    eligible_ready = []
+    excluded_adopted = []
+    for item in selected:
+        adopted_ids = [fid for fid in item["features"]
+                       if catalog_by_id.get(fid) in ("RC", "STUDIO", "FUN")]
+        if adopted_ids:
+            excluded_adopted.append({"pr": item["pr"], "already_adopted": sorted(adopted_ids)})
+        else:
+            eligible_ready.append(item)
+    eligible_count = len(eligible_ready)
 
-    level = 0 if n == 0 else 1 if n == 1 else 2 if n <= 3 else 3
+    level = 0 if eligible_count == 0 else 1 if eligible_count == 1 else 2 if eligible_count <= 3 else 3
     state = _STATES[level]
     prep_pct, integrate_pct = _RATIOS[level]
     # SOURCE-backed gameplay before IDEA-only ideation. Never duplicate active/READY IDs.
@@ -116,9 +127,13 @@ def balance(queue: dict[str, Any], catalog: dict[str, Any],
 
     source.sort(key=rank)
     idea.sort(key=rank)
-    slots = 2 if n <= 1 else 1
-    targets = (source or idea)[:slots]
-    target_stage = "SOURCE_TO_READY" if source else "IDEA_TO_REAL_SOURCE" if idea else "NO_UNCLAIMED_BACKLOG"
+    slots = 2 if eligible_count <= 1 else 1
+    has_source_backlog = any(r["stage"] == "SOURCE" for r in rows)
+    # An already-owned SOURCE item must be finished, not replaced by speculative IDEA.
+    targets = (source if source else [] if has_source_backlog else idea)[:slots]
+    target_stage = ("SOURCE_TO_READY" if source else
+                    "ASSIST_CLAIMED_SOURCE" if has_source_backlog else
+                    "IDEA_TO_REAL_SOURCE" if idea else "NO_UNCLAIMED_BACKLOG")
     statuses: dict[str, int] = {}
     for row in rows:
         statuses[row["stage"]] = statuses.get(row["stage"], 0) + 1
@@ -126,7 +141,9 @@ def balance(queue: dict[str, Any], catalog: dict[str, Any],
         "schema": "P0D_AUTO_QUEUE_BALANCE_V1",
         "official_head": sha,
         "queue_state": state,
-        "ready_count": n,
+        "ready_count": eligible_count,
+        "raw_selected_ready_count": n,
+        "excluded_already_adopted_prs": excluded_adopted,
         "target_work_split_pct": {"A_PREP": prep_pct, "B_INTEGRATOR": integrate_pct},
         "a_target_stage": target_stage,
         "a_suggested_feature_ids": [r["id"] for r in targets],
@@ -134,7 +151,12 @@ def balance(queue: dict[str, Any], catalog: dict[str, Any],
                                   "from_stage": r["stage"], "group": r.get("group", "")}
                                  for r in targets],
         "b_ready_prs": [{"pr": x["pr"], "head": x["head"], "features": x["features"]}
-                        for x in selected],
+                        for x in eligible_ready],
+        "a_assist_existing_prep_prs": [
+            {"feature_id": fid, "prs": sorted(active_by_id[fid])}
+            for fid in sorted(active_by_id)
+            if catalog_by_id.get(fid) == "SOURCE"
+        ][:2],
         "catalog_total": len(rows),
         "catalog_stages": statuses,
         "blocked_by_external_claims": sorted(_id_list(claimed_feature_ids or [], "CLAIMS")),
@@ -157,13 +179,17 @@ def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--queue", required=True, help="Existing read-only P0D_PREP_INBOX.json")
     p.add_argument("--catalog", required=True, help="FEATURE_CATALOG.json at same official snapshot")
+    p.add_argument("--catalog-head", required=True, help="git rev-parse HEAD of trusted catalog checkout")
     p.add_argument("--claims", help="Optional JSON array of currently claimed feature IDs")
     p.add_argument("--out", default="-")
     opts = p.parse_args(argv)
     q = json.loads(Path(opts.queue).read_text(encoding="utf-8"))
     c = json.loads(Path(opts.catalog).read_text(encoding="utf-8"))
     claims = json.loads(Path(opts.claims).read_text(encoding="utf-8")) if opts.claims else None
+    if not _SHA.fullmatch(opts.catalog_head) or q.get("official_head") != opts.catalog_head:
+        raise InvalidSnapshot("QUEUE_AND_TRUSTED_CATALOG_HEAD_MISMATCH")
     result = balance(q, c, claims)
+    result["trusted_catalog_checkout_head"] = opts.catalog_head
     output = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
     if opts.out == "-":
         print(output, end="")

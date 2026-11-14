@@ -109,6 +109,27 @@ class QueueBalanceTest(unittest.TestCase):
         with self.assertRaisesRegex(InvalidSnapshot, "INVALID_OPEN_PR_CLAIM"):
             balance(q, catalog())
 
+    def test_if_every_source_is_claimed_assist_instead_of_starting_ideas(self):
+        q = inbox(0)
+        q["open_pr_title_claims"] = [
+            {"feature_id": fid, "pr": n, "head": HEAD, "draft": True}
+            for fid, n in (("P0D-018", 358), ("P0D-017", 359), ("P0D-040", 360))]
+        r = balance(q, catalog())
+        self.assertEqual(r["a_target_stage"], "ASSIST_CLAIMED_SOURCE")
+        self.assertEqual(r["a_suggested_feature_ids"], [])
+        self.assertEqual(len(r["a_assist_existing_prep_prs"]), 2)
+
+    def test_ready_for_already_adopted_id_does_not_reduce_a_budget(self):
+        q = inbox(1)
+        q["selected"][0]["features"] = ["P0D-001"]
+        r = balance(q, catalog())
+        self.assertEqual(r["queue_state"], "QUEUE_RED")
+        self.assertEqual(r["ready_count"], 0)
+        self.assertEqual(r["raw_selected_ready_count"], 1)
+        self.assertEqual(r["b_ready_prs"], [])
+        self.assertEqual(r["excluded_already_adopted_prs"],
+                         [{"pr": 100, "already_adopted": ["P0D-001"]}])
+
     def test_idea_only_when_source_exhausted(self):
         c = catalog()
         for row in c["rows"]:
@@ -140,17 +161,21 @@ class QueueBalanceTest(unittest.TestCase):
             balance(q, catalog())
 
 
-    def test_workflow_regenerates_plan_on_all_official_rc_and_pr_updates(self):
+    def test_workflow_is_trusted_official_push_only_and_snapshot_pinned(self):
         workflow = (Path(__file__).resolve().parents[1] /
                     ".github" / "workflows" / "p0d-two-lane-intake.yml").read_text(encoding="utf-8")
         self.assertIn("      - rc/p0d-s1-kids-rc01", workflow)
-        self.assertIn("  pull_request:", workflow)
-        self.assertIn("    types: [opened, synchronize, reopened, ready_for_review, edited]", workflow)
+        self.assertNotIn("  pull_request:", workflow)
+        self.assertNotIn("  pull_request_target:", workflow)
+        self.assertEqual(workflow.count("uses: actions/checkout@v4"), 1)
+        self.assertNotIn("github.event.pull_request.head.sha", workflow)
+        self.assertIn('--expect-official-sha "$PINNED_OFFICIAL_SHA"', workflow)
+        self.assertIn('--catalog-head "$PINNED_OFFICIAL_SHA"', workflow)
         self.assertIn("  workflow_dispatch: {}", workflow)
         self.assertNotIn("    paths:", workflow,
                          "path-filtered push would miss normal official RC feature adoption")
         self.assertNotIn("if: github.event_name == 'push'", workflow,
-                         "PR-synced candidate replenishment must also generate a plan")
+                         "The trusted push workflow always generates an adoption-time plan")
         self.assertIn("--out /tmp/p0d_two_lane/P0D_BALANCE_PLAN.json", workflow)
         self.assertIn("path: /tmp/p0d_two_lane/", workflow)
         self.assertIn("P0D_BALANCE_NOT_YET_ADOPTED_IN_TRUSTED_RC", workflow)
@@ -161,7 +186,27 @@ class QueueBalanceTest(unittest.TestCase):
         self.assertIn("persist-credentials: false", workflow)
         self.assertIn("  contents: read", workflow)
         self.assertNotIn("  contents: write", workflow)
-        self.assertNotIn("pull_request_target:", workflow)
+        self.assertNotIn("  pull-requests: write", workflow)
+        self.assertNotIn("  actions: write", workflow)
+        self.assertRegex(workflow, r'(?s)if \[ ! -f tools/p0d_queue_balance.py \].*?exit 0\s+fi')
+
+
+    def test_cli_must_match_trusted_checkout_sha(self):
+        import json
+        import tempfile
+        from p0d_queue_balance import main
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d)
+            qfile, cfile = p / "queue.json", p / "catalog.json"
+            qfile.write_text(json.dumps(inbox()), encoding="utf8")
+            cfile.write_text(json.dumps(catalog()), encoding="utf8")
+            with self.assertRaisesRegex(InvalidSnapshot, "QUEUE_AND_TRUSTED_CATALOG_HEAD_MISMATCH"):
+                main(["--queue", str(qfile), "--catalog", str(cfile),
+                      "--catalog-head", HEAD])
+            ret = p / "out.json"
+            self.assertEqual(main(["--queue", str(qfile), "--catalog", str(cfile),
+                                   "--catalog-head", SHA, "--out", str(ret)]), 0)
+            self.assertEqual(json.loads(ret.read_text(encoding="utf8"))["trusted_catalog_checkout_head"], SHA)
 
     def test_invalid_claims_and_catalog_fail_closed(self):
         with self.assertRaises(InvalidSnapshot):

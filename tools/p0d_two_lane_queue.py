@@ -161,9 +161,13 @@ def choose_latest(official_sha: str, pull_requests: list[dict], api: Callable[[s
             "next_owner": "SOLE_AUTHENTICATED_ISSUE_220_INTEGRATOR_CAS_ONLY",
             "no_auto_merge": True, "studio_and_fun_not_inferred": True}
 
-def read_queue(api: Callable[[str], Any], repo: str = REPO) -> dict[str, Any]:
-    ref = api(f"/repos/{repo}/git/ref/heads/{OFFICIAL}")
+def read_queue(api: Callable[[str], Any], repo: str = REPO,
+               expected_official_sha: str | None = None) -> dict[str, Any]:
+    ref_path = f"/repos/{repo}/git/ref/heads/{OFFICIAL}"
+    ref = api(ref_path)
     official_sha = (ref.get("object") or {}).get("sha", "")
+    if expected_official_sha is not None and official_sha != expected_official_sha:
+        raise ValueError("OFFICIAL_RC_CHANGED_AFTER_TRUSTED_CHECKOUT")
     prs = []
     claims_scan_complete = False
     for page in range(1, 4):
@@ -174,20 +178,25 @@ def read_queue(api: Callable[[str], Any], repo: str = REPO) -> dict[str, Any]:
         if len(page_rows) < 100:
             claims_scan_complete = True
             break
+    if (api(ref_path).get("object") or {}).get("sha") != official_sha:
+        raise ValueError("OFFICIAL_RC_CHANGED_DURING_INTAKE")
     return choose_latest(official_sha, prs, api, repo, claims_scan_complete=claims_scan_complete)
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--repo", default=REPO)
     p.add_argument("--out", default="-")
+    p.add_argument("--expect-official-sha", help="Immutable git HEAD of trusted official checkout")
     p.add_argument("--fixture", help="offline fixture JSON, no network")
     opts = p.parse_args(argv)
     if opts.fixture:
         with open(opts.fixture, encoding="utf-8") as f:
             paths = json.load(f)["api"]
-        result = read_queue(lambda path: paths[path], opts.repo)
+        result = read_queue(lambda path: paths[path], opts.repo,
+                            expected_official_sha=opts.expect_official_sha)
     else:
-        result = read_queue(GitHubReadOnly(os.environ.get("GITHUB_TOKEN", "")), opts.repo)
+        result = read_queue(GitHubReadOnly(os.environ.get("GITHUB_TOKEN", "")), opts.repo,
+                            expected_official_sha=opts.expect_official_sha)
     body = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
     if opts.out == "-":
         sys.stdout.write(body)

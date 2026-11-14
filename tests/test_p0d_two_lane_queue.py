@@ -2,7 +2,7 @@ import sys
 import unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/"tools"))
-from p0d_two_lane_queue import manifest, choose_latest, active_title_claims, OFFICIAL, REPO, RUN_NAME
+from p0d_two_lane_queue import manifest, choose_latest, active_title_claims, read_queue, OFFICIAL, REPO, RUN_NAME
 
 OLD="a"*40
 NEW="b"*40
@@ -115,6 +115,24 @@ class TwoLaneQueueTests(unittest.TestCase):
     def test_open_pr_claims_scan_incomplete_must_be_visible(self):
         out = choose_latest(OLD, [], api, claims_scan_complete=False)
         self.assertFalse(out["claims_scan_complete"])
+
+    def test_ref_drift_guard_before_and_during_scan(self):
+        ref_path = f"/repos/{REPO}/git/ref/heads/{OFFICIAL}"
+        prs = f"/repos/{REPO}/pulls?state=open&per_page=100&page=1"
+        seen = 0
+        def changed(_path):
+            nonlocal seen
+            if _path == ref_path:
+                seen += 1
+                return {"object": {"sha": OLD if seen == 1 else NEW}}
+            if _path == prs:
+                return []
+            raise AssertionError(_path)
+        with self.assertRaisesRegex(ValueError, "AFTER_TRUSTED_CHECKOUT"):
+            read_queue(changed, expected_official_sha=NEW)
+        seen = 0
+        with self.assertRaisesRegex(ValueError, "DURING_INTAKE"):
+            read_queue(changed, expected_official_sha=OLD)
 
     def test_fail_if_invalid_official_sha(self):
         with self.assertRaises(ValueError):choose_latest("missing",[pr(414)],api)

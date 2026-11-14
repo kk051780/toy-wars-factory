@@ -3,10 +3,6 @@ on:
   push:
     branches:
       - rc/p0d-s1-kids-rc01
-  pull_request:
-    branches:
-      - rc/p0d-s1-kids-rc01
-    types: [opened, synchronize, reopened, ready_for_review, edited]
   workflow_dispatch: {}
 permissions:
   contents: read
@@ -29,8 +25,10 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           mkdir -p /tmp/p0d_two_lane
+          PINNED_OFFICIAL_SHA="$(git rev-parse HEAD)"
           python3 -B tools/p0d_two_lane_queue.py \
             --repo kk051780/toy-wars-factory \
+            --expect-official-sha "$PINNED_OFFICIAL_SHA" \
             --out /tmp/p0d_two_lane/P0D_PREP_INBOX.json
           python3 - <<'PY'
           import json
@@ -42,16 +40,18 @@ jobs:
           PY
       - name: Plan scarcity-aware A/B balance from trusted official code
         run: |
-          # PR event workflows must never execute a tool only present in the untrusted PR branch.
-          # Until the sole writer adopts it, trusted official checkout has no such file.
+          # Only official RC push or manual trusted dispatch runs this read-only job.
+          # Before adoption, the canonical checkout lacks these balancer source files.
           if [ ! -f tools/p0d_queue_balance.py ] || [ ! -f tests/test_p0d_queue_balance.py ]; then
             echo "P0D_BALANCE_NOT_YET_ADOPTED_IN_TRUSTED_RC; inbox remains valid"
             exit 0
           fi
           python3 -m unittest discover -s tests -p test_p0d_queue_balance.py -v
+          PINNED_OFFICIAL_SHA="$(git rev-parse HEAD)"
           python3 -B tools/p0d_queue_balance.py \
             --queue /tmp/p0d_two_lane/P0D_PREP_INBOX.json \
             --catalog rc_fastlane/FEATURE_CATALOG.json \
+            --catalog-head "$PINNED_OFFICIAL_SHA" \
             --out /tmp/p0d_two_lane/P0D_BALANCE_PLAN.json
           python3 - <<'PY'
           import json

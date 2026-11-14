@@ -18,12 +18,15 @@ The targets are a suggested WIP budget, **not a command to launch additional aut
 1. Generate current read-only inbox using the trusted current official script `tools/p0d_two_lane_queue.py`. It rejects stale base/HEAD, drafts, duplicate FEATURE_IDs, or latest non-green full RC CI. The output is `P0D_PREP_INBOX.json`.
 2. Read the same official source's `rc_fastlane/FEATURE_CATALOG.json`, **not** a mutable feature-PR supplied catalogue. Catalog's `verified_rc_head` metadata can lag the true Git ref; do not use that historical metadata as current HEAD.
 3. Gather a small external `CLAIMS.json` array of genuinely in-progress FEATURE_IDs from #219/#250/PR heads, if verified. An absent claims file is **not** a verified claim-free universe. Always check GitHub active authors before initiating any feature write.
-4. Run:
+4. Run after an immutable trusted `rc/p0d-s1-kids-rc01` checkout (external CLAIMS.json is optional):
    ```bash
+   PINNED_OFFICIAL_SHA="$(git rev-parse HEAD)"
+   python3 -B tools/p0d_two_lane_queue.py --expect-official-sha "$PINNED_OFFICIAL_SHA" \
+     --out P0D_PREP_INBOX.json
    python3 -B tools/p0d_queue_balance.py \
      --queue P0D_PREP_INBOX.json \
      --catalog rc_fastlane/FEATURE_CATALOG.json \
-     --claims CLAIMS.json \
+     --catalog-head "$PINNED_OFFICIAL_SHA" \
      --out P0D_BALANCE_PLAN.json
    python3 -m unittest discover -s tests -p test_p0d_queue_balance.py -v
    ```
@@ -38,16 +41,22 @@ Status of this branch: **separate DRAFT proposal, no official RC adoption; CI an
 
 ## V1 event + artifact acceptance (after authorized RC adoption)
 - Every official `rc/p0d-s1-kids-rc01` push recomputes the plan; no `paths` guard may suppress gameplay-only updates to the official RC HEAD.
-- Each RC-target PR `opened/synchronize/reopened/ready_for_review/edited` triggers the same **trusted official branch** read-only checkout, never PR-supplied executable code. Manual dispatch also works.
+- **No pull_request or pull_request_target trigger**: a PR can supply its own workflow definition, so the read-only balancer runs only on trusted official RC pushes and intentional workflow_dispatch. Existing hourly A/B Automations handle interim PR updates without creating a new schedule. The checkout never runs PR-supplied executable code.
 - The runner always executes both selector and balancer tests (under the canonical checkout) and stores **both** `P0D_PREP_INBOX.json` and `P0D_BALANCE_PLAN.json` under the one seven-day `P0D-TWO-LANE-PREP-INBOX` Actions artifact.
 - ZERO job write scopes: `permissions: contents:read, actions:read, pull-requests:read`. Suggestions from the balance JSON must not be treated as a legitimate author claim, source production, preview validation, or sole-writer RC approval.
 - Preserve the queue's current rule requiring the latest success on the actual HEAD. If P0/P1 Sourcery reviews are outstanding, the B writer still rejects adoption even if selector emits a candidate.
 
-## Fail-closed rollout on RC-target PR events before adoption
-A PR can carry the *future* workflow before the official RC has the balancer script. GitHub runs that workflow with `checkout ref: rc/p0d-s1-kids-rc01` for safety. If the trusted checkout lacks either script or tests, the balance step logs `P0D_BALANCE_NOT_YET_ADOPTED_IN_TRUSTED_RC` and succeeds **without running PR code**; the original verified queue JSON still uploads. Once #220 legitimately admits both trusted files into the official RC, no manual switch is needed: ordinary RC pushes and PR updates generate both JSONs. The artifact upload uses `if: always()` so a failed balance test cannot hide a previously valid queue snapshot.
+## Fail-closed rollout before authorized RC adoption
+This PR can contain the *future* workflow but **cannot execute it as a pull_request workflow**. Only when #220 admits the trusted file into the official RC will a push/manual dispatch check out that canonical source. If that checkout lacks either the balancer or its tests, the plan step logs `P0D_BALANCE_NOT_YET_ADOPTED_IN_TRUSTED_RC` and skips; the queue JSON remains available. No PR code is executed. `if: always()` uploads the available read-only queue even if plan generation fails.
 
 ## Existing work must never be recommended twice (P0D_AUTO_QUEUE_BALANCE_V1 claim scan)
 - The same trusted official `tools/p0d_two_lane_queue.py` fetches RC-target open PRs; it now emits `open_pr_title_claims` with stable `P0D-NNN` IDs extracted **from each PR title only**, not the body (which often references unrelated features). It records PR number, immutable HEAD and Draft status. This is a **conservative work-in-progress filter**, not a lock, authority, approval, or author change.
 - Example: current existing Draft `#358 P0D-018 捕獲・救出` and `#359 P0D-017 中立精鋭` are both active and must not be reallocated. With READY0, A will recommend the next unclaimed SOURCE such as P0D-040, **not** the already active P0D-018/017. Approved READY PR feature IDs are also excluded automatically.
 - PR title convention for A: include exactly one clear canonical `P0D-###` identifier for the feature being worked on. An unrelated mention in the PR body must not imply a claim. Other non-GitHub claims can still be supplied by a verified external claims JSON.
 - If the open-PR scan reaches its maximum supported three 100-PR pages without an exhaustive last page, `claims_scan_complete=false`: the balancer **refuses to recommend new A work** rather than silently ignoring active branches. This does not change the selector's B authenticated independent READY/CAS review gate.
+
+## Safety corrections following independent review
+- **Immutable source/catalog proof:** GitHub Actions reads `git rev-parse HEAD` after canonical checkout, passes it to the queue selector via `--expect-official-sha` and to the balancer via `--catalog-head`. The selector re-fetches live ref before and after scanning PRs; a mismatch is an error, not a silently mixed current HEAD / stale catalogue plan. The next official RC push reruns from the new HEAD.
+- **No duplicate adoption READY inflation:** an apparently READY PR that references a feature already in trusted catalog stage RC/STUDIO/FUN is omitted from B's effective READY inventory (with a visible `excluded_already_adopted_prs` reason), not allowed to reduce A priority. Truly new candidate FEATURE_IDs missing from the official catalog are still permitted for B's independent source review.
+- **No speculative IDEA diversion:** if any catalog SOURCE remains under another owner's active PR, and none are unclaimed, `ASSIST_CLAIMED_SOURCE` recommends collaboration/review on those tracked PRs, rather than creating another IDEA task.
+- **Workflow trust model:** disable PR-event execution of a PR-authored YAML definition. Official push/manual only, minimal read-only token and one canonical checkout. Candidate PR edits are observed by existing A/B hourly monitoring; do not add a duplicate scheduled GitHub Actions job.
