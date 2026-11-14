@@ -8,7 +8,7 @@ from pathlib import Path
 GAME="server/Game.server.luau"
 HUD="client/HUD.client.luau"
 KEY="FB019_ATTACK_RESPONSE_V1"
-PIN_GAME="7ad806322554499ca91cef7c36f31aad438642b4"
+PIN_GAME="5648ff17b54fd9f9e949d641b41178d43e8a9c28"
 PIN_HUD="0cfa5b882ff44bf6ba12dfce96ca11e262dd3ec1"
 
 def blob(data:bytes)->str:
@@ -163,7 +163,8 @@ def apply(base:Path,out:Path,enabled:bool)->bool:
     for feature in ("FB016_FOLIAGE_PASSAGE_20261114",
                     "FB017_NO_PERSISTENT_BATTLE_GUIDES",
                     "FB018_ACTION_BUTTON_TEXT_INIT",
-                    "FB019_RESPONSIVE_ATTACK_INPUT_SWING"):
+                    "FB019_RESPONSIVE_ATTACK_INPUT_SWING",
+                    "FB019_REAL_HIT_VISIBLE_SERVER_CONFIRMED_V2"):
         assert fl["feature_flags"][feature] is True,("FB019_REQUIRED_PARENT",feature)
     assert KEY not in fl["feature_flags"]
     after={**before,GAME:patch_game(before[GAME]),HUD:patch_hud(before[HUD])}
