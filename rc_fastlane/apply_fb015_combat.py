@@ -79,7 +79,9 @@ def apply(dist: Path, enabled: bool) -> bool:
     assert source_lock["total_scripts"] == BASE and source_lock["blobs"] == original, "ORIGINAL_LOCK_DRIFT"
     assert feature_lock["total_sources"] == BASE and feature_lock["source_gitblobs"] == original, "FEATURE_LOCK_DRIFT"
     assert FEATURE not in feature_lock.get("feature_flags", {}), "DUPLICATE_FEATURE_ID"
-    assert "src/client" in json.dumps(project), "NO_CLIENT_SCRIPT_DESTINATION"
+    starter = project["tree"]["StarterPlayer"]["StarterPlayerScripts"]
+    assert "ArtCombatSlash" not in starter, "DUPLICATE_ROJO_CLIENT_ENTRY"
+    assert starter["ResultNextStep"]["$path"] == "src/client/ResultNextStep.client.luau", "STARTER_LAYOUT_DRIFT"
     visual = AUTHOR.read_bytes()
     validate_visual(visual)
     new_blobs = dict(original)
@@ -100,6 +102,8 @@ def apply(dist: Path, enabled: bool) -> bool:
     }
     # All fail-closed preflight checks run before the first file write.
     (dist / "src" / DEST).write_bytes(visual)
+    starter["ArtCombatSlash"] = {"$path": "src/client/ArtCombatSlash.client.luau"}
+    project_path.write_text(json.dumps(project, ensure_ascii=False, indent=2) + "\\n", encoding="utf8")
     source_lock["total_scripts"] = BASE + 1
     source_lock["blobs"] = new_blobs
     source_lock["art_combat"] = receipt
