@@ -158,7 +158,7 @@ class Motion69Tests(unittest.TestCase):
             os.rename(p69,tomb)
             unrelated=tomb/"DO_NOT_DELETE.txt"
             unrelated.write_text("user data","utf8")
-            with self.assertRaisesRegex(RuntimeError,"MOTION69_TREE_DRIFT_NO_REMOVAL"):
+            with self.assertRaisesRegex(RuntimeError,"MOTION69_PARTIAL_TOMBSTONE_UNRELATED_FILE_REFUSED"):
                 motion.compose(p68,p69,False)
             self.assertTrue(tomb.is_dir())
             self.assertEqual(unrelated.read_text("utf8"),"user data")
@@ -184,6 +184,63 @@ class Motion69Tests(unittest.TestCase):
             self.assertTrue(motion.compose(p68,p69,False))
             self.assertFalse(journal.exists())
             self.assertEqual(original68,prior.snapshot(p68))
+
+    def test_partial_tombstone_recovery_with_missing_original_files(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            _,p68,_,_,original68=self.make_chain(root)
+            p69=root/"private69"
+            motion.compose(p68,p69,True)
+            tomb=root/"private69.motion69_removing"
+            journal=root/"private69.motion69_journal.json"
+            motion.atomic_ticket(journal,{
+                "input":str(p68),"output":str(p69),"id":motion.MANIFEST_ID
+            })
+            os.rename(p69,tomb)
+            # Simulate interrupted shutil.rmtree after deleting part of tree.
+            (tomb/"src/client/P0DNeutralMotion.client.luau").unlink()
+            (tomb/"SOURCE_LOCK.json").unlink()
+            self.assertTrue(motion.compose(p68,p69,False))
+            self.assertFalse(tomb.exists())
+            self.assertFalse(journal.exists())
+            self.assertEqual(original68,prior.snapshot(p68))
+
+    def test_partial_tombstone_with_extra_empty_directory_refused(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            _,p68,_,_,_=self.make_chain(root)
+            p69=root/"private69"
+            motion.compose(p68,p69,True)
+            tomb=root/"private69.motion69_removing"
+            journal=root/"private69.motion69_journal.json"
+            motion.atomic_ticket(journal,{
+                "input":str(p68),"output":str(p69),"id":motion.MANIFEST_ID
+            })
+            os.rename(p69,tomb)
+            (tomb/"UNRELATED_EMPTY_DIR").mkdir()
+            with self.assertRaisesRegex(RuntimeError,"MOTION69_UNEXPECTED_DIRECTORY_REFUSED"):
+                motion.compose(p68,p69,False)
+            self.assertTrue((tomb/"UNRELATED_EMPTY_DIR").is_dir())
+
+    def test_symlinked_parent_ancestor_refused(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            _,p68,_,_,_=self.make_chain(root)
+            link=root/"link"
+            link.symlink_to(root, target_is_directory=True)
+            with self.assertRaisesRegex(RuntimeError,"SYMLINK_FORBIDDEN"):
+                motion.compose(link/"private68",link/"private69",True)
+            self.assertFalse((root/"private69").exists())
+
+    def test_parent_and_output_must_share_lock_directory(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            _,p68,_,_,_=self.make_chain(root)
+            another=root/"another"
+            another.mkdir()
+            with self.assertRaisesRegex(RuntimeError,"MOTION69_PARENT_LOCK_DOMAIN_MISMATCH"):
+                motion.compose(p68,another/"private69",True)
+            self.assertFalse((another/"private69").exists())
 
     def test_symlink_output_refused(self):
         with tempfile.TemporaryDirectory() as temporary:
