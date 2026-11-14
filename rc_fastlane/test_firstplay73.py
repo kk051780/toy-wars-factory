@@ -68,6 +68,14 @@ class FirstPlay73(unittest.TestCase):
         self.assertIn("SoloTeamBots.stop()",all_src)
         self.assertIn("LobbyIsland.spawn(team)",all_src)
 
+    def test_new_castle_bounds_extend_active_only_lobby_safety_retained(self):
+        src=(ROOT/"rc_fastlane/apply_firstplay73.py").read_text()
+        self.assertIn('before_bounds="math.abs(position.X) > 130 or math.abs(position.Z) > 76"',src)
+        self.assertIn('"math.abs(position.X) > 182 or math.abs(position.Z) > 145"',src)
+        self.assertIn('"FIRSTPLAY_EXPANDED_CASTLE_RECOVERY_DRIFT"',src)
+        self.assertIn('author["lobby"].patch_game(source)',src)
+        self.assertIn('LobbyIsland.spawn(team)',(m.AUTH/"author_lobby.py").read_text())
+
     def test_seven_layers_correct_counts(self):
         self.assertEqual(m.BEFORE,71)
         self.assertEqual(m.AFTER,73)
