@@ -1,6 +1,8 @@
 --!strict
 -- P0D H1 / ISOLATED Studio-only neutral encounters. ONE Game.server drives tick/hit.
--- No RemoteEvent, no task scheduler, no XP/egg/score/damage-player authority.
+-- In Studio only: one outbound cosmetic RemoteEvent + visual-only spark cue.
+-- No OnServerEvent listener, scheduler, XP/egg/score/damage-player authority.
+local RunService=game:GetService("RunService")
 local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))
 local Horde = {}
 Horde.__index = Horde
@@ -183,10 +185,13 @@ function Horde.new(world: Instance)
     local folder=Instance.new("Folder")
     folder.Name="EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT"
     folder.Parent=world
-    -- Pure outbound visual delivery. No OnServerEvent handler or game authority.
-    local visualCue=Instance.new("RemoteEvent")
-    visualCue.Name="P0D_ART_COMBAT_SIGNAL_V1"
-    visualCue.Parent=folder
+    -- Studio-only outbound visuals; live servers create/send no unused packet.
+    local visualCue=nil
+    if RunService:IsStudio() then
+        visualCue=Instance.new("RemoteEvent")
+        visualCue.Name="P0D_ART_COMBAT_SIGNAL_V1"
+        visualCue.Parent=folder
+    end
     return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0,artCue=visualCue},Horde)
 end
 function Horde:clear()
@@ -263,11 +268,15 @@ function Horde:hit(origin: Vector3,facing: Vector3,damage: number,now: number,ig
                     m.popupUntil=now+.72
                     m.flashUntil=now+.18
                     m.body.Color=Color3.fromRGB(253,231,111)
-                    -- A reliable outbound message for EACH real server hit.
-                    -- Unlike replicated Attributes it cannot coalesce quick hits.
-                    -- This Remote has NO OnServerEvent listener / hit authority.
-                    m.artHitSeq=(m.artHitSeq or 0)+1
-                    self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)
+                    -- Every confirmed hit produces BOTH a reliable Studio client
+                    -- arc packet and a synchronous server-only 3D spark cue.
+                    -- Never allow the cosmetic Remote to accept client traffic.
+                    if self.artCue then
+                        m.artHitSeq=(m.artHitSeq or 0)+1
+                        self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)
+                        m.body:SetAttribute("P0D_ART_SPARK_V1",
+                            tostring(m.artHitSeq).."|"..(if m.hp<=0 then "K" else "H"))
+                    end
                     -- A normal enemy loses its immediate melee response when
                     -- hit. Elite warning remains readable and uninterruptible.
                     if not m.elite then
