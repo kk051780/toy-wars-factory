@@ -22,19 +22,20 @@ def blob(source:str)->str:
 
 class TwinBond(unittest.TestCase):
     def test_01_world_source_pin(self):
-        self.assertEqual(blob(WORLD),"3a28a749bd1df8e4c5acf291b9d350c771074d58")
+        self.assertEqual(blob(WORLD),"90fab81f6daaf8623c630a8ff702930e8ff358b5")
     def test_02_policy_source_pin(self):
-        self.assertEqual(blob(POLICY),"d217e8cf03893efeebe437607e196f9a6f27d50f")
+        self.assertEqual(blob(POLICY),"57e9ecfabc3aea27078704cb30c0ac184c031ef7")
     def test_03_real_native_40(self):
-        self.assertEqual(NATIVE.count('check("'),40)
-        self.assertIn("assert(tested==40",NATIVE)
+        self.assertEqual(NATIVE.count('check("'),43)
+        self.assertIn("assert(tested==43",NATIVE)
     def test_04_exact_canonical65_parent(self):
         self.assertIn('PREV_COUNT=65',ADAPTER)
         self.assertIn('GAME_PREV="cdc995d8a64f6a6f6df5abd43fb8210486328572"',ADAPTER)
         self.assertIn('TWIN_PREV="ff7c57aae79f03e3fbc72e043fe3f34f5ac373a5"',ADAPTER)
     def test_05_explicit_studio_flag(self):
         self.assertIn('P0D_ENABLE_TWIN_BOND_PVE_V1',ADAPTER)
-        self.assertIn('not RunService:IsStudio()',ADAPTER)
+        self.assertIn('not RunService:IsStudio() or not flag or not flag:IsA("BoolValue")',ADAPTER)
+        self.assertIn('local twinBondStorage = game:GetService("ServerStorage")',ADAPTER)
     def test_06_world_existing_studio_off(self):
         self.assertIn('if not RunService:IsStudio() then',WORLD)
         self.assertIn('if not value or not value:IsA("BoolValue") or value.Value ~= true then',WORLD)
@@ -52,6 +53,7 @@ class TwinBond(unittest.TestCase):
         self.assertNotIn('OnServerEvent:Connect(',WORLD)
     def test_10_level2_gate(self):
         self.assertIn('if level < 2 or player.Parent ~= Players then return end',WORLD)
+        self.assertIn('bondFlag.Value~=true then return end',WORLD)
         self.assertIn('or level<2 or level>3',POLICY)
     def test_11_cooldown_and_timeout(self):
         self.assertIn('local MAX_DURATION = 180',POLICY)
@@ -61,9 +63,10 @@ class TwinBond(unittest.TestCase):
         self.assertIn('if current.level==3 then return 1.2 end',POLICY)
         self.assertIn('return 1.1',POLICY)
         self.assertIn('return 1',POLICY)
+        self.assertIn('and old.switchAt or now+SWITCH_WAIT',POLICY)
     def test_13_game_is_only_attacker(self):
         self.assertIn('twinBondOnlyNeutralMobBonus(player)',ADAPTER)
-        self.assertIn('savedPveMinionMultiplier(player))',ADAPTER)
+        self.assertIn('math.min(3.8,savedPveMinionMultiplier(player)',ADAPTER)
         self.assertIn('remote.OnServerEvent:Connect(',ADAPTER)
         self.assertNotIn('horde:hit(',WORLD)
     def test_14_no_client_damage_authority(self):

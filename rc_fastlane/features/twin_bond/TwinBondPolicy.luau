@@ -27,7 +27,8 @@ function Bond.select(player, speciesId, level, now)
     state[player]={
         species=speciesId,level=level,
         untilAt=now+MAX_DURATION,
-        switchAt=now+SWITCH_WAIT,
+        switchAt=(old and old.untilAt>now and old.species==speciesId)
+            and old.switchAt or now+SWITCH_WAIT,
     }
     return true,speciesId
 end

@@ -548,8 +548,8 @@ jobs:
           author=Path('rc_fastlane/features/twin_bond/TwinBondPolicy.luau').read_bytes()
           runner=Path('rc_fastlane/features/twin_bond/TwinBondNative.luau').read_bytes()
           def blob(b):return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
-          assert src==author and blob(src)=='d217e8cf03893efeebe437607e196f9a6f27d50f'
-          assert runner.count(b'check("')==40
+          assert src==author and blob(src)=='57e9ecfabc3aea27078704cb30c0ac184c031ef7'
+          assert runner.count(b'check("')==43
           text=src.decode('utf8')
           assert text.count('return Bond')==1
           out=text.rsplit('return Bond',1)[0]+'\n'+runner.decode('utf8')
@@ -558,7 +558,7 @@ jobs:
           PY
             /tmp/p0d_new_luau/luau-compile /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau >/dev/null
             /tmp/p0d_new_luau/luau /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau | tee /tmp/p0d_real_bond_native40.log
-            grep -Fx P0D_TWIN_BOND_REAL_NATIVE_40_POLICY_CASES_PASS /tmp/p0d_real_bond_native40.log
+            grep -Fx P0D_TWIN_BOND_REAL_NATIVE_43_POLICY_CASES_PASS /tmp/p0d_real_bond_native40.log
           fi
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash
@@ -821,6 +821,9 @@ jobs:
               assert 'local Bond = require(script.Parent:WaitForChild("TwinBondPolicy"))' in twin_src
               assert 'summonBoundCompanion(player,info,level)' in twin_src
               assert 'buddy.CanCollide=false' in twin_src
+              assert 'bondFlag.Value~=true then return end' in twin_src
+              assert 'local twinBondStorage = game:GetService("ServerStorage")' in game_src
+              assert 'math.min(3.8,savedPveMinionMultiplier(player)' in game_src
               assert 'Bond.snapshot(player,timeNow)' in twin_src
               assert 'function Bond.pveMultiplier(' in bond_src
               project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
@@ -872,7 +875,7 @@ jobs:
             'twin_creature_training_session_only_3_levels':bool(training_enabled),
             'twin_creature_native_real_policy_cases':38 if training_enabled else None,
             'twin_bond_one_active_session_companion_pve_only':bool(bond_enabled),
-            'twin_bond_native_policy_cases':40 if bond_enabled else None,
+            'twin_bond_native_policy_cases':43 if bond_enabled else None,
             'twin_biomes_engine_2client_android_fun':'NOT_TESTED',
             'star_shards_native_policy_cases':22 if shards_enabled else None,
             'mobile_relay_touch_geometry_12viewports_144checks':True if shards_enabled else None,
@@ -922,7 +925,7 @@ jobs:
             python3 - <<'PY'
           import json
           x=json.load(open('/tmp/p0d_rc_out/RC_CAPACITY_REPORT.json'))
-          assert x['native_source_count']==65+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
+          assert x['native_source_count']==64+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
           assert x['rbxlx_bytes']>571621 and x['rbxlx_bytes']<2000000
           print('P0D_PRIVATE64_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
           PY

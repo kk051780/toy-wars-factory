@@ -353,10 +353,15 @@ local function summonBoundCompanion(player, info, level)
     -- Server-only, one anchored noncolliding sphere per player. This is
     -- visual representation; the ONLY actual PvE damage authority is Game.
     if level < 2 or player.Parent ~= Players then return end
+    local bondFlag=ServerStorage:FindFirstChild("P0D_ENABLE_TWIN_BOND_PVE_V1")
+    if not bondFlag or not bondFlag:IsA("BoolValue") or bondFlag.Value~=true then return end
     local now=os.clock()
     local granted=Bond.select(player,info.id,level,now)
     if not granted then return end
     local prior=companionsByPlayer[player]
+    if prior and prior.part.Parent and prior.species==info.id and prior.level==level then
+        return -- no duplicate instance churn on repeated same-species prompt
+    end
     if prior and prior.part.Parent then prior.part:Destroy() end
     local buddy=Instance.new("Part")
     buddy.Name="P0D_BOND_"..info.id
@@ -373,7 +378,7 @@ local function summonBoundCompanion(player, info, level)
     buddy:SetAttribute("NoDamageAuthority",true)
     buddy.Parent=world
     addSign(buddy,"BoundCompanionLabel",info.name.." 相棒 Lv"..tostring(level),2.4)
-    companionsByPlayer[player]={part=buddy,species=info.id}
+    companionsByPlayer[player]={part=buddy,species=info.id,level=level}
     player:SetAttribute("P0D_TwinBondSpecies",info.id)
     player:SetAttribute("P0D_TwinBondLevel",level)
 end
@@ -505,12 +510,14 @@ task.spawn(function()
     -- unbounded clones, physics, damage or per-player persistent data.
     while world.Parent do
         local timeNow=os.clock()
+        local liveBondFlag=ServerStorage:FindFirstChild("P0D_ENABLE_TWIN_BOND_PVE_V1")
+        local bondEnabled=liveBondFlag and liveBondFlag:IsA("BoolValue") and liveBondFlag.Value==true
         for player,companion in pairs(companionsByPlayer) do
             local active=Bond.snapshot(player,timeNow)
             local char=player.Character
             local root=char and char:FindFirstChild("HumanoidRootPart")
             local hum=char and char:FindFirstChildOfClass("Humanoid")
-            if not active or not root or not hum or hum.Health<=0
+            if not bondEnabled or not active or not root or not hum or hum.Health<=0
                 or not companion.part.Parent then
                 if companion.part.Parent then companion.part:Destroy() end
                 companionsByPlayer[player]=nil

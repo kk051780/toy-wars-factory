@@ -20,8 +20,8 @@ TWIN="server/TwinBiomes.server.luau"
 MODULE="server/TwinBondPolicy.luau"
 GAME_PREV="cdc995d8a64f6a6f6df5abd43fb8210486328572"
 TWIN_PREV="ff7c57aae79f03e3fbc72e043fe3f34f5ac373a5"
-TWIN_NEXT="3a28a749bd1df8e4c5acf291b9d350c771074d58"
-BOND_BLOB="d217e8cf03893efeebe437607e196f9a6f27d50f"
+TWIN_NEXT="90fab81f6daaf8623c630a8ff702930e8ff358b5"
+BOND_BLOB="57e9ecfabc3aea27078704cb30c0ac184c031ef7"
 TRAINING_MODULE="server/TwinCreatureTraining.luau"
 SOURCE_TWIN=ROOT/"features/twin_bond/TwinBiomesBonded.server.luau"
 SOURCE_BOND=ROOT/"features/twin_bond/TwinBondPolicy.luau"
@@ -45,10 +45,11 @@ def patch_game(before:bytes)->bytes:
         b'local SavedPvePolicy = require(script.Parent:WaitForChild("SavedPveMasteryPolicy"))\n'
         b'local TwinBond = require(script.Parent:WaitForChild("TwinBondPolicy"))')
     target=b'local function applyAttack(player: Player, data)'
-    helper=b'''local function twinBondOnlyNeutralMobBonus(player:Player):number
+    helper=b'''local twinBondStorage = game:GetService("ServerStorage")
+local function twinBondOnlyNeutralMobBonus(player:Player):number
     -- Source of companion state is only the server-side NPC ProximityPrompt.
     -- THIS original Game remains the single attack/HP/score/reward authority.
-    local flag=ServerStorage:FindFirstChild("P0D_ENABLE_TWIN_BOND_PVE_V1")
+    local flag=twinBondStorage:FindFirstChild("P0D_ENABLE_TWIN_BOND_PVE_V1")
     if not RunService:IsStudio() or not flag or not flag:IsA("BoolValue")
         or flag.Value~=true or match.phase~="ACTIVE" or carry[player]~=nil then
         return 1
@@ -60,12 +61,14 @@ end
 '''
     body=replace_once(body,target,helper+target)
     attack=b'''                    savedPveMinionMultiplier(player)),now,player.Character)'''
-    boosted=b'''                    savedPveMinionMultiplier(player))
-                    *twinBondOnlyNeutralMobBonus(player),now,player.Character)'''
+    boosted=b'''                    math.min(3.8,savedPveMinionMultiplier(player)
+                    *twinBondOnlyNeutralMobBonus(player))),now,player.Character)'''
     body=replace_once(body,attack,boosted)
     assert before.count(b"remote.OnServerEvent:Connect(")==1
     assert body.count(b"remote.OnServerEvent:Connect(")==1
     assert body.count(b"twinBondOnlyNeutralMobBonus(player)")==1
+    assert b'local twinBondStorage = game:GetService("ServerStorage")' in body
+    assert b'math.min(3.8,savedPveMinionMultiplier(player)' in body
     assert body.count(b"TwinBond.pveMultiplier(player,os.clock())")==1
     assert b"horde:hit(root.Position,look," in body
     return body
