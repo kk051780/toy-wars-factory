@@ -34,6 +34,16 @@ def verify(dist: Path, output: Path) -> None:
                     'local function tickRound()',0)
     branch=extract(game,'if match.phase == "LOBBY" then',
                    'elseif match.phase == "ACTIVE" then',start)
+    toggle=extract(game,'local function toggleMatchReady(player: Player, data)',
+                   'remote.OnServerEvent:Connect(')
+    hud=(dist/"src/client/HUD.client.luau").read_text("utf8")
+    assert 's.phase == "COUNTDOWN" and s.ready == true' in hud
+    assert 'readyButton.Visible = s.phase == "LOBBY"' in hud
+    assert '出撃中止' in hud
+    assert toggle.index('if match.phase ~= "LOBBY"') < toggle.index('lastSeq[player] = data.seq')
+    assert 'match.phaseUntil=0' in toggle
+    assert 'broadcast()' in toggle
+
     assert 'if allPlayersReadyForRound() then' in branch
     assert 'if not allPlayersReadyForRound() then' in branch
     assert 'readyForMatch[entrant]=false' in branch
@@ -68,7 +78,7 @@ def verify(dist: Path, output: Path) -> None:
     assert 'Bot.stop()' in bot
     assert 'StarterPlayerScripts' in proj
 
-    native=StringRawNativeHead+"\n"+pregame+"\n"+StringRawNativeMiddle+"\n"+branch+"\n"+StringRawNativeTail
+    native=StringRawNativeHead+"\n"+pregame+"\n"+toggle+"\n"+StringRawNativeMiddle+"\n"+branch+"\n"+StringRawNativeTail
     output.parent.mkdir(parents=True,exist_ok=True)
     output.write_text(native,encoding="utf8")
     print("P0D_FIRSTPLAY_COMPOSED_GAME_REAL_SOURCE_P0P1_ASSERTIONS_PASS")
@@ -85,6 +95,13 @@ local RunService={}
 function RunService:IsStudio() return true end
 local Config={MinPlayers=2,IntermissionSeconds=2}
 local readyForMatch={}
+local lastSeq={}
+local Rules={}
+function Rules.validSeq(seq,last)
+  return type(seq)=="number" and seq>last and seq<=last+99999
+end
+local broadcastCount=0
+local function broadcast() broadcastCount+=1 end
 local match={phase="LOBBY",phaseUntil=0}
 local function teamCount(side)
   local n=0
@@ -167,6 +184,36 @@ check(match.phase=="COUNTDOWN","TWO_CLIENT_REARMED")
 tickRealReadyTransition(16)
 check(match.phase=="ACTIVE" and resetCount==2,"TWO_CLIENT_START")
 print("P0D_FIRSTPLAY_ACTUAL_GAME_READY_10_NATIVE_BEHAVIOR_CASES_PASS")
+Players.online={p1}
+reset()
+lastSeq[p1]=0
+local countBefore=broadcastCount
+toggleMatchReady(p1,{action="READY_TOGGLE",seq=1})
+check(readyForMatch[p1]==true and lastSeq[p1]==1,"INPUT_SOLO_READY_ACCEPTED")
+tickRealReadyTransition(18)
+check(match.phase=="COUNTDOWN","INPUT_SOLO_STARTED_COUNTDOWN")
+toggleMatchReady(p1,{action="READY_TOGGLE",seq=2})
+check(match.phase=="LOBBY" and readyForMatch[p1]==false,"INPUT_SOLO_CANCEL_IMMEDIATELY")
+check(match.phaseUntil==0,"INPUT_SOLO_CANCEL_CLEAR_TIMER")
+check(broadcastCount==countBefore+2,"INPUT_SOLO_CANCEL_BROADCAST")
+local previousSeq=lastSeq[p1]
+match.phase="ACTIVE"
+toggleMatchReady(p1,{action="READY_TOGGLE",seq=9000})
+check(lastSeq[p1]==previousSeq,"INPUT_ACTIVE_READY_CANNOT_POISON_ATTACK_SEQ")
+check(broadcastCount==countBefore+2,"INPUT_ACTIVE_READY_NO_BROADCAST")
+Players.online={p1,p2}
+reset()
+lastSeq[p2]=0
+readyForMatch[p1]=true
+local previousPeerBroadcast=broadcastCount
+toggleMatchReady(p2,{action="READY_TOGGLE",seq=1})
+check(readyForMatch[p2]==true,"INPUT_TWO_PLAYER_READY")
+tickRealReadyTransition(22)
+check(match.phase=="COUNTDOWN","INPUT_TWO_PLAYER_COUNTDOWN")
+toggleMatchReady(p2,{action="READY_TOGGLE",seq=2})
+check(match.phase=="LOBBY" and not readyForMatch[p2],"INPUT_TWO_PLAYER_CANCEL_IMMEDIATE")
+check(broadcastCount==previousPeerBroadcast+2,"INPUT_TWO_PLAYER_CANCEL_NOTIFIES_PEER")
+print("P0D_FIRSTPLAY_ACTUAL_GAME_READY_INPUT_11_NATIVE_CASES_PASS")
 '''
 
 if __name__=="__main__":
