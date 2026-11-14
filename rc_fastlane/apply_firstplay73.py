@@ -16,9 +16,12 @@ import hashlib
 import importlib.util
 import json
 from pathlib import Path
-from rc_fastlane import qa_firstplay_p0
 
 ROOT = Path(__file__).resolve().parent
+_QA_SPEC=importlib.util.spec_from_file_location("firstplay_integrated_qa",ROOT/"qa_firstplay_p0.py")
+assert _QA_SPEC and _QA_SPEC.loader
+qa_firstplay_p0=importlib.util.module_from_spec(_QA_SPEC)
+_QA_SPEC.loader.exec_module(qa_firstplay_p0)
 AUTH = ROOT / "features/firstplay73"
 FEATURE = "P0D_FIRSTPLAY_READY_LOBBY_SOLO_ON_ART71_PRIVATE_V1"
 BEFORE = 71
