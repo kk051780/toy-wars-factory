@@ -20,6 +20,15 @@ def emit(dist:Path,out:Path):
     assert branch.count('horde:reset(match.serial,serverNow())')==1
     assert 'game.PrivateServerId ~= ""' in branch
     assert 'workspace:GetAttribute("P0D_PRIVATE_LIVE_HORDE") == true' in branch
+    attack_anchor='    -- Original ATTACK cooldown/seq/phase also gates PvE. No second Remote or damage event.\n'
+    tick_anchor='    -- Existing server tick is the sole PvE attack authority; no extra game loop.\n'
+    assert s.count(attack_anchor)==1 and s.count(tick_anchor)==1
+    attack_line=s.split(attack_anchor,1)[1].splitlines()[0]
+    tick_line=s.split(tick_anchor,1)[1].splitlines()[0]
+    assert attack_line.strip().startswith('if RunService:IsStudio() or (game.PrivateServerId')
+    assert tick_line.strip().startswith('if (RunService:IsStudio() or (game.PrivateServerId')
+    assert 'and match.phase=="ACTIVE" then' in tick_line
+    assert s.count('if RunService:IsStudio() and not EXPERIMENTAL_FIVE_EGG_MODE then')==1
     luau=r'''--!nocheck
 -- Original Game branch extracted exactly from built RC81, NOT engine live evidence.
 local studio=true
@@ -30,7 +39,7 @@ local workspace={GetAttribute=function(_,name)
  assert(name=="P0D_PRIVATE_LIVE_HORDE")
  return allowed
 end}
-local match={serial=7}
+local match={serial=7,phase="ACTIVE"}
 local reset_count=0
 local seenSerial={}
 local horde={reset=function(_,serial,now)
@@ -42,6 +51,18 @@ local function serverNow() return 42 end
 local function start()
 ''' + branch + r'''
 end
+local function attackAllowed()
+''' + attack_line + r'''
+        return true
+    end
+    return false
+end
+local function tickAllowed()
+''' + tick_line + r'''
+        return true
+    end
+    return false
+end
 local function check(label,s,p,allowedAttr,want)
  studio=s
  game.PrivateServerId=p
@@ -50,6 +71,8 @@ local function check(label,s,p,allowedAttr,want)
  table.clear(seenSerial)
  start()
  assert(reset_count==want,label.." wrong reset count")
+ assert(attackAllowed()==(want>0),label.." real attack guard failed")
+ assert(tickAllowed()==(want>0),label.." real horde tick guard failed")
  if want>0 then assert(seenSerial[1]==match.serial,label.." bad serial") end
 end
 check("STUDIO_ORIGINAL",true,"",false,1)
@@ -61,7 +84,9 @@ check("PRIVATE_OWNER_OPTIN",false,"private-unique",true,1)
 match.serial=8
 check("PRIVATE_NEXT_ROUND_SERIAL",false,"private-unique",true,1)
 check("PRIVATE_DISABLED_AFTER_OPTIN",false,"private-unique",false,0)
-print("P0D_REAL_GAME_PRIVATE_HORDE_NATIVE8_GUARD_CASES_PASS")
+match.phase="LOBBY"
+assert(not tickAllowed(),"LOBBY_MUST_NOT_RUN_HORDE_AI")
+print("P0D_REAL_GAME_PRIVATE_HORDE_NATIVE8_RESET_ATTACK_TICK_GUARDS_PASS")
 '''
     out.write_text(luau,"utf8")
     print("P0D_REAL_GAME_PRIVATE_HORDE_GUARD_EXTRACTED",len(branch))
