@@ -63,6 +63,16 @@ class TestBotPathRaceFix(unittest.TestCase):
         self.assertIn("lastTick=-math.huge",stop)
         self.assertIn("callbacks=nil",stop)
 
+    def test_bot_start_soft_fail_and_exception_exit_empty_match(self):
+        adapter=Path(parent.__file__).read_text("utf8")
+        self.assertEqual(adapter.count("pcall(SoloTeamBots.start,map,"),1)
+        self.assertIn("if not ok or started~=true then",adapter)
+        self.assertIn('stopRound("DRAW","SOLO_BOTS_NOT_READY")',adapter)
+        self.assertIn('if match.phase=="ACTIVE" and studioSoloRoundStarted',adapter)
+        self.assertIn('and #Players:GetPlayers()==1 then',adapter)
+        self.assertIn('SoloTeamBots.stop()',adapter)
+        self.assertNotIn('if not ok then\n                    warn("FB005_SOLO_START_FAIL_CLOSED"',adapter)
+
     def test_unchanged_single_game_owner_and_bot_is_not_player(self):
         s=self.src
         self.assertNotIn('Instance.new("RemoteEvent")',s)
