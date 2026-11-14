@@ -105,6 +105,14 @@ def compose(previous: dict[str, bytes]) -> tuple[dict[str,bytes], dict]:
     source=author["ready"].patch_game(source)
     source=author["lobby"].patch_game(source)
     source=author["solo"].patch_game(source)
+    # Integration-only correction: #366 castle expands GrassArena to 370x294.
+    # The authored #376 lobby's old ACTIVE out-of-bounds threshold 130x76
+    # would teleport visitors near new castle keeps at x=145. Preserve lobby
+    # phase checks untouched; extend ACTIVE recovery only, inside actual walls.
+    before_bounds="math.abs(position.X) > 130 or math.abs(position.Z) > 76"
+    assert source.count(before_bounds)==1, "FIRSTPLAY_EXPANDED_CASTLE_RECOVERY_DRIFT"
+    source=source.replace(before_bounds,
+        "math.abs(position.X) > 182 or math.abs(position.Z) > 145",1)
     assert source.count("remote.OnServerEvent:Connect(")==1
     assert source.count("local function tickRound()")==1
     assert source.count("local function stopRound(")==1
