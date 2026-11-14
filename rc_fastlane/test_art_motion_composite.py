@@ -277,6 +277,52 @@ class Motion69Tests(unittest.TestCase):
                 motion.compose(p68,another/"private69",True)
             self.assertFalse((another/"private69").exists())
 
+    def test_off_rejects_new_empty_folder_in_candidate(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            _,p68,_,_,_=self.make_chain(root)
+            p69=root/"private69"
+            motion.compose(p68,p69,True)
+            extra=p69/"NEW_EMPTY_OWNER_FOLDER"
+            extra.mkdir()
+            with self.assertRaisesRegex(RuntimeError,"MOTION69_UNEXPECTED_DIRECTORY_REFUSED"):
+                motion.compose(p68,p69,False)
+            self.assertTrue(extra.is_dir())
+            extra.rmdir()
+            self.assertTrue(motion.compose(p68,p69,False))
+
+    def test_race_added_file_during_off_is_not_deleted(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            from unittest import mock
+            root=Path(temporary)
+            _,p68,_,_,_=self.make_chain(root)
+            p69=root/"private69"
+            motion.compose(p68,p69,True)
+            tomb=root/"private69.motion69_removing"
+            rogue=tomb/"LATE_OWNER_WROTE_THIS.txt"
+            orig_unlink=os.unlink
+            inserted=[False]
+
+            def concurrent_writer(path,*args,**kwargs):
+                result=orig_unlink(path,*args,**kwargs)
+                if not inserted[0] and tomb.exists():
+                    inserted[0]=True
+                    rogue.write_text("PRESERVE CONCURRENT DATA","utf8")
+                return result
+
+            with mock.patch.object(motion.os,"unlink",side_effect=concurrent_writer):
+                with self.assertRaises(OSError):
+                    motion.compose(p68,p69,False)
+            self.assertTrue(inserted[0])
+            self.assertEqual(rogue.read_text("utf8"),"PRESERVE CONCURRENT DATA")
+            with self.assertRaisesRegex(
+                    RuntimeError,"MOTION69_PARTIAL_TOMBSTONE_UNRELATED_FILE_REFUSED"):
+                motion.compose(p68,p69,False)
+            self.assertEqual(rogue.read_text("utf8"),"PRESERVE CONCURRENT DATA")
+            rogue.unlink()
+            self.assertTrue(motion.compose(p68,p69,False))
+            self.assertFalse(tomb.exists())
+
     def test_symlink_output_refused(self):
         with tempfile.TemporaryDirectory() as temporary:
             root=Path(temporary)
