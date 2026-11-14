@@ -20,8 +20,8 @@ def verify(dist: Path, output: Path) -> None:
     reset=src.index('local function resetRound()',start)
     stopper=src[start:reset]
     clear=re.search(
-        r'for _, participant in ipairs\(Players:GetPlayers\(\)\) do\s+'
-        r'roundReady\[participant\] = false\s+end',stopper)
+        r'for _, player in ipairs\(Players:GetPlayers\(\)\) do\s+'
+        r'roundReady\[player\] = false\s+end',stopper)
     assert clear, "REAL_STOP_ROUND_DOES_NOT_REVOKE_ALL_READY"
     tick=src.index('local function tickRound()')
     a=src.index('elseif match.phase == "RESULTS" then',tick)
