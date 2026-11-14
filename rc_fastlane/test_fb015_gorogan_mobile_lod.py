@@ -28,6 +28,8 @@ class GoroganMobileLOD(unittest.TestCase):
     def test_patch_pc_near_full_art_mobile_real_lod(self):
         s=patch(self.source_before).decode("utf8")
         self.assertIn('LOW_END_TOUCH',s)
+        self.assertIn('art:SetAttribute("BeastLodPolicy", "FB015_GOROGAN_MOBILE_LOD_V1")',s)
+        self.assertNotIn('art:SetAttribute("BeastLodPolicy", FEATURE)',s)
         self.assertIn('MobileDetailRadiusStuds", 52)',s)
         self.assertIn('MobileSilhouetteRadiusStuds", 118)',s)
         self.assertIn('name == "ObsidianChestPlate"',s)
