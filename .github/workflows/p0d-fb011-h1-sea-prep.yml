@@ -1,0 +1,41 @@
+name: P0D FB-011 H1 Sea Coastal PREP
+
+on:
+  push:
+    branches:
+      - feature/p0d-prep-fb011-sea-coast-v1-20261114
+
+permissions:
+  contents: read
+
+jobs:
+  h1-sea-luau-and-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test original objective coordinates and authored scene geometry contract
+        run: python3 -B -m unittest discover -s rc_fastlane -p 'test_fb011_sea.py' -v
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_rc_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Reuse pinned Luau native compiler
+        uses: actions/cache@v4
+        with:
+          path: /tmp/p0d_new_luau
+          key: p0d-rc-luau-ubuntu-f46d879e28302-v1
+      - name: Compile authored castle map with pinned real Luau compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_rc_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          if [ ! -x /tmp/p0d_new_luau/luau-compile ]; then
+            cmake -S _p0d_rc_luau -B /tmp/p0d_new_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+            cmake --build /tmp/p0d_new_luau --target Luau.Compile.CLI --parallel 4
+          fi
+          /tmp/p0d_new_luau/luau-compile rc_fastlane/features/fb011_sea/H1SeaCoast.server.luau > /tmp/owner361_castle_native.out
+          echo 'FB011_H1_SEA_NATIVE_SOURCE_ONLY_PASS_NOT_STUDIO_NOT_OFFICIAL'
