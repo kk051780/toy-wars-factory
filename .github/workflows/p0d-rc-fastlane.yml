@@ -2230,20 +2230,6 @@ jobs:
           print('P0D_RC81_LIVE_CASTLE_SOURCE_AND_ORIGINAL80_EXACT_PASS',report['place_bytes'],report['place_sha256'])
           print('P0D_LIVE_ART_NO_GO_LEGACY_7_GUARDS',report['live_art_legacy_studio_only_layers'])
           PY
-      - uses: actions/upload-artifact@v4
-        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
-        with:
-          name: P0D-CANONICAL-RC81-LIVE-SAFE-CASTLE-FALLBACK-NO-GO
-          path: /tmp/p0d_live_safe_castle81_artifact/*
-          retention-days: 14
-          if-no-files-found: error
-      - uses: actions/upload-artifact@v4
-        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
-        with:
-          name: P0D-PRIVATE-RC81-LIVE-SAFE-CASTLE-FALLBACK-NO-GO
-          path: /tmp/p0d_live_safe_castle81_artifact/*
-          retention-days: 14
-          if-no-files-found: error
 
       - name: 'P0 #444 source-only private 9 neutral Horde canary; public unchanged off'
         if: ${{ env.PROFILE == 'rich51' }}
@@ -2344,26 +2330,19 @@ jobs:
           (dest/'PRIVATE_HORDE_FULL_RECEIPT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
           print('P0D_PRIVATE_HORDE81_FULL_REAL_PLACE_PASS',report['place_bytes'],report['place_sha256'])
           PY
-      - uses: actions/upload-artifact@v4
-        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
-        with:
-          name: P0D-CANONICAL-RC81-PRIVATE-HORDE9-SOURCE-NO-GO
-          path: /tmp/p0d_private_live_horde81_evidence/*
-          retention-days: 14
-          if-no-files-found: error
-      - uses: actions/upload-artifact@v4
-        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
-        with:
-          name: P0D-PRIVATE-RC81-HORDE9-SOURCE-NO-GO
-          path: /tmp/p0d_private_live_horde81_evidence/*
-          retention-days: 14
-          if-no-files-found: error
       - name: 'P0 #444 V2 PRIVATE Horde real Game ATTACK and 0.5s tick after official B reset'
+        id: horde_v2
         if: env.PROFILE == 'rich51'
         shell: bash
         run: |
           set -euo pipefail
           BASE=/tmp/p0d_private_live_horde81_dist
+          if [ "$(find "$BASE/src" -name '*.luau' | wc -l)" -ne 81 ]; then
+            echo "built=false" >> "$GITHUB_OUTPUT"
+            echo "P0D_HORDE_V2_SKIP_WHEN_CASTLE_RC80_FALLBACK"
+            exit 0
+          fi
+          echo "built=true" >> "$GITHUB_OUTPUT"
           FINAL=/tmp/p0d_horde_private_lifecycle_v2_81
           OUT=/tmp/p0d_horde_private_lifecycle_v2_artifact
           PLACE="$OUT/P0D_RC81_PRIVATE_HORDE_LIFECYCLE_V2_STUDIO.rbxlx"
@@ -2384,6 +2363,9 @@ jobs:
           /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
           python3 -B rc_fastlane/verify_private_horde_combat.py \
             --dist "$FINAL" --place "$PLACE" --receipt "$OUT/HORDE_LIFECYCLE_EXACT.json"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" --place "$PLACE" \
+            --receipt "$OUT/RC81_V2_PRE_UPLOAD_FULL_INSTANCE_BINDINGS.json" --count 81
           python3 -B art_quality/check_art_quality.py \
             --place "$PLACE" --out "$OUT/ART_SOURCE_REPORT.json"
           python3 -B art_quality/check_live_art_parity.py \
@@ -2428,17 +2410,97 @@ jobs:
           print('P0D_PRIVATE_HORDE_V2_SOURCE81_QA_NOT_ENGINE_GO',result['place_bytes'],result['place_sha256'])
           PY
 
+      - name: 'P0 #420 final RC81 genuine Castle, Horde1 and Horde2 full Instance path+class+source gate'
+        if: env.PROFILE == 'rich51'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
+          python3 -B -m unittest discover -s art_quality -p test_rc_source_identity.py -v
+          OUT=/tmp/p0d_rc81_full_bindings_v2_receipts
+          mkdir -p "$OUT"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist /tmp/p0d_live_safe_castle81_source \
+            --place /tmp/p0d_live_safe_castle81_artifact/P0D_RC81_LIVE_SAFE_CASTLE_ART4_STUDIO_PREVIEW.rbxlx \
+            --receipt "$OUT/01_CASTLE_BINDINGS.json" \
+            --count "$(find /tmp/p0d_live_safe_castle81_source/src -name '*.luau' | wc -l)"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist /tmp/p0d_private_live_horde81_dist \
+            --place /tmp/p0d_private_live_horde81_evidence/P0D_RC81_PRIVATE_HORDE9_LIVE_CASTLE_STUDIO_CANDIDATE.rbxlx \
+            --receipt "$OUT/02_HORDE_RESET_BINDINGS.json" \
+            --count "$(find /tmp/p0d_private_live_horde81_dist/src -name '*.luau' | wc -l)"
+          if [ -f /tmp/p0d_horde_private_lifecycle_v2_artifact/P0D_RC81_PRIVATE_HORDE_LIFECYCLE_V2_STUDIO.rbxlx ]; then
+            python3 -B art_quality/verify_rc_source_identity.py \
+              --dist /tmp/p0d_horde_private_lifecycle_v2_81 \
+              --place /tmp/p0d_horde_private_lifecycle_v2_artifact/P0D_RC81_PRIVATE_HORDE_LIFECYCLE_V2_STUDIO.rbxlx \
+              --receipt "$OUT/03_HORDE_REAL_ATTACK_AI_BINDINGS.json" --count 81
+          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          root=Path('/tmp/p0d_rc81_full_bindings_v2_receipts')
+          records=[json.loads(p.read_text('utf8')) for p in sorted(root.glob('*.json'))]
+          assert len(records) in (2,3)
+          assert all(
+              x['embedded_count']==x['source_count']
+              and x['all_instance_class_name_path_source_exact']
+              and x['all_ancestor_container_class_exact']
+              and x['source_gate']=='PASS'
+              and x['art_decision']=='ART_NO_GO'
+              and x['mobile_decision']=='MOBILE_NO_GO'
+              and x['fun_decision']=='FUN_NO_GO'
+              and x['owner_accepted'] is False
+              for x in records
+          ), 'UNVERIFIED_RC_PLACE_MUST_NOT_BE_UPLOADED'
+          print('P0D_RC81_FULL_3_STUDIO_IDENTITY_NOT_ART_GO',
+                len(records),sum(x['embedded_count'] for x in records))
+          PY
       - uses: actions/upload-artifact@v4
-        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
+        with:
+          name: P0D-CANONICAL-RC81-LIVE-SAFE-CASTLE-FALLBACK-NO-GO
+          path: /tmp/p0d_live_safe_castle81_artifact/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        with:
+          name: P0D-PRIVATE-RC81-LIVE-SAFE-CASTLE-FALLBACK-NO-GO
+          path: /tmp/p0d_live_safe_castle81_artifact/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
+        with:
+          name: P0D-CANONICAL-RC81-PRIVATE-HORDE9-SOURCE-NO-GO
+          path: /tmp/p0d_private_live_horde81_evidence/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        with:
+          name: P0D-PRIVATE-RC81-HORDE9-SOURCE-NO-GO
+          path: /tmp/p0d_private_live_horde81_evidence/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' && steps.horde_v2.outputs.built == 'true'
         with:
           name: P0D-CANONICAL-RC81-PRIVATE-HORDE-FULL-LIFECYCLE-V2-SOURCE-NOGO
           path: /tmp/p0d_horde_private_lifecycle_v2_artifact/*
           retention-days: 14
           if-no-files-found: error
       - uses: actions/upload-artifact@v4
-        if: env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        if: env.PROFILE == 'rich51' && github.event_name == 'pull_request' && steps.horde_v2.outputs.built == 'true'
         with:
           name: P0D-PRIVATE-RC81-HORDE-FULL-LIFECYCLE-V2-SOURCE-NOGO
           path: /tmp/p0d_horde_private_lifecycle_v2_artifact/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        with:
+          name: P0D-RC81-ALL-PLACE-INSTANCE-IDENTITY-SOURCE-QA
+          path: /tmp/p0d_rc81_full_bindings_v2_receipts/*
           retention-days: 14
           if-no-files-found: error
