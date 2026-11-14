@@ -255,7 +255,19 @@ check(same(sideways.root.Position,V(0,2,4)),
   "SIDESTEP_PHYSICS_POSITION_NEVER_FORCED")
 check(sideways.detourUntil>35.1,
   "DETOUR_HAS_FINITE_HOLD_DURATION")
-print("P0D_SOLO_REAL_BOT_START_AND_STALL_35_NATIVE_CASES_PASS")
+-- Elevated castle/bridge goal must not be treated as arrived merely
+-- because its horizontal XZ offset is small.
+local elevated={root={Position=V(50,12,0)},path={},pathIndex=1,
+  pathGeneration=0,lastGoal=nil,planning=false,
+  hum={MoveTo=function(self,p) self.lastDestination=p end,Jump=false}}
+move(elevated,V(50,0,0),0)
+check(same(elevated.hum.lastDestination,V(50,0,0)),
+  "ELEVATED_GOAL_REQUIRES_REAL_MOVEMENT")
+check(elevated.pathCalls==1 and elevated.detourGoal==nil,
+  "ELEVATED_GOAL_NOT_MARKED_ARRIVED")
+check(same(elevated.root.Position,V(50,12,0)),
+  "ELEVATED_MOVE_NEVER_TELEPORTS")
+print("P0D_SOLO_REAL_BOT_START_AND_STALL_38_NATIVE_CASES_PASS")
 '''
 if __name__=="__main__":
     p=argparse.ArgumentParser()
