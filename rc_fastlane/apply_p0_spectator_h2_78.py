@@ -167,9 +167,12 @@ def patch_game(src:str)->str:
     # Onehuman SCORE vote => CLASSIC bots; H2 SCORE if >1 eligible fighters.
     # Vote tally itself must exclude observers, not only the SCORE gate.
     # Otherwise a spectator can alter a legitimate two-human vote.
-    src=once(src,
-        'ModeVote.tally(modeVotes,Players:GetPlayers())',
-        'ModeVote.tally(modeVotes,eligibleSoloPlayers())')
+    voteCall='ModeVote.tally(modeVotes,Players:GetPlayers())'
+    # Existing Game tallies on both lobby/status and round freeze paths.
+    # Neither one may allow a neutral spectator to influence H2 selection.
+    assert src.count(voteCall)==2,("MODE_VOTE_DUAL_OWNER_DRIFT",src.count(voteCall))
+    src=src.replace(voteCall,'ModeVote.tally(modeVotes,eligibleSoloPlayers())')
+    assert src.count('ModeVote.tally(modeVotes,eligibleSoloPlayers())')==2
     src=once(src,
         '#Players:GetPlayers()>1 and chosenMode==ModeVote.SCORE',
         '#eligibleSoloPlayers()>1 and chosenMode==ModeVote.SCORE')
