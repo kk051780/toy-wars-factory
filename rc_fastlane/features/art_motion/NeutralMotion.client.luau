@@ -83,7 +83,10 @@ local function tryEquip(model)
             })
         end
     end
-    if #attachments == 0 then return false end
+    -- The server author marks P0D_ART_MINION_V1 before creating the art.
+    -- Do not lock the observer to an incomplete first child attachment.
+    -- Wait for all expected accessory parts before taking a fixed offset.
+    if #attachments ~= #watchedParts[kind] then return false end
     records[model] = {
         core=core, model=model, kind=kind, attachments=attachments,
         prevPos=core.Position, speed=0, hitAt=-100, koAt=-100,
