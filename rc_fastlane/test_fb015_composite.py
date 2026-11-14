@@ -356,5 +356,22 @@ finally:
             self.assertFalse(combo.receipt_path(output).exists())
             self.assertEqual((external/"secret").read_text("utf8"),"KEEP")
 
+    def test_dangling_composite_delete_journal_and_tombstone_refused(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            out=root/"private68"
+            combo.compose(d,out,True)
+            for suffix in (".fb015_delete_journal.json",".fb015_deleting"):
+                reserved=out.with_name(out.name+suffix)
+                reserved.symlink_to(root/"missing_user_target")
+                with self.assertRaisesRegex(RuntimeError,
+                        "COMPOSITE_RESERVED_SYMLINK_REFUSED"):
+                    combo.compose(d,out,False)
+                self.assertTrue(reserved.is_symlink())
+                reserved.unlink()
+            self.assertTrue(combo.compose(d,out,False))
+
 if __name__ == "__main__":
     unittest.main()
