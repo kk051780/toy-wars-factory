@@ -11,6 +11,9 @@ from __future__ import annotations
 import hashlib
 from pathlib import Path
 import stat
+import json
+import os
+import tempfile
 
 
 def strict_inventory(root: Path, exclude: str = "") -> dict[str, str]:
@@ -36,3 +39,24 @@ def strict_inventory(root: Path, exclude: str = "") -> dict[str, str]:
         else:
             raise RuntimeError("FB015_SPECIAL_ENTRY_REFUSED:" + rel)
     return entries
+
+def verify_partial_tree(root: Path, expected: dict[str,str]) -> None:
+    """Only known, byte-and-type-identical leftovers can be resumed."""
+    remaining=strict_inventory(root)
+    if not all(name in expected and identity==expected[name]
+               for name, identity in remaining.items()):
+        raise RuntimeError("FB015_PARTIAL_DELETE_UNTRUSTED_LEFTOVERS")
+
+def atomic_json(path: Path, payload: dict) -> None:
+    """Write external manifest / recovery journal atomically on same fs."""
+    fd,name=tempfile.mkstemp(prefix="."+path.name+".",dir=path.parent)
+    try:
+        with os.fdopen(fd,"w",encoding="utf8") as f:
+            json.dump(payload,f,sort_keys=True,ensure_ascii=False)
+            f.write("\n")
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(name,path)
+    finally:
+        if os.path.exists(name):
+            os.unlink(name)
