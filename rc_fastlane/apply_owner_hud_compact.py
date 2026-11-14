@@ -60,7 +60,7 @@ SNAPSHOT_INSERT = """if s.kind ~= "SNAPSHOT" then return end
 
 
 def gitblob(raw: bytes) -> str:
-    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\\0" + raw).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
 
 
 def inventory(dist: Path) -> dict[str, bytes]:
@@ -75,11 +75,11 @@ def transform(source: str) -> str:
     assert source.count('local instructions = label(gui, "Instructions"') == 1, "HELP_ANCHOR_DRIFT"
     assert source.count('if s.kind ~= "SNAPSHOT" then return end') == 1, "SNAPSHOT_ANCHOR_DRIFT"
     # This line is authored once and followed by other HUD widget definitions.
-    anchor = re.compile(r"(?m)^instructions\\.Text\\s*=\\s*[^\\n]+$")
+    anchor = re.compile(r"(?m)^instructions\.Text\s*=\s*[^\n]+$")
     matches = list(anchor.finditer(source))
     assert len(matches) == 1, ("INSTRUCTIONS_TEXT_DRIFT", len(matches))
     m = matches[0]
-    result = source[:m.end()] + "\\n" + HUD_INSERT + source[m.end():]
+    result = source[:m.end()] + "\n" + HUD_INSERT + source[m.end():]
     result = result.replace('if s.kind ~= "SNAPSHOT" then return end',
                             SNAPSHOT_INSERT, 1)
     assert result.count(START) == 1 and result.count(END) == 1
@@ -131,8 +131,8 @@ def run(dist: Path, enabled: bool) -> bool:
     feature.setdefault("feature_flags", {})[FEATURE] = True
     # No writes above this line. Do not rewrite the project definition.
     (dist / "src" / HUD).write_bytes(updated)
-    lockpath.write_text(json.dumps(lock, ensure_ascii=False, indent=2) + "\\n", "utf8")
-    featurepath.write_text(json.dumps(feature, ensure_ascii=False, indent=2) + "\\n", "utf8")
+    lockpath.write_text(json.dumps(lock, ensure_ascii=False, indent=2) + "\n", "utf8")
+    featurepath.write_text(json.dumps(feature, ensure_ascii=False, indent=2) + "\n", "utf8")
     assert inventory(dist) == after
     assert json.loads(lockpath.read_text("utf8"))["blobs"] == newpins
     print("P0D_OWNER_COMPACT_HUD_65_SOURCES_ONLY_ONE_HUD_CHANGED_SOURCE_LOCK_PASS")
