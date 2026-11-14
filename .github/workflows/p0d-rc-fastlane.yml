@@ -2556,7 +2556,7 @@ jobs:
           c=json.loads((out/'HIT_ART_FINAL_SOURCE_RECEIPT.json').read_text())
           art=json.loads((out/'ART_SOURCE_GATE.json').read_text())
           live=json.loads((out/'LIVE_ART_PARITY_NO_GO.json').read_text())
-          identity=json.loads((o/'RC81_FULL_CLASS_PATH_SOURCE_IDENTITY.json').read_text())
+          identity=json.loads((out/'RC81_FULL_CLASS_PATH_SOURCE_IDENTITY.json').read_text())
           assert identity['embedded_count']==identity['source_count']==81
           assert identity['all_instance_class_name_path_source_exact']
           assert identity['all_ancestor_container_class_exact']
