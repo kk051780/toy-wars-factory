@@ -25,7 +25,7 @@ def verify(dist:Path,place:Path,receipt:Path):
     assert s.count("local function applyAttack(player: Player, data)")==1
     assert s.count("remote.OnServerEvent:Connect(")==1
     assert s.count('kind="P0D_ATTACK_RESULT"')==1
-    assert s.count('attackResponse("HIT"')==5
+    assert s.count('attackResponse("HIT"')==6
     assert s.count('attackResponse("MISS"')==6
     assert "if hum.Health<beforeHp then" in s
     assert 'remote:FireClient(player,snapshotFor(player))' in s
