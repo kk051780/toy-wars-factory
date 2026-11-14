@@ -28,7 +28,9 @@ def emit(dist:Path,out:Path):
     assert attack_line.strip().startswith('if RunService:IsStudio() or (game.PrivateServerId')
     assert tick_line.strip().startswith('if (RunService:IsStudio() or (game.PrivateServerId')
     assert 'and match.phase=="ACTIVE" then' in tick_line
-    assert s.count('if RunService:IsStudio() and not EXPERIMENTAL_FIVE_EGG_MODE then')==1
+    studio_bot_tick=('        -- The same ORIGINAL Game tick drives Studio bots. No second match loop.\\n'
+                     '        if RunService:IsStudio() and not EXPERIMENTAL_FIVE_EGG_MODE then')
+    assert s.count(studio_bot_tick)==1
     luau=r'''--!nocheck
 -- Original Game branch extracted exactly from built RC81, NOT engine live evidence.
 local studio=true
