@@ -7,7 +7,8 @@
     "FB016_ART_CAMERA_SIGHTLINE_V2": true,
     "FB015_GOROGAN_MOBILE_LOD_V1": true,
     "FB015_LIVE_CASTLE_SAFE_PARITY_V1": true,
-    "P0D_PRIVATE_LIVE_HORDE_NINE_V1": true
+    "P0D_PRIVATE_LIVE_HORDE_NINE_V1": true,
+    "P0D_PRIVATE_LIVE_HORDE_ATTACK_TICK_V2": true
   },
   "base_official_head": "f4e64c9248423f9c021f633b80e554706f7a66e4",
   "base_original_place_bytes": 744130,
@@ -51,5 +52,27 @@
     "child_fun_first3min": "NOT_TESTED",
     "art_decision": "ART_NO_GO",
     "rollback": "Disable this flag and recompile original 81 source"
+  },
+  "private_full_horde_lifecycle_v2": {
+    "issue": 444,
+    "feature": "P0D_PRIVATE_LIVE_HORDE_ATTACK_TICK_V2",
+    "official_parent_before_selection": "0287c696bd2467177236c46a1b2b39646d5aa2b9",
+    "changed_source": "server/Game.server.luau",
+    "original_reset_unchanged": true,
+    "old_horde_byte_unchanged": true,
+    "new_guard_count": 2,
+    "studio_only_SoloTeamBots_tick_retained": true,
+    "expected_luau_count": 81,
+    "public_server": "OFF",
+    "private_without_pre_round_server_attribute": "OFF",
+    "private_with_owner_pre_round_server_attribute": "SOURCE_ONLY_NOT_ENGINE_VERIFIED",
+    "original_80_other_sources_unchanged": true,
+    "real_neutral9": "NOT_TESTED",
+    "real_damage_popup": "NOT_TESTED",
+    "real_android15min": "NOT_TESTED",
+    "real_child_fun_first3min": "NOT_TESTED",
+    "owner_accepted": false,
+    "release": "NOT_AUTHORIZED",
+    "rollback": "Disable source-stage V2 overlay and rebuild from verified official P0 #444 reset1 canary"
   }
 }
