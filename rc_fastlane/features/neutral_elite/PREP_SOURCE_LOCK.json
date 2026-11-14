@@ -1,5 +1,5 @@
 {
-  "schema": "P0D_SOURCE_PREP_V1",
+  "schema": "P0D_PREP_SOURCE_LOCK_V2",
   "feature_id": "P0D-017",
   "canonical_parent_sha": "9feb2ec9f5ad8e96b6b727e9f77260b0a5f60991",
   "official_rc_adopted": false,
@@ -10,7 +10,7 @@
   "test_path": "rc_fastlane/features/neutral_elite/NeutralEliteNative.luau",
   "horde_writer": "original Game+MusouHorde only",
   "authoritative_attack_callback": "REQUEST_HORDE_STRIKE must be explicitly consumed by original Horde; policy never damages anything",
-  "integrated_playable": false,
+  "integrated_playable": "SOURCE_67_CANDIDATE_PENDING_CI",
   "requires": [
     "one-original-Horde hook",
     "matching src/server Game/Horde source pin",
@@ -22,5 +22,16 @@
   "studio_2client": "NOT_TESTED",
   "android": "NOT_TESTED",
   "owner_fun": "NOT_TESTED",
-  "rollback": "Not mounted; entire current 66-source official RC byte-identical, omit policy from assembly"
+  "rollback": "--enabled false makes ZERO changes to the official66 dist; no additional Game/Remote/Store/impact owner",
+  "status": "PLAYABLE_SOURCE_COMPOSE_CANDIDATE_CI_PENDING",
+  "parent_canonical_head": "9feb2ec9f5ad8e96b6b727e9f77260b0a5f60991",
+  "expected_before_sources": 66,
+  "expected_candidate_sources": 67,
+  "original_horde_git_blob": "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38",
+  "bossed_horde_git_blob": "8852f8034d1faa068647924edafc6fb9fc00dff7",
+  "one_existing_elite_slot_replaced": true,
+  "original_game_bytes_unchanged": true,
+  "feature_switch": "P0D_017_NEUTRAL_ELITE_BOSS_V1",
+  "overlay": "rc_fastlane/apply_neutral_elite.py",
+  "source_adoption_status": "SOURCE_PRIVATE_CANDIDATE_NOT_OFFICIAL"
 }
