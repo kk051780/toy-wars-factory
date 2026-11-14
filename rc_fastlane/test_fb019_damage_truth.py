@@ -3,7 +3,7 @@
 import unittest
 from pathlib import Path
 from apply_fb019_server_ack import patch_game,blob,PIN_GAME
-GAME = Path("/tmp/p0d_fb019_attack_gesture_dist/src/server/Game.server.luau")
+GAME = Path("/tmp/p0d_fb019_hit_visibility_dist/src/server/Game.server.luau")
 
 class EffectiveHitResponseQA(unittest.TestCase):
     @classmethod
