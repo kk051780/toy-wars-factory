@@ -21,7 +21,7 @@ class TrackedCoreSmokeTest(unittest.TestCase):
         self.assertIn("roundReady[player] = false", actual)
         self.assertIn('if not everybodyReady() then return end', actual)
         self.assertEqual(actual.count('remote.OnServerEvent:Connect('), 1)
-        self.assertNotIn('Instance.new("RemoteEvent")\nremote.Name', actual)
+        self.assertEqual(actual.count('Instance.new("RemoteEvent")'), 1)
 
     def test_original_hud_anchor_compatibility(self):
         baseline = (ENGINE / "client/HUD.client.luau").read_text("utf8")
