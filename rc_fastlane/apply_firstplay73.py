@@ -133,7 +133,8 @@ def compose(previous: dict[str, bytes]) -> tuple[dict[str,bytes], dict]:
     updated=dict(previous)
     updated[GAME]=source.encode("utf8")
     updated[CONFIG]=author["ready"].patch_config(previous[CONFIG].decode("utf8")).encode("utf8")
-    updated[HUD]=author["ready"].patch_hud(previous[HUD].decode("utf8")).encode("utf8")
+    updated[HUD]=qa_firstplay_p0.patch_hud(
+        author["ready"].patch_hud(previous[HUD].decode("utf8"))).encode("utf8")
     updated[V4]=author["lobby"].patch_v4(previous[V4].decode("utf8")).encode("utf8")
     updated.update(old_mod)
     assert len(updated)==AFTER
