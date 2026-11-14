@@ -274,7 +274,7 @@ local function applyConfirmedHit(id, isKO, serial, round, epoch, now, findEntry)
 end
 -- END_NATIVE_MOTION_CONFIRMED_HIT
 
-local cue = horde:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1")
+local cue = nil
 local cueConnection
 local historyConnection
 local epochConnection
@@ -287,7 +287,7 @@ local function findEntryById(targetId)
 end
 
 local function onConfirmedHit(id, isKO, serial, round, epoch, hitAt)
-    if not isRunning or not cue:IsA("RemoteEvent") then return end
+    if not isRunning or not cue or not cue:IsA("RemoteEvent") then return end
     local serverEpoch = cue:GetAttribute("P0D_ART_EPOCH_V1")
     if type(serverEpoch) == "number" and epoch < serverEpoch then return end
     applyConfirmedHit(id, isKO, serial, round, epoch, hitAt, findEntryById)
@@ -298,7 +298,7 @@ end
 -- this LocalScript's OnClientEvent listener was attached. Replayed poses use
 -- the original hit time, never a new/delayed fictitious damage event.
 local function replayRecent()
-    if not isRunning then return end
+    if not isRunning or not cue then return end
     local encoded = cue:GetAttribute("P0D_ART_RECENT_V1")
     if type(encoded) ~= "string" or #encoded > 4096 then return end
     local ok, list = pcall(function() return HttpService:JSONDecode(encoded) end)
@@ -322,7 +322,7 @@ local function replayRecent()
 end
 
 local function syncServerEpoch()
-    if not isRunning then return end
+    if not isRunning or not cue then return end
     local epoch = cue:GetAttribute("P0D_ART_EPOCH_V1")
     if type(epoch) ~= "number" or epoch%1 ~= 0 or epoch < 1 then return end
     if lastEpoch == nil or epoch > lastEpoch then
@@ -340,9 +340,15 @@ local function syncServerEpoch()
     replayRecent()
 end
 
-if cue:IsA("RemoteEvent") then
-    -- Register live first. Concurrent snapshot updates are deduped by
-    -- (epoch,mob,serial) under the actual native-tested motion policy.
+-- No unbounded WaitForChild here: a missing/late optional combat cue must
+-- never prevent the actual 41-part walking/idle Heartbeat from starting.
+local function connectCue(candidate)
+    if not isRunning or cue or not candidate
+        or candidate.Name ~= "P0D_ART_COMBAT_SIGNAL_V1"
+        or not candidate:IsA("RemoteEvent") then return end
+    cue = candidate
+    -- Register live first, then snapshot. Runtime hit/KO is exact per confirmed
+    -- epoch/mob/serial, never a client-generated damage event.
     cueConnection = cue.OnClientEvent:Connect(
         function(id, hitPos, fromPos, isKO, serial, round, epoch)
             onConfirmedHit(id, isKO, serial, round, epoch, os.clock())
@@ -352,6 +358,13 @@ if cue:IsA("RemoteEvent") then
     epochConnection = cue:GetAttributeChangedSignal("P0D_ART_EPOCH_V1")
         :Connect(syncServerEpoch)
     syncServerEpoch()
+end
+-- Subscribe BEFORE looking up the existing optional Remote: no lost race if
+-- replication creates it during initial world snapshot.
+local cueReadyConnection = horde.ChildAdded:Connect(connectCue)
+connectCue(horde:FindFirstChild("P0D_ART_COMBAT_SIGNAL_V1"))
+if not cue then
+    warn("P0D_ART_MOTION_CUE_PENDING_BODY_MOTION_CONTINUES")
 end
 
 local pulse
@@ -370,6 +383,7 @@ pulse = RunService.Heartbeat:Connect(function(dt)
         table.clear(lastHitSerial)
         table.clear(pendingHits)
         for model in pairs(records) do drop(model) end
+        if cueReadyConnection then cueReadyConnection:Disconnect() end
         if cueConnection then cueConnection:Disconnect() end
         if historyConnection then historyConnection:Disconnect() end
         if epochConnection then epochConnection:Disconnect() end
@@ -430,6 +444,7 @@ script.Destroying:Connect(function()
     table.clear(lastHitSerial)
     table.clear(pendingHits)
     for model in pairs(records) do drop(model) end
+    if cueReadyConnection then cueReadyConnection:Disconnect() end
     if cueConnection then cueConnection:Disconnect() end
     if historyConnection then historyConnection:Disconnect() end
     if epochConnection then epochConnection:Disconnect() end
