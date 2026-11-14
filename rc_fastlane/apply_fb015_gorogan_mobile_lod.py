@@ -9,7 +9,7 @@ from __future__ import annotations
 import argparse,hashlib,json,os,shutil,tempfile
 from pathlib import Path
 
-TARGET="client/FB015GoroganVisual.client.luau"
+TARGET="client/FB015CharacterArt.client.luau"
 BASE_BLOB="2ff10db1a4171be9abdc276a43dd21b2401da2d8"
 FEATURE="FB015_GOROGAN_MOBILE_LOD_V1"
 BASE_RC="bd5b819b846705e18537a994ed97ffe71ddd4855"
