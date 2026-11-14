@@ -39,7 +39,7 @@ def patch_game(s:str)->str:
     assert s.count("local function resetRound()")==1 and s.count("local function tickRound()")==1
     assert s.count("remote.OnServerEvent:Connect(")==1
     assert s.count("pcall(SoloTeamBots.start,map,")==1
-    assert s.count("and not EXPERIMENTAL_FIVE_EGG_MODE then")==1, "SOLO_BOT_GUARD_DRIFT"
+    assert "if RunService:IsStudio() and studioSoloRoundStarted\n        and not EXPERIMENTAL_FIVE_EGG_MODE then" in s, "SOLO_BOT_START_GUARD_DRIFT"
     s=sub_once(s,OLD,NEW)
     s=sub_once(s,READY_OLD,READY_NEW)
     assert s.count('#Players:GetPlayers()>1 and chosenMode==ModeVote.SCORE')==1
