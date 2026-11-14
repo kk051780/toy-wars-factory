@@ -29,7 +29,7 @@ class LiveCombatArtQA(unittest.TestCase):
         self.assertIn('local VIEW_DISTANCE = if touchDevice then 70 else 110',self.new)
         self.assertIn('local MIN_PER_TARGET_INTERVAL = if touchDevice then .16 else .09',self.new)
         self.assertIn('local BURST_DURATION = if touchDevice then .17 else .23',self.new)
-        self.assertIn('if active >= MAX_ACTIVE_PARTS then return nil end',self.new)
+        self.assertIn('if not alive or not container.Parent or active >= MAX_ACTIVE_PARTS then return nil end',self.new)
         self.assertIn('Debris:AddItem(p, .34)',self.new)
 
     def test_no_gameplay_or_collision_or_permanent_hud(self):
