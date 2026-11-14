@@ -2,8 +2,9 @@
 """QA for FB019: only acknowledge HIT after server-side effective HP reduction."""
 import unittest
 from pathlib import Path
-from apply_fb019_server_ack import patch_game,blob,PIN_GAME
+from apply_fb019_server_ack import patch_game,patch_hud,blob,PIN_GAME,PIN_HUD
 GAME = Path("/tmp/p0d_fb019_hit_visibility_dist/src/server/Game.server.luau")
+HUD = Path("/tmp/p0d_fb019_hit_visibility_dist/src/client/HUD.client.luau")
 
 class EffectiveHitResponseQA(unittest.TestCase):
     @classmethod
@@ -25,7 +26,7 @@ class EffectiveHitResponseQA(unittest.TestCase):
         self.assertIn("if hum.Health < beforeHealth then",s)
         self.assertTrue(s.index("local beforeHealth") < s.index("hum:TakeDamage(") < s.index("hum.Health < beforeHealth") < s.index('attackResponse("HIT","PLAYER")'))
         self.assertIn('attackResponse("MISS","BLOCKED")',s)
-        self.assertIn('elseif mobHits>0 then\n                attackResponse("HIT","MINION")',s)
+        self.assertIn('if mobHits>0 then\n                attackResponse("HIT","MINION")\n            elseif hum.Health < beforeHealth then',s)
 
     def test_bot_damage_requires_actual_hp_change(self):
         s=self.attack
@@ -43,6 +44,17 @@ class EffectiveHitResponseQA(unittest.TestCase):
         self.assertEqual(s.count('attackResponse("HIT"'),6)
         self.assertEqual(s.count('attackResponse("MISS"'),6)
         self.assertNotIn('FireServer(',s)
+
+    def test_latest_attack_only_can_display_remote_ack(self):
+        raw=HUD.read_bytes()
+        self.assertEqual(blob(raw),PIN_HUD)
+        new=patch_hud(raw).decode("utf8")
+        self.assertEqual(new.count("local lastIssuedAttackSeq=-1"),1)
+        self.assertEqual(new.count('if kind=="ATTACK" then lastIssuedAttackSeq=seq end'),1)
+        self.assertIn("packet.seq~=lastIssuedAttackSeq",new)
+        self.assertEqual(new.count("attack.Activated:Connect(pressAttack)"),1)
+        with self.assertRaises(AssertionError):
+            patch_hud(raw+b"\n-- WRONG HUD SOURCE")
 
     def test_invalid_source_drift_fails_closed(self):
         with self.assertRaises(AssertionError):
