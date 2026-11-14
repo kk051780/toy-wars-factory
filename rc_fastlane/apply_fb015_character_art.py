@@ -40,7 +40,7 @@ def source_safety() -> bytes:
         'RuneEye_', 'ObsidianBackSpike_', 'FB015GoroganDamageSparks',
         'RUNESTONE_TITAN', 'WeldConstraint', 'MAX_BEASTS = 2',
         'CanCollide = false', 'CanQuery = false',
-        'MAX_MODELS = 28', 'MAX_PARTS = 280',
+        'MAX_DECOR_PARTS = 64', 'MAX_BEASTS = 2',
     ):
         assert token in src, ("MISSING_ART_CONTRACT", token)
     for bad in ("FireServer(", "RemoteEvent", "OnServerEvent:Connect(",
