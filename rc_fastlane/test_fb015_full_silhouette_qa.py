@@ -91,7 +91,7 @@ class FullSilhouetteFollowing(unittest.TestCase):
     def test_out_of_range_never_resurrects_anchored_spawn_ghosts(self):
         self.assertIn('original.LocalTransparencyModifier = visual.initialModifier',self.motion)
         tail=self.motion.split('                -- IMPORTANT: hiding out-of-range clones',1)[1]
-        block=tail.split('            end\n',1)[0]
+        block=tail.split('    end\nend)',1)[0]
         self.assertIn('visual.original.LocalTransparencyModifier = 1',block)
         self.assertIn('visual.copy.Transparency = 1',block)
         self.assertNotIn('visual.initialModifier',block)
