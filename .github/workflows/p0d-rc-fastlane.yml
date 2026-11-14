@@ -1023,7 +1023,7 @@ jobs:
           test -x /tmp/p0d_new_luau/luau
           /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau >/dev/null
           /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau | tee /tmp/p0d_combat_native14.log
-          grep -Fx P0D_FB015_REAL_CLIENT_CUE_NATIVE_34_ORDERED_EPOCH_CASES_PASS /tmp/p0d_combat_native14.log
+          grep -Fx P0D_FB015_REAL_CLIENT_CUE_NATIVE_53_ORDERED_EPOCH_CASES_PASS /tmp/p0d_combat_native14.log
           python3 -B rc_fastlane/features/fb015_combat/generate_native_history_policy.py --out /tmp/P0D_FB015_ACTUAL_HISTORY.luau
           /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_HISTORY.luau >/dev/null
           /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_HISTORY.luau | tee /tmp/p0d_combat_history.log
@@ -1063,10 +1063,7 @@ jobs:
           assert sp['art_combat']['owner_fun']=='ART_NO_GO'
           assert fp['feature_flags']['ART_COMBAT_SLASH_READONLY_V1'] is True
           candidate=(dist/'src/client/ArtCombatSlash.client.luau').read_bytes()
-          assert hashlib.sha1(b'blob '+str(len(candidate)).encode()+bytes([0])+candidate).hexdigest()=='257f5da5e40c0af89220745d576763f513a7e6ef'
-          horde=(dist/'src/server/MusouHorde.luau').read_bytes()
-          assert hashlib.sha1(b'blob '+str(len(horde)).encode()+bytes([0])+horde).hexdigest()=='a2d07936bd9fe5bdf3630498c39d61d5a8560d99'
-          assert b'if RunService:IsStudio() then' in horde and b'P0D_ART_HIT_BUS_V1' in horde
+          assert hashlib.sha1(b'blob '+str(len(candidate)).encode()+bytes([0])+candidate).hexdigest()=='c3e3c89b781d446fd8952bee51ec3a2cac46d1ff'
           old=pathlib.Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx')
           digest=hashlib.sha256(place.read_bytes()).hexdigest()
           receipt={
@@ -1074,7 +1071,7 @@ jobs:
               'private_candidate_sha256':digest,
               'private_candidate_rbxlx_bytes':place.stat().st_size,
               'source_count':len(scripts),
-              'source_gitblob':'257f5da5e40c0af89220745d576763f513a7e6ef',
+              'source_gitblob':'c3e3c89b781d446fd8952bee51ec3a2cac46d1ff',
               'horde_signal_blob':'a2d07936bd9fe5bdf3630498c39d61d5a8560d99',
               'original_rc66_unchanged_scripts':65,
               'single_original_horde_cosmetic_cue_patch_only':True,
@@ -1088,6 +1085,85 @@ jobs:
           (output/'RC_FEATURE_LOCK.json').write_text(json.dumps(fp,indent=2)+'\n')
           print(receipt)
           PY
+          # #374+381 integration: separate scratch output, NO official RC writes.
+          python3 -B -m unittest discover -s rc_fastlane -p 'test_fb015_composite.py' -v
+          python3 -B rc_fastlane/features/art_minion/generate_native_spark_policy.py --out /tmp/P0D_FB015_ACTUAL_SPARK_POLICY.luau
+          /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_SPARK_POLICY.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_SPARK_POLICY.luau | tee /tmp/p0d_art_spark_native12.log
+          grep -Fx P0D_FB015_ACTUAL_MINION_SPARK_NATIVE_12_CASES_PASS /tmp/p0d_art_spark_native12.log
+          grep -Fx P0D_FB015_ACTUAL_SERVER_SPARK_QUEUE_NATIVE_PASS /tmp/p0d_art_spark_native12.log
+          PRIVATE67_BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          COMBO_DIST=/tmp/p0d_fb015_combined_private68
+          COMBO_OUT=/tmp/p0d_art_minion_combat_private68
+          mkdir -p "$COMBO_OUT"
+          python3 -B rc_fastlane/compose_fb015_minion_combat.py --dist "$DIST" --out "$COMBO_DIST" --enabled false
+          python3 -B rc_fastlane/compose_fb015_minion_combat.py --dist "$DIST" --out "$COMBO_DIST" --enabled true
+          find "$COMBO_DIST/src" -type f -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$COMBO_DIST/default.project.json" -o "$COMBO_OUT/P0D_FB015_MINION_COMBAT_PRIVATE68.rbxlx"
+          python3 - <<'PY'
+          from pathlib import Path
+          import collections,hashlib,json,xml.etree.ElementTree as ET
+          dist=Path('/tmp/p0d_fb015_combined_private68')
+          out=Path('/tmp/p0d_art_minion_combat_private68')
+          place=out/'P0D_FB015_MINION_COMBAT_PRIVATE68.rbxlx'
+          inputs=list((dist/'src').rglob('*.luau'))
+          actual=collections.Counter(p.read_text('utf8') for p in inputs)
+          assert len(inputs)==68,('COMPOSITE_SOURCE_COUNT',len(inputs))
+          contained=collections.Counter()
+          names=collections.Counter()
+          for item in ET.fromstring(place.read_bytes()).iter('Item'):
+              if item.get('class') not in ('Script','ModuleScript','LocalScript'):continue
+              src=item.find("./Properties/string[@name='Source']")
+              if src is None:continue
+              contained[src.text or '']+=1
+              node=item.find("./Properties/string[@name='Name']")
+              if node is not None:names[(item.get('class'),node.text)]+=1
+          assert actual==contained,('COMPOSITE_SOURCE_EXACT_MISMATCH',len(actual),len(contained))
+          assert names[('Script','Game')]==1
+          assert names[('ModuleScript','MusouHorde')]==1
+          assert names[('Script','ArtMinionSilhouette')]==1
+          assert names[('LocalScript','ArtCombatSlash')]==1
+          locks=json.loads((dist/'SOURCE_LOCK.json').read_text('utf8'))
+          flags=json.loads((dist/'RC_FEATURE_LOCK.json').read_text('utf8'))
+          digest=lambda raw:hashlib.sha1(b'blob '+str(len(raw)).encode()+bytes([0])+raw).hexdigest()
+          pins={p.relative_to(dist/'src').as_posix():digest(p.read_bytes()) for p in inputs}
+          assert locks['total_scripts']==flags['total_sources']==len(inputs)==68
+          assert locks['blobs']==flags['source_gitblobs']==pins
+          assert flags['feature_flags']['ART_COMBAT_SLASH_READONLY_V1'] is True
+          assert flags['feature_flags']['ART_MINION_THREE_SILHOUETTES_V1'] is True
+          assert pins['server/ArtMinionSilhouette.server.luau']=='4d0aac99d670ca4364a7368255d1edc63d28b3a0'
+          assert pins['client/ArtCombatSlash.client.luau']=='c3e3c89b781d446fd8952bee51ec3a2cac46d1ff'
+          assert pins['server/MusouHorde.luau']=='a2d07936bd9fe5bdf3630498c39d61d5a8560d99'
+          baseline=Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx')
+          receipt={
+              'result':'P0D_FB015_MINION_COMBAT_PRIVATE68_BOTH_SOURCE_EXACT_PASS',
+              'source_count':len(inputs),'server_game_count':names[('Script','Game')],
+              'minion_silhouettes_and_combat_slash_together':True,
+              'original_66_unmodified_sources':65,
+              'only_existing_modified_script':'server/MusouHorde.luau',
+              'private_place_bytes':place.stat().st_size,
+              'private_place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+              'baseline_rc66_place_bytes':baseline.stat().st_size,
+              'composite_receipt':locks['art_minion_combo'],
+              'status':'PRIVATE_SOURCE_QA_ONLY',
+              'official_rc_adopted':False,
+              'studio':'NOT_TESTED','android':'NOT_TESTED','owner_fun':'ART_NO_GO',
+              'sourcery_latest_findings':'OPEN',
+          }
+          (out/'FB015_MINION_COMBAT_PRIVATE68_RECEIPT.json').write_text(
+              json.dumps(receipt,indent=2,ensure_ascii=False)+'\n','utf8')
+          (out/'SOURCE_LOCK.json').write_text(
+              json.dumps(locks,indent=2,ensure_ascii=False)+'\n','utf8')
+          (out/'RC_FEATURE_LOCK.json').write_text(
+              json.dumps(flags,indent=2,ensure_ascii=False)+'\n','utf8')
+          print(receipt)
+          PY
+          python3 -B rc_fastlane/compose_fb015_minion_combat.py --dist "$DIST" --out "$COMBO_DIST" --enabled false
+          PRIVATE67_AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          test "$PRIVATE67_BEFORE" = "$PRIVATE67_AFTER"
+          echo P0D_FB015_COMPOSITE_PRIVATE68_OFF_EXACT67_PRESERVED_PASS
           python3 -B rc_fastlane/apply_fb015_combat.py --dist "$DIST" --enabled false
           RESTORED=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
           test "$BEFORE" = "$RESTORED"
@@ -1097,5 +1173,12 @@ jobs:
         with:
           name: P0D-FB015-ART-COMBAT-PRIVATE67
           path: /tmp/p0d_art_combat_private67/*
+          retention-days: 7
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-FB015-ART-MINION-COMBAT-PRIVATE68
+          path: /tmp/p0d_art_minion_combat_private68/*
           retention-days: 7
           if-no-files-found: error
