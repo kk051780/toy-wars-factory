@@ -86,7 +86,8 @@ function Instance.new(className)
   if className=="Humanoid" then humanoidsCreated+=1 end
   if className=="Motor6D" then motorsCreated+=1 end
   if className=="WeldConstraint" then weldsCreated+=1 end
-  local o=setmetatable({ClassName=className,children={}},instanceMeta)
+  -- Roblox Instance.new defaults Name to the class name (Humanoid etc).
+  local o=setmetatable({ClassName=className,Name=className,children={}},instanceMeta)
   function o:SetAttribute(key,val)
     if self.attrs==nil then self.attrs={} end
     self.attrs[key]=val
