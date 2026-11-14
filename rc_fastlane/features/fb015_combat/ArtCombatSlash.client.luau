@@ -72,6 +72,21 @@ local function makeArc(hitPos, toward, isKO)
         })
         beam.Parent = holder
     end
+    -- Sparks are authored locally: server ParticleEmitter:Emit is not
+    -- reliable visual replication across Roblox clients.
+    local sparks=Instance.new("ParticleEmitter")
+    sparks.Name="P0D_CLIENT_CONFIRMED_HIT_SPARKS"
+    sparks.Rate=0
+    sparks.Lifetime=NumberRange.new(.16,.32)
+    sparks.Speed=NumberRange.new(3,7)
+    sparks.Size=NumberSequence.new(.34)
+    sparks.LightEmission=.8
+    sparks.SpreadAngle=Vector2.new(65,65)
+    sparks.Color=ColorSequence.new(
+        if isKO then Color3.fromRGB(255,192,70)
+        else Color3.fromRGB(116,231,255))
+    sparks.Parent=holder
+    sparks:Emit(if isKO then 10 else 4)
     TweenService:Create(holder, TweenInfo.new(.16, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
         CFrame = holder.CFrame * CFrame.Angles(0, 0, math.rad(if isKO then 52 else 32))
     }):Play()
@@ -95,8 +110,12 @@ local lastByMob={}
 local destroyed=false
 local visualConnection
 local historyConnection
+local epochConnection
+local characterConnection
+local pending={}
+local MAX_PENDING_CUES=16
 
--- BEGIN_ACTUAL_CUE_DEDUPE_POLICY (native test executes these REAL source lines)
+-- BEGIN_ACTUAL_CUE_DEDUPE_POLICY (extracted and executed by native Luau)
 local function acceptVisualCue(id,serial,round,epoch)
     if type(id)~="number" or id<1 or id>9 or id%1~=0
         or type(serial)~="number" or serial<1 or serial%1~=0
@@ -107,12 +126,27 @@ local function acceptVisualCue(id,serial,round,epoch)
         lastEpoch=epoch
         lastRound=round
         table.clear(lastByMob)
+    elseif lastRound==nil then
+        -- First hit after observing a new server epoch: accept its round.
+        lastRound=round
     elseif lastRound~=round then
-        -- Match epoch is the reset authority, not the recycled round number.
         return false
     end
-    if serial<=(lastByMob[id] or 0) then return false end
-    lastByMob[id]=serial
+    -- A live hit can overtake older snapshot cues. Keep a bounded set,
+    -- not a single high-water mark that discards earlier unseen hits.
+    local state=lastByMob[id]
+    if not state then
+        state={max=0,seen={},order={}}
+        lastByMob[id]=state
+    end
+    if state.seen[serial] or serial<=state.max-16 then return false end
+    state.seen[serial]=true
+    table.insert(state.order,serial)
+    state.max=math.max(state.max,serial)
+    while #state.order>16 do
+        local expired=table.remove(state.order,1)
+        state.seen[expired]=nil
+    end
     return true
 end
 -- END_ACTUAL_CUE_DEDUPE_POLICY
@@ -120,15 +154,26 @@ end
 local function onConfirmedHit(id,hitPos,fromPos,isKO,serial,round,epoch)
     if destroyed or typeof(hitPos)~="Vector3" or typeof(fromPos)~="Vector3"
         or type(isKO)~="boolean" then return end
-    if not acceptVisualCue(id,serial,round,epoch) then return end
-
+    local authoritativeEpoch=cue:GetAttribute("P0D_ART_EPOCH_V1")
+    if type(authoritativeEpoch)=="number" and epoch~=authoritativeEpoch then return end
     local root=localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if not root or (root.Position-hitPos).Magnitude>64 then return end
+    if not root then
+        -- Preserve actual live packets while the character is respawning.
+        -- Cap memory; server snapshots cover the newest 2.5 seconds as well.
+        if #pending>=MAX_PENDING_CUES then
+            table.remove(pending,1)
+            warn("P0D_ART_PENDING_OVERFLOW_DROPPED_OLDEST_VISUAL_ONLY")
+        end
+        table.insert(pending,{id,hitPos,fromPos,isKO,serial,round,epoch,os.clock()})
+        return
+    end
+    if (root.Position-hitPos).Magnitude>64 then return end
     local now=os.clock()
     while #times>0 and now-times[1]>=1 do table.remove(times,1) end
-    if #times>=MAX_BURSTS_PER_SECOND then return end
+    if #times>=MAX_BURSTS_PER_SECOND or live>=MAX_LIVE then return end
+    -- Commit dedupe only AFTER there is a root and render budget.
+    if not acceptVisualCue(id,serial,round,epoch) then return end
     table.insert(times,now)
-    -- Always use the actual server-authoritative attacker position.
     makeArc(hitPos,fromPos,isKO)
 end
 
@@ -157,15 +202,57 @@ local function replayRecent()
     end
 end
 
+local function syncServerEpoch()
+    local current=cue:GetAttribute("P0D_ART_EPOCH_V1")
+    if type(current)~="number" or current<1 then return end
+    if lastEpoch~=nil and current<=lastEpoch then return end
+    lastEpoch=current
+    lastRound=nil
+    table.clear(lastByMob)
+    table.clear(pending)
+end
+
+local function drainPending()
+    if destroyed then return end
+    local queued=pending
+    pending={}
+    local now=os.clock()
+    for _,hit in ipairs(queued) do
+        if now-hit[8]<=2.5 then
+            onConfirmedHit(hit[1],hit[2],hit[3],hit[4],hit[5],hit[6],hit[7])
+        end
+    end
+    replayRecent()
+end
+
+-- Listener first, then current epoch and replay. Live/snapshot overlap
+-- dedupes by exact per-mob event identity, including out-of-order arrivals.
 visualConnection=cue.OnClientEvent:Connect(onConfirmedHit)
 historyConnection=cue:GetAttributeChangedSignal("P0D_ART_RECENT_V1")
     :Connect(replayRecent)
-replayRecent() -- recover server-confirmed startup hits before first listener
+epochConnection=cue:GetAttributeChangedSignal("P0D_ART_EPOCH_V1")
+    :Connect(syncServerEpoch)
+syncServerEpoch()
+replayRecent()
+characterConnection=localPlayer.CharacterAdded:Connect(function(character)
+    task.spawn(function()
+        if character:WaitForChild("HumanoidRootPart",15) then
+            drainPending()
+        end
+    end)
+end)
+if localPlayer.Character then
+    local root=localPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if root then drainPending() end
+end
 script.Destroying:Connect(function()
     destroyed=true
     if visualConnection then visualConnection:Disconnect() end
     if historyConnection then historyConnection:Disconnect() end
+    if epochConnection then epochConnection:Disconnect() end
+    if characterConnection then characterConnection:Disconnect() end
     table.clear(lastByMob)
     table.clear(times)
+    table.clear(pending)
 end)
-print(FEATURE.." _SOURCE_WIP_STUDIO_ONLY_EPOCH_SNAPSHOT_REPLAY")
+print(FEATURE.." _STUDIO_ONLY_CLIENT_SPARKS_EPOCH_PENDING_REPLAY")
