@@ -502,7 +502,7 @@ jobs:
             /tmp/p0d_new_luau/luau /tmp/p0d_owner_ux_role_castle_native.luau | tee /tmp/p0d_owner_ux_role_castle_native.log
             grep -Fx P0D_OWNER_UX_NATIVE_ROLE_CASTLE_9_CASES_PASS /tmp/p0d_owner_ux_role_castle_native.log
           fi
-      - name: OWNER #341 actual compiled Studio Solo 24 cases (unique Game unchanged)
+      - name: OWNER #341 native Studio Solo rule source 24 cases + actual READY human consent override
         shell: bash
         run: |
           set -euo pipefail
@@ -518,7 +518,11 @@ jobs:
           assert src.count("function Solo.canStart(")==1
           assert src.count("function Solo.isSoloRound(")==1
           assert src.count("function Solo.emptyWinner(")==1
-          assert game.count("StudioSolo.canStart(")==2
+          # OWNER READY deliberately replaces the two auto-start Game calls:
+          # actual Studio solo can only enter after this human consent gate.
+          assert game.count("StudioSolo.canStart(")==0
+          assert game.count("allPlayersReadyForRound()")>=3
+          assert "readyForMatch[online[1]] == true" in game
           assert game.count("StudioSolo.isSoloRound(")==1
           assert game.count("StudioSolo.emptyWinner(")==1
           assert game.count("RunService:IsStudio()")>=3
