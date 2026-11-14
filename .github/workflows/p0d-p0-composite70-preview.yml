@@ -1004,6 +1004,7 @@ jobs:
           if [ "$PROFILE" = rich51 ]; then
             SRC=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             DST=/tmp/p0d_owner361_composite70
+            FINAL=/tmp/p0d_owner361_composite70_final
             cp -a "$SRC" "$DST"
             BEFORE=$(find "$DST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
             python3 -B rc_fastlane/apply_owner361_p0_composite70.py --dist "$DST" --enabled false
@@ -1016,21 +1017,21 @@ jobs:
           tick=d.split('local function tickRound()',1)[1]
           print('P0D_REAL66_TICKROUND_HEAD',tick[:2400])
           PY
-            python3 -B rc_fastlane/apply_owner361_p0_composite70.py --dist "$DST" --enabled true
+            python3 -B rc_fastlane/apply_owner361_p0_composite70.py --dist "$DST" --out "$FINAL" --enabled true
             mkdir -p /tmp/p0d_owner361_out
-            find "$DST/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            find "$FINAL/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
               /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
             done
             echo P0_PRIVATE70_ALL_LUAU_COMPILED
-            /tmp/p0d_rc_rojo build "$DST/default.project.json" -o /tmp/p0d_owner361_out/P0D_P0_COMPOSITE_PRIVATE70.rbxlx
-            cp "$DST/SOURCE_LOCK.json" "$DST/RC_FEATURE_LOCK.json" /tmp/p0d_owner361_out/
+            /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o /tmp/p0d_owner361_out/P0D_P0_COMPOSITE_PRIVATE70.rbxlx
+            cp "$FINAL/SOURCE_LOCK.json" "$FINAL/RC_FEATURE_LOCK.json" /tmp/p0d_owner361_out/
             python3 - <<'PY'
           import json,hashlib,xml.etree.ElementTree as ET,sys
           from collections import Counter
           from pathlib import Path
           sys.path.insert(0,'rc_fastlane')  # adapter imports authors from same package directory
           from rc_fastlane.apply_owner361_p0_composite70 import source_map,blob,CHANGED,ADDED,FEATURE_IDS,BASE_RC
-          dist=Path('/tmp/p0d_owner361_composite70')
+          dist=Path('/tmp/p0d_owner361_composite70_final')
           ref=Path('_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE')
           base=source_map(ref); a=source_map(dist)
           assert len(base)==66 and len(a)==70
