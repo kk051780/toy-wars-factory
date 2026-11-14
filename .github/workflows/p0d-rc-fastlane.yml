@@ -1796,3 +1796,91 @@ jobs:
           path: /tmp/p0d_fb019_v2_out/*
           retention-days: 7
           if-no-files-found: error
+
+      - name: 'FB015 forest biome v2 on confirmed-hit official RC80, other79 byte exact'
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_forest_v2.py -v
+          BASE=/tmp/p0d_fb019_hit_visibility_dist
+          OUT=/tmp/p0d_fb015_forest_v2_confirmed_hit_private80
+          mkdir -p /tmp/p0d_fb015_forest_v2_confirmed_hit_out
+          python3 -B rc_fastlane/apply_fb015_forest_v2.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_fb015_forest_v2.py --base "$BASE" --out "$OUT" --enabled true
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 80
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          echo FB015_FOREST_V2_FULL80_NATIVE_LUAU_PASS
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_fb015_forest_v2_confirmed_hit_out/P0D_FB015_BIOME_AFTER_FB019V2_PRIVATE80_STUDIO.rbxlx
+          python3 -B rc_fastlane/verify_fb015_forest_v2.py --dist "$OUT" --place /tmp/p0d_fb015_forest_v2_confirmed_hit_out/P0D_FB015_BIOME_AFTER_FB019V2_PRIVATE80_STUDIO.rbxlx --receipt /tmp/p0d_fb015_forest_v2_confirmed_hit_out/RECEIPT.json
+          echo FB015_FOREST_BIOME_PRIVATE_ONLY_NOT_FORMAL_RC
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        with:
+          name: P0D-FB015-FOREST-BIOMES-FB019V2-PRIVATE80
+          path: /tmp/p0d_fb015_forest_v2_confirmed_hit_out/*
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: 'ART GATE #420: full actual RC80 Place plus forest candidate, no cosmetic false-positive'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s art_quality -p 'test_*.py' -v
+          mkdir -p /tmp/p0d_art_gate_samehead
+          python3 -B art_quality/check_art_quality.py \
+            --place /tmp/p0d_fb019_v2_out/P0D_TRAP_RAIDERS_RC80_CONFIRMED_HIT_STUDIO.rbxlx \
+            --out /tmp/p0d_art_gate_samehead/ART_CHECK_OFFICIAL_RC80.json
+          python3 -B art_quality/check_reference_benchmarks.py \
+            --references art_quality/REFERENCE_BENCHMARKS_V2.json \
+            --out /tmp/p0d_art_gate_samehead/ART_BENCHMARK_REPORT.json
+          python3 -B art_quality/check_mobile_fun.py \
+            --out /tmp/p0d_art_gate_samehead/MOBILE_KID_FUN_REPORT.json
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            test -f /tmp/p0d_fb015_forest_v2_confirmed_hit_out/P0D_FB015_BIOME_AFTER_FB019V2_PRIVATE80_STUDIO.rbxlx
+            python3 -B art_quality/check_art_quality.py \
+              --place /tmp/p0d_fb015_forest_v2_confirmed_hit_out/P0D_FB015_BIOME_AFTER_FB019V2_PRIVATE80_STUDIO.rbxlx \
+              --out /tmp/p0d_art_gate_samehead/ART_CHECK_FOREST_PRIVATE80.json
+          fi
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          output=Path('/tmp/p0d_art_gate_samehead')
+          official=json.loads((output/'ART_CHECK_OFFICIAL_RC80.json').read_text())
+          assert official['source']['source_gate']=='PASS',official['source']['source_violations']
+          assert official['source']['script_count']==80,'NOT_80_GENUINE_SOURCES'
+          assert official['owner_accepted'] is False and official['art_decision']=='ART_NO_GO'
+          p=output/'ART_CHECK_FOREST_PRIVATE80.json'
+          if p.exists():
+              candidate=json.loads(p.read_text())
+              assert candidate['source']['source_gate']=='PASS',candidate['source']['source_violations']
+              assert candidate['source']['script_count']==80
+              assert candidate['owner_accepted'] is False
+          receipt={
+              'schema':'P0D_ART_QUALITY_SAMEHEAD_RC80_RECEIPT_V1',
+              'github_head':os.environ['GITHUB_SHA'],
+              'github_run_id':os.environ['GITHUB_RUN_ID'],
+              'github_ref':os.environ['GITHUB_REF'],
+              'official_build_under_test':'P0D_TRAP_RAIDERS_RC80_CONFIRMED_HIT_STUDIO.rbxlx',
+              'official_source_gate':official['source']['source_gate'],
+              'official_script_count':official['source']['script_count'],
+              'forest_candidate_source_gate':('PASS' if p.exists() else 'NOT_BUILT_THIS_EVENT'),
+              'studio_pc':'NOT_TESTED','android':'NOT_TESTED','kid_fun':'NOT_TESTED',
+              'art_decision':'ART_NO_GO','mobile_decision':'MOBILE_NO_GO','fun_decision':'FUN_NO_GO',
+              'owner_accepted':False,
+              'official_art_adoption_by_this_gate':False
+          }
+          (output/'ART_RC_INTAKE_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_ART_QUALITY_SAMEHEAD_SOURCE_ONLY_OK',receipt['github_head'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() && env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-ART-GATE-RC80-SAMEHEAD-NO-OWNER-APPROVAL
+          path: /tmp/p0d_art_gate_samehead/*
+          retention-days: 14
+          if-no-files-found: warn
