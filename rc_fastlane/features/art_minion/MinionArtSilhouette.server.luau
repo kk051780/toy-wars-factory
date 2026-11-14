@@ -129,15 +129,37 @@ local function elite(model, core)
 end
 
 -- BEGIN_ACTUAL_ART_SPARK_POLICY
--- This exact authored function is executed under pinned native Luau CI.
-local function parseSparkCue(raw, lastSerial)
-    if type(raw) ~= "string" then return nil end
-    local serial, kind = raw:match("^(%d+)|([HK])$")
-    local seq = tonumber(serial)
-    if not seq or seq <= lastSerial or seq % 1 ~= 0 then return nil end
-    return seq, if kind == "K" then 10 else 4
+-- Real Luau is executed in CI. Receive the event PAYLOAD, never reread an
+-- Attribute that may already have been overwritten by a later hit.
+local function burstForHit(serial,lastSerial,isKO)
+    if type(serial) ~= "number" or serial % 1 ~= 0 or serial <= lastSerial
+        or type(isKO) ~= "boolean" then return nil end
+    return serial, if isKO then 10 else 4
 end
 -- END_ACTUAL_ART_SPARK_POLICY
+
+local activeByCore = {}
+local pendingByCore = {}
+local MAX_PENDING_PER_CORE = 16
+local function onConfirmedServerHit(core,serial,isKO,round)
+    if not core or not core:IsA("BasePart") then return end
+    if type(round) ~= "number" then return end
+    local item=activeByCore[core]
+    if item then
+        local accepted, burst=burstForHit(serial,item.lastSparkSeq,isKO)
+        if not accepted then return end
+        item.lastSparkSeq=accepted
+        item.sparks:Emit(burst)
+    else
+        -- Horde can hit before task.defer(decorate) finishes. Retain a bounded
+        -- pre-attachment FIFO; each confirmed hit is a distinct server event.
+        local queue=pendingByCore[core]
+        if not queue then queue={}; pendingByCore[core]=queue end
+        if #queue < MAX_PENDING_PER_CORE then
+            table.insert(queue,{serial=serial,isKO=isKO,round=round})
+        end
+    end
+end
 
 local function decorate(model)
     if not model or not model:IsA("Model") or not model.Parent then return end
@@ -184,24 +206,30 @@ local function decorate(model)
             item.MaxDistance = 44
         end
     end
-    -- Wire actual server-confirmed hit serial; repeated hits are never
-    -- inferred from Core.Color or a 140ms Heartbeat sampling window.
+    -- Register the Core before draining hits queued during visual creation.
     local state={
         model=model, core=core, moving=moving, sparks=sparks,
         typeId=typeId, lastSparkSeq=0, id=numeric or 9,
-        sparkConnection=nil,
     }
-    local function emitActualHitSpark()
-        local seq, burst = parseSparkCue(
-            core:GetAttribute("P0D_ART_SPARK_V1"), state.lastSparkSeq)
-        if not seq or not model.Parent then return end
-        state.lastSparkSeq = seq
-        sparks:Emit(burst)
+    activeByCore[core]=state
+    local backlog=pendingByCore[core]
+    pendingByCore[core]=nil
+    if backlog then
+        for _,hit in ipairs(backlog) do
+            onConfirmedServerHit(core,hit.serial,hit.isKO,hit.round)
+        end
     end
-    state.sparkConnection=core:GetAttributeChangedSignal("P0D_ART_SPARK_V1")
-        :Connect(emitActualHitSpark)
-    emitActualHitSpark() -- reconcile a hit already committed before binding
     table.insert(equipped,state)
+end
+
+-- Attach to the original server-only BindableEvent BEFORE deferring NPC
+-- decoration. No client->server authority or network traffic is introduced.
+local artHitBus=mobsFolder:WaitForChild("P0D_ART_HIT_BUS_V1",15)
+local hitBusConnection=nil
+if artHitBus and artHitBus:IsA("BindableEvent") then
+    hitBusConnection=artHitBus.Event:Connect(onConfirmedServerHit)
+else
+    warn("ART_MINION_CONFIRMED_HIT_BUS_MISSING_STUDIO")
 end
 
 -- Horde.reset destroys and recreates its nine Models each round; attaching
@@ -232,7 +260,8 @@ heart = RunService.Heartbeat:Connect(function(dt)
     for i=#equipped,1,-1 do
         local item = equipped[i]
         if not item.model.Parent or not item.moving.Parent then
-            if item.sparkConnection then item.sparkConnection:Disconnect() end
+            activeByCore[item.core]=nil
+            pendingByCore[item.core]=nil
             table.remove(equipped,i)
         else
             -- Only cosmetic breathing/cloak motion. Sparks are event-driven.
@@ -244,9 +273,9 @@ script.Destroying:Connect(function()
     alive = false
     added:Disconnect()
     if heart then heart:Disconnect() end
-    for _,item in ipairs(equipped) do
-        if item.sparkConnection then item.sparkConnection:Disconnect() end
-    end
+    if hitBusConnection then hitBusConnection:Disconnect() end
+    table.clear(activeByCore)
+    table.clear(pendingByCore)
     table.clear(equipped)
 end)
-print("ART_MINION_V1_REAL_SERVER_SPARK_CUE_STUDIO_ONLY_FUN_PENDING")
+print("ART_MINION_V1_PER_HIT_BINDABLE_SPARK_STUDIO_ONLY_FUN_PENDING")
