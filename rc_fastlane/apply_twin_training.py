@@ -62,8 +62,8 @@ def apply(dist:Path, profile:str="rich51", override:bool|None=None)->bool:
     assert FEATURE not in features["feature_flags"],"TRAINING_DUPLICATE_ADOPTION"
     tree=cfg["tree"]
     assert tree["ServerScriptService"]["TrapRaidersS1"]["$path"]=="src/server"
-    boot=tree["ServerStorage"]["P0D_ENABLE_TWIN_BIOMES_V1"]
-    assert boot["$className"]=="BoolValue" and boot["$properties"]["Value"] is True,"TWIN_BOOT_REQUIRED"
+    boot=tree["ServerStorage"].get("P0D_ENABLE_TWIN_BIOMES_V1")
+    assert type(boot) is dict and boot.get("$className")=="BoolValue" and boot.get("$properties",{}).get("Value") is True,"TWIN_BOOT_REQUIRED"
     trained=TRAINED.read_bytes()
     policy=POLICY.read_bytes()
     assert blob(trained)==TRAINED_BLOB,"TRAINED_SCRIPT_BLOB_DRIFT"
