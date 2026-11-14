@@ -303,5 +303,58 @@ class CompositeTest(unittest.TestCase):
             self.assertFalse((root/"private68").exists())
             self.assertTrue(dist.is_dir())
 
+    def test_separate_output_directory_locks_both_source_and_destination(self):
+        import subprocess
+        import sys
+        from fb015_fs_guard import transaction_parent_locks
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            source=root/"parent_a"
+            out=root/"parent_b"
+            source.mkdir()
+            out.mkdir()
+            script="""import os,sys,fcntl
+fd=os.open(sys.argv[1],os.O_RDONLY|os.O_DIRECTORY)
+try:
+    fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
+except BlockingIOError:
+    sys.exit(42)
+else:
+    sys.exit(0)
+finally:
+    os.close(fd)
+"""
+            with transaction_parent_locks(source,out):
+                for parent in (source,out):
+                    child=subprocess.run([sys.executable,"-c",script,str(parent)],
+                                         check=False)
+                    self.assertEqual(child.returncode,42,str(parent))
+            for parent in (source,out):
+                child=subprocess.run([sys.executable,"-c",script,str(parent)],
+                                     check=False)
+                self.assertEqual(child.returncode,0,str(parent))
+
+    def test_composite_stage_rejects_symlink_inserted_during_copy(self):
+        from unittest import mock
+        real_copy=combo.shutil.copytree
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            output=root/"private68"
+            external=root/"OWNER_SECRET"
+            external.mkdir()
+            (external/"secret").write_text("KEEP")
+            def mutated_copy(source,dest,*args,**kwargs):
+                copied=real_copy(source,dest,*args,**kwargs)
+                (Path(dest)/"SNEAK_LINK").symlink_to(external,target_is_directory=True)
+                return copied
+            with mock.patch.object(combo.shutil,"copytree",side_effect=mutated_copy):
+                with self.assertRaisesRegex(RuntimeError,"FB015_SYMLINK_ENTRY_REFUSED"):
+                    combo.compose(d,output,True)
+            self.assertFalse(output.exists())
+            self.assertFalse(combo.receipt_path(output).exists())
+            self.assertEqual((external/"secret").read_text("utf8"),"KEEP")
+
 if __name__ == "__main__":
     unittest.main()
