@@ -35,6 +35,7 @@ def re_once(text: str, pattern: str, replacement: str, flags=0) -> str:
     return value
 
 def patch_game(text: str) -> str:
+    assert "local readyForMatch: {[Player]: boolean}" not in text, "DUPLICATE_P0_READY_PATCH"
     assert text.count("remote.OnServerEvent:Connect(") == 1, "DUPLICATE_GAME_REMOTE"
     assert "local function snapshotFor(player: Player)" in text
     assert "local function tickRound()" in text
