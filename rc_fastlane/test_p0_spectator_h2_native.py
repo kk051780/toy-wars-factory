@@ -71,10 +71,6 @@ local humanTeam="RED"
 local authority={}
 local world={}
 local chosenMode=ModeVote.SCORE
-local function computeMode()
-    EXPERIMENTAL_FIVE_EGG_MODE=RunService:IsStudio()
-        and #eligibleSoloPlayers()>1 and chosenMode==ModeVote.SCORE
-end
 local function getTeamName(p)
     return p.Team and p.Team.Name or "NONE"
 end
@@ -186,7 +182,13 @@ computeMode()
 check(EXPERIMENTAL_FIVE_EGG_MODE==false and mayStartBots(),"NEW_SOLO_READY_CAN_SPAWN_BOTS")
 print("P0_PRIVATE78_SPECTATOR_H2_NATIVE_15_CASES_PASS")
 '''
-    return pre+eligible+near+tests
+    compute=r'''
+local function computeMode()
+    EXPERIMENTAL_FIVE_EGG_MODE=RunService:IsStudio()
+        and #eligibleSoloPlayers()>1 and chosenMode==ModeVote.SCORE
+end
+'''
+    return pre+eligible+near+compute+tests
 
 if __name__=="__main__":
     p=argparse.ArgumentParser()
