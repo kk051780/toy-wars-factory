@@ -9,6 +9,7 @@ on:
       - feature/p0d-flat63-official57-direct-intake-20261114
       - feature/p0d-rc64-twin-flat-official-intake-20261114
       - feature/p0d-flat65-twin-training-rc-adoption-20261114
+      - feature/p0d-talking-npc-native-42qa-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -726,8 +727,17 @@ jobs:
           path: /tmp/p0d_rc_out/*
           retention-days: 7
           if-no-files-found: error
+      - name: Execute 42 actual source-extracted native TalkingNPC Director behavior and cooldown assertions
+        if: github.event_name == 'push' && github.ref_name == 'feature/p0d-talking-npc-native-42qa-20261114'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B tests/native_director_qa.py --out /tmp/P0D_TALK_DIRECTOR_NATIVE42.luau
+          /tmp/p0d_new_luau/luau-compile /tmp/P0D_TALK_DIRECTOR_NATIVE42.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/P0D_TALK_DIRECTOR_NATIVE42.luau | tee /tmp/p0d_talk_director42.log
+          grep -Fx P0D_TALKING_DIRECTOR_REAL_NATIVE_42_CASES_PASS /tmp/p0d_talk_director42.log
       - name: Build separate latest+3 Talking NPC PREP Place (never overwrite official RC artifact)
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'feature/p0d-prep-talking-npc-20261114'
+        if: (github.event_name == 'pull_request' && (github.event.pull_request.head.ref == 'feature/p0d-prep-talking-npc-20261114' || github.event.pull_request.head.ref == 'feature/p0d-talking-npc-native-42qa-20261114')) || (github.event_name == 'push' && github.ref_name == 'feature/p0d-talking-npc-native-42qa-20261114')
         shell: bash
         run: |
           set -euo pipefail
@@ -760,7 +770,7 @@ jobs:
           cp /tmp/p0d_talking_npc_ready/SOURCE_LOCK.json /tmp/p0d_talking_npc_out/PREP_67_SOURCE_LOCK.json
           echo P0D_TALKING_NPC_STUDIO_PLAY_NOT_TESTED
       - uses: actions/upload-artifact@v4
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'feature/p0d-prep-talking-npc-20261114'
+        if: (github.event_name == 'pull_request' && (github.event.pull_request.head.ref == 'feature/p0d-prep-talking-npc-20261114' || github.event.pull_request.head.ref == 'feature/p0d-talking-npc-native-42qa-20261114')) || (github.event_name == 'push' && github.ref_name == 'feature/p0d-talking-npc-native-42qa-20261114')
         with:
           name: P0D-TALKING-NPC-PREP-LATEST-NOT-OFFICIAL
           path: /tmp/p0d_talking_npc_out/*

@@ -100,13 +100,16 @@ end
 
 -- Pure cooldown helper. The caller must enforce per-player and per-NPC buckets.
 function Director.CanSpeak(nowSeconds, previousSeconds, urgent)
-    if type(nowSeconds) ~= "number" then
+    if type(nowSeconds) ~= "number" or nowSeconds ~= nowSeconds
+        or nowSeconds < 0 or nowSeconds == math.huge or nowSeconds == -math.huge then
         return false
     end
     if previousSeconds == nil then
         return true
     end
-    if type(previousSeconds) ~= "number" then
+    if type(previousSeconds) ~= "number" or previousSeconds ~= previousSeconds
+        or previousSeconds < 0 or previousSeconds == math.huge
+        or previousSeconds == -math.huge then
         return false
     end
     local gap = urgent == true and 15 or 30

@@ -6,7 +6,7 @@
   "canonical_rc_unmodified": true,
   "runtime_enabled_in_rc": false,
   "files": {
-    "TalkingNPCDirector.luau": "97172ad316d8cba63d95780dea38cff682b3290f",
+    "TalkingNPCDirector.luau": "9fa3bb6adb47662270fea18e8f8cad1f0555f946",
     "TalkingNPCRuntime.server.luau": "0a910bb2914bd61e7a9c04cfe36a9c6195e16e47",
     "TalkingNPCClient.client.luau": "f527521b8ed3be586a67cb5f489cbed2a67f5f4e"
   },
@@ -24,7 +24,9 @@
     "roblox_studio": "NOT_TESTED",
     "android": "NOT_TESTED",
     "tts": "NOT_TESTED",
-    "sourcery_review": "13_FINDINGS_REMEDIATION_PENDING"
+    "sourcery_review": "13_FINDINGS_REMEDIATION_PENDING",
+    "native_dialogue_source_exact": "42_DIRECTOR_COMPOSE_COOLDOWN_CASES_ADDED",
+    "cooldown_invalid_times": "NAN_INF_NEGATIVE_REJECTED_NOT_STUDIO_TESTED"
   },
   "no_auto_merge": true
 }
