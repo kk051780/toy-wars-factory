@@ -55,6 +55,14 @@ class TestFeedback(unittest.TestCase):
         self.assertIn('fb019ShowSwing()',out)
         self.assertNotIn("TakeDamage(",out)
         self.assertNotIn('Instance.new("RemoteEvent")',out)
+    def test_no_new_gui_remote_or_fake_damage(self):
+        output=patch(HUD_ORIGINAL.encode()).decode()
+        self.assertEqual(output.count('Instance.new("Beam")'),1)
+        self.assertIn('if not fb019InBattle',output)
+        self.assertIn('fb019Debris:AddItem(beam, .22)',output)
+        self.assertNotIn('Instance.new("RemoteEvent")',output)
+        self.assertNotIn('Instance.new("ScreenGui")',output)
+        self.assertEqual(output.count('remote:FireServer({action = kind, role = role, seq = seq})'),1)
     def test_disable_zero_write(self):
         before=read(self.base)
         self.assertFalse(apply(self.base,self.out,False))
