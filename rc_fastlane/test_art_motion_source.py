@@ -36,15 +36,37 @@ class ArtMotionSourceContract(unittest.TestCase):
         # Diagnostic labels such as ART_MOTION_NO_ARENA are not geometry.
         declaration = s.split("local watchedParts = {", 1)[1].split("\n}\n", 1)[0]
         watched = re.findall(r'"(ART_[A-Z_0-9-]+)"', declaration)
-        self.assertGreaterEqual(len(watched), 16)
+        self.assertEqual(len(watched), 41)
+        self.assertEqual(len(set(watched)), 41, "No repeated part names")
         for name in watched:
             fragment = re.sub(r"-?1$", "", name.removeprefix("ART_"))
             self.assertIn(fragment, self.author, msg=f"original #374 art missing {name}")
 
+    def test_original_full_41_silhouettes_and_spawn_ghost_guard(self):
+        s=self.motion
+        art=s.split("local watchedParts = {",1)[1].split("\n}\n",1)[0]
+        variants={}
+        for species in ("KNIGHT","WRAITH","BRUTE","ELITE"):
+            chunk=art.split(species+" = {",1)[1].split("}",1)[0]
+            variants[species]=re.findall(r'"(ART_[A-Z_0-9-]+)"',chunk)
+        self.assertEqual({k:len(v) for k,v in variants.items()},
+                         {"KNIGHT":10,"WRAITH":10,"BRUTE":11,"ELITE":10})
+        self.assertEqual(3*10+3*10+2*11+1*10,92)
+        self.assertIn("MAX_ACTIVE_COSMETIC_PARTS = 104",s)
+        # All original static body art is hidden at equip AND out-of-range;
+        # never draw frozen helmets and armor at previous spawn locations.
+        self.assertIn("for _,visual in ipairs(attachments) do",s)
+        lod=s.split("            else\n                -- LOD:",1)[1].split(
+            "            end\n",1)[0]
+        self.assertIn("visual.original.LocalTransparencyModifier = 1",lod)
+        self.assertNotIn("visual.initialModifier",lod)
+        self.assertIn("model.Destroying",s)
+        self.assertIn("if not isRunning or not isMinion(model)",s)
+
     def test_animation_budget_and_spawn_reset(self):
         s = self.motion
         for term in (
-            "MAX_MODELS = 16", "MAX_ACTIVE_COSMETIC_PARTS = 56",
+            "MAX_MODELS = 16", "MAX_ACTIVE_COSMETIC_PARTS = 104",
             "VIEW_RANGE_STUDS = 105", "ANIM_STEP = 1 / 25",
             "horde.ChildAdded", "model.Destroying", "script.Destroying",
             "core.CFrame:ToObjectSpace(source.CFrame)",
