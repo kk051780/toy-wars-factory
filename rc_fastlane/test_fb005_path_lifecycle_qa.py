@@ -36,7 +36,7 @@ class TestBotPathRaceFix(unittest.TestCase):
 
     def test_egg_goal_switch_both_events_revoke_old_path(self):
         s=self.src
-        self.assertEqual(s.count("invalidatePath(bot)"),2)
+        self.assertEqual(s.count("                    invalidatePath(bot)"),2)
         i=s.index("if callbacks.steal(bot,enemy) then")
         self.assertIn("invalidatePath(bot)",s[i:i+450])
         j=s.index("if callbacks.deposit(bot,bot.team,bot.carry) then")
