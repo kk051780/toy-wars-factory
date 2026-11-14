@@ -56,7 +56,17 @@ def verify_partial_tree(root: Path, expected: dict[str,str]) -> None:
         raise RuntimeError("FB015_PARTIAL_DELETE_UNTRUSTED_LEFTOVERS")
 
 def atomic_json(path: Path, payload: dict) -> None:
-    """Write external manifest / recovery journal atomically on same fs."""
+    """Create a new sibling receipt/journal, never replace ANY caller data.
+
+    The file is staged and fsynced before publication. Hard links, symlinks
+    and dangling links at the requested destination are all treated as
+    collisions. This is safe for our single-writer protocol but not a
+    substitute for protecting the parent directory from hostile writers.
+    """
+    path=Path(path)
+    reject_symlink_ancestors(path.parent)
+    if os.path.lexists(path):
+        raise RuntimeError("FB015_ATOMIC_JSON_DESTINATION_ALREADY_EXISTS")
     fd,name=tempfile.mkstemp(prefix="."+path.name+".",dir=path.parent)
     try:
         with os.fdopen(fd,"w",encoding="utf8") as f:
@@ -64,7 +74,12 @@ def atomic_json(path: Path, payload: dict) -> None:
             f.write("\n")
             f.flush()
             os.fsync(f.fileno())
-        os.replace(name,path)
+        # Atomic hardlink creation (fails if target exists, including a
+        # dangling symlink) instead of os.replace() which overwrites data.
+        os.link(name,path,follow_symlinks=False)
+        parent_fd=os.open(path.parent,os.O_RDONLY|os.O_DIRECTORY)
+        try: os.fsync(parent_fd)
+        finally: os.close(parent_fd)
     finally:
-        if os.path.exists(name):
+        if os.path.lexists(name):
             os.unlink(name)
