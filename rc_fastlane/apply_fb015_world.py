@@ -12,7 +12,7 @@ BASE=Path(__file__).resolve().parent
 FEATURE="FB015_ART_WORLD_LIGHT_FOLIAGE_V1"
 MODULE="server/FantasyWorldArt.server.luau"
 SCRIPT=BASE/"features/fb015_world/FantasyWorldArt.server.luau"
-SCRIPT_SHA="9e4dfba571807252ada1cc6ddd174e9b63fcc83d"
+SCRIPT_SHA="f2a1d58ab4420c0f331adb8f6d9d0478cf32ad4a"
 
 def blob(data:bytes)->str:
     return hashlib.sha1(b"blob "+str(len(data)).encode()+bytes([0])+data).hexdigest()
