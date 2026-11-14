@@ -82,8 +82,11 @@ end
     if src.count(marker) != 1:
         raise AssertionError("tickRound_missing_or_ambiguous")
     prefix, phase = src.split(marker, 1)
-    phase = once(phase, '        if count >= Config.MinPlayers',
-        '        if everybodyReady() and count >= Config.MinPlayers')
+    # 2026-11-14 integration-only correction: current assembled RC66 uses
+    # StudioSolo.canStart(..), not the original pre-Solo MinPlayers-only gate.
+    # Keep existing one-human Studio policy and add voluntary READY outside it.
+    phase = once(phase, '        if StudioSolo.canStart(',
+        '        if everybodyReady() and StudioSolo.canStart(')
     phase = once(phase, '    elseif match.phase == "COUNTDOWN" then',
         '    elseif match.phase == "COUNTDOWN" then\n'
         '        if not everybodyReady() then\n'
