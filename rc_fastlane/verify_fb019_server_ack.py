@@ -39,6 +39,9 @@ def verify(dist:Path,place:Path,receipt:Path):
     assert "attack.MouseButton1Click:Connect" not in h
     assert h.count("remote.OnClientEvent:Connect(")==2
     assert "lastAttackFeedbackSeq" in h
+    assert 'lastIssuedAttackSeq=-1' in h
+    assert 'if kind=="ATTACK" then lastIssuedAttackSeq=seq end' in h
+    assert 'packet.seq~=lastIssuedAttackSeq' in h
     assert h.count("FireServer({action = kind")==3
     assert h.count("showLocalSwing()")==2
     assert h.count("attack.Activated:Connect(pressAttack)")==1
@@ -49,19 +52,32 @@ def verify(dist:Path,place:Path,receipt:Path):
     assert h.count('Instance.new("ScreenGui")')==1 # original GUI only
     actual=collections.Counter()
     names=collections.Counter()
-    for item in ET.parse(place).iter("Item"):
+    by_name={}
+    # Rojo-generated Place is local build output; explicitly forbid XML DTD,
+    # ENTITY expansion and unexpectedly huge files before stdlib XML parsing.
+    xml=place.read_bytes()
+    assert len(xml)<10_000_000 and b"<!DOCTYPE" not in xml.upper() and b"<!ENTITY" not in xml.upper()
+    for item in ET.fromstring(xml).iter("Item"):
         if item.attrib.get("class") not in ("Script","LocalScript","ModuleScript"):continue
         prop=item.find("Properties")
         if prop is None:continue
         node=prop.find("string[@name='Source']")
         name=prop.find("string[@name='Name']")
         if node is not None:actual[node.text or ""]+=1
-        if name is not None:names[(item.attrib["class"],name.text)]+=1
+        if name is not None:
+            names[(item.attrib["class"],name.text)]+=1
+            if node is not None:
+                by_name[(item.attrib["class"],name.text)]=node.text or ""
     expected=collections.Counter(v.decode("utf8") for v in src.values())
     assert actual==expected and sum(actual.values())==80, "ROJO_NOT_ALL80_SOURCE_EXACT"
     assert names[("Script","Game")]==1
     assert names[("LocalScript","TrapRaidersHUD")]==1
     assert names[("ModuleScript","SoloTeamBots")]==1
+    # Prevent swapped source bodies that a source multiset alone would miss.
+    assert by_name[("Script","Game")]==src[GAME].decode("utf8")
+    assert by_name[("LocalScript","TrapRaidersHUD")]==src[HUD].decode("utf8")
+    assert by_name[("LocalScript","BattleHUDGovernor")]==src["client/BattleHUDGovernor.client.luau"].decode("utf8")
+    assert by_name[("ModuleScript","SoloTeamBots")]==src["server/SoloTeamBots.luau"].decode("utf8")
     result={
         "kind":"P0D_FB019_SOURCE_CANDIDATE",
         "source_count":80,"source_exact":True,"single_game":True,
