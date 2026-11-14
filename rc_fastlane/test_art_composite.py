@@ -1,4 +1,4 @@
-"""The complete five-art preview must never mutate canonical RC66."""
+"""The complete six-art preview must never mutate canonical RC66."""
 import hashlib
 import tempfile
 import unittest
@@ -6,9 +6,9 @@ from pathlib import Path
 from rc_fastlane import build_art_composite as art
 
 
-class FiveArtCandidateSafety(unittest.TestCase):
-    def test_all_five_real_source_blobs(self):
-        self.assertEqual(len(art.pinned_art()),5)
+class SixArtCandidateSafety(unittest.TestCase):
+    def test_all_six_real_source_blobs(self):
+        self.assertEqual(len(art.pinned_art()),6)
 
     def test_composite_includes_no_server_game_replacement(self):
         a=art.pinned_art()
@@ -18,6 +18,7 @@ class FiveArtCandidateSafety(unittest.TestCase):
             "server/H1CoastalSeascape.server.luau",
             "server/ArtMinionSilhouette.server.luau",
             "client/FB015CharacterArt.client.luau",
+            "client/ConfirmedSlashFX.client.luau",
         })
         self.assertNotIn("server/Game.server.luau",a)
         self.assertNotIn("server/GoroganRigDriver.luau",a)
@@ -26,6 +27,15 @@ class FiveArtCandidateSafety(unittest.TestCase):
         a=art.pinned_art()
         self.assertNotIn(b"MUSOU_MINION_",a["client/FB015CharacterArt.client.luau"])
         self.assertNotIn(b"Gorogan_ServerRig",a["server/ArtMinionSilhouette.server.luau"])
+
+    def test_confirmed_hit_art_is_local_and_keeps_original_damage_authority(self):
+        a=art.pinned_art()
+        hit=a["client/ConfirmedSlashFX.client.luau"]
+        self.assertIn(b'RealDamagePopup',hit)
+        self.assertIn(b'GetPropertyChangedSignal("Enabled")',hit)
+        self.assertIn(b'Players.LocalPlayer',hit)
+        self.assertNotIn(b'FireServer(',hit)
+        self.assertNotIn(b'TakeDamage(',hit)
 
     def test_reject_missing_source_before_writing(self):
         with tempfile.TemporaryDirectory() as tmp:

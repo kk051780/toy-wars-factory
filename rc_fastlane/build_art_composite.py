@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""P0D first real FIVE-art cumulative Studio candidate from canonical RC66.
+"""P0D real SIX-art cumulative Studio candidate from canonical RC66.
 
-Sources from original contributor PRs #366 #377 #370 #374 #373 stay pinned
+Sources from original contributor PRs #366 #377 #370 #374 #373 #379 stay pinned
 by exact Gitblob. The official RC66 distribution remains byte identical.
 This script creates only a PRIVATE candidate for technical/visual inspection.
 """
@@ -23,6 +23,7 @@ SPECS = (
     ("SEA", "44b39c3d8b0df9290c86a139318ca1bf68356814", "server/H1CoastalSeascape.server.luau", "H1CoastalSeascape.server.luau", "FB011_H1_COASTAL_SEASCAPE_V1"),
     ("MINION", "ed5cd56789abc4a7bc8ee3a44b8982aae4f3ff62", "server/ArtMinionSilhouette.server.luau", "MinionArtSilhouette.server.luau", "ART_MINION_THREE_SILHOUETTES_V1"),
     ("BEAST", "2ff10db1a4171be9abdc276a43dd21b2401da2d8", "client/FB015CharacterArt.client.luau", "FB015CharacterArt.client.luau", "FB015_GOROGAN_BEAST_VISUAL_V2"),
+    ("COMBAT", "4b1dce5635b709d349ab3f00bba7a7cf9d9883bd", "client/ConfirmedSlashFX.client.luau", "ConfirmedSlashFX.client.luau", "FB008_CONFIRMED_HIT_SLASH_VFX_V1"),
 )
 
 
@@ -47,7 +48,7 @@ def pinned_art() -> dict[str, bytes]:
                        "UpdateAsync(", "FireServer(", "OnServerEvent:Connect("):
             assert banned.encode("utf8") not in content, ("ART_UNSAFE_AUTHORITY", category, banned)
         sources[path] = content
-    assert len(sources) == 5
+    assert len(sources) == 6
     assert b"MUSOU_MINION_" not in sources["client/FB015CharacterArt.client.luau"]
     assert b"Gorogan_ServerRig" not in sources["server/ArtMinionSilhouette.server.luau"]
     return sources
@@ -75,43 +76,45 @@ def compose(dist: Path, work: Path) -> tuple[dict[str, bytes], dict, dict]:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(content)
     after = source_files(work)
-    assert len(after) == 71
+    assert len(after) == 72
     assert all(after[k] == v for k,v in before.items()), "CANONICAL66_MUTATED"
     project_path = work / "default.project.json"
     project = json.loads(project_path.read_text("utf8"))
     assert project["tree"]["ServerScriptService"]["TrapRaidersS1"]["$path"] == "src/server"
     client = project["tree"]["StarterPlayer"]["StarterPlayerScripts"]
     assert "FB015GoroganVisual" not in client
+    assert "P0DConfirmedCombatFX" not in client
     assert any(isinstance(x,dict) and x.get("$path")=="src/client/HUD.client.luau" for x in client.values())
     client["FB015GoroganVisual"]={"$path":"src/client/FB015CharacterArt.client.luau"}
+    client["P0DConfirmedCombatFX"]={"$path":"src/client/ConfirmedSlashFX.client.luau"}
     project_path.write_text(json.dumps(project,ensure_ascii=False,indent=2)+"\n","utf8")
     receipt={
         "status":"PRIVATE_PREP_NO_OFFICIAL_RC",
         "owner_art": "FB-015",
         "branch_base":"43543378f976374e2cac2d68b3136ac355d3191b",
-        "source_count":71,
+        "source_count":72,
         "original_source_count":66,
         "original_66_source_bytes_identical":True,
         "categories":[row[0] for row in SPECS],
-        "source_prs":{"CASTLE":366,"WORLD":377,"SEA":370,"MINION":374,"BEAST":373},
+        "source_prs":{"CASTLE":366,"WORLD":377,"SEA":370,"MINION":374,"BEAST":373,"COMBAT":379},
         "source_blobs":{row[2]:row[1] for row in SPECS},
         "single_Game_Remote_Store":True,
         "stages":{"native":"PENDING","rojo":"PENDING","studio_solo":"NOT_TESTED",
                   "studio_2client":"NOT_TESTED","android_fps":"NOT_TESTED",
                   "owner_art":"ART_NO_GO","physics_water":"NOT_TESTED"},
         "known_collision_risk":"castle enlarged ground, coastal Terrain water, forestry routes; Studio physical verification required",
-        "rollback":"omit all 5 additive sources; original distribution bytes untouched",
+        "rollback":"omit all 6 additive sources; original distribution bytes untouched",
     }
     updated_blobs={k:gitblob(v) for k,v in sorted(after.items())}
-    locks["total_scripts"]=71
+    locks["total_scripts"]=72
     locks["blobs"]=updated_blobs
-    locks["rc_fb015_five_art_composite"]=receipt
-    features["total_sources"]=71
+    locks["rc_fb015_six_art_composite"]=receipt
+    features["total_sources"]=72
     features["source_gitblobs"]=updated_blobs
     for category,pin,path,base,flag in SPECS:
         assert flag not in features["feature_flags"], ("ALREADY_ADOPTED",flag)
         features["feature_flags"][flag]=True
-    features["rc_fb015_five_art_composite"]=receipt
+    features["rc_fb015_six_art_composite"]=receipt
     (work/"SOURCE_LOCK.json").write_text(json.dumps(locks,ensure_ascii=False,indent=2)+"\n","utf8")
     (work/"RC_FEATURE_LOCK.json").write_text(json.dumps(features,ensure_ascii=False,indent=2)+"\n","utf8")
     assert source_files(dist)==before
@@ -133,13 +136,14 @@ def verify_rbxlx(place: Path, actual: dict[str, bytes]) -> None:
         n=item.find("./Properties/string[@name='Name']")
         if n is not None:
             kinds[(klass,n.text)] += 1
-    assert included == expected, ("PRIVATE71_ROJO_BINARY_SOURCE_MISMATCH",sum(included.values()),len(actual))
+    assert included == expected, ("PRIVATE72_ROJO_BINARY_SOURCE_MISMATCH",sum(included.values()),len(actual))
     assert kinds[("Script","Game")] == 1, ("GAME_DUPLICATED",kinds)
     for name in ("CastleBattlefield","FantasyWorldArt","H1CoastalSeascape","ArtMinionSilhouette"):
         assert kinds[("Script",name)]==1, ("MISSING_SERVER_ART",name,kinds[("Script",name)])
     assert kinds[("LocalScript","FB015GoroganVisual")]==1
-    assert sum(included.values())==71
-    print("FB015_FIVE_ART_ROJO_71_71_SOURCE_EXACT_SINGLE_GAME_PASS")
+    assert kinds[("LocalScript","P0DConfirmedCombatFX")]==1
+    assert sum(included.values())==72
+    print("FB015_SIX_ART_ROJO_72_72_SOURCE_EXACT_SINGLE_GAME_PASS")
 
 
 def main() -> None:
@@ -151,7 +155,7 @@ def main() -> None:
     p.add_argument("--enabled",choices=["true","false"],required=True)
     args=p.parse_args()
     if args.enabled=="false":
-        print("FB015_FIVE_ART_OFF_EXACT_ZERO_WRITES")
+        print("FB015_SIX_ART_OFF_EXACT_ZERO_WRITES")
         return
     assert args.rojo.is_file() and args.luau.is_file(), "PINNED_BUILD_TOOLS_MISSING"
     assert not args.out.exists()
@@ -161,8 +165,8 @@ def main() -> None:
     for name in sorted(after):
         with (args.out/"luau-native-compile.log").open("a",encoding="utf8") as log:
             subprocess.run([str(args.luau),str(work/"src"/name)],stdout=log,check=True)
-    print("FB015_FIVE_ART_LUAU_NATIVE_71_71_PASS")
-    place=args.out/"P0D_PRIVATE71_FIVE_ART_STUDIO.rbxlx"
+    print("FB015_SIX_ART_LUAU_NATIVE_72_72_PASS")
+    place=args.out/"P0D_PRIVATE72_SIX_ART_STUDIO.rbxlx"
     subprocess.run([str(args.rojo),"build",str(work/"default.project.json"),"-o",str(place)],check=True)
     verify_rbxlx(place,after)
     receipt["stages"]["native"]="PASS"
@@ -171,8 +175,8 @@ def main() -> None:
     receipt["place_sha256"]=hashlib.sha256(place.read_bytes()).hexdigest()
     receipt["source_count_actual"]=len(after)
     receipt["studio_visual_and_fun"]="NOT_TESTED"
-    (args.out/"P0D_PRIVATE71_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n","utf8")
-    print("FB015_FIVE_ART_PRIVATE71_BYTES",receipt["place_bytes"],"SHA256",receipt["place_sha256"])
+    (args.out/"P0D_PRIVATE72_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n","utf8")
+    print("FB015_SIX_ART_PRIVATE72_BYTES",receipt["place_bytes"],"SHA256",receipt["place_sha256"])
     # Keep source workspace out of uploaded artifact; the authored sources are
     # reproducible from pinned PR Git blobs and original canonical source build.
     shutil.rmtree(work)
