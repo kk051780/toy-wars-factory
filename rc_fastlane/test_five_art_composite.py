@@ -56,7 +56,7 @@ class FiveArtSingleCandidate(unittest.TestCase):
         world=contents["server/FantasyWorldArt.server.luau"].decode()
         minion=contents["server/ArtMinionSilhouette.server.luau"].decode()
         combat=contents["client/ConfirmedSlashFX.client.luau"].decode()
-        for needle in ("Terrain:FillBlock","SEA_BOARDWALK_DECK_",'"COSMETIC_SEA"'):
+        for needle in ("terra:FillBlock","SEA_BOARDWALK_DECK_",'"COSMETIC_SEA"'):
             self.assertIn(needle,sea)
         self.assertIn("CanCollide=false",world)
         self.assertIn("MAX_ACTIVE_PARTS = 48",combat)
