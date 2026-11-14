@@ -9,7 +9,7 @@ import argparse,hashlib,json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 MODULE=ROOT/"features/fb005_solo/SoloTeamBots.luau"
-MODULE_BLOB="b62c267a352c4037eb71acbb0e440b64011c2a00"
+MODULE_BLOB="9e52ab2636058858dc2d0bc000b5e9fd2bb9e88f"
 ID="FB005_STUDIO_SOLO_TEAM_BOTS_CLASSIC_V1"
 GAME="server/Game.server.luau"
 DEST="server/SoloTeamBots.luau"
@@ -168,6 +168,12 @@ def patch_game(text:str)->str:
             if not ok then
                 warn("FB005_SOLO_TICK_FAIL_CLOSED",err)
                 SoloTeamBots.stop()
+                -- Do not strand a solo player in an ACTIVE game with no opponents.
+                if studioSoloRoundStarted and match.phase=="ACTIVE"
+                    and #Players:GetPlayers()==1 then
+                    stopRound("DRAW","SOLO_BOTS_TICK_FAILURE")
+                end
+                return
             end
         end
         for _,impact in ipairs(horde:tick(now,Players:GetPlayers(),healthy)) do''')
