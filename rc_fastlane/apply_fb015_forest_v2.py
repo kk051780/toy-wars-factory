@@ -92,6 +92,7 @@ def once(raw:str,old:str,new:str)->str:
 def patch(raw:bytes)->bytes:
     assert blob(raw)==BASE_BLOB,("WORLD_ART_AUTHOR_GIT_BLOB_DRIFT",blob(raw))
     source=raw.decode("utf8")
+    assert FEATURE not in source, "PREEXISTING_FOREST_V2_FEATURE"
     source=once(source,'if root:FindFirstChild("P0D_FB015_WORLD_ART_V1") then return end',
         '''local oldForest = root:FindFirstChild("P0D_FB015_WORLD_ART_V1")
 if oldForest and oldForest:GetAttribute("ArtPass")=="FB015_FOREST_BIOMES_MONUMENTS_V2" then return end''')
@@ -102,7 +103,6 @@ local folder = Instance.new("Folder")''')
     assert 'p.CanCollide=false' in source and 'p.CanQuery=false' in source
     assert 'MAX_PARTS=255' in source
     assert 'for i=1,9 do' in source and 'for i=1,12 do' in source
-    assert FEATURE not in source
     source=once(source,TREE_ANCHOR,TREE_ADDITION)
     source=once(source,RUIN_ANCHOR,RUIN_ADDITION+
         'assert(count==226,"FB015_FOREST_RUNTIME_PART_COUNT_DRIFT")\n'+RUIN_ANCHOR)
