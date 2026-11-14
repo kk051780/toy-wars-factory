@@ -55,6 +55,9 @@ function Director.Compose(facts)
         return nil
     end
     if speakerId == "NAVI" then
+        if signal == "HELLO" then
+            return output(speakerId, signal, "卵を運ぶ味方を守ろう！こまったら呼んでね。", false, false)
+        end
         if signal == "ENEMY_ALERT" and facts.observedByTeam == true then
             local area = AREAS[facts.areaCode]
             if area ~= nil then
@@ -76,6 +79,9 @@ function Director.Compose(facts)
             return output(speakerId, signal, "その卵、ほんとに守りきれるかな？", false, true)
         end
     elseif speakerId == "ORACLE" then
+        if signal == "INTRO" then
+            return output(speakerId, signal, "4つの秘境の印を見つけると、秘密が分かるぞ。", false, false)
+        end
         if signal == "SECRET_HINT" and facts.hintUnlocked == true then
             if facts.secretTier == 1 then
                 return output(speakerId, signal, "天空と海、まだ見つけていない印はあるかな？", false, false)
@@ -103,7 +109,7 @@ function Director.CanSpeak(nowSeconds, previousSeconds, urgent)
     if type(previousSeconds) ~= "number" then
         return false
     end
-    local gap = urgent == true and 5 or 25
+    local gap = urgent == true and 15 or 30
     return nowSeconds >= previousSeconds and (nowSeconds - previousSeconds) >= gap
 end
 
