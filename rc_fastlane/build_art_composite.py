@@ -14,6 +14,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import xml.etree.ElementTree as ET
+from apply_fb008_density import apply_horde, H as DENSITY_HORDE, ORIGINAL_BLOB as ORIGINAL_HORDE_BLOB
 
 ROOT = Path(__file__).resolve().parent
 ART = ROOT / "features/art_composite_sources"
@@ -88,13 +89,18 @@ def compose(dist: Path, work: Path) -> tuple[dict[str, bytes], dict, dict]:
     assert before["server/Game.server.luau"].count(b"remote.OnServerEvent:Connect(") == 1
     assert work != dist and not work.exists()
     shutil.copytree(dist, work)
+    patched_horde = apply_horde(before[DENSITY_HORDE])
+    (work / "src" / DENSITY_HORDE).write_bytes(patched_horde)
     for path, content in authored.items():
         target = work / "src" / path
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(content)
     after = source_files(work)
     assert len(after) == 74
-    assert all(after[k] == v for k,v in before.items()), "CANONICAL66_MUTATED"
+    assert after[DENSITY_HORDE] == patched_horde, "PRIVATE_HORDE_SWAP_FAILED"
+    assert all(after[k] == v for k,v in before.items() if k != DENSITY_HORDE), "ORIGINAL65_MUTATED"
+    assert {k for k,v in before.items() if after[k] != v} == {DENSITY_HORDE}, "UNAUTHORIZED_SOURCE_REPLACEMENT"
+    assert after["server/Game.server.luau"] == before["server/Game.server.luau"], "GAME_AUTHORITY_CHANGED"
     project_path = work / "default.project.json"
     project = json.loads(project_path.read_text("utf8"))
     assert project["tree"]["ServerScriptService"]["TrapRaidersS1"]["$path"] == "src/server"
@@ -111,7 +117,14 @@ def compose(dist: Path, work: Path) -> tuple[dict[str, bytes], dict, dict]:
         "branch_base":"43543378f976374e2cac2d68b3136ac355d3191b",
         "source_count":74,
         "original_source_count":66,
-        "original_66_source_bytes_identical":True,
+        "original_66_source_bytes_identical":False,
+        "original_65_byte_identical_except_horde":True,
+        "authorized_original_source_replacement":"server/MusouHorde.luau",
+        "original_horde_blob":ORIGINAL_HORDE_BLOB,
+        "private_horde_blob":gitblob(patched_horde),
+        "neutral_density_trial":{"regular":16,"elite":1,"total":17,
+            "sweep_cap_per_attack":6,"minion_impact_cap_per_tick":4,
+            "studio_solo_android":"NOT_TESTED"},
         "categories":[row[0] for row in SPECS],
         "source_prs":{"CASTLE":366,"CASTLE_DETAIL":382,"WORLD":377,"SEA":370,"MINION":374,"BEAST":373,"HUD":367},
         "source_blobs":{row[2]:row[1] for row in SPECS},
@@ -120,7 +133,7 @@ def compose(dist: Path, work: Path) -> tuple[dict[str, bytes], dict, dict]:
                   "studio_2client":"NOT_TESTED","android_fps":"NOT_TESTED",
                   "owner_art":"ART_NO_GO","physics_water":"NOT_TESTED"},
         "known_collision_risk":"castle gate geometry, new noncolliding fortress ornament, coastal Terrain water and forestry routes; Studio physical verification required",
-        "rollback":"omit all 8 additive sources; original distribution bytes untouched",
+        "rollback":"restore untouched official 66 sources including original Horde; omit 8 art scripts",
     }
     updated_blobs={k:gitblob(v) for k,v in sorted(after.items())}
     locks["total_scripts"]=74
@@ -132,12 +145,17 @@ def compose(dist: Path, work: Path) -> tuple[dict[str, bytes], dict, dict]:
         assert flag not in features["feature_flags"], ("ALREADY_ADOPTED",flag)
         features["feature_flags"][flag]=True
     features["rc_fb015_eight_feature_composite"]=receipt
+    assert "FB008_REAL_DENSITY_TRIAL_16_PLUS_ELITE_V1" not in features["feature_flags"]
+    features["feature_flags"]["FB008_REAL_DENSITY_TRIAL_16_PLUS_ELITE_V1"] = True
+    locks["rc_fb008_density_trial"] = receipt
+    features["rc_fb008_density_trial"] = receipt
     (work/"SOURCE_LOCK.json").write_text(json.dumps(locks,ensure_ascii=False,indent=2)+"\n","utf8")
     (work/"RC_FEATURE_LOCK.json").write_text(json.dumps(features,ensure_ascii=False,indent=2)+"\n","utf8")
     assert locks["total_scripts"] == len(after) == features["total_sources"], "LOCK_TOTAL_MUST_MATCH_REAL_SCRIPT_COUNT"
     assert locks["blobs"] == updated_blobs == features["source_gitblobs"], "LOCK_BLOBS_MUST_MATCH_ACTUAL"
     assert source_files(work) == after, "GENERATED_ART_SOURCES_MUST_MATCH_LOCK"
-    assert source_files(dist)==before
+    assert source_files(dist)==before, "ORIGINAL_CANONICAL_DISTRIBUTION_TOUCHED"
+    assert gitblob(before[DENSITY_HORDE])==ORIGINAL_HORDE_BLOB
     return after, receipt, project
 
 
@@ -186,7 +204,7 @@ def main() -> None:
         with (args.out/"luau-native-compile.log").open("a",encoding="utf8") as log:
             subprocess.run([str(args.luau),str(work/"src"/name)],stdout=log,check=True)
     print("FB015_EIGHT_FEATURE_LUAU_NATIVE_74_74_PASS")
-    place=args.out/"P0D_PRIVATE74_EIGHT_FEATURE_STUDIO.rbxlx"
+    place=args.out/"P0D_PRIVATE74_DENSITY_16PLUS1_STUDIO.rbxlx"
     subprocess.run([str(args.rojo),"build",str(work/"default.project.json"),"-o",str(place)],check=True)
     verify_rbxlx(place,after)
     receipt["stages"]["native"]="PASS"
@@ -194,12 +212,14 @@ def main() -> None:
     receipt["place_bytes"]=place.stat().st_size
     receipt["place_sha256"]=hashlib.sha256(place.read_bytes()).hexdigest()
     receipt["source_count_actual"]=len(after)
+    assert receipt["private_horde_blob"] != receipt["original_horde_blob"]
     receipt["source_lock_total"]=len(after)  # compose() already asserts both lock totals equal actual 73
     receipt["source_lock_verified"]=True
+    receipt["private_horde_density_trial"]=True
     assert receipt["source_count_actual"] == 74
     receipt["studio_visual_and_fun"]="NOT_TESTED"
-    (args.out/"P0D_PRIVATE74_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n","utf8")
-    print("FB015_EIGHT_FEATURE_PRIVATE74_BYTES",receipt["place_bytes"],"SHA256",receipt["place_sha256"])
+    (args.out/"P0D_PRIVATE74_DENSITY_RECEIPT.json").write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n","utf8")
+    print("FB008_REAL_DENSITY_16PLUS1_PRIVATE74_BYTES",receipt["place_bytes"],"SHA256",receipt["place_sha256"])
     # Keep source workspace out of uploaded artifact; the authored sources are
     # reproducible from pinned PR Git blobs and original canonical source build.
     shutil.rmtree(work)

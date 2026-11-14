@@ -1,9 +1,10 @@
-"""The complete eight-feature preview must never mutate canonical RC66."""
+"""PRIVATE74 16+1 gameplay density trial: original Game/other65 byte-identical."""
 import hashlib
 import tempfile
 import unittest
 from pathlib import Path
 from rc_fastlane import build_art_composite as art
+from rc_fastlane import apply_fb008_density as density
 
 
 class EightFeatureCandidateSafety(unittest.TestCase):
@@ -24,6 +25,33 @@ class EightFeatureCandidateSafety(unittest.TestCase):
         })
         self.assertNotIn("server/Game.server.luau",a)
         self.assertNotIn("server/GoroganRigDriver.luau",a)
+
+    def test_horde_density_patches_pinned_and_reversible(self):
+        self.assertEqual(density.ORIGINAL_BLOB,"fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38")
+        self.assertEqual(len(density.REPLACEMENTS),6)
+        with self.assertRaises(AssertionError):
+            density.apply_horde(b"fake unverified horde source")
+        patches=dict(density.REPLACEMENTS)
+        self.assertEqual(patches["local MINIONS = 8"],"local MINIONS = 16")
+        self.assertEqual(patches["local MAX_ACTIVE = 9"],"local MAX_ACTIVE = 17")
+        self.assertIn("i<=12 then -6 else 6",patches[
+            "local z=if elite then 0 else (if i<=4 then -18 else 18)"])
+        self.assertTrue(any("minionImpacts<4" in p for p in patches.values()))
+        self.assertTrue(any("minionImpacts+=1" in p for p in patches.values()))
+        self.assertTrue(any("local minionImpacts=0" in p for p in patches.values()))
+
+    def test_density_replaces_only_horde_in_scratch_not_game(self):
+        import inspect
+        code=inspect.getsource(art.compose)
+        self.assertIn("patched_horde = apply_horde(before[DENSITY_HORDE])",code)
+        self.assertIn('if k != DENSITY_HORDE',code)
+        self.assertIn("ORIGINAL65_MUTATED",code)
+        self.assertIn("UNAUTHORIZED_SOURCE_REPLACEMENT",code)
+        self.assertIn("GAME_AUTHORITY_CHANGED",code)
+        self.assertIn('original_66_source_bytes_identical":False',code)
+        self.assertIn('original_65_byte_identical_except_horde":True',code)
+        self.assertIn("FB008_REAL_DENSITY_TRIAL_16_PLUS_ELITE_V1",code)
+        self.assertIn("assert source_files(dist)==before",code)
 
     def test_numeric_hp_minimal_hud_and_world_label_contract(self):
         code=art.pinned_art()["client/BattleHUDGovernor.client.luau"].decode("utf8")
