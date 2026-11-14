@@ -65,3 +65,14 @@ jobs:
           fi
           /tmp/p0d_motion_repin_ind_luau/luau-compile rc_fastlane/features/art_motion/NeutralMotion.client.luau >/dev/null
           echo P0D_FB015_MOTION_NATIVE_LUAU_COMPILE_PASS_SOURCE_ONLY_STUDIO_PENDING
+      - name: Execute the actual authored confirmed-hit/replay policy in pinned native Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -x /tmp/p0d_motion_repin_ind_luau/luau ]; then
+            cmake --build /tmp/p0d_motion_repin_ind_luau --target Luau.Repl.CLI --parallel 4
+          fi
+          python3 -B rc_fastlane/features/art_motion/generate_native_motion_policy.py --out /tmp/P0D_FB015_NATIVE_MOTION_EXACT_POLICY.luau
+          /tmp/p0d_motion_repin_ind_luau/luau-compile /tmp/P0D_FB015_NATIVE_MOTION_EXACT_POLICY.luau >/dev/null
+          /tmp/p0d_motion_repin_ind_luau/luau /tmp/P0D_FB015_NATIVE_MOTION_EXACT_POLICY.luau | tee /tmp/P0D_FB015_NATIVE_MOTION_POLICY.log
+          grep -Fx P0D_FB015_ACTUAL_MOTION_NATIVE_POLICY_PASS /tmp/P0D_FB015_NATIVE_MOTION_POLICY.log
