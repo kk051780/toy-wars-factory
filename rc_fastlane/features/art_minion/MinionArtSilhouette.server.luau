@@ -5,10 +5,9 @@
 local RunService = game:GetService("RunService")
 if not RunService:IsStudio() then return end
 
-local arena = workspace:WaitForChild("TRAP_RAIDERS_S1", 45)
-if not arena then warn("ART_MINION_NO_ARENA"); return end
-local mobsFolder = arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT", 45)
-if not mobsFolder then warn("ART_MINION_NO_ORIGINAL_HORDE"); return end
+-- Late Studio world loads must never permanently skip visual models.
+local arena = workspace:WaitForChild("TRAP_RAIDERS_S1")
+local mobsFolder = arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT")
 
 local equipped = {}
 local function rgb(r,g,b) return Color3.fromRGB(r,g,b) end
