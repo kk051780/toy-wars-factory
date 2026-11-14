@@ -330,7 +330,7 @@
     {
       "id": "TWIN_BIOMES_4NPC_V1",
       "summary": "Coral and Storm mirrored worlds, 4 NPC species with distinct shapes/idle and private 4/4 session codex",
-      "state": "SOURCE_PRIVATE64_NOT_OFFICIAL",
+      "state": "CANONICAL_RC64_SOURCE_ADMITTED_SAME_HEAD_CI_PENDING",
       "profiles": [
         "rich51"
       ],
@@ -341,7 +341,12 @@
       "stage": "S2+",
       "studio_test": "NOT_TESTED",
       "android": "NOT_TESTED",
-      "paid": false
+      "paid": false,
+      "official_rc_adopted": true,
+      "official_source_sha": "f680cb921d056b8e9c06d0ca13f9cdd9dc094b5a",
+      "source_adoption_pr": 332,
+      "owner_fun": "NOT_TESTED",
+      "captures_or_persistence": false
     }
   ],
   "next_source_adoption_contract": {
@@ -361,9 +366,11 @@
   },
   "last_studio": "NOT_TESTED",
   "last_official_completion_pct": 75,
-  "canonical_rc_source_head": "b0f5969536b0b800353f4f897a7b14c18800ee96",
+  "canonical_rc_source_head": "f680cb921d056b8e9c06d0ca13f9cdd9dc094b5a",
   "canonical_rc_acceptance_run": 43531582802,
-  "canonical_rc_source_count": 63,
+  "canonical_rc_source_count": 64,
   "canonical_rc_studio_real": "NOT_TESTED",
-  "canonical_rc_fun": "NOT_TESTED"
+  "canonical_rc_fun": "NOT_TESTED",
+  "canonical_rc64_candidate_ci_run": 43536196350,
+  "canonical_rc64_acceptance_ci_run": null
 }

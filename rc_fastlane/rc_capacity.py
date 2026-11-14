@@ -49,7 +49,7 @@ def inspect(out_dir: Path) -> dict:
     return {
         "schema": "P0D_RC_CAPACITY_V1",
         "status": "MEASURED_FROM_GENUINE_ROJO_PLACE_SOURCE_EXACT",
-        "artifact_scope": "Private candidate" if int(count)>57 else "Exact RC57 baseline or rebuilt source",
+        "artifact_scope": ("Official RC source build" if receipt.get("canonical_rc_source_adopted") is True else ("Private candidate" if int(count)>57 else "Exact RC57 baseline or rebuilt source")),
         "place_file_name": place.name,
         "rbxlx_bytes": b,
         "rbxlx_kb_decimal": round(b/1000, 3),
@@ -65,6 +65,7 @@ def inspect(out_dir: Path) -> dict:
         "zip_note": "GitHub artifact ZIP bytes are measured after upload via Actions metadata",
         "caveats": ["Not engine memory", "Not mobile download size", "Not Roblox runtime network usage"],
         "rc_adopted_by_this_report": False,
+        "official_rc_source_adopted_in_build_receipt": receipt.get("canonical_rc_source_adopted") is True,
     }
 
 def main():

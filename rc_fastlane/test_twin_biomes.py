@@ -105,15 +105,15 @@ class TwinBiomes(unittest.TestCase):
     def test_22_true_boolvalue_booted_by_rojo(self):
         self.assertIn('storage[FLAG] = {"$className":"BoolValue","$properties":{"Value":True}}',ADAPTER)
         self.assertIn('"P0D_ENABLE_TWIN_BIOMES_V1"',SCRIPT)
-    def test_23_unique_catalog_rows_source_only(self):
+    def test_23_unique_catalog_rows_match_official_adoption(self):
         rows={r["id"]:r for r in CATALOG}
         for i in ("P0D-063","P0D-064","P0D-065"):
-            self.assertEqual(rows[i]["stage"],"SOURCE")
+            self.assertEqual(rows[i]["stage"],"RC")
         self.assertEqual(len({r["id"] for r in CATALOG}),len(CATALOG))
-    def test_24_flag_owner_unpublished(self):
+    def test_24_source_flag_is_official_but_game_unpublished(self):
         f=FLAGS["TWIN_BIOMES_4NPC_V1"]
         self.assertTrue(f["enabled"])
-        self.assertFalse(f["official_rc_adopted"])
+        self.assertTrue(f["official_rc_adopted"])
         self.assertEqual(f["source_git_blob"],GITBLOB)
     def test_25_parent_features_all_required(self):
         for feature in ("WCS_F01_C01","SEVEN_JOBS_PVE_V1","EGG_RELAY_CLASSIC_V1",
