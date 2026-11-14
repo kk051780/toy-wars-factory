@@ -72,7 +72,7 @@ function workspace:Raycast(origin,delta,params)
 end
 local Bot={}
 ''';
-    const tests=r'''
+    tests=r'''
 -- 1: clear real ray against candidate should accept nearest valid bot.
 mode="target"
 assert(Bot.tryHumanHit("RED",v(0),v(1),9,attacker)==bots[1],"TARGET_NOT_HIT")
@@ -101,7 +101,7 @@ active=false
 assert(Bot.tryHumanHit("RED",v(0),v(1),9,attacker)==nil,"INACTIVE_DAMAGE")
 assert(rayCalls>4,"RAY_PATH_NOT_EXECUTED")
 print("FB005_HUMAN_BOT_LOS_NATIVE_8_SCENARIOS_PASS")
-''';
+'''
     return code+function+"\n"+tests
 
 if __name__=="__main__":
