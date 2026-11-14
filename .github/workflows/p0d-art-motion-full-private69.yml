@@ -328,21 +328,21 @@ jobs:
       - name: Cache same pinned Luau compiler between RC builds
         uses: actions/cache@v4
         with:
-          path: /tmp/p0d_new_luau
-          key: p0d-rc-luau-ubuntu-f46d879e28302-v1
+          path: /tmp/p0d_motion_full_luau
+          key: p0d-motion-full-luau-ubuntu-f46d879e28302-v1
       - name: Compile every actual canonical RC Luau source using same pinned compiler
         shell: bash
         run: |
           set -euo pipefail
           test "$(git -C _p0d_rc_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
-          if [ ! -x /tmp/p0d_new_luau/luau-compile ]; then
-            cmake -S _p0d_rc_luau -B /tmp/p0d_new_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-            cmake --build /tmp/p0d_new_luau --target Luau.Compile.CLI --parallel 4
+          if [ ! -x /tmp/p0d_motion_full_luau/luau-compile ]; then
+            cmake -S _p0d_rc_luau -B /tmp/p0d_motion_full_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+            cmake --build /tmp/p0d_motion_full_luau --target Luau.Compile.CLI --parallel 4
           else
             echo P0D_RC_PINNED_LUAU_CACHE_REUSED
           fi
-          /tmp/p0d_new_luau/luau-compile rc_fastlane/features/realm_hunt/RealmHunt.server.luau > /tmp/p0d_new_server.luau.out
-          /tmp/p0d_new_luau/luau-compile rc_fastlane/features/realm_hunt/RealmHuntHUD.client.luau > /tmp/p0d_new_client.luau.out
+          /tmp/p0d_motion_full_luau/luau-compile rc_fastlane/features/realm_hunt/RealmHunt.server.luau > /tmp/p0d_new_server.luau.out
+          /tmp/p0d_motion_full_luau/luau-compile rc_fastlane/features/realm_hunt/RealmHuntHUD.client.luau > /tmp/p0d_new_client.luau.out
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
@@ -357,7 +357,7 @@ jobs:
           fi
           n=0
           while IFS= read -r -d '' file; do
-            /tmp/p0d_new_luau/luau-compile "$file" > /tmp/p0d_rc_native_source.out 2>&1 || {
+            /tmp/p0d_motion_full_luau/luau-compile "$file" > /tmp/p0d_rc_native_source.out 2>&1 || {
               cat /tmp/p0d_rc_native_source.out
               echo "P0D_CANONICAL_RC_LUAU_COMPILE_FAILED $file"
               exit 1
@@ -376,9 +376,9 @@ jobs:
               --game "$DIST/src/server/Game.server.luau" \
               --policy "$DIST/src/server/EggRelayPolicy.luau" \
               --out /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau
-            cmake --build /tmp/p0d_new_luau --target Luau.Repl.CLI --parallel 4
-            /tmp/p0d_new_luau/luau-compile /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau >/dev/null
-            /tmp/p0d_new_luau/luau /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau | tee /tmp/p0d_egg_native.log
+            cmake --build /tmp/p0d_motion_full_luau --target Luau.Repl.CLI --parallel 4
+            /tmp/p0d_motion_full_luau/luau-compile /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau >/dev/null
+            /tmp/p0d_motion_full_luau/luau /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau | tee /tmp/p0d_egg_native.log
             grep -Fx P0D_EGG_RELAY_ACTUAL_GAME_NATIVE_31_CASES_PASS /tmp/p0d_egg_native.log
           fi
       - name: Native-Luau behavioral check of actual OWNER lobby phase HUD
@@ -409,8 +409,8 @@ jobs:
           '''
           Path("/tmp/p0d_owner_ux_lobby_native.luau").write_text(native,encoding="utf8")
           PY
-            /tmp/p0d_new_luau/luau-compile /tmp/p0d_owner_ux_lobby_native.luau >/dev/null
-            /tmp/p0d_new_luau/luau /tmp/p0d_owner_ux_lobby_native.luau | tee /tmp/p0d_owner_ux_lobby_native.log
+            /tmp/p0d_motion_full_luau/luau-compile /tmp/p0d_owner_ux_lobby_native.luau >/dev/null
+            /tmp/p0d_motion_full_luau/luau /tmp/p0d_owner_ux_lobby_native.luau | tee /tmp/p0d_owner_ux_lobby_native.log
             grep -Fx P0D_OWNER_UX_NATIVE_HUD_LOBBY_PHASE_4_CASES_PASS /tmp/p0d_owner_ux_lobby_native.log
           fi
       - name: Native Luau executable scoreboard role and egg/castle objective tests
@@ -468,8 +468,8 @@ jobs:
           '''
           Path("/tmp/p0d_owner_ux_role_castle_native.luau").write_text(code,encoding="utf8")
           PY
-            /tmp/p0d_new_luau/luau-compile /tmp/p0d_owner_ux_role_castle_native.luau >/dev/null
-            /tmp/p0d_new_luau/luau /tmp/p0d_owner_ux_role_castle_native.luau | tee /tmp/p0d_owner_ux_role_castle_native.log
+            /tmp/p0d_motion_full_luau/luau-compile /tmp/p0d_owner_ux_role_castle_native.luau >/dev/null
+            /tmp/p0d_motion_full_luau/luau /tmp/p0d_owner_ux_role_castle_native.luau | tee /tmp/p0d_owner_ux_role_castle_native.log
             grep -Fx P0D_OWNER_UX_NATIVE_ROLE_CASTLE_9_CASES_PASS /tmp/p0d_owner_ux_role_castle_native.log
           fi
       - name: OWNER #341 actual compiled Studio Solo 24 cases (unique Game unchanged)
@@ -498,8 +498,8 @@ jobs:
           Path("/tmp/P0D_OWNER341_ACTUAL_SOLO_NATIVE24.luau").write_text(actual,encoding="utf8")
           print("P0D_OWNER341_GENERATED_FROM_CURRENT_ACTUAL_GAME_POLICY_PASS")
           PY
-            /tmp/p0d_new_luau/luau-compile /tmp/P0D_OWNER341_ACTUAL_SOLO_NATIVE24.luau >/dev/null
-            /tmp/p0d_new_luau/luau /tmp/P0D_OWNER341_ACTUAL_SOLO_NATIVE24.luau | tee /tmp/p0d_owner341_solo_native24.log
+            /tmp/p0d_motion_full_luau/luau-compile /tmp/P0D_OWNER341_ACTUAL_SOLO_NATIVE24.luau >/dev/null
+            /tmp/p0d_motion_full_luau/luau /tmp/P0D_OWNER341_ACTUAL_SOLO_NATIVE24.luau | tee /tmp/p0d_owner341_solo_native24.log
             grep -Fx P0D_STUDIO_SOLO_ACTUAL_POLICY_NATIVE_24_CASES_PASS /tmp/p0d_owner341_solo_native24.log
           fi
       - name: Checkout exact original 41-case egg relay test author (no change to Game)
@@ -537,11 +537,11 @@ jobs:
           print("P0D_PRIVATE61_AUTHOR_JOB_AND_RELAY_MODULE_SOURCE_EXACT_PASS")
           PY
             python3 -B _egg_author_41/handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/tools/generate_native_runner.py --out /tmp/p0d60_relay41.luau
-            /tmp/p0d_new_luau/luau-compile /tmp/p0d60_job33.luau >/dev/null
-            /tmp/p0d_new_luau/luau /tmp/p0d60_job33.luau | tee /tmp/p0d60_job33.log
+            /tmp/p0d_motion_full_luau/luau-compile /tmp/p0d60_job33.luau >/dev/null
+            /tmp/p0d_motion_full_luau/luau /tmp/p0d60_job33.luau | tee /tmp/p0d60_job33.log
             grep -Fx 'P0D_SEVEN_JOBS_NATIVE_33_OF_33_POLICY_ASSERTIONS_PASS' /tmp/p0d60_job33.log
-            /tmp/p0d_new_luau/luau-compile /tmp/p0d60_relay41.luau >/dev/null
-            /tmp/p0d_new_luau/luau /tmp/p0d60_relay41.luau | tee /tmp/p0d60_relay41.log
+            /tmp/p0d_motion_full_luau/luau-compile /tmp/p0d60_relay41.luau >/dev/null
+            /tmp/p0d_motion_full_luau/luau /tmp/p0d60_relay41.luau | tee /tmp/p0d60_relay41.log
             grep -Fx 'P0D_EGG_RELAY_NATIVE_POLICY_41_CASES_PASS' /tmp/p0d60_relay41.log
             echo P0D_PRIVATE61_ONE_GAME_JOBS33_RELAY_POLICY41_REAL_HANDLER31_ALL_PASS
           fi
@@ -554,8 +554,8 @@ jobs:
             python3 -B rc_fastlane/features/star_shards/generate_native_runner.py \
               --script "$DIST/src/server/StarShardHunt.server.luau" \
               --out /tmp/P0D_STARSHARDS_PRIVATE63_REAL22.luau
-            /tmp/p0d_new_luau/luau-compile /tmp/P0D_STARSHARDS_PRIVATE63_REAL22.luau >/dev/null
-            /tmp/p0d_new_luau/luau /tmp/P0D_STARSHARDS_PRIVATE63_REAL22.luau | tee /tmp/p0d_private63_shards22.log
+            /tmp/p0d_motion_full_luau/luau-compile /tmp/P0D_STARSHARDS_PRIVATE63_REAL22.luau >/dev/null
+            /tmp/p0d_motion_full_luau/luau /tmp/P0D_STARSHARDS_PRIVATE63_REAL22.luau | tee /tmp/p0d_private63_shards22.log
             grep -Fx P0D_STAR_SHARDS_REAL_SOURCE_NATIVE_22_POLICY_CASES_PASS /tmp/p0d_private63_shards22.log
             echo P0D_PRIVATE63_ALL_NATIVE_33_41_31_22_EQUALS127_PASS
           fi
@@ -579,8 +579,8 @@ jobs:
           Path("/tmp/P0D_REAL_TWIN_TRAINING38.luau").write_text(txt.rsplit("return Training",1)[0]+"\n"+native,encoding="utf8")
           print("P0D_TWIN_TRAINING_REAL_POLICY_SOURCE_EXTRACTED_PASS")
           PY
-            /tmp/p0d_new_luau/luau-compile /tmp/P0D_REAL_TWIN_TRAINING38.luau >/dev/null
-            /tmp/p0d_new_luau/luau /tmp/P0D_REAL_TWIN_TRAINING38.luau | tee /tmp/p0d_twin_native38.log
+            /tmp/p0d_motion_full_luau/luau-compile /tmp/P0D_REAL_TWIN_TRAINING38.luau >/dev/null
+            /tmp/p0d_motion_full_luau/luau /tmp/P0D_REAL_TWIN_TRAINING38.luau | tee /tmp/p0d_twin_native38.log
             grep -Fx P0D_TWIN_CREATURE_REAL_NATIVE_38_POLICY_CASES_PASS /tmp/p0d_twin_native38.log
           fi
       - name: Execute 47 real native bond policy checks from actual 66-source module
@@ -604,8 +604,8 @@ jobs:
           Path('/tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau').write_text(out,'utf8')
           print('P0D_PRIVATE66_BOND_NATIVE40_ACTUAL_SOURCE_PIN_PASS')
           PY
-            /tmp/p0d_new_luau/luau-compile /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau >/dev/null
-            /tmp/p0d_new_luau/luau /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau | tee /tmp/p0d_real_bond_native40.log
+            /tmp/p0d_motion_full_luau/luau-compile /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau >/dev/null
+            /tmp/p0d_motion_full_luau/luau /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau | tee /tmp/p0d_real_bond_native40.log
             grep -Fx P0D_TWIN_BOND_REAL_NATIVE_47_POLICY_CASES_PASS /tmp/p0d_real_bond_native40.log
           fi
       - name: Native-execute actual composed Game+real Bond policy (27 cases), cap and live Horde wiring
@@ -618,8 +618,8 @@ jobs:
               --game "$DIST/src/server/Game.server.luau" \
               --policy "$DIST/src/server/TwinBondPolicy.luau" \
               --out /tmp/P0D_BOND_REAL_GAME_HELPER27.luau
-            /tmp/p0d_new_luau/luau-compile /tmp/P0D_BOND_REAL_GAME_HELPER27.luau >/dev/null
-            /tmp/p0d_new_luau/luau /tmp/P0D_BOND_REAL_GAME_HELPER27.luau | tee /tmp/p0d_bond_game18.log
+            /tmp/p0d_motion_full_luau/luau-compile /tmp/P0D_BOND_REAL_GAME_HELPER27.luau >/dev/null
+            /tmp/p0d_motion_full_luau/luau /tmp/P0D_BOND_REAL_GAME_HELPER27.luau | tee /tmp/p0d_bond_game18.log
             grep -Fx P0D_BOND_REAL_GAME_HELPER_NATIVE_27_CASES_PASS /tmp/p0d_bond_game18.log
           fi
       - name: Install checksum-pinned official Rojo v7.7.1
@@ -1007,20 +1007,20 @@ jobs:
           set -euo pipefail
           DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
           python3 -B -m unittest discover -s rc_fastlane -p 'test_fb015_combat.py' -v
-          test -x /tmp/p0d_new_luau/luau-compile
+          test -x /tmp/p0d_motion_full_luau/luau-compile
           BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
           python3 -B rc_fastlane/apply_fb015_combat.py --dist "$DIST" --enabled false
           AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
           test "$BEFORE" = "$AFTER"
           python3 -B rc_fastlane/apply_fb015_combat.py --dist "$DIST" --enabled true
           python3 -B rc_fastlane/features/fb015_combat/generate_native_cue_policy.py --out /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau
-          test -x /tmp/p0d_new_luau/luau
-          /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau >/dev/null
-          /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau | tee /tmp/p0d_combat_native14.log
+          test -x /tmp/p0d_motion_full_luau/luau
+          /tmp/p0d_motion_full_luau/luau-compile /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau >/dev/null
+          /tmp/p0d_motion_full_luau/luau /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau | tee /tmp/p0d_combat_native14.log
           grep -Fx P0D_FB015_REAL_CLIENT_CUE_NATIVE_14_CASES_PASS /tmp/p0d_combat_native14.log
           mkdir -p /tmp/p0d_art_combat_private67
           find "$DIST/src" -type f -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' file; do
-            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+            /tmp/p0d_motion_full_luau/luau-compile "$file" >/dev/null
           done
           /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o /tmp/p0d_art_combat_private67/P0D_ART_COMBAT_PRIVATE67.rbxlx
           python3 - <<'PY'
@@ -1084,7 +1084,7 @@ jobs:
           python3 -B rc_fastlane/compose_fb015_minion_combat.py --dist "$DIST" --out "$COMBO_DIST" --enabled false
           python3 -B rc_fastlane/compose_fb015_minion_combat.py --dist "$DIST" --out "$COMBO_DIST" --enabled true
           find "$COMBO_DIST/src" -type f -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' file; do
-            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+            /tmp/p0d_motion_full_luau/luau-compile "$file" >/dev/null
           done
           /tmp/p0d_rc_rojo build "$COMBO_DIST/default.project.json" -o "$COMBO_OUT/P0D_FB015_MINION_COMBAT_PRIVATE68.rbxlx"
           python3 - <<'PY'
@@ -1157,7 +1157,7 @@ jobs:
           python3 -B rc_fastlane/compose_fb015_art_motion.py --dist "$COMBO_DIST" --out "$MOTION_DIST" --enabled true
           n=0
           while IFS= read -r -d '' file; do
-            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+            /tmp/p0d_motion_full_luau/luau-compile "$file" >/dev/null
             n=$((n+1))
           done < <(find "$MOTION_DIST/src" -name '*.luau' -type f -print0)
           test "$n" -eq 69
