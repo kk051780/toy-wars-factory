@@ -252,6 +252,10 @@ local function applyConfirmedHit(id, isKO, serial, round, epoch, now, findEntry)
         lastRound = round
         table.clear(lastHitSerial)
         table.clear(pendingHits)
+    elseif lastRound == nil then
+        -- syncServerEpoch() can observe the epoch BEFORE its first hit.
+        -- The first server-confirmed round binds it; subsequent mismatches fail.
+        lastRound = round
     elseif lastRound ~= round then
         return false
     end
@@ -326,6 +330,12 @@ local function syncServerEpoch()
         lastRound = nil
         table.clear(lastHitSerial)
         table.clear(pendingHits)
+        -- Epoch advancement invalidates old-round hit/KO poses even if the
+        -- previous models survive another Heartbeat during replication.
+        for _,entry in pairs(records) do
+            entry.hitAt = -100
+            entry.koAt = -100
+        end
     end
     replayRecent()
 end
