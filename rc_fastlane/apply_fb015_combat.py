@@ -25,8 +25,8 @@ AUTHOR = ROOT / "features/fb015_combat/ArtCombatSlash.client.luau"
 HORDE_AUTHOR = ROOT / "features/fb015_combat/MusouHordeArtSignal.luau"
 DEST = "client/ArtCombatSlash.client.luau"
 HORDE = "server/MusouHorde.luau"
-PIN = "ba247a0a51477e215986f329f0dae422cd06c2ff"
-HORDE_PATCH_PIN = "51612783152dc84c37ccd743d3f7a4e6c7c43dbd"
+PIN = "257f5da5e40c0af89220745d576763f513a7e6ef"
+HORDE_PATCH_PIN = "a2d07936bd9fe5bdf3630498c39d61d5a8560d99"
 ORIGINAL_HORDE_PIN = "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 BASE = 66
 TRANSACTION = "P0D_ART_COMBAT_FULL_TREE_MANIFEST.json"
@@ -74,11 +74,17 @@ def validate_visual(raw: bytes) -> None:
         'arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT")',
         'mobs:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1",25)',
         "visualConnection=cue.OnClientEvent:Connect(onConfirmedHit)",
-        "serial<=(lastByMob[id] or 0)",
-        "lastByMob[id]=serial",
+        "state.seen[serial]",
+        "state.max=math.max(state.max,serial)",
+        "serial<=state.max-16",
+        "state.seen[serial]=true",
+        "if lastRound==nil then",
         "lastEpoch=epoch",
         'historyConnection=cue:GetAttributeChangedSignal("P0D_ART_RECENT_V1")',
         "replayRecent()",
+        "syncServerEpoch()",
+        "local MAX_PENDING_CUES=16",
+        "sparks:Emit(if isKO then 10 else 4)",
         "HttpService:JSONDecode(encoded)",
         "workspace:GetServerTimeNow()",
         "makeArc(hitPos,fromPos,isKO)",
@@ -164,20 +170,24 @@ end
                     -- A property/Attribute would coalesce back-to-back hits.
                     -- Both channels are appearance-only; no OnServerEvent handler.
                     if self.artCue and self.artHitBus then
-                        m.artHitSeq=(m.artHitSeq or 0)+1
-                        self.artHitBus:Fire(m.body,m.artHitSeq,m.hp<=0,self.round)
-                        local stamp=workspace:GetServerTimeNow()
-                        appendRecentHit(self.artRecent,{
-                            m.id,m.pos.X,m.pos.Y,m.pos.Z,
-                            origin.X,origin.Y,origin.Z,
-                            m.hp<=0,m.artHitSeq,self.round,self.artEpoch,stamp
-                        },stamp)
-                        -- The replicated Attribute holds a whole recent HIT LIST,
-                        -- not a single hit whose intermediate state could coalesce.
-                        self.artCue:SetAttribute("P0D_ART_RECENT_V1",
-                            HttpService:JSONEncode(self.artRecent))
-                        self.artCue:FireAllClients(
-                            m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round,self.artEpoch)
+                        -- Cosmetic APIs must NEVER abort original HP/KO accounting.
+                        local visualOK,visualError=pcall(function()
+                            m.artHitSeq=(m.artHitSeq or 0)+1
+                            self.artHitBus:Fire(m.body,m.artHitSeq,m.hp<=0,self.round)
+                            local stamp=workspace:GetServerTimeNow()
+                            appendRecentHit(self.artRecent,{
+                                m.id,m.pos.X,m.pos.Y,m.pos.Z,
+                                origin.X,origin.Y,origin.Z,
+                                m.hp<=0,m.artHitSeq,self.round,self.artEpoch,stamp
+                            },stamp)
+                            self.artCue:SetAttribute("P0D_ART_RECENT_V1",
+                                HttpService:JSONEncode(self.artRecent))
+                            self.artCue:FireAllClients(
+                                m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round,self.artEpoch)
+                        end)
+                        if not visualOK then
+                            warn("P0D_ART_VISUAL_CUE_NON_BLOCKING",visualError)
+                        end
                     end'''
     require(old.count(header)==1 and old.count(old_ctor)==1
             and old.count(old_reset)==1 and old.count(seam)==1
@@ -193,6 +203,8 @@ end
             and new.count('Instance.new("BindableEvent")')==1
             and new.count("self.artHitBus:Fire(")==1
             and new.count("self.artCue:FireAllClients(")==1
+            and "P0D_ART_VISUAL_CUE_NON_BLOCKING" in new
+            and "pcall(function()" in new
             and new.count('HttpService:JSONEncode(')==1
             and new.count('P0D_ART_RECENT_V1')>=2
             and new.count('P0D_ART_EPOCH_V1')>=2
