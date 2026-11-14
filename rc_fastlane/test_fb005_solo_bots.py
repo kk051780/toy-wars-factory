@@ -29,7 +29,7 @@ class Fb005SoloBotContracts(unittest.TestCase):
         self.assertIn('Rules.winner(',source)
         self.assertIn('hum:TakeDamage(',source)
         self.assertIn('EXPERIMENTAL_FIVE_EGG_MODE',source)
-        self.assertIn('StudioSolo.isSoloRound(',source)
+        self.assertIn('studioSoloRoundStarted',source)
         self.assertIn('SoloTeamBots.stop()',source)
         self.assertIn('SoloTeamBots.tick(now)',source)
         self.assertIn("original",source.lower())
