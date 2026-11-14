@@ -128,11 +128,24 @@ local function sourceFacts(player, speaker, mode, arena)
         local realms = arena:FindFirstChild("P0D_REALM_HUNT_V1")
         if not realms or realms:GetAttribute("Enabled") ~= true then return nil end
         local discovered = player:GetAttribute("P0D_RealmHunt_Count")
-        facts.signal = "SECRET_HINT"
-        facts.hintUnlocked = type(discovered) == "number" and discovered >= 1
-        facts.secretTier = type(discovered) == "number" and discovered >= 3 and 2 or 1
-        if not facts.hintUnlocked then facts.signal = "INTRO" end
-        return facts
+        if type(discovered) ~= "number" or discovered < 1 then
+            facts.signal = "INTRO"
+            return facts
+        end
+        if discovered >= 4 and player:GetAttribute("P0D_RealmHunt_Complete") == true then
+            facts.signal = "REALM_COMPLETE"
+            facts.realmComplete = true
+            return facts
+        end
+        for _, realmId in ipairs({"SKY", "SEA", "EMBER", "STAR"}) do
+            if player:GetAttribute("P0D_RealmHunt_" .. realmId) ~= true then
+                facts.signal = "SECRET_HINT"
+                facts.hintUnlocked = true
+                facts.nextRealm = realmId -- only user-specific, already-visible landmarks
+                return facts
+            end
+        end
+        return nil -- contradictory session state: never fake a clue
     end
     return nil
 end
