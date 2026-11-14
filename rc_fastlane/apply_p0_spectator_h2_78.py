@@ -96,11 +96,15 @@ def patch_game(src:str)->str:
     # otherwise the objective loop is half-appended and the script corrupts.
     marker="local function assignSpawn(player: Player, character: Model)"
     objective='for _, team in ipairs({"RED", "BLUE"}) do'
+    originalObjectiveCount=src.count(objective)
+    assert originalObjectiveCount>=1
     assert src.count(marker)==1, "ASSIGN_SPAWN_SOURCE_UNIQUE"
     beforeSpawn,afterStart=src.split(marker,1)
     assert objective in afterStart, "OBJECTIVE_HOOK_MISSING_AFTER_SPAWN"
     spawnBody,afterObjective=afterStart.split(objective,1)
     src=beforeSpawn+marker+spawn(spawnBody)+objective+afterObjective
+    assert src.count(objective)==originalObjectiveCount, "EGG_PROMPT_LOOP_DUPLICATED"
+    assert "map.teams[teamfor " not in src, "EGG_PROMPT_SPLICE_CORRUPTED"
 
     # Promote neutral spectators only on the NEXT LOBBY, never in ACTIVE or
     # COUNTDOWN. A dead observer receives a bounded one-shot engine respawn.
