@@ -2,7 +2,7 @@ import sys
 import unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/"tools"))
-from p0d_two_lane_queue import manifest, choose_latest, OFFICIAL, REPO, RUN_NAME
+from p0d_two_lane_queue import manifest, choose_latest, active_title_claims, read_queue, OFFICIAL, REPO, RUN_NAME
 
 OLD="a"*40
 NEW="b"*40
@@ -92,6 +92,48 @@ class TwoLaneQueueTests(unittest.TestCase):
     def test_official_head_recheck_at_selection(self):
         d=choose_latest(NEW,[pr(413,base=OLD)],api)
         self.assertEqual(d["ready_count"],0)
+    def test_active_draft_claims_only_from_pr_title_not_mentions_in_body(self):
+        capture = pr(358, draft=True)
+        capture["title"] = "[P0D A PREP DRAFT] P0D-018 捕獲・救出"
+        capture["body"] = "See unrelated P0D-017 P0D-067 for context"
+        elite = pr(359, draft=True)
+        elite["title"] = "[P0D PREP DRAFT] P0D-017 中立巨人"
+        on_other_base = pr(360)
+        on_other_base["title"] = "[P0D-040] unrelated main PR"
+        on_other_base["base"]["ref"] = "main"
+        closed = pr(361)
+        closed["title"] = "P0D-038 closed"
+        closed["state"] = "closed"
+        names = active_title_claims([capture, elite, on_other_base, closed])
+        self.assertEqual([(x["feature_id"], x["pr"]) for x in names],
+                         [("P0D-017", 359), ("P0D-018", 358)])
+        out = choose_latest(OLD, [capture, elite], api)
+        self.assertEqual(out["ready_count"], 0)
+        self.assertTrue(out["claims_scan_complete"])
+        self.assertEqual(len(out["open_pr_title_claims"]), 2)
+
+    def test_open_pr_claims_scan_incomplete_must_be_visible(self):
+        out = choose_latest(OLD, [], api, claims_scan_complete=False)
+        self.assertFalse(out["claims_scan_complete"])
+
+    def test_ref_drift_guard_before_and_during_scan(self):
+        ref_path = f"/repos/{REPO}/git/ref/heads/{OFFICIAL}"
+        prs = f"/repos/{REPO}/pulls?state=open&per_page=100&page=1"
+        seen = 0
+        def changed(_path):
+            nonlocal seen
+            if _path == ref_path:
+                seen += 1
+                return {"object": {"sha": OLD if seen == 1 else NEW}}
+            if _path == prs:
+                return []
+            raise AssertionError(_path)
+        with self.assertRaisesRegex(ValueError, "AFTER_TRUSTED_CHECKOUT"):
+            read_queue(changed, expected_official_sha=NEW)
+        seen = 0
+        with self.assertRaisesRegex(ValueError, "DURING_INTAKE"):
+            read_queue(changed, expected_official_sha=OLD)
+
     def test_fail_if_invalid_official_sha(self):
         with self.assertRaises(ValueError):choose_latest("missing",[pr(414)],api)
 
