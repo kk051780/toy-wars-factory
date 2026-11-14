@@ -1062,7 +1062,7 @@ jobs:
           assert hashlib.sha1(b'blob '+str(len(candidate)).encode()+bytes([0])+candidate).hexdigest()=='c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba'
           horde=(dist/'src/server/MusouHorde.luau').read_bytes()
           assert hashlib.sha1(b'blob '+str(len(horde)).encode()+bytes([0])+horde).hexdigest()=='e48186a6d717a46c86ec395ffbe778d196ab182d'
-          assert b'if RunService:IsStudio() then' in horde and b'P0D_ART_SPARK_V1' in horde
+          assert b'if RunService:IsStudio() then' in horde and b'P0D_ART_HIT_BUS_V1' in horde
           old=pathlib.Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx')
           digest=hashlib.sha256(place.read_bytes()).hexdigest()
           receipt={
