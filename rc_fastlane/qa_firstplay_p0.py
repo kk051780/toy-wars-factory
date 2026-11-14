@@ -141,6 +141,29 @@ def patch_game(text: str) -> str:
     assert 'match.phase=="COUNTDOWN" and readyForMatch[player]~=true' in text
     assert 'match.phaseUntil=0' in text
 
+    # Results -> lobby recovers defeated players, too: the original lobby
+    # adapter teleports healthy characters but silently skips dead players.
+    # Schedule a guarded re-characterization after state is LOBBY, not while
+    # the results screen is active. Any Roblox auto-respawn wins the race safely.
+    text=in_region(text,
+        'elseif match.phase == "RESULTS" then',
+        '-- Recovery uses the existing server-only authoritative tick',
+        lambda block: one(block,
+            """                        root.CFrame=LobbyIsland.spawn(team)
+                    end""",
+            """                        root.CFrame=LobbyIsland.spawn(team)
+                    elseif (team=="RED" or team=="BLUE") and p.Parent==Players then
+                        task.defer(function()
+                            if p.Parent~=Players or match.phase~="LOBBY" then return end
+                            local refreshed=healthy(p)
+                            if not refreshed then
+                                local ok,err=pcall(function() p:LoadCharacter() end)
+                                if not ok then warn("P0D_LOBBY_RESPAWN_FAIL",err) end
+                            end
+                        end)
+                    end"""))
+    assert text.count('P0D_LOBBY_RESPAWN_FAIL')==1
+
     # Critical lobby-to-battle proof: original resetRound loads every human
     # AFTER phase ACTIVE, CharacterAdded calls assignSpawn(ACTIVE => battle).
     text_start=text.index("local function resetRound()")
