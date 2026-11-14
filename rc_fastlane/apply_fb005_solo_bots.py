@@ -9,7 +9,7 @@ import argparse,hashlib,json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 MODULE=ROOT/"features/fb005_solo/SoloTeamBots.luau"
-MODULE_BLOB="0334a56f3aa1f4ce8d67e547cf60f4582219bc8e"
+MODULE_BLOB="b62c267a352c4037eb71acbb0e440b64011c2a00"
 ID="FB005_STUDIO_SOLO_TEAM_BOTS_CLASSIC_V1"
 GAME="server/Game.server.luau"
 DEST="server/SoloTeamBots.luau"
@@ -133,10 +133,16 @@ def patch_game(text:str)->str:
         task.defer(function()
             if match.phase=="ACTIVE" and #Players:GetPlayers()==1 then
                 local player=Players:GetPlayers()[1]
-                local ok,err=pcall(SoloTeamBots.start,map,getTeamName(player),botAuthority)
-                if not ok then
-                    warn("FB005_SOLO_START_FAIL_CLOSED",err)
+                local ok,started=pcall(SoloTeamBots.start,map,getTeamName(player),botAuthority)
+                if not ok or started~=true then
+                    warn("FB005_SOLO_START_FAIL_CLOSED",started)
                     SoloTeamBots.stop()
+                    -- Never leave a player trapped in an ACTIVE but empty
+                    -- solo match after a soft-fail (false) or hard exception.
+                    if match.phase=="ACTIVE" and studioSoloRoundStarted
+                        and #Players:GetPlayers()==1 then
+                        stopRound("DRAW","SOLO_BOTS_NOT_READY")
+                    end
                 end
             end
         end)
