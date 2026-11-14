@@ -30,11 +30,11 @@ def sub(s: str, old: str, new: str) -> str:
 
 def patch_hud(s: str) -> str:
     s = sub(s, '"Score", UDim2.new(.76, 0, 0, 58), UDim2.new(.12, 0, 0, 4)',
-            '"Score", UDim2.new(.76, 0, 0, 39), UDim2.new(.12, 0, 0, 4)')
+            '"Score", UDim2.new(.9, 0, 0, 39), UDim2.new(.05, 0, 0, 4)')
     s = sub(s, '"Status", UDim2.new(.76, 0, 0, 34), UDim2.new(.12, 0, 0, 65)',
             '"Status", UDim2.new(.76, 0, 0, 29), UDim2.new(.12, 0, 0, 47)')
     s = sub(s, '"RealH1ServerLevel",UDim2.new(.76,0,0,35),\n    UDim2.new(.12,0,0,105)',
-            '"RealH1ServerLevel",UDim2.new(.42,0,0,26),\n    UDim2.new(.015,0,0,82)')
+            '"RealH1ServerLevel",UDim2.new(.20,0,0,26),\n    UDim2.new(.015,0,0,82)')
     s = sub(s, '"First90RealObjectiveGuide",UDim2.new(.62,0,0,44),\n    UDim2.new(.19,0,.61,0)',
             '"First90RealObjectiveGuide",UDim2.new(.48,0,0,29),\n    UDim2.new(.26,0,.19,0)')
     s = sub(s, 'UDim2.fromOffset(260,33),UDim2.fromOffset(17,178)',
@@ -51,7 +51,7 @@ def patch_hud(s: str) -> str:
     s = sub(s, '    if s.phase == "COUNTDOWN" then return "開始まで " .. tostring(s.time) .. " 秒！" end',
             '    if s.phase == "COUNTDOWN" then return "▶ 開始まで " .. tostring(s.time) .. " 秒" end')
     s = sub(s, '    top.Text = string.format("🔴 %d / 🏰 %d       🔵 %d / 🏰 %d\\n自分:%s・%s  |  %d対%d人",\n        s.scores.RED or 0, s.hp.RED or 0, s.scores.BLUE or 0,\n        s.hp.BLUE or 0, s.team or "?", displayRole(s.role),\n        s.redPlayers or 0, s.bluePlayers or 0)',
-            '    top.Text = string.format("🔴%d   🔵%d   🏰%d/%d",\n        s.scores.RED or 0, s.scores.BLUE or 0, s.hp.RED or 0, s.hp.BLUE or 0)')
+            '    top.Text = string.format("🔴%d 🔵%d 🏰%d/%d | %s%s",\n        s.scores.RED or 0, s.scores.BLUE or 0, s.hp.RED or 0, s.hp.BLUE or 0,\n        (if s.team=="RED" then "赤" elseif s.team=="BLUE" then "青" else "―"), displayRole(s.role))')
     s = sub(s, '    dojoBadge.Visible=valid and s.hatchEnabled==true',
             '    dojoBadge.Visible=valid and s.hatchEnabled==true and s.phase=="LOBBY"')
     s = sub(s, '    progressBadge.Visible=s.phase=="ACTIVE"',
@@ -59,13 +59,15 @@ def patch_hud(s: str) -> str:
     s = sub(s, '    instructions.Visible=s.phase=="ACTIVE"',
             '    instructions.Visible=s.phase=="ACTIVE" -- tiny objective, not a long blocker')
     s = sub(s, '    top.Text=string.format("🏆 🔴 %d 点    🔵 %d 点\\n自分:%s・%s　|　卵5こ得点戦",\n            s.scores.RED or 0,s.scores.BLUE or 0,s.team or "?",displayRole(s.role))',
-            '    top.Text=string.format("🏆 🔴%d   🔵%d", s.scores.RED or 0,s.scores.BLUE or 0)')
+            '    top.Text=string.format("🏆 🔴%d 🔵%d | %s%s", s.scores.RED or 0,s.scores.BLUE or 0,\n        (if s.team=="RED" then "赤" elseif s.team=="BLUE" then "青" else "―"), displayRole(s.role))')
     s = sub(s, '"Instructions", UDim2.new(.55, 0, 0, 42),\n    UDim2.new(.2, 0, 1, -58)',
-            '"Instructions", UDim2.new(.45, 0, 0, 25),\n    UDim2.new(.275, 0, 0, 82)')
+            '"Instructions", UDim2.new(.58, 0, 0, 25),\n    UDim2.new(.24, 0, 0, 82)')
     s = sub(s, 'instructions.Text = "敵の卵に近づいてE／タップで奪取 → 自陣の台へ。城を攻撃しても勝てる！"',
-            'instructions.Text = "🥚 敵の卵 → 自陣へ"\ninstructions.Visible=false')
+            'instructions.Text = "🥚卵を運ぶ／🏰城をこわす"\ninstructions.Visible=false')
     s = sub(s, '    instructions.Text=if s.scoreMode=="FIVE_EGG_SCORE" and s.phase=="ACTIVE"\n        then "卵は5こ！ E／タップでひろう→自陣の金庫へ。持って逃げても得点！"\n        else "敵の卵に近づいてE／タップで奪取 → 自陣の台へ。城を攻撃しても勝てる！"',
-            '    instructions.Text=if s.scoreMode=="FIVE_EGG_SCORE" and s.phase=="ACTIVE"\n        then "🥚 集めて得点" else "🥚 敵の卵 → 自陣へ"')
+            '    instructions.Text=if s.scoreMode=="FIVE_EGG_SCORE" and s.phase=="ACTIVE"\n        then "🥚5個集めて得点" else "🥚卵を運ぶ／🏰城をこわす"')
+    s = sub(s, '    Color3.new(1, 1, 1), 17)\ntop.Text = "EGG RAID RUMBLE · 接続中..."',
+            '    Color3.new(1, 1, 1), 14)\ntop.Text = "EGG RAID RUMBLE · 接続中..."')
     assert 'local RunService = game:GetService("RunService")' in s
     assert 'if s.kind ~= "SNAPSHOT" then return end' in s
     assert 'action("MODE_VOTE","CLASSIC")' in s
