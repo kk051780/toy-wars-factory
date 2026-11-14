@@ -143,7 +143,7 @@
     },
     "WCS_F01_C01": {
       "enabled": true,
-      "status": "RC58_CANDIDATE_DEFAULT_OFF_IF_MISSING_ATTR_CI_PENDING",
+      "status": "CANONICAL_RC63_SOURCE_EXACT_CI_PASSED_STUDIO_NOT_TESTED",
       "gameplay": "Studio-only elevated Crystal Canyon/Moguron gate, route and 14-second shortcut",
       "source": [
         {
@@ -159,11 +159,13 @@
       "source_exact_rojo": "NOT_RUN_ON_NEW_CANDIDATE_HEAD",
       "engine_2client": "NOT_TESTED",
       "android": "NOT_TESTED",
-      "fun": "NOT_TESTED"
+      "fun": "NOT_TESTED",
+      "official_rc_adopted": true,
+      "canonical_rc_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802"
     },
     "SEVEN_JOBS_PVE_V1": {
       "enabled": true,
-      "status": "WCS_PLUS_SEVEN_JOBS_RC59_CANDIDATE_NOT_OFFICIAL",
+      "status": "CANONICAL_RC63_SOURCE_EXACT_CI_PASSED_STUDIO_NOT_TESTED",
       "source_author_sha": "98edf843fb8a8f6123c13a67745b216712bfe63d",
       "source_module_blob": "a7253d36cb67df47d4ba65d35af212ed1eb7b5b2",
       "game_patch_blob": "d81b8acb89b1c243761f1b69610742812eb475a6",
@@ -174,11 +176,13 @@
       "private_studio": "NOT_TESTED",
       "two_client": "NOT_TESTED",
       "android": "NOT_TESTED",
-      "owner_fun": "NOT_TESTED"
+      "owner_fun": "NOT_TESTED",
+      "official_rc_adopted": true,
+      "canonical_rc_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802"
     },
     "EGG_RELAY_CLASSIC_V1": {
       "enabled": true,
-      "status": "WCS_JOBS_RELAY_RC60_PRIVATE_CANDIDATE_NOT_OFFICIAL",
+      "status": "CANONICAL_RC63_SOURCE_EXACT_CI_PASSED_STUDIO_NOT_TESTED",
       "author_policy_gitblob": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
       "classic_one_egg_only": true,
       "server_runtime": "Original Game uses explicit BoolValue true under ServerStorage; missing/false means OFF, Studio-only",
@@ -188,11 +192,13 @@
       "official_rc": false,
       "studio": "NOT_TESTED",
       "android": "NOT_TESTED",
-      "owner_fun": "NOT_TESTED"
+      "owner_fun": "NOT_TESTED",
+      "official_rc_adopted": true,
+      "canonical_rc_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802"
     },
     "STARRY_PATH_V1": {
       "enabled": true,
-      "status": "PRIVATE61_CANDIDATE_NOT_CANONICAL",
+      "status": "CANONICAL_RC63_SOURCE_EXACT_CI_PASSED_STUDIO_NOT_TESTED",
       "feature": "WCS third route; star bridge via both shores, 16s on, 7s after real closure",
       "source_git_blob": "311d4c75e38f896f24c982afbc6f9d5c35e90cb4",
       "source_path": "rc_fastlane/features/star_path/StarfallPath.server.luau",
@@ -207,11 +213,13 @@
       "changes_to_Game_Store_Remote": false,
       "engine": "NOT_TESTED",
       "android": "NOT_TESTED",
-      "owner_fun": "NOT_TESTED"
+      "owner_fun": "NOT_TESTED",
+      "official_rc_adopted": true,
+      "canonical_rc_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802"
     },
     "METEOR_FOURTH_V1": {
       "enabled": true,
-      "status": "PRIVATE62_SOURCE_CANDIDATE_NOT_CANONICAL",
+      "status": "CANONICAL_RC63_SOURCE_EXACT_CI_PASSED_STUDIO_NOT_TESTED",
       "feature": "55s quiet + 5s warning + 22s collision bridge, fourth distinct WCS canyon route; Starfall existing third lane",
       "source_git_blob": "4845ffa98b0b17a506a993682dc84f9de0fd5e30",
       "source_path": "rc_fastlane/features/meteor_fourth/MeteorFourth.server.luau",
@@ -225,10 +233,11 @@
       "geometry": "WCS bank local z=-17, min 3 stud width-aware clearance to existing z=-35 Starfall and z=0 gate and +30 permanent crossing",
       "fail_closed": "world/StarStep_01/banks/gate/safe part missing, bad geometry, duplicate runtime, invalid flag",
       "rollback": "enabled=false preserves exact existing 61-source Place, project and locks",
-      "official_rc_adopted": false,
+      "official_rc_adopted": true,
       "engine_studio": "NOT_TESTED",
       "android": "NOT_TESTED",
-      "owner_fun": "NOT_TESTED"
+      "owner_fun": "NOT_TESTED",
+      "canonical_rc_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802"
     },
     "STAR_SHARDS_V1": {
       "enabled": true,
@@ -249,7 +258,10 @@
       "studio_2client": "NOT_TESTED",
       "android": "NOT_TESTED",
       "owner_fun": "NOT_TESTED",
-      "startup_dependency_wait_seconds": 170
+      "startup_dependency_wait_seconds": 170,
+      "status": "CANONICAL_RC63_SOURCE_EXACT_CI_PASSED_STUDIO_NOT_TESTED",
+      "official_rc_adopted": true,
+      "canonical_rc_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802"
     }
   }
 }

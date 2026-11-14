@@ -3,7 +3,7 @@
   "as_of_jst": "2026-11-14",
   "rc_branch": "rc/p0d-s1-kids-rc01",
   "active_source": "79123d35cd7afdd5f4f9941675bc2d2cf382ac4e",
-  "verified_rc_head": "639da1af22f8fcee1e609a2637ef3bbcabf33d6f",
+  "verified_rc_head": "b0f5969536b0b800353f4f897a7b14c18800ee96",
   "official_s1_previous_score": 75,
   "stages": {
     "IDEA": "企画段階",
@@ -19,7 +19,7 @@
     "STUDIO": 90,
     "FUN": 100
   },
-  "progress_note": "工程到達率は仮配点の可視化であり公開完成率ではない。特にRCはRojoビルド成功であってRobloxエンジン試験成功ではない",
+  "progress_note": "Original official57 baseline 21/58 RC; official flat63 one-commit source admission adds four catalog IDs (059-062), raises five rows incl 007 to RC. Partial P0D-032 world weather remains IDEA; true Studio/Android/FUN NOT_TESTED.",
   "rows": [
     {
       "id": "P0D-001",
@@ -85,11 +85,11 @@
       "id": "P0D-007",
       "group": "基本",
       "name": "仲間への卵リレー",
-      "stage": "SOURCE",
+      "stage": "RC",
       "release": "S2+",
       "evidence": "https://github.com/kk051780/toy-wars-factory/pull/296",
-      "note": "クラシック1卵リレー。WCS＋7職業と同じゲームに実装するRC60候補、正式採用前はSOURCE",
-      "rc_evidence": null
+      "note": "クラシック1卵の味方リレーが正式RC63の単一Game/HUDへ搭載済。5卵モードの受渡しは対象外。native31含む同一RC CI成功、Studio実機は未検証",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802"
     },
     {
       "id": "P0D-008",
@@ -338,7 +338,7 @@
       "stage": "IDEA",
       "release": "S2+",
       "evidence": "https://github.com/kk051780/toy-wars-factory/issues/213",
-      "note": "天候イベント案",
+      "note": "雷・吹雪・流星群の全体天候案は未完成。流星ショートカット（第4橋）の部分のみ正式RC63に採用済。雷・吹雪部分は企画中",
       "rc_evidence": null
     },
     {
@@ -605,42 +605,46 @@
       "id": "P0D-059",
       "group": "世界",
       "name": "浮遊クリスタル峡谷・橋掘りモグロン",
-      "stage": "SOURCE",
+      "stage": "RC",
       "release": "S2+",
       "evidence": "https://github.com/kk051780/toy-wars-factory/issues/293",
-      "note": "57本完全保持＋新WCS1本。RojoはStudio限定の起動フラグを明示true、未設定なら安全停止。新HEAD CI検証待ち",
-      "source_git_blob": "7d2afad5e9b8df410ea0eb83ad962cf42ab98e71"
+      "note": "浮遊クリスタル峡谷、常設安全橋、14秒モグロンの橋を正式RC63へ採用。WCS58段階のOFF切戻し可、Studio物理・2clientは未検証",
+      "source_git_blob": "7d2afad5e9b8df410ea0eb83ad962cf42ab98e71",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802"
     },
     {
       "id": "P0D-060",
       "group": "戦闘",
       "name": "7職業PvE専用技（初期MVP）",
-      "stage": "SOURCE",
+      "stage": "RC",
       "release": "S1",
       "evidence": "https://github.com/kk051780/toy-wars-factory/pull/297",
-      "note": "本体7職業フル実装とは別のPvE縦切り。RC59候補ビルドと独立QA後も公式RC採用まではSOURCE",
-      "source_git_blob": "a7253d36cb67df47d4ba65d35af212ed1eb7b5b2"
+      "note": "7職の中立PvE技を正式RC63の単一Game/HUDへ搭載。フル7職PvP完成ではなくPvE縦切りMVP。native33成功、実機未検証",
+      "source_git_blob": "a7253d36cb67df47d4ba65d35af212ed1eb7b5b2",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802"
     },
     {
       "id": "P0D-061",
       "group": "世界",
       "name": "星降る秘境・第三の橋ルート",
-      "stage": "SOURCE",
+      "stage": "RC",
       "release": "S2+",
       "evidence": "https://github.com/kk051780/toy-wars-factory/issues/219",
-      "note": "峡谷の第3ルート。両岸で起動、16秒開き、在橋者がいれば閉じない。SOURCE候補・Studio未検証",
-      "source_git_blob": "311d4c75e38f896f24c982afbc6f9d5c35e90cb4"
+      "note": "両岸から起動する16秒の星橋を正式RC63へ採用。WCS遅延起動対応120秒、独立OFF可能。Studio実機未検証",
+      "source_git_blob": "311d4c75e38f896f24c982afbc6f9d5c35e90cb4",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802"
     },
     {
       "id": "P0D-062",
       "group": "世界・収集",
       "name": "星降る橋・6つのかけら探索と称号",
-      "stage": "SOURCE",
+      "stage": "RC",
       "release": "S2+",
       "evidence": "https://github.com/kk051780/toy-wars-factory/pull/312",
-      "note": "元の星の橋の6地点で収集。重複不可、6/6で一時的な星エフェクトと頭上称号。セッション限定・保存/得点/XP/課金なし。候補のみ・Studio未検証；流星第四路と共存し、遅延起動170秒に対応したPRIVATE63候補",
-      "source_git_blob": "abd07316ae23bc0b250ebd31590986b09109ce01"
+      "note": "星橋上6かけらのセッション限定収集＋30秒装飾称号を正式RC63へ搭載。native22成功、永続保存・通貨・XP・課金は無し。Studio実機未検証",
+      "source_git_blob": "abd07316ae23bc0b250ebd31590986b09109ce01",
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802"
     }
   ],
-  "last_progress_change": "candidate row P0D-061 is SOURCE only; official 21/58 RC remains unchanged"
+  "last_progress_change": "Official RC63 source admitted and CI passed at b0f5969536b0b800353f4f897a7b14c18800ee96; 5 concept rows SOURCE->RC, 62 total, no Studio/FUN scoring"
 }

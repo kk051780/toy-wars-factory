@@ -226,7 +226,7 @@
     {
       "id": "WCS_F01_C01",
       "summary": "Crystal Canyon elevated two-team fair entry, two Mogurones and 14s bridge/cooldown",
-      "state": "CANDIDATE_SOURCE_LOCKED_RC58_CI_PENDING_NOT_OFFICIAL",
+      "state": "INCLUDED_IN_CANONICAL_RC63_SOURCE_EXACT_CI_PASSED",
       "profiles": [
         "rich51"
       ],
@@ -238,12 +238,16 @@
       "studio_2client": "NOT_TESTED",
       "android": "NOT_TESTED",
       "owner_fun": "NOT_TESTED",
-      "boot_attribute": "Rojo sets ServerStorage.P0D_RC_ENABLE_WCS_F01_C01=true only in WCS-included private candidate; missing/false runtime flag is OFF"
+      "boot_attribute": "Rojo sets ServerStorage.P0D_RC_ENABLE_WCS_F01_C01=true only in WCS-included private candidate; missing/false runtime flag is OFF",
+      "canonical_rc_source_head": "b0f5969536b0b800353f4f897a7b14c18800ee96",
+      "canonical_rc_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802",
+      "studio": "NOT_TESTED",
+      "official_rc_adopted": true
     },
     {
       "id": "SEVEN_JOBS_PVE_V1",
       "summary": "Seven distinct player jobs with neutral PvE moves, lobby job select and Q/mobile skill",
-      "state": "CANDIDATE_RC59_UNADOPTED",
+      "state": "INCLUDED_IN_CANONICAL_RC63_SOURCE_EXACT_CI_PASSED",
       "profiles": [
         "rich51"
       ],
@@ -254,32 +258,43 @@
       "server_owned_damage": true,
       "studio_2client": "NOT_TESTED",
       "android": "NOT_TESTED",
-      "owner_fun": "NOT_TESTED"
+      "owner_fun": "NOT_TESTED",
+      "canonical_rc_source_head": "b0f5969536b0b800353f4f897a7b14c18800ee96",
+      "canonical_rc_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802",
+      "studio": "NOT_TESTED",
+      "official_rc_adopted": true
     },
     {
       "id": "EGG_RELAY_CLASSIC_V1",
-      "state": "RC60_COMBINED_SOURCE_ONLY",
+      "state": "INCLUDED_IN_CANONICAL_RC63_SOURCE_EXACT_CI_PASSED",
       "summary": "Original Game implements classic 1-egg close teammate handoff with HUD touch/H",
       "source_policy_gitblob": "ef9b65bd6520231f299f21c5cfe2aa250798c8d0",
       "independent_switch": true,
       "rollback": "FEATURE_SWITCHES.features.EGG_RELAY_CLASSIC_V1.enabled=false restores WCS+Jobs59",
       "one_original_game_remote_store": true,
-      "studio": "NOT_TESTED"
+      "studio": "NOT_TESTED",
+      "canonical_rc_source_head": "b0f5969536b0b800353f4f897a7b14c18800ee96",
+      "canonical_rc_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802",
+      "official_rc_adopted": true
     },
     {
       "id": "STARRY_PATH_V1",
-      "state": "SOURCE_PRIVATE61_CI_NOT_YET_VERIFIED",
+      "state": "INCLUDED_IN_CANONICAL_RC63_SOURCE_EXACT_CI_PASSED",
       "name": "星降る橋・第三峡谷ルート",
       "one_server_script": true,
       "source_git_blob": "311d4c75e38f896f24c982afbc6f9d5c35e90cb4",
       "existing_Game_Remote_Store_unchanged": true,
       "independent_switch": true,
-      "engine": "NOT_TESTED"
+      "engine": "NOT_TESTED",
+      "canonical_rc_source_head": "b0f5969536b0b800353f4f897a7b14c18800ee96",
+      "canonical_rc_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802",
+      "studio": "NOT_TESTED",
+      "official_rc_adopted": true
     },
     {
       "id": "STAR_SHARDS_V1",
       "name": "星のかけら6個探索・コスメティック探検家称号",
-      "state": "PRIVATE63_AFTER_METEOR_SOURCE_NOT_OFFICIAL",
+      "state": "INCLUDED_IN_CANONICAL_RC63_SOURCE_EXACT_CI_PASSED",
       "script_count_change": 1,
       "source_git_blob": "abd07316ae23bc0b250ebd31590986b09109ce01",
       "independent_switch": true,
@@ -289,7 +304,28 @@
       "rollback": "FEATURE_SWITCHES.features.STAR_SHARDS_V1.enabled=false restores meteor private62",
       "studio": "NOT_TESTED",
       "android": "NOT_TESTED",
-      "wait_seconds": 170
+      "wait_seconds": 170,
+      "canonical_rc_source_head": "b0f5969536b0b800353f4f897a7b14c18800ee96",
+      "canonical_rc_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802",
+      "official_rc_adopted": true
+    },
+    {
+      "id": "METEOR_FOURTH_V1",
+      "state": "INCLUDED_IN_CANONICAL_RC63_SOURCE_EXACT_CI_PASSED",
+      "summary": "第4流星橋。星橋とは独立した22秒の渡河ショートカット、Studio private only",
+      "profiles": [
+        "rich51"
+      ],
+      "source_git_blob": "4845ffa98b0b17a506a993682dc84f9de0fd5e30",
+      "independent_switch": true,
+      "rollback": "FEATURE_SWITCHES.features.METEOR_FOURTH_V1.enabled=false restores 61-source stage",
+      "single_original_Game_Remote_Store_authority": true,
+      "canonical_rc_source_head": "b0f5969536b0b800353f4f897a7b14c18800ee96",
+      "canonical_rc_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802",
+      "studio": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "owner_fun": "NOT_TESTED",
+      "official_rc_adopted": true
     }
   ],
   "next_source_adoption_contract": {
@@ -308,5 +344,10 @@
     "release_gate": "owner_studio_and_fun_and_safety_approval"
   },
   "last_studio": "NOT_TESTED",
-  "last_official_completion_pct": 75
+  "last_official_completion_pct": 75,
+  "canonical_rc_source_head": "b0f5969536b0b800353f4f897a7b14c18800ee96",
+  "canonical_rc_acceptance_run": 43531582802,
+  "canonical_rc_source_count": 63,
+  "canonical_rc_studio_real": "NOT_TESTED",
+  "canonical_rc_fun": "NOT_TESTED"
 }
