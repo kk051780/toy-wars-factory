@@ -109,6 +109,8 @@ end
 local match={phase="ACTIVE",phaseUntil=0,winner="",reason="",alarm="ACTIVE",
   alarmUntil=10}
 local readyForMatch={}
+local modeVotes={}
+local lastModeVote={}
 local roles={}
 local invulnUntil={}
 local earnedPower={}
