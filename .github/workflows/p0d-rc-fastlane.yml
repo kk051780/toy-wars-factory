@@ -970,6 +970,80 @@ jobs:
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
           print('OFFICIAL_RC_FASTLANE_BINARY_SOURCE_EXACT_PASS',p,digest)
           PY
+      - name: P0D018 private67 actual original Game + exact Rojo Place, not official
+        if: github.head_ref == 'feature/p0d-018-capture-policy-rc66-prep-20261114'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$PROFILE" = rich51
+          python3 -B -m unittest discover -s rc_fastlane -p test_capture_source.py -v
+          python3 -B -m unittest discover -s rc_fastlane -p test_capture_integration.py -v
+          DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+          cp -a "$DIST" /tmp/p0d_capture67
+          BEFORE=$(find /tmp/p0d_capture67 -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          python3 -B rc_fastlane/apply_capture.py --dist /tmp/p0d_capture67 --enabled false
+          AFTER=$(find /tmp/p0d_capture67 -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          test "$BEFORE" = "$AFTER"
+          echo P0D018_CAPTURE_OFF_EXACT_RC66_ZERO_DIFF_PASS
+          python3 -B rc_fastlane/apply_capture.py --dist /tmp/p0d_capture67 --enabled true
+          n=0
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" > /tmp/p0d_capture_compile.txt 2>&1 || {
+              cat /tmp/p0d_capture_compile.txt; exit 1;
+            }
+            n=$((n+1))
+          done < <(find /tmp/p0d_capture67/src -name '*.luau' -print0)
+          test "$n" -eq 67
+          echo P0D018_CAPTURE_PRIVATE67_ALL_NATIVE_LUAU_COMPILE_PASS
+          mkdir -p /tmp/p0d_capture_out
+          /tmp/p0d_rc_rojo build /tmp/p0d_capture67/default.project.json -o /tmp/p0d_capture_out/P0D_PRIVATE_CAPTURE_67.rbxlx
+          python3 - <<'PY'
+          import pathlib,collections,json,hashlib,zipfile,xml.etree.ElementTree as ET,os
+          root=pathlib.Path('/tmp/p0d_capture67')
+          real=pathlib.Path('/tmp/p0d_capture_out/P0D_PRIVATE_CAPTURE_67.rbxlx')
+          original=pathlib.Path('_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE')
+          def scripts(root):
+            return {p.relative_to(root/'src').as_posix():p.read_bytes() for p in (root/'src').rglob('*.luau')}
+          old=scripts(original); src=scripts(root)
+          assert len(old)==66 and len(src)==67
+          assert set(src)-set(old)=={'server/CapturePolicy.luau'}
+          assert {p for p in old if old[p]!=src[p]}=={'server/Game.server.luau'}
+          def blob(b):
+            return hashlib.sha1(b'blob '+str(len(b)).encode()+bytes([0])+b).hexdigest()
+          lock=json.loads((root/'SOURCE_LOCK.json').read_text())
+          assert lock['blobs']=={p:blob(b) for p,b in sorted(src.items())}
+          embedded=collections.Counter();names=collections.Counter()
+          for item in ET.fromstring(real.read_bytes()).iter('Item'):
+            if item.get('class') not in ('Script','LocalScript','ModuleScript'):continue
+            x=item.find("./Properties/string[@name='Source']")
+            if x is not None:embedded[(x.text or '').encode('utf8')]+=1
+            y=item.find("./Properties/string[@name='Name']")
+            if y is not None:names[(item.get('class'),y.text)]+=1
+          assert embedded==collections.Counter(src.values())
+          assert names[('Script','Game')]==1 and names[('ModuleScript','CapturePolicy')]==1
+          txt=src['server/Game.server.luau'].decode()
+          assert txt.count('remote.OnServerEvent:Connect(')==1
+          assert txt.count('Capture.begin(player,nearest,')==1
+          assert txt.count('Capture.rescue(rescuer,nearest,')==1
+          size=real.stat().st_size;sha=hashlib.sha256(real.read_bytes()).hexdigest()
+          out=pathlib.Path('/tmp/p0d_capture_out')
+          receipt={'feature_id':'P0D-018','candidate_head':os.environ['GITHUB_SHA'],
+               'base_official':'9feb2ec9f5ad8e96b6b727e9f77260b0a5f60991',
+               'kind':'PRIVATE_CANDIDATE_67_NOT_OFFICIAL_RC',
+               'script_count':67,'same_original_Game':True,'single_Remote':True,
+               'studio_2client':'NOT_TESTED','android':'NOT_TESTED','fun':'NOT_TESTED',
+               'actual_place_bytes':size,'sha256':sha}
+          receiptPath=out/'P0D_CAPTURE_PRIVATE67_RECEIPT.json'
+          receiptPath.write_text(json.dumps(receipt,indent=2)+'\n')
+          candidate=out/'P0D_CAPTURE_PRIVATE67.zip'
+          with zipfile.ZipFile(candidate,'w',zipfile.ZIP_DEFLATED) as z:
+            for path,name in ((real,real.name),(root/'SOURCE_LOCK.json','SOURCE_LOCK.json'),
+                              (root/'RC_FEATURE_LOCK.json','RC_FEATURE_LOCK.json'),
+                              (receiptPath,receiptPath.name)):
+              z.write(path,name)
+          print('P0D018_CAPTURE_PRIVATE67_ROJO_SOURCE_EXACT_PASS',size,sha)
+          print('P0D018_CAPTURE_PRIVATE67_ZIP_BYTES',candidate.stat().st_size)
+          PY
       - name: Inspect real assembled private63 Rojo boot + Meteor + shards + mobile HUD
         shell: bash
         run: |
@@ -999,6 +1073,13 @@ jobs:
           print('P0D_PRIVATE64_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
           PY
           fi
+      - uses: actions/upload-artifact@v4
+        if: github.head_ref == 'feature/p0d-018-capture-policy-rc66-prep-20261114'
+        with:
+          name: P0D-CAPTURE-PRIVATE67-CANDIDATE
+          path: /tmp/p0d_capture_out/*
+          retention-days: 7
+          if-no-files-found: error
       - uses: actions/upload-artifact@v4
         with:
           name: P0D-CANONICAL-RC-STUDIO-${{ env.PROFILE }}
