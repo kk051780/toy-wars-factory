@@ -44,6 +44,14 @@ class NPCSafetyAudit(unittest.TestCase):
                   'enemy, enemyRoot = observedEnemy, observedRoot',
                   'speak(player, "NAVI", "AUTO_ENEMY_ALERT", arena, enemy, enemyRoot)'):
             self.assertIn(t,self.r)
+    def test_canonical_game_cannot_enable_egg_prompts_in_lobby(self):
+        game=(ROOT/"releases/P0D_S1_KIDS_RC01/src/server/Game.server.luau").read_text("utf8")
+        map_builder=(ROOT/"releases/P0D_S1_KIDS_RC01/src/server/MapBuilder.luau").read_text("utf8")
+        self.assertIn('p.Enabled = false',map_builder)
+        self.assertIn('eggPrompt = prompt(egg, "Steal egg"',map_builder)
+        self.assertIn('map.teams[team].eggPrompt.Enabled = match.phase == "ACTIVE"',game)
+        self.assertIn('map.teams[name].eggPrompt.Enabled = enabled and match.eggOwners[name] == nil',game)
+        self.assertIn('match.phase = "LOBBY"',game)
     def test_original_authority_preserved(self):
         for token in ('Instance.new("RemoteEvent")','OnServerEvent:Connect(',
                       'GetDataStore(','MarketplaceService'):
