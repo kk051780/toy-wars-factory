@@ -11,9 +11,9 @@ class Solo78(unittest.TestCase):
   self.assertIn('#Players:GetPlayers()>1 and chosenMode==ModeVote.SCORE',s.NEW)
   self.assertIn('EXPERIMENTAL_FIVE_EGG_MODE',s.NEW)
  def test_hud_no_new_overlay(self):
-  self.assertIn("lobbyHelp.Visible",s.HUD_NEW)
+  self.assertIn("local function phaseText(s): string",s.HUD_NEW)
   self.assertNotIn('Instance.new("ScreenGui")',s.HUD_NEW)
-  self.assertIn('ソロ：通常卵戦',s.HUD_NEW)
+  self.assertIn('ソロ：通常卵戦＋AI5体',s.HUD_NEW)
  def test_old_anchor_single_game(self):
   with self.assertRaises(AssertionError):s.patch_game("random game")
  def test_off_writes_nothing(self):
