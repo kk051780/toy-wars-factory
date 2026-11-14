@@ -6,7 +6,8 @@
     "FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3": true,
     "FB016_ART_CAMERA_SIGHTLINE_V2": true,
     "FB015_GOROGAN_MOBILE_LOD_V1": true,
-    "FB015_LIVE_CASTLE_SAFE_PARITY_V1": true
+    "FB015_LIVE_CASTLE_SAFE_PARITY_V1": true,
+    "P0D_PRIVATE_LIVE_HORDE_NINE_V1": true
   },
   "base_official_head": "f4e64c9248423f9c021f633b80e554706f7a66e4",
   "base_original_place_bytes": 744130,
@@ -32,5 +33,23 @@
   ],
   "preconditions": "Official FB019 V2 80-source sameHEAD validated Place; 2 unchanged core authorities",
   "live_art_gate": "LIVE_ART_NO_GO; seven Studio-only high-value art systems still absent in nonStudio; fallback adds independent safe castle geometry only.",
-  "source_script_count_on_live_fallback": 81
+  "source_script_count_on_live_fallback": 81,
+  "private_gameplay_canary": {
+    "issue": 444,
+    "id": "P0D_PRIVATE_LIVE_HORDE_NINE_V1",
+    "changed_source": "server/Game.server.luau",
+    "original_MusouHorde": "SOURCE_BYTES_UNCHANGED",
+    "public_nonStudio": "OFF",
+    "studio": "UNCHANGED",
+    "private_nonStudio": "OFF unless game.PrivateServerId nonempty AND Workspace server attribute P0D_PRIVATE_LIVE_HORDE_NINE=true",
+    "admin_harness": "MUST_SET_BEFORE_MATCH_START_PRIVATE_SESSION_ONLY",
+    "status": "CODEPATH_SOURCE_QA_ONLY",
+    "release": "NOT_AUTHORIZED",
+    "owner_accepted": false,
+    "real_runtime": "NOT_TESTED",
+    "android15min": "NOT_TESTED",
+    "child_fun_first3min": "NOT_TESTED",
+    "art_decision": "ART_NO_GO",
+    "rollback": "Disable this flag and recompile original 81 source"
+  }
 }
