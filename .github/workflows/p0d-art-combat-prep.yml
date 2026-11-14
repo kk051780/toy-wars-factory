@@ -49,4 +49,10 @@ jobs:
             cmake --build /tmp/p0d_new_luau --target Luau.Compile.CLI --parallel 4
           fi
           /tmp/p0d_new_luau/luau-compile rc_fastlane/features/fb015_combat/ArtCombatSlash.client.luau >/tmp/p0d_art_combat_native.out
-          echo ART_COMBAT_NATIVE_SOURCE_ONLY_PASS_NOT_STUDIO_NOT_OFFICIAL
+          /tmp/p0d_new_luau/luau-compile rc_fastlane/features/fb015_combat/MusouHordeArtSignal.luau >/tmp/p0d_art_horde_native.out
+          cmake --build /tmp/p0d_new_luau --target Luau.Repl.CLI --parallel 4
+          python3 -B rc_fastlane/features/fb015_combat/generate_native_cue_policy.py --out /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau
+          /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau | tee /tmp/p0d_actual_cue_native.log
+          grep -Fx P0D_FB015_REAL_CLIENT_CUE_NATIVE_14_CASES_PASS /tmp/p0d_actual_cue_native.log
+          echo ART_COMBAT_NATIVE_REAL_DEDUPE_POLICY_PASS_STUDIO_NOT_TESTED
