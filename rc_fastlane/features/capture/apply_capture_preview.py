@@ -8,7 +8,7 @@ from __future__ import annotations
 import argparse, hashlib, json, shutil
 from pathlib import Path
 
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=Path(__file__).resolve().parents[3]
 CAPTURE=ROOT/"rc_fastlane/features/capture/CapturePolicy.luau"
 PREP=ROOT/"rc_fastlane/features/capture/PREP_SOURCE_LOCK.json"
 GAME="server/Game.server.luau"
