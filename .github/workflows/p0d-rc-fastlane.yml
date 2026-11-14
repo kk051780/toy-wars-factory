@@ -1796,3 +1796,42 @@ jobs:
           path: /tmp/p0d_fb019_v2_out/*
           retention-days: 7
           if-no-files-found: error
+
+      - name: 'ART GATE candidate - recompose exact RC80 + forest 2 biomes and four gates'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_fb019_hit_visibility_dist
+          OUT=/tmp/p0d_fb015_forest_artgate_stage_dist
+          REPORT=/tmp/p0d_fb015_artgate_stage
+          PLACE="$REPORT/P0D_RC80_FB015_FOREST_ARTGATE_PRIVATE_STUDIO.rbxlx"
+          mkdir -p "$REPORT"
+          test -f "$BASE/SOURCE_LOCK.json"
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_forest_v2.py -v
+          python3 -B rc_fastlane/apply_fb015_forest_v2.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_fb015_forest_v2.py --base "$BASE" --out "$OUT" --enabled true
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 80
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done < <(find "$OUT/src" -type f -name '*.luau' -print0)
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o "$PLACE"
+          python3 -B rc_fastlane/verify_fb015_forest_v2.py --dist "$OUT" --place "$PLACE" --receipt "$REPORT/FB015_FOREST_SOURCE_RECEIPT.json"
+          python3 -B art_quality/check_art_quality.py --place "$PLACE" --out "$REPORT/ART_CHECK_REPORT.json"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('/tmp/p0d_fb015_artgate_stage/ART_CHECK_REPORT.json').read_text())
+          assert r['source']['source_gate']=='PASS',r['source']
+          assert r['art_decision']=='ART_NO_GO' and r['owner_accepted'] is False
+          print('ART_GATE_PRIVATE_FOREST_SOURCE_PASS_ART_NO_GO_OWNER_PENDING')
+          PY
+          sha256sum "$PLACE" > "$REPORT/PLACE_SHA256.txt"
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-PRIVATE-RC80-FB015-FOREST-ARTGATE-NOT-APPROVED
+          path: /tmp/p0d_fb015_artgate_stage/*
+          retention-days: 14
+          if-no-files-found: error

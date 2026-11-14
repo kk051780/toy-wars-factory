@@ -1,0 +1,59 @@
+{
+  "schema": "P0D_RC80_ARTGATE_RECOMPOSE_STAGE_V1",
+  "base_official_rc_sha": "bd5b819b846705e18537a994ed97ffe71ddd4855",
+  "created_for": "2026-11-15 OWNER ART GATE RC recompose",
+  "current_scope": "ISOLATED_STAGING_NOT_OFFICIAL",
+  "source_candidates": [
+    {
+      "pr": 424,
+      "sha": "a751d1d36e5a8263e72b9ce219054f4630f08ddb",
+      "selection": "COPY 13 SOURCE QA FILES",
+      "source_ci_run": 43640246895,
+      "source_ci_status": "SUCCESS",
+      "owner_accepted": false
+    },
+    {
+      "pr": 421,
+      "sha": "6223abdf43427dedb00c81c592b7121d3d701cfd",
+      "selection": "RECOMPOSE 1 WORLD SCRIPT VIA 80-SOURCE OFFICIAL RC IN ACTIONS",
+      "source_ci_run": 43638389157,
+      "source_ci_status": "SUCCESS",
+      "feature_id": "FB015_FOREST_BIOMES_MONUMENTS_V2",
+      "owner_accepted": false
+    }
+  ],
+  "on_hold": [
+    {
+      "pr": 417,
+      "reason": "OLD BASE 846d; camera line-of-sight patch needs new BASE revalidation"
+    },
+    {
+      "pr": 423,
+      "reason": "SEPARATE SERVER HIT MISS/HP AUTHORITY change; do not mix with art-only stage"
+    }
+  ],
+  "gates": {
+    "source": "PENDING_NEW_STAGE_CI",
+    "studio_pc_8_scenes": "NOT_TESTED",
+    "android_8_scenes": "NOT_TESTED",
+    "mobile_15_minutes": "NOT_TESTED",
+    "child_3_minutes": "NOT_TESTED",
+    "human_art_rating": "NOT_TESTED",
+    "final": "ART_NO_GO / FUN_NO_GO / MOBILE_NO_GO / OWNER_ACCEPTED=0"
+  },
+  "preserve": [
+    "ONE_Game",
+    "80_SOURCE",
+    "FB016_PASSABLE_FOLIAGE",
+    "FB017_NO_PERSISTENT_GUIDES",
+    "FB018_BUTTON_LABEL",
+    "FB019_V2_REAL_HIT_VISIBILITY",
+    "SOURCE_LOCK",
+    "OFF_ROLLBACK"
+  ],
+  "no_main_write": true,
+  "no_official_rc_write": true,
+  "no_pr_merge": true,
+  "no_publish": true,
+  "no_paid_changes": true
+}
