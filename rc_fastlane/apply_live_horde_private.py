@@ -74,10 +74,32 @@ def patch(source:bytes)->bytes:
     )
     assert reset.count(old)==1
     result=before+"local function resetRound()"+reset.replace(old,new,1)+"local function chooseTeam("+after
+    # #444 must fix the actual existing three-part combat lifecycle, not reset
+    # alone: ordinary ATTACK still gated to Studio, and 0.5s horde AI ticks
+    # were nested in a Studio-only SoloTeamBots loop.
+    access='(game.PrivateServerId ~= "" and workspace:GetAttribute("'+PRIVATE_ATTR+'") == true)'
+    hit_old=('    -- Original ATTACK cooldown/seq/phase also gates PvE. No second Remote or damage event.\n'
+             '    if RunService:IsStudio() then\n')
+    hit_new=('    -- Original ATTACK cooldown/seq/phase also gates PvE. No second Remote or damage event.\n'
+             '    if RunService:IsStudio() or '+access+' then\n')
+    assert result.count(hit_old)==1, "STUDIO_HORDE_ATTACK_GUARD_DRIFT"
+    result=result.replace(hit_old,hit_new,1)
+    tick_old=('    -- Existing server tick is the sole PvE attack authority; no extra game loop.\n'
+              '    if RunService:IsStudio() and match.phase=="ACTIVE" then\n')
+    tick_new=('    -- Existing server tick is the sole PvE attack authority; no extra game loop.\n'
+              '    if (RunService:IsStudio() or '+access+') and match.phase=="ACTIVE" then\n')
+    assert result.count(tick_old)==1, "STUDIO_HORDE_TICK_GUARD_DRIFT"
+    result=result.replace(tick_old,tick_new,1)
+    bot_old=('        -- The same ORIGINAL Game tick drives Studio bots. No second match loop.\n'
+             '        if not EXPERIMENTAL_FIVE_EGG_MODE then\n')
+    bot_new=('        -- The same ORIGINAL Game tick drives Studio bots. No second match loop.\n'
+             '        if RunService:IsStudio() and not EXPERIMENTAL_FIVE_EGG_MODE then\n')
+    assert result.count(bot_old)==1, "STUDIO_BOTS_PARENT_TICK_GUARD_DRIFT"
+    result=result.replace(bot_old,bot_new,1)
     assert result.count("horde:reset(")==1
     assert result.count("remote.OnServerEvent:Connect(")==1
-    assert result.count('game.PrivateServerId ~= ""')==1
-    assert result.count('workspace:GetAttribute("'+PRIVATE_ATTR+'") == true')==1
+    assert result.count('game.PrivateServerId ~= ""')==3
+    assert result.count('workspace:GetAttribute("'+PRIVATE_ATTR+'") == true')==3
     assert len(result)>len(raw)
     return result.encode("utf8")
 
@@ -105,6 +127,9 @@ def apply(base:Path,out:Path,enabled:bool)->bool:
     horde=before[HORDE].decode("utf8")
     assert "function Horde:reset(" in horde or "function MusouHorde:reset(" in horde, "NO_REAL_HORDE_RESET"
     assert "RealDamagePopup" in horde and "MUSOU_ELITE_TELEGRAPH" in horde
+    assert "local MINIONS = 8" in horde and "local MAX_ACTIVE = 9" in horde
+    assert "for i=1,MAX_ACTIVE do" in horde, "REAL_NINE_MOB_CREATION_DRIFT"
+    assert "if self.round<0 then return 0,0 end" in horde
     changed=patch(before[GAME])
     after={**before,GAME:changed}
     assert len(after)==81 and {k for k in before if before[k]!=after[k]}=={GAME}
@@ -114,6 +139,8 @@ def apply(base:Path,out:Path,enabled:bool)->bool:
        "parent_official":PARENT,"feature":FEATURE,"source_count":81,
        "modified_sources":[GAME],"other_80_sources_exact":True,
        "original_game_authority_only":True,"original_horde_source_unchanged":True,
+       "studio_guarded_sites_original":3,"source_controlled_sites":3,
+       "studio_SoloTeamBots_tick_stays_studio_only":True,
        "old_game_sha":orig[GAME],"new_game_sha":pins[GAME],
        "nonstudio_private_server_id_required":True,
        "nonstudio_server_attribute":PRIVATE_ATTR,"public_default":"OFF",
