@@ -299,6 +299,17 @@ class ArtCombatQA(unittest.TestCase):
             self.assertFalse(mod.receipt_path(d).exists())
             self.assertEqual(len(mod.sources(d)),66)
 
+    def test_symlinked_parent_is_refused_before_resolve(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            dist=fixture(root)
+            alias=root/"ALIAS"
+            alias.symlink_to(root,target_is_directory=True)
+            with self.assertRaisesRegex(RuntimeError,"FB015_SYMLINK_PARENT_COMPONENT_REFUSED"):
+                mod.apply(alias/dist.name,True)
+            self.assertTrue(dist.is_dir())
+            self.assertFalse(mod.backup_dir(dist).exists())
+
     def test_uninstalled_off_is_true_zero_write(self):
         with tempfile.TemporaryDirectory() as tmp:
             d=Path(tmp)/"missing"
