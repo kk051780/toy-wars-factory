@@ -53,6 +53,9 @@ class TalkingNpcPrepTests(unittest.TestCase):
             else:
                 self.assertIn(fragment, s)
         self.assertIn("params.FilterDescendantsInstances", s)
+        self.assertIn('arena:GetAttribute("P0D_AUTH_ROUND_PHASE") == "ACTIVE"', s)
+        self.assertIn('if inspected > 12 or raycasts >= 3 then break', s)
+        self.assertIn('local ok, reason = pcall(function()', s)
         self.assertIn("d.Magnitude <= 45", s)
         self.assertIn("remote:FireClient(player,", s)
         self.assertIn('if team and not inTeam(player, team) then return end', s)
@@ -119,8 +122,10 @@ class TalkingNpcPrepTests(unittest.TestCase):
 
     def test_sourcery_tts_single_worker_cleanup_and_budget(self):
         client = self.sources["TalkingNPCClient.client.luau"]
-        self.assertIn('if audioBusy then return end', client)
+        self.assertIn('if audioBusy or not audioPending then return end', client)
         self.assertIn('audioBusy = true', client)
+        self.assertIn('task.delay(9, function()', client)
+        self.assertIn('workerGeneration += 1', client)
         self.assertIn('audioPending = nil', client)
         self.assertIn('request.nonce == speechSerial', client)
         self.assertIn('TTS_GAP = 20', client)
@@ -150,6 +155,9 @@ class TalkingNpcPrepTests(unittest.TestCase):
         self.assertIn('type(shardCount) == "number" and shardCount < 6', runtime)
         self.assertIn('facts.areaCode = "star_bridge"', runtime)
         self.assertIn('star_bridge = "星降る橋"', director)
+        self.assertIn('REALMS = {SKY = "空のひみつ"', director)
+        self.assertIn('facts.nextRealm', director)
+        self.assertIn('facts.realmComplete == true', director)
         self.assertIn('area .. "に" .. item .. "があるよ！"', director)
 
     def test_expired_captions_cancel_stale_audio(self):
