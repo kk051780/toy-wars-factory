@@ -58,7 +58,8 @@ def patch(source:bytes)->bytes:
     assert FEATURE not in raw and PRIVATE_ATTR not in raw,"DOUBLE_ADOPTION"
     assert raw.count("remote.OnServerEvent:Connect(")==1,"GAME_AUTHORITY_DRIFT"
     assert "local touched,defeated = horde:hit(" in raw
-    assert "FB019" in raw and "RealDamagePopup" in raw
+    assert "FB019" in raw, "MISSING_AUTHOR_CONFIRMED_HIT_LAYER"
+    # Popup belongs to MusouHorde, not Game. Validate it in the unchanged Horde.
     before,reset,after,old=parse_guard(raw)
     indentation=old[:len(old)-len(old.lstrip())]
     new=(
