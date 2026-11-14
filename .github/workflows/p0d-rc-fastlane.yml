@@ -1044,15 +1044,17 @@ jobs:
           assert actual==embedded, ('PRIVATE67_SOURCE_EXACT_MISMATCH',len(actual),len(embedded))
           assert named[('Script','Game')]==1
           assert named[('LocalScript','ArtCombatSlash')]==1
+          assert named[('ModuleScript','MusouHorde')]==1
+          assert (dist/'src/server/MusouHorde.luau').read_bytes().count(b'P0D_ART_HIT_V1')==1
           sp=json.loads((dist/'SOURCE_LOCK.json').read_text('utf8'))
           fp=json.loads((dist/'RC_FEATURE_LOCK.json').read_text('utf8'))
           assert sp['total_scripts']==fp['total_sources']==67
           assert sp['blobs']==fp['source_gitblobs']
-          assert sp['art_combat']['all_original_66_bytes_preserved'] is True
+          assert sp['art_combat']['unchanged_original_sources']==65
           assert sp['art_combat']['owner_fun']=='ART_NO_GO'
           assert fp['feature_flags']['ART_COMBAT_SLASH_READONLY_V1'] is True
           candidate=(dist/'src/client/ArtCombatSlash.client.luau').read_bytes()
-          assert hashlib.sha1(b'blob '+str(len(candidate)).encode()+bytes([0])+candidate).hexdigest()=='2edae20c45ca712c344fdcd3093837c7ac37f59d'
+          assert hashlib.sha1(b'blob '+str(len(candidate)).encode()+bytes([0])+candidate).hexdigest()=='7650d205ecba6cf0bccb50859407633227c57aa1'
           old=pathlib.Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx')
           digest=hashlib.sha256(place.read_bytes()).hexdigest()
           receipt={
@@ -1060,8 +1062,10 @@ jobs:
               'private_candidate_sha256':digest,
               'private_candidate_rbxlx_bytes':place.stat().st_size,
               'source_count':len(scripts),
-              'source_gitblob':'2edae20c45ca712c344fdcd3093837c7ac37f59d',
-              'original_rc66_source_bytes_preserved':True,
+              'source_gitblob':'7650d205ecba6cf0bccb50859407633227c57aa1',
+              'horde_signal_blob':'acf72809877595921ba2f45f9e4d0220a6338853',
+              'original_rc66_unchanged_scripts':65,
+              'single_original_horde_cosmetic_cue_patch_only':True,
               'baseline_rc66_place_bytes':old.stat().st_size,
               'baseline_rc66_place_sha256':hashlib.sha256(old.read_bytes()).hexdigest(),
               'source_stage':'PRIVATE_PREP_NOT_OFFICIAL_RC',
@@ -1072,6 +1076,10 @@ jobs:
           (output/'RC_FEATURE_LOCK.json').write_text(json.dumps(fp,indent=2)+'\n')
           print(receipt)
           PY
+          python3 -B rc_fastlane/apply_fb015_combat.py --dist "$DIST" --enabled false
+          RESTORED=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          test "$BEFORE" = "$RESTORED"
+          echo ART_COMBAT_PRIVATE67_ROLLBACK_ORIGINAL66_ALL_DIST_BYTES_PASS
       - uses: actions/upload-artifact@v4
         if: ${{ env.PROFILE == 'rich51' }}
         with:
