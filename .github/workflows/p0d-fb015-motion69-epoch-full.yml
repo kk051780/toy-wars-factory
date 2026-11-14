@@ -1157,6 +1157,10 @@ jobs:
           /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_EPOCH_NATIVE_MOTION_POLICY.luau >/dev/null
           /tmp/p0d_new_luau/luau /tmp/P0D_FB015_EPOCH_NATIVE_MOTION_POLICY.luau | tee /tmp/P0D_FB015_EPOCH_NATIVE_MOTION_POLICY.log
           grep -Fx P0D_FB015_ACTUAL_MOTION_EPOCH_HISTORY_NATIVE_POLICY_PASS /tmp/P0D_FB015_EPOCH_NATIVE_MOTION_POLICY.log
+          python3 -B rc_fastlane/features/art_motion/generate_native_body41_policy.py --out /tmp/P0D_FB015_NATIVE_FULL41_MOTION.luau
+          /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_NATIVE_FULL41_MOTION.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/P0D_FB015_NATIVE_FULL41_MOTION.luau | tee /tmp/P0D_FB015_NATIVE_FULL41_MOTION.log
+          grep -F P0D_FB015_41_PART_REAL_NATIVE_MOTION_PASS /tmp/P0D_FB015_NATIVE_FULL41_MOTION.log
           PARENT68_BEFORE=$(find "$COMBO_DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
           # Observe the entire 68 blob source map; the composer MUST fail
           # closed until this digest is explicitly frozen in its SOURCE PIN.
