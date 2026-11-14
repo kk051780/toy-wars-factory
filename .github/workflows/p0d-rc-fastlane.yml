@@ -614,7 +614,7 @@ jobs:
             /tmp/p0d_new_luau/luau /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau | tee /tmp/p0d_real_bond_native40.log
             grep -Fx P0D_TWIN_BOND_REAL_NATIVE_47_POLICY_CASES_PASS /tmp/p0d_real_bond_native40.log
           fi
-      - name: Native-execute actual composed Game bond guard and capped neutral attack, 18 cases
+      - name: Native-execute actual composed Game+real Bond policy (27 cases), cap and live Horde wiring
         shell: bash
         run: |
           set -euo pipefail
@@ -622,10 +622,11 @@ jobs:
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
             python3 -B rc_fastlane/features/twin_bond/generate_game_native.py \
               --game "$DIST/src/server/Game.server.luau" \
-              --out /tmp/P0D_BOND_REAL_GAME_HELPER18.luau
-            /tmp/p0d_new_luau/luau-compile /tmp/P0D_BOND_REAL_GAME_HELPER18.luau >/dev/null
-            /tmp/p0d_new_luau/luau /tmp/P0D_BOND_REAL_GAME_HELPER18.luau | tee /tmp/p0d_bond_game18.log
-            grep -Fx P0D_BOND_REAL_GAME_HELPER_NATIVE_18_CASES_PASS /tmp/p0d_bond_game18.log
+              --policy "$DIST/src/server/TwinBondPolicy.luau" \
+              --out /tmp/P0D_BOND_REAL_GAME_HELPER27.luau
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_BOND_REAL_GAME_HELPER27.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_BOND_REAL_GAME_HELPER27.luau | tee /tmp/p0d_bond_game18.log
+            grep -Fx P0D_BOND_REAL_GAME_HELPER_NATIVE_27_CASES_PASS /tmp/p0d_bond_game18.log
           fi
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash

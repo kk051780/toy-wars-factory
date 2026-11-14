@@ -93,9 +93,12 @@ class TwinBond(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             folder=Path(temp)
             (folder/"sentinel.bin").write_bytes(b"OFF must never touch output bytes")
+            (folder/"already-empty"/"nested").mkdir(parents=True)
             def snapshot():
-                return {p.relative_to(folder).as_posix():p.read_bytes()
-                        for p in folder.rglob("*") if p.is_file()}
+                # Include directories and their types, not just file bytes.
+                return {p.relative_to(folder).as_posix():
+                        ("dir", None) if p.is_dir() else ("file", p.read_bytes())
+                        for p in folder.rglob("*")}
             before=snapshot()
             self.assertFalse(apply_twin_bond.apply(folder,override=False))
             self.assertEqual(snapshot(),before)

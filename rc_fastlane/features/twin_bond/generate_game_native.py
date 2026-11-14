@@ -113,12 +113,38 @@ check("not_studio_no_bonus",combinedDamageMultiplier(player),2)
 studio=true
 flagOn=false
 check("flag_off_no_bonus",combinedDamageMultiplier(player),2)
-assert(checked==18,"BONDED_GAME_ASSERTIONS_NOT_18_"..tostring(checked))
-print("P0D_BOND_REAL_GAME_HELPER_NATIVE_18_CASES_PASS")
+-- Real Game helper now exercises the EXACT compiled policy body, not a stub.
+-- This proves the actual session Lv2/Lv3 state produces the promised bonus.
+flagOn=true
+saved=1
+TwinBond=(function()
+{{POLICY}}
+end)()
+check("real_no_bond_contract",combinedDamageMultiplier(player),1)
+local accept2=TwinBond.select(player,"AWARIN",2,os.clock())
+check("real_accept_level2",if accept2 then 1 else 0,1)
+check("real_level2_bonus",twinBondOnlyNeutralMobBonus(player),1.1)
+check("real_level2_horde_multiplier",combinedDamageMultiplier(player),1.1)
+TwinBond.forget(player)
+local accept3=TwinBond.select(player,"RAIKO",3,os.clock())
+check("real_accept_level3",if accept3 then 1 else 0,1)
+check("real_level3_bonus",twinBondOnlyNeutralMobBonus(player),1.2)
+saved=2
+check("real_level3_saved_damage",combinedDamageMultiplier(player),2.4)
+saved=3.8
+check("real_level3_cap38",combinedDamageMultiplier(player),3.8)
+TwinBond.forget(player)
+saved=1
+check("real_after_forget_no_bonus",combinedDamageMultiplier(player),1)
+assert(checked==27,"BONDED_GAME_ASSERTIONS_NOT_27_"..tostring(checked))
+print("P0D_BOND_REAL_GAME_HELPER_NATIVE_27_CASES_PASS")
 '''
 
-def generate(source: Path, output: Path) -> None:
+def generate(source: Path, policy: Path, output: Path) -> None:
     game=source.read_text("utf8")
+    pure=policy.read_text("utf8")
+    assert pure.count("return Bond")==1 and "function Bond.select(" in pure
+    assert "function Bond.pveMultiplier(" in pure and "function Bond.forget(" in pure
     assert game.count(MARKER)==1, "BOUND_GAME_SERVICE_MISSING_OR_DUPLICATE"
     assert game.count(END)==1, "ORIGINAL_GAME_ATTACK_AUTHORITY_CHANGED"
     start=game.index(MARKER)
@@ -132,9 +158,43 @@ def generate(source: Path, output: Path) -> None:
     matches=list(ATTACK.finditer(game))
     assert len(matches)==1, "BONDED_MINION_ATTACK_NOT_EXACTLY_ONCE"
     attack=matches[0]
-    assert 'horde:hit(root.Position,look,' in game[max(0,attack.start()-650):attack.start()]
-    assert ',now,player.Character)' in game[attack.end():attack.end()+50]
-    native=TESTS.replace("{{HELPER}}",helper).replace("{{EXPR}}",attack.group(0))
+    # Bind the expression to the ACTUAL single Horde call argument, not just
+    # text within 650 bytes of a possibly unwired horde:hit invocation.
+    pre='horde:hit(root.Position,look,'
+    calls=[m.start() for m in re.finditer(re.escape(pre),game)]
+    assert len(calls)==1,"HORDE_HIT_AUTHORITY_COUNT_NOT_ONE"
+    call_at=calls[0]
+    depth=1
+    end_call=None
+    for i in range(call_at+len('horde:hit('),len(game)):
+        if game[i]=='(': depth+=1
+        elif game[i]==')':
+            depth-=1
+            if depth==0:
+                end_call=i
+                break
+    assert end_call is not None,"UNTERMINATED_HORDE_HIT"
+    assert call_at < attack.start() < attack.end() < end_call,"BONUS_UNWIRED_FROM_HORDE"
+    args=game[call_at+len('horde:hit('):end_call]
+    pieces=[]
+    level=0
+    begin=0
+    for pos,char in enumerate(args):
+        if char=='(': level+=1
+        elif char==')': level-=1
+        elif char==',' and level==0:
+            pieces.append(args[begin:pos].strip())
+            begin=pos+1
+        assert level>=0,"BAD_HORDE_ARGUMENT_PARENS"
+    pieces.append(args[begin:].strip())
+    assert len(pieces)==5,("BAD_HORDE_SIGNATURE",len(pieces))
+    assert pieces[0]=="root.Position" and pieces[1]=="look"
+    assert pieces[3]=="now" and pieces[4]=="player.Character"
+    assert pieces[2].count(attack.group(0))==1,"BONUS_NOT_IN_DAMAGE_ARGUMENT"
+    assert len(list(ATTACK.finditer(pieces[2])))==1,"MULTIPLIER_NOT_HORDE_DAMAGE"
+    native=(TESTS.replace("{{HELPER}}",helper)
+           .replace("{{EXPR}}",attack.group(0))
+           .replace("{{POLICY}}",pure))
     assert "{{" not in native
     output.parent.mkdir(parents=True,exist_ok=True)
     output.write_text(native,encoding="utf8")
@@ -143,6 +203,7 @@ def generate(source: Path, output: Path) -> None:
 if __name__=="__main__":
     parser=argparse.ArgumentParser()
     parser.add_argument("--game",required=True,type=Path)
+    parser.add_argument("--policy",required=True,type=Path)
     parser.add_argument("--out",required=True,type=Path)
     args=parser.parse_args()
-    generate(args.game,args.out)
+    generate(args.game,args.policy,args.out)
