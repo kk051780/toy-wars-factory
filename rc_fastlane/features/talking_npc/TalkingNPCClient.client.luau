@@ -92,6 +92,7 @@ end
 voiceToggle.Activated:Connect(function()
     audioEnabled = not audioEnabled
     voiceToggle.Text = audioEnabled and "音声: ON" or "音声: OFF"
+    speechSerial += 1 -- disable pending load even after a fast OFF/ON toggle
     if not audioEnabled then stopVoice() end
 end)
 
@@ -191,6 +192,7 @@ local function receive(packet)
     if type(packet.displayName) ~= "string" or #packet.displayName > 65 then return end
     if not allowVoices[packet.voiceId] then return end
     speechSerial += 1
+    stopVoice() -- stop previous spoken line before replacing the visible caption
     local seq = speechSerial
     label.Text = packet.displayName .. (packet.suspicious == true and "　※敵のうわさ" or "")
     label.TextColor3 = packet.suspicious == true
