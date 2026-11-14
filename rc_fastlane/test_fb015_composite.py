@@ -3,6 +3,7 @@
 from __future__ import annotations
 import importlib.util
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -96,6 +97,49 @@ class CompositeTest(unittest.TestCase):
             root=Path(tmp)
             self.assertFalse(combo.compose(root/"missing",root/"private68",False))
             self.assertFalse((root/"private68").exists())
+
+    def test_off_never_deletes_ancestor_of_input(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            with self.assertRaisesRegex(RuntimeError,"PRIVATE_OUTPUT_MUST_BE_SEPARATE"):
+                combo.compose(d,root,False)
+            self.assertTrue(d.exists())
+
+    def test_off_never_deletes_unrelated_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            output=root/"private68"
+            combo.compose(d,output,True)
+            unrelated=output/"SAVED_UNRELATED_FILE.txt"
+            unrelated.write_text("DO NOT DELETE",encoding="utf8")
+            with self.assertRaisesRegex(RuntimeError,"ROLLBACK_REFUSED_ADDED_OR_MODIFIED_OR_MISSING_FILE"):
+                combo.compose(d,output,False)
+            self.assertEqual(unrelated.read_text("utf8"),"DO NOT DELETE")
+            unrelated.unlink()
+            self.assertTrue(combo.compose(d,output,False))
+            self.assertFalse(output.exists())
+
+    def test_interrupted_composite_off_cleanup_recover(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            original67=snapshot(d)
+            output=root/"private68"
+            combo.compose(d,output,True)
+            record=combo.verify_private_output(output,d)
+            journal=output.with_name(output.name+".fb015_delete_journal.json")
+            tombstone=output.with_name(output.name+".fb015_deleting")
+            journal.write_text(json.dumps(record)+"\\n",encoding="utf8")
+            os.rename(output,tombstone)
+            self.assertTrue(combo.compose(d,output,False))
+            self.assertFalse(journal.exists())
+            self.assertFalse(tombstone.exists())
+            self.assertFalse(output.exists())
+            self.assertEqual(snapshot(d),original67)
 
 if __name__ == "__main__":
     unittest.main()
