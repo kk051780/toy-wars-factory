@@ -291,5 +291,17 @@ class CompositeTest(unittest.TestCase):
             mf.write_bytes(raw)
             self.assertTrue(combo.compose(d,out,False))
 
+    def test_composite_symlinked_output_parent_refused_before_resolve(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            dist=fixture(root)
+            slash.apply(dist,True)
+            alias=root/"ALIAS"
+            alias.symlink_to(root,target_is_directory=True)
+            with self.assertRaisesRegex(RuntimeError,"FB015_SYMLINK_PARENT_COMPONENT_REFUSED"):
+                combo.compose(dist,alias/"private68",True)
+            self.assertFalse((root/"private68").exists())
+            self.assertTrue(dist.is_dir())
+
 if __name__ == "__main__":
     unittest.main()
