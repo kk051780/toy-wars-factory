@@ -26,8 +26,8 @@ AUTHOR = ROOT / "features/fb015_combat/ArtCombatSlash.client.luau"
 HORDE_AUTHOR = ROOT / "features/fb015_combat/MusouHordeArtSignal.luau"
 DEST = "client/ArtCombatSlash.client.luau"
 HORDE = "server/MusouHorde.luau"
-PIN = "17c6a9a3404e913b279b348e3b981ac61bfd1b24"
-HORDE_PATCH_PIN = "a2d07936bd9fe5bdf3630498c39d61d5a8560d99"
+PIN = "5dcc59469f25f636125032ac802bce2254c2cec6"
+HORDE_PATCH_PIN = "48e46b19951143ad63f692d12aa5fc0e8bdeed36"
 ORIGINAL_HORDE_PIN = "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 BASE = 66
 TRANSACTION = "P0D_ART_COMBAT_FULL_TREE_MANIFEST.json"
@@ -107,6 +107,8 @@ def validate_visual(raw: bytes) -> None:
         "workspace:GetServerTimeNow()",
         "makeArc(hitPos,fromPos,isKO)",
         "if isEpochStale(authoritativeEpoch,epoch) then return end",
+        "if not admitPacketEpoch(epoch) then return end",
+        "local highestPacketEpoch=nil",
         "typeof(hitPos)~=\"Vector3\"",
         "cue:IsA(\"RemoteEvent\")",
         "MAX_BURSTS_PER_SECOND = 9",
@@ -193,14 +195,21 @@ end
                         local visualOK,visualError=pcall(function()
                             m.artHitSeq=(m.artHitSeq or 0)+1
                             self.artHitBus:Fire(m.body,m.artHitSeq,m.hp<=0,self.round)
-                            local stamp=workspace:GetServerTimeNow()
-                            appendRecentHit(self.artRecent,{
-                                m.id,m.pos.X,m.pos.Y,m.pos.Z,
-                                origin.X,origin.Y,origin.Z,
-                                m.hp<=0,m.artHitSeq,self.round,self.artEpoch,stamp
-                            },stamp)
-                            self.artCue:SetAttribute("P0D_ART_RECENT_V1",
-                                HttpService:JSONEncode(self.artRecent))
+                            local historyOK,historyError=pcall(function()
+                                local stamp=workspace:GetServerTimeNow()
+                                appendRecentHit(self.artRecent,{
+                                    m.id,m.pos.X,m.pos.Y,m.pos.Z,
+                                    origin.X,origin.Y,origin.Z,
+                                    m.hp<=0,m.artHitSeq,self.round,self.artEpoch,stamp
+                                },stamp)
+                                self.artCue:SetAttribute("P0D_ART_RECENT_V1",
+                                    HttpService:JSONEncode(self.artRecent))
+                            end)
+                            if not historyOK then
+                                warn("P0D_ART_RECENT_HISTORY_NON_BLOCKING",historyError)
+                            end
+                            -- Deliver confirmed LIVE hit even if history
+                            -- serialization or replicated Attribute fails.
                             self.artCue:FireAllClients(
                                 m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round,self.artEpoch)
                         end)
@@ -223,6 +232,7 @@ end
             and new.count("self.artHitBus:Fire(")==1
             and new.count("self.artCue:FireAllClients(")==1
             and "P0D_ART_VISUAL_CUE_NON_BLOCKING" in new
+            and "P0D_ART_RECENT_HISTORY_NON_BLOCKING" in new
             and "pcall(function()" in new
             and new.count('HttpService:JSONEncode(')==1
             and new.count('P0D_ART_RECENT_V1')>=2
@@ -314,9 +324,9 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
     disabled = dist.with_name(dist.name + ".art_combat_disabling")
     trusted=receipt_path(dist)
     # Recover an interrupted OFF without losing either valid tree.
-    if disabled.exists():
+    if os.path.lexists(disabled):
         require(not enabled, "INTERRUPTED_OFF_RECOVERY_REQUIRES_DISABLED_MODE")
-        if not dist.exists() and backup.exists():
+        if not dist.exists() and os.path.lexists(backup):
             record=validate_candidate_tree(disabled,dist)
             validate_saved_original(backup,record)
             _check_original(backup)
@@ -326,7 +336,7 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
             trusted.unlink()
             print("ART_COMBAT_OFF_INTERRUPTED_SWAP_RECOVERED")
             return True
-        if dist.exists() and not backup.exists():
+        if dist.exists() and not os.path.lexists(backup):
             record=external_receipt(dist)
             validate_saved_original(dist,record)
             _check_original(dist)
@@ -336,7 +346,7 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
             print("ART_COMBAT_OFF_INTERRUPTED_CLEANUP_RECOVERED")
             return True
         raise RuntimeError("AMBIGUOUS_INTERRUPTED_OFF_STATE_KEEP_ALL_DATA")
-    if not dist.exists() and backup.exists():
+    if not dist.exists() and os.path.lexists(backup):
         record=external_receipt(dist)
         validate_saved_original(backup,record)
         _check_original(backup)
@@ -344,8 +354,8 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
         trusted.unlink()
         raise RuntimeError("PREVIOUS_INTERRUPTED_APPLY_RECOVERED_RERUN")
     if not enabled:
-        if not backup.exists():
-            require(not trusted.exists(), "ORPHANED_TRUSTED_RECEIPT_KEEP_ALL_DATA")
+        if not os.path.lexists(backup):
+            require(not os.path.lexists(trusted), "ORPHANED_TRUSTED_RECEIPT_KEEP_ALL_DATA")
             if dist.exists():
                 _check_original(dist)
             print("ART_COMBAT_OFF_CLEAN_ZERO_WRITE")
@@ -357,7 +367,7 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
         require(dist.exists() and (dist / "src" / DEST).exists(), "OFF_BACKUP_STATE_INVALID")
         require(blob((dist / "src" / DEST).read_bytes()) == PIN, "ART_COMBAT_FAIL_CLOSED")
         require(blob((dist / "src" / HORDE).read_bytes()) == HORDE_PATCH_PIN, "ART_COMBAT_FAIL_CLOSED")
-        require(not disabled.exists(), "PREVIOUS_DISABLE_INCOMPLETE")
+        require(not os.path.lexists(disabled), "PREVIOUS_DISABLE_INCOMPLETE")
         os.rename(dist, disabled)
         try:
             os.rename(backup, dist)
@@ -371,14 +381,14 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
         trusted.unlink()
         print("ART_COMBAT_OFF_EXACT_ORIGINAL66_RESTORED")
         return True
-    require(dist.is_dir() and not backup.exists() and not trusted.exists(),
+    require(dist.is_dir() and not os.path.lexists(backup) and not os.path.lexists(trusted),
             "ART_COMBAT_ALREADY_APPLIED_OR_BACKUP_EXISTS")
     prior = _check_original(dist)
     # All source and author preflight validation precedes writing a candidate.
     with tempfile.TemporaryDirectory(prefix=".art_combat_stage_", dir=dist.parent) as tmp:
         staged = Path(tmp) / dist.name
         _stage_candidate(dist, staged, prior)
-        require(not backup.exists(), "ART_COMBAT_FAIL_CLOSED")
+        require(not os.path.lexists(backup), "ART_COMBAT_FAIL_CLOSED")
         atomic_json(trusted,{
             "id":"P0D_FB015_COMBAT_EXTERNAL_RECEIPT_V1",
             "dist":str(dist),
