@@ -101,7 +101,7 @@ local lodSet: {[Model]: {parts: {BasePart}, glow: PointLight, tier: number}} = {
     s=one(s,'    art:SetAttribute("VisualOnly", true)\n',
           '''    art:SetAttribute("VisualOnly", true)
     decorByFolder[art] = {}
-    art:SetAttribute("BeastLodPolicy", FEATURE)
+    art:SetAttribute("BeastLodPolicy", "FB015_GOROGAN_MOBILE_LOD_V1")
     art:SetAttribute("MobileDetailRadiusStuds", 52)
     art:SetAttribute("MobileSilhouetteRadiusStuds", 118)
 ''')
