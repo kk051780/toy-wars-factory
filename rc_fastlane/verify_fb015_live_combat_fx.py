@@ -52,6 +52,18 @@ def verify(dist:Path,place:Path,receipt:Path)->dict:
     for kind,name,path in CRITICAL:
         values=named[(kind,name)]
         assert len(values)==1 and values[0]==src[path].decode("utf8"),("SOURCE_OR_INSTANCE_SWAPPED",name)
+    studio_only_paths = (
+        "server/CastleDetailArt.server.luau",
+        "server/FantasyWorldArt.server.luau",
+        "server/H1CoastalSeascape.server.luau",
+        "server/H1SeaGroundRepair.server.luau",
+        "server/ArtMinionSilhouette.server.luau",
+        "client/FB015CharacterArt.client.luau",
+    )
+    for path in studio_only_paths:
+        original = src[path].decode("utf8")
+        assert 'if not RunService:IsStudio() then return end' in original, (
+            "UNEXPECTED_OTHER_LAYER_LIVE_DRIFT",path)
     fx=src[TARGET].decode("utf8")
     assert 'if not RunService:IsStudio() then return end' not in fx
     assert 'local MAX_ACTIVE_PARTS = if touchDevice then 16 else 32' in fx
