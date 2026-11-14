@@ -14,7 +14,9 @@ SCRIPT = (ROOT/"features/twin_biomes/TwinBiomes.server.luau").read_text("utf8")
 ADAPTER = (ROOT/"apply_twin_biomes.py").read_text("utf8")
 FLAGS = json.loads((ROOT/"FEATURE_SWITCHES.json").read_text("utf8"))["features"]
 CATALOG = json.loads((ROOT/"FEATURE_CATALOG.json").read_text("utf8"))["rows"]
-GITBLOB = "ff48273db7c7f0e240e45fba8b997cad669a5143"
+GITBLOB = "ff7c57aae79f03e3fbc72e043fe3f34f5ac373a5"
+POLICY = (ROOT/"features/twin_biomes/TwinCreatureTraining.luau").read_text("utf8")
+POLICY_BLOB = "b2f8275be676b46fc1ad32050832a4fcf13099af"
 
 def blob(source: str) -> str:
     raw=source.encode("utf8")
@@ -96,7 +98,7 @@ class TwinBiomes(unittest.TestCase):
         self.assertNotIn("GetAttribute('EggOwner')",SCRIPT)
     def test_20_source_locked_62_to_63(self):
         self.assertIn('PARENT_COUNT = 63',ADAPTER)
-        self.assertIn('assert len(after) == 64',ADAPTER)
+        self.assertIn('assert len(after) == 65',ADAPTER)
         self.assertIn('assert sources(dist) == after',ADAPTER)
     def test_21_roll_back_zero_write(self):
         self.assertIn("P0D_TWIN_BIOMES_OFF_ZERO_WRITES_OFFICIAL63_PASS",ADAPTER)
@@ -115,6 +117,7 @@ class TwinBiomes(unittest.TestCase):
         self.assertTrue(f["enabled"])
         self.assertFalse(f["official_rc_adopted"])
         self.assertEqual(f["source_git_blob"],GITBLOB)
+        self.assertEqual(f["training_policy_git_blob"],POLICY_BLOB)
     def test_25_parent_features_all_required(self):
         for feature in ("WCS_F01_C01","SEVEN_JOBS_PVE_V1","EGG_RELAY_CLASSIC_V1",
                         "STARRY_PATH_V1","METEOR_FOURTH_V1"):
@@ -185,7 +188,58 @@ class TwinBiomes(unittest.TestCase):
     def test_37_show_visual_discoveries_only_on_real_player_prompt(self):
         self.assertIn('if not player or player.Parent~=Players then return end',SCRIPT)
         self.assertIn("if seen[info.id] then return end",SCRIPT)
-        self.assertIn('activate(info.effect)\n        markDiscovery(player,info)',SCRIPT)
+        self.assertIn('local level=awardPractice(player,info,npc,crest)\n        activate(info.effect,level)\n        markDiscovery(player,info)',SCRIPT)
+    def test_38_exact_training_module_bytes(self):
+        self.assertEqual(blob(POLICY),POLICY_BLOB)
+        self.assertIn('return Training',POLICY)
+    def test_39_linked_to_existing_one_server_script(self):
+        self.assertIn('require(script.Parent:WaitForChild("TwinCreatureTraining"))',SCRIPT)
+        self.assertIn('after[POLICY_DEST] = policy_raw',ADAPTER)
+        self.assertIn('after[DEST] = raw',ADAPTER)
+        self.assertIn('assert len(after) == 65',ADAPTER)
+    def test_40_discovery_and_training_separate(self):
+        self.assertIn('markDiscovery(player,info)',SCRIPT)
+        self.assertIn('awardPractice(player,info,npc,crest)',SCRIPT)
+        self.assertIn("if not earned then",SCRIPT)
+    def test_41_per_player_not_global_xp(self):
+        self.assertIn('local practiceByPlayer = {}',SCRIPT)
+        self.assertIn('practiceByPlayer[player] = nil',SCRIPT)
+        self.assertIn('player:SetAttribute("P0D_TwinLevel_"..info.id,updated.level)',SCRIPT)
+    def test_42_level3_visual_evolution(self):
+        self.assertIn('npc:SetAttribute("EvolutionStage",3)',SCRIPT)
+        self.assertIn('npc:SetAttribute("MaxTrainingLevel",maxLevel)',SCRIPT)
+        self.assertIn('crest:FindFirstChild("P0D_TwinEvolutionGlow")',SCRIPT)
+    def test_43_level_no_shared_downgrade(self):
+        self.assertIn('math.max(npc:GetAttribute("MaxTrainingLevel") or 1,updated.level)',SCRIPT)
+        self.assertIn('maxLevel==3 and " ✦進化" or ""',SCRIPT)
+    def test_44_dont_spawn_duplicate_labels(self):
+        self.assertIn('crest:FindFirstChild("SpeciesLevelSign")',SCRIPT)
+        self.assertIn('label=sign and sign:FindFirstChild("Readout")',SCRIPT)
+    def test_45_field_skill_duration_by_level(self):
+        self.assertIn('local duration = Training.effectSeconds(level)',SCRIPT)
+        self.assertIn('activeUntil[effect] = now + duration',SCRIPT)
+        self.assertIn('nextUse[effect] = now + duration + REARM_SECONDS',SCRIPT)
+    def test_46_time_validity_and_xp_bounds(self):
+        self.assertIn('local MAX_PRACTICE = 7',POLICY)
+        self.assertIn('local REPEAT_WAIT_SECONDS = 20',POLICY)
+        self.assertIn('xp >= MAX_PRACTICE',POLICY)
+        self.assertIn('now ~= now',POLICY)
+    def test_47_no_datastore_or_rewards_policy(self):
+        for term in ('GetDataStore','UpdateAsync','MarketplaceService','RemoteEvent',
+                     'SetAttribute','Instance.new','FireServer'):
+            self.assertNotIn(term,POLICY)
+    def test_48_new_module_off_unchanged(self):
+        self.assertIn('if not enabled:',ADAPTER)
+        self.assertLess(ADAPTER.index('if not enabled:'),ADAPTER.index('before = sources(dist)'))
+        self.assertIn('assert DEST not in before and POLICY_DEST not in before',ADAPTER)
+    def test_49_three_increasing_levels(self):
+        self.assertIn('if xp >= 7 then return 3 end',POLICY)
+        self.assertIn('if xp >= 3 then return 2 end',POLICY)
+        self.assertIn('if level == 3 then return 24 end',POLICY)
+    def test_50_no_client_authority(self):
+        self.assertNotIn('OnServerEvent:Connect(',SCRIPT)
+        self.assertIn('prompt.Triggered:Connect(function(player)',SCRIPT)
+        self.assertIn('hum.Health <= 0',SCRIPT)
 
 if __name__=="__main__":
     unittest.main()
