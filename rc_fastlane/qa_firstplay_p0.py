@@ -304,13 +304,30 @@ end''')
 
 def patch_bot(text: str) -> str:
     assert "P0D_LateJoinSpectator" not in text, "FIRSTPLAY_BOT_QA_DUPLICATE"
+    # Bot.start must use the same legitimate participant predicate as
+    # Game's solo mode selection and deferred start; observers can join while
+    # the Game's task.defer is pending.
+    text=one(text,
+        'if not RunService:IsStudio() or #Players:GetPlayers()~=1 then return false end',
+        '''if not RunService:IsStudio() then return false end
+    local eligible=0
+    for _,p in ipairs(Players:GetPlayers()) do
+        local team=p.Team
+        if p:GetAttribute("P0D_LateJoinSpectator")~=true
+            and team and (team.Name=="RED" or team.Name=="BLUE") then
+            eligible+=1
+        end
+    end
+    if eligible~=1 then return false end''')
     # A second real Player may join the Studio server as a *noncombat*
     # spectator; it must not disable the five bots in the active solo match.
     text=one(text,
         "if #Players:GetPlayers()~=1 then Bot.stop();return end",
         """local eligible=0
     for _,p in ipairs(Players:GetPlayers()) do
-        if p:GetAttribute("P0D_LateJoinSpectator")~=true then
+        local team=p.Team
+        if p:GetAttribute("P0D_LateJoinSpectator")~=true
+            and team and (team.Name=="RED" or team.Name=="BLUE") then
             eligible+=1
         end
     end
@@ -358,6 +375,8 @@ def patch_bot(text: str) -> str:
         """        inflightPaths=math.max(0,inflightPaths-1)
         -- Both the global match and this particular bot/goal must still be""")
     assert "if eligible~=1 then Bot.stop();return end" in text
+    assert "if eligible~=1 then return false end" in text
+    assert text.count("local team=p.Team")>=2
     assert text.count("MAX_INFLIGHT_PATHS")>=2
     return text
 
