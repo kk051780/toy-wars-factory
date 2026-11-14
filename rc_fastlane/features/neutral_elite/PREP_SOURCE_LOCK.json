@@ -1,0 +1,26 @@
+{
+  "schema": "P0D_SOURCE_PREP_V1",
+  "feature_id": "P0D-017",
+  "canonical_parent_sha": "9feb2ec9f5ad8e96b6b727e9f77260b0a5f60991",
+  "official_rc_adopted": false,
+  "stage": "SOURCE_PREP_SOURCE_ONLY",
+  "policy_path": "rc_fastlane/features/neutral_elite/NeutralElitePhasePolicy.luau",
+  "policy_git_blob": "9f8d805b866216cdd62c4820c8264f9fd6ed4d69",
+  "real_native_cases": 45,
+  "test_path": "rc_fastlane/features/neutral_elite/NeutralEliteNative.luau",
+  "horde_writer": "original Game+MusouHorde only",
+  "authoritative_attack_callback": "REQUEST_HORDE_STRIKE must be explicitly consumed by original Horde; policy never damages anything",
+  "integrated_playable": false,
+  "requires": [
+    "one-original-Horde hook",
+    "matching src/server Game/Horde source pin",
+    "familiar boss models",
+    "true melee/range LOS safety checks",
+    "reversible ON/OFF",
+    "Rojo 67/67 and SourceExact"
+  ],
+  "studio_2client": "NOT_TESTED",
+  "android": "NOT_TESTED",
+  "owner_fun": "NOT_TESTED",
+  "rollback": "Not mounted; entire current 66-source official RC byte-identical, omit policy from assembly"
+}
