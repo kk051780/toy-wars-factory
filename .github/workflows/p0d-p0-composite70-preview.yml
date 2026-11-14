@@ -1010,6 +1010,12 @@ jobs:
             AFTER=$(find "$DST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
             test "$BEFORE" = "$AFTER"
             echo P0_PRIVATE70_OFF_FULL_TREE_EXACT_PASS
+            python3 - <<'PY'
+          from pathlib import Path
+          d=Path('/tmp/p0d_owner361_composite70/src/server/Game.server.luau').read_text('utf8')
+          tick=d.split('local function tickRound()',1)[1]
+          print('P0D_REAL66_TICKROUND_HEAD',tick[:2400])
+          PY
             python3 -B rc_fastlane/apply_owner361_p0_composite70.py --dist "$DST" --enabled true
             mkdir -p /tmp/p0d_owner361_out
             find "$DST/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
