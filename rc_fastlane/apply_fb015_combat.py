@@ -18,7 +18,7 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
-from fb015_fs_guard import strict_inventory, verify_partial_tree, atomic_json, reject_symlink_ancestors
+from fb015_fs_guard import strict_inventory, verify_partial_tree, atomic_json, reject_symlink_ancestors, transaction_parent_locks
 
 ROOT = Path(__file__).resolve().parent
 FEATURE = "ART_COMBAT_SLASH_READONLY_V1"
@@ -255,7 +255,11 @@ def _check_original(dist: Path):
 
 def _stage_candidate(dist: Path, stage: Path, prior):
     old, original, sp, fp, pr, visual, horde = prior
-    shutil.copytree(dist, stage)
+    original_inventory=strict_inventory(dist)
+    # Fail closed on a symlink inserted while copying: never follow it.
+    shutil.copytree(dist, stage, symlinks=True)
+    require(strict_inventory(stage)==original_inventory,
+            "ART_COMBAT_COPIED_BASE_TREE_DRIFT")
     (stage / "src" / DEST).parent.mkdir(parents=True, exist_ok=True)
     (stage / "src" / DEST).write_bytes(visual)
     (stage / "src" / HORDE).write_bytes(horde)
@@ -391,16 +395,12 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
 
 def apply(dist: Path, enabled: bool) -> bool:
     reject_symlink_ancestors(dist)
-    # File-less directory lock on the existing parent serializes concurrent
-    # toggle calls while preserving zero-write clean OFF.
+    # Same parent-directory lock is also held by COMPOSE when it reads dist.
+    # Other writers must participate; non-cooperating writers remain blocked
+    # from any destructive admission to official RC.
     dist=dist.resolve()
-    fd=os.open(dist.parent,os.O_RDONLY | os.O_DIRECTORY)
-    try:
-        fcntl.flock(fd,fcntl.LOCK_EX)
+    with transaction_parent_locks(dist.parent):
         return _apply_locked(dist,enabled)
-    finally:
-        fcntl.flock(fd,fcntl.LOCK_UN)
-        os.close(fd)
 
 
 def main() -> None:
