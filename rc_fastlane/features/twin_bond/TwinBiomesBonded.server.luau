@@ -14,6 +14,10 @@ local Players = game:GetService("Players")
 local Training = require(script.Parent:WaitForChild("TwinCreatureTraining"))
 local Bond = require(script.Parent:WaitForChild("TwinBondPolicy"))
 local FLAG = "P0D_ENABLE_TWIN_BIOMES_V1"
+local function bondEnabled()
+    local f=ServerStorage:FindFirstChild("P0D_ENABLE_TWIN_BOND_PVE_V1")
+    return f~=nil and f:IsA("BoolValue") and f.Value==true
+end
 local value = ServerStorage:FindFirstChild(FLAG)
 if not value or not value:IsA("BoolValue") or value.Value ~= true then
     return -- Missing/false = OFF; Studio explicit opt-in only.
@@ -29,9 +33,16 @@ end
 -- bounded canonical SkyV5 boot. A strict bounded wait avoids random boot-order
 -- failures. Do not construct scenery when WCS did not initialize.
 local canyon = Workspace:FindFirstChild("P0D_WCS_CrystalCanyon")
-    or Workspace:WaitForChild("P0D_WCS_CrystalCanyon", 145)
+-- Bounded increasing retry rather than one permanent 145s boot timeout.
+for attempt=1,6 do
+    if canyon then break end
+    canyon=Workspace:WaitForChild("P0D_WCS_CrystalCanyon",math.min(60,attempt*20))
+end
 local anchor = Workspace:FindFirstChild("P0D_CrystalCanyonAnchor")
-    or Workspace:WaitForChild("P0D_CrystalCanyonAnchor", 15)
+for attempt=1,3 do
+    if anchor then break end
+    anchor=Workspace:WaitForChild("P0D_CrystalCanyonAnchor",15)
+end
 if not canyon or not canyon:IsA("Model")
     or not anchor or not anchor:IsA("BasePart")
     or anchor:GetAttribute("P0DWorldOptIn") ~= true then
@@ -62,6 +73,8 @@ if (west.Position - anchor.CFrame:PointToWorldSpace(Vector3.new(-50, -2, 0))).Ma
     return
 end
 
+-- After the yielding WCS waits, recheck right before non-yielding publication.
+if Workspace:FindFirstChild("P0D_TwinBiomes") then return end
 local world = Instance.new("Model")
 world.Name = "P0D_TwinBiomes"
 world:SetAttribute("FeatureId", "TWIN_BIOMES_4NPC_V1")
@@ -352,10 +365,16 @@ end
 local function summonBoundCompanion(player, info, level)
     -- Server-only, one anchored noncolliding sphere per player. This is
     -- visual representation; the ONLY actual PvE damage authority is Game.
-    if level < 2 or player.Parent ~= Players then return end
+    if not bondEnabled() or level < 2 or player.Parent ~= Players then return end
     local now=os.clock()
-    local granted=Bond.select(player,info.id,level,now)
-    if not granted then return end
+    local granted,reason=Bond.select(player,info.id,level,now)
+    if not granted then
+        if reason=="SWITCH_COOLDOWN" then
+            player:SetAttribute("P0D_TwinBondNotice","相棒切替まで20秒")
+        end
+        return
+    end
+    player:SetAttribute("P0D_TwinBondNotice",nil)
     local prior=companionsByPlayer[player]
     if prior and prior.part.Parent then prior.part:Destroy() end
     local buddy=Instance.new("Part")
@@ -506,10 +525,11 @@ task.spawn(function()
     while world.Parent do
         local timeNow=os.clock()
         for player,companion in pairs(companionsByPlayer) do
-            local active=Bond.snapshot(player,timeNow)
+            local active=if bondEnabled() then Bond.snapshot(player,timeNow) else nil
             local char=player.Character
             local root=char and char:FindFirstChild("HumanoidRootPart")
             local hum=char and char:FindFirstChildOfClass("Humanoid")
+            -- Bond lasts up to 180s; death/respawn intentionally cancels it.
             if not active or not root or not hum or hum.Health<=0
                 or not companion.part.Parent then
                 if companion.part.Parent then companion.part:Destroy() end

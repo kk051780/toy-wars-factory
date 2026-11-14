@@ -14,21 +14,21 @@
     },
     {
       "path": "rc_fastlane/features/twin_bond/TwinBiomesBonded.server.luau",
-      "blob": "3a28a749bd1df8e4c5acf291b9d350c771074d58"
+      "blob": "5fda8c5a82a06da92ac4d739f548cc9b487c8e36"
     },
     {
       "path": "rc_fastlane/features/twin_bond/TwinBondPolicy.luau",
-      "blob": "d217e8cf03893efeebe437607e196f9a6f27d50f"
+      "blob": "a56509f932bc1193bf447f9e33249d9e9b0c56a7"
     },
     {
       "path": "rc_fastlane/features/twin_bond/TwinBondNative.luau",
-      "blob": "535293325e3de96e6bef49dfe4ebe6efc8cbd925"
+      "blob": "119cd758be644de5187018922a8654a173c1d4f0"
     }
   ],
   "original_game_parent_git_blob": "cdc995d8a64f6a6f6df5abd43fb8210486328572",
   "original_trained_twin_git_blob": "ff7c57aae79f03e3fbc72e043fe3f34f5ac373a5",
-  "new_world_blob": "3a28a749bd1df8e4c5acf291b9d350c771074d58",
-  "new_module_blob": "d217e8cf03893efeebe437607e196f9a6f27d50f",
+  "new_world_blob": "5fda8c5a82a06da92ac4d739f548cc9b487c8e36",
+  "new_module_blob": "a56509f932bc1193bf447f9e33249d9e9b0c56a7",
   "final_runtime_lock": "SOURCE_LOCK.json",
   "final_feature_lock": "RC_FEATURE_LOCK.json",
   "only_modified": [
@@ -44,5 +44,36 @@
   "android": "NOT_TESTED",
   "owner_fun": "NOT_TESTED",
   "official_rc_adopted": false,
-  "previous_rebased_official_parent_sha": "b151a6f38f0fb7127b506ef993a3bdf1918c823e"
+  "previous_rebased_official_parent_sha": "b151a6f38f0fb7127b506ef993a3bdf1918c823e",
+  "original_author_world_blob": "3a28a749bd1df8e4c5acf291b9d350c771074d58",
+  "original_author_module_blob": "d217e8cf03893efeebe437607e196f9a6f27d50f",
+  "original_author_source_blobs": [
+    {
+      "path": "rc_fastlane/apply_twin_bond.py",
+      "blob": "72a60892be71e3802b4e010edb906555a401e6b8"
+    },
+    {
+      "path": "rc_fastlane/features/twin_bond/TwinBiomesBonded.server.luau",
+      "blob": "3a28a749bd1df8e4c5acf291b9d350c771074d58"
+    },
+    {
+      "path": "rc_fastlane/features/twin_bond/TwinBondPolicy.luau",
+      "blob": "d217e8cf03893efeebe437607e196f9a6f27d50f"
+    },
+    {
+      "path": "rc_fastlane/features/twin_bond/TwinBondNative.luau",
+      "blob": "535293325e3de96e6bef49dfe4ebe6efc8cbd925"
+    }
+  ],
+  "sourcery_QA_patch": {
+    "upstream_pr": 338,
+    "fixes": [
+      "visuals respect Studio bond flag",
+      "total saved+bond PvE multiplier capped at 1.2",
+      "same-species repeat preserves expiry and switch boundary",
+      "bounded WCS startup retries and post-yield uniqueness",
+      "death ends bond contract, per-player rejection status"
+    ],
+    "engine_Studio": "NOT_TESTED"
+  }
 }

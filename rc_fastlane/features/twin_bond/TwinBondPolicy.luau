@@ -20,6 +20,11 @@ function Bond.select(player, speciesId, level, now)
         return false, "INVALID"
     end
     local old=state[player]
+    -- Same-species repeat may upgrade Lv2->Lv3 but cannot renew 180s or cooldown.
+    if old and old.untilAt>now and old.species==speciesId then
+        old.level=math.max(old.level,level)
+        return true,speciesId
+    end
     if old and old.untilAt>now and old.species~=speciesId
         and now<old.switchAt then
         return false, "SWITCH_COOLDOWN"

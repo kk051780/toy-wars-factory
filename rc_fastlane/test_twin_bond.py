@@ -22,12 +22,12 @@ def blob(source:str)->str:
 
 class TwinBond(unittest.TestCase):
     def test_01_world_source_pin(self):
-        self.assertEqual(blob(WORLD),"3a28a749bd1df8e4c5acf291b9d350c771074d58")
+        self.assertEqual(blob(WORLD),"5fda8c5a82a06da92ac4d739f548cc9b487c8e36")
     def test_02_policy_source_pin(self):
-        self.assertEqual(blob(POLICY),"d217e8cf03893efeebe437607e196f9a6f27d50f")
+        self.assertEqual(blob(POLICY),"a56509f932bc1193bf447f9e33249d9e9b0c56a7")
     def test_03_real_native_40(self):
-        self.assertEqual(NATIVE.count('check("'),40)
-        self.assertIn("assert(tested==40",NATIVE)
+        self.assertEqual(NATIVE.count('check("'),44)
+        self.assertIn("assert(tested==44",NATIVE)
     def test_04_exact_canonical65_parent(self):
         self.assertIn('PREV_COUNT=65',ADAPTER)
         self.assertIn('GAME_PREV="cdc995d8a64f6a6f6df5abd43fb8210486328572"',ADAPTER)
@@ -51,7 +51,7 @@ class TwinBond(unittest.TestCase):
         self.assertIn('Bond.select(player,info.id,level,now)',WORLD)
         self.assertNotIn('OnServerEvent:Connect(',WORLD)
     def test_10_level2_gate(self):
-        self.assertIn('if level < 2 or player.Parent ~= Players then return end',WORLD)
+        self.assertIn('if not bondEnabled() or level < 2 or player.Parent ~= Players then return end',WORLD)
         self.assertIn('or level<2 or level>3',POLICY)
     def test_11_cooldown_and_timeout(self):
         self.assertIn('local MAX_DURATION = 180',POLICY)
@@ -63,7 +63,7 @@ class TwinBond(unittest.TestCase):
         self.assertIn('return 1',POLICY)
     def test_13_game_is_only_attacker(self):
         self.assertIn('twinBondOnlyNeutralMobBonus(player)',ADAPTER)
-        self.assertIn('savedPveMinionMultiplier(player))',ADAPTER)
+        self.assertIn('math.min(1.2,savedPveMinionMultiplier(player)',ADAPTER)
         self.assertIn('remote.OnServerEvent:Connect(',ADAPTER)
         self.assertNotIn('horde:hit(',WORLD)
     def test_14_no_client_damage_authority(self):
@@ -103,6 +103,23 @@ class TwinBond(unittest.TestCase):
         self.assertIn('buddy:SetAttribute("NoDamageAuthority",true)',WORLD)
         self.assertNotIn('leaderstats',WORLD)
         self.assertNotIn('Humanoid:TakeDamage(',WORLD)
+
+    def test_23_bond_off_also_blocks_visual_follower(self):
+        self.assertIn('local function bondEnabled()',WORLD)
+        self.assertIn('if bondEnabled() then Bond.snapshot',WORLD)
+
+    def test_24_same_species_does_not_extend_timer(self):
+        self.assertIn('old.species==speciesId',POLICY)
+        self.assertIn('old.level=math.max(old.level,level)',POLICY)
+        self.assertIn('same_expiry_fixed',NATIVE)
+
+    def test_25_unique_world_and_bounded_wcs_retries(self):
+        self.assertIn('for attempt=1,6 do',WORLD)
+        self.assertGreaterEqual(WORLD.count('Workspace:FindFirstChild("P0D_TwinBiomes")'),2)
+
+    def test_26_total_bonus_cap_including_saved_and_death_policy(self):
+        self.assertIn('math.min(1.2,savedPveMinionMultiplier(player)',ADAPTER)
+        self.assertIn('death/respawn intentionally cancels it',WORLD)
 
 if __name__=="__main__":
     unittest.main()

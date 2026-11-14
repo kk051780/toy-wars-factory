@@ -20,8 +20,8 @@ TWIN="server/TwinBiomes.server.luau"
 MODULE="server/TwinBondPolicy.luau"
 GAME_PREV="cdc995d8a64f6a6f6df5abd43fb8210486328572"
 TWIN_PREV="ff7c57aae79f03e3fbc72e043fe3f34f5ac373a5"
-TWIN_NEXT="3a28a749bd1df8e4c5acf291b9d350c771074d58"
-BOND_BLOB="d217e8cf03893efeebe437607e196f9a6f27d50f"
+TWIN_NEXT="5fda8c5a82a06da92ac4d739f548cc9b487c8e36"
+BOND_BLOB="a56509f932bc1193bf447f9e33249d9e9b0c56a7"
 TRAINING_MODULE="server/TwinCreatureTraining.luau"
 SOURCE_TWIN=ROOT/"features/twin_bond/TwinBiomesBonded.server.luau"
 SOURCE_BOND=ROOT/"features/twin_bond/TwinBondPolicy.luau"
@@ -60,8 +60,8 @@ end
 '''
     body=replace_once(body,target,helper+target)
     attack=b'''                    savedPveMinionMultiplier(player)),now,player.Character)'''
-    boosted=b'''                    savedPveMinionMultiplier(player))
-                    *twinBondOnlyNeutralMobBonus(player),now,player.Character)'''
+    boosted=b'''                    math.min(1.2,savedPveMinionMultiplier(player)
+                    *twinBondOnlyNeutralMobBonus(player))),now,player.Character)'''
     body=replace_once(body,attack,boosted)
     assert before.count(b"remote.OnServerEvent:Connect(")==1
     assert body.count(b"remote.OnServerEvent:Connect(")==1

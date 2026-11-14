@@ -311,13 +311,13 @@
     },
     "TWIN_BOND_PVE_COMPANION_V1": {
       "enabled": true,
-      "status": "PREP_CANDIDATE_REBASED_LATEST_RC65_NOT_OFFICIAL",
+      "status": "PREP_66_QA_REVISED_NOT_OFFICIAL",
       "parent_source_count": 65,
       "parent_canonical_head": "a1c6c5dcacd12a9b36da0d18c579359a6d92f28f",
       "original_game_git_blob": "cdc995d8a64f6a6f6df5abd43fb8210486328572",
       "original_trained_twin_blob": "ff7c57aae79f03e3fbc72e043fe3f34f5ac373a5",
-      "bonded_twin_blob": "3a28a749bd1df8e4c5acf291b9d350c771074d58",
-      "bond_policy_blob": "d217e8cf03893efeebe437607e196f9a6f27d50f",
+      "bonded_twin_blob": "5fda8c5a82a06da92ac4d739f548cc9b487c8e36",
+      "bond_policy_blob": "a56509f932bc1193bf447f9e33249d9e9b0c56a7",
       "one_follower_per_player": true,
       "field_training_prerequisite": "Lv2 or Lv3 species practice in session",
       "duration_seconds": 180,
@@ -334,7 +334,11 @@
       "owner_fun": "NOT_TESTED",
       "official_rc_adopted": false,
       "author_original_parent_head": "96b11c900b4dc689ca41fb0710f5ef650e3f455c",
-      "previous_rebased_official_parent_sha": "b151a6f38f0fb7127b506ef993a3bdf1918c823e"
+      "previous_rebased_official_parent_sha": "b151a6f38f0fb7127b506ef993a3bdf1918c823e",
+      "original_author_bonded_twin_blob": "3a28a749bd1df8e4c5acf291b9d350c771074d58",
+      "original_author_bond_policy_blob": "d217e8cf03893efeebe437607e196f9a6f27d50f",
+      "total_pve_bonus_cap_including_saved": 1.2,
+      "death_cancels_bond": true
     }
   }
 }
