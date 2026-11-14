@@ -1,0 +1,106 @@
+name: P0D ART QUALITY GATE - source and real Studio evidence (read only)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'art_quality/**'
+      - '.github/workflows/p0d-art-quality-gate.yml'
+  workflow_dispatch:
+    inputs:
+      artifact_run_id:
+        description: 'Actions run containing candidate or official actual Studio Place ZIP'
+        required: true
+        default: '43637955662'
+        type: string
+      artifact_name:
+        description: 'EXACT artifact name from the selected run'
+        required: true
+        default: 'P0D-CANONICAL-RC80-FB019-REAL-HIT-V2'
+        type: string
+      strict_evidence:
+        description: 'Require actual PC+Android before/after images and review data'
+        default: false
+        type: boolean
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  art-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Native stdlib unit and negative tests (no synthetic beauty claims)
+        run: python3 -B -m unittest discover -s art_quality -p 'test_art_quality.py' -v
+      - name: Benchmark provenance, real-mobile and children-first-play safety QA
+        env:
+          ART_STRICT: ${{ inputs.strict_evidence || 'false' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s art_quality -p 'test_reference_benchmarks.py' -v
+          python3 -B -m unittest discover -s art_quality -p 'test_mobile_fun.py' -v
+          mkdir -p /tmp/p0d_art_report
+          python3 -B art_quality/check_reference_benchmarks.py --references art_quality/REFERENCE_BENCHMARKS_V2.json --out /tmp/p0d_art_report/REFERENCE_BENCHMARK_REPORT.json
+          FUN_ARGS=(--out /tmp/p0d_art_report/MOBILE_KID_FUN_REPORT.json)
+          if [ -f art_quality/evidence/mobile_kid_fun.json ]; then
+            FUN_ARGS+=(--evidence art_quality/evidence/mobile_kid_fun.json)
+          fi
+          if [ "$ART_STRICT" = "true" ]; then
+            FUN_ARGS+=(--strict)
+          fi
+          python3 -B art_quality/check_mobile_fun.py "${FUN_ARGS[@]}"
+      - name: Download selected authentic RC Studio Place (never guess latest)
+        uses: actions/download-artifact@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          run-id: ${{ inputs.artifact_run_id || '43637955662' }}
+          name: ${{ inputs.artifact_name || 'P0D-CANONICAL-RC80-FB019-REAL-HIT-V2' }}
+          github-token: ${{ github.token }}
+          path: /tmp/p0d_art_real_place
+      - name: Audit real embedded source and submitted Studio picture evidence
+        shell: bash
+        env:
+          ART_STRICT: ${{ inputs.strict_evidence || 'false' }}
+          ART_RUN_ID: ${{ inputs.artifact_run_id || '43637955662' }}
+          ART_NAME: ${{ inputs.artifact_name || 'P0D-CANONICAL-RC80-FB019-REAL-HIT-V2' }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_art_report
+          mapfile -d '' PLACES < <(find /tmp/p0d_art_real_place -type f -name '*.rbxlx' -print0)
+          test "${#PLACES[@]}" -eq 1 || { echo "ART_REAL_PLACE_NOT_UNIQUE"; exit 2; }
+          ARGS=(--place "${PLACES[0]}" --out /tmp/p0d_art_report/ART_CHECK_REPORT.json)
+          if [ -f art_quality/evidence/manifest.json ]; then
+            ARGS+=(--evidence art_quality/evidence/manifest.json --screenshots art_quality/evidence)
+          fi
+          if [ "$ART_STRICT" = "true" ]; then
+            ARGS+=(--strict)
+          fi
+          python3 -B art_quality/check_art_quality.py "${ARGS[@]}"
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,os
+          report=json.loads(Path('/tmp/p0d_art_report/ART_CHECK_REPORT.json').read_text())
+          summary=(f"## P0D art gate\n"
+                   f"Selected run: {os.environ['ART_RUN_ID']}\n\n"
+                   f"Selected artifact: {os.environ['ART_NAME']}\n\n"
+                   f"Source gate: {report.get('source',{}).get('source_gate','FAIL')}\n\n"
+                   f"Evidence: {report.get('evidence',{}).get('gate','FAIL')}\n\n"
+                   f"**ART DECISION: {report['art_decision']}**\n\n"
+                   f"Owner accepted: **NO**. This workflow cannot approve visuals automatically.\n")
+          Path('/tmp/p0d_art_report/ART_CHECK_SUMMARY.md').write_text(summary)
+          print(summary)
+          if os.environ.get('GITHUB_STEP_SUMMARY'):
+            Path(os.environ['GITHUB_STEP_SUMMARY']).write_text(summary)
+          PY
+      - name: Upload explicit NO_GO or reviewer-ready evidence report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-ART-QUALITY-REPORT-NOT-OWNER-APPROVAL
+          path: /tmp/p0d_art_report/*
+          retention-days: 14
+          if-no-files-found: warn
