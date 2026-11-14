@@ -1,0 +1,28 @@
+{
+  "schema": "P0D_TALKING_NPC_PREP_SOURCE_LOCK_V1",
+  "feature_id": "P0D-TALKING-NPC-V1",
+  "type": "ISOLATED_PREP_SOURCE_ONLY",
+  "initial_base_rc": "44b2df61e8452790dc491466d3efbab5e7fb2e8e",
+  "canonical_rc_unmodified": true,
+  "runtime_enabled_in_rc": false,
+  "files": {
+    "TalkingNPCDirector.luau": "87b7c3b3fa181fff84c34b3e6679fd3eb4997e79",
+    "TalkingNPCRuntime.server.luau": "ad40584ac2b3ea680a0fd2e0734bf7322b41221f",
+    "TalkingNPCClient.client.luau": "28e3dfbb49c65f9a98cb63342e73e8d8545a9844"
+  },
+  "dependencies": [
+    "existing Game-owned TrapRaidersS1Remote",
+    "TRAP_RAIDERS_S1 arena",
+    "RunService:IsStudio",
+    "ServerStorage P0D_RC_ENABLE_TALKING_NPC_V1 true"
+  ],
+  "rollback": "Remove optional server/client/module from assembled Place or set ServerStorage flag false before start; existing original Game/Store remain byte-identical.",
+  "tests": {
+    "source_lock": "PENDING",
+    "luau_runtime": "NOT_TESTED",
+    "roblox_studio": "NOT_TESTED",
+    "mobile": "NOT_TESTED",
+    "tts": "NOT_TESTED"
+  },
+  "no_auto_merge": true
+}
