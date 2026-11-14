@@ -262,6 +262,39 @@
       "status": "CANONICAL_RC63_SOURCE_EXACT_CI_PASSED_STUDIO_NOT_TESTED",
       "official_rc_adopted": true,
       "canonical_rc_ci": "https://github.com/kk051780/toy-wars-factory/actions/runs/43531582802"
+    },
+    "TWIN_BIOMES_4NPC_V1": {
+      "enabled": true,
+      "status": "PRIVATE64_FROM_OFFICIAL_RC63_NOT_ADOPTED",
+      "biome_fields": [
+        "TIDAL_CORAL_GARDEN",
+        "STORM_CLOUD_LOOKOUT"
+      ],
+      "neutral_npc_species": [
+        "AWARIN",
+        "SANGORU",
+        "RAIKO",
+        "KUMONON"
+      ],
+      "n_instances": 8,
+      "source_path": "rc_fastlane/features/twin_biomes/TwinBiomes.server.luau",
+      "source_git_blob": "0958e7743669e670cc499035fa6446b7819cea6a",
+      "dependent_source_count": 63,
+      "dependency": [
+        "WCS_F01_C01",
+        "SEVEN_JOBS_PVE_V1",
+        "EGG_RELAY_CLASSIC_V1",
+        "STARRY_PATH_V1",
+        "METEOR_FOURTH_V1",
+        "STAR_SHARDS_V1"
+      ],
+      "runtime_flag": "ServerStorage BoolValue P0D_ENABLE_TWIN_BIOMES_V1 must be true, otherwise absent/false OFF, Studio only",
+      "function": "Two mirrored themed fields on WCS banks with four shared-route and visual scout NPC effects; no damage or persisted collection",
+      "rollback": "Disable flag -> exact original official RC63 scripts, project, source and feature lock unchanged",
+      "owner_fun": "NOT_TESTED",
+      "studio_2client": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "official_rc_adopted": false
     }
   }
 }

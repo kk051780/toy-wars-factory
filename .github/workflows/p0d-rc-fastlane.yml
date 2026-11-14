@@ -204,6 +204,20 @@ jobs:
             python3 -B rc_fastlane/apply_relay_touch_layout.py --dist "$DIST" --enabled on
             python3 -B rc_fastlane/rc61_touch_geometry_audit.py --hud "$DIST/src/client/HUD.client.luau"
           fi
+      - name: Reuse 30 author world safety cases and verify exact 63-to-64 source add and OFF rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_twin_biomes.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_twin_biomes.py --profile rich51 --dist "$DIST" --enabled false
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            echo P0D_CANONICAL63_BIOME_OFF_ZERO_BYTES_CHANGED_PASS
+            python3 -B rc_fastlane/apply_twin_biomes.py --profile rich51 --dist "$DIST" --enabled true
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -232,7 +246,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']) + int(f['TWIN_BIOMES_4NPC_V1']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -373,7 +387,8 @@ jobs:
           star_enabled=(p=='rich51' and flags['features']['STARRY_PATH_V1']['enabled'])
           meteor_enabled=(p=='rich51' and flags['features']['METEOR_FOURTH_V1']['enabled'])
           shards_enabled=(p=='rich51' and flags['features']['STAR_SHARDS_V1']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled),'rich47':47,'legacy21':21}[p]
+          twin_enabled=(p=='rich51' and flags['features']['TWIN_BIOMES_4NPC_V1']['enabled'])
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -522,6 +537,30 @@ jobs:
               assert project['ServerStorage']['$attributes']['P0D_RC_ENABLE_STAR_SHARDS_V1'] is True
           else:
               assert titles[('Script','StarShardHunt')]==0
+          if twin_enabled:
+              assert shards_enabled and meteor_enabled and wcs_enabled and star_enabled
+              assert titles[('Script','TwinBiomes')]==1,('BIOMES_SCRIPT_SINGLETON',titles)
+              twin=(base/'src/server/TwinBiomes.server.luau').read_text('utf8')
+              assert 'world:SetAttribute("CharacterInstances", 8)' in twin
+              assert 'world:SetAttribute("BothTeamsAccess", true)' in twin
+              assert 'Workspace:WaitForChild("P0D_WCS_CrystalCanyon", 145)' in twin
+              assert 'OnServerEvent:Connect(' not in twin and 'GetDataStore(' not in twin
+              project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
+              boot=project['ServerStorage']['P0D_ENABLE_TWIN_BIOMES_V1']
+              assert boot['$className']=='BoolValue' and boot['$properties']['Value'] is True
+              root=ET.fromstring(target.read_bytes())
+              bools=[]
+              for node in root.iter('Item'):
+                  if node.get('class')!='BoolValue':continue
+                  label=node.find("./Properties/string[@name='Name']")
+                  if label is not None and label.text=='P0D_ENABLE_TWIN_BIOMES_V1':
+                      bools.append(node)
+              assert len(bools)==1,('BIOMES_BOOT_NOT_SINGLETON',len(bools))
+              value=bools[0].find("./Properties/bool[@name='Value']")
+              assert value is not None and (value.text or '').lower()=='true'
+              print('P0D_PRIVATE64_TWIN_2_BIOMES_8_NPCS_REAL_ROJO_BOOT_PASS')
+          else:
+              assert titles[('Script','TwinBiomes')]==0
           if p=='rich51':
               assert 'local function layoutRelayTouch()' in (base/'src/client/HUD.client.luau').read_text('utf8')
           if p=='rich51':
@@ -539,7 +578,7 @@ jobs:
           if p=='rich51':
               assert place_bytes>507197 and place_bytes<2000000,('IMPLAUSIBLE_PRIVATE61_PLACE_SIZE',place_bytes)
               print('P0D_PRIVATE63_ACTUAL_PLACE_RBXLX_BYTES',place_bytes)
-              print('P0D_PRIVATE63_SOURCE_PRESERVED_SIX_FEATURES',sum(actual.values()),int(wcs_enabled),int(seven_enabled),int(egg_enabled),int(star_enabled),int(meteor_enabled),int(shards_enabled))
+              print('P0D_PRIVATE64_SOURCE_PRESERVED_SEVEN_FEATURES',sum(actual.values()),int(wcs_enabled),int(seven_enabled),int(egg_enabled),int(star_enabled),int(meteor_enabled),int(shards_enabled),int(twin_enabled))
           receipt={'release_id':'P0D-S1-KIDS-RC01','profile':p,'source_commit':source,
             'source_overlays':overlay_ids,'composite_rc_source_commit':os.environ['GITHUB_SHA'],
             'rc_branch_commit':os.environ['GITHUB_SHA'],'place_sha256':digest,
@@ -563,6 +602,9 @@ jobs:
             'starry_path_third_canyon_route_included':bool(star_enabled),
             'meteor_fourth_canyon_route_included':bool(meteor_enabled),
             'star_shards_six_fragment_session_quest':bool(shards_enabled),
+            'twin_biomes_two_worlds_four_species_eight_npcs':bool(twin_enabled),
+            'twin_biomes_capture_and_save':False,
+            'twin_biomes_real_studio':'NOT_TESTED',
             'star_shards_native_policy_cases':22 if shards_enabled else None,
             'mobile_relay_touch_geometry_12viewports_144checks':True if shards_enabled else None,
             'meteor_engine_2client':'NOT_TESTED',
@@ -581,7 +623,7 @@ jobs:
             'android':'NOT_TESTED','owner_fun':'NOT_TESTED',
             'production_publish':False,'sixskill_persistent':False,
             's1_score_prior_only':75,
-            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled,'STAR_SHARDS_V1':shards_enabled},
+            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled,'STAR_SHARDS_V1':shards_enabled,'TWIN_BIOMES_4NPC_V1':twin_enabled},
             'base_author_51_preserved':True if realm_enabled else None,
             'new_realms_studio_2client':'NOT_TESTED'}
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
