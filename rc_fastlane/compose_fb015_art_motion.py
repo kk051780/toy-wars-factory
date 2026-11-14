@@ -78,7 +78,10 @@ def preflight(parent: Path):
     old = source_map(parent)
     require(len(old) == BASE and DEST not in old, "REQUIRE_REAL_PRIVATE68")
     pins = {key: blob(raw) for key, raw in sorted(old.items())}
-    # All 68 source Git blobs MUST match one immutable parent contract.
+    # Bootstrap only records the new parent's independently visible digest;
+    # the placeholder is intentionally FAIL CLOSED until pinned in a commit.
+    print("P0D_FB015_PARENT68_FULL_SOURCE_MAP_ACTUAL_SHA256",
+          full_source_pin_digest(pins))
     require(full_source_pin_digest(pins) == EXPECTED_PARENT68_FULL_SOURCES_SHA256,
             "FB015_FULL_PARENT68_SOURCE_MAP_DRIFT")
     require(pins.get("server/ArtMinionSilhouette.server.luau") == ORIGINAL_MINION,
