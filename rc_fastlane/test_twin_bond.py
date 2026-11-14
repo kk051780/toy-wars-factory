@@ -87,8 +87,19 @@ class TwinBond(unittest.TestCase):
         self.assertIn('if p not in {GAME,TWIN}',ADAPTER)
         self.assertIn('assert body.count(b"remote.OnServerEvent:Connect(")==1',ADAPTER)
     def test_17_independent_zero_write_off(self):
+        # Test actual adapter OFF, not a brittle source-string check.
+        import tempfile
+        import apply_twin_bond
+        with tempfile.TemporaryDirectory() as temp:
+            folder=Path(temp)
+            (folder/"sentinel.bin").write_bytes(b"OFF must never touch output bytes")
+            def snapshot():
+                return {p.relative_to(folder).as_posix():p.read_bytes()
+                        for p in folder.rglob("*") if p.is_file()}
+            before=snapshot()
+            self.assertFalse(apply_twin_bond.apply(folder,override=False))
+            self.assertEqual(snapshot(),before)
         self.assertIn('P0D_TWIN_BOND_OFF_PRESERVES_OFFICIAL65_ALL_BYTES_PASS',ADAPTER)
-        self.assertLess(ADAPTER.index('if not enabled:'),ADAPTER.index('before=scripts(dist)'))
     def test_18_66th_source_pure_module(self):
         self.assertIn('new[MODULE]=bond',ADAPTER)
         self.assertIn('assert len(new)==66',ADAPTER)
