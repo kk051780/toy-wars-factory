@@ -234,6 +234,19 @@ jobs:
             echo P0D_TWIN_TRAINING_PREP65_OFF_REAL_OFFICIAL64_BYTE_EXACT_PASS
             python3 -B rc_fastlane/apply_twin_training.py --dist "$DIST" --enabled true
           fi
+      - name: PREP #340 compact HUD after all existing gameplay (one HUD only, OFF exact)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_compact_hud.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_compact_hud.py --dist "$DIST" --enabled off
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            python3 -B rc_fastlane/apply_compact_hud.py --dist "$DIST" --enabled on
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -579,7 +592,13 @@ jobs:
           else:
               assert titles[('Script','StarShardHunt')]==0
           if p=='rich51':
-              assert 'local function layoutRelayTouch()' in (base/'src/client/HUD.client.luau').read_text('utf8')
+              hud=(base/'src/client/HUD.client.luau').read_text('utf8')
+              assert 'local function layoutRelayTouch()' in hud
+              assert hud.count('-- P0D_UX_HUD_COMPACT_V1_BEGIN')==1
+              assert 'instructions.Visible = false' in hud
+              assert 'compactHelp.MouseButton1Click:Connect(function()' in hud
+              assert 'helpGeneration == generation' in hud
+              print('P0D_UX_COMPACT_HUD_PRIVATE65_ROJO_PRESENT_OFF_CAN_ROLLBACK')
           if twin_enabled:
               assert wcs_enabled and seven_enabled and egg_enabled and star_enabled and meteor_enabled and shards_enabled
               assert titles[('Script','TwinBiomes')]==1
