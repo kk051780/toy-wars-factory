@@ -41,12 +41,32 @@ end
 local function inTeam(player, team)
     return player.Team ~= nil and player.Team.Name == team
 end
-local function visibleEnemy(player)
+-- Read Game-owned egg Prompt.Enabled as a conservative ACTIVE proxy.
+-- Both prompts are false in lobby/countdown; both false mid-round => fail closed.
+local function matchLikelyActive()
+    local arena = active and active.folder and active.folder.Parent
+    if not arena then return false end
+    for _, team in ipairs({"RED", "BLUE"}) do
+        local castle = arena:FindFirstChild(team .. "_CASTLE")
+        local egg = castle and castle:FindFirstChild(team .. "_EGG")
+        local prompt = egg and egg:FindFirstChildOfClass("ProximityPrompt")
+        if prompt and prompt.Enabled == true then return true end
+    end
+    return false
+end
+local MAX_ENEMY_CANDIDATES = 12
+local SCAN_RAYCAST_BUDGET = 24
+local MANUAL_RAYCAST_BUDGET = 6
+local function visibleEnemy(player, quota)
+    if not matchLikelyActive() then return nil end
     local root = aliveRoot(player)
     if not root or not player.Team then return nil end
     local name = player.Team.Name
     if name ~= "RED" and name ~= "BLUE" then return nil end
+    local considered = 0
     for _, enemy in ipairs(Players:GetPlayers()) do
+        considered += 1
+        if considered > MAX_ENEMY_CANDIDATES then return nil end
         if enemy ~= player and enemy.Team
             and (enemy.Team.Name == "RED" or enemy.Team.Name == "BLUE")
             and enemy.Team ~= player.Team then
@@ -57,6 +77,8 @@ local function visibleEnemy(player)
                     local params = RaycastParams.new()
                     params.FilterType = Enum.RaycastFilterType.Exclude
                     params.FilterDescendantsInstances = {player.Character, enemy.Character}
+                    if quota and quota.remaining <= 0 then return nil end
+                    if quota then quota.remaining -= 1 end
                     local blocked = Workspace:Raycast(root.Position, d, params)
                     if blocked == nil then return enemy, other end
                 end
@@ -77,7 +99,7 @@ local function carryingEgg(player)
     return head and head:FindFirstChild("S1_CARRIED_EGG") ~= nil
 end
 
-local function sourceFacts(player, speaker, mode, arena)
+local function sourceFacts(player, speaker, mode, arena, observedEnemy, observedRoot)
     local facts = {featureEnabled = true, speakerId = speaker, cooldownActive = false}
     if speaker == "NAVI" then
         -- Auto warnings use ENEMY_ALERT ONLY. Never mark the enemy as alerted
@@ -88,7 +110,12 @@ local function sourceFacts(player, speaker, mode, arena)
             facts.urgent = true
             return facts
         end
-        local enemy, enemyRoot = visibleEnemy(player)
+        local enemy, enemyRoot
+        if mode == "AUTO_ENEMY_ALERT" then
+            enemy, enemyRoot = observedEnemy, observedRoot
+        else
+            enemy, enemyRoot = visibleEnemy(player, {remaining=MANUAL_RAYCAST_BUDGET})
+        end
         if enemy and enemyRoot then
             facts.signal = "ENEMY_ALERT"
             facts.areaCode = areaFor(enemyRoot.Position)
@@ -117,20 +144,35 @@ local function sourceFacts(player, speaker, mode, arena)
     elseif speaker == "ORACLE" then
         local realms = arena:FindFirstChild("P0D_REALM_HUNT_V1")
         if not realms or realms:GetAttribute("Enabled") ~= true then return nil end
-        local discovered = player:GetAttribute("P0D_RealmHunt_Count")
-        facts.signal = "SECRET_HINT"
-        facts.hintUnlocked = type(discovered) == "number" and discovered >= 1
-        facts.secretTier = type(discovered) == "number" and discovered >= 3 and 2 or 1
-        if not facts.hintUnlocked then facts.signal = "INTRO" end
+        if player:GetAttribute("P0D_RealmHunt_Enabled") ~= true then return nil end
+        local missing = nil
+        local discovered = 0
+        for _, id in ipairs({"SKY", "SEA", "EMBER", "STAR"}) do
+            if player:GetAttribute("P0D_RealmHunt_" .. id) == true then
+                discovered += 1
+            elseif not missing then
+                missing = id
+            end
+        end
+        if discovered == 4 and player:GetAttribute("P0D_RealmHunt_Complete") == true then
+            facts.signal = "REALM_COMPLETE"
+            facts.allRealmsComplete = true
+        elseif discovered > 0 and missing then
+            facts.signal = "SECRET_HINT"
+            facts.hintUnlocked = true
+            facts.missingRealm = missing
+        else
+            facts.signal = "INTRO"
+        end
         return facts
     end
     return nil
 end
 
-local function speak(player, speaker, mode, arena)
+local function speak(player, speaker, mode, arena, observedEnemy, observedRoot)
     if ServerStorage:GetAttribute(FLAG) ~= true or not active
         or not aliveRoot(player) then return nil end
-    local facts = sourceFacts(player, speaker, mode, arena)
+    local facts = sourceFacts(player, speaker, mode, arena, observedEnemy, observedRoot)
     if not facts then return nil end
     local now = os.clock()
     local perSpeaker = speechTimes[player] or {}
@@ -252,10 +294,12 @@ local function start()
         -- Low-frequency ONE loop for all characters; sent only on real fresh enemy.
         while active and active.folder == folder and folder.Parent
             and epoch == generation and ServerStorage:GetAttribute(FLAG) == true do
+            local quota = {remaining=SCAN_RAYCAST_BUDGET}
             for _,player in ipairs(Players:GetPlayers()) do
-                local enemy = visibleEnemy(player)
+                if quota.remaining <= 0 then break end
+                local enemy, enemyRoot = visibleEnemy(player, quota)
                 if enemy and lastAlertTarget[player] ~= enemy.UserId then
-                    if speak(player, "NAVI", "AUTO_ENEMY_ALERT", arena) == "ENEMY_ALERT" then
+                    if speak(player, "NAVI", "AUTO_ENEMY_ALERT", arena, enemy, enemyRoot) == "ENEMY_ALERT" then
                         lastAlertTarget[player] = enemy.UserId
                     end
                 elseif not enemy then

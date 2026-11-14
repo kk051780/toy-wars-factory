@@ -9,6 +9,12 @@
 - TalkingNPCClient.client.luau: caption bubble designed for mobile (Android UX NOT_TESTED), voice ON/OFF, AudioTextToSpeech with AudioDeviceOutput+Wire; silent subtitle fallback when TTS is not available or throttled.
 - PREP_SOURCE_LOCK.json pins all 3 script Git blobs. tests/test_p0d_talking_npc_prep.py provides source-only safety/lock tests.
 
+## Independent gameplay QA patch (not official RC)
+- Accurate Oracle hints use actual per-player SKY/SEA/EMBER/STAR discovery attributes. Completed 4/4 gives truthful celebration, not a fictitious unlock.
+- NAVI enemy alerts use existing Game-owned RED/BLUE egg-steal ProximityPrompt.Enabled as a read-only ACTIVE signal. Both egg prompts disabled mid-battle (both eggs carried) temporarily silences the optional warning; fail closed is safer than lobbying false alarms. Studio battle-phase verification remains necessary.
+- Manual enemy LOS scan is limited to 6 raycasts and 12 candidates; auto scan shares a 24-raycast budget across a pass, without repeating raycasts while composing a message. No new Game/Remote/Store authority.
+- Source and Rojo CI is not real Roblox 2client/Android/FUN QA.
+
 ## Latest PREP build and sole-writer integration
 1. PREP branch inherited official RC65 without dropping any official features. Rebase again only if HEAD advances; never use old PREP CI on new base.
 2. PREP-only `apply_talking_npc.py` installs three source-locked scripts, one StarterPlayerScripts client mapping, and ServerStorage opt-in attribute **in a copied distribution**. It does not write the canonical RC. #220 must inspect this exact source for admission.
