@@ -1,0 +1,68 @@
+{
+  "schema": "P0D_ART_REFORM_SOURCE_LOCK_V1",
+  "owner_issue": 372,
+  "feedback_ids": [
+    "FB-015",
+    "FB-008"
+  ],
+  "art_package": "ART-MINION",
+  "feature_id": "FB015_ART_MINION_SILHOUETTE_V1",
+  "canonical_rc_base": "43543378f976374e2cac2d68b3136ac355d3191b",
+  "original_horde_source_git_blob": "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38",
+  "adapter_path": "rc_fastlane/apply_fb015_musou_art.py",
+  "adapter_source_git_blob": "8516a17ede6841e8b97a94c243b72b491e4601ef",
+  "original_source_count": 66,
+  "private_source_count": 66,
+  "modified_scripts": [
+    "server/MusouHorde.luau"
+  ],
+  "preserved_exact_source_count": 65,
+  "never_modified": [
+    "server/Game.server.luau",
+    "shared/Config.luau",
+    "server/MapBuilder.luau",
+    "client/HUD.client.luau",
+    "server/PersistentHatchStore.luau"
+  ],
+  "gameplay_authority": "single existing Game/Remote, existing single Horde server module",
+  "available_silhouettes": [
+    "SHIELD_WARDEN",
+    "TWINBLADE_SCOUT",
+    "HORNED_LANCER",
+    "SIEGE_CHAMPION"
+  ],
+  "actions": [
+    "real hit-confirm spark",
+    "server KO burst",
+    "12Hz-or-original-Horde-tick boot sway",
+    "capped near-only overhead cues"
+  ],
+  "guards": [
+    "original Horde git blob pinned",
+    "complete 66-lock preflight",
+    "OFF zero writes",
+    "server-only hit-confirm emission",
+    "no client combat requests",
+    "cosmetic parts do not collide or raycast",
+    "exact script count after rebuild"
+  ],
+  "evidence": {
+    "last_validated_head": "df9fefb3eafba76e66e7403102c5d29f154d7834",
+    "ci_run_id": 43558529761,
+    "ci_conclusion": "success",
+    "native_compiler": "PASS",
+    "private_rojo": "PASS",
+    "private_place_bytes": 610339,
+    "private_artifact_zip_bytes": 175950,
+    "studio_retest": "NOT_TESTED",
+    "android": "NOT_TESTED",
+    "user_visual_acceptance": "ART_NO_GO"
+  },
+  "release_status": "PREP_CANDIDATE_ONLY_NO_OFFICIAL_INTEGRATION",
+  "rollback": "omit optional post-canonical art patch step; rebuild unchanged original66",
+  "limits": [
+    "not real Studio visual acceptance",
+    "not a full character architecture/mesh replacement",
+    "other ART-WORLD, ART-CASTLE, ART-BEAST, ART-COMBAT, ART-LOBBY categories remain open"
+  ]
+}
