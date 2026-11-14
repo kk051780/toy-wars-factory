@@ -1796,3 +1796,44 @@ jobs:
           path: /tmp/p0d_fb019_v2_out/*
           retention-days: 7
           if-no-files-found: error
+      - name: 'FB019 V3: native verified server HP-positive ACK on official V2 neutral confirmed hits'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_fb019_hit_visibility_dist
+          OUT=/tmp/p0d_fb019_server_ack_v3_dist
+          mkdir -p /tmp/p0d_fb019_server_ack_v3_out
+          python3 -B rc_fastlane/apply_fb019_server_ack.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_fb019_server_ack.py --base "$BASE" --out "$OUT" --enabled true
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 80
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_fb019_server_ack_v3_out/P0D_RC80_FB019_V3_HP_CONFIRMED_PREP_STUDIO.rbxlx
+          python3 -m pip install --disable-pip-version-check -q 'defusedxml==0.7.1'
+          python3 -B rc_fastlane/qa_fb019_server_ack_native.py --dist "$OUT" --out /tmp/p0d_fb019_native_real_game_hud.luau
+          /tmp/p0d_new_luau/luau-compile /tmp/p0d_fb019_native_real_game_hud.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/p0d_fb019_native_real_game_hud.luau | tee /tmp/p0d_fb019_server_ack_v3_out/NATIVE_REAL_ATTACK_HUD_PASS.txt
+          grep -q 'FB019_NATIVE_REAL_GAME_ATTACK_PATHS_PASS' /tmp/p0d_fb019_server_ack_v3_out/NATIVE_REAL_ATTACK_HUD_PASS.txt
+          grep -q 'FB019_NATIVE_REAL_HUD_ACK_CUES_PASS' /tmp/p0d_fb019_server_ack_v3_out/NATIVE_REAL_ATTACK_HUD_PASS.txt
+          python3 -B rc_fastlane/verify_fb019_server_ack.py --dist "$OUT" --place /tmp/p0d_fb019_server_ack_v3_out/P0D_RC80_FB019_V3_HP_CONFIRMED_PREP_STUDIO.rbxlx --receipt /tmp/p0d_fb019_server_ack_v3_out/ACK_RECEIPT.json
+          python3 - <<'PY'
+          import os,json
+          from pathlib import Path
+          p=Path('/tmp/p0d_fb019_server_ack_v3_out/ACK_RECEIPT.json')
+          r=json.loads(p.read_text())
+          r['source_head_sha']=os.environ['GITHUB_SHA']
+          r['official_rc_adoption']=False
+          r['rollback_to_rc80']='bd5b819b846705e18537a994ed97ffe71ddd4855'
+          p.write_text(json.dumps(r,ensure_ascii=False,indent=2)+'\n')
+          print('FB019_ACK_PRIVATE_PREP_NOT_OFFICIAL',r['source_head_sha'],r['place_bytes'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-FB019-V3-SERVER-HP-PROOF-NATIVE-PREP
+          path: /tmp/p0d_fb019_server_ack_v3_out/*
+          retention-days: 7
+          if-no-files-found: error
