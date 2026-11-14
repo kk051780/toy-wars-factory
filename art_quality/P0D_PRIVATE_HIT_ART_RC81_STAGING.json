@@ -1,0 +1,38 @@
+{
+  "schema": "P0D_PRIVATE_RC81_HIT_ART_SOURCERY_MEDIUM2_FIXED_V1",
+  "jst_date": "2026-11-15",
+  "parent_official_rc_sha": "a17d290358db246e8414224cdc263cd1557f4a90",
+  "parent_official_original_source_count": 81,
+  "input_author_prs": [
+    457,
+    456
+  ],
+  "expected_changed": [
+    "server/Game.server.luau",
+    "client/HUD.client.luau",
+    "server/CastleDetailArt.server.luau",
+    "client/FB015CharacterArt.client.luau",
+    "client/ConfirmedSlashFX.client.luau"
+  ],
+  "other_76_byte_exact": true,
+  "visible_hit_popup_source_duration_s": 0.42,
+  "permanent_guide_first90_and_mob_and_buttons_studio_only": true,
+  "real_horde_reset_attack_tick_preserved": true,
+  "public_default_off": true,
+  "private_owner_explicit_optin": true,
+  "live_engine": "NOT_TESTED",
+  "android_low_end": "NOT_TESTED",
+  "child3min": "NOT_TESTED",
+  "owner_accepted": false,
+  "release": "NO_GO",
+  "source_gate": "PENDING_SAME_HEAD",
+  "no_official_update": true,
+  "no_main": true,
+  "no_merge": true,
+  "no_roblox_publish": true,
+  "sourcery_medium": [
+    "Medium1: stale 0.42-second earlier timer can hide subsequent true hit; use hitSeq UI Instance attribute per true hit and callback token match",
+    "Medium2: source only asserts increment snippets exist, misses might trigger; use fail closed touched>0 structural prefix and negative mutation test"
+  ],
+  "sourcery_new_review": "NOT_YET_COMPLETE"
+}
