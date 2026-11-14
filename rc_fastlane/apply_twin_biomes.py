@@ -13,8 +13,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 FEATURE = "TWIN_BIOMES_4NPC_V1"
 ORIGINAL = ROOT / "features/twin_biomes/TwinBiomes.server.luau"
-PIN = "ff48273db7c7f0e240e45fba8b997cad669a5143"
+POLICY_ORIGINAL = ROOT / "features/twin_biomes/TwinCreatureTraining.luau"
+PIN = "ff7c57aae79f03e3fbc72e043fe3f34f5ac373a5"
+POLICY_PIN = "b2f8275be676b46fc1ad32050832a4fcf13099af"
 DEST = "server/TwinBiomes.server.luau"
+POLICY_DEST = "server/TwinCreatureTraining.luau"
 FLAG = "P0D_ENABLE_TWIN_BIOMES_V1"
 PARENT_COUNT = 63
 
@@ -46,7 +49,7 @@ def apply(dist: Path, profile: str, override: bool | None = None) -> bool:
                 "server/SevenJobsRules.luau", "server/EggRelayPolicy.luau",
                 "server/StarfallPath.server.luau", "server/MeteorFourth.server.luau"):
         assert key in before, ("MISSING_REQUIRED_PARENT_SOURCE", key)
-    assert DEST not in before, "DUPLICATE_BIOME_SOURCE"
+    assert DEST not in before and POLICY_DEST not in before, "DUPLICATE_BIOME_POLICY_SOURCE"
     assert "server/StarShardHunt.server.luau" in before, "MISSING_OFFICIAL63_SHARDS"
     assert before["server/StarShardHunt.server.luau"].count(b"local TOTAL=6") == 1, "SHARDS_PARENT_DRIFT"
     assert before["server/Game.server.luau"].count(b"remote.OnServerEvent:Connect(") == 1
@@ -83,7 +86,13 @@ def apply(dist: Path, profile: str, override: bool | None = None) -> bool:
     assert FLAG not in storage, "BOOT_FLAG_DUPLICATE"
 
     raw = ORIGINAL.read_bytes()
+    policy_raw = POLICY_ORIGINAL.read_bytes()
     assert blob(raw) == PIN, "ORIGINAL_SOURCE_BLOB_DRIFT"
+    assert blob(policy_raw) == POLICY_PIN, "PURE_TRAINING_POLICY_BLOB_DRIFT"
+    assert b"return Training" in policy_raw and b"function Training.advance(" in policy_raw
+    for forbidden in (b"DataStoreService", b"UpdateAsync(", b"MarketplaceService",
+                      b"Instance.new", b"RemoteEvent", b"FireServer(", b"SetAttribute("):
+        assert forbidden not in policy_raw, ("POLICY_MUST_BE_PURE", forbidden)
     script = raw.decode("utf8")
     for marker in (
         "if not RunService:IsStudio() then",
@@ -99,6 +108,12 @@ def apply(dist: Path, profile: str, override: bool | None = None) -> bool:
         'if (root.Position - body.Position).Magnitude > 12 then',
         'task.wait(0.25)',
         'markDiscovery(player,info)',
+        'require(script.Parent:WaitForChild("TwinCreatureTraining"))',
+        'local level=awardPractice(player,info,npc,crest)',
+        'activate(info.effect,level)',
+        'player:SetAttribute("P0D_TwinPractice_"..info.id,updated.xp)',
+        'player:SetAttribute("P0D_TwinLevel_"..info.id,updated.level)',
+        'npc:SetAttribute("EvolutionStage",3)',
         'npc.PrimaryPart=body',
         'entry.model:PivotTo(entry.base*CFrame.new(0,bob,0)*CFrame.Angles(0,turn,0))',
         'player:SetAttribute("P0D_TwinCodexCount",count)',
@@ -115,14 +130,22 @@ def apply(dist: Path, profile: str, override: bool | None = None) -> bool:
 
     after = dict(before)
     after[DEST] = raw
-    assert len(after) == 64
+    after[POLICY_DEST] = policy_raw
+    assert len(after) == 65
     assert all(after[k] == original for k,original in before.items()), "PARENT_CHANGED"
     locks = {p:blob(v) for p,v in sorted(after.items())}
-    lock["total_scripts"] = 64
+    lock["total_scripts"] = 65
     lock["blobs"] = locks
     lock["rc_twin_biomes_overlay"] = {
         "id":FEATURE,
         "source_gitblob":PIN,
+        "training_policy_blob":POLICY_PIN,
+        "training_module_source":POLICY_DEST,
+        "new_source_count":2,
+        "session_training_levels":"1_2_3",
+        "max_xp_per_species":7,
+        "per_player_practice_cooldown_seconds":20,
+        "evolved_field_effect_duration_seconds":24,
         "source_count_parent_exact":PARENT_COUNT,
         "canonical_parent_head":"389c7484354cf5f9bf8d1731c327483059d6ffbb",
         "species_unique_visual_shapes":4,
@@ -133,6 +156,7 @@ def apply(dist: Path, profile: str, override: bool | None = None) -> bool:
         "new_features":["unique_silhouettes","model_idle","session_bestiary_4_4"],
         "characters_mirrored_each_team":8,
         "new_sole_script":DEST,
+        "new_pure_training_module":POLICY_DEST,
         "single_original_game_remote_store":True,
         "default_off_if_missing_runtime_flag":True,
         "runtime_scope":"STUDIO_ONLY_EXPLICIT_TRUE_BOOLVALUE",
@@ -142,19 +166,20 @@ def apply(dist: Path, profile: str, override: bool | None = None) -> bool:
     }
     storage[FLAG] = {"$className":"BoolValue","$properties":{"Value":True}}
     if receipt is not None:
-        receipt["total_sources"] = 64
+        receipt["total_sources"] = 65
         receipt["source_gitblobs"] = locks
         receipt["feature_flags"][FEATURE] = True
         receipt["new_biomes_and_npcs"] = "PRIVATE_SOURCE64_NOT_CANONICAL"
 
     # Entire preflight above runs BEFORE any scratch-distro mutation.
     (dist/"src"/DEST).write_bytes(raw)
+    (dist/"src"/POLICY_DEST).write_bytes(policy_raw)
     cfgpath.write_text(json.dumps(cfg,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
     lockpath.write_text(json.dumps(lock,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
     if receipt is not None:
         receiptpath.write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
     assert sources(dist) == after, "SOURCE_BODIES_CHANGED_AFTER_INSTALL"
-    print("P0D_TWIN_BIOMES_2_FIELDS_4_SPECIES_8_NPCS_SOURCE64_PASS")
+    print("P0D_TWIN_BIOMES_FOUR_SPECIES_EVOLUTION_SOURCE65_PASS")
     return True
 
 if __name__=="__main__":
