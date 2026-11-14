@@ -1032,13 +1032,13 @@ jobs:
           from apply_owner361_p0_composite70 import source_map,blob
           d=Path('/tmp/p0_owner361_forged66')
           game=d/'src/server/Game.server.luau'
-          game.write_bytes(game.read_bytes()+b'\\n-- forged self-consistent input\\n')
+          game.write_bytes(game.read_bytes()+b'\n-- forged self-consistent input\n')
           pins={p:blob(x) for p,x in sorted(source_map(d).items())}
           sl=d/'SOURCE_LOCK.json'; fl=d/'RC_FEATURE_LOCK.json'
           a=json.loads(sl.read_text('utf8')); b=json.loads(fl.read_text('utf8'))
           a['blobs']=pins; b['source_gitblobs']=pins
-          sl.write_text(json.dumps(a,indent=2)+'\\n','utf8')
-          fl.write_text(json.dumps(b,indent=2)+'\\n','utf8')
+          sl.write_text(json.dumps(a,indent=2)+'\n','utf8')
+          fl.write_text(json.dumps(b,indent=2)+'\n','utf8')
           assert json.loads(sl.read_text())['blobs']==pins
           assert json.loads(fl.read_text())['source_gitblobs']==pins
           PY
