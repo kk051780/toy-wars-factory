@@ -86,19 +86,26 @@ local lastByMob={}
 local destroyed=false
 local visualConnection
 
-local function onConfirmedHit(id,hitPos,fromPos,isKO,serial,round)
-    if destroyed or typeof(hitPos)~="Vector3" or typeof(fromPos)~="Vector3"
-        or type(id)~="number" or id<1 or id>9 or id%1~=0
+-- BEGIN_ACTUAL_CUE_DEDUPE_POLICY (native test executes these REAL source lines)
+local function acceptVisualCue(id,serial,round)
+    if type(id)~="number" or id<1 or id>9 or id%1~=0
         or type(serial)~="number" or serial<1 or serial%1~=0
-        or type(round)~="number" or type(isKO)~="boolean" then return end
-
+        or type(round)~="number" or round%1~=0 then return false end
     if lastRound~=round then
-        if lastRound~=nil and round<lastRound then return end
+        if lastRound~=nil and round<lastRound then return false end
         lastRound=round
         table.clear(lastByMob)
     end
-    if serial<=(lastByMob[id] or 0) then return end
-    lastByMob[id]=serial -- Exactly once, server deliveries are ordered.
+    if serial<=(lastByMob[id] or 0) then return false end
+    lastByMob[id]=serial
+    return true
+end
+-- END_ACTUAL_CUE_DEDUPE_POLICY
+
+local function onConfirmedHit(id,hitPos,fromPos,isKO,serial,round)
+    if destroyed or typeof(hitPos)~="Vector3" or typeof(fromPos)~="Vector3"
+        or type(isKO)~="boolean" then return end
+    if not acceptVisualCue(id,serial,round) then return end
 
     local root=localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
     if not root or (root.Position-hitPos).Magnitude>64 then return end
