@@ -41,6 +41,7 @@ localArt.Parent = Workspace
 
 -- These names refer to the original #374 generated art. We DO NOT recreate
 -- geometry or overlap #379/#381 slash particles or #374's hit sparks.
+-- BEGIN_NATIVE_MOTION_ALL_41_ART
 local watchedParts = {
     KNIGHT = {
         "ART_KNIGHT_CHEST", "ART_KNIGHT_HELMET", "ART_KNIGHT_CREST",
@@ -69,6 +70,8 @@ local watchedParts = {
         "ART_ELITE_BACK_BANNER", "ART_ELITE_WAR_CORE",
     },
 }
+
+-- END_NATIVE_MOTION_ALL_41_ART
 
 local function isMinion(model)
     return model:IsA("Model") and (
@@ -193,6 +196,7 @@ local function watch(model)
     task.defer(attempt)
 end
 
+-- BEGIN_NATIVE_MOTION_ACTUAL_BODY_MOVEMENT
 local function movementFor(kind, name, speed, t, hitAge, koAge)
     local walking = math.clamp(speed / 12, 0, 1)
     local step = math.sin(t * (3.0 + walking * 6.0))
@@ -225,6 +229,8 @@ local function movementFor(kind, name, speed, t, hitAge, koAge)
         return CFrame.Angles(-.08*walking*step+tilt,0,.07*step)
     end
 end
+
+-- END_NATIVE_MOTION_ACTUAL_BODY_MOVEMENT
 
 -- ChildAdded is registered before the first snapshot (no replication gap).
 local added = horde.ChildAdded:Connect(function(child) task.defer(watch,child) end)
