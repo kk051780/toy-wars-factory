@@ -1,0 +1,48 @@
+{
+  "schema": "P0D_PREP_SOURCE_LOCK_V1",
+  "feature_id": "P0D-067",
+  "feature_key": "TWIN_BOND_PVE_COMPANION_V1",
+  "original_author_pr": "https://github.com/kk051780/toy-wars-factory/pull/338",
+  "original_author_parent_sha": "96b11c900b4dc689ca41fb0710f5ef650e3f455c",
+  "rebased_official_parent_sha": "abf1710d1392057271468f42920dc1173748f0f7",
+  "parent_expected_source_count": 65,
+  "candidate_expected_source_count": 66,
+  "author_source_blobs": [
+    {
+      "path": "rc_fastlane/apply_twin_bond.py",
+      "blob": "c384b16763ef6bffaaed30295aec96577afa1978"
+    },
+    {
+      "path": "rc_fastlane/features/twin_bond/TwinBiomesBonded.server.luau",
+      "blob": "45d82ea64be15fd1245f994293bff21b175d98fe"
+    },
+    {
+      "path": "rc_fastlane/features/twin_bond/TwinBondPolicy.luau",
+      "blob": "0dbf7b659c154361b9d6f6d76e4e660cc9caa1cf"
+    },
+    {
+      "path": "rc_fastlane/features/twin_bond/TwinBondNative.luau",
+      "blob": "12d1b2c4e0445ff81dc0ffc186bf59641beac10f"
+    }
+  ],
+  "original_game_parent_git_blob": "cdc995d8a64f6a6f6df5abd43fb8210486328572",
+  "original_trained_twin_git_blob": "ff7c57aae79f03e3fbc72e043fe3f34f5ac373a5",
+  "new_world_blob": "45d82ea64be15fd1245f994293bff21b175d98fe",
+  "new_module_blob": "0dbf7b659c154361b9d6f6d76e4e660cc9caa1cf",
+  "final_runtime_lock": "SOURCE_LOCK.json",
+  "final_feature_lock": "RC_FEATURE_LOCK.json",
+  "only_modified": [
+    "server/Game.server.luau",
+    "server/TwinBiomes.server.luau"
+  ],
+  "added": [
+    "server/TwinBondPolicy.luau"
+  ],
+  "unchanged_sources": 63,
+  "rollback": "Without final apply_twin_bond.py enabled=true, the complete current parent65 project, source-lock, feature-lock and all 65 source bodies are byte-identical",
+  "studio_2client": "NOT_TESTED",
+  "android": "NOT_TESTED",
+  "owner_fun": "NOT_TESTED",
+  "official_rc_adopted": false,
+  "qa_child_note": "Sourcery hotfix source-only: Game ServerStorage binding, capped PvE bonus, runtime flag OFF, respawn continuity, cooldown refresh. Await exact-head Actions. No formal RC adoption."
+}
