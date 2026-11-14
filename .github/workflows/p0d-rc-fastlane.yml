@@ -1912,17 +1912,17 @@ jobs:
           assert type(f['FB015_FOREST_BIOMES_MONUMENTS_V2']) is bool
           assert type(f['FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3']) is bool
           with open('/tmp/p0d_art_flags.env','w') as g:
-              g.write('FOREST='+str(f['FB015_FOREST_BIOMES_MONUMENTS_V2']).lower()+'\n')
-              g.write('CASTLE='+str(f['FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3']).lower()+'\n')
+              g.write('FOREST_ENABLED='+str(f['FB015_FOREST_BIOMES_MONUMENTS_V2']).lower()+'\n')
+              g.write('CASTLE_ENABLED='+str(f['FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3']).lower()+'\n')
           PY
           source /tmp/p0d_art_flags.env
-          if [ "$FOREST" = true ]; then
+          if [ "$FOREST_ENABLED" = true ]; then
             python3 -B rc_fastlane/apply_fb015_forest_v2.py --base "$BASE" --out "$FOREST" --enabled true
           else
             python3 -B rc_fastlane/apply_fb015_forest_v2.py --base "$BASE" --out "$FOREST" --enabled false
             cp -a "$BASE" "$FOREST"
           fi
-          if [ "$CASTLE" = true ]; then
+          if [ "$CASTLE_ENABLED" = true ]; then
             python3 -B rc_fastlane/apply_fb015_castle_gate_silhouette.py --base "$FOREST" --out "$FINAL" --enabled true
           else
             python3 -B rc_fastlane/apply_fb015_castle_gate_silhouette.py --base "$FOREST" --out "$FINAL" --enabled false
@@ -1933,10 +1933,10 @@ jobs:
             /tmp/p0d_new_luau/luau-compile "$script" >/dev/null
           done
           /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$OUT/P0D_RC80_ART_WORLD_CASTLE_STUDIO_PREVIEW.rbxlx"
-          if [ "$FOREST" = true ]; then
+          if [ "$FOREST_ENABLED" = true ]; then
             python3 -B rc_fastlane/verify_fb015_forest_v2.py --dist "$FINAL" --place "$OUT/P0D_RC80_ART_WORLD_CASTLE_STUDIO_PREVIEW.rbxlx" --receipt "$OUT/FOREST_SOURCE_RECEIPT.json"
           fi
-          if [ "$CASTLE" = true ]; then
+          if [ "$CASTLE_ENABLED" = true ]; then
             python3 -B rc_fastlane/verify_fb015_castle_gate_silhouette.py --dist "$FINAL" --place "$OUT/P0D_RC80_ART_WORLD_CASTLE_STUDIO_PREVIEW.rbxlx" --receipt "$OUT/CASTLE_SOURCE_RECEIPT.json"
           fi
           python3 -B art_quality/check_art_quality.py --place "$OUT/P0D_RC80_ART_WORLD_CASTLE_STUDIO_PREVIEW.rbxlx" --out "$OUT/ART_QUALITY_REPORT.json"
