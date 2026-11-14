@@ -15,7 +15,7 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
-from fb015_fs_guard import strict_inventory, reject_symlink_ancestors
+from fb015_fs_guard import strict_inventory, reject_symlink_ancestors, transaction_parent_locks, atomic_json
 
 ROOT = Path(__file__).resolve().parent
 FEATURE = "ART_MINION_THREE_SILHOUETTES_V1"
@@ -31,19 +31,6 @@ TRUST_SUFFIX = ".fb015_external_receipt.json"
 
 def receipt_path(out: Path) -> Path:
     return out.with_name(out.name + TRUST_SUFFIX)
-
-def atomic_json(path: Path, payload: dict) -> None:
-    """Publish a complete journal/receipt or nothing, never truncated JSON."""
-    fd,name=tempfile.mkstemp(prefix="."+path.name+".",dir=path.parent)
-    try:
-        with os.fdopen(fd,"w",encoding="utf8") as f:
-            json.dump(payload,f,sort_keys=True,ensure_ascii=False)
-            f.write("\n")
-            f.flush()
-            os.fsync(f.fileno())
-        os.replace(name,path)
-    finally:
-        if os.path.exists(name): os.unlink(name)
 
 def external_receipt(out: Path, dist: Path) -> dict:
     path=receipt_path(out)
@@ -220,9 +207,13 @@ def _compose_locked(dist: Path, out: Path, enabled: bool):
             "PENDING_OFF_RECOVERY_MUST_FINISH_BEFORE_ENABLE")
     require(out != dist and not out.exists(), "COMPOSITE_ALREADY_PRESENT")
     source, pins, locks, author = baseline(dist)
+    before_inventory=strict_inventory(dist)
     with tempfile.TemporaryDirectory(prefix=".fb015_combo_stage_", dir=out.parent) as tmp:
         staged = Path(tmp) / out.name
-        shutil.copytree(dist, staged)
+        # Never follow an input symlink inserted after preflight.
+        shutil.copytree(dist, staged, symlinks=True)
+        require(strict_inventory(staged)==before_inventory,
+                "COMPOSITE_COPIED_BASE_TREE_DRIFT")
         target = staged / "src" / DEST
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(author)
@@ -282,14 +273,10 @@ def compose(dist: Path, out: Path, enabled: bool):
     out = out.resolve()
     require(out != dist and out not in dist.parents and dist not in out.parents,
             "PRIVATE_OUTPUT_MUST_BE_SEPARATE")
-    # No sibling lockfile; a clean OFF is a literal zero-write operation.
-    fd=os.open(out.parent,os.O_RDONLY | os.O_DIRECTORY)
-    try:
-        fcntl.flock(fd,fcntl.LOCK_EX)
+    # Source and output share the source parent lock with APPLY, even when
+    # output is in another directory. This covers cooperating processes.
+    with transaction_parent_locks(dist.parent, out.parent):
         return _compose_locked(dist, out, enabled)
-    finally:
-        fcntl.flock(fd,fcntl.LOCK_UN)
-        os.close(fd)
 
 def main():
     ap = argparse.ArgumentParser()
