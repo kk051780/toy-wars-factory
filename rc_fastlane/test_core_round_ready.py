@@ -68,7 +68,7 @@ class CoreRoundReadyTest(unittest.TestCase):
         actual = u.patch_game(GAME)
         self.assertEqual(actual.count('remote.OnServerEvent:Connect('), 1)
         self.assertEqual(actual.count('remote.Name = "TrapRaidersS1Remote"'), 1)
-        self.assertIn('if not everybodyReady() then return end', actual)
+        self.assertIn('if everybodyReady() and count >= Config.MinPlayers', actual)
         self.assertIn('if match.phase == "COUNTDOWN" and data.ready then return end', actual)
         self.assertIn('roundReady[player] = false', actual)
         self.assertIn('roundReady[player] = nil', actual)
