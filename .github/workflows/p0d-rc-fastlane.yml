@@ -2236,3 +2236,78 @@ jobs:
           path: /tmp/p0d_live_safe_castle81_artifact/*
           retention-days: 14
           if-no-files-found: error
+
+
+      - name: 'P0 #444 PRIVATE Horde reset from original Game with native 8 and real 81 source'
+        if: env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_live_safe_castle81_source
+          FINAL=/tmp/p0d_private_live_horde81
+          OUT=/tmp/p0d_live_horde81_evidence
+          PLACE="$OUT/P0D_RC81_PRIVATE_LIVE_HORDE_SOURCE_QA.rbxlx"
+          mkdir -p "$OUT"
+          test -f "$BASE/SOURCE_LOCK.json"
+          python3 -B -m unittest discover -s rc_fastlane -p test_live_horde_private.py -v
+          python3 -B rc_fastlane/apply_live_horde_private.py --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_live_horde_private.py --base "$BASE" --out "$FINAL" --enabled true
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 81
+          python3 -B rc_fastlane/generate_live_horde_native.py \
+            --dist "$FINAL" --out "$OUT/HORDE_NATIVE8.luau"
+          /tmp/p0d_new_luau/luau "$OUT/HORDE_NATIVE8.luau"
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B rc_fastlane/verify_live_horde_private.py \
+            --dist "$FINAL" --place "$PLACE" --receipt "$OUT/HORDE_SOURCE_EXACT_RECEIPT.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/ART_SOURCE_REPORT.json"
+          python3 -B art_quality/check_mobile_fun.py \
+            --out "$OUT/MOBILE_KID_FUN_REPORT.json"
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          python3 - <<'PY'
+          import json,hashlib,os
+          from pathlib import Path
+          out=Path('/tmp/p0d_live_horde81_evidence')
+          p=out/'P0D_RC81_PRIVATE_LIVE_HORDE_SOURCE_QA.rbxlx'
+          v=json.loads((out/'HORDE_SOURCE_EXACT_RECEIPT.json').read_text())
+          art=json.loads((out/'ART_SOURCE_REPORT.json').read_text())
+          assert v['lua_sources']==v['embedded_sources_exact']==81
+          assert v['other_80_source_byte_exact'] and v['public_default']=='OFF'
+          assert art['source']['source_gate']=='PASS'
+          assert art['source']['script_count']==81
+          assert art['art_decision']=='ART_NO_GO' and not art['owner_accepted']
+          result={
+            'schema':'P0D_PRIVATE_HORDE_RC81_SOURCE_GATE_V1',
+            'official_parent':'bab8e93bfe0bce0baddfe64ee2898962486058af',
+            'github_checkout_sha':os.environ['GITHUB_SHA'],
+            'official_rc_adopted':False,'source_count':81,
+            'existing_Game_source_only_changed':True,
+            'other80_source_byte_exact':True,
+            'original_Horde_unchanged':True,
+            'private_server_plus_owner_attr_required':True,
+            'public_default':'OFF','studio_original_reset_path':True,
+            'place_bytes':p.stat().st_size,
+            'place_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
+            'source_gate':'PASS','live_horde_decision':'LIVE_HORDE_NO_GO',
+            'live_art_decision':'LIVE_ART_NO_GO',
+            'art_decision':'ART_NO_GO','mobile_decision':'MOBILE_NO_GO',
+            'fun_decision':'FUN_NO_GO','owner_accepted':False,
+            'real_horde_nine_mobs':'NOT_TESTED',
+            'real_hit_hp_popup':'NOT_TESTED',
+            'android_15min':'NOT_TESTED','kid_first3min':'NOT_TESTED'
+          }
+          (out/'PRIVATE_HORDE_STAGE_RECEIPT.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_PRIVATE_HORDE_REAL_81_QA_PASS_NOT_LIVE_GO',result['place_bytes'],result['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always() && env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        with:
+          name: P0D-RC81-PRIVATE-LIVE-HORDE-TEST-ONLY-NO-GO
+          path: /tmp/p0d_live_horde81_evidence/*
+          retention-days: 14
+          if-no-files-found: warn
