@@ -111,11 +111,11 @@ def patch_hud(raw:bytes) -> bytes:
     delayed=updated.index(HIT_DELAY)
     assert declaration<visible<delayed and delayed-declaration<2400
     updated=updated.replace(HIT_VISIBLE,
-        f'impactToast:SetAttribute("{HIT_SEQUENCE_ATTRIBUTE}", hitSeq)\\n'
+        f'impactToast:SetAttribute("{HIT_SEQUENCE_ATTRIBUTE}", hitSeq)\n'
         +HIT_VISIBLE,1)
     updated=updated.replace(HIT_DELAY,
         HIT_DELAY
-        + f'\\n            if impactToast:GetAttribute("{HIT_SEQUENCE_ATTRIBUTE}") ~= hitSeq then return end',1)
+        + f'\n            if impactToast:GetAttribute("{HIT_SEQUENCE_ATTRIBUTE}") ~= hitSeq then return end',1)
     assert updated.count(f'impactToast:SetAttribute("{HIT_SEQUENCE_ATTRIBUTE}", hitSeq)')==1
     assert updated.count(f'impactToast:GetAttribute("{HIT_SEQUENCE_ATTRIBUTE}") ~= hitSeq')==1
     assert updated.count("if s.musouActive==true or (s.musouHitFeedback==true") == 1
