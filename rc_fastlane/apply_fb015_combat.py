@@ -25,7 +25,7 @@ HORDE_AUTHOR = ROOT / "features/fb015_combat/MusouHordeArtSignal.luau"
 DEST = "client/ArtCombatSlash.client.luau"
 HORDE = "server/MusouHorde.luau"
 PIN = "c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba"
-HORDE_PATCH_PIN = "6c613406c4c72be31b2a5c38177d54f1af78e617"
+HORDE_PATCH_PIN = "4ed99eb0b5177142b389ba3bf6954b288c804a08"
 ORIGINAL_HORDE_PIN = "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 BASE = 66
 
@@ -83,29 +83,45 @@ def validate_horde_patch(before: bytes, after: bytes) -> None:
     require(blob(before) == ORIGINAL_HORDE_PIN, "ORIGINAL_HORDE_DRIFT")
     require(blob(after) == HORDE_PATCH_PIN, "ART_HORDE_DRIFT")
     old, new = before.decode("utf8"), after.decode("utf8")
+    header = '''-- No RemoteEvent, no task scheduler, no XP/egg/score/damage-player authority.
+local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))'''
+    new_header = '''-- In Studio only: one outbound cosmetic RemoteEvent + visual-only spark cue.
+-- No OnServerEvent listener, scheduler, XP/egg/score/damage-player authority.
+local RunService=game:GetService("RunService")
+local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))'''
     old_ctor = '''    folder.Parent=world
     return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0},Horde)'''
     new_ctor = '''    folder.Parent=world
-    -- Pure outbound visual delivery. No OnServerEvent handler or game authority.
-    local visualCue=Instance.new("RemoteEvent")
-    visualCue.Name="P0D_ART_COMBAT_SIGNAL_V1"
-    visualCue.Parent=folder
+    -- Studio-only outbound visuals; live servers create/send no unused packet.
+    local visualCue=nil
+    if RunService:IsStudio() then
+        visualCue=Instance.new("RemoteEvent")
+        visualCue.Name="P0D_ART_COMBAT_SIGNAL_V1"
+        visualCue.Parent=folder
+    end
     return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0,artCue=visualCue},Horde)'''
     seam = '                    m.body.Color=Color3.fromRGB(253,231,111)'
     extra = '''
-                    -- A reliable outbound message for EACH real server hit.
-                    -- Unlike replicated Attributes it cannot coalesce quick hits.
-                    -- This Remote has NO OnServerEvent listener / hit authority.
-                    m.artHitSeq=(m.artHitSeq or 0)+1
-                    self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)'''
-    require(old.count(old_ctor) == 1 and old.count(seam) == 1,
-            "UNEXPECTED_ORIGINAL_HORDE_SEAMS")
-    require(old.replace(old_ctor, new_ctor).replace(seam, seam + extra) == new,
+                    -- Every confirmed hit produces BOTH a reliable Studio client
+                    -- arc packet and a synchronous server-only 3D spark cue.
+                    -- Never allow the cosmetic Remote to accept client traffic.
+                    if self.artCue then
+                        m.artHitSeq=(m.artHitSeq or 0)+1
+                        self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)
+                        m.body:SetAttribute("P0D_ART_SPARK_V1",
+                            tostring(m.artHitSeq).."|"..(if m.hp<=0 then "K" else "H"))
+                    end'''
+    require(old.count(header)==1 and old.count(old_ctor)==1 and old.count(seam)==1,
+            "ORIGINAL_HORDE_SEAM_DRIFT")
+    require(old.replace(header, new_header).replace(old_ctor, new_ctor)
+            .replace(seam, seam + extra) == new,
             "UNEXPECTED_HORDE_COMBAT_CHANGE")
     require(new.count('Instance.new("RemoteEvent")') == 1 and
             new.count("self.artCue:FireAllClients(") == 1 and
-            'OnServerEvent:Connect(' not in new,
-            "COSMETIC_REMOTE_MUST_BE_SERVER_OUTBOUND_ONLY")
+            new.count('m.body:SetAttribute("P0D_ART_SPARK_V1"') == 1 and
+            'OnServerEvent:Connect(' not in new and
+            "if RunService:IsStudio() then" in new,
+            "COSMETIC_REMOTE_MUST_BE_STUDIO_ONLY_AND_OUTBOUND")
 
 
 def _check_original(dist: Path):
