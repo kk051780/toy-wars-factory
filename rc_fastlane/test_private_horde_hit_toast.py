@@ -62,7 +62,7 @@ class PrivateHitToastV3Tests(unittest.TestCase):
         # Simulate a source regression where normal ATTACK increments even
         # after its touched>0 block has already closed (a MISS could show HIT).
         origin=game.index(needle,game.index('if touched>0 then'))
-        mutated=game[:origin]+'end\\n        '+game[origin:]
+        mutated=game[:origin]+'end\n        '+game[origin:]
         with self.assertRaises(AssertionError):
             verify_all_real_hit_branches(mutated)
     def test_sourcery_medium1_original_epoch_already_protects_new_hit(self):
