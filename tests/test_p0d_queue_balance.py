@@ -102,6 +102,26 @@ class QueueBalanceTest(unittest.TestCase):
         with self.assertRaises(InvalidSnapshot):
             balance(q, catalog())
 
+
+    def test_workflow_regenerates_plan_on_all_official_rc_and_pr_updates(self):
+        workflow = (Path(__file__).resolve().parents[1] /
+                    ".github" / "workflows" / "p0d-two-lane-intake.yml").read_text(encoding="utf-8")
+        self.assertIn("      - rc/p0d-s1-kids-rc01", workflow)
+        self.assertIn("  pull_request:", workflow)
+        self.assertIn("    types: [opened, synchronize, reopened, ready_for_review, edited]", workflow)
+        self.assertIn("  workflow_dispatch: {}", workflow)
+        self.assertNotIn("    paths:", workflow,
+                         "path-filtered push would miss normal official RC feature adoption")
+        self.assertNotIn("if: github.event_name == 'push'", workflow,
+                         "PR-synced candidate replenishment must also generate a plan")
+        self.assertIn("--out /tmp/p0d_two_lane/P0D_BALANCE_PLAN.json", workflow)
+        self.assertIn("path: /tmp/p0d_two_lane/", workflow)
+        self.assertIn("ref: rc/p0d-s1-kids-rc01", workflow)
+        self.assertIn("persist-credentials: false", workflow)
+        self.assertIn("  contents: read", workflow)
+        self.assertNotIn("  contents: write", workflow)
+        self.assertNotIn("pull_request_target:", workflow)
+
     def test_invalid_claims_and_catalog_fail_closed(self):
         with self.assertRaises(InvalidSnapshot):
             balance(inbox(), catalog(), ["bad ID"])

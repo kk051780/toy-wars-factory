@@ -35,3 +35,10 @@ The targets are a suggested WIP budget, **not a command to launch additional aut
 Result contains `QUEUE_STATE`, stage counts, `a_suggested_feature_ids`, `b_ready_prs` and role targets with proof-adjacent immutable SHA. It never marks its A target complete, never changes a source or registration, and never labels a DRAFT or old-head candidate READY. A/B report actual source/CI, adoption, ZIP bytes, Studio Place bytes, and unresolved FUN separately. Severe Sourcery findings require genuine new-head review and must not be bypassed.
 
 Status of this branch: **separate DRAFT proposal, no official RC adoption; CI and engine verification pending**. Main, Roblox publication, payments, automated merge and extra cloud costs are out of scope.
+
+## V1 event + artifact acceptance (after authorized RC adoption)
+- Every official `rc/p0d-s1-kids-rc01` push recomputes the plan; no `paths` guard may suppress gameplay-only updates to the official RC HEAD.
+- Each RC-target PR `opened/synchronize/reopened/ready_for_review/edited` triggers the same **trusted official branch** read-only checkout, never PR-supplied executable code. Manual dispatch also works.
+- The runner always executes both selector and balancer tests (under the canonical checkout) and stores **both** `P0D_PREP_INBOX.json` and `P0D_BALANCE_PLAN.json` under the one seven-day `P0D-TWO-LANE-PREP-INBOX` Actions artifact.
+- ZERO job write scopes: `permissions: contents:read, actions:read, pull-requests:read`. Suggestions from the balance JSON must not be treated as a legitimate author claim, source production, preview validation, or sole-writer RC approval.
+- Preserve the queue's current rule requiring the latest success on the actual HEAD. If P0/P1 Sourcery reviews are outstanding, the B writer still rejects adoption even if selector emits a candidate.
