@@ -18,6 +18,7 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
+from fb015_fs_guard import strict_inventory
 
 ROOT = Path(__file__).resolve().parent
 FEATURE = "ART_COMBAT_SLASH_READONLY_V1"
@@ -32,9 +33,7 @@ BASE = 66
 TRANSACTION = "P0D_ART_COMBAT_FULL_TREE_MANIFEST.json"
 
 def whole_tree(dist: Path) -> dict[str, str]:
-    return {p.relative_to(dist).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in sorted(dist.rglob("*")) if p.is_file()
-            and p.relative_to(dist).as_posix() != TRANSACTION}
+    return strict_inventory(dist, exclude=TRANSACTION)
 
 def validate_candidate_tree(dist: Path) -> dict:
     path = dist / TRANSACTION
@@ -214,6 +213,7 @@ end
 
 
 def _check_original(dist: Path):
+    strict_inventory(dist)  # Reject symlink escapes BEFORE copytree or source access.
     old = sources(dist)
     require(len(old) == BASE and DEST not in old, "REQUIRE_CLEAN_RC66")
     visual = AUTHOR.read_bytes()
@@ -354,6 +354,8 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
     return True
 
 def apply(dist: Path, enabled: bool) -> bool:
+    if dist.is_symlink():
+        raise RuntimeError("FB015_SYMLINK_DISTRIBUTION_REFUSED")
     # File-less directory lock on the existing parent serializes concurrent
     # toggle calls while preserving zero-write clean OFF.
     dist=dist.resolve()
