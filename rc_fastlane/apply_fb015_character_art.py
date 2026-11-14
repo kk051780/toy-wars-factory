@@ -56,7 +56,14 @@ def apply(dist: Path, enabled: bool) -> bool:
         return False
     candidate = source_safety()
     original = sources(dist)
-    assert len(original) == 66, ("REQUIRES_OFFICIAL66", len(original))
+    base_count = len(original)
+    assert base_count in (66, 67), ("EXPECT_UNMODIFIED66_OR_ART_MINION67", base_count)
+    if base_count == 67:
+        # Explicitly support exactly #374's minion visual addon, not unknown
+        # 67-source builds. The actual source/feature lock is checked below.
+        assert "server/ArtMinionSilhouette.server.luau" in original
+        assert gitblob(original["server/ArtMinionSilhouette.server.luau"]) == "ed5cd56789abc4a7bc8ee3a44b8982aae4f3ff62"
+
     assert DEST not in original, "DUPLICATE_ART_CLIENT"
     assert "server/Game.server.luau" in original
     assert "server/MusouHorde.luau" in original
@@ -67,8 +74,12 @@ def apply(dist: Path, enabled: bool) -> bool:
     a = json.loads(lp.read_text("utf8"))
     b = json.loads(fp.read_text("utf8"))
     project = json.loads(pj.read_text("utf8"))
-    assert a["total_scripts"] == 66 and a["blobs"] == pins, "SOURCE_BASE_DRIFT"
-    assert b["total_sources"] == 66 and b["source_gitblobs"] == pins, "FEATURE_BASE_DRIFT"
+    assert a["total_scripts"] == base_count and a["blobs"] == pins, "SOURCE_BASE_DRIFT"
+    assert b["total_sources"] == base_count and b["source_gitblobs"] == pins, "FEATURE_BASE_DRIFT"
+    if base_count == 67:
+        assert b["feature_flags"].get("ART_MINION_THREE_SILHOUETTES_V1") is True
+        assert a.get("rc_art_minion", {}).get("previous_66_byte_identical") is True
+
     assert FEATURE not in b["feature_flags"], "VISUAL_ALREADY_INCLUDED"
     clients = project["tree"]["StarterPlayer"]["StarterPlayerScripts"]
     assert any(isinstance(x, dict) and x.get("$path") == "src/client/HUD.client.luau"
@@ -77,13 +88,15 @@ def apply(dist: Path, enabled: bool) -> bool:
     clients["FB015CharacterArt"] = {"$path": "src/" + DEST}
     updated = {**original, DEST: candidate}
     pins2 = {p: gitblob(raw) for p, raw in sorted(updated.items())}
-    assert len(updated) == 67
+    assert len(updated) == base_count + 1
     assert all(updated[p] == raw for p, raw in original.items())
     receipt = {
         "feedback": "FB-015",
         "feature": FEATURE,
         "added_client_script": DEST,
-        "source_count": 67,
+        "base_source_count": base_count,
+        "source_count": base_count + 1,
+        "non_overlap_with_pr374": True,
         "original66_unchanged": True,
         "no_Game_Horde_Gorogan_Remote_Store_change": True,
         "original_scripts_sha": pins,
@@ -92,10 +105,10 @@ def apply(dist: Path, enabled: bool) -> bool:
         "approval": "PREP_ONLY_NOT_RC",
         "rollback": "omit adapter; OFF writes nothing",
     }
-    a["total_scripts"] = 67
+    a["total_scripts"] = base_count + 1
     a["blobs"] = pins2
     a["rc_fb015_character_art"] = receipt
-    b["total_sources"] = 67
+    b["total_sources"] = base_count + 1
     b["source_gitblobs"] = pins2
     b["feature_flags"][FEATURE] = True
     b["rc_fb015_character_art"] = receipt
@@ -104,7 +117,7 @@ def apply(dist: Path, enabled: bool) -> bool:
     lp.write_text(json.dumps(a, ensure_ascii=False, indent=2) + "\n", "utf8")
     fp.write_text(json.dumps(b, ensure_ascii=False, indent=2) + "\n", "utf8")
     assert sources(dist) == updated
-    print("FB015_BEAST_ONLY_SOURCE_67_AND_BASE_66_IDENTICAL")
+    print("FB015_BEAST_ONLY_NEXT_SOURCE_AND_PREVIOUS_ALL_IDENTICAL", base_count + 1)
     return True
 
 
