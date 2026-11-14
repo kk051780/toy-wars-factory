@@ -234,6 +234,39 @@ jobs:
             echo P0D_TWIN_TRAINING_PREP65_OFF_REAL_OFFICIAL64_BYTE_EXACT_PASS
             python3 -B rc_fastlane/apply_twin_training.py --dist "$DIST" --enabled true
           fi
+      - name: OWNER first-play HUD + solo-start clarity (no Game authority change)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_owner_firstplay_ux.py --dist "$DIST" --enabled false
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            echo P0D_OWNER_UX_OFF_ALL65_AND_CONFIG_EXACT_PASS
+            python3 -B rc_fastlane/apply_owner_firstplay_ux.py --dist "$DIST" --enabled true
+            python3 - <<'PY'
+          from pathlib import Path
+          import json
+          dist=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE")
+          src=dist/"src"
+          hud=(src/"client/HUD.client.luau").read_text("utf8")
+          v4=(src/"client/V4TrialOverlay.client.luau").read_text("utf8")
+          audit=(src/"client/P0DStudioTrialAudit.client.luau").read_text("utf8")
+          game=(src/"server/Game.server.luau").read_text("utf8")
+          assert "StudioSolo.canStart(RunService:IsStudio()" in game
+          assert "1人練習は自動開始" in hud
+          assert 'instructions.Visible=false' in hud
+          assert 'progressBadge.Visible=false' in hud
+          assert 'dojoBadge.Visible=valid and s.hatchEnabled==true and s.phase=="LOBBY"' in hud
+          assert 'local folded=true' in v4 and 'box.Visible=false' in v4
+          assert 'screen.Enabled=false' in audit and 'log("START",' in audit
+          lock=json.loads((dist/"SOURCE_LOCK.json").read_text("utf8"))
+          assert lock["total_scripts"]==65 and len(lock["blobs"])==65
+          print("P0D_OWNER_UX_INITIAL_TEXT_COLLAPSED_SOLO_GUIDE_ACTUAL_GAME_UNCHANGED_PASS")
+          PY
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
