@@ -100,8 +100,8 @@ class EightFeatureCandidateSafety(unittest.TestCase):
             'beam.Name = "ART_SERVER_HIT_SLASH_"', 'beam.Enabled = false',
             'beam.FaceCamera = true', 'NumberSequenceKeypoint.new(1,1)',
             'if flashing and not item.lastHit then',
-            'item.slashStart = os.clock()', 'arc.Enabled = true',
-            'if dead and not item.lastDeath then', 'item.sparks:Emit(22)',
+            'item.slashStart = now', 'arc.Enabled = true',
+            'if dead then', 'item.sparks:Emit(22)',
             'local remain = 1 - (os.clock()-item.slashStart)/.36',
             'arc.Enabled = false', 'arc.Width0 = item.slashWidth * remain',
             'item.CanCollide = false', 'item.CanQuery = false',
@@ -111,6 +111,29 @@ class EightFeatureCandidateSafety(unittest.TestCase):
         self.assertNotIn('Instance.new("RemoteEvent")',code)
         self.assertNotIn('FireServer(',code)
         self.assertNotIn('TakeDamage(',code)
+        self.assertNotIn('item.core.CFrame =',code)
+
+    def test_direct_damage_cue_for_fast_hit_and_ko_without_authority(self):
+        code=art.pinned_art()["server/ArtMinionSilhouette.server.luau"].decode("utf8")
+        for marker in (
+            'core:GetPropertyChangedSignal("Color")',
+            'cueText:GetPropertyChangedSignal("Text")',
+            'originalHPText(value)', 'isOriginalGold(core.Color)',
+            'if now-item.lastImpactAt < .06 then return end',
+            'item.streak = if previousGap < 1.25 then',
+            'fireHitVisual(entry)', 'fireKOCosmetic(entry)',
+            'local recoil=math.clamp((item.recoilUntil-now)/.19,0,1)',
+            'local ko=math.clamp((item.koUntil-now)/.62,0,1)',
+            'clearVisualSignals(item)',
+            'connection:Disconnect()',
+            'table.clear(item.connections)',
+            'item.lastDeath = false',
+        ):
+            self.assertIn(marker,code)
+        self.assertEqual(code.count('Instance.new("Beam")'),1)
+        self.assertNotIn('Instance.new("RemoteEvent")',code)
+        self.assertNotIn('TakeDamage(',code)
+        self.assertNotIn('FireServer(',code)
         self.assertNotIn('item.core.CFrame =',code)
 
     def test_minion_and_gorogan_cosmetics_have_distinct_owners(self):

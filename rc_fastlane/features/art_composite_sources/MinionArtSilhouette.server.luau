@@ -174,6 +174,50 @@ local function makeSlashArcs(core, accent, isElite)
     return arcs
 end
 
+-- Directly observe the original Horde's replicated damage cues. Polling
+-- only every .14s can miss its .18s flash, or combine consecutive hits into
+-- one flash. CombatCue HP text is updated by the server for EVERY true hit;
+-- exact yellow Core is an independent fallback, not a damage authority.
+local function isOriginalGold(c)
+    return c.R > .96 and c.G > .85 and c.B > .35 and c.B < .58
+end
+local function fireHitVisual(item)
+    local now = os.clock()
+    if now-item.lastImpactAt < .06 then return end
+    local previousGap = now-item.lastImpactAt
+    item.streak = if previousGap < 1.25 then math.min(item.streak+1,5) else 1
+    item.lastImpactAt = now
+    item.recoilUntil = now+.19
+    item.sparks:Emit(7+item.streak)
+    item.slashStart = now
+    item.slashWidth = item.baseSlashWidth*(1+.055*(item.streak-1))
+    for _,arc in ipairs(item.slashes) do
+        arc.Color = ColorSequence.new(item.slashColor)
+        arc.Enabled = true
+    end
+end
+local function fireKOCosmetic(item)
+    if item.lastDeath then return end
+    item.lastDeath = true
+    item.sparks:Emit(22)
+    item.slashStart = os.clock()
+    item.koUntil = item.slashStart+.62
+    for _,arc in ipairs(item.slashes) do
+        arc.Color = ColorSequence.new(rgb(255,192,111))
+        arc.Enabled = true
+    end
+end
+local function originalHPText(s)
+    return s:match("^中立 %d+/%d+$") ~= nil
+        or s:match("^精鋭 %d+/%d+$") ~= nil
+end
+local function clearVisualSignals(item)
+    for _,connection in ipairs(item.connections) do
+        connection:Disconnect()
+    end
+    table.clear(item.connections)
+end
+
 local function decorate(model)
     if not model or not model:IsA("Model") or not model.Parent then return end
     if model:GetAttribute("P0D_ART_MINION_V1") == true then return end
@@ -225,15 +269,42 @@ local function decorate(model)
             item.MaxDistance = 44
         end
     end
-    table.insert(equipped,{
+    local entry={
         model=model, core=core, moving=moving, sparks=sparks,
         slashes=slashes, slashStart=-100, slashColor=accent,
+        baseSlashWidth=if isElite then .90 else .64,
         slashWidth=if isElite then .90 else .64,
-        -- Cache once in model-space. Every art update re-derives from the
-        -- authoritative Core pose; no accumulating drift when Horde PivotTo's.
+        -- Cache once in model-space; never drift against server-owned Core.
         movingRelative=core.CFrame:ToObjectSpace(moving.CFrame),
         typeId=typeId, lastHit=false, lastDeath=false, id=numeric or 9,
-    })
+        lastImpactAt=-100, recoilUntil=-100, koUntil=-100, streak=0,
+        connections={},
+    }
+    -- Server cue updates on every non-lethal hit as HP decreases, even when
+    -- two attacks deal equal damage while Color is still gold.
+    local cueGui=core:FindFirstChild("CombatCue")
+    local cueText=if cueGui and cueGui:IsA("BillboardGui")
+        then cueGui:FindFirstChildOfClass("TextLabel") else nil
+    if cueText then
+        table.insert(entry.connections,cueText:GetPropertyChangedSignal("Text"):Connect(function()
+            if not model.Parent then return end
+            local value=cueText.Text
+            if originalHPText(value) then
+                fireHitVisual(entry)
+            elseif string.find(value,"撃破",1,true) then
+                fireHitVisual(entry)
+                fireKOCosmetic(entry)
+            end
+        end))
+    end
+    -- Core Color can change at a different moment than cue replication.
+    -- 60ms deduplication prevents two visual bursts for one server hit.
+    table.insert(entry.connections,core:GetPropertyChangedSignal("Color"):Connect(function()
+        if model.Parent and isOriginalGold(core.Color) then
+            fireHitVisual(entry)
+        end
+    end))
+    table.insert(equipped,entry)
 end
 
 -- Horde.reset destroys and recreates its nine Models each round; attaching
@@ -264,6 +335,7 @@ heart = RunService.Heartbeat:Connect(function(dt)
     for i=#equipped,1,-1 do
         local item = equipped[i]
         if not item.model.Parent or not item.moving.Parent then
+            clearVisualSignals(item)
             table.remove(equipped,i)
         else
             -- Tiny cosmetic breathing/cloak motion; never touches author arms,
@@ -272,35 +344,32 @@ heart = RunService.Heartbeat:Connect(function(dt)
             local flutter = math.sin(cycle * 4.2 + item.id * .37)
             -- One subtle cloak/fur/core motion per NPC; not a hitbox or
             -- animation override for Core, server arms, or Head.
+            -- Recoil and KO affect only the animated costume, not Core,
+            -- the server hitbox, knockback, movement or physics ownership.
+            local now=os.clock()
+            local recoil=math.clamp((item.recoilUntil-now)/.19,0,1)
+            local ko=math.clamp((item.koUntil-now)/.62,0,1)
             item.moving.CFrame = item.core.CFrame * item.movingRelative
-                * CFrame.Angles(sway*.10,flutter*.055,sway*.085)
+                * CFrame.new(0,-.12*ko,.18*recoil)
+                * CFrame.Angles(sway*.10+ko*.22,flutter*.055,
+                    sway*.085+recoil*.23+ko*.28)
             item.moving.Transparency = .10 + .08*(.5+.5*math.sin(cycle*3+item.id))
-            local flashing = item.core.Color.R > .9
-                and item.core.Color.G > .8 and item.core.Color.B < .7
+            -- Low-rate fallback; source-owned property listeners above give
+            -- responsive cues even when a flash ends between Heartbeats.
+            local flashing = isOriginalGold(item.core.Color)
             if flashing and not item.lastHit then
-                -- Only the real Horde hit method sets Core to golden yellow.
-                -- Its red elite telegraph has a low green channel and cannot
-                -- accidentally trigger these hit-only slash effects.
-                item.sparks:Emit(9)
-                item.slashStart = os.clock()
-                for _,arc in ipairs(item.slashes) do
-                    arc.Color = ColorSequence.new(item.slashColor)
-                    arc.Enabled = true
-                end
+                fireHitVisual(item)
             end
             item.lastHit = flashing
             local cue = item.core:FindFirstChild("CombatCue")
-            local tag = if cue and cue:IsA("BillboardGui") then cue:FindFirstChildOfClass("TextLabel") else nil
-            local dead = tag ~= nil and string.find(tag.Text, "撃破") ~= nil
-            if dead and not item.lastDeath then
-                item.sparks:Emit(22)
-                item.slashStart = os.clock()
-                for _,arc in ipairs(item.slashes) do
-                    arc.Color = ColorSequence.new(rgb(255,192,111))
-                    arc.Enabled = true
-                end
+            local tag = if cue and cue:IsA("BillboardGui")
+                then cue:FindFirstChildOfClass("TextLabel") else nil
+            local dead=tag ~= nil and string.find(tag.Text,"撃破",1,true) ~= nil
+            if dead then
+                fireKOCosmetic(item)
+            else
+                item.lastDeath = false
             end
-            item.lastDeath = dead
             -- Fade without Tweens or per-hit Instances. The same two reusable
             -- arcs and one emitter are the *entire* added effect budget.
             local remain = 1 - (os.clock()-item.slashStart)/.36
@@ -319,5 +388,6 @@ script.Destroying:Connect(function()
     alive = false
     added:Disconnect()
     if heart then heart:Disconnect() end
+    for _,item in ipairs(equipped) do clearVisualSignals(item) end
 end)
-print("ART_MINION_V2_SERVER_CUE_SLASH_KO_COSMETIC_STUDIO_FUN_PENDING")
+print("ART_MINION_V3_DIRECT_ORIGINAL_HIT_CUES_VISUAL_ONLY_STUDIO_FUN_PENDING")
