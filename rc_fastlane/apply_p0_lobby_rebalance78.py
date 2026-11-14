@@ -12,7 +12,7 @@ from apply_p0_motion78 import read,gitblob,BASE_RC
 GAME="server/Game.server.luau"
 FEATURE="FB007_LOBBY_REBALANCE_STAYS_IN_DOJO_QA_V1"
 OLD='''                root.CFrame = map.teams[move.to].spawn + Vector3.new(0, 2, 0)'''
-NEW='''                -- FB007 correction: during LOBBY a team-balance move must
+NEW='''                -- FB007_LOBBY_REBALANCE_STAYS_IN_DOJO_QA_V1: during LOBBY a team-balance move must
                 -- land on the selected TEAM'S separated lobby island.
                 -- The original field spawn is valid only outside Studio.
                 root.AssemblyLinearVelocity=Vector3.zero
