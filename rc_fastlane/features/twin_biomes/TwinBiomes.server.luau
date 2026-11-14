@@ -11,6 +11,7 @@ end
 local ServerStorage = game:GetService("ServerStorage")
 local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
+local Training = require(script.Parent:WaitForChild("TwinCreatureTraining"))
 local FLAG = "P0D_ENABLE_TWIN_BIOMES_V1"
 local value = ServerStorage:FindFirstChild(FLAG)
 if not value or not value:IsA("BoolValue") or value.Value ~= true then
@@ -72,6 +73,8 @@ world:SetAttribute("CharacterInstances", 8)
 world:SetAttribute("PersistedCollection", false)
 world:SetAttribute("SessionCodexOnly", true)
 world:SetAttribute("FourUniqueCreatureSilhouettes", true)
+world:SetAttribute("SessionPracticeLevels", "1_TO_3")
+world:SetAttribute("TrueEvolutionStage3", true)
 world.Parent = Workspace
 
 local function part(name, size, x, y, z, color, material, collide, parent)
@@ -106,8 +109,12 @@ local watchLamps = {}
 local routeTexts = {}
 local animate = {}
 local seenByPlayer = {}
+local practiceByPlayer = {}
 local sessionSpecies = {"AWARIN", "SANGORU", "RAIKO", "KUMONON"}
-Players.PlayerRemoving:Connect(function(p) seenByPlayer[p] = nil end)
+Players.PlayerRemoving:Connect(function(p)
+    seenByPlayer[p] = nil
+    practiceByPlayer[p] = nil
+end)
 
 local function addSign(target, name, initial, offsetY)
     local gui = Instance.new("BillboardGui")
@@ -222,13 +229,15 @@ local species = {
         localZ = -5, dx = 5, y = 8, tint = pearl},
 }
 
-local function activate(effect)
+local function activate(effect, level)
     local now = os.clock()
     if now < (nextUse[effect] or 0) then
         return
     end
-    activeUntil[effect] = now + EFFECT_SECONDS
-    nextUse[effect] = now + EFFECT_SECONDS + REARM_SECONDS
+    local duration = Training.effectSeconds(level)
+    activeUntil[effect] = now + duration
+    nextUse[effect] = now + duration + REARM_SECONDS
+    world:SetAttribute(effect .. "_Level", level)
     world:SetAttribute(effect .. "_EndsAt", activeUntil[effect])
     world:SetAttribute(effect .. "_SharedByBothTeams", true)
 end
@@ -283,6 +292,50 @@ local function markDiscovery(player,info)
             toast:Destroy()
         end
     end)
+end
+
+local function awardPractice(player, info, npc, crest)
+    -- Per-player practice, capped and cooldown-guarded server-side; no Remote
+    -- and no DataStore. Discovery still works even when practice is cooling.
+    local state = practiceByPlayer[player]
+    if not state then
+        state={}
+        practiceByPlayer[player]=state
+    end
+    local previous=state[info.id]
+    local updated, earned, promoted=Training.advance(previous,info.id,os.clock())
+    if not earned then
+        return updated and updated.level or 1
+    end
+    state[info.id]=updated
+    player:SetAttribute("P0D_TwinPractice_"..info.id,updated.xp)
+    player:SetAttribute("P0D_TwinLevel_"..info.id,updated.level)
+    if updated.level==3 then
+        player:SetAttribute("P0D_TwinEvolved_"..info.id,true)
+    end
+    -- A creature changes visually in THIS Studio server once a participant
+    -- reaches stage 3; everyone's interactions stay equally available.
+    if promoted and updated.level==3 then
+        npc:SetAttribute("EvolutionStage",3)
+        crest.Color=gold
+        crest.Size=Vector3.new(2.1,2.2,2.1)
+        local evo=Instance.new("PointLight")
+        evo.Name="P0D_TwinEvolutionGlow"
+        evo.Color=gold
+        evo.Brightness=0.8
+        evo.Range=10
+        evo.Parent=crest
+    end
+    local label = npc:FindFirstChild("SpeciesLevelSign")
+    if not label then
+        label=addSign(crest,"SpeciesLevelSign",
+            info.name.." Lv"..tostring(updated.level),5.4)
+    end
+    if label and label:IsA("TextLabel") then
+        label.Text=info.name.." Lv"..tostring(updated.level)
+            ..(updated.level==3 and " ✦進化" or "")
+    end
+    return updated.level
 end
 
 local function makeGuide(info, side)
@@ -376,7 +429,8 @@ local function makeGuide(info, side)
         if (root.Position - body.Position).Magnitude > 12 then
             return
         end
-        activate(info.effect)
+        local level=awardPractice(player,info,npc,crest)
+        activate(info.effect,level)
         markDiscovery(player,info)
     end)
     addSign(body,"NPCLabel",info.name .. "\n" .. info.rarity, 4.3)
@@ -416,12 +470,14 @@ task.spawn(function()
             entry.model:PivotTo(entry.base*CFrame.new(0,bob,0)*CFrame.Angles(0,turn,0))
         end
         local veil = visible("TIDE_VEIL")
+        local tidePower=world:GetAttribute("TIDE_VEIL_Level") or 1
         for _, p in ipairs(curtains) do
-            p.Transparency = veil and 0.32 or 0.93
+            p.Transparency = veil and (tidePower==3 and 0.14 or 0.32) or 0.93
         end
         local route = visible("ROUTE_LANTERN")
+        local routePower=world:GetAttribute("ROUTE_LANTERN_Level") or 1
         for _, p in ipairs(routeLamps) do
-            p.Transparency = route and 0.06 or 0.7
+            p.Transparency = route and (routePower==3 and 0 or 0.06) or 0.7
         end
         for _, txt in ipairs(routeTexts) do
             txt.Text = route and currentRouteText() or "サンゴの灯台\n橋を見渡そう"
@@ -429,15 +485,16 @@ task.spawn(function()
         local flash = visible("THUNDER_SIGNAL")
         for _, obj in ipairs(stormLamps) do
             obj.part.Transparency = flash and 0.05 or 0.8
-            obj.light.Brightness = flash and 1.8 or 0
+            obj.light.Brightness = flash and ((world:GetAttribute("THUNDER_SIGNAL_Level") or 1)==3 and 2.2 or 1.8) or 0
         end
         local compass = visible("CLOUD_COMPASS")
+        local compassPower=world:GetAttribute("CLOUD_COMPASS_Level") or 1
         for _, p in ipairs(watchLamps) do
-            p.Transparency = compass and 0.1 or 0.85
+            p.Transparency = compass and (compassPower==3 and 0.02 or 0.1) or 0.85
         end
         task.wait(0.25)
     end
 end)
 
-world:SetAttribute("Status", "PRIVATE64_POLISH_WITH_SESSION_CODEX_STUDIO_UNTESTED")
+world:SetAttribute("Status", "PRIVATE65_SESSION_LEVEL3_EVOLUTION_STUDIO_UNTESTED")
 world:SetAttribute("NoRemoteStoreScoreXpDamage", true)
