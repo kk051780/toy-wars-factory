@@ -55,7 +55,7 @@ def patch(raw:bytes)->bytes:
         'popup:GetPropertyChangedSignal("Enabled"):Connect(',
         'if not alive or not popup.Enabled or not model.Parent then return end',
         'local horde = arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT", 45)',
-        'if active >= MAX_ACTIVE_PARTS then return nil end',
+        'if not alive or not container.Parent or active >= MAX_ACTIVE_PARTS then return nil end',
         'p.CanCollide = false','p.CanTouch = false','p.CanQuery = false',
         'Debris:AddItem(p, .34)',
     ):
