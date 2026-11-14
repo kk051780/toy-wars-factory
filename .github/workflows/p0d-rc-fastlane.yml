@@ -670,3 +670,44 @@ jobs:
           path: /tmp/p0d_rc_out/*
           retention-days: 7
           if-no-files-found: error
+
+      - name: Build separate 67-script Talking NPC PREP Place (never overwrite canonical 64-script artifact)
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'feature/p0d-prep-talking-npc-20261114'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$PROFILE" = rich51
+          DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+          cp -a "$DIST" /tmp/p0d_talking_npc_dist
+          BEFORE=$(find /tmp/p0d_talking_npc_dist -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          python3 -B rc_fastlane/apply_talking_npc.py --dist /tmp/p0d_talking_npc_dist --enabled false
+          AFTER=$(find /tmp/p0d_talking_npc_dist -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          test "$BEFORE" = "$AFTER"
+          echo P0D_TALKING_NPC_PREP_SWITCH_OFF_EXACT64_PASS
+          python3 -B rc_fastlane/apply_talking_npc.py --dist /tmp/p0d_talking_npc_dist --enabled true
+          for name in \
+            server/TalkingNPCDirector.luau \
+            server/TalkingNPCRuntime.server.luau \
+            client/TalkingNPCClient.client.luau; do
+              /tmp/p0d_new_luau/luau-compile "/tmp/p0d_talking_npc_dist/src/$name" > /tmp/p0d_talking_npc_compile.out 2>&1 || {
+                cat /tmp/p0d_talking_npc_compile.out
+                echo "P0D_TALKING_NPC_NATIVE_COMPILE_FAIL $name"
+                exit 1
+              }
+          done
+          echo P0D_TALKING_NPC_3_OF_3_NATIVE_LUAU_PASS
+          mkdir -p /tmp/p0d_talking_npc_out
+          /tmp/p0d_rc_rojo build /tmp/p0d_talking_npc_dist/default.project.json -o /tmp/p0d_talking_npc_out/P0D_PREP_TALKING_NPC_67.rbxlx
+          python3 -B rc_fastlane/verify_talking_npc.py \
+            --dist /tmp/p0d_talking_npc_dist \
+            --place /tmp/p0d_talking_npc_out/P0D_PREP_TALKING_NPC_67.rbxlx \
+            --receipt /tmp/p0d_talking_npc_out/PREP_RECEIPT.json
+          cp /tmp/p0d_talking_npc_dist/SOURCE_LOCK.json /tmp/p0d_talking_npc_out/PREP_67_SOURCE_LOCK.json
+          echo P0D_TALKING_NPC_STUDIO_PLAY_NOT_TESTED
+      - uses: actions/upload-artifact@v4
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'feature/p0d-prep-talking-npc-20261114'
+        with:
+          name: P0D-TALKING-NPC-PREP-67-NOT-OFFICIAL
+          path: /tmp/p0d_talking_npc_out/*
+          retention-days: 7
+          if-no-files-found: error
