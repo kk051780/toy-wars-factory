@@ -315,7 +315,9 @@ local function awardPractice(player, info, npc, crest)
     end
     -- A creature changes visually in THIS Studio server once a participant
     -- reaches stage 3; everyone's interactions stay equally available.
-    if promoted and updated.level==3 then
+    local maxLevel=math.max(npc:GetAttribute("MaxTrainingLevel") or 1,updated.level)
+    npc:SetAttribute("MaxTrainingLevel",maxLevel)
+    if promoted and updated.level==3 and not crest:FindFirstChild("P0D_TwinEvolutionGlow") then
         npc:SetAttribute("EvolutionStage",3)
         crest.Color=gold
         crest.Size=Vector3.new(2.1,2.2,2.1)
@@ -326,14 +328,15 @@ local function awardPractice(player, info, npc, crest)
         evo.Range=10
         evo.Parent=crest
     end
-    local label = npc:FindFirstChild("SpeciesLevelSign")
+    local sign=crest:FindFirstChild("SpeciesLevelSign")
+    local label=sign and sign:FindFirstChild("Readout")
     if not label then
         label=addSign(crest,"SpeciesLevelSign",
-            info.name.." Lv"..tostring(updated.level),5.4)
+            info.name.." Lv"..tostring(maxLevel),5.4)
     end
     if label and label:IsA("TextLabel") then
-        label.Text=info.name.." Lv"..tostring(updated.level)
-            ..(updated.level==3 and " ✦進化" or "")
+        label.Text=info.name.." Lv"..tostring(maxLevel)
+            ..(maxLevel==3 and " ✦進化" or "")
     end
     return updated.level
 end
