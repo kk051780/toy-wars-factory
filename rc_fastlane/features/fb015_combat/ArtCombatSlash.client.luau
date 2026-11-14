@@ -12,7 +12,7 @@ local UserInputService = game:GetService("UserInputService")
 local localPlayer = Players.LocalPlayer
 if not localPlayer then return end
 
--- Do not lose the horde if it spawns after 45 s (slow Studio load).
+-- Studio-only private visual cue from server: reliable per-hit deliveries.
 local arena = workspace:WaitForChild("TRAP_RAIDERS_S1")
 local mobs = arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT")
 
@@ -21,16 +21,6 @@ local MAX_LIVE = 8
 local MAX_BURSTS_PER_SECOND = 9
 local live = 0
 local times = {}
-local bound = {}
-local folderConnection
-local destroyed = false
-
-local function isOriginalMob(model)
-    return model:IsA("Model")
-        and (model.Name:match("^MUSOU_MINION_%d+$") ~= nil
-            or model.Name == "MUSOU_ELITE_TELEGRAPH")
-end
-
 local function makeArc(hitPos, toward, isKO)
     if live >= MAX_LIVE then return end
     local dx = Vector3.new(toward.X - hitPos.X, 0, toward.Z - hitPos.Z)
@@ -87,67 +77,44 @@ local function makeArc(hitPos, toward, isKO)
     Debris:AddItem(holder, .22)
 end
 
--- ONE changing server-authored string carries serial, KO and true attack
--- direction. Unlike a text popup, identical damage values remain observable.
-local function parseHitSignal(raw)
-    if type(raw) ~= "string" then return nil end
-    local serial, kind, dx, dz = raw:match("^(%d+)|([KH])|([^|]+)|([^|]+)$")
-    local sequence, vx, vz = tonumber(serial), tonumber(dx), tonumber(dz)
-    if not sequence or not vx or not vz or vx ~= vx or vz ~= vz
-        or math.abs(vx) > 2000 or math.abs(vz) > 2000 then return nil end
-    return sequence, kind, vx, vz
+-- No local damage claims and NO creation of a client-to-server command.
+-- A real single outbound RemoteEvent lives under the existing Musou folder.
+local cue=mobs:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1")
+if not cue:IsA("RemoteEvent") then return end
+local lastRound=nil
+local lastByMob={}
+local destroyed=false
+local visualConnection
+
+local function onConfirmedHit(id,hitPos,fromPos,isKO,serial,round)
+    if destroyed or typeof(hitPos)~="Vector3" or typeof(fromPos)~="Vector3"
+        or type(id)~="number" or id<1 or id>9 or id%1~=0
+        or type(serial)~="number" or serial<1 or serial%1~=0
+        or type(round)~="number" or type(isKO)~="boolean" then return end
+
+    if lastRound~=round then
+        if lastRound~=nil and round<lastRound then return end
+        lastRound=round
+        table.clear(lastByMob)
+    end
+    if serial<=(lastByMob[id] or 0) then return end
+    lastByMob[id]=serial -- Exactly once, server deliveries are ordered.
+
+    local root=localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not root or (root.Position-hitPos).Magnitude>64 then return end
+    local now=os.clock()
+    while #times>0 and now-times[1]>=1 do table.remove(times,1) end
+    if #times>=MAX_BURSTS_PER_SECOND then return end
+    table.insert(times,now)
+    -- Always use the actual server-authoritative attacker position.
+    makeArc(hitPos,fromPos,isKO)
 end
 
-local function onConfirmedHit(core, state)
-    if destroyed or not core.Parent then return end
-    local serial, kind, dx, dz = parseHitSignal(core:GetAttribute("P0D_ART_HIT_V1"))
-    if not serial or serial <= state.lastSerial then return end
-    state.lastSerial = serial
-    local root = localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
-    if not root or (root.Position - core.Position).Magnitude > 64 then return end
-    local now = os.clock()
-    while #times > 0 and now - times[1] >= 1 do table.remove(times, 1) end
-    if #times >= MAX_BURSTS_PER_SECOND then return end
-    table.insert(times, now)
-    -- Direction derives from the actual server-authoritative attack origin.
-    -- Never aim a bystander's strike from localPlayer's own position.
-    makeArc(core.Position, core.Position + Vector3.new(dx, 0, dz), kind == "K")
-end
-
-local function detach(model)
-    local state = bound[model]
-    if not state then return end
-    bound[model] = nil
-    for _,connection in ipairs(state.connections) do connection:Disconnect() end
-end
-
-local function attach(model)
-    if destroyed or not model.Parent or not isOriginalMob(model) or bound[model] then return end
-    local state = {lastSerial = 0, connections = {}}
-    bound[model] = state
-    table.insert(state.connections, model.Destroying:Connect(function() detach(model) end))
-    task.spawn(function()
-        local core = model:WaitForChild("Core", 15)
-        if destroyed or not core or not core:IsA("BasePart")
-            or not model.Parent or bound[model] ~= state then
-            detach(model)
-            return
-        end
-        local initial = parseHitSignal(core:GetAttribute("P0D_ART_HIT_V1"))
-        state.lastSerial = initial or 0 -- Never replay a hit before binding.
-        table.insert(state.connections, core:GetAttributeChangedSignal("P0D_ART_HIT_V1"):Connect(function()
-            if bound[model] == state then onConfirmedHit(core, state) end
-        end))
-    end)
-end
-
--- Original MusouHorde destroys and recreates up to 9 models each round.
-for _,child in ipairs(mobs:GetChildren()) do task.defer(attach, child) end
-folderConnection = mobs.ChildAdded:Connect(function(child) task.defer(attach, child) end)
-
+visualConnection=cue.OnClientEvent:Connect(onConfirmedHit)
 script.Destroying:Connect(function()
-    destroyed = true
-    if folderConnection then folderConnection:Disconnect() end
-    for model in pairs(bound) do detach(model) end
+    destroyed=true
+    if visualConnection then visualConnection:Disconnect() end
+    table.clear(lastByMob)
+    table.clear(times)
 end)
-print(FEATURE .. "_SOURCE_WIP_STUDIO_PRIVATE_ONLY")
+print(FEATURE.." _SOURCE_WIP_STUDIO_PRIVATE_ONLY_RELIABLE_HIT")
