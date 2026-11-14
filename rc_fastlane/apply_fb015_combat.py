@@ -18,6 +18,7 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
+from fb015_fs_guard import strict_inventory
 
 ROOT = Path(__file__).resolve().parent
 FEATURE = "ART_COMBAT_SLASH_READONLY_V1"
@@ -25,16 +26,14 @@ AUTHOR = ROOT / "features/fb015_combat/ArtCombatSlash.client.luau"
 HORDE_AUTHOR = ROOT / "features/fb015_combat/MusouHordeArtSignal.luau"
 DEST = "client/ArtCombatSlash.client.luau"
 HORDE = "server/MusouHorde.luau"
-PIN = "257f5da5e40c0af89220745d576763f513a7e6ef"
+PIN = "c3e3c89b781d446fd8952bee51ec3a2cac46d1ff"
 HORDE_PATCH_PIN = "a2d07936bd9fe5bdf3630498c39d61d5a8560d99"
 ORIGINAL_HORDE_PIN = "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 BASE = 66
 TRANSACTION = "P0D_ART_COMBAT_FULL_TREE_MANIFEST.json"
 
 def whole_tree(dist: Path) -> dict[str, str]:
-    return {p.relative_to(dist).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in sorted(dist.rglob("*")) if p.is_file()
-            and p.relative_to(dist).as_posix() != TRANSACTION}
+    return strict_inventory(dist, exclude=TRANSACTION)
 
 def validate_candidate_tree(dist: Path) -> dict:
     path = dist / TRANSACTION
@@ -72,7 +71,7 @@ def validate_visual(raw: bytes) -> None:
     for marker in (
         "if not RunService:IsStudio() then return end",
         'arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT")',
-        'mobs:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1",25)',
+        'mobs:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1")',
         "visualConnection=cue.OnClientEvent:Connect(onConfirmedHit)",
         "state.seen[serial]",
         "state.max=math.max(state.max,serial)",
@@ -214,6 +213,7 @@ end
 
 
 def _check_original(dist: Path):
+    strict_inventory(dist)  # Reject symlink escapes BEFORE copytree or source access.
     old = sources(dist)
     require(len(old) == BASE and DEST not in old, "REQUIRE_CLEAN_RC66")
     visual = AUTHOR.read_bytes()
@@ -354,6 +354,8 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
     return True
 
 def apply(dist: Path, enabled: bool) -> bool:
+    if dist.is_symlink():
+        raise RuntimeError("FB015_SYMLINK_DISTRIBUTION_REFUSED")
     # File-less directory lock on the existing parent serializes concurrent
     # toggle calls while preserving zero-write clean OFF.
     dist=dist.resolve()
