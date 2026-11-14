@@ -1,0 +1,58 @@
+{
+  "schema": "P0D_VISUAL5_ARTMOBILE_SOURCE_RECOMPOSE_V1",
+  "canonical_parent": "f4e64c9248423f9c021f633b80e554706f7a66e4",
+  "prior_sources": [
+    {
+      "pr": 423,
+      "sha": "8d1c18214402074a1ebdabbc730fe20a9ceb7e63",
+      "files": 2
+    },
+    {
+      "pr": 417,
+      "sha": "8bb1514a4172bfb855ffcf322f467f9cf135065a",
+      "files": 1
+    },
+    {
+      "pr": 421,
+      "sha": "6223abdf43427dedb00c81c592b7121d3d701cfd",
+      "files": 1
+    },
+    {
+      "pr": 430,
+      "sha": "1eb544386b24e4cd5162a1889dee8195312de086",
+      "files": 1
+    },
+    {
+      "pr": 426,
+      "sha": "59ca166d5885fe129e9dfe544bb0c82b6ad8c8c4",
+      "files": 1
+    }
+  ],
+  "modified_game_luau_source_count": 6,
+  "original_other_sources_byte_exact": 74,
+  "same_head_test": "PENDING",
+  "art_gate_source_only": true,
+  "source_only_expected": [
+    "80 Luau compile",
+    "80 embedded Rojo source",
+    "single Game/HUD",
+    "5 source-exact verifiers",
+    "native Game/HUD attack tests",
+    "no persistent guide regression"
+  ],
+  "not_official": true,
+  "no_force": false,
+  "no_main_changes": true,
+  "no_pr_merge": true,
+  "no_publish": true,
+  "art_decision": "ART_NO_GO",
+  "mobile_decision": "MOBILE_NO_GO",
+  "fun_decision": "FUN_NO_GO",
+  "owner_accepted": false,
+  "pending": [
+    "Studio PC/Android before+after 8 scenes x 2 versions x 2 devices",
+    "low-end Android 15 min FPS thermal",
+    "children first 3 min play 4/5",
+    "owner art review"
+  ]
+}
