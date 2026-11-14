@@ -205,7 +205,7 @@ jobs:
             python3 -B rc_fastlane/apply_relay_touch_layout.py --dist "$DIST" --enabled on
             python3 -B rc_fastlane/rc61_touch_geometry_audit.py --hud "$DIST/src/client/HUD.client.luau"
           fi
-      - name: Add two mirrored worlds and four animated discoverable creatures after official63
+      - name: Add twin worlds plus four trained/evolving creatures with native 38 real policy cases on official63
         shell: bash
         run: |
           set -euo pipefail
@@ -216,7 +216,7 @@ jobs:
             python3 -B rc_fastlane/apply_twin_biomes.py --profile rich51 --dist "$DIST" --enabled false
             AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
             test "$BEFORE" = "$AFTER"
-            echo P0D_PRIVATE64_TWIN_BIOMES_OFF_PRESERVES_OFFICIAL63_ALL_BYTES_PASS
+            echo P0D_PRIVATE65_TWIN_BIOMES_OFF_PRESERVES_OFFICIAL63_ALL_BYTES_PASS
             python3 -B rc_fastlane/apply_twin_biomes.py --profile rich51 --dist "$DIST" --enabled true
           fi
       - uses: actions/checkout@v4
@@ -247,7 +247,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']) + int(f['TWIN_BIOMES_4NPC_V1']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']) + 2*int(f['TWIN_BIOMES_4NPC_V1']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -339,6 +339,33 @@ jobs:
             grep -Fx P0D_STAR_SHARDS_REAL_SOURCE_NATIVE_22_POLICY_CASES_PASS /tmp/p0d_private63_shards22.log
             echo P0D_PRIVATE63_ALL_NATIVE_33_41_31_22_EQUALS127_PASS
           fi
+      - name: Run 38 true Luau edge cases from exact built 65-source training policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          dist=Path('_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE')
+          local=Path('rc_fastlane/features/twin_biomes')
+          built=(dist/'src/server/TwinCreatureTraining.luau').read_bytes()
+          authored=(local/'TwinCreatureTraining.luau').read_bytes()
+          test=(local/'TwinCreatureTrainingNative.luau').read_bytes()
+          def blob(x):
+              return hashlib.sha1(b'blob '+str(len(x)).encode()+b'\0'+x).hexdigest()
+          assert built==authored, 'ACTUAL_65_GAME_POLICY_MUST_EQUAL_AUTHOR'
+          assert blob(built)=='b2f8275be676b46fc1ad32050832a4fcf13099af'
+          assert blob(test)=='2ff709ede35d44e0d5fe3c595199b98498ac687a'
+          assert test.count(b'check("')==38
+          content=b'local Training=(function()\n'+built+b'\nend)()\n'+test
+          Path('/tmp/P0D_TWIN_TRAINING_REAL_NATIVE65.luau').write_bytes(content)
+          print('P0D_PRIVATE65_REAL_TRAINING_POLICY_AND_NATIVE38_BYTE_LOCK_PASS')
+          PY
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_TWIN_TRAINING_REAL_NATIVE65.luau > /dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_TWIN_TRAINING_REAL_NATIVE65.luau | tee /tmp/p0d_twin_native65.log
+            grep -Fx P0D_TWIN_CREATURE_REAL_NATIVE_38_POLICY_CASES_PASS /tmp/p0d_twin_native65.log
+          fi
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash
         run: |
@@ -389,7 +416,7 @@ jobs:
           meteor_enabled=(p=='rich51' and flags['features']['METEOR_FOURTH_V1']['enabled'])
           shards_enabled=(p=='rich51' and flags['features']['STAR_SHARDS_V1']['enabled'])
           twin_enabled=(p=='rich51' and flags['features']['TWIN_BIOMES_4NPC_V1']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled),'rich47':47,'legacy21':21}[p]
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+2*int(twin_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -543,12 +570,19 @@ jobs:
           if twin_enabled:
               assert wcs_enabled and seven_enabled and egg_enabled and star_enabled and meteor_enabled and shards_enabled
               assert titles[('Script','TwinBiomes')]==1
+              assert titles[('ModuleScript','TwinCreatureTraining')]==1
               twin=(base/'src/server/TwinBiomes.server.luau').read_text('utf8')
               for name in ('AWARIN','SANGORU','RAIKO','KUMONON'):
                   assert 'id = "'+name+'"' in twin, ('MISSING_CHARACTER',name)
               for shape in ('BubbleHalo','CoralAntler_','ThunderHorn_','CloudWing_'):
                   assert shape in twin,('MISSING_SPECIES_SILHOUETTE',shape)
               assert 'entry.model:PivotTo(' in twin, 'MISSING_NPC_IDLE_MOTION'
+              assert 'require(script.Parent:WaitForChild("TwinCreatureTraining"))' in twin
+              assert 'local level=awardPractice(player,info,npc,crest)' in twin
+              assert 'npc:SetAttribute("EvolutionStage",3)' in twin
+              assert 'player:SetAttribute("P0D_TwinLevel_"..info.id,updated.level)' in twin
+              policy=(base/'src/server/TwinCreatureTraining.luau').read_bytes()
+              assert b'function Training.advance(' in policy and b'local MAX_PRACTICE = 7' in policy
               assert 'player:SetAttribute("P0D_TwinCodexCount",count)' in twin
               assert 'player:SetAttribute("P0D_TwinCodexComplete",count==4)' in twin
               assert 'world:SetAttribute("CharacterInstances", 8)' in twin
@@ -567,9 +601,10 @@ jobs:
               assert len(matches)==1,('TWIN_BOOT_MISSING_OR_DUPLICATE',len(matches))
               v=matches[0].find("./Properties/bool[@name='Value']")
               assert v is not None and (v.text or '').lower()=='true'
-              print('P0D_PRIVATE64_ANIMATED_4_CHARACTERS_TWO_WORLDS_ROJO_SOURCE_EXACT_PASS')
+              print('P0D_PRIVATE65_FOUR_EVOLVING_CREATURES_TWO_WORLDS_ROJO_SOURCE_EXACT_PASS')
           else:
               assert titles[('Script','TwinBiomes')]==0
+              assert titles[('ModuleScript','TwinCreatureTraining')]==0
           if p=='rich51':
               assert titles[('Script','V4TrainingBridge')]==1
               assert titles[('LocalScript','V4TrialOverlay')]==1
@@ -610,6 +645,8 @@ jobs:
             'meteor_fourth_canyon_route_included':bool(meteor_enabled),
             'star_shards_six_fragment_session_quest':bool(shards_enabled),
             'twin_biomes_two_worlds_four_species_animated_session_codex':bool(twin_enabled),
+            'twin_creature_training_session_level3_evolution':bool(twin_enabled),
+            'twin_creature_policy_native_cases':38 if twin_enabled else None,
             'twin_biomes_engine_2client_android_fun':'NOT_TESTED',
             'star_shards_native_policy_cases':22 if shards_enabled else None,
             'mobile_relay_touch_geometry_12viewports_144checks':True if shards_enabled else None,
@@ -650,7 +687,7 @@ jobs:
           set -euo pipefail
           python3 -B rc_fastlane/progress.py --out /tmp/p0d_rc_out/FEATURE_PROGRESS.md --json /tmp/p0d_rc_out/FEATURE_PROGRESS.json
           grep -F P0D /tmp/p0d_rc_out/FEATURE_PROGRESS.md | head -2
-      - name: Measure actual source-exact Place size and SHA with explicit Private64 source count
+      - name: Measure actual source-exact Place size and SHA with explicit Private65 source count
         shell: bash
         run: |
           set -euo pipefail
@@ -659,9 +696,9 @@ jobs:
             python3 - <<'PY'
           import json
           x=json.load(open('/tmp/p0d_rc_out/RC_CAPACITY_REPORT.json'))
-          assert x['native_source_count']==64, x
+          assert x['native_source_count']==65, x
           assert x['rbxlx_bytes']>571621 and x['rbxlx_bytes']<2000000
-          print('P0D_PRIVATE64_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
+          print('P0D_PRIVATE65_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
           PY
           fi
       - uses: actions/upload-artifact@v4
