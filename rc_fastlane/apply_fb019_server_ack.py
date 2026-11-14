@@ -25,6 +25,7 @@ def one(s:str,old:str,new:str)->str:
     return s.replace(old,new,1)
 
 def patch_game(raw:bytes)->bytes:
+    assert blob(raw)==PIN_GAME,"FB019_DIRECT_GAME_PIN_DRIFT"
     src=raw.decode("utf8")
     marker="local function applyAttack(player: Player, data)"
     end="-- H1 RAIDER wind:"
@@ -128,6 +129,7 @@ remote.OnClientEvent:Connect(function(packet:any)
 end)'''
 
 def patch_hud(raw:bytes)->bytes:
+    assert blob(raw)==PIN_HUD,"FB019_DIRECT_HUD_PIN_DRIFT"
     src=raw.decode("utf8")
     assert src.count("local lastSerial = -1")==1
     assert src.count("attack.Activated:Connect(pressAttack)")==1
