@@ -2505,3 +2505,117 @@ jobs:
           path: /tmp/p0d_rc81_full_bindings_v2_receipts/*
           retention-days: 14
           if-no-files-found: error
+
+      - name: 'P0 #444 / #431 newest 81 QA: HIT 0.42s stale callback + MISS source guard + private art'
+        if: env.PROFILE == 'rich51' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/rc/p0d-s1-kids-rc01')
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
+          BASE=/tmp/p0d_horde_private_lifecycle_v2_81
+          HIT=/tmp/p0d_private_horde_hit_toast_v3_81
+          FINAL=/tmp/p0d_private_horde_hit_toast_art_rc81
+          OUT=/tmp/p0d_private_horde_hit_art_rc81_artifact
+          PLACE="$OUT/P0D_RC81_PRIVATE_HIT_TOAST_AND_GOROGAN_VISUAL.rbxlx"
+          mkdir -p "$OUT"
+          test -f "$BASE/SOURCE_LOCK.json"
+          python3 -B -m unittest discover -s rc_fastlane -p test_private_horde_hit_toast.py -v
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_live_art_client_pilot.py -v
+          python3 -B rc_fastlane/apply_private_horde_hit_toast.py --base "$BASE" --out "$HIT" --enabled false
+          test ! -e "$HIT"
+          python3 -B rc_fastlane/apply_private_horde_hit_toast.py --base "$BASE" --out "$HIT" --enabled true
+          python3 -B rc_fastlane/apply_fb015_live_art_client_pilot.py --base "$HIT" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_fb015_live_art_client_pilot.py --base "$HIT" --out "$FINAL" --enabled true
+          test "$(find "$FINAL/src" -name '*.luau' | wc -l)" -eq 81
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          /tmp/p0d_rc_rojo build "$HIT/default.project.json" -o "$OUT/P0D_RC81_HIT_TOAST_PRE_ART_STAGE.rbxlx"
+          python3 -B rc_fastlane/verify_private_horde_hit_toast.py \
+            --dist "$HIT" --place "$OUT/P0D_RC81_HIT_TOAST_PRE_ART_STAGE.rbxlx" \
+            --receipt "$OUT/HIT_TOAST81_SOURCE_RECEIPT.json"
+          python3 -B rc_fastlane/verify_fb015_live_art_client_pilot.py \
+            --base "$HIT" --dist "$FINAL" --place "$PLACE" \
+            --receipt "$OUT/CLIENT_ART81_SOURCE_RECEIPT.json"
+          python3 -B rc_fastlane/verify_hit_and_art_rc81.py \
+            --base "$BASE" --toast "$HIT" --final "$FINAL" --place "$PLACE" \
+            --receipt "$OUT/HIT_ART_FINAL_SOURCE_RECEIPT.json"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" --place "$PLACE" --count 81 \
+            --receipt "$OUT/RC81_FULL_CLASS_PATH_SOURCE_IDENTITY.json"
+          python3 -B art_quality/check_art_quality.py --place "$PLACE" --out "$OUT/ART_SOURCE_GATE.json"
+          python3 -B art_quality/check_live_art_parity.py \
+            --place "$PLACE" --expected-scripts 81 --out "$OUT/LIVE_ART_PARITY_NO_GO.json"
+          python3 -B art_quality/check_mobile_fun.py --out "$OUT/MOBILE_KID_FUN_NO_GO.json"
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          out=Path('/tmp/p0d_private_horde_hit_art_rc81_artifact')
+          c=json.loads((out/'HIT_ART_FINAL_SOURCE_RECEIPT.json').read_text())
+          art=json.loads((out/'ART_SOURCE_GATE.json').read_text())
+          live=json.loads((out/'LIVE_ART_PARITY_NO_GO.json').read_text())
+          identity=json.loads((out/'RC81_FULL_CLASS_PATH_SOURCE_IDENTITY.json').read_text())
+          assert identity['embedded_count']==identity['source_count']==81
+          assert identity['all_instance_class_name_path_source_exact']
+          assert identity['all_ancestor_container_class_exact']
+          assert c['source_gate']=='PASS' and c['script_count']==81
+          assert c['unchanged_original_sources']==76 and len(c['changed_sources'])==5
+          assert art['source']['source_gate']=='PASS' and art['source']['script_count']==81
+          assert live['source_gate']=='PASS' and live['expected_script_count']==81
+          assert live['top_studio_only_count']==4,('STUDIO_ART_GUARD_DRIFT',live['top_studio_only_count'])
+          assert art['art_decision']=='ART_NO_GO' and c['live_horde_decision']=='LIVE_HORDE_NO_GO'
+          assert art['owner_accepted'] is False and c['owner_accepted'] is False
+          print('P0D_HIT_TOAST_042S_AND_REAL_CLIENT_ART_81_ALL_SRC_PASS',c['place_bytes'],c['place_sha256'])
+          print('P0D_LIVE_RUNTIME_ART_ANDROID_KID_OWNER_ALL_NO_GO')
+          PY
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          cp art_quality/P0D_PRIVATE_HIT_ART_RC81_STAGING.json "$OUT/FEATURES.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          out=Path('/tmp/p0d_private_horde_hit_art_rc81_artifact')
+          candidate=json.loads((out/'HIT_ART_FINAL_SOURCE_RECEIPT.json').read_text())
+          assert candidate['source_gate']=='PASS' and candidate['script_count']==81
+          assert candidate['place_bytes']==761489,('UNEXPECTED_REAL_PLACE_BYTES',candidate['place_bytes'])
+          assert candidate['place_sha256']=='6169da88349712352bca62a41ae703e2ae6dc75113a560c874c00128a5b5e49e', 'UNEXPECTED_REAL_PLACE_SHA'
+          official=(os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01')
+          record={
+            'schema':'P0D_B_220_OFFICIAL_PRIVATE_HIT_ART_SOURCE_ONLY_RECEIPT_V1',
+            'head':os.environ['GITHUB_SHA'],
+            'official_rc_branch':official,
+            'rc_source_intake': 'FORMAL_SOURCE_STAGE' if official else 'PRIVATE_PR_SOURCE_STAGE',
+            'game_source_count':81,
+            'changed_game_sources':candidate['changed_sources'],
+            'original_unchanged_sources':76,
+            'place_bytes':candidate['place_bytes'],
+            'place_sha256':candidate['place_sha256'],
+            'private_runtime': 'NOT_TESTED',
+            'art_decision':'ART_NO_GO',
+            'mobile_decision':'MOBILE_NO_GO',
+            'fun_decision':'FUN_NO_GO',
+            'live_art_decision':'LIVE_ART_NO_GO',
+            'live_horde_decision':'LIVE_HORDE_NO_GO',
+            'owner_accepted':False,
+            'public_or_paid_release':False,
+            'rollback':'omit staged overlay and rebuild original 81 official source'
+          }
+          (out/'B220_SOURCE_ONLY_INTAKE_RECEIPT.json').write_text(json.dumps(record,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_B220_CAS_STAGED_REAL_81_SOURCE_NO_RUNTIME_GO',record['head'],record['place_bytes'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        with:
+          name: P0D-RC81-PRIVATE-HIT-MEDIUM2-FIXES-ART-81IDENTITY-NOGO
+          path: /tmp/p0d_private_horde_hit_art_rc81_artifact/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        with:
+          name: P0D-CANONICAL-RC81-PRIVATE-HIT-ART-STAGED-SOURCE-NOGO
+          path: /tmp/p0d_private_horde_hit_art_rc81_artifact/*
+          retention-days: 14
+          if-no-files-found: error
