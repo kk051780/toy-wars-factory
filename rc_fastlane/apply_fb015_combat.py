@@ -144,8 +144,7 @@ local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))'''
         self.artCue:SetAttribute("P0D_ART_EPOCH_V1",self.artEpoch)
         self.artCue:SetAttribute("P0D_ART_RECENT_V1","[]")
     end
-    self.lastTick=now
-'''
+    self.lastTick=now'''
     helper = '''-- BEGIN_ACTUAL_RECENT_HIT_RING
 -- Bounded Studio-only snapshot for a slow-joining visual LocalScript.
 -- Live reliable packets still carry every individual hit; replay is deduped.
@@ -159,7 +158,8 @@ end
 -- END_ACTUAL_RECENT_HIT_RING
 '''
     seam = '''                    m.body.Color=Color3.fromRGB(253,231,111)'''
-    extra = '''                    -- Every confirmed hit produces a separate private Studio
+    extra = '''
+                    -- Every confirmed hit produces a separate private Studio
                     -- client arc packet and a separate server-only BindableEvent.
                     -- A property/Attribute would coalesce back-to-back hits.
                     -- Both channels are appearance-only; no OnServerEvent handler.
@@ -178,8 +178,7 @@ end
                             HttpService:JSONEncode(self.artRecent))
                         self.artCue:FireAllClients(
                             m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round,self.artEpoch)
-                    end
-'''
+                    end'''
     require(old.count(header)==1 and old.count(old_ctor)==1
             and old.count(old_reset)==1 and old.count(seam)==1
             and old.count("function Horde.new(world: Instance)")==1,
