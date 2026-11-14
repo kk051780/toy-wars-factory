@@ -18,7 +18,7 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
-from fb015_fs_guard import strict_inventory
+from fb015_fs_guard import strict_inventory, verify_partial_tree, atomic_json, reject_symlink_ancestors
 
 ROOT = Path(__file__).resolve().parent
 FEATURE = "ART_COMBAT_SLASH_READONLY_V1"
@@ -31,18 +31,37 @@ HORDE_PATCH_PIN = "a2d07936bd9fe5bdf3630498c39d61d5a8560d99"
 ORIGINAL_HORDE_PIN = "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 BASE = 66
 TRANSACTION = "P0D_ART_COMBAT_FULL_TREE_MANIFEST.json"
+TRUST_SUFFIX = ".art_combat_external_receipt.json"
 
-def whole_tree(dist: Path) -> dict[str, str]:
-    return strict_inventory(dist, exclude=TRANSACTION)
+def receipt_path(dist: Path) -> Path:
+    return dist.with_name(dist.name + TRUST_SUFFIX)
 
-def validate_candidate_tree(dist: Path) -> dict:
+def external_receipt(dist: Path) -> dict:
+    path=receipt_path(dist)
+    require(path.is_file() and not path.is_symlink(),
+            "MISSING_TRUSTED_EXTERNAL_COMBAT_RECEIPT")
+    record=json.loads(path.read_text("utf8"))
+    require(record.get("id")=="P0D_FB015_COMBAT_EXTERNAL_RECEIPT_V1"
+            and record.get("dist")==str(dist)
+            and isinstance(record.get("original"),dict)
+            and isinstance(record.get("candidate"),dict),
+            "INVALID_TRUSTED_EXTERNAL_COMBAT_RECEIPT")
+    return record
+
+def whole_tree(dist: Path, exclude: str = "") -> dict[str, str]:
+    return strict_inventory(dist, exclude=exclude)
+
+def validate_candidate_tree(dist: Path, canonical: Path | None = None) -> dict:
     path = dist / TRANSACTION
     require(path.is_file(), "MISSING_ART_COMBAT_FULL_TREE_MANIFEST")
     receipt = json.loads(path.read_text("utf8"))
+    independent=external_receipt(canonical or dist)
     require(receipt.get("id") == "P0D_FB015_COMBAT_PRIVATE67_FULL_TREE"
-            and receipt.get("candidate") == whole_tree(dist),
+            and receipt.get("candidate") == whole_tree(dist,exclude=TRANSACTION)
+            and independent["candidate"]==whole_tree(dist)
+            and receipt.get("original")==independent["original"],
             "ART_COMBAT_CANDIDATE_EXTRA_OR_CHANGED_FILE")
-    return receipt
+    return independent
 
 def validate_saved_original(original: Path, receipt: dict) -> None:
     require(original.is_dir() and whole_tree(original) == receipt["original"],
@@ -280,7 +299,7 @@ def _stage_candidate(dist: Path, stage: Path, prior):
     (stage / TRANSACTION).write_text(json.dumps({
         "id":"P0D_FB015_COMBAT_PRIVATE67_FULL_TREE",
         "original":whole_tree(dist),
-        "candidate":whole_tree(stage),
+        "candidate":whole_tree(stage,exclude=TRANSACTION),
     },sort_keys=True,indent=2)+"\n",encoding="utf8")
     return receipt
 
@@ -288,34 +307,42 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
     dist = dist.resolve()
     backup = backup_dir(dist)
     disabled = dist.with_name(dist.name + ".art_combat_disabling")
+    trusted=receipt_path(dist)
     # Recover an interrupted OFF without losing either valid tree.
     if disabled.exists():
         require(not enabled, "INTERRUPTED_OFF_RECOVERY_REQUIRES_DISABLED_MODE")
         if not dist.exists() and backup.exists():
-            record=validate_candidate_tree(disabled)
+            record=validate_candidate_tree(disabled,dist)
             validate_saved_original(backup,record)
             _check_original(backup)
             os.rename(backup, dist)
-            validate_candidate_tree(disabled)
+            verify_partial_tree(disabled,record["candidate"])
             shutil.rmtree(disabled)
+            trusted.unlink()
             print("ART_COMBAT_OFF_INTERRUPTED_SWAP_RECOVERED")
             return True
         if dist.exists() and not backup.exists():
-            record=validate_candidate_tree(disabled)
+            record=external_receipt(dist)
             validate_saved_original(dist,record)
             _check_original(dist)
+            verify_partial_tree(disabled,record["candidate"])
             shutil.rmtree(disabled)
+            trusted.unlink()
             print("ART_COMBAT_OFF_INTERRUPTED_CLEANUP_RECOVERED")
             return True
         raise RuntimeError("AMBIGUOUS_INTERRUPTED_OFF_STATE_KEEP_ALL_DATA")
     if not dist.exists() and backup.exists():
+        record=external_receipt(dist)
+        validate_saved_original(backup,record)
         _check_original(backup)
         os.rename(backup, dist)
+        trusted.unlink()
         raise RuntimeError("PREVIOUS_INTERRUPTED_APPLY_RECOVERED_RERUN")
     if not enabled:
         if not backup.exists():
+            require(not trusted.exists(), "ORPHANED_TRUSTED_RECEIPT_KEEP_ALL_DATA")
             if dist.exists():
-                require(DEST not in sources(dist), "ENABLED_OVERLAY_WITHOUT_BACKUP")
+                _check_original(dist)
             print("ART_COMBAT_OFF_CLEAN_ZERO_WRITE")
             return False
         # Fail-closed: check ALL files in both trees before any delete.
@@ -333,17 +360,26 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
             os.rename(disabled, dist)
             raise
         _check_original(dist)
-        validate_saved_original(dist,validate_candidate_tree(disabled))
+        validate_saved_original(dist,record)
+        verify_partial_tree(disabled,record["candidate"])
         shutil.rmtree(disabled)
+        trusted.unlink()
         print("ART_COMBAT_OFF_EXACT_ORIGINAL66_RESTORED")
         return True
-    require(dist.is_dir() and not backup.exists(), "ART_COMBAT_ALREADY_APPLIED_OR_BACKUP_EXISTS")
+    require(dist.is_dir() and not backup.exists() and not trusted.exists(),
+            "ART_COMBAT_ALREADY_APPLIED_OR_BACKUP_EXISTS")
     prior = _check_original(dist)
     # All source and author preflight validation precedes writing a candidate.
     with tempfile.TemporaryDirectory(prefix=".art_combat_stage_", dir=dist.parent) as tmp:
         staged = Path(tmp) / dist.name
         _stage_candidate(dist, staged, prior)
         require(not backup.exists(), "ART_COMBAT_FAIL_CLOSED")
+        atomic_json(trusted,{
+            "id":"P0D_FB015_COMBAT_EXTERNAL_RECEIPT_V1",
+            "dist":str(dist),
+            "original":whole_tree(dist),
+            "candidate":whole_tree(staged),
+        })
         os.rename(dist, backup)
         try:
             os.rename(staged, dist)
@@ -354,8 +390,7 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
     return True
 
 def apply(dist: Path, enabled: bool) -> bool:
-    if dist.is_symlink():
-        raise RuntimeError("FB015_SYMLINK_DISTRIBUTION_REFUSED")
+    reject_symlink_ancestors(dist)
     # File-less directory lock on the existing parent serializes concurrent
     # toggle calls while preserving zero-write clean OFF.
     dist=dist.resolve()
