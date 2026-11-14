@@ -4,6 +4,12 @@
 -- Does NOT remove any existing Studio-only script guard.
 local RunService = game:GetService("RunService")
 if not RunService:IsServer() then return end
+-- Public server protection is independent of the Workspace opt-in flag.
+-- DataModel.PrivateServerId is read on the server only (non-replicated).
+if not RunService:IsStudio() and game.PrivateServerId == "" then
+    warn("P0D_LIVE_COAST_PUBLIC_SERVER_ALWAYS_OFF")
+    return
+end
 
 -- In both Studio and private non-Studio Roblox, opt-in must be explicitly
 -- set by the server/OWNER. NEVER enable cosmetic parity on public by default.
