@@ -1,0 +1,24 @@
+{
+  "schema": "P0D_CAPTURE_PREP_SOURCE_LOCK_V1",
+  "feature_id": "P0D-018",
+  "official_base": "43543378f976374e2cac2d68b3136ac355d3191b",
+  "phase": "PRIVATE67_SOURCE_VERIFIED_B_REVIEW_PENDING",
+  "game_wired": true,
+  "module_source": "rc_fastlane/features/capture/CapturePolicy.luau",
+  "module_blob": "a96d32e91f211f9d00fa9fa87830e199f4799a46",
+  "native_fixture": "rc_fastlane/features/capture/CaptureNative.luau",
+  "native_blob": "eb10e3fa0387644c8402ebf3bf4cac7df4685740",
+  "cases": 18,
+  "native_status": "ACTUAL_POLICY18_NATIVE_EXECUTED_SUCCESS",
+  "rollback": "OFF overlay zero writes and reproduces original 66 source, project and locks; no canonical RC write",
+  "requires_ready": [
+    "Sourcery critical/high/medium triage and independent B approval",
+    "new official RC HEAD check and rebase if changed",
+    "same-head CI/contract nonDraft author handoff"
+  ],
+  "game_wired_official_rc": false,
+  "private67_status": "REAL_ROJO_67_SOURCE_EXACT_BUILD_GREEN",
+  "private67_place_bytes_last_verified": 611340,
+  "private67_zip_bytes_last_verified": 174962,
+  "private67_verified_ci_run": 43553287101
+}
