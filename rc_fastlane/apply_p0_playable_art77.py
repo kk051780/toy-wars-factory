@@ -49,13 +49,13 @@ def apply(base,out,enabled):
  base=base.absolute();out=out.absolute()
  assert out.parent.is_dir() and not out.exists() and not out.is_relative_to(base),"BAD_OUTPUT"
  before=read(base)
- required={"server/Game.server.luau","server/SoloTeamBots.luau","server/LobbyDojoIsland.luau","server/CastleBattlefield.server.luau","client/BattleHUDGovernor.client.luau"}
+ required={"server/Game.server.luau","server/SoloTeamBots.luau","server/LobbyDojoIsland.luau","server/Owner361CastleBattlefield.server.luau","client/BattleHUDGovernor.client.luau"}
  assert len(before)==70 and required.issubset(before),"NOT_CORE70"
  game=before["server/Game.server.luau"]
  assert game.count(b"remote.OnServerEvent:Connect(")==1
  assert b"everybodyReady()" in game and b"SoloTeamBots.tick" in game
  assert b"math.abs(position.X) > 182" in game
- assert b"grass.Size = Vector3.new(370, 4, 294)" in before["server/CastleBattlefield.server.luau"]
+ assert b"grass.Size = Vector3.new(370, 4, 294)" in before["server/Owner361CastleBattlefield.server.luau"]
  pins={p:blob(v) for p,v in sorted(before.items())}
  sl=json.loads((base/"SOURCE_LOCK.json").read_text("utf8"))
  fl=json.loads((base/"RC_FEATURE_LOCK.json").read_text("utf8"))
