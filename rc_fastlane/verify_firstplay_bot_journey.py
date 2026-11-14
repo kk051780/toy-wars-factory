@@ -20,7 +20,21 @@ def verify(dist: Path, out: Path):
     bot=(dist/"src/server/SoloTeamBots.luau").read_text("utf8")
     selector=extract(game,"local chosenMode=ModeVote.tally(modeVotes,Players:GetPlayers())",
         "if RunService:IsStudio() then\n        beginProgressRounds")
-    assert "#Players:GetPlayers()>1 and chosenMode==ModeVote.SCORE" in selector
+    assert "#eligibleSoloPlayers()>1 and chosenMode==ModeVote.SCORE" in selector
+    eligible=extract(game,"local function eligibleSoloPlayers(): {Player}",
+                     "local snapshotFor:")
+    assert 'P0D_LateJoinSpectator' in eligible
+    assert 'team.Name=="RED" or team.Name=="BLUE"' in eligible
+    roster=extract(game,
+        'if RunService:IsStudio() and match.phase=="ACTIVE"\n        and EXPERIMENTAL_FIVE_EGG_MODE then',
+        'if match.phase == "ACTIVE" and side ~= "NONE" then',
+        game.index('Players.PlayerRemoving:Connect(function(player)'))
+    assert 'stopRound("DRAW","SOLO_H2_ROSTER_CHANGED_REQUIRES_NEW_READY")' in roster
+    game_tick=extract(game,
+        "if not EXPERIMENTAL_FIVE_EGG_MODE then",
+        "for _,impact in ipairs(horde:tick(now,Players:GetPlayers(),healthy))",
+        game.index("local function tickRound()"))
+    assert "pcall(SoloTeamBots.tick,now)" in game_tick
     assert "EXPERIMENTAL_FIVE_EGG_MODE=RunService:IsStudio()" in selector
     source_authority=extract(game,"local botAuthority={","local function resetRound()")
     assert "callbacks.steal(" in bot and "callbacks.deposit(" in bot
@@ -28,6 +42,11 @@ def verify(dist: Path, out: Path):
     assert "callbacks.steal(bot,enemy)" in tick
     assert "callbacks.deposit(bot,bot.team,bot.carry)" in tick
     assert "if eligible~=1 then Bot.stop();return end" in tick
+    assert 'local team=p.Team' in tick
+    start_guard=extract(bot,"function Bot.start(world,humanTeam,authority)",
+                        'folder=Instance.new("Folder")')
+    assert 'if eligible~=1 then return false end' in start_guard
+    assert 'P0D_LateJoinSpectator' in start_guard
     assert "if not active then return end" in tick
     assert "move(bot,waypoint,now)" in tick
     ui=(dist/"src/client/HUD.client.luau").read_text("utf8")
@@ -35,8 +54,10 @@ def verify(dist: Path, out: Path):
     assert "5個卵モードは2人以上" in ui
     assert 'soloFiveEggUnavailable = RunService:IsStudio()' in game
     assert game.count("remote.OnServerEvent:Connect(")==1
-    merged="\n".join((MOCK,PRELUDE,source_authority,SELECT_START,selector,SELECT_END,
-                      tick,CASES))
+    merged="\n".join((MOCK,PRELUDE,eligible,source_authority,SELECT_START,
+                      selector,SELECT_END,tick,
+                      'local function actualPlayerLeaves(player)',roster,'end',
+                      TICK_GATE_START,game_tick,TICK_GATE_END,CASES))
     out.parent.mkdir(parents=True,exist_ok=True)
     out.write_text(merged,encoding="utf8")
     print("P0D_SOLO_MODE_GAME_BOT_TICK_SOURCE_EXACT_PASS")
@@ -48,14 +69,16 @@ local RunService={IsStudio=function() return true end}
 local ModeVote={SCORE="SCORE",CLASSIC="CLASSIC",
   tally=function() return "SCORE" end}
 local modeVotes={}
-local human={attrs={}}
+local human={attrs={},Team={Name="RED"}}
 function human:GetAttribute(key) return self.attrs[key] end
 local spectator={attrs={P0D_LateJoinSpectator=true}}
 function spectator:GetAttribute(key) return self.attrs[key] end
-local extraHuman={attrs={}}
+local extraHuman={attrs={},Team={Name="BLUE"}}
 function extraHuman:GetAttribute(key) return self.attrs[key] end
 local EXPERIMENTAL_FIVE_EGG_MODE=false
 local guardCalls=0
+local studioSoloRoundStarted=true
+local function warn(...) end
 '''
 SELECT_START=r'''
 local function actualModeDecision()
@@ -95,6 +118,16 @@ function Bot.stop()
   table.clear(bots)
 end
 '''
+TICK_GATE_START=r'''
+local SoloTeamBots={}
+function SoloTeamBots.tick(now) return Bot.tick(now) end
+function SoloTeamBots.stop() return Bot.stop() end
+function SoloTeamBots.isActive() return active end
+local function actualGameTick(now)
+'''
+TICK_GATE_END=r'''
+end
+'''
 CASES=r'''
 local function check(cond,label)
   assert(cond,"ACTUAL_BOT_TICK_JOURNEY_FAILED_"..label)
@@ -105,6 +138,11 @@ check(EXPERIMENTAL_FIVE_EGG_MODE==false,"SOLO_SCORE_VOTE_CANNOT_START_BOTLESS_H2
 Players.online={human,extraHuman}
 actualModeDecision()
 check(EXPERIMENTAL_FIVE_EGG_MODE==true,"TWO_PLAYER_SCORE_VOTE_PRESERVED")
+Players.online={human,spectator}
+actualModeDecision()
+check(EXPERIMENTAL_FIVE_EGG_MODE==false,
+  "NEUTRAL_SPECTATOR_DOES_NOT_FORCE_H2")
+check(#eligibleSoloPlayers()==1,"SPECTATOR_EXCLUDED_SAME_GAME_COUNT")
 Players.online={human}
 actualModeDecision()
 check(EXPERIMENTAL_FIVE_EGG_MODE==false,"SOLO_CLASSIC_MODE_RESTORED")
@@ -129,9 +167,13 @@ check(b.carry==nil and not b.carryVisual,"DROP_CARRY_VISUAL_AFTER_DEPOSIT")
 check(map.teams.BLUE.egg.Transparency==0,"EGG_RESETS_AFTER_DEPOSIT")
 check(#winners==0 and match.phase=="ACTIVE","FIRST_CAPTURE_NO_AUTO_WIN")
 EXPERIMENTAL_FIVE_EGG_MODE=true
-Bot.tick(2.5)
+b.root.Position=V(50,0,0)
+local travelBefore=#travelLog
+actualGameTick(2.5)
 check(botEggOwners.BLUE==nil and match.scores.RED==1,
-  "BOT_CANNOT_STEAL_WHILE_H2_UNSUPPORTED")
+  "GAME_LEVEL_H2_GUARD_PREVENTS_REAL_STEAL")
+check(#travelLog==travelBefore,"GAME_H2_DID_NOT_TICK_BOT")
+check(b.carry==nil,"GAME_H2_CARRY_REMAINS_EMPTY")
 EXPERIMENTAL_FIVE_EGG_MODE=false
 Players.online={human,spectator}
 Bot.tick(3)
@@ -140,7 +182,19 @@ Players.online={human,extraHuman}
 Bot.tick(3.5)
 check(not active and guardCalls==1,"SECOND_ELIGIBLE_PLAYER_FAIL_CLOSED")
 check(#bots==0,"BOT_STOP_CLEANS_ROSTER")
-print("P0D_SOLO_REAL_GAME_BOT_TICK_17_NATIVE_CASES_PASS")
+Players.online={human,extraHuman}
+match.phase="ACTIVE"
+EXPERIMENTAL_FIVE_EGG_MODE=true
+actualPlayerLeaves(extraHuman)
+check(match.phase=="RESULTS","H2_LEAVER_CANNOT_RUN_SOLO_WITHOUT_BOTS")
+check(winners[#winners].reason=="SOLO_H2_ROSTER_CHANGED_REQUIRES_NEW_READY",
+  "H2_LEAVER_REQUIRES_NEW_READY_NOT_MIDGAME_MODE_SWAP")
+check(winners[#winners].winner=="DRAW","H2_LEAVER_NEUTRAL_RESULT")
+Players.online={human}
+match.phase="LOBBY"
+actualModeDecision()
+check(EXPERIMENTAL_FIVE_EGG_MODE==false,"NEW_LOBBY_SOLO_CLASSIC_ELIGIBLE")
+print("P0D_SOLO_REAL_GAME_BOT_TICK_25_NATIVE_CASES_PASS")
 '''
 if __name__=="__main__":
     p=argparse.ArgumentParser()
