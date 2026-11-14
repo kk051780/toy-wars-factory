@@ -1153,6 +1153,10 @@ jobs:
           # private68 remains unmodified; create + verify real private69.
           python3 -B -m unittest discover -s rc_fastlane -p 'test_art_motion_source.py' -v
           python3 -B -m unittest discover -s rc_fastlane -p 'test_art_motion_composite.py' -v
+          python3 -B rc_fastlane/features/art_motion/generate_native_motion_policy.py --out /tmp/P0D_FB015_NATIVE_MOTION_EXACT_POLICY.luau
+          /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_NATIVE_MOTION_EXACT_POLICY.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/P0D_FB015_NATIVE_MOTION_EXACT_POLICY.luau | tee /tmp/P0D_FB015_NATIVE_MOTION_POLICY.log
+          grep -Fx P0D_FB015_ACTUAL_MOTION_NATIVE_POLICY_PASS /tmp/P0D_FB015_NATIVE_MOTION_POLICY.log
           PARENT68_BEFORE=$(find "$COMBO_DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
           MOTION_DIST=/tmp/p0d_fb015_motion69_repin_actual_source
           MOTION_OUT=/tmp/p0d_fb015_motion69_repin_actual_place
