@@ -1124,7 +1124,7 @@ jobs:
           assert locks['blobs']==flags['source_gitblobs']==pins
           assert flags['feature_flags']['ART_COMBAT_SLASH_READONLY_V1'] is True
           assert flags['feature_flags']['ART_MINION_THREE_SILHOUETTES_V1'] is True
-          assert pins['server/ArtMinionSilhouette.server.luau']=='ed5cd56789abc4a7bc8ee3a44b8982aae4f3ff62'
+          assert pins['server/ArtMinionSilhouette.server.luau']=='4503f3139c5b7dff6ece7c93afe00fb7604bba39'
           assert pins['client/ArtCombatSlash.client.luau']=='c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba'
           assert pins['server/MusouHorde.luau']=='6c613406c4c72be31b2a5c38177d54f1af78e617'
           baseline=Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx')
