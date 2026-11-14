@@ -28,7 +28,7 @@ class EightFeatureCandidateSafety(unittest.TestCase):
 
     def test_horde_density_patches_pinned_and_reversible(self):
         self.assertEqual(density.ORIGINAL_BLOB,"fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38")
-        self.assertEqual(len(density.REPLACEMENTS),6)
+        self.assertEqual(len(density.REPLACEMENTS),8)
         with self.assertRaises(AssertionError):
             density.apply_horde(b"fake unverified horde source")
         patches=dict(density.REPLACEMENTS)
@@ -52,6 +52,35 @@ class EightFeatureCandidateSafety(unittest.TestCase):
         self.assertIn('original_65_byte_identical_except_horde":True',code)
         self.assertIn("FB008_REAL_DENSITY_TRIAL_16_PLUS_ELITE_V1",code)
         self.assertIn("assert source_files(dist)==before",code)
+
+    def test_16_ways_rotate_melee_priority_equally(self):
+        # Prove the modulo order in the real Horde replacement gives
+        # each of the sixteen mobs four first-chance positions per 16 ticks.
+        substitutions="\\n".join(new for _old,new in density.REPLACEMENTS)
+        self.assertIn("local sweepStart=self.tickSequence%MINIONS",substitutions)
+        self.assertIn("self.tickSequence+=1",substitutions)
+        self.assertIn("for mobIndex=1,#self.mobs do",substitutions)
+        self.assertIn("((mobIndex-1+sweepStart)%MINIONS)+1",substitutions)
+        self.assertIn("self.tickSequence=0",substitutions)
+        fairness=[0]*16
+        for tick in range(16):
+            order=[((i+tick)%16) for i in range(16)]
+            self.assertEqual(len(set(order)),16)
+            for i in order[:4]:
+                fairness[i]+=1
+        self.assertEqual(fairness,[4]*16)
+
+    def test_compact_combo_uses_server_musou_combo_not_new_gui(self):
+        code=art.pinned_art()["client/BattleHUDGovernor.client.luau"].decode("utf8")
+        self.assertIn('serverMobCombo = if active then math.min(99,bounded(packet.musouCombo)) else 0',code)
+        self.assertIn('then string.format("%s   ⚔ %d HIT",number,serverMobCombo)',code)
+        self.assertIn('if serverMobCombo >= 3',code)
+        self.assertIn('refreshHp()',code)
+        self.assertIn('hp.Size = UDim2.fromOffset(188, 28)',code)
+        self.assertEqual(code.count('Instance.new("TextLabel")'),1)
+        self.assertNotIn('Instance.new("RemoteEvent")',code)
+        self.assertNotIn('FireServer(',code)
+        self.assertNotIn('UpdateAsync(',code)
 
     def test_numeric_hp_minimal_hud_and_world_label_contract(self):
         code=art.pinned_art()["client/BattleHUDGovernor.client.luau"].decode("utf8")

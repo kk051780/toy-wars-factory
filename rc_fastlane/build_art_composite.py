@@ -26,7 +26,7 @@ SPECS = (
     ("COAST_CHANNEL", "652bbcb31d91810a8d5d65d25e769c18ddd1f20f", "server/H1SeaGroundRepair.server.luau", "H1SeaGroundRepair.server.luau", "FB015_REAL_SEA_GROUND_V2"),
     ("MINION", "c4b6f7de73efdb2c71118834aa631a6f42ebf0b3", "server/ArtMinionSilhouette.server.luau", "MinionArtSilhouette.server.luau", "ART_MINION_THREE_SILHOUETTES_V1"),
     ("BEAST", "bae36c1a22ea649acfed069f5f3ebbc403c3b456", "client/FB015CharacterArt.client.luau", "FB015CharacterArt.client.luau", "FB015_GOROGAN_BEAST_VISUAL_V2"),
-    ("HUD", "20536bc52b108edf94564013e2900aa25bd3aaf3", "client/BattleHUDGovernor.client.luau", "BattleHUDGovernor.client.luau", "P0D_HUD_CLEAR_COMBAT_V1"),
+    ("HUD", "1408d8a1c8a27aed11578bbf4058a9038a560a4c", "client/BattleHUDGovernor.client.luau", "BattleHUDGovernor.client.luau", "P0D_HUD_CLEAR_COMBAT_V1"),
 )
 
 

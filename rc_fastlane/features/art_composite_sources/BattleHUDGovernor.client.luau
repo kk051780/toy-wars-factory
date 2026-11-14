@@ -32,7 +32,7 @@ local instructionLabel = instructions :: TextLabel
 
 local hp = Instance.new("TextLabel")
 hp.Name = "BattleSelfHPNumerical"
-hp.Size = UDim2.fromOffset(120, 28)
+hp.Size = UDim2.fromOffset(188, 28)
 hp.Position = UDim2.new(0, 12, 1, -193) -- clear of native mobile thumbstick
 hp.BackgroundColor3 = Color3.fromRGB(18, 26, 32)
 hp.BackgroundTransparency = 0.55
@@ -88,11 +88,18 @@ workspace.DescendantAdded:Connect(reduceWorldBillboard)
 local humConnection: RBXScriptConnection? = nil
 local maxConnection: RBXScriptConnection? = nil
 local currentHum: Humanoid? = nil
+local serverMobCombo = 0
 local function refreshHp()
     local hum = currentHum
     if not hum then hp.Text = "HP --/--" return end
-    hp.Text = string.format("HP %d/%d", math.ceil(math.max(0, hum.Health)),
+    local number = string.format("HP %d/%d", math.ceil(math.max(0, hum.Health)),
         math.ceil(math.max(0, hum.MaxHealth)))
+    -- The original Game computes packet.musouCombo from authoritative
+    -- ATTACK/horde:hit. Display it inside the already present HP label:
+    -- one small line, no extra screen-wide overlay or independent score.
+    hp.Text = if serverMobCombo >= 3
+        then string.format("%s   ⚔ %d HIT",number,serverMobCombo)
+        else number
 end
 local function bindCharacter(char: Model)
     if humConnection then humConnection:Disconnect() end
@@ -130,7 +137,9 @@ end
 remote.OnClientEvent:Connect(function(packet: any)
     if type(packet) ~= "table" or packet.kind ~= "SNAPSHOT" then return end
     active = packet.phase == "ACTIVE"
+    serverMobCombo = if active then math.min(99,bounded(packet.musouCombo)) else 0
     hp.Visible = active
+    refreshHp()
     if active then
         local castle = if type(packet.hp) == "table" then packet.hp else {}
         local scores = if type(packet.scores) == "table" then packet.scores else {}
