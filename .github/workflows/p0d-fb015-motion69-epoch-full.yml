@@ -1,0 +1,1224 @@
+name: P0D FB015 epoch-history motion69 real Rojo latest parent QA
+on:
+  push:
+    branches:
+      - feature/p0d-fb015-motion69-epoch-v2-20261114
+    paths:
+      - 'rc_fastlane/**'
+      - '.github/workflows/p0d-fb015-motion69-epoch-full.yml'
+  pull_request:
+    branches:
+      - feature/p0d-fb015-art68-frozen-d3ce-20261114
+    paths:
+      - 'rc_fastlane/**'
+      - '.github/workflows/p0d-fb015-motion69-epoch-full.yml'
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Source profile for noncanonical private Studio candidate
+        type: choice
+        required: true
+        default: rich51
+        options:
+          - rich51
+          - rich47
+          - legacy21
+permissions:
+  contents: read
+jobs:
+  rc-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PROFILE: ${{ github.event.inputs.profile || 'rich51' }}
+      EXPECTED_SOURCE: ${{ (github.event.inputs.profile == 'rich47' && 'f74686cbfc601436962df8aeb8da7a1b3ff92152') || '79123d35cd7afdd5f4f9941675bc2d2cf382ac4e' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: ${{ env.EXPECTED_SOURCE }}
+          path: _p0d_pinned_source
+          persist-credentials: false
+      - name: Validate selected official RC profile and freeze source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os,subprocess
+          x=json.load(open('rc_fastlane/ACTIVE.json',encoding='utf8'))
+          p=os.environ['PROFILE']
+          assert p in x['source_profiles'],p
+          assert p == 'rich51' or os.environ.get('GITHUB_EVENT_NAME')=='workflow_dispatch',"FALLBACK_ONLY_MANUAL"
+          source=x['source_profiles'][p]['source_commit']
+          if p=='legacy21':source=x['source_profiles']['rich51']['source_commit']
+          actual=subprocess.check_output(['git','-C','_p0d_pinned_source','rev-parse','HEAD'],text=True).strip()
+          assert actual==source==os.environ['EXPECTED_SOURCE'],(actual,source)
+          assert x['active_profile']=='rich51'
+          assert x['previous_official_rc_commit']=='1263a03701211a652b99b91d2339575dc8104eff'
+          print('PINNED_RC_PROFILE_SOURCE_PASS',p,source)
+          PY
+      - name: Assemble original authored real game once (no reauthoring)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            python3 -B _p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/tools/assemble.py --assemble
+          elif [ "$PROFILE" = rich47 ]; then
+            python3 -B _p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/tools/assemble.py --assemble
+          else
+            test -f releases/P0D_S1_KIDS_RC01/default.project.json
+          fi
+      - name: Apply exact source-locked per-feature Studio V4 idle/friend overlay (optional)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            python3 -B rc_fastlane/apply_overlays.py \
+              --dist "_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE" \
+              --profile "$PROFILE"
+          fi
+      - name: Add P0D optional gameplay directly to current RC, never modifying author 51
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_realm_hunt.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/integrate.py --profile rich51 --dist "$DIST"
+          fi
+      - name: Integrate author-pinned six-skill DEV persistence on the same Game Store
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_sixskill_durable.py --profile rich51 --dist "$DIST"
+          fi
+      - name: Apply source-exact saved WEAPON level -> neutral PvE tier in existing Game
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_saved_pve.py --profile rich51 --dist "$DIST"
+          fi
+      - name: Integrate saved BEAST mastery into original real evolved scout
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_saved_beast.py --profile rich51 --dist "$DIST"
+          fi
+      - name: Add forest swift and star burst species within ORIGINAL evolved scout
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_scout_species.py --profile rich51 --dist "$DIST"
+          fi
+      - name: Add source-locked Crystal Canyon/Moguron stage with independent rollback (Studio only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_wcs_f01_c01.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_wcs_f01_c01.py --profile rich51 --dist "$DIST"
+          fi
+      - name: Integrate original Seven Jobs PvE narrow Game/HUD patch after WCS
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_seven_jobs_pve.py --dist "$DIST"
+          fi
+      - name: Add classic 1-egg teammate relay inside one Game after SevenJobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_egg_relay_classic.py --dist "$DIST" --policy rc_fastlane/features/egg_relay_classic/policy/EggRelayPolicy.luau
+          fi
+      - name: Build original WCS third-route Starfall bridge with exact source pin and rollback tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_star_path.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_star_path.py --profile rich51 --dist "$DIST"
+          fi
+      - name: Add automatic fourth-lane Meteor source after real Starfall61
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_meteor_fourth.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_meteor_fourth.py --profile rich51 --dist "$DIST" --enabled false
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            echo P0D_PRIVATE62_METEOR_OFF_PRESERVES_ALL_61_BYTES_PASS
+            python3 -B rc_fastlane/apply_meteor_fourth.py --profile rich51 --dist "$DIST" --enabled true
+          fi
+      - name: Add six collectible shards on the EXISTING meteor62 game, and preserve switch-OFF source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_star_shards.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_star_shards.py --profile rich51 --dist "$DIST" --help >/dev/null
+            python3 -B rc_fastlane/apply_star_shards.py --profile rich47 --dist "$DIST"
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            python3 -B rc_fastlane/apply_star_shards.py --profile rich51 --dist "$DIST"
+            echo P0D_PRIVATE63_METEOR62_PLUS_SHARDS63_SOURCE_ADOPTED_PRIVATE_ONLY
+          fi
+      - name: Make classic egg relay reachable on mobile portrait (HUD only, independent rollback)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_relay_touch_layout.py --dist "$DIST" --enabled off
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            python3 -B rc_fastlane/apply_relay_touch_layout.py --dist "$DIST" --enabled on
+            python3 -B rc_fastlane/rc61_touch_geometry_audit.py --hud "$DIST/src/client/HUD.client.luau"
+          fi
+      - name: Add two mirrored worlds and four animated discoverable creatures after official63
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_twin_biomes.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_twin_biomes.py --profile rich51 --dist "$DIST" --enabled false
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            echo P0D_PRIVATE64_TWIN_BIOMES_OFF_PRESERVES_OFFICIAL63_ALL_BYTES_PASS
+            python3 -B rc_fastlane/apply_twin_biomes.py --profile rich51 --dist "$DIST" --enabled true
+          fi
+      - name: Adopt original four-species Lv1-Lv3 training onto exact existing official64 TwinBiomes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_twin_training.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_twin_training.py --dist "$DIST" --enabled false
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            echo P0D_TWIN_TRAINING_PREP65_OFF_REAL_OFFICIAL64_BYTE_EXACT_PASS
+            python3 -B rc_fastlane/apply_twin_training.py --dist "$DIST" --enabled true
+          fi
+      - name: OWNER first-play HUD + solo-start clarity (no Game authority change)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_owner_firstplay_ux.py --dist "$DIST" --enabled false
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            echo P0D_OWNER_UX_OFF_ALL65_AND_CONFIG_EXACT_PASS
+            python3 -B rc_fastlane/apply_owner_firstplay_ux.py --dist "$DIST" --enabled true
+            python3 - <<'PY'
+          from pathlib import Path
+          import json
+          dist=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE")
+          src=dist/"src"
+          hud=(src/"client/HUD.client.luau").read_text("utf8")
+          v4=(src/"client/V4TrialOverlay.client.luau").read_text("utf8")
+          audit=(src/"client/P0DStudioTrialAudit.client.luau").read_text("utf8")
+          game=(src/"server/Game.server.luau").read_text("utf8")
+          assert "StudioSolo.canStart(RunService:IsStudio()" in game
+          assert "1人練習 自動開始" in hud
+          import re
+          for exp in (
+              r'^    instructions\.Visible=s\.phase=="ACTIVE" and not first90Cue\.Visible',
+              r'^    progressBadge\.Visible=s\.phase=="ACTIVE" -- tiny XP only',
+              r'^    dojoBadge\.Visible=valid and s\.hatchEnabled==true and s\.phase=="LOBBY"',
+          ):
+              assert re.search(exp,hud,re.M), ("HUD_ACTIVE_ASSIGNMENT_REQUIRED",exp)
+          assert '🥚卵を運ぶ／🏰城をこわす' in hud
+          assert 'if s.team=="RED" then "赤"' in hud
+          assert 'RealH1ServerLevel",UDim2.new(.20,0,0,26)' in hud
+          assert 'Instructions", UDim2.new(.58, 0, 0, 25)' in hud
+          assert .015+.20 < .24, "ROLE_AND_OBJECTIVE_SAFE_HORIZ_SEPARATION"
+          assert 'instructions.Visible=s.phase=="ACTIVE" and not first90Cue.Visible' in hud
+          assert 'progressBadge.Visible=s.phase=="ACTIVE"' in hud
+          assert 'dojoBadge.Visible=valid and s.hatchEnabled==true and s.phase=="LOBBY"' in hud
+          assert 'local folded=true' in v4 and 'box.Visible=false' in v4
+          assert 'screen.Enabled=false' in audit and 'log("START",' in audit
+          lock=json.loads((dist/"SOURCE_LOCK.json").read_text("utf8"))
+          assert lock["total_scripts"]==65 and len(lock["blobs"])==65
+          import hashlib
+          pins={p.relative_to(src).as_posix(): hashlib.sha1(b"blob "+str(len(p.read_bytes())).encode()+b"\0"+p.read_bytes()).hexdigest() for p in src.rglob("*.luau")}
+          assert lock["blobs"]==pins
+          feature=json.loads((dist/"RC_FEATURE_LOCK.json").read_text("utf8"))
+          assert feature["total_sources"]==65 and feature["source_gitblobs"]==pins
+          assert feature["feature_flags"]["OWNER_FIRSTPLAY_UX_V1"] is True
+          print("P0D_OWNER_UX_INITIAL_TEXT_COLLAPSED_SOLO_GUIDE_ACTUAL_GAME_UNCHANGED_PASS")
+          PY
+          fi
+      - name: Add exact canonical65 one familiar + 20pct PvE minion-only assist, all OFF rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_twin_bond.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_twin_bond.py --dist "$DIST" --enabled false
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            echo P0D_PRIVATE66_BOND_OFF_EXACT_REAL_OFFICIAL65_PASS
+            python3 -B rc_fastlane/apply_twin_bond.py --dist "$DIST" --enabled true
+          fi
+      - name: Check actual built RC66 source lock, approved feature and ledger agree
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE")
+          lock=json.loads((root/"SOURCE_LOCK.json").read_text("utf8"))
+          flags=json.loads(Path("rc_fastlane/FEATURE_SWITCHES.json").read_text("utf8"))["features"]
+          catalog=json.loads(Path("rc_fastlane/FEATURE_CATALOG.json").read_text("utf8"))
+          reg=json.loads(Path("rc_fastlane/FEATURE_REGISTRY.json").read_text("utf8"))
+          assert lock["total_scripts"]==66
+          assert lock["rc_twin_bond_overlay"]["id"]=="TWIN_BOND_PVE_COMPANION_V1"
+          assert lock["rc_twin_bond_overlay"]["official_rc_adopted"] is True
+          assert flags["TWIN_BOND_PVE_COMPANION_V1"]["official_rc_adopted"] is True
+          assert reg["canonical_rc_source_count"]==66
+          assert catalog["verified_rc_head"]==reg["canonical_rc_source_head"]=="2c74382bf24f9fdfd67f3bfcecb9a8a6d7ddd264"
+          assert reg["canonical_rc_acceptance_run"]==43549547549
+          assert len(catalog["rows"])==67
+          assert sum(z["stage"]=="RC" for z in catalog["rows"])==31
+          print("P0D_RC66_REAL_OUTPUT_LOCK_AND_CATALOG_REGISTRY_ADOPTION_RECEIPT_MATCH_PASS")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_rc_luau
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Cache same pinned Luau compiler between RC builds
+        uses: actions/cache@v4
+        with:
+          path: /tmp/p0d_new_luau
+          key: p0d-rc-luau-ubuntu-f46d879e28302-v1
+      - name: Compile every actual canonical RC Luau source using same pinned compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_rc_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          if [ ! -x /tmp/p0d_new_luau/luau-compile ]; then
+            cmake -S _p0d_rc_luau -B /tmp/p0d_new_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+            cmake --build /tmp/p0d_new_luau --target Luau.Compile.CLI --parallel 4
+          else
+            echo P0D_RC_PINNED_LUAU_CACHE_REUSED
+          fi
+          /tmp/p0d_new_luau/luau-compile rc_fastlane/features/realm_hunt/RealmHunt.server.luau > /tmp/p0d_new_server.luau.out
+          /tmp/p0d_new_luau/luau-compile rc_fastlane/features/realm_hunt/RealmHuntHUD.client.luau > /tmp/p0d_new_client.luau.out
+          echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']) + int(f['TWIN_BIOMES_4NPC_V1']['enabled']) + int(f['TWIN_CREATURE_TRAINING_V1']['enabled']) + int(f['TWIN_BOND_PVE_COMPANION_V1']['enabled']))")
+
+          elif [ "$PROFILE" = rich47 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
+            WANT=47
+          else
+            DIST=releases/P0D_S1_KIDS_RC01
+            WANT=21
+          fi
+          n=0
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" > /tmp/p0d_rc_native_source.out 2>&1 || {
+              cat /tmp/p0d_rc_native_source.out
+              echo "P0D_CANONICAL_RC_LUAU_COMPILE_FAILED $file"
+              exit 1
+            }
+            n=$((n+1))
+          done < <(find "$DIST/src" -type f -name '*.luau' -print0)
+          test "$n" -eq "$WANT"
+          echo "P0D_CANONICAL_RC_FULL_SOURCE_LUAU_COMPILE_PASS $n/$WANT"
+      - name: Execute 31 native original-Game egg relay transaction safety cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ] && python3 -c "import json; assert json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['EGG_RELAY_CLASSIC_V1']['enabled']"; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/features/egg_relay_classic/tools/generate_native_game_harness.py \
+              --game "$DIST/src/server/Game.server.luau" \
+              --policy "$DIST/src/server/EggRelayPolicy.luau" \
+              --out /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau
+            cmake --build /tmp/p0d_new_luau --target Luau.Repl.CLI --parallel 4
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau | tee /tmp/p0d_egg_native.log
+            grep -Fx P0D_EGG_RELAY_ACTUAL_GAME_NATIVE_31_CASES_PASS /tmp/p0d_egg_native.log
+          fi
+      - name: Native-Luau behavioral check of actual OWNER lobby phase HUD
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 - <<'PY'
+          from pathlib import Path
+          hud=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE/src/client/HUD.client.luau").read_text("utf8")
+          start="local function phaseText(s): string"
+          stop="remote.OnClientEvent:Connect(function(s)"
+          assert hud.count(start)==1 and hud.count(stop)==1
+          body=hud.split(start,1)[1].split(stop,1)[0]
+          native='''local studio = true
+          local RunService = {IsStudio = function(self) return studio end}
+          local function resultLine(s) return "results" end
+          local function phaseText(s): string
+          '''+body+'''
+          assert(phaseText({phase="LOBBY",redPlayers=1,bluePlayers=0}) == "▶ 1人練習 自動開始")
+          assert(phaseText({phase="LOBBY",redPlayers=1,bluePlayers=1}) == "▶ 赤・青がそろうと開始")
+          studio=false
+          assert(phaseText({phase="LOBBY",redPlayers=1,bluePlayers=0}) == "▶ 赤・青がそろうと開始")
+          studio=true
+          assert(phaseText({phase="COUNTDOWN",time=7}) == "▶ 開始まで 7 秒")
+          print("P0D_OWNER_UX_NATIVE_HUD_LOBBY_PHASE_4_CASES_PASS")
+          '''
+          Path("/tmp/p0d_owner_ux_lobby_native.luau").write_text(native,encoding="utf8")
+          PY
+            /tmp/p0d_new_luau/luau-compile /tmp/p0d_owner_ux_lobby_native.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/p0d_owner_ux_lobby_native.luau | tee /tmp/p0d_owner_ux_lobby_native.log
+            grep -Fx P0D_OWNER_UX_NATIVE_HUD_LOBBY_PHASE_4_CASES_PASS /tmp/p0d_owner_ux_lobby_native.log
+          fi
+      - name: Native Luau executable scoreboard role and egg/castle objective tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            python3 - <<'PY'
+          from pathlib import Path
+          hud=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE/src/client/HUD.client.luau").read_text("utf8")
+          initial='    top.Text = string.format("🔴%d '
+          end='    status.Text = phaseText(s)'
+          assert hud.count(initial)==1 and hud.count(end)==1
+          score=initial+hud.split(initial,1)[1].split(end,1)[0]
+          five='        top.Text=string.format("🏆 '
+          assert hud.count(five)==1
+          score_five=five+hud.split(five,1)[1].split("\n    end\n    instructions.Text=",1)[0]
+          objective='    instructions.Text=if s.scoreMode=="FIVE_EGG_SCORE"'
+          assert hud.count(objective)==1
+          obj=objective+hud.split(objective,1)[1].split("\n    local canChoose=",1)[0]
+          role_start='local function displayRole(role: string): string'
+          assert hud.count(role_start)==1
+          actual_role=role_start+hud.split(role_start,1)[1].split('-- RESULT_COPY_BEGIN',1)[0]
+          visible_lines=[line for line in hud.splitlines() if line.startswith('    instructions.Visible=s.phase=="ACTIVE"')]
+          assert len(visible_lines)==1
+          actual_visibility=visible_lines[0]
+          code=actual_role+'''local top={Text=""}
+          local instructions={Text="",Visible=false}
+          local s={scores={RED=2,BLUE=1},hp={RED=94,BLUE=83},team="RED",role="RAIDER",scoreMode="CLASSIC",phase="ACTIVE"}
+          '''+score+'''
+          assert(string.find(top.Text,"赤速攻",1,true)~=nil,"RED_ROLE_LOST")
+          assert(string.find(top.Text,"94/83",1,true)~=nil,"CASTLE_HP_LOST")
+          s.team="BLUE"; s.role="GUARDIAN"
+          '''+score+'''
+          assert(string.find(top.Text,"青守護",1,true)~=nil,"BLUE_ROLE_LOST")
+          '''+score_five+'''
+          assert(string.find(top.Text,"青守護",1,true)~=nil,"FIVE_SCORE_ROLE_LOST")
+          s.scoreMode="CLASSIC"
+          '''+obj+'''
+          assert(instructions.Text=="🥚卵を運ぶ／🏰城をこわす","CLASSIC_CASTLE_HINT_LOST")
+          s.scoreMode="FIVE_EGG_SCORE"
+          '''+obj+'''
+          assert(instructions.Text=="🥚5個集めて得点","FIVE_EGG_HINT_LOST")
+          local first90Cue={Visible=false}
+          '''+actual_visibility+'''
+          assert(instructions.Visible==true,"GUIDE_HIDDEN_DURING_ACTIVE")
+          first90Cue.Visible=true
+          '''+actual_visibility+'''
+          assert(instructions.Visible==false,"GUIDE_OVERLAP_WITH_FIRST90")
+          first90Cue.Visible=false
+          s.phase="LOBBY"
+          '''+actual_visibility+'''
+          assert(instructions.Visible==false,"GUIDE_SHOWN_IN_LOBBY")
+          print("P0D_OWNER_UX_NATIVE_ROLE_CASTLE_9_CASES_PASS")
+          '''
+          Path("/tmp/p0d_owner_ux_role_castle_native.luau").write_text(code,encoding="utf8")
+          PY
+            /tmp/p0d_new_luau/luau-compile /tmp/p0d_owner_ux_role_castle_native.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/p0d_owner_ux_role_castle_native.luau | tee /tmp/p0d_owner_ux_role_castle_native.log
+            grep -Fx P0D_OWNER_UX_NATIVE_ROLE_CASTLE_9_CASES_PASS /tmp/p0d_owner_ux_role_castle_native.log
+          fi
+      - name: OWNER #341 actual compiled Studio Solo 24 cases (unique Game unchanged)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 - <<'PY'
+          from pathlib import Path
+          import os
+          root=Path(os.environ["DIST"])/"src/server"
+          game=(root/"Game.server.luau").read_text("utf8")
+          src=(root/"StudioSoloPreviewRules.luau").read_text("utf8")
+          assert len(src)>900 and src.count("return Solo")==1
+          assert src.count("function Solo.canStart(")==1
+          assert src.count("function Solo.isSoloRound(")==1
+          assert src.count("function Solo.emptyWinner(")==1
+          assert game.count("StudioSolo.canStart(")==2
+          assert game.count("StudioSolo.isSoloRound(")==1
+          assert game.count("StudioSolo.emptyWinner(")==1
+          assert game.count("RunService:IsStudio()")>=3
+          assert "Config.MinPlayers" in game
+          native=Path("rc_fastlane/features/owner341_solo_qa/StudioSoloNativeAcceptance.luau").read_text("utf8")
+          actual=src.rsplit("return Solo",1)[0]+"\n"+native
+          Path("/tmp/P0D_OWNER341_ACTUAL_SOLO_NATIVE24.luau").write_text(actual,encoding="utf8")
+          print("P0D_OWNER341_GENERATED_FROM_CURRENT_ACTUAL_GAME_POLICY_PASS")
+          PY
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_OWNER341_ACTUAL_SOLO_NATIVE24.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_OWNER341_ACTUAL_SOLO_NATIVE24.luau | tee /tmp/p0d_owner341_solo_native24.log
+            grep -Fx P0D_STUDIO_SOLO_ACTUAL_POLICY_NATIVE_24_CASES_PASS /tmp/p0d_owner341_solo_native24.log
+          fi
+      - name: Checkout exact original 41-case egg relay test author (no change to Game)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f1c0866423c2c1d36a5cd8eafe8cee7558b1a1dd
+          path: _egg_author_41
+          persist-credentials: false
+      - name: Prove original 33 SevenJobs and 41 EggRelay policy cases in same 60-source Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            test "$(git -C _egg_author_41 rev-parse HEAD)" = f1c0866423c2c1d36a5cd8eafe8cee7558b1a1dd
+            export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 - <<'PY'
+          import hashlib,os
+          from pathlib import Path
+          dist=Path(os.environ["DIST"])
+          job=dist/"src/server/SevenJobsRules.luau"
+          original_job=Path("rc_fastlane/features/seven_jobs/src/SevenJobsRules.luau")
+          job_cases=Path("rc_fastlane/features/seven_jobs/tests/SevenJobsNative.luau")
+          relay=dist/"src/server/EggRelayPolicy.luau"
+          original_relay=Path("_egg_author_41/handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/src/EggRelayPolicy.luau")
+          def gitblob(b):return hashlib.sha1(b"blob "+str(len(b)).encode()+bytes([0])+b).hexdigest()
+          assert job.read_bytes()==original_job.read_bytes()
+          assert gitblob(job.read_bytes())=="a7253d36cb67df47d4ba65d35af212ed1eb7b5b2"
+          assert gitblob(job_cases.read_bytes())=="5bb1b8a507fe05955e257f69af75222ebd638577"
+          assert relay.read_bytes()==original_relay.read_bytes()
+          assert gitblob(relay.read_bytes())=="ef9b65bd6520231f299f21c5cfe2aa250798c8d0"
+          src="local R=(function()\n"+job.read_text("utf8")+"\nend)()\n"+job_cases.read_text("utf8")
+          assert "P0D_SEVEN_JOBS_NATIVE_33_OF_33_POLICY_ASSERTIONS_PASS" in src
+          Path("/tmp/p0d60_job33.luau").write_text(src,"utf8")
+          print("P0D_PRIVATE61_AUTHOR_JOB_AND_RELAY_MODULE_SOURCE_EXACT_PASS")
+          PY
+            python3 -B _egg_author_41/handoffs/P0D-EGG-RELAY-PASS-POLICY-20261113-01/tools/generate_native_runner.py --out /tmp/p0d60_relay41.luau
+            /tmp/p0d_new_luau/luau-compile /tmp/p0d60_job33.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/p0d60_job33.luau | tee /tmp/p0d60_job33.log
+            grep -Fx 'P0D_SEVEN_JOBS_NATIVE_33_OF_33_POLICY_ASSERTIONS_PASS' /tmp/p0d60_job33.log
+            /tmp/p0d_new_luau/luau-compile /tmp/p0d60_relay41.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/p0d60_relay41.luau | tee /tmp/p0d60_relay41.log
+            grep -Fx 'P0D_EGG_RELAY_NATIVE_POLICY_41_CASES_PASS' /tmp/p0d60_relay41.log
+            echo P0D_PRIVATE61_ONE_GAME_JOBS33_RELAY_POLICY41_REAL_HANDLER31_ALL_PASS
+          fi
+      - name: Run 22 real native-Luau shard policy tests from FINAL combined private63 Script
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/features/star_shards/generate_native_runner.py \
+              --script "$DIST/src/server/StarShardHunt.server.luau" \
+              --out /tmp/P0D_STARSHARDS_PRIVATE63_REAL22.luau
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_STARSHARDS_PRIVATE63_REAL22.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_STARSHARDS_PRIVATE63_REAL22.luau | tee /tmp/p0d_private63_shards22.log
+            grep -Fx P0D_STAR_SHARDS_REAL_SOURCE_NATIVE_22_POLICY_CASES_PASS /tmp/p0d_private63_shards22.log
+            echo P0D_PRIVATE63_ALL_NATIVE_33_41_31_22_EQUALS127_PASS
+          fi
+      - name: Execute original authored 38 native Luau Lv1-Lv3 policy cases from final composed65 policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          dist=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE")
+          src=(dist/"src/server/TwinCreatureTraining.luau").read_bytes()
+          def blob(x):return hashlib.sha1(b"blob "+str(len(x)).encode()+b"\0"+x).hexdigest()
+          assert blob(src)=="b2f8275be676b46fc1ad32050832a4fcf13099af"
+          txt=src.decode("utf8")
+          assert txt.count("return Training")==1
+          native=Path("rc_fastlane/features/twin_training/TwinCreatureTrainingNative.luau").read_text("utf8")
+          assert "assert(cases==38" in native and "P0D_TWIN_CREATURE_REAL_NATIVE_38_POLICY_CASES_PASS" in native
+          Path("/tmp/P0D_REAL_TWIN_TRAINING38.luau").write_text(txt.rsplit("return Training",1)[0]+"\n"+native,encoding="utf8")
+          print("P0D_TWIN_TRAINING_REAL_POLICY_SOURCE_EXTRACTED_PASS")
+          PY
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_REAL_TWIN_TRAINING38.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_REAL_TWIN_TRAINING38.luau | tee /tmp/p0d_twin_native38.log
+            grep -Fx P0D_TWIN_CREATURE_REAL_NATIVE_38_POLICY_CASES_PASS /tmp/p0d_twin_native38.log
+          fi
+      - name: Execute 47 real native bond policy checks from actual 66-source module
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          root=Path('_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE')
+          src=(root/'src/server/TwinBondPolicy.luau').read_bytes()
+          author=Path('rc_fastlane/features/twin_bond/TwinBondPolicy.luau').read_bytes()
+          runner=Path('rc_fastlane/features/twin_bond/TwinBondNative.luau').read_bytes()
+          def blob(b):return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          assert src==author and blob(src)=='e5ab733e1baadf2d79eec6ba53463a16ccd8c0c1'
+          assert runner.count(b'check("')==47
+          text=src.decode('utf8')
+          assert text.count('return Bond')==1
+          out=text.rsplit('return Bond',1)[0]+'\n'+runner.decode('utf8')
+          Path('/tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau').write_text(out,'utf8')
+          print('P0D_PRIVATE66_BOND_NATIVE40_ACTUAL_SOURCE_PIN_PASS')
+          PY
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau | tee /tmp/p0d_real_bond_native40.log
+            grep -Fx P0D_TWIN_BOND_REAL_NATIVE_47_POLICY_CASES_PASS /tmp/p0d_real_bond_native40.log
+          fi
+      - name: Native-execute actual composed Game+real Bond policy (27 cases), cap and live Horde wiring
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/features/twin_bond/generate_game_native.py \
+              --game "$DIST/src/server/Game.server.luau" \
+              --policy "$DIST/src/server/TwinBondPolicy.luau" \
+              --out /tmp/P0D_BOND_REAL_GAME_HELPER27.luau
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_BOND_REAL_GAME_HELPER27.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_BOND_REAL_GAME_HELPER27.luau | tee /tmp/p0d_bond_game18.log
+            grep -Fx P0D_BOND_REAL_GAME_HELPER_NATIVE_27_CASES_PASS /tmp/p0d_bond_game18.log
+          fi
+      - name: Install checksum-pinned official Rojo v7.7.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_rc_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_rc_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile,stat
+          with zipfile.ZipFile('/tmp/p0d_rc_rojo.zip') as z:
+              items=[k for k in z.namelist() if k.rsplit('/',1)[-1]=='rojo']
+              assert len(items)==1
+              x=Path('/tmp/p0d_rc_rojo');x.write_bytes(z.read(items[0]))
+              x.chmod(x.stat().st_mode|stat.S_IXUSR|stat.S_IXGRP|stat.S_IXOTH)
+          PY
+          /tmp/p0d_rc_rojo --version | grep -F '7.7.1'
+      - name: Produce playable RC Place and verify binary exact source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_rc_out
+          if [ "$PROFILE" = rich51 ]; then
+            export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+          elif [ "$PROFILE" = rich47 ]; then
+            export DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
+          else
+            export DIST=releases/P0D_S1_KIDS_RC01
+          fi
+          /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o /tmp/p0d_rc_out/P0D_CANONICAL_RC_${PROFILE}.rbxlx
+          if [ "$PROFILE" = rich51 ] && [ -f "$DIST/RC_FEATURE_LOCK.json" ]; then
+            cp "$DIST/RC_FEATURE_LOCK.json" /tmp/p0d_rc_out/RC_FEATURE_LOCK.json
+          fi
+          python3 - <<'PY'
+          import os,json,hashlib,collections,pathlib,xml.etree.ElementTree as ET
+          p=os.environ['PROFILE'];base=pathlib.Path(os.environ['DIST'])
+          target=pathlib.Path('/tmp/p0d_rc_out')/('P0D_CANONICAL_RC_'+p+'.rbxlx')
+          actual=collections.Counter(f.read_text('utf8') for f in (base/'src').rglob('*.luau'))
+          flags=json.load(open('rc_fastlane/FEATURE_SWITCHES.json',encoding='utf8'))
+          realm_enabled=flags['features']['REALM_HUNT_V1']['enabled'] and p=='rich51'
+          durable_enabled=(p=='rich51' and flags['features']['SIX_SKILL_DURABLE']['enabled'])
+          saved_pve_enabled=(p=='rich51' and flags['features']['SAVED_PVE_MASTERY']['enabled'])
+          saved_beast_enabled=(p=='rich51' and flags['features']['SAVED_BEAST_EVOLUTION']['enabled'])
+          species_enabled=(p=='rich51' and flags['features']['SCOUT_SPECIES_V1']['enabled'])
+          wcs_enabled=(p=='rich51' and flags['features']['WCS_F01_C01']['enabled'])
+          seven_enabled=(p=='rich51' and flags['features']['SEVEN_JOBS_PVE_V1']['enabled'])
+          egg_enabled=(p=='rich51' and flags['features']['EGG_RELAY_CLASSIC_V1']['enabled'])
+          star_enabled=(p=='rich51' and flags['features']['STARRY_PATH_V1']['enabled'])
+          meteor_enabled=(p=='rich51' and flags['features']['METEOR_FOURTH_V1']['enabled'])
+          shards_enabled=(p=='rich51' and flags['features']['STAR_SHARDS_V1']['enabled'])
+          twin_enabled=(p=='rich51' and flags['features']['TWIN_BIOMES_4NPC_V1']['enabled'])
+          training_enabled=(p=='rich51' and flags['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])
+          bond_enabled=(p=='rich51' and flags['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled'])
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
+          assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
+          included=collections.Counter();titles=collections.Counter()
+          for e in ET.fromstring(target.read_bytes()).iter('Item'):
+              if e.get('class') not in ('Script','LocalScript','ModuleScript'):continue
+              c=e.find("./Properties/string[@name='Source']")
+              if c is None:continue
+              included[c.text or '']+=1
+              n=e.find("./Properties/string[@name='Name']")
+              if n is not None:titles[(e.get('class'),n.text)]+=1
+          assert included==actual,('SOURCE_MISMATCH',len(included),len(actual))
+          if p=='rich51':
+              f=json.load(open('rc_fastlane/ACTIVE.json',encoding='utf8'))['feature_switches']['V4_IDLE_FRIEND_SAFE_FIX']
+              assert f['rollback']=='DISABLE_OVERLAY_RETAIN_RICH51'
+              live=f['enabled']
+              srcs=list(included.elements())
+              has_server=any('player:IsFriendsWithAsync(other.UserId)' in x and 'NoCombatBuff' in x for x in srcs)
+              has_client=any('player.Idled:Connect(' in x and 'UserInputService.InputBegan:Connect(' in x for x in srcs)
+              assert has_server==live and has_client==live,('OVERLAY_SWITCH_MISMATCH',live,has_server,has_client)
+              lock=json.load(open(base/'SOURCE_LOCK.json',encoding='utf8'))
+              assert (lock.get('rc_overlay',{}).get('id')=='V4_IDLE_FRIEND_SAFE_FIX')==live
+              assert lock['blobs']=={f.relative_to(base/'src').as_posix():
+                            hashlib.sha1(b'blob '+str(len(f.read_bytes())).encode()+bytes([0])+f.read_bytes()).hexdigest()
+                            for f in (base/'src').rglob('*.luau')},'RC_PROFILE_SOURCE_LOCK'
+              if live:
+                  assert lock['rc_overlay']['untouched_original_game_scripts']==49
+                  assert sorted(lock['rc_overlay']['only_changed_scripts'])==[
+                    'client/V4TrialOverlay.client.luau','server/V4TrainingBridge.server.luau']
+                  print('P0D_RC_FASTLANE_V4_2FILE_SWITCH_49_ORIGINAL_BYTES_PASS')
+              else:
+                  print('P0D_RC_FASTLANE_V4_SWITCH_OFF_ORIGINAL51_PASS')
+          assert titles[('Script','Game')]==1,('DUPLICATE_GAME',titles)
+          if species_enabled:
+              assert saved_beast_enabled and durable_enabled
+              assert titles[('ModuleScript','ScoutSpeciesPolicy')]==1
+              assert sum('ScoutSpecies.attack(' in src for src in included)==1
+              assert sum('ScoutSpecies.guard(' in src for src in included)==1
+              assert sum('P0D_ActualScoutSpecies' in src for src in included)==1
+              assert sum('local assaultCount=0' in src for src in included)==1
+          else:
+              assert titles[('ModuleScript','ScoutSpeciesPolicy')]==0
+          if saved_beast_enabled:
+              assert durable_enabled and saved_pve_enabled
+              assert titles[('ModuleScript','SavedBeastEvolutionPolicy')]==1
+              assert sum('SavedBeastEvolution.choose(' in src for src in included)==1
+              assert sum('SavedBeastEvolution.saved(' in src for src in included)==1
+              assert sum('SavedBeastEvolutionTier' in src for src in included)==1
+          else:
+              assert titles[('ModuleScript','SavedBeastEvolutionPolicy')]==0
+          if saved_pve_enabled:
+              assert durable_enabled, 'SAVED_MASTERY_REQUIRES_DURABLE'
+              assert titles[('ModuleScript','SavedPveMasteryPolicy')]==1
+              assert sum('SavedPvePolicy.mergeWithEarned(' in src for src in included)==1
+              assert sum('savedPveMinionMultiplier(player)' in src for src in included)==1
+              assert sum('PersistentHatch.settleSixSkill(' in src for src in included)==1
+          else:
+              assert titles[('ModuleScript','SavedPveMasteryPolicy')]==0
+          if durable_enabled:
+              assert titles[('ModuleScript','SixSkillAtomicProfile')]==1
+              assert any('PersistentHatch.settleSixSkill(' in s for s in included)
+              assert any('function Store.settleSixSkill(' in s for s in included)
+              assert any('P0D_V4_SavedRemaining' in s for s in included)
+          else:
+              assert titles[('ModuleScript','SixSkillAtomicProfile')]==0
+          if realm_enabled:
+              assert titles[('Script','RealmHunt')]==1
+              assert titles[('LocalScript','RealmHuntHUD')]==1
+          else:
+              assert titles[('Script','RealmHunt')]==0
+              assert titles[('LocalScript','RealmHuntHUD')]==0
+          if wcs_enabled:
+              assert titles[('Script','WCS_CrystalCanyon')]==1
+              assert sum('GetAttribute("P0D_RC_ENABLE_WCS_F01_C01")~=true' in src for src in included)==1
+          if p=='rich51':
+              boot_attr=json.loads((base/'default.project.json').read_text('utf8'))['tree'].get('ServerStorage',{}).get('$attributes',{}).get('P0D_RC_ENABLE_WCS_F01_C01')
+              assert boot_attr is (True if wcs_enabled else None),('WCS_BOOT_ATTR_MISMATCH',boot_attr,wcs_enabled)
+          if wcs_enabled:
+              assert titles[('Script','WCS_CrystalCanyon')]==1
+              assert sum('playerIsInGateClosureZone()' in src for src in included)==1
+          else:
+              assert titles[('Script','WCS_CrystalCanyon')]==0
+          if seven_enabled:
+              assert titles[('ModuleScript','SevenJobsRules')]==1
+              assert sum('action("JOB_SKILL",nil)' in src for src in included)==1
+              assert sum('P0D_RC_ENABLE_SEVEN_JOBS_PVE' in src for src in included)==1
+              assert sum('horde:hit(source,dir,damage,serverNow(),player.Character)' in src for src in included)==1
+              assert 'SavedPveMasteryPolicy' in ''.join(included.elements())
+              assert json.loads((base/'default.project.json').read_text('utf8'))['tree']['ServerStorage']['$attributes']['P0D_RC_ENABLE_SEVEN_JOBS_PVE'] is True
+          else:
+              assert titles[('ModuleScript','SevenJobsRules')]==0
+          if egg_enabled:
+              assert seven_enabled and wcs_enabled
+              assert titles[('ModuleScript','EggRelayPolicy')]==1
+              assert sum('local function applyClassicEggRelay(' in src for src in included)==1
+              assert sum('relayButton.MouseButton1Click:Connect(fireClassicEggRelay)' in src for src in included)==1
+              game_source=(base/'src/server/Game.server.luau').read_text('utf8')
+              assert game_source.count('return flag ~= nil and flag:IsA("BoolValue")')==1
+              project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
+              assert project['ServerStorage']['P0D_RC_ENABLE_EGG_RELAY_CLASSIC']['$className']=='BoolValue'
+              assert project['ServerStorage']['P0D_RC_ENABLE_EGG_RELAY_CLASSIC']['$properties']['Value'] is True
+          else:
+              assert titles[('ModuleScript','EggRelayPolicy')]==0
+          if star_enabled:
+              assert wcs_enabled and seven_enabled and egg_enabled
+              assert titles[('Script','StarfallPath')]==1
+              star_source=(base/'src/server/StarfallPath.server.luau').read_text('utf8')
+              assert star_source.count('P0D_STARRY_PATH')>=1
+              assert sum('if active and os.clock()>=expiresAt and not occupied()' in src for src in included)==1
+              assert sum('GetAttribute("P0D_RC_ENABLE_STARRY_PATH_V1")~=true' in src for src in included)==1+int(shards_enabled), ('STAR_BOOT_GUARD_PER_FEATURE',shards_enabled)
+              project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
+              assert project['ServerStorage']['$attributes']['P0D_RC_ENABLE_STARRY_PATH_V1'] is True
+          else:
+              assert titles[('Script','StarfallPath')]==0
+          if meteor_enabled:
+              assert star_enabled and wcs_enabled and seven_enabled and egg_enabled
+              assert titles[('Script','MeteorFourth')]==1
+              meteor=(base/'src/server/MeteorFourth.server.luau').read_text('utf8')
+              assert meteor.count('local QUIET_SECONDS = 55')==1
+              assert 'local z = (west.Position.Z + east.Position.Z) * 0.5 - 17' in meteor
+              project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
+              boot=project['ServerStorage']['P0D_ENABLE_METEOR_SHORTCUT_V1']
+              assert boot['$className']=='BoolValue' and boot['$properties']['Value'] is True
+              root=ET.fromstring(target.read_bytes())
+              flags_xml=[]
+              for node in root.iter('Item'):
+                  if node.get('class')!='BoolValue':continue
+                  name=node.find("./Properties/string[@name='Name']")
+                  if name is not None and name.text=='P0D_ENABLE_METEOR_SHORTCUT_V1':
+                      flags_xml.append(node)
+              assert len(flags_xml)==1,('METEOR_BOOT_ROJO_MISSING',len(flags_xml))
+              value=flags_xml[0].find("./Properties/bool[@name='Value']")
+              assert value is not None and (value.text or '').lower()=='true'
+              print('P0D_PRIVATE62_METEOR_FOURTH_REAL_ROJO_BOOLVALUE_PASS')
+          else:
+              assert titles[('Script','MeteorFourth')]==0
+          if shards_enabled:
+              assert meteor_enabled and star_enabled and egg_enabled
+              assert titles[('Script','StarShardHunt')]==1
+              shards=(base/'src/server/StarShardHunt.server.luau').read_text('utf8')
+              assert 'Workspace:WaitForChild("P0D_STARRY_PATH",170)' in shards
+              assert 'local locations={1,3,5,6,8,10}' in shards
+              assert 'local TOTAL=6' in shards
+              assert 'stage:GetAttribute("PathOpen")~=true' in shards
+              assert 'if not stone.CanCollide then return end' in shards
+              assert 'P0D_RC_ENABLE_STAR_SHARDS_V1' in shards
+              project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
+              assert project['ServerStorage']['$attributes']['P0D_RC_ENABLE_STAR_SHARDS_V1'] is True
+          else:
+              assert titles[('Script','StarShardHunt')]==0
+          if p=='rich51':
+              assert 'local function layoutRelayTouch()' in (base/'src/client/HUD.client.luau').read_text('utf8')
+          if twin_enabled:
+              assert wcs_enabled and seven_enabled and egg_enabled and star_enabled and meteor_enabled and shards_enabled
+              assert titles[('Script','TwinBiomes')]==1
+              twin=(base/'src/server/TwinBiomes.server.luau').read_text('utf8')
+              for name in ('AWARIN','SANGORU','RAIKO','KUMONON'):
+                  assert 'id = "'+name+'"' in twin, ('MISSING_CHARACTER',name)
+              for shape in ('BubbleHalo','CoralAntler_','ThunderHorn_','CloudWing_'):
+                  assert shape in twin,('MISSING_SPECIES_SILHOUETTE',shape)
+              assert 'entry.model:PivotTo(' in twin, 'MISSING_NPC_IDLE_MOTION'
+              assert 'player:SetAttribute("P0D_TwinCodexCount",count)' in twin
+              assert 'player:SetAttribute("P0D_TwinCodexComplete",count==4)' in twin
+              assert 'world:SetAttribute("CharacterInstances", 8)' in twin
+              assert 'world:SetAttribute("BothTeamsAccess", true)' in twin
+              assert 'if not value or not value:IsA("BoolValue") or value.Value ~= true then' in twin
+              cfg=json.loads((base/'default.project.json').read_text('utf8'))['tree']
+              boot=cfg['ServerStorage']['P0D_ENABLE_TWIN_BIOMES_V1']
+              assert boot['$className']=='BoolValue' and boot['$properties']['Value'] is True
+              root=ET.fromstring(target.read_bytes())
+              matches=[]
+              for node in root.iter('Item'):
+                  if node.get('class')!='BoolValue': continue
+                  n=node.find("./Properties/string[@name='Name']")
+                  if n is not None and n.text=='P0D_ENABLE_TWIN_BIOMES_V1':
+                      matches.append(node)
+              assert len(matches)==1,('TWIN_BOOT_MISSING_OR_DUPLICATE',len(matches))
+              v=matches[0].find("./Properties/bool[@name='Value']")
+              assert v is not None and (v.text or '').lower()=='true'
+              print('P0D_PRIVATE64_ANIMATED_4_CHARACTERS_TWO_WORLDS_ROJO_SOURCE_EXACT_PASS')
+          else:
+              assert titles[('Script','TwinBiomes')]==0
+          if training_enabled:
+              assert twin_enabled
+              assert titles[('ModuleScript','TwinCreatureTraining')]==1
+              trained=(base/'src/server/TwinBiomes.server.luau').read_text('utf8')
+              pure=(base/'src/server/TwinCreatureTraining.luau').read_text('utf8')
+              assert 'local level=awardPractice(player,info,npc,crest)' in trained
+              assert 'npc:SetAttribute("EvolutionStage",3)' in trained
+              assert 'local duration = Training.effectSeconds(level)' in trained
+              assert 'function Training.advance(' in pure
+              assert 'local REPEAT_WAIT_SECONDS = 20' in pure
+              assert 'local MAX_PRACTICE = 7' in pure
+              print('P0D_PRIVATE65_TWIN_TRAINING_REAL_ROJO_MODULE_SINGLETON_PASS')
+          else:
+              assert titles[('ModuleScript','TwinCreatureTraining')]==0
+          if bond_enabled:
+              assert twin_enabled and training_enabled
+              assert titles[('ModuleScript','TwinBondPolicy')]==1
+              assert titles[('Script','Game')]==1 and titles[('Script','TwinBiomes')]==1
+              game_src=(base/'src/server/Game.server.luau').read_text('utf8')
+              twin_src=(base/'src/server/TwinBiomes.server.luau').read_text('utf8')
+              bond_src=(base/'src/server/TwinBondPolicy.luau').read_text('utf8')
+              assert game_src.count('remote.OnServerEvent:Connect(')==1
+              assert game_src.count('*twinBondOnlyNeutralMobBonus(player)')==1
+              assert game_src.count('local function twinBondOnlyNeutralMobBonus(')==1
+              assert 'match.phase~="ACTIVE" or carry[player]~=nil' in game_src
+              assert 'local Bond = require(script.Parent:WaitForChild("TwinBondPolicy"))' in twin_src
+              assert 'summonBoundCompanion(player,info,level)' in twin_src
+              assert 'buddy.CanCollide=false' in twin_src
+              assert 'bondFlag.Value~=true then return end' in twin_src
+              assert 'local twinBondStorage = game:GetService("ServerStorage")' in game_src
+              assert 'math.min(3.8,savedPveMinionMultiplier(player)' in game_src
+              assert 'Bond.snapshot(player,timeNow)' in twin_src
+              assert 'function Bond.pveMultiplier(' in bond_src
+              project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
+              boot=project['ServerStorage']['P0D_ENABLE_TWIN_BOND_PVE_V1']
+              assert boot['$className']=='BoolValue' and boot['$properties']['Value'] is True
+              print('P0D_PRIVATE66_SINGLE_GAME_ONLY_NEUTRAL_PVE_BONDED_COMPANION_ROJO_PASS')
+          else:
+              assert titles[('ModuleScript','TwinBondPolicy')]==0
+          if p=='rich51':
+              assert titles[('Script','V4TrainingBridge')]==1
+              assert titles[('LocalScript','V4TrialOverlay')]==1
+          if p=='rich47':
+              assert titles[('Script','V4TrainingBridge')]==0
+          digest=hashlib.sha256(target.read_bytes()).hexdigest()
+          source=os.environ['EXPECTED_SOURCE']
+          overlay_ids=(
+            ['V4_IDLE_FRIEND_SAFE_FIX'] if p=='rich51' and json.load(
+                open('rc_fastlane/ACTIVE.json',encoding='utf8')
+              )['feature_switches']['V4_IDLE_FRIEND_SAFE_FIX']['enabled'] else [])
+          place_bytes=target.stat().st_size
+          if p=='rich51':
+              assert place_bytes>507197 and place_bytes<2000000,('IMPLAUSIBLE_PRIVATE61_PLACE_SIZE',place_bytes)
+              print('P0D_PRIVATE63_ACTUAL_PLACE_RBXLX_BYTES',place_bytes)
+              print('P0D_PRIVATE63_SOURCE_PRESERVED_SIX_FEATURES',sum(actual.values()),int(wcs_enabled),int(seven_enabled),int(egg_enabled),int(star_enabled),int(meteor_enabled),int(shards_enabled))
+          receipt={'release_id':'P0D-S1-KIDS-RC01','profile':p,'source_commit':source,
+            'source_overlays':overlay_ids,'composite_rc_source_commit':os.environ['GITHUB_SHA'],
+            'rc_branch_commit':os.environ['GITHUB_SHA'],'place_sha256':digest,
+            'source_count':sum(actual.values()),'exact_rojo_binary':True,
+            'actual_uncompressed_place_bytes':place_bytes,
+            'source_candidate_stage':(('CANONICAL_RC66_SOURCE_ADOPTED_STUDIO_NOT_TESTED' if bond_enabled
+                else 'CANONICAL_RC65_SOURCE_ADOPTED_STUDIO_NOT_TESTED')
+                if p=='rich51' and os.environ.get('GITHUB_REF')=='refs/heads/rc/p0d-s1-kids-rc01'
+                else 'PRIVATE_CANDIDATE_OR_FALLBACK_NOT_OFFICIAL_RC'),
+            'canonical_rc_source_adopted':bool(
+                p=='rich51' and os.environ.get('GITHUB_REF')=='refs/heads/rc/p0d-s1-kids-rc01'),
+            'native_policy_cases_7jobs':33 if p=='rich51' else None,
+            'native_policy_cases_relay':41 if p=='rich51' else None,
+            'native_original_Game_relay_cases':31 if p=='rich51' else None,
+            'sixskill_durable_dev_code_included':bool(durable_enabled),
+            'saved_pve_mastery_included':bool(saved_pve_enabled),
+            'saved_beast_evolution_included':bool(saved_beast_enabled),
+            'existing_three_scout_species_included':bool(species_enabled),
+            'wcs_crystal_canyon_moguron_included':bool(wcs_enabled),
+            'seven_jobs_neutral_pve_included':bool(seven_enabled),
+            'egg_relay_classic_one_egg_included':bool(egg_enabled),
+            'starry_path_third_canyon_route_included':bool(star_enabled),
+            'meteor_fourth_canyon_route_included':bool(meteor_enabled),
+            'star_shards_six_fragment_session_quest':bool(shards_enabled),
+            'twin_biomes_two_worlds_four_species_animated_session_codex':bool(twin_enabled),
+            'twin_creature_training_session_only_3_levels':bool(training_enabled),
+            'twin_creature_native_real_policy_cases':38 if training_enabled else None,
+            'twin_bond_one_active_session_companion_pve_only':bool(bond_enabled),
+            'twin_bond_native_policy_cases':47 if bond_enabled else None,
+            'twin_biomes_engine_2client_android_fun':'NOT_TESTED',
+            'star_shards_native_policy_cases':22 if shards_enabled else None,
+            'mobile_relay_touch_geometry_12viewports_144checks':True if shards_enabled else None,
+            'meteor_engine_2client':'NOT_TESTED',
+            'starry_path_engine_2client':'NOT_TESTED',
+            'egg_relay_five_egg_supported':False,
+            'egg_relay_engine':'NOT_TESTED',
+            'seven_jobs_pvp_full_implementation':False,
+            'seven_jobs_engine':'NOT_TESTED',
+            'wcs_engine_physics':'NOT_TESTED',
+            'species_engine_qa':'NOT_TESTED',
+            'saved_beast_engine_qa':'NOT_TESTED',
+            'saved_pve_minion_only':True if saved_pve_enabled else None,
+            'saved_pve_engine_qa':'NOT_TESTED',
+            'sixskill_real_Studio_DEV_UpdateAsync':'NOT_TESTED',
+            'single_game':True,'owner_studio_2client':'NOT_TESTED',
+            'android':'NOT_TESTED','owner_fun':'NOT_TESTED',
+            'production_publish':False,'sixskill_persistent':False,
+            's1_score_prior_only':75,
+            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled,'STAR_SHARDS_V1':shards_enabled,'TWIN_BIOMES_4NPC_V1':twin_enabled,'TWIN_CREATURE_TRAINING_V1':training_enabled,'TWIN_BOND_PVE_COMPANION_V1':bond_enabled},
+            'base_author_51_preserved':True if realm_enabled else None,
+            'new_realms_studio_2client':'NOT_TESTED'}
+          (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          print('OFFICIAL_RC_FASTLANE_BINARY_SOURCE_EXACT_PASS',p,digest)
+          PY
+      - name: Inspect real assembled private63 Rojo boot + Meteor + shards + mobile HUD
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/verify_private63.py \
+              --dist "$DIST" --place /tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx
+          fi
+      - name: Generate OWNER feature progress in the SAME RC build (no second QA run)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B rc_fastlane/progress.py --out /tmp/p0d_rc_out/FEATURE_PROGRESS.md --json /tmp/p0d_rc_out/FEATURE_PROGRESS.json
+          grep -F P0D /tmp/p0d_rc_out/FEATURE_PROGRESS.md | head -2
+      - name: Measure actual source-exact Place size and SHA with explicit Private64 source count
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B rc_fastlane/rc_capacity.py --out-dir /tmp/p0d_rc_out
+          if [ "$PROFILE" = rich51 ]; then
+            python3 - <<'PY'
+          import json
+          x=json.load(open('/tmp/p0d_rc_out/RC_CAPACITY_REPORT.json'))
+          assert x['native_source_count']==64+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
+          assert x['rbxlx_bytes']>571621 and x['rbxlx_bytes']<2000000
+          print('P0D_PRIVATE64_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
+          PY
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: P0D-CANONICAL-RC-STUDIO-${{ env.PROFILE }}
+          path: /tmp/p0d_rc_out/*
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: P0 FB-008/015 private67 ART-COMBAT visual full source-exact (after unchanged RC artifact upload)
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+          python3 -B -m unittest discover -s rc_fastlane -p 'test_fb015_combat.py' -v
+          test -x /tmp/p0d_new_luau/luau-compile
+          BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          python3 -B rc_fastlane/apply_fb015_combat.py --dist "$DIST" --enabled false
+          AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          test "$BEFORE" = "$AFTER"
+          python3 -B rc_fastlane/apply_fb015_combat.py --dist "$DIST" --enabled true
+          python3 -B rc_fastlane/features/fb015_combat/generate_native_cue_policy.py --out /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau
+          test -x /tmp/p0d_new_luau/luau
+          /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau | tee /tmp/p0d_combat_native14.log
+          grep -Fx P0D_FB015_REAL_CLIENT_CUE_NATIVE_34_ORDERED_EPOCH_CASES_PASS /tmp/p0d_combat_native14.log
+          python3 -B rc_fastlane/features/fb015_combat/generate_native_history_policy.py --out /tmp/P0D_FB015_ACTUAL_HISTORY.luau
+          /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_HISTORY.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_HISTORY.luau | tee /tmp/p0d_combat_history.log
+          grep -Fx P0D_FB015_REAL_SERVER_RECENT_HISTORY_NATIVE_PASS /tmp/p0d_combat_history.log
+          mkdir -p /tmp/p0d_art_combat_private67
+          find "$DIST/src" -type f -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o /tmp/p0d_art_combat_private67/P0D_ART_COMBAT_PRIVATE67.rbxlx
+          python3 - <<'PY'
+          import pathlib,json,collections,xml.etree.ElementTree as ET,hashlib
+          dist=pathlib.Path('_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE')
+          output=pathlib.Path('/tmp/p0d_art_combat_private67')
+          place=output/'P0D_ART_COMBAT_PRIVATE67.rbxlx'
+          scripts=list((dist/'src').rglob('*.luau'))
+          assert len(scripts)==67, ('PRIVATE67_SOURCE_COUNT',len(scripts))
+          actual=collections.Counter(p.read_text('utf8') for p in scripts)
+          embedded=collections.Counter()
+          named=collections.Counter()
+          for item in ET.fromstring(place.read_bytes()).iter('Item'):
+              if item.get('class') not in ('Script','LocalScript','ModuleScript'):continue
+              src=item.find("./Properties/string[@name='Source']")
+              if src is None:continue
+              embedded[src.text or '']+=1
+              node=item.find("./Properties/string[@name='Name']")
+              if node is not None:named[(item.get('class'),node.text)]+=1
+          assert actual==embedded, ('PRIVATE67_SOURCE_EXACT_MISMATCH',len(actual),len(embedded))
+          assert named[('Script','Game')]==1
+          assert named[('LocalScript','ArtCombatSlash')]==1
+          assert named[('ModuleScript','MusouHorde')]==1
+          assert (dist/'src/server/MusouHorde.luau').read_bytes().count(b'P0D_ART_COMBAT_SIGNAL_V1')==1
+          sp=json.loads((dist/'SOURCE_LOCK.json').read_text('utf8'))
+          fp=json.loads((dist/'RC_FEATURE_LOCK.json').read_text('utf8'))
+          assert sp['total_scripts']==fp['total_sources']==67
+          assert sp['blobs']==fp['source_gitblobs']
+          assert sp['art_combat']['unchanged_original_sources']==65
+          assert sp['art_combat']['owner_fun']=='ART_NO_GO'
+          assert fp['feature_flags']['ART_COMBAT_SLASH_READONLY_V1'] is True
+          candidate=(dist/'src/client/ArtCombatSlash.client.luau').read_bytes()
+          assert hashlib.sha1(b'blob '+str(len(candidate)).encode()+bytes([0])+candidate).hexdigest()=='257f5da5e40c0af89220745d576763f513a7e6ef'
+          old=pathlib.Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx')
+          digest=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt={
+              'result':'P0D_ART_COMBAT_PRIVATE67_NATIVE_ROJO_SOURCE_EXACT_PASS',
+              'private_candidate_sha256':digest,
+              'private_candidate_rbxlx_bytes':place.stat().st_size,
+              'source_count':len(scripts),
+              'source_gitblob':'257f5da5e40c0af89220745d576763f513a7e6ef',
+              'horde_signal_blob':'a2d07936bd9fe5bdf3630498c39d61d5a8560d99',
+              'original_rc66_unchanged_scripts':65,
+              'single_original_horde_cosmetic_cue_patch_only':True,
+              'baseline_rc66_place_bytes':old.stat().st_size,
+              'baseline_rc66_place_sha256':hashlib.sha256(old.read_bytes()).hexdigest(),
+              'source_stage':'PRIVATE_PREP_NOT_OFFICIAL_RC',
+              'studio':'NOT_TESTED','android':'NOT_TESTED','owner_fun':'ART_NO_GO',
+          }
+          (output/'ART_COMBAT_PRIVATE67_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          (output/'SOURCE_LOCK.json').write_text(json.dumps(sp,indent=2)+'\n')
+          (output/'RC_FEATURE_LOCK.json').write_text(json.dumps(fp,indent=2)+'\n')
+          print(receipt)
+          PY
+          # #374+381 integration: separate scratch output, NO official RC writes.
+          python3 -B -m unittest discover -s rc_fastlane -p 'test_fb015_composite.py' -v
+          python3 -B rc_fastlane/features/art_minion/generate_native_spark_policy.py --out /tmp/P0D_FB015_ACTUAL_SPARK_POLICY.luau
+          /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_SPARK_POLICY.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_SPARK_POLICY.luau | tee /tmp/p0d_art_spark_native12.log
+          grep -Fx P0D_FB015_ACTUAL_MINION_SPARK_NATIVE_12_CASES_PASS /tmp/p0d_art_spark_native12.log
+          grep -Fx P0D_FB015_ACTUAL_SERVER_SPARK_QUEUE_NATIVE_PASS /tmp/p0d_art_spark_native12.log
+          PRIVATE67_BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          COMBO_DIST=/tmp/p0d_fb015_combined_private68
+          COMBO_OUT=/tmp/p0d_art_minion_combat_private68
+          mkdir -p "$COMBO_OUT"
+          python3 -B rc_fastlane/compose_fb015_minion_combat.py --dist "$DIST" --out "$COMBO_DIST" --enabled false
+          python3 -B rc_fastlane/compose_fb015_minion_combat.py --dist "$DIST" --out "$COMBO_DIST" --enabled true
+          find "$COMBO_DIST/src" -type f -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$COMBO_DIST/default.project.json" -o "$COMBO_OUT/P0D_FB015_MINION_COMBAT_PRIVATE68.rbxlx"
+          python3 - <<'PY'
+          from pathlib import Path
+          import collections,hashlib,json,xml.etree.ElementTree as ET
+          dist=Path('/tmp/p0d_fb015_combined_private68')
+          out=Path('/tmp/p0d_art_minion_combat_private68')
+          place=out/'P0D_FB015_MINION_COMBAT_PRIVATE68.rbxlx'
+          inputs=list((dist/'src').rglob('*.luau'))
+          actual=collections.Counter(p.read_text('utf8') for p in inputs)
+          assert len(inputs)==68,('COMPOSITE_SOURCE_COUNT',len(inputs))
+          contained=collections.Counter()
+          names=collections.Counter()
+          for item in ET.fromstring(place.read_bytes()).iter('Item'):
+              if item.get('class') not in ('Script','ModuleScript','LocalScript'):continue
+              src=item.find("./Properties/string[@name='Source']")
+              if src is None:continue
+              contained[src.text or '']+=1
+              node=item.find("./Properties/string[@name='Name']")
+              if node is not None:names[(item.get('class'),node.text)]+=1
+          assert actual==contained,('COMPOSITE_SOURCE_EXACT_MISMATCH',len(actual),len(contained))
+          assert names[('Script','Game')]==1
+          assert names[('ModuleScript','MusouHorde')]==1
+          assert names[('Script','ArtMinionSilhouette')]==1
+          assert names[('LocalScript','ArtCombatSlash')]==1
+          locks=json.loads((dist/'SOURCE_LOCK.json').read_text('utf8'))
+          flags=json.loads((dist/'RC_FEATURE_LOCK.json').read_text('utf8'))
+          digest=lambda raw:hashlib.sha1(b'blob '+str(len(raw)).encode()+bytes([0])+raw).hexdigest()
+          pins={p.relative_to(dist/'src').as_posix():digest(p.read_bytes()) for p in inputs}
+          assert locks['total_scripts']==flags['total_sources']==len(inputs)==68
+          assert locks['blobs']==flags['source_gitblobs']==pins
+          assert flags['feature_flags']['ART_COMBAT_SLASH_READONLY_V1'] is True
+          assert flags['feature_flags']['ART_MINION_THREE_SILHOUETTES_V1'] is True
+          assert pins['server/ArtMinionSilhouette.server.luau']=='4d0aac99d670ca4364a7368255d1edc63d28b3a0'
+          assert pins['client/ArtCombatSlash.client.luau']=='257f5da5e40c0af89220745d576763f513a7e6ef'
+          assert pins['server/MusouHorde.luau']=='a2d07936bd9fe5bdf3630498c39d61d5a8560d99'
+          baseline=Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx')
+          receipt={
+              'result':'P0D_FB015_MINION_COMBAT_PRIVATE68_BOTH_SOURCE_EXACT_PASS',
+              'source_count':len(inputs),'server_game_count':names[('Script','Game')],
+              'minion_silhouettes_and_combat_slash_together':True,
+              'original_66_unmodified_sources':65,
+              'only_existing_modified_script':'server/MusouHorde.luau',
+              'private_place_bytes':place.stat().st_size,
+              'private_place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+              'baseline_rc66_place_bytes':baseline.stat().st_size,
+              'composite_receipt':locks['art_minion_combo'],
+              'status':'PRIVATE_SOURCE_QA_ONLY',
+              'official_rc_adopted':False,
+              'studio':'NOT_TESTED','android':'NOT_TESTED','owner_fun':'ART_NO_GO',
+              'sourcery_latest_findings':'OPEN',
+          }
+          (out/'FB015_MINION_COMBAT_PRIVATE68_RECEIPT.json').write_text(
+              json.dumps(receipt,indent=2,ensure_ascii=False)+'\n','utf8')
+          (out/'SOURCE_LOCK.json').write_text(
+              json.dumps(locks,indent=2,ensure_ascii=False)+'\n','utf8')
+          (out/'RC_FEATURE_LOCK.json').write_text(
+              json.dumps(flags,indent=2,ensure_ascii=False)+'\n','utf8')
+          print(receipt)
+          PY
+          # #388 latest-pinned #387 d3ce epoch+hit-history: separate PRIVATE69.
+          python3 -B -m unittest discover -s rc_fastlane -p 'test_art_motion_source.py' -v
+          python3 -B -m unittest discover -s rc_fastlane -p 'test_art_motion_composite.py' -v
+          python3 -B rc_fastlane/features/art_motion/generate_native_motion_policy.py --out /tmp/P0D_FB015_EPOCH_NATIVE_MOTION_POLICY.luau
+          /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_EPOCH_NATIVE_MOTION_POLICY.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/P0D_FB015_EPOCH_NATIVE_MOTION_POLICY.luau | tee /tmp/P0D_FB015_EPOCH_NATIVE_MOTION_POLICY.log
+          grep -Fx P0D_FB015_ACTUAL_MOTION_EPOCH_HISTORY_NATIVE_POLICY_PASS /tmp/P0D_FB015_EPOCH_NATIVE_MOTION_POLICY.log
+          PARENT68_BEFORE=$(find "$COMBO_DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          # Observe the entire 68 blob source map; the composer MUST fail
+          # closed until this digest is explicitly frozen in its SOURCE PIN.
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          p=Path('/tmp/p0d_fb015_combined_private68')
+          pins=json.loads((p/'SOURCE_LOCK.json').read_text('utf8'))['blobs']
+          assert len(pins)==68
+          digest=hashlib.sha256(json.dumps(pins,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+          print('P0D_FB015_D3CE_PARENT68_REAL_ALL_SOURCE_MAP_SHA256',digest)
+          PY
+          MOTION_DIST=/tmp/p0d_fb015_epoch_motion69_private_source
+          MOTION_OUT=/tmp/p0d_fb015_epoch_motion69_private_place
+          mkdir -p "$MOTION_OUT"
+          python3 -B rc_fastlane/compose_fb015_art_motion.py --dist "$COMBO_DIST" --out "$MOTION_DIST" --enabled false
+          python3 -B rc_fastlane/compose_fb015_art_motion.py --dist "$COMBO_DIST" --out "$MOTION_DIST" --enabled true
+          total=0
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+            total=$((total+1))
+          done < <(find "$MOTION_DIST/src" -type f -name '*.luau' -print0)
+          test "$total" -eq 69
+          echo P0D_FB015_EPOCH_MOTION69_REAL_LUAU_69_69_PASS
+          /tmp/p0d_rc_rojo build "$MOTION_DIST/default.project.json" -o "$MOTION_OUT/P0D_FB015_EPOCH_MOTION69_PRIVATE.rbxlx"
+          if python3 -O -B rc_fastlane/verify_motion69_rojo.py --parent "$COMBO_DIST" --dist "$MOTION_DIST" --place "$MOTION_OUT/P0D_FB015_EPOCH_MOTION69_PRIVATE.rbxlx" --receipt "$MOTION_OUT/OPTIMIZED_MUST_NOT_EXIST.json" >/tmp/P0D_FB015_OPTIMIZED_REJECT.log 2>&1; then
+            echo P0D_FAIL_OPEN_OPTIMIZED_VERIFIER >&2
+            exit 1
+          fi
+          grep -F P0D_ROJO69_OPTIMIZED_VALIDATOR_REFUSED /tmp/P0D_FB015_OPTIMIZED_REJECT.log
+          test ! -e "$MOTION_OUT/OPTIMIZED_MUST_NOT_EXIST.json"
+          python3 -B rc_fastlane/verify_motion69_rojo.py --parent "$COMBO_DIST" --dist "$MOTION_DIST" --place "$MOTION_OUT/P0D_FB015_EPOCH_MOTION69_PRIVATE.rbxlx" --receipt "$MOTION_OUT/FB015_EPOCH_MOTION69_RECEIPT.json"
+          python3 -B rc_fastlane/compose_fb015_art_motion.py --dist "$COMBO_DIST" --out "$MOTION_DIST" --enabled false
+          PARENT68_AFTER=$(find "$COMBO_DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          test "$PARENT68_BEFORE" = "$PARENT68_AFTER"
+          echo P0D_FB015_EPOCH_MOTION69_OFF_PARENT68_BYTE_EXACT_PASS
+          python3 -B rc_fastlane/compose_fb015_minion_combat.py --dist "$DIST" --out "$COMBO_DIST" --enabled false
+          PRIVATE67_AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          test "$PRIVATE67_BEFORE" = "$PRIVATE67_AFTER"
+          echo P0D_FB015_COMPOSITE_PRIVATE68_OFF_EXACT67_PRESERVED_PASS
+          python3 -B rc_fastlane/apply_fb015_combat.py --dist "$DIST" --enabled false
+          RESTORED=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          test "$BEFORE" = "$RESTORED"
+          echo ART_COMBAT_PRIVATE67_ROLLBACK_ORIGINAL66_ALL_DIST_BYTES_PASS
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-FB015-ART-COMBAT-PRIVATE67
+          path: /tmp/p0d_art_combat_private67/*
+          retention-days: 7
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-FB015-ART-MINION-COMBAT-PRIVATE68
+          path: /tmp/p0d_art_minion_combat_private68/*
+          retention-days: 7
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-FB015-EPOCH-HISTORY-MOTION69-PRIVATE
+          path: /tmp/p0d_fb015_epoch_motion69_private_place/*
+          retention-days: 7
+          if-no-files-found: error
