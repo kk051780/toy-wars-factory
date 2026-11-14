@@ -27,7 +27,9 @@ function Bond.select(player, speciesId, level, now)
     state[player]={
         species=speciesId,level=level,
         untilAt=now+MAX_DURATION,
-        switchAt=now+SWITCH_WAIT,
+        -- Refreshing an already-bound species must not postpone the next switch.
+        switchAt=(old and old.untilAt>now and old.species==speciesId)
+            and old.switchAt or (now+SWITCH_WAIT),
     }
     return true,speciesId
 end
