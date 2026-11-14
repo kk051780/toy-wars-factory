@@ -125,8 +125,8 @@ def apply(base: Path, output: Path, enabled: bool) -> bool:
         "official_rc_adopted":False,
         "rollback":"Omit the new Script and retain all prior 80 bytes"
     }
-    fl["total_sources"]=81
-    sl["total_scripts"]=81
+    fl["total_sources"]=82
+    sl["total_scripts"]=82
     sl["blobs"]=pins
     fl["source_gitblobs"]=pins
     fl["feature_flags"][FEATURE]=True
