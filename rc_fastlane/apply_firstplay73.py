@@ -75,7 +75,7 @@ def modules():
         assert gitblob(content)==pin,("FIRSTPLAY_MODULE_DRIFT",dest)
         text=content.decode("utf8")
         if "Lobby" in dest:
-            assert "LobbyDojoIsland" in text and "padPosition" in text
+            assert "function Lobby.padPosition(" in text and "function Lobby.build(" in text
         else:
             assert "PathfindingService" in text and "Bot.tryHumanHit" in text
             assert "Bot.start" in text and "Bot.tick" in text
