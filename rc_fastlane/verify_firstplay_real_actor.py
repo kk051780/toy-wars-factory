@@ -137,6 +137,10 @@ local active=false
 local lastTick=-math.huge
 local MAX_BOTS=5
 local inflightPaths=0
+local warningLog={}
+local function warn(...)
+  table.insert(warningLog,{...})
+end
 local world={model=Instance.new("Folder"),
    teams={RED={spawn=CFrame.new(-30,0,0)},
           BLUE={spawn=CFrame.new(30,0,0)}}}
@@ -176,6 +180,19 @@ for _,b in ipairs(bots) do
     "ACTOR_TEAM_TAGS_PRESENT")
 end
 check(allies==2 and opponents==3,"REAL_FORMATION_TWO_VS_THREE")
+-- A carried egg drop that throws must NOT interrupt the teardown of
+-- all five actors/folder or leave path leases held.
+local visual=Instance.new("Part")
+bots[1].carry="BLUE"
+bots[1].carryVisual=visual
+local dropped=0
+authority.drop=function()
+  dropped+=1
+  error("INJECTED_DROP_FAILURE")
+end
+local lease={held=true}
+bots[2].pathLease=lease
+inflightPaths=1
 local previousModels={}
 for _,b in ipairs(bots) do table.insert(previousModels,b.model) end
 local previousFolder=folder
@@ -186,11 +203,17 @@ check(not active and #bots==0 and folder==nil,
   "REAL_BOT_STOP_CLEARS_ALL_ROSTER_AND_FOLDER")
 check(previousFolder.destroyed==true,
   "REAL_BOT_STOP_DESTROYS_FOLDER")
+check(dropped==1 and #warningLog>=1,
+  "THROWING_EGG_DROP_RECORDED_AND_RECOVERY_CONTINUED")
+check(visual.destroyed==true,"HELD_EGG_VISUAL_DESTROYED")
+check(lease.held==false and inflightPaths==0,
+  "HELD_PATH_LEASE_RELEASED_DESPITE_DROP_FAILURE")
 local deadModels=0
 for _,m in ipairs(previousModels) do
   if m.destroyed and m.Parent==nil then deadModels+=1 end
 end
 check(deadModels==5,"REAL_BOT_STOP_DESTROYS_ALL_FIVE_MODELS")
+authority.drop=function() dropped+=1 end
 Players.online={human,spectator}
 check(Bot.start(world,"RED",authority)==true,
   "REAL_RESTART_AFTER_FAILED_START")
@@ -199,7 +222,7 @@ Bot.stop()
 check(#bots==0 and folder==nil and not active,
   "REAL_STOP_IDEMPOTENT_CLEANUP")
 check(inflightPaths==0,"STOP_RELEASED_ALL_LEASES")
-print("P0D_REAL_BOT_ACTOR_START_STOP_19_NATIVE_CASES_PASS")
+print("P0D_REAL_BOT_ACTOR_START_STOP_22_NATIVE_CASES_PASS")
 '''
 if __name__=="__main__":
     p=argparse.ArgumentParser()
