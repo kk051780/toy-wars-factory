@@ -29,7 +29,8 @@ def verify(dist: Path,output: Path) -> None:
     assert 'table.insert(bots,makeActor(' in start
     assert 'assert(#bots==MAX_BOTS)' in start
     assert 'bot.unstuckAttempts=((bot.unstuckAttempts or 0)%4)+1' in move
-    assert 'bot.hum:MoveTo(position+detour)' in move
+    assert 'bot.hum:MoveTo(bot.detourGoal)' in move
+    assert 'now<bot.detourUntil and gap>2.5' in move
     assert 'bot.hum.Jump=true' in move
     assert 'if bot.lastGoal==nil or (bot.lastGoal-goal).Magnitude>8 then' in move
     assert 'pathTo(bot,goal,now)' in move
