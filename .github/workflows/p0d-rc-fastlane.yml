@@ -18,6 +18,7 @@ on:
       - feature/p0d-prep-solo-roster-path-20261114
       - feature/p0d-prep-solo-path-recovery-20261114
       - feature/p0d-prep-path-lease-detour-20261114
+      - feature/p0d-prep-path-callback-stop-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -465,7 +466,7 @@ jobs:
             /tmp/p0d_new_luau/luau /tmp/P0D_SOLO_REAL_BOT_TICK_JOURNEY.luau | tee /tmp/p0d_solo_tick_journey.log
             grep -Fx P0D_SOLO_REAL_GAME_BOT_TICK_25_NATIVE_CASES_PASS /tmp/p0d_solo_tick_journey.log
           fi
-      - name: P0 actual Bot.start and goal-directed sticky detour 35 native cases
+      - name: P0 actual Bot.start, sticky detour and elevated goals 38 native cases
         shell: bash
         run: |
           set -euo pipefail
@@ -475,9 +476,9 @@ jobs:
               --out /tmp/P0D_SOLO_ACTUAL_START_AND_STALL.luau
             /tmp/p0d_new_luau/luau-compile /tmp/P0D_SOLO_ACTUAL_START_AND_STALL.luau >/dev/null
             /tmp/p0d_new_luau/luau /tmp/P0D_SOLO_ACTUAL_START_AND_STALL.luau | tee /tmp/p0d_solo_start_stall.log
-            grep -Fx P0D_SOLO_REAL_BOT_START_AND_STALL_35_NATIVE_CASES_PASS /tmp/p0d_solo_start_stall.log
+            grep -Fx P0D_SOLO_REAL_BOT_START_AND_STALL_38_NATIVE_CASES_PASS /tmp/p0d_solo_start_stall.log
           fi
-      - name: P0 source-exact actor factory and real stop 19 native cases
+      - name: P0 source-exact actor respawn, throwing carry-stop cleanup 26 native cases
         shell: bash
         run: |
           set -euo pipefail
@@ -487,9 +488,9 @@ jobs:
               --out /tmp/P0D_SOLO_ACTUAL_R6_ACTOR_LIFECYCLE.luau
             /tmp/p0d_new_luau/luau-compile /tmp/P0D_SOLO_ACTUAL_R6_ACTOR_LIFECYCLE.luau >/dev/null
             /tmp/p0d_new_luau/luau /tmp/P0D_SOLO_ACTUAL_R6_ACTOR_LIFECYCLE.luau | tee /tmp/p0d_actor_lifecycle.log
-            grep -Fx P0D_REAL_BOT_ACTOR_START_STOP_19_NATIVE_CASES_PASS /tmp/p0d_actor_lifecycle.log
+            grep -Fx P0D_REAL_BOT_ACTOR_START_STOP_26_NATIVE_CASES_PASS /tmp/p0d_actor_lifecycle.log
           fi
-      - name: P0 source-exact path leases and delayed ComputeAsync 18 native cases
+      - name: P0 suspended ComputeAsync, GetWaypoints failure and lease 25 native cases
         shell: bash
         run: |
           set -euo pipefail
@@ -499,7 +500,7 @@ jobs:
               --out /tmp/P0D_SOLO_PATH_LEASE_REAL_SOURCE.luau
             /tmp/p0d_new_luau/luau-compile /tmp/P0D_SOLO_PATH_LEASE_REAL_SOURCE.luau >/dev/null
             /tmp/p0d_new_luau/luau /tmp/P0D_SOLO_PATH_LEASE_REAL_SOURCE.luau | tee /tmp/p0d_path_lease.log
-            grep -Fx P0D_REAL_BOT_PATH_LEASE_18_NATIVE_CASES_PASS /tmp/p0d_path_lease.log
+            grep -Fx P0D_REAL_BOT_PATH_LEASE_25_NATIVE_CASES_PASS /tmp/p0d_path_lease.log
           fi
       - name: Native-Luau behavioral check of actual OWNER lobby phase HUD
         shell: bash
