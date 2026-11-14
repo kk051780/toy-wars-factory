@@ -21,11 +21,10 @@ local function piece(model, core, name, size, offset, color, material, shape, al
     item.Color = color
     item.Material = material
     item.Transparency = alpha or 0
-    -- All art plates MUST follow the server-owned Core. Anchored decorative
-    -- pieces visually detach if the Horde moves Core.CFrame without PivotTo.
-    -- A massless weld is presentation-only, with no collisions/hit targets.
-    item.Anchored = false
-    item.Massless = true
+    -- Original server Horde moves the entire model via Model:PivotTo.
+    -- Keep this decorative Part anchored and in the same Model, so its
+    -- original silhouette follows PivotTo with NO welded physics assembly.
+    item.Anchored = true
     item.CanCollide = false
     item.CanTouch = false
     item.CanQuery = false
@@ -35,11 +34,6 @@ local function piece(model, core, name, size, offset, color, material, shape, al
         elseif shape == "cylinder" then item.Shape = Enum.PartType.Cylinder end
     end
     item.Parent = model
-    local weld = Instance.new("WeldConstraint")
-    weld.Name = "ART_CoreCosmeticWeld"
-    weld.Part0 = core
-    weld.Part1 = item
-    weld.Parent = item
     return item
 end
 
@@ -150,7 +144,7 @@ local function decorate(model)
         or not model.PrimaryPart then return end
     -- Mark before creating children to avoid duplicate asynchronous callbacks.
     model:SetAttribute("P0D_ART_MINION_V1", true)
-    model:SetAttribute("P0D_ART_MINION_WELDED", true)
+    model:SetAttribute("P0D_ART_MINION_SWAY_VISUAL", true)
     local typeId = if isElite then 4 else ((numeric-1)%3)+1
     local accent = if typeId==1 then rgb(84,179,224)
         elseif typeId==2 then rgb(114,226,231)
@@ -186,6 +180,9 @@ local function decorate(model)
     end
     table.insert(equipped,{
         model=model, core=core, moving=moving, sparks=sparks,
+        -- Cache once in model-space. Every art update re-derives from the
+        -- authoritative Core pose; no accumulating drift when Horde PivotTo's.
+        movingRelative=core.CFrame:ToObjectSpace(moving.CFrame),
         typeId=typeId, lastHit=false, lastDeath=false, id=numeric or 9,
     })
 end
@@ -222,7 +219,13 @@ heart = RunService.Heartbeat:Connect(function(dt)
         else
             -- Tiny cosmetic breathing/cloak motion; never touches author arms,
             -- original NPC movement or server hit/score logic.
-            item.moving.Transparency = .12 + .08*(.5+.5*math.sin(cycle*3+item.id))
+            local sway = math.sin(cycle * 2.8 + item.id * .73)
+            local flutter = math.sin(cycle * 4.2 + item.id * .37)
+            -- One subtle cloak/fur/core motion per NPC; not a hitbox or
+            -- animation override for Core, server arms, or Head.
+            item.moving.CFrame = item.core.CFrame * item.movingRelative
+                * CFrame.Angles(sway*.10,flutter*.055,sway*.085)
+            item.moving.Transparency = .10 + .08*(.5+.5*math.sin(cycle*3+item.id))
             local flashing = item.core.Color.R > .9
                 and item.core.Color.G > .8 and item.core.Color.B < .7
             if flashing and not item.lastHit then item.sparks:Emit(4) end

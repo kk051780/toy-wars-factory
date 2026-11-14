@@ -72,21 +72,22 @@ class EightFeatureCandidateSafety(unittest.TestCase):
         self.assertIn('folder:SetAttribute("ForestSourceMapDepth",ground.Size.Z)',code)
         self.assertIn('task.wait(.1)',code)
 
-    def test_minion_all_visual_parts_follow_authoritative_core(self):
+    def test_minion_cloak_sways_without_physics_or_game_authority(self):
         code=art.pinned_art()["server/ArtMinionSilhouette.server.luau"].decode("utf8")
-        # Source-authority is the original Horde; cosmetics cannot be anchored
-        # independently or stay behind when Core.CFrame is moved.
-        self.assertIn('item.Anchored = false',code)
-        self.assertIn('item.Massless = true',code)
+        # Real original MusouHorde uses Model:PivotTo. Decorative parts
+        # remain anchored inside that Model, and only the selected cape/fur
+        # gets animated relative to the current authoritative Core pose.
+        self.assertIn('item.Anchored = true',code)
         self.assertIn('item.CanCollide = false',code)
         self.assertIn('item.CanTouch = false',code)
         self.assertIn('item.CanQuery = false',code)
-        self.assertIn('local weld = Instance.new("WeldConstraint")',code)
-        self.assertIn('weld.Part0 = core',code)
-        self.assertIn('weld.Part1 = item',code)
-        self.assertIn('weld.Parent = item',code)
-        self.assertIn('P0D_ART_MINION_WELDED',code)
-        self.assertNotIn('item.Anchored = true',code)
+        self.assertIn('movingRelative=core.CFrame:ToObjectSpace(moving.CFrame)',code)
+        self.assertIn('item.moving.CFrame = item.core.CFrame * item.movingRelative',code)
+        self.assertIn('CFrame.Angles(sway*.10,flutter*.055,sway*.085)',code)
+        self.assertIn('P0D_ART_MINION_SWAY_VISUAL',code)
+        self.assertNotIn('WeldConstraint',code)
+        self.assertNotIn('item.Anchored = false',code)
+        self.assertNotIn('item.core.CFrame =',code)
         self.assertNotIn('TakeDamage(',code)
         self.assertNotIn('FireServer(',code)
 
