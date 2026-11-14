@@ -3,11 +3,13 @@
   "review_only": true,
   "features": {
     "FB015_FOREST_BIOMES_MONUMENTS_V2": true,
-    "FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3": true
+    "FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3": true,
+    "FB016_ART_CAMERA_SIGHTLINE_V2": true,
+    "FB015_GOROGAN_MOBILE_LOD_V1": true
   },
   "base_official_head": "f4e64c9248423f9c021f633b80e554706f7a66e4",
   "base_original_place_bytes": 744130,
-  "goal": "Improved forest and fortress silhouettes without gameplay or HUD authority changes",
+  "goal": "4 art-source cumulative RC80 preview: forest, castle, camera-to-avatar foliage visibility, Gorogan mobile LOD. Studio-only art is not production parity.",
   "human_art_gate": "ART_NO_GO",
   "android_gate": "MOBILE_NO_GO",
   "kid_fun_gate": "FUN_NO_GO",
@@ -15,12 +17,16 @@
   "switch_off": "Change individual feature value to false then rebuild through sole writer nonforce CAS; both false retains baseline 80 source .rbxlx.",
   "expected_changed_source_paths": [
     "server/FantasyWorldArt.server.luau",
-    "server/CastleDetailArt.server.luau"
+    "server/CastleDetailArt.server.luau",
+    "client/FoliageCameraFade.client.luau",
+    "client/FB015CharacterArt.client.luau"
   ],
   "provenance": [
     "#421 forest candidate and reviewed defect fixes",
     "#430 castle original Git blobs",
-    "#420 official art gate"
+    "#420 official art gate",
+    "#417 foliage original artist Git blob and test, #426 Gorogan original artist Git blob and test, #435 live-art parity fail-closed auditor"
   ],
-  "preconditions": "Official FB019 V2 80-source sameHEAD validated Place; 2 unchanged core authorities"
+  "preconditions": "Official FB019 V2 80-source sameHEAD validated Place; 2 unchanged core authorities",
+  "live_art_gate": "LIVE_ART_NO_GO: 7 visual layers gated to Studio, no real release parity evidence"
 }
