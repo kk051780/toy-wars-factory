@@ -2619,3 +2619,123 @@ jobs:
           path: /tmp/p0d_private_horde_hit_art_rc81_artifact/*
           retention-days: 14
           if-no-files-found: error
+
+      - name: 'P0 #444 B#220 cumulative OWNER-private 1-human READY + verified HIT/ART (RC81)'
+        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_private_horde_hit_toast_art_rc81
+          FINAL=/tmp/p0d_private_onehuman_after_art_rc81
+          OUT=/tmp/p0d_private_onehuman_after_art_receipts
+          PLACE="$OUT/P0D_RC81_PRIVATE_ONEHUMAN_HIT_ART_STUDIO.rbxlx"
+          mkdir -p "$OUT"
+          test -f "$BASE/SOURCE_LOCK.json"
+          python3 -B -m unittest discover -s rc_fastlane -p test_private_onehuman_horde_post_art.py -v
+          python3 -B rc_fastlane/apply_private_onehuman_horde_post_art.py \
+            --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_private_onehuman_horde_post_art.py \
+            --base "$BASE" --out "$FINAL" --enabled true
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 81
+          python3 -B rc_fastlane/native_private_onehuman_horde_post_art.py \
+            --dist "$FINAL" --out "$OUT/REAL_ONEHUMAN_READY_NATIVE_16.luau"
+          /tmp/p0d_new_luau/luau "$OUT/REAL_ONEHUMAN_READY_NATIVE_16.luau"
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B rc_fastlane/verify_private_onehuman_horde_post_art.py \
+            --dist "$FINAL" --place "$PLACE" \
+            --receipt "$OUT/PRIVATE_ONEHUMAN_HIT_ART_RC81_SOURCE_QA.json"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" --place "$PLACE" --count 81 \
+            --receipt "$OUT/REAL_81_INSTANCE_PATH_CLASS_SOURCE.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/ART_SOURCE_ONLY.json"
+          python3 -B art_quality/check_live_art_parity.py \
+            --place "$PLACE" --expected-scripts 81 \
+            --out "$OUT/LIVE_ART_PARITY_NO_GO.json"
+          python3 -B art_quality/check_mobile_fun.py \
+            --out "$OUT/MOBILE_KID_FUN_NO_GO.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          import sys
+          sys.path.insert(0,str(Path('rc_fastlane').resolve()))
+          from apply_private_onehuman_horde_post_art import read,GAME,SOLO,HORDE,FEATURE
+          out=Path('/tmp/p0d_private_onehuman_after_art_receipts')
+          base=Path('/tmp/p0d_private_horde_hit_toast_art_rc81')
+          final=Path('/tmp/p0d_private_onehuman_after_art_rc81')
+          before,after=read(base),read(final)
+          assert len(before)==len(after)==81
+          assert set(before)==set(after)
+          assert {p for p in before if before[p]!=after[p]}=={GAME}
+          assert all(after[p]==before[p] for p in before if p!=GAME)
+          assert after[SOLO]==before[SOLO] and after[HORDE]==before[HORDE]
+          assert b'musouHitFeedback = ' in after[GAME], 'LAST_RC_REAL_HIT_MISSING'
+          assert b'privateHordeTrialAllowed()' in after[GAME]
+          assert b'impactDisplayEpoch' in after['client/HUD.client.luau']
+          for p in ('client/FB015CharacterArt.client.luau','client/ConfirmedSlashFX.client.luau','server/CastleDetailArt.server.luau'):
+              assert after[p]==before[p],('LAST_RC_ART_LOST',p)
+          sl=json.loads((final/'SOURCE_LOCK.json').read_text())
+          fl=json.loads((final/'RC_FEATURE_LOCK.json').read_text())
+          assert sl['blobs']==fl['source_gitblobs']
+          for f in (FEATURE,'P0D_PRIVATE_LIVE_HORDE_HIT_TOAST_V3',
+                    'FB015_LIVE_ART_PRIVATE_CLIENT_PILOT_V1'):
+              assert fl['feature_flags'][f]
+          actual=json.loads((out/'PRIVATE_ONEHUMAN_HIT_ART_RC81_SOURCE_QA.json').read_text())
+          identity=json.loads((out/'REAL_81_INSTANCE_PATH_CLASS_SOURCE.json').read_text())
+          art=json.loads((out/'ART_SOURCE_ONLY.json').read_text())
+          live=json.loads((out/'LIVE_ART_PARITY_NO_GO.json').read_text())
+          assert actual['source_gate']=='PASS' and actual['actual_embedded_luau_sources']==81
+          assert actual['private_one_human_requires_owner_flag_and_READY']
+          assert actual['public_match_min_players']==2
+          assert identity['source_count']==identity['embedded_count']==81
+          assert identity['all_instance_class_name_path_source_exact']
+          assert identity['all_ancestor_container_class_exact']
+          assert art['source']['source_gate']=='PASS' and art['art_decision']=='ART_NO_GO'
+          assert live['source_gate']=='PASS' and live['expected_script_count']==81
+          assert not actual['owner_accepted']
+          place=out/'P0D_RC81_PRIVATE_ONEHUMAN_HIT_ART_STUDIO.rbxlx'
+          record={
+            'schema':'P0D_B220_CUMULATIVE_ONEHUMAN_REAL_HIT_MOBILE_ART_PRIVATE_81_V1',
+            'official_rc_head':os.environ['GITHUB_SHA'],
+            'original_private_hit_art_parent':'7005762b4a137fd46e4938c06fbaa937ce8f8cf9',
+            'source_count':81,
+            'incremental_changed_game_sources':[GAME],
+            'incremental_unchanged_game_sources':80,
+            'original_cumulative_game_sources_changed':5,
+            'native_ready_cases':16,
+            'real_rojo_path_class_source_gate':'PASS',
+            'source_gate':'PASS',
+            'owner_private_onehuman_ready':'SOURCE_QA_ONLY',
+            'public_no_permission':'OFF',
+            'real_private_runtime':'NOT_TESTED',
+            'PC_Android_32_visual_samples':'NOT_TESTED',
+            'low_end_Android_15min':'NOT_TESTED',
+            'kid_first_3min':'NOT_TESTED',
+            'live_horde_decision':'LIVE_HORDE_NO_GO',
+            'live_art_decision':'LIVE_ART_NO_GO',
+            'art_decision':'ART_NO_GO',
+            'mobile_decision':'MOBILE_NO_GO',
+            'fun_decision':'FUN_NO_GO',
+            'owner_accepted':False,
+            'game_release_approved':False,
+            'place_bytes':place.stat().st_size,
+            'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+            'rollback':'omit only post-HIT/ART onehuman overlay to restore official previous private preview'
+          }
+          (out/'B220_CUMULATIVE_SOURCE_ONLY_RC_RECEIPT.json').write_text(json.dumps(record,ensure_ascii=False,indent=2)+'\n')
+          assert record['place_bytes'] > 760000
+          print('P0D_B220_REAL_81_ONEHUMAN_HIT_ART_CUMULATIVE_SOURCE_PASS',record['place_bytes'],record['place_sha256'])
+          PY
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        with:
+          name: P0D-RC81-PRIVATE-ONEHUMAN-POST-HIT-ART-81-SOURCE-NOGO
+          path: /tmp/p0d_private_onehuman_after_art_receipts/*
+          retention-days: 14
+          if-no-files-found: error
