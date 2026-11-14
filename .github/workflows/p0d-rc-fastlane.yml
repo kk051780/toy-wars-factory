@@ -10,6 +10,7 @@ on:
       - feature/p0d-rc64-twin-flat-official-intake-20261114
       - feature/p0d-flat65-twin-training-rc-adoption-20261114
       - feature/p0d-bond66-latest-rc346-prep-20261114
+      - feature/p0d-rc66-ledger-receipt-qa-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -300,6 +301,30 @@ jobs:
             echo P0D_PRIVATE66_BOND_OFF_EXACT_REAL_OFFICIAL65_PASS
             python3 -B rc_fastlane/apply_twin_bond.py --dist "$DIST" --enabled true
           fi
+      - name: Check actual built RC66 source lock, approved feature and ledger agree
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE")
+          lock=json.loads((root/"SOURCE_LOCK.json").read_text("utf8"))
+          flags=json.loads(Path("rc_fastlane/FEATURE_SWITCHES.json").read_text("utf8"))["features"]
+          catalog=json.loads(Path("rc_fastlane/FEATURE_CATALOG.json").read_text("utf8"))
+          reg=json.loads(Path("rc_fastlane/FEATURE_REGISTRY.json").read_text("utf8"))
+          assert lock["total_scripts"]==66
+          assert lock["rc_twin_bond_overlay"]["id"]=="TWIN_BOND_PVE_COMPANION_V1"
+          assert lock["rc_twin_bond_overlay"]["official_rc_adopted"] is True
+          assert flags["TWIN_BOND_PVE_COMPANION_V1"]["official_rc_adopted"] is True
+          assert reg["canonical_rc_source_count"]==66
+          assert catalog["verified_rc_head"]==reg["canonical_rc_source_head"]=="2c74382bf24f9fdfd67f3bfcecb9a8a6d7ddd264"
+          assert reg["canonical_rc_acceptance_run"]==43549547549
+          assert len(catalog["rows"])==67
+          assert sum(z["stage"]=="RC" for z in catalog["rows"])==31
+          print("P0D_RC66_REAL_OUTPUT_LOCK_AND_CATALOG_REGISTRY_ADOPTION_RECEIPT_MATCH_PASS")
+          PY
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
