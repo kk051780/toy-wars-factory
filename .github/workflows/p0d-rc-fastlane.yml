@@ -2122,3 +2122,117 @@ jobs:
           path: /tmp/p0d_rc80_art_full4/*
           retention-days: 14
           if-no-files-found: error
+
+      - name: 'P0 #431: real MapBuilder castle fallback live-safe 81 script over cumulative ART4'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
+          python3 -B -m unittest discover -s rc_fastlane -p test_live_castle_safe.py -v
+          BASE=/tmp/p0d_rc80_fb015_gorogan_s4
+          FINAL=/tmp/p0d_live_safe_castle81_source
+          OUT=/tmp/p0d_live_safe_castle81_artifact
+          mkdir -p "$OUT"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          cfg=json.loads(Path('art_quality/RC80_ART_PREVIEW_CONFIG.json').read_text('utf8'))
+          flag=cfg['features']['FB015_LIVE_CASTLE_SAFE_PARITY_V1']
+          assert type(flag) is bool
+          assert cfg['human_art_gate']=='ART_NO_GO'
+          assert cfg['owner_accepted'] is False and cfg['review_only'] is True
+          Path('/tmp/p0d_live_castle_enabled').write_text('true' if flag else 'false')
+          PY
+          LIVE_ENABLED="$(cat /tmp/p0d_live_castle_enabled)"
+          if [ "$LIVE_ENABLED" = true ]; then
+            python3 -B rc_fastlane/apply_live_castle_safe.py --base "$BASE" --out "$FINAL" --enabled true
+          else
+            python3 -B rc_fastlane/apply_live_castle_safe.py --base "$BASE" --out "$FINAL" --enabled false
+            cp -a "$BASE" "$FINAL"
+          fi
+          SOURCE_COUNT="$(find "$FINAL/src" -name '*.luau' | wc -l)"
+          if [ "$LIVE_ENABLED" = true ]; then
+            test "$SOURCE_COUNT" -eq 81
+          else
+            test "$SOURCE_COUNT" -eq 80
+          fi
+          find "$FINAL/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' src; do
+            /tmp/p0d_new_luau/luau-compile "$src" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$OUT/P0D_RC81_LIVE_SAFE_CASTLE_ART4_STUDIO_PREVIEW.rbxlx"
+          if [ "$LIVE_ENABLED" = true ]; then
+            python3 -B rc_fastlane/verify_live_castle_safe.py --dist "$FINAL" --place "$OUT/P0D_RC81_LIVE_SAFE_CASTLE_ART4_STUDIO_PREVIEW.rbxlx" --receipt "$OUT/LIVE_CASTLE_RC81_EXACT.json"
+          fi
+          python3 -B art_quality/check_art_quality.py --place "$OUT/P0D_RC81_LIVE_SAFE_CASTLE_ART4_STUDIO_PREVIEW.rbxlx" --out "$OUT/ART_QUALITY_RC81_SOURCE.json"
+          python3 -B art_quality/check_live_art_parity.py --place /tmp/p0d_rc80_art_full4/P0D_RC80_FOUR_ART_FOLIAGE_GOROGAN_STUDIO_PREVIEW.rbxlx --out "$OUT/LEGACY_SEVEN_STUDIO_ONLY_AUDIT.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          from rc_fastlane.apply_live_castle_safe import read_sources,blob,AUTHOR_BLOB,DEST
+          base=Path('/tmp/p0d_rc80_fb015_gorogan_s4')
+          final=Path('/tmp/p0d_live_safe_castle81_source')
+          output=Path('/tmp/p0d_live_safe_castle81_artifact')
+          original,after=read_sources(base),read_sources(final)
+          cfg=json.loads(Path('art_quality/RC80_ART_PREVIEW_CONFIG.json').read_text('utf8'))
+          enabled=cfg['features']['FB015_LIVE_CASTLE_SAFE_PARITY_V1']
+          expected=81 if enabled else 80
+          assert len(original)==80 and len(after)==expected
+          assert all(after[k]==v for k,v in original.items()),'ORIGINAL_80_CHANGED'
+          extra=set(after)-set(original)
+          assert extra==({DEST} if enabled else set()),('UNEXPECTED_LUAU_ADDITION',extra)
+          if enabled:
+              assert blob(after[DEST])==AUTHOR_BLOB,'LIVE_CASTLE_AUTHOR_BLOB_DRIFT'
+          lock=json.loads((final/'SOURCE_LOCK.json').read_text('utf8'))
+          features=json.loads((final/'RC_FEATURE_LOCK.json').read_text('utf8'))
+          pin={name:blob(raw) for name,raw in sorted(after.items())}
+          assert lock['total_scripts']==features['total_sources']==expected
+          assert lock['blobs']==features['source_gitblobs']==pin
+          gate=json.loads((output/'ART_QUALITY_RC81_SOURCE.json').read_text('utf8'))
+          audit=json.loads((output/'LEGACY_SEVEN_STUDIO_ONLY_AUDIT.json').read_text('utf8'))
+          assert gate['source']['source_gate']=='PASS' and gate['source']['script_count']==expected
+          assert gate['art_decision']=='ART_NO_GO' and gate['owner_accepted'] is False
+          assert audit['source_gate']=='PASS' and audit['top_studio_only_count']==7
+          assert audit['live_art_decision']=='LIVE_ART_NO_GO' and audit['owner_accepted'] is False
+          place=output/'P0D_RC81_LIVE_SAFE_CASTLE_ART4_STUDIO_PREVIEW.rbxlx'
+          report={
+            'schema':'P0D_RC81_LIVE_SAFE_CASTLE_SOURCE_INTAKE_20261115',
+            'head':os.environ['GITHUB_SHA'],
+            'official_branch':os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01',
+            'source_gate':'PASS','source_count':expected,
+            'original80_luau_all_byte_identical':True,
+            'new_script':DEST if enabled else None,
+            'new_art_budget_max':36 if enabled else 0,
+            'production_mapbuilder_anchor_verified_in_source':True,
+            'real_roblox_runtime':'NOT_TESTED',
+            'studio_pc_live_comparison':'NOT_TESTED',
+            'android_real_15min':'NOT_TESTED',
+            'kid_fun_first3min':'NOT_TESTED',
+            'live_art_legacy_studio_only_layers':7,
+            'fallback_live_codepath':'SOURCE_PRESENT_NOT_RUNTIME_VERIFIED' if enabled else 'OFF',
+            'art_decision':'ART_NO_GO','live_art_decision':'LIVE_ART_NO_GO',
+            'mobile_decision':'MOBILE_NO_GO','fun_decision':'FUN_NO_GO',
+            'owner_accepted':False,'publish_approved':False,
+            'sourcery_major_review':'PENDING',
+            'place_bytes':place.stat().st_size,
+            'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+            'rollback':'Disable FB015_LIVE_CASTLE_SAFE_PARITY_V1, rebuild and source CAS to previous 80 scripts'
+          }
+          (output/'RC81_LIVE_CASTLE_RECEIPT.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n','utf8')
+          print('P0D_RC81_LIVE_CASTLE_SOURCE_AND_ORIGINAL80_EXACT_PASS',report['place_bytes'],report['place_sha256'])
+          print('P0D_LIVE_ART_NO_GO_LEGACY_7_GUARDS',report['live_art_legacy_studio_only_layers'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
+        with:
+          name: P0D-CANONICAL-RC81-LIVE-SAFE-CASTLE-FALLBACK-NO-GO
+          path: /tmp/p0d_live_safe_castle81_artifact/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        with:
+          name: P0D-PRIVATE-RC81-LIVE-SAFE-CASTLE-FALLBACK-NO-GO
+          path: /tmp/p0d_live_safe_castle81_artifact/*
+          retention-days: 14
+          if-no-files-found: error
