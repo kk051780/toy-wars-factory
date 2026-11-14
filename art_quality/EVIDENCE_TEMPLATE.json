@@ -244,17 +244,29 @@
     "pc": {
       "device_model": "",
       "graphics_quality": "medium",
-      "fps_p10": null
+      "fps_p10": null,
+      "fps_median": null,
+      "session_minutes": null,
+      "oom_crash_free": null
     },
     "android": {
       "device_model": "",
       "graphics_quality": "low",
-      "fps_p10": null
+      "fps_p10": null,
+      "fps_median": null,
+      "session_minutes": null,
+      "oom_crash_free": null,
+      "device_tier": "baseline_low_end_2_to_4GB",
+      "ram_gb": null,
+      "warm_fps_drop_fraction": null,
+      "memory_mb_peak": null,
+      "loading_seconds": null
     }
   },
   "critical_visual_blockers": [
     "Replace with [] only after actual playtesting demonstrates no blocker"
   ],
   "human_reviewer": "",
-  "owner_review_link": ""
+  "owner_review_link": "",
+  "review_note": "Project acceptance targets: PC p10 >= 45; baseline Android p10 >= 25, median >= 30; 15 min no crash/OOM or more than 20% warm FPS decline; live real device, not Studio emulator."
 }
