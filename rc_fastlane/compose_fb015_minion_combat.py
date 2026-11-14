@@ -23,7 +23,7 @@ AUTHOR = ROOT / "features/art_minion/MinionArtSilhouette.server.luau"
 DEST = "server/ArtMinionSilhouette.server.luau"
 PIN = "4d0aac99d670ca4364a7368255d1edc63d28b3a0"
 HIT_CUE_BLOB = "a2d07936bd9fe5bdf3630498c39d61d5a8560d99"
-SLASH_CLIENT_BLOB = "257f5da5e40c0af89220745d576763f513a7e6ef"
+SLASH_CLIENT_BLOB = "c3e3c89b781d446fd8952bee51ec3a2cac46d1ff"
 BASE = 67
 MANIFEST = ".P0D_FB015_COMPOSITE_EXACT_MANIFEST.json"
 
