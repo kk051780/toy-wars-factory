@@ -1,0 +1,23 @@
+{
+  "schema": "P0D_431_CLIENT_ART_PILOT_V1",
+  "official_base": "1bf25e7e83a38ecbbef588309edd7217b9f39c67",
+  "formal_rc_modified": false,
+  "target": [
+    "client/FB015CharacterArt.client.luau",
+    "client/ConfirmedSlashFX.client.luau"
+  ],
+  "staged_from": "#426 mobile Gorogan LOD then private-only opt-in guard",
+  "enabled_in_studio": true,
+  "enabled_in_nonstudio_public": false,
+  "requires_private_server": true,
+  "requires_workspace_attribute": "P0D_LIVE_ART_PILOT_OPTIN",
+  "five_server_art_scripts_studio_only": true,
+  "source_qa": "CI_PENDING",
+  "runtime_pc": "NOT_TESTED",
+  "android_15min": "NOT_TESTED",
+  "kid_fun": "NOT_TESTED",
+  "art": "ART_NO_GO",
+  "live_art": "LIVE_ART_NO_GO",
+  "owner_accepted": false,
+  "rollback": "skip candidate; prior formal 80 Luau source unchanged"
+}

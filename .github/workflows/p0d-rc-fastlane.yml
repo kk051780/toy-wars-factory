@@ -1996,3 +1996,56 @@ jobs:
           path: /tmp/p0d_rc80_art_world_castle/*
           retention-days: 14
           if-no-files-found: error
+
+      - name: 'P0 #431: source-exact private-client live ART opt-in pilot, 80 Luau real Place'
+        if: env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_rc80_fb015_castle_s2
+          LOD=/tmp/p0d_431_gorogan_lod
+          FINAL=/tmp/p0d_431_private_client
+          OUT=/tmp/p0d_431_private_client_artifact
+          mkdir -p "$OUT"
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_gorogan_mobile_lod.py -v
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_live_art_client_pilot.py -v
+          python3 -B rc_fastlane/apply_fb015_gorogan_mobile_lod.py --base "$BASE" --out "$LOD" --enabled false
+          test ! -e "$LOD"
+          python3 -B rc_fastlane/apply_fb015_gorogan_mobile_lod.py --base "$BASE" --out "$LOD" --enabled true
+          python3 -B rc_fastlane/apply_fb015_live_art_client_pilot.py --base "$LOD" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_fb015_live_art_client_pilot.py --base "$LOD" --out "$FINAL" --enabled true
+          test "$(find "$FINAL/src" -name '*.luau' | wc -l)" -eq 80
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          PLACE="$OUT/P0D_RC80_431_PRIVATE_CLIENT_STUDIO.rbxlx"
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B rc_fastlane/verify_fb015_live_art_client_pilot.py --base "$LOD" --dist "$FINAL" --place "$PLACE" --receipt "$OUT/LIVE_ART_PILOT_RECEIPT.json"
+          python3 -B art_quality/check_art_quality.py --place "$PLACE" --out "$OUT/ART_REPORT.json"
+          python3 -B art_quality/check_mobile_fun.py --out "$OUT/MOBILE_KID_FUN_REPORT.json"
+          python3 - <<'PY'
+          import os,json
+          from pathlib import Path
+          o=Path('/tmp/p0d_431_private_client_artifact')
+          r=json.loads((o/'LIVE_ART_PILOT_RECEIPT.json').read_text())
+          a=json.loads((o/'ART_REPORT.json').read_text())
+          assert r['source_gate']=='PASS' and r['server_studio_only_sources']==5
+          assert r['client_private_optin_sources']==2 and not r['owner_accepted']
+          assert a['source']['source_gate']=='PASS' and a['source']['script_count']==80
+          assert a['art_decision']=='ART_NO_GO' and a['owner_accepted'] is False
+          r['github_sha']=os.environ['GITHUB_SHA']
+          r['github_head_ref']=os.environ.get('GITHUB_HEAD_REF','')
+          (o/'LIVE_ART_PILOT_RECEIPT.json').write_text(json.dumps(r,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_431_PILOT_SOURCE_PASS__LIVE_ART_NO_GO',r)
+          PY
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          cp art_quality/LIVE_ART_CLIENT_PILOT_20261115.json "$OUT/SELECTION.json"
+      - uses: actions/upload-artifact@v4
+        if: always() && env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        with:
+          name: P0D-431-LIVE-ART-CLIENT-PRIVATE-PILOT-NO-OWNER-ACCEPT
+          path: /tmp/p0d_431_private_client_artifact/*
+          retention-days: 7
+          if-no-files-found: warn
