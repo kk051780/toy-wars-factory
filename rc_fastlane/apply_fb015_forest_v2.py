@@ -105,7 +105,7 @@ local folder = Instance.new("Folder")''')
     assert FEATURE not in source
     source=once(source,TREE_ANCHOR,TREE_ADDITION)
     source=once(source,RUIN_ANCHOR,RUIN_ADDITION+
-        'assert(count==226,"FB015_FOREST_RUNTIME_PART_COUNT_DRIFT")\\n'+RUIN_ANCHOR)
+        'assert(count==226,"FB015_FOREST_RUNTIME_PART_COUNT_DRIFT")\n'+RUIN_ANCHOR)
     source=once(source,META_OLD,'folder:SetAttribute("ArtPass","FB015_FOREST_BIOMES_MONUMENTS_V2")')
     source=once(source,'folder:SetAttribute("OfficialOwnerAccepted",false)',
         '''folder:SetAttribute("ForestBiomeBlossomParts",36)
