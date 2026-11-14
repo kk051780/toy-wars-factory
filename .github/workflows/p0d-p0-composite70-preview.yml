@@ -1383,6 +1383,8 @@ jobs:
           /tmp/p0d_new_luau/luau /tmp/p0_spectator_preserve_results_native.luau | tee /tmp/p0_spectator_preserve_results_native.log
           grep -Fx P0_PRIVATE78_REAL_RESULTS_LOBBY_15_NATIVE_CASES_PASS /tmp/p0_spectator_preserve_results_native.log
           test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 78
+          echo P0_SPECTATOR_SOURCE_AROUND_ERROR
+          nl -ba "$OUT/src/server/Game.server.luau" | sed -n '1950,1978p;3004,3025p'
           find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
             /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
           done
