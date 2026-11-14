@@ -1005,3 +1005,77 @@ jobs:
           path: /tmp/p0d_rc_out/*
           retention-days: 7
           if-no-files-found: error
+
+      - name: P0 FB-008/015 private67 ART-COMBAT visual full source-exact (after unchanged RC artifact upload)
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+          python3 -B -m unittest discover -s rc_fastlane -p 'test_fb015_combat.py' -v
+          test -x /tmp/p0d_new_luau/luau-compile
+          BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          python3 -B rc_fastlane/apply_fb015_combat.py --dist "$DIST" --enabled false
+          AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          test "$BEFORE" = "$AFTER"
+          python3 -B rc_fastlane/apply_fb015_combat.py --dist "$DIST" --enabled true
+          mkdir -p /tmp/p0d_art_combat_private67
+          find "$DIST/src" -type f -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o /tmp/p0d_art_combat_private67/P0D_ART_COMBAT_PRIVATE67.rbxlx
+          python3 - <<'PY'
+          import pathlib,json,collections,xml.etree.ElementTree as ET,hashlib
+          dist=pathlib.Path('_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE')
+          output=pathlib.Path('/tmp/p0d_art_combat_private67')
+          place=output/'P0D_ART_COMBAT_PRIVATE67.rbxlx'
+          scripts=list((dist/'src').rglob('*.luau'))
+          assert len(scripts)==67, ('PRIVATE67_SOURCE_COUNT',len(scripts))
+          actual=collections.Counter(p.read_text('utf8') for p in scripts)
+          embedded=collections.Counter()
+          named=collections.Counter()
+          for item in ET.fromstring(place.read_bytes()).iter('Item'):
+              if item.get('class') not in ('Script','LocalScript','ModuleScript'):continue
+              src=item.find("./Properties/string[@name='Source']")
+              if src is None:continue
+              embedded[src.text or '']+=1
+              node=item.find("./Properties/string[@name='Name']")
+              if node is not None:named[(item.get('class'),node.text)]+=1
+          assert actual==embedded, ('PRIVATE67_SOURCE_EXACT_MISMATCH',len(actual),len(embedded))
+          assert named[('Script','Game')]==1
+          assert named[('LocalScript','ArtCombatSlash')]==1
+          sp=json.loads((dist/'SOURCE_LOCK.json').read_text('utf8'))
+          fp=json.loads((dist/'RC_FEATURE_LOCK.json').read_text('utf8'))
+          assert sp['total_scripts']==fp['total_sources']==67
+          assert sp['blobs']==fp['source_gitblobs']
+          assert sp['art_combat']['all_original_66_bytes_preserved'] is True
+          assert sp['art_combat']['owner_fun']=='ART_NO_GO'
+          assert fp['feature_flags']['ART_COMBAT_SLASH_READONLY_V1'] is True
+          candidate=(dist/'src/client/ArtCombatSlash.client.luau').read_bytes()
+          assert hashlib.sha1(b'blob '+str(len(candidate)).encode()+bytes([0])+candidate).hexdigest()=='2edae20c45ca712c344fdcd3093837c7ac37f59d'
+          old=pathlib.Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx')
+          digest=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt={
+              'result':'P0D_ART_COMBAT_PRIVATE67_NATIVE_ROJO_SOURCE_EXACT_PASS',
+              'private_candidate_sha256':digest,
+              'private_candidate_rbxlx_bytes':place.stat().st_size,
+              'source_count':len(scripts),
+              'source_gitblob':'2edae20c45ca712c344fdcd3093837c7ac37f59d',
+              'original_rc66_source_bytes_preserved':True,
+              'baseline_rc66_place_bytes':old.stat().st_size,
+              'baseline_rc66_place_sha256':hashlib.sha256(old.read_bytes()).hexdigest(),
+              'source_stage':'PRIVATE_PREP_NOT_OFFICIAL_RC',
+              'studio':'NOT_TESTED','android':'NOT_TESTED','owner_fun':'ART_NO_GO',
+          }
+          (output/'ART_COMBAT_PRIVATE67_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          (output/'SOURCE_LOCK.json').write_text(json.dumps(sp,indent=2)+'\n')
+          (output/'RC_FEATURE_LOCK.json').write_text(json.dumps(fp,indent=2)+'\n')
+          print(receipt)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-FB015-ART-COMBAT-PRIVATE67
+          path: /tmp/p0d_art_combat_private67/*
+          retention-days: 7
+          if-no-files-found: error
