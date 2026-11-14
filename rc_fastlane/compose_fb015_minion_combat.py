@@ -105,6 +105,17 @@ def verify_private_output(out: Path, dist: Path):
             "ROLLBACK_REFUSED_ADDED_OR_MODIFIED_OR_MISSING_FILE")
     return record
 
+def validate_partial_tombstone(tombstone: Path, record: dict) -> None:
+    # An interrupted deletion may have removed some original files. The
+    # remaining files must ALL match the recorded original bytes; never
+    # delete a newly-added or modified user file on retry.
+    expected=record["files"]
+    observed=manifest_contents(tombstone)
+    require(all(path in expected and sha == expected[path]
+                for path,sha in observed.items()),
+            "TOMBSTONE_EXTRA_OR_MODIFIED_FILE_ROLLBACK_REFUSED")
+
+
 def _compose_locked(dist: Path, out: Path, enabled: bool):
     dist = dist.resolve()
     out = out.resolve()
@@ -122,12 +133,21 @@ def _compose_locked(dist: Path, out: Path, enabled: bool):
                     and record.get("output") == str(out)
                     and record.get("id") == "P0D_FB015_COMPOSITE_PRIVATE68_EXACT_TREE",
                     "INVALID_COMPOSITE_DELETE_JOURNAL")
+            validate_partial_tombstone(tombstone, record)
             shutil.rmtree(tombstone)
             journal.unlink()
             print("ART_MINION_COMBO_INTERRUPTED_OFF_CLEANUP_RECOVERED")
             return True
         if not out.exists():
-            require(not journal.exists(), "STALE_COMPOSITE_DELETE_JOURNAL")
+            if journal.is_file():
+                record=json.loads(journal.read_text("utf8"))
+                require(record.get("id")=="P0D_FB015_COMPOSITE_PRIVATE68_EXACT_TREE"
+                        and record.get("input")==str(dist)
+                        and record.get("output")==str(out),
+                        "INVALID_COMPLETED_OFF_JOURNAL")
+                journal.unlink()
+                print("ART_MINION_COMBO_COMPLETED_OFF_JOURNAL_RECOVERED")
+                return True
             print("ART_MINION_COMBO_OFF_ZERO_WRITE")
             return False
         if journal.exists():
@@ -150,6 +170,8 @@ def _compose_locked(dist: Path, out: Path, enabled: bool):
         journal.unlink()
         print("ART_MINION_COMBO_PRIVATE68_OFF_RETAINED_ORIGINAL67")
         return True
+    require(not tombstone.exists() and not journal.exists(),
+            "PENDING_OFF_RECOVERY_MUST_FINISH_BEFORE_ENABLE")
     require(out != dist and not out.exists(), "COMPOSITE_ALREADY_PRESENT")
     source, pins, locks, author = baseline(dist)
     with tempfile.TemporaryDirectory(prefix=".fb015_combo_stage_", dir=out.parent) as tmp:
@@ -205,13 +227,14 @@ def compose(dist: Path, out: Path, enabled: bool):
     out = out.resolve()
     require(out != dist and out not in dist.parents and dist not in out.parents,
             "PRIVATE_OUTPUT_MUST_BE_SEPARATE")
-    lock = out.with_name("." + out.name + ".fb015_lock")
-    with lock.open("a+b") as fh:
-        fcntl.flock(fh.fileno(), fcntl.LOCK_EX)
-        try:
-            return _compose_locked(dist, out, enabled)
-        finally:
-            fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
+    # No sibling lockfile; a clean OFF is a literal zero-write operation.
+    fd=os.open(out.parent,os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        fcntl.flock(fd,fcntl.LOCK_EX)
+        return _compose_locked(dist, out, enabled)
+    finally:
+        fcntl.flock(fd,fcntl.LOCK_UN)
+        os.close(fd)
 
 def main():
     ap = argparse.ArgumentParser()
