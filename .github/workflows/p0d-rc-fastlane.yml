@@ -10,6 +10,7 @@ on:
       - feature/p0d-rc64-twin-flat-official-intake-20261114
       - feature/p0d-flat65-twin-training-rc-adoption-20261114
       - feature/p0d-bond66-latest-rc346-prep-20261114
+      - feature/p0d-fb015-world-light-foliage-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -324,6 +325,39 @@ jobs:
           assert sum(z["stage"]=="RC" for z in catalog["rows"])==31
           print("P0D_RC66_REAL_OUTPUT_LOCK_AND_CATALOG_REGISTRY_ADOPTION_RECEIPT_MATCH_PASS")
           PY
+      - name: OWNER FB-015 genuine private67 ART-WORLD scene, no Gameplay alterations
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_fb015_world.py --dist "$DIST" --enabled false
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            echo P0D_FB015_WORLD_ART_REAL_OFF_EXACT_ORIGINAL66_PASS
+            python3 -B rc_fastlane/apply_fb015_world.py --dist "$DIST" --enabled true
+            python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE")
+          source=(d/"src/server/FantasyWorldArt.server.luau").read_text("utf8")
+          allsource=list((d/"src").rglob("*.luau"))
+          assert len(allsource)==67, len(allsource)
+          assert "Lighting.ClockTime=15.65" in source
+          assert 'p.CanCollide=false' in source and 'p.CanTouch=false' in source and 'p.CanQuery=false' in source
+          assert 'local MAX_PARTS=255' in source
+          assert source.count("for side=-1,1,2 do")==2
+          assert "Terrain:FindFirstChildOfClass" in source
+          assert "DataStoreService" not in source and "OnServerEvent" not in source
+          lock=json.loads((d/"SOURCE_LOCK.json").read_text("utf8"))
+          feat=json.loads((d/"RC_FEATURE_LOCK.json").read_text("utf8"))
+          assert lock["total_scripts"]==feat["total_sources"]==67
+          assert lock["blobs"]==feat["source_gitblobs"]
+          assert feat["feature_flags"]["FB015_ART_WORLD_LIGHT_FOLIAGE_V1"] is True
+          print("P0D_FB015_WORLD_ART_ACTUAL_67_WITH_ONE_GAME_SOURCE_LOCK_PASS")
+          PY
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -352,7 +386,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']) + int(f['TWIN_BIOMES_4NPC_V1']['enabled']) + int(f['TWIN_CREATURE_TRAINING_V1']['enabled']) + int(f['TWIN_BOND_PVE_COMPANION_V1']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']) + int(f['TWIN_BIOMES_4NPC_V1']['enabled']) + int(f['TWIN_CREATURE_TRAINING_V1']['enabled']) + int(f['TWIN_BOND_PVE_COMPANION_V1']['enabled']) + int(f['FB015_ART_WORLD_LIGHT_FOLIAGE_V1']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -680,7 +714,8 @@ jobs:
           twin_enabled=(p=='rich51' and flags['features']['TWIN_BIOMES_4NPC_V1']['enabled'])
           training_enabled=(p=='rich51' and flags['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])
           bond_enabled=(p=='rich51' and flags['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
+          world_art_enabled=(p=='rich51' and flags['features']['FB015_ART_WORLD_LIGHT_FOLIAGE_V1']['enabled'])
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled)+int(world_art_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -900,6 +935,19 @@ jobs:
               print('P0D_PRIVATE66_SINGLE_GAME_ONLY_NEUTRAL_PVE_BONDED_COMPANION_ROJO_PASS')
           else:
               assert titles[('ModuleScript','TwinBondPolicy')]==0
+          if world_art_enabled:
+              assert titles[('Script','FantasyWorldArt')]==1
+              assert titles[('Script','Game')]==1
+              art=(base/'src/server/FantasyWorldArt.server.luau').read_text('utf8')
+              assert 'if not RunService:IsStudio() then return end' in art
+              assert 'p.CanCollide=false' in art and 'p.CanQuery=false' in art
+              assert 'folder:SetAttribute("OfficialOwnerAccepted",false)' in art
+              assert 'Lighting.ClockTime=15.65' in art
+              assert 'Clouds' in art and 'Atmosphere' in art and 'ColorCorrectionEffect' in art
+              assert 'MAX_PARTS=255' in art
+              print('P0D_FB015_WORLD_ART_REAL_ROJO_ONE_DECO_SCENE_PASS')
+          else:
+              assert titles[('Script','FantasyWorldArt')]==0
           if p=='rich51':
               assert titles[('Script','V4TrainingBridge')]==1
               assert titles[('LocalScript','V4TrialOverlay')]==1
@@ -944,6 +992,7 @@ jobs:
             'twin_creature_training_session_only_3_levels':bool(training_enabled),
             'twin_creature_native_real_policy_cases':38 if training_enabled else None,
             'twin_bond_one_active_session_companion_pve_only':bool(bond_enabled),
+            'fb015_world_palette_foliage_private_source':bool(world_art_enabled),
             'twin_bond_native_policy_cases':47 if bond_enabled else None,
             'twin_biomes_engine_2client_android_fun':'NOT_TESTED',
             'star_shards_native_policy_cases':22 if shards_enabled else None,
@@ -964,7 +1013,7 @@ jobs:
             'android':'NOT_TESTED','owner_fun':'NOT_TESTED',
             'production_publish':False,'sixskill_persistent':False,
             's1_score_prior_only':75,
-            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled,'STAR_SHARDS_V1':shards_enabled,'TWIN_BIOMES_4NPC_V1':twin_enabled,'TWIN_CREATURE_TRAINING_V1':training_enabled,'TWIN_BOND_PVE_COMPANION_V1':bond_enabled},
+            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled,'STAR_SHARDS_V1':shards_enabled,'TWIN_BIOMES_4NPC_V1':twin_enabled,'TWIN_CREATURE_TRAINING_V1':training_enabled,'TWIN_BOND_PVE_COMPANION_V1':bond_enabled,'FB015_ART_WORLD_LIGHT_FOLIAGE_V1':world_art_enabled},
             'base_author_51_preserved':True if realm_enabled else None,
             'new_realms_studio_2client':'NOT_TESTED'}
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
@@ -994,7 +1043,7 @@ jobs:
             python3 - <<'PY'
           import json
           x=json.load(open('/tmp/p0d_rc_out/RC_CAPACITY_REPORT.json'))
-          assert x['native_source_count']==64+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
+          assert x['native_source_count']==64+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['FB015_ART_WORLD_LIGHT_FOLIAGE_V1']['enabled']), x
           assert x['rbxlx_bytes']>571621 and x['rbxlx_bytes']<2000000
           print('P0D_PRIVATE64_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
           PY

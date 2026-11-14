@@ -1,0 +1,35 @@
+{
+  "feature_id": "FB015_ART_WORLD_LIGHT_FOLIAGE_V1",
+  "feedback_id": "FB-015",
+  "art_category": "ART-WORLD",
+  "stage": "SOURCE_PRIVATE67_CI_PENDING",
+  "source_path": "rc_fastlane/features/fb015_world/FantasyWorldArt.server.luau",
+  "source_git_blob": "f2a1d58ab4420c0f331adb8f6d9d0478cf32ad4a",
+  "base_rc_head": "43543378f976374e2cac2d68b3136ac355d3191b",
+  "from_sources": 66,
+  "to_sources": 67,
+  "original_game_changes": 0,
+  "original_noncamera_source_changes": 0,
+  "visual_properties": [
+    "Lighting",
+    "Atmosphere",
+    "ColorCorrectionEffect",
+    "TerrainClouds",
+    "18 leafy nonblocking trees",
+    "24 rocks/shrubs",
+    "16 meadow patches"
+  ],
+  "max_instance_parts": 255,
+  "uses_terrain_fill": false,
+  "non_colliding": true,
+  "branch_only": true,
+  "owner_studio_pc": "NOT_TESTED",
+  "owner_android": "NOT_TESTED",
+  "owner_acceptance": "NO_GO",
+  "rollback": "no adapter invocation or --enabled false = source66 exact; no built-in new Game/Remote/store authority",
+  "reserved_future_conflicts": [
+    "#366 castle/map extend",
+    "select one of #369/#370 FB011 sea",
+    "same FB015 #373 character art independent add; must integrate next sequential +1"
+  ]
+}
