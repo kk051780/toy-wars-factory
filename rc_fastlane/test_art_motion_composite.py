@@ -26,6 +26,13 @@ class Motion69Tests(unittest.TestCase):
         self.assertTrue(prior.slash.apply(d,True))
         scratch68=root/"private68"
         self.assertTrue(prior.combo.compose(d,scratch68,True))
+        # Synthetic 64 original stubs are intentionally NOT the canonical
+        # parent68. Pin the exact fixture independently, never skip pin check.
+        fixture_blobs={name:motion.blob(raw) for name,raw
+                       in motion.source_map(scratch68).items()}
+        self.assertEqual(len(fixture_blobs),68)
+        motion.EXPECTED_PARENT68_FULL_SOURCES_SHA256 = motion.full_source_pin_digest(
+            fixture_blobs)
         return d,scratch68,original,prior.snapshot(d),prior.snapshot(scratch68)
 
     def test_exact_chain_and_compiler_inputs_and_off(self):
@@ -68,6 +75,34 @@ class Motion69Tests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,"PRIVATE68_TREE_DRIFT"):
                 motion.compose(p68,p69,True)
             self.assertFalse(p69.exists())
+
+    def test_full_parent_source_map_cannot_be_self_signed(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root=Path(temporary)
+            _,p68,_,_,_=self.make_chain(root)
+            previous=motion.EXPECTED_PARENT68_FULL_SOURCES_SHA256
+            # A swapped original source, even with its own feature locks and
+            # self-manifest recomputed, must be rejected by the OUTSIDE pin.
+            src=p68/"src/shared/Original_10.luau"
+            src.write_text("return 99999\n","utf8")
+            pins={name:motion.blob(raw) for name,raw
+                  in motion.source_map(p68).items()}
+            for filename,key in (("SOURCE_LOCK.json","blobs"),
+                                 ("RC_FEATURE_LOCK.json","source_gitblobs")):
+                p=p68/filename
+                lock=json.loads(p.read_text("utf8"))
+                lock[key]=pins
+                p.write_text(json.dumps(lock,ensure_ascii=False,indent=2)+"\n","utf8")
+            mf=p68/".P0D_FB015_COMPOSITE_EXACT_MANIFEST.json"
+            record=json.loads(mf.read_text("utf8"))
+            new=motion.manifest_files(p68)
+            new.pop(mf.name)
+            record["files"]=new
+            mf.write_text(json.dumps(record,ensure_ascii=False,sort_keys=True,indent=2)+"\n","utf8")
+            self.assertNotEqual(motion.full_source_pin_digest(pins),previous)
+            with self.assertRaisesRegex(RuntimeError,"FB015_FULL_PARENT68_SOURCE_MAP_DRIFT"):
+                motion.compose(p68,root/"private69",True)
+            self.assertFalse((root/"private69").exists())
 
     def test_extra_file_does_not_get_deleted_by_off(self):
         with tempfile.TemporaryDirectory() as temporary:
