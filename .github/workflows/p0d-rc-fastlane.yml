@@ -2333,3 +2333,79 @@ jobs:
           path: /tmp/p0d_private_live_horde81_evidence/*
           retention-days: 14
           if-no-files-found: error
+
+
+      - name: 'P0 #444 V2 PRIVATE Horde real Game ATTACK and 0.5s tick after official B reset'
+        if: env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_private_live_horde81_dist
+          FINAL=/tmp/p0d_horde_private_lifecycle_v2_81
+          OUT=/tmp/p0d_horde_private_lifecycle_v2_artifact
+          PLACE="$OUT/P0D_RC81_PRIVATE_HORDE_LIFECYCLE_V2_STUDIO.rbxlx"
+          mkdir -p "$OUT"
+          test -f "$BASE/SOURCE_LOCK.json"
+          python3 -B -m unittest discover -s rc_fastlane -p test_private_horde_combat.py -v
+          python3 -B rc_fastlane/apply_private_horde_combat.py --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_private_horde_combat.py --base "$BASE" --out "$FINAL" --enabled true
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 81
+          python3 -B rc_fastlane/native_private_horde_combat.py \
+            --dist "$FINAL" --out "$OUT/NATIVE_THREE_GUARDS.luau"
+          /tmp/p0d_new_luau/luau "$OUT/NATIVE_THREE_GUARDS.luau"
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B rc_fastlane/verify_private_horde_combat.py \
+            --dist "$FINAL" --place "$PLACE" --receipt "$OUT/HORDE_LIFECYCLE_EXACT.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/ART_SOURCE_REPORT.json"
+          python3 -B art_quality/check_live_art_parity.py \
+            --place "$PLACE" --out "$OUT/LIVE_ART_REPORT.json"
+          python3 -B art_quality/check_mobile_fun.py \
+            --out "$OUT/MOBILE_KID_FUN_REPORT.json"
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path('/tmp/p0d_horde_private_lifecycle_v2_artifact')
+          p=out/'P0D_RC81_PRIVATE_HORDE_LIFECYCLE_V2_STUDIO.rbxlx'
+          qa=json.loads((out/'HORDE_LIFECYCLE_EXACT.json').read_text())
+          art=json.loads((out/'ART_SOURCE_REPORT.json').read_text())
+          live=json.loads((out/'LIVE_ART_REPORT.json').read_text())
+          assert qa['embedded81_real_luau_exact']==81
+          assert qa['original_B_reset_unchanged'] and qa['one_Game_Horde_HUD']
+          assert qa['three_original_Horde_guards_with_private_optin']
+          assert art['source']['source_gate']=='PASS' and art['source']['script_count']==81
+          assert live['source_gate']=='PASS' and live['top_studio_only_count']==7
+          assert art['art_decision']=='ART_NO_GO' and qa['live_horde_decision']=='LIVE_HORDE_NO_GO'
+          result={
+            'schema':'P0D_ISSUE444_HORDE_PRIVATE_LIFECYCLE_V2_SOURCE_GATE',
+            'official_parent':'0287c696bd2467177236c46a1b2b39646d5aa2b9',
+            'ci_checkout_sha':os.environ['GITHUB_SHA'],
+            'official_rc_adopted':False,'real_luau_source_count':81,
+            'B_canonical_reset_unchanged':True,
+            'additional_guards':['original_attack_hit','original_half_second_horde_tick'],
+            'original_bot_tick_studio_only':True,
+            'Game_only_source_modified':True,'other80_byte_exact':True,
+            'public_runtime_default':'OFF','owner_private_attr':'P0D_PRIVATE_LIVE_HORDE_NINE',
+            'place_bytes':p.stat().st_size,'place_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
+            'source_gate':'PASS','live_horde_decision':'LIVE_HORDE_NO_GO',
+            'live_art_decision':'LIVE_ART_NO_GO','art_decision':'ART_NO_GO',
+            'mobile_decision':'MOBILE_NO_GO','fun_decision':'FUN_NO_GO',
+            'actual_live_nine_mobs':'NOT_TESTED','real_hit_hp_popup':'NOT_TESTED',
+            'android15min':'NOT_TESTED','kid_first3min':'NOT_TESTED','owner_accepted':False
+          }
+          (out/'HORDE_PRIVATE_V2_RECEIPT.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_PRIVATE_HORDE_V2_SOURCE81_QA_NOT_ENGINE_GO',result['place_bytes'],result['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always() && env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        with:
+          name: P0D-PRIVATE-HORDE-ATTACK-TICK-V2-SOURCE-NOGO
+          path: /tmp/p0d_horde_private_lifecycle_v2_artifact/*
+          retention-days: 14
+          if-no-files-found: warn
