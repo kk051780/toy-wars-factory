@@ -41,6 +41,14 @@ def emit(game:Path,out:Path):
     pre=r'''--!nocheck
 -- Real authored final Game source, deterministic coroutine race tests.
 local match={serial=17,phase="LOBBY",startedAt=0,deadline=0}
+local RunService={IsStudio=function() return true end}
+local ModeVote={SCORE="SCORE",CLASSIC="CLASSIC"}
+function ModeVote.tally(votes,participants) return "CLASSIC" end
+local modeVotes={}
+local EXPERIMENTAL_FIVE_EGG_MODE=false
+local studioSoloRoundStarted=false
+local function eligibleSoloPlayers() return Players and Players:GetPlayers() or {} end
+local function beginProgressRounds() end
 local Players={online={}}
 function Players:GetPlayers() return self.online end
 local Config={MatchSeconds=900,CastleMaxHp=100,RoleSelectCooldown=3}
