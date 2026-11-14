@@ -13,6 +13,7 @@ local ITEMS = {
     rare_egg = "レア卵", healing = "回復アイテム",
     beast_stone = "魔獣の進化石", speed = "加速アイテム", star_shard = "星のかけら",
 }
+local REALMS = {SKY = "空のひみつ", SEA = "海のひみつ", EMBER = "炎のひみつ", STAR = "星のひみつ"}
 local WEATHER = {
     thunder = "雷雨", snow = "吹雪", meteor = "流星",
     clear = "晴れ",
@@ -82,11 +83,13 @@ function Director.Compose(facts)
         if signal == "INTRO" then
             return output(speakerId, signal, "4つの秘境の印を見つけると、秘密が分かるぞ。", false, false)
         end
+        if signal == "REALM_COMPLETE" and facts.realmComplete == true then
+            return output(speakerId, signal, "4つの秘境を発見！君のまわりの光を見てみよう。", false, false)
+        end
         if signal == "SECRET_HINT" and facts.hintUnlocked == true then
-            if facts.secretTier == 1 then
-                return output(speakerId, signal, "天空と海、まだ見つけていない印はあるかな？", false, false)
-            elseif facts.secretTier == 2 then
-                return output(speakerId, signal, "4つの秘境の印を集めると、不思議な光が現れる……", false, false)
+            local nextName = REALMS[facts.nextRealm]
+            if nextName ~= nil then
+                return output(speakerId, signal, "次は「" .. nextName .. "」の印を探してみよう。", false, false)
             end
         elseif signal == "WEATHER" and facts.weatherObserved == true then
             local weather = WEATHER[facts.weatherCode]
