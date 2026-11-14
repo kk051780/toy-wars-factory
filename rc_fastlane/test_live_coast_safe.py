@@ -56,6 +56,8 @@ class PrivateCoastTests(unittest.TestCase):
         source=self.raw.decode("utf8")
         self.assertIn('if workspace:GetAttribute("P0D_PRIVATE_LIVE_COAST") ~= true then return end',source)
         self.assertNotIn("if not RunService:IsStudio() then return end",source)
+        self.assertIn('if not RunService:IsStudio() and game.PrivateServerId == "" then',source)
+        self.assertIn('P0D_LIVE_COAST_PUBLIC_SERVER_ALWAYS_OFF',source)
     def test_gameplay_surface_unchanged_and_outside_boundary(self):
         s=self.raw.decode("utf8")
         for v in ('math.abs(north.Position.Z + 71)',
