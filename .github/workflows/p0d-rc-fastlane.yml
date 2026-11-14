@@ -2128,26 +2128,22 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          BASE=/tmp/p0d_rc80_fb015_castle_s2
-          LOD=/tmp/p0d_431_gorogan_lod
+          BASE=/tmp/p0d_rc80_fb015_gorogan_s4
           FINAL=/tmp/p0d_431_private_client
           OUT=/tmp/p0d_431_private_client_artifact
           mkdir -p "$OUT"
           python3 -B -m unittest discover -s rc_fastlane -p test_fb015_gorogan_mobile_lod.py -v
           python3 -B -m unittest discover -s rc_fastlane -p test_fb015_live_art_client_pilot.py -v
-          python3 -B rc_fastlane/apply_fb015_gorogan_mobile_lod.py --base "$BASE" --out "$LOD" --enabled false
-          test ! -e "$LOD"
-          python3 -B rc_fastlane/apply_fb015_gorogan_mobile_lod.py --base "$BASE" --out "$LOD" --enabled true
-          python3 -B rc_fastlane/apply_fb015_live_art_client_pilot.py --base "$LOD" --out "$FINAL" --enabled false
+          python3 -B rc_fastlane/apply_fb015_live_art_client_pilot.py --base "$BASE" --out "$FINAL" --enabled false
           test ! -e "$FINAL"
-          python3 -B rc_fastlane/apply_fb015_live_art_client_pilot.py --base "$LOD" --out "$FINAL" --enabled true
+          python3 -B rc_fastlane/apply_fb015_live_art_client_pilot.py --base "$BASE" --out "$FINAL" --enabled true
           test "$(find "$FINAL/src" -name '*.luau' | wc -l)" -eq 80
           while IFS= read -r -d '' f; do
             /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
           done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
           PLACE="$OUT/P0D_RC80_431_PRIVATE_CLIENT_STUDIO.rbxlx"
           /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
-          python3 -B rc_fastlane/verify_fb015_live_art_client_pilot.py --base "$LOD" --dist "$FINAL" --place "$PLACE" --receipt "$OUT/LIVE_ART_PILOT_RECEIPT.json"
+          python3 -B rc_fastlane/verify_fb015_live_art_client_pilot.py --base "$BASE" --dist "$FINAL" --place "$PLACE" --receipt "$OUT/LIVE_ART_PILOT_RECEIPT.json"
           python3 -B art_quality/check_art_quality.py --place "$PLACE" --out "$OUT/ART_REPORT.json"
           python3 -B art_quality/check_mobile_fun.py --out "$OUT/MOBILE_KID_FUN_REPORT.json"
           python3 - <<'PY'
