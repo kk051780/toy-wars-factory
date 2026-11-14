@@ -1996,3 +1996,84 @@ jobs:
           path: /tmp/p0d_rc80_art_world_castle/*
           retention-days: 14
           if-no-files-found: error
+
+
+      - name: 'PRIVATE #431 live castle non-Studio-lite canary: source-exact 80 + no-go ART'
+        if: env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_rc80_fb015_castle_s2
+          OUT=/tmp/p0d_fb015_live_castle_lite_canary80
+          REPORT=/tmp/p0d_live_castle_canary_report
+          PLACE="$REPORT/P0D_RC80_PRIVATE_LIVE_CASTLE_36PART_CANARY.rbxlx"
+          mkdir -p "$REPORT"
+          test -f "$BASE/SOURCE_LOCK.json"
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_live_castle_canary.py -v
+          python3 -B -m unittest discover -s art_quality -p test_live_art_parity.py -v
+          python3 -B rc_fastlane/apply_fb015_live_castle_canary.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_fb015_live_castle_canary.py --base "$BASE" --out "$OUT" --enabled true
+          test "$(find "$OUT/src" -type f -name '*.luau' | wc -l)" -eq 80
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done < <(find "$OUT/src" -type f -name '*.luau' -print0)
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o "$PLACE"
+          python3 -B rc_fastlane/verify_fb015_live_castle_canary.py \
+            --dist "$OUT" --place "$PLACE" --receipt "$REPORT/CASTLE_LIVE_SOURCE_RECEIPT.json"
+          python3 -B art_quality/check_live_art_parity.py \
+            --place "$PLACE" --out "$REPORT/LIVE_ART_PARITY_REPORT.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$REPORT/ART_QUALITY_REPORT.json"
+          python3 -B art_quality/check_mobile_fun.py \
+            --out "$REPORT/MOBILE_KID_FUN_REPORT.json"
+          cp "$OUT/SOURCE_LOCK.json" "$REPORT/SOURCE_LOCK.json"
+          cp "$OUT/RC_FEATURE_LOCK.json" "$REPORT/RC_FEATURE_LOCK.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path('/tmp/p0d_live_castle_canary_report')
+          p=out/'P0D_RC80_PRIVATE_LIVE_CASTLE_36PART_CANARY.rbxlx'
+          live=json.loads((out/'LIVE_ART_PARITY_REPORT.json').read_text())
+          art=json.loads((out/'ART_QUALITY_REPORT.json').read_text())
+          assert live['source_gate']=='PASS',live.get('source_errors')
+          assert live['script_count']==80 and live['top_studio_only_count']==6
+          assert len(live['visual_sources'])==7
+          status={x['name']:x['source_guard'] for x in live['visual_sources']}
+          assert status['CastleDetailArt']=='CONDITIONAL_OR_UNKNOWN',status
+          assert art['source']['source_gate']=='PASS',art['source']
+          assert art['source']['script_count']==80
+          assert live['live_art_decision']=='LIVE_ART_NO_GO'
+          assert art['art_decision']=='ART_NO_GO'
+          assert live['owner_accepted'] is False and art['owner_accepted'] is False
+          report={
+            'schema':'P0D_PRIVATE_LIVE_CASTLE_CANARY_FINAL_STAGING_V1',
+            'official_parent':'1bf25e7e83a38ecbbef588309edd7217b9f39c67',
+            'ci_checkout_sha':os.environ['GITHUB_SHA'],
+            'official_rc_adopted':False,'no_publish':True,
+            'source_count':80,'modified_existing_sources':1,
+            'other79_byte_identical':True,
+            'live_castle_canary_enabled_by_default':False,
+            'live_castle_canary_workspace_attr':'P0D_PRIVATE_LIVE_CASTLE',
+            'nonstudio_budget_parts':36,'seven_art_guarded_before':7,
+            'studio_only_remaining_after':6,
+            'nonstudio_device_and_render':'NOT_TESTED',
+            'android_15_minutes':'NOT_TESTED',
+            'child_first_three_minutes':'NOT_TESTED',
+            'place_bytes':p.stat().st_size,
+            'place_sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
+            'source_gate':'PASS','live_art_decision':'LIVE_ART_NO_GO',
+            'art_decision':'ART_NO_GO','mobile_decision':'MOBILE_NO_GO',
+            'fun_decision':'FUN_NO_GO','owner_accepted':False
+          }
+          (out/'PRIVATE_LIVE_CASTLE_CANDIDATE_RECEIPT.json').write_text(
+            json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_LIVE_CASTLE_CANARY_SOURCE_ONLY_PASS_NO_GO',report['place_bytes'],report['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always() && env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        with:
+          name: P0D-PRIVATE-LIVE-CASTLE-36PART-CANARY-NOT-PUBLISHABLE
+          path: /tmp/p0d_live_castle_canary_report/*
+          retention-days: 14
+          if-no-files-found: warn
