@@ -42,6 +42,10 @@ def check(parent: Path, dist: Path, place: Path, receipt: Path):
     pins = {name:mod.blob(raw) for name,raw in sorted(sources.items())}
     assert source_lock["total_scripts"] == feature_lock["total_sources"] == 69
     assert source_lock["blobs"] == feature_lock["source_gitblobs"] == pins
+    parent_pins=json.loads((parent/"SOURCE_LOCK.json").read_text("utf8"))["blobs"]
+    parent_fingerprint=hashlib.sha256(json.dumps(
+        parent_pins,sort_keys=True,separators=(",",":")).encode("utf8")).hexdigest()
+    print("P0D_FB015_PINNED_PARENT68_ALL_68_SOURCE_MAP_SHA256",parent_fingerprint)
     assert feature_lock["feature_flags"][mod.FLAG] is True
     assert pins[mod.DEST] == mod.PIN
     assert pins["server/MusouHorde.luau"] == mod.ORIGINAL_HORDE
@@ -57,6 +61,7 @@ def check(parent: Path, dist: Path, place: Path, receipt: Path):
             ["git", "rev-parse", "HEAD"], text=True).strip(),
         "parent_horde_blob":mod.ORIGINAL_HORDE,
         "parent_minion_blob":mod.ORIGINAL_MINION,
+        "parent68_full_source_map_sha256":parent_fingerprint,
         "motion_blob":mod.PIN,
         "place_bytes": len(raw),
         "place_sha256":hashlib.sha256(raw).hexdigest(),
