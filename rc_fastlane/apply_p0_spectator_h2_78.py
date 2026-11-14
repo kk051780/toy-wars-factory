@@ -59,8 +59,6 @@ def patch_game(src:str)->str:
     new='''    local online = eligibleSoloPlayers()
     if #online == 0 then return false end
     for _, player in ipairs(online) do'''
-    src=region(src,"local function everybodyReady(): boolean",
-               "local function",lambda body:once(body,old,new)) if False else src
     # Original READY code has one such unique block.
     src=once(src,old,new)
 
@@ -92,19 +90,17 @@ def patch_game(src:str)->str:
             root.CFrame=LobbyIsland.spawn("RED")
         end''')
     src=region(src,"local function assignSpawn(player: Player, character: Model)",
-               "for _, team in ipairs({\"RED\", \"BLUE\"}) do",spawn) if False else region(src,
-               "local function assignSpawn(player: Player, character: Model)",
-               "local function",spawn) if False else src
-    # Split using actual original objective hookup (no duplicate assumptions).
-    src=region(src,"local function assignSpawn(player: Player, character: Model)",
               'map.teams[team].eggPrompt.Triggered:Connect(',spawn) if False else src
-    # Within assignSpawn, region ends at existing objective hook.
-    boundary='for _, team in ipairs({"RED", "BLUE"}) do'
-    assert src.count(boundary)>=1
-    start=src.index("local function assignSpawn(player: Player, character: Model)")
-    tail=src[start:]
-    idx=tail.index(boundary)
-    src=src[:start]+ "local function assignSpawn(player: Player, character: Model)"+spawn(tail.split("local function assignSpawn(player: Player, character: Model)",1)[1][:idx])+tail[idx:]
+    # Only the function body, excluding all egg prompt/event hooks.
+    # Indices MUST be relative to the split body, never the original tail:
+    # otherwise the objective loop is half-appended and the script corrupts.
+    marker="local function assignSpawn(player: Player, character: Model)"
+    objective='for _, team in ipairs({"RED", "BLUE"}) do'
+    assert src.count(marker)==1, "ASSIGN_SPAWN_SOURCE_UNIQUE"
+    beforeSpawn,afterStart=src.split(marker,1)
+    assert objective in afterStart, "OBJECTIVE_HOOK_MISSING_AFTER_SPAWN"
+    spawnBody,afterObjective=afterStart.split(objective,1)
+    src=beforeSpawn+marker+spawn(spawnBody)+objective+afterObjective
 
     # Promote neutral spectators only on the NEXT LOBBY, never in ACTIVE or
     # COUNTDOWN. A dead observer receives a bounded one-shot engine respawn.
