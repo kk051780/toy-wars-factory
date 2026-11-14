@@ -4,11 +4,12 @@ from __future__ import annotations
 import argparse,collections,hashlib,json
 from defusedxml import ElementTree as ET
 from pathlib import Path
-from apply_fb019_server_ack import read,blob,GAME,HUD,KEY,PIN_GAME,PIN_HUD
+from apply_fb019_server_ack import read,blob,GAME,HUD,HORDE,KEY,PIN_GAME,PIN_HUD,PIN_HORDE
 
 def verify(dist:Path,place:Path,receipt:Path):
     src=read(dist)
-    assert len(src)==80 and GAME in src and HUD in src
+    assert len(src)==80 and GAME in src and HUD in src and HORDE in src
+    assert blob(src[HORDE])==PIN_HORDE
     sl=json.loads((dist/"SOURCE_LOCK.json").read_text("utf8"))
     fl=json.loads((dist/"RC_FEATURE_LOCK.json").read_text("utf8"))
     pins={p:blob(v) for p,v in sorted(src.items())}
@@ -50,17 +51,23 @@ def verify(dist:Path,place:Path,receipt:Path):
     assert "attackFeedbackVersion==version" in h
     assert 'packet.serial~=lastSerial' in h
     assert h.count('Instance.new("ScreenGui")')==1 # original GUI only
+    assert fl["fb019_attack"]["horde_source_pin"]==PIN_HORDE
     actual=collections.Counter()
     names=collections.Counter()
+    script_items=0
     for item in ET.parse(place).iter("Item"):
         if item.attrib.get("class") not in ("Script","LocalScript","ModuleScript"):continue
+        script_items+=1
         prop=item.find("Properties")
-        if prop is None:continue
+        assert prop is not None,"SCRIPT_WITHOUT_PROPERTIES"
         node=prop.find("string[@name='Source']")
+        assert node is not None,"SCRIPT_WITHOUT_SOURCE"
         name=prop.find("string[@name='Name']")
-        if node is not None:actual[node.text or ""]+=1
-        if name is not None:names[(item.attrib["class"],name.text)]+=1
+        assert name is not None,"SCRIPT_WITHOUT_NAME"
+        actual[node.text or ""]+=1
+        names[(item.attrib["class"],name.text)]+=1
     expected=collections.Counter(v.decode("utf8") for v in src.values())
+    assert script_items==len(src)==80,"SCRIPT_COUNT_INCLUDES_SOURCELESS"
     assert actual==expected and sum(actual.values())==80, "ROJO_NOT_ALL80_SOURCE_EXACT"
     assert names[("Script","Game")]==1
     assert names[("LocalScript","TrapRaidersHUD")]==1
