@@ -212,5 +212,47 @@ class CompositeTest(unittest.TestCase):
             self.assertFalse(journal.exists())
             self.assertFalse(output.exists())
 
+    def test_composite_off_refuses_empty_directory_and_mode_change(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            private=root/"private68"
+            combo.compose(d,private,True)
+            extra=private/"PRESERVE_MY_EMPTY_FOLDER"
+            extra.mkdir()
+            with self.assertRaisesRegex(RuntimeError,
+                    "ROLLBACK_REFUSED_ADDED_OR_MODIFIED_OR_MISSING_FILE"):
+                combo.compose(d,private,False)
+            self.assertTrue(extra.is_dir())
+            extra.rmdir()
+            f=private/"src/server/ArtMinionSilhouette.server.luau"
+            initial=f.stat().st_mode & 0o777
+            f.chmod(0o600 if initial!=0o600 else 0o644)
+            with self.assertRaisesRegex(RuntimeError,
+                    "ROLLBACK_REFUSED_ADDED_OR_MODIFIED_OR_MISSING_FILE"):
+                combo.compose(d,private,False)
+            f.chmod(initial)
+            self.assertTrue(combo.compose(d,private,False))
+
+    def test_composite_symlink_refuses_off_without_deleting_external_target(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            private=root/"private68"
+            combo.compose(d,private,True)
+            external=root/"keep"
+            external.mkdir()
+            (external/"precious.txt").write_text("LEAVE ME")
+            link=private/"OUTSIDE_LINK"
+            link.symlink_to(external,target_is_directory=True)
+            with self.assertRaisesRegex(RuntimeError,"FB015_SYMLINK_ENTRY_REFUSED"):
+                combo.compose(d,private,False)
+            self.assertTrue(link.is_symlink())
+            self.assertEqual((external/"precious.txt").read_text(),"LEAVE ME")
+            link.unlink()
+            self.assertTrue(combo.compose(d,private,False))
+
 if __name__ == "__main__":
     unittest.main()
