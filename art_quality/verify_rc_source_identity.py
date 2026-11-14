@@ -117,7 +117,33 @@ def expected_bindings(dist: Path) -> dict[tuple[str, str], bytes]:
     return expected
 
 
-def actual_bindings(place: Path) -> dict[tuple[str, str], bytes]:
+def expected_ancestor_classes(
+    dist: Path, expected: dict[tuple[str, str], bytes]
+) -> dict[tuple[str, ...], str]:
+    """Check the *container* classes too, not just leaf Game/HUD classes."""
+    project = json.loads((dist / "default.project.json").read_text("utf8"))
+    classes: dict[tuple[str, ...], str] = {}
+
+    def walk(node: dict, path: tuple[str, ...]) -> None:
+        if path and not str(node.get("$path", "")).endswith(".luau"):
+            classes[path] = node.get("$className", "Folder")
+        for name, child in node.items():
+            if not name.startswith("$"):
+                assert "/" not in name and "\\" not in name
+                walk(child, path + (name,))
+
+    walk(project["tree"], ())
+    for (runtime_path, _), _source in expected.items():
+        names = runtime_path.split("/")
+        for i in range(1, len(names)):
+            classes.setdefault(tuple(names[:i]), "Folder")
+    assert classes, "PROJECT_HAS_NO_ANCESTOR_CLASSES"
+    return classes
+
+
+def actual_bindings(
+    place: Path, observed_ancestors: dict[tuple[str, ...], str] | None = None
+) -> dict[tuple[str, str], bytes]:
     raw = place.read_bytes()
     assert 0 < len(raw) <= 10_000_000, "BAD_PLACE_SIZE"
     assert b"<!DOCTYPE" not in raw.upper() and b"<!ENTITY" not in raw.upper(), "XML_ENTITY_REJECTED"
@@ -133,7 +159,14 @@ def actual_bindings(place: Path) -> dict[tuple[str, str], bytes]:
             assert properties is not None, ("ITEM_WITHOUT_PROPERTIES", kind)
             name_node = properties.find("string[@name='Name']")
             assert name_node is not None and name_node.text, ("ITEM_WITHOUT_NAME", kind)
-            instance_path = ancestors + (name_node.text,)
+            name = name_node.text
+            assert ("/" not in name and "\\" not in name and name not in (".", "..")), (
+                "INVALID_INSTANCE_NAME", name)
+            instance_path = ancestors + (name,)
+            if kind != "DataModel" and kind not in CLASSES and observed_ancestors is not None:
+                prior = observed_ancestors.get(instance_path)
+                assert prior is None or prior == kind, ("DUPLICATE_ANCESTOR_CLASS", instance_path)
+                observed_ancestors[instance_path] = kind
             if kind in CLASSES:
                 count += 1
                 source_nodes = [
@@ -158,7 +191,12 @@ def actual_bindings(place: Path) -> dict[tuple[str, str], bytes]:
 
 def verify(dist: Path, place: Path, receipt: Path, expected_count: int | None = None) -> dict:
     expected = expected_bindings(dist)
-    actual = actual_bindings(place)
+    expected_parents = expected_ancestor_classes(dist, expected)
+    observed_parents: dict[tuple[str, ...], str] = {}
+    actual = actual_bindings(place, observed_parents)
+    for path, required_class in expected_parents.items():
+        assert observed_parents.get(path) == required_class, (
+            "ROJO_ANCESTOR_CLASS_DRIFT", path, required_class, observed_parents.get(path))
     if expected_count is not None:
         assert len(expected) == expected_count, ("EXPECTED_COUNT_CHANGED", len(expected))
     missing = set(expected) - set(actual)
@@ -179,6 +217,7 @@ def verify(dist: Path, place: Path, receipt: Path, expected_count: int | None = 
         "embedded_count": len(actual),
         "source_count": len(expected),
         "all_instance_class_name_path_source_exact": True,
+        "all_ancestor_container_class_exact": True,
         "source_less_script_rejected": True,
         "swapped_source_rejected": True,
         "one_Game": True,
