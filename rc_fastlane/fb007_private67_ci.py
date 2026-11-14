@@ -47,8 +47,8 @@ def build(original:Path,private:Path,output:Path,compiler:Path,rojo:Path):
     assert 'match.phase=="LOBBY" and carry[player]==nil' in game
     assert 'LobbyIsland.inLobby(position)' in game
     for file in sorted((private/'src').rglob('*.luau')):
-        result=subprocess.run([str(compiler),str(file)],capture_output=True,text=True)
-        assert result.returncode==0,("LUAU_COMPILER_ERROR",file,result.stderr[:1500])
+        result=subprocess.run([str(compiler),str(file)],stdout=subprocess.DEVNULL,stderr=subprocess.PIPE)
+        assert result.returncode==0,("LUAU_COMPILER_ERROR",file,result.stderr.decode("utf8","replace")[:1500])
     output.mkdir(parents=True)
     place=output/'FB007_PRIVATE67.rbxlx'
     subprocess.run([str(rojo),'build',str(private/'default.project.json'),'-o',str(place)],check=True)
