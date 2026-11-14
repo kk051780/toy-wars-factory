@@ -1,0 +1,377 @@
+#!/usr/bin/env python3
+"""Regression of actual #381 overlay followed by exact #374 3D minion source."""
+from __future__ import annotations
+import importlib.util
+import json
+import os
+import tempfile
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, ROOT / path)
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+slash = load("apply_combat_art", "apply_fb015_combat.py")
+combo = load("compose_minion_combat", "compose_fb015_minion_combat.py")
+
+QA = load("p0d_art_combat_real_test_fixture", "test_fb015_combat.py")
+
+def original_horde():
+    return QA.original_horde()
+
+def snapshot(d):
+    return {p.relative_to(d).as_posix():p.read_bytes()
+            for p in d.rglob("*") if p.is_file()}
+
+def fixture(root):
+    dist = root / "base66"
+    items = {
+        "server/MusouHorde.luau": original_horde(),
+        "server/Game.server.luau": b'remote.OnServerEvent:Connect(function() end)',
+    }
+    items.update({f"shared/Original_{i:02d}.luau": f"return {i}\n".encode()
+                  for i in range(64)})
+    for path, raw in items.items():
+        d = dist / "src" / path
+        d.parent.mkdir(parents=True, exist_ok=True)
+        d.write_bytes(raw)
+    pins = {k:slash.blob(v) for k,v in sorted(items.items())}
+    (dist/"SOURCE_LOCK.json").write_text(json.dumps({"total_scripts":66,"blobs":pins}))
+    (dist/"RC_FEATURE_LOCK.json").write_text(json.dumps({
+        "total_sources":66,"source_gitblobs":pins,"feature_flags":{}}))
+    (dist/"default.project.json").write_text(json.dumps({
+        "tree":{
+            "ServerScriptService":{"TrapRaidersS1":{"$path":"src/server"}},
+            "StarterPlayer":{"StarterPlayerScripts":{
+                "ResultNextStep":{"$path":"src/client/ResultNextStep.client.luau"}}}
+        }}))
+    return dist
+
+class CompositeTest(unittest.TestCase):
+    def test_minion_source_keeps_four_species_with_confirmed_sparks(self):
+        self.assertEqual(combo.blob(combo.AUTHOR.read_bytes()), combo.PIN)
+        self.assertIn(b"ELITE_BACK_BANNER",combo.AUTHOR.read_bytes())
+        self.assertIn(b'artHitBus.Event:Connect(onConfirmedServerHit)',
+                      combo.AUTHOR.read_bytes())
+        self.assertIn(b'pendingByCore[core]',combo.AUTHOR.read_bytes())
+        self.assertNotIn(b'GetAttributeChangedSignal("P0D_ART_SPARK_V1")',
+                         combo.AUTHOR.read_bytes())
+        self.assertNotIn(b"local flashing = item.core.Color.R > .9",
+                         combo.AUTHOR.read_bytes())
+        h=slash.HORDE_AUTHOR.read_bytes()
+        self.assertIn(b'if RunService:IsStudio() then',h)
+        self.assertIn(b'if self.artCue and self.artHitBus then',h)
+        self.assertIn(b'self.artHitBus:Fire(m.body,m.artHitSeq,m.hp<=0,self.round)',h)
+        self.assertIn(b'Instance.new("BindableEvent")',h)
+        self.assertNotIn(b'P0D_ART_SPARK_V1',h)
+        self.assertNotIn(b'OnServerEvent:Connect(',h)
+
+    def test_compose_exact_real_66_67_68_and_off(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            dist=fixture(root)
+            original=snapshot(dist)
+            self.assertTrue(slash.apply(dist, True))
+            prev=snapshot(dist)
+            output=root/"private68"
+            self.assertTrue(combo.compose(dist, output, True))
+            scripts=combo.files(output)
+            self.assertEqual(len(scripts), 68)
+            self.assertEqual(scripts["server/ArtMinionSilhouette.server.luau"],combo.AUTHOR.read_bytes())
+            self.assertEqual(len(combo.files(dist)),67)
+            self.assertEqual(snapshot(dist),prev)
+            self.assertEqual(json.loads((output/"SOURCE_LOCK.json").read_text())["total_scripts"],68)
+            self.assertEqual(json.loads((output/"RC_FEATURE_LOCK.json").read_text())["total_sources"],68)
+            self.assertTrue(combo.compose(dist, output, False))
+            self.assertFalse(output.exists())
+            self.assertEqual(snapshot(dist),prev)
+            self.assertTrue(slash.apply(dist, False))
+            self.assertEqual(snapshot(dist),original)
+
+    def test_fail_closed_if_source_or_horde_drift(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            dist=fixture(root)
+            slash.apply(dist,True)
+            p=dist/"src/server/MusouHorde.luau"
+            p.write_bytes(p.read_bytes()+b"DRIFT")
+            out=root/"private68"
+            with self.assertRaisesRegex(RuntimeError,"SOURCE_PIN_HORDE_SIGNAL_DRIFT"):
+                combo.compose(dist,out,True)
+            self.assertFalse(out.exists())
+
+    def test_private68_off_zero_write_if_not_exists(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            self.assertFalse(combo.compose(root/"missing",root/"private68",False))
+            self.assertFalse((root/"private68").exists())
+            self.assertEqual(list(root.iterdir()),[])
+
+    def test_off_never_deletes_ancestor_of_input(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            with self.assertRaisesRegex(RuntimeError,"PRIVATE_OUTPUT_MUST_BE_SEPARATE"):
+                combo.compose(d,root,False)
+            self.assertTrue(d.exists())
+
+    def test_off_never_deletes_unrelated_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            output=root/"private68"
+            combo.compose(d,output,True)
+            unrelated=output/"SAVED_UNRELATED_FILE.txt"
+            unrelated.write_text("DO NOT DELETE",encoding="utf8")
+            with self.assertRaisesRegex(RuntimeError,"ROLLBACK_REFUSED_ADDED_OR_MODIFIED_OR_MISSING_FILE"):
+                combo.compose(d,output,False)
+            self.assertEqual(unrelated.read_text("utf8"),"DO NOT DELETE")
+            unrelated.unlink()
+            self.assertTrue(combo.compose(d,output,False))
+            self.assertFalse(output.exists())
+
+    def test_interrupted_composite_off_cleanup_recover(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            original67=snapshot(d)
+            output=root/"private68"
+            combo.compose(d,output,True)
+            record=combo.verify_private_output(output,d)
+            journal=output.with_name(output.name+".fb015_delete_journal.json")
+            tombstone=output.with_name(output.name+".fb015_deleting")
+            journal.write_text(json.dumps(record)+"\n",encoding="utf8")
+            os.rename(output,tombstone)
+            self.assertTrue(combo.compose(d,output,False))
+            self.assertFalse(journal.exists())
+            self.assertFalse(tombstone.exists())
+            self.assertFalse(output.exists())
+            self.assertEqual(snapshot(d),original67)
+
+    def test_refuse_changed_partially_deleted_tombstone(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            output=root/"private68"
+            combo.compose(d,output,True)
+            record=combo.verify_private_output(output,d)
+            journal=output.with_name(output.name+".fb015_delete_journal.json")
+            tombstone=output.with_name(output.name+".fb015_deleting")
+            journal.write_text(json.dumps(record)+"\n",encoding="utf8")
+            os.rename(output,tombstone)
+            rogue=tombstone/"INTRUDER_SAVED.txt"
+            rogue.write_text("KEEP ME",encoding="utf8")
+            with self.assertRaisesRegex(RuntimeError,"TOMBSTONE_EXTRA_OR_MODIFIED_FILE_ROLLBACK_REFUSED"):
+                combo.compose(d,output,False)
+            self.assertEqual(rogue.read_text("utf8"),"KEEP ME")
+            rogue.unlink()
+            self.assertTrue(combo.compose(d,output,False))
+            self.assertFalse(tombstone.exists())
+
+    def test_no_enable_while_rollback_tombstone_pending(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            output=root/"private68"
+            combo.compose(d,output,True)
+            record=combo.verify_private_output(output,d)
+            journal=output.with_name(output.name+".fb015_delete_journal.json")
+            tombstone=output.with_name(output.name+".fb015_deleting")
+            journal.write_text(json.dumps(record)+"\n",encoding="utf8")
+            os.rename(output,tombstone)
+            with self.assertRaisesRegex(RuntimeError,"PENDING_OFF_RECOVERY"):
+                combo.compose(d,output,True)
+            self.assertFalse(output.exists())
+            self.assertTrue(combo.compose(d,output,False))
+
+    def test_recover_after_tombstone_already_deleted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            output=root/"private68"
+            combo.compose(d,output,True)
+            record=combo.verify_private_output(output,d)
+            journal=output.with_name(output.name+".fb015_delete_journal.json")
+            tombstone=output.with_name(output.name+".fb015_deleting")
+            journal.write_text(json.dumps(record)+"\n",encoding="utf8")
+            os.rename(output,tombstone)
+            import shutil
+            shutil.rmtree(tombstone)
+            self.assertTrue(combo.compose(d,output,False))
+            self.assertFalse(journal.exists())
+            self.assertFalse(output.exists())
+
+    def test_composite_off_refuses_empty_directory_and_mode_change(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            private=root/"private68"
+            combo.compose(d,private,True)
+            extra=private/"PRESERVE_MY_EMPTY_FOLDER"
+            extra.mkdir()
+            with self.assertRaisesRegex(RuntimeError,
+                    "ROLLBACK_REFUSED_ADDED_OR_MODIFIED_OR_MISSING_FILE"):
+                combo.compose(d,private,False)
+            self.assertTrue(extra.is_dir())
+            extra.rmdir()
+            f=private/"src/server/ArtMinionSilhouette.server.luau"
+            initial=f.stat().st_mode & 0o777
+            f.chmod(0o600 if initial!=0o600 else 0o644)
+            with self.assertRaisesRegex(RuntimeError,
+                    "ROLLBACK_REFUSED_ADDED_OR_MODIFIED_OR_MISSING_FILE"):
+                combo.compose(d,private,False)
+            f.chmod(initial)
+            self.assertTrue(combo.compose(d,private,False))
+
+    def test_composite_symlink_refuses_off_without_deleting_external_target(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            private=root/"private68"
+            combo.compose(d,private,True)
+            external=root/"keep"
+            external.mkdir()
+            (external/"precious.txt").write_text("LEAVE ME")
+            link=private/"OUTSIDE_LINK"
+            link.symlink_to(external,target_is_directory=True)
+            with self.assertRaisesRegex(RuntimeError,"FB015_SYMLINK_ENTRY_REFUSED"):
+                combo.compose(d,private,False)
+            self.assertTrue(link.is_symlink())
+            self.assertEqual((external/"precious.txt").read_text(),"LEAVE ME")
+            link.unlink()
+            self.assertTrue(combo.compose(d,private,False))
+
+    def test_coedited_composite_manifest_and_candidate_preserve_user_data(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            out=root/"private68"
+            combo.compose(d,out,True)
+            rogue=out/"VERY_IMPORTANT_USER_DATA.bin"
+            rogue.write_bytes(b"KEEP ME")
+            mf=out/combo.MANIFEST
+            original=mf.read_bytes()
+            hacked=json.loads(mf.read_text("utf8"))
+            hacked["files"]=combo.manifest_contents(out)
+            mf.write_text(json.dumps(hacked),encoding="utf8")
+            with self.assertRaisesRegex(RuntimeError,"EXTERNAL_COMPOSITE_INVENTORY_MISMATCH"):
+                combo.compose(d,out,False)
+            self.assertEqual(rogue.read_bytes(),b"KEEP ME")
+            rogue.unlink()
+            mf.write_bytes(original)
+            self.assertTrue(combo.compose(d,out,False))
+            self.assertFalse(combo.receipt_path(out).exists())
+
+    def test_external_receipt_can_detect_manifest_bytes_changed_only(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            out=root/"private68"
+            combo.compose(d,out,True)
+            mf=out/combo.MANIFEST
+            raw=mf.read_bytes()
+            mf.write_bytes(raw+b" ")
+            with self.assertRaisesRegex(RuntimeError,"EXTERNAL_COMPOSITE_INVENTORY_MISMATCH"):
+                combo.compose(d,out,False)
+            mf.write_bytes(raw)
+            self.assertTrue(combo.compose(d,out,False))
+
+    def test_composite_symlinked_output_parent_refused_before_resolve(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            dist=fixture(root)
+            slash.apply(dist,True)
+            alias=root/"ALIAS"
+            alias.symlink_to(root,target_is_directory=True)
+            with self.assertRaisesRegex(RuntimeError,"FB015_SYMLINK_PARENT_COMPONENT_REFUSED"):
+                combo.compose(dist,alias/"private68",True)
+            self.assertFalse((root/"private68").exists())
+            self.assertTrue(dist.is_dir())
+
+    def test_separate_output_directory_locks_both_source_and_destination(self):
+        import subprocess
+        import sys
+        from fb015_fs_guard import transaction_parent_locks
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            source=root/"parent_a"
+            out=root/"parent_b"
+            source.mkdir()
+            out.mkdir()
+            script="""import os,sys,fcntl
+fd=os.open(sys.argv[1],os.O_RDONLY|os.O_DIRECTORY)
+try:
+    fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
+except BlockingIOError:
+    sys.exit(42)
+else:
+    sys.exit(0)
+finally:
+    os.close(fd)
+"""
+            with transaction_parent_locks(source,out):
+                for parent in (source,out):
+                    child=subprocess.run([sys.executable,"-c",script,str(parent)],
+                                         check=False)
+                    self.assertEqual(child.returncode,42,str(parent))
+            for parent in (source,out):
+                child=subprocess.run([sys.executable,"-c",script,str(parent)],
+                                     check=False)
+                self.assertEqual(child.returncode,0,str(parent))
+
+    def test_composite_stage_rejects_symlink_inserted_during_copy(self):
+        from unittest import mock
+        real_copy=combo.shutil.copytree
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            output=root/"private68"
+            external=root/"OWNER_SECRET"
+            external.mkdir()
+            (external/"secret").write_text("KEEP")
+            def mutated_copy(source,dest,*args,**kwargs):
+                copied=real_copy(source,dest,*args,**kwargs)
+                (Path(dest)/"SNEAK_LINK").symlink_to(external,target_is_directory=True)
+                return copied
+            with mock.patch.object(combo.shutil,"copytree",side_effect=mutated_copy):
+                with self.assertRaisesRegex(RuntimeError,"FB015_SYMLINK_ENTRY_REFUSED"):
+                    combo.compose(d,output,True)
+            self.assertFalse(output.exists())
+            self.assertFalse(combo.receipt_path(output).exists())
+            self.assertEqual((external/"secret").read_text("utf8"),"KEEP")
+
+    def test_dangling_composite_delete_journal_and_tombstone_refused(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            out=root/"private68"
+            combo.compose(d,out,True)
+            for suffix in (".fb015_delete_journal.json",".fb015_deleting"):
+                reserved=out.with_name(out.name+suffix)
+                reserved.symlink_to(root/"missing_user_target")
+                with self.assertRaisesRegex(RuntimeError,
+                        "COMPOSITE_RESERVED_SYMLINK_REFUSED"):
+                    combo.compose(d,out,False)
+                self.assertTrue(reserved.is_symlink())
+                reserved.unlink()
+            self.assertTrue(combo.compose(d,out,False))
+
+if __name__ == "__main__":
+    unittest.main()
