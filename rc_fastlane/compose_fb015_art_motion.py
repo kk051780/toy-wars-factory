@@ -108,13 +108,16 @@ def preflight(parent: Path):
     return old, pins, slock, flock, project, actual
 
 
-def check_output(parent: Path, out: Path) -> None:
+def check_output(parent: Path, out: Path, identity: Path | None = None) -> None:
     require(out.is_dir() and not out.is_symlink(), "NO_MOTION69_OUTPUT")
+    # During an interrupted OFF, the directory is moved to a tombstone, but
+    # its signed manifest must still identify the original output path.
+    expected_output = identity or out
     mf = out / MANIFEST
     require(mf.is_file(), "ROLLBACK_REFUSED_NOT_OUR_MOTION69")
     rec = json.loads(mf.read_text("utf8"))
     require(rec.get("id") == MANIFEST_ID and rec.get("input") == str(parent)
-            and rec.get("output") == str(out), "MOTION69_MANIFEST_ID_MISMATCH")
+            and rec.get("output") == str(expected_output), "MOTION69_MANIFEST_ID_MISMATCH")
     require(rec.get("files") == manifest_files(out),
             "MOTION69_TREE_DRIFT_NO_REMOVAL")
     src = out / "src" / DEST
@@ -135,21 +138,34 @@ def inner(parent: Path, out: Path, enabled: bool):
     tomb = out.with_name(out.name + ".motion69_removing")
     journal = out.with_name(out.name + ".motion69_journal.json")
     if not enabled:
+        ticket = {"input": str(parent), "output": str(out), "id": MANIFEST_ID}
         if tomb.exists():
             require(not out.exists() and journal.is_file(),
                     "MOTION69_RECOVERY_AMBIGUOUS")
-            ticket = json.loads(journal.read_text("utf8"))
-            require(ticket == {"input": str(parent), "output": str(out), "id": MANIFEST_ID},
+            require(json.loads(journal.read_text("utf8")) == ticket,
                     "MOTION69_RECOVERY_TICKET_MISMATCH")
+            # The tombstone could be changed after the initial signed check.
+            # Refuse to remove it unless its full content is still exact.
+            check_output(parent, tomb, identity=out)
             shutil.rmtree(tomb)
             journal.unlink()
             print("P0D_ART_MOTION69_INTERRUPTED_OFF_RECOVERED")
             return True
+        if journal.exists():
+            require(json.loads(journal.read_text("utf8")) == ticket,
+                    "MOTION69_RECOVERY_TICKET_MISMATCH")
+            if out.exists():
+                # Crash after writing journal and before the rename.
+                check_output(parent, out)
+                journal.unlink()
+            else:
+                # Crash after successful tomb deletion but before journal unlink.
+                journal.unlink()
+                print("P0D_ART_MOTION69_INTERRUPTED_OFF_FINISHED")
+                return True
         if not out.exists():
-            require(not journal.exists(), "MOTION69_STALE_JOURNAL")
             print("P0D_ART_MOTION69_OFF_ZERO_WRITE")
             return False
-        require(not journal.exists(), "MOTION69_STALE_JOURNAL")
         check_output(parent, out)
         journal.write_text(json.dumps(
             {"input": str(parent), "output": str(out), "id": MANIFEST_ID})+"\n", "utf8")
@@ -212,11 +228,20 @@ def inner(parent: Path, out: Path, enabled: bool):
 
 
 def compose(parent: Path, out: Path, enabled: bool):
+    # Reject symbolic links before resolve() so OFF cannot target a redirect.
+    require(not parent.is_symlink() and not out.is_symlink(),
+            "MOTION69_INPUT_OR_OUTPUT_SYMLINK_FORBIDDEN")
     parent = parent.resolve()
     out = out.resolve()
     require(out != parent and out not in parent.parents and parent not in out.parents,
             "MOTION69_INPUT_OUTPUT_OVERLAP")
     lock = out.with_name("." + out.name + ".motion69_lock")
+    tomb = out.with_name(out.name + ".motion69_removing")
+    journal = out.with_name(out.name + ".motion69_journal.json")
+    # A no-op OFF must not leave a newly created lock file behind.
+    if not enabled and not out.exists() and not tomb.exists() and not journal.exists() and not lock.exists():
+        print("P0D_ART_MOTION69_OFF_ZERO_WRITE")
+        return False
     with lock.open("a+b") as file:
         fcntl.flock(file.fileno(), fcntl.LOCK_EX)
         try:
