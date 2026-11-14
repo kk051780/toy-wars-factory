@@ -4,6 +4,7 @@ on:
     branches:
       - rc/p0d-s1-kids-rc01
       - rc/p0d-rc78-stage-20261114-2000
+      - prep/p0d-rc80-quality-gate-after-fb019-v2-20261115
       - feature/p0d-p0game-composite70-integration-prep-20261114
       - qa/p0d-lobby-team-rebalance-private78-20261114
       - qa/p0d-spectator-h2-private78-20261114
@@ -1795,4 +1796,65 @@ jobs:
           name: P0D-FB019-V2-STAGE-REAL-HIT
           path: /tmp/p0d_fb019_v2_out/*
           retention-days: 7
+          if-no-files-found: error
+
+      - name: 'OWNER #420: native art/mobile/kid gates on this SAME built RC80 Studio Place'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          PLACE=/tmp/p0d_fb019_v2_out/P0D_TRAP_RAIDERS_RC80_CONFIRMED_HIT_STUDIO.rbxlx
+          RECEIPT=/tmp/p0d_fb019_v2_out/RC80_CONFIRMED_HIT_RECEIPT.json
+          REPORT=/tmp/p0d_rc80_art_mobile_fun
+          test -s "$PLACE"
+          test -s "$RECEIPT"
+          mkdir -p "$REPORT"
+          python3 -B -m unittest discover -s art_quality -p 'test_art_quality.py' -v
+          python3 -B -m unittest discover -s art_quality -p 'test_reference_benchmarks.py' -v
+          python3 -B -m unittest discover -s art_quality -p 'test_mobile_fun.py' -v
+          python3 -B art_quality/check_reference_benchmarks.py \
+            --references art_quality/REFERENCE_BENCHMARKS_V2.json \
+            --out "$REPORT/REFERENCE_BENCHMARK_REPORT.json"
+          python3 -B art_quality/check_mobile_fun.py \
+            --out "$REPORT/MOBILE_KID_FUN_REPORT.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$REPORT/ART_CHECK_REPORT.json"
+          python3 - <<'PY'
+          from pathlib import Path
+          import json,os,hashlib
+          d=Path('/tmp/p0d_rc80_art_mobile_fun')
+          src=json.loads((d/'ART_CHECK_REPORT.json').read_text())
+          mobile=json.loads((d/'MOBILE_KID_FUN_REPORT.json').read_text())
+          rec=json.loads(Path('/tmp/p0d_fb019_v2_out/RC80_CONFIRMED_HIT_RECEIPT.json').read_text())
+          place=Path('/tmp/p0d_fb019_v2_out/P0D_TRAP_RAIDERS_RC80_CONFIRMED_HIT_STUDIO.rbxlx')
+          assert rec['source_head_sha']==os.environ['GITHUB_SHA'],'NOT_SAME_HEAD_PLACE'
+          assert rec['place_bytes']==place.stat().st_size,'PLACE_SIZE_MISMATCH'
+          assert rec['place_sha256']==hashlib.sha256(place.read_bytes()).hexdigest(),'PLACE_SHA_MISMATCH'
+          assert src['source']['place_sha256']==rec['place_sha256'],'ART_PLACE_SHA_MISMATCH'
+          assert src['source']['script_count']==80,'ART_SOURCE_COUNT_DRIFT'
+          assert src['source']['source_gate']=='PASS','ART_SOURCE_GATE_REJECTED'
+          assert src['art_decision']=='ART_NO_GO' and src['owner_accepted'] is False
+          assert mobile['fun_decision']=='FUN_NO_GO' and mobile['mobile_decision']=='MOBILE_NO_GO'
+          out={'schema':'P0D_RC80_OWNER420_SAME_HEAD_ART_MOBILE_KID_GATE_V1',
+               'source_head_sha':os.environ['GITHUB_SHA'],
+               'built_place_sha256':rec['place_sha256'],
+               'built_place_bytes':rec['place_bytes'],
+               'source_count':80,'source_gate':'PASS',
+               'art_decision':'ART_NO_GO','fun_decision':'FUN_NO_GO',
+               'mobile_decision':'MOBILE_NO_GO','owner_accepted':False,
+               'studiopc':'NOT_TESTED','android15min':'NOT_TESTED',
+               'children3min':'NOT_TESTED',
+               'official_rc_branch':'rc/p0d-s1-kids-rc01',
+               'official_rc_adoption':os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01',
+               'rollback_to':'bd5b819b846705e18537a994ed97ffe71ddd4855'}
+          (d/'RC80_QUALITY_GATE_RECEIPT.json').write_text(json.dumps(out,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_OWNER420_REAL_PLACE_SOURCE_GATE_PASS_ART_FUN_MOBILE_NO_GO',
+                out['source_head_sha'],out['built_place_bytes'],out['official_rc_adoption'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-RC80-OWNER420-ART-MOBILE-KID-SAME-HEAD-REPORT
+          path: /tmp/p0d_rc80_art_mobile_fun/*
+          retention-days: 14
           if-no-files-found: error
