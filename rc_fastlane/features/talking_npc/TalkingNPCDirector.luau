@@ -81,7 +81,7 @@ function Director.Compose(facts)
         end
     elseif speakerId == "ORACLE" then
         if signal == "INTRO" then
-            return output(speakerId, signal, "4つの秘境の印を見つけると、秘密が分かるぞ。", false, false)
+            return output(speakerId, signal, "4つの秘境を探索して、印を集めよう！", false, false)
         end
         if signal == "SECRET_HINT" and facts.hintUnlocked == true then
             local place = REALM_NAMES[facts.missingRealm]

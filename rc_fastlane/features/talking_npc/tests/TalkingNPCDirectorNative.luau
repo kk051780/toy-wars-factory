@@ -37,12 +37,20 @@ case(Director.Compose(fact("NAVI","KNOWN_ITEM",{areaCode="star_bridge",itemCode=
     "ITEM_NOT_OBSERVED_CLOSED")
 says(fact("TRICK","TRICK_RUMOR"),"ふふっ、こっちに宝があるかもね？ 信じる？","TRICK_RUMOR")
 says(fact("TRICK","TAUNT"),"その卵、ほんとに守りきれるかな？","TAUNT")
-says(fact("ORACLE","INTRO"),"4つの秘境の印を見つけると、秘密が分かるぞ。","INTRO")
-says(fact("ORACLE","SECRET_HINT",{hintUnlocked=true,secretTier=1}),
-    "天空と海、まだ見つけていない印はあるかな？","SECRET_HINT")
-says(fact("ORACLE","SECRET_HINT",{hintUnlocked=true,secretTier=2}),
-    "4つの秘境の印を集めると、不思議な光が現れる……","SECRET_HINT")
-case(Director.Compose(fact("ORACLE","SECRET_HINT",{secretTier=2}))==nil,"HINT_LOCKED_CLOSED")
+says(fact("ORACLE","INTRO"),"4つの秘境を探索して、印を集めよう！","INTRO")
+says(fact("ORACLE","SECRET_HINT",{hintUnlocked=true,missingRealm="SKY"}),
+    "次は「空」の印を探してみよう！","SECRET_HINT")
+says(fact("ORACLE","SECRET_HINT",{hintUnlocked=true,missingRealm="SEA"}),
+    "次は「海」の印を探してみよう！","SECRET_HINT")
+says(fact("ORACLE","SECRET_HINT",{hintUnlocked=true,missingRealm="EMBER"}),
+    "次は「炎」の印を探してみよう！","SECRET_HINT")
+says(fact("ORACLE","SECRET_HINT",{hintUnlocked=true,missingRealm="STAR"}),
+    "次は「星」の印を探してみよう！","SECRET_HINT")
+says(fact("ORACLE","REALM_COMPLETE",{allRealmsComplete=true}),
+    "4つの秘境の印がそろったね！探索王だ！","REALM_COMPLETE")
+case(Director.Compose(fact("ORACLE","REALM_COMPLETE"))==nil,"COMPLETE_NOT_OWNED_CLOSED")
+case(Director.Compose(fact("ORACLE","SECRET_HINT",{hintUnlocked=true,missingRealm="INVALID"}))==nil,"NO_UNKNOWN_REALM_HINT")
+case(Director.Compose(fact("ORACLE","SECRET_HINT",{missingRealm="SKY"}))==nil,"HINT_LOCKED_CLOSED")
 case(Director.CanSpeak(25,nil,false)==true,"FIRST_MESSAGE")
 case(Director.CanSpeak(29,0,false)==false,"NORMAL_29S_BLOCK")
 case(Director.CanSpeak(30,0,false)==true,"NORMAL_30S_ALLOW")
