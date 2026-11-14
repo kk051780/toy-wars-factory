@@ -66,6 +66,7 @@ jobs:
           /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau >/dev/null
           /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau | tee /tmp/p0d_actual_cue_native.log
           grep -Fx P0D_FB015_REAL_CLIENT_CUE_NATIVE_53_ORDERED_EPOCH_CASES_PASS /tmp/p0d_actual_cue_native.log
+          grep -Fx P0D_FB015_REAL_CLIENT_EPOCH_LAG_NATIVE_PASS /tmp/p0d_actual_cue_native.log
           python3 -B rc_fastlane/features/fb015_combat/generate_native_history_policy.py --out /tmp/P0D_FB015_ACTUAL_HISTORY.luau
           /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_HISTORY.luau >/dev/null
           /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_HISTORY.luau | tee /tmp/p0d_actual_history.log
