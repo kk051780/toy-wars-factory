@@ -26,7 +26,7 @@ def original_horde() -> bytes:
     # Extract authored exact seam literals from the real adapter, then verify
     # the reconstructed original against the independent original Git blob.
     source = ast.parse(inspect.getsource(mod.validate_horde_patch)).body[0]
-    keys = {"header","new_header","old_ctor","new_ctor","seam","extra"}
+    keys = {"header","new_header","old_ctor","new_ctor","old_reset","new_reset","helper","seam","extra"}
     vals = {}
     for line in source.body:
         if isinstance(line, ast.Assign) and len(line.targets)==1:
@@ -37,7 +37,9 @@ def original_horde() -> bytes:
         raise RuntimeError("INCOMPLETE_ORIGINAL_HORDE_SEAMS")
     patched=mod.HORDE_AUTHOR.read_text("utf8")
     restored=(patched.replace(vals["new_header"], vals["header"])
+                    .replace(vals["helper"],"")
                     .replace(vals["new_ctor"], vals["old_ctor"])
+                    .replace(vals["new_reset"], vals["old_reset"])
                     .replace(vals["seam"]+vals["extra"], vals["seam"])).encode("utf8")
     if restored==patched.encode("utf8") or mod.blob(restored)!=mod.ORIGINAL_HORDE_PIN:
         raise RuntimeError("BAD_HORDE_TEST_FIXTURE_EXACT_RECONSTRUCTION")
@@ -78,7 +80,11 @@ class ArtCombatQA(unittest.TestCase):
         mod.validate_visual(mod.AUTHOR.read_bytes())
         mod.validate_horde_patch(original_horde(),mod.HORDE_AUTHOR.read_bytes())
         h=mod.HORDE_AUTHOR.read_text()
-        self.assertIn('self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)',h)
+        self.assertIn('self.artCue:FireAllClients(',h)
+        self.assertIn('self.artEpoch',h)
+        self.assertIn('P0D_ART_RECENT_V1',h)
+        self.assertIn('HttpService:JSONEncode(self.artRecent)',h)
+        self.assertIn('self.artEpoch+=1',h)
         self.assertNotIn("OnServerEvent:Connect(",h)
         self.assertEqual(h.count('Instance.new("RemoteEvent")'),1)
         self.assertIn("if RunService:IsStudio() then",h)
@@ -90,7 +96,11 @@ class ArtCombatQA(unittest.TestCase):
     def test_client_only_observes_outbound_hit_and_limit(self):
         s=mod.AUTHOR.read_text()
         self.assertIn('cue.OnClientEvent:Connect(onConfirmedHit)',s)
-        self.assertIn('if not acceptVisualCue(id,serial,round) then return end',s)
+        self.assertIn('if not acceptVisualCue(id,serial,round,epoch) then return end',s)
+        self.assertIn('historyConnection=cue:GetAttributeChangedSignal("P0D_ART_RECENT_V1")',s)
+        self.assertIn('HttpService:JSONDecode(encoded)',s)
+        self.assertIn('replayRecent() -- recover server-confirmed startup hits',s)
+        self.assertIn('if lastEpoch~=nil and epoch<lastEpoch then return false end',s)
         self.assertIn('makeArc(hitPos,fromPos,isKO)',s)
         self.assertIn('if UserInputService.TouchEnabled then 1 else 2',s)
         self.assertIn("MAX_BURSTS_PER_SECOND = 9",s)
