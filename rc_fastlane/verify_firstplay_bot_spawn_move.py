@@ -19,7 +19,7 @@ def verify(dist: Path,output: Path) -> None:
     bot=(dist/"src/server/SoloTeamBots.luau").read_text("utf8")
     start=piece(bot,"function Bot.start(world,humanTeam,authority)",
                 "local function alive(bot)")
-    invalid=piece(bot,"local function invalidatePath(bot)",
+    invalid=piece(bot,"local function releasePathLease(bot)",
                   "local function respawn(bot)")
     move=piece(bot,"local function move(bot,goal,now)",
                "local function nearestEnemyBot(bot,maxDistance)")
@@ -106,6 +106,7 @@ local callbacks=nil
 local folder=nil
 local bots={}
 local MAX_BOTS=5
+local inflightPaths=0
 local modelCount=0
 local startStops=0
 function Bot.stop()
