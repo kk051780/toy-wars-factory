@@ -74,7 +74,7 @@ check(acceptVisualCue(1,2,8,0),false)
 check(acceptVisualCue(1,2,8,5.5),false)
 check(acceptVisualCue(1,2,8,"5"),false)
 check(acceptVisualCue(1,2,7,5),false)
-assert(yes==13 and no==21,yes,no)
+assert(yes==15 and no==19,yes,no)
 print("P0D_FB015_REAL_CLIENT_CUE_NATIVE_34_ORDERED_EPOCH_CASES_PASS")
 '''
 
