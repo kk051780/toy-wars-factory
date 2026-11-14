@@ -22,6 +22,7 @@ def compose(raw: str) -> str:
         if text not in fragment:
             raise RuntimeError("POLICY_RUNTIME_CONTRACT_DRIFT: " + text)
     return '''local lastRound=nil
+local lastEpoch=nil
 local lastByMob={}
 ''' + fragment + '''
 local accepted = 0
@@ -30,29 +31,37 @@ local function check(ok, expected)
     if ok == expected then
         if ok then accepted += 1 else rejected += 1 end
     else
-        error("ACTUAL_CUE_POLICY_WRONG_RESULT")
+        error("ACTUAL_CUE_EPOCH_POLICY_WRONG_RESULT")
     end
 end
--- Single mob hits with identical damage text still change sequence.
-check(acceptVisualCue(1,1,1),true)
-check(acceptVisualCue(1,2,1),true)
-check(acceptVisualCue(1,3,1),true)
-check(acceptVisualCue(1,3,1),false)
-check(acceptVisualCue(1,2,1),false)
--- Different mobs can each start at serial 1.
-check(acceptVisualCue(2,1,1),true)
-check(acceptVisualCue(9,1,1),true)
--- Fresh round restarts per-mob serial and old round cannot replay.
-check(acceptVisualCue(1,1,2),true)
-check(acceptVisualCue(1,4,1),false)
-check(acceptVisualCue(1,1,2),false)
--- Corrupted/malformed payload rejected before any effects.
-check(acceptVisualCue(0,3,2),false)
-check(acceptVisualCue(10,3,2),false)
-check(acceptVisualCue(1,0,2),false)
-check(acceptVisualCue(1,2,1.3),false)
-assert(accepted==6 and rejected==8,accepted,rejected)
-print("P0D_FB015_REAL_CLIENT_CUE_NATIVE_14_CASES_PASS")
+-- Real live packets retain identical-damage serials and reject duplicates.
+check(acceptVisualCue(1,1,1,1),true)
+check(acceptVisualCue(1,2,1,1),true)
+check(acceptVisualCue(1,3,1,1),true)
+check(acceptVisualCue(1,3,1,1),false)
+check(acceptVisualCue(1,2,1,1),false)
+check(acceptVisualCue(2,1,1,1),true)
+check(acceptVisualCue(9,1,1,1),true)
+-- New Horde epoch resets per-id seq; older epoch replay is rejected.
+check(acceptVisualCue(1,1,2,2),true)
+check(acceptVisualCue(1,4,1,1),false)
+check(acceptVisualCue(1,1,2,2),false)
+-- Same or LOWER round is valid only if new epoch is larger.
+check(acceptVisualCue(1,1,1,3),true)
+check(acceptVisualCue(1,1,1,3),false)
+check(acceptVisualCue(1,1,1,4),true)
+check(acceptVisualCue(1,4,1,3),false)
+check(acceptVisualCue(1,1,2,4),false)
+-- Malformed event cannot change dedupe state.
+check(acceptVisualCue(0,3,2,4),false)
+check(acceptVisualCue(10,3,2,4),false)
+check(acceptVisualCue(1,0,2,4),false)
+check(acceptVisualCue(1,2,1.3,4),false)
+check(acceptVisualCue(1,2,2,0),false)
+check(acceptVisualCue(1,2,2,4.5),false)
+check(acceptVisualCue(1,2,2,"4"),false)
+assert(accepted==8 and rejected==14,accepted,rejected)
+print("P0D_FB015_REAL_CLIENT_CUE_NATIVE_22_EPOCH_CASES_PASS")
 '''
 
 def main():
