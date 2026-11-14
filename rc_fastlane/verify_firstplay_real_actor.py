@@ -31,7 +31,8 @@ def verify(dist: Path,out: Path):
     assert 'releasePathLease(bot)' in stop
     assert 'pcall(clearCarry,bot)' in stop
     assert 'bot.model:Destroy()' in stop
-    assert 'folder:Destroy()' in stop
+    assert 'oldFolder:Destroy()' in stop
+    assert 'folder=nil' in stop
     assert '#bots==MAX_BOTS' in start
     out.parent.mkdir(parents=True,exist_ok=True)
     out.write_text("\n".join((MOCK,actor,lease,respawn,carry,stop,start,CASES)),"utf8")
