@@ -12,6 +12,7 @@ on:
       - feature/p0d-bond66-latest-rc346-prep-20261114
       - feature/p0d-prep-five-art-composite-20261114
       - feature/p0d-prep-firstplay-composite73-20261114
+      - feature/p0d-prep-results-return-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -422,6 +423,18 @@ jobs:
             /tmp/p0d_new_luau/luau-compile /tmp/P0D_FIRSTPLAY_REAL_GAME_READY_NATIVE.luau >/dev/null
             /tmp/p0d_new_luau/luau /tmp/P0D_FIRSTPLAY_REAL_GAME_READY_NATIVE.luau | tee /tmp/p0d_firstplay_native.log
             grep -Fx P0D_FIRSTPLAY_ACTUAL_GAME_READY_10_NATIVE_BEHAVIOR_CASES_PASS /tmp/p0d_firstplay_native.log
+          fi
+      - name: P0 real RESULTS -> LOBBY native 15-case journey including dead players
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/verify_firstplay_results.py --dist "$DIST" \
+              --out /tmp/P0D_FIRSTPLAY_RESULTS_ACTUAL_GAME_NATIVE.luau
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_FIRSTPLAY_RESULTS_ACTUAL_GAME_NATIVE.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_FIRSTPLAY_RESULTS_ACTUAL_GAME_NATIVE.luau | tee /tmp/p0d_firstplay_results.log
+            grep -Fx P0D_FIRSTPLAY_ACTUAL_RESULTS_LOBBY_15_NATIVE_CASES_PASS /tmp/p0d_firstplay_results.log
           fi
       - name: Native-Luau behavioral check of actual OWNER lobby phase HUD
         shell: bash
