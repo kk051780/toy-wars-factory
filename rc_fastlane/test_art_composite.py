@@ -91,6 +91,28 @@ class EightFeatureCandidateSafety(unittest.TestCase):
         self.assertNotIn('TakeDamage(',code)
         self.assertNotIn('FireServer(',code)
 
+    def test_server_hit_slash_and_ko_are_reused_visual_only(self):
+        code=art.pinned_art()["server/ArtMinionSilhouette.server.luau"].decode("utf8")
+        # 8 normal + 1 elite: exactly two persistent beams for each NPC,
+        # triggered by original server-owned hit flash and KO text.
+        for token in (
+            'makeSlashArcs(core,accent,isElite)', 'Instance.new("Beam")',
+            'beam.Name = "ART_SERVER_HIT_SLASH_"', 'beam.Enabled = false',
+            'beam.FaceCamera = true', 'NumberSequenceKeypoint.new(1,1)',
+            'if flashing and not item.lastHit then',
+            'item.slashStart = os.clock()', 'arc.Enabled = true',
+            'if dead and not item.lastDeath then', 'item.sparks:Emit(22)',
+            'local remain = 1 - (os.clock()-item.slashStart)/.36',
+            'arc.Enabled = false', 'arc.Width0 = item.slashWidth * remain',
+            'item.CanCollide = false', 'item.CanQuery = false',
+        ):
+            self.assertIn(token,code)
+        self.assertEqual(code.count('Instance.new("Beam")'),1)
+        self.assertNotIn('Instance.new("RemoteEvent")',code)
+        self.assertNotIn('FireServer(',code)
+        self.assertNotIn('TakeDamage(',code)
+        self.assertNotIn('item.core.CFrame =',code)
+
     def test_minion_and_gorogan_cosmetics_have_distinct_owners(self):
         a=art.pinned_art()
         self.assertNotIn(b"MUSOU_MINION_",a["client/FB015CharacterArt.client.luau"])

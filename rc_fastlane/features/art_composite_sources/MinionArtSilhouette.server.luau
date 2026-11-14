@@ -132,6 +132,48 @@ local function elite(model, core)
         Vector3.new(0,1.02,-1.96),gold,Enum.Material.Neon)
 end
 
+-- Shared, reusable slash geometry. The original Horde is the only damage
+-- authority: these 2 Beams per NPC never create hitboxes, Remotes or KO.
+-- Build once per NPC (8 normal and 1 elite); just enable briefly on a real
+-- server-owned yellow hit flash. Crossed curves read as an impact slash at
+-- third-person camera distance without large overhead labels.
+local function makeSlashArcs(core, accent, isElite)
+    local scale = if isElite then 1.42 else 1
+    local arcs = {}
+    for i = 1, 2 do
+        local a = Instance.new("Attachment")
+        a.Name = "ART_SLASH_START_" .. i
+        a.Position = Vector3.new(-2.0*scale, if i==1 then 1.2 else -.45, -1.85*scale)
+        a.Parent = core
+        local z = Instance.new("Attachment")
+        z.Name = "ART_SLASH_END_" .. i
+        z.Position = Vector3.new(2.0*scale, if i==1 then -.55 else 1.5, -1.85*scale)
+        z.Parent = core
+        local beam = Instance.new("Beam")
+        beam.Name = "ART_SERVER_HIT_SLASH_" .. i
+        beam.Attachment0 = a
+        beam.Attachment1 = z
+        beam.Segments = 12
+        beam.CurveSize0 = if i==1 then 1.4*scale else -1.3*scale
+        beam.CurveSize1 = if i==1 then -1.4*scale else 1.3*scale
+        beam.Width0 = 0.62*scale
+        beam.Width1 = 0.11*scale
+        beam.Color = ColorSequence.new(accent)
+        beam.Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0,.88),
+            NumberSequenceKeypoint.new(.23,.08),
+            NumberSequenceKeypoint.new(.74,.25),
+            NumberSequenceKeypoint.new(1,1),
+        })
+        beam.LightEmission = .7
+        beam.FaceCamera = true
+        beam.Enabled = false
+        beam.Parent = core
+        table.insert(arcs,beam)
+    end
+    return arcs
+end
+
 local function decorate(model)
     if not model or not model:IsA("Model") or not model.Parent then return end
     if model:GetAttribute("P0D_ART_MINION_V1") == true then return end
@@ -163,11 +205,16 @@ local function decorate(model)
     sparks.Lifetime = NumberRange.new(.22,.42)
     sparks.Speed = NumberRange.new(3,7)
     sparks.SpreadAngle = Vector2.new(48,48)
-    sparks.Size = NumberSequence.new(.55)
-    sparks.LightEmission = .65
+    sparks.Size = NumberSequence.new({
+        NumberSequenceKeypoint.new(0,.56),
+        NumberSequenceKeypoint.new(1,0),
+    })
+    sparks.Drag = 9
+    sparks.LightEmission = .75
     sparks.Color = ColorSequence.new(accent)
     sparks.Enabled = true
     sparks.Parent = core
+    local slashes = makeSlashArcs(core,accent,isElite)
 
     for _,item in ipairs(core:GetChildren()) do
         if item:IsA("BillboardGui") and item.Name == "CombatCue" then
@@ -180,6 +227,8 @@ local function decorate(model)
     end
     table.insert(equipped,{
         model=model, core=core, moving=moving, sparks=sparks,
+        slashes=slashes, slashStart=-100, slashColor=accent,
+        slashWidth=if isElite then .90 else .64,
         -- Cache once in model-space. Every art update re-derives from the
         -- authoritative Core pose; no accumulating drift when Horde PivotTo's.
         movingRelative=core.CFrame:ToObjectSpace(moving.CFrame),
@@ -228,13 +277,41 @@ heart = RunService.Heartbeat:Connect(function(dt)
             item.moving.Transparency = .10 + .08*(.5+.5*math.sin(cycle*3+item.id))
             local flashing = item.core.Color.R > .9
                 and item.core.Color.G > .8 and item.core.Color.B < .7
-            if flashing and not item.lastHit then item.sparks:Emit(4) end
+            if flashing and not item.lastHit then
+                -- Only the real Horde hit method sets Core to golden yellow.
+                -- Its red elite telegraph has a low green channel and cannot
+                -- accidentally trigger these hit-only slash effects.
+                item.sparks:Emit(9)
+                item.slashStart = os.clock()
+                for _,arc in ipairs(item.slashes) do
+                    arc.Color = ColorSequence.new(item.slashColor)
+                    arc.Enabled = true
+                end
+            end
             item.lastHit = flashing
             local cue = item.core:FindFirstChild("CombatCue")
             local tag = if cue and cue:IsA("BillboardGui") then cue:FindFirstChildOfClass("TextLabel") else nil
             local dead = tag ~= nil and string.find(tag.Text, "撃破") ~= nil
-            if dead and not item.lastDeath then item.sparks:Emit(10) end
+            if dead and not item.lastDeath then
+                item.sparks:Emit(22)
+                item.slashStart = os.clock()
+                for _,arc in ipairs(item.slashes) do
+                    arc.Color = ColorSequence.new(rgb(255,192,111))
+                    arc.Enabled = true
+                end
+            end
             item.lastDeath = dead
+            -- Fade without Tweens or per-hit Instances. The same two reusable
+            -- arcs and one emitter are the *entire* added effect budget.
+            local remain = 1 - (os.clock()-item.slashStart)/.36
+            for _,arc in ipairs(item.slashes) do
+                if remain <= 0 then
+                    arc.Enabled = false
+                else
+                    arc.Width0 = item.slashWidth * remain
+                    arc.Width1 = .11 * remain
+                end
+            end
         end
     end
 end)
@@ -243,4 +320,4 @@ script.Destroying:Connect(function()
     added:Disconnect()
     if heart then heart:Disconnect() end
 end)
-print("ART_MINION_V1_SILHOUETTES_ATTACHED_STUDIO_ONLY_FUN_PENDING")
+print("ART_MINION_V2_SERVER_CUE_SLASH_KO_COSMETIC_STUDIO_FUN_PENDING")
