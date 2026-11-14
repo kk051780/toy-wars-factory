@@ -258,6 +258,18 @@ jobs:
           game=(src/"server/Game.server.luau").read_text("utf8")
           assert "StudioSolo.canStart(RunService:IsStudio()" in game
           assert "1人練習 自動開始" in hud
+          import re
+          for exp in (
+              r'^    instructions\.Visible=s\.phase=="ACTIVE" -- tiny objective',
+              r'^    progressBadge\.Visible=false -- XP stays server-owned',
+              r'^    dojoBadge\.Visible=valid and s\.hatchEnabled==true and s\.phase=="LOBBY"',
+          ):
+              assert re.search(exp,hud,re.M), ("HUD_ACTIVE_ASSIGNMENT_REQUIRED",exp)
+          assert '🥚卵を運ぶ／🏰城をこわす' in hud
+          assert 'if s.team=="RED" then "赤"' in hud
+          assert 'RealH1ServerLevel",UDim2.new(.20,0,0,26)' in hud
+          assert 'Instructions", UDim2.new(.58, 0, 0, 25)' in hud
+          assert .015+.20 < .24, "ROLE_AND_OBJECTIVE_SAFE_HORIZ_SEPARATION"
           assert 'instructions.Visible=s.phase=="ACTIVE" -- tiny objective' in hud
           assert 'progressBadge.Visible=false' in hud
           assert 'dojoBadge.Visible=valid and s.hatchEnabled==true and s.phase=="LOBBY"' in hud
@@ -382,6 +394,52 @@ jobs:
             /tmp/p0d_new_luau/luau-compile /tmp/p0d_owner_ux_lobby_native.luau >/dev/null
             /tmp/p0d_new_luau/luau /tmp/p0d_owner_ux_lobby_native.luau | tee /tmp/p0d_owner_ux_lobby_native.log
             grep -Fx P0D_OWNER_UX_NATIVE_HUD_LOBBY_PHASE_4_CASES_PASS /tmp/p0d_owner_ux_lobby_native.log
+          fi
+      - name: Native Luau executable scoreboard role and egg/castle objective tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            python3 - <<'PY'
+          from pathlib import Path
+          hud=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE/src/client/HUD.client.luau").read_text("utf8")
+          initial='    top.Text = string.format("🔴%d '
+          end='    status.Text = phaseText(s)'
+          assert hud.count(initial)==1 and hud.count(end)==1
+          score=initial+hud.split(initial,1)[1].split(end,1)[0]
+          five='        top.Text=string.format("🏆 '
+          assert hud.count(five)==1
+          score_five=five+hud.split(five,1)[1].split("\n    end\n    instructions.Text=",1)[0]
+          objective='    instructions.Text=if s.scoreMode=="FIVE_EGG_SCORE"'
+          assert hud.count(objective)==1
+          obj=objective+hud.split(objective,1)[1].split("\n    local canChoose=",1)[0]
+          code='''local function displayRole(role)
+            return if role=="GUARDIAN" then "守護" else "速攻"
+          end
+          local top={Text=""}
+          local instructions={Text=""}
+          local s={scores={RED=2,BLUE=1},hp={RED=94,BLUE=83},team="RED",role="RAIDER",scoreMode="CLASSIC",phase="ACTIVE"}
+          '''+score+'''
+          assert(string.find(top.Text,"赤速攻",1,true)~=nil,"RED_ROLE_LOST")
+          assert(string.find(top.Text,"94/83",1,true)~=nil,"CASTLE_HP_LOST")
+          s.team="BLUE"; s.role="GUARDIAN"
+          '''+score+'''
+          assert(string.find(top.Text,"青守護",1,true)~=nil,"BLUE_ROLE_LOST")
+          '''+score_five+'''
+          assert(string.find(top.Text,"青守護",1,true)~=nil,"FIVE_SCORE_ROLE_LOST")
+          s.scoreMode="CLASSIC"
+          '''+obj+'''
+          assert(instructions.Text=="🥚卵を運ぶ／🏰城をこわす","CLASSIC_CASTLE_HINT_LOST")
+          s.scoreMode="FIVE_EGG_SCORE"
+          '''+obj+'''
+          assert(instructions.Text=="🥚5個集めて得点","FIVE_EGG_HINT_LOST")
+          print("P0D_OWNER_UX_NATIVE_ROLE_CASTLE_6_CASES_PASS")
+          '''
+          Path("/tmp/p0d_owner_ux_role_castle_native.luau").write_text(code,encoding="utf8")
+          PY
+            /tmp/p0d_new_luau/luau-compile /tmp/p0d_owner_ux_role_castle_native.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/p0d_owner_ux_role_castle_native.luau | tee /tmp/p0d_owner_ux_role_castle_native.log
+            grep -Fx P0D_OWNER_UX_NATIVE_ROLE_CASTLE_6_CASES_PASS /tmp/p0d_owner_ux_role_castle_native.log
           fi
       - name: Checkout exact original 41-case egg relay test author (no change to Game)
         uses: actions/checkout@v4
