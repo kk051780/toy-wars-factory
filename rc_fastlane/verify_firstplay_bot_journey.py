@@ -110,6 +110,10 @@ actualModeDecision()
 check(EXPERIMENTAL_FIVE_EGG_MODE==false,"SOLO_CLASSIC_MODE_RESTORED")
 local b={id="runner",team="RED",style="RAIDER",hum={Health=100},
   root={Position=V(-58,0,0)},carry=nil,lastAttack=0}
+function b.hum:MoveTo(goal)
+  -- Roblox humanoid MoveTo when the bot is already at its target;
+  -- this is a mock of the engine method, NOT a movement implementation.
+end
 bots={b}
 Bot.tick(1)
 check(#travelLog==1,"REAL_BOT_TICK_PURSUES_ENEMY_EGG")
