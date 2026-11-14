@@ -10,6 +10,7 @@ on:
       - feature/p0d-rc64-twin-flat-official-intake-20261114
       - feature/p0d-flat65-twin-training-rc-adoption-20261114
       - feature/p0d-bond66-latest-rc346-prep-20261114
+      - feature/p0d-prep-neutral-elites-017-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -348,6 +349,33 @@ jobs:
           done < <(find "$DIST/src" -type f -name '*.luau' -print0)
           test "$n" -eq "$WANT"
           echo "P0D_CANONICAL_RC_FULL_SOURCE_LUAU_COMPILE_PASS $n/$WANT"
+      - name: SOURCE-ONLY P0D-017 real native 45 giant/dragon elite cases (no Game install)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          root=Path("rc_fastlane/features/neutral_elite")
+          manifest=json.loads((root/"PREP_SOURCE_LOCK.json").read_text("utf8"))
+          body=(root/"NeutralElitePhasePolicy.luau").read_bytes()
+          test=(root/"NeutralEliteNative.luau").read_bytes()
+          digest=hashlib.sha1(b"blob "+str(len(body)).encode()+b"\\0"+body).hexdigest()
+          assert manifest["feature_id"]=="P0D-017" and manifest["policy_git_blob"]==digest
+          assert manifest["integrated_playable"] is False and manifest["official_rc_adopted"] is False
+          assert test.count(b'check("')==45
+          for forbidden in (b"RemoteEvent",b"OnServerEvent",b"DataStoreService",b"UpdateAsync",b"TakeDamage",b"MarketplaceService",b"horde:hit("):
+              assert forbidden not in body,forbidden
+          ending=b"return Elite\\n"
+          assert body.endswith(ending),"UNSAFE_MODULE_END"
+          (Path("/tmp")/"P0D_NEUTRAL_ELITE_NATIVE45.luau").write_bytes(body[:-len(ending)]+test)
+          print("P0D_017_AUTHOR_SOURCE_LOCK_45_TESTS_NO_DOUBLE_AUTHORITY_PASS")
+          PY
+          /tmp/p0d_new_luau/luau-compile rc_fastlane/features/neutral_elite/NeutralElitePhasePolicy.luau >/dev/null
+          /tmp/p0d_new_luau/luau-compile /tmp/P0D_NEUTRAL_ELITE_NATIVE45.luau >/dev/null
+          cmake --build /tmp/p0d_new_luau --target Luau.Repl.CLI --parallel 4
+          /tmp/p0d_new_luau/luau /tmp/P0D_NEUTRAL_ELITE_NATIVE45.luau | tee /tmp/p0d_neutral_elite_native45.log
+          grep -Fx P0D_NEUTRAL_ELITE_REAL_NATIVE_45_POLICY_CASES_PASS /tmp/p0d_neutral_elite_native45.log
       - name: Execute 31 native original-Game egg relay transaction safety cases
         shell: bash
         run: |
