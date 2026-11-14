@@ -1028,6 +1028,15 @@ jobs:
           retention-days: 7
           if-no-files-found: error
 
+      - name: Run original bot pathTo with native yielding Luau coroutines
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake --build /tmp/p0d_new_luau --target Luau.Repl.CLI --parallel 4
+          python3 -B rc_fastlane/test_fb005_async_native.py --emit /tmp/p0d_fb005_async_native.luau
+          /tmp/p0d_new_luau/luau /tmp/p0d_fb005_async_native.luau | tee /tmp/p0d_fb005_native.log
+          grep -Fx FB005_ASYNC_LIFECYCLE_NATIVE_BEHAVIOR_PASS /tmp/p0d_fb005_native.log
       - name: FB005 child QA path generation and bot contracts
         if: ${{ env.PROFILE == 'rich51' }}
         shell: bash
