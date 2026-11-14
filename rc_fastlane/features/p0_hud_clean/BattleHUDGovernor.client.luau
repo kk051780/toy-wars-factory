@@ -29,6 +29,16 @@ end
 local scoreLabel = score :: TextLabel
 local statusLabel = status :: TextLabel
 local instructionLabel = instructions :: TextLabel
+-- Restore the author's lobby/results layout after every match; never let the
+-- compact ACTIVE overlay permanently corrupt the existing HUD.
+local originalScoreLayout = {
+    Size = scoreLabel.Size,
+    Position = scoreLabel.Position,
+    BackgroundTransparency = scoreLabel.BackgroundTransparency,
+    TextScaled = scoreLabel.TextScaled,
+    TextSize = scoreLabel.TextSize,
+    TextWrapped = scoreLabel.TextWrapped,
+}
 
 local hp = Instance.new("TextLabel")
 hp.Name = "BattleSelfHPNumerical"
@@ -150,7 +160,14 @@ remote.OnClientEvent:Connect(function(packet: any)
         instructionLabel.Visible = false
     else
         compactScore = nil
+        scoreLabel.Size = originalScoreLayout.Size
+        scoreLabel.Position = originalScoreLayout.Position
+        scoreLabel.BackgroundTransparency = originalScoreLayout.BackgroundTransparency
+        scoreLabel.TextScaled = originalScoreLayout.TextScaled
+        scoreLabel.TextSize = originalScoreLayout.TextSize
+        scoreLabel.TextWrapped = originalScoreLayout.TextWrapped
         statusLabel.Visible = true
+        instructionLabel.Visible = true
     end
     updateOptionalAll()
 end)
