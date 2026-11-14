@@ -1176,7 +1176,7 @@ jobs:
           path: /tmp/p0d_playable_art77_out/*
           retention-days: 7
           if-no-files-found: error
-      - name: P0 critical visual motion: append authored #390 to full 77-source game as PRIVATE78
+      - name: 'P0 critical visual motion - append source-locked author #390 to private78'
         if: ${{ env.PROFILE == 'rich51' }}
         shell: bash
         run: |
