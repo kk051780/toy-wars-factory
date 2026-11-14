@@ -7,7 +7,7 @@ import hashlib
 import json
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from apply_private_horde_hit_toast import GAME,HUD,FEATURE,read,blob,require_real_touched_branch,HIT_SEQUENCE_ATTRIBUTE
+from apply_private_horde_hit_toast import GAME,HUD,FEATURE,read,blob,verify_all_real_hit_branches,verify_original_toast_epoch
 
 def verify(dist:Path,place:Path,receipt:Path)->dict:
     before=read(dist)
@@ -51,7 +51,8 @@ def verify(dist:Path,place:Path,receipt:Path)->dict:
           "INSTANCE_ROLE_OR_CONTENT_SWAPPED",name,len(actual))
     game=before[GAME].decode("utf8")
     hud=before[HUD].decode("utf8")
-    require_real_touched_branch(game)
+    verify_all_real_hit_branches(game)
+    verify_original_toast_epoch(hud)
     assert 'musouActive = RunService:IsStudio() and match.phase=="ACTIVE"' in game
     assert game.count('musouHitFeedback = (RunService:IsStudio() or (game.PrivateServerId ~= ""')==1
     assert 'if s.musouActive==true or (s.musouHitFeedback==true and s.phase=="ACTIVE") then' in hud
@@ -60,8 +61,6 @@ def verify(dist:Path,place:Path,receipt:Path)->dict:
     assert 'netButton.Visible=s.musouActive==true' in hud
     assert 'rescueButton.Visible=s.musouActive==true' in hud
     assert 'impactToast.Visible=true' in hud and 'task.delay(.42,function()' in hud
-    assert hud.count(f'impactToast:SetAttribute("{HIT_SEQUENCE_ATTRIBUTE}", hitSeq)')==1
-    assert hud.count(f'impactToast:GetAttribute("{HIT_SEQUENCE_ATTRIBUTE}") ~= hitSeq')==1
     result={
       "schema":"P0D_444_PRIVATE_HIT_TRANSIENT_RECEIPT_V3_SOURCE_ONLY",
       "source_count":81,
