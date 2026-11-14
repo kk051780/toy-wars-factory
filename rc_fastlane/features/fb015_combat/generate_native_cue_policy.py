@@ -16,8 +16,10 @@ def compose(raw: str) -> str:
     if raw.count(START) != 1 or raw.count(END) != 1:
         raise RuntimeError("POLICY_SOURCE_BOUNDARY_MISSING_OR_DUPLICATED")
     fragment = raw.split(START, 1)[1].split("\n", 1)[1].split(END, 1)[0]
-    required = ("local function acceptVisualCue(", "serial<=(lastByMob[id] or 0)",
-                "lastByMob[id]=serial", "return true")
+    required = ("local function acceptVisualCue(", "state.seen[serial]",
+                "state.max=math.max(state.max,serial)",
+                "serial<=state.max-16", "table.clear(lastByMob)",
+                "if lastRound==nil then")
     for text in required:
         if text not in fragment:
             raise RuntimeError("POLICY_RUNTIME_CONTRACT_DRIFT: " + text)
@@ -25,16 +27,11 @@ def compose(raw: str) -> str:
 local lastEpoch=nil
 local lastByMob={}
 ''' + fragment + '''
-local accepted = 0
-local rejected = 0
-local function check(ok, expected)
-    if ok == expected then
-        if ok then accepted += 1 else rejected += 1 end
-    else
-        error("ACTUAL_CUE_EPOCH_POLICY_WRONG_RESULT")
-    end
+local yes,no=0,0
+local function check(actual, expected)
+    assert(actual==expected,"EPOCH_AND_OUT_OF_ORDER_POLICY_FAIL")
+    if actual then yes+=1 else no+=1 end
 end
--- Real live packets retain identical-damage serials and reject duplicates.
 check(acceptVisualCue(1,1,1,1),true)
 check(acceptVisualCue(1,2,1,1),true)
 check(acceptVisualCue(1,3,1,1),true)
@@ -42,26 +39,43 @@ check(acceptVisualCue(1,3,1,1),false)
 check(acceptVisualCue(1,2,1,1),false)
 check(acceptVisualCue(2,1,1,1),true)
 check(acceptVisualCue(9,1,1,1),true)
--- New Horde epoch resets per-id seq; older epoch replay is rejected.
+-- Earlier unseen snapshot hits must survive when newer live hits overtake.
+check(acceptVisualCue(1,6,1,1),true)
+check(acceptVisualCue(1,5,1,1),true)
+check(acceptVisualCue(1,4,1,1),true)
+check(acceptVisualCue(1,5,1,1),false)
+-- New epochs accept reused or LOWER round ids.
 check(acceptVisualCue(1,1,2,2),true)
 check(acceptVisualCue(1,4,1,1),false)
 check(acceptVisualCue(1,1,2,2),false)
--- Same or LOWER round is valid only if new epoch is larger.
 check(acceptVisualCue(1,1,1,3),true)
 check(acceptVisualCue(1,1,1,3),false)
 check(acceptVisualCue(1,1,1,4),true)
 check(acceptVisualCue(1,4,1,3),false)
 check(acceptVisualCue(1,1,2,4),false)
--- Malformed event cannot change dedupe state.
-check(acceptVisualCue(0,3,2,4),false)
-check(acceptVisualCue(10,3,2,4),false)
-check(acceptVisualCue(1,0,2,4),false)
-check(acceptVisualCue(1,2,1.3,4),false)
-check(acceptVisualCue(1,2,2,0),false)
-check(acceptVisualCue(1,2,2,4.5),false)
-check(acceptVisualCue(1,2,2,"4"),false)
-assert(accepted==8 and rejected==14,accepted,rejected)
-print("P0D_FB015_REAL_CLIENT_CUE_NATIVE_22_EPOCH_CASES_PASS")
+-- Epoch arrived first in replicated Attribute with no hit yet.
+lastEpoch=5
+lastRound=nil
+table.clear(lastByMob)
+check(acceptVisualCue(1,1,8,5),true)
+check(acceptVisualCue(1,1,8,4),false)
+check(acceptVisualCue(1,1,8,5),false)
+check(acceptVisualCue(1,3,8,5),true)
+check(acceptVisualCue(1,2,8,5),true)
+-- Source derives 16-item budget with safe expiry of very old serials.
+check(acceptVisualCue(1,23,8,5),true)
+check(acceptVisualCue(1,4,8,5),false)
+-- Bad payload and attempted cross-round bleed must not change state.
+check(acceptVisualCue(0,3,8,5),false)
+check(acceptVisualCue(10,3,8,5),false)
+check(acceptVisualCue(1,0,8,5),false)
+check(acceptVisualCue(1,2,1.3,5),false)
+check(acceptVisualCue(1,2,8,0),false)
+check(acceptVisualCue(1,2,8,5.5),false)
+check(acceptVisualCue(1,2,8,"5"),false)
+check(acceptVisualCue(1,2,7,5),false)
+assert(yes==13 and no==21,yes,no)
+print("P0D_FB015_REAL_CLIENT_CUE_NATIVE_34_ORDERED_EPOCH_CASES_PASS")
 '''
 
 def main():
