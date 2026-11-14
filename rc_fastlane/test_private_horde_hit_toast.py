@@ -62,7 +62,7 @@ class PrivateHitToastV3Tests(unittest.TestCase):
         original=game.index(needle)
         branch=game.rfind('if touched>0 then',0,original)
         # An early end would put the increment *after* the true-hit branch.
-        moved=game[:original]+'end\\n            '+game[original:]
+        moved=game[:original]+'end\n            '+game[original:]
         with self.assertRaises(AssertionError):
             require_real_touched_branch(moved)
     def test_sourcery_medium1_stale_toast_callback_guard(self):
