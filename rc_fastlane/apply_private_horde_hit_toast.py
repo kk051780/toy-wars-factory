@@ -54,8 +54,8 @@ def verify_all_real_hit_branches(source:str)->None:
         between=source[guard:pos]
         # A premature 'end' would put an increment outside its guarded HIT.
         # Keep 'else' allowed: original normal attack uses Luau if-expression.
-        assert not re.search(r'\\bend\\b',between),("MISS_CAN_ADVANCE_IMPACT",pos)
-        assert not re.search(r'\\bfunction\\b',between),("IMPACT_IN_NESTED_FUNCTION",pos)
+        assert not re.search(r'\bend\b',between),("MISS_CAN_ADVANCE_IMPACT",pos)
+        assert not re.search(r'\bfunction\b',between),("IMPACT_IN_NESTED_FUNCTION",pos)
 
 def verify_original_toast_epoch(source:str)->None:
     # The original real HUD already uses a generation token; don't double
