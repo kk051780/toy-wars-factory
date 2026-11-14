@@ -1005,3 +1005,99 @@ jobs:
           path: /tmp/p0d_rc_out/*
           retention-days: 7
           if-no-files-found: error
+
+      - name: P0 FB-008/015 private67 ART-COMBAT visual full source-exact (after unchanged RC artifact upload)
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+          python3 -B -m unittest discover -s rc_fastlane -p 'test_fb015_combat.py' -v
+          test -x /tmp/p0d_new_luau/luau-compile
+          BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          python3 -B rc_fastlane/apply_fb015_combat.py --dist "$DIST" --enabled false
+          AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          test "$BEFORE" = "$AFTER"
+          python3 -B rc_fastlane/apply_fb015_combat.py --dist "$DIST" --enabled true
+          python3 -B rc_fastlane/features/fb015_combat/generate_native_cue_policy.py --out /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau
+          test -x /tmp/p0d_new_luau/luau
+          /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau | tee /tmp/p0d_combat_native14.log
+          grep -Fx P0D_FB015_REAL_CLIENT_CUE_NATIVE_53_ORDERED_EPOCH_CASES_PASS /tmp/p0d_combat_native14.log
+          grep -Fx P0D_FB015_REAL_CLIENT_EPOCH_LAG_NATIVE_PASS /tmp/p0d_combat_native14.log
+          grep -Fx P0D_FB015_REAL_PENDING_EPOCH_NATIVE_PASS /tmp/p0d_combat_native14.log
+          python3 -B rc_fastlane/features/fb015_combat/generate_native_history_policy.py --out /tmp/P0D_FB015_ACTUAL_HISTORY.luau
+          /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_HISTORY.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_HISTORY.luau | tee /tmp/p0d_combat_history.log
+          grep -Fx P0D_FB015_REAL_SERVER_RECENT_HISTORY_NATIVE_PASS /tmp/p0d_combat_history.log
+          mkdir -p /tmp/p0d_art_combat_private67
+          find "$DIST/src" -type f -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o /tmp/p0d_art_combat_private67/P0D_ART_COMBAT_PRIVATE67.rbxlx
+          python3 - <<'PY'
+          import pathlib,json,collections,xml.etree.ElementTree as ET,hashlib
+          dist=pathlib.Path('_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE')
+          output=pathlib.Path('/tmp/p0d_art_combat_private67')
+          place=output/'P0D_ART_COMBAT_PRIVATE67.rbxlx'
+          scripts=list((dist/'src').rglob('*.luau'))
+          assert len(scripts)==67, ('PRIVATE67_SOURCE_COUNT',len(scripts))
+          actual=collections.Counter(p.read_text('utf8') for p in scripts)
+          embedded=collections.Counter()
+          named=collections.Counter()
+          for item in ET.fromstring(place.read_bytes()).iter('Item'):
+              if item.get('class') not in ('Script','LocalScript','ModuleScript'):continue
+              src=item.find("./Properties/string[@name='Source']")
+              if src is None:continue
+              embedded[src.text or '']+=1
+              node=item.find("./Properties/string[@name='Name']")
+              if node is not None:named[(item.get('class'),node.text)]+=1
+          assert actual==embedded, ('PRIVATE67_SOURCE_EXACT_MISMATCH',len(actual),len(embedded))
+          assert named[('Script','Game')]==1
+          assert named[('LocalScript','ArtCombatSlash')]==1
+          assert named[('ModuleScript','MusouHorde')]==1
+          assert (dist/'src/server/MusouHorde.luau').read_bytes().count(b'P0D_ART_COMBAT_SIGNAL_V1')==1
+          sp=json.loads((dist/'SOURCE_LOCK.json').read_text('utf8'))
+          fp=json.loads((dist/'RC_FEATURE_LOCK.json').read_text('utf8'))
+          assert sp['total_scripts']==fp['total_sources']==67
+          assert sp['blobs']==fp['source_gitblobs']
+          assert sp['art_combat']['unchanged_original_sources']==65
+          assert sp['art_combat']['owner_fun']=='ART_NO_GO'
+          assert fp['feature_flags']['ART_COMBAT_SLASH_READONLY_V1'] is True
+          candidate=(dist/'src/client/ArtCombatSlash.client.luau').read_bytes()
+          assert hashlib.sha1(b'blob '+str(len(candidate)).encode()+bytes([0])+candidate).hexdigest()=='5dcc59469f25f636125032ac802bce2254c2cec6'
+          horde=(dist/'src/server/MusouHorde.luau').read_bytes()
+          assert hashlib.sha1(b'blob '+str(len(horde)).encode()+bytes([0])+horde).hexdigest()=='48e46b19951143ad63f692d12aa5fc0e8bdeed36'
+          assert b'if RunService:IsStudio() then' in horde and b'P0D_ART_HIT_BUS_V1' in horde
+          old=pathlib.Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx')
+          digest=hashlib.sha256(place.read_bytes()).hexdigest()
+          receipt={
+              'result':'P0D_ART_COMBAT_PRIVATE67_NATIVE_ROJO_SOURCE_EXACT_PASS',
+              'private_candidate_sha256':digest,
+              'private_candidate_rbxlx_bytes':place.stat().st_size,
+              'source_count':len(scripts),
+              'source_gitblob':'5dcc59469f25f636125032ac802bce2254c2cec6',
+              'horde_signal_blob':'48e46b19951143ad63f692d12aa5fc0e8bdeed36',
+              'original_rc66_unchanged_scripts':65,
+              'single_original_horde_cosmetic_cue_patch_only':True,
+              'baseline_rc66_place_bytes':old.stat().st_size,
+              'baseline_rc66_place_sha256':hashlib.sha256(old.read_bytes()).hexdigest(),
+              'source_stage':'PRIVATE_PREP_NOT_OFFICIAL_RC',
+              'studio':'NOT_TESTED','android':'NOT_TESTED','owner_fun':'ART_NO_GO',
+          }
+          (output/'ART_COMBAT_PRIVATE67_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          (output/'SOURCE_LOCK.json').write_text(json.dumps(sp,indent=2)+'\n')
+          (output/'RC_FEATURE_LOCK.json').write_text(json.dumps(fp,indent=2)+'\n')
+          print(receipt)
+          PY
+          python3 -B rc_fastlane/apply_fb015_combat.py --dist "$DIST" --enabled false
+          RESTORED=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          test "$BEFORE" = "$RESTORED"
+          echo ART_COMBAT_PRIVATE67_ROLLBACK_ORIGINAL66_ALL_DIST_BYTES_PASS
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-FB015-ART-COMBAT-PRIVATE67
+          path: /tmp/p0d_art_combat_private67/*
+          retention-days: 7
+          if-no-files-found: error
