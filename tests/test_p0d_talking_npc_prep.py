@@ -143,5 +143,25 @@ class TalkingNpcPrepTests(unittest.TestCase):
         self.assertIn('output_dist.exists()', source)
 
 
+    def test_shards_only_if_unclaimed_and_realm_label_is_correct(self):
+        runtime = self.sources["TalkingNPCRuntime.server.luau"]
+        director = self.sources["TalkingNPCDirector.luau"]
+        self.assertIn('local shardCount = player:GetAttribute("P0D_StarShardCount")', runtime)
+        self.assertIn('type(shardCount) == "number" and shardCount < 6', runtime)
+        self.assertIn('facts.areaCode = "star_bridge"', runtime)
+        self.assertIn('star_bridge = "星降る橋"', director)
+        self.assertIn('area .. "に" .. item .. "があるよ！"', director)
+
+    def test_expired_captions_cancel_stale_audio(self):
+        client = self.sources["TalkingNPCClient.client.luau"]
+        receive = client.split("local function receive(packet)", 1)[1].split(
+            "remote.OnClientEvent:Connect(receive)", 1)[0]
+        self.assertIn("card.Visible = true", receive)
+        self.assertIn("speechSerial += 1 -- invalidate any TTS LoadAsync", receive)
+        self.assertIn("stopVoice()", receive)
+        self.assertIn("and card.Visible then", client)
+        self.assertIn("audioEnabled = not audioEnabled", client)
+
+
 if __name__ == "__main__":
     unittest.main()
