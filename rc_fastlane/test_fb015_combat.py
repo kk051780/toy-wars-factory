@@ -22,22 +22,35 @@ spec.loader.exec_module(mod)
 
 def original_horde() -> bytes:
     s = mod.HORDE_AUTHOR.read_text("utf8")
-    old_ctor = '''    folder.Parent=world
+    header='''-- No RemoteEvent, no task scheduler, no XP/egg/score/damage-player authority.
+local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))'''
+    new_header='''-- In Studio only: one outbound cosmetic RemoteEvent + visual-only spark cue.
+-- No OnServerEvent listener, scheduler, XP/egg/score/damage-player authority.
+local RunService=game:GetService("RunService")
+local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))'''
+    old_ctor='''    folder.Parent=world
     return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0},Horde)'''
-    new_ctor = '''    folder.Parent=world
-    -- Pure outbound visual delivery. No OnServerEvent handler or game authority.
-    local visualCue=Instance.new("RemoteEvent")
-    visualCue.Name="P0D_ART_COMBAT_SIGNAL_V1"
-    visualCue.Parent=folder
+    new_ctor='''    folder.Parent=world
+    -- Studio-only outbound visuals; live servers create/send no unused packet.
+    local visualCue=nil
+    if RunService:IsStudio() then
+        visualCue=Instance.new("RemoteEvent")
+        visualCue.Name="P0D_ART_COMBAT_SIGNAL_V1"
+        visualCue.Parent=folder
+    end
     return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0,artCue=visualCue},Horde)'''
-    seam = '                    m.body.Color=Color3.fromRGB(253,231,111)'
-    hit = '''
-                    -- A reliable outbound message for EACH real server hit.
-                    -- Unlike replicated Attributes it cannot coalesce quick hits.
-                    -- This Remote has NO OnServerEvent listener / hit authority.
-                    m.artHitSeq=(m.artHitSeq or 0)+1
-                    self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)'''
-    raw = s.replace(new_ctor, old_ctor).replace(seam + hit, seam).encode("utf8")
+    seam='                    m.body.Color=Color3.fromRGB(253,231,111)'
+    hit='''
+                    -- Every confirmed hit produces BOTH a reliable Studio client
+                    -- arc packet and a synchronous server-only 3D spark cue.
+                    -- Never allow the cosmetic Remote to accept client traffic.
+                    if self.artCue then
+                        m.artHitSeq=(m.artHitSeq or 0)+1
+                        self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)
+                        m.body:SetAttribute("P0D_ART_SPARK_V1",
+                            tostring(m.artHitSeq).."|"..(if m.hp<=0 then "K" else "H"))
+                    end'''
+    raw = s.replace(new_header,header).replace(new_ctor,old_ctor).replace(seam+hit,seam).encode("utf8")
     if raw == s.encode("utf8") or mod.blob(raw) != mod.ORIGINAL_HORDE_PIN:
         raise RuntimeError("BAD_HORDE_TEST_FIXTURE_EXACT_RECONSTRUCTION")
     return raw
@@ -80,6 +93,9 @@ class ArtCombatQA(unittest.TestCase):
         self.assertIn('self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)',h)
         self.assertNotIn("OnServerEvent:Connect(",h)
         self.assertEqual(h.count('Instance.new("RemoteEvent")'),1)
+        self.assertIn("if RunService:IsStudio() then",h)
+        self.assertIn('m.body:SetAttribute("P0D_ART_SPARK_V1"',h)
+        self.assertIn("if self.artCue then",h)
 
     def test_client_only_observes_outbound_hit_and_limit(self):
         s=mod.AUTHOR.read_text()
