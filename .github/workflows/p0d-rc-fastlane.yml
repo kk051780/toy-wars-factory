@@ -1759,6 +1759,7 @@ jobs:
           BASE=/tmp/p0d_fb019_attack_gesture_dist
           OUT=/tmp/p0d_fb019_server_ack_dist
           mkdir -p /tmp/p0d_fb019_server_ack_out
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb019_damage_truth.py -v
           python3 -B rc_fastlane/apply_fb019_server_ack.py --base "$BASE" --out "$OUT" --enabled false
           test ! -e "$OUT"
           python3 -B rc_fastlane/apply_fb019_server_ack.py --base "$BASE" --out "$OUT" --enabled true
