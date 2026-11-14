@@ -56,8 +56,8 @@ class ArtMotionSourceContract(unittest.TestCase):
             "lastHitSerial[id] = serial",
             "local pendingHits = {}",
             "pendingHits[id] = {at=now, ko=isKO}",
-            "if os.clock() - pending.at < .7 then",
-            "if pending.ko then records[model].koAt = pending.at end",
+            "if now - pending.at >= .7 then return false end",
+            "if pending.ko then entry.koAt = pending.at end",
             "local added = horde.ChildAdded:Connect(",
             'Workspace:WaitForChild("TRAP_RAIDERS_S1")',
         ):
