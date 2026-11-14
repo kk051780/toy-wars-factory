@@ -15,7 +15,8 @@ class Fb005SoloBotContracts(unittest.TestCase):
                        'Bot.tick(', 'Bot.tryHumanHit(', 'callbacks.steal(',
                        'callbacks.deposit(', 'callbacks.drop(', 'callbacks.attackHuman(',
                        'callbacks.attackBot(', 'MAX_BOTS=5', 'HumanoidRootPart',
-                       'GuardianShield', 'RAIDER', 'GUARD'):
+                       'GuardianShield', 'RAIDER', 'GUARD',
+                       'VISUAL_CARRIED_ENEMY_EGG', 'showCarriedEgg(', 'epoch==token'):
             self.assertIn(marker, script)
         for forbidden in ('Instance.new("RemoteEvent")','OnServerEvent:Connect(',
                           'UpdateAsync(', 'DataStoreService',
@@ -32,6 +33,8 @@ class Fb005SoloBotContracts(unittest.TestCase):
         self.assertIn('studioSoloRoundStarted',source)
         self.assertIn('SoloTeamBots.stop()',source)
         self.assertIn('SoloTeamBots.tick(now)',source)
+        self.assertIn('pcall(SoloTeamBots.tick,now)',source)
+        self.assertIn('pcall(SoloTeamBots.start,map,',source)
         self.assertIn("original",source.lower())
 
     def test_off_zero_writes(self):
