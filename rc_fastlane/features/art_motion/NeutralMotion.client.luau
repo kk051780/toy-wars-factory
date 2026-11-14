@@ -17,7 +17,9 @@ local horde = arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT")
 
 local FEATURE = "P0D_ART_MOTION_CLIENT_V1"
 local MAX_MODELS = 16
-local MAX_ACTIVE_COSMETIC_PARTS = 56
+-- Full existing art: 3 knights×10 + 3 wraiths×10 + 2 brutes×11
+-- + 1 elite×10 = 92 client-only mirrors, bounded at 104 for headroom.
+local MAX_ACTIVE_COSMETIC_PARTS = 104
 local VIEW_RANGE_STUDS = 105
 local ANIM_STEP = 1 / 25
 local connected = {}
@@ -40,15 +42,32 @@ localArt.Parent = Workspace
 -- These names refer to the original #374 generated art. We DO NOT recreate
 -- geometry or overlap #379/#381 slash particles or #374's hit sparks.
 local watchedParts = {
-    KNIGHT = {"ART_KNIGHT_CAPE","ART_KNIGHT_SPEAR_SHAFT",
-              "ART_KNIGHT_SPEAR_TIP","ART_KNIGHT_SHIELD"},
-    WRAITH = {"ART_WRAITH_SHROUD","ART_WRAITH_ORB",
-              "ART_WRAITH_SHOULDER_FIN_-1","ART_WRAITH_SHOULDER_FIN_1"},
-    BRUTE = {"ART_BRUTE_BACK_FUR","ART_BRUTE_MAUL_HANDLE",
-             "ART_BRUTE_MAUL_HEAD","ART_BRUTE_SHOULDER_-1",
-             "ART_BRUTE_SHOULDER_1"},
-    ELITE = {"ART_ELITE_BACK_BANNER","ART_ELITE_GAUNTLET_-1",
-             "ART_ELITE_GAUNTLET_1"},
+    KNIGHT = {
+        "ART_KNIGHT_CHEST", "ART_KNIGHT_HELMET", "ART_KNIGHT_CREST",
+        "ART_KNIGHT_PAULDRON_-1", "ART_KNIGHT_PAULDRON_1",
+        "ART_KNIGHT_SHIELD", "ART_KNIGHT_SHIELD_MARK",
+        "ART_KNIGHT_SPEAR_SHAFT", "ART_KNIGHT_SPEAR_TIP", "ART_KNIGHT_CAPE",
+    },
+    WRAITH = {
+        "ART_WRAITH_HOOD", "ART_WRAITH_COWL", "ART_WRAITH_FACE_VEIL",
+        "ART_WRAITH_CRYSTAL_EYE_-1", "ART_WRAITH_CRYSTAL_EYE_1",
+        "ART_WRAITH_SHOULDER_FIN_-1", "ART_WRAITH_SHOULDER_FIN_1",
+        "ART_WRAITH_CHEST_SIGIL", "ART_WRAITH_ORB", "ART_WRAITH_SHROUD",
+    },
+    BRUTE = {
+        "ART_BRUTE_CHEST_PLATE", "ART_BRUTE_JAW",
+        "ART_BRUTE_TUSK_-1", "ART_BRUTE_TUSK_1",
+        "ART_BRUTE_HORN_-1", "ART_BRUTE_HORN_1",
+        "ART_BRUTE_SHOULDER_-1", "ART_BRUTE_SHOULDER_1",
+        "ART_BRUTE_MAUL_HANDLE", "ART_BRUTE_MAUL_HEAD", "ART_BRUTE_BACK_FUR",
+    },
+    ELITE = {
+        "ART_ELITE_CHEST_ARMOUR", "ART_ELITE_MASK",
+        "ART_ELITE_CURVED_HORN_-1", "ART_ELITE_CURVED_HORN_1",
+        "ART_ELITE_SHOULDER_SPIKE_-1", "ART_ELITE_SHOULDER_SPIKE_1",
+        "ART_ELITE_GAUNTLET_-1", "ART_ELITE_GAUNTLET_1",
+        "ART_ELITE_BACK_BANNER", "ART_ELITE_WAR_CORE",
+    },
 }
 
 local function isMinion(model)
@@ -136,6 +155,14 @@ local function tryEquip(model)
     local id = if kind == "ELITE" then 9 else tonumber(model.Name:match("(%d+)$"))
     replayPendingHit(records[model], id, os.clock())
     activeParts += #attachments
+    -- IMPORTANT: each anchored server ART_ piece remains at spawn while its
+    -- Core moves. Hide ALL original body pieces immediately on full equip;
+    -- re-showing any of them draws a frozen ghost / armour in midair.
+    for _,visual in ipairs(attachments) do
+        if visual.original.Parent then
+            visual.original.LocalTransparencyModifier = 1
+        end
+    end
     return true
 end
 
@@ -363,9 +390,11 @@ pulse = RunService.Heartbeat:Connect(function(dt)
                     end
                 end
             else
+                -- LOD: never redisplay anchored originals at their old spawn
+                -- position; only hide cosmetic copies when off-screen.
                 for _,visual in ipairs(entry.attachments) do
                     if visual.original.Parent then
-                        visual.original.LocalTransparencyModifier = visual.initialModifier
+                        visual.original.LocalTransparencyModifier = 1
                     end
                     if visual.copy.Parent then visual.copy.Transparency = 1 end
                 end
