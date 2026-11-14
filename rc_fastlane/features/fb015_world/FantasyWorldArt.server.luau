@@ -50,7 +50,7 @@ local function makeTree(index:number,side:number,x:number,z:number,scale:number)
     local center=Vector3.new(x,BASE_Y,z)
     local trunkH=5.1*scale
     local trunk=deco("Bark_"..index.."_"..side,center+Vector3.new(0,trunkH*0.5,0),
-        Vector3.new(.9*scale,trunkH,.9*scale),Color3.fromRGB(90,70,60),Enum.Material.Wood,Enum.PartType.Cylinder)
+        Vector3.new(trunkH,.9*scale,.9*scale),Color3.fromRGB(90,70,60),Enum.Material.Wood,Enum.PartType.Cylinder)
     if trunk then trunk.CFrame=CFrame.new(trunk.Position)*CFrame.Angles(0,0,math.pi*.5) end
     -- Overlapping asymmetrical organic crowns: no square "toy-box" leaves.
     local branches={
