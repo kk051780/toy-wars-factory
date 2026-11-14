@@ -6,11 +6,11 @@
   "base_official_rc_sha": "43543378f976374e2cac2d68b3136ac355d3191b",
   "adapter": {
     "path": "rc_fastlane/apply_fb005_solo_bots.py",
-    "source_gitblob": "fd75e27f8254aa94acc321feb2110e365c60c09e"
+    "source_gitblob": "f05740f3c5b04b1577c30bf65773893197077598"
   },
   "authored_module": {
     "path": "rc_fastlane/features/fb005_solo/SoloTeamBots.luau",
-    "source_gitblob": "658398f7521f775b4ed905e375f2411c6b9a32e1"
+    "source_gitblob": "84f59050da4f4fcdf6630d8f08e65af72af8fa1a"
   },
   "scope": {
     "original_scripts": 66,
@@ -44,7 +44,8 @@
     "human strike ray must hit physically queryable target bot torso; world walls, allied and nearer bot bodies block hit",
     "a bot tick exception exits ACTIVE solo to DRAW/SOLO_BOTS_TICK_FAILURE",
     "player-count transitions do not delete active bots; lobby/new match stop cleans bots",
-    "path goal drift preserves nextRepath throttle; 8s watchdog generation-invalidates hung planner"
+    "path goal drift preserves nextRepath throttle; 8s watchdog generation-invalidates hung planner",
+    "watchdog preserves current lastGoal after invalidation, permitting the new path worker to pass generation+goal adoption guards"
   ],
   "verification": {
     "source_regression": "CI_REQUIRED",
@@ -62,5 +63,5 @@
     "bot_join_leave_source_contract": "CI_REQUIRED"
   },
   "roll_back": "omit post-official FB005 adapter and rebuild previous66 locked source",
-  "notes": "This is not a finished AI feature; physical navigation, scoring and human combat still need real Studio acceptance. Must reconcile same Game edits with #363 READY and #376 lobby. QA child changes only bot navigation lifespan, no new authority/score rules. Parent PR #378 author should select these deltas and rerun full pinned same-HEAD build. Hardened original Game start callback: failed pcall and false result both exit active solo instead of leaving player without AI. Sourcery QA child now has executable native Luau coroutine tests extracted from exact author invalidatePath/pathTo/move (not only source text). Human-vs-bot server melee validation now uses real raycast target hits, NOT a filter excluding all bots. Author parent branch also fail-closes solo match when a running bot tick throws. Native 8-case raycast behavior tests pin actual authored function. Join/leave during ACTIVE retains existing NPCs; stop at zero players or match cleanup. The NPC module initializes NPC health at birth; original Game remains sole authority for combat damage and round/castle HP. A per-bot re-path timeout prevents indefinite planner lock, and preserving nextRepath prevents dynamic target storms."
+  "notes": "This is not a finished AI feature; physical navigation, scoring and human combat still need real Studio acceptance. Must reconcile same Game edits with #363 READY and #376 lobby. QA child changes only bot navigation lifespan, no new authority/score rules. Parent PR #378 author should select these deltas and rerun full pinned same-HEAD build. Hardened original Game start callback: failed pcall and false result both exit active solo instead of leaving player without AI. Sourcery QA child now has executable native Luau coroutine tests extracted from exact author invalidatePath/pathTo/move (not only source text). Human-vs-bot server melee validation now uses real raycast target hits, NOT a filter excluding all bots. Author parent branch also fail-closes solo match when a running bot tick throws. Native 8-case raycast behavior tests pin actual authored function. Join/leave during ACTIVE retains existing NPCs; stop at zero players or match cleanup. The NPC module initializes NPC health at birth; original Game remains sole authority for combat damage and round/castle HP. A per-bot re-path timeout prevents indefinite planner lock, and preserving nextRepath prevents dynamic target storms. Native Luau watchdog test caught that invalidatePath cleared the current lastGoal; corrected by restoring the exact goal before scheduling a new worker."
 }
