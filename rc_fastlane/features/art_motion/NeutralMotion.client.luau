@@ -160,6 +160,19 @@ local added = horde.ChildAdded:Connect(function(child) task.defer(watch,child) e
 local pulse
 pulse = RunService.Heartbeat:Connect(function(dt)
     if not isRunning then return end
+    if not horde.Parent then
+        -- Match the original Horde's teardown semantics. Do not leave a
+        -- live client animation loop running after world destruction.
+        isRunning = false
+        added:Disconnect()
+        if pulse then pulse:Disconnect() end
+        for _,leases in pairs(connected) do
+            for _,connection in ipairs(leases) do connection:Disconnect() end
+        end
+        table.clear(connected)
+        table.clear(records)
+        return
+    end
     if dt <= 0 or dt > .5 then return end
     elapsed += dt
     if elapsed < ANIM_STEP then return end
