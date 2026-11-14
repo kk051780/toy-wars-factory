@@ -1884,3 +1884,114 @@ jobs:
           path: /tmp/p0d_art_gate_samehead/*
           retention-days: 14
           if-no-files-found: warn
+
+      - name: 'FB015 two-scene cumulative official RC preview: forest + castle reversible SOURCE GATE'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_forest_v2.py -v
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_castle_gate_silhouette.py -v
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
+          BASE=/tmp/p0d_fb019_hit_visibility_dist
+          OLD=/tmp/p0d_fb019_v2_out/P0D_TRAP_RAIDERS_RC80_CONFIRMED_HIT_STUDIO.rbxlx
+          FOREST=/tmp/p0d_rc80_fb015_world_s1
+          FINAL=/tmp/p0d_rc80_fb015_castle_s2
+          OUT=/tmp/p0d_rc80_art_world_castle
+          mkdir -p "$OUT"
+          python3 -B rc_fastlane/verify_fb019_hit_visibility.py --dist "$BASE" --place "$OLD" --receipt "$OUT/BASE_V2_RECEIPT.json"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path('art_quality/RC80_ART_PREVIEW_CONFIG.json').read_text('utf8'))
+          assert x['schema']=='P0D_RC80_ART_PREVIEW_FLAGS_V1'
+          assert x['owner_accepted'] is False and x['review_only'] is True
+          assert x['base_official_head']=='f4e64c9248423f9c021f633b80e554706f7a66e4'
+          f=x['features']
+          assert type(f['FB015_FOREST_BIOMES_MONUMENTS_V2']) is bool
+          assert type(f['FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3']) is bool
+          with open('/tmp/p0d_art_flags.env','w') as g:
+              g.write('FOREST='+str(f['FB015_FOREST_BIOMES_MONUMENTS_V2']).lower()+'\n')
+              g.write('CASTLE='+str(f['FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3']).lower()+'\n')
+          PY
+          source /tmp/p0d_art_flags.env
+          if [ "$FOREST" = true ]; then
+            python3 -B rc_fastlane/apply_fb015_forest_v2.py --base "$BASE" --out "$FOREST" --enabled true
+          else
+            python3 -B rc_fastlane/apply_fb015_forest_v2.py --base "$BASE" --out "$FOREST" --enabled false
+            cp -a "$BASE" "$FOREST"
+          fi
+          if [ "$CASTLE" = true ]; then
+            python3 -B rc_fastlane/apply_fb015_castle_gate_silhouette.py --base "$FOREST" --out "$FINAL" --enabled true
+          else
+            python3 -B rc_fastlane/apply_fb015_castle_gate_silhouette.py --base "$FOREST" --out "$FINAL" --enabled false
+            cp -a "$FOREST" "$FINAL"
+          fi
+          test "$(find "$FINAL/src" -name '*.luau' | wc -l)" -eq 80
+          find "$FINAL/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' script; do
+            /tmp/p0d_new_luau/luau-compile "$script" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$OUT/P0D_RC80_ART_WORLD_CASTLE_STUDIO_PREVIEW.rbxlx"
+          if [ "$FOREST" = true ]; then
+            python3 -B rc_fastlane/verify_fb015_forest_v2.py --dist "$FINAL" --place "$OUT/P0D_RC80_ART_WORLD_CASTLE_STUDIO_PREVIEW.rbxlx" --receipt "$OUT/FOREST_SOURCE_RECEIPT.json"
+          fi
+          if [ "$CASTLE" = true ]; then
+            python3 -B rc_fastlane/verify_fb015_castle_gate_silhouette.py --dist "$FINAL" --place "$OUT/P0D_RC80_ART_WORLD_CASTLE_STUDIO_PREVIEW.rbxlx" --receipt "$OUT/CASTLE_SOURCE_RECEIPT.json"
+          fi
+          python3 -B art_quality/check_art_quality.py --place "$OUT/P0D_RC80_ART_WORLD_CASTLE_STUDIO_PREVIEW.rbxlx" --out "$OUT/ART_QUALITY_REPORT.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          from rc_fastlane.apply_fb015_forest_v2 import read,blob
+          base=Path('/tmp/p0d_fb019_hit_visibility_dist')
+          final=Path('/tmp/p0d_rc80_fb015_castle_s2')
+          out=Path('/tmp/p0d_rc80_art_world_castle')
+          old,new=read(base),read(final)
+          f=json.loads(Path('art_quality/RC80_ART_PREVIEW_CONFIG.json').read_text())['features']
+          allow=set()
+          if f['FB015_FOREST_BIOMES_MONUMENTS_V2']: allow.add('server/FantasyWorldArt.server.luau')
+          if f['FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3']: allow.add('server/CastleDetailArt.server.luau')
+          changed={p for p in old if old[p]!=new[p]}
+          assert set(new)==set(old) and len(new)==80 and changed==allow,('UNEXPECTED_SOURCE_DRIFT',changed,allow)
+          src=json.loads((final/'SOURCE_LOCK.json').read_text())
+          feats=json.loads((final/'RC_FEATURE_LOCK.json').read_text())
+          pins={p:blob(b) for p,b in sorted(new.items())}
+          assert src['blobs']==feats['source_gitblobs']==pins
+          assert old['server/Game.server.luau']==new['server/Game.server.luau']
+          assert old['client/HUD.client.luau']==new['client/HUD.client.luau']
+          assert old['client/BattleHUDGovernor.client.luau']==new['client/BattleHUDGovernor.client.luau']
+          place=out/'P0D_RC80_ART_WORLD_CASTLE_STUDIO_PREVIEW.rbxlx'
+          gate=json.loads((out/'ART_QUALITY_REPORT.json').read_text())
+          assert gate['source']['source_gate']=='PASS'
+          assert gate['source']['script_count']==80
+          assert gate['art_decision']=='ART_NO_GO' and gate['owner_accepted'] is False
+          receipt={
+            'schema':'P0D_RC80_ART_WORLD_CASTLE_SOURCE_INTAKE_V1',
+            'head':os.environ['GITHUB_SHA'],
+            'official_branch':os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01',
+            'source_changes':sorted(changed),'source_count':80,'other_source_byte_exact':True,
+            'place_bytes':place.stat().st_size,'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+            'features':f,'source_gate':'PASS','art_decision':'ART_NO_GO',
+            'mobile_decision':'MOBILE_NO_GO','fun_decision':'FUN_NO_GO','owner_accepted':False,
+            'real_studio_pc':'NOT_TESTED','real_android_15min':'NOT_TESTED',
+            'kid_fun_first3min':'NOT_TESTED','sourcery_major_review':'PENDING_OWNER',
+            'normal_pr_merge':False,'roblox_publish':False,
+            'rollback':'Disable each ART feature in art_quality/RC80_ART_PREVIEW_CONFIG.json and rebuild on fresh official HEAD'
+          }
+          (out/'RC_ART_PREVIEW_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_FB015_ART_WORLD_CASTLE_80_SOURCE_EXACT_PASS',receipt['place_bytes'],receipt['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
+        with:
+          name: P0D-CANONICAL-RC80-ART-WORLD-CASTLE-SOURCE-ONLY
+          path: /tmp/p0d_rc80_art_world_castle/*
+          retention-days: 14
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        with:
+          name: P0D-PRIVATE-RC80-ART-WORLD-CASTLE-SOURCE-ONLY
+          path: /tmp/p0d_rc80_art_world_castle/*
+          retention-days: 14
+          if-no-files-found: error

@@ -5,7 +5,7 @@ import argparse
 import collections
 import hashlib
 import json
-import xml.etree.ElementTree as ET
+from defusedxml import ElementTree as ET
 from pathlib import Path
 from apply_fb015_forest_v2 import read,blob,TARGET,FEATURE,BASE_BLOB
 
@@ -17,6 +17,8 @@ def verify(dist:Path,place:Path,receipt:Path)->None:
     assert len(src)==sl["total_scripts"]==fl["total_sources"]==80
     assert sl["blobs"]==fl["source_gitblobs"]==pins
     assert fl["feature_flags"][FEATURE] is True
+    assert fl["feature_flags"].get("FB019_REAL_HIT_VISIBLE_SERVER_CONFIRMED_V2") is True
+    assert fl["fb019_hit_visibility"]["id"]=="FB019_REAL_HIT_VISIBLE_SERVER_CONFIRMED_V2"
     detail=fl["fb015_forest_v2"]
     assert detail["base_world_git_blob"]==BASE_BLOB
     assert detail["new_world_git_blob"]==pins[TARGET]

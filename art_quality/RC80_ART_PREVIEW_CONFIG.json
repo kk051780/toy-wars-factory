@@ -1,0 +1,26 @@
+{
+  "schema": "P0D_RC80_ART_PREVIEW_FLAGS_V1",
+  "review_only": true,
+  "features": {
+    "FB015_FOREST_BIOMES_MONUMENTS_V2": true,
+    "FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3": true
+  },
+  "base_official_head": "f4e64c9248423f9c021f633b80e554706f7a66e4",
+  "base_original_place_bytes": 744130,
+  "goal": "Improved forest and fortress silhouettes without gameplay or HUD authority changes",
+  "human_art_gate": "ART_NO_GO",
+  "android_gate": "MOBILE_NO_GO",
+  "kid_fun_gate": "FUN_NO_GO",
+  "owner_accepted": false,
+  "switch_off": "Change individual feature value to false then rebuild through sole writer nonforce CAS; both false retains baseline 80 source .rbxlx.",
+  "expected_changed_source_paths": [
+    "server/FantasyWorldArt.server.luau",
+    "server/CastleDetailArt.server.luau"
+  ],
+  "provenance": [
+    "#421 forest candidate and reviewed defect fixes",
+    "#430 castle original Git blobs",
+    "#420 official art gate"
+  ],
+  "preconditions": "Official FB019 V2 80-source sameHEAD validated Place; 2 unchanged core authorities"
+}

@@ -5,7 +5,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from apply_fb015_forest_v2 import apply,patch,blob,read,TARGET,BASE_BLOB,FEATURE
+from apply_fb015_forest_v2 import apply,patch,blob,read,once,RUIN_ANCHOR,RUIN_ADDITION,TARGET,BASE_BLOB,FEATURE
 
 HERE=Path(__file__).resolve().parent
 AUTHOR=HERE/"features/p0_playable_art77/FantasyWorldArt.server.luau"
@@ -34,7 +34,11 @@ class ForestV2(unittest.TestCase):
             "FB016_FOLIAGE_PASSAGE_20261114":True,
             "FB017_NO_PERSISTENT_BATTLE_GUIDES":True,
             "FB018_ACTION_BUTTON_TEXT_INIT":True,
-            "FB019_RESPONSIVE_ATTACK_INPUT_SWING":True}}
+            "FB019_RESPONSIVE_ATTACK_INPUT_SWING":True,
+            "FB019_REAL_HIT_VISIBLE_SERVER_CONFIRMED_V2":True},
+            "fb019_hit_visibility":{
+              "id":"FB019_REAL_HIT_VISIBLE_SERVER_CONFIRMED_V2",
+              "source_blobs_after":{"server/Game.server.luau":pins["server/Game.server.luau"]}}}
         (self.base/"SOURCE_LOCK.json").write_text(json.dumps(sl),"utf8")
         (self.base/"RC_FEATURE_LOCK.json").write_text(json.dumps(fl),"utf8")
     def tearDown(self):
@@ -45,6 +49,8 @@ class ForestV2(unittest.TestCase):
         self.assertIn("AncientForestGate_",out)
         self.assertIn('ForestArtPartBudgetExpectedMax",226)',out)
         self.assertIn("MAX_PARTS=255",out)
+        self.assertIn('assert(count==226,"FB015_FOREST_RUNTIME_PART_COUNT_DRIFT")',out)
+        self.assertIn('oldForest:Destroy()',out)
         self.assertIn('p.CanCollide=false',out)
         self.assertIn('p.CanQuery=false',out)
         self.assertNotIn('Instance.new("ScreenGui")',out)
@@ -87,11 +93,24 @@ class ForestV2(unittest.TestCase):
         with self.assertRaises(AssertionError):
             apply(self.base,self.out,True)
         self.assertFalse(self.out.exists())
+    def test_missing_confirmed_hit_stage2_rejected(self):
+        f=self.base/"RC_FEATURE_LOCK.json"
+        data=json.loads(f.read_text())
+        data["feature_flags"]["FB019_REAL_HIT_VISIBLE_SERVER_CONFIRMED_V2"]=False
+        f.write_text(json.dumps(data))
+        with self.assertRaises(AssertionError):
+            apply(self.base,self.out,True)
+    def test_output_parent_symlink_into_base_rejected(self):
+        link=Path(self.t.name)/"linked"
+        link.symlink_to(self.base,target_is_directory=True)
+        with self.assertRaises(AssertionError):
+            apply(self.base,link/"unexpected",True)
+        self.assertFalse((self.base/"unexpected").exists())
     def test_anchor_tamper_rejected(self):
         stale=self.raw.decode("utf8").replace(
             "-- Color grading is global but only in the author's Studio preview.",
             "-- Different anchor")
         with self.assertRaises(AssertionError):
-            patch(stale.encode("utf8"))
+            once(stale,RUIN_ANCHOR,RUIN_ADDITION+RUIN_ANCHOR)
 if __name__=="__main__":
     unittest.main()

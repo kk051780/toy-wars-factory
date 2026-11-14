@@ -92,13 +92,20 @@ def once(raw:str,old:str,new:str)->str:
 def patch(raw:bytes)->bytes:
     assert blob(raw)==BASE_BLOB,("WORLD_ART_AUTHOR_GIT_BLOB_DRIFT",blob(raw))
     source=raw.decode("utf8")
+    source=once(source,'if root:FindFirstChild("P0D_FB015_WORLD_ART_V1") then return end',
+        '''local oldForest = root:FindFirstChild("P0D_FB015_WORLD_ART_V1")
+if oldForest and oldForest:GetAttribute("ArtPass")=="FB015_FOREST_BIOMES_MONUMENTS_V2" then return end''')
+    source=once(source,'local folder = Instance.new("Folder")',
+        '''if oldForest then oldForest:Destroy() end
+local folder = Instance.new("Folder")''')
     assert 'if not RunService:IsStudio() then return end' in source
     assert 'p.CanCollide=false' in source and 'p.CanQuery=false' in source
     assert 'MAX_PARTS=255' in source
     assert 'for i=1,9 do' in source and 'for i=1,12 do' in source
     assert FEATURE not in source
     source=once(source,TREE_ANCHOR,TREE_ADDITION)
-    source=once(source,RUIN_ANCHOR,RUIN_ADDITION+RUIN_ANCHOR)
+    source=once(source,RUIN_ANCHOR,RUIN_ADDITION+
+        'assert(count==226,"FB015_FOREST_RUNTIME_PART_COUNT_DRIFT")\\n'+RUIN_ANCHOR)
     source=once(source,META_OLD,'folder:SetAttribute("ArtPass","FB015_FOREST_BIOMES_MONUMENTS_V2")')
     source=once(source,'folder:SetAttribute("OfficialOwnerAccepted",false)',
         '''folder:SetAttribute("ForestBiomeBlossomParts",36)
@@ -122,7 +129,7 @@ def apply(base:Path,out:Path,enabled:bool)->bool:
         print("FB015_FOREST_V2_DISABLED_ZERO_WRITE_PASS")
         return False
     base=base.resolve()
-    out=out.absolute()
+    out=out.parent.resolve(strict=True)/out.name
     assert out.parent.is_dir() and not out.exists()
     assert not out.is_relative_to(base), "OUTPUT_INSIDE_INPUT"
     before=read(base)
@@ -137,6 +144,10 @@ def apply(base:Path,out:Path,enabled:bool)->bool:
     assert fl["feature_flags"]["FB017_NO_PERSISTENT_BATTLE_GUIDES"] is True
     assert fl["feature_flags"]["FB018_ACTION_BUTTON_TEXT_INIT"] is True
     assert fl["feature_flags"]["FB019_RESPONSIVE_ATTACK_INPUT_SWING"] is True
+    assert fl["feature_flags"].get("FB019_REAL_HIT_VISIBLE_SERVER_CONFIRMED_V2") is True, "MISSING_CONFIRMED_HIT_V2"
+    v2=fl.get("fb019_hit_visibility",{})
+    assert v2.get("id")=="FB019_REAL_HIT_VISIBLE_SERVER_CONFIRMED_V2", "V2_RECEIPT_UNTRUSTED"
+    assert v2.get("source_blobs_after",{}).get("server/Game.server.luau")==origPins.get("server/Game.server.luau"), "V2_PARENT_GAME_DRIFT"
     assert FEATURE not in fl["feature_flags"]
     world=patch(before[TARGET])
     after=dict(before)
