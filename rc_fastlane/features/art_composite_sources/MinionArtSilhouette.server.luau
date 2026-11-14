@@ -21,7 +21,11 @@ local function piece(model, core, name, size, offset, color, material, shape, al
     item.Color = color
     item.Material = material
     item.Transparency = alpha or 0
-    item.Anchored = true
+    -- All art plates MUST follow the server-owned Core. Anchored decorative
+    -- pieces visually detach if the Horde moves Core.CFrame without PivotTo.
+    -- A massless weld is presentation-only, with no collisions/hit targets.
+    item.Anchored = false
+    item.Massless = true
     item.CanCollide = false
     item.CanTouch = false
     item.CanQuery = false
@@ -31,6 +35,11 @@ local function piece(model, core, name, size, offset, color, material, shape, al
         elseif shape == "cylinder" then item.Shape = Enum.PartType.Cylinder end
     end
     item.Parent = model
+    local weld = Instance.new("WeldConstraint")
+    weld.Name = "ART_CoreCosmeticWeld"
+    weld.Part0 = core
+    weld.Part1 = item
+    weld.Parent = item
     return item
 end
 
@@ -141,6 +150,7 @@ local function decorate(model)
         or not model.PrimaryPart then return end
     -- Mark before creating children to avoid duplicate asynchronous callbacks.
     model:SetAttribute("P0D_ART_MINION_V1", true)
+    model:SetAttribute("P0D_ART_MINION_WELDED", true)
     local typeId = if isElite then 4 else ((numeric-1)%3)+1
     local accent = if typeId==1 then rgb(84,179,224)
         elseif typeId==2 then rgb(114,226,231)

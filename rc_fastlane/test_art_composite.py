@@ -72,6 +72,24 @@ class EightFeatureCandidateSafety(unittest.TestCase):
         self.assertIn('folder:SetAttribute("ForestSourceMapDepth",ground.Size.Z)',code)
         self.assertIn('task.wait(.1)',code)
 
+    def test_minion_all_visual_parts_follow_authoritative_core(self):
+        code=art.pinned_art()["server/ArtMinionSilhouette.server.luau"].decode("utf8")
+        # Source-authority is the original Horde; cosmetics cannot be anchored
+        # independently or stay behind when Core.CFrame is moved.
+        self.assertIn('item.Anchored = false',code)
+        self.assertIn('item.Massless = true',code)
+        self.assertIn('item.CanCollide = false',code)
+        self.assertIn('item.CanTouch = false',code)
+        self.assertIn('item.CanQuery = false',code)
+        self.assertIn('local weld = Instance.new("WeldConstraint")',code)
+        self.assertIn('weld.Part0 = core',code)
+        self.assertIn('weld.Part1 = item',code)
+        self.assertIn('weld.Parent = item',code)
+        self.assertIn('P0D_ART_MINION_WELDED',code)
+        self.assertNotIn('item.Anchored = true',code)
+        self.assertNotIn('TakeDamage(',code)
+        self.assertNotIn('FireServer(',code)
+
     def test_minion_and_gorogan_cosmetics_have_distinct_owners(self):
         a=art.pinned_art()
         self.assertNotIn(b"MUSOU_MINION_",a["client/FB015CharacterArt.client.luau"])
