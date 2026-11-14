@@ -62,6 +62,18 @@ def patch_game(src:str)->str:
     # Original READY code has one such unique block.
     src=once(src,old,new)
 
+    # A neutral observer must not be able to revoke an existing COUNTDOWN
+    # through the same authenticated READY endpoint (or poison attack seq).
+    def ready(body):
+        anchor='    if match.phase ~= "LOBBY" and match.phase ~= "COUNTDOWN" then return end'
+        guarded='''    if player:GetAttribute("P0D_LateJoinSpectator")==true then return end
+    local side=getTeamName(player)
+    if side~="RED" and side~="BLUE" then return end
+    if match.phase ~= "LOBBY" and match.phase ~= "COUNTDOWN" then return end'''
+        return once(body,anchor,guarded)
+    src=region(src,"local function applyReady(player: Player, data)",
+               "remote.OnServerEvent:Connect(function(player: Player, data)",ready)
+
     # Prevent a late spectator affecting Game's single-human StudioSolo.count
     # during LOBBY or COUNTDOWN.
     src=region(src,'local function tickRound()','-- Recovery uses the existing server-only authoritative tick',
@@ -153,6 +165,11 @@ def patch_game(src:str)->str:
     src=region(src,"local function resetRound()","local function chooseTeam(",reset)
 
     # Onehuman SCORE vote => CLASSIC bots; H2 SCORE if >1 eligible fighters.
+    # Vote tally itself must exclude observers, not only the SCORE gate.
+    # Otherwise a spectator can alter a legitimate two-human vote.
+    src=once(src,
+        'ModeVote.tally(modeVotes,Players:GetPlayers())',
+        'ModeVote.tally(modeVotes,eligibleSoloPlayers())')
     src=once(src,
         '#Players:GetPlayers()>1 and chosenMode==ModeVote.SCORE',
         '#eligibleSoloPlayers()>1 and chosenMode==ModeVote.SCORE')
