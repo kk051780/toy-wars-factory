@@ -3,6 +3,8 @@
 from __future__ import annotations
 import hashlib
 import json
+import subprocess
+import sys
 import tempfile
 import unittest
 import xml.etree.ElementTree as ET
@@ -105,6 +107,37 @@ class SourceIdentityGate(unittest.TestCase):
         report = verify(self.dist, self.place, self.report, 4)
         self.assertEqual(report["embedded_count"], 4)
         self.assertTrue(report["all_instance_class_name_path_source_exact"])
+
+    def test_rojo_protected_string_source_is_accepted(self):
+        node = self.script_items[GAME].find("Properties/string[@name='Source']")
+        node.tag = "ProtectedString"
+        self.save()
+        result = verify(self.dist, self.place, self.report, 4)
+        self.assertEqual(result["source_count"], 4)
+
+    def test_root_datamodel_item_does_not_change_instance_paths(self):
+        wrapped = ET.Element("roblox", {"version": "4"})
+        root_game = item(wrapped, "DataModel", "Game")
+        for child in list(self.xml):
+            self.xml.remove(child)
+            root_game.append(child)
+        self.xml = wrapped
+        self.save()
+        result = verify(self.dist, self.place, self.report, 4)
+        self.assertEqual(result["embedded_count"], 4)
+
+    def test_python_optimized_mode_cannot_emit_false_pass(self):
+        cmd = [
+            sys.executable, "-O",
+            str(Path(__file__).with_name("verify_rc_source_identity.py")),
+            "--dist", str(self.dist),
+            "--place", str(self.place),
+            "--receipt", str(self.report), "--count", "4"
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+        self.assertNotEqual(result.returncode, 0, "Python -O must be rejected")
+        self.assertIn("P0D_IDENTITY_GATE_PYTHON_OPTIMIZATION_FORBIDDEN", result.stderr)
+        self.assertFalse(self.report.exists())
 
     def test_wrong_source_on_correct_script_rejected(self):
         el = self.script_items[GAME].find("Properties/string[@name='Source']")
