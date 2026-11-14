@@ -182,7 +182,8 @@ local function tryAdvancedCapture(player:Player,now:number,root:BasePart,team:st
     sign.Size=UDim2.fromOffset(160,35)
     sign.StudsOffsetWorldSpace=Vector3.new(0,3.6,0)
     sign.AlwaysOnTop=true
-    sign.Parent=targetRoot
+    sign.Adornee=targetRoot -- the GUI is grouped under the removable cage Model
+    sign.Parent=cage
     local txt=Instance.new("TextLabel")
     txt.Size=UDim2.fromScale(1,1)
     txt.BackgroundTransparency=.3
@@ -191,7 +192,6 @@ local function tryAdvancedCapture(player:Player,now:number,root:BasePart,team:st
     txt.TextScaled=true
     txt.Text="🪤 捕獲！ 味方が救助"
     txt.Parent=sign
-    sign.Parent=cage
     slowed[nearest]={
         hum=hum,untilAt=now+Capture.DURATION,kind="CAPTURE",
         jumpPower=hum.JumpPower,jumpHeight=hum.JumpHeight,
