@@ -29,6 +29,13 @@ EXPECTED_PARENT_ID = "P0D_FB015_COMPOSITE_PRIVATE68_EXACT_TREE"
 ORIGINAL_MINION = "4d0aac99d670ca4364a7368255d1edc63d28b3a0"
 ORIGINAL_SLASH = "c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba"
 ORIGINAL_HORDE = "e48186a6d717a46c86ec395ffbe778d196ab182d"
+# Independently recorded from fixed parent #387 commit 070f9c645c2743e,
+# real 68-source lock in CI #43579099367; not from candidate self-manifest.
+EXPECTED_PARENT68_FULL_SOURCES_SHA256 = "8d72c99e59f3dbcb4b33b47244174df65b5efbf16230820ce8809b9ba030c362"
+
+def full_source_pin_digest(pins: dict[str, str]) -> str:
+    return hashlib.sha256(json.dumps(
+        pins, sort_keys=True, separators=(",", ":")).encode("utf8")).hexdigest()
 
 
 def require(predicate: bool, reason: str) -> None:
@@ -71,6 +78,9 @@ def preflight(parent: Path):
     old = source_map(parent)
     require(len(old) == BASE and DEST not in old, "REQUIRE_REAL_PRIVATE68")
     pins = {key: blob(raw) for key, raw in sorted(old.items())}
+    # All 68 source Git blobs MUST match one immutable parent contract.
+    require(full_source_pin_digest(pins) == EXPECTED_PARENT68_FULL_SOURCES_SHA256,
+            "FB015_FULL_PARENT68_SOURCE_MAP_DRIFT")
     require(pins.get("server/ArtMinionSilhouette.server.luau") == ORIGINAL_MINION,
             "ORIGINAL_MINION_DRIFT")
     require(pins.get("client/ArtCombatSlash.client.luau") == ORIGINAL_SLASH,
@@ -125,6 +135,7 @@ def independent_expected_files(parent: Path) -> dict[str, str]:
         "studio": "NOT_TESTED", "android": "NOT_TESTED",
         "official_rc_adoption": False, "owner_acceptance": "ART_NO_GO",
         "rollback": "separate output only, parent68 byte-identical",
+        "parent68_full_sources_sha256": EXPECTED_PARENT68_FULL_SOURCES_SHA256,
     }
     project["tree"]["StarterPlayer"]["StarterPlayerScripts"]["P0DNeutralMotion"] = {
         "$path": "src/" + DEST,
@@ -293,6 +304,7 @@ def inner(parent: Path, out: Path, enabled: bool):
             "studio": "NOT_TESTED", "android": "NOT_TESTED",
             "official_rc_adoption": False, "owner_acceptance": "ART_NO_GO",
             "rollback": "separate output only, parent68 byte-identical",
+        "parent68_full_sources_sha256": EXPECTED_PARENT68_FULL_SOURCES_SHA256,
         }
         slock["total_scripts"] = 69
         slock["blobs"] = next_pins
