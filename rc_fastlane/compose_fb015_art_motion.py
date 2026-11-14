@@ -51,7 +51,7 @@ def manifest_files(stage: Path) -> dict[str, str]:
     for p in sorted(stage.rglob("*")):
         if p.is_symlink():
             raise RuntimeError("SYMLINK_FORBIDDEN_IN_ART_MOTION_TREE")
-        if p.is_file() and p.name != MANIFEST:
+        if p.is_file() and p.relative_to(stage).as_posix() != MANIFEST:
             output[p.relative_to(stage).as_posix()] = hashlib.sha256(p.read_bytes()).hexdigest()
     return output
 
@@ -108,6 +108,47 @@ def preflight(parent: Path):
     return old, pins, slock, flock, project, actual
 
 
+def independent_expected_files(parent: Path) -> dict[str, str]:
+    """Rebuild the complete 69-source byte identities from untouched parent68.
+
+    We do NOT trust an editable manifest inside a candidate to authorize OFF.
+    Only the deterministic parent tree, exact source blob and metadata changes
+    made by this composer define files it is allowed to remove.
+    """
+    old, pins, slock, flock, project, author = preflight(parent)
+    next_pins = dict(pins)
+    next_pins[DEST] = PIN
+    receipt = {
+        "feature_id": FLAG, "parent": "#387 private68",
+        "issue": "#388", "source_count": 69,
+        "new_client_only_script": DEST,
+        "studio": "NOT_TESTED", "android": "NOT_TESTED",
+        "official_rc_adoption": False, "owner_acceptance": "ART_NO_GO",
+        "rollback": "separate output only, parent68 byte-identical",
+    }
+    project["tree"]["StarterPlayer"]["StarterPlayerScripts"]["P0DNeutralMotion"] = {
+        "$path": "src/" + DEST,
+    }
+    slock["total_scripts"] = 69
+    slock["blobs"] = next_pins
+    slock["motion69"] = receipt
+    flock["total_sources"] = 69
+    flock["source_gitblobs"] = next_pins
+    flock["feature_flags"][FLAG] = True
+    flock["motion69"] = receipt
+    expected = manifest_files(parent)
+    def sha(raw: bytes) -> str:
+        return hashlib.sha256(raw).hexdigest()
+    expected["src/" + DEST] = sha(author)
+    expected["default.project.json"] = sha(
+        (json.dumps(project, ensure_ascii=False, indent=2) + "\n").encode("utf8"))
+    expected["SOURCE_LOCK.json"] = sha(
+        (json.dumps(slock, ensure_ascii=False, indent=2) + "\n").encode("utf8"))
+    expected["RC_FEATURE_LOCK.json"] = sha(
+        (json.dumps(flock, ensure_ascii=False, indent=2) + "\n").encode("utf8"))
+    return expected
+
+
 def check_output(parent: Path, out: Path, identity: Path | None = None) -> None:
     require(out.is_dir() and not out.is_symlink(), "NO_MOTION69_OUTPUT")
     # During an interrupted OFF, the directory is moved to a tombstone, but
@@ -118,8 +159,12 @@ def check_output(parent: Path, out: Path, identity: Path | None = None) -> None:
     rec = json.loads(mf.read_text("utf8"))
     require(rec.get("id") == MANIFEST_ID and rec.get("input") == str(parent)
             and rec.get("output") == str(expected_output), "MOTION69_MANIFEST_ID_MISMATCH")
-    require(rec.get("files") == manifest_files(out),
-            "MOTION69_TREE_DRIFT_NO_REMOVAL")
+    actual = manifest_files(out)
+    require(rec.get("files") == actual, "MOTION69_TREE_DRIFT_NO_REMOVAL")
+    # Defense in depth: a rewritten self-manifest MUST NOT authorize deleting
+    # unrelated files or altered baseline scripts.
+    require(actual == independent_expected_files(parent),
+            "MOTION69_INDEPENDENT_EXPECTED_TREE_DRIFT")
     src = out / "src" / DEST
     require(src.is_file() and blob(src.read_bytes()) == PIN,
             "MOTION69_SOURCE_PIN_MISMATCH")
