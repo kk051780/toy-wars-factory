@@ -121,6 +121,7 @@ local function tickRealReadyTransition(now)
 '''
 StringRawNativeTail=r'''
 end
+end
 local function reset()
   match.phase="LOBBY"
   match.phaseUntil=0
