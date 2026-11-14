@@ -138,7 +138,10 @@ for _, side in ipairs({-1, 1}) do
     end
     for j = 1, 6 do
         local px = side * (20 + (j % 3) * 31)
-        local pz = -80 - math.floor((j - 1) / 3) * 49
+        -- Coastal channel occupies z=-83..-31 in the private composite.
+        -- Prior z=-80 planted a forest trunk and its entire crown in water.
+        -- Keep both rows on the northern DRY shore, not in the sea/bridge.
+        local pz = -94 - math.floor((j - 1) / 3) * 35
         part(folder, "FOREST_TRUNK_" .. side .. "_" .. j, Vector3.new(4, 12, 4),
             Vector3.new(px, 5, pz), wood, Enum.Material.Wood, true)
         local crown = part(folder, "FOREST_CROWN_" .. side .. "_" .. j,

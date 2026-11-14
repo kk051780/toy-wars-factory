@@ -39,6 +39,15 @@ class SevenArtCandidateSafety(unittest.TestCase):
         self.assertNotIn('Instance.new("RemoteEvent")',s)
         self.assertNotIn('TakeDamage(',s)
 
+    def test_castle_authored_trees_are_on_dry_north_shore(self):
+        castle=art.pinned_art()["server/CastleBattlefield.server.luau"].decode("utf8")
+        self.assertIn('local pz = -94 - math.floor((j - 1) / 3) * 35',castle)
+        self.assertNotIn('local pz = -80',castle)
+        # The near row is z=-94 and its 15-stud foliage crown reaches to
+        # z=-86.5, beyond the coastal channel edge at z=-83.
+        self.assertLess(-94 + 15 / 2, -83)
+        self.assertGreater(-94 - 35 - 15 / 2, -147)
+
     def test_forest_waits_for_expanded_castle_before_scattering(self):
         code=art.pinned_art()["server/FantasyWorldArt.server.luau"].decode("utf8")
         gates=("OWNER361_CASTLE_WORLD_V1", "red:FindFirstChild",
