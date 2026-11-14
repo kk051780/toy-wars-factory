@@ -9,7 +9,7 @@ local SoundService = game:GetService("SoundService")
 local player = Players.LocalPlayer
 if not player then return end
 local playerGui = player:WaitForChild("PlayerGui", 30)
-local remote = ReplicatedStorage:WaitForChild("TrapRaidersS1Remote", 60)
+local remote = ReplicatedStorage:WaitForChild("TrapRaidersS1Remote") -- event-driven wait, no 60s startup failure
 if not playerGui or not remote or not remote:IsA("RemoteEvent") then return end
 if playerGui:FindFirstChild("P0DTalkingNPCUI") then return end
 local PUBLIC_ENABLED = "P0D_TALKING_NPC_CLIENT_ENABLED"
