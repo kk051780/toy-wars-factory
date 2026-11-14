@@ -1570,44 +1570,48 @@ jobs:
           retention-days: 7
           if-no-files-found: error
 
-      - name: 'Verify and promote exact final 78 scripts to official RC Studio artifact'
-        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
+      - name: 'FB016 P0 foliage/shoreline movement blocker RC80 author-pinned real build'
+        if: ${{ env.PROFILE == 'rich51' }}
         shell: bash
         run: |
           set -euo pipefail
-          SRC=/tmp/p0d_p0_bot_path78_out/P0D_ALL_FEATURES_SOLO_BOT_UNSTUCK_PRIVATE78.rbxlx
-          R=/tmp/p0d_p0_bot_path78_out/RECEIPT.json
-          test -s "$SRC"
-          test -s "$R"
-          mkdir -p /tmp/p0d_canonical_rc78
-          cp "$SRC" /tmp/p0d_canonical_rc78/P0D_TRAP_RAIDERS_CANONICAL_RC78_STUDIO.rbxlx
+          BASE=/tmp/p0d_p0_bot_path78_dist
+          OUT=/tmp/p0d_fb016_rc80_dist
+          mkdir -p /tmp/p0d_rc80_out
+          python3 -B rc_fastlane/apply_fb016_passage.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_fb016_passage.py --base "$BASE" --out "$OUT" --enabled true
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 80
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_rc80_out/P0D_TRAP_RAIDERS_CANONICAL_RC80_STUDIO.rbxlx
+          python3 -B rc_fastlane/verify_fb016_passage.py --dist "$OUT" --place /tmp/p0d_rc80_out/P0D_TRAP_RAIDERS_CANONICAL_RC80_STUDIO.rbxlx --receipt /tmp/p0d_rc80_out/RC80_RECEIPT.json
           python3 - <<'PY'
-          import json,os,hashlib
+          import json,os
           from pathlib import Path
-          p=Path('/tmp/p0d_canonical_rc78/P0D_TRAP_RAIDERS_CANONICAL_RC78_STUDIO.rbxlx')
-          r=json.loads(Path('/tmp/p0d_p0_bot_path78_out/RECEIPT.json').read_text())
-          assert r['sources']==78 and r['Rojo_source_exact'] is True and r['game_only_one'] is True
-          assert r['place_bytes']==p.stat().st_size and r['sha256']==hashlib.sha256(p.read_bytes()).hexdigest()
-          assert os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01'
-          r.update({
-            'artifact':'P0D-CANONICAL-RC78-STUDIO',
-            'official_rc_branch':'rc/p0d-s1-kids-rc01',
-            'official_rc_head':os.environ['GITHUB_SHA'],
-            'official_rc_integration':'SOURCE_EXACT_RC78_BUILT',
-            'official_rc_adoption':True,
-            'studio_engine':'NOT_TESTED',
-            'android':'NOT_TESTED',
-            'owner_art':'ART_NO_GO',
-            'owner_fun':'FUN_NO_GO',
-            'rollback':'last RC66 snapshot, current HEAD parent, and original rich51 source pins'
-          })
-          Path('/tmp/p0d_canonical_rc78/RC78_RECEIPT.json').write_text(json.dumps(r,ensure_ascii=False,indent=2)+'\n')
-          print('P0D_OFFICIAL_RC78_COMPLETE_SOURCE_EXACT',r['official_rc_head'],r['place_bytes'],r['sha256'])
+          p=Path('/tmp/p0d_rc80_out/RC80_RECEIPT.json')
+          r=json.loads(p.read_text())
+          r['official_rc_branch']='rc/p0d-s1-kids-rc01'
+          r['source_head_sha']=os.environ['GITHUB_SHA']
+          r['official_rc_adoption']=(os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01')
+          r['source_review']='P0_FB016_COLLISION_CAMERA_SEA_PASS_SOURCE_ONLY'
+          r['studio_real_retest']='PENDING_USER'
+          r['rollback_to_rc78']='7a81731eb6421fefe532915a0f6300ba224a0014'
+          p.write_text(json.dumps(r,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_FB016_RC80_FINAL_SAME_HEAD',r['source_head_sha'],r['place_bytes'],r['official_rc_adoption'])
           PY
       - uses: actions/upload-artifact@v4
         if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
         with:
-          name: P0D-CANONICAL-RC78-STUDIO
-          path: /tmp/p0d_canonical_rc78/*
+          name: P0D-CANONICAL-RC80-STUDIO
+          path: /tmp/p0d_rc80_out/*
+          retention-days: 7
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-rc78-stage-20261114-2000' }}
+        with:
+          name: P0D-FB016-STAGING-RC80-STUDIO
+          path: /tmp/p0d_rc80_out/*
           retention-days: 7
           if-no-files-found: error
