@@ -3,7 +3,8 @@
 
 One original Horde receives ONLY a server-confirmed cosmetic hit cue;
 one Studio-only LocalScript renders VFX. No damage, score, Game, Store,
-Remote, HP, egg or match rules are altered.
+client-to-server handler, HP, egg or match rules are altered.
+One server-to-client cosmetic RemoteEvent is created under original Horde.
 Apply is staged in a sibling and swaps a single directory on same filesystem.
 A persisted complete original distribution allows exact OFF restoration.
 """
@@ -23,7 +24,7 @@ AUTHOR = ROOT / "features/fb015_combat/ArtCombatSlash.client.luau"
 HORDE_AUTHOR = ROOT / "features/fb015_combat/MusouHordeArtSignal.luau"
 DEST = "client/ArtCombatSlash.client.luau"
 HORDE = "server/MusouHorde.luau"
-PIN = "98d3d3469ed834891e3265a59d811fdc40e72178"
+PIN = "c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba"
 HORDE_PATCH_PIN = "6c613406c4c72be31b2a5c38177d54f1af78e617"
 ORIGINAL_HORDE_PIN = "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 BASE = 66
