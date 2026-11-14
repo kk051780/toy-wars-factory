@@ -1025,9 +1025,10 @@ jobs:
             /tmp/p0d_rc_rojo build "$DST/default.project.json" -o /tmp/p0d_owner361_out/P0D_P0_COMPOSITE_PRIVATE70.rbxlx
             cp "$DST/SOURCE_LOCK.json" "$DST/RC_FEATURE_LOCK.json" /tmp/p0d_owner361_out/
             python3 - <<'PY'
-          import json,hashlib,xml.etree.ElementTree as ET
+          import json,hashlib,xml.etree.ElementTree as ET,sys
           from collections import Counter
           from pathlib import Path
+          sys.path.insert(0,'rc_fastlane')  # adapter imports authors from same package directory
           from rc_fastlane.apply_owner361_p0_composite70 import source_map,blob,CHANGED,ADDED,FEATURE_IDS,BASE_RC
           dist=Path('/tmp/p0d_owner361_composite70')
           ref=Path('_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE')
