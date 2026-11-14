@@ -452,7 +452,6 @@ function Horde:tick(now: number,players: {Player},healthy: (Player)->(boolean,Ba
                     m.cue.Text="✨ ボス攻撃を回避！"
                 elseif action.kind=="READY" then
                     m.target=nil
-                end
             elseif not m.elite and nearest and now>=m.attackAt
                 and canStrike(nearest,false) then
                 table.insert(impacts,{player=nearest,damage=3,kind="MINION"})
