@@ -26,8 +26,8 @@ AUTHOR = ROOT / "features/fb015_combat/ArtCombatSlash.client.luau"
 HORDE_AUTHOR = ROOT / "features/fb015_combat/MusouHordeArtSignal.luau"
 DEST = "client/ArtCombatSlash.client.luau"
 HORDE = "server/MusouHorde.luau"
-PIN = "17c6a9a3404e913b279b348e3b981ac61bfd1b24"
-HORDE_PATCH_PIN = "a2d07936bd9fe5bdf3630498c39d61d5a8560d99"
+PIN = "5dcc59469f25f636125032ac802bce2254c2cec6"
+HORDE_PATCH_PIN = "48e46b19951143ad63f692d12aa5fc0e8bdeed36"
 ORIGINAL_HORDE_PIN = "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 BASE = 66
 TRANSACTION = "P0D_ART_COMBAT_FULL_TREE_MANIFEST.json"
@@ -107,6 +107,8 @@ def validate_visual(raw: bytes) -> None:
         "workspace:GetServerTimeNow()",
         "makeArc(hitPos,fromPos,isKO)",
         "if isEpochStale(authoritativeEpoch,epoch) then return end",
+        "if not admitPacketEpoch(epoch) then return end",
+        "local highestPacketEpoch=nil",
         "typeof(hitPos)~=\"Vector3\"",
         "cue:IsA(\"RemoteEvent\")",
         "MAX_BURSTS_PER_SECOND = 9",
@@ -193,14 +195,21 @@ end
                         local visualOK,visualError=pcall(function()
                             m.artHitSeq=(m.artHitSeq or 0)+1
                             self.artHitBus:Fire(m.body,m.artHitSeq,m.hp<=0,self.round)
-                            local stamp=workspace:GetServerTimeNow()
-                            appendRecentHit(self.artRecent,{
-                                m.id,m.pos.X,m.pos.Y,m.pos.Z,
-                                origin.X,origin.Y,origin.Z,
-                                m.hp<=0,m.artHitSeq,self.round,self.artEpoch,stamp
-                            },stamp)
-                            self.artCue:SetAttribute("P0D_ART_RECENT_V1",
-                                HttpService:JSONEncode(self.artRecent))
+                            local historyOK,historyError=pcall(function()
+                                local stamp=workspace:GetServerTimeNow()
+                                appendRecentHit(self.artRecent,{
+                                    m.id,m.pos.X,m.pos.Y,m.pos.Z,
+                                    origin.X,origin.Y,origin.Z,
+                                    m.hp<=0,m.artHitSeq,self.round,self.artEpoch,stamp
+                                },stamp)
+                                self.artCue:SetAttribute("P0D_ART_RECENT_V1",
+                                    HttpService:JSONEncode(self.artRecent))
+                            end)
+                            if not historyOK then
+                                warn("P0D_ART_RECENT_HISTORY_NON_BLOCKING",historyError)
+                            end
+                            -- Deliver confirmed LIVE hit even if history
+                            -- serialization or replicated Attribute fails.
                             self.artCue:FireAllClients(
                                 m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round,self.artEpoch)
                         end)
@@ -223,6 +232,7 @@ end
             and new.count("self.artHitBus:Fire(")==1
             and new.count("self.artCue:FireAllClients(")==1
             and "P0D_ART_VISUAL_CUE_NON_BLOCKING" in new
+            and "P0D_ART_RECENT_HISTORY_NON_BLOCKING" in new
             and "pcall(function()" in new
             and new.count('HttpService:JSONEncode(')==1
             and new.count('P0D_ART_RECENT_V1')>=2
