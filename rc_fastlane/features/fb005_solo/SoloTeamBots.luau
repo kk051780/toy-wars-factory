@@ -305,9 +305,6 @@ function Bot.tick(now)
             elseif now>=bot.deadUntil then respawn(bot) end
         else
             local enemy=if bot.team=="RED" then "BLUE" else "RED"
-            local target=if bot.carry then map.teams[bot.team].scorePad.Position
-                elseif bot.style=="GUARD" then map.teams[bot.team].egg.Position
-                else map.teams[enemy].egg.Position
             local player,dp=nearestHuman(bot,8)
             local rival,db=nearestEnemyBot(bot,8)
             local combatTarget=if player and dp<=db then player else rival
