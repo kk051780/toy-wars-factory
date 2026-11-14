@@ -110,8 +110,9 @@ def patch_game(raw: bytes)->bytes:
     helper='''-- P0D-018 optional advanced TRAPPER capture. Same Game/Remote/seq/movement authority.
 -- The existing Guardian NET remains unchanged: 1.2s, independent RESCUE/BREAK_FREE.
 local function tryAdvancedCapture(player:Player,now:number,root:BasePart,team:string)
-    if not RunService:IsStudio() or
-        ServerStorage:GetAttribute("P0D_ENABLE_ADV_CAPTURE_V1")~=true
+    local captureFlag=ServerStorage:FindFirstChild("P0D_ENABLE_ADV_CAPTURE_V1")
+    if not RunService:IsStudio() or not captureFlag
+        or not captureFlag:IsA("BoolValue") or captureFlag.Value~=true
         or match.phase~="ACTIVE" or sevenJobs[player]~="TRAPPER"
         or carry[player]~=nil or slowed[player]~=nil then return end
     local enemyTeam=Rules.opponent(team)
