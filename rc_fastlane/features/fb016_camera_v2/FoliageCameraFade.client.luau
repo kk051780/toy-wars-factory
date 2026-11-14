@@ -56,7 +56,7 @@ renderConn=RunService.RenderStepped:Connect(function(dt:number)
     local cameraPos=camera.CFrame.Position
     local char=player.Character
     local hrp=if char then char:FindFirstChild("HumanoidRootPart") else nil
-    local avatarPos:Vector3?=if hrp and hrp:IsA("BasePart") then hrp.Position else nil
+    local avatarPos: Vector3? = if hrp and hrp:IsA("BasePart") then hrp.Position else nil
     for p,_ in pairs(tracked) do
         if not p:IsDescendantOf(root) then
             p.LocalTransparencyModifier=0
