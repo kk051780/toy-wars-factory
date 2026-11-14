@@ -1005,3 +1005,54 @@ jobs:
           path: /tmp/p0d_rc_out/*
           retention-days: 7
           if-no-files-found: error
+
+      - name: FB011 source-locked PRIVATE seascape candidate after canonical RC66 QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb011_seascape.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_fb011_seascape.py --dist "$DIST" --enabled false
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            python3 -B rc_fastlane/apply_fb011_seascape.py --dist "$DIST" --enabled true
+            /tmp/p0d_new_luau/luau-compile "$DIST/src/server/FB011_H1CoastalSeascape.server.luau" >/dev/null
+            mkdir -p /tmp/p0d_fb011_out
+            /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o /tmp/p0d_fb011_out/P0D_FB011_PRIVATE67_SEASCAPE.rbxlx
+            cp "$DIST/SOURCE_LOCK.json" /tmp/p0d_fb011_out/SOURCE_LOCK.json
+            cp "$DIST/RC_FEATURE_LOCK.json" /tmp/p0d_fb011_out/RC_FEATURE_LOCK.json
+            python3 - <<'PY'
+          import hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          out=Path("/tmp/p0d_fb011_out")
+          target=out/"P0D_FB011_PRIVATE67_SEASCAPE.rbxlx"
+          tree=ET.parse(target)
+          names=[]
+          for item in tree.iter("Item"):
+              if item.get("class")!="Script":continue
+              node=item.find("./Properties/string[@name='Name']")
+              if node is not None:names.append(node.text)
+          assert names.count("FB011_H1CoastalSeascape")==1,("SOURCE_MISSING_IN_ACTUAL_PLACE",names.count("FB011_H1CoastalSeascape"))
+          assert names.count("Game")==1,("DUPLICATE_GAME_AUTHORITY",names.count("Game"))
+          lock=json.loads((out/"SOURCE_LOCK.json").read_text())
+          assert lock["total_scripts"]==67
+          receipt={"feature_id":"FB011_H1_COASTAL_SEASCAPE_V1",
+                   "feedback_id":"FB-011",
+                   "status":"PRIVATE67_BUILD_SOURCE_EXACT_STUDIO_NOT_TESTED",
+                   "candidate_sha":"${{ github.event.pull_request.head.sha || github.sha }}",
+                   "official_rc_adopted":False,"studio_fun":"NOT_TESTED",
+                   "source_count":67,"place_bytes":target.stat().st_size,
+                   "place_sha256":hashlib.sha256(target.read_bytes()).hexdigest()}
+          (out/"FB011_BUILD_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
+          print("FB011_PRIVATE_67_SOURCE_EXACT_ROJO_AND_NATIVE_PASS",receipt["place_bytes"])
+          PY
+          fi
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-FB011-PRIVATE67-SEASCAPE
+          path: /tmp/p0d_fb011_out/*
+          retention-days: 7
+          if-no-files-found: error
