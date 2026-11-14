@@ -1049,6 +1049,9 @@ jobs:
             python3 -B rc_fastlane/test_fb005_async_native.py --emit /tmp/fb005_parent_author_native.luau
             /tmp/p0d_new_luau/luau /tmp/fb005_parent_author_native.luau | tee /tmp/p0d_fb005_author_native.log
             grep -Fx FB005_ASYNC_LIFECYCLE_NATIVE_BEHAVIOR_PASS /tmp/p0d_fb005_author_native.log
+            python3 -B rc_fastlane/test_fb005_human_bot_los_native.py --module rc_fastlane/features/fb005_solo/SoloTeamBots.luau --emit /tmp/fb005_author_los_native.luau
+            /tmp/p0d_new_luau/luau /tmp/fb005_author_los_native.luau | tee /tmp/fb005_author_los_native.log
+            grep -Fx FB005_HUMAN_BOT_LOS_NATIVE_8_SCENARIOS_PASS /tmp/fb005_author_los_native.log
           fi
       - name: FB005 private67 Studio solo ally/enemy real Game bot source audit
         shell: bash
