@@ -726,3 +726,68 @@ jobs:
           path: /tmp/p0d_rc_out/*
           retention-days: 7
           if-no-files-found: error
+      - name: Build separate latest+3 Talking NPC PREP Place (never overwrite official RC artifact)
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'feature/p0d-prep-talking-npc-20261114'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$PROFILE" = rich51
+          DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+          cp -a "$DIST" /tmp/p0d_talking_npc_dist
+          BEFORE=$(find /tmp/p0d_talking_npc_dist -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          python3 -B rc_fastlane/apply_talking_npc.py --dist /tmp/p0d_talking_npc_dist --enabled false
+          AFTER=$(find /tmp/p0d_talking_npc_dist -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          test "$BEFORE" = "$AFTER"
+          echo P0D_TALKING_NPC_PREP_SWITCH_OFF_EXACT_BASE_PASS
+          # Assert the SAME run's already compiled canonical artifact matches the input.
+          python3 - <<'PY'
+          from collections import Counter
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          src=Path("/tmp/p0d_talking_npc_dist/src")
+          actual=Counter(p.read_text("utf8") for p in src.rglob("*.luau"))
+          root=ET.parse("/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx").getroot()
+          packaged=Counter()
+          for item in root.iter("Item"):
+              if item.get("class") not in ("ModuleScript","Script","LocalScript"): continue
+              node=item.find("./Properties/string[@name='Source']")
+              if node is not None: packaged[node.text or ""]+=1
+          assert actual==packaged,("STAGING_DIST_NOT_SAME_RUN_CANONICAL",len(actual),len(packaged))
+          print("P0D_PREP_PARENT_MATCHES_CURRENT_CANONICAL_PLACE_PASS",sum(actual.values()))
+          PY
+          python3 -B rc_fastlane/apply_talking_npc.py --dist /tmp/p0d_talking_npc_dist --output-dist /tmp/p0d_talking_npc_ready --enabled true
+          for name in \
+            server/TalkingNPCDirector.luau \
+            server/TalkingNPCRuntime.server.luau \
+            client/TalkingNPCClient.client.luau; do
+              /tmp/p0d_new_luau/luau-compile "/tmp/p0d_talking_npc_ready/src/$name" > /tmp/p0d_talking_npc_compile.out 2>&1 || {
+                cat /tmp/p0d_talking_npc_compile.out
+                echo "P0D_TALKING_NPC_NATIVE_COMPILE_FAIL $name"
+                exit 1
+              }
+          done
+          echo P0D_TALKING_NPC_3_OF_3_NATIVE_LUAU_PASS
+          python3 - <<'PY'
+          from pathlib import Path
+          source=Path("rc_fastlane/features/talking_npc/TalkingNPCDirector.luau").read_text("utf8")
+          test=Path("rc_fastlane/features/talking_npc/tests/TalkingNPCDirectorNative.luau").read_text("utf8")
+          Path("/tmp/P0D_TALK_NATIVE.luau").write_text("local Director = (function()\n"+source+"\nend)()\n"+test,encoding="utf8")
+          PY
+          /tmp/p0d_new_luau/luau-compile /tmp/P0D_TALK_NATIVE.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/P0D_TALK_NATIVE.luau | tee /tmp/p0d_talk_native.log
+          grep -E '^P0D_TALKING_NPC_NATIVE_DIRECTOR_[0-9]+_CASES_PASS$' /tmp/p0d_talk_native.log
+          mkdir -p /tmp/p0d_talking_npc_out
+          /tmp/p0d_rc_rojo build /tmp/p0d_talking_npc_ready/default.project.json -o /tmp/p0d_talking_npc_out/P0D_PREP_TALKING_NPC_LATEST_PLUS3.rbxlx
+          python3 -B rc_fastlane/verify_talking_npc.py \
+            --dist /tmp/p0d_talking_npc_ready \
+            --place /tmp/p0d_talking_npc_out/P0D_PREP_TALKING_NPC_LATEST_PLUS3.rbxlx \
+            --receipt /tmp/p0d_talking_npc_out/PREP_RECEIPT.json
+          cp /tmp/p0d_talking_npc_ready/SOURCE_LOCK.json /tmp/p0d_talking_npc_out/PREP_68_SOURCE_LOCK.json
+          echo P0D_TALKING_NPC_STUDIO_PLAY_NOT_TESTED
+      - uses: actions/upload-artifact@v4
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'feature/p0d-prep-talking-npc-20261114'
+        with:
+          name: P0D-TALKING-NPC-PREP-LATEST-NOT-OFFICIAL
+          path: /tmp/p0d_talking_npc_out/*
+          retention-days: 7
+          if-no-files-found: error
