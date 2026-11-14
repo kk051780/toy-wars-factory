@@ -110,7 +110,7 @@ def compose(previous: dict[str, bytes]) -> tuple[dict[str,bytes], dict]:
     assert source.count("local function stopRound(")==1
     for marker in ("READY_TOGGLE","allPlayersReadyForRound()",
                    "LobbyIsland.spawn(team)",
-                   "SoloTeamBots.start(map,","SoloTeamBots.tick",
+                   "pcall(SoloTeamBots.start,map,","SoloTeamBots.tick",
                    "SOLO_BOTS_NOT_READY"):
         assert marker in source,("FIRSTPLAY_MISSING_GAME_BEHAVIOR",marker)
     updated=dict(previous)
