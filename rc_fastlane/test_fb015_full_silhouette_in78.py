@@ -8,8 +8,8 @@ import re
 import unittest
 
 ROOT=Path(__file__).resolve().parent
-MOTION=ROOT/"features/art_motion/NeutralMotion.client.luau"
-AUTHOR=ROOT/"features/art_minion/MinionArtSilhouette.server.luau"
+MOTION=ROOT/"features/p0_fullbody78/NeutralMotionAuthor392.client.luau"
+AUTHOR=ROOT/"features/p0_playable_art77/MinionArtSilhouette.server.luau"
 
 EXPECTED={
     "KNIGHT":{
