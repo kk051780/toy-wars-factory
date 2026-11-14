@@ -27,7 +27,7 @@ def compose(raw: str) -> str:
     end_pending="-- END_ACTUAL_PENDING_EPOCH_POLICY"
     if raw.count(start_pending)!=1 or raw.count(end_pending)!=1:
         raise RuntimeError("REAL_PENDING_EPOCH_POLICY_NOT_UNIQUE")
-    pending_fragment=raw.split(start_pending,1)[1].split("\\n",1)[1].split(end_pending,1)[0]
+    pending_fragment=raw.split(start_pending,1)[1].split("\n",1)[1].split(end_pending,1)[0]
     for marker in ("local function admitPacketEpoch(", "highestPacketEpoch=epoch",
                    "if pending[i][7]<epoch then table.remove(pending,i) end"):
         if marker not in pending_fragment:
