@@ -61,7 +61,7 @@ def verify(base:Path,dist:Path,place:Path,receipt:Path):
     assert names[("Script","CastleDetailArt")]==1
     assert names[("Script","FantasyWorldArt")]==1
     assert names[("LocalScript","FoliageCameraFade")]==1
-    assert names[("LocalScript","FB015CharacterArt")]==1
+    assert names[("LocalScript","FB015GoroganVisual")]==1
     data={
        "stage":"PRIVATE_SOURCE_ONLY_UNACCEPTED",
        "official_rc_integrated":False,
