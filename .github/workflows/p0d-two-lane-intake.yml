@@ -5,6 +5,9 @@ on:
       - rc/p0d-s1-kids-rc01
     paths:
       - 'tools/p0d_two_lane_queue.py'
+      - 'tools/p0d_queue_balance.py'
+      - 'tests/test_p0d_queue_balance.py'
+      - 'rc_fastlane/QUEUE_BALANCE_V1.md'
       - 'tests/test_p0d_two_lane_queue.py'
       - 'rc_fastlane/TWO_LANE_DEVELOPMENT.md'
       - '.github/workflows/p0d-two-lane-intake.yml'
@@ -44,6 +47,22 @@ jobs:
           print('P0D_TWO_LANE_LIVE_PREP_INBOX_PASS',p['official_head'],p['ready_count'])
           for item in p['selected']:
               print('P0D_PREP_LATEST_READY_FOR_220',item['pr'],item['head'],','.join(item['features']))
+          PY
+      - name: Plan scarcity-aware A/B balance from trusted official code (push only)
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: |
+          python3 -m unittest discover -s tests -p test_p0d_queue_balance.py -v
+          python3 -B tools/p0d_queue_balance.py \
+            --queue /tmp/p0d_two_lane/P0D_PREP_INBOX.json \
+            --catalog rc_fastlane/FEATURE_CATALOG.json \
+            --out /tmp/p0d_two_lane/P0D_BALANCE_PLAN.json
+          python3 - <<'PY'
+          import json
+          p = json.load(open('/tmp/p0d_two_lane/P0D_BALANCE_PLAN.json', encoding='utf8'))
+          assert p['no_auto_merge'] is True and p['no_branch_writes'] is True
+          print('P0D_BALANCE_PLAN_READ_ONLY', p['official_head'], p['queue_state'], p['ready_count'])
+          print('A_NEXT', ','.join(p['a_suggested_feature_ids']))
+          print('B_NEXT', [x['pr'] for x in p['b_ready_prs']])
           PY
       - name: Store read-only queue snapshot (NOT adoption ACK)
         uses: actions/upload-artifact@v4
