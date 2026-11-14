@@ -51,7 +51,7 @@ class TwinBond(unittest.TestCase):
         self.assertIn('Bond.select(player,info.id,level,now)',WORLD)
         self.assertNotIn('OnServerEvent:Connect(',WORLD)
     def test_10_level2_gate(self):
-        self.assertIn('if level < 2 or player.Parent ~= Players then return end',WORLD)
+        self.assertIn('if level < 2 or player.Parent ~= Players or not bondEnabled() then return end',WORLD)
         self.assertIn('or level<2 or level>3',POLICY)
     def test_11_cooldown_and_timeout(self):
         self.assertIn('local MAX_DURATION = 180',POLICY)
