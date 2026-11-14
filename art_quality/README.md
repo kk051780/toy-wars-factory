@@ -54,3 +54,18 @@ For each BEFORE/AFTER pair, reproduce position, camera direction, zoom/FOV, weat
 Critical flags: missing visuals or stale Place SHA, blank/reused photos, scores below 4, obstructive leaves/meshes, unreadable Android, inadequate frame rate, generic placeholder art, UI occlusion, fake HIT visual, and no Studio test evidence. These remain NO_GO even if scripts compile perfectly. The gate never signs off its own art; result can reach REVIEW_READY_OWNER_PENDING only.
 
 No main write, merge, Roblox publication, purchases, or unauthorized Windows operation. See #364 FB-015 and #372 all-art visual overhaul.
+
+## 2026-11-15 strategy update — child-friendly stylized excellence, mobile hard gate
+
+**Positioning:** Beautiful, instantly recognizable, high-end **stylized 3D fantasy** combined with clear fast combat and strategic egg theft — **NOT** a maximum-graphics photorealistic demo that drops frames on phones. Visual references searched via YouTube query: **ロブロックス リアル**. See REFERENCE_BENCHMARKS_V2.json and MOBILE_KID_WIN_STRATEGY_V1.json. YouTube metadata and stills do not equal full video review; never claim video playback confirmed without timeline/frame evidence.
+
+Three deliberately separate benchmarks:
+- **World/character/combat art**: aim >=4.5/5 in real PC Studio view, drawing on Fushimi Castle, Mist, Beyond the Dark and battle action references; measured Android appearance >=4/5 and readable enemy/attack silhouettes. Realism is a *technique*, not an end state.
+- **Mobile playability**: 15 min **on actual devices**, not emulator. Low-end Android (2–4GB target) median >=30 FPS, p10 >=25; midrange Android median >=45 FPS, p10 >=30; PC p10 >=45. No crashes/OOM, warm-frame-rate decline <=20% versus initial; touch buttons work. These are initial internal thresholds, NOT official Roblox numeric standards. Actual hardware and scene must be recorded.
+- **Kid enjoyment**: use appropriately consented supervised observations without personal identifiers. First move <=15s, visible attack <=45s, actual damaging hit <=75s, egg/castle objective learned by action <=180s; initial play enjoyment >=4/5, solo works, no constant instructional overlays. Do not replace actual user playtesting with scripted benchmarks.
+
+Visual approach: strong castle silhouette, clear routes, appealing monsters, art-directed light/materials and short punchy hit effects before expensive texture/detail density. Reuse meshes and texture assets, streaming/LOD, restrained particles/transparency and smart visual scaling by hardware. Do **not** add permanent labels or more neon blocks to artificially increase quality. Optimize before lowering the visual target.
+
+**Development speed rule:** Every source PR runs fast deterministic native/static checks; independent art workers produce source packages in parallel. Sample a changed scene in each milestone, not all 32 evidence screenshots on every PR. At each official RC art milestone perform full 8 scenes x before/after x PC/Android=32 plus four real motion samples and mobile 15-min + kid first 3-min check. Do not delay unrelated source preparation for owner screenshots; **only the final ART/FUN acceptance is blocked**. Critical bug and unsafe Game/Remote changes remain P0.
+
+**Automation contract:** check_reference_benchmarks.py and check_mobile_fun.py emit honest reports. Even a complete form is only REVIEW_READY_OWNER_PENDING. No automatic metric or metadata can declare ART_GO/FUN_GO; Owner decides after seeing real Android/PC gameplay.
