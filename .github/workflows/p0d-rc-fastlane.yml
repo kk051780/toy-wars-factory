@@ -2505,3 +2505,83 @@ jobs:
           path: /tmp/p0d_rc81_full_bindings_v2_receipts/*
           retention-days: 14
           if-no-files-found: error
+
+
+      - name: 'P0 #444 OWNER private 1-human ready Horde practice (RC81 source-only)'
+        if: env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_horde_private_lifecycle_v2_81
+          FINAL=/tmp/p0d_private_onehuman_horde_trial81
+          OUT=/tmp/p0d_private_onehuman_horde_report
+          PLACE="$OUT/P0D_RC81_PRIVATE_ONEHUMAN_HORDE_TRIAL_STUDIO.rbxlx"
+          test -f "$BASE/SOURCE_LOCK.json"
+          mkdir -p "$OUT"
+          python3 -B -m unittest discover -s rc_fastlane -p test_private_onehuman_horde.py -v
+          python3 -B rc_fastlane/apply_private_onehuman_horde.py \
+            --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_private_onehuman_horde.py \
+            --base "$BASE" --out "$FINAL" --enabled true
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 81
+          python3 -B rc_fastlane/native_private_onehuman_horde.py \
+            --dist "$FINAL" --out "$OUT/REAL_GAME_READY_SOLO_NATIVE.luau"
+          /tmp/p0d_new_luau/luau "$OUT/REAL_GAME_READY_SOLO_NATIVE.luau"
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B rc_fastlane/verify_private_onehuman_horde.py \
+            --dist "$FINAL" --place "$PLACE" --receipt "$OUT/PRIVATE_ONEHUMAN_SOURCE_EXACT.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/ART_SOURCE_ONLY.json"
+          python3 -B art_quality/check_mobile_fun.py \
+            --out "$OUT/MOBILE_KID_FUN_MISSING.json"
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          python3 - <<'PY'
+          import json,hashlib,os
+          from pathlib import Path
+          out=Path('/tmp/p0d_private_onehuman_horde_report')
+          place=out/'P0D_RC81_PRIVATE_ONEHUMAN_HORDE_TRIAL_STUDIO.rbxlx'
+          qa=json.loads((out/'PRIVATE_ONEHUMAN_SOURCE_EXACT.json').read_text())
+          art=json.loads((out/'ART_SOURCE_ONLY.json').read_text())
+          assert qa['actual_embedded_luau_sources']==81
+          assert qa['source_gate']=='PASS' and qa['other80_byte_exact']
+          assert qa['private_one_human_requires_owner_flag_and_READY']
+          assert qa['public_match_min_players']==2
+          assert art['source']['source_gate']=='PASS'
+          assert art['source']['script_count']==81
+          assert art['art_decision']=='ART_NO_GO' and not art['owner_accepted']
+          result={
+            'schema':'P0D_RC81_PRIVATE_OWNER_ONEHUMAN_HORDE_TRIAL_SOURCE_GATE_V1',
+            'parent_official_head':'f52879fa1dfbd4204adc27fdba3f45f242a5a1ac',
+            'ci_checkout_sha':os.environ['GITHUB_SHA'],
+            'official_rc_adopted':False,
+            'single_existing_Game_modified':True,'other80_Luau_byte_exact':True,
+            'source_count':81,'source_gate':'PASS',
+            'original_horde_reset_hit_tick':'UNCHANGED',
+            'private_runtime_attr':'P0D_PRIVATE_LIVE_HORDE_NINE',
+            'single_ready_required':True,'public_min_players':2,
+            'real_nonstudio_9mobs_and_hit':'NOT_TESTED',
+            'android_15min':'NOT_TESTED','kids_3min':'NOT_TESTED',
+            'place_bytes':place.stat().st_size,
+            'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+            'live_horde_decision':'LIVE_HORDE_NO_GO',
+            'live_art_decision':'LIVE_ART_NO_GO',
+            'art_decision':'ART_NO_GO','mobile_decision':'MOBILE_NO_GO',
+            'fun_decision':'FUN_NO_GO','owner_accepted':False
+          }
+          (out/'ONEHUMAN_HORDE_TRIAL_STAGING_RECEIPT.json').write_text(
+            json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_PRIVATE_ONEHUMAN_HORDE_RC81_SOURCE_PASS_NO_GO',
+                result['place_bytes'],result['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always() && env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        with:
+          name: P0D-RC81-PRIVATE-ONEHUMAN-HORDE-TRIAL-NOT-PUBLISHABLE
+          path: /tmp/p0d_private_onehuman_horde_report/*
+          retention-days: 14
+          if-no-files-found: warn
