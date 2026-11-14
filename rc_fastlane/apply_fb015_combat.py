@@ -299,7 +299,7 @@ def _stage_candidate(dist: Path, stage: Path, prior):
     (stage / TRANSACTION).write_text(json.dumps({
         "id":"P0D_FB015_COMBAT_PRIVATE67_FULL_TREE",
         "original":whole_tree(dist),
-        "candidate":whole_tree(stage),
+        "candidate":whole_tree(stage,exclude=TRANSACTION),
     },sort_keys=True,indent=2)+"\n",encoding="utf8")
     return receipt
 
