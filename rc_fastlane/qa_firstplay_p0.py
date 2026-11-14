@@ -559,6 +559,12 @@ local function invalidatePath(bot)""")
     end
     -- A sidestep must not be overwritten on the very next 0.5s tick.
     -- Hold it until within 2.5stud or max 2.6s; no teleport is permitted.
+    -- Any real improvement toward the egg/goal ends a detour immediately.
+    if bot.detourGoal and bot.lastProgressDistance~=nil
+        and flatDistance<=bot.lastProgressDistance-2.5 then
+        bot.detourGoal=nil
+        bot.detourUntil=0
+    end
     if bot.detourGoal then
         local gap=Vector3.new(position.X-bot.detourGoal.X,0,
             position.Z-bot.detourGoal.Z).Magnitude
