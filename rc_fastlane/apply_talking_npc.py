@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""PREP-only talking NPC overlay: exact source-lock + reversible RC64 -> preview67.
+"""PREP-only talking NPC overlay: exact source-lock + reversible latest RC -> preview (+3).
 
 This does not alter canonical RC. The caller must use a COPY of the verified
-official RC64 distribution. It never modifies existing Game, Store, Remote, HUD
+official RC distribution. It never modifies existing Game, Store, Remote, HUD
 or any previously source-locked Luau, and never adds game/score ownership.
 """
 from __future__ import annotations
@@ -71,18 +71,19 @@ def apply(dist: Path, enabled: bool = True) -> bool:
             assert bad not in s, ("ILLEGAL_SECOND_AUTHORITY_OR_SPENDING", origin, bad)
 
     existing = source_bytes(dist)
-    assert len(existing) == 64, ("REQUIRE_COMPLETE_OFFICIAL_RC64", len(existing))
+    assert 64 <= len(existing) <= 90, ("REQUIRE_CURRENT_RC_FEATURES", len(existing))
+    base_count = len(existing)
     assert all(path not in existing for path in data), "TALKING_NPC_DUPLICATE_SCRIPT"
     assert sum(path == "server/Game.server.luau" for path in existing) == 1
     assert "server/TwinBiomes.server.luau" in existing, "REQUIRE_CURRENT_PRIVATE64"
     lock_path = dist / "SOURCE_LOCK.json"
     source_lock = json.loads(lock_path.read_text("utf8"))
     old_pins = {path: git_blob(raw) for path, raw in sorted(existing.items())}
-    assert source_lock["total_scripts"] == 64, "PREVIOUS_SOURCE_COUNT_DRIFT"
+    assert source_lock["total_scripts"] == base_count, "PREVIOUS_SOURCE_COUNT_DRIFT"
     assert source_lock["blobs"] == old_pins, "PREVIOUS_RC_SOURCE_LOCK_DRIFT"
     feature_lock_path = dist / "RC_FEATURE_LOCK.json"
     feature_lock = json.loads(feature_lock_path.read_text("utf8"))
-    assert feature_lock["total_sources"] == 64
+    assert feature_lock["total_sources"] == base_count
     assert feature_lock["source_gitblobs"] == old_pins
     assert FEATURE_ID not in feature_lock["feature_flags"]
 
@@ -108,33 +109,33 @@ def apply(dist: Path, enabled: bool = True) -> bool:
     starter["P0DTalkingNPCClient"] = {
         "$path": "src/client/TalkingNPCClient.client.luau"
     }
-    project["name"] = "P0D_PREP_TALKING_NPC_67_NOT_CANONICAL"
+    project["name"] = "P0D_PREP_TALKING_NPC_LATEST_PLUS3_NOT_CANONICAL"
     project_path.write_text(json.dumps(project, ensure_ascii=False, indent=2) + "\n", "utf8")
     current = source_bytes(dist)
-    assert len(current) == 67
+    assert len(current) == base_count + 3
     assert all(current[path] == raw for path, raw in existing.items()), "PREVIOUS64_BODY_DRIFT"
     assert set(current) - set(existing) == set(data), "ADDED_FILES_DRIFT"
     new_pins = {path: git_blob(raw) for path, raw in sorted(current.items())}
-    source_lock["total_scripts"] = 67
+    source_lock["total_scripts"] = base_count + 3
     source_lock["blobs"] = new_pins
     source_lock["rc_talking_npc_PREP_overlay"] = {
         "feature_id": FEATURE_ID,
-        "predecessor_script_count": 64,
+        "predecessor_script_count": base_count,
         "new_source_files": list(SCRIPTS.values()),
-        "previous64_byte_identical": True,
+        "previous_sources_byte_identical": True,
         "match_round_egg_store_remote_unchanged": True,
         "private_studio_opt_in": True,
-        "rollback": "Set preview flag false / omit 3 scripts to recover exact64",
+        "rollback": "Set preview flag false / omit 3 scripts to recover exact predecessor",
         "engine_studio": "NOT_TESTED",
         "mobile_tts": "NOT_TESTED",
         "official_rc_adopted": False,
     }
     lock_path.write_text(json.dumps(source_lock, ensure_ascii=False, indent=2) + "\n", "utf8")
-    feature_lock["total_sources"] = 67
+    feature_lock["total_sources"] = base_count + 3
     feature_lock["source_gitblobs"] = new_pins
     feature_lock["feature_flags"][FEATURE_ID] = True
     feature_lock_path.write_text(json.dumps(feature_lock, ensure_ascii=False, indent=2) + "\n", "utf8")
-    print("P0D_TALKING_NPC_PREP_67_EXACT_SOURCES_PASS", len(current))
+    print("P0D_TALKING_NPC_PREP_LATEST_PLUS3_EXACT_SOURCES_PASS", base_count, len(current))
     return True
 
 def main() -> None:
