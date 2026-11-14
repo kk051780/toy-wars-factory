@@ -39,6 +39,9 @@ end
 HUD_FIXTURE = '''
 local function action(kind: string, role: string?)
 end
+local function phaseText(s): string
+    return "lobby"
+end
 remote.OnClientEvent:Connect(function(s)
     if s.kind ~= "SNAPSHOT" then return end
     status.Text = phaseText(s)
