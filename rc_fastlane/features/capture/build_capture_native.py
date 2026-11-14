@@ -14,7 +14,7 @@ def generate(out:Path)->None:
     manifest=json.loads(MANIFEST.read_text("utf8"))
     assert manifest["schema"]=="P0D_CAPTURE_PREP_SOURCE_LOCK_V1"
     assert manifest["feature_id"]=="P0D-018"
-    assert manifest["game_wired"] is False
+    assert manifest["game_wired"] is True
     policy=(REPO/manifest["module_source"]).read_bytes()
     native=(REPO/manifest["native_fixture"]).read_bytes()
     assert git_blob(policy)==manifest["module_blob"],"CAPTURE_POLICY_BLOB_DRIFT"
@@ -30,7 +30,7 @@ def generate(out:Path)->None:
     assert "print(\"CAPTURE_NATIVE_18_PASS\")" in code
     out.parent.mkdir(parents=True,exist_ok=True)
     out.write_text(code,encoding="utf8")
-    print("P0D018_CAPTURE_EXACT_SOURCE_LOCK_PASS native18_not_yet_executed")
+    print("P0D018_CAPTURE_EXACT_SOURCE_LOCK_PASS native18_fixture_generated_for_execution")
 
 if __name__=="__main__":
     parser=argparse.ArgumentParser()

@@ -32,8 +32,8 @@ class SourceChecks(unittest.TestCase):
         self.assertIn("assert(tests==18",NATIVE)
     def test_lock_identifies_unique_id(self):
         self.assertEqual(MANIFEST["feature_id"],"P0D-018")
-        self.assertFalse(MANIFEST["game_wired"])
-        self.assertEqual(MANIFEST["phase"],"SOURCE_ONLY_NOT_READY")
+        self.assertTrue(MANIFEST["game_wired"])
+        self.assertEqual(MANIFEST["phase"],"PRIVATE67_SOURCE_VERIFIED_B_REVIEW_PENDING")
     def test_exact_source_pins(self):
         self.assertEqual(gitblob(SRC.encode("utf8")),MANIFEST["module_blob"])
         self.assertEqual(gitblob(NATIVE.encode("utf8")),MANIFEST["native_blob"])

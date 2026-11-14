@@ -165,7 +165,7 @@ def apply(dist,enabled):
         print("P0D018_CAPTURE_OFF_PRESERVES_EXACT_RC66_ALL_BYTES")
         return False
     manifest=json.loads(MANIFEST.read_text("utf8"))
-    assert manifest["feature_id"]=="P0D-018" and manifest["game_wired"] is False
+    assert manifest["feature_id"]=="P0D-018" and manifest["game_wired"] is True
     original=scripts(dist)
     assert len(original)==66 and GAME in original and MODULE not in original
     source_lock=dist/"SOURCE_LOCK.json"
