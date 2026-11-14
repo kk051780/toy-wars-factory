@@ -98,11 +98,13 @@ local function sourceFacts(player, speaker, mode, arena)
         end
         if mode == "AUTO_ENEMY_ALERT" then return nil end
         local starStage = Workspace:FindFirstChild("P0D_STARRY_PATH")
+        local shardCount = player:GetAttribute("P0D_StarShardCount")
         if starStage and starStage:GetAttribute("PathOpen") == true
             and starStage:FindFirstChild("P0D_StarShardHunt")
+            and type(shardCount) == "number" and shardCount < 6
             and player:GetAttribute("P0D_StarShardComplete") ~= true then
             facts.signal = "KNOWN_ITEM"
-            facts.areaCode = "sky"
+            facts.areaCode = "star_bridge"
             facts.itemCode = "star_shard"
             facts.itemKnownByTeam = true
             return facts
