@@ -19,6 +19,10 @@ from defusedxml import ElementTree as ET
 
 CLASSES = frozenset(("Script", "LocalScript", "ModuleScript"))
 
+# Python -O strips assert statements: NEVER permit a falsely successful receipt.
+if not __debug__:
+    raise RuntimeError("P0D_IDENTITY_GATE_PYTHON_OPTIMIZATION_FORBIDDEN")
+
 
 def blob(data: bytes) -> str:
     return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
@@ -132,12 +136,20 @@ def actual_bindings(place: Path) -> dict[tuple[str, str], bytes]:
             instance_path = ancestors + (name_node.text,)
             if kind in CLASSES:
                 count += 1
-                source_node = properties.find("string[@name='Source']")
-                assert source_node is not None, ("SCRIPT_WITHOUT_SOURCE", instance_path)
+                source_nodes = [
+                    child for child in properties
+                    if child.get("name") == "Source"
+                    and child.tag in ("string", "ProtectedString")
+                ]
+                assert len(source_nodes) == 1, ("SCRIPT_WITHOUT_SOURCE_OR_DUPLICATE", instance_path)
+                source_node = source_nodes[0]
                 key = ("/".join(instance_path), kind)
                 assert key not in out, ("DUPLICATE_SCRIPT_INSTANCE", key)
                 out[key] = (source_node.text or "").encode("utf8")
-            walk(item, instance_path)
+            # Rojo XML normally has service Items directly under <roblox>.
+            # Some serializers add a DataModel root Item named Game; that root
+            # does not participate in runtime paths, so exclude it strictly.
+            walk(item, ancestors if kind == "DataModel" else instance_path)
 
     walk(xml, ())
     assert count == len(out), "UNACCOUNTED_SCRIPT_ITEM"
