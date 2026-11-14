@@ -1023,7 +1023,7 @@ jobs:
           test -x /tmp/p0d_new_luau/luau
           /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau >/dev/null
           /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau | tee /tmp/p0d_combat_native14.log
-          grep -Fx P0D_FB015_REAL_CLIENT_CUE_NATIVE_22_EPOCH_CASES_PASS /tmp/p0d_combat_native14.log
+          grep -Fx P0D_FB015_REAL_CLIENT_CUE_NATIVE_34_ORDERED_EPOCH_CASES_PASS /tmp/p0d_combat_native14.log
           python3 -B rc_fastlane/features/fb015_combat/generate_native_history_policy.py --out /tmp/P0D_FB015_ACTUAL_HISTORY.luau
           /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_HISTORY.luau >/dev/null
           /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_HISTORY.luau | tee /tmp/p0d_combat_history.log
@@ -1063,9 +1063,9 @@ jobs:
           assert sp['art_combat']['owner_fun']=='ART_NO_GO'
           assert fp['feature_flags']['ART_COMBAT_SLASH_READONLY_V1'] is True
           candidate=(dist/'src/client/ArtCombatSlash.client.luau').read_bytes()
-          assert hashlib.sha1(b'blob '+str(len(candidate)).encode()+bytes([0])+candidate).hexdigest()=='ba247a0a51477e215986f329f0dae422cd06c2ff'
+          assert hashlib.sha1(b'blob '+str(len(candidate)).encode()+bytes([0])+candidate).hexdigest()=='257f5da5e40c0af89220745d576763f513a7e6ef'
           horde=(dist/'src/server/MusouHorde.luau').read_bytes()
-          assert hashlib.sha1(b'blob '+str(len(horde)).encode()+bytes([0])+horde).hexdigest()=='51612783152dc84c37ccd743d3f7a4e6c7c43dbd'
+          assert hashlib.sha1(b'blob '+str(len(horde)).encode()+bytes([0])+horde).hexdigest()=='a2d07936bd9fe5bdf3630498c39d61d5a8560d99'
           assert b'if RunService:IsStudio() then' in horde and b'P0D_ART_HIT_BUS_V1' in horde
           old=pathlib.Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx')
           digest=hashlib.sha256(place.read_bytes()).hexdigest()
@@ -1074,8 +1074,8 @@ jobs:
               'private_candidate_sha256':digest,
               'private_candidate_rbxlx_bytes':place.stat().st_size,
               'source_count':len(scripts),
-              'source_gitblob':'ba247a0a51477e215986f329f0dae422cd06c2ff',
-              'horde_signal_blob':'51612783152dc84c37ccd743d3f7a4e6c7c43dbd',
+              'source_gitblob':'257f5da5e40c0af89220745d576763f513a7e6ef',
+              'horde_signal_blob':'a2d07936bd9fe5bdf3630498c39d61d5a8560d99',
               'original_rc66_unchanged_scripts':65,
               'single_original_horde_cosmetic_cue_patch_only':True,
               'baseline_rc66_place_bytes':old.stat().st_size,
