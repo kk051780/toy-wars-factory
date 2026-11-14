@@ -20,14 +20,15 @@ READY_OLD="ready = roundReady[player] == true,"
 READY_NEW='''ready = roundReady[player] == true,
         soloFiveEggUnavailable = RunService:IsStudio()
             and #Players:GetPlayers()==1,'''
-HUD_OLD='    lobbyHelp.Visible = s.phase == "LOBBY"'
-HUD_NEW='''    lobbyHelp.Visible = s.phase == "LOBBY"
-    -- Reuse existing lobby help; no HUD overlay or large text on battlefield.
-    if s.soloFiveEggUnavailable == true then
-        lobbyHelp.Text = "ソロ：通常卵戦／味方2・敵3のAI\\n5個卵戦は2人以上"
-    else
-        lobbyHelp.Text = "敵城の卵を奪い自城へ！城を破壊しても勝利\\n攻撃：F／タップ　罠：T"
-    end'''
+HUD_OLD='''local function phaseText(s): string
+    if s.phase == "LOBBY" then'''
+HUD_NEW='''local function phaseText(s): string
+    if s.phase == "LOBBY" then
+        -- One compact existing status-line hint; no extra label or overlays.
+        -- A READY player keeps their original positive confirmation text.
+        if s.soloFiveEggUnavailable == true and s.ready ~= true then
+            return "ソロ：通常卵戦＋AI5体。5個卵は2人以上"
+        end'''
 
 def sub_once(s:str,a:str,b:str)->str:
     assert s.count(a)==1,("SOLO_GAME_OR_HUD_SOURCE_DRIFT",a,s.count(a))
@@ -49,10 +50,11 @@ def patch_game(s:str)->str:
 
 def patch_hud(s:str)->str:
     assert "soloFiveEggUnavailable" not in s,"SOLO_HUD_ALREADY_APPLIED"
-    assert "VoluntaryReady" in s and "lobbyHelp" in s
+    assert "VoluntaryReady" in s and 'local function phaseText(s): string' in s
     s=sub_once(s,HUD_OLD,HUD_NEW)
     assert s.count("soloFiveEggUnavailable")==1
-    assert s.count('lobbyHelp.Visible = s.phase == "LOBBY"')==1
+    assert s.count('local function phaseText(s): string')==1
+    assert '出撃予約済。全員の準備を待っています' in s
     return s
 
 def compose(base:Path,out:Path,enabled:bool)->bool:
