@@ -6,11 +6,11 @@
   "base_official_rc_sha": "43543378f976374e2cac2d68b3136ac355d3191b",
   "adapter": {
     "path": "rc_fastlane/apply_fb005_solo_bots.py",
-    "source_gitblob": "ac929c108c34eb8f621732143d2ca48c8c2d8ced"
+    "source_gitblob": "2d0a7a36100b562d6baa9670bc5da0a1deae24bc"
   },
   "authored_module": {
     "path": "rc_fastlane/features/fb005_solo/SoloTeamBots.luau",
-    "source_gitblob": "0334a56f3aa1f4ce8d67e547cf60f4582219bc8e"
+    "source_gitblob": "b62c267a352c4037eb71acbb0e440b64011c2a00"
   },
   "scope": {
     "original_scripts": 66,
@@ -36,7 +36,11 @@
     "bot start/tick pcall fail closed",
     "pathfinding epoch guard",
     "out of scope H2 five-egg bot rules",
-    "do not merge wholesale"
+    "do not merge wholesale",
+    "async ComputeAsync results discarded after respawn, egg goal change or global bot stop",
+    "stale pathfinder never unlocks a newer plan",
+    "Bot.start false return triggers DRAW/SOLO_BOTS_NOT_READY instead of silently empty solo match",
+    "Sourcery medium: stale target reassessed after same-tick egg pickup/deposit; old ComputeAsync result discarded on material goal drift"
   ],
   "verification": {
     "source_regression": "CI_REQUIRED",
@@ -45,8 +49,11 @@
     "engine_studio_single_player": "NOT_TESTED",
     "engine_studio_two_clients": "NOT_TESTED",
     "mobile_android": "NOT_TESTED",
-    "human_fun": "FUN_NO_GO"
+    "human_fun": "FUN_NO_GO",
+    "path_lifecycle_qa": "SOURCE_TEST_REQUIRED",
+    "solo_start_false_regression": "CI_REQUIRED",
+    "async_luau_coroutine_behavior": "CI_REQUIRED"
   },
   "roll_back": "omit post-official FB005 adapter and rebuild previous66 locked source",
-  "notes": "This is not a finished AI feature; physical navigation, scoring and human combat still need real Studio acceptance. Must reconcile same Game edits with #363 READY and #376 lobby."
+  "notes": "This is not a finished AI feature; physical navigation, scoring and human combat still need real Studio acceptance. Must reconcile same Game edits with #363 READY and #376 lobby. QA child changes only bot navigation lifespan, no new authority/score rules. Parent PR #378 author should select these deltas and rerun full pinned same-HEAD build. Hardened original Game start callback: failed pcall and false result both exit active solo instead of leaving player without AI. Sourcery QA child now has executable native Luau coroutine tests extracted from exact author invalidatePath/pathTo/move (not only source text)."
 }
