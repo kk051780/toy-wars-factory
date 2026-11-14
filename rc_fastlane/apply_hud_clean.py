@@ -11,7 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "features/p0_hud_clean/BattleHUDGovernor.client.luau"
-BLOB = "20536bc52b108edf94564013e2900aa25bd3aaf3"
+BLOB = "ad9bf4f5a9c1c8683319dd476faa91ad30c68185"
 FEATURE = "P0D_HUD_CLEAR_COMBAT_V1"
 DEST = "client/BattleHUDGovernor.client.luau"
 
