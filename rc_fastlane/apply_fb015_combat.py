@@ -114,6 +114,7 @@ def _check_original(dist: Path):
 def _stage_candidate(dist: Path, stage: Path, prior):
     old, original, sp, fp, pr, visual, horde = prior
     shutil.copytree(dist, stage)
+    (stage / "src" / DEST).parent.mkdir(parents=True, exist_ok=True)
     (stage / "src" / DEST).write_bytes(visual)
     (stage / "src" / HORDE).write_bytes(horde)
     pr["tree"]["StarterPlayer"]["StarterPlayerScripts"]["ArtCombatSlash"] = {
