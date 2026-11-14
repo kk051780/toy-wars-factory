@@ -21,8 +21,8 @@ FEATURE = "ART_MINION_THREE_SILHOUETTES_V1"
 SLASH = "ART_COMBAT_SLASH_READONLY_V1"
 AUTHOR = ROOT / "features/art_minion/MinionArtSilhouette.server.luau"
 DEST = "server/ArtMinionSilhouette.server.luau"
-PIN = "855985f8b474fb983485c27e26918cea39c42574"
-HIT_CUE_BLOB = "4ed99eb0b5177142b389ba3bf6954b288c804a08"
+PIN = "4d0aac99d670ca4364a7368255d1edc63d28b3a0"
+HIT_CUE_BLOB = "e48186a6d717a46c86ec395ffbe778d196ab182d"
 SLASH_CLIENT_BLOB = "c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba"
 BASE = 67
 MANIFEST = ".P0D_FB015_COMPOSITE_EXACT_MANIFEST.json"
@@ -71,7 +71,9 @@ def baseline(dist: Path):
     require(blob(author) == PIN, "ART_MINION_SOURCE_DRIFT")
     for token in (b"KNIGHT_HELMET", b"WRAITH_HOOD", b"BRUTE_TUSK_",
                   b"ELITE_MASK", b"P0D_ART_MINION_V1",
-                  b"mobsFolder.ChildAdded:Connect("):
+                  b"mobsFolder.ChildAdded:Connect(",
+                  b'P0D_ART_HIT_BUS_V1',
+                  b'artHitBus.Event:Connect('):
         require(token in author, "ART_MINION_MISSING_ANCHOR_"+repr(token))
     for token in (b"FireServer(", b"TakeDamage(", b"UpdateAsync(",
                   b"OnServerEvent:Connect(", b"DataStoreService"):
