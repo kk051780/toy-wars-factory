@@ -25,6 +25,20 @@ jobs:
           set -euo pipefail
           python3 -B -m unittest discover -s rc_fastlane -p test_hud_clean.py -v
           python3 -B -m py_compile rc_fastlane/apply_hud_clean.py
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0_luau
+          persist-credentials: false
+      - name: Compile actual HUD governor Luau with pinned compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _p0_luau -B /tmp/p0_hud_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0_hud_luau --target Luau.Compile.CLI --parallel 4
+          /tmp/p0_hud_luau/luau-compile rc_fastlane/features/p0_hud_clean/BattleHUDGovernor.client.luau > /dev/null
+          echo "HUD_CANDIDATE_LUAU_REAL_COMPILE_SUCCESS_NOT_STUDIO"
       - name: Runtime still needs Studio and Android viewport review
         shell: bash
         run: echo "PREP_HUD_ONLY_NOT_CANONICAL_NOT_FTUE_NOT_FUN_VERIFIED"
