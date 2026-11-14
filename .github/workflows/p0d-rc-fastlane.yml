@@ -4,6 +4,7 @@ on:
     branches:
       - rc/p0d-s1-kids-rc01
       - rc/p0d-rc78-stage-20261114-2000
+      - rc/p0d-rc80-fb008-stage-20261114-2343
       - feature/p0d-p0game-composite70-integration-prep-20261114
       - qa/p0d-lobby-team-rebalance-private78-20261114
       - qa/p0d-spectator-h2-private78-20261114
@@ -1658,5 +1659,49 @@ jobs:
         with:
           name: P0D-FB017-PREP-RC80-NO-GUIDES
           path: /tmp/p0d_fb017_final_out/*
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: 'FB008 17-unit horde fairness: cumulative final RC80 80/80 Studio build'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_fb017_no_guides_dist
+          OUT=/tmp/p0d_fb008_crowd80_dist
+          mkdir -p /tmp/p0d_fb008_final_out
+          python3 -B rc_fastlane/apply_fb008_density_rc80.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_fb008_density_rc80.py --base "$BASE" --out "$OUT" --enabled true
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 80
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_fb008_final_out/P0D_TRAP_RAIDERS_RC80_CROWD17_STUDIO.rbxlx
+          python3 -B rc_fastlane/verify_fb008_density_rc80.py --dist "$OUT" --place /tmp/p0d_fb008_final_out/P0D_TRAP_RAIDERS_RC80_CROWD17_STUDIO.rbxlx --receipt /tmp/p0d_fb008_final_out/RC80_FB008_RECEIPT.json
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path('/tmp/p0d_fb008_final_out/RC80_FB008_RECEIPT.json')
+          r=json.loads(p.read_text())
+          r['source_head_sha']=os.environ['GITHUB_SHA']
+          r['official_rc_adoption']=os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01'
+          r['official_rc_branch']='rc/p0d-s1-kids-rc01'
+          r['rollback_commit']='5c2ad66ad22583202a48de28422813346aa08db5'
+          p.write_text(json.dumps(r,ensure_ascii=False,indent=2)+'\n')
+          print('FB008_CROWD_FINAL_RC80_STUDIO_PLACE',r['place_bytes'],r['place_sha256'],r['official_rc_adoption'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
+        with:
+          name: P0D-CANONICAL-RC80-CROWD17-STUDIO
+          path: /tmp/p0d_fb008_final_out/*
+          retention-days: 7
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && (github.ref == 'refs/heads/rc/p0d-rc80-fb008-stage-20261114-2343' || github.event_name == 'pull_request') }}
+        with:
+          name: P0D-FB008-PREP-RC80-CROWD17-STUDIO
+          path: /tmp/p0d_fb008_final_out/*
           retention-days: 7
           if-no-files-found: error
