@@ -32,7 +32,6 @@ class Fb005SoloBotContracts(unittest.TestCase):
         self.assertIn('EXPERIMENTAL_FIVE_EGG_MODE',source)
         self.assertIn('studioSoloRoundStarted',source)
         self.assertIn('SoloTeamBots.stop()',source)
-        self.assertIn('SoloTeamBots.tick(now)',source)
         self.assertIn('pcall(SoloTeamBots.tick,now)',source)
         self.assertIn('pcall(SoloTeamBots.start,map,',source)
         self.assertIn("original",source.lower())
