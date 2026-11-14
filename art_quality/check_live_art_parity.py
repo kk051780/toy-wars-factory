@@ -24,7 +24,7 @@ ART_INSTANCES = {
     "P0DConfirmedCombatFX": ("LocalScript", "combat_fx"),
 }
 _TOP_GUARD = re.compile(
-    r"^\s*if\s+not\s+RunService:IsStudio\(\)\s+then\s+return\s+end(?:\s*--.*)?\s*$"
+    r"^if\s+not\s+RunService:IsStudio\(\)\s+then\s+return\s+end(?:\s*--.*)?\s*$"
 )
 
 def classify(source: str) -> str:
