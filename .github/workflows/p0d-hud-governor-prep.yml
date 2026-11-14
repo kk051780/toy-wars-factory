@@ -1,0 +1,30 @@
+name: P0D P0 HUD-clean standalone source-contract (PREP only)
+on:
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - "rc_fastlane/apply_hud_clean.py"
+      - "rc_fastlane/test_hud_clean.py"
+      - "rc_fastlane/features/p0_hud_clean/**"
+      - ".github/workflows/p0d-hud-governor-prep.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Static and OFF/source-exact HUD contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_hud_clean.py -v
+          python3 -B -m py_compile rc_fastlane/apply_hud_clean.py
+      - name: Runtime still needs Studio and Android viewport review
+        shell: bash
+        run: echo "PREP_HUD_ONLY_NOT_CANONICAL_NOT_FTUE_NOT_FUN_VERIFIED"
