@@ -111,14 +111,25 @@ local function makeActor(id,team,style,spawn)
     local state={id=id,team=team,style=style,
         model=m,hum=hum,root=root,spawn=spawn,carry=nil,deadUntil=0,
         nextRepath=0,path={},pathIndex=1,planning=false,
-        lastAttack=0,lastGoal=Vector3.zero}
+        lastAttack=0,lastGoal=Vector3.zero,pathGeneration=0}
     return state
 end
 
+local function invalidatePath(bot)
+    -- PathfindingService:ComputeAsync yields; old callbacks must never claim
+    -- authority over an agent that just stole an egg, respawned or changed goal.
+    bot.pathGeneration+=1
+    bot.path={}
+    bot.pathIndex=1
+    bot.nextRepath=0
+    bot.planning=false
+end
 local function respawn(bot)
+    local nextGeneration=bot.pathGeneration+1
     if bot.model and bot.model.Parent then bot.model:Destroy() end
     local fresh=makeActor(bot.id,bot.team,bot.style,bot.spawn)
     for key,value in pairs(fresh) do bot[key]=value end
+    bot.pathGeneration=nextGeneration
     bot.deadUntil=0
     bot.carry=nil
     bot.carryVisual=nil
@@ -157,6 +168,7 @@ function Bot.stop()
     table.clear(bots)
     if folder then folder:Destroy();folder=nil end
     map=nil;callbacks=nil
+    lastTick=-math.huge
 end
 
 function Bot.start(world,humanTeam,authority)
@@ -200,15 +212,21 @@ local function pathTo(bot,goal,now)
     if bot.planning or now<bot.nextRepath then return end
     bot.nextRepath=now+REPATH_SECONDS
     local token=epoch
+    local generation=bot.pathGeneration
+    local planningRoot=bot.root
     bot.planning=true
     task.spawn(function()
         local ok,path=pcall(function()
             local p=PathfindingService:CreatePath({
                 AgentRadius=2,AgentHeight=5,AgentCanJump=true,WaypointSpacing=7})
-            p:ComputeAsync(bot.root.Position,goal)
+            p:ComputeAsync(planningRoot.Position,goal)
             return p
         end)
-        if active and epoch==token and alive(bot) then
+        -- Both the global match and this particular bot/goal must still be
+        -- current. A respawn can happen while ComputeAsync is yielding.
+        local current=active and epoch==token and bot.pathGeneration==generation
+            and bot.root==planningRoot and alive(bot)
+        if current then
             if ok and path and path.Status==Enum.PathStatus.Success then
                 bot.path=path:GetWaypoints()
                 bot.pathIndex=math.min(2,#bot.path)
@@ -217,7 +235,10 @@ local function pathTo(bot,goal,now)
                 bot.pathIndex=1
             end
         end
-        bot.planning=false
+        -- Old asynchronous planners must not release a newer planner's lock.
+        if bot.pathGeneration==generation and bot.root==planningRoot then
+            bot.planning=false
+        end
     end)
 end
 local function move(bot,goal,now)
@@ -292,8 +313,7 @@ function Bot.tick(now)
                 if callbacks.steal(bot,enemy) then
                     bot.carry=enemy
                     showCarriedEgg(bot,true)
-                    bot.path={}
-                    bot.nextRepath=0
+                    invalidatePath(bot)
                 end
             elseif bot.carry and
                 (bot.root.Position-map.teams[bot.team].scorePad.Position).Magnitude<=7 then
@@ -301,8 +321,7 @@ function Bot.tick(now)
                     if not active then return end
                     bot.carry=nil
                     showCarriedEgg(bot,false)
-                    bot.path={}
-                    bot.nextRepath=0
+                    invalidatePath(bot)
                 end
             end
             local waypoint=target
