@@ -1176,6 +1176,32 @@ jobs:
           path: /tmp/p0d_playable_art77_out/*
           retention-days: 7
           if-no-files-found: error
+      - name: P0 critical visual motion: append authored #390 to full 77-source game as PRIVATE78
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_p0_motion78.py -v
+          BASE=/tmp/p0d_playable_art77_dist
+          OUT=/tmp/p0d_p0_motion78_dist
+          python3 -B rc_fastlane/apply_p0_motion78.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_p0_motion78.py --base "$BASE" --out "$OUT" --enabled true
+          mkdir -p /tmp/p0d_p0_motion78_out
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 78
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          echo P0_PRIVATE78_NATIVE_78_78_COMPILE_PASS
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_p0_motion78_out/P0D_PLAYABLE_ART_MOTION_PRIVATE78.rbxlx
+          python3 -B rc_fastlane/verify_p0_motion78.py --dist "$OUT" --place /tmp/p0d_p0_motion78_out/P0D_PLAYABLE_ART_MOTION_PRIVATE78.rbxlx --receipt /tmp/p0d_p0_motion78_out/RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-PLAYABLE-ART-MOTION-PRIVATE78-STUDIO
+          path: /tmp/p0d_p0_motion78_out/*
+          retention-days: 7
+          if-no-files-found: error
       - uses: actions/upload-artifact@v4
         if: ${{ env.PROFILE == 'rich51' }}
         with:
