@@ -303,14 +303,21 @@ function Horde:hit(origin: Vector3,facing: Vector3,damage: number,now: number,ig
                         local visualOK,visualError=pcall(function()
                             m.artHitSeq=(m.artHitSeq or 0)+1
                             self.artHitBus:Fire(m.body,m.artHitSeq,m.hp<=0,self.round)
-                            local stamp=workspace:GetServerTimeNow()
-                            appendRecentHit(self.artRecent,{
-                                m.id,m.pos.X,m.pos.Y,m.pos.Z,
-                                origin.X,origin.Y,origin.Z,
-                                m.hp<=0,m.artHitSeq,self.round,self.artEpoch,stamp
-                            },stamp)
-                            self.artCue:SetAttribute("P0D_ART_RECENT_V1",
-                                HttpService:JSONEncode(self.artRecent))
+                            local historyOK,historyError=pcall(function()
+                                local stamp=workspace:GetServerTimeNow()
+                                appendRecentHit(self.artRecent,{
+                                    m.id,m.pos.X,m.pos.Y,m.pos.Z,
+                                    origin.X,origin.Y,origin.Z,
+                                    m.hp<=0,m.artHitSeq,self.round,self.artEpoch,stamp
+                                },stamp)
+                                self.artCue:SetAttribute("P0D_ART_RECENT_V1",
+                                    HttpService:JSONEncode(self.artRecent))
+                            end)
+                            if not historyOK then
+                                warn("P0D_ART_RECENT_HISTORY_NON_BLOCKING",historyError)
+                            end
+                            -- Deliver confirmed LIVE hit even if history
+                            -- serialization or replicated Attribute fails.
                             self.artCue:FireAllClients(
                                 m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round,self.artEpoch)
                         end)
