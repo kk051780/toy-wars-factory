@@ -336,6 +336,38 @@ jobs:
             /tmp/p0d_new_luau/luau /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau | tee /tmp/p0d_egg_native.log
             grep -Fx P0D_EGG_RELAY_ACTUAL_GAME_NATIVE_31_CASES_PASS /tmp/p0d_egg_native.log
           fi
+      - name: Native-Luau behavioral check of actual OWNER lobby phase HUD
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 - <<'PY'
+          from pathlib import Path
+          hud=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE/src/client/HUD.client.luau").read_text("utf8")
+          start="local function phaseText(s): string"
+          stop="remote.OnClientEvent:Connect(function(s)"
+          assert hud.count(start)==1 and hud.count(stop)==1
+          body=hud.split(start,1)[1].split(stop,1)[0]
+          native='''local studio = true
+          local RunService = {IsStudio = function(self) return studio end}
+          local function resultLine(s) return "results" end
+          local function phaseText(s): string
+          '''+body+'''
+          assert(phaseText({phase="LOBBY",redPlayers=1,bluePlayers=0}) == "▶ 1人練習 自動開始")
+          assert(phaseText({phase="LOBBY",redPlayers=1,bluePlayers=1}) == "▶ 赤・青がそろうと開始")
+          studio=false
+          assert(phaseText({phase="LOBBY",redPlayers=1,bluePlayers=0}) == "▶ 赤・青がそろうと開始")
+          studio=true
+          assert(phaseText({phase="COUNTDOWN",time=7}) == "▶ 開始まで 7 秒")
+          print("P0D_OWNER_UX_NATIVE_HUD_LOBBY_PHASE_4_CASES_PASS")
+          '''
+          Path("/tmp/p0d_owner_ux_lobby_native.luau").write_text(native,encoding="utf8")
+          PY
+            /tmp/p0d_new_luau/luau-compile /tmp/p0d_owner_ux_lobby_native.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/p0d_owner_ux_lobby_native.luau | tee /tmp/p0d_owner_ux_lobby_native.log
+            grep -Fx P0D_OWNER_UX_NATIVE_HUD_LOBBY_PHASE_4_CASES_PASS /tmp/p0d_owner_ux_lobby_native.log
+          fi
       - name: Checkout exact original 41-case egg relay test author (no change to Game)
         uses: actions/checkout@v4
         with:
