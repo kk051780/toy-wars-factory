@@ -19,7 +19,7 @@ local WEATHER = {
 }
 local SPEAKERS = {
     NAVI = { display = "ナビィ", voiceId = "701", team = "ALLY" },
-    TRICK = { display = "ウソップ", voiceId = "702", team = "ENEMY" },
+    TRICK = { display = "マドロン", voiceId = "702", team = "ENEMY" },
     ORACLE = { display = "オラクル", voiceId = "701", team = "NEUTRAL" },
 }
 
