@@ -2150,12 +2150,16 @@ jobs:
           python3 -B art_quality/check_art_quality.py \
             --place "$OUT/P0D_P431_LIVE_COMBAT_FX_CANDIDATE_STUDIO.rbxlx" \
             --out "$OUT/ART_CHECK_REPORT.json"
+          python3 -B art_quality/check_live_art_parity.py \
+            --place "$OUT/P0D_P431_LIVE_COMBAT_FX_CANDIDATE_STUDIO.rbxlx" \
+            --out "$OUT/LIVE_ART_PARITY_REPORT.json"
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
           r=Path('/tmp/p0d_p431_live_combat_fx_candidate')
           receipt=json.loads((r/'LIVE_COMBAT_FX_SOURCE_RECEIPT.json').read_text())
           report=json.loads((r/'ART_CHECK_REPORT.json').read_text())
+          live=json.loads((r/'LIVE_ART_PARITY_REPORT.json').read_text())
           place=r/'P0D_P431_LIVE_COMBAT_FX_CANDIDATE_STUDIO.rbxlx'
           assert receipt['source_count']==80 and receipt['other79_byte_exact']
           assert receipt['place_bytes']==place.stat().st_size
@@ -2167,6 +2171,11 @@ jobs:
           assert receipt['android_real_15min']=='NOT_TESTED'
           assert receipt['owner_accepted'] is False
           assert report['art_decision']=='ART_NO_GO'
+          assert live['source_gate']=='PASS' and live['script_count']==80
+          assert live['top_studio_only_count']==6,('EXPECTED_SIX_REMAINING_ART_BLOCKERS',live['top_studio_only_count'])
+          assert sum(x['name']=='P0DConfirmedCombatFX' and x['source_guard']!='TOP_STUDIO_ONLY'
+                     for x in live['visual_sources'])==1,'REAL_FX_NONSTUDIO_SOURCE_NOT_ENABLED'
+          assert live['live_art_decision']=='LIVE_ART_NO_GO' and live['owner_accepted'] is False
           receipt['candidate_test_checkout_sha']=os.environ['GITHUB_SHA']
           receipt['candidate_feature_branch']=os.environ.get('GITHUB_HEAD_REF','')
           (r/'LIVE_COMBAT_FX_SOURCE_RECEIPT.json').write_text(
