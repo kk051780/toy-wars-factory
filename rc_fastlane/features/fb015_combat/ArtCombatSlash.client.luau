@@ -113,6 +113,7 @@ local characterConnection
 local rootConnection
 local pending={}
 local MAX_PENDING_CUES=16
+local highestPacketEpoch=nil
 
 -- BEGIN_ACTUAL_CUE_DEDUPE_POLICY (extracted and executed by native Luau)
 local function acceptVisualCue(id,serial,round,epoch)
@@ -156,12 +157,30 @@ local function isEpochStale(authoritativeEpoch,packetEpoch)
         and packetEpoch<authoritativeEpoch
 end
 -- END_ACTUAL_CUE_DEDUPE_POLICY
+-- BEGIN_ACTUAL_PENDING_EPOCH_POLICY
+-- Pure epoch admission shared by live/queued/respawn processing.
+local function admitPacketEpoch(epoch)
+    if type(epoch)~="number" or epoch%1~=0 or epoch<1 then return false end
+    if highestPacketEpoch~=nil and epoch<highestPacketEpoch then return false end
+    if highestPacketEpoch==nil or epoch>highestPacketEpoch then
+        highestPacketEpoch=epoch
+        -- New match wins immediately. Never render old-round cues after a
+        -- root arrives, even before its replicated epoch Attribute arrives.
+        for i=#pending,1,-1 do
+            if pending[i][7]<epoch then table.remove(pending,i) end
+        end
+    end
+    return true
+end
+-- END_ACTUAL_PENDING_EPOCH_POLICY
+
 
 local function onConfirmedHit(id,hitPos,fromPos,isKO,serial,round,epoch)
     if destroyed or typeof(hitPos)~="Vector3" or typeof(fromPos)~="Vector3"
         or type(isKO)~="boolean" then return end
     local authoritativeEpoch=cue:GetAttribute("P0D_ART_EPOCH_V1")
     if isEpochStale(authoritativeEpoch,epoch) then return end
+    if not admitPacketEpoch(epoch) then return end
     local root=localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
     if not root then
         -- Preserve actual live packets while the character is respawning.
@@ -215,7 +234,13 @@ local function syncServerEpoch()
     lastEpoch=current
     lastRound=nil
     table.clear(lastByMob)
-    table.clear(pending)
+    -- Preserve queued cues for this epoch, discarding only stale matches.
+    if highestPacketEpoch==nil or current>highestPacketEpoch then
+        highestPacketEpoch=current
+    end
+    for i=#pending,1,-1 do
+        if pending[i][7]<highestPacketEpoch then table.remove(pending,i) end
+    end
     -- Attribute replication may deliver history before the new epoch.
     -- Retry it NOW even if the history Attribute never changes again.
     replayRecent()
@@ -268,5 +293,6 @@ script.Destroying:Connect(function()
     table.clear(lastByMob)
     table.clear(times)
     table.clear(pending)
+    highestPacketEpoch=nil
 end)
 print(FEATURE.." _STUDIO_ONLY_CLIENT_SPARKS_EPOCH_PENDING_REPLAY")
