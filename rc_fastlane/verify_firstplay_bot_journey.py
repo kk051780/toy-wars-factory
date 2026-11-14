@@ -136,7 +136,7 @@ Players.online={human,extraHuman}
 Bot.tick(3.5)
 check(not active and guardCalls==1,"SECOND_ELIGIBLE_PLAYER_FAIL_CLOSED")
 check(#bots==0,"BOT_STOP_CLEANS_ROSTER")
-print("P0D_SOLO_REAL_GAME_BOT_TICK_15_NATIVE_CASES_PASS")
+print("P0D_SOLO_REAL_GAME_BOT_TICK_17_NATIVE_CASES_PASS")
 '''
 if __name__=="__main__":
     p=argparse.ArgumentParser()
