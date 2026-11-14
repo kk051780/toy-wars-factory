@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""#361 authored castle/map regression (source-level only, NOT Studio FUN)."""
+"""#361 authentic additive private67 scene regression tests."""
 import importlib.util
 import tempfile
 import unittest
@@ -7,78 +7,63 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPT = ROOT / "rc_fastlane/apply_owner361_castle.py"
-ORIGINAL = ROOT / "releases/P0D_S1_KIDS_RC01/src/server/MapBuilder.luau"
-
+OLD_MAP = ROOT / "releases/P0D_S1_KIDS_RC01/src/server/MapBuilder.luau"
 spec = importlib.util.spec_from_file_location("owner361_castle", SCRIPT)
 assert spec and spec.loader
 mod = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod)
 
 
-class CastleRoutePrepTests(unittest.TestCase):
+class CastleWorldTests(unittest.TestCase):
     def setUp(self):
-        self.base = ORIGINAL.read_text(encoding="utf8")
-        self.authored = mod.AUTHOR.read_text(encoding="utf8")
+        self.authored = mod.SOURCE.read_text("utf8")
 
-    def test_exact_authored_blob_and_contract(self):
-        self.assertEqual(mod.gitblob(self.base.encode("utf8")), mod.OLD_BLOB)
-        self.assertEqual(mod.gitblob(self.authored.encode("utf8")), mod.NEW_BLOB)
-        mod.check_authored_map(self.authored.encode("utf8"))
+    def test_one_exact_native_addon(self):
+        self.assertEqual(mod.blob(mod.SOURCE.read_bytes()), mod.PIN)
+        mod.check_authored(self.authored.encode("utf8"))
+        self.assertIn("server/Owner361CastleBattlefield.server.luau", mod.DEST)
 
-    def test_sides_and_server_objectives_have_exact_original_anchors(self):
-        critical = (
-            'Vector3.new(sign * 107, 6.5, 0)',
-            'Vector3.new(sign * 98, 2.5, -20)',
-            'Vector3.new(sign * 82, -.5, 20)',
-            'spawn = CFrame.new(sign * 68, 5, 0)',
-            'eggPrompt = prompt(egg, "Steal egg", name .. " treasure")',
-            'scorePrompt = prompt(pad, "Deliver egg", name .. " scoring pad")',
-            'result.teams[name] = {core = core, egg = egg, eggPrompt = eggPrompt,',
-            'b.Parent = partRef',
-        )
-        for anchor in critical:
-            self.assertIn(anchor, self.base)
-            self.assertIn(anchor, self.authored)
+    def test_actual_map_untouched_not_a_clone(self):
+        original = OLD_MAP.read_text("utf8")
+        self.assertIn('MapBuilder.build(config)', original)
+        self.assertNotIn('function MapBuilder.build(config)', self.authored)
+        self.assertNotIn('Instance.new("RemoteEvent")', self.authored)
+        self.assertNotIn('TakeDamage(', self.authored)
+        self.assertIn('if not RunService:IsStudio() then return end', self.authored)
 
-    def test_world_larger_and_has_symmetric_3D_castles(self):
-        self.assertIn('Vector3.new(250, 4, 142)', self.base)
-        self.assertNotIn('Vector3.new(250, 4, 142)', self.authored)
-        self.assertIn('Vector3.new(370, 4, 294)', self.authored)
-        self.assertIn('castleArchitecture(base, sign, accent)', self.authored)
-        self.assertIn('Vector3.new(sign * 139, 18, 0)', self.authored)
-        self.assertIn('"FRONT_TOWER_"', self.authored)
-        self.assertIn('"GATE_ARCH"', self.authored)
+    def test_real_location_anchors_and_objectives_not_moved(self):
+        for marker in (
+            'world:WaitForChild("RED_CASTLE", 10)',
+            'world:WaitForChild("BLUE_CASTLE", 10)',
+            'world:WaitForChild("GrassArena", 10)',
+            'grass.Size = Vector3.new(370, 4, 294)',
+            'north.Position = Vector3.new(0, 7, -147)',
+            'south.Position = Vector3.new(0, 7, 147)',
+        ):
+            self.assertIn(marker, self.authored)
+        self.assertNotIn('_CASTLE_CORE.Position =', self.authored)
+        self.assertNotIn('_EGG.Position =', self.authored)
 
-    def test_accessible_pads_and_small_distance_limited_labels(self):
-        self.assertIn('local z = side * 44', self.authored)
-        self.assertIn('Vector3.new(sign * 83, 10, z)', self.authored)
-        self.assertIn('b.MaxDistance = 26', self.authored)
-        self.assertIn('b.AlwaysOnTop = false', self.authored)
-        self.assertIn('UDim2.fromOffset(96, 22)', self.authored)
-        self.assertIn('UDim2.fromOffset(210, 44)', self.base)
-
-    def test_north_and_south_routes_and_map_bounds(self):
-        for anchor in (
+    def test_three_routes_two_castles_crest_and_low_labels(self):
+        for marker in (
+            'fortress(-1, "RED"', 'fortress(1, "BLUE"',
+            '"GRAND_KEEP"', '"OPEN_GATE_ARCH"', '"GATE_TOWER_"',
             '"NORTH_WOODLAND_TRAIL"', '"SOUTH_WETLAND_TRAIL"',
             '"NORTH_LOOKOUT_PLATEAU_"', '"SOUTH_SHALLOW_WATER_"',
-            '"SOUTH_STEPPING_STONE_"', '"WOOD_TRUNK_"',
-            '"ARENA_BOUNDARY_W"', '"ARENA_BOUNDARY_E"',
-            '"CENTER_STREAM"',
+            "descendant.MaxDistance = 26",
+            "descendant.AlwaysOnTop = false",
         ):
-            self.assertIn(anchor, self.authored)
-        self.assertIn('Vector3.new(0, 7, -147)', self.authored)
-        self.assertIn('Vector3.new(0, 7, 147)', self.authored)
-        self.assertIn('Vector3.new(185, 7, 0)', self.authored)
+            self.assertIn(marker, self.authored)
 
-    def test_off_is_zero_write(self):
+    def test_off_is_absolute_no_write(self):
         with tempfile.TemporaryDirectory() as root:
-            path = Path(root) / "nonexistent"
-            self.assertFalse(mod.apply(path, False))
-            self.assertFalse(path.exists())
+            dest = Path(root) / "nonexistent"
+            self.assertFalse(mod.apply(dest, False))
+            self.assertFalse(dest.exists())
 
-    def test_drift_fails_closed(self):
+    def test_altered_author_fails_closed(self):
         with self.assertRaises(AssertionError):
-            mod.check_authored_map(self.authored.replace("GREAT_KEEP", "BROKEN").encode("utf8"))
+            mod.check_authored(self.authored.replace("GRAND_KEEP", "BROKEN").encode("utf8"))
 
 
 if __name__ == "__main__":
