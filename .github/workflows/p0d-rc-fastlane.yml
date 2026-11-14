@@ -1,31 +1,26 @@
-name: P0D canonical RC fast-lane Studio build
+name: P0D RC78 author-pinned source-exact unified Studio build
 on:
   push:
     branches:
       - rc/p0d-s1-kids-rc01
-      - feature/p0d-private61-native105-size-qa-20261114
-      - feature/p0d-private62-starry-meteor-20261114-01
-      - feature/p0d-private63-meteor-shards-mobile-20261114-01
-      - feature/p0d-flat63-official57-direct-intake-20261114
-      - feature/p0d-rc64-twin-flat-official-intake-20261114
-      - feature/p0d-flat65-twin-training-rc-adoption-20261114
-      - feature/p0d-bond66-latest-rc346-prep-20261114
+      - rc/p0d-rc78-stage-20261114-2000
+      - feature/p0d-p0game-composite70-integration-prep-20261114
+      - qa/p0d-lobby-team-rebalance-private78-20261114
+      - qa/p0d-spectator-h2-private78-20261114
+      - qa/p0d-round-epoch-spectator-role-private78-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
   pull_request:
     branches:
       - rc/p0d-s1-kids-rc01
-      - feature/p0d-wcs-rc58-fastlane-candidate-20261114-02
-      - feature/p0d-wcs-sevenjobs-rc59-candidate-20261114
-      - feature/p0d-wcs-jobs-egg-classic-rc60-candidate-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
   workflow_dispatch:
     inputs:
       profile:
-        description: RC source profile (fallback selectable; official active remains ACTIVE.json)
+        description: Pinned profile; actual composite only permitted on rich51
         type: choice
         required: true
         default: rich51
@@ -1001,7 +996,618 @@ jobs:
           fi
       - uses: actions/upload-artifact@v4
         with:
-          name: P0D-CANONICAL-RC-STUDIO-${{ env.PROFILE }}
+          name: P0D-RC66-ROLLBACK-${{ env.PROFILE }}
           path: /tmp/p0d_rc_out/*
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: P0 owner 5-PREP contract tests and OFF=exact-zero preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_owner361_p0_composite70.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            SRC=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            DST=/tmp/p0d_owner361_composite70
+            FINAL=/tmp/p0d_owner361_composite70_final
+            cp -a "$SRC" "$DST"
+            BEFORE=$(find "$DST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_owner361_p0_composite70.py --dist "$DST" --enabled false
+            AFTER=$(find "$DST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            echo P0_PRIVATE70_OFF_FULL_TREE_EXACT_PASS
+            python3 - <<'PY'
+          from pathlib import Path
+          d=Path('/tmp/p0d_owner361_composite70/src/server/Game.server.luau').read_text('utf8')
+          tick=d.split('local function tickRound()',1)[1]
+          print('P0D_REAL66_TICKROUND_HEAD',tick[:2400])
+          PY
+            python3 -B rc_fastlane/apply_owner361_p0_composite70.py --dist "$DST" --out "$FINAL" --enabled true
+            cmp "$SRC/SOURCE_LOCK.json" "$DST/SOURCE_LOCK.json"
+            cmp "$SRC/RC_FEATURE_LOCK.json" "$DST/RC_FEATURE_LOCK.json"
+            echo P0_OWNER66_INPUT_UNCHANGED_NO_BYTES_PASS
+            # Negative proof: a foreign Game with rewritten self-consistent
+            # SOURCE_LOCK and RC_FEATURE_LOCK MUST fail the trusted source pin.
+            FAKE=/tmp/p0_owner361_forged66
+            cp -a "$DST" "$FAKE"
+            python3 - <<'PY'
+          import json,sys
+          from pathlib import Path
+          sys.path.insert(0,'rc_fastlane')
+          from apply_owner361_p0_composite70 import source_map,blob
+          d=Path('/tmp/p0_owner361_forged66')
+          game=d/'src/server/Game.server.luau'
+          game.write_bytes(game.read_bytes()+b'\n-- forged self-consistent input\n')
+          pins={p:blob(x) for p,x in sorted(source_map(d).items())}
+          sl=d/'SOURCE_LOCK.json'; fl=d/'RC_FEATURE_LOCK.json'
+          a=json.loads(sl.read_text('utf8')); b=json.loads(fl.read_text('utf8'))
+          a['blobs']=pins; b['source_gitblobs']=pins
+          sl.write_text(json.dumps(a,indent=2)+'\n','utf8')
+          fl.write_text(json.dumps(b,indent=2)+'\n','utf8')
+          assert json.loads(sl.read_text())['blobs']==pins
+          assert json.loads(fl.read_text())['source_gitblobs']==pins
+          PY
+            if python3 -B rc_fastlane/apply_owner361_p0_composite70.py --dist "$FAKE" --out /tmp/p0_owner361_forged70 --enabled true >/tmp/p0_forged66_reject.log 2>&1; then
+              echo P0_FORGED66_DANGEROUS_FALSE_ACCEPT; exit 1
+            fi
+            grep -F WRONG_66_SOURCE_DISTRIBUTION /tmp/p0_forged66_reject.log
+            test ! -e /tmp/p0_owner361_forged70
+            echo P0_FORGED66_REGENERATED_LOCKS_REJECTED
+            # Reject a source symlink even if it points at identical original
+            # bytes and appears to satisfy both source-lock manifests.
+            LINKED=/tmp/p0_owner361_linked66
+            cp -a "$DST" "$LINKED"
+            cp "$LINKED/src/server/Game.server.luau" /tmp/p0_composite_external_original
+            rm "$LINKED/src/server/Game.server.luau"
+            ln -s /tmp/p0_composite_external_original "$LINKED/src/server/Game.server.luau"
+            if python3 -B rc_fastlane/apply_owner361_p0_composite70.py --dist "$LINKED" --out /tmp/p0_owner361_linked70 --enabled true >/tmp/p0_linked_reject.log 2>&1; then
+              echo P0_SYMLINK_FALSE_ACCEPT; exit 1
+            fi
+            grep -F P0_SYMLINK_REFUSED /tmp/p0_linked_reject.log
+            test ! -e /tmp/p0_owner361_linked70
+            cmp "$DST/src/server/Game.server.luau" /tmp/p0_composite_external_original
+            echo P0_SYMLINK_EXTERNAL_FILE_UNCHANGED_PASS
+            cmake --build /tmp/p0d_new_luau --target Luau.Repl.CLI --parallel 4
+            python3 -B rc_fastlane/test_p0_ready_composed_native.py --game "$FINAL/src/server/Game.server.luau" --emit /tmp/p0_composed_ready_native.luau
+            /tmp/p0d_new_luau/luau /tmp/p0_composed_ready_native.luau | tee /tmp/p0_ready_native.log
+            grep -Fx P0_COMPOSED_READY_NATIVE_6_SCENARIOS_PASS /tmp/p0_ready_native.log
+            python3 -B rc_fastlane/test_fb005_human_bot_los_native.py --module "$FINAL/src/server/SoloTeamBots.luau" --emit /tmp/p0_bot_los_native.luau
+            /tmp/p0d_new_luau/luau /tmp/p0_bot_los_native.luau | tee /tmp/p0_bot_los_native.log
+            grep -Fx FB005_HUMAN_BOT_LOS_NATIVE_8_SCENARIOS_PASS /tmp/p0_bot_los_native.log
+            python3 -B rc_fastlane/test_fb005_async_native.py --emit /tmp/p0_bot_path_watchdog_native.luau
+            /tmp/p0d_new_luau/luau /tmp/p0_bot_path_watchdog_native.luau | tee /tmp/p0_bot_path_watchdog_native.log
+            grep -Fx FB005_ASYNC_LIFECYCLE_NATIVE_BEHAVIOR_PASS /tmp/p0_bot_path_watchdog_native.log
+            mkdir -p /tmp/p0d_owner361_out
+            find "$FINAL/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+              /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+            done
+            echo P0_PRIVATE70_ALL_LUAU_COMPILED
+            /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o /tmp/p0d_owner361_out/P0D_P0_COMPOSITE_PRIVATE70.rbxlx
+            cp "$FINAL/SOURCE_LOCK.json" "$FINAL/RC_FEATURE_LOCK.json" /tmp/p0d_owner361_out/
+            python3 - <<'PY'
+          import json,hashlib,xml.etree.ElementTree as ET,sys
+          from collections import Counter
+          from pathlib import Path
+          sys.path.insert(0,'rc_fastlane')  # adapter imports authors from same package directory
+          from rc_fastlane.apply_owner361_p0_composite70 import source_map,blob,CHANGED,ADDED,FEATURE_IDS,BASE_RC
+          dist=Path('/tmp/p0d_owner361_composite70_final')
+          ref=Path('_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE')
+          base=source_map(ref); a=source_map(dist)
+          assert len(base)==66 and len(a)==70
+          assert {p for p in base if base[p]!=a[p]}==CHANGED
+          assert set(a)-set(base)==set(ADDED)
+          assert all(a[p]==base[p] for p in base if p not in CHANGED)
+          pins={p:blob(raw) for p,raw in sorted(a.items())}
+          l=json.loads((dist/'SOURCE_LOCK.json').read_text())
+          f=json.loads((dist/'RC_FEATURE_LOCK.json').read_text())
+          assert l['total_scripts']==f['total_sources']==70
+          assert l['blobs']==f['source_gitblobs']==pins
+          assert all(f['feature_flags'].get(id) is True for id in FEATURE_IDS)
+          assert f['owner361_p0_composite_private70']['formal_rc_adoption'] is False
+          g=a['server/Game.server.luau'].decode()
+          assert g.count('remote.OnServerEvent:Connect(')==1
+          assert g.count('local function tickRound()')==1
+          assert g.count('local function resetRound()')==1
+          assert 'math.abs(position.X) > 182 or math.abs(position.Z) > 144' in g
+          assert g.count('map.model:SetAttribute("P0D_PHASE",match.phase)')==1
+          assert g.count('local function applyReady(')==1
+          assert g.count('local botAuthority=')==1
+          assert g.count('pcall(SoloTeamBots.tick,now)')==1
+          v=a['server/V4TrainingBridge.server.luau'].decode()
+          assert v.count('LobbyIsland.padPosition(')>=2
+          assert 'arena:GetAttribute("P0D_PHASE")~="LOBBY"' in v
+          hud=a['client/HUD.client.luau'].decode()
+          assert hud.count('FireServer({action="READY"')==1
+          assert a['shared/Config.luau'].decode().count('MatchSeconds = 900,')==1
+          project=json.loads((dist/'default.project.json').read_text())
+          assert project['tree']['StarterPlayer']['StarterPlayerScripts']['BattleHUDGovernor']['$path']=='src/client/BattleHUDGovernor.client.luau'
+          place=Path('/tmp/p0d_owner361_out/P0D_P0_COMPOSITE_PRIVATE70.rbxlx')
+          doc=ET.parse(place)
+          comps=Counter()
+          names=[]
+          for item in doc.iter('Item'):
+              if item.get('class') not in ('Script','LocalScript','ModuleScript'): continue
+              n=item.find("./Properties/string[@name='Name']")
+              if n is not None: names.append(n.text)
+              node=item.find("./Properties/string[@name='Source']")
+              if node is not None: comps[node.text or '']+=1
+          expected=Counter(x.decode('utf8') for x in a.values())
+          assert sum(comps.values())==70,('BAD_SOURCE_COUNT',sum(comps.values()))
+          assert comps==expected,('NOT_SOURCE_EXACT',comps-expected)
+          assert names.count('Game')==1
+          assert names.count('LobbyDojoIsland')==1
+          assert names.count('SoloTeamBots')==1
+          assert names.count('Owner361CastleBattlefield')==1
+          assert names.count('BattleHUDGovernor')==1
+          out=Path('/tmp/p0d_owner361_out')
+          report={'base_official_rc_sha':BASE_RC,'current_branch_preview_only':True,'base_sources':66,
+              'private_sources':70,'original_changed':sorted(CHANGED),
+              'original_unchanged':62,'added':sorted(ADDED),
+              'feature_ids':FEATURE_IDS,'all_70_luau_compiled':True,
+              'rojo_binary_all_70_source_exact':True,'sole_original_game':True,
+              'engine_studio':'NOT_TESTED','2_client':'NOT_TESTED',
+              'touch_android':'NOT_TESTED','owner_fun':'FUN_NO_GO','owner_art':'ART_NO_GO',
+              'place_bytes':place.stat().st_size,
+              'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+              'rollback':'omit optional 66-to-70 composition',
+              'never_merge_directly_into_main_or_official_rc':True}
+          (out/'P0_COMPOSITE70_RECEIPT.json').write_text(json.dumps(report,indent=2)+'\n')
+          print('P0_PRIVATE70_ROJO_ALL_70_SOURCE_EXACT_PASS',report['place_bytes'],report['place_sha256'])
+          PY
+          fi
+      - name: Build P0 playable core and all-art PRIVATE77 cumulatively
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_p0_playable_art77.py -v
+          BASE=/tmp/p0d_owner361_composite70_final
+          DIST=/tmp/p0d_playable_art77_dist
+          python3 -B rc_fastlane/apply_p0_playable_art77.py --base "$BASE" --out "$DIST" --enabled false
+          test ! -e "$DIST"
+          python3 -B rc_fastlane/apply_p0_playable_art77.py --base "$BASE" --out "$DIST" --enabled true
+          test "$(find "$DIST/src" -name '*.luau' | wc -l)" -eq 77
+          mkdir -p /tmp/p0d_playable_art77_out
+          find "$DIST/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          echo P0_PRIVATE77_NATIVE_LUAU_77_77_PASS
+          /tmp/p0d_rc_rojo build "$DIST/default.project.json" -o /tmp/p0d_playable_art77_out/P0D_PLAYABLE_ART_PRIVATE77.rbxlx
+          python3 -B rc_fastlane/verify_p0_playable_art77.py --dist "$DIST" --place /tmp/p0d_playable_art77_out/P0D_PLAYABLE_ART_PRIVATE77.rbxlx --receipt /tmp/p0d_playable_art77_out/RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-PLAYABLE-ART-PRIVATE77-STUDIO
+          path: /tmp/p0d_playable_art77_out/*
+          retention-days: 7
+          if-no-files-found: error
+      - name: 'P0 critical visual motion - append source-locked author #390 to private78'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_p0_motion78.py -v
+          BASE=/tmp/p0d_playable_art77_dist
+          OUT=/tmp/p0d_p0_motion78_dist
+          python3 -B rc_fastlane/apply_p0_motion78.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_p0_motion78.py --base "$BASE" --out "$OUT" --enabled true
+          mkdir -p /tmp/p0d_p0_motion78_out
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 78
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          echo P0_PRIVATE78_NATIVE_78_78_COMPILE_PASS
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_p0_motion78_out/P0D_PLAYABLE_ART_MOTION_PRIVATE78.rbxlx
+          python3 -B rc_fastlane/verify_p0_motion78.py --dist "$OUT" --place /tmp/p0d_p0_motion78_out/P0D_PLAYABLE_ART_MOTION_PRIVATE78.rbxlx --receipt /tmp/p0d_p0_motion78_out/RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-PLAYABLE-ART-MOTION-PRIVATE78-STUDIO
+          path: /tmp/p0d_p0_motion78_out/*
+          retention-days: 7
+          if-no-files-found: error
+      - name: 'P0 native results-recovery author 391 - repair defeated lobby return on playable78'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_p0_results78.py -v
+          BASE=/tmp/p0d_p0_motion78_dist
+          OUT=/tmp/p0d_p0_results78_dist
+          python3 -B rc_fastlane/apply_p0_results78.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_p0_results78.py --base "$BASE" --out "$OUT" --enabled true
+          mkdir -p /tmp/p0d_p0_results78_out
+          python3 -B rc_fastlane/verify_p0_results78_native.py --dist "$OUT" --out /tmp/p0d_p0_results78_out/RESULTS_NATIVE_EXACT.luau
+          /tmp/p0d_new_luau/luau /tmp/p0d_p0_results78_out/RESULTS_NATIVE_EXACT.luau | tee /tmp/p0d_p0_results78_out/RESULTS_NATIVE_PASS.txt
+          grep -Fx P0_PRIVATE78_REAL_RESULTS_LOBBY_15_NATIVE_CASES_PASS /tmp/p0d_p0_results78_out/RESULTS_NATIVE_PASS.txt
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 78
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          echo P0_PRIVATE78_RESULTS_NATIVE_78_78_COMPILE_PASS
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_p0_results78_out/P0D_PLAYABLE_RESULTS_PRIVATE78.rbxlx
+          python3 -B rc_fastlane/verify_p0_results78.py --dist "$OUT" --place /tmp/p0d_p0_results78_out/P0D_PLAYABLE_RESULTS_PRIVATE78.rbxlx --receipt /tmp/p0d_p0_results78_out/RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-PLAYABLE-RESULTS-PRIVATE78-STUDIO
+          path: /tmp/p0d_p0_results78_out/*
+          retention-days: 7
+          if-no-files-found: error
+      - name: 'P0 all-character art - pin QA child 392 full silhouette with legacy Horde popup compatibility'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_full_silhouette_in78.py -v
+          python3 -B -m unittest discover -s rc_fastlane -p test_p0_fullbody78.py -v
+          BASE=/tmp/p0d_p0_results78_dist
+          OUT=/tmp/p0d_p0_fullbody78_dist
+          python3 -B rc_fastlane/apply_p0_fullbody78.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_p0_fullbody78.py --base "$BASE" --out "$OUT" --enabled true
+          mkdir -p /tmp/p0d_p0_fullbody78_out
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 78
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          echo P0_PRIVATE78_FULLBODY_NATIVE_78_78_COMPILE_PASS
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_p0_fullbody78_out/P0D_PLAYABLE_FULL_COSTUMES_PRIVATE78.rbxlx
+          python3 -B rc_fastlane/verify_p0_fullbody78.py --dist "$OUT" --place /tmp/p0d_p0_fullbody78_out/P0D_PLAYABLE_FULL_COSTUMES_PRIVATE78.rbxlx --receipt /tmp/p0d_p0_fullbody78_out/RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-PLAYABLE-FULL-COSTUMES-PRIVATE78-STUDIO
+          path: /tmp/p0d_p0_fullbody78_out/*
+          retention-days: 7
+          if-no-files-found: error
+      - name: 'P0 fix solo AI - author 395 one-human FIVE_EGG botless mode fallback in full private78'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_p0_solo78.py -v
+          BASE=/tmp/p0d_p0_fullbody78_dist
+          OUT=/tmp/p0d_p0_solo78_dist
+          python3 -B rc_fastlane/apply_p0_solo78.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_p0_solo78.py --base "$BASE" --out "$OUT" --enabled true
+          mkdir -p /tmp/p0d_p0_solo78_out
+          python3 -B rc_fastlane/verify_p0_solo78_native.py --dist "$OUT" --out /tmp/p0d_p0_solo78_out/SOLO_NATIVE_REAL_GAME.luau
+          /tmp/p0d_new_luau/luau /tmp/p0d_p0_solo78_out/SOLO_NATIVE_REAL_GAME.luau | tee /tmp/p0d_p0_solo78_out/SOLO_NATIVE_RESULT.txt
+          grep -Fx P0_PRIVATE78_REAL_GAME_SOLO_CLASSIC_MODE_9_NATIVE_CASES_PASS /tmp/p0d_p0_solo78_out/SOLO_NATIVE_RESULT.txt
+          python3 -B rc_fastlane/verify_p0_results78_native.py --dist "$OUT" --out /tmp/p0d_p0_solo78_out/RESULTS_NATIVE_REAL_GAME.luau
+          /tmp/p0d_new_luau/luau /tmp/p0d_p0_solo78_out/RESULTS_NATIVE_REAL_GAME.luau | tee /tmp/p0d_p0_solo78_out/RESULTS_NATIVE_RESULT.txt
+          grep -Fx P0_PRIVATE78_REAL_RESULTS_LOBBY_15_NATIVE_CASES_PASS /tmp/p0d_p0_solo78_out/RESULTS_NATIVE_RESULT.txt
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 78
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          echo P0_PRIVATE78_SOLO_NATIVE_78_78_COMPILE_PASS
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_p0_solo78_out/P0D_PLAYABLE_FULLBODY_SOLO_BOTLESS_PRIVATE78.rbxlx
+          python3 -B rc_fastlane/verify_p0_solo78.py --dist "$OUT" --place /tmp/p0d_p0_solo78_out/P0D_PLAYABLE_FULLBODY_SOLO_BOTLESS_PRIVATE78.rbxlx --receipt /tmp/p0d_p0_solo78_out/RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-PLAYABLE-FULLBODY-SOLO-FIX-PRIVATE78-STUDIO
+          path: /tmp/p0d_p0_solo78_out/*
+          retention-days: 7
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-COMPOSITE70-PRIVATE-STUDIO-CANDIDATE
+          path: /tmp/p0d_owner361_out/*
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: 'FB007 QA only - stage final 78 with lobby team-balance kept inside physical dojo'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_p0_lobby_rebalance78.py -v
+          BASE=/tmp/p0d_p0_solo78_dist
+          OUT=/tmp/p0d_p0_lobby_rebalance78_dist
+          python3 -B rc_fastlane/apply_p0_lobby_rebalance78.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_p0_lobby_rebalance78.py --base "$BASE" --out "$OUT" --enabled true
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 78
+          python3 -B rc_fastlane/test_p0_lobby_rebalance78_native.py --game "$OUT/src/server/Game.server.luau" --emit /tmp/p0_lobby_balance_actual_final78.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_lobby_balance_actual_final78.luau | tee /tmp/p0_lobby_balance_actual_final78_native.txt
+          grep -Fx P0_PRIVATE78_LOBBY_TEAM_REBALANCE_NATIVE_7_CASES_PASS /tmp/p0_lobby_balance_actual_final78_native.txt
+          python3 -B rc_fastlane/verify_p0_solo78_native.py --dist "$OUT" --out /tmp/p0_lobby_final_solo_native.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_lobby_final_solo_native.luau | tee /tmp/p0_lobby_final_solo_native.txt
+          grep -Fx P0_PRIVATE78_REAL_GAME_SOLO_CLASSIC_MODE_9_NATIVE_CASES_PASS /tmp/p0_lobby_final_solo_native.txt
+          python3 -B rc_fastlane/verify_p0_results78_native.py --dist "$OUT" --out /tmp/p0_lobby_final_results_native.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_lobby_final_results_native.luau | tee /tmp/p0_lobby_final_results_native.txt
+          grep -Fx P0_PRIVATE78_REAL_RESULTS_LOBBY_15_NATIVE_CASES_PASS /tmp/p0_lobby_final_results_native.txt
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          echo P0_PRIVATE78_ALL_NATIVE_LUAU_COMPILED_WITH_LOBBY_REBALANCE
+          mkdir -p /tmp/p0d_p0_lobby_rebalance78_out
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_p0_lobby_rebalance78_out/P0D_FINAL78_LOBBY_REBALANCE_QA.rbxlx
+          python3 -B rc_fastlane/verify_p0_solo78.py --dist "$OUT" --place /tmp/p0d_p0_lobby_rebalance78_out/P0D_FINAL78_LOBBY_REBALANCE_QA.rbxlx --receipt /tmp/p0d_p0_lobby_rebalance78_out/RECEIPT.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import sys,json
+          sys.path.insert(0,'rc_fastlane')
+          from rc_fastlane.apply_p0_lobby_rebalance78 import read,FEATURE
+          parent=Path('/tmp/p0d_p0_solo78_dist')
+          final=Path('/tmp/p0d_p0_lobby_rebalance78_dist')
+          a=read(parent);b=read(final)
+          assert len(a)==len(b)==78
+          assert {k for k in a if a[k]!=b[k]}=={'server/Game.server.luau'}
+          assert all(a[k]==b[k] for k in a if k!='server/Game.server.luau')
+          f=json.loads((final/'RC_FEATURE_LOCK.json').read_text())
+          assert f['p0_lobby_rebalance78']['id']==FEATURE
+          assert not f['p0_lobby_rebalance78']['formal_feature_id_added']
+          assert f['total_sources']==78
+          receipt=Path('/tmp/p0d_p0_lobby_rebalance78_out/RECEIPT.json')
+          data=json.loads(receipt.read_text())
+          data['lobby_team_rebalance_native']='7_REAL_GAME_LUAU_CASES_PASS'
+          data['results_native']='15_REAL_GAME_LUAU_CASES_PASS'
+          data['solo_native']='9_REAL_GAME_LUAU_CASES_PASS'
+          data['only_existing_game_amended']=True
+          data['original_other_77_scripts_unchanged']=True
+          data['official_RC_modified']=False
+          receipt.write_text(json.dumps(data,indent=2)+'\n')
+          print('P0_LOBBY_REBALANCE78_SOURCE_ROJO_ALL_78_AND_NATIVE_7_PASS',data['place_bytes'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-PLAYABLE-LOBBY-REBALANCE-PRIVATE78-STUDIO-QA-ONLY
+          path: /tmp/p0d_p0_lobby_rebalance78_out/*
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: 'P0 #397 spectator / H2 midmatch leaver private78 exact native QA'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p 'test_p0_spectator_h2_source.py' -v
+          BASE=/tmp/p0d_p0_lobby_rebalance78_dist
+          OUT=/tmp/p0d_p0_spectator_h2_dist
+          python3 -B rc_fastlane/apply_p0_spectator_h2_78.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_p0_spectator_h2_78.py --base "$BASE" --out "$OUT" --enabled true
+          python3 -B rc_fastlane/test_p0_spectator_h2_native.py --game "$OUT/src/server/Game.server.luau" --bot "$OUT/src/server/SoloTeamBots.luau" --out /tmp/p0_spectator_h2_exact_native.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_spectator_h2_exact_native.luau | tee /tmp/p0_spectator_h2_exact_native.log
+          grep -Fx P0_PRIVATE78_SPECTATOR_H2_NATIVE_19_CASES_PASS /tmp/p0_spectator_h2_exact_native.log
+          python3 -B rc_fastlane/test_p0_lobby_rebalance78_native.py --game "$OUT/src/server/Game.server.luau" --emit /tmp/p0_spectator_preserve_lobby_native.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_spectator_preserve_lobby_native.luau | tee /tmp/p0_spectator_preserve_lobby_native.log
+          grep -Fx P0_PRIVATE78_LOBBY_TEAM_REBALANCE_NATIVE_7_CASES_PASS /tmp/p0_spectator_preserve_lobby_native.log
+          python3 -B rc_fastlane/verify_p0_results78_native.py --dist "$OUT" --out /tmp/p0_spectator_preserve_results_native.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_spectator_preserve_results_native.luau | tee /tmp/p0_spectator_preserve_results_native.log
+          grep -Fx P0_PRIVATE78_REAL_RESULTS_LOBBY_15_NATIVE_CASES_PASS /tmp/p0_spectator_preserve_results_native.log
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 78
+          echo P0_SPECTATOR_SOURCE_AROUND_ERROR
+          nl -ba "$OUT/src/server/Game.server.luau" | sed -n '1950,1978p;3004,3025p'
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          echo P0_PRIVATE78_SPECTATOR_NATIVE_LUAU_78_78_PASS
+          mkdir -p /tmp/p0d_p0_spectator_h2_out
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_p0_spectator_h2_out/P0D_PLAYABLE_SPECTATOR_H2_PRIVATE78.rbxlx
+          python3 -B rc_fastlane/verify_p0_fullbody78.py --dist "$OUT" --place /tmp/p0d_p0_spectator_h2_out/P0D_PLAYABLE_SPECTATOR_H2_PRIVATE78.rbxlx --receipt /tmp/p0d_p0_spectator_h2_out/RECEIPT.json
+          python3 - <<'PY'
+          import sys,json
+          from pathlib import Path
+          sys.path.insert(0,'rc_fastlane')
+          from apply_p0_motion78 import read
+          a=read(Path('/tmp/p0d_p0_lobby_rebalance78_dist'))
+          b=read(Path('/tmp/p0d_p0_spectator_h2_dist'))
+          assert len(a)==len(b)==78
+          assert {k for k in a if a[k]!=b[k]}=={'server/Game.server.luau','server/SoloTeamBots.luau'}
+          f=json.loads(Path('/tmp/p0d_p0_spectator_h2_dist/RC_FEATURE_LOCK.json').read_text())
+          assert f['p0_spectator_h2_78']['new_feature_count']==0
+          assert f['p0_spectator_h2_78']['other76_byte_exact']
+          receipt=Path('/tmp/p0d_p0_spectator_h2_out/RECEIPT.json')
+          data=json.loads(receipt.read_text())
+          data.update({
+            'spectator_h2_native':'19_REAL_SOURCE_LUAU_CASES_PASS',
+            'lobby_rebalance_native':'7_REAL_GAME_LUAU_CASES_PASS',
+            'results_native':'15_REAL_GAME_LUAU_CASES_PASS',
+            'modified_existing_sources':['server/Game.server.luau','server/SoloTeamBots.luau'],
+            'other76_sources_byte_exact':True,
+            'feature_count_increment':0,
+            'official_rc_write':False
+          })
+          receipt.write_text(json.dumps(data,indent=2)+'\n')
+          print('P0_PRIVATE78_SPECTATOR_H2_NATIVE_ROJO_ALL_78_PASS',
+              data['place_bytes'], data['place_sha256'])
+          PY
+      - name: 'P0 FB006 real Game - source-authored #393 robust lobby respawn spectator and dead team'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_p0_recovery_v2_78.py -v
+          BASE=/tmp/p0d_p0_spectator_h2_dist
+          OUT=/tmp/p0d_p0_recovery_v2_dist
+          python3 -B rc_fastlane/apply_p0_recovery_v2_78.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_p0_recovery_v2_78.py --base "$BASE" --out "$OUT" --enabled true
+          mkdir -p /tmp/p0d_p0_recovery_v2_out
+          python3 -B rc_fastlane/test_p0_recovery_v2_native.py --dist "$OUT" --out /tmp/p0d_p0_recovery_v2_out/ACTUAL_GAME_LOBBY_NATIVE.luau
+          /tmp/p0d_new_luau/luau /tmp/p0d_p0_recovery_v2_out/ACTUAL_GAME_LOBBY_NATIVE.luau | tee /tmp/p0d_p0_recovery_v2_out/RESULTS_NATIVE.txt
+          grep -Fx P0_PRIVATE78_RECOVERY_V2_REAL_GAME_26_NATIVE_CASES_PASS /tmp/p0d_p0_recovery_v2_out/RESULTS_NATIVE.txt
+          python3 -B rc_fastlane/test_p0_spectator_h2_native.py --game "$OUT/src/server/Game.server.luau" --bot "$OUT/src/server/SoloTeamBots.luau" --out /tmp/p0_recovery_v2_spectator_native.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_recovery_v2_spectator_native.luau | tee /tmp/p0_recovery_v2_spectator_native.txt
+          grep -Fx P0_PRIVATE78_SPECTATOR_H2_NATIVE_19_CASES_PASS /tmp/p0_recovery_v2_spectator_native.txt
+          python3 -B rc_fastlane/test_p0_lobby_rebalance78_native.py --game "$OUT/src/server/Game.server.luau" --emit /tmp/p0_recovery_v2_lobby_native.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_recovery_v2_lobby_native.luau | tee /tmp/p0_recovery_v2_lobby_native.txt
+          grep -Fx P0_PRIVATE78_LOBBY_TEAM_REBALANCE_NATIVE_7_CASES_PASS /tmp/p0_recovery_v2_lobby_native.txt
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 78
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          echo P0_PRIVATE78_RECOVERY_V2_ALL_LUAU_78_78_COMPILED_PASS
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_p0_recovery_v2_out/P0D_PLAYABLE_ROBUST_LOBBY_PRIVATE78.rbxlx
+          python3 -B rc_fastlane/verify_p0_recovery_v2_78.py --dist "$OUT" --place /tmp/p0d_p0_recovery_v2_out/P0D_PLAYABLE_ROBUST_LOBBY_PRIVATE78.rbxlx --receipt /tmp/p0d_p0_recovery_v2_out/RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-PLAYABLE-ROBUST-LOBBY-PRIVATE78-STUDIO
+          path: /tmp/p0d_p0_recovery_v2_out/*
+          retention-days: 7
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-PLAYABLE-SPECTATOR-H2-PRIVATE78-STUDIO-QA-ONLY
+          path: /tmp/p0d_p0_spectator_h2_out/*
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: 'P0 real Game round reset epoch fence and late spectator ROLE P0/P1 regression'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p 'test_p0_round_epoch_role78.py' -v
+          BASE=/tmp/p0d_p0_recovery_v2_dist
+          OUT=/tmp/p0d_p0_round_epoch_role_dist
+          python3 -B rc_fastlane/apply_p0_round_epoch78.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_p0_round_epoch78.py --base "$BASE" --out "$OUT" --enabled true
+          python3 -B rc_fastlane/test_p0_round_epoch_role_native.py --game "$OUT/src/server/Game.server.luau" --out /tmp/p0_round_epoch_role_native.luau
+          echo P0_ROUND_EPOCH_NATIVE_EXACT_FIRST_LINES
+          nl -ba /tmp/p0_round_epoch_role_native.luau | sed -n '35,120p'
+          /tmp/p0d_new_luau/luau /tmp/p0_round_epoch_role_native.luau | tee /tmp/p0_round_epoch_role_native.log
+          grep -Fx P0_PRIVATE78_ROUND_EPOCH_ROLE_NATIVE_9_SCENARIOS_PASS /tmp/p0_round_epoch_role_native.log
+          python3 -B rc_fastlane/test_p0_recovery_v2_native.py --dist "$OUT" --out /tmp/p0_round_epoch_recovery_native.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_round_epoch_recovery_native.luau | tee /tmp/p0_round_epoch_recovery_native.log
+          grep -Fx P0_PRIVATE78_RECOVERY_V2_REAL_GAME_26_NATIVE_CASES_PASS /tmp/p0_round_epoch_recovery_native.log
+          python3 -B rc_fastlane/test_p0_spectator_h2_native.py --game "$OUT/src/server/Game.server.luau" --bot "$OUT/src/server/SoloTeamBots.luau" --out /tmp/p0_round_epoch_spectator_native.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_round_epoch_spectator_native.luau | tee /tmp/p0_round_epoch_spectator_native.log
+          grep -Fx P0_PRIVATE78_SPECTATOR_H2_NATIVE_19_CASES_PASS /tmp/p0_round_epoch_spectator_native.log
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 78
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          echo P0_PRIVATE78_ROUND_EPOCH_ROLE_NATIVE_LUAU_78_78_PASS
+          mkdir -p /tmp/p0d_p0_round_epoch_role_out
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_p0_round_epoch_role_out/P0D_FULLGAME_ROUND_EPOCH_SPECTATOR_ROLE_PRIVATE78.rbxlx
+          python3 -B rc_fastlane/verify_p0_recovery_v2_78.py --dist "$OUT" --place /tmp/p0d_p0_round_epoch_role_out/P0D_FULLGAME_ROUND_EPOCH_SPECTATOR_ROLE_PRIVATE78.rbxlx --receipt /tmp/p0d_p0_round_epoch_role_out/RECEIPT.json
+          python3 - <<'PY'
+          import json,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane")
+          from apply_p0_motion78 import read
+          a=Path("/tmp/p0d_p0_recovery_v2_dist")
+          b=Path("/tmp/p0d_p0_round_epoch_role_dist")
+          original=read(a);new=read(b)
+          assert len(original)==len(new)==78
+          assert {k for k in original if original[k]!=new[k]}=={"server/Game.server.luau"}
+          r=json.loads(Path("/tmp/p0d_p0_round_epoch_role_out/RECEIPT.json").read_text())
+          assert r["all_source_exact"] and r["unique_game"]
+          f=json.loads((b/"RC_FEATURE_LOCK.json").read_text())
+          assert f["p0_round_epoch_role78"]["other77_sources_byte_exact"]
+          assert f["p0_round_epoch_role78"]["new_feature_ids"]==0
+          r.update({"round_epoch_role_native":"9_AUTHORED_GAME_SCENARIOS_PASS",
+            "preserved_robust_lobby_native":"26",
+            "preserved_spectator_h2_native":"19",
+            "only_game_source_changed":True,"other77_scripts_exact":True,
+            "official_rc_written":False,"studio_engine":"NOT_TESTED",
+            "owner_fun":"FUN_NO_GO","owner_art":"ART_NO_GO"})
+          Path("/tmp/p0d_p0_round_epoch_role_out/RECEIPT.json").write_text(
+            json.dumps(r,ensure_ascii=False,indent=2)+"\n")
+          print("P0_PRIVATE78_ROUND_EPOCH_ROLE_ROJO_ALL78_SOURCE_EXACT_PASS",
+            r["place_bytes"],r["place_sha256"])
+          PY
+      - name: 'P0 FB005 final fullgame 78 - author402 source exact AI stalled detour and path leases'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_p0_bot_path78.py -v
+          BASE=/tmp/p0d_p0_round_epoch_role_dist
+          OUT=/tmp/p0d_p0_bot_path78_dist
+          python3 -B rc_fastlane/apply_p0_bot_path78.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_p0_bot_path78.py --base "$BASE" --out "$OUT" --enabled true
+          mkdir -p /tmp/p0d_p0_bot_path78_out
+          python3 -B rc_fastlane/verify_p0_bot_path78_move.py --dist "$OUT" --out /tmp/p0d_p0_bot_path78_out/BOT_START_MOVE_NATIVE.luau
+          /tmp/p0d_new_luau/luau /tmp/p0d_p0_bot_path78_out/BOT_START_MOVE_NATIVE.luau | tee /tmp/p0d_p0_bot_path78_out/BOT_START_MOVE_NATIVE.txt
+          grep -Fx P0D_SOLO_REAL_BOT_START_AND_STALL_35_NATIVE_CASES_PASS /tmp/p0d_p0_bot_path78_out/BOT_START_MOVE_NATIVE.txt
+          python3 -B rc_fastlane/verify_p0_bot_path78_actor.py --dist "$OUT" --out /tmp/p0d_p0_bot_path78_out/REAL_ACTOR_NATIVE.luau
+          /tmp/p0d_new_luau/luau /tmp/p0d_p0_bot_path78_out/REAL_ACTOR_NATIVE.luau | tee /tmp/p0d_p0_bot_path78_out/REAL_ACTOR_NATIVE.txt
+          grep -Fx P0D_REAL_BOT_ACTOR_START_STOP_19_NATIVE_CASES_PASS /tmp/p0d_p0_bot_path78_out/REAL_ACTOR_NATIVE.txt
+          python3 -B rc_fastlane/verify_p0_bot_path78_lease.py --dist "$OUT" --out /tmp/p0d_p0_bot_path78_out/REAL_LEASE_NATIVE.luau
+          /tmp/p0d_new_luau/luau /tmp/p0d_p0_bot_path78_out/REAL_LEASE_NATIVE.luau | tee /tmp/p0d_p0_bot_path78_out/REAL_LEASE_NATIVE.txt
+          grep -Fx P0D_REAL_BOT_PATH_LEASE_18_NATIVE_CASES_PASS /tmp/p0d_p0_bot_path78_out/REAL_LEASE_NATIVE.txt
+          python3 -B rc_fastlane/test_p0_spectator_h2_native.py --game "$OUT/src/server/Game.server.luau" --bot "$OUT/src/server/SoloTeamBots.luau" --out /tmp/p0d_p0_bot_path78_out/SPECTATOR_H2_NATIVE.luau
+          /tmp/p0d_new_luau/luau /tmp/p0d_p0_bot_path78_out/SPECTATOR_H2_NATIVE.luau | tee /tmp/p0d_p0_bot_path78_out/SPECTATOR_H2_NATIVE.txt
+          grep -Fx P0_PRIVATE78_SPECTATOR_H2_NATIVE_19_CASES_PASS /tmp/p0d_p0_bot_path78_out/SPECTATOR_H2_NATIVE.txt
+          python3 -B rc_fastlane/test_p0_round_epoch_role_native.py --game "$OUT/src/server/Game.server.luau" --out /tmp/p0d_p0_bot_path78_out/ROUND_EPOCH_ROLE_NATIVE.luau
+          /tmp/p0d_new_luau/luau /tmp/p0d_p0_bot_path78_out/ROUND_EPOCH_ROLE_NATIVE.luau | tee /tmp/p0d_p0_bot_path78_out/ROUND_EPOCH_ROLE_NATIVE.txt
+          grep -Fx P0_PRIVATE78_ROUND_EPOCH_ROLE_NATIVE_9_SCENARIOS_PASS /tmp/p0d_p0_bot_path78_out/ROUND_EPOCH_ROLE_NATIVE.txt
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 78
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done
+          echo P0_PRIVATE78_SOLO_AI_PATH_ALL_78_LUAU_COMPILED
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_p0_bot_path78_out/P0D_ALL_FEATURES_SOLO_BOT_UNSTUCK_PRIVATE78.rbxlx
+          python3 -B rc_fastlane/verify_p0_bot_path78.py --dist "$OUT" --place /tmp/p0d_p0_bot_path78_out/P0D_ALL_FEATURES_SOLO_BOT_UNSTUCK_PRIVATE78.rbxlx --receipt /tmp/p0d_p0_bot_path78_out/RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-ALLFEATURES-AI-UNSTUCK-PRIVATE78-STUDIO
+          path: /tmp/p0d_p0_bot_path78_out/*
+          retention-days: 7
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-ROUND-EPOCH-SPECTATOR-ROLE-PRIVATE78-STUDIO-QA
+          path: /tmp/p0d_p0_round_epoch_role_out/*
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: 'Verify and promote exact final 78 scripts to official RC Studio artifact'
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=/tmp/p0d_p0_bot_path78_out/P0D_ALL_FEATURES_SOLO_BOT_UNSTUCK_PRIVATE78.rbxlx
+          R=/tmp/p0d_p0_bot_path78_out/RECEIPT.json
+          test -s "$SRC"
+          test -s "$R"
+          mkdir -p /tmp/p0d_canonical_rc78
+          cp "$SRC" /tmp/p0d_canonical_rc78/P0D_TRAP_RAIDERS_CANONICAL_RC78_STUDIO.rbxlx
+          python3 - <<'PY'
+          import json,os,hashlib
+          from pathlib import Path
+          p=Path('/tmp/p0d_canonical_rc78/P0D_TRAP_RAIDERS_CANONICAL_RC78_STUDIO.rbxlx')
+          r=json.loads(Path('/tmp/p0d_p0_bot_path78_out/RECEIPT.json').read_text())
+          assert r['sources']==78 and r['Rojo_source_exact'] is True and r['game_only_one'] is True
+          assert r['place_bytes']==p.stat().st_size and r['sha256']==hashlib.sha256(p.read_bytes()).hexdigest()
+          assert os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01'
+          r.update({
+            'artifact':'P0D-CANONICAL-RC78-STUDIO',
+            'official_rc_branch':'rc/p0d-s1-kids-rc01',
+            'official_rc_head':os.environ['GITHUB_SHA'],
+            'official_rc_integration':'SOURCE_EXACT_RC78_BUILT',
+            'official_rc_adoption':True,
+            'studio_engine':'NOT_TESTED',
+            'android':'NOT_TESTED',
+            'owner_art':'ART_NO_GO',
+            'owner_fun':'FUN_NO_GO',
+            'rollback':'last RC66 snapshot, current HEAD parent, and original rich51 source pins'
+          })
+          Path('/tmp/p0d_canonical_rc78/RC78_RECEIPT.json').write_text(json.dumps(r,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_OFFICIAL_RC78_COMPLETE_SOURCE_EXACT',r['official_rc_head'],r['place_bytes'],r['sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
+        with:
+          name: P0D-CANONICAL-RC78-STUDIO
+          path: /tmp/p0d_canonical_rc78/*
           retention-days: 7
           if-no-files-found: error
