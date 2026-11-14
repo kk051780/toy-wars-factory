@@ -16,6 +16,14 @@ import os
 import tempfile
 
 
+def reject_symlink_ancestors(path: Path) -> None:
+    """Inspect the spelling supplied by caller BEFORE pathlib.resolve()."""
+    path=Path(os.path.abspath(path))
+    for node in (path, *path.parents):
+        if node.is_symlink():
+            raise RuntimeError("FB015_SYMLINK_PARENT_COMPONENT_REFUSED:" + str(node))
+
+
 def strict_inventory(root: Path, exclude: str = "") -> dict[str, str]:
     root = Path(root)
     if root.is_symlink():
