@@ -1660,3 +1660,40 @@ jobs:
           path: /tmp/p0d_fb017_final_out/*
           retention-days: 7
           if-no-files-found: error
+
+      - name: 'P0 RC80 next safety candidate: source-locked #405 actual Bot path callback and stop cleanup'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_fb017_no_guides_dist
+          OUT=/tmp/p0d_rc80_bot405_dist
+          mkdir -p /tmp/p0d_rc80_bot405_out
+          python3 -B rc_fastlane/apply_rc80_bot405.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_rc80_bot405.py --base "$BASE" --out "$OUT" --enabled true
+          python3 -B rc_fastlane/rc80_verify_bot405_move.py --dist "$OUT" --out /tmp/p0d_rc80_bot405_out/REAL_MOVE.luau
+          /tmp/p0d_new_luau/luau-compile /tmp/p0d_rc80_bot405_out/REAL_MOVE.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/p0d_rc80_bot405_out/REAL_MOVE.luau | tee /tmp/p0d_rc80_bot405_out/MOVE_NATIVE.log
+          grep -Fx P0D_SOLO_REAL_BOT_START_AND_STALL_38_NATIVE_CASES_PASS /tmp/p0d_rc80_bot405_out/MOVE_NATIVE.log
+          python3 -B rc_fastlane/rc80_verify_bot405_actor.py --dist "$OUT" --out /tmp/p0d_rc80_bot405_out/REAL_ACTOR.luau
+          /tmp/p0d_new_luau/luau-compile /tmp/p0d_rc80_bot405_out/REAL_ACTOR.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/p0d_rc80_bot405_out/REAL_ACTOR.luau | tee /tmp/p0d_rc80_bot405_out/ACTOR_NATIVE.log
+          grep -Fx P0D_REAL_BOT_ACTOR_START_STOP_26_NATIVE_CASES_PASS /tmp/p0d_rc80_bot405_out/ACTOR_NATIVE.log
+          python3 -B rc_fastlane/rc80_verify_bot405_lease.py --dist "$OUT" --out /tmp/p0d_rc80_bot405_out/REAL_LEASE.luau
+          /tmp/p0d_new_luau/luau-compile /tmp/p0d_rc80_bot405_out/REAL_LEASE.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/p0d_rc80_bot405_out/REAL_LEASE.luau | tee /tmp/p0d_rc80_bot405_out/LEASE_NATIVE.log
+          grep -Fx P0D_REAL_BOT_PATH_LEASE_25_NATIVE_CASES_PASS /tmp/p0d_rc80_bot405_out/LEASE_NATIVE.log
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 80
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_rc80_bot405_out/P0D_RC80_BOT405_PREP_STUDIO.rbxlx
+          python3 -B rc_fastlane/verify_rc80_bot405.py --dist "$OUT" --place /tmp/p0d_rc80_bot405_out/P0D_RC80_BOT405_PREP_STUDIO.rbxlx --receipt /tmp/p0d_rc80_bot405_out/RECEIPT.json
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-PREP-RC80-BOT405-SAFETY-STUDIO
+          path: /tmp/p0d_rc80_bot405_out/*
+          retention-days: 7
+          if-no-files-found: error
