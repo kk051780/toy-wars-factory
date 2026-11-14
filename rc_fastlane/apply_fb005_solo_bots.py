@@ -168,6 +168,12 @@ def patch_game(text:str)->str:
             if not ok then
                 warn("FB005_SOLO_TICK_FAIL_CLOSED",err)
                 SoloTeamBots.stop()
+                -- Do not strand a solo player in an ACTIVE game with no opponents.
+                if studioSoloRoundStarted and match.phase=="ACTIVE"
+                    and #Players:GetPlayers()==1 then
+                    stopRound("DRAW","SOLO_BOTS_TICK_FAILURE")
+                end
+                return
             end
         end
         for _,impact in ipairs(horde:tick(now,Players:GetPlayers(),healthy)) do''')
