@@ -87,13 +87,13 @@ end
 local entrant={Team=nil,attrs={P0D_LateJoinSpectator=true}}
 function entrant:GetAttribute(k) return self.attrs[k] end
 local function chooseTeam(p) p.Team={Name="BLUE"} end
+local roundReady={}
 local function promote(p)
  local entrant=p
  chooseTeam(entrant)
 ''' + promotion + r'''
  roundReady[entrant]=false
 end
-local roundReady={}
 -- 1: Normal start after loading all players enables objectives and canonical.
 pause=false
 match.phase="LOBBY";match.serial=17
