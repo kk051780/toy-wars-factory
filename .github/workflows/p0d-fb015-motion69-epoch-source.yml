@@ -37,7 +37,7 @@ jobs:
           import hashlib
           a=Path("rc_fastlane/features/art_motion/NeutralMotion.client.luau").read_bytes()
           got=hashlib.sha1(b"blob "+str(len(a)).encode()+bytes([0])+a).hexdigest()
-          assert got=="25b88dc88170d21c2c0a9a0c5588f315430f122a",got
+          assert got=="9637b45e09f75759c3901528e4fa3a47cfe39f95",got
           print("P0D_MOTION_AUTHOR_GITBLOB_PIN_PASS",got)
           PY
       - name: All 3 motion source policy tests
