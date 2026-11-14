@@ -7,6 +7,8 @@ import argparse,hashlib,json,os,shutil,tempfile
 from pathlib import Path
 GAME="server/Game.server.luau"
 HUD="client/HUD.client.luau"
+HORDE="server/MusouHorde.luau"
+PIN_HORDE="fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 KEY="FB019_ATTACK_RESPONSE_V1"
 PIN_GAME="5648ff17b54fd9f9e949d641b41178d43e8a9c28"
 PIN_HUD="0cfa5b882ff44bf6ba12dfce96ca11e262dd3ec1"
@@ -160,6 +162,27 @@ def apply(base:Path,out:Path,enabled:bool)->bool:
     assert sl["total_scripts"]==fl["total_sources"]==80
     assert sl["blobs"]==fl["source_gitblobs"]==oldpins
     assert oldpins[GAME]==PIN_GAME and oldpins[HUD]==PIN_HUD
+    # Original Horde source and touched->REAL_HP_DAMAGE contract are frozen.
+    assert oldpins[HORDE]==PIN_HORDE,"HORDE_HIT_AUTHORITY_DRIFT"
+    hs=before[HORDE].decode("utf8")
+    hstart="function Horde:hit("
+    hend="function Horde:tick("
+    assert hs.count(hstart)==hs.count(hend)==1
+    hit=hs[hs.index(hstart):hs.index(hend,hs.index(hstart))]
+    for contract in (
+        'if m.hp>0 and touched<6 then',
+        'touched+=1',
+        'local dealt=math.max(1,math.min(math.floor(damage),40))',
+        'local beforeHp=m.hp',
+        'm.hp=math.max(0,beforeHp-dealt)',
+        'local realDamage=beforeHp-m.hp',
+        'return touched,defeated',
+    ):
+        assert contract in hit,("HORDE_HP_DELTA_CONTRACT_CHANGED",contract)
+    assert hit.index('touched+=1') < hit.index('m.hp=math.max(0,beforeHp-dealt)')
+    # Because m.hp>0 and dealt>=1, each touched increment necessarily
+    # corresponds to positive realDamage; an exception would stop before ACK.
+
     for feature in ("FB016_FOLIAGE_PASSAGE_20261114",
                     "FB017_NO_PERSISTENT_BATTLE_GUIDES",
                     "FB018_ACTION_BUTTON_TEXT_INIT",
@@ -178,6 +201,8 @@ def apply(base:Path,out:Path,enabled:bool)->bool:
         "server_valid_seq_phase_cooldown_kept":True,
         "inherited_horde_confirmed_snapshot":True,
         "server_hit_requires_positive_Hp_delta":True,
+        "horde_source_pin":PIN_HORDE,
+        "horde_touched_positive_implies_real_hp_decrease":True,
         "client_hit_not_authoritative":True,
         "one_game_one_remote_same_damage_authority":True,
         "new_source_count":0,
