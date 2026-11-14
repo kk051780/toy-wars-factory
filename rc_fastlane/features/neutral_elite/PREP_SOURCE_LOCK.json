@@ -1,7 +1,7 @@
 {
   "schema": "P0D_PREP_SOURCE_LOCK_V2",
   "feature_id": "P0D-017",
-  "canonical_parent_sha": "9feb2ec9f5ad8e96b6b727e9f77260b0a5f60991",
+  "canonical_parent_sha": "43543378f976374e2cac2d68b3136ac355d3191b",
   "official_rc_adopted": false,
   "stage": "SOURCE_PREP_SOURCE_ONLY",
   "policy_path": "rc_fastlane/features/neutral_elite/NeutralElitePhasePolicy.luau",
@@ -12,19 +12,16 @@
   "authoritative_attack_callback": "REQUEST_HORDE_STRIKE must be explicitly consumed by original Horde; policy never damages anything",
   "integrated_playable": false,
   "requires": [
-    "one-original-Horde hook",
-    "matching src/server Game/Horde source pin",
-    "familiar boss models",
-    "true melee/range LOS safety checks",
-    "reversible ON/OFF",
-    "Rojo 67/67 and SourceExact"
+    "B sole-authorized latest-SHA CAS adoption & new exact official CI",
+    "Owner Studio 2-client and Android runtime tests before publish",
+    "Owner FUN gate before publish"
   ],
   "studio_2client": "NOT_TESTED",
   "android": "NOT_TESTED",
   "owner_fun": "NOT_TESTED",
   "rollback": "--enabled false makes ZERO changes to the official66 dist; no additional Game/Remote/Store/impact owner",
-  "status": "PLAYABLE_SOURCE_COMPOSE_CANDIDATE_CI_PENDING",
-  "parent_canonical_head": "9feb2ec9f5ad8e96b6b727e9f77260b0a5f60991",
+  "status": "P0D_PREP_READY_PRIVATE67_SOURCE_GREEN_ENGINE_NOT_TESTED",
+  "parent_canonical_head": "43543378f976374e2cac2d68b3136ac355d3191b",
   "expected_before_sources": 66,
   "expected_candidate_sources": 67,
   "original_horde_git_blob": "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38",
@@ -33,6 +30,17 @@
   "original_game_bytes_unchanged": true,
   "feature_switch": "P0D_017_NEUTRAL_ELITE_BOSS_V1",
   "overlay": "rc_fastlane/apply_neutral_elite.py",
-  "source_adoption_status": "SOURCE_PRIVATE67_HORDE_CONNECTED_ENGINE_NOT_TESTED_CI_PENDING",
-  "connected_in_private_candidate_67": true
+  "source_adoption_status": "P0D_017_SOURCE_INTEGRATED_PRIVATE67_READY_FOR_B_REVIEW_NOT_OFFICIAL",
+  "connected_in_private_candidate_67": true,
+  "private_source_ci": {
+    "head": "3bfe9b458eabbb710fe6b8e7d0098534d6296bb5",
+    "run_id": 43553597641,
+    "artifact_zip_bytes": 176057,
+    "artifact_id": 14097038452,
+    "raw_place_bytes": 609635,
+    "raw_place_sha256": "df53f0ceb2e47afb6bf5ed02dc584b3f11e857ec7e83d66aefe51130640ee221",
+    "native_policy_cases": 45,
+    "final_luau_sources": 67,
+    "source_exact_rojo": true
+  }
 }
