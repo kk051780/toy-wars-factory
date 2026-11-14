@@ -99,6 +99,7 @@ class ArtCombatQA(unittest.TestCase):
         s=mod.AUTHOR.read_text()
         self.assertIn('cue.OnClientEvent:Connect(onConfirmedHit)',s)
         self.assertIn('if not acceptVisualCue(id,serial,round,epoch) then return end',s)
+        self.assertIn('if isEpochStale(authoritativeEpoch,epoch) then return end',s)
         self.assertIn('historyConnection=cue:GetAttributeChangedSignal("P0D_ART_RECENT_V1")',s)
         self.assertIn('HttpService:JSONDecode(encoded)',s)
         self.assertIn("syncServerEpoch()",s)
