@@ -175,6 +175,51 @@ def check_output(parent: Path, out: Path, identity: Path | None = None) -> None:
             "MOTION69_FEATURE_LOCK_MISMATCH")
 
 
+def atomic_ticket(journal: Path, ticket: dict) -> None:
+    """A crash during preparation cannot leave an unparseable active journal."""
+    candidate = None
+    try:
+        with tempfile.NamedTemporaryFile(
+                mode="w", encoding="utf8", prefix=".motion69_atomic_",
+                suffix=".tmp", dir=journal.parent, delete=False) as tmp:
+            candidate = Path(tmp.name)
+            tmp.write(json.dumps(ticket, sort_keys=True) + "\n")
+            tmp.flush()
+            os.fsync(tmp.fileno())
+        os.replace(candidate, journal)
+    finally:
+        if candidate is not None and candidate.exists():
+            candidate.unlink()
+
+
+def partial_tombstone_safe(parent: Path, tomb: Path, output: Path) -> None:
+    """OFF retries only remove verified remaining OWN files after partial rmtree."""
+    expected = independent_expected_files(parent)
+    rec = {"id": MANIFEST_ID, "input": str(parent),
+           "output": str(output), "files": expected}
+    expected[MANIFEST] = hashlib.sha256(
+        (json.dumps(rec, ensure_ascii=False, sort_keys=True, indent=2) + "\n")
+        .encode("utf8")).hexdigest()
+    observed = manifest_files(tomb)
+    mf = tomb / MANIFEST
+    if mf.is_file():
+        observed[MANIFEST] = hashlib.sha256(mf.read_bytes()).hexdigest()
+    require(all(name in expected and expected[name] == digest
+                for name, digest in observed.items()),
+            "MOTION69_PARTIAL_TOMBSTONE_UNRELATED_FILE_REFUSED")
+    # Extra empty folders can also belong to someone else: refuse removal.
+    valid_dirs = {"."}
+    for name in expected:
+        p = Path(name).parent
+        while str(p) != ".":
+            valid_dirs.add(p.as_posix())
+            p = p.parent
+    for directory in tomb.rglob("*"):
+        if directory.is_dir():
+            require(directory.relative_to(tomb).as_posix() in valid_dirs,
+                    "MOTION69_UNEXPECTED_DIRECTORY_REFUSED")
+
+
 def inner(parent: Path, out: Path, enabled: bool):
     parent = parent.resolve()
     out = out.resolve()
@@ -189,9 +234,10 @@ def inner(parent: Path, out: Path, enabled: bool):
                     "MOTION69_RECOVERY_AMBIGUOUS")
             require(json.loads(journal.read_text("utf8")) == ticket,
                     "MOTION69_RECOVERY_TICKET_MISMATCH")
-            # The tombstone could be changed after the initial signed check.
-            # Refuse to remove it unless its full content is still exact.
-            check_output(parent, tomb, identity=out)
+            # A crash may have deleted *some* original files. Validate every
+            # remaining file against the independently rebuilt exact allowlist.
+            # An added/edited user file is never deleted on recovery.
+            partial_tombstone_safe(parent, tomb, out)
             shutil.rmtree(tomb)
             journal.unlink()
             print("P0D_ART_MOTION69_INTERRUPTED_OFF_RECOVERED")
@@ -212,8 +258,7 @@ def inner(parent: Path, out: Path, enabled: bool):
             print("P0D_ART_MOTION69_OFF_ZERO_WRITE")
             return False
         check_output(parent, out)
-        journal.write_text(json.dumps(
-            {"input": str(parent), "output": str(out), "id": MANIFEST_ID})+"\n", "utf8")
+        atomic_ticket(journal, ticket)
         os.rename(out, tomb)
         shutil.rmtree(tomb)
         journal.unlink()
@@ -227,6 +272,10 @@ def inner(parent: Path, out: Path, enabled: bool):
     with tempfile.TemporaryDirectory(prefix=".p0d_motion69_stage_", dir=out.parent) as tmp:
         stage = Path(tmp) / out.name
         shutil.copytree(parent, stage, symlinks=False)
+        # Lock domain also holds parent68's own composer OFF. Re-validate the
+        # immutable snapshot after the copy before making any output visible.
+        require(manifest_files(stage) == manifest_files(parent),
+                "MOTION69_PARENT_CHANGED_DURING_SNAPSHOT")
         target = stage / "src" / DEST
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(actual)
@@ -267,32 +316,37 @@ def inner(parent: Path, out: Path, enabled: bool):
         (stage / MANIFEST).write_text(
             json.dumps(record, ensure_ascii=False, sort_keys=True, indent=2)+"\n", "utf8")
         os.rename(stage, out)
-    check_output(parent, out)
+    try:
+        check_output(parent, out)
+    except Exception:
+        # Do not report a completed candidate if parent provenance vanished.
+        # Never delete an unverified candidate here; leave it quarantined.
+        raise
     print("P0D_FB015_PRIVATE69_MOTION_SOURCE_EXACT_PARENT68_PRESERVED")
     return True
 
 
 def compose(parent: Path, out: Path, enabled: bool):
-    # Reject symbolic links before resolve() so OFF cannot target a redirect.
-    require(not parent.is_symlink() and not out.is_symlink(),
-            "MOTION69_INPUT_OR_OUTPUT_SYMLINK_FORBIDDEN")
+    # Do not follow path-level or ancestor symbolic links, including paths
+    # that are not yet present. A symlink under an ancestor is also forbidden.
+    for path in (parent.absolute(), out.absolute()):
+        require(not any(segment.is_symlink() for segment in (path, *path.parents)),
+                "MOTION69_INPUT_OR_OUTPUT_SYMLINK_FORBIDDEN")
     parent = parent.resolve()
     out = out.resolve()
     require(out != parent and out not in parent.parents and parent not in out.parents,
             "MOTION69_INPUT_OUTPUT_OVERLAP")
-    lock = out.with_name("." + out.name + ".motion69_lock")
-    tomb = out.with_name(out.name + ".motion69_removing")
-    journal = out.with_name(out.name + ".motion69_journal.json")
-    # A no-op OFF must not leave a newly created lock file behind.
-    if not enabled and not out.exists() and not tomb.exists() and not journal.exists() and not lock.exists():
-        print("P0D_ART_MOTION69_OFF_ZERO_WRITE")
-        return False
-    with lock.open("a+b") as file:
-        fcntl.flock(file.fileno(), fcntl.LOCK_EX)
-        try:
-            return inner(parent, out, enabled)
-        finally:
-            fcntl.flock(file.fileno(), fcntl.LOCK_UN)
+    # The private68 builder locks the containing DIRECTORY via flock; take
+    # that SAME lock so its OFF cannot remove parent68 during our compose/OFF.
+    # Restrict to sibling output to guarantee a shared filesystem lock domain.
+    require(parent.parent == out.parent, "MOTION69_PARENT_LOCK_DOMAIN_MISMATCH")
+    fd = os.open(parent.parent, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        return inner(parent, out, enabled)
+    finally:
+        fcntl.flock(fd, fcntl.LOCK_UN)
+        os.close(fd)
 
 
 if __name__ == "__main__":
