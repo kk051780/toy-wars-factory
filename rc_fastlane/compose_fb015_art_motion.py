@@ -31,7 +31,7 @@ ORIGINAL_SLASH = "257f5da5e40c0af89220745d576763f513a7e6ef"
 ORIGINAL_HORDE = "a2d07936bd9fe5bdf3630498c39d61d5a8560d99"
 # Independently recorded from latest pinned parent #387 commit d3cece540cfdd4217596724e,
 # real 68-source lock in CI #43579099367; not from candidate self-manifest.
-EXPECTED_PARENT68_FULL_SOURCES_SHA256 = "PENDING_REAL_PARENT_D3CE_CI_SHA256"
+EXPECTED_PARENT68_FULL_SOURCES_SHA256 = "6463c3cf27a50375db3a8f988ffdbd38fa3f511289852f7853845ae6be813eec"
 
 def full_source_pin_digest(pins: dict[str, str]) -> str:
     return hashlib.sha256(json.dumps(
@@ -78,10 +78,7 @@ def preflight(parent: Path):
     old = source_map(parent)
     require(len(old) == BASE and DEST not in old, "REQUIRE_REAL_PRIVATE68")
     pins = {key: blob(raw) for key, raw in sorted(old.items())}
-    # Bootstrap only records the new parent's independently visible digest;
-    # the placeholder is intentionally FAIL CLOSED until pinned in a commit.
-    print("P0D_FB015_PARENT68_FULL_SOURCE_MAP_ACTUAL_SHA256",
-          full_source_pin_digest(pins))
+    # Immutable whole-parent map observed from exact frozen d3ce workflow.
     require(full_source_pin_digest(pins) == EXPECTED_PARENT68_FULL_SOURCES_SHA256,
             "FB015_FULL_PARENT68_SOURCE_MAP_DRIFT")
     require(pins.get("server/ArtMinionSilhouette.server.luau") == ORIGINAL_MINION,
