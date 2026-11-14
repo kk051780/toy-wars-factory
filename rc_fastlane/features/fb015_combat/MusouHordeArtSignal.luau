@@ -183,7 +183,11 @@ function Horde.new(world: Instance)
     local folder=Instance.new("Folder")
     folder.Name="EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT"
     folder.Parent=world
-    return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0},Horde)
+    -- Pure outbound visual delivery. No OnServerEvent handler or game authority.
+    local visualCue=Instance.new("RemoteEvent")
+    visualCue.Name="P0D_ART_COMBAT_SIGNAL_V1"
+    visualCue.Parent=folder
+    return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0,artCue=visualCue},Horde)
 end
 function Horde:clear()
     for _,m in ipairs(self.mobs) do m.model:Destroy() end
@@ -259,14 +263,11 @@ function Horde:hit(origin: Vector3,facing: Vector3,damage: number,now: number,ig
                     m.popupUntil=now+.72
                     m.flashUntil=now+.18
                     m.body.Color=Color3.fromRGB(253,231,111)
-                    -- Server-only confirmation: one changing cue per REAL hit.
-                    -- Encodes serial, hit/KO and true attack origin vector in ONE
-                    -- replicated attribute, so identical damage popups still fire.
+                    -- A reliable outbound message for EACH real server hit.
+                    -- Unlike replicated Attributes it cannot coalesce quick hits.
+                    -- This Remote has NO OnServerEvent listener / hit authority.
                     m.artHitSeq=(m.artHitSeq or 0)+1
-                    local artFrom=origin-m.pos
-                    m.body:SetAttribute("P0D_ART_HIT_V1",string.format(
-                        "%d|%s|%.2f|%.2f",m.artHitSeq,
-                        if m.hp<=0 then "K" else "H",artFrom.X,artFrom.Z))
+                    self.artCue:FireAllClients(m.pos,origin,m.hp<=0,m.artHitSeq,self.round)
                     -- A normal enemy loses its immediate melee response when
                     -- hit. Elite warning remains readable and uninterruptible.
                     if not m.elite then
