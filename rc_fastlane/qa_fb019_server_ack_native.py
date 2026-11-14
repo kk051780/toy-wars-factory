@@ -138,6 +138,12 @@ expect("HIT","PLAYER")
 assert(victim.hum.Health==90,"ACTUAL_PLAYER_HP_NOT_CHANGED")
 setup()
 victim=makeEnemy()
+function victim.hum:TakeDamage(dmg) end -- immune ForceField mock, real zero HP delta
+invoke()
+expect("MISS","NONE")
+assert(victim.hum.Health==100,"IMMUNE_PLAYER_NO_DAMAGE")
+setup()
+victim=makeEnemy()
 victim.failSecond=true
 invoke()
 expect("MISS","NONE")
@@ -156,10 +162,23 @@ invoke()
 expect("HIT","BOT")
 assert(botHum.Health==90,"ACTUAL_BOT_HP_NOT_CHANGED")
 setup()
+botHum={Health=100}
+function botHum:TakeDamage(dmg) end
+env.bot={hum=botHum}
+invoke()
+expect("MISS","NONE")
+assert(botHum.Health==100,"IMMUNE_BOT_NO_DAMAGE")
+setup()
 map.teams.BLUE.core.Position=V(6,0,0)
 invoke()
 expect("HIT","CASTLE")
 assert(match.hp.BLUE==89,"ACTUAL_CASTLE_HP_NOT_CHANGED")
+setup()
+map.teams.BLUE.core.Position=V(6,0,0)
+Config.CastleAttackDamage.RAIDER=0
+invoke()
+expect("MISS","NONE")
+assert(match.hp.BLUE==100,"IMMUNE_CASTLE_NO_DAMAGE")
 setup()
 map.teams.BLUE.core.Position=V(6,0,0)
 env.blocked=true
