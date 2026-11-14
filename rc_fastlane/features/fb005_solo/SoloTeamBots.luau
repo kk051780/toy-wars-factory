@@ -111,14 +111,26 @@ local function makeActor(id,team,style,spawn)
     local state={id=id,team=team,style=style,
         model=m,hum=hum,root=root,spawn=spawn,carry=nil,deadUntil=0,
         nextRepath=0,path={},pathIndex=1,planning=false,
-        lastAttack=0,lastGoal=Vector3.zero}
+        lastAttack=0,lastGoal=nil,pathGeneration=0}
     return state
 end
 
+local function invalidatePath(bot)
+    -- PathfindingService:ComputeAsync yields; old callbacks must never claim
+    -- authority over an agent that just stole an egg, respawned or changed goal.
+    bot.pathGeneration+=1
+    bot.lastGoal=nil
+    bot.path={}
+    bot.pathIndex=1
+    bot.nextRepath=0
+    bot.planning=false
+end
 local function respawn(bot)
+    local nextGeneration=bot.pathGeneration+1
     if bot.model and bot.model.Parent then bot.model:Destroy() end
     local fresh=makeActor(bot.id,bot.team,bot.style,bot.spawn)
     for key,value in pairs(fresh) do bot[key]=value end
+    bot.pathGeneration=nextGeneration
     bot.deadUntil=0
     bot.carry=nil
     bot.carryVisual=nil
@@ -157,6 +169,7 @@ function Bot.stop()
     table.clear(bots)
     if folder then folder:Destroy();folder=nil end
     map=nil;callbacks=nil
+    lastTick=-math.huge
 end
 
 function Bot.start(world,humanTeam,authority)
@@ -200,15 +213,22 @@ local function pathTo(bot,goal,now)
     if bot.planning or now<bot.nextRepath then return end
     bot.nextRepath=now+REPATH_SECONDS
     local token=epoch
+    local generation=bot.pathGeneration
+    local planningRoot=bot.root
     bot.planning=true
     task.spawn(function()
         local ok,path=pcall(function()
             local p=PathfindingService:CreatePath({
                 AgentRadius=2,AgentHeight=5,AgentCanJump=true,WaypointSpacing=7})
-            p:ComputeAsync(bot.root.Position,goal)
+            p:ComputeAsync(planningRoot.Position,goal)
             return p
         end)
-        if active and epoch==token and alive(bot) then
+        -- Both the global match and this particular bot/goal must still be
+        -- current. A respawn can happen while ComputeAsync is yielding.
+        local current=active and epoch==token and bot.pathGeneration==generation
+            and bot.root==planningRoot and alive(bot)
+            and bot.lastGoal~=nil and (bot.lastGoal-goal).Magnitude<=8
+        if current then
             if ok and path and path.Status==Enum.PathStatus.Success then
                 bot.path=path:GetWaypoints()
                 bot.pathIndex=math.min(2,#bot.path)
@@ -217,10 +237,19 @@ local function pathTo(bot,goal,now)
                 bot.pathIndex=1
             end
         end
-        bot.planning=false
+        -- Old asynchronous planners must not release a newer planner's lock.
+        if bot.pathGeneration==generation and bot.root==planningRoot then
+            bot.planning=false
+        end
     end)
 end
 local function move(bot,goal,now)
+    -- Rival positions and the raid objective can change WHILE ComputeAsync
+    -- yields. Revoke any path planned for a materially different destination.
+    if bot.lastGoal==nil or (bot.lastGoal-goal).Magnitude>8 then
+        invalidatePath(bot)
+    end
+    bot.lastGoal=goal
     pathTo(bot,goal,now)
     local actual=goal
     if bot.pathIndex<=#bot.path then
@@ -276,9 +305,6 @@ function Bot.tick(now)
             elseif now>=bot.deadUntil then respawn(bot) end
         else
             local enemy=if bot.team=="RED" then "BLUE" else "RED"
-            local target=if bot.carry then map.teams[bot.team].scorePad.Position
-                elseif bot.style=="GUARD" then map.teams[bot.team].egg.Position
-                else map.teams[enemy].egg.Position
             local player,dp=nearestHuman(bot,8)
             local rival,db=nearestEnemyBot(bot,8)
             local combatTarget=if player and dp<=db then player else rival
@@ -292,8 +318,7 @@ function Bot.tick(now)
                 if callbacks.steal(bot,enemy) then
                     bot.carry=enemy
                     showCarriedEgg(bot,true)
-                    bot.path={}
-                    bot.nextRepath=0
+                    invalidatePath(bot)
                 end
             elseif bot.carry and
                 (bot.root.Position-map.teams[bot.team].scorePad.Position).Magnitude<=7 then
@@ -301,11 +326,14 @@ function Bot.tick(now)
                     if not active then return end
                     bot.carry=nil
                     showCarriedEgg(bot,false)
-                    bot.path={}
-                    bot.nextRepath=0
+                    invalidatePath(bot)
                 end
             end
-            local waypoint=target
+            -- Steal/deposit may change bot.carry above. Do NOT reuse the
+            -- pre-transaction target for the same-tick MoveTo.
+            local waypoint=if bot.carry then map.teams[bot.team].scorePad.Position
+                elseif bot.style=="GUARD" then map.teams[bot.team].egg.Position
+                else map.teams[enemy].egg.Position
             if bot.style=="GUARD" then
                 if rival and db<14 then waypoint=rival.root.Position
                 elseif player and dp<14 and player.Character then
