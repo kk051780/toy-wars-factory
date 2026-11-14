@@ -218,6 +218,10 @@ local function pathTo(bot,goal,now)
     -- Invalidating the generation makes any late worker harmless.
     if bot.planning and now-(bot.planningSince or now)>=8 then
         invalidatePath(bot)
+        -- Watchdog invalidation clears lastGoal. Restore the exact current
+        -- intent BEFORE launching a new async worker, else its own
+        -- "lastGoal~=nil" stale-result guard will discard the good result.
+        bot.lastGoal=goal
     end
     if bot.planning or now<bot.nextRepath then return end
     bot.nextRepath=now+REPATH_SECONDS
