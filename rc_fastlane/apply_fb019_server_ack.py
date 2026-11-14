@@ -94,7 +94,7 @@ def patch_game(raw:bytes)->bytes:
         attackResponse("MISS","NONE")
     end
 ''')
-    assert block.count('attackResponse("HIT"')==5
+    assert block.count('attackResponse("HIT"')==6
     assert block.count('attackResponse("MISS"')==6
     assert block.count('remote:FireClient(player,{kind="P0D_ATTACK_RESULT"')==1
     return (src[:a]+block+src[b:]).encode("utf8")
