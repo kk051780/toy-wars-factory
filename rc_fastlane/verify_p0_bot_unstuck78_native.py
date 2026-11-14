@@ -211,7 +211,21 @@ check(stuck.unstuckAttempts==0 and stuck.lastGoal.X==-50,
   "NEW_GOAL_RESETS_STUCK_STATE")
 check(stuck.hum.lastDestination.X==-50,
   "GOAL_CHANGE_MOVES_NEW_DESTINATION")
-print("P0D_SOLO_REAL_BOT_START_AND_STALL_24_NATIVE_CASES_PASS")
+-- Additional private78 safety: do not spam detours for a bot already
+-- in close-range combat / target capture. The #400 author test did not
+-- cover this exact near-goal jitter prevention case.
+local close={root={Position=V(0,0,0)},path={},pathIndex=1,
+  pathGeneration=0,lastGoal=nil,planning=false,
+  hum={Jump=false,MoveTo=function(self,destination)
+    self.lastDestination=destination
+  end}}
+move(close,V(2,0,0),0)
+move(close,V(2,0,0),10.2)
+check(close.unstuckAttempts==0 and not close.hum.Jump,
+    "NEAR_MELEE_TARGET_NO_WATCHDOG_JITTER")
+check(close.hum.lastDestination.X==2 and close.hum.lastDestination.Z==0,
+    "NEAR_GOAL_NO_LATERAL_DETOUR")
+print("P0D_SOLO_REAL_BOT_START_AND_STALL_26_NATIVE_CASES_PASS")
 '''
 if __name__=="__main__":
     p=argparse.ArgumentParser()
