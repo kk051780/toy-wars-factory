@@ -51,8 +51,9 @@ class TestBotPathRaceFix(unittest.TestCase):
         j=s.index("if callbacks.deposit(bot,bot.team,bot.carry) then")
         self.assertIn("invalidatePath(bot)",s[j:j+500])
         section=s[s.index("local function invalidatePath(bot)"):s.index("local function respawn(bot)")]
-        for x in ("bot.pathGeneration+=1","bot.path={}","bot.pathIndex=1","bot.nextRepath=0","bot.planning=false"):
+        for x in ("bot.pathGeneration+=1","bot.path={}","bot.pathIndex=1","bot.planning=false","bot.planningSince=nil"):
             self.assertIn(x,section)
+        self.assertNotIn("bot.nextRepath=0",section,"GOAL_JITTER_MUST_NOT_RESET_REPATH_THROTTLE")
 
     def test_respawn_invalidates_old_planners_and_new_agent_identity(self):
         s=self.src
@@ -63,6 +64,15 @@ class TestBotPathRaceFix(unittest.TestCase):
         self.assertIn("bot.pathGeneration=nextGeneration",sub)
         self.assertLess(sub.index("local nextGeneration"),sub.index("makeActor"))
         self.assertGreater(sub.index("bot.pathGeneration=nextGeneration"),sub.index("for key,value in pairs(fresh)"))
+
+    def test_repath_watchdog_and_bot_count_transition(self):
+        s=self.src
+        self.assertIn("now-(bot.planningSince or now)>=8",s)
+        self.assertIn("bot.planningSince=now",s)
+        self.assertIn("bot.planningSince=nil",s)
+        self.assertIn("if bot.planning or now<bot.nextRepath then return end",s)
+        self.assertIn("if #Players:GetPlayers()==0 then Bot.stop();return end",s)
+        self.assertNotIn("if #Players:GetPlayers()~=1 then Bot.stop();return end",s)
 
     def test_stop_resets_ghost_tick_and_match_epoch(self):
         s=self.src
