@@ -25,6 +25,31 @@ jobs:
           set -euo pipefail
           python3 -B -m unittest discover -s rc_fastlane -p test_core_round*.py -v
           python3 -B -m py_compile rc_fastlane/apply_core_round_ready.py
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0_luau
+          persist-credentials: false
+      - name: Compile generated READY Game HUD Config Luau
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _p0_luau -B /tmp/p0_ready_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0_ready_luau --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, 'rc_fastlane')
+          import apply_core_round_ready as m
+          original = Path('releases/P0D_S1_KIDS_RC01/src')
+          for path, transform in [('server/Game.server.luau',m.patch_game),('client/HUD.client.luau',m.patch_hud),('shared/Config.luau',m.patch_config)]:
+              target = Path('/tmp/p0_ready_') / path
+              target.parent.mkdir(parents=True, exist_ok=True)
+              target.write_text(transform((original/path).read_text(encoding='utf8')),encoding='utf8')
+          PY
+          find /tmp/p0_ready_ -name '*.luau' -print0 | xargs -0 -n1 /tmp/p0_ready_luau/luau-compile >/dev/null
+          echo "TRACKED_ORIGINAL_PATCHES_REAL_LUAU_COMPILE_PASS_NOT_CURRENT_COMPILED66"
       - name: Do not certify Studio game/fun from source tests
         shell: bash
         run: echo "PREP_ONLY_SOURCE_CONTRACT_PASS_NOT_STUDIO_NOT_OFFICIAL_RC"
