@@ -176,19 +176,37 @@ def _stage_candidate(dist: Path, stage: Path, prior):
 def apply(dist: Path, enabled: bool) -> bool:
     dist = dist.resolve()
     backup = backup_dir(dist)
+    disabled = dist.with_name(dist.name + ".art_combat_disabling")
+    # Recover an interrupted OFF without losing either valid tree.
+    if disabled.exists():
+        require(not enabled, "INTERRUPTED_OFF_RECOVERY_REQUIRES_DISABLED_MODE")
+        if not dist.exists() and backup.exists():
+            _check_original(backup)  # Validate backup before replacing anything.
+            os.rename(backup, dist)
+            shutil.rmtree(disabled)
+            print("ART_COMBAT_OFF_INTERRUPTED_SWAP_RECOVERED")
+            return True
+        if dist.exists() and not backup.exists():
+            _check_original(dist)
+            shutil.rmtree(disabled)
+            print("ART_COMBAT_OFF_INTERRUPTED_CLEANUP_RECOVERED")
+            return True
+        raise RuntimeError("AMBIGUOUS_INTERRUPTED_OFF_STATE_KEEP_ALL_DATA")
     if not dist.exists() and backup.exists():
+        _check_original(backup)
         os.rename(backup, dist)
-        raise RuntimeError("PREVIOUS_INTERRUPTED_SWAP_RECOVERED_RERUN")
+        raise RuntimeError("PREVIOUS_INTERRUPTED_APPLY_RECOVERED_RERUN")
     if not enabled:
         if not backup.exists():
             if dist.exists():
                 require(DEST not in sources(dist), "ENABLED_OVERLAY_WITHOUT_BACKUP")
             print("ART_COMBAT_OFF_CLEAN_ZERO_WRITE")
             return False
+        # Fail-closed: corrupt original must NEVER replace known-good candidate.
+        _check_original(backup)
         require(dist.exists() and (dist / "src" / DEST).exists(), "OFF_BACKUP_STATE_INVALID")
         require(blob((dist / "src" / DEST).read_bytes()) == PIN, "ART_COMBAT_FAIL_CLOSED")
         require(blob((dist / "src" / HORDE).read_bytes()) == HORDE_PATCH_PIN, "ART_COMBAT_FAIL_CLOSED")
-        disabled = dist.with_name(dist.name + ".art_combat_disabling")
         require(not disabled.exists(), "PREVIOUS_DISABLE_INCOMPLETE")
         os.rename(dist, disabled)
         try:
@@ -196,8 +214,8 @@ def apply(dist: Path, enabled: bool) -> bool:
         except BaseException:
             os.rename(disabled, dist)
             raise
-        shutil.rmtree(disabled)
         _check_original(dist)
+        shutil.rmtree(disabled)
         print("ART_COMBAT_OFF_EXACT_ORIGINAL66_RESTORED")
         return True
     require(dist.is_dir() and not backup.exists(), "ART_COMBAT_ALREADY_APPLIED_OR_BACKUP_EXISTS")
