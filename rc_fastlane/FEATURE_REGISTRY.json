@@ -326,6 +326,27 @@
       "android": "NOT_TESTED",
       "owner_fun": "NOT_TESTED",
       "official_rc_adopted": true
+    },
+    {
+      "id": "TWIN_BIOMES_4NPC_V1",
+      "summary": "Coral and Storm mirrored worlds, 4 NPC species with distinct shapes/idle and private 4/4 session codex",
+      "state": "CANONICAL_RC64_SOURCE_ADMITTED_SAME_HEAD_CI_PENDING",
+      "profiles": [
+        "rich51"
+      ],
+      "independent_switch": true,
+      "source_git_blob": "ff48273db7c7f0e240e45fba8b997cad669a5143",
+      "rollback": "Disable twin switch to keep exact official63 with star shards untouched",
+      "one_original_game_remote_store": true,
+      "stage": "S2+",
+      "studio_test": "NOT_TESTED",
+      "android": "NOT_TESTED",
+      "paid": false,
+      "official_rc_adopted": true,
+      "official_source_sha": "f680cb921d056b8e9c06d0ca13f9cdd9dc094b5a",
+      "source_adoption_pr": 332,
+      "owner_fun": "NOT_TESTED",
+      "captures_or_persistence": false
     }
   ],
   "next_source_adoption_contract": {
@@ -345,9 +366,29 @@
   },
   "last_studio": "NOT_TESTED",
   "last_official_completion_pct": 75,
-  "canonical_rc_source_head": "b0f5969536b0b800353f4f897a7b14c18800ee96",
+  "canonical_rc_source_head": "f680cb921d056b8e9c06d0ca13f9cdd9dc094b5a",
   "canonical_rc_acceptance_run": 43531582802,
-  "canonical_rc_source_count": 63,
+  "canonical_rc_source_count": 64,
   "canonical_rc_studio_real": "NOT_TESTED",
-  "canonical_rc_fun": "NOT_TESTED"
+  "canonical_rc_fun": "NOT_TESTED",
+  "canonical_rc64_candidate_ci_run": 43536196350,
+  "canonical_rc64_acceptance_ci_run": null,
+  "canonical_rc64_acceptance_receipt": {
+    "stage": "OFFICIAL_SOURCE_CAS_ADOPTED__FINAL_SAME_HEAD_CI_PENDING",
+    "source_commit": "f680cb921d056b8e9c06d0ca13f9cdd9dc094b5a",
+    "catalog_stage_commit": "da8fbf7744a734c69a695f64745db51ecb8843ea",
+    "gameplay_scripts": 64,
+    "catalog_rc_rows": 29,
+    "catalog_total_rows": 65,
+    "real_legacy_official_rc63_place_bytes": 571621,
+    "real_legacy_official_rc63_zip_bytes": 162707,
+    "real_identical_source_private_build_place_bytes": 590327,
+    "real_identical_source_private_build_zip_bytes": 170009,
+    "verified_candidate_ci_run_id": 43536196350,
+    "official_same_head_ci_run_id": null,
+    "studio_2client": "NOT_TESTED",
+    "android": "NOT_TESTED",
+    "owner_fun": "NOT_TESTED",
+    "game_publish": false
+  }
 }
