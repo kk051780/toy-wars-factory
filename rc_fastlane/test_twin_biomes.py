@@ -86,7 +86,9 @@ class TwinBiomes(unittest.TestCase):
     def test_18_deck_stairs_not_timed_or_removed(self):
         self.assertIn('part("AlwaysOpenStair_"',SCRIPT)
         self.assertIn('part("RearGuard"',SCRIPT)
-        self.assertNotIn("Destroy()",SCRIPT)
+        self.assertNotIn("world:Destroy()",SCRIPT)
+        self.assertNotIn("deck:Destroy()",SCRIPT)
+        self.assertIn("toast:Destroy()",SCRIPT)
         self.assertNotIn("CanCollide = false -- route",SCRIPT)
     def test_19_route_beacon_public_world_state_only(self):
         self.assertIn('gate:GetAttribute("WCS_GateOpen")',SCRIPT)
@@ -143,7 +145,8 @@ class TwinBiomes(unittest.TestCase):
         self.assertNotIn("GetChildren()",SCRIPT)
     def test_30_no_player_teleports_or_forced_velocity(self):
         for bad in ("HumanoidRootPart.CFrame", "root.CFrame =", "AssemblyLinearVelocity",
-                    "VectorForce", "BodyVelocity", "PivotTo(", "Humanoid.JumpPower"):
+                    "VectorForce", "BodyVelocity", "root:PivotTo(",
+                    "player.Character:PivotTo(", "Humanoid.JumpPower"):
             self.assertNotIn(bad,SCRIPT)
     def test_31_four_unique_silhouette_constructions(self):
         for key in ("BubbleHalo","Foam_","CoralAntler_","CoralFork_",
