@@ -1,0 +1,42 @@
+{
+  "schema": "P0D_431_444_OFFICIAL_GAME_COMPLETE_ART_SOURCE_ONLY_V1",
+  "date_jst": "2026-11-15",
+  "source_parent_sha": "b32664b7555f040eeca50f853927a9d975249ce5",
+  "source_parent_luau": 81,
+  "parent_full_private_horde_feature": "P0D_PRIVATE_LIVE_HORDE_ATTACK_TICK_V2",
+  "author_refs": {
+    "private_client_art": "65fcd52539e5b3ad5ca6a499c2afc2482936c66b",
+    "official_lifecycle_source": "#452"
+  },
+  "source_adoption": {
+    "Game": "OFFICIAL_ALREADY_PRESENT_NO_DOUBLE_APPLICATION",
+    "private_art_client": "PENDING_A_SOURCE_QA_ONLY",
+    "sources_changed": [
+      "server/CastleDetailArt.server.luau",
+      "client/FB015CharacterArt.client.luau",
+      "client/ConfirmedSlashFX.client.luau"
+    ],
+    "other_original_source_bytes_unchanged": 78
+  },
+  "source_place_baseline_bytes": 759298,
+  "expected_recomposition_from_original_four_feature_staging": {
+    "place_bytes": 761024,
+    "sha256": "b21250266aa99d618941b409ae044739f0352d98b6fcb097c2b29885d17e6cb8",
+    "prior_staging_pr": 454,
+    "prior_staging_ci": 43650833467
+  },
+  "private_flags": {
+    "horde": "P0D_PRIVATE_LIVE_HORDE_NINE",
+    "client_art_owner": "P0D_LIVE_ART_PILOT_OPTIN",
+    "client_art_server_authorized": "P0D_LIVE_ART_PILOT_SERVER_ALLOWED"
+  },
+  "source_ci": "PENDING",
+  "runtime": "NOT_TESTED",
+  "mobile": "NOT_TESTED",
+  "fun": "NOT_TESTED",
+  "owner_accepted": false,
+  "go": "ALL_NO_GO",
+  "no_merge": true,
+  "no_publish": true,
+  "no_main": true
+}

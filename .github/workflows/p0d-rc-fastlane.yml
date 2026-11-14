@@ -2417,3 +2417,98 @@ jobs:
           path: /tmp/p0d_horde_private_lifecycle_v2_artifact/*
           retention-days: 14
           if-no-files-found: error
+
+
+      - name: 'P0 #431 after official #444 full Horde V2: only 3 private client ART source patches, RC81 no Game duplicate'
+        if: env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
+          BASE=/tmp/p0d_horde_private_lifecycle_v2_81
+          FINAL=/tmp/p0d_rc81_live_art_after_official_horde
+          OUT=/tmp/p0d_rc81_official_horde_private_art_artifact
+          PLACE="$OUT/P0D_RC81_OFFICIAL_HORDE_AND_PRIVATE_ART_STUDIO.rbxlx"
+          mkdir -p "$OUT"
+          test -f "$BASE/SOURCE_LOCK.json"
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_live_art_client_pilot.py -v
+          python3 -B rc_fastlane/apply_fb015_live_art_client_pilot.py --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_fb015_live_art_client_pilot.py --base "$BASE" --out "$FINAL" --enabled true
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 81
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B rc_fastlane/verify_fb015_live_art_client_pilot.py \
+            --base "$BASE" --dist "$FINAL" --place "$PLACE" \
+            --receipt "$OUT/RC81_CLIENT_ART_ON_OFF_SOURCE_EXACT.json"
+          python3 -B art_quality/check_art_quality.py --place "$PLACE" --out "$OUT/ART_SOURCE_GATE.json"
+          python3 -B art_quality/check_live_art_parity.py \
+            --place "$PLACE" --expected-scripts 81 --out "$OUT/LIVE_ART_PARITY_GATE.json"
+          python3 -B art_quality/check_mobile_fun.py --out "$OUT/MOBILE_CHILD_FUN_NO_GO.json"
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,os
+          from rc_fastlane.apply_fb015_live_art_client_pilot import read,blob,FILES,LIVE_CASTLE,CASTLE_BLOB
+          base=Path('/tmp/p0d_horde_private_lifecycle_v2_81')
+          final=Path('/tmp/p0d_rc81_live_art_after_official_horde')
+          out=Path('/tmp/p0d_rc81_official_horde_private_art_artifact')
+          p=out/'P0D_RC81_OFFICIAL_HORDE_AND_PRIVATE_ART_STUDIO.rbxlx'
+          a,b=read(base),read(final)
+          assert len(a)==len(b)==81 and set(a)==set(b)
+          changed={k for k in a if a[k]!=b[k]}
+          assert changed==set(FILES),('ONLY_THREE_PRIVATE_ART',changed)
+          assert all(a[k]==b[k] for k in a if k not in FILES)
+          assert a['server/Game.server.luau']==b['server/Game.server.luau']
+          assert a['server/MusouHorde.luau']==b['server/MusouHorde.luau']
+          assert b[LIVE_CASTLE]==a[LIVE_CASTLE] and blob(b[LIVE_CASTLE])==CASTLE_BLOB
+          locks=json.loads((final/'RC_FEATURE_LOCK.json').read_text('utf8'))
+          assert locks['feature_flags']['P0D_PRIVATE_LIVE_HORDE_NINE_V1']
+          assert locks['feature_flags']['P0D_PRIVATE_LIVE_HORDE_ATTACK_TICK_V2']
+          assert locks['feature_flags']['FB015_LIVE_ART_PRIVATE_CLIENT_PILOT_V1']
+          game=b['server/Game.server.luau'].decode()
+          assert game.count('horde:reset(')==game.count('horde:tick(')==1
+          assert game.count('game.PrivateServerId ~= ""')==3
+          assert game.count('remote.OnServerEvent:Connect(')==1
+          assert p.stat().st_size==761024,('COMPOSITE_REBASE_SIZE_DRIFT',p.stat().st_size)
+          sha=hashlib.sha256(p.read_bytes()).hexdigest()
+          assert sha=='b21250266aa99d618941b409ae044739f0352d98b6fcb097c2b29885d17e6cb8',('COMPOSITE_REBASE_SHA_DRIFT',sha)
+          source=json.loads((out/'ART_SOURCE_GATE.json').read_text())
+          live=json.loads((out/'LIVE_ART_PARITY_GATE.json').read_text())
+          assert source['source']['source_gate']=='PASS' and source['source']['script_count']==81
+          assert source['art_decision']=='ART_NO_GO' and source['owner_accepted'] is False
+          assert live['source_gate']=='PASS' and live['top_studio_only_count']==4
+          record={
+           'schema':'P0D_PRIVATE81_OFFICIAL_HORDE_PLUS_ART_RECOMPOSE_V1',
+           'official_source_parent':'b32664b7555f040eeca50f853927a9d975249ce5',
+           'author_head':os.environ.get('GITHUB_HEAD_REF',''),
+           'checkout_sha':os.environ['GITHUB_SHA'],
+           'script_count':81,'modified_sources':sorted(changed),'other_sources_byte_exact':78,
+           'real_studio_place_bytes':p.stat().st_size,'real_studio_place_sha256':sha,
+           'matches_original_4_feature_staging_place':True,
+           'official_Game_Horde_Castle_unchanged':True,
+           'owner_accepted':False,'source_gate':'PASS',
+           'live_horde_decision':'LIVE_HORDE_NO_GO',
+           'live_art_decision':'LIVE_ART_NO_GO',
+           'art_decision':'ART_NO_GO','mobile_decision':'MOBILE_NO_GO',
+           'fun_decision':'FUN_NO_GO',
+           'android15':'NOT_TESTED','kid_first3min':'NOT_TESTED',
+           'pc_engine_private_session':'NOT_TESTED',
+           'formal_art_adopted':False,
+           'no_merge':True,'no_main':True,'no_publish':True
+          }
+          (out/'SOURCE_COMPOSITE_RECEIPT.json').write_text(
+              json.dumps(record,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_OFFICIAL_HORDE_RECOMPOSE_ART3_78EXACT_SOURCE_PASS',record['real_studio_place_bytes'],sha)
+          PY
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          cp art_quality/P0D_431_OFFICIAL_HORDE_ART_SOURCE_20261115.json "$OUT/CANDIDATE_POLICY.json"
+      - uses: actions/upload-artifact@v4
+        if: always() && env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        with:
+          name: P0D-OFFICIAL-HORDE-RC81-PRIVATE-ART-3SRC-EXACT-NOGO
+          path: /tmp/p0d_rc81_official_horde_private_art_artifact/*
+          retention-days: 14
+          if-no-files-found: warn
