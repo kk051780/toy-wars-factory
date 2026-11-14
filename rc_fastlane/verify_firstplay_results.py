@@ -75,7 +75,7 @@ def verify(dist: Path, output: Path):
     results=results.replace('elseif match.phase == "RESULTS" then',
                             'if match.phase == "RESULTS" then',1)
     native=("\n".join([MOCK,stopper,spawning,helper,
-            'local function realResultsStep(now)',results,'end','end',CASES]))
+            'local function realResultsStep(now)',results,'end',CASES]))
     output.parent.mkdir(parents=True,exist_ok=True)
     output.write_text(native,"utf8")
     print("P0D_FIRSTPLAY_RESULTS_REAL_STOP_SPAWN_RECOVERY_SOURCE_EXACT_PASS")
