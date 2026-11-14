@@ -54,6 +54,10 @@ class ArtMotionSourceContract(unittest.TestCase):
             "visual.copy.CFrame = core.CFrame * visual.offset * localMotion",
             "cue.OnClientEvent:Connect(",
             "lastHitSerial[id] = serial",
+            "local pendingHits = {}",
+            "pendingHits[id] = {at=now, ko=isKO}",
+            "if os.clock() - pending.at < .7 then",
+            "if pending.ko then records[model].koAt = pending.at end",
             "local added = horde.ChildAdded:Connect(",
             'Workspace:WaitForChild("TRAP_RAIDERS_S1")',
         ):
