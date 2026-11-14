@@ -2333,3 +2333,40 @@ jobs:
           path: /tmp/p0d_private_live_horde81_evidence/*
           retention-days: 14
           if-no-files-found: error
+
+      - name: 'P0 #420 full real Rojo path+class+instance-name+source 81/81 identity gate'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q 'defusedxml==0.7.1'
+          python3 -B -m unittest discover -s art_quality -p 'test_rc_source_identity.py' -v
+          mkdir -p /tmp/p0d_rc81_full_binding_qa
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist /tmp/p0d_live_safe_castle81_source \
+            --place /tmp/p0d_live_safe_castle81_artifact/P0D_RC81_LIVE_SAFE_CASTLE_ART4_STUDIO_PREVIEW.rbxlx \
+            --receipt /tmp/p0d_rc81_full_binding_qa/RC81_LIVE_CASTLE_FULL_INSTANCE_SOURCE_IDENTITY.json \
+            --count 81
+          if [ -f /tmp/p0d_private_live_horde81_evidence/P0D_RC81_PRIVATE_HORDE9_LIVE_CASTLE_STUDIO_CANDIDATE.rbxlx ]; then
+            python3 -B art_quality/verify_rc_source_identity.py \
+              --dist /tmp/p0d_private_live_horde81_dist \
+              --place /tmp/p0d_private_live_horde81_evidence/P0D_RC81_PRIVATE_HORDE9_LIVE_CASTLE_STUDIO_CANDIDATE.rbxlx \
+              --receipt /tmp/p0d_rc81_full_binding_qa/RC81_PRIVATE_HORDE_FULL_INSTANCE_SOURCE_IDENTITY.json \
+              --count 81
+          fi
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('/tmp/p0d_rc81_full_binding_qa')
+          records=[json.loads(p.read_text('utf8')) for p in sorted(root.glob('*.json'))]
+          assert records and all(x['embedded_count']==81 and x['all_instance_class_name_path_source_exact'] for x in records)
+          assert all(x['art_decision']=='ART_NO_GO' and x['mobile_decision']=='MOBILE_NO_GO' and x['owner_accepted'] is False for x in records)
+          print("P0D_RC81_FULL_SCRIPT_IDENTITY_NOT_ART_GO",len(records),sum(x['embedded_count'] for x in records))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        with:
+          name: P0D-RC81-REAL-ROJO-BINDINGS-PRIVATE-QA
+          path: /tmp/p0d_rc81_full_binding_qa/*
+          retention-days: 14
+          if-no-files-found: error
