@@ -7,7 +7,7 @@ All imported authorship is immutable/pinned; overlay applied atomically to a
 throwaway 66-source dist. Do not double-adopt upstream standalone PRs.
 """
 from __future__ import annotations
-import argparse, hashlib, json
+import argparse, hashlib, json, os, shutil, tempfile
 from pathlib import Path
 
 import apply_core_round_ready as ready
@@ -23,12 +23,15 @@ HUD="client/HUD.client.luau"
 CONFIG="shared/Config.luau"
 CHANGED={GAME,V4,HUD,CONFIG}
 BASE_RC="43543378f976374e2cac2d68b3136ac355d3191b"
+# Trusted 66 authored script manifest generated from verified pinned official RC CI.
+# Pin exact digest before handing this composite to B #220; never trust self-authored locks.
+BASE66_BLOBS_SHA256=""
 INPUTS={
-    "ready":("apply_core_round_ready.py","ad63720b185827b8b843b12979cfb8980e2fb3bf"),
+    "ready":("apply_core_round_ready.py","9460fd8a0bcc95af9eff765aa28960b45fde5e12"),
     "lobby":("apply_fb007_lobby.py","9fcf93b03efd5567f6c5197453fc1817a5105928"),
-    "solo":("apply_fb005_solo_bots.py","2d0a7a36100b562d6baa9670bc5da0a1deae24bc"),
+    "solo":("apply_fb005_solo_bots.py","d8e15526f144838063003aa853151d02b599f282"),
     "castle":("apply_owner361_castle.py","bc1fa66e33f42f0117377615976ff505b4932af5"),
-    "hud":("apply_hud_clean.py","de41753bf3a20338b2bf9911e8277b286e2aa9b6"),
+    "hud":("apply_hud_clean.py","a4e2d73c3e48ba3fa660a7b227f8dca98b377b65"),
 }
 FEATURE_IDS=[
     ready.FEATURE,lobby.FEATURE,solo.ID,castle.FEATURE,hud.FEATURE,
@@ -44,7 +47,17 @@ ID="OWNER361_FIVE_PREP_COMPOSITE70_STUDIO_REVIEW_ONLY_V1"
 def blob(data:bytes)->str:
     return hashlib.sha1(b"blob "+str(len(data)).encode()+b"\0"+data).hexdigest()
 
+def reject_symlink_tree(dist:Path):
+    # Fail before a single write: a forged symlink must not overwrite external
+    # files while checksums and receipts appear self-consistent.
+    assert dist.is_dir() and not dist.is_symlink(), "INVALID_OR_LINKED_DIST"
+    allowed=dist.resolve()
+    for p in dist.rglob("*"):
+        assert not p.is_symlink(), ("P0_SYMLINK_REFUSED",str(p))
+        assert p.resolve().is_relative_to(allowed), ("P0_PATH_ESCAPES_DIST",str(p))
+
 def source_map(dist:Path)->dict[str,bytes]:
+    reject_symlink_tree(dist)
     root=dist/"src"
     return {f.relative_to(root).as_posix():f.read_bytes()
         for f in sorted(root.rglob("*.luau"))}
@@ -103,10 +116,14 @@ def compose(before:dict[str,bytes])->dict[str,bytes]:
     assert after[GAME].count(b'OnServerEvent:Connect(')==1
     return after
 
-def apply(dist:Path,enabled:bool)->bool:
+def apply(dist:Path,enabled:bool,out_dir:Path|None=None)->bool:
     if not enabled:
         print("OWNER361_PRIVATE70_OFF_ZERO_WRITE")
         return False
+    assert out_dir is not None, "PRIVATE_COMPOSITE_REQUIRES_SEPARATE_OUTPUT"
+    out_dir=out_dir.absolute()
+    assert out_dir.parent.is_dir() and not out_dir.exists() and not out_dir.is_symlink(), "OUTPUT_ALREADY_EXISTS"
+    assert out_dir != dist.absolute() and not out_dir.is_relative_to(dist.absolute()), "OUTPUT_INSIDE_INPUT"
     check_authors()
     before=source_map(dist)
     assert len(before)==66 and CHANGED.issubset(before),("REQUIRE_CANONICAL_RC66",len(before))
@@ -119,6 +136,10 @@ def apply(dist:Path,enabled:bool)->bool:
     assert source_lock["total_scripts"]==66 and source_lock["blobs"]==initial
     assert feature_lock["total_sources"]==66 and feature_lock["source_gitblobs"]==initial
     assert set(FEATURE_IDS).isdisjoint(feature_lock["feature_flags"])
+    verified_digest=hashlib.sha256(json.dumps(initial,sort_keys=True,separators=(",",":")).encode("utf8")).hexdigest()
+    print("P0_RECONSTRUCTED_OFFICIAL66_SOURCE_FINGERPRINT",verified_digest)
+    if BASE66_BLOBS_SHA256:
+        assert verified_digest==BASE66_BLOBS_SHA256, "WRONG_66_SOURCE_DISTRIBUTION"
     assert project["tree"]["ServerScriptService"]["TrapRaidersS1"]["$path"]=="src/server"
     starter=project["tree"]["StarterPlayer"]["StarterPlayerScripts"]
     assert "BattleHUDGovernor" not in starter
@@ -152,23 +173,36 @@ def apply(dist:Path,enabled:bool)->bool:
     feature_lock["source_gitblobs"]=newpins
     feature_lock["feature_flags"]=flags
     feature_lock["owner361_p0_composite_private70"]=receipt
-    for path in sorted(after):
-        if path not in before or after[path]!=before[path]:
-            out=dist/"src"/path
-            out.parent.mkdir(parents=True,exist_ok=True)
-            out.write_bytes(after[path])
-    sl.write_text(json.dumps(source_lock,ensure_ascii=False,indent=2)+"\n","utf8")
-    fl.write_text(json.dumps(feature_lock,ensure_ascii=False,indent=2)+"\n","utf8")
-    pj.write_text(json.dumps(project,ensure_ascii=False,indent=2)+"\n","utf8")
-    assert source_map(dist)==after
-    assert json.loads(sl.read_text("utf8"))["blobs"]==newpins
-    assert json.loads(fl.read_text("utf8"))["source_gitblobs"]==newpins
+    # Build to a fresh private sibling directory; publish the complete
+    # candidate with ONE atomic rename. The immutable original66 remains
+    # available if interrupted, and the destination is never half-written.
+    scratch=Path(tempfile.mkdtemp(prefix=".p0d_p0_stage_",dir=str(out_dir.parent)))
+    staged=scratch/"candidate"
+    try:
+        shutil.copytree(dist,staged,symlinks=False)
+        for path in sorted(after):
+            if path not in before or after[path]!=before[path]:
+                out=staged/"src"/path
+                out.parent.mkdir(parents=True,exist_ok=True)
+                out.write_bytes(after[path])
+        (staged/"SOURCE_LOCK.json").write_text(json.dumps(source_lock,ensure_ascii=False,indent=2)+"\n","utf8")
+        (staged/"RC_FEATURE_LOCK.json").write_text(json.dumps(feature_lock,ensure_ascii=False,indent=2)+"\n","utf8")
+        (staged/"default.project.json").write_text(json.dumps(project,ensure_ascii=False,indent=2)+"\n","utf8")
+        assert source_map(staged)==after
+        assert json.loads((staged/"SOURCE_LOCK.json").read_text("utf8"))["blobs"]==newpins
+        assert json.loads((staged/"RC_FEATURE_LOCK.json").read_text("utf8"))["source_gitblobs"]==newpins
+        assert out_dir.exists()==False, "PRIVATE_OUTPUT_RACE"
+        os.replace(staged,out_dir)
+    finally:
+        shutil.rmtree(scratch,ignore_errors=True)
+    assert source_map(dist)==before, "CANONICAL_INPUT_MODIFIED"
     print("OWNER361_P0_PRIVATE70_COMPOSITE_SOURCE_EXACT_PASS")
     return True
 
 if __name__=="__main__":
     parser=argparse.ArgumentParser()
     parser.add_argument("--dist",required=True,type=Path)
+    parser.add_argument("--out",type=Path,help="NEW private candidate directory; input official66 remains immutable")
     parser.add_argument("--enabled",required=True,choices=("true","false"))
     args=parser.parse_args()
-    apply(args.dist,args.enabled=="true")
+    apply(args.dist,args.enabled=="true",args.out)
