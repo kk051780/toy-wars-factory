@@ -47,7 +47,9 @@ def patch_game(raw:bytes)->bytes:
             hum:TakeDamage(Config.CombatDamage[roles[player] or "RAIDER"]
                 *earnedDamageMultiplier(player,"PLAYER"))
         end
-        return''','''        if ok and hum then
+        return''','''        -- A selected enemy may KO or despawn between targeting and this
+        -- second health check; never claim a HIT against a dead Humanoid.
+        if ok and hum and hum.Health>0 then
             hum:TakeDamage(Config.CombatDamage[roles[player] or "RAIDER"]
                 *earnedDamageMultiplier(player,"PLAYER"))
             attackResponse("HIT","PLAYER")
