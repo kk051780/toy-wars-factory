@@ -2449,7 +2449,8 @@ jobs:
           python3 -B art_quality/check_mobile_fun.py --out "$OUT/MOBILE_CHILD_FUN_NO_GO.json"
           python3 - <<'PY'
           from pathlib import Path
-          import hashlib,json,os
+          import hashlib,json,os,sys
+          sys.path.insert(0,str(Path('rc_fastlane').resolve()))
           from rc_fastlane.apply_fb015_live_art_client_pilot import read,blob,FILES,LIVE_CASTLE,CASTLE_BLOB
           base=Path('/tmp/p0d_horde_private_lifecycle_v2_81')
           final=Path('/tmp/p0d_rc81_live_art_after_official_horde')
