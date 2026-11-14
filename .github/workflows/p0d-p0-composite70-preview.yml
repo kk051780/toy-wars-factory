@@ -1375,7 +1375,7 @@ jobs:
           python3 -B rc_fastlane/apply_p0_spectator_h2_78.py --base "$BASE" --out "$OUT" --enabled true
           python3 -B rc_fastlane/test_p0_spectator_h2_native.py --game "$OUT/src/server/Game.server.luau" --bot "$OUT/src/server/SoloTeamBots.luau" --out /tmp/p0_spectator_h2_exact_native.luau
           /tmp/p0d_new_luau/luau /tmp/p0_spectator_h2_exact_native.luau | tee /tmp/p0_spectator_h2_exact_native.log
-          grep -Fx P0_PRIVATE78_SPECTATOR_H2_NATIVE_15_CASES_PASS /tmp/p0_spectator_h2_exact_native.log
+          grep -Fx P0_PRIVATE78_SPECTATOR_H2_NATIVE_19_CASES_PASS /tmp/p0_spectator_h2_exact_native.log
           python3 -B rc_fastlane/test_p0_lobby_rebalance78_native.py --game "$OUT/src/server/Game.server.luau" --emit /tmp/p0_spectator_preserve_lobby_native.luau
           /tmp/p0d_new_luau/luau /tmp/p0_spectator_preserve_lobby_native.luau | tee /tmp/p0_spectator_preserve_lobby_native.log
           grep -Fx P0_PRIVATE78_LOBBY_TEAM_REBALANCE_NATIVE_7_CASES_PASS /tmp/p0_spectator_preserve_lobby_native.log
@@ -1407,7 +1407,7 @@ jobs:
           receipt=Path('/tmp/p0d_p0_spectator_h2_out/RECEIPT.json')
           data=json.loads(receipt.read_text())
           data.update({
-            'spectator_h2_native':'15_REAL_SOURCE_LUAU_CASES_PASS',
+            'spectator_h2_native':'19_REAL_SOURCE_LUAU_CASES_PASS',
             'lobby_rebalance_native':'7_REAL_GAME_LUAU_CASES_PASS',
             'results_native':'15_REAL_GAME_LUAU_CASES_PASS',
             'modified_existing_sources':['server/Game.server.luau','server/SoloTeamBots.luau'],
