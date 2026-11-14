@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+"""Regression of actual #381 overlay followed by exact #374 3D minion source."""
+from __future__ import annotations
+import importlib.util
+import json
+import tempfile
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+
+def load(name, path):
+    spec = importlib.util.spec_from_file_location(name, ROOT / path)
+    assert spec and spec.loader
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+slash = load("apply_combat_art", "apply_fb015_combat.py")
+combo = load("compose_minion_combat", "compose_fb015_minion_combat.py")
+
+def original_horde():
+    src = slash.HORDE_AUTHOR.read_text("utf8")
+    a = src.index("                    -- Server-only confirmation: one changing cue per REAL hit.")
+    b = src.index("                    -- A normal enemy loses its immediate melee response", a)
+    raw = (src[:a] + src[b:]).encode("utf8")
+    assert slash.blob(raw) == slash.ORIGINAL_HORDE_PIN
+    return raw
+
+def snapshot(d):
+    return {p.relative_to(d).as_posix():p.read_bytes()
+            for p in d.rglob("*") if p.is_file()}
+
+def fixture(root):
+    dist = root / "base66"
+    items = {
+        "server/MusouHorde.luau": original_horde(),
+        "server/Game.server.luau": b'remote.OnServerEvent:Connect(function() end)',
+    }
+    items.update({f"shared/Original_{i:02d}.luau": f"return {i}\n".encode()
+                  for i in range(64)})
+    for path, raw in items.items():
+        d = dist / "src" / path
+        d.parent.mkdir(parents=True, exist_ok=True)
+        d.write_bytes(raw)
+    pins = {k:slash.blob(v) for k,v in sorted(items.items())}
+    (dist/"SOURCE_LOCK.json").write_text(json.dumps({"total_scripts":66,"blobs":pins}))
+    (dist/"RC_FEATURE_LOCK.json").write_text(json.dumps({
+        "total_sources":66,"source_gitblobs":pins,"feature_flags":{}}))
+    (dist/"default.project.json").write_text(json.dumps({
+        "tree":{
+            "ServerScriptService":{"TrapRaidersS1":{"$path":"src/server"}},
+            "StarterPlayer":{"StarterPlayerScripts":{
+                "ResultNextStep":{"$path":"src/client/ResultNextStep.client.luau"}}}
+        }}))
+    return dist
+
+class CompositeTest(unittest.TestCase):
+    def test_minion_source_is_unchanged_pr374(self):
+        self.assertEqual(combo.blob(combo.AUTHOR.read_bytes()), combo.PIN)
+        self.assertIn(b"ELITE_BACK_BANNER", combo.AUTHOR.read_bytes())
+
+    def test_compose_exact_real_66_67_68_and_off(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            dist=fixture(root)
+            original=snapshot(dist)
+            self.assertTrue(slash.apply(dist, True))
+            prev=snapshot(dist)
+            output=root/"private68"
+            self.assertTrue(combo.compose(dist, output, True))
+            scripts=combo.files(output)
+            self.assertEqual(len(scripts), 68)
+            self.assertEqual(scripts["server/ArtMinionSilhouette.server.luau"],combo.AUTHOR.read_bytes())
+            self.assertEqual(len(combo.files(dist)),67)
+            self.assertEqual(snapshot(dist),prev)
+            self.assertEqual(json.loads((output/"SOURCE_LOCK.json").read_text())["total_scripts"],68)
+            self.assertEqual(json.loads((output/"RC_FEATURE_LOCK.json").read_text())["total_sources"],68)
+            self.assertTrue(combo.compose(dist, output, False))
+            self.assertFalse(output.exists())
+            self.assertEqual(snapshot(dist),prev)
+            self.assertTrue(slash.apply(dist, False))
+            self.assertEqual(snapshot(dist),original)
+
+    def test_fail_closed_if_source_or_horde_drift(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            dist=fixture(root)
+            slash.apply(dist,True)
+            p=dist/"src/server/MusouHorde.luau"
+            p.write_bytes(p.read_bytes()+b"DRIFT")
+            out=root/"private68"
+            with self.assertRaisesRegex(RuntimeError,"SOURCE_PIN_HORDE_SIGNAL_DRIFT"):
+                combo.compose(dist,out,True)
+            self.assertFalse(out.exists())
+
+    def test_private68_off_zero_write_if_not_exists(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            self.assertFalse(combo.compose(root/"missing",root/"private68",False))
+            self.assertFalse((root/"private68").exists())
+
+if __name__ == "__main__":
+    unittest.main()
