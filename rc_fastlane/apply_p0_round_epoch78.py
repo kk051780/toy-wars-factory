@@ -50,11 +50,20 @@ def patch_game(src:str)->str:
         # and stop safely if an H2 leaver moved the current match to RESULTS.
         body=one(body,'    match.serial += 1\n',
             '    match.serial += 1\n    local startupSerial=match.serial\n')
-        start=body.index("    for _, p in ipairs(Players:GetPlayers()) do")
-        stop=body.index("    for _, team in ipairs({\"RED\", \"BLUE\"}) do",start)
-        assert "p:LoadCharacter()" in body[start:stop],"ROUND_LOADING_FRAGMENT_DRIFT"
-        body=body[:stop]+EPOCH_GUARD+body[stop:]
+        # The guard must be directly after the yielding LoadCharacter loop,
+        # BEFORE H2 SCORE mode votes, beginProgressRounds and objective reset.
+        # A check later in resetRound would still mutate stale reward/mode state.
+        anchor='''        p:LoadCharacter()
+    end
+    -- All previous epoch egg carriers were cleaned above while OLD mode was active.'''
+        assert body.count(anchor)==1,"ROUND_START_PLAYER_LOOP_SOURCE_DRIFT"
+        replacement='''        p:LoadCharacter()
+    end
+'''+EPOCH_GUARD+'''    -- All previous epoch egg carriers were cleaned above while OLD mode was active.'''
+        body=body.replace(anchor,replacement,1)
         assert body.index("p:LoadCharacter()")<body.index(EPOCH_GUARD)
+        assert body.index(EPOCH_GUARD)<body.index("ModeVote.tally(modeVotes,")
+        assert body.index(EPOCH_GUARD)<body.index("beginProgressRounds(")
         assert body.index(EPOCH_GUARD)<body.index("setObjectiveEnabled(true)")
         assert body.index(EPOCH_GUARD)<body.index("startCanonical()")
         return body
