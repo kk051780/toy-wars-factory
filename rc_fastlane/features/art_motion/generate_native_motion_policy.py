@@ -82,6 +82,21 @@ assert(applyConfirmedHit(4,"KO",3,0,2,11.5,lookup)==false)
 assert(applyConfirmedHit(4,false,3,2.5,2,11.5,lookup)==false)
 assert(applyConfirmedHit(4,false,3,0,0,11.5,lookup)==false)
 assert(applyConfirmedHit(4,false,3,0,2,11.5,lookup)==true)
+-- HIGH regression: epoch Attribute may arrive BEFORE first confirmed hit.
+-- The same-epoch first hit MUST bind round from nil and animate.
+lastEpoch=4
+lastRound=nil
+table.clear(lastHitSerial)
+table.clear(pendingHits)
+local first={hitAt=-100,koAt=-100}
+active[5]=first
+assert(applyConfirmedHit(5,false,1,0,4,12,lookup)==true,
+       "FIRST_HIT_AFTER_EPOCH_SYNC_MUST_BIND_ROUND")
+assert(lastRound==0 and first.hitAt==12)
+assert(applyConfirmedHit(5,true,2,0,4,12.04,lookup)==true)
+assert(first.koAt==12.04)
+assert(applyConfirmedHit(5,false,3,1,4,12.07,lookup)==false)
+assert(applyConfirmedHit(5,false,1,0,3,12.09,lookup)==false)
 print("P0D_FB015_ACTUAL_MOTION_EPOCH_HISTORY_NATIVE_POLICY_PASS")
 '''
     qa='''--!nocheck
