@@ -53,7 +53,7 @@ def apply(dist: Path, enabled: bool) -> bool:
     for required in ("COSMETIC_SEA", "Enum.Material.Water", "terra:FillBlock(",
                      "OCEAN_SHOAL_SURFACE", "FORESHORE_SAND_", "OUTER_COAST_SAND_",
                      "SURF_BREAK_", "SEA_BOARDWALK_DECK_", "REEF_ROCK_",
-                     "FISHING_BOAT_HULL_", "FB011_SEA_GEOMETRY_DRIFT_FAIL_CLOSED",
+                     "FISHING_BOAT_HULL_", "FB011_H1_SEA_GEOMETRY_DRIFT_FAIL_CLOSED",
                      "if not RunService:IsStudio() then return end"):
         assert required in text, ("NOT_REAL_SEA_ART", required)
     for forbidden in ("RemoteEvent", "OnServerEvent:Connect(", "DataStoreService",
