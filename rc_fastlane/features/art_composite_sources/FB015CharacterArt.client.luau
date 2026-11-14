@@ -166,28 +166,57 @@ local function attachBeast(model: Model): boolean
     return true
 end
 
+-- Models replicate to clients asynchronously. The first DescendantAdded
+-- for the Model can arrive BEFORE Head/Torso/Humanoid, even though the
+-- server completed construction before parenting it. A one-shot attach
+-- silently leaves the boss looking like the old gray block for this spawn.
+local pending: {[Model]: boolean} = {}
+local MAX_REPLICATION_WAIT_STEPS = 40
+local REPLICATION_WAIT_SECONDS = .15
+
 local function prepare(instance: Instance)
     if not instance:IsA("Model") or instance.Name ~= "Gorogan_ServerRig" then
         return
     end
     local model = instance :: Model
-    if seen[model] or activeBeasts >= MAX_BEASTS then return end
-    -- GoroganRigDriver constructs complete head/torso before parenting the rig.
-    local ok, result = pcall(attachBeast, model)
-    if ok and result == true then
-        seen[model] = true
-        activeBeasts += 1
-    elseif not ok then
-        warn("FB015_GOROGAN_VISUAL_SAFE_SKIP", result)
-    end
+    if seen[model] or pending[model] then return end
+    pending[model] = true
+    task.spawn(function()
+        local done = false
+        for _ = 1, MAX_REPLICATION_WAIT_STEPS do
+            if not model.Parent or seen[model] then break end
+            if activeBeasts < MAX_BEASTS then
+                local ok, result = pcall(attachBeast, model)
+                if ok and result == true then
+                    seen[model] = true
+                    activeBeasts += 1
+                    model:SetAttribute("FB015_BeastArtClientAttached", true)
+                    done = true
+                    break
+                elseif not ok then
+                    warn("FB015_GOROGAN_ART_ATTACH_FAIL_CLOSED", result)
+                    break
+                end
+            end
+            task.wait(REPLICATION_WAIT_SECONDS)
+        end
+        pending[model] = nil
+        if not done and not seen[model] and model.Parent then
+            model:SetAttribute("FB015_BeastArtClientPendingExpired", true)
+            warn("FB015_GOROGAN_ART_REPLICATION_WAIT_EXPIRED")
+        end
+    end)
 end
 
 for _,item in ipairs(Workspace:GetDescendants()) do
     prepare(item)
 end
-Workspace.DescendantAdded:Connect(function(obj)
+local added = Workspace.DescendantAdded:Connect(function(obj)
     if obj:IsA("Model") and obj.Name == "Gorogan_ServerRig" then
-        task.defer(prepare,obj)
+        prepare(obj)
     end
+end)
+script.Destroying:Connect(function()
+    added:Disconnect()
 end)
 print("FB015_GOROGAN_BEAST_ART_SOURCE_ONLY_NOT_STUDIO_VERIFIED")

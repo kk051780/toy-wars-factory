@@ -66,6 +66,21 @@ class SevenArtCandidateSafety(unittest.TestCase):
         self.assertNotIn(b"MUSOU_MINION_",a["client/FB015CharacterArt.client.luau"])
         self.assertNotIn(b"Gorogan_ServerRig",a["server/ArtMinionSilhouette.server.luau"])
 
+    def test_gorogan_client_art_waits_for_replicated_rig_bounded(self):
+        source=art.pinned_art()["client/FB015CharacterArt.client.luau"].decode("utf8")
+        self.assertIn('MAX_REPLICATION_WAIT_STEPS = 40',source)
+        self.assertIn('REPLICATION_WAIT_SECONDS = .15',source)
+        self.assertIn('pending[model] = true',source)
+        self.assertIn('pending[model] = nil',source)
+        self.assertIn('task.spawn(function()',source)
+        self.assertIn('FB015_BeastArtClientAttached',source)
+        self.assertIn('FB015_GOROGAN_ART_REPLICATION_WAIT_EXPIRED',source)
+        self.assertIn('local added = Workspace.DescendantAdded:Connect',source)
+        self.assertIn('added:Disconnect()',source)
+        self.assertNotIn('MUSOU_MINION_',source)
+        self.assertNotIn('humanoid.Health =',source)
+        self.assertNotIn('FireServer(',source)
+
     def test_coastal_solid_floor_is_carved_into_real_water_and_dry_paths(self):
         scripts=art.pinned_art()
         code=scripts["server/H1SeaGroundRepair.server.luau"].decode("utf8")

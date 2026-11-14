@@ -24,7 +24,7 @@ SPECS = (
     ("SEA", "44b39c3d8b0df9290c86a139318ca1bf68356814", "server/H1CoastalSeascape.server.luau", "H1CoastalSeascape.server.luau", "FB011_H1_COASTAL_SEASCAPE_V1"),
     ("COAST_CHANNEL", "652bbcb31d91810a8d5d65d25e769c18ddd1f20f", "server/H1SeaGroundRepair.server.luau", "H1SeaGroundRepair.server.luau", "FB015_REAL_SEA_GROUND_V2"),
     ("MINION", "ed5cd56789abc4a7bc8ee3a44b8982aae4f3ff62", "server/ArtMinionSilhouette.server.luau", "MinionArtSilhouette.server.luau", "ART_MINION_THREE_SILHOUETTES_V1"),
-    ("BEAST", "2ff10db1a4171be9abdc276a43dd21b2401da2d8", "client/FB015CharacterArt.client.luau", "FB015CharacterArt.client.luau", "FB015_GOROGAN_BEAST_VISUAL_V2"),
+    ("BEAST", "bae36c1a22ea649acfed069f5f3ebbc403c3b456", "client/FB015CharacterArt.client.luau", "FB015CharacterArt.client.luau", "FB015_GOROGAN_BEAST_VISUAL_V2"),
 )
 
 
