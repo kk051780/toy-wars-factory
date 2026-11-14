@@ -256,14 +256,20 @@ jobs:
           audit=(src/"client/P0DStudioTrialAudit.client.luau").read_text("utf8")
           game=(src/"server/Game.server.luau").read_text("utf8")
           assert "StudioSolo.canStart(RunService:IsStudio()" in game
-          assert "1人練習は自動開始" in hud
-          assert 'instructions.Visible=false' in hud
+          assert "1人練習 自動開始" in hud
+          assert 'instructions.Visible=s.phase=="ACTIVE" -- tiny objective' in hud
           assert 'progressBadge.Visible=false' in hud
           assert 'dojoBadge.Visible=valid and s.hatchEnabled==true and s.phase=="LOBBY"' in hud
           assert 'local folded=true' in v4 and 'box.Visible=false' in v4
           assert 'screen.Enabled=false' in audit and 'log("START",' in audit
           lock=json.loads((dist/"SOURCE_LOCK.json").read_text("utf8"))
           assert lock["total_scripts"]==65 and len(lock["blobs"])==65
+          import hashlib
+          pins={p.relative_to(src).as_posix(): hashlib.sha1(b"blob "+str(len(p.read_bytes())).encode()+b"\0"+p.read_bytes()).hexdigest() for p in src.rglob("*.luau")}
+          assert lock["blobs"]==pins
+          feature=json.loads((dist/"RC_FEATURE_LOCK.json").read_text("utf8"))
+          assert feature["total_sources"]==65 and feature["source_gitblobs"]==pins
+          assert feature["feature_flags"]["OWNER_FIRSTPLAY_UX_V1"] is True
           print("P0D_OWNER_UX_INITIAL_TEXT_COLLAPSED_SOLO_GUIDE_ACTUAL_GAME_UNCHANGED_PASS")
           PY
           fi
