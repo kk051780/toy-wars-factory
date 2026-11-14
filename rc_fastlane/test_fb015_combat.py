@@ -211,6 +211,47 @@ class ArtCombatQA(unittest.TestCase):
             user_file.unlink()
             self.assertTrue(mod.apply(d,False))
 
+    def test_empty_user_directory_is_not_deleted_by_off(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d=fixture(Path(tmp))
+            mod.apply(d,True)
+            user_dir=d/"IMPORTANT_EMPTY_FOLDER"
+            user_dir.mkdir()
+            with self.assertRaisesRegex(RuntimeError,
+                "ART_COMBAT_CANDIDATE_EXTRA_OR_CHANGED_FILE"):
+                mod.apply(d,False)
+            self.assertTrue(user_dir.is_dir())
+            user_dir.rmdir()
+            self.assertTrue(mod.apply(d,False))
+
+    def test_mode_changes_are_not_deleted_by_off(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d=fixture(Path(tmp))
+            mod.apply(d,True)
+            f=d/"src/client/ArtCombatSlash.client.luau"
+            initial=f.stat().st_mode & 0o777
+            f.chmod(0o600 if initial != 0o600 else 0o644)
+            with self.assertRaisesRegex(RuntimeError,
+                "ART_COMBAT_CANDIDATE_EXTRA_OR_CHANGED_FILE"):
+                mod.apply(d,False)
+            f.chmod(initial)
+            self.assertTrue(mod.apply(d,False))
+
+    def test_preflight_symlink_refused_before_copying(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            escape=root/"EXTERNAL"
+            escape.mkdir()
+            (escape/"secret.txt").write_text("not part of game")
+            link=d/"DANGEROUS_LINK"
+            link.symlink_to(escape, target_is_directory=True)
+            with self.assertRaisesRegex(RuntimeError,"FB015_SYMLINK_ENTRY_REFUSED"):
+                mod.apply(d,True)
+            self.assertFalse(mod.backup_dir(d).exists())
+            self.assertTrue(link.is_symlink())
+            self.assertEqual((escape/"secret.txt").read_text(),"not part of game")
+
     def test_uninstalled_off_is_true_zero_write(self):
         with tempfile.TemporaryDirectory() as tmp:
             d=Path(tmp)/"missing"
