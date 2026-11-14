@@ -155,7 +155,7 @@ local function pumpAudio()
                 end)
                 if not ok or status ~= Enum.AssetFetchStatus.Success then
                     warn("[P0D/TALK] TTS unavailable; subtitles still visible")
-                elseif request.nonce == speechSerial and audioEnabled and gui.Enabled then
+                elseif request.nonce == speechSerial and audioEnabled and gui.Enabled and card.Visible then
                     pcall(function() tts:Play() end)
                 end
             end
@@ -201,7 +201,11 @@ local function receive(packet)
         playSpeech(packet.text, packet.voiceId, seq)
     end
     task.delay(7, function()
-        if seq == speechSerial and card.Parent then card.Visible = false end
+        if seq == speechSerial and card.Parent then
+            card.Visible = false
+            speechSerial += 1 -- invalidate any TTS LoadAsync that finished after caption expiry
+            stopVoice()
+        end
     end)
 end
 remote.OnClientEvent:Connect(receive)
