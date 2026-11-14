@@ -10,10 +10,9 @@ local Workspace = game:GetService("Workspace")
 
 local localPlayer = Players.LocalPlayer
 if not localPlayer then return end
-local arena = Workspace:WaitForChild("TRAP_RAIDERS_S1", 50)
-if not arena then warn("ART_MOTION_NO_ARENA"); return end
-local horde = arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT", 50)
-if not horde then warn("ART_MOTION_NO_HORDE"); return end
+-- Avoid permanent timeout when Roblox streaming delays the original world.
+local arena = Workspace:WaitForChild("TRAP_RAIDERS_S1")
+local horde = arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT")
 
 local FEATURE = "P0D_ART_MOTION_CLIENT_V1"
 local MAX_MODELS = 16
@@ -25,6 +24,13 @@ local records = {}
 local isRunning = true
 local elapsed = 0
 local activeParts = 0
+local lastRound = nil
+local lastHitSerial = {}
+-- Server-created anchored art is never locally re-positioned. We animate only
+-- client-owned clones and reveal server originals when outside the view range.
+local localArt = Instance.new("Folder")
+localArt.Name = "P0D_FB015_MOTION_COSMETIC_CLIENT_ONLY"
+localArt.Parent = Workspace
 
 -- These names refer to the original #374 generated art. We DO NOT recreate
 -- geometry or overlap #379/#381 slash particles or #374's hit sparks.
@@ -56,6 +62,12 @@ end
 local function drop(model)
     local entry = records[model]
     if not entry then return end
+    for _,visual in ipairs(entry.attachments) do
+        if visual.original and visual.original.Parent then
+            visual.original.LocalTransparencyModifier = visual.initialModifier
+        end
+        if visual.copy and visual.copy.Parent then visual.copy:Destroy() end
+    end
     activeParts = math.max(0, activeParts - #entry.attachments)
     records[model] = nil
 end
@@ -70,23 +82,34 @@ local function tryEquip(model)
     for _ in pairs(records) do count += 1 end
     if count >= MAX_MODELS then return false end
 
-    local attachments = {}
+    local originals = {}
     for _,name in ipairs(watchedParts[kind]) do
         local art = model:FindFirstChild(name)
-        if art and art:IsA("BasePart") and art:GetAttribute(FEATURE) ~= true
-            and #attachments + activeParts < MAX_ACTIVE_COSMETIC_PARTS then
-            -- Preserve the author-created 3D geometry and its initial exact
-            -- attachment offset. Re-evaluating relative CFrame from an already
-            -- modified part would accumulate drift across frames.
-            table.insert(attachments,{
-                part=art, offset=core.CFrame:ToObjectSpace(art.CFrame), name=name
-            })
+        if art and art:IsA("BasePart") and art:GetAttribute(FEATURE) ~= true then
+            table.insert(originals, {original=art, name=name})
         end
     end
-    -- The server author marks P0D_ART_MINION_V1 before creating the art.
-    -- Do not lock the observer to an incomplete first child attachment.
-    -- Wait for all expected accessory parts before taking a fixed offset.
-    if #attachments ~= #watchedParts[kind] then return false end
+    -- The author marks a model before all accessories are fully replicated.
+    if #originals ~= #watchedParts[kind]
+        or activeParts + #originals > MAX_ACTIVE_COSMETIC_PARTS then return false end
+    local attachments = {}
+    for _,visual in ipairs(originals) do
+        local source = visual.original
+        local copy = source:Clone()
+        copy.Name = "LOCAL_" .. source.Name
+        copy.Anchored = true
+        copy.CanCollide = false
+        copy.CanTouch = false
+        copy.CanQuery = false
+        copy.Massless = true
+        copy.LocalTransparencyModifier = 0
+        copy.Parent = localArt
+        table.insert(attachments, {
+            original=source, copy=copy, name=visual.name,
+            initialModifier=source.LocalTransparencyModifier,
+            offset=core.CFrame:ToObjectSpace(source.CFrame),
+        })
+    end
     records[model] = {
         core=core, model=model, kind=kind, attachments=attachments,
         prevPos=core.Position, speed=0, hitAt=-100, koAt=-100,
@@ -154,8 +177,37 @@ local function movementFor(kind, name, speed, t, hitAge, koAge)
     end
 end
 
-for _,child in ipairs(horde:GetChildren()) do task.defer(watch,child) end
+-- ChildAdded is registered before the first snapshot (no replication gap).
 local added = horde.ChildAdded:Connect(function(child) task.defer(watch,child) end)
+for _,child in ipairs(horde:GetChildren()) do task.defer(watch,child) end
+
+-- Reuse the same original server-confirmed hit event as #381's slash.
+-- It sends one delivery per actual attack, even during an active damage popup.
+local cue = horde:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1")
+local cueConnection
+if cue:IsA("RemoteEvent") then
+    cueConnection = cue.OnClientEvent:Connect(function(id, hitPos, fromPos, isKO, serial, round)
+        if not isRunning or type(id) ~= "number" or id%1 ~= 0 or id < 1 or id > 9
+            or type(serial) ~= "number" or serial%1 ~= 0 or serial < 1
+            or type(round) ~= "number" or round%1 ~= 0
+            or type(isKO) ~= "boolean" then return end
+        if lastRound ~= round then
+            if lastRound ~= nil and round < lastRound then return end
+            lastRound = round
+            table.clear(lastHitSerial)
+        end
+        if serial <= (lastHitSerial[id] or 0) then return end
+        lastHitSerial[id] = serial
+        local targetName = if id == 9 then "MUSOU_ELITE_TELEGRAPH"
+            else "MUSOU_MINION_" .. tostring(id)
+        local model = horde:FindFirstChild(targetName)
+        local entry = model and records[model]
+        if not entry then return end
+        local now = os.clock()
+        entry.hitAt = now
+        if isKO then entry.koAt = now end
+    end)
+end
 
 local pulse
 pulse = RunService.Heartbeat:Connect(function(dt)
