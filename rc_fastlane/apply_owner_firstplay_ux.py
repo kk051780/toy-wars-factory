@@ -55,9 +55,9 @@ def patch_hud(s: str) -> str:
     s = sub(s, '    dojoBadge.Visible=valid and s.hatchEnabled==true',
             '    dojoBadge.Visible=valid and s.hatchEnabled==true and s.phase=="LOBBY"')
     s = sub(s, '    progressBadge.Visible=s.phase=="ACTIVE"',
-            '    progressBadge.Visible=false -- XP stays server-owned; hide bulky text')
+            '    progressBadge.Visible=s.phase=="ACTIVE" -- tiny XP only, no extra panel')
     s = sub(s, '    instructions.Visible=s.phase=="ACTIVE"',
-            '    instructions.Visible=s.phase=="ACTIVE" -- tiny objective, not a long blocker')
+            '    instructions.Visible=s.phase=="ACTIVE" and not first90Cue.Visible -- never overlap tutorial cue')
     s = sub(s, '    top.Text=string.format("🏆 🔴 %d 点    🔵 %d 点\\n自分:%s・%s　|　卵5こ得点戦",\n            s.scores.RED or 0,s.scores.BLUE or 0,s.team or "?",displayRole(s.role))',
             '    top.Text=string.format("🏆 🔴%d 🔵%d | %s%s", s.scores.RED or 0,s.scores.BLUE or 0,\n        (if s.team=="RED" then "赤" elseif s.team=="BLUE" then "青" else "―"), displayRole(s.role))')
     s = sub(s, '"Instructions", UDim2.new(.55, 0, 0, 42),\n    UDim2.new(.2, 0, 1, -58)',
@@ -66,6 +66,10 @@ def patch_hud(s: str) -> str:
             'instructions.Text = "🥚卵を運ぶ／🏰城をこわす"\ninstructions.Visible=false')
     s = sub(s, '    instructions.Text=if s.scoreMode=="FIVE_EGG_SCORE" and s.phase=="ACTIVE"\n        then "卵は5こ！ E／タップでひろう→自陣の金庫へ。持って逃げても得点！"\n        else "敵の卵に近づいてE／タップで奪取 → 自陣の台へ。城を攻撃しても勝てる！"',
             '    instructions.Text=if s.scoreMode=="FIVE_EGG_SCORE" and s.phase=="ACTIVE"\n        then "🥚5個集めて得点" else "🥚卵を運ぶ／🏰城をこわす"')
+    s = sub(s, 'progressBadge.Visible=false\nprogressBadge.Text="Lv1 | 0/60 XP | 🎯 フォーカス1 | 🐉 熟練1"',
+            'progressBadge.Visible=false\nprogressBadge.TextSize=10\nprogressBadge.Text="Lv1 0/60"')
+    s = sub(s, '    progressBadge.Text="⭐ Lv"..tostring(level).."  "..tostring(xp).."/"..tostring(need)\n        .." XP   🎯"..tostring(focus).."   🐉熟練"..tostring(mastery)',
+            '    progressBadge.Text="Lv"..tostring(level).." "..tostring(xp).."/"..tostring(need)')
     s = sub(s, '    Color3.new(1, 1, 1), 17)\ntop.Text = "EGG RAID RUMBLE · 接続中..."',
             '    Color3.new(1, 1, 1), 14)\ntop.Text = "EGG RAID RUMBLE · 接続中..."')
     assert 'local RunService = game:GetService("RunService")' in s
