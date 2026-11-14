@@ -128,6 +128,17 @@ local function elite(model, core)
         Vector3.new(0,1.02,-1.96),gold,Enum.Material.Neon)
 end
 
+-- BEGIN_ACTUAL_ART_SPARK_POLICY
+-- This exact authored function is executed under pinned native Luau CI.
+local function parseSparkCue(raw, lastSerial)
+    if type(raw) ~= "string" then return nil end
+    local serial, kind = raw:match("^(%d+)|([HK])$")
+    local seq = tonumber(serial)
+    if not seq or seq <= lastSerial or seq % 1 ~= 0 then return nil end
+    return seq, if kind == "K" then 10 else 4
+end
+-- END_ACTUAL_ART_SPARK_POLICY
+
 local function decorate(model)
     if not model or not model:IsA("Model") or not model.Parent then return end
     if model:GetAttribute("P0D_ART_MINION_V1") == true then return end
@@ -173,10 +184,24 @@ local function decorate(model)
             item.MaxDistance = 44
         end
     end
-    table.insert(equipped,{
+    -- Wire actual server-confirmed hit serial; repeated hits are never
+    -- inferred from Core.Color or a 140ms Heartbeat sampling window.
+    local state={
         model=model, core=core, moving=moving, sparks=sparks,
-        typeId=typeId, lastHit=false, lastDeath=false, id=numeric or 9,
-    })
+        typeId=typeId, lastSparkSeq=0, id=numeric or 9,
+        sparkConnection=nil,
+    }
+    local function emitActualHitSpark()
+        local seq, burst = parseSparkCue(
+            core:GetAttribute("P0D_ART_SPARK_V1"), state.lastSparkSeq)
+        if not seq or not model.Parent then return end
+        state.lastSparkSeq = seq
+        sparks:Emit(burst)
+    end
+    state.sparkConnection=core:GetAttributeChangedSignal("P0D_ART_SPARK_V1")
+        :Connect(emitActualHitSpark)
+    emitActualHitSpark() -- reconcile a hit already committed before binding
+    table.insert(equipped,state)
 end
 
 -- Horde.reset destroys and recreates its nine Models each round; attaching
@@ -207,20 +232,11 @@ heart = RunService.Heartbeat:Connect(function(dt)
     for i=#equipped,1,-1 do
         local item = equipped[i]
         if not item.model.Parent or not item.moving.Parent then
+            if item.sparkConnection then item.sparkConnection:Disconnect() end
             table.remove(equipped,i)
         else
-            -- Tiny cosmetic breathing/cloak motion; never touches author arms,
-            -- original NPC movement or server hit/score logic.
+            -- Only cosmetic breathing/cloak motion. Sparks are event-driven.
             item.moving.Transparency = .12 + .08*(.5+.5*math.sin(cycle*3+item.id))
-            local flashing = item.core.Color.R > .9
-                and item.core.Color.G > .8 and item.core.Color.B < .7
-            if flashing and not item.lastHit then item.sparks:Emit(4) end
-            item.lastHit = flashing
-            local cue = item.core:FindFirstChild("CombatCue")
-            local tag = if cue and cue:IsA("BillboardGui") then cue:FindFirstChildOfClass("TextLabel") else nil
-            local dead = tag ~= nil and string.find(tag.Text, "撃破") ~= nil
-            if dead and not item.lastDeath then item.sparks:Emit(10) end
-            item.lastDeath = dead
         end
     end
 end)
@@ -228,5 +244,9 @@ script.Destroying:Connect(function()
     alive = false
     added:Disconnect()
     if heart then heart:Disconnect() end
+    for _,item in ipairs(equipped) do
+        if item.sparkConnection then item.sparkConnection:Disconnect() end
+    end
+    table.clear(equipped)
 end)
-print("ART_MINION_V1_SILHOUETTES_ATTACHED_STUDIO_ONLY_FUN_PENDING")
+print("ART_MINION_V1_REAL_SERVER_SPARK_CUE_STUDIO_ONLY_FUN_PENDING")
