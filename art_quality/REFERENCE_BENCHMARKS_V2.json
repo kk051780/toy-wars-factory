@@ -1,0 +1,214 @@
+{
+  "schema": "P0D_ART_TOP_CLASS_REFERENCE_V2",
+  "updated_jst": "2026-11-15",
+  "owner_directive": "TRAP RAIDERS art to rival leading Roblox world showcases AND top-tier battle games while preserving development speed",
+  "target": "TOP_CLASS_ROBLOX_BATTLE_VISUALS",
+  "overall_grade_goal": 4.5,
+  "comparison_rule": "PC >=4.5/5 with high-end reference delta <=0.25; baseline Android >=4.0/5 with real touch responsiveness and smooth performance. No photographic realism mandate on mobile.",
+  "no_auto_beauty_signoff": true,
+  "video_playback_verified": false,
+  "user_uploaded_reference_image": "2026-11-15 screenshot of Google Video search results, not the source videos",
+  "user_referenced_clips": [
+    {
+      "id": "ref01",
+      "platform": "YouTube",
+      "display_title": "ロブロックスで最も美しいバーチャル空間を体験しよう…",
+      "visible_date": "2024-05-10",
+      "visible_duration_seconds": 11,
+      "link": null,
+      "link_match": "UNRESOLVED",
+      "source_verification": "SEARCH_SCREENSHOT_ONLY",
+      "full_video_watched": false,
+      "requested_focus": [
+        "cinematic environment",
+        "lighting",
+        "atmosphere"
+      ],
+      "notes": "Title truncated in supplied screenshot; do not substitute a similar video."
+    },
+    {
+      "id": "ref02",
+      "platform": "YouTube",
+      "display_title": "美しい3Dのバーチャル空間を体験しよう🌐 #Roblox #ロブロックス",
+      "visible_date": "2023-11-07",
+      "visible_duration_seconds": 25,
+      "link": "https://www.youtube.com/watch?v=A6FNDsw8XHQ",
+      "link_match": "EXACT_TITLE_AND_DATE",
+      "source_verification": "PUBLIC_METADATA_CONFIRMED_FRAMES_UNAVAILABLE",
+      "full_video_watched": false,
+      "requested_focus": [
+        "geometry",
+        "3D scenic composition",
+        "visual richness"
+      ]
+    },
+    {
+      "id": "ref03",
+      "platform": "TikTok",
+      "display_title": "たくさんの美しい世界が広がるバーチャル空間 #Roblox…",
+      "visible_date": "2023-10-07",
+      "visible_duration_seconds": 29,
+      "link": null,
+      "link_match": "UNRESOLVED",
+      "source_verification": "SEARCH_SCREENSHOT_ONLY_TIKTOK_ROBOTS_BLOCKED",
+      "full_video_watched": false,
+      "requested_focus": [
+        "range of worlds",
+        "coherent visual identity"
+      ],
+      "notes": "TikTok result from official-like account robloxjp as displayed; independent authorship not confirmed."
+    },
+    {
+      "id": "ref04",
+      "platform": "TikTok",
+      "display_title": "Roblox（ロブロックス）には、古き良き日本の風景を楽しめるバーチャル空間もあるんです。",
+      "visible_date": "2024-01-25",
+      "visible_duration_seconds": 26,
+      "link": null,
+      "related_same_title_youtube": "https://www.youtube.com/watch?v=viZ6v-Q6Fes",
+      "link_match": "SAME_TITLE_YOUTUBE_FOUND_NOT_VIDEO_EQUIVALENCE_VERIFIED",
+      "source_verification": "SEARCH_SCREENSHOT_PLUS_YOUTUBE_TITLE_METADATA",
+      "full_video_watched": false,
+      "requested_focus": [
+        "Japanese architecture",
+        "natural materials",
+        "period environment"
+      ]
+    }
+  ],
+  "additional_grounded_references": [
+    {
+      "id": "fushimi_castle",
+      "work": "Fushimi Castle - [SHOWCASE]",
+      "creator": "Hiuh29",
+      "url": "https://www.roblox.com/games/4901271746/Fushimi-Castle-SHOWCASE",
+      "support": "https://devforum.roblox.com/t/showcase-japanese-castle/525700",
+      "evidence_status": "PUBLIC_STILL_SCREENSHOT_REVIEWED_NOT_FULL_PLAYTEST",
+      "observed_from_stills": [
+        "layered recognizable castle roofs and stone base",
+        "warm sunset light and dramatic cloudy sky",
+        "environmental composition using trees and autumn leaves",
+        "distant/near architectural depth"
+      ],
+      "application_to_p0d": "World/castle/terrain lighting detail reference; battle readability still required",
+      "claim_is_top_ranked": false
+    },
+    {
+      "id": "the_strongest_battlegrounds",
+      "work": "The Strongest Battlegrounds",
+      "url": "https://www.roblox.com/games/",
+      "reference_image": "https://cms-cdn.now.gg/cms-media/2024/07/RobloxTSB_Combos_EN_8.jpg",
+      "evidence_status": "THIRD_PARTY_STILL_SCREENSHOT_REVIEWED_NOT_FULL_PLAYTEST",
+      "observed_from_stills": [
+        "directional combat trails convey motion",
+        "high-contrast effects and character silhouette",
+        "VFX scale and time-limited screen occupation"
+      ],
+      "application_to_p0d": "Combat attack/hit telegraph reference, not world-detail rating",
+      "claim_is_top_ranked": false
+    },
+    {
+      "id": "rivals",
+      "work": "RIVALS",
+      "url": "https://www.roblox.com/games/",
+      "evidence_status": "CANDIDATE_METADATA_ONLY",
+      "application_to_p0d": "HUD clarity and competitive legibility to investigate",
+      "claim_is_top_ranked": false
+    },
+    {
+      "id": "related_japan_video",
+      "work": "ロブロックスで最も美しい日本のバーチャル空間に浸ってみませんか",
+      "url": "https://www.youtube.com/watch?v=GtF_fziaUHk",
+      "evidence_status": "RELATED_OFFICIAL_VIDEO_METADATA_NOT_FULL_VIDEO",
+      "application_to_p0d": "Additional search seed, not a substitute for 2024-05-10 screenshot clip",
+      "claim_is_top_ranked": false
+    }
+  ],
+  "grade_dimensions": [
+    {
+      "id": "world_silhouette",
+      "weight": 0.15,
+      "reference": "fushimi_castle",
+      "criterion": "城・山・樹木・通路が遠景でも立体的かつ識別できる"
+    },
+    {
+      "id": "environment_materials",
+      "weight": 0.15,
+      "reference": "fushimi_castle",
+      "criterion": "地面・石材・水面・草木の材質やディテールが安価なNeon箱に見えない"
+    },
+    {
+      "id": "lighting_cinematics",
+      "weight": 0.15,
+      "reference": "fushimi_castle",
+      "criterion": "空・光・霧・影の奥行と色調、天候変化が自然で統一される"
+    },
+    {
+      "id": "character_beast_art",
+      "weight": 0.15,
+      "reference": "fushimi_castle",
+      "criterion": "兵士・職業・魔獣それぞれ固有シルエット、モーション、材質品質"
+    },
+    {
+      "id": "combat_vfx_impact",
+      "weight": 0.15,
+      "reference": "the_strongest_battlegrounds",
+      "criterion": "攻撃予兆→動作→衝突→反応→消滅が明瞭で爽快、偽命中なし"
+    },
+    {
+      "id": "motion_animation",
+      "weight": 0.1,
+      "reference": "the_strongest_battlegrounds",
+      "criterion": "走る・戦う・倒れる・飛行・ボスが硬い簡易Part動作に見えない"
+    },
+    {
+      "id": "battle_readability",
+      "weight": 0.1,
+      "reference": "the_strongest_battlegrounds",
+      "criterion": "Androidでも敵/味方/目的/HPを読め、常駐文字で画面を覆わない"
+    },
+    {
+      "id": "world_cohesion",
+      "weight": 0.05,
+      "reference": "fushimi_castle",
+      "criterion": "城・海・森・魔獣・UIの世界観が同じゲームとして調和する"
+    }
+  ],
+  "no_go_conditions": [
+    "no genuine video-frame review for supplied reference clips",
+    "any category only source-approved without Studio evidence",
+    "critical route/camera collision or unreadable gameplay",
+    "visuals rely on labels or placeholder geometry instead of model quality",
+    "PC or Android FPS below committed target",
+    "OWNER has not explicitly accepted"
+  ],
+  "delivery_process": {
+    "fast_lint": "Every art PR: source-lock, single authority, illegal overlays, file size delta, placeholders; parallel 10-category independent producer",
+    "art_candidate": "Each substantially changed world or combat pack: 8 fixed-camera comparison scenes plus 4 short action clips for presentation; only relevant clips per incremental PR, full suite at RC batch",
+    "visual_review": "Expert/Human side-by-side against actual validated reference frames, 1-5 per dimension with .5 granularity, notes and severity; no AI-only PASS",
+    "rc_gate": "Sole #220 authenticated writer, latest HEAD nonforce CAS, exact Rojo and source, same-head artifact receipts; Studio before/after PC Android and Owner at publication gate",
+    "speed": "Do not pause source development awaiting owner review for each small asset; verify safety at each PR, batch real visual reviews at RC milestones. P0 defects always take priority."
+  },
+  "status": "BENCHMARK_REGISTERED_REFERENCE_FULL_VIDEO_REVIEW_INCOMPLETE",
+  "owner_accepted": false,
+  "mobile_playable_target": "Real low-end Android p10>=25 median>=30 during 15-minute session; PC art 4.5; OWNER approves only after real Studio and age-appropriate fun verification.",
+  "youtube_search_query": "ロブロックス リアル",
+  "youtube_discovery_titles": [
+    {
+      "title": "The Most Realistic Roblox Games 2",
+      "url": "https://www.youtube.com/watch?v=Xvc3P1AUy-o",
+      "status": "METADATA_ONLY_NOT_FULL_VIEWED"
+    },
+    {
+      "title": "MOST REALISTIC ROBLOX GAMES...",
+      "url": "https://www.youtube.com/watch?v=d-0Ic18fag4",
+      "status": "METADATA_ONLY_NOT_FULL_VIEWED"
+    },
+    {
+      "title": "Most REALISTIC Roblox Clips",
+      "url": "https://www.youtube.com/watch?v=qltwILSWsTM",
+      "status": "METADATA_ONLY_NOT_FULL_VIEWED"
+    }
+  ],
+  "performance_source": "https://create.roblox.com/docs/performance-optimization/test-on-hardware"
+}
