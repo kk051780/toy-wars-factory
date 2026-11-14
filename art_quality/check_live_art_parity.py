@@ -40,7 +40,9 @@ def classify(source: str) -> str:
         return "CONDITIONAL_OR_UNKNOWN"
     return "NO_TOP_GUARD_SOURCE_ONLY"
 
-def inspect(place: Path) -> dict:
+def inspect(place: Path, expected_scripts: int = 80) -> dict:
+    if not 80 <= expected_scripts <= 96:
+        raise ValueError('EXPECTED_SCRIPT_COUNT_OUT_OF_RANGE')
     raw = place.read_bytes()
     if not raw or len(raw) > MAX_PLACE_BYTES:
         raise ValueError("PLACE_SIZE_INVALID")
@@ -80,13 +82,14 @@ def inspect(place: Path) -> dict:
         if counts.get((kind, name), 0) != 1:
             problems.append(f"GAMEPLAY_AUTHORITY_CARDINALITY:{name}")
     script_count = sum(counts.values())
-    if script_count != 80:
-        problems.append("NOT_80_AUTHENTIC_LUA_SOURCES")
+    if script_count != expected_scripts:
+        problems.append(f"EXPECTED_{expected_scripts}_ACTUAL_{script_count}_LUA_SOURCE_MISMATCH")
     top_only = sum(item["source_guard"] == "TOP_STUDIO_ONLY" for item in report)
     return {
         "schema": "P0D_LIVE_ART_SOURCE_PARITY_GATE_V1",
         "place_bytes": len(raw), "place_sha256": hashlib.sha256(raw).hexdigest(),
         "script_count": script_count,
+        "expected_script_count": expected_scripts,
         "source_gate": "PASS" if not problems else "FAIL",
         "source_errors": problems,
         "expected_visual_groups": len(ART_INSTANCES),
@@ -104,9 +107,10 @@ def main(argv=None) -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--place", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--expected-scripts", type=int, default=80)
     a = p.parse_args(argv)
     try:
-        result = inspect(a.place)
+        result = inspect(a.place, expected_scripts=a.expected_scripts)
     except (OSError, ValueError, ET.ParseError) as exc:
         result = {"schema": "P0D_LIVE_ART_SOURCE_PARITY_GATE_V1",
                   "source_gate": "FAIL", "live_art_decision": "LIVE_ART_NO_GO",
