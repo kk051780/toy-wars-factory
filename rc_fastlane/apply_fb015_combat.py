@@ -103,7 +103,7 @@ def apply(dist: Path, enabled: bool) -> bool:
     # All fail-closed preflight checks run before the first file write.
     (dist / "src" / DEST).write_bytes(visual)
     starter["ArtCombatSlash"] = {"$path": "src/client/ArtCombatSlash.client.luau"}
-    project_path.write_text(json.dumps(project, ensure_ascii=False, indent=2) + "\\n", encoding="utf8")
+    project_path.write_text(json.dumps(project, ensure_ascii=False, indent=2) + chr(10), encoding="utf8")
     source_lock["total_scripts"] = BASE + 1
     source_lock["blobs"] = new_blobs
     source_lock["art_combat"] = receipt
