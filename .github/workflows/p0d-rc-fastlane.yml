@@ -2236,3 +2236,74 @@ jobs:
           path: /tmp/p0d_live_safe_castle81_artifact/*
           retention-days: 14
           if-no-files-found: error
+
+
+      - name: 'P0 #431 PRIVATE MapBuilder live-forest 60 decorations RC81 to RC82 real-source QA'
+        if: env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_live_safe_castle81_source
+          FINAL=/tmp/p0d_live_forest_mobile60_private82
+          OUT=/tmp/p0d_live_forest_mobile60_report
+          PLACE="$OUT/P0D_RC82_PRIVATE_LIVE_FOREST_STUDIO.rbxlx"
+          mkdir -p "$OUT"
+          test -f "$BASE/SOURCE_LOCK.json"
+          python3 -B -m unittest discover -s rc_fastlane -p test_live_forest_safe.py -v
+          python3 -B rc_fastlane/apply_live_forest_safe.py --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_live_forest_safe.py --base "$BASE" --out "$FINAL" --enabled true
+          test "$(find "$FINAL/src" -name '*.luau' | wc -l)" -eq 82
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B rc_fastlane/verify_live_forest_safe.py --dist "$FINAL" \
+            --place "$PLACE" --receipt "$OUT/LIVE_FOREST_SOURCE_RECEIPT.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/ART_SOURCE_REPORT.json"
+          python3 -B art_quality/check_mobile_fun.py \
+            --out "$OUT/MOBILE_KID_FUN_REPORT.json"
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          python3 - <<'PY'
+          import json,hashlib,os
+          from pathlib import Path
+          out=Path('/tmp/p0d_live_forest_mobile60_report')
+          place=out/'P0D_RC82_PRIVATE_LIVE_FOREST_STUDIO.rbxlx'
+          source=json.loads((out/'LIVE_FOREST_SOURCE_RECEIPT.json').read_text())
+          art=json.loads((out/'ART_SOURCE_REPORT.json').read_text())
+          assert source['scripts']==source['rojo_source_exact']==82
+          assert source['original81_byte_identical'] is True
+          assert source['public_default']=='OFF' and source['owner_accepted'] is False
+          assert source['art_decision']=='ART_NO_GO'
+          assert art['source']['script_count']==82,art['source']
+          assert art['source']['source_gate']=='PASS',art['source']
+          assert art['art_decision']=='ART_NO_GO' and art['owner_accepted'] is False
+          receipt={
+            'schema':'P0D_LIVE_FOREST_PRIVATE82_STAGE_V1',
+            'official_parent':'bab8e93bfe0bce0baddfe64ee2898962486058af',
+            'github_checkout_sha':os.environ['GITHUB_SHA'],
+            'official_rc_adopted':False,'script_count':82,
+            'original81_all_sources_byte_identical':True,
+            'new_mapbuilder_only_forest_source':1,
+            'nonstudio_default':'OFF','private_server_optin':'P0D_PRIVATE_LIVE_FOREST',
+            'static_forest_parts':60,'new_lights':0,'new_collider':0,
+            'place_bytes':place.stat().st_size,
+            'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+            'source_gate':'PASS','live_art_decision':'LIVE_ART_NO_GO',
+            'art_decision':'ART_NO_GO','mobile_decision':'MOBILE_NO_GO',
+            'fun_decision':'FUN_NO_GO','owner_accepted':False,
+            'studio_pc_art':'NOT_TESTED','private_live_android':'NOT_TESTED',
+            'android_15min_fps':'NOT_TESTED','child_first3min':'NOT_TESTED'
+          }
+          (out/'LIVE_FOREST82_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_LIVE_FOREST_RC82_SOURCE_QA_PASS_NO_GO',receipt['place_bytes'],receipt['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always() && env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        with:
+          name: P0D-PRIVATE-RC82-LIVE-FOREST-60-MOBILE-NOT-APPROVED
+          path: /tmp/p0d_live_forest_mobile60_report/*
+          retention-days: 14
+          if-no-files-found: warn
