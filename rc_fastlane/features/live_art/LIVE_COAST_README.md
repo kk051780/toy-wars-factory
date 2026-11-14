@@ -6,7 +6,7 @@ The new `P0DLiveCoastalVista.server.luau` Script adds only a **decorative mariti
 
 ## Hard runtime safety contract
 
-- **Default OFF in all engines, including private Roblox non-Studio**. No source deploy automatically enables this feature. Requires server-side `workspace:GetAttribute("P0D_PRIVATE_LIVE_COAST")==true` configured on a separately authorized private test place **before the Script starts**. Client toggles do not authorize server changes.
+- **Default OFF in all engines, including private Roblox non-Studio**. In non-Studio the server first rejects public instances with an empty `game.PrivateServerId`, even if the Workspace flag were accidentally set. No source deploy automatically enables this feature. Requires server-side `workspace:GetAttribute("P0D_PRIVATE_LIVE_COAST")==true` configured on a separately authorized private test place **before the Script starts**. Client toggles do not authorize server changes.
 - Checks the real `TRAP_RAIDERS_S1`, `GrassArena` size 250×142 at Y=-3, `CenterRoad` Z=0 and width 24, and northern wall `ARENA_BOUNDARY_N` Z=-71 and width 4; missing/moved anchors => **no write**. Explicitly rejects the Studio-expanded 370×294 scene.
 - 40 parts total: two colored smooth surface bands, six sand strips, twelve static foam bands, eight rocks, two islands (base/palm/crown each), two sailboats (hull/mast/sail each). The near ocean only begins north of the original boundary. No Terrain editing, no physics water, no collidable or queryable geometry; no lights, particles, Tween, heartbeat, ScreenGui, permanent labels.
 - No modifications to the seven studio-gated legacy visual scripts. Other coastal/ocean feature source and physics are unchanged. Source/Mode switch is atomically reversible.
