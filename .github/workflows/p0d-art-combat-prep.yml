@@ -6,6 +6,7 @@ on:
       - feature/p0d-prep-fb015-minion-combat-composite-20261114
     paths:
       - 'rc_fastlane/apply_fb015_combat.py'
+      - 'rc_fastlane/fb015_fs_guard.py'
       - 'rc_fastlane/test_fb015_combat.py'
       - 'rc_fastlane/features/fb015_combat/**'
       - 'rc_fastlane/features/art_minion/**'
@@ -18,6 +19,7 @@ on:
       - rc/p0d-s1-kids-rc01
     paths:
       - 'rc_fastlane/apply_fb015_combat.py'
+      - 'rc_fastlane/fb015_fs_guard.py'
       - 'rc_fastlane/test_fb015_combat.py'
       - 'rc_fastlane/features/fb015_combat/**'
       - 'rc_fastlane/features/art_minion/**'
