@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import fcntl
 import os
 from pathlib import Path
 import shutil
@@ -20,10 +21,11 @@ FEATURE = "ART_MINION_THREE_SILHOUETTES_V1"
 SLASH = "ART_COMBAT_SLASH_READONLY_V1"
 AUTHOR = ROOT / "features/art_minion/MinionArtSilhouette.server.luau"
 DEST = "server/ArtMinionSilhouette.server.luau"
-PIN = "ed5cd56789abc4a7bc8ee3a44b8982aae4f3ff62"
+PIN = "4503f3139c5b7dff6ece7c93afe00fb7604bba39"
 HIT_CUE_BLOB = "6c613406c4c72be31b2a5c38177d54f1af78e617"
 SLASH_CLIENT_BLOB = "c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba"
 BASE = 67
+MANIFEST = ".P0D_FB015_COMPOSITE_EXACT_MANIFEST.json"
 
 def require(ok, reason):
     if not ok:
@@ -76,22 +78,71 @@ def baseline(dist: Path):
         require(token not in author, "ART_MINION_AUTHORITIES_FORBIDDEN_"+repr(token))
     return source, pins, locks, author
 
-def compose(dist: Path, out: Path, enabled: bool):
+def manifest_contents(stage: Path) -> dict[str, str]:
+    return {p.relative_to(stage).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in sorted(stage.rglob("*")) if p.is_file()
+            and p.relative_to(stage).as_posix() != MANIFEST}
+
+def generate_manifest(stage: Path, dist: Path, out: Path):
+    data = {
+        "id": "P0D_FB015_COMPOSITE_PRIVATE68_EXACT_TREE",
+        "input": str(dist),
+        "output": str(out),
+        "files": manifest_contents(stage),
+    }
+    (stage / MANIFEST).write_text(
+        json.dumps(data, ensure_ascii=False, sort_keys=True, indent=2)+"\\n", "utf8")
+
+def verify_private_output(out: Path, dist: Path):
+    mf = out / MANIFEST
+    require(mf.is_file(), "ROLLBACK_REFUSED_NOT_OUR_PRIVATE68")
+    record = json.loads(mf.read_text("utf8"))
+    require(record.get("id") == "P0D_FB015_COMPOSITE_PRIVATE68_EXACT_TREE",
+            "ROLLBACK_REFUSED_WRONG_MANIFEST")
+    require(record.get("output") == str(out) and record.get("input") == str(dist),
+            "ROLLBACK_REFUSED_WRONG_INPUT_OUTPUT_IDENTITY")
+    require(record.get("files") == manifest_contents(out),
+            "ROLLBACK_REFUSED_ADDED_OR_MODIFIED_OR_MISSING_FILE")
+    return record
+
+def _compose_locked(dist: Path, out: Path, enabled: bool):
     dist = dist.resolve()
     out = out.resolve()
-    require(out != dist and out.parent != dist and dist not in out.parents,
+    require(out != dist and out not in dist.parents and dist not in out.parents,
             "PRIVATE_OUTPUT_MUST_BE_SEPARATE")
+    # An interrupted OFF is resumed only from our own pre-authorized tombstone.
+    journal = out.with_name(out.name + ".fb015_delete_journal.json")
+    tombstone = out.with_name(out.name + ".fb015_deleting")
     if not enabled:
+        if tombstone.exists():
+            require(not out.exists() and journal.is_file(),
+                    "AMBIGUOUS_COMPOSITE_OFF_RETRY")
+            record = json.loads(journal.read_text("utf8"))
+            require(record.get("input") == str(dist)
+                    and record.get("output") == str(out)
+                    and record.get("id") == "P0D_FB015_COMPOSITE_PRIVATE68_EXACT_TREE",
+                    "INVALID_COMPOSITE_DELETE_JOURNAL")
+            shutil.rmtree(tombstone)
+            journal.unlink()
+            print("ART_MINION_COMBO_INTERRUPTED_OFF_CLEANUP_RECOVERED")
+            return True
         if not out.exists():
+            require(not journal.exists(), "STALE_COMPOSITE_DELETE_JOURNAL")
             print("ART_MINION_COMBO_OFF_ZERO_WRITE")
             return False
+        require(not journal.exists(), "STALE_COMPOSITE_DELETE_JOURNAL")
+        record = verify_private_output(out, dist)
         require((out / "src" / DEST).is_file(), "NO_PRIVATE_MINION_TO_ROLLBACK")
         feature = json.loads((out / "RC_FEATURE_LOCK.json").read_text("utf8"))
         require(feature["feature_flags"].get(FEATURE) is True,
                 "COMPOSITE_ROLLBACK_REFUSED_MISSING_ID")
         require(blob((out / "src" / DEST).read_bytes()) == PIN,
                 "COMPOSITE_ROLLBACK_REFUSED_DRIFT")
-        shutil.rmtree(out)
+        # Only after verifying EVERY file may we authorize removal.
+        journal.write_text(json.dumps(record, sort_keys=True)+"\\n", "utf8")
+        os.rename(out, tombstone)
+        shutil.rmtree(tombstone)
+        journal.unlink()
         print("ART_MINION_COMBO_PRIVATE68_OFF_RETAINED_ORIGINAL67")
         return True
     require(out != dist and not out.exists(), "COMPOSITE_ALREADY_PRESENT")
@@ -138,9 +189,24 @@ def compose(dist: Path, out: Path, enabled: bool):
                 "COMPOSITE_MODIFIED_BASE_SCRIPT")
         require({p: blob(v) for p, v in sorted(actual.items())} == next_pins,
                 "COMPOSITE_SOURCE_BLOB_DRIFT")
+        generate_manifest(staged, dist, out)
         os.rename(staged, out)
     print("P0D_ART_COMBAT_MINION_PRIVATE68_SOURCE_EXACT_67_PRESERVED_PASS")
     return True
+
+def compose(dist: Path, out: Path, enabled: bool):
+    # Linux CI file lock serializes OFF against an in-flight enable.
+    dist = dist.resolve()
+    out = out.resolve()
+    require(out != dist and out not in dist.parents and dist not in out.parents,
+            "PRIVATE_OUTPUT_MUST_BE_SEPARATE")
+    lock = out.with_name("." + out.name + ".fb015_lock")
+    with lock.open("a+b") as fh:
+        fcntl.flock(fh.fileno(), fcntl.LOCK_EX)
+        try:
+            return _compose_locked(dist, out, enabled)
+        finally:
+            fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
 
 def main():
     ap = argparse.ArgumentParser()
