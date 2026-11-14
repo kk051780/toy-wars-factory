@@ -1,0 +1,52 @@
+{
+  "schema": "P0D_FB005_PREP_SOURCE_LOCK_V1",
+  "feedback_id": "FB-005",
+  "feature_id": "FB005_STUDIO_SOLO_TEAM_BOTS_CLASSIC_V1",
+  "owner_priority": "P0_CORE_GAMEPLAY",
+  "base_official_rc_sha": "43543378f976374e2cac2d68b3136ac355d3191b",
+  "adapter": {
+    "path": "rc_fastlane/apply_fb005_solo_bots.py",
+    "source_gitblob": "beaa7fec45a1f1aaa1fcfadcdf9b8edf69660493"
+  },
+  "authored_module": {
+    "path": "rc_fastlane/features/fb005_solo/SoloTeamBots.luau",
+    "source_gitblob": "0334a56f3aa1f4ce8d67e547cf60f4582219bc8e"
+  },
+  "scope": {
+    "original_scripts": 66,
+    "private_scripts": 67,
+    "modified_existing": [
+      "server/Game.server.luau"
+    ],
+    "added": [
+      "server/SoloTeamBots.luau"
+    ],
+    "unchanged_original_scripts": 65,
+    "ruleset": "CLASSIC_SINGLE_EGG_STUDIO_ONLY",
+    "solo_max_humans": 1,
+    "ally_bots": 2,
+    "opponent_bots": 3,
+    "authority": "only original Game can write scoreboard, egg owners, player/bot HP; module emits local server intents"
+  },
+  "safety": [
+    "no new RemoteEvent",
+    "no DataStore edits",
+    "no paid/publish",
+    "OFF byte-exact previous66",
+    "bot start/tick pcall fail closed",
+    "pathfinding epoch guard",
+    "out of scope H2 five-egg bot rules",
+    "do not merge wholesale"
+  ],
+  "verification": {
+    "source_regression": "CI_REQUIRED",
+    "luau_compiler": "CI_REQUIRED",
+    "source_exact_rojo": "CI_REQUIRED",
+    "engine_studio_single_player": "NOT_TESTED",
+    "engine_studio_two_clients": "NOT_TESTED",
+    "mobile_android": "NOT_TESTED",
+    "human_fun": "FUN_NO_GO"
+  },
+  "roll_back": "omit post-official FB005 adapter and rebuild previous66 locked source",
+  "notes": "This is not a finished AI feature; physical navigation, scoring and human combat still need real Studio acceptance. Must reconcile same Game edits with #363 READY and #376 lobby."
+}
