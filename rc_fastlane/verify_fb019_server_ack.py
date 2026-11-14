@@ -26,7 +26,10 @@ def verify(dist:Path,place:Path,receipt:Path):
     assert s.count("remote.OnServerEvent:Connect(")==1
     assert s.count('kind="P0D_ATTACK_RESULT"')==1
     assert s.count('attackResponse("HIT"')==5
-    assert s.count('attackResponse("MISS"')==3
+    assert s.count('attackResponse("MISS"')==6
+    assert "if hum.Health<beforeHp then" in s
+    assert "if victim.hum.Health<beforeHp then" in s
+    assert "if match.hp[enemy]<priorCastleHp then" in s
     assert "if ok and hum and hum.Health>0 then" in s
     for x in ('Rules.validSeq(data.seq','Rules.canAttack(now, lastAttack',
               'horde:hit(', 'SoloTeamBots.tryHumanHit(',
