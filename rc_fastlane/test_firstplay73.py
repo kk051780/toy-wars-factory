@@ -40,7 +40,7 @@ class FirstPlay73(unittest.TestCase):
             'source=author["lobby"].patch_game(source)',
             'source=author["solo"].patch_game(source)',
             'updated[CONFIG]=author["ready"].patch_config(',
-            'updated[HUD]=qa_firstplay_p0.patch_hud('
+            'updated[HUD]=qa_firstplay_p0.patch_hud(',
             'author["ready"].patch_hud(',
             'updated[V4]=author["lobby"].patch_v4(',
             'assert source.count("remote.OnServerEvent:Connect(")==1',
