@@ -46,7 +46,11 @@ local function visibleEnemy(player)
     if not root or not player.Team then return nil end
     local name = player.Team.Name
     if name ~= "RED" and name ~= "BLUE" then return nil end
+    local inspected = 0
+    local raycasts = 0
     for _, enemy in ipairs(Players:GetPlayers()) do
+        inspected += 1
+        if inspected > 12 or raycasts >= 3 then break end -- bound whole-server scan
         if enemy ~= player and enemy.Team
             and (enemy.Team.Name == "RED" or enemy.Team.Name == "BLUE")
             and enemy.Team ~= player.Team then
@@ -57,6 +61,7 @@ local function visibleEnemy(player)
                     local params = RaycastParams.new()
                     params.FilterType = Enum.RaycastFilterType.Exclude
                     params.FilterDescendantsInstances = {player.Character, enemy.Character}
+                    raycasts += 1
                     local blocked = Workspace:Raycast(root.Position, d, params)
                     if blocked == nil then return enemy, other end
                 end
@@ -88,7 +93,12 @@ local function sourceFacts(player, speaker, mode, arena)
             facts.urgent = true
             return facts
         end
-        local enemy, enemyRoot = visibleEnemy(player)
+        -- The original Game alone owns round phase. No inferred phase from team
+        -- or proximity: #220 must publish this read-only attribute in the host.
+        local enemy, enemyRoot = nil, nil
+        if arena:GetAttribute("P0D_AUTH_ROUND_PHASE") == "ACTIVE" then
+            enemy, enemyRoot = visibleEnemy(player)
+        end
         if enemy and enemyRoot then
             facts.signal = "ENEMY_ALERT"
             facts.areaCode = areaFor(enemyRoot.Position)
@@ -253,7 +263,10 @@ local function start()
         while active and active.folder == folder and folder.Parent
             and epoch == generation and ServerStorage:GetAttribute(FLAG) == true do
             for _,player in ipairs(Players:GetPlayers()) do
-                local enemy = visibleEnemy(player)
+                local enemy = nil
+                if arena:GetAttribute("P0D_AUTH_ROUND_PHASE") == "ACTIVE" then
+                    enemy = visibleEnemy(player)
+                end
                 if enemy and lastAlertTarget[player] ~= enemy.UserId then
                     if speak(player, "NAVI", "AUTO_ENEMY_ALERT", arena) == "ENEMY_ALERT" then
                         lastAlertTarget[player] = enemy.UserId
@@ -284,17 +297,29 @@ local reconcileBusy = false
 local function reconcile()
     if reconcileBusy then return end
     reconcileBusy = true
-    if ServerStorage:GetAttribute(FLAG) == true then
-        if not active then start() end
-    else
+    local ok, reason = pcall(function()
+        if ServerStorage:GetAttribute(FLAG) == true then
+            if not active then start() end
+        else
+            stop()
+        end
+    end)
+    reconcileBusy = false -- reset even if the start() constructor throws
+    if not ok then
+        warn("[P0D/TALK] startup failure; cleaning up optional preview", reason)
         stop()
     end
-    reconcileBusy = false
 end
 Players.PlayerRemoving:Connect(function(player)
     speechTimes[player] = nil
     lastAlertTarget[player] = nil
 end)
 ServerStorage:GetAttributeChangedSignal(FLAG):Connect(reconcile)
+Workspace.ChildAdded:Connect(function(child)
+    if child.Name == "TRAP_RAIDERS_S1" then task.defer(reconcile) end
+end)
+ReplicatedStorage.ChildAdded:Connect(function(child)
+    if child.Name == "TrapRaidersS1Remote" then task.defer(reconcile) end
+end)
 task.defer(reconcile)
 print("[P0D/TALK] optional NPC layer configured; Studio/FUN NOT_TESTED")
