@@ -11,6 +11,7 @@ on:
       - feature/p0d-flat65-twin-training-rc-adoption-20261114
       - feature/p0d-bond66-latest-rc346-prep-20261114
       - feature/p0d-prep-five-art-composite-20261114
+      - feature/p0d-prep-firstplay-composite73-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -311,6 +312,16 @@ jobs:
             python3 -B rc_fastlane/apply_five_art_composite.py --dist "$DIST" --enabled false
             python3 -B rc_fastlane/apply_five_art_composite.py --dist "$DIST" --enabled true
           fi
+      - name: P0 READY + physical lobby + actual solo bots on cumulative ART71 -> private73
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_firstplay73.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_firstplay73.py --dist "$DIST" --enabled false
+            python3 -B rc_fastlane/apply_firstplay73.py --dist "$DIST" --enabled true
+          fi
       - name: Check actual built RC66 source lock, approved feature and ledger agree
         if: ${{ env.PROFILE == 'rich51' }}
         shell: bash
@@ -324,7 +335,8 @@ jobs:
           flags=json.loads(Path("rc_fastlane/FEATURE_SWITCHES.json").read_text("utf8"))["features"]
           catalog=json.loads(Path("rc_fastlane/FEATURE_CATALOG.json").read_text("utf8"))
           reg=json.loads(Path("rc_fastlane/FEATURE_REGISTRY.json").read_text("utf8"))
-          assert lock["total_scripts"]==71
+          assert lock["total_scripts"]==73
+          assert lock["rc_firstplay73"]["original_art5_sources_byte_identical"] is True
           assert lock["rc_five_art_composite"]["original66_all_bytes_identical"] is True
           assert lock["rc_twin_bond_overlay"]["id"]=="TWIN_BOND_PVE_COMPANION_V1"
           assert lock["rc_twin_bond_overlay"]["official_rc_adopted"] is True
@@ -364,7 +376,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(58 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']) + int(f['TWIN_BIOMES_4NPC_V1']['enabled']) + int(f['TWIN_CREATURE_TRAINING_V1']['enabled']) + int(f['TWIN_BOND_PVE_COMPANION_V1']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(60 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']) + int(f['TWIN_BIOMES_4NPC_V1']['enabled']) + int(f['TWIN_CREATURE_TRAINING_V1']['enabled']) + int(f['TWIN_BOND_PVE_COMPANION_V1']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -398,6 +410,18 @@ jobs:
             /tmp/p0d_new_luau/luau-compile /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau >/dev/null
             /tmp/p0d_new_luau/luau /tmp/P0D_CLASSIC_GAME_NATIVE_31.luau | tee /tmp/p0d_egg_native.log
             grep -Fx P0D_EGG_RELAY_ACTUAL_GAME_NATIVE_31_CASES_PASS /tmp/p0d_egg_native.log
+          fi
+      - name: P0 firstplay source-real READY/countdown/lobby/spawn/bot QA + 10 native cases
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/verify_firstplay_game.py --dist "$DIST" \
+              --out /tmp/P0D_FIRSTPLAY_REAL_GAME_READY_NATIVE.luau
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_FIRSTPLAY_REAL_GAME_READY_NATIVE.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_FIRSTPLAY_REAL_GAME_READY_NATIVE.luau | tee /tmp/p0d_firstplay_native.log
+            grep -Fx P0D_FIRSTPLAY_ACTUAL_GAME_READY_10_NATIVE_BEHAVIOR_CASES_PASS /tmp/p0d_firstplay_native.log
           fi
       - name: Native-Luau behavioral check of actual OWNER lobby phase HUD
         shell: bash
@@ -490,7 +514,7 @@ jobs:
             /tmp/p0d_new_luau/luau /tmp/p0d_owner_ux_role_castle_native.luau | tee /tmp/p0d_owner_ux_role_castle_native.log
             grep -Fx P0D_OWNER_UX_NATIVE_ROLE_CASTLE_9_CASES_PASS /tmp/p0d_owner_ux_role_castle_native.log
           fi
-      - name: OWNER #341 actual compiled Studio Solo 24 cases (unique Game unchanged)
+      - name: OWNER #341 native Studio Solo rule source 24 cases + actual READY human consent override
         shell: bash
         run: |
           set -euo pipefail
@@ -506,7 +530,11 @@ jobs:
           assert src.count("function Solo.canStart(")==1
           assert src.count("function Solo.isSoloRound(")==1
           assert src.count("function Solo.emptyWinner(")==1
-          assert game.count("StudioSolo.canStart(")==2
+          # OWNER READY deliberately replaces the two auto-start Game calls:
+          # actual Studio solo can only enter after this human consent gate.
+          assert game.count("StudioSolo.canStart(")==0
+          assert game.count("allPlayersReadyForRound()")>=3
+          assert "readyForMatch[online[1]] == true" in game
           assert game.count("StudioSolo.isSoloRound(")==1
           assert game.count("StudioSolo.emptyWinner(")==1
           assert game.count("RunService:IsStudio()")>=3
@@ -692,7 +720,7 @@ jobs:
           twin_enabled=(p=='rich51' and flags['features']['TWIN_BIOMES_4NPC_V1']['enabled'])
           training_enabled=(p=='rich51' and flags['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])
           bond_enabled=(p=='rich51' and flags['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled'])
-          expected={'rich51':56+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
+          expected={'rich51':58+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -1006,7 +1034,7 @@ jobs:
             python3 - <<'PY'
           import json
           x=json.load(open('/tmp/p0d_rc_out/RC_CAPACITY_REPORT.json'))
-          assert x['native_source_count']==71, x
+          assert x['native_source_count']==73, x
           assert x['rbxlx_bytes']>571621 and x['rbxlx_bytes']<2000000
           print('P0D_PRIVATE64_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
           PY

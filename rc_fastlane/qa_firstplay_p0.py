@@ -1,0 +1,231 @@
+#!/usr/bin/env python3
+"""P0D private73 combined first-play P0/P1 source QA fixes.
+
+This file modifies ONLY private assembled Game & private SoloTeamBots source.
+Five original art Luau, LobbyDojoIsland and the 66 original source inputs remain
+byte-exact; the authored upstream patch/module originals remain pinned in
+features/firstplay73. No official RC/main write or public publish.
+"""
+from __future__ import annotations
+import re
+
+def one(text: str, old: str, new: str) -> str:
+    assert text.count(old) == 1, ("FIRSTPLAY_P0_REPAIR_ANCHOR_CHANGED", old[:95], text.count(old))
+    return text.replace(old,new,1)
+
+def in_region(text: str, start: str, end: str, edit) -> str:
+    assert text.count(start)==1,("FIRSTPLAY_START_DRIFT",start)
+    i=text.index(start)
+    j=text.index(end,i)
+    part=edit(text[i:j])
+    return text[:i]+part+text[j:]
+
+
+def patch_game(text: str) -> str:
+    assert "P0D_LateJoinSpectator" not in text, "FIRSTPLAY_QA_DUPLICATE"
+
+    # Studio joins during an ACTIVE/COUNTDOWN game are non-combat spectators.
+    # Team nil avoids altering teamCount, score, egg, attack and match winner.
+    # Initialization still runs (profile, connections, seq), unlike early return.
+    text=in_region(text,"local function onJoin(player: Player)",
+        "Players.PlayerAdded:Connect(onJoin)",
+        lambda block: one(block,"    chooseTeam(player)\n",
+            """    chooseTeam(player)
+    if RunService:IsStudio() and
+        (match.phase=="ACTIVE" or match.phase=="COUNTDOWN") then
+        player.Team=nil
+        player.Neutral=true
+        player:SetAttribute("P0D_LateJoinSpectator",true)
+    end
+"""))
+
+    # Spawn a late joiner in the physical lobby, not the active battlefield.
+    # Keeping Team nil makes him/her ineligible for fight and egg transactions.
+    text=in_region(text,"local function assignSpawn(player: Player, character: Model)",
+        "-- EGG RAID RUMBLE",
+        lambda block: one(block,
+            """                else map.teams[team].spawn + Vector3.new(0, 2, 0)
+        end""",
+            """                else map.teams[team].spawn + Vector3.new(0, 2, 0)
+        elseif RunService:IsStudio()
+            and player:GetAttribute("P0D_LateJoinSpectator")==true then
+            root.CFrame=LobbyIsland.spawn("RED")
+        end"""))
+
+    # Original LobbyTeamRecovery can physically move rebalance candidates to
+    # old battlefield spawns while phase still LOBBY. Keep them on lobby pads.
+    text=in_region(text,"local function rebalanceLobbyTeams()",
+        "local function assignSpawn(",
+        lambda block: one(block,
+          "root.CFrame = map.teams[move.to].spawn + Vector3.new(0, 2, 0)",
+          """root.CFrame = if RunService:IsStudio()
+                    then LobbyIsland.spawn(move.to)
+                    else map.teams[move.to].spawn + Vector3.new(0, 2, 0)"""))
+
+    # At NEXT lobby, promote neutral spectators to balanced team and stay in lobby
+    # with default readiness FALSE. No spectator can join an active roster.
+    text=in_region(text,"local function tickRound()",
+        "elseif match.phase == \"COUNTDOWN\" then",
+        lambda block: one(block,
+            """if match.phase == "LOBBY" then
+        rebalanceLobbyTeams()""",
+            """if match.phase == "LOBBY" then
+        if RunService:IsStudio() then
+            for _,entrant in ipairs(Players:GetPlayers()) do
+                if entrant:GetAttribute("P0D_LateJoinSpectator")==true then
+                    entrant:SetAttribute("P0D_LateJoinSpectator",nil)
+                    chooseTeam(entrant)
+                    readyForMatch[entrant]=false
+                    local ok,root=healthy(entrant)
+                    if ok and root then
+                        root.CFrame=LobbyIsland.spawn(getTeamName(entrant))
+                    end
+                end
+            end
+        end
+        rebalanceLobbyTeams()"""))
+
+    # Only react to missing/failed bots when the active match is a Solo bot
+    # match. Ensure engine errors and soft stop from player-count gates never
+    # strand a human in empty ACTIVE gameplay.
+    text=in_region(text,"local function tickRound()",
+        "Players.PlayerAdded:Connect(" if False else "elseif match.phase == \"RESULTS\" then",
+        lambda block: one(block,
+            """            if not ok then
+                warn("FB005_SOLO_TICK_FAIL_CLOSED",err)
+                SoloTeamBots.stop()
+            end""",
+            """            if not ok or (studioSoloRoundStarted and match.phase=="ACTIVE"
+                and not SoloTeamBots.isActive()) then
+                warn("FB005_SOLO_TICK_FAIL_CLOSED",err)
+                SoloTeamBots.stop()
+                if studioSoloRoundStarted and match.phase=="ACTIVE" then
+                    stopRound("DRAW","SOLO_BOTS_RUNTIME_FAILURE")
+                end
+            end"""))
+
+    # Consent / input integrity: COUNTDOWN must support cancellation, while
+    # an ignored READY input during ACTIVE/RESULTS must never consume the
+    # same monotonic seq used by ATTACK/TRAP/MAGIC in this sole original Game.
+    text=in_region(text,
+        "local function toggleMatchReady(player: Player, data)",
+        "remote.OnServerEvent:Connect(",
+        lambda block: one(block,
+            """    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end
+    lastSeq[player] = data.seq
+    if match.phase ~= "LOBBY" then return end
+    local side = getTeamName(player)
+    if side ~= "RED" and side ~= "BLUE" then return end
+    readyForMatch[player] = not (readyForMatch[player] == true)
+    broadcast()""",
+            """    if match.phase ~= "LOBBY" and match.phase ~= "COUNTDOWN" then
+        return
+    end
+    local side = getTeamName(player)
+    if side ~= "RED" and side ~= "BLUE" then return end
+    if match.phase=="COUNTDOWN" and readyForMatch[player]~=true then
+        return
+    end
+    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end
+    lastSeq[player] = data.seq
+    if match.phase=="COUNTDOWN" then
+        -- Explicit last-second revoke, with immediate peer notification.
+        readyForMatch[player]=false
+        match.phase="LOBBY"
+        match.phaseUntil=0
+        broadcast()
+        return
+    end
+    readyForMatch[player] = not (readyForMatch[player] == true)
+    broadcast()"""))
+    assert 'match.phase=="COUNTDOWN" and readyForMatch[player]~=true' in text
+    assert 'match.phaseUntil=0' in text
+
+    # Critical lobby-to-battle proof: original resetRound loads every human
+    # AFTER phase ACTIVE, CharacterAdded calls assignSpawn(ACTIVE => battle).
+    text_start=text.index("local function resetRound()")
+    text_end=text.index("local function chooseTeam(",text_start)
+    body=text[text_start:text_end]
+    assert 'match.phase = "ACTIVE"' in body
+    assert "p:LoadCharacter()" in body
+    assert body.index('match.phase = "ACTIVE"') < body.index("p:LoadCharacter()")
+    spawn=text[text.index("local function assignSpawn("):
+               text.index("-- EGG RAID RUMBLE",text.index("local function assignSpawn("))]
+    assert 'match.phase~="ACTIVE"' in spawn
+    assert "else map.teams[team].spawn + Vector3.new(0, 2, 0)" in spawn
+    assert text.count("remote.OnServerEvent:Connect(")==1
+    assert text.count("local function tickRound()")==1
+    assert text.count('P0D_LateJoinSpectator')>=4
+    return text
+
+
+def patch_bot(text: str) -> str:
+    assert "P0D_LateJoinSpectator" not in text, "FIRSTPLAY_BOT_QA_DUPLICATE"
+    # A second real Player may join the Studio server as a *noncombat*
+    # spectator; it must not disable the five bots in the active solo match.
+    text=one(text,
+        "if #Players:GetPlayers()~=1 then Bot.stop();return end",
+        """local eligible=0
+    for _,p in ipairs(Players:GetPlayers()) do
+        if p:GetAttribute("P0D_LateJoinSpectator")~=true then
+            eligible+=1
+        end
+    end
+    if eligible~=1 then Bot.stop();return end""")
+    text=one(text,
+        "if team~=bot.team and root and hum and hum.Health>0 then",
+        """if p:GetAttribute("P0D_LateJoinSpectator")~=true
+            and team~=bot.team and root and hum and hum.Health>0 then""")
+
+    # Hit only when FIRST raycast target is the actual bot; do not exclude all
+    # bots from collision line-of-sight. A wall or another bot blocks the hit.
+    text=one(text,
+        "params.FilterDescendantsInstances={bot.model,folder,attackerCharacter}",
+        "params.FilterDescendantsInstances={attackerCharacter}")
+    text=one(text,
+        "if not hit then\n                    best=bot",
+        "if hit and hit.Instance:IsDescendantOf(bot.model) then\n                    best=bot")
+    assert 'params.FilterDescendantsInstances={attackerCharacter}' in text
+
+    # ComputeAsync may yield indefinitely; old task is invalidated after 8sec,
+    # bounded concurrently to <=10 outstanding tasks to avoid task leaks.
+    # Each old returned callback carries epoch+generation to prevent stale
+    # routes overriding a new goal/respawn or releasing a fresh planner.
+    text=one(text,
+        "local TICK_MIN=.35",
+        "local TICK_MIN=.35\nlocal PATH_TIMEOUT_SECONDS=8\nlocal MAX_INFLIGHT_PATHS=10\nlocal inflightPaths=0")
+    text=one(text,
+        "nextRepath=0,path={},pathIndex=1,planning=false,",
+        "nextRepath=0,path={},pathIndex=1,planning=false,planningSince=0,")
+    text=one(text,
+        """    if bot.planning or now<bot.nextRepath then return end
+    bot.nextRepath=now+REPATH_SECONDS""",
+        """    if bot.planning and now-(bot.planningSince or now)>PATH_TIMEOUT_SECONDS then
+        invalidatePath(bot)
+        -- Exponential resource cost is avoided via bounded in-flight workers.
+        bot.nextRepath=now+REPATH_SECONDS
+    end
+    if bot.planning or now<bot.nextRepath
+        or inflightPaths>=MAX_INFLIGHT_PATHS then return end
+    bot.planningSince=now
+    inflightPaths+=1
+    bot.nextRepath=now+REPATH_SECONDS""")
+    text=one(text,
+        """        -- Both the global match and this particular bot/goal must still be""",
+        """        inflightPaths=math.max(0,inflightPaths-1)
+        -- Both the global match and this particular bot/goal must still be""")
+    assert "if eligible~=1 then Bot.stop();return end" in text
+    assert text.count("MAX_INFLIGHT_PATHS")>=2
+    return text
+
+def patch_hud(text: str) -> str:
+    # The start button cannot be hidden during countdown because the user
+    # must be able to revoke a READY even after countdown begins.
+    text=one(text,
+        """    readyButton.Visible = s.phase == "LOBBY"
+    readyButton.Text = if s.ready == true then "✓ 準備解除" else "▶ 出撃する" """.rstrip(),
+        """    readyButton.Visible = s.phase == "LOBBY"
+        or (s.phase == "COUNTDOWN" and s.ready == true)
+    readyButton.Text = if s.phase == "COUNTDOWN" then "✕ 出撃中止"
+        elseif s.ready == true then "✓ 準備解除" else "▶ 出撃する" """.rstrip())
+    return text
