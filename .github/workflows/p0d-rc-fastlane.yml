@@ -2333,3 +2333,79 @@ jobs:
           path: /tmp/p0d_private_live_horde81_evidence/*
           retention-days: 14
           if-no-files-found: error
+
+
+      - name: 'P0 #444 + #431 cumulative: official reset + real ATTACK/TICK + 2 private visual clients, exact RC81'
+        if: env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
+          BASE=/tmp/p0d_private_live_horde81_dist
+          COMBAT=/tmp/p0d_private_combat_v2_intake
+          FINAL=/tmp/p0d_horde_art4_composite_source81
+          OUT=/tmp/p0d_horde_art4_composite81_artifact
+          mkdir -p "$OUT"
+          test -f "$BASE/SOURCE_LOCK.json" || { echo "NO_CANONICAL_HORDE_PARENT"; exit 1; }
+          python3 -B -m unittest discover -s rc_fastlane -p test_private_horde_combat.py -v
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb015_live_art_client_pilot.py -v
+          python3 -B -m unittest discover -s art_quality -p test_live_art_expected_scripts.py -v
+          python3 -B rc_fastlane/apply_private_horde_combat.py --base "$BASE" --out "$COMBAT" --enabled false
+          test ! -e "$COMBAT"
+          python3 -B rc_fastlane/apply_private_horde_combat.py --base "$BASE" --out "$COMBAT" --enabled true
+          python3 -B rc_fastlane/apply_fb015_live_art_client_pilot.py --base "$COMBAT" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_fb015_live_art_client_pilot.py --base "$COMBAT" --out "$FINAL" --enabled true
+          python3 -B rc_fastlane/native_private_horde_combat.py --dist "$COMBAT" --out "$OUT/REAL_GAME_NATIVE_8.luau"
+          /tmp/p0d_new_luau/luau "$OUT/REAL_GAME_NATIVE_8.luau"
+          test "$(find "$FINAL/src" -name '*.luau' | wc -l)" -eq 81
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done < <(find "$FINAL/src" -name '*.luau' -print0)
+          STAGE_PLACE="$OUT/P0D_RC81_HORDE_FULL_LIFECYCLE_STAGING.rbxlx"
+          PRIVATE_PLACE="$OUT/P0D_RC81_PRIVATE_HORDE_ART4_LIVE_CANDIDATE.rbxlx"
+          /tmp/p0d_rc_rojo build "$COMBAT/default.project.json" -o "$STAGE_PLACE"
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PRIVATE_PLACE"
+          python3 -B rc_fastlane/verify_private_horde_combat.py \
+            --dist "$COMBAT" --place "$STAGE_PLACE" --receipt "$OUT/REAL_GAME_LIFECYCLE_SOURCE_LOCK.json"
+          python3 -B rc_fastlane/verify_fb015_live_art_client_pilot.py \
+            --base "$COMBAT" --dist "$FINAL" --place "$PRIVATE_PLACE" --receipt "$OUT/PRIVATE_ART_SOURCE_LOCK.json"
+          python3 -B rc_fastlane/verify_private_horde_art_combo.py \
+            --base "$BASE" --horde "$COMBAT" --final "$FINAL" --place "$PRIVATE_PLACE" \
+            --out "$OUT/HORDE_ART_RC81_FINAL_SOURCE_RECEIPT.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PRIVATE_PLACE" --out "$OUT/ART_SOURCE_QA.json"
+          python3 -B art_quality/check_live_art_parity.py \
+            --place "$PRIVATE_PLACE" --expected-scripts 81 --out "$OUT/LIVE_ART_GUARD_AUDIT.json"
+          python3 -B art_quality/check_mobile_fun.py \
+            --out "$OUT/MOBILE_KID_FUN_NO_GO.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          o=Path('/tmp/p0d_horde_art4_composite81_artifact')
+          rec=json.loads((o/'HORDE_ART_RC81_FINAL_SOURCE_RECEIPT.json').read_text())
+          live=json.loads((o/'LIVE_ART_GUARD_AUDIT.json').read_text())
+          art=json.loads((o/'ART_SOURCE_QA.json').read_text())
+          assert rec['all_real_embedded_sources']==81 and rec['other_sources_original_byte_exact']==77
+          assert rec['one_Game_HUD_and_Horde'] and rec['castle_81st_source_original_byte_exact']
+          assert live['expected_script_count']==81 and live['source_gate']=='PASS'
+          assert live['top_studio_only_count']==4,live['visual_sources']
+          assert art['source']['source_gate']=='PASS' and art['source']['script_count']==81
+          assert not rec['owner_accepted'] and art['art_decision']=='ART_NO_GO'
+          rec['ci_checkout_sha']=os.environ['GITHUB_SHA']
+          rec['branch_name']=os.environ.get('GITHUB_HEAD_REF','')
+          (o/'HORDE_ART_RC81_FINAL_SOURCE_RECEIPT.json').write_text(
+              json.dumps(rec,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_PRIVATE81_SOURCE_GATE_PASS_4MOD_77UNCHANGED',rec['place_bytes'],rec['place_sha256'])
+          print('P0D_PRIVATE81_RUNTIME_AND_OWNER_NO_GO',rec['live_horde_decision'],rec['live_art_decision'])
+          PY
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          cp art_quality/P0D_HORDE_ART_PRIVATE_SELECTION_20261115.json "$OUT/FEATURE_SELECTION.json"
+      - uses: actions/upload-artifact@v4
+        if: always() && env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        with:
+          name: P0D-RC81-PRIVATE-HORDE-ART-COMPOSITE-SOURCE-ONLY-NOGO
+          path: /tmp/p0d_horde_art4_composite81_artifact/*
+          retention-days: 14
+          if-no-files-found: warn

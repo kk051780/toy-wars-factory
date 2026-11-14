@@ -1,0 +1,47 @@
+{
+  "schema": "P0D_PRIVATE81_HORDE_ART_SOURCE_SELECTION_V1",
+  "official_head": "0287c696bd2467177236c46a1b2b39646d5aa2b9",
+  "changes": [
+    {
+      "path": "server/Game.server.luau",
+      "source_pr": 452,
+      "feature": "OWNER_PRIVATE_HORDE_ATTACK_TICK_V2"
+    },
+    {
+      "path": "server/CastleDetailArt.server.luau",
+      "source_pr": 448,
+      "feature": "SERVER_PRIVATE_ART_AUTHORIZER"
+    },
+    {
+      "path": "client/FB015CharacterArt.client.luau",
+      "source_pr": 448,
+      "feature": "GOROGAN_MOBILE_LOD_PRIVATE_OPTIN"
+    },
+    {
+      "path": "client/ConfirmedSlashFX.client.luau",
+      "source_pr": 448,
+      "feature": "CONFIRMED_DAMAGE_SLASH_PRIVATE_OPTIN"
+    }
+  ],
+  "expected_source_count": 81,
+  "expected_modified": 4,
+  "other_original_unchanged": 77,
+  "existing_studio_and_castle_preserved": true,
+  "server_private_horde_flag": "P0D_PRIVATE_LIVE_HORDE_NINE",
+  "server_private_art_flag": "P0D_LIVE_ART_PILOT_OPTIN",
+  "flags_are_independent_and_both_owner_set_only": true,
+  "no_auto_optin": true,
+  "requires_real_runtime_engine": "YES_NOT_TESTED",
+  "release": "BLOCKED_LIVE_HORDE_ART_ANDROID_CHILD_OWNER",
+  "source_ci": "PENDING",
+  "source_inputs": {
+    "horde_pr452_head": "20c7ecee113e54b109def97f29ec7e15a06a330a",
+    "client_pr448_head": "65fcd52539e5b3ad5ca6a499c2afc2482936c66b"
+  },
+  "approval": {
+    "owner": false,
+    "studio": false,
+    "android": false,
+    "child": false
+  }
+}
