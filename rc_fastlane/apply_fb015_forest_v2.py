@@ -21,7 +21,7 @@ TREE_ANCHOR="    end\nend\nlocal leftMargin=math.min(85,ground.Size.X*.33)"
 RUIN_ANCHOR="-- Color grading is global but only in the author's Studio preview."
 META_OLD='folder:SetAttribute("ArtPass","FB015_WORLD_PALETTE_FOLIAGE_ONLY")'
 
-TREE_ADDITION=String.raw if False else '''    end
+TREE_ADDITION='''    end
     -- Biome-dependent sculpted blossom highlights, kept within existing
     -- decorative-only tree crowns. LeafMass prefix retains FB016 camera fade.
     local petal = if side < 0 then Color3.fromRGB(166,201,185)
