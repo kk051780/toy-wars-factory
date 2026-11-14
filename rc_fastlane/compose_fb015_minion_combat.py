@@ -27,6 +27,36 @@ HIT_CUE_BLOB = "a2d07936bd9fe5bdf3630498c39d61d5a8560d99"
 SLASH_CLIENT_BLOB = "c3e3c89b781d446fd8952bee51ec3a2cac46d1ff"
 BASE = 67
 MANIFEST = ".P0D_FB015_COMPOSITE_EXACT_MANIFEST.json"
+TRUST_SUFFIX = ".fb015_external_receipt.json"
+
+def receipt_path(out: Path) -> Path:
+    return out.with_name(out.name + TRUST_SUFFIX)
+
+def atomic_json(path: Path, payload: dict) -> None:
+    """Publish a complete journal/receipt or nothing, never truncated JSON."""
+    fd,name=tempfile.mkstemp(prefix="."+path.name+".",dir=path.parent)
+    try:
+        with os.fdopen(fd,"w",encoding="utf8") as f:
+            json.dump(payload,f,sort_keys=True,ensure_ascii=False)
+            f.write("\\n")
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(name,path)
+    finally:
+        if os.path.exists(name): os.unlink(name)
+
+def external_receipt(out: Path, dist: Path) -> dict:
+    path=receipt_path(out)
+    require(path.is_file() and not path.is_symlink(),
+            "MISSING_TRUSTED_EXTERNAL_COMPOSITE_RECEIPT")
+    record=json.loads(path.read_text("utf8"))
+    require(record.get("id")=="P0D_FB015_COMPOSITE_EXTERNAL_RECEIPT_V1"
+            and record.get("input")==str(dist)
+            and record.get("output")==str(out)
+            and isinstance(record.get("files"),dict),
+            "INVALID_TRUSTED_EXTERNAL_COMPOSITE_RECEIPT")
+    return record
+
 
 def require(ok, reason):
     if not ok:
@@ -105,6 +135,11 @@ def verify_private_output(out: Path, dist: Path):
             "ROLLBACK_REFUSED_WRONG_INPUT_OUTPUT_IDENTITY")
     require(record.get("files") == manifest_contents(out),
             "ROLLBACK_REFUSED_ADDED_OR_MODIFIED_OR_MISSING_FILE")
+    independent=external_receipt(out,dist)
+    require(independent["files"] == strict_inventory(out),
+            "EXTERNAL_COMPOSITE_INVENTORY_MISMATCH")
+    require(independent["files"].get(MANIFEST) is not None,
+            "EXTERNAL_RECEIPT_MUST_BIND_INTERNAL_MANIFEST")
     return record
 
 def validate_partial_tombstone(tombstone: Path, record: dict) -> None:
@@ -112,7 +147,7 @@ def validate_partial_tombstone(tombstone: Path, record: dict) -> None:
     # remaining files must ALL match the recorded original bytes; never
     # delete a newly-added or modified user file on retry.
     expected=record["files"]
-    observed=manifest_contents(tombstone)
+    observed=strict_inventory(tombstone)
     require(all(path in expected and sha == expected[path]
                 for path,sha in observed.items()),
             "TOMBSTONE_EXTRA_OR_MODIFIED_FILE_ROLLBACK_REFUSED")
@@ -126,6 +161,7 @@ def _compose_locked(dist: Path, out: Path, enabled: bool):
     # An interrupted OFF is resumed only from our own pre-authorized tombstone.
     journal = out.with_name(out.name + ".fb015_delete_journal.json")
     tombstone = out.with_name(out.name + ".fb015_deleting")
+    trusted=receipt_path(out)
     if not enabled:
         if tombstone.exists():
             require(not out.exists() and journal.is_file(),
@@ -135,9 +171,11 @@ def _compose_locked(dist: Path, out: Path, enabled: bool):
                     and record.get("output") == str(out)
                     and record.get("id") == "P0D_FB015_COMPOSITE_PRIVATE68_EXACT_TREE",
                     "INVALID_COMPOSITE_DELETE_JOURNAL")
-            validate_partial_tombstone(tombstone, record)
+            independent=external_receipt(out,dist)
+            validate_partial_tombstone(tombstone, independent)
             shutil.rmtree(tombstone)
             journal.unlink()
+            trusted.unlink()
             print("ART_MINION_COMBO_INTERRUPTED_OFF_CLEANUP_RECOVERED")
             return True
         if not out.exists():
@@ -147,7 +185,10 @@ def _compose_locked(dist: Path, out: Path, enabled: bool):
                         and record.get("input")==str(dist)
                         and record.get("output")==str(out),
                         "INVALID_COMPLETED_OFF_JOURNAL")
+                require(external_receipt(out,dist).get("files"),
+                        "MISSING_COMPOSITE_EXTERNAL_RECOVERY_RECEIPT")
                 journal.unlink()
+                trusted.unlink()
                 print("ART_MINION_COMBO_COMPLETED_OFF_JOURNAL_RECOVERED")
                 return True
             print("ART_MINION_COMBO_OFF_ZERO_WRITE")
@@ -166,13 +207,16 @@ def _compose_locked(dist: Path, out: Path, enabled: bool):
         require(blob((out / "src" / DEST).read_bytes()) == PIN,
                 "COMPOSITE_ROLLBACK_REFUSED_DRIFT")
         # Only after verifying EVERY file may we authorize removal.
-        journal.write_text(json.dumps(record, sort_keys=True)+"\n", "utf8")
+        atomic_json(journal,record)
         os.rename(out, tombstone)
+        independent=external_receipt(out,dist)
+        validate_partial_tombstone(tombstone,independent)
         shutil.rmtree(tombstone)
         journal.unlink()
+        trusted.unlink()
         print("ART_MINION_COMBO_PRIVATE68_OFF_RETAINED_ORIGINAL67")
         return True
-    require(not tombstone.exists() and not journal.exists(),
+    require(not tombstone.exists() and not journal.exists() and not trusted.exists(),
             "PENDING_OFF_RECOVERY_MUST_FINISH_BEFORE_ENABLE")
     require(out != dist and not out.exists(), "COMPOSITE_ALREADY_PRESENT")
     source, pins, locks, author = baseline(dist)
@@ -219,6 +263,13 @@ def _compose_locked(dist: Path, out: Path, enabled: bool):
         require({p: blob(v) for p, v in sorted(actual.items())} == next_pins,
                 "COMPOSITE_SOURCE_BLOB_DRIFT")
         generate_manifest(staged, dist, out)
+        # Created OUTSIDE the candidate: editing the in-tree manifest can no
+        # longer authorize deletion of altered user files.
+        atomic_json(trusted,{
+            "id":"P0D_FB015_COMPOSITE_EXTERNAL_RECEIPT_V1",
+            "input":str(dist), "output":str(out),
+            "files":strict_inventory(staged),
+        })
         os.rename(staged, out)
     print("P0D_ART_COMBAT_MINION_PRIVATE68_SOURCE_EXACT_67_PRESERVED_PASS")
     return True
