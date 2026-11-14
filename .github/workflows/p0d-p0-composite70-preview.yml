@@ -1020,7 +1020,48 @@ jobs:
             python3 -B rc_fastlane/apply_owner361_p0_composite70.py --dist "$DST" --out "$FINAL" --enabled true
             cmp "$SRC/SOURCE_LOCK.json" "$DST/SOURCE_LOCK.json"
             cmp "$SRC/RC_FEATURE_LOCK.json" "$DST/RC_FEATURE_LOCK.json"
-            echo P0_OWNER66_INPUT_REMOVED_NO_BYTES_PASS
+            echo P0_OWNER66_INPUT_UNCHANGED_NO_BYTES_PASS
+            # Negative proof: a foreign Game with rewritten self-consistent
+            # SOURCE_LOCK and RC_FEATURE_LOCK MUST fail the trusted source pin.
+            FAKE=/tmp/p0_owner361_forged66
+            cp -a "$DST" "$FAKE"
+            python3 - <<'PY'
+          import json,sys
+          from pathlib import Path
+          sys.path.insert(0,'rc_fastlane')
+          from apply_owner361_p0_composite70 import source_map,blob
+          d=Path('/tmp/p0_owner361_forged66')
+          game=d/'src/server/Game.server.luau'
+          game.write_bytes(game.read_bytes()+b'\\n-- forged self-consistent input\\n')
+          pins={p:blob(x) for p,x in sorted(source_map(d).items())}
+          sl=d/'SOURCE_LOCK.json'; fl=d/'RC_FEATURE_LOCK.json'
+          a=json.loads(sl.read_text('utf8')); b=json.loads(fl.read_text('utf8'))
+          a['blobs']=pins; b['source_gitblobs']=pins
+          sl.write_text(json.dumps(a,indent=2)+'\\n','utf8')
+          fl.write_text(json.dumps(b,indent=2)+'\\n','utf8')
+          assert json.loads(sl.read_text())['blobs']==pins
+          assert json.loads(fl.read_text())['source_gitblobs']==pins
+          PY
+            if python3 -B rc_fastlane/apply_owner361_p0_composite70.py --dist "$FAKE" --out /tmp/p0_owner361_forged70 --enabled true >/tmp/p0_forged66_reject.log 2>&1; then
+              echo P0_FORGED66_DANGEROUS_FALSE_ACCEPT; exit 1
+            fi
+            grep -F WRONG_66_SOURCE_DISTRIBUTION /tmp/p0_forged66_reject.log
+            test ! -e /tmp/p0_owner361_forged70
+            echo P0_FORGED66_REGENERATED_LOCKS_REJECTED
+            # Reject a source symlink even if it points at identical original
+            # bytes and appears to satisfy both source-lock manifests.
+            LINKED=/tmp/p0_owner361_linked66
+            cp -a "$DST" "$LINKED"
+            cp "$LINKED/src/server/Game.server.luau" /tmp/p0_composite_external_original
+            rm "$LINKED/src/server/Game.server.luau"
+            ln -s /tmp/p0_composite_external_original "$LINKED/src/server/Game.server.luau"
+            if python3 -B rc_fastlane/apply_owner361_p0_composite70.py --dist "$LINKED" --out /tmp/p0_owner361_linked70 --enabled true >/tmp/p0_linked_reject.log 2>&1; then
+              echo P0_SYMLINK_FALSE_ACCEPT; exit 1
+            fi
+            grep -F P0_SYMLINK_REFUSED /tmp/p0_linked_reject.log
+            test ! -e /tmp/p0_owner361_linked70
+            cmp "$DST/src/server/Game.server.luau" /tmp/p0_composite_external_original
+            echo P0_SYMLINK_EXTERNAL_FILE_UNCHANGED_PASS
             cmake --build /tmp/p0d_new_luau --target Luau.Repl.CLI --parallel 4
             python3 -B rc_fastlane/test_p0_ready_composed_native.py --game "$FINAL/src/server/Game.server.luau" --emit /tmp/p0_composed_ready_native.luau
             /tmp/p0d_new_luau/luau /tmp/p0_composed_ready_native.luau | tee /tmp/p0_ready_native.log
