@@ -10,6 +10,7 @@ on:
       - feature/p0d-rc64-twin-flat-official-intake-20261114
       - feature/p0d-flat65-twin-training-rc-adoption-20261114
       - feature/p0d-bond66-latest-rc346-prep-20261114
+      - feature/p0d-prep-neutral-elites-017-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -300,6 +301,38 @@ jobs:
             echo P0D_PRIVATE66_BOND_OFF_EXACT_REAL_OFFICIAL65_PASS
             python3 -B rc_fastlane/apply_twin_bond.py --dist "$DIST" --enabled true
           fi
+      - name: SOURCE PREP P0D-017 join original one Horde (66 to private67, OFF zero writes)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_neutral_elite.py --dist "$DIST" --enabled false
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            echo P0D_017_OFF_PRESERVES_ORIGINAL_RC66_ALL_BYTES_PASS
+            python3 -B rc_fastlane/apply_neutral_elite.py --dist "$DIST" --enabled true
+            python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          d=Path("_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE")
+          files={p.relative_to(d/"src").as_posix():p.read_bytes() for p in (d/"src").rglob("*.luau")}
+          assert len(files)==67
+          original=files["server/Game.server.luau"]
+          horde=files["server/MusouHorde.luau"]
+          assert original.count(b"remote.OnServerEvent:Connect(")==1
+          assert horde.count(b"table.insert(impacts,")==2
+          assert horde.count(b'ElitePhase.step(boss,self.round,now,targetDistance,bossVisible,true)')==1
+          assert b'local ElitePhase=require(script.Parent:WaitForChild("NeutralElitePhasePolicy"))' in horde
+          lock=json.loads((d/"SOURCE_LOCK.json").read_text("utf8"))
+          feat=json.loads((d/"RC_FEATURE_LOCK.json").read_text("utf8"))
+          assert lock["total_scripts"]==67 and feat["total_sources"]==67
+          assert lock["rc_neutral_elite_overlay"]["id"]=="P0D_017_NEUTRAL_ELITE_BOSS_V1"
+          assert lock["blobs"]==feat["source_gitblobs"]
+          print("P0D_017_ACTUAL_JOINED67_ONE_HORDE_GAME_AND_SOURCE_LOCK_PASS")
+          PY
+          fi
       - name: Check actual built RC66 source lock, approved feature and ledger agree
         if: ${{ env.PROFILE == 'rich51' }}
         shell: bash
@@ -313,7 +346,7 @@ jobs:
           flags=json.loads(Path("rc_fastlane/FEATURE_SWITCHES.json").read_text("utf8"))["features"]
           catalog=json.loads(Path("rc_fastlane/FEATURE_CATALOG.json").read_text("utf8"))
           reg=json.loads(Path("rc_fastlane/FEATURE_REGISTRY.json").read_text("utf8"))
-          assert lock["total_scripts"]==66
+          assert lock["total_scripts"]==66+int(flags["P0D_017_NEUTRAL_ELITE_BOSS_V1"]["enabled"])
           assert lock["rc_twin_bond_overlay"]["id"]=="TWIN_BOND_PVE_COMPANION_V1"
           assert lock["rc_twin_bond_overlay"]["official_rc_adopted"] is True
           assert flags["TWIN_BOND_PVE_COMPANION_V1"]["official_rc_adopted"] is True
@@ -352,7 +385,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']) + int(f['TWIN_BIOMES_4NPC_V1']['enabled']) + int(f['TWIN_CREATURE_TRAINING_V1']['enabled']) + int(f['TWIN_BOND_PVE_COMPANION_V1']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']) + int(f['TWIN_BIOMES_4NPC_V1']['enabled']) + int(f['TWIN_CREATURE_TRAINING_V1']['enabled']) + int(f['TWIN_BOND_PVE_COMPANION_V1']['enabled']) + int(f['P0D_017_NEUTRAL_ELITE_BOSS_V1']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -372,6 +405,33 @@ jobs:
           done < <(find "$DIST/src" -type f -name '*.luau' -print0)
           test "$n" -eq "$WANT"
           echo "P0D_CANONICAL_RC_FULL_SOURCE_LUAU_COMPILE_PASS $n/$WANT"
+      - name: SOURCE-ONLY P0D-017 real native 45 giant/dragon elite cases (no Game install)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          root=Path("rc_fastlane/features/neutral_elite")
+          manifest=json.loads((root/"PREP_SOURCE_LOCK.json").read_text("utf8"))
+          body=(root/"NeutralElitePhasePolicy.luau").read_bytes()
+          test=(root/"NeutralEliteNative.luau").read_bytes()
+          digest=hashlib.sha1(b"blob "+str(len(body)).encode()+bytes([0])+body).hexdigest()
+          assert manifest["feature_id"]=="P0D-017" and manifest["policy_git_blob"]==digest
+          assert manifest["integrated_playable"] is False and manifest["official_rc_adopted"] is False
+          assert test.count(b'check("')==45
+          for forbidden in (b"RemoteEvent",b"OnServerEvent",b"DataStoreService",b"UpdateAsync",b"TakeDamage",b"MarketplaceService",b"horde:hit("):
+              assert forbidden not in body,forbidden
+          ending=b"return Elite"+bytes([10])
+          assert body.endswith(ending),"UNSAFE_MODULE_END"
+          (Path("/tmp")/"P0D_NEUTRAL_ELITE_NATIVE45.luau").write_bytes(body[:-len(ending)]+test)
+          print("P0D_017_AUTHOR_SOURCE_LOCK_45_TESTS_NO_DOUBLE_AUTHORITY_PASS")
+          PY
+          /tmp/p0d_new_luau/luau-compile rc_fastlane/features/neutral_elite/NeutralElitePhasePolicy.luau >/dev/null
+          /tmp/p0d_new_luau/luau-compile /tmp/P0D_NEUTRAL_ELITE_NATIVE45.luau >/dev/null
+          cmake --build /tmp/p0d_new_luau --target Luau.Repl.CLI --parallel 4
+          /tmp/p0d_new_luau/luau /tmp/P0D_NEUTRAL_ELITE_NATIVE45.luau | tee /tmp/p0d_neutral_elite_native45.log
+          grep -Fx P0D_NEUTRAL_ELITE_REAL_NATIVE_45_POLICY_CASES_PASS /tmp/p0d_neutral_elite_native45.log
       - name: Execute 31 native original-Game egg relay transaction safety cases
         shell: bash
         run: |
@@ -680,7 +740,8 @@ jobs:
           twin_enabled=(p=='rich51' and flags['features']['TWIN_BIOMES_4NPC_V1']['enabled'])
           training_enabled=(p=='rich51' and flags['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])
           bond_enabled=(p=='rich51' and flags['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
+          elite_enabled=(p=='rich51' and flags['features']['P0D_017_NEUTRAL_ELITE_BOSS_V1']['enabled'])
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled)+int(elite_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -900,6 +961,18 @@ jobs:
               print('P0D_PRIVATE66_SINGLE_GAME_ONLY_NEUTRAL_PVE_BONDED_COMPANION_ROJO_PASS')
           else:
               assert titles[('ModuleScript','TwinBondPolicy')]==0
+          if elite_enabled:
+              assert bond_enabled and titles[('ModuleScript','NeutralElitePhasePolicy')]==1
+              assert titles[('Script','Game')]==1 and titles[('ModuleScript','MusouHorde')]==1
+              horde_src=(base/'src/server/MusouHorde.luau').read_text('utf8')
+              assert horde_src.count('table.insert(impacts,')==2
+              assert horde_src.count('ElitePhase.step(boss,self.round,now,targetDistance,bossVisible,true)')==1
+              assert 'P0D_NEUTRAL_BOSS_' in horde_src
+              assert 'DecorativeStormWing_' in horde_src
+              assert 'P0D_017_NEUTRAL_ELITE_BOSS_V1' in json.dumps(json.load(open(base/'SOURCE_LOCK.json')))
+              print('P0D_017_ORIGINAL_HORDE_ELITE_SLOT_GIANT_DRAGON_REAL_ROJO_PASS')
+          else:
+              assert titles[('ModuleScript','NeutralElitePhasePolicy')]==0
           if p=='rich51':
               assert titles[('Script','V4TrainingBridge')]==1
               assert titles[('LocalScript','V4TrialOverlay')]==1
@@ -944,6 +1017,7 @@ jobs:
             'twin_creature_training_session_only_3_levels':bool(training_enabled),
             'twin_creature_native_real_policy_cases':38 if training_enabled else None,
             'twin_bond_one_active_session_companion_pve_only':bool(bond_enabled),
+            'neutral_elite_017_giant_dragon_private67_candidate':bool(elite_enabled),
             'twin_bond_native_policy_cases':47 if bond_enabled else None,
             'twin_biomes_engine_2client_android_fun':'NOT_TESTED',
             'star_shards_native_policy_cases':22 if shards_enabled else None,
@@ -964,7 +1038,7 @@ jobs:
             'android':'NOT_TESTED','owner_fun':'NOT_TESTED',
             'production_publish':False,'sixskill_persistent':False,
             's1_score_prior_only':75,
-            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled,'STAR_SHARDS_V1':shards_enabled,'TWIN_BIOMES_4NPC_V1':twin_enabled,'TWIN_CREATURE_TRAINING_V1':training_enabled,'TWIN_BOND_PVE_COMPANION_V1':bond_enabled},
+            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled,'STAR_SHARDS_V1':shards_enabled,'TWIN_BIOMES_4NPC_V1':twin_enabled,'TWIN_CREATURE_TRAINING_V1':training_enabled,'TWIN_BOND_PVE_COMPANION_V1':bond_enabled,'P0D_017_NEUTRAL_ELITE_BOSS_V1':elite_enabled},
             'base_author_51_preserved':True if realm_enabled else None,
             'new_realms_studio_2client':'NOT_TESTED'}
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
@@ -994,7 +1068,7 @@ jobs:
             python3 - <<'PY'
           import json
           x=json.load(open('/tmp/p0d_rc_out/RC_CAPACITY_REPORT.json'))
-          assert x['native_source_count']==64+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
+          assert x['native_source_count']==64+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled'])+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['P0D_017_NEUTRAL_ELITE_BOSS_V1']['enabled']), x
           assert x['rbxlx_bytes']>571621 and x['rbxlx_bytes']<2000000
           print('P0D_PRIVATE64_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
           PY
