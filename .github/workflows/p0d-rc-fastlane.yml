@@ -300,6 +300,16 @@ jobs:
             echo P0D_PRIVATE66_BOND_OFF_EXACT_REAL_OFFICIAL65_PASS
             python3 -B rc_fastlane/apply_twin_bond.py --dist "$DIST" --enabled true
           fi
+      - name: P0-C #361 source-locked castle map private67-composition gate (66 scripts)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_owner361_castle.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/apply_owner361_castle.py --dist "$DIST" --enabled false
+            python3 -B rc_fastlane/apply_owner361_castle.py --dist "$DIST" --enabled true
+          fi
       - name: Check actual built RC66 source lock, approved feature and ledger agree
         if: ${{ env.PROFILE == 'rich51' }}
         shell: bash
