@@ -6,6 +6,8 @@ these Python tests do NOT claim Roblox Studio, networking or visuals.
 """
 from __future__ import annotations
 import importlib.util
+import ast
+import inspect
 import json
 import os
 from pathlib import Path
@@ -21,39 +23,25 @@ mod = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod)
 
 def original_horde() -> bytes:
-    s = mod.HORDE_AUTHOR.read_text("utf8")
-    header='''-- No RemoteEvent, no task scheduler, no XP/egg/score/damage-player authority.
-local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))'''
-    new_header='''-- In Studio only: one outbound cosmetic RemoteEvent + visual-only spark cue.
--- No OnServerEvent listener, scheduler, XP/egg/score/damage-player authority.
-local RunService=game:GetService("RunService")
-local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))'''
-    old_ctor='''    folder.Parent=world
-    return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0},Horde)'''
-    new_ctor='''    folder.Parent=world
-    -- Studio-only outbound visuals; live servers create/send no unused packet.
-    local visualCue=nil
-    if RunService:IsStudio() then
-        visualCue=Instance.new("RemoteEvent")
-        visualCue.Name="P0D_ART_COMBAT_SIGNAL_V1"
-        visualCue.Parent=folder
-    end
-    return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0,artCue=visualCue},Horde)'''
-    seam='                    m.body.Color=Color3.fromRGB(253,231,111)'
-    hit='''
-                    -- Every confirmed hit produces BOTH a reliable Studio client
-                    -- arc packet and a synchronous server-only 3D spark cue.
-                    -- Never allow the cosmetic Remote to accept client traffic.
-                    if self.artCue then
-                        m.artHitSeq=(m.artHitSeq or 0)+1
-                        self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)
-                        m.body:SetAttribute("P0D_ART_SPARK_V1",
-                            tostring(m.artHitSeq).."|"..(if m.hp<=0 then "K" else "H"))
-                    end'''
-    raw = s.replace(new_header,header).replace(new_ctor,old_ctor).replace(seam+hit,seam).encode("utf8")
-    if raw == s.encode("utf8") or mod.blob(raw) != mod.ORIGINAL_HORDE_PIN:
+    # Extract authored exact seam literals from the real adapter, then verify
+    # the reconstructed original against the independent original Git blob.
+    source = ast.parse(inspect.getsource(mod.validate_horde_patch)).body[0]
+    keys = {"header","new_header","old_ctor","new_ctor","seam","extra"}
+    vals = {}
+    for line in source.body:
+        if isinstance(line, ast.Assign) and len(line.targets)==1:
+            t=line.targets[0]
+            if isinstance(t,ast.Name) and t.id in keys:
+                vals[t.id]=ast.literal_eval(line.value)
+    if vals.keys()!=keys:
+        raise RuntimeError("INCOMPLETE_ORIGINAL_HORDE_SEAMS")
+    patched=mod.HORDE_AUTHOR.read_text("utf8")
+    restored=(patched.replace(vals["new_header"], vals["header"])
+                    .replace(vals["new_ctor"], vals["old_ctor"])
+                    .replace(vals["seam"]+vals["extra"], vals["seam"])).encode("utf8")
+    if restored==patched.encode("utf8") or mod.blob(restored)!=mod.ORIGINAL_HORDE_PIN:
         raise RuntimeError("BAD_HORDE_TEST_FIXTURE_EXACT_RECONSTRUCTION")
-    return raw
+    return restored
 
 def snapshot(base: Path):
     return {p.relative_to(base).as_posix(): p.read_bytes()
@@ -94,7 +82,9 @@ class ArtCombatQA(unittest.TestCase):
         self.assertNotIn("OnServerEvent:Connect(",h)
         self.assertEqual(h.count('Instance.new("RemoteEvent")'),1)
         self.assertIn("if RunService:IsStudio() then",h)
-        self.assertIn('m.body:SetAttribute("P0D_ART_SPARK_V1"',h)
+        self.assertIn('self.artHitBus:Fire(m.body,m.artHitSeq,m.hp<=0,self.round)',h)
+        self.assertIn('Instance.new("BindableEvent")',h)
+        self.assertNotIn('P0D_ART_SPARK_V1',h)
         self.assertIn("if self.artCue then",h)
 
     def test_client_only_observes_outbound_hit_and_limit(self):
