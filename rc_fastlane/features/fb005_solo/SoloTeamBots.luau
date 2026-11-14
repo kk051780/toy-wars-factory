@@ -111,7 +111,7 @@ local function makeActor(id,team,style,spawn)
     local state={id=id,team=team,style=style,
         model=m,hum=hum,root=root,spawn=spawn,carry=nil,deadUntil=0,
         nextRepath=0,path={},pathIndex=1,planning=false,
-        lastAttack=0,lastGoal=Vector3.zero,pathGeneration=0}
+        lastAttack=0,lastGoal=nil,pathGeneration=0}
     return state
 end
 
@@ -119,6 +119,7 @@ local function invalidatePath(bot)
     -- PathfindingService:ComputeAsync yields; old callbacks must never claim
     -- authority over an agent that just stole an egg, respawned or changed goal.
     bot.pathGeneration+=1
+    bot.lastGoal=nil
     bot.path={}
     bot.pathIndex=1
     bot.nextRepath=0
@@ -226,6 +227,7 @@ local function pathTo(bot,goal,now)
         -- current. A respawn can happen while ComputeAsync is yielding.
         local current=active and epoch==token and bot.pathGeneration==generation
             and bot.root==planningRoot and alive(bot)
+            and bot.lastGoal~=nil and (bot.lastGoal-goal).Magnitude<=8
         if current then
             if ok and path and path.Status==Enum.PathStatus.Success then
                 bot.path=path:GetWaypoints()
@@ -242,6 +244,12 @@ local function pathTo(bot,goal,now)
     end)
 end
 local function move(bot,goal,now)
+    -- Rival positions and the raid objective can change WHILE ComputeAsync
+    -- yields. Revoke any path planned for a materially different destination.
+    if bot.lastGoal==nil or (bot.lastGoal-goal).Magnitude>8 then
+        invalidatePath(bot)
+    end
+    bot.lastGoal=goal
     pathTo(bot,goal,now)
     local actual=goal
     if bot.pathIndex<=#bot.path then
@@ -324,7 +332,11 @@ function Bot.tick(now)
                     invalidatePath(bot)
                 end
             end
-            local waypoint=target
+            -- Steal/deposit may change bot.carry above. Do NOT reuse the
+            -- pre-transaction target for the same-tick MoveTo.
+            local waypoint=if bot.carry then map.teams[bot.team].scorePad.Position
+                elseif bot.style=="GUARD" then map.teams[bot.team].egg.Position
+                else map.teams[enemy].egg.Position
             if bot.style=="GUARD" then
                 if rival and db<14 then waypoint=rival.root.Position
                 elseif player and dp<14 and player.Character then
