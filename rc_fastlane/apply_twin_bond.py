@@ -144,7 +144,7 @@ def apply(dist:Path,profile:str="rich51",override:bool|None=None)->bool:
       "studio_explicit_true_only":True,
       "rollback":"OFF preserves all 65 source/project/locks bytes",
       "studio_2player_android_fun":"NOT_TESTED",
-      "official_rc_adopted":False,
+      "official_rc_adopted":flags[FEATURE]["official_rc_adopted"] is True,
     }
     feats["total_sources"]=66
     feats["source_gitblobs"]=pins

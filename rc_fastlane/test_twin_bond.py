@@ -121,5 +121,21 @@ class TwinBond(unittest.TestCase):
         self.assertNotIn('leaderstats',WORLD)
         self.assertNotIn('Humanoid:TakeDamage(',WORLD)
 
+    def test_23_official_rc66_ledger_receipt_consistent(self):
+        registry=json.loads((ROOT/"FEATURE_REGISTRY.json").read_text("utf8"))
+        catalog=json.loads((ROOT/"FEATURE_CATALOG.json").read_text("utf8"))
+        flags=json.loads((ROOT/"FEATURE_SWITCHES.json").read_text("utf8"))["features"]
+        bond=next(v for v in registry["features"] if v["id"]=="TWIN_BOND_PVE_COMPANION_V1")
+        self.assertTrue(bond["official_rc_adopted"])
+        self.assertTrue(flags["TWIN_BOND_PVE_COMPANION_V1"]["official_rc_adopted"])
+        self.assertEqual(registry["canonical_rc_source_count"],66)
+        self.assertEqual(registry["canonical_rc_source_head"],"2c74382bf24f9fdfd67f3bfcecb9a8a6d7ddd264")
+        self.assertEqual(catalog["verified_rc_head"],"2c74382bf24f9fdfd67f3bfcecb9a8a6d7ddd264")
+        self.assertEqual(registry["canonical_rc_acceptance_run"],43549547549)
+        self.assertEqual(sum(row["stage"]=="RC" for row in catalog["rows"]),31)
+        self.assertEqual(len(catalog["rows"]),67)
+        self.assertIn('"official_rc_adopted":flags[FEATURE]["official_rc_adopted"] is True',ADAPTER)
+
+
 if __name__=="__main__":
     unittest.main()
