@@ -6,6 +6,7 @@
 local RunService = game:GetService("RunService")
 if not RunService:IsStudio() then return end
 local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
 local Workspace = game:GetService("Workspace")
 
 local localPlayer = Players.LocalPlayer
@@ -25,6 +26,7 @@ local isRunning = true
 local elapsed = 0
 local activeParts = 0
 local lastRound = nil
+local lastEpoch = nil
 local lastHitSerial = {}
 -- Bounded 9-NPC short-lived cues can arrive before an art model replicates.
 -- Replaying them at their original time avoids inventing later damage events.
@@ -138,7 +140,9 @@ local function tryEquip(model)
 end
 
 local function watch(model)
-    if not isMinion(model) or connected[model] then return end
+    -- task.defer(watch, model) may run AFTER script.Destroying. Never lease
+    -- new listeners once teardown begins.
+    if not isRunning or not isMinion(model) or connected[model] then return end
     local leases = {}
     connected[model] = leases
     -- #374 marks the model BEFORE creating art children. ChildAdded retries
@@ -202,22 +206,27 @@ for _,child in ipairs(horde:GetChildren()) do task.defer(watch,child) end
 -- Reuse the same original server-confirmed hit event as #381's slash.
 -- It sends one delivery per actual attack, even during an active damage popup.
 -- BEGIN_NATIVE_MOTION_CONFIRMED_HIT (exact runtime policy under native QA)
-local function applyConfirmedHit(id, isKO, serial, round, now, findEntry)
+local function applyConfirmedHit(id, isKO, serial, round, epoch, now, findEntry)
     if type(id) ~= "number" or id%1 ~= 0 or id < 1 or id > 9
         or type(serial) ~= "number" or serial%1 ~= 0 or serial < 1
         or type(round) ~= "number" or round%1 ~= 0
+        or type(epoch) ~= "number" or epoch%1 ~= 0 or epoch < 1
         or type(isKO) ~= "boolean" then return false end
-    if lastRound ~= round then
-        if lastRound ~= nil and round < lastRound then return false end
+    if lastEpoch ~= epoch then
+        -- New match epoch is strictly monotonic; round numbers may reset.
+        if lastEpoch ~= nil and epoch < lastEpoch then return false end
+        lastEpoch = epoch
         lastRound = round
         table.clear(lastHitSerial)
         table.clear(pendingHits)
+    elseif lastRound ~= round then
+        return false
     end
     if serial <= (lastHitSerial[id] or 0) then return false end
     lastHitSerial[id] = serial
     local entry = findEntry(id)
     if not entry then
-        -- The server hit is already authoritative; queue visual pose only.
+        -- Queued actual server hit, never locally predicted damage.
         pendingHits[id] = {at=now, ko=isKO}
         return true
     end
@@ -230,16 +239,76 @@ end
 
 local cue = horde:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1")
 local cueConnection
+local historyConnection
+local epochConnection
+
+local function findEntryById(targetId)
+    local targetName = if targetId == 9 then "MUSOU_ELITE_TELEGRAPH"
+        else "MUSOU_MINION_" .. tostring(targetId)
+    local model = horde:FindFirstChild(targetName)
+    return model and records[model]
+end
+
+local function onConfirmedHit(id, isKO, serial, round, epoch, hitAt)
+    if not isRunning or not cue:IsA("RemoteEvent") then return end
+    local serverEpoch = cue:GetAttribute("P0D_ART_EPOCH_V1")
+    if type(serverEpoch) == "number" and epoch < serverEpoch then return end
+    applyConfirmedHit(id, isKO, serial, round, epoch, hitAt, findEntryById)
+end
+
+-- #387's ORIGINAL Horde stores its most recent 12 server-confirmed events
+-- for up to 2.5 seconds. Use those snapshots to bridge startup gaps before
+-- this LocalScript's OnClientEvent listener was attached. Replayed poses use
+-- the original hit time, never a new/delayed fictitious damage event.
+local function replayRecent()
+    if not isRunning then return end
+    local encoded = cue:GetAttribute("P0D_ART_RECENT_V1")
+    if type(encoded) ~= "string" or #encoded > 4096 then return end
+    local ok, list = pcall(function() return HttpService:JSONDecode(encoded) end)
+    if not ok or type(list) ~= "table" or #list > 12 then return end
+    local serverNow = Workspace:GetServerTimeNow()
+    local localNow = os.clock()
+    for _,hit in ipairs(list) do
+        if type(hit) == "table" and #hit == 12 then
+            local id, isKO, serial, round, epoch, stamp =
+                hit[1], hit[8], hit[9], hit[10], hit[11], hit[12]
+            if type(stamp) == "number" and stamp == stamp
+                and type(epoch) == "number" and epoch%1 == 0 then
+                local age = serverNow - stamp
+                if age >= -.25 and age <= .7 then
+                    onConfirmedHit(id, isKO, serial, round, epoch,
+                        localNow - math.max(0,age))
+                end
+            end
+        end
+    end
+end
+
+local function syncServerEpoch()
+    if not isRunning then return end
+    local epoch = cue:GetAttribute("P0D_ART_EPOCH_V1")
+    if type(epoch) ~= "number" or epoch%1 ~= 0 or epoch < 1 then return end
+    if lastEpoch == nil or epoch > lastEpoch then
+        lastEpoch = epoch
+        lastRound = nil
+        table.clear(lastHitSerial)
+        table.clear(pendingHits)
+    end
+    replayRecent()
+end
+
 if cue:IsA("RemoteEvent") then
-    cueConnection = cue.OnClientEvent:Connect(function(id, hitPos, fromPos, isKO, serial, round)
-        if not isRunning then return end
-        applyConfirmedHit(id, isKO, serial, round, os.clock(), function(targetId)
-            local targetName = if targetId == 9 then "MUSOU_ELITE_TELEGRAPH"
-                else "MUSOU_MINION_" .. tostring(targetId)
-            local model = horde:FindFirstChild(targetName)
-            return model and records[model]
+    -- Register live first. Concurrent snapshot updates are deduped by
+    -- (epoch,mob,serial) under the actual native-tested motion policy.
+    cueConnection = cue.OnClientEvent:Connect(
+        function(id, hitPos, fromPos, isKO, serial, round, epoch)
+            onConfirmedHit(id, isKO, serial, round, epoch, os.clock())
         end)
-    end)
+    historyConnection = cue:GetAttributeChangedSignal("P0D_ART_RECENT_V1")
+        :Connect(replayRecent)
+    epochConnection = cue:GetAttributeChangedSignal("P0D_ART_EPOCH_V1")
+        :Connect(syncServerEpoch)
+    syncServerEpoch()
 end
 
 local pulse
@@ -259,6 +328,8 @@ pulse = RunService.Heartbeat:Connect(function(dt)
         table.clear(pendingHits)
         for model in pairs(records) do drop(model) end
         if cueConnection then cueConnection:Disconnect() end
+        if historyConnection then historyConnection:Disconnect() end
+        if epochConnection then epochConnection:Disconnect() end
         if localArt.Parent then localArt:Destroy() end
         return
     end
@@ -315,6 +386,8 @@ script.Destroying:Connect(function()
     table.clear(pendingHits)
     for model in pairs(records) do drop(model) end
     if cueConnection then cueConnection:Disconnect() end
+    if historyConnection then historyConnection:Disconnect() end
+    if epochConnection then epochConnection:Disconnect() end
     if localArt.Parent then localArt:Destroy() end
 end)
 print("ART_MOTION_SOURCE_WIP_CLIENT_COSMETIC_ONLY_NOT_STUDIO_VERIFIED")
