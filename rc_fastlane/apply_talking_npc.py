@@ -162,9 +162,14 @@ def apply(dist: Path, enabled: bool = True, output_dist: Path | None = None) -> 
         staged = temp_root / "candidate"
         shutil.copytree(dist, staged)
         _apply_inplace(staged, True)
-        if output_dist.exists():
-            raise ValueError("OUTPUT_RACED_WITH_ANOTHER_WRITER")
-        os.replace(staged, output_dist)
+        # Exclusive filesystem reservation prevents two publishers from racing.
+        # os.replace on its own can overwrite a concurrently-created empty dir.
+        os.mkdir(output_dist, mode=0o700)  # raises FileExistsError, atomic no-clobber gate
+        try:
+            os.replace(staged, output_dist)
+        except BaseException:
+            output_dist.rmdir()  # owned, empty reservation; never remove foreign output
+            raise
     finally:
         shutil.rmtree(temp_root, ignore_errors=True)
     print("P0D_TALKING_NPC_TRANSACTIONAL_PUBLISH_PASS", output_dist)
