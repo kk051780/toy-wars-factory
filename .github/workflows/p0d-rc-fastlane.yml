@@ -1039,6 +1039,17 @@ jobs:
           retention-days: 7
           if-no-files-found: error
 
+      - name: FB005 verify source-locked async yielding path behavior and soft-start safety
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_fb005_path_lifecycle_qa.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            cmake --build /tmp/p0d_new_luau --target Luau.Repl.CLI --parallel 4
+            python3 -B rc_fastlane/test_fb005_async_native.py --emit /tmp/fb005_parent_author_native.luau
+            /tmp/p0d_new_luau/luau /tmp/fb005_parent_author_native.luau | tee /tmp/p0d_fb005_author_native.log
+            grep -Fx FB005_ASYNC_LIFECYCLE_NATIVE_BEHAVIOR_PASS /tmp/p0d_fb005_author_native.log
+          fi
       - name: FB005 private67 Studio solo ally/enemy real Game bot source audit
         shell: bash
         run: |
@@ -1083,6 +1094,18 @@ jobs:
           assert names["Script"].count("Game")==1
           assert names["ModuleScript"].count("SoloTeamBots")==1
           assert names["ModuleScript"].count("MusouHorde")==1
+          # Check all 67 actual compiled Rojo Script Source texts, not names only.
+          from collections import Counter
+          compiled=Counter()
+          for script_item in doc.iter("Item"):
+              if script_item.get("class") not in ("Script","LocalScript","ModuleScript"):
+                  continue
+              node=script_item.find("./Properties/string[@name='Source']")
+              if node is not None:
+                  compiled[node.text or ""]+=1
+          expected=Counter(v.decode("utf8") for v in b.values())
+          assert sum(compiled.values())==67,("FB005_BINARY_COUNT",sum(compiled.values()))
+          assert compiled==expected,("FB005_SOURCE_EXACT_ROJO_MISMATCH",compiled-expected)
           receipt={"id":"FB005_STUDIO_SOLO_TEAM_BOTS_CLASSIC_V1",
                    "source_count":67,"original_scripts_preserved":65,
                    "only_one_existing_game":True,"engine_studio":"NOT_TESTED",
