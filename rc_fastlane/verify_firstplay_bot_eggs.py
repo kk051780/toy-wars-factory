@@ -160,7 +160,7 @@ check(not botAuthority.steal(red,"BLUE"),"FIVE_EGG_BOT_UNSUPPORTED")
 EXPERIMENTAL_FIVE_EGG_MODE=false
 check(not botAuthority.deposit(blue,"BLUE","RED"),
   "UNCLAIMED_EGG_NO_SCORE")
-print("P0D_FIRSTPLAY_REAL_GAME_BOT_EGG_AUTHORITY_29_NATIVE_CASES_PASS")
+print("P0D_FIRSTPLAY_REAL_GAME_BOT_EGG_AUTHORITY_30_NATIVE_CASES_PASS")
 '''
 if __name__=="__main__":
     p=argparse.ArgumentParser()
