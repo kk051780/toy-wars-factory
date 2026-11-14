@@ -727,7 +727,7 @@ jobs:
           path: /tmp/p0d_rc_out/*
           retention-days: 7
           if-no-files-found: error
-      - name: Run authored 27-case Oracle and alert policy in genuine native Luau
+      - name: Run authored 25-case Oracle and alert policy in genuine native Luau
         if: github.ref == 'refs/heads/feature/p0d-npc-oracle-battle-qa-20261114'
         shell: bash
         run: |
@@ -737,7 +737,7 @@ jobs:
           script=Path('rc_fastlane/features/talking_npc/TalkingNPCDirector.luau').read_text('utf8')
           assert script.count('return Director')==1
           tests=Path('tests/p0d_npc_oracle_battle_native.luau').read_text('utf8')
-          Path('/tmp/p0d_native_oracle_tests.luau').write_text(script.rsplit('return Director',1)[0]+'\\n'+tests,encoding='utf8')
+          Path('/tmp/p0d_native_oracle_tests.luau').write_text(script.rsplit('return Director',1)[0]+chr(10)+tests,encoding='utf8')
           PY
           /tmp/p0d_new_luau/luau-compile /tmp/p0d_native_oracle_tests.luau >/dev/null
           /tmp/p0d_new_luau/luau /tmp/p0d_native_oracle_tests.luau | tee /tmp/p0d_oracle_native.log
