@@ -410,6 +410,9 @@ def patch_bot(text: str) -> str:
         bot.unstuckAttempts=((bot.unstuckAttempts or 0)%4)+1
         -- End any stalled ComputeAsync candidate; it may finish too late.
         invalidatePath(bot)
+        -- invalidatePath clears lastGoal for stale async callbacks; restore
+        -- the same valid target so retry counts and alternating sides persist.
+        bot.lastGoal=goal
         local side=if bot.unstuckAttempts%2==0 then -1 else 1
         local toGoal=goal-position
         local lateral=Vector3.new(-toGoal.Z,0,toGoal.X)
