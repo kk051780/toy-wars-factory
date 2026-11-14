@@ -1,0 +1,67 @@
+{
+  "schema": "P0D_FB005_PREP_SOURCE_LOCK_V1",
+  "feedback_id": "FB-005",
+  "feature_id": "FB005_STUDIO_SOLO_TEAM_BOTS_CLASSIC_V1",
+  "owner_priority": "P0_CORE_GAMEPLAY",
+  "base_official_rc_sha": "43543378f976374e2cac2d68b3136ac355d3191b",
+  "adapter": {
+    "path": "rc_fastlane/apply_fb005_solo_bots.py",
+    "source_gitblob": "f05740f3c5b04b1577c30bf65773893197077598"
+  },
+  "authored_module": {
+    "path": "rc_fastlane/features/fb005_solo/SoloTeamBots.luau",
+    "source_gitblob": "84f59050da4f4fcdf6630d8f08e65af72af8fa1a"
+  },
+  "scope": {
+    "original_scripts": 66,
+    "private_scripts": 67,
+    "modified_existing": [
+      "server/Game.server.luau"
+    ],
+    "added": [
+      "server/SoloTeamBots.luau"
+    ],
+    "unchanged_original_scripts": 65,
+    "ruleset": "CLASSIC_SINGLE_EGG_STUDIO_ONLY",
+    "solo_max_humans": 1,
+    "ally_bots": 2,
+    "opponent_bots": 3,
+    "authority": "Original Game owns match HP/egg/score/winner and handles NPC combat damage; SoloTeamBots module initializes NPC Humanoid MaxHealth/Health at spawn and respawn only; no second match authority"
+  },
+  "safety": [
+    "no new RemoteEvent",
+    "no DataStore edits",
+    "no paid/publish",
+    "OFF byte-exact previous66",
+    "bot start/tick pcall fail closed",
+    "pathfinding epoch guard",
+    "out of scope H2 five-egg bot rules",
+    "do not merge wholesale",
+    "async ComputeAsync results discarded after respawn, egg goal change or global bot stop",
+    "stale pathfinder never unlocks a newer plan",
+    "Bot.start false return triggers DRAW/SOLO_BOTS_NOT_READY instead of silently empty solo match",
+    "Sourcery medium: stale target reassessed after same-tick egg pickup/deposit; old ComputeAsync result discarded on material goal drift",
+    "human strike ray must hit physically queryable target bot torso; world walls, allied and nearer bot bodies block hit",
+    "a bot tick exception exits ACTIVE solo to DRAW/SOLO_BOTS_TICK_FAILURE",
+    "player-count transitions do not delete active bots; lobby/new match stop cleans bots",
+    "path goal drift preserves nextRepath throttle; 8s watchdog generation-invalidates hung planner",
+    "watchdog preserves current lastGoal after invalidation, permitting the new path worker to pass generation+goal adoption guards"
+  ],
+  "verification": {
+    "source_regression": "CI_REQUIRED",
+    "luau_compiler": "CI_REQUIRED",
+    "source_exact_rojo": "CI_REQUIRED",
+    "engine_studio_single_player": "NOT_TESTED",
+    "engine_studio_two_clients": "NOT_TESTED",
+    "mobile_android": "NOT_TESTED",
+    "human_fun": "FUN_NO_GO",
+    "path_lifecycle_qa": "SOURCE_TEST_REQUIRED",
+    "solo_start_false_regression": "CI_REQUIRED",
+    "async_luau_coroutine_behavior": "CI_REQUIRED",
+    "native_human_bot_raycast_los_behavior": "CI_REQUIRED",
+    "watchdog_and_goal_drift_native_luau": "CI_REQUIRED",
+    "bot_join_leave_source_contract": "CI_REQUIRED"
+  },
+  "roll_back": "omit post-official FB005 adapter and rebuild previous66 locked source",
+  "notes": "This is not a finished AI feature; physical navigation, scoring and human combat still need real Studio acceptance. Must reconcile same Game edits with #363 READY and #376 lobby. QA child changes only bot navigation lifespan, no new authority/score rules. Parent PR #378 author should select these deltas and rerun full pinned same-HEAD build. Hardened original Game start callback: failed pcall and false result both exit active solo instead of leaving player without AI. Sourcery QA child now has executable native Luau coroutine tests extracted from exact author invalidatePath/pathTo/move (not only source text). Human-vs-bot server melee validation now uses real raycast target hits, NOT a filter excluding all bots. Author parent branch also fail-closes solo match when a running bot tick throws. Native 8-case raycast behavior tests pin actual authored function. Join/leave during ACTIVE retains existing NPCs; stop at zero players or match cleanup. The NPC module initializes NPC health at birth; original Game remains sole authority for combat damage and round/castle HP. A per-bot re-path timeout prevents indefinite planner lock, and preserving nextRepath prevents dynamic target storms. Native Luau watchdog test caught that invalidatePath cleared the current lastGoal; corrected by restoring the exact goal before scheduling a new worker."
+}
