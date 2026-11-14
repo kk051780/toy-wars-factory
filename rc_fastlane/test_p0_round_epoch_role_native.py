@@ -41,7 +41,10 @@ def emit(game:Path,out:Path):
         assert reset.index("match.serial~=startupSerial")<reset.index(check)
     enable=reset[reset.index('    setObjectiveEnabled(true)'):].split('\n',1)[0]
     canonical=reset[reset.index('    startCanonical()'):].split('\n',1)[0]
-    startup=serial+match_line+loop+guard+enable+'\n'+canonical+'\n'
+    egg='    for _, team in ipairs({"RED", "BLUE"}) do resetEgg(team) end'
+    assert reset.count(egg)==1,"TWO_EGGS_REAL_SOURCE_DRIFT"
+    assert reset.index("match.serial~=startupSerial")<reset.index(egg)
+    startup=serial+match_line+loop+guard+egg+'\n'+enable+'\n'+canonical+'\n'
     role="local function applyRole(player: Player, data)"+extract(g,
         "local function applyRole(player: Player, data)",
         "remote.OnServerEvent:Connect(function(player: Player, data)")
