@@ -1822,7 +1822,7 @@ jobs:
           r=json.loads(p.read_text())
           r['source_head_sha']=os.environ['GITHUB_SHA']
           r['official_rc_adoption']=False
-          r['rollback_to_rc80']='846d4be03b96c53b9fbbba3de94c2eda2d7d8aa6'
+          r['rollback_to_rc80']='bd5b819b846705e18537a994ed97ffe71ddd4855'
           p.write_text(json.dumps(r,ensure_ascii=False,indent=2)+'\n')
           print('FB019_ACK_PRIVATE_PREP_NOT_OFFICIAL',r['source_head_sha'],r['place_bytes'])
           PY
