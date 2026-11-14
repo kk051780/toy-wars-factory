@@ -2030,7 +2030,7 @@ jobs:
           o=Path('/tmp/p0d_431_private_client_artifact')
           r=json.loads((o/'LIVE_ART_PILOT_RECEIPT.json').read_text())
           a=json.loads((o/'ART_REPORT.json').read_text())
-          assert r['source_gate']=='PASS' and r['server_studio_only_sources']==5
+          assert r['source_gate']=='PASS' and r['server_guarded_art_sources']==5
           assert r['client_private_optin_sources']==2 and not r['owner_accepted']
           assert a['source']['source_gate']=='PASS' and a['source']['script_count']==80
           assert a['art_decision']=='ART_NO_GO' and a['owner_accepted'] is False

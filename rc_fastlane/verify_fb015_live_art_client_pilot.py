@@ -3,7 +3,7 @@
 import argparse,collections,hashlib,json
 from pathlib import Path
 from defusedxml import ElementTree as ET
-from apply_fb015_live_art_client_pilot import read,blob,BEAST,FX,FILES,OLD,NEW,ATTR,FLAG
+from apply_fb015_live_art_client_pilot import read,blob,BEAST,FX,SERVER,CLIENTS,FILES,OLD,NEW,SERVER_OLD,SERVER_NEW,ATTR,OWNER_OPTIN,FLAG
 ART={
  ("Script","CastleDetailArt"):"server/CastleDetailArt.server.luau",
  ("Script","FantasyWorldArt"):"server/FantasyWorldArt.server.luau",
@@ -17,10 +17,13 @@ def verify(base:Path,dist:Path,place:Path,receipt:Path):
     old,new=read(base),read(dist)
     assert len(old)==len(new)==80 and set(old)==set(new)
     changed={p for p in new if old[p]!=new[p]}
-    assert changed==set(FILES),("TWO_ONLY",changed)
-    for p in FILES:
+    assert changed==set(FILES),("THREE_ONLY",changed)
+    for p in CLIENTS:
         assert new[p].replace(NEW.encode(),OLD.encode(),1)==old[p]
         assert new[p].count(ATTR.encode())==1
+    assert new[SERVER].replace(SERVER_NEW.encode(),SERVER_OLD.encode(),1)==old[SERVER]
+    assert new[SERVER].count(OWNER_OPTIN.encode())==1
+    assert new[SERVER].count(ATTR.encode())==1
     sl=json.loads((dist/"SOURCE_LOCK.json").read_text())
     fl=json.loads((dist/"RC_FEATURE_LOCK.json").read_text())
     pins={p:blob(v) for p,v in sorted(new.items())}
@@ -48,13 +51,15 @@ def verify(base:Path,dist:Path,place:Path,receipt:Path):
     assert len(names[("LocalScript","TrapRaidersHUD")])==1
     for key,path in ART.items():
         assert names[key]==[new[path].decode()],("REAL_INSTANCE_DRIFT",key)
-        if path in FILES:assert NEW in names[key][0]
+        if path in CLIENTS:assert NEW in names[key][0]
+        elif path==SERVER:assert SERVER_NEW in names[key][0] and OLD not in names[key][0]
         else:assert OLD in names[key][0],("DANGEROUS_SERVER_ART_ENABLED",path)
     result={
       "schema":"P0D_LIVE_ART_CLIENT_PILOT_RECEIPT_V1",
-      "changed_sources":sorted(changed),"other_78_identical":True,
+      "changed_sources":sorted(changed),"other_77_identical":True,
       "exact_studio_place":True,"source_count":80,
-      "client_private_optin_sources":2,"server_studio_only_sources":5,
+      "client_private_optin_sources":2,"server_guarded_art_sources":5,
+      "server_private_authorizer":1,
       "studio_visual":"NOT_TESTED","nonstudio_private":"NOT_TESTED",
       "nonstudio_public":"INTENT_OFF_NOT_RUNTIME_TESTED",
       "android15":"NOT_TESTED","kid_fun":"NOT_TESTED",
@@ -66,7 +71,7 @@ def verify(base:Path,dist:Path,place:Path,receipt:Path):
     }
     assert not receipt.exists()
     receipt.write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n")
-    print("P0D_431_TWO_PRIVATE_CLIENT_ART_SOURCE_EXACT_PASS__FIVE_STUDIO_ONLY",len(raw),result["place_sha256"])
+    print("P0D_431_SERVER_AUTH_TWO_PRIVATE_CLIENT_ART_EXACT_PASS__FIVE_GUARDED",len(raw),result["place_sha256"])
 if __name__=="__main__":
     p=argparse.ArgumentParser()
     for k in ("base","dist","place","receipt"):p.add_argument("--"+k,type=Path,required=True)

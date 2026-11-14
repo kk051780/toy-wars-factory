@@ -4,7 +4,8 @@
   "formal_rc_modified": false,
   "target": [
     "client/FB015CharacterArt.client.luau",
-    "client/ConfirmedSlashFX.client.luau"
+    "client/ConfirmedSlashFX.client.luau",
+    "server/CastleDetailArt.server.luau"
   ],
   "staged_from": "#426 mobile Gorogan LOD then private-only opt-in guard",
   "enabled_in_studio": true,
@@ -19,5 +20,10 @@
   "art": "ART_NO_GO",
   "live_art": "LIVE_ART_NO_GO",
   "owner_accepted": false,
-  "rollback": "skip candidate; prior formal 80 Luau source unchanged"
+  "rollback": "skip candidate; prior formal 80 Luau source unchanged",
+  "server_only_authorizer": "server/CastleDetailArt.server.luau",
+  "replicated_authorization_attribute": "P0D_LIVE_ART_PILOT_SERVER_ALLOWED",
+  "client_private_id_direct_check": false,
+  "no_public_server_authorization": true,
+  "other_sources_byte_identical": 77
 }

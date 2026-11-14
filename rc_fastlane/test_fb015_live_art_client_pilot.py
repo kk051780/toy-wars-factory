@@ -2,13 +2,17 @@
 """#431 deny-first contract/negative tests. No runtime art acceptance claim."""
 import unittest,tempfile
 from pathlib import Path
-from apply_fb015_live_art_client_pilot import OLD,NEW,FLAG,ATTR,FILES,patch,apply
+from apply_fb015_live_art_client_pilot import OLD,NEW,SERVER_OLD,SERVER_NEW,SERVER,OWNER_OPTIN,CLIENTS,FLAG,ATTR,FILES,patch,patch_server,apply
 class T(unittest.TestCase):
     def test_studio_unchanged(self):
         self.assertIn("if RunService:IsStudio() then return true end",NEW)
     def test_public_off(self):
-        self.assertIn('if game.PrivateServerId == "" then return false end',NEW)
+        self.assertIn('game.PrivateServerId ~= ""',SERVER_NEW)
+        self.assertIn('if not RunService:IsStudio() then',SERVER_NEW)
+        self.assertNotIn("PrivateServerId",NEW)
     def test_private_not_automatically_on(self):
+        self.assertIn('workspace:GetAttribute("'+OWNER_OPTIN+'") == true',SERVER_NEW)
+        self.assertIn('workspace:SetAttribute("'+ATTR+'", true)',SERVER_NEW)
         self.assertIn('workspace:GetAttribute("'+ATTR+'") == true',NEW)
     def test_original_source_byte_restored(self):
         b=("foo\n"+OLD+"\nbar").encode()
@@ -24,10 +28,19 @@ class T(unittest.TestCase):
             p=Path(d)/"destination"
             self.assertFalse(apply(Path(d)/"none",p,False))
             self.assertFalse(p.exists())
-    def test_client_cosmetics_only(self):
-        self.assertEqual(len(FILES),2)
-        self.assertTrue(all(p.startswith("client/") for p in FILES))
+    def test_cosmetics_only_and_single_server_authorizer(self):
+        self.assertEqual(len(FILES),3)
+        self.assertTrue(all(p.startswith("client/") for p in CLIENTS))
+        self.assertEqual(SERVER,"server/CastleDetailArt.server.luau")
         self.assertNotIn("server/Game.server.luau",FILES)
+    def test_server_guard_exact_restore(self):
+        raw=(SERVER_OLD+"\nprint(123)").encode()
+        fixed=patch_server(raw)
+        self.assertEqual(fixed.replace(SERVER_NEW.encode(),SERVER_OLD.encode()),raw)
+    def test_server_double_guard_rejected(self):
+        with self.assertRaises(AssertionError):patch_server(patch_server(SERVER_OLD.encode()))
+    def test_server_missing_guard_rejected(self):
+        with self.assertRaises(AssertionError):patch_server(b"print(3)")
     def test_no_authority_in_switch(self):
         for token in ("FireServer(","TakeDamage(","OnServerEvent","FillBlock(","CanCollide =","DataStore"):
             self.assertNotIn(token,NEW)
