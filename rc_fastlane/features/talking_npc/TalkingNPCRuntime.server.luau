@@ -1,46 +1,41 @@
 --!nocheck
--- P0D-TALKING-NPC-V1 / PREP only. ONE existing Game remains match/egg/combat authority.
--- Install as ServerScriptService/TrapRaidersS1/TalkingNPCRuntime after real integration.
--- Requires sibling TalkingNPCDirector ModuleScript and existing TrapRaidersS1Remote.
--- No new Remote, Store, round, HP, score, XP, rewards or paid services.
+-- Talking NPC PREP: optional server-only observations; original Game/Store/Remote untouched.
+-- ServerStorage P0D_RC_ENABLE_TALKING_NPC_V1 true only in Studio private build.
 local RunService = game:GetService("RunService")
 if not RunService:IsStudio() then return end
 local ServerStorage = game:GetService("ServerStorage")
 local FLAG = "P0D_RC_ENABLE_TALKING_NPC_V1"
-if ServerStorage:GetAttribute(FLAG) ~= true then return end
-
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Director = require(script.Parent:WaitForChild("TalkingNPCDirector", 20))
-if type(Director) ~= "table" or type(Director.Compose) ~= "function" then return end
-local arena = Workspace:WaitForChild("TRAP_RAIDERS_S1", 60)
-local remote = ReplicatedStorage:WaitForChild("TrapRaidersS1Remote", 60)
-if not arena or not arena:IsA("Folder") or not remote or not remote:IsA("RemoteEvent") then
-    warn("[P0D/TALK] original arena or Remote missing; fail closed")
+local PUBLIC_ENABLED = "P0D_TALKING_NPC_CLIENT_ENABLED"
+ReplicatedStorage:SetAttribute(PUBLIC_ENABLED, false)
+
+local directorModule = script.Parent:WaitForChild("TalkingNPCDirector", 20)
+if not directorModule or not directorModule:IsA("ModuleScript") then
+    warn("[P0D/TALK] missing TalkingNPCDirector; feature disabled")
     return
 end
-if arena:FindFirstChild("P0D_TalkingNPCs") then
-    warn("[P0D/TALK] duplicate runtime refused")
+local directorOk, Director = pcall(require, directorModule)
+if not directorOk or type(Director) ~= "table"
+    or type(Director.Compose) ~= "function" or type(Director.CanSpeak) ~= "function" then
+    warn("[P0D/TALK] dialogue module failed to load; feature disabled")
     return
 end
 
-local folder = Instance.new("Folder")
-folder.Name = "P0D_TalkingNPCs"
-folder:SetAttribute("FeatureId", "P0D-TALKING-NPC-V1")
-folder:SetAttribute("PrivateStudioOnly", true)
-folder:SetAttribute("NoGameplayAuthority", true)
-folder.Parent = arena
+local active = nil
+local epoch = 0
+local speechTimes = {}  -- [Player] = {[speaker] = os.clock()}
+local lastAlertTarget = {} -- [Player] = enemy.UserId, only after ENEMY_ALERT is sent
 
-local lastSpeech = {}
-local lastAlertTarget = {}
-local animated = {}
 local function aliveRoot(player)
     if not player or player.Parent ~= Players then return nil end
-    local char = player.Character
-    local hum = char and char:FindFirstChildOfClass("Humanoid")
-    local root = char and char:FindFirstChild("HumanoidRootPart")
-    if not hum or hum.Health <= 0 or not root or not root:IsA("BasePart") then return nil end
+    local character = player.Character
+    local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+    local root = character and character:FindFirstChild("HumanoidRootPart")
+    if not humanoid or humanoid.Health <= 0 or not root or not root:IsA("BasePart") then
+        return nil
+    end
     return root
 end
 local function inTeam(player, team)
@@ -49,10 +44,12 @@ end
 local function visibleEnemy(player)
     local root = aliveRoot(player)
     if not root or not player.Team then return nil end
-    local ourTeam = player.Team.Name
-    if ourTeam ~= "RED" and ourTeam ~= "BLUE" then return nil end
+    local name = player.Team.Name
+    if name ~= "RED" and name ~= "BLUE" then return nil end
     for _, enemy in ipairs(Players:GetPlayers()) do
-        if enemy ~= player and enemy.Team and enemy.Team ~= player.Team then
+        if enemy ~= player and enemy.Team
+            and (enemy.Team.Name == "RED" or enemy.Team.Name == "BLUE")
+            and enemy.Team ~= player.Team then
             local other = aliveRoot(enemy)
             if other then
                 local d = other.Position - root.Position
@@ -61,26 +58,31 @@ local function visibleEnemy(player)
                     params.FilterType = Enum.RaycastFilterType.Exclude
                     params.FilterDescendantsInstances = {player.Character, enemy.Character}
                     local blocked = Workspace:Raycast(root.Position, d, params)
-                    if blocked == nil then
-                        return enemy, other
-                    end
+                    if blocked == nil then return enemy, other end
                 end
             end
         end
     end
     return nil
 end
-local function areaFor(worldPosition)
-    if worldPosition.X < -25 then return "west" end
-    if worldPosition.X > 25 then return "east" end
-    if worldPosition.Z < -22 then return "north" end
-    if worldPosition.Z > 22 then return "south" end
+local function areaFor(position)
+    if position.X < -25 then return "west" end
+    if position.X > 25 then return "east" end
+    if position.Z < -22 then return "north" end
+    if position.Z > 22 then return "south" end
     return "center"
 end
-local function sourceFacts(player, speaker, selected)
+local function carryingEgg(player)
+    local head = player.Character and player.Character:FindFirstChild("Head")
+    return head and head:FindFirstChild("S1_CARRIED_EGG") ~= nil
+end
+
+local function sourceFacts(player, speaker, mode, arena)
     local facts = {featureEnabled = true, speakerId = speaker, cooldownActive = false}
     if speaker == "NAVI" then
-        if player.Character and player.Character:FindFirstChild("S1_CARRIED_EGG") then
+        -- Auto warnings use ENEMY_ALERT ONLY. Never mark the enemy as alerted
+        -- after composing a carried-egg message or a HELLO.
+        if mode ~= "AUTO_ENEMY_ALERT" and carryingEgg(player) then
             facts.signal = "EGG_RETURN"
             facts.ourEggCarrier = true
             facts.urgent = true
@@ -88,16 +90,17 @@ local function sourceFacts(player, speaker, selected)
         end
         local enemy, enemyRoot = visibleEnemy(player)
         if enemy and enemyRoot then
-            -- LOS+45 studs confirmed on the server for this player only.
             facts.signal = "ENEMY_ALERT"
             facts.areaCode = areaFor(enemyRoot.Position)
             facts.observedByTeam = true
             facts.urgent = true
             return facts
         end
+        if mode == "AUTO_ENEMY_ALERT" then return nil end
         local starStage = Workspace:FindFirstChild("P0D_STARRY_PATH")
         if starStage and starStage:GetAttribute("PathOpen") == true
-            and starStage:FindFirstChild("P0D_StarShardHunt") then
+            and starStage:FindFirstChild("P0D_StarShardHunt")
+            and player:GetAttribute("P0D_StarShardComplete") ~= true then
             facts.signal = "KNOWN_ITEM"
             facts.areaCode = "sky"
             facts.itemCode = "star_shard"
@@ -107,46 +110,47 @@ local function sourceFacts(player, speaker, selected)
         facts.signal = "HELLO"
         return facts
     elseif speaker == "TRICK" then
-        facts.signal = selected == "TAUNT" and "TAUNT" or "TRICK_RUMOR"
+        facts.signal = mode == "TAUNT" and "TAUNT" or "TRICK_RUMOR"
         return facts
     elseif speaker == "ORACLE" then
         local realms = arena:FindFirstChild("P0D_REALM_HUNT_V1")
-        if not realms then return nil end
+        if not realms or realms:GetAttribute("Enabled") ~= true then return nil end
         local discovered = player:GetAttribute("P0D_RealmHunt_Count")
         facts.signal = "SECRET_HINT"
         facts.hintUnlocked = type(discovered) == "number" and discovered >= 1
-        facts.secretTier = (type(discovered) == "number" and discovered >= 3) and 2 or 1
+        facts.secretTier = type(discovered) == "number" and discovered >= 3 and 2 or 1
         if not facts.hintUnlocked then facts.signal = "INTRO" end
         return facts
     end
     return nil
 end
 
-local function speak(player, speaker, selected)
-    if ServerStorage:GetAttribute(FLAG) ~= true then return false end
-    if not aliveRoot(player) then return false end
-    local facts = sourceFacts(player, speaker, selected)
-    if not facts then return false end
+local function speak(player, speaker, mode, arena)
+    if ServerStorage:GetAttribute(FLAG) ~= true or not active
+        or not aliveRoot(player) then return nil end
+    local facts = sourceFacts(player, speaker, mode, arena)
+    if not facts then return nil end
     local now = os.clock()
-    if not Director.CanSpeak(now, lastSpeech[player], facts.urgent) then return false end
+    local perSpeaker = speechTimes[player] or {}
+    if not Director.CanSpeak(now, perSpeaker[speaker], facts.urgent) then return nil end
     local message = Director.Compose(facts)
-    if not message then return false end
-    if type(message.text) ~= "string" or #message.text > 270 then return false end
-    lastSpeech[player] = now
-    -- This is an existing server-owned Remote. FireClient is private to ONE player.
-    -- Other clients never receive this location, hint, or nearby enemy observation.
-    remote:FireClient(player, {
+    if not message or type(message.text) ~= "string" or #message.text > 270 then return nil end
+    perSpeaker[speaker] = now
+    speechTimes[player] = perSpeaker
+    -- One existing Game-owned RemoteEvent. Private FireClient, never FireAllClients.
+    active.remote:FireClient(player, {
         kind = "P0D_NPC_TALK_V1",
         speakerId = message.speakerId,
         displayName = message.displayName,
         text = message.text,
         voiceId = message.voiceId,
         suspicious = message.suspicious == true,
+        automated = mode == "AUTO_ENEMY_ALERT",
     })
-    return true
+    return message.intent
 end
 
-local function npc(name, speaker, position, color, team)
+local function createNPC(folder, arena, name, speaker, position, color, team, animated)
     local core = Instance.new("Part")
     core.Name = name
     core.Shape = Enum.PartType.Ball
@@ -158,20 +162,15 @@ local function npc(name, speaker, position, color, team)
     core.CanQuery = false
     core.Material = Enum.Material.Neon
     core.Color = color
-    core.Parent = folder
     core:SetAttribute("TalkRole", speaker)
     core:SetAttribute("Faction", team or "NEUTRAL")
+    core.Parent = folder
     table.insert(animated, {core = core, base = core.CFrame, phase = #animated * 1.7})
     local light = Instance.new("PointLight")
     light.Range = 12
     light.Brightness = 1
     light.Color = color
     light.Parent = core
-    local eye = Instance.new("Decal")
-    eye.Name = "Eyes"
-    eye.Face = Enum.NormalId.Front
-    eye.Texture = "rbxasset://textures/face.png"
-    eye.Parent = core
     local bb = Instance.new("BillboardGui")
     bb.Size = UDim2.fromOffset(160, 38)
     bb.StudsOffsetWorldSpace = Vector3.new(0, 3, 0)
@@ -196,54 +195,104 @@ local function npc(name, speaker, position, color, team)
     prompt.RequiresLineOfSight = false
     prompt.Parent = core
     prompt.Triggered:Connect(function(player)
+        if ServerStorage:GetAttribute(FLAG) ~= true or not active
+            or active.folder ~= folder then return end
         local root = aliveRoot(player)
         if not root or (root.Position - core.Position).Magnitude > 13 then return end
         if team and not inTeam(player, team) then return end
-        speak(player, speaker, nil)
+        speak(player, speaker, nil, arena)
     end)
-    return core
 end
 
--- Both teams get the same ally, while the trickster and Oracle are neutral locations.
-npc("ナビィ 赤チーム", "NAVI", Vector3.new(-69, 3.2, 11), Color3.fromRGB(254, 115, 153), "RED")
-npc("ナビィ 青チーム", "NAVI", Vector3.new(69, 3.2, 11), Color3.fromRGB(94, 193, 255), "BLUE")
-npc("マドロン あやしい噂", "TRICK", Vector3.new(0, 3.2, -40), Color3.fromRGB(202, 127, 249), nil)
-npc("オラクル 秘境のヒント", "ORACLE", Vector3.new(0, 3.2, 47), Color3.fromRGB(250, 213, 112), nil)
-
-Players.PlayerRemoving:Connect(function(p)
-    lastSpeech[p] = nil
-    lastAlertTarget[p] = nil
-end)
-
--- Optional automatic companion warning. Never transmit a hidden enemy.
--- One low-frequency scan; no Heartbeat loop per character.
-task.spawn(function()
-    while folder.Parent and ServerStorage:GetAttribute(FLAG) == true do
-        for _, player in ipairs(Players:GetPlayers()) do
-            local enemy = visibleEnemy(player)
-            if enemy ~= nil and lastAlertTarget[player] ~= enemy.UserId then
-                if speak(player, "NAVI", nil) then
-                    lastAlertTarget[player] = enemy.UserId
+local function stop()
+    epoch += 1
+    local prior = active
+    active = nil
+    if prior and prior.folder.Parent then prior.folder:Destroy() end
+    speechTimes = {}
+    lastAlertTarget = {}
+    ReplicatedStorage:SetAttribute(PUBLIC_ENABLED, false)
+end
+local function start()
+    if active or ServerStorage:GetAttribute(FLAG) ~= true then return end
+    local arena = Workspace:FindFirstChild("TRAP_RAIDERS_S1")
+        or Workspace:WaitForChild("TRAP_RAIDERS_S1", 60)
+    local remote = ReplicatedStorage:FindFirstChild("TrapRaidersS1Remote")
+        or ReplicatedStorage:WaitForChild("TrapRaidersS1Remote", 60)
+    if ServerStorage:GetAttribute(FLAG) ~= true then return end
+    if not arena or not arena:IsA("Folder") or not remote or not remote:IsA("RemoteEvent") then
+        warn("[P0D/TALK] original arena or Remote missing; fail closed")
+        return
+    end
+    if arena:FindFirstChild("P0D_TalkingNPCs") then
+        warn("[P0D/TALK] duplicate runtime refused")
+        return
+    end
+    local folder = Instance.new("Folder")
+    folder.Name = "P0D_TalkingNPCs"
+    folder:SetAttribute("FeatureId", "P0D-TALKING-NPC-V1")
+    folder:SetAttribute("PrivateStudioOnly", true)
+    folder:SetAttribute("NoGameplayAuthority", true)
+    folder.Parent = arena
+    local animated = {}
+    active = {folder = folder, remote = remote}
+    createNPC(folder, arena, "ナビィ 赤チーム", "NAVI",
+        Vector3.new(-69, 3.2, 11), Color3.fromRGB(254, 115, 153), "RED", animated)
+    createNPC(folder, arena, "ナビィ 青チーム", "NAVI",
+        Vector3.new(69, 3.2, 11), Color3.fromRGB(94, 193, 255), "BLUE", animated)
+    createNPC(folder, arena, "マドロン あやしい噂", "TRICK",
+        Vector3.new(0, 3.2, -40), Color3.fromRGB(202, 127, 249), nil, animated)
+    createNPC(folder, arena, "オラクル 秘境のヒント", "ORACLE",
+        Vector3.new(0, 3.2, 47), Color3.fromRGB(250, 213, 112), nil, animated)
+    ReplicatedStorage:SetAttribute(PUBLIC_ENABLED, true)
+    local generation = epoch
+    task.spawn(function()
+        -- Low-frequency ONE loop for all characters; sent only on real fresh enemy.
+        while active and active.folder == folder and folder.Parent
+            and epoch == generation and ServerStorage:GetAttribute(FLAG) == true do
+            for _,player in ipairs(Players:GetPlayers()) do
+                local enemy = visibleEnemy(player)
+                if enemy and lastAlertTarget[player] ~= enemy.UserId then
+                    if speak(player, "NAVI", "AUTO_ENEMY_ALERT", arena) == "ENEMY_ALERT" then
+                        lastAlertTarget[player] = enemy.UserId
+                    end
+                elseif not enemy then
+                    lastAlertTarget[player] = nil
                 end
-            elseif enemy == nil then
-                lastAlertTarget[player] = nil
             end
+            task.wait(8)
         end
-        task.wait(8)
-    end
-end)
-task.spawn(function()
-    -- One shared lightweight animation loop, 4 decorative nonblocking orbs only.
-    while folder.Parent and ServerStorage:GetAttribute(FLAG) == true do
-        local t = os.clock()
-        for _, entry in ipairs(animated) do
-            if entry.core.Parent then
-                entry.core.CFrame = entry.base
-                    * CFrame.new(0, math.sin(t * 1.4 + entry.phase) * 0.33, 0)
-                    * CFrame.Angles(0, math.sin(t * 0.7 + entry.phase) * 0.25, 0)
+    end)
+    task.spawn(function()
+        while active and active.folder == folder and folder.Parent
+            and epoch == generation and ServerStorage:GetAttribute(FLAG) == true do
+            local t = os.clock()
+            for _, entry in ipairs(animated) do
+                if entry.core.Parent then
+                    entry.core.CFrame = entry.base
+                        * CFrame.new(0, math.sin(t * 1.4 + entry.phase) * 0.33, 0)
+                        * CFrame.Angles(0, math.sin(t * 0.7 + entry.phase) * 0.25, 0)
+                end
             end
+            task.wait(0.12)
         end
-        task.wait(0.12)
+    end)
+end
+local reconcileBusy = false
+local function reconcile()
+    if reconcileBusy then return end
+    reconcileBusy = true
+    if ServerStorage:GetAttribute(FLAG) == true then
+        if not active then start() end
+    else
+        stop()
     end
+    reconcileBusy = false
+end
+Players.PlayerRemoving:Connect(function(player)
+    speechTimes[player] = nil
+    lastAlertTarget[player] = nil
 end)
-print("[P0D/TALK] optional NPC layer ready; original Game untouched, Studio/FUN NOT_TESTED")
+ServerStorage:GetAttributeChangedSignal(FLAG):Connect(reconcile)
+task.defer(reconcile)
+print("[P0D/TALK] optional NPC layer configured; Studio/FUN NOT_TESTED")
