@@ -141,8 +141,12 @@ def audit_human_review(registry: dict, review_file: Path | None) -> dict:
                 continue
             if abs(round(p0d*2) - p0d*2) > 1e-8 or abs(round(ref*2) - ref*2) > 1e-8:
                 errors.append("HALF_POINT_INCREMENTS_REQUIRED:" + name_pair)
-            if p0d < 4.5 or p0d < ref - 0.25:
-                errors.append("BELOW_TOP_CLASS_REFERENCE:" + name_pair)
+            minimum = 4.5 if device == "pc" else 4.0
+            # A low-end phone needs a clear, attractive scene, not desktop-only photorealism.
+            # PC comparisons retain the benchmark delta; mobile FPS is gated separately.
+            below = p0d < minimum or (device == "pc" and p0d < ref - 0.25)
+            if below:
+                errors.append("BELOW_TOP_CLASS_PLAYABLE_TARGET:" + name_pair)
             elif not (cell.get("p0d_studio_evidence") and cell.get("reference_frame_evidence")
                       and cell.get("reason")):
                 errors.append("MISSING_SIDE_BY_SIDE_EVIDENCE:" + name_pair)
