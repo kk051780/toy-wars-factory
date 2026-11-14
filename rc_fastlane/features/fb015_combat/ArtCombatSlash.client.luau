@@ -126,6 +126,9 @@ local function acceptVisualCue(id,serial,round,epoch)
         lastEpoch=epoch
         lastRound=round
         table.clear(lastByMob)
+    elseif lastRound==nil then
+        -- First hit after observing a new server epoch: accept its round.
+        lastRound=round
     elseif lastRound~=round then
         return false
     end
