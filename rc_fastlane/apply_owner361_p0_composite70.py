@@ -24,7 +24,7 @@ CONFIG="shared/Config.luau"
 CHANGED={GAME,V4,HUD,CONFIG}
 BASE_RC="43543378f976374e2cac2d68b3136ac355d3191b"
 INPUTS={
-    "ready":("apply_core_round_ready.py","14f8419129edf7df24951f6e3e6fc167c3805192"),
+    "ready":("apply_core_round_ready.py","ad63720b185827b8b843b12979cfb8980e2fb3bf"),
     "lobby":("apply_fb007_lobby.py","9fcf93b03efd5567f6c5197453fc1817a5105928"),
     "solo":("apply_fb005_solo_bots.py","2d0a7a36100b562d6baa9670bc5da0a1deae24bc"),
     "castle":("apply_owner361_castle.py","bc1fa66e33f42f0117377615976ff505b4932af5"),
@@ -80,7 +80,7 @@ def patch_owner_game(base:str)->str:
     assert script.count('local function applyReady(')==1
     assert script.count('LobbyIsland.build(map.model)')==1
     assert script.count('SoloTeamBots.stop()')>=2
-    assert 'everybodyReady() and count >= Config.MinPlayers' in script
+    assert 'everybodyReady() and StudioSolo.canStart(' in script
     assert 'Bot.start' not in script # only original Game's approved callback identifier
     return script
 
