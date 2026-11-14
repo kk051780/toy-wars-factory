@@ -1803,7 +1803,7 @@ jobs:
         run: |
           set -euo pipefail
           export P0D_MOBILE_LOD_PARENT=/tmp/p0d_fb019_hit_visibility_dist
-          test -f "$P0D_MOBILE_LOD_PARENT/src/client/FB015GoroganVisual.client.luau"
+          test -f "$P0D_MOBILE_LOD_PARENT/src/client/FB015CharacterArt.client.luau"
           python3 -B -m unittest discover -s rc_fastlane -p test_fb015_gorogan_mobile_lod.py -v
           BASE="$P0D_MOBILE_LOD_PARENT"
           OUT=/tmp/p0d_fb015_gorogan_mobile_lod_private80
