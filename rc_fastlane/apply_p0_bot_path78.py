@@ -38,7 +38,7 @@ def authored_pairs()->list[tuple[str,str]]:
         assert isinstance(old,str) and isinstance(new,str)
         if old=="local TICK_MIN=.35":begun=True
         if begun:pairs.append((old,new))
-    assert len(pairs)==17,("P0_BOT_PATH_AUTHOR_REWRITE_COUNT_DRIFT",len(pairs))
+    assert len(pairs)==16,("P0_BOT_PATH_AUTHOR_REWRITE_COUNT_DRIFT",len(pairs))
     assert pairs[0][0]=="local TICK_MIN=.35"
     assert pairs[-1][0].startswith("    if bot.lastGoal==nil")
     assert "bot.detourGoal=position+detour" in pairs[-1][1]
@@ -106,7 +106,7 @@ def apply(base:Path,out:Path,enabled:bool)->bool:
     receipt={
         "id":FIX,"authored_pr":402,"source_author_blob":AUTHOR_BLOB,
         "parent_original_author_bot":ORIGINAL_BOT_BLOB,
-        "source_author_pairs":17,
+        "source_author_pairs":16,
         "only_existing_bot_changed":True,"other77_sources_byte_exact":True,
         "Game_egg_HP_score_Remote_unchanged":True,
         "new_scripts":0,"new_feature_ids":0,"count":78,
