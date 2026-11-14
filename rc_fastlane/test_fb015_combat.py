@@ -134,7 +134,7 @@ class ArtCombatQA(unittest.TestCase):
             original=mod.backup_dir(d)
             h=original/"src/server/MusouHorde.luau"
             h.write_bytes(h.read_bytes()+b"CORRUPT")
-            with self.assertRaisesRegex(RuntimeError,"ORIGINAL_HORDE_DRIFT"):
+            with self.assertRaisesRegex(RuntimeError,"ART_COMBAT_SAVED_ORIGINAL_EXTRA_OR_CHANGED_FILE"):
                 mod.apply(d,False)
             self.assertEqual(snapshot(d),candidate)
             self.assertTrue(original.exists())
@@ -177,6 +177,32 @@ class ArtCombatQA(unittest.TestCase):
             self.assertNotEqual(p.returncode,0,p.stdout)
             self.assertIn("ORIGINAL_HORDE_DRIFT",p.stderr)
             self.assertEqual(snapshot(d),before)
+
+    def test_candidate_added_file_refuses_off_and_retains_user_data(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d=fixture(Path(tmp))
+            mod.apply(d,True)
+            added=d/"IMPORTANT_UNRELATED.txt"
+            added.write_text("KEEP_THIS",encoding="utf8")
+            with self.assertRaisesRegex(RuntimeError,
+                "ART_COMBAT_CANDIDATE_EXTRA_OR_CHANGED_FILE"):
+                mod.apply(d,False)
+            self.assertEqual(added.read_text("utf8"),"KEEP_THIS")
+            added.unlink()
+            self.assertTrue(mod.apply(d,False))
+
+    def test_saved_original_added_file_refuses_off(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d=fixture(Path(tmp))
+            mod.apply(d,True)
+            user_file=mod.backup_dir(d)/"IMPORTANT_ORIGINAL.txt"
+            user_file.write_text("DO_NOT_DELETE",encoding="utf8")
+            with self.assertRaisesRegex(RuntimeError,
+                "ART_COMBAT_SAVED_ORIGINAL_EXTRA_OR_CHANGED_FILE"):
+                mod.apply(d,False)
+            self.assertEqual(user_file.read_text("utf8"),"DO_NOT_DELETE")
+            user_file.unlink()
+            self.assertTrue(mod.apply(d,False))
 
     def test_uninstalled_off_is_true_zero_write(self):
         with tempfile.TemporaryDirectory() as tmp:
