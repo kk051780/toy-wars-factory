@@ -10,7 +10,7 @@
   "test_path": "rc_fastlane/features/neutral_elite/NeutralEliteNative.luau",
   "horde_writer": "original Game+MusouHorde only",
   "authoritative_attack_callback": "REQUEST_HORDE_STRIKE must be explicitly consumed by original Horde; policy never damages anything",
-  "integrated_playable": "SOURCE_67_CANDIDATE_PENDING_CI",
+  "integrated_playable": false,
   "requires": [
     "one-original-Horde hook",
     "matching src/server Game/Horde source pin",
@@ -33,5 +33,6 @@
   "original_game_bytes_unchanged": true,
   "feature_switch": "P0D_017_NEUTRAL_ELITE_BOSS_V1",
   "overlay": "rc_fastlane/apply_neutral_elite.py",
-  "source_adoption_status": "SOURCE_PRIVATE_CANDIDATE_NOT_OFFICIAL"
+  "source_adoption_status": "SOURCE_PRIVATE67_HORDE_CONNECTED_ENGINE_NOT_TESTED_CI_PENDING",
+  "connected_in_private_candidate_67": true
 }
