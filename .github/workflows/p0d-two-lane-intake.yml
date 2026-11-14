@@ -42,6 +42,12 @@ jobs:
           PY
       - name: Plan scarcity-aware A/B balance from trusted official code
         run: |
+          # PR event workflows must never execute a tool only present in the untrusted PR branch.
+          # Until the sole writer adopts it, trusted official checkout has no such file.
+          if [ ! -f tools/p0d_queue_balance.py ] || [ ! -f tests/test_p0d_queue_balance.py ]; then
+            echo "P0D_BALANCE_NOT_YET_ADOPTED_IN_TRUSTED_RC; inbox remains valid"
+            exit 0
+          fi
           python3 -m unittest discover -s tests -p test_p0d_queue_balance.py -v
           python3 -B tools/p0d_queue_balance.py \
             --queue /tmp/p0d_two_lane/P0D_PREP_INBOX.json \
@@ -56,6 +62,7 @@ jobs:
           print('B_NEXT', [x['pr'] for x in p['b_ready_prs']])
           PY
       - name: Store read-only queue snapshot (NOT adoption ACK)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: P0D-TWO-LANE-PREP-INBOX
