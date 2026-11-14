@@ -75,6 +75,19 @@ local function drop(model)
     records[model] = nil
 end
 
+-- BEGIN_NATIVE_MOTION_PENDING_REPLAY (test exact lines in native Luau)
+local function replayPendingHit(entry, id, now)
+    local pending = id and pendingHits[id]
+    if not pending then return false end
+    pendingHits[id] = nil
+    -- The authentic hit timestamp determines the remaining pose lifetime.
+    if now - pending.at >= .7 then return false end
+    entry.hitAt = pending.at
+    if pending.ko then entry.koAt = pending.at end
+    return true
+end
+-- END_NATIVE_MOTION_PENDING_REPLAY
+
 local function tryEquip(model)
     if not isRunning or records[model] or not isMinion(model) then return false end
     if model:GetAttribute("P0D_ART_MINION_V1") ~= true then return false end
@@ -119,15 +132,7 @@ local function tryEquip(model)
         phase=(count * 1.19) + (#model.Name * .17),
     }
     local id = if kind == "ELITE" then 9 else tonumber(model.Name:match("(%d+)$"))
-    local pending = id and pendingHits[id]
-    if pending then
-        pendingHits[id] = nil
-        -- Old hits must not be freshly animated when art appears too late.
-        if os.clock() - pending.at < .7 then
-            records[model].hitAt = pending.at
-            if pending.ko then records[model].koAt = pending.at end
-        end
-    end
+    replayPendingHit(records[model], id, os.clock())
     activeParts += #attachments
     return true
 end
@@ -196,35 +201,44 @@ for _,child in ipairs(horde:GetChildren()) do task.defer(watch,child) end
 
 -- Reuse the same original server-confirmed hit event as #381's slash.
 -- It sends one delivery per actual attack, even during an active damage popup.
+-- BEGIN_NATIVE_MOTION_CONFIRMED_HIT (exact runtime policy under native QA)
+local function applyConfirmedHit(id, isKO, serial, round, now, findEntry)
+    if type(id) ~= "number" or id%1 ~= 0 or id < 1 or id > 9
+        or type(serial) ~= "number" or serial%1 ~= 0 or serial < 1
+        or type(round) ~= "number" or round%1 ~= 0
+        or type(isKO) ~= "boolean" then return false end
+    if lastRound ~= round then
+        if lastRound ~= nil and round < lastRound then return false end
+        lastRound = round
+        table.clear(lastHitSerial)
+        table.clear(pendingHits)
+    end
+    if serial <= (lastHitSerial[id] or 0) then return false end
+    lastHitSerial[id] = serial
+    local entry = findEntry(id)
+    if not entry then
+        -- The server hit is already authoritative; queue visual pose only.
+        pendingHits[id] = {at=now, ko=isKO}
+        return true
+    end
+    pendingHits[id] = nil
+    entry.hitAt = now
+    if isKO then entry.koAt = now end
+    return true
+end
+-- END_NATIVE_MOTION_CONFIRMED_HIT
+
 local cue = horde:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1")
 local cueConnection
 if cue:IsA("RemoteEvent") then
     cueConnection = cue.OnClientEvent:Connect(function(id, hitPos, fromPos, isKO, serial, round)
-        if not isRunning or type(id) ~= "number" or id%1 ~= 0 or id < 1 or id > 9
-            or type(serial) ~= "number" or serial%1 ~= 0 or serial < 1
-            or type(round) ~= "number" or round%1 ~= 0
-            or type(isKO) ~= "boolean" then return end
-        if lastRound ~= round then
-            if lastRound ~= nil and round < lastRound then return end
-            lastRound = round
-            table.clear(lastHitSerial)
-            table.clear(pendingHits)
-        end
-        if serial <= (lastHitSerial[id] or 0) then return end
-        lastHitSerial[id] = serial
-        local now = os.clock()
-        local targetName = if id == 9 then "MUSOU_ELITE_TELEGRAPH"
-            else "MUSOU_MINION_" .. tostring(id)
-        local model = horde:FindFirstChild(targetName)
-        local entry = model and records[model]
-        if not entry then
-            -- Do not lose the cue while #374 assembles the replicated art.
-            pendingHits[id] = {at=now, ko=isKO}
-            return
-        end
-        pendingHits[id] = nil
-        entry.hitAt = now
-        if isKO then entry.koAt = now end
+        if not isRunning then return end
+        applyConfirmedHit(id, isKO, serial, round, os.clock(), function(targetId)
+            local targetName = if targetId == 9 then "MUSOU_ELITE_TELEGRAPH"
+                else "MUSOU_MINION_" .. tostring(targetId)
+            local model = horde:FindFirstChild(targetName)
+            return model and records[model]
+        end)
     end)
 end
 
