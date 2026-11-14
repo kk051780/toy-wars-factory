@@ -25,7 +25,7 @@ CHANGED={GAME,V4,HUD,CONFIG}
 BASE_RC="43543378f976374e2cac2d68b3136ac355d3191b"
 # Trusted 66 authored script manifest generated from verified pinned official RC CI.
 # Pin exact digest before handing this composite to B #220; never trust self-authored locks.
-BASE66_BLOBS_SHA256=""
+BASE66_BLOBS_SHA256="5fb70b5af83d217ef67bc5c71f467d71d9cfc3a0a1485c8dd58ebec93e93f728"
 INPUTS={
     "ready":("apply_core_round_ready.py","9460fd8a0bcc95af9eff765aa28960b45fde5e12"),
     "lobby":("apply_fb007_lobby.py","9fcf93b03efd5567f6c5197453fc1817a5105928"),
@@ -138,8 +138,7 @@ def apply(dist:Path,enabled:bool,out_dir:Path|None=None)->bool:
     assert set(FEATURE_IDS).isdisjoint(feature_lock["feature_flags"])
     verified_digest=hashlib.sha256(json.dumps(initial,sort_keys=True,separators=(",",":")).encode("utf8")).hexdigest()
     print("P0_RECONSTRUCTED_OFFICIAL66_SOURCE_FINGERPRINT",verified_digest)
-    if BASE66_BLOBS_SHA256:
-        assert verified_digest==BASE66_BLOBS_SHA256, "WRONG_66_SOURCE_DISTRIBUTION"
+    assert verified_digest==BASE66_BLOBS_SHA256, "WRONG_66_SOURCE_DISTRIBUTION"
     assert project["tree"]["ServerScriptService"]["TrapRaidersS1"]["$path"]=="src/server"
     starter=project["tree"]["StarterPlayer"]["StarterPlayerScripts"]
     assert "BattleHUDGovernor" not in starter
