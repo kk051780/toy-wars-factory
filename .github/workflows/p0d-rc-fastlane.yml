@@ -10,6 +10,7 @@ on:
       - feature/p0d-rc64-twin-flat-official-intake-20261114
       - feature/p0d-flat65-twin-training-rc-adoption-20261114
       - feature/p0d-bond66-latest-rc346-prep-20261114
+      - feature/p0d-fb015-art-motion-v1-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -19,6 +20,8 @@ on:
       - feature/p0d-wcs-rc58-fastlane-candidate-20261114-02
       - feature/p0d-wcs-sevenjobs-rc59-candidate-20261114
       - feature/p0d-wcs-jobs-egg-classic-rc60-candidate-20261114
+      - feature/p0d-prep-fb015-minion-combat-composite-20261114
+      - feature/p0d-fb015-art68-frozen-d100-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -45,6 +48,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          # On a PR whose parent #387 is updated concurrently, do not silently
+          # test a synthetic merge ref under the previous source SHA locks.
+          # A follow-up rebased candidate must be independently re-pinned.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
@@ -1151,6 +1158,79 @@ jobs:
               json.dumps(flags,indent=2,ensure_ascii=False)+'\n','utf8')
           print(receipt)
           PY
+          # #388 Motion upgrade is one extra local cosmetic source on the
+          # already built private68, never added to the official RC artifact.
+          python3 -B -m unittest discover -s rc_fastlane -p 'test_art_motion_source.py' -v
+          python3 -B -m unittest discover -s rc_fastlane -p 'test_art_motion_composite.py' -v
+          PRIVATE68_BEFORE=$(find "$COMBO_DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          MOTION_DIST=/tmp/p0d_fb015_minion_motion_private69
+          MOTION_OUT=/tmp/p0d_art_minion_motion_private69
+          mkdir -p "$MOTION_OUT"
+          python3 -B rc_fastlane/compose_fb015_art_motion.py --dist "$COMBO_DIST" --out "$MOTION_DIST" --enabled false
+          python3 -B rc_fastlane/compose_fb015_art_motion.py --dist "$COMBO_DIST" --out "$MOTION_DIST" --enabled true
+          n=0
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+            n=$((n+1))
+          done < <(find "$MOTION_DIST/src" -name '*.luau' -type f -print0)
+          test "$n" -eq 69
+          echo P0D_ART_MOTION_ALL_REAL_NATIVE69_OF_69_PASS
+          /tmp/p0d_rc_rojo build "$MOTION_DIST/default.project.json" -o "$MOTION_OUT/P0D_FB015_ART_MOTION_PRIVATE69.rbxlx"
+          python3 - <<'PY'
+          from pathlib import Path
+          import collections,hashlib,json,xml.etree.ElementTree as ET
+          from sys import path
+          path.insert(0,'rc_fastlane')
+          import compose_fb015_art_motion as mod
+          dist=Path('/tmp/p0d_fb015_minion_motion_private69')
+          out=Path('/tmp/p0d_art_minion_motion_private69')
+          place=out/'P0D_FB015_ART_MOTION_PRIVATE69.rbxlx'
+          src=mod.source_map(dist)
+          assert len(src)==69,('PRIVATE69_SCRIPT_COUNT',len(src))
+          expected=collections.Counter(v.decode('utf8') for v in src.values())
+          actual=collections.Counter()
+          names=collections.Counter()
+          for item in ET.fromstring(place.read_bytes()).iter('Item'):
+              if item.get('class') not in ('Script','LocalScript','ModuleScript'):continue
+              p=item.find("./Properties/string[@name='Source']")
+              if p is None:continue
+              actual[p.text or '']+=1
+              n=item.find("./Properties/string[@name='Name']")
+              if n is not None:names[(item.get('class'),n.text)]+=1
+          assert expected==actual,('PRIVATE69_ROJO_SOURCE_EXACT_FAILURE',len(expected),len(actual))
+          assert names[('Script','Game')]==1
+          assert names[('Script','ArtMinionSilhouette')]==1
+          assert names[('LocalScript','ArtCombatSlash')]==1
+          assert names[('LocalScript','P0DNeutralMotion')]==1
+          assert names[('ModuleScript','MusouHorde')]==1
+          slock=json.loads((dist/'SOURCE_LOCK.json').read_text('utf8'))
+          flock=json.loads((dist/'RC_FEATURE_LOCK.json').read_text('utf8'))
+          assert slock['total_scripts']==flock['total_sources']==69
+          assert slock['blobs']==flock['source_gitblobs']=={
+              name:mod.blob(raw) for name,raw in sorted(src.items())}
+          assert flock['feature_flags'][mod.FLAG] is True
+          assert slock['blobs'][mod.DEST]==mod.PIN
+          mod.check_output(Path('/tmp/p0d_fb015_combined_private68'),dist)
+          receipt={
+              'result':'P0D_FB015_REAL_MOTION_PRIVATE69_NATIVE_ROJO_SOURCE_EXACT_PASS',
+              'candidate':'PRIVATE_NOT_OFFICIAL','source_count':69,
+              'feature_id':mod.FLAG, 'fixed_head':__import__('os').environ['GITHUB_SHA'],
+              'place_bytes':place.stat().st_size,
+              'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+              'official_rc_script_count':66, 'official_rc_adoption':False,
+              'sourcery_independent_gate':'PENDING','studio':'NOT_TESTED',
+              'android':'NOT_TESTED','owner_accepted':False,'fun':'ART_NO_GO',
+          }
+          for name,payload in (('SOURCE_LOCK.json',slock),
+                               ('RC_FEATURE_LOCK.json',flock),
+                               ('ART_MOTION69_RECEIPT.json',receipt)):
+              (out/name).write_text(json.dumps(payload,ensure_ascii=False,indent=2)+'\n','utf8')
+          print(receipt)
+          PY
+          python3 -B rc_fastlane/compose_fb015_art_motion.py --dist "$COMBO_DIST" --out "$MOTION_DIST" --enabled false
+          PRIVATE68_AFTER=$(find "$COMBO_DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+          test "$PRIVATE68_BEFORE" = "$PRIVATE68_AFTER"
+          echo P0D_ART_MOTION_PRIVATE69_OFF_EXACT_PRIVATE68_PRESERVED_PASS
           python3 -B rc_fastlane/compose_fb015_minion_combat.py --dist "$DIST" --out "$COMBO_DIST" --enabled false
           PRIVATE67_AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
           test "$PRIVATE67_BEFORE" = "$PRIVATE67_AFTER"
@@ -1171,5 +1251,12 @@ jobs:
         with:
           name: P0D-FB015-ART-MINION-COMBAT-PRIVATE68
           path: /tmp/p0d_art_minion_combat_private68/*
+          retention-days: 7
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0D-FB015-ART-MOTION-PRIVATE69
+          path: /tmp/p0d_art_minion_motion_private69/*
           retention-days: 7
           if-no-files-found: error
