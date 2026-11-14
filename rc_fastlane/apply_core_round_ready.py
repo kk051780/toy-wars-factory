@@ -62,13 +62,20 @@ end''')
     added = '''-- One authenticated Remote; READY cannot change score, damage or match duration.
 local function applyReady(player: Player, data)
     if data.action ~= "READY" or type(data.ready) ~= "boolean" then return end
-    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end
-    lastSeq[player] = data.seq
+    -- Rejected READY packets must NEVER burn the shared combat input sequence.
     if match.phase ~= "LOBBY" and match.phase ~= "COUNTDOWN" then return end
     -- During COUNTDOWN only cancellation is allowed, never late opt-in.
     if match.phase == "COUNTDOWN" and data.ready then return end
+    if not Rules.validSeq(data.seq, lastSeq[player] or 0) then return end
+    lastSeq[player] = data.seq
     roundReady[player] = data.ready
-    remote:FireClient(player, snapshotFor(player))
+    -- A player withdrawing consent immediately cancels the COUNTDOWN;
+    -- all peers receive the updated authoritative phase, not only the sender.
+    if match.phase == "COUNTDOWN" and not data.ready then
+        match.phase = "LOBBY"
+        match.phaseUntil = 0
+    end
+    broadcast()
 end
 
 '''
@@ -92,6 +99,7 @@ end
         '        if not everybodyReady() then\n'
         '            match.phase = "LOBBY"\n'
         '            match.phaseUntil = 0\n'
+        '            broadcast()\n'
         '            return\n'
         '        end')
     src = prefix + marker + phase
@@ -113,8 +121,11 @@ local isReady = false
 local seq = 0''')
     src = once(src, 'attack.MouseButton1Click:Connect(function() action("ATTACK", nil) end)',
         'readyButton.MouseButton1Click:Connect(function()\n'
+        '    if not readyButton.Visible then return end\n'
         '    seq += 1\n'
-        '    remote:FireServer({action="READY", ready=not isReady, seq=seq})\n'
+        '    isReady = not isReady -- optimistic toggle handles rapid cancel before SNAPSHOT\n'
+        '    readyButton.Text = if isReady then "✓ 出撃予約中\\n押すと取消" else "▶ 出撃する"\n'
+        '    remote:FireServer({action="READY", ready=isReady, seq=seq})\n'
         'end)\n'
         'attack.MouseButton1Click:Connect(function() action("ATTACK", nil) end)')
     src = once(src, 'local function phaseText(s): string', '''local function phaseText(s): string
