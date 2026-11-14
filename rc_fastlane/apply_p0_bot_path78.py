@@ -71,6 +71,25 @@ def patch_bot(src:str)->str:
     for i,(old,new) in enumerate(authored_pairs()):
         assert src.count(old)==1,("P0_BOT_PATH_AUTHOR_SOURCE_CONFLICT",i,old[:120],src.count(old))
         src=src.replace(old,new,1)
+    # The #386 source had a separate pre-#402 8-second watchdog ABOVE
+    # #402's new lease-aware watchdog. Keeping both invokes the old invalidator
+    # and immediately starts a new planner, violating the raw-worker lease
+    # test. Remove only that obsolete predecessor; retain the #402 canonical
+    # watchdog (PATH_TIMEOUT_SECONDS / logical lease / throttle) exactly.
+    obsolete='''    -- A stuck ComputeAsync must not lock this bot out of navigation forever.
+    -- Invalidating the generation makes any late worker harmless.
+    if bot.planning and now-(bot.planningSince or now)>=8 then
+        invalidatePath(bot)
+        -- Watchdog invalidation clears lastGoal. Restore the exact current
+        -- intent BEFORE launching a new async worker, else its own
+        -- "lastGoal~=nil" stale-result guard will discard the good result.
+        bot.lastGoal=goal
+    end
+'''
+    assert src.count(obsolete)==1,("LEGACY386_DOUBLE_WATCHDOG_SOURCE_DRIFT",src.count(obsolete))
+    src=src.replace(obsolete,"",1)
+    assert src.count("now-(bot.planningSince or now)>PATH_TIMEOUT_SECONDS")==1
+    assert src.count("pendingPathTasks+=1")==1
     for marker in (
         'MAX_PENDING_PATH_TASKS=10','pendingPathTasks=0',
         'releasePathLease(bot)','now<bot.detourUntil and gap>2.5',
