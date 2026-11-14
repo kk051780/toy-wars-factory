@@ -209,6 +209,25 @@ end
     assert text.count('scheduleLobbyRecovery(p)')==1
     assert text.count('scheduleLobbyRecovery(entrant)')==1
 
+    # Studio solo bot AI only knows ORIGINAL CLASSIC two-egg rules.
+    # A SCORE/FIVE_EGG mode vote with one actual player would otherwise
+    # start a 15min match without any Bot.start() (guarded from SCORE mode).
+    # Single Studio players always receive the working Classic solo variant;
+    # preserve legitimate SCORE vote and Game scoring for >=2 people.
+    text=one(text,
+        'EXPERIMENTAL_FIVE_EGG_MODE=RunService:IsStudio() and chosenMode==ModeVote.SCORE',
+        '''EXPERIMENTAL_FIVE_EGG_MODE=RunService:IsStudio()
+        and #Players:GetPlayers()>1 and chosenMode==ModeVote.SCORE''')
+    assert text.count('#Players:GetPlayers()>1 and chosenMode==ModeVote.SCORE')==1
+    # Explain this constraint in the existing LOBBY HUD via SNAPSHOT, not
+    # by inventing new message authority or multiplying overlay labels.
+    text=one(text,
+        'ready = readyForMatch[player] == true,',
+        '''ready = readyForMatch[player] == true,
+        soloFiveEggUnavailable = RunService:IsStudio()
+            and #Players:GetPlayers()==1,''')
+    assert text.count('soloFiveEggUnavailable = RunService:IsStudio()')==1
+
     # Critical lobby-to-battle proof: original resetRound loads every human
     # AFTER phase ACTIVE, CharacterAdded calls assignSpawn(ACTIVE => battle).
     text_start=text.index("local function resetRound()")
@@ -296,4 +315,12 @@ def patch_hud(text: str) -> str:
         or (s.phase == "COUNTDOWN" and s.ready == true)
     readyButton.Text = if s.phase == "COUNTDOWN" then "✕ 出撃中止"
         elseif s.ready == true then "✓ 準備解除" else "▶ 出撃する" """.rstrip())
+    text=one(text,
+        '    lobbyHelp.Visible = s.phase == "LOBBY"',
+        '''    lobbyHelp.Visible = s.phase == "LOBBY"
+    if s.soloFiveEggUnavailable == true then
+        lobbyHelp.Text = "1人は通常卵モード（味方2/敵3のAI参戦）\\n5個卵モードは2人以上で有効"
+    else
+        lobbyHelp.Text = "敵城の卵を奪って自城へ！ または敵城を破壊！\\n攻撃：F／タップ　罠：T　ロビーで職業選択"
+    end''')
     return text
