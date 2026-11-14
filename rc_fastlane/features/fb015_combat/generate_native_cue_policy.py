@@ -88,6 +88,13 @@ check(acceptVisualCue(1,100,1,6),false)
 check(acceptVisualCue(1,85,1,6),false)
 assert(yes==32 and no==21,yes,no)
 print("P0D_FB015_REAL_CLIENT_CUE_NATIVE_53_ORDERED_EPOCH_CASES_PASS")
+-- Replicated epoch Attribute can lag the reliable hit RemoteEvent.
+-- A newer server hit MUST be delivered; a genuinely old packet is rejected.
+assert(not isEpochStale(3,4),"FUTURE_CONFIRMED_HIT_WAS_DROPPED")
+assert(not isEpochStale(nil,4),"MISSING_EPOCH_ATTRIBUTE_DROPPED_HIT")
+assert(not isEpochStale(3,3),"EQUAL_EPOCH_MISTAKENLY_STALE")
+assert(isEpochStale(4,3),"OLDER_HIT_NOT_REJECTED")
+print("P0D_FB015_REAL_CLIENT_EPOCH_LAG_NATIVE_PASS")
 '''
 
 def main():
