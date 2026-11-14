@@ -369,7 +369,7 @@
     },
     {
       "id": "TWIN_BOND_PVE_COMPANION_V1",
-      "state": "SOURCE_PRIVATE66_NOT_OFFICIAL",
+      "state": "RC_SOURCE_ADOPTED_STUDIO_NOT_TESTED",
       "summary": "Bond one of four session-trained companions for180s and max20% neutral PvE melee bonus via sole existing Game writer",
       "source_module": "server/TwinBondPolicy.luau",
       "source_module_gitblob": "e5ab733e1baadf2d79eec6ba53463a16ccd8c0c1",
@@ -381,7 +381,8 @@
       "studio_2client": "NOT_TESTED",
       "owner_fun": "NOT_TESTED",
       "rollback": "single feature OFF keeps official65 byte exact",
-      "official_rc_adopted": false
+      "official_rc_adopted": true,
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/actions/runs/43549547549"
     }
   ],
   "next_source_adoption_contract": {
@@ -403,7 +404,7 @@
   "last_official_completion_pct": 75,
   "canonical_rc_source_head": "f680cb921d056b8e9c06d0ca13f9cdd9dc094b5a",
   "canonical_rc_acceptance_run": 43531582802,
-  "canonical_rc_source_count": 65,
+  "canonical_rc_source_count": 66,
   "canonical_rc_studio_real": "NOT_TESTED",
   "canonical_rc_fun": "NOT_TESTED",
   "canonical_rc64_candidate_ci_run": 43536196350,
@@ -427,5 +428,9 @@
     "game_publish": false
   },
   "canonical_rc65_acceptance_run": null,
-  "canonical_rc65_candidate_run": 43537989552
+  "canonical_rc65_candidate_run": 43537989552,
+  "canonical_rc66_first_acceptance_run": 43549547549,
+  "canonical_rc66_studio_2client": "NOT_TESTED",
+  "canonical_rc66_android": "NOT_TESTED",
+  "canonical_rc66_owner_fun": "NOT_TESTED"
 }
