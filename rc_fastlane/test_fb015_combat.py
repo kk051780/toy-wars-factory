@@ -99,6 +99,7 @@ class ArtCombatQA(unittest.TestCase):
         s=mod.AUTHOR.read_text()
         self.assertIn('cue.OnClientEvent:Connect(onConfirmedHit)',s)
         self.assertIn('if not acceptVisualCue(id,serial,round,epoch) then return end',s)
+        self.assertIn('if isEpochStale(authoritativeEpoch,epoch) then return end',s)
         self.assertIn('historyConnection=cue:GetAttributeChangedSignal("P0D_ART_RECENT_V1")',s)
         self.assertIn('HttpService:JSONDecode(encoded)',s)
         self.assertIn("syncServerEpoch()",s)
@@ -309,6 +310,50 @@ class ArtCombatQA(unittest.TestCase):
                 mod.apply(alias/dist.name,True)
             self.assertTrue(dist.is_dir())
             self.assertFalse(mod.backup_dir(dist).exists())
+
+    def test_atomic_external_receipt_never_overwrites_symlink_or_file(self):
+        from fb015_fs_guard import atomic_json
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            original=root/"owner_data"
+            original.write_text("DO_NOT_OVERWRITE",encoding="utf8")
+            journal=root/"journal.json"
+            journal.symlink_to(original)
+            with self.assertRaisesRegex((RuntimeError,FileExistsError),
+                    "FB015_ATOMIC_JSON_DESTINATION_ALREADY_EXISTS|File exists"):
+                atomic_json(journal,{"id":"not_user_data"})
+            self.assertEqual(original.read_text("utf8"),"DO_NOT_OVERWRITE")
+            journal.unlink()
+            journal.symlink_to(root/"missing-external-target")
+            with self.assertRaises((RuntimeError,FileExistsError)):
+                atomic_json(journal,{"id":"not_user_data"})
+            self.assertFalse((root/"missing-external-target").exists())
+            journal.unlink()
+            atomic_json(journal,{"id":"first"})
+            self.assertEqual(json.loads(journal.read_text("utf8"))["id"],"first")
+            with self.assertRaises((RuntimeError,FileExistsError)):
+                atomic_json(journal,{"id":"second"})
+            self.assertEqual(json.loads(journal.read_text("utf8"))["id"],"first")
+
+    def test_copy_rejects_symlink_inserted_after_preflight(self):
+        from unittest import mock
+        original_copy=mod.shutil.copytree
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            external=root/"OWNER_EXTERNAL"
+            external.mkdir()
+            (external/"secret.txt").write_text("PRESERVE")
+            def racing_copy(source,target,*args,**kwargs):
+                result=original_copy(source,target,*args,**kwargs)
+                (Path(target)/"SNEAKED_LINK").symlink_to(external,target_is_directory=True)
+                return result
+            with mock.patch.object(mod.shutil,"copytree",side_effect=racing_copy):
+                with self.assertRaisesRegex(RuntimeError,"FB015_SYMLINK_ENTRY_REFUSED"):
+                    mod.apply(d,True)
+            self.assertTrue(d.is_dir())
+            self.assertFalse(mod.backup_dir(d).exists())
+            self.assertEqual((external/"secret.txt").read_text("utf8"),"PRESERVE")
 
     def test_uninstalled_off_is_true_zero_write(self):
         with tempfile.TemporaryDirectory() as tmp:
