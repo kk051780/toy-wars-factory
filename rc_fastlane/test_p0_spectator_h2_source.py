@@ -19,7 +19,7 @@ class SpectatorPrivate78(unittest.TestCase):
             'LobbyIsland.spawn("RED")',
             'local count = #eligibleSoloPlayers()',
             'local online = eligibleSoloPlayers()',
-            'and #eligibleSoloPlayers()>1 and chosenMode==ModeVote.SCORE',
+            '#eligibleSoloPlayers()>1 and chosenMode==ModeVote.SCORE',
             'stopRound("DRAW","SOLO_H2_ROSTER_CHANGED_REQUIRES_NEW_READY")',
             'if eligible~=1 then Bot.stop();return end',
             'and team and (team.Name=="RED" or team.Name=="BLUE")',
