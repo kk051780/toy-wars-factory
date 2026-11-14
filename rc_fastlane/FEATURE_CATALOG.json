@@ -677,7 +677,22 @@
       "note": "RC63からの正規RC64、両岸共用。NPC4種は固有3D外見、アイドルモーション、セッション限定4/4発見。捕獲/育成/保存/課金は未実装。正式RCのソースに搭載済（Studio実機未検証）。 Studio 2client/Android/FUNは未検証。捕獲・保存・課金は未実装。",
       "source_git_blob": "ff48273db7c7f0e240e45fba8b997cad669a5143",
       "rc_evidence": "https://github.com/kk051780/toy-wars-factory/commit/f680cb921d056b8e9c06d0ca13f9cdd9dc094b5a"
+    },
+    {
+      "id": "P0D-066",
+      "group": "キャラ育成",
+      "name": "中立魔獣4種 Lv1〜3 セッション練習・進化演出",
+      "stage": "RC",
+      "release": "S2+",
+      "evidence": "https://github.com/kk051780/toy-wars-factory/pull/330",
+      "note": "既存アワリン・サンゴル・ライコ・クモノンの観察/訓練を20秒間隔で累積。3回Lv2・7回Lv3、フィールド演出16/20/24秒、Lv3外観発光。プレイヤーセッション内のみ。永続図鑑/ガチャ/購入/HP/得点/XP無変更。正式RC64には未採用。 RC65採用対象：4種セッション限定Lv1〜3練習。Studio 2client/Android/FUN未検証、永続育成/課金なし。",
+      "script_delta": "one existing TwinBiomes script updated and one pure module added",
+      "source_git_blobs": [
+        "ff7c57aae79f03e3fbc72e043fe3f34f5ac373a5",
+        "b2f8275be676b46fc1ad32050832a4fcf13099af"
+      ],
+      "rc_evidence": "https://github.com/kk051780/toy-wars-factory/pull/335"
     }
   ],
-  "last_progress_change": "2026-11-14 official source CAS: P0D-063/064/065 adopted with TwinBiomes64 real source. Game/Remote/Store single owner; source tests 37, native127, Rojo64 success in matching prerelease CI; Studio/Android/FUN NOT_TESTED. Source stage29/65=44.6%, historical S1 75/100 FUN_NO_GO unchanged."
+  "last_progress_change": "P0D-066 Twin Creature Training source and one pure module admitted by authenticated CAS after exact tree/CI checks; RC30/SOURCE26/IDEA10 total66, S1 prior75 FUN_NO_GO, Studio physical+Android+FUN NOT_TESTED."
 }
