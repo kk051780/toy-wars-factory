@@ -25,7 +25,7 @@ AUTHOR = ROOT / "features/fb015_combat/ArtCombatSlash.client.luau"
 HORDE_AUTHOR = ROOT / "features/fb015_combat/MusouHordeArtSignal.luau"
 DEST = "client/ArtCombatSlash.client.luau"
 HORDE = "server/MusouHorde.luau"
-PIN = "257f5da5e40c0af89220745d576763f513a7e6ef"
+PIN = "c3e3c89b781d446fd8952bee51ec3a2cac46d1ff"
 HORDE_PATCH_PIN = "a2d07936bd9fe5bdf3630498c39d61d5a8560d99"
 ORIGINAL_HORDE_PIN = "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 BASE = 66
@@ -72,7 +72,7 @@ def validate_visual(raw: bytes) -> None:
     for marker in (
         "if not RunService:IsStudio() then return end",
         'arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT")',
-        'mobs:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1",25)',
+        'mobs:WaitForChild("P0D_ART_COMBAT_SIGNAL_V1")',
         "visualConnection=cue.OnClientEvent:Connect(onConfirmedHit)",
         "state.seen[serial]",
         "state.max=math.max(state.max,serial)",
