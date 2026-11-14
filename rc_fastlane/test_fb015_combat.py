@@ -358,6 +358,27 @@ class ArtCombatQA(unittest.TestCase):
             self.assertFalse(mod.backup_dir(d).exists())
             self.assertEqual((external/"secret.txt").read_text("utf8"),"PRESERVE")
 
+    def test_dangling_reserved_paths_cannot_be_overwritten(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            backup=mod.backup_dir(d)
+            backup.symlink_to(root/"missing_backup")
+            with self.assertRaisesRegex(RuntimeError,"ART_COMBAT_ALREADY_APPLIED"):
+                mod.apply(d,True)
+            self.assertTrue(backup.is_symlink())
+            self.assertFalse((root/"missing_backup").exists())
+            backup.unlink()
+            self.assertTrue(mod.apply(d,True))
+            disabled=d.with_name(d.name+".art_combat_disabling")
+            disabled.symlink_to(root/"missing_disabled")
+            with self.assertRaisesRegex(RuntimeError,
+                    "AMBIGUOUS_INTERRUPTED_OFF_STATE_KEEP_ALL_DATA"):
+                mod.apply(d,False)
+            self.assertTrue(disabled.is_symlink())
+            disabled.unlink()
+            self.assertTrue(mod.apply(d,False))
+
     def test_uninstalled_off_is_true_zero_write(self):
         with tempfile.TemporaryDirectory() as tmp:
             d=Path(tmp)/"missing"
