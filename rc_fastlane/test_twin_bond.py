@@ -31,7 +31,7 @@ class TwinBond(unittest.TestCase):
     def test_04_exact_canonical65_parent(self):
         self.assertIn('PREV_COUNT=65',ADAPTER)
         self.assertIn('GAME_PREV="cdc995d8a64f6a6f6df5abd43fb8210486328572"',ADAPTER)
-        self.assertIn('TWIN_PREV="ff7c57aae79f03e3f34f5ba8b997cad669a5143"',ADAPTER)
+        self.assertIn('TWIN_PREV="ff7c57aae79f03e3fbc72e043fe3f34f5ac373a5"',ADAPTER)
     def test_05_explicit_studio_flag(self):
         self.assertIn('P0D_ENABLE_TWIN_BOND_PVE_V1',ADAPTER)
         self.assertIn('not RunService:IsStudio()',ADAPTER)
