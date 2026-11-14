@@ -2411,3 +2411,52 @@ jobs:
           path: /tmp/p0d_horde_private_lifecycle_v2_artifact/*
           retention-days: 14
           if-no-files-found: warn
+
+      - name: 'P0 #444 FB019 V3 private real-hit toast only, no permanent mobile guides'
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_horde_private_lifecycle_v2_81
+          FINAL=/tmp/p0d_horde_private_hit_toast_v3_81
+          OUT=/tmp/p0d_horde_private_hit_toast_v3_artifacts
+          mkdir -p "$OUT"
+          test -f "$BASE/src/server/Game.server.luau"
+          test -f "$BASE/src/client/HUD.client.luau"
+          P0D_PRIVATE_HORDE_V2_DIST="$BASE" python3 -B -m unittest discover -s rc_fastlane -p test_private_horde_hit_toast.py -v
+          python3 -B rc_fastlane/apply_private_horde_hit_toast.py --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_private_horde_hit_toast.py --base "$BASE" --out "$FINAL" --enabled true
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 81
+          find "$FINAL/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$OUT/P0D_ISSUE444_PRIVATE_REAL_HIT_TOAST_V3_STUDIO.rbxlx"
+          python3 -B rc_fastlane/verify_private_horde_hit_toast.py \
+            --dist "$FINAL" --place "$OUT/P0D_ISSUE444_PRIVATE_REAL_HIT_TOAST_V3_STUDIO.rbxlx" \
+            --receipt "$OUT/REAL_HIT_TOAST_V3_SOURCE_RECEIPT.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$OUT/P0D_ISSUE444_PRIVATE_REAL_HIT_TOAST_V3_STUDIO.rbxlx" \
+            --out "$OUT/ART_QA.json"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          out=Path("/tmp/p0d_horde_private_hit_toast_v3_artifacts")
+          report=json.loads((out/"REAL_HIT_TOAST_V3_SOURCE_RECEIPT.json").read_text())
+          art=json.loads((out/"ART_QA.json").read_text())
+          assert report["real_rojo_scripts_byte_exact"]==81
+          assert report["changed_sources"]==["server/Game.server.luau","client/HUD.client.luau"] or set(report["changed_sources"])=={"server/Game.server.luau","client/HUD.client.luau"}
+          assert report["persistent_coach_in_private_nonstudio"] is False
+          assert report["persistent_mob_banner_in_private_nonstudio"] is False
+          assert report["live_horde_decision"]=="LIVE_HORDE_NO_GO"
+          assert art["source"]["source_gate"]=="PASS" and art["source"]["script_count"]==81
+          assert art["art_decision"]=="ART_NO_GO"
+          print("FB019_V3_REAL_HIT_TOAST_SOURCE_PASS_PC_ANDROID_KID_NOT_TESTED")
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.event_name == 'pull_request' }}
+        with:
+          name: P0D-444-V3-PRIVATE-REAL-HIT-TOAST-NO-INTRUSIVE-GUIDES
+          path: /tmp/p0d_horde_private_hit_toast_v3_artifacts/*
+          retention-days: 7
+          if-no-files-found: error
