@@ -773,7 +773,7 @@ jobs:
           from pathlib import Path
           source=Path("rc_fastlane/features/talking_npc/TalkingNPCDirector.luau").read_text("utf8")
           test=Path("rc_fastlane/features/talking_npc/tests/TalkingNPCDirectorNative.luau").read_text("utf8")
-          Path("/tmp/P0D_TALK_NATIVE.luau").write_text("local Director = (function()\\n"+source+"\\nend)()\\n"+test,encoding="utf8")
+          Path("/tmp/P0D_TALK_NATIVE.luau").write_text("local Director = (function()\n"+source+"\nend)()\n"+test,encoding="utf8")
           PY
           /tmp/p0d_new_luau/luau-compile /tmp/P0D_TALK_NATIVE.luau >/dev/null
           /tmp/p0d_new_luau/luau /tmp/P0D_TALK_NATIVE.luau | tee /tmp/p0d_talk_native.log
