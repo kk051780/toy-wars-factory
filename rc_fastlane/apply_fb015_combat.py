@@ -11,6 +11,7 @@ A persisted complete original distribution allows exact OFF restoration.
 from __future__ import annotations
 
 import argparse
+import fcntl
 import hashlib
 import json
 import os
@@ -25,9 +26,29 @@ HORDE_AUTHOR = ROOT / "features/fb015_combat/MusouHordeArtSignal.luau"
 DEST = "client/ArtCombatSlash.client.luau"
 HORDE = "server/MusouHorde.luau"
 PIN = "c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba"
-HORDE_PATCH_PIN = "6c613406c4c72be31b2a5c38177d54f1af78e617"
+HORDE_PATCH_PIN = "4ed99eb0b5177142b389ba3bf6954b288c804a08"
 ORIGINAL_HORDE_PIN = "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 BASE = 66
+TRANSACTION = "P0D_ART_COMBAT_FULL_TREE_MANIFEST.json"
+
+def whole_tree(dist: Path) -> dict[str, str]:
+    return {p.relative_to(dist).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in sorted(dist.rglob("*")) if p.is_file()
+            and p.relative_to(dist).as_posix() != TRANSACTION}
+
+def validate_candidate_tree(dist: Path) -> dict:
+    path = dist / TRANSACTION
+    require(path.is_file(), "MISSING_ART_COMBAT_FULL_TREE_MANIFEST")
+    receipt = json.loads(path.read_text("utf8"))
+    require(receipt.get("id") == "P0D_FB015_COMBAT_PRIVATE67_FULL_TREE"
+            and receipt.get("candidate") == whole_tree(dist),
+            "ART_COMBAT_CANDIDATE_EXTRA_OR_CHANGED_FILE")
+    return receipt
+
+def validate_saved_original(original: Path, receipt: dict) -> None:
+    require(original.is_dir() and whole_tree(original) == receipt["original"],
+            "ART_COMBAT_SAVED_ORIGINAL_EXTRA_OR_CHANGED_FILE")
+
 
 def require(ok, reason):
     if not ok:
@@ -83,29 +104,45 @@ def validate_horde_patch(before: bytes, after: bytes) -> None:
     require(blob(before) == ORIGINAL_HORDE_PIN, "ORIGINAL_HORDE_DRIFT")
     require(blob(after) == HORDE_PATCH_PIN, "ART_HORDE_DRIFT")
     old, new = before.decode("utf8"), after.decode("utf8")
+    header = '''-- No RemoteEvent, no task scheduler, no XP/egg/score/damage-player authority.
+local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))'''
+    new_header = '''-- In Studio only: one outbound cosmetic RemoteEvent + visual-only spark cue.
+-- No OnServerEvent listener, scheduler, XP/egg/score/damage-player authority.
+local RunService=game:GetService("RunService")
+local Combat=require(script.Parent:WaitForChild("MusouCombatRules"))'''
     old_ctor = '''    folder.Parent=world
     return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0},Horde)'''
     new_ctor = '''    folder.Parent=world
-    -- Pure outbound visual delivery. No OnServerEvent handler or game authority.
-    local visualCue=Instance.new("RemoteEvent")
-    visualCue.Name="P0D_ART_COMBAT_SIGNAL_V1"
-    visualCue.Parent=folder
+    -- Studio-only outbound visuals; live servers create/send no unused packet.
+    local visualCue=nil
+    if RunService:IsStudio() then
+        visualCue=Instance.new("RemoteEvent")
+        visualCue.Name="P0D_ART_COMBAT_SIGNAL_V1"
+        visualCue.Parent=folder
+    end
     return setmetatable({folder=folder,world=world,mobs={},round=-1,lastTick=0,kills=0,artCue=visualCue},Horde)'''
     seam = '                    m.body.Color=Color3.fromRGB(253,231,111)'
     extra = '''
-                    -- A reliable outbound message for EACH real server hit.
-                    -- Unlike replicated Attributes it cannot coalesce quick hits.
-                    -- This Remote has NO OnServerEvent listener / hit authority.
-                    m.artHitSeq=(m.artHitSeq or 0)+1
-                    self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)'''
-    require(old.count(old_ctor) == 1 and old.count(seam) == 1,
-            "UNEXPECTED_ORIGINAL_HORDE_SEAMS")
-    require(old.replace(old_ctor, new_ctor).replace(seam, seam + extra) == new,
+                    -- Every confirmed hit produces BOTH a reliable Studio client
+                    -- arc packet and a synchronous server-only 3D spark cue.
+                    -- Never allow the cosmetic Remote to accept client traffic.
+                    if self.artCue then
+                        m.artHitSeq=(m.artHitSeq or 0)+1
+                        self.artCue:FireAllClients(m.id,m.pos,origin,m.hp<=0,m.artHitSeq,self.round)
+                        m.body:SetAttribute("P0D_ART_SPARK_V1",
+                            tostring(m.artHitSeq).."|"..(if m.hp<=0 then "K" else "H"))
+                    end'''
+    require(old.count(header)==1 and old.count(old_ctor)==1 and old.count(seam)==1,
+            "ORIGINAL_HORDE_SEAM_DRIFT")
+    require(old.replace(header, new_header).replace(old_ctor, new_ctor)
+            .replace(seam, seam + extra) == new,
             "UNEXPECTED_HORDE_COMBAT_CHANGE")
     require(new.count('Instance.new("RemoteEvent")') == 1 and
             new.count("self.artCue:FireAllClients(") == 1 and
-            'OnServerEvent:Connect(' not in new,
-            "COSMETIC_REMOTE_MUST_BE_SERVER_OUTBOUND_ONLY")
+            new.count('m.body:SetAttribute("P0D_ART_SPARK_V1"') == 1 and
+            'OnServerEvent:Connect(' not in new and
+            "if RunService:IsStudio() then" in new,
+            "COSMETIC_REMOTE_MUST_BE_STUDIO_ONLY_AND_OUTBOUND")
 
 
 def _check_original(dist: Path):
@@ -172,9 +209,14 @@ def _stage_candidate(dist: Path, stage: Path, prior):
     require(all(new[n] == raw for n, raw in old.items() if n != HORDE), "ART_COMBAT_FAIL_CLOSED")
     require(blob(new[HORDE]) == HORDE_PATCH_PIN and blob(new[DEST]) == PIN, "ART_COMBAT_FAIL_CLOSED")
     require({n: blob(raw) for n, raw in sorted(new.items())} == next_blobs, "ART_COMBAT_FAIL_CLOSED")
+    (stage / TRANSACTION).write_text(json.dumps({
+        "id":"P0D_FB015_COMBAT_PRIVATE67_FULL_TREE",
+        "original":whole_tree(dist),
+        "candidate":whole_tree(stage),
+    },sort_keys=True,indent=2)+"\n",encoding="utf8")
     return receipt
 
-def apply(dist: Path, enabled: bool) -> bool:
+def _apply_locked(dist: Path, enabled: bool) -> bool:
     dist = dist.resolve()
     backup = backup_dir(dist)
     disabled = dist.with_name(dist.name + ".art_combat_disabling")
@@ -182,12 +224,17 @@ def apply(dist: Path, enabled: bool) -> bool:
     if disabled.exists():
         require(not enabled, "INTERRUPTED_OFF_RECOVERY_REQUIRES_DISABLED_MODE")
         if not dist.exists() and backup.exists():
-            _check_original(backup)  # Validate backup before replacing anything.
+            record=validate_candidate_tree(disabled)
+            validate_saved_original(backup,record)
+            _check_original(backup)
             os.rename(backup, dist)
+            validate_candidate_tree(disabled)
             shutil.rmtree(disabled)
             print("ART_COMBAT_OFF_INTERRUPTED_SWAP_RECOVERED")
             return True
         if dist.exists() and not backup.exists():
+            record=validate_candidate_tree(disabled)
+            validate_saved_original(dist,record)
             _check_original(dist)
             shutil.rmtree(disabled)
             print("ART_COMBAT_OFF_INTERRUPTED_CLEANUP_RECOVERED")
@@ -203,7 +250,9 @@ def apply(dist: Path, enabled: bool) -> bool:
                 require(DEST not in sources(dist), "ENABLED_OVERLAY_WITHOUT_BACKUP")
             print("ART_COMBAT_OFF_CLEAN_ZERO_WRITE")
             return False
-        # Fail-closed: corrupt original must NEVER replace known-good candidate.
+        # Fail-closed: check ALL files in both trees before any delete.
+        record=validate_candidate_tree(dist)
+        validate_saved_original(backup,record)
         _check_original(backup)
         require(dist.exists() and (dist / "src" / DEST).exists(), "OFF_BACKUP_STATE_INVALID")
         require(blob((dist / "src" / DEST).read_bytes()) == PIN, "ART_COMBAT_FAIL_CLOSED")
@@ -216,6 +265,7 @@ def apply(dist: Path, enabled: bool) -> bool:
             os.rename(disabled, dist)
             raise
         _check_original(dist)
+        validate_saved_original(dist,validate_candidate_tree(disabled))
         shutil.rmtree(disabled)
         print("ART_COMBAT_OFF_EXACT_ORIGINAL66_RESTORED")
         return True
@@ -234,6 +284,19 @@ def apply(dist: Path, enabled: bool) -> bool:
             raise
     print("ART_COMBAT_PRIVATE67_SOURCEXACT_65_ORIGINALS_UNCHANGED")
     return True
+
+def apply(dist: Path, enabled: bool) -> bool:
+    # File-less directory lock on the existing parent serializes concurrent
+    # toggle calls while preserving zero-write clean OFF.
+    dist=dist.resolve()
+    fd=os.open(dist.parent,os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        fcntl.flock(fd,fcntl.LOCK_EX)
+        return _apply_locked(dist,enabled)
+    finally:
+        fcntl.flock(fd,fcntl.LOCK_UN)
+        os.close(fd)
+
 
 def main() -> None:
     parser = argparse.ArgumentParser()
