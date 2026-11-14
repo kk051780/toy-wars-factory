@@ -65,7 +65,7 @@ end
 '''
 
 def blob(raw: bytes) -> str:
-    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\\0" + raw).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
 
 def read(root: Path) -> dict[str, bytes]:
     assert root.is_dir() and not root.is_symlink()
@@ -85,8 +85,8 @@ def patch(raw: bytes) -> bytes:
     assert 'attack.MouseButton1Click:Connect(function() action("ATTACK", nil) end)' in code
     assert 'if input.KeyCode == Enum.KeyCode.F then action("ATTACK", nil)' in code
     code = once(code, ACTION, HELPER + ACTION)
-    code = once(code, FIRE, '    if kind == "ATTACK" then fb019ShowSwing() end\\n' + FIRE)
-    code = once(code, SNAP, SNAP + '\\n    fb019InBattle = s.phase == "ACTIVE"')
+    code = once(code, FIRE, '    if kind == "ATTACK" then fb019ShowSwing() end\n' + FIRE)
+    code = once(code, SNAP, SNAP + '\n    fb019InBattle = s.phase == "ACTIVE"')
     assert code.count(FIRE)==1 and code.count("fb019ShowSwing()")==2
     assert code.count('action("ATTACK", nil)')>=2
     assert code.count('remote:FireServer({action = kind, role = role, seq = seq})') == 1
@@ -143,8 +143,8 @@ def apply(base: Path, out: Path, enabled: bool) -> bool:
     try:
         shutil.copytree(base,staged,symlinks=False)
         (staged/"src"/TARGET).write_bytes(replacement)
-        (staged/"SOURCE_LOCK.json").write_text(json.dumps(sl,ensure_ascii=False,indent=2)+"\\n","utf8")
-        (staged/"RC_FEATURE_LOCK.json").write_text(json.dumps(fl,ensure_ascii=False,indent=2)+"\\n","utf8")
+        (staged/"SOURCE_LOCK.json").write_text(json.dumps(sl,ensure_ascii=False,indent=2)+"\n","utf8")
+        (staged/"RC_FEATURE_LOCK.json").write_text(json.dumps(fl,ensure_ascii=False,indent=2)+"\n","utf8")
         assert read(staged)==after and read(base)==original
         os.replace(staged,out)
     finally:
