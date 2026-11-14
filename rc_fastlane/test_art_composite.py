@@ -28,7 +28,7 @@ class EightFeatureCandidateSafety(unittest.TestCase):
 
     def test_horde_density_patches_pinned_and_reversible(self):
         self.assertEqual(density.ORIGINAL_BLOB,"fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38")
-        self.assertEqual(len(density.REPLACEMENTS),8)
+        self.assertEqual(len(density.REPLACEMENTS),10)
         with self.assertRaises(AssertionError):
             density.apply_horde(b"fake unverified horde source")
         patches=dict(density.REPLACEMENTS)
@@ -38,6 +38,11 @@ class EightFeatureCandidateSafety(unittest.TestCase):
             "local z=if elite then 0 else (if i<=4 then -18 else 18)"])
         self.assertTrue(any("minionImpacts<4" in p for p in patches.values()))
         self.assertTrue(any("minionImpacts+=1" in p for p in patches.values()))
+        self.assertTrue(any("(impactsByPlayer[nearest] or 0)<2" in p for p in patches.values()))
+        self.assertTrue(any("impactsByPlayer[nearest]=(impactsByPlayer[nearest] or 0)+1" in p for p in patches.values()))
+        self.assertTrue(any("local separation=Vector3.zero" in p for p in patches.values()))
+        self.assertTrue(any("if gap>.01 and gap<5 then" in p for p in patches.values()))
+        self.assertTrue(any("if (nextPos-m.pos).Magnitude>.05" in p for p in patches.values()))
         self.assertTrue(any("local minionImpacts=0" in p for p in patches.values()))
 
     def test_density_replaces_only_horde_in_scratch_not_game(self):
@@ -52,6 +57,36 @@ class EightFeatureCandidateSafety(unittest.TestCase):
         self.assertIn('original_65_byte_identical_except_horde":True',code)
         self.assertIn("FB008_REAL_DENSITY_TRIAL_16_PLUS_ELITE_V1",code)
         self.assertIn("assert source_files(dist)==before",code)
+
+    def test_17_mob_solo_burst_and_spacing_are_bounded(self):
+        substitutions="\\n".join(new for _old,new in density.REPLACEMENTS)
+        # Player-level burst cap independently of the total four-hit cap.
+        self.assertIn("local impactsByPlayer={}",substitutions)
+        self.assertIn("and minionImpacts<4 and (impactsByPlayer[nearest] or 0)<2",substitutions)
+        self.assertIn("impactsByPlayer[nearest]=(impactsByPlayer[nearest] or 0)+1",substitutions)
+        # Example 16 mobs attack one player at the same instant.
+        playerHits={}
+        total=0
+        for _ in range(16):
+            who="solo"
+            if total<4 and playerHits.get(who,0)<2:
+                total+=1
+                playerHits[who]=playerHits.get(who,0)+1
+        self.assertEqual(total,2)
+        self.assertEqual(playerHits["solo"],2)
+        # Two players still consume no more than four minion strikes total.
+        total=0
+        playerHits={}
+        for who in ("A","B")*8:
+            if total<4 and playerHits.get(who,0)<2:
+                total+=1
+                playerHits[who]=playerHits.get(who,0)+1
+        self.assertEqual((total,playerHits),(4,{"A":2,"B":2}))
+        # Zero displacement cannot create a zero-length Raycast.
+        self.assertIn("if (nextPos-m.pos).Magnitude>.05",substitutions)
+        self.assertIn("math.min(dt*1.1,.5)",substitutions)
+        self.assertIn("if gap>.01 and gap<5 then",substitutions)
+        self.assertIn("(nextPos-m.home).Magnitude<22",substitutions)
 
     def test_16_ways_rotate_melee_priority_equally(self):
         # Prove the modulo order in the real Horde replacement gives

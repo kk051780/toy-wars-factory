@@ -23,6 +23,7 @@ REPLACEMENTS = (
     ),
     ("    local impacts={}\n    for _,m in ipairs(self.mobs) do",
      "    local impacts={}\n    local minionImpacts=0\n"
+     "    local impactsByPlayer={}\n"
      "    -- Circular attack priority: 16 mobs get equal access to the"
      " four-impact fairness cap. Elite still ticks once.\n"
      "    local sweepStart=self.tickSequence%MINIONS\n"
@@ -34,13 +35,46 @@ REPLACEMENTS = (
         "            elseif not m.elite and nearest and now>=m.attackAt\n"
         "                and canStrike(nearest,false) then",
         "            elseif not m.elite and nearest and now>=m.attackAt\n"
-        "                and minionImpacts<4 and canStrike(nearest,false) then",
+        "                and minionImpacts<4 and (impactsByPlayer[nearest] or 0)<2\n"
+        "                and canStrike(nearest,false) then",
+    ),
+    (
+        "            if nearest and nearestDist>4.5 and m.tellUntil==0 then",
+        "            if nearest and m.tellUntil==0 then",
+    ),
+    (
+        "                    local unit=horizontal(m.pos,root.Position)\n"
+        "                    local step=m.pos+unit*math.min(nearestDist-4.5,dt*(if m.elite then 2.8 else 3.4))\n"
+        "                    local nextPos=anchoredToWalkable(self.world,m,step)\n"
+        "                    if (nextPos-m.home).Magnitude<22 then",
+        "                    local unit=horizontal(m.pos,root.Position)\n"
+        "                    -- Crowd stays readable instead of collapsing into one model.\n"
+        "                    -- O(16*16) at .5s tick, bounded and no physics ownership.\n"
+        "                    local separation=Vector3.zero\n"
+        "                    if not m.elite then\n"
+        "                        for _,other in ipairs(self.mobs) do\n"
+        "                            if other~=m and other.hp>0 then\n"
+        "                                local away,gap=horizontal(other.pos,m.pos)\n"
+        "                                if gap>.01 and gap<5 then\n"
+        "                                    separation+=away*((5-gap)/5)\n"
+        "                                end\n"
+        "                            end\n"
+        "                        end\n"
+        "                    end\n"
+        "                    local approach=math.min(math.max(0,nearestDist-4.5),\n"
+        "                        dt*(if m.elite then 2.8 else 3.4))\n"
+        "                    local delta=unit*approach+separation*math.min(dt*1.1,.5)\n"
+        "                    local step=m.pos+delta\n"
+        "                    local nextPos=anchoredToWalkable(self.world,m,step)\n"
+        "                    if (nextPos-m.pos).Magnitude>.05\n"
+        "                        and (nextPos-m.home).Magnitude<22 then",
     ),
     (
         '                table.insert(impacts,{player=nearest,damage=3,kind="MINION"})\n'
         '                m.attackAt=now+2.5',
         '                table.insert(impacts,{player=nearest,damage=3,kind="MINION"})\n'
         '                minionImpacts+=1\n'
+        '                impactsByPlayer[nearest]=(impactsByPlayer[nearest] or 0)+1\n'
         '                m.attackAt=now+2.5',
     ),
 )
@@ -69,6 +103,13 @@ def apply_horde(original: bytes) -> bytes:
     assert "for mobIndex=1,#self.mobs do" in decoded
     assert "local slot=if mobIndex<=MINIONS then ((mobIndex-1+sweepStart)%MINIONS)+1 else mobIndex" in decoded
     assert "self.tickSequence=0" in decoded
+    assert "local impactsByPlayer={}" in decoded
+    assert "(impactsByPlayer[nearest] or 0)<2" in decoded
+    assert "impactsByPlayer[nearest]=(impactsByPlayer[nearest] or 0)+1" in decoded
+    assert "local separation=Vector3.zero" in decoded
+    assert "if gap>.01 and gap<5 then" in decoded
+    assert "local delta=unit*approach+separation*math.min(dt*1.1,.5)" in decoded
+    assert "if (nextPos-m.pos).Magnitude>.05" in decoded
     assert "local z=if elite then 0 else (if i<=4 then -18 elseif i<=8 then 18 elseif i<=12 then -6 else 6)" in decoded
     # All original source is preserved except the six explicitly reviewed
     # substitutions; reject any future unrelated Game/authority edits.
