@@ -13,6 +13,10 @@ import compose_fb015_art_motion as mod
 
 
 def check(parent: Path, dist: Path, place: Path, receipt: Path):
+    # -O / PYTHONOPTIMIZE erases Python 'assert'. Fail closed BEFORE writing
+    # any source-exact receipt; optimised runs are never certified.
+    if not __debug__:
+        raise RuntimeError("P0D_ROJO69_OPTIMIZED_VALIDATOR_REFUSED")
     parent, dist, place, receipt = (p.resolve() for p in (parent,dist,place,receipt))
     mod.check_output(parent, dist)  # independently pinned parent68 full tree
     sources = mod.source_map(dist)
