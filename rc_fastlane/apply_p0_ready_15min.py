@@ -150,7 +150,7 @@ player.CharacterAdded:Connect(attachHealth)
 if player.Character then task.spawn(attachHealth, player.Character) end
 
 """
-    text = sub_once(text, "remote.OnClientEvent:Connect(function(s)", start + "remote.OnClientEvent:Connect(function(s)")
+    text = sub_once(text, "local function phaseText(s): string", start + "local function phaseText(s): string")
     append = """    -- Low-interference combat: one slim numeric scoreboard, no permanent status slab.
     readyButton.Visible = s.phase == "LOBBY"
     readyButton.Text = if s.ready == true then "✓ 準備解除" else "▶ 出撃する"
