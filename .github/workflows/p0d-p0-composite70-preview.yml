@@ -1329,8 +1329,9 @@ jobs:
           python3 -B rc_fastlane/verify_p0_solo78.py --dist "$OUT" --place /tmp/p0d_p0_lobby_rebalance78_out/P0D_FINAL78_LOBBY_REBALANCE_QA.rbxlx --receipt /tmp/p0d_p0_lobby_rebalance78_out/RECEIPT.json
           python3 - <<'PY'
           from pathlib import Path
+          import sys,json
+          sys.path.insert(0,'rc_fastlane')
           from rc_fastlane.apply_p0_lobby_rebalance78 import read,FEATURE
-          import json
           parent=Path('/tmp/p0d_p0_solo78_dist')
           final=Path('/tmp/p0d_p0_lobby_rebalance78_dist')
           a=read(parent);b=read(final)
