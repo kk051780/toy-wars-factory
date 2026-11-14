@@ -1818,7 +1818,7 @@ jobs:
           /tmp/p0d_new_luau/luau /tmp/p0d_fb019_native_real_game_hud.luau | tee /tmp/p0d_fb019_server_ack_v3_out/NATIVE_REAL_ATTACK_HUD_PASS.txt
           grep -q 'FB019_NATIVE_REAL_GAME_ATTACK_PATHS_PASS' /tmp/p0d_fb019_server_ack_v3_out/NATIVE_REAL_ATTACK_HUD_PASS.txt
           grep -q 'FB019_NATIVE_REAL_HUD_ACK_CUES_PASS' /tmp/p0d_fb019_server_ack_v3_out/NATIVE_REAL_ATTACK_HUD_PASS.txt
-          python3 -B rc_fastlane/verify_fb019_server_ack.py --dist "$OUT" --place /tmp/p0d_fb019_server_ack_v3_out/P0D_RC80_FB019_SERVER_HIT_MISS_PREP_STUDIO.rbxlx --receipt /tmp/p0d_fb019_server_ack_v3_out/ACK_RECEIPT.json
+          python3 -B rc_fastlane/verify_fb019_server_ack.py --dist "$OUT" --place /tmp/p0d_fb019_server_ack_v3_out/P0D_RC80_FB019_V3_HP_CONFIRMED_PREP_STUDIO.rbxlx --receipt /tmp/p0d_fb019_server_ack_v3_out/ACK_RECEIPT.json
           python3 - <<'PY'
           import os,json
           from pathlib import Path
