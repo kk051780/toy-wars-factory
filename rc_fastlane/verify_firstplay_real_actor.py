@@ -29,7 +29,7 @@ def verify(dist: Path,out: Path):
         'm:GetDescendants()','part:SetNetworkOwner(nil)'):
         assert term in actor,("ACTOR_FACTORY_DRIFT",term)
     assert 'releasePathLease(bot)' in stop
-    assert 'clearCarry(bot)' in stop
+    assert 'pcall(clearCarry,bot)' in stop
     assert 'bot.model:Destroy()' in stop
     assert 'folder:Destroy()' in stop
     assert '#bots==MAX_BOTS' in start
