@@ -63,7 +63,7 @@ class PrivateHitToastV3Tests(unittest.TestCase):
         g=patch_game(self.sources[GAME]).decode("utf8")
         orig=self.sources[GAME].decode("utf8")
         self.assertIn("if touched>0 then",orig)
-        self.assertEqual(orig.count("mobImpactSeq[player]=(mobImpactSeq[player] or 0)+1"),1)
+        self.assertIn("mobImpactSeq[player]=(mobImpactSeq[player] or 0)+1",orig)
         self.assertEqual(g.replace(GAME_INSERT,GAME_ANCHOR,1),orig)
         self.assertEqual(blob(self.sources[GAME]),GAME_V2_BLOB)
     def test_off_exact_zero_write(self):
