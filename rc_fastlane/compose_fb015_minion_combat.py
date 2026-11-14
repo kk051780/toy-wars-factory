@@ -15,7 +15,7 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
-from fb015_fs_guard import strict_inventory
+from fb015_fs_guard import strict_inventory, reject_symlink_ancestors
 
 ROOT = Path(__file__).resolve().parent
 FEATURE = "ART_MINION_THREE_SILHOUETTES_V1"
@@ -275,8 +275,8 @@ def _compose_locked(dist: Path, out: Path, enabled: bool):
     return True
 
 def compose(dist: Path, out: Path, enabled: bool):
-    if dist.is_symlink() or out.is_symlink():
-        raise RuntimeError("FB015_SYMLINK_DISTRIBUTION_REFUSED")
+    reject_symlink_ancestors(dist)
+    reject_symlink_ancestors(out)
     # Linux CI file lock serializes OFF against an in-flight enable.
     dist = dist.resolve()
     out = out.resolve()
