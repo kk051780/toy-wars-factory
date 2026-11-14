@@ -12,10 +12,9 @@ local UserInputService = game:GetService("UserInputService")
 local localPlayer = Players.LocalPlayer
 if not localPlayer then return end
 
-local arena = workspace:WaitForChild("TRAP_RAIDERS_S1", 45)
-if not arena then warn("ART_COMBAT_NO_ARENA"); return end
-local mobs = arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT", 45)
-if not mobs then warn("ART_COMBAT_NO_HORDE"); return end
+-- Do not lose the horde if it spawns after 45 s (slow Studio load).
+local arena = workspace:WaitForChild("TRAP_RAIDERS_S1")
+local mobs = arena:WaitForChild("EGG_RUMBLE_NEUTRAL_MUSOU_EXPERIMENT")
 
 local FEATURE = "ART_COMBAT_SLASH_READONLY_V1"
 local MAX_LIVE = 8
@@ -88,23 +87,31 @@ local function makeArc(hitPos, toward, isKO)
     Debris:AddItem(holder, .22)
 end
 
-local function onConfirmedHit(core, popup, textLabel, state)
-    if destroyed or not core.Parent or not popup.Parent or not popup.Enabled then return end
-    local cue = textLabel.Text
-    local isKO = string.find(cue, "撃破", 1, true) ~= nil
-    local isDamage = string.find(cue, "−", 1, true) == 1
-    if not isKO and not isDamage then return end
+-- ONE changing server-authored string carries serial, KO and true attack
+-- direction. Unlike a text popup, identical damage values remain observable.
+local function parseHitSignal(raw)
+    if type(raw) ~= "string" then return nil end
+    local serial, kind, dx, dz = raw:match("^(%d+)|([KH])|([^|]+)|([^|]+)$")
+    local sequence, vx, vz = tonumber(serial), tonumber(dx), tonumber(dz)
+    if not sequence or not vx or not vz or vx ~= vx or vz ~= vz
+        or math.abs(vx) > 2000 or math.abs(vz) > 2000 then return nil end
+    return sequence, kind, vx, vz
+end
 
+local function onConfirmedHit(core, state)
+    if destroyed or not core.Parent then return end
+    local serial, kind, dx, dz = parseHitSignal(core:GetAttribute("P0D_ART_HIT_V1"))
+    if not serial or serial <= state.lastSerial then return end
+    state.lastSerial = serial
     local root = localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
     if not root or (root.Position - core.Position).Magnitude > 64 then return end
     local now = os.clock()
-    if now - state.last < .13 then return end
     while #times > 0 and now - times[1] >= 1 do table.remove(times, 1) end
     if #times >= MAX_BURSTS_PER_SECOND then return end
-
-    state.last = now
     table.insert(times, now)
-    makeArc(core.Position, root.Position, isKO)
+    -- Direction derives from the actual server-authoritative attack origin.
+    -- Never aim a bystander's strike from localPlayer's own position.
+    makeArc(core.Position, core.Position + Vector3.new(dx, 0, dz), kind == "K")
 end
 
 local function detach(model)
@@ -116,20 +123,22 @@ end
 
 local function attach(model)
     if destroyed or not model.Parent or not isOriginalMob(model) or bound[model] then return end
-    local core = model:FindFirstChild("Core")
-    local popup = core and core:FindFirstChild("RealDamagePopup")
-    local label = popup and popup:FindFirstChildOfClass("TextLabel")
-    if not (core and core:IsA("BasePart") and popup
-        and popup:IsA("BillboardGui") and label and label:IsA("TextLabel")) then return end
-    local state = {last = -100, connections = {}}
+    local state = {lastSerial = 0, connections = {}}
     bound[model] = state
-    table.insert(state.connections, popup:GetPropertyChangedSignal("Enabled"):Connect(function()
-        onConfirmedHit(core, popup, label, state)
-    end))
-    table.insert(state.connections, label:GetPropertyChangedSignal("Text"):Connect(function()
-        onConfirmedHit(core, popup, label, state)
-    end))
     table.insert(state.connections, model.Destroying:Connect(function() detach(model) end))
+    task.spawn(function()
+        local core = model:WaitForChild("Core", 15)
+        if destroyed or not core or not core:IsA("BasePart")
+            or not model.Parent or bound[model] ~= state then
+            detach(model)
+            return
+        end
+        local initial = parseHitSignal(core:GetAttribute("P0D_ART_HIT_V1"))
+        state.lastSerial = initial or 0 -- Never replay a hit before binding.
+        table.insert(state.connections, core:GetAttributeChangedSignal("P0D_ART_HIT_V1"):Connect(function()
+            if bound[model] == state then onConfirmedHit(core, state) end
+        end))
+    end)
 end
 
 -- Original MusouHorde destroys and recreates up to 9 models each round.
