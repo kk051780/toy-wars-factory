@@ -106,7 +106,8 @@ class ArtCombatQA(unittest.TestCase):
         self.assertIn("MAX_BURSTS_PER_SECOND = 9",s)
         self.assertIn("MAX_LIVE = 8",s)
         self.assertNotIn("FireServer(",s)
-        self.assertNotIn("GetAttributeChangedSignal(",s)
+        self.assertIn('GetAttributeChangedSignal("P0D_ART_RECENT_V1")',s)
+        self.assertNotIn('GetAttributeChangedSignal("P0D_ART_SPARK_V1")',s)
         self.assertNotIn("OnServerEvent:Connect(",s)
 
     def test_clean_off_then_on_then_exact_off_and_locks(self):
