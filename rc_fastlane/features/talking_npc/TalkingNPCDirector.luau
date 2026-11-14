@@ -11,7 +11,7 @@ local AREAS = {
 }
 local ITEMS = {
     rare_egg = "レア卵", healing = "回復アイテム",
-    beast_stone = "魔獣の進化石", speed = "加速アイテム",
+    beast_stone = "魔獣の進化石", speed = "加速アイテム", star_shard = "星のかけら",
 }
 local WEATHER = {
     thunder = "雷雨", snow = "吹雪", meteor = "流星",
@@ -78,9 +78,9 @@ function Director.Compose(facts)
     elseif speakerId == "ORACLE" then
         if signal == "SECRET_HINT" and facts.hintUnlocked == true then
             if facts.secretTier == 1 then
-                return output(speakerId, signal, "空と海の境に、隠された道がある……", false, false)
+                return output(speakerId, signal, "天空と海、まだ見つけていない印はあるかな？", false, false)
             elseif facts.secretTier == 2 then
-                return output(speakerId, signal, "雷が鳴るとき、古い門の印を探すのだ……", false, false)
+                return output(speakerId, signal, "4つの秘境の印を集めると、不思議な光が現れる……", false, false)
             end
         elseif signal == "WEATHER" and facts.weatherObserved == true then
             local weather = WEATHER[facts.weatherCode]
