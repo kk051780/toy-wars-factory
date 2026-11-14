@@ -19,13 +19,10 @@ def load(name, path):
 slash = load("apply_combat_art", "apply_fb015_combat.py")
 combo = load("compose_minion_combat", "compose_fb015_minion_combat.py")
 
+QA = load("p0d_art_combat_real_test_fixture", "test_fb015_combat.py")
+
 def original_horde():
-    src = slash.HORDE_AUTHOR.read_text("utf8")
-    a = src.index("                    -- Server-only confirmation: one changing cue per REAL hit.")
-    b = src.index("                    -- A normal enemy loses its immediate melee response", a)
-    raw = (src[:a] + src[b:]).encode("utf8")
-    assert slash.blob(raw) == slash.ORIGINAL_HORDE_PIN
-    return raw
+    return QA.original_horde()
 
 def snapshot(d):
     return {p.relative_to(d).as_posix():p.read_bytes()
