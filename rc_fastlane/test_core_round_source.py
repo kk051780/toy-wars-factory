@@ -19,7 +19,7 @@ class TrackedCoreSmokeTest(unittest.TestCase):
         baseline = (ENGINE / "server/Game.server.luau").read_text("utf8")
         actual = u.patch_game(baseline)
         self.assertIn("roundReady[player] = false", actual)
-        self.assertIn('if not everybodyReady() then return end', actual)
+        self.assertIn('if everybodyReady() and count >= Config.MinPlayers', actual)
         self.assertEqual(actual.count('remote.OnServerEvent:Connect('), 1)
         self.assertEqual(actual.count('Instance.new("RemoteEvent")'), 1)
 
