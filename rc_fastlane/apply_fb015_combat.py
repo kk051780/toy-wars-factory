@@ -11,6 +11,7 @@ A persisted complete original distribution allows exact OFF restoration.
 from __future__ import annotations
 
 import argparse
+import fcntl
 import hashlib
 import json
 import os
@@ -28,6 +29,26 @@ PIN = "c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba"
 HORDE_PATCH_PIN = "4ed99eb0b5177142b389ba3bf6954b288c804a08"
 ORIGINAL_HORDE_PIN = "fc6ca46d36bb81ce5f1cd3d327ad2ab714b4be38"
 BASE = 66
+TRANSACTION = "P0D_ART_COMBAT_FULL_TREE_MANIFEST.json"
+
+def whole_tree(dist: Path) -> dict[str, str]:
+    return {p.relative_to(dist).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in sorted(dist.rglob("*")) if p.is_file()
+            and p.relative_to(dist).as_posix() != TRANSACTION}
+
+def validate_candidate_tree(dist: Path) -> dict:
+    path = dist / TRANSACTION
+    require(path.is_file(), "MISSING_ART_COMBAT_FULL_TREE_MANIFEST")
+    receipt = json.loads(path.read_text("utf8"))
+    require(receipt.get("id") == "P0D_FB015_COMBAT_PRIVATE67_FULL_TREE"
+            and receipt.get("candidate") == whole_tree(dist),
+            "ART_COMBAT_CANDIDATE_EXTRA_OR_CHANGED_FILE")
+    return receipt
+
+def validate_saved_original(original: Path, receipt: dict) -> None:
+    require(original.is_dir() and whole_tree(original) == receipt["original"],
+            "ART_COMBAT_SAVED_ORIGINAL_EXTRA_OR_CHANGED_FILE")
+
 
 def require(ok, reason):
     if not ok:
@@ -188,9 +209,14 @@ def _stage_candidate(dist: Path, stage: Path, prior):
     require(all(new[n] == raw for n, raw in old.items() if n != HORDE), "ART_COMBAT_FAIL_CLOSED")
     require(blob(new[HORDE]) == HORDE_PATCH_PIN and blob(new[DEST]) == PIN, "ART_COMBAT_FAIL_CLOSED")
     require({n: blob(raw) for n, raw in sorted(new.items())} == next_blobs, "ART_COMBAT_FAIL_CLOSED")
+    (stage / TRANSACTION).write_text(json.dumps({
+        "id":"P0D_FB015_COMBAT_PRIVATE67_FULL_TREE",
+        "original":whole_tree(dist),
+        "candidate":whole_tree(stage),
+    },sort_keys=True,indent=2)+"\n",encoding="utf8")
     return receipt
 
-def apply(dist: Path, enabled: bool) -> bool:
+def _apply_locked(dist: Path, enabled: bool) -> bool:
     dist = dist.resolve()
     backup = backup_dir(dist)
     disabled = dist.with_name(dist.name + ".art_combat_disabling")
@@ -198,12 +224,17 @@ def apply(dist: Path, enabled: bool) -> bool:
     if disabled.exists():
         require(not enabled, "INTERRUPTED_OFF_RECOVERY_REQUIRES_DISABLED_MODE")
         if not dist.exists() and backup.exists():
-            _check_original(backup)  # Validate backup before replacing anything.
+            record=validate_candidate_tree(disabled)
+            validate_saved_original(backup,record)
+            _check_original(backup)
             os.rename(backup, dist)
+            validate_candidate_tree(disabled)
             shutil.rmtree(disabled)
             print("ART_COMBAT_OFF_INTERRUPTED_SWAP_RECOVERED")
             return True
         if dist.exists() and not backup.exists():
+            record=validate_candidate_tree(disabled)
+            validate_saved_original(dist,record)
             _check_original(dist)
             shutil.rmtree(disabled)
             print("ART_COMBAT_OFF_INTERRUPTED_CLEANUP_RECOVERED")
@@ -219,7 +250,9 @@ def apply(dist: Path, enabled: bool) -> bool:
                 require(DEST not in sources(dist), "ENABLED_OVERLAY_WITHOUT_BACKUP")
             print("ART_COMBAT_OFF_CLEAN_ZERO_WRITE")
             return False
-        # Fail-closed: corrupt original must NEVER replace known-good candidate.
+        # Fail-closed: check ALL files in both trees before any delete.
+        record=validate_candidate_tree(dist)
+        validate_saved_original(backup,record)
         _check_original(backup)
         require(dist.exists() and (dist / "src" / DEST).exists(), "OFF_BACKUP_STATE_INVALID")
         require(blob((dist / "src" / DEST).read_bytes()) == PIN, "ART_COMBAT_FAIL_CLOSED")
@@ -232,6 +265,7 @@ def apply(dist: Path, enabled: bool) -> bool:
             os.rename(disabled, dist)
             raise
         _check_original(dist)
+        validate_saved_original(dist,validate_candidate_tree(disabled))
         shutil.rmtree(disabled)
         print("ART_COMBAT_OFF_EXACT_ORIGINAL66_RESTORED")
         return True
@@ -250,6 +284,19 @@ def apply(dist: Path, enabled: bool) -> bool:
             raise
     print("ART_COMBAT_PRIVATE67_SOURCEXACT_65_ORIGINALS_UNCHANGED")
     return True
+
+def apply(dist: Path, enabled: bool) -> bool:
+    # File-less directory lock on the existing parent serializes concurrent
+    # toggle calls while preserving zero-write clean OFF.
+    dist=dist.resolve()
+    fd=os.open(dist.parent,os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        fcntl.flock(fd,fcntl.LOCK_EX)
+        return _apply_locked(dist,enabled)
+    finally:
+        fcntl.flock(fd,fcntl.LOCK_UN)
+        os.close(fd)
+
 
 def main() -> None:
     parser = argparse.ArgumentParser()
