@@ -1947,7 +1947,7 @@ jobs:
           import hashlib,json,os
           from pathlib import Path
           out=Path('/tmp/p0d_art_recompose_output')
-          p=out/'P0D_RC80_ART_RECOMPOSE_PRIVATE_STUDIO.rbxlx'
+          p=out/'P0D_RC80_VISUAL5_PRIVATE_STUDIO.rbxlx'
           report={'canonical_base_sha':'f4e64c9248423f9c021f633b80e554706f7a66e4',
             'candidate_head':os.environ['GITHUB_SHA'],'candidate_only':True,
             'official_rc_adopted':False,'source_count':80,
