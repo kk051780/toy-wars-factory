@@ -182,6 +182,22 @@ class SourceIdentityGate(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, "INSTANCE_PATH_OR_CLASS_DRIFT"):
             verify(self.dist, self.place, self.report, 4)
 
+    def test_wrong_ancestor_service_class_rejected(self):
+        service = self.xml.find("Item[@class='ServerScriptService']")
+        self.assertIsNotNone(service)
+        service.set("class", "Folder")  # same name & all Luau unchanged
+        self.save()
+        with self.assertRaisesRegex(AssertionError, "ROJO_ANCESTOR_CLASS_DRIFT"):
+            verify(self.dist, self.place, self.report, 4)
+        self.assertFalse(self.report.exists())
+
+    def test_slash_instance_name_spoof_rejected(self):
+        node = self.script_items[HUD].find("Properties/string[@name='Name']")
+        node.text = "Escaped/TrapRaidersHUD"
+        self.save()
+        with self.assertRaisesRegex(AssertionError, "INVALID_INSTANCE_NAME"):
+            verify(self.dist, self.place, self.report, 4)
+
     def test_wrong_script_class_rejected(self):
         self.script_items[GAME].set("class", "ModuleScript")
         self.save()
