@@ -65,7 +65,8 @@ class TwinBiomes(unittest.TestCase):
     def test_14_all_effects_time_bounded(self):
         self.assertIn('local EFFECT_SECONDS = 16',SCRIPT)
         self.assertIn('local REARM_SECONDS = 4',SCRIPT)
-        self.assertIn('activeUntil[effect] = now + EFFECT_SECONDS',SCRIPT)
+        self.assertIn('local duration = Training.effectSeconds(level)',SCRIPT)
+        self.assertIn('activeUntil[effect] = now + duration',SCRIPT)
     def test_15_one_bounded_loop_for_8_npcs(self):
         self.assertEqual(SCRIPT.count('task.spawn(function()'),1)
         self.assertEqual(SCRIPT.count('while world.Parent do'),1)
@@ -203,7 +204,7 @@ class TwinBiomes(unittest.TestCase):
         self.assertIn("if not earned then",SCRIPT)
     def test_41_per_player_not_global_xp(self):
         self.assertIn('local practiceByPlayer = {}',SCRIPT)
-        self.assertIn('practiceByPlayer[player] = nil',SCRIPT)
+        self.assertIn('practiceByPlayer[p] = nil',SCRIPT)
         self.assertIn('player:SetAttribute("P0D_TwinLevel_"..info.id,updated.level)',SCRIPT)
     def test_42_level3_visual_evolution(self):
         self.assertIn('npc:SetAttribute("EvolutionStage",3)',SCRIPT)
