@@ -1,0 +1,73 @@
+{
+  "schema": "P0D_ART_GATE_RC80_RECOMPOSITION_V1",
+  "date_jst": "2026-11-15",
+  "canonical_rc_branch": "rc/p0d-s1-kids-rc01",
+  "canonical_base_sha": "bd5b819b846705e18537a994ed97ffe71ddd4855",
+  "official_rc_writer": "B #220 only; nonforce expected-SHA CAS",
+  "target": "private 80-source cumulative Studio build",
+  "adopted_official": false,
+  "source_count_expected": 80,
+  "owner_accepted": false,
+  "art_decision": "ART_NO_GO",
+  "mobile_decision": "MOBILE_NO_GO",
+  "kid_fun_decision": "FUN_NO_GO",
+  "ordered_overlays": [
+    {
+      "id": "FB019_ATTACK_RESPONSE_V1",
+      "pr": 423,
+      "source_sha": "8d1c18214402074a1ebdabbc730fe20a9ceb7e63",
+      "changed": [
+        "server/Game.server.luau",
+        "client/HUD.client.luau"
+      ],
+      "last_verified_run": 43639598980
+    },
+    {
+      "id": "FB016_ART_CAMERA_SIGHTLINE_V2",
+      "pr": 417,
+      "source_sha": "8bb1514a4172bfb855ffcf322f467f9cf135065a",
+      "changed": [
+        "client/FoliageCameraFade.client.luau"
+      ],
+      "status": "REVERIFY_WITH_CURRENT_COMPOSITE"
+    },
+    {
+      "id": "FB015_FOREST_BIOMES_MONUMENTS_V2",
+      "pr": 421,
+      "source_sha": "6223abdf43427dedb00c81c592b7121d3d701cfd",
+      "changed": [
+        "server/FantasyWorldArt.server.luau"
+      ],
+      "last_verified_run": 43638389157
+    }
+  ],
+  "tools": {
+    "art_gate_pr": 424,
+    "source_sha": "a751d1d36e5a8263e72b9ce219054f4630f08ddb",
+    "last_verified_run": 43640246895,
+    "modifies_game": false
+  },
+  "superseded_not_included": [
+    419,
+    422,
+    409,
+    416,
+    418
+  ],
+  "rollback": "Independently omit any overlay and rebuild without modifying canonical RC",
+  "no_go_reasons": [
+    "No 32 actual before/after Studio screenshots",
+    "No 15-minute Android test",
+    "No 3-minute child FUN test",
+    "No OWNER visual acceptance"
+  ],
+  "official_reference": {
+    "head": "bd5b819b846705e18537a994ed97ffe71ddd4855",
+    "source_count": 80,
+    "zip_bytes": 205205,
+    "place_bytes": 744130,
+    "run_id": 43637955662,
+    "planned_count": 67,
+    "integrated_count": 31
+  }
+}

@@ -1,0 +1,171 @@
+{
+  "schema": "P0D_MOBILE_KID_WIN_STRATEGY_V1",
+  "updated_jst": "2026-11-15",
+  "owner_goal": "YouTube ロブロックス リアル as source of impressive craftsmanship; build top-class attractive Roblox-style battle, mobile playable, fun for children, fast iteration",
+  "positioning": "STYLE-REAL / GAMEPLAY-FIRST: high-art stylized fantasy 3D, not high-end-only photorealistic showcase",
+  "audience_hypothesis": "kids and younger teens who can enjoy short understandable team action plus returning to collect/train; exact ages and preferences are unvalidated hypotheses",
+  "priority_order": [
+    "gameplay_controls_and_actual_damage",
+    "mobile_feel_and_robustness",
+    "recognizable_world_character_shapes",
+    "coherent_materials_lighting",
+    "short_impactful_combat_vfx",
+    "polish_details_only_if_no_mobile_regression"
+  ],
+  "reference_approach": {
+    "youtube_search_query": "ロブロックス リアル",
+    "purpose": "Discover current visually striking worlds and gameplay, then learn from shape/material/light/animation/optimization; do not assume searched video fully watched",
+    "world_candidates": [
+      "Fushimi Castle - SHOWCASE",
+      "Mist",
+      "Beyond the Dark",
+      "Realistic Forest Demo",
+      "The Ocean Experience"
+    ],
+    "playable_battle_candidates": [
+      "The Strongest Battlegrounds",
+      "FRONTLINES",
+      "Guts & Blackpowder",
+      "Blox Fruits"
+    ],
+    "youtube_discovery": [
+      {
+        "title": "The Most Realistic Roblox Games 2",
+        "url": "https://www.youtube.com/watch?v=Xvc3P1AUy-o",
+        "verification": "SEARCH_METADATA_ONLY_NOT_FULL_VIDEO_REVIEW"
+      },
+      {
+        "title": "MOST REALISTIC ROBLOX GAMES...",
+        "url": "https://www.youtube.com/watch?v=d-0Ic18fag4",
+        "verification": "YOUTUBE_TITLE_DESCRIPTION_ONLY_NOT_FULL_VIDEO_REVIEW"
+      },
+      {
+        "title": "Most REALISTIC Roblox Clips",
+        "url": "https://www.youtube.com/watch?v=qltwILSWsTM",
+        "verification": "YOUTUBE_TITLE_DESCRIPTION_ONLY_NOT_FULL_VIDEO_REVIEW"
+      }
+    ],
+    "no_ip_copy": "Copying someone else's models, maps, characters, textures, audio or UI is prohibited; independently author equivalent design-quality techniques"
+  },
+  "visual_target": {
+    "pc_quality_1_to_5": 4.5,
+    "android_quality_1_to_5": 4,
+    "all_categories_each_at_least": 4,
+    "recognizable_without_text": [
+      "castle_gate_and_siege",
+      "sea_and_bridge",
+      "forest_route",
+      "beast_and_elite_mob",
+      "ally_versus_opponent"
+    ],
+    "required_playable": "Android low/medium visual legibility must persist even with shadows and particles reduced"
+  },
+  "performance_proposed_thresholds": {
+    "note": "Project acceptance targets, not Roblox official universal benchmarks. Must be verified on real target hardware, never inferred from source or simulator.",
+    "baseline_device": "one actual mainstream low-end Android, ideally 2–4GB RAM; choose and record named model",
+    "comparison_device": "one real midrange Android plus a PC",
+    "mobile_baseline": {
+      "median_fps_min": 30,
+      "p10_fps_min": 25,
+      "combat_no_sustained_stall_seconds_over_1": true,
+      "no_oom_or_crash": true
+    },
+    "mobile_midrange": {
+      "median_fps_min": 45,
+      "p10_fps_min": 30,
+      "no_oom_or_crash": true
+    },
+    "pc": {
+      "p10_fps_min": 45
+    },
+    "thermal_test_minutes": 15,
+    "warm_fps_decline_max_fraction": 0.2,
+    "must_record": [
+      "device_model",
+      "ram_gb",
+      "graphics_quality",
+      "session_length_minutes",
+      "p10_fps",
+      "median_fps",
+      "crash",
+      "oom",
+      "thermal_delta_fraction",
+      "loading_seconds",
+      "input_responsiveness_observation"
+    ],
+    "hard_fail_if": "critical combat/camera/egg input blocked; crash/OOM; baseline p10<25 or median<30; unreadable enemies/targets at low settings"
+  },
+  "child_fun_gate": {
+    "assessment": "Small consent-based age-appropriate gameplay session; no personal identifiers in QA, no unsupervised direct interaction with minors",
+    "fast_understand_goals_project_targets": [
+      {
+        "goal": "player_can_move_and_see_destination",
+        "seconds": 15
+      },
+      {
+        "goal": "first_attack_input_and_visible_reaction",
+        "seconds": 45
+      },
+      {
+        "goal": "hit_real_neutral_enemy_or_practice_bot",
+        "seconds": 75
+      },
+      {
+        "goal": "egg_capture_or_siege_objective_understood_by_action",
+        "seconds": 180
+      }
+    ],
+    "minimum_quality": {
+      "first_3_minutes_fun_rating_out_of_5": 4,
+      "core_objective_understood_without_persistent_tutorial": true,
+      "mobile_touch_reliable": true,
+      "solo_match_playable": true
+    },
+    "return_reasons": [
+      "defend_or_steal_egg",
+      "class_unique_power",
+      "satisfying_minion_clearing",
+      "rare_beasts_traps_and_movement",
+      "lobby_training_progress",
+      "friend_bonus_without_forced_socializing"
+    ],
+    "regressions": [
+      "player_cannot_start",
+      "button_unresponsive",
+      "constant_overlays",
+      "unsafe_path_or_impassable_leaves",
+      "camera_blocks_combat",
+      "worse_device_frame_time",
+      "visual_enemy_clutter"
+    ]
+  },
+  "production_speed": {
+    "parallel_teams": [
+      "art_world_terrain_castle_sea_forest",
+      "art_characters_beasts_jobs",
+      "art_battle_vfx_motion",
+      "qa_mobile_and_kid_fun",
+      "B_authenticated_RC_integration"
+    ],
+    "small_pr_gates": "Source lock, one authority, no colliding route, no permanent HUD, shape/material cost inventory and test evidence plan.",
+    "milestone_gate": "At each official candidate RC batch compare representative BEFORE/AFTER images, run 15-min actual Android session, 3-minute first-user fun test and approve only with human source-linked ratings.",
+    "optimization_ladder": [
+      "first replace ugly silhouettes and placeholder shapes",
+      "unify materials and lighting for all devices",
+      "use model LOD and instance streaming",
+      "reuse meshes/textures and avoid expensive transparent layers/shadows",
+      "limit effects to short bursts and nearby players",
+      "prefer short unique animations to permanently expensive visuals"
+    ],
+    "rollback": "Disable only the offending cosmetic feature and preserve authoritative server Game, control inputs and official RC rollback"
+  },
+  "art_gate_prohibitions": [
+    "static source compilation called visually beautiful",
+    "realistic photo grade expected on every low-end phone",
+    "part counts or neon glows as beauty proxy",
+    "training on or copying protected third party game assets",
+    "shipping before real mobile/child-fun evidence",
+    "extra work delaying critical game-breaking fixes"
+  ],
+  "status": "SPECIFICATION_PREPARED_REAL_DEVICE_UNTESTED_REFERENCE_FULL_VIDEO_UNREVIEWED_OWNER_ART_NO_GO"
+}
