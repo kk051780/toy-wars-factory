@@ -22,7 +22,7 @@ AUTHOR = ROOT / "features/art_motion/NeutralMotion.client.luau"
 DEST = "client/P0DNeutralMotion.client.luau"
 FLAG = "FB015_MINION_MOTION_VISUAL_ONLY_V1"
 BASE = 68
-PIN = "25b88dc88170d21c2c0a9a0c5588f315430f122a"
+PIN = "9637b45e09f75759c3901528e4fa3a47cfe39f95"
 MANIFEST = ".P0D_FB015_MOTION69_TREE.json"
 MANIFEST_ID = "P0D_FB015_ART_MOTION_PRIVATE69_SOURCE_EXACT"
 EXPECTED_PARENT_ID = "P0D_FB015_COMPOSITE_PRIVATE68_EXACT_TREE"
@@ -108,7 +108,7 @@ def preflight(parent: Path):
     require(blob(actual) == PIN, "ART_MOTION_AUTHOR_BLOB_DRIFT")
     for term in (b"if not RunService:IsStudio() then return end",
                  b"P0D_ART_MINION_V1", b"MAX_MODELS = 16",
-                 b"MAX_ACTIVE_COSMETIC_PARTS = 56", b"script.Destroying"):
+                 b"MAX_ACTIVE_COSMETIC_PARTS = 104", b"script.Destroying"):
         require(term in actual, "ART_MOTION_REQUIRED_ANCHOR_MISSING")
     for forbidden in (b"FireServer(", b"TakeDamage(", b"OnServerEvent",
                       b"DataStoreService", b"Instance.new(\"RemoteEvent\")",
