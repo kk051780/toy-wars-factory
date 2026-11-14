@@ -209,6 +209,59 @@ end
     assert text.count('scheduleLobbyRecovery(p)')==1
     assert text.count('scheduleLobbyRecovery(entrant)')==1
 
+    # One definition of eligible humans across mode voting, HUD and startup.
+    # Late-join spectators do not turn a solo match into a 2-player match.
+    text=one(text,
+        'local readyForMatch: {[Player]: boolean} = {}',
+        '''local readyForMatch: {[Player]: boolean} = {}
+local function eligibleSoloPlayers(): {Player}
+    local result: {Player} = {}
+    for _,candidate in ipairs(Players:GetPlayers()) do
+        local team=candidate.Team
+        if candidate:GetAttribute("P0D_LateJoinSpectator")~=true
+            and team and (team.Name=="RED" or team.Name=="BLUE") then
+            table.insert(result,candidate)
+        end
+    end
+    return result
+end''')
+
+    # Exact authored deferred bot start expects one participant, not one
+    # connection; a neutral spectator should not silently suppress bots.
+    def fix_reset(block: str) -> str:
+        sentinel='if match.phase=="ACTIVE" and #Players:GetPlayers()==1 then'
+        assert block.count(sentinel)==1, ("SOLO_START_ELIGIBLE_DRIFT",block.count(sentinel))
+        block=one(block,sentinel,
+                  'if match.phase=="ACTIVE" and #eligibleSoloPlayers()==1 then')
+        block=one(block,'local player=Players:GetPlayers()[1]',
+                  'local player=eligibleSoloPlayers()[1]')
+        sentinel='and #Players:GetPlayers()==1 then'
+        assert block.count(sentinel)==1, ("SOLO_FAILURE_ELIGIBLE_DRIFT",block.count(sentinel))
+        block=one(block,sentinel,'and #eligibleSoloPlayers()==1 then')
+        return block
+    text=in_region(text,'local function resetRound()',
+                   'local function chooseTeam(',fix_reset)
+
+    # H2 mode has different live score/egg ownership. Do NOT reinterpret its
+    # progress as Classic mid-round. Draw immediately on one-person leave,
+    # require the survivor to opt-in again at the next lobby.
+    text=in_region(text,'Players.PlayerRemoving:Connect(function(player)',
+                   'local function tickRound()',
+        lambda block: one(block,
+            '    if match.phase == "ACTIVE" and side ~= "NONE" then',
+            '''    if RunService:IsStudio() and match.phase=="ACTIVE"
+        and EXPERIMENTAL_FIVE_EGG_MODE then
+        local survivors=0
+        for _,remaining in ipairs(eligibleSoloPlayers()) do
+            if remaining~=player then survivors+=1 end
+        end
+        if survivors==1 then
+            stopRound("DRAW","SOLO_H2_ROSTER_CHANGED_REQUIRES_NEW_READY")
+        end
+    end
+    if match.phase == "ACTIVE" and side ~= "NONE" then'''))
+    assert text.count('SOLO_H2_ROSTER_CHANGED_REQUIRES_NEW_READY')==1
+
     # Studio solo bot AI only knows ORIGINAL CLASSIC two-egg rules.
     # A SCORE/FIVE_EGG mode vote with one actual player would otherwise
     # start a 15min match without any Bot.start() (guarded from SCORE mode).
@@ -217,16 +270,19 @@ end
     text=one(text,
         'EXPERIMENTAL_FIVE_EGG_MODE=RunService:IsStudio() and chosenMode==ModeVote.SCORE',
         '''EXPERIMENTAL_FIVE_EGG_MODE=RunService:IsStudio()
-        and #Players:GetPlayers()>1 and chosenMode==ModeVote.SCORE''')
-    assert text.count('#Players:GetPlayers()>1 and chosenMode==ModeVote.SCORE')==1
+        and #eligibleSoloPlayers()>1 and chosenMode==ModeVote.SCORE''')
+    assert text.count('#eligibleSoloPlayers()>1 and chosenMode==ModeVote.SCORE')==1
     # Explain this constraint in the existing LOBBY HUD via SNAPSHOT, not
     # by inventing new message authority or multiplying overlay labels.
     text=one(text,
         'ready = readyForMatch[player] == true,',
         '''ready = readyForMatch[player] == true,
         soloFiveEggUnavailable = RunService:IsStudio()
-            and #Players:GetPlayers()==1,''')
+            and #eligibleSoloPlayers()==1,''')
     assert text.count('soloFiveEggUnavailable = RunService:IsStudio()')==1
+    assert 'if match.phase=="ACTIVE" and #eligibleSoloPlayers()==1 then' in text
+    assert 'and #eligibleSoloPlayers()==1 then' in text
+    assert 'local player=eligibleSoloPlayers()[1]' in text
 
     # Critical lobby-to-battle proof: original resetRound loads every human
     # AFTER phase ACTIVE, CharacterAdded calls assignSpawn(ACTIVE => battle).
@@ -248,13 +304,30 @@ end
 
 def patch_bot(text: str) -> str:
     assert "P0D_LateJoinSpectator" not in text, "FIRSTPLAY_BOT_QA_DUPLICATE"
+    # Bot.start must use the same legitimate participant predicate as
+    # Game's solo mode selection and deferred start; observers can join while
+    # the Game's task.defer is pending.
+    text=one(text,
+        'if not RunService:IsStudio() or #Players:GetPlayers()~=1 then return false end',
+        '''if not RunService:IsStudio() then return false end
+    local eligible=0
+    for _,p in ipairs(Players:GetPlayers()) do
+        local team=p.Team
+        if p:GetAttribute("P0D_LateJoinSpectator")~=true
+            and team and (team.Name=="RED" or team.Name=="BLUE") then
+            eligible+=1
+        end
+    end
+    if eligible~=1 then return false end''')
     # A second real Player may join the Studio server as a *noncombat*
     # spectator; it must not disable the five bots in the active solo match.
     text=one(text,
         "if #Players:GetPlayers()~=1 then Bot.stop();return end",
         """local eligible=0
     for _,p in ipairs(Players:GetPlayers()) do
-        if p:GetAttribute("P0D_LateJoinSpectator")~=true then
+        local team=p.Team
+        if p:GetAttribute("P0D_LateJoinSpectator")~=true
+            and team and (team.Name=="RED" or team.Name=="BLUE") then
             eligible+=1
         end
     end
@@ -302,6 +375,8 @@ def patch_bot(text: str) -> str:
         """        inflightPaths=math.max(0,inflightPaths-1)
         -- Both the global match and this particular bot/goal must still be""")
     assert "if eligible~=1 then Bot.stop();return end" in text
+    assert "if eligible~=1 then return false end" in text
+    assert text.count("local team=p.Team")>=2
     assert text.count("MAX_INFLIGHT_PATHS")>=2
     return text
 
