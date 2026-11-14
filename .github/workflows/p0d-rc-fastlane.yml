@@ -14,6 +14,7 @@ on:
       - feature/p0d-prep-firstplay-composite73-20261114
       - feature/p0d-prep-results-return-20261114
       - feature/p0d-prep-lobby-recovery-qa-20261114
+      - feature/p0d-prep-solo-raid-guard-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -448,6 +449,18 @@ jobs:
             /tmp/p0d_new_luau/luau-compile /tmp/P0D_FIRSTPLAY_ACTUAL_BOT_EGG_GAME_NATIVE.luau >/dev/null
             /tmp/p0d_new_luau/luau /tmp/P0D_FIRSTPLAY_ACTUAL_BOT_EGG_GAME_NATIVE.luau | tee /tmp/p0d_bot_egg_native.log
             grep -Fx P0D_FIRSTPLAY_REAL_GAME_BOT_EGG_AUTHORITY_30_NATIVE_CASES_PASS /tmp/p0d_bot_egg_native.log
+          fi
+      - name: Solo SCORE cannot launch without AI, actual Bot.tick raid intent and deposit 17 native checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            python3 -B rc_fastlane/verify_firstplay_bot_journey.py --dist "$DIST" \
+              --out /tmp/P0D_SOLO_REAL_BOT_TICK_JOURNEY.luau
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_SOLO_REAL_BOT_TICK_JOURNEY.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_SOLO_REAL_BOT_TICK_JOURNEY.luau | tee /tmp/p0d_solo_tick_journey.log
+            grep -Fx P0D_SOLO_REAL_GAME_BOT_TICK_17_NATIVE_CASES_PASS /tmp/p0d_solo_tick_journey.log
           fi
       - name: Native-Luau behavioral check of actual OWNER lobby phase HUD
         shell: bash
