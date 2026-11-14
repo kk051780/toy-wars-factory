@@ -68,7 +68,7 @@ def safety() -> dict[str, bytes]:
             assert "COSMETIC_SEA" in text
             assert 'Terrain' in text and "SEA_BOARDWALK_DECK_" in text
         elif category == "ART-WORLD":
-            assert "Lighting" in text and "FantasyWorldArt" in text
+            assert "Lighting" in text and "P0D_FB015_WORLD_ART_V1" in text
         elif category == "ART-MINION":
             assert "MUSOU_MINION_" in text and "MUSOU_ELITE_TELEGRAPH" in text
         else:
