@@ -14,7 +14,7 @@ def verify(dist:Path,out:Path)->None:
     m=re.search(r'EXPERIMENTAL_FIVE_EGG_MODE=RunService:IsStudio\(\)\s+and #Players:GetPlayers\(\)>1 and chosenMode==ModeVote.SCORE',s)
     assert m,"ACTUAL_GAME_SOLO_MODE_SELECTOR_NOT_FOUND"
     assert 'soloFiveEggUnavailable = RunService:IsStudio()' in s
-    assert 'soloFiveEggUnavailable' in h and '味方2・敵3' in h
+    assert 'soloFiveEggUnavailable' in h and '通常卵戦＋AI5体' in h
     assignment=m.group(0)
     luau=r'''-- Real mode-selection source extracted from the actual 78-file Game.
 local Players={online={}}
