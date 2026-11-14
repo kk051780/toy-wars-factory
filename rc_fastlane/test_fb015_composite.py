@@ -57,14 +57,19 @@ class CompositeTest(unittest.TestCase):
     def test_minion_source_keeps_four_species_with_confirmed_sparks(self):
         self.assertEqual(combo.blob(combo.AUTHOR.read_bytes()), combo.PIN)
         self.assertIn(b"ELITE_BACK_BANNER",combo.AUTHOR.read_bytes())
-        self.assertIn(b'core:GetAttributeChangedSignal("P0D_ART_SPARK_V1")',
+        self.assertIn(b'artHitBus.Event:Connect(onConfirmedServerHit)',
                       combo.AUTHOR.read_bytes())
+        self.assertIn(b'pendingByCore[core]',combo.AUTHOR.read_bytes())
+        self.assertNotIn(b'GetAttributeChangedSignal("P0D_ART_SPARK_V1")',
+                         combo.AUTHOR.read_bytes())
         self.assertNotIn(b"local flashing = item.core.Color.R > .9",
                          combo.AUTHOR.read_bytes())
         h=slash.HORDE_AUTHOR.read_bytes()
         self.assertIn(b'if RunService:IsStudio() then',h)
         self.assertIn(b'if self.artCue then',h)
-        self.assertIn(b'm.body:SetAttribute("P0D_ART_SPARK_V1"',h)
+        self.assertIn(b'self.artHitBus:Fire(m.body,m.artHitSeq,m.hp<=0,self.round)',h)
+        self.assertIn(b'Instance.new("BindableEvent")',h)
+        self.assertNotIn(b'P0D_ART_SPARK_V1',h)
         self.assertNotIn(b'OnServerEvent:Connect(',h)
 
     def test_compose_exact_real_66_67_68_and_off(self):
