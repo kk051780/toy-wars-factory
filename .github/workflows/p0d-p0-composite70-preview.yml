@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feature/p0d-p0game-composite70-integration-prep-20261114
+      - qa/p0d-lobby-team-rebalance-private78-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-p0-composite70-preview.yml'
@@ -1295,5 +1296,66 @@ jobs:
         with:
           name: P0-COMPOSITE70-PRIVATE-STUDIO-CANDIDATE
           path: /tmp/p0d_owner361_out/*
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: 'FB007 QA only - stage final 78 with lobby team-balance kept inside physical dojo'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_p0_lobby_rebalance78.py -v
+          BASE=/tmp/p0d_p0_solo78_dist
+          OUT=/tmp/p0d_p0_lobby_rebalance78_dist
+          python3 -B rc_fastlane/apply_p0_lobby_rebalance78.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_p0_lobby_rebalance78.py --base "$BASE" --out "$OUT" --enabled true
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 78
+          python3 -B rc_fastlane/test_p0_lobby_rebalance78_native.py --game "$OUT/src/server/Game.server.luau" --emit /tmp/p0_lobby_balance_actual_final78.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_lobby_balance_actual_final78.luau | tee /tmp/p0_lobby_balance_actual_final78_native.txt
+          grep -Fx P0_PRIVATE78_LOBBY_TEAM_REBALANCE_NATIVE_7_CASES_PASS /tmp/p0_lobby_balance_actual_final78_native.txt
+          python3 -B rc_fastlane/verify_p0_solo78_native.py --dist "$OUT" --out /tmp/p0_lobby_final_solo_native.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_lobby_final_solo_native.luau | tee /tmp/p0_lobby_final_solo_native.txt
+          grep -Fx P0_PRIVATE78_REAL_GAME_SOLO_CLASSIC_MODE_9_NATIVE_CASES_PASS /tmp/p0_lobby_final_solo_native.txt
+          python3 -B rc_fastlane/verify_p0_results78_native.py --dist "$OUT" --out /tmp/p0_lobby_final_results_native.luau
+          /tmp/p0d_new_luau/luau /tmp/p0_lobby_final_results_native.luau | tee /tmp/p0_lobby_final_results_native.txt
+          grep -Fx P0_PRIVATE78_REAL_RESULTS_LOBBY_15_NATIVE_CASES_PASS /tmp/p0_lobby_final_results_native.txt
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          echo P0_PRIVATE78_ALL_NATIVE_LUAU_COMPILED_WITH_LOBBY_REBALANCE
+          mkdir -p /tmp/p0d_p0_lobby_rebalance78_out
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_p0_lobby_rebalance78_out/P0D_FINAL78_LOBBY_REBALANCE_QA.rbxlx
+          python3 -B rc_fastlane/verify_p0_solo78.py --dist "$OUT" --place /tmp/p0d_p0_lobby_rebalance78_out/P0D_FINAL78_LOBBY_REBALANCE_QA.rbxlx --receipt /tmp/p0d_p0_lobby_rebalance78_out/RECEIPT.json
+          python3 - <<'PY'
+          from pathlib import Path
+          from rc_fastlane.apply_p0_lobby_rebalance78 import read,FEATURE
+          import json
+          parent=Path('/tmp/p0d_p0_solo78_dist')
+          final=Path('/tmp/p0d_p0_lobby_rebalance78_dist')
+          a=read(parent);b=read(final)
+          assert len(a)==len(b)==78
+          assert {k for k in a if a[k]!=b[k]}=={'server/Game.server.luau'}
+          assert all(a[k]==b[k] for k in a if k!='server/Game.server.luau')
+          f=json.loads((final/'RC_FEATURE_LOCK.json').read_text())
+          assert f['p0_lobby_rebalance78']['id']==FEATURE
+          assert not f['p0_lobby_rebalance78']['formal_feature_id_added']
+          assert f['total_sources']==78
+          receipt=Path('/tmp/p0d_p0_lobby_rebalance78_out/RECEIPT.json')
+          data=json.loads(receipt.read_text())
+          data['lobby_team_rebalance_native']='7_REAL_GAME_LUAU_CASES_PASS'
+          data['results_native']='15_REAL_GAME_LUAU_CASES_PASS'
+          data['solo_native']='9_REAL_GAME_LUAU_CASES_PASS'
+          data['only_existing_game_amended']=True
+          data['original_other_77_scripts_unchanged']=True
+          data['official_RC_modified']=False
+          receipt.write_text(json.dumps(data,indent=2)+'\n')
+          print('P0_LOBBY_REBALANCE78_SOURCE_ROJO_ALL_78_AND_NATIVE_7_PASS',data['place_bytes'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' }}
+        with:
+          name: P0-PLAYABLE-LOBBY-REBALANCE-PRIVATE78-STUDIO-QA-ONLY
+          path: /tmp/p0d_p0_lobby_rebalance78_out/*
           retention-days: 7
           if-no-files-found: error
