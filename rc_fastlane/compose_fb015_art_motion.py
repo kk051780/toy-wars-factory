@@ -29,7 +29,7 @@ EXPECTED_PARENT_ID = "P0D_FB015_COMPOSITE_PRIVATE68_EXACT_TREE"
 ORIGINAL_MINION = "4d0aac99d670ca4364a7368255d1edc63d28b3a0"
 ORIGINAL_SLASH = "257f5da5e40c0af89220745d576763f513a7e6ef"
 ORIGINAL_HORDE = "a2d07936bd9fe5bdf3630498c39d61d5a8560d99"
-# Independently recorded from fixed parent #387 commit 070f9c645c2743e,
+# Independently recorded from latest pinned parent #387 commit d3cece540cfdd4217596724e,
 # real 68-source lock in CI #43579099367; not from candidate self-manifest.
 EXPECTED_PARENT68_FULL_SOURCES_SHA256 = "PENDING_REAL_PARENT_D3CE_CI_SHA256"
 
@@ -176,6 +176,8 @@ def check_output(parent: Path, out: Path, identity: Path | None = None) -> None:
     # unrelated files or altered baseline scripts.
     require(actual == independent_expected_files(parent),
             "MOTION69_INDEPENDENT_EXPECTED_TREE_DRIFT")
+    # File-only manifests cannot protect unknown empty directories.
+    partial_tombstone_safe(parent, out, expected_output)
     src = out / "src" / DEST
     require(src.is_file() and blob(src.read_bytes()) == PIN,
             "MOTION69_SOURCE_PIN_MISMATCH")
@@ -184,6 +186,14 @@ def check_output(parent: Path, out: Path, identity: Path | None = None) -> None:
     require(slock.get("total_scripts") == 69 and flock.get("total_sources") == 69
             and flock.get("feature_flags", {}).get(FLAG) is True,
             "MOTION69_FEATURE_LOCK_MISMATCH")
+
+
+def fsync_directory(path: Path) -> None:
+    fd = os.open(path, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        os.fsync(fd)
+    finally:
+        os.close(fd)
 
 
 def atomic_ticket(journal: Path, ticket: dict) -> None:
@@ -198,13 +208,14 @@ def atomic_ticket(journal: Path, ticket: dict) -> None:
             tmp.flush()
             os.fsync(tmp.fileno())
         os.replace(candidate, journal)
+        fsync_directory(journal.parent)
     finally:
         if candidate is not None and candidate.exists():
             candidate.unlink()
 
 
 def partial_tombstone_safe(parent: Path, tomb: Path, output: Path) -> None:
-    """OFF retries only remove verified remaining OWN files after partial rmtree."""
+    """OFF retries only remove independently verified remaining OWN files."""
     expected = independent_expected_files(parent)
     rec = {"id": MANIFEST_ID, "input": str(parent),
            "output": str(output), "files": expected}
@@ -231,6 +242,49 @@ def partial_tombstone_safe(parent: Path, tomb: Path, output: Path) -> None:
                     "MOTION69_UNEXPECTED_DIRECTORY_REFUSED")
 
 
+def remove_only_verified_files(parent: Path, tomb: Path, output: Path) -> None:
+    """Never recursively remove a tree: only unlink known exact OWN bytes.
+
+    A noncooperating writer that creates an unrelated path during cleanup will
+    block rmdir, preserving its data. Each OWN file is checked again immediately
+    before unlink. This is a bounded private QA temp tree, not a general fs
+    transaction; directory-flock is additionally shared with parent68.
+    """
+    partial_tombstone_safe(parent, tomb, output)
+    owned = independent_expected_files(parent)
+    record = {"id": MANIFEST_ID, "input": str(parent),
+              "output": str(output), "files": owned}
+    owned[MANIFEST] = hashlib.sha256(
+        (json.dumps(record, ensure_ascii=False, sort_keys=True, indent=2) + "\n")
+        .encode("utf8")).hexdigest()
+    for name in sorted(owned, reverse=True):
+        path = tomb / name
+        if not path.exists():
+            continue  # An interrupted earlier OFF already removed this file.
+        require(path.is_file() and not path.is_symlink(),
+                "MOTION69_UNSAFE_FILE_UNLINK_REFUSED")
+        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+        try:
+            identity = os.fstat(fd)
+            with os.fdopen(fd, "rb", closefd=False) as fh:
+                actual = hashlib.sha256(fh.read()).hexdigest()
+            require(actual == owned[name],
+                    "MOTION69_MODIFIED_FILE_UNLINK_REFUSED")
+            current = path.stat(follow_symlinks=False)
+            require((current.st_dev, current.st_ino) ==
+                    (identity.st_dev, identity.st_ino),
+                    "MOTION69_CONCURRENT_FILE_REPLACEMENT_REFUSED")
+            os.unlink(path)
+        finally:
+            os.close(fd)
+    # os.rmdir (unlike rmtree) refuses any newly added files/directories.
+    dirs = sorted((p for p in tomb.rglob("*") if p.is_dir()),
+                  key=lambda p: len(p.parts), reverse=True)
+    for directory in dirs:
+        directory.rmdir()
+    tomb.rmdir()
+
+
 def inner(parent: Path, out: Path, enabled: bool):
     parent = parent.resolve()
     out = out.resolve()
@@ -249,8 +303,10 @@ def inner(parent: Path, out: Path, enabled: bool):
             # remaining file against the independently rebuilt exact allowlist.
             # An added/edited user file is never deleted on recovery.
             partial_tombstone_safe(parent, tomb, out)
-            shutil.rmtree(tomb)
+            remove_only_verified_files(parent, tomb, out)
+            fsync_directory(out.parent)
             journal.unlink()
+            fsync_directory(out.parent)
             print("P0D_ART_MOTION69_INTERRUPTED_OFF_RECOVERED")
             return True
         if journal.exists():
@@ -271,8 +327,11 @@ def inner(parent: Path, out: Path, enabled: bool):
         check_output(parent, out)
         atomic_ticket(journal, ticket)
         os.rename(out, tomb)
-        shutil.rmtree(tomb)
+        fsync_directory(out.parent)
+        remove_only_verified_files(parent, tomb, out)
+        fsync_directory(out.parent)
         journal.unlink()
+        fsync_directory(out.parent)
         print("P0D_ART_MOTION69_OFF_RETAINED_PARENT68")
         return True
 
