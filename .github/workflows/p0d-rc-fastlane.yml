@@ -1019,6 +1019,11 @@ jobs:
           AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
           test "$BEFORE" = "$AFTER"
           python3 -B rc_fastlane/apply_fb015_combat.py --dist "$DIST" --enabled true
+          python3 -B rc_fastlane/features/fb015_combat/generate_native_cue_policy.py --out /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau
+          test -x /tmp/p0d_new_luau/luau
+          /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau >/dev/null
+          /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_CUE_POLICY.luau | tee /tmp/p0d_combat_native14.log
+          grep -Fx P0D_FB015_REAL_CLIENT_CUE_NATIVE_14_CASES_PASS /tmp/p0d_combat_native14.log
           mkdir -p /tmp/p0d_art_combat_private67
           find "$DIST/src" -type f -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' file; do
             /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
@@ -1045,7 +1050,7 @@ jobs:
           assert named[('Script','Game')]==1
           assert named[('LocalScript','ArtCombatSlash')]==1
           assert named[('ModuleScript','MusouHorde')]==1
-          assert (dist/'src/server/MusouHorde.luau').read_bytes().count(b'P0D_ART_HIT_V1')==1
+          assert (dist/'src/server/MusouHorde.luau').read_bytes().count(b'P0D_ART_COMBAT_SIGNAL_V1')==1
           sp=json.loads((dist/'SOURCE_LOCK.json').read_text('utf8'))
           fp=json.loads((dist/'RC_FEATURE_LOCK.json').read_text('utf8'))
           assert sp['total_scripts']==fp['total_sources']==67
@@ -1054,7 +1059,7 @@ jobs:
           assert sp['art_combat']['owner_fun']=='ART_NO_GO'
           assert fp['feature_flags']['ART_COMBAT_SLASH_READONLY_V1'] is True
           candidate=(dist/'src/client/ArtCombatSlash.client.luau').read_bytes()
-          assert hashlib.sha1(b'blob '+str(len(candidate)).encode()+bytes([0])+candidate).hexdigest()=='7650d205ecba6cf0bccb50859407633227c57aa1'
+          assert hashlib.sha1(b'blob '+str(len(candidate)).encode()+bytes([0])+candidate).hexdigest()=='c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba'
           old=pathlib.Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx')
           digest=hashlib.sha256(place.read_bytes()).hexdigest()
           receipt={
@@ -1062,8 +1067,8 @@ jobs:
               'private_candidate_sha256':digest,
               'private_candidate_rbxlx_bytes':place.stat().st_size,
               'source_count':len(scripts),
-              'source_gitblob':'7650d205ecba6cf0bccb50859407633227c57aa1',
-              'horde_signal_blob':'acf72809877595921ba2f45f9e4d0220a6338853',
+              'source_gitblob':'c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba',
+              'horde_signal_blob':'6c613406c4c72be31b2a5c38177d54f1af78e617',
               'original_rc66_unchanged_scripts':65,
               'single_original_horde_cosmetic_cue_patch_only':True,
               'baseline_rc66_place_bytes':old.stat().st_size,
