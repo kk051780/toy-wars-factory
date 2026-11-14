@@ -65,6 +65,7 @@ def apply(base:Path,out:Path,enabled:bool)->bool:
     assert sl["blobs"]==fl["source_gitblobs"]==pins,"SOURCE_PIN_DRIFT"
     for flag in ("FB015_FOREST_BIOMES_MONUMENTS_V2",
                  "FB015_CASTLE_GATE_SILHOUETTE_MOBILE_V3",
+                 "FB016_ART_CAMERA_SIGHTLINE_V2",
                  "FB015_GOROGAN_MOBILE_LOD_V1"):
         assert fl["feature_flags"].get(flag) is True,("MISSING_PARENT",flag)
     assert FLAG not in fl["feature_flags"]
