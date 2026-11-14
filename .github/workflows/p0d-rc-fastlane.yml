@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - rc/p0d-s1-kids-rc01
+      - feature/p0d-prep-owner-hud-compact-20261114
       - feature/p0d-private61-native105-size-qa-20261114
       - feature/p0d-private62-starry-meteor-20261114-01
       - feature/p0d-private63-meteor-shards-mobile-20261114-01
@@ -233,6 +234,20 @@ jobs:
             test "$BEFORE" = "$AFTER"
             echo P0D_TWIN_TRAINING_PREP65_OFF_REAL_OFFICIAL64_BYTE_EXACT_PASS
             python3 -B rc_fastlane/apply_twin_training.py --dist "$DIST" --enabled true
+          fi
+      - name: PREP #340 compact final RC65 HUD; OFF rollback exact, no Game mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_owner_hud_compact.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_owner_hud_compact.py --dist "$DIST" --enabled off
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            echo P0D_OWNER_HUD_OFF_ALL_PROJECT_BYTES_EXACT_PASS
+            python3 -B rc_fastlane/apply_owner_hud_compact.py --dist "$DIST" --enabled on
           fi
       - uses: actions/checkout@v4
         with:
