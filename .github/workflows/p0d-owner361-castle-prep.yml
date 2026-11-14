@@ -37,5 +37,5 @@ jobs:
             cmake -S _p0d_rc_luau -B /tmp/p0d_new_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
             cmake --build /tmp/p0d_new_luau --target Luau.Compile.CLI --parallel 4
           fi
-          /tmp/p0d_new_luau/luau-compile rc_fastlane/features/owner361_castle/MapBuilderCastleV2.luau > /tmp/owner361_castle_native.out
+          /tmp/p0d_new_luau/luau-compile rc_fastlane/features/owner361_castle/CastleBattlefield.server.luau > /tmp/owner361_castle_native.out
           echo 'OWNER361_CASTLE_NATIVE_SOURCE_ONLY_PASS_NOT_STUDIO_NOT_OFFICIAL'
