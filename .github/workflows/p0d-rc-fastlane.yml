@@ -9,6 +9,7 @@ on:
       - feature/p0d-flat63-official57-direct-intake-20261114
       - feature/p0d-rc64-twin-flat-official-intake-20261114
       - feature/p0d-flat65-twin-training-rc-adoption-20261114
+      - feature/p0d-prep-bond-rebase-official-20261114
     paths:
       - 'rc_fastlane/**'
       - '.github/workflows/p0d-rc-fastlane.yml'
@@ -273,6 +274,20 @@ jobs:
           print("P0D_OWNER_UX_INITIAL_TEXT_COLLAPSED_SOLO_GUIDE_ACTUAL_GAME_UNCHANGED_PASS")
           PY
           fi
+      - name: Add exact canonical65 one familiar + 20pct PvE minion-only assist, all OFF rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s rc_fastlane -p test_twin_bond.py -v
+          if [ "$PROFILE" = rich51 ]; then
+            DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
+            BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            python3 -B rc_fastlane/apply_twin_bond.py --dist "$DIST" --enabled false
+            AFTER=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+            test "$BEFORE" = "$AFTER"
+            echo P0D_PRIVATE66_BOND_OFF_EXACT_REAL_OFFICIAL65_PASS
+            python3 -B rc_fastlane/apply_twin_bond.py --dist "$DIST" --enabled true
+          fi
       - uses: actions/checkout@v4
         with:
           repository: luau-lang/luau
@@ -301,7 +316,7 @@ jobs:
           echo P0D_RC_NEW_REALM_LUAU_COMPILE_2_OF_2_PASS
           if [ "$PROFILE" = rich51 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE
-            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']) + int(f['TWIN_BIOMES_4NPC_V1']['enabled']) + int(f['TWIN_CREATURE_TRAINING_V1']['enabled']))")
+            WANT=$(python3 -c "import json; f=json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']; print(53 + int(f['SIX_SKILL_DURABLE']['enabled']) + int(f['SAVED_PVE_MASTERY']['enabled']) + int(f['SAVED_BEAST_EVOLUTION']['enabled']) + int(f['SCOUT_SPECIES_V1']['enabled']) + int(f['WCS_F01_C01']['enabled']) + int(f['SEVEN_JOBS_PVE_V1']['enabled']) + int(f['EGG_RELAY_CLASSIC_V1']['enabled']) + int(f['STARRY_PATH_V1']['enabled']) + int(f['METEOR_FOURTH_V1']['enabled']) + int(f['STAR_SHARDS_V1']['enabled']) + int(f['TWIN_BIOMES_4NPC_V1']['enabled']) + int(f['TWIN_CREATURE_TRAINING_V1']['enabled']) + int(f['TWIN_BOND_PVE_COMPANION_V1']['enabled']))")
 
           elif [ "$PROFILE" = rich47 ]; then
             DIST=_p0d_pinned_source/handoffs/P0D-RC-H1-SKYV5-DOJO-RESULT-20261113-01/dist/P0D_H1_SKYV5_DOJO_RESULT7_STUDIO_PRIVATE
@@ -449,6 +464,31 @@ jobs:
             /tmp/p0d_new_luau/luau /tmp/P0D_REAL_TWIN_TRAINING38.luau | tee /tmp/p0d_twin_native38.log
             grep -Fx P0D_TWIN_CREATURE_REAL_NATIVE_38_POLICY_CASES_PASS /tmp/p0d_twin_native38.log
           fi
+      - name: Execute 40 real native bond policy checks from actual 66-source module
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PROFILE" = rich51 ]; then
+            python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          root=Path('_p0d_pinned_source/handoffs/P0D-RC-H1-RESULT47-WAYPOINT-V4-SESSION-20261114-01/dist/P0D_RICH47_WAYPOINT_V4_6SKILL_SESSION_PRIVATE')
+          src=(root/'src/server/TwinBondPolicy.luau').read_bytes()
+          author=Path('rc_fastlane/features/twin_bond/TwinBondPolicy.luau').read_bytes()
+          runner=Path('rc_fastlane/features/twin_bond/TwinBondNative.luau').read_bytes()
+          def blob(b):return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          assert src==author and blob(src)=='d217e8cf03893efeebe437607e196f9a6f27d50f'
+          assert runner.count(b'check("')==40
+          text=src.decode('utf8')
+          assert text.count('return Bond')==1
+          out=text.rsplit('return Bond',1)[0]+'\n'+runner.decode('utf8')
+          Path('/tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau').write_text(out,'utf8')
+          print('P0D_PRIVATE66_BOND_NATIVE40_ACTUAL_SOURCE_PIN_PASS')
+          PY
+            /tmp/p0d_new_luau/luau-compile /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau >/dev/null
+            /tmp/p0d_new_luau/luau /tmp/P0D_REAL_TWIN_BOND_NATIVE40.luau | tee /tmp/p0d_real_bond_native40.log
+            grep -Fx P0D_TWIN_BOND_REAL_NATIVE_40_POLICY_CASES_PASS /tmp/p0d_real_bond_native40.log
+          fi
       - name: Install checksum-pinned official Rojo v7.7.1
         shell: bash
         run: |
@@ -500,7 +540,8 @@ jobs:
           shards_enabled=(p=='rich51' and flags['features']['STAR_SHARDS_V1']['enabled'])
           twin_enabled=(p=='rich51' and flags['features']['TWIN_BIOMES_4NPC_V1']['enabled'])
           training_enabled=(p=='rich51' and flags['features']['TWIN_CREATURE_TRAINING_V1']['enabled'])
-          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled),'rich47':47,'legacy21':21}[p]
+          bond_enabled=(p=='rich51' and flags['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled'])
+          expected={'rich51':51+int(realm_enabled)*2+int(durable_enabled)+int(saved_pve_enabled)+int(saved_beast_enabled)+int(species_enabled)+int(wcs_enabled)+int(seven_enabled)+int(egg_enabled)+int(star_enabled) +int(meteor_enabled)+int(shards_enabled)+int(twin_enabled)+int(training_enabled)+int(bond_enabled),'rich47':47,'legacy21':21}[p]
           assert sum(actual.values())==expected, ('RC_SCRIPT_COUNT',sum(actual.values()),expected)
           included=collections.Counter();titles=collections.Counter()
           for e in ET.fromstring(target.read_bytes()).iter('Item'):
@@ -695,6 +736,28 @@ jobs:
               print('P0D_PRIVATE65_TWIN_TRAINING_REAL_ROJO_MODULE_SINGLETON_PASS')
           else:
               assert titles[('ModuleScript','TwinCreatureTraining')]==0
+          if bond_enabled:
+              assert twin_enabled and training_enabled
+              assert titles[('ModuleScript','TwinBondPolicy')]==1
+              assert titles[('Script','Game')]==1 and titles[('Script','TwinBiomes')]==1
+              game_src=(base/'src/server/Game.server.luau').read_text('utf8')
+              twin_src=(base/'src/server/TwinBiomes.server.luau').read_text('utf8')
+              bond_src=(base/'src/server/TwinBondPolicy.luau').read_text('utf8')
+              assert game_src.count('remote.OnServerEvent:Connect(')==1
+              assert game_src.count('*twinBondOnlyNeutralMobBonus(player)')==1
+              assert game_src.count('local function twinBondOnlyNeutralMobBonus(')==1
+              assert 'match.phase~="ACTIVE" or carry[player]~=nil' in game_src
+              assert 'local Bond = require(script.Parent:WaitForChild("TwinBondPolicy"))' in twin_src
+              assert 'summonBoundCompanion(player,info,level)' in twin_src
+              assert 'buddy.CanCollide=false' in twin_src
+              assert 'Bond.snapshot(player,timeNow)' in twin_src
+              assert 'function Bond.pveMultiplier(' in bond_src
+              project=json.loads((base/'default.project.json').read_text('utf8'))['tree']
+              boot=project['ServerStorage']['P0D_ENABLE_TWIN_BOND_PVE_V1']
+              assert boot['$className']=='BoolValue' and boot['$properties']['Value'] is True
+              print('P0D_PRIVATE66_SINGLE_GAME_ONLY_NEUTRAL_PVE_BONDED_COMPANION_ROJO_PASS')
+          else:
+              assert titles[('ModuleScript','TwinBondPolicy')]==0
           if p=='rich51':
               assert titles[('Script','V4TrainingBridge')]==1
               assert titles[('LocalScript','V4TrialOverlay')]==1
@@ -737,6 +800,8 @@ jobs:
             'twin_biomes_two_worlds_four_species_animated_session_codex':bool(twin_enabled),
             'twin_creature_training_session_only_3_levels':bool(training_enabled),
             'twin_creature_native_real_policy_cases':38 if training_enabled else None,
+            'twin_bond_one_active_session_companion_pve_only':bool(bond_enabled),
+            'twin_bond_native_policy_cases':40 if bond_enabled else None,
             'twin_biomes_engine_2client_android_fun':'NOT_TESTED',
             'star_shards_native_policy_cases':22 if shards_enabled else None,
             'mobile_relay_touch_geometry_12viewports_144checks':True if shards_enabled else None,
@@ -756,7 +821,7 @@ jobs:
             'android':'NOT_TESTED','owner_fun':'NOT_TESTED',
             'production_publish':False,'sixskill_persistent':False,
             's1_score_prior_only':75,
-            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled,'STAR_SHARDS_V1':shards_enabled,'TWIN_BIOMES_4NPC_V1':twin_enabled,'TWIN_CREATURE_TRAINING_V1':training_enabled},
+            'feature_flags':{'REALM_HUNT_V1':realm_enabled,'WCS_F01_C01':wcs_enabled,'SEVEN_JOBS_PVE_V1':seven_enabled,'EGG_RELAY_CLASSIC_V1':egg_enabled,'STARRY_PATH_V1':star_enabled,'METEOR_FOURTH_V1':meteor_enabled,'STAR_SHARDS_V1':shards_enabled,'TWIN_BIOMES_4NPC_V1':twin_enabled,'TWIN_CREATURE_TRAINING_V1':training_enabled,'TWIN_BOND_PVE_COMPANION_V1':bond_enabled},
             'base_author_51_preserved':True if realm_enabled else None,
             'new_realms_studio_2client':'NOT_TESTED'}
           (pathlib.Path('/tmp/p0d_rc_out')/'RC_BUILD_RECEIPT.json').write_text(json.dumps(receipt,indent=2)+'\n')
@@ -786,7 +851,7 @@ jobs:
             python3 - <<'PY'
           import json
           x=json.load(open('/tmp/p0d_rc_out/RC_CAPACITY_REPORT.json'))
-          assert x['native_source_count']==64+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_CREATURE_TRAINING_V1']['enabled']), x
+          assert x['native_source_count']==65+int(json.load(open('rc_fastlane/FEATURE_SWITCHES.json'))['features']['TWIN_BOND_PVE_COMPANION_V1']['enabled']), x
           assert x['rbxlx_bytes']>571621 and x['rbxlx_bytes']<2000000
           print('P0D_PRIVATE64_TRUE_CAPACITY_PASS',x['rbxlx_bytes'],x['sha256'])
           PY
