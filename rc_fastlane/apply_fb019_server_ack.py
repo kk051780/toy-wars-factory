@@ -48,9 +48,17 @@ def patch_game(raw:bytes)->bytes:
                 *earnedDamageMultiplier(player,"PLAYER"))
         end
         return''','''        if ok and hum then
+            local beforeHealth = hum.Health
             hum:TakeDamage(Config.CombatDamage[roles[player] or "RAIDER"]
                 *earnedDamageMultiplier(player,"PLAYER"))
-            attackResponse("HIT","PLAYER")
+            -- A ForceField or zero effective damage must never display a fake HIT.
+            if hum.Health < beforeHealth then
+                attackResponse("HIT","PLAYER")
+            elseif mobHits>0 then
+                attackResponse("HIT","MINION")
+            else
+                attackResponse("MISS","BLOCKED")
+            end
         elseif mobHits>0 then
             attackResponse("HIT","MINION")
         else
@@ -59,8 +67,13 @@ def patch_game(raw:bytes)->bytes:
         return''')
     block=one(block,'    if mobHits>0 then return end','    if mobHits>0 then attackResponse("HIT","MINION"); return end')
     block=one(block,'''            victim.hum:TakeDamage(Config.CombatDamage[roles[player] or "RAIDER"])
-            return''','''            victim.hum:TakeDamage(Config.CombatDamage[roles[player] or "RAIDER"])
-            attackResponse("HIT","BOT")
+            return''','''            local beforeBotHealth = victim.hum.Health
+            victim.hum:TakeDamage(Config.CombatDamage[roles[player] or "RAIDER"])
+            if victim.hum.Health < beforeBotHealth then
+                attackResponse("HIT","BOT")
+            else
+                attackResponse("MISS","BLOCKED")
+            end
             return''')
     block=one(block,'    if not Rules.damageCandidate(distance, aim, Config.CastleReach) then return end','''    if not Rules.damageCandidate(distance, aim, Config.CastleReach) then
         attackResponse("MISS","NONE")
@@ -71,11 +84,16 @@ def patch_game(raw:bytes)->bytes:
         return
     end''')
     block=one(block,'''    match.hp[enemy] = math.max(0, match.hp[enemy] - Config.CastleAttackDamage[roles[player] or "RAIDER"])
-''','''    match.hp[enemy] = math.max(0, match.hp[enemy] - Config.CastleAttackDamage[roles[player] or "RAIDER"])
-    attackResponse("HIT","CASTLE")
+''','''    local beforeCastleHealth = match.hp[enemy]
+    match.hp[enemy] = math.max(0, match.hp[enemy] - Config.CastleAttackDamage[roles[player] or "RAIDER"])
+    if match.hp[enemy] < beforeCastleHealth then
+        attackResponse("HIT","CASTLE")
+    else
+        attackResponse("MISS","NONE")
+    end
 ''')
-    assert block.count('attackResponse("HIT"')==5
-    assert block.count('attackResponse("MISS"')==3
+    assert block.count('attackResponse("HIT"')==6
+    assert block.count('attackResponse("MISS"')==6
     assert block.count('remote:FireClient(player,{kind="P0D_ATTACK_RESULT"')==1
     return (src[:a]+block+src[b:]).encode("utf8")
 
