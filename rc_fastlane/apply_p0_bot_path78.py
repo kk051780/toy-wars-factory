@@ -59,6 +59,14 @@ def patch_bot(src:str)->str:
     assert FIX not in src and "MAX_PENDING_PATH_TASKS" not in src,"P0_BOT_PATH_ALREADY_ADOPTED"
     assert src.count("function Bot.start(")==src.count("function Bot.tick(")==1
     assert src.count("local function move(")==1
+    # #386 original Game Bot retained a planningSince field absent from
+    # #402 author's private73 reference. Normalize only table field ORDER,
+    # never delete its existing timeout data; the next author-exact 16 text
+    # substitutions then match without rewriting semantic logic.
+    original_init="lastAttack=0,lastGoal=nil,pathGeneration=0,planningSince=nil}"
+    normalized_init="planningSince=nil,lastAttack=0,lastGoal=nil,pathGeneration=0}"
+    assert src.count(original_init)==1,("BOT_PATH_PARENT386_INIT_DRIFT",src.count(original_init))
+    src=src.replace(original_init,normalized_init,1)
     original=src
     for i,(old,new) in enumerate(authored_pairs()):
         assert src.count(old)==1,("P0_BOT_PATH_AUTHOR_SOURCE_CONFLICT",i,old[:120],src.count(old))
