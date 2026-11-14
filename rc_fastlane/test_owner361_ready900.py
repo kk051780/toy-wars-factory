@@ -61,7 +61,7 @@ class Owner361Ready900Tests(unittest.TestCase):
         self.assertNotIn("MatchSeconds = 360,", out)
 
     def test_foreign_source_fails_closed(self):
-        with self.assertRaisesRegex(AssertionError, "SOURCE_DRIFT"):
+        with self.assertRaisesRegex(AssertionError, "ONE_REMOTE_AUTHORITY"):
             mod.patch_game("--!strict\n")
         with self.assertRaisesRegex(AssertionError, "SOURCE_DRIFT"):
             mod.patch_hud("local seq = 0\n")
