@@ -11,6 +11,7 @@ on:
   pull_request:
     branches:
       - feature/p0d-prep-fb015-minion-combat-composite-20261114
+      - feature/p0d-fb015-art68-frozen-070f-20261114
     paths:
       - 'rc_fastlane/features/art_motion/**'
       - 'rc_fastlane/compose_fb015_art_motion.py'
@@ -41,7 +42,7 @@ jobs:
           PY
       - name: All 3 motion source policy tests
         run: python3 -B -m unittest discover -s rc_fastlane -p 'test_art_motion_source.py' -v
-      - name: All 6 66-to-69 fixture composition and protected OFF tests
+      - name: All 17 66-to-69 fixture composition and protected OFF tests
         run: python3 -B -m unittest discover -s rc_fastlane -p 'test_art_motion_composite.py' -v
       - uses: actions/checkout@v4
         with:
