@@ -1802,6 +1802,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python3 -m pip install --disable-pip-version-check -q defusedxml==0.7.1
           python3 -B -m unittest discover -s rc_fastlane -p test_fb015_forest_v2.py -v
           BASE=/tmp/p0d_fb019_hit_visibility_dist
           OUT=/tmp/p0d_fb015_forest_v2_confirmed_hit_private80
