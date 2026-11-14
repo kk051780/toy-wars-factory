@@ -18,7 +18,7 @@ import os
 from pathlib import Path
 import shutil
 import tempfile
-from fb015_fs_guard import strict_inventory, verify_partial_tree, atomic_json
+from fb015_fs_guard import strict_inventory, verify_partial_tree, atomic_json, reject_symlink_ancestors
 
 ROOT = Path(__file__).resolve().parent
 FEATURE = "ART_COMBAT_SLASH_READONLY_V1"
@@ -390,8 +390,7 @@ def _apply_locked(dist: Path, enabled: bool) -> bool:
     return True
 
 def apply(dist: Path, enabled: bool) -> bool:
-    if dist.is_symlink():
-        raise RuntimeError("FB015_SYMLINK_DISTRIBUTION_REFUSED")
+    reject_symlink_ancestors(dist)
     # File-less directory lock on the existing parent serializes concurrent
     # toggle calls while preserving zero-write clean OFF.
     dist=dist.resolve()
