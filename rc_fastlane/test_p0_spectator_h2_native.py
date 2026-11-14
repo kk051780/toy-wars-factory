@@ -43,13 +43,19 @@ def emit(game:Path, bot:Path)->str:
     assert "local count = #eligibleSoloPlayers()" in g
     assert "local online = eligibleSoloPlayers()" in g
     assert "if entrant:GetAttribute(\"P0D_LateJoinSpectator\")==true then" in g
+    assert "ModeVote.tally(modeVotes,eligibleSoloPlayers())" in g
+    apply_ready="local function applyReady(player: Player, data)"+section(
+        g,"local function applyReady(player: Player, data)",
+        "remote.OnServerEvent:Connect(function(player: Player, data)")
+    assert 'player:GetAttribute("P0D_LateJoinSpectator")==true then return end' in apply_ready
+    assert 'if side~="RED" and side~="BLUE" then return end' in apply_ready
 
     pre=r'''-- Native original authored eligibility + leaver + enemy selection.
 local Players={online={}}
 function Players:GetPlayers() return self.online end
 local RunService={}
 function RunService:IsStudio() return true end
-local match={phase="LOBBY"}
+local match={phase="LOBBY",phaseUntil=0}
 local EXPERIMENTAL_FIVE_EGG_MODE=false
 local ModeVote={SCORE="SCORE",CLASSIC="CLASSIC"}
 local teamInstances={RED={Name="RED"},BLUE={Name="BLUE"}}
@@ -74,6 +80,12 @@ local chosenMode=ModeVote.SCORE
 local function getTeamName(p)
     return p.Team and p.Team.Name or "NONE"
 end
+local lastSeq={}
+local roundReady={}
+local Rules={}
+function Rules.validSeq(seq,last) return type(seq)=="number" and seq>last end
+local broadcasts=0
+local function broadcast() broadcasts+=1 end
 local function v(x) return setmetatable({X=x}, {
     __sub=function(a,b) return v(a.X-b.X) end,
     __index=function(t,k) if k=="Magnitude" then return math.abs(t.X) end end
@@ -97,6 +109,7 @@ local function actualTickGuard()
 ''' + bot_guard + r'''
     return true
 end
+''' + apply_ready + r'''
 
 -- 1: A single actual combat participant + a late spectator counts one.
 Players.online={human,visitor}
@@ -180,7 +193,31 @@ Players.online={human}
 match.phase="LOBBY"
 computeMode()
 check(EXPERIMENTAL_FIVE_EGG_MODE==false and mayStartBots(),"NEW_SOLO_READY_CAN_SPAWN_BOTS")
-print("P0_PRIVATE78_SPECTATOR_H2_NATIVE_15_CASES_PASS")
+-- 16. Neutral observer cannot cancel somebody else's countdown.
+Players.online={human,visitor}
+match.phase="COUNTDOWN";match.phaseUntil=200
+roundReady[human]=true
+local oldBroadcast=broadcasts
+applyReady(visitor,{action="READY",ready=false,seq=1})
+check(match.phase=="COUNTDOWN" and match.phaseUntil==200
+    and broadcasts==oldBroadcast,"NEUTRAL_OBSERVER_CANNOT_CANCEL_READY")
+check(lastSeq[visitor]==nil,"NEUTRAL_OBSERVER_CANNOT_BURN_COMBAT_SEQ")
+-- 17. Even a temporarily red-teamed spectator attribute is always denied.
+visitor.Team=teamInstances.RED
+applyReady(visitor,{action="READY",ready=false,seq=5})
+check(match.phase=="COUNTDOWN" and lastSeq[visitor]==nil,
+    "SPECTATOR_ATTR_CANNOT_CANCEL_READY")
+-- 18. Existing real fighter can still withdraw READY with phase broadcast.
+applyReady(human,{action="READY",ready=false,seq=1})
+check(match.phase=="LOBBY" and match.phaseUntil==0
+    and roundReady[human]==false and broadcasts>oldBroadcast,
+    "REAL_HUMAN_CANCEL_STILL_WORKS")
+-- 19. ACTIVE bogus READY cannot consume input seq.
+match.phase="ACTIVE"
+local seqBefore=lastSeq[human]
+applyReady(human,{action="READY",ready=false,seq=9999})
+check(lastSeq[human]==seqBefore,"ACTIVE_READY_REJECTED_BEFORE_SEQ")
+print("P0_PRIVATE78_SPECTATOR_H2_NATIVE_19_CASES_PASS")
 '''
     compute=r'''
 local function computeMode()
