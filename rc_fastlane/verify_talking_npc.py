@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify exact 67-source Rojo preview without claiming Studio engine execution."""
+"""Verify exact latest RC + 3 source Rojo preview, not engine playtest."""
 import argparse
 import base64
 import collections
@@ -15,7 +15,8 @@ def verify(dist: Path, place: Path) -> dict:
     assert dist.is_dir() and place.is_file()
     source = {p.relative_to(dist/"src").as_posix():p.read_bytes()
               for p in sorted((dist/"src").rglob("*.luau"))}
-    assert len(source)==67, ("WRONG_PREVIEW_COUNT",len(source))
+    pre_count=json.loads((dist/"SOURCE_LOCK.json").read_text("utf8"))["rc_talking_npc_PREP_overlay"]["predecessor_script_count"]
+    assert pre_count>=64 and len(source)==pre_count+3, ("WRONG_PREVIEW_COUNT",len(source),pre_count)
     assert sum(path=="server/Game.server.luau" for path in source)==1
     assert all(p in source for p in (
         "server/TalkingNPCDirector.luau",
@@ -29,10 +30,10 @@ def verify(dist: Path, place: Path) -> dict:
     lock=json.loads((dist/"SOURCE_LOCK.json").read_text("utf8"))
     feature=json.loads((dist/"RC_FEATURE_LOCK.json").read_text("utf8"))
     pins={k:blob(v) for k,v in sorted(source.items())}
-    assert lock["total_scripts"]==67 and lock["blobs"]==pins, "NEW_SOURCE_LOCK_DRIFT"
-    assert feature["total_sources"]==67 and feature["source_gitblobs"]==pins
+    assert lock["total_scripts"]==pre_count+3 and lock["blobs"]==pins, "NEW_SOURCE_LOCK_DRIFT"
+    assert feature["total_sources"]==pre_count+3 and feature["source_gitblobs"]==pins
     assert feature["feature_flags"]["P0D-TALKING-NPC-V1"] is True
-    assert lock["rc_talking_npc_PREP_overlay"]["previous64_byte_identical"] is True
+    assert lock["rc_talking_npc_PREP_overlay"]["previous_sources_byte_identical"] is True
 
     xml=ET.fromstring(place.read_bytes())
     scripts=collections.Counter()
@@ -69,9 +70,9 @@ def verify(dist: Path, place: Path) -> dict:
         "status":"SOURCE_EXACT_ROJO_PASS_ENGINE_NOT_TESTED",
         "preview":True,
         "official_rc_adopted":False,
-        "scripts":67,
+        "scripts":pre_count+3,
         "new_scripts":3,
-        "previous_sources_preserved":64,
+        "previous_sources_preserved":pre_count,
         "source_exact":True,
         "single_Game":True,
         "single_existing_remote":True,
@@ -82,7 +83,7 @@ def verify(dist: Path, place: Path) -> dict:
         "rbxlx_bytes":place.stat().st_size,
         "rbxlx_sha256":hashlib.sha256(place.read_bytes()).hexdigest(),
     }
-    print("P0D_TALKING_NPC_PREP_67_REAL_ROJO_SOURCE_EXACT_PASS",result["rbxlx_bytes"])
+    print("P0D_TALKING_NPC_PREP_LATEST_PLUS3_REAL_ROJO_SOURCE_EXACT_PASS",result["scripts"],result["rbxlx_bytes"])
     return result
 
 def main():
