@@ -1068,7 +1068,7 @@ jobs:
               'private_candidate_rbxlx_bytes':place.stat().st_size,
               'source_count':len(scripts),
               'source_gitblob':'c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba',
-              'horde_signal_blob':'4ed99eb0b5177142b389ba3bf6954b288c804a08',
+              'horde_signal_blob':'e48186a6d717a46c86ec395ffbe778d196ab182d',
               'original_rc66_unchanged_scripts':65,
               'single_original_horde_cosmetic_cue_patch_only':True,
               'baseline_rc66_place_bytes':old.stat().st_size,
@@ -1087,6 +1087,7 @@ jobs:
           /tmp/p0d_new_luau/luau-compile /tmp/P0D_FB015_ACTUAL_SPARK_POLICY.luau >/dev/null
           /tmp/p0d_new_luau/luau /tmp/P0D_FB015_ACTUAL_SPARK_POLICY.luau | tee /tmp/p0d_art_spark_native12.log
           grep -Fx P0D_FB015_ACTUAL_MINION_SPARK_NATIVE_12_CASES_PASS /tmp/p0d_art_spark_native12.log
+          grep -Fx P0D_FB015_ACTUAL_SERVER_SPARK_QUEUE_NATIVE_PASS /tmp/p0d_art_spark_native12.log
           PRIVATE67_BEFORE=$(find "$DIST" -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
           COMBO_DIST=/tmp/p0d_fb015_combined_private68
           COMBO_OUT=/tmp/p0d_art_minion_combat_private68
@@ -1128,9 +1129,9 @@ jobs:
           assert locks['blobs']==flags['source_gitblobs']==pins
           assert flags['feature_flags']['ART_COMBAT_SLASH_READONLY_V1'] is True
           assert flags['feature_flags']['ART_MINION_THREE_SILHOUETTES_V1'] is True
-          assert pins['server/ArtMinionSilhouette.server.luau']=='855985f8b474fb983485c27e26918cea39c42574'
+          assert pins['server/ArtMinionSilhouette.server.luau']=='4d0aac99d670ca4364a7368255d1edc63d28b3a0'
           assert pins['client/ArtCombatSlash.client.luau']=='c8aa1c4ff740ca46b85fc78dbb99c2a2a82a6eba'
-          assert pins['server/MusouHorde.luau']=='4ed99eb0b5177142b389ba3bf6954b288c804a08'
+          assert pins['server/MusouHorde.luau']=='e48186a6d717a46c86ec395ffbe778d196ab182d'
           baseline=Path('/tmp/p0d_rc_out/P0D_CANONICAL_RC_rich51.rbxlx')
           receipt={
               'result':'P0D_FB015_MINION_COMBAT_PRIVATE68_BOTH_SOURCE_EXACT_PASS',
