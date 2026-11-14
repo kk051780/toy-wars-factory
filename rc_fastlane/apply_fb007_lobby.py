@@ -79,7 +79,8 @@ def patch_game(source:str)->str:
         '                or math.abs(position.Z) > 76 then',
         '''if (match.phase=="ACTIVE" and (position.Y < -30
                 or math.abs(position.X) > 130 or math.abs(position.Z) > 76))
-                or (RunService:IsStudio() and match.phase~="ACTIVE"
+                or (RunService:IsStudio()
+                and (match.phase=="LOBBY" or match.phase=="COUNTDOWN")
                 and not LobbyIsland.inLobby(position)) then''')
     tick=replace1(tick,
        'root.CFrame = map.teams[team].spawn + Vector3.new(0, 4, 0)',
