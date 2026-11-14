@@ -54,9 +54,18 @@ def fixture(root):
     return dist
 
 class CompositeTest(unittest.TestCase):
-    def test_minion_source_is_unchanged_pr374(self):
+    def test_minion_source_keeps_four_species_with_confirmed_sparks(self):
         self.assertEqual(combo.blob(combo.AUTHOR.read_bytes()), combo.PIN)
-        self.assertIn(b"ELITE_BACK_BANNER", combo.AUTHOR.read_bytes())
+        self.assertIn(b"ELITE_BACK_BANNER",combo.AUTHOR.read_bytes())
+        self.assertIn(b'core:GetAttributeChangedSignal("P0D_ART_SPARK_V1")',
+                      combo.AUTHOR.read_bytes())
+        self.assertNotIn(b"local flashing = item.core.Color.R > .9",
+                         combo.AUTHOR.read_bytes())
+        h=slash.HORDE_AUTHOR.read_bytes()
+        self.assertIn(b'if RunService:IsStudio() then',h)
+        self.assertIn(b'if self.artCue then',h)
+        self.assertIn(b'm.body:SetAttribute("P0D_ART_SPARK_V1"',h)
+        self.assertNotIn(b'OnServerEvent:Connect(',h)
 
     def test_compose_exact_real_66_67_68_and_off(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -97,6 +106,7 @@ class CompositeTest(unittest.TestCase):
             root=Path(tmp)
             self.assertFalse(combo.compose(root/"missing",root/"private68",False))
             self.assertFalse((root/"private68").exists())
+            self.assertEqual(list(root.iterdir()),[])
 
     def test_off_never_deletes_ancestor_of_input(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -140,6 +150,62 @@ class CompositeTest(unittest.TestCase):
             self.assertFalse(tombstone.exists())
             self.assertFalse(output.exists())
             self.assertEqual(snapshot(d),original67)
+
+    def test_refuse_changed_partially_deleted_tombstone(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            output=root/"private68"
+            combo.compose(d,output,True)
+            record=combo.verify_private_output(output,d)
+            journal=output.with_name(output.name+".fb015_delete_journal.json")
+            tombstone=output.with_name(output.name+".fb015_deleting")
+            journal.write_text(json.dumps(record)+"\n",encoding="utf8")
+            os.rename(output,tombstone)
+            rogue=tombstone/"INTRUDER_SAVED.txt"
+            rogue.write_text("KEEP ME",encoding="utf8")
+            with self.assertRaisesRegex(RuntimeError,"TOMBSTONE_EXTRA_OR_MODIFIED_FILE_ROLLBACK_REFUSED"):
+                combo.compose(d,output,False)
+            self.assertEqual(rogue.read_text("utf8"),"KEEP ME")
+            rogue.unlink()
+            self.assertTrue(combo.compose(d,output,False))
+            self.assertFalse(tombstone.exists())
+
+    def test_no_enable_while_rollback_tombstone_pending(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            output=root/"private68"
+            combo.compose(d,output,True)
+            record=combo.verify_private_output(output,d)
+            journal=output.with_name(output.name+".fb015_delete_journal.json")
+            tombstone=output.with_name(output.name+".fb015_deleting")
+            journal.write_text(json.dumps(record)+"\n",encoding="utf8")
+            os.rename(output,tombstone)
+            with self.assertRaisesRegex(RuntimeError,"PENDING_OFF_RECOVERY"):
+                combo.compose(d,output,True)
+            self.assertFalse(output.exists())
+            self.assertTrue(combo.compose(d,output,False))
+
+    def test_recover_after_tombstone_already_deleted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            d=fixture(root)
+            slash.apply(d,True)
+            output=root/"private68"
+            combo.compose(d,output,True)
+            record=combo.verify_private_output(output,d)
+            journal=output.with_name(output.name+".fb015_delete_journal.json")
+            tombstone=output.with_name(output.name+".fb015_deleting")
+            journal.write_text(json.dumps(record)+"\n",encoding="utf8")
+            os.rename(output,tombstone)
+            import shutil
+            shutil.rmtree(tombstone)
+            self.assertTrue(combo.compose(d,output,False))
+            self.assertFalse(journal.exists())
+            self.assertFalse(output.exists())
 
 if __name__ == "__main__":
     unittest.main()
