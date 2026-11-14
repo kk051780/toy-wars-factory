@@ -1604,7 +1604,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
         with:
-          name: P0D-CANONICAL-RC80-STUDIO
+          name: P0D-RC80-ROLLBACK-BEFORE-FB017
           path: /tmp/p0d_rc80_out/*
           retention-days: 7
           if-no-files-found: error
@@ -1613,5 +1613,50 @@ jobs:
         with:
           name: P0D-FB016-STAGING-RC80-STUDIO
           path: /tmp/p0d_rc80_out/*
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: 'FB017 no permanent battle guides: 80 script source-locked final Studio build'
+        if: ${{ env.PROFILE == 'rich51' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_fb016_rc80_dist
+          OUT=/tmp/p0d_fb017_no_guides_dist
+          mkdir -p /tmp/p0d_fb017_final_out
+          python3 -B rc_fastlane/apply_fb017_no_guides.py --base "$BASE" --out "$OUT" --enabled false
+          test ! -e "$OUT"
+          python3 -B rc_fastlane/apply_fb017_no_guides.py --base "$BASE" --out "$OUT" --enabled true
+          test "$(find "$OUT/src" -name '*.luau' | wc -l)" -eq 80
+          find "$OUT/src" -name '*.luau' -print0 | sort -z | while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done
+          /tmp/p0d_rc_rojo build "$OUT/default.project.json" -o /tmp/p0d_fb017_final_out/P0D_TRAP_RAIDERS_RC80_NO_GUIDES_STUDIO.rbxlx
+          python3 -B rc_fastlane/verify_fb017_no_guides.py --dist "$OUT" --place /tmp/p0d_fb017_final_out/P0D_TRAP_RAIDERS_RC80_NO_GUIDES_STUDIO.rbxlx --receipt /tmp/p0d_fb017_final_out/RC80_HUD_RECEIPT.json
+          python3 - <<'PY'
+          import os,json
+          from pathlib import Path
+          p=Path('/tmp/p0d_fb017_final_out/RC80_HUD_RECEIPT.json')
+          r=json.loads(p.read_text())
+          r['source_head_sha']=os.environ['GITHUB_SHA']
+          r['official_rc_branch']='rc/p0d-s1-kids-rc01'
+          r['official_rc_adoption']=os.environ['GITHUB_REF']=='refs/heads/rc/p0d-s1-kids-rc01'
+          r['studio_retest']='REQUIRED'
+          r['rollback_to_rc80']='96009e7dfceb2990d63136d31df33d1a362ae8b9'
+          p.write_text(json.dumps(r,ensure_ascii=False,indent=2)+'\n')
+          print('FB017_NO_PERSISTENT_BATTLE_GUIDE_VALIDATED',r['source_head_sha'],r['place_bytes'],r['official_rc_adoption'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' }}
+        with:
+          name: P0D-CANONICAL-RC80-NO-GUIDES-STUDIO
+          path: /tmp/p0d_fb017_final_out/*
+          retention-days: 7
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: ${{ env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-rc78-stage-20261114-2000' }}
+        with:
+          name: P0D-FB017-PREP-RC80-NO-GUIDES
+          path: /tmp/p0d_fb017_final_out/*
           retention-days: 7
           if-no-files-found: error
