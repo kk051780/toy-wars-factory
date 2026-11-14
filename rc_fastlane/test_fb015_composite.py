@@ -133,7 +133,7 @@ class CompositeTest(unittest.TestCase):
             record=combo.verify_private_output(output,d)
             journal=output.with_name(output.name+".fb015_delete_journal.json")
             tombstone=output.with_name(output.name+".fb015_deleting")
-            journal.write_text(json.dumps(record)+"\\n",encoding="utf8")
+            journal.write_text(json.dumps(record)+"\n",encoding="utf8")
             os.rename(output,tombstone)
             self.assertTrue(combo.compose(d,output,False))
             self.assertFalse(journal.exists())
