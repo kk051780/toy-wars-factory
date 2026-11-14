@@ -96,7 +96,8 @@ def apply_horde(original: bytes) -> bytes:
     assert "local MINIONS = 16" in decoded
     assert "local MAX_ACTIVE = 17" in decoded
     assert "touched<6" in decoded, "KEEP_EXISTING_ATTACK_SWEEP_CAP"
-    assert 'minionImpacts<4 and canStrike(nearest,false)' in decoded
+    assert 'minionImpacts<4 and (impactsByPlayer[nearest] or 0)<2' in decoded
+    assert 'and canStrike(nearest,false)' in decoded
     assert 'local minionImpacts=0' in decoded
     assert "local sweepStart=self.tickSequence%MINIONS" in decoded
     assert "self.tickSequence+=1" in decoded
@@ -111,7 +112,7 @@ def apply_horde(original: bytes) -> bytes:
     assert "local delta=unit*approach+separation*math.min(dt*1.1,.5)" in decoded
     assert "if (nextPos-m.pos).Magnitude>.05" in decoded
     assert "local z=if elite then 0 else (if i<=4 then -18 elseif i<=8 then 18 elseif i<=12 then -6 else 6)" in decoded
-    # All original source is preserved except the six explicitly reviewed
+    # All original source is preserved except the ten explicitly reviewed
     # substitutions; reject any future unrelated Game/authority edits.
     restored = decoded
     for old, new in reversed(REPLACEMENTS):
