@@ -84,7 +84,7 @@ local function createWorldCastle(session:any,entry:any,index:number)
   local ok,res=pcall(function() return Rules.damageCastle(state,entry.id,from,120) end)
   if not ok then return end
   session.refresh()
-  if res.fallen then session.releaseEggs(entry.id,at,res.releasedEggs) end
+  if res.fallen then session.releaseEggs(entry.id,at,res.releasedEggIds) end
  end)
  local deco=block(model,"DecorStation",at+Vector3.new(18,2,-18),Vector3.new(5,4,4),Color3.fromRGB(214,158,97))
  prompt(deco,"旗の装飾変更","自分の城",function(p)
@@ -160,13 +160,13 @@ local function startSession(mode:string)
    end
   else Rules.loadDefense(session.rules,entry.id,{"SENSOR"}) end
  end
- session.releaseEggs=function(ownerId:string,at:Vector3,count:number)
-  for i=1,count do
-   local egg=block(session.world,"ReleasedEgg",at+Vector3.new((i-2)*3,4,-17),Vector3.new(2,3,2),Color3.fromRGB(245,219,94))
+ session.releaseEggs=function(ownerId:string,at:Vector3,eggIds:{string})
+  for i,eggId in ipairs(eggIds) do
+   local egg=block(session.world,"ReleasedEgg_"..eggId,at+Vector3.new((i-2)*3,4,-17),Vector3.new(2,3,2),Color3.fromRGB(245,219,94))
    egg.Shape=Enum.PartType.Ball
    prompt(egg,"拾う","解放された卵",function(p)
     if joined[p.UserId]~=mode or egg.Parent==nil then return end
-    if pcall(function() Rules.takeEggs(session.rules,tostring(p.UserId),1) end) then egg:Destroy() end
+    if pcall(function() Rules.takeFieldEgg(session.rules,tostring(p.UserId),eggId) end) then egg:Destroy() end
    end)
   end
  end
@@ -177,10 +177,10 @@ local function startSession(mode:string)
   if session.rules.phase~="ACTIVE" then return 0 end
   local carrier=session.rules.castles[ownerId]
   if not carrier or not carrier.alive or carrier.heldEggs<=0 then return 0 end
-  local dropped=Rules.onCarrierEliminated(session.rules,ownerId)
+  local dropped,dropIds=Rules.onCarrierEliminated(session.rules,ownerId)
   if dropped>0 then
    local landing=Vector3.new(at.X,session.groundY or at.Y,at.Z+17)
-   session.releaseEggs(ownerId,landing,dropped)
+   session.releaseEggs(ownerId,landing,dropIds)
    session.refresh()
   end
   return dropped
@@ -221,11 +221,12 @@ local function startSession(mode:string)
   local col=(i-1)%8;local row=math.floor((i-1)/8)
   local worldX=mode=="TEAM" and -620 or 620
   local at=root+Vector3.new(worldX+(col-3.5)*93,3,290+row*200)
+  local eggId="FIELD_"..i
   local egg=block(session.world,"FieldEgg_"..i,at,Vector3.new(2.6,3.3,2.6),Color3.fromRGB(238,214,108))
   egg.Shape=Enum.PartType.Ball
   prompt(egg,"卵を拾う","フィールドの卵",function(p)
    if joined[p.UserId]~=mode or egg.Parent==nil then return end
-   if pcall(function() Rules.takeEggs(session.rules,tostring(p.UserId),1) end) then egg:Destroy() end
+   if pcall(function() Rules.takeFieldEgg(session.rules,tostring(p.UserId),eggId) end) then egg:Destroy() end
   end)
  end
  Rules.start(session.rules)
