@@ -38,6 +38,8 @@ local lastVisible = {} :: {[Instance]: boolean}
 local priorPosition = {} :: {[Instance]: Vector3}
 local ended = "SAMPLE_LIMIT"
 local invalidNameObserved = false
+local lastSample = 0
+local lastActive = 0
 
 local function report(state: string, sample: number, active: number)
     -- JSON is output to private server Output only; no player PII.
@@ -47,6 +49,8 @@ local function report(state: string, sample: number, active: number)
         sample = sample,
         elapsedSeconds = math.floor((os.clock() - started) * 10) / 10,
         currentModels = active,
+        lastObservedModels = active,
+        configuredSampleLimit = MAX_SAMPLES,
         peakModels = peak,
         allNineSeenAtOnce = spawnComplete,
         firstNineSeconds = spawnSeconds,
@@ -115,6 +119,9 @@ for sample = 1, MAX_SAMPLES do
             end
         end
     end
+    -- Do not fabricate a full sample count or current mob count on early stop.
+    lastSample = sample
+    lastActive = active
     peak = math.max(peak, active)
     if active == MAX_MOBS and not spawnComplete then
         spawnComplete = true
@@ -126,6 +133,6 @@ for sample = 1, MAX_SAMPLES do
     end
     task.wait(SAMPLE_SECONDS)
 end
-report(ended, MAX_SAMPLES, peak)
+report(ended, lastSample, lastActive)
 -- A runtime log is only a witness to observable objects. Source/runtime
 -- evidence is NEVER a substitute for OWNER PC/Android visual+fun sign-off.

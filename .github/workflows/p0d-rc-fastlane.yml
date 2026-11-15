@@ -2621,7 +2621,7 @@ jobs:
           if-no-files-found: error
 
       - name: 'P0 #444 B#220 cumulative OWNER-private 1-human READY + verified HIT/ART (RC81)'
-        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        if: env.PROFILE == 'rich51' && (github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' || github.event_name == 'pull_request')
         shell: bash
         run: |
           set -euo pipefail
@@ -2741,7 +2741,7 @@ jobs:
           if-no-files-found: error
 
       - name: 'P0 #444 B#220 cumulative RC81 -> PRIVATE82 real-engine 3-minute read-only Horde witness'
-        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        if: env.PROFILE == 'rich51' && (github.ref == 'refs/heads/rc/p0d-s1-kids-rc01' || github.event_name == 'pull_request')
         shell: bash
         run: |
           set -euo pipefail
@@ -2844,6 +2844,15 @@ jobs:
         if: success() && env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
         with:
           name: P0D-CANONICAL-RC82-PRIVATE-ONEHUMAN-HIT-ART-EVIDENCE-SOURCE-NOGO
+          path: /tmp/p0d_private_onehuman_hit_art_evidence82_artifact/*
+          retention-days: 14
+          if-no-files-found: error
+
+      # Private PR evidence only. Existing official artifact is never polluted.
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.event_name == 'pull_request'
+        with:
+          name: P0D-RC82-PRIVATE-HORDE-TRUE-TERMINAL-OBSERVATION-PR-NOGO
           path: /tmp/p0d_private_onehuman_hit_art_evidence82_artifact/*
           retention-days: 14
           if-no-files-found: error

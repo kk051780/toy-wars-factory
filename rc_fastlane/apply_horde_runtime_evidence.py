@@ -8,7 +8,7 @@ from __future__ import annotations
 import argparse,hashlib,json,os,shutil,tempfile
 from pathlib import Path
 AUTHOR=Path(__file__).resolve().parent/"features/live_art/P0DPrivateHordeEvidence.server.luau"
-AUTHOR_BLOB="233e19afd4a91f5e0e037148bcc7f4d56fa55d2f"
+AUTHOR_BLOB="e7f93b00ff582b5ce8de4f8525dd42ff43b49d97"
 DEST="server/P0DPrivateHordeEvidence.server.luau"
 GAME="server/Game.server.luau"
 HORDE="server/MusouHorde.luau"
@@ -44,6 +44,11 @@ def verify_author(raw:bytes)->None:
         "sample % 60 == 0",
         "liveCombatQualityApproved = false",
         "ownerAccepted = false",
+        "local lastSample = 0",
+        "local lastActive = 0",
+        "lastSample = sample",
+        "lastActive = active",
+        "report(ended, lastSample, lastActive)",
     ):
         assert must in s,("MISSING_PRIVATE_RUNTIME_SAFETY",must)
     for bad in (
