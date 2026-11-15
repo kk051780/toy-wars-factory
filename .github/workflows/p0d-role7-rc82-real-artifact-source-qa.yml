@@ -1,0 +1,365 @@
+name: P0D RC82 role7 original-author real artifact QA
+
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01/tools/rc82_role7_ready_patch.py"
+      - "handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01/tools/rc82_beast_companion_patch.py"
+      - ".github/workflows/p0d-role7-rc82-real-artifact-source-qa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  patch-real-rc82:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Download the pinned genuine official RC82 source artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_rc82_base
+          gh run download 43677046865 -R kk051780/toy-wars-factory \
+            -n P0D-RC82-ROLE7-ASSASSIN-PRIVATE-MOBILE-STUDIO-SOURCE-NOGO \
+            -D /tmp/p0d_rc82_base
+          test -s /tmp/p0d_rc82_base/P0D_RC82_ASSASSIN_7JOB_PRIVATE_MOBILE_STUDIO.rbxlx
+          test -s /tmp/p0d_rc82_base/SOURCE_LOCK.json
+          test -s /tmp/p0d_rc82_base/RC_FEATURE_LOCK.json
+          (cd /tmp/p0d_rc82_base && zip -q /tmp/p0d_rc82_parent.zip ./*)
+      - name: Build ONLY modified Game and HUD sources from official RC82
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01/tools/rc82_role7_ready_patch.py \
+            /tmp/p0d_rc82_parent.zip /tmp/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip \
+            | tee /tmp/role7_rc82_receipt.log
+          python3 - <<'PY'
+          import json,zipfile
+          with zipfile.ZipFile('/tmp/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip') as z:
+              receipt=json.loads(z.read('RECEIPT.json'))
+              assert receipt['source_rc']=='d2f3ed1a47558fdaf07be0181c83c698bdb2ce34'
+              assert receipt['scripts']==82 and receipt['unchanged_scripts']==80
+              assert receipt['official_rc_write'] is False
+              assert receipt['product']=='NO_GO'
+              assert receipt['native_luau']=='NOT_RUN'
+              assert receipt['studio']=='NOT_RUN'
+          print('REAL_82_SOURCE_PRIVATE_QA_PASS_NOT_PRODUCT_PASS')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_role7_luau
+          persist-credentials: false
+      - name: Native Luau compile actual modified Game/HUD
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_role7_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_role7_luau -B /tmp/p0d_role7_luau_build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_role7_luau_build --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import zipfile,xml.etree.ElementTree as E
+          from pathlib import Path
+          with zipfile.ZipFile('/tmp/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip') as z:
+              root=E.fromstring(z.read('PRIVATE_ROLE7_READY_RC82.rbxlx'))
+          scripts={}
+          for item in root.iter('Item'):
+              p=item.find('Properties')
+              if p is None:continue
+              n=p.find("./string[@name='Name']")
+              s=p.find("./string[@name='Source']")
+              if n is not None and s is not None and s.text is not None:
+                  scripts[n.text]=s.text
+          assert len(scripts)==82
+          for name in ('Game','TrapRaidersHUD'):
+              Path('/tmp/p0d_role7_'+name+'.luau').write_text(scripts[name],encoding='utf-8')
+          PY
+          /tmp/p0d_role7_luau_build/luau-compile /tmp/p0d_role7_Game.luau >/dev/null
+          /tmp/p0d_role7_luau_build/luau-compile /tmp/p0d_role7_TrapRaidersHUD.luau >/dev/null
+          echo 'P0D_RC82_ROLE7_NATIVE_GAME_HUD_2_OF_2_PASS'
+      - name: Extract and compile ALL 82 genuine private RC82 Luau scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,zipfile,xml.etree.ElementTree as E
+          from collections import Counter
+          from pathlib import Path
+          dest=Path('/tmp/p0d_role7_full82')
+          with zipfile.ZipFile('/tmp/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip') as z:
+              root=E.fromstring(z.read('PRIVATE_ROLE7_READY_RC82.rbxlx'))
+              lock=json.loads(z.read('SOURCE_LOCK.json'))
+              feature=json.loads(z.read('RC_FEATURE_LOCK.json'))
+          items=[]
+          def walk(node,chain=()):
+              p=node.find('Properties')
+              n=p.find("./string[@name='Name']") if p is not None else None
+              s=p.find("./string[@name='Source']") if p is not None else None
+              path=chain+((n.text,) if n is not None else ())
+              if s is not None and s.text is not None:
+                  assert node.attrib['class'] in ('Script','LocalScript','ModuleScript')
+                  assert len(path)>=3 and path[0] in ('ReplicatedStorage','ServerScriptService','StarterPlayer')
+                  assert all(q.isidentifier() for q in path)
+                  ext={'Script':'.server.luau','LocalScript':'.client.luau','ModuleScript':'.luau'}[node.attrib['class']]
+                  filename=dest/'src'/Path(*path).with_suffix(ext)
+                  filename.parent.mkdir(parents=True,exist_ok=True)
+                  filename.write_bytes(s.text.encode('utf-8'))
+                  items.append((path,node.attrib['class'],s.text))
+              for child in node.findall('Item'):
+                  walk(child,path)
+          for item in root.findall('Item'):
+              walk(item)
+          def gitblob(s):
+              b=s.encode('utf-8')
+              return hashlib.sha1(b'blob '+str(len(b)).encode()+bytes([0])+b).hexdigest()
+          assert len(items)==82,len(items)
+          assert len({tuple(p) for p,_,_ in items})==82
+          hashes=Counter(gitblob(src) for _,_,src in items)
+          assert hashes==Counter(lock['blobs'].values())
+          assert hashes==Counter(feature['source_gitblobs'].values())
+          (dest/'manifest.json').write_text(json.dumps([
+              dict(path='/'.join(path),kind=kind,blob=gitblob(src)) for path,kind,src in items
+          ],ensure_ascii=False,indent=2))
+          project={
+            "name":"P0DSourceParity82",
+            "tree":{"$className":"DataModel",
+               "ReplicatedStorage":{"$className":"ReplicatedStorage","TrapRaidersShared":{"$path":"src/ReplicatedStorage/TrapRaidersShared"}},
+               "ServerScriptService":{"$className":"ServerScriptService","TrapRaidersS1":{"$path":"src/ServerScriptService/TrapRaidersS1"}},
+               "StarterPlayer":{"$className":"StarterPlayer","StarterPlayerScripts":{"$path":"src/StarterPlayer/StarterPlayerScripts"}}
+            }
+          }
+          (dest/'default.project.json').write_text(json.dumps(project,indent=2))
+          print('PINNED_PRIVATE_RC82_82_EXACT_SOURCE_MANIFEST_PASS')
+          PY
+          count=0
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_role7_luau_build/luau-compile "$file" >/dev/null
+            count=$((count+1))
+          done < <(find /tmp/p0d_role7_full82/src -name '*.luau' -type f -print0)
+          test "$count" -eq 82
+          echo 'P0D_RC82_ALL_NATIVE_LUAU_82_OF_82_PASS'
+      - name: Install pinned Rojo 7.7.1 for complete source-only roundtrip
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_role7_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_role7_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile
+          with zipfile.ZipFile('/tmp/p0d_role7_rojo.zip') as z:
+              match=[name for name in z.namelist() if name.rsplit('/',1)[-1]=='rojo']
+              assert len(match)==1
+              f=Path('/tmp/p0d_role7_rojo');f.write_bytes(z.read(match[0]));f.chmod(0o755)
+          PY
+          /tmp/p0d_role7_rojo build /tmp/p0d_role7_full82/default.project.json -o /tmp/P0D_RC82_ROLE7_REBUILT_SOURCE_ONLY.rbxlx
+      - name: Compare rebuilt Rojo 82 script CLASS, PATH and full Source hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,xml.etree.ElementTree as E
+          from pathlib import Path
+          folder=Path('/tmp/p0d_role7_full82')
+          before=json.loads((folder/'manifest.json').read_text())
+          root=E.fromstring(Path('/tmp/P0D_RC82_ROLE7_REBUILT_SOURCE_ONLY.rbxlx').read_bytes())
+          scripts=[]
+          def blob(src):
+              b=src.encode()
+              return hashlib.sha1(b'blob '+str(len(b)).encode()+bytes([0])+b).hexdigest()
+          def walk(item,chain=()):
+              props=item.find('Properties')
+              name=props.find("./string[@name='Name']") if props is not None else None
+              source=props.find("./string[@name='Source']") if props is not None else None
+              path=chain+((name.text,) if name is not None else ())
+              if source is not None and source.text is not None:
+                  scripts.append(dict(path='/'.join(path),kind=item.attrib['class'],blob=blob(source.text)))
+              for kid in item.findall('Item'):
+                  walk(kid,path)
+          for item in root.findall('Item'):
+              walk(item)
+          assert len(scripts)==82,len(scripts)
+          original={x['path']:(x['kind'],x['blob']) for x in before}
+          rebuilt={x['path']:(x['kind'],x['blob']) for x in scripts}
+          if rebuilt!=original:
+              details={'missing':list(set(original)-set(rebuilt))[:10],
+                       'extra':list(set(rebuilt)-set(original))[:10],
+                       'different':[x for x in original.keys()&rebuilt.keys() if original[x]!=rebuilt[x]][:10]}
+              raise SystemExit('ROJO_SOURCE_EXACT_DIFFERENCE:'+json.dumps(details))
+          print('P0D_RC82_ROJO_SOURCE_EXACT_82_OF_82_PASS')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 3d48167720f6352b659e69dea4aeaf34a8c6fb32
+          path: _p0d_existing_quality_source
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 2738d302e8c732617924bdbd29253dd4727b9bef
+          path: _p0d_spectator_quality_source
+          persist-credentials: false
+      - name: Reuse original quality-writer wind and Builder Q patch (no duplicated Game)
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_existing_quality_source rev-parse HEAD)" = 3d48167720f6352b659e69dea4aeaf34a8c6fb32
+          mkdir -p /tmp/p0d_role7_author_input
+          cp /tmp/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip /tmp/p0d_role7_author_input/
+          (cd /tmp/p0d_role7_author_input && zip -q /tmp/p0d_role7_author_outer.zip P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip)
+          python3 _p0d_existing_quality_source/product_quality/role7_wind_composite.py \
+            --author-outer /tmp/p0d_role7_author_outer.zip \
+            --out /tmp/P0D_RC82_ROLE7_WIND_BUILDER_CUMULATIVE_PRIVATE.zip \
+            --extract /tmp/p0d_role7_wind82_flat
+          python3 _p0d_existing_quality_source/product_quality/role7_respawn_guard.py \
+            --input /tmp/P0D_RC82_ROLE7_WIND_BUILDER_CUMULATIVE_PRIVATE.zip \
+            --output /tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip \
+            --extract /tmp/p0d_role7_respawn_flat
+          test "$(git -C _p0d_spectator_quality_source rev-parse HEAD)" = 2738d302e8c732617924bdbd29253dd4727b9bef
+          python3 _p0d_spectator_quality_source/product_quality/role7_spectator_cumulative.py \
+            --parent /tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip \
+            --out /tmp/P0D_RC82_FINAL_SPECTATOR_CUMULATIVE_PRIVATE.zip \
+            --extract /tmp/p0d_role7_spectator_flat
+          python3 handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01/tools/rc82_beast_companion_patch.py \
+            --parent /tmp/P0D_RC82_FINAL_SPECTATOR_CUMULATIVE_PRIVATE.zip \
+            --out /tmp/P0D_RC82_BEAST_COMPANION_REAL_PRIVATE.zip \
+            | tee /tmp/P0D_BEAST_COMPANION_REAL_RECEIPT.log
+          python3 - <<'PY'
+          import json,zipfile,hashlib,xml.etree.ElementTree as E
+          from pathlib import Path
+          from collections import Counter
+          b=Path('/tmp/P0D_RC82_BEAST_COMPANION_REAL_PRIVATE.zip').read_bytes()
+          with zipfile.ZipFile('/tmp/P0D_RC82_BEAST_COMPANION_REAL_PRIVATE.zip') as z:
+              xml=z.read('P0D_RC82_BEAST_TAMER_REAL_COMPANION_PRIVATE.rbxlx')
+              sl=json.loads(z.read('SOURCE_LOCK.json'));fl=json.loads(z.read('RC_FEATURE_LOCK.json'))
+              receipt=json.loads(z.read('RECEIPT.json'))
+          assert receipt['product']=='NO_GO' and receipt['official_rc_write']==False
+          assert receipt['game_blob_before']=='6848da45a10242e5908a102bd9db47b9d3f30023'
+          assert receipt['game_blob_after']=='71d3ffa619dbdc76e2c83170f47f19143195cca0'
+          assert receipt['modified_only']==['server/Game.server.luau','server/SevenJobsRules.luau','client/HUD.client.luau']
+          assert receipt['summon_lifetime_seconds']==9 and receipt['summon_steps_max']==40
+          assert len(xml)==785755 and hashlib.sha256(xml).hexdigest()=='b64db322c3cafe817fc4c6a9a8d7b4fb51f1cec93f681d6d4f5502c945bf163d'
+          out=Path('/tmp/p0d_role7_cumulative82')
+          root=E.fromstring(xml)
+          scripts=[]
+          def walk(item,path=()):
+              props=item.find('Properties')
+              n=props.find("./string[@name='Name']") if props is not None else None
+              s=props.find("./string[@name='Source']") if props is not None else None
+              chain=path+((n.text,) if n is not None else ())
+              if s is not None and s.text is not None:
+                  assert item.attrib['class'] in ('Script','LocalScript','ModuleScript')
+                  ext={'Script':'.server.luau','LocalScript':'.client.luau','ModuleScript':'.luau'}[item.attrib['class']]
+                  file=out/'src'/Path(*chain).with_suffix(ext)
+                  assert file not in [p for p,_ in scripts]
+                  file.parent.mkdir(parents=True,exist_ok=True)
+                  file.write_text(s.text,encoding='utf-8')
+                  scripts.append((file,dict(path='/'.join(chain),kind=item.attrib['class'],blob=hashlib.sha1(b'blob '+str(len(s.text.encode())).encode()+bytes([0])+s.text.encode()).hexdigest())))
+              for c in item.findall('Item'):walk(c,chain)
+          for item in root.findall('Item'):walk(item)
+          assert len(scripts)==82,len(scripts)
+          assert len(set(m['path'] for _,m in scripts))==82
+          assert Counter(m['blob'] for _,m in scripts)==Counter(sl['blobs'].values())==Counter(fl['source_gitblobs'].values())
+          (out/'manifest.json').write_text(json.dumps([m for _,m in scripts],ensure_ascii=False,indent=2))
+          project={'name':'P0D_CUMULATIVE_SOURCE82','tree':{'$className':'DataModel',
+            'ReplicatedStorage':{'$className':'ReplicatedStorage','TrapRaidersShared':{'$path':'src/ReplicatedStorage/TrapRaidersShared'}},
+            'ServerScriptService':{'$className':'ServerScriptService','TrapRaidersS1':{'$path':'src/ServerScriptService/TrapRaidersS1'}},
+            'StarterPlayer':{'$className':'StarterPlayer','StarterPlayerScripts':{'$path':'src/StarterPlayer/StarterPlayerScripts'}}}}
+          (out/'default.project.json').write_text(json.dumps(project,indent=2))
+          final=next(p.read_text('utf-8') for p,m in scripts if m['path'].endswith('/Game'))
+          for phrase in ('function horde:summonSevenBeast(',
+                         'summonSevenBeast(player,root,team,match.serial)',
+                         'clearSevenBeast(player)',
+                         'player.Character~=castCharacter','getTeamName(player)~=castTeam',
+                         'horde:tick(now,eligibleSoloPlayers(),healthy)',
+                         'victim:GetAttribute("P0D_LateJoinSpectator")~=true',
+                         'or #eligibleSoloPlayers()<#Players:GetPlayers() then'):
+              assert phrase in final,phrase
+          assert '魔獣召喚' in next(p.read_text('utf-8') for p,m in scripts if m['path'].endswith('/SevenJobsRules'))
+          assert '魔獣召喚' in next(p.read_text('utf-8') for p,m in scripts if m['path'].endswith('/TrapRaidersHUD'))
+          print('ORIGINAL_AUTHOR_BEAST_SUMMON_GAMEROLEHUD_REAL_SOURCE_LOCK_82_PASS')
+          PY
+      - name: Native Luau all 82 of cumulative role7 + wind + Builder Q source
+        shell: bash
+        run: |
+          set -euo pipefail
+          n=0
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_role7_luau_build/luau-compile "$f" >/dev/null
+            n=$((n+1))
+          done < <(find /tmp/p0d_role7_cumulative82/src -name '*.luau' -type f -print0)
+          test "$n" -eq 82
+          echo "P0D_CUMULATIVE_REAL_NATIVE_LUAU_82_OF_82_PASS"
+      - name: Rojo source-only path/type/blob parity on cumulative 82
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/p0d_role7_rojo build /tmp/p0d_role7_cumulative82/default.project.json -o /tmp/p0d_role7_cumulative82/source_rebuilt.rbxlx
+          python3 - <<'PY'
+          import json,xml.etree.ElementTree as E,hashlib
+          from pathlib import Path
+          p=Path('/tmp/p0d_role7_cumulative82')
+          before=json.loads((p/'manifest.json').read_text())
+          root=E.fromstring((p/'source_rebuilt.rbxlx').read_bytes())
+          after=[]
+          def walk(item,path=()):
+              props=item.find('Properties')
+              n=props.find("./string[@name='Name']") if props is not None else None
+              s=props.find("./string[@name='Source']") if props is not None else None
+              chain=path+((n.text,) if n is not None else ())
+              if s is not None and s.text is not None:
+                  b=s.text.encode()
+                  after.append(dict(path='/'.join(chain),kind=item.attrib['class'],blob=hashlib.sha1(b'blob '+str(len(b)).encode()+bytes([0])+b).hexdigest()))
+              for kid in item.findall('Item'):walk(kid,chain)
+          for item in root.findall('Item'):walk(item)
+          assert len(before)==len(after)==82
+          assert {x['path']:(x['kind'],x['blob']) for x in before}=={x['path']:(x['kind'],x['blob']) for x in after}
+          print('P0D_CUMULATIVE_ROJO_SOURCE_PARITY_82_OF_82_PASS')
+          PY
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          p=Path('/tmp/P0D_V6_CUMULATIVE_INTAKE_RECEIPT.json')
+          p.write_text(json.dumps({
+            'schema':'P0D_V6_REAL_SOURCE_BATCH_V1',
+            'original_author_pr':297,'quality_author_pr':471,
+            'original_author_sha':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+            'quality_author_sha':'3d48167720f6352b659e69dea4aeaf34a8c6fb32',
+            'spectator_author_sha':'2738d302e8c732617924bdbd29253dd4727b9bef',
+            'official_parent':'d2f3ed1a47558fdaf07be0181c83c698bdb2ce34',
+            'real_private_place_bytes':785755,
+            'real_private_place_sha256':'b64db322c3cafe817fc4c6a9a8d7b4fb51f1cec93f681d6d4f5502c945bf163d',
+            'source_scripts':82,'native_luau':True,'rojo_source_parity':True,
+            'source_lock':True,'source_diff_stage':'private_source_candidate',
+            'studio_2client':'NOT_RUN','android':'NOT_RUN',
+            'official_rc_adopted':False,'owner_acceptance':False,'product_pass':False,
+            'changes':'Role ACK, wind, Builder Q, combo, respawn, spectators plus Beast Tamer real 3D follower and server-neutral autosweep; no mount',
+            'rollback':'Exact official source d2f3ed1a47558fdaf07be0181c83c698bdb2ce34',
+          },ensure_ascii=False,indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: P0D-ROLE7-RC82-READY-ORIGINAL-AUTHOR-PATCH-NO-GO
+          path: |
+            /tmp/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip
+            /tmp/role7_rc82_receipt.log
+            /tmp/P0D_RC82_ROLE7_WIND_BUILDER_CUMULATIVE_PRIVATE.zip
+            /tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip
+            /tmp/P0D_RC82_FINAL_SPECTATOR_CUMULATIVE_PRIVATE.zip
+            /tmp/P0D_RC82_BEAST_COMPANION_REAL_PRIVATE.zip
+            /tmp/P0D_BEAST_COMPANION_REAL_RECEIPT.log
+            /tmp/P0D_V6_CUMULATIVE_INTAKE_RECEIPT.json
+          retention-days: 7
