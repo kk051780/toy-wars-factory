@@ -1,0 +1,93 @@
+name: P0D #470 real solo bots plus safe spectator cumulative native82
+on:
+  push:
+    branches: [feature/p0d-product-quality-gate-20261115]
+    paths:
+      - product_quality/private_solo_bots_safe_stage_composite.py
+      - .github/workflows/p0d-quality-private-solo-safe-spectator-native.yml
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - product_quality/private_solo_bots_safe_stage_composite.py
+      - .github/workflows/p0d-quality-private-solo-safe-spectator-native.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  cumulative-real-game:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download exact existing #471 original-author plus solo-AI source parent
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_solo_safe_parent
+          gh run download 43693330988 -R kk051780/toy-wars-factory \
+            -n P0D-QUALITY-FB005-PRIVATE-SOLO-BOTS-SOURCE-NO-GO \
+            -D /tmp/p0d_solo_safe_parent
+          test -s /tmp/p0d_solo_safe_parent/P0D_FB005_REAL_SOLO_BOTS_PRIVATE.zip
+      - name: Build exact private Place; negative tests, 81/82 preservation, egg-winner lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B product_quality/private_solo_bots_safe_stage_composite.py \
+            --parent /tmp/p0d_solo_safe_parent/P0D_FB005_REAL_SOLO_BOTS_PRIVATE.zip \
+            --out /tmp/P0D_SOLO_BOTS_SAFE_SPECTATOR_PRIVATE.zip \
+            --extract /tmp/p0d_solo_safe_source
+          python3 - <<'PY'
+          import zipfile,json,sys,pathlib
+          sys.path.insert(0,"product_quality")
+          from private_solo_bots_safe_stage_composite import compose, SAFE_BEFORE, SAFE_AFTER, REENTER_BEFORE,REENTER_AFTER
+          for wrong in ("",SAFE_BEFORE,SAFE_AFTER,REENTER_BEFORE,REENTER_AFTER,SAFE_BEFORE+SAFE_BEFORE):
+              try: compose(wrong)
+              except ValueError: pass
+              else: raise AssertionError("DOUBLE_OR_STALE_AUTHOR_ACCEPTED")
+          with zipfile.ZipFile("/tmp/P0D_SOLO_BOTS_SAFE_SPECTATOR_PRIVATE.zip") as z:
+              report=json.loads(z.read("RECEIPT.json"))
+          assert report["scripts"] == 82 and report["unchanged_parent_scripts"] == 81
+          assert report["egg_score_winner_authority_unchanged"] and report["source_lock_exact"]
+          assert report["private_only"] and report["default_off"] and not report["official_rc_write"]
+          assert report["studio"] == "NOT_RUN" and report["product"] == "NO_GO"
+          files=list(pathlib.Path("/tmp/p0d_solo_safe_source").glob("*.luau"))
+          assert len(files) == 82
+          text=pathlib.Path("/tmp/p0d_solo_safe_source/Game.luau").read_text(encoding="utf-8")
+          bot=pathlib.Path("/tmp/p0d_solo_safe_source/SoloTeamBots.luau").read_text(encoding="utf-8")
+          assert 'LobbyIsland.build(map.model)' in text
+          assert 'or root.CFrame)' in text and 'privateSoloBotsTrialAllowed()' in text
+          assert 'P0D_PRIVATE_SOLO_TEAM_BOTS' in bot
+          assert "callbacks.deposit(bot,bot.team,bot.carry)" in bot
+          print("PRIVATE_BOTS_PLUS_SAFE_LOBBY_SOURCE_EXACT_NEGATIVE_PASS_NOT_ENGINE")
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_pinned_luau
+          persist-credentials: false
+      - name: Native compile real Game, SoloTeamBots and remaining 80 scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_pinned_luau -B /tmp/p0d_solo_safe_build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_solo_safe_build --target Luau.Compile.CLI --parallel 4
+          n=0
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_solo_safe_build/luau-compile "$f" >/dev/null
+            n=$((n+1))
+          done < <(find /tmp/p0d_solo_safe_source -name '*.luau' -type f -print0 | sort -z)
+          test "$n" -eq 82
+          echo "NATIVE_82_82_PASS_PRODUCT_NO_GO_STUDIO_ANDROID_NOT_RUN"
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: P0D-QUALITY-SOLO-BOTS-SAFE-SPECTATOR-CUMULATIVE-SOURCE-NOGO
+          path: /tmp/P0D_SOLO_BOTS_SAFE_SPECTATOR_PRIVATE.zip
+          retention-days: 7
