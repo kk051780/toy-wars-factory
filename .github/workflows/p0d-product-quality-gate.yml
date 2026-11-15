@@ -86,6 +86,28 @@ jobs:
           assert r['decision'] == 'CATALOG_REVIEW_REQUIRED'
           print('Review required, never gameplay PASS:', r['issues'])
           PY
+      - name: Trace every official catalog feature and all 7 full abilities (expected NO_GO)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/product_quality
+          set +e
+          python3 -B product_quality/check_concept_trace.py --catalog rc_fastlane/FEATURE_CATALOG.json --trace product_quality/DESIGN_TO_GAME_TRACE_MATRIX.json --report /tmp/product_quality/DESIGN_TO_GAME_TRACE_REPORT.json
+          CODE=$?
+          set -e
+          test "$CODE" -eq 1
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('/tmp/product_quality/DESIGN_TO_GAME_TRACE_REPORT.json').read_text())
+          assert r['decision'] == 'DESIGN_NO_GO'
+          assert r['catalog_entries'] == 67
+          assert r['inventory_covered'] == 67
+          assert r['design_coverage'] == '0/67'
+          assert r['seven_jobs_full_engine_pass'] == '0/7'
+          assert r['release_unresolved'] > 0
+          print('67 inventory rows loaded; full design+engine proof still NO_GO')
+          PY
       - name: Publish transparent NO_GO report
         if: always()
         uses: actions/upload-artifact@v4
