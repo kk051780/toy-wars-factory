@@ -105,6 +105,9 @@ def evaluate(catalog, trace):
         if gap not in ("ABSENT", "STUB", "WRONG_BEHAVIOR", "PARTIAL", "REGRESSION", "EVIDENCE_MISSING", "NONE"):
             problems.append("GAP_TYPE_INVALID:" + fid)
         gap_counts[str(gap)] += 1
+        # Release candidates cannot claim engine PASS while admitting an open design gap.
+        if required and gap != "NONE":
+            problems.append("RELEASE_GAP_UNRESOLVED:" + fid)
         must = row.get("must_behave")
         has_contract = (isinstance(must, str) and bool(must.strip())
                         and row.get("design_contract_status") == "VERIFIED"
@@ -121,7 +124,8 @@ def evaluate(catalog, trace):
                       and isinstance(hashes, list) and len(paths) == len(hashes)
                       and all(isinstance(p, str) and p.strip() for p in paths)
                       and all(sha(h, 64) for h in hashes))
-        proof_ok = has_contract and has_source and engine_evidence_ok(row.get("engine_proof"), official_head)
+        proof_ok = (has_contract and has_source and gap == "NONE"
+                    and engine_evidence_ok(row.get("engine_proof"), official_head))
         if proof_ok:
             engine_count += 1
         elif required:
