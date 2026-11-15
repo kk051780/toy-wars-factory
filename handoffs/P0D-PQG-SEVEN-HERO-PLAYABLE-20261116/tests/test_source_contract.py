@@ -22,7 +22,7 @@ class TestSevenHeroStudioSource(unittest.TestCase):
     def test_all_roles_have_new_visible_name_and_loadout(self):
         for code, name in ROLES.items():
             with self.subTest(code=code):
-                self.assertRegex(self.source, re.escape(code) + r'=\\{name="' + name + '"')
+                self.assertIn(code + '={name="' + name + '"', self.source)
         self.assertIn('local ROLE_ORDER = {"WARRIOR","MAGE","NINJA","TRAPPER","BUILDER","BEAST","ZOMBIE"}', self.source)
         self.assertIn('addTool(player,role,"A")', self.source)
         self.assertIn('addTool(player,role,"B")', self.source)
