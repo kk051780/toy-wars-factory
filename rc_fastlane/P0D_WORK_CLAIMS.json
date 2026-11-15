@@ -1,0 +1,26 @@
+{
+  "schema": "P0D_EXCLUSIVE_CLAIMS_V1",
+  "release": "P0D-S1-KIDS-RC01",
+  "role": "COORDINATOR_GRANTED_ONLY",
+  "policy_issue": "https://github.com/kk051780/toy-wars-factory/issues/218#issuecomment-6886441650",
+  "integrator_issue": "https://github.com/kk051780/toy-wars-factory/issues/220",
+  "aliases": {
+    "CASTLE_3D": "ART_CASTLE",
+    "WORLD_CASTLE": "ART_CASTLE",
+    "SEA_BIOME": "ART_SEA",
+    "COASTLINE": "ART_SEA",
+    "MINION_ART": "ART_MINION",
+    "FOREST_PASSAGE": "FB_016_FOREST_COLLISION",
+    "FOREST_BLOCKED": "FB_016_FOREST_COLLISION",
+    "ATTACK_BUTTON": "FB_019_ATTACK_INPUT"
+  },
+  "claims": [],
+  "legacy_overlap_triage": [
+    {"canonical_resource": "ART_CASTLE", "candidate_prs": [366, 368], "state": "REUSE_EXISTING_DO_NOT_REMAKE"},
+    {"canonical_resource": "ART_SEA", "candidate_prs": [369, 370], "state": "REUSE_EXISTING_DO_NOT_REMAKE"},
+    {"canonical_resource": "ART_MINION", "candidate_prs": [373, 374], "state": "REUSE_EXISTING_DO_NOT_REMAKE"},
+    {"canonical_resource": "FB_016_FOREST_COLLISION", "candidate_prs": [421], "state": "REUSE_EXISTING_DO_NOT_REMAKE"},
+    {"canonical_resource": "FB_019_ATTACK_INPUT", "source_issue": 406, "state": "REUSE_EXISTING_DO_NOT_REMAKE"}
+  ],
+  "note": "No grants at bootstrap. Existing PRs are not cancelled; coordinators first audit/reuse originals. Changes require current contents blob SHA compare-and-swap and single authorized coordinator. JSON alone does not authenticate OWNER."
+}
