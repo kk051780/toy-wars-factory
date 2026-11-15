@@ -1,0 +1,52 @@
+name: P0D V6 fast triage read-only
+
+on:
+  pull_request:
+    branches:
+      - rc/p0d-s1-kids-rc01
+    paths:
+      - "tools/p0d_v6_triage.py"
+      - "tests/test_p0d_v6_triage.py"
+      - ".github/workflows/p0d-v6-triage.yml"
+      - "rc_fastlane/OWNER_V6_ACCELERATION.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  v6-triage:
+    name: V6 RED/YELLOW/GREEN negative controls
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          # PR's real source commit, not a synthetic merge HEAD
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Run V6 deterministic fail-closed tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tests -p 'test_p0d_v6_triage.py' -v
+      - name: Prove no write grant and non-final quality decision
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0, "tools")
+          from p0d_v6_triage import evaluate
+          sha = "a" * 40
+          packet = dict(schema="P0D_V6_TRIAGE_V1", base_rc_sha=sha, feature_id="P0D-011",
+                        mandatory_checks={k: True for k in (
+                            "source_exact","native_luau","rojo","same_head_ci",
+                            "no_authority_duplication","rollback_verified","original_claim_verified")},
+                        findings=[])
+          result = evaluate(packet)
+          assert result["lane"] == "GREEN_REVIEW"
+          assert result["official_rc_write_allowed"] is False
+          assert result["product_pass"] is False
+          print("V6 advisory-only gate verified")
+          PY
