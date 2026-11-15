@@ -62,9 +62,12 @@ local function makeDefensibleGate(base,name,sign,accent)
     action.MaxActivationDistance=10
     action.RequiresLineOfSight=false
     -- Public mode remains noninteractive; private pilot requires opt-in.
-    action.Enabled=game:GetService("RunService"):IsStudio() or
-        (game.PrivateServerId~="" and
-         workspace:GetAttribute("P0D_PRIVATE_SIEGE_GATES")==true)
+    local function pilotAllowed()
+        return game:GetService("RunService"):IsStudio() or
+            (game.PrivateServerId~="" and
+             workspace:GetAttribute("P0D_PRIVATE_SIEGE_GATES")==true)
+    end
+    action.Enabled=pilotAllowed()
     action.Parent=console
     local tween=game:GetService("TweenService")
     local raised=CFrame.new(x,22,0)
@@ -108,6 +111,12 @@ local function makeDefensibleGate(base,name,sign,accent)
     local function openGate()
         if not opened then slide(raised,true) end
     end
+    -- A private owner may enable pilot after MapBuilder.build; the attribute
+    -- is not required to be present at boot. OFF immediately opens any gate.
+    workspace:GetAttributeChangedSignal("P0D_PRIVATE_SIEGE_GATES"):Connect(function()
+        action.Enabled=pilotAllowed()
+        if not action.Enabled then openGate() end
+    end)
     action.Triggered:Connect(function(player)
         if not action.Enabled or player:GetAttribute("P0D_LateJoinSpectator")==true then
             return
