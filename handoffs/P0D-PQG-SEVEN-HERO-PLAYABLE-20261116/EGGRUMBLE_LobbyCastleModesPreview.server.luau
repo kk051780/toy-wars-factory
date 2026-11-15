@@ -9,6 +9,7 @@ if not RunService:IsStudio() then return end
 local Rules=require(script.Parent:WaitForChild("EGGRUMBLE_CastleMatchRules"))
 local BotActors=require(script.Parent:WaitForChild("EGGRUMBLE_BotActors"))
 local SwarmCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SwarmCombat"))
+local InteractionGuard=require(script.Parent:WaitForChild("EGGRUMBLE_InteractionGuard"))
 local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)::SpawnLocation?
 local root=spawn and spawn.Position or Vector3.new(0,4,0)
 local folder=Instance.new("Folder");folder.Name="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW";folder.Parent=workspace
@@ -34,7 +35,10 @@ end
 local function prompt(at:BasePart,action:string,subject:string,callback:(Player)->())
  local p=Instance.new("ProximityPrompt");p.ActionText=action;p.ObjectText=subject
  p.HoldDuration=.2;p.MaxActivationDistance=14;p.RequiresLineOfSight=false;p.Parent=at
- p.Triggered:Connect(callback)
+ p.Triggered:Connect(function(actor:Player)
+  -- All client-originated prompt interactions are server checked, including castle HP damage.
+  if InteractionGuard.allow(actor,at,action,at.Name) then callback(actor) end
+ end)
 end
 local function getCastlePoint(mode:string,index:number):Vector3
  if mode=="TEAM" then
@@ -341,6 +345,7 @@ for i,name in ipairs({"HARDENED","REPAIR","TURRET","TRAP","SENSOR"}) do
  end)
 end
 Players.PlayerRemoving:Connect(function(p)
+ InteractionGuard.clear(p)
  local mode=joined[p.UserId];joined[p.UserId]=nil
  if mode and not sessions[mode] then
   local q=queues[mode]
