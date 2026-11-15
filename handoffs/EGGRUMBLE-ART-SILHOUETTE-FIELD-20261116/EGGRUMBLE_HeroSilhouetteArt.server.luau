@@ -62,7 +62,10 @@ local function sculpt(parent:Instance,anchor:BasePart,role:string,static:boolean
  local metal=Enum.Material.Metal
  local cloth=Enum.Material.Fabric
  local stone=Enum.Material.SmoothPlastic
+ local made=0
  local function add(n:string,shape:string,s:Vector3,x:number,y:number,z:number,col:Color3,mat:Enum.Material,rx:number?,ry:number?,rz:number?)
+  if made>=PART_BUDGET_PER_SUBJECT then return end
+  made+=1
   piece(parent,anchor,n,shape,s,
    CFrame.new(x,y,z)*CFrame.Angles(math.rad(rx or 0),math.rad(ry or 0),math.rad(rz or 0)),
    col,mat,static)
