@@ -53,7 +53,9 @@ jobs:
               assert r["exact_job_pick_ack_preserved"] is True
               assert r["builder_q_false_cooldown_fixed"] is True
               assert r["official_rc_write"] is False and r["decision"]=="PRODUCT_NO_GO"
-              assert len(z.read("COMPOSED_ROLE7_WIND_RC82.rbxlx"))==777846
+              assert len(z.read("COMPOSED_ROLE7_WIND_RC82.rbxlx"))==778249
+              assert r["q_combo_expiry_fixed"] is True
+              assert r["delayed_q_stale_selection_denied"] is True
           # Mutants must never be mistaken for the pinned original author stage.
           try:c.compose(b"not a zip")
           except (ValueError,zipfile.BadZipFile):pass
@@ -80,10 +82,10 @@ jobs:
             n=$((n+1))
           done < <(find /tmp/p0d_real_role7_wind_luau -name '*.luau' -type f -print0 | sort -z)
           test "$n" -eq 82
-          echo "NATIVE_LUAU_82_OF_82_COMPOSITE_COMPILE_PASS"
+          echo "NATIVE_LUAU_82_OF_82_COMPOSITE_Q_GUARD_COMPILE_PASS"
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: P0D-QUALITY-REAL-RC82-EXACTACK-WIND-BUILDERQ-NO-GO
+          name: P0D-QUALITY-REAL-RC82-ACK-WIND-Q-GUARD-NO-GO
           path: /tmp/P0D_RC82_ROLE7_WIND_COMPOSITE_UNPUBLISHED.zip
           retention-days: 7
