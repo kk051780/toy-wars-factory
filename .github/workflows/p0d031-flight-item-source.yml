@@ -1,0 +1,78 @@
+name: P0D031 actual Luau flight item native source and isolated Rojo stage QA
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'rc_fastlane/features/p0d031_sky_feather/**'
+      - '.github/workflows/p0d031-flight-item-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  flight-item-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Actual source regression tests and source lock collision refusal
+        run: python3 -B -m unittest discover -s rc_fastlane/features/p0d031_sky_feather -p test_flight_item.py -v
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_pinned_luau
+          persist-credentials: false
+      - name: Native Luau compile of the real pickup and flight Script
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_pinned_luau -B /tmp/p0d031_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d031_luau --target Luau.Compile.CLI --parallel 4
+          /tmp/p0d031_luau/luau-compile rc_fastlane/features/p0d031_sky_feather/P0DSkyFeather.server.luau > /tmp/p0d031_native_output.luauc
+          test -s /tmp/p0d031_native_output.luauc
+          echo P0D031_TRUE_LUAU_PARSE_PASS
+      - name: Independent Rojo build of additive flight source on test fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          d=Path('/tmp/p0d031_dist')
+          (d/'src/server').mkdir(parents=True,exist_ok=True)
+          code=b"--!strict\\nprint('P0D031_FIXTURE_NOT_ACTUAL_RC')\\n"
+          (d/'src/server/Game.server.luau').write_bytes(code)
+          blob=hashlib.sha1(b'blob '+str(len(code)).encode()+b'\\0'+code).hexdigest()
+          (d/'SOURCE_LOCK.json').write_text(json.dumps({'total_scripts':1,'blobs':{'server/Game.server.luau':blob}}))
+          (d/'default.project.json').write_text(json.dumps({'name':'P0D031_PRIVATE_FIXTURE','tree':{'$className':'DataModel','ServerScriptService':{'$className':'ServerScriptService','Game':{'$path':'src/server/Game.server.luau'}}}}))
+          PY
+          python3 rc_fastlane/features/p0d031_sky_feather/apply_private_stage.py \\
+            --dist /tmp/p0d031_dist --feature rc_fastlane/features/p0d031_sky_feather/P0DSkyFeather.server.luau
+          curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d031_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d031_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/p0d031_rojo.zip') as z:
+            files=[x for x in z.namelist() if x.endswith('/rojo') or x == 'rojo']
+            assert len(files)==1,files
+            p=Path('/tmp/p0d031_rojo')
+            p.write_bytes(z.read(files[0]))
+            p.chmod(0o755)
+          PY
+          /tmp/p0d031_rojo --version | grep -F '7.7.1'
+          /tmp/p0d031_rojo build /tmp/p0d031_dist/default.project.json -o /tmp/p0d031_staged.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+          import hashlib
+          file=Path('/tmp/p0d031_staged.rbxlx')
+          root=ET.parse(file).getroot()
+          names={p.text for p in root.iter('string') if p.get('name')=='Name'}
+          assert 'P0DSkyFeather' in names,names
+          assert 'Game' in names,names
+          print('P0D031_FIXTURE_ROJO_BUILD_PASS_NOT_FULL_RC',file.stat().st_size,hashlib.sha256(file.read_bytes()).hexdigest())
+          PY
