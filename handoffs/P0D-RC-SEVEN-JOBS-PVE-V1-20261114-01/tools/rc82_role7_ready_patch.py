@@ -52,6 +52,27 @@ def patch_game(s):
        '            sevenJobSelected[player]=false\n            sevenJobLastChoose[player]=-math.huge\n'
        '            sevenJobLastUse[player]=-math.huge\n            roundReady[player]=false\n'
        '            player.Team = teamInstances[move.to]',"REBALANCE_CLEAR")
+    # JOB_PICK ACK is the exact successful server input sequence, never a stale
+    # snapshot's matching role label.
+    s=once(s,'local sevenJobSelected: {[Player]: boolean} = {}\n',
+       'local sevenJobSelected: {[Player]: boolean} = {}\n'
+       'local sevenJobPickAckSeq: {[Player]: number} = {}\n',"PICK_ACK_STATE")
+    s=once(s,'        jobSelected = sevenJobSelected[player] == true,\n',
+       '        jobSelected = sevenJobSelected[player] == true,\n'
+       '        jobPickAckSeq = sevenJobPickAckSeq[player] or 0,\n',"SNAPSHOT_PICK_ACK")
+    s=once(s,'    sevenJobLastChoose[player]=now\n    roundReady[player]=false\n',
+       '    sevenJobLastChoose[player]=now\n'
+       '    sevenJobPickAckSeq[player]=data.seq -- genuine authorized JOB_PICK only\n'
+       '    roundReady[player]=false\n',"COMMIT_PICK_ACK")
+    s=once(s,'            sevenJobSelected[player]=false\n            sevenJobLastChoose[player]=-math.huge\n',
+       '            sevenJobSelected[player]=false\n            sevenJobPickAckSeq[player]=0\n'
+       '            sevenJobLastChoose[player]=-math.huge\n',"REBALANCE_RESET_ACK")
+    s=once(s,'    sevenJobSelected[player] = false\n    sevenJobLastChoose[player]=-math.huge\n',
+       '    sevenJobSelected[player] = false\n    sevenJobPickAckSeq[player]=0\n'
+       '    sevenJobLastChoose[player]=-math.huge\n',"JOIN_RESET_ACK")
+    s=once(s,'    sevenJobSelected[player]=nil\n    sevenJobLastChoose[player]=nil\n',
+       '    sevenJobSelected[player]=nil\n    sevenJobPickAckSeq[player]=nil\n'
+       '    sevenJobLastChoose[player]=nil\n',"EXIT_CLEAR_ACK")
     return s
 
 
@@ -80,6 +101,34 @@ def patch_hud(s):
        '        else "職業を選ぶ J"',"UNSELECTED_LABEL")
     s=once(s,'    jobCast.Active=jobCast.Visible and jobCd==0 and not currentNetBound',
        '    jobCast.Active=jobCast.Visible and s.jobSelected==true and jobCd==0 and not currentNetBound',"SKILL_DISABLED")
+    # A client may send a second JOB_PICK before an earlier snapshot arrives.
+    # Only the exact winning server ACK can close the chooser.
+    s=once(s,'local function action(kind: string, role: string?)\n    seq += 1',
+       'local function action(kind: string, role: string?): number\n    seq += 1',"ACTION_RET_TYPE")
+    s=once(s,'        remote:FireServer({action = kind, role = role, seq = seq})\n    end\nend\n',
+       '        remote:FireServer({action = kind, role = role, seq = seq})\n    end\n'
+       '    return seq\nend\n',"ACTION_RET_SEQ")
+    s=once(s,'local pendingJobChoice: string?=nil\n',
+       'local pendingJobChoice: string?=nil\nlocal pendingJobSeq: number?=nil\n'
+       'local jobPickerLastTeam: string?=nil\n',"HUD_PENDING_SEQ_TEAM")
+    s=once(s,'        action("JOB_PICK",entry[1]) -- Wait for server jobSelected ACK',
+       '        pendingJobSeq=action("JOB_PICK",entry[1]) -- exact latest server ACK',"HUD_EXACT_JOB_PENDING")
+    s=once(s,'    if pendingJobChoice~=nil and s.jobSelected==true and s.job==pendingJobChoice then\n'
+       '        pendingJobChoice=nil\n'
+       '        jobPanel.Visible=false -- Server confirmed this exact job\n    end',
+       '    if s.phase=="LOBBY" and jobMenu.Visible and jobPickerLastTeam~=nil\n'
+       '        and s.team~=jobPickerLastTeam then\n'
+       '        pendingJobChoice=nil;pendingJobSeq=nil\n'
+       '        jobPickerPresented=false\n'
+       '    end\n'
+       '    if jobMenu.Visible then jobPickerLastTeam=s.team end\n'
+       '    if jobMenu.Visible and s.jobSelected~=true then jobPanel.Visible=true end\n'
+       '    if pendingJobChoice~=nil and pendingJobSeq~=nil\n'
+       '        and s.jobSelected==true and s.job==pendingJobChoice\n'
+       '        and s.jobPickAckSeq==pendingJobSeq then\n'
+       '        pendingJobChoice=nil;pendingJobSeq=nil\n'
+       '        jobPanel.Visible=false -- EXACT accepted server JOB_PICK seq\n    end',
+       "HUD_EXACT_ACK_CLOSE_AND_TEAM_REOPEN")
     return s
 
 
@@ -124,7 +173,7 @@ def build(artifact):
                   if x.attrib.get("name")=="Source" and x.text is not None)
     if blobs!=after:
         raise ValueError("SERIALIZATION_CHANGED_SOURCE")
-    receipt={"schema":"P0D_RC82_ROLE7_PATCH_V1","source_rc":BASE,
+    receipt={"schema":"P0D_RC82_ROLE7_PATCH_V2_EXACT_ACK","source_rc":BASE,
              "official_place_sha256":PLACE_SHA,"private_place_sha256":sha(out),
              "private_place_bytes":len(out),"scripts":82,"unchanged_scripts":80,
              "modified":[GP,HP],"game_blob":lock["blobs"][GP],"hud_blob":lock["blobs"][HP],
