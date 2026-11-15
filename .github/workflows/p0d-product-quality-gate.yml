@@ -72,6 +72,20 @@ jobs:
           assert r['external_competitor_map_studs'] is None
           print('PASS static source evidence; field gameplay/P0 remains NO_GO until real path test')
           PY
+      - name: Audit all 67 catalog entries against owner core roles (advisory NO_GO)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B product_quality/audit_catalog.py --catalog rc_fastlane/FEATURE_CATALOG.json --report /tmp/product_quality/CATALOG_AUDIT_REPORT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r = json.loads(Path('/tmp/product_quality/CATALOG_AUDIT_REPORT.json').read_text())
+          assert r['row_count'] == 67
+          assert r['gameplay_engine_pass_count'] is None
+          assert r['decision'] == 'CATALOG_REVIEW_REQUIRED'
+          print('Review required, never gameplay PASS:', r['issues'])
+          PY
       - name: Publish transparent NO_GO report
         if: always()
         uses: actions/upload-artifact@v4
