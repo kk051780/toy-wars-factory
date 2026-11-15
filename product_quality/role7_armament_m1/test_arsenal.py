@@ -25,10 +25,10 @@ class TestArsenal(unittest.TestCase):
  def test_game_has_one_remote(self):
   self.assertEqual(self.sources['Game'].count('Instance.new("RemoteEvent")'),1)
  def test_role_selection_does_real_equipping(self):
-  s=self.sources['Game'];self.assertLess(s.index('sevenJobPickAckSeq[player]=data.seq'),s.index('JobArsenal.equip(player.Character,job)'))
+  s=self.sources['Game'];self.assertLess(s.index('sevenJobPickAckSeq[player]=data.seq'),s.index('SevenJobs.ArmamentM1.equip(player.Character,job)'))
  def test_rebalance_revoke(self):
-  s=self.sources['Game'];self.assertLess(s.index('sevenJobSelected[player]=false'),s.index('JobArsenal.clear(player.Character)'))
- def test_respawn(self):self.assertIn('JobArsenal.equip(character,sevenJobs[player])',self.sources['Game'])
+  s=self.sources['Game'];self.assertLess(s.index('sevenJobSelected[player]=false'),s.index('SevenJobs.ArmamentM1.clear(player.Character)'))
+ def test_respawn(self):self.assertIn('SevenJobs.ArmamentM1.equip(character,sevenJobs[player])',self.sources['Game'])
  def test_public_fallback(self):
   s=self.sources['Game'];self.assertIn('touched,defeated=horde:hit(root.Position,look,',s)
   self.assertIn('and ServerStorage:GetAttribute("P0D_RC_ENABLE_SEVEN_JOBS_PVE")~=false then',s)
