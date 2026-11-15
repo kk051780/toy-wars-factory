@@ -37,7 +37,15 @@ local function prompt(at:BasePart,action:string,subject:string,callback:(Player)
  p.Triggered:Connect(callback)
 end
 local function getCastlePoint(mode:string,index:number):Vector3
- local base=root+Vector3.new(mode=="TEAM" and -620 or 620,2,0)
+ if mode=="TEAM" then
+  -- Strict RED west / BLUE east castle districts. Human roster alternates team colors.
+  local isRed=index%2==1
+  local localIndex=math.floor((index-1)/2)
+  local col=localIndex%2;local row=math.floor(localIndex/2)
+  local x=if isRed then -885+col*124 else -475+col*124
+  return root+Vector3.new(x,2,260+row*146)
+ end
+ local base=root+Vector3.new(620,2,0)
  local col=(index-1)%4;local row=math.floor((index-1)/4)
  return base+Vector3.new((col-1.5)*122,0,280+row*112)
 end
@@ -122,9 +130,25 @@ local function startSession(mode:string)
  floor.Material=Enum.Material.Grass
  -- Moveable routes between personal fortresses; demo geometry only, not a finished detailed terrain.
  for j=1,3 do
-  local lane=block(session.world,"TacticalRoute_"..j,root+Vector3.new(worldX+(j-2)*150,-2.75,465),
-   Vector3.new(18,.7,960),Color3.fromRGB(152,133,99))
+  -- Three west-east infiltration corridors: northern ridge, river ford and forest flank.
+  local lane=block(session.world,"TacticalRoute_"..j,root+Vector3.new(worldX,-2.75,295+(j-1)*170),
+   Vector3.new(835,.7,23),Color3.fromRGB(152,133,99))
   lane.Material=Enum.Material.Ground
+ end
+ if mode=="TEAM" then
+  local ridge=block(session.world,"CentralRidge",root+Vector3.new(-620,15,475),
+   Vector3.new(54,34,190),Color3.fromRGB(105,103,93))
+  ridge.Material=Enum.Material.Slate
+  local valley=block(session.world,"ValleyOverlook",root+Vector3.new(-610,5,695),
+   Vector3.new(85,11,30),Color3.fromRGB(118,130,94))
+  valley.Material=Enum.Material.Rock
+  for n=1,7 do
+   local x=-800+(n%4)*38
+   local z=470+math.floor(n/4)*110
+   local tree=block(session.world,"ForestAmbushCover_"..n,root+Vector3.new(x,11,z),
+    Vector3.new(7,24,7),Color3.fromRGB(66,104,65))
+   tree.Material=Enum.Material.Grass
+  end
  end
  sessions[mode]=session
  for _,entry in ipairs(roster) do
@@ -179,7 +203,9 @@ local function startSession(mode:string)
  for idx,entry in ipairs(roster) do createWorldCastle(session,entry,idx) end
  -- Field eggs available in both modes, not single/multi mode toggles.
  for i=1,24 do
-  local at=getCastlePoint(mode,1)+Vector3.new((i%6)*40-115,2,math.floor(i/6)*55+230)
+  local col=(i-1)%8;local row=math.floor((i-1)/8)
+  local worldX=mode=="TEAM" and -620 or 620
+  local at=root+Vector3.new(worldX+(col-3.5)*93,3,290+row*200)
   local egg=block(session.world,"FieldEgg_"..i,at,Vector3.new(2.6,3.3,2.6),Color3.fromRGB(238,214,108))
   egg.Shape=Enum.PartType.Ball
   prompt(egg,"卵を拾う","フィールドの卵",function(p)
