@@ -1,0 +1,87 @@
+{
+  "schema": "P0D_PQ470_OBSERVATION_PROTOCOL_V1",
+  "scope": "evidence capture only; no gameplay source edits; not a product acceptance score",
+  "issue": "https://github.com/kk051780/toy-wars-factory/issues/470",
+  "method": "same-scenario benchmark: record real videos, no guessed metrics; label unavailable as null",
+  "games": [
+    {
+      "id": "steal_an_egg",
+      "role": "egg raid simplicity"
+    },
+    {
+      "id": "blox_fruits",
+      "role": "mobility and collection"
+    },
+    {
+      "id": "strongest_battlegrounds",
+      "role": "combat impact"
+    },
+    {
+      "id": "bedwars",
+      "role": "team strategy and routes"
+    },
+    {
+      "id": "nights_99",
+      "role": "world readability and co-op"
+    },
+    {
+      "id": "p0d_official_rc",
+      "role": "current game, pinned RC SHA required"
+    }
+  ],
+  "observations": [],
+  "scenarios": [
+    {
+      "id": "FIELD_ROUTE",
+      "metrics": [
+        "base_to_base_seconds",
+        "usable_distinct_routes",
+        "traversal_blockers",
+        "egg_escape_branches"
+      ],
+      "repeat": 3,
+      "description": "Use the same start/end objective and default walk speed; speed ability and route must be annotated."
+    },
+    {
+      "id": "MOB_CLEAR_30S",
+      "metrics": [
+        "kills_30s",
+        "max_valid_targets_one_attack",
+        "input_to_first_hit_ms"
+      ],
+      "repeat": 3,
+      "description": "30-second fight against small neutral enemies; count real server-confirmed kills; record enemy size and density."
+    },
+    {
+      "id": "ONBOARD_180S",
+      "metrics": [
+        "seconds_to_role_select",
+        "seconds_to_first_hit",
+        "seconds_to_objective_understood",
+        "persistent_hud_coverage_percent"
+      ],
+      "repeat": 3,
+      "description": "New player with no coaching; after role choice selection UI must close."
+    },
+    {
+      "id": "REPLAY_3MATCH",
+      "metrics": [
+        "eggs_scored",
+        "neutral_kills_scored",
+        "distinct_tactical_choices",
+        "voluntary_next_match"
+      ],
+      "repeat": 3,
+      "description": "Three complete matches; no invented retention or purchase intent."
+    }
+  ],
+  "required_evidence": [
+    "source_url",
+    "video_timecode",
+    "device",
+    "capture_date",
+    "observer",
+    "game_version_or_sha"
+  ],
+  "status": "NOT_MEASURED"
+}
