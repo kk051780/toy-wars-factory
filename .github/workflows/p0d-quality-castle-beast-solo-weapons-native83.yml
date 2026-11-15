@@ -1,0 +1,95 @@
+name: P0D real castle beast solo and seven unique held weapons native83
+on:
+  push:
+    branches: [feature/p0d-product-quality-gate-20261115]
+    paths:
+      - product_quality/castle_beast_solo_armament_83_composite.py
+      - .github/workflows/p0d-quality-castle-beast-solo-weapons-native83.yml
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - product_quality/castle_beast_solo_armament_83_composite.py
+      - .github/workflows/p0d-quality-castle-beast-solo-weapons-native83.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  actual-game-native83:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch immutable castle, beast, solo AI and egg Game RC82
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_83_original
+          gh run download 43700281615 -R kk051780/toy-wars-factory \
+            -n P0D-REAL-CASTLE-GATE-BEAST-SOLO-RC82-SOURCE-NOGO \
+            -D /tmp/p0d_83_original
+          test -s /tmp/p0d_83_original/P0D_WALKIN_CASTLE_GATE_BEAST_SOLO_PRIVATE.zip
+      - name: Construct actual 83-script Place with original game authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B product_quality/castle_beast_solo_armament_83_composite.py \
+            --parent /tmp/p0d_83_original/P0D_WALKIN_CASTLE_GATE_BEAST_SOLO_PRIVATE.zip \
+            --out /tmp/P0D_CASTLE_BEAST_SOLO_SEVEN_WEAPONS_PRIVATE83.zip \
+            --extract /tmp/p0d_83_actual_sources
+          python3 - <<'PY'
+          import sys,zipfile,json,hashlib
+          from pathlib import Path
+          sys.path.insert(0,'product_quality')
+          from castle_beast_solo_armament_83_composite import add_module,OUTPUT_PLACE
+          from role7_respawn_guard import extract
+          with zipfile.ZipFile('/tmp/P0D_CASTLE_BEAST_SOLO_SEVEN_WEAPONS_PRIVATE83.zip') as z:
+              r=json.loads(z.read('RECEIPT.json'))
+              place=z.read(OUTPUT_PLACE)
+          assert r['source_count']==83 and r['existing_81_sources_byte_exact']
+          assert r['egg_score_winner_byte_exact'] and r['source_lock_path_and_class_exact']
+          assert r['real_siege_gate_preserved'] and r['real_beast_follow_attack_preserved']
+          assert r['private_solo_egg_ai_preserved'] and r['seven_distinct_server_m1']
+          assert not r['official_rc_write'] and r['product']=='NO_GO'
+          assert r['place_sha256']==hashlib.sha256(place).hexdigest()
+          root, scripts=extract(place)
+          assert len(scripts)==83 and len(list(Path('/tmp/p0d_83_actual_sources').glob('*.luau')))==83
+          assert 'P0D_FB_CASTLE_WALKIN_SIEGE_V1' in scripts['MapBuilder'].text
+          assert 'summonSevenBeast' in scripts['Game'].text
+          assert 'SevenJobs.ArmamentM1.strike(job,stage,root.Position,look' in scripts['Game'].text
+          assert 'callbacks.deposit(bot,bot.team,bot.carry)' in scripts['SoloTeamBots'].text
+          try: add_module(root,scripts['SevenJobArmamentM1'].text)
+          except ValueError: pass
+          else: raise AssertionError('DUPLICATE_ARMAMENT_MODULE_ACCEPTED')
+          print('REAL_CASTLE_BEAST_SOLO_SEVEN_WEAPONS_FULL83_SOURCE_PASS')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_pinned_luau
+          persist-credentials: false
+      - name: Native compile real 83 source bodies
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_pinned_luau -B /tmp/p0d_83_build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_83_build --target Luau.Compile.CLI --parallel 4
+          n=0
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_83_build/luau-compile "$f" >/dev/null
+            n=$((n+1))
+          done < <(find /tmp/p0d_83_actual_sources -name '*.luau' -type f -print0 | sort -z)
+          test "$n" -eq 83
+          echo P0D_REAL_SEVEN_WEAPONS_CASTLE_BEAST_SOLO_NATIVE83_PASS
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: P0D-QUALITY-REAL-CASTLE-BEAST-SOLO-7WEAPONS-PRIVATE83-NOGO
+          path: /tmp/P0D_CASTLE_BEAST_SOLO_SEVEN_WEAPONS_PRIVATE83.zip
+          retention-days: 7
