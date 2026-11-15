@@ -1,0 +1,132 @@
+name: P0D FB034 RC91 real Horde hit KO receipts native86 Rojo86
+on:
+  push:
+    branches: [feature/p0d-fb029-wind-rules-integration-20261115]
+    paths:
+      - quality_repair/FB034_RC91_TRUE_HIT_KO/**
+      - .github/workflows/p0d-fb034-rc91-hit-confirm-native86.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-exact-real86:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download immutable RC90 real 86-script place from CI and freeze original sources
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/fb034_rc90
+          gh run download 43766032293 -R kk051780/toy-wars-factory \
+            -n P0D-FB033-RC90-SEVEN-ROLE-ATTACK-FX-NATIVE86-NOGO \
+            -D /tmp/fb034_rc90
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile,ZIP_DEFLATED
+          base=Path('/tmp/fb034_rc90');d={p.name:p for p in base.rglob('*') if p.is_file()}
+          needed=['P0D_RC90_SEVEN_JOB_ATTACK_FX_WARP_LOOT_UNDEAD_PRIVATE.rbxlx','RC_FEATURE_LOCK.json','RECEIPT.json','SOURCE_LOCK.json']
+          assert sorted(d)==sorted(needed),list(d)
+          target=Path('quality_repair/FB034_RC91_TRUE_HIT_KO/parent_rc90.zip')
+          with ZipFile(target,'w',ZIP_DEFLATED) as z:
+              for k in sorted(d):z.write(d[k],k)
+          PY
+      - name: Build real RC91 genuine hit KO and execute 25 strict regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd quality_repair/FB034_RC91_TRUE_HIT_KO
+          python3 -m unittest -v test_fb034.py
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('P0D_RC91_7JOBS_TRUE_HIT_KO_FEEDBACK_PRIVATE.rbxlx');b=p.read_bytes()
+          assert len(b)==854151,len(b)
+          assert hashlib.sha256(b).hexdigest()=='2b0ea6e93589265873c5c3e5f37fa5a5e831fbc15fe6e5d38b85ed273ad08c0a'
+          r=json.loads(Path('RECEIPT.json').read_text())
+          assert r['unchanged_scripts']==85 and r['scripts']==86
+          assert not r['official_rc_write'] and r['studio']=='NOT_RUN'
+          print('FB034_RC91_REAL_HIT_ONLY_SOURCE_ONLY_PASS')
+          PY
+      - name: Extract exact 86 real Script path class body source lock
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_repair/FB034_RC91_TRUE_HIT_KO/extract_rojo.py \
+            quality_repair/FB034_RC91_TRUE_HIT_KO/P0D_RC91_7JOBS_TRUE_HIT_KO_FEEDBACK_PRIVATE.rbxlx \
+            quality_repair/FB034_RC91_TRUE_HIT_KO/SOURCE_LOCK.json \
+            /tmp/fb034_rc91_rojo
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _fb034_luau
+          persist-credentials: false
+      - name: Real native Luau compile every one of 86 original Game and ModuleScripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _fb034_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _fb034_luau -B /tmp/fb034_luau_build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/fb034_luau_build --target Luau.Compile.CLI --parallel 4
+          n=0
+          while IFS= read -r -d '' src; do
+            /tmp/fb034_luau_build/luau-compile "$src" >/dev/null
+            n=$((n+1))
+          done < <(find /tmp/fb034_rc91_rojo/src -type f -name '*.luau' -print0 | sort -z)
+          test "$n" -eq 86
+          echo NATIVE_LUAU_86_86_REAL_SOURCES_PASS
+      - name: Pinned Rojo 7.7.1 actual Place build and exact 86 class path GitBlob equality
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/fb034_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/fb034_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/fb034_rojo.zip') as z:
+              names=[n for n in z.namelist() if n.rsplit('/',1)[-1]=='rojo']
+              assert len(names)==1
+              p=Path('/tmp/fb034_rojo_bin');p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/fb034_rojo_bin build /tmp/fb034_rc91_rojo/default.project.json -o /tmp/fb034_rc90_rebuilt.rbxlx
+          python3 - <<'PY'
+          import hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          from collections import Counter
+          want=json.loads(Path('/tmp/fb034_rc91_rojo/manifest.json').read_text())
+          root=ET.fromstring(Path('/tmp/fb034_rc90_rebuilt.rbxlx').read_bytes())
+          got=[]
+          def walk(item,base=()):
+              prop=item.find('Properties')
+              name=prop.findtext("string[@name='Name']") if prop is not None else None
+              src=next((x.text or '' for x in prop if x.get('name')=='Source'),None) if prop is not None else None
+              here=base+((name,) if name else ())
+              if src is not None:
+                  by=src.encode('utf8')
+                  blob=hashlib.sha1(b'blob '+str(len(by)).encode()+b'\0'+by).hexdigest()
+                  got.append({'path':'/'.join(here),'class':item.attrib['class'],'blob':blob})
+              for c in item.findall('Item'):walk(c,here)
+          for i in root.findall('Item'):walk(i)
+          assert len(got)==86
+          assert Counter((x['path'],x['class'],x['blob']) for x in got)==Counter((x['path'],x['class'],x['blob']) for x in want)
+          print('ROJO_86_86_PATH_CLASS_SOURCE_BLOB_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: P0D-FB034-RC91-GENUINE-HIT-KO-NATIVE86-NOGO
+          path: |
+            quality_repair/FB034_RC91_TRUE_HIT_KO/P0D_RC91_7JOBS_TRUE_HIT_KO_FEEDBACK_PRIVATE.rbxlx
+            quality_repair/FB034_RC91_TRUE_HIT_KO/SOURCE_LOCK.json
+            quality_repair/FB034_RC91_TRUE_HIT_KO/RC_FEATURE_LOCK.json
+            quality_repair/FB034_RC91_TRUE_HIT_KO/RECEIPT.json
+          if-no-files-found: warn
+          retention-days: 7
