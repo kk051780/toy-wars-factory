@@ -240,9 +240,14 @@ local function startSession(mode:string)
      if not my or not my.alive or os.clock()-lastAttack<.45 then return end
      local character=p.Character
      local rootPart=character and character:FindFirstChild("HumanoidRootPart")::BasePart?
-     if not rootPart then return end
+     if not character or not rootPart then return end
      lastAttack=os.clock()
      local affected=0
+     -- Never let a human strike an AI through a collidable castle wall or gate.
+     local swordRay=RaycastParams.new()
+     swordRay.FilterType=Enum.RaycastFilterType.Exclude
+     swordRay.FilterDescendantsInstances={character}
+     swordRay.RespectCanCollide=true
      local tier=p:GetAttribute("EGGRUMBLE_SlashEvolution") or "BASE"
      local length=if tier=="TEMPEST" then 30 elseif tier=="WAVE" then 23 else 15
      local radius=if tier=="TEMPEST" then 23 elseif tier=="WAVE" then 17 else 11
@@ -257,7 +262,14 @@ local function startSession(mode:string)
       if c and c.alive and ar and (mode~="TEAM" or c.team~=my.team)
        and (ar.Position-rootPart.Position).Magnitude<14 then
        local h=actor:FindFirstChildOfClass("Humanoid")
-       if h and h.Health>0 and affected<3 then h:TakeDamage(42);affected+=1 end
+       if h and h.Health>0 and affected<3 then
+        local from=rootPart.Position+Vector3.new(0,1,0)
+        local to=ar.Position+Vector3.new(0,1,0)
+        if workspace:Raycast(from,to-from,swordRay)==nil then
+         h:TakeDamage(42)
+         affected+=1
+        end
+       end
       end
      end
     end)
