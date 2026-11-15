@@ -1,0 +1,135 @@
+name: P0D #470 spectator island plus 5 solo team bots + no-team reentry real native82/Rojo
+on:
+  push:
+    branches: [feature/p0d-product-quality-gate-20261115]
+    paths:
+      - product_quality/p0d_role7_spectator_solo_batch.py
+      - product_quality/test_p0d_role7_spectator_solo_batch.py
+      - .github/workflows/p0d-quality-spectator-solo-batch-native.yml
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - product_quality/p0d_role7_spectator_solo_batch.py
+      - product_quality/test_p0d_role7_spectator_solo_batch.py
+      - .github/workflows/p0d-quality-spectator-solo-batch-native.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  cumulative-native82:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Download original quality cumulative spectator physical-safe-island source exact artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_batch_original
+          gh run download 43693330990 -R kk051780/toy-wars-factory \
+            -n P0D-QUALITY-CUMULATIVE-ROLE7-SPECTATOR-SOURCE-NOGO \
+            -D /tmp/p0d_batch_original
+          test -s /tmp/p0d_batch_original/P0D_ROLE7_CUMULATIVE_SPECTATOR_PRIVATE.zip
+          (cd /tmp/p0d_batch_original && zip -q /tmp/P0D_PARENT_14153251141.zip P0D_ROLE7_CUMULATIVE_SPECTATOR_PRIVATE.zip)
+          echo PINNED_779310_SPECTATOR_PARENT_RETRIEVED
+      - name: Execute actual source merge and 18 negative/source regression tests
+        shell: bash
+        env:
+          P0D_BOT_PARENT_ARTIFACT: /tmp/P0D_PARENT_14153251141.zip
+        run: |
+          set -euo pipefail
+          python3 -B product_quality/p0d_role7_spectator_solo_batch.py \
+            --author-artifact "$P0D_BOT_PARENT_ARTIFACT" \
+            --out /tmp/P0D_PRIVATE_CUMULATIVE_GAMEPLAY_BATCH.zip \
+            --extract /tmp/p0d_batch_sources
+          PYTHONPATH=product_quality python3 -m unittest -q \
+            product_quality/test_p0d_role7_spectator_solo_batch.py
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import hashlib,json
+          with ZipFile('/tmp/P0D_PRIVATE_CUMULATIVE_GAMEPLAY_BATCH.zip') as z:
+              r=json.loads(z.read('RECEIPT.json'))
+              data=z.read('P0D_ROLE7_SPECTATOR_SAFE_STAGE_SOLO_BOTS_LOBBY_SAFE_RC82.rbxlx')
+          assert len(data)==780590
+          assert hashlib.sha256(data).hexdigest()=='c1cfc5f73b219bec5e75f5d9bee6647ab34f08cbaff44dd3bebdf8e5afc14111'
+          assert r['source_count']==82 and r['unchanged_parent_scripts']==80
+          assert r['egg_score_winner_source_byte_exact']
+          assert r['source_lock_exact_paths']
+          assert r['physical_observer_island_preserved'] and r['teamescape_nil_index_fixed']
+          assert r['private_ai_default_off']
+          assert r['official_rc_write'] is False and r['product']=='NO_GO'
+          assert len(list(Path('/tmp/p0d_batch_sources/src').rglob('*.luau')))==82
+          print('SOURCE_FULL82_NATIVE_INPUT_PINNED_WITH_18_NEGATIVE_TESTS_PASS')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_batch_luau
+          persist-credentials: false
+      - name: Native Luau compiler all 82 actual staged Game scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_batch_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_batch_luau -B /tmp/p0d_batch_build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_batch_build --target Luau.Compile.CLI --parallel 4
+          n=0
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_batch_build/luau-compile "$f" >/dev/null
+            n=$((n+1))
+          done < <(find /tmp/p0d_batch_sources/src -name '*.luau' -type f -print0)
+          test "$n" -eq 82
+          echo P0D_CUMULATIVE_SOLO_SPECTATOR_NATIVE_LUAU_82_OF_82_PASS
+      - name: Rojo 7.7.1 source-only exact script class path blob roundtrip
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/p0d_batch_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_batch_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/p0d_batch_rojo.zip') as z:
+              names=[n for n in z.namelist() if n.rsplit('/',1)[-1]=='rojo']
+              assert len(names)==1
+              p=Path('/tmp/p0d_batch_rojo_cli');p.write_bytes(z.read(names[0]));p.chmod(0o755)
+          PY
+          /tmp/p0d_batch_rojo_cli build /tmp/p0d_batch_sources/default.project.json \
+            -o /tmp/p0d_batch_rojo_source_only.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,xml.etree.ElementTree as E
+          root=E.fromstring(Path('/tmp/p0d_batch_rojo_source_only.rbxlx').read_bytes())
+          expected=json.loads(Path('/tmp/p0d_batch_sources/manifest.json').read_text('utf-8'))
+          actual=[]
+          def walk(n,prev=()):
+              p=n.find('Properties')
+              name=p.findtext("string[@name='Name']") if p is not None else None
+              src=p.findtext("string[@name='Source']") if p is not None else None
+              path=prev+((name,) if name is not None else ())
+              if src is not None:
+                  b=src.encode('utf-8');digest=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+                  actual.append({'path':'/'.join(path),'kind':n.get('class'),'blob':digest})
+              for child in n.findall('Item'):walk(child,path)
+          for item in root.findall('Item'):walk(item)
+          assert len(actual)==len(expected)==82
+          assert {x['path']:(x['kind'],x['blob']) for x in actual}=={x['path']:(x['kind'],x['blob']) for x in expected}
+          print('P0D_SOLO_SPECTATOR_ROJO82_82_CLASS_PATH_BLOB_EXACT_PASS')
+          PY
+      - name: Retain source-only PRIVATE Studio candidate (not official RC or publish)
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: P0D-QUALITY-SOLO-SPECTATOR-SAFE-STAGING-FULL82-NOGO
+          path: /tmp/P0D_PRIVATE_CUMULATIVE_GAMEPLAY_BATCH.zip
+          retention-days: 7
