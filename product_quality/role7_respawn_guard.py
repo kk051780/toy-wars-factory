@@ -72,7 +72,7 @@ def build(source_path,target_path,extract_dir=None):
     new=previous.replace(
       "    local selectedAck=sevenJobPickAckSeq[player]\n",
       "    local selectedAck=sevenJobPickAckSeq[player]\n"
-      "    -- FB004: only the original character and team own this deferred cast.\n"
+      "    -- FB004: deferred PvE hits belong to the original alive avatar AND team.\n"
       "    local castCharacter=player.Character\n"
       "    local castTeam=getTeamName(player)\n"
       '    if not castCharacter or (castTeam~="RED" and castTeam~="BLUE") then return end\n',1)
