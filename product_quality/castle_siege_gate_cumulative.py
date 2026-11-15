@@ -22,9 +22,9 @@ OUTPUT_PLACE="P0D_CASTLE_WALKIN_SIEGE_GATE_BEAST_SOLO_PRIVATE_RC82.rbxlx"
 MAP="server/MapBuilder.luau"
 GAME="server/Game.server.luau"
 BOTS="server/SoloTeamBots.luau"
-EXPECTED_PLACE_SHA=""
-EXPECTED_PLACE_BYTES=0
-EXPECTED_MAP_BLOB=""
+EXPECTED_PLACE_SHA="c0c74efab8b63716a7b4cef1f8884b4270309c659478e194e1ecf3b8421111a4"
+EXPECTED_PLACE_BYTES=792844
+EXPECTED_MAP_BLOB="52e677d208412483b744c7ac464eb0ffbc9e6ecd"
 
 # All parts are real server world geometry. Existing studio art arches are
 # at x +/-85, ground passage z +/-14, so gates stay below the old arch.
