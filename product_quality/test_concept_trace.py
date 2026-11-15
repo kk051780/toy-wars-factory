@@ -27,7 +27,8 @@ class TestTrace(unittest.TestCase):
         c, t = fixture()
         r = evaluate(c, t)
         self.assertEqual(r["inventory_covered"], 67)
-        self.assertEqual(r["design_coverage"], "0/67")
+        self.assertEqual(r["design_coverage"], "67/67")
+        self.assertEqual(r["verified_design_contracts"], "0/67")
         self.assertEqual(r["seven_jobs_full_engine_pass"], "0/7")
         self.assertEqual(r["decision"], "DESIGN_NO_GO")
     def test_missing_catalog_row(self):
