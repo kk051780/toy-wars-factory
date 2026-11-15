@@ -1,4 +1,4 @@
-name: P0D FB026 Siege V3 + Necromancer 85 native Luau and Rojo (private)
+name: P0D FB026 3 Stage Loot Weapons + 3 Undead source exact private86 native Luau Rojo
 on:
   push:
     branches: [feature/p0d-fb026-undead-siege-native85-20261115]
@@ -11,56 +11,56 @@ permissions:
   contents: read
   actions: read
 jobs:
-  real85:
+  real86:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Obtain immutable native84 castle+egg-escape+trapper parent
+      - name: Obtain immutable native85 stage loot+castle+egg+trapper parent
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           mkdir -p /tmp/fb026_85_parent
-          gh run download 43707427582 -R kk051780/toy-wars-factory \
-            -n P0D-QUALITY-SIEGE-HIT-FX-AND-AI-ARRIVAL-RC84-NOGO \
+          gh run download 43709500167 -R kk051780/toy-wars-factory \
+            -n P0D-QUALITY-REAL-THREE-STAGE-WEAPON-LOOT-RC85-NOGO \
             -D /tmp/fb026_85_parent
           python3 - <<'PY'
           from pathlib import Path
           from zipfile import ZipFile,ZIP_DEFLATED
           p=list(Path('/tmp/fb026_85_parent').rglob('*.zip'))
           assert len(p)==1, p
-          dest=Path('quality_repair/FB026_UNDEAD_SIEGE/parent_rc84.zip')
+          dest=Path('quality_repair/FB026_UNDEAD_SIEGE/stage_loot_parent85.zip')
           with ZipFile(dest,'w',ZIP_DEFLATED) as z: z.write(p[0],p[0].name)
           PY
-      - name: Exact RC85 rebuild and negative regression suite
+      - name: Exact RC86 rebuild and 24-case regression suite
         run: |
           set -euo pipefail
           cd quality_repair/FB026_UNDEAD_SIEGE
-          python3 -m unittest -v test_undead_rc85.py
+          python3 -m unittest -v test_rc86.py
           python3 - <<'PY'
           import hashlib,json
           from pathlib import Path
-          p=Path('P0D_FB026_NECROMANCER_SIEGE_CUMULATIVE_PRIVATE85.rbxlx')
+          p=Path('P0D_RC86_SIEGE_V3_STAGE_WEAPONS_UNDEAD_PRIVATE.rbxlx')
           data=p.read_bytes()
-          assert len(data)==833538, len(data)
-          assert hashlib.sha256(data).hexdigest()=='5192304d75e933e98ccffa20a4ac8abaa1349d4ce156bf63c5353607ec36f084'
+          assert len(data)==843641, len(data)
+          assert hashlib.sha256(data).hexdigest()=='11fa894c4ebfa2303e3f7cef8590d14a6a26f359699b6eda3d2e692bc161c707'
           receipt=json.loads(Path('RECEIPT.json').read_text())
-          assert receipt['script_count']==85 and receipt['old_83_scripts_byte_exact']
+          assert receipt['script_count']==86 and receipt['unchanged_existing_scripts']==84
           assert receipt['official_rc_write'] is False and receipt['product']=='NO_GO'
           PY
-      - name: Extract all 85 script class/path/body identities into real Rojo tree
+      - name: Extract all 86 script class/path/body identities into real Rojo tree
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
           import hashlib,json,xml.etree.ElementTree as ET
-          root=ET.fromstring(Path('quality_repair/FB026_UNDEAD_SIEGE/P0D_FB026_NECROMANCER_SIEGE_CUMULATIVE_PRIVATE85.rbxlx').read_bytes())
-          dst=Path('/tmp/p0d_fb026_rojo85')
+          root=ET.fromstring(Path('quality_repair/FB026_UNDEAD_SIEGE/P0D_RC86_SIEGE_V3_STAGE_WEAPONS_UNDEAD_PRIVATE.rbxlx').read_bytes())
+          dst=Path('/tmp/p0d_fb026_rojo86')
           exts={'Script':'.server.luau','LocalScript':'.client.luau','ModuleScript':'.luau'}
           found=[]
           def walk(item,base=()):
@@ -81,9 +81,9 @@ jobs:
                   found.append({'path':'/'.join(here),'class':item.attrib['class'],'blob':sha})
               for c in item.findall('Item'):walk(c,here)
           for n in root.findall('Item'):walk(n)
-          assert len(found)==85, len(found)
+          assert len(found)==86, len(found)
           (dst/'manifest.json').write_text(json.dumps(found,indent=2))
-          project={'name':'P0DFB026UndeadPrivate85','tree':{'$className':'DataModel',
+          project={'name':'P0DFB026UndeadStageLootPrivate86','tree':{'$className':'DataModel',
             'ReplicatedStorage':{'$className':'ReplicatedStorage','TrapRaidersShared':{'$path':'src/ReplicatedStorage/TrapRaidersShared'}},
             'ServerScriptService':{'$className':'ServerScriptService','TrapRaidersS1':{'$path':'src/ServerScriptService/TrapRaidersS1'}},
             'StarterPlayer':{'$className':'StarterPlayer','StarterPlayerScripts':{'$className':'StarterPlayerScripts','$path':'src/StarterPlayer/StarterPlayerScripts'}}}}
@@ -95,7 +95,7 @@ jobs:
           ref: f46d879e28302a430029304f7f6a162aed66f103
           path: _fb026_pinned_luau
           persist-credentials: false
-      - name: Real native Luau compile all 85 scripts including Game+Undead
+      - name: Real native Luau compile all 86 scripts including Game+Undead+Loot
         shell: bash
         run: |
           set -euo pipefail
@@ -106,10 +106,10 @@ jobs:
           while IFS= read -r -d '' src; do
             /tmp/fb026_luau_build/luau-compile "$src" >/dev/null
             n=$((n+1))
-          done < <(find /tmp/p0d_fb026_rojo85/src -name '*.luau' -type f -print0 | sort -z)
-          test "$n" -eq 85
-          echo P0D_FB026_NATIVE_85_85_PASS
-      - name: Pin Rojo and verify all 85 real class/path/GitBlob identities
+          done < <(find /tmp/p0d_fb026_rojo86/src -name '*.luau' -type f -print0 | sort -z)
+          test "$n" -eq 86
+          echo P0D_FB026_NATIVE_86_86_PASS
+      - name: Pin Rojo and verify all 86 real class/path/GitBlob identities
         shell: bash
         run: |
           set -euo pipefail
@@ -123,13 +123,13 @@ jobs:
               assert len(xs)==1
               p=Path('/tmp/fb026_rojo_bin');p.write_bytes(z.read(xs[0]));p.chmod(0o755)
           PY
-          /tmp/fb026_rojo_bin build /tmp/p0d_fb026_rojo85/default.project.json -o /tmp/p0d_fb026_rojo85_built.rbxlx
+          /tmp/fb026_rojo_bin build /tmp/p0d_fb026_rojo86/default.project.json -o /tmp/p0d_fb026_rojo86_built.rbxlx
           python3 - <<'PY'
           from pathlib import Path
           from collections import Counter
           import hashlib,json,xml.etree.ElementTree as ET
-          want=json.loads(Path('/tmp/p0d_fb026_rojo85/manifest.json').read_text())
-          root=ET.fromstring(Path('/tmp/p0d_fb026_rojo85_built.rbxlx').read_bytes())
+          want=json.loads(Path('/tmp/p0d_fb026_rojo86/manifest.json').read_text())
+          root=ET.fromstring(Path('/tmp/p0d_fb026_rojo86_built.rbxlx').read_bytes())
           got=[]
           def walk(item,base=()):
               prop=item.find('Properties')
@@ -142,16 +142,16 @@ jobs:
                   got.append({'path':'/'.join(here),'class':item.attrib['class'],'blob':blob})
               for child in item.findall('Item'):walk(child,here)
           for item in root.findall('Item'):walk(item)
-          assert len(got)==85, len(got)
+          assert len(got)==86, len(got)
           assert Counter((x['path'],x['class'],x['blob']) for x in got)==Counter((x['path'],x['class'],x['blob']) for x in want)
-          print('P0D_FB026_NATIVE_ROJO_85_85_PATH_CLASS_GITBLOB_PASS')
+          print('P0D_FB026_NATIVE_ROJO_86_86_PATH_CLASS_GITBLOB_PASS')
           PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: P0D-FB026-UNDEAD-SIEGE-PRIVATE85-SOURCE-NOGO
+          name: P0D-FB026-UNDEAD-STAGE-LOOT-PRIVATE86-SOURCE-NOGO
           path: |
-            quality_repair/FB026_UNDEAD_SIEGE/P0D_FB026_NECROMANCER_SIEGE_CUMULATIVE_PRIVATE85.rbxlx
+            quality_repair/FB026_UNDEAD_SIEGE/P0D_RC86_SIEGE_V3_STAGE_WEAPONS_UNDEAD_PRIVATE.rbxlx
             quality_repair/FB026_UNDEAD_SIEGE/SOURCE_LOCK.json
             quality_repair/FB026_UNDEAD_SIEGE/RC_FEATURE_LOCK.json
             quality_repair/FB026_UNDEAD_SIEGE/RECEIPT.json
