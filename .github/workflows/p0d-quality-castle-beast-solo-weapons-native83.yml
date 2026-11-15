@@ -87,6 +87,91 @@ jobs:
           done < <(find /tmp/p0d_83_actual_sources -name '*.luau' -type f -print0 | sort -z)
           test "$n" -eq 83
           echo P0D_REAL_SEVEN_WEAPONS_CASTLE_BEAST_SOLO_NATIVE83_PASS
+      - name: Reconstruct 83 original Roblox paths and types from the actual Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          from xml.etree import ElementTree as ET
+          import hashlib,json
+          target=Path('/tmp/p0d_83_rojo')
+          with ZipFile('/tmp/P0D_CASTLE_BEAST_SOLO_SEVEN_WEAPONS_PRIVATE83.zip') as z:
+              root=ET.fromstring(z.read('P0D_CASTLE_BEAST_SOLO_SEVEN_WEAPONS_PRIVATE_RC83.rbxlx'))
+          types={'Script':'.server.luau','LocalScript':'.client.luau','ModuleScript':'.luau'}
+          manifest=[]
+          def walk(item,old=()):
+              p=item.find('Properties')
+              name=p.findtext("string[@name='Name']") if p is not None else None
+              src=p.findtext("string[@name='Source']") if p is not None else None
+              here=old+((name,) if name else ())
+              if src is not None:
+                  assert item.get('class') in types and len(here)>=3
+                  assert here[0] in ('ReplicatedStorage','ServerScriptService','StarterPlayer')
+                  assert all(t.isidentifier() for t in here)
+                  f=target/'src'/Path(*here).with_suffix(types[item.get('class')])
+                  f.parent.mkdir(parents=True,exist_ok=True)
+                  assert not f.exists()
+                  f.write_text(src,encoding='utf-8')
+                  raw=src.encode('utf-8')
+                  d=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+                  manifest.append({'path':'/'.join(here),'kind':item.get('class'),'blob':d})
+              for child in item.findall('Item'):walk(child,here)
+          for item in root.findall('Item'):walk(item)
+          assert len(manifest)==83
+          assert len({x['path'] for x in manifest})==83
+          (target/'manifest.json').write_text(json.dumps(manifest,indent=2))
+          project={'name':'P0DActualSiegeBeastSolo7Armament83','tree':{'$className':'DataModel',
+            'ReplicatedStorage':{'$className':'ReplicatedStorage',
+              'TrapRaidersShared':{'$path':'src/ReplicatedStorage/TrapRaidersShared'}},
+            'ServerScriptService':{'$className':'ServerScriptService',
+              'TrapRaidersS1':{'$path':'src/ServerScriptService/TrapRaidersS1'}},
+            'StarterPlayer':{'$className':'StarterPlayer',
+              'StarterPlayerScripts':{'$path':'src/StarterPlayer/StarterPlayerScripts'}}}}
+          (target/'default.project.json').write_text(json.dumps(project,indent=2))
+          print('83_REAL_LUAU_PATH_CLASS_BLOB_MANIFEST_PREPARED')
+          PY
+      - name: Pinned Rojo 7.7.1 rebuild exact 83 class path and source GitBlob
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_83_rojo_release.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_83_rojo_release.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/p0d_83_rojo_release.zip') as z:
+              entries=[n for n in z.namelist() if n.rsplit('/',1)[-1]=='rojo']
+              assert len(entries)==1
+              file=Path('/tmp/p0d_83_rojo_binary')
+              file.write_bytes(z.read(entries[0]))
+              file.chmod(0o755)
+          PY
+          /tmp/p0d_83_rojo_binary build /tmp/p0d_83_rojo/default.project.json -o /tmp/p0d_83_rojo_rebuilt.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+          import hashlib,json
+          want=json.loads(Path('/tmp/p0d_83_rojo/manifest.json').read_text())
+          root=ET.fromstring(Path('/tmp/p0d_83_rojo_rebuilt.rbxlx').read_bytes())
+          got=[]
+          def walk(n,prior=()):
+              p=n.find('Properties')
+              name=p.findtext("string[@name='Name']") if p is not None else None
+              src=p.findtext("string[@name='Source']") if p is not None else None
+              here=prior+((name,) if name else ())
+              if src is not None:
+                  raw=src.encode('utf-8')
+                  d=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+                  got.append({'path':'/'.join(here),'kind':n.get('class'),'blob':d})
+              for c in n.findall('Item'):walk(c,here)
+          for item in root.findall('Item'):walk(item)
+          assert len(got)==len(want)==83
+          assert {x['path']:(x['kind'],x['blob']) for x in got}=={
+              x['path']:(x['kind'],x['blob']) for x in want}
+          print('REAL_SEVEN_WEAPON_SIEGE_BEAST_SOLO_ROJO83_83_SOURCE_EXACT_PASS')
+          PY
       - uses: actions/upload-artifact@v4
         if: success()
         with:
