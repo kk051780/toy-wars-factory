@@ -89,6 +89,95 @@ jobs:
           done < <(find /tmp/p0d_castle_all82 -type f -name '*.luau' -print0 | sort -z)
           test "$n" -eq 82
           echo 'REAL_CASTLE_WALKIN_SIEGE_BEAST_SOLO_NATIVE82_PASS_NOT_STUDIO'
+      - name: Reconstruct all 82 actual Roblox source paths and classes for Rojo
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,hashlib,xml.etree.ElementTree as ET
+          from pathlib import Path
+          from zipfile import ZipFile
+          target=Path('/tmp/p0d_castle_siege_rojo')
+          target.mkdir(parents=True,exist_ok=True)
+          with ZipFile('/tmp/P0D_WALKIN_CASTLE_GATE_BEAST_SOLO_PRIVATE.zip') as z:
+              data=z.read('P0D_CASTLE_WALKIN_SIEGE_GATE_BEAST_SOLO_PRIVATE_RC82.rbxlx')
+          root=ET.fromstring(data)
+          kinds={'Script':'.server.luau','LocalScript':'.client.luau','ModuleScript':'.luau'}
+          manifest=[]
+          def visit(node,anc=()):
+              props=node.find('Properties')
+              name=props.findtext("string[@name='Name']") if props is not None else None
+              src=props.findtext("string[@name='Source']") if props is not None else None
+              path=anc+((name,) if name else ())
+              if src is not None:
+                  assert node.get('class') in kinds
+                  assert path[0] in ('ReplicatedStorage','ServerScriptService','StarterPlayer')
+                  assert all(p.isidentifier() for p in path)
+                  f=target/'src'/Path(*path).with_suffix(kinds[node.get('class')])
+                  f.parent.mkdir(parents=True,exist_ok=True)
+                  assert not f.exists()
+                  f.write_text(src,encoding='utf-8')
+                  raw=src.encode('utf-8')
+                  blob=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+                  manifest.append({'path':'/'.join(path),'kind':node.get('class'),'blob':blob})
+              for child in node.findall('Item'):
+                  visit(child,path)
+          for item in root.findall('Item'):
+              visit(item)
+          assert len(manifest)==82
+          (target/'manifest.json').write_text(json.dumps(manifest,indent=2))
+          project={'name':'P0DOriginalBeastSoloActual82','tree':{'$className':'DataModel',
+            'ReplicatedStorage':{'$className':'ReplicatedStorage',
+              'TrapRaidersShared':{'$path':'src/ReplicatedStorage/TrapRaidersShared'}},
+            'ServerScriptService':{'$className':'ServerScriptService',
+              'TrapRaidersS1':{'$path':'src/ServerScriptService/TrapRaidersS1'}},
+            'StarterPlayer':{'$className':'StarterPlayer',
+              'StarterPlayerScripts':{'$path':'src/StarterPlayer/StarterPlayerScripts'}}}}
+          (target/'default.project.json').write_text(json.dumps(project,indent=2))
+          print('EXACT_ACTUAL_BEAST_SOLO_RC82_ROJO_PATHS_PREPARED')
+          PY
+      - name: Pinned Rojo 7.7.1 script path class and source GitBlob parity 82/82
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/p0d_castle_siege_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_castle_siege_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/p0d_castle_siege_rojo.zip') as z:
+              match=[n for n in z.namelist() if n.rsplit('/',1)[-1]=='rojo']
+              assert len(match)==1
+              p=Path('/tmp/p0d_castle_siege_rojo_binary')
+              p.write_bytes(z.read(match[0]));p.chmod(0o755)
+          PY
+          /tmp/p0d_castle_siege_rojo_binary build /tmp/p0d_castle_siege_rojo/default.project.json \
+            -o /tmp/p0d_castle_siege_rojo_source_only.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,xml.etree.ElementTree as ET
+          expected=json.loads(Path('/tmp/p0d_castle_siege_rojo/manifest.json').read_text())
+          root=ET.fromstring(Path('/tmp/p0d_castle_siege_rojo_source_only.rbxlx').read_bytes())
+          actual=[]
+          def visit(node,anc=()):
+              props=node.find('Properties')
+              name=props.findtext("string[@name='Name']") if props is not None else None
+              src=props.findtext("string[@name='Source']") if props is not None else None
+              path=anc+((name,) if name else ())
+              if src is not None:
+                  raw=src.encode('utf-8')
+                  blob=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+                  actual.append({'path':'/'.join(path),'kind':node.get('class'),'blob':blob})
+              for child in node.findall('Item'):
+                  visit(child,path)
+          for item in root.findall('Item'):
+              visit(item)
+          assert len(expected)==len(actual)==82
+          assert {x['path']:(x['kind'],x['blob']) for x in expected}=={
+              x['path']:(x['kind'],x['blob']) for x in actual}
+          print('REAL_CASTLE_GATE_BEAST_SOLO_ROJO_82_82_SAME_CLASS_PATH_BLOB_PASS')
+          PY
       - uses: actions/upload-artifact@v4
         if: success()
         with:
