@@ -206,6 +206,19 @@ class CASTest(unittest.TestCase):
                 independent_authorization={"decision":"EVIDENCE_READY_NOT_AUTHORIZATION"},
                 message="P0D/test")
         self.assertEqual(0,g.writes)
+    def test_reject_relative_parent_path_before_any_write(self):
+        g=FakeGit()
+        with self.assertRaisesRegex(cas.CASBlocked,"INVALID_TARGET_PATH"):
+            cas.atomic_source_selective_cas(
+                g,official_branch=cas.RC,expected_head=A,source_head=F,
+                exact_paths=["../secret.lua"],
+                independent_authorization={
+                    "decision":"PROTECTED_WORKFLOW_AUTHORIZE_SINGLE_CAS",
+                    "source_sha":F,"expected_rc_head":A,
+                    "paths":["../secret.lua"]},
+                message="P0D/test")
+        self.assertEqual(0,g.writes)
+
     def test_no_wholesale_merge_or_meta_paths(self):
         g=FakeGit()
         with self.assertRaisesRegex(cas.CASBlocked,"SHARED_META"):
