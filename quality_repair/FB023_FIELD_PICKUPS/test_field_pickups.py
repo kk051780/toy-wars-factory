@@ -35,6 +35,7 @@ class FieldPickupSourceTests(unittest.TestCase):
         self.assertIn('task.delay(RESPAWN_SECONDS', SOURCE)
         self.assertIn('tool:Destroy()', SOURCE)
         self.assertIn('math.abs(hum.WalkSpeed - boosted)', SOURCE)
+        self.assertIn('math.max(before, math.min(before + 8, 34))', SOURCE)
 
     def test_no_path_blocking(self):
         self.assertIn('pad.CanCollide = false', SOURCE)
