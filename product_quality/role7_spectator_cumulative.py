@@ -15,13 +15,13 @@ PIN="f6cc936a17b10d7cbfb1eb31718025a6fe21346160cacea8d58e8e52d93eb542"
 BASE="d2f3ed1a47558fdaf07be0181c83c698bdb2ce34"
 GAME_PATH="server/Game.server.luau"
 PARENT_GAME="00fab56c721145688a34ba2825babd7bac351fbb"
-RESULT_GAME="f0fbfcc2756f5e3bdcebde08a19f432de670977b"
-RESULT_PLACE="00a1fcc4621b52b6d6ecf7d79eab1eb7828fccbe3e4a79e902756c4a988bde79"
+RESULT_GAME="6848da45a10242e5908a102bd9db47b9d3f30023"
+RESULT_PLACE="bbb9c919cb11cfc5147a75a9d8f8e770eb5a7d540acfffeb650010f5710e0d1c"
 
 FIXES=(
  ("late_join",
  'if RunService:IsStudio() and\n        (match.phase=="ACTIVE" or match.phase=="COUNTDOWN") then',
- '(RunService:IsStudio() or privateHordeTrialAllowed()) and\n        (match.phase=="ACTIVE" or match.phase=="COUNTDOWN") then'),
+ 'if (RunService:IsStudio() or privateHordeTrialAllowed()) and\n        (match.phase=="ACTIVE" or match.phase=="COUNTDOWN") then'),
  ("horde_eligible",
  'horde:tick(now,Players:GetPlayers(),healthy)',
  'horde:tick(now,eligibleSoloPlayers(),healthy)'),
@@ -73,7 +73,7 @@ def build(parent, output, extract_dir=None):
     if blob(repaired)!=RESULT_GAME: raise ValueError("GAME_SOURCE_DRIFT")
     script["Game"].text=repaired
     place=ET.tostring(root,encoding="utf-8")
-    if sha(place)!=RESULT_PLACE or len(place)!=779052:
+    if sha(place)!=RESULT_PLACE or len(place)!=779055:
         raise ValueError("PLACE_REPRODUCIBILITY_FAILURE")
     after=extract(place)[1]
     if any(after[n].text!=original[n].text for n in original if n!="Game"):
