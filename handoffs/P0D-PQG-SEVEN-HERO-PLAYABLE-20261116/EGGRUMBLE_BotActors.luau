@@ -86,7 +86,7 @@ local function tryHeroAttack(actor:Model,my:any,session:any,lastHit:{[string]:nu
    local character=player.Character
    local root=character and character:FindFirstChild("HumanoidRootPart")::BasePart?
    local h=character and character:FindFirstChildOfClass("Humanoid")
-   if root and h and h.Health>0 and (root.Position-at).Magnitude<11
+   if character and root and h and h.Health>0 and (root.Position-at).Magnitude<11
     and clearHeroStrike(actor,character,at+Vector3.new(0,1.5,0),root.Position+Vector3.new(0,1,0)) then
     lastHit[my.id]=now
     h:TakeDamage(BOT_HERO_DAMAGE)
