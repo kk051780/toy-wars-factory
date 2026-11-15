@@ -1,0 +1,37 @@
+name: P0D reproducible private-source QA offline Luau Rojo toolchain
+on:
+  push:
+    branches:
+      - feature/p0d-product-quality-gate-20261115
+    paths:
+      - .github/workflows/p0d-quality-offline-luau-rojo-toolchain.yml
+permissions:
+  contents: read
+jobs:
+  export-pinned-foss-toolchain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout pinned Luau source only, no private Roblox Place
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: luau
+          persist-credentials: false
+      - name: Package source snapshot and pinned Rojo offline Linux binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          mkdir -p /tmp/p0d_source_qa_tools
+          tar --exclude=.git -czf /tmp/p0d_source_qa_tools/luau-pinned-src.tar.gz -C luau .
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_source_qa_tools/rojo-7.7.1-linux-x86_64.zip
+          echo "00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_source_qa_tools/rojo-7.7.1-linux-x86_64.zip" | sha256sum -c -
+          printf 'Luau source pinned: f46d879e28302a430029304f7f6a162aed66f103\nRojo v7.7.1 archive SHA256: 00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4\nBuild on destination platform: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON && cmake --build build --target Luau.Compile.CLI --parallel 4\nSource-only tooling; no Roblox Place, Game, user credentials, publishing.\n' > /tmp/p0d_source_qa_tools/PINNED_TOOLS.txt
+          test -s /tmp/p0d_source_qa_tools/luau-pinned-src.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: P0D-OFFLINE-PINNED-LUAU-ROJO-TOOLS
+          path: /tmp/p0d_source_qa_tools
+          retention-days: 7
