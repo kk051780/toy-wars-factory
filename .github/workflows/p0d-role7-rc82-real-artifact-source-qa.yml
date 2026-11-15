@@ -247,10 +247,10 @@ jobs:
               receipt=json.loads(z.read('RECEIPT.json'))
           assert receipt['product']=='NO_GO' and receipt['official_rc_write']==False
           assert receipt['game_blob_before']=='6848da45a10242e5908a102bd9db47b9d3f30023'
-          assert receipt['game_blob_after']=='d1af274cb2da3c545e7ce9b516b80c4a2b719e6e'
+          assert receipt['game_blob_after']=='71d3ffa619dbdc76e2c83170f47f19143195cca0'
           assert receipt['modified_only']==['server/Game.server.luau','server/SevenJobsRules.luau','client/HUD.client.luau']
           assert receipt['summon_lifetime_seconds']==9 and receipt['summon_steps_max']==40
-          assert len(xml)==785541 and hashlib.sha256(xml).hexdigest()=='5949233d5e38c3c107994a93b7dc0daf749e32b14720fc75afed0bfb37b89544'
+          assert len(xml)==785755 and hashlib.sha256(xml).hexdigest()=='b64db322c3cafe817fc4c6a9a8d7b4fb51f1cec93f681d6d4f5502c945bf163d'
           out=Path('/tmp/p0d_role7_cumulative82')
           root=E.fromstring(xml)
           scripts=[]
@@ -279,7 +279,7 @@ jobs:
             'StarterPlayer':{'$className':'StarterPlayer','StarterPlayerScripts':{'$path':'src/StarterPlayer/StarterPlayerScripts'}}}}
           (out/'default.project.json').write_text(json.dumps(project,indent=2))
           final=next(p.read_text('utf-8') for p,m in scripts if m['path'].endswith('/Game'))
-          for phrase in ('local function summonSevenBeast(',
+          for phrase in ('function horde:summonSevenBeast(',
                          'summonSevenBeast(player,root,team,match.serial)',
                          'clearSevenBeast(player)',
                          'player.Character~=castCharacter','getTeamName(player)~=castTeam',
@@ -339,8 +339,8 @@ jobs:
             'quality_author_sha':'3d48167720f6352b659e69dea4aeaf34a8c6fb32',
             'spectator_author_sha':'2738d302e8c732617924bdbd29253dd4727b9bef',
             'official_parent':'d2f3ed1a47558fdaf07be0181c83c698bdb2ce34',
-            'real_private_place_bytes':785541,
-            'real_private_place_sha256':'5949233d5e38c3c107994a93b7dc0daf749e32b14720fc75afed0bfb37b89544',
+            'real_private_place_bytes':785755,
+            'real_private_place_sha256':'b64db322c3cafe817fc4c6a9a8d7b4fb51f1cec93f681d6d4f5502c945bf163d',
             'source_scripts':82,'native_luau':True,'rojo_source_parity':True,
             'source_lock':True,'source_diff_stage':'private_source_candidate',
             'studio_2client':'NOT_RUN','android':'NOT_RUN',
