@@ -19,7 +19,7 @@ def defects(bot,router,lobby):
       "no missing floor": "if grounded==nil then" in router,
       "no cliff wall": "if rise>2.25 or rise< -5.5 then" in router,
       "no steep/noncolliding support": "result.Normal.Y<.65" in router and "not result.Instance.CanCollide" in router,
-      "guard before move": router.index("if grounded==nil then")<router.index("model:PivotTo(CFrame.lookAt(smoothed,smoothed+direction))"),
+      "guard before move": router.find("if grounded==nil then")>=0 and router.find("model:PivotTo(CFrame.lookAt(smoothed,smoothed+direction))")>router.find("if grounded==nil then"),
       "visible world walls": "params.FilterDescendantsInstances={actors}" in router and "params.RespectCanCollide=true" in router,
       "no instant wall phase": "if not routeClear(here,here+direction*step,actors) then" in router,
       "server egg/siege LOS": "clearActionPath(actor,actors,actualTarget)" in bot and "actualDist<=ACTION_DISTANCE" in bot,
