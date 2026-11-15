@@ -2933,3 +2933,112 @@ jobs:
           path: /tmp/p0d_rc82_fb003_egg_controls_receipts/*
           retention-days: 14
           if-no-files-found: error
+
+      - name: 'P0 FB008 #470 original author 17-mob sixpack real 82-source cumulative fixed-egg preview'
+        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_rc82_fb003_egg_controls_v1
+          FINAL=/tmp/p0d_rc82_fb003_fb008_sixpack_v1
+          OUT=/tmp/p0d_rc82_fb003_fb008_sixpack_receipts
+          PLACE="$OUT/P0D_RC82_FB003_FB008_SIXPACK17_PRIVATE_STUDIO.rbxlx"
+          test -f "$BASE/SOURCE_LOCK.json"
+          test ! -e "$FINAL"
+          mkdir -p "$OUT"
+          python3 -B rc_fastlane/apply_fb008_sixpack_rc82.py --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_fb008_sixpack_rc82.py --base "$BASE" --out "$FINAL" --enabled true
+          python3 - <<'PY'
+          import math,sys,json
+          from pathlib import Path
+          sys.path.insert(0,'rc_fastlane')
+          from apply_fb008_sixpack_rc82 import read,blob,patch,H,ORIGINAL_BLOB,FEATURE
+          before=read(Path('/tmp/p0d_rc82_fb003_egg_controls_v1'))
+          after=read(Path('/tmp/p0d_rc82_fb003_fb008_sixpack_v1'))
+          assert len(before)==len(after)==82
+          assert {p for p in before if after[p]!=before[p]}=={H}
+          assert after[H]==patch(before[H])
+          assert blob(before[H])==ORIGINAL_BLOB
+          for name in ('server/Game.server.luau','server/MapBuilder.luau',
+                       'client/HUD.client.luau','server/P0DPrivateHordeEvidence.server.luau'):
+              assert after[name]==before[name],('SHARED_AUTHORITY_CHANGED',name)
+          s=after[H].decode()
+          assert s.count('function Horde:hit(')==1 and s.count('function Horde:tick(')==1
+          assert s.count('return touched,defeated')==1
+          assert 'local MINIONS = 16' in s and 'local MAX_ACTIVE = 17' in s
+          assert 'local MINION_HP = 24' in s and 'touched<6' in s
+          assert 'minionImpacts<4' in s and '(impactsByPlayer[nearest] or 0)<2' in s
+          assert 'Horde.MINIONS=MINIONS' in s and 'Horde.MAX_ACTIVE=MAX_ACTIVE' in s
+          six=[(-24,-18),(-19,-18),(-14,-18),(-24,-12),(-19,-12),(-14,-12)]
+          assert len(set(six))==6
+          x,z=-26,-17
+          count=0
+          for a,b in six:
+              dx,dz=a-x,b-z
+              dist=math.hypot(dx,dz)
+              dot=dx/dist
+              if dist<=13 and dot>=.1:count+=1
+          assert count==6,('UNREACHABLE_FIRST_SIX_SWEEP',count)
+          corrupted=before[H]+b'\n-- mutation'
+          try:patch(corrupted)
+          except AssertionError:pass
+          else:raise AssertionError('MUTANT_BLOB_ACCEPTED')
+          rollback=after.copy();rollback[H]=before[H]
+          assert rollback==before
+          meta=json.loads((Path('/tmp/p0d_rc82_fb003_fb008_sixpack_v1')/'RC_FEATURE_LOCK.json').read_text())
+          assert meta['feature_flags'][FEATURE] is True
+          assert meta['fb008_sixpack']['other81_byte_exact']
+          print('P0D_FB008_SOURCE_REAL82_AUTHOR_6PACK_NEGATIVE_QA_PASS')
+          PY
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 82
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" --place "$PLACE" --count 82 \
+            --receipt "$OUT/FB008_SIXPACK_SOURCE_IDENTITY.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/FB008_ART_SOURCE_ONLY.json"
+          python3 -B art_quality/check_mobile_fun.py --out "$OUT/FB008_MOBILE_FUN_NO_GO.json"
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path('/tmp/p0d_rc82_fb003_fb008_sixpack_receipts')
+          identity=json.loads((out/'FB008_SIXPACK_SOURCE_IDENTITY.json').read_text())
+          art=json.loads((out/'FB008_ART_SOURCE_ONLY.json').read_text())
+          assert identity['source_count']==identity['embedded_count']==82
+          assert identity['all_instance_class_name_path_source_exact']
+          assert identity['all_ancestor_container_class_exact']
+          assert art['source']['source_gate']=='PASS'
+          assert art['art_decision']=='ART_NO_GO'
+          place=out/'P0D_RC82_FB003_FB008_SIXPACK17_PRIVATE_STUDIO.rbxlx'
+          record={
+              'schema':'P0D_FB003_FB008_REAL82_ORIGINAL_AUTHOR_CUMULATIVE_PRIVATE_V1',
+              'official_rc_head':os.environ['GITHUB_SHA'],
+              'source_author_pr':382,
+              'previous_fb003_fixed':True,
+              'modified_source':'server/MusouHorde.luau',
+              'other81_script_byte_exact':True,
+              'minions':16,'elite':1,'sweep_max':6,
+              'real_server_six_ko':'NOT_TESTED',
+              'android15':'NOT_TESTED','fun3':'NOT_TESTED',
+              'source_gate':'PASS','product_quality':'NO_GO',
+              'owner_accepted':False,'not_public':True,
+              'place_bytes':place.stat().st_size,
+              'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest(),
+              'rollback':'remove FB008 overlay; FB003 fixed original 82 remains'
+          }
+          (out/'FB008_RC82_PRIVATE_SOURCE_RECEIPT.json').write_text(json.dumps(record,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_FB008_SOURCE_REAL82_SIXPACK_NATIVE_ROJO_PASS',record['place_bytes'],record['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        with:
+          name: P0D-RC82-FB003-FB008-ORIGINAL17-SIXPACK-PRIVATE-STUDIO-NO-OWNER-GO
+          path: /tmp/p0d_rc82_fb003_fb008_sixpack_receipts/*
+          retention-days: 14
+          if-no-files-found: error
