@@ -201,14 +201,20 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
-          ref: 2738d302e8c732617924bdbd29253dd4727b9bef
+          ref: 3d48167720f6352b659e69dea4aeaf34a8c6fb32
           path: _p0d_existing_quality_source
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 2738d302e8c732617924bdbd29253dd4727b9bef
+          path: _p0d_spectator_quality_source
           persist-credentials: false
       - name: Reuse original quality-writer wind and Builder Q patch (no duplicated Game)
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git -C _p0d_existing_quality_source rev-parse HEAD)" = 2738d302e8c732617924bdbd29253dd4727b9bef
+          test "$(git -C _p0d_existing_quality_source rev-parse HEAD)" = 3d48167720f6352b659e69dea4aeaf34a8c6fb32
           mkdir -p /tmp/p0d_role7_author_input
           cp /tmp/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip /tmp/p0d_role7_author_input/
           (cd /tmp/p0d_role7_author_input && zip -q /tmp/p0d_role7_author_outer.zip P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip)
@@ -220,7 +226,8 @@ jobs:
             --input /tmp/P0D_RC82_ROLE7_WIND_BUILDER_CUMULATIVE_PRIVATE.zip \
             --output /tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip \
             --extract /tmp/p0d_role7_respawn_flat
-          python3 _p0d_existing_quality_source/product_quality/role7_spectator_cumulative.py \
+          test "$(git -C _p0d_spectator_quality_source rev-parse HEAD)" = 2738d302e8c732617924bdbd29253dd4727b9bef
+          python3 _p0d_spectator_quality_source/product_quality/role7_spectator_cumulative.py \
             --parent /tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip \
             --out /tmp/P0D_RC82_FINAL_SPECTATOR_CUMULATIVE_PRIVATE.zip \
             --extract /tmp/p0d_role7_spectator_flat
@@ -319,7 +326,8 @@ jobs:
             'schema':'P0D_V6_REAL_SOURCE_BATCH_V1',
             'original_author_pr':297,'quality_author_pr':471,
             'original_author_sha':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
-            'quality_author_sha':'2738d302e8c732617924bdbd29253dd4727b9bef',
+            'quality_author_sha':'3d48167720f6352b659e69dea4aeaf34a8c6fb32',
+            'spectator_author_sha':'2738d302e8c732617924bdbd29253dd4727b9bef',
             'official_parent':'d2f3ed1a47558fdaf07be0181c83c698bdb2ce34',
             'real_private_place_bytes':779055,
             'real_private_place_sha256':'bbb9c919cb11cfc5147a75a9d8f8e770eb5a7d540acfffeb650010f5710e0d1c',
