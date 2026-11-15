@@ -201,14 +201,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
-          ref: 3d48167720f6352b659e69dea4aeaf34a8c6fb32
+          ref: 2738d302e8c732617924bdbd29253dd4727b9bef
           path: _p0d_existing_quality_source
           persist-credentials: false
       - name: Reuse original quality-writer wind and Builder Q patch (no duplicated Game)
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git -C _p0d_existing_quality_source rev-parse HEAD)" = 3d48167720f6352b659e69dea4aeaf34a8c6fb32
+          test "$(git -C _p0d_existing_quality_source rev-parse HEAD)" = 2738d302e8c732617924bdbd29253dd4727b9bef
           mkdir -p /tmp/p0d_role7_author_input
           cp /tmp/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip /tmp/p0d_role7_author_input/
           (cd /tmp/p0d_role7_author_input && zip -q /tmp/p0d_role7_author_outer.zip P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip)
@@ -220,18 +220,24 @@ jobs:
             --input /tmp/P0D_RC82_ROLE7_WIND_BUILDER_CUMULATIVE_PRIVATE.zip \
             --output /tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip \
             --extract /tmp/p0d_role7_respawn_flat
+          python3 _p0d_existing_quality_source/product_quality/role7_spectator_cumulative.py \
+            --parent /tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip \
+            --out /tmp/P0D_RC82_FINAL_SPECTATOR_CUMULATIVE_PRIVATE.zip \
+            --extract /tmp/p0d_role7_spectator_flat
           python3 - <<'PY'
           import json,zipfile,hashlib,xml.etree.ElementTree as E
           from pathlib import Path
           from collections import Counter
-          b=Path('/tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip').read_bytes()
-          with zipfile.ZipFile('/tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip') as z:
-              xml=z.read('COMPOSED_ROLE7_WIND_BUILDERQ_DELAYED_SAFE_RC82.rbxlx')
+          b=Path('/tmp/P0D_RC82_FINAL_SPECTATOR_CUMULATIVE_PRIVATE.zip').read_bytes()
+          with zipfile.ZipFile('/tmp/P0D_RC82_FINAL_SPECTATOR_CUMULATIVE_PRIVATE.zip') as z:
+              xml=z.read('P0D_ROLE7_ACK_WIND_BUILDER_COMBO_RESPAWN_SPECTATOR_RC82.rbxlx')
               sl=json.loads(z.read('SOURCE_LOCK.json'));fl=json.loads(z.read('RC_FEATURE_LOCK.json'))
               receipt=json.loads(z.read('RECEIPT.json'))
           assert receipt['product']=='NO_GO' and receipt['official_rc_write']==False
-          assert receipt['new_game_blob']=='00fab56c721145688a34ba2825babd7bac351fbb'
-          assert len(xml)==778612 and hashlib.sha256(xml).hexdigest()=='f6cc936a17b10d7cbfb1eb31718025a6fe21346160cacea8d58e8e52d93eb542'
+          assert receipt['new_game_blob']=='6848da45a10242e5908a102bd9db47b9d3f30023'
+          assert receipt['egg_score_authority_byte_exact'] is True
+          assert receipt['quality_fixes']==['late_join','horde_eligible','elite_spectator','flag_off_readmission','private_observer_spawn']
+          assert len(xml)==779055 and hashlib.sha256(xml).hexdigest()=='bbb9c919cb11cfc5147a75a9d8f8e770eb5a7d540acfffeb650010f5710e0d1c'
           out=Path('/tmp/p0d_role7_cumulative82')
           root=E.fromstring(xml)
           scripts=[]
@@ -259,10 +265,14 @@ jobs:
             'ServerScriptService':{'$className':'ServerScriptService','TrapRaidersS1':{'$path':'src/ServerScriptService/TrapRaidersS1'}},
             'StarterPlayer':{'$className':'StarterPlayer','StarterPlayerScripts':{'$path':'src/StarterPlayer/StarterPlayerScripts'}}}}
           (out/'default.project.json').write_text(json.dumps(project,indent=2))
-          assert any('sevenJobPickAckSeq[player]~=selectedAck' in p.read_text('utf-8') for p in [Path('/tmp/p0d_role7_respawn_flat/Game.luau')])
-          assert 'player.Character~=castCharacter' in Path('/tmp/p0d_role7_respawn_flat/Game.luau').read_text('utf-8')
-          assert 'getTeamName(player)~=castTeam' in Path('/tmp/p0d_role7_respawn_flat/Game.luau').read_text('utf-8')
-          print('ORIGINAL_AUTHOR_PLUS_QUALITY_COMPOSED_SOURCE_LOCK_82_OF_82_PASS')
+          assert any('sevenJobPickAckSeq[player]~=selectedAck' in p.read_text('utf-8') for p in [Path('/tmp/p0d_role7_spectator_flat/Game.luau')])
+          final=Path('/tmp/p0d_role7_spectator_flat/Game.luau').read_text('utf-8')
+          for phrase in ('player.Character~=castCharacter','getTeamName(player)~=castTeam',
+                         'horde:tick(now,eligibleSoloPlayers(),healthy)',
+                         'victim:GetAttribute("P0D_LateJoinSpectator")~=true',
+                         'or #eligibleSoloPlayers()<#Players:GetPlayers() then'):
+              assert phrase in final,phrase
+          print('ORIGINAL_AUTHOR_PLUS_SPECTATOR_NATIVE_READY_SOURCE_LOCK_82_PASS')
           PY
       - name: Native Luau all 82 of cumulative role7 + wind + Builder Q source
         shell: bash
@@ -309,15 +319,15 @@ jobs:
             'schema':'P0D_V6_REAL_SOURCE_BATCH_V1',
             'original_author_pr':297,'quality_author_pr':471,
             'original_author_sha':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
-            'quality_author_sha':'3d48167720f6352b659e69dea4aeaf34a8c6fb32',
+            'quality_author_sha':'2738d302e8c732617924bdbd29253dd4727b9bef',
             'official_parent':'d2f3ed1a47558fdaf07be0181c83c698bdb2ce34',
-            'real_private_place_bytes':778612,
-            'real_private_place_sha256':'f6cc936a17b10d7cbfb1eb31718025a6fe21346160cacea8d58e8e52d93eb542',
+            'real_private_place_bytes':779055,
+            'real_private_place_sha256':'bbb9c919cb11cfc5147a75a9d8f8e770eb5a7d540acfffeb650010f5710e0d1c',
             'source_scripts':82,'native_luau':True,'rojo_source_parity':True,
             'source_lock':True,'source_diff_stage':'private_source_candidate',
             'studio_2client':'NOT_RUN','android':'NOT_RUN',
             'official_rc_adopted':False,'owner_acceptance':False,'product_pass':False,
-            'changes':'P0D-008 role ACK + adaptive wind + builder Q cooldown + combo expiry + delayed Q selection/respawn guard',
+            'changes':'Role ACK, adaptive wind, builder Q, combo expiry, delayed respawn Q, spectator late join and Horde targeting',
             'rollback':'Exact official source d2f3ed1a47558fdaf07be0181c83c698bdb2ce34',
           },ensure_ascii=False,indent=2)+'\n')
           PY
@@ -330,5 +340,6 @@ jobs:
             /tmp/role7_rc82_receipt.log
             /tmp/P0D_RC82_ROLE7_WIND_BUILDER_CUMULATIVE_PRIVATE.zip
             /tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip
+            /tmp/P0D_RC82_FINAL_SPECTATOR_CUMULATIVE_PRIVATE.zip
             /tmp/P0D_V6_CUMULATIVE_INTAKE_RECEIPT.json
           retention-days: 7
