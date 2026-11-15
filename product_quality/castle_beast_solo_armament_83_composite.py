@@ -121,7 +121,17 @@ def build(parent,out,extract_dir=None):
     lock["blobs"][MODULE]=feature["source_gitblobs"][MODULE]=MOD_BLOB
     lock["total_scripts"]=83
     feature["total_sources"]=83
-    verify(final,lock,feature)
+    # The legacy role7_respawn_guard.verify intentionally enforces EXACTLY 82.
+    # This one-time real new ModuleScript requires a strict *83*-source lock.
+    from collections import Counter
+    if lock.get("total_scripts")!=83 or feature.get("total_sources")!=83:
+        raise ValueError("NEW_83_SCRIPT_COUNT_LOCK_DRIFT")
+    if lock.get("blobs")!=feature.get("source_gitblobs") or len(lock["blobs"])!=83:
+        raise ValueError("NEW_83_DUAL_SOURCE_LOCK_DRIFT")
+    if Counter(blob(n.text) for n in after.values())!=Counter(lock["blobs"].values()):
+        raise ValueError("NEW_83_GAME_SOURCE_BLOB_DRIFT")
+    if len({name for name in after})!=83 or after["SevenJobArmamentM1"].text!=module:
+        raise ValueError("NEW_83_MODULE_IDENTITY_DRIFT")
     report={"schema":"P0D_FB020_CASTLE_BEAST_SOLO_ALL_SEVEN_WEAPONS_REAL83",
         "official_rc_head":RC,"official_rc_write":False,
         "source_parent_sha256":PARENT_SHA,"place_sha256":sha(final),
