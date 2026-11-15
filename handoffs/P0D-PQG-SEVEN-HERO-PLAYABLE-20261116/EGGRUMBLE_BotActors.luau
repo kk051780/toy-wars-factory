@@ -65,6 +65,16 @@ local function desiredTarget(session:any,mode:string,my:any):any
  end
  return target
 end
+local function clearHeroStrike(actor:Model,target:Model,origin:Vector3,destination:Vector3):boolean
+ local delta=destination-origin
+ if delta.Magnitude<=0.01 then return true end
+ local params=RaycastParams.new()
+ params.FilterType=Enum.RaycastFilterType.Exclude
+ params.FilterDescendantsInstances={actor,target}
+ params.RespectCanCollide=true
+ -- A solid castle core, wall, or gate must prevent a bot hero strike.
+ return workspace:Raycast(origin,delta,params)==nil
+end
 local function tryHeroAttack(actor:Model,my:any,session:any,lastHit:{[string]:number}):boolean
  local at=actor:GetPivot().Position
  local now=os.clock()
@@ -76,7 +86,8 @@ local function tryHeroAttack(actor:Model,my:any,session:any,lastHit:{[string]:nu
    local character=player.Character
    local root=character and character:FindFirstChild("HumanoidRootPart")::BasePart?
    local h=character and character:FindFirstChildOfClass("Humanoid")
-   if root and h and h.Health>0 and (root.Position-at).Magnitude<11 then
+   if character and root and h and h.Health>0 and (root.Position-at).Magnitude<11
+    and clearHeroStrike(actor,character,at+Vector3.new(0,1.5,0),root.Position+Vector3.new(0,1,0)) then
     lastHit[my.id]=now
     h:TakeDamage(BOT_HERO_DAMAGE)
     return true
@@ -85,31 +96,44 @@ local function tryHeroAttack(actor:Model,my:any,session:any,lastHit:{[string]:nu
  end
  return false
 end
-local function steeringStep(model:Model,target:Vector3,dt:number,actorFolder:Instance):number
+local function planarDistance(a:Vector3,b:Vector3):number
+ return (Vector3.new(a.X,0,a.Z)-Vector3.new(b.X,0,b.Z)).Magnitude
+end
+
+local function steeringStep(model:Model,target:Vector3,dt:number,_folder:Instance):number
  local current=model:GetPivot().Position
  local horizontal=Vector3.new(target.X-current.X,0,target.Z-current.Z)
  local distance=horizontal.Magnitude
  if distance<=.05 then return distance end
  local direction=horizontal.Unit
  local forwardDistance=math.min(AI_SPEED*dt,distance)
- -- This preview has only very simple static steering; pathfinding is still required
- -- for a production map with tunnels, traversable castle entrances and mountains.
- local yaw=CFrame.lookAt(current,current+direction)
- local next=Vector3.new(current.X+direction.X*forwardDistance,current.Y,current.Z+direction.Z*forwardDistance)
- -- Avoid walking through a solid world obstacle where possible. If blocked,
- -- try a lateral bypass; never grant an action just for being stuck.
  local params=RaycastParams.new()
  params.FilterType=Enum.RaycastFilterType.Exclude
- params.FilterDescendantsInstances={actorFolder}
+ params.FilterDescendantsInstances={model}
  params.RespectCanCollide=true
- local origin=current+Vector3.new(0,2,0)
- local collision=workspace:Raycast(origin,direction*math.max(5,forwardDistance+2),params)
- if collision and collision.Instance.CanCollide then
-  local lateral=Vector3.new(-direction.Z,0,direction.X)
-  next=Vector3.new(current.X+lateral.X*forwardDistance,current.Y,current.Z+lateral.Z*forwardDistance)
-  yaw=CFrame.lookAt(current,current+lateral)
+ local resultPivot:CFrame?=nil
+ local function tryStep(heading:Vector3):boolean
+  local delta=heading*forwardDistance
+  local ahead=workspace:Raycast(current+Vector3.new(0,1,0),delta+heading*1.4,params)
+  if ahead~=nil then return false end
+  local nextXZ=current+delta
+  -- Anchored preview actors still need physical support: no walking over a gap,
+  -- up a steep wall or through the roof. A shared 2D arena floor is not assumed.
+  local support=workspace:Raycast(nextXZ+Vector3.new(0,6,0),Vector3.new(0,-19,0),params)
+  if support==nil or support.Normal.Y<.65 or not support.Instance.Anchored then return false end
+  local nextY=support.Position.Y+2.4
+  if math.abs(nextY-current.Y)>7.5 then return false end
+  local next=Vector3.new(nextXZ.X,nextY,nextXZ.Z)
+  resultPivot=CFrame.lookAt(next,next+heading)
+  return true
  end
- model:PivotTo(CFrame.new(next)*yaw.Rotation)
+ local advanced=tryStep(direction)
+ if not advanced then
+  local lateral=Vector3.new(-direction.Z,0,direction.X)
+  advanced=tryStep(lateral)
+  if not advanced then advanced=tryStep(-lateral) end
+ end
+ if resultPivot~=nil then model:PivotTo(resultPivot) end
  return distance
 end
 function BotActors.start(session:any,Rules:any):()
@@ -122,12 +146,14 @@ function BotActors.start(session:any,Rules:any):()
  local lastHit:{[string]:number}={}
  local deaths:{[string]:number}={}
  local goals:{[string]:string}={}
+ local raidStage:{[string]:number}={}
+ local raidTargetOwner:{[string]:string}={}
  -- True 3D actor models, not just logical AI roster entries.
  for _,entry in ipairs(session.roster) do
   if entry.isAI then
    local pos=session.castleLocations[entry.id]
    if pos then
-    bots[entry.id]=spawnActor(actors,entry.id,pos+Vector3.new(0,5,-34),entry.team)
+    bots[entry.id]=spawnActor(actors,entry.id,pos+Vector3.new(0,-3,-34),entry.team)
    end
   end
  end
@@ -142,12 +168,15 @@ function BotActors.start(session:any,Rules:any):()
       if hum.Health<=0 then
        if not deaths[id] then deaths[id]=now+BOT_REBIRTH end
        if now>=deaths[id] then
-        hum.Health=hum.MaxHealth;deaths[id]=nil
+        deaths[id]=nil
+        raidStage[id]=nil;raidTargetOwner[id]=nil
         local home=session.castleLocations[id]
-        if home then actor:PivotTo(CFrame.new(home+Vector3.new(0,5,-34))) end
+        actor:Destroy()
+        if home then bots[id]=spawnActor(actors,id,home+Vector3.new(0,-3,-34),me.team) end
        end
       else
        tryHeroAttack(actor,me,session,lastHit)
+       if session.swarm then session.swarm.damageFromBot(id,actor:GetPivot().Position) end
        local enemy=desiredTarget(session,mode,me)
        if enemy then
         local own=session.castleLocations[id]
@@ -155,12 +184,29 @@ function BotActors.start(session:any,Rules:any):()
         if own and enemyLoc then
          local goHome=me.heldEggs>0
          local hasEgg=enemy.vaultEggs>0
-         local front=enemyLoc+Vector3.new(20,3,-20)
-         local raidTarget=enemyLoc+Vector3.new(18,3,9) -- outside the solid core, next to EggVault
-         local nearFront=(Vector3.new(actor:GetPivot().Position.X,0,actor:GetPivot().Position.Z)-Vector3.new(front.X,0,front.Z)).Magnitude<18
-         local goal=if goHome then own+Vector3.new(-16,3,-18)
-          elseif hasEgg then (if nearFront then raidTarget else front)
-          else enemyLoc+Vector3.new(0,3,-12)
+         -- Approach enemy vault along its exterior, not through the solid 26x22 core.
+         -- Three physical waypoints prevent an instant through-wall egg steal.
+         local front=enemyLoc+Vector3.new(0,3,-27)
+         local flank=enemyLoc+Vector3.new(20,3,-18)
+         local raid=enemyLoc+Vector3.new(20,3,9)
+         local goal:Vector3
+         if goHome then
+          raidStage[id]=nil;raidTargetOwner[id]=nil
+          goal=own+Vector3.new(-16,3,-18)
+         elseif hasEgg then
+          if raidTargetOwner[id]~=enemy.id then
+           raidTargetOwner[id]=enemy.id;raidStage[id]=1
+          end
+          local stage=raidStage[id] or 1
+          local here=actor:GetPivot().Position
+          if stage==1 and planarDistance(here,front)<=9 then stage=2 end
+          if stage==2 and planarDistance(here,flank)<=9 then stage=3 end
+          raidStage[id]=stage
+          goal=if stage==1 then front elseif stage==2 then flank else raid
+         else
+          raidStage[id]=nil;raidTargetOwner[id]=nil
+          goal=enemyLoc+Vector3.new(0,3,-12)
+         end
          goals[id]=if goHome then "RETURN" elseif hasEgg then "STEAL" else "SIEGE"
          local dist=steeringStep(actor,goal,AI_TICK,actors)
          local label=actor:FindFirstChild("Head") and actor.Head:FindFirstChild("BotObjective")
@@ -171,10 +217,11 @@ function BotActors.start(session:any,Rules:any):()
          -- A bot cannot steal eggs, deposit them or attack from across the map.
          local at=actor:GetPivot().Position
          local actualTarget=if goHome then own+Vector3.new(-16,3,-18)
-          elseif hasEgg then raidTarget
+          elseif hasEgg then raid
           else enemyLoc+Vector3.new(0,3,-12)
-         local actualDist=(Vector3.new(at.X,0,at.Z)-Vector3.new(actualTarget.X,0,actualTarget.Z)).Magnitude
-         if actualDist<=ACTION_DISTANCE then
+         local actualDist=planarDistance(at,actualTarget)
+         -- Reaching the castle front alone is insufficient; traverse the flank first.
+         if actualDist<=ACTION_DISTANCE and (goHome or not hasEgg or raidStage[id]==3) then
           if goHome then
            pcall(function() Rules.depositEggs(session.rules,id,me.heldEggs) end)
           elseif hasEgg then
@@ -203,5 +250,15 @@ function BotActors.start(session:any,Rules:any):()
  end)
  session.botActors=bots
  session.botObjectives=goals
+ session.takeover=function(id:string):boolean
+  local state=session.rules.castles[id]
+  if not state or not state.alive or bots[id] then return false end
+  local home=session.castleLocations[id]
+  if not home then return false end
+  -- Keep the disconnected player's castle in the match under equal-budget AI defense.
+  state.isAI=true
+  bots[id]=spawnActor(actors,id,home+Vector3.new(0,-3,-34),state.team)
+  return true
+ end
 end
 return BotActors

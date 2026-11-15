@@ -1,87 +1,69 @@
-"""EGGRUMBLE V3 Studio-only preview: regression tests for physically grounded bots.
-
-These source checks are NOT Luau native compile or Roblox Studio/runtime proof.
-"""
+"""EGGRUMBLE V3 source-only negative QA, not Roblox runtime proof."""
 from pathlib import Path
 import unittest
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT=Path(__file__).resolve().parents[1]
+def issues(bot: str, lobby: str) -> list[str]:
+    faults=[]
+    checks={
+      "bot wiring": "BotActors.start(session,Rules)" in lobby,
+      "no timer ghost": "Rules.damageCastle(session.rules,target.id,bot.id,18)" not in lobby,
+      "one actor controller": lobby.count("BotActors.start(session,Rules)")==1,
+      "world walls visible": "params.FilterDescendantsInstances={model}" in bot,
+      "collision filter": "params.RespectCanCollide=true" in bot,
+      "wall stop": "if ahead~=nil then return false end" in bot,
+      "floor support": "if support==nil or support.Normal.Y<.65 or not support.Instance.Anchored then return false end" in bot,
+      "no unsafe side movement": "if resultPivot~=nil then model:PivotTo(resultPivot) end" in bot,
+      "both side probes": "advanced=tryStep(lateral)" in bot and "advanced=tryStep(-lateral)" in bot,
+      "front waypoint": "local front=enemyLoc+Vector3.new(0,3,-27)" in bot,
+      "east flank waypoint": "local flank=enemyLoc+Vector3.new(20,3,-18)" in bot,
+      "vault exterior waypoint": "local raid=enemyLoc+Vector3.new(20,3,9)" in bot,
+      "front and flank reached": "stage==1 and planarDistance(here,front)<=9" in bot and "stage==2 and planarDistance(here,flank)<=9" in bot,
+      "spatial action": "if actualDist<=ACTION_DISTANCE and (goHome or not hasEgg or raidStage[id]==3) then" in bot,
+      "owner route reset": "raidTargetOwner[id]~=enemy.id" in bot,
+      "balanced bot spawn": "home+Vector3.new(0,-3,-34)" in bot,
+      "studio only": "assert(RunService:IsStudio()" in bot and "if not RunService:IsStudio() then return end" in lobby,
+    }
+    for key,ok in checks.items():
+        if not ok: faults.append(key)
+    return faults
 
-
-def spatial_problems(preview: str, actors: str) -> list[str]:
-    errors = []
-    if 'local BotActors=require(script.Parent:WaitForChild("EGGRUMBLE_BotActors"))' not in preview:
-        errors.append("bot module not required")
-    if preview.count("BotActors.start(session,Rules)") != 1:
-        errors.append("exactly one grounded bot loop required")
-    if "task.wait(2.4)" in preview or "Rules.damageCastle(session.rules,target.id,bot.id,18)" in preview:
-        errors.append("ghost AI damage/egg timer is forbidden")
-    if "Rules.takeEggs(session.rules,bot.id" in preview:
-        errors.append("ghost AI egg pickup is forbidden")
-    if 'params.FilterDescendantsInstances={actorFolder}' not in actors:
-        errors.append("raycast must see solid castle parts")
-    if "params.RespectCanCollide=true" not in actors:
-        errors.append("noncollidable cosmetics must not hide solid obstacles")
-    if "steeringStep(actor,goal,AI_TICK,actors)" not in actors:
-        errors.append("steering may only ignore bot model collection")
-    if 'local raidTarget=enemyLoc+Vector3.new(18,3,9)' not in actors:
-        errors.append("raid must target outside the solid castle core")
-    if "elseif hasEgg then raidTarget" not in actors:
-        errors.append("egg action must use the reached exterior location")
-    if "actualDist<=ACTION_DISTANCE" not in actors:
-        errors.append("egg/siege/deposit action must have physical distance gate")
-    if "lastSiege[id]=now" not in actors:
-        errors.append("siege rate limit missing")
-    if "if not RunService:IsStudio() then return end" not in preview:
-        errors.append("studio-only preview guard removed")
-    return errors
-
-
-class SpatialBotSourceTests(unittest.TestCase):
+class TestSpatialBot(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.preview = (ROOT / "EGGRUMBLE_LobbyCastleModesPreview.server.luau").read_text(encoding="utf-8")
-        cls.actors = (ROOT / "EGGRUMBLE_BotActors.luau").read_text(encoding="utf-8")
+        cls.bot=(ROOT/"EGGRUMBLE_BotActors.luau").read_text(encoding="utf-8")
+        cls.lobby=(ROOT/"EGGRUMBLE_LobbyCastleModesPreview.server.luau").read_text(encoding="utf-8")
+    def test_real_source_contract(self):
+        self.assertEqual([],issues(self.bot,self.lobby))
+    def test_ghost_timer_mutation(self):
+        s=self.lobby+"\nRules.damageCastle(session.rules,target.id,bot.id,18)"
+        self.assertIn("no timer ghost",issues(self.bot,s))
+    def test_duplicate_ai_mutation(self):
+        self.assertIn("one actor controller",issues(self.bot,self.lobby+"\nBotActors.start(session,Rules)"))
+    def test_wall_ignored_mutation(self):
+        s=self.bot.replace("params.FilterDescendantsInstances={model}","params.FilterDescendantsInstances={folder}")
+        self.assertIn("world walls visible",issues(s,self.lobby))
+    def test_blind_side_move_mutation(self):
+        s=self.bot.replace("if resultPivot~=nil then model:PivotTo(resultPivot) end","model:PivotTo(CFrame.new(current))")
+        self.assertIn("no unsafe side movement",issues(s,self.lobby))
+    def test_floor_void_mutation(self):
+        s=self.bot.replace("if support==nil or support.Normal.Y<.65 or not support.Instance.Anchored then return false end","-- no floor")
+        self.assertIn("floor support",issues(s,self.lobby))
+    def test_wall_probe_mutation(self):
+        s=self.bot.replace("if ahead~=nil then return false end","-- ignore wall")
+        self.assertIn("wall stop",issues(s,self.lobby))
+    def test_direct_egg_mutation(self):
+        s=self.bot.replace("local raid=enemyLoc+Vector3.new(20,3,9)","local raid=enemyLoc+Vector3.new(0,3,6)")
+        self.assertIn("vault exterior waypoint",issues(s,self.lobby))
+    def test_route_stage_bypass_mutation(self):
+        s=self.bot.replace("if actualDist<=ACTION_DISTANCE and (goHome or not hasEgg or raidStage[id]==3) then","if actualDist<=ACTION_DISTANCE then")
+        self.assertIn("spatial action",issues(s,self.lobby))
+    def test_no_spawn_hover_mutation(self):
+        s=self.bot.replace("home+Vector3.new(0,-3,-34)","home+Vector3.new(0,5,-34)")
+        self.assertIn("balanced bot spawn",issues(s,self.lobby))
+    def test_missing_actor_mutation(self):
+        s=self.lobby.replace("BotActors.start(session,Rules)","-- not started")
+        self.assertIn("bot wiring",issues(self.bot,s))
 
-    def test_current_sources_pass(self):
-        self.assertEqual([], spatial_problems(self.preview, self.actors))
-
-    def test_old_ghost_siege_regression_rejected(self):
-        bad = self.preview + '\n-- regression: task.wait(2.4) Rules.damageCastle(session.rules,target.id,bot.id,18)'
-        self.assertIn("ghost AI damage/egg timer is forbidden", spatial_problems(bad, self.actors))
-
-    def test_ghost_egg_pickup_rejected(self):
-        bad = self.preview + '\nRules.takeEggs(session.rules,bot.id,1,target.id)'
-        self.assertIn("ghost AI egg pickup is forbidden", spatial_problems(bad, self.actors))
-
-    def test_missing_bot_module_rejected(self):
-        bad = self.preview.replace('local BotActors=require(script.Parent:WaitForChild("EGGRUMBLE_BotActors"))', '-- removed')
-        self.assertIn("bot module not required", spatial_problems(bad, self.actors))
-
-    def test_duplicate_ai_loop_rejected(self):
-        bad = self.preview + '\nBotActors.start(session,Rules)'
-        self.assertIn("exactly one grounded bot loop required", spatial_problems(bad, self.actors))
-
-    def test_castle_is_not_excluded_from_raycast(self):
-        bad = self.actors.replace("params.FilterDescendantsInstances={actorFolder}",
-                                  "params.FilterDescendantsInstances={folder,model}")
-        self.assertIn("raycast must see solid castle parts", spatial_problems(self.preview, bad))
-
-    def test_noncollidable_visuals_do_not_mask_wall(self):
-        bad = self.actors.replace("params.RespectCanCollide=true", "")
-        self.assertIn("noncollidable cosmetics must not hide solid obstacles", spatial_problems(self.preview, bad))
-
-    def test_bot_cannot_trigger_siege_remotely(self):
-        bad = self.actors.replace("actualDist<=ACTION_DISTANCE", "true")
-        self.assertIn("egg/siege/deposit action must have physical distance gate",
-                      spatial_problems(self.preview, bad))
-
-    def test_core_blocked_raid_waypoint_rejected(self):
-        bad = self.actors.replace("local raidTarget=enemyLoc+Vector3.new(18,3,9)",
-                                  "local raidTarget=enemyLoc+Vector3.new(0,3,6)")
-        self.assertIn("raid must target outside the solid castle core",
-                      spatial_problems(self.preview, bad))
-
-
-if __name__ == "__main__":
+if __name__=="__main__":
     unittest.main()

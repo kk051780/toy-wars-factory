@@ -8,6 +8,7 @@ local Debris=game:GetService("Debris")
 if not RunService:IsStudio() then return end
 local Rules=require(script.Parent:WaitForChild("EGGRUMBLE_CastleMatchRules"))
 local BotActors=require(script.Parent:WaitForChild("EGGRUMBLE_BotActors"))
+local SwarmCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SwarmCombat"))
 local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)::SpawnLocation?
 local root=spawn and spawn.Position or Vector3.new(0,4,0)
 local folder=Instance.new("Folder");folder.Name="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW";folder.Parent=workspace
@@ -36,7 +37,15 @@ local function prompt(at:BasePart,action:string,subject:string,callback:(Player)
  p.Triggered:Connect(callback)
 end
 local function getCastlePoint(mode:string,index:number):Vector3
- local base=root+Vector3.new(mode=="TEAM" and -620 or 620,2,0)
+ if mode=="TEAM" then
+  -- Strict RED west / BLUE east castle districts. Human roster alternates team colors.
+  local isRed=index%2==1
+  local localIndex=math.floor((index-1)/2)
+  local col=localIndex%2;local row=math.floor(localIndex/2)
+  local x=if isRed then -885+col*124 else -475+col*124
+  return root+Vector3.new(x,2,260+row*146)
+ end
+ local base=root+Vector3.new(620,2,0)
  local col=(index-1)%4;local row=math.floor((index-1)/4)
  return base+Vector3.new((col-1.5)*122,0,280+row*112)
 end
@@ -47,9 +56,16 @@ local function createWorldCastle(session:any,entry:any,index:number)
  local side=if session.mode=="TEAM" then entry.team else (if index%2==1 then "RED" else "BLUE")
  local tint=if side=="RED" then Color3.fromRGB(207,92,86) else Color3.fromRGB(87,146,218)
  local ground=block(model,"StandardFoundation",at+Vector3.new(0,-2,0),Vector3.new(72,3,72),tint)
- local core=block(model,"StandardCore",at+Vector3.new(0,6,0),Vector3.new(26,13,22),Color3.fromRGB(172,166,147))
+ -- Hollow, traversable standard castle shell: every owner gets the same entrance and geometry.
+ local core=block(model,"StandardCore",at+Vector3.new(0,14,0),Vector3.new(30,2,27),Color3.fromRGB(172,166,147))
  core.Material=Enum.Material.Brick
- local door=block(model,"SiegeGate",at+Vector3.new(0,4,-12),Vector3.new(10,8,1.5),Color3.fromRGB(96,69,56))
+ local left=block(model,"CastleSideLeft",at+Vector3.new(-15,6,0),Vector3.new(2,12,26),Color3.fromRGB(160,154,145))
+ local right=block(model,"CastleSideRight",at+Vector3.new(15,6,0),Vector3.new(2,12,26),Color3.fromRGB(160,154,145))
+ local back=block(model,"CastleBackWall",at+Vector3.new(0,6,13),Vector3.new(30,12,2),Color3.fromRGB(160,154,145))
+ local frontL=block(model,"CastleFrontLeft",at+Vector3.new(-10,6,-13),Vector3.new(10,12,2),Color3.fromRGB(160,154,145))
+ local frontR=block(model,"CastleFrontRight",at+Vector3.new(10,6,-13),Vector3.new(10,12,2),Color3.fromRGB(160,154,145))
+ local door=block(model,"SiegeGate",at+Vector3.new(0,4,-13),Vector3.new(9,8,1.3),Color3.fromRGB(96,69,56))
+ door.Transparency=.45;door.CanCollide=false -- open gate permits both human and bot approach
  for _,dx in ipairs({-26,26}) do
   for _,dz in ipairs({-26,26}) do
    block(model,"Tower",at+Vector3.new(dx,9,dz),Vector3.new(9,18,9),Color3.fromRGB(137,137,142))
@@ -85,7 +101,7 @@ local function createWorldCastle(session:any,entry:any,index:number)
   local c=session.rules.castles[entry.id]
   if c.alive and c.heldEggs>0 then pcall(function() Rules.depositEggs(session.rules,entry.id,c.heldEggs) end) end
  end)
- local vault=block(model,"EggVault",at+Vector3.new(13,3,9),Vector3.new(6,5,6),Color3.fromRGB(218,181,75))
+ local vault=block(model,"EggVault",at+Vector3.new(0,3,6),Vector3.new(6,5,6),Color3.fromRGB(218,181,75))
  board(vault,"卵倉庫")
  prompt(vault,"敵の卵を奪取","卵3個から1個ずつ",function(p)
   if not session.rules or joined[p.UserId]~=session.mode then return end
@@ -106,9 +122,34 @@ local function startSession(mode:string)
  local roster=Rules.makeRoster(mode,humans,MODE_SEATS)
  local session={
   mode=mode,roster=roster,rules=Rules.new(mode,roster,24),
-  castleLocations={},castleModels={},world=Instance.new("Folder"),
+  castleLocations={},castleModels={},world=Instance.new("Folder"),groundY=root.Y-3,
  }
  session.world.Name=mode.."_Arena";session.world.Parent=folder
+ local worldX=mode=="TEAM" and -620 or 620
+ local floor=block(session.world,"TacticalBattlefield",root+Vector3.new(worldX,-4,465),Vector3.new(890,2,1050),Color3.fromRGB(96,126,83))
+ floor.Material=Enum.Material.Grass
+ -- Moveable routes between personal fortresses; demo geometry only, not a finished detailed terrain.
+ for j=1,3 do
+  -- Three west-east infiltration corridors: northern ridge, river ford and forest flank.
+  local lane=block(session.world,"TacticalRoute_"..j,root+Vector3.new(worldX,-2.75,295+(j-1)*170),
+   Vector3.new(835,.7,23),Color3.fromRGB(152,133,99))
+  lane.Material=Enum.Material.Ground
+ end
+ if mode=="TEAM" then
+  local ridge=block(session.world,"CentralRidge",root+Vector3.new(-620,15,475),
+   Vector3.new(54,34,190),Color3.fromRGB(105,103,93))
+  ridge.Material=Enum.Material.Slate
+  local valley=block(session.world,"ValleyOverlook",root+Vector3.new(-610,5,695),
+   Vector3.new(85,11,30),Color3.fromRGB(118,130,94))
+  valley.Material=Enum.Material.Rock
+  for n=1,7 do
+   local x=-800+(n%4)*38
+   local z=470+math.floor(n/4)*110
+   local tree=block(session.world,"ForestAmbushCover_"..n,root+Vector3.new(x,11,z),
+    Vector3.new(7,24,7),Color3.fromRGB(66,104,65))
+   tree.Material=Enum.Material.Grass
+  end
+ end
  sessions[mode]=session
  for _,entry in ipairs(roster) do
   if not entry.isAI then
@@ -139,6 +180,22 @@ local function startSession(mode:string)
     if t then t.Text=(c.isAI and "AI " or "")..id.."\nHP"..math.floor(c.hp).." / 卵"..c.vaultEggs end
    end
   end
+  for _,player in ipairs(queue) do
+   if player.Parent and joined[player.UserId]==mode then
+    local c=session.rules.castles[tostring(player.UserId)]
+    if c and not c.alive and player:GetAttribute("EGGRUMBLE_Eliminated")~=true then
+     player:SetAttribute("EGGRUMBLE_Eliminated",true)
+     local ch=player.Character
+     local rootPart=ch and ch:FindFirstChild("HumanoidRootPart")::BasePart?
+     if rootPart then rootPart.CFrame=CFrame.new(root+Vector3.new(0,12,-35)) end
+     local backpack=player:FindFirstChildOfClass("Backpack")
+     if backpack then
+      local tool=backpack:FindFirstChild("EGGRUMBLE_TestBlade")
+      if tool then tool:Destroy() end
+     end
+    end
+   end
+  end
   if session.rules.winner~=nil then
    print("[EGGRUMBLE "..mode.."] Castle elimination winner:",session.rules.winner)
   end
@@ -146,7 +203,9 @@ local function startSession(mode:string)
  for idx,entry in ipairs(roster) do createWorldCastle(session,entry,idx) end
  -- Field eggs available in both modes, not single/multi mode toggles.
  for i=1,24 do
-  local at=getCastlePoint(mode,1)+Vector3.new((i%6)*40-115,2,math.floor(i/6)*55+230)
+  local col=(i-1)%8;local row=math.floor((i-1)/8)
+  local worldX=mode=="TEAM" and -620 or 620
+  local at=root+Vector3.new(worldX+(col-3.5)*93,3,290+row*200)
   local egg=block(session.world,"FieldEgg_"..i,at,Vector3.new(2.6,3.3,2.6),Color3.fromRGB(238,214,108))
   egg.Shape=Enum.PartType.Ball
   prompt(egg,"卵を拾う","フィールドの卵",function(p)
@@ -162,9 +221,63 @@ local function startSession(mode:string)
    if rootPart and idx then rootPart.CFrame=CFrame.new(getCastlePoint(mode,idx)+Vector3.new(0,7,-45)) end
   end
  end
- -- Existing bot-actor module owns the ONLY AI combat/egg/siege loop.
- -- Never advance castle damage or eggs from a timer without spatial movement.
+ -- Actual anchored 3D bot actors roam between castles and must reach their goal
+ -- before stealing/depositing eggs or damaging the castle. No remote numerical sieges.
  BotActors.start(session,Rules)
+ SwarmCombat.start(session)
+ for _,p in ipairs(queue) do
+  if p.Parent and joined[p.UserId]==mode then
+   local backpack=p:FindFirstChildOfClass("Backpack")
+   if backpack then
+    local tool=Instance.new("Tool");tool.Name="EGGRUMBLE_TestBlade"
+    tool.CanBeDropped=false;tool.RequiresHandle=true
+    local grip=Instance.new("Part");grip.Name="Handle";grip.Size=Vector3.new(.5,3.8,.4)
+    grip.Material=Enum.Material.Metal;grip.Color=Color3.fromRGB(251,216,135);grip.Parent=tool
+    local lastAttack=0
+    tool.Activated:Connect(function()
+     if joined[p.UserId]~=mode or session.rules.phase~="ACTIVE" then return end
+     local my=session.rules.castles[tostring(p.UserId)]
+     if not my or not my.alive or os.clock()-lastAttack<.45 then return end
+     local character=p.Character
+     local rootPart=character and character:FindFirstChild("HumanoidRootPart")::BasePart?
+     if not character or not rootPart then return end
+     lastAttack=os.clock()
+     local affected=0
+     -- Never let a human strike an AI through a collidable castle wall or gate.
+     local swordRay=RaycastParams.new()
+     swordRay.FilterType=Enum.RaycastFilterType.Exclude
+     swordRay.FilterDescendantsInstances={character}
+     swordRay.RespectCanCollide=true
+     local tier=p:GetAttribute("EGGRUMBLE_SlashEvolution") or "BASE"
+     local length=if tier=="TEMPEST" then 30 elseif tier=="WAVE" then 23 else 15
+     local radius=if tier=="TEMPEST" then 23 elseif tier=="WAVE" then 17 else 11
+     -- The same human attack damages real neutral NPCs; actual Humanoid deaths grant KOs.
+     if session.swarm then
+      session.swarm.damageFromPlayer(p,rootPart.Position+rootPart.CFrame.LookVector*length,
+       radius,if tier=="TEMPEST" then 75 else 38)
+     end
+     for id,actor in pairs(session.botActors or {}) do
+      local c=session.rules.castles[id]
+      local ar=actor and actor.PrimaryPart
+      if c and c.alive and ar and (mode~="TEAM" or c.team~=my.team)
+       and (ar.Position-rootPart.Position).Magnitude<14 then
+       local h=actor:FindFirstChildOfClass("Humanoid")
+       if h and h.Health>0 and affected<3 then
+        local from=rootPart.Position+Vector3.new(0,1,0)
+        local to=ar.Position+Vector3.new(0,1,0)
+        if workspace:Raycast(from,to-from,swordRay)==nil then
+         h:TakeDamage(42)
+         affected+=1
+        end
+       end
+      end
+     end
+    end)
+    tool.Parent=backpack
+   end
+  end
+ end
+
 end
 
 local function joinQueue(mode:string,p:Player)
@@ -200,6 +313,9 @@ Players.PlayerRemoving:Connect(function(p)
   if idx then table.remove(q,idx) end
  end
  chosenDefense[p.UserId]=nil
- -- Production policy must decide whether an active disconnected castle persists under AI.
+ if mode and sessions[mode] and sessions[mode].rules.phase=="ACTIVE" then
+  -- Team match integrity: preserve an active owner's castle and assign AI to defend it.
+  if sessions[mode].takeover then sessions[mode].takeover(tostring(p.UserId)) end
+ end
 end)
-print("[EGGRUMBLE V3] Studio-only two mode gates, bot filling/egg vault/field eggs and castle elimination preview; production teleport & full AI UNIMPLEMENTED")
+print("[EGGRUMBLE V3] Studio-only two mode gates; moving AI actors, shared horde and castle multi-egg combat; real platform matchmaking/production AI UNIMPLEMENTED")
