@@ -192,8 +192,30 @@ function Swarm.start(session:any)
        if delta.Magnitude<best then near=delta;best=delta.Magnitude end
       end
       if near and best>3 then
-       local next=at+near.Unit*math.min(NEUTRAL_SPEED*.38,best)
-       m:PivotTo(CFrame.lookAt(next,next+near.Unit))
+       local travel=math.min(NEUTRAL_SPEED*.38,best)
+       local forward=near.Unit*travel
+       local params=RaycastParams.new()
+       params.FilterType=Enum.RaycastFilterType.Exclude
+       params.FilterDescendantsInstances={all}
+       params.RespectCanCollide=true
+       local origin=at+Vector3.new(0,1,0)
+       local function free(step:Vector3):boolean
+        if step.Magnitude<=.01 then return false end
+        return workspace:Raycast(origin,step+step.Unit*.35,params)==nil
+       end
+       local chosen:Vector3?=nil
+       if free(forward) then
+        chosen=forward
+       else
+        -- NPCs take a small sidestep, never ghost through a solid gate or wall.
+        local sideways=Vector3.new(-near.Unit.Z,0,near.Unit.X)*travel
+        if free(sideways) then chosen=sideways
+        elseif free(-sideways) then chosen=-sideways end
+       end
+       if chosen then
+        local next=at+chosen
+        m:PivotTo(CFrame.lookAt(next,next+near.Unit))
+       end
       end
      end
     end
