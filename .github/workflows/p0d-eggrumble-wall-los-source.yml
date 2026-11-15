@@ -1,0 +1,25 @@
+name: P0D EGGRUMBLE wall line-of-sight SOURCE regression
+on:
+  pull_request:
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/**'
+      - '.github/workflows/p0d-eggrumble-wall-los-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: p0d-eggrumble-los-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  source-wall-los:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Regression for real 3D AI/human strikes blocked by solid castle walls
+        run: |
+          python3 -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_bot_hero_line_of_sight_contract.py' -v
+      - name: Report engine proof boundary
+        run: |
+          echo 'SOURCE test only. Native Luau / Roblox Studio / Android / #420 / OWNER remain NOT_RUN.'
