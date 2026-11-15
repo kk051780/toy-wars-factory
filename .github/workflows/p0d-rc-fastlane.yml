@@ -2847,3 +2847,89 @@ jobs:
           path: /tmp/p0d_private_onehuman_hit_art_evidence82_artifact/*
           retention-days: 14
           if-no-files-found: error
+
+      - name: 'P0 FB003 #470 owner-original Classic+H2 egg prompt fix — real 82-source RC candidate'
+        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_private_onehuman_hit_art_evidence82
+          FINAL=/tmp/p0d_rc82_fb003_egg_controls_v1
+          OUT=/tmp/p0d_rc82_fb003_egg_controls_receipts
+          PLACE="$OUT/P0D_RC82_FB003_EGG_CONTROLS_PRIVATE_STUDIO.rbxlx"
+          test -f "$BASE/SOURCE_LOCK.json"
+          test ! -e "$FINAL"
+          mkdir -p "$OUT"
+          python3 -B rc_fastlane/apply_fb003_prompt_fix.py --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_fb003_prompt_fix.py --base "$BASE" --out "$FINAL" --enabled true
+          python3 - <<'PY'
+          import sys,json
+          from pathlib import Path
+          sys.path.insert(0, 'rc_fastlane')
+          from apply_fb003_prompt_fix import read,blob,patch,GAME,MAP,FEATURE
+          base=Path('/tmp/p0d_private_onehuman_hit_art_evidence82')
+          final=Path('/tmp/p0d_rc82_fb003_egg_controls_v1')
+          original=read(base); fixed=read(final)
+          assert len(original)==len(fixed)==82
+          assert {p for p in original if original[p]!=fixed[p]}=={GAME,MAP}
+          assert fixed==patch(original)
+          for f in ('SOURCE_LOCK.json','RC_FEATURE_LOCK.json'):
+              o=json.loads((final/f).read_text())
+              assert 'source_gitblobs' in o or 'blobs' in o
+          m=fixed[MAP].decode();g=fixed[GAME].decode()
+          assert 'p.HoldDuration = 0' in m and 'p.MaxActivationDistance = 12' in m
+          assert g.count('def.prompt.KeyboardKeyCode=Enum.KeyCode.E')==2
+          assert g.count('def.prompt.KeyboardKeyCode=Enum.KeyCode.F')==1
+          assert g.count('def.prompt.GamepadKeyCode=Enum.KeyCode.ButtonY')==1
+          assert original[GAME].count(b'H2Score.deposit(')==fixed[GAME].count(b'H2Score.deposit(')==1
+          assert original[GAME].count(b'remote.OnServerEvent:Connect(')==fixed[GAME].count(b'remote.OnServerEvent:Connect(')==1
+          corrupted=dict(original);corrupted[GAME]+=b'\n-- mutation'
+          try:patch(corrupted)
+          except AssertionError:pass
+          else:raise AssertionError('MUTANT_SOURCE_NOT_REJECTED')
+          print('FB003_OWNER_REAL82_SOURCE_PATCH_NEGATIVE_QA_PASS')
+          PY
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 82
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" --place "$PLACE" --count 82 \
+            --receipt "$OUT/REAL_FB003_SOURCE_IDENTITY.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/ART_SOURCE_ONLY.json"
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path('/tmp/p0d_rc82_fb003_egg_controls_receipts')
+          src=json.loads((out/'REAL_FB003_SOURCE_IDENTITY.json').read_text())
+          art=json.loads((out/'ART_SOURCE_ONLY.json').read_text())
+          assert src['source_count']==src['embedded_count']==82
+          assert src['all_instance_class_name_path_source_exact']
+          assert src['all_ancestor_container_class_exact']
+          assert art['source']['source_gate']=='PASS'
+          assert art['art_decision']=='ART_NO_GO'
+          place=out/'P0D_RC82_FB003_EGG_CONTROLS_PRIVATE_STUDIO.rbxlx'
+          receipt={'schema':'FB003_OWNER_REAL_SOURCE_EGG_FIX_PRIVATE_V1',
+                   'official_rc_head':os.environ['GITHUB_SHA'],
+                   'changed_sources':['server/Game.server.luau','server/MapBuilder.luau'],
+                   'other80_byte_exact':True,'source_count':82,
+                   'native_luau':'PASS','rojo_source_identity':'PASS',
+                   'actual_owner_studio_egg_pickup_score':'NOT_TESTED',
+                   'android':'NOT_TESTED','product_quality':'NO_GO',
+                   'owner_accepted':False,'place_bytes':place.stat().st_size,
+                   'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest()}
+          (out/'FB003_OWNER_FIX_RC_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_FB003_REAL82_EGG_PROMPT_FIXED_PLACE_SOURCE_PASS',receipt['place_bytes'],receipt['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        with:
+          name: P0D-RC82-FB003-EGG-INTERACTION-FIX-PRIVATE-STUDIO-NO-OWNER-GO
+          path: /tmp/p0d_rc82_fb003_egg_controls_receipts/*
+          retention-days: 14
+          if-no-files-found: error
