@@ -69,7 +69,7 @@ class VisualLayersSourceContract(unittest.TestCase):
         self.assertIn('"EGGRUMBLE_RoleVisuals"', HERO)
         self.assertIn('"EGGRUMBLE_BotVisuals"', HERO)
         self.assertIn('"EGGRUMBLE_FlagshipLandscape_VisualOnly"', FIELD)
-        self.assertIn('art:Destroy()', HERO)
+        self.assertIn('existing:Destroy()', HERO)
         self.assertNotIn('script.Parent:WaitForChild("Game")', HERO + FIELD)
 
 
