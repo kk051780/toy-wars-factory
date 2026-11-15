@@ -1,0 +1,66 @@
+name: P0D product quality benchmark and gate - source-only (read-only)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'product_quality/**'
+      - '.github/workflows/p0d-product-quality-gate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  product-quality-spec:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Unit tests for fail-closed scoring and acceptance rules
+        run: python3 -B -m unittest discover -s product_quality -p 'test_product_quality.py' -v
+      - name: Verify public competitor reference provenance (not actual gameplay measurement)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          b=json.loads(Path('product_quality/competitors_20261115.json').read_text(encoding='utf-8'))
+          assert b['schema']=='P0D_COMPETITOR_BASELINE_V1'
+          assert len(b['games'])==5
+          for g in b['games']:
+              assert g['url'].startswith('https://www.rolimons.com/game/')
+              assert g['visits']>0
+              assert 0<=g['like_percent']<=100
+              assert g['avg_session_minutes']>0
+              assert g['measurements_verified'] is False
+              assert all(g[k] is None for k in ('map_size_studs','effective_paths','character_count','item_count','retention_d1','retention_d7'))
+          print('5 public KPI baselines captured; real competitor game measurements remain UNKNOWN')
+          PY
+      - name: Require an unmeasured candidate to be NO_GO (expected failure as evidence)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/product_quality
+          set +e
+          python3 -B product_quality/check_product_quality.py --candidate product_quality/CANDIDATE_TEMPLATE.json --report /tmp/product_quality/PRODUCT_QUALITY_REPORT.json
+          CODE=$?
+          set -e
+          test "$CODE" -eq 1
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('/tmp/product_quality/PRODUCT_QUALITY_REPORT.json').read_text())
+          assert r['decision']=='PRODUCT_NO_GO'
+          assert r['total_score'] is None
+          assert 'PRODUCT_SCORE_UNKNOWN' in r['problems']
+          print('PASS: unevaluated game is rejected; no fake acceptance')
+          PY
+      - name: Publish transparent NO_GO report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-PRODUCT-QUALITY-NOT-OWNER-APPROVED
+          path: /tmp/product_quality/PRODUCT_QUALITY_REPORT.json
+          retention-days: 14
+          if-no-files-found: warn
