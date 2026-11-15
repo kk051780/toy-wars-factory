@@ -51,6 +51,17 @@ class TestNeutralSwarmLineOfSight(unittest.TestCase):
         self.assertIn("local center=root.Position+root.CFrame.LookVector*3", s)
         self.assertIn("root.Position+Vector3.new(0,1,0),actor)", s)
 
+    def test_neutral_navigation_never_forces_through_solid_wall(self):
+        s = self.source
+        self.assertIn("params.FilterDescendantsInstances={all}", s)
+        self.assertIn("params.RespectCanCollide=true", s)
+        self.assertIn("return workspace:Raycast(origin,step+step.Unit*.35,params)==nil", s)
+        self.assertIn("if free(forward) then", s)
+        self.assertIn("if free(sideways) then chosen=sideways", s)
+        self.assertIn("elseif free(-sideways) then chosen=-sideways", s)
+        self.assertIn("if chosen then", s)
+        self.assertNotIn("local next=at+near.Unit*math.min(NEUTRAL_SPEED*.38,best)", s)
+
     def test_studio_only_and_existing_ko_pipeline_preserved(self):
         s = self.source
         self.assertIn('assert(RunService:IsStudio()', s)
