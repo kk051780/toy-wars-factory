@@ -1,0 +1,89 @@
+name: P0D quality exact-role7 delayed-cast respawn guard native82
+on:
+  push:
+    branches: [feature/p0d-product-quality-gate-20261115]
+    paths:
+      - product_quality/role7_respawn_guard.py
+      - .github/workflows/p0d-role7-respawn-guard-native.yml
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - product_quality/role7_respawn_guard.py
+      - .github/workflows/p0d-role7-respawn-guard-native.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download source-exact latest role-ACK/wind/Builder/combos parent artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/role7_native_parent
+          gh run download 43689779244 -R kk051780/toy-wars-factory \
+            -n P0D-QUALITY-REAL-RC82-ACK-WIND-Q-GUARD-NO-GO \
+            -D /tmp/role7_native_parent
+          test -s /tmp/role7_native_parent/P0D_RC82_ROLE7_WIND_COMPOSITE_UNPUBLISHED.zip
+      - name: Reproduce actual 82 source files and assert ghost strike no longer possible after respawn
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B product_quality/role7_respawn_guard.py \
+            --input /tmp/role7_native_parent/P0D_RC82_ROLE7_WIND_COMPOSITE_UNPUBLISHED.zip \
+            --output /tmp/P0D_RC82_ROLE7_RESPAWN_SAFE_PRIVATE.zip \
+            --extract /tmp/p0d_ghost_safe_luau
+          python3 - <<'PY'
+          import json,zipfile
+          from pathlib import Path
+          with zipfile.ZipFile('/tmp/P0D_RC82_ROLE7_RESPAWN_SAFE_PRIVATE.zip') as z:
+              r=json.loads(z.read('RECEIPT.json'))
+              assert r['scripts']==82 and r['unchanged_parent_scripts']==81
+              assert r['new_game_blob']=='00fab56c721145688a34ba2825babd7bac351fbb'
+              assert r['place_sha256']=='f6cc936a17b10d7cbfb1eb31718025a6fe21346160cacea8d58e8e52d93eb542'
+              assert r['place_bytes']==778612
+              assert r['official_rc_write'] is False and r['product']=='NO_GO'
+          text=Path('/tmp/p0d_ghost_safe_luau/Game.luau').read_text('utf-8')
+          assert text.count('local castCharacter=player.Character')==1
+          assert text.count('local castTeam=getTeamName(player)')==1
+          assert 'player.Character~=castCharacter' in text
+          assert 'getTeamName(player)~=castTeam' in text
+          assert 'root.Parent~=castCharacter' in text
+          assert 'sevenJobPickAckSeq[player]~=selectedAck' in text
+          assert 'mobComboUntil[player]' in text
+          print('P0D_RC82_GHOST_CASTER_SOURCE_LOCK_AND_COMBO_PRESERVED_PASS')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_pinned
+          persist-credentials: false
+      - name: Native Luau compile all 82 actual source files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_pinned rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_pinned -B /tmp/p0d_ghost_luau_build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_ghost_luau_build --target Luau.Compile.CLI --parallel 4
+          n=0
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_ghost_luau_build/luau-compile "$f" >/dev/null
+            n=$((n+1))
+          done < <(find /tmp/p0d_ghost_safe_luau -name '*.luau' -type f -print0 | sort -z)
+          test "$n" -eq 82
+          echo P0D_ROLE7_GHOST_GUARD_LUAU82_OF_82_PASS
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: P0D-ROLE7-ACK-WIND-BUILDER-COMBO-RESPAWN-SAFE-PRIVATE-NOGO
+          path: /tmp/P0D_RC82_ROLE7_RESPAWN_SAFE_PRIVATE.zip
+          retention-days: 7
