@@ -7,6 +7,7 @@ local RunService=game:GetService("RunService")
 local Debris=game:GetService("Debris")
 if not RunService:IsStudio() then return end
 local Rules=require(script.Parent:WaitForChild("EGGRUMBLE_CastleMatchRules"))
+local BotActors=require(script.Parent:WaitForChild("EGGRUMBLE_BotActors"))
 local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)::SpawnLocation?
 local root=spawn and spawn.Position or Vector3.new(0,4,0)
 local folder=Instance.new("Folder");folder.Name="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW";folder.Parent=workspace
@@ -161,39 +162,9 @@ local function startSession(mode:string)
    if rootPart and idx then rootPart.CFrame=CFrame.new(getCastlePoint(mode,idx)+Vector3.new(0,7,-45)) end
   end
  end
- -- Bot slots participate in server rules; this PRIVATE preview gives bot tactics as
- -- deliberate simple state transitions, NOT full navmesh NPC, combat animation, PVP AI.
- task.spawn(function()
-  while session.rules.phase=="ACTIVE" and session.world.Parent do
-   for _,bot in ipairs(roster) do
-    if bot.isAI then
-     local me=session.rules.castles[bot.id]
-     if me and me.alive then
-      local target=nil
-      for _,other in ipairs(roster) do
-       local c=session.rules.castles[other.id]
-       if c and c.alive and c.id~=bot.id and (mode~="TEAM" or c.team~=me.team) then
-        target=c;break
-       end
-      end
-      if target then
-       -- 1) seek a valuable egg, 2) deliver it, 3) siege; all server-owned rule calls.
-       if me.heldEggs==0 then
-        pcall(function()
-         if target.vaultEggs>0 then Rules.takeEggs(session.rules,bot.id,1,target.id)
-         else Rules.takeEggs(session.rules,bot.id,1) end
-        end)
-       else pcall(function() Rules.depositEggs(session.rules,bot.id,1) end) end
-       local ok,res=pcall(function() return Rules.damageCastle(session.rules,target.id,bot.id,18) end)
-       if ok and res.fallen then session.releaseEggs(target.id,session.castleLocations[target.id],res.releasedEggs) end
-      end
-     end
-    end
-   end
-   session.refresh()
-   task.wait(2.4)
-  end
- end)
+ -- Existing bot-actor module owns the ONLY AI combat/egg/siege loop.
+ -- Never advance castle damage or eggs from a timer without spatial movement.
+ BotActors.start(session,Rules)
 end
 
 local function joinQueue(mode:string,p:Player)
