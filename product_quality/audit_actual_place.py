@@ -75,12 +75,16 @@ def inspect(place_data, source_lock, official_head):
         block = ""
     else:
         block = game[begin:end]
+    # Ignore the preceding BUILDER eligibility guard: the real seven-way skill
+    # dispatch begins after the authoritative cooldown charge and FX setup.
+    dispatch_start = block.find('if job=="WARRIOR" then')
+    dispatch = block[dispatch_start:] if dispatch_start >= 0 else ""
     def segment(role):
-        m = re.search(r'(?:if|elseif)\s+job\s*==\s*"' + role + r'"\s+then', block)
+        m = re.search(r'(?:if|elseif)\s+job\s*==\s*"' + role + r'"\s+then', dispatch)
         if not m:
             return ""
-        follow = re.search(r'\belseif\s+job\s*==\s*"[A-Z_]+"\s+then', block[m.end():])
-        return block[m.end():m.end() + follow.start()] if follow else block[m.end():]
+        follow = re.search(r'\belseif\s+job\s*==\s*"[A-Z_]+"\s+then', dispatch[m.end():])
+        return dispatch[m.end():m.end() + follow.start()] if follow else dispatch[m.end():]
     seg = {r: segment(r) for r in ROLE_IDS}
     for r in ROLE_IDS:
         if not seg[r]:
