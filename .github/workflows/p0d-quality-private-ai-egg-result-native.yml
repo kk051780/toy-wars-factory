@@ -109,7 +109,7 @@ jobs:
           import hashlib,json
           target=Path('/tmp/p0d_cumulative_rojo')
           target.mkdir(parents=True,exist_ok=True)
-          with ZipFile('/tmp/P0D_FB005_SAFE_LOBBY_CUMULATIVE_PRIVATE.zip') as z:
+          with ZipFile('/tmp/P0D_FB005_AI_RAID_RESULT_CUMULATIVE_PRIVATE.zip') as z:
               rb=[n for n in z.namelist() if n.endswith('.rbxlx')]
               assert len(rb)==1
               root=ET.fromstring(z.read(rb[0]))
