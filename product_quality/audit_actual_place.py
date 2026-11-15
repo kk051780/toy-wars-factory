@@ -23,6 +23,28 @@ SOURCE_ROLE_EXPECTATIONS = {
     "NECROMANCER": "independent zombie squad that can be commanded",
 }
 SCRIPT_CLASSES = {"Script", "LocalScript", "ModuleScript"}
+# Paths are the actual Rojo locations. Four historical source-file aliases have
+# intentional different Roblox Instance names; no fuzzy basename matching.
+SCRIPT_ROOTS = {
+    ("ServerScriptService", "TrapRaidersS1"): "server",
+    ("StarterPlayer", "StarterPlayerScripts"): "client",
+    ("ReplicatedStorage", "TrapRaidersShared"): "shared",
+}
+SCRIPT_ALIASES = {
+    ("client", "TrapRaidersHUD"): "client/HUD.client.luau",
+    ("client", "P0DConfirmedCombatFX"): "client/ConfirmedSlashFX.client.luau",
+    ("client", "TrapRaidersCoach"): "client/FirstMinuteCoach.client.luau",
+    ("client", "FB015GoroganVisual"): "client/FB015CharacterArt.client.luau",
+}
+
+def lock_path(ancestors, name, script_class):
+    lane = SCRIPT_ROOTS.get(tuple(ancestors))
+    if lane is None:
+        return None
+    suffix = (".server.luau" if script_class == "Script"
+              else ".client.luau" if script_class == "LocalScript"
+              else ".luau")
+    return SCRIPT_ALIASES.get((lane, name), lane + "/" + name + suffix)
 
 def git_blob(data):
     return hashlib.sha1(b"blob " + str(len(data)).encode("ascii") + b"\0" + data).hexdigest()
@@ -37,19 +59,28 @@ def inspect(place_data, source_lock, official_head):
         return {"decision": "SOURCE_INTEGRITY_NO_GO", "problems": ["INVALID_PLACE_XML"],
                 "gameplay_engine_pass": False, "role_source_findings": {}}
     scripts = []
-    for item in root.iter("Item"):
-        if item.get("class") not in SCRIPT_CLASSES:
-            continue
-        props = item.find("Properties")
-        if props is None:
-            fail.append("SCRIPT_MISSING_PROPERTIES")
-            continue
-        name = props.findtext("string[@name='Name']")
-        source = props.findtext("string[@name='Source']")
-        if not isinstance(name, str) or source is None:
-            fail.append("SCRIPT_MISSING_NAME_OR_SOURCE")
-            continue
-        scripts.append((name, git_blob(source.encode("utf-8")), source))
+    by_path = {}
+    def walk(parent, ancestors):
+        for item in parent.findall("Item"):
+            props = item.find("Properties")
+            name = props.findtext("string[@name='Name']") if props is not None else None
+            script_class = item.get("class")
+            if script_class in SCRIPT_CLASSES:
+                source = props.findtext("string[@name='Source']") if props is not None else None
+                if not isinstance(name, str) or source is None:
+                    fail.append("SCRIPT_MISSING_NAME_OR_SOURCE")
+                else:
+                    blob = git_blob(source.encode("utf-8"))
+                    scripts.append((name, blob, source))
+                    path = lock_path(ancestors, name, script_class)
+                    if path is None:
+                        fail.append("SCRIPT_UNEXPECTED_LOCATION:" + name)
+                    elif path in by_path:
+                        fail.append("DUPLICATE_SOURCE_PATH:" + path)
+                    else:
+                        by_path[path] = blob
+            walk(item, ancestors + [name or ""])
+    walk(root, [])
     locks = source_lock.get("blobs") if isinstance(source_lock, dict) else None
     if not isinstance(locks, dict) or not locks:
         fail.append("SOURCE_LOCK_MISSING")
@@ -59,6 +90,12 @@ def inspect(place_data, source_lock, official_head):
         fail.append("SOURCE_COUNT_MISMATCH")
     if Counter(s[1] for s in scripts) != Counter(locks.values()):
         fail.append("PLACE_SOURCE_GITBLOBS_DO_NOT_MATCH_LOCK")
+    # Multiset equality alone can be fooled by swapping code between Scripts.
+    # Require same path, Script/LocalScript/ModuleScript kind, and byte content.
+    if set(by_path) != set(locks):
+        fail.append("PLACE_SOURCE_PATH_SET_MISMATCH")
+    if any(by_path[p] != locks[p] for p in set(by_path) & set(locks)):
+        fail.append("PLACE_SOURCE_PATH_BLOB_MISMATCH")
     def get_script(name):
         matches = [s[2] for s in scripts if s[0] == name]
         if len(matches) != 1:
@@ -126,20 +163,26 @@ def inspect(place_data, source_lock, official_head):
     if 'label="暗殺者"' not in rules or "NINJA" not in rules or "暗殺者" not in hud:
         fail.append("ASSASSIN_DISPLAY_OR_INTERNAL_KEY_INCONSISTENT")
     gaps = sorted(r for r, rec in source_findings.items() if rec["source_gap"] is not None)
+    integrity = ("SOURCE_COUNT_MISMATCH", "SOURCE_LOCK_MISSING",
+                 "PLACE_SOURCE_GITBLOBS_DO_NOT_MATCH_LOCK",
+                 "PLACE_SOURCE_PATH_SET_MISMATCH", "PLACE_SOURCE_PATH_BLOB_MISMATCH")
+    integrity_failed = any(k in fail for k in integrity) or any(
+        f.startswith(("SCRIPT_UNEXPECTED_LOCATION:", "DUPLICATE_SOURCE_PATH:"))
+        for f in fail)
     return {
         "schema": "P0D_ACTUAL_PLACE_ROLE_SOURCE_AUDIT_V1",
         "official_rc_head": official_head,
         "place_bytes": len(place_data),
         "place_sha256": hashlib.sha256(place_data).hexdigest(),
         "scripts_examined": len(scripts),
-        "source_lock_exact": not any(k in fail for k in
-             ("SOURCE_COUNT_MISMATCH", "SOURCE_LOCK_MISSING", "PLACE_SOURCE_GITBLOBS_DO_NOT_MATCH_LOCK")),
+        "source_lock_exact": not integrity_failed,
+        "source_path_exact": not integrity_failed,
+        "source_paths_matched": sum(
+            by_path[p] == locks[p] for p in set(by_path) & set(locks)),
         "role_source_findings": source_findings,
         "role_source_gaps": gaps,
         "problems": sorted(set(fail)),
-        "decision": "SOURCE_INTEGRITY_NO_GO" if any(k in fail for k in
-                    ("INVALID_PLACE_XML", "SOURCE_COUNT_MISMATCH",
-                     "SOURCE_LOCK_MISSING", "PLACE_SOURCE_GITBLOBS_DO_NOT_MATCH_LOCK"))
+        "decision": "SOURCE_INTEGRITY_NO_GO" if integrity_failed
                     else "GAMEPLAY_SOURCE_REMEDIATION_REQUIRED",
         "gameplay_engine_pass": False,
         "human_approved": False,
