@@ -1,0 +1,46 @@
+name: P0D EGGRUMBLE V3 actual Luau syntax and castle rules VM tests
+
+on:
+  pull_request:
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/**/*.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_rules_harness.py'
+      - '.github/workflows/p0d-eggrumble-v3-native-luau.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-luau-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build official open-source Luau CLI
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/eggrumble-luau
+          cmake -S /tmp/eggrumble-luau -B /tmp/eggrumble-luau/build \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/eggrumble-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+          /tmp/eggrumble-luau/build/luau -v || true
+      - name: Parse all isolated Luau game source with a native compiler
+        run: |
+          set -euo pipefail
+          find handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 \
+            -type f -name '*.luau' -print0 |
+            while IFS= read -r -d '' source; do
+              echo "Native parse: $source"
+              /tmp/eggrumble-luau/build/luau-compile "$source" >/dev/null
+            done
+      - name: Execute castle/egg/TEAM/BR with actual Luau VM
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_rules_harness.py \
+            --out /tmp/eggrumble-v3-native-castle-smoke.luau
+          /tmp/eggrumble-luau/build/luau /tmp/eggrumble-v3-native-castle-smoke.luau
+      - name: State precise QA limit
+        run: |
+          echo "NATIVE_LUAU_SOURCE_AND_PURE_GAME_RULES_QA: code executed in Luau VM."
+          echo "REAL_STUDIO_WORLD/ANDROID/RC_INTEGRATION: NOT_TESTED."
