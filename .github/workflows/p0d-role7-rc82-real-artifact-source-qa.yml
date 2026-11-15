@@ -87,6 +87,117 @@ jobs:
           /tmp/p0d_role7_luau_build/luau-compile /tmp/p0d_role7_Game.luau >/dev/null
           /tmp/p0d_role7_luau_build/luau-compile /tmp/p0d_role7_TrapRaidersHUD.luau >/dev/null
           echo 'P0D_RC82_ROLE7_NATIVE_GAME_HUD_2_OF_2_PASS'
+      - name: Extract and compile ALL 82 genuine private RC82 Luau scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,zipfile,xml.etree.ElementTree as E
+          from collections import Counter
+          from pathlib import Path
+          dest=Path('/tmp/p0d_role7_full82')
+          with zipfile.ZipFile('/tmp/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip') as z:
+              root=E.fromstring(z.read('PRIVATE_ROLE7_READY_RC82.rbxlx'))
+              lock=json.loads(z.read('SOURCE_LOCK.json'))
+              feature=json.loads(z.read('RC_FEATURE_LOCK.json'))
+          items=[]
+          def walk(node,chain=()):
+              p=node.find('Properties')
+              n=p.find("./string[@name='Name']") if p is not None else None
+              s=p.find("./string[@name='Source']") if p is not None else None
+              path=chain+((n.text,) if n is not None else ())
+              if s is not None and s.text is not None:
+                  assert node.attrib['class'] in ('Script','LocalScript','ModuleScript')
+                  assert len(path)>=3 and path[0] in ('ReplicatedStorage','ServerScriptService','StarterPlayer')
+                  assert all(q.isidentifier() for q in path)
+                  ext={'Script':'.server.luau','LocalScript':'.client.luau','ModuleScript':'.luau'}[node.attrib['class']]
+                  filename=dest/'src'/Path(*path).with_suffix(ext)
+                  filename.parent.mkdir(parents=True,exist_ok=True)
+                  filename.write_bytes(s.text.encode('utf-8'))
+                  items.append((path,node.attrib['class'],s.text))
+              for child in node.findall('Item'):
+                  walk(child,path)
+          for item in root.findall('Item'):
+              walk(item)
+          def gitblob(s):
+              b=s.encode('utf-8')
+              return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\\0'+b).hexdigest()
+          assert len(items)==82,len(items)
+          assert len({tuple(p) for p,_,_ in items})==82
+          hashes=Counter(gitblob(src) for _,_,src in items)
+          assert hashes==Counter(lock['blobs'].values())
+          assert hashes==Counter(feature['source_gitblobs'].values())
+          (dest/'manifest.json').write_text(json.dumps([
+              dict(path='/'.join(path),kind=kind,blob=gitblob(src)) for path,kind,src in items
+          ],ensure_ascii=False,indent=2))
+          project={
+            "name":"P0DSourceParity82",
+            "tree":{"$className":"DataModel",
+               "ReplicatedStorage":{"$className":"ReplicatedStorage","TrapRaidersShared":{"$path":"src/ReplicatedStorage/TrapRaidersShared"}},
+               "ServerScriptService":{"$className":"ServerScriptService","TrapRaidersS1":{"$path":"src/ServerScriptService/TrapRaidersS1"}},
+               "StarterPlayer":{"$className":"StarterPlayer","StarterPlayerScripts":{"$path":"src/StarterPlayer/StarterPlayerScripts"}}
+            }
+          }
+          (dest/'default.project.json').write_text(json.dumps(project,indent=2))
+          print('PINNED_PRIVATE_RC82_82_EXACT_SOURCE_MANIFEST_PASS')
+          PY
+          count=0
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_role7_luau_build/luau-compile "$file" >/dev/null
+            count=$((count+1))
+          done < <(find /tmp/p0d_role7_full82/src -name '*.luau' -type f -print0)
+          test "$count" -eq 82
+          echo 'P0D_RC82_ALL_NATIVE_LUAU_82_OF_82_PASS'
+      - name: Install pinned Rojo 7.7.1 for complete source-only roundtrip
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_role7_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_role7_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile
+          with zipfile.ZipFile('/tmp/p0d_role7_rojo.zip') as z:
+              match=[name for name in z.namelist() if name.rsplit('/',1)[-1]=='rojo']
+              assert len(match)==1
+              f=Path('/tmp/p0d_role7_rojo');f.write_bytes(z.read(match[0]));f.chmod(0o755)
+          PY
+          /tmp/p0d_role7_rojo build /tmp/p0d_role7_full82/default.project.json -o /tmp/P0D_RC82_ROLE7_REBUILT_SOURCE_ONLY.rbxlx
+      - name: Compare rebuilt Rojo 82 script CLASS, PATH and full Source hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,xml.etree.ElementTree as E
+          from pathlib import Path
+          folder=Path('/tmp/p0d_role7_full82')
+          before=json.loads((folder/'manifest.json').read_text())
+          root=E.fromstring(Path('/tmp/P0D_RC82_ROLE7_REBUILT_SOURCE_ONLY.rbxlx').read_bytes())
+          scripts=[]
+          def blob(src):
+              b=src.encode()
+              return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\\0'+b).hexdigest()
+          def walk(item,chain=()):
+              props=item.find('Properties')
+              name=props.find("./string[@name='Name']") if props is not None else None
+              source=props.find("./string[@name='Source']") if props is not None else None
+              path=chain+((name.text,) if name is not None else ())
+              if source is not None and source.text is not None:
+                  scripts.append(dict(path='/'.join(path),kind=item.attrib['class'],blob=blob(source.text)))
+              for kid in item.findall('Item'):
+                  walk(kid,path)
+          for item in root.findall('Item'):
+              walk(item)
+          assert len(scripts)==82,len(scripts)
+          original={x['path']:(x['kind'],x['blob']) for x in before}
+          rebuilt={x['path']:(x['kind'],x['blob']) for x in scripts}
+          if rebuilt!=original:
+              details={'missing':list(set(original)-set(rebuilt))[:10],
+                       'extra':list(set(rebuilt)-set(original))[:10],
+                       'different':[x for x in original.keys()&rebuilt.keys() if original[x]!=rebuilt[x]][:10]}
+              raise SystemExit('ROJO_SOURCE_EXACT_DIFFERENCE:'+json.dumps(details))
+          print('P0D_RC82_ROJO_SOURCE_EXACT_82_OF_82_PASS')
+          PY
       - uses: actions/upload-artifact@v4
         if: success()
         with:
