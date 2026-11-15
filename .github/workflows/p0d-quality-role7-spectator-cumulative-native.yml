@@ -46,9 +46,9 @@ jobs:
           with zipfile.ZipFile('/tmp/P0D_ROLE7_CUMULATIVE_SPECTATOR_PRIVATE.zip') as z:
               r=json.loads(z.read('RECEIPT.json'))
               assert r['scripts']==82 and r['unchanged_parent_scripts']==81
-              assert r['new_game_blob']=='f0fbfcc2756f5e3bdcebde08a19f432de670977b'
-              assert r['place_sha256']=='00a1fcc4621b52b6d6ecf7d79eab1eb7828fccbe3e4a79e902756c4a988bde79'
-              assert r['place_bytes']==779052
+              assert r['new_game_blob']=='6848da45a10242e5908a102bd9db47b9d3f30023'
+              assert r['place_sha256']=='bbb9c919cb11cfc5147a75a9d8f8e770eb5a7d540acfffeb650010f5710e0d1c'
+              assert r['place_bytes']==779055
               assert r['egg_score_authority_byte_exact'] is True
               assert r['official_rc_write'] is False and r['product']=='NO_GO'
           game=Path('/tmp/p0d_cumulative_sources/Game.luau').read_text()
