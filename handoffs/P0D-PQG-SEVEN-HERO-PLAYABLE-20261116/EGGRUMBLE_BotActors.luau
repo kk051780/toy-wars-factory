@@ -126,7 +126,11 @@ function BotActors.start(session:any,Rules:any):()
      local hum=actor:FindFirstChildOfClass("Humanoid")
      if hum then
       if hum.Health<=0 then
-       if not deaths[id] then deaths[id]=now+BOT_REBIRTH end
+       if not deaths[id] then
+        -- Do not let a bot respawn with an invisible carried egg. One physical drop.
+        if session.dropCarrierEggs then session.dropCarrierEggs(id,actor:GetPivot().Position) end
+        deaths[id]=now+BOT_REBIRTH
+       end
        if now>=deaths[id] then
         deaths[id]=nil
         local home=session.castleLocations[id]
