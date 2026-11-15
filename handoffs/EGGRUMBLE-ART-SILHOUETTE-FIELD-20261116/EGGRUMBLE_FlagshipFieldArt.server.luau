@@ -169,14 +169,14 @@ local function paintArena(arena:Instance)
  for i=1,20 do
   local left=i<=10
   local j=if left then i else i-10
-  local x=(if left then -1 else 1)*(206+(j%3)*38)
+  local x=(if left then -1 else 1)*(348+(j%3)*25)
   local z=-414+(j-1)*84
   drawTree(arena,art,onGround(x,z),if i%2==0 then 1 else 2,i)
  end
  -- Rocky viewpoint rhythm at wide outer edges; decorative only.
  for i=1,10 do
   local side=if i%2==0 then -1 else 1
-  local x=side*(265+(i%3)*19)
+  local x=side*(322+(i%3)*25)
   local z=-388+(i-1)*81
   drawRocks(arena,art,onGround(x,z),i)
  end
