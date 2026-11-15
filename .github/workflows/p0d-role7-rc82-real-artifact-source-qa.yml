@@ -121,7 +121,7 @@ jobs:
               walk(item)
           def gitblob(s):
               b=s.encode('utf-8')
-              return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\\0'+b).hexdigest()
+              return hashlib.sha1(b'blob '+str(len(b)).encode()+bytes([0])+b).hexdigest()
           assert len(items)==82,len(items)
           assert len({tuple(p) for p,_,_ in items})==82
           hashes=Counter(gitblob(src) for _,_,src in items)
@@ -176,7 +176,7 @@ jobs:
           scripts=[]
           def blob(src):
               b=src.encode()
-              return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\\0'+b).hexdigest()
+              return hashlib.sha1(b'blob '+str(len(b)).encode()+bytes([0])+b).hexdigest()
           def walk(item,chain=()):
               props=item.find('Properties')
               name=props.find("./string[@name='Name']") if props is not None else None
