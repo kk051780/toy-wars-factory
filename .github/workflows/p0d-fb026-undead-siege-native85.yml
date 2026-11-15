@@ -1,4 +1,4 @@
-name: P0D FB026 Necromancer cumulative 85 native Luau and Rojo (private)
+name: P0D FB026 Siege V3 + Necromancer 85 native Luau and Rojo (private)
 on:
   push:
     branches: [feature/p0d-fb026-undead-siege-native85-20261115]
@@ -25,8 +25,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p /tmp/fb026_85_parent
-          gh run download 43705934185 -R kk051780/toy-wars-factory \
-            -n P0D-QUALITY-SIEGE-CLOCK-CARRIER-EXIT-PRIVATE-RC84-NOGO \
+          gh run download 43707427582 -R kk051780/toy-wars-factory \
+            -n P0D-QUALITY-SIEGE-HIT-FX-AND-AI-ARRIVAL-RC84-NOGO \
             -D /tmp/fb026_85_parent
           python3 - <<'PY'
           from pathlib import Path
@@ -46,8 +46,8 @@ jobs:
           from pathlib import Path
           p=Path('P0D_FB026_NECROMANCER_SIEGE_CUMULATIVE_PRIVATE85.rbxlx')
           data=p.read_bytes()
-          assert len(data)==830812, len(data)
-          assert hashlib.sha256(data).hexdigest()=='fdd7ed3397c02825c67e986ca0fb1755dbe15f9523ac065cbef1cdc66d81d978'
+          assert len(data)==833538, len(data)
+          assert hashlib.sha256(data).hexdigest()=='5192304d75e933e98ccffa20a4ac8abaa1349d4ce156bf63c5353607ec36f084'
           receipt=json.loads(Path('RECEIPT.json').read_text())
           assert receipt['script_count']==85 and receipt['old_83_scripts_byte_exact']
           assert receipt['official_rc_write'] is False and receipt['product']=='NO_GO'
