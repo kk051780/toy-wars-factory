@@ -87,9 +87,10 @@ local function makePad(owner,team,index,where,folder)
     counter+=1
     local model=Instance.new("Part")
     model.Name="P0D_TRAPPER_PORTAL_"..team.."_"..tostring(index).."_"..tostring(counter)
-    model.Size=Vector3.new(7,.28,7)
+    -- Cylinder is X-axis aligned in Roblox; rotate its short X axis upright.
+    model.Size=Vector3.new(.28,7,7)
     model.Shape=Enum.PartType.Cylinder
-    model.CFrame=CFrame.new(where)
+    model.CFrame=CFrame.new(where)*CFrame.Angles(0,0,math.rad(90))
     model.Anchored=true
     model.CanCollide=false
     model.CanTouch=false
@@ -164,6 +165,18 @@ local function tick(dt)
                         end
                         if from and dest then
                             local target=CFrame.new(dest.Position+Vector3.new(0,3.8,0))
+                            -- Reject a landing inside solid castle walls/closed
+                            -- gates or another humanoid. A rejected move does
+                            -- not charge the shared transport quota.
+                            local obstructed=false
+                            for _,hit in ipairs(workspace:GetPartBoundsInBox(
+                                target,Vector3.new(4.2,6.2,4.2))) do
+                                if hit.CanCollide and not hit:IsDescendantOf(character) then
+                                    obstructed=true
+                                    break
+                                end
+                            end
+                            if obstructed then break end
                             local ok=pcall(function() character:PivotTo(target) end)
                             if ok then
                                 -- Failed PivotTo is not charged; successful
