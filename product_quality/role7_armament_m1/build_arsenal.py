@@ -25,24 +25,24 @@ def once(s,old,new,why):
 def patch_game(game):
     game=once(game,'local SevenJobs = require(script.Parent:WaitForChild("SevenJobsRules"))',
        'local SevenJobs = require(script.Parent:WaitForChild("SevenJobsRules"))\n'
-       'local JobArsenal = require(script.Parent:WaitForChild("SevenJobArmamentM1"))', 'IMPORT_SINGLE')
+       'SevenJobs.ArmamentM1 = require(script.Parent:WaitForChild("SevenJobArmamentM1"))', 'IMPORT_SINGLE')
     # Existing original authorized job select; no second JOBCHECK or Remote.
     game=once(game,'    sevenJobPickAckSeq[player]=data.seq -- genuine authorized JOB_PICK only\n',
         '    sevenJobPickAckSeq[player]=data.seq -- genuine authorized JOB_PICK only\n'
-        '    JobArsenal.resetPlayer(player)\n'
-        '    if player.Character then JobArsenal.equip(player.Character,job) end\n','JOB_EQUIP_AFTER_REAL_ACK')
+        '    SevenJobs.ArmamentM1.resetPlayer(player)\n'
+        '    if player.Character then SevenJobs.ArmamentM1.equip(player.Character,job) end\n','JOB_EQUIP_AFTER_REAL_ACK')
     game=once(game,'            roundReady[player]=false\n            player.Team = teamInstances[move.to]',
         '            roundReady[player]=false\n'
-        '            JobArsenal.resetPlayer(player)\n'
-        '            JobArsenal.clear(player.Character) -- clear revoked job on lobby team transfer\n'
+        '            SevenJobs.ArmamentM1.resetPlayer(player)\n'
+        '            SevenJobs.ArmamentM1.clear(player.Character) -- clear revoked job on lobby team transfer\n'
         '            player.Team = teamInstances[move.to]','REBALANCE_UNEQUIP')
     game=once(game,'        invulnUntil[player] = serverNow() + Config.RespawnInvulnerability\n',
         '        invulnUntil[player] = serverNow() + Config.RespawnInvulnerability\n'
-        '        JobArsenal.resetPlayer(player) -- a respawn never carries a prior 3-hit chain\n'
+        '        SevenJobs.ArmamentM1.resetPlayer(player) -- a respawn never carries a prior 3-hit chain\n'
         '        if sevenJobSelected[player]==true and SevenJobs.valid(sevenJobs[player])\n'
         '            and (RunService:IsStudio() or privateHordeTrialAllowed())\n'
         '            and ServerStorage:GetAttribute("P0D_RC_ENABLE_SEVEN_JOBS_PVE")~=false then\n'
-        '            JobArsenal.equip(character,sevenJobs[player])\n'
+        '            SevenJobs.ArmamentM1.equip(character,sevenJobs[player])\n'
         '        end\n','CHARACTER_REAL_EQUIP')
     old='''        local touched,defeated = horde:hit(root.Position,look,
             Config.CombatDamage[roles[player] or "RAIDER"]
@@ -63,8 +63,8 @@ def patch_game(game):
             -- Server 3-stage per-class M1; original Horde owns real damage/KOs.
             -- Each strike uses authenticated root/role/seq/cooldown above.
             local job=sevenJobs[player]
-            local stage=JobArsenal.comboStage(player,job,now)
-            touched,defeated=JobArsenal.strike(job,stage,root.Position,look,
+            local stage=SevenJobs.ArmamentM1.comboStage(player,job,now)
+            touched,defeated=SevenJobs.ArmamentM1.strike(job,stage,root.Position,look,
                 originalPveDamage,function(pos:Vector3,dir:Vector3,damage:number)
                     return horde:hit(pos,dir,damage,now,player.Character)
                 end)
@@ -75,8 +75,8 @@ def patch_game(game):
         end'''
     game=once(game,old,new,'CLASS_SPECIFIC_M1_AUTH_DAMAGE')
     game=once(game,'    sevenJobSelected[player]=nil\n    sevenJobPickAckSeq[player]=nil',
-        '    sevenJobSelected[player]=nil\n    JobArsenal.resetPlayer(player)\n'
-        '    JobArsenal.clear(player.Character)\n    sevenJobPickAckSeq[player]=nil','REMOVE_CLEANUP')
+        '    sevenJobSelected[player]=nil\n    SevenJobs.ArmamentM1.resetPlayer(player)\n'
+        '    SevenJobs.ArmamentM1.clear(player.Character)\n    sevenJobPickAckSeq[player]=nil','REMOVE_CLEANUP')
     return game
 
 def extract(src):
