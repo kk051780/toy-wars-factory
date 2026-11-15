@@ -45,6 +45,23 @@ class PrivateHordeWitness(unittest.TestCase):
         self.assertIn('modelMovementSamples = motionEvents',s)
         self.assertIn('liveCombatQualityApproved = false',s)
         self.assertIn('ownerAccepted = false',s)
+    def test_no_fake_full_360_samples_or_peak_on_terminal_report(self):
+        s=AUTHOR.read_text("utf8")
+        self.assertIn("local lastSample = 0", s)
+        self.assertIn("local lastActive = 0", s)
+        self.assertIn("lastSample = sample", s)
+        self.assertIn("lastActive = active", s)
+        self.assertIn("report(ended, lastSample, lastActive)", s)
+        self.assertNotIn("report(ended, MAX_SAMPLES, peak)", s)
+        self.assertIn("lastObservedModels = active", s)
+        self.assertIn("configuredSampleLimit = MAX_SAMPLES", s)
+        self.assertEqual(s.count("report(ended, lastSample, lastActive)"),1)
+    def test_original_observation_evidence_stays_read_only(self):
+        s=AUTHOR.read_text("utf8")
+        self.assertIn("popup.Enabled and text ~= nil", s)
+        self.assertIn("if active == MAX_MOBS and not spawnComplete then", s)
+        self.assertIn("modelMovementSamples = motionEvents", s)
+        self.assertIn("ownerAccepted = false", s)
     def test_off_must_not_write(self):
         before=read(self.base)
         self.assertFalse(apply(self.base,self.out,False))
