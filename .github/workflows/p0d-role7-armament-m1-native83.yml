@@ -1,0 +1,169 @@
+name: P0D FB020-A actual seven class held armament and M1 native83 Rojo (private)
+on:
+  push:
+    branches: [feature/p0d-product-quality-gate-20261115]
+    paths:
+      - product_quality/role7_armament_m1/**
+      - .github/workflows/p0d-role7-armament-m1-native83.yml
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - product_quality/role7_armament_m1/**
+      - .github/workflows/p0d-role7-armament-m1-native83.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real83:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download exact FB005 82-script cumulative author/quality source
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_m1_parent
+          gh run download 43695314357 -R kk051780/toy-wars-factory \
+            -n P0D-QUALITY-SOLO-BOTS-SAFE-SPECTATOR-CUMULATIVE-SOURCE-NOGO \
+            -D /tmp/p0d_m1_parent
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile,ZIP_DEFLATED
+          src=Path('/tmp/p0d_m1_parent/P0D_SOLO_BOTS_SAFE_SPECTATOR_PRIVATE.zip')
+          assert src.is_file()
+          with ZipFile('/tmp/P0D_FB005_SOLO_OBSERVER_KICKOFF_NATIVE82_AUTHOR_CI.zip','w',ZIP_DEFLATED) as z:
+              z.write(src,src.name)
+          PY
+      - name: Regenerate actual 83-script Place with original Game + new weapons
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd product_quality/role7_armament_m1
+          python3 build_arsenal.py
+          python3 -m unittest -v test_arsenal.py
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('P0D_ROLE7_REAL_ARMAMENT_M1_PRIVATE83.rbxlx')
+          b=p.read_bytes()
+          assert len(b)==791639
+          assert hashlib.sha256(b).hexdigest()=='9f92222a532319cff24c3e57e03eb780d7ac19574c9dc507a1295f5723923cc3'
+          r=json.loads(Path('RECEIPT.json').read_text())
+          assert r['source_count']==83 and r['other_81_original_scripts_unchanged'] is True
+          assert r['official_rc_write'] is False and r['product']=='NO_GO'
+          lock=json.loads(Path('SOURCE_LOCK.json').read_text())
+          feat=json.loads(Path('RC_FEATURE_LOCK.json').read_text())
+          assert lock['blobs']==feat['source_gitblobs'] and len(lock['blobs'])==83
+          assert lock['blobs']['server/Game.server.luau']=='e24978a4be60d8501f2d86429a021ddc06fd7b72'
+          assert lock['blobs']['server/SevenJobArmamentM1.luau']=='7468f143ef801ebc7bdeab75f13bb5b16f66b103'
+          print('REAL_83_PLACE_LOCKS_AND_21_PY_REGRESSIONS_PASS')
+          PY
+      - name: Reconstruct 83 actual Luau script bodies and Rojo mapping
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,xml.etree.ElementTree as ET
+          root=ET.fromstring(Path('product_quality/role7_armament_m1/P0D_ROLE7_REAL_ARMAMENT_M1_PRIVATE83.rbxlx').read_bytes())
+          dest=Path('/tmp/p0d_role7_m1_rojo')
+          types={'Script':'.server.luau','LocalScript':'.client.luau','ModuleScript':'.luau'}
+          found=[]
+          def walk(n,base=()):
+              prop=n.find('Properties')
+              name=prop.findtext("string[@name='Name']") if prop is not None else None
+              source=prop.findtext("string[@name='Source']") if prop is not None else None
+              here=base+((name,) if name else ())
+              if source is not None:
+                  assert n.attrib['class'] in types and len(here)>=3 and all(x.isidentifier() for x in here)
+                  assert here[0] in ('ReplicatedStorage','ServerScriptService','StarterPlayer')
+                  p=dest/'src'/Path(*here).with_suffix(types[n.attrib['class']])
+                  p.parent.mkdir(parents=True,exist_ok=True)
+                  assert not p.exists()
+                  p.write_text(source,encoding='utf-8')
+                  raw=source.encode('utf-8')
+                  blob=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+                  found.append({'path':'/'.join(here),'class':n.attrib['class'],'blob':blob})
+              for child in n.findall('Item'):walk(child,here)
+          for item in root.findall('Item'):walk(item)
+          assert len(found)==83
+          (dest/'manifest.json').write_text(json.dumps(found,indent=2))
+          project={'name':'P0DRole7ArmamentM1','tree':{'$className':'DataModel',
+            'ReplicatedStorage':{'$className':'ReplicatedStorage','TrapRaidersShared':{'$path':'src/ReplicatedStorage/TrapRaidersShared'}},
+            'ServerScriptService':{'$className':'ServerScriptService','TrapRaidersS1':{'$path':'src/ServerScriptService/TrapRaidersS1'}},
+            'StarterPlayer':{'$className':'StarterPlayer','StarterPlayerScripts':{'$path':'src/StarterPlayer/StarterPlayerScripts'}}}}
+          (dest/'default.project.json').write_text(json.dumps(project,indent=2))
+          print('ACTUAL_83_ROJO_INPUT_EXTRACTED')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_armament_pinned_luau
+          persist-credentials: false
+      - name: Native Luau compile of ALL 83 actual new Place sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_armament_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_armament_pinned_luau -B /tmp/p0d_armament_luau_build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_armament_luau_build --target Luau.Compile.CLI --parallel 4
+          count=0
+          while IFS= read -r -d '' src; do
+            /tmp/p0d_armament_luau_build/luau-compile "$src" > /dev/null
+            count=$((count+1))
+          done < <(find /tmp/p0d_role7_m1_rojo/src -name '*.luau' -type f -print0 | sort -z)
+          test "$count" -eq 83
+          echo 'P0D_SEVEN_JOB_ARMAMENT_NATIVE_LUAU_83_83_PASS'
+      - name: Rojo 7.7.1 verify rebuilt 83 script PATH CLASS and GitBlob exact
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_m1_rojo_release.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_m1_rojo_release.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/p0d_m1_rojo_release.zip') as z:
+              items=[name for name in z.namelist() if name.rsplit('/',1)[-1]=='rojo']
+              assert len(items)==1
+              p=Path('/tmp/p0d_m1_rojo')
+              p.write_bytes(z.read(items[0]));p.chmod(0o755)
+          PY
+          /tmp/p0d_m1_rojo build /tmp/p0d_role7_m1_rojo/default.project.json -o /tmp/p0d_m1_rebuilt.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          from collections import Counter
+          import hashlib,json,xml.etree.ElementTree as ET
+          want=json.loads(Path('/tmp/p0d_role7_m1_rojo/manifest.json').read_text())
+          root=ET.fromstring(Path('/tmp/p0d_m1_rebuilt.rbxlx').read_bytes())
+          got=[]
+          def walk(n,base=()):
+              p=n.find('Properties')
+              name=p.findtext("string[@name='Name']") if p is not None else None
+              source=p.findtext("string[@name='Source']") if p is not None else None
+              here=base+((name,) if name else ())
+              if source is not None:
+                  x=source.encode('utf-8')
+                  digest=hashlib.sha1(b'blob '+str(len(x)).encode()+b'\0'+x).hexdigest()
+                  got.append({'path':'/'.join(here),'class':n.attrib['class'],'blob':digest})
+              for child in n.findall('Item'):walk(child,here)
+          for item in root.findall('Item'):walk(item)
+          assert len(want)==len(got)==83
+          assert Counter(x['path'] for x in want)==Counter(x['path'] for x in got)
+          if {x['path']:(x['class'],x['blob']) for x in want}!={x['path']:(x['class'],x['blob']) for x in got}:
+              raise ValueError('ROLE7_M1_ROJO_CLASS_PATH_SOURCE_SHA_RED')
+          print('P0D_REAL_ROLE7_ARMAMENT_ROJO_83_OF_83_EXACT_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: P0D-QUALITY-REAL-SEVEN-JOB-ARMAMENT-M1-83-SOURCE-NOGO
+          path: product_quality/role7_armament_m1/P0D_ROLE7_ARMAMENT_M1_SOURCE_PRIVATE83.zip
+          retention-days: 7
