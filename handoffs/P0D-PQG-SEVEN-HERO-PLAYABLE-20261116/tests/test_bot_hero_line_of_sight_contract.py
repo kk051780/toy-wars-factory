@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 BOT=ROOT/"EGGRUMBLE_BotActors.luau"
+PREVIEW=ROOT/"EGGRUMBLE_LobbyCastleModesPreview.server.luau"
 
 
 class TestBotHeroLineOfSight(unittest.TestCase):
@@ -29,6 +30,16 @@ class TestBotHeroLineOfSight(unittest.TestCase):
         hit=s.index("h:TakeDamage(BOT_HERO_DAMAGE)")
         self.assertLess(guard,hit)
         self.assertIn("lastHit[my.id]=now",s[guard:hit])
+
+    def test_human_sword_cannot_hit_bot_through_wall(self):
+        src=PREVIEW.read_text(encoding="utf-8")
+        self.assertIn("swordRay.RespectCanCollide=true",src)
+        self.assertIn("swordRay.FilterDescendantsInstances={character}",src)
+        self.assertIn("if workspace:Raycast(from,to-from,swordRay)==nil then",src)
+        ray=src.index("if workspace:Raycast(from,to-from,swordRay)==nil then")
+        hit=src.index("h:TakeDamage(42)")
+        self.assertLess(ray,hit)
+        self.assertNotIn("if h and h.Health>0 and affected<3 then h:TakeDamage(42)",src)
 
     def test_preview_only_no_unapproved_external_io(self):
         s=self.src
