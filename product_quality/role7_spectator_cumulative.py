@@ -15,8 +15,8 @@ PIN="f6cc936a17b10d7cbfb1eb31718025a6fe21346160cacea8d58e8e52d93eb542"
 BASE="d2f3ed1a47558fdaf07be0181c83c698bdb2ce34"
 GAME_PATH="server/Game.server.luau"
 PARENT_GAME="00fab56c721145688a34ba2825babd7bac351fbb"
-RESULT_GAME="6848da45a10242e5908a102bd9db47b9d3f30023"
-RESULT_PLACE="bbb9c919cb11cfc5147a75a9d8f8e770eb5a7d540acfffeb650010f5710e0d1c"
+RESULT_GAME="4986f23e7e0c46595aa489e4576d227945ed8686"
+RESULT_PLACE="233c684371f6211d2d5f385479e8a39e6a22b0504efba96935a740cd99042a5e"
 
 FIXES=(
  ("late_join",
@@ -34,6 +34,9 @@ FIXES=(
  ("private_observer_spawn",
  'root.CFrame=LobbyIsland.spawn(getTeamName(entrant))',
  'root.CFrame=if RunService:IsStudio()\n                            then LobbyIsland.spawn(getTeamName(entrant))\n                            else map.teams[getTeamName(entrant)].spawn + Vector3.new(0,2,0)'),
+ ("private_observer_physical_safe_island",
+  'elseif RunService:IsStudio()\n            and player:GetAttribute("P0D_LateJoinSpectator")==true then\n            root.CFrame=LobbyIsland.spawn("RED")',
+  'elseif player:GetAttribute("P0D_LateJoinSpectator")==true then\n            -- Reuse the preexisting Studio safe lobby for private real observers.\n            -- Build it only when first needed; no public/normal-game footprint.\n            if map.model:FindFirstChild("P0D_SAFE_LOBBY")==nil then\n                LobbyIsland.build(map.model)\n            end\n            root.CFrame=LobbyIsland.spawn("RED")'),
 )
 
 def sha(data): return hashlib.sha256(data).hexdigest()
@@ -70,10 +73,15 @@ def build(parent, output, extract_dir=None):
         'if ServerStorage:GetAttribute("P0D_ADAPTIVE_WIND_FIELD") == true then',
         'personalEggDeposits[player]=(personalEggDeposits[player] or 0)+1'):
         if proof not in repaired: raise ValueError("PARENT_ROLE_OR_SCORE_REGRESSION:"+proof)
+    # Private observers receive real physical safe staging, public mode untouched.
+    if (repaired.count('if map.model:FindFirstChild("P0D_SAFE_LOBBY")==nil then')!=1
+        or repaired.count('LobbyIsland.build(map.model)')!=2
+        or 'if RunService:IsStudio() then LobbyIsland.build(map.model) end' not in repaired):
+        raise ValueError("PRIVATE_SAFE_ISLAND_OR_STUDIO_REUSE_MISSING")
     if blob(repaired)!=RESULT_GAME: raise ValueError("GAME_SOURCE_DRIFT")
     script["Game"].text=repaired
     place=ET.tostring(root,encoding="utf-8")
-    if sha(place)!=RESULT_PLACE or len(place)!=779055:
+    if sha(place)!=RESULT_PLACE or len(place)!=779310:
         raise ValueError("PLACE_REPRODUCIBILITY_FAILURE")
     after=extract(place)[1]
     if any(after[n].text!=original[n].text for n in original if n!="Game"):
@@ -81,11 +89,12 @@ def build(parent, output, extract_dir=None):
     lock["blobs"][GAME_PATH]=feature["source_gitblobs"][GAME_PATH]=RESULT_GAME
     verify(place,lock,feature)
     report={
-      "schema":"P0D_ROLE7_SPECTATOR_CUMULATIVE_V1",
+      "schema":"P0D_ROLE7_SPECTATOR_CUMULATIVE_SAFE_STAGING_V2",
       "official_rc_head":BASE,"official_rc_write":False,
       "parent_sha256":PIN,"place_sha256":RESULT_PLACE,"place_bytes":len(place),
       "scripts":82,"unchanged_parent_scripts":81,"source_lock_exact":True,
       "new_game_blob":RESULT_GAME,"egg_score_authority_byte_exact":True,
+      "private_observer_safe_staging":True,
       "quality_fixes":[name for name,_,_ in FIXES],
       "native":"NOT_RUN","rojo":"NOT_RUN","studio":"NOT_RUN",
       "android":"NOT_RUN","product":"NO_GO","owner":False}

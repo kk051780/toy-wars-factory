@@ -46,15 +46,19 @@ jobs:
           with zipfile.ZipFile('/tmp/P0D_ROLE7_CUMULATIVE_SPECTATOR_PRIVATE.zip') as z:
               r=json.loads(z.read('RECEIPT.json'))
               assert r['scripts']==82 and r['unchanged_parent_scripts']==81
-              assert r['new_game_blob']=='6848da45a10242e5908a102bd9db47b9d3f30023'
-              assert r['place_sha256']=='bbb9c919cb11cfc5147a75a9d8f8e770eb5a7d540acfffeb650010f5710e0d1c'
-              assert r['place_bytes']==779055
+              assert r['new_game_blob']=='4986f23e7e0c46595aa489e4576d227945ed8686'
+              assert r['place_sha256']=='233c684371f6211d2d5f385479e8a39e6a22b0504efba96935a740cd99042a5e'
+              assert r['place_bytes']==779310
               assert r['egg_score_authority_byte_exact'] is True
+              assert r['private_observer_safe_staging'] is True
               assert r['official_rc_write'] is False and r['product']=='NO_GO'
           game=Path('/tmp/p0d_cumulative_sources/Game.luau').read_text()
           assert 'horde:tick(now,eligibleSoloPlayers(),healthy)' in game
           assert 'and victim:GetAttribute("P0D_LateJoinSpectator")~=true' in game
           assert 'or #eligibleSoloPlayers()<#Players:GetPlayers() then' in game
+          assert 'if map.model:FindFirstChild("P0D_SAFE_LOBBY")==nil then' in game
+          assert 'LobbyIsland.build(map.model)' in game
+          assert 'root.CFrame=LobbyIsland.spawn("RED")' in game
           assert 'player.Character~=castCharacter' in game
           assert 'sevenJobPickAckSeq[player]~=selectedAck' in game
           assert 'mobCombo[player]=if hitNow<(mobComboUntil[player] or 0)' in game
