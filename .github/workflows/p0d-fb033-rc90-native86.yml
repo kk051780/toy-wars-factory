@@ -32,7 +32,7 @@ jobs:
           set -euo pipefail
           python3 -m pip install --quiet lxml==6.1.1
           parent="$(find /tmp/fb033_parent -name '*.rbxlx' -type f | head -1)"
-          python3 python3 quality_repair/FB033_PRIVATE_NINJA_WIND/build_rc90_ci.py "$parent" /tmp/P0D_RC90_FB033_PRIVATE_NINJA_WIND_PARITY.rbxlx > /tmp/patch_log.json
+          python3 quality_repair/FB033_PRIVATE_NINJA_WIND/build_rc90_ci.py "$parent" /tmp/P0D_RC90_FB033_PRIVATE_NINJA_WIND_PARITY.rbxlx > /tmp/patch_log.json
           cp /tmp/patch_log.json /tmp/RC90_RECEIPT.json
           echo '4302da965a6a29fe8dc472cd97691a0dbfffa9f713dee556323afe73941941bc  /tmp/P0D_RC90_FB033_PRIVATE_NINJA_WIND_PARITY.rbxlx' | sha256sum -c
           test "$(stat -c %s /tmp/P0D_RC90_FB033_PRIVATE_NINJA_WIND_PARITY.rbxlx)" -eq 848560
