@@ -50,7 +50,7 @@ class PrivateOneHumanHordeTests(unittest.TestCase):
         self.assertIn('musouHitFeedback = ',self.original[GAME].decode())
         self.assertNotIn('workspace:SetAttribute("'+OWNER_ATTR,g)
         self.assertEqual(g.count('game.PrivateServerId ~= ""'),5)
-        self.assertEqual(g.count('workspace:GetAttribute("'+OWNER_ATTR+'") == true'),4)
+        self.assertEqual(g.count('workspace:GetAttribute("'+OWNER_ATTR+'") == true'),5)
     def test_original_bots_studio_only(self):
         g=patch(self.original[GAME]).decode()
         self.assertIn("if RunService:IsStudio() and studioSoloRoundStarted",g)
