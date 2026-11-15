@@ -8,6 +8,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 jobs:
   product-quality-spec:
     runs-on: ubuntu-latest
@@ -107,6 +108,51 @@ jobs:
           assert r['seven_jobs_full_engine_pass'] == '0/7'
           assert r['release_unresolved'] > 0
           print('67 inventory rows loaded; full design+engine proof still NO_GO')
+          PY
+      - name: Fetch the actual pinned official RC82 build (READ-ONLY)
+        uses: actions/download-artifact@v4
+        with:
+          run-id: 43677046865
+          name: P0D-RC82-ROLE7-ASSASSIN-PRIVATE-MOBILE-STUDIO-SOURCE-NOGO
+          github-token: ${{ github.token }}
+          path: /tmp/product_quality/official_source
+      - name: Verify 82 genuine Luau scripts and audit all 7 role source branches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, ZIP_DEFLATED
+          import hashlib
+          d=Path("/tmp/product_quality/official_source")
+          place=d/"P0D_RC82_ASSASSIN_7JOB_PRIVATE_MOBILE_STUDIO.rbxlx"
+          blob=place.read_bytes()
+          assert len(blob)==772452, "OFFICIAL_PLACE_BYTES_CHANGED"
+          assert hashlib.sha256(blob).hexdigest()=="79938054ff3d4c6859e195789be35520032bb8b9ff4bb3c7ff80515d0dcb22dd","OFFICIAL_PLACE_SHA256_CHANGED"
+          assert (d/"SOURCE_LOCK.json").is_file(),"OFFICIAL_SOURCE_LOCK_MISSING"
+          target=Path("/tmp/product_quality/P0D_RC82_PINNED_FOR_AUDIT.zip")
+          with ZipFile(target,"w",ZIP_DEFLATED) as z:
+            z.write(place,place.name)
+            z.write(d/"SOURCE_LOCK.json","SOURCE_LOCK.json")
+          print("GITHUB_OFFICIAL_RC82_ACTUAL_PLACE_SHA256_PINNED")
+          PY
+          python3 -B product_quality/audit_actual_place.py \
+            --artifact /tmp/product_quality/P0D_RC82_PINNED_FOR_AUDIT.zip \
+            --official-head d2f3ed1a47558fdaf07be0181c83c698bdb2ce34 \
+            --report /tmp/product_quality/ACTUAL_RC82_GAMEPLAY_SOURCE_AUDIT.json
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          r=json.loads(Path("/tmp/product_quality/ACTUAL_RC82_GAMEPLAY_SOURCE_AUDIT.json").read_text())
+          assert r["source_lock_exact"] is True
+          assert r["scripts_examined"]==82
+          assert r["place_bytes"]==772452
+          assert r["gameplay_engine_pass"] is False
+          assert r["decision"]=="GAMEPLAY_SOURCE_REMEDIATION_REQUIRED"
+          assert "MAGE" in r["role_source_gaps"]
+          assert "BEAST_TAMER" in r["role_source_gaps"]
+          assert "NECROMANCER" in r["role_source_gaps"]
+          print("PASS_82_REAL_SOURCE_LOCK_AND_SEVEN_ROLE_MVP_GAP_DIAGNOSIS",r["role_source_gaps"])
           PY
       - name: Publish transparent NO_GO report
         if: always()
