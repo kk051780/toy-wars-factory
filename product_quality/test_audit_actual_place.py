@@ -49,8 +49,17 @@ class ActualPlaceTests(unittest.TestCase):
         xml, lock = fixture()
         result = inspect(xml, lock, HEAD)
         self.assertIn("UNSELECTED_PLAYER_CAN_READY_PRIVATE_JOB_TRIAL",result["problems"])
-        self.assertIn("ASSASSIN_DISPLAY_OR_INTERNAL_KEY_INCONSISTENT",result["problems"])
+        self.assertNotIn("ASSASSIN_DISPLAY_OR_INTERNAL_KEY_INCONSISTENT",result["problems"])
         self.assertFalse(result["human_approved"])
+
+    def test_legacy_alias_is_rejected_even_with_updated_source_lock(self):
+        xml, lock = fixture()
+        xml = xml.replace("暗殺者".encode("utf-8"), "忍者".encode("utf-8"))
+        lock["blobs"]["SevenJobsRules.luau"] = git_blob('NINJA={label="忍者"}'.encode("utf-8"))
+        lock["blobs"]["TrapRaidersHUD.luau"] = git_blob("忍者".encode("utf-8"))
+        r = inspect(xml, lock, HEAD)
+        self.assertTrue(r["source_lock_exact"])
+        self.assertIn("ASSASSIN_DISPLAY_OR_INTERNAL_KEY_INCONSISTENT", r["problems"])
 
     def test_zip_input_and_missing_manifest(self):
         xml, lock = fixture()
