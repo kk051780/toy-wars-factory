@@ -1,6 +1,6 @@
 
 --!strict
--- TRAP RAIDERS / independent, Studio-only seven hero PLAYABLE prototype.
+-- EGGRUMBLE / independent, Studio-only seven hero PLAYABLE prototype.
 -- Source is not authoritative official RC; no Game/Store/Remote/egg modifications.
 -- Copy to ServerScriptService as SevenHeroArena.server.luau for private Studio Play.
 local Players = game:GetService("Players")
@@ -358,6 +358,8 @@ end
 
 local ground=part(folder,"ArenaGround",Vector3.new(108,1.5,104),origin+Vector3.new(0,-3,20),Color3.fromRGB(35,49,63))
 ground.CanCollide=true
+local brandMarker=part(folder,"EGGRUMBLE_BrandMarker",Vector3.new(4,1,4),origin+Vector3.new(0,0,-11),Color3.fromRGB(233,188,81))
+label(brandMarker,"EGGRUMBLE","7職バトル実験場｜Studio専用")
 for i,role in ipairs(ROLE_ORDER) do
  local data=ROLES[role]
  local x=(i-4)*14
