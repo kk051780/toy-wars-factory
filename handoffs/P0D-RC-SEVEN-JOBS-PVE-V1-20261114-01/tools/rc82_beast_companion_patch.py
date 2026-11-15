@@ -31,21 +31,25 @@ def one(s:str,old:str,new:str,label:str)->str:
     if s.count(old)!=1: raise ValueError('ANCHOR_DRIFT_'+label+'_'+str(s.count(old)))
     return s.replace(old,new,1)
 
-COMPANION_STATE = '''local sevenBeastCompanions: {[Player]: Model} = {}
-'''
-COMPANION_CLEANUP = '''-- SevenJob Beast Tamer: ONE short-lived server-owned pet per player.
-local function clearSevenBeast(player:Player)
-    local model=sevenBeastCompanions[player]
-    sevenBeastCompanions[player]=nil
+COMPANION_CLEANUP = '''-- Existing horde object also owns this ONE bounded PvE pet cache.
+-- No additional Game module-level Luau registers / Remote / Store writer.
+function horde:clearSevenBeast(player:Player)
+    local companions=self.beastCompanions
+    if not companions then return end
+    local model=companions[player]
+    companions[player]=nil
     if model and model.Parent then model:Destroy() end
 end
 '''
 
+
 COMPANION_FUNCTION = '''-- FB004: real summon, not a flash/second instant attack. 1 pet / caster,
 -- bounded 9s, <= 40 server updates, <= 17 existing neutral enemies, no PvP.
 -- Existing single Game/Remote and horde:hit remain the ONLY damage/KO authority.
-local function summonSevenBeast(player:Player,root:BasePart,team:string,serial:number)
-    clearSevenBeast(player)
+function horde:summonSevenBeast(player:Player,root:BasePart,team:string,serial:number)
+    horde:clearSevenBeast(player)
+    local companions=horde.beastCompanions
+    if not companions then companions={};horde.beastCompanions=companions end
     local castCharacter=player.Character
     local selectedAck=sevenJobPickAckSeq[player]
     if not castCharacter or selectedAck==nil then return end
@@ -83,7 +87,7 @@ local function summonSevenBeast(player:Player,root:BasePart,team:string,serial:n
             gold,Enum.PartType.Block)
     end
     pet.Parent=map.model
-    sevenBeastCompanions[player]=pet
+    companions[player]=pet
     task.spawn(function()
         local expires=serverNow()+9
         local lastPetHit=serverNow()
@@ -94,7 +98,7 @@ local function summonSevenBeast(player:Player,root:BasePart,team:string,serial:n
         for _=1,40 do
             task.wait(.25)
             local now=serverNow()
-            if now>=expires or sevenBeastCompanions[player]~=pet
+            if now>=expires or companions[player]~=pet
                 or not pet.Parent or player.Parent~=Players
                 or player.Character~=castCharacter or match.phase~="ACTIVE"
                 or match.serial~=serial or getTeamName(player)~=team
@@ -154,32 +158,32 @@ local function summonSevenBeast(player:Player,root:BasePart,team:string,serial:n
                 sevenJobStrike(player,petPosition,aim,14)
             end
         end
-        if sevenBeastCompanions[player]==pet then clearSevenBeast(player)
+        if companions[player]==pet then horde:clearSevenBeast(player)
         elseif pet.Parent then pet:Destroy() end
     end)
 end
 '''
 
 def modify_game(s:str)->str:
-    s=one(s,'local sevenJobLastUse: {[Player]: number} = {}\n',
-       'local sevenJobLastUse: {[Player]: number} = {}\n'+COMPANION_STATE+COMPANION_CLEANUP,'PET_STATE')
+    s=one(s,'local horde=MusouHorde.new(map.model)\n',
+       'local horde=MusouHorde.new(map.model)\n'+COMPANION_CLEANUP,'PET_METHOD_AFTER_HORDE')
     s=one(s,'    sevenJobs[player]=job\n    sevenJobSelected[player]=true\n',
-       '    clearSevenBeast(player) -- no old pet survives role re-selection\n'
+       '    horde:clearSevenBeast(player) -- no old pet survives role re-selection\n'
        '    sevenJobs[player]=job\n    sevenJobSelected[player]=true\n','SELECT_PET_REVOKE')
     s=one(s,'            dropEgg(player)\n            sevenJobs[player]="WARRIOR"\n',
-       '            dropEgg(player)\n            clearSevenBeast(player)\n'
+       '            dropEgg(player)\n            horde:clearSevenBeast(player)\n'
        '            sevenJobs[player]="WARRIOR"\n','TEAM_CLEAR_PET')
     s=one(s,'local function useSevenJob(player:Player,data:any)\n',
        COMPANION_FUNCTION+'local function useSevenJob(player:Player,data:any)\n','PET_BEFORE_USE')
     s=one(s,'    elseif job=="BEAST_TAMER" then\n        sevenJobStrike(player,root.Position,facing,23)\n        sevenJobDelayedStrike(player,job,match.serial,root.Position,facing,23,.8)\n',
        '    elseif job=="BEAST_TAMER" then\n'
        '        sevenJobStrike(player,root.Position,facing,23)\n'
-       '        summonSevenBeast(player,root,team,match.serial)\n','PET_Q_REAL')
+       '        horde:summonSevenBeast(player,root,team,match.serial)\n','PET_Q_REAL')
     s=one(s,'        clearEarnedPowerVisual(player)\n        cleanupScout(player)\n        dropEgg(player)\n',
        '        clearEarnedPowerVisual(player)\n        cleanupScout(player)\n'
-       '        clearSevenBeast(player)\n        dropEgg(player)\n','RESPAWN_CLEAR_PET')
+       '        horde:clearSevenBeast(player)\n        dropEgg(player)\n','RESPAWN_CLEAR_PET')
     s=one(s,'    dropEgg(player)\n    cleanupScout(player)\n    lastFreeHatch[player]=nil\n',
-       '    dropEgg(player)\n    cleanupScout(player)\n    clearSevenBeast(player)\n    lastFreeHatch[player]=nil\n','LEAVE_CLEAR_PET')
+       '    dropEgg(player)\n    cleanupScout(player)\n    horde:clearSevenBeast(player)\n    lastFreeHatch[player]=nil\n','LEAVE_CLEAR_PET')
     return s
 
 def main(parent:Path,target:Path):
@@ -213,7 +217,7 @@ def main(parent:Path,target:Path):
         raise ValueError('ORIGINAL_GAME_BLOB_DRIFT')
     before=scripts['Game'].text
     after=modify_game(before)
-    if blob(after)==PARENT_GAME_BLOB or 'summonSevenBeast(player,root,team,match.serial)' not in after:
+    if blob(after)==PARENT_GAME_BLOB or 'horde:summonSevenBeast(player,root,team,match.serial)' not in after:
         raise ValueError('PET_GAME_NOT_APPLIED')
     # Preserve original exact ACK, objective and spectator authority.
     for literal in ('sevenJobPickAckSeq[player]~=selectedAck',
