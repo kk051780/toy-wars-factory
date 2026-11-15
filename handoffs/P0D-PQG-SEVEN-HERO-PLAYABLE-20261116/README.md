@@ -1,6 +1,8 @@
 # EGGRUMBLE — Seven Hero Playable Studio Slice (SOURCE only, not official RC)
 
-**Canonical player-facing product name: EGGRUMBLE**. Historical internal repo/game and source IDs are retained for compatibility.\n\nOWNER instruction (2026-11-16): "ゲーム品質ゲートとして、各キャラを作り上げて".
+**Canonical player-facing product name: EGGRUMBLE**. Historical internal repo/game and source IDs are retained for compatibility.
+
+OWNER instruction (2026-11-16): "ゲーム品質ゲートとして、各キャラを作り上げて".
 
 ## What is implemented as actual Luau
 
@@ -8,22 +10,22 @@
 
 | Internal role ID kept | Visible role | A / B / C implemented as runnable Studio behavior |
 | --- | --- | --- |
-| WARRIOR | 戦士 | strike / earthquake AoE / large battle shockwave |
+| WARRIOR | 神将（仮） | odachi/spear/taijutsu stance basic / earthquake AoE / storm/flame/eight-headed serpent divine avatar |
 | MAGE | 魔法使い | ranged magic / AoE thunder + ally healing / falling meteor |
 | NINJA | 暗殺者 | dash hit / temporary speed + transparency / extended strike dash |
 | TRAPPER | 超能力者 | gravity hit / short levitation + swap of two training enemies / temporary two-point portal |
 | BUILDER | マッドサイエンティスト | energy shot / tracking autonomous turret / 3D mobile UFO demonstration and blast |
-| BEAST | 魔獣使い | beast impact / AI-companion summon with follow and target damage / giant beast |
+| BEAST | 魔獣使い | beast impact / feed-altered giant or three split smaller companions / feed-altered giant or split ultimate beast |
 | ZOMBIE | 呪術師 | damage + short slow curse / three attacking undead units / oversized dark creature |
 
-The display names are the new OWNER-approved direction; internal IDs remain unchanged to minimize migration risk. Abilities target **test dummies only** for safe preview and **do not demonstrate finished real PvP**.
+Most display names follow OWNER-approved direction. **神将 is a proposed name pending OWNER final choice.** Existing WARRIOR/BEAST internal IDs are unchanged to minimize migration risk. For the complete design, current source coverage and missing functionality, read [ROLE_EVOLUTION_20261116.md](ROLE_EVOLUTION_20261116.md). Abilities target **test dummies only** for safe preview and **do not demonstrate finished real PvP**.
 
 ## Try privately in Roblox Studio
 
 1. On an isolated Studio copy (never the production place), create a **Script** in ServerScriptService.
 2. Paste the complete file `SevenHeroArena.server.luau` into that Script.
 3. Enter **Play**. Find the EGGRUMBLE-branded marker and seven job stands about 42 studs from the existing SpawnLocation; a flat test floor and twelve red test dummies appear.
-4. Use the stand ProximityPrompt to choose a job. Equip a Tool from the backpack (or Android hotbar): A=basic, B=special, C=signature. Each can be activated against the training dummies, which respawn.
+4. Use the stand ProximityPrompt to choose a job. If 神将 or 魔獣使い is selected, interact with the extra ground choice stations for weapon style/divine seal or giant/split/armor food before using the skill Tools. Equip a Tool from the backpack (or Android hotbar): A=basic, B=special, C=signature. Each can be activated against the training dummies, which respawn.
 5. Stop Play to remove all prototype entities. Script is inert outside Studio because of `RunService:IsStudio()`.
 
 ## Safety / honest test status
@@ -31,6 +33,7 @@ The display names are the new OWNER-approved direction; internal IDs remain unch
 - Preview **works only when installed into a Studio test place**; GitHub code existence is not a Studio test record.
 - No source was added to the canonical RC, no normal merge or game Publish, no DataStore writes, no real network Remotes, no game economy modifications.
 - No source-exact Rojo/native Lua compiler, Studio 2-client, Android FPS/Art/FUN or OWNER acceptance has run for this slice yet. It remains **SOURCE_WIP / ENGINE_UNKNOWN / RC_NOT_INTEGRATED**.
+- The beast's ARMORED shell is visual in the present preview; real armor interception is future work. The scientist's superpower cores, 8+ divine seals, real mounting/flying, PvP and egg capture are still missing.
 - This is a playable mechanics scaffold, **not** the finished art/style/animations, enemy-team AI, map, egg capture or advanced skill trees. Role-specific full product quality remains NO_GO.
 - Follow the existing Game/HUD/SevenJobs author PR #297/#303/#305 and latest private role fixes #476/#481 for all shared integration paths. No edits to another writer's path. #220's authenticated RC writer alone decides any source-selective official adoption.
 
