@@ -10,7 +10,7 @@ local Debris = game:GetService("Debris")
 if not RunService:IsStudio() then return end
 
 local ROLE_ORDER = {"WARRIOR","MAGE","NINJA","TRAPPER","BUILDER","BEAST","ZOMBIE"}
-local ROLES = {
+local ROLES: {[string]: {name:string,color:Color3,weapon:string,a:string,b:string}} = {
  WARRIOR={name="戦士",color=Color3.fromRGB(238,87,45),weapon="大剣",a="烈風斬",b="大地震撃"},
  MAGE={name="魔法使い",color=Color3.fromRGB(64,165,255),weapon="魔導杖",a="魔力弾",b="雷光＋治癒"},
  NINJA={name="暗殺者",color=Color3.fromRGB(93,94,157),weapon="双短剣",a="瞬影斬",b="風走り＋透明化"},
@@ -147,18 +147,77 @@ local function curse(h:Humanoid)
  local old=h.WalkSpeed;h.WalkSpeed=math.min(old,7)
  task.delay(2.7,function() if h.Parent and h.WalkSpeed<=7 then h.WalkSpeed=old end end)
 end
-local function cast(player:Player,role:string,special:boolean)
+local function cast(player:Player,role:string,slot:string)
+ local special=(slot~="A")
  local entry=ROLES[role]
  if not entry then return end
  local char,root,hum=getRig(player)
  if not char or not root or not hum then return end
- local key=role..(special and "_B" or "_A")
+ local key=role.."_"..slot
  cd[player]=cd[player] or {}
- local now=os.clock();local duration=special and 11 or 1.0
+ local now=os.clock();local duration=(slot=="C" and 22) or (special and 11 or 1.0)
  if (cd[player][key] or 0)>now then return end
  cd[player][key]=now+duration
  local c=entry.color; local front=forward(root,8)
- if role=="WARRIOR" then
+ if slot=="C" then
+  -- Signature abilities: separate from ordinary/special input, always server-owned.
+  if role=="WARRIOR" then
+   hit(forward(root,11),25,92,c,char)
+  elseif role=="MAGE" then
+   local impact=forward(root,24)
+   local meteor=effectsPart(folder,"Meteor",impact+Vector3.new(0,28,0),Vector3.new(5,5,5),c)
+   meteor.Shape=Enum.PartType.Ball
+   TweenService:Create(meteor,TweenInfo.new(.45),{Position=impact,Size=Vector3.new(9,9,9)}):Play()
+   task.delay(.46,function() if meteor.Parent then meteor:Destroy() end; hit(impact,18,73,c,char) end)
+  elseif role=="NINJA" then
+   root.CFrame=root.CFrame+root.CFrame.LookVector*24
+   hit(forward(root,4),10,70,c,char)
+  elseif role=="TRAPPER" then
+   local p1=effectsPart(folder,"EsperPortalA",root.Position+root.CFrame.LookVector*6,Vector3.new(5,7,.6),c)
+   local p2=effectsPart(folder,"EsperPortalB",root.Position+root.CFrame.LookVector*33,Vector3.new(5,7,.6),c)
+   local touched={}
+   p1.Touched:Connect(function(other)
+    local m=other:FindFirstAncestorOfClass("Model")
+    local pr=m and Players:GetPlayerFromCharacter(m)
+    if not pr or touched[pr] or (pr:GetAttribute("P0DPreviewCarryingEgg")==true) then return end
+    local rr=m:FindFirstChild("HumanoidRootPart")::BasePart?
+    if not rr then return end
+    touched[pr]=true;rr.CFrame=p2.CFrame+Vector3.new(0,2,-6)
+    task.delay(1,function() touched[pr]=nil end)
+   end)
+   Debris:AddItem(p1,8);Debris:AddItem(p2,8)
+   hit(forward(root,15),7,12,c,char)
+  elseif role=="BUILDER" then
+   local craft=Instance.new("Model");craft.Name="MadScientistUFO";craft.Parent=folder
+   local disc=effectsPart(craft,"FlyingSaucer",root.Position+Vector3.new(0,-2,0),Vector3.new(12,.9,12),c)
+   disc.Shape=Enum.PartType.Cylinder; craft.PrimaryPart=disc
+   local dome=effectsPart(craft,"Dome",root.Position+Vector3.new(0,.1,0),Vector3.new(6,3,6),Color3.fromRGB(95,165,255))
+   dome.Shape=Enum.PartType.Ball;dome.Transparency=.45
+   local seat=Instance.new("Seat");seat.Name="PilotSeat";seat.Size=Vector3.new(2,1.1,2)
+   seat.CFrame=CFrame.new(root.Position+Vector3.new(0,.7,0));seat.Anchored=true;seat.Parent=craft
+   -- The craft visibly flies over the field; this is a controlled preview, not full vehicle controls.
+   task.spawn(function()
+    for i=1,35 do
+     if not craft.Parent then break end
+     craft:PivotTo(craft:GetPivot()+root.CFrame.LookVector*1.5+Vector3.new(0,math.sin(i/4)*.16,0))
+     task.wait(.08)
+    end
+    if craft.Parent then craft:Destroy() end
+   end)
+   hit(forward(root,10),13,53,c,char)
+  elseif role=="BEAST" then
+   local creature=beastBody("GreatBeast",forward(root,7),c,false)
+   creature:ScaleTo(2.4)
+   summonAI(player,{creature},14,25)
+   flash(creature:GetPivot().Position,9,c)
+  elseif role=="ZOMBIE" then
+   local shade=beastBody("DarkWorldCreature",forward(root,12),c,false)
+   shade:ScaleTo(2.7)
+   summonAI(player,{shade},14,22)
+   for _,h in ipairs(nearby(front,23,char)) do curse(h) end
+   flash(front,22,c)
+  end
+ elseif role=="WARRIOR" then
   if special then
    hit(root.Position,17,65,c,char)
    local shock=effectsPart(folder,"EarthRing",root.Position-Vector3.new(0,2,0),Vector3.new(1,.35,1),c)
@@ -171,7 +230,7 @@ local function cast(player:Player,role:string,special:boolean)
    hit(front,17,32,c,char)
    for _,p in ipairs(Players:GetPlayers()) do
     local pc,pr,ph=getRig(p)
-    if pc and pr and ph and (pr.Position-root.Position).Magnitude<22 and (p==player or p.Team==player.Team) then
+    if pc and pr and ph and (pr.Position-root.Position).Magnitude<22 and (p==player or (player.Team~=nil and p.Team==player.Team)) then
      ph.Health=math.min(ph.MaxHealth,ph.Health+28)
      flash(pr.Position,3,Color3.fromRGB(86,255,165))
     end
@@ -259,10 +318,11 @@ local function cast(player:Player,role:string,special:boolean)
  end
 end
 
-local function addTool(player:Player,role:string,special:boolean)
+local function addTool(player:Player,role:string,slot:string)
+ local special=(slot~="A")
  local entry=ROLES[role]
  local tool=Instance.new("Tool")
- tool.Name=(special and "B " or "A ")..(special and entry.b or entry.a)
+ tool.Name=slot.." "..(slot=="A" and entry.a or (slot=="B" and entry.b or "究極技"))
  tool.ToolTip=entry.name.." / "..entry.weapon
  tool.CanBeDropped=false;tool.RequiresHandle=true
  tool:SetAttribute("P0DPreviewTool",true)
@@ -276,7 +336,7 @@ local function addTool(player:Player,role:string,special:boolean)
  elseif role=="BUILDER" then handle.Size=Vector3.new(.8,.9,2.8)
  elseif role=="ZOMBIE" then handle.Size=Vector3.new(.8,3.8,.4) end
  tool.Activated:Connect(function()
-  if player:GetAttribute("P0DPreviewRole")==role then cast(player,role,special) end
+  if player:GetAttribute("P0DPreviewRole")==role then cast(player,role,slot) end
  end)
  tool.Parent=player:WaitForChild("Backpack")
 end
@@ -291,8 +351,9 @@ local function choose(player:Player,role:string)
   end
  end
  player:SetAttribute("P0DPreviewRole",role)
- addTool(player,role,false)
- addTool(player,role,true)
+ addTool(player,role,"A")
+ addTool(player,role,"B")
+ addTool(player,role,"C")
 end
 
 local ground=part(folder,"ArenaGround",Vector3.new(108,1.5,104),origin+Vector3.new(0,-3,20),Color3.fromRGB(35,49,63))
@@ -317,7 +378,7 @@ for i,role in ipairs(ROLE_ORDER) do
   local hat=effectsPart(folder,role.."_Sigil",head.Position+Vector3.new(0,1,0),Vector3.new(2.3,.17,2.3),data.color)
   hat.Shape=Enum.PartType.Cylinder
  end
- label(head,data.name,data.weapon.." | A通常 / B特殊")
+ label(head,data.name,data.weapon.." | A通常 / B特殊 / C究極")
  local prompt=Instance.new("ProximityPrompt");prompt.ActionText="この職業で試す"
  prompt.ObjectText=data.name;prompt.HoldDuration=.2;prompt.MaxActivationDistance=12
  prompt.RequiresLineOfSight=false;prompt.Parent=stand
@@ -339,4 +400,4 @@ local function dummy(n:number)
 end
 for n=1,12 do dummy(n) end
 Players.PlayerRemoving:Connect(function(player) cd[player]=nil end)
-print("[P0D PREVIEW] seven jobs, two active tools each, 12 respawning target dummies; Studio-only; official RC unchanged")
+print("[P0D PREVIEW] seven jobs, THREE active tools each, 12 respawning target dummies; Studio-only; official RC unchanged")
