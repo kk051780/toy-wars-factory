@@ -1,0 +1,87 @@
+name: P0D #470 FB005 spectator lobby reentry actual 82-source native
+on:
+  push:
+    branches: [feature/p0d-product-quality-gate-20261115]
+    paths:
+      - product_quality/role7_lobby_reentry_guard.py
+      - .github/workflows/p0d-quality-role7-lobby-reentry-native.yml
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - product_quality/role7_lobby_reentry_guard.py
+      - .github/workflows/p0d-quality-role7-lobby-reentry-native.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  actual-source-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download frozen genuine 82-source parent from existing PR471 (not RC)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_fb005_parent
+          gh run download 43691542351 -R kk051780/toy-wars-factory \
+            -n P0D-QUALITY-CUMULATIVE-ROLE7-SPECTATOR-SOURCE-NOGO \
+            -D /tmp/p0d_fb005_parent
+          test -s /tmp/p0d_fb005_parent/P0D_ROLE7_CUMULATIVE_SPECTATOR_PRIVATE.zip
+      - name: Build one Game-only source fix and check lock, negation, exact egg score
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B product_quality/role7_lobby_reentry_guard.py \
+            --parent /tmp/p0d_fb005_parent/P0D_ROLE7_CUMULATIVE_SPECTATOR_PRIVATE.zip \
+            --out /tmp/P0D_FB005_LOBBY_REENTRY_SAFE.zip \
+            --extract /tmp/p0d_fb005_sources
+          python3 - <<'PY'
+          import sys, pathlib, json, zipfile
+          sys.path.insert(0, "product_quality")
+          from role7_lobby_reentry_guard import replace_game, OLD, NEW
+          for corrupt in ("", "root.CFrame=CFrame.new()", OLD*2, NEW):
+              try: replace_game(corrupt)
+              except ValueError: pass
+              else: raise AssertionError("UNPINNED_OR_DOUBLE_APPLIED_PATCH_ACCEPTED")
+          with zipfile.ZipFile("/tmp/P0D_FB005_LOBBY_REENTRY_SAFE.zip") as z:
+              r=json.loads(z.read("RECEIPT.json"))
+          assert r["source_count"] == 82 and r["unchanged_scripts"] == 81
+          assert r["egg_score_authority_unchanged"] is True
+          assert r["studio"] == "NOT_TESTED" and r["official_rc_write"] is False
+          assert "root.CFrame=if RunService:IsStudio()" in pathlib.Path(
+              "/tmp/p0d_fb005_sources/Game.luau").read_text(encoding="utf8")
+          print("SOURCE_LOCK82_AND_NON_DESTRUCTIVE_FB005_REENTRY_GUARD_PASS_NOT_STUDIO")
+          PY
+      - name: Checkout fixed external Luau native compiler
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_pinned_luau
+          persist-credentials: false
+      - name: Compile actual patched Game and all 81 preserved scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_pinned_luau -B /tmp/p0d_fb005_luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_fb005_luau --target Luau.Compile.CLI --parallel 4
+          n=0
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_fb005_luau/luau-compile "$f" >/dev/null
+            n=$((n+1))
+          done < <(find /tmp/p0d_fb005_sources -name '*.luau' -type f -print0 | sort -z)
+          test "$n" -eq 82
+          echo "NATIVE_82_82_PASS_STUDIO_ANDROID_NOT_TESTED"
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: P0D-FB005-LOBBY-REENTRY-SAFE-82-SOURCE-NOGO
+          path: /tmp/P0D_FB005_LOBBY_REENTRY_SAFE.zip
+          retention-days: 7
