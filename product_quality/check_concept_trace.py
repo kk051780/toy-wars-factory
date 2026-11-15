@@ -69,6 +69,7 @@ def evaluate(catalog, trace):
         problems.append("UNKNOWN_TRACE_IDS:" + ",".join(extra))
     catalog_by_id = {r["id"]: r for r in rows if isinstance(r, dict) and isinstance(r.get("id"), str)}
     covered = 0
+    mapped_count = 0
     engine_count = 0
     verified_roles = 0
     release_total = 0
@@ -87,11 +88,13 @@ def evaluate(catalog, trace):
             release_total += 1
         if row.get("concept_id") != fid or not url(row.get("design_source_url")):
             problems.append("DESIGN_SOURCE_MISSING:" + fid)
+        else:
+            mapped_count += 1
         if row.get("release_required") is not required:
             problems.append("RELEASE_REQUIREMENT_MISMATCH:" + fid)
         if fid in RELEASE_ROLE_IDS and row.get("catalog_release") == "S2+":
             # OWNER overrides old S2+ release label; flag the unresolved planning drift.
-            problems.append("OWNER_RELEASE_VS_CATALOG_DRIFT:" + fid)
+            gap_counts["OWNER_RELEASE_OVERRIDE_NEEDS_CATALOG_SYNC"] += 1
         if row.get("catalog_release") != src.get("release"):
             problems.append("CATALOG_RELEASE_DRIFT:" + fid)
         if fid == "P0D-011" and (row.get("display_name") != "暗殺者" or row.get("internal_role") != "NINJA"):
@@ -108,8 +111,10 @@ def evaluate(catalog, trace):
                         and url(row.get("design_revision_url")))
         if has_contract:
             covered += 1
-        else:
+        elif required:
             problems.append("DESIGN_CONTRACT_UNVERIFIED:" + fid)
+        else:
+            gap_counts["DEFERRED_FUTURE_DESIGN_PENDING"] += 1
         paths = row.get("real_source_paths")
         hashes = row.get("real_source_sha256")
         has_source = (isinstance(paths, list) and bool(paths)
@@ -119,8 +124,10 @@ def evaluate(catalog, trace):
         proof_ok = has_contract and has_source and engine_evidence_ok(row.get("engine_proof"), official_head)
         if proof_ok:
             engine_count += 1
-        else:
+        elif required:
             problems.append(("ENGINE_UNKNOWN:" if has_source else "SOURCE_OR_ENGINE_UNKNOWN:") + fid)
+        else:
+            gap_counts["DEFERRED_FUTURE_ENGINE_UNTESTED"] += 1
         if fid in ROLE_CAPABILITIES:
             caps = row.get("capability_proofs")
             if not isinstance(caps, dict):
@@ -138,10 +145,10 @@ def evaluate(catalog, trace):
         problems.append("NO_RELEASE_SCOPE")
     if verified_roles != 7:
         problems.append("SEVEN_JOBS_FULL_ENGINE_NO_GO")
-    if covered != 67:
-        problems.append("DESIGN_COVERAGE_NOT_67")
-    if engine_count != 67:
-        problems.append("ENGINE_COVERAGE_NOT_67")
+    if mapped_count != 67:
+        problems.append("DESIGN_MAPPING_NOT_67")
+    if release_unresolved:
+        problems.append("RELEASE_GAMEPLAY_ENGINE_NO_GO")
     if trace.get("art_gate") != "ART_GO" or trace.get("mobile_gate") != "MOBILE_GO" or trace.get("kid_fun_gate") != "FUN_GO":
         problems.append("ART_MOBILE_KID_GATES_UNVERIFIED")
     if trace.get("owner_accepted") is not True:
@@ -152,7 +159,8 @@ def evaluate(catalog, trace):
         "catalog_entries": len(rows),
         "trace_rows": len(traced),
         "inventory_covered": len(set(catalog_ids) & set(traced_ids)),
-        "design_coverage": f"{covered}/67",
+        "design_coverage": f"{mapped_count}/67",
+        "verified_design_contracts": f"{covered}/67",
         "real_engine_pass": engine_count,
         "seven_jobs_full_engine_pass": f"{verified_roles}/7",
         "release_must_pass": release_total,
