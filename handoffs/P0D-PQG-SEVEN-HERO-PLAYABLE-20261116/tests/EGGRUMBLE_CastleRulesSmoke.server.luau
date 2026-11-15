@@ -34,7 +34,7 @@ expect(Rules.loadDefense(match,redPlayer,{"HARDENED","TRAP","SENSOR"})==10,
  "full equal-defense budget remains ten points")
 Rules.start(match)
 expect(not pcall(function()
- Rules.damageCastle(match,blueBot,roster[3].id,100)
+ Rules.damageCastle(match,blueBot,roster[4].id,100)
 end),"friendly-fire attack must fail")
 expect(Rules.takeEggs(match,redPlayer,2,blueBot)==2,"red hero steals two blue eggs")
 expect(match.castles[blueBot].vaultEggs==1,"vault decremented")
