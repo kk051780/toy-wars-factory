@@ -4,6 +4,18 @@
 
 OWNER instruction (2026-11-16): "ゲーム品質ゲートとして、各キャラを作り上げて".
 
+## V3 owner rules — supersede earlier assumptions
+
+Read [EGGRUMBLE_V3_CASTLE_ELIMINATION_MULTI_EGGS_GAME_MODES_CAPACITY.md](EGGRUMBLE_V3_CASTLE_ELIMINATION_MULTI_EGGS_GAME_MODES_CAPACITY.md) before working on this repository. The match outcome is **last castle standing for BR / last surviving team's castles for TEAM**, not an egg score threshold. A castle fall eliminates its owner and releases vaulted/carried eggs. Each castle and the field have multiple eggs; the 1/5-egg game mode split is retired. Two physical lobby portals select TEAM/BR; empty seats are filled by AI. Competitive castle foundations and hitboxes are standard while cosmetic housebuilding/optional prebattle defense modules allow individuality; the shop catalog is nontransactional.
+
+**Three separate Studio-only examples** exist here; DO NOT place all three server scripts into the same running Place:
+
+1. SevenHeroArena.server.luau — all 7 role abilities and 武神 ranged sword waves against training dummies.
+2. EGGRUMBLE_MassBattleCastlePreview.server.luau — 9 sectors, a capped horde, KO counting and owner banner changes.
+3. EGGRUMBLE_LobbyCastleModesPreview.server.luau — 2 mode gateways, AI roster rules, multi-eggs, individual castle HP/elimination. For this preview, add companion EGGRUMBLE_CastleMatchRules.luau as a ModuleScript named EGGRUMBLE_CastleMatchRules under the SAME ServerScriptService. Bots use simple scripted match-rule actions, not actual navmesh battle AI.
+
+These are SOURCE-WIP preview slices, not a complete integrated game. Default roster size 16 total heroes (real+AI); 24/32 player settings are NOT validated and must not be asserted as capable. Read tools/eggrumble_capacity_model.py for assumed arithmetic; real devices and official RC acceptance pending.
+
 ## What is implemented as actual Luau
 
 `SevenHeroArena.server.luau` is a **Studio-only**, opt-in ServerScriptService preview, additive to (not replacing) the official Game/Store/egg/Remote source. It creates **7 selectable 3D hero stands**, **three Roblox Tools per selected job**, **12 respawning training dummies with actual Humanoid damage**, and server-side abilities/effects. No network assets, no external IP characters, no new charges.
