@@ -191,7 +191,7 @@ function BotActors.start(session:any,Rules:any):()
            local ok,result=pcall(function() return Rules.damageCastle(session.rules,enemy.id,id,26) end)
            if ok then
             if result.fallen and session.releaseEggs then
-             session.releaseEggs(enemy.id,enemyLoc,result.releasedEggs)
+             session.releaseEggs(enemy.id,enemyLoc,result.releasedEggIds)
             end
            end
           end
