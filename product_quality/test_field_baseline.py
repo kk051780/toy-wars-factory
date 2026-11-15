@@ -57,5 +57,19 @@ class SourceRealFieldTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "SOURCE_PATTERN_AMBIGUOUS_OR_MISSING"):
                 audit_module.audit(p,self.studio)
 
+    def test_private_studio_path_probe_is_opt_in_and_read_only(self):
+        source=(HERE / "P0DFieldRouteProbe.server.luau").read_text(encoding="utf8")
+        self.assertIn('if not RunService:IsStudio() then return end', source)
+        self.assertIn('ServerStorage:GetAttribute("P0D_FIELD_ROUTE_PROBE") ~= true', source)
+        self.assertIn('path:ComputeAsync(fromPos, toPos)', source)
+        self.assertIn('"P0D_FIELD_ROUTE_PROBE_JSON "', source)
+        self.assertIn('"NOT_MEASURED"', source)
+        self.assertEqual(1, source.count('print("P0D_FIELD_ROUTE_PROBE_JSON "'))
+        self.assertEqual(3, source.count('{name = "'))
+        for forbidden in ("DataStoreService", "RemoteEvent", "FireServer",
+                          "SetAttribute(", "Instance.new(", "Humanoid:MoveTo(",
+                          "Workspace.Terrain", "game:BindToClose("):
+            self.assertNotIn(forbidden, source)
+
 if __name__ == "__main__":
     unittest.main()
