@@ -5,6 +5,7 @@ This is NOT a Luau compiler, real Studio device, or art/FUN approval.
 """
 from pathlib import Path
 import re
+import json
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -64,6 +65,21 @@ class VisualLayersSourceContract(unittest.TestCase):
         self.assertIn("EGGRUMBLE_CastleArt_VisualOnly", FIELD)
         self.assertNotIn('Instance.new("SpawnLocation")', FIELD)
         self.assertNotIn('Instance.new("Terrain")', FIELD)
+
+    def test_rojo_previews_pin_only_existing_author_sources(self):
+        projects = {
+            "EGGRUMBLE_V3_ART_STUDIO.project.json": 7,
+            "EGGRUMBLE_SEVEN_HERO_ART_STUDIO.project.json": 2,
+        }
+        for filename, expected in projects.items():
+            project = json.loads((ROOT / filename).read_text(encoding="utf-8"))
+            nodes = project["tree"]["ServerScriptService"]
+            self.assertEqual(len(nodes) - 1, expected)  # one $className entry
+            for name, spec in nodes.items():
+                if name == "$className":
+                    continue
+                resolved = (ROOT / spec["$path"]).resolve()
+                self.assertTrue(resolved.is_file(), f"broken Rojo source: {filename}:{name}")
 
     def test_reversible_visual_only_namespaces(self):
         self.assertIn('"EGGRUMBLE_RoleVisuals"', HERO)
