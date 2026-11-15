@@ -54,6 +54,39 @@ jobs:
               assert receipt['studio']=='NOT_RUN'
           print('REAL_82_SOURCE_PRIVATE_QA_PASS_NOT_PRODUCT_PASS')
           PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_role7_luau
+          persist-credentials: false
+      - name: Native Luau compile actual modified Game/HUD
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_role7_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_role7_luau -B /tmp/p0d_role7_luau_build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_role7_luau_build --target Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import zipfile,xml.etree.ElementTree as E
+          from pathlib import Path
+          with zipfile.ZipFile('/tmp/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip') as z:
+              root=E.fromstring(z.read('PRIVATE_ROLE7_READY_RC82.rbxlx'))
+          scripts={}
+          for item in root.iter('Item'):
+              p=item.find('Properties')
+              if p is None:continue
+              n=p.find("./string[@name='Name']")
+              s=p.find("./string[@name='Source']")
+              if n is not None and s is not None and s.text is not None:
+                  scripts[n.text]=s.text
+          assert len(scripts)==82
+          for name in ('Game','TrapRaidersHUD'):
+              Path('/tmp/p0d_role7_'+name+'.luau').write_text(scripts[name],encoding='utf-8')
+          PY
+          /tmp/p0d_role7_luau_build/luau-compile /tmp/p0d_role7_Game.luau >/dev/null
+          /tmp/p0d_role7_luau_build/luau-compile /tmp/p0d_role7_TrapRaidersHUD.luau >/dev/null
+          echo 'P0D_RC82_ROLE7_NATIVE_GAME_HUD_2_OF_2_PASS'
       - uses: actions/upload-artifact@v4
         if: success()
         with:
