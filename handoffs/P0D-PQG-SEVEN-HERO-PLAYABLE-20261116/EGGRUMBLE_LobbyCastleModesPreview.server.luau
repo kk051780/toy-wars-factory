@@ -7,6 +7,7 @@ local RunService=game:GetService("RunService")
 local Debris=game:GetService("Debris")
 if not RunService:IsStudio() then return end
 local Rules=require(script.Parent:WaitForChild("EGGRUMBLE_CastleMatchRules"))
+local BotActors=require(script.Parent:WaitForChild("EGGRUMBLE_BotActors"))
 local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)::SpawnLocation?
 local root=spawn and spawn.Position or Vector3.new(0,4,0)
 local folder=Instance.new("Folder");folder.Name="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW";folder.Parent=workspace
@@ -46,9 +47,16 @@ local function createWorldCastle(session:any,entry:any,index:number)
  local side=if session.mode=="TEAM" then entry.team else (if index%2==1 then "RED" else "BLUE")
  local tint=if side=="RED" then Color3.fromRGB(207,92,86) else Color3.fromRGB(87,146,218)
  local ground=block(model,"StandardFoundation",at+Vector3.new(0,-2,0),Vector3.new(72,3,72),tint)
- local core=block(model,"StandardCore",at+Vector3.new(0,6,0),Vector3.new(26,13,22),Color3.fromRGB(172,166,147))
+ -- Hollow, traversable standard castle shell: every owner gets the same entrance and geometry.
+ local core=block(model,"StandardCore",at+Vector3.new(0,14,0),Vector3.new(30,2,27),Color3.fromRGB(172,166,147))
  core.Material=Enum.Material.Brick
- local door=block(model,"SiegeGate",at+Vector3.new(0,4,-12),Vector3.new(10,8,1.5),Color3.fromRGB(96,69,56))
+ local left=block(model,"CastleSideLeft",at+Vector3.new(-15,6,0),Vector3.new(2,12,26),Color3.fromRGB(160,154,145))
+ local right=block(model,"CastleSideRight",at+Vector3.new(15,6,0),Vector3.new(2,12,26),Color3.fromRGB(160,154,145))
+ local back=block(model,"CastleBackWall",at+Vector3.new(0,6,13),Vector3.new(30,12,2),Color3.fromRGB(160,154,145))
+ local frontL=block(model,"CastleFrontLeft",at+Vector3.new(-10,6,-13),Vector3.new(10,12,2),Color3.fromRGB(160,154,145))
+ local frontR=block(model,"CastleFrontRight",at+Vector3.new(10,6,-13),Vector3.new(10,12,2),Color3.fromRGB(160,154,145))
+ local door=block(model,"SiegeGate",at+Vector3.new(0,4,-13),Vector3.new(9,8,1.3),Color3.fromRGB(96,69,56))
+ door.Transparency=.45;door.CanCollide=false -- open gate permits both human and bot approach
  for _,dx in ipairs({-26,26}) do
   for _,dz in ipairs({-26,26}) do
    block(model,"Tower",at+Vector3.new(dx,9,dz),Vector3.new(9,18,9),Color3.fromRGB(137,137,142))
@@ -84,7 +92,7 @@ local function createWorldCastle(session:any,entry:any,index:number)
   local c=session.rules.castles[entry.id]
   if c.alive and c.heldEggs>0 then pcall(function() Rules.depositEggs(session.rules,entry.id,c.heldEggs) end) end
  end)
- local vault=block(model,"EggVault",at+Vector3.new(13,3,9),Vector3.new(6,5,6),Color3.fromRGB(218,181,75))
+ local vault=block(model,"EggVault",at+Vector3.new(0,3,6),Vector3.new(6,5,6),Color3.fromRGB(218,181,75))
  board(vault,"卵倉庫")
  prompt(vault,"敵の卵を奪取","卵3個から1個ずつ",function(p)
   if not session.rules or joined[p.UserId]~=session.mode then return end
@@ -108,6 +116,15 @@ local function startSession(mode:string)
   castleLocations={},castleModels={},world=Instance.new("Folder"),
  }
  session.world.Name=mode.."_Arena";session.world.Parent=folder
+ local worldX=mode=="TEAM" and -620 or 620
+ local floor=block(session.world,"TacticalBattlefield",root+Vector3.new(worldX,-4,465),Vector3.new(890,2,1050),Color3.fromRGB(96,126,83))
+ floor.Material=Enum.Material.Grass
+ -- Moveable routes between personal fortresses; demo geometry only, not a finished detailed terrain.
+ for j=1,3 do
+  local lane=block(session.world,"TacticalRoute_"..j,root+Vector3.new(worldX+(j-2)*150,-2.75,465),
+   Vector3.new(18,.7,960),Color3.fromRGB(152,133,99))
+  lane.Material=Enum.Material.Ground
+ end
  sessions[mode]=session
  for _,entry in ipairs(roster) do
   if not entry.isAI then
@@ -138,6 +155,22 @@ local function startSession(mode:string)
     if t then t.Text=(c.isAI and "AI " or "")..id.."\nHP"..math.floor(c.hp).." / 卵"..c.vaultEggs end
    end
   end
+  for _,player in ipairs(queue) do
+   if player.Parent and joined[player.UserId]==mode then
+    local c=session.rules.castles[tostring(player.UserId)]
+    if c and not c.alive and player:GetAttribute("EGGRUMBLE_Eliminated")~=true then
+     player:SetAttribute("EGGRUMBLE_Eliminated",true)
+     local ch=player.Character
+     local rootPart=ch and ch:FindFirstChild("HumanoidRootPart")::BasePart?
+     if rootPart then rootPart.CFrame=CFrame.new(root+Vector3.new(0,12,-35)) end
+     local backpack=player:FindFirstChildOfClass("Backpack")
+     if backpack then
+      local tool=backpack:FindFirstChild("EGGRUMBLE_TestBlade")
+      if tool then tool:Destroy() end
+     end
+    end
+   end
+  end
   if session.rules.winner~=nil then
    print("[EGGRUMBLE "..mode.."] Castle elimination winner:",session.rules.winner)
   end
@@ -161,39 +194,42 @@ local function startSession(mode:string)
    if rootPart and idx then rootPart.CFrame=CFrame.new(getCastlePoint(mode,idx)+Vector3.new(0,7,-45)) end
   end
  end
- -- Bot slots participate in server rules; this PRIVATE preview gives bot tactics as
- -- deliberate simple state transitions, NOT full navmesh NPC, combat animation, PVP AI.
- task.spawn(function()
-  while session.rules.phase=="ACTIVE" and session.world.Parent do
-   for _,bot in ipairs(roster) do
-    if bot.isAI then
-     local me=session.rules.castles[bot.id]
-     if me and me.alive then
-      local target=nil
-      for _,other in ipairs(roster) do
-       local c=session.rules.castles[other.id]
-       if c and c.alive and c.id~=bot.id and (mode~="TEAM" or c.team~=me.team) then
-        target=c;break
-       end
-      end
-      if target then
-       -- 1) seek a valuable egg, 2) deliver it, 3) siege; all server-owned rule calls.
-       if me.heldEggs==0 then
-        pcall(function()
-         if target.vaultEggs>0 then Rules.takeEggs(session.rules,bot.id,1,target.id)
-         else Rules.takeEggs(session.rules,bot.id,1) end
-        end)
-       else pcall(function() Rules.depositEggs(session.rules,bot.id,1) end) end
-       local ok,res=pcall(function() return Rules.damageCastle(session.rules,target.id,bot.id,18) end)
-       if ok and res.fallen then session.releaseEggs(target.id,session.castleLocations[target.id],res.releasedEggs) end
+ -- Actual anchored 3D bot actors roam between castles and must reach their goal
+ -- before stealing/depositing eggs or damaging the castle. No remote numerical sieges.
+ BotActors.start(session,Rules)
+ for _,p in ipairs(queue) do
+  if p.Parent and joined[p.UserId]==mode then
+   local backpack=p:FindFirstChildOfClass("Backpack")
+   if backpack then
+    local tool=Instance.new("Tool");tool.Name="EGGRUMBLE_TestBlade"
+    tool.CanBeDropped=false;tool.RequiresHandle=true
+    local grip=Instance.new("Part");grip.Name="Handle";grip.Size=Vector3.new(.5,3.8,.4)
+    grip.Material=Enum.Material.Metal;grip.Color=Color3.fromRGB(251,216,135);grip.Parent=tool
+    local lastAttack=0
+    tool.Activated:Connect(function()
+     if joined[p.UserId]~=mode or session.rules.phase~="ACTIVE" then return end
+     local my=session.rules.castles[tostring(p.UserId)]
+     if not my or not my.alive or os.clock()-lastAttack<.45 then return end
+     local character=p.Character
+     local rootPart=character and character:FindFirstChild("HumanoidRootPart")::BasePart?
+     if not rootPart then return end
+     lastAttack=os.clock()
+     local affected=0
+     for id,actor in pairs(session.botActors or {}) do
+      local c=session.rules.castles[id]
+      local ar=actor and actor.PrimaryPart
+      if c and c.alive and ar and (mode~="TEAM" or c.team~=my.team)
+       and (ar.Position-rootPart.Position).Magnitude<14 then
+       local h=actor:FindFirstChildOfClass("Humanoid")
+       if h and h.Health>0 and affected<3 then h:TakeDamage(42);affected+=1 end
       end
      end
-    end
+    end)
+    tool.Parent=backpack
    end
-   session.refresh()
-   task.wait(2.4)
   end
- end)
+ end
+
 end
 
 local function joinQueue(mode:string,p:Player)
