@@ -142,8 +142,8 @@ def build(parent,out,extract_dir=None):
         z.writestr("RECEIPT.json",json.dumps(report,indent=2,ensure_ascii=False)+"\n")
     if extract_dir:
         extract_dir.mkdir(parents=True,exist_ok=True)
-        for name,(src,kind,path) in after.items():
-            (extract_dir/(name+".luau")).write_text(src.text,encoding="utf-8")
+        for name,node in after.items():
+            (extract_dir/(name+".luau")).write_text(node.text,encoding="utf-8")
     return report
 
 if __name__=="__main__":
