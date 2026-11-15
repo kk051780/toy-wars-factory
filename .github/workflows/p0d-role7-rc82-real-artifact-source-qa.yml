@@ -5,6 +5,7 @@ on:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
       - "handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01/tools/rc82_role7_ready_patch.py"
+      - "handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01/tools/rc82_beast_companion_patch.py"
       - ".github/workflows/p0d-role7-rc82-real-artifact-source-qa.yml"
   workflow_dispatch:
 
@@ -231,20 +232,25 @@ jobs:
             --parent /tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip \
             --out /tmp/P0D_RC82_FINAL_SPECTATOR_CUMULATIVE_PRIVATE.zip \
             --extract /tmp/p0d_role7_spectator_flat
+          python3 handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01/tools/rc82_beast_companion_patch.py \
+            --parent /tmp/P0D_RC82_FINAL_SPECTATOR_CUMULATIVE_PRIVATE.zip \
+            --out /tmp/P0D_RC82_BEAST_COMPANION_REAL_PRIVATE.zip \
+            | tee /tmp/P0D_BEAST_COMPANION_REAL_RECEIPT.log
           python3 - <<'PY'
           import json,zipfile,hashlib,xml.etree.ElementTree as E
           from pathlib import Path
           from collections import Counter
-          b=Path('/tmp/P0D_RC82_FINAL_SPECTATOR_CUMULATIVE_PRIVATE.zip').read_bytes()
-          with zipfile.ZipFile('/tmp/P0D_RC82_FINAL_SPECTATOR_CUMULATIVE_PRIVATE.zip') as z:
-              xml=z.read('P0D_ROLE7_ACK_WIND_BUILDER_COMBO_RESPAWN_SPECTATOR_RC82.rbxlx')
+          b=Path('/tmp/P0D_RC82_BEAST_COMPANION_REAL_PRIVATE.zip').read_bytes()
+          with zipfile.ZipFile('/tmp/P0D_RC82_BEAST_COMPANION_REAL_PRIVATE.zip') as z:
+              xml=z.read('P0D_RC82_BEAST_TAMER_REAL_COMPANION_PRIVATE.rbxlx')
               sl=json.loads(z.read('SOURCE_LOCK.json'));fl=json.loads(z.read('RC_FEATURE_LOCK.json'))
               receipt=json.loads(z.read('RECEIPT.json'))
           assert receipt['product']=='NO_GO' and receipt['official_rc_write']==False
-          assert receipt['new_game_blob']=='6848da45a10242e5908a102bd9db47b9d3f30023'
-          assert receipt['egg_score_authority_byte_exact'] is True
-          assert receipt['quality_fixes']==['late_join','horde_eligible','elite_spectator','flag_off_readmission','private_observer_spawn']
-          assert len(xml)==779055 and hashlib.sha256(xml).hexdigest()=='bbb9c919cb11cfc5147a75a9d8f8e770eb5a7d540acfffeb650010f5710e0d1c'
+          assert receipt['game_blob_before']=='6848da45a10242e5908a102bd9db47b9d3f30023'
+          assert receipt['game_blob_after']=='d1af274cb2da3c545e7ce9b516b80c4a2b719e6e'
+          assert receipt['modified_only']==['server/Game.server.luau','server/SevenJobsRules.luau','client/HUD.client.luau']
+          assert receipt['summon_lifetime_seconds']==9 and receipt['summon_steps_max']==40
+          assert len(xml)==785541 and hashlib.sha256(xml).hexdigest()=='5949233d5e38c3c107994a93b7dc0daf749e32b14720fc75afed0bfb37b89544'
           out=Path('/tmp/p0d_role7_cumulative82')
           root=E.fromstring(xml)
           scripts=[]
@@ -272,14 +278,18 @@ jobs:
             'ServerScriptService':{'$className':'ServerScriptService','TrapRaidersS1':{'$path':'src/ServerScriptService/TrapRaidersS1'}},
             'StarterPlayer':{'$className':'StarterPlayer','StarterPlayerScripts':{'$path':'src/StarterPlayer/StarterPlayerScripts'}}}}
           (out/'default.project.json').write_text(json.dumps(project,indent=2))
-          assert any('sevenJobPickAckSeq[player]~=selectedAck' in p.read_text('utf-8') for p in [Path('/tmp/p0d_role7_spectator_flat/Game.luau')])
-          final=Path('/tmp/p0d_role7_spectator_flat/Game.luau').read_text('utf-8')
-          for phrase in ('player.Character~=castCharacter','getTeamName(player)~=castTeam',
+          final=next(p.read_text('utf-8') for p,m in scripts if m['path'].endswith('/Game'))
+          for phrase in ('local function summonSevenBeast(',
+                         'summonSevenBeast(player,root,team,match.serial)',
+                         'clearSevenBeast(player)',
+                         'player.Character~=castCharacter','getTeamName(player)~=castTeam',
                          'horde:tick(now,eligibleSoloPlayers(),healthy)',
                          'victim:GetAttribute("P0D_LateJoinSpectator")~=true',
                          'or #eligibleSoloPlayers()<#Players:GetPlayers() then'):
               assert phrase in final,phrase
-          print('ORIGINAL_AUTHOR_PLUS_SPECTATOR_NATIVE_READY_SOURCE_LOCK_82_PASS')
+          assert '魔獣召喚' in next(p.read_text('utf-8') for p,m in scripts if m['path'].endswith('/SevenJobsRules'))
+          assert '魔獣召喚' in next(p.read_text('utf-8') for p,m in scripts if m['path'].endswith('/TrapRaidersHUD'))
+          print('ORIGINAL_AUTHOR_BEAST_SUMMON_GAMEROLEHUD_REAL_SOURCE_LOCK_82_PASS')
           PY
       - name: Native Luau all 82 of cumulative role7 + wind + Builder Q source
         shell: bash
@@ -329,13 +339,13 @@ jobs:
             'quality_author_sha':'3d48167720f6352b659e69dea4aeaf34a8c6fb32',
             'spectator_author_sha':'2738d302e8c732617924bdbd29253dd4727b9bef',
             'official_parent':'d2f3ed1a47558fdaf07be0181c83c698bdb2ce34',
-            'real_private_place_bytes':779055,
-            'real_private_place_sha256':'bbb9c919cb11cfc5147a75a9d8f8e770eb5a7d540acfffeb650010f5710e0d1c',
+            'real_private_place_bytes':785541,
+            'real_private_place_sha256':'5949233d5e38c3c107994a93b7dc0daf749e32b14720fc75afed0bfb37b89544',
             'source_scripts':82,'native_luau':True,'rojo_source_parity':True,
             'source_lock':True,'source_diff_stage':'private_source_candidate',
             'studio_2client':'NOT_RUN','android':'NOT_RUN',
             'official_rc_adopted':False,'owner_acceptance':False,'product_pass':False,
-            'changes':'Role ACK, adaptive wind, builder Q, combo expiry, delayed respawn Q, spectator late join and Horde targeting',
+            'changes':'Role ACK, wind, Builder Q, combo, respawn, spectators plus Beast Tamer real 3D follower and server-neutral autosweep; no mount',
             'rollback':'Exact official source d2f3ed1a47558fdaf07be0181c83c698bdb2ce34',
           },ensure_ascii=False,indent=2)+'\n')
           PY
@@ -349,5 +359,7 @@ jobs:
             /tmp/P0D_RC82_ROLE7_WIND_BUILDER_CUMULATIVE_PRIVATE.zip
             /tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip
             /tmp/P0D_RC82_FINAL_SPECTATOR_CUMULATIVE_PRIVATE.zip
+            /tmp/P0D_RC82_BEAST_COMPANION_REAL_PRIVATE.zip
+            /tmp/P0D_BEAST_COMPANION_REAL_RECEIPT.log
             /tmp/P0D_V6_CUMULATIVE_INTAKE_RECEIPT.json
           retention-days: 7
