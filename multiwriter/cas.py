@@ -66,9 +66,14 @@ def atomic_source_selective_cas(
         raise CASBlocked("AUTHORIZATION_NOT_BOUND_TO_EXACT_SOURCE_BASE_PATHS")
     if not isinstance(exact_paths,list) or not exact_paths or len(set(exact_paths))!=len(exact_paths):
         raise CASBlocked("NO_UNIQUE_PATHS")
-    from gate import pathok
+    from pathlib import PurePosixPath
     for path in exact_paths:
-        pathok(path)
+        if (not isinstance(path,str) or not path or len(path)>240
+            or path.startswith("/") or "\\" in path or "//" in path
+            or "." in PurePosixPath(path).parts
+            or ".." in PurePosixPath(path).parts
+            or path != str(PurePosixPath(path))):
+            raise CASBlocked("INVALID_TARGET_PATH")
         if path.startswith((".github/","multiwriter/")):
             raise CASBlocked("SHARED_META_NEEDS_SEPARATE_COORDINATION")
     if not isinstance(message,str) or not message.startswith("P0D/") or len(message)>200:
