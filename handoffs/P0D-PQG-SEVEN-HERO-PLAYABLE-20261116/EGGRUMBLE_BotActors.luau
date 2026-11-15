@@ -66,6 +66,21 @@ local function desiredTarget(session:any,mode:string,my:any):any
  end
  return target
 end
+-- A short action radius is not enough: side-wall adjacency must not let AI
+-- steal vault eggs, deposit or damage castles through collidable geometry.
+-- Stop the cast just before its interactable (vault/door/deposit) target part.
+local function clearActionPath(actor:Model,actors:Instance,target:Vector3):boolean
+ local origin=actor:GetPivot().Position
+ if math.abs(origin.Y-target.Y)>4.0 then return false end
+ local delta=Vector3.new(target.X-origin.X,0,target.Z-origin.Z)
+ if delta.Magnitude<=4 then return true end
+ local params=RaycastParams.new()
+ params.FilterType=Enum.RaycastFilterType.Exclude
+ params.FilterDescendantsInstances={actor,actors}
+ params.RespectCanCollide=true
+ return workspace:Raycast(origin+Vector3.new(0,0.4,0),delta.Unit*(delta.Magnitude-4),params)==nil
+end
+
 local function clearHeroStrike(actor:Model,target:Model,origin:Vector3,destination:Vector3):boolean
  local delta=destination-origin
  if delta.Magnitude<=0.01 then return true end
@@ -166,7 +181,7 @@ function BotActors.start(session:any,Rules:any):()
           elseif hasEgg then enemyLoc+Vector3.new(0,3,6)
           else enemyLoc+Vector3.new(0,3,-12)
          local actualDist=(Vector3.new(at.X,0,at.Z)-Vector3.new(actualTarget.X,0,actualTarget.Z)).Magnitude
-         if actualDist<=ACTION_DISTANCE then
+         if actualDist<=ACTION_DISTANCE and clearActionPath(actor,actors,actualTarget) then
           if goHome then
            pcall(function() Rules.depositEggs(session.rules,id,me.heldEggs) end)
           elseif hasEgg then
