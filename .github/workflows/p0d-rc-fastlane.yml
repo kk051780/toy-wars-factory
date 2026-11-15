@@ -3150,3 +3150,113 @@ jobs:
           path: /tmp/p0d_rc82_fb003_fb008_personal_results_receipts/*
           retention-days: 14
           if-no-files-found: error
+
+      - name: 'P0 #470 7 jobs: original #297 Assassin alias + server-ACK first-join selection + private mobile gate'
+        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_rc82_fb003_fb008_personal_results_v1
+          FINAL=/tmp/p0d_role7_assassin_mobile_private_rc82
+          OUT=/tmp/p0d_role7_assassin_mobile_private_receipts
+          PLACE="$OUT/P0D_RC82_ASSASSIN_7JOB_PRIVATE_MOBILE_STUDIO.rbxlx"
+          test -f "$BASE/SOURCE_LOCK.json"
+          test ! -e "$FINAL"
+          mkdir -p "$OUT"
+          python3 -B rc_fastlane/apply_role7_assassin_mobile_rc82.py --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_role7_assassin_mobile_rc82.py --base "$BASE" --out "$FINAL" --enabled true
+          python3 - <<'PY'
+          import sys,json
+          from pathlib import Path
+          sys.path.insert(0,'rc_fastlane')
+          from apply_role7_assassin_mobile_rc82 import read,patch,blob,PINS,OUTPUT,GAME,HUD,POLICY,FEATURE
+          base=Path('/tmp/p0d_rc82_fb003_fb008_personal_results_v1')
+          final=Path('/tmp/p0d_role7_assassin_mobile_private_rc82')
+          before,after=read(base),read(final)
+          assert len(before)==len(after)==82
+          assert {p for p in before if before[p]!=after[p]}==set(PINS)
+          assert all(after[k]==v for k,v in patch(before).items())
+          assert {k:blob(after[k]) for k in OUTPUT}==OUTPUT
+          for p in ('server/MusouHorde.luau','server/MapBuilder.luau',
+                    'server/H2FiveEggRules.luau','client/ResultNextStep.client.luau'):
+              assert after[p]==before[p],('PREVIOUS_OWNED_SOURCE_OVERWRITTEN',p)
+          g=after[GAME].decode('utf8');h=after[HUD].decode('utf8')
+          assert 'jobStudioPvE = (RunService:IsStudio() or privateHordeTrialAllowed())' in g
+          assert g.count('{studio=(RunService:IsStudio() or privateHordeTrialAllowed())')==2
+          assert g.count('local function privateHordeTrialAllowed(): boolean')==1
+          assert 'game.PrivateServerId ~= ""' in g and 'workspace:GetAttribute("P0D_PRIVATE_LIVE_HORDE_NINE") == true' in g
+          assert 'jobSelected = sevenJobSelected[player] == true' in g
+          assert 'sevenJobSelected[player]=true' in g
+          assert 'pendingJobChoice=entry[1]' in h
+          assert 's.jobSelected==true and s.job==pendingJobChoice' in h
+          assert 'jobPanel.Visible=true' in h
+          assert '🗡 暗殺者' in h and '🥷 忍者' not in h
+          assert 'NINJA={label="暗殺者",skill="影刃"' in after[POLICY].decode()
+          assert 'NINJA' in after[POLICY].decode()
+          assert g.count('remote.OnServerEvent:Connect(')==1
+          assert g.count('horde:hit(')==3
+          assert g.count('personalNeutralKOs[player]=(personalNeutralKOs[player] or 0)+')==3
+          assert g.count('personalEggDeposits[player]=(personalEggDeposits[player] or 0)+1')==2
+          bad=dict(before);bad[GAME]+=b'\n-- unrelated game change'
+          try:patch(bad)
+          except AssertionError:pass
+          else:raise AssertionError('UNPINNED_ORIGINAL_GAME_ACCEPTED')
+          meta=json.loads((final/'RC_FEATURE_LOCK.json').read_text())
+          assert meta['feature_flags'].get(FEATURE)==True
+          assert meta['assassin_private_role7']['public_server_role7']=='DISABLED'
+          assert meta['assassin_private_role7']['unchanged79_sources_byte_exact']
+          assert meta['source_gitblobs']=={k:blob(v) for k,v in after.items()}
+          print('P0D_ROLE7_ASSASSIN_PRIVATE_SEVEN_SERVER_ACK_NEGATIVE_QA_PASS')
+          PY
+          while IFS= read -r -d '' file; do
+            /tmp/p0d_new_luau/luau-compile "$file" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 82
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" --place "$PLACE" --count 82 \
+            --receipt "$OUT/ROLE7_ASSASSIN_REAL_SOURCE_IDENTITY.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/ART_SOURCE_ONLY.json"
+          python3 -B art_quality/check_mobile_fun.py \
+            --out "$OUT/MOBILE_FUN_NOT_ENGINE_TESTED.json"
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+          python3 - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path('/tmp/p0d_role7_assassin_mobile_private_receipts')
+          source=json.loads((out/'ROLE7_ASSASSIN_REAL_SOURCE_IDENTITY.json').read_text())
+          art=json.loads((out/'ART_SOURCE_ONLY.json').read_text())
+          assert source['source_count']==source['embedded_count']==82
+          assert source['all_instance_class_name_path_source_exact']
+          assert source['all_ancestor_container_class_exact']
+          assert art['source']['source_gate']=='PASS'
+          assert art['art_decision']=='ART_NO_GO'
+          place=out/'P0D_RC82_ASSASSIN_7JOB_PRIVATE_MOBILE_STUDIO.rbxlx'
+          receipt={
+            'schema':'P0D_ROLE7_ASSASSIN_PRIVATE_SERVER_MOBILE_PREP_V1',
+            'official_rc_head':os.environ['GITHUB_SHA'],
+            'original_author_297_alias':True,
+            'server_gate':'STUDIO_OR_EXPLICIT_OWNER_PRIVATE_HORDE_ONLY',
+            'selection_server_ACK':True,
+            'public_server_seven_jobs':'HARD_OFF',
+            'internal_job_id_NINJA':'UNCHANGED',
+            'sources':82,'original_other79_byte_exact':True,
+            'source_exact':'PASS','luau_compilation':'PASS',
+            'real_android_private_play':'NOT_TESTED',
+            'seven_job_full_abilities':'NOT_COMPLETED',
+            'owner_acceptance':False,'product_quality':'NO_GO',
+            'place_bytes':place.stat().st_size,
+            'place_sha256':hashlib.sha256(place.read_bytes()).hexdigest()}
+          (out/'ASSASSIN_PRIVATE_MOBILE_RECEIPT.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_ROLE7_ASSASSIN_PRIVATE_MOBILE_SOURCE_BUILD_PASS',receipt['place_bytes'],receipt['place_sha256'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        with:
+          name: P0D-RC82-ROLE7-ASSASSIN-PRIVATE-MOBILE-STUDIO-SOURCE-NOGO
+          path: /tmp/p0d_role7_assassin_mobile_private_receipts/*
+          retention-days: 14
+          if-no-files-found: error
