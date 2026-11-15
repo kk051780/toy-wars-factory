@@ -1,0 +1,134 @@
+name: P0D FB030 Stage pickup closed-wall safety native86 Rojo86
+on:
+  push:
+    branches: [feature/p0d-fb026-undead-siege-native85-20261115]
+    paths:
+      - quality_repair/FB030_STAGE_LOOT_LOS/**
+      - .github/workflows/p0d-fb030-loot-los-native86.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  exact-wall-safe86:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Obtain exact native-pass RC86 parent and reconstruct source ZIP
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/fb030_parent
+          gh run download 43716032711 -R kk051780/toy-wars-factory \
+            -n P0D-FB029-ASSASSIN-WIND-LOOT-UNDEAD-PRIVATE86-SOURCE-NOGO \
+            -D /tmp/fb030_parent
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile,ZIP_DEFLATED
+          root=Path('/tmp/fb030_parent')
+          got={p.name:p for p in root.rglob('*') if p.is_file()}
+          want={'P0D_RC86_STAGE_WEAPONS_UNDEAD_ASSASSIN_WIND_PRIVATE.rbxlx',
+                'SOURCE_LOCK.json','RC_FEATURE_LOCK.json','RECEIPT.json'}
+          assert set(got)==want,sorted(got)
+          dest=Path('quality_repair/FB030_STAGE_LOOT_LOS/parent_rc86_ci.zip')
+          with ZipFile(dest,'w',ZIP_DEFLATED) as z:
+            for name in sorted(got):z.write(got[name],name)
+          PY
+      - name: Rebuild real 86-source Place and run 24 negative regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd quality_repair/FB030_STAGE_LOOT_LOS
+          python3 -m unittest -v test_stage_los.py
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('P0D_RC86_STAGE_WEAPONS_UNDEAD_WIND_WALL_SAFE_PRIVATE.rbxlx')
+          b=p.read_bytes();r=json.loads(Path('RECEIPT.json').read_text())
+          assert len(b)==845972,len(b)
+          assert hashlib.sha256(b).hexdigest()=='d67f9f68912cb67de0e184844d57649fbe50e5b70ab30cffbe3ee320e6a15cd8'
+          assert r['unchanged_sources']==85 and r['changed']==['server/StagePickupLoot.luau']
+          assert r['official_rc_write']==False and r['studio']=='NOT_RUN'
+          print('FB030_ACTUAL_PLACE_BYTE_EXACT_PASS')
+          PY
+      - name: Extract true 86 Luau bodies and original Roblox class/path
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_repair/FB030_STAGE_LOOT_LOS/extract_rojo86.py \
+            quality_repair/FB030_STAGE_LOOT_LOS/P0D_RC86_STAGE_WEAPONS_UNDEAD_WIND_WALL_SAFE_PRIVATE.rbxlx \
+            quality_repair/FB030_STAGE_LOOT_LOS/SOURCE_LOCK.json \
+            /tmp/fb030_rojo86
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _fb030_pinned_luau
+          persist-credentials: false
+      - name: Native Luau compile all 86 actual Script bodies
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _fb030_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _fb030_pinned_luau -B /tmp/fb030_luau_build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/fb030_luau_build --target Luau.Compile.CLI --parallel 4
+          n=0
+          while IFS= read -r -d '' src; do
+            /tmp/fb030_luau_build/luau-compile "$src" >/dev/null
+            n=$((n+1))
+          done < <(find /tmp/fb030_rojo86/src -name '*.luau' -type f -print0 | sort -z)
+          test "$n" -eq 86
+          echo FB030_NATIVE_LUAU_86_86_PASS
+      - name: Pinned Rojo 7.7.1 build and verify all exact class/path/GitBlob
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/fb030_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/fb030_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/fb030_rojo.zip') as z:
+            matches=[n for n in z.namelist() if n.rsplit('/',1)[-1]=='rojo']
+            assert len(matches)==1
+            p=Path('/tmp/fb030_rojo_bin');p.write_bytes(z.read(matches[0]));p.chmod(0o755)
+          PY
+          /tmp/fb030_rojo_bin build /tmp/fb030_rojo86/default.project.json -o /tmp/fb030_rojo86_built.rbxlx
+          python3 - <<'PY'
+          import hashlib,json,xml.etree.ElementTree as ET
+          from pathlib import Path
+          from collections import Counter
+          want=json.loads(Path('/tmp/fb030_rojo86/manifest.json').read_text())
+          root=ET.fromstring(Path('/tmp/fb030_rojo86_built.rbxlx').read_bytes())
+          got=[]
+          def walk(item,base=()):
+            prop=item.find('Properties')
+            name=prop.findtext("string[@name='Name']") if prop is not None else None
+            src=prop.findtext("string[@name='Source']") if prop is not None else None
+            here=base+((name,) if name else ())
+            if src is not None:
+              b=src.encode('utf8')
+              blob=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+              got.append({'path':'/'.join(here),'class':item.attrib['class'],'blob':blob})
+            for child in item.findall('Item'):walk(child,here)
+          for item in root.findall('Item'):walk(item)
+          assert len(got)==86,len(got)
+          assert Counter((v['path'],v['class'],v['blob']) for v in got)==Counter((v['path'],v['class'],v['blob']) for v in want)
+          print('FB030_ROJO_86_86_SCRIPT_PATH_CLASS_GITBLOB_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: P0D-FB030-STAGE-LOOT-WALL-SAFE-PRIVATE86-NOGO
+          path: |
+            quality_repair/FB030_STAGE_LOOT_LOS/P0D_RC86_STAGE_WEAPONS_UNDEAD_WIND_WALL_SAFE_PRIVATE.rbxlx
+            quality_repair/FB030_STAGE_LOOT_LOS/SOURCE_LOCK.json
+            quality_repair/FB030_STAGE_LOOT_LOS/RC_FEATURE_LOCK.json
+            quality_repair/FB030_STAGE_LOOT_LOS/RECEIPT.json
+          if-no-files-found: warn
+          retention-days: 7
