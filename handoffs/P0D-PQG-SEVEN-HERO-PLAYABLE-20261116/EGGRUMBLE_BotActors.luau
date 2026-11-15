@@ -141,9 +141,10 @@ function BotActors.start(session:any,Rules:any):()
       if hum.Health<=0 then
        if not deaths[id] then deaths[id]=now+BOT_REBIRTH end
        if now>=deaths[id] then
-        hum.Health=hum.MaxHealth;deaths[id]=nil
+        deaths[id]=nil
         local home=session.castleLocations[id]
-        if home then actor:PivotTo(CFrame.new(home+Vector3.new(0,5,-34))) end
+        actor:Destroy()
+        if home then bots[id]=spawnActor(actors,id,home+Vector3.new(0,5,-34),me.team) end
        end
       else
        tryHeroAttack(actor,me,session,lastHit)
@@ -160,7 +161,7 @@ function BotActors.start(session:any,Rules:any):()
           elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,6) else front)
           else enemyLoc+Vector3.new(0,3,-12)
          goals[id]=if goHome then "RETURN" elseif hasEgg then "STEAL" else "SIEGE"
-         local dist=steeringStep(actor,goal,AI_TICK,folder)
+         local dist=steeringStep(actor,goal,AI_TICK,actors)
          local label=actor:FindFirstChild("Head") and actor.Head:FindFirstChild("BotObjective")
          local ui=label and label:FindFirstChildOfClass("TextLabel")
          if ui then
