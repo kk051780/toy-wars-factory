@@ -12,16 +12,37 @@ class EGGRUMBLEV3PlaytestSources(unittest.TestCase):
         cls.mode=source("EGGRUMBLE_LobbyCastleModesPreview.server.luau")
         cls.rules=source("EGGRUMBLE_CastleMatchRules.luau")
         cls.bot=source("EGGRUMBLE_BotActors.luau")
+        cls.router=source("EGGRUMBLE_BotPathRouter.luau")
         cls.swarm=source("EGGRUMBLE_SwarmCombat.luau")
 
     def test_bot_has_visible_physical_actor_and_distance_gate(self):
         for word in ("AI_Actor_","HumanoidRootPart","Humanoid",
-                     "model:PivotTo(","steeringStep(","tryHeroAttack(",
+                     "spawnActor(","Router.navigate(","tryHeroAttack(",
                      "actualDist<=ACTION_DISTANCE","Rules.takeEggs(",
                      "Rules.depositEggs(","Rules.damageCastle(",
                      "session.releaseEggs(", "actor:Destroy()"):
             with self.subTest(word=word):
                 self.assertIn(word, self.bot)
+
+    def test_navigation_quality_and_bounded_real_pathfinding(self):
+        for token in ('PathfindingService', 'PathfindingService:CreatePath(',
+                      'path:ComputeAsync(', 'path:GetWaypoints()', 'path.Blocked:Connect(',
+                      'MAX_COMPUTES_IN_FLIGHT=2', 'RECOMPUTE_SECONDS=2.8',
+                      'routeClear(', 'if not routeClear(', 'Router.clear('):
+            with self.subTest(token=token):
+                self.assertIn(token, self.router)
+        self.assertIn('Router.navigate(mode..":"..id,actor,goal,AI_TICK,actors)', self.bot)
+        self.assertNotIn('local function steeringStep(', self.bot)
+
+    def test_world_egg_tokens_are_not_duplicable(self):
+        for token in ('m.fieldEggTokens[eggId]=nil', 'function M.takeFieldEgg(',
+                      'function M.auditEggConservation(', 'field egg pickup must reference',
+                      'releasedEggIds=', 'CARRIER_DROP_'):
+            with self.subTest(token=token):
+                self.assertIn(token, self.rules)
+        self.assertIn('Rules.takeFieldEgg(session.rules,tostring(p.UserId),eggId)', self.mode)
+        self.assertIn('res.releasedEggIds', self.mode)
+        self.assertIn('result.releasedEggIds', self.bot)
 
     def test_neutral_combat_tracks_actual_humanoid_deaths(self):
         for word in ('"HordeSoldier"','LIMIT=110',
