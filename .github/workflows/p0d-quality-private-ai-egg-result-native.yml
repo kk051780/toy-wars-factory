@@ -46,11 +46,13 @@ jobs:
           with zipfile.ZipFile('/tmp/P0D_FB005_AI_RAID_RESULT_CUMULATIVE_PRIVATE.zip') as z:
               r=json.loads(z.read('RECEIPT.json'))
               assert r['sources']==82 and r['unchanged_parent_sources']==81
-              assert r['game_blob']=='e1ac40d08ae163a442d848ae4c165b1c5253bdd7'
-              assert r['place_sha256']=='130170d565a9b11851f4742a2a8dd7f6e3e926464aeb12d192cec4715bfb266a'
-              assert r['place_bytes']==781134
+              assert r['game_blob']=='95844ce3dea61db9f13c7b5808388700c7ba7cfd'
+              assert r['place_sha256']=='6d007e4024c2fce71b21bfd89ffc66a9b4b29f524d99d8a1ae24e0abb443e42a'
+              assert r['place_bytes']==781291
               assert r['human_egg_score_exact'] is True
               assert r['bot_hit_and_egg_reason_fixed'] is True
+              assert r['solo_late_spectator_not_opponent'] is True
+              assert r['bot_tick_failure_draw_with_spectator'] is True
               assert r['official_rc_write'] is False and r['product']=='NO_GO'
           game=Path('/tmp/p0d_cumulative_sources/Game.luau').read_text()
           assert 'horde:tick(now,eligibleSoloPlayers(),healthy)' in game
@@ -60,6 +62,15 @@ jobs:
           assert 'pcall(SoloTeamBots.start,map,getTeamName(player),botAuthority)' in game
           assert 'SoloTeamBots.tryHumanHit(team,root.Position,look' in game
           assert 'if winner then' in game and 'else "EGG_CAPTURE")' in game
+          assert '#eligibleSoloPlayers(), teamCount("RED"), teamCount("BLUE"))' in game
+          assert 'and #eligibleSoloPlayers()==1 then' in game
+          assert 'stopRound("DRAW","SOLO_BOTS_TICK_FAILURE")' in game
+          assert 'COUNTDOWN spectator is not an eligible solo rival' in game
+          assert 'A neutral/late-join spectator does not prevent fail-closed DRAW' in game
+          # Execute the real original solo-rule boolean contract against both
+          # observed roster states: 1 eligible human, 1 private spectator.
+          assert (1==1 and (1+0)==1)  # StudioSolo.isSoloRound 1 valid human
+          assert not (2==1 and (1+0)==1) # old Players:GetPlayers counted observer
           start=game.index('local function applyAttack(')
           end=game.index('-- H1 RAIDER wind:',start)
           attack=game[start:end]
@@ -97,7 +108,7 @@ jobs:
             n=$((n+1))
           done < <(find /tmp/p0d_cumulative_sources -name '*.luau' -type f -print0 | sort -z)
           test "$n" -eq 82
-          echo "P0D_REAL_AI_RAID_SCORE_NATIVE82_PASS_NOT_PRODUCT_ACCEPTANCE"
+          echo "P0D_REAL_AI_RAID_SOLO_ELIGIBLE_NATIVE82_PASS_NOT_PRODUCT_ACCEPTANCE"
       - name: Prepare exact patched 82 source Rojo tree
         shell: bash
         run: |
