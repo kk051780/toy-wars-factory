@@ -112,9 +112,6 @@ local function tryHeroAttack(actor:Model,my:any,session:any,lastHit:{[string]:nu
  end
  return false
 end
-local function planarDistance(a:Vector3,b:Vector3):number
- return (Vector3.new(a.X,0,a.Z)-Vector3.new(b.X,0,b.Z)).Magnitude
-end
 -- Actor pathfinding is in the reusable, budgeted EGGRUMBLE_BotPathRouter module.
 function BotActors.start(session:any,Rules:any):()
  assert(RunService:IsStudio(),"preview bot actors are Studio-only")
@@ -126,14 +123,12 @@ function BotActors.start(session:any,Rules:any):()
  local lastHit:{[string]:number}={}
  local deaths:{[string]:number}={}
  local goals:{[string]:string}={}
- local raidStage:{[string]:number}={}
- local raidTargetOwner:{[string]:string}={}
  -- True 3D actor models, not just logical AI roster entries.
  for _,entry in ipairs(session.roster) do
   if entry.isAI then
    local pos=session.castleLocations[entry.id]
    if pos then
-    bots[entry.id]=spawnActor(actors,entry.id,pos+Vector3.new(0,-3,-34),entry.team)
+    bots[entry.id]=spawnActor(actors,entry.id,pos+Vector3.new(0,-1.5,-34),entry.team)
    end
   end
  end
@@ -153,11 +148,10 @@ function BotActors.start(session:any,Rules:any):()
        end
        if now>=deaths[id] then
         deaths[id]=nil
-        raidStage[id]=nil;raidTargetOwner[id]=nil
         local home=session.castleLocations[id]
         Router.clear(mode..":"..id)
         actor:Destroy()
-        if home then bots[id]=spawnActor(actors,id,home+Vector3.new(0,-3,-34),me.team) end
+        if home then bots[id]=spawnActor(actors,id,home+Vector3.new(0,-1.5,-34),me.team) end
        end
       else
        tryHeroAttack(actor,me,session,lastHit)
@@ -169,29 +163,11 @@ function BotActors.start(session:any,Rules:any):()
         if own and enemyLoc then
          local goHome=me.heldEggs>0
          local hasEgg=enemy.vaultEggs>0
-         -- Real exterior route: front -> east flank -> vault's exposed outer side.
-         -- The 26x22 solid core blocks a direct center waypoint in this preview.
-         local front=enemyLoc+Vector3.new(0,3,-27)
-         local flank=enemyLoc+Vector3.new(20,3,-18)
-         local raid=enemyLoc+Vector3.new(20,3,9)
-         local goal:Vector3
-         if goHome then
-          raidStage[id]=nil;raidTargetOwner[id]=nil
-          goal=own+Vector3.new(-16,3,-18)
-         elseif hasEgg then
-          if raidTargetOwner[id]~=enemy.id then
-           raidTargetOwner[id]=enemy.id;raidStage[id]=1
-          end
-          local stage=raidStage[id] or 1
-          local here=actor:GetPivot().Position
-          if stage==1 and planarDistance(here,front)<=9 then stage=2 end
-          if stage==2 and planarDistance(here,flank)<=9 then stage=3 end
-          raidStage[id]=stage
-          goal=if stage==1 then front elseif stage==2 then flank else raid
-         else
-          raidStage[id]=nil;raidTargetOwner[id]=nil
-          goal=enemyLoc+Vector3.new(0,3,-12)
-         end
+         local front=enemyLoc+Vector3.new(0,3,-26)
+         local nearFront=(Vector3.new(actor:GetPivot().Position.X,0,actor:GetPivot().Position.Z)-Vector3.new(front.X,0,front.Z)).Magnitude<18
+         local goal=if goHome then own+Vector3.new(-16,3,-18)
+          elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,-2) else front)
+          else enemyLoc+Vector3.new(0,3,-12)
          goals[id]=if goHome then "RETURN" elseif hasEgg then "STEAL" else "SIEGE"
          local dist=Router.navigate(mode..":"..id,actor,goal,AI_TICK,actors)
          local label=actor:FindFirstChild("Head") and actor.Head:FindFirstChild("BotObjective")
@@ -202,12 +178,10 @@ function BotActors.start(session:any,Rules:any):()
          -- A bot cannot steal eggs, deposit them or attack from across the map.
          local at=actor:GetPivot().Position
          local actualTarget=if goHome then own+Vector3.new(-16,3,-18)
-          elseif hasEgg then raid
+          elseif hasEgg then enemyLoc+Vector3.new(0,3,6)
           else enemyLoc+Vector3.new(0,3,-12)
-         local actualDist=planarDistance(at,actualTarget)
-         if actualDist<=ACTION_DISTANCE
-          and (goHome or not hasEgg or raidStage[id]==3)
-          and clearActionPath(actor,actors,actualTarget) then
+         local actualDist=(Vector3.new(at.X,0,at.Z)-Vector3.new(actualTarget.X,0,actualTarget.Z)).Magnitude
+         if actualDist<=ACTION_DISTANCE and clearActionPath(actor,actors,actualTarget) then
           if goHome then
            pcall(function() Rules.depositEggs(session.rules,id,me.heldEggs) end)
           elseif hasEgg then
@@ -245,7 +219,7 @@ function BotActors.start(session:any,Rules:any):()
   if not home then return false end
   -- Keep the disconnected player's castle in the match under equal-budget AI defense.
   state.isAI=true
-  bots[id]=spawnActor(actors,id,home+Vector3.new(0,-3,-34),state.team)
+  bots[id]=spawnActor(actors,id,home+Vector3.new(0,-1.5,-34),state.team)
   return true
  end
 end

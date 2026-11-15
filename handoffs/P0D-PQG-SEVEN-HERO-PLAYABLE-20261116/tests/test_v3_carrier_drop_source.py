@@ -16,7 +16,9 @@ def inspect(preview: str, bot: str, rules: str) -> list[str]:
         "IDEMPOTENT": 'carrier.heldEggs<=0 then return 0' in preview,
         "ACTIVE_ONLY": 'session.rules.phase~="ACTIVE" then return 0' in preview,
         "AUTHORITATIVE_DROP": 'Rules.onCarrierEliminated(session.rules,ownerId)' in preview,
-        "PHYSICAL_DROP": 'session.releaseEggs(ownerId,landing,dropped)' in preview,
+        "PHYSICAL_DROP": ('local dropped,dropIds=Rules.onCarrierEliminated(session.rules,ownerId)' in preview
+                          and 'session.releaseEggs(ownerId,landing,dropIds)' in preview
+                          and 'Rules.takeFieldEgg(session.rules,tostring(p.UserId),eggId)' in preview),
         "HUMAN_DIED": 'humanoid.Died:Connect(function()' in preview,
         "RESPAWN_HOOK": 'player.CharacterAdded:Connect(bindCarrierLife)' in preview,
         "HUMAN_INVOKES_DROP": 'session.dropCarrierEggs(tostring(player.UserId)' in preview,
@@ -49,7 +51,7 @@ class TestCarrierDrop(unittest.TestCase):
         self.assertIn("HUMAN_DIED",inspect(mutant,self.bot,self.rules))
 
     def test_negative_missing_physical_pickup(self):
-        mutant=self.preview.replace("session.releaseEggs(ownerId,landing,dropped)","-- physical spawn intentionally removed")
+        mutant=self.preview.replace("session.releaseEggs(ownerId,landing,dropIds)","-- physical spawn intentionally removed")
         self.assertIn("PHYSICAL_DROP",inspect(mutant,self.bot,self.rules))
 
     def test_negative_double_drop_risk(self):
