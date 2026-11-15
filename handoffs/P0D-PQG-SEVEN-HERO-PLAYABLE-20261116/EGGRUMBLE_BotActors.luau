@@ -4,6 +4,7 @@
 -- NOT a finished pathfinding/matchmaking or PvP implementation.
 local Players=game:GetService("Players")
 local RunService=game:GetService("RunService")
+local Router=require(script.Parent:WaitForChild("EGGRUMBLE_BotPathRouter"))
 local BotActors={}
 local AI_TICK=.18
 local AI_SPEED=30
@@ -96,35 +97,7 @@ local function tryHeroAttack(actor:Model,my:any,session:any,lastHit:{[string]:nu
  end
  return false
 end
-local function steeringStep(model:Model,target:Vector3,dt:number,folder:Instance):number
- local current=model:GetPivot().Position
- local horizontal=Vector3.new(target.X-current.X,0,target.Z-current.Z)
- local distance=horizontal.Magnitude
- if distance<=.05 then return distance end
- local direction=horizontal.Unit
- local forwardDistance=math.min(AI_SPEED*dt,distance)
- -- This preview has only very simple static steering; pathfinding is still required
- -- for a production map with tunnels, traversable castle entrances and mountains.
- local yaw=CFrame.lookAt(current,current+direction)
- local next=Vector3.new(current.X+direction.X*forwardDistance,current.Y,current.Z+direction.Z*forwardDistance)
- -- Avoid walking through a solid world obstacle where possible. If blocked,
- -- try a lateral bypass; never grant an action just for being stuck.
- local params=RaycastParams.new()
- params.FilterType=Enum.RaycastFilterType.Exclude
- -- Excluding the entire session world hid every castle wall and gate from bots.
- -- Only the moving actor itself is ignored; collidable world obstacles must block.
- params.FilterDescendantsInstances={model}
- params.RespectCanCollide=true
- local origin=current+Vector3.new(0,2,0)
- local collision=workspace:Raycast(origin,direction*math.max(5,forwardDistance+2),params)
- if collision and collision.Instance.CanCollide then
-  local lateral=Vector3.new(-direction.Z,0,direction.X)
-  next=Vector3.new(current.X+lateral.X*forwardDistance,current.Y,current.Z+lateral.Z*forwardDistance)
-  yaw=CFrame.lookAt(current,current+lateral)
- end
- model:PivotTo(CFrame.new(next)*yaw.Rotation)
- return distance
-end
+-- Actor pathfinding is in the reusable, budgeted EGGRUMBLE_BotPathRouter module.
 function BotActors.start(session:any,Rules:any):()
  assert(RunService:IsStudio(),"preview bot actors are Studio-only")
  local mode=session.mode
@@ -157,6 +130,7 @@ function BotActors.start(session:any,Rules:any):()
        if now>=deaths[id] then
         deaths[id]=nil
         local home=session.castleLocations[id]
+        Router.clear(mode..":"..id)
         actor:Destroy()
         if home then bots[id]=spawnActor(actors,id,home+Vector3.new(0,5,-34),me.team) end
        end
@@ -176,7 +150,7 @@ function BotActors.start(session:any,Rules:any):()
           elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,6) else front)
           else enemyLoc+Vector3.new(0,3,-12)
          goals[id]=if goHome then "RETURN" elseif hasEgg then "STEAL" else "SIEGE"
-         local dist=steeringStep(actor,goal,AI_TICK,actors)
+         local dist=Router.navigate(mode..":"..id,actor,goal,AI_TICK,actors)
          local label=actor:FindFirstChild("Head") and actor.Head:FindFirstChild("BotObjective")
          local ui=label and label:FindFirstChildOfClass("TextLabel")
          if ui then
@@ -209,11 +183,13 @@ function BotActors.start(session:any,Rules:any):()
       end
      end
     else
+     Router.clear(mode..":"..id)
      if actor.Parent then actor:Destroy() end
     end
    end
    task.wait(AI_TICK)
   end
+  for id,_ in pairs(bots) do Router.clear(mode..":"..id) end
  end)
  session.botActors=bots
  session.botObjectives=goals
