@@ -63,7 +63,7 @@ def evaluate(doc):
         if not isinstance(entry.get("reviewer"), str) or not entry["reviewer"].strip() or entry.get("benchmark_compared") is not True or not valid_date(entry.get("measured_on")):
             problems.append(f"NO_VERIFIABLE_REVIEW:{key}")
             continue
-        if not isinstance(entry["evidence_urls"], list) or not entry["evidence_urls"] or any(not valid_url(u) for u in entry["evidence_urls"]):
+        if not isinstance(entry.get("evidence_urls"), list) or not entry["evidence_urls"] or any(not valid_url(u) for u in entry["evidence_urls"]):
             problems.append(f"BAD_EVIDENCE_URLS:{key}")
             continue
         scores[key] = s
