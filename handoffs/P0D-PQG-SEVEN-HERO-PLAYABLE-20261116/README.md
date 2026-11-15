@@ -10,7 +10,7 @@ OWNER instruction (2026-11-16): "ゲーム品質ゲートとして、各キャ�
 
 | Internal role ID kept | Visible role | A / B / C implemented as runnable Studio behavior |
 | --- | --- | --- |
-| WARRIOR | 神将（仮） | odachi/spear/taijutsu stance basic / earthquake AoE / storm/flame/eight-headed serpent divine avatar |
+| WARRIOR | 武神 | odachi/spear/taijutsu stance basic / earthquake AoE / storm/flame/eight-headed serpent divine avatar |
 | MAGE | 魔法使い | ranged magic / AoE thunder + ally healing / falling meteor |
 | NINJA | 暗殺者 | dash hit / temporary speed + transparency / extended strike dash |
 | TRAPPER | 超能力者 | gravity hit / short levitation + swap of two training enemies / temporary two-point portal |
@@ -18,7 +18,7 @@ OWNER instruction (2026-11-16): "ゲーム品質ゲートとして、各キャ�
 | BEAST | 魔獣使い | beast impact / feed-altered giant or three split smaller companions / feed-altered giant or split ultimate beast |
 | ZOMBIE | 呪術師 | damage + short slow curse / three attacking undead units / oversized dark creature |
 
-Most display names follow OWNER-approved direction. **神将 is a proposed name pending OWNER final choice.** Existing WARRIOR/BEAST internal IDs are unchanged to minimize migration risk. For the complete design, current source coverage and missing functionality, read [ROLE_EVOLUTION_20261116.md](ROLE_EVOLUTION_20261116.md). Abilities target **test dummies only** for safe preview and **do not demonstrate finished real PvP**.
+**武神 is OWNER-confirmed 2026-11-16; internal ID remains WARRIOR.** All seven playable display names must use EGGRUMBLE's latest OWNER choices. Existing WARRIOR/BEAST internal IDs are unchanged to minimize migration risk. For the complete design, current source coverage and missing functionality, read [ROLE_EVOLUTION_20261116.md](ROLE_EVOLUTION_20261116.md). Abilities target **test dummies only** for safe preview and **do not demonstrate finished real PvP**.
 
 ## Try privately in Roblox Studio
 
@@ -42,3 +42,9 @@ Most display names follow OWNER-approved direction. **神将 is a proposed name 
 (1) Lock existing author source-IDs and map all 7 roles/21 skills; (2) author-integration into genuine Game/Tool/HUD for real server role authority and mobile; (3) add physical character models, locomotion and hit animations at #420 art quality; (4) test opponent interaction, anti-permaCC, egg carrier, death/rejoin/respawn, AI/rideable, missiles/vehicle controls and anti-P2W; (5) source exact QA → authenticated RC CAS → real Studio/Android/competitive/OWNER verification.
 
 Roll back by removing the single preview Script, which removes all spawned prototype objects on next Play.
+
+## V2 core-loop reset — the new main game direction
+
+OWNER now requires **massive horde-musou battle as a co-primary loop**, with teams still fighting to steal and deliver eggs. **武神** is the dedicated duelist/weapon master and sends flying sword slashes (not a Mage spell), with large self-boosting kami transformation. **One customisable castle per player**, grouped by Red/Blue team. Experienced matches aspire to 10,000+ individual verified neutral KOs / 30,000+ aggregate KOs with a genuinely huge multi-sector map. These are unproven product goals, not current QA results.
+
+The new standalone `EGGRUMBLE_MassBattleCastlePreview.server.luau` is **another optional Studio-only script**. **Run it ALONE on a separate private Studio copy, not simultaneously with `SevenHeroArena.server.luau`** (their preview worlds are independent). This creates 9 large map sectors, a capped continuous neutral horde, automatic attacks and server-attributed real KO counts, XP-based slash upgrades, a castle for each joined player, and an owner-only banner-palette decoration station. It does **not** implement real PvP, capture/return eggs, production AI, advanced castle customization or Roblox/Android verification. The full contract, including performance/fairness/ownership, is in [EGGRUMBLE_V2_MASS_BATTLE_PERSONAL_CASTLE_CONTRACT.md](EGGRUMBLE_V2_MASS_BATTLE_PERSONAL_CASTLE_CONTRACT.md).
