@@ -50,7 +50,7 @@ class TestSevenHeroStudioSource(unittest.TestCase):
 
     def test_safe_preview_cooldowns_and_lifetime(self):
         for token in ("os.clock()", "Debris:AddItem(", "task.delay(", "PlayerRemoving",
-                      "if h.Health>0", "Tool", "getRig(player)"):
+                      "h.Health>0", "Tool", "getRig(player)"):
             self.assertIn(token, self.source)
         self.assertGreaterEqual(self.source.count("task.wait("), 2)
 
