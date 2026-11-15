@@ -1,6 +1,6 @@
-# P0D Seven Hero Playable Studio Slice — SOURCE, not official RC
+# EGGRUMBLE — Seven Hero Playable Studio Slice (SOURCE only, not official RC)
 
-OWNER instruction (2026-11-16): "ゲーム品質ゲートとして、各キャラを作り上げて".
+**Canonical player-facing product name: EGGRUMBLE**. Historical internal repo/game and source IDs are retained for compatibility.\n\nOWNER instruction (2026-11-16): "ゲーム品質ゲートとして、各キャラを作り上げて".
 
 ## What is implemented as actual Luau
 
@@ -22,7 +22,7 @@ The display names are the new OWNER-approved direction; internal IDs remain unch
 
 1. On an isolated Studio copy (never the production place), create a **Script** in ServerScriptService.
 2. Paste the complete file `SevenHeroArena.server.luau` into that Script.
-3. Enter **Play**. Find the seven job stands about 42 studs from the existing SpawnLocation; a flat test floor and twelve red test dummies appear.
+3. Enter **Play**. Find the EGGRUMBLE-branded marker and seven job stands about 42 studs from the existing SpawnLocation; a flat test floor and twelve red test dummies appear.
 4. Use the stand ProximityPrompt to choose a job. Equip a Tool from the backpack (or Android hotbar): A=basic, B=special, C=signature. Each can be activated against the training dummies, which respawn.
 5. Stop Play to remove all prototype entities. Script is inert outside Studio because of `RunService:IsStudio()`.
 
