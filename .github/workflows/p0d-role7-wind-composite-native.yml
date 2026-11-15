@@ -53,9 +53,13 @@ jobs:
               assert r["exact_job_pick_ack_preserved"] is True
               assert r["builder_q_false_cooldown_fixed"] is True
               assert r["official_rc_write"] is False and r["decision"]=="PRODUCT_NO_GO"
-              assert len(z.read("COMPOSED_ROLE7_WIND_RC82.rbxlx"))==778249
+              assert len(z.read("COMPOSED_ROLE7_WIND_RC82.rbxlx"))==778694
               assert r["q_combo_expiry_fixed"] is True
               assert r["delayed_q_stale_selection_denied"] is True
+              assert r["private_latejoin_spectator"] is True
+              assert r["horde_authorized_roster_only"] is True
+              assert r["elite_revalidates_spectator"] is True
+              assert r["spectator_re_admit_after_flag_off"] is True
           # Mutants must never be mistaken for the pinned original author stage.
           try:c.compose(b"not a zip")
           except (ValueError,zipfile.BadZipFile):pass

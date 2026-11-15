@@ -21,9 +21,9 @@ AUTHOR_PLACE_SHA = "66204b3a25ca61af16fc9b21638906e88b300727a0987dd0a1f19fcd9601
 AUTHOR_GAME_BLOB = "eea411befa2c7986d463eef29e28636eb2d02f08"
 AUTHOR_HUD_BLOB = "4e3c9d8f3a1064e5387f3fb9ccbd08e3d7499af0"
 WIND_BASE_BLOB = "7d5706774b874759e7ab994dc0654c3ae9a46502"
-EXPECTED_GAME_BLOB = "981af6a5f56ef78e0850bf0393e03031d9b85837"
+EXPECTED_GAME_BLOB = "a12dc933c7e80b94d1423e04d8273a2bbcaa7830"
 EXPECTED_WIND_BLOB = "d66efccbf90028627cd65aa0fb33173506819c11"
-EXPECTED_PLACE_SHA = "4f7161e48898b486edc52a2555594994b9876448f79d9954435034bfe02a98ef"
+EXPECTED_PLACE_SHA = "8d26ec3526527a3fd014935423ca263166b07a77fb5ba92508178c4ef5382d19"
 
 GAME_BEFORE = "    if not WindRules.canActivate({\n        phase = match.phase, team = team, role = roles[player] or \"RAIDER\",\n        alive = alive, carrying = carry[player] ~= nil, slowed = slowed[player] ~= nil,\n        active = (windUntil[player] or 0) > now, now = now,\n        lastAt = lastWind[player] or -math.huge,\n        x = root.Position.X, y = root.Position.Y, z = root.Position.Z,\n    }) then return end"
 GAME_AFTER = "    local windInput:any = {\n        phase = match.phase, team = team, role = roles[player] or \"RAIDER\",\n        alive = alive, carrying = carry[player] ~= nil, slowed = slowed[player] ~= nil,\n        active = (windUntil[player] or 0) > now, now = now,\n        lastAt = lastWind[player] or -math.huge,\n        x = root.Position.X, y = root.Position.Y, z = root.Position.Z,\n    }\n    -- FB004 quality: exact live floor size. Default OFF keeps official behavior.\n    if ServerStorage:GetAttribute(\"P0D_ADAPTIVE_WIND_FIELD\") == true then\n        local grass=map.model:FindFirstChild(\"GrassArena\")\n        if not grass or not grass:IsA(\"BasePart\") or not grass.Anchored\n            or not grass.CanCollide or grass.Parent~=map.model then return end\n        local localPosition=grass.CFrame:PointToObjectSpace(root.Position)\n        windInput.adaptiveField=true\n        windInput.arenaX=localPosition.X\n        windInput.arenaZ=localPosition.Z\n        windInput.arenaMaxX=math.min(178,grass.Size.X*.5-5)\n        windInput.arenaMaxZ=math.min(140,grass.Size.Z*.5-6)\n    end\n    if not WindRules.canActivate(windInput) then return end"
@@ -98,6 +98,50 @@ def assert_locked(xml,source_lock,feature_lock):
         raise ValueError("ACTUAL_PLACE_SOURCE_LOCK_MISMATCH")
     return root,sources,items
 
+
+# FB004 observer/Horde source-selective fix on the ORIGINAL author's real Game.
+# No second Remote, AI, health, score or gameplay authority. Source-drift FAIL.
+def apply_spectator_horde_fix(game: str) -> str:
+    changes = [
+        (
+            '    if RunService:IsStudio() and\n        (match.phase=="ACTIVE" or match.phase=="COUNTDOWN") then\n        player.Team=nil',
+            '    if (RunService:IsStudio() or privateHordeTrialAllowed()) and\n        (match.phase=="ACTIVE" or match.phase=="COUNTDOWN") then\n        player.Team=nil',
+        ),
+        (
+            '    if match.phase == "LOBBY" then\n        if RunService:IsStudio() then\n            for _,entrant in ipairs(Players:GetPlayers()) do',
+            '    if match.phase == "LOBBY" then\n        if RunService:IsStudio() or privateHordeTrialAllowed()\n'
+            '            or #eligibleSoloPlayers() < #Players:GetPlayers() then\n'
+            '            for _,entrant in ipairs(Players:GetPlayers()) do',
+        ),
+        (
+            '                        root.CFrame=LobbyIsland.spawn(getTeamName(entrant))\n                    else\n                        scheduleLobbyRecovery(entrant)',
+            '                        root.CFrame=if RunService:IsStudio()\n'
+            '                            then LobbyIsland.spawn(getTeamName(entrant))\n'
+            '                            else map.teams[getTeamName(entrant)].spawn + Vector3.new(0,2,0)\n'
+            '                    else\n                        scheduleLobbyRecovery(entrant)',
+        ),
+        (
+            'horde:tick(now,Players:GetPlayers(),healthy)',
+            'horde:tick(now,eligibleSoloPlayers(),healthy)',
+        ),
+        (
+            '            if ok and hum and victimRoot and now>=(invulnUntil[victim] or 0) then',
+            '            if ok and hum and victimRoot\n'
+            '                and victim:GetAttribute("P0D_LateJoinSpectator")~=true\n'
+            '                and (getTeamName(victim)=="RED" or getTeamName(victim)=="BLUE")\n'
+            '                and now>=(invulnUntil[victim] or 0) then',
+        ),
+    ]
+    for i, (before, after) in enumerate(changes, 1):
+        if game.count(before) != 1:
+            raise ValueError("SPECTATOR_SOURCE_DRIFT_" + str(i))
+        game = game.replace(before, after, 1)
+    if game.count('horde:tick(now,eligibleSoloPlayers(),healthy)') != 1:
+        raise ValueError("HORDE_ELIGIBILITY_NOT_ENFORCED")
+    if game.count('local function eligibleSoloPlayers(): {Player}') != 1:
+        raise ValueError("SOLO_ROSTER_AUTHORITY_NOT_SINGLE")
+    return game
+
 def compose(outer_zip):
     with ZipFile(io.BytesIO(outer_zip)) as outer:
         inner=outer.read("P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip")
@@ -130,6 +174,7 @@ def compose(outer_zip):
         raise ValueError("AUTHOR_Q_COMBO_OR_DELAY_GUARD_DRIFT")
     fixed_game=fixed_game.replace(Q_COMBO_BEFORE,Q_COMBO_AFTER,1)
     fixed_game=fixed_game.replace(Q_DELAY_BEFORE,Q_DELAY_AFTER,1)
+    fixed_game=apply_spectator_horde_fix(fixed_game)
     job=fixed_game.index('local function useSevenJob(')
     if not (fixed_game.index(raycast,job)<fixed_game.index('    sevenJobLastUse[player]=now',job)):
         raise ValueError("BUILDER_Q_RAYCAST_AFTER_COST")
@@ -165,12 +210,16 @@ def build(outer_zip,output,extract_dir=None):
         z.writestr("SOURCE_LOCK.json",json.dumps(sl,ensure_ascii=False,indent=2)+"\n")
         z.writestr("RC_FEATURE_LOCK.json",json.dumps(fl,ensure_ascii=False,indent=2)+"\n")
         z.writestr("RECEIPT.json",json.dumps({
-          "schema":"PQ_AUTHOR297_EXACT_ACK_WIND_BUILDER_Q_COMBO_V3","head":HEAD,
+          "schema":"PQ_AUTHOR297_EXACT_ACK_WIND_BUILDER_Q_COMBO_SPECTATOR_V4","head":HEAD,
           "scripts":82,"unchanged_author":80,"place_bytes":len(place),
           "place_sha256":sha(place),"source_lock":True,"exact_job_pick_ack_preserved":True,
           "builder_q_false_cooldown_fixed":True,
           "q_combo_expiry_fixed":True,
           "delayed_q_stale_selection_denied":True,
+          "private_latejoin_spectator":True,
+          "horde_authorized_roster_only":True,
+          "elite_revalidates_spectator":True,
+          "spectator_re_admit_after_flag_off":True,
           "official_rc_write":False,"engine":"NOT_RUN","android":"NOT_RUN",
           "owner":False,"decision":"PRODUCT_NO_GO"},indent=2)+"\n")
     if extract_dir is not None:
