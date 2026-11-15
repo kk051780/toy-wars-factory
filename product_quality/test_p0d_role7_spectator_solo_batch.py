@@ -21,6 +21,13 @@ def original():
 class BatchTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        # The pinned 82-source artifact is fetched by the dedicated native/Rojo
+        # workflow. Generic product-quality discovery has no artifact by design;
+        # do not turn that into a false game-code RED, or falsely mark 18 tests
+        # as passed. In the dedicated workflow the env var is explicit, so a
+        # missing artifact remains a hard failure rather than a silent skip.
+        if not BASE.is_file() and not os.environ.get('P0D_BOT_PARENT_ARTIFACT'):
+            raise unittest.SkipTest('Pinned RC82 artifact absent: run the dedicated native/Rojo batch workflow; not an engine pass')
         cls.raw,cls.lock,cls.feature=original()
         _,cls.parent_script=b.locked(cls.raw,cls.lock,cls.feature)
         cls.before={n:e.text for n,(e,_,_) in cls.parent_script.items()}
