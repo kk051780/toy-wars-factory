@@ -45,3 +45,15 @@ If any dimension is NULL or lacks reviewer / real evidence / benchmark reference
 `python3 product_quality/check_product_quality.py --candidate product_quality/CANDIDATE_TEMPLATE.json --report PRODUCT_QUALITY_REPORT.json` writes a machine-readable report and exits 1 while not ready. This intentional negative is NOT a regression and must not be attached as a blocking universal CI step until #220 formally installs milestone gates. A positive exit does NOT prove screenshots or ratings are authentic.
 
 No main writes, automatic merges, Roblox publishing, paid purchases, unapproved PC operations. Competitors' assets/IP must not be copied. No dark patterns or underage gambling pressure.
+
+## P0 field freedom: source-derived baseline (FB-009)
+Run `python3 -B product_quality/field_baseline.py --out FIELD_BASELINE_REPORT.json` on the **same checked-out source HEAD**. This reads actual `releases/P0D_S1_KIDS_RC01/src/server/MapBuilder.luau` and `rc_fastlane/features/owner361_castle/CastleBattlefield.server.luau`, not a hand-edited fictitious map model.
+- Original `GrassArena`: **250 × 142 = 35,500 stud²** (ground plan footprint).
+- The `CastleBattlefield` script enlarges grass to **370 × 294 = 108,780 stud²** (**3.064×** baseline). **This entire script is guarded `if not RunService:IsStudio() then return end`**. Therefore this expansion is *not proven in a public/non-Studio session*; it is not safe to equate Studio screenshot and published field scale.
+- The two named flanks (`NORTH_WOODLAND_TRAIL`, `SOUTH_WETLAND_TRAIL`) center on **z=-112 and z=111**, beyond the original 142-stud deep grass half-span of ±71. Their names/geometry are **not pathfinding or actual reachability evidence**.
+- Objective straight-line *lower bounds* derive from the canonical `_SPAWN` (±68,0), `_EGG` (±98,-20), and `_SCORE_PAD` (±82,+20): **136 studs** between spawns, **167.201 studs** from red spawn to blue egg, **184.391 studs** from blue egg to red home scoring pad. Real walking time/path length is UNKNOWN and must be observed in Studio/live equivalent.
+- Other overlay/scripts may generate additional geometry. **Do not assert the public live effective map is exactly 250 × 142 from these two files alone**. These numbers describe the base generator and one Studio-only expansion only.
+
+**Required next field evidence:** fixed-version real Place+source SHA, server mode (Studio/private/live), one human and one AI crossing, map bounds query, 3 independent traversable approaches verified using actual Pathfinding/position trace, egg capture-to-pad timing, out-of-bounds/fall/camera obstruction rate, device. Compare with *verified gameplay captures* of relevant competitors, not hypothetical stud sizes.
+
+The scanner is intentionally read-only and cannot approve `field_freedom` or override `#420` / OWNER. Other lanes own actual 3D map, live art, combat, AI. This lane owns only measured field criteria / regression audit.
