@@ -84,7 +84,7 @@ local function createWorldCastle(session:any,entry:any,index:number)
   local ok,res=pcall(function() return Rules.damageCastle(state,entry.id,from,120) end)
   if not ok then return end
   session.refresh()
-  if res.fallen then session.releaseEggs(entry.id,at,res.releasedEggs) end
+  if res.fallen then session.releaseEggs(entry.id,at,res.releasedEggIds) end
  end)
  local deco=block(model,"DecorStation",at+Vector3.new(18,2,-18),Vector3.new(5,4,4),Color3.fromRGB(214,158,97))
  prompt(deco,"旗の装飾変更","自分の城",function(p)
@@ -160,15 +160,30 @@ local function startSession(mode:string)
    end
   else Rules.loadDefense(session.rules,entry.id,{"SENSOR"}) end
  end
- session.releaseEggs=function(ownerId:string,at:Vector3,count:number)
-  for i=1,count do
-   local egg=block(session.world,"ReleasedEgg",at+Vector3.new((i-2)*3,4,-17),Vector3.new(2,3,2),Color3.fromRGB(245,219,94))
+ session.releaseEggs=function(ownerId:string,at:Vector3,eggIds:{string})
+  for i,eggId in ipairs(eggIds) do
+   local egg=block(session.world,"ReleasedEgg_"..eggId,at+Vector3.new((i-2)*3,4,-17),Vector3.new(2,3,2),Color3.fromRGB(245,219,94))
    egg.Shape=Enum.PartType.Ball
    prompt(egg,"拾う","解放された卵",function(p)
     if joined[p.UserId]~=mode or egg.Parent==nil then return end
-    if pcall(function() Rules.takeEggs(session.rules,tostring(p.UserId),1) end) then egg:Destroy() end
+    if pcall(function() Rules.takeFieldEgg(session.rules,tostring(p.UserId),eggId) end) then egg:Destroy() end
    end)
   end
+ end
+
+ -- A defeated carrier drops physical eggs; never leave an invisible stock increase.
+ -- The Rules module owns the count mutation and is idempotent after the first drop.
+ session.dropCarrierEggs=function(ownerId:string,at:Vector3):number
+  if session.rules.phase~="ACTIVE" then return 0 end
+  local carrier=session.rules.castles[ownerId]
+  if not carrier or not carrier.alive or carrier.heldEggs<=0 then return 0 end
+  local dropped,dropIds=Rules.onCarrierEliminated(session.rules,ownerId)
+  if dropped>0 then
+   local landing=Vector3.new(at.X,session.groundY or at.Y,at.Z+17)
+   session.releaseEggs(ownerId,landing,dropIds)
+   session.refresh()
+  end
+  return dropped
  end
  session.refresh=function()
   for id,bits in pairs(session.castleModels) do
@@ -206,11 +221,12 @@ local function startSession(mode:string)
   local col=(i-1)%8;local row=math.floor((i-1)/8)
   local worldX=mode=="TEAM" and -620 or 620
   local at=root+Vector3.new(worldX+(col-3.5)*93,3,290+row*200)
+  local eggId="FIELD_"..i
   local egg=block(session.world,"FieldEgg_"..i,at,Vector3.new(2.6,3.3,2.6),Color3.fromRGB(238,214,108))
   egg.Shape=Enum.PartType.Ball
   prompt(egg,"卵を拾う","フィールドの卵",function(p)
    if joined[p.UserId]~=mode or egg.Parent==nil then return end
-   if pcall(function() Rules.takeEggs(session.rules,tostring(p.UserId),1) end) then egg:Destroy() end
+   if pcall(function() Rules.takeFieldEgg(session.rules,tostring(p.UserId),eggId) end) then egg:Destroy() end
   end)
  end
  Rules.start(session.rules)
@@ -219,6 +235,25 @@ local function startSession(mode:string)
    local ch=p.Character;local rootPart=ch and ch:FindFirstChild("HumanoidRootPart")::BasePart?
    local idx=table.find(humans,tostring(p.UserId))
    if rootPart and idx then rootPart.CFrame=CFrame.new(getCastlePoint(mode,idx)+Vector3.new(0,7,-45)) end
+  end
+ end
+ -- Drop carried eggs on every human death, including post-respawn deaths.
+ -- CharacterAdded reconnects only for this one preview session; no new Remote/Game.
+ for _,player in ipairs(queue) do
+  if player.Parent and joined[player.UserId]==mode then
+   local function bindCarrierLife(character:Model)
+    local humanoid=character:FindFirstChildOfClass("Humanoid") or character:WaitForChild("Humanoid",5)
+    if humanoid and humanoid:IsA("Humanoid") then
+     humanoid.Died:Connect(function()
+      if joined[player.UserId]~=mode then return end
+      local rootPart=character:FindFirstChild("HumanoidRootPart")::BasePart?
+      local fallback=session.castleLocations[tostring(player.UserId)] or root
+      session.dropCarrierEggs(tostring(player.UserId),rootPart and rootPart.Position or fallback)
+     end)
+    end
+   end
+   player.CharacterAdded:Connect(bindCarrierLife)
+   if player.Character then task.spawn(bindCarrierLife,player.Character) end
   end
  end
  -- Actual anchored 3D bot actors roam between castles and must reach their goal
@@ -314,6 +349,10 @@ Players.PlayerRemoving:Connect(function(p)
  end
  chosenDefense[p.UserId]=nil
  if mode and sessions[mode] and sessions[mode].rules.phase=="ACTIVE" then
+  local scene=sessions[mode]
+  local ch=p.Character
+  local rootPart=ch and ch:FindFirstChild("HumanoidRootPart")::BasePart?
+  scene.dropCarrierEggs(tostring(p.UserId),rootPart and rootPart.Position or scene.castleLocations[tostring(p.UserId)] or root)
   -- Team match integrity: preserve an active owner's castle and assign AI to defend it.
   if sessions[mode].takeover then sessions[mode].takeover(tostring(p.UserId)) end
  end

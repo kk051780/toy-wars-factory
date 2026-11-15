@@ -9,7 +9,7 @@ permissions:
   contents: read
 concurrency:
   group: p0d-eggrumble-los-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   source-wall-los:
     if: github.event_name == 'pull_request'
@@ -20,6 +20,9 @@ jobs:
       - name: Regression for real 3D AI/human strikes blocked by solid castle walls
         run: |
           python3 -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_bot_hero_line_of_sight_contract.py' -v
+      - name: Regression for neutral swarm real source and KO attribution
+        run: |
+          python3 -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_swarm_wall_los_contract.py' -v
       - name: Report engine proof boundary
         run: |
           echo 'SOURCE test only. Native Luau / Roblox Studio / Android / #420 / OWNER remain NOT_RUN.'

@@ -59,6 +59,17 @@ return function(Rules:any)
  assert(not pcall(function() Rules.takeEggs(m2,"red",1,"red") end),
   "owner must not steal from their own castle")
 
+ -- Death drops a carried egg exactly once. The preview connects this operation
+ -- to a visible physical pickup; this pure rule test proves count conservation.
+ local dead=Rules.new(Rules.MODE_TEAM,rosterTeam(),24)
+ Rules.start(dead)
+ Rules.takeEggs(dead,"red",1,"blue")
+ equal(Rules.onCarrierEliminated(dead,"red"),1,"first death drops one egg")
+ equal(dead.castles.red.heldEggs,0,"dead carrier has no hidden carried stock")
+ equal(Rules.onCarrierEliminated(dead,"red"),0,"duplicate death cannot duplicate an egg")
+ equal(dead.fieldEggs,25,"death moves the carried egg to field stock")
+ equal(stock(dead),30,"death drop conserves total egg stock")
+
  -- Royale must not finish when the first of three personal castles falls.
  local br=Rules.new(Rules.MODE_ROYALE,{{id="A"},{id="B"},{id="C"}},24)
  Rules.start(br)

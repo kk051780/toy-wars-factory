@@ -52,10 +52,13 @@ function M.new(mode:string,roster:{any},initialFieldEggs:number?):any
  assert(#roster>=2 and #roster<=32,"invalid roster size")
  local m={
   mode=mode,phase="LOBBY",winner=nil,castles={},ids={},events={},
-  fieldEggs=initialFieldEggs or M.DEFAULT_FIELD_EGGS,
+  fieldEggs=initialFieldEggs or M.DEFAULT_FIELD_EGGS, initialFieldEggs=initialFieldEggs or M.DEFAULT_FIELD_EGGS,
+  fieldEggTokens={}, eggSerial=0,
   teamDeposits={RED=0,BLUE=0},teamSiegeTokens={RED=0,BLUE=0},
  }
  assert(type(m.fieldEggs)=="number" and m.fieldEggs>=0 and m.fieldEggs%1==0,"invalid egg count")
+ -- A world egg is not just a global number: each collectible receives a single-use server ID.
+ for i=1,m.fieldEggs do m.fieldEggTokens["FIELD_"..i]=true end
  local used={}
  local teams={RED=0,BLUE=0}
  for _,entry in ipairs(roster) do
@@ -163,11 +166,20 @@ function M.damageCastle(m:any,targetId:any,attackerId:any,amount:number):any
   c.hp=0;c.alive=false
   released=c.vaultEggs+c.heldEggs
   m.fieldEggs+=released
+  local releasedEggIds={}
+  for i=1,released do
+   m.eggSerial+=1
+   local key="RELEASE_"..tostring(m.eggSerial)
+   m.fieldEggTokens[key]=true
+   table.insert(releasedEggIds,key)
+  end
   c.vaultEggs=0;c.heldEggs=0
+  m.lastReleasedEggIds=releasedEggIds
   table.insert(m.events,{type="CASTLE_FALL",owner=c.id,attacker=attacker.id,releasedEggs=released})
   concludeIfLast(m)
  end
- return {hp=c.hp,shield=c.shield,damage=lost,fallen=not c.alive,releasedEggs=released,winner=m.winner}
+ return {hp=c.hp,shield=c.shield,damage=lost,fallen=not c.alive,releasedEggs=released,
+  releasedEggIds=if released>0 then m.lastReleasedEggIds else {},winner=m.winner}
 end
 function M.takeEggs(m:any,thiefId:any,quantity:number,fromCastleId:any?):any
  assertActive(m)
@@ -181,12 +193,39 @@ function M.takeEggs(m:any,thiefId:any,quantity:number,fromCastleId:any?):any
   assert(target.vaultEggs>=quantity,"not enough enemy eggs")
   target.vaultEggs-=quantity
  else
-  assert(m.fieldEggs>=quantity,"not enough field eggs")
-  m.fieldEggs-=quantity
+  error("field egg pickup must reference a unique server-issued egg ID; use M.takeFieldEgg")
  end
  thief.heldEggs+=quantity
  table.insert(m.events,{type="EGG_TAKEN",thief=thief.id,source=fromCastleId or "FIELD",quantity=quantity})
  return thief.heldEggs
+end
+function M.takeFieldEgg(m:any,actorId:any,eggId:string):number
+ assertActive(m)
+ local actor=castleOf(m,actorId)
+ assert(actor.alive,"eliminated owner cannot pick up an egg")
+ assert(type(eggId)=="string" and m.fieldEggTokens[eggId]==true,"egg is missing or already collected")
+ assert(actor.heldEggs<3,"egg carrying limit exceeded")
+ -- No yields here: spending the token and transferring a single egg is atomic.
+ m.fieldEggTokens[eggId]=nil
+ m.fieldEggs-=1
+ actor.heldEggs+=1
+ table.insert(m.events,{type="FIELD_EGG_TAKEN",owner=actor.id,eggId=eggId})
+ return actor.heldEggs
+end
+function M.auditEggConservation(m:any):any
+ local tokens=0
+ for _,available in pairs(m.fieldEggTokens) do
+  if available then tokens+=1 end
+ end
+ local inCastles=0;local carried=0
+ for _,castle in pairs(m.castles) do
+  inCastles+=castle.vaultEggs
+  carried+=castle.heldEggs
+ end
+ local initial=M.EGGS_PER_CASTLE*#m.ids
+  +(m.initialFieldEggs or M.DEFAULT_FIELD_EGGS)
+ return {valid=tokens==m.fieldEggs and tokens+inCastles+carried==initial,
+  tokens=tokens,fieldEggs=m.fieldEggs,inCastles=inCastles,carried=carried,total=initial}
 end
 function M.depositEggs(m:any,actorId:any,quantity:number):number
  assertActive(m)
@@ -203,11 +242,18 @@ function M.depositEggs(m:any,actorId:any,quantity:number):number
  table.insert(m.events,{type="EGG_DEPOSIT",owner=c.id,quantity=quantity})
  return c.depositedEggs
 end
-function M.onCarrierEliminated(m:any,id:any):number
+function M.onCarrierEliminated(m:any,id:any)
  local c=castleOf(m,id)
  local dropped=c.heldEggs;c.heldEggs=0;m.fieldEggs+=dropped
+ local ids={}
+ for _=1,dropped do
+  m.eggSerial+=1
+  local eggId="CARRIER_DROP_"..tostring(m.eggSerial)
+  m.fieldEggTokens[eggId]=true
+  table.insert(ids,eggId)
+ end
  if dropped>0 then table.insert(m.events,{type="EGG_DROP",owner=c.id,quantity=dropped}) end
- return dropped
+ return dropped,ids
 end
 function M.summary(m:any):any
  local alive=0;local eggsInCastles=0

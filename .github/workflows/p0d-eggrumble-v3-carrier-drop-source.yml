@@ -1,0 +1,49 @@
+name: P0D EGGRUMBLE V3 carrier death egg drop SOURCE QA
+on:
+  push:
+    branches: [feature/p0d-pqg-seven-hero-playable-20261116-01]
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotActors.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/test_v3_carrier_drop_source.py'
+      - '.github/workflows/p0d-eggrumble-v3-carrier-drop-source.yml'
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/**'
+      - '.github/workflows/p0d-eggrumble-v3-carrier-drop-source.yml'
+permissions:
+  contents: read
+jobs:
+  pinned-source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Actual original source wiring and seven deliberate negative mutations
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p test_v3_carrier_drop_source.py -v
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_pinned_luau
+          persist-credentials: false
+      - name: Pinned compiler verifies all changed Luau scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_pinned_luau -B /tmp/eggrumble_drop_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/eggrumble_drop_luau --target Luau.Compile.CLI --parallel 4
+          root=handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          for f in "$root/EGGRUMBLE_CastleMatchRules.luau" "$root/EGGRUMBLE_BotActors.luau" "$root/EGGRUMBLE_LobbyCastleModesPreview.server.luau"; do
+            /tmp/eggrumble_drop_luau/luau-compile "$f" >/dev/null
+            sha256sum "$f"
+          done
+          echo "NATIVE_COMPILE_3_OF_3_PASSED_SOURCE_ONLY"
+          echo "STUDIO_2CLIENT_NOT_TESTED ANDROID_NOT_TESTED OWNER_ACCEPTED=0"

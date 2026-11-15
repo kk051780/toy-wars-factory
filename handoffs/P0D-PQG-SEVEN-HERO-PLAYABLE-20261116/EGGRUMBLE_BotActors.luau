@@ -4,6 +4,7 @@
 -- NOT a finished pathfinding/matchmaking or PvP implementation.
 local Players=game:GetService("Players")
 local RunService=game:GetService("RunService")
+local Router=require(script.Parent:WaitForChild("EGGRUMBLE_BotPathRouter"))
 local BotActors={}
 local AI_TICK=.18
 local AI_SPEED=30
@@ -65,6 +66,21 @@ local function desiredTarget(session:any,mode:string,my:any):any
  end
  return target
 end
+-- A short action radius is not enough: side-wall adjacency must not let AI
+-- steal vault eggs, deposit or damage castles through collidable geometry.
+-- Stop the cast just before its interactable (vault/door/deposit) target part.
+local function clearActionPath(actor:Model,actors:Instance,target:Vector3):boolean
+ local origin=actor:GetPivot().Position
+ if math.abs(origin.Y-target.Y)>4.0 then return false end
+ local delta=Vector3.new(target.X-origin.X,0,target.Z-origin.Z)
+ if delta.Magnitude<=4 then return true end
+ local params=RaycastParams.new()
+ params.FilterType=Enum.RaycastFilterType.Exclude
+ params.FilterDescendantsInstances={actor,actors}
+ params.RespectCanCollide=true
+ return workspace:Raycast(origin+Vector3.new(0,0.4,0),delta.Unit*(delta.Magnitude-4),params)==nil
+end
+
 local function clearHeroStrike(actor:Model,target:Model,origin:Vector3,destination:Vector3):boolean
  local delta=destination-origin
  if delta.Magnitude<=0.01 then return true end
@@ -99,43 +115,7 @@ end
 local function planarDistance(a:Vector3,b:Vector3):number
  return (Vector3.new(a.X,0,a.Z)-Vector3.new(b.X,0,b.Z)).Magnitude
 end
-
-local function steeringStep(model:Model,target:Vector3,dt:number,_folder:Instance):number
- local current=model:GetPivot().Position
- local horizontal=Vector3.new(target.X-current.X,0,target.Z-current.Z)
- local distance=horizontal.Magnitude
- if distance<=.05 then return distance end
- local direction=horizontal.Unit
- local forwardDistance=math.min(AI_SPEED*dt,distance)
- local params=RaycastParams.new()
- params.FilterType=Enum.RaycastFilterType.Exclude
- params.FilterDescendantsInstances={model}
- params.RespectCanCollide=true
- local resultPivot:CFrame?=nil
- local function tryStep(heading:Vector3):boolean
-  local delta=heading*forwardDistance
-  local ahead=workspace:Raycast(current+Vector3.new(0,1,0),delta+heading*1.4,params)
-  if ahead~=nil then return false end
-  local nextXZ=current+delta
-  -- Anchored preview actors still need physical support: no walking over a gap,
-  -- up a steep wall or through the roof. A shared 2D arena floor is not assumed.
-  local support=workspace:Raycast(nextXZ+Vector3.new(0,6,0),Vector3.new(0,-19,0),params)
-  if support==nil or support.Normal.Y<.65 or not support.Instance.Anchored then return false end
-  local nextY=support.Position.Y+2.4
-  if math.abs(nextY-current.Y)>7.5 then return false end
-  local next=Vector3.new(nextXZ.X,nextY,nextXZ.Z)
-  resultPivot=CFrame.lookAt(next,next+heading)
-  return true
- end
- local advanced=tryStep(direction)
- if not advanced then
-  local lateral=Vector3.new(-direction.Z,0,direction.X)
-  advanced=tryStep(lateral)
-  if not advanced then advanced=tryStep(-lateral) end
- end
- if resultPivot~=nil then model:PivotTo(resultPivot) end
- return distance
-end
+-- Actor pathfinding is in the reusable, budgeted EGGRUMBLE_BotPathRouter module.
 function BotActors.start(session:any,Rules:any):()
  assert(RunService:IsStudio(),"preview bot actors are Studio-only")
  local mode=session.mode
@@ -166,11 +146,16 @@ function BotActors.start(session:any,Rules:any):()
      local hum=actor:FindFirstChildOfClass("Humanoid")
      if hum then
       if hum.Health<=0 then
-       if not deaths[id] then deaths[id]=now+BOT_REBIRTH end
+       if not deaths[id] then
+        -- Do not let a bot respawn with an invisible carried egg. One physical drop.
+        if session.dropCarrierEggs then session.dropCarrierEggs(id,actor:GetPivot().Position) end
+        deaths[id]=now+BOT_REBIRTH
+       end
        if now>=deaths[id] then
         deaths[id]=nil
         raidStage[id]=nil;raidTargetOwner[id]=nil
         local home=session.castleLocations[id]
+        Router.clear(mode..":"..id)
         actor:Destroy()
         if home then bots[id]=spawnActor(actors,id,home+Vector3.new(0,-3,-34),me.team) end
        end
@@ -184,8 +169,8 @@ function BotActors.start(session:any,Rules:any):()
         if own and enemyLoc then
          local goHome=me.heldEggs>0
          local hasEgg=enemy.vaultEggs>0
-         -- Approach enemy vault along its exterior, not through the solid 26x22 core.
-         -- Three physical waypoints prevent an instant through-wall egg steal.
+         -- Real exterior route: front -> east flank -> vault's exposed outer side.
+         -- The 26x22 solid core blocks a direct center waypoint in this preview.
          local front=enemyLoc+Vector3.new(0,3,-27)
          local flank=enemyLoc+Vector3.new(20,3,-18)
          local raid=enemyLoc+Vector3.new(20,3,9)
@@ -208,7 +193,7 @@ function BotActors.start(session:any,Rules:any):()
           goal=enemyLoc+Vector3.new(0,3,-12)
          end
          goals[id]=if goHome then "RETURN" elseif hasEgg then "STEAL" else "SIEGE"
-         local dist=steeringStep(actor,goal,AI_TICK,actors)
+         local dist=Router.navigate(mode..":"..id,actor,goal,AI_TICK,actors)
          local label=actor:FindFirstChild("Head") and actor.Head:FindFirstChild("BotObjective")
          local ui=label and label:FindFirstChildOfClass("TextLabel")
          if ui then
@@ -220,8 +205,9 @@ function BotActors.start(session:any,Rules:any):()
           elseif hasEgg then raid
           else enemyLoc+Vector3.new(0,3,-12)
          local actualDist=planarDistance(at,actualTarget)
-         -- Reaching the castle front alone is insufficient; traverse the flank first.
-         if actualDist<=ACTION_DISTANCE and (goHome or not hasEgg or raidStage[id]==3) then
+         if actualDist<=ACTION_DISTANCE
+          and (goHome or not hasEgg or raidStage[id]==3)
+          and clearActionPath(actor,actors,actualTarget) then
           if goHome then
            pcall(function() Rules.depositEggs(session.rules,id,me.heldEggs) end)
           elseif hasEgg then
@@ -231,7 +217,7 @@ function BotActors.start(session:any,Rules:any):()
            local ok,result=pcall(function() return Rules.damageCastle(session.rules,enemy.id,id,26) end)
            if ok then
             if result.fallen and session.releaseEggs then
-             session.releaseEggs(enemy.id,enemyLoc,result.releasedEggs)
+             session.releaseEggs(enemy.id,enemyLoc,result.releasedEggIds)
             end
            end
           end
@@ -242,11 +228,13 @@ function BotActors.start(session:any,Rules:any):()
       end
      end
     else
+     Router.clear(mode..":"..id)
      if actor.Parent then actor:Destroy() end
     end
    end
    task.wait(AI_TICK)
   end
+  for id,_ in pairs(bots) do Router.clear(mode..":"..id) end
  end)
  session.botActors=bots
  session.botObjectives=goals

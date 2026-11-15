@@ -33,5 +33,6 @@ jobs:
           cmake --build /tmp/p0d-gq-native --target Luau.Compile.CLI --parallel 4
           base='handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116'
           /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_BotActors.luau" >/dev/null
+          /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_BotPathRouter.luau" >/dev/null
           /tmp/p0d-gq-native/luau-compile --text "$base/EGGRUMBLE_LobbyCastleModesPreview.server.luau" >/dev/null
 

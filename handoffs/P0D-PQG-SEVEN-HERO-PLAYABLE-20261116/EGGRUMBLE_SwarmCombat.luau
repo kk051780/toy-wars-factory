@@ -8,6 +8,7 @@ local LIMIT=110
 local SPAWN_TICK=.18
 local SPAWN_BATCH=5
 local MAX_HITS=24
+local MAX_LOS_RAYS_PER_ATTACK=48 -- source-only safety/performance cap; measure on Android
 local NEUTRAL_HEALTH=32
 local NEUTRAL_SPEED=7
 local SWARM_RANGE=240
@@ -89,7 +90,19 @@ function Swarm.start(session:any)
   end
   return a
  end
- local function strike(id:string,at:Vector3,radius:number,damage:number):number
+ -- Area skills have a visible area, not the ability to hit through solid castle walls.
+ local function lineOfSightToNeutral(origin:Vector3,attacker:Model,target:Model):boolean
+  local root=target.PrimaryPart
+  if not root then return false end
+  local params=RaycastParams.new()
+  params.FilterType=Enum.RaycastFilterType.Exclude
+  params.FilterDescendantsInstances={attacker,target}
+  params.RespectCanCollide=true
+  local delta=(root.Position+Vector3.new(0,1,0))-origin
+  if delta.Magnitude<=.01 then return true end
+  return workspace:Raycast(origin,delta,params)==nil
+ end
+ local function strike(id:string,at:Vector3,radius:number,damage:number,origin:Vector3,attacker:Model):number
   if session.rules.phase~="ACTIVE" then return 0 end
   local player=session.rules.castles[id]
   if not player or not player.alive then return 0 end
@@ -102,24 +115,44 @@ function Swarm.start(session:any)
    end
   end
   table.sort(nearest,function(x,y)return x.dist<y.dist end)
-  local hits=math.min(MAX_HITS,#nearest)
-  for i=1,hits do
-   local h=nearest[i].target
-   h:SetAttribute("LastAttackerId",id)
-   h:TakeDamage(damage)
+  -- A blocked target never consumes a KO/HIT slot; guard CPU with a fixed ray budget.
+  local hits=0
+  local rays=0
+  for _,candidate in ipairs(nearest) do
+   if hits>=MAX_HITS or rays>=MAX_LOS_RAYS_PER_ATTACK then break end
+   rays+=1
+   local h=candidate.target
+   local model=h.Parent
+   if model and model:IsA("Model") and lineOfSightToNeutral(origin,attacker,model) then
+    h:SetAttribute("LastAttackerId",id)
+    h:TakeDamage(damage)
+    hits+=1
+   end
   end
   return hits
  end
  local api={
   kills=kills,
   damageFromPlayer=function(player:Player,at:Vector3,radius:number,damage:number):number
-   return strike(tostring(player.UserId),at,radius,damage)
+   local character=player.Character
+   local root=character and character:FindFirstChild("HumanoidRootPart")::BasePart?
+   local humanoid=character and character:FindFirstChildOfClass("Humanoid")
+   if not character or not root or not humanoid or humanoid.Health<=0 then return 0 end
+   -- Splash center is server-generated and stays in reach of the living attacker.
+   if (at-root.Position).Magnitude>36 then return 0 end
+   return strike(tostring(player.UserId),at,radius,damage,root.Position+Vector3.new(0,1,0),character)
   end,
   damageFromBot=function(botId:string,at:Vector3):number
+   local actor=session.botActors and session.botActors[botId]
+   local root=actor and actor.PrimaryPart
+   local h=actor and actor:FindFirstChildOfClass("Humanoid")
+   if not actor or not root or not h or h.Health<=0 then return 0 end
+   if (root.Position-at).Magnitude>5 then return 0 end
    local now=os.clock()
    if now-(lastBotHit[botId] or 0)<BOT_ATTACK_CD then return 0 end
    lastBotHit[botId]=now
-   return strike(botId,at+Vector3.new(0,0,-2),9,NEUTRAL_HEALTH)
+   local center=root.Position+root.CFrame.LookVector*3
+   return strike(botId,center,9,NEUTRAL_HEALTH,root.Position+Vector3.new(0,1,0),actor)
   end,
   getAliveCount=function():number
    local n=0;for m,h in pairs(live) do if m.Parent and h.Health>0 then n+=1 end end
@@ -159,8 +192,30 @@ function Swarm.start(session:any)
        if delta.Magnitude<best then near=delta;best=delta.Magnitude end
       end
       if near and best>3 then
-       local next=at+near.Unit*math.min(NEUTRAL_SPEED*.38,best)
-       m:PivotTo(CFrame.lookAt(next,next+near.Unit))
+       local travel=math.min(NEUTRAL_SPEED*.38,best)
+       local forward=near.Unit*travel
+       local params=RaycastParams.new()
+       params.FilterType=Enum.RaycastFilterType.Exclude
+       params.FilterDescendantsInstances={all}
+       params.RespectCanCollide=true
+       local origin=at+Vector3.new(0,1,0)
+       local function free(step:Vector3):boolean
+        if step.Magnitude<=.01 then return false end
+        return workspace:Raycast(origin,step+step.Unit*.35,params)==nil
+       end
+       local chosen:Vector3?=nil
+       if free(forward) then
+        chosen=forward
+       else
+        -- NPCs take a small sidestep, never ghost through a solid gate or wall.
+        local sideways=Vector3.new(-near.Unit.Z,0,near.Unit.X)*travel
+        if free(sideways) then chosen=sideways
+        elseif free(-sideways) then chosen=-sideways end
+       end
+       if chosen then
+        local next=at+chosen
+        m:PivotTo(CFrame.lookAt(next,next+near.Unit))
+       end
       end
      end
     end
