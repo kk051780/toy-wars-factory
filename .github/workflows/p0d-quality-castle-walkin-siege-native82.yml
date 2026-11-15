@@ -1,0 +1,97 @@
+name: P0D real walk-in castle gate siege 82 native and source lock
+on:
+  push:
+    branches: [feature/p0d-product-quality-gate-20261115]
+    paths:
+      - product_quality/castle_siege_gate_cumulative.py
+      - .github/workflows/p0d-quality-castle-walkin-siege-native82.yml
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - product_quality/castle_siege_gate_cumulative.py
+      - .github/workflows/p0d-quality-castle-walkin-siege-native82.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real-82-source-castle-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch immutable native and Rojo82 Beast plus solo Game actual artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_castle_parent
+          gh run download 43697714426 -R kk051780/toy-wars-factory \
+            -n P0D-REAL-BEAST-SOLO-AI-CUMULATIVE-RC82-SOURCE-NOGO \
+            -D /tmp/p0d_castle_parent
+          test -s /tmp/p0d_castle_parent/P0D_BEAST_SOLO_NATIVE82_PRIVATE.zip
+      - name: Produce real full castle Place; check 82 locks, egg and AI unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B product_quality/castle_siege_gate_cumulative.py \
+            --parent /tmp/p0d_castle_parent/P0D_BEAST_SOLO_NATIVE82_PRIVATE.zip \
+            --out /tmp/P0D_WALKIN_CASTLE_GATE_BEAST_SOLO_PRIVATE.zip \
+            --extract /tmp/p0d_castle_all82
+          python3 - <<'PY'
+          import sys,json,zipfile
+          from pathlib import Path
+          sys.path.insert(0,'product_quality')
+          import castle_siege_gate_cumulative as m
+          for bad in ('',m.FUNCTION_ANCHOR,m.FUNCTION_ANCHOR*2,m.GATE_IMPL+m.FUNCTION_ANCHOR):
+              try:m.build_source(bad)
+              except ValueError:pass
+              else:raise AssertionError('STALE_OR_DUPLICATE_MAP_ALLOWED')
+          with zipfile.ZipFile('/tmp/P0D_WALKIN_CASTLE_GATE_BEAST_SOLO_PRIVATE.zip') as z:
+              r=json.loads(z.read('RECEIPT.json'))
+          assert r['scripts']==82 and r['unchanged_parent_scripts']==81
+          assert r['source_lock_exact'] and r['other_game_solo_score_sources_exact']
+          assert r['gate_default_open_for_bots'] and r['castle_entrance_real_collision']
+          assert r['private_default_off'] and not r['official_rc_write']
+          assert r['product']=='NO_GO' and r['studio']=='NOT_RUN'
+          ms=Path('/tmp/p0d_castle_all82/MapBuilder.luau').read_text()
+          assert ms.count('makeDefensibleGate(base,name,sign,accent)')==2
+          for mark in ('doorwayClear','SiegeGateAction','P0D_PRIVATE_SIEGE_GATES',
+                       't.Name==name','task.delay(9','Game'):
+              if mark!='Game':assert mark in ms
+          game=Path('/tmp/p0d_castle_all82/Game.luau').read_text()
+          bot=Path('/tmp/p0d_castle_all82/SoloTeamBots.luau').read_text()
+          assert 'summonSevenBeast' in game and 'privateSoloBotsTrialAllowed()' in game
+          assert 'callbacks.deposit(bot,bot.team,bot.carry)' in bot
+          assert len(list(Path('/tmp/p0d_castle_all82').glob('*.luau')))==82
+          print('REAL_WALKIN_CASTLE_GATE_SOURCE_AND_81_SCRIPT_PRESERVATION_PASS')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_pinned_luau
+          persist-credentials: false
+      - name: Native compile ALL 82 real source scripts incl castle MapBuilder
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_pinned_luau -B /tmp/p0d_castle_luau_build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_castle_luau_build --target Luau.Compile.CLI --parallel 4
+          n=0
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_castle_luau_build/luau-compile "$f" >/dev/null
+            n=$((n+1))
+          done < <(find /tmp/p0d_castle_all82 -type f -name '*.luau' -print0 | sort -z)
+          test "$n" -eq 82
+          echo 'REAL_CASTLE_WALKIN_SIEGE_BEAST_SOLO_NATIVE82_PASS_NOT_STUDIO'
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: P0D-REAL-CASTLE-GATE-BEAST-SOLO-RC82-SOURCE-NOGO
+          path: /tmp/P0D_WALKIN_CASTLE_GATE_BEAST_SOLO_PRIVATE.zip
+          retention-days: 7
