@@ -17,13 +17,13 @@ GAME = "server/Game.server.luau"
 WIND = "server/S1RaiderWindRules.luau"
 HUD = "client/HUD.client.luau"
 HEAD = "d2f3ed1a47558fdaf07be0181c83c698bdb2ce34"
-AUTHOR_PLACE_SHA = "349f5258d1bf10829ace6a0b455acf1b646f89d20ac989a4c5d7ca57c34017ed"
-AUTHOR_GAME_BLOB = "e897043c9e86184ed221d5af6db2546d8d15f377"
-AUTHOR_HUD_BLOB = "22e41fe75e4a450e7d9ba7e511eaac02994840d7"
+AUTHOR_PLACE_SHA = "66204b3a25ca61af16fc9b21638906e88b300727a0987dd0a1f19fcd960157d0"
+AUTHOR_GAME_BLOB = "eea411befa2c7986d463eef29e28636eb2d02f08"
+AUTHOR_HUD_BLOB = "4e3c9d8f3a1064e5387f3fb9ccbd08e3d7499af0"
 WIND_BASE_BLOB = "7d5706774b874759e7ab994dc0654c3ae9a46502"
-EXPECTED_GAME_BLOB = "19a5a3a0f24255502f6956e114092d3b4273afcf"
+EXPECTED_GAME_BLOB = "e9be319f34168a4a49bf38b9408bbe16ee1af69b"
 EXPECTED_WIND_BLOB = "d66efccbf90028627cd65aa0fb33173506819c11"
-EXPECTED_PLACE_SHA = "4f82548f1213675937fe6e8431cd29031fe37abc5c54ef0ceb02ab7d05e88d9a"
+EXPECTED_PLACE_SHA = "aaa49c8771312ebb3d288b1a4707eded0525e553dd5791667a94a778816b3d61"
 
 GAME_BEFORE = "    if not WindRules.canActivate({\n        phase = match.phase, team = team, role = roles[player] or \"RAIDER\",\n        alive = alive, carrying = carry[player] ~= nil, slowed = slowed[player] ~= nil,\n        active = (windUntil[player] or 0) > now, now = now,\n        lastAt = lastWind[player] or -math.huge,\n        x = root.Position.X, y = root.Position.Y, z = root.Position.Z,\n    }) then return end"
 GAME_AFTER = "    local windInput:any = {\n        phase = match.phase, team = team, role = roles[player] or \"RAIDER\",\n        alive = alive, carrying = carry[player] ~= nil, slowed = slowed[player] ~= nil,\n        active = (windUntil[player] or 0) > now, now = now,\n        lastAt = lastWind[player] or -math.huge,\n        x = root.Position.X, y = root.Position.Y, z = root.Position.Z,\n    }\n    -- FB004 quality: exact live floor size. Default OFF keeps official behavior.\n    if ServerStorage:GetAttribute(\"P0D_ADAPTIVE_WIND_FIELD\") == true then\n        local grass=map.model:FindFirstChild(\"GrassArena\")\n        if not grass or not grass:IsA(\"BasePart\") or not grass.Anchored\n            or not grass.CanCollide or grass.Parent~=map.model then return end\n        local localPosition=grass.CFrame:PointToObjectSpace(root.Position)\n        windInput.adaptiveField=true\n        windInput.arenaX=localPosition.X\n        windInput.arenaZ=localPosition.Z\n        windInput.arenaMaxX=math.min(178,grass.Size.X*.5-5)\n        windInput.arenaMaxZ=math.min(140,grass.Size.Z*.5-6)\n    end\n    if not WindRules.canActivate(windInput) then return end"
@@ -80,7 +80,22 @@ def compose(outer_zip):
         if sl["blobs"].get(key)!=wanted:raise ValueError("ORIGINAL_AUTHOR_DRIFT:"+key)
     if sources["Game"].count(GAME_BEFORE)!=1 or sources["S1RaiderWindRules"].count(WIND_BEFORE)!=1:
         raise ValueError("AUTHOR_PATCH_CONFLICT_WITH_WIND")
+    # Reuse existing #470 Builder-Q blocked-raycast fix; no independent Game/Remote.
+    # A rejected physical placement must NOT consume 18s cooldown or play success FX.
+    raycast=('        local params=RaycastParams.new()\n'
+             '        params.FilterType=Enum.RaycastFilterType.Exclude\n'
+             '        params.FilterDescendantsInstances={player.Character :: Model,horde.folder}\n'
+             '        if workspace:Raycast(root.Position,facing*9,params) then return end\n')
+    safe='        if not SevenJobs.safeWall(wallCenter.X,wallCenter.Z,near) then return end\n'
+    post=raycast+'        local wall=Instance.new("Part")'
     fixed_game=sources["Game"].replace(GAME_BEFORE,GAME_AFTER,1)
+    if fixed_game.count(safe)!=1 or fixed_game.count(post)!=1:
+        raise ValueError("BUILDER_Q_REBASE_OVERLAP_OR_DRIFT")
+    fixed_game=fixed_game.replace(safe,safe+raycast,1)
+    fixed_game=fixed_game.replace(post,'        local wall=Instance.new("Part")',1)
+    job=fixed_game.index('local function useSevenJob(')
+    if not (fixed_game.index(raycast,job)<fixed_game.index('    sevenJobLastUse[player]=now',job)):
+        raise ValueError("BUILDER_Q_RAYCAST_AFTER_COST")
     fixed_wind=sources["S1RaiderWindRules"].replace(WIND_BEFORE,WIND_AFTER,1)
     if blob(fixed_game)!=EXPECTED_GAME_BLOB or blob(fixed_wind)!=EXPECTED_WIND_BLOB:
         raise ValueError("FIXED_SOURCE_REPRODUCIBILITY_FAILURE")
@@ -93,8 +108,11 @@ def compose(outer_zip):
         if name not in ("Game","S1RaiderWindRules") and sources[name]!=after[name]:
             raise ValueError("OTHER_AUTHOR_SOURCE_CHANGED:"+name)
     if sources["TrapRaidersHUD"]!=after["TrapRaidersHUD"]:raise ValueError("HUD_NOT_PRESERVED")
-    if "sevenJobSelected[player]~=true" not in fixed_game or "broadcast() -- update all peers after job change" not in fixed_game:
-        raise ValueError("ROLE7_AUTHOR_PATCH_REMOVED")
+    if ("sevenJobSelected[player]~=true" not in fixed_game
+        or "broadcast() -- update all peers after job change" not in fixed_game
+        or "sevenJobPickAckSeq" not in fixed_game
+        or "pendingJobSeq" not in after["TrapRaidersHUD"]):
+        raise ValueError("LATEST_ROLE7_EXACT_ACK_PATCH_REMOVED")
     sl["blobs"][GAME]=fl["source_gitblobs"][GAME]=EXPECTED_GAME_BLOB
     sl["blobs"][WIND]=fl["source_gitblobs"][WIND]=EXPECTED_WIND_BLOB
     assert_locked(out,sl,fl)
@@ -107,9 +125,10 @@ def build(outer_zip,output,extract_dir=None):
         z.writestr("SOURCE_LOCK.json",json.dumps(sl,ensure_ascii=False,indent=2)+"\n")
         z.writestr("RC_FEATURE_LOCK.json",json.dumps(fl,ensure_ascii=False,indent=2)+"\n")
         z.writestr("RECEIPT.json",json.dumps({
-          "schema":"PQ_AUTHOR297_WIND_COMPOSITE_V1","head":HEAD,
+          "schema":"PQ_AUTHOR297_EXACT_ACK_WIND_BUILDER_Q_V2","head":HEAD,
           "scripts":82,"unchanged_author":80,"place_bytes":len(place),
-          "place_sha256":sha(place),"source_lock":True,
+          "place_sha256":sha(place),"source_lock":True,"exact_job_pick_ack_preserved":True,
+          "builder_q_false_cooldown_fixed":True,
           "official_rc_write":False,"engine":"NOT_RUN","android":"NOT_RUN",
           "owner":False,"decision":"PRODUCT_NO_GO"},indent=2)+"\n")
     if extract_dir is not None:
