@@ -201,14 +201,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
-          ref: 0d9795912fe3715bbdfe87978923328c88ddf179
+          ref: 3d48167720f6352b659e69dea4aeaf34a8c6fb32
           path: _p0d_existing_quality_source
           persist-credentials: false
       - name: Reuse original quality-writer wind and Builder Q patch (no duplicated Game)
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git -C _p0d_existing_quality_source rev-parse HEAD)" = 0d9795912fe3715bbdfe87978923328c88ddf179
+          test "$(git -C _p0d_existing_quality_source rev-parse HEAD)" = 3d48167720f6352b659e69dea4aeaf34a8c6fb32
           mkdir -p /tmp/p0d_role7_author_input
           cp /tmp/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip /tmp/p0d_role7_author_input/
           (cd /tmp/p0d_role7_author_input && zip -q /tmp/p0d_role7_author_outer.zip P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip)
@@ -216,18 +216,22 @@ jobs:
             --author-outer /tmp/p0d_role7_author_outer.zip \
             --out /tmp/P0D_RC82_ROLE7_WIND_BUILDER_CUMULATIVE_PRIVATE.zip \
             --extract /tmp/p0d_role7_wind82_flat
+          python3 _p0d_existing_quality_source/product_quality/role7_respawn_guard.py \
+            --input /tmp/P0D_RC82_ROLE7_WIND_BUILDER_CUMULATIVE_PRIVATE.zip \
+            --output /tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip \
+            --extract /tmp/p0d_role7_respawn_flat
           python3 - <<'PY'
           import json,zipfile,hashlib,xml.etree.ElementTree as E
           from pathlib import Path
           from collections import Counter
-          b=Path('/tmp/P0D_RC82_ROLE7_WIND_BUILDER_CUMULATIVE_PRIVATE.zip').read_bytes()
-          with zipfile.ZipFile('/tmp/P0D_RC82_ROLE7_WIND_BUILDER_CUMULATIVE_PRIVATE.zip') as z:
-              xml=z.read('COMPOSED_ROLE7_WIND_RC82.rbxlx')
+          b=Path('/tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip').read_bytes()
+          with zipfile.ZipFile('/tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip') as z:
+              xml=z.read('COMPOSED_ROLE7_WIND_BUILDERQ_DELAYED_SAFE_RC82.rbxlx')
               sl=json.loads(z.read('SOURCE_LOCK.json'));fl=json.loads(z.read('RC_FEATURE_LOCK.json'))
               receipt=json.loads(z.read('RECEIPT.json'))
-          assert receipt['decision']=='PRODUCT_NO_GO' and receipt['official_rc_write']==False
-          assert receipt['exact_job_pick_ack_preserved'] and receipt['builder_q_false_cooldown_fixed']
-          assert len(xml)==777846 and hashlib.sha256(xml).hexdigest()=='aaa49c8771312ebb3d288b1a4707eded0525e553dd5791667a94a778816b3d61'
+          assert receipt['product']=='NO_GO' and receipt['official_rc_write']==False
+          assert receipt['new_game_blob']=='00fab56c721145688a34ba2825babd7bac351fbb'
+          assert len(xml)==778612 and hashlib.sha256(xml).hexdigest()=='f6cc936a17b10d7cbfb1eb31718025a6fe21346160cacea8d58e8e52d93eb542'
           out=Path('/tmp/p0d_role7_cumulative82')
           root=E.fromstring(xml)
           scripts=[]
@@ -255,6 +259,9 @@ jobs:
             'ServerScriptService':{'$className':'ServerScriptService','TrapRaidersS1':{'$path':'src/ServerScriptService/TrapRaidersS1'}},
             'StarterPlayer':{'$className':'StarterPlayer','StarterPlayerScripts':{'$path':'src/StarterPlayer/StarterPlayerScripts'}}}}
           (out/'default.project.json').write_text(json.dumps(project,indent=2))
+          assert any('sevenJobPickAckSeq[player]~=selectedAck' in p.read_text('utf-8') for p in [Path('/tmp/p0d_role7_respawn_flat/Game.luau')])
+          assert 'player.Character~=castCharacter' in Path('/tmp/p0d_role7_respawn_flat/Game.luau').read_text('utf-8')
+          assert 'getTeamName(player)~=castTeam' in Path('/tmp/p0d_role7_respawn_flat/Game.luau').read_text('utf-8')
           print('ORIGINAL_AUTHOR_PLUS_QUALITY_COMPOSED_SOURCE_LOCK_82_OF_82_PASS')
           PY
       - name: Native Luau all 82 of cumulative role7 + wind + Builder Q source
@@ -302,15 +309,15 @@ jobs:
             'schema':'P0D_V6_REAL_SOURCE_BATCH_V1',
             'original_author_pr':297,'quality_author_pr':471,
             'original_author_sha':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
-            'quality_author_sha':'0d9795912fe3715bbdfe87978923328c88ddf179',
+            'quality_author_sha':'3d48167720f6352b659e69dea4aeaf34a8c6fb32',
             'official_parent':'d2f3ed1a47558fdaf07be0181c83c698bdb2ce34',
-            'real_private_place_bytes':777846,
-            'real_private_place_sha256':'aaa49c8771312ebb3d288b1a4707eded0525e553dd5791667a94a778816b3d61',
+            'real_private_place_bytes':778612,
+            'real_private_place_sha256':'f6cc936a17b10d7cbfb1eb31718025a6fe21346160cacea8d58e8e52d93eb542',
             'source_scripts':82,'native_luau':True,'rojo_source_parity':True,
             'source_lock':True,'source_diff_stage':'private_source_candidate',
             'studio_2client':'NOT_RUN','android':'NOT_RUN',
             'official_rc_adopted':False,'owner_acceptance':False,'product_pass':False,
-            'changes':'P0D-008 role ACK + wind floor limits + builder blocked Q cooldown',
+            'changes':'P0D-008 role ACK + adaptive wind + builder Q cooldown + combo expiry + delayed Q selection/respawn guard',
             'rollback':'Exact official source d2f3ed1a47558fdaf07be0181c83c698bdb2ce34',
           },ensure_ascii=False,indent=2)+'\n')
           PY
@@ -322,5 +329,6 @@ jobs:
             /tmp/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip
             /tmp/role7_rc82_receipt.log
             /tmp/P0D_RC82_ROLE7_WIND_BUILDER_CUMULATIVE_PRIVATE.zip
+            /tmp/P0D_RC82_ROLE7_FULL_SAFETY_COMPOSITE_PRIVATE.zip
             /tmp/P0D_V6_CUMULATIVE_INTAKE_RECEIPT.json
           retention-days: 7
