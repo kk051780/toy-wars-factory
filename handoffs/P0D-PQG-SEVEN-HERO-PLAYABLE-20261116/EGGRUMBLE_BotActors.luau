@@ -85,7 +85,7 @@ local function tryHeroAttack(actor:Model,my:any,session:any,lastHit:{[string]:nu
  end
  return false
 end
-local function steeringStep(model:Model,target:Vector3,dt:number,folder:Instance):number
+local function steeringStep(model:Model,target:Vector3,dt:number,actorFolder:Instance):number
  local current=model:GetPivot().Position
  local horizontal=Vector3.new(target.X-current.X,0,target.Z-current.Z)
  local distance=horizontal.Magnitude
@@ -100,7 +100,8 @@ local function steeringStep(model:Model,target:Vector3,dt:number,folder:Instance
  -- try a lateral bypass; never grant an action just for being stuck.
  local params=RaycastParams.new()
  params.FilterType=Enum.RaycastFilterType.Exclude
- params.FilterDescendantsInstances={folder,model}
+ params.FilterDescendantsInstances={actorFolder}
+ params.RespectCanCollide=true
  local origin=current+Vector3.new(0,2,0)
  local collision=workspace:Raycast(origin,direction*math.max(5,forwardDistance+2),params)
  if collision and collision.Instance.CanCollide then
@@ -154,13 +155,14 @@ function BotActors.start(session:any,Rules:any):()
         if own and enemyLoc then
          local goHome=me.heldEggs>0
          local hasEgg=enemy.vaultEggs>0
-         local front=enemyLoc+Vector3.new(0,3,-26)
+         local front=enemyLoc+Vector3.new(20,3,-20)
+         local raidTarget=enemyLoc+Vector3.new(18,3,9) -- outside the solid core, next to EggVault
          local nearFront=(Vector3.new(actor:GetPivot().Position.X,0,actor:GetPivot().Position.Z)-Vector3.new(front.X,0,front.Z)).Magnitude<18
          local goal=if goHome then own+Vector3.new(-16,3,-18)
-          elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,6) else front)
+          elseif hasEgg then (if nearFront then raidTarget else front)
           else enemyLoc+Vector3.new(0,3,-12)
          goals[id]=if goHome then "RETURN" elseif hasEgg then "STEAL" else "SIEGE"
-         local dist=steeringStep(actor,goal,AI_TICK,folder)
+         local dist=steeringStep(actor,goal,AI_TICK,actors)
          local label=actor:FindFirstChild("Head") and actor.Head:FindFirstChild("BotObjective")
          local ui=label and label:FindFirstChildOfClass("TextLabel")
          if ui then
@@ -169,7 +171,7 @@ function BotActors.start(session:any,Rules:any):()
          -- A bot cannot steal eggs, deposit them or attack from across the map.
          local at=actor:GetPivot().Position
          local actualTarget=if goHome then own+Vector3.new(-16,3,-18)
-          elseif hasEgg then enemyLoc+Vector3.new(0,3,6)
+          elseif hasEgg then raidTarget
           else enemyLoc+Vector3.new(0,3,-12)
          local actualDist=(Vector3.new(at.X,0,at.Z)-Vector3.new(actualTarget.X,0,actualTarget.Z)).Magnitude
          if actualDist<=ACTION_DISTANCE then
