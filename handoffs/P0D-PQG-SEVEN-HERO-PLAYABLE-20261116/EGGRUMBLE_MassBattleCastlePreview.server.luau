@@ -28,6 +28,7 @@ local center=(spawn and spawn.Position or Vector3.new(0,5,0))+Vector3.new(0,2,71
 local live:{[Model]:Humanoid}={}
 local deathCount=0
 local playerCastles:{[number]:Model}={}
+local playerCastleSlots:{[number]:number}={}
 local colors={Color3.fromRGB(208,91,58),Color3.fromRGB(56,141,225)}
 local palettes={Color3.fromRGB(238,196,107),Color3.fromRGB(123,230,166),Color3.fromRGB(165,142,235)}
 
@@ -74,17 +75,29 @@ local function teamOf(player:Player):number
   if n:find("blue") or n:find("青") then return 2 end
  end
  -- Studio fallback only. Production teams MUST be read from authoritative Game.
- local index=table.find(Players:GetPlayers(),player) or 1
- return if index%2==1 then 1 else 2
+ return if player.UserId%2==0 then 2 else 1
 end
 local function personalCastlePosition(player:Player):Vector3
  local side=teamOf(player)
- local idx=(player.UserId%4)
- return center+Vector3.new(if side==1 then -545 else 545,0,(idx-1.5)*115)
+ local idx=playerCastleSlots[player.UserId] or 1
+ -- Four rows within a team wing; overflow is tiled in second x row.
+ local col=math.floor((idx-1)/8)
+ local row=(idx-1)%8
+ local x=(if side==1 then -545 else 545)+(if side==1 then col*100 else -col*100)
+ return center+Vector3.new(x,-4,(row-3.5)*111)
 end
 local function makeCastle(player:Player)
  local previous=playerCastles[player.UserId]
  if previous then previous:Destroy() end
+ local side=teamOf(player)
+ local used={}
+ for uid,slot in pairs(playerCastleSlots) do
+  local other=Players:GetPlayerByUserId(uid)
+  if other and teamOf(other)==side then used[slot]=true end
+ end
+ local slot=1
+ while used[slot] do slot+=1 end
+ playerCastleSlots[player.UserId]=slot
  local model=Instance.new("Model");model.Name="PersonalCastle_"..player.UserId
  model:SetAttribute("CastleOwnerUserId",player.UserId)
  model:SetAttribute("CastleTeam",teamOf(player))
@@ -160,7 +173,7 @@ local function dummy(at:Vector3)
  head.Shape=Enum.PartType.Ball;head.CanTouch=false
  m.PrimaryPart=r
  local h=Instance.new("Humanoid");h.MaxHealth=CONFIG.SWARM_HP;h.Health=CONFIG.SWARM_HP
- h.BreakJointsOnDeath=false;h.Parent=m
+ h.RequiresNeck=false;h.BreakJointsOnDeath=false;h.Parent=m
  live[m]=h
  h.Died:Connect(function()
   live[m]=nil
@@ -193,7 +206,7 @@ local function slash(player:Player,bonus:number)
  for m,enemyHum in pairs(live) do
   local mr=m.PrimaryPart
   if mr and enemyHum.Health>0 then
-   local dist=(mr.Position-impact).Magnitude
+   local dist=(Vector3.new(mr.Position.X,0,mr.Position.Z)-Vector3.new(impact.X,0,impact.Z)).Magnitude
    if dist<=radius then table.insert(ranked,{hum=enemyHum,dist=dist}) end
   end
  end
@@ -243,6 +256,7 @@ Players.PlayerRemoving:Connect(function(p)
  local m=playerCastles[p.UserId]
  if m then m:Destroy() end
  playerCastles[p.UserId]=nil
+ playerCastleSlots[p.UserId]=nil
 end)
 for _,p in ipairs(Players:GetPlayers()) do join(p) end
 Players.PlayerAdded:Connect(join)
@@ -263,6 +277,7 @@ task.spawn(function()
      local angle=math.random()*math.pi*2
      local distance=math.random(29,75)
      local at=pr.Position+Vector3.new(math.cos(angle)*distance,0,math.sin(angle)*distance)
+     at=Vector3.new(at.X,center.Y-3.5,at.Z)
      -- Stay within the 3 x 3 arena footprint, avoid spawning over individual castles.
      if math.abs(at.X-center.X)<CONFIG.MAP_TILE*1.4 and math.abs(at.Z-center.Z)<CONFIG.MAP_TILE*1.4 then
       dummy(at)
