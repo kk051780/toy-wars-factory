@@ -104,7 +104,8 @@ jobs:
           assert r['decision'] == 'DESIGN_NO_GO'
           assert r['catalog_entries'] == 67
           assert r['inventory_covered'] == 67
-          assert r['design_coverage'] == '0/67'
+          assert r['design_coverage'] == '67/67'
+          assert r['verified_design_contracts'] == '0/67'
           assert r['seven_jobs_full_engine_pass'] == '0/7'
           assert r['release_unresolved'] > 0
           print('67 inventory rows loaded; full design+engine proof still NO_GO')
