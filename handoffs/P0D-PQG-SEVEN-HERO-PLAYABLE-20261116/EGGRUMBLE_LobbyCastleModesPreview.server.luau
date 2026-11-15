@@ -8,6 +8,7 @@ local Debris=game:GetService("Debris")
 if not RunService:IsStudio() then return end
 local Rules=require(script.Parent:WaitForChild("EGGRUMBLE_CastleMatchRules"))
 local BotActors=require(script.Parent:WaitForChild("EGGRUMBLE_BotActors"))
+local SwarmCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SwarmCombat"))
 local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)::SpawnLocation?
 local root=spawn and spawn.Position or Vector3.new(0,4,0)
 local folder=Instance.new("Folder");folder.Name="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW";folder.Parent=workspace
@@ -113,7 +114,7 @@ local function startSession(mode:string)
  local roster=Rules.makeRoster(mode,humans,MODE_SEATS)
  local session={
   mode=mode,roster=roster,rules=Rules.new(mode,roster,24),
-  castleLocations={},castleModels={},world=Instance.new("Folder"),
+  castleLocations={},castleModels={},world=Instance.new("Folder"),groundY=root.Y-3,
  }
  session.world.Name=mode.."_Arena";session.world.Parent=folder
  local worldX=mode=="TEAM" and -620 or 620
@@ -197,6 +198,7 @@ local function startSession(mode:string)
  -- Actual anchored 3D bot actors roam between castles and must reach their goal
  -- before stealing/depositing eggs or damaging the castle. No remote numerical sieges.
  BotActors.start(session,Rules)
+ SwarmCombat.start(session)
  for _,p in ipairs(queue) do
   if p.Parent and joined[p.UserId]==mode then
    local backpack=p:FindFirstChildOfClass("Backpack")
@@ -215,6 +217,14 @@ local function startSession(mode:string)
      if not rootPart then return end
      lastAttack=os.clock()
      local affected=0
+     local tier=p:GetAttribute("EGGRUMBLE_SlashEvolution") or "BASE"
+     local length=if tier=="TEMPEST" then 30 elseif tier=="WAVE" then 23 else 15
+     local radius=if tier=="TEMPEST" then 23 elseif tier=="WAVE" then 17 else 11
+     -- The same human attack damages real neutral NPCs; actual Humanoid deaths grant KOs.
+     if session.swarm then
+      session.swarm.damageFromPlayer(p,rootPart.Position+rootPart.CFrame.LookVector*length,
+       radius,if tier=="TEMPEST" then 75 else 38)
+     end
      for id,actor in pairs(session.botActors or {}) do
       local c=session.rules.castles[id]
       local ar=actor and actor.PrimaryPart
@@ -267,4 +277,4 @@ Players.PlayerRemoving:Connect(function(p)
  chosenDefense[p.UserId]=nil
  -- Production policy must decide whether an active disconnected castle persists under AI.
 end)
-print("[EGGRUMBLE V3] Studio-only two mode gates, bot filling/egg vault/field eggs and castle elimination preview; production teleport & full AI UNIMPLEMENTED")
+print("[EGGRUMBLE V3] Studio-only two mode gates; moving AI actors, shared horde and castle multi-egg combat; real platform matchmaking/production AI UNIMPLEMENTED")
