@@ -58,6 +58,31 @@ class TestTrace(unittest.TestCase):
         r["real_source_paths"] = ["server/Game.server.luau"]
         r["real_source_sha256"] = ["b" * 64]
         self.assertIn("ENGINE_UNKNOWN:P0D-009", evaluate(c, t)["issues"])
+    def test_declared_absent_release_feature_never_counts_as_engine_pass(self):
+        c, t = fixture()
+        row = t["rows"][0]  # S1 gameplay feature, not a future wish-list item
+        row["design_contract_status"] = "VERIFIED"
+        row["design_revision_url"] = "https://example.org/design-rev"
+        row["real_source_paths"] = ["server/Game.server.luau"]
+        row["real_source_sha256"] = ["b" * 64]
+        row["engine_proof"] = {
+            "result": "PASS", "official_rc_head": HEAD,
+            "recording_url": "https://example.org/private-studio-capture",
+            "device": "Studio 2-client", "reviewer": "Independent QA",
+            "observed_effect": "server-side egg delivery",
+            "same_head_build_url": "https://example.org/frozen-rc-artifact",
+        }
+        row["gap_type"] = "ABSENT"
+        broken = evaluate(c, t)
+        self.assertEqual(broken["real_engine_pass"], 0)
+        self.assertIn("RELEASE_GAP_UNRESOLVED:P0D-001", broken["issues"])
+        self.assertEqual(broken["decision"], "DESIGN_NO_GO")
+        # Only a resolved gap may count structurally reviewable proof.
+        row["gap_type"] = "NONE"
+        resolved = evaluate(c, t)
+        self.assertEqual(resolved["real_engine_pass"], 1)
+        self.assertNotIn("RELEASE_GAP_UNRESOLVED:P0D-001", resolved["issues"])
+
     def test_unverified_role_capabilities_not_counted(self):
         c, t = fixture()
         row = t["rows"][13]
