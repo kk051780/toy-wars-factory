@@ -20,6 +20,9 @@ OUT = "P0D_ROLE7_SOLO_BOTS_SAFE_SPECTATOR_RC82.rbxlx"
 PARENT_SHA = "457cb3fb34d9fe72485e335aa0e7307c06fab75bcff09cffd6d45615d94bfde8"
 PARENT_GAME_BLOB = "976d2a7118a0013f1dc32f414ec4fe54b9b84b31"
 PARENT_BOTS_BLOB = "a77176fdcfe3351b5dc9ed4aa23fcf48a28edd53"
+EXPECTED_PLACE_SHA = "2f86fcaaa392ef26e277ee35387525f7ad58f41b0b8baf6cc4d4bee61bb11ebb"
+EXPECTED_PLACE_BYTES = 780880
+EXPECTED_GAME_BLOB = "2d98c3c7ac89ea2195b46afb171cfb78af37615e"
 GAME = "server/Game.server.luau"
 BOTS = "server/SoloTeamBots.luau"
 
@@ -116,6 +119,9 @@ def build(parent: Path, output: Path, extract_dir: Path | None = None) -> dict:
                                 for name in scripts if name != "Game"):
         raise ValueError("OTHER_81_SOURCE_CHANGED")
     new_blob = blob(new_game)
+    if new_blob != EXPECTED_GAME_BLOB or sha(place) != EXPECTED_PLACE_SHA \
+            or len(place) != EXPECTED_PLACE_BYTES:
+        raise ValueError("CUMULATIVE_SOURCE_EXACT_OUTPUT_DRIFT")
     lock["blobs"][GAME] = feature_lock["source_gitblobs"][GAME] = new_blob
     verify(place, lock, feature_lock)
     report = {
