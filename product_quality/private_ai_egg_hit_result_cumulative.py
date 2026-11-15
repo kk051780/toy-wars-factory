@@ -16,9 +16,9 @@ PARENT_SHA="11c9afe248915989531ff4945cb7267e70f7bf0e7ebfeb8782ac22d8dcdfe6d6"
 PARENT_GAME_BLOB="19219949555bd86359e50ed245ca1eebecfd3e32"
 GAME="server/Game.server.luau"
 BOT="server/SoloTeamBots.luau"
-EXPECTED_GAME="e1ac40d08ae163a442d848ae4c165b1c5253bdd7"
-EXPECTED_PLACE="130170d565a9b11851f4742a2a8dd7f6e3e926464aeb12d192cec4715bfb266a"
-EXPECTED_BYTES=781134
+EXPECTED_GAME="95844ce3dea61db9f13c7b5808388700c7ba7cfd"
+EXPECTED_PLACE="6d007e4024c2fce71b21bfd89ffc66a9b4b29f524d99d8a1ae24e0abb443e42a"
+EXPECTED_BYTES=781291
 
 PRIORITY_OLD="""    -- Cannot hit castle with the same swing after hitting neutral soldiers.
     if mobHits>0 then return end
@@ -50,6 +50,20 @@ REASON_NEW="""        -- A private 1-human raid uses the normal egg-victory resu
                 else "EGG_CAPTURE")
         else broadcast() end
 """
+
+# Reuse the verified existing #471 solo eligibility fix, not a second Game owner.
+KICKOFF_OLD='''    studioSoloRoundStarted = StudioSolo.isSoloRound(RunService:IsStudio() or privateHordeTrialAllowed(),
+        #Players:GetPlayers(), teamCount("RED"), teamCount("BLUE"))'''
+KICKOFF_NEW='''    -- A COUNTDOWN spectator is not an eligible solo rival at kickoff.
+    studioSoloRoundStarted = StudioSolo.isSoloRound(RunService:IsStudio() or privateHordeTrialAllowed(),
+        #eligibleSoloPlayers(), teamCount("RED"), teamCount("BLUE"))'''
+BOT_FAILURE_OLD='''                if studioSoloRoundStarted and match.phase=="ACTIVE"
+                    and #Players:GetPlayers()==1 then
+                    stopRound("DRAW","SOLO_BOTS_TICK_FAILURE")'''
+BOT_FAILURE_NEW='''                -- A neutral/late-join spectator does not prevent fail-closed DRAW.
+                if studioSoloRoundStarted and match.phase=="ACTIVE"
+                    and #eligibleSoloPlayers()==1 then
+                    stopRound("DRAW","SOLO_BOTS_TICK_FAILURE")'''
 
 def sha(b):return hashlib.sha256(b).hexdigest()
 def swap_once(s,old,new,key):
@@ -87,6 +101,8 @@ def build(parent,out,extract_dir=None):
     end=new.index("    attackHuman=function(",start)
     bot_auth=swap_once(new[start:end],REASON_OLD,REASON_NEW,"BOT_EGG_WIN_RESULT")
     new=new[:start]+bot_auth+new[end:]
+    new=swap_once(new,KICKOFF_OLD,KICKOFF_NEW,"SOLO_COUNTDOWN_EXCLUDE_SPECTATOR")
+    new=swap_once(new,BOT_FAILURE_OLD,BOT_FAILURE_NEW,"SOLO_ERROR_FAILCLOSED_WITH_SPECTATOR")
     if human_egg(old)!=human_egg(new):
         raise ValueError("HUMAN_EGG_SCORE_REGRESSION")
     for essential in ("P0D_PRIVATE_SOLO_TEAM_BOTS","P0D_SAFE_LOBBY","privateSoloBotsTrialAllowed()",
@@ -104,13 +120,14 @@ def build(parent,out,extract_dir=None):
         raise ValueError("OTHER_81_LUAU_CHANGED")
     sl["blobs"][GAME]=fl["source_gitblobs"][GAME]=EXPECTED_GAME
     verify(output_place,sl,fl)
-    meta={"schema":"P0D_FB005_BOT_MELEE_AND_EGG_WIN_REASON_V1",
+    meta={"schema":"P0D_FB005_AI_EGG_RESULT_ELIGIBLE_SOLO_AND_FAILURE_V2",
           "official_rc_head":RC,"official_rc_write":False,
           "place_sha256":EXPECTED_PLACE,"place_bytes":EXPECTED_BYTES,
           "game_blob":EXPECTED_GAME,"bots_blob":sl["blobs"][BOT],
           "sources":82,"unchanged_parent_sources":81,
           "human_egg_score_exact":True,"private_default_off":True,
           "bot_hit_and_egg_reason_fixed":True,
+          "solo_late_spectator_not_opponent":True,"bot_tick_failure_draw_with_spectator":True,
           "native":"NOT_RUN","rojo":"NOT_RUN","studio":"NOT_RUN","android":"NOT_RUN",
           "owner":False,"product":"NO_GO"}
     with ZipFile(out,"w",ZIP_DEFLATED) as z:
