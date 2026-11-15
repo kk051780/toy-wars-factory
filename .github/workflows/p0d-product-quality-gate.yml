@@ -17,7 +17,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Unit tests for fail-closed scoring and acceptance rules
-        run: python3 -B -m unittest discover -s product_quality -p 'test_product_quality.py' -v
+        run: python3 -B -m unittest discover -s product_quality -p 'test_*.py' -v
       - name: Verify public competitor reference provenance (not actual gameplay measurement)
         shell: bash
         run: |
@@ -56,11 +56,27 @@ jobs:
           assert 'PRODUCT_SCORE_UNKNOWN' in r['problems']
           print('PASS: unevaluated game is rejected; no fake acceptance')
           PY
+      - name: Audit source-confirmed live baseline vs Studio-only battlefield extent (FB-009)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/product_quality
+          python3 -B product_quality/field_baseline.py --out /tmp/product_quality/FIELD_BASELINE_REPORT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('/tmp/product_quality/FIELD_BASELINE_REPORT.json').read_text())
+          assert r['status']=='FIELD_P0_NEEDS_REAL_LIVE_AND_STUDIO_ROUTE_MEASUREMENT'
+          assert r['studio_only_extension']['studio_guard_source_confirmed']
+          assert r['objective_geometry_lower_bounds']['walking_seconds'] is None
+          assert r['external_competitor_map_studs'] is None
+          print('PASS static source evidence; field gameplay/P0 remains NO_GO until real path test')
+          PY
       - name: Publish transparent NO_GO report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: P0D-PRODUCT-QUALITY-NOT-OWNER-APPROVED
-          path: /tmp/product_quality/PRODUCT_QUALITY_REPORT.json
+          path: /tmp/product_quality/*.json
           retention-days: 14
           if-no-files-found: warn
