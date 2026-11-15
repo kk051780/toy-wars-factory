@@ -100,7 +100,10 @@ local function steeringStep(model:Model,target:Vector3,dt:number,folder:Instance
  -- try a lateral bypass; never grant an action just for being stuck.
  local params=RaycastParams.new()
  params.FilterType=Enum.RaycastFilterType.Exclude
- params.FilterDescendantsInstances={folder,model}
+ -- Excluding the entire session world hid every castle wall and gate from bots.
+ -- Only the moving actor itself is ignored; collidable world obstacles must block.
+ params.FilterDescendantsInstances={model}
+ params.RespectCanCollide=true
  local origin=current+Vector3.new(0,2,0)
  local collision=workspace:Raycast(origin,direction*math.max(5,forwardDistance+2),params)
  if collision and collision.Instance.CanCollide then
