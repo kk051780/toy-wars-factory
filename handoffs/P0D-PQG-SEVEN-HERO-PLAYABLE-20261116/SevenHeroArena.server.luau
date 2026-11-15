@@ -11,7 +11,7 @@ if not RunService:IsStudio() then return end
 
 local ROLE_ORDER = {"WARRIOR","MAGE","NINJA","TRAPPER","BUILDER","BEAST","ZOMBIE"}
 local ROLES: {[string]: {name:string,color:Color3,weapon:string,a:string,b:string}} = {
- WARRIOR={name="神将（仮）",color=Color3.fromRGB(238,87,45),weapon="大太刀・槍・拳",a="武芸連撃",b="大地震撃"},
+ WARRIOR={name="武神",color=Color3.fromRGB(238,87,45),weapon="大太刀・槍・拳・飛翔斬撃",a="武器自在＋飛翔斬撃",b="武神・大地震撃"},
  MAGE={name="魔法使い",color=Color3.fromRGB(64,165,255),weapon="魔導杖",a="魔力弾",b="雷光＋治癒"},
  NINJA={name="暗殺者",color=Color3.fromRGB(93,94,157),weapon="双短剣",a="瞬影斬",b="風走り＋透明化"},
  TRAPPER={name="超能力者",color=Color3.fromRGB(179,88,255),weapon="念動キューブ",a="重力衝撃",b="重力牢獄＋空間交換"},
@@ -246,8 +246,17 @@ local function cast(player:Player,role:string,slot:string)
    flash(front,22,c)
   end
  elseif role=="WARRIOR" then
+  local divineActive=player:GetAttribute("P0DPreviewDivineActive")==true
+  local boost=if divineActive then 1.55 else 1
+  local function warHit(at:Vector3,radius:number,base:number)
+   local num=hit(at,radius,base*boost,c,char)
+   -- Real single-target dummy bonus illustrates duelist design without changing PvP authority.
+   if num==1 then
+    for _,target in ipairs(nearby(at,radius,char)) do target:TakeDamage(base*.32*boost) end
+   end
+  end
   if special then
-   hit(root.Position,17,65,c,char)
+   warHit(root.Position,17,65)
    local shock=effectsPart(folder,"EarthRing",root.Position-Vector3.new(0,2,0),Vector3.new(1,.35,1),c)
    shock.Shape=Enum.PartType.Cylinder
    TweenService:Create(shock,TweenInfo.new(.55),{Size=Vector3.new(34,.35,34),Transparency=1}):Play()
@@ -255,12 +264,18 @@ local function cast(player:Player,role:string,slot:string)
   else
    local stance=player:GetAttribute("P0DPreviewWarlordStance") or "KATANA"
    if stance=="SPEAR" then
-    hit(forward(root,15),7,37,c,char)
+    warHit(forward(root,15),7,37)
    elseif stance=="FIST" then
-    hit(forward(root,4),8,22,c,char)
-    task.delay(.18,function() hit(forward(root,5),8,22,c,char) end)
+    warHit(forward(root,4),8,22)
+    task.delay(.18,function() warHit(forward(root,5),8,22) end)
    else
-    hit(front,10,31,c,char)
+    warHit(front,10,31)
+    -- Weapon mastery: airborne slashing arc reaches distant neutral enemies.
+    local flying=effectsPart(folder,"WarGodFlyingSlash",forward(root,8)+Vector3.new(0,1,0),Vector3.new(9,5,.5),c)
+    flying.Orientation=Vector3.new(0,root.Orientation.Y,22)
+    TweenService:Create(flying,TweenInfo.new(.32),{Position=forward(root,30)+Vector3.new(0,1,0),Transparency=.95}):Play()
+    task.delay(.31,function() warHit(forward(root,30),9,38) end)
+    Debris:AddItem(flying,.40)
    end
   end
  elseif role=="MAGE" then
