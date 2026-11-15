@@ -192,7 +192,9 @@ function M.depositEggs(m:any,actorId:any,quantity:number):number
  assertActive(m)
  local c=castleOf(m,actorId)
  assert(c.alive and type(quantity)=="number" and quantity%1==0 and quantity>0 and quantity<=c.heldEggs,"invalid deposit")
- c.heldEggs-=quantity;c.depositedEggs+=quantity
+ -- Deposited eggs are physically stored in this castle, not destroyed.
+ -- Preserve the egg stock so an enemy can steal it back or release it on castle fall.
+ c.heldEggs-=quantity;c.vaultEggs+=quantity;c.depositedEggs+=quantity
  if m.mode==M.MODE_TEAM then
   m.teamDeposits[c.team]+=quantity
   -- One optional siege token earned per delivered egg, capped so egg advantage stays bounded.
