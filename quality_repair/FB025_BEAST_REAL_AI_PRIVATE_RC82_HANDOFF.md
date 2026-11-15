@@ -7,7 +7,7 @@
 - **新:** `TRAP_RAIDERS_RC82_FB025_BEAST_AI_PLAYTEST.rbxlx` **837563 bytes** / SHA256 `0fdb6932be2d33eb1711d80d8b4a4c9a56be86b05f95faa818c482541e0c54df`
 - **ZIP:** `TRAP_RAIDERS_RC82_FB025_BEAST_AI_PLAYTEST.zip` **237533 bytes** / SHA256 `42afa199f80c74d3079c113e71bfddd620cf90833e48e001ae856a490284d2a9`。
 - 原本全82 script XML再読、**Game/SevenJobsRules/TrapRaidersHUDの3 script sourceのみ変更、その他79元Lua本文完全一致**（魔獣以外のFB020-024元実体を保持）。
-- Game blob: `9e712afc6e64b9bc382365c4f11aca844d36446d` → `c40bc7a0a9790fdaac12f783eebd9145f8e5eea6`。
+- Game blob: `9e712afc6e64b9bc382365c4f11aca844d36446d` → `a2ebd9471d2ae4ceef7d4026b3c67b5fad68a460`。
 - SevenJobsRules blob: `5e04c1b4b62908ebb0dc21db7ae82653d70e8ef8` → `9bb1e4be79974ffddae5dac139444bff375e456b`。
 - HUD blob: `3af56301667b783a23f9c641f9b6b6289df0f44f` → `6e667a0680aff26de3833a473512b228d1702377`。
 - ZIP内に `SOURCE_PATCH.py`（元FB024実PlaceのSHA固定・実Luau source差分再現パッチ）、`RECEIPT.json` と実Studio `.rbxlx`、READMEを同梱。**PUBLIC repositoryにはゲーム全源/Place binaryを無断アップロードしない**。ユーザー私的受渡しのみ。
