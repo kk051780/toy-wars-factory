@@ -147,7 +147,7 @@ function BotActors.start(session:any,Rules:any):()
          local front=enemyLoc+Vector3.new(0,3,-26)
          local nearFront=(Vector3.new(actor:GetPivot().Position.X,0,actor:GetPivot().Position.Z)-Vector3.new(front.X,0,front.Z)).Magnitude<18
          local goal=if goHome then own+Vector3.new(-16,3,-18)
-          elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,6) else front)
+          elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,-2) else front)
           else enemyLoc+Vector3.new(0,3,-12)
          goals[id]=if goHome then "RETURN" elseif hasEgg then "STEAL" else "SIEGE"
          local dist=Router.navigate(mode..":"..id,actor,goal,AI_TICK,actors)
