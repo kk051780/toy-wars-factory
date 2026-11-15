@@ -1,0 +1,107 @@
+name: P0D real Beast Tamer and solo egg AI cumulative source native82
+on:
+  push:
+    branches: [feature/p0d-product-quality-gate-20261115]
+    paths:
+      - product_quality/beast_solo_real_author_integrator.py
+      - .github/workflows/p0d-quality-beast-solo-source-native82.yml
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - product_quality/beast_solo_real_author_integrator.py
+      - .github/workflows/p0d-quality-beast-solo-source-native82.yml
+permissions:
+  contents: read
+  actions: read
+jobs:
+  actual-beast-solo-game:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download pinned original Game beast 3D follower and common spectator base
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_original_beast
+          gh run download 43694730932 -R kk051780/toy-wars-factory \
+            -n P0D-ROLE7-RC82-READY-ORIGINAL-AUTHOR-PATCH-NO-GO \
+            -D /tmp/p0d_original_beast
+          test -s /tmp/p0d_original_beast/P0D_RC82_FINAL_SPECTATOR_CUMULATIVE_PRIVATE.zip
+          test -s /tmp/p0d_original_beast/P0D_RC82_BEAST_COMPANION_REAL_PRIVATE.zip
+      - name: Download pinned existing quality private solo AI egg result source
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_existing_solo
+          gh run download 43695318951 -R kk051780/toy-wars-factory \
+            -n P0D-QUALITY-FB005-PRIVATE-AI-RAID-RESULT-NOGO \
+            -D /tmp/p0d_existing_solo
+          test -s /tmp/p0d_existing_solo/P0D_FB005_AI_RAID_RESULT_CUMULATIVE_PRIVATE.zip
+      - name: Real 3-way Game merge with source locks and exact pins, no second authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B product_quality/beast_solo_real_author_integrator.py \
+            --base /tmp/p0d_original_beast/P0D_RC82_FINAL_SPECTATOR_CUMULATIVE_PRIVATE.zip \
+            --beast /tmp/p0d_original_beast/P0D_RC82_BEAST_COMPANION_REAL_PRIVATE.zip \
+            --solo /tmp/p0d_existing_solo/P0D_FB005_AI_RAID_RESULT_CUMULATIVE_PRIVATE.zip \
+            --out /tmp/P0D_BEAST_SOLO_NATIVE82_PRIVATE.zip \
+            --extract /tmp/p0d_beast_solo_scripts
+          python3 - <<'PY'
+          import json,zipfile,sys
+          from pathlib import Path
+          with zipfile.ZipFile('/tmp/P0D_BEAST_SOLO_NATIVE82_PRIVATE.zip') as z:
+              r=json.loads(z.read('RECEIPT.json'))
+          assert r['place_sha256']=='eb9ccd5bb516328ce61da3b0c82c5dcccdb6cc6ad0e60076d4c9f15db19de1eb'
+          assert r['place_bytes']==787836 and r['scripts']==82
+          assert r['original_author_scripts_unchanged']==80
+          assert r['egg_score_winner_source_byte_exact'] and r['source_lock_exact']
+          assert r['private_only'] and r['default_off'] and not r['official_rc_write']
+          assert r['studio']=='NOT_RUN' and r['product']=='NO_GO'
+          game=Path('/tmp/p0d_beast_solo_scripts/Game.luau').read_text()
+          bots=Path('/tmp/p0d_beast_solo_scripts/SoloTeamBots.luau').read_text()
+          assert 'summonSevenBeast' in game and 'privateSoloBotsTrialAllowed()' in game
+          assert 'SoloTeamBots.tryHumanHit' in game and 'EGG_CAPTURE' in game
+          assert 'callbacks.deposit(bot,bot.team,bot.carry)' in bots
+          assert len(list(Path('/tmp/p0d_beast_solo_scripts').glob('*.luau')))==82
+          sys.path.insert(0,'product_quality')
+          from beast_solo_real_author_integrator import merge_game,LATCH_OLD,LATCH_NEW
+          try: merge_game('',LATCH_OLD,LATCH_OLD)
+          except ValueError: pass
+          else: raise AssertionError('STALE_ORIGINAL_SOURCE_ACCEPTED')
+          print('EXACT_AUTHOR_BEAST_AND_SOLO_AI_TRUE_82_SCRIPT_MERGE_PASS')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_pinned_luau
+          persist-credentials: false
+      - name: Compile ALL 82 real merged Luau scripts with native pinned compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_pinned_luau -B /tmp/p0d_beast_solo_luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_beast_solo_luau --target Luau.Compile.CLI --parallel 4
+          n=0
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_beast_solo_luau/luau-compile "$f" >/dev/null
+            n=$((n+1))
+          done < <(find /tmp/p0d_beast_solo_scripts -type f -name '*.luau' -print0 | sort -z)
+          test "$n" -eq 82
+          echo 'P0D_REAL_BEAST_FOLLOW_AND_SOLO_AI_82_NATIVE_PASS_NOT_STUDIO'
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: P0D-REAL-BEAST-SOLO-AI-CUMULATIVE-RC82-SOURCE-NOGO
+          path: /tmp/P0D_BEAST_SOLO_NATIVE82_PRIVATE.zip
+          retention-days: 7
