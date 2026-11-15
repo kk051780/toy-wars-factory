@@ -5,7 +5,7 @@ import unittest
 
 SOURCE = Path(__file__).resolve().parents[1] / "SevenHeroArena.server.luau"
 ROLES = {
-    "WARRIOR": "神将（仮）",
+    "WARRIOR": "武神",
     "MAGE": "魔法使い",
     "NINJA": "暗殺者",
     "TRAPPER": "超能力者",
@@ -62,6 +62,13 @@ class TestSevenHeroStudioSource(unittest.TestCase):
         self.assertIn('if p:GetAttribute("P0DPreviewRole")==role then', self.source)
         self.assertIn('if not RunService:IsStudio() then return end', self.source)
         self.assertNotIn('DataStoreService', self.source)
+
+    def test_war_god_ranged_slash_and_duelist_bonus(self):
+        for term in ('WarGodFlyingSlash', 'if num==1 then',
+                     'P0DPreviewDivineActive', 'local boost=if divineActive then 1.55 else 1',
+                     'WARRIOR={name="武神"', 'warHit(forward(root,30),9,38)'):
+            with self.subTest(term=term):
+                self.assertIn(term, self.source)
 
     def test_studio_only_non_authoritative(self):
         self.assertIn("RunService:IsStudio()", self.source)
