@@ -43,13 +43,13 @@ jobs:
           from pathlib import Path
           d=Path('/tmp/p0d031_dist')
           (d/'src/server').mkdir(parents=True,exist_ok=True)
-          code=b"--!strict\\nprint('P0D031_FIXTURE_NOT_ACTUAL_RC')\\n"
+          code=b"--!strict\nprint('P0D031_FIXTURE_NOT_ACTUAL_RC')\n"
           (d/'src/server/Game.server.luau').write_bytes(code)
-          blob=hashlib.sha1(b'blob '+str(len(code)).encode()+b'\\0'+code).hexdigest()
+          blob=hashlib.sha1(b'blob '+str(len(code)).encode()+b'\0'+code).hexdigest()
           (d/'SOURCE_LOCK.json').write_text(json.dumps({'total_scripts':1,'blobs':{'server/Game.server.luau':blob}}))
           (d/'default.project.json').write_text(json.dumps({'name':'P0D031_PRIVATE_FIXTURE','tree':{'$className':'DataModel','ServerScriptService':{'$className':'ServerScriptService','Game':{'$path':'src/server/Game.server.luau'}}}}))
           PY
-          python3 rc_fastlane/features/p0d031_sky_feather/apply_private_stage.py \\
+          python3 rc_fastlane/features/p0d031_sky_feather/apply_private_stage.py \
             --dist /tmp/p0d031_dist --feature rc_fastlane/features/p0d031_sky_feather/P0DSkyFeather.server.luau
           curl -fsSL --retry 3 --retry-delay 2 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d031_rojo.zip
           echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d031_rojo.zip' | sha256sum -c
