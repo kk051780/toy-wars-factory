@@ -11,7 +11,7 @@ from zipfile import ZipFile,ZIP_DEFLATED
 
 HERE=Path(__file__).resolve().parent
 PARENT=HERE/'parent_rc84.zip'
-PARENT_SHA='89b47d4d919a04b4ea72304681749f2b8f01da768698bf5a1838b8bb5c331e7e'
+PARENT_SHA='0f256dfd46cad4ff1f94d09730eb6bc1d285ed6fc29f4801cae6e59ea8f4e63a'
 TARGET='server/Game.server.luau'
 MODULE_PATH='server/UndeadSquad.luau'
 
@@ -118,7 +118,7 @@ def build():
             parent=inner.read(places[0])
             sl=json.loads(inner.read('SOURCE_LOCK.json'))
             fl=json.loads(inner.read('RC_FEATURE_LOCK.json'))
-    assert digest(parent)==PARENT_SHA and len(parent)==819866
+    assert digest(parent)==PARENT_SHA and len(parent)==822592
     assert sl['total_scripts']==fl['total_sources']==84
     assert sl['blobs']==fl['source_gitblobs'] and len(sl['blobs'])==84
     root=ET.fromstring(parent)
