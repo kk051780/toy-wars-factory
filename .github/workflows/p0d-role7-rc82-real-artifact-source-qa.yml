@@ -1,0 +1,64 @@
+name: P0D RC82 role7 original-author real artifact QA
+
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - "handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01/tools/rc82_role7_ready_patch.py"
+      - ".github/workflows/p0d-role7-rc82-real-artifact-source-qa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  patch-real-rc82:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Download the pinned genuine official RC82 source artifact
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_rc82_base
+          gh run download 43677046865 -R kk051780/toy-wars-factory \
+            -n P0D-RC82-ROLE7-ASSASSIN-PRIVATE-MOBILE-STUDIO-SOURCE-NOGO \
+            -D /tmp/p0d_rc82_base
+          test -s /tmp/p0d_rc82_base/P0D_RC82_ASSASSIN_7JOB_PRIVATE_MOBILE_STUDIO.rbxlx
+          test -s /tmp/p0d_rc82_base/SOURCE_LOCK.json
+          test -s /tmp/p0d_rc82_base/RC_FEATURE_LOCK.json
+          (cd /tmp/p0d_rc82_base && zip -q /tmp/p0d_rc82_parent.zip ./*)
+      - name: Build ONLY modified Game and HUD sources from official RC82
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-RC-SEVEN-JOBS-PVE-V1-20261114-01/tools/rc82_role7_ready_patch.py \
+            /tmp/p0d_rc82_parent.zip /tmp/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip \
+            | tee /tmp/role7_rc82_receipt.log
+          python3 - <<'PY'
+          import json,zipfile
+          with zipfile.ZipFile('/tmp/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip') as z:
+              receipt=json.loads(z.read('RECEIPT.json'))
+              assert receipt['source_rc']=='d2f3ed1a47558fdaf07be0181c83c698bdb2ce34'
+              assert receipt['scripts']==82 and receipt['unchanged_scripts']==80
+              assert receipt['official_rc_write'] is False
+              assert receipt['product']=='NO_GO'
+              assert receipt['native_luau']=='NOT_RUN'
+              assert receipt['studio']=='NOT_RUN'
+          print('REAL_82_SOURCE_PRIVATE_QA_PASS_NOT_PRODUCT_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: P0D-ROLE7-RC82-READY-ORIGINAL-AUTHOR-PATCH-NO-GO
+          path: |
+            /tmp/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip
+            /tmp/role7_rc82_receipt.log
+          retention-days: 7
