@@ -242,15 +242,18 @@ function M.depositEggs(m:any,actorId:any,quantity:number):number
  table.insert(m.events,{type="EGG_DEPOSIT",owner=c.id,quantity=quantity})
  return c.depositedEggs
 end
-function M.onCarrierEliminated(m:any,id:any):number
+function M.onCarrierEliminated(m:any,id:any)
  local c=castleOf(m,id)
  local dropped=c.heldEggs;c.heldEggs=0;m.fieldEggs+=dropped
+ local ids={}
  for _=1,dropped do
   m.eggSerial+=1
-  m.fieldEggTokens["CARRIER_DROP_"..tostring(m.eggSerial)]=true
+  local eggId="CARRIER_DROP_"..tostring(m.eggSerial)
+  m.fieldEggTokens[eggId]=true
+  table.insert(ids,eggId)
  end
  if dropped>0 then table.insert(m.events,{type="EGG_DROP",owner=c.id,quantity=dropped}) end
- return dropped
+ return dropped,ids
 end
 function M.summary(m:any):any
  local alive=0;local eggsInCastles=0
