@@ -2,7 +2,7 @@
   "schema": "P0D_COMPETITOR_BASELINE_V1",
   "date_jst": "2026-11-15",
   "issue": "https://github.com/kk051780/toy-wars-factory/issues/470",
-  "source_note": "Rolimons values captured on 2026-11-15; counters fluctuate. Public values are not original observed Studio metrics; averages are third-party estimates. NULL is unknown, not zero.",
+  "source_note": "Rolimons values captured on 2026-11-15; counters fluctuate. Public values are not original observed Studio metrics; averages are third-party estimates. NULL is unknown, not zero. Subtype catalog counts below are explicitly provenance-labeled; never mistake them for total modeled usable item counts.",
   "games": [
     {
       "game": "Steal An Egg",
@@ -21,7 +21,16 @@
       "retention_d1": null,
       "retention_d7": null,
       "arp_paying": null,
-      "measurements_verified": false
+      "measurements_verified": false,
+      "catalog_community_unverified": {
+        "category": "community pet index",
+        "reported_count": 266,
+        "reported_zone_count": 14,
+        "egg_pictures": 148,
+        "sync_date": "2026-11-08",
+        "url": "https://stealaneggindex.com/about",
+        "caution": "Third-party index; may include inactive or paid-only pets. Conflicting historical counts: 78/149/157; must verify within game before comparing."
+      }
     },
     {
       "game": "Blox Fruits",
@@ -40,7 +49,15 @@
       "retention_d1": null,
       "retention_d7": null,
       "arp_paying": null,
-      "measurements_verified": false
+      "measurements_verified": false,
+      "catalog_partial_confirmed": {
+        "category": "fruits",
+        "count": 42,
+        "provenance": "official developer-maintained Roblox game description list",
+        "url": "https://www.roblox.com/games/2753915549/Blox-Fruits",
+        "updated_description_2026": true,
+        "not_total_items": true
+      }
     },
     {
       "game": "99 Nights in the Forest",
@@ -97,7 +114,14 @@
       "retention_d1": null,
       "retention_d7": null,
       "arp_paying": null,
-      "measurements_verified": false
+      "measurements_verified": false,
+      "modes_public_description": {
+        "category": "game modes",
+        "minimum_stated": 10,
+        "exact_count": null,
+        "source_url": "https://www.rolimons.com/game/6872265039",
+        "caution": "Developer description says over 10; exact current count unknown."
+      }
     }
   ],
   "measurement_protocol": {
