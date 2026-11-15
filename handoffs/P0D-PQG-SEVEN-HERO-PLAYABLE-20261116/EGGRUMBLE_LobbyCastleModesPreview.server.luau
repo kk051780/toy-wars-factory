@@ -301,6 +301,9 @@ Players.PlayerRemoving:Connect(function(p)
   if idx then table.remove(q,idx) end
  end
  chosenDefense[p.UserId]=nil
- -- Production policy must decide whether an active disconnected castle persists under AI.
+ if mode and sessions[mode] and sessions[mode].rules.phase=="ACTIVE" then
+  -- Team match integrity: preserve an active owner's castle and assign AI to defend it.
+  if sessions[mode].takeover then sessions[mode].takeover(tostring(p.UserId)) end
+ end
 end)
 print("[EGGRUMBLE V3] Studio-only two mode gates; moving AI actors, shared horde and castle multi-egg combat; real platform matchmaking/production AI UNIMPLEMENTED")
