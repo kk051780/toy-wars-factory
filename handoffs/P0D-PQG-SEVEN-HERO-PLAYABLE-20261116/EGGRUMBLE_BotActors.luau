@@ -162,6 +162,7 @@ function BotActors.start(session:any,Rules:any):()
        end
       else
        tryHeroAttack(actor,me,session,lastHit)
+       if session.swarm then session.swarm.damageFromBot(id,actor:GetPivot().Position) end
        local enemy=desiredTarget(session,mode,me)
        if enemy then
         local own=session.castleLocations[id]
