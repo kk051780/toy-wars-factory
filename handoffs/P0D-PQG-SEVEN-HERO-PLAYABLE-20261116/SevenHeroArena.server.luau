@@ -26,7 +26,7 @@ folder=Instance.new("Folder")
 folder.Name="P0D_SEVEN_HERO_STUDIO_ONLY"
 folder.Parent=workspace
 
-local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true)
+local spawn=workspace:FindFirstChildWhichIsA("SpawnLocation",true) :: SpawnLocation?
 local origin=(spawn and spawn.Position or Vector3.new(0,4,0))+Vector3.new(0,3,42)
 local function part(parent:Instance,name:string,size:Vector3,pos:Vector3,color:Color3,shape:Enum.PartType?,anchored:boolean?):Part
  local p=Instance.new("Part")
@@ -374,6 +374,44 @@ for i,role in ipairs(ROLE_ORDER) do
  elseif role=="TRAPPER" then weapon.Shape=Enum.PartType.Ball;weapon.Size=Vector3.new(1.6,1.6,1.6)
  elseif role=="BUILDER" then weapon.Size=Vector3.new(1.2,1.1,2.5)
  elseif role=="BEAST" then weapon.Shape=Enum.PartType.Ball;weapon.Size=Vector3.new(1.8,1.8,1.8) end
+ -- Build class silhouettes using distinct shapes and wearable accents.
+ if role=="WARRIOR" then
+  part(folder,"WarriorShield",Vector3.new(.5,3.2,2.5),torso.Position+Vector3.new(-3,.2,0),Color3.fromRGB(113,131,149))
+  for _,side in ipairs({-1,1}) do
+   part(folder,"WarriorPauldron",Vector3.new(1.8,1.2,1.8),torso.Position+Vector3.new(side*1.8,1.2,0),Color3.fromRGB(222,183,86))
+  end
+ elseif role=="MAGE" then
+  part(folder,"MageRobe",Vector3.new(3.2,3.8,.42),torso.Position+Vector3.new(0,-1.8,.8),Color3.fromRGB(33,44,101))
+  for n=1,3 do
+   local orb=effectsPart(folder,"MageOrb_"..n,head.Position+Vector3.new((n-2)*2.1,1.2,1.6),Vector3.new(.9,.9,.9),n==1 and Color3.fromRGB(255,134,44) or (n==2 and Color3.fromRGB(80,229,245) or Color3.fromRGB(248,240,92)))
+   orb.Shape=Enum.PartType.Ball
+  end
+ elseif role=="NINJA" then
+  local hood=part(folder,"AssassinHood",Vector3.new(2.25,2,2.2),head.Position+Vector3.new(0,.2,.15),Color3.fromRGB(28,28,47),Enum.PartType.Ball)
+  hood.Transparency=.22
+  effectsPart(folder,"SecondDagger",torso.Position+Vector3.new(-3,.12,0),Vector3.new(.32,2.6,.27),c)
+ elseif role=="TRAPPER" then
+  for n=1,4 do
+   local a=n*math.pi/2
+   local cube=effectsPart(folder,"EsperOrbitCube_"..n,torso.Position+Vector3.new(math.cos(a)*3,math.sin(a)*2.6,math.sin(a)*3),Vector3.new(1.1,1.1,1.1),c)
+   cube.Orientation=Vector3.new(18,45,30)
+  end
+  effectsPart(folder,"EsperThirdEye",head.Position+Vector3.new(0,.2,-.9),Vector3.new(.65,.4,.22),c)
+ elseif role=="BUILDER" then
+  part(folder,"ScientistCoat",Vector3.new(3.1,4,.3),torso.Position+Vector3.new(0,-1.6,.82),Color3.fromRGB(228,234,220))
+  local goggles=effectsPart(folder,"ScientistGoggles",head.Position+Vector3.new(0,.25,-.83),Vector3.new(1.5,.52,.25),c)
+  goggles.Transparency=.13
+  part(folder,"ScientistBackpack",Vector3.new(2.3,2.4,1.3),torso.Position+Vector3.new(0,.2,1.5),Color3.fromRGB(53,62,73))
+ elseif role=="BEAST" then
+  part(folder,"TamerCape",Vector3.new(3.1,4,.3),torso.Position+Vector3.new(0,-1.6,1),Color3.fromRGB(132,75,46))
+  for _,side in ipairs({-1,1}) do
+   part(folder,"BeastHorn",Vector3.new(.6,1.4,.7),head.Position+Vector3.new(side*.8,1.2,.1),Color3.fromRGB(223,190,105))
+  end
+ elseif role=="ZOMBIE" then
+  part(folder,"CurseRobe",Vector3.new(3.2,3.9,.32),torso.Position+Vector3.new(0,-1.7,.92),Color3.fromRGB(40,19,69))
+  local sigil=effectsPart(folder,"CurseSigil",torso.Position+Vector3.new(0,.4,-.87),Vector3.new(1.8,1.8,.14),c)
+  sigil.Shape=Enum.PartType.Ball
+ end
  if role=="MAGE" or role=="ZOMBIE" then
   local hat=effectsPart(folder,role.."_Sigil",head.Position+Vector3.new(0,1,0),Vector3.new(2.3,.17,2.3),data.color)
   hat.Shape=Enum.PartType.Cylinder
