@@ -85,6 +85,96 @@ jobs:
           done < <(find /tmp/p0d_cumulative_sources -name '*.luau' -type f -print0 | sort -z)
           test "$n" -eq 82
           echo "P0D_REAL_CUMULATIVE_82_NATIVE_PASS_NOT_PRODUCT_ACCEPTANCE"
+      - name: Prepare exact patched 82 source Rojo tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          from xml.etree import ElementTree as ET
+          import hashlib,json
+          target=Path('/tmp/p0d_cumulative_rojo')
+          target.mkdir(parents=True,exist_ok=True)
+          with ZipFile('/tmp/P0D_ROLE7_CUMULATIVE_SPECTATOR_PRIVATE.zip') as z:
+              rb=[n for n in z.namelist() if n.endswith('.rbxlx')]
+              assert len(rb)==1
+              root=ET.fromstring(z.read(rb[0]))
+          kinds={'Script':'.server.luau','LocalScript':'.client.luau','ModuleScript':'.luau'}
+          manifest=[]
+          def walk(node,parent=()):
+              p=node.find('Properties')
+              name=p.findtext("string[@name='Name']") if p is not None else None
+              src=p.findtext("string[@name='Source']") if p is not None else None
+              here=parent+((name,) if name else ())
+              if src is not None:
+                  assert node.attrib['class'] in kinds and len(here)>=3
+                  assert here[0] in ('ReplicatedStorage','ServerScriptService','StarterPlayer')
+                  assert all(x.isidentifier() for x in here)
+                  rel=Path(*here).with_suffix(kinds[node.attrib['class']])
+                  f=target/'src'/rel
+                  f.parent.mkdir(parents=True,exist_ok=True)
+                  assert not f.exists()
+                  f.write_text(src,encoding='utf-8')
+                  x=src.encode('utf-8')
+                  digest=hashlib.sha1(b'blob '+str(len(x)).encode()+b'\0'+x).hexdigest()
+                  manifest.append({'path':'/'.join(here),'kind':node.attrib['class'],'blob':digest})
+              for item in node.findall('Item'):walk(item,here)
+          for node in root.findall('Item'):walk(node)
+          assert len(manifest)==82
+          (target/'manifest.json').write_text(json.dumps(manifest,indent=2))
+          project={'name':'P0DNativeSpectatorSafe82','tree':{'$className':'DataModel',
+            'ReplicatedStorage':{'$className':'ReplicatedStorage',
+              'TrapRaidersShared':{'$path':'src/ReplicatedStorage/TrapRaidersShared'}},
+            'ServerScriptService':{'$className':'ServerScriptService',
+              'TrapRaidersS1':{'$path':'src/ServerScriptService/TrapRaidersS1'}},
+            'StarterPlayer':{'$className':'StarterPlayer',
+              'StarterPlayerScripts':{'$path':'src/StarterPlayer/StarterPlayerScripts'}}}}
+          (target/'default.project.json').write_text(json.dumps(project,indent=2))
+          print('EXACT_PATCHED_PLACE_ROJO_82_SOURCE_LAYOUT_READY')
+          PY
+      - name: Pinned Rojo 7.7.1 source-only class path GitBlob parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/p0d_spectator_safe_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/p0d_spectator_safe_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/p0d_spectator_safe_rojo.zip') as z:
+              matches=[n for n in z.namelist() if n.rsplit('/',1)[-1]=='rojo']
+              assert len(matches)==1
+              p=Path('/tmp/p0d_safe_rojo_bin')
+              p.write_bytes(z.read(matches[0]));p.chmod(0o755)
+          PY
+          /tmp/p0d_safe_rojo_bin build /tmp/p0d_cumulative_rojo/default.project.json -o /tmp/P0D_SPECTATOR_SAFE_REBUILT_ROJO.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          from collections import Counter
+          import xml.etree.ElementTree as ET
+          import hashlib,json
+          manifest=json.loads(Path('/tmp/p0d_cumulative_rojo/manifest.json').read_text())
+          root=ET.fromstring(Path('/tmp/P0D_SPECTATOR_SAFE_REBUILT_ROJO.rbxlx').read_bytes())
+          got=[]
+          def visit(n,base=()):
+              p=n.find('Properties')
+              name=p.findtext("string[@name='Name']") if p is not None else None
+              src=p.findtext("string[@name='Source']") if p is not None else None
+              here=base+((name,) if name else ())
+              if src is not None:
+                  x=src.encode('utf-8')
+                  digest=hashlib.sha1(b'blob '+str(len(x)).encode()+b'\0'+x).hexdigest()
+                  got.append({'path':'/'.join(here),'kind':n.attrib['class'],'blob':digest})
+              for kid in n.findall('Item'):visit(kid,here)
+          for i in root.findall('Item'):visit(i)
+          assert len(got)==82 and len(manifest)==82
+          assert Counter(x['path'] for x in got)==Counter(x['path'] for x in manifest)
+          expect={x['path']:(x['kind'],x['blob']) for x in manifest}
+          actual={x['path']:(x['kind'],x['blob']) for x in got}
+          if expect!=actual:raise ValueError('SAFE_SPECTATOR_ROJO_PATH_CLASS_SOURCE_MISMATCH')
+          print('P0D_SAFE_SPECTATOR_NATIVE_ROJO_EXACT_82_OF_82_PASS')
+          PY
       - uses: actions/upload-artifact@v4
         if: success()
         with:
