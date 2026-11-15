@@ -30,7 +30,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 -m pip install --quiet lxml==5.4.0
+          python3 -m pip install --quiet lxml==6.1.1
           parent="$(find /tmp/fb030_parent -name '*.rbxlx' -type f | head -1)"
           python3 quality_repair/FB030_RC86_WIND/build_rc87.py "$parent" /tmp/P0D_RC87_FB030_NATIVE86_WIND_PRIVATE.rbxlx --receipt /tmp/RC87_RECEIPT.json > /tmp/patch_log.json
           echo '994d08c141cbd53f7b163c13f61f13ad9266a10c59dc7439a904172d032f07e2  /tmp/P0D_RC87_FB030_NATIVE86_WIND_PRIVATE.rbxlx' | sha256sum -c
