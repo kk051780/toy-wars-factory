@@ -27,7 +27,8 @@ local function raycastParams(actors:Instance):RaycastParams
 end
 local function surfaceAt(pos:Vector3,actors:Instance):Vector3
  -- Use the collidable mesh to estimate the foot position of the anchored preview model.
- local result=workspace:Raycast(pos+Vector3.new(0,28,0),Vector3.new(0,-90,0),raycastParams(actors))
+ -- Start near the actor foot, not above a roof: castle ceilings are not walking ground.
+ local result=workspace:Raycast(pos+Vector3.new(0,1,0),Vector3.new(0,-70,0),raycastParams(actors))
  if result then return Vector3.new(pos.X,result.Position.Y+2.0,pos.Z) end
  return pos
 end
