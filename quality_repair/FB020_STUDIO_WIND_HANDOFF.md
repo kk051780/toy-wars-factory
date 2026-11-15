@@ -9,7 +9,7 @@
 
 ## 実ファイルと再現
 - GitHub Actions元候補: [#43694651550](https://github.com/kk051780/toy-wars-factory/actions/runs/43694651550) / artifact 14154231400
-- 元Place SHA256: `UNVERIFIED_IN_REPO`（ユーザーの元Placeが一致するかは実体ハッシュで比較）
+- 元Place SHA256: `11c9afe248915989531ff4945cb7267e70f7bf0e7ebfeb8782ac22d8dcdfe6d6`（ユーザーが試した直前の配布候補を実測）
 - 変更後Place SHA256: `89e67cc78cdc23ccb63284bd61cd038e3b2d7a7f70f8f084dc500d7f54a06e1f` / 781967 bytes
 - 82本のScriptを読み取り、2本変更、80本元GitBlob一致 / 元Game+HUD以外は不変更
 - 手元でXML再読・同じパッチ二重適用拒否・Remote唯一を静的検証。native Luau compile / Studio 1client / 2client / Android **NOT_RUN**。
