@@ -217,5 +217,15 @@ function BotActors.start(session:any,Rules:any):()
  end)
  session.botActors=bots
  session.botObjectives=goals
+ session.takeover=function(id:string):boolean
+  local state=session.rules.castles[id]
+  if not state or not state.alive or bots[id] then return false end
+  local home=session.castleLocations[id]
+  if not home then return false end
+  -- Keep the disconnected player's castle in the match under equal-budget AI defense.
+  state.isAI=true
+  bots[id]=spawnActor(actors,id,home+Vector3.new(0,5,-34),state.team)
+  return true
+ end
 end
 return BotActors
