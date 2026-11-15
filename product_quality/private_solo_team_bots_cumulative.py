@@ -59,7 +59,7 @@ def build(parent,output,extract_dir=None):
     game=original["Game"].text
     bots=original["SoloTeamBots"].text
     gate='local function privateHordeTrialAllowed(): boolean\n    return game.PrivateServerId ~= "" and\n        workspace:GetAttribute("P0D_PRIVATE_LIVE_HORDE_NINE") == true\nend'
-    game=swap(game,gate,gate+'\n-- Private single-player team bots: independent opt-in and default OFF.\nlocal function privateSoloBotsTrialAllowed(): boolean\n    return privateHordeTrialAllowed()\n        and workspace:GetAttribute("P0D_PRIVATE_SOLO_TEAM_BOTS") == true\nend',"PRIVATE_BOT_GATE")
+    game=swap(game,gate,gate+'\n-- FB005 private team-bot rollout is OFF unless the private owner explicitly\n-- opts in; never create extra bots in public server or enable five-egg mode.\nlocal function privateSoloBotsTrialAllowed(): boolean\n    return privateHordeTrialAllowed()\n        and workspace:GetAttribute("P0D_PRIVATE_SOLO_TEAM_BOTS") == true\nend',"PRIVATE_BOT_GATE")
     game=swap(game,
        'if RunService:IsStudio() and studioSoloRoundStarted\n        and not EXPERIMENTAL_FIVE_EGG_MODE then',
        'if (RunService:IsStudio() or privateSoloBotsTrialAllowed())\n        and studioSoloRoundStarted and not EXPERIMENTAL_FIVE_EGG_MODE then',"SOLO_BOT_START")
@@ -70,10 +70,10 @@ def build(parent,output,extract_dir=None):
       'if (RunService:IsStudio() or privateSoloBotsTrialAllowed())\n        and not EXPERIMENTAL_FIVE_EGG_MODE then')
     game=swap(game,
        '    tickTraps(now)\n    -- The ORIGINAL Game clock alone owns auto-training;',
-       '    tickTraps(now)\n    -- Disable/rollback private bot models immediately, never affect Studio.\n    if not RunService:IsStudio() and SoloTeamBots.isActive()\n        and not privateSoloBotsTrialAllowed() then\n        SoloTeamBots.stop()\n        if studioSoloRoundStarted and match.phase=="ACTIVE"\n            and #eligibleSoloPlayers()==1 then\n            stopRound("DRAW","PRIVATE_SOLO_BOTS_DISABLED")\n        end\n    end\n    -- The ORIGINAL Game clock alone owns auto-training;', "SOLO_BOT_DISABLE")
+       '    tickTraps(now)\n    -- Server-only immediate rollback: a mid-round OFF cannot strand an active\n    -- private 1-human bot session or leave five physical bot models orphaned.\n    if not RunService:IsStudio() and SoloTeamBots.isActive()\n        and not privateSoloBotsTrialAllowed() then\n        SoloTeamBots.stop()\n        if studioSoloRoundStarted and match.phase=="ACTIVE"\n            and #eligibleSoloPlayers()==1 then\n            stopRound("DRAW","PRIVATE_SOLO_BOTS_DISABLED")\n        end\n    end\n    -- The ORIGINAL Game clock alone owns auto-training;', "SOLO_BOT_DISABLE")
     bots=swap(bots,
        '    if not RunService:IsStudio() then return false end\n    local eligible=0',
-       '    -- Non-Studio agents require private-server double opt-in.\n    if not (RunService:IsStudio() or\n        (game.PrivateServerId ~= ""\n         and workspace:GetAttribute("P0D_PRIVATE_LIVE_HORDE_NINE")==true\n         and workspace:GetAttribute("P0D_PRIVATE_SOLO_TEAM_BOTS")==true)) then\n        return false\n    end\n    local eligible=0',"BOT_MODULE_PRIVATE_ONLY")
+       '    -- The original Studio behavior stays intact; live server bots are\n    -- private+double-opt-in only, and share the same original Game callbacks.\n    if not (RunService:IsStudio() or\n        (game.PrivateServerId ~= ""\n         and workspace:GetAttribute("P0D_PRIVATE_LIVE_HORDE_NINE")==true\n         and workspace:GetAttribute("P0D_PRIVATE_SOLO_TEAM_BOTS")==true)) then\n        return false\n    end\n    local eligible=0',"BOT_MODULE_PRIVATE_ONLY")
     bots=swap(bots,
        '    folder:SetAttribute("StudioBotPreview",true)',
        '    folder:SetAttribute("StudioBotPreview",RunService:IsStudio())',"STUDIO_METADATA")
