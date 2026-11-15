@@ -28,7 +28,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p /tmp/p0d_wind_author
-          gh run download 43686957256 -R kk051780/toy-wars-factory \
+          gh run download 43687804656 -R kk051780/toy-wars-factory \
             -n P0D-ROLE7-RC82-READY-ORIGINAL-AUTHOR-PATCH-NO-GO \
             -D /tmp/p0d_wind_author
           test -s /tmp/p0d_wind_author/P0D_RC82_ROLE7_READY_PRIVATE_SOURCE_PATCH.zip
@@ -50,8 +50,10 @@ jobs:
           with zipfile.ZipFile("/tmp/P0D_RC82_ROLE7_WIND_COMPOSITE_UNPUBLISHED.zip") as z:
               r=json.loads(z.read("RECEIPT.json"))
               assert r["scripts"]==82 and r["unchanged_author"]==80
+              assert r["exact_job_pick_ack_preserved"] is True
+              assert r["builder_q_false_cooldown_fixed"] is True
               assert r["official_rc_write"] is False and r["decision"]=="PRODUCT_NO_GO"
-              assert len(z.read("COMPOSED_ROLE7_WIND_RC82.rbxlx"))==777023
+              assert len(z.read("COMPOSED_ROLE7_WIND_RC82.rbxlx"))==777846
           # Mutants must never be mistaken for the pinned original author stage.
           try:c.compose(b"not a zip")
           except (ValueError,zipfile.BadZipFile):pass
@@ -82,6 +84,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: P0D-QUALITY-REAL-RC82-ROLE7-READY-WIND-COMPOSITE-NO-GO
+          name: P0D-QUALITY-REAL-RC82-EXACTACK-WIND-BUILDERQ-NO-GO
           path: /tmp/P0D_RC82_ROLE7_WIND_COMPOSITE_UNPUBLISHED.zip
           retention-days: 7
