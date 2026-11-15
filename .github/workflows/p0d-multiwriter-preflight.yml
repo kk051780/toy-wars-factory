@@ -1,0 +1,29 @@
+name: P0D multiwriter scoped CAS preview (read-only)
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'multiwriter/**'
+      - '.github/workflows/p0d-multiwriter-preflight.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  scoped-multiwriter-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Unit tests cover independent writers, stale HEAD, lease, protections and racing CAS
+        run: python3 -B -m unittest discover -s multiwriter -p 'test_multiwriter.py' -v
+      - name: Verify this candidate is NOT a production writer
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          r=Path('multiwriter/README.md').read_text(encoding='utf-8')
+          assert 'PRODUCTION_MULTIWRITER=HOLD' in r
+          assert 'AUTHORIZED_WRITERS=0' in r
+          print('PREVIEW_CI_PASS_NOT_AUTHORIZATION')
+          PY
