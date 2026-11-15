@@ -96,6 +96,14 @@ def evaluate(doc):
         val = candidate.get(key)
         if not valid_sha(val):
             problems.append(f"UNPINNED_SHA:{key}")
+    base = candidate.get("base_rc")
+    if not valid_sha(base):
+        problems.append("UNPINNED_SHA:base_rc")
+    feature_ids = candidate.get("feature_ids")
+    if (not isinstance(feature_ids, list) or not feature_ids or
+            any(not isinstance(v, str) or not re.fullmatch(r"P0D-\d{3}", v) for v in feature_ids) or
+            len(feature_ids) != len(set(feature_ids))):
+        problems.append("INVALID_OR_MISSING_FEATURE_IDS")
     # Evidence MUST correspond to the exact official RC under review.
     ev = doc.get("source_evidence")
     if not isinstance(ev, dict):
@@ -106,6 +114,39 @@ def evaluate(doc):
         values = ev.get(key)
         if not isinstance(values, list) or not values:
             problems.append("MISSING_SOURCE_EVIDENCE:" + key)
+    # Same-head official CI/build receipt is necessary for product review,
+    # but human review must still authenticate the claimed artifact and footage.
+    build = ev.get("official_build")
+    if not isinstance(build, dict):
+        build = {}
+    if (build.get("official_rc_head") != candidate.get("official_rc_head") or
+            not valid_sha(build.get("official_rc_head"))):
+        problems.append("OFFICIAL_BUILD_HEAD_MISMATCH")
+    if (isinstance(build.get("run_id"), bool) or
+            not isinstance(build.get("run_id"), int) or build["run_id"] <= 0 or
+            build.get("conclusion") != "success"):
+        problems.append("OFFICIAL_BUILD_CI_UNVERIFIED")
+    for key in ("artifact_zip_bytes", "place_bytes", "source_count"):
+        value = build.get(key)
+        if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+            problems.append("OFFICIAL_BUILD_INVALID:" + key)
+    if not valid_sha(build.get("place_sha256"), 64):
+        problems.append("OFFICIAL_BUILD_PLACE_SHA256_MISSING")
+    run_url = build.get("run_url")
+    if not valid_url(run_url) or ("/actions/runs/" not in run_url):
+        problems.append("OFFICIAL_BUILD_RUN_URL_INVALID")
+    device_models = ev.get("device_models")
+    device_models = set(device_models) if (isinstance(device_models, list) and all(isinstance(d, str) for d in device_models)) else set()
+    recordings = ev.get("studio_recordings")
+    recordings = set(recordings) if (isinstance(recordings, list) and all(isinstance(v, str) for v in recordings)) else set()
+    if not device_models or any(not d.strip() for d in device_models):
+        problems.append("INVALID_DEVICE_MODELS")
+    if not recordings or any(not valid_url(url) for url in recordings):
+        problems.append("INVALID_STUDIO_RECORDINGS")
+    comparators = ev.get("competitor_timecodes")
+    if (not isinstance(comparators, list) or not comparators or
+            any(not valid_url(c) for c in comparators)):
+        problems.append("INVALID_COMPETITOR_TIMECODES")
     scenarios = ev.get("core_scenarios")
     if not isinstance(scenarios, list):
         scenarios = []
@@ -122,12 +163,14 @@ def evaluate(doc):
             row.get("result") == "PASS"
             and row.get("official_rc_head") == candidate.get("official_rc_head")
             and valid_sha(row.get("official_rc_head"))
-            and valid_url(row.get("recording_url"))
-            and isinstance(row.get("device"), str) and bool(row["device"].strip())
+            and valid_url(row.get("recording_url")) and row.get("recording_url") in recordings
+            and isinstance(row.get("device"), str) and row["device"] in device_models
             and isinstance(row.get("reviewer"), str) and bool(row["reviewer"].strip())
             and valid_date(row.get("measured_on"))
             and isinstance(row.get("observed_effect"), str) and bool(row["observed_effect"].strip())
         )
+        if name == "mobile_unobstructed_hud":
+            good = good and isinstance(row.get("device"), str) and "android" in row["device"].lower()
         if name == "assassin_stealth_and_ambush":
             good = good and row.get("display_name") == "暗殺者" and row.get("internal_role") == "NINJA"
         if good:
