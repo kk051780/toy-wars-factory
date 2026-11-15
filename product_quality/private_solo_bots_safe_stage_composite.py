@@ -20,9 +20,20 @@ OUT = "P0D_ROLE7_SOLO_BOTS_SAFE_SPECTATOR_RC82.rbxlx"
 PARENT_SHA = "457cb3fb34d9fe72485e335aa0e7307c06fab75bcff09cffd6d45615d94bfde8"
 PARENT_GAME_BLOB = "976d2a7118a0013f1dc32f414ec4fe54b9b84b31"
 PARENT_BOTS_BLOB = "a77176fdcfe3351b5dc9ed4aa23fcf48a28edd53"
-EXPECTED_PLACE_SHA = "2f86fcaaa392ef26e277ee35387525f7ad58f41b0b8baf6cc4d4bee61bb11ebb"
-EXPECTED_PLACE_BYTES = 780880
-EXPECTED_GAME_BLOB = "2d98c3c7ac89ea2195b46afb171cfb78af37615e"
+EXPECTED_PLACE_SHA = "b773e1eb52c249b220a04ad3f8b1f9f32a0c03362a315261f9eadecfce537f7f"
+EXPECTED_PLACE_BYTES = 781036
+EXPECTED_GAME_BLOB = "b41d79c3b96e1f31248bcdb9b4059e92755a29e4"
+# COUNTDOWN spectators must not disable the 1-human match or AI5 kickoff.
+KICKOFF_BEFORE = (
+ '    studioSoloRoundStarted = StudioSolo.isSoloRound(RunService:IsStudio() or privateHordeTrialAllowed(),\n'
+ '        #Players:GetPlayers(), teamCount("RED"), teamCount("BLUE"))'
+)
+KICKOFF_AFTER = (
+ '    -- FB005: a COUNTDOWN late-join spectator is not a real solo opponent.\n'
+ '    -- Match LOBBY canStart, bot.start/tick and emptyWinner roster eligibility.\n'
+ '    studioSoloRoundStarted = StudioSolo.isSoloRound(RunService:IsStudio() or privateHordeTrialAllowed(),\n'
+ '        #eligibleSoloPlayers(), teamCount("RED"), teamCount("BLUE"))'
+)
 GAME = "server/Game.server.luau"
 BOTS = "server/SoloTeamBots.luau"
 
@@ -72,6 +83,7 @@ def egg_authority_region(src: str) -> str:
 def compose(game_src: str) -> str:
     out = swap(game_src, SAFE_BEFORE, SAFE_AFTER, "SPECTATOR_PHYSICAL_ISLAND")
     out = swap(out, REENTER_BEFORE, REENTER_AFTER, "TEAMLESS_LOBBY_REENTRY")
+    out = swap(out, KICKOFF_BEFORE, KICKOFF_AFTER, "COUNTDOWN_OBSERVER_SOLO_ROSTER")
     if egg_authority_region(game_src) != egg_authority_region(out):
         raise ValueError("EGG_WINNER_SCORE_AUTHORITY_CHANGED")
     for proof in (
@@ -125,7 +137,7 @@ def build(parent: Path, output: Path, extract_dir: Path | None = None) -> dict:
     lock["blobs"][GAME] = feature_lock["source_gitblobs"][GAME] = new_blob
     verify(place, lock, feature_lock)
     report = {
-        "schema": "P0D_470_SOLO_BOTS_PLUS_SAFE_SPECTATOR_V1",
+        "schema": "P0D_470_SOLO_BOTS_PLUS_SAFE_SPECTATOR_KICKOFF_V2",
         "official_rc_head": RC_HEAD,
         "parent_place_sha256": PARENT_SHA,
         "place_sha256": sha(place),
@@ -141,6 +153,7 @@ def build(parent: Path, output: Path, extract_dir: Path | None = None) -> dict:
         "default_off": True,
         "spectator_physical_island": True,
         "teamless_reentry_fallback": True,
+        "observer_not_solo_opponent_at_kickoff": True,
         "source_native": "NOT_RUN",
         "studio": "NOT_RUN",
         "android": "NOT_RUN",

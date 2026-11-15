@@ -54,11 +54,18 @@ jobs:
           assert report["egg_score_winner_authority_unchanged"] and report["source_lock_exact"]
           assert report["private_only"] and report["default_off"] and not report["official_rc_write"]
           assert report["studio"] == "NOT_RUN" and report["product"] == "NO_GO"
+          assert report["observer_not_solo_opponent_at_kickoff"] is True
+          assert report["place_sha256"] == "b773e1eb52c249b220a04ad3f8b1f9f32a0c03362a315261f9eadecfce537f7f"
+          assert report["place_bytes"] == 781036
+          assert report["new_game_gitblob"] == "b41d79c3b96e1f31248bcdb9b4059e92755a29e4"
           files=list(pathlib.Path("/tmp/p0d_solo_safe_source").glob("*.luau"))
           assert len(files) == 82
           text=pathlib.Path("/tmp/p0d_solo_safe_source/Game.luau").read_text(encoding="utf-8")
           bot=pathlib.Path("/tmp/p0d_solo_safe_source/SoloTeamBots.luau").read_text(encoding="utf-8")
           assert 'LobbyIsland.build(map.model)' in text
+          assert '#eligibleSoloPlayers(), teamCount("RED"), teamCount("BLUE"))' in text
+          assert '#Players:GetPlayers(), teamCount("RED"), teamCount("BLUE"))' not in text
+          assert 'StudioSolo.emptyWinner' in text
           assert 'or root.CFrame)' in text and 'privateSoloBotsTrialAllowed()' in text
           assert 'P0D_PRIVATE_SOLO_TEAM_BOTS' in bot
           assert "callbacks.deposit(bot,bot.team,bot.carry)" in bot
