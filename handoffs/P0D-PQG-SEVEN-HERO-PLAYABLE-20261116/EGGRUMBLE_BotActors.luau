@@ -154,8 +154,10 @@ function BotActors.start(session:any,Rules:any):()
         if own and enemyLoc then
          local goHome=me.heldEggs>0
          local hasEgg=enemy.vaultEggs>0
+         local front=enemyLoc+Vector3.new(0,3,-26)
+         local nearFront=(Vector3.new(actor:GetPivot().Position.X,0,actor:GetPivot().Position.Z)-Vector3.new(front.X,0,front.Z)).Magnitude<18
          local goal=if goHome then own+Vector3.new(-16,3,-18)
-          elseif hasEgg then enemyLoc+Vector3.new(13,3,9)
+          elseif hasEgg then (if nearFront then enemyLoc+Vector3.new(0,3,6) else front)
           else enemyLoc+Vector3.new(0,3,-12)
          goals[id]=if goHome then "RETURN" elseif hasEgg then "STEAL" else "SIEGE"
          local dist=steeringStep(actor,goal,AI_TICK,folder)
@@ -165,7 +167,12 @@ function BotActors.start(session:any,Rules:any):()
           ui.Text=id.."\n"..(if goHome then "🥚 卵を帰還" elseif hasEgg then "🥚 敵城に潜入" else "⚔ 城攻め")
          end
          -- A bot cannot steal eggs, deposit them or attack from across the map.
-         if dist<=ACTION_DISTANCE then
+         local at=actor:GetPivot().Position
+         local actualTarget=if goHome then own+Vector3.new(-16,3,-18)
+          elseif hasEgg then enemyLoc+Vector3.new(0,3,6)
+          else enemyLoc+Vector3.new(0,3,-12)
+         local actualDist=(Vector3.new(at.X,0,at.Z)-Vector3.new(actualTarget.X,0,actualTarget.Z)).Magnitude
+         if actualDist<=ACTION_DISTANCE then
           if goHome then
            pcall(function() Rules.depositEggs(session.rules,id,me.heldEggs) end)
           elseif hasEgg then
