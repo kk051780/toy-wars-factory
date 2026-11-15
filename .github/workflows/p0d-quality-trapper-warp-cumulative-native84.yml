@@ -111,7 +111,7 @@ jobs:
           from xml.etree import ElementTree as ET
           import hashlib,json
           target=Path('/tmp/p0d_trapper_84_rojo')
-          with ZipFile('/tmp/P0D_CASTLE_BEAST_SOLO_SEVEN_WEAPONS_PRIVATE84.zip') as z:
+          with ZipFile('/tmp/P0D_TRAPPER_WARP_PRIVATE84.zip') as z:
               root=ET.fromstring(z.read('P0D_RC84_CASTLE_BEAST_SOLO_SEVEN_WEAPONS_TRAPPER_PRIVATE.rbxlx'))
           types={'Script':'.server.luau','LocalScript':'.client.luau','ModuleScript':'.luau'}
           manifest=[]
