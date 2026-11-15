@@ -9,6 +9,15 @@ Owner scope: ART-SILHOUETTE-FIELD-20261116-A01. Shared non-overlap dispatch: [#2
 
 The style uses warm limestone, slate, fabric and subdued metals with team-readable heraldry. It deliberately avoids always-on nameplate UI, permanent particle/Tween loops, a sea of Neon shapes, unlicensed external assets and opaque blockers in doorways.
 
+## Faster private Studio builds without modifying the original #482 project
+
+Two separate Rojo project files were added inside this isolated directory. Use **only one at a time**:
+
+- EGGRUMBLE_SEVEN_HERO_ART_STUDIO.project.json — original SevenHeroArena + costume/stand source.
+- EGGRUMBLE_V3_ART_STUDIO.project.json — original CastleMatchRules/BotPathRouter/BotActors/SwarmCombat/LobbyCastleModesPreview plus the two art scripts.
+
+Both resolve the original #482 sibling files by relative paths; they do not copy or override them. On a computer with a verified Rojo installation, build using the appropriate project to an **isolated private** .rbxlx and manually open it in Studio. Do not Publish, replace an OWNER place or silently mark the official RC as updated. Rojo/native build and Studio execution have **not** been performed here, so the project definitions remain unproven candidates.
+
 ## Manual private Studio preview, NOT production integration
 
 - Use a **separate private Studio copy**, not the published experience.
