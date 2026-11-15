@@ -1,0 +1,163 @@
+name: P0D FB029 Assassin wind repaired native86 Rojo86 exact private
+on:
+  push:
+    branches: [feature/p0d-fb026-undead-siege-native85-20261115]
+    paths:
+      - quality_repair/FB029_WIND_ASSASSIN/**
+      - .github/workflows/p0d-fb029-wind-native86.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  exact-wind86:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download exact native-pass RC86 parent from same GitHub repository
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p0d_fb029_parent
+          gh run download 43714858562 -R kk051780/toy-wars-factory \
+            -n P0D-FB026-UNDEAD-STAGE-LOOT-PRIVATE86-SOURCE-NOGO \
+            -D /tmp/p0d_fb029_parent
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, ZIP_DEFLATED
+          root=Path('/tmp/p0d_fb029_parent')
+          paths={p.name:p for p in root.rglob('*') if p.is_file()}
+          want={'P0D_RC86_SIEGE_V3_STAGE_WEAPONS_UNDEAD_PRIVATE.rbxlx','SOURCE_LOCK.json','RC_FEATURE_LOCK.json','RECEIPT.json'}
+          assert set(paths)==want,sorted(paths)
+          dst=Path('quality_repair/FB029_WIND_ASSASSIN/parent_rc86_ci.zip')
+          with ZipFile(dst,'w',ZIP_DEFLATED) as z:
+              for k in sorted(paths): z.write(paths[k],k)
+          PY
+      - name: Build actual 86-script wind-repaired Place and run 20 negative tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd quality_repair/FB029_WIND_ASSASSIN
+          python3 -m unittest -v test_wind_rc86.py
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('P0D_RC86_STAGE_WEAPONS_UNDEAD_ASSASSIN_WIND_PRIVATE.rbxlx')
+          b=p.read_bytes()
+          assert len(b)==844814,len(b)
+          assert hashlib.sha256(b).hexdigest()=='b614def362c7dad77341e75b568ab153e3001b9a146defe93ff2e9fa94f0dc6d'
+          receipt=json.loads(Path('RECEIPT.json').read_text())
+          assert receipt['source_count']==86 and receipt['unchanged_sources']==84
+          assert receipt['official_rc_write'] is False and receipt['studio']=='NOT_RUN'
+          print('FB029_WIND_ASSASSIN_REAL_PLACE_SHA_LOCK_PASS')
+          PY
+      - name: Extract 86 original source bodies and class/path identities into Rojo tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,xml.etree.ElementTree as ET
+          root=ET.fromstring(Path('quality_repair/FB029_WIND_ASSASSIN/P0D_RC86_STAGE_WEAPONS_UNDEAD_ASSASSIN_WIND_PRIVATE.rbxlx').read_bytes())
+          dst=Path('/tmp/p0d_fb029_rojo86')
+          exts={'Script':'.server.luau','LocalScript':'.client.luau','ModuleScript':'.luau'}
+          found=[]
+          def walk(item,base=()):
+              p=item.find('Properties')
+              name=p.findtext("string[@name='Name']") if p is not None else None
+              src=p.findtext("string[@name='Source']") if p is not None else None
+              here=base+((name,) if name else ())
+              if src is not None:
+                  assert item.attrib['class'] in exts and len(here)>=3
+                  assert here[0] in ('ServerScriptService','StarterPlayer','ReplicatedStorage')
+                  assert all(x.isidentifier() for x in here)
+                  path=dst/'src'/Path(*here).with_suffix(exts[item.attrib['class']])
+                  path.parent.mkdir(parents=True,exist_ok=True)
+                  assert not path.exists(),path
+                  path.write_text(src,encoding='utf-8')
+                  b=src.encode('utf-8')
+                  sha=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+                  found.append({'path':'/'.join(here),'class':item.attrib['class'],'blob':sha})
+              for c in item.findall('Item'):walk(c,here)
+          for n in root.findall('Item'):walk(n)
+          assert len(found)==86,len(found)
+          (dst/'manifest.json').write_text(json.dumps(found,indent=2))
+          project={'name':'P0DFB029WindPrivate86','tree':{'$className':'DataModel',
+            'ReplicatedStorage':{'$className':'ReplicatedStorage','TrapRaidersShared':{'$path':'src/ReplicatedStorage/TrapRaidersShared'}},
+            'ServerScriptService':{'$className':'ServerScriptService','TrapRaidersS1':{'$path':'src/ServerScriptService/TrapRaidersS1'}},
+            'StarterPlayer':{'$className':'StarterPlayer','StarterPlayerScripts':{'$className':'StarterPlayerScripts','$path':'src/StarterPlayer/StarterPlayerScripts'}}}}
+          (dst/'default.project.json').write_text(json.dumps(project,indent=2))
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _fb029_pinned_luau
+          persist-credentials: false
+      - name: Actual native Luau compile all 86 source bodies
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _fb029_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _fb029_pinned_luau -B /tmp/fb029_luau_build -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/fb029_luau_build --target Luau.Compile.CLI --parallel 4
+          n=0
+          while IFS= read -r -d '' src; do
+            /tmp/fb029_luau_build/luau-compile "$src" >/dev/null
+            n=$((n+1))
+          done < <(find /tmp/p0d_fb029_rojo86/src -name '*.luau' -type f -print0 | sort -z)
+          test "$n" -eq 86
+          echo FB029_WIND_NATIVE_LUAU_86_86_PASS
+      - name: Pinned Rojo 7.7.1 build plus exact path/class/GitBlob verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/fb029_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/fb029_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/fb029_rojo.zip') as z:
+              xs=[n for n in z.namelist() if n.rsplit('/',1)[-1]=='rojo']
+              assert len(xs)==1
+              p=Path('/tmp/fb029_rojo_bin');p.write_bytes(z.read(xs[0]));p.chmod(0o755)
+          PY
+          /tmp/fb029_rojo_bin build /tmp/p0d_fb029_rojo86/default.project.json -o /tmp/p0d_fb029_rojo86_built.rbxlx
+          python3 - <<'PY'
+          from pathlib import Path
+          from collections import Counter
+          import hashlib,json,xml.etree.ElementTree as ET
+          want=json.loads(Path('/tmp/p0d_fb029_rojo86/manifest.json').read_text())
+          root=ET.fromstring(Path('/tmp/p0d_fb029_rojo86_built.rbxlx').read_bytes())
+          got=[]
+          def walk(item,base=()):
+              prop=item.find('Properties')
+              name=prop.findtext("string[@name='Name']") if prop is not None else None
+              source=prop.findtext("string[@name='Source']") if prop is not None else None
+              here=base+((name,) if name else ())
+              if source is not None:
+                  b=source.encode('utf-8')
+                  blob=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+                  got.append({'path':'/'.join(here),'class':item.attrib['class'],'blob':blob})
+              for child in item.findall('Item'):walk(child,here)
+          for item in root.findall('Item'):walk(item)
+          assert len(got)==86,len(got)
+          assert Counter((x['path'],x['class'],x['blob']) for x in got)==Counter((x['path'],x['class'],x['blob']) for x in want)
+          print('FB029_WIND_ROJO_86_86_PATH_CLASS_GITBLOB_PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: P0D-FB029-ASSASSIN-WIND-LOOT-UNDEAD-PRIVATE86-SOURCE-NOGO
+          path: |
+            quality_repair/FB029_WIND_ASSASSIN/P0D_RC86_STAGE_WEAPONS_UNDEAD_ASSASSIN_WIND_PRIVATE.rbxlx
+            quality_repair/FB029_WIND_ASSASSIN/SOURCE_LOCK.json
+            quality_repair/FB029_WIND_ASSASSIN/RC_FEATURE_LOCK.json
+            quality_repair/FB029_WIND_ASSASSIN/RECEIPT.json
+          if-no-files-found: warn
+          retention-days: 7
