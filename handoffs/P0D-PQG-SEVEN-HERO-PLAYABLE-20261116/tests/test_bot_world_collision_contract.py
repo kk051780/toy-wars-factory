@@ -27,11 +27,12 @@ class TestBotWorldCollisionContract(unittest.TestCase):
 
     def test_ai_actions_require_approach(self):
         src = BOT.read_text(encoding="utf-8")
-        self.assertIn('if dist<=ACTION_DISTANCE then', src)
+        self.assertIn('if actualDist<=ACTION_DISTANCE then', src)
         self.assertIn('Rules.takeEggs(session.rules,id,1,enemy.id)', src)
         self.assertIn('Rules.depositEggs(session.rules,id,me.heldEggs)', src)
         self.assertIn('Rules.damageCastle(session.rules,enemy.id,id,26)', src)
         self.assertIn('tryHeroAttack(actor,me,session,lastHit)', src)
+        self.assertIn('local actualDist=', src)
 
 
 if __name__ == "__main__":
