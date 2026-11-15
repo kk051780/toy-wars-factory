@@ -2,6 +2,7 @@
 """#297 original author RC82 role-selection safety patch (source-only, no RC writes)."""
 from __future__ import annotations
 import argparse
+import difflib
 import hashlib
 import io
 import json
@@ -179,7 +180,8 @@ def build(artifact):
              "modified":[GP,HP],"game_blob":lock["blobs"][GP],"hud_blob":lock["blobs"][HP],
              "native_luau":"NOT_RUN","studio":"NOT_RUN","android":"NOT_RUN",
              "product":"NO_GO","owner":False,"official_rc_write":False}
-    return out,lock,fl,receipt,before
+    actual={n:script.text for n,script in items if n in ("Game","TrapRaidersHUD")}
+    return out,lock,fl,receipt,before,actual
 
 
 def main():
@@ -187,14 +189,38 @@ def main():
     p.add_argument("artifact_zip",type=Path)
     p.add_argument("output_zip",type=Path)
     args=p.parse_args()
-    place,lock,feature,receipt,before=build(args.artifact_zip.read_bytes())
+    place,lock,feature,receipt,before,actual=build(args.artifact_zip.read_bytes())
     args.output_zip.parent.mkdir(parents=True,exist_ok=True)
     with zipfile.ZipFile(args.output_zip,"w",compression=zipfile.ZIP_DEFLATED) as z:
         z.writestr("PRIVATE_ROLE7_READY_RC82.rbxlx",place)
         z.writestr("SOURCE_LOCK.json",json.dumps(lock,ensure_ascii=False,indent=2))
         z.writestr("RC_FEATURE_LOCK.json",json.dumps(feature,ensure_ascii=False,indent=2))
         z.writestr("RECEIPT.json",json.dumps(receipt,ensure_ascii=False,indent=2))
-        z.writestr("READ_ME.txt","Source-only real RC82 patch. Original author #297; #220 integration required. No Studio or native Luau validation.\n")
+        # Source-selective #220 intake: exact two files and human-reviewable patch,
+        # not just an opaque .rbxlx.
+        for role,src_path in (("Game",GP),("TrapRaidersHUD",HP)):
+            z.writestr("source/"+src_path,actual[role])
+        patch=""
+        for role,src_path in (("Game",GP),("TrapRaidersHUD",HP)):
+            patch+="".join(difflib.unified_diff(
+                before[role].splitlines(keepends=True),
+                actual[role].splitlines(keepends=True),
+                fromfile="official/"+src_path,
+                tofile="candidate/"+src_path))
+        if not patch or "jobPickAckSeq" not in patch:
+            raise ValueError("MISSING_EXACT_ACK_DIFF")
+        z.writestr("SOURCE_SELECTIVE_GAME_HUD.diff",patch)
+        z.writestr("HANDOFF_FOR_220.json",json.dumps({
+            "schema":"P0D_V6_SOURCE_SELECTIVE_HANDOFF_V1",
+            "base_official_sha":BASE,"require_author":"original PR #297",
+            "candidate_non_public":True,"modified_only":[GP,HP],
+            "new_blobs":{GP:lock["blobs"][GP],HP:lock["blobs"][HP]},
+            "strict_source_count":82,"other_80_unchanged":True,
+            "require_native_rojo_samehead":True,
+            "authorised_cas_only":True,"final_product_pass":False,
+            "rollback":"Restore original official Game and HUD from pinned RC82 source",
+        },ensure_ascii=False,indent=2))
+        z.writestr("READ_ME.txt","Real source select Game/HUD only for original #297 and #220; native Luau supplied by separate same-head workflow; actual Studio/Android NOT_RUN.\n")
     print(json.dumps(receipt,ensure_ascii=False,indent=2))
 
 
