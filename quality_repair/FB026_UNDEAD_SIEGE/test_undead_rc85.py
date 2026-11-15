@@ -29,8 +29,8 @@ class ActualUndeadRC85Test(unittest.TestCase):
     def test_01_actual_place_85(self):
         self.assertEqual(85,len(self.scripts))
         self.assertEqual(84,len(self.before))
-        self.assertEqual(830812,len(self.xml))
-        self.assertEqual('fdd7ed3397c02825c67e986ca0fb1755dbe15f9523ac065cbef1cdc66d81d978',mod.digest(self.xml))
+        self.assertEqual(833538,len(self.xml))
+        self.assertEqual('5192304d75e933e98ccffa20a4ac8abaa1349d4ce156bf63c5353607ec36f084',mod.digest(self.xml))
 
     def test_02_original_83_unchanged(self):
         for name,source in self.before.items():
@@ -115,7 +115,7 @@ class ActualUndeadRC85Test(unittest.TestCase):
         self.assertIn('TrapperWarpService', self.scripts)
 
     def test_13_private_place_parent_locked(self):
-        self.assertEqual('89b47d4d919a04b4ea72304681749f2b8f01da768698bf5a1838b8bb5c331e7e', mod.PARENT_SHA)
+        self.assertEqual('0f256dfd46cad4ff1f94d09730eb6bc1d285ed6fc29f4801cae6e59ea8f4e63a', mod.PARENT_SHA)
         self.assertEqual(85, self.receipt['script_count'])
         self.assertTrue(self.receipt['old_83_scripts_byte_exact'])
 
@@ -135,5 +135,17 @@ class ActualUndeadRC85Test(unittest.TestCase):
         self.assertIn('TrapperWarpService', self.scripts)
         self.assertIn('MapBuilder', self.scripts)
         self.assertIn('SoloTeamBots', self.scripts)
+
+    def test_16_v3_siege_ai_arrival_dead_zone_repaired(self):
+        builder=self.scripts['MapBuilder']
+        self.assertEqual(builder,self.before['MapBuilder'])
+        self.assertIn('5.2',builder)
+        self.assertIn('SiegeRequiredHits',builder)
+        self.assertIn('GetServerTimeNow()',builder)
+
+    def test_17_v3_repair_and_ai_script_preserved(self):
+        for name in ('SoloTeamBots','TrapperWarpService','MapBuilder','SevenJobArmamentM1'):
+            self.assertEqual(self.before[name],self.scripts[name])
+        self.assertEqual('0f256dfd46cad4ff1f94d09730eb6bc1d285ed6fc29f4801cae6e59ea8f4e63a',self.receipt['parent_sha256'])
 
 if __name__=='__main__':unittest.main()
