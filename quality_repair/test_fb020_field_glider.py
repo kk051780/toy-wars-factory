@@ -16,7 +16,7 @@ class FieldGliderSourceContract(unittest.TestCase):
     def test_no_duplicate_world(self):
         self.assertIn('world:FindFirstChild("P0D_FIELD_GLIDER_V1")', SRC)
     def test_four_pickup_stations(self):
-        self.assertEqual(4, len(re.findall(r'Vector2\\.new\\(', SRC)))
+        self.assertEqual(4, SRC.count("Vector2.new("))
     def test_mobile_and_pc_prompt(self):
         self.assertIn('Instance.new("ProximityPrompt")', SRC)
         self.assertIn('prompt.KeyboardKeyCode = Enum.KeyCode.E', SRC)
