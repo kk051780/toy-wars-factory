@@ -18,12 +18,17 @@ class ProductQualityTests(unittest.TestCase):
         doc["source_evidence"].update(
             source_lock="c" * 64,
             device_models=["Android handset", "PC Studio"],
-            studio_recordings=["https://example.org/studio-capture"],
+            studio_recordings=["https://example.org/studio-capture", "https://example.org/studio-evidence"],
             competitor_timecodes=["https://example.org/gameplay?t=35"],
+            official_build=dict(
+                official_rc_head="a" * 40, run_id=123456, conclusion="success",
+                run_url="https://github.com/example/project/actions/runs/123456",
+                artifact_zip_bytes=243612, place_bytes=772452, source_count=82,
+                place_sha256="d" * 64),
         )
         doc["source_evidence"]["core_scenarios"] = [
             dict(id=key, result="PASS", official_rc_head="a" * 40,
-                 recording_url="https://example.org/studio-evidence", device="Studio + Android",
+                 recording_url="https://example.org/studio-evidence", device=("Android handset" if key == "mobile_unobstructed_hud" else "PC Studio"),
                  reviewer="human-reviewer", measured_on="2026-11-15",
                  observed_effect="observed actual engine behavior",
                  **({"display_name": "暗殺者", "internal_role": "NINJA"}
@@ -64,6 +69,7 @@ class ProductQualityTests(unittest.TestCase):
         for key in o["operational_gates"]:
             o["operational_gates"][key] = True
         o["candidate"]["base_rc"] = "a" * 40
+        o["candidate"]["feature_ids"] = ["P0D-008", "P0D-011"]
         self.add_complete_engine_declarations(o)
         r = module.evaluate(o)
         self.assertEqual(15, r["core_scenarios_declared"])
@@ -128,6 +134,39 @@ class ProductQualityTests(unittest.TestCase):
         entry["benchmark_compared"] = True
         entry.pop("evidence_urls")
         self.assertEqual("PRODUCT_NO_GO", module.evaluate(o)["decision"])
+
+
+    def test_foreign_build_receipt_and_unlisted_footage_are_rejected(self):
+        o = copy.deepcopy(self.record)
+        o["candidate"].update(official_rc_head="a" * 40, source_head="b" * 40)
+        self.add_complete_engine_declarations(o)
+        o["source_evidence"]["official_build"]["official_rc_head"] = "e" * 40
+        o["source_evidence"]["core_scenarios"][0]["recording_url"] = "https://example.org/not-in-manifest"
+        r = module.evaluate(o)
+        self.assertIn("OFFICIAL_BUILD_HEAD_MISMATCH", r["problems"])
+        self.assertIn("INVALID_ENGINE_PROOF:seven_jobs_select_and_dismiss", r["problems"])
+
+    def test_mobile_hud_must_have_android_device(self):
+        o = copy.deepcopy(self.record)
+        o["candidate"]["official_rc_head"] = "a" * 40
+        self.add_complete_engine_declarations(o)
+        hud = next(x for x in o["source_evidence"]["core_scenarios"]
+                   if x["id"] == "mobile_unobstructed_hud")
+        hud["device"] = "PC Studio"
+        r = module.evaluate(o)
+        self.assertIn("INVALID_ENGINE_PROOF:mobile_unobstructed_hud", r["problems"])
+
+    def test_malformed_feature_ids_and_fake_build_bytes_are_rejected(self):
+        o = copy.deepcopy(self.record)
+        o["candidate"]["official_rc_head"] = "a" * 40
+        o["candidate"]["feature_ids"] = ["P0D-011", "P0D-011"]
+        self.add_complete_engine_declarations(o)
+        o["source_evidence"]["official_build"]["artifact_zip_bytes"] = True
+        o["source_evidence"]["official_build"]["run_id"] = False
+        r = module.evaluate(o)
+        self.assertIn("INVALID_OR_MISSING_FEATURE_IDS", r["problems"])
+        self.assertIn("OFFICIAL_BUILD_INVALID:artifact_zip_bytes", r["problems"])
+        self.assertIn("OFFICIAL_BUILD_CI_UNVERIFIED", r["problems"])
 
 
 if __name__ == "__main__":
