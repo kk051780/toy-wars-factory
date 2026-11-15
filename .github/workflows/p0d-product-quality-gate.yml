@@ -105,10 +105,10 @@ jobs:
           assert r['catalog_entries'] == 67
           assert r['inventory_covered'] == 67
           assert r['design_coverage'] == '67/67'
-          assert r['verified_design_contracts'] == '0/67'
+          assert r['verified_design_contracts'] == '8/67'
           assert r['seven_jobs_full_engine_pass'] == '0/7'
           assert r['release_unresolved'] > 0
-          print('67 inventory rows loaded; full design+engine proof still NO_GO')
+          print('67 inventory mapped / 8 role design contracts verified / engine proof remains NO_GO')
           PY
       - name: Fetch the actual pinned official RC82 build (READ-ONLY)
         uses: actions/download-artifact@v4
