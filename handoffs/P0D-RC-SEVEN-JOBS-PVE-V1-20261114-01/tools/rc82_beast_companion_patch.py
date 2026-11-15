@@ -19,6 +19,8 @@ PARENT_PLACE = "P0D_ROLE7_ACK_WIND_BUILDER_COMBO_RESPAWN_SPECTATOR_RC82.rbxlx"
 PARENT_SHA256 = "bbb9c919cb11cfc5147a75a9d8f8e770eb5a7d540acfffeb650010f5710e0d1c"
 PARENT_GAME_BLOB = "6848da45a10242e5908a102bd9db47b9d3f30023"
 GAME = "server/Game.server.luau"
+POLICY = "server/SevenJobsRules.luau"
+HUD = "client/HUD.client.luau"
 OUTPUT_PLACE = "P0D_RC82_BEAST_TAMER_REAL_COMPANION_PRIVATE.rbxlx"
 
 def sha(x:bytes)->str: return hashlib.sha256(x).hexdigest()
@@ -223,7 +225,16 @@ def main(parent:Path,target:Path):
         if literal not in after:raise ValueError('PARENT_REAL_FEATURE_LOST_'+literal)
     for no in scripts:
         if no!='Game' and scripts[no].text is None:raise ValueError('OTHER_SOURCE_MISSING')
+    rules_before=scripts['SevenJobsRules'].text
+    rules_after=one(rules_before,
+       'BEAST_TAMER={label="魔獣使い",skill="魔獣突進",',
+       'BEAST_TAMER={label="魔獣使い",skill="魔獣召喚",','RULES_BEAST_SKILL_LABEL')
+    hud_before=scripts['TrapRaidersHUD'].text
+    hud_after=one(hud_before,'{"BEAST_TAMER","🐲 魔獣使い","魔獣突進"}',
+       '{"BEAST_TAMER","🐲 魔獣使い","魔獣召喚"}','HUD_BEAST_SKILL_LABEL')
     scripts['Game'].text=after
+    scripts['SevenJobsRules'].text=rules_after
+    scripts['TrapRaidersHUD'].text=hud_after
     xml=ET.tostring(root,encoding='utf-8')
     check=ET.fromstring(xml)
     actual=[]
@@ -233,14 +244,15 @@ def main(parent:Path,target:Path):
         if p is None:continue
         src=p.find("./string[@name='Source']")
         if src is not None and src.text is not None:actual.append(blob(src.text))
-    sl['blobs'][GAME]=fl['source_gitblobs'][GAME]=blob(after)
+    for name,source in ((GAME,after),(POLICY,rules_after),(HUD,hud_after)):
+        sl['blobs'][name]=fl['source_gitblobs'][name]=blob(source)
     if len(actual)!=82 or Counter(actual)!=Counter(sl['blobs'].values()):
         raise ValueError('NEW_LOCK_OR_XML_BAD')
     meta={
       'schema':'P0D_ROLE7_REAL_BEAST_COMPANION_PRIVATE_SOURCE_V1',
       'official_parent':BASE,'parent_place_sha256':PARENT_SHA256,
       'place_sha256':sha(xml),'place_bytes':len(xml),
-      'scripts':82,'modified_only':[GAME],'unchanged_parent':81,
+      'scripts':82,'modified_only':[GAME,POLICY,HUD],'unchanged_parent':79,
       'game_blob_before':PARENT_GAME_BLOB,'game_blob_after':blob(after),
       'summon_max_per_player':1,'summon_lifetime_seconds':9,
       'summon_tick_seconds':.25,'summon_steps_max':40,
@@ -255,6 +267,8 @@ def main(parent:Path,target:Path):
         z.writestr('RC_FEATURE_LOCK.json',json.dumps(fl,ensure_ascii=False,indent=2)+'\n')
         z.writestr('RECEIPT.json',json.dumps(meta,ensure_ascii=False,indent=2)+'\n')
         z.writestr('source/server/Game.server.luau',after)
+        z.writestr('source/server/SevenJobsRules.luau',rules_after)
+        z.writestr('source/client/HUD.client.luau',hud_after)
     print(json.dumps(meta,ensure_ascii=False,indent=2))
 
 if __name__=='__main__':
