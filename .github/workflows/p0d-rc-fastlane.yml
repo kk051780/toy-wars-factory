@@ -2739,3 +2739,111 @@ jobs:
           path: /tmp/p0d_private_onehuman_after_art_receipts/*
           retention-days: 14
           if-no-files-found: error
+
+      - name: 'P0 #444 B#220 cumulative RC81 -> PRIVATE82 real-engine 3-minute read-only Horde witness'
+        if: env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=/tmp/p0d_private_onehuman_after_art_rc81
+          FINAL=/tmp/p0d_private_onehuman_hit_art_evidence82
+          OUT=/tmp/p0d_private_onehuman_hit_art_evidence82_artifact
+          PLACE="$OUT/P0D_RC82_ONEHUMAN_HIT_ART_EVIDENCE_PRIVATE_STUDIO.rbxlx"
+          mkdir -p "$OUT"
+          test -f "$BASE/SOURCE_LOCK.json"
+          test ! -e "$FINAL"
+          export P0D_HORDE_RUNTIME_EVIDENCE_PARENT="$BASE"
+          python3 -B -m unittest discover -s rc_fastlane -p 'test_horde_runtime_evidence.py' -v
+          python3 -B rc_fastlane/apply_horde_runtime_evidence.py \
+            --base "$BASE" --out "$FINAL" --enabled false
+          test ! -e "$FINAL"
+          python3 -B rc_fastlane/apply_horde_runtime_evidence.py \
+            --base "$BASE" --out "$FINAL" --enabled true
+          test "$(find "$BASE/src" -type f -name '*.luau' | wc -l)" -eq 81
+          test "$(find "$FINAL/src" -type f -name '*.luau' | wc -l)" -eq 82
+          while IFS= read -r -d '' f; do
+            /tmp/p0d_new_luau/luau-compile "$f" >/dev/null
+          done < <(find "$FINAL/src" -type f -name '*.luau' -print0)
+          /tmp/p0d_rc_rojo build "$FINAL/default.project.json" -o "$PLACE"
+          python3 -B rc_fastlane/verify_horde_runtime_evidence.py \
+            --dist "$FINAL" --place "$PLACE" \
+            --receipt "$OUT/PRIVATE_HORDE_ENGINE_EVIDENCE82_SOURCE_QA.json"
+          python3 -B art_quality/verify_rc_source_identity.py \
+            --dist "$FINAL" --place "$PLACE" --count 82 \
+            --receipt "$OUT/REAL_82_INSTANCE_PATH_CLASS_SOURCE.json"
+          python3 -B art_quality/check_art_quality.py \
+            --place "$PLACE" --out "$OUT/ART_SOURCE_ONLY.json"
+          python3 -B art_quality/check_live_art_parity.py \
+            --place "$PLACE" --expected-scripts 82 \
+            --out "$OUT/LIVE_ART_PARITY_NO_GO.json"
+          python3 -B art_quality/check_mobile_fun.py \
+            --out "$OUT/MOBILE_KID_FUN_NO_GO.json"
+          python3 - <<'PY'
+          import hashlib,json,os,sys
+          from pathlib import Path
+          sys.path.insert(0,str(Path("rc_fastlane").resolve()))
+          from apply_horde_runtime_evidence import read,blob,DEST,GAME,HORDE,AUTHOR_BLOB
+          base=Path('/tmp/p0d_private_onehuman_after_art_rc81')
+          final=Path('/tmp/p0d_private_onehuman_hit_art_evidence82')
+          out=Path('/tmp/p0d_private_onehuman_hit_art_evidence82_artifact')
+          before,after=read(base),read(final)
+          assert len(before)==81 and len(after)==82
+          assert set(after)-set(before)=={DEST}
+          assert all(after[k]==before[k] for k in before)
+          assert blob(after[DEST])==AUTHOR_BLOB
+          for p in (GAME,HORDE,'client/HUD.client.luau',
+                    'client/FB015CharacterArt.client.luau',
+                    'client/ConfirmedSlashFX.client.luau',
+                    'server/CastleDetailArt.server.luau'):
+              assert after[p]==before[p],('REGRESSION_SOURCE',p)
+          assert b'privateHordeTrialAllowed' in after[GAME]
+          assert b'musouHitFeedback' in after[GAME]
+          evidence=json.loads((out/'PRIVATE_HORDE_ENGINE_EVIDENCE82_SOURCE_QA.json').read_text())
+          identity=json.loads((out/'REAL_82_INSTANCE_PATH_CLASS_SOURCE.json').read_text())
+          art=json.loads((out/'ART_SOURCE_ONLY.json').read_text())
+          live=json.loads((out/'LIVE_ART_PARITY_NO_GO.json').read_text())
+          assert evidence['real_rojo_source_count_exact']==82
+          assert evidence['old81_source_bytes_unchanged']
+          assert identity['source_count']==identity['embedded_count']==82
+          assert identity['all_instance_class_name_path_source_exact']
+          assert identity['all_ancestor_container_class_exact']
+          assert art['source']['source_gate']=='PASS' and art['art_decision']=='ART_NO_GO'
+          assert live['source_gate']=='PASS' and live['expected_script_count']==82
+          assert evidence['public_runtime_codepath']=='HARD_OFF'
+          assert evidence['actual_nonstudio_private9']=='NOT_TESTED'
+          assert not evidence['owner_accepted']
+          record={
+            'schema':'P0D_B220_RC82_ONEHUMAN_HIT_ART_PRIVATE_EVIDENCE_SOURCE_V1',
+            'official_rc_head':os.environ['GITHUB_SHA'],
+            'parent_cumulative_private_rc81':'bf3e2ae7ff8ab7f5e6e5af6d139f0b0f62483df2',
+            'original_81_game_sources_unchanged':True,
+            'new_diagnostic_server_source':DEST,
+            'source_count':82,'source_gate':'PASS',
+            'rojo_82_full_path_class_source':'PASS',
+            'server_only_private_two_flag_optin':True,
+            'max_runtime_seconds_if_owner_enabled':180,
+            'actual_roblox_runtime':'NOT_TESTED',
+            'android15':'NOT_TESTED','kid3min':'NOT_TESTED',
+            'live_horde_decision':'LIVE_HORDE_NO_GO',
+            'live_art_decision':'LIVE_ART_NO_GO',
+            'art_decision':'ART_NO_GO',
+            'mobile_decision':'MOBILE_NO_GO',
+            'fun_decision':'FUN_NO_GO',
+            'owner_accepted':False,
+            'public_release':False,
+            'place_bytes':(out/'P0D_RC82_ONEHUMAN_HIT_ART_EVIDENCE_PRIVATE_STUDIO.rbxlx').stat().st_size,
+            'place_sha256':hashlib.sha256((out/'P0D_RC82_ONEHUMAN_HIT_ART_EVIDENCE_PRIVATE_STUDIO.rbxlx').read_bytes()).hexdigest(),
+            'rollback':'remove extra evidence Script, original 81 unchanged'
+          }
+          (out/'B220_RC82_PRIVATE_SOURCE_ONLY_RECEIPT.json').write_text(json.dumps(record,ensure_ascii=False,indent=2)+'\n')
+          print('P0D_B220_82_REAL_SOURCE_PRIVATE_PROBE_PASS',record['place_bytes'],record['place_sha256'])
+          PY
+          cp "$FINAL/SOURCE_LOCK.json" "$OUT/SOURCE_LOCK.json"
+          cp "$FINAL/RC_FEATURE_LOCK.json" "$OUT/RC_FEATURE_LOCK.json"
+      - uses: actions/upload-artifact@v4
+        if: success() && env.PROFILE == 'rich51' && github.ref == 'refs/heads/rc/p0d-s1-kids-rc01'
+        with:
+          name: P0D-CANONICAL-RC82-PRIVATE-ONEHUMAN-HIT-ART-EVIDENCE-SOURCE-NOGO
+          path: /tmp/p0d_private_onehuman_hit_art_evidence82_artifact/*
+          retention-days: 14
+          if-no-files-found: error
