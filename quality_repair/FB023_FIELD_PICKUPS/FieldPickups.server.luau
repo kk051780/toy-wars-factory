@@ -106,7 +106,7 @@ end
 local function applySwift(hum, root)
     -- Do not overwrite newer job/wind movement changes on expiry.
     local before = hum.WalkSpeed
-    local boosted = math.min(before + 8, 34)
+    local boosted = math.max(before, math.min(before + 8, 34))
     hum.WalkSpeed = boosted
     flash(root.Position, Color3.fromRGB(85, 219, 245), 7)
     task.delay(7, function()
