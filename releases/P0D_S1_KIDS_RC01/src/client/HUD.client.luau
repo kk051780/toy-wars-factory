@@ -62,7 +62,7 @@ end
 
 local top = label(gui, "Score", UDim2.new(.76, 0, 0, 58), UDim2.new(.12, 0, 0, 4),
     Color3.new(1, 1, 1), 17)
-top.Text = "TRAP RAIDERS · 接続中..."
+top.Text = "EGGRUMBLE · 接続中..."
 local status = label(gui, "Status", UDim2.new(.76, 0, 0, 34), UDim2.new(.12, 0, 0, 65),
     Color3.fromRGB(255, 232, 135), 14)
 status.Text = "2人そろうと開始。卵を奪って自陣の納品台へ！"
@@ -131,9 +131,9 @@ end
 -- RESULT_COPY_END
 
 local function phaseText(s): string
-    if s.phase == "LOBBY" then return "準備中：2人集まると開始。役職を選ぼう！" end
-    if s.phase == "COUNTDOWN" then return "開始まで " .. tostring(s.time) .. " 秒！" end
-    if s.phase == "RESULTS" then return resultLine(s) end
+    if s.phase == "LOBBY" then return "EGGRUMBLE｜準備中：2人集まると開始。役職を選ぼう！" end
+    if s.phase == "COUNTDOWN" then return "EGGRUMBLE｜開始まで " .. tostring(s.time) .. " 秒！" end
+    if s.phase == "RESULTS" then return "EGGRUMBLE｜" .. resultLine(s) end
     local carrying = if s.carrying ~= "" then " 🥚敵の卵を持っている！自陣へ！" else ""
     local warning = if s.alarm == "WARNING" then " ⚠ 襲撃の予兆 " .. tostring(s.alarmTime) .. "秒"
         else (if s.alarm == "SIGNAL" then " ⚡警報発動中！" else "")
