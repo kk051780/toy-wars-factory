@@ -5,7 +5,7 @@ import unittest
 
 SOURCE = Path(__file__).resolve().parents[1] / "SevenHeroArena.server.luau"
 ROLES = {
-    "WARRIOR": "戦士",
+    "WARRIOR": "神将（仮）",
     "MAGE": "魔法使い",
     "NINJA": "暗殺者",
     "TRAPPER": "超能力者",
@@ -37,6 +37,31 @@ class TestSevenHeroStudioSource(unittest.TestCase):
                          "EsperPortalA", "MadScientistUFO", "GreatBeast",
                          "UndeadMinion", "DarkWorldCreature", "WARRIOR"):
             self.assertIn(mechanic, self.source)
+
+    def test_warlord_has_three_weapon_stances_and_distinct_divine_avatars(self):
+        for term in ("P0DPreviewWarlordStance", "WarlordKatana", "WarlordSpear",
+                     "WarlordFist", "P0DPreviewKami", "KamiStorm", "KamiFlame",
+                     "KamiOrochi", "OrochiDivineHead_", 'role=="WARRIOR"'):
+            with self.subTest(term=term):
+                self.assertIn(term, self.source)
+        # The mythological avatar is a short-lived effect, not a persistent pet.
+        self.assertIn('Debris:AddItem(p,.55)', self.source)
+        self.assertIn('P0DPreviewDivineActive', self.source)
+
+    def test_beast_feed_choices_change_morphology_and_team_count(self):
+        for term in ("BeastFeedGiant", "BeastFeedSplit", "BeastFeedArmor",
+                     'mode=="GIANT"', 'mode=="SPLIT"', 'mode=="ARMORED"',
+                     'then 3 else 1', 'ScaleTo(', "ArmorShell",
+                     "BeastCompanion_", "GreatBeast_"):
+            with self.subTest(term=term):
+                self.assertIn(term, self.source)
+
+    def test_world_choice_stations_do_not_change_game_authority(self):
+        self.assertIn('ProximityPrompt', self.source)
+        self.assertIn('P0DPreviewRole', self.source)
+        self.assertIn('if p:GetAttribute("P0DPreviewRole")==role then', self.source)
+        self.assertIn('if not RunService:IsStudio() then return end', self.source)
+        self.assertNotIn('DataStoreService', self.source)
 
     def test_studio_only_non_authoritative(self):
         self.assertIn("RunService:IsStudio()", self.source)
