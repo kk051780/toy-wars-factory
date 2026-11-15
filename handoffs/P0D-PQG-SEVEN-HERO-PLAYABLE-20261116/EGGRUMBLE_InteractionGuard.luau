@@ -1,7 +1,7 @@
 --!strict
 -- EGGRUMBLE V3 Studio-only prompt server gate.
 -- Every human ProximityPrompt action validates position, alive state, LOS and rate-limit.
--- Never authorize actions using client-configured prompt distance or hold-time settings.
+-- Never treat client-side MaxActivationDistance or HoldDuration as authorization.
 local Guard={}
 local MAX_DISTANCE=16.0
 local VERTICAL_LIMIT=10.0

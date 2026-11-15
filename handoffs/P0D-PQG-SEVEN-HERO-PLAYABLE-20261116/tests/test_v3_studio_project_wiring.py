@@ -25,7 +25,7 @@ class TestStudioProjectWiring(unittest.TestCase):
         cls.project = json.loads(PROJECT.read_text(encoding="utf-8"))
         cls.tree = cls.project["tree"]["ServerScriptService"]
 
-    def test_exactly_one_studio_match_host_and_five_modules(self):
+    def test_exactly_one_studio_match_host_and_all_modules(self):
         self.assertEqual(self.project["tree"]["$className"], "DataModel")
         self.assertEqual(self.tree["$className"], "ServerScriptService")
         sources = {k: v["$path"] for k, v in self.tree.items() if k != "$className"}

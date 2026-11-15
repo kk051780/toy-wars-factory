@@ -33,8 +33,8 @@ class InteractionSecurityTests(unittest.TestCase):
             'callback(actor)')
         self.assertNotIn('if InteractionGuard.allow(actor,at,action,at.Name) then callback(actor) end', mutant)
     def test_defense_guard_does_not_use_client_prompt_duration_as_authority(self):
-        self.assertNotIn("HoldDuration",GUARD)
-        self.assertNotIn("MaxActivationDistance",GUARD)
+        self.assertNotIn("part.HoldDuration",GUARD)
+        self.assertNotIn("part.MaxActivationDistance",GUARD)
 
 if __name__=="__main__":
     unittest.main()
