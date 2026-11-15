@@ -19,6 +19,9 @@ PARENT_PLACE_SHA = "bbb9c919cb11cfc5147a75a9d8f8e770eb5a7d540acfffeb650010f5710e
 PARENT_GAME_BLOB = "6848da45a10242e5908a102bd9db47b9d3f30023"
 GAME_PATH = "server/Game.server.luau"
 OUTPUT_PLACE = "P0D_ROLE7_LOBBY_REENTRY_TEAM_SAFE_RC82.rbxlx"
+EXPECTED_PLACE_SHA = "00fb3eb899495e9978636bb2f81aaae68271bfd834841ccac1251555e54ce1e1"
+EXPECTED_PLACE_BYTES = 779343
+EXPECTED_GAME_BLOB = "ab5576a406b23bbd3903c76a64d3f5cc54f950a3"
 OLD = (
     'root.CFrame=if RunService:IsStudio()\n'
     '                            then LobbyIsland.spawn(getTeamName(entrant))\n'
@@ -91,6 +94,9 @@ def build(parent_file: Path, output_file: Path, extract_dir: Path | None = None)
     if old_game[old_game.index(begin):old_game.index(end)] != new_game[new_game.index(begin):new_game.index(end)]:
         raise ValueError("EGG_SCORE_REGRESSION")
     new_blob = blob(new_game)
+    if new_blob != EXPECTED_GAME_BLOB or sha(output_place) != EXPECTED_PLACE_SHA \
+            or len(output_place) != EXPECTED_PLACE_BYTES:
+        raise ValueError("SOURCE_EXACT_FIXED_OUTPUT_DRIFT")
     lock["blobs"][GAME_PATH] = feature["source_gitblobs"][GAME_PATH] = new_blob
     verify(output_place, lock, feature)
     report = {
