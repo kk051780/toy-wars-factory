@@ -11,12 +11,12 @@ if not RunService:IsStudio() then return end
 
 local ROLE_ORDER = {"WARRIOR","MAGE","NINJA","TRAPPER","BUILDER","BEAST","ZOMBIE"}
 local ROLES: {[string]: {name:string,color:Color3,weapon:string,a:string,b:string}} = {
- WARRIOR={name="戦士",color=Color3.fromRGB(238,87,45),weapon="大剣",a="烈風斬",b="大地震撃"},
+ WARRIOR={name="神将（仮）",color=Color3.fromRGB(238,87,45),weapon="大太刀・槍・拳",a="武芸連撃",b="大地震撃"},
  MAGE={name="魔法使い",color=Color3.fromRGB(64,165,255),weapon="魔導杖",a="魔力弾",b="雷光＋治癒"},
  NINJA={name="暗殺者",color=Color3.fromRGB(93,94,157),weapon="双短剣",a="瞬影斬",b="風走り＋透明化"},
  TRAPPER={name="超能力者",color=Color3.fromRGB(179,88,255),weapon="念動キューブ",a="重力衝撃",b="重力牢獄＋空間交換"},
  BUILDER={name="マッドサイエンティスト",color=Color3.fromRGB(65,238,196),weapon="未来銃",a="電磁射撃",b="自動砲台＋ロケット"},
- BEAST={name="魔獣使い",color=Color3.fromRGB(235,171,69),weapon="獣笛",a="獣牙衝撃",b="魔獣召喚"},
+ BEAST={name="魔獣使い",color=Color3.fromRGB(235,171,69),weapon="獣笛・進化餌",a="獣牙衝撃",b="進化魔獣召喚"},
  ZOMBIE={name="呪術師",color=Color3.fromRGB(160,74,169),weapon="呪杖",a="呪印波動",b="不死兵召喚＋呪い"},
 }
 local cd: {[Player]: {[string]: number}} = {}
@@ -162,7 +162,28 @@ local function cast(player:Player,role:string,slot:string)
  if slot=="C" then
   -- Signature abilities: separate from ordinary/special input, always server-owned.
   if role=="WARRIOR" then
-   hit(forward(root,11),25,92,c,char)
+   local divine=player:GetAttribute("P0DPreviewKami") or "STORM"
+   player:SetAttribute("P0DPreviewDivineActive",true)
+   task.delay(6,function() if player.Parent then player:SetAttribute("P0DPreviewDivineActive",false) end end)
+   if divine=="OROCHI" then
+    local center=forward(root,16)
+    -- Original eight-headed serpent-like divine avatar, not an AI pet.
+    for n=1,8 do
+     local a=n*math.pi/4
+     local p=effectsPart(folder,"OrochiDivineHead_"..n,center+Vector3.new(math.cos(a)*12,4+math.sin(a)*3,math.sin(a)*12),Vector3.new(3.3,3.3,3.3),Color3.fromRGB(104,224,159))
+     p.Shape=Enum.PartType.Ball
+     TweenService:Create(p,TweenInfo.new(.45),{Position=center+Vector3.new(0,3,0),Transparency=.7}):Play()
+     Debris:AddItem(p,.55)
+    end
+    task.delay(.38,function() hit(center,25,92,c,char) end)
+   elseif divine=="FLAME" then
+    hit(forward(root,17),19,82,Color3.fromRGB(255,115,48),char)
+   else
+    for n=1,3 do
+     local at=forward(root,9+n*5)
+     task.delay(n*.12,function() hit(at,10,35,Color3.fromRGB(130,202,255),char) end)
+    end
+   end
   elseif role=="MAGE" then
    local impact=forward(root,24)
    local meteor=effectsPart(folder,"Meteor",impact+Vector3.new(0,28,0),Vector3.new(5,5,5),c)
@@ -206,10 +227,17 @@ local function cast(player:Player,role:string,slot:string)
    end)
    hit(forward(root,10),13,53,c,char)
   elseif role=="BEAST" then
-   local creature=beastBody("GreatBeast",forward(root,7),c,false)
-   creature:ScaleTo(2.4)
-   summonAI(player,{creature},14,25)
-   flash(creature:GetPivot().Position,9,c)
+   local mode=player:GetAttribute("P0DPreviewBeastFeed") or "GIANT"
+   local creatures={}
+   local amount=if mode=="SPLIT" then 3 else 1
+   for i=1,amount do
+    local at=forward(root,7)+Vector3.new((i-2)*4,0,0)
+    local creature=beastBody("GreatBeast_"..mode.."_"..i,at,c,false)
+    creature:ScaleTo(if mode=="GIANT" then 3.1 elseif mode=="SPLIT" then 1.15 else 2.0)
+    table.insert(creatures,creature)
+    flash(creature:GetPivot().Position,7,c)
+   end
+   summonAI(player,creatures,14,if mode=="SPLIT" then 13 else 25)
   elseif role=="ZOMBIE" then
    local shade=beastBody("DarkWorldCreature",forward(root,12),c,false)
    shade:ScaleTo(2.7)
@@ -224,7 +252,17 @@ local function cast(player:Player,role:string,slot:string)
    shock.Shape=Enum.PartType.Cylinder
    TweenService:Create(shock,TweenInfo.new(.55),{Size=Vector3.new(34,.35,34),Transparency=1}):Play()
    Debris:AddItem(shock,.6)
-  else hit(front,8,26,c,char) end
+  else
+   local stance=player:GetAttribute("P0DPreviewWarlordStance") or "KATANA"
+   if stance=="SPEAR" then
+    hit(forward(root,15),7,37,c,char)
+   elseif stance=="FIST" then
+    hit(forward(root,4),8,22,c,char)
+    task.delay(.18,function() hit(forward(root,5),8,22,c,char) end)
+   else
+    hit(front,10,31,c,char)
+   end
+  end
  elseif role=="MAGE" then
   if special then
    hit(front,17,32,c,char)
@@ -298,9 +336,21 @@ local function cast(player:Player,role:string,slot:string)
   else hit(front,8,25,c,char) end
  elseif role=="BEAST" then
   if special then
-   local m=beastBody("BeastCompanion",forward(root,6),c,false)
-   summonAI(player,{m},12,12)
-   flash(m.PrimaryPart.Position,5,c)
+   local mode=player:GetAttribute("P0DPreviewBeastFeed") or "GIANT"
+   local units={}
+   local amount=if mode=="SPLIT" then 3 else 1
+   for i=1,amount do
+    local at=forward(root,6)+Vector3.new((i-2)*3,0,0)
+    local m=beastBody("BeastCompanion_"..mode.."_"..i,at,c,false)
+    m:ScaleTo(if mode=="GIANT" then 2.15 elseif mode=="SPLIT" then .75 else 1.0)
+    if mode=="ARMORED" then
+     local shell=effectsPart(m,"ArmorShell",at+Vector3.new(0,1.4,0),Vector3.new(3.1,3.0,2.9),Color3.fromRGB(150,161,178))
+     shell.Transparency=.58
+    end
+    table.insert(units,m)
+    flash(m.PrimaryPart.Position,4,c)
+   end
+   summonAI(player,units,12,if mode=="SPLIT" then 7 elseif mode=="ARMORED" then 10 else 17)
   else hit(front,9,25,c,char) end
  elseif role=="ZOMBIE" then
   if special then
@@ -322,7 +372,7 @@ local function addTool(player:Player,role:string,slot:string)
  local special=(slot~="A")
  local entry=ROLES[role]
  local tool=Instance.new("Tool")
- tool.Name=slot.." "..(slot=="A" and entry.a or (slot=="B" and entry.b or "究極技"))
+ tool.Name=slot.." "..(slot=="A" and entry.a or (slot=="B" and entry.b or (role=="WARRIOR" and "神威降臨" or (role=="BEAST" and "進化魔獣・超覚醒" or "究極技"))))
  tool.ToolTip=entry.name.." / "..entry.weapon
  tool.CanBeDropped=false;tool.RequiresHandle=true
  tool:SetAttribute("P0DPreviewTool",true)
@@ -351,6 +401,12 @@ local function choose(player:Player,role:string)
   end
  end
  player:SetAttribute("P0DPreviewRole",role)
+ if role=="WARRIOR" then
+  if not player:GetAttribute("P0DPreviewWarlordStance") then player:SetAttribute("P0DPreviewWarlordStance","KATANA") end
+  if not player:GetAttribute("P0DPreviewKami") then player:SetAttribute("P0DPreviewKami","STORM") end
+ elseif role=="BEAST" then
+  if not player:GetAttribute("P0DPreviewBeastFeed") then player:SetAttribute("P0DPreviewBeastFeed","GIANT") end
+ end
  addTool(player,role,"A")
  addTool(player,role,"B")
  addTool(player,role,"C")
@@ -362,6 +418,7 @@ local brandMarker=part(folder,"EGGRUMBLE_BrandMarker",Vector3.new(4,1,4),origin+
 label(brandMarker,"EGGRUMBLE","7職バトル実験場｜Studio専用")
 for i,role in ipairs(ROLE_ORDER) do
  local data=ROLES[role]
+ local c=data.color
  local x=(i-4)*14
  local stand=part(folder,role.."_Pedestal",Vector3.new(10,1,10),origin+Vector3.new(x,-1,0),data.color)
  stand.CanCollide=true
@@ -424,6 +481,33 @@ for i,role in ipairs(ROLE_ORDER) do
  prompt.RequiresLineOfSight=false;prompt.Parent=stand
  prompt.Triggered:Connect(function(player) choose(player,role) end)
 end
+
+-- Prototype world buttons keep mobile UI compact: choose one technique/feed at preparation stands.
+local function techniqueChoice(name:string,role:string,attribute:string,value:string,caption:string,pos:Vector3,color:Color3)
+ local button=part(folder,name,Vector3.new(3.5,1.1,3.5),pos,color)
+ glow(button,color)
+ label(button,caption,"タップで選択")
+ local prompt=Instance.new("ProximityPrompt")
+ prompt.Name="TechniqueChoice";prompt.ObjectText=caption;prompt.ActionText="装備"
+ prompt.MaxActivationDistance=10;prompt.RequiresLineOfSight=false;prompt.HoldDuration=.15
+ prompt.Parent=button
+ prompt.Triggered:Connect(function(p:Player)
+  if p:GetAttribute("P0DPreviewRole")==role then
+   p:SetAttribute(attribute,value)
+   flash(button.Position,3,color)
+  end
+ end)
+end
+local armor=Color3.fromRGB(234,165,63)
+techniqueChoice("WarlordKatana","WARRIOR","P0DPreviewWarlordStance","KATANA","大太刀",origin+Vector3.new(-50,0,-12),armor)
+techniqueChoice("WarlordSpear","WARRIOR","P0DPreviewWarlordStance","SPEAR","槍",origin+Vector3.new(-45,0,-12),armor)
+techniqueChoice("WarlordFist","WARRIOR","P0DPreviewWarlordStance","FIST","体術",origin+Vector3.new(-40,0,-12),armor)
+techniqueChoice("KamiStorm","WARRIOR","P0DPreviewKami","STORM","雷神の神威",origin+Vector3.new(-50,0,-19),Color3.fromRGB(103,191,255))
+techniqueChoice("KamiFlame","WARRIOR","P0DPreviewKami","FLAME","炎神の神威",origin+Vector3.new(-45,0,-19),Color3.fromRGB(255,115,61))
+techniqueChoice("KamiOrochi","WARRIOR","P0DPreviewKami","OROCHI","八岐大蛇の幻影",origin+Vector3.new(-40,0,-19),Color3.fromRGB(119,216,142))
+techniqueChoice("BeastFeedGiant","BEAST","P0DPreviewBeastFeed","GIANT","巨大化の餌",origin+Vector3.new(23,0,-12),Color3.fromRGB(242,162,64))
+techniqueChoice("BeastFeedSplit","BEAST","P0DPreviewBeastFeed","SPLIT","分裂の餌",origin+Vector3.new(28,0,-12),Color3.fromRGB(245,114,208))
+techniqueChoice("BeastFeedArmor","BEAST","P0DPreviewBeastFeed","ARMORED","装甲の餌",origin+Vector3.new(33,0,-12),Color3.fromRGB(113,192,194))
 
 local function dummy(n:number)
  local ix=(n-1)%6;local iz=math.floor((n-1)/6)
