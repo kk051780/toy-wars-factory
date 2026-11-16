@@ -32,6 +32,7 @@ local function clear(id:number)
  if not old then return end
  live[id]=nil
  num=math.max(0,num-1)
+ if old.deadConnection then old.deadConnection:Disconnect() end
  if old.model and old.model.Parent then old.model:Destroy() end
  if old.highlight and old.highlight.Parent then old.highlight:Destroy() end
  if old.char and old.char.Parent then old.char:SetAttribute("EGGRUMBLE_DivineVisualActive",false) end
@@ -87,6 +88,13 @@ function Mantle.activate(player:Player,duration:number):boolean
  hlt.Parent=char
  local token={}
  live[player.UserId]={model=model,highlight=hlt,char=char,token=token}
+ live[player.UserId].deadConnection=h.Died:Connect(function()
+  local entry=live[player.UserId]
+  if entry and entry.token==token then
+   clear(player.UserId)
+   if char.Parent then char:SetAttribute("EGGRUMBLE_KamiUntil",0) end
+  end
+ end)
  char:SetAttribute("EGGRUMBLE_DivineVisualActive",true)
  task.delay(duration,function()
   local entry=live[player.UserId]
