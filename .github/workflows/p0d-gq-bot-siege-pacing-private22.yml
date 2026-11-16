@@ -63,6 +63,19 @@ jobs:
           /tmp/gq_bot_luau/luau-compile --text "$private/BOT_ACTION.native.luau" >/dev/null
           /tmp/gq_bot_luau/luau "$private/BOT_ACTION.native.luau" | tee "$private/BOT_ACTION_NATIVE.log"
           grep -q GQ_BOT_SIEGE_ACTUAL_AUTHOR_BRANCH_NATIVE_PASS "$private/BOT_ACTION_NATIVE.log"
+      - name: Real original author CastleMatchRules plus extracted BotActors and siege pacing native
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=quality_gameplay/gq_bot_siege_pacing_20261116
+          private=/tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC
+          python3 "$base/tools/generate_native_author_rules_harness.py" \
+            --actor "$private/src/EGGRUMBLE_BotActors.luau" \
+            --rules "$private/src/EGGRUMBLE_CastleMatchRules.luau" \
+            --out "$private/AUTHOR_RULES_BOT.native.luau"
+          /tmp/gq_bot_luau/luau-compile --text "$private/AUTHOR_RULES_BOT.native.luau" >/dev/null
+          /tmp/gq_bot_luau/luau "$private/AUTHOR_RULES_BOT.native.luau" | tee "$private/AUTHOR_RULES_BOT_NATIVE.log"
+          grep -q GQ_ORIGINAL_RULES_PLUS_REAL_BOT_BRANCH_NATIVE_PASS "$private/AUTHOR_RULES_BOT_NATIVE.log"
       - name: Pinned Rojo 7.7.1 real private Place and 22 exact source/class verification
         shell: bash
         run: |
@@ -88,7 +101,7 @@ jobs:
         run: |
           set -euo pipefail
           cd /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC
-          zip -q -r /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.zip private_v3.project.json source_lock.json src BOT_SIEGE_NATIVE.log BOT_ACTION_NATIVE.log GQ_BOT_SIEGE_PRIVATE22_NOT_RC.rbxlx
+          zip -q -r /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.zip private_v3.project.json source_lock.json src BOT_SIEGE_NATIVE.log BOT_ACTION_NATIVE.log AUTHOR_RULES_BOT_NATIVE.log GQ_BOT_SIEGE_PRIVATE22_NOT_RC.rbxlx
           stat -c 'PRIVATE_ZIP_BYTES=%s' /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.zip
           sha256sum /tmp/GQ_BOT_SIEGE_PRIVATE22_NOT_RC.zip
       - uses: actions/upload-artifact@v4
