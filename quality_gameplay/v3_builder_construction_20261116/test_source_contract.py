@@ -42,6 +42,17 @@ class BuilderSourceTests(unittest.TestCase):
   self.assertIn('other.Name=="TacticalBattlefield"',SRC)
   self.assertIn('other.Name:match("^TacticalRoute_")~=nil',SRC)
   self.assertIn("canCollide~=false and ownGround~=true",POL)
+ def test_watchdog_auto_cleanup_on_round_end(self):
+  self.assertIn('local function monitorSession(session:any,s:any)',SRC)
+  self.assertIn('if s.monitoring then return end',SRC)
+  self.assertIn('if bySession[session]~=s then return end',SRC)
+  self.assertIn('or session.rules.phase~="ACTIVE" or session.rules.winner~=nil',SRC)
+  self.assertIn('Build.clear(session)',SRC)
+  self.assertIn('task.delay(0.25,tick)',SRC)
+  self.assertIn('monitorSession(session,s)',SRC)
+  runtime=(HERE/"EGGRUMBLE_BuilderConstruction.runtime.spec.luau").read_text()
+  for case in ("AUTO_MATCH_FINISH_CLEAR","AUTO_WIN_CLEAR","AUTO_DESTROYED_WORLD_CLEAR","STALE_WATCHDOG_NO_RECREATE"):
+   self.assertIn(case,runtime)
  def test_bridge_requires_midspan_void_or_depth(self):
   self.assertIn('if kind=="BRIDGE" then',SRC)
   self.assertIn('local middle=groundAt(session,root.Position+direction*15.5)',SRC)

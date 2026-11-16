@@ -123,13 +123,15 @@ check(ok and reason=="WALL","PHYSICAL_WALL")
 check(#created==1 and created[1].Size.X==13 and created[1].Size.Y==10,"WALL_PHYSICS")
 check(created[1].CanCollide==true and created[1].Parent==folder,"WALL_MATCH_PARENT")
 check(created[1].attributes.EGGRUMBLE_ConstructOwner==1337,"AUTHORITATIVE_OWNER")
-check(#pending==1 and pending[1].seconds==9,"BOUNDED_LIFETIME")
+check(#pending==2 and pending[1].seconds==9 and pending[2].seconds==0.25,"BOUNDED_LIFETIME_AND_WATCHDOG")
 ok,reason=Build.place(session,p,"WALL",true)
 check(not ok and reason=="COOLDOWN","SPAM_BLOCK")
 Build.clear(session)
 check(created[1].destroyed and created[1].Parent==nil,"ROUND_CLEAN")
 pending[1].callback()
 check(created[1].Parent==nil,"EXPIRED_CALLBACK_IDEMPOTENT")
+pending[2].callback()
+check(created[1].Parent==nil,"STALE_WATCHDOG_NO_RECREATE")
 
 -- Non-collidable body parts MUST still block an actual new wall.
 local humModel={FindFirstChildOfClass=function(_,kind)
@@ -205,7 +207,32 @@ check(not ok and reason=="NOT_AUTHORIZED","CROSS_MODE_DENIED")
 attributes.EGGRUMBLE_QueuedMode="BATTLE_ROYALE"
 ok,reason=Build.place(session,p,"WALL",true)
 check(ok and reason=="WALL","BR_MODE_VALID")
+-- The author closeRound hook is not yet wired; the module must self-clean
+-- in <= 0.25 second after a real match ends, independently of tool expiry.
+check(pending[#pending].seconds==0.25,"BR_MODE_SINGLE_WATCHDOG")
+session.rules.phase="FINISHED"
+pending[#pending].callback()
+check(created[#created].destroyed,"AUTO_MATCH_FINISH_CLEAR")
+session.rules.phase="ACTIVE"
 Build.clear(session)
-check(created[#created].destroyed,"BR_MODE_CLEAN")
+check(created[#created].destroyed,"FINISH_CLEAR_IDEMPOTENT")
+
+-- A winner is also terminal even before an external round close callback.
+ok,reason=Build.place(session,p,"WALL",true)
+check(ok and reason=="WALL","NEW_SESSION_CONSTRUCT_BEFORE_WIN")
+session.rules.winner="RED"
+pending[#pending].callback()
+check(created[#created].destroyed,"AUTO_WIN_CLEAR")
+session.rules.winner=nil
+
+-- Destroying the arena Folder must revoke collision objects immediately,
+-- even if the game never invoked its optional cleanup integration hook.
+ok,reason=Build.place(session,p,"WALL",true)
+check(ok and reason=="WALL","NEW_CONSTRUCT_BEFORE_WORLD_LOST")
+folder.Parent=nil
+pending[#pending].callback()
+check(created[#created].destroyed,"AUTO_DESTROYED_WORLD_CLEAR")
+folder.Parent=workspace
+Build.clear(session)
 
 print("GQ_BUILDER_RUNTIME_MOCK_PASS assertions="..tostring(assertions))

@@ -35,3 +35,9 @@ Rollback: flag OFF, remove the two mapped optional modules and original-author h
 - Real TEAM/BR generated demo has an unbroken grass slab, so this honest gate will reject bridges across that slab until original field author supplies a physically real watercourse or canyon. A blue visual river marking alone is not evidence. Do NOT claim working field traversal on the existing flat demo. No Game/MapBuilder changes in this PR.
 - Native runtime mock tests: intact floor rejected, missing midspan accepted, lowered riverbed accepted; other real-CI source/field/egg/castle/neutral/role/round invariants unchanged.
 - #482 author needs to ACK skill-input mapping and a real crossing site in existing authored battlefield. #220 sole writer needs signed source-lock/CAS and official exact-byte receipt. Without them the formal integration gate stays NO_GO.
+
+## 2026-11-16 lifecycle hardening — 0.25s safety fallback
+- Adds one 0.25-second callback chain *per match only while live temporary constructs exist*. After a phase != ACTIVE, nonnil winner, or destroyed arena, it invokes its own idempotent clear(session); no second Game/Remote or general background monitoring.
+- Preserves the 9-second individual timeout and owner-issued clear(session). Explicit author closeRound hook remains mandatory for formal integration; fallback is defense in depth.
+- Native source-exact mock covers terminal phase, winner, destroyed folder, duplicate/stale callback, plus existing two game modes/egg/NPC/hazard and 23-script Rojo audit.
+- No original-author #482 Lua scripts altered; official RC adoption still zero until #218 hard claim plus #220 original author authorized source selection and real Studio/Android tests.
