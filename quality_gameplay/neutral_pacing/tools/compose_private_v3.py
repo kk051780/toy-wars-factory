@@ -68,6 +68,17 @@ def patch_swarm(source: str) -> str:
         '   if batch>0 then\n'
         '    for _=1,batch do\n',
     )
+    # A real Humanoid.Died callback may arrive after a castle falls or after
+    # the match has ended. Never credit a dead/evicted participant for stale KO.
+    # This is still the SAME original neutral Died callback; no parallel scorer.
+    source = replace_once(
+        source,
+        '   if type(id)=="string" and session.rules.castles[id] then\n',
+        '   if type(id)=="string" and session.rules.phase=="ACTIVE"\n'
+        '    and session.rules.castles[id] and session.rules.castles[id].alive then\n',
+    )
+    assert source.count('session.rules.phase=="ACTIVE"') >= 3
+    assert source.count('and session.rules.castles[id].alive then') == 1
     assert source.count("SpawnPacing.step(") == 1
     assert source.count("local function credit(") == 1
     assert source.count("ImpactFeedback.ko(") == 1
