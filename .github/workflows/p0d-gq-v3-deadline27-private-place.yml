@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: kk051780/toy-wars-factory
-          ref: cc13acabb582f757a96e60fb41d2b75e112268ee
+          ref: 81088f99b2ea60bbffc0eaa860c46338203f0808
           path: _fixed_quality
           persist-credentials: false
       - name: Checkout original game author's 21 sources
@@ -47,7 +47,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git -C _fixed_quality rev-parse HEAD)" = cc13acabb582f757a96e60fb41d2b75e112268ee
+          test "$(git -C _fixed_quality rev-parse HEAD)" = 81088f99b2ea60bbffc0eaa860c46338203f0808
           test "$(git -C _fixed_game rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
           test "$(git -C _fixed_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
           test "$(git -C _fixed_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
@@ -127,6 +127,13 @@ jobs:
           cp "$score/tests/run_score_balance_native.luau" /tmp/p0d_score_native/Runner.luau
           (cd /tmp/p0d_score_native && /tmp/p0d_gq_luau/luau Runner.luau) | tee artifacts/SCORE_NATIVE.log
           grep -q MATCH_RESULT_POSTGAME_SCORE_NATIVE_ONLY artifacts/SCORE_NATIVE.log
+          python3 quality_gameplay/v3_match_deadline_20261116/tools/make_native_cross_domain_harness.py \
+            --rules _fixed_game/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --score _fixed_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_ScoreBalance.luau \
+            --policy quality_gameplay/v3_match_deadline_20261116/EGGRUMBLE_DeadlinePolicy.luau \
+            --out /tmp/eggrumble_real_rules_score_timeout.luau
+          /tmp/p0d_gq_luau/luau-compile --text /tmp/eggrumble_real_rules_score_timeout.luau >/dev/null
+          /tmp/p0d_gq_luau/luau /tmp/eggrumble_real_rules_score_timeout.luau
       - name: Acquire checksum-pinned Rojo 7.7.1
         shell: bash
         run: |
