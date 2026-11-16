@@ -1,0 +1,76 @@
+name: P0D GQ Bot Human PvP Mode/Session Fence native source QA
+
+on:
+  pull_request:
+    paths:
+      - "quality_gameplay/v3_bot_human_match_membership_20261116/**"
+      - ".github/workflows/p0d-gq-v3-bot-human-membership.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bot-human-membership:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      OWNER_SHA: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+      GQ_OWNER_SOURCE_DIR: /tmp/p0d-v3-original-owner
+      GQ_PATCHED_DIR: /tmp/p0d-v3-gq-bot-patched
+      GQ_DIR: quality_gameplay/v3_bot_human_match_membership_20261116
+      SOURCE_ROOT: handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch source-exact original #482 only (never modify author or RC)
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$OWNER_SHA"
+          mkdir -p "$GQ_OWNER_SOURCE_DIR"
+          for name in EGGRUMBLE_LobbyCastleModesPreview.server.luau EGGRUMBLE_BotActors.luau; do
+            git show "$OWNER_SHA:$SOURCE_ROOT/$name" > "$GQ_OWNER_SOURCE_DIR/$name"
+          done
+      - name: Build exact two-source overlay and pin lock (refuse drift)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 "$GQ_DIR/compose.py" \
+            --source-dir "$GQ_OWNER_SOURCE_DIR" \
+            --out-dir "$GQ_PATCHED_DIR"
+          python3 -m unittest discover -s "$GQ_DIR" -p 'test_*.py' -v
+      - name: Build open-source native Luau CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth=1 https://github.com/luau-lang/luau.git /tmp/p0d-native-luau
+          cmake -S /tmp/p0d-native-luau -B /tmp/p0d-native-luau/build \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/p0d-native-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+      - name: Compile actual patched Host and BotActors and run 9 negatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in EGGRUMBLE_LobbyCastleModesPreview.server.luau EGGRUMBLE_BotActors.luau; do
+            /tmp/p0d-native-luau/build/luau-compile "$GQ_PATCHED_DIR/$name" > /dev/null
+          done
+          python3 "$GQ_DIR/make_native_membership_harness.py" \
+            --patched-host "$GQ_PATCHED_DIR/EGGRUMBLE_LobbyCastleModesPreview.server.luau" \
+            --out /tmp/p0d-bot-human-membership-native.luau
+          /tmp/p0d-native-luau/build/luau-compile /tmp/p0d-bot-human-membership-native.luau > /dev/null
+          /tmp/p0d-native-luau/build/luau /tmp/p0d-bot-human-membership-native.luau
+      - name: Preserve exact candidate evidence (not official Place)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gq-v3-bot-human-membership-source-lock
+          path: |
+            /tmp/p0d-v3-gq-bot-patched/*.luau
+            /tmp/p0d-v3-gq-bot-patched/overlay_source_lock.json
+          if-no-files-found: warn
+      - name: Mark honest downstream gates
+        run: |
+          echo "ORIGINAL_#482_AUTHOR_SOURCE=UNCHANGED"
+          echo "GAMEPLAY=SOURCE_CANDIDATE"
+          echo "FORMAL_RC_AUTH_CAS=NOT_DONE"
+          echo "STUDIO_1_2_CLIENT/ANDROID/FUN/ART/OWNER=NOT_TESTED"
