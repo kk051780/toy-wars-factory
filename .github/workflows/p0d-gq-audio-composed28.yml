@@ -131,6 +131,14 @@ jobs:
           python3 quality/eggrumble_hit_audio_20261116/tools/make_native_hit_audio_harness.py --out /tmp/eggrumble-gq-audio-native.luau
           /tmp/gq27_native/luau-compile --text /tmp/eggrumble-gq-audio-native.luau >/dev/null
           /tmp/gq27_native/luau /tmp/eggrumble-gq-audio-native.luau
+      - name: Verify actual #482 server-confirmed hit to #504 audio client in the same native VM
+        run: |
+          set -euo pipefail
+          python3 quality/eggrumble_hit_audio_20261116/tools/make_native_hit_pipeline_harness.py \
+            --author-impact _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_ImpactFeedback.luau \
+            --out /tmp/eggrumble-gq-hit-authoritative-pipeline.luau
+          /tmp/gq27_native/luau-compile --text /tmp/eggrumble-gq-hit-authoritative-pipeline.luau >/dev/null
+          /tmp/gq27_native/luau /tmp/eggrumble-gq-hit-authoritative-pipeline.luau
       - name: Reuse #484 author's actual native bot path retarget regression
         run: |
           set -euo pipefail
