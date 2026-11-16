@@ -36,6 +36,7 @@
     "original_item489": "03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd",
     "bot_nearest555": "cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d",
     "original_route536": "cdf4fe5f231c998532963c5c16d9525d20a69e7e",
+    "castle_board547": "b8c6774a3b9b886dd46c60dd9e8722c0cb6a4125",
     "boss_wave518": "f31081d5cb2bea86d01c76c53bb60cd2f9a8355d"
   },
   "feature_flags": {
@@ -51,6 +52,7 @@
     "ORIGINAL_ITEM_AUTHOR_489": true,
     "BOT_NEAREST_CURRENT_HUMAN_555": true,
     "BOT_ROUTE_FULLSTEP_536": true,
+    "CASTLE_EGG_BOARD_DISTANCE_547": true,
     "BOSS_SHOCKWAVE_WALL_OCCLUSION_518": true
   },
   "native_gate": "31 original source compiles ON/OFF + original 84 skill + 14 membership; current exact #541 selected Swarm and full canonical selected 31 native recompilation; current #537 Host + original #540 one-callback source selection, final 31 native; #489 source select after original #539 Host / #541 Swarm all31 native; original #555 nearest eligible human actual 6 native cases; last BotActors selected 31/31 native; original #536 full-step nav native differential + selected current31",
@@ -108,5 +110,18 @@
     "android": "NOT_TESTED",
     "owner_fun": "NO_GO"
   },
-  "selected_candidate_555_studio_tested": false
+  "selected_candidate_555_studio_tested": false,
+  "gq547": {
+    "author_pr": 547,
+    "original_head": "b8c6774a3b9b886dd46c60dd9e8722c0cb6a4125",
+    "base_rc_head": "e0b82e8d29c0d33889cb8e16607a69de0285eca2",
+    "source_count": 31,
+    "other_scripts_byte_exact": 30,
+    "scope": "Only original #547 core65stud + vault40stud existing GUI properties, preserve #536 Router/#555 bot/#489 item/#539 lobby/#540/#537/#541",
+    "rollback": "Remove two GUI additions and restore immediately previous canonical #536 Host",
+    "studio": "NOT_TESTED",
+    "android": "NOT_TESTED",
+    "owner_fun": "NO_GO",
+    "status": "PREMERGE_CANDIDATE_UNTIL_SINGLE_RC_CAS_AND_SAMEHEAD_CI"
+  }
 }
