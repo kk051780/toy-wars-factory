@@ -65,6 +65,7 @@ function Tell.start(session:any):boolean
   or field.Parent ~= session.world then return false end
  session._carrierWorldTellStarted = true
  local records:{[string]:any} = {}
+ local faulted:{[string]:boolean} = {}
  task.spawn(function()
   -- This is optional visual QA. A malformed/replaced actor Model must not
   -- leave the session stuck "started" or leak labels into future rounds.
@@ -75,6 +76,9 @@ function Tell.start(session:any):boolean
    and session.carrierWorldTellEnabled ~= false do
    for _,entry in ipairs(session.roster) do
     local id = tostring(entry.id)
+    -- One malformed avatar must not blank the other 15 player markers.
+    -- Isolate its cosmetic inspection, not the original game/Rules code.
+    local seatOk,seatError = pcall(function()
     local castle = session.rules.castles[id]
     local actor = actorFor(session,entry)
     local root = actor and actor:FindFirstChild("HumanoidRootPart")
@@ -119,6 +123,21 @@ function Tell.start(session:any):boolean
      if old.count ~= castle.heldEggs or old.label.Text ~= caption then
       old.label.Text = caption
       old.count = castle.heldEggs
+     end
+    end
+    end)
+    if seatOk then
+     faulted[id] = nil
+    else
+     local damaged = records[id]
+     if damaged then
+      -- Never let a broken cosmetic Instance abort other seats' inspection.
+      pcall(destroyRecord,damaged)
+      records[id] = nil
+     end
+     if not faulted[id] then
+      faulted[id] = true
+      warn("[GQ511] optional carrier actor label isolated: "..tostring(seatError))
      end
     end
    end
