@@ -63,6 +63,13 @@ jobs:
           ref: e232b9a8411879c2c1a945c0a8ed09233ca73fff
           path: _combo_original
           persist-credentials: false
+      - name: Reuse original quality writer #514 BOSS-credit two-source observer
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: d20fa69a59da6499796a76929533cf0f1d3563d0
+          path: _boss_original
+          persist-credentials: false
       - name: Pin original writer HEADs and only make a local ITEM copy
         shell: bash
         run: |
@@ -223,6 +230,52 @@ jobs:
           assert r["official_rc_integrated"] is False
           print("GQ_517_ITEM_PLUS_512_COMBO_PRIVATE28_EXACT_PASS",r["place_bytes"],r["place_sha256"])
           PY
+      - name: Reuse original #514 author BOSS composer and native source-exact verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _boss_original rev-parse HEAD)" = d20fa69a59da6499796a76929533cf0f1d3563d0
+          python3 _boss_original/quality_gameplay/v3_boss_credit_round_fence_20261116/compose_current28.py \
+            --original artifacts/ITEM_GQ_HEAL26.project.json --out artifacts/ITEM_GQ_HEAL_BOSS28.project.json
+          /tmp/gq_heal_rojo build artifacts/ITEM_GQ_HEAL_BOSS28.project.json -o artifacts/ITEM_GQ_HEAL_BOSS28_PRIVATE_NOT_RC.rbxlx
+          python3 _boss_original/quality_gameplay/v3_boss_credit_round_fence_20261116/verify_current28.py \
+            --original artifacts/ITEM_GQ_HEAL26.project.json \
+            --project artifacts/ITEM_GQ_HEAL_BOSS28.project.json \
+            --place artifacts/ITEM_GQ_HEAL_BOSS28_PRIVATE_NOT_RC.rbxlx \
+            --receipt artifacts/ITEM_GQ_HEAL_BOSS28_SOURCE_RECEIPT.json
+          python3 quality_gameplay/v3_heal_no_waste_20261116/cross_author30.py policy \
+            --combo _combo_original/quality_gameplay/v3_round_attribute_fence_20261116/EGGRUMBLE_RoundAttributeFence.luau \
+            --boss _boss_original/quality_gameplay/v3_boss_credit_round_fence_20261116/EGGRUMBLE_BossCreditPolicy.luau \
+            --out artifacts/ORIGINAL_COMBO_BOSS_BOUNDARIES.native.luau
+          /tmp/gq_heal_native/luau-compile --text artifacts/ORIGINAL_COMBO_BOSS_BOUNDARIES.native.luau >/dev/null
+          /tmp/gq_heal_native/luau artifacts/ORIGINAL_COMBO_BOSS_BOUNDARIES.native.luau | tee artifacts/ORIGINAL_COUNTER_BOUNDARIES.log
+          grep -q GQ_517_512_514_REAL_AUTHOR_POLICY_BOUNDARY_PASS artifacts/ORIGINAL_COUNTER_BOUNDARIES.log
+      - name: Real combined 30-source ITEM COMBO BOSS Place with strict dual-author mapping
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_heal_no_waste_20261116/cross_author30.py compose \
+            --combo artifacts/ITEM_GQ_HEAL_COMBO28.project.json \
+            --boss artifacts/ITEM_GQ_HEAL_BOSS28.project.json \
+            --out artifacts/ITEM_GQ_HEAL_COMBO_BOSS30.project.json \
+            --receipt artifacts/ITEM_GQ_HEAL_COMBO_BOSS30_RECEIPT.json
+          /tmp/gq_heal_rojo build artifacts/ITEM_GQ_HEAL_COMBO_BOSS30.project.json \
+            -o artifacts/ITEM_GQ_HEAL_COMBO_BOSS30_PRIVATE_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_heal_no_waste_20261116/cross_author30.py verify \
+            --project artifacts/ITEM_GQ_HEAL_COMBO_BOSS30.project.json \
+            --place artifacts/ITEM_GQ_HEAL_COMBO_BOSS30_PRIVATE_NOT_RC.rbxlx \
+            --receipt artifacts/ITEM_GQ_HEAL_COMBO_BOSS30_RECEIPT.json \
+            --compiler /tmp/gq_heal_native/luau-compile
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GQ-517-512-514-PRIVATE30-SOURCE-EXACT-NOT-OFFICIAL-RC
+          path: |
+            artifacts/ITEM_GQ_HEAL_COMBO_BOSS30_PRIVATE_NOT_RC.rbxlx
+            artifacts/ITEM_GQ_HEAL_COMBO_BOSS30.project.json
+            artifacts/ITEM_GQ_HEAL_COMBO_BOSS30_RECEIPT.json
+            artifacts/ITEM_GQ_HEAL_BOSS28_SOURCE_RECEIPT.json
+            artifacts/ORIGINAL_COUNTER_BOUNDARIES.log
+          retention-days: 2
       - uses: actions/upload-artifact@v4
         with:
           name: GQ-HEAL-ITEM-PLUS-ORIGINAL-COMBO-PRIVATE28-NOT-RC
