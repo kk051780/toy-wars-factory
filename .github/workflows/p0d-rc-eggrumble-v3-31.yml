@@ -562,10 +562,66 @@ jobs:
           test -s artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx
           test -s artifacts/gq539_official_select/GQ539_SELECTED_31_TRUE_ROJO.rbxlx
           echo "PRIVATE_ONE_ORIGINAL_ITEM_SELECTED=PASS; SAME_31_SOURCE_COUNT; OFF=GQ537_SELECTED_31_TRUE_ROJO; FORMAL_RC_WRITE_ONLY_AFTER_AUTH_CAS"
+      - name: Fetch pinned ORIGINAL #551 stale-avatar carrier death author (reuse only)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 93d774bf3aaecd0e7714d64a7f970003698d69ef
+          path: _gq551_original
+          persist-credentials: false
+      - name: Source-select original #551 Died callback only after canonical #541/#537/#540/#539/#489
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq551_original rev-parse HEAD)" = 93d774bf3aaecd0e7714d64a7f970003698d69ef
+          python3 -B -m unittest discover -v \
+            -s _gq551_original/quality_gameplay/v3_carrier_stale_avatar_20261116/tests -p 'test_*.py'
+          mkdir -p artifacts/gq551_official_select
+          python3 -B rc_fastlane/quality_carrier551_rc31/select_original_carrier551.py prepare \
+            --base artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json \
+            --out artifacts/gq551_official_select/GQ551_SELECTED31.project.json \
+            --author _gq551_original/quality_gameplay/v3_carrier_stale_avatar_20261116/tools/compose.py
+          python3 - <<'PY'
+          import subprocess,sys
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_carrier551_rc31")
+          from select_original_carrier551 import flatten
+          _,sources=flatten(Path("artifacts/gq551_official_select/GQ551_SELECTED31.project.json"))
+          assert len(sources)==31
+          for src in sources.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(src)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ551_SOURCE_SELECT_ALL_31_NATIVE_COMPILE_PASS")
+          PY
+      - name: Run ACTUAL original Host Humanoid.Died callback 7 states; old-guard mutant MUST fail
+        shell: bash
+        run: |
+          set -euo pipefail
+          dir=artifacts/gq551_official_select
+          /tmp/gq530_all31_native/luau-compile --text "$dir/GQ551_ACTUAL_HOST_DIED_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$dir/GQ551_ACTUAL_HOST_DIED_NATIVE.luau" | tee /tmp/gq551_native.log
+          grep -q "GQ_STALE_AVATAR_CARRIER_REAL_CALLBACK_NATIVE=PASS 7 CASES" /tmp/gq551_native.log
+          if /tmp/gq530_all31_native/luau "$dir/GQ551_OLD_GUARD_MUTANT.luau" >/tmp/gq551_mutant.log 2>&1; then
+            echo 'RED: stale-avatar carrier original unguarded mutation incorrectly passed'; exit 1
+          fi
+          grep -q "stale avatar death may not drop new avatar eggs" /tmp/gq551_mutant.log
+          echo GQ551_STALE_AVATAR_OLD_GUARD_MUTANT_REJECTED
+      - name: Rojo actual single-Host selected canonical 31 original source+class exact
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/gq530-all31-rojo build artifacts/gq551_official_select/GQ551_SELECTED31.project.json \
+            -o artifacts/gq551_official_select/GQ551_SELECTED31_TRUE_ROJO.rbxlx
+          python3 -B rc_fastlane/quality_carrier551_rc31/select_original_carrier551.py verify \
+            --base artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json \
+            --out artifacts/gq551_official_select/GQ551_SELECTED31.project.json \
+            --author _gq551_original/quality_gameplay/v3_carrier_stale_avatar_20261116/tools/compose.py \
+            --place artifacts/gq551_official_select/GQ551_SELECTED31_TRUE_ROJO.rbxlx
+          echo GQ551_EXISTING_ORIGINAL_551_ON31_REAL_ROJO_EXACT_AND_30_SOURCE_PRESERVED_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq551_official_select/GQ551_SELECTED31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -581,7 +637,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq551_official_select/GQ551_SELECTED31_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -603,7 +659,14 @@ jobs:
           item489=json.loads(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_text())
           assert item489["real_rojo_source_and_class_exact"]=="31/31"
           assert item489["unchanged_source_count"]==30
-          assert item489["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert item489["private_place_sha256"]==hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          gq551=json.loads(Path("artifacts/gq551_official_select/GQ551_RC31_SOURCE_RECEIPT.json").read_text())
+          assert gq551["real_rojo_source_class_exact"]=="31/31"
+          assert gq551["previous_other_30_sources_byte_exact"]==30
+          assert gq551["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq551["original_541_swarm_preserved"] if "original_541_swarm_preserved" in gq551 else gq551["original_current_541_swarm_preserved"]
+          assert m["feature_flags"]["CARRIER_STALE_AVATAR_DIED_551"]
+          assert m["source_heads"]["carrier_respawn551"]=="93d774bf3aaecd0e7714d64a7f970003698d69ef"
           assert m["feature_flags"]["ORIGINAL_ITEM_AUTHOR_489"] and m["source_heads"]["original_item489"]=="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
           assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
@@ -624,6 +687,11 @@ jobs:
             "original_author_540_added_in_same_537_host":True,
             "original_source_539_added_in_same_540_host":True,
             "original_author_489_item_source_selected":True,
+            "original_author_551_current_avatar_egg_carrier_selected":True,
+            "gq551_original_author_receipt_sha256":hashlib.sha256(Path("artifacts/gq551_official_select/GQ551_RC31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
+            "gq551_previous_30_script_bytes_preserved":30,
+            "gq551_real_original_host_died_callback_native_7_cases":True,
+            "gq551_previous_unguarded_mutant_rejected":True,
             "original_489_item_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "gq539_one_host_rollback_byte_exact":True,
             "gq539_selected_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json").read_bytes()).hexdigest(),
@@ -675,6 +743,8 @@ jobs:
             artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json
             artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json
             artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json
+            artifacts/gq551_official_select/GQ551_SELECTED31.project.json
+            artifacts/gq551_official_select/GQ551_RC31_SOURCE_RECEIPT.json
           retention-days: 3
       - name: Preserve exact private #489 ITEM RC31 candidate and source-lock receipt (not official RC)
         if: github.event_name == 'pull_request'
