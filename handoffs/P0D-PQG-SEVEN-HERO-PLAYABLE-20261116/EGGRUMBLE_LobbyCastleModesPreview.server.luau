@@ -12,6 +12,7 @@ local SwarmCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SwarmCombat"))
 local InteractionGuard=require(script.Parent:WaitForChild("EGGRUMBLE_InteractionGuard"))
 local ResultService=require(script.Parent:WaitForChild("EGGRUMBLE_MatchResultService"))
 local RoundReplay=require(script.Parent:WaitForChild("EGGRUMBLE_RoundReplay"))
+local RaidAlerts=require(script.Parent:WaitForChild("EGGRUMBLE_RaidAlerts"))
 local SevenRoleCombat=require(script.Parent:WaitForChild("EGGRUMBLE_SevenRoleCombat"))
 -- Existing ITEM author remains the one and only effect/collection implementation.
 local FieldItems=require(script.Parent:WaitForChild("EGGRUMBLE_FieldItemPickups"))
@@ -222,6 +223,8 @@ local function startSession(mode:string)
   return dropped
  end
  session.refresh=function()
+  -- Authoritative event-only objective feedback, no extra HUD or score authority.
+  RaidAlerts.process(session)
   for id,bits in pairs(session.castleModels) do
    local c=session.rules.castles[id]
    if c then
