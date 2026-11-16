@@ -48,7 +48,7 @@ class Private27ContractTests(unittest.TestCase):
             M.overlay("local x=RunService:IsStudio()\n","EGGRUMBLE_BotActors","EGGRUMBLE_BotActors.luau")
 
     def test_host_lease_watch_fails_closed_on_moved_anchor(self):
-        source="--!strict\\nif not RunService:IsStudio() then return end\\n"
+        source="--!strict\nif not RunService:IsStudio() then return end\n"
         with self.assertRaises(ValueError):
             M.overlay(source,"EGGRUMBLE_LobbyCastleModesPreview",
                       "EGGRUMBLE_LobbyCastleModesPreview.server.luau")
