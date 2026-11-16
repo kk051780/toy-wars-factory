@@ -22,6 +22,11 @@ local COLORS = {
 }
 local roleSet:{[string]:boolean}={}
 for _,role in ipairs(HERO_ROLES) do roleSet[role]=true end
+local JAPANESE_LOBBY_TO_ROLE:{[string]:string}={
+ ["武神"]="WARRIOR",["魔法使い"]="MAGE",["暗殺者"]="NINJA",
+ ["超能力者"]="TRAPPER",["マッドサイエンティスト"]="BUILDER",
+ ["魔獣使い"]="BEAST",["呪術師"]="ZOMBIE",
+}
 local marked:{[Instance]:boolean}={}
 
 local function piece(parent:Instance,anchor:BasePart,tag:string,shape:string,
@@ -139,9 +144,12 @@ local function decorateHeroCharacter(player:Player)
  if not char then return end
  -- Full V3 uses SelectedRole in lobby and Role when its real three skills equip.
  -- Legacy SevenHeroArena only uses P0DPreviewRole; keep all three read-only.
+ local previewRole=player:GetAttribute("EGGRUMBLE_LobbyPreviewRole")
+ local fallbackRole=if type(previewRole)=="string" then JAPANESE_LOBBY_TO_ROLE[previewRole] else nil
  local role=player:GetAttribute("EGGRUMBLE_Role")
   or player:GetAttribute("EGGRUMBLE_SelectedRole")
   or player:GetAttribute("P0DPreviewRole")
+  or fallbackRole
  local existing=char:FindFirstChild("EGGRUMBLE_RoleVisuals")
  if existing then existing:Destroy() end
  if type(role)~="string" or not roleSet[role] then return end
@@ -177,8 +185,17 @@ end
 
 local function decorateLobbyRoleStand(stand:BasePart)
  local root=stand.Parent
- if not root or root.Name~="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW" then return end
- local role=stand.Name:match("^ROLE_([A-Z]+)$")
+ if not root then return end
+ local role:string?
+ if root.Name=="EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW" then
+  role=stand.Name:match("^ROLE_([A-Z]+)$")
+ elseif root.Name=="EGGRUMBLE_LobbyUX" then
+  -- Existing original standalone UX author owns JOB_1..JOB_7 and selection prompt.
+  local i=tonumber(stand.Name:match("^JOB_(%d+)$"))
+  if i and i>=1 and i<=#HERO_ROLES then role=HERO_ROLES[i] end
+ else
+  return
+ end
  if not role or not roleSet[role] or marked[stand] then return end
  marked[stand]=true
  local palette=COLORS[role]
@@ -252,7 +269,7 @@ local function decorateAI(model:Model)
 end
 
 local function watchRole(player:Player)
- for _,attribute in ipairs({"P0DPreviewRole","EGGRUMBLE_SelectedRole","EGGRUMBLE_Role"}) do
+ for _,attribute in ipairs({"P0DPreviewRole","EGGRUMBLE_SelectedRole","EGGRUMBLE_Role","EGGRUMBLE_LobbyPreviewRole"}) do
   player:GetAttributeChangedSignal(attribute):Connect(function() decorateHeroCharacter(player) end)
  end
  local function onCharacterAdded(character:Model)
@@ -275,12 +292,12 @@ for _,source in ipairs(workspace:GetChildren()) do connectStandSource(source) en
 workspace.ChildAdded:Connect(connectStandSource)
 for _,instance in ipairs(workspace:GetDescendants()) do
  if instance:IsA("Model") and instance:GetAttribute("EGGRUMBLE_BotId")~=nil then decorateAI(instance) end
- if instance:IsA("BasePart") and instance.Name:match("^ROLE_[A-Z]+$") then decorateLobbyRoleStand(instance) end
+ if instance:IsA("BasePart") and (instance.Name:match("^ROLE_[A-Z]+$") or instance.Name:match("^JOB_%d+$")) then decorateLobbyRoleStand(instance) end
 end
 workspace.DescendantAdded:Connect(function(instance)
  if instance:IsA("Model") and instance.Name:sub(1,9)=="AI_Actor_" then
   task.defer(function() if instance.Parent then decorateAI(instance) end end)
- elseif instance:IsA("BasePart") and instance.Name:match("^ROLE_[A-Z]+$") then
+ elseif instance:IsA("BasePart") and (instance.Name:match("^ROLE_[A-Z]+$") or instance.Name:match("^JOB_%d+$")) then
   task.defer(function() if instance.Parent then decorateLobbyRoleStand(instance) end end)
  elseif instance:IsA("BasePart") and instance.Name=="HumanoidRootPart" then
   local ancestor=instance.Parent
