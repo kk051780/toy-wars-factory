@@ -6,6 +6,7 @@ local RunService=game:GetService("RunService")
 local Debris=game:GetService("Debris")
 local CombatBalance=require(script.Parent:WaitForChild("EGGRUMBLE_CombatBalance"))
 local SkillFX=require(script.Parent:WaitForChild("EGGRUMBLE_SkillFX"))
+local AttackGeometry=require(script.Parent:WaitForChild("EGGRUMBLE_AttackGeometry"))
 local HeroCombat={}
 local ORDER={"WARRIOR","MAGE","NINJA","TRAPPER","BUILDER","BEAST","ZOMBIE"}
 local JOBS={
@@ -44,7 +45,7 @@ local function lineClear(source:Vector3,to:Vector3,first:Model,second:Model):boo
  ray.FilterDescendantsInstances={first,second};ray.RespectCanCollide=true
  return workspace:Raycast(source,delta,ray)==nil
 end
-local function hitBotHeroes(session:any,player:Player,root:BasePart,char:Model,center:Vector3,range:number,damage:number):number
+local function hitBotHeroes(session:any,player:Player,root:BasePart,char:Model,center:Vector3,range:number,damage:number,shape:string):number
  local state=session.rules.castles[tostring(player.UserId)]
  if not state or not state.alive then return 0 end
  local count=0
@@ -54,7 +55,7 @@ local function hitBotHeroes(session:any,player:Player,root:BasePart,char:Model,c
   local h=enemy and enemy:FindFirstChildOfClass("Humanoid")
   if target and target.alive and (session.mode~="TEAM" or target.team~=state.team)
    and er and h and h.Health>0
-   and (er.Position-center).Magnitude<=range
+   and AttackGeometry.allowed(root.Position,center,er.Position,range,shape)
    and (er.Position-root.Position).Magnitude<=36
    and count<5 and lineClear(root.Position+Vector3.new(0,1.5,0),er.Position,char,enemy) then
    -- War God has a deliberate single-target duelist edge against a lone opponent.
@@ -77,7 +78,7 @@ local function hitBotHeroes(session:any,player:Player,root:BasePart,char:Model,c
  end
  return count
 end
-local function hitHumanHeroes(session:any,p:Player,root:BasePart,char:Model,center:Vector3,range:number,damage:number):number
+local function hitHumanHeroes(session:any,p:Player,root:BasePart,char:Model,center:Vector3,range:number,damage:number,shape:string):number
  local state=session.rules.castles[tostring(p.UserId)]
  if not state or not state.alive then return 0 end
  local count=0
@@ -87,7 +88,7 @@ local function hitHumanHeroes(session:any,p:Player,root:BasePart,char:Model,cent
   if enemyPlayer~=p and enemyState and enemyState.alive
    and (session.mode~="TEAM" or enemyState.team~=state.team)
    and enemyChar and enemyRoot and enemyHum and enemyHum.Health>0
-   and (enemyRoot.Position-center).Magnitude<=range
+   and AttackGeometry.allowed(root.Position,center,enemyRoot.Position,range,shape)
    and (enemyRoot.Position-root.Position).Magnitude<=36
    and count<4 and lineClear(root.Position+Vector3.new(0,1.5,0),
     enemyRoot.Position+Vector3.new(0,1,0),char,enemyChar) then
@@ -102,12 +103,12 @@ local function hitHumanHeroes(session:any,p:Player,root:BasePart,char:Model,cent
  end
  return count
 end
-local function neutralAndBotHit(session:any,p:Player,root:BasePart,char:Model,at:Vector3,range:number,damage:number,c:Color3):number
+local function neutralAndBotHit(session:any,p:Player,root:BasePart,char:Model,at:Vector3,range:number,damage:number,c:Color3,shape:string):number
  -- Both hit APIs are SERVER-owned; neutral KO credit only comes from Humanoid.Died.
  local count=0
- if session.swarm then count+=session.swarm.damageFromPlayer(p,at,range,damage) end
- count+=hitBotHeroes(session,p,root,char,at,range,damage)
- count+=hitHumanHeroes(session,p,root,char,at,range,damage)
+ if session.swarm then count+=session.swarm.damageFromPlayer(p,at,range,damage,shape) end
+ count+=hitBotHeroes(session,p,root,char,at,range,damage,shape)
+ count+=hitHumanHeroes(session,p,root,char,at,range,damage,shape)
  makeEffect(session.world,at,Vector3.new(range*1.3,2,range*1.3),c,.35)
  return count
 end
@@ -155,7 +156,7 @@ end
 -- Status effects are real server damage / movement changes (not only colored VFX).
 -- Hard caps and team checks keep control roles useful without stun-locking a duel.
 local function secondaryEffect(session:any,p:Player,root:BasePart,char:Model,
- center:Vector3,radius:number,effect:string)
+ center:Vector3,radius:number,effect:string,shape:string)
  if effect~="CHILL_2S" and effect~="SLOW_3S" and effect~="BURN_3S"
   and effect~="MARK" and effect~="PUSH" and effect~="PREDATOR" then return end
  local state=session.rules.castles[tostring(p.UserId)]
@@ -202,7 +203,7 @@ local function secondaryEffect(session:any,p:Player,root:BasePart,char:Model,
   local hum=actor and actor:FindFirstChildOfClass("Humanoid")
   if target and target.alive and enemy and hum
    and (session.mode~="TEAM" or target.team~=state.team)
-   and (enemy.Position-center).Magnitude<=radius
+   and AttackGeometry.allowed(root.Position,center,enemy.Position,radius,shape)
    and (enemy.Position-root.Position).Magnitude<=36
    and lineClear(root.Position+Vector3.new(0,1,0),enemy.Position,char,actor) then
    apply(hum,actor)
@@ -213,7 +214,7 @@ local function secondaryEffect(session:any,p:Player,root:BasePart,char:Model,
   local enemyChar,enemyRoot,hum=characterOf(targetPlayer)
   if targetPlayer~=p and target and target.alive and enemyChar and enemyRoot and hum
    and (session.mode~="TEAM" or target.team~=state.team)
-   and (enemyRoot.Position-center).Magnitude<=radius
+   and AttackGeometry.allowed(root.Position,center,enemyRoot.Position,radius,shape)
    and (enemyRoot.Position-root.Position).Magnitude<=36
    and lineClear(root.Position+Vector3.new(0,1,0),enemyRoot.Position, char,enemyChar) then
    apply(hum,nil)
@@ -247,8 +248,8 @@ local function execute(session:any,p:Player,role:string,slot:string)
   local area=radius or spec.radius
   local amount=damage or spec.damage
   local center=rootAdvance(root,forward)
-  local hits=neutralAndBotHit(session,p,root,char,center,area,amount*boost,def.color)
-  secondaryEffect(session,p,root,char,center,area,spec.effect)
+  local hits=neutralAndBotHit(session,p,root,char,center,area,amount*boost,def.color,spec.shape)
+  secondaryEffect(session,p,root,char,center,area,spec.effect,spec.shape)
   SkillFX.emit(session.world,role,slot,root.Position,root.CFrame.LookVector,center,area)
   return hits
  end
