@@ -950,10 +950,48 @@ jobs:
             --out artifacts/gq538_official_select/GQ580_FINAL_SELECTED31.project.json \
             --place artifacts/gq538_official_select/GQ580_FINAL31_TRUE_ROJO.rbxlx
           echo GQ580_OFFICIAL_CANDIDATE_SINGLE_BOT_30_PRESERVED_SOURCE_CLASS_31_NATIVE_PASS
+      - name: GQ586 current-session own-egg deposit select on single Host; 31 Native and true Rojo exact
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -v -s rc_fastlane/quality_deposit_membership_20261116 -p 'test_selection.py'
+          python3 -B rc_fastlane/quality_deposit_membership_20261116/select_deposit.py prepare \
+            --base artifacts/gq538_official_select/GQ580_FINAL_SELECTED31.project.json \
+            --out artifacts/gq538_official_select/GQ586_FINAL_SELECTED31.project.json
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          m=SourceFileLoader("gq586_map","rc_fastlane/select_gq541_original_neutral_fallback.py").load_module()
+          _,sources=m.flatten(Path("artifacts/gq538_official_select/GQ586_FINAL_SELECTED31.project.json"))
+          assert len(sources)==31
+          for path in sources.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ586_REAL_SELECTED31_NATIVE_COMPILE_PASS")
+          PY
+          python3 -B rc_fastlane/quality_deposit_membership_20261116/make_native_harness.py \
+            --host artifacts/gq538_official_select/GQ586_CURRENT_MATCH_HOST.server.luau \
+            --out artifacts/gq538_official_select/GQ586_ACTUAL_CALLBACK_NATIVE8.luau
+          /tmp/gq530_all31_native/luau-compile --text \
+            artifacts/gq538_official_select/GQ586_ACTUAL_CALLBACK_NATIVE8.luau >/dev/null
+          /tmp/gq530_all31_native/luau \
+            artifacts/gq538_official_select/GQ586_ACTUAL_CALLBACK_NATIVE8.luau \
+            | tee artifacts/gq538_official_select/GQ586_NATIVE8_RESULT.txt
+          grep -q GQ_DEPOSIT_CURRENT_SESSION_ACTUAL_HOST_NATIVE_8_CASES_PASS \
+            artifacts/gq538_official_select/GQ586_NATIVE8_RESULT.txt
+          /tmp/gq530-all31-rojo build \
+            artifacts/gq538_official_select/GQ586_FINAL_SELECTED31.project.json \
+            -o artifacts/gq538_official_select/GQ586_FINAL31_TRUE_ROJO.rbxlx
+          python3 -B rc_fastlane/quality_deposit_membership_20261116/select_deposit.py verify \
+            --base artifacts/gq538_official_select/GQ580_FINAL_SELECTED31.project.json \
+            --out artifacts/gq538_official_select/GQ586_FINAL_SELECTED31.project.json \
+            --place artifacts/gq538_official_select/GQ586_FINAL31_TRUE_ROJO.rbxlx
+          echo "GQ586_SINGLE_DEPOSIT_GUARD_OTHER30_PRESERVED_REAL_ROJO31_PASS"
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq538_official_select/GQ580_FINAL31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq538_official_select/GQ586_FINAL31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -969,7 +1007,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq538_official_select/GQ580_FINAL31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq538_official_select/GQ586_FINAL31_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1024,6 +1062,12 @@ jobs:
           assert ko508["original_author508_policy_git_blob"]=="00eed6aa306656eded1e3c9fc62acdf1a86ce248"
           gq580=json.loads(Path("artifacts/gq538_official_select/GQ580_PRIVATE31_RECEIPT.json").read_text())
           assert gq580["source_count"]==31 and gq580["others_byte_exact"]==30
+          gq586=json.loads(Path("artifacts/gq538_official_select/GQ586_SOURCE_RECEIPT.json").read_text())
+          assert gq586["real_rojo_source_class_exact"]=="31/31" and gq586["other_30_byte_exact"]
+          assert gq586["rollback_host_exact"] and gq586["source_count"]==31
+          assert gq586["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["source_heads"]["deposit_membership586"]=="38e78750a93af66b7e21ee153e106b2ca71fe6de"
+          assert m["feature_flags"]["DEPOSIT_CURRENT_SESSION_586"] is True
           assert gq580["rollback_bot_exact"] and gq580["real_rojo_exact"]=="31/31"
           assert gq580["formal_rc_adopted"] is False
           assert gq580["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
@@ -1069,6 +1113,9 @@ jobs:
             "original_author_517_single_item_heal_guard_selected":True,
             "original_517_heal_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ517_HEAL_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "original_author_580_ai_takeover_terminal_fence_in_one_bot":True,
+            "gq586_current_session_egg_deposit_guard_selected":True,
+            "gq586_only_current_host_changed_other30_byte_exact":True,
+            "gq586_selected_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ586_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
             "gq580_other_30_existing_source_bytes_exact":True,
             "gq580_receipt_sha256":hashlib.sha256(Path("artifacts/gq538_official_select/GQ580_PRIVATE31_RECEIPT.json").read_bytes()).hexdigest(),
             "original_author_508_neutral_ko_death_credit_selected_inline":True,
@@ -1156,6 +1203,10 @@ jobs:
             artifacts/gq538_official_select/GQ580_FINAL31_TRUE_ROJO.rbxlx
             artifacts/gq538_official_select/GQ580_PRIVATE31_RECEIPT.json
             artifacts/gq538_official_select/GQ580_NATIVE7_RESULT.txt
+            artifacts/gq538_official_select/GQ586_FINAL_SELECTED31.project.json
+            artifacts/gq538_official_select/GQ586_FINAL31_TRUE_ROJO.rbxlx
+            artifacts/gq538_official_select/GQ586_SOURCE_RECEIPT.json
+            artifacts/gq538_official_select/GQ586_NATIVE8_RESULT.txt
             artifacts/gq538_official_select/GQ_ITEM489_HEAL517_SINGLE.luau
             artifacts/gq538_official_select/GQ538_NATIVE15_RESULT.log
             artifacts/gq530_all31/GQ31_OFF_PRIVATE.rbxlx
