@@ -31,7 +31,7 @@ class RoundReplayContract(unittest.TestCase):
         for line in ("if sessions[mode]~=session or (not abandoned and session.rules.phase~=\"FINISHED\") then return end",
                      "sessions[mode]=nil","queues[mode]={}","queueEpoch[mode]+=1",
                      "local expectedEpoch=queueEpoch[mode]",
-                     "if queueEpoch[mode]==expectedEpoch then startSession(mode) end"):
+                     "RoundReplay.canStartCountdown(mode,expectedEpoch,queues,queueEpoch,sessions)"):
             with self.subTest(line=line):
                 self.assertIn(line,LOBBY)
         self.assertNotIn("sessions={}",LOBBY)
@@ -72,6 +72,24 @@ class RoundReplayContract(unittest.TestCase):
         self.assertIn("if not abandoned and scene.takeover then", LOBBY)
         self.assertIn("if session.world.Parent then session.world:Destroy() end", LOBBY)
         self.assertNotIn("session.rules.winner=\"AI_1\"", LOBBY)
+
+    def test_gate_toggle_and_mode_switch_without_extra_hud(self):
+        self.assertIn("function Replay.leaveWaitingQueue(",REPLAY)
+        self.assertIn("function Replay.canStartCountdown(",REPLAY)
+        self.assertIn("if sessions[mode] or joined[p.UserId]~=mode then return false end",REPLAY)
+        self.assertIn("if #q==0 then",REPLAY)
+        self.assertIn("queueEpoch[mode]=(queueEpoch[mode] or 0)+1",REPLAY)
+        self.assertIn("queueEpoch[mode]==expectedEpoch",REPLAY)
+        self.assertIn("sessions[mode]==nil and waiting~=nil and #waiting>0",REPLAY)
+        self.assertIn("if sessions[previous] then return end",LOBBY)
+        self.assertIn("RoundReplay.leaveWaitingQueue(previous,p,queues,joined,queueEpoch,sessions)",LOBBY)
+        self.assertIn("if previous==mode then return end",LOBBY)
+        self.assertIn("RoundReplay.leaveWaitingQueue(mode,p,queues,joined,queueEpoch,sessions)",LOBBY)
+        self.assertIn('p:SetAttribute("EGGRUMBLE_QueuedMode",nil)',LOBBY)
+        self.assertIn('チーム戦（再操作で解除）',LOBBY)
+        self.assertIn('BR戦（再操作で解除）',LOBBY)
+        self.assertNotIn("ScreenGui",REPLAY)
+        self.assertNotIn("RemoteEvent",REPLAY)
 
     def test_single_rojo_game_host_and_no_remote_or_stores(self):
         scripts=PROJECT["tree"]["ServerScriptService"]
