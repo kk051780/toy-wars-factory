@@ -35,7 +35,7 @@ def patch_swarm(source: str) -> str:
     source = replace_one(source,
         'local function aliveTargets():{Vector3}\n   local a={}',
         'local function aliveTargets():({Vector3},{string})\n   local a={}\n'
-        '   local kinds:{}={}',
+        '   local kinds:{string}={}',
         "target_interface")
     source = replace_one(source,
         'if root then table.insert(a,root.Position) end',
