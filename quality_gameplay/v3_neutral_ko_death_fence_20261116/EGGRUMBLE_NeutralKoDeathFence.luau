@@ -13,7 +13,7 @@ function Fence.decide(phase: any, winner: any, attackerAlive: any, neutralInCurr
 end
 
 -- Invoke only INSIDE the original SwarmCombat h.Died callback; never from clients.
--- The original callback still owns attribution, ImpactFeedback and credit().
+-- The original callback still owns attribution, impact visuals and KO tally.
 function Fence.mayCredit(session: any, id: any, model: any, hordeFolder: any): boolean
     if type(id) ~= "string" or id == "" then return false end
     if not session or not session.rules or not session.rules.castles then return false end
