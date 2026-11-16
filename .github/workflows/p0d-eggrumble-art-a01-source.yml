@@ -34,6 +34,27 @@ jobs:
             --out .art-preview-generated/EGGRUMBLE_V3_CURRENT_ART_STUDIO.project.json
           python3 -m json.tool .art-preview-generated/EGGRUMBLE_V3_CURRENT_ART_STUDIO.project.json >/dev/null
           echo "Combined mapping is generated for source inspection; Native/Rojo/Studio still NOT_RUN"
+      - name: Build authoritative open-source Luau compiler for actual art syntax
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/eggrumble-art-a01-luau
+          cmake -S /tmp/eggrumble-art-a01-luau -B /tmp/eggrumble-art-a01-luau/build \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/eggrumble-art-a01-luau/build --target Luau.Compile.CLI -j 4
+          test -x /tmp/eggrumble-art-a01-luau/build/luau-compile
+      - name: NATIVE compile each art layer and every current author V3 source
+        run: |
+          set -euo pipefail
+          for source in handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/*.server.luau; do
+            echo "NATIVE ART PARSE $source"
+            /tmp/eggrumble-art-a01-luau/build/luau-compile "$source" >/dev/null
+          done
+          find author-current/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116 -maxdepth 1 -type f -name '*.luau' -print0 |
+            while IFS= read -r -d '' source; do
+              echo "NATIVE AUTHOR PARSE $source"
+              /tmp/eggrumble-art-a01-luau/build/luau-compile "$source" >/dev/null
+            done
+          echo "NATIVE_LUAU_ART_AND_AUTHOR_SYNTAX=PASS (not Roblox Studio runtime)"
       - name: Report boundaries
         run: |
           echo "SOURCE REGRESSION ONLY — NOT Native Luau/Rojo/Studio/Android/FUN/OWNER acceptance."
