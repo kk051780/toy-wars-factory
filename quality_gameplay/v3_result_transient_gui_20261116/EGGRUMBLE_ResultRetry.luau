@@ -12,6 +12,7 @@ function Retry.deliver(isCurrent: () -> boolean, renderOnce: () -> boolean, dela
  assert(type(isCurrent) == "function" and type(renderOnce) == "function" and type(delay) == "function",
   "server callbacks are required")
  local finished = false
+ local delivered = false
  local retries = 0
  local function attempt()
   if finished then return end
@@ -24,6 +25,7 @@ function Retry.deliver(isCurrent: () -> boolean, renderOnce: () -> boolean, dela
   local renderOK, rendered = pcall(renderOnce)
   if renderOK and rendered == true then
    finished = true
+   delivered = true
    return
   end
   if retries >= Retry.MAX_RETRIES then
@@ -34,6 +36,6 @@ function Retry.deliver(isCurrent: () -> boolean, renderOnce: () -> boolean, dela
   delay(Retry.INTERVAL_SECONDS, attempt)
  end
  attempt()
- return finished -- true means immediately delivered OR safely aborted, NOT RC acceptance
+ return delivered -- only synchronous genuine GUI delivery yields true
 end
 return Retry
