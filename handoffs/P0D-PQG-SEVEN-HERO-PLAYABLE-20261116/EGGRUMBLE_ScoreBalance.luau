@@ -35,6 +35,26 @@ local function koPoints(realKOs:number):number
  return math.min(SCORE.KO_CAP,math.floor(earned+0.0000001))
 end
 
+-- Post-match style is a single truthful, server-derived specialty, never a
+-- fabricated best-in-lobby badge or a gameplay advantage. Ranked by actual
+-- capped contribution, with deterministic priority when equally valuable.
+local function specialty(row:any):string
+ local options={
+  {name="攻城",value=math.min(SCORE.CASTLE_CAP,row.castlesDestroyed)*SCORE.CASTLE_RATE},
+  {name="卵奪取",value=math.min(SCORE.EGG_STEAL_CAP,row.securedSteals)*SCORE.EGG_STEAL_RATE},
+  {name="卵運搬",value=math.min(SCORE.EGG_DEPOSIT_CAP,row.deposited)*SCORE.EGG_DEPOSIT_RATE},
+  {name="無双",value=koPoints(row.ko)},
+  {name="共闘",value=math.min(SCORE.TEAM_CASTLE_SUPPORT_CAP,row.teamCastleSupport)*SCORE.TEAM_CASTLE_SUPPORT_RATE},
+ }
+ local best="参加";local earned=0
+ for _,option in ipairs(options) do
+  if option.value>earned then
+   earned=option.value;best=option.name
+  end
+ end
+ return best
+end
+
 local function points(row:any):number
  -- Losing a castle does not erase earlier player accomplishments.
  return koPoints(row.ko)
@@ -115,6 +135,7 @@ function Results.build(state:any,kills:any):any
   row.won=state.phase=="FINISHED" and state.winner~=nil and
    (if state.mode=="TEAM" then row.team==state.winner else row.id==tostring(state.winner))
   row.score=points(row)
+  row.specialty=specialty(row)
   -- Same total score: reward actual egg/castle objectives BEFORE raw KO volume.
   -- The value is derived exclusively from original server-authoritative events.
   row.objectiveScore=
