@@ -181,6 +181,44 @@ return function(Results:any):boolean
  equal(redo.stolen,2,"raw theft tracks both actual attempts")
  equal(redo.securedSteals,1,"only successfully returned second theft scores")
  equal(redo.score,200+170+120,"lost and returned raid scored once")
+ -- TEAM cooperative castle reward: each personal castle defender who is still
+ -- in the match when the team actually captures a rival castle gets 90 points.
+ -- The final blow stays 440, BR remains individual, score always bounded.
+ local function byId(snapshot:any,key:string):any
+  for _,row in ipairs(snapshot.rows) do if row.id==key then return row end end
+  error("missing tested participant "..key)
+ end
+ local coOp=state("TEAM",nil,"ACTIVE")
+ coOp.events={{type="CASTLE_FALL",owner="mage",attacker="war"}}
+ local coopScore=Results.build(coOp,{})
+ equal(byId(coopScore,"war").castlesDestroyed,1,"siege final blow remains with actual attacker")
+ equal(byId(coopScore,"war").teamCastleSupport,0,"no double-credit for final hitter")
+ equal(byId(coopScore,"war").score,200+440,"attacker score unchanged")
+ equal(byId(coopScore,"assassin").teamCastleSupport,1,"living same-team defender shares team siege")
+ equal(byId(coopScore,"assassin").score,90,"eliminated end-state cannot erase earlier team siege")
+ equal(byId(coopScore,"assassin").objectiveScore,90,"team objective tie-break includes real siege share")
+ equal(byId(coopScore,"builder").teamCastleSupport,0,"enemy team gets no credit")
+ local brSupport=state("BATTLE_ROYALE",nil,"ACTIVE")
+ brSupport.events={{type="CASTLE_FALL",owner="mage",attacker="war"}}
+ equal(byId(Results.build(brSupport,{}),"assassin").teamCastleSupport,0,"BR has no allied share")
+ local ordered=state("TEAM",nil,"ACTIVE")
+ ordered.events={
+  {type="CASTLE_FALL",owner="assassin",attacker="mage"},
+  {type="CASTLE_FALL",owner="builder",attacker="war"},
+ }
+ local afterDeath=Results.build(ordered,{})
+ equal(byId(afterDeath,"assassin").teamCastleSupport,0,"already eliminated teammate cannot receive later siege points")
+ equal(byId(afterDeath,"mage").teamCastleSupport,0,"enemy final-blow owner never receives extra team assist")
+ equal(byId(afterDeath,"war").teamCastleSupport,0,"owner did not receive own final blow twice")
+ local supportCap=state("TEAM",nil,"ACTIVE")
+ supportCap.events={}
+ for _=1,12 do
+  table.insert(supportCap.events,{type="CASTLE_FALL",owner="mage",attacker="war"})
+ end
+ local share=byId(Results.build(supportCap,{}),"assassin")
+ equal(share.teamCastleSupport,12,"raw team siege captures retained for diagnostics")
+ equal(share.score,90*3,"team siege bonus capped to limit passive farm")
+ equal(share.objectiveScore,90*3,"team objective cap also applies to tie-break")
  local ties={mode="BATTLE_ROYALE",phase="FINISHED",winner=nil,
    ids={"Z","A"},castles={Z={alive=false,isAI=true},A={alive=false,isAI=true}},events={}}
  local sorted=Results.build(ties,{})
