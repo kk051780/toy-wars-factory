@@ -10,6 +10,12 @@
 ## Original owner hookup contract; not done
 Only after #482 author ACK and #218 hard claim may the original server-owned dispatcher invoke BuilderConstruction.place(session, player, "WALL", true) or place(...,"BRIDGE",true). The server selects kind; never trust client-supplied coordinates or introduce another Remote. BUILDER skill C must not silently lose existing turret pulses. The original owner must provide an explicit player choice and actual skill hook. The original session.closeRound should call BuilderConstruction.clear(session), with 9-second delayed cleanup as redundancy.
 
+## 2026-11-17 independent server-owned Tool input implementation
+- Added `Build.equip(session, player, serverEnabled)` to the same original Builder module; default OFF; no new Game, Remote, Score or duplicated source. It creates only two optional Roblox `Tool` instances, `EGGRUMBLE_SKILL_CONSTRUCT_WALL` and `EGGRUMBLE_SKILL_CONSTRUCT_BRIDGE`, *after* original seven-role tool equipment; does not replace the original Builder A/B/C attack/turret.
+- Tool `Activated` callbacks invoke `Build.place` exclusively on the Roblox server. They refuse activation while unequipped, after character replacement, outside original live match membership, carrying eggs, after the match ends, or when the optional feature is OFF. Re-equip clears stale construction tools before recreating them.
+- Native mock covers real Tool grant, activation, re-equip, old character and match-state fail-closed behavior. This creates the missing **input module/API**, but original Host source still must select the single `Build.equip` hook at both role grant and respawn, and must `Build.clear` on round closure. No premature RC/Studio claim.
+- Original `BRIDGE` still requires true height/drop support; current flat demo grass returns `NO_GAP`. Reuse existing field-site author evidence in this PR's comments instead of creating a competing map.
+
 ## Current-match identity fence (source-only correction)
 - Reuses original #531 Host `session.isCurrentHuman(player)` callback, already selected in the current official V3 companion Host, instead of creating another Game/Remote or trusting old `session.roster` alone.
 - Builder placement now fails closed for same-mode stale sessions, missing Host membership callback, and callback errors; three new native runtime negative cases plus source contract assertions.
