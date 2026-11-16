@@ -68,11 +68,12 @@ def rehash(data,receipt):
     receipt["place_sha256"]=hashlib.sha256(data).hexdigest()
 
 class Gate(unittest.TestCase):
-    def test_valid_covers_eight_domains_and_fourteen_known_flags(self):
+    def test_valid_covers_eight_domains_and_eighteen_known_flags(self):
         b,r,m,a=fixture()
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(len(v["domains"]),8)
-        self.assertEqual(v["verified_flag_count"],17)
+        self.assertEqual(v["verified_flag_count"],18)
+        self.assertEqual(v["unassessed_new_flags"],[])
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
@@ -152,6 +153,36 @@ class Gate(unittest.TestCase):
         r["source_author_heads"]["carrier_stale_avatar551"]="b"*40
         with self.assertRaisesRegex(gq8.RedGate,"AUTHOR_SHA_MANIFEST_ARTIFACT_DRIFT"):
             gq8.verify(b,r,m,a,HEAD)
+    def test_ko508_existing_author_policy_is_not_silently_unassessed(self):
+        b,r,m,a=fixture()
+        anchor="and KoFence.mayCredit(session,id,m,all) then"
+        self.assertTrue(m["feature_flags"]["NEUTRAL_DEATH_KO_CURRENT_OWNER_508"])
+        result=gq8.verify(b,r,m,a,HEAD)
+        self.assertEqual(result["verified_flag_count"],18)
+        self.assertEqual(result["unassessed_new_flags"],[])
+        root=ET.fromstring(b)
+        found=False
+        for item in root.findall("Item"):
+            props=item.find("Properties")
+            if props is not None and props.findtext("string[@name='Name']")=="EGGRUMBLE_SwarmCombat":
+                source=props.find("ProtectedString[@name='Source']")
+                self.assertIsNotNone(source)
+                self.assertIn(anchor,source.text)
+                source.text=source.text.replace(anchor,"-- KO508 policy call removed",1)
+                found=True
+                break
+        self.assertTrue(found)
+        b=ET.tostring(root,encoding="utf-8")
+        rehash(b,r)
+        with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_NEUTRAL_DEATH_KO_CURRENT_OWNER_508"):
+            gq8.verify(b,r,m,a,HEAD)
+
+    def test_ko508_disabled_flag_cannot_be_certified(self):
+        b,r,m,a=fixture()
+        m["feature_flags"]["NEUTRAL_DEATH_KO_CURRENT_OWNER_508"]=False
+        with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_NEUTRAL_DEATH_KO_CURRENT_OWNER_508"):
+            gq8.verify(b,r,m,a,HEAD)
+
     def test_no_misrepresented_studio_or_publish(self):
         b,r,m,a=fixture()
         r["roblox_publish"]=True
