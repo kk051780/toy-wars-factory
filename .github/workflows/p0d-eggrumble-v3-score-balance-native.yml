@@ -40,7 +40,9 @@ jobs:
           assert 'teamSiege=row.teamCastleSupport' in script
           assert 'if mode=="TEAM" then' in script
           assert ' 城%d 団%d' in script and ' 城%d"' in script
-          assert script.count('return status,string.format(')==2
+          assert script.count('return status.."・"..specialty,string.format(')==2
+          assert 'specialty=row.specialty' in script
+          assert 'local specialty="参加"' in script
           print("SCORE_STUDIO_WIRING_SOURCE_CONTRACT_PASS")
           PY
       - uses: actions/checkout@v4
