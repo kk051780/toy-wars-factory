@@ -89,20 +89,29 @@ def patch(original: str) -> str:
       -- Same existing Swarm tick/neutral owner; capped melee is NOT a second AI loop.
       if meleeRays<Melee.MAX_RAYS_PER_TICK and session.rules.phase=="ACTIVE" then
        local mobRoot=m.PrimaryPart
-       local nearest=nil
-       local range=Melee.RANGE
        if mobRoot then
-        for _,victim in ipairs(victims) do
+        -- Select the nearest READY candidate, not merely the nearest body.
+        -- A victim on cooldown or behind a solid wall must not starve others.
+        local eligible={}
+        for index,victim in ipairs(victims) do
          local dist=(mobRoot.Position-victim.root.Position).Magnitude
-         if dist<=range then nearest=victim;range=dist end
+         if Melee.ready(lastMeleeSwing,lastVictimHit,m,victim.humanoid,
+          meleeNow,dist,true,h.Health>0,victim.humanoid.Health>0) then
+          table.insert(eligible,{victim=victim,distance=dist,slot=index})
+         end
         end
-        if nearest and Melee.ready(lastMeleeSwing,lastVictimHit,m,nearest.humanoid,
-         meleeNow,range,true,h.Health>0,nearest.humanoid.Health>0) then
+        table.sort(eligible,function(a,b)
+         if a.distance==b.distance then return a.slot<b.slot end
+         return a.distance<b.distance
+        end)
+        for _,candidate in ipairs(eligible) do
+         if meleeRays>=Melee.MAX_RAYS_PER_TICK then break end
          meleeRays+=1
-         if meleeLineClear(m,nearest.root) then
-          Melee.commit(lastMeleeSwing,lastVictimHit,m,nearest.humanoid,meleeNow)
-          -- Roblox Humanoid:TakeDamage respects ForceField; no custom score/egg mutation.
-          nearest.humanoid:TakeDamage(Melee.DAMAGE)
+         if meleeLineClear(m,candidate.victim.root) then
+          Melee.commit(lastMeleeSwing,lastVictimHit,m,candidate.victim.humanoid,meleeNow)
+          -- Roblox Humanoid:TakeDamage respects ForceField.
+          candidate.victim.humanoid:TakeDamage(Melee.DAMAGE)
+          break -- One real hit per soldier swing.
          end
         end
        end
