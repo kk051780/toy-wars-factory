@@ -44,7 +44,7 @@ jobs:
           set -euo pipefail
           test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
           cmake -S _luau_fixed -B /tmp/gq_r13_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/gq_r13_luau --target Luau.Compile.CLI --parallel 4
+          cmake --build /tmp/gq_r13_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
           python3 - <<'PY'
           import json,subprocess
           from pathlib import Path
@@ -65,6 +65,14 @@ jobs:
                              stdout=subprocess.DEVNULL,check=True)
           print('GQ_R13_ALL_22_NATIVE_LUAU_SYNTAX_PASS')
           PY
+      - name: Execute genuine original R13 Luau against adversarial session and death ticket VM
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 handoffs/P0D-GQ-RESPAWN-GRACE-20261116-R13/tests/make_native_respawn_harness.py --out /tmp/gq_r13_real_vm.luau
+          /tmp/gq_r13_luau/luau-compile --text /tmp/gq_r13_real_vm.luau >/dev/null
+          /tmp/gq_r13_luau/luau /tmp/gq_r13_real_vm.luau | tee /tmp/gq_r13_native_vm.log
+          grep -q GQ_R13_GENUINE_DEATH_TICKET_NATIVE_VM_PASS /tmp/gq_r13_native_vm.log
       - name: Fetch official Rojo v7.7.1 exact ZIP SHA
         shell: bash
         run: |
