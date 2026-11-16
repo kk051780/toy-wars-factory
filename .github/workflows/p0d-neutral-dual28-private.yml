@@ -149,6 +149,11 @@ jobs:
           /tmp/gq28_luau/luau artifacts/pace_native28.luau | tee artifacts/PACE_NATIVE28.log
           grep -q NEUTRAL_ENCOUNTER_NATIVE artifacts/FAIR_NATIVE28.log
           grep -q 'NEUTRAL_PACING_NATIVE_PASS checks=27 15min_supply=36000' artifacts/PACE_NATIVE28.log
+      - name: Verify latest #484 BotActors neutral-failure pcall and two negative mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd _v3_quality && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_bot_neutral_fault_native.py --luau /tmp/gq28_luau/luau)
       - name: Download SHA-pinned Rojo 7.7.1 and build the actual private28 XML Place
         shell: bash
         run: |
