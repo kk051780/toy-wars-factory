@@ -18,7 +18,7 @@ jobs:
       - name: Checkout original GQ 26 composer (pinned)
         uses: actions/checkout@v4
         with:
-          ref: bc7fdd9e392530d5264b595783ebd3da0d909305
+          ref: bbdb1906a0d0750bbb0e0c7b31a955b98d72c65a
           path: _gq_original
           persist-credentials: false
       - name: Checkout owner original game 7 domains (pinned)
@@ -43,7 +43,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git -C _gq_original rev-parse HEAD)" = bc7fdd9e392530d5264b595783ebd3da0d909305
+          test "$(git -C _gq_original rev-parse HEAD)" = bbdb1906a0d0750bbb0e0c7b31a955b98d72c65a
           test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
           test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
           test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
@@ -82,7 +82,7 @@ jobs:
           set -euo pipefail
           test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
           cmake -S _luau_fixed -B /tmp/gq_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
-          cmake --build /tmp/gq_luau --target Luau.Compile.CLI --parallel 4
+          cmake --build /tmp/gq_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
           python3 - <<'PY'
           import json,subprocess
           from pathlib import Path
@@ -100,6 +100,11 @@ jobs:
               subprocess.run(["/tmp/gq_luau/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
           print("NATIVE_LUAU_27_OF_27_PASS")
           PY
+          mkdir -p /tmp/gq_observer_native
+          cp cross_domain_gate/EGGRUMBLE_IntegrityObserver.luau /tmp/gq_observer_native/Observer.luau
+          cp cross_domain_gate/observer_native.spec.luau /tmp/gq_observer_native/Runner.luau
+          (cd /tmp/gq_observer_native && /tmp/gq_luau/luau Runner.luau) | tee artifacts/GQ_OBSERVER_NATIVE.log
+          grep -q GQ_7DOMAIN_OBSERVER_REAL_LUAU_NATIVE_BEHAVIOR artifacts/GQ_OBSERVER_NATIVE.log
       - name: Acquire pinned Rojo and build unpublished private Place
         shell: bash
         run: |
@@ -168,4 +173,5 @@ jobs:
           path: |
             artifacts/EGGRUMBLE_GQ27_SHADOW_PRIVATE.rbxlx
             artifacts/SOURCE_RECEIPT.json
+            artifacts/GQ_OBSERVER_NATIVE.log
           retention-days: 3
