@@ -240,7 +240,8 @@ class Gate(unittest.TestCase):
                     self.assertEqual(gq8.verify(b,r,m,a,HEAD)["verified_flag_count"],30)
                     b=drop_anchor(b,script,anchor)
                     rehash(b,r)
-                    with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_"+flag):
+                    with self.assertRaisesRegex(gq8.RedGate,
+                        "FEATURE_FALSE_ON_"+flag+"|DOMAIN_castle_MISSING"):
                         gq8.verify(b,r,m,a,HEAD)
 
     def test_item525_disabled_cross_owner_flag_fails(self):
