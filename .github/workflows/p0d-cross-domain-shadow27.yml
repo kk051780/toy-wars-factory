@@ -111,6 +111,9 @@ jobs:
           (cd _gq_original && python3 quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/test_nav_retarget_native.py --luau /tmp/gq_luau/luau) | tee artifacts/GQ_NAV_NATIVE.log
           grep -q GQ_NAV_STALE_GOAL_NEGATIVE_PASS artifacts/GQ_NAV_NATIVE.log
           grep -q GQ_CREATEPATH_EXCEPTION_MUTANT_NEGATIVE_PASS artifacts/GQ_NAV_NATIVE.log
+          python3 cross_domain_gate/test_original_ai_target_native.py \
+            --luau /tmp/gq_luau/luau --quality _gq_original | tee artifacts/GQ_GHOST_ACTION_NATIVE.log
+          grep -q GQ_GHOST_TARGET_GUARD_MUTATION_REJECTED artifacts/GQ_GHOST_ACTION_NATIVE.log
       - name: Acquire pinned Rojo and build unpublished private Place
         shell: bash
         run: |
@@ -181,4 +184,5 @@ jobs:
             artifacts/SOURCE_RECEIPT.json
             artifacts/GQ_OBSERVER_NATIVE.log
             artifacts/GQ_NAV_NATIVE.log
+            artifacts/GQ_GHOST_ACTION_NATIVE.log
           retention-days: 3
