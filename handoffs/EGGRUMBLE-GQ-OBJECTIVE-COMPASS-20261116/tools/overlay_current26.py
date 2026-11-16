@@ -60,10 +60,10 @@ def compose(base_project, base_receipt, new_script, out):
         raise ValueError("Base composite not the 26-source author/ART/SCORE baseline")
     data = json.loads(base_project.read_text(encoding="utf-8"))
     prior = flatten(data["tree"])
-    if len(prior) != 26 or len({p[-1] for p in prior}) != 26:
-        raise ValueError("Source names duplicate or incomplete")
     if any(p[-1] == CLIENT_NAME for p in prior):
         raise ValueError("Objective compass already installed")
+    if len(prior) != 26 or len({p[-1] for p in prior}) != 26:
+        raise ValueError("Source names duplicate or incomplete")
     server = data["tree"]["ServerScriptService"]
     clients = data["tree"]["StarterPlayer"]["StarterPlayerScripts"]
     if server["$className"] != "ServerScriptService" or clients["$className"] != "StarterPlayerScripts":
