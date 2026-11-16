@@ -32,7 +32,7 @@ def defects(bot,router,lobby):
       "bot-v-bot shares cooldown": "tryHeroAttack(actor,me,session,lastHit,bots)" in bot and "now-(lastHit[my.id] or 0)<BOT_ATTACK_INTERVAL" in bot,
       "bot-v-bot server actor death flow": "if hum.Health<=0 then" in bot and "session.dropCarrierEggs(id,actor:GetPivot().Position)" in bot,
 
-      "same mode isolation": 'Router.navigate(mode..":"..id,actor,goal,AI_TICK,actors)' in bot,
+      "same mode isolation": ('Router.navigate(mode..":"..id,actor,goal,AI_TICK*slow,actors)' in bot or 'Router.navigate(mode..":"..id,actor,goal,AI_TICK,actors)' in bot),
       "Studio-only": 'assert(RunService:IsStudio()' in router and "if not RunService:IsStudio() then return end" in lobby,
     }
     return [name for name,passes in guards.items() if not passes]
