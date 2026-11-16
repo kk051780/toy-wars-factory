@@ -15,6 +15,13 @@ class BuilderSourceTests(unittest.TestCase):
  def test_unique_server_role_and_membership(self):
   for k in ["EGGRUMBLE_Role","BUILDER","EGGRUMBLE_QueuedMode","session.roster","session.rules.castles","session.rules.winner","owner.heldEggs"]:
    self.assertIn(k,SRC)
+ def test_same_mode_stale_session_fail_closed(self):
+  self.assertIn('typeof(session.isCurrentHuman)~="function"',SRC)
+  self.assertIn("pcall(session.isCurrentHuman,p)",SRC)
+  self.assertIn("currentHuman~=true",SRC)
+  spec=(HERE/"EGGRUMBLE_BuilderConstruction.runtime.spec.luau").read_text(encoding="utf-8")
+  for tag in ("STALE_SAME_MODE_SESSION","MISSING_LIVE_MEMBERSHIP_CALLBACK","MEMBERSHIP_CALLBACK_ERROR_FAIL_CLOSED"):
+   self.assertIn(tag,spec)
  def test_no_authority_fork(self):
   executable="\n".join(line for line in SRC.splitlines() if not line.strip().startswith("--"))
   for k in ["DataStoreService","MarketplaceService","TakeDamage(","SetAsync(","PublishAsync("]:
