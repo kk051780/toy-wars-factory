@@ -6,14 +6,12 @@ on:
       - 'rc_fastlane/EGGRUMBLE_V3_ACTIVE.json'
       - 'rc_fastlane/ACTIVE.json'
       - '.github/workflows/p0d-rc-eggrumble-v3-31.yml'
-      - 'rc_fastlane/quality_item489_rc31/**'
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
       - 'rc_fastlane/EGGRUMBLE_V3_ACTIVE.json'
       - 'rc_fastlane/ACTIVE.json'
       - '.github/workflows/p0d-rc-eggrumble-v3-31.yml'
-      - 'rc_fastlane/quality_item489_rc31/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -73,6 +71,20 @@ jobs:
           ref: 9e77a7f78147b68ce7d347131effb7475e6b74e2
           path: _gq537_original
           persist-credentials: false
+      - name: Read exact original #540 Assassin respawn author
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 40a79702a3ca949e2bf65f9108126a34d44c88b4
+          path: _gq540_original_respawn
+          persist-credentials: false
+      - name: Original GQ539 lobby-only selector at immutable green HEAD
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e003d73d516e65e1817dd281eb1743fa866f3770
+          path: _gq539_lobby
+          persist-credentials: false
       - name: Source lock all original owners and symlink existing trusted author modules read-only
         run: |
           set -euo pipefail
@@ -82,6 +94,8 @@ jobs:
           test "$(git -C _gq530_official_source rev-parse HEAD)" = f5594979f7ad1852442ea917fbd5f3bdad1698ec
           test "$(git -C _gq541_original_fallback rev-parse HEAD)" = 6fc0261d21a3aa260fa7bcf19b1b177d4994570a
           test "$(git -C _gq537_original rev-parse HEAD)" = 9e77a7f78147b68ce7d347131effb7475e6b74e2
+          test "$(git -C _gq540_original_respawn rev-parse HEAD)" = 40a79702a3ca949e2bf65f9108126a34d44c88b4
+          test "$(git -C _gq539_lobby rev-parse HEAD)" = e003d73d516e65e1817dd281eb1743fa866f3770
           if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
             test "$GITHUB_BASE_REF" = rc/p0d-s1-kids-rc01
             echo "GQ_PREMERGE_TO_RC_VALIDATION"
@@ -108,6 +122,8 @@ jobs:
           assert m["feature_flags"]["NEUTRAL_NEAREST_ELIGIBLE_FALLBACK_541"] is True
           assert m["feature_flags"]["CASTLE_EGG_DEPOSIT_REFRESH_537"] is True
           assert m["source_heads"]["castle_refresh537"]=="9e77a7f78147b68ce7d347131effb7475e6b74e2"
+          assert m["source_heads"]["respawn_stealth540"]=="40a79702a3ca949e2bf65f9108126a34d44c88b4"
+          assert m["feature_flags"]["ASSASSIN_RESPAWN_STEALTH_FENCE_540"] is True
           assert m["source_heads"]["membership_host531"]=="e78bff41e70564d0b26578e3c3a85f4698e6110e"
           assert m["feature_flags"]["DEAD_CASTER_FENCE_530"]
           assert not m["publication_authorized"]
@@ -400,6 +416,106 @@ jobs:
           (root/"GQ537_ROJO_EXACT_RECEIPT.json").write_text(json.dumps(receipt,indent=2)+"\n")
           print("GQ537_31_SOURCE_CLASS_EXACT_PASS",receipt["place_bytes"],receipt["place_sha256"])
           PY
+      - name: Select original #540 within the same #537 Host after #541 Swarm, native31 Rojo31
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/gq540_official_select
+          python3 rc_fastlane/select_gq540_original_assassin_respawn.py \
+            --original31 artifacts/gq530_all31/GQ31_ON.project.json \
+            --selected537 artifacts/gq541_official_select/GQ31_SELECTED_537.project.json \
+            --author _gq540_original_respawn/quality_gameplay/v3_respawn_stealth_20261116/apply_to_companion31.py \
+            --out artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json
+          python3 - <<'PY'
+          import subprocess
+          from pathlib import Path
+          from importlib.machinery import SourceFileLoader
+          mod=SourceFileLoader("gq540source","rc_fastlane/select_gq540_original_assassin_respawn.py").load_module()
+          author=mod.load_author(Path("_gq540_original_respawn/quality_gameplay/v3_respawn_stealth_20261116/apply_to_companion31.py"))
+          _,mapped=author.scan(Path("artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json"))
+          assert len(mapped)==31
+          for path in mapped.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ540_AFTER_GQ537_ALL_31_NATIVE_LUAU_PASS")
+          PY
+          /tmp/gq530-all31-rojo build artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json \
+            -o artifacts/gq540_official_select/GQ540_FINAL_SELECTED_31_TRUE_ROJO.rbxlx
+          python3 rc_fastlane/select_gq540_original_assassin_respawn.py \
+            --original31 artifacts/gq530_all31/GQ31_ON.project.json \
+            --selected537 artifacts/gq541_official_select/GQ31_SELECTED_537.project.json \
+            --author _gq540_original_respawn/quality_gameplay/v3_respawn_stealth_20261116/apply_to_companion31.py \
+            --out artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json \
+            --verify-place artifacts/gq540_official_select/GQ540_FINAL_SELECTED_31_TRUE_ROJO.rbxlx \
+            > artifacts/gq540_official_select/GQ540_TRUE_ROJO_VERIFY.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("artifacts/gq540_official_select/GQ540_TRUE_ROJO_VERIFY.json").read_text())
+          assert r["source_exact"]=="31/31" and r["unchanged_scripts"]==30
+          assert r["only_host_changed"] and r["original_gq541_swarm_preserved"]
+          print("GQ540_ORIGINAL_HOST_AFTER_537_NATIVE_ROJO_PASS",r["place_bytes"],r["place_sha256"])
+          PY
+      - name: Source-select original GQ539 nearby lobby ONLY after #541, verify 31 real Luau and Rojo
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -v -s _gq539_lobby/quality_gameplay/v3_lobby_nearby_20261116/tests -p 'test_*.py'
+          mkdir -p artifacts/gq539_official_select
+          HOST_BLOB="$(python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          proj=Path("artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json")
+          dat=json.loads(proj.read_text())
+          paths=[]
+          def walk(node):
+              for name,v in node.items():
+                  if isinstance(v,dict):
+                      if "$path" in v:
+                          paths.append((name,(proj.parent/v["$path"]).resolve()))
+                      else:walk(v)
+          walk(dat["tree"])
+          original=[p for name,p in paths if name=="EGGRUMBLE_LobbyCastleModesPreview"]
+          assert len(paths)==31 and len(original)==1
+          payload=original[0].read_bytes()
+          print(hashlib.sha1(b"blob "+str(len(payload)).encode()+b"\0"+payload).hexdigest())
+          PY
+          )"
+          python3 _gq539_lobby/quality_gameplay/v3_lobby_nearby_20261116/select_original_host.py \
+            --project artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json \
+            --host-blob "$HOST_BLOB" \
+            --out artifacts/gq539_official_select
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          proj=Path("artifacts/gq539_official_select/GQ539_SELECTED31.project.json")
+          dat=json.loads(proj.read_text())
+          paths=[]
+          def walk(node):
+              for name,v in node.items():
+                  if isinstance(v,dict):
+                      if "$path" in v:
+                          paths.append((proj.parent/v["$path"]).resolve())
+                      else:walk(v)
+          walk(dat["tree"])
+          assert len(paths)==31
+          for p in paths:
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(p)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ539_EXACT_31_SELECTED_LUAU_NATIVE_COMPILE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build artifacts/gq539_official_select/GQ539_SELECTED31.project.json \
+            -o artifacts/gq539_official_select/GQ539_SELECTED_31_TRUE_ROJO.rbxlx
+          python3 rc_fastlane/verify_gq539_rc31_place.py \
+            --base artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json \
+            --selected artifacts/gq539_official_select/GQ539_SELECTED31.project.json \
+            --place artifacts/gq539_official_select/GQ539_SELECTED_31_TRUE_ROJO.rbxlx \
+            > artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json").read_text())
+          assert m["script_count"]==m["rojo_exact_scripts"]==31
+          assert m["other_sources_byte_exact"]==30 and m["rollback_byte_exact"]
+          print("GQ539_RC31_ONE_HOST_30_UNCHANGED_ROJO_EXACT_PASS",m["place_bytes"],m["place_sha256"])
+          PY
       - name: Fetch immutable existing #489 Item author (no new gameplay authority)
         uses: actions/checkout@v4
         with:
@@ -411,7 +527,7 @@ jobs:
         env:
           GQ_AUTHOR489_ITEM: _gq_original_item489/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau
           GQ_AUTHOR482_ITEM: _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau
-          GQ_BASE31_PROJECT: artifacts/gq541_official_select/GQ31_SELECTED_537.project.json
+          GQ_BASE31_PROJECT: artifacts/gq539_official_select/GQ539_SELECTED31.project.json
         shell: bash
         run: |
           set -euo pipefail
@@ -420,13 +536,13 @@ jobs:
           python3 -B rc_fastlane/quality_item489_rc31/select_original_item489.py prepare \
             --base "$GQ_BASE31_PROJECT" \
             --item "$GQ_AUTHOR489_ITEM" \
-            --out artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json
+            --out artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json
           python3 - <<'PY'
           from pathlib import Path
           import subprocess,sys
           sys.path.insert(0,"rc_fastlane/quality_item489_rc31")
           from select_original_item489 import flatten
-          _,source=flatten(Path("artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json"))
+          _,source=flatten(Path("artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json"))
           assert len(source)==31
           for _,f in source.items():
             subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(f)],
@@ -437,19 +553,19 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          /tmp/gq530-all31-rojo build artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json \
-            -o artifacts/gq541_official_select/GQ537_ITEM489_SELECTED_31_TRUE_ROJO.rbxlx
+          /tmp/gq530-all31-rojo build artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json \
+            -o artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx
           python3 -B rc_fastlane/quality_item489_rc31/select_original_item489.py verify \
-            --base artifacts/gq541_official_select/GQ31_SELECTED_537.project.json \
-            --out artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json \
-            --place artifacts/gq541_official_select/GQ537_ITEM489_SELECTED_31_TRUE_ROJO.rbxlx
-          test -s artifacts/gq541_official_select/GQ537_ITEM489_SELECTED_31_TRUE_ROJO.rbxlx
-          test -s artifacts/gq541_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx
+            --base artifacts/gq539_official_select/GQ539_SELECTED31.project.json \
+            --out artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json \
+            --place artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx
+          test -s artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx
+          test -s artifacts/gq539_official_select/GQ539_SELECTED_31_TRUE_ROJO.rbxlx
           echo "PRIVATE_ONE_ORIGINAL_ITEM_SELECTED=PASS; SAME_31_SOURCE_COUNT; OFF=GQ537_SELECTED_31_TRUE_ROJO; FORMAL_RC_WRITE_ONLY_AFTER_AUTH_CAS"
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq541_official_select/GQ537_ITEM489_SELECTED_31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -465,17 +581,29 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq541_official_select/GQ537_ITEM489_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
-          assert gq537["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          gq537_place=Path("artifacts/gq541_official_select/GQ537_SELECTED_31_TRUE_ROJO.rbxlx")
+          assert gq537["place_sha256"]==hashlib.sha256(gq537_place.read_bytes()).hexdigest()
+          assert gq537_place.read_bytes()!=place.read_bytes()
           assert gq537["other_sources_byte_exact"]==30 and gq537["source_class_exact"]==31
           assert m["feature_flags"]["CASTLE_EGG_DEPOSIT_REFRESH_537"] and m["source_heads"]["castle_refresh537"]=="9e77a7f78147b68ce7d347131effb7475e6b74e2"
-          item489=json.loads(Path("artifacts/gq541_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_text())
+          gq540=json.loads(Path("artifacts/gq540_official_select/GQ540_TRUE_ROJO_VERIFY.json").read_text())
+          assert gq540["source_exact"]=="31/31" and gq540["unchanged_scripts"]==30
+          assert gq540["original_gq541_swarm_preserved"] and gq540["only_host_changed"]
+          assert gq540["place_sha256"]==hashlib.sha256(Path("artifacts/gq540_official_select/GQ540_FINAL_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          assert m["source_heads"]["respawn_stealth540"]=="40a79702a3ca949e2bf65f9108126a34d44c88b4"
+          assert m["source_heads"]["lobby_world_539"]=="e003d73d516e65e1817dd281eb1743fa866f3770"
+          assert m["feature_flags"]["LOBBY_NEARBY_BOARDS_539"] is True
+          gq539=json.loads(Path("artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json").read_text())
+          assert gq539["rojo_exact_scripts"]==31 and gq539["other_sources_byte_exact"]==30
+          assert gq539["place_sha256"]==hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          item489=json.loads(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_text())
           assert item489["real_rojo_source_and_class_exact"]=="31/31"
-          assert item489["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert item489["unchanged_source_count"]==30
+          assert item489["private_place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["feature_flags"]["ORIGINAL_ITEM_AUTHOR_489"] and m["source_heads"]["original_item489"]=="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
           assert gq541["rojo_exact_scripts"]==31 and gq541["other_sources_byte_exact"]==30
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
@@ -489,12 +617,18 @@ jobs:
             "source_author_heads":m["source_heads"],
             "script_count":31,
             "script_source_and_class_exact":"31/31",
-            "original_31_untouched_except_selected_neutral_swarm_castle_host_and_item":28,
+            "original_31_untouched_except_selected_neutral_swarm_and_castle_host":29,
             "base_owner30_untouched_except_combat_before_541":29,
             "original_author_541_selected_into_one_swarm":True,
             "original_author_537_selected_into_one_host":True,
-            "original_author_489_selected_into_one_item":True,
-            "selected_489_item_receipt_sha256":hashlib.sha256(Path("artifacts/gq541_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
+            "original_author_540_added_in_same_537_host":True,
+            "original_source_539_added_in_same_540_host":True,
+            "original_author_489_item_source_selected":True,
+            "original_489_item_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
+            "gq539_one_host_rollback_byte_exact":True,
+            "gq539_selected_receipt_sha256":hashlib.sha256(Path("artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+            "same_537_host_previous_vs_540_final_unchanged_others":30,
+            "gq540_host_receipt_sha256":hashlib.sha256(Path("artifacts/gq540_official_select/GQ540_SELECTED31_RECEIPT.json").read_bytes()).hexdigest(),
             "selected_537_place_receipt_sha256":hashlib.sha256(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "selected_541_source_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_bytes()).hexdigest(),
             "single_game_and_combat":True,
@@ -533,8 +667,14 @@ jobs:
             artifacts/gq541_official_select/GQ31_SELECTED_537.project.json
             artifacts/gq541_official_select/GQ537_SOURCE_SELECTION_RECEIPT.json
             artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json
-            artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json
-            artifacts/gq541_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json
+            artifacts/gq540_official_select/GQ31_FINAL_SELECTED.project.json
+            artifacts/gq540_official_select/GQ540_SELECTED31_RECEIPT.json
+            artifacts/gq540_official_select/GQ540_TRUE_ROJO_VERIFY.json
+            artifacts/gq539_official_select/GQ539_SELECTED31.project.json
+            artifacts/gq539_official_select/GQ539_SELECTED31_RECEIPT.json
+            artifacts/gq539_official_select/GQ539_ROJO_RC31_RECEIPT.json
+            artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json
+            artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json
           retention-days: 3
       - name: Preserve exact private #489 ITEM RC31 candidate and source-lock receipt (not official RC)
         if: github.event_name == 'pull_request'
@@ -542,9 +682,9 @@ jobs:
         with:
           name: GQ-ORIGINAL489-ITEM-SELECTED-PRIVATE31-ONLY-NOT-RC
           path: |
-            artifacts/gq541_official_select/GQ537_ITEM489_SELECTED_31_TRUE_ROJO.rbxlx
-            artifacts/gq541_official_select/GQ31_GQ541_GQ537_ITEM489_ON.project.json
-            artifacts/gq541_official_select/GQ_ITEM489_ORIGINAL_AUTHOR_SINGLE.luau
-            artifacts/gq541_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json
+            artifacts/gq539_official_select/GQ539_ITEM489_RC31_TRUE_ROJO.rbxlx
+            artifacts/gq539_official_select/GQ539_ITEM489_SELECTED31.project.json
+            artifacts/gq539_official_select/GQ_ITEM489_ORIGINAL_AUTHOR_SINGLE.luau
+            artifacts/gq539_official_select/GQ_ITEM489_RC31_SOURCE_RECEIPT.json
           if-no-files-found: error
           retention-days: 3

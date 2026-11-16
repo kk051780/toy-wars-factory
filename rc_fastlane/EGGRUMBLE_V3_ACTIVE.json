@@ -31,6 +31,8 @@
     "fused_gameplay_quality530": "f5594979f7ad1852442ea917fbd5f3bdad1698ec",
     "neutral_fallback541": "6fc0261d21a3aa260fa7bcf19b1b177d4994570a",
     "castle_refresh537": "9e77a7f78147b68ce7d347131effb7475e6b74e2",
+    "respawn_stealth540": "40a79702a3ca949e2bf65f9108126a34d44c88b4",
+    "lobby_world_539": "e003d73d516e65e1817dd281eb1743fa866f3770",
     "original_item489": "03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
   },
   "feature_flags": {
@@ -41,20 +43,22 @@
     "SHARED_NEUTRAL_BUDGET_528": true,
     "NEUTRAL_NEAREST_ELIGIBLE_FALLBACK_541": true,
     "CASTLE_EGG_DEPOSIT_REFRESH_537": true,
+    "ASSASSIN_RESPAWN_STEALTH_FENCE_540": true,
+    "LOBBY_NEARBY_BOARDS_539": true,
     "ORIGINAL_ITEM_AUTHOR_489": true
   },
-  "native_gate": "31 original source compiles ON/OFF + original 84 skill + 14 membership; current exact #541 selected Swarm and full canonical selected 31 native recompilation; immutable author #489 single Item in #541+#537 selection native31",
-  "rojo_gate": "Pinned Rojo7.7.1 original31 ON/OFF and #541 selected canonical31 true Source/Class exact 31/31; selected author #489 Item with existing #541+#537 canonical real Source/Class exact31",
-  "reverse_gate": "Unselect #541 original neutral fallback to prior #533 Swarm byte-exact; previous #530 Combat 160-byte OFF rollback unchanged; disable #489 source-select to byte-exact #541+#537 Item original (other30 preserved)",
+  "native_gate": "31 original source compiles ON/OFF + original 84 skill + 14 membership; current exact #541 selected Swarm and full canonical selected 31 native recompilation; current #537 Host + original #540 one-callback source selection, final 31 native; #489 source select after original #539 Host / #541 Swarm all31 native",
+  "rojo_gate": "Pinned Rojo7.7.1 original31 ON/OFF and #541 selected canonical31 true Source/Class exact 31/31; after #537 original Host, #540 final Host full pinned Rojo31 exact; final original489 Item exact canonical31 after original #539",
+  "reverse_gate": "Unselect #540 to exact original #537 Host, preserving #541 Swarm and #530 160B Combat rollback. Explicit S1 active rich51 remains.",
   "legacy_s1_profile": "rich51",
   "legacy_s1_unchanged": true,
   "studio_2client": "NOT_TESTED",
   "android_15min": "NOT_TESTED",
   "art_fun_owner": "NO_GO",
   "publication_authorized": false,
-  "next_gate": "Authenticated #220 sole-writer nonforce CAS; official same-HEAD native31 and true selected Rojo31 artifact SHA+bytes; Studio TEAM/BR 1+15 AI, 2 clients, Android, art+fun and OWNER",
-  "rollback": "Disable source selector #541 and rebuild original #530 V3 companion31; original rich51 S1 active_profile unaffected. Retain #530 Combat OFF rollback separately. No main, publish or billing.; to rollback #489 Item return unchanged GQ31_SELECTED_537 project and rerun official native/Rojo without dropping #541 or #537",
-  "note": "Formal RC branch companion profile; does not switch old S1 default active profile, merge main, or publish Roblox. Built from immutable source-selection of existing authors, not duplicate Game.; #489 original Item source selection staged via PR #549 to official companion only on authenticated writer CAS; no new Item module",
+  "next_gate": "Same PR exact HEAD PASS then #220-only nonforce CAS into latest official RC; official same-HEAD native31 Rojo31 and Place/ZIP receipts; Studio/Android/OWNER remains NO_GO.",
+  "rollback": "Omit only #540 Host overlay to restore original #537 Host; preserve #541 Swarm, #537 egg-core refresh and all 30 other scripts. S1 rich51 untouched.; optional #489 OFF selects unchanged GQ539_SELECTED31 original31 and reruns official native/Rojo",
+  "note": "Formal RC branch companion profile; does not switch old S1 default active profile, merge main, or publish Roblox. Built from immutable source-selection of existing authors, not duplicate Game.; original #489 Item author source added as next original select (count still 31), intended RC only after #220 CAS",
   "status": "RC31_COMPANION_SOURCE_ADOPTED_OFFICIAL_BRANCH_CI_VERIFIED_AT_RECORDED_HEAD",
   "last_verified_rc_run": {
     "rc_head_sha": "935e50f6e590c3bd783e2dc8aac947627f57fd5f",
@@ -85,5 +89,17 @@
   "legacy_s1_default_not_replaced": true,
   "owner_approval_wait_blocker": false,
   "rc_active_source_artifact_proof_complete": true,
-  "official_source_overlay_notes": "Original author #541 immutable composer selected into existing one neutral Swarm; 30/31 other V3 sources unchanged vs baseline original31. No new game authority, no script-count increase."
+  "official_source_overlay_notes": "Original #541 Swarm plus exact original #537 egg-deposit Host retained; append original #540 stealth respawn fence to SAME Host, no second authority. Source count31. Final parent #537 -> #540 30/31 byte identical. Native/Rojo before actual Studio.",
+  "gq539": {
+    "source_pr": 539,
+    "source_head": "e003d73d516e65e1817dd281eb1743fa866f3770",
+    "base_rc_head": "1b2c629d2d2060742caa8355ee7b12d23bf5ebb8",
+    "after": "Original #541 Swarm/#537 deposit Host/#540 assassin respawn Host",
+    "select": "one Host extra helper+four lobby board calls; other 30 scripts untouched",
+    "castle_vault_board": "PR547 independent owner",
+    "rollback": "Revert only lobby-helper/four calls to original #540 Host, keep #540/#537/#541",
+    "studio": "NOT_TESTED",
+    "android": "NOT_TESTED",
+    "owner_fun": "NO_GO"
+  }
 }
