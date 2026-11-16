@@ -96,7 +96,6 @@ def prepare(original_place:Path,original_project:Path,original_receipt:Path,out:
         assert sha(code.encode("utf-8"))==record["source_sha256"][name],("parent receipt mismatch",name)
     assert record["original_host_blob"]=="7162b209bf67b74a71553217f3f744e072a0365d"
     assert '{x=0,z=470,kind="SHIELD"}' in before["EGGRUMBLE_RaidItemIntake"][1]
-    assert "RespectCanCollide=true" not in before[HOST][1] or True  # no LOS authority is added by this operation
     new_code=change_only_eggs(before[HOST][1])
     after=dict(before);after[HOST]=(before[HOST][0],new_code)
     modified=[name for name in before if before[name]!=after[name]]
