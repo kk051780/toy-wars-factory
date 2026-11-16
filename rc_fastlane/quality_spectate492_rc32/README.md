@@ -34,3 +34,8 @@
 ## Current official GQ499 deadline composition
 - Base accepted RC `b6f80874ecb9320f483bcb87892bc32af387aca3` has 31 current runtime scripts and 32 enabled source flags. Spectator candidate adds one original client only; all original31 including deadline Host preserved byte/class exact.
 - Use current `GQ499_DEADLINE_SELECTED31.project.json` and `GQ499_DEADLINE_REAL_ROJO31.rbxlx`, not stale lobby-only base. Studio/Android/FUN still NOT_TESTED.
+
+
+## New original GQ527 castle bot-siege current RC composition
+- Official parent `2291154fd07c8d8af086f76199bf585ff2c725c4`: original 31 scripts, now 33 source flags. One existing BotActors changed by the original #527, after #499 deadline Host; our spectator candidate preserves ALL31 current script bodies and adds only original spectator LocalScript.
+- Optional Studio profile base `GQ527_SIEGE_SELECTED31.project.json`; exact live canonical source comparison `GQ527_SIEGE_REAL_ROJO31.rbxlx`. Original #492 remains Studio-only, not public playable, no double gameplay authority.
