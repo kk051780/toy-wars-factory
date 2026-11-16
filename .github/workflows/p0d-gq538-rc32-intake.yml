@@ -1,0 +1,103 @@
+name: P0D GQ538 existing result retry in actual official V3 31 to private 32
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'rc_fastlane/quality_result538_rc32/**'
+      - '.github/workflows/p0d-gq538-rc32-intake.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  true-existing-result-single-author-32:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: d56262dbe8309cf606877fe39a44cde7dda0d9b5
+          path: _original_result538
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_luau
+          persist-credentials: false
+      - name: Download genuine same-head official V3 RC31 build (frozen input)
+        uses: actions/download-artifact@v4
+        with:
+          name: P0D-EGGRUMBLE-V3-RC31-CANONICAL-COMPANION-STUDIO
+          run-id: 43860999862
+          github-token: ${{ github.token }}
+          repository: kk051780/toy-wars-factory
+          path: _official_rc31
+      - name: Confirm pinned original author + official 31-source Place SHA then select one Result with original retry
+        run: |
+          set -euo pipefail
+          test "$(git -C _original_result538 rev-parse HEAD)" = d56262dbe8309cf606877fe39a44cde7dda0d9b5
+          test -s _official_rc31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          python3 -B rc_fastlane/quality_result538_rc32/compose.py \
+            --official-place _official_rc31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --official-receipt _official_rc31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --official-project _official_rc31/GQ31_ON.project.json \
+            --author-root _original_result538 \
+            --out artifacts/gq538_rc32
+          python3 -B rc_fastlane/quality_result538_rc32/test_selection.py
+      - name: Real native Luau compile 32 and execute unchanged original result retry policy tests
+        run: |
+          set -euo pipefail
+          cmake -S _gq_luau -B /tmp/gq538_native -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq538_native --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import subprocess,json
+          from pathlib import Path
+          data=json.loads(Path("artifacts/gq538_rc32/GQ538_RC32_CANDIDATE.project.json").read_text())
+          paths=list(Path("artifacts/gq538_rc32").glob("EGGRUMBLE_*.luau"))
+          assert len(paths)==32,(len(paths),[str(x) for x in paths])
+          for p in paths:
+              subprocess.run(["/tmp/gq538_native/luau-compile","--text",str(p)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ538_CURRENT_OFFICIAL32_NATIVE_ALL_SOURCE_COMPILE_PASS",len(paths))
+          PY
+          /tmp/gq538_native/luau _original_result538/quality_gameplay/v3_result_transient_gui_20261116/tests/test_result_retry.luau \
+            | tee /tmp/gq538-native-retry.log
+          grep -q PASS /tmp/gq538-native-retry.log
+      - name: Pinned Rojo 7.7.1 build true 32-script unpublished Place; Source + Class compare
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq538-rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq538-rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq538-rojo.zip") as z:
+              files=[f for f in z.namelist() if f.endswith("rojo")]
+              assert len(files)==1,files
+              Path("/tmp/gq538-rojo").write_bytes(z.read(files[0]))
+          PY
+          chmod +x /tmp/gq538-rojo
+          /tmp/gq538-rojo build artifacts/gq538_rc32/GQ538_RC32_CANDIDATE.project.json -o artifacts/gq538_rc32/GQ538_PRIVATE_RC32.rbxlx
+          python3 -B rc_fastlane/quality_result538_rc32/compose.py \
+            --official-place _official_rc31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx \
+            --official-receipt _official_rc31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json \
+            --official-project _official_rc31/GQ31_ON.project.json \
+            --author-root _original_result538 \
+            --out artifacts/gq538_rc32 \
+            --built-place artifacts/gq538_rc32/GQ538_PRIVATE_RC32.rbxlx
+          echo GQ538_ORIGINAL_GAME_31_PLUS_ONE_ORIGINAL_RETRY32_SAME_SOURCE_REAL_ROJO_PASS
+      - name: Upload private source-only intake and original author trace (NOT official RC)
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-GQ538-RC32-EXISTING-AUTHOR-PRIVATE-NO-ADOPTION
+          retention-days: 7
+          path: |
+            artifacts/gq538_rc32/GQ538_PRIVATE_RC32.rbxlx
+            artifacts/gq538_rc32/GQ538_RC32_RECEIPT.json
+            artifacts/gq538_rc32/GQ538_RC32_CANDIDATE.project.json
+          if-no-files-found: error
