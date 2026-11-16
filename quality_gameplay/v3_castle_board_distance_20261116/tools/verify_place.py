@@ -15,7 +15,9 @@ def script_nodes(root):
         if props is None:
             continue
         name = props.find("string[@name='Name']")
-        source = props.find("ProtectedString[@name='Source']")
+        source = props.find("string[@name='Source']")
+        if source is None:
+            source = props.find("ProtectedString[@name='Source']")
         if name is None or source is None or name.text is None:
             raise RuntimeError("Incomplete Rojo script node: class=" + repr(item.attrib.get("class"))
                 + " props=" + repr([(t.tag, t.attrib.get("name"), len(t.text or "")) for t in props])
