@@ -124,7 +124,8 @@ assert(attack()==0 and enemy.h.Health==100,"WALL_LOS_REGRESSION")
 blocked=false
 -- 9: BATTLE_ROYALE permits hostile combat with no teams.
 session.mode="BATTLE_ROYALE";session.rules.castles["2"].heldEggs=0
-assert(attack()==1 and enemy.h.Health==80,"BR_HOSTILE_DUEL_REGRESSION")
+assert(attack()==2 and enemy.h.Health==80 and ally.h.Health==80,"BR_HOSTILE_DUEL_REGRESSION")
+session.mode="TEAM" -- Subsequent test isolates a single hostile target
 -- 10: target outside this session's castle roster cannot be hit.
 assert(stranger.h.Health==100,"OTHER_SESSION_TARGETED")
 -- 11: fallen castle forbids its owner from dealing damage.
