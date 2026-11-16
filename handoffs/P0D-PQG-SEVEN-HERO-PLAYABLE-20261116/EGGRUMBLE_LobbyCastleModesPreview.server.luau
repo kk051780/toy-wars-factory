@@ -162,8 +162,9 @@ local function startSession(mode:string)
  end
  sessions[mode]=session
  -- Clean up only this finished match; queues and matches for the other mode survive.
- session.closeRound=function()
-  if sessions[mode]~=session or session.rules.phase~="FINISHED" then return end
+ session.closeRound=function(abandoned:boolean?)
+  if sessions[mode]~=session or (not abandoned and session.rules.phase~="FINISHED") then return end
+  if abandoned then session.rules.phase="ABANDONED" end
   for _,connection in ipairs(session.lifeConnections) do connection:Disconnect() end
   for _,entry in ipairs(session.roster) do
    if not entry.isAI then
@@ -366,8 +367,13 @@ Players.PlayerRemoving:Connect(function(p)
   local ch=p.Character
   local rootPart=ch and ch:FindFirstChild("HumanoidRootPart")::BasePart?
   scene.dropCarrierEggs(tostring(p.UserId),rootPart and rootPart.Position or scene.castleLocations[tostring(p.UserId)] or root)
-  -- Team match integrity: preserve an active owner's castle and assign AI to defend it.
-  if sessions[mode].takeover then sessions[mode].takeover(tostring(p.UserId)) end
+  -- If no human remains, retire the bot-only arena immediately instead of
+  -- trapping the next player behind an occupied session forever.
+  local abandoned=RoundReplay.abandonIfEmpty(scene,joined,function()
+   scene.closeRound(true)
+  end)
+  -- Preserve an existing match by transferring a disconnected castle to AI.
+  if not abandoned and scene.takeover then scene.takeover(tostring(p.UserId)) end
  end
 end)
 print("[EGGRUMBLE V3] Studio-only two mode gates; moving AI actors, shared horde and castle multi-egg combat; real platform matchmaking/production AI UNIMPLEMENTED")
