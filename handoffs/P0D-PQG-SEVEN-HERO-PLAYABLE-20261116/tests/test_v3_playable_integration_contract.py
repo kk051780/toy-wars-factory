@@ -14,6 +14,7 @@ class EGGRUMBLEV3PlaytestSources(unittest.TestCase):
         cls.bot=source("EGGRUMBLE_BotActors.luau")
         cls.router=source("EGGRUMBLE_BotPathRouter.luau")
         cls.swarm=source("EGGRUMBLE_SwarmCombat.luau")
+        cls.hero=source("EGGRUMBLE_SevenRoleCombat.luau")
 
     def test_bot_has_visible_physical_actor_and_distance_gate(self):
         for word in ("AI_Actor_","HumanoidRootPart","Humanoid",
@@ -59,8 +60,8 @@ class EGGRUMBLEV3PlaytestSources(unittest.TestCase):
     def test_two_mode_stage_uses_same_bot_and_swarm_rules(self):
         for word in ('BotActors=require(', 'SwarmCombat=require(',
                      'BotActors.start(session,Rules)','SwarmCombat.start(session)',
-                     'session.swarm.damageFromPlayer(',
-                     'EGGRUMBLE_TestBlade', 'EGGRUMBLE_Eliminated',
+                     'SevenRoleCombat=require(',
+                     'SevenRoleCombat.equip(session,p,role)', 'EGGRUMBLE_Eliminated',
                      'CastleFrontLeft', 'door.CanCollide=false',
                      'TacticalRoute_', 'CentralRidge',
                      'ForestAmbushCover_', 'TEAM_PORTAL',
@@ -69,8 +70,24 @@ class EGGRUMBLEV3PlaytestSources(unittest.TestCase):
                 self.assertIn(word,self.mode)
         self.assertNotIn("Bot slots participate in server rules;",self.mode)
 
+    def test_seven_roles_same_match_and_server_authority(self):
+        for role in ('WARRIOR','MAGE','NINJA','TRAPPER','BUILDER','BEAST','ZOMBIE'):
+            with self.subTest(role=role):
+                self.assertIn(role+'={name=',self.hero)
+        for text in ('EGGRUMBLE_SKILL_','Tool','ToolTip','COOLDOWNS',
+                     'session.swarm.damageFromPlayer(', 'h:TakeDamage(damage)',
+                     'owner.heldEggs==0','session.rules.phase~="ACTIVE"',
+                     'if tool.Parent~=p.Character then return end',
+                     'lineClear(', 'RaycastParams.new()'):
+            with self.subTest(text=text):
+                self.assertIn(text,self.hero)
+        self.assertIn('"武神"',self.hero)
+        self.assertIn('"暗殺者"',self.hero)
+        self.assertIn('["職業選択"]=0.4',source("EGGRUMBLE_InteractionGuard.luau"))
+        self.assertNotIn('EGGRUMBLE_TestBlade',self.mode)
+
     def test_server_authority_and_owner_contract(self):
-        for text in (self.mode,self.bot,self.swarm):
+        for text in (self.mode,self.bot,self.swarm,self.hero):
             self.assertNotIn("MarketplaceService",text)
             self.assertNotIn("DataStoreService",text)
             self.assertNotIn("TeleportService",text)
