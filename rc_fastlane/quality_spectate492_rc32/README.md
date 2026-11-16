@@ -29,3 +29,8 @@
 ## New formal HEAD follow-up after original GQ615 lobby queue
 - Source refresh only: newest authenticated official parent `b0a4b95de5a501173bdbd2ce179e5901d9d78686` with `LOBBY_QUEUE_ETA_615`; selected private32 project is composed from `GQ615_LOBBY_QUEUE_SELECTED31.project.json`, not obsolete prior ZOMBIE-GUARD-only selected project.
 - Preserve 31/31 current 31 source/classes including now installed original #615 Host Billboard, #631 Zombie GUARD, #618 Beast, #611 Guard, #525 Item. No reauthoring GQ615 or GQ492. Native32 + Rojo32 full comparison against exact GQ615 canonical Place required after this new HEAD.
+
+
+## Current official GQ499 deadline composition
+- Base accepted RC `b6f80874ecb9320f483bcb87892bc32af387aca3` has 31 current runtime scripts and 32 enabled source flags. Spectator candidate adds one original client only; all original31 including deadline Host preserved byte/class exact.
+- Use current `GQ499_DEADLINE_SELECTED31.project.json` and `GQ499_DEADLINE_REAL_ROJO31.rbxlx`, not stale lobby-only base. Studio/Android/FUN still NOT_TESTED.
