@@ -1,0 +1,50 @@
+name: P0D GQ carrier WIND stealth bot targeting native
+on:
+  push:
+    branches:
+      - quality/eggrumble-egg-carrier-stealth-targeting-20261116
+    paths:
+      - '.github/workflows/p0d-gq-egg-carrier-stealth-native.yml'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotActors.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CarrierBotTargeting.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_SevenRoleCombat.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/EGGRUMBLE_CarrierBotTargeting.spec.luau'
+      - 'handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests/test_carrier_stealth_targeting_contract.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  carrier-target-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Cross-domain source contract
+        run: python3 -B -m unittest discover -s handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p test_carrier_stealth_targeting_contract.py -v
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _p0d_pinned_luau
+          persist-credentials: false
+      - name: Build pinned Luau and verify actual policy behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _p0d_pinned_luau rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _p0d_pinned_luau -B /tmp/p0d_egg_carrier_luau -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/p0d_egg_carrier_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          root=handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          for path in EGGRUMBLE_BotActors.luau EGGRUMBLE_SevenRoleCombat.luau EGGRUMBLE_CarrierBotTargeting.luau tests/EGGRUMBLE_CarrierBotTargeting.spec.luau; do
+            /tmp/p0d_egg_carrier_luau/luau-compile "$root/$path" >/dev/null
+          done
+          mkdir -p /tmp/p0d_carrier_case/tests
+          cp "$root/EGGRUMBLE_CarrierBotTargeting.luau" /tmp/p0d_carrier_case/
+          cp "$root/tests/EGGRUMBLE_CarrierBotTargeting.spec.luau" /tmp/p0d_carrier_case/tests/
+          cd /tmp/p0d_carrier_case/tests
+          /tmp/p0d_egg_carrier_luau/luau EGGRUMBLE_CarrierBotTargeting.spec.luau | tee /tmp/p0d_carrier_native.log
+          grep -q 'CARRIER_BOT_TARGET_NATIVE_PASS 24 checks' /tmp/p0d_carrier_native.log
+          echo 'SOURCE_TEST_PASS; STUDIO/ANDROID/FUN/RC_NOT_TESTED'
