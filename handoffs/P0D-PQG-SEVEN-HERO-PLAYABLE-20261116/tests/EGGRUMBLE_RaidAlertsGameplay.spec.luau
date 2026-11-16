@@ -64,5 +64,37 @@ return function(Rules:any,Alerts:any)
  eq(brDelivered[1].castleId,"a","BR depositor")
  eq(br.teamDeposits.RED,0,"BR does not write TEAM points")
  assert(Rules.auditEggConservation(br).valid,"BR egg conservation")
+
+ -- Real AI/player siege damage comes from original castle rules, not fake
+ -- event fixtures. First snapshot at spawn must be quiet.
+ local siege=Rules.new(Rules.MODE_TEAM,{
+  {id="red",team="RED",isAI=false},{id="blue",team="BLUE",isAI=true}
+ },1)
+ Rules.start(siege)
+ local priorHP:{[string]:number}={}
+ local lastShown:{[string]:number}={}
+ eq(#Alerts.siegeSignals(siege.castles,priorHP,lastShown,100),0,"spawn never triggers siege warning")
+ Rules.damageCastle(siege,"blue","red",100)
+ local firstSiege=Alerts.siegeSignals(siege.castles,priorHP,lastShown,101)
+ eq(#firstSiege,1,"real castle damage raises siege warning")
+ eq(firstSiege[1].kind,"SIEGE","siege signal kind")
+ eq(firstSiege[1].castleId,"blue","only the attacked castle")
+ eq(#Alerts.siegeSignals(siege.castles,priorHP,lastShown,102),0,"refresh unchanged HP is quiet")
+ Rules.damageCastle(siege,"blue","red",100)
+ eq(#Alerts.siegeSignals(siege.castles,priorHP,lastShown,103),0,"AI rapid attack is throttled")
+ Rules.damageCastle(siege,"blue","red",100)
+ local again=Alerts.siegeSignals(siege.castles,priorHP,lastShown,109)
+ eq(#again,1,"siege warning allowed after seven-second cooldown")
+ eq(again[1].castleId,"blue","throttled warning still identifies target")
+ eq(#Alerts.siegeSignals(br.castles,{}, {},120),0,"BR new session has no stale siege warning")
+ local endSiege
+ for _=1,4 do
+  if siege.phase~="ACTIVE" then break end
+  endSiege=Rules.damageCastle(siege,"blue","red",250)
+  Alerts.siegeSignals(siege.castles,priorHP,lastShown,111)
+ end
+ assert(endSiege and endSiege.fallen,"real siege eventually destroys castle")
+ eq(#Alerts.siegeSignals(siege.castles,priorHP,lastShown,120),0,"dead castle never raises siege warning")
+ assert(Rules.auditEggConservation(siege).valid,"siege warnings never change egg ledger")
  return true
 end
