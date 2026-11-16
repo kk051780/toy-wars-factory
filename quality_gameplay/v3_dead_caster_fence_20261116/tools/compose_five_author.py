@@ -65,10 +65,13 @@ def apply_to_combined(original: str) -> str:
         raise ValueError("RED_DUPLICATE_FENCE")
     return result
 
-def compose(output: Path, project: Path, receipt: Path) -> None:
+def compose(output: Path, project: Path, receipt: Path, enabled: bool = True) -> None:
     four=four_author_module()
     old, upstream_heads=four.build_union()
-    new=apply_to_combined(old)
+    # OFF must preserve ALL existing #510/#516/#524/#529 fixes, never revert to bare #482.
+    new=apply_to_combined(old) if enabled else old
+    if not enabled and sha256(new)!=ORIGINAL_529_FOUR_SHA256:
+        raise ValueError("RED_OFF22_LOST_PREVIOUS_AUTHORS")
     output.parent.mkdir(parents=True,exist_ok=True)
     output.write_text(new,encoding="utf-8")
     five_heads={
@@ -76,6 +79,7 @@ def compose(output: Path, project: Path, receipt: Path) -> None:
         "five_author_combat_sha256":sha256(new),
         "prior_529_head":ORIGINAL_529_HEAD,
         "dead_cast_530":"SOURCE_ONLY_SOFT_CLAIM_NOT_GRANTED",
+        "dead_cast_530_enabled":enabled,
         "dead_cast_530_source_only":True,
         "dead_cast_530_rollback":"remove only two inserted lines or disable entire optional overlay",
         "original_482_game_sources_unchanged":20,
@@ -83,20 +87,25 @@ def compose(output: Path, project: Path, receipt: Path) -> None:
     }
     four.compose_private(output,project,receipt,five_heads)
     data=json.loads(receipt.read_text(encoding="utf-8"))
-    data["status"]="FIVE_AUTHOR_PRIVATE22_SOURCE_ONLY_NOT_FORMAL_RC"
-    data["combination"]="original482+mage510+dot516+warp524+human529+deadguard530"
+    data["status"]=("FIVE_AUTHOR_PRIVATE22_SOURCE_ONLY_NOT_FORMAL_RC" if enabled
+                    else "FOUR_AUTHOR_OFF22_SOURCE_ONLY_NOT_FORMAL_RC")
+    data["combination"]=("original482+mage510+dot516+warp524+human529+deadguard530"
+                         if enabled else "original482+mage510+dot516+warp524+human529")
+    data["dead_cast_530_enabled"]=enabled
     data["combat_source_overlays"]=1
     data["source_author_review_required"]=True
     data["claim_granted"]=False
     data["project_mode"]="NOT_REAL_STUDIO_TEST"
     receipt.write_text(json.dumps(data,ensure_ascii=False,indent=2,sort_keys=True)+"\n",encoding="utf-8")
     pj=json.loads(project.read_text(encoding="utf-8"))
-    pj["name"]="GQ_5_AUTHOR_WITH_DEAD_CASTER_PRIVATE22_NOT_OFFICIAL_RC"
+    pj["name"]=("GQ_5_AUTHOR_WITH_DEAD_CASTER_PRIVATE22_NOT_OFFICIAL_RC" if enabled
+                else "GQ_4_AUTHOR_WITHOUT_DEAD_CASTER_PRIVATE22_NOT_OFFICIAL_RC")
     project.write_text(json.dumps(pj,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     assert data["private_source_count"]==22
     assert data["original_modules_byte_identical"]==20
     assert data["combat_four_author_sha256"]==ORIGINAL_529_FOUR_SHA256
-    print("FIVE_AUTHOR_COMBAT_REUSE_AND_REVERSE_PASS",sha256(new))
+    print("FIVE_AUTHOR_COMBAT_REUSE_AND_REVERSE_PASS" if enabled else
+          "FOUR_AUTHOR_OFF22_ROLLBACK_EXACT_PASS",sha256(new))
     print("FIVE_AUTHOR_PRIVATE22_SOURCE_MAP_PASS",len(data["source_sha256"]))
 
 def main():
@@ -105,11 +114,12 @@ def main():
     p.add_argument("--project",required=True,type=Path)
     p.add_argument("--receipt",required=True,type=Path)
     p.add_argument("--verify-place",type=Path)
+    p.add_argument("--off",action="store_true",help="restore exact #529 four-author Combat in private22")
     a=p.parse_args()
     if a.verify_place:
         four_author_module().verify_place(a.project,a.verify_place,a.receipt)
     else:
-        compose(a.combat,a.project,a.receipt)
+        compose(a.combat,a.project,a.receipt,enabled=not a.off)
 
 if __name__=="__main__":
     main()
