@@ -190,14 +190,48 @@ return function(Results:any):boolean
  end
  local coOp=state("TEAM",nil,"ACTIVE")
  coOp.events={{type="CASTLE_FALL",owner="mage",attacker="war"}}
- local coopScore=Results.build(coOp,{})
+ local coopScore=Results.build(coOp,{assassin=5})
  equal(byId(coopScore,"war").castlesDestroyed,1,"siege final blow remains with actual attacker")
  equal(byId(coopScore,"war").teamCastleSupport,0,"no double-credit for final hitter")
  equal(byId(coopScore,"war").score,200+440,"attacker score unchanged")
  equal(byId(coopScore,"assassin").teamCastleSupport,1,"living same-team defender shares team siege")
- equal(byId(coopScore,"assassin").score,90,"eliminated end-state cannot erase earlier team siege")
+ equal(byId(coopScore,"assassin").score,30+90,"eliminated end-state cannot erase earlier team siege")
  equal(byId(coopScore,"assassin").objectiveScore,90,"team objective tie-break includes real siege share")
  equal(byId(coopScore,"builder").teamCastleSupport,0,"enemy team gets no credit")
+ -- Anti-AFK: survival/teammate alone is never a server-verified assist.
+ local idle=byId(Results.build(coOp,{}),"assassin")
+ equal(idle.teamCastleSupport,0,"idle teammate never gets free siege points")
+ equal(idle.specialty,"参加","idle teammate cannot claim co-op specialist")
+ equal(idle.score,0,"idle teammate keeps zero when castle already eliminated")
+ local incidental=byId(Results.build(coOp,{assassin=4}),"assassin")
+ equal(incidental.teamCastleSupport,0,"one to four neutral KOs cannot farm ninety support points")
+ equal(incidental.score,24,"low KO retains only its real combat points")
+ equal(byId(coopScore,"assassin").ko,5,"five actual server KOs make defender active")
+ local withDeposit=state("TEAM",nil,"ACTIVE")
+ withDeposit.events={
+  {type="FIELD_EGG_TAKEN",owner="assassin",eggId="FIELD_1"},
+  {type="EGG_DEPOSIT",owner="assassin",quantity=1},
+  {type="CASTLE_FALL",owner="mage",attacker="war"},
+ }
+ local courier=byId(Results.build(withDeposit,{}),"assassin")
+ equal(courier.teamCastleSupport,1,"real home-delivery activates team supporter")
+ equal(courier.deposited,1,"support uses server egg-delivery event")
+ equal(courier.score,120+90,"courier team contribution is bounded and credited")
+ local onlySteal=state("TEAM",nil,"ACTIVE")
+ onlySteal.events={
+  {type="EGG_TAKEN",thief="assassin",source="mage",quantity=1},
+  {type="CASTLE_FALL",owner="mage",attacker="war"},
+ }
+ equal(byId(Results.build(onlySteal,{}),"assassin").teamCastleSupport,0,
+  "unreturned stolen egg cannot unlock team siege credit")
+ local laterDelivery=state("TEAM",nil,"ACTIVE")
+ laterDelivery.events={
+  {type="CASTLE_FALL",owner="mage",attacker="war"},
+  {type="FIELD_EGG_TAKEN",owner="assassin",eggId="FIELD_3"},
+  {type="EGG_DEPOSIT",owner="assassin",quantity=1},
+ }
+ equal(byId(Results.build(laterDelivery,{}),"assassin").teamCastleSupport,0,
+  "later egg delivery never retroactively unlocks a past siege")
  local brSupport=state("BATTLE_ROYALE",nil,"ACTIVE")
  brSupport.events={{type="CASTLE_FALL",owner="mage",attacker="war"}}
  equal(byId(Results.build(brSupport,{}),"assassin").teamCastleSupport,0,"BR has no allied share")
@@ -206,7 +240,7 @@ return function(Results:any):boolean
   {type="CASTLE_FALL",owner="assassin",attacker="mage"},
   {type="CASTLE_FALL",owner="builder",attacker="war"},
  }
- local afterDeath=Results.build(ordered,{})
+ local afterDeath=Results.build(ordered,{assassin=5})
  equal(byId(afterDeath,"assassin").teamCastleSupport,0,"already eliminated teammate cannot receive later siege points")
  equal(byId(afterDeath,"mage").teamCastleSupport,0,"enemy final-blow owner never receives extra team assist")
  equal(byId(afterDeath,"war").teamCastleSupport,0,"owner did not receive own final blow twice")
@@ -215,9 +249,9 @@ return function(Results:any):boolean
  for _=1,12 do
   table.insert(supportCap.events,{type="CASTLE_FALL",owner="mage",attacker="war"})
  end
- local share=byId(Results.build(supportCap,{}),"assassin")
+ local share=byId(Results.build(supportCap,{assassin=5}),"assassin")
  equal(share.teamCastleSupport,12,"raw team siege captures retained for diagnostics")
- equal(share.score,90*3,"team siege bonus capped to limit passive farm")
+ equal(share.score,30+90*3,"team siege bonus capped after real participation")
  equal(share.objectiveScore,90*3,"team objective cap also applies to tie-break")
  -- 6 verified post-game specialties make different roles/rewards feel distinct,
  -- but do NOT alter match score, fake a server event, or imply global MVP.
@@ -251,7 +285,7 @@ return function(Results:any):boolean
  equal(medal({},100).specialty,"無双","actual neutral KO score earns horde specialist")
  local allyMedal=medal({
   {type="CASTLE_FALL",owner="mage",attacker="assassin"}
- },0)
+ },5)
  equal(allyMedal.specialty,"共闘","real teammate castle capture earns team specialist")
  equal(medal({
   {type="CASTLE_FALL",owner="mage",attacker="assassin"}
