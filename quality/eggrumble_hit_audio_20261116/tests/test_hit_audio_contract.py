@@ -36,7 +36,7 @@ class AudioContract(unittest.TestCase):
         self.assertIn(SOURCE.resolve(strict=True),paths_real)
     def test_one_optional_client_no_game_authority(self):
         client=self.project["tree"]["StarterPlayer"]["StarterPlayerScripts"]
-        self.assertEqual({"EGGRUMBLE_CombatFeel","EGGRUMBLE_ProceduralSkills","EGGRUMBLE_RealHitAudio"},set(client))
+        self.assertEqual({"EGGRUMBLE_CombatFeel","EGGRUMBLE_ProceduralSkills","EGGRUMBLE_RealHitAudio"},{key for key in client if not key.startswith("$")}))
         self.assertEqual("EGGRUMBLE_RealHitAudio.client.luau",client["EGGRUMBLE_RealHitAudio"]["$path"])
         for prohibited in ("RemoteEvent","TakeDamage(","SetAttribute(","DataStoreService",
                            "Humanoid.WalkSpeed","Tool.Activated","Touched:Connect"):
