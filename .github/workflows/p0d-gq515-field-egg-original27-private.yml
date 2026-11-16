@@ -1,0 +1,175 @@
+name: P0D GQ egg field safety original26 to private27 source-exact
+on:
+  push:
+    branches:
+      - quality/gq-field-egg-drop-recovery-20261116-q01
+  pull_request:
+    branches:
+      - feature/p0d-pqg-seven-hero-playable-20261116-01
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  author27-private-intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Original 21 Game owner pinned
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - name: Original 26 composite and AI quality owner pinned
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _v3_quality
+          persist-credentials: false
+      - name: Original artwork owner pinned
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - name: Original SCORE owner pinned
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - name: Original native Luau VM pinned
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Ensure exact original authors and run own negative tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          python3 -m unittest discover -s quality_gameplay/field_egg_drop_recovery_20261116 -p 'test_source_contract.py' -v
+      - name: Reuse original ART composer
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/EGGRUMBLE_ORIGINAL_ART.project.json
+      - name: Reuse original #484 26-source GAME and ART and SCORE composer
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality --art _v3_art --score _v3_score \
+            --art-project artifacts/EGGRUMBLE_ORIGINAL_ART.project.json \
+            --out artifacts/EGGRUMBLE_ORIGINAL26.project.json
+      - name: Compose only our single additional field egg policy onto 26
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/field_egg_drop_recovery_20261116/tools/compose_on_current26.py \
+            --base26 artifacts/EGGRUMBLE_ORIGINAL26.project.json \
+            --out artifacts/field27
+          test -f artifacts/field27/EGGRUMBLE_GQ_FIELD_EGG_SAFE27.project.json
+      - name: Build native Luau compiler plus VM and run actual module 18 assertions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S _luau_fixed -B /tmp/gq515_native27 -G Ninja -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq515_native27 --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          from pathlib import Path
+          r=Path("quality_gameplay/field_egg_drop_recovery_20261116")
+          body=(r/"EGGRUMBLE_FieldEggDropBounds.luau").read_text()
+          assert body.rstrip().endswith("return Drop")
+          Path("artifacts/field27/actual_policy_native.luau").write_text(
+            body.rsplit("return Drop",1)[0]+"\n"+(r/"tests/spec_native.luau").read_text())
+          PY
+          /tmp/gq515_native27/luau artifacts/field27/actual_policy_native.luau | tee artifacts/field27/EGG_POLICY_NATIVE.log
+          grep -q 'EGGRUMBLE_FIELD_EGG_RECOVERY_NATIVE_PASS checks=18' artifacts/field27/EGG_POLICY_NATIVE.log
+      - name: ORIGINAL CastleMatchRules plus actual DropBounds native lifecycle six cross-domain scenarios
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/field_egg_drop_recovery_20261116/tools/build_real_rules_native.py \
+            --rules _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --out artifacts/field27/real_rules_drop_native.luau
+          /tmp/gq515_native27/luau-compile --text artifacts/field27/real_rules_drop_native.luau >/dev/null
+          /tmp/gq515_native27/luau artifacts/field27/real_rules_drop_native.luau | tee artifacts/field27/REAL_RULES_CROSS_DOMAIN_NATIVE.log
+          grep -q 'EGGRUMBLE_FIELD_EGG_REAL_RULES_CROSS_DOMAIN_NATIVE_PASS checks=' artifacts/field27/REAL_RULES_CROSS_DOMAIN_NATIVE.log
+      - name: Native Luau compile all 27 actual source maps
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          p=Path("artifacts/field27/EGGRUMBLE_GQ_FIELD_EGG_SAFE27.project.json").resolve()
+          def walk(tree):
+              for k,v in tree.items():
+                  if k.startswith("$"):continue
+                  if "$path" in v:yield (p.parent/v["$path"]).resolve(strict=True)
+                  else:yield from walk(v)
+          src=list(walk(json.loads(p.read_text())["tree"]))
+          assert len(src)==27 and len(set(src))==27
+          for s in src:
+              subprocess.run(["/tmp/gq515_native27/luau-compile","--text",str(s)],check=True,stdout=subprocess.DEVNULL)
+          print("GQ_FIELD_EGG_SOURCE_NATIVE27_PARSE_PASS 27/27")
+          PY
+      - name: Checksum pinned Rojo build unpublished 27 source Place
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq515_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq515_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq515_rojo.zip") as z:
+              names=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              target=Path("/tmp/gq515_rojo")
+              target.write_bytes(z.read(names[0]))
+              target.chmod(0o755)
+          PY
+          /tmp/gq515_rojo build artifacts/field27/EGGRUMBLE_GQ_FIELD_EGG_SAFE27.project.json \
+            -o artifacts/field27/EGGRUMBLE_GQ_FIELD_EGG_SAFE27_PRIVATE.rbxlx
+          python3 quality_gameplay/field_egg_drop_recovery_20261116/tools/verify_place22.py \
+            --expected-count 27 \
+            --project artifacts/field27/EGGRUMBLE_GQ_FIELD_EGG_SAFE27.project.json \
+            --place artifacts/field27/EGGRUMBLE_GQ_FIELD_EGG_SAFE27_PRIVATE.rbxlx
+      - name: Archive SOURCE only, not authenticated RC
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ515-AUTHOR26-PLUS-EGG-SAFETY27-SOURCE-ONLY-NOT-RC
+          retention-days: 3
+          path: |
+            artifacts/field27/EGGRUMBLE_GQ_FIELD_EGG_SAFE27_PRIVATE.rbxlx
+            artifacts/field27/EGGRUMBLE_GQ_FIELD_EGG_SAFE27.project.json
+            artifacts/field27/SOURCE27_RECEIPT.json
+            artifacts/field27/EGG_POLICY_NATIVE.log
+            artifacts/field27/REAL_RULES_CROSS_DOMAIN_NATIVE.log
+            artifacts/field27/real_rules_drop_native.receipt.txt
+      - run: echo 'PRIVATE27_ONLY; OFFICIAL_RC_WRITER_220_REQUIRED; STUDIO_ANDROID_FUN_OWNER_NOT_RUN'
+
+  original-29-federation:
+    name: Federate 8 owned areas into private29 without RC write
+    uses: ./.github/workflows/p0d-gq515-federated29-private.yml
+    permissions:
+      contents: read
