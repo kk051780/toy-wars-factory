@@ -148,6 +148,21 @@ jobs:
           python3 _item_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/compose_item26_overlay.py compile \
             --project artifacts/ITEM_GQ_HEAL26.project.json \
             --compiler /tmp/gq_heal_native/luau-compile
+      - name: Preserve original 8-domain game source tests across 7-roles field castle battle neutral item lobby
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s _game_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tests -p 'test_*.py' -q
+          python3 -B -m unittest discover -s _art_original/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tests -p 'test_*.py' -q
+          for pair in "make_native_rules_harness.py:castle_eggs_modes" "make_native_combat_harness.py:seven_roles" "make_native_round_replay_harness.py:round_replay_lobby" "make_native_raid_item_harness.py:raid_item" "make_native_boss_session_harness.py:neutral_boss"; do
+            generator="${pair%%:*}"
+            label="${pair##*:}"
+            python3 "_game_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/$generator" \
+              --out "artifacts/ORIGINAL_GAME_${label}.native.luau"
+            /tmp/gq_heal_native/luau-compile --text "artifacts/ORIGINAL_GAME_${label}.native.luau" >/dev/null
+            /tmp/gq_heal_native/luau "artifacts/ORIGINAL_GAME_${label}.native.luau" | tee "artifacts/ORIGINAL_GAME_${label}.log"
+          done
+          echo GQ_8_DOMAIN_ORIGINAL_AUTHOR_VM_AND_CONTRACT_PASS
       - name: Pin Rojo 7.7.1 binary and build actual unpublished 26-source Place
         shell: bash
         run: |
