@@ -68,6 +68,7 @@ RULES = {
 ROLE_CLASSES = {
  "EGGRUMBLE_LobbyCastleModesPreview": "Script",
  "EGGRUMBLE_SevenRoleCombat": "ModuleScript",
+ "EGGRUMBLE_AttackGeometry": "ModuleScript",
  "EGGRUMBLE_SwarmCombat": "ModuleScript",
  "EGGRUMBLE_BotActors": "ModuleScript",
  "EGGRUMBLE_BotPathRouter": "ModuleScript",
@@ -110,6 +111,26 @@ FEATURE_EVIDENCE = {
    "CentralRidgeRight",
    "local z=470+math.floor(n/4)*110+(if n==1 then 18 else 0)")),
 
+}
+
+# Newer official RC source flags must never be silently called covered.
+# Optional because #590's immutable original base predates #515/#582/#595/#586.
+# When present, each MUST be true and have a real selected Luau source anchor.
+OPTIONAL_FEATURE_EVIDENCE = {
+ "FIELD_CARRIER_OFFARENA_DROP_515": (
+  "EGGRUMBLE_LobbyCastleModesPreview",
+  ("function Drop.recover(", "DropBounds.recover(")),
+ "ZOMBIE_COMMAND_SQUAD_582": (
+  "EGGRUMBLE_SevenRoleCombat",
+  ("local ZombieCommander=(function()", "ZombieCommander.begin(p,")),
+ "VERTICAL_HIT_FAIRNESS_595": (
+  "EGGRUMBLE_AttackGeometry",
+  ("if dy~=dy or math.abs(dy)>math.min(radius,14) then return false end",)),
+ "DEPOSIT_CURRENT_SESSION_586": (
+  "EGGRUMBLE_LobbyCastleModesPreview",
+  ("GQ_DEPOSIT_CURRENT_MATCH_586",
+   "joined[p.UserId]~=session.mode",
+   "sessions[session.mode]~=session")),
 }
 
 class RedGate(ValueError):
@@ -186,6 +207,17 @@ def verify(place:bytes, receipt:dict, manifest:dict, active:dict, expected_head:
         require(flags.get(flag) is True,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag)
         for anchor in ((anchors,) if isinstance(anchors,str) else anchors):
             require(anchor in scripts[script][1],"FEATURE_FALSE_ON_"+flag)
+    # Original base contains 21 flags; official RC may have up to 25.
+    # Absence is not certification. Present enabled flags must be source-proved.
+    verified_optional=[]
+    for flag,(script,anchors) in OPTIONAL_FEATURE_EVIDENCE.items():
+        if flag not in flags:
+            continue
+        require(flags[flag] is True,"FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag)
+        require(script in scripts,"FEATURE_FALSE_ON_"+flag)
+        for anchor in anchors:
+            require(anchor in scripts[script][1],"FEATURE_FALSE_ON_"+flag)
+        verified_optional.append(flag)
     return {
         "result":("OFFICIAL_SOURCE_ARTIFACT_8_DOMAIN_GATE_PASS_NOT_GAMEPLAY_ACCEPTANCE"
                   if official else "PR_PREMERGE_SOURCE_ARTIFACT_GATE_PASS_NOT_OFFICIAL_RC"),
@@ -193,8 +225,9 @@ def verify(place:bytes, receipt:dict, manifest:dict, active:dict, expected_head:
         "official_rc_head":expected_head,"studio_place_bytes":len(place),
         "studio_place_sha256":placehash,"script_count":len(scripts),
         "domains":by_domain,
-        "verified_flag_count":len(FEATURE_EVIDENCE),
-        "unassessed_new_flags":sorted(set(flags)-set(FEATURE_EVIDENCE)),
+        "verified_flag_count":len(FEATURE_EVIDENCE)+len(verified_optional),
+        "verified_optional_flags":sorted(verified_optional),
+        "unassessed_new_flags":sorted(set(flags)-set(FEATURE_EVIDENCE)-set(verified_optional)),
         "legacy_s1_default":"rich51",
         "real_studio_2client":"NOT_TESTED",
         "android_15min":"NOT_TESTED","owner_fun":"NOT_TESTED",

@@ -81,6 +81,22 @@ def drop_anchor(raw:bytes,name:str,anchor:str)->bytes:
         return ET.tostring(root,encoding="utf-8")
     raise AssertionError("missing script "+name)
 
+def fixture_with_current_25_flags():
+    raw,receipt,manifest,active=fixture()
+    root=ET.fromstring(raw)
+    by_name={}
+    for item in root.iter("Item"):
+        props=item.find("Properties")
+        if props is not None:
+            by_name[props.findtext("string[@name='Name']")]=props
+    for flag,(script,anchors) in gq8.OPTIONAL_FEATURE_EVIDENCE.items():
+        source=by_name[script].find("ProtectedString[@name='Source']")
+        source.text=(source.text or "")+"\n"+"\n".join(anchors)
+        manifest["feature_flags"][flag]=True
+    raw=ET.tostring(root,encoding="utf-8")
+    rehash(raw,receipt)
+    return raw,receipt,manifest,active
+
 class Gate(unittest.TestCase):
     def test_valid_covers_eight_domains_and_twenty_one_current_flags(self):
         b,r,m,a=fixture()
@@ -247,6 +263,34 @@ class Gate(unittest.TestCase):
         a["active_profile"]="eggrumble_v3_31"
         with self.assertRaisesRegex(gq8.RedGate,"S1_LEGACY_CHANGED_WITHOUT_OWNER"):
             gq8.verify(b,r,m,a,HEAD)
+
+    def test_current_rc25_flags_are_individually_source_proved(self):
+        b,r,m,a=fixture_with_current_25_flags()
+        result=gq8.verify(b,r,m,a,HEAD)
+        self.assertEqual(result["verified_flag_count"],25)
+        self.assertEqual(len(result["verified_optional_flags"]),4)
+        self.assertEqual(result["unassessed_new_flags"],[])
+        for flag,(script,anchors) in gq8.OPTIONAL_FEATURE_EVIDENCE.items():
+            with self.subTest(flag=flag):
+                raw,receipt,manifest,active=fixture_with_current_25_flags()
+                raw=drop_anchor(raw,script,anchors[0])
+                rehash(raw,receipt)
+                with self.assertRaisesRegex(gq8.RedGate,
+                    "FEATURE_FALSE_ON_"+flag):
+                    gq8.verify(raw,receipt,manifest,active,HEAD)
+
+    def test_current_rc_optional_flags_cannot_be_disabled_or_falsely_assessed(self):
+        for flag in gq8.OPTIONAL_FEATURE_EVIDENCE:
+            with self.subTest(flag=flag):
+                b,r,m,a=fixture_with_current_25_flags()
+                m["feature_flags"][flag]=False
+                with self.assertRaisesRegex(gq8.RedGate,
+                    "FEATURE_FLAG_DISABLED_OR_UNKNOWN_"+flag):
+                    gq8.verify(b,r,m,a,HEAD)
+        b,r,m,a=fixture()
+        result=gq8.verify(b,r,m,a,HEAD)
+        self.assertEqual(result["verified_flag_count"],21)
+        self.assertEqual(result["verified_optional_flags"],[])
 
 if __name__=="__main__":
     unittest.main()
