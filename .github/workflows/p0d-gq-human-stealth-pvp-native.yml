@@ -1,0 +1,104 @@
+name: P0D GQ Human Stealth PvP Native plus Private 21 SourceExact
+on:
+  push:
+    branches: [quality/gq-v3-human-stealth-pvp-20261116-01]
+    paths:
+      - 'quality_gameplay/v3_human_stealth_pvp_20261116/**'
+      - '.github/workflows/p0d-gq-human-stealth-pvp-native.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_human_stealth_pvp_20261116/**'
+      - '.github/workflows/p0d-gq-human-stealth-pvp-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gq-human-stealth-private:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Exact source lock, source-repair tests, original 21-script private compose
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s quality_gameplay/v3_human_stealth_pvp_20261116 -p test_source_contract.py -v
+          mkdir -p artifacts
+          python3 quality_gameplay/v3_human_stealth_pvp_20261116/build_candidate.py \
+            --patched artifacts/GQ_SevenRoleCombat_STEALTH_PVP.luau \
+            --fixed-harness artifacts/STEALTH_FIXED_NATIVE.luau \
+            --original-harness artifacts/STEALTH_ORIGINAL_NATIVE.luau
+          python3 quality_gameplay/v3_human_stealth_pvp_20261116/compose_private.py \
+            --project artifacts/GQ_HUMAN_STEALTH21.project.json \
+            --candidate artifacts/GQ_SevenRoleCombat_STEALTH_PVP.luau \
+            --receipt artifacts/GQ_HUMAN_STEALTH_RECEIPT.json
+          git diff --exit-code -- handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+      - name: Checkout exact native Luau toolchain
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_luau
+          persist-credentials: false
+      - name: Real extracted Combat functions, original negative and repaired 12-case native
+        run: |
+          set -euo pipefail
+          cmake -S _gq_luau -B /tmp/gq_stealth_luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq_stealth_luau --target Luau.Repl.CLI Luau.Compile.CLI --parallel 4
+          python3 - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          project=Path("artifacts/GQ_HUMAN_STEALTH21.project.json").resolve()
+          from importlib.machinery import SourceFileLoader
+          m=SourceFileLoader("composer","quality_gameplay/v3_human_stealth_pvp_20261116/compose_private.py").load_module()
+          files=m.mapped(json.loads(project.read_text(encoding="utf-8")),project.parent)
+          assert len(files)==21
+          for name,(_,src) in files.items():
+              subprocess.run(["/tmp/gq_stealth_luau/luau-compile","--text",str(src)],
+                             check=True,stdout=subprocess.DEVNULL)
+          for src in ["artifacts/STEALTH_FIXED_NATIVE.luau","artifacts/STEALTH_ORIGINAL_NATIVE.luau"]:
+              subprocess.run(["/tmp/gq_stealth_luau/luau-compile","--text",src],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ_HUMAN_STEALTH_NATIVE_21_OF_21_COMPILE_PASS")
+          PY
+          if /tmp/gq_stealth_luau/luau artifacts/STEALTH_ORIGINAL_NATIVE.luau >/tmp/orig.log 2>&1; then
+            echo "RED: original hidden-target defect did not reproduce";exit 1
+          fi
+          cat /tmp/orig.log
+          grep -q HIDDEN_HUMAN_WAS_DAMAGED /tmp/orig.log
+          echo "GQ_HUMAN_STEALTH_ORIGINAL_DEFECT_REPRODUCED"
+          /tmp/gq_stealth_luau/luau artifacts/STEALTH_FIXED_NATIVE.luau | tee /tmp/fixed.log
+          grep -q GQ_HUMAN_STEALTH_PVP_REAL_SOURCE_12_CASES_PASS /tmp/fixed.log
+      - name: Download checksum-locked Rojo binary and assemble actual private Place
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_stealth_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_stealth_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          with ZipFile("/tmp/gq_stealth_rojo.zip") as z:
+              entries=[n for n in z.namelist() if n.split("/")[-1]=="rojo"]
+              assert len(entries)==1
+              p=Path("/tmp/gq_stealth_rojo")
+              p.write_bytes(z.read(entries[0]))
+              p.chmod(0o755)
+          PY
+          /tmp/gq_stealth_rojo build artifacts/GQ_HUMAN_STEALTH21.project.json \
+            -o artifacts/GQ_HUMAN_STEALTH_PRIVATE_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_human_stealth_pvp_20261116/compose_private.py \
+            --project artifacts/GQ_HUMAN_STEALTH21.project.json \
+            --receipt artifacts/GQ_HUMAN_STEALTH_RECEIPT.json \
+            --verify-place artifacts/GQ_HUMAN_STEALTH_PRIVATE_NOT_RC.rbxlx
+      - name: Upload private evidence only
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ-HUMAN-STEALTH-PVP-PRIVATE21-NOT-RELEASE
+          path: |
+            artifacts/GQ_HUMAN_STEALTH_PRIVATE_NOT_RC.rbxlx
+            artifacts/GQ_HUMAN_STEALTH21.project.json
+            artifacts/GQ_HUMAN_STEALTH_RECEIPT.json
+          retention-days: 3
