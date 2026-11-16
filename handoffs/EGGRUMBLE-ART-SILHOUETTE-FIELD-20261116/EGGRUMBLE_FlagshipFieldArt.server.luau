@@ -253,6 +253,7 @@ local function handleNew(instance:Instance)
    castle.ChildAdded:Connect(function(child)
     if child.Name=="StandardCore" then task.defer(function() castleAt(arena,castle) end) end
    end)
+  end
  elseif instance:IsA("BasePart") and instance.Name=="StandardCore" then
   local castle=instance.Parent
   if castle and castle:IsA("Model") then task.defer(function() castleAt(arena,castle) end) end
