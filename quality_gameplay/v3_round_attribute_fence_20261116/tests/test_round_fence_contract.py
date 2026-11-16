@@ -47,7 +47,7 @@ class RoundAttributeFenceContract(unittest.TestCase):
         for stale in ("EGGRUMBLE_Combo", "EGGRUMBLE_BestCombo", "EGGRUMBLE_BossDefeats"):
             self.assertNotIn(stale, replay)
     def test_only_three_round_local_attributes(self):
-        self.assertEqual(set(re.findall(r'"(EGGRUMBLE_\\w+)"', MODULE)), {
+        self.assertEqual(set(re.findall(r'"(EGGRUMBLE_\w+)"', MODULE)), {
             "EGGRUMBLE_Combo", "EGGRUMBLE_BestCombo", "EGGRUMBLE_BossDefeats"})
     def test_exact_server_exit_gate(self):
         self.assertIn("LIVE_MODES[previous] == true and current == nil", MODULE)
