@@ -9,6 +9,7 @@ on:
       - 'rc_fastlane/quality_egg515_rc31/**'
       - 'rc_fastlane/quality_item525_rc31/**'
       - 'rc_fastlane/quality_rctrace8/**'
+      - 'rc_fastlane/quality_prompt611_rc31/**'
   pull_request:
     branches: [rc/p0d-s1-kids-rc01]
     paths:
@@ -18,6 +19,7 @@ on:
       - 'rc_fastlane/quality_egg515_rc31/**'
       - 'rc_fastlane/quality_item525_rc31/**'
       - 'rc_fastlane/quality_rctrace8/**'
+      - 'rc_fastlane/quality_prompt611_rc31/**'
   workflow_dispatch:
 permissions:
   contents: read
@@ -1316,10 +1318,56 @@ jobs:
           grep -q "NATIVE_LUAU_ITEM_MODE_GUARD.*13.*assertions PASS" \
             artifacts/gq515_official_select/GQ525_CURRENT31_NATIVE13_RESULT.txt
           echo "GQ525_REUSED_AUTHOR_ONLY_TWO_EXISTING_SCRIPTS_OTHER29_EXACT_PASS"
+      - name: Pin existing #611 real InteractionGuard author and original 13-case native runtime
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: f41246191d35f64fe6c1c097999562f37ccaa1fc
+          path: _gq611_existing_author
+          persist-credentials: false
+      - name: GQ611 RC31 select one existing Guard only; 30 exact, 13 real native, full31 Rojo
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq611_existing_author rev-parse HEAD)" = f41246191d35f64fe6c1c097999562f37ccaa1fc
+          DIR=artifacts/gq515_official_select
+          AUTHOR=_gq611_existing_author/quality_gameplay/gq8_prompt_reach_20261117
+          ORIGINAL=_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_InteractionGuard.luau
+          BASE=$DIR/GQ586_ITEM525_SELECTED31.project.json
+          OUT=$DIR/GQ611_PROMPT_REACH_SELECTED31.project.json
+          PLACE=$DIR/GQ611_PROMPT_REACH_TRUE_ROJO31.rbxlx
+          python3 -B rc_fastlane/quality_prompt611_rc31/select_original_guard.py prepare \
+            --base "$BASE" --out "$OUT" --original "$ORIGINAL" \
+            --selected "$AUTHOR/EGGRUMBLE_InteractionGuard.luau" --verifier "$AUTHOR/verify.py"
+          python3 - <<'PY'
+          from pathlib import Path
+          import importlib.util,subprocess
+          f="rc_fastlane/quality_prompt611_rc31/select_original_guard.py"
+          spec=importlib.util.spec_from_file_location("gq611",f)
+          m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+          _,files=m.flat(Path("artifacts/gq515_official_select/GQ611_PROMPT_REACH_SELECTED31.project.json"))
+          assert len(files)==31
+          for src in files.values():
+            subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(src)],
+                           check=True,stdout=subprocess.DEVNULL)
+          print("GQ611_REAL_CURRENT31_NATIVE_COMPILE_PASS")
+          PY
+          python3 "$AUTHOR/native_reach_test.py" \
+            --selected "$DIR/GQ611_SELECTED_INTERACTION_GUARD.luau" \
+            --out "$DIR/GQ611_REAL_13CASE_NATIVE.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ611_REAL_13CASE_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ611_REAL_13CASE_NATIVE.luau" \
+            | tee "$DIR/GQ611_REAL_13CASE_NATIVE.log"
+          grep -q GQ8_NATIVE_REAL_GUARD_PROMPT_REACH_13_CASES_PASS "$DIR/GQ611_REAL_13CASE_NATIVE.log"
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B rc_fastlane/quality_prompt611_rc31/select_original_guard.py verify \
+            --base "$BASE" --out "$OUT" --place "$PLACE" --original "$ORIGINAL" \
+            --selected "$AUTHOR/EGGRUMBLE_InteractionGuard.luau" --verifier "$AUTHOR/verify.py"
+          echo "GQ611_SAMEHEAD_CANDIDATE_31_SCRIPT_ONE_GUARD_REAL_NATIVE_ROJO_ROLLBACK_PASS"
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq515_official_select/GQ586_ITEM525_TRUE_ROJO.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq515_official_select/GQ611_PROMPT_REACH_TRUE_ROJO31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -1335,7 +1383,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ586_ITEM525_TRUE_ROJO.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq515_official_select/GQ611_PROMPT_REACH_TRUE_ROJO31.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -1425,7 +1473,14 @@ jobs:
           assert gq525["source_count"]==31 and len(gq525["only_changed"])==2
           assert gq525["other_29_byte_identical"] and gq525["two_hunk_rollback_exact"]
           assert gq525["source_class_exact"]=="31/31"
-          assert gq525["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert gq525["place_sha256"]==hashlib.sha256(Path("artifacts/gq515_official_select/GQ586_ITEM525_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
+          gq611=json.loads(Path("artifacts/gq515_official_select/GQ611_ONE_GUARD_RC31_RECEIPT.json").read_text())
+          assert gq611["script_count"]==31 and gq611["real_rojo_exact"]=="31/31"
+          assert gq611["other_30_byte_exact"] and gq611["off_rollback_guard_byte_exact"]
+          assert gq611["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
+          assert m["feature_flags"]["ITEM_CURRENT_SESSION_525"] is True
+          assert m["feature_flags"]["PROMPT_CONFIGURED_REACH_611"] is True
+          assert m["source_heads"]["prompt_reach611"]=="f41246191d35f64fe6c1c097999562f37ccaa1fc"
           assert gq586["source_flag"]=="GQ_DEPOSIT_CURRENT_MATCH_586"
           assert m["source_heads"]["deposit_membership586"]=="417dfa87106b1eab9eaf45e6180273a9ce8ec8c2"
           assert m["feature_flags"]["DEPOSIT_CURRENT_SESSION_586"] is True
@@ -1476,6 +1531,9 @@ jobs:
             "source_author_heads":m["source_heads"],
             "gq582_v3_neutral_target_identity_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ582_V3_NEUTRAL_ID_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "gq582_v3_unique_neutral_instances_current_human_filter":True,
+            "gq611_configured_reach_selected":True,
+            "gq611_other30_byte_exact":True,
+            "gq611_original_guard_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ611_ONE_GUARD_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "gq586_current_match_deposit_selected":True,
             "gq586_other_30_original_scripts_preserved":True,
             "gq586_single_host_receipt_sha256":hashlib.sha256(Path("artifacts/gq515_official_select/GQ586_SOURCE_RECEIPT.json").read_bytes()).hexdigest(),
@@ -1596,6 +1654,9 @@ jobs:
             artifacts/gq515_official_select/GQ525_RC31_AUTHOR_REUSE_RECEIPT.json
             artifacts/gq515_official_select/GQ525_CURRENT31_ACTUAL_CALLBACK_NATIVE13.luau
             artifacts/gq515_official_select/GQ525_CURRENT31_NATIVE13_RESULT.txt
+            artifacts/gq515_official_select/GQ611_PROMPT_REACH_SELECTED31.project.json
+            artifacts/gq515_official_select/GQ611_ONE_GUARD_RC31_RECEIPT.json
+            artifacts/gq515_official_select/GQ611_REAL_13CASE_NATIVE.log
             artifacts/gq515_official_select/gq595_author/SOURCE_RECEIPT.json
             artifacts/gq515_official_select/GQ582_RC31_SOURCE_EXACT_RECEIPT.json
             artifacts/gq515_official_select/GQ582_ZOMBIE_NATIVE.log
