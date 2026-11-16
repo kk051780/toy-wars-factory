@@ -66,7 +66,7 @@ class RareFieldEggsTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"ALREADY"):
             apply_score(apply_score(self.score))
     def test_missing_host_original_author_rejected(self):
-        mutation=self.host.replace('egg.Shape=Enum.PartType.Ball','egg.Shape=Enum.PartType.Block',1)
+        mutation=self.host.replace(HOST_OLD,HOST_OLD.replace('egg.Shape=Enum.PartType.Ball','egg.Shape=Enum.PartType.Block'),1)
         with self.assertRaisesRegex(ValueError,"ANCHOR"):
             apply_host(mutation)
     def test_duplicate_host_original_author_rejected(self):
