@@ -695,6 +695,48 @@ jobs:
           python3 -B rc_fastlane/quality_castle547_rc31/build_31.py \
             --base artifacts/gq555_official_select/GQ555_ROUTE536_FINAL_SELECTED31.project.json \
             --out artifacts/gq547_official_select
+      - name: Read immutable existing original GQ551 21-source stale-avatar fix (no new gameplay author)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 93d774bf3aaecd0e7714d64a7f970003698d69ef
+          path: _gq551_original_carrier
+          persist-credentials: false
+      - name: Original #551 single Host source-select on CURRENT #541+537+540+539+489 31, real callback Native
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq551_original_carrier rev-parse HEAD)" = 93d774bf3aaecd0e7714d64a7f970003698d69ef
+          python3 -m unittest discover -v -s rc_fastlane/quality_carrier551_rc31 -p 'test_*.py'
+          mkdir -p artifacts/gq551_official_select
+          python3 rc_fastlane/quality_carrier551_rc31/select_original_carrier551.py prepare \
+            --base artifacts/gq547_official_select/GQ547_SELECTED31.project.json \
+            --author _gq551_original_carrier/quality_gameplay/v3_carrier_stale_avatar_20261116/tools/compose.py \
+            --out artifacts/gq551_official_select/GQ551_SELECTED31.project.json
+          python3 - <<'PY'
+          import sys, subprocess
+          from pathlib import Path
+          sys.path.insert(0,"rc_fastlane/quality_carrier551_rc31")
+          from select_original_carrier551 import flatten
+          _,src=flatten(Path("artifacts/gq551_official_select/GQ551_SELECTED31.project.json"))
+          assert len(src)==31
+          for path in src.values():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ551_ALL_EXISTING_31_NATIVE_COMPILE_PASS")
+          PY
+          /tmp/gq530_all31_native/luau artifacts/gq551_official_select/GQ551_ACTUAL_CALLBACK_7_NATIVE.luau | tee /tmp/gq551-current-native.log
+          grep -q 'GQ_STALE_AVATAR_CARRIER_REAL_CALLBACK_NATIVE=PASS 7 CASES' /tmp/gq551-current-native.log
+          echo 'GQ551_EXISTING_REAL_CALLBACK_NATIVE_7_7_PASS'
+      - name: Real pinned Rojo selected #551 exact existing31 source/class, rollback proof
+        run: |
+          set -euo pipefail
+          /tmp/gq530-all31-rojo build artifacts/gq551_official_select/GQ551_SELECTED31.project.json \
+            -o artifacts/gq551_official_select/GQ551_SELECTED31_REAL_ROJO.rbxlx
+          python3 rc_fastlane/quality_carrier551_rc31/select_original_carrier551.py verify \
+            --base artifacts/gq547_official_select/GQ547_SELECTED31.project.json \
+            --author _gq551_original_carrier/quality_gameplay/v3_carrier_stale_avatar_20261116/tools/compose.py \
+            --out artifacts/gq551_official_select/GQ551_SELECTED31.project.json \
+            --place artifacts/gq551_official_select/GQ551_SELECTED31_REAL_ROJO.rbxlx
       - name: Checkout immutable original #518 boss wall-occlusion author
         uses: actions/checkout@v4
         with:
@@ -712,8 +754,8 @@ jobs:
           import json,hashlib,copy
           from pathlib import Path
           from importlib.machinery import SourceFileLoader
-          parent=Path("artifacts/gq547_official_select")
-          base=parent/"GQ547_SELECTED31.project.json"
+          parent=Path("artifacts/gq551_official_select")
+          base=parent/"GQ551_SELECTED31.project.json"
           out=parent/"GQ518_SELECTED31.project.json"
           patchpath=Path("_gq518_original/quality_gameplay/boss_wave_occlusion_20261116/tools/compose_patch.py")
           blob=lambda b:hashlib.sha1(b"blob "+str(len(b)).encode()+b"\0"+b).hexdigest()
@@ -752,21 +794,21 @@ jobs:
           from importlib.machinery import SourceFileLoader
           import subprocess
           m=SourceFileLoader("mapping","rc_fastlane/select_gq541_original_neutral_fallback.py").load_module()
-          _,src=m.flatten(Path("artifacts/gq547_official_select/GQ518_SELECTED31.project.json"))
+          _,src=m.flatten(Path("artifacts/gq551_official_select/GQ518_SELECTED31.project.json"))
           assert len(src)==31
           for path in src.values():
               subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(path)],check=True,stdout=subprocess.DEVNULL)
           print("GQ518_ACTUAL_NATIVE_ALL_31_PASS")
           PY
-          /tmp/gq530-all31-rojo build artifacts/gq547_official_select/GQ518_SELECTED31.project.json \
-            -o artifacts/gq547_official_select/GQ518_SELECTED31.rbxlx
+          /tmp/gq530-all31-rojo build artifacts/gq551_official_select/GQ518_SELECTED31.project.json \
+            -o artifacts/gq551_official_select/GQ518_SELECTED31.rbxlx
           python3 - <<'PY'
           import hashlib,xml.etree.ElementTree as ET,json
           from pathlib import Path
           from importlib.machinery import SourceFileLoader
           m=SourceFileLoader("mapping","rc_fastlane/select_gq541_original_neutral_fallback.py").load_module()
-          folder=Path("artifacts/gq547_official_select")
-          _,old=m.flatten(folder/"GQ547_SELECTED31.project.json")
+          folder=Path("artifacts/gq551_official_select")
+          _,old=m.flatten(folder/"GQ551_SELECTED31.project.json")
           _,new=m.flatten(folder/"GQ518_SELECTED31.project.json")
           boss=("ServerScriptService","EGGRUMBLE_NeutralStoneGiant")
           assert len(new)==31 and {k for k in new if new[k].read_bytes()!=old[k].read_bytes()}=={boss}
@@ -796,7 +838,7 @@ jobs:
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
           set -euo pipefail
-          cp artifacts/gq547_official_select/GQ518_SELECTED31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
+          cp artifacts/gq551_official_select/GQ518_SELECTED31.rbxlx artifacts/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx
           python3 - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -812,7 +854,7 @@ jobs:
           assert src["real_rojo_source_class_exact_31"] and off["real_rojo_source_class_exact_31"]
           assert src["previous_owner30_unchanged_sources"]==29
           assert src["combat_sha256"]!=off["combat_sha256"]
-          assert place.read_bytes()==Path("artifacts/gq547_official_select/GQ518_SELECTED31.rbxlx").read_bytes()
+          assert place.read_bytes()==Path("artifacts/gq551_official_select/GQ518_SELECTED31.rbxlx").read_bytes()
           gq541=json.loads(Path("artifacts/gq541_official_select/GQ541_ROJO_SOURCE_EXACT_RECEIPT.json").read_text())
           assert gq541["place_sha256"]==hashlib.sha256(Path("artifacts/gq541_official_select/GQ541_SELECTED_31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           gq537=json.loads(Path("artifacts/gq541_official_select/GQ537_ROJO_EXACT_RECEIPT.json").read_text())
@@ -845,14 +887,20 @@ jobs:
           assert m["feature_flags"]["BOT_ROUTE_FULLSTEP_536"] and m["source_heads"]["original_route536"]=="cdf4fe5f231c998532963c5c16d9525d20a69e7e"
           assert m["source_heads"]["castle_board547"]=="b8c6774a3b9b886dd46c60dd9e8722c0cb6a4125"
           assert m["feature_flags"]["CASTLE_EGG_BOARD_DISTANCE_547"] is True
-          gq547=json.loads(Path("artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json").read_text())
-          assert gq547["rojo_exact"]=="31/31" and gq547["unchanged_other_scripts"]==30
-          assert gq547["rollback_byte_exact"] and gq547["place_sha256"]==hashlib.sha256(Path("artifacts/gq547_official_select/GQ547_SELECTED31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
-          gq518=json.loads(Path("artifacts/gq547_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_text())
+          gq551=json.loads(Path("artifacts/gq551_official_select/GQ551_RC31_VERIFIED_PLACE_RECEIPT.json").read_text())
+          assert gq551["rojo_real_source_class_exact"]=="31/31"
+          assert gq551["unchanged_existing_sources"]==30 and gq551["exact_host_rollback"]
+          assert gq551["place_sha256"]==hashlib.sha256(Path("artifacts/gq551_official_select/GQ551_SELECTED31_REAL_ROJO.rbxlx").read_bytes()).hexdigest()
+          gq518=json.loads(Path("artifacts/gq551_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_text())
           assert gq518["source_class_exact"]==31 and gq518["unchanged_source_count"]==30
           assert gq518["place_sha256"]==hashlib.sha256(place.read_bytes()).hexdigest()
           assert m["feature_flags"]["BOSS_SHOCKWAVE_WALL_OCCLUSION_518"]
           assert m["source_heads"]["boss_wave518"]=="f31081d5cb2bea86d01c76c53bb60cd2f9a8355d"
+          assert m["source_heads"]["carrier_stale_avatar551"]=="93d774bf3aaecd0e7714d64a7f970003698d69ef"
+          assert m["feature_flags"]["CARRIER_STALE_AVATAR_DIED_FENCE_551"] is True
+          gq547=json.loads(Path("artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json").read_text())
+          assert gq547["rojo_exact"]=="31/31" and gq547["unchanged_other_scripts"]==30
+          assert gq547["rollback_byte_exact"] and gq547["place_sha256"]==hashlib.sha256(Path("artifacts/gq547_official_select/GQ547_SELECTED31_TRUE_ROJO.rbxlx").read_bytes()).hexdigest()
           assert m["source_heads"]["bot_nearest555"]=="cd7d2cd6b39c7d5531a2b2d2437a523a6d09e32d"
           assert m["feature_flags"]["BOT_NEAREST_CURRENT_HUMAN_555"] is True
           assert m["feature_flags"]["ORIGINAL_ITEM_AUTHOR_489"] and m["source_heads"]["original_item489"]=="03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd"
@@ -860,7 +908,7 @@ jobs:
           assert m["source_heads"]["neutral_fallback541"]=="6fc0261d21a3aa260fa7bcf19b1b177d4994570a"
           details={
             "original_author_518_boss_source_selected":True,
-            "original_author_518_receipt_sha256":hashlib.sha256(Path("artifacts/gq547_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_bytes()).hexdigest(),
+            "original_author_518_receipt_sha256":hashlib.sha256(Path("artifacts/gq551_official_select/GQ518_BOSS_RC31_RECEIPT.json").read_bytes()).hexdigest(),
             "status":("RC_PREMERGE_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"
                       if os.environ.get("GITHUB_EVENT_NAME")=="pull_request"
                       else "CANONICAL_RC_BRANCH_COMPANION_PROFILE_BUILD_PASS_NOT_STUDIO_PLAYTESTED"),
@@ -879,6 +927,7 @@ jobs:
             "original_author_489_item_source_selected":True,
             "original_author_555_nearest_bot_source_selected":True,
             "original_author_547_castle_vault_gui_2_existing_only":True,
+            "original_author_551_stale_carrier_host_guard_selected":True,
             "gq547_other_30_current_original_scripts_byte_exact":True,
             "gq547_off_restores_previous_536_host_exact":True,
             "gq547_rojo_receipt_sha256":hashlib.sha256(Path("artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json").read_bytes()).hexdigest(),
@@ -921,6 +970,9 @@ jobs:
             artifacts/gq547_official_select/GQ547_SELECTED31.project.json
             artifacts/gq547_official_select/GQ547_SOURCE_RECEIPT.json
             artifacts/gq547_official_select/GQ547_ROJO_SOURCE_CLASS_RECEIPT.json
+            artifacts/gq551_official_select/GQ551_SELECTED31.project.json
+            artifacts/gq551_official_select/GQ551_RC31_SOURCE_RECEIPT.json
+            artifacts/gq551_official_select/GQ551_RC31_VERIFIED_PLACE_RECEIPT.json
             artifacts/gq530_all31/GQ31_OFF_PRIVATE.rbxlx
             artifacts/gq530_all31/EGGRUMBLE_V3_OFFICIAL_RC31_RECEIPT.json
             artifacts/gq530_all31/GQ31_ON_RECEIPT.json
