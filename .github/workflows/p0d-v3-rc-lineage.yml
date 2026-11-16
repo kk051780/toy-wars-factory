@@ -127,6 +127,9 @@ jobs:
           SCORE="$(head_of refs/heads/quality/eggrumble-v3-score-only-20261116)"
           RC="$(head_of refs/heads/rc/p0d-s1-kids-rc01)"
           test -n "$AUTHOR" && test -n "$QUALITY" && test -n "$ART" && test -n "$SCORE" && test -n "$RC"
+          # Read-only fetch: prove the pinned quality source and newest quality
+          # source are identical even if parallel QA-only commits advanced HEAD.
+          git -C _v3_quality fetch --quiet --no-tags --depth=1 origin "$QUALITY"
           python3 quality/v3_rc_lineage/verify_current26.py \
             --workspace . --author _v3_original --quality _v3_quality \
             --art _v3_art --score _v3_score \
