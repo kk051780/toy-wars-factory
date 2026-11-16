@@ -77,7 +77,7 @@ def apply_host(source:str)->str:
         raise ValueError("RED_ALREADY_HAS_RARE_EGGS")
     if source.count('local eggId="FIELD_"..i')!=1:
         raise ValueError("RED_ORIGINAL_FIELD_TOKEN_AUTHORITY_NOT_PRESENT")
-    if source.count('Rules.takeFieldEgg(session.rules,tostring(p.UserId),eggId)')!=1:
+    if source.count('Rules.takeFieldEgg(session.rules,tostring(p.UserId),eggId)')!=2:
         raise ValueError("RED_ORIGINAL_TAKE_SERVER_GATE_NOT_PRESENT")
     out=apply_hunk(source,HOST_OLD,HOST_NEW)
     for v in ('local eggId="FIELD_"..i','Rules.takeFieldEgg(session.rules,tostring(p.UserId),eggId)'):
