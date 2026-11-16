@@ -32,6 +32,12 @@ jobs:
           python3 quality_gameplay/carrier_world_tell_20261116/make_native_harness.py --out /tmp/carrier-policy-native.luau
           /tmp/gq-luau/build/luau-compile /tmp/carrier-policy-native.luau >/dev/null
           /tmp/gq-luau/build/luau /tmp/carrier-policy-native.luau
+      - name: Execute original WorldTell module with native Roblox mock across TEAM/BR
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/carrier_world_tell_20261116/make_native_world_harness.py --out /tmp/carrier-world-actual-native.luau
+          /tmp/gq-luau/build/luau-compile /tmp/carrier-world-actual-native.luau >/dev/null
+          /tmp/gq-luau/build/luau /tmp/carrier-world-actual-native.luau
       - name: Checksum-locked Rojo 7.7.1 private 23-script Place build
         run: |
           set -euo pipefail
