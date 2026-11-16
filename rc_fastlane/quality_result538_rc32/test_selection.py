@@ -18,7 +18,7 @@ class TestSelection(unittest.TestCase):
     def setUpClass(cls):
         cls.project=json.loads((ROOT/"GQ538_RC32_CANDIDATE.project.json").read_text())
         cls.receipt=json.loads((ROOT/"GQ538_RC32_RECEIPT.json").read_text())
-        cls.original=Path("_official_rc31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx")
+        cls.original=Path("_official_rc31/gq530_all31/EGGRUMBLE_V3_RC31_CANONICAL_STUDIO.rbxlx")
         import sys
         sys.path.insert(0,"rc_fastlane/quality_result538_rc32")
         import compose
