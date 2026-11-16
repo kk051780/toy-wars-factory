@@ -1,0 +1,40 @@
+name: P0D GQ V3 boss counter round-boundary Native QA
+on:
+  push:
+    branches:
+      - quality/gq-v3-boss-credit-round-fence-20261116
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_boss_credit_round_fence_20261116/**'
+      - '.github/workflows/p0d-gq-v3-boss-credit-round-fence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  boss-credit-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirm exact original author + 23-source wiring + source safety
+        run: python3 -m unittest discover -s quality_gameplay/v3_boss_credit_round_fence_20261116/tests -p 'test_*.py' -v
+      - name: Build public Luau CLI for real VM and compile
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/gq-v3-luau
+          cmake -S /tmp/gq-v3-luau -B /tmp/gq-v3-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq-v3-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+          git -C /tmp/gq-v3-luau rev-parse HEAD
+      - name: Native Luau syntax and 13 real VM boundary cases
+        run: |
+          set -euo pipefail
+          ROOT=quality_gameplay/v3_boss_credit_round_fence_20261116
+          /tmp/gq-v3-luau/build/luau-compile "$ROOT/EGGRUMBLE_BossCreditPolicy.luau" >/dev/null
+          /tmp/gq-v3-luau/build/luau-compile "$ROOT/EGGRUMBLE_BossCreditRoundFence.server.luau" >/dev/null
+          python3 "$ROOT/make_native_harness.py" /tmp/boss_credit_fence_native.luau
+          /tmp/gq-v3-luau/build/luau-compile /tmp/boss_credit_fence_native.luau >/dev/null
+          /tmp/gq-v3-luau/build/luau /tmp/boss_credit_fence_native.luau
+      - name: Evidence boundary
+        run: |
+          echo 'NATIVE_LUAU_POLICY+SOURCE_CONTRACT: evaluated'
+          echo 'ACTUAL_ROBLOX_STUDIO+ANDROID+OFFICIAL_RC+OWNER: NOT_TESTED'
