@@ -1,5 +1,6 @@
 """Negative source tests for the existing-author 26->27 integration adapter."""
 from pathlib import Path
+import os
 import importlib.util
 import unittest
 
@@ -77,7 +78,7 @@ class ItemAuthorSourceSelectTest(unittest.TestCase):
         def source(name, data, suffix=".luau"):
             p = self.base / (name + suffix)
             p.write_text(data, encoding="utf-8")
-            return {"$path": p.name}
+            return {"$path": os.path.relpath(p, self.artifacts)}
 
         self.old_item = "local DEFINITIONS={}\\nlocal RESPAWN_SECONDS=35\\nreturn Items\\n"
         self.new_item = (
@@ -100,7 +101,9 @@ class ItemAuthorSourceSelectTest(unittest.TestCase):
         client = {"$className": "StarterPlayerScripts"}
         for name in ("EGGRUMBLE_ProceduralSkills", "EGGRUMBLE_ArtDistanceLOD", "EGGRUMBLE_CombatFeel"):
             client[name] = source(name, "print('client')\\n", ".client.luau")
-        self.project = self.base / "base26.project.json"
+        # Both #484 composer and #499 overlay project manifests live in artifacts/.
+        # Paths in each manifest are relative to that shared directory.
+        self.project = self.artifacts / "base26.project.json"
         self.project.write_text(__import__("json").dumps({"tree":{
             "ServerScriptService": server,
             "StarterPlayer":{"$className":"StarterPlayer","StarterPlayerScripts":client},
