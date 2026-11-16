@@ -50,3 +50,40 @@ jobs:
           fi
           echo "MUTANT_REJECTED: actual old dead-caster logic violates the 84-case contract"
           echo "REAL_ROBLOX_ENGINE / PRIVATE_PLACE / OFFICIAL_RC / ANDROID / OWNER = NOT_TESTED"
+
+      - name: Build original 21-source V3 private Rojo Place ON and OFF, source-exact
+        run: |
+          set -euo pipefail
+          git fetch --depth 1 origin fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          git diff --exit-code fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9 HEAD -- handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116
+          python3 quality_gameplay/v3_dead_caster_fence_20261116/tools/private_place.py --out-dir artifacts/gqdead
+          curl -fsSL --retry 3 https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip -o /tmp/gq_dead_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq_dead_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile('/tmp/gq_dead_rojo.zip') as archive:
+              found=[s for s in archive.namelist() if s.split('/')[-1]=='rojo']
+              assert len(found)==1, found
+              p=Path('/tmp/gq_dead_rojo')
+              p.write_bytes(archive.read(found[0]))
+              p.chmod(0o755)
+          PY
+          /tmp/gq_dead_rojo build artifacts/gqdead/GQ_CASTER_PRIVATE_ON21.project.json -o artifacts/gqdead/GQ_CASTER_PRIVATE_ON21_NOT_RC.rbxlx
+          /tmp/gq_dead_rojo build artifacts/gqdead/GQ_CASTER_PRIVATE_OFF21.project.json -o artifacts/gqdead/GQ_CASTER_PRIVATE_OFF21_NOT_RC.rbxlx
+          python3 quality_gameplay/v3_dead_caster_fence_20261116/tools/private_place.py --out-dir artifacts/gqdead \
+            --verify-on artifacts/gqdead/GQ_CASTER_PRIVATE_ON21_NOT_RC.rbxlx \
+            --verify-off artifacts/gqdead/GQ_CASTER_PRIVATE_OFF21_NOT_RC.rbxlx
+          echo "ORIGINAL_21_AND_PRIVATE_ON21_OFF21_ROJO_SOURCE_EXACT_PASS"
+          echo "FORMAL_RC / REAL_STUDIO / ANDROID / ART / FUN / OWNER_ACCEPTED = NOT_VERIFIED"
+      - name: Save unpublished source-exact intake evidence, never formal RC
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ-DEAD-CASTER-PRIVATE21-ON-OFF-NOT-FORMAL-RC
+          path: |
+            artifacts/gqdead/GQ_CASTER_PRIVATE_ON21_NOT_RC.rbxlx
+            artifacts/gqdead/GQ_CASTER_PRIVATE_OFF21_NOT_RC.rbxlx
+            artifacts/gqdead/GQ_CASTER_PRIVATE_ON21_receipt.json
+            artifacts/gqdead/GQ_CASTER_PRIVATE_OFF21_receipt.json
+          retention-days: 2
