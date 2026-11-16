@@ -33,8 +33,10 @@ end}
 local actor={position=Vector3.new(0,1,0)}
 function actor:GetPivot()return {Position=self.position} end
 local actors={}
-local targetPart={Name="EggVault"}
-local wall={Name="CastleSideWall"}
+local world={Name="Arena"}
+local targetPart={Name="EggVault",Parent=world}
+local wall={Name="CastleSideWall",Parent=world}
+local detachedTarget={Name="OldEggVault",Parent=nil}
 """
 FOOTER = r"""
 local cases=0
@@ -44,7 +46,7 @@ local function check(desc,pos,goal,obstacle,expected,interactable)
  raycasts=0
  local actual=clearActionPath(actor,actors,goal,interactable)
  assert(actual==expected,desc.." expected "..tostring(expected).." got "..tostring(actual))
- if math.abs(pos.Y-goal.Y)<=4 and (goal-(pos+Vector3.new(0,.4,0))).Magnitude>.01 then
+ if interactable~=nil and interactable.Parent~=nil and math.abs(pos.Y-goal.Y)<=4 and (goal-(pos+Vector3.new(0,.4,0))).Magnitude>.01 then
   assert(raycasts==1,desc.." must perform full-length raycast")
  else
   assert(raycasts==0,desc.." invalid height/zero-length should not raycast")
@@ -58,6 +60,9 @@ check("short 3 studs no collision",Vector3.new(0,1,0),Vector3.new(3,1,0),nil,tru
 check("long 13 studs wall",Vector3.new(0,1,0),Vector3.new(13,1,0),wall,false,targetPart)
 check("long 13 studs clear",Vector3.new(0,1,0),Vector3.new(13,1,0),nil,true,targetPart)
 check("target part missing blocks hit",Vector3.new(0,1,0),Vector3.new(3,1,0),targetPart,false,nil)
+check("missing target no collision denies ghost pickup",Vector3.new(0,1,0),Vector3.new(3,1,0),nil,false,nil)
+check("destroyed target no collision denies ghost pickup",Vector3.new(0,1,0),Vector3.new(3,1,0),nil,false,detachedTarget)
+check("destroyed target cannot authorize raycast hit",Vector3.new(0,1,0),Vector3.new(3,1,0),detachedTarget,false,detachedTarget)
 check("excessive height delta",Vector3.new(0,1,0),Vector3.new(3,9,0),nil,false,targetPart)
 check("near-zero segment",Vector3.new(0,1,0),Vector3.new(0,1.4,0),nil,true,targetPart)
 print("GQ_ACTION_LOS_NATIVE_PASS cases="..cases)
@@ -69,6 +74,7 @@ def extracted(source: str) -> str:
     f = source[left:right]
     assert "workspace:Raycast(start,segment,params)" in f, "full LOS missing"
     assert "hit.Instance==targetPart" in f, "target identity guard missing"
+    assert "if not targetPart or not targetPart.Parent then return false end" in f, "live target guard missing"
     return f
 
 def run(luau: Path, body: str) -> subprocess.CompletedProcess[str]:
@@ -85,7 +91,7 @@ def main() -> None:
     original=extracted(BOT.read_text(encoding="utf-8"))
     good=run(args.luau,original)
     assert good.returncode==0,(good.stdout,good.stderr)
-    assert "GQ_ACTION_LOS_NATIVE_PASS cases=9" in good.stdout,good.stdout
+    assert "GQ_ACTION_LOS_NATIVE_PASS cases=12" in good.stdout,good.stdout
     # Deliberate old-vulnerability mutation must make the native test RED.
     bypass=original.replace(
        "if segment.Magnitude<=0.01 then return true end",
@@ -98,8 +104,12 @@ def main() -> None:
     assert wrong!=original
     bad=run(args.luau,wrong)
     assert bad.returncode!=0,"native test failed to detect wrong-target collision permission"
+    ghost=original.replace("if not targetPart or not targetPart.Parent then return false end","-- unsafe missing target allowed")
+    assert ghost!=original
+    bad=run(args.luau,ghost)
+    assert bad.returncode!=0,"native test failed to detect ghost pickup without target"
     print(good.stdout.strip())
-    print("GQ_ACTION_LOS_MUTANT_NEGATIVE_2_OF_2_PASS")
+    print("GQ_ACTION_LOS_MUTANT_NEGATIVE_3_OF_3_PASS")
 
 if __name__=="__main__":
     main()
