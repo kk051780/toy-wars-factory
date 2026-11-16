@@ -37,12 +37,18 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m unittest discover -s handoffs/P0D-PQG-CASTLE-DEFENSE-20261116/tests -p 'test_*.py' -v
-      - name: Build real Luau compiler and native VM (independent SOURCE evidence)
+      - name: Read immutable Luau compiler source
+        uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _gq_luau_fixed
+          persist-credentials: false
+      - name: Build SHA-pinned Luau compiler and VM (SOURCE evidence)
         run: |
           set -euo pipefail
-          git clone --depth=1 https://github.com/luau-lang/luau.git /tmp/gq-def-luau
-          git -C /tmp/gq-def-luau rev-parse HEAD | tee /tmp/luau-source-sha.txt
-          cmake -S /tmp/gq-def-luau -B /tmp/gq-def-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          test "$(git -C _gq_luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _gq_luau_fixed -B /tmp/gq-def-luau/build -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
           cmake --build /tmp/gq-def-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
           test -x /tmp/gq-def-luau/build/luau
           test -x /tmp/gq-def-luau/build/luau-compile
