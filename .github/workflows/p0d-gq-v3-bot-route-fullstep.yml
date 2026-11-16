@@ -1,0 +1,59 @@
+name: P0D GQ V3 Bot Route Full-Step Ray Native Differential
+on:
+  push:
+    paths:
+      - 'quality_gameplay/v3_bot_route_fullstep_20261116/**'
+      - '.github/workflows/p0d-gq-v3-bot-route-fullstep.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_bot_route_fullstep_20261116/**'
+      - '.github/workflows/p0d-gq-v3-bot-route-fullstep.yml'
+permissions:
+  contents: read
+jobs:
+  original-source-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Immutable original #484 BotPathRouter, never editing original branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin quality/eggrumble-v3-spatial-bot-intake-20261116
+          mkdir -p /tmp/gq-route
+          git show 6b52eaf1f2725496277998fe0c5532b7a8fcaab5:handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_BotPathRouter.luau > /tmp/gq-route/original.luau
+          python3 quality_gameplay/v3_bot_route_fullstep_20261116/source_patch.py \
+            --source /tmp/gq-route/original.luau \
+            --output /tmp/gq-route/overlay.luau
+      - name: Source SHA lock and unique real-ray hunk negative tests
+        shell: bash
+        env:
+          GQ_ROUTE_ORIGINAL: /tmp/gq-route/original.luau
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s quality_gameplay/v3_bot_route_fullstep_20261116 -p 'test_*.py' -v
+      - name: Build open source Luau CLI
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/gq-route-luau
+          cmake -S /tmp/gq-route-luau -B /tmp/gq-route-luau/build \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq-route-luau/build --target Luau.Repl.CLI Luau.Compile.CLI -j 4
+      - name: Execute actual #484 routeClear against 8.5-stud wall negative case
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_bot_route_fullstep_20261116/make_native_ray_harness.py \
+            --original /tmp/gq-route/original.luau \
+            --patched /tmp/gq-route/overlay.luau \
+            --output-dir /tmp/gq-route
+          /tmp/gq-route-luau/build/luau-compile /tmp/gq-route/overlay.luau >/dev/null
+          for name in original patched; do
+            /tmp/gq-route-luau/build/luau-compile /tmp/gq-route/$name.spec.luau >/dev/null
+            /tmp/gq-route-luau/build/luau /tmp/gq-route/$name.spec.luau
+          done
+          echo 'NATIVE SOURCE-GEOMETRY: owner old ray fails last stud; private overlay covers full step.'
+          echo 'ACTUAL STUDIO/ANDROID/OWNER/FORMAL RC INTEGRATION=NOT TESTED.'
