@@ -121,6 +121,16 @@ jobs:
           /tmp/gq_heal_native/luau-compile --text artifacts/HEAL_REAL_POLICY.native.luau >/dev/null
           /tmp/gq_heal_native/luau artifacts/HEAL_REAL_POLICY.native.luau | tee artifacts/HEAL_NATIVE.log
           grep -q GQ_HEAL_NATIVE_REAL_POLICY_PASS artifacts/HEAL_NATIVE.log
+          # Run the ORIGINAL #489 ITEM + ORIGINAL InteractionGuard together.
+          # This supplements the pure helper test without a second gameplay owner.
+          python3 quality_gameplay/v3_heal_no_waste_20261116/make_original_item_vm.py \
+            --author-harness _item_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_field_item_harness.py \
+            --guard _item_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_InteractionGuard.luau \
+            --item artifacts/EGGRUMBLE_FieldItemPickups.luau \
+            --out artifacts/ORIGINAL_ITEM_GUARD_HEAL.native.luau
+          /tmp/gq_heal_native/luau-compile --text artifacts/ORIGINAL_ITEM_GUARD_HEAL.native.luau >/dev/null
+          /tmp/gq_heal_native/luau artifacts/ORIGINAL_ITEM_GUARD_HEAL.native.luau | tee artifacts/ORIGINAL_ITEM_GUARD_HEAL_NATIVE.log
+          grep -q GQ_HEAL_ORIGINAL_FULL_ITEM_GUARD_VM_PASS artifacts/ORIGINAL_ITEM_GUARD_HEAL_NATIVE.log
           python3 _item_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/compose_item26_overlay.py compile \
             --project artifacts/ITEM_GQ_HEAL26.project.json \
             --compiler /tmp/gq_heal_native/luau-compile
@@ -159,4 +169,5 @@ jobs:
             artifacts/ITEM_GQ_HEAL26.project.json
             artifacts/SOURCE_RECEIPT.json
             artifacts/HEAL_NATIVE.log
+            artifacts/ORIGINAL_ITEM_GUARD_HEAL_NATIVE.log
           retention-days: 2
