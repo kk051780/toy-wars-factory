@@ -1,0 +1,145 @@
+name: P0D GQ525 source-selected original26 Rojo TEAM BR item ownership
+on:
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_item_mode_ownership_20261116/**'
+      - '.github/workflows/p0d-gq525-original26-source-exact.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gq525-private26:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          path: _v3_quality
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: e86702c906bdf9c71adcdf769ae48a206b26607b
+          path: _v3_art
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          path: _v3_item
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: c8a324ad7bb40648d82a5828cbf54e217585fefd
+          path: _v3_heal
+          persist-credentials: false
+      - name: Exact author SHA and no-main/RC-writes contract
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$(git -C _v3_original rev-parse HEAD)" = fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          test "$(git -C _v3_quality rev-parse HEAD)" = 6b52eaf1f2725496277998fe0c5532b7a8fcaab5
+          test "$(git -C _v3_art rev-parse HEAD)" = e86702c906bdf9c71adcdf769ae48a206b26607b
+          test "$(git -C _v3_score rev-parse HEAD)" = 438a406ccfda5563053d783d7561797ccd364361
+          test "$(git -C _v3_item rev-parse HEAD)" = 03c51bf5c8d12484bd8dc4667b0d3d3841cb4ddd
+          test "$(git -C _v3_heal rev-parse HEAD)" = c8a324ad7bb40648d82a5828cbf54e217585fefd
+          PYTHONPATH=quality_gameplay/v3_item_mode_ownership_20261116 \
+            python3 -B -m unittest discover \
+            -s quality_gameplay/v3_item_mode_ownership_20261116 \
+            -p 'test_patch_sources.py' -v
+      - name: Original artist and original #484 26-source composite (no new owner)
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          python3 _v3_art/handoffs/EGGRUMBLE-ART-SILHOUETTE-FIELD-20261116/tools/compose_current_v3_art.py \
+            --target v3 \
+            --author-project _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_V3_STUDIO.project.json \
+            --out artifacts/GQ_V3_ART.project.json
+          python3 _v3_quality/quality_repair/EGGRUMBLE_V3_GQ_CURRENT26_20261116/compose.py \
+            --author _v3_original --quality _v3_quality --art _v3_art --score _v3_score \
+            --art-project artifacts/GQ_V3_ART.project.json \
+            --out artifacts/GQ_V3_AUTHOR26.project.json
+      - name: Select existing ITEM #489 + HEAL #517 + original ownership #525 as exactly two scripts
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/compose_author26.py compose \
+            --base-project artifacts/GQ_V3_AUTHOR26.project.json \
+            --base-receipt artifacts/SOURCE_RECEIPT.json \
+            --item-author _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_FieldItemPickups.luau \
+            --heal-patch _v3_heal/quality_gameplay/v3_heal_no_waste_20261116/patch_heal_item.py \
+            --out-project artifacts/GQ525_PRIVATE26.project.json \
+            --out-receipt artifacts/GQ525_SOURCE_RECEIPT.json
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _luau_fixed
+          persist-credentials: false
+      - name: Real patched 26 Luau native parse plus cross-mode authorization native VM
+        run: |
+          set -euo pipefail
+          test "$(git -C _luau_fixed rev-parse HEAD)" = f46d879e28302a430029304f7f6a162aed66f103
+          cmake -S _luau_fixed -B /tmp/gq525_luau -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq525_luau --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/make_native_vm.py \
+            --candidate artifacts --out /tmp/gq525_item_mode_native.luau
+          /tmp/gq525_luau/luau-compile /tmp/gq525_item_mode_native.luau >/dev/null
+          /tmp/gq525_luau/luau /tmp/gq525_item_mode_native.luau | tee artifacts/GQ525_ITEM_VM.log
+          grep -q 'NATIVE_LUAU_ITEM_MODE_GUARD' artifacts/GQ525_ITEM_VM.log
+      - name: Checksum-pinned Rojo private Place only (NEVER publish)
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.1/rojo-7.7.1-linux-x86_64.zip \
+            -o /tmp/gq525_rojo.zip
+          echo '00feb4fa0829a1dd72b49df2639da519a352bfe13cadcd83969e2ba2bb5693c4  /tmp/gq525_rojo.zip' | sha256sum -c
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          with ZipFile("/tmp/gq525_rojo.zip") as z:
+              names=[x for x in z.namelist() if x.split("/")[-1]=="rojo"]
+              assert len(names)==1
+              path=Path("/tmp/gq525_rojo")
+              path.write_bytes(z.read(names[0]))
+              path.chmod(0o755)
+          PY
+          /tmp/gq525_rojo build artifacts/GQ525_PRIVATE26.project.json \
+            -o artifacts/GQ525_PRIVATE26_NOT_RC.rbxlx
+      - name: Check actual compiled native 26 scripts and 26 Rojo Source/Class exact receipts
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/compose_author26.py verify \
+            --out-project artifacts/GQ525_PRIVATE26.project.json \
+            --out-receipt artifacts/GQ525_SOURCE_RECEIPT.json \
+            --place artifacts/GQ525_PRIVATE26_NOT_RC.rbxlx \
+            --compiler /tmp/gq525_luau/luau-compile
+          echo "Private source-exact only; no real Studio/Android/OWNER pass"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE_GQ525_ORIGINAL26_PRIVATE_NOT_OFFICIAL_RC
+          path: |
+            artifacts/GQ525_PRIVATE26_NOT_RC.rbxlx
+            artifacts/GQ525_PRIVATE26.project.json
+            artifacts/GQ525_SOURCE_RECEIPT.json
+            artifacts/GQ525_ITEM_VM.log
+          retention-days: 1
