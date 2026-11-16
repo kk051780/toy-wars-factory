@@ -132,7 +132,11 @@ def build(actual_source: str, *, safe: bool) -> str:
     body=body.replace("EXPECTED_MAX_RAY","9" if safe else "8")
     body=body.replace("REPORT_LABEL",
                       '"GQ_FULL_NAVIGATE_SAFE_FULLSTEP"' if safe else '"GQ_FULL_NAVIGATE_OLD_LEAK"')
-    return PRELUDE+"\n"+actual_source+"\n"+body
+    main, delimiter, remainder = actual_source.rpartition("\nreturn Router")
+    if not delimiter or remainder.strip():
+        raise ValueError("original Router source must end in module return")
+    # Native spec must append assertions *before* any top-level return.
+    return PRELUDE+"\n"+main+"\n"+body
 
 
 def main():
@@ -149,8 +153,7 @@ def main():
     (args.outdir/"navigate-original.spec.luau").write_text(build(orig,safe=False),encoding="utf-8")
     (args.outdir/"navigate-fixed.spec.luau").write_text(build(fixed,safe=True),encoding="utf-8")
     # Red negative control: an unsafe ray must be rejected by the *safe* expectations.
-    (args.outdir/"navigate-mutant.spec.luau").write_text(build(orig,safe=True) if False else
-        build(fixed,safe=True).replace(AFTER,BEFORE,1),encoding="utf-8")
+    (args.outdir/"navigate-mutant.spec.luau").write_text(build(fixed,safe=True).replace(AFTER,BEFORE,1),encoding="utf-8")
     print("FULL_AUTHORED_ROUTER_NATIVE_SPECS_GENERATED original+fixed+mutant")
 
 
