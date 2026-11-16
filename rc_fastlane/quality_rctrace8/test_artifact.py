@@ -90,6 +90,19 @@ class Gate(unittest.TestCase):
         self.assertEqual(v["script_count"],31)
         self.assertEqual(v["real_studio_2client"],"NOT_TESTED")
         self.assertFalse(v["roblox_published"])
+    def test_prompt_guard_server_reach_source_required(self):
+        b,r,m,a=fixture()
+        name="EGGRUMBLE_InteractionGuard"
+        anchor="local function configuredReach(part:BasePart,verb:string):number?"
+        b=drop_anchor(b,name,anchor)
+        rehash(b,r)
+        with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FALSE_ON_PROMPT_SERVER_REACH_611"):
+            gq8.verify(b,r,m,a,HEAD)
+        b,r,m,a=fixture()
+        m["feature_flags"]["PROMPT_SERVER_REACH_611"]=False
+        with self.assertRaisesRegex(gq8.RedGate,"FEATURE_FLAG_DISABLED_OR_UNKNOWN"):
+            gq8.verify(b,r,m,a,HEAD)
+
     def test_roster16_actual_place_with_old_32_guards_is_red(self):
         b,r,m,a=fixture()
         b=change_source(b,"EGGRUMBLE_CastleMatchRules",
