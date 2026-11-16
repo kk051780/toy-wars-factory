@@ -21,7 +21,7 @@ def sha256(raw: bytes) -> str:
 
 
 def git_blob(raw: bytes) -> str:
-    return hashlib.sha1(f"blob {len(raw)}\\0".encode().replace(b"\\0", b"\\x00") + raw).hexdigest()
+    return hashlib.sha1(("blob " + str(len(raw))).encode() + bytes([0]) + raw).hexdigest()
 
 
 def stage(output: Path) -> dict:
