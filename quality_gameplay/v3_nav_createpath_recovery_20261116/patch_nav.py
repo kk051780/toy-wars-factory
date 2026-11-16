@@ -33,7 +33,8 @@ AFTER = '''  -- Creation and compute must share one error boundary: a CreatePath
     AgentRadius=2,AgentHeight=5,AgentCanJump=false,
     WaypointSpacing=8,Costs={Water=15},
    })
-   path:ComputeAsync(surfaceAt(at,actors),surfaceAt(expectedTarget,actors))
+   path=candidate
+   candidate:ComputeAsync(surfaceAt(at,actors),surfaceAt(expectedTarget,actors))
   end)
   inFlight=math.max(0,inFlight-1)
   if not path then
