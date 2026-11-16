@@ -35,11 +35,20 @@ local function block(parent:Instance,name:string,pos:Vector3,size:Vector3,color:
  p.Color=color;p.Material=Enum.Material.SmoothPlastic;p.Parent=parent
  return p
 end
-local function board(at:BasePart,label:string)
- local b=Instance.new("BillboardGui");b.Size=UDim2.fromOffset(230,82);b.StudsOffset=Vector3.new(0,4.5,0)
- b.AlwaysOnTop=true;b.Parent=at
- local t=Instance.new("TextLabel");t.Size=UDim2.fromScale(1,1);t.TextScaled=true;t.TextWrapped=true
- t.BackgroundColor3=Color3.fromRGB(24,27,43);t.BackgroundTransparency=.12
+-- GQ-V3-WORLD-PLAQUE: nearby, world-occluded cues only.
+-- World text must never blanket the battlefield or hide opponents/eggs at distance.
+local function board(at:BasePart,label:string,maxDistance:number?)
+ local b=Instance.new("BillboardGui")
+ b.Name="EGGRUMBLE_NearbyPlaque"
+ b.Size=UDim2.fromOffset(174,56)
+ b.StudsOffsetWorldSpace=Vector3.new(0,3.2,0)
+ b.AlwaysOnTop=false
+ b.MaxDistance=math.clamp(maxDistance or 42,16,52)
+ b.Parent=at
+ local t=Instance.new("TextLabel")
+ t.Name="Title";t.Size=UDim2.fromScale(1,1)
+ t.TextScaled=false;t.TextSize=14;t.TextWrapped=true
+ t.BackgroundColor3=Color3.fromRGB(24,27,43);t.BackgroundTransparency=.54
  t.TextColor3=Color3.new(1,1,1);t.Font=Enum.Font.GothamBold;t.Text=label;t.Parent=b
 end
 local function prompt(at:BasePart,action:string,subject:string,callback:(Player)->())
@@ -86,7 +95,7 @@ local function createWorldCastle(session:any,entry:any,index:number)
   end
  end
  local banner=block(model,"OwnerFlag",at+Vector3.new(0,18,0),Vector3.new(6,9,.8),Color3.fromRGB(228,190,110))
- board(core,(entry.isAI and "AI " or "")..entry.id.." の城\n卵×3 / HP1000")
+ board(core,(entry.isAI and "AI " or "")..entry.id.." の城\n卵×3 / HP1000",52)
  session.castleModels[entry.id]={model=model,core=core,banner=banner,door=door}
  prompt(door,"攻城攻撃","敵城を攻める",function(p)
   if joined[p.UserId]~=session.mode or not session.rules then return end
@@ -116,7 +125,7 @@ local function createWorldCastle(session:any,entry:any,index:number)
   if c.alive and c.heldEggs>0 then pcall(function() Rules.depositEggs(session.rules,entry.id,c.heldEggs) end) end
  end)
  local vault=block(model,"EggVault",at+Vector3.new(0,3,6),Vector3.new(6,5,6),Color3.fromRGB(218,181,75))
- board(vault,"卵倉庫")
+ board(vault,"卵倉庫",28)
  prompt(vault,"敵の卵を奪取","卵3個から1個ずつ",function(p)
   if not session.rules or joined[p.UserId]~=session.mode then return end
   pcall(function() Rules.takeEggs(session.rules,tostring(p.UserId),1,entry.id) end)
@@ -398,7 +407,7 @@ end
 for i,role in ipairs(SevenRoleCombat.roleOrder()) do
  local data=SevenRoleCombat.info(role)
  local stand=block(folder,"ROLE_"..role,root+Vector3.new((i-4)*9,1,69),Vector3.new(5,4,5),data.color)
- board(stand,data.name.."\n"..data.weapon)
+ board(stand,data.name.."\n"..data.weapon,24)
  prompt(stand,"職業選択",data.name,function(p)
   if joined[p.UserId] and sessions[joined[p.UserId]] then return end
   chosenRole[p.UserId]=role
@@ -407,13 +416,13 @@ for i,role in ipairs(SevenRoleCombat.roleOrder()) do
 end
 local gateTeam=block(folder,"TEAM_PORTAL",root+Vector3.new(-12,6,28),Vector3.new(9,12,2),Color3.fromRGB(206,74,67))
 local gateBR=block(folder,"BATTLE_ROYALE_PORTAL",root+Vector3.new(12,6,28),Vector3.new(9,12,2),Color3.fromRGB(79,132,230))
-board(gateTeam,"EGGRUMBLE\nチーム戦｜全味方城陥落で敗北")
-board(gateBR,"EGGRUMBLE\nバトルロワイヤル｜最後の城が勝者")
+board(gateTeam,"EGGRUMBLE\nチーム戦｜全味方城陥落で敗北",44)
+board(gateBR,"EGGRUMBLE\nバトルロワイヤル｜最後の城が勝者",44)
 prompt(gateTeam,"参加する","チーム戦（再操作で解除）",function(p) joinQueue("TEAM",p) end)
 prompt(gateBR,"参加する","BR戦（再操作で解除）",function(p) joinQueue("BATTLE_ROYALE",p) end)
 for i,name in ipairs({"HARDENED","REPAIR","TURRET","TRAP","SENSOR"}) do
  local stand=block(folder,"DEFENSE_"..name,root+Vector3.new((i-3)*9,1,47),Vector3.new(5,3,5),Color3.fromRGB(149,164,121))
- board(stand,name.."\n出撃前の防衛選択")
+ board(stand,name.."\n出撃前の防衛選択",25)
  prompt(stand,"装備する","全員同一防衛予算",function(p)
   if joined[p.UserId]==nil or sessions[joined[p.UserId]]==nil then
    chosenDefense[p.UserId]=name
