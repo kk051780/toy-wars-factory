@@ -88,7 +88,7 @@ def prepare(base: Path, out: Path, runtime: Path, expected_sha256: str) -> None:
         feature_id=FEATURE_ID,
         exact_original_combat_sha256=sha(combat_raw),
         exact_selected_combat_sha256=sha(selected.encode()),
-        31_scripts_preserved=True,
+        source_count=31,
         original_30_scripts_byte_identical=True,
         off_previous_combat_exact=True,
         no_second_game_combat_remote_store_score_authority=True,
