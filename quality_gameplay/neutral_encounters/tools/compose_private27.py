@@ -20,7 +20,7 @@ def replace_one(source: str, before: str, after: str, note: str) -> str:
 
 def patch_swarm(source: str) -> str:
     """Exact minimal, reviewable changes to the *generated private copy* only."""
-    assert "EGGRUMBLE: standalone lightweight neutral-horde combat controller." in source
+    assert "EGGRUMBLE V3: standalone lightweight neutral-horde combat controller." in source
     assert 'require(script.Parent:WaitForChild("EGGRUMBLE_NeutralEncounterFairness"))' not in source
     source = replace_one(source,
         'local ImpactFeedback=require(script.Parent:WaitForChild("EGGRUMBLE_ImpactFeedback"))',
