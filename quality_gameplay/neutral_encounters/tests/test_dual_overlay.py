@@ -14,6 +14,9 @@ SPEC.loader.exec_module(DUAL)
 class DualOverlayContract(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        required=("P0D_GQ494_COMPOSER","P0D_V3_ORIGINAL_SWARM","P0D_GQ_ORIGINAL26_PROJECT","P0D_GQ494_POLICY")
+        if not all(os.environ.get(k) for k in required):
+            raise unittest.SkipTest("dual28 requires exact pinned #494 and #484 input; standalone 27-source CI tests remain independent")
         cls.pacing=pathlib.Path(os.environ["P0D_GQ494_COMPOSER"]).resolve(strict=True)
         cls.author=pathlib.Path(os.environ["P0D_V3_ORIGINAL_SWARM"]).resolve(strict=True)
         spec=importlib.util.spec_from_file_location("gq494",cls.pacing)
