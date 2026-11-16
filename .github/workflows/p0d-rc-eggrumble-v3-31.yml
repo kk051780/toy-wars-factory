@@ -9,6 +9,8 @@ on:
       - 'rc_fastlane/quality_egg515_rc31/**'
       - 'rc_fastlane/quality_item525_rc31/**'
       - 'rc_fastlane/quality_rctrace8/**'
+      - 'rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json'
+      - 'rc_fastlane/quality_spectator32_optional/**'
       - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
   pull_request:
@@ -20,6 +22,8 @@ on:
       - 'rc_fastlane/quality_egg515_rc31/**'
       - 'rc_fastlane/quality_item525_rc31/**'
       - 'rc_fastlane/quality_rctrace8/**'
+      - 'rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json'
+      - 'rc_fastlane/quality_spectator32_optional/**'
       - 'rc_fastlane/quality_deadline499_current31/**'
       - 'rc_fastlane/quality_prompt611_rc31/**'
   workflow_dispatch:
@@ -1848,6 +1852,125 @@ jobs:
             "${gq8mode[@]}"
           test -s artifacts/gq530_all31/GQ8_RC31_ACTUAL_ARTIFACT_8_DOMAIN_SOURCE_RECEIPT.json
           echo GQ8_ACTUAL_BUILT_CANONICAL_RC_8_DOMAIN_SOURCE_TRUTH_GATE_PASS
+      - name: Checkout immutable original #634 adapter (no duplicate gameplay code)
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fed9cbb5680d40c68a2e1395e9b84276d7868fb9
+          path: _gq634_intake
+          persist-credentials: false
+      - name: Checkout immutable original #492 eliminated spectator LocalScript
+        uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20
+          path: _gq492_original
+          persist-credentials: false
+      - name: GQ470 source-register OPTIONAL32 Studio-only original spectator after GQ499
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _gq634_intake rev-parse HEAD)" = fed9cbb5680d40c68a2e1395e9b84276d7868fb9
+          test "$(git -C _gq492_original rev-parse HEAD)" = eb38aa60b69ed0bdd80fb7ea0dd10cf230345c20
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            current_base=$(python3 -c 'import json,os;print(json.load(open(os.environ["GITHUB_EVENT_PATH"]))["pull_request"]["base"]["sha"])')
+            test "$current_base" = b6f80874ecb9320f483bcb87892bc32af387aca3 \
+              || { echo "RED: official branch changed; rebase GQ470 optional32"; exit 1; }
+          fi
+          python3 -B -m unittest discover -v \
+            -s rc_fastlane/quality_spectator32_optional -p 'test_*.py'
+          SRC=_gq492_original/handoffs/P0D-PQG-SPECTATE-20261116-01/EGGRUMBLE_Spectate.client.luau
+          SELECT=_gq634_intake/rc_fastlane/quality_spectate492_rc32/admit_spectator.py
+          BASE=artifacts/gq515_official_select/GQ499_DEADLINE_SELECTED31.project.json
+          DIR=artifacts/gq470_optional32
+          OUT="$DIR/GQ470_SPECTATE32_OPTIONAL.project.json"
+          PLACE="$DIR/EGGRUMBLE_V3_SPECTATE32_OPTIONAL_STUDIO.rbxlx"
+          RECEIPT="$DIR/GQ492_ORIGINAL_SELECTOR_RECEIPT.json"
+          mkdir -p "$DIR"
+          python3 -B "$SELECT" prepare --base "$BASE" --source "$SRC" \
+            --out "$OUT" --receipt "$RECEIPT"
+          python3 - "$OUT" <<'PY'
+          import json,sys
+          from pathlib import Path
+          p=Path(sys.argv[1]);doc=json.loads(p.read_text(encoding="utf-8"))
+          assert doc["name"]=="EGGRUMBLE_GQ492_SPECTATE32_PRIVATE_NOT_OFFICIAL_RC"
+          doc["name"]="EGGRUMBLE_V3_OPTIONAL32_SPECTATOR_STUDIO_ONLY"
+          p.write_text(json.dumps(doc,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          PY
+          /tmp/gq530_all31_native/luau-compile --text "$SRC" >/dev/null
+          python3 - "$OUT" "$SELECT" <<'PY'
+          import importlib.util,json,subprocess,sys
+          from pathlib import Path
+          spec=importlib.util.spec_from_file_location("intake",sys.argv[2])
+          lib=importlib.util.module_from_spec(spec);spec.loader.exec_module(lib)
+          path=Path(sys.argv[1]);sources=lib.source_map(json.loads(path.read_text()),path)
+          assert len(sources)==32
+          for name,(file,clazz) in sources.items():
+              subprocess.run(["/tmp/gq530_all31_native/luau-compile","--text",str(file)],
+                             check=True,stdout=subprocess.DEVNULL)
+          print("GQ470_OPTIONAL32_ALL_REAL_LUAU_NATIVE_COMPILE_PASS")
+          PY
+          /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
+          python3 -B "$SELECT" verify --base "$BASE" --source "$SRC" \
+            --out "$OUT" --receipt "$RECEIPT" --place "$PLACE"
+          echo GQ470_OPTIONAL32_SINGLE_ORIGINAL_CLIENT_REAL_ROJO32_SOURCE_EXACT_PASS
+      - name: GQ470 run original client real Luau lifecycle and 3 mutation negatives
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIR=artifacts/gq470_optional32
+          HARNESS=_gq492_original/handoffs/P0D-PQG-SPECTATE-20261116-01/tools/make_native_spectator_harness.py
+          python3 "$HARNESS" --out "$DIR/ORIGINAL_REAL_CLIENT_NATIVE.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/ORIGINAL_REAL_CLIENT_NATIVE.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/ORIGINAL_REAL_CLIENT_NATIVE.luau" \
+            | tee "$DIR/ORIGINAL_REAL_CLIENT_NATIVE.log"
+          for marker in NATIVE_SPECTATOR_REAL_CLIENT_LIFECYCLE_PASS \
+            NATIVE_SPECTATOR_CROSS_MODE_ISOLATION_PASS NATIVE_SPECTATOR_RESET_FLAG_PASS \
+            NATIVE_SPECTATOR_ARENA_REMOVAL_PASS; do
+            grep -q "^$marker$" "$DIR/ORIGINAL_REAL_CLIENT_NATIVE.log"
+          done
+          : > "$DIR/MUTATION_NEGATIVES.log"
+          for m in elimination mode recovery; do
+            python3 "$HARNESS" --mutation "$m" --out "$DIR/MUTANT_$m.luau"
+            /tmp/gq530_all31_native/luau-compile --text "$DIR/MUTANT_$m.luau" >/dev/null
+            if /tmp/gq530_all31_native/luau "$DIR/MUTANT_$m.luau" \
+              >"$DIR/MUTANT_$m.log" 2>&1; then
+              echo "RED: mutated source passed $m"; exit 1
+            fi
+            echo "REJECTED_$m" | tee -a "$DIR/MUTATION_NEGATIVES.log"
+          done
+          echo GQ470_OPTIONAL32_ORIGINAL_NATIVE_LIFECYCLE_AND_3_MUTANTS_PASS
+      - name: GQ470 attest optional Studio-only RC32 vs true current31 GQ8 domain proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIR=artifacts/gq470_optional32
+          python3 -B rc_fastlane/quality_spectator32_optional/verify_optional.py \
+            --manifest rc_fastlane/EGGRUMBLE_V3_SPECTATE32_OPTIONAL.json \
+            --active rc_fastlane/ACTIVE.json \
+            --base-manifest rc_fastlane/EGGRUMBLE_V3_ACTIVE.json \
+            --intake-receipt "$DIR/GQ492_ORIGINAL_SELECTOR_RECEIPT.json" \
+            --gq8-receipt artifacts/gq530_all31/GQ8_RC31_ACTUAL_ARTIFACT_8_DOMAIN_SOURCE_RECEIPT.json \
+            --native-log "$DIR/ORIGINAL_REAL_CLIENT_NATIVE.log" \
+            --mutation-log "$DIR/MUTATION_NEGATIVES.log" \
+            --place "$DIR/EGGRUMBLE_V3_SPECTATE32_OPTIONAL_STUDIO.rbxlx" \
+            --out "$DIR/GQ470_OPTIONAL32_PROFILE_RC_RECEIPT.json" \
+            --head "$GITHUB_SHA" --event "$GITHUB_EVENT_NAME"
+          echo GQ470_OPTIONAL32_8_DOMAIN_GQ8_AND_ROJO32_SOURCE_GATE_PASS
+      - name: Upload GQ470 registered OPTIONAL32 Studio-only companion (never public publish)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: P0D-EGGRUMBLE-V3-OPTIONAL32-SPECTATOR-STUDIO-ONLY
+          path: |
+            artifacts/gq470_optional32/EGGRUMBLE_V3_SPECTATE32_OPTIONAL_STUDIO.rbxlx
+            artifacts/gq470_optional32/GQ470_SPECTATE32_OPTIONAL.project.json
+            artifacts/gq470_optional32/GQ492_ORIGINAL_SELECTOR_RECEIPT.json
+            artifacts/gq470_optional32/GQ470_OPTIONAL32_PROFILE_RC_RECEIPT.json
+            artifacts/gq470_optional32/ORIGINAL_REAL_CLIENT_NATIVE.log
+            artifacts/gq470_optional32/MUTATION_NEGATIVES.log
+          if-no-files-found: error
+          retention-days: 3
       - name: Upload actual canonical RC branch V3 companion Studio Place and rollback evidence
         if: success()
         uses: actions/upload-artifact@v4
