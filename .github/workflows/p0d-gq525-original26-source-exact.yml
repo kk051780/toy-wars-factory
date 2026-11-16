@@ -106,6 +106,27 @@ jobs:
           /tmp/gq525_luau/luau-compile /tmp/gq525_item_mode_native.luau >/dev/null
           /tmp/gq525_luau/luau /tmp/gq525_item_mode_native.luau | tee artifacts/GQ525_ITEM_VM.log
           grep -q 'NATIVE_LUAU_ITEM_MODE_GUARD' artifacts/GQ525_ITEM_VM.log
+          # Actual original #489 ProximityPrompt/Guard/HEAL/DASH/SHIELD plus
+          # original #517 HEAL and our exact #525 extracted Lobby hook.
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/make_item_effect_vm.py \
+            --project artifacts/GQ525_PRIVATE26.project.json \
+            --receipt artifacts/GQ525_SOURCE_RECEIPT.json \
+            --author-harness _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_field_item_harness.py \
+            --out /tmp/gq525_real_item_effect_vm.luau
+          /tmp/gq525_luau/luau-compile /tmp/gq525_real_item_effect_vm.luau >/dev/null
+          /tmp/gq525_luau/luau /tmp/gq525_real_item_effect_vm.luau | tee artifacts/GQ525_ITEM_EFFECT_VM.log
+          grep -q 'GQ525_REAL_ITEM_PROMPT_EFFECT_INTEGRATION' artifacts/GQ525_ITEM_EFFECT_VM.log
+          # The same real source without #525 guard MUST fail the cross-mode suite.
+          python3 quality_gameplay/v3_item_mode_ownership_20261116/make_item_effect_vm.py \
+            --project artifacts/GQ525_PRIVATE26.project.json \
+            --receipt artifacts/GQ525_SOURCE_RECEIPT.json \
+            --author-harness _v3_item/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/tools/make_native_field_item_harness.py \
+            --out /tmp/gq525_item_mutant_vm.luau --mutant
+          if /tmp/gq525_luau/luau /tmp/gq525_item_mutant_vm.luau >artifacts/GQ525_MUTANT_NEGATIVE.log 2>&1; then
+            echo 'ERROR unguarded mutant unexpectedly passes';exit 1
+          fi
+          grep -q 'stale TEAM player in BR' artifacts/GQ525_MUTANT_NEGATIVE.log
+          echo 'GQ525_UNGUARDED_CROSSMODE_MUTANT_REJECTED'
       - name: Checksum-pinned Rojo private Place only (NEVER publish)
         run: |
           set -euo pipefail
@@ -142,4 +163,6 @@ jobs:
             artifacts/GQ525_PRIVATE26.project.json
             artifacts/GQ525_SOURCE_RECEIPT.json
             artifacts/GQ525_ITEM_VM.log
+            artifacts/GQ525_ITEM_EFFECT_VM.log
+            artifacts/GQ525_MUTANT_NEGATIVE.log
           retention-days: 1
