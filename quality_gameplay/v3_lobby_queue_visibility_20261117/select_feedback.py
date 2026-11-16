@@ -54,9 +54,9 @@ local function getCastlePoint(mode:string,index:number):Vector3
 '''
     ),
     (
-        'session.world.Name=mode.."_Arena";session.world.Parent=folder\n',
-        '''session.world.Name=mode.."_Arena";session.world.Parent=folder
-  refreshQueueBoard(mode)
+        ' sessions[mode]=session\n',
+        ''' sessions[mode]=session
+ refreshQueueBoard(mode)
 '''
     ),
     (
