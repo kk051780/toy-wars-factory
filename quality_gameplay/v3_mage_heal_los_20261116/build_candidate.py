@@ -111,11 +111,13 @@ healAllies(session,source,source.root)
 assert(enemy.h.Health==20, "friendly-fire team ownership invariant")
 
 -- 4. Eliminated source cannot heal, even if role tool callback survived.
-session.rules.castles["1"].alive=false
-ally.h.Health=25
-healAllies(session,source,source.root)
-assert(ally.h.Health==25,"eliminated caster must never heal")
-session.rules.castles["1"].alive=true
+if FIXED then
+ session.rules.castles["1"].alive=false
+ ally.h.Health=25
+ healAllies(session,source,source.root)
+ assert(ally.h.Health==25,"eliminated caster must never heal")
+ session.rules.castles["1"].alive=true
+end
 
 -- 5. BR mode heals self, but no other player even when same approximate team tag.
 session.mode="BATTLE_ROYALE"
@@ -124,11 +126,13 @@ healAllies(session,source,source.root)
 assert(source.h.Health==80 and ally.h.Health==60,"BR self only")
 
 -- 6. No source avatar means no post-respawn heal from the old tool callback.
-session.mode="TEAM"
-source.Character=nil
-source.h.Health=55;ally.h.Health=60
-healAllies(session,source,source.root)
-assert(source.h.Health==55 and ally.h.Health==60,"stale actor must not heal")
+if FIXED then
+ session.mode="TEAM"
+ source.Character=nil
+ source.h.Health=55;ally.h.Health=60
+ healAllies(session,source,source.root)
+ assert(source.h.Health==55 and ally.h.Health==60,"stale actor must not heal")
+end
 print("MAGE_HEAL_LOS_NATIVE_VM_CASES_PASS",FIXED and "FIXED" or "ORIGINAL_BUG_REPRODUCED")
 '''
     header = f"local FIXED={'true' if fixed else 'false'}\nlocal EXPECTED_WALL_HEALTH={60 if fixed else 85}\n"
