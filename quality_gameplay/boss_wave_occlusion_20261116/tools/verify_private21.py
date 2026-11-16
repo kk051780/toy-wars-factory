@@ -39,9 +39,9 @@ def verify(project_dir: Path, place: Path):
         assert cls == script_class(rel), (name, cls, script_class(rel))
         wanted = (project_dir / rel).read_text("utf-8").replace("\r\n", "\n")
         assert code == wanted, f"binary source mismatch: {name}"
-    assert sum(cls == "Script" for cls, _ in observed.values()) == 4
+    assert sum(cls == "Script" for cls, _ in observed.values()) == 1
     assert sum(cls == "LocalScript" for cls, _ in observed.values()) == 2
-    assert sum(cls == "ModuleScript" for cls, _ in observed.values()) == 15
+    assert sum(cls == "ModuleScript" for cls, _ in observed.values()) == 18
     return {"actual_place_bytes": place.stat().st_size,
             "actual_place_sha256": hashlib.sha256(place.read_bytes()).hexdigest(),
             "actual_embedded_sources_exact": len(observed),
