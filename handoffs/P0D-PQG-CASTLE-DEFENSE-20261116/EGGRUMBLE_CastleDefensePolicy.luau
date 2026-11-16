@@ -44,4 +44,13 @@ function Policy.mayActivate(kind:string,phase:string,now:number,last:number?,
  return not config.needsLOS or hasLOS==true
 end
 
+-- Transparent Assassin bypasses automatic turret/trap targeting until detected.
+-- The SENSOR is a counterpick and fires only against genuinely invisible human heroes.
+function Policy.canAcquire(kind:string,now:number,stealthUntil:any):boolean
+ if not Policy.CONFIG[kind] or not finite(now) or not finite(stealthUntil) then return false end
+ local invisible=stealthUntil>now
+ if kind=="SENSOR" then return invisible end
+ return not invisible
+end
+
 return Policy
