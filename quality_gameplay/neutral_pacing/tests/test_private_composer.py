@@ -31,6 +31,23 @@ class TestPrivateComposer(unittest.TestCase):
         self.assertNotIn('math.min(SPAWN_BATCH,LIMIT-n)',after)
         self.assertNotEqual(after,before)
 
+    def test_neutral_death_credit_excludes_finished_round_or_fallen_owner(self):
+        after=COMPOSE.patch_swarm(self.swarm)
+        guard=('if type(id)=="string" and session.rules.phase=="ACTIVE"\\n'
+               '    and session.rules.castles[id] and session.rules.castles[id].alive then')
+        self.assertIn(guard,after)
+        self.assertEqual(after.count("h.Died:Connect("),1)
+        self.assertEqual(after.count("credit(id)"),1)
+        self.assertEqual(after.count("ImpactFeedback.ko("),1)
+        self.assertLess(after.index(guard),after.index("credit(id)"))
+        # This new condition must be impossible in FINISHED/ABANDONED and
+        # for an eliminated castle, while remaining reachable for living
+        # participants in ACTIVE state. Do not conflate with Studio proof.
+        for phase,alive,expected in (
+            ("ACTIVE",True,True),("ACTIVE",False,False),
+            ("FINISHED",True,False),("ABANDONED",True,False)):
+            self.assertEqual(phase=="ACTIVE" and alive,expected)
+
     def test_mismatched_author_source_fails_closed(self):
         corrupt=self.swarm.replace('local SPAWN_BATCH=5','local SPAWN_BATCH=6')
         with self.assertRaises(AssertionError):
