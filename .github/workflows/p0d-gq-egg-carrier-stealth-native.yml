@@ -1,5 +1,8 @@
 name: P0D GQ carrier WIND stealth bot targeting native
 on:
+  pull_request:
+    branches:
+      - feature/p0d-pqg-seven-hero-playable-20261116-01
   push:
     branches:
       - quality/eggrumble-egg-carrier-stealth-targeting-20261116
