@@ -33,8 +33,8 @@ def patch_swarm(source: str) -> str:
         '  local encounterFairState={}',
         "session_state")
     source = replace_one(source,
-        'local function aliveTargets():{Vector3}\n   local a={}',
-        'local function aliveTargets():({Vector3},{string})\n   local a={}\n'
+        'local function aliveTargets():{Vector3}\n  local a={}',
+        'local function aliveTargets():({Vector3},{string})\n  local a={}\n'
         '   local kinds:{string}={}',
         "target_interface")
     source = replace_one(source,
@@ -54,11 +54,11 @@ def patch_swarm(source: str) -> str:
         '    end',
         "alive_bot")
     source = replace_one(source,
-        'return a\n  end\n  -- Area skills',
-        'return a,kinds\n  end\n  -- Area skills',
+        'return a\n end\n -- Area skills',
+        'return a,kinds\n end\n -- Area skills',
         "paired_return")
     source = replace_one(source,
-        'local candidates=aliveTargets()\n    if #candidates>0 then\n     local n=api.getAliveCount()',
+        'local candidates=aliveTargets()\n   if #candidates>0 then\n    local n=api.getAliveCount()',
         'local candidates,kinds=aliveTargets()\n'
         '    if #candidates>0 then\n     local n=api.getAliveCount()',
         "spawn_candidates")
@@ -69,7 +69,7 @@ def patch_swarm(source: str) -> str:
         '      local target=candidates[selected]',
         "target_pick")
     source = replace_one(source,
-        'ended=true\n  end)',
+        'ended=true\n end)',
         'EncounterFair.clear(encounterFairState)\n'
         '   ended=true\n  end)',
         "round_cleanup")
