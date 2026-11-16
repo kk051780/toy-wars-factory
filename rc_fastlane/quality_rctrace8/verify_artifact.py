@@ -126,6 +126,10 @@ OPTIONAL_FEATURE_EVIDENCE = {
  "VERTICAL_HIT_FAIRNESS_595": (
   "EGGRUMBLE_AttackGeometry",
   ("if dy~=dy or math.abs(dy)>math.min(radius,14) then return false end",)),
+ "ZOMBIE_NEUTRAL_STABLE_ID_V3": (
+  "EGGRUMBLE_SevenRoleCombat",
+  ('local neutralIds=setmetatable({}, {__mode="k"})',
+   "id=neutralTargetId(enemy)")),
  "DEPOSIT_CURRENT_SESSION_586": (
   "EGGRUMBLE_LobbyCastleModesPreview",
   ("GQ_DEPOSIT_CURRENT_MATCH_586",
