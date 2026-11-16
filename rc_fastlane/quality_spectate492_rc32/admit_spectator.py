@@ -106,7 +106,7 @@ def prepare(base, source, out, receipt):
         raise ValueError("RED: original spectator not LocalScript")
     evidence = {
         "kind": "PRIVATE_RC32_PREMERGE_NOT_OFFICIAL",
-        "base_rc_head": "89cbeb03d74ddbe3408ef805fed6683ff6abc508",
+        "base_rc_head": "b0a4b95de5a501173bdbd2ce179e5901d9d78686",
         "original_spectator_author": AUTHOR_HEAD,
         "original_spectator_blob": AUTHOR_BLOB,
         "existing_gameplay_sources_unchanged": 31,

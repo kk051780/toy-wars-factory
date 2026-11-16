@@ -24,3 +24,8 @@
 - Native compiles all32, executes original #492 lifecycle and 3 mutation negative cases, real Rojo32 compares exact Script Source/Class for all31 and original client. Actual Github Actions must be SUCCESS at fixed PR HEAD before `PREP_READY`.
 - Client is guarded by `RunService:IsStudio()`; source selection is for private QA only. Official adoption would require an explicit source/feature flag, RC count32 and publisher-safe review; **do not classify as production-playable**.
 - #220 sole authenticated CAS writer and original source QA gates remain; Studio2client/Android/FUN/OWNER are NOT_TESTED. No main, release publishing, payment or Windows changes.
+
+
+## New formal HEAD follow-up after original GQ615 lobby queue
+- Source refresh only: newest authenticated official parent `b0a4b95de5a501173bdbd2ce179e5901d9d78686` with `LOBBY_QUEUE_ETA_615`; selected private32 project is composed from `GQ615_LOBBY_QUEUE_SELECTED31.project.json`, not obsolete prior ZOMBIE-GUARD-only selected project.
+- Preserve 31/31 current 31 source/classes including now installed original #615 Host Billboard, #631 Zombie GUARD, #618 Beast, #611 Guard, #525 Item. No reauthoring GQ615 or GQ492. Native32 + Rojo32 full comparison against exact GQ615 canonical Place required after this new HEAD.
