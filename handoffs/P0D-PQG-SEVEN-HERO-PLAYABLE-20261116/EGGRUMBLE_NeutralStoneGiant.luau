@@ -61,7 +61,10 @@ function Boss.spawn(parent:Instance,at:Vector3,options:any?):any
   eye.Color=if health<=300 then Color3.fromRGB(255,99,91) else Color3.fromRGB(93,220,245)
   if health<=0 then
    active=false
-   if options and options.onDefeat then options.onDefeat(player) end
+   if options and options.onDefeat then
+    local callbackOK,callbackError=pcall(options.onDefeat,player)
+    if not callbackOK then warn("[EGGRUMBLE BOSS] onDefeat callback error:",callbackError) end
+   end
    ring:Destroy()
    model:Destroy()
   end
