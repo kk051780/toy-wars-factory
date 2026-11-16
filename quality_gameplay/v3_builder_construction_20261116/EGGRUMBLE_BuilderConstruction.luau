@@ -88,6 +88,30 @@ local function count(s:any,userId:number):(number,number)
  return total,own
 end
 
+-- Independent fallback when the original Game's closeRound hook has not been
+-- connected yet. Only one heartbeat exists per real session, and only while
+-- there are active constructs. It does NOT create a second Game/Remote/loop.
+local function monitorSession(session:any,s:any):()
+ if s.monitoring then return end
+ s.monitoring=true
+ local function tick()
+  if bySession[session]~=s then return end
+  if not session.world or not session.world.Parent or not session.rules
+   or session.rules.phase~="ACTIVE" or session.rules.winner~=nil then
+   -- The original author may also call clear(); both paths are idempotent.
+   Build.clear(session)
+   return
+  end
+  local total=count(s,-1)
+  if total==0 then
+   s.monitoring=false
+   return
+  end
+  task.delay(0.25,tick)
+ end
+ task.delay(0.25,tick)
+end
+
 function Build.place(session:any,p:Player,kind:string,serverEnabled:boolean?):(boolean,string)
  -- This opt-in flag is passed ONLY by the original server-owned skill dispatcher.
  if serverEnabled~=true then return false,"FEATURE_OFF" end
@@ -166,6 +190,7 @@ function Build.place(session:any,p:Player,kind:string,serverEnabled:boolean?):(b
    if entry.part and entry.part.Parent then entry.part:Destroy() end
   end
  end)
+ monitorSession(session,s)
  return true,kind
 end
 function Build.clear(session:any):()
