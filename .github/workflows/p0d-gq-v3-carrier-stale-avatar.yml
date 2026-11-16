@@ -1,0 +1,86 @@
+name: GQ V3 existing castle stale avatar carrier source/native/Rojo only
+
+on:
+  push:
+    branches:
+      - quality/gq-v3-stale-avatar-carrier-died-20261116-01
+    paths:
+      - 'quality_gameplay/v3_carrier_stale_avatar_20261116/**'
+      - '.github/workflows/p0d-gq-v3-carrier-stale-avatar.yml'
+  pull_request:
+    paths:
+      - 'quality_gameplay/v3_carrier_stale_avatar_20261116/**'
+      - '.github/workflows/p0d-gq-v3-carrier-stale-avatar.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-native-private-place:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test immutable original, exact 2-board overlay, OFF rollback, 8-domain preservation
+        run: |
+          python3 -m unittest discover -v \
+            -s quality_gameplay/v3_carrier_stale_avatar_20261116/tests -p 'test_*.py'
+      - name: Compose original 21-source private V3 Rojo project, one original Host overlay
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_carrier_stale_avatar_20261116/tools/compose.py \
+            --out quality_gameplay/v3_carrier_stale_avatar_20261116/_private_stage
+          python3 -m json.tool quality_gameplay/v3_carrier_stale_avatar_20261116/_private_stage/private.project.json >/dev/null
+      - name: Native compile the generated Host and all unchanged author Luau
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/luau-lang/luau.git /tmp/gq-carrier-stale-luau
+          cmake -S /tmp/gq-carrier-stale-luau -B /tmp/gq-carrier-stale-luau/build \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF
+          cmake --build /tmp/gq-carrier-stale-luau/build --target Luau.Compile.CLI Luau.Repl.CLI -j 4
+          for f in \
+            quality_gameplay/v3_carrier_stale_avatar_20261116/_private_stage/HostOverlay.server.luau \
+            handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/*.luau; do
+            /tmp/gq-carrier-stale-luau/build/luau-compile "$f" >/dev/null
+          done
+          /tmp/gq-carrier-stale-luau/build/luau "quality_gameplay/v3_carrier_stale_avatar_20261116/_private_stage/native_cases.luau"
+          echo 'GQ_STALE_AVATAR_CARRIER_NATIVE_EXECUTED=PASS'
+          echo "NATIVE_LUAU_HOST_AND_ORIGINAL_SOURCE=PASS"
+      - name: Install pinned official Rojo 7.7.0 private build CLI
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/gq-carrier-stale-rojo
+          curl --fail --location --retry 2 \
+            https://github.com/rojo-rbx/rojo/releases/download/v7.7.0/rojo-7.7.0-linux-x86_64.zip \
+            -o /tmp/gq-carrier-stale-rojo.zip
+          unzip -q /tmp/gq-carrier-stale-rojo.zip -d /tmp/gq-carrier-stale-rojo
+          chmod +x /tmp/gq-carrier-stale-rojo/rojo
+          /tmp/gq-carrier-stale-rojo/rojo --version
+      - name: Build and inspect actual PRIVATE 21-Luau Studio Place
+        run: |
+          set -euo pipefail
+          STAGE=quality_gameplay/v3_carrier_stale_avatar_20261116/_private_stage
+          /tmp/gq-carrier-stale-rojo/rojo build "$STAGE/private.project.json" \
+            --output "$STAGE/EGGRUMBLE_CARRIER_STALE_AVATAR_PRIVATE_NOT_RC.rbxlx"
+          test -s "$STAGE/EGGRUMBLE_CARRIER_STALE_AVATAR_PRIVATE_NOT_RC.rbxlx"
+          python3 quality_gameplay/v3_carrier_stale_avatar_20261116/tools/verify_place.py \
+            --project "$STAGE/private.project.json" \
+            --place "$STAGE/EGGRUMBLE_CARRIER_STALE_AVATAR_PRIVATE_NOT_RC.rbxlx"
+          wc -c "$STAGE/EGGRUMBLE_CARRIER_STALE_AVATAR_PRIVATE_NOT_RC.rbxlx"
+          sha256sum "$STAGE/EGGRUMBLE_CARRIER_STALE_AVATAR_PRIVATE_NOT_RC.rbxlx"
+      - name: Save only PRIVATE source evidence; no merge / publish / official RC write
+        uses: actions/upload-artifact@v4
+        with:
+          name: EGGRUMBLE-GQ-V3-CARRIER-STALE-AVATAR-PRIVATE-NOT-RC
+          path: |
+            quality_gameplay/v3_carrier_stale_avatar_20261116/_private_stage/*.rbxlx
+            quality_gameplay/v3_carrier_stale_avatar_20261116/_private_stage/receipt.json
+            quality_gameplay/v3_carrier_stale_avatar_20261116/_private_stage/HostOverlay.server.luau
+          retention-days: 3
+          if-no-files-found: error
+      - name: Explicit unfinished acceptance gates
+        run: |
+          echo "GQ SOURCE/NATIVE/REAL PRIVATE ROJO: check previous steps."
+          echo "OFFICIAL_RC_ADOPTED=0; STUDIO/ANDROID/FUN/ART/OWNER=NOT_TESTED."
+          echo "No original author source changed; no main / merge / paid action / Roblox publish."
