@@ -187,7 +187,7 @@ class Gate(unittest.TestCase):
         m["feature_flags"]["FUTURE_AUTHOR_UNKNOWN_999"]=True
         v=gq8.verify(b,r,m,a,HEAD)
         self.assertEqual(v["unassessed_new_flags"],["FUTURE_AUTHOR_UNKNOWN_999"])
-    def test_current28_manifest_anchors_enforce_all_nine_late_flags(self):
+    def test_current29_manifest_anchors_enforce_nonshared_flags(self):
         late=(
             "NEUTRAL_DEATH_KO_CURRENT_OWNER_508",
             "AI_TAKEOVER_TERMINAL_FENCE_580",
@@ -196,7 +196,6 @@ class Gate(unittest.TestCase):
             "ZOMBIE_COMMAND_SQUAD_582",
             "DEPOSIT_CURRENT_SESSION_586",
             "ZOMBIE_NEUTRAL_STABLE_ID_V3",
-            "ITEM_CURRENT_SESSION_525",
             "SERVER_PROMPT_CONFIG_REACH_611",
         )
         for flag in late:
@@ -220,7 +219,6 @@ class Gate(unittest.TestCase):
             "ZOMBIE_COMMAND_SQUAD_582",
             "DEPOSIT_CURRENT_SESSION_586",
             "ZOMBIE_NEUTRAL_STABLE_ID_V3",
-            "ITEM_CURRENT_SESSION_525",
             "SERVER_PROMPT_CONFIG_REACH_611",
         ):
             with self.subTest(flag=flag):
