@@ -32,7 +32,7 @@ NEW = (
 
 def git_blob(text: str) -> str:
     data = text.encode("utf-8")
-    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\\0" + data).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
 
 def patch_author_host(source: str, item_source: str) -> str:
     """Fail closed on original-source drift, duplicate patch and different item geometry."""
@@ -83,7 +83,7 @@ def main() -> None:
         raise SystemExit("RED: geometric clearance assertion failed")
     if args.output:
         out = args.output.resolve()
-        if out == HOST.resolve() or HOST.resolve().is_relative_to(out):
+        if out == HOST.resolve() or out.is_relative_to(AUTHOR.resolve()):
             raise SystemExit("RED: refusing output into original author path")
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(patched, encoding="utf-8")
