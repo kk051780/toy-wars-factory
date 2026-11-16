@@ -188,7 +188,8 @@ local function scanMode(mode: string)
 end
 
 local function scanPlayers()
- local out = {total = 0, selectedRoles = {}, equippedRoles = {}, queuedModes = {}, neutralKOCredits = 0}
+ -- Existing player KO attributes are not tied to a specific arena; name them honestly.
+ local out = {total = 0, selectedRoles = {}, equippedRoles = {}, queuedModes = {}, neutralKOCreditsUnscoped = 0}
  for _,player in ipairs(Players:GetPlayers()) do
   out.total += 1
   local selected = player:GetAttribute("EGGRUMBLE_SelectedRole")
@@ -198,7 +199,7 @@ local function scanPlayers()
   if type(equipped) == "string" then out.equippedRoles[equipped] = (out.equippedRoles[equipped] or 0) + 1 end
   if type(queued) == "string" then out.queuedModes[queued] = (out.queuedModes[queued] or 0) + 1 end
   local kos = player:GetAttribute("EGGRUMBLE_NeutralKOs")
-  if type(kos) == "number" and kos >= 0 and kos < 1000000 then out.neutralKOCredits += kos end
+  if type(kos) == "number" and kos >= 0 and kos < 1000000 then out.neutralKOCreditsUnscoped += kos end
  end
  return out
 end
