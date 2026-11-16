@@ -103,12 +103,11 @@ jobs:
           python3 _heal_original/quality_gameplay/v3_heal_no_waste_20261116/patch_heal_item.py \
             --source "_item_original/$GAME_ROOT/EGGRUMBLE_FieldItemPickups.luau" \
             --out artifacts/EGGRUMBLE_FieldItemPickups.luau
-          cp artifacts/SOURCE_RECEIPT.json artifacts/GQ531_ITEM_RECEIPT.json
           python3 "_item_original/$GAME_ROOT/tools/compose_item26_overlay.py" prepare \
             --project artifacts/GQ531_BASE26.project.json \
             --out artifacts/GQ531_ITEM26.project.json \
             --item artifacts/EGGRUMBLE_FieldItemPickups.luau \
-            --receipt artifacts/GQ531_ITEM_RECEIPT.json \
+            --receipt artifacts/SOURCE_RECEIPT.json \
             --item-head c8a324ad7bb40648d82a5828cbf54e217585fefd \
             --quality-head 6b52eaf1f2725496277998fe0c5532b7a8fcaab5 \
             --author-head fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
