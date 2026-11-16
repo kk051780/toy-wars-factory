@@ -102,6 +102,16 @@ jobs:
           PY
           /tmp/gq515_native27/luau artifacts/field27/actual_policy_native.luau | tee artifacts/field27/EGG_POLICY_NATIVE.log
           grep -q 'EGGRUMBLE_FIELD_EGG_RECOVERY_NATIVE_PASS checks=18' artifacts/field27/EGG_POLICY_NATIVE.log
+      - name: ORIGINAL CastleMatchRules plus actual DropBounds native lifecycle six cross-domain scenarios
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/field_egg_drop_recovery_20261116/tools/build_real_rules_native.py \
+            --rules _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_CastleMatchRules.luau \
+            --out artifacts/field27/real_rules_drop_native.luau
+          /tmp/gq515_native27/luau-compile --text artifacts/field27/real_rules_drop_native.luau >/dev/null
+          /tmp/gq515_native27/luau artifacts/field27/real_rules_drop_native.luau | tee artifacts/field27/REAL_RULES_CROSS_DOMAIN_NATIVE.log
+          grep -q 'EGGRUMBLE_FIELD_EGG_REAL_RULES_CROSS_DOMAIN_NATIVE_PASS checks=' artifacts/field27/REAL_RULES_CROSS_DOMAIN_NATIVE.log
       - name: Native Luau compile all 27 actual source maps
         shell: bash
         run: |
@@ -154,4 +164,6 @@ jobs:
             artifacts/field27/EGGRUMBLE_GQ_FIELD_EGG_SAFE27.project.json
             artifacts/field27/SOURCE27_RECEIPT.json
             artifacts/field27/EGG_POLICY_NATIVE.log
+            artifacts/field27/REAL_RULES_CROSS_DOMAIN_NATIVE.log
+            artifacts/field27/real_rules_drop_native.receipt.txt
       - run: echo 'PRIVATE27_ONLY; OFFICIAL_RC_WRITER_220_REQUIRED; STUDIO_ANDROID_FUN_OWNER_NOT_RUN'
