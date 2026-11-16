@@ -340,6 +340,19 @@ jobs:
                  check=True,stdout=subprocess.DEVNULL)
           print("GQ520_RIDGE_AUTHOR34_ALL_NATIVE_LUAU_34_OF_34_PASS")
           PY
+      - name: Execute ACTUAL original and patched TEAM ridge Luau in native VM with SHIELD LOS path checks
+        run: |
+          set -euo pipefail
+          python3 quality_gameplay/v3_central_ridge_clearance_20261116/make_native_corridor.py \
+            --original _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau \
+            --source34 artifacts/EGGRUMBLE_CASTLE32_LobbyCastleModesPreview.server.luau \
+            --patched34 artifacts/GQ520_RIDGE34_OnlyHost.server.luau \
+            --items _v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_RaidItemIntake.luau \
+            --out /tmp/GQ520_original_vs_fixed_corridor_native.luau
+          /tmp/gq27_native/luau-compile --text /tmp/GQ520_original_vs_fixed_corridor_native.luau >/dev/null
+          /tmp/gq27_native/luau /tmp/GQ520_original_vs_fixed_corridor_native.luau | tee artifacts/GQ520_NATIVE_CORRIDOR_VM.log
+          grep -q GQ520_ORIGINAL_RIDGE_REAL_LUAU_VM_PASS artifacts/GQ520_NATIVE_CORRIDOR_VM.log
+          grep -q GQ520_LOS_PATH_NEGATIVE_PASS artifacts/GQ520_NATIVE_CORRIDOR_VM.log
       - name: Build exact GQ520 original34 single-hunk REAL private Place and verify actual Luau source
         run: |
           set -euo pipefail
@@ -362,4 +375,5 @@ jobs:
             artifacts/GQ520_AUTHOR34_RIDGE_PRIVATE.project.json
             artifacts/GQ520_RIDGE34_OnlyHost.server.luau
             artifacts/GQ520_PRIVATE34_RECEIPT.json
+            artifacts/GQ520_NATIVE_CORRIDOR_VM.log
           retention-days: 3
