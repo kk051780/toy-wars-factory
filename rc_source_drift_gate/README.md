@@ -96,3 +96,22 @@ The earlier V3 five-file guard scan revealed an actual normal-server blocker, bu
 New test file `test_effective_runtime_selection.py` validates 7 overlay/guard-negative cases. New `test_full26_runtime.py` validates 8 more selection and art-vs-game guard scenarios. All tests run with no network; the live CI read-only job then checks immutable GitHub heads and all 26 actual owner source files.
 
 **Important:** a newer #484 current26 Native/Rojo SUCCESS and a successful source scan are *private development source readiness*, not product GO. The true canonical #220 writer must select actual production Game/Remote/Store authority before nonStudio mobile play can be accepted. Never remove guards as a blanket replacement or duplicate the already live Game. No main/official RC writer change, PR merge, Roblox publishing or payment from this quality tool.
+
+
+## Latest quality-owner repin checkpoint (2026-11-16 13:xx JST)
+
+After the prior read-only audit, #484 quality author advanced from
+`2aeb4fd856657c9298a2763d9204d0c9d9b031cb` to
+`6b52eaf1f2725496277998fe0c5532b7a8fcaab5`.
+Actual GitHub compare shows four changed files: current26 CI workflow,
+quality BotActors, spatial-quality test, native neutral fault test.
+Therefore the earlier #490 selected BotActors source byte hash cannot be
+reused as evidence for this newer quality HEAD; re-run the live audit.
+
+#484 itself built a new truly source-exact private 26-script Place on that
+HEAD: [same-head GitHub Actions 43802122900](https://github.com/kk051780/toy-wars-factory/actions/runs/43802122900)
+SUCCESS, real Place **218,949 bytes** SHA256
+`7afbc4db3035c4f8985927f89128fcbc0cd09c2857b58305099a751560bd7115`,
+private artifact **66,359 bytes** ID `14196449069`. Not canonical RC
+Place or ZIP. New runtime-guard and original-byte source selection MUST be
+recomputed at the new head; Studio/Android/OWNER still NO_GO.
