@@ -109,6 +109,43 @@ function dead:LoadCharacter() self.loads+=1 end
 Replay.resetHuman(dead,ret)
 check(dead.loads==1,"dead player not respawned for replay")
 
+-- A transient failed LoadCharacter request is retried once without a loop.
+pending={}
+local retry={Parent=playersService,UserId=127,attributes={},loads=0,Character={}}
+function retry:SetAttribute(key:string,value:any) self.attributes[key]=value end
+function retry:GetAttribute(key:string):any return self.attributes[key] end
+function retry:FindFirstChild(name:string) return nil end
+function retry.Character:FindFirstChildOfClass(name:string) return nil end
+function retry.Character:FindFirstChild(name:string) return nil end
+function retry:LoadCharacter()
+ self.loads+=1
+ if self.loads==1 then error("temporary Studio respawn refused") end
+end
+Replay.resetHuman(retry,ret)
+check(retry.loads==1,"failed respawn did not attempt immediately")
+check(#pending==1 and pending[1].seconds==1,"failed respawn did not schedule bounded retry")
+pending[1].fn()
+check(retry.loads==2,"failed respawn did not recover on retry")
+check(#pending==1,"unexpected unbounded retry loop")
+
+-- A stale retry must not touch a player who has already entered a different mode.
+pending={}
+local queued={Parent=playersService,UserId=128,attributes={},loads=0,Character={}}
+function queued:SetAttribute(key:string,value:any) self.attributes[key]=value end
+function queued:GetAttribute(key:string):any return self.attributes[key] end
+function queued:FindFirstChild(name:string) return nil end
+function queued.Character:FindFirstChildOfClass(name:string) return nil end
+function queued.Character:FindFirstChild(name:string) return nil end
+function queued:LoadCharacter()
+ self.loads+=1
+ if self.loads==1 then error("first attempt declined") end
+end
+Replay.resetHuman(queued,ret)
+check(queued.loads==1 and #pending==1,"queued player did not schedule retry")
+queued.attributes.EGGRUMBLE_QueuedMode="BATTLE_ROYALE"
+pending[1].fn()
+check(queued.loads==1,"old lobby retry touched an active new match")
+
 -- Left players are ignored, and no cross-player mutations occur after removal.
 local gone={Parent=nil,UserId=126,attributes={}}
 function gone:SetAttribute(key:string,v:any) self.attributes[key]=v end
