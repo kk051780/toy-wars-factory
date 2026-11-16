@@ -23,7 +23,7 @@ class BuilderSourceTests(unittest.TestCase):
   for tag in ("STALE_SAME_MODE_SESSION","MISSING_LIVE_MEMBERSHIP_CALLBACK","MEMBERSHIP_CALLBACK_ERROR_FAIL_CLOSED"):
    self.assertIn(tag,spec)
  def test_server_tool_interface(self):
-  for text in ['function Build.equip(session:any,p:Player,serverEnabled:boolean?)',
+  for text in ['function Build.equip(session:any,p:Player,serverEnabled:boolean?,bridgeEnabled:boolean?)',
                'if serverEnabled~=true then return false,"FEATURE_OFF"',
                'p:FindFirstChildOfClass("Backpack")','Instance.new("Tool")',
                'tool.Activated:Connect(function()',
@@ -35,7 +35,8 @@ class BuilderSourceTests(unittest.TestCase):
   for token in ('BUILDER_TOOL_OFF','BUILDER_TWO_TOOLS_NO_REMOTE',
                 'UNEQUIPPED_TOOL_DENIED','EQUIPPED_SERVER_TOOL_CREATES_WALL',
                 'BUILDER_OLD_TOOL_REMOVED','BUILDER_TOOL_LIVE_MATCH_GUARD',
-                'BUILDER_TOOL_TERMINAL_PHASE_GUARD'):
+                'BUILDER_TOOL_TERMINAL_PHASE_GUARD',
+                'BUILDER_BRIDGE_HIDDEN_ON_FLAT_FIELD'):
    self.assertIn(token,native)
  def test_no_authority_fork(self):
   executable="\n".join(line for line in SRC.splitlines() if not line.strip().startswith("--"))
