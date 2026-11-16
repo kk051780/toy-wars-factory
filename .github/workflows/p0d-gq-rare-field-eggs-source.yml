@@ -1,0 +1,77 @@
+name: P0D GQ rare mirrored field eggs original Host and Score true Luau
+on:
+  pull_request:
+    branches: [rc/p0d-s1-kids-rc01]
+    paths:
+      - 'quality_gameplay/v3_rare_field_eggs_20261117/**'
+      - '.github/workflows/p0d-gq-rare-field-eggs-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rare-source-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: fe67d31bc8d1b3e481cd22d2be9ea54a1eb031c9
+          path: _v3_original
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: kk051780/toy-wars-factory
+          ref: 438a406ccfda5563053d783d7561797ccd364361
+          path: _v3_score
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: luau-lang/luau
+          ref: f46d879e28302a430029304f7f6a162aed66f103
+          path: _native_luau
+          persist-credentials: false
+      - name: Source-mutation tests and byte-exact OFF
+        run: |
+          set -euo pipefail
+          python3 -B -m unittest discover -s quality_gameplay/v3_rare_field_eggs_20261117 -p 'test_rare.py' -v
+      - name: Apply only original existing Host+Score and create genuine 13-case score native harness
+        run: |
+          set -euo pipefail
+          mkdir artifacts
+          python3 - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0,"quality_gameplay/v3_rare_field_eggs_20261117")
+          from select_rare import apply_host,apply_score,score_native_harness
+          host=Path("_v3_original/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_LobbyCastleModesPreview.server.luau")
+          score=Path("_v3_score/handoffs/P0D-PQG-SEVEN-HERO-PLAYABLE-20261116/EGGRUMBLE_ScoreBalance.luau")
+          Path("artifacts/RARE_HOST.server.luau").write_text(apply_host(host.read_text()),encoding="utf-8")
+          selected=Path("artifacts/RARE_SCORE.luau")
+          selected.write_text(apply_score(score.read_text()),encoding="utf-8")
+          score_native_harness(selected,Path("artifacts/RARE_ACTUAL_NATIVE.luau"))
+          print("GQ_RARE_ORIGINAL_TWO_AUTHENTIC_SOURCE_SELECT_PASS")
+          PY
+      - name: Native Luau compile original two and execute actual ScoreBalance score cases
+        run: |
+          set -euo pipefail
+          cmake -S _native_luau -B /tmp/gq-rare-native -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release -DLUAU_BUILD_TESTS=OFF -DLUAU_BUILD_CLI=ON
+          cmake --build /tmp/gq-rare-native --target Luau.Compile.CLI Luau.Repl.CLI --parallel 4
+          for file in artifacts/*.luau; do /tmp/gq-rare-native/luau-compile --text "$file" >/dev/null; done
+          /tmp/gq-rare-native/luau artifacts/RARE_ACTUAL_NATIVE.luau \
+            | tee artifacts/RARE_NATIVE_RESULT.log
+          grep -q 'GQ_RARE_FIELD_REAL_SCOREBALANCE_NATIVE_CASES_PASS=13' artifacts/RARE_NATIVE_RESULT.log
+      - name: Immutable source candidate proof, NOT official RC
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GQ-RARE-FIELD-EGGS-2SOURCE-PREP-NOT-RC
+          path: |
+            artifacts/RARE_HOST.server.luau
+            artifacts/RARE_SCORE.luau
+            artifacts/RARE_NATIVE_RESULT.log
+          if-no-files-found: error
+          retention-days: 3
