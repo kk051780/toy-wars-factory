@@ -1839,6 +1839,21 @@ jobs:
           PY
           /tmp/gq530-all31-rojo build "$OUT" -o "$PLACE"
           python3 -B "$SRC/select_role_ready.py" verify --base "$BASE" --out "$OUT" --place "$PLACE"
+          python3 -B "$SRC/role_native.py" --project "$OUT" \
+            --out "$DIR/GQ8_ROLE_ACK_NATIVE12.luau" \
+            --mutant "$DIR/GQ8_ROLE_ACK_NO_GUARD_MUTANT.luau"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_ROLE_ACK_NATIVE12.luau" >/dev/null
+          /tmp/gq530_all31_native/luau "$DIR/GQ8_ROLE_ACK_NATIVE12.luau" \
+            | tee "$DIR/GQ8_ROLE_ACK_NATIVE12_RESULT.log"
+          grep -q GQ8_REAL_HOST_NATIVE_ROLE_ACK_12_SEMANTIC_CASES_PASS \
+            "$DIR/GQ8_ROLE_ACK_NATIVE12_RESULT.log"
+          /tmp/gq530_all31_native/luau-compile --text "$DIR/GQ8_ROLE_ACK_NO_GUARD_MUTANT.luau" >/dev/null
+          if /tmp/gq530_all31_native/luau "$DIR/GQ8_ROLE_ACK_NO_GUARD_MUTANT.luau" \
+            > "$DIR/GQ8_ROLE_ACK_MUTANT_EXPECTED_RED.log" 2>&1; then
+            echo 'RED_GQ8_ROLE_ACK_MUTANT_NOT_CAUGHT'; exit 1
+          fi
+          grep -q GQ8_NATIVE_ROLE_ACK_RED_ "$DIR/GQ8_ROLE_ACK_MUTANT_EXPECTED_RED.log"
+          echo GQ8_ROLE_ACK_12_REAL_HOST_NATIVE_SEMANTIC_AND_MUTANT_PASS
           echo GQ8_ROLE_ACK_TEAM_BR_ONE_HOST_OTHER30_BYTE_EXACT_PASS
       - name: Attest official RC branch HEAD and emit one canonical V3 studio companion Place
         run: |
@@ -2239,6 +2254,8 @@ jobs:
             artifacts/gq515_official_select/GQ646_LOBBY_SAFE_SPAWN_RC31_RECEIPT.json
             artifacts/gq515_official_select/GQ8_ROLE_ACK_SELECTED31.project.json
             artifacts/gq515_official_select/GQ8_ROLE_ACK_SELECTED31_RECEIPT.json
+            artifacts/gq515_official_select/GQ8_ROLE_ACK_NATIVE12_RESULT.log
+            artifacts/gq515_official_select/GQ8_ROLE_ACK_MUTANT_EXPECTED_RED.log
             artifacts/gq515_official_select/GQ_DRAW_RESULT_RC31_SOURCE_EXACT_RECEIPT.json
             artifacts/gq515_official_select/GQ_DRAW_LABEL_REAL_ROJO31.rbxlx
             artifacts/gq515_official_select/GQ527_SIEGE_SELECTED31.project.json
