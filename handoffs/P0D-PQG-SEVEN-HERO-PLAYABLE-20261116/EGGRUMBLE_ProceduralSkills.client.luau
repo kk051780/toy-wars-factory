@@ -29,13 +29,36 @@ local function joints(character:Model):any
   waist=jointOf(character,{"Waist","RootJoint","Root"}),
  }
 end
+local function sameCFrame(a:CFrame,b:CFrame):boolean
+ local delta=a:ToObjectSpace(b)
+ local _,angle=delta:ToAxisAngle()
+ return delta.Position.Magnitude<.005 and math.abs(angle)<.01
+end
 local function resetPose(record:any)
  for _,joint in pairs(record.joints) do
   if joint and joint.Parent then
-   -- Do not modify C0/attachments: animator owns the underlying pose.
-   joint.Transform=CFrame.new()
+   local last=record.lastApplied[joint]
+   local delta=record.lastDelta[joint]
+   -- If Roblox Animator has already replaced this pose, do NOT wipe that animation.
+   if last and delta and sameCFrame(last,joint.Transform) then
+    joint.Transform=joint.Transform*delta:Inverse()
+   end
   end
  end
+end
+local function additive(record:any,joint:any,delta:CFrame)
+ if not joint or not joint.Parent then return end
+ local base=joint.Transform
+ local last=record.lastApplied[joint]
+ local previous=record.lastDelta[joint]
+ -- When the animator is idle and leaves a previous procedural pose untouched,
+ -- subtract our old delta before applying the new one; no accumulating arm twist.
+ if last and previous and sameCFrame(last,base) then
+  base=base*previous:Inverse()
+ end
+ joint.Transform=base*delta
+ record.lastApplied[joint]=joint.Transform
+ record.lastDelta[joint]=delta
 end
 local function readCast(player:Player)
  local signature=player:GetAttribute("EGGRUMBLE_SkillCastSignature")
@@ -54,6 +77,7 @@ local function readCast(player:Player)
  active[player.UserId]={
   player=player,char=c,role=role,slot=slot,start=os.clock(),
   duration=DURATION[slot] or .3,joints=joints(c),
+  lastApplied={},lastDelta={},
  }
 end
 local function watch(p:Player)
@@ -138,9 +162,9 @@ RunService.PreSimulation:Connect(function(_dt)
   elseif nearby(character) then
    local r,l,w=rotate(record.role,record.slot,elapsed/record.duration)
    local js=record.joints
-   if js.right and js.right.Parent then js.right.Transform=js.right.Transform*r end
-   if js.left and js.left.Parent then js.left.Transform=js.left.Transform*l end
-   if js.waist and js.waist.Parent then js.waist.Transform=js.waist.Transform*w end
+   additive(record,js.right,r)
+   additive(record,js.left,l)
+   additive(record,js.waist,w)
   end
  end
 end)
