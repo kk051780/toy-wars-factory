@@ -3,7 +3,7 @@ from cross_domain_gate.compose_observed import (
     patch,REQUIRE_ANCHOR,REQUIRE_INJECT,START_ANCHOR,START_INJECT
 )
 HOST = '''local RoundReplay=require(script.Parent:WaitForChild("EGGRUMBLE_RoundReplay"))
-  SwarmCombat.start(session)
+ SwarmCombat.start(session)
   scene.closeRound(true)
   if session.rules.phase=="ACTIVE" then return end
 '''
