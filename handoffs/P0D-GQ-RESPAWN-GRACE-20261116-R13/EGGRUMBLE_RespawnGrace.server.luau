@@ -125,9 +125,7 @@ local function watch(player: Player)
         clear(player)
         -- Only an actual server-observed Humanoid.Died in a live, same-mode
         -- personal-castle session can authorize the NEXT character.
-        task.spawn(function()
-            local humanoid = character:FindFirstChildOfClass("Humanoid")
-                or character:WaitForChild("Humanoid", 5)
+        local function bindDeath(humanoid: Humanoid?)
             if not humanoid or not humanoid:IsA("Humanoid") then return end
             humanoid.Died:Connect(function()
                 clear(player)
@@ -143,7 +141,15 @@ local function watch(player: Player)
                     tickets[player] = nil
                 end
             end)
-        end)
+        end
+        local immediate = character:FindFirstChildOfClass("Humanoid")
+        if immediate then
+            bindDeath(immediate :: Humanoid)
+        else
+            task.spawn(function()
+                bindDeath(character:WaitForChild("Humanoid", 5) :: Humanoid?)
+            end)
+        end
         task.delay(SPAWN_BIND_DELAY, function()
             if player.Character ~= character then return end
             local ticket = tickets[player]
