@@ -23,3 +23,15 @@ Run `python3 -m unittest discover -s quality_gameplay/v3_private_live_canary_202
 - **Progress**: this slice code work is SOURCE_CANDIDATE, formal RC integrated **0/1**, actual gameplay/ART/FUN/OWNER acceptance **0/1**. The earlier V3 umbrella 3/6 candidate preparation is separate and not increased by local scripts.
 
 **Prohibitions:** no direct `main` edits, ordinary merge, Publish, new payment, Windows/Studio remote control, or production activation.
+
+## 2026-11-16 — Private-only lifecycle fault correction (continuation of same #513 claim)
+
+**Reproduced source risk, not an engine-observed crash:** the original temporary gate advertised `EGGRUMBLE_V3_PRIVATE_SERVER_READY=true` before the canonical host had created its complete two-mode lobby/portals. Clearing `ServerStorage.EGGRUMBLE_V3_EXPLICIT_PRIVATE_CANARY` after game start did not withdraw READY or retire the previously spawned private world. That was unsafe to describe as immediate flag-OFF rollback.
+
+**Actual new correction on scratch-owned source only:**
+- Original 21-host and original 26-author composite host both replace the early Studio check with `PrivateGate.allowed()`. They call `PrivateGate.watchWorld(folder)` immediately after the canonical `EGGRUMBLE_LOBBY_CASTLE_MODES_PREVIEW` folder is mounted, and call `PrivateGate.advertiseServerReady()` **only after** the original lobby and TEAM/BR portals are initialized. A changed/missing author anchor aborts composition instead of placing the monitor elsewhere.
+- One existing independent gate module now polls the **server-owned** opt-in at a bounded 0.25-second interval *only in a non-Studio private test server*. Opt-in cancellation withdraws the replicated READY attribute and destroys only the gate-owned private V3 arena folder. A public server cannot start the arena even if the attribute is set. Studio preview remains available.
+- Both source composers retain **exactly 21+1 / 26+1 mapped scripts**, 17 / 21 expected guard sites, and the original author SHA records. There is **no new Game, Score, Store, Remote, replicated authority, or production-source change**.
+- The pinned Native Luau VM harness tests initial public denial, private default OFF, authorized Studio/private start, client/server separation, READY after authorization, and revocation teardown. **Source/native tests are not a real Roblox thread scheduler test**.
+
+**Explicit limitations and rollback:** destroying the test arena does not guarantee cleanup of every engine/client-side connection, animation, or HUD. A private instance should be stopped/restarted after a revocation before re-enabling its server flag. Only a separately controlled private test Place can set the opt-in; never copy the gate into public/official RC. Runtime Studio/Android post-revocation verification, #420 ART/FUN and OWNER signoff remain NO_GO. Official B #220 has sole authority for source-selective protected RC CAS and its complete proof chain.
