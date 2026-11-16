@@ -79,7 +79,7 @@ ROLE_CLASSES = {
  "EGGRUMBLE_MatchResultService": "ModuleScript",
  "EGGRUMBLE_CombatFeel": "LocalScript",
 }
-# These 34 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
+# These 35 enabled RC31 flags are mapped to source evidence (not Studio gameplay proof).
 # A future new flag is not silently certified; report it as unassessed.
 FEATURE_EVIDENCE = {
  "DEAD_CASTER_FENCE_530": ("EGGRUMBLE_SevenRoleCombat","GQ_DEAD_CASTER_FENCE:"),
@@ -151,6 +151,11 @@ FEATURE_EVIDENCE = {
   'type="TIME_LIMIT_DRAW"')),
 
 
+ "RESULT_DRAW_LABEL_20261117": ("EGGRUMBLE_MatchResultService", (
+  'local status=if session.rules.winner=="DRAW" then "引き分け" elseif won then',
+  'function ResultRetry.deliver(',
+  'ScoreBalance.build(',
+  'session.resultsDelivered=true')),
  "POSTWIN_LATE_CARRIER_DEATH_FREEZE_509": ("EGGRUMBLE_CastleMatchRules",
   'if m.phase~="ACTIVE" or m.winner~=nil then return 0,{} end'),
  "BOT_SIEGE_TARGET_PACING_527": ("EGGRUMBLE_BotActors", (
@@ -271,7 +276,7 @@ def main():
     a.out.parent.mkdir(parents=True,exist_ok=True)
     a.out.write_text(json.dumps(result,ensure_ascii=False,indent=2,sort_keys=True)+"\n",
                      encoding="utf-8")
-    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_33_FEATURE_FLAGS_PASS"
+    print("GQ8_OFFICIAL_PLACE_8_DOMAINS_SOURCE_ANCHOR_AND_35_FEATURE_FLAGS_PASS"
           if result["official_rc_push_verified"]
           else "GQ8_PR_PREMERGE_8_DOMAIN_SOURCE_ONLY_PASS_NOT_OFFICIAL_RC")
     print("GQ8_OFFICIAL_RC_SHA_PLACE_BYTES",result["official_rc_head"],
